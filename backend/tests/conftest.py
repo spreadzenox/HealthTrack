@@ -3,6 +3,13 @@ Pytest configuration and fixtures for HealthTrack backend.
 Each test gets a unique DB file so runs are isolated.
 """
 import os
+import sys
+from pathlib import Path
+
+# Ensure backend root is on Python path (CI runs from backend/ but path may not include it)
+_backend_root = Path(__file__).resolve().parent.parent
+if str(_backend_root) not in sys.path:
+    sys.path.insert(0, str(_backend_root))
 
 import pytest
 from fastapi.testclient import TestClient
