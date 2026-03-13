@@ -8,6 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from providers.base import IngredientResult
+from providers.errors import NotFoodError
 
 
 @pytest.fixture
@@ -151,4 +152,44 @@ def test_meals_predicts_and_saves(mock_get_provider, client: TestClient, sample_
     entries = list_r.json()
     assert any(e["id"] == data["entry_id"] for e in entries)
     entry = next(e for e in entries if e["id"] == data["entry_id"])
-    assert entry["payload"]["items"] == [{"ingredient": "rice", "quantity": "1 cup"}, {"ingredient": "chicken", "quantity": "150g"}]
+    assert entry["payload"]["items"] == [
+        {"ingredient": "rice", "quantity": "1 cup", "quantity_g": None},
+        {"ingredient": "chicken", "quantity": "150g", "quantity_g": None},
+    ]
+
+
+@patch("main.get_provider")
+def test_predict_returns_422_when_not_food(mock_get_provider, client: TestClient, sample_image_bytes):
+    """POST /api/predict returns 422 with not_food when provider raises NotFoodError."""
+    provider = MagicMock()
+    provider.name = "gemini"
+    provider.predict.side_effect = NotFoodError("Ce n'est pas un plat.")
+    mock_get_provider.return_value = provider
+    r = client.post(
+        "/api/predict",
+        files={"file": ("photo.jpg", sample_image_bytes, "image/jpeg")},
+    )
+    assert r.status_code == 422
+    data = r.json()
+    assert data.get("detail", {}).get("code") == "not_food"
+    assert "pas un plat" in data.get("detail", {}).get("message", "")
+
+
+def test_nutrition_returns_totals_and_per_ingredient(client: TestClient):
+    """POST /api/nutrition returns total and per_ingredient from nutrition DB."""
+    r = client.post(
+        "/api/nutrition",
+        json={
+            "items": [
+                {"ingredient": "Riz blanc cuit", "quantity_g": 200},
+                {"ingredient": "Poulet grillé", "quantity_g": 150},
+            ],
+        },
+    )
+    assert r.status_code == 200
+    data = r.json()
+    assert "total" in data
+    assert "per_ingredient" in data
+    assert data["total"]["energy_kcal"] > 0
+    assert data["total"]["protein_g"] > 0
+    assert len(data["per_ingredient"]) == 2

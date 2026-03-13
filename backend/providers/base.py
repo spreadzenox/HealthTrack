@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
 class IngredientResult:
     ingredient: str
     quantity: str
+    quantity_g: Optional[float] = None  # grammage pour analyse nutritionnelle
 
 
 class BaseProvider(ABC):

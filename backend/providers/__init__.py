@@ -1,10 +1,12 @@
 from .base import IngredientResult, BaseProvider
+from .errors import NotFoodError
 from .openai_provider import OpenAIProvider
 from .gemini_provider import GeminiProvider
 
 __all__ = [
     "IngredientResult",
     "BaseProvider",
+    "NotFoodError",
     "OpenAIProvider",
     "GeminiProvider",
     "get_provider",

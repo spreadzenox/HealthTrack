@@ -5,14 +5,15 @@ HealthTrack API: health data hub.
 """
 import os
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from providers import get_provider, IngredientResult
+from providers import get_provider, IngredientResult, NotFoodError
 
+from nutrition import compute_nutrition
 from db import (
     create_entry,
     get_entry,
@@ -46,11 +47,26 @@ def startup():
 class IngredientItem(BaseModel):
     ingredient: str
     quantity: str
+    quantity_g: Optional[float] = None  # grammes pour analyse nutritionnelle
 
 
 class PredictResponse(BaseModel):
     provider: str
     items: List[IngredientItem]
+
+
+class NutritionItemRequest(BaseModel):
+    ingredient: str
+    quantity_g: float
+
+
+class NutritionRequest(BaseModel):
+    items: List[NutritionItemRequest]
+
+
+class NutritionResponse(BaseModel):
+    total: Dict[str, float]
+    per_ingredient: List[Dict[str, Any]]
 
 
 class HealthEntryCreate(BaseModel):
@@ -112,11 +128,16 @@ async def predict(
     try:
         p = get_provider(provider_name)
         results: List[IngredientResult] = p.predict(image_bytes, mime_type=content_type)
+    except NotFoodError as e:
+        raise HTTPException(422, detail={"code": "not_food", "message": e.reason})
     except Exception as e:
         raise HTTPException(502, f"Provider error: {str(e)}")
     return PredictResponse(
         provider=p.name,
-        items=[IngredientItem(ingredient=r.ingredient, quantity=r.quantity) for r in results],
+        items=[
+            IngredientItem(ingredient=r.ingredient, quantity=r.quantity, quantity_g=r.quantity_g)
+            for r in results
+        ],
     )
 
 
@@ -203,11 +224,19 @@ async def log_meal(
     try:
         p = get_provider(provider_name)
         results: List[IngredientResult] = p.predict(image_bytes, mime_type=content_type)
+    except NotFoodError as e:
+        raise HTTPException(422, detail={"code": "not_food", "message": e.reason})
     except Exception as e:
         raise HTTPException(502, f"Provider error: {str(e)}")
-    items = [IngredientItem(ingredient=r.ingredient, quantity=r.quantity) for r in results]
+    items = [
+        IngredientItem(ingredient=r.ingredient, quantity=r.quantity, quantity_g=r.quantity_g)
+        for r in results
+    ]
     payload = {
-        "items": [{"ingredient": i.ingredient, "quantity": i.quantity} for i in items],
+        "items": [
+            {"ingredient": i.ingredient, "quantity": i.quantity, "quantity_g": i.quantity_g}
+            for i in items
+        ],
         "provider": p.name,
     }
     entry_id = create_entry(
@@ -216,6 +245,17 @@ async def log_meal(
         payload=payload,
     )
     return MealLogResponse(entry_id=entry_id, provider=p.name, items=items)
+
+
+# ----- Analyse nutritionnelle -----
+@app.post("/api/nutrition", response_model=NutritionResponse)
+def analyze_nutrition(body: NutritionRequest):
+    """
+    Calcule les apports nutritionnels à partir d'une liste d'ingrédients avec grammages.
+    Les noms doivent correspondre à la base (noms canoniques). Retourne totaux + détail par ingrédient.
+    """
+    items = [{"ingredient": i.ingredient, "quantity_g": i.quantity_g} for i in body.items]
+    return compute_nutrition(items)
 
 
 if __name__ == "__main__":
