@@ -4,6 +4,7 @@ import './App.css'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 const BUILD_VERSION = import.meta.env.VITE_APP_VERSION || 'dev'
+const IS_DEV = BUILD_VERSION === 'dev' || !BUILD_VERSION
 const CHECK_VERSION_INTERVAL_MS = 2 * 60 * 1000
 const AUTO_RELOAD_DELAY_MS = 5000
 
@@ -11,6 +12,7 @@ export default function Layout() {
   const [updateAvailable, setUpdateAvailable] = useState(false)
   const [reloadCountdown, setReloadCountdown] = useState(null)
   const checkVersion = useRef(async () => {
+    if (IS_DEV) return
     try {
       const res = await fetch(`${API_BASE}/api/version`, { cache: 'no-store' })
       if (!res.ok) return
