@@ -1,0 +1,11 @@
+---
+description: HealthTrack is test-driven; all key features must be testable end-to-end (except purely visual).
+alwaysApply: true
+---
+
+# Test-Driven Development (HealthTrack)
+
+- **Backend**: Every new or changed behavior must have tests in `backend/tests/` (pytest). API endpoints, db, and provider logic are covered by tests; new features need corresponding tests.
+- **Frontend**: Important flows and components should be testable (Vitest + React Testing Library in `app/src/**/*.test.jsx`). Purely visual/CSS changes may have no tests.
+- **Rule**: When adding or changing a feature, add or update tests so that the behavior is verifiable end-to-end. Prefer writing a failing test first, then implementing.
+- See `CONTRIBUTING.md` and README section "Tests (TDD)" for how to run tests and what is in scope.

@@ -16,6 +16,10 @@ build/
 # Node (app)
 node_modules/
 
+# Backend DB (local data)
+backend/*.db
+healthtrack.db
+
 # Modèles téléchargés (cache Hugging Face)
 .cache/
 models/

@@ -1,6 +1,12 @@
-# HealthTrack – Reconnaissance d'image alimentaire
+# HealthTrack – Hub de suivi santé
 
-Module de **reconnaissance d'image** pour, à partir d’une photo de votre assiette ou de ce que vous mangez, obtenir en sortie une **liste d’ingrédients avec des quantités estimées**.
+**HealthTrack** est un hub pour centraliser vos données santé. Trois sources sont prévues :
+
+1. **Alimentation** (en place) : photo d’assiette → modèle (OpenAI / Gemini ou local) → ingrédients et quantités, enregistrés dans l’app.
+2. **Montre Samsung** (à venir) : activité, fréquence cardiaque, sommeil.
+3. **Balance connectée** (à venir) : poids.
+
+L’architecture (backend + frontend) est pensée pour un **tableau de bord** unique agrégant toutes ces sources. Pour l’instant, le focus est sur le **suivi alimentaire** (reconnaissance d’image + enregistrement des repas).
 
 ## Entrée / Sortie
 
@@ -19,6 +25,14 @@ pip install -r requirements.txt
 ```
 
 **Requis :** Python 3.10+, PyTorch. Pour le GPU (recommandé) : CUDA et `pip install torch` avec support CUDA.
+
+## Tests (TDD)
+
+Le dépôt est piloté par le **test-driven development** : toutes les fonctionnalités clés doivent être testables de bout en bout (sauf le pur visuel).
+
+- **Backend** : `cd backend && pytest tests/ -v` — persistance (db), parsing, API (health, version, predict, meals, health/entries). Aucune clé API requise (provider mocké).
+- **Frontend** : `cd app && npm run test` — navigation, pages Dashboard/Food, chargement des données (Vitest + React Testing Library).
+- **Règle** : toute nouvelle feature doit être couverte par des tests ; le front doit rester testable sur les flux importants. Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Utilisation
 
@@ -90,6 +104,25 @@ npm run dev
 ```
 
 Ouvre l’URL affichée (ex. http://localhost:5173) sur ton téléphone (même réseau Wi‑Fi) ou déploie l’app et l’API en production.
+
+### Mise à jour automatique après un push
+
+Quand tu déploies une nouvelle version (après un `git push`), les utilisateurs connectés sont notifiés et l’app se recharge pour récupérer les changements :
+
+- Le **backend** expose `GET /api/version` (retourne la variable d’environnement `APP_VERSION`).
+- L’**app** compare cette version à la sienne (injectée à la build via `VITE_APP_VERSION`) toutes les 2 minutes et à chaque retour sur l’onglet. Si la version serveur est différente : bandeau « Une nouvelle version est disponible » puis **rechargement automatique** après 5 s (ou bouton « Recharger maintenant »).
+
+Pour que la notification fonctionne après un déploiement, utilise **la même valeur** pour la version à la build et au déploiement du backend, par exemple le commit Git :
+
+```bash
+# Build de l’app (ex. dans ta CI)
+VITE_APP_VERSION=abc123 npm run build
+
+# Démarrage du backend (ou config de ton hébergeur)
+APP_VERSION=abc123 uvicorn main:app ...
+```
+
+Avec GitHub Actions, tu peux utiliser `${{ github.sha }}` pour les deux.
 
 ## Structure du projet
 
