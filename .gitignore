@@ -37,6 +37,9 @@ samples/
 *.swp
 *.swo
 
+# Android SDK (local build, do not commit)
+android-sdk/
+
 # OS
 .DS_Store
 Thumbs.db
