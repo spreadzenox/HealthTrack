@@ -1,0 +1,5 @@
+{
+  "appId": "com.healthtrack.app",
+  "appName": "HealthTrack",
+  "webDir": "dist"
+}
