@@ -1,0 +1,86 @@
+# Générer l’APK Android (HealthTrack)
+
+L’app web est packagée en application Android avec **Capacitor**. Pour produire un fichier APK installable :
+
+## Prérequis
+
+- **Node.js** 20.19+ ou 22+ (pour `npm run build`)
+- **Android Studio** (recommandé) ou Android SDK + Gradle en ligne de commande
+- **Java JDK 17** (ou celui requis par votre version d’Android Studio)
+
+## Étapes
+
+### 1. Build de l’app web
+
+Depuis la racine de `app/` :
+
+```bash
+cd app
+npm install
+npm run build
+```
+
+Si vous utilisez une **URL d’API** en production (analyse des photos), définissez-la au build :
+
+```bash
+VITE_API_URL=https://votre-api.example.com npm run build
+```
+
+### 2. Synchroniser avec le projet Android
+
+```bash
+npx cap sync
+```
+
+Cela copie le contenu de `dist/` dans le projet Android.
+
+### 3. Générer l’APK
+
+**Option A – Android Studio (recommandé)**
+
+```bash
+npx cap open android
+```
+
+Dans Android Studio :
+
+1. Attendre la fin de la synchronisation Gradle.
+2. **Build** → **Build Bundle(s) / APK(s)** → **Build APK(s)**.
+3. L’APK sera dans :  
+   `app/android/app/build/outputs/apk/debug/app-debug.apk`  
+   (ou **release** si vous avez configuré une signature).
+
+**Option B – Ligne de commande (Gradle)**
+
+```bash
+cd android
+./gradlew assembleDebug
+```
+
+Sur Windows :
+
+```bash
+cd android
+gradlew.bat assembleDebug
+```
+
+APK généré : `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+### 4. Installer sur un appareil
+
+- Transférez `app-debug.apk` sur le téléphone et ouvrez-le (autorisez l’installation depuis des sources inconnues si demandé), ou
+- Branchez le téléphone en USB, puis dans Android Studio : **Run** (▶).
+
+## Résumé des commandes
+
+```bash
+cd app
+npm run build
+npx cap sync
+npx cap open android
+# Puis dans Android Studio : Build > Build APK(s)
+```
+
+## Version release (signée)
+
+Pour publier sur le Play Store, il faut configurer une clé de signature et un build release. Voir la [doc Capacitor Android](https://capacitorjs.com/docs/android) et la doc Android sur [signing your app](https://developer.android.com/studio/publish/app-signing).
