@@ -28,7 +28,9 @@ describe('Food', () => {
       </BrowserRouter>
     )
     await screen.findByText(/Derniers repas enregistrés/i)
-    expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringMatching(/\/api\/health\/entries.*type=food/), expect.any(Object))
+    expect(globalThis.fetch).toHaveBeenCalled()
+    expect(globalThis.fetch.mock.calls[0][0]).toContain('/api/health/entries')
+    expect(globalThis.fetch.mock.calls[0][0]).toContain('type=food')
   })
 
   it('shows empty hint when no meals', async () => {

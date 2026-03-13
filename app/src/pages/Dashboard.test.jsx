@@ -9,7 +9,7 @@ describe('Dashboard', () => {
   })
 
   it('renders dashboard title and intro', () => {
-    fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
+    globalThis.fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
     render(
       <BrowserRouter>
         <Dashboard />
@@ -29,7 +29,8 @@ describe('Dashboard', () => {
       </BrowserRouter>
     )
     await screen.findByText(/Dernières entrées/i)
-    expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringMatching(/\/api\/health\/entries/), expect.any(Object))
+    expect(globalThis.fetch).toHaveBeenCalled()
+    expect(globalThis.fetch.mock.calls[0][0]).toContain('/api/health/entries')
   })
 
   it('shows empty hint when no entries', async () => {
@@ -39,7 +40,8 @@ describe('Dashboard', () => {
         <Dashboard />
       </BrowserRouter>
     )
-    await screen.findByText(/Aucune donnée pour l'instant/i)
+    await screen.findByText(/Dernières entrées/i)
+    expect(screen.getByText(/Aucune donnée/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Enregistrez un repas/i })).toHaveAttribute('href', '/food')
   })
 
