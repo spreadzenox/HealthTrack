@@ -1,0 +1,11 @@
+# Vision-Language Model pour reconnaissance alimentaire
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.36.0
+accelerate>=0.25.0
+
+# Images
+Pillow>=10.0.0
+
+# Optionnel : pour parsing avancé des réponses
+# regex

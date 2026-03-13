@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Node (app)
+node_modules/
+
+# Modèles téléchargés (cache Hugging Face)
+.cache/
+models/
+
+# Données / samples
+samples/
+*.jpg
+*.png
+!examples/*.jpg
+!examples/*.png
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
