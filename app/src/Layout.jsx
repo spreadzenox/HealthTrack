@@ -67,6 +67,9 @@ export default function Layout() {
           <NavLink to="/food" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>
             Alimentation
           </NavLink>
+          <NavLink to="/data" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>
+            Données
+          </NavLink>
         </nav>
       </header>
       <main className="main">

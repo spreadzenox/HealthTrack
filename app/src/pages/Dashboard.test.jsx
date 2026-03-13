@@ -3,13 +3,17 @@ import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Dashboard from './Dashboard'
 
+vi.mock('../storage/localHealthStorage', () => ({
+  listEntries: vi.fn(),
+}))
+
 describe('Dashboard', () => {
-  beforeEach(() => {
-    globalThis.fetch = vi.fn()
+  beforeEach(async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([])
   })
 
   it('renders dashboard title and intro', () => {
-    globalThis.fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
     render(
       <BrowserRouter>
         <Dashboard />
@@ -21,20 +25,18 @@ describe('Dashboard', () => {
     expect(screen.getByText(/balance connectée/i)).toBeInTheDocument()
   })
 
-  it('fetches health entries on mount', async () => {
-    globalThis.fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
+  it('loads health entries from local storage on mount', async () => {
     render(
       <BrowserRouter>
         <Dashboard />
       </BrowserRouter>
     )
     await screen.findByText(/Dernières entrées/i)
-    expect(globalThis.fetch).toHaveBeenCalled()
-    expect(globalThis.fetch.mock.calls[0][0]).toContain('/api/health/entries')
+    const { listEntries } = await import('../storage/localHealthStorage')
+    expect(listEntries).toHaveBeenCalledWith({ limit: 30 })
   })
 
   it('shows empty hint when no entries', async () => {
-    globalThis.fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
     render(
       <BrowserRouter>
         <Dashboard />
@@ -46,19 +48,17 @@ describe('Dashboard', () => {
   })
 
   it('shows food entries when returned', async () => {
-    globalThis.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => [
-        {
-          id: 1,
-          type: 'food',
-          source: 'app_food',
-          at: '2025-03-01T12:00:00Z',
-          payload: { items: [{ ingredient: 'rice', quantity: '1 cup' }] },
-          created_at: '',
-        },
-      ],
-    })
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValueOnce([
+      {
+        id: 1,
+        type: 'food',
+        source: 'app_food',
+        at: '2025-03-01T12:00:00Z',
+        payload: { items: [{ ingredient: 'rice', quantity: '1 cup' }] },
+        created_at: '',
+      },
+    ])
     render(
       <BrowserRouter>
         <Dashboard />

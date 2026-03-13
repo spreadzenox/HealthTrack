@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import '../Food.css'
+import { listEntries, createEntry } from '../storage/localHealthStorage'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -25,11 +26,8 @@ export default function Food() {
 
   const loadRecent = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/health/entries?type=food&limit=20`)
-      if (res.ok) {
-        const data = await res.json()
-        setRecentMeals(data)
-      }
+      const data = await listEntries({ type: 'food', limit: 20 })
+      setRecentMeals(data)
     } catch {}
   }
 
@@ -100,21 +98,12 @@ export default function Food() {
     setSaving(true)
     setError(null)
     try {
-      const res = await fetch(`${API_BASE}/api/health/entries`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'food',
-          source: 'app_food',
-          payload: { items: result.items, provider: result.provider },
-        }),
+      const id = await createEntry({
+        type: 'food',
+        source: 'app_food',
+        payload: { items: result.items, provider: result.provider },
       })
-      if (!res.ok) {
-        const t = await res.text()
-        throw new Error(t || `HTTP ${res.status}`)
-      }
-      const data = await res.json()
-      setSavedId(data.id)
+      setSavedId(id)
       loadRecent()
     } catch (err) {
       setError(err.message || 'Erreur lors de l’enregistrement.')

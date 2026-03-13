@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-
-const API_BASE = import.meta.env.VITE_API_URL || ''
+import { listEntries } from '../storage/localHealthStorage'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
@@ -33,11 +32,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     let cancelled = false
-    async function fetchEntries() {
+    async function load() {
       try {
-        const res = await fetch(`${API_BASE}/api/health/entries?limit=30`)
-        if (!res.ok) throw new Error(res.statusText)
-        const data = await res.json()
+        const data = await listEntries({ limit: 30 })
         if (!cancelled) setEntries(data)
       } catch (e) {
         if (!cancelled) setError(e.message)
@@ -45,7 +42,7 @@ export default function Dashboard() {
         if (!cancelled) setLoading(false)
       }
     }
-    fetchEntries()
+    load()
     return () => { cancelled = true }
   }, [])
 
