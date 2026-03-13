@@ -1,0 +1,79 @@
+.food-page .page-title,
+.dashboard .page-title {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.food-page .page-intro,
+.dashboard-intro {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.section-title {
+  margin: 24px 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.empty-hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.empty-hint a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.empty-hint a:hover {
+  text-decoration: underline;
+}
+
+.saved-msg {
+  margin: 0;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Recent meals list */
+.meals-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.meal-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+
+.meal-at {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.meal-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.meal-items li {
+  padding: 2px 0;
+}
+
+.meal-more {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
