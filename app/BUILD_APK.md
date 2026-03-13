@@ -20,11 +20,13 @@ npm install
 npm run build
 ```
 
-Si vous utilisez une **URL d’API** en production (analyse des photos), définissez-la au build :
+**Important :** Pour que « Analyser les ingrédients » fonctionne dans l’APK, l’app doit connaître l’URL de votre backend. Définissez-la au build (sans slash final) :
 
 ```bash
-VITE_API_URL=https://votre-api.example.com npm run build
+VITE_API_URL=https://votre-api.onrender.com npm run build
 ```
+
+Sans cette variable, l’app appellera l’API sur elle-même et vous verrez une erreur du type « is not valid JSON ».
 
 ### 2. Synchroniser avec le projet Android
 
