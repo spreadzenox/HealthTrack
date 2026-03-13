@@ -107,6 +107,10 @@ npm run dev
 
 Ouvre l’URL affichée (ex. http://localhost:5173) sur ton téléphone (même réseau Wi‑Fi) ou déploie l’app et l’API en production.
 
+### APK Android
+
+L’app peut être packagée en **APK** (Capacitor). Voir **[app/BUILD_APK.md](app/BUILD_APK.md)** pour les étapes : build web → `npx cap sync` → ouvrir le projet Android dans Android Studio → Build APK(s).
+
 ### Mise à jour automatique après un push
 
 Quand tu déploies une nouvelle version (après un `git push`), les utilisateurs connectés sont notifiés et l’app se recharge pour récupérer les changements :
