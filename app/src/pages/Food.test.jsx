@@ -3,13 +3,19 @@ import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Food from './Food'
 
+vi.mock('../storage/localHealthStorage', () => ({
+  listEntries: vi.fn(),
+  createEntry: vi.fn(),
+}))
+
 describe('Food', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     globalThis.fetch = vi.fn()
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([])
   })
 
   it('renders food page title and upload zone', () => {
-    globalThis.fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
     render(
       <BrowserRouter>
         <Food />
@@ -20,21 +26,18 @@ describe('Food', () => {
     expect(screen.getByText(/Prendre une photo ou choisir une image/i)).toBeInTheDocument()
   })
 
-  it('fetches recent meals on mount', async () => {
-    globalThis.fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
+  it('loads recent meals from local storage on mount', async () => {
     render(
       <BrowserRouter>
         <Food />
       </BrowserRouter>
     )
     await screen.findByText(/Derniers repas enregistrés/i)
-    expect(globalThis.fetch).toHaveBeenCalled()
-    expect(globalThis.fetch.mock.calls[0][0]).toContain('/api/health/entries')
-    expect(globalThis.fetch.mock.calls[0][0]).toContain('type=food')
+    const { listEntries } = await import('../storage/localHealthStorage')
+    expect(listEntries).toHaveBeenCalledWith({ type: 'food', limit: 20 })
   })
 
   it('shows empty hint when no meals', async () => {
-    globalThis.fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
     render(
       <BrowserRouter>
         <Food />
@@ -44,7 +47,6 @@ describe('Food', () => {
   })
 
   it('analyze button is not visible until image selected', () => {
-    globalThis.fetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
     render(
       <BrowserRouter>
         <Food />

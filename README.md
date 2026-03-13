@@ -8,6 +8,8 @@
 
 L’architecture (backend + frontend) est pensée pour un **tableau de bord** unique agrégant toutes ces sources. Pour l’instant, le focus est sur le **suivi alimentaire** (reconnaissance d’image + enregistrement des repas).
 
+**Stockage des données** : toutes les données utilisateur (repas, et à venir montre / balance) sont stockées **uniquement sur l’appareil** (IndexedDB dans l’app web). Aucune persistance côté serveur. Pour survivre à une **réinstallation** de l’app, l’utilisateur peut **exporter** ses données (fichier JSON téléchargé) depuis la page « Données », puis **réimporter** ce fichier après réinstallation.
+
 ## Entrée / Sortie
 
 - **Input :** image (JPG, PNG, etc.) d’une assiette / d’un repas  

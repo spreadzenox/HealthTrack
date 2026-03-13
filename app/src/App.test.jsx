@@ -8,6 +8,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: /HealthTrack/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Tableau de bord/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Alimentation/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Données/i })).toBeInTheDocument()
   })
 
   it('dashboard link points to /', () => {
@@ -20,5 +21,11 @@ describe('App', () => {
     render(<App />)
     const foodLink = screen.getByRole('link', { name: /Alimentation/i })
     expect(foodLink).toHaveAttribute('href', '/food')
+  })
+
+  it('data link points to /data', () => {
+    render(<App />)
+    const dataLink = screen.getByRole('link', { name: /Données/i })
+    expect(dataLink).toHaveAttribute('href', '/data')
   })
 })
