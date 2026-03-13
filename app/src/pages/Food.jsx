@@ -80,11 +80,18 @@ export default function Food() {
         method: 'POST',
         body: form,
       })
+      const text = await res.text()
       if (!res.ok) {
-        const t = await res.text()
-        throw new Error(t || `HTTP ${res.status}`)
+        throw new Error(text || `HTTP ${res.status}`)
       }
-      const data = await res.json()
+      if (!text.trim() || text.trimStart().startsWith('<')) {
+        throw new Error(
+          API_BASE
+            ? 'Le serveur a renvoyé une page au lieu de JSON. Vérifiez l’URL de l’API.'
+            : "URL de l’API non configurée. Recompilez l’app avec VITE_API_URL=https://votre-backend.example.com"
+        )
+      }
+      const data = JSON.parse(text)
       setResult(data)
     } catch (err) {
       setError(err.message || 'Erreur lors de l’analyse.')
