@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import NutritionKPIs from '../components/NutritionKPIs'
+import { formatAt } from '../utils/format'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
@@ -14,16 +15,6 @@ const TYPE_LABELS = {
   activity: 'Activité',
   weight: 'Poids',
   sleep: 'Sommeil',
-}
-
-function formatAt(at) {
-  if (!at) return ''
-  try {
-    const d = new Date(at)
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-  } catch {
-    return at
-  }
 }
 
 export default function Dashboard() {

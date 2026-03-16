@@ -19,7 +19,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 # Répertoire backend (parent de scripts/)
 BACKEND_DIR = Path(__file__).resolve().parent.parent
@@ -53,17 +53,6 @@ def save_ingredients(items: List[Dict[str, Any]]) -> None:
     with open(INGREDIENTS_FILE, "w", encoding="utf-8") as f:
         json.dump(items, f, ensure_ascii=False, indent=2)
     print(f"Écrit {len(items)} ingrédients dans {INGREDIENTS_FILE}")
-
-
-def find_column(row: Dict[str, str], *candidates: str) -> Optional[str]:
-    """Retourne la valeur de la première colonne existante (insensible à la casse)."""
-    keys_lower = {k.strip().lower(): k for k in row.keys()}
-    for c in candidates:
-        c_lower = c.lower().strip()
-        for k, orig in keys_lower.items():
-            if c_lower in k or k in c_lower:
-                return row.get(orig)
-    return None
 
 
 def parse_float(val: Any) -> float:

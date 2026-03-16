@@ -3,15 +3,7 @@ import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
 import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { analyzeWithGemini } from '../services/geminiStandalone'
-
-function formatAt(at) {
-  if (!at) return ''
-  try {
-    return new Date(at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-  } catch {
-    return at
-  }
-}
+import { formatAt } from '../utils/format'
 
 export default function Food() {
   const [file, setFile] = useState(null)

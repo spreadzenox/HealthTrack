@@ -3,12 +3,11 @@ import { listEntries } from '../storage/localHealthStorage'
 import { aggregateNutrition } from '../services/nutritionKPIs'
 import './NutritionKPIs.css'
 
-/** Cibles indicatives pour la digestion / éviter l'intestin irritable (recommandations courantes) */
 const TARGETS = {
-  fiber_g: { min: 25, max: 35, label: 'Fibres (g)', tip: 'Favorise le transit et le microbiote. Progressif pour éviter ballonnements.' },
-  fat_g: { max: 70, label: 'Lipides (g)', tip: 'Modération : les repas très gras ralentissent la digestion.' },
-  carbohydrates_g: { max: 300, label: 'Glucides (g)', tip: 'Répartis sur la journée pour limiter les pics.' },
-  energy_kcal: { max: 2500, label: 'Énergie (kcal)', tip: 'Éviter les repas trop copieux en une fois.' },
+  fiber_g: { label: 'Fibres (g)' },
+  fat_g: { label: 'Lipides (g)' },
+  carbohydrates_g: { label: 'Glucides (g)' },
+  energy_kcal: { label: 'Énergie (kcal)' },
 }
 
 export default function NutritionKPIs() {

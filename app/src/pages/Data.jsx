@@ -33,7 +33,8 @@ export default function Data() {
     try {
       const text = await file.text()
       const { imported } = await importFromJson(text, { merge: false })
-      setImportStatus(`${imported} entrée(s) importée(s). Rechargez la page pour voir les données.`)
+      setImportStatus(`${imported} entrée(s) importée(s). Le tableau de bord se met à jour.`)
+      window.dispatchEvent(new CustomEvent('health-entries-updated'))
       if (fileInputRef.current) fileInputRef.current.value = ''
     } catch (err) {
       setImportStatus('Erreur : ' + (err.message || 'import impossible'))
