@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
+import NutritionKPIs from '../components/NutritionKPIs'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
@@ -64,6 +65,7 @@ export default function Dashboard() {
 
       {!loading && !error && (
         <>
+          <NutritionKPIs />
           <h3 className="section-title">Dernières entrées</h3>
           {entries.length === 0 ? (
             <p className="empty-hint">

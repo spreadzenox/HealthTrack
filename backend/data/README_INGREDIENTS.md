@@ -61,4 +61,7 @@ Après un import Ciqual, **synchroniser la liste côté app** si besoin :
 }
 ```
 
+Après enrichissement, régénérer la base côté app (KPIs nutritionnels) : depuis `backend`, exécuter  
+`python -c "import json; from pathlib import Path; d=json.load(open('data/ingredients_nutrition.json',encoding='utf-8')); Path('../app/src/data/ingredientsNutrition.json').write_text(json.dumps({i['name']:i['per_100g'] for i in d}, ensure_ascii=False), encoding='utf-8')"`
+
 Les doublons sont évités par **nom normalisé** (minuscules, espaces unifiés) : un nouvel aliment avec le même nom qu’un existant ne crée pas une seconde entrée.

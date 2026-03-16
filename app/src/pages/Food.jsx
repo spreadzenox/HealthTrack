@@ -100,6 +100,7 @@ export default function Food() {
       })
       setSavedId(id)
       loadRecent()
+      window.dispatchEvent(new CustomEvent('health-entries-updated'))
     } catch (err) {
       setError(err.message || 'Erreur lors de l’enregistrement.')
     } finally {
