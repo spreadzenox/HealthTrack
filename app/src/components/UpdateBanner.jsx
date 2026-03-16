@@ -8,8 +8,6 @@ import {
 import { installUpdate } from '../services/installUpdate'
 import './UpdateBanner.css'
 
-const CHECK_INTERVAL_MS = 30 * 60 * 1000 // 30 min
-
 export default function UpdateBanner() {
   const [release, setRelease] = useState(null)
   const [dismissed, setDismissed] = useState(false)
@@ -26,8 +24,25 @@ export default function UpdateBanner() {
 
   useEffect(() => {
     check()
-    const interval = setInterval(check, CHECK_INTERVAL_MS)
-    return () => clearInterval(interval)
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') check()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    let appListenerRemove = () => {}
+    import('@capacitor/app')
+      .then(({ App }) =>
+        App.addListener('appStateChange', ({ isActive }) => {
+          if (isActive) check()
+        })
+      )
+      .then((handle) => {
+        appListenerRemove = () => handle.remove()
+      })
+      .catch(() => {})
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      appListenerRemove()
+    }
   }, [check])
 
   const handleUpdate = async () => {
