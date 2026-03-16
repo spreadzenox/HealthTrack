@@ -111,7 +111,9 @@ Ouvre l’URL affichée (ex. http://localhost:5173) sur ton téléphone (même r
 
 L’app peut être packagée en **APK** (Capacitor). Voir **[app/BUILD_APK.md](app/BUILD_APK.md)** pour les étapes : build web → `npx cap sync` → ouvrir le projet Android dans Android Studio → Build APK(s).
 
-### Mise à jour automatique après un push
+À chaque push sur `main`, la CI crée une **GitHub Release** avec l’APK. Les utilisateurs qui ont une **version antérieure** voient une **bannière de mise à jour** dans l’app et peuvent **télécharger la nouvelle version en un clic** (lien vers la release ou l’APK). Détails dans [app/BUILD_APK.md#build-et-release-automatiques-ci](app/BUILD_APK.md#build-et-release-automatiques-ci).
+
+### Mise à jour automatique après un push (app + backend)
 
 Quand tu déploies une nouvelle version (après un `git push`), les utilisateurs connectés sont notifiés et l’app se recharge pour récupérer les changements :
 

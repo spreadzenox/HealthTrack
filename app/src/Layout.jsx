@@ -1,9 +1,11 @@
 import { Outlet, NavLink } from 'react-router-dom'
+import UpdateBanner from './components/UpdateBanner'
 import './App.css'
 
 export default function Layout() {
   return (
     <div className="app">
+      <UpdateBanner />
       <header className="header">
         <h1>HealthTrack</h1>
         <p className="header-sub">Hub de suivi santé</p>

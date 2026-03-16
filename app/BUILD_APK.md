@@ -83,6 +83,19 @@ npx cap open android
 # Puis dans Android Studio : Build > Build APK(s)
 ```
 
+## Build et release automatiques (CI)
+
+À chaque **push sur `main`**, le workflow GitHub Actions **Build & Release** (`.github/workflows/build-release.yml`) :
+
+1. Build l’app avec une version = numéro de run (`VITE_APP_VERSION`)
+2. Synchronise Capacitor et build l’APK (debug)
+3. Crée une **GitHub Release** avec le tag `v<run_number>` (ex. `v42`) et attache l’APK en pièce jointe
+
+Les utilisateurs qui ont une **version antérieure** voient une **bannière de mise à jour** en haut de l’app (vérification toutes les 30 min via l’API GitHub `releases/latest`). Un clic ouvre la page de la release ou télécharge directement l’APK.
+
+- **Version affichée / comparée** : celle injectée au build (`VITE_APP_VERSION` en CI, sinon `package.json` → `version`).
+- Pour déclencher manuellement : **Actions** → **Build & Release** → **Run workflow**.
+
 ## Version release (signée)
 
 Pour publier sur le Play Store, il faut configurer une clé de signature et un build release. Voir la [doc Capacitor Android](https://capacitorjs.com/docs/android) et la doc Android sur [signing your app](https://developer.android.com/studio/publish/app-signing).
