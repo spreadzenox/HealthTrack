@@ -57,6 +57,10 @@ jobs:
         run: |
           echo "sdk.dir=$ANDROID_HOME" >> local.properties
 
+      - name: Make gradlew executable
+        working-directory: app/android
+        run: chmod +x gradlew
+
       - name: Build APK
         working-directory: app/android
         run: ./gradlew assembleDebug --no-daemon
