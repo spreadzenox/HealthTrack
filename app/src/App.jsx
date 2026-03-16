@@ -3,6 +3,7 @@ import Layout from './Layout'
 import Dashboard from './pages/Dashboard'
 import Food from './pages/Food'
 import Data from './pages/Data'
+import Settings from './pages/Settings'
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="food" element={<Food />} />
           <Route path="data" element={<Data />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </BrowserRouter>

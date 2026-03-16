@@ -112,3 +112,36 @@
   overflow: hidden;
   z-index: -1;
 }
+
+/* Paramètres */
+.settings-block {
+  margin-bottom: 28px;
+}
+
+.settings-block .section-title {
+  margin-top: 0;
+}
+
+.input-label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.settings-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}

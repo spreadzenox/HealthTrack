@@ -1,17 +1,16 @@
 """
 HealthTrack API: health data hub.
-- Food: image → ingredients + quantities (predict + log).
-- Health entries: unified storage for food, future Samsung Watch, scale.
+- Health entries: unified storage (food, future Samsung Watch, scale).
+- Analyse nutritionnelle: calcul à partir d'ingrédients + grammages.
+L'analyse photo (ingrédients) est faite en standalone dans l'app (Gemini direct).
 """
 import os
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-
-from providers import get_provider, IngredientResult, NotFoodError
 
 from nutrition import compute_nutrition
 from db import (
@@ -19,8 +18,6 @@ from db import (
     get_entry,
     init_db,
     list_entries,
-    ENTRY_TYPE_FOOD,
-    SOURCE_APP_FOOD,
 )
 
 app = FastAPI(
@@ -44,17 +41,6 @@ def startup():
 
 
 # ----- Schemas -----
-class IngredientItem(BaseModel):
-    ingredient: str
-    quantity: str
-    quantity_g: Optional[float] = None  # grammes pour analyse nutritionnelle
-
-
-class PredictResponse(BaseModel):
-    provider: str
-    items: List[IngredientItem]
-
-
 class NutritionItemRequest(BaseModel):
     ingredient: str
     quantity_g: float
@@ -85,16 +71,6 @@ class HealthEntryOut(BaseModel):
     created_at: str
 
 
-class MealLogResponse(BaseModel):
-    entry_id: int
-    provider: str
-    items: List[IngredientItem]
-
-
-def _get_provider_name() -> str:
-    return os.environ.get("HEALTHTRACK_PROVIDER", "openai").lower()
-
-
 def _get_app_version() -> str:
     return os.environ.get("APP_VERSION", "1.0.0")
 
@@ -102,43 +78,12 @@ def _get_app_version() -> str:
 # ----- Health & version -----
 @app.get("/health")
 def health():
-    return {"status": "ok", "provider": _get_provider_name()}
+    return {"status": "ok"}
 
 
 @app.get("/api/version")
 def version():
     return {"version": _get_app_version()}
-
-
-# ----- Predict (existing) -----
-@app.post("/api/predict", response_model=PredictResponse)
-async def predict(
-    file: UploadFile = File(...),
-    provider: str | None = None,
-):
-    provider_name = (provider or _get_provider_name()).lower()
-    if provider_name not in ("openai", "gemini", "local"):
-        raise HTTPException(400, "provider must be openai, gemini, or local")
-    content_type = file.content_type or "image/jpeg"
-    if not content_type.startswith("image/"):
-        raise HTTPException(400, "File must be an image")
-    image_bytes = await file.read()
-    if not image_bytes:
-        raise HTTPException(400, "Empty file")
-    try:
-        p = get_provider(provider_name)
-        results: List[IngredientResult] = p.predict(image_bytes, mime_type=content_type)
-    except NotFoodError as e:
-        raise HTTPException(422, detail={"code": "not_food", "message": e.reason})
-    except Exception as e:
-        raise HTTPException(502, f"Provider error: {str(e)}")
-    return PredictResponse(
-        provider=p.name,
-        items=[
-            IngredientItem(ingredient=r.ingredient, quantity=r.quantity, quantity_g=r.quantity_g)
-            for r in results
-        ],
-    )
 
 
 # ----- Health entries (hub) -----
@@ -203,48 +148,6 @@ def get_health_entries(
         )
         for e in entries
     ]
-
-
-# ----- Meals: predict + log in one call -----
-@app.post("/api/meals", response_model=MealLogResponse)
-async def log_meal(
-    file: UploadFile = File(...),
-    provider: str | None = None,
-):
-    """Upload a plate image: run ingredient model and save as a food entry. Returns entry id + items."""
-    provider_name = (provider or _get_provider_name()).lower()
-    if provider_name not in ("openai", "gemini", "local"):
-        raise HTTPException(400, "provider must be openai, gemini, or local")
-    content_type = file.content_type or "image/jpeg"
-    if not content_type.startswith("image/"):
-        raise HTTPException(400, "File must be an image")
-    image_bytes = await file.read()
-    if not image_bytes:
-        raise HTTPException(400, "Empty file")
-    try:
-        p = get_provider(provider_name)
-        results: List[IngredientResult] = p.predict(image_bytes, mime_type=content_type)
-    except NotFoodError as e:
-        raise HTTPException(422, detail={"code": "not_food", "message": e.reason})
-    except Exception as e:
-        raise HTTPException(502, f"Provider error: {str(e)}")
-    items = [
-        IngredientItem(ingredient=r.ingredient, quantity=r.quantity, quantity_g=r.quantity_g)
-        for r in results
-    ]
-    payload = {
-        "items": [
-            {"ingredient": i.ingredient, "quantity": i.quantity, "quantity_g": i.quantity_g}
-            for i in items
-        ],
-        "provider": p.name,
-    }
-    entry_id = create_entry(
-        entry_type=ENTRY_TYPE_FOOD,
-        source=SOURCE_APP_FOOD,
-        payload=payload,
-    )
-    return MealLogResponse(entry_id=entry_id, provider=p.name, items=items)
 
 
 # ----- Analyse nutritionnelle -----

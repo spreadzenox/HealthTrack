@@ -1,35 +1,16 @@
 """
 API (integration) tests for HealthTrack FastAPI app.
-Predict and meals endpoints use a mocked provider so no API keys are required.
 """
-from unittest.mock import patch, MagicMock
-
 import pytest
 from fastapi.testclient import TestClient
 
-from providers.base import IngredientResult
-from providers.errors import NotFoodError
-
-
-@pytest.fixture
-def mock_provider():
-    """Provider that returns a fixed list of ingredients (no OpenAI/Gemini call)."""
-    provider = MagicMock()
-    provider.name = "test"
-    provider.predict.return_value = [
-        IngredientResult(ingredient="rice", quantity="1 cup"),
-        IngredientResult(ingredient="chicken", quantity="150g"),
-    ]
-    return provider
-
 
 def test_health_returns_ok(client: TestClient):
-    """GET /health returns status ok and provider name."""
+    """GET /health returns status ok."""
     r = client.get("/health")
     assert r.status_code == 200
     data = r.json()
     assert data["status"] == "ok"
-    assert "provider" in data
 
 
 def test_version_returns_version(client: TestClient):
@@ -105,74 +86,6 @@ def test_list_health_entries_filter_by_type(client: TestClient):
     assert r.status_code == 200
     entries = r.json()
     assert all(e["type"] == "food" for e in entries)
-
-
-@patch("main.get_provider")
-def test_predict_returns_ingredients(mock_get_provider, client: TestClient, sample_image_bytes, mock_provider):
-    """POST /api/predict returns ingredient list from mocked provider."""
-    mock_get_provider.return_value = mock_provider
-    r = client.post(
-        "/api/predict",
-        files={"file": ("plate.jpg", sample_image_bytes, "image/jpeg")},
-    )
-    assert r.status_code == 200
-    data = r.json()
-    assert data["provider"] == "test"
-    assert len(data["items"]) == 2
-    assert data["items"][0]["ingredient"] == "rice"
-    assert data["items"][0]["quantity"] == "1 cup"
-
-
-def test_predict_rejects_non_image(client: TestClient):
-    """POST /api/predict with non-image returns 400."""
-    r = client.post(
-        "/api/predict",
-        files={"file": ("x.txt", b"not an image", "text/plain")},
-    )
-    assert r.status_code == 400
-
-
-@patch("main.get_provider")
-def test_meals_predicts_and_saves(mock_get_provider, client: TestClient, sample_image_bytes, mock_provider):
-    """POST /api/meals runs prediction and saves food entry; returns entry_id and items."""
-    mock_get_provider.return_value = mock_provider
-    r = client.post(
-        "/api/meals",
-        files={"file": ("plate.jpg", sample_image_bytes, "image/jpeg")},
-    )
-    assert r.status_code == 200
-    data = r.json()
-    assert data["entry_id"] >= 1
-    assert data["provider"] == "test"
-    assert len(data["items"]) == 2
-
-    # Entry should appear in list
-    list_r = client.get("/api/health/entries", params={"type": "food"})
-    assert list_r.status_code == 200
-    entries = list_r.json()
-    assert any(e["id"] == data["entry_id"] for e in entries)
-    entry = next(e for e in entries if e["id"] == data["entry_id"])
-    assert entry["payload"]["items"] == [
-        {"ingredient": "rice", "quantity": "1 cup", "quantity_g": None},
-        {"ingredient": "chicken", "quantity": "150g", "quantity_g": None},
-    ]
-
-
-@patch("main.get_provider")
-def test_predict_returns_422_when_not_food(mock_get_provider, client: TestClient, sample_image_bytes):
-    """POST /api/predict returns 422 with not_food when provider raises NotFoodError."""
-    provider = MagicMock()
-    provider.name = "gemini"
-    provider.predict.side_effect = NotFoodError("Ce n'est pas un plat.")
-    mock_get_provider.return_value = provider
-    r = client.post(
-        "/api/predict",
-        files={"file": ("photo.jpg", sample_image_bytes, "image/jpeg")},
-    )
-    assert r.status_code == 422
-    data = r.json()
-    assert data.get("detail", {}).get("code") == "not_food"
-    assert "pas un plat" in data.get("detail", {}).get("message", "")
 
 
 def test_nutrition_returns_totals_and_per_ingredient(client: TestClient):

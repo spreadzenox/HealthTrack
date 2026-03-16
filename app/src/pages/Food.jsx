@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
-
-const API_BASE = import.meta.env.VITE_API_URL || ''
+import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
+import { analyzeWithGemini } from '../services/geminiStandalone'
 
 function formatAt(at) {
   if (!at) return ''
@@ -69,29 +69,17 @@ export default function Food() {
 
   const analyze = async () => {
     if (!file) return
+    if (!hasGeminiApiKey()) {
+      setError('Ajoutez votre clé API Gemini dans Paramètres pour analyser une photo.')
+      return
+    }
     setLoading(true)
     setError(null)
     setResult(null)
     setSavedId(null)
     try {
-      const form = new FormData()
-      form.append('file', file)
-      const res = await fetch(`${API_BASE}/api/predict`, {
-        method: 'POST',
-        body: form,
-      })
-      const text = await res.text()
-      if (!res.ok) {
-        throw new Error(text || `HTTP ${res.status}`)
-      }
-      if (!text.trim() || text.trimStart().startsWith('<')) {
-        throw new Error(
-          API_BASE
-            ? 'Le serveur a renvoyé une page au lieu de JSON. Vérifiez l’URL de l’API.'
-            : "URL de l’API non configurée. Recompilez l’app avec VITE_API_URL=https://votre-backend.example.com"
-        )
-      }
-      const data = JSON.parse(text)
+      const apiKey = getGeminiApiKey()
+      const data = await analyzeWithGemini(file, apiKey)
       setResult(data)
     } catch (err) {
       setError(err.message || 'Erreur lors de l’analyse.')
