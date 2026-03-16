@@ -7,22 +7,26 @@ const GEMINI_MODEL = 'gemini-2.5-flash'
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`
 
 function buildPrompt() {
-  const namesList = INGREDIENT_NAMES.map((n) => `"${n}"`).join(', ')
-  return `Tu analyses une photo de plat / repas pour une application de suivi nutritionnel.
+  // Liste exhaustive : un nom par ligne pour limiter la taille du prompt tout en restant lisible
+  const namesList = INGREDIENT_NAMES.join('\n')
+  return `Tu analyses une photo de plat/repas. Tu ne dois répondre QUE par du JSON valide, rien d'autre (pas de texte, pas de markdown).
 
-RÈGLES:
-1) Si l'image ne montre PAS de nourriture (pas un plat, pas des aliments comestibles), réponds UNIQUEMENT par du JSON valide avec ce format exact:
+LISTE EXHAUSTIVE DES INGRÉDIENTS AUTORISÉS (tu DOIS utiliser exactement un de ces noms, copié à l'identique, pour chaque ingrédient détecté) :
+---
+${namesList}
+---
+
+RÈGLES DE RÉPONSE :
+1) Si l'image ne montre PAS de nourriture : réponds uniquement ce JSON (rien d'autre) :
 {"not_food": true, "reason": "explication courte en français"}
 
-2) Si l'image montre un plat ou des aliments, liste les ingrédients PRIMAIRES (aliments de base, pas des plats préparés complexes) avec une estimation du poids en grammes.
-   Tu DOIS utiliser UNIQUEMENT des noms pris dans cette liste (choisis le plus proche si besoin):
-   ${namesList}
-   Réponds UNIQUEMENT par du JSON valide avec ce format exact:
-   {"not_food": false, "ingredients": [{"ingredient": "Nom exact de la liste", "quantity_g": nombre}]}
-   - "ingredient" doit être exactement un des noms de la liste ci-dessus.
-   - "quantity_g" doit être un nombre (grammes), pas de texte.
+2) Si l'image montre un plat ou des aliments : liste chaque ingrédient visible avec une estimation du poids en grammes. Choisis le nom le plus pertinent dans la liste ci-dessus pour chaque aliment.
+   Réponds UNIQUEMENT ce JSON (aucun texte avant ni après) :
+   {"not_food": false, "ingredients": [{"ingredient": "Nom exact copié de la liste", "quantity_g": nombre}]}
+   - "ingredient" : exactement une chaîne prise dans la liste exhaustive ci-dessus (copie à l'identique).
+   - "quantity_g" : nombre (grammes), entier ou décimal.
 
-Réponds uniquement avec le JSON, sans texte avant ou après.`
+Interdiction : ne réponds pas avec du texte libre, des explications ou du markdown. Uniquement le JSON.`
 }
 
 /**
@@ -103,19 +107,20 @@ export async function analyzeWithGemini(file, apiKey) {
     throw new Error(reason)
   }
 
-  const ingredients = parsed.ingredients || []
-  const items = ingredients
-    .filter((it) => (it.ingredient || '').trim())
-    .map((it) => {
-      const name = String(it.ingredient).trim()
-      const qtyG = it.quantity_g != null ? Number(it.quantity_g) : null
-      const quantity = qtyG != null && !Number.isNaN(qtyG) ? `${Math.round(qtyG)} g` : 'portion non précisée'
-      return {
-        ingredient: name,
-        quantity,
-        quantity_g: qtyG != null && !Number.isNaN(qtyG) ? qtyG : undefined,
-      }
-    })
+  const allowedSet = new Set(INGREDIENT_NAMES.map((n) => n.trim()))
+  const ingredients = (parsed.ingredients || []).filter(
+    (it) => (it.ingredient || '').trim() && allowedSet.has(String(it.ingredient).trim())
+  )
+  const items = ingredients.map((it) => {
+    const name = String(it.ingredient).trim()
+    const qtyG = it.quantity_g != null ? Number(it.quantity_g) : null
+    const quantity = qtyG != null && !Number.isNaN(qtyG) ? `${Math.round(qtyG)} g` : 'portion non précisée'
+    return {
+      ingredient: name,
+      quantity,
+      quantity_g: qtyG != null && !Number.isNaN(qtyG) ? qtyG : undefined,
+    }
+  })
 
   return { provider: 'gemini', items }
 }

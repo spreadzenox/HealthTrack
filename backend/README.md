@@ -29,6 +29,20 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 Base de données : SQLite, fichier `healthtrack.db` dans `backend/` (ou `HEALTHTRACK_DB`).
 
+## Enrichir la base d’ingrédients (Ciqual, etc.)
+
+La base `data/ingredients_nutrition.json` sert au calcul des apports et à la liste des noms pour l’app. Pour l’enrichir avec des bases ouvertes (Ciqual ANSES, USDA, etc.) :
+
+```bash
+cd backend
+# Télécharger la table Ciqual en CSV depuis recherche.data.gouv.fr, puis :
+python -m scripts.enrich_ingredients ciqual chemin/vers/Table_Ciqual.csv
+# Option : régénérer la liste des noms pour le prompt Gemini (ex. 500 premiers)
+python -m scripts.enrich_ingredients ciqual chemin/vers/Table_Ciqual.csv --export-names 500
+```
+
+Voir [data/README_INGREDIENTS.md](data/README_INGREDIENTS.md) pour les sources et le format.
+
 ## Benchmark des providers
 
 ```bash

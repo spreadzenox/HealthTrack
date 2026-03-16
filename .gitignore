@@ -24,6 +24,10 @@ healthtrack.db
 .cache/
 models/
 
+# Table Ciqual téléchargée (volume)
+backend/data/Table_Ciqual*.xlsx
+backend/data/Table_Ciqual*.xls
+
 # Données / samples
 samples/
 *.jpg
