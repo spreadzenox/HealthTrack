@@ -142,7 +142,7 @@ function ActivationWizard({ connector, onClose, onDone }) {
         setActionStatus(ok ? 'ok' : 'err')
       },
       hint: actionStatus === 'err'
-        ? 'Impossible d\'ouvrir automatiquement. Allez manuellement dans Paramètres → Applis → Health Connect.'
+        ? 'Impossible d\'ouvrir automatiquement. Sur Android 14+ (dont Android 16 / One UI 8), allez dans Paramètres → Sécurité et confidentialité → Health Connect. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.'
         : actionStatus === 'ok'
           ? 'Paramètres Health Connect ouverts. Vérifiez les autorisations pour HealthTrack.'
           : null,

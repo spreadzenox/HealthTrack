@@ -20,6 +20,13 @@ vi.mock('@capgo/capacitor-health', () => ({
   },
 }))
 
+// Mock @capacitor/app-launcher (used by openSamsungHealth and openGooglePlaySystemUpdates)
+vi.mock('@capacitor/app-launcher', () => ({
+  AppLauncher: {
+    openUrl: vi.fn().mockResolvedValue({ completed: true }),
+  },
+}))
+
 describe('toEntryType', () => {
   it('maps steps to steps', () => expect(toEntryType('steps')).toBe('steps'))
   it('maps sleep to sleep', () => expect(toEntryType('sleep')).toBe('sleep'))
@@ -146,35 +153,50 @@ describe('HealthConnectConnector', () => {
   })
 
   describe('openSamsungHealth', () => {
-    it('returns true when window.open succeeds', async () => {
-      const original = window.open
-      window.open = vi.fn()
+    it('returns true when AppLauncher.openUrl succeeds with samsunghealth:// scheme', async () => {
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      AppLauncher.openUrl.mockResolvedValue({ completed: true })
       const result = await connector.openSamsungHealth()
       expect(result).toBe(true)
-      window.open = original
+      expect(AppLauncher.openUrl).toHaveBeenCalledWith({ url: 'samsunghealth://' })
+    })
+
+    it('falls back to Play Store if samsunghealth:// throws, and returns true', async () => {
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      AppLauncher.openUrl
+        .mockRejectedValueOnce(new Error('app not installed'))
+        .mockResolvedValueOnce({ completed: true })
+      const result = await connector.openSamsungHealth()
+      expect(result).toBe(true)
+      expect(AppLauncher.openUrl).toHaveBeenCalledWith(
+        expect.objectContaining({ url: 'market://details?id=com.sec.android.app.shealth' })
+      )
+    })
+
+    it('returns false when both samsunghealth:// and Play Store fallback throw', async () => {
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      AppLauncher.openUrl.mockRejectedValue(new Error('no bridge'))
+      const result = await connector.openSamsungHealth()
+      expect(result).toBe(false)
     })
   })
 
   describe('openGooglePlaySystemUpdates', () => {
     it('returns true and opens the Health Connect system module Play listing', async () => {
-      const original = window.open
-      const openMock = vi.fn()
-      window.open = openMock
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      AppLauncher.openUrl.mockResolvedValue({ completed: true })
       const result = await connector.openGooglePlaySystemUpdates()
       expect(result).toBe(true)
-      expect(openMock).toHaveBeenCalledWith(
-        'market://details?id=com.google.android.healthconnect.controller',
-        '_system'
-      )
-      window.open = original
+      expect(AppLauncher.openUrl).toHaveBeenCalledWith({
+        url: 'market://details?id=com.google.android.healthconnect.controller',
+      })
     })
 
-    it('returns false when window.open throws', async () => {
-      const original = window.open
-      window.open = () => { throw new Error('blocked') }
+    it('returns false when AppLauncher.openUrl throws', async () => {
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      AppLauncher.openUrl.mockRejectedValue(new Error('blocked'))
       const result = await connector.openGooglePlaySystemUpdates()
       expect(result).toBe(false)
-      window.open = original
     })
   })
 

@@ -41,11 +41,26 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
-    <!-- Required so the app can query whether the Health Connect system module
-         (com.google.android.healthconnect.controller, Android 14+) is installed
-         and resolve market:// intents targeting it. -->
+    <!-- Required for Android 11+ package-visibility rules.
+         @capacitor/app-launcher uses these to resolve intents for custom URL
+         schemes and package IDs. Without these declarations the OS silently
+         prevents intent resolution for the listed apps/schemes. -->
     <queries>
+        <!-- Health Connect: system module (Android 14+) -->
         <package android:name="com.google.android.healthconnect.controller" />
+        <!-- Health Connect: standalone APK (Android 8–13) -->
         <package android:name="com.google.android.apps.healthdata" />
+        <!-- Samsung Health app -->
+        <package android:name="com.sec.android.app.shealth" />
+        <!-- Samsung Health deep-link scheme -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="samsunghealth" />
+        </intent>
+        <!-- Google Play Store market:// scheme (used by openGooglePlaySystemUpdates) -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="market" />
+        </intent>
     </queries>
 </manifest>
