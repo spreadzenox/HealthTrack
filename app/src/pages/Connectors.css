@@ -248,6 +248,25 @@
   background: rgba(231, 76, 60, 0.12);
 }
 
+/* ── Native reason diagnostic text ────────────────────────────────────── */
+.connector-native-reason {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  word-break: break-word;
+}
+
+.connector-native-reason-err {
+  color: #ff6b6b;
+  font-family: inherit;
+}
+
+.connector-native-reason-ok {
+  color: #2ed573;
+  font-family: inherit;
+}
+
 /* ── Activation Wizard ──────────────────────────────────────────────────── */
 .wizard-overlay {
   position: fixed;

@@ -247,12 +247,14 @@ function ConnectorCard({ connector }) {
   const [settings, setSettings] = useState(() => getConnectorSettings(connector.id))
   const [availability, setAvailability] = useState('checking')
   const [availabilityReason, setAvailabilityReason] = useState(null)
+  const [availabilityNativeReason, setAvailabilityNativeReason] = useState(null)
   const [permissions, setPermissions] = useState('checking')
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState(null)
   const [historyDays, setHistoryDays] = useState(DEFAULT_HISTORY_DAYS)
   const [checkCount, setCheckCount] = useState(0)
   const [wizardOpen, setWizardOpen] = useState(false)
+  const [settingsActionStatus, setSettingsActionStatus] = useState(null) // 'ok' | 'err' | null
   // Track whether we already auto-opened the wizard for the current unavailable state
   const autoOpenedRef = useRef(false)
 
@@ -265,6 +267,8 @@ function ConnectorCard({ connector }) {
     autoOpenedRef.current = false
     setAvailability('checking')
     setAvailabilityReason(null)
+    setAvailabilityNativeReason(null)
+    setSettingsActionStatus(null)
     setCheckCount((n) => n + 1)
   }, [])
 
@@ -279,6 +283,7 @@ function ConnectorCard({ connector }) {
         const avail = details.available ? 'available' : 'unavailable'
         setAvailability(avail)
         setAvailabilityReason(details.reason || null)
+        setAvailabilityNativeReason(details.nativeReason || null)
         // Auto-open the wizard when the connector is enabled, HC is unavailable,
         // and we have not auto-opened for this unavailable state yet.
         if (
@@ -298,6 +303,7 @@ function ConnectorCard({ connector }) {
       .catch(() => {
         setAvailability('unavailable')
         setAvailabilityReason(null)
+        setAvailabilityNativeReason(null)
       })
     withTimeout(connector.checkPermissions(), 8000, 'not_asked')
       .then((p) => setPermissions(p === 'not_asked' ? 'not_asked' : p))
@@ -313,6 +319,12 @@ function ConnectorCard({ connector }) {
       autoOpenedRef.current = true
       setWizardOpen(true)
     }
+  }
+
+  const handleOpenSettings = async () => {
+    setSettingsActionStatus(null)
+    const ok = await connector.openHealthConnectSettings()
+    setSettingsActionStatus(ok ? 'ok' : 'err')
   }
 
   const handleRequestPermissions = async () => {
@@ -419,6 +431,17 @@ function ConnectorCard({ connector }) {
               Pour le mettre à jour, allez dans{' '}
               <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>{' '}
               et installez la dernière version.
+              {availabilityNativeReason && (
+                <p className="connector-native-reason">Détail : {availabilityNativeReason}</p>
+              )}
+              {settingsActionStatus === 'err' && (
+                <p className="connector-native-reason connector-native-reason-err">
+                  Impossible d&apos;ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
+                </p>
+              )}
+              {settingsActionStatus === 'ok' && (
+                <p className="connector-native-reason connector-native-reason-ok">Paramètres Health Connect ouverts.</p>
+              )}
               <div className="connector-alert-actions">
                 <button
                   type="button"
@@ -430,7 +453,7 @@ function ConnectorCard({ connector }) {
                 <button
                   type="button"
                   className="btn btn-secondary connector-btn"
-                  onClick={() => connector.openHealthConnectSettings && connector.openHealthConnectSettings()}
+                  onClick={handleOpenSettings}
                 >
                   Ouvrir les paramètres Health Connect
                 </button>
@@ -451,6 +474,17 @@ function ConnectorCard({ connector }) {
               Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
               <strong>module système intégré</strong> — il n&apos;y a pas d&apos;application à installer.{' '}
               Utilisez l&apos;assistant ci-dessous pour activer la connexion étape par étape.
+              {availabilityNativeReason && (
+                <p className="connector-native-reason">Détail : {availabilityNativeReason}</p>
+              )}
+              {settingsActionStatus === 'err' && (
+                <p className="connector-native-reason connector-native-reason-err">
+                  Impossible d&apos;ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
+                </p>
+              )}
+              {settingsActionStatus === 'ok' && (
+                <p className="connector-native-reason connector-native-reason-ok">Paramètres Health Connect ouverts.</p>
+              )}
               <div className="connector-alert-actions">
                 <button
                   type="button"
@@ -462,7 +496,7 @@ function ConnectorCard({ connector }) {
                 <button
                   type="button"
                   className="btn btn-secondary connector-btn"
-                  onClick={() => connector.openHealthConnectSettings && connector.openHealthConnectSettings()}
+                  onClick={handleOpenSettings}
                 >
                   Ouvrir les paramètres Health Connect
                 </button>
@@ -485,6 +519,17 @@ function ConnectorCard({ connector }) {
               <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>.{' '}
               Sur Android 8–13 uniquement, installez &quot;Health Connect&quot; depuis le Play Store.{' '}
               Activez ensuite la synchronisation dans Samsung Health → Paramètres → Health Connect.
+              {availabilityNativeReason && (
+                <p className="connector-native-reason">Détail : {availabilityNativeReason}</p>
+              )}
+              {settingsActionStatus === 'err' && (
+                <p className="connector-native-reason connector-native-reason-err">
+                  Impossible d&apos;ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
+                </p>
+              )}
+              {settingsActionStatus === 'ok' && (
+                <p className="connector-native-reason connector-native-reason-ok">Paramètres Health Connect ouverts.</p>
+              )}
               <div className="connector-alert-actions">
                 <button
                   type="button"
@@ -496,7 +541,7 @@ function ConnectorCard({ connector }) {
                 <button
                   type="button"
                   className="btn btn-secondary connector-btn"
-                  onClick={() => connector.openHealthConnectSettings && connector.openHealthConnectSettings()}
+                  onClick={handleOpenSettings}
                 >
                   Ouvrir les paramètres Health Connect
                 </button>

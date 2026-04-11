@@ -100,6 +100,7 @@ describe('HealthConnectConnector', () => {
       expect(details.available).toBe(false)
       expect(details.reason).toBe('provider_update_required')
       expect(details.platform).toBe('android')
+      expect(details.nativeReason).toBe('Health Connect needs an update.')
     })
 
     it('returns reason=sdk_unavailable when Health Connect is unavailable on Android', async () => {
@@ -113,6 +114,7 @@ describe('HealthConnectConnector', () => {
       expect(details.available).toBe(false)
       expect(details.reason).toBe('sdk_unavailable')
       expect(details.platform).toBe('android')
+      expect(details.nativeReason).toBe('Health Connect is unavailable on this device.')
     })
 
     it('returns reason=unavailable when platform is not android and Health Connect is unavailable', async () => {
@@ -125,14 +127,16 @@ describe('HealthConnectConnector', () => {
       const details = await connector.availabilityDetails()
       expect(details.available).toBe(false)
       expect(details.reason).toBe('unavailable')
+      expect(details.nativeReason).toBe('Not supported.')
     })
 
-    it('returns reason=unavailable when plugin throws', async () => {
+    it('returns reason=unavailable with nativeReason from error when plugin throws', async () => {
       const { Health } = await import('@capgo/capacitor-health')
       Health.isAvailable.mockRejectedValue(new Error('bridge error'))
       const details = await connector.availabilityDetails()
       expect(details.available).toBe(false)
       expect(details.reason).toBe('unavailable')
+      expect(details.nativeReason).toBe('bridge error')
     })
   })
 
@@ -161,7 +165,15 @@ describe('HealthConnectConnector', () => {
       expect(AppLauncher.openUrl).toHaveBeenCalledWith({ url: 'samsunghealth://' })
     })
 
-    it('falls back to Play Store if samsunghealth:// throws, and returns true', async () => {
+    it('returns false when samsunghealth:// resolves with completed=false', async () => {
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      // All URLs resolve with completed=false (e.g. no handler registered)
+      AppLauncher.openUrl.mockResolvedValue({ completed: false })
+      const result = await connector.openSamsungHealth()
+      expect(result).toBe(false)
+    })
+
+    it('falls back to market:// if samsunghealth:// throws, and returns true', async () => {
       const { AppLauncher } = await import('@capacitor/app-launcher')
       AppLauncher.openUrl
         .mockRejectedValueOnce(new Error('app not installed'))
@@ -173,7 +185,20 @@ describe('HealthConnectConnector', () => {
       )
     })
 
-    it('returns false when both samsunghealth:// and Play Store fallback throw', async () => {
+    it('falls back to HTTPS Play Store if market:// also throws', async () => {
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      AppLauncher.openUrl
+        .mockRejectedValueOnce(new Error('no Samsung Health'))
+        .mockRejectedValueOnce(new Error('no Play Store'))
+        .mockResolvedValueOnce({ completed: true })
+      const result = await connector.openSamsungHealth()
+      expect(result).toBe(true)
+      expect(AppLauncher.openUrl).toHaveBeenCalledWith(
+        expect.objectContaining({ url: 'https://play.google.com/store/apps/details?id=com.sec.android.app.shealth' })
+      )
+    })
+
+    it('returns false when all fallbacks throw', async () => {
       const { AppLauncher } = await import('@capacitor/app-launcher')
       AppLauncher.openUrl.mockRejectedValue(new Error('no bridge'))
       const result = await connector.openSamsungHealth()
@@ -192,7 +217,26 @@ describe('HealthConnectConnector', () => {
       })
     })
 
-    it('returns false when AppLauncher.openUrl throws', async () => {
+    it('falls back to HTTPS Play Store when market:// throws', async () => {
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      AppLauncher.openUrl
+        .mockRejectedValueOnce(new Error('no market'))
+        .mockResolvedValueOnce({ completed: true })
+      const result = await connector.openGooglePlaySystemUpdates()
+      expect(result).toBe(true)
+      expect(AppLauncher.openUrl).toHaveBeenCalledWith(
+        expect.objectContaining({ url: 'https://play.google.com/store/apps/details?id=com.google.android.healthconnect.controller' })
+      )
+    })
+
+    it('returns false when AppLauncher.openUrl resolves with completed=false for all URLs', async () => {
+      const { AppLauncher } = await import('@capacitor/app-launcher')
+      AppLauncher.openUrl.mockResolvedValue({ completed: false })
+      const result = await connector.openGooglePlaySystemUpdates()
+      expect(result).toBe(false)
+    })
+
+    it('returns false when all URLs throw', async () => {
       const { AppLauncher } = await import('@capacitor/app-launcher')
       AppLauncher.openUrl.mockRejectedValue(new Error('blocked'))
       const result = await connector.openGooglePlaySystemUpdates()

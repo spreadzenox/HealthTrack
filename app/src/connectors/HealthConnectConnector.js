@@ -104,7 +104,7 @@ export class HealthConnectConnector extends BaseConnector {
    * Returns detailed availability information including the reason when
    * Health Connect is not available.
    *
-   * @returns {Promise<{ available: boolean, reason?: string, platform?: string }>}
+   * @returns {Promise<{ available: boolean, reason?: string, nativeReason?: string, platform?: string }>}
    *   - available: true if Health Connect is ready to use
    *   - reason: one of 'provider_update_required' | 'sdk_unavailable' | 'unavailable' | 'no_bridge'
    *     - 'provider_update_required': Health Connect present but needs a Google Play System update
@@ -114,6 +114,7 @@ export class HealthConnectConnector extends BaseConnector {
    *       Typically resolved by updating via Google Play System Updates.
    *     - 'unavailable': catch-all for other unavailability scenarios
    *     - 'no_bridge': Capacitor native bridge is absent (web/dev/test environment)
+   *   - nativeReason: raw reason string returned by the native plugin (useful for diagnostics)
    *   - platform: 'android' or undefined
    */
   async availabilityDetails() {
@@ -125,20 +126,20 @@ export class HealthConnectConnector extends BaseConnector {
         return { available: true, platform: result.platform }
       }
       // Map the native reason string to a stable enum value
-      const reason = result.reason || ''
-      if (reason.toLowerCase().includes('update')) {
-        return { available: false, reason: 'provider_update_required', platform: result.platform }
+      const nativeReason = result.reason || ''
+      if (nativeReason.toLowerCase().includes('update')) {
+        return { available: false, reason: 'provider_update_required', nativeReason, platform: result.platform }
       }
       // SDK_UNAVAILABLE is distinct from SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED:
       // it means Health Connect is absent/disabled on the device. On Android 14+ (including
       // Android 16 / One UI 8) this can still happen when system modules are out of date
       // or when the device reports HC as unavailable despite it being a built-in module.
       if (result.platform === 'android') {
-        return { available: false, reason: 'sdk_unavailable', platform: result.platform }
+        return { available: false, reason: 'sdk_unavailable', nativeReason, platform: result.platform }
       }
-      return { available: false, reason: 'unavailable', platform: result.platform }
-    } catch {
-      return { available: false, reason: 'unavailable' }
+      return { available: false, reason: 'unavailable', nativeReason, platform: result.platform }
+    } catch (e) {
+      return { available: false, reason: 'unavailable', nativeReason: e?.message || String(e) }
     }
   }
 
@@ -172,18 +173,21 @@ export class HealthConnectConnector extends BaseConnector {
   async openSamsungHealth() {
     const AppLauncher = await getAppLauncher()
     if (!AppLauncher) return false
-    try {
-      await AppLauncher.openUrl({ url: 'samsunghealth://' })
-      return true
-    } catch {
-      // Samsung Health not installed — send user to Galaxy Store / Play Store
+    // Try deep-link first, then market:// scheme, then HTTPS Play Store as final fallback
+    const urls = [
+      'samsunghealth://',
+      'market://details?id=com.sec.android.app.shealth',
+      'https://play.google.com/store/apps/details?id=com.sec.android.app.shealth',
+    ]
+    for (const url of urls) {
       try {
-        await AppLauncher.openUrl({ url: 'market://details?id=com.sec.android.app.shealth' })
-        return true
+        const result = await AppLauncher.openUrl({ url })
+        if (result && result.completed) return true
       } catch {
-        return false
+        // try next URL
       }
     }
+    return false
   }
 
   /**
@@ -200,12 +204,19 @@ export class HealthConnectConnector extends BaseConnector {
   async openGooglePlaySystemUpdates() {
     const AppLauncher = await getAppLauncher()
     if (!AppLauncher) return false
-    try {
-      await AppLauncher.openUrl({ url: 'market://details?id=com.google.android.healthconnect.controller' })
-      return true
-    } catch {
-      return false
+    const urls = [
+      'market://details?id=com.google.android.healthconnect.controller',
+      'https://play.google.com/store/apps/details?id=com.google.android.healthconnect.controller',
+    ]
+    for (const url of urls) {
+      try {
+        const result = await AppLauncher.openUrl({ url })
+        if (result && result.completed) return true
+      } catch {
+        // try next URL
+      }
     }
+    return false
   }
 
   async checkPermissions() {
