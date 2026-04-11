@@ -299,7 +299,11 @@
 }
 
 .entry-card[data-type="food"] { border-left-color: var(--accent); }
-.entry-card[data-type="activity"] { border-left-color: #7f8c8d; }
+.entry-card[data-type="activity"] { border-left-color: #3498db; }
+.entry-card[data-type="steps"] { border-left-color: #2ecc71; }
+.entry-card[data-type="heart_rate"] { border-left-color: #e74c3c; }
+.entry-card[data-type="calories"] { border-left-color: #e67e22; }
+.entry-card[data-type="sleep"] { border-left-color: #9b59b6; }
 .entry-card[data-type="weight"] { border-left-color: #95a5a6; }
 
 .entry-card-header {

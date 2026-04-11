@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Politique de confidentialité — HealthTrack</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+      color: #1a1a2e;
+      line-height: 1.6;
+      background: #ffffff;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 4px; }
+    h2 { font-size: 1.1rem; margin-top: 28px; margin-bottom: 8px; }
+    p  { margin: 0 0 14px; }
+    ul { margin: 0 0 14px; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    .updated { color: #666; font-size: 0.88rem; margin-bottom: 28px; }
+    a  { color: #4ecdc4; }
+  </style>
+</head>
+<body>
+
+<h1>Politique de confidentialité</h1>
+<p class="updated">Dernière mise à jour : avril 2026</p>
+
+<p>
+  <strong>HealthTrack</strong> est une application mobile de suivi santé qui fonctionne
+  entièrement <strong>hors ligne</strong>. Aucune donnée personnelle n'est envoyée vers
+  des serveurs tiers.
+</p>
+
+<h2>Données collectées et stockage</h2>
+<p>
+  Toutes les données (repas, sommeil, fréquence cardiaque, activités sportives,
+  pas, etc.) sont stockées <strong>uniquement sur votre appareil</strong>, dans la base
+  de données locale de l'application (IndexedDB). Elles ne quittent jamais votre
+  téléphone, sauf si vous exportez vous-même un fichier de sauvegarde.
+</p>
+
+<h2>Accès à Android Health Connect</h2>
+<p>
+  Avec votre autorisation explicite, HealthTrack peut lire les données de santé
+  provenant d'<strong>Android Health Connect</strong> (et indirectement de la
+  Samsung Galaxy Fit 3 via Samsung Health). Ces données incluent :
+</p>
+<ul>
+  <li>Nombre de pas</li>
+  <li>Données de sommeil (durée, phases)</li>
+  <li>Fréquence cardiaque (FC, FC de repos, HRV)</li>
+  <li>Saturation en oxygène (SpO₂)</li>
+  <li>Calories actives</li>
+  <li>Séances d'activité sportive</li>
+</ul>
+<p>
+  Ces données sont lues depuis Health Connect <strong>uniquement à votre demande</strong>
+  (bouton de synchronisation) et sont stockées localement sur votre appareil.
+  Elles ne sont <strong>jamais</strong> partagées avec des tiers.
+</p>
+<p>
+  Vous pouvez révoquer ces autorisations à tout moment dans
+  <em>Paramètres Android → Confidentialité → Health Connect → HealthTrack</em>.
+</p>
+
+<h2>Clé API Gemini (optionnel)</h2>
+<p>
+  Si vous configurez une clé API Google Gemini pour l'analyse photo des repas,
+  cette clé est stockée uniquement sur votre appareil. Les photos que vous soumettez
+  à l'analyse sont envoyées à l'API Gemini de Google conformément à leurs
+  <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">conditions de confidentialité</a>.
+</p>
+
+<h2>Partage des données</h2>
+<p>
+  HealthTrack <strong>ne partage, ne vend et ne transmet aucune donnée</strong>
+  personnelle ou de santé à des tiers. Aucun compte utilisateur n'est requis.
+  Aucune analytique n'est collectée.
+</p>
+
+<h2>Sécurité</h2>
+<p>
+  Les données restant sur votre appareil, leur sécurité dépend de la protection
+  de votre téléphone (code PIN, empreinte digitale, etc.). Nous vous recommandons
+  d'activer le chiffrement de l'appareil (activé par défaut sur Android 7+).
+</p>
+
+<h2>Contact</h2>
+<p>
+  Pour toute question relative à la confidentialité, ouvrez une issue sur le
+  dépôt GitHub de l'application :
+  <a href="https://github.com/spreadzenox/HealthTrack" target="_blank" rel="noopener">
+    github.com/spreadzenox/HealthTrack
+  </a>.
+</p>
+
+</body>
+</html>

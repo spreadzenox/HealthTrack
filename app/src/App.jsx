@@ -3,6 +3,7 @@ import Layout from './Layout'
 import Dashboard from './pages/Dashboard'
 import Food from './pages/Food'
 import Data from './pages/Data'
+import Connectors from './pages/Connectors'
 import Settings from './pages/Settings'
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="food" element={<Food />} />
           <Route path="data" element={<Data />} />
+          <Route path="connectors" element={<Connectors />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
