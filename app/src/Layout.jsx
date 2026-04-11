@@ -7,7 +7,10 @@ export default function Layout() {
     <div className="app">
       <UpdateBanner />
       <header className="header">
-        <h1>HealthTrack</h1>
+        <div className="header-brand">
+          <img className="header-logo" src="/favicon.svg" alt="" width={48} height={48} decoding="async" />
+          <h1>HealthTrack</h1>
+        </div>
         <p className="header-sub">Hub de suivi santé</p>
         <nav className="nav" aria-label="Principal">
           <NavLink to="/" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} end>
