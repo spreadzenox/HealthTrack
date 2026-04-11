@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Connectors from './Connectors'
+
+// Helpers to create a promise that never resolves (simulates a hanging native bridge call)
+function neverResolves() {
+  return new Promise(() => {})
+}
 
 // Mock the connector registry
 vi.mock('../connectors/connectorRegistry', () => ({
@@ -101,4 +106,44 @@ describe('Connectors page', () => {
     const matches = screen.getAllByText(/Samsung Health/i)
     expect(matches.length).toBeGreaterThan(0)
   })
+
+  it('resolves to "Non disponible" when isAvailable never resolves (timeout fallback)', async () => {
+    const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    CONNECTORS[0].isAvailable.mockReturnValue(neverResolves())
+    CONNECTORS[0].checkPermissions.mockResolvedValue('not_asked')
+
+    vi.useFakeTimers()
+    try {
+      // Render and let effects register their setTimeout calls
+      await act(async () => {
+        renderConnectors()
+      })
+      // Now advance past the 8-second timeout so the race resolves with the fallback
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(9000)
+      })
+      expect(screen.getByText('Non disponible')).toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
+  }, 15000)
+
+  it('resolves to "Non demandé" when checkPermissions never resolves (timeout fallback)', async () => {
+    const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    CONNECTORS[0].isAvailable.mockResolvedValue(false)
+    CONNECTORS[0].checkPermissions.mockReturnValue(neverResolves())
+
+    vi.useFakeTimers()
+    try {
+      await act(async () => {
+        renderConnectors()
+      })
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(9000)
+      })
+      expect(screen.getByText('Non demandé')).toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
+  }, 15000)
 })
