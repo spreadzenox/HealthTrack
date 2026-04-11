@@ -11,5 +11,8 @@ project(':capacitor-filesystem').projectDir = new File('../node_modules/@capacit
 include ':capgo-capacitor-health'
 project(':capgo-capacitor-health').projectDir = new File('../node_modules/@capgo/capacitor-health/android')
 
+include ':capacitor-app-launcher'
+project(':capacitor-app-launcher').projectDir = new File('../node_modules/@capacitor/app-launcher/android')
+
 include ':m430-capacitor-app-install'
 project(':m430-capacitor-app-install').projectDir = new File('../node_modules/@m430/capacitor-app-install/android')
