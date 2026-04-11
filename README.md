@@ -1,34 +1,38 @@
 # HealthTrack – Hub de suivi santé
 
-**HealthTrack** est un hub pour centraliser vos données santé. Trois sources sont prévues :
+**HealthTrack** est un hub pour centraliser vos données santé. Fonctionnalités disponibles :
 
-1. **Alimentation** (en place) : photo d’assiette → **Gemini** (clé API sur l’appareil) → ingrédients et quantités, enregistrés dans l’app.
-2. **Montre Samsung** (à venir) : activité, fréquence cardiaque, sommeil.
-3. **Balance connectée** (à venir) : poids.
+1. **Alimentation** : photo d'assiette → **Gemini** (clé API sur l'appareil) → ingrédients et quantités, enregistrés dans l'app.
+2. **Bien-être** : saisie manuelle d'un score quotidien de bien-être (1–5).
+3. **Health Connect** : pas, sommeil, fréquence cardiaque, calories et activité synchronisés depuis une montre ou l'application Health Connect Android (Samsung Fit 3, etc.).
+4. **Recommandations** : analyse locale (corrélations de Pearson, régression OLS) des facteurs qui influencent votre bien-être.
 
-L’application est une **app web mobile-first** (React + Vite) avec stockage **local** (IndexedDB). Pour l’instant, le focus est sur le **suivi alimentaire** (reconnaissance d’image + enregistrement des repas).
+L'application est une **app mobile-first** (React + Vite + Capacitor) avec stockage **local** (IndexedDB). Aucun serveur HealthTrack n'est requis.
 
-**Stockage des données** : toutes les données utilisateur (repas, et à venir montre / balance) sont stockées **uniquement sur l’appareil**. Pour survivre à une **réinstallation** de l’app, l’utilisateur peut **exporter** ses données (fichier JSON) depuis la page « Données », puis **réimporter** ce fichier après réinstallation.
+**Stockage des données** : toutes les données utilisateur sont stockées **uniquement sur l'appareil**. Pour survivre à une **réinstallation** de l'app, l'utilisateur peut **exporter** ses données (fichier JSON) depuis la page « Données », puis **réimporter** ce fichier après réinstallation.
 
-## Entrée / Sortie
+## Application web / mobile
 
-- **Input :** image (JPG, PNG, etc.) d’une assiette / d’un repas  
-- **Output :** liste d’éléments `{ ingrédient, quantité }`  
-  - ex. : `riz: 120 g`, `poulet: 150 g`, `salade: 40 g`
-
-## Installation (modèle local optionnel)
-
-Pour expérimenter une **vision-langage locale** (BLIP-2, etc.) en ligne de commande — **hors** de l’app mobile :
+L'**app** (`app/`) analyse les photos **directement** via l'**API Gemini** avec une clé saisie dans **Paramètres** (jamais envoyée ailleurs qu'à Google). Aucun serveur HealthTrack n'est requis.
 
 ```bash
-cd HealthTrack
-python -m venv .venv
-.venv\Scripts\activate   # Windows
-# source .venv/bin/activate  # Linux / macOS
-pip install -r requirements.txt
+cd app
+npm install
+npm run dev
 ```
 
-**Requis :** Python 3.10+, PyTorch. Pour le GPU (recommandé) : CUDA et `pip install torch` avec support CUDA.
+Ouvre l'URL affichée (ex. http://localhost:5173) sur ton téléphone (même réseau Wi‑Fi) ou déploie l'app statique.
+
+### APK Android
+
+L'app peut être packagée en **APK** (Capacitor). Voir **[app/BUILD_APK.md](app/BUILD_APK.md)** pour les étapes : build web → `npx cap sync` → ouvrir le projet Android dans Android Studio → Build APK(s).
+
+À chaque push sur `main`, la CI crée une **GitHub Release** avec l'APK. Les utilisateurs qui ont une **version antérieure** voient une **bannière de mise à jour** dans l'app (vérification via l'API GitHub `releases/latest`). Détails dans [app/BUILD_APK.md#build-et-release-automatiques-ci](app/BUILD_APK.md#build-et-release-automatiques-ci).
+
+### Version et mises à jour
+
+- **Bannière de mise à jour** : l'app compare `VITE_APP_VERSION` (injectée au build) au tag de la dernière release GitHub.
+- Définis `VITE_APP_VERSION` en CI ou au build (ex. numéro de run, SHA, semver) pour que la comparaison reflète bien tes releases.
 
 ## Tests (TDD)
 
@@ -37,9 +41,21 @@ Le dépôt est piloté par le **test-driven development** : toutes les fonctionn
 - **Frontend** : `cd app && npm run test` — navigation, pages Dashboard/Food, chargement des données (Vitest + React Testing Library).
 - **Règle** : toute nouvelle feature doit être couverte par des tests sur les flux importants. Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Utilisation
+## Outil CLI local (expérimental)
 
-### Ligne de commande (modèle local Hugging Face)
+Pour expérimenter une **vision-langage locale** (BLIP-2, InstructBLIP, etc.) en ligne de commande — **hors** de l'app mobile :
+
+```bash
+cd HealthTrack
+python -m venv .venv
+source .venv/bin/activate   # Linux / macOS
+# .venv\Scripts\activate    # Windows
+pip install -r requirements.txt
+```
+
+**Requis :** Python 3.10+, PyTorch. Pour le GPU (recommandé) : CUDA et `pip install torch` avec support CUDA.
+
+### Utilisation
 
 ```bash
 python run_predict.py chemin/vers/assiette.jpg
@@ -52,11 +68,11 @@ Options utiles :
 - `--max-tokens 200` — longueur max de la réponse
 - `--json` — sortie en JSON
 
-Exemple sortie JSON :
+Le benchmark recommande **InstructBLIP** pour de meilleure qualité (format liste + quantités) : `--model Salesforce/instructblip-flan-t5-xl` (voir [docs/BENCHMARK.md](docs/BENCHMARK.md)).
 
-```bash
-python run_predict.py photo.jpg --json
-```
+Premier lancement : téléchargement du modèle (~5–10 Go selon le modèle). **GPU recommandé** (BLIP-2 ~6–8 Go VRAM, InstructBLIP Flan-T5 XL ~10 Go).
+
+Lancer une comparaison sur ta propre image : `python benchmark_models.py chemin/vers/assiette.jpg`.
 
 ### Dans ton code Python
 
@@ -72,48 +88,22 @@ for i in items:
     print(f"{i.name}: {i.quantity}")
 ```
 
-### Exemple complet
-
-```bash
-python examples/usage_example.py chemin/vers/image.jpg
-```
-
-## Modèle utilisé (CLI local)
-
-- Par défaut : **BLIP-2** (`Salesforce/blip2-opt-2.7b`). Pour **meilleure qualité** (surtout format liste + quantités), le benchmark recommande **InstructBLIP** : `--model Salesforce/instructblip-flan-t5-xl` (voir [docs/BENCHMARK.md](docs/BENCHMARK.md)).
-- Premier lancement : téléchargement du modèle (~5–10 Go selon le modèle).  
-- **GPU recommandé** (BLIP-2 ~6–8 Go VRAM, InstructBLIP Flan-T5 XL ~10 Go).
-- Lancer une comparaison sur ta propre image : `python benchmark_models.py chemin/vers/assiette.jpg`.
-
-## Application web / mobile
-
-L’**app** (`app/`) analyse les photos **directement** via l’**API Gemini** avec une clé saisie dans **Paramètres** (jamais envoyée ailleurs qu’à Google). Aucun serveur HealthTrack n’est requis.
-
-```bash
-cd app
-npm install
-npm run dev
-```
-
-Ouvre l’URL affichée (ex. http://localhost:5173) sur ton téléphone (même réseau Wi‑Fi) ou déploie l’app statique.
-
-### APK Android
-
-L’app peut être packagée en **APK** (Capacitor). Voir **[app/BUILD_APK.md](app/BUILD_APK.md)** pour les étapes : build web → `npx cap sync` → ouvrir le projet Android dans Android Studio → Build APK(s).
-
-À chaque push sur `main`, la CI crée une **GitHub Release** avec l’APK. Les utilisateurs qui ont une **version antérieure** voient une **bannière de mise à jour** dans l’app (vérification via l’API GitHub `releases/latest`). Détails dans [app/BUILD_APK.md#build-et-release-automatiques-ci](app/BUILD_APK.md#build-et-release-automatiques-ci).
-
-### Version et mises à jour
-
-- **Bannière de mise à jour** : l’app compare `VITE_APP_VERSION` (injectée au build) au tag de la dernière release GitHub.
-- Définis `VITE_APP_VERSION` en CI ou au build (ex. numéro de run, SHA, semver) pour que la comparaison reflète bien tes releases.
-
 ## Structure du projet
 
 ```
 HealthTrack/
-├── app/                    # App web mobile-first (React + Vite, IndexedDB)
-├── food_vision/
+├── app/                    # App mobile-first (React + Vite + Capacitor, IndexedDB)
+│   ├── src/
+│   │   ├── pages/          # Dashboard, Food, Data, Connectors, Settings, Recommendations
+│   │   ├── components/     # WellbeingCharts, WellbeingPrompt, UpdateBanner
+│   │   ├── services/       # geminiStandalone, nutritionKPIs, analysisEngine, …
+│   │   ├── connectors/     # HealthConnectConnector, connectorRegistry
+│   │   ├── storage/        # localHealthStorage (IndexedDB)
+│   │   └── settings/       # geminiApiKey, connectorSettings
+│   ├── android/            # Projet Capacitor Android
+│   ├── BUILD_APK.md
+│   └── README.md
+├── food_vision/            # Module Python CLI (BLIP-2 / InstructBLIP local)
 │   ├── __init__.py
 │   └── predictor.py
 ├── docs/
@@ -125,13 +115,6 @@ HealthTrack/
 ├── requirements.txt
 └── README.md
 ```
-
-## Améliorations possibles
-
-- **Fine-tuning** sur un dataset alimentaire (ex. Food-101, Recipe1M, MM-Food-100K) pour de meilleurs ingrédients et quantités.
-- **Segmentation** des aliments sur l’assiette puis classification par zone pour affiner les quantités (petite / moyenne / grande portion par zone).
-- **Référence d’échelle** (objet connu dans l’image, ex. fourchette) pour améliorer l’estimation des portions.
-- **Modèles dédiés** (ex. [food-recognition-model](https://huggingface.co/BinhQuocNguyen/food-recognition-model)) pour combiner classification de plats + détection d’objets + estimation de calories.
 
 ## Licence
 
