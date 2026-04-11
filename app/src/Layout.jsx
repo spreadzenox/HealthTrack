@@ -27,6 +27,9 @@ export default function Layout() {
           <NavLink to="/connectors" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>
             Connecteurs
           </NavLink>
+          <NavLink to="/recommendations" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>
+            Recommandations
+          </NavLink>
           <NavLink to="/settings" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>
             Paramètres
           </NavLink>
