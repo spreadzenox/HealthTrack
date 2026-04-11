@@ -46,6 +46,8 @@ healthtrack.db
 *.pfx
 *.keystore
 *.jks
+# Exception : debug.keystore partagé pour garantir une signature cohérente entre les builds CI
+!app/android/app/debug.keystore
 google-services.json
 
 # OS
