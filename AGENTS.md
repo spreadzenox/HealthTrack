@@ -4,26 +4,23 @@
 
 ### Overview
 
-HealthTrack is a health data hub with a **Python FastAPI backend** (port 8000) and a **React + Vite frontend** (port 5173). Data is stored in SQLite (auto-created `healthtrack.db`). No external databases or Docker required.
+HealthTrack is a standalone mobile health app built with **React + Vite + Capacitor**. There is no backend server — all data is stored locally on the device. AI food analysis calls the **Gemini API directly from the client** (key stored in app settings). The app is packaged as an Android APK via Capacitor.
 
 ### Running services
 
-- **Backend**: `cd backend && uvicorn main:app --reload --host 0.0.0.0 --port 8000`
-- **Frontend**: `cd app && npm run dev -- --host 0.0.0.0` (proxies `/api` and `/health` to backend on port 8000)
+- **Frontend (dev)**: `cd app && npm run dev -- --host 0.0.0.0`
 
-Both must run simultaneously for full E2E testing.
+No backend required. Opens at `http://localhost:5173`.
 
 ### Tests
 
-- **Backend**: `cd backend && pytest tests/ -v` — 23 tests, no API keys needed (providers mocked, temp SQLite).
-- **Frontend**: `cd app && npm run test` — 12 tests via Vitest + jsdom, no backend needed.
-- **Lint**: `cd app && npm run lint` — ESLint. Note: the codebase has 12 pre-existing lint errors.
+- **Frontend**: `cd app && npm run test` — Vitest + jsdom, no backend or API keys needed.
+- **Lint**: `cd app && npm run lint` — ESLint. Note: the codebase has some pre-existing lint errors.
 
 See `CONTRIBUTING.md` for TDD conventions and test file locations.
 
 ### Gotchas
 
-- Python packages install to `~/.local/bin` (user-level pip). Ensure `$HOME/.local/bin` is on `PATH` when running `uvicorn` or `pytest` directly.
-- The root `requirements.txt` is for the ML/local model (PyTorch, heavy). Only `backend/requirements.txt` is needed for API development.
-- AI provider features (image analysis) require `OPENAI_API_KEY` or `GEMINI_API_KEY` env vars, but all tests pass without them.
-- The frontend Vite proxy config expects the backend on `localhost:8000`. If the backend port changes, update `app/vite.config.js`.
+- AI food analysis requires a `GEMINI_API_KEY` set in the app's Settings page (stored locally, never in the repo).
+- To build an APK: see `app/BUILD_APK.md`. CI builds are triggered automatically on push to `main`.
+- The in-app update banner calls `https://api.github.com/repos/spreadzenox/HealthTrack/releases/latest` — the repo must be **public** for this to work without authentication.
