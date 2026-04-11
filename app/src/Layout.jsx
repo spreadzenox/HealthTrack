@@ -24,6 +24,9 @@ export default function Layout() {
           <NavLink to="/data" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>
             Données
           </NavLink>
+          <NavLink to="/connectors" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>
+            Connecteurs
+          </NavLink>
           <NavLink to="/settings" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>
             Paramètres
           </NavLink>

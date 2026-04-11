@@ -1,0 +1,259 @@
+/**
+ * Unit tests for HealthConnectConnector.
+ *
+ * The @capgo/capacitor-health plugin is mocked because it requires native
+ * Capacitor bridge. We test the connector's logic/data-mapping in isolation.
+ */
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { HealthConnectConnector, toEntryType } from './HealthConnectConnector'
+
+// Mock the capacitor health plugin
+vi.mock('@capgo/capacitor-health', () => ({
+  Health: {
+    isAvailable: vi.fn(),
+    checkAuthorization: vi.fn(),
+    requestAuthorization: vi.fn(),
+    readSamples: vi.fn(),
+    queryAggregated: vi.fn(),
+    queryWorkouts: vi.fn(),
+  },
+}))
+
+describe('toEntryType', () => {
+  it('maps steps to steps', () => expect(toEntryType('steps')).toBe('steps'))
+  it('maps sleep to sleep', () => expect(toEntryType('sleep')).toBe('sleep'))
+  it('maps heartRate to heart_rate', () => expect(toEntryType('heartRate')).toBe('heart_rate'))
+  it('maps restingHeartRate to heart_rate', () => expect(toEntryType('restingHeartRate')).toBe('heart_rate'))
+  it('maps oxygenSaturation to heart_rate', () => expect(toEntryType('oxygenSaturation')).toBe('heart_rate'))
+  it('maps calories to calories', () => expect(toEntryType('calories')).toBe('calories'))
+  it('maps workouts to activity', () => expect(toEntryType('workouts')).toBe('activity'))
+  it('maps distance to activity', () => expect(toEntryType('distance')).toBe('activity'))
+  it('returns unknown types as-is', () => expect(toEntryType('unknown')).toBe('unknown'))
+})
+
+describe('HealthConnectConnector', () => {
+  let connector
+
+  beforeEach(async () => {
+    connector = new HealthConnectConnector()
+    vi.clearAllMocks()
+  })
+
+  it('has correct id and name', () => {
+    expect(connector.id).toBe('health_connect')
+    expect(connector.name).toContain('Health Connect')
+  })
+
+  it('has the expected dataTypes', () => {
+    expect(connector.dataTypes).toContain('steps')
+    expect(connector.dataTypes).toContain('sleep')
+    expect(connector.dataTypes).toContain('heart_rate')
+    expect(connector.dataTypes).toContain('activity')
+    expect(connector.dataTypes).toContain('calories')
+  })
+
+  describe('isAvailable', () => {
+    it('returns true when Health.isAvailable returns available=true', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.isAvailable.mockResolvedValue({ available: true })
+      expect(await connector.isAvailable()).toBe(true)
+    })
+
+    it('returns false when Health.isAvailable returns available=false', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.isAvailable.mockResolvedValue({ available: false, reason: 'not installed' })
+      expect(await connector.isAvailable()).toBe(false)
+    })
+
+    it('returns false when the plugin throws', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.isAvailable.mockRejectedValue(new Error('bridge not available'))
+      expect(await connector.isAvailable()).toBe(false)
+    })
+  })
+
+  describe('checkPermissions', () => {
+    it('returns granted when all types are authorized', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.checkAuthorization.mockResolvedValue({
+        readAuthorized: ['steps', 'sleep'],
+        readDenied: [],
+        writeAuthorized: [],
+        writeDenied: [],
+      })
+      expect(await connector.checkPermissions()).toBe('granted')
+    })
+
+    it('returns denied when any type is denied', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.checkAuthorization.mockResolvedValue({
+        readAuthorized: ['steps'],
+        readDenied: ['sleep'],
+        writeAuthorized: [],
+        writeDenied: [],
+      })
+      expect(await connector.checkPermissions()).toBe('denied')
+    })
+
+    it('returns not_asked when nothing is authorized or denied', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.checkAuthorization.mockResolvedValue({
+        readAuthorized: [],
+        readDenied: [],
+        writeAuthorized: [],
+        writeDenied: [],
+      })
+      expect(await connector.checkPermissions()).toBe('not_asked')
+    })
+  })
+
+  describe('sync', () => {
+    const makeWriter = () => {
+      const written = []
+      const writer = async (entries) => { written.push(...entries) }
+      return { written, writer }
+    }
+
+    it('syncs steps samples into entries with type=steps', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(({ dataType }) => {
+        if (dataType === 'steps') {
+          return Promise.resolve({ samples: [
+            { startDate: '2026-01-01T08:00:00Z', endDate: '2026-01-01T09:00:00Z', value: 1200, unit: 'count', platformId: 'abc', sourceName: 'Galaxy Fit3' },
+          ] })
+        }
+        return Promise.resolve({ samples: [] })
+      })
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+
+      const { written, writer } = makeWriter()
+      const since = new Date('2026-01-01T00:00:00Z')
+      const until = new Date('2026-01-01T12:00:00Z')
+      const result = await connector.sync({ since, until, writer })
+
+      const stepEntries = written.filter((e) => e.type === 'steps')
+      expect(stepEntries.length).toBeGreaterThan(0)
+      expect(stepEntries[0].source).toBe('health_connect')
+      expect(stepEntries[0].payload.value).toBe(1200)
+      expect(result.synced).toBeGreaterThan(0)
+    })
+
+    it('syncs sleep samples with sleepState in payload', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(({ dataType }) => {
+        if (dataType === 'sleep') {
+          return Promise.resolve({ samples: [
+            { startDate: '2026-01-01T22:00:00Z', endDate: '2026-01-02T06:00:00Z', value: 480, unit: 'minute', sleepState: 'deep', platformId: 'xyz', sourceName: 'Samsung Health' },
+          ] })
+        }
+        return Promise.resolve({ samples: [] })
+      })
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+
+      const { written, writer } = makeWriter()
+      await connector.sync({ since: new Date('2026-01-01T00:00:00Z'), until: new Date('2026-01-02T12:00:00Z'), writer })
+
+      const sleepEntries = written.filter((e) => e.type === 'sleep')
+      expect(sleepEntries.length).toBe(1)
+      expect(sleepEntries[0].payload.durationMinutes).toBe(480)
+      expect(sleepEntries[0].payload.sleepState).toBe('deep')
+    })
+
+    it('syncs heart rate samples', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(({ dataType }) => {
+        if (dataType === 'heartRate') {
+          return Promise.resolve({ samples: [
+            { startDate: '2026-01-01T10:00:00Z', endDate: '2026-01-01T10:00:01Z', value: 72, unit: 'bpm', platformId: 'hr1', sourceName: 'Fit3' },
+          ] })
+        }
+        return Promise.resolve({ samples: [] })
+      })
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+
+      const { written, writer } = makeWriter()
+      await connector.sync({ since: new Date('2026-01-01T00:00:00Z'), until: new Date('2026-01-01T12:00:00Z'), writer })
+
+      const hrEntries = written.filter((e) => e.type === 'heart_rate')
+      expect(hrEntries.length).toBeGreaterThan(0)
+      expect(hrEntries[0].payload.bpm).toBe(72)
+      expect(hrEntries[0].payload.subtype).toBe('heartRate')
+    })
+
+    it('syncs workouts as activity entries', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockResolvedValue({ samples: [] })
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({
+        workouts: [
+          {
+            startDate: '2026-01-01T07:00:00Z',
+            endDate: '2026-01-01T07:45:00Z',
+            workoutType: 'running',
+            duration: 2700,
+            totalEnergyBurned: 350,
+            totalDistance: 5200,
+            sourceName: 'Samsung Health',
+            platformId: 'w1',
+          },
+        ],
+      })
+
+      const { written, writer } = makeWriter()
+      await connector.sync({ since: new Date('2026-01-01T00:00:00Z'), until: new Date('2026-01-01T12:00:00Z'), writer })
+
+      const actEntries = written.filter((e) => e.type === 'activity')
+      expect(actEntries.length).toBe(1)
+      expect(actEntries[0].payload.workoutType).toBe('running')
+      expect(actEntries[0].payload.durationSeconds).toBe(2700)
+    })
+
+    it('uses aggregated steps for historical ranges (> 30 days)', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.queryAggregated.mockImplementation(({ dataType }) => {
+        if (dataType === 'steps') {
+          return Promise.resolve({ samples: [
+            { startDate: '2025-01-01T00:00:00Z', endDate: '2025-01-01T23:59:59Z', value: 8000, unit: 'count' },
+          ] })
+        }
+        return Promise.resolve({ samples: [] })
+      })
+      Health.readSamples.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+
+      const { written, writer } = makeWriter()
+      const since = new Date('2025-01-01T00:00:00Z')
+      const until = new Date('2026-01-01T00:00:00Z') // > 30 days
+      await connector.sync({ since, until, writer })
+
+      // queryAggregated should have been called for steps
+      expect(Health.queryAggregated).toHaveBeenCalledWith(
+        expect.objectContaining({ dataType: 'steps', bucket: 'day' })
+      )
+      const stepEntries = written.filter((e) => e.type === 'steps')
+      expect(stepEntries.length).toBe(1)
+      expect(stepEntries[0].payload.period).toBe('day')
+    })
+
+    it('collects errors from failing data types but continues', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockRejectedValue(new Error('Permission denied'))
+      Health.queryAggregated.mockRejectedValue(new Error('Permission denied'))
+      Health.queryWorkouts.mockRejectedValue(new Error('Permission denied'))
+
+      const { written, writer } = makeWriter()
+      const result = await connector.sync({
+        since: new Date('2026-01-01T00:00:00Z'),
+        until: new Date('2026-01-01T12:00:00Z'),
+        writer,
+      })
+
+      expect(result.errors.length).toBeGreaterThan(0)
+      expect(result.synced).toBe(0)
+      expect(written.length).toBe(0)
+    })
+  })
+})

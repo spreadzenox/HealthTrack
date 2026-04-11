@@ -1,0 +1,266 @@
+/* ── Connector list ────────────────────────────────────────────────────── */
+.connectors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* ── Connector card ────────────────────────────────────────────────────── */
+.connector-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.connector-card-enabled {
+  border-color: rgba(78, 205, 196, 0.3);
+}
+
+.connector-card-header {
+  padding: 16px;
+}
+
+.connector-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.connector-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.connector-description {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* ── Status badges ─────────────────────────────────────────────────────── */
+.connector-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.connector-badge-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+
+.connector-badge-label:first-child {
+  margin-left: 0;
+}
+
+.connector-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge-available {
+  background: rgba(46, 213, 115, 0.18);
+  color: #2ed573;
+}
+
+.badge-unavailable {
+  background: rgba(255, 71, 87, 0.18);
+  color: #ff4757;
+}
+
+.badge-checking {
+  background: rgba(255, 165, 2, 0.18);
+  color: #ffa502;
+}
+
+/* ── Toggle switch ─────────────────────────────────────────────────────── */
+.connector-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.connector-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.connector-toggle input:checked + .toggle-track {
+  background: var(--accent);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.connector-toggle input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(20px);
+}
+
+/* ── Connector body (expanded when enabled) ───────────────────────────── */
+.connector-body {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px;
+}
+
+/* ── Alert boxes ───────────────────────────────────────────────────────── */
+.connector-alert {
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.connector-alert-warning {
+  background: rgba(255, 165, 2, 0.12);
+  border-left: 3px solid #ffa502;
+  color: var(--text);
+}
+
+.connector-alert-info {
+  background: rgba(78, 205, 196, 0.1);
+  border-left: 3px solid var(--accent);
+  color: var(--text);
+}
+
+.connector-alert p {
+  margin: 0 0 10px;
+}
+
+.connector-alert p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Sync section ──────────────────────────────────────────────────────── */
+.connector-sync-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.connector-history-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.connector-select {
+  max-width: 200px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+
+.connector-sync-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.connector-sync-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.connector-sync-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.connector-sync-date {
+  font-size: 0.9rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.connector-sync-summary {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.connector-btn {
+  flex: none;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.connector-sync-msg {
+  margin: 0;
+  font-size: 0.88rem;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+}
+
+.connector-sync-msg-ok {
+  color: #2ed573;
+  background: rgba(46, 213, 115, 0.1);
+}
+
+.connector-sync-msg-err {
+  color: var(--error);
+  background: rgba(231, 76, 60, 0.12);
+}
+
+/* ── Help section ──────────────────────────────────────────────────────── */
+.connector-help {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.connector-steps {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.connector-steps li {
+  padding: 4px 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.connector-steps strong,
+.connector-steps em {
+  color: var(--text);
+}

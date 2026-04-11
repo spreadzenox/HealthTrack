@@ -9,6 +9,7 @@ const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
   app_wellbeing: 'Bien-être (app)',
   samsung_watch: 'Montre Samsung',
+  health_connect: 'Health Connect',
   scale: 'Balance connectée',
 }
 
@@ -18,6 +19,9 @@ const TYPE_LABELS = {
   weight: 'Poids',
   sleep: 'Sommeil',
   wellbeing: 'Bien-être',
+  steps: 'Pas',
+  heart_rate: 'Fréquence cardiaque',
+  calories: 'Calories',
 }
 
 export default function Dashboard() {
@@ -45,8 +49,10 @@ export default function Dashboard() {
     <section className="dashboard">
       <h2 className="page-title">Tableau de bord</h2>
       <p className="dashboard-intro">
-        HealthTrack centralise vos données santé. Aujourd’hui : <strong>alimentation</strong> (photo → ingrédients et quantités).
-        Bientôt : <strong>montre Samsung</strong> (activité, sommeil) et <strong>balance connectée</strong> (poids).
+        HealthTrack centralise vos données santé: <strong>alimentation</strong> (photo → ingrédients),{' '}
+        <strong>montre Samsung Fit 3</strong> (pas, sommeil, fréquence cardiaque) via Health Connect,{' '}
+        et bien plus. Configurez les sources dans{' '}
+        <a href="/connectors" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Connecteurs</a>.
       </p>
 
       {loading && (
@@ -91,7 +97,47 @@ export default function Dashboard() {
                         Note : <strong>{e.payload.score}</strong> / 5
                       </p>
                     )}
-                    {e.type !== 'food' && e.type !== 'wellbeing' && (
+                    {e.type === 'steps' && typeof e.payload?.value === 'number' && (
+                      <p className="entry-wellbeing-score">
+                        <strong>{e.payload.value.toLocaleString('fr-FR')}</strong> pas
+                        {e.payload.period && ` (${e.payload.period})`}
+                      </p>
+                    )}
+                    {e.type === 'heart_rate' && typeof e.payload?.bpm === 'number' && (
+                      <p className="entry-wellbeing-score">
+                        <strong>{e.payload.bpm}</strong> bpm
+                        {e.payload.subtype === 'restingHeartRate' && ' (repos)'}
+                        {e.payload.subtype === 'oxygenSaturation' && ' SpO₂ %'}
+                        {e.payload.subtype === 'heartRateVariability' && ' HRV ms'}
+                      </p>
+                    )}
+                    {e.type === 'heart_rate' && typeof e.payload?.value === 'number' && typeof e.payload?.bpm === 'undefined' && (
+                      <p className="entry-wellbeing-score">
+                        <strong>{e.payload.value}</strong> {e.payload.unit}
+                        {e.payload.subtype === 'oxygenSaturation' && ' (SpO₂)'}
+                        {e.payload.subtype === 'heartRateVariability' && ' (HRV)'}
+                      </p>
+                    )}
+                    {e.type === 'calories' && typeof e.payload?.value === 'number' && (
+                      <p className="entry-wellbeing-score">
+                        <strong>{Math.round(e.payload.value).toLocaleString('fr-FR')}</strong> kcal
+                        {e.payload.period && ` (${e.payload.period})`}
+                      </p>
+                    )}
+                    {e.type === 'sleep' && typeof e.payload?.durationMinutes === 'number' && (
+                      <p className="entry-wellbeing-score">
+                        <strong>{Math.round(e.payload.durationMinutes)}</strong> min
+                        {e.payload.sleepState && ` — ${e.payload.sleepState}`}
+                      </p>
+                    )}
+                    {e.type === 'activity' && e.payload?.workoutType && (
+                      <p className="entry-wellbeing-score">
+                        {e.payload.workoutType}
+                        {e.payload.durationSeconds && ` — ${Math.round(e.payload.durationSeconds / 60)} min`}
+                        {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
+                      </p>
+                    )}
+                    {!['food', 'wellbeing', 'steps', 'heart_rate', 'calories', 'sleep', 'activity'].includes(e.type) && (
                       <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
                     )}
                   </div>

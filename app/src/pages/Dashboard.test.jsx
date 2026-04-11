@@ -21,8 +21,8 @@ describe('Dashboard', () => {
     )
     expect(screen.getByRole('heading', { name: /Tableau de bord/i })).toBeInTheDocument()
     expect(screen.getByText(/HealthTrack centralise/i)).toBeInTheDocument()
-    expect(screen.getByText(/montre Samsung/i)).toBeInTheDocument()
-    expect(screen.getByText(/balance connectée/i)).toBeInTheDocument()
+    expect(screen.getByText(/montre Samsung Fit 3/i)).toBeInTheDocument()
+    expect(screen.getByText(/Connecteurs/i)).toBeInTheDocument()
   })
 
   it('loads health entries from local storage on mount', async () => {
