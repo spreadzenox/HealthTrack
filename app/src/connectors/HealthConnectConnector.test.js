@@ -16,6 +16,7 @@ vi.mock('@capgo/capacitor-health', () => ({
     readSamples: vi.fn(),
     queryAggregated: vi.fn(),
     queryWorkouts: vi.fn(),
+    openHealthConnectSettings: vi.fn(),
   },
 }))
 
@@ -125,6 +126,32 @@ describe('HealthConnectConnector', () => {
       const details = await connector.availabilityDetails()
       expect(details.available).toBe(false)
       expect(details.reason).toBe('unavailable')
+    })
+  })
+
+  describe('openHealthConnectSettings', () => {
+    it('returns true when the plugin call succeeds', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.openHealthConnectSettings.mockResolvedValue(undefined)
+      const result = await connector.openHealthConnectSettings()
+      expect(result).toBe(true)
+    })
+
+    it('returns false when the plugin call throws', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.openHealthConnectSettings.mockRejectedValue(new Error('intent not available'))
+      const result = await connector.openHealthConnectSettings()
+      expect(result).toBe(false)
+    })
+  })
+
+  describe('openSamsungHealth', () => {
+    it('returns true when window.open succeeds', async () => {
+      const original = window.open
+      window.open = vi.fn()
+      const result = await connector.openSamsungHealth()
+      expect(result).toBe(true)
+      window.open = original
     })
   })
 

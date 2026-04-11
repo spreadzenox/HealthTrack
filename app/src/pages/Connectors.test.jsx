@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act, within } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Connectors from './Connectors'
 
@@ -20,7 +20,9 @@ vi.mock('../connectors/connectorRegistry', () => ({
       availabilityDetails: vi.fn().mockResolvedValue({ available: false, reason: 'unavailable' }),
       checkPermissions: vi.fn().mockResolvedValue('not_asked'),
       requestPermissions: vi.fn().mockResolvedValue('denied'),
-      openHealthConnectSettings: vi.fn().mockResolvedValue(undefined),
+      openHealthConnectSettings: vi.fn().mockResolvedValue(true),
+      openSamsungHealth: vi.fn().mockResolvedValue(true),
+      openGooglePlaySystemUpdates: vi.fn().mockResolvedValue(true),
       sync: vi.fn().mockResolvedValue({ synced: 0, skipped: 0, errors: [] }),
     },
   ],
@@ -128,9 +130,9 @@ describe('Connectors page', () => {
     await waitFor(() => {
       expect(screen.getByText(/nécessite une mise à jour/i)).toBeInTheDocument()
     })
-    // Should also show settings and retry buttons
-    expect(screen.getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Revérifier la disponibilité/i })).toBeInTheDocument()
+    // Should also show settings and retry buttons (multiple occurrences due to wizard auto-open)
+    expect(screen.getAllByRole('button', { name: /Ouvrir les paramètres Health Connect/i }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('button', { name: /Revérifier la disponibilité/i }).length).toBeGreaterThan(0)
     unmount()
   })
 
@@ -147,10 +149,10 @@ describe('Connectors page', () => {
     })
     // Should mention system module (appears in alert and in help section)
     expect(screen.getAllByText(/module système intégré/i).length).toBeGreaterThan(0)
-    // Should include a button to open Health Connect settings
-    expect(screen.getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })).toBeInTheDocument()
+    // Should include buttons to open Health Connect settings (may appear multiple times due to wizard)
+    expect(screen.getAllByRole('button', { name: /Ouvrir les paramètres Health Connect/i }).length).toBeGreaterThan(0)
     // Should include a retry button
-    expect(screen.getByRole('button', { name: /Revérifier la disponibilité/i })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: /Revérifier la disponibilité/i }).length).toBeGreaterThan(0)
     unmount()
   })
 
@@ -165,8 +167,9 @@ describe('Connectors page', () => {
     await waitFor(() => {
       expect(screen.getByText(/Health Connect non disponible\./i)).toBeInTheDocument()
     })
-    expect(screen.getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Revérifier la disponibilité/i })).toBeInTheDocument()
+    // Multiple instances possible due to wizard auto-opening
+    expect(screen.getAllByRole('button', { name: /Ouvrir les paramètres Health Connect/i }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('button', { name: /Revérifier la disponibilité/i }).length).toBeGreaterThan(0)
     unmount()
   })
 
@@ -244,4 +247,153 @@ describe('Connectors page', () => {
       vi.useRealTimers()
     }
   }, 15000)
+
+  describe('Activation wizard', () => {
+    it('shows the wizard launch button in the sdk_unavailable alert', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /Lancer l'assistant d'activation/i })).toBeInTheDocument()
+      })
+      unmount()
+    })
+
+    it('shows the wizard launch button in the provider_update_required alert', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'provider_update_required' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /Lancer l'assistant d'activation/i })).toBeInTheDocument()
+      })
+      unmount()
+    })
+
+    it('shows the wizard launch button in the generic unavailable alert', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'unavailable' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /Lancer l'assistant d'activation/i })).toBeInTheDocument()
+      })
+      unmount()
+    })
+
+    it('opens the wizard dialog when launch button is clicked', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /Lancer l'assistant d'activation/i })).toBeInTheDocument()
+      })
+
+      fireEvent.click(screen.getByRole('button', { name: /Lancer l'assistant d'activation/i }))
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: /Assistant d'activation Health Connect/i })).toBeInTheDocument()
+      })
+      unmount()
+    })
+
+    it('auto-opens the wizard when connector is enabled and HC is unavailable', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      // Connector is already enabled
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: /Assistant d'activation Health Connect/i })).toBeInTheDocument()
+      })
+      unmount()
+    })
+
+    it('closes the wizard when the close button is clicked', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument()
+      })
+
+      fireEvent.click(screen.getByRole('button', { name: /Fermer l'assistant/i }))
+
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      })
+      unmount()
+    })
+
+    it('shows step navigation buttons in the wizard', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument()
+      })
+
+      // First step should show "Étape suivante" but not "Précédent"
+      expect(screen.getByRole('button', { name: /Étape suivante/i })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /Précédent/i })).not.toBeInTheDocument()
+
+      // Go to next step
+      fireEvent.click(screen.getByRole('button', { name: /Étape suivante/i }))
+
+      // Second step should show both
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /Précédent/i })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /Étape suivante/i })).toBeInTheDocument()
+      })
+      unmount()
+    })
+
+    it('calls openHealthConnectSettings when primary action is triggered on step 1', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument()
+      })
+
+      // Target the button inside the wizard dialog specifically
+      const dialog = screen.getByRole('dialog')
+      const settingsBtn = within(dialog).getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })
+      fireEvent.click(settingsBtn)
+
+      await waitFor(() => {
+        expect(CONNECTORS[0].openHealthConnectSettings).toHaveBeenCalled()
+      })
+      unmount()
+    })
+  })
 })

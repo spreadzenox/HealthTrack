@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { CONNECTORS } from '../connectors/connectorRegistry'
 import { getConnectorSettings, setConnectorSettings } from '../settings/connectorSettings'
 import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
@@ -53,6 +53,196 @@ function StatusBadge({ status }) {
   return <span className={`connector-badge ${className}`}>{label}</span>
 }
 
+/**
+ * Step-by-step activation wizard for Health Connect on Android.
+ *
+ * Step 0 – Check if Health Connect is a system module (Android 14+)
+ * Step 1 – Update Google Play System modules (fixes SDK_UNAVAILABLE)
+ * Step 2 – Open Samsung Health and enable Health Connect sync
+ * Step 3 – Grant permissions inside Health Connect
+ * Step 4 – Done / retry availability check
+ */
+function ActivationWizard({ connector, onClose, onDone }) {
+  const [step, setStep] = useState(0)
+  const [actionStatus, setActionStatus] = useState(null) // 'ok' | 'err' | null
+  const [checking, setChecking] = useState(false)
+
+  const STEPS = [
+    {
+      title: 'Étape 1 — Vérifier les mises à jour système',
+      body: (
+        <>
+          <p>
+            Sur <strong>Android 14 et supérieur</strong> (dont Android 16 / One UI 8), Health
+            Connect est un <strong>module système intégré</strong> — il n&apos;y a pas
+            d&apos;application à installer.
+          </p>
+          <p>
+            Pour activer Health Connect, commencez par installer toutes les mises à jour
+            disponibles via{' '}
+            <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>.
+          </p>
+        </>
+      ),
+      primaryLabel: 'Ouvrir les paramètres Health Connect',
+      primaryAction: async () => {
+        const ok = await connector.openHealthConnectSettings()
+        setActionStatus(ok ? 'ok' : 'err')
+      },
+      hint: actionStatus === 'err'
+        ? 'Impossible d\'ouvrir automatiquement. Allez manuellement dans Paramètres → Mise à jour du logiciel → Mises à jour du système Google.'
+        : actionStatus === 'ok'
+          ? 'Paramètres ouverts. Installez toutes les mises à jour disponibles, puis revenez ici.'
+          : null,
+    },
+    {
+      title: 'Étape 2 — Activer la synchronisation Samsung Health',
+      body: (
+        <>
+          <p>
+            Dans <strong>Samsung Health</strong>, activez la synchronisation avec Health Connect :
+          </p>
+          <ol className="wizard-steps-list">
+            <li>Ouvrez <strong>Samsung Health</strong></li>
+            <li>Allez dans <strong>Paramètres</strong> (icône ⚙️ en haut à droite)</li>
+            <li>Appuyez sur <strong>Health Connect</strong></li>
+            <li>Activez <strong>Synchroniser les données</strong></li>
+            <li>Autorisez toutes les catégories de données demandées</li>
+          </ol>
+        </>
+      ),
+      primaryLabel: 'Ouvrir Samsung Health',
+      primaryAction: async () => {
+        const ok = await connector.openSamsungHealth()
+        setActionStatus(ok ? 'ok' : 'err')
+      },
+      hint: actionStatus === 'err'
+        ? 'Samsung Health introuvable. Installez-le depuis le Galaxy Store ou le Play Store.'
+        : actionStatus === 'ok'
+          ? 'Samsung Health ouvert. Suivez les étapes ci-dessus, puis revenez ici.'
+          : null,
+    },
+    {
+      title: 'Étape 3 — Autoriser l\'accès depuis HealthTrack',
+      body: (
+        <>
+          <p>
+            Ouvrez les <strong>paramètres Health Connect</strong> pour vérifier que HealthTrack
+            apparaît dans la liste des applications autorisées.
+          </p>
+          <p>
+            Si HealthTrack n&apos;y figure pas encore, revenez dans le connecteur et appuyez sur{' '}
+            <strong>Demander les autorisations</strong> une fois que Health Connect est disponible.
+          </p>
+        </>
+      ),
+      primaryLabel: 'Ouvrir les paramètres Health Connect',
+      primaryAction: async () => {
+        const ok = await connector.openHealthConnectSettings()
+        setActionStatus(ok ? 'ok' : 'err')
+      },
+      hint: actionStatus === 'err'
+        ? 'Impossible d\'ouvrir automatiquement. Allez manuellement dans Paramètres → Applis → Health Connect.'
+        : actionStatus === 'ok'
+          ? 'Paramètres Health Connect ouverts. Vérifiez les autorisations pour HealthTrack.'
+          : null,
+    },
+    {
+      title: 'Vérification finale',
+      body: (
+        <>
+          <p>
+            Vous avez suivi toutes les étapes. Appuyez sur <strong>Revérifier la disponibilité</strong>{' '}
+            pour que l&apos;application détecte si Health Connect est maintenant disponible.
+          </p>
+          <p>
+            Si le statut reste <em>Non disponible</em>, attendez quelques minutes que les mises à
+            jour système s&apos;appliquent, puis réessayez.
+          </p>
+        </>
+      ),
+      primaryLabel: checking ? 'Vérification…' : 'Revérifier la disponibilité',
+      primaryAction: async () => {
+        setChecking(true)
+        await onDone()
+        setChecking(false)
+      },
+      hint: null,
+    },
+  ]
+
+  const currentStep = STEPS[step]
+
+  return (
+    <div className="wizard-overlay" role="dialog" aria-modal="true" aria-label="Assistant d'activation Health Connect">
+      <div className="wizard-panel">
+        <div className="wizard-header">
+          <h3 className="wizard-title">Assistant d&apos;activation Health Connect</h3>
+          <button
+            type="button"
+            className="wizard-close"
+            onClick={onClose}
+            aria-label="Fermer l'assistant"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="wizard-progress">
+          {STEPS.map((_, i) => (
+            <div
+              key={i}
+              className={`wizard-progress-dot ${i === step ? 'active' : i < step ? 'done' : ''}`}
+            />
+          ))}
+        </div>
+
+        <div className="wizard-body">
+          <h4 className="wizard-step-title">{currentStep.title}</h4>
+          <div className="wizard-step-body">{currentStep.body}</div>
+          {currentStep.hint && (
+            <div className={`wizard-hint ${actionStatus === 'err' ? 'wizard-hint-err' : 'wizard-hint-ok'}`}>
+              {currentStep.hint}
+            </div>
+          )}
+        </div>
+
+        <div className="wizard-footer">
+          {step > 0 && (
+            <button
+              type="button"
+              className="btn btn-secondary connector-btn"
+              onClick={() => { setStep((s) => s - 1); setActionStatus(null) }}
+            >
+              Précédent
+            </button>
+          )}
+          <button
+            type="button"
+            className="btn btn-secondary connector-btn"
+            onClick={() => {
+              setActionStatus(null)
+              currentStep.primaryAction()
+            }}
+            disabled={checking}
+          >
+            {currentStep.primaryLabel}
+          </button>
+          {step < STEPS.length - 1 && (
+            <button
+              type="button"
+              className="btn connector-btn"
+              onClick={() => { setStep((s) => s + 1); setActionStatus(null) }}
+            >
+              Étape suivante
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ConnectorCard({ connector }) {
   const [settings, setSettings] = useState(() => getConnectorSettings(connector.id))
   const [availability, setAvailability] = useState('checking')
@@ -62,6 +252,9 @@ function ConnectorCard({ connector }) {
   const [syncMsg, setSyncMsg] = useState(null)
   const [historyDays, setHistoryDays] = useState(DEFAULT_HISTORY_DAYS)
   const [checkCount, setCheckCount] = useState(0)
+  const [wizardOpen, setWizardOpen] = useState(false)
+  // Track whether we already auto-opened the wizard for the current unavailable state
+  const autoOpenedRef = useRef(false)
 
   // Reload settings from localStorage when component mounts
   const reloadSettings = useCallback(() => {
@@ -69,20 +262,38 @@ function ConnectorCard({ connector }) {
   }, [connector.id])
 
   const recheckAvailability = useCallback(() => {
+    autoOpenedRef.current = false
     setAvailability('checking')
     setAvailabilityReason(null)
     setCheckCount((n) => n + 1)
   }, [])
 
   useEffect(() => {
+    const currentSettings = getConnectorSettings(connector.id)
     reloadSettings()
     const detailsFn = connector.availabilityDetails
       ? connector.availabilityDetails.bind(connector)
       : () => connector.isAvailable().then((a) => ({ available: a }))
     withTimeout(detailsFn(), 8000, { available: false, reason: 'unavailable' })
       .then((details) => {
-        setAvailability(details.available ? 'available' : 'unavailable')
+        const avail = details.available ? 'available' : 'unavailable'
+        setAvailability(avail)
         setAvailabilityReason(details.reason || null)
+        // Auto-open the wizard when the connector is enabled, HC is unavailable,
+        // and we have not auto-opened for this unavailable state yet.
+        if (
+          avail === 'unavailable' &&
+          currentSettings.enabled &&
+          details.reason !== 'no_bridge' &&
+          !autoOpenedRef.current
+        ) {
+          autoOpenedRef.current = true
+          setWizardOpen(true)
+        }
+        // Reset the auto-open guard when HC becomes available
+        if (avail === 'available') {
+          autoOpenedRef.current = false
+        }
       })
       .catch(() => {
         setAvailability('unavailable')
@@ -91,13 +302,17 @@ function ConnectorCard({ connector }) {
     withTimeout(connector.checkPermissions(), 8000, 'not_asked')
       .then((p) => setPermissions(p === 'not_asked' ? 'not_asked' : p))
       .catch(() => setPermissions('not_asked'))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connector, reloadSettings, checkCount])
 
   const handleToggleEnabled = () => {
     const next = !settings.enabled
     setConnectorSettings(connector.id, { enabled: next })
     reloadSettings()
+    // When enabling: if HC is already known-unavailable, open the wizard
+    if (next && availability === 'unavailable' && availabilityReason !== 'no_bridge') {
+      autoOpenedRef.current = true
+      setWizardOpen(true)
+    }
   }
 
   const handleRequestPermissions = async () => {
@@ -163,6 +378,11 @@ function ConnectorCard({ connector }) {
 
   const canSync = availability === 'available' && permissions === 'granted'
 
+  const handleWizardDone = async () => {
+    recheckAvailability()
+    setWizardOpen(false)
+  }
+
   return (
     <div className={`connector-card ${settings.enabled ? 'connector-card-enabled' : ''}`}>
       <div className="connector-card-header">
@@ -198,8 +418,15 @@ function ConnectorCard({ connector }) {
               <strong>module système</strong> intégré — il n&apos;est pas dans le Play Store.{' '}
               Pour le mettre à jour, allez dans{' '}
               <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>{' '}
-              et installez la dernière version. Relancez ensuite l&apos;application.
+              et installez la dernière version.
               <div className="connector-alert-actions">
+                <button
+                  type="button"
+                  className="btn connector-btn"
+                  onClick={() => setWizardOpen(true)}
+                >
+                  Lancer l&apos;assistant d&apos;activation
+                </button>
                 <button
                   type="button"
                   className="btn btn-secondary connector-btn"
@@ -223,21 +450,15 @@ function ConnectorCard({ connector }) {
               <strong>Health Connect non disponible sur cet appareil.</strong>{' '}
               Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
               <strong>module système intégré</strong> — il n&apos;y a pas d&apos;application à installer.{' '}
-              Si votre appareil l&apos;indique comme non disponible, essayez les étapes suivantes :{' '}
-              <ol style={{ margin: '0.5em 0 0.5em 1.2em', padding: 0 }}>
-                <li>
-                  Allez dans <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>{' '}
-                  et installez toutes les mises à jour disponibles.
-                </li>
-                <li>
-                  Vérifiez que <strong>Samsung Health</strong> est à jour et que la synchronisation avec{' '}
-                  Health Connect est activée dans Samsung Health → Paramètres → Health Connect.
-                </li>
-                <li>
-                  Ouvrez les paramètres Health Connect pour vérifier que l&apos;accès est configuré.
-                </li>
-              </ol>
+              Utilisez l&apos;assistant ci-dessous pour activer la connexion étape par étape.
               <div className="connector-alert-actions">
+                <button
+                  type="button"
+                  className="btn connector-btn"
+                  onClick={() => setWizardOpen(true)}
+                >
+                  Lancer l&apos;assistant d&apos;activation
+                </button>
                 <button
                   type="button"
                   className="btn btn-secondary connector-btn"
@@ -265,6 +486,13 @@ function ConnectorCard({ connector }) {
               Sur Android 8–13 uniquement, installez &quot;Health Connect&quot; depuis le Play Store.{' '}
               Activez ensuite la synchronisation dans Samsung Health → Paramètres → Health Connect.
               <div className="connector-alert-actions">
+                <button
+                  type="button"
+                  className="btn connector-btn"
+                  onClick={() => setWizardOpen(true)}
+                >
+                  Lancer l&apos;assistant d&apos;activation
+                </button>
                 <button
                   type="button"
                   className="btn btn-secondary connector-btn"
@@ -350,6 +578,14 @@ function ConnectorCard({ connector }) {
             </div>
           )}
         </div>
+      )}
+
+      {wizardOpen && (
+        <ActivationWizard
+          connector={connector}
+          onClose={() => setWizardOpen(false)}
+          onDone={handleWizardDone}
+        />
       )}
     </div>
   )

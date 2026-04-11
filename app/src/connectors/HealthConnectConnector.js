@@ -129,15 +129,48 @@ export class HealthConnectConnector extends BaseConnector {
 
   /**
    * Opens the Android Health Connect settings screen directly (permissions, data sources).
-   * No-op in web/test environments.
+   * Returns true on success, false when the intent could not be fired.
+   * No-op (returns false) in web/test environments.
    */
   async openHealthConnectSettings() {
     const Health = await getHealthPlugin()
-    if (!Health || typeof Health.openHealthConnectSettings !== 'function') return
+    if (!Health || typeof Health.openHealthConnectSettings !== 'function') return false
     try {
       await Health.openHealthConnectSettings()
+      return true
     } catch {
-      // ignore – settings intent may not be available on all devices
+      return false
+    }
+  }
+
+  /**
+   * Attempts to open Samsung Health via deep-link so the user can enable the
+   * Health Connect integration inside Samsung Health settings.
+   * Falls back to a Play-Store search if the app is not installed.
+   * Returns true when an intent was dispatched, false in web/test environments.
+   */
+  async openSamsungHealth() {
+    try {
+      // Primary: Samsung Health deep-link (opens the app directly)
+      window.open('samsunghealth://', '_system')
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  /**
+   * Attempts to open the Google Play System Updates screen where the user can
+   * update built-in modules including Health Connect.
+   * Returns true when an intent was dispatched.
+   */
+  async openGooglePlaySystemUpdates() {
+    try {
+      // Opens the Google Play System Updates page in the Settings app
+      window.open('market://details?id=com.google.android.gms', '_system')
+      return true
+    } catch {
+      return false
     }
   }
 
