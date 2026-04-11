@@ -40,4 +40,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- Required so the app can query whether the Health Connect system module
+         (com.google.android.healthconnect.controller, Android 14+) is installed
+         and resolve market:// intents targeting it. -->
+    <queries>
+        <package android:name="com.google.android.healthconnect.controller" />
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 </manifest>

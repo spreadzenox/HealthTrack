@@ -373,7 +373,7 @@ describe('Connectors page', () => {
       unmount()
     })
 
-    it('calls openHealthConnectSettings when primary action is triggered on step 1', async () => {
+    it('calls openGooglePlaySystemUpdates when primary action is triggered on step 1', async () => {
       const { CONNECTORS } = await import('../connectors/connectorRegistry')
       CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
 
@@ -385,7 +385,37 @@ describe('Connectors page', () => {
         expect(screen.getByRole('dialog')).toBeInTheDocument()
       })
 
-      // Target the button inside the wizard dialog specifically
+      // Step 1: primary action is "Mettre à jour Health Connect via Google Play"
+      const dialog = screen.getByRole('dialog')
+      const updateBtn = within(dialog).getByRole('button', { name: /Mettre à jour Health Connect via Google Play/i })
+      fireEvent.click(updateBtn)
+
+      await waitFor(() => {
+        expect(CONNECTORS[0].openGooglePlaySystemUpdates).toHaveBeenCalled()
+      })
+      unmount()
+    })
+
+    it('calls openHealthConnectSettings when primary action is triggered on step 3', async () => {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+      const { getConnectorSettings } = await import('../settings/connectorSettings')
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+      const { unmount } = renderConnectors()
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument()
+      })
+
+      // Navigate to step 3 (0-indexed steps: 0=update, 1=samsung health, 2=permissions, 3=final check)
+      for (let i = 0; i < 2; i++) {
+        fireEvent.click(screen.getByRole('button', { name: /Étape suivante/i }))
+        await waitFor(() => {
+          expect(screen.getByRole('button', { name: /Précédent/i })).toBeInTheDocument()
+        })
+      }
+
       const dialog = screen.getByRole('dialog')
       const settingsBtn = within(dialog).getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })
       fireEvent.click(settingsBtn)

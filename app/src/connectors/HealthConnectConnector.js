@@ -160,14 +160,18 @@ export class HealthConnectConnector extends BaseConnector {
   }
 
   /**
-   * Attempts to open the Google Play System Updates screen where the user can
-   * update built-in modules including Health Connect.
+   * Attempts to open the Health Connect system module page in Google Play so
+   * the user can trigger a Google Play System Update for Health Connect.
+   *
+   * On Android 14+ Health Connect ships as a system module under the package
+   * com.google.android.healthconnect.controller (not com.google.android.gms).
+   * Opening this Play listing prompts the system to check for/apply the update.
+   *
    * Returns true when an intent was dispatched.
    */
   async openGooglePlaySystemUpdates() {
     try {
-      // Opens the Google Play System Updates page in the Settings app
-      window.open('market://details?id=com.google.android.gms', '_system')
+      window.open('market://details?id=com.google.android.healthconnect.controller', '_system')
       return true
     } catch {
       return false

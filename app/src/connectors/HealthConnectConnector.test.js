@@ -155,6 +155,29 @@ describe('HealthConnectConnector', () => {
     })
   })
 
+  describe('openGooglePlaySystemUpdates', () => {
+    it('returns true and opens the Health Connect system module Play listing', async () => {
+      const original = window.open
+      const openMock = vi.fn()
+      window.open = openMock
+      const result = await connector.openGooglePlaySystemUpdates()
+      expect(result).toBe(true)
+      expect(openMock).toHaveBeenCalledWith(
+        'market://details?id=com.google.android.healthconnect.controller',
+        '_system'
+      )
+      window.open = original
+    })
+
+    it('returns false when window.open throws', async () => {
+      const original = window.open
+      window.open = () => { throw new Error('blocked') }
+      const result = await connector.openGooglePlaySystemUpdates()
+      expect(result).toBe(false)
+      window.open = original
+    })
+  })
+
   describe('checkPermissions', () => {
     it('returns granted when all types are authorized', async () => {
       const { Health } = await import('@capgo/capacitor-health')
