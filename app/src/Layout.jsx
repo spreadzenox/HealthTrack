@@ -1,10 +1,12 @@
 import { Outlet, NavLink } from 'react-router-dom'
 import UpdateBanner from './components/UpdateBanner'
+import WellbeingPrompt from './components/WellbeingPrompt'
 import './App.css'
 
 export default function Layout() {
   return (
     <div className="app">
+      <WellbeingPrompt />
       <UpdateBanner />
       <header className="header">
         <div className="header-brand">

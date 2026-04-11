@@ -47,7 +47,7 @@ export default function Data() {
     <section className="food-page">
       <h2 className="page-title">Vos données</h2>
       <p className="page-intro">
-        Toutes vos données (repas, et plus tard montre, balance) sont stockées <strong>uniquement sur cet appareil</strong>, dans le navigateur.
+        Toutes vos données (repas, bien-être, et plus tard montre, balance) sont stockées <strong>uniquement sur cet appareil</strong>, dans le navigateur.
         Elles survivent aux mises à jour de l’app. Pour les conserver après une réinstallation, exportez un fichier puis réimportez-le.
       </p>
 

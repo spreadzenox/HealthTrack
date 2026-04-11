@@ -67,4 +67,27 @@ describe('Dashboard', () => {
     await screen.findByText(/rice/)
     expect(screen.getByText(/1 cup/)).toBeInTheDocument()
   })
+
+  it('shows wellbeing score in recent entries', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValueOnce([
+      {
+        id: 2,
+        type: 'wellbeing',
+        source: 'app_wellbeing',
+        at: '2026-04-10T09:00:00',
+        payload: { score: 4 },
+        created_at: '',
+      },
+    ])
+    render(
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>
+    )
+    await screen.findByText(/Note :/)
+    const card = screen.getByRole('listitem')
+    expect(card).toHaveTextContent('Bien-être')
+    expect(card).toHaveTextContent('4')
+  })
 })

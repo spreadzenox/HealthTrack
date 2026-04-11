@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import NutritionKPIs from '../components/NutritionKPIs'
+import WellbeingCharts from '../components/WellbeingCharts'
 import { formatAt } from '../utils/format'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
+  app_wellbeing: 'Bien-être (app)',
   samsung_watch: 'Montre Samsung',
   scale: 'Balance connectée',
 }
@@ -15,6 +17,7 @@ const TYPE_LABELS = {
   activity: 'Activité',
   weight: 'Poids',
   sleep: 'Sommeil',
+  wellbeing: 'Bien-être',
 }
 
 export default function Dashboard() {
@@ -57,6 +60,7 @@ export default function Dashboard() {
       {!loading && !error && (
         <>
           <NutritionKPIs />
+          <WellbeingCharts />
           <h3 className="section-title">Dernières entrées</h3>
           {entries.length === 0 ? (
             <p className="empty-hint">
@@ -82,7 +86,12 @@ export default function Dashboard() {
                         )}
                       </ul>
                     )}
-                    {e.type !== 'food' && (
+                    {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
+                      <p className="entry-wellbeing-score">
+                        Note : <strong>{e.payload.score}</strong> / 5
+                      </p>
+                    )}
+                    {e.type !== 'food' && e.type !== 'wellbeing' && (
                       <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
                     )}
                   </div>
