@@ -18,7 +18,7 @@ export async function installUpdate(apkOrReleaseUrl) {
     if (isAndroid && isApk && isNative) {
       return await installApkOnAndroid(apkOrReleaseUrl)
     }
-  } catch (_) {
+  } catch {
     // Fallback si Capacitor non dispo (web)
   }
 
@@ -29,9 +29,14 @@ export async function installUpdate(apkOrReleaseUrl) {
 
 /**
  * Télécharge l'APK puis lance l'installateur Android (1 clic).
+ *
+ * Utilise CapacitorHttp (requête HTTP native) au lieu du fetch() du WebView
+ * pour éviter les erreurs CORS/redirect lors du téléchargement depuis GitHub CDN.
+ * CapacitorHttp.get avec responseType 'arraybuffer' retourne la donnée encodée
+ * en base64, prête à être écrite via Filesystem.writeFile.
  */
 async function installApkOnAndroid(apkUrl) {
-  const { Capacitor } = await import('@capacitor/core')
+  const { CapacitorHttp } = await import('@capacitor/core')
   const { Filesystem, Directory } = await import('@capacitor/filesystem')
   const { AppInstallPlugin } = await import('@m430/capacitor-app-install')
 
@@ -43,20 +48,24 @@ async function installApkOnAndroid(apkUrl) {
       await AppInstallPlugin.openInstallUnknownAppsSettings()
       return {
         ok: false,
-        message: 'Autorisez l’installation depuis cette source dans les réglages, puis réessayez.',
+        message: "Autorisez l'installation depuis cette source dans les réglages, puis réessayez.",
       }
     }
 
-    const res = await fetch(apkUrl, { cache: 'no-store' })
-    if (!res.ok) throw new Error(`Téléchargement échoué: ${res.status}`)
-
-    const blob = await res.blob()
-    const arrayBuffer = await blob.arrayBuffer()
-    const base64 = arrayBufferToBase64(new Uint8Array(arrayBuffer))
+    // CapacitorHttp contourne les restrictions CORS du WebView Android.
+    // responseType 'arraybuffer' indique au plugin natif de retourner la réponse
+    // encodée en base64 — format attendu par Filesystem.writeFile.
+    const response = await CapacitorHttp.get({
+      url: apkUrl,
+      responseType: 'arraybuffer',
+    })
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Téléchargement échoué: ${response.status}`)
+    }
 
     await Filesystem.writeFile({
       path,
-      data: base64,
+      data: response.data,
       directory: Directory.Cache,
     })
 
@@ -69,14 +78,7 @@ async function installApkOnAndroid(apkUrl) {
   } catch (e) {
     return {
       ok: false,
-      message: e?.message || 'Erreur lors du téléchargement ou de l’installation.',
+      message: e?.message || "Erreur lors du téléchargement ou de l'installation.",
     }
   }
-}
-
-function arrayBufferToBase64(bytes) {
-  let binary = ''
-  const len = bytes.byteLength
-  for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i])
-  return btoa(binary)
 }
