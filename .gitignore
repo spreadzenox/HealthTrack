@@ -12,6 +12,7 @@ env/
 .eggs/
 dist/
 build/
+.pytest_cache/
 
 # Node (app)
 node_modules/

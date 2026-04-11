@@ -6,7 +6,7 @@ L’app web est packagée en application Android avec **Capacitor**. Pour produi
 
 - **Node.js** 20.19+ ou 22+ (pour `npm run build`)
 - **Android Studio** (recommandé) ou Android SDK + Gradle en ligne de commande
-- **Java JDK 17** (ou celui requis par votre version d’Android Studio)
+- **Java JDK 21** (ou celui requis par votre version d’Android Studio)
 
 ## Étapes
 
