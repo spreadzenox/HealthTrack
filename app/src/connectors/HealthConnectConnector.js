@@ -62,6 +62,21 @@ async function getHealthPlugin() {
   }
 }
 
+/**
+ * Lazily import AppLauncher to avoid crashing in web/test environments.
+ * AppLauncher is required to open non-http URLs (custom schemes) on Android
+ * from inside a Capacitor WebView — window.open() does not fire Android intents
+ * for custom schemes on Android 11+.
+ */
+async function getAppLauncher() {
+  try {
+    const mod = await import('@capacitor/app-launcher')
+    return mod.AppLauncher
+  } catch {
+    return null
+  }
+}
+
 export class HealthConnectConnector extends BaseConnector {
   constructor() {
     super({
@@ -146,28 +161,47 @@ export class HealthConnectConnector extends BaseConnector {
   /**
    * Attempts to open Samsung Health via deep-link so the user can enable the
    * Health Connect integration inside Samsung Health settings.
-   * Falls back to a Play-Store search if the app is not installed.
+   *
+   * Uses @capacitor/app-launcher because window.open() does not fire Android
+   * intents for custom URL schemes (like samsunghealth://) inside a Capacitor
+   * WebView on Android 11+. Falls back to a Play Store search link if Samsung
+   * Health is not installed (i.e. AppLauncher.openUrl rejects).
+   *
    * Returns true when an intent was dispatched, false in web/test environments.
    */
   async openSamsungHealth() {
+    const AppLauncher = await getAppLauncher()
+    if (!AppLauncher) return false
     try {
-      // Primary: Samsung Health deep-link (opens the app directly)
-      window.open('samsunghealth://', '_system')
+      await AppLauncher.openUrl({ url: 'samsunghealth://' })
       return true
     } catch {
-      return false
+      // Samsung Health not installed — send user to Galaxy Store / Play Store
+      try {
+        await AppLauncher.openUrl({ url: 'market://details?id=com.sec.android.app.shealth' })
+        return true
+      } catch {
+        return false
+      }
     }
   }
 
   /**
-   * Attempts to open the Google Play System Updates screen where the user can
-   * update built-in modules including Health Connect.
+   * Attempts to open the Health Connect system module page in Google Play so
+   * the user can trigger a Google Play System Update for Health Connect.
+   *
+   * On Android 14+ Health Connect ships as a standalone system module under
+   * com.google.android.healthconnect.controller (not com.google.android.gms).
+   * Opening this Play listing prompts the system to check for/apply the update.
+   *
+   * Uses @capacitor/app-launcher for the same reason as openSamsungHealth().
    * Returns true when an intent was dispatched.
    */
   async openGooglePlaySystemUpdates() {
+    const AppLauncher = await getAppLauncher()
+    if (!AppLauncher) return false
     try {
-      // Opens the Google Play System Updates page in the Settings app
-      window.open('market://details?id=com.google.android.gms', '_system')
+      await AppLauncher.openUrl({ url: 'market://details?id=com.google.android.healthconnect.controller' })
       return true
     } catch {
       return false

@@ -69,30 +69,30 @@ function ActivationWizard({ connector, onClose, onDone }) {
 
   const STEPS = [
     {
-      title: 'Étape 1 — Vérifier les mises à jour système',
+      title: 'Étape 1 — Mettre à jour Health Connect (module système)',
       body: (
         <>
           <p>
             Sur <strong>Android 14 et supérieur</strong> (dont Android 16 / One UI 8), Health
             Connect est un <strong>module système intégré</strong> — il n&apos;y a pas
-            d&apos;application à installer.
+            d&apos;application à installer depuis le Play Store classique.
           </p>
           <p>
-            Pour activer Health Connect, commencez par installer toutes les mises à jour
-            disponibles via{' '}
+            Le bouton ci-dessous ouvre la fiche du module Health Connect dans Google Play afin de
+            déclencher sa mise à jour. Vous pouvez aussi passer par{' '}
             <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>.
           </p>
         </>
       ),
-      primaryLabel: 'Ouvrir les paramètres Health Connect',
+      primaryLabel: 'Mettre à jour Health Connect via Google Play',
       primaryAction: async () => {
-        const ok = await connector.openHealthConnectSettings()
+        const ok = await connector.openGooglePlaySystemUpdates()
         setActionStatus(ok ? 'ok' : 'err')
       },
       hint: actionStatus === 'err'
         ? 'Impossible d\'ouvrir automatiquement. Allez manuellement dans Paramètres → Mise à jour du logiciel → Mises à jour du système Google.'
         : actionStatus === 'ok'
-          ? 'Paramètres ouverts. Installez toutes les mises à jour disponibles, puis revenez ici.'
+          ? 'Google Play ouvert. Installez la mise à jour Health Connect, puis revenez ici.'
           : null,
     },
     {
@@ -142,7 +142,7 @@ function ActivationWizard({ connector, onClose, onDone }) {
         setActionStatus(ok ? 'ok' : 'err')
       },
       hint: actionStatus === 'err'
-        ? 'Impossible d\'ouvrir automatiquement. Allez manuellement dans Paramètres → Applis → Health Connect.'
+        ? 'Impossible d\'ouvrir automatiquement. Sur Android 14+ (dont Android 16 / One UI 8), allez dans Paramètres → Sécurité et confidentialité → Health Connect. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.'
         : actionStatus === 'ok'
           ? 'Paramètres Health Connect ouverts. Vérifiez les autorisations pour HealthTrack.'
           : null,
