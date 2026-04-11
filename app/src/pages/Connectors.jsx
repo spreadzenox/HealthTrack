@@ -194,11 +194,41 @@ function ConnectorCard({ connector }) {
             </div>
           )}
 
-          {availability === 'unavailable' && availabilityReason !== 'provider_update_required' && (
+          {availability === 'unavailable' && availabilityReason === 'sdk_unavailable' && (
+            <div className="connector-alert connector-alert-warning">
+              <strong>Health Connect non disponible sur cet appareil.</strong>{' '}
+              Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
+              <strong>module système intégré</strong> — il n'y a pas d'application à installer.{' '}
+              Si votre appareil l'indique comme non disponible, essayez les étapes suivantes :{' '}
+              <ol style={{ margin: '0.5em 0 0.5em 1.2em', padding: 0 }}>
+                <li>
+                  Allez dans <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>{' '}
+                  et installez toutes les mises à jour disponibles.
+                </li>
+                <li>
+                  Vérifiez que <strong>Samsung Health</strong> est à jour et que la synchronisation avec{' '}
+                  Health Connect est activée dans Samsung Health → Paramètres → Health Connect.
+                </li>
+                <li>
+                  Ouvrez les paramètres Health Connect pour vérifier que l'accès est configuré :
+                </li>
+              </ol>
+              <button
+                type="button"
+                className="btn btn-secondary connector-btn"
+                onClick={() => connector.openHealthConnectSettings && connector.openHealthConnectSettings()}
+              >
+                Ouvrir les paramètres Health Connect
+              </button>
+            </div>
+          )}
+
+          {availability === 'unavailable' && availabilityReason !== 'provider_update_required' && availabilityReason !== 'sdk_unavailable' && (
             <div className="connector-alert connector-alert-warning">
               <strong>Health Connect non disponible.</strong>{' '}
-              Sur Android 14 et supérieur, Health Connect est intégré au système — assurez-vous que{' '}
-              votre appareil est à jour (<strong>Paramètres → Mise à jour du logiciel</strong>).{' '}
+              Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est{' '}
+              <strong>intégré au système</strong> — assurez-vous que votre appareil est à jour via{' '}
+              <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>.{' '}
               Sur Android 8–13 uniquement, installez &quot;Health Connect&quot; depuis le Play Store.{' '}
               Activez ensuite la synchronisation dans Samsung Health → Paramètres → Health Connect.
             </div>
