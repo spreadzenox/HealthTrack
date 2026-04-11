@@ -283,6 +283,18 @@
   text-decoration: underline;
 }
 
+/* Dashboard quick-actions */
+.dashboard-actions {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0 8px;
+  flex-wrap: wrap;
+}
+
+.dashboard-wellbeing-btn {
+  flex: none;
+}
+
 /* Dashboard entries */
 .entries-list {
   list-style: none;
