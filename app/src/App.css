@@ -349,10 +349,127 @@
   font-style: italic;
 }
 
+.entry-wellbeing-score {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
 .entry-payload {
   margin: 0;
   font-size: 0.8rem;
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-all;
+}
+
+/* Wellbeing prompt (session, local storage only) */
+.wellbeing-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+}
+
+.wellbeing-modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 22px 20px 18px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.wellbeing-modal-title {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+}
+
+.wellbeing-modal-desc {
+  margin: 0 0 18px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.45;
+}
+
+.wellbeing-circles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.wellbeing-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px 6px;
+  min-width: 44px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+
+.wellbeing-circle:hover {
+  background: rgba(78, 205, 196, 0.1);
+  color: var(--text);
+}
+
+.wellbeing-circle-selected {
+  background: rgba(78, 205, 196, 0.2);
+  color: var(--accent);
+}
+
+.wellbeing-circle-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--text-muted);
+  background: transparent;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.wellbeing-circle-selected .wellbeing-circle-dot {
+  border-color: var(--accent);
+  background: var(--accent);
+  transform: scale(1.08);
+}
+
+.wellbeing-circle-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.wellbeing-modal-error {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--error);
+  text-align: center;
+}
+
+.wellbeing-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.wellbeing-modal-actions .btn {
+  flex: 1;
+}
+
+.entry-card[data-type="wellbeing"] {
+  border-left-color: #9b59b6;
 }
