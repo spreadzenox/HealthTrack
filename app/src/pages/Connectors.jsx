@@ -16,6 +16,18 @@ const DEFAULT_HISTORY_DAYS = 180
  */
 const SYNC_OVERLAP_MS = 2 * 60 * 60 * 1000
 
+/**
+ * Races a promise against a timeout. If the timeout fires first the provided
+ * fallback value is returned, preventing status badges from being stuck on
+ * "Vérification…" indefinitely when the native bridge hangs.
+ */
+function withTimeout(promise, ms, fallback) {
+  return Promise.race([
+    promise,
+    new Promise((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ])
+}
+
 function formatDate(isoString) {
   if (!isoString) return '—'
   try {
@@ -56,8 +68,12 @@ function ConnectorCard({ connector }) {
 
   useEffect(() => {
     reloadSettings()
-    connector.isAvailable().then((a) => setAvailability(a ? 'available' : 'unavailable'))
-    connector.checkPermissions().then((p) => setPermissions(p === 'not_asked' ? 'not_asked' : p))
+    withTimeout(connector.isAvailable(), 8000, false)
+      .then((a) => setAvailability(a ? 'available' : 'unavailable'))
+      .catch(() => setAvailability('unavailable'))
+    withTimeout(connector.checkPermissions(), 8000, 'not_asked')
+      .then((p) => setPermissions(p === 'not_asked' ? 'not_asked' : p))
+      .catch(() => setPermissions('not_asked'))
   }, [connector, reloadSettings])
 
   const handleToggleEnabled = () => {
@@ -68,8 +84,12 @@ function ConnectorCard({ connector }) {
 
   const handleRequestPermissions = async () => {
     setPermissions('checking')
-    const result = await connector.requestPermissions()
-    setPermissions(result)
+    try {
+      const result = await withTimeout(connector.requestPermissions(), 15000, 'denied')
+      setPermissions(result)
+    } catch {
+      setPermissions('denied')
+    }
   }
 
   const handleSync = async () => {
