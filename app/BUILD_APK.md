@@ -20,13 +20,7 @@ npm install
 npm run build
 ```
 
-**Important :** Pour que « Analyser les ingrédients » fonctionne dans l’APK, l’app doit connaître l’URL de votre backend. Définissez-la au build (sans slash final) :
-
-```bash
-VITE_API_URL=https://votre-api.onrender.com npm run build
-```
-
-Sans cette variable, l’app appellera l’API sur elle-même et vous verrez une erreur du type « is not valid JSON ».
+**Important :** pour que « Analyser les ingrédients » fonctionne dans l’APK, l’utilisateur doit avoir enregistré une **clé API Gemini** dans l’app (**Paramètres**). L’analyse appelle directement l’API Google depuis l’appareil ; aucun serveur HealthTrack n’est nécessaire.
 
 ### 2. Synchroniser avec le projet Android
 

@@ -46,7 +46,9 @@ export default function Settings() {
           aria-describedby="gemini-key-hint"
         />
         <p id="gemini-key-hint" className="hint">
-          {hasGeminiApiKey() ? 'Une clé est enregistrée (mode autonome actif).' : 'Aucune clé : l’app utilisera le backend si configuré.'}
+          {hasGeminiApiKey()
+            ? 'Une clé est enregistrée (analyse photo disponible).'
+            : 'Sans clé, l’analyse photo n’est pas disponible : ajoutez une clé ci-dessus.'}
         </p>
         <div className="actions">
           <button type="button" className="btn" onClick={handleSave}>
