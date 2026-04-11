@@ -36,6 +36,15 @@ export class BaseConnector {
   }
 
   /**
+   * Returns detailed availability info. Override to provide richer diagnostics.
+   * @returns {Promise<{ available: boolean, reason?: string, platform?: string }>}
+   */
+  async availabilityDetails() {
+    const available = await this.isAvailable()
+    return { available }
+  }
+
+  /**
    * Returns the current permission status.
    * @returns {Promise<'granted'|'denied'|'not_asked'>}
    */
