@@ -31,6 +31,21 @@ samples/
 
 # Android SDK (local build, do not commit)
 android-sdk/
+local.properties
+
+# Base de données locale (données personnelles)
+healthtrack.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Fichiers de secrets locaux
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.jks
+google-services.json
 
 # OS
 .DS_Store
