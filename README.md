@@ -41,79 +41,21 @@ Le dépôt est piloté par le **test-driven development** : toutes les fonctionn
 - **Frontend** : `cd app && npm run test` — navigation, pages Dashboard/Food, chargement des données (Vitest + React Testing Library).
 - **Règle** : toute nouvelle feature doit être couverte par des tests sur les flux importants. Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Outil CLI local (expérimental)
-
-Pour expérimenter une **vision-langage locale** (BLIP-2, InstructBLIP, etc.) en ligne de commande — **hors** de l'app mobile :
-
-```bash
-cd HealthTrack
-python -m venv .venv
-source .venv/bin/activate   # Linux / macOS
-# .venv\Scripts\activate    # Windows
-pip install -r requirements.txt
-```
-
-**Requis :** Python 3.10+, PyTorch. Pour le GPU (recommandé) : CUDA et `pip install torch` avec support CUDA.
-
-### Utilisation
-
-```bash
-python run_predict.py chemin/vers/assiette.jpg
-```
-
-Options utiles :
-
-- `--model Salesforce/blip2-opt-2.7b` — modèle utilisé (défaut : BLIP-2)
-- `--device cuda` ou `--device cpu`
-- `--max-tokens 200` — longueur max de la réponse
-- `--json` — sortie en JSON
-
-Le benchmark recommande **InstructBLIP** pour de meilleure qualité (format liste + quantités) : `--model Salesforce/instructblip-flan-t5-xl` (voir [docs/BENCHMARK.md](docs/BENCHMARK.md)).
-
-Premier lancement : téléchargement du modèle (~5–10 Go selon le modèle). **GPU recommandé** (BLIP-2 ~6–8 Go VRAM, InstructBLIP Flan-T5 XL ~10 Go).
-
-Lancer une comparaison sur ta propre image : `python benchmark_models.py chemin/vers/assiette.jpg`.
-
-### Dans ton code Python
-
-```python
-from food_vision import predict_ingredients, IngredientItem
-
-items: list[IngredientItem] = predict_ingredients(
-    "chemin/vers/assiette.jpg",
-    device="cuda",  # ou "cpu"
-    max_new_tokens=200,
-)
-for i in items:
-    print(f"{i.name}: {i.quantity}")
-```
-
 ## Structure du projet
 
 ```
 HealthTrack/
-├── app/                    # App mobile-first (React + Vite + Capacitor, IndexedDB)
-│   ├── src/
-│   │   ├── pages/          # Dashboard, Food, Data, Connectors, Settings, Recommendations
-│   │   ├── components/     # WellbeingCharts, WellbeingPrompt, UpdateBanner
-│   │   ├── services/       # geminiStandalone, nutritionKPIs, analysisEngine, …
-│   │   ├── connectors/     # HealthConnectConnector, connectorRegistry
-│   │   ├── storage/        # localHealthStorage (IndexedDB)
-│   │   └── settings/       # geminiApiKey, connectorSettings
-│   ├── android/            # Projet Capacitor Android
-│   ├── BUILD_APK.md
-│   └── README.md
-├── food_vision/            # Module Python CLI (BLIP-2 / InstructBLIP local)
-│   ├── __init__.py
-│   └── predictor.py
-├── docs/
-│   ├── BENCHMARK.md
-│   └── BENCHMARK_PROVIDERS.md
-├── examples/
-├── run_predict.py
-├── benchmark_models.py
-├── requirements.txt
-└── README.md
+└── app/                    # App mobile-first (React + Vite + Capacitor, IndexedDB)
+    ├── src/
+    │   ├── pages/          # Dashboard, Food, Data, Connectors, Settings, Recommendations
+    │   ├── components/     # WellbeingCharts, WellbeingPrompt, UpdateBanner
+    │   ├── services/       # geminiStandalone, nutritionKPIs, analysisEngine, …
+    │   ├── connectors/     # HealthConnectConnector, connectorRegistry
+    │   ├── storage/        # localHealthStorage (IndexedDB)
+    │   └── settings/       # geminiApiKey, connectorSettings
+    ├── android/            # Projet Capacitor Android
+    ├── BUILD_APK.md
+    └── README.md
 ```
 
 ## Licence

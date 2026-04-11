@@ -1,28 +1,14 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-.venv/
-venv/
-env/
-.env
-.env.*
-!.env.example
-*.egg-info/
-.eggs/
-dist/
-build/
-.pytest_cache/
-
 # Node (app)
 node_modules/
+
+# Build output
+dist/
+build/
 
 # Données / samples
 samples/
 *.jpg
 *.png
-!examples/*.jpg
-!examples/*.png
 !app/android/app/src/main/res/mipmap-*/*.png
 
 # IDE
@@ -54,3 +40,8 @@ google-services.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Env files
+.env
+.env.*
+!.env.example
