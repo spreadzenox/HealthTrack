@@ -2,6 +2,15 @@ import { useState, useRef } from 'react'
 import { exportToJson, importFromJson } from '../storage/localHealthStorage'
 import '../Food.css'
 
+async function isAndroidNative() {
+  try {
+    const { Capacitor } = await import('@capacitor/core')
+    return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
+  } catch {
+    return false
+  }
+}
+
 export default function Data() {
   const [exportStatus, setExportStatus] = useState(null)
   const [importStatus, setImportStatus] = useState(null)
@@ -12,14 +21,30 @@ export default function Data() {
     setExportStatus(null)
     try {
       const json = await exportToJson()
-      const blob = new Blob([json], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `healthtrack-export-${new Date().toISOString().slice(0, 10)}.json`
-      a.click()
-      URL.revokeObjectURL(url)
-      setExportStatus('Téléchargement démarré. Enregistrez le fichier sur votre appareil (ex. Dossier Documents).')
+      const filename = `healthtrack-export-${new Date().toISOString().slice(0, 10)}.json`
+
+      if (await isAndroidNative()) {
+        const { Filesystem, Directory } = await import('@capacitor/filesystem')
+        // Convert JSON string to base64 for Filesystem.writeFile
+        const base64 = btoa(unescape(encodeURIComponent(json)))
+        await Filesystem.writeFile({
+          path: filename,
+          data: base64,
+          directory: Directory.Documents,
+        })
+        setExportStatus('Fichier enregistré dans le dossier Documents de votre appareil.')
+      } else {
+        const blob = new Blob([json], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        setTimeout(() => URL.revokeObjectURL(url), 1000)
+        setExportStatus('Téléchargement démarré. Enregistrez le fichier sur votre appareil (ex. Dossier Documents).')
+      }
     } catch (e) {
       setExportStatus('Erreur : ' + (e.message || 'export impossible'))
     }
