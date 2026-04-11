@@ -50,7 +50,7 @@ jobs:
 
       - name: Install Android platform and build-tools
         run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager "platforms;android-35" "platforms;android-36" "build-tools;35.0.0"
 
       - name: Create local.properties
         working-directory: app/android
