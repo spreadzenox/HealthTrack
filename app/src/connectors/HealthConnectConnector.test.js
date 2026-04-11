@@ -72,6 +72,49 @@ describe('HealthConnectConnector', () => {
     })
   })
 
+  describe('availabilityDetails', () => {
+    it('returns available=true when Health Connect is ready', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.isAvailable.mockResolvedValue({ available: true, platform: 'android' })
+      const details = await connector.availabilityDetails()
+      expect(details.available).toBe(true)
+      expect(details.platform).toBe('android')
+    })
+
+    it('returns reason=provider_update_required when Health Connect needs an update', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.isAvailable.mockResolvedValue({
+        available: false,
+        reason: 'Health Connect needs an update.',
+        platform: 'android',
+      })
+      const details = await connector.availabilityDetails()
+      expect(details.available).toBe(false)
+      expect(details.reason).toBe('provider_update_required')
+      expect(details.platform).toBe('android')
+    })
+
+    it('returns reason=unavailable when Health Connect is simply not supported', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.isAvailable.mockResolvedValue({
+        available: false,
+        reason: 'Health Connect is unavailable on this device.',
+        platform: 'android',
+      })
+      const details = await connector.availabilityDetails()
+      expect(details.available).toBe(false)
+      expect(details.reason).toBe('unavailable')
+    })
+
+    it('returns reason=unavailable when plugin throws', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.isAvailable.mockRejectedValue(new Error('bridge error'))
+      const details = await connector.availabilityDetails()
+      expect(details.available).toBe(false)
+      expect(details.reason).toBe('unavailable')
+    })
+  })
+
   describe('checkPermissions', () => {
     it('returns granted when all types are authorized', async () => {
       const { Health } = await import('@capgo/capacitor-health')

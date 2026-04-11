@@ -56,6 +56,7 @@ function StatusBadge({ status }) {
 function ConnectorCard({ connector }) {
   const [settings, setSettings] = useState(() => getConnectorSettings(connector.id))
   const [availability, setAvailability] = useState('checking')
+  const [availabilityReason, setAvailabilityReason] = useState(null)
   const [permissions, setPermissions] = useState('checking')
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState(null)
@@ -68,9 +69,18 @@ function ConnectorCard({ connector }) {
 
   useEffect(() => {
     reloadSettings()
-    withTimeout(connector.isAvailable(), 8000, false)
-      .then((a) => setAvailability(a ? 'available' : 'unavailable'))
-      .catch(() => setAvailability('unavailable'))
+    const detailsFn = connector.availabilityDetails
+      ? connector.availabilityDetails.bind(connector)
+      : () => connector.isAvailable().then((a) => ({ available: a }))
+    withTimeout(detailsFn(), 8000, { available: false, reason: 'unavailable' })
+      .then((details) => {
+        setAvailability(details.available ? 'available' : 'unavailable')
+        setAvailabilityReason(details.reason || null)
+      })
+      .catch(() => {
+        setAvailability('unavailable')
+        setAvailabilityReason(null)
+      })
     withTimeout(connector.checkPermissions(), 8000, 'not_asked')
       .then((p) => setPermissions(p === 'not_asked' ? 'not_asked' : p))
       .catch(() => setPermissions('not_asked'))
@@ -173,10 +183,23 @@ function ConnectorCard({ connector }) {
 
       {settings.enabled && (
         <div className="connector-body">
-          {availability === 'unavailable' && (
+          {availability === 'unavailable' && availabilityReason === 'provider_update_required' && (
             <div className="connector-alert connector-alert-warning">
-              <strong>Health Connect non disponible.</strong> Sur Android 14+ il est intégré au système.
-              Sur Android 8–13, installez &quot;Health Connect&quot; depuis le Play Store.
+              <strong>Health Connect nécessite une mise à jour.</strong>{' '}
+              Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
+              <strong>module système</strong> intégré — il n'est pas dans le Play Store.{' '}
+              Pour le mettre à jour, allez dans{' '}
+              <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>{' '}
+              et installez la dernière version. Relancez ensuite l'application.
+            </div>
+          )}
+
+          {availability === 'unavailable' && availabilityReason !== 'provider_update_required' && (
+            <div className="connector-alert connector-alert-warning">
+              <strong>Health Connect non disponible.</strong>{' '}
+              Sur Android 14 et supérieur, Health Connect est intégré au système — assurez-vous que{' '}
+              votre appareil est à jour (<strong>Paramètres → Mise à jour du logiciel</strong>).{' '}
+              Sur Android 8–13 uniquement, installez &quot;Health Connect&quot; depuis le Play Store.{' '}
               Activez ensuite la synchronisation dans Samsung Health → Paramètres → Health Connect.
             </div>
           )}
@@ -276,7 +299,13 @@ export default function Connectors() {
           <li>
             Dans Samsung Health, allez dans <em>Paramètres → Health Connect → Autorisations de l&apos;application → Samsung Health</em> et activez toutes les catégories.
           </li>
-          <li>Sur Android 14+, Health Connect est intégré au système. Sur Android 8–13, installez &quot;Health Connect&quot; depuis le Play Store.</li>
+          <li>
+            Sur <strong>Android 14 et supérieur</strong> (Android 14 / 15 / 16, One UI 7 / 8…), Health Connect est un{' '}
+            <strong>module système intégré</strong> — il n&apos;y a pas d&apos;application à installer depuis le Play Store.{' '}
+            Si la plateforme s&apos;affiche comme non disponible, mettez votre téléphone à jour via{' '}
+            <em>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</em>.{' '}
+            Sur Android 8–13 uniquement, installez &quot;Health Connect&quot; depuis le Play Store.
+          </li>
           <li>Revenez ici, activez le connecteur, puis appuyez sur <strong>Importer l&apos;historique</strong>.</li>
         </ol>
       </div>

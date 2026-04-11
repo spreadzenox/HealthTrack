@@ -6,8 +6,11 @@
  *                                        ↕
  *                              HealthTrack (this connector)
  *
- * On Android 14+ Health Connect is built-in. On Android 8–13 the user must
- * install "Health Connect by Android" from the Play Store.
+ * On Android 14+ (API 34+) Health Connect is integrated as a system module —
+ * it does NOT need to be installed separately. The Play Store app is only for
+ * Android 8–13. If the SDK reports SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED on
+ * Android 14+, it means the built-in Health Connect system module needs a system
+ * update (OTA), not a manual Play Store install.
  *
  * In a web/browser environment (e.g. during unit tests or desktop dev),
  * the Capacitor bridge is absent: isAvailable() returns false gracefully.
@@ -79,6 +82,34 @@ export class HealthConnectConnector extends BaseConnector {
       return result.available === true
     } catch {
       return false
+    }
+  }
+
+  /**
+   * Returns detailed availability information including the reason when
+   * Health Connect is not available.
+   *
+   * @returns {Promise<{ available: boolean, reason?: string, platform?: string }>}
+   *   - available: true if Health Connect is ready to use
+   *   - reason: one of 'provider_update_required' | 'unavailable' | 'no_bridge'
+   *   - platform: 'android' or undefined
+   */
+  async availabilityDetails() {
+    const Health = await getHealthPlugin()
+    if (!Health) return { available: false, reason: 'no_bridge' }
+    try {
+      const result = await Health.isAvailable()
+      if (result.available === true) {
+        return { available: true, platform: result.platform }
+      }
+      // Map the native reason string to a stable enum value
+      const reason = result.reason || ''
+      if (reason.toLowerCase().includes('update')) {
+        return { available: false, reason: 'provider_update_required', platform: result.platform }
+      }
+      return { available: false, reason: 'unavailable', platform: result.platform }
+    } catch {
+      return { available: false, reason: 'unavailable' }
     }
   }
 

@@ -17,6 +17,7 @@ vi.mock('../connectors/connectorRegistry', () => ({
       description: 'A test connector for unit tests',
       dataTypes: ['steps', 'sleep'],
       isAvailable: vi.fn().mockResolvedValue(false),
+      availabilityDetails: vi.fn().mockResolvedValue({ available: false, reason: 'unavailable' }),
       checkPermissions: vi.fn().mockResolvedValue('not_asked'),
       requestPermissions: vi.fn().mockResolvedValue('denied'),
       sync: vi.fn().mockResolvedValue({ synced: 0, skipped: 0, errors: [] }),
@@ -105,6 +106,38 @@ describe('Connectors page', () => {
     renderConnectors()
     const matches = screen.getAllByText(/Samsung Health/i)
     expect(matches.length).toBeGreaterThan(0)
+  })
+
+  it('mentions system module (no Play Store) in setup instructions for Android 14+', () => {
+    renderConnectors()
+    expect(screen.getByText(/module système intégré/i)).toBeInTheDocument()
+  })
+
+  it('shows provider_update_required message when Health Connect needs a system update', async () => {
+    const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'provider_update_required' })
+
+    renderConnectors()
+    // Enable the connector so the alert body is shown
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+    // Re-render with enabled state
+    const { unmount } = renderConnectors()
+    await waitFor(() => {
+      expect(screen.getByText(/nécessite une mise à jour/i)).toBeInTheDocument()
+    })
+    unmount()
+  })
+
+  it('does not tell Android 14+ users to install from Play Store', () => {
+    renderConnectors()
+    // The Play Store instruction should only appear in the Android 8-13 clarification, not as the primary step
+    const playStoreText = screen.queryAllByText(/installez.*Health Connect.*Play Store/i)
+    // It should appear only in the context of "Android 8-13 uniquement"
+    playStoreText.forEach((el) => {
+      expect(el.textContent).toMatch(/8.13/i)
+    })
   })
 
   it('resolves to "Non disponible" when isAvailable never resolves (timeout fallback)', async () => {
