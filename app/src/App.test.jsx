@@ -4,7 +4,8 @@ import App from './App'
 
 describe('App', () => {
   it('renders and shows navigation', () => {
-    render(<App />)
+    const { container } = render(<App />)
+    expect(container.querySelector('img.header-logo')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /HealthTrack/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Tableau de bord/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Alimentation/i })).toBeInTheDocument()
