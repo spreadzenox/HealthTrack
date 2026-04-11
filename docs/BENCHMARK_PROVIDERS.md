@@ -1,6 +1,8 @@
 # Benchmark: Remote providers (image → ingredients + quantities)
 
-This document compares **remote** options for the workflow: **image of plate/meal → list of ingredients with estimated quantities**, for use in a **phone app** (model runs on server or in the cloud).
+This document compares **remote** options for the workflow: **image of plate/meal → list of ingredients with estimated quantities**, for use in a **phone app** (model runs in the cloud).
+
+The **HealthTrack app** calls the **Gemini API directly from the device** (user API key in Settings). The steps below are for **your own experiments** if you want to compare OpenAI vs Gemini latency and quality outside the repo (e.g. small scripts using each vendor’s HTTP API).
 
 ---
 
@@ -10,35 +12,22 @@ This document compares **remote** options for the workflow: **image of plate/mea
 |----------|--------|----------------|-------------------|----------------|
 | **OpenAI** | GPT-4o (vision) | OpenAI cloud | ~1–3 s | ~$0.01–0.03 per image (input + output) |
 | **Google Gemini** | Gemini 1.5 Flash / Pro | Google cloud | ~1–4 s | Free tier generous; paid per token |
-| **Local** | BLIP-2 / InstructBLIP | Your server (GPU) | ~2–10 s | Server cost only |
+| **Local** | BLIP-2 / InstructBLIP | Your machine or server (GPU) | ~2–10 s | Hardware cost only |
 
-- **OpenAI** and **Gemini** are **multimodal APIs**: you send the image + prompt, they return text. No GPU to manage; best for a phone app with a remote backend.
-- **Local** runs your own VLM (e.g. on a single GPU server). No per-call API cost, but you pay for the machine and maintenance.
+- **OpenAI** and **Gemini** are **multimodal APIs**: you send the image + prompt, they return text. No GPU to manage on the client.
+- **Local** runs your own VLM (see [BENCHMARK.md](BENCHMARK.md) and `run_predict.py`). No per-call API cost, but you pay for the machine and maintenance.
 
 ---
 
-## 2. How to run the benchmark
+## 2. How to benchmark (your own script)
 
-1. **Backend and keys**
-   - From project root: `cd backend`
-   - Install: `pip install -r requirements.txt`
-   - Set API keys (at least one):
-     - `OPENAI_API_KEY=sk-...`
-     - `GEMINI_API_KEY=...` or `GOOGLE_API_KEY=...`
+1. **API keys** (at least one provider you want to test):
+   - `OPENAI_API_KEY=sk-...`
+   - `GEMINI_API_KEY=...` or `GOOGLE_API_KEY=...`
 
-2. **Run on one image**
-   ```bash
-   cd backend
-   python benchmark_providers.py path/to/plate.jpg
-   python benchmark_providers.py path/to/plate.jpg --providers openai gemini
-   ```
+2. **Call each API** with the same image and a prompt that asks for structured JSON (ingredient names + quantities).
 
-3. **Optional: JSON output**
-   ```bash
-   python benchmark_providers.py path/to/plate.jpg --json
-   ```
-
-The script measures **latency** (time to first token / full response) and prints the **parsed list** (ingredient + quantity) for each provider so you can compare quality on the same image.
+3. **Compare** latency (time to full response) and the parsed list quality on representative plate photos.
 
 ---
 
@@ -49,21 +38,16 @@ The script measures **latency** (time to first token / full response) and prints
 - **Cost**: Sustainable for your usage (e.g. per user per day).
 - **Reliability**: Uptime, rate limits, no need to maintain GPU for cloud options.
 
-**Recommendation for a phone app with remote backend:**  
-Use **OpenAI (GPT-4o)** or **Gemini (1.5 Flash)** as primary. Both are multimodal, easy to integrate, and avoid running your own GPU. Run the benchmark script on a few representative plate images and compare latency + quality; then choose one (or both with a fallback).
+**Recommendation for a phone app using cloud vision:**  
+**OpenAI (GPT-4o)** or **Gemini** are typical choices. HealthTrack ships with **Gemini from the client** so users do not depend on your servers.
 
 ---
 
-## 4. API usage (for the mobile app)
+## 4. How the HealthTrack app works
 
-The backend exposes a single endpoint used by the app:
-
-- **POST /api/predict**  
-  - Body: multipart form with `file` = image file.  
-  - Query (optional): `?provider=openai` or `?provider=gemini` or `?provider=local`.  
-  - Response: `{ "provider": "openai", "items": [ { "ingredient": "...", "quantity": "..." }, ... ] }`.
-
-The mobile app uploads the photo to this endpoint and displays the `items` list.
+- The app uses **`app/src/services/geminiStandalone.js`**: image + prompt → Gemini `generateContent` → parsed ingredients list.
+- Meals are stored in **IndexedDB** (`app/src/storage/localHealthStorage.js`).
+- Nutrition KPIs use bundled data in **`app/src/data/ingredientsNutrition.json`** (`app/src/services/nutritionKPIs.js`).
 
 ---
 
@@ -71,4 +55,3 @@ The mobile app uploads the photo to this endpoint and displays the `items` list.
 
 - [OpenAI Vision API](https://platform.openai.com/docs/guides/vision)
 - [Gemini image understanding](https://ai.google.dev/gemini-api/docs/image-understanding)
-- Internal: `backend/benchmark_providers.py`, `backend/providers/`.

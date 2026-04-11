@@ -16,18 +16,6 @@ build/
 # Node (app)
 node_modules/
 
-# Backend DB (local data)
-backend/*.db
-healthtrack.db
-
-# Modèles téléchargés (cache Hugging Face)
-.cache/
-models/
-
-# Table Ciqual téléchargée (volume)
-backend/data/Table_Ciqual*.xlsx
-backend/data/Table_Ciqual*.xls
-
 # Données / samples
 samples/
 *.jpg
