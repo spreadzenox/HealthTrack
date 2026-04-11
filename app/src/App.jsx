@@ -5,6 +5,7 @@ import Food from './pages/Food'
 import Data from './pages/Data'
 import Connectors from './pages/Connectors'
 import Settings from './pages/Settings'
+import Recommendations from './pages/Recommendations'
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="data" element={<Data />} />
           <Route path="connectors" element={<Connectors />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="recommendations" element={<Recommendations />} />
         </Route>
       </Routes>
     </BrowserRouter>

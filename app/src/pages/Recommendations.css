@@ -1,0 +1,303 @@
+.reco-page {
+  padding-bottom: 32px;
+}
+
+.reco-intro {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 20px;
+}
+
+/* ─── Tab navigation ─────────────────────────────────────────────────────── */
+
+.reco-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.reco-tab-btn {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--text-muted);
+  border-radius: var(--radius);
+  border: 1.5px solid transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.reco-tab-btn:hover {
+  background: rgba(78, 205, 196, 0.08);
+  color: var(--text);
+}
+
+.reco-tab-btn-active {
+  background: rgba(78, 205, 196, 0.14);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.reco-tab-min {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.reco-tab-btn-active .reco-tab-min {
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+/* ─── Tab content ────────────────────────────────────────────────────────── */
+
+.reco-tab-content {
+  animation: reco-fade 0.18s ease;
+}
+
+@keyframes reco-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reco-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+/* ─── Section ─────────────────────────────────────────────────────────────── */
+
+.reco-section {
+  margin-bottom: 22px;
+}
+
+.reco-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.reco-section-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+/* ─── Advice cards ────────────────────────────────────────────────────────── */
+
+.reco-advice-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reco-advice-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent);
+}
+
+.reco-advice-rank {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+.reco-advice-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.reco-advice-text {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.reco-advice-impact {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ─── Correlation / importance bar chart ─────────────────────────────────── */
+
+.reco-corr-chart {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reco-corr-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 48px;
+  align-items: center;
+  gap: 8px;
+}
+
+.reco-corr-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reco-corr-bar-wrap {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.reco-corr-bar {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+
+.reco-corr-pos {
+  background: #2ecc71;
+}
+
+.reco-corr-neg {
+  background: #e74c3c;
+}
+
+.reco-corr-value {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Residuals table ─────────────────────────────────────────────────────── */
+
+.reco-residuals {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reco-residual-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 1fr 48px;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.82rem;
+}
+
+.reco-residual-row:last-child {
+  border-bottom: none;
+}
+
+.reco-residual-date {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.reco-residual-actual,
+.reco-residual-pred {
+  color: var(--text-muted);
+}
+
+.reco-residual-diff {
+  text-align: right;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.reco-diff-pos { color: #2ecc71; }
+.reco-diff-neg { color: #e74c3c; }
+
+/* ─── Not enough data ─────────────────────────────────────────────────────── */
+
+.reco-not-enough {
+  text-align: center;
+  padding: 36px 20px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-top: 8px;
+}
+
+.reco-not-enough-icon {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+}
+
+.reco-not-enough-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+
+.reco-not-enough-hint {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+
+.reco-not-enough-min {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ─── Disclaimer ──────────────────────────────────────────────────────────── */
+
+.reco-disclaimer {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 12px 0;
+  opacity: 0.7;
+  line-height: 1.4;
+  margin-top: 8px;
+}
