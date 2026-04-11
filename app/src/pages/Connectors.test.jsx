@@ -128,6 +128,9 @@ describe('Connectors page', () => {
     await waitFor(() => {
       expect(screen.getByText(/nécessite une mise à jour/i)).toBeInTheDocument()
     })
+    // Should also show settings and retry buttons
+    expect(screen.getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Revérifier la disponibilité/i })).toBeInTheDocument()
     unmount()
   })
 
@@ -146,6 +149,48 @@ describe('Connectors page', () => {
     expect(screen.getAllByText(/module système intégré/i).length).toBeGreaterThan(0)
     // Should include a button to open Health Connect settings
     expect(screen.getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })).toBeInTheDocument()
+    // Should include a retry button
+    expect(screen.getByRole('button', { name: /Revérifier la disponibilité/i })).toBeInTheDocument()
+    unmount()
+  })
+
+  it('shows settings and retry buttons in generic unavailable state', async () => {
+    const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'unavailable' })
+
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+    const { unmount } = renderConnectors()
+    await waitFor(() => {
+      expect(screen.getByText(/Health Connect non disponible\./i)).toBeInTheDocument()
+    })
+    expect(screen.getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Revérifier la disponibilité/i })).toBeInTheDocument()
+    unmount()
+  })
+
+  it('re-checks availability when retry button is clicked', async () => {
+    const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+    const { unmount } = renderConnectors()
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Revérifier la disponibilité/i })).toBeInTheDocument()
+    })
+
+    // Simulate that after system update, Health Connect becomes available
+    CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: true, platform: 'android' })
+    CONNECTORS[0].checkPermissions.mockResolvedValue('not_asked')
+
+    fireEvent.click(screen.getByRole('button', { name: /Revérifier la disponibilité/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Disponible')).toBeInTheDocument()
+    })
     unmount()
   })
 
@@ -161,6 +206,7 @@ describe('Connectors page', () => {
 
   it('resolves to "Non disponible" when isAvailable never resolves (timeout fallback)', async () => {
     const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    CONNECTORS[0].availabilityDetails.mockReturnValue(neverResolves())
     CONNECTORS[0].isAvailable.mockReturnValue(neverResolves())
     CONNECTORS[0].checkPermissions.mockResolvedValue('not_asked')
 
