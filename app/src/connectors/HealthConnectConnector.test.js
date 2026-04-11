@@ -94,12 +94,25 @@ describe('HealthConnectConnector', () => {
       expect(details.platform).toBe('android')
     })
 
-    it('returns reason=unavailable when Health Connect is simply not supported', async () => {
+    it('returns reason=sdk_unavailable when Health Connect is unavailable on Android', async () => {
       const { Health } = await import('@capgo/capacitor-health')
       Health.isAvailable.mockResolvedValue({
         available: false,
         reason: 'Health Connect is unavailable on this device.',
         platform: 'android',
+      })
+      const details = await connector.availabilityDetails()
+      expect(details.available).toBe(false)
+      expect(details.reason).toBe('sdk_unavailable')
+      expect(details.platform).toBe('android')
+    })
+
+    it('returns reason=unavailable when platform is not android and Health Connect is unavailable', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.isAvailable.mockResolvedValue({
+        available: false,
+        reason: 'Not supported.',
+        platform: 'web',
       })
       const details = await connector.availabilityDetails()
       expect(details.available).toBe(false)

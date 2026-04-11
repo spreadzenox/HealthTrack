@@ -20,6 +20,7 @@ vi.mock('../connectors/connectorRegistry', () => ({
       availabilityDetails: vi.fn().mockResolvedValue({ available: false, reason: 'unavailable' }),
       checkPermissions: vi.fn().mockResolvedValue('not_asked'),
       requestPermissions: vi.fn().mockResolvedValue('denied'),
+      openHealthConnectSettings: vi.fn().mockResolvedValue(undefined),
       sync: vi.fn().mockResolvedValue({ synced: 0, skipped: 0, errors: [] }),
     },
   ],
@@ -127,6 +128,24 @@ describe('Connectors page', () => {
     await waitFor(() => {
       expect(screen.getByText(/nécessite une mise à jour/i)).toBeInTheDocument()
     })
+    unmount()
+  })
+
+  it('shows sdk_unavailable message with system update steps for Android 16 / One UI 8', async () => {
+    const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'sdk_unavailable', platform: 'android' })
+
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+    const { unmount } = renderConnectors()
+    await waitFor(() => {
+      expect(screen.getByText(/Health Connect non disponible sur cet appareil/i)).toBeInTheDocument()
+    })
+    // Should mention system module (appears in alert and in help section)
+    expect(screen.getAllByText(/module système intégré/i).length).toBeGreaterThan(0)
+    // Should include a button to open Health Connect settings
+    expect(screen.getByRole('button', { name: /Ouvrir les paramètres Health Connect/i })).toBeInTheDocument()
     unmount()
   })
 

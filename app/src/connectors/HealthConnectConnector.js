@@ -91,7 +91,14 @@ export class HealthConnectConnector extends BaseConnector {
    *
    * @returns {Promise<{ available: boolean, reason?: string, platform?: string }>}
    *   - available: true if Health Connect is ready to use
-   *   - reason: one of 'provider_update_required' | 'unavailable' | 'no_bridge'
+   *   - reason: one of 'provider_update_required' | 'sdk_unavailable' | 'unavailable' | 'no_bridge'
+   *     - 'provider_update_required': Health Connect present but needs a Google Play System update
+   *       (SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED). Common on Android 14+ including Android 16.
+   *     - 'sdk_unavailable': Health Connect SDK returned SDK_UNAVAILABLE — device reports HC as
+   *       not available even though it should be on Android 14+ (One UI 8, Android 16, etc.).
+   *       Typically resolved by updating via Google Play System Updates.
+   *     - 'unavailable': catch-all for other unavailability scenarios
+   *     - 'no_bridge': Capacitor native bridge is absent (web/dev/test environment)
    *   - platform: 'android' or undefined
    */
   async availabilityDetails() {
@@ -107,9 +114,30 @@ export class HealthConnectConnector extends BaseConnector {
       if (reason.toLowerCase().includes('update')) {
         return { available: false, reason: 'provider_update_required', platform: result.platform }
       }
+      // SDK_UNAVAILABLE is distinct from SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED:
+      // it means Health Connect is absent/disabled on the device. On Android 14+ (including
+      // Android 16 / One UI 8) this can still happen when system modules are out of date
+      // or when the device reports HC as unavailable despite it being a built-in module.
+      if (result.platform === 'android') {
+        return { available: false, reason: 'sdk_unavailable', platform: result.platform }
+      }
       return { available: false, reason: 'unavailable', platform: result.platform }
     } catch {
       return { available: false, reason: 'unavailable' }
+    }
+  }
+
+  /**
+   * Opens the Android Health Connect settings screen directly (permissions, data sources).
+   * No-op in web/test environments.
+   */
+  async openHealthConnectSettings() {
+    const Health = await getHealthPlugin()
+    if (!Health || typeof Health.openHealthConnectSettings !== 'function') return
+    try {
+      await Health.openHealthConnectSettings()
+    } catch {
+      // ignore – settings intent may not be available on all devices
     }
   }
 
