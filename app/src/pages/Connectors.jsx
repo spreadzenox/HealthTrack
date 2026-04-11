@@ -61,11 +61,18 @@ function ConnectorCard({ connector }) {
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState(null)
   const [historyDays, setHistoryDays] = useState(DEFAULT_HISTORY_DAYS)
+  const [checkCount, setCheckCount] = useState(0)
 
   // Reload settings from localStorage when component mounts
   const reloadSettings = useCallback(() => {
     setSettings(getConnectorSettings(connector.id))
   }, [connector.id])
+
+  const recheckAvailability = useCallback(() => {
+    setAvailability('checking')
+    setAvailabilityReason(null)
+    setCheckCount((n) => n + 1)
+  }, [])
 
   useEffect(() => {
     reloadSettings()
@@ -84,7 +91,8 @@ function ConnectorCard({ connector }) {
     withTimeout(connector.checkPermissions(), 8000, 'not_asked')
       .then((p) => setPermissions(p === 'not_asked' ? 'not_asked' : p))
       .catch(() => setPermissions('not_asked'))
-  }, [connector, reloadSettings])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connector, reloadSettings, checkCount])
 
   const handleToggleEnabled = () => {
     const next = !settings.enabled
@@ -187,10 +195,26 @@ function ConnectorCard({ connector }) {
             <div className="connector-alert connector-alert-warning">
               <strong>Health Connect nécessite une mise à jour.</strong>{' '}
               Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
-              <strong>module système</strong> intégré — il n'est pas dans le Play Store.{' '}
+              <strong>module système</strong> intégré — il n&apos;est pas dans le Play Store.{' '}
               Pour le mettre à jour, allez dans{' '}
               <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>{' '}
-              et installez la dernière version. Relancez ensuite l'application.
+              et installez la dernière version. Relancez ensuite l&apos;application.
+              <div className="connector-alert-actions">
+                <button
+                  type="button"
+                  className="btn btn-secondary connector-btn"
+                  onClick={() => connector.openHealthConnectSettings && connector.openHealthConnectSettings()}
+                >
+                  Ouvrir les paramètres Health Connect
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary connector-btn"
+                  onClick={recheckAvailability}
+                >
+                  Revérifier la disponibilité
+                </button>
+              </div>
             </div>
           )}
 
@@ -198,8 +222,8 @@ function ConnectorCard({ connector }) {
             <div className="connector-alert connector-alert-warning">
               <strong>Health Connect non disponible sur cet appareil.</strong>{' '}
               Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
-              <strong>module système intégré</strong> — il n'y a pas d'application à installer.{' '}
-              Si votre appareil l'indique comme non disponible, essayez les étapes suivantes :{' '}
+              <strong>module système intégré</strong> — il n&apos;y a pas d&apos;application à installer.{' '}
+              Si votre appareil l&apos;indique comme non disponible, essayez les étapes suivantes :{' '}
               <ol style={{ margin: '0.5em 0 0.5em 1.2em', padding: 0 }}>
                 <li>
                   Allez dans <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>{' '}
@@ -210,16 +234,25 @@ function ConnectorCard({ connector }) {
                   Health Connect est activée dans Samsung Health → Paramètres → Health Connect.
                 </li>
                 <li>
-                  Ouvrez les paramètres Health Connect pour vérifier que l'accès est configuré :
+                  Ouvrez les paramètres Health Connect pour vérifier que l&apos;accès est configuré.
                 </li>
               </ol>
-              <button
-                type="button"
-                className="btn btn-secondary connector-btn"
-                onClick={() => connector.openHealthConnectSettings && connector.openHealthConnectSettings()}
-              >
-                Ouvrir les paramètres Health Connect
-              </button>
+              <div className="connector-alert-actions">
+                <button
+                  type="button"
+                  className="btn btn-secondary connector-btn"
+                  onClick={() => connector.openHealthConnectSettings && connector.openHealthConnectSettings()}
+                >
+                  Ouvrir les paramètres Health Connect
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary connector-btn"
+                  onClick={recheckAvailability}
+                >
+                  Revérifier la disponibilité
+                </button>
+              </div>
             </div>
           )}
 
@@ -231,6 +264,22 @@ function ConnectorCard({ connector }) {
               <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>.{' '}
               Sur Android 8–13 uniquement, installez &quot;Health Connect&quot; depuis le Play Store.{' '}
               Activez ensuite la synchronisation dans Samsung Health → Paramètres → Health Connect.
+              <div className="connector-alert-actions">
+                <button
+                  type="button"
+                  className="btn btn-secondary connector-btn"
+                  onClick={() => connector.openHealthConnectSettings && connector.openHealthConnectSettings()}
+                >
+                  Ouvrir les paramètres Health Connect
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary connector-btn"
+                  onClick={recheckAvailability}
+                >
+                  Revérifier la disponibilité
+                </button>
+              </div>
             </div>
           )}
 
