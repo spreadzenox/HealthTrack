@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
-import NutritionKPIs from '../components/NutritionKPIs'
 import WellbeingCharts from '../components/WellbeingCharts'
 import { formatAt } from '../utils/format'
 
@@ -65,7 +64,6 @@ export default function Dashboard() {
 
       {!loading && !error && (
         <>
-          <NutritionKPIs />
           <WellbeingCharts />
           <h3 className="section-title">Dernières entrées</h3>
           {entries.length === 0 ? (
