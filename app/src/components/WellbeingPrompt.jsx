@@ -21,21 +21,43 @@ function markSessionAnswered() {
 
 const SCORES = [0, 1, 2, 3, 4, 5]
 
-export default function WellbeingPrompt() {
-  const [open, setOpen] = useState(false)
+/**
+ * WellbeingPrompt can work in two modes:
+ * - Uncontrolled (no props): shows automatically once per session.
+ * - Controlled (open + onClose props): caller manages visibility.
+ */
+export default function WellbeingPrompt({ open: controlledOpen, onClose: controlledOnClose } = {}) {
+  const isControlled = controlledOpen !== undefined
+
+  const [internalOpen, setInternalOpen] = useState(false)
   const [selected, setSelected] = useState(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (!hasAnsweredThisSession()) {
-      setOpen(true)
+    if (!isControlled && !hasAnsweredThisSession()) {
+      setInternalOpen(true)
     }
-  }, [])
+  }, [isControlled])
+
+  // Reset selected score whenever the dialog opens
+  useEffect(() => {
+    const visible = isControlled ? controlledOpen : internalOpen
+    if (visible) {
+      setSelected(null)
+      setError(null)
+    }
+  }, [isControlled ? controlledOpen : internalOpen]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const open = isControlled ? controlledOpen : internalOpen
 
   const close = () => {
-    setOpen(false)
-    markSessionAnswered()
+    if (isControlled) {
+      controlledOnClose?.()
+    } else {
+      setInternalOpen(false)
+      markSessionAnswered()
+    }
   }
 
   const handleSkip = () => {
@@ -57,8 +79,10 @@ export default function WellbeingPrompt() {
         payload: { score: selected },
       })
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
-      markSessionAnswered()
-      setOpen(false)
+      if (!isControlled) {
+        markSessionAnswered()
+      }
+      close()
     } catch (e) {
       setError(e.message || 'Enregistrement impossible')
     } finally {
@@ -113,7 +137,7 @@ export default function WellbeingPrompt() {
 
         <div className="wellbeing-modal-actions">
           <button type="button" className="btn btn-secondary" onClick={handleSkip} disabled={saving}>
-            Plus tard
+            {isControlled ? 'Annuler' : 'Plus tard'}
           </button>
           <button type="button" className="btn" onClick={handleSave} disabled={saving}>
             {saving ? 'Enregistrement…' : 'Enregistrer'}

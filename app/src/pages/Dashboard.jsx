@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import WellbeingCharts from '../components/WellbeingCharts'
+import WellbeingPrompt from '../components/WellbeingPrompt'
 import { formatAt } from '../utils/format'
 
 const SOURCE_LABELS = {
@@ -27,6 +28,18 @@ export default function Dashboard() {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [wellbeingOpen, setWellbeingOpen] = useState(false)
+
+  const loadEntries = useCallback(async () => {
+    try {
+      const data = await listEntries({ limit: 30 })
+      setEntries(data)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -44,6 +57,12 @@ export default function Dashboard() {
     return () => { cancelled = true }
   }, [])
 
+  useEffect(() => {
+    const handler = () => loadEntries()
+    window.addEventListener('health-entries-updated', handler)
+    return () => window.removeEventListener('health-entries-updated', handler)
+  }, [loadEntries])
+
   return (
     <section className="dashboard">
       <h2 className="page-title">Tableau de bord</h2>
@@ -53,6 +72,18 @@ export default function Dashboard() {
         et bien plus. Configurez les sources dans{' '}
         <a href="/connectors" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Connecteurs</a>.
       </p>
+
+      <div className="dashboard-actions">
+        <button
+          type="button"
+          className="btn btn-secondary dashboard-wellbeing-btn"
+          onClick={() => setWellbeingOpen(true)}
+        >
+          + Ajouter un bien-être
+        </button>
+      </div>
+
+      <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
 
       {loading && (
         <div className="loading">
@@ -68,7 +99,7 @@ export default function Dashboard() {
           <h3 className="section-title">Dernières entrées</h3>
           {entries.length === 0 ? (
             <p className="empty-hint">
-              Aucune donnée pour l’instant. <Link to="/food">Enregistrez un repas</Link> pour commencer.
+              Aucune donnée pour l'instant. <Link to="/food">Enregistrez un repas</Link> pour commencer.
             </p>
           ) : (
             <ul className="entries-list">
