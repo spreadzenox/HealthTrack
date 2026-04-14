@@ -14,7 +14,8 @@ export default function Food() {
   const [result, setResult] = useState(null)
   const [savedId, setSavedId] = useState(null)
   const [recentMeals, setRecentMeals] = useState([])
-  const inputRef = useRef(null)
+  const cameraInputRef = useRef(null)
+  const galleryInputRef = useRef(null)
 
   const loadRecent = async () => {
     try {
@@ -74,7 +75,7 @@ export default function Food() {
       const data = await analyzeWithGemini(file, apiKey)
       setResult(data)
     } catch (err) {
-      setError(err.message || 'Erreur lors de l’analyse.')
+      setError(err.message || "Erreur lors de l'analyse.")
     } finally {
       setLoading(false)
     }
@@ -94,7 +95,7 @@ export default function Food() {
       loadRecent()
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
     } catch (err) {
-      setError(err.message || 'Erreur lors de l’enregistrement.')
+      setError(err.message || "Erreur lors de l'enregistrement.")
     } finally {
       setSaving(false)
     }
@@ -106,7 +107,8 @@ export default function Food() {
     setResult(null)
     setSavedId(null)
     setError(null)
-    if (inputRef.current) inputRef.current.value = ''
+    if (cameraInputRef.current) cameraInputRef.current.value = ''
+    if (galleryInputRef.current) galleryInputRef.current.value = ''
   }
 
   return (
@@ -120,21 +122,39 @@ export default function Food() {
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
       >
+        {/* Hidden input wired to camera (rear camera hint) */}
         <input
-          ref={inputRef}
-          id="file-upload"
+          ref={cameraInputRef}
+          id="camera-upload"
           type="file"
           accept="image/*"
           capture="environment"
           onChange={onInputChange}
-          aria-label="Choisir une photo"
+          aria-label="Prendre une photo"
+          className="hidden-file-input"
         />
-        <label htmlFor="file-upload">
-          {preview ? 'Changer la photo' : '📷 Prendre une photo ou choisir une image'}
-        </label>
-        <p className="hint">
-          {preview ? 'Cliquez pour modifier' : 'Utilisez l’appareil photo ou la galerie sur mobile'}
-        </p>
+        {/* Hidden input wired to gallery (no capture attribute) */}
+        <input
+          ref={galleryInputRef}
+          id="gallery-upload"
+          type="file"
+          accept="image/*"
+          onChange={onInputChange}
+          aria-label="Choisir depuis la galerie"
+          className="hidden-file-input"
+        />
+
+        <div className="upload-actions">
+          <label htmlFor="camera-upload" className="upload-btn">
+            📷 {preview ? 'Reprendre' : 'Prendre une photo'}
+          </label>
+          <label htmlFor="gallery-upload" className="upload-btn">
+            🖼️ {preview ? 'Galerie' : 'Choisir depuis la galerie'}
+          </label>
+        </div>
+        {!preview && (
+          <p className="hint">Utilisez l&apos;appareil photo ou la galerie sur mobile</p>
+        )}
       </div>
 
       {preview && (
@@ -201,7 +221,7 @@ export default function Food() {
 
       <h3 className="section-title">Derniers repas enregistrés</h3>
       {recentMeals.length === 0 ? (
-        <p className="empty-hint">Aucun repas enregistré pour l’instant.</p>
+        <p className="empty-hint">Aucun repas enregistré pour l&apos;instant.</p>
       ) : (
         <ul className="meals-list">
           {recentMeals.map((e) => (
