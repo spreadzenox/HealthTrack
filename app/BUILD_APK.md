@@ -92,7 +92,7 @@ Les utilisateurs qui ont une **version antérieure** voient une **bannière de m
 
 ## Test sur émulateur Samsung Galaxy A56
 
-Le workflow **`.github/workflows/emulator-samsung-a56.yml`** permet de lancer HealthTrack dans un émulateur Android dont les caractéristiques correspondent au Galaxy A56 :
+Le workflow **`.github/workflows/emulator-samsung-a56.yml`** lance HealthTrack dans un émulateur Android reproduisant fidèlement le Galaxy A56 et **exécute les tests instrumentés Health Connect** à chaque push et PR.
 
 | Paramètre | Valeur |
 |---|---|
@@ -105,22 +105,43 @@ Le workflow **`.github/workflows/emulator-samsung-a56.yml`** permet de lancer He
 
 ### Déclenchement
 
-Ce workflow est déclenché **manuellement** (`workflow_dispatch`) depuis l'onglet **Actions → Test — émulateur Samsung Galaxy A56 → Run workflow** de GitHub.
+Ce workflow se déclenche **automatiquement** à chaque :
+- push sur `main` ou une branche `cursor/**`
+- pull request vers `main`
+
+Il peut aussi être déclenché **manuellement** depuis **Actions → Test — émulateur Samsung Galaxy A56 → Run workflow**.
 
 ### Ce que fait le workflow
 
 1. Build de l'app web + synchronisation Capacitor
-2. Construction de l'APK debug
-3. Création d'un AVD nommé `samsung_a56` avec les specs ci-dessus
+2. Construction de l'APK debug **et** de l'APK de tests instrumentés (`assembleDebugAndroidTest`)
+3. Création d'un AVD `samsung_a56` avec les specs ci-dessus
 4. Démarrage de l'émulateur (KVM, sans fenêtre)
-5. Installation de l'APK et lancement de `MainActivity`
-6. Capture d'écran de l'app en cours d'exécution
+5. Installation des deux APK
+6. **Accord des permissions Health Connect via ADB** (sans popup utilisateur sur l'émulateur)
+7. **Exécution des tests instrumentés** `com.healthtrack.app.HealthConnectTest` qui vérifient :
+   - Disponibilité du SDK Health Connect
+   - Écriture et lecture de pas (`StepsRecord`)
+   - Écriture et lecture de fréquence cardiaque (`HeartRateRecord`)
+   - Écriture et lecture de sommeil (`SleepSessionRecord`)
+   - Simulation d'une synchronisation increméntale (plage de la dernière heure)
+8. Capture d'écran de l'app au démarrage et sur la page Connecteurs
+
+### Tests instrumentés Android
+
+Les tests sont dans :
+```
+app/android/app/src/androidTest/java/com/healthtrack/app/HealthConnectTest.kt
+```
+
+Ils utilisent directement le SDK `androidx.health.connect:connect-client` pour insérer des données synthétiques dans Health Connect, puis lisent ces données pour vérifier que le flux complet fonctionne.
 
 ### Artefacts produits
 
-À la fin du run, deux artefacts sont disponibles dans l'onglet **Actions → Artifacts** :
+À la fin du run, les artefacts suivants sont disponibles dans l'onglet **Actions → Artifacts** :
 
-- **`screenshot-samsung-a56`** — capture d'écran de l'app sur l'émulateur A56
+- **`screenshots-samsung-a56`** — captures d'écran (démarrage + page Connecteurs)
+- **`instrumented-test-results`** — sortie brute des tests instrumentés
 - **`apk-debug`** — l'APK installé lors du test
 
 ## Version release (signée)
