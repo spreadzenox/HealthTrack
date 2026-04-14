@@ -6,18 +6,42 @@
 import nutritionMap from '../data/ingredientsNutrition.json'
 
 /**
+ * All numeric fields that can be summed from ingredientsNutrition.json
+ * (excluding fodmap_score which is a categorical max, not a sum)
+ */
+export const NUTRITION_FIELDS = [
+  'energy_kcal',
+  'protein_g',
+  'carbohydrates_g',
+  'fat_g',
+  'fiber_g',
+  'sugar_g',
+  'saturated_fat_g',
+  'omega3_g',
+  'vitamin_c_mg',
+  'vitamin_d_ug',
+  'vitamin_b12_ug',
+  'vitamin_b9_ug',
+  'vitamin_a_ug',
+  'vitamin_e_mg',
+  'calcium_mg',
+  'iron_mg',
+  'magnesium_mg',
+  'zinc_mg',
+  'potassium_mg',
+  'sodium_mg',
+  'alcohol_g',
+]
+
+/**
  * @param {{ ingredient: string, quantity_g?: number }[]} items
- * @returns {{ energy_kcal: number, protein_g: number, carbohydrates_g: number, fat_g: number, fiber_g: number }}
+ * @returns {object} totals for all NUTRITION_FIELDS plus fodmap_score (max of items)
  */
 export function computeTotalsFromItems(items) {
-  const totals = {
-    energy_kcal: 0,
-    protein_g: 0,
-    carbohydrates_g: 0,
-    fat_g: 0,
-    fiber_g: 0,
-  }
-  if (!Array.isArray(items)) return totals
+  const totals = Object.fromEntries(NUTRITION_FIELDS.map((f) => [f, 0]))
+  let maxFodmap = 0
+
+  if (!Array.isArray(items)) return { ...totals, fodmap_score: maxFodmap }
 
   for (const it of items) {
     const name = (it.ingredient || '').trim()
@@ -26,20 +50,24 @@ export function computeTotalsFromItems(items) {
     const p100 = nutritionMap[name]
     if (!p100) continue
     const factor = qtyG / 100
-    totals.energy_kcal += (p100.energy_kcal || 0) * factor
-    totals.protein_g += (p100.protein_g || 0) * factor
-    totals.carbohydrates_g += (p100.carbohydrates_g || 0) * factor
-    totals.fat_g += (p100.fat_g || 0) * factor
-    totals.fiber_g += (p100.fiber_g || 0) * factor
+
+    for (const field of NUTRITION_FIELDS) {
+      totals[field] += (p100[field] || 0) * factor
+    }
+    // FODMAP: take the maximum score among all items in the meal
+    if (typeof p100.fodmap_score === 'number' && p100.fodmap_score > maxFodmap) {
+      maxFodmap = p100.fodmap_score
+    }
   }
 
-  return {
-    energy_kcal: Math.round(totals.energy_kcal * 10) / 10,
-    protein_g: Math.round(totals.protein_g * 10) / 10,
-    carbohydrates_g: Math.round(totals.carbohydrates_g * 10) / 10,
-    fat_g: Math.round(totals.fat_g * 10) / 10,
-    fiber_g: Math.round(totals.fiber_g * 10) / 10,
+  // Round summable fields to 1 decimal
+  const rounded = {}
+  for (const field of NUTRITION_FIELDS) {
+    rounded[field] = Math.round(totals[field] * 10) / 10
   }
+  rounded.fodmap_score = maxFodmap
+
+  return rounded
 }
 
 /**
