@@ -15,15 +15,53 @@ describe('Food', () => {
     listEntries.mockResolvedValue([])
   })
 
-  it('renders food page title and upload zone', () => {
+  it('renders food page title', () => {
     render(
       <BrowserRouter>
         <Food />
       </BrowserRouter>
     )
     expect(screen.getByRole('heading', { name: /Alimentation/i })).toBeInTheDocument()
-    expect(screen.getByLabelText(/Choisir une photo/i)).toBeInTheDocument()
-    expect(screen.getByText(/Prendre une photo ou choisir une image/i)).toBeInTheDocument()
+  })
+
+  it('renders two separate file inputs: camera and gallery', () => {
+    render(
+      <BrowserRouter>
+        <Food />
+      </BrowserRouter>
+    )
+    expect(screen.getByLabelText(/Prendre une photo/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Choisir depuis la galerie/i)).toBeInTheDocument()
+  })
+
+  it('renders camera button with capture attribute', () => {
+    render(
+      <BrowserRouter>
+        <Food />
+      </BrowserRouter>
+    )
+    const cameraInput = screen.getByLabelText(/Prendre une photo/i)
+    expect(cameraInput).toHaveAttribute('capture', 'environment')
+  })
+
+  it('renders gallery input without capture attribute', () => {
+    render(
+      <BrowserRouter>
+        <Food />
+      </BrowserRouter>
+    )
+    const galleryInput = screen.getByLabelText(/Choisir depuis la galerie/i)
+    expect(galleryInput).not.toHaveAttribute('capture')
+  })
+
+  it('renders camera and gallery label buttons', () => {
+    render(
+      <BrowserRouter>
+        <Food />
+      </BrowserRouter>
+    )
+    expect(screen.getByText(/Prendre une photo/i)).toBeInTheDocument()
+    expect(screen.getByText(/Choisir depuis la galerie/i)).toBeInTheDocument()
   })
 
   it('loads recent meals from local storage on mount', async () => {
