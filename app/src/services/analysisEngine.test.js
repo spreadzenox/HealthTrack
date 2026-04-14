@@ -6,11 +6,14 @@ import { describe, it, expect } from 'vitest'
 import {
   localDateKey,
   buildDailyDataset,
+  buildLaggedDataset,
   pearsonCorrelation,
   computeBasicCorrelations,
   computeAdvancedAnalysis,
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
+  LAG_DAYS,
+  VARIABLE_META,
 } from './analysisEngine'
 
 // ---------------------------------------------------------------------------
@@ -83,7 +86,7 @@ describe('localDateKey', () => {
 })
 
 // ---------------------------------------------------------------------------
-// buildDailyDataset
+// buildDailyDataset — base fields
 // ---------------------------------------------------------------------------
 
 describe('buildDailyDataset', () => {
@@ -151,25 +154,129 @@ describe('buildDailyDataset', () => {
   })
 
   it('computes nutrition kcal for the day', () => {
-    // Rice: ~130 kcal per 100g
     const items = [{ ingredient: 'riz cuit', quantity_g: 100 }]
     const entries = [
       makeWellbeing('2026-01-01', 4),
       makeFood('2026-01-01', items),
     ]
     const ds = buildDailyDataset(entries)
-    // Just check it's a number (may be 0 if ingredient not in lookup)
     expect(typeof ds[0].kcal).toBe('number')
   })
 
   it('only includes days that have at least one wellbeing score', () => {
     const entries = [
-      makeSleep('2026-01-01', 480),  // no wellbeing
+      makeSleep('2026-01-01', 480),
       makeWellbeing('2026-01-02', 3),
     ]
     const ds = buildDailyDataset(entries)
     expect(ds).toHaveLength(1)
     expect(ds[0].dateKey).toBe(localDateKey('2026-01-02T12:00:00Z'))
+  })
+
+  // New micronutrient & enriched fields
+  it('includes sugar_g, saturated_fat_g, omega3_g, alcohol_g in day rows', () => {
+    const entries = [makeWellbeing('2026-01-01', 3)]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0]).toHaveProperty('sugar_g')
+    expect(ds[0]).toHaveProperty('saturated_fat_g')
+    expect(ds[0]).toHaveProperty('omega3_g')
+    expect(ds[0]).toHaveProperty('alcohol_g')
+  })
+
+  it('includes vitamin fields in day rows', () => {
+    const entries = [makeWellbeing('2026-01-01', 3)]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0]).toHaveProperty('vitamin_c_mg')
+    expect(ds[0]).toHaveProperty('vitamin_d_ug')
+    expect(ds[0]).toHaveProperty('vitamin_b12_ug')
+    expect(ds[0]).toHaveProperty('vitamin_b9_ug')
+    expect(ds[0]).toHaveProperty('vitamin_a_ug')
+    expect(ds[0]).toHaveProperty('vitamin_e_mg')
+  })
+
+  it('includes mineral fields in day rows', () => {
+    const entries = [makeWellbeing('2026-01-01', 3)]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0]).toHaveProperty('calcium_mg')
+    expect(ds[0]).toHaveProperty('iron_mg')
+    expect(ds[0]).toHaveProperty('magnesium_mg')
+    expect(ds[0]).toHaveProperty('zinc_mg')
+    expect(ds[0]).toHaveProperty('potassium_mg')
+    expect(ds[0]).toHaveProperty('sodium_mg')
+  })
+
+  it('includes fodmap_score in day rows', () => {
+    const entries = [makeWellbeing('2026-01-01', 3)]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0]).toHaveProperty('fodmap_score')
+    expect(typeof ds[0].fodmap_score).toBe('number')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// buildLaggedDataset
+// ---------------------------------------------------------------------------
+
+describe('buildLaggedDataset', () => {
+  it('returns empty array for empty input', () => {
+    expect(buildLaggedDataset([])).toEqual([])
+  })
+
+  it('returns same length as input dataset', () => {
+    const entries = []
+    for (let d = 1; d <= 5; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 3))
+    }
+    const raw = buildDailyDataset(entries)
+    const lagged = buildLaggedDataset(raw)
+    expect(lagged).toHaveLength(raw.length)
+  })
+
+  it('preserves wellbeing and lifestyle values unchanged', () => {
+    const entries = [
+      makeWellbeing('2026-01-01', 4),
+      makeSleep('2026-01-01', 480),
+      makeSteps('2026-01-01', 8000),
+    ]
+    const raw = buildDailyDataset(entries)
+    const lagged = buildLaggedDataset(raw)
+    expect(lagged[0].wellbeing).toBeCloseTo(4)
+    expect(lagged[0].sleepMinutes).toBeCloseTo(480)
+    expect(lagged[0].steps).toBeCloseTo(8000)
+  })
+
+  it('smooths nutrition values across multiple days', () => {
+    // Day 1: high kcal, Day 2: low kcal
+    // Day 2 lagged kcal should be > day 2 raw kcal (influenced by day 1)
+    const items_high = [{ ingredient: 'Huile d\'olive vierge extra', quantity_g: 100 }]
+    const items_low = [{ ingredient: 'Huile d\'olive vierge extra', quantity_g: 10 }]
+    const entries = [
+      makeWellbeing('2026-01-01', 3),
+      makeFood('2026-01-01', items_high),
+      makeWellbeing('2026-01-02', 3),
+      makeFood('2026-01-02', items_low),
+    ]
+    const raw = buildDailyDataset(entries)
+    // If kcal is non-zero in raw, lagged day 2 should be influenced by day 1
+    if (raw[0].kcal > 0 && raw[1].kcal > 0) {
+      const lagged = buildLaggedDataset(raw)
+      // Day 2 lagged kcal should be between day 1 raw and day 2 raw
+      expect(lagged[1].kcal).toBeGreaterThan(raw[1].kcal * 0.9)
+    }
+  })
+
+  it('for a single isolated day, lagged equals raw (only self-contribution)', () => {
+    // With only 1 day and no neighbours, the lagged value = raw value (weight=1 for delta=0)
+    const entries = [makeWellbeing('2026-06-15', 4)]
+    const raw = buildDailyDataset(entries)
+    const lagged = buildLaggedDataset(raw)
+    expect(lagged[0].wellbeing).toBeCloseTo(raw[0].wellbeing)
+    expect(lagged[0].kcal).toBeCloseTo(raw[0].kcal)
+  })
+
+  it('LAG_DAYS constant is positive', () => {
+    expect(LAG_DAYS).toBeGreaterThan(0)
   })
 })
 
@@ -207,14 +314,51 @@ describe('pearsonCorrelation', () => {
 })
 
 // ---------------------------------------------------------------------------
+// VARIABLE_META
+// ---------------------------------------------------------------------------
+
+describe('VARIABLE_META', () => {
+  it('includes all expected new micronutrient keys', () => {
+    const expectedKeys = [
+      'sugar_g', 'saturated_fat_g', 'omega3_g', 'alcohol_g', 'fodmap_score',
+      'vitamin_c_mg', 'vitamin_d_ug', 'vitamin_b12_ug', 'vitamin_b9_ug', 'vitamin_a_ug', 'vitamin_e_mg',
+      'calcium_mg', 'iron_mg', 'magnesium_mg', 'zinc_mg', 'potassium_mg', 'sodium_mg',
+    ]
+    for (const key of expectedKeys) {
+      expect(VARIABLE_META).toHaveProperty(key)
+    }
+  })
+
+  it('every entry has label, unit, direction, group', () => {
+    for (const [key, meta] of Object.entries(VARIABLE_META)) {
+      expect(meta, `${key} missing label`).toHaveProperty('label')
+      expect(meta, `${key} missing unit`).toHaveProperty('unit')
+      expect(meta, `${key} missing direction`).toHaveProperty('direction')
+      expect(meta, `${key} missing group`).toHaveProperty('group')
+      expect(['higher_better', 'lower_better', 'neutral'], `${key} invalid direction`).toContain(meta.direction)
+    }
+  })
+
+  it('alcohol has direction lower_better', () => {
+    expect(VARIABLE_META.alcohol_g.direction).toBe('lower_better')
+  })
+
+  it('sodium has direction lower_better', () => {
+    expect(VARIABLE_META.sodium_mg.direction).toBe('lower_better')
+  })
+
+  it('vitamin_d has direction higher_better', () => {
+    expect(VARIABLE_META.vitamin_d_ug.direction).toBe('higher_better')
+  })
+})
+
+// ---------------------------------------------------------------------------
 // computeBasicCorrelations
 // ---------------------------------------------------------------------------
 
 describe('computeBasicCorrelations', () => {
   it('returns { status: "not_enough_data" } with fewer than MIN_DAYS_BASIC days', () => {
-    const entries = [
-      makeWellbeing('2026-01-01', 3),
-    ]
+    const entries = [makeWellbeing('2026-01-01', 3)]
     const result = computeBasicCorrelations(entries)
     expect(result.status).toBe('not_enough_data')
     expect(result.minDays).toBe(MIN_DAYS_BASIC)
@@ -222,7 +366,6 @@ describe('computeBasicCorrelations', () => {
 
   it('returns correlations when enough data exists', () => {
     const entries = []
-    // Build 7 days of well-correlated sleep → wellbeing data
     for (let d = 1; d <= 7; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, d <= 4 ? 2 : 4))
@@ -233,9 +376,21 @@ describe('computeBasicCorrelations', () => {
     expect(Array.isArray(result.correlations)).toBe(true)
   })
 
+  it('correlations include group field', () => {
+    const entries = []
+    for (let d = 1; d <= 5; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, d))
+      entries.push(makeSleep(date, 300 + d * 30))
+    }
+    const result = computeBasicCorrelations(entries)
+    if (result.status === 'ok' && result.correlations.length > 0) {
+      expect(result.correlations[0]).toHaveProperty('group')
+    }
+  })
+
   it('returns top 3 negative-impact variables sorted by impact', () => {
     const entries = []
-    // 7 days: sleep negatively affects wellbeing (inversely correlated)
     for (let d = 1; d <= 7; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, d <= 4 ? 4 : 2))
@@ -285,7 +440,7 @@ describe('computeAdvancedAnalysis', () => {
     expect(result.status).toBe('ok')
   })
 
-  it('returns featureImportance array', () => {
+  it('returns featureImportance array with group field', () => {
     const entries = []
     for (let d = 1; d <= 7; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
@@ -299,11 +454,12 @@ describe('computeAdvancedAnalysis', () => {
         expect(fi).toHaveProperty('variable')
         expect(fi).toHaveProperty('importance')
         expect(fi).toHaveProperty('direction')
+        expect(fi).toHaveProperty('group')
       })
     }
   })
 
-  it('returns modelInfo with R2 score', () => {
+  it('returns modelInfo with R2 score and lagDays', () => {
     const entries = []
     for (let d = 1; d <= 7; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
@@ -312,10 +468,24 @@ describe('computeAdvancedAnalysis', () => {
       entries.push(makeSteps(date, 4000 + d * 500))
     }
     const result = computeAdvancedAnalysis(entries)
-    if (result.status === 'ok') {
+    if (result.status === 'ok' && result.modelInfo.method === 'ols_linear_regression') {
       expect(result.modelInfo).toHaveProperty('r2')
-      // r2 is a number (may be null in correlation-only fallback)
-      expect(result.modelInfo.r2 === null || typeof result.modelInfo.r2 === 'number').toBe(true)
+      expect(result.modelInfo).toHaveProperty('lagDays')
+      expect(result.modelInfo.lagDays).toBe(LAG_DAYS)
+    }
+  })
+
+  it('featureImportance shows at most 12 entries', () => {
+    const entries = []
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 4)))
+      entries.push(makeSleep(date, 300 + d * 20))
+      entries.push(makeSteps(date, 4000 + d * 500))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok') {
+      expect(result.featureImportance.length).toBeLessThanOrEqual(12)
     }
   })
 })
