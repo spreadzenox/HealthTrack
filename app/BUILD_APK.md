@@ -90,6 +90,39 @@ Les utilisateurs qui ont une **version antérieure** voient une **bannière de m
 - **Version affichée / comparée** : celle injectée au build (`VITE_APP_VERSION` en CI, sinon `package.json` → `version`).
 - Pour déclencher manuellement : **Actions** → **Build & Release** → **Run workflow**.
 
+## Test sur émulateur Samsung Galaxy A56
+
+Le workflow **`.github/workflows/emulator-samsung-a56.yml`** permet de lancer HealthTrack dans un émulateur Android dont les caractéristiques correspondent au Galaxy A56 :
+
+| Paramètre | Valeur |
+|---|---|
+| Android | API 35 (Android 15) |
+| Résolution | 1080 × 2340 px |
+| Densité | ~385 ppi (xxhdpi) |
+| Taille écran | 6.7" |
+| RAM | 8 Go |
+| Architecture | x86_64 (accéléré KVM) |
+
+### Déclenchement
+
+Ce workflow est déclenché **manuellement** (`workflow_dispatch`) depuis l'onglet **Actions → Test — émulateur Samsung Galaxy A56 → Run workflow** de GitHub.
+
+### Ce que fait le workflow
+
+1. Build de l'app web + synchronisation Capacitor
+2. Construction de l'APK debug
+3. Création d'un AVD nommé `samsung_a56` avec les specs ci-dessus
+4. Démarrage de l'émulateur (KVM, sans fenêtre)
+5. Installation de l'APK et lancement de `MainActivity`
+6. Capture d'écran de l'app en cours d'exécution
+
+### Artefacts produits
+
+À la fin du run, deux artefacts sont disponibles dans l'onglet **Actions → Artifacts** :
+
+- **`screenshot-samsung-a56`** — capture d'écran de l'app sur l'émulateur A56
+- **`apk-debug`** — l'APK installé lors du test
+
 ## Version release (signée)
 
 Pour publier sur le Play Store, il faut configurer une clé de signature et un build release. Voir la [doc Capacitor Android](https://capacitorjs.com/docs/android) et la doc Android sur [signing your app](https://developer.android.com/studio/publish/app-signing).
