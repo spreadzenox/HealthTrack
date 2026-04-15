@@ -184,30 +184,29 @@ jobs:
 
             echo "=== Accord des permissions Health Connect via ADB ==="
             # Ces permissions fonctionnent sur l'image google_apis (émulateur) sans popup utilisateur.
-            HC_PERMS=(
-              "android.permission.health.READ_STEPS"
-              "android.permission.health.WRITE_STEPS"
-              "android.permission.health.READ_HEART_RATE"
-              "android.permission.health.WRITE_HEART_RATE"
-              "android.permission.health.READ_SLEEP"
-              "android.permission.health.WRITE_SLEEP"
-              "android.permission.health.READ_DISTANCE"
-              "android.permission.health.WRITE_DISTANCE"
-              "android.permission.health.READ_ACTIVE_CALORIES_BURNED"
-              "android.permission.health.WRITE_ACTIVE_CALORIES_BURNED"
-              "android.permission.health.READ_RESTING_HEART_RATE"
-              "android.permission.health.WRITE_RESTING_HEART_RATE"
-              "android.permission.health.READ_HEART_RATE_VARIABILITY"
-              "android.permission.health.WRITE_HEART_RATE_VARIABILITY"
-              "android.permission.health.READ_OXYGEN_SATURATION"
-              "android.permission.health.WRITE_OXYGEN_SATURATION"
-              "android.permission.health.READ_EXERCISE"
-              "android.permission.health.WRITE_EXERCISE"
-              "android.permission.health.READ_TOTAL_CALORIES_BURNED"
-              "android.permission.health.WRITE_TOTAL_CALORIES_BURNED"
-            )
-            for PERM in "${HC_PERMS[@]}"; do
-              adb shell pm grant com.healthtrack.app "$PERM" 2>/dev/null && echo "✓ $PERM" || echo "⚠ Non accordée : $PERM"
+            # Note: use a plain for-loop (POSIX sh compatible — no bash arrays).
+            for PERM in \
+              android.permission.health.READ_STEPS \
+              android.permission.health.WRITE_STEPS \
+              android.permission.health.READ_HEART_RATE \
+              android.permission.health.WRITE_HEART_RATE \
+              android.permission.health.READ_SLEEP \
+              android.permission.health.WRITE_SLEEP \
+              android.permission.health.READ_DISTANCE \
+              android.permission.health.WRITE_DISTANCE \
+              android.permission.health.READ_ACTIVE_CALORIES_BURNED \
+              android.permission.health.WRITE_ACTIVE_CALORIES_BURNED \
+              android.permission.health.READ_RESTING_HEART_RATE \
+              android.permission.health.WRITE_RESTING_HEART_RATE \
+              android.permission.health.READ_HEART_RATE_VARIABILITY \
+              android.permission.health.WRITE_HEART_RATE_VARIABILITY \
+              android.permission.health.READ_OXYGEN_SATURATION \
+              android.permission.health.WRITE_OXYGEN_SATURATION \
+              android.permission.health.READ_EXERCISE \
+              android.permission.health.WRITE_EXERCISE \
+              android.permission.health.READ_TOTAL_CALORIES_BURNED \
+              android.permission.health.WRITE_TOTAL_CALORIES_BURNED; do
+              adb shell pm grant com.healthtrack.app "$PERM" 2>/dev/null && echo "OK $PERM" || echo "SKIP $PERM"
             done
 
             echo "=== Lancement de HealthTrack ==="
