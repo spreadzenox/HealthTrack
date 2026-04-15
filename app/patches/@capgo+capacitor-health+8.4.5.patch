@@ -1,5 +1,5 @@
 diff --git a/node_modules/@capgo/capacitor-health/android/src/main/java/app/capgo/plugin/health/HealthPlugin.kt b/node_modules/@capgo/capacitor-health/android/src/main/java/app/capgo/plugin/health/HealthPlugin.kt
-index 8767de8..91dd622 100644
+index 8767de8..cca8e15 100644
 --- a/node_modules/@capgo/capacitor-health/android/src/main/java/app/capgo/plugin/health/HealthPlugin.kt
 +++ b/node_modules/@capgo/capacitor-health/android/src/main/java/app/capgo/plugin/health/HealthPlugin.kt
 @@ -3,6 +3,7 @@ package app.capgo.plugin.health
@@ -19,7 +19,7 @@ index 8767de8..91dd622 100644
          call.resolve(availabilityPayload(status))
      }
  
-@@ -290,12 +291,49 @@ class HealthPlugin : Plugin() {
+@@ -290,12 +291,97 @@ class HealthPlugin : Plugin() {
      }
  
      private fun getClientOrReject(call: PluginCall): HealthConnectClient? {
@@ -68,10 +68,67 @@ index 8767de8..91dd622 100644
 +            // Treat as SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED so the user is directed to update.
 +            HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED
 +        }
++    }
++
++    /**
++     * Same as [getSdkStatusSafe] but also returns the raw status integers for both
++     * provider queries so they can be surfaced in the JS debug log for remote diagnosis.
++     */
++    private fun getSdkStatusDetailed(): Triple<Int, Int?, Int?> {
++        return try {
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
++                val systemStatus = try {
++                    HealthConnectClient.getSdkStatus(context, SYSTEM_MODULE_PACKAGE_NAME)
++                } catch (e: Exception) {
++                    -1
++                }
++                val defaultStatus = try {
++                    HealthConnectClient.getSdkStatus(context)
++                } catch (e: Exception) {
++                    -1
++                }
++                val resolved = when {
++                    systemStatus == HealthConnectClient.SDK_AVAILABLE -> systemStatus
++                    defaultStatus == HealthConnectClient.SDK_AVAILABLE -> defaultStatus
++                    else -> systemStatus
++                }
++                Triple(resolved, systemStatus, defaultStatus)
++            } else {
++                val s = HealthConnectClient.getSdkStatus(context)
++                Triple(s, null, null)
++            }
++        } catch (e: Exception) {
++            Triple(HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED, null, null)
++        }
++    }
++
++    @PluginMethod
++    fun getAvailabilityStatus(call: PluginCall) {
++        val (status, systemStatus, defaultStatus) = getSdkStatusDetailed()
++        val payload = JSObject()
++        payload.put("status", status)
++        payload.put("sdkInt", Build.VERSION.SDK_INT)
++        payload.put("sdkAvailableConst", HealthConnectClient.SDK_AVAILABLE)
++        payload.put("sdkUnavailableConst", HealthConnectClient.SDK_UNAVAILABLE)
++        payload.put("sdkUnavailableUpdateRequiredConst", HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED)
++        payload.put("available", status == HealthConnectClient.SDK_AVAILABLE)
++        payload.put("reason", availabilityReason(status))
++        if (systemStatus != null) payload.put("systemModuleStatus", systemStatus)
++        if (defaultStatus != null) payload.put("defaultProviderStatus", defaultStatus)
++        call.resolve(payload)
      }
  
      private fun availabilityPayload(status: Int): JSObject {
-@@ -441,5 +479,7 @@ class HealthPlugin : Plugin() {
+@@ -305,6 +391,8 @@ class HealthPlugin : Plugin() {
+         if (status != HealthConnectClient.SDK_AVAILABLE) {
+             payload.put("reason", availabilityReason(status))
+         }
++        payload.put("sdkInt", Build.VERSION.SDK_INT)
++        payload.put("statusCode", status)
+         return payload
+     }
+ 
+@@ -441,5 +529,7 @@ class HealthPlugin : Plugin() {
          private const val DEFAULT_LIMIT = 100
          private val DEFAULT_PAST_DURATION: Duration = Duration.ofDays(1)
          private const val HEALTH_CONNECT_SETTINGS_ACTION = "androidx.health.ACTION_HEALTH_CONNECT_SETTINGS"

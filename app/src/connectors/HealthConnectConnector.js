@@ -55,22 +55,80 @@ function toEntryType(dataType) {
   return map[dataType] || dataType
 }
 
+/**
+ * Returns the current Capacitor platform.
+ * Reads window.Capacitor synchronously first (no dynamic import, avoids potential
+ * WebView re-entry/deadlock on Android). Falls back to 'web'.
+ *
+ * NOTE: unit tests mock @capacitor/core but not window.Capacitor, so in tests
+ * this always returns 'web'. callers that need Android detection under tests
+ * should accept an optional override.
+ */
+function getPlatformSync() {
+  try {
+    return (typeof window !== 'undefined' && window?.Capacitor?.getPlatform?.()) || 'web'
+  } catch {
+    return 'web'
+  }
+}
+
+/**
+ * Async platform detection — imports @capacitor/core but prefers the synchronous
+ * window.Capacitor path on real devices to avoid potential WebView import deadlocks.
+ * On real Android devices window.Capacitor IS set, so the sync path is taken.
+ * In unit tests window.Capacitor is not set so we fall through to the dynamic import
+ * which respects vi.mock() overrides.
+ */
+async function getPlatformAsync() {
+  // Real device: window.Capacitor.getPlatform() is available synchronously
+  const sync = getPlatformSync()
+  if (sync !== 'web') return sync
+  // Test / web environment: fall back to dynamic import
+  try {
+    const { Capacitor } = await import('@capacitor/core')
+    return Capacitor.getPlatform()
+  } catch {
+    return 'web'
+  }
+}
+
 /** Lazily import the Capacitor plugin to avoid crashing in web/test environments. */
 async function getHealthPlugin() {
   try {
     const mod = await import('@capgo/capacitor-health')
     const Health = mod.Health
-    // Log which methods are available on the plugin object so we can tell if it is a
-    // real native bridge or just the JS stub/fallback.
-    const methodNames = Health
-      ? Object.getOwnPropertyNames(Object.getPrototypeOf(Health) || {})
-          .concat(Object.keys(Health))
-          .filter((k) => typeof Health[k] === 'function')
-      : []
-    debugDebug(TAG, 'Plugin @capgo/capacitor-health chargé avec succès', {
+
+    // Probe specific expected method names WITHOUT iterating proxy keys.
+    // (Object.keys() / getOwnPropertyNames() on a Capacitor native proxy can
+    //  trigger bridge calls for every key, potentially deadlocking the WebView thread.)
+    const EXPECTED_METHODS = ['isAvailable', 'checkAuthorization', 'requestAuthorization', 'readSamples', 'queryAggregated', 'queryWorkouts', 'openHealthConnectSettings']
+    let nativeMethods = []
+    try {
+      nativeMethods = Health
+        ? EXPECTED_METHODS.filter((m) => typeof Health[m] === 'function')
+        : []
+    } catch (probeErr) {
+      debugWarn(TAG, 'Probe méthodes Health échouée', { error: String(probeErr) })
+    }
+    const hasNativeMethods = nativeMethods.length > 0
+
+    // Also check direct plugin registration via window.Capacitor
+    let healthInRegistry = false
+    try {
+      const pluginsRegistry = (typeof window !== 'undefined' && window?.Capacitor?.Plugins) || {}
+      healthInRegistry = 'Health' in pluginsRegistry
+    } catch {
+      // ignore
+    }
+
+    debugInfo(TAG, 'Plugin @capgo/capacitor-health chargé', {
       pluginType: typeof Health,
-      methodsAvailable: methodNames,
-      hasNativeBridge: !!(typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.()),
+      pluginIsNull: Health == null,
+      nativeMethodsFound: nativeMethods,
+      hasNativeMethods,
+      healthInCapacitorRegistry: healthInRegistry,
+      isNativePlatform: !!(typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.()),
+      platform: getPlatformSync(),
     })
     return Health
   } catch (e) {
@@ -79,18 +137,6 @@ async function getHealthPlugin() {
   }
 }
 
-/**
- * Lazily import Capacitor core to read the current platform.
- * Returns 'web' in test/browser environments (no native bridge).
- */
-async function getPlatform() {
-  try {
-    const { Capacitor } = await import('@capacitor/core')
-    return Capacitor.getPlatform()
-  } catch {
-    return 'web'
-  }
-}
 
 /**
  * Collect device/environment diagnostics useful for remote debugging.
@@ -202,28 +248,75 @@ export class HealthConnectConnector extends BaseConnector {
     debugInfo(TAG, 'Informations appareil', deviceInfo)
 
     const Health = await getHealthPlugin()
+
+    // Platform: sync first (real Android device), async fallback (tests/web).
+    // getPlatformSync() reads window.Capacitor which is set on all real Capacitor builds.
+    // The async fallback handles test environments where window.Capacitor is not mocked.
+    const platform = await getPlatformAsync()
+    debugInfo(TAG, `Plateforme détectée : ${platform}`)
+
     if (!Health) {
       debugWarn(TAG, 'Aucun bridge natif Capacitor détecté → no_bridge', { reason: 'no_bridge' })
       return { available: false, reason: 'no_bridge' }
     }
 
-    // Log which methods are present on the Health object to distinguish a real native
-    // proxy from the JS stub (stub won't have native method implementations).
-    try {
-      const protoMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(Health) || {})
-      const ownKeys = Object.keys(Health)
-      debugDebug(TAG, 'Méthodes Health (prototype)', { protoMethods })
-      debugDebug(TAG, 'Clés Health (propres)', { ownKeys })
-    } catch (introspectErr) {
-      debugWarn(TAG, 'Introspection Health échouée', { error: String(introspectErr) })
+    // Verify method presence immediately after getHealthPlugin() returns.
+    // This distinguishes a real native proxy (has isAvailable) from a web stub.
+    const hasIsAvailable = typeof Health.isAvailable === 'function'
+    debugInfo(TAG, 'Vérification méthode Health.isAvailable', {
+      hasIsAvailable,
+      platform,
+      isNative: getPlatformSync() === 'android',
+    })
+
+    if (!hasIsAvailable) {
+      debugError(TAG, 'Health.isAvailable() absent du proxy — plugin natif non chargé', {
+        platform,
+        bridgePresent: !!(typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.()),
+      })
+      return { available: false, reason: 'no_bridge', platform }
     }
 
-    // Collect platform info before calling isAvailable for richer diagnostics
-    const platform = await getPlatform()
-    debugInfo(TAG, `Plateforme détectée (Capacitor.getPlatform) : ${platform}`)
+    // Quick bridge responsiveness test — getPluginVersion() is lightweight and synchronous
+    // on the native side. If it times out, the bridge is hung.
+    try {
+      if (typeof Health.getPluginVersion === 'function') {
+        const versionResult = await Promise.race([
+          Health.getPluginVersion(),
+          new Promise((resolve) => setTimeout(() => resolve({ __timeout: true }), 3000)),
+        ])
+        if (versionResult?.__timeout) {
+          debugError(TAG, 'Bridge Capacitor suspendu — getPluginVersion() timeout 3s', { platform })
+        } else {
+          debugInfo(TAG, 'Bridge Capacitor opérationnel', { pluginVersion: versionResult?.version, platform })
+        }
+      }
+    } catch (pingErr) {
+      debugWarn(TAG, 'getPluginVersion() échouée (non bloquant)', { error: String(pingErr) })
+    }
+
+    // Run getAvailabilityStatus() in parallel (if available in patched build) to
+    // get exact SDK status codes for diagnosis — non-blocking, best-effort.
+    if (typeof Health.getAvailabilityStatus === 'function') {
+      Promise.race([
+        Health.getAvailabilityStatus(),
+        new Promise((resolve) => setTimeout(() => resolve({ __timeout: true }), 5000)),
+      ]).then((statusResult) => {
+        if (statusResult?.__timeout) {
+          debugWarn(TAG, 'getAvailabilityStatus() timeout 5s')
+        } else {
+          debugInfo(TAG, 'Statut SDK détaillé (getAvailabilityStatus)', statusResult)
+        }
+      }).catch((e) => {
+        debugWarn(TAG, 'getAvailabilityStatus() échouée', { error: String(e) })
+      })
+    }
+
+    // Fall back to isAvailable() — always available in non-patched builds.
+    debugInfo(TAG, `Méthode d'appel : isAvailable`)
 
     try {
-      debugDebug(TAG, 'Appel Health.isAvailable() — en attente de la réponse native…')
+      debugInfo(TAG, 'Appel Health.isAvailable() — en attente de la réponse native…')
       const t0 = Date.now()
 
       // Wrap with a 10-second timeout so we can detect a hanging native call.
@@ -240,7 +333,7 @@ export class HealthConnectConnector extends BaseConnector {
       ])
 
       const elapsed = Date.now() - t0
-      debugDebug(TAG, `Health.isAvailable() a répondu en ${elapsed} ms`, { timedOut })
+      debugInfo(TAG, `Health.isAvailable() a répondu en ${elapsed} ms`, { timedOut })
 
       if (timedOut || result?.__timeout) {
         debugError(TAG, `Health.isAvailable() n'a pas répondu après ${TIMEOUT_MS} ms → timeout`, {
@@ -253,11 +346,13 @@ export class HealthConnectConnector extends BaseConnector {
       // Log the complete raw result — every key/value — so nothing is hidden.
       debugInfo(TAG, 'Réponse brute Health.isAvailable()', {
         rawResult: result,
-        resultKeys: result ? Object.keys(result) : [],
         available: result?.available,
         reason: result?.reason,
         platform: result?.platform,
-        status: result?.status,
+        statusCode: result?.statusCode,
+        sdkInt: result?.sdkInt,
+        systemModuleStatus: result?.systemModuleStatus,
+        defaultProviderStatus: result?.defaultProviderStatus,
         elapsedMs: elapsed,
       })
 
@@ -415,8 +510,15 @@ export class HealthConnectConnector extends BaseConnector {
       debugWarn(TAG, 'Bridge absent → permissions non demandées')
       return 'not_asked'
     }
+    const platform = await getPlatformAsync()
+    const hasCheckAuth = typeof Health.checkAuthorization === 'function'
+    debugInfo(TAG, 'Vérification méthode Health.checkAuthorization', { hasCheckAuth, platform })
+    if (!hasCheckAuth) {
+      debugWarn(TAG, 'Health.checkAuthorization absent → permissions non demandées', { platform })
+      return 'not_asked'
+    }
     try {
-      debugDebug(TAG, 'Appel Health.checkAuthorization()…', { readTypes: READ_TYPES })
+      debugInfo(TAG, 'Appel Health.checkAuthorization()…', { readTypes: READ_TYPES })
       const status = await Health.checkAuthorization({ read: READ_TYPES, write: [] })
       debugInfo(TAG, 'Résultat checkAuthorization()', status)
       if (status.readDenied && status.readDenied.length > 0) {
@@ -442,8 +544,14 @@ export class HealthConnectConnector extends BaseConnector {
       debugWarn(TAG, 'Bridge absent → impossible de demander les permissions')
       return 'denied'
     }
+    const hasRequestAuth = typeof Health.requestAuthorization === 'function'
+    debugInfo(TAG, 'Vérification méthode Health.requestAuthorization', { hasRequestAuth, platform: await getPlatformAsync() })
+    if (!hasRequestAuth) {
+      debugWarn(TAG, 'Health.requestAuthorization absent → denied')
+      return 'denied'
+    }
     try {
-      debugDebug(TAG, 'Appel Health.requestAuthorization()…')
+      debugInfo(TAG, 'Appel Health.requestAuthorization()…')
       await Health.requestAuthorization({ read: READ_TYPES, write: [] })
       debugInfo(TAG, 'requestAuthorization() terminé, vérification du résultat…')
       return await this.checkPermissions()
