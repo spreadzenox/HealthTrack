@@ -85,7 +85,7 @@ class HealthConnectTest {
             startZoneOffset = null,
             endZoneOffset = null,
             count = 4_200,
-            metadata = HealthMetadata(),
+            metadata = HealthMetadata.unknownRecordingMethod(),
         )
         client.insertRecords(listOf(stepsRecord))
 
@@ -120,7 +120,7 @@ class HealthConnectTest {
             startZoneOffset = null,
             endZoneOffset = null,
             samples = listOf(hrSample),
-            metadata = HealthMetadata(),
+            metadata = HealthMetadata.unknownRecordingMethod(),
         )
         client.insertRecords(listOf(hrRecord))
 
@@ -162,7 +162,7 @@ class HealthConnectTest {
                     stage = SleepSessionRecord.STAGE_TYPE_SLEEPING,
                 )
             ),
-            metadata = HealthMetadata(),
+            metadata = HealthMetadata.unknownRecordingMethod(),
         )
         client.insertRecords(listOf(sleepRecord))
 
@@ -196,7 +196,7 @@ class HealthConnectTest {
             startZoneOffset = null,
             endZoneOffset = null,
             count = 800,
-            metadata = HealthMetadata(),
+            metadata = HealthMetadata.unknownRecordingMethod(),
         )
         client.insertRecords(listOf(syncRecord))
 
