@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { CONNECTORS } from '../connectors/connectorRegistry'
 import { getConnectorSettings, setConnectorSettings } from '../settings/connectorSettings'
 import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
+import { useDebug } from '../contexts/DebugContext'
+import DebugPanel from '../components/DebugPanel'
 import './Connectors.css'
 
 /**
@@ -637,6 +639,8 @@ function ConnectorCard({ connector }) {
 }
 
 export default function Connectors() {
+  const { debugMode } = useDebug()
+
   return (
     <section className="food-page">
       <h2 className="page-title">Connecteurs</h2>
@@ -651,6 +655,8 @@ export default function Connectors() {
           <ConnectorCard key={connector.id} connector={connector} />
         ))}
       </div>
+
+      {debugMode && <DebugPanel filter="HealthConnect" />}
 
       <div className="connector-help">
         <h3 className="section-title">Comment connecter la Samsung Galaxy Fit 3 ?</h3>
