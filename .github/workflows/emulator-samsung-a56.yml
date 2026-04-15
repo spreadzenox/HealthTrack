@@ -106,7 +106,23 @@ jobs:
             --device "pixel_6" \
             --force
 
-          AVD_CONFIG="$HOME/.android/avd/samsung_a56.avd/config.ini"
+          # Locate the config.ini dynamically — avdmanager may place AVDs under
+          # $ANDROID_AVD_HOME, $ANDROID_SDK_HOME/.android/avd, or $HOME/.android/avd
+          # depending on the runner environment.
+          AVD_DIR=$(avdmanager list avd 2>/dev/null \
+            | grep -A3 "Name: samsung_a56" \
+            | grep "Path:" \
+            | awk '{print $2}')
+
+          if [ -z "$AVD_DIR" ]; then
+            echo "ERROR: could not find AVD path via avdmanager list avd"
+            avdmanager list avd
+            exit 1
+          fi
+
+          AVD_CONFIG="${AVD_DIR}/config.ini"
+          echo "AVD path   : $AVD_DIR"
+          echo "Config file: $AVD_CONFIG"
 
           update_or_add() {
             local key="$1" val="$2"
