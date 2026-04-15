@@ -5,7 +5,7 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.records.StepsRecord
-import androidx.health.connect.client.records.metadata.Metadata
+import androidx.health.connect.client.records.metadata.Metadata as HealthMetadata
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -85,7 +85,7 @@ class HealthConnectTest {
             startZoneOffset = null,
             endZoneOffset = null,
             count = 4_200,
-            metadata = Metadata(),
+            metadata = HealthMetadata(),
         )
         client.insertRecords(listOf(stepsRecord))
 
@@ -120,7 +120,7 @@ class HealthConnectTest {
             startZoneOffset = null,
             endZoneOffset = null,
             samples = listOf(hrSample),
-            metadata = Metadata(),
+            metadata = HealthMetadata(),
         )
         client.insertRecords(listOf(hrRecord))
 
@@ -162,7 +162,7 @@ class HealthConnectTest {
                     stage = SleepSessionRecord.STAGE_TYPE_SLEEPING,
                 )
             ),
-            metadata = Metadata(),
+            metadata = HealthMetadata(),
         )
         client.insertRecords(listOf(sleepRecord))
 
@@ -196,7 +196,7 @@ class HealthConnectTest {
             startZoneOffset = null,
             endZoneOffset = null,
             count = 800,
-            metadata = Metadata(),
+            metadata = HealthMetadata(),
         )
         client.insertRecords(listOf(syncRecord))
 
