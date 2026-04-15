@@ -63,6 +63,19 @@ async function getHealthPlugin() {
 }
 
 /**
+ * Lazily import Capacitor core to read the current platform.
+ * Returns 'web' in test/browser environments (no native bridge).
+ */
+async function getPlatform() {
+  try {
+    const { Capacitor } = await import('@capacitor/core')
+    return Capacitor.getPlatform()
+  } catch {
+    return 'web'
+  }
+}
+
+/**
  * Lazily import AppLauncher to avoid crashing in web/test environments.
  * AppLauncher is required to open non-http URLs (custom schemes) on Android
  * from inside a Capacitor WebView — window.open() does not fire Android intents
@@ -139,7 +152,13 @@ export class HealthConnectConnector extends BaseConnector {
       }
       return { available: false, reason: 'unavailable', nativeReason, platform: result.platform }
     } catch (e) {
-      return { available: false, reason: 'unavailable', nativeReason: e?.message || String(e) }
+      // If the native bridge itself throws (e.g. IllegalStateException on Android 16),
+      // determine the platform so the UI can show the right guidance.
+      const platform = await getPlatform()
+      if (platform === 'android') {
+        return { available: false, reason: 'provider_update_required', nativeReason: e?.message || String(e), platform }
+      }
+      return { available: false, reason: 'unavailable', nativeReason: e?.message || String(e), platform }
     }
   }
 

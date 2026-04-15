@@ -278,7 +278,7 @@ function ConnectorCard({ connector }) {
     const detailsFn = connector.availabilityDetails
       ? connector.availabilityDetails.bind(connector)
       : () => connector.isAvailable().then((a) => ({ available: a }))
-    withTimeout(detailsFn(), 8000, { available: false, reason: 'unavailable' })
+    withTimeout(detailsFn(), 12000, { available: false, reason: 'unavailable' })
       .then((details) => {
         const avail = details.available ? 'available' : 'unavailable'
         setAvailability(avail)
@@ -305,7 +305,7 @@ function ConnectorCard({ connector }) {
         setAvailabilityReason(null)
         setAvailabilityNativeReason(null)
       })
-    withTimeout(connector.checkPermissions(), 8000, 'not_asked')
+    withTimeout(connector.checkPermissions(), 12000, 'not_asked')
       .then((p) => setPermissions(p === 'not_asked' ? 'not_asked' : p))
       .catch(() => setPermissions('not_asked'))
   }, [connector, reloadSettings, checkCount])

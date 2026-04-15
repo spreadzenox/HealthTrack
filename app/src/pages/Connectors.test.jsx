@@ -219,15 +219,15 @@ describe('Connectors page', () => {
       await act(async () => {
         renderConnectors()
       })
-      // Now advance past the 8-second timeout so the race resolves with the fallback
+      // Advance past the 12-second availability timeout so the race resolves with the fallback
       await act(async () => {
-        await vi.advanceTimersByTimeAsync(9000)
+        await vi.advanceTimersByTimeAsync(13000)
       })
       expect(screen.getByText('Non disponible')).toBeInTheDocument()
     } finally {
       vi.useRealTimers()
     }
-  }, 15000)
+  }, 20000)
 
   it('resolves to "Non demandé" when checkPermissions never resolves (timeout fallback)', async () => {
     const { CONNECTORS } = await import('../connectors/connectorRegistry')
@@ -239,14 +239,15 @@ describe('Connectors page', () => {
       await act(async () => {
         renderConnectors()
       })
+      // Advance past the 12-second permissions timeout so the race resolves with the fallback
       await act(async () => {
-        await vi.advanceTimersByTimeAsync(9000)
+        await vi.advanceTimersByTimeAsync(13000)
       })
       expect(screen.getByText('Non demandé')).toBeInTheDocument()
     } finally {
       vi.useRealTimers()
     }
-  }, 15000)
+  }, 20000)
 
   describe('Activation wizard', () => {
     it('shows the wizard launch button in the sdk_unavailable alert', async () => {
