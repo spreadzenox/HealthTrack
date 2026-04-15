@@ -111,7 +111,7 @@ export default function Settings() {
           autoComplete="off"
           value={macInput}
           onChange={(e) => { setMacInput(e.target.value); setMacError(null) }}
-          placeholder="Ex: 74:F6:7A:6C:6D:25"
+          placeholder="Ex: AA:BB:CC:DD:EE:FF"
           className="settings-input"
           aria-describedby="debug-mac-hint"
         />
