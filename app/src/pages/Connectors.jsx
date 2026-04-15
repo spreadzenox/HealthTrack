@@ -513,7 +513,34 @@ function ConnectorCard({ connector }) {
             </div>
           )}
 
-          {availability === 'unavailable' && availabilityReason !== 'provider_update_required' && availabilityReason !== 'sdk_unavailable' && (
+          {availability === 'unavailable' && availabilityReason === 'timeout' && (
+            <div className="connector-alert connector-alert-warning">
+              <strong>Health Connect ne répond pas.</strong>{' '}
+              Le module natif Health Connect n&apos;a pas répondu dans les délais (10 s).
+              Cela peut indiquer que le module système est bloqué ou nécessite une mise à jour.
+              Essayez de mettre à jour via{' '}
+              <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>,
+              puis relancez l&apos;application.
+              <div className="connector-alert-actions">
+                <button
+                  type="button"
+                  className="btn connector-btn"
+                  onClick={() => setWizardOpen(true)}
+                >
+                  Lancer l&apos;assistant d&apos;activation
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary connector-btn"
+                  onClick={recheckAvailability}
+                >
+                  Revérifier la disponibilité
+                </button>
+              </div>
+            </div>
+          )}
+
+          {availability === 'unavailable' && availabilityReason !== 'provider_update_required' && availabilityReason !== 'sdk_unavailable' && availabilityReason !== 'timeout' && (
             <div className="connector-alert connector-alert-warning">
               <strong>Health Connect non disponible.</strong>{' '}
               Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est{' '}

@@ -59,8 +59,20 @@ function toEntryType(dataType) {
 async function getHealthPlugin() {
   try {
     const mod = await import('@capgo/capacitor-health')
-    debugDebug(TAG, 'Plugin @capgo/capacitor-health chargé avec succès')
-    return mod.Health
+    const Health = mod.Health
+    // Log which methods are available on the plugin object so we can tell if it is a
+    // real native bridge or just the JS stub/fallback.
+    const methodNames = Health
+      ? Object.getOwnPropertyNames(Object.getPrototypeOf(Health) || {})
+          .concat(Object.keys(Health))
+          .filter((k) => typeof Health[k] === 'function')
+      : []
+    debugDebug(TAG, 'Plugin @capgo/capacitor-health chargé avec succès', {
+      pluginType: typeof Health,
+      methodsAvailable: methodNames,
+      hasNativeBridge: !!(typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.()),
+    })
+    return Health
   } catch (e) {
     debugWarn(TAG, 'Plugin @capgo/capacitor-health introuvable (environnement web/test)', { error: e?.message || String(e) })
     return null
@@ -78,6 +90,52 @@ async function getPlatform() {
   } catch {
     return 'web'
   }
+}
+
+/**
+ * Collect device/environment diagnostics useful for remote debugging.
+ * Never throws — always returns a plain object.
+ */
+async function collectDeviceInfo() {
+  const info = {
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A',
+    jsPlatform: typeof navigator !== 'undefined' ? navigator.platform : 'N/A',
+    language: typeof navigator !== 'undefined' ? navigator.language : 'N/A',
+    screenWidth: typeof screen !== 'undefined' ? screen.width : 'N/A',
+    screenHeight: typeof screen !== 'undefined' ? screen.height : 'N/A',
+    windowCapacitorPresent: typeof window !== 'undefined' && 'Capacitor' in window,
+    isNativePlatform: typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true,
+    capacitorPlatformRaw: typeof window !== 'undefined' ? window?.Capacitor?.getPlatform?.() ?? 'N/A' : 'N/A',
+  }
+
+  // Try to get richer native device info via the Capacitor plugin bridge if available.
+  // We access the Device plugin via window.Capacitor.Plugins to avoid a hard import
+  // dependency on @capacitor/device (not installed in this project).
+  try {
+    const DevicePlugin =
+      typeof window !== 'undefined' &&
+      window?.Capacitor?.Plugins?.Device
+
+    if (DevicePlugin && typeof DevicePlugin.getInfo === 'function') {
+      const deviceInfo = await DevicePlugin.getInfo()
+      if (deviceInfo) {
+        info.deviceManufacturer = deviceInfo.manufacturer
+        info.deviceModel = deviceInfo.model
+        info.deviceName = deviceInfo.name
+        info.osVersion = deviceInfo.osVersion
+        info.androidSDKVersion = deviceInfo.androidSDKVersion
+        info.platform = deviceInfo.platform
+        info.isVirtual = deviceInfo.isVirtual
+        info.webViewVersion = deviceInfo.webViewVersion
+      }
+    } else {
+      info.deviceInfoError = 'Device plugin not available on this bridge'
+    }
+  } catch (deviceErr) {
+    info.deviceInfoError = String(deviceErr)
+  }
+
+  return info
 }
 
 /**
@@ -124,7 +182,7 @@ export class HealthConnectConnector extends BaseConnector {
    *
    * @returns {Promise<{ available: boolean, reason?: string, nativeReason?: string, platform?: string }>}
    *   - available: true if Health Connect is ready to use
-   *   - reason: one of 'provider_update_required' | 'sdk_unavailable' | 'unavailable' | 'no_bridge'
+   *   - reason: one of 'provider_update_required' | 'sdk_unavailable' | 'unavailable' | 'no_bridge' | 'timeout'
    *     - 'provider_update_required': Health Connect present but needs a Google Play System update
    *       (SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED). Common on Android 14+ including Android 16.
    *     - 'sdk_unavailable': Health Connect SDK returned SDK_UNAVAILABLE — device reports HC as
@@ -132,11 +190,16 @@ export class HealthConnectConnector extends BaseConnector {
    *       Typically resolved by updating via Google Play System Updates.
    *     - 'unavailable': catch-all for other unavailability scenarios
    *     - 'no_bridge': Capacitor native bridge is absent (web/dev/test environment)
+   *     - 'timeout': native call did not respond within 10 s
    *   - nativeReason: raw reason string returned by the native plugin (useful for diagnostics)
    *   - platform: 'android' or undefined
    */
   async availabilityDetails() {
     debugInfo(TAG, 'Début vérification disponibilité Health Connect')
+
+    // Collect device info early so it is logged even if something below hangs
+    const deviceInfo = await collectDeviceInfo()
+    debugInfo(TAG, 'Informations appareil', deviceInfo)
 
     const Health = await getHealthPlugin()
     if (!Health) {
@@ -144,17 +207,62 @@ export class HealthConnectConnector extends BaseConnector {
       return { available: false, reason: 'no_bridge' }
     }
 
+    // Log which methods are present on the Health object to distinguish a real native
+    // proxy from the JS stub (stub won't have native method implementations).
+    try {
+      const protoMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(Health) || {})
+      const ownKeys = Object.keys(Health)
+      debugDebug(TAG, 'Méthodes Health (prototype)', { protoMethods })
+      debugDebug(TAG, 'Clés Health (propres)', { ownKeys })
+    } catch (introspectErr) {
+      debugWarn(TAG, 'Introspection Health échouée', { error: String(introspectErr) })
+    }
+
     // Collect platform info before calling isAvailable for richer diagnostics
     const platform = await getPlatform()
-    debugInfo(TAG, `Plateforme détectée : ${platform}`)
+    debugInfo(TAG, `Plateforme détectée (Capacitor.getPlatform) : ${platform}`)
 
     try {
-      debugDebug(TAG, 'Appel Health.isAvailable()…')
-      const result = await Health.isAvailable()
-      debugInfo(TAG, 'Réponse Health.isAvailable()', result)
+      debugDebug(TAG, 'Appel Health.isAvailable() — en attente de la réponse native…')
+      const t0 = Date.now()
+
+      // Wrap with a 10-second timeout so we can detect a hanging native call.
+      const TIMEOUT_MS = 10000
+      let timedOut = false
+      const result = await Promise.race([
+        Health.isAvailable(),
+        new Promise((resolve) => {
+          setTimeout(() => {
+            timedOut = true
+            resolve({ __timeout: true })
+          }, TIMEOUT_MS)
+        }),
+      ])
+
+      const elapsed = Date.now() - t0
+      debugDebug(TAG, `Health.isAvailable() a répondu en ${elapsed} ms`, { timedOut })
+
+      if (timedOut || result?.__timeout) {
+        debugError(TAG, `Health.isAvailable() n'a pas répondu après ${TIMEOUT_MS} ms → timeout`, {
+          platform,
+          deviceInfo,
+        })
+        return { available: false, reason: 'timeout', platform }
+      }
+
+      // Log the complete raw result — every key/value — so nothing is hidden.
+      debugInfo(TAG, 'Réponse brute Health.isAvailable()', {
+        rawResult: result,
+        resultKeys: result ? Object.keys(result) : [],
+        available: result?.available,
+        reason: result?.reason,
+        platform: result?.platform,
+        status: result?.status,
+        elapsedMs: elapsed,
+      })
 
       if (result.available === true) {
-        debugInfo(TAG, 'Health Connect DISPONIBLE', { platform: result.platform })
+        debugInfo(TAG, 'Health Connect DISPONIBLE ✅', { platform: result.platform })
         return { available: true, platform: result.platform }
       }
 
@@ -175,9 +283,9 @@ export class HealthConnectConnector extends BaseConnector {
       // it means Health Connect is absent/disabled on the device. On Android 14+ (including
       // Android 16 / One UI 8) this can still happen when system modules are out of date
       // or when the device reports HC as unavailable despite it being a built-in module.
-      if (result.platform === 'android') {
+      if (result.platform === 'android' || platform === 'android') {
         debugWarn(TAG, 'Diagnostic : SDK_UNAVAILABLE sur Android → module HC absent ou désactivé')
-        return { available: false, reason: 'sdk_unavailable', nativeReason, platform: result.platform }
+        return { available: false, reason: 'sdk_unavailable', nativeReason, platform: result.platform ?? platform }
       }
       debugWarn(TAG, 'Diagnostic : indisponible (raison inconnue)')
       return { available: false, reason: 'unavailable', nativeReason, platform: result.platform }
