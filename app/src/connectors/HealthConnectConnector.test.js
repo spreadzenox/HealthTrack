@@ -4,8 +4,8 @@
  * The @capgo/capacitor-health plugin is mocked because it requires native
  * Capacitor bridge. We test the connector's logic/data-mapping in isolation.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HealthConnectConnector, toEntryType } from './HealthConnectConnector'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { HealthConnectConnector, toEntryType, _resetHealthPluginCache } from './HealthConnectConnector'
 
 // Mock the capacitor health plugin
 vi.mock('@capgo/capacitor-health', () => ({
@@ -28,11 +28,13 @@ vi.mock('@capacitor/app-launcher', () => ({
 }))
 
 // Mock @capacitor/core so getPlatform() returns 'web' by default in tests
+// (this is used as a fallback when window.Capacitor is not set)
 vi.mock('@capacitor/core', () => ({
   Capacitor: {
     getPlatform: vi.fn().mockReturnValue('web'),
   },
 }))
+
 
 describe('toEntryType', () => {
   it('maps steps to steps', () => expect(toEntryType('steps')).toBe('steps'))
@@ -52,6 +54,12 @@ describe('HealthConnectConnector', () => {
   beforeEach(async () => {
     connector = new HealthConnectConnector()
     vi.clearAllMocks()
+    // Reset the plugin cache so each test gets a fresh import call
+    _resetHealthPluginCache()
+  })
+
+  afterEach(() => {
+    _resetHealthPluginCache()
   })
 
   it('has correct id and name', () => {
@@ -139,9 +147,8 @@ describe('HealthConnectConnector', () => {
 
     it('returns reason=unavailable with nativeReason from error when plugin throws on web', async () => {
       const { Health } = await import('@capgo/capacitor-health')
-      const { Capacitor } = await import('@capacitor/core')
+      // window.Capacitor is not set in jsdom, so getPlatformSync() returns 'web'.
       Health.isAvailable.mockRejectedValue(new Error('bridge error'))
-      Capacitor.getPlatform.mockReturnValue('web')
       const details = await connector.availabilityDetails()
       expect(details.available).toBe(false)
       expect(details.reason).toBe('unavailable')
@@ -150,14 +157,26 @@ describe('HealthConnectConnector', () => {
 
     it('returns reason=provider_update_required when plugin throws on Android (e.g. IllegalStateException on Android 16)', async () => {
       const { Health } = await import('@capgo/capacitor-health')
-      const { Capacitor } = await import('@capacitor/core')
       Health.isAvailable.mockRejectedValue(new Error('IllegalStateException: Health Connect not available'))
-      Capacitor.getPlatform.mockReturnValue('android')
-      const details = await connector.availabilityDetails()
-      expect(details.available).toBe(false)
-      expect(details.reason).toBe('provider_update_required')
-      expect(details.platform).toBe('android')
-      expect(details.nativeReason).toBe('IllegalStateException: Health Connect not available')
+      // Simulate Android: set window.Capacitor.getPlatform to return 'android'
+      globalThis.window = globalThis.window || {}
+      const origCapacitor = globalThis.window.Capacitor
+      globalThis.window.Capacitor = { getPlatform: () => 'android', isNativePlatform: () => true, Plugins: {} }
+      try {
+        _resetHealthPluginCache()
+        const details = await connector.availabilityDetails()
+        expect(details.available).toBe(false)
+        expect(details.reason).toBe('provider_update_required')
+        expect(details.platform).toBe('android')
+        expect(details.nativeReason).toBe('IllegalStateException: Health Connect not available')
+      } finally {
+        if (origCapacitor !== undefined) {
+          globalThis.window.Capacitor = origCapacitor
+        } else {
+          delete globalThis.window.Capacitor
+        }
+        _resetHealthPluginCache()
+      }
     })
   })
 
