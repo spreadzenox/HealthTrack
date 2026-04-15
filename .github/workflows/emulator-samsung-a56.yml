@@ -2,11 +2,13 @@
 #
 # Specs Samsung Galaxy A56 :
 #   Écran : 6.7" Super AMOLED, 1080 × 2340 px (~385 ppi), 120 Hz
-#   Android 15 (API 35) / One UI 7
+#   Android 16 (API 36) / One UI 8  ← version de l'utilisateur
+#   Android 15 (API 35) / One UI 7  ← version de CI secondaire
 #   RAM : 8 Go
 #
-# AVD créé : pixel_6 (base) avec config matérielle écrasée pour coller
-# exactement à ces valeurs (résolution, densité, RAM).
+# Deux jobs :
+#   emulator-test-api35 : image API 35 (référence stable)
+#   emulator-test-api36 : image API 36 (Android 16 / One UI 8 — cible de correction HC)
 #
 # Ce workflow est déclenché à chaque push et PR sur main, ainsi que
 # manuellement (workflow_dispatch).
@@ -21,24 +23,20 @@ on:
   workflow_dispatch:
 
 jobs:
-  emulator-test:
-    name: HealthTrack sur Samsung A56 (API 35, 1080×2340, 385 dpi)
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job commun : build de l'APK (mutualisé entre les deux jobs d'émulateur)
+  # ─────────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build APK
     runs-on: ubuntu-latest
+    outputs:
+      apk-path: app/android/app/build/outputs/apk/debug/app-debug.apk
+      test-apk-path: app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 
     steps:
-      # ─── Checkout ─────────────────────────────────────────────────────────────
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ─── KVM (accélération matérielle pour l'émulateur) ───────────────────────
-      - name: Activer KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
-            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      # ─── Node / dépendances ───────────────────────────────────────────────────
       - name: Configurer Node.js 20
         uses: actions/setup-node@v4
         with:
@@ -50,7 +48,6 @@ jobs:
         working-directory: app
         run: npm ci
 
-      # ─── Build web + Capacitor ────────────────────────────────────────────────
       - name: Build de l'app web
         working-directory: app
         run: npm run build
@@ -59,7 +56,6 @@ jobs:
         working-directory: app
         run: npx cap sync android
 
-      # ─── SDK / Gradle ─────────────────────────────────────────────────────────
       - name: Configurer JDK 21
         uses: actions/setup-java@v4
         with:
@@ -69,13 +65,13 @@ jobs:
       - name: Configurer Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Installer les composants SDK (platform-35, build-tools, émulateur)
+      - name: Installer les composants SDK (platform-36, build-tools, platform-35)
         run: |
           sdkmanager --no_https \
+            "platforms;android-36" \
             "platforms;android-35" \
-            "build-tools;35.0.0" \
-            "emulator" \
-            "system-images;android-35;google_apis;x86_64"
+            "build-tools;36.0.0" \
+            "build-tools;35.0.0"
 
       - name: Créer local.properties
         working-directory: app/android
@@ -85,7 +81,6 @@ jobs:
         working-directory: app/android
         run: chmod +x gradlew
 
-      # ─── Build APK + APK de test ──────────────────────────────────────────────
       - name: Construire l'APK debug et l'APK de test
         working-directory: app/android
         run: ./gradlew assembleDebug assembleDebugAndroidTest --no-daemon
@@ -97,33 +92,85 @@ jobs:
           echo "APK principal    : $APK  ($(du -h "$APK" | cut -f1))"
           echo "APK de test       : $TEST_APK  ($(du -h "$TEST_APK" | cut -f1))"
 
-      # ─── AVD Samsung Galaxy A56 ───────────────────────────────────────────────
-      - name: Créer l'AVD Samsung Galaxy A56
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-build
+          path: |
+            app/android/app/build/outputs/apk/debug/app-debug.apk
+            app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job émulateur API 35 (Android 15 / référence stable)
+  # ─────────────────────────────────────────────────────────────────────────────
+  emulator-test-api35:
+    name: HealthTrack sur Samsung A56 (API 35 / Android 15)
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Télécharger les APKs buildés
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-build
+          path: .
+
+      - name: Déplacer les APKs au bon emplacement
+        run: |
+          mkdir -p app/android/app/build/outputs/apk/debug
+          mkdir -p app/android/app/build/outputs/apk/androidTest/debug
+          mv app-debug.apk app/android/app/build/outputs/apk/debug/app-debug.apk 2>/dev/null || \
+            find . -name "app-debug.apk" ! -path "*/androidTest/*" -exec cp {} app/android/app/build/outputs/apk/debug/app-debug.apk \;
+          mv app-debug-androidTest.apk app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk 2>/dev/null || \
+            find . -name "app-debug-androidTest.apk" -exec cp {} app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk \;
+
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Configurer JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Configurer Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Installer image système API 35
+        run: |
+          sdkmanager --no_https \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "emulator" \
+            "system-images;android-35;google_apis;x86_64"
+
+      - name: Créer l'AVD Samsung Galaxy A56 (API 35)
         run: |
           echo "no" | avdmanager create avd \
-            --name "samsung_a56" \
+            --name "samsung_a56_api35" \
             --package "system-images;android-35;google_apis;x86_64" \
             --device "pixel_6" \
             --force
 
-          # Locate the config.ini dynamically — avdmanager may place AVDs under
-          # $ANDROID_AVD_HOME, $ANDROID_SDK_HOME/.android/avd, or $HOME/.android/avd
-          # depending on the runner environment.
           AVD_DIR=$(avdmanager list avd 2>/dev/null \
-            | grep -A3 "Name: samsung_a56" \
+            | grep -A3 "Name: samsung_a56_api35" \
             | grep "Path:" \
             | awk '{print $2}')
 
           if [ -z "$AVD_DIR" ]; then
-            echo "ERROR: could not find AVD path via avdmanager list avd"
+            echo "ERROR: could not find AVD path"
             avdmanager list avd
             exit 1
           fi
 
           AVD_CONFIG="${AVD_DIR}/config.ini"
-          echo "AVD path   : $AVD_DIR"
-          echo "Config file: $AVD_CONFIG"
-
           update_or_add() {
             local key="$1" val="$2"
             if grep -q "^${key}=" "$AVD_CONFIG" 2>/dev/null; then
@@ -132,25 +179,19 @@ jobs:
               echo "${key}=${val}" >> "$AVD_CONFIG"
             fi
           }
-
-          # Samsung Galaxy A56 : 1080 × 2340 px, ~385 ppi, 8 Go RAM
           update_or_add "hw.lcd.width"   "1080"
           update_or_add "hw.lcd.height"  "2340"
           update_or_add "hw.lcd.density" "385"
           update_or_add "hw.ramSize"     "8192"
           update_or_add "hw.sdCard"      "no"
 
-          echo "=== Config AVD Samsung A56 ==="
-          grep -E "hw\.lcd\.|hw\.ram" "$AVD_CONFIG" || true
-
-      # ─── Démarrage émulateur, tests instrumentés, screenshot ─────────────────
-      - name: Lancer l'émulateur, accorder les permissions HC et exécuter les tests
+      - name: Lancer l'émulateur API 35 et exécuter les tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
           target: google_apis
           arch: x86_64
-          avd-name: samsung_a56
+          avd-name: samsung_a56_api35
           force-avd-creation: false
           emulator-options: >-
             -no-snapshot-save
@@ -161,45 +202,163 @@ jobs:
           disable-animations: true
           script: bash .github/scripts/run-emulator-tests.sh
 
-      # ─── Artefacts ────────────────────────────────────────────────────────────
-      - name: Publier les captures d'écran
+      - name: Publier les captures d'écran (API 35)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: screenshots-samsung-a56
+          name: screenshots-samsung-a56-api35
           path: |
             screenshot_startup.png
             screenshot_connectors_page.png
           if-no-files-found: warn
 
-      - name: Publier le rapport de tests instrumentés
+      - name: Publier le rapport de tests instrumentés (API 35)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: instrumented-test-results
+          name: instrumented-test-results-api35
           path: |
             instrumented_test_output.txt
             app/android/app/build/outputs/androidTest-results/
           if-no-files-found: warn
 
-      - name: Publier l'APK
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job émulateur API 36 (Android 16 / One UI 8 — cible de la correction HC)
+  # ─────────────────────────────────────────────────────────────────────────────
+  emulator-test-api36:
+    name: HealthTrack sur Samsung A56 (API 36 / Android 16 — cible fix HC)
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Télécharger les APKs buildés
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-build
+          path: .
+
+      - name: Déplacer les APKs au bon emplacement
+        run: |
+          mkdir -p app/android/app/build/outputs/apk/debug
+          mkdir -p app/android/app/build/outputs/apk/androidTest/debug
+          find . -maxdepth 3 -name "app-debug.apk" ! -path "*/androidTest/*" | head -1 | \
+            xargs -I{} cp {} app/android/app/build/outputs/apk/debug/app-debug.apk
+          find . -maxdepth 3 -name "app-debug-androidTest.apk" | head -1 | \
+            xargs -I{} cp {} app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Configurer JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Configurer Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Installer image système API 36
+        run: |
+          sdkmanager --no_https \
+            "platforms;android-36" \
+            "build-tools;36.0.0" \
+            "emulator" \
+            "system-images;android-36;google_apis;x86_64" || \
+          sdkmanager --no_https \
+            "platforms;android-36" \
+            "build-tools;35.0.0" \
+            "emulator" \
+            "system-images;android-36;google_apis_playstore;x86_64" || true
+
+      - name: Créer l'AVD Samsung Galaxy A56 (API 36)
+        run: |
+          # Try google_apis first, then google_apis_playstore
+          IMAGE="system-images;android-36;google_apis;x86_64"
+          if ! avdmanager create avd --name "samsung_a56_api36" --package "$IMAGE" --device "pixel_6" --force 2>/dev/null; then
+            IMAGE="system-images;android-36;google_apis_playstore;x86_64"
+            avdmanager create avd --name "samsung_a56_api36" --package "$IMAGE" --device "pixel_6" --force
+          fi
+
+          AVD_DIR=$(avdmanager list avd 2>/dev/null \
+            | grep -A3 "Name: samsung_a56_api36" \
+            | grep "Path:" \
+            | awk '{print $2}')
+
+          if [ -z "$AVD_DIR" ]; then
+            echo "ERROR: could not find AVD path"
+            avdmanager list avd
+            exit 1
+          fi
+
+          AVD_CONFIG="${AVD_DIR}/config.ini"
+          update_or_add() {
+            local key="$1" val="$2"
+            if grep -q "^${key}=" "$AVD_CONFIG" 2>/dev/null; then
+              sed -i "s|^${key}=.*|${key}=${val}|" "$AVD_CONFIG"
+            else
+              echo "${key}=${val}" >> "$AVD_CONFIG"
+            fi
+          }
+          update_or_add "hw.lcd.width"   "1080"
+          update_or_add "hw.lcd.height"  "2340"
+          update_or_add "hw.lcd.density" "385"
+          update_or_add "hw.ramSize"     "8192"
+          update_or_add "hw.sdCard"      "no"
+
+      - name: Lancer l'émulateur API 36 et exécuter les tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          avd-name: samsung_a56_api36
+          force-avd-creation: false
+          emulator-options: >-
+            -no-snapshot-save
+            -no-window
+            -gpu swiftshader_indirect
+            -noaudio
+            -no-boot-anim
+          disable-animations: true
+          script: bash .github/scripts/run-emulator-tests.sh
+
+      - name: Publier les captures d'écran (API 36)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: apk-debug
-          path: app/android/app/build/outputs/apk/debug/app-debug.apk
+          name: screenshots-samsung-a56-api36
+          path: |
+            screenshot_startup.png
+            screenshot_connectors_page.png
           if-no-files-found: warn
 
-      # ─── Résumé dans GitHub Actions ───────────────────────────────────────────
-      - name: Résumé du test
+      - name: Publier le rapport de tests instrumentés (API 36)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-test-results-api36
+          path: |
+            instrumented_test_output.txt
+            app/android/app/build/outputs/androidTest-results/
+          if-no-files-found: warn
+
+      - name: Résumé du test API 36
         if: always()
         run: |
           cat >> "$GITHUB_STEP_SUMMARY" << 'EOF'
-          ## Test HealthTrack — Samsung Galaxy A56 (équivalent)
+          ## Test HealthTrack — Samsung Galaxy A56 Android 16 (API 36)
 
           | Paramètre         | Valeur                         |
           |-------------------|--------------------------------|
-          | Android API       | 35 (Android 15)                |
+          | Android API       | 36 (Android 16)                |
           | Résolution        | 1080 × 2340 px                 |
           | Densité           | ~385 ppi (xxhdpi)              |
           | Taille écran      | 6.7"                           |
@@ -207,12 +366,36 @@ jobs:
           | Architecture      | x86_64 (accéléré KVM)          |
           | Image système     | google_apis                    |
 
-          ### Tests instrumentés Health Connect
-          Les permissions Health Connect sont accordées via ADB avant les tests.
-          Les tests vérifient : disponibilité, écriture/lecture des pas, fréquence cardiaque et sommeil.
+          ### Objectif
+          Valider la correction du bug Health Connect "Non disponible" sur Android 16 / One UI 8.
+          Le correctif utilise le package système `com.google.android.healthconnect.controller`
+          en priorité sur Android 14+ et encapsule getSdkStatus() dans un try-catch pour
+          gérer les IllegalStateException sur certaines versions de Samsung One UI.
 
           Les artefacts sont disponibles dans l'onglet **Actions → Artifacts** :
-          - `screenshots-samsung-a56` — captures d'écran au démarrage et sur la page Connecteurs
-          - `instrumented-test-results` — sortie brute des tests instrumentés
-          - `apk-debug` — APK installé lors du test
+          - `screenshots-samsung-a56-api36` — captures d'écran
+          - `instrumented-test-results-api36` — sortie brute des tests instrumentés
           EOF
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Résumé global + publication APK
+  # ─────────────────────────────────────────────────────────────────────────────
+  publish-apk:
+    name: Publier l'APK
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+
+    steps:
+      - name: Télécharger les APKs buildés
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-build
+          path: apk-artifacts
+
+      - name: Publier l'APK debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-debug
+          path: apk-artifacts/**/app-debug.apk
+          if-no-files-found: warn

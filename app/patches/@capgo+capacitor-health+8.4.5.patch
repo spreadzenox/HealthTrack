@@ -1,0 +1,81 @@
+diff --git a/node_modules/@capgo/capacitor-health/android/src/main/java/app/capgo/plugin/health/HealthPlugin.kt b/node_modules/@capgo/capacitor-health/android/src/main/java/app/capgo/plugin/health/HealthPlugin.kt
+index 8767de8..91dd622 100644
+--- a/node_modules/@capgo/capacitor-health/android/src/main/java/app/capgo/plugin/health/HealthPlugin.kt
++++ b/node_modules/@capgo/capacitor-health/android/src/main/java/app/capgo/plugin/health/HealthPlugin.kt
+@@ -3,6 +3,7 @@ package app.capgo.plugin.health
+ import android.app.Activity
+ import android.content.Intent
+ import android.net.Uri
++import android.os.Build
+ import androidx.activity.result.ActivityResult
+ import com.getcapacitor.JSArray
+ import com.getcapacitor.JSObject
+@@ -41,7 +42,7 @@ class HealthPlugin : Plugin() {
+ 
+     @PluginMethod
+     fun isAvailable(call: PluginCall) {
+-        val status = HealthConnectClient.getSdkStatus(context)
++        val status = getSdkStatusSafe()
+         call.resolve(availabilityPayload(status))
+     }
+ 
+@@ -290,12 +291,49 @@ class HealthPlugin : Plugin() {
+     }
+ 
+     private fun getClientOrReject(call: PluginCall): HealthConnectClient? {
+-        val status = HealthConnectClient.getSdkStatus(context)
++        val status = getSdkStatusSafe()
+         if (status != HealthConnectClient.SDK_AVAILABLE) {
+             call.reject(availabilityReason(status))
+             return null
+         }
+-        return HealthConnectClient.getOrCreate(context)
++        return try {
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
++                HealthConnectClient.getOrCreate(context, SYSTEM_MODULE_PACKAGE_NAME)
++            } else {
++                HealthConnectClient.getOrCreate(context)
++            }
++        } catch (e: Exception) {
++            HealthConnectClient.getOrCreate(context)
++        }
++    }
++
++    /**
++     * Wraps [HealthConnectClient.getSdkStatus] with a two-pass strategy:
++     *  1. On Android 14+ (API 34 / UPSIDE_DOWN_CAKE) try with the system-module package name first.
++     *     Samsung One UI 8 / Android 16 sometimes reports SDK_UNAVAILABLE when the default
++     *     (APK-based) package name is queried, even though the framework module is present.
++     *  2. Fall back to the default package name.
++     *  3. Wrap everything in try-catch: on some Samsung builds getSdkStatus() throws an
++     *     IllegalStateException which would otherwise crash the plugin call silently.
++     */
++    private fun getSdkStatusSafe(): Int {
++        return try {
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
++                val systemStatus = HealthConnectClient.getSdkStatus(context, SYSTEM_MODULE_PACKAGE_NAME)
++                if (systemStatus == HealthConnectClient.SDK_AVAILABLE) {
++                    return systemStatus
++                }
++                // Fall back to default provider check (covers the update-required case)
++                val defaultStatus = HealthConnectClient.getSdkStatus(context)
++                if (defaultStatus == HealthConnectClient.SDK_AVAILABLE) defaultStatus else systemStatus
++            } else {
++                HealthConnectClient.getSdkStatus(context)
++            }
++        } catch (e: Exception) {
++            // IllegalStateException or other unexpected errors from the SDK on some Samsung builds.
++            // Treat as SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED so the user is directed to update.
++            HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED
++        }
+     }
+ 
+     private fun availabilityPayload(status: Int): JSObject {
+@@ -441,5 +479,7 @@ class HealthPlugin : Plugin() {
+         private const val DEFAULT_LIMIT = 100
+         private val DEFAULT_PAST_DURATION: Duration = Duration.ofDays(1)
+         private const val HEALTH_CONNECT_SETTINGS_ACTION = "androidx.health.ACTION_HEALTH_CONNECT_SETTINGS"
++        /** Health Connect system module package (Android 14+, API 34+). */
++        private const val SYSTEM_MODULE_PACKAGE_NAME = "com.google.android.healthconnect.controller"
+     }
+ }
