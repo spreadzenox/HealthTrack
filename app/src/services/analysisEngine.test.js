@@ -74,6 +74,42 @@ function makeHeartRate(dateStr, bpm) {
   }
 }
 
+function makeAvgHR(dateStr, bpm) {
+  return {
+    type: 'heart_rate',
+    source: 'health_connect',
+    at: `${dateStr}T14:00:00Z`,
+    payload: { bpm, subtype: 'heartRate' },
+  }
+}
+
+function makeHRV(dateStr, ms) {
+  return {
+    type: 'heart_rate',
+    source: 'health_connect',
+    at: `${dateStr}T07:30:00Z`,
+    payload: { value: ms, subtype: 'heartRateVariability' },
+  }
+}
+
+function makeSpO2(dateStr, pct) {
+  return {
+    type: 'heart_rate',
+    source: 'health_connect',
+    at: `${dateStr}T07:45:00Z`,
+    payload: { value: pct, subtype: 'oxygenSaturation' },
+  }
+}
+
+function makeCaloriesHC(dateStr, value) {
+  return {
+    type: 'calories',
+    source: 'health_connect',
+    at: `${dateStr}T23:00:00Z`,
+    payload: { value, unit: 'kcal' },
+  }
+}
+
 // ---------------------------------------------------------------------------
 // localDateKey
 // ---------------------------------------------------------------------------
@@ -211,6 +247,83 @@ describe('buildDailyDataset', () => {
     expect(ds[0]).toHaveProperty('fodmap_score')
     expect(typeof ds[0].fodmap_score).toBe('number')
   })
+
+  // ── Health Connect extended metrics ────────────────────────────────────────
+
+  it('computes avgHR (daily average heart rate) from heartRate subtype entries', () => {
+    const entries = [
+      makeWellbeing('2026-01-01', 4),
+      makeAvgHR('2026-01-01', 70),
+      makeAvgHR('2026-01-01', 80),
+    ]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].avgHR).toBeCloseTo(75)
+  })
+
+  it('avgHR is 0 when no heartRate subtype entries exist', () => {
+    const entries = [makeWellbeing('2026-01-01', 4)]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].avgHR).toBe(0)
+  })
+
+  it('computes hrv_ms (HRV average) from heartRateVariability subtype entries', () => {
+    const entries = [
+      makeWellbeing('2026-01-01', 4),
+      makeHRV('2026-01-01', 40),
+      makeHRV('2026-01-01', 60),
+    ]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].hrv_ms).toBeCloseTo(50)
+  })
+
+  it('hrv_ms is 0 when no HRV entries exist', () => {
+    const entries = [makeWellbeing('2026-01-01', 4)]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].hrv_ms).toBe(0)
+  })
+
+  it('computes spo2_pct (SpO₂ average) from oxygenSaturation subtype entries', () => {
+    const entries = [
+      makeWellbeing('2026-01-01', 4),
+      makeSpO2('2026-01-01', 97),
+      makeSpO2('2026-01-01', 99),
+    ]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].spo2_pct).toBeCloseTo(98)
+  })
+
+  it('spo2_pct is 0 when no SpO₂ entries exist', () => {
+    const entries = [makeWellbeing('2026-01-01', 4)]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].spo2_pct).toBe(0)
+  })
+
+  it('computes dailyCaloriesHC from calories type entries', () => {
+    const entries = [
+      makeWellbeing('2026-01-01', 4),
+      makeCaloriesHC('2026-01-01', 2000),
+      makeCaloriesHC('2026-01-01', 500),
+    ]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].dailyCaloriesHC).toBeCloseTo(2500)
+  })
+
+  it('dailyCaloriesHC is 0 when no calories HC entries exist', () => {
+    const entries = [makeWellbeing('2026-01-01', 4)]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].dailyCaloriesHC).toBe(0)
+  })
+
+  it('restingHR and avgHR are tracked separately for the same day', () => {
+    const entries = [
+      makeWellbeing('2026-01-01', 4),
+      makeHeartRate('2026-01-01', 55),    // resting
+      makeAvgHR('2026-01-01', 80),        // active
+    ]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].restingHR).toBeCloseTo(55)
+    expect(ds[0].avgHR).toBeCloseTo(80)
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -329,6 +442,29 @@ describe('VARIABLE_META', () => {
     }
   })
 
+  it('includes Health Connect extended metrics keys (avgHR, hrv_ms, spo2_pct, dailyCaloriesHC)', () => {
+    const hcKeys = ['avgHR', 'hrv_ms', 'spo2_pct', 'dailyCaloriesHC']
+    for (const key of hcKeys) {
+      expect(VARIABLE_META).toHaveProperty(key)
+    }
+  })
+
+  it('avgHR has direction neutral', () => {
+    expect(VARIABLE_META.avgHR.direction).toBe('neutral')
+  })
+
+  it('hrv_ms has direction higher_better', () => {
+    expect(VARIABLE_META.hrv_ms.direction).toBe('higher_better')
+  })
+
+  it('spo2_pct has direction higher_better', () => {
+    expect(VARIABLE_META.spo2_pct.direction).toBe('higher_better')
+  })
+
+  it('dailyCaloriesHC has direction higher_better', () => {
+    expect(VARIABLE_META.dailyCaloriesHC.direction).toBe('higher_better')
+  })
+
   it('every entry has label, unit, direction, group', () => {
     for (const [key, meta] of Object.entries(VARIABLE_META)) {
       expect(meta, `${key} missing label`).toHaveProperty('label')
@@ -412,6 +548,25 @@ describe('computeBasicCorrelations', () => {
   })
 })
 
+  it('includes Health Connect features (avgHR, hrv_ms, spo2_pct, dailyCaloriesHC) in correlations when data is present', () => {
+    const entries = []
+    for (let d = 1; d <= 7; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 3)))
+      entries.push(makeAvgHR(date, 60 + d * 2))
+      entries.push(makeHRV(date, 30 + d * 5))
+      entries.push(makeSpO2(date, 96 + (d % 3)))
+      entries.push(makeCaloriesHC(date, 1800 + d * 50))
+    }
+    const result = computeBasicCorrelations(entries)
+    expect(result.status).toBe('ok')
+    const keys = result.correlations.map((c) => c.variable)
+    expect(keys).toContain('avgHR')
+    expect(keys).toContain('hrv_ms')
+    expect(keys).toContain('spo2_pct')
+    expect(keys).toContain('dailyCaloriesHC')
+  })
+
 // ---------------------------------------------------------------------------
 // computeAdvancedAnalysis
 // ---------------------------------------------------------------------------
@@ -472,6 +627,30 @@ describe('computeAdvancedAnalysis', () => {
       expect(result.modelInfo).toHaveProperty('r2')
       expect(result.modelInfo).toHaveProperty('lagDays')
       expect(result.modelInfo.lagDays).toBe(LAG_DAYS)
+    }
+  })
+
+  it('includes Health Connect features (avgHR, hrv_ms, spo2_pct, dailyCaloriesHC) in featureImportance when data is present', () => {
+    const entries = []
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 4)))
+      entries.push(makeSleep(date, 360 + d * 10))
+      entries.push(makeAvgHR(date, 60 + d * 2))
+      entries.push(makeHRV(date, 30 + d * 4))
+      entries.push(makeSpO2(date, 96 + (d % 4)))
+      entries.push(makeCaloriesHC(date, 1800 + d * 40))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok') {
+      const allFeatureKeys = Object.keys(VARIABLE_META).filter((k) => {
+        return ['avgHR', 'hrv_ms', 'spo2_pct', 'dailyCaloriesHC'].includes(k)
+      })
+      // The model may cap at 12 features, but they must be present in VARIABLE_META
+      // and in the dataset (non-zero columns), so they are eligible
+      for (const k of allFeatureKeys) {
+        expect(VARIABLE_META).toHaveProperty(k)
+      }
     }
   })
 

@@ -69,6 +69,34 @@ export const VARIABLE_META = {
     direction: 'lower_better',
     group: 'lifestyle',
   },
+  avgHR: {
+    label: 'FC moyenne (journée)',
+    unit: 'bpm',
+    format: (v) => `${Math.round(v)} bpm`,
+    direction: 'neutral',
+    group: 'lifestyle',
+  },
+  hrv_ms: {
+    label: 'Variabilité FC (HRV)',
+    unit: 'ms',
+    format: (v) => `${Math.round(v)} ms`,
+    direction: 'higher_better',
+    group: 'lifestyle',
+  },
+  spo2_pct: {
+    label: 'Saturation en oxygène (SpO₂)',
+    unit: '%',
+    format: (v) => `${v.toFixed(1)} %`,
+    direction: 'higher_better',
+    group: 'lifestyle',
+  },
+  dailyCaloriesHC: {
+    label: 'Calories brûlées totales (Health Connect)',
+    unit: 'kcal',
+    format: (v) => `${Math.round(v)} kcal`,
+    direction: 'higher_better',
+    group: 'lifestyle',
+  },
   // ── Macronutrients ─────────────────────────────────────────────────────────
   kcal: {
     label: 'Apport calorique',
@@ -278,6 +306,10 @@ export function buildDailyDataset(entries) {
         steps: 0,
         activityCalories: 0,
         _hrSum: 0, _hrCount: 0,
+        _avgHRSum: 0, _avgHRCount: 0,
+        _hrvSum: 0, _hrvCount: 0,
+        _spo2Sum: 0, _spo2Count: 0,
+        dailyCaloriesHC: 0,
         kcal: 0,
         protein_g: 0,
         fat_g: 0,
@@ -347,11 +379,37 @@ export function buildDailyDataset(entries) {
 
       case 'heart_rate': {
         const subtype = e.payload?.subtype
-        if (subtype !== 'restingHeartRate') break
         const bpm = e.payload?.bpm ?? e.payload?.value
-        if (typeof bpm === 'number' && bpm > 0) {
-          day._hrSum += bpm
-          day._hrCount += 1
+        if (subtype === 'restingHeartRate') {
+          if (typeof bpm === 'number' && bpm > 0) {
+            day._hrSum += bpm
+            day._hrCount += 1
+          }
+        } else if (subtype === 'heartRate') {
+          if (typeof bpm === 'number' && bpm > 0) {
+            day._avgHRSum += bpm
+            day._avgHRCount += 1
+          }
+        } else if (subtype === 'heartRateVariability') {
+          const hrv = e.payload?.value ?? bpm
+          if (typeof hrv === 'number' && hrv > 0) {
+            day._hrvSum += hrv
+            day._hrvCount += 1
+          }
+        } else if (subtype === 'oxygenSaturation') {
+          const spo2 = e.payload?.value ?? bpm
+          if (typeof spo2 === 'number' && spo2 > 0) {
+            day._spo2Sum += spo2
+            day._spo2Count += 1
+          }
+        }
+        break
+      }
+
+      case 'calories': {
+        const cal = e.payload?.value
+        if (typeof cal === 'number' && cal > 0) {
+          day.dailyCaloriesHC += cal
         }
         break
       }
@@ -398,13 +456,17 @@ export function buildDailyDataset(entries) {
   for (const [, day] of days) {
     if (day._wellbeingCount === 0) continue
     result.push({
-      dateKey:          day.dateKey,
-      wellbeing:        day._wellbeingSum / day._wellbeingCount,
-      sleepMinutes:     day.sleepMinutes,
-      steps:            day.steps,
-      activityCalories: day.activityCalories,
-      restingHR:        day._hrCount > 0 ? day._hrSum / day._hrCount : 0,
-      kcal:             day.kcal,
+      dateKey:            day.dateKey,
+      wellbeing:          day._wellbeingSum / day._wellbeingCount,
+      sleepMinutes:       day.sleepMinutes,
+      steps:              day.steps,
+      activityCalories:   day.activityCalories,
+      restingHR:          day._hrCount > 0 ? day._hrSum / day._hrCount : 0,
+      avgHR:              day._avgHRCount > 0 ? day._avgHRSum / day._avgHRCount : 0,
+      hrv_ms:             day._hrvCount > 0 ? day._hrvSum / day._hrvCount : 0,
+      spo2_pct:           day._spo2Count > 0 ? day._spo2Sum / day._spo2Count : 0,
+      dailyCaloriesHC:    day.dailyCaloriesHC,
+      kcal:               day.kcal,
       protein_g:        day.protein_g,
       fat_g:            day.fat_g,
       carbohydrates_g:  day.carbohydrates_g,
