@@ -1,9 +1,11 @@
 import { Outlet, NavLink } from 'react-router-dom'
 import UpdateBanner from './components/UpdateBanner'
 import WellbeingPrompt from './components/WellbeingPrompt'
+import { useAutoSync } from './hooks/useAutoSync'
 import './App.css'
 
 export default function Layout() {
+  useAutoSync()
   return (
     <div className="app">
       <WellbeingPrompt />

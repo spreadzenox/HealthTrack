@@ -7,6 +7,11 @@ vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
 }))
 
+// Prevent auto-sync from calling Health Connect during unit tests
+vi.mock('../hooks/useAutoSync', () => ({
+  useAutoSync: vi.fn(),
+}))
+
 
 // Helper to build a minimal set of entries (no real health data)
 function makeEntries(days = 0) {
@@ -197,6 +202,25 @@ describe('CorrelationBar color logic', () => {
     expect(lipidBar).not.toHaveClass('reco-corr-pos')
 
     spy.mockRestore()
+  })
+})
+
+// ─── Auto-sync trigger ────────────────────────────────────────────────────────
+
+describe('Recommendations auto-sync', () => {
+  it('calls useAutoSync when the page mounts', async () => {
+    const { useAutoSync } = await import('../hooks/useAutoSync')
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([])
+
+    render(
+      <BrowserRouter>
+        <Recommendations />
+      </BrowserRouter>
+    )
+
+    await screen.findByRole('heading', { name: /Recommandations/i })
+    expect(useAutoSync).toHaveBeenCalled()
   })
 })
 
