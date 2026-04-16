@@ -79,15 +79,27 @@ function getPlatformSync() {
 
 /**
  * Module-level cache for the Health plugin instance.
- * Avoids triggering a second dynamic import() when both availabilityDetails()
- * and checkPermissions() are awaited concurrently (as they are in Connectors.jsx).
- * On Android, each dynamic import can cause a round-trip through the WebView
- * bridge, creating unnecessary latency and re-entry risks.
  *
  * Sentinel values:
  *   undefined  – not yet loaded (initial state / after reset)
  *   null       – load attempted but plugin unavailable (web/test env)
- *   object     – loaded native plugin instance
+ *   object     – loaded native plugin instance (Capacitor proxy)
+ *
+ * CRITICAL — Capacitor native proxy IS a thenable:
+ *   The Capacitor Android bridge intercepts ALL property accesses on plugin
+ *   proxies, including `.then`. This means that if an `async function` returns
+ *   the proxy object directly (e.g. `return _healthPluginCache`), V8 internally
+ *   calls `Promise.resolve(proxy)`, which detects the `.then` property and tries
+ *   to call `proxy.then(resolve, reject)` via the native bridge. That bridge call
+ *   never resolves, so every caller that does `await getHealthPlugin()` hangs
+ *   forever — silently, with no timeout, no error, no log.
+ *
+ * Solution: split into two functions:
+ *   ensureHealthPlugin() — async, populates the cache, returns undefined (safe)
+ *   getCachedHealthPlugin() — synchronous, reads cache, NEVER awaited
+ *
+ * Callers must do:  await ensureHealthPlugin(); const h = getCachedHealthPlugin()
+ * NOT:             const h = await getHealthPlugin()   ← old broken pattern
  */
 let _healthPluginCache = undefined
 let _healthPluginCachePromise = null
@@ -98,20 +110,29 @@ export function _resetHealthPluginCache() {
   _healthPluginCachePromise = null
 }
 
-/** Lazily import the Capacitor plugin to avoid crashing in web/test environments. */
-async function getHealthPlugin() {
-  // Return cached plain value immediately — returning a non-thenable avoids an
-  // extra PromiseResolveThenableJob microtask tick in the V8/JSC engine, which on
-  // Android 16 WebView can leave continuations stranded when the bridge is busy.
-  // Check !== undefined so that null (= "plugin unavailable") is also returned
-  // directly without re-triggering the import.
-  if (_healthPluginCache !== undefined) return _healthPluginCache
+/**
+ * Returns the cached Health plugin synchronously.
+ * MUST be called after ensureHealthPlugin() has resolved.
+ * Never use `await` on the return value — the proxy is a thenable.
+ */
+function getCachedHealthPlugin() {
+  return _healthPluginCache
+}
 
-  // If a load is already in flight, await the shared promise and return the
-  // resolved plain value (not the promise itself) to avoid thenable-return issues.
+/**
+ * Ensures the Health plugin is loaded and cached.
+ * Always returns undefined (a plain non-thenable) — never the proxy itself —
+ * so callers can safely `await` this function without triggering the
+ * Capacitor thenable-proxy hang described above.
+ */
+async function ensureHealthPlugin() {
+  // Already loaded (including null = "unavailable"). Nothing to do.
+  if (_healthPluginCache !== undefined) return
+
+  // Load already in flight — wait for it, then return (not the cache value!).
   if (_healthPluginCachePromise !== null) {
     await _healthPluginCachePromise
-    return _healthPluginCache
+    return
   }
 
   _healthPluginCachePromise = (async () => {
@@ -152,6 +173,8 @@ async function getHealthPlugin() {
         platform: getPlatformSync(),
       })
 
+      // Store in cache ONLY after all logging is done. The proxy object is stored
+      // here but NEVER returned directly from an async function.
       _healthPluginCache = Health ?? null
     } catch (e) {
       debugWarn(TAG, 'Plugin @capgo/capacitor-health introuvable (environnement web/test)', { error: e?.message || String(e) })
@@ -160,7 +183,7 @@ async function getHealthPlugin() {
   })()
 
   await _healthPluginCachePromise
-  return _healthPluginCache
+  // Return undefined explicitly — never return _healthPluginCache from here.
 }
 
 
@@ -238,7 +261,8 @@ export class HealthConnectConnector extends BaseConnector {
   }
 
   async isAvailable() {
-    const Health = await getHealthPlugin()
+    await ensureHealthPlugin()
+    const Health = getCachedHealthPlugin()
     if (!Health) return false
     try {
       const result = await Health.isAvailable()
@@ -280,19 +304,20 @@ export class HealthConnectConnector extends BaseConnector {
     debugInfo(TAG, 'Informations appareil', deviceInfo)
 
     debugInfo(TAG, 'Chargement plugin @capgo/capacitor-health…')
-    let Health
     try {
-      Health = await getHealthPlugin()
-      debugInfo(TAG, 'Plugin chargé, entrée dans la logique de disponibilité', {
-        healthIsNull: Health == null,
-        healthType: typeof Health,
-      })
+      await ensureHealthPlugin()
     } catch (loadErr) {
       debugError(TAG, `Erreur lors du chargement du plugin : ${loadErr?.message || loadErr}`, {
         errorStack: loadErr?.stack,
       })
       return { available: false, reason: 'no_bridge' }
     }
+    // getCachedHealthPlugin() is synchronous — never awaited, never a thenable issue.
+    const Health = getCachedHealthPlugin()
+    debugInfo(TAG, 'Plugin chargé, entrée dans la logique de disponibilité', {
+      healthIsNull: Health == null,
+      healthType: typeof Health,
+    })
 
     if (!Health) {
       debugWarn(TAG, 'Aucun bridge natif Capacitor détecté → no_bridge', { reason: 'no_bridge' })
@@ -449,7 +474,8 @@ export class HealthConnectConnector extends BaseConnector {
    */
   async openHealthConnectSettings() {
     debugInfo(TAG, 'Tentative ouverture paramètres Health Connect')
-    const Health = await getHealthPlugin()
+    await ensureHealthPlugin()
+    const Health = getCachedHealthPlugin()
     if (!Health || typeof Health.openHealthConnectSettings !== 'function') {
       debugWarn(TAG, 'openHealthConnectSettings non disponible sur ce bridge')
       return false
@@ -544,7 +570,8 @@ export class HealthConnectConnector extends BaseConnector {
 
   async checkPermissions() {
     debugInfo(TAG, 'Vérification des permissions Health Connect')
-    const Health = await getHealthPlugin()
+    await ensureHealthPlugin()
+    const Health = getCachedHealthPlugin()
     if (!Health) {
       debugWarn(TAG, 'Bridge absent → permissions non demandées')
       return 'not_asked'
@@ -578,7 +605,8 @@ export class HealthConnectConnector extends BaseConnector {
 
   async requestPermissions() {
     debugInfo(TAG, 'Demande de permissions Health Connect', { readTypes: READ_TYPES })
-    const Health = await getHealthPlugin()
+    await ensureHealthPlugin()
+    const Health = getCachedHealthPlugin()
     if (!Health) {
       debugWarn(TAG, 'Bridge absent → impossible de demander les permissions')
       return 'denied'
@@ -616,7 +644,8 @@ export class HealthConnectConnector extends BaseConnector {
       until: (until || new Date()).toISOString(),
     })
 
-    const Health = await getHealthPlugin()
+    await ensureHealthPlugin()
+    const Health = getCachedHealthPlugin()
     if (!Health) {
       debugError(TAG, 'Bridge absent → synchronisation impossible')
       return { synced: 0, skipped: 0, errors: ['Health Connect non disponible'] }
