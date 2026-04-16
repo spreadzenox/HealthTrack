@@ -232,6 +232,9 @@ describe('Connectors page', () => {
   it('resolves to "Non demandé" when checkPermissions never resolves (timeout fallback)', async () => {
     const { CONNECTORS } = await import('../connectors/connectorRegistry')
     CONNECTORS[0].isAvailable.mockResolvedValue(false)
+    // Explicitly mock availabilityDetails so it resolves immediately (state from a prior
+    // test that called mockReturnValue(neverResolves()) is not reset by clearAllMocks).
+    CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'unavailable' })
     CONNECTORS[0].checkPermissions.mockReturnValue(neverResolves())
 
     vi.useFakeTimers()
