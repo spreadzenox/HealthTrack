@@ -156,13 +156,13 @@ describe('Recommendations page', () => {
 // ─── Correlation bar color semantics ─────────────────────────────────────────
 
 describe('CorrelationBar color logic', () => {
-  it('renders higher_better variable with green bar even when r is negative', async () => {
-    // protein: direction=higher_better, r=-0.97 (user has low protein → wellbeing drops)
-    // The bar must be green (increasing protein is beneficial)
+  it('renders bar color based on the sign of r, not the variable direction', async () => {
+    // Bar color is always determined by the raw Pearson r sign:
+    //   r >= 0 → green (reco-corr-pos)
+    //   r < 0  → red   (reco-corr-neg)
+    // This keeps bar color and the displayed numeric sign coherent.
     const { listEntries } = await import('../storage/localHealthStorage')
 
-    // Build entries with enough days so the analysis runs, then intercept
-    // the result via a spy on computeBasicCorrelations
     const analysisModule = await import('../services/analysisEngine')
 
     const spy = vi.spyOn(analysisModule, 'computeBasicCorrelations').mockReturnValue({
@@ -170,7 +170,7 @@ describe('CorrelationBar color logic', () => {
       datasetDays: 3,
       correlations: [
         { variable: 'protein_g', label: 'Protéines', r: -0.97, direction: 'higher_better' },
-        { variable: 'fat_g',     label: 'Lipides',   r: -0.65, direction: 'neutral' },
+        { variable: 'fat_g',     label: 'Lipides',   r:  0.65, direction: 'neutral' },
       ],
       topNegativeFactors: [],
     })
@@ -182,19 +182,19 @@ describe('CorrelationBar color logic', () => {
       expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
     })
 
-    // The bar for Protéines (higher_better, r<0) must have the green class
+    // Protéines (r<0) must have the red class regardless of direction
     const proteinLabel = await screen.findByText('Protéines')
     const proteinRow = proteinLabel.closest('.reco-corr-row')
     const proteinBar = proteinRow.querySelector('.reco-corr-bar')
-    expect(proteinBar).toHaveClass('reco-corr-pos')
-    expect(proteinBar).not.toHaveClass('reco-corr-neg')
+    expect(proteinBar).toHaveClass('reco-corr-neg')
+    expect(proteinBar).not.toHaveClass('reco-corr-pos')
 
-    // The bar for Lipides (neutral, r<0) must have the red class
+    // Lipides (r>0) must have the green class
     const lipidLabel = screen.getByText('Lipides')
     const lipidRow = lipidLabel.closest('.reco-corr-row')
     const lipidBar = lipidRow.querySelector('.reco-corr-bar')
-    expect(lipidBar).toHaveClass('reco-corr-neg')
-    expect(lipidBar).not.toHaveClass('reco-corr-pos')
+    expect(lipidBar).toHaveClass('reco-corr-pos')
+    expect(lipidBar).not.toHaveClass('reco-corr-neg')
 
     spy.mockRestore()
   })

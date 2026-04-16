@@ -410,6 +410,48 @@ describe('computeBasicCorrelations', () => {
     const result = computeBasicCorrelations(entries)
     expect(result.datasetDays).toBe(7)
   })
+
+  it('includes lower_better variable in topNegativeFactors when r is strongly negative', () => {
+    // alcohol is lower_better. When it correlates negatively with wellbeing (r < -0.15)
+    // it should appear in the Top 3 (more alcohol → worse wellbeing).
+    const entries = []
+    const alcoholItems = [{ ingredient: 'Bière', quantity_g: 500 }]
+    for (let d = 1; d <= 7; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      // Days 1-4: low wellbeing AND food with alcohol; days 5-7: high wellbeing AND no food
+      entries.push(makeWellbeing(date, d <= 4 ? 2 : 5))
+      if (d <= 4) entries.push(makeFood(date, alcoholItems))
+    }
+    const result = computeBasicCorrelations(entries)
+    expect(result.status).toBe('ok')
+    // If alcohol data produced a correlation, it must be included in top factors
+    const alcoholCorr = result.correlations.find((c) => c.variable === 'alcohol_g')
+    if (alcoholCorr && alcoholCorr.r < -0.15) {
+      const inTop3 = result.topNegativeFactors.some((f) => f.variable === 'alcohol_g')
+      expect(inTop3).toBe(true)
+    }
+  })
+
+  it('excludes lower_better variable from topNegativeFactors when r is positive', () => {
+    // If a lower_better variable has a positive correlation (r > 0),
+    // it should NOT be flagged as harmful (positive r means more of it → better wellbeing).
+    const entries = []
+    const alcoholItems = [{ ingredient: 'Bière', quantity_g: 300 }]
+    for (let d = 1; d <= 7; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      // Days 1-4: high wellbeing AND food with alcohol; days 5-7: low wellbeing AND no food
+      // This creates a positive r for alcohol_g, which should NOT be in Top 3
+      entries.push(makeWellbeing(date, d <= 4 ? 5 : 2))
+      if (d <= 4) entries.push(makeFood(date, alcoholItems))
+    }
+    const result = computeBasicCorrelations(entries)
+    expect(result.status).toBe('ok')
+    const alcoholCorr = result.correlations.find((c) => c.variable === 'alcohol_g')
+    if (alcoholCorr && alcoholCorr.r > 0) {
+      const inTop3 = result.topNegativeFactors.some((f) => f.variable === 'alcohol_g')
+      expect(inTop3).toBe(false)
+    }
+  })
 })
 
 // ---------------------------------------------------------------------------

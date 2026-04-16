@@ -585,7 +585,7 @@ export function computeBasicCorrelations(entries) {
   const negativeFactors = correlations
     .filter((c) => {
       if (c.direction === 'higher_better') return c.r < -0.15
-      if (c.direction === 'lower_better') return c.r > 0.15
+      if (c.direction === 'lower_better') return c.r < -0.15
       return Math.abs(c.r) > 0.15
     })
     .sort((a, b) => Math.abs(b.r) - Math.abs(a.r))
@@ -615,7 +615,7 @@ function buildBasicAdvice({ variable, r, direction }) {
   if (direction === 'higher_better' && r < 0) {
     return `Augmenter votre apport en ${label.toLowerCase()} pourrait améliorer votre bien-être.`
   }
-  if (direction === 'lower_better' && r > 0) {
+  if (direction === 'lower_better' && r < 0) {
     return `Réduire votre ${label.toLowerCase()} pourrait améliorer votre bien-être.`
   }
   if (r > 0) {
