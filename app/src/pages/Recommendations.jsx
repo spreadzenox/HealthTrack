@@ -11,20 +11,10 @@ import './Recommendations.css'
 
 // ─── Correlation bar chart (SVG) ─────────────────────────────────────────────
 
-function CorrelationBar({ label, r, impact, direction }) {
+function CorrelationBar({ label, r, impact }) {
   const pct = Math.round(Math.abs(impact) * 100)
-  // Color reflects semantic benefit: green = more is better, red = less is better.
-  // For higher_better variables (e.g. protein), increasing is always the goal → green.
-  // For lower_better variables (e.g. resting HR), decreasing is always the goal → red.
-  // For neutral variables, follow the raw correlation sign (positive r → green).
-  let isPositive
-  if (direction === 'higher_better') {
-    isPositive = true
-  } else if (direction === 'lower_better') {
-    isPositive = false
-  } else {
-    isPositive = r >= 0
-  }
+  // Green = positive correlation with wellbeing, red = negative correlation.
+  const isPositive = r >= 0
   return (
     <div className="reco-corr-row">
       <span className="reco-corr-label">{label}</span>
@@ -150,11 +140,11 @@ function BasicTab({ entries }) {
         <section className="reco-section">
           <h3 className="reco-section-title">📈 Corrélations avec votre bien-être</h3>
           <p className="reco-section-hint">
-            Barres vertes = augmenter est bénéfique · Barres rouges = réduire est bénéfique.
+            Barres vertes = corrélation positive avec votre bien-être · Barres rouges = corrélation négative.
           </p>
           <div className="reco-corr-chart">
             {correlations.map((c) => (
-              <CorrelationBar key={c.variable} label={c.label} r={c.r} impact={Math.abs(c.r)} direction={c.direction} />
+              <CorrelationBar key={c.variable} label={c.label} r={c.r} impact={Math.abs(c.r)} />
             ))}
           </div>
         </section>
