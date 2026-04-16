@@ -6,6 +6,7 @@ import {
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
 } from '../services/analysisEngine'
+import { useAutoSync } from '../hooks/useAutoSync'
 import './Recommendations.css'
 
 // ─── Correlation bar chart (SVG) ─────────────────────────────────────────────
@@ -279,6 +280,8 @@ const TABS = [
 ]
 
 export default function Recommendations() {
+  useAutoSync()
+
   const [tab, setTab] = useState('basic')
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
