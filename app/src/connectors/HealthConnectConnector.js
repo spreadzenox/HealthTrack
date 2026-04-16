@@ -83,23 +83,36 @@ function getPlatformSync() {
  * and checkPermissions() are awaited concurrently (as they are in Connectors.jsx).
  * On Android, each dynamic import can cause a round-trip through the WebView
  * bridge, creating unnecessary latency and re-entry risks.
+ *
+ * Sentinel values:
+ *   undefined  – not yet loaded (initial state / after reset)
+ *   null       – load attempted but plugin unavailable (web/test env)
+ *   object     – loaded native plugin instance
  */
-let _healthPluginCache = null
+let _healthPluginCache = undefined
 let _healthPluginCachePromise = null
 
 /** Reset the plugin cache. Exported for use in tests only. */
 export function _resetHealthPluginCache() {
-  _healthPluginCache = null
+  _healthPluginCache = undefined
   _healthPluginCachePromise = null
 }
 
 /** Lazily import the Capacitor plugin to avoid crashing in web/test environments. */
 async function getHealthPlugin() {
-  // Return cached instance immediately (avoids double import on concurrent calls)
-  if (_healthPluginCache !== null) return _healthPluginCache
+  // Return cached plain value immediately — returning a non-thenable avoids an
+  // extra PromiseResolveThenableJob microtask tick in the V8/JSC engine, which on
+  // Android 16 WebView can leave continuations stranded when the bridge is busy.
+  // Check !== undefined so that null (= "plugin unavailable") is also returned
+  // directly without re-triggering the import.
+  if (_healthPluginCache !== undefined) return _healthPluginCache
 
-  // If a load is already in flight, wait for it rather than starting a second import
-  if (_healthPluginCachePromise !== null) return _healthPluginCachePromise
+  // If a load is already in flight, await the shared promise and return the
+  // resolved plain value (not the promise itself) to avoid thenable-return issues.
+  if (_healthPluginCachePromise !== null) {
+    await _healthPluginCachePromise
+    return _healthPluginCache
+  }
 
   _healthPluginCachePromise = (async () => {
     try {
@@ -139,16 +152,15 @@ async function getHealthPlugin() {
         platform: getPlatformSync(),
       })
 
-      _healthPluginCache = Health
-      return Health
+      _healthPluginCache = Health ?? null
     } catch (e) {
       debugWarn(TAG, 'Plugin @capgo/capacitor-health introuvable (environnement web/test)', { error: e?.message || String(e) })
       _healthPluginCache = null
-      return null
     }
   })()
 
-  return _healthPluginCachePromise
+  await _healthPluginCachePromise
+  return _healthPluginCache
 }
 
 
@@ -268,8 +280,19 @@ export class HealthConnectConnector extends BaseConnector {
     debugInfo(TAG, 'Informations appareil', deviceInfo)
 
     debugInfo(TAG, 'Chargement plugin @capgo/capacitor-health…')
-    const Health = await getHealthPlugin()
-    debugInfo(TAG, 'Plugin chargé, entrée dans la logique de disponibilité')
+    let Health
+    try {
+      Health = await getHealthPlugin()
+      debugInfo(TAG, 'Plugin chargé, entrée dans la logique de disponibilité', {
+        healthIsNull: Health == null,
+        healthType: typeof Health,
+      })
+    } catch (loadErr) {
+      debugError(TAG, `Erreur lors du chargement du plugin : ${loadErr?.message || loadErr}`, {
+        errorStack: loadErr?.stack,
+      })
+      return { available: false, reason: 'no_bridge' }
+    }
 
     if (!Health) {
       debugWarn(TAG, 'Aucun bridge natif Capacitor détecté → no_bridge', { reason: 'no_bridge' })

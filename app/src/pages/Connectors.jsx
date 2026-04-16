@@ -280,6 +280,11 @@ function ConnectorCard({ connector }) {
     const detailsFn = connector.availabilityDetails
       ? connector.availabilityDetails.bind(connector)
       : () => connector.isAvailable().then((a) => ({ available: a }))
+
+    // Run availability check first, then permissions check sequentially.
+    // On Android, running both concurrently can saturate the Capacitor WebView
+    // bridge message queue and cause one (or both) native calls to be dropped.
+    // Serialising them ensures the bridge is free before the second call starts.
     withTimeout(detailsFn(), 12000, { available: false, reason: 'unavailable' })
       .then((details) => {
         const avail = details.available ? 'available' : 'unavailable'
@@ -301,15 +306,20 @@ function ConnectorCard({ connector }) {
         if (avail === 'available') {
           autoOpenedRef.current = false
         }
+        // Now that availabilityDetails() has fully resolved (and the bridge is
+        // idle), kick off the permissions check.
+        return withTimeout(connector.checkPermissions(), 12000, 'not_asked')
+      })
+      .then((p) => {
+        // p is undefined if the availability check threw (caught below)
+        if (p !== undefined) setPermissions(p === 'not_asked' ? 'not_asked' : p)
       })
       .catch(() => {
         setAvailability('unavailable')
         setAvailabilityReason(null)
         setAvailabilityNativeReason(null)
+        setPermissions('not_asked')
       })
-    withTimeout(connector.checkPermissions(), 12000, 'not_asked')
-      .then((p) => setPermissions(p === 'not_asked' ? 'not_asked' : p))
-      .catch(() => setPermissions('not_asked'))
   }, [connector, reloadSettings, checkCount])
 
   const handleToggleEnabled = () => {
