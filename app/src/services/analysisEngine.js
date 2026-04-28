@@ -703,6 +703,170 @@ function buildBasicAdvice({ variable, r, direction }) {
 // ─── Step 5 — advanced ML analysis (OLS multiple regression) ─────────────────
 
 /**
+ * Builds a feature row for today from all entries, without requiring a
+ * wellbeing score to exist.  Lifestyle metrics (steps, sleep, HR…) are
+ * aggregated from today's entries; nutrition keys are lag-weighted using
+ * historicalRawDataset as the lookback window.
+ *
+ * @param {Array}        entries               raw entries from listEntriesForAnalysis
+ * @param {Array<DayRow>} historicalRawDataset  output of buildDailyDataset (wellbeing days)
+ * @returns {DayRow|null}  today's feature row, or null when no data exists at all today
+ */
+export function buildTodayRow(entries, historicalRawDataset) {
+  const todayKey = localDateKey(new Date().toISOString())
+
+  const row = {
+    dateKey: todayKey,
+    _wellbeingSum: 0, _wellbeingCount: 0,
+    sleepMinutes: 0,
+    steps: 0,
+    activityCalories: 0,
+    _hrSum: 0, _hrCount: 0,
+    _avgHRSum: 0, _avgHRCount: 0,
+    _hrvSum: 0, _hrvCount: 0,
+    _spo2Sum: 0, _spo2Count: 0,
+    dailyCaloriesHC: 0,
+    kcal: 0, protein_g: 0, fat_g: 0, carbohydrates_g: 0,
+    fiber_g: 0, sugar_g: 0, saturated_fat_g: 0, omega3_g: 0, alcohol_g: 0,
+    fodmap_score: 0,
+    vitamin_c_mg: 0, vitamin_d_ug: 0, vitamin_b12_ug: 0, vitamin_b9_ug: 0,
+    vitamin_a_ug: 0, vitamin_e_mg: 0,
+    calcium_mg: 0, iron_mg: 0, magnesium_mg: 0, zinc_mg: 0,
+    potassium_mg: 0, sodium_mg: 0,
+    mealCount: 0,
+  }
+
+  let hasAnyData = false
+
+  for (const e of entries) {
+    if (!e.at || localDateKey(e.at) !== todayKey) continue
+    hasAnyData = true
+
+    switch (e.type) {
+      case 'wellbeing': {
+        const score = e.payload?.score
+        if (typeof score === 'number' && score >= 0 && score <= 5) {
+          row._wellbeingSum += score
+          row._wellbeingCount += 1
+        }
+        break
+      }
+      case 'sleep': {
+        const mins = e.payload?.durationMinutes
+        if (typeof mins === 'number' && mins > 0) row.sleepMinutes += mins
+        break
+      }
+      case 'steps': {
+        const val = e.payload?.value
+        if (typeof val === 'number' && val > 0) row.steps += val
+        break
+      }
+      case 'activity': {
+        const cal = e.payload?.totalCalories
+        if (typeof cal === 'number' && cal > 0) row.activityCalories += cal
+        break
+      }
+      case 'heart_rate': {
+        const subtype = e.payload?.subtype
+        const bpm = e.payload?.bpm ?? e.payload?.value
+        if (subtype === 'restingHeartRate' && typeof bpm === 'number' && bpm > 0) {
+          row._hrSum += bpm; row._hrCount += 1
+        } else if (subtype === 'heartRate' && typeof bpm === 'number' && bpm > 0) {
+          row._avgHRSum += bpm; row._avgHRCount += 1
+        } else if (subtype === 'heartRateVariability') {
+          const v = e.payload?.value ?? bpm
+          if (typeof v === 'number' && v > 0) { row._hrvSum += v; row._hrvCount += 1 }
+        } else if (subtype === 'oxygenSaturation') {
+          const v = e.payload?.value ?? bpm
+          if (typeof v === 'number' && v > 0) { row._spo2Sum += v; row._spo2Count += 1 }
+        }
+        break
+      }
+      case 'calories': {
+        const cal = e.payload?.value
+        if (typeof cal === 'number' && cal > 0) row.dailyCaloriesHC += cal
+        break
+      }
+      case 'food': {
+        const items = e.payload?.items
+        if (!Array.isArray(items) || items.length === 0) break
+        const totals = computeTotalsFromItems(items)
+        row.kcal += totals.energy_kcal
+        row.protein_g += totals.protein_g
+        row.fat_g += totals.fat_g
+        row.carbohydrates_g += totals.carbohydrates_g
+        row.fiber_g += totals.fiber_g
+        row.sugar_g += totals.sugar_g
+        row.saturated_fat_g += totals.saturated_fat_g
+        row.omega3_g += totals.omega3_g
+        row.alcohol_g += totals.alcohol_g
+        if (typeof totals.fodmap_score === 'number') {
+          row.fodmap_score = Math.max(row.fodmap_score, totals.fodmap_score)
+        }
+        row.vitamin_c_mg += totals.vitamin_c_mg
+        row.vitamin_d_ug += totals.vitamin_d_ug
+        row.vitamin_b12_ug += totals.vitamin_b12_ug
+        row.vitamin_b9_ug += totals.vitamin_b9_ug
+        row.vitamin_a_ug += totals.vitamin_a_ug
+        row.vitamin_e_mg += totals.vitamin_e_mg
+        row.calcium_mg += totals.calcium_mg
+        row.iron_mg += totals.iron_mg
+        row.magnesium_mg += totals.magnesium_mg
+        row.zinc_mg += totals.zinc_mg
+        row.potassium_mg += totals.potassium_mg
+        row.sodium_mg += totals.sodium_mg
+        row.mealCount += 1
+        break
+      }
+      default:
+        break
+    }
+  }
+
+  if (!hasAnyData) return null
+
+  // Finalise averaged metrics
+  const todayRaw = {
+    ...row,
+    restingHR:  row._hrCount    > 0 ? row._hrSum    / row._hrCount    : 0,
+    avgHR:      row._avgHRCount > 0 ? row._avgHRSum  / row._avgHRCount : 0,
+    hrv_ms:     row._hrvCount   > 0 ? row._hrvSum    / row._hrvCount   : 0,
+    spo2_pct:   row._spo2Count  > 0 ? row._spo2Sum   / row._spo2Count  : 0,
+    wellbeing:  row._wellbeingCount > 0 ? row._wellbeingSum / row._wellbeingCount : null,
+  }
+
+  // Apply nutrition lag: merge historical raw data with today's row
+  const byDate = new Map(historicalRawDataset.map((d) => [d.dateKey, d]))
+  byDate.set(todayKey, todayRaw)
+
+  const targetDate = new Date(todayKey + 'T00:00:00Z')
+  const weightedSums = Object.fromEntries(LAGGED_NUTRITION_KEYS.map((k) => [k, 0]))
+  let totalWeight = 0
+
+  for (let delta = 0; delta <= LAG_DAYS; delta++) {
+    const w = 1 - delta / LAG_DAYS
+    if (w <= 0) continue
+    const d = new Date(targetDate)
+    d.setUTCDate(d.getUTCDate() - delta)
+    const dk = d.toISOString().slice(0, 10)
+    const srcRow = byDate.get(dk)
+    if (!srcRow) continue
+    totalWeight += w
+    for (const key of LAGGED_NUTRITION_KEYS) {
+      weightedSums[key] += (srcRow[key] ?? 0) * w
+    }
+  }
+
+  if (totalWeight > 0) {
+    for (const key of LAGGED_NUTRITION_KEYS) {
+      todayRaw[key] = weightedSums[key] / totalWeight
+    }
+  }
+
+  return todayRaw
+}
+
+/**
  * Fits an OLS multiple linear regression on the time-lagged dataset.
  *
  * Uses the lagged nutrition values so that the model captures the sustained
@@ -759,7 +923,7 @@ export function computeAdvancedAnalysis(entries) {
     return {
       status: 'ok',
       datasetDays: n,
-      modelInfo: { r2: null, method: 'correlation_fallback' },
+      modelInfo: { r2: null, r2_loo: null, method: 'correlation_fallback' },
       featureImportance: basic.correlations.slice(0, 5).map((c) => ({
         variable: c.variable,
         label: c.label,
@@ -771,20 +935,35 @@ export function computeAdvancedAnalysis(entries) {
       })),
       topRecommendations: basic.topNegativeFactors.map((f) => f.advice),
       residuals: null,
+      todayPrediction: null,
     }
   }
 
   const yPred = X.map((row) => row.reduce((s, x, j) => s + x * beta[j], 0))
   const r2 = computeR2(y, yPred)
 
-  const featureImportance = featureKeys.map((key, j) => {
+  // LOO cross-validated R²: honest out-of-sample estimate
+  const r2_loo = computeR2LOO(X, y)
+
+  // Standardised beta coefficients
+  const rawImportances = featureKeys.map((key, j) => {
     const betaJ = beta[j + 1]
     const stdX = featureStds[j]
-    const stdCoeff = stdY > 0 ? (betaJ * stdX) / stdY : 0
+    return stdY > 0 ? (betaJ * stdX) / stdY : 0
+  })
+
+  // Normalise importance so the strongest variable = 1.0 (bars are relative).
+  // If all coefficients are near-zero (degenerate/collinear fit), keep importances at 0.
+  const maxRawImportance = Math.max(...rawImportances.map(Math.abs))
+
+  const featureImportance = featureKeys.map((key, j) => {
+    const stdCoeff = rawImportances[j]
     return {
       variable: key,
       label: VARIABLE_META[key].label,
-      importance: Math.abs(stdCoeff),
+      // importance in [0,1]: fraction of the strongest feature's impact.
+      // When maxRawImportance is effectively zero the model has no signal; keep 0.
+      importance: maxRawImportance > 1e-9 ? Math.abs(stdCoeff) / maxRawImportance : 0,
       direction: stdCoeff >= 0 ? 'positive' : 'negative',
       coefficient: stdCoeff,
       group: VARIABLE_META[key].group,
@@ -802,18 +981,87 @@ export function computeAdvancedAnalysis(entries) {
     ? negImpact.map((f) => f.advice)
     : featureImportance.slice(0, 3).map((f) => f.advice)
 
+  // Predict today's wellbeing using the fitted model
+  const todayPrediction = _predictToday(entries, rawDataset, featureKeys, featureMeans, featureStds, beta)
+
   return {
     status: 'ok',
     datasetDays: n,
     modelInfo: {
       r2,
+      r2_loo,
       method: 'ols_linear_regression',
       nFeatures: featureKeys.length,
       lagDays: LAG_DAYS,
+      // Flag that there are more parameters than observations (likely overfitting)
+      overfit_risk: featureKeys.length + 1 >= n,
     },
     featureImportance: featureImportance.slice(0, 12),
     topRecommendations,
     residuals: y.map((actual, i) => ({ dateKey: dataset[i].dateKey, actual, predicted: yPred[i] })),
+    todayPrediction,
+  }
+}
+
+/**
+ * Standalone function: fit the model and return a prediction for today's
+ * wellbeing.  Returns null if there is not enough historical data or no
+ * data at all for today.
+ *
+ * @param {Array} entries  raw entries from listEntriesForAnalysis
+ * @returns {{ dateKey: string, predicted: number, actual: number|null }|null}
+ */
+export function computeTodayPrediction(entries) {
+  const rawDataset = buildDailyDataset(entries)
+  if (rawDataset.length < MIN_DAYS_ADVANCED) return null
+
+  const dataset = buildLaggedDataset(rawDataset)
+
+  const featureKeys = Object.keys(VARIABLE_META).filter((k) => {
+    const vec = dataset.map((d) => d[k] ?? 0)
+    return !vec.every((v) => v === 0)
+  })
+  if (featureKeys.length === 0) return null
+
+  const y = dataset.map((d) => d.wellbeing)
+  const featureMeans = featureKeys.map((k) => mean(dataset.map((d) => d[k] ?? 0)))
+  const featureStds = featureKeys.map((k) => {
+    const s = std(dataset.map((d) => d[k] ?? 0))
+    return s === 0 ? 1 : s
+  })
+
+  const X = dataset.map((row) => {
+    const feats = featureKeys.map((k, j) => ((row[k] ?? 0) - featureMeans[j]) / featureStds[j])
+    return [1, ...feats]
+  })
+
+  const beta = olsWithRidgeFallback(X, y)
+  if (!beta) return null
+
+  return _predictToday(entries, rawDataset, featureKeys, featureMeans, featureStds, beta)
+}
+
+/**
+ * Internal helper: given an already-fitted model, build today's feature row
+ * and return a prediction.
+ */
+function _predictToday(entries, rawDataset, featureKeys, featureMeans, featureStds, beta) {
+  const todayRow = buildTodayRow(entries, rawDataset)
+  if (!todayRow) return null
+
+  const xToday = [
+    1,
+    ...featureKeys.map((k, j) => ((todayRow[k] ?? 0) - featureMeans[j]) / featureStds[j]),
+  ]
+  const rawPred = xToday.reduce((s, x, j) => s + x * beta[j], 0)
+  // Clamp to valid wellbeing range [0, 5]
+  const predicted = Math.max(0, Math.min(5, rawPred))
+  const actual = typeof todayRow.wellbeing === 'number' ? todayRow.wellbeing : null
+
+  return {
+    dateKey: todayRow.dateKey,
+    predicted,
+    actual,
   }
 }
 
@@ -906,6 +1154,34 @@ function computeR2(yTrue, yPred) {
   const ssRes = yTrue.reduce((s, v, i) => s + (v - yPred[i]) ** 2, 0)
   if (ssTot === 0) return 0
   return 1 - ssRes / ssTot
+}
+
+/**
+ * Leave-One-Out cross-validated R².
+ *
+ * For each observation i, fits the model on all other n-1 observations,
+ * then predicts observation i.  The resulting R² is an honest estimate
+ * of out-of-sample performance and is not inflated by in-sample fitting.
+ *
+ * Returns null when n < MIN_DAYS_ADVANCED + 1 (not enough data to LOO).
+ *
+ * @param {number[][]} X  n × k design matrix (intercept column first)
+ * @param {number[]}   y  n-length response vector
+ * @returns {number|null}
+ */
+function computeR2LOO(X, y) {
+  const n = X.length
+  if (n < MIN_DAYS_ADVANCED + 1) return null
+
+  const yHat = new Array(n).fill(0)
+  for (let i = 0; i < n; i++) {
+    const Xtrain = X.filter((_, idx) => idx !== i)
+    const ytrain = y.filter((_, idx) => idx !== i)
+    const beta = olsWithRidgeFallback(Xtrain, ytrain)
+    if (!beta) return null
+    yHat[i] = X[i].reduce((s, x, j) => s + x * beta[j], 0)
+  }
+  return computeR2(y, yHat)
 }
 
 function mean(arr) {

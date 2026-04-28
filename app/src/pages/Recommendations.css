@@ -290,6 +290,46 @@
   margin: 0;
 }
 
+/* ─── Method note (collapsible explanation) ──────────────────────────────── */
+
+.reco-method-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin: -10px 0 16px;
+  line-height: 1.5;
+}
+
+.reco-method-note summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--accent);
+  list-style: none;
+  outline: none;
+}
+
+.reco-method-note summary::before {
+  content: '▶ ';
+  font-size: 0.7rem;
+}
+
+.reco-method-note[open] summary::before {
+  content: '▼ ';
+}
+
+.reco-method-note p {
+  margin: 8px 0 0;
+}
+
+/* ─── Overfit warning ─────────────────────────────────────────────────────── */
+
+.reco-overfit-warn {
+  color: #f39c12;
+  font-weight: 600;
+}
+
 /* ─── Disclaimer ──────────────────────────────────────────────────────────── */
 
 .reco-disclaimer {

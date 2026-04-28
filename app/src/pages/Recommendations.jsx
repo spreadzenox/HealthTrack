@@ -37,6 +37,7 @@ function CorrelationBar({ label, r, impact }) {
 // ─── Importance bar (ML tab) ──────────────────────────────────────────────────
 
 function ImportanceBar({ label, importance, direction }) {
+  // importance is already normalised to [0,1] where 1 = strongest variable
   const pct = Math.round(importance * 100)
   return (
     <div className="reco-corr-row">
@@ -44,12 +45,12 @@ function ImportanceBar({ label, importance, direction }) {
       <div className="reco-corr-bar-wrap">
         <div
           className={'reco-corr-bar ' + (direction === 'positive' ? 'reco-corr-pos' : 'reco-corr-neg')}
-          style={{ width: `${Math.min(pct, 100)}%` }}
+          style={{ width: `${pct}%` }}
           aria-label={`${pct}%`}
         />
       </div>
       <span className="reco-corr-value">
-        {direction === 'positive' ? '▲' : '▼'} {Math.min(pct, 100)}%
+        {direction === 'positive' ? '▲' : '▼'} {pct}%
       </span>
     </div>
   )
@@ -182,6 +183,9 @@ function AdvancedTab({ entries }) {
   const { datasetDays, modelInfo, featureImportance, topRecommendations, residuals } = result
 
   const r2Display = modelInfo?.r2 != null ? `${Math.round(modelInfo.r2 * 100)}%` : 'N/A'
+  const r2LooDisplay = modelInfo?.r2_loo != null
+    ? `${Math.round(modelInfo.r2_loo * 100)}%`
+    : null
   const method = modelInfo?.method === 'ols_linear_regression'
     ? 'Régression linéaire multiple (OLS + Ridge)'
     : 'Corrélation de Pearson (fallback)'
@@ -193,9 +197,32 @@ function AdvancedTab({ entries }) {
         {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
         Modèle : <em>{method}</em>.
         {modelInfo?.r2 != null && (
-          <> Pouvoir explicatif (R²) : <strong>{r2Display}</strong>.</>
+          <> R² entraînement : <strong>{r2Display}</strong>
+          {r2LooDisplay != null
+            ? <> · R² LOO (hors-échantillon) : <strong>{r2LooDisplay}</strong></>
+            : null
+          }
+          .</>
+        )}
+        {modelInfo?.overfit_risk && (
+          <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours — R² entraînement non fiable.</span></>
         )}
       </p>
+      {modelInfo?.method === 'ols_linear_regression' && (
+        <details className="reco-method-note">
+          <summary>Comment fonctionne ce modèle ?</summary>
+          <p>
+            Chaque type de donnée est enregistré à une fréquence différente (ex : pas quotidiens, repas plusieurs fois/jour, bien-être manuellement). Pour harmoniser, toutes les entrées sont agrégées par <strong>jour calendaire</strong> (somme pour les pas/calories/nutriments, moyenne pour la fréquence cardiaque et le bien-être). Les nutriments sont ensuite <strong>lissés sur {modelInfo.lagDays} jours</strong> avec une pondération décroissante (un repas d'aujourd'hui influence le bien-être des ~10 prochains jours, avec un impact qui décroît linéairement).
+          </p>
+          <p>
+            Le modèle est une régression linéaire multiple (OLS + Ridge) entraîné <em>entièrement sur vos données locales</em>. Le <strong>R² entraînement</strong> mesure à quel point le modèle s'ajuste aux données qu'il a vues — il peut être élevé simplement parce qu'il y a plus de variables que de jours. Le <strong>R² LOO</strong> (Leave-One-Out) est une mesure honnête : pour chaque jour, le modèle est ré-entraîné sans ce jour puis prédit. Un R² LOO négatif ou très inférieur au R² entraînement signale un sur-apprentissage.
+          </p>
+          <p>
+            Les barres d'importance sont <strong>relatives</strong> : la variable la plus influente vaut 100%, les autres sont exprimées en proportion.
+          </p>
+        </details>
+      )}
+
 
       {topRecommendations?.length > 0 && (
         <section className="reco-section">
