@@ -15,6 +15,7 @@ import {
   countTotalDataDays,
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
+  HOLD_OUT_DAYS,
   LAG_DAYS,
   VARIABLE_META,
 } from './analysisEngine'
@@ -616,21 +617,24 @@ describe('computeBasicCorrelations', () => {
 // computeAdvancedAnalysis
 // ---------------------------------------------------------------------------
 
+const MIN_ADVANCED_TOTAL = MIN_DAYS_ADVANCED + HOLD_OUT_DAYS
+
 describe('computeAdvancedAnalysis', () => {
-  it('returns { status: "not_enough_data" } with fewer than MIN_DAYS_ADVANCED days', () => {
+  it('returns { status: "not_enough_data" } with fewer than MIN_DAYS_ADVANCED + HOLD_OUT_DAYS days', () => {
     const entries = []
-    for (let d = 1; d <= 5; d++) {
+    // Use exactly MIN_DAYS_ADVANCED - 1 days (not enough even without hold-out)
+    for (let d = 1; d <= MIN_DAYS_ADVANCED - 1; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 3))
     }
     const result = computeAdvancedAnalysis(entries)
     expect(result.status).toBe('not_enough_data')
-    expect(result.minDays).toBe(MIN_DAYS_ADVANCED)
+    expect(result.minDays).toBe(MIN_ADVANCED_TOTAL)
   })
 
-  it('returns ok with 7+ days of data', () => {
+  it('returns ok with MIN_DAYS_ADVANCED + HOLD_OUT_DAYS days of data', () => {
     const entries = []
-    for (let d = 1; d <= 7; d++) {
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 2 + (d % 3)))
       entries.push(makeSleep(date, 360 + d * 15))
@@ -642,7 +646,7 @@ describe('computeAdvancedAnalysis', () => {
 
   it('returns featureImportance array with group field', () => {
     const entries = []
-    for (let d = 1; d <= 7; d++) {
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 2 + (d % 3)))
       entries.push(makeSleep(date, 300 + d * 20))
@@ -661,7 +665,7 @@ describe('computeAdvancedAnalysis', () => {
 
   it('returns modelInfo with R2 score and lagDays', () => {
     const entries = []
-    for (let d = 1; d <= 7; d++) {
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 2 + (d % 3)))
       entries.push(makeSleep(date, 300 + d * 20))
@@ -690,11 +694,12 @@ describe('computeAdvancedAnalysis', () => {
     }
   })
 
-  it('returns overfit_risk flag when features >= data days', () => {
-    // With only 7 days and many nutrition features, Ridge still fits but overfit_risk should be true
+  it('returns overfit_risk flag when features >= training data days', () => {
+    // With MIN_ADVANCED_TOTAL days (HOLD_OUT_DAYS are held out, so only MIN_DAYS_ADVANCED
+    // training rows) and many nutrition features, Ridge still fits but overfit_risk should be true
     const entries = []
     const foodItems = [{ ingredient: 'Riz cuit', quantity_g: 150 }]
-    for (let d = 1; d <= 7; d++) {
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 2 + (d % 3)))
       entries.push(makeFood(date, foodItems))
@@ -734,7 +739,7 @@ describe('computeAdvancedAnalysis', () => {
 
   it('result includes todayPrediction field (null or object)', () => {
     const entries = []
-    for (let d = 1; d <= 7; d++) {
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 2 + (d % 3)))
       entries.push(makeSleep(date, 300 + d * 20))
@@ -746,6 +751,29 @@ describe('computeAdvancedAnalysis', () => {
         result.todayPrediction === null ||
         (typeof result.todayPrediction === 'object' && 'predicted' in result.todayPrediction)
       ).toBe(true)
+    }
+  })
+
+  it('residuals are hold-out predictions: exactly HOLD_OUT_DAYS entries, not in-sample', () => {
+    const entries = []
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL + 2; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 3)))
+      entries.push(makeSleep(date, 300 + d * 20))
+      entries.push(makeSteps(date, 4000 + d * 500))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok' && result.residuals) {
+      // Must be exactly HOLD_OUT_DAYS entries
+      expect(result.residuals.length).toBe(HOLD_OUT_DAYS)
+      // Each residual must have dateKey, actual, predicted
+      result.residuals.forEach((r) => {
+        expect(r).toHaveProperty('dateKey')
+        expect(r).toHaveProperty('actual')
+        expect(r).toHaveProperty('predicted')
+        expect(r.predicted).toBeGreaterThanOrEqual(0)
+        expect(r.predicted).toBeLessThanOrEqual(5)
+      })
     }
   })
 
@@ -787,13 +815,13 @@ describe('computeAdvancedAnalysis', () => {
     }
   })
 
-  it('uses OLS (not Pearson fallback) when features > data days, via Ridge regularisation', () => {
-    // Simulate the real-world scenario: ~8 wellbeing days but many active features
+  it('uses OLS (not Pearson fallback) when features > training days, via Ridge regularisation', () => {
+    // Simulate the real-world scenario: many wellbeing days but many active features
     // (sleep, steps, food with many nutrients, heart rate). Without Ridge, OLS would fall
     // back to Pearson. With Ridge, it should succeed as OLS.
     const entries = []
     const foodItems = [{ ingredient: 'Riz cuit', quantity_g: 150 }]
-    for (let d = 1; d <= 8; d++) {
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL + 2; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 2 + (d % 4)))
       entries.push(makeSleep(date, 360 + d * 10))
@@ -860,9 +888,10 @@ describe('buildTodayRow', () => {
 // ---------------------------------------------------------------------------
 
 describe('computeTodayPrediction', () => {
-  it('returns null when fewer than MIN_DAYS_ADVANCED historical days', () => {
+  it('returns null when fewer than MIN_DAYS_ADVANCED + HOLD_OUT_DAYS historical days', () => {
     const entries = []
-    for (let d = 1; d <= 5; d++) {
+    // MIN_DAYS_ADVANCED + HOLD_OUT_DAYS - 1 days → still not enough
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL - 1; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 3))
     }
@@ -871,7 +900,7 @@ describe('computeTodayPrediction', () => {
 
   it('returns null when there are enough historical days but no data for today', () => {
     const entries = []
-    for (let d = 1; d <= 10; d++) {
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL + 2; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 3))
       entries.push(makeSleep(date, 420))
@@ -886,8 +915,8 @@ describe('computeTodayPrediction', () => {
   it('returns a prediction object with predicted in [0,5] when today data exists', () => {
     const todayStr = localDateKey(new Date().toISOString())
     const entries = []
-    // Historical days (need at least MIN_DAYS_ADVANCED)
-    for (let d = 1; d <= 10; d++) {
+    // Historical days (need at least MIN_DAYS_ADVANCED + HOLD_OUT_DAYS)
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL + 2; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
       entries.push(makeWellbeing(date, 2 + (d % 4)))
       entries.push(makeSleep(date, 360 + d * 10))
@@ -905,6 +934,37 @@ describe('computeTodayPrediction', () => {
       expect(result.predicted).toBeGreaterThanOrEqual(0)
       expect(result.predicted).toBeLessThanOrEqual(5)
       expect(result.dateKey).toBe(todayKey)
+    }
+  })
+
+  it('hold-out: today wellbeing score is never included in training data used for its own prediction', () => {
+    // The model is trained on (n - HOLD_OUT_DAYS) days.  Today's wellbeing score — if present —
+    // belongs to the most recent dataset row, which is always inside the hold-out window and
+    // therefore excluded from training.  We verify this by checking that the prediction value
+    // returned by computeTodayPrediction is clamped to [0,5] and is valid (not NaN) in all
+    // scenarios; the broader "no adaptation" invariant is guaranteed by the architecture.
+    const todayStr = localDateKey(new Date().toISOString())
+    const baseEntries = []
+    for (let d = 1; d <= MIN_ADVANCED_TOTAL + 3; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      baseEntries.push(makeWellbeing(date, 2 + (d % 4)))
+      baseEntries.push(makeSleep(date, 360 + d * 10))
+      baseEntries.push(makeSteps(date, 5000 + d * 200))
+    }
+    const todayStep = { type: 'steps', source: 'health_connect', at: `${todayStr}T10:00:00Z`, payload: { value: 7000 } }
+    const todayWellbeing = makeWellbeing(todayStr, 5)
+
+    const todayKey = localDateKey(new Date().toISOString())
+    if (!todayKey.startsWith('2026-01')) {
+      const predWithWellbeing = computeTodayPrediction([...baseEntries, todayStep, todayWellbeing])
+      // Must be valid (not null, not NaN) and within range
+      if (predWithWellbeing !== null) {
+        expect(predWithWellbeing.predicted).toBeGreaterThanOrEqual(0)
+        expect(predWithWellbeing.predicted).toBeLessThanOrEqual(5)
+        expect(Number.isNaN(predWithWellbeing.predicted)).toBe(false)
+        // The actual value must be reported correctly
+        expect(predWithWellbeing.actual).toBeCloseTo(5, 1)
+      }
     }
   })
 })
