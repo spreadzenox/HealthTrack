@@ -4,9 +4,12 @@ import {
   computeBasicCorrelations,
   computeAdvancedAnalysis,
   countTotalDataDays,
+  buildDailyDataset,
+  localDateKey,
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
 } from '../services/analysisEngine'
+import { isDebugModeEnabled } from '../settings/debugMode'
 import { useAutoSync } from '../hooks/useAutoSync'
 import './Recommendations.css'
 
@@ -267,6 +270,79 @@ function AdvancedTab({ entries }) {
   )
 }
 
+// ─── Debug panel (visible only in debug mode) ─────────────────────────────────
+
+function RecoDebugPanel({ entries }) {
+  const byType = useMemo(() => {
+    const map = {}
+    for (const e of entries) map[e.type] = (map[e.type] || 0) + 1
+    return map
+  }, [entries])
+
+  const wellbeingByDay = useMemo(() => {
+    const map = {}
+    for (const e of entries) {
+      if (e.type !== 'wellbeing' || !e.at) continue
+      const dk = localDateKey(e.at)
+      if (!map[dk]) map[dk] = []
+      map[dk].push({ score: e.payload?.score, at: e.at })
+    }
+    return map
+  }, [entries])
+
+  const allDays = useMemo(() => {
+    const set = new Set(entries.filter((e) => e.at).map((e) => localDateKey(e.at)))
+    return [...set].sort()
+  }, [entries])
+
+  const wellbeingDaysSorted = Object.keys(wellbeingByDay).sort()
+  const dailyDataset = useMemo(() => buildDailyDataset(entries), [entries])
+
+  return (
+    <details className="reco-debug-panel" open>
+      <summary className="reco-debug-title">🛠 Debug — Données Recommandations</summary>
+      <div className="reco-debug-body">
+        <p><strong>Total entrées chargées :</strong> {entries.length}</p>
+        <p><strong>Jours calendaires (toutes données) :</strong> {allDays.length} — [{allDays.join(', ')}]</p>
+        <p><strong>Jours avec score bien-être :</strong> {wellbeingDaysSorted.length}</p>
+        <p><strong>Jours dans buildDailyDataset() :</strong> {dailyDataset.length}</p>
+
+        <p><strong>Entrées par type :</strong></p>
+        <ul>
+          {Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([t, c]) => (
+            <li key={t}>{t} : {c}</li>
+          ))}
+        </ul>
+
+        <p><strong>Détail jours bien-être :</strong></p>
+        <ul>
+          {wellbeingDaysSorted.map((day) => {
+            const records = wellbeingByDay[day]
+            return (
+              <li key={day}>
+                {day} — {records.length} entrée(s), scores : [{records.map((r) => r.score).join(', ')}]
+                , heures UTC : [{records.map((r) => new Date(r.at).toISOString().slice(11, 16)).join(', ')}]
+              </li>
+            )
+          })}
+        </ul>
+
+        <p><strong>Jours sans bien-être (données manquantes pour le modèle) :</strong></p>
+        <ul>
+          {allDays.filter((d) => !wellbeingByDay[d]).map((d) => {
+            const dayEntries = entries.filter((e) => e.at && localDateKey(e.at) === d)
+            const typeCounts = {}
+            for (const e of dayEntries) typeCounts[e.type] = (typeCounts[e.type] || 0) + 1
+            return (
+              <li key={d}>{d} — {Object.entries(typeCounts).map(([t, c]) => `${t}:${c}`).join(', ')}</li>
+            )
+          })}
+        </ul>
+      </div>
+    </details>
+  )
+}
+
 // ─── Page root ────────────────────────────────────────────────────────────────
 
 const TABS = [
@@ -281,6 +357,7 @@ export default function Recommendations() {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const debugMode = isDebugModeEnabled()
 
   const load = async () => {
     try {
@@ -335,6 +412,7 @@ export default function Recommendations() {
 
       {!loading && !error && (
         <>
+          {debugMode && <RecoDebugPanel entries={entries} />}
           {tab === 'basic' && <BasicTab entries={entries} />}
           {tab === 'advanced' && <AdvancedTab entries={entries} />}
         </>
