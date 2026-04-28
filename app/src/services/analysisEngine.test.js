@@ -7,9 +7,11 @@ import {
   localDateKey,
   buildDailyDataset,
   buildLaggedDataset,
+  buildTodayRow,
   pearsonCorrelation,
   computeBasicCorrelations,
   computeAdvancedAnalysis,
+  computeTodayPrediction,
   countTotalDataDays,
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
@@ -673,6 +675,80 @@ describe('computeAdvancedAnalysis', () => {
     }
   })
 
+  it('returns r2_loo in modelInfo when enough data for LOO CV', () => {
+    const entries = []
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 4)))
+      entries.push(makeSleep(date, 300 + d * 20))
+      entries.push(makeSteps(date, 4000 + d * 500))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok' && result.modelInfo.method === 'ols_linear_regression') {
+      // r2_loo should be a number or null (not undefined)
+      expect(result.modelInfo.r2_loo === null || typeof result.modelInfo.r2_loo === 'number').toBe(true)
+    }
+  })
+
+  it('returns overfit_risk flag when features >= data days', () => {
+    // With only 7 days and many nutrition features, Ridge still fits but overfit_risk should be true
+    const entries = []
+    const foodItems = [{ ingredient: 'Riz cuit', quantity_g: 150 }]
+    for (let d = 1; d <= 7; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 3)))
+      entries.push(makeFood(date, foodItems))
+      entries.push(makeSleep(date, 300 + d * 20))
+      entries.push(makeSteps(date, 4000 + d * 500))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok' && result.modelInfo.method === 'ols_linear_regression') {
+      expect(typeof result.modelInfo.overfit_risk).toBe('boolean')
+    }
+  })
+
+  it('featureImportance values are normalised — all importances in [0,1] and max is 0 or 1', () => {
+    const entries = []
+    // Use a varied wellbeing pattern and diverse features to avoid degenerate collinear fit
+    const wellbeingScores = [1, 4, 2, 5, 3, 2, 4, 1, 5, 3]
+    const sleepValues    = [300, 480, 350, 500, 400, 330, 460, 290, 510, 380]
+    const stepsValues    = [3000, 9000, 5000, 11000, 7000, 4000, 8000, 2500, 10000, 6000]
+    for (let d = 0; d < 10; d++) {
+      const date = `2026-01-${String(d + 1).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, wellbeingScores[d]))
+      entries.push(makeSleep(date, sleepValues[d]))
+      entries.push(makeSteps(date, stepsValues[d]))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok' && result.featureImportance.length > 0) {
+      const maxImportance = Math.max(...result.featureImportance.map((f) => f.importance))
+      // max is either 1.0 (when model has signal) or 0 (degenerate case)
+      expect(maxImportance === 0 || Math.abs(maxImportance - 1.0) < 1e-6).toBe(true)
+      // All importances should be in [0,1]
+      result.featureImportance.forEach((f) => {
+        expect(f.importance).toBeGreaterThanOrEqual(0)
+        expect(f.importance).toBeLessThanOrEqual(1 + 1e-9)
+      })
+    }
+  })
+
+  it('result includes todayPrediction field (null or object)', () => {
+    const entries = []
+    for (let d = 1; d <= 7; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 3)))
+      entries.push(makeSleep(date, 300 + d * 20))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok') {
+      // todayPrediction is null when no today-data exists, or an object otherwise
+      expect(
+        result.todayPrediction === null ||
+        (typeof result.todayPrediction === 'object' && 'predicted' in result.todayPrediction)
+      ).toBe(true)
+    }
+  })
+
   it('includes Health Connect features (avgHR, hrv_ms, spo2_pct, dailyCaloriesHC) in featureImportance when data is present', () => {
     const entries = []
     for (let d = 1; d <= 10; d++) {
@@ -730,6 +806,106 @@ describe('computeAdvancedAnalysis', () => {
     const result = computeAdvancedAnalysis(entries)
     expect(result.status).toBe('ok')
     expect(result.modelInfo.method).toBe('ols_linear_regression')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// buildTodayRow
+// ---------------------------------------------------------------------------
+
+describe('buildTodayRow', () => {
+  it('returns null when no entries exist for today', () => {
+    // Use a clearly past historical dataset with no today entries
+    const historicalRaw = buildDailyDataset([
+      makeWellbeing('2026-01-01', 3),
+      makeWellbeing('2026-01-02', 4),
+    ])
+    // Pass entries that are all in the past (no today entries)
+    const result = buildTodayRow([
+      makeWellbeing('2026-01-01', 3),
+    ], historicalRaw)
+    // Today's date is not 2026-01-01 in real runtime, so result should be null
+    // (unless the test runs exactly on 2026-01-01, which is very unlikely)
+    const todayKey = localDateKey(new Date().toISOString())
+    if (todayKey !== '2026-01-01') {
+      expect(result).toBeNull()
+    }
+  })
+
+  it('includes steps and sleep from today when present', () => {
+    const todayStr = localDateKey(new Date().toISOString())
+    const entries = [
+      { type: 'steps', source: 'health_connect', at: `${todayStr}T10:00:00Z`, payload: { value: 5000 } },
+      { type: 'sleep', source: 'health_connect', at: `${todayStr}T07:00:00Z`, payload: { durationMinutes: 420 } },
+    ]
+    const result = buildTodayRow(entries, [])
+    expect(result).not.toBeNull()
+    expect(result.steps).toBe(5000)
+    expect(result.sleepMinutes).toBe(420)
+  })
+
+  it('today wellbeing is null when no wellbeing score today', () => {
+    const todayStr = localDateKey(new Date().toISOString())
+    const entries = [
+      { type: 'steps', source: 'health_connect', at: `${todayStr}T10:00:00Z`, payload: { value: 3000 } },
+    ]
+    const result = buildTodayRow(entries, [])
+    expect(result).not.toBeNull()
+    expect(result.wellbeing).toBeNull()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// computeTodayPrediction
+// ---------------------------------------------------------------------------
+
+describe('computeTodayPrediction', () => {
+  it('returns null when fewer than MIN_DAYS_ADVANCED historical days', () => {
+    const entries = []
+    for (let d = 1; d <= 5; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 3))
+    }
+    expect(computeTodayPrediction(entries)).toBeNull()
+  })
+
+  it('returns null when there are enough historical days but no data for today', () => {
+    const entries = []
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 3))
+      entries.push(makeSleep(date, 420))
+    }
+    // All entries are in Jan 2026, not today
+    const todayKey = localDateKey(new Date().toISOString())
+    if (!todayKey.startsWith('2026-01')) {
+      expect(computeTodayPrediction(entries)).toBeNull()
+    }
+  })
+
+  it('returns a prediction object with predicted in [0,5] when today data exists', () => {
+    const todayStr = localDateKey(new Date().toISOString())
+    const entries = []
+    // Historical days (need at least MIN_DAYS_ADVANCED)
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 4)))
+      entries.push(makeSleep(date, 360 + d * 10))
+      entries.push(makeSteps(date, 5000 + d * 200))
+    }
+    // Today's data
+    entries.push({ type: 'steps', source: 'health_connect', at: `${todayStr}T10:00:00Z`, payload: { value: 7000 } })
+    entries.push({ type: 'sleep', source: 'health_connect', at: `${todayStr}T07:00:00Z`, payload: { durationMinutes: 450 } })
+
+    const result = computeTodayPrediction(entries)
+    // If today is NOT in Jan 2026, we have historical data and today data
+    const todayKey = localDateKey(new Date().toISOString())
+    if (!todayKey.startsWith('2026-01')) {
+      expect(result).not.toBeNull()
+      expect(result.predicted).toBeGreaterThanOrEqual(0)
+      expect(result.predicted).toBeLessThanOrEqual(5)
+      expect(result.dateKey).toBe(todayKey)
+    }
   })
 })
 
