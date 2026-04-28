@@ -301,3 +301,38 @@
   line-height: 1.4;
   margin-top: 8px;
 }
+
+/* ─── Debug panel ─────────────────────────────────────────────────────────── */
+
+.reco-debug-panel {
+  background: rgba(255, 200, 0, 0.07);
+  border: 1px solid rgba(255, 200, 0, 0.3);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.78rem;
+  font-family: monospace;
+}
+
+.reco-debug-title {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #f5c518;
+  font-size: 0.82rem;
+}
+
+.reco-debug-body {
+  padding: 0 12px 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.reco-debug-body ul {
+  margin: 4px 0 8px 16px;
+  padding: 0;
+}
+
+.reco-debug-body li {
+  margin: 2px 0;
+  word-break: break-all;
+}

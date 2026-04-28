@@ -3,9 +3,13 @@ import { listEntries } from '../storage/localHealthStorage'
 import {
   computeBasicCorrelations,
   computeAdvancedAnalysis,
+  countTotalDataDays,
+  buildDailyDataset,
+  localDateKey,
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
 } from '../services/analysisEngine'
+import { isDebugModeEnabled } from '../settings/debugMode'
 import { useAutoSync } from '../hooks/useAutoSync'
 import './Recommendations.css'
 
@@ -81,11 +85,11 @@ function NotEnoughData({ currentDays, minDays, tabLabel }) {
       </p>
       <p className="reco-not-enough-hint">
         {currentDays === 0
-          ? `Enregistrez votre bien-être chaque jour pour activer cette fonctionnalité.`
-          : `Il manque encore ${remaining} jour${remaining > 1 ? 's' : ''} d'historique bien-être (vous en avez ${currentDays}).`}
+          ? `Enregistrez votre bien-être chaque jour pour activer cette fonctionnalité (les données alimentaires ou de sommeil seules ne suffisent pas).`
+          : `Il manque encore ${remaining} jour${remaining > 1 ? 's' : ''} avec un score bien-être (vous en avez ${currentDays}). Pensez à enregistrer votre bien-être quotidiennement.`}
       </p>
       <p className="reco-not-enough-min">
-        Seuil minimum : <strong>{minDays} jours</strong>
+        Seuil minimum : <strong>{minDays} jours</strong> avec score bien-être
       </p>
     </div>
   )
@@ -95,6 +99,7 @@ function NotEnoughData({ currentDays, minDays, tabLabel }) {
 
 function BasicTab({ entries }) {
   const result = useMemo(() => computeBasicCorrelations(entries), [entries])
+  const totalDays = useMemo(() => countTotalDataDays(entries), [entries])
 
   if (result.status === 'not_enough_data') {
     return (
@@ -111,7 +116,8 @@ function BasicTab({ entries }) {
   return (
     <div className="reco-tab-content">
       <p className="reco-meta">
-        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''}</strong> de données.
+        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} avec score bien-être</strong>
+        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
         Méthode : corrélation de Pearson entre chaque variable et le bien-être.
       </p>
 
@@ -161,6 +167,7 @@ function BasicTab({ entries }) {
 
 function AdvancedTab({ entries }) {
   const result = useMemo(() => computeAdvancedAnalysis(entries), [entries])
+  const totalDays = useMemo(() => countTotalDataDays(entries), [entries])
 
   if (result.status === 'not_enough_data') {
     return (
@@ -176,13 +183,14 @@ function AdvancedTab({ entries }) {
 
   const r2Display = modelInfo?.r2 != null ? `${Math.round(modelInfo.r2 * 100)}%` : 'N/A'
   const method = modelInfo?.method === 'ols_linear_regression'
-    ? 'Régression linéaire multiple (OLS)'
+    ? 'Régression linéaire multiple (OLS + Ridge)'
     : 'Corrélation de Pearson (fallback)'
 
   return (
     <div className="reco-tab-content">
       <p className="reco-meta">
-        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''}</strong> de données.
+        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} avec score bien-être</strong>
+        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
         Modèle : <em>{method}</em>.
         {modelInfo?.r2 != null && (
           <> Pouvoir explicatif (R²) : <strong>{r2Display}</strong>.</>
@@ -262,6 +270,79 @@ function AdvancedTab({ entries }) {
   )
 }
 
+// ─── Debug panel (visible only in debug mode) ─────────────────────────────────
+
+function RecoDebugPanel({ entries }) {
+  const byType = useMemo(() => {
+    const map = {}
+    for (const e of entries) map[e.type] = (map[e.type] || 0) + 1
+    return map
+  }, [entries])
+
+  const wellbeingByDay = useMemo(() => {
+    const map = {}
+    for (const e of entries) {
+      if (e.type !== 'wellbeing' || !e.at) continue
+      const dk = localDateKey(e.at)
+      if (!map[dk]) map[dk] = []
+      map[dk].push({ score: e.payload?.score, at: e.at })
+    }
+    return map
+  }, [entries])
+
+  const allDays = useMemo(() => {
+    const set = new Set(entries.filter((e) => e.at).map((e) => localDateKey(e.at)))
+    return [...set].sort()
+  }, [entries])
+
+  const wellbeingDaysSorted = Object.keys(wellbeingByDay).sort()
+  const dailyDataset = useMemo(() => buildDailyDataset(entries), [entries])
+
+  return (
+    <details className="reco-debug-panel" open>
+      <summary className="reco-debug-title">🛠 Debug — Données Recommandations</summary>
+      <div className="reco-debug-body">
+        <p><strong>Total entrées chargées :</strong> {entries.length}</p>
+        <p><strong>Jours calendaires (toutes données) :</strong> {allDays.length} — [{allDays.join(', ')}]</p>
+        <p><strong>Jours avec score bien-être :</strong> {wellbeingDaysSorted.length}</p>
+        <p><strong>Jours dans buildDailyDataset() :</strong> {dailyDataset.length}</p>
+
+        <p><strong>Entrées par type :</strong></p>
+        <ul>
+          {Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([t, c]) => (
+            <li key={t}>{t} : {c}</li>
+          ))}
+        </ul>
+
+        <p><strong>Détail jours bien-être :</strong></p>
+        <ul>
+          {wellbeingDaysSorted.map((day) => {
+            const records = wellbeingByDay[day]
+            return (
+              <li key={day}>
+                {day} — {records.length} entrée(s), scores : [{records.map((r) => r.score).join(', ')}]
+                , heures UTC : [{records.map((r) => new Date(r.at).toISOString().slice(11, 16)).join(', ')}]
+              </li>
+            )
+          })}
+        </ul>
+
+        <p><strong>Jours sans bien-être (données manquantes pour le modèle) :</strong></p>
+        <ul>
+          {allDays.filter((d) => !wellbeingByDay[d]).map((d) => {
+            const dayEntries = entries.filter((e) => e.at && localDateKey(e.at) === d)
+            const typeCounts = {}
+            for (const e of dayEntries) typeCounts[e.type] = (typeCounts[e.type] || 0) + 1
+            return (
+              <li key={d}>{d} — {Object.entries(typeCounts).map(([t, c]) => `${t}:${c}`).join(', ')}</li>
+            )
+          })}
+        </ul>
+      </div>
+    </details>
+  )
+}
+
 // ─── Page root ────────────────────────────────────────────────────────────────
 
 const TABS = [
@@ -276,6 +357,7 @@ export default function Recommendations() {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const debugMode = isDebugModeEnabled()
 
   const load = async () => {
     try {
@@ -330,6 +412,7 @@ export default function Recommendations() {
 
       {!loading && !error && (
         <>
+          {debugMode && <RecoDebugPanel entries={entries} />}
           {tab === 'basic' && <BasicTab entries={entries} />}
           {tab === 'advanced' && <AdvancedTab entries={entries} />}
         </>
