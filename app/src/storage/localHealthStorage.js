@@ -165,11 +165,85 @@ export async function createEntry(entry) {
 }
 
 /**
+ * Count total entries in the DB (lightweight — does not load payloads via getAll;
+ * uses IDBObjectStore.count() which is O(1) in most IndexedDB engines).
+ * @returns {Promise<number>}
+ */
+export async function countAllEntries() {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly')
+    const store = tx.objectStore(STORE_NAME)
+    const req = store.count()
+    req.onerror = () => reject(req.error)
+    req.onsuccess = () => resolve(req.result)
+  })
+}
+
+/**
+ * Load all entries for analysis/ML, loading each type independently so that
+ * high-frequency types (e.g. heart_rate) cannot crowd out lower-frequency
+ * types (e.g. wellbeing, sleep, food) due to a shared entry cap.
+ *
+ * Per-type limits (most-recent N entries of that type):
+ *   - heart_rate: 5000  (high-frequency wearable data)
+ *   - steps:      2000
+ *   - wellbeing:  2000
+ *   - food:       2000
+ *   - sleep:      500
+ *   - activity:   500
+ *   - calories:   500
+ *   - default:    1000  (any future types)
+ *
+ * @returns {Promise<Array<{ id: number, type: string, source: string, at: string, payload: object, created_at: string }>>}
+ */
+export async function listEntriesForAnalysis() {
+  const TYPE_LIMITS = {
+    heart_rate: 5000,
+    steps: 2000,
+    wellbeing: 2000,
+    food: 2000,
+    sleep: 500,
+    activity: 500,
+    calories: 500,
+  }
+  const DEFAULT_LIMIT = 1000
+
+  const db = await openDB()
+  const allEntries = await new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly')
+    const store = tx.objectStore(STORE_NAME)
+    const req = store.getAll()
+    req.onerror = () => reject(req.error)
+    req.onsuccess = () => resolve(req.result || [])
+  })
+
+  // Group by type, sort each group descending by `at`, apply per-type limit
+  const byType = {}
+  for (const entry of allEntries) {
+    const t = entry.type || '__unknown__'
+    if (!byType[t]) byType[t] = []
+    byType[t].push(entry)
+  }
+
+  const result = []
+  for (const [type, entries] of Object.entries(byType)) {
+    entries.sort((a, b) => (b.at < a.at ? -1 : 1))
+    const limit = TYPE_LIMITS[type] ?? DEFAULT_LIMIT
+    result.push(...entries.slice(0, limit))
+  }
+
+  return result
+}
+
+/**
  * Export all entries as JSON string (for download / backup).
+ * Uses per-type limits (same as listEntriesForAnalysis) so that high-frequency
+ * types cannot crowd out other types in the export file.
  * @returns {Promise<string>}
  */
 export async function exportToJson() {
-  const entries = await listEntries({ limit: 10000 })
+  const entries = await listEntriesForAnalysis()
   return JSON.stringify(
     { version: 1, exportedAt: new Date().toISOString(), entries },
     null,

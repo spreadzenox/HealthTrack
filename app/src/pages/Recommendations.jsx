@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { listEntries } from '../storage/localHealthStorage'
+import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import {
   computeBasicCorrelations,
   computeAdvancedAnalysis,
@@ -272,7 +272,7 @@ function AdvancedTab({ entries }) {
 
 // ─── Debug panel (visible only in debug mode) ─────────────────────────────────
 
-function RecoDebugPanel({ entries }) {
+function RecoDebugPanel({ entries, totalDbCount }) {
   const byType = useMemo(() => {
     const map = {}
     for (const e of entries) map[e.type] = (map[e.type] || 0) + 1
@@ -302,7 +302,8 @@ function RecoDebugPanel({ entries }) {
     <details className="reco-debug-panel" open>
       <summary className="reco-debug-title">🛠 Debug — Données Recommandations</summary>
       <div className="reco-debug-body">
-        <p><strong>Total entrées chargées :</strong> {entries.length}</p>
+        <p><strong>Total entrées en base (DB) :</strong> {totalDbCount ?? '…'}</p>
+        <p><strong>Total entrées chargées (après limites par type) :</strong> {entries.length}</p>
         <p><strong>Jours calendaires (toutes données) :</strong> {allDays.length} — [{allDays.join(', ')}]</p>
         <p><strong>Jours avec score bien-être :</strong> {wellbeingDaysSorted.length}</p>
         <p><strong>Jours dans buildDailyDataset() :</strong> {dailyDataset.length}</p>
@@ -355,15 +356,21 @@ export default function Recommendations() {
 
   const [tab, setTab] = useState('basic')
   const [entries, setEntries] = useState([])
+  const [totalDbCount, setTotalDbCount] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const debugMode = isDebugModeEnabled()
 
   const load = async () => {
     try {
-      // Load all entries — we need cross-type correlations
-      const data = await listEntries({ limit: 10000 })
+      // Load entries per type with independent caps so high-frequency types
+      // (e.g. heart_rate) cannot crowd out lower-frequency ones (wellbeing, sleep…)
+      const [data, dbTotal] = await Promise.all([
+        listEntriesForAnalysis(),
+        debugMode ? countAllEntries() : Promise.resolve(null),
+      ])
       setEntries(data)
+      if (dbTotal !== null) setTotalDbCount(dbTotal)
     } catch (e) {
       setError(e.message)
     } finally {
@@ -412,7 +419,7 @@ export default function Recommendations() {
 
       {!loading && !error && (
         <>
-          {debugMode && <RecoDebugPanel entries={entries} />}
+          {debugMode && <RecoDebugPanel entries={entries} totalDbCount={totalDbCount} />}
           {tab === 'basic' && <BasicTab entries={entries} />}
           {tab === 'advanced' && <AdvancedTab entries={entries} />}
         </>

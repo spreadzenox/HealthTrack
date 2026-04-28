@@ -4,7 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import Recommendations from './Recommendations'
 
 vi.mock('../storage/localHealthStorage', () => ({
-  listEntries: vi.fn(),
+  listEntriesForAnalysis: vi.fn(),
+  countAllEntries: vi.fn().mockResolvedValue(0),
 }))
 
 // Prevent auto-sync from calling Health Connect during unit tests
@@ -56,8 +57,8 @@ function renderPage() {
 
 describe('Recommendations page', () => {
   beforeEach(async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValue([])
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue([])
   })
 
   it('renders the page title', async () => {
@@ -96,8 +97,8 @@ describe('Recommendations page', () => {
   })
 
   it('shows analysis when basic has enough data (2+ days)', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValue(makeEntries(3))
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
     renderPage()
     await waitFor(() => {
       expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
@@ -113,8 +114,8 @@ describe('Recommendations page', () => {
   })
 
   it('shows advanced analysis after 7+ days', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValue(makeEntries(7))
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(7))
     renderPage()
     // Switch to advanced tab
     await screen.findByRole('button', { name: /Recommandations avancées/i })
@@ -130,8 +131,8 @@ describe('Recommendations page', () => {
   })
 
   it('shows remaining-days message when some but not enough data for advanced', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValue(makeEntries(3))
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
     renderPage()
     // Click advanced tab after initial render (button should be there immediately)
     const advBtn = await screen.findByRole('button', { name: /Recommandations avancées/i })
@@ -144,17 +145,17 @@ describe('Recommendations page', () => {
   })
 
   it('reloads when health-entries-updated event fires', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValue([])
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue([])
     renderPage()
     await screen.findByText(/Enregistrez votre bien-être/i)
 
-    const callsBefore = listEntries.mock.calls.length
+    const callsBefore = listEntriesForAnalysis.mock.calls.length
 
     // Simulate new data arriving
-    listEntries.mockResolvedValue(makeEntries(5))
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     window.dispatchEvent(new CustomEvent('health-entries-updated'))
-    await waitFor(() => expect(listEntries.mock.calls.length).toBeGreaterThan(callsBefore))
+    await waitFor(() => expect(listEntriesForAnalysis.mock.calls.length).toBeGreaterThan(callsBefore))
   })
 })
 
@@ -166,7 +167,7 @@ describe('CorrelationBar color logic', () => {
     //   r >= 0 → green (reco-corr-pos)
     //   r < 0  → red   (reco-corr-neg)
     // This keeps bar color and the displayed numeric sign coherent.
-    const { listEntries } = await import('../storage/localHealthStorage')
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
 
     const analysisModule = await import('../services/analysisEngine')
 
@@ -180,7 +181,7 @@ describe('CorrelationBar color logic', () => {
       topNegativeFactors: [],
     })
 
-    listEntries.mockResolvedValue(makeEntries(3))
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
     renderPage()
 
     await waitFor(() => {
@@ -210,8 +211,8 @@ describe('CorrelationBar color logic', () => {
 describe('Recommendations auto-sync', () => {
   it('calls useAutoSync when the page mounts', async () => {
     const { useAutoSync } = await import('../hooks/useAutoSync')
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValue([])
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue([])
 
     render(
       <BrowserRouter>

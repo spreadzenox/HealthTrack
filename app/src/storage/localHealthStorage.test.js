@@ -18,6 +18,8 @@ beforeEach(() => {
 import {
   createEntry,
   listEntries,
+  listEntriesForAnalysis,
+  countAllEntries,
   upsertEntries,
   getLatestEntryAt,
   exportToJson,
@@ -101,6 +103,61 @@ describe('getLatestEntryAt', () => {
     await createEntry({ type: 'steps', source: 'other', payload: {}, at: '2026-12-31T10:00:00Z' })
     const result = await getLatestEntryAt('hc_only')
     expect(result).toBeNull()
+  })
+})
+
+describe('countAllEntries', () => {
+  it('returns 0 when DB is empty', async () => {
+    const count = await countAllEntries()
+    expect(count).toBe(0)
+  })
+
+  it('returns correct count after inserts', async () => {
+    await createEntry({ type: 'steps', source: 'test', payload: {}, at: '2026-01-01T10:00:00Z' })
+    await createEntry({ type: 'wellbeing', source: 'test', payload: { score: 3 }, at: '2026-01-02T10:00:00Z' })
+    const count = await countAllEntries()
+    expect(count).toBe(2)
+  })
+})
+
+describe('listEntriesForAnalysis', () => {
+  it('returns all entries when below per-type limits', async () => {
+    await createEntry({ type: 'wellbeing', source: 'test', payload: { score: 3 }, at: '2026-01-01T12:00:00Z' })
+    await createEntry({ type: 'steps', source: 'test', payload: { value: 5000 }, at: '2026-01-01T22:00:00Z' })
+    await createEntry({ type: 'heart_rate', source: 'test', payload: { value: 70 }, at: '2026-01-01T08:00:00Z' })
+    const entries = await listEntriesForAnalysis()
+    expect(entries.length).toBe(3)
+    const types = new Set(entries.map((e) => e.type))
+    expect(types.has('wellbeing')).toBe(true)
+    expect(types.has('steps')).toBe(true)
+    expect(types.has('heart_rate')).toBe(true)
+  })
+
+  it('ensures all types are represented even when heart_rate dominates', async () => {
+    // Insert many heart_rate entries
+    for (let i = 0; i < 10; i++) {
+      await createEntry({
+        type: 'heart_rate',
+        source: 'test',
+        payload: { value: 70 + i },
+        at: `2026-01-01T${String(i).padStart(2, '0')}:00:00Z`,
+      })
+    }
+    // Insert wellbeing entries
+    for (let i = 1; i <= 3; i++) {
+      await createEntry({
+        type: 'wellbeing',
+        source: 'test',
+        payload: { score: i },
+        at: `2026-01-0${i}T12:00:00Z`,
+      })
+    }
+    const entries = await listEntriesForAnalysis()
+    const byType = {}
+    for (const e of entries) byType[e.type] = (byType[e.type] || 0) + 1
+    // Both types must be present
+    expect(byType.heart_rate).toBe(10)
+    expect(byType.wellbeing).toBe(3)
   })
 })
 
