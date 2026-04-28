@@ -79,7 +79,12 @@ export default function Data() {
       <div className="data-actions">
         <div className="data-block">
           <h3 className="section-title">Exporter (sauvegarde)</h3>
-          <p className="data-hint">Téléchargez un fichier JSON contenant toutes vos entrées. Enregistrez-le dans un dossier persistant (ex. Documents).</p>
+          <p className="data-hint">
+            Téléchargez un fichier JSON contenant toutes vos entrées.
+            Sur Android, le fichier est enregistré dans le dossier <strong>Documents</strong> de votre appareil
+            (application Fichiers &gt; Téléphone &gt; Documents).
+            Sur navigateur, le fichier est téléchargé via votre navigateur — enregistrez-le dans un dossier persistant.
+          </p>
           <button type="button" className="btn" onClick={handleExport}>
             Télécharger la sauvegarde
           </button>

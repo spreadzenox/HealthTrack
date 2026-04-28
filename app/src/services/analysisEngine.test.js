@@ -10,6 +10,7 @@ import {
   pearsonCorrelation,
   computeBasicCorrelations,
   computeAdvancedAnalysis,
+  countTotalDataDays,
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
   LAG_DAYS,
@@ -708,5 +709,64 @@ describe('computeAdvancedAnalysis', () => {
     if (result.status === 'ok') {
       expect(result.featureImportance.length).toBeLessThanOrEqual(12)
     }
+  })
+
+  it('uses OLS (not Pearson fallback) when features > data days, via Ridge regularisation', () => {
+    // Simulate the real-world scenario: ~8 wellbeing days but many active features
+    // (sleep, steps, food with many nutrients, heart rate). Without Ridge, OLS would fall
+    // back to Pearson. With Ridge, it should succeed as OLS.
+    const entries = []
+    const foodItems = [{ ingredient: 'Riz cuit', quantity_g: 150 }]
+    for (let d = 1; d <= 8; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 4)))
+      entries.push(makeSleep(date, 360 + d * 10))
+      entries.push(makeSteps(date, 5000 + d * 300))
+      entries.push(makeFood(date, foodItems))
+      entries.push(makeAvgHR(date, 65 + d))
+      entries.push(makeHRV(date, 40 + d * 2))
+      entries.push(makeActivity(date, 200 + d * 10))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    expect(result.status).toBe('ok')
+    expect(result.modelInfo.method).toBe('ols_linear_regression')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// countTotalDataDays
+// ---------------------------------------------------------------------------
+
+describe('countTotalDataDays', () => {
+  it('returns 0 for empty array', () => {
+    expect(countTotalDataDays([])).toBe(0)
+  })
+
+  it('returns 0 for null/undefined', () => {
+    expect(countTotalDataDays(null)).toBe(0)
+    expect(countTotalDataDays(undefined)).toBe(0)
+  })
+
+  it('counts distinct calendar days regardless of entry type', () => {
+    const entries = [
+      makeWellbeing('2026-01-01', 3),
+      makeSleep('2026-01-01', 480),   // same day → still 1
+      makeWellbeing('2026-01-02', 4),
+      makeFood('2026-01-03', []),     // day without wellbeing still counted
+    ]
+    expect(countTotalDataDays(entries)).toBe(3)
+  })
+
+  it('differs from buildDailyDataset length when some days lack wellbeing', () => {
+    const entries = [
+      makeSleep('2026-01-01', 480),   // no wellbeing → not in dailyDataset
+      makeWellbeing('2026-01-02', 4),
+      makeWellbeing('2026-01-03', 3),
+    ]
+    const totalDays = countTotalDataDays(entries)
+    const wellbeingDays = buildDailyDataset(entries).length
+    expect(totalDays).toBe(3)
+    expect(wellbeingDays).toBe(2)
+    expect(totalDays).toBeGreaterThan(wellbeingDays)
   })
 })

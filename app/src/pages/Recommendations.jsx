@@ -3,6 +3,7 @@ import { listEntries } from '../storage/localHealthStorage'
 import {
   computeBasicCorrelations,
   computeAdvancedAnalysis,
+  countTotalDataDays,
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
 } from '../services/analysisEngine'
@@ -81,11 +82,11 @@ function NotEnoughData({ currentDays, minDays, tabLabel }) {
       </p>
       <p className="reco-not-enough-hint">
         {currentDays === 0
-          ? `Enregistrez votre bien-être chaque jour pour activer cette fonctionnalité.`
-          : `Il manque encore ${remaining} jour${remaining > 1 ? 's' : ''} d'historique bien-être (vous en avez ${currentDays}).`}
+          ? `Enregistrez votre bien-être chaque jour pour activer cette fonctionnalité (les données alimentaires ou de sommeil seules ne suffisent pas).`
+          : `Il manque encore ${remaining} jour${remaining > 1 ? 's' : ''} avec un score bien-être (vous en avez ${currentDays}). Pensez à enregistrer votre bien-être quotidiennement.`}
       </p>
       <p className="reco-not-enough-min">
-        Seuil minimum : <strong>{minDays} jours</strong>
+        Seuil minimum : <strong>{minDays} jours</strong> avec score bien-être
       </p>
     </div>
   )
@@ -95,6 +96,7 @@ function NotEnoughData({ currentDays, minDays, tabLabel }) {
 
 function BasicTab({ entries }) {
   const result = useMemo(() => computeBasicCorrelations(entries), [entries])
+  const totalDays = useMemo(() => countTotalDataDays(entries), [entries])
 
   if (result.status === 'not_enough_data') {
     return (
@@ -111,7 +113,8 @@ function BasicTab({ entries }) {
   return (
     <div className="reco-tab-content">
       <p className="reco-meta">
-        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''}</strong> de données.
+        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} avec score bien-être</strong>
+        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
         Méthode : corrélation de Pearson entre chaque variable et le bien-être.
       </p>
 
@@ -161,6 +164,7 @@ function BasicTab({ entries }) {
 
 function AdvancedTab({ entries }) {
   const result = useMemo(() => computeAdvancedAnalysis(entries), [entries])
+  const totalDays = useMemo(() => countTotalDataDays(entries), [entries])
 
   if (result.status === 'not_enough_data') {
     return (
@@ -176,13 +180,14 @@ function AdvancedTab({ entries }) {
 
   const r2Display = modelInfo?.r2 != null ? `${Math.round(modelInfo.r2 * 100)}%` : 'N/A'
   const method = modelInfo?.method === 'ols_linear_regression'
-    ? 'Régression linéaire multiple (OLS)'
+    ? 'Régression linéaire multiple (OLS + Ridge)'
     : 'Corrélation de Pearson (fallback)'
 
   return (
     <div className="reco-tab-content">
       <p className="reco-meta">
-        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''}</strong> de données.
+        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} avec score bien-être</strong>
+        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
         Modèle : <em>{method}</em>.
         {modelInfo?.r2 != null && (
           <> Pouvoir explicatif (R²) : <strong>{r2Display}</strong>.</>

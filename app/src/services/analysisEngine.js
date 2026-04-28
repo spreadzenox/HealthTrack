@@ -282,6 +282,20 @@ export function localDateKey(iso) {
 }
 
 /**
+ * Returns the number of distinct calendar days (YYYY-MM-DD) that have any
+ * entry, regardless of type. Used to inform the user how many total days of
+ * data they have vs. how many include a wellbeing score (the model input).
+ *
+ * @param {Array} entries
+ * @returns {number}
+ */
+export function countTotalDataDays(entries) {
+  if (!entries || entries.length === 0) return 0
+  const days = new Set(entries.filter((e) => e.at).map((e) => localDateKey(e.at)))
+  return days.size
+}
+
+/**
  * Aggregates raw health entries into one feature-row per calendar day.
  * Only days that contain at least one wellbeing score are included (wellbeing
  * is the target variable for every analysis).
@@ -738,7 +752,7 @@ export function computeAdvancedAnalysis(entries) {
     return [1, ...feats]
   })
 
-  const beta = olsNormalEquations(X, y)
+  const beta = olsWithRidgeFallback(X, y)
   if (!beta) {
     const basic = computeBasicCorrelations(entries)
     if (basic.status !== 'ok') return { status: 'not_enough_data', minDays: MIN_DAYS_ADVANCED, currentDays: n }
@@ -805,7 +819,17 @@ export function computeAdvancedAnalysis(entries) {
 
 // ─── OLS helpers ─────────────────────────────────────────────────────────────
 
-function olsNormalEquations(X, y) {
+/**
+ * Solves (X^T X + λI) β = X^T y via Gaussian elimination with partial pivoting.
+ * The intercept column (index 0) is NOT regularised (λ only applied to feature cols).
+ * Returns null only if the augmented system is still degenerate after regularisation.
+ *
+ * @param {number[][]} X   n × k design matrix (first column is the intercept 1s)
+ * @param {number[]}   y   n-length response vector
+ * @param {number}    [lambda=0]  Ridge penalty (L2 regularisation)
+ * @returns {number[]|null}  k-length coefficient vector, or null on failure
+ */
+function olsNormalEquations(X, y, lambda = 0) {
   const n = X.length
   if (n === 0) return null
   const k = X[0].length
@@ -819,6 +843,11 @@ function olsNormalEquations(X, y) {
         A[j][l] += X[i][j] * X[i][l]
       }
     }
+  }
+
+  // Apply Ridge penalty to all columns except the intercept (col 0)
+  for (let j = 1; j < k; j++) {
+    A[j][j] += lambda
   }
 
   const aug = A.map((row, i) => [...row, b[i]])
@@ -851,6 +880,24 @@ function olsNormalEquations(X, y) {
   }
 
   return beta
+}
+
+/**
+ * Fits Ridge regression, automatically tuning lambda when the plain OLS is
+ * singular (n_samples < n_features or near-collinear columns).
+ * Tries λ = 0, 0.01, 0.1, 1, 10, 100 in sequence; returns the first solution found.
+ *
+ * @param {number[][]} X
+ * @param {number[]}   y
+ * @returns {number[]|null}
+ */
+function olsWithRidgeFallback(X, y) {
+  const lambdas = [0, 0.01, 0.1, 1, 10, 100]
+  for (const lam of lambdas) {
+    const beta = olsNormalEquations(X, y, lam)
+    if (beta !== null) return beta
+  }
+  return null
 }
 
 function computeR2(yTrue, yPred) {
