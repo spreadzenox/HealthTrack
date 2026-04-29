@@ -37,6 +37,17 @@ export const MIN_DAYS_ADVANCED = 7
  */
 export const LAG_DAYS = 10.5
 
+/**
+ * Number of most-recent days held out from model training.
+ *
+ * The model is always trained on (n - HOLD_OUT_DAYS) days and then used to
+ * predict the held-out days.  This produces genuine out-of-sample predictions
+ * that cannot overfit to the days they were trained on, which prevents the
+ * "predicted adapts in real-time to match actual" artefact observed in the
+ * in-sample residuals approach.
+ */
+export const HOLD_OUT_DAYS = 2
+
 // ─── Variable metadata ───────────────────────────────────────────────────────
 
 export const VARIABLE_META = {
@@ -867,11 +878,53 @@ export function buildTodayRow(entries, historicalRawDataset) {
 }
 
 /**
+ * Fits a Ridge-regularised OLS model on a pre-built lagged dataset slice,
+ * returning the fitted parameters needed to make predictions.
+ *
+ * The caller selects which rows of the lagged dataset to train on; this lets
+ * us trivially implement hold-out evaluation without duplicating the
+ * standardisation / matrix-build logic.
+ *
+ * @param {Array<DayRow>} trainRows  subset of lagged rows used for fitting
+ * @returns {{ featureKeys, featureMeans, featureStds, beta, X, y } | null}
+ *   null when Ridge still cannot produce a solution (degenerate data)
+ */
+function _fitModelOnRows(trainRows) {
+  const featureKeys = Object.keys(VARIABLE_META).filter((k) => {
+    const vec = trainRows.map((d) => d[k] ?? 0)
+    return !vec.every((v) => v === 0)
+  })
+  if (featureKeys.length === 0) return null
+
+  const featureMeans = featureKeys.map((k) => mean(trainRows.map((d) => d[k] ?? 0)))
+  const featureStds  = featureKeys.map((k) => {
+    const s = std(trainRows.map((d) => d[k] ?? 0))
+    return s === 0 ? 1 : s
+  })
+
+  const y = trainRows.map((d) => d.wellbeing)
+  const X = trainRows.map((row) => [
+    1,
+    ...featureKeys.map((k, j) => ((row[k] ?? 0) - featureMeans[j]) / featureStds[j]),
+  ])
+
+  const beta = olsWithRidgeFallback(X, y)
+  if (!beta) return null
+
+  return { featureKeys, featureMeans, featureStds, beta, X, y }
+}
+
+/**
  * Fits an OLS multiple linear regression on the time-lagged dataset.
  *
  * Uses the lagged nutrition values so that the model captures the sustained
  * nutritional influence over ~10.5 days. The objective is to identify which
  * dietary patterns maximise the integral of wellbeing over time.
+ *
+ * The model is trained on all days EXCEPT the last HOLD_OUT_DAYS days.
+ * The held-out days are then predicted using this model, producing genuinely
+ * out-of-sample residuals (not in-sample fitted values) that cannot adapt to
+ * data they never saw during training.
  *
  * @param {Array} entries
  * @returns {AdvancedResult}
@@ -880,46 +933,25 @@ export function computeAdvancedAnalysis(entries) {
   const rawDataset = buildDailyDataset(entries)
   const n = rawDataset.length
 
-  if (n < MIN_DAYS_ADVANCED) {
+  // We need at least MIN_DAYS_ADVANCED training days PLUS the hold-out window
+  if (n < MIN_DAYS_ADVANCED + HOLD_OUT_DAYS) {
     return {
       status: 'not_enough_data',
-      minDays: MIN_DAYS_ADVANCED,
+      minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS,
       currentDays: n,
     }
   }
 
   const dataset = buildLaggedDataset(rawDataset)
 
-  const featureKeys = Object.keys(VARIABLE_META).filter((k) => {
-    const vec = dataset.map((d) => d[k] ?? 0)
-    return !vec.every((v) => v === 0)
-  })
+  // Split: train on everything except the last HOLD_OUT_DAYS days
+  const trainRows = dataset.slice(0, n - HOLD_OUT_DAYS)
+  const holdOutRows = dataset.slice(n - HOLD_OUT_DAYS)
 
-  if (featureKeys.length === 0) {
-    return { status: 'not_enough_data', minDays: MIN_DAYS_ADVANCED, currentDays: n }
-  }
-
-  const y = dataset.map((d) => d.wellbeing)
-  const stdY = std(y)
-
-  const featureMeans = featureKeys.map((k) => mean(dataset.map((d) => d[k] ?? 0)))
-  const featureStds = featureKeys.map((k) => {
-    const s = std(dataset.map((d) => d[k] ?? 0))
-    return s === 0 ? 1 : s
-  })
-
-  // X: n × (p+1) with intercept column, features standardised
-  const X = dataset.map((row) => {
-    const feats = featureKeys.map((k, j) => {
-      return ((row[k] ?? 0) - featureMeans[j]) / featureStds[j]
-    })
-    return [1, ...feats]
-  })
-
-  const beta = olsWithRidgeFallback(X, y)
-  if (!beta) {
+  const fit = _fitModelOnRows(trainRows)
+  if (!fit) {
     const basic = computeBasicCorrelations(entries)
-    if (basic.status !== 'ok') return { status: 'not_enough_data', minDays: MIN_DAYS_ADVANCED, currentDays: n }
+    if (basic.status !== 'ok') return { status: 'not_enough_data', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS, currentDays: n }
     return {
       status: 'ok',
       datasetDays: n,
@@ -939,21 +971,24 @@ export function computeAdvancedAnalysis(entries) {
     }
   }
 
-  const yPred = X.map((row) => row.reduce((s, x, j) => s + x * beta[j], 0))
-  const r2 = computeR2(y, yPred)
+  const { featureKeys, featureMeans, featureStds, beta, X: Xtrain, y: ytrain } = fit
 
-  // LOO cross-validated R²: honest out-of-sample estimate
-  const r2_loo = computeR2LOO(X, y)
+  // In-sample R² on the training partition (for display — expected to be high)
+  const yPredTrain = Xtrain.map((row) => row.reduce((s, x, j) => s + x * beta[j], 0))
+  const r2 = computeR2(ytrain, yPredTrain)
 
-  // Standardised beta coefficients
+  // LOO cross-validated R² on the training partition
+  const r2_loo = computeR2LOO(Xtrain, ytrain)
+
+  const stdY = std(ytrain)
+
+  // Standardised beta coefficients (feature importance)
   const rawImportances = featureKeys.map((key, j) => {
     const betaJ = beta[j + 1]
     const stdX = featureStds[j]
     return stdY > 0 ? (betaJ * stdX) / stdY : 0
   })
 
-  // Normalise importance so the strongest variable = 1.0 (bars are relative).
-  // If all coefficients are near-zero (degenerate/collinear fit), keep importances at 0.
   const maxRawImportance = Math.max(...rawImportances.map(Math.abs))
 
   const featureImportance = featureKeys.map((key, j) => {
@@ -961,13 +996,11 @@ export function computeAdvancedAnalysis(entries) {
     return {
       variable: key,
       label: VARIABLE_META[key].label,
-      // importance in [0,1]: fraction of the strongest feature's impact.
-      // When maxRawImportance is effectively zero the model has no signal; keep 0.
       importance: maxRawImportance > 1e-9 ? Math.abs(stdCoeff) / maxRawImportance : 0,
       direction: stdCoeff >= 0 ? 'positive' : 'negative',
       coefficient: stdCoeff,
       group: VARIABLE_META[key].group,
-      advice: buildAdvancedAdvice(key, stdCoeff, dataset),
+      advice: buildAdvancedAdvice(key, stdCoeff, trainRows),
     }
   })
 
@@ -981,7 +1014,19 @@ export function computeAdvancedAnalysis(entries) {
     ? negImpact.map((f) => f.advice)
     : featureImportance.slice(0, 3).map((f) => f.advice)
 
-  // Predict today's wellbeing using the fitted model
+  // Hold-out residuals: predict the last HOLD_OUT_DAYS days using the model
+  // trained WITHOUT those days — genuine out-of-sample evaluation.
+  const residuals = holdOutRows.map((row) => {
+    const xRow = [
+      1,
+      ...featureKeys.map((k, j) => ((row[k] ?? 0) - featureMeans[j]) / featureStds[j]),
+    ]
+    const rawPred = xRow.reduce((s, x, j) => s + x * beta[j], 0)
+    const predicted = Math.max(0, Math.min(5, rawPred))
+    return { dateKey: row.dateKey, actual: row.wellbeing, predicted }
+  })
+
+  // Predict today using the hold-out model (trained without last HOLD_OUT_DAYS)
   const todayPrediction = _predictToday(entries, rawDataset, featureKeys, featureMeans, featureStds, beta)
 
   return {
@@ -993,12 +1038,11 @@ export function computeAdvancedAnalysis(entries) {
       method: 'ols_linear_regression',
       nFeatures: featureKeys.length,
       lagDays: LAG_DAYS,
-      // Flag that there are more parameters than observations (likely overfitting)
-      overfit_risk: featureKeys.length + 1 >= n,
+      overfit_risk: featureKeys.length + 1 >= trainRows.length,
     },
     featureImportance: featureImportance.slice(0, 12),
     topRecommendations,
-    residuals: y.map((actual, i) => ({ dateKey: dataset[i].dateKey, actual, predicted: yPred[i] })),
+    residuals,
     todayPrediction,
   }
 }
@@ -1008,36 +1052,28 @@ export function computeAdvancedAnalysis(entries) {
  * wellbeing.  Returns null if there is not enough historical data or no
  * data at all for today.
  *
+ * The model is trained on all historical days EXCEPT the last HOLD_OUT_DAYS
+ * days, so that the prediction for today is never influenced by recent actual
+ * wellbeing scores that the model "saw" during training.  This prevents the
+ * artefact where adding a new wellbeing score immediately shifts the predicted
+ * value to match it.
+ *
  * @param {Array} entries  raw entries from listEntriesForAnalysis
  * @returns {{ dateKey: string, predicted: number, actual: number|null }|null}
  */
 export function computeTodayPrediction(entries) {
   const rawDataset = buildDailyDataset(entries)
-  if (rawDataset.length < MIN_DAYS_ADVANCED) return null
+  // We need at least MIN_DAYS_ADVANCED training rows after removing the hold-out window
+  if (rawDataset.length < MIN_DAYS_ADVANCED + HOLD_OUT_DAYS) return null
 
   const dataset = buildLaggedDataset(rawDataset)
 
-  const featureKeys = Object.keys(VARIABLE_META).filter((k) => {
-    const vec = dataset.map((d) => d[k] ?? 0)
-    return !vec.every((v) => v === 0)
-  })
-  if (featureKeys.length === 0) return null
+  // Train on all days except the last HOLD_OUT_DAYS
+  const trainRows = dataset.slice(0, dataset.length - HOLD_OUT_DAYS)
+  const fit = _fitModelOnRows(trainRows)
+  if (!fit) return null
 
-  const y = dataset.map((d) => d.wellbeing)
-  const featureMeans = featureKeys.map((k) => mean(dataset.map((d) => d[k] ?? 0)))
-  const featureStds = featureKeys.map((k) => {
-    const s = std(dataset.map((d) => d[k] ?? 0))
-    return s === 0 ? 1 : s
-  })
-
-  const X = dataset.map((row) => {
-    const feats = featureKeys.map((k, j) => ((row[k] ?? 0) - featureMeans[j]) / featureStds[j])
-    return [1, ...feats]
-  })
-
-  const beta = olsWithRidgeFallback(X, y)
-  if (!beta) return null
-
+  const { featureKeys, featureMeans, featureStds, beta } = fit
   return _predictToday(entries, rawDataset, featureKeys, featureMeans, featureStds, beta)
 }
 

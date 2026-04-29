@@ -8,6 +8,7 @@ import {
   localDateKey,
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
+  HOLD_OUT_DAYS,
 } from '../services/analysisEngine'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { useAutoSync } from '../hooks/useAutoSync'
@@ -218,6 +219,9 @@ function AdvancedTab({ entries }) {
             Le modèle est une régression linéaire multiple (OLS + Ridge) entraîné <em>entièrement sur vos données locales</em>. Le <strong>R² entraînement</strong> mesure à quel point le modèle s'ajuste aux données qu'il a vues — il peut être élevé simplement parce qu'il y a plus de variables que de jours. Le <strong>R² LOO</strong> (Leave-One-Out) est une mesure honnête : pour chaque jour, le modèle est ré-entraîné sans ce jour puis prédit. Un R² LOO négatif ou très inférieur au R² entraînement signale un sur-apprentissage.
           </p>
           <p>
+            Pour éviter le sur-apprentissage dans la section « Prédit vs réel », le modèle est entraîné sur toutes les données <strong>sauf les {HOLD_OUT_DAYS} derniers jours</strong>. Ces jours sont ensuite prédits sans que le modèle les ait vus, ce qui garantit des prédictions honnêtement hors-échantillon. La prédiction affichée sur le tableau de bord utilise également ce modèle.
+          </p>
+          <p>
             Les barres d'importance sont <strong>relatives</strong> : la variable la plus influente vaut 100%, les autres sont exprimées en proportion.
           </p>
         </details>
@@ -268,10 +272,11 @@ function AdvancedTab({ entries }) {
             📉 Bien-être prédit vs réel
           </h3>
           <p className="reco-section-hint">
-            Comparaison entre les valeurs prédites par le modèle et vos scores réels (derniers {Math.min(residuals.length, 14)} jours).
+            Le modèle a été entraîné sur toutes les données <strong>sauf</strong> les {HOLD_OUT_DAYS} derniers jours.
+            Ces prédictions sont donc hors-échantillon — le modèle n'a jamais vu ces jours pendant l'entraînement.
           </p>
           <div className="reco-residuals">
-            {residuals.slice(-14).map((r) => {
+            {residuals.map((r) => {
               const [, m, d] = r.dateKey.split('-')
               const diff = r.actual - r.predicted
               return (
@@ -375,7 +380,7 @@ function RecoDebugPanel({ entries, totalDbCount }) {
 
 const TABS = [
   { id: 'basic', label: 'Recommandations basiques', minDays: MIN_DAYS_BASIC },
-  { id: 'advanced', label: 'Recommandations avancées', minDays: MIN_DAYS_ADVANCED },
+  { id: 'advanced', label: 'Recommandations avancées', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS },
 ]
 
 export default function Recommendations() {

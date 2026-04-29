@@ -113,21 +113,18 @@ describe('Recommendations page', () => {
     ).toBeTruthy()
   })
 
-  it('shows advanced analysis after 7+ days', async () => {
+  it('shows advanced analysis after 9+ days (MIN_DAYS_ADVANCED + HOLD_OUT_DAYS)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
-    listEntriesForAnalysis.mockResolvedValue(makeEntries(7))
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(9))
     renderPage()
     // Switch to advanced tab
     await screen.findByRole('button', { name: /Recommandations avancées/i })
-    fireEvent.click(screen.getByRole('button', { name: /Recommandations avancées/i }))
+    fireEvent.click(screen.getAllByRole('button', { name: /Recommandations avancées/i })[0])
     await waitFor(() => {
       expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
     })
-    // Should show advanced analysis (not not-enough-data)
-    expect(
-      screen.queryByText(/recommandations avancées/i) === null ||
-      screen.queryByText(/Analyse sur/i) !== null
-    ).toBe(true)
+    // Should show advanced analysis, not not-enough-data
+    expect(screen.queryByText(/Analyse sur/i)).not.toBeNull()
   })
 
   it('shows remaining-days message when some but not enough data for advanced', async () => {
