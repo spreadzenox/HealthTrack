@@ -96,9 +96,9 @@ describe('Recommendations page', () => {
     await screen.findByText(/Données insuffisantes/i)
   })
 
-  it('shows analysis when basic has enough data (2+ days)', async () => {
+  it('shows analysis when basic has enough data (5+ days)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
-    listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage()
     await waitFor(() => {
       expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()

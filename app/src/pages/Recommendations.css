@@ -330,6 +330,18 @@
   font-weight: 600;
 }
 
+/* ─── Reliability indicators ─────────────────────────────────────────────── */
+
+.reco-reliability-warn {
+  color: #e67e22;
+  font-weight: 600;
+}
+
+.reco-reliability-ok {
+  color: #2ecc71;
+  font-weight: 600;
+}
+
 /* ─── Disclaimer ──────────────────────────────────────────────────────────── */
 
 .reco-disclaimer {

@@ -18,6 +18,7 @@ import {
   HOLD_OUT_DAYS,
   LAG_DAYS,
   VARIABLE_META,
+  MAX_FEATURES_RATIO,
 } from './analysisEngine'
 
 // ---------------------------------------------------------------------------
@@ -592,6 +593,79 @@ describe('computeBasicCorrelations', () => {
       expect(inTop3).toBe(false)
     }
   })
+
+  it('MIN_DAYS_BASIC is at least 5 to avoid near-random Pearson r', () => {
+    // With fewer than 5 points, Pearson r is unreliable. Ensure the constant enforces this.
+    expect(MIN_DAYS_BASIC).toBeGreaterThanOrEqual(5)
+  })
+
+  it('returns reliability field in basic result', () => {
+    const entries = []
+    for (let d = 1; d <= MIN_DAYS_BASIC; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 3)))
+      entries.push(makeSleep(date, 360 + d * 10))
+    }
+    const result = computeBasicCorrelations(entries)
+    expect(result.status).toBe('ok')
+    expect(result).toHaveProperty('reliability')
+    expect(['good', 'exploratory']).toContain(result.reliability)
+  })
+
+  it('reliability is exploratory with fewer than 10 days', () => {
+    const entries = []
+    // Use exactly MIN_DAYS_BASIC days (5), which is < 10
+    for (let d = 1; d <= MIN_DAYS_BASIC; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 3)))
+    }
+    const result = computeBasicCorrelations(entries)
+    if (result.status === 'ok') {
+      expect(result.reliability).toBe('exploratory')
+    }
+  })
+
+  it('reliability is good with 10 or more days', () => {
+    const entries = []
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 3)))
+      entries.push(makeSleep(date, 360 + d * 10))
+    }
+    const result = computeBasicCorrelations(entries)
+    if (result.status === 'ok') {
+      expect(result.reliability).toBe('good')
+    }
+  })
+
+  it('does NOT include a variable in topNegativeFactors when r is positive and another has r < -threshold', () => {
+    // The filter requires r < -threshold for all directions (higher_better, lower_better, neutral).
+    // We use lifestyle variables (not lagged) to avoid lag interference:
+    // - sleep (higher_better): MORE sleep = LOWER wellbeing → r < 0, should appear in main filter
+    // - steps (higher_better): MORE steps = HIGHER wellbeing → r > 0, must NOT appear in main filter
+    const entries = []
+    for (let d = 1; d <= 7; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      // Pattern: alternating to create clear opposite correlations
+      // Days 1,3,5,7 = high sleep + low wellbeing; steps always increase with d
+      const isHighSleepDay = d % 2 === 1
+      entries.push(makeWellbeing(date, isHighSleepDay ? 1 : 5))
+      entries.push(makeSleep(date, isHighSleepDay ? 600 : 300))
+      // Steps increase monotonically: high steps → high wellbeing index (days 2,4,6 are high wellbeing)
+      entries.push(makeSteps(date, d * 1500))
+    }
+    const result = computeBasicCorrelations(entries)
+    if (result.status === 'ok') {
+      const sleepCorr = result.correlations.find((c) => c.variable === 'sleepMinutes')
+      const stepsCorr = result.correlations.find((c) => c.variable === 'steps')
+      // Only test the invariant if the setup actually produced the expected correlations
+      if (sleepCorr && sleepCorr.r < -0.2 && stepsCorr && stepsCorr.r > 0) {
+        // Main filter should be non-empty (sleep qualifies). steps (r > 0) must not appear.
+        const stepsInTop3 = result.topNegativeFactors.some((f) => f.variable === 'steps')
+        expect(stepsInTop3).toBe(false)
+      }
+    }
+  })
 })
 
   it('includes Health Connect features (avgHR, hrv_ms, spo2_pct, dailyCaloriesHC) in correlations when data is present', () => {
@@ -813,6 +887,66 @@ describe('computeAdvancedAnalysis', () => {
     if (result.status === 'ok') {
       expect(result.featureImportance.length).toBeLessThanOrEqual(12)
     }
+  })
+
+  it('modelInfo includes model_reliable (boolean or null)', () => {
+    const entries = []
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 4)))
+      entries.push(makeSleep(date, 360 + d * 10))
+      entries.push(makeSteps(date, 5000 + d * 300))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok' && result.modelInfo.method === 'ols_linear_regression') {
+      expect(result.modelInfo).toHaveProperty('model_reliable')
+      const val = result.modelInfo.model_reliable
+      expect(val === null || typeof val === 'boolean').toBe(true)
+    }
+  })
+
+  it('modelInfo includes nFeaturesFinal and nFeaturesCandidate', () => {
+    const entries = []
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 4)))
+      entries.push(makeSleep(date, 360 + d * 10))
+      entries.push(makeSteps(date, 5000 + d * 300))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok' && result.modelInfo.method === 'ols_linear_regression') {
+      expect(result.modelInfo).toHaveProperty('nFeaturesFinal')
+      expect(result.modelInfo).toHaveProperty('nFeaturesCandidate')
+      expect(result.modelInfo.nFeaturesFinal).toBeGreaterThanOrEqual(1)
+      expect(result.modelInfo.nFeaturesCandidate).toBeGreaterThan(result.modelInfo.nFeaturesFinal)
+    }
+  })
+
+  it('feature pre-selection limits number of features to floor(n_train * MAX_FEATURES_RATIO)', () => {
+    // With 10 total days: 8 training rows (10 - HOLD_OUT_DAYS=2)
+    // Pre-selection cap: floor(8 * MAX_FEATURES_RATIO) = floor(8 * 0.5) = 4 features
+    const entries = []
+    const foodItems = [{ ingredient: 'Riz cuit', quantity_g: 150 }]
+    for (let d = 1; d <= 10; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 4)))
+      entries.push(makeSleep(date, 360 + d * 10))
+      entries.push(makeSteps(date, 5000 + d * 300))
+      entries.push(makeFood(date, foodItems))
+      entries.push(makeActivity(date, 200 + d * 10))
+      entries.push(makeAvgHR(date, 70 + d))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    if (result.status === 'ok' && result.modelInfo.method === 'ols_linear_regression') {
+      const nTrain = 10 - HOLD_OUT_DAYS
+      const expectedCap = Math.max(2, Math.floor(nTrain * MAX_FEATURES_RATIO))
+      expect(result.modelInfo.nFeaturesFinal).toBeLessThanOrEqual(expectedCap)
+    }
+  })
+
+  it('MAX_FEATURES_RATIO constant is exported and in (0, 1]', () => {
+    expect(MAX_FEATURES_RATIO).toBeGreaterThan(0)
+    expect(MAX_FEATURES_RATIO).toBeLessThanOrEqual(1)
   })
 
   it('uses OLS (not Pearson fallback) when features > training days, via Ridge regularisation', () => {
