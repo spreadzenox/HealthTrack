@@ -28,8 +28,23 @@ import { computeTotalsFromItems, NUTRITION_FIELDS } from './nutritionKPIs'
 
 // ─── Public constants ────────────────────────────────────────────────────────
 
-export const MIN_DAYS_BASIC    = 2
+/**
+ * With fewer than 5 wellbeing days, Pearson r is effectively random (3 points
+ * always give |r|=1; 4 points are barely better). Require 5 as the minimum
+ * for any correlation to be interpretable.
+ */
+export const MIN_DAYS_BASIC    = 5
 export const MIN_DAYS_ADVANCED = 7
+
+/**
+ * Feature pre-selection ratio for the advanced model.
+ * The number of features fed to OLS is capped at floor(n_train × ratio).
+ * This prevents severe overfitting when n_train is small relative to the
+ * total number of available predictors (~30).
+ * Features are ranked by |Pearson r| with wellbeing on the training set,
+ * and only the top K are kept.
+ */
+export const MAX_FEATURES_RATIO = 0.5
 
 /**
  * Meal influence half-life: a meal affects wellbeing for this many days
@@ -669,11 +684,18 @@ export function computeBasicCorrelations(entries) {
 
   correlations.sort((a, b) => Math.abs(b.r) - Math.abs(a.r))
 
+  // "Factors to improve" logic:
+  // - higher_better: r < -threshold → having less of a good thing is associated with lower wellbeing
+  // - lower_better: r < -threshold → having more of a bad thing is associated with lower wellbeing
+  //   (positive r for a lower_better variable means "more bad thing → better wellbeing", which is
+  //   a spurious / confusing correlation and should NOT be flagged as a problem to fix)
+  // - neutral: only negative r (r < -threshold) is actionable as "reduce this"
+  const CORR_THRESHOLD = 0.2
   const negativeFactors = correlations
     .filter((c) => {
-      if (c.direction === 'higher_better') return c.r < -0.15
-      if (c.direction === 'lower_better') return c.r < -0.15
-      return Math.abs(c.r) > 0.15
+      if (c.direction === 'higher_better') return c.r < -CORR_THRESHOLD
+      if (c.direction === 'lower_better') return c.r < -CORR_THRESHOLD
+      return c.r < -CORR_THRESHOLD
     })
     .sort((a, b) => Math.abs(b.r) - Math.abs(a.r))
     .slice(0, 3)
@@ -683,9 +705,15 @@ export function computeBasicCorrelations(entries) {
       ? negativeFactors
       : correlations.slice(0, 3)
 
+  // Reliability assessment for the basic mode:
+  // - With 5–9 days, Pearson r is computed but has high uncertainty (treat as exploratory)
+  // - With ≥ 10 days, correlations are more stable
+  const reliability = n >= 10 ? 'good' : 'exploratory'
+
   return {
     status: 'ok',
     datasetDays: n,
+    reliability,
     correlations,
     topNegativeFactors: topNegativeFactors.map((c) => ({
       ...c,
@@ -885,12 +913,15 @@ export function buildTodayRow(entries, historicalRawDataset) {
  * us trivially implement hold-out evaluation without duplicating the
  * standardisation / matrix-build logic.
  *
- * @param {Array<DayRow>} trainRows  subset of lagged rows used for fitting
+ * @param {Array<DayRow>} trainRows       subset of lagged rows used for fitting
+ * @param {string[]|null} [allowedKeys]   optional pre-selected feature keys;
+ *                                        if null, all non-zero keys are used
  * @returns {{ featureKeys, featureMeans, featureStds, beta, X, y } | null}
  *   null when Ridge still cannot produce a solution (degenerate data)
  */
-function _fitModelOnRows(trainRows) {
-  const featureKeys = Object.keys(VARIABLE_META).filter((k) => {
+function _fitModelOnRows(trainRows, allowedKeys = null) {
+  const candidateKeys = allowedKeys ?? Object.keys(VARIABLE_META)
+  const featureKeys = candidateKeys.filter((k) => {
     const vec = trainRows.map((d) => d[k] ?? 0)
     return !vec.every((v) => v === 0)
   })
@@ -948,7 +979,26 @@ export function computeAdvancedAnalysis(entries) {
   const trainRows = dataset.slice(0, n - HOLD_OUT_DAYS)
   const holdOutRows = dataset.slice(n - HOLD_OUT_DAYS)
 
-  const fit = _fitModelOnRows(trainRows)
+  // ── Feature pre-selection ─────────────────────────────────────────────────
+  // With a small training set (~7–15 days) and ~30 candidate features, OLS
+  // massively overfits even with Ridge.  Pre-select the K features with the
+  // highest |Pearson r| to wellbeing on the training rows, where
+  // K = floor(n_train × MAX_FEATURES_RATIO), minimum 2.
+  const wellbeingTrainVec = trainRows.map((d) => d.wellbeing)
+  const allCandidateKeys = Object.keys(VARIABLE_META)
+  const preSelectionK = Math.max(2, Math.floor(trainRows.length * MAX_FEATURES_RATIO))
+  const candidateCorrs = allCandidateKeys
+    .map((k) => {
+      const vec = trainRows.map((d) => d[k] ?? 0)
+      if (vec.every((v) => v === 0)) return null
+      const r = pearsonCorrelation(wellbeingTrainVec, vec)
+      return r !== null ? { key: k, absR: Math.abs(r) } : null
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.absR - a.absR)
+  const selectedKeys = candidateCorrs.slice(0, preSelectionK).map((c) => c.key)
+
+  const fit = _fitModelOnRows(trainRows, selectedKeys.length > 0 ? selectedKeys : null)
   if (!fit) {
     const basic = computeBasicCorrelations(entries)
     if (basic.status !== 'ok') return { status: 'not_enough_data', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS, currentDays: n }
@@ -1029,6 +1079,14 @@ export function computeAdvancedAnalysis(entries) {
   // Predict today using the hold-out model (trained without last HOLD_OUT_DAYS)
   const todayPrediction = _predictToday(entries, rawDataset, featureKeys, featureMeans, featureStds, beta)
 
+  // Model reliability:
+  // - overfit_risk: true when the intercept + all feature coefficients ≥ training days
+  //   (classical p ≥ n regime — training R² is inflated even with Ridge)
+  // - model_reliable: true when LOO R² is positive, meaning the model generalises
+  //   beyond its training data.  null when LOO could not be computed.
+  const overfit_risk = featureKeys.length + 1 >= trainRows.length
+  const model_reliable = r2_loo !== null ? r2_loo > 0 : null
+
   return {
     status: 'ok',
     datasetDays: n,
@@ -1037,8 +1095,11 @@ export function computeAdvancedAnalysis(entries) {
       r2_loo,
       method: 'ols_linear_regression',
       nFeatures: featureKeys.length,
+      nFeaturesFinal: featureKeys.length,
+      nFeaturesCandidate: allCandidateKeys.length,
       lagDays: LAG_DAYS,
-      overfit_risk: featureKeys.length + 1 >= trainRows.length,
+      overfit_risk,
+      model_reliable,
     },
     featureImportance: featureImportance.slice(0, 12),
     topRecommendations,

@@ -9,6 +9,7 @@ import {
   MIN_DAYS_BASIC,
   MIN_DAYS_ADVANCED,
   HOLD_OUT_DAYS,
+  MAX_FEATURES_RATIO,
 } from '../services/analysisEngine'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { useAutoSync } from '../hooks/useAutoSync'
@@ -113,7 +114,7 @@ function BasicTab({ entries }) {
     )
   }
 
-  const { datasetDays, correlations, topNegativeFactors } = result
+  const { datasetDays, reliability, correlations, topNegativeFactors } = result
 
   return (
     <div className="reco-tab-content">
@@ -121,6 +122,9 @@ function BasicTab({ entries }) {
         Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} avec score bien-être</strong>
         {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
         Méthode : corrélation de Pearson entre chaque variable et le bien-être.
+        {reliability === 'exploratory' && (
+          <> <span className="reco-reliability-warn">⚠ Données exploratoires — continuez à enregistrer votre bien-être pour améliorer la fiabilité (objectif : 10 jours).</span></>
+        )}
       </p>
 
       {topNegativeFactors.length > 0 && (
@@ -191,6 +195,10 @@ function AdvancedTab({ entries }) {
     ? 'Régression linéaire multiple (OLS + Ridge)'
     : 'Corrélation de Pearson (fallback)'
 
+  // Model reliability derived states
+  const isModelUnreliable = modelInfo?.model_reliable === false
+  const isModelReliable   = modelInfo?.model_reliable === true
+
   return (
     <div className="reco-tab-content">
       <p className="reco-meta">
@@ -205,8 +213,17 @@ function AdvancedTab({ entries }) {
           }
           .</>
         )}
+        {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
+          <> Variables sélectionnées : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate} (top {Math.round(MAX_FEATURES_RATIO * 100)}% par corrélation).</>
+        )}
         {modelInfo?.overfit_risk && (
           <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours — R² entraînement non fiable.</span></>
+        )}
+        {isModelUnreliable && (
+          <> <span className="reco-reliability-warn">⚠ Modèle non fiable (R² LOO négatif) — recommandations à titre indicatif uniquement. Continuez à enregistrer vos données pour améliorer la précision.</span></>
+        )}
+        {isModelReliable && (
+          <> <span className="reco-reliability-ok">✓ Le modèle généralise correctement (R² LOO positif).</span></>
         )}
       </p>
       {modelInfo?.method === 'ols_linear_regression' && (
@@ -216,7 +233,7 @@ function AdvancedTab({ entries }) {
             Chaque type de donnée est enregistré à une fréquence différente (ex : pas quotidiens, repas plusieurs fois/jour, bien-être manuellement). Pour harmoniser, toutes les entrées sont agrégées par <strong>jour calendaire</strong> (somme pour les pas/calories/nutriments, moyenne pour la fréquence cardiaque et le bien-être). Les nutriments sont ensuite <strong>lissés sur {modelInfo.lagDays} jours</strong> avec une pondération décroissante (un repas d'aujourd'hui influence le bien-être des ~10 prochains jours, avec un impact qui décroît linéairement).
           </p>
           <p>
-            Le modèle est une régression linéaire multiple (OLS + Ridge) entraîné <em>entièrement sur vos données locales</em>. Le <strong>R² entraînement</strong> mesure à quel point le modèle s'ajuste aux données qu'il a vues — il peut être élevé simplement parce qu'il y a plus de variables que de jours. Le <strong>R² LOO</strong> (Leave-One-Out) est une mesure honnête : pour chaque jour, le modèle est ré-entraîné sans ce jour puis prédit. Un R² LOO négatif ou très inférieur au R² entraînement signale un sur-apprentissage.
+            Le modèle est une régression linéaire multiple (OLS + Ridge) entraîné <em>entièrement sur vos données locales</em>. Pour limiter le sur-apprentissage, une <strong>pré-sélection</strong> retient les {Math.round(MAX_FEATURES_RATIO * 100)}% de variables les plus corrélées au bien-être sur les données d'entraînement, avant d'ajuster la régression. Le <strong>R² entraînement</strong> mesure à quel point le modèle s'ajuste aux données qu'il a vues — il peut être élevé simplement parce qu'il y a plus de variables que de jours. Le <strong>R² LOO</strong> (Leave-One-Out) est une mesure honnête : pour chaque jour, le modèle est ré-entraîné sans ce jour puis prédit. Un R² LOO négatif ou très inférieur au R² entraînement signale un sur-apprentissage — dans ce cas le modèle est marqué comme non fiable et les recommandations sont indicatives.
           </p>
           <p>
             Pour éviter le sur-apprentissage dans la section « Prédit vs réel », le modèle est entraîné sur toutes les données <strong>sauf les {HOLD_OUT_DAYS} derniers jours</strong>. Ces jours sont ensuite prédits sans que le modèle les ait vus, ce qui garantit des prédictions honnêtement hors-échantillon. La prédiction affichée sur le tableau de bord utilise également ce modèle.
