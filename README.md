@@ -58,6 +58,3 @@ HealthTrack/
     └── README.md
 ```
 
-## Licence
-
-À définir selon ton projet.
