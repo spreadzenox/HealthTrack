@@ -52,6 +52,15 @@ function makeSteps(dateStr, steps) {
   }
 }
 
+function makeCigarette(dateStr, count = 1) {
+  return {
+    type: 'cigarette',
+    source: 'app_cigarette',
+    at: `${dateStr}T14:00:00Z`,
+    payload: { count },
+  }
+}
+
 function makeFood(dateStr, items) {
   return {
     type: 'food',
@@ -173,6 +182,17 @@ describe('buildDailyDataset', () => {
     ]
     const ds = buildDailyDataset(entries)
     expect(ds[0].steps).toBeCloseTo(8000)
+  })
+
+  it('sums cigarette entries per day', () => {
+    const entries = [
+      makeWellbeing('2026-01-01', 4),
+      makeCigarette('2026-01-01'),
+      makeCigarette('2026-01-01'),
+      makeCigarette('2026-01-01', 2),
+    ]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].cigaretteCount).toBe(4)
   })
 
   it('sums activity calories per day', () => {
@@ -482,6 +502,12 @@ describe('VARIABLE_META', () => {
 
   it('alcohol has direction lower_better', () => {
     expect(VARIABLE_META.alcohol_g.direction).toBe('lower_better')
+  })
+
+  it('cigaretteCount has direction lower_better and lifestyle group', () => {
+    expect(VARIABLE_META).toHaveProperty('cigaretteCount')
+    expect(VARIABLE_META.cigaretteCount.direction).toBe('lower_better')
+    expect(VARIABLE_META.cigaretteCount.group).toBe('lifestyle')
   })
 
   it('sodium has direction lower_better', () => {
@@ -1004,6 +1030,17 @@ describe('buildTodayRow', () => {
     expect(result).not.toBeNull()
     expect(result.steps).toBe(5000)
     expect(result.sleepMinutes).toBe(420)
+  })
+
+  it('includes cigarettes logged today', () => {
+    const todayStr = localDateKey(new Date().toISOString())
+    const entries = [
+      makeCigarette(todayStr),
+      makeCigarette(todayStr),
+    ]
+    const result = buildTodayRow(entries, [])
+    expect(result).not.toBeNull()
+    expect(result.cigaretteCount).toBe(2)
   })
 
   it('today wellbeing is null when no wellbeing score today', () => {

@@ -193,6 +193,7 @@ export async function countAllEntries() {
  *   - sleep:      500
  *   - activity:   500
  *   - calories:   500
+ *   - cigarette:  2000
  *   - default:    1000  (any future types)
  *
  * @returns {Promise<Array<{ id: number, type: string, source: string, at: string, payload: object, created_at: string }>>}
@@ -206,6 +207,7 @@ export async function listEntriesForAnalysis() {
     sleep: 500,
     activity: 500,
     calories: 500,
+    cigarette: 2000,
   }
   const DEFAULT_LIMIT = 1000
 

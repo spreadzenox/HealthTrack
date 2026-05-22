@@ -316,6 +316,27 @@
   flex: none;
 }
 
+.cigarette-quick-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dashboard-cigarette-btn {
+  flex: none;
+}
+
+.cigarette-quick-add-ok {
+  font-size: 0.85rem;
+  color: var(--success, #2ecc71);
+}
+
+.cigarette-quick-add-error {
+  font-size: 0.85rem;
+  color: var(--danger, #e74c3c);
+}
+
 /* Dashboard entries */
 .entries-list {
   list-style: none;
@@ -338,6 +359,8 @@
 .entry-card[data-type="calories"] { border-left-color: #e67e22; }
 .entry-card[data-type="sleep"] { border-left-color: #9b59b6; }
 .entry-card[data-type="weight"] { border-left-color: #95a5a6; }
+.entry-card[data-type="cigarette"] { border-left-color: #7f8c8d; }
+.entry-card[data-type="wellbeing"] { border-left-color: var(--accent); }
 
 .entry-card-header {
   display: flex;
