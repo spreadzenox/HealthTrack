@@ -10,17 +10,22 @@
 #   emulator-test-api35 : image API 35 (référence stable)
 #   emulator-test-api36 : image API 36 (Android 16 / One UI 8 — cible de correction HC)
 #
-# Ce workflow est déclenché à chaque push et PR sur main, ainsi que
-# manuellement (workflow_dispatch).
+# Ce workflow est déclenché sur push vers main, sur les PR vers main, et
+# manuellement (workflow_dispatch). Les branches de PR (ex. cursor/**) ne
+# déclenchent pas aussi un push — évite deux runs identiques par commit.
 
 name: Test — émulateur Samsung Galaxy A56
 
 on:
   push:
-    branches: [main, "cursor/**"]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
+
+concurrency:
+  group: emulator-samsung-a56-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
