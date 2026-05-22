@@ -9,7 +9,7 @@ import {
 } from '../settings/debugMode'
 import { useDebug } from '../contexts/DebugContext'
 import { clearWithingsAuth, hasWithingsTokens } from '../settings/withingsSettings'
-import { hasBuiltInWithingsCredentials } from '../settings/withingsBuiltInCredentials'
+import { isWithingsDirectConnectAvailable } from '../settings/withingsConnectConfig'
 import '../Food.css'
 
 export default function Settings() {
@@ -96,7 +96,7 @@ export default function Settings() {
         </div>
       </div>
 
-      {hasBuiltInWithingsCredentials() && hasWithingsTokens() && (
+      {isWithingsDirectConnectAvailable() && hasWithingsTokens() && (
         <div className="settings-block">
           <h3 className="section-title">Compte Withings</h3>
           <p className="page-intro">

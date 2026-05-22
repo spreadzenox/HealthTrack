@@ -6,15 +6,27 @@ describe('connectorRegistry CONNECTORS list', () => {
     vi.resetModules()
   })
 
-  it('hides Withings connector when no built-in OAuth credentials', async () => {
+  it('shows Withings in mock/test mode without built-in OAuth', async () => {
+    vi.stubEnv('VITE_WITHINGS_MOCK', 'true')
+    vi.stubEnv('VITE_WITHINGS_CLIENT_ID', '')
+    vi.stubEnv('VITE_WITHINGS_CLIENT_SECRET', '')
+    const { CONNECTORS } = await import('./connectorRegistry')
+    expect(CONNECTORS.some((c) => c.id === 'withings')).toBe(true)
+    expect(CONNECTORS.some((c) => c.id === 'health_connect')).toBe(true)
+  })
+
+  it('hides Withings when no mock and no built-in credentials', async () => {
+    vi.stubEnv('VITE_WITHINGS_MOCK', '')
+    vi.stubEnv('MODE', 'development')
     vi.stubEnv('VITE_WITHINGS_CLIENT_ID', '')
     vi.stubEnv('VITE_WITHINGS_CLIENT_SECRET', '')
     const { CONNECTORS } = await import('./connectorRegistry')
     expect(CONNECTORS.some((c) => c.id === 'withings')).toBe(false)
-    expect(CONNECTORS.some((c) => c.id === 'health_connect')).toBe(true)
   })
 
-  it('shows Withings connector when built-in OAuth credentials are set', async () => {
+  it('shows Withings when built-in OAuth credentials are set', async () => {
+    vi.stubEnv('VITE_WITHINGS_MOCK', '')
+    vi.stubEnv('MODE', 'development')
     vi.stubEnv('VITE_WITHINGS_CLIENT_ID', 'test-id')
     vi.stubEnv('VITE_WITHINGS_CLIENT_SECRET', 'test-secret')
     vi.stubEnv('VITE_WITHINGS_REDIRECT_URI', 'http://localhost/callback')

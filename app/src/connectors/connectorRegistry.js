@@ -10,7 +10,7 @@
  */
 import { HealthConnectConnector } from './HealthConnectConnector'
 import { WithingsConnector } from './WithingsConnector'
-import { hasBuiltInWithingsCredentials } from '../settings/withingsBuiltInCredentials'
+import { isWithingsDirectConnectAvailable } from '../settings/withingsConnectConfig'
 
 const ALL_CONNECTORS = [
   new HealthConnectConnector(),
@@ -19,13 +19,13 @@ const ALL_CONNECTORS = [
 
 /**
  * Connectors shown in the UI.
- * Withings direct OAuth is hidden unless credentials are bundled at build time —
- * on Android, use Health Connect (Withings app → Health Connect → HealthTrack).
+ * Withings direct OAuth appears when credentials are bundled at build time or in
+ * mock/demo mode (tests). Health Connect remains the simple path for watch + basic scale data.
  *
  * @type {import('./BaseConnector').BaseConnector[]}
  */
 export const CONNECTORS = ALL_CONNECTORS.filter((c) => {
-  if (c.id === 'withings') return hasBuiltInWithingsCredentials()
+  if (c.id === 'withings') return isWithingsDirectConnectAvailable()
   return true
 })
 
