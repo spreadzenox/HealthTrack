@@ -21,6 +21,14 @@ vi.mock('../components/WellbeingPrompt', () => ({
     ) : null,
 }))
 
+vi.mock('../components/CigaretteQuickAdd', () => ({
+  default: () => (
+    <button type="button" aria-label="Ajouter une cigarette">
+      + 1 cigarette
+    </button>
+  ),
+}))
+
 function renderDashboard() {
   return render(
     <BrowserRouter>
@@ -74,6 +82,24 @@ describe('Dashboard', () => {
     expect(screen.getByText(/1 cup/)).toBeInTheDocument()
   })
 
+  it('shows cigarette entries in recent list', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValueOnce([
+      {
+        id: 10,
+        type: 'cigarette',
+        source: 'app_cigarette',
+        at: '2026-04-10T15:00:00',
+        payload: { count: 1 },
+        created_at: '',
+      },
+    ])
+    renderDashboard()
+    await screen.findByText(/Cigarette/i)
+    const card = screen.getByRole('listitem')
+    expect(card).toHaveTextContent('1 cigarette')
+  })
+
   it('shows wellbeing score in recent entries', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValueOnce([
@@ -97,6 +123,11 @@ describe('Dashboard', () => {
     renderDashboard()
     const btn = screen.getByRole('button', { name: /Ajouter un bien-être/i })
     expect(btn).toBeInTheDocument()
+  })
+
+  it('renders the cigarette quick-add button', async () => {
+    renderDashboard()
+    expect(screen.getByRole('button', { name: /Ajouter une cigarette/i })).toBeInTheDocument()
   })
 
   it('opens the wellbeing modal when the button is clicked', async () => {

@@ -194,6 +194,13 @@ export const VARIABLE_META = {
     direction: 'neutral',
     group: 'lifestyle',
   },
+  cigaretteCount: {
+    label: 'Cigarettes',
+    unit: 'cig.',
+    format: (v) => `${Math.round(v)} cigarette${Math.round(v) > 1 ? 's' : ''}`,
+    direction: 'lower_better',
+    group: 'lifestyle',
+  },
   // ── FODMAPs ────────────────────────────────────────────────────────────────
   fodmap_score: {
     label: 'Score FODMAP (repas le plus élevé)',
@@ -373,6 +380,7 @@ export function buildDailyDataset(entries) {
         potassium_mg: 0,
         sodium_mg: 0,
         mealCount: 0,
+        cigaretteCount: 0,
       })
     }
     return days.get(dateKey)
@@ -454,6 +462,16 @@ export function buildDailyDataset(entries) {
         break
       }
 
+      case 'cigarette': {
+        const count = e.payload?.count
+        if (typeof count === 'number' && count > 0) {
+          day.cigaretteCount += count
+        } else {
+          day.cigaretteCount += 1
+        }
+        break
+      }
+
       case 'food': {
         const items = e.payload?.items
         if (!Array.isArray(items) || items.length === 0) break
@@ -529,6 +547,7 @@ export function buildDailyDataset(entries) {
       potassium_mg:     day.potassium_mg,
       sodium_mg:        day.sodium_mg,
       mealCount:        day.mealCount,
+      cigaretteCount:   day.cigaretteCount,
     })
   }
 
@@ -773,6 +792,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
     calcium_mg: 0, iron_mg: 0, magnesium_mg: 0, zinc_mg: 0,
     potassium_mg: 0, sodium_mg: 0,
     mealCount: 0,
+    cigaretteCount: 0,
   }
 
   let hasAnyData = false
@@ -782,6 +802,15 @@ export function buildTodayRow(entries, historicalRawDataset) {
     hasAnyData = true
 
     switch (e.type) {
+      case 'cigarette': {
+        const count = e.payload?.count
+        if (typeof count === 'number' && count > 0) {
+          row.cigaretteCount += count
+        } else {
+          row.cigaretteCount += 1
+        }
+        break
+      }
       case 'wellbeing': {
         const score = e.payload?.score
         if (typeof score === 'number' && score >= 0 && score <= 5) {

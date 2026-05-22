@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
+import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { formatAt } from '../utils/format'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
   app_wellbeing: 'Bien-être (app)',
+  app_cigarette: 'Tabac (app)',
   samsung_watch: 'Montre Samsung',
   health_connect: 'Health Connect',
   scale: 'Balance connectée',
@@ -19,6 +21,7 @@ const TYPE_LABELS = {
   weight: 'Poids',
   sleep: 'Sommeil',
   wellbeing: 'Bien-être',
+  cigarette: 'Cigarette',
   steps: 'Pas',
   heart_rate: 'Fréquence cardiaque',
   calories: 'Calories',
@@ -81,6 +84,7 @@ export default function Dashboard() {
         >
           + Ajouter un bien-être
         </button>
+        <CigaretteQuickAdd />
       </div>
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
@@ -126,6 +130,12 @@ export default function Dashboard() {
                         Note : <strong>{e.payload.score}</strong> / 5
                       </p>
                     )}
+                    {e.type === 'cigarette' && (
+                      <p className="entry-wellbeing-score">
+                        <strong>{typeof e.payload?.count === 'number' ? e.payload.count : 1}</strong>{' '}
+                        cigarette{(typeof e.payload?.count === 'number' ? e.payload.count : 1) > 1 ? 's' : ''}
+                      </p>
+                    )}
                     {e.type === 'steps' && typeof e.payload?.value === 'number' && (
                       <p className="entry-wellbeing-score">
                         <strong>{e.payload.value.toLocaleString('fr-FR')}</strong> pas
@@ -166,7 +176,7 @@ export default function Dashboard() {
                         {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
                       </p>
                     )}
-                    {!['food', 'wellbeing', 'steps', 'heart_rate', 'calories', 'sleep', 'activity'].includes(e.type) && (
+                    {!['food', 'wellbeing', 'cigarette', 'steps', 'heart_rate', 'calories', 'sleep', 'activity'].includes(e.type) && (
                       <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
                     )}
                   </div>
