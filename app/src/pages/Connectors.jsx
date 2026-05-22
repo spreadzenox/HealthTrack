@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { CONNECTORS } from '../connectors/connectorRegistry'
 import { getConnectorSettings, setConnectorSettings } from '../settings/connectorSettings'
+import { hasWithingsCredentials } from '../settings/withingsSettings'
+import { Link } from 'react-router-dom'
 import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
 import { useDebug } from '../contexts/DebugContext'
 import DebugPanel from '../components/DebugPanel'
@@ -150,7 +152,7 @@ function ConnectorCard({ connector }) {
         since = new Date(new Date(currentSettings.lastSyncAt).getTime() - SYNC_OVERLAP_MS)
       } else {
         // First sync: historical import
-        const latestAt = await getLatestEntryAt('health_connect')
+        const latestAt = await getLatestEntryAt(connector.id)
         if (latestAt) {
           since = new Date(new Date(latestAt).getTime() - SYNC_OVERLAP_MS)
         } else {
@@ -186,7 +188,9 @@ function ConnectorCard({ connector }) {
     }
   }
 
-  const canSync = availability === 'available' && permissions === 'granted'
+  const isWithings = connector.id === 'withings'
+  const withingsNeedsCreds = isWithings && !hasWithingsCredentials()
+  const canSync = availability === 'available' && permissions === 'granted' && !withingsNeedsCreds
 
   return (
     <div className={`connector-card ${settings.enabled ? 'connector-card-enabled' : ''}`}>
@@ -348,15 +352,28 @@ function ConnectorCard({ connector }) {
             </div>
           )}
 
-          {availability === 'available' && permissions !== 'granted' && (
+          {withingsNeedsCreds && (
             <div className="connector-alert connector-alert-info">
-              <p>Autorisez l'accès à vos données de santé pour démarrer la synchronisation.</p>
+              <p>
+                Configurez d&apos;abord vos identifiants API Withings dans{' '}
+                <Link to="/settings">Paramètres</Link> (Client ID, secret et URL de redirection).
+              </p>
+            </div>
+          )}
+
+          {availability === 'available' && !withingsNeedsCreds && permissions !== 'granted' && (
+            <div className="connector-alert connector-alert-info">
+              <p>
+                {isWithings
+                  ? 'Connectez votre compte Withings pour importer poids, taille et composition corporelle.'
+                  : 'Autorisez l\'accès à vos données de santé pour démarrer la synchronisation.'}
+              </p>
               <button
                 type="button"
                 className="btn btn-secondary connector-btn"
                 onClick={handleRequestPermissions}
               >
-                Demander les autorisations
+                {isWithings ? 'Connecter Withings' : 'Demander les autorisations'}
               </button>
             </div>
           )}

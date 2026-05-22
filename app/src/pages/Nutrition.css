@@ -1,0 +1,110 @@
+.nutrition-page {
+  padding-bottom: 32px;
+}
+
+.nutrition-intro {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 16px;
+}
+
+.nutrition-profile-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 0.88rem;
+}
+
+.nutrition-profile-card strong {
+  color: var(--accent);
+}
+
+.nutrition-profile-hint {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.nutrition-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 24px 0 12px;
+}
+
+.nutrition-bar-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.nutrition-bar-label {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.nutrition-bar-wrap {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.nutrition-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.nutrition-bar-ok {
+  background: linear-gradient(90deg, #4ecdc4, #44a08d);
+}
+
+.nutrition-bar-partial {
+  background: linear-gradient(90deg, #f7b733, #fc4a1a);
+}
+
+.nutrition-bar-low {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.nutrition-bar-over {
+  background: linear-gradient(90deg, #e67e22, #d35400);
+}
+
+.nutrition-bar-value {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  min-width: 72px;
+  text-align: right;
+}
+
+.nutrition-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted);
+}
+
+.nutrition-body-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.nutrition-body-item {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 0.82rem;
+}
+
+.nutrition-body-item span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+}

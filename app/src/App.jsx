@@ -6,6 +6,8 @@ import Data from './pages/Data'
 import Connectors from './pages/Connectors'
 import Settings from './pages/Settings'
 import Recommendations from './pages/Recommendations'
+import Nutrition from './pages/Nutrition'
+import WithingsCallback from './pages/WithingsCallback'
 import { DebugProvider } from './contexts/DebugContext'
 
 export default function App() {
@@ -16,10 +18,12 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="food" element={<Food />} />
+            <Route path="nutrition" element={<Nutrition />} />
             <Route path="data" element={<Data />} />
             <Route path="connectors" element={<Connectors />} />
             <Route path="settings" element={<Settings />} />
             <Route path="recommendations" element={<Recommendations />} />
+            <Route path="connectors/withings/callback" element={<WithingsCallback />} />
           </Route>
         </Routes>
       </BrowserRouter>

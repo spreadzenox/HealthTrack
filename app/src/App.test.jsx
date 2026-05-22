@@ -10,6 +10,7 @@ describe('App', () => {
     expect(screen.getByRole('link', { name: /Tableau de bord/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Alimentation/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Données/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Nutrition/i })).toBeInTheDocument()
   })
 
   it('dashboard link points to /', () => {
