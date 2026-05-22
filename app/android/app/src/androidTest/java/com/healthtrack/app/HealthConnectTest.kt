@@ -23,6 +23,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.Instant
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 /**
@@ -191,8 +192,10 @@ class HealthConnectTest {
 
     @Test
     fun healthConnect_canWriteAndReadWeight() = runBlocking {
+        val weightTime = TEST_START.plus(2, ChronoUnit.MINUTES)
         val weightRecord = WeightRecord(
-            time = TEST_START.plus(2, ChronoUnit.MINUTES),
+            time = weightTime,
+            zoneOffset = ZoneOffset.UTC,
             weight = Mass.kilograms(73.5),
             metadata = HealthMetadata.unknownRecordingMethod(),
         )
@@ -213,8 +216,10 @@ class HealthConnectTest {
 
     @Test
     fun healthConnect_canWriteAndReadBodyFat() = runBlocking {
+        val fatTime = TEST_START.plus(3, ChronoUnit.MINUTES)
         val fatRecord = BodyFatRecord(
-            time = TEST_START.plus(3, ChronoUnit.MINUTES),
+            time = fatTime,
+            zoneOffset = ZoneOffset.UTC,
             percentage = Percentage(19.2),
             metadata = HealthMetadata.unknownRecordingMethod(),
         )
