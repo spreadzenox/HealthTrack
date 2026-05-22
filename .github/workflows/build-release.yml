@@ -33,6 +33,9 @@ jobs:
         working-directory: app
         env:
           VITE_APP_VERSION: ${{ github.run_number }}
+          VITE_WITHINGS_CLIENT_ID: ${{ secrets.WITHINGS_CLIENT_ID }}
+          VITE_WITHINGS_CLIENT_SECRET: ${{ secrets.WITHINGS_CLIENT_SECRET }}
+          VITE_WITHINGS_REDIRECT_URI: com.healthtrack.app://connectors/withings/callback
         run: npm run build
 
       - name: Sync Capacitor

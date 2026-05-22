@@ -8,12 +8,8 @@ import {
   setDebugMac,
 } from '../settings/debugMode'
 import { useDebug } from '../contexts/DebugContext'
-import {
-  getWithingsCredentials,
-  setWithingsCredentials,
-  hasWithingsCredentials,
-  clearWithingsAuth,
-} from '../settings/withingsSettings'
+import { clearWithingsAuth, hasWithingsTokens } from '../settings/withingsSettings'
+import { isWithingsDirectConnectAvailable } from '../settings/withingsConnectConfig'
 import '../Food.css'
 
 export default function Settings() {
@@ -27,17 +23,8 @@ export default function Settings() {
   const [debugEnabled, setDebugEnabled] = useState(() => isDebugModeEnabled())
   const [macError, setMacError] = useState(null)
 
-  const [withingsClientId, setWithingsClientId] = useState('')
-  const [withingsSecret, setWithingsSecret] = useState('')
-  const [withingsRedirect, setWithingsRedirect] = useState('')
-  const [withingsSaved, setWithingsSaved] = useState(false)
-
   useEffect(() => {
     setApiKey(getGeminiApiKey())
-    const creds = getWithingsCredentials()
-    setWithingsClientId(creds.clientId)
-    setWithingsSecret(creds.clientSecret)
-    setWithingsRedirect(creds.redirectUri)
   }, [])
 
   const handleSave = () => {
@@ -109,79 +96,24 @@ export default function Settings() {
         </div>
       </div>
 
-      <div className="settings-block">
-        <h3 className="section-title">Withings Body Scan</h3>
-        <p className="page-intro">
-          Pour synchroniser votre balance, créez une application sur{' '}
-          <a href="https://developer.withings.com/" target="_blank" rel="noopener noreferrer">
-            developer.withings.com
-          </a>{' '}
-          et renseignez les identifiants ci-dessous. L&apos;URL de redirection doit pointer vers{' '}
-          <code>/connectors/withings/callback</code> de cette app (ex.{' '}
-          <code>https://votre-domaine/connectors/withings/callback</code> ou{' '}
-          <code>http://localhost:5173/connectors/withings/callback</code> en développement).
-        </p>
-        <label htmlFor="withings-client-id" className="input-label">Client ID</label>
-        <input
-          id="withings-client-id"
-          type="text"
-          autoComplete="off"
-          value={withingsClientId}
-          onChange={(e) => setWithingsClientId(e.target.value)}
-          className="settings-input"
-        />
-        <label htmlFor="withings-secret" className="input-label">Client Secret</label>
-        <input
-          id="withings-secret"
-          type="password"
-          autoComplete="off"
-          value={withingsSecret}
-          onChange={(e) => setWithingsSecret(e.target.value)}
-          className="settings-input"
-        />
-        <label htmlFor="withings-redirect" className="input-label">URL de redirection OAuth</label>
-        <input
-          id="withings-redirect"
-          type="url"
-          autoComplete="off"
-          value={withingsRedirect}
-          onChange={(e) => setWithingsRedirect(e.target.value)}
-          placeholder="http://localhost:5173/connectors/withings/callback"
-          className="settings-input"
-        />
-        <p className="hint">
-          {hasWithingsCredentials()
-            ? 'Identifiants Withings enregistrés. Connectez-vous depuis Connecteurs.'
-            : 'Renseignez les trois champs pour activer le connecteur Withings.'}
-        </p>
-        <div className="actions">
-          <button
-            type="button"
-            className="btn"
-            onClick={() => {
-              setWithingsCredentials({
-                clientId: withingsClientId,
-                clientSecret: withingsSecret,
-                redirectUri: withingsRedirect,
-              })
-              setWithingsSaved(true)
-              setTimeout(() => setWithingsSaved(false), 2000)
-            }}
-          >
-            Enregistrer Withings
-          </button>
-          {withingsSaved && <span className="saved-msg">✓ Enregistré</span>}
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => {
-              clearWithingsAuth()
-            }}
-          >
-            Déconnecter Withings
-          </button>
+      {isWithingsDirectConnectAvailable() && hasWithingsTokens() && (
+        <div className="settings-block">
+          <h3 className="section-title">Compte Withings</h3>
+          <p className="page-intro">
+            Connexion directe Withings active. Sur Android, la balance est en général importée via{' '}
+            <strong>Health Connect</strong> (onglet Connecteurs) sans compte développeur.
+          </p>
+          <div className="actions">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => clearWithingsAuth()}
+            >
+              Déconnecter Withings
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Mode debug ─────────────────────────────────────────────────────── */}
       <div className="settings-block">

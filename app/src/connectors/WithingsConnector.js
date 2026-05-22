@@ -10,12 +10,10 @@ import {
   WITHINGS_TYPE_TO_FIELD,
   normalizeWithingsMeasure,
 } from './withingsMeasureTypes'
+import { hasWithingsTokens } from '../settings/withingsSettings'
+import { isWithingsDirectConnectAvailable } from '../settings/withingsConnectConfig'
+import { connectWithingsAccount } from '../services/withingsConnect'
 import {
-  hasWithingsCredentials,
-  hasWithingsTokens,
-} from '../settings/withingsSettings'
-import {
-  buildWithingsAuthUrl,
   fetchWithingsMeasures,
   fetchAndCacheWithingsUser,
   ensureWithingsAccessToken,
@@ -111,20 +109,20 @@ export class WithingsConnector extends BaseConnector {
       id: 'withings',
       name: 'Withings Body Scan',
       description:
-        'Balance Withings Body Scan : poids, taille, masse grasse, masse musculaire, BMR, âge vasculaire et autres biomarqueurs.',
+        'Un clic pour connecter votre compte Withings : masse grasse, muscle, âge vasculaire, PWV, BMR, graisse viscérale, etc. Complète Health Connect sur le même téléphone.',
       dataTypes: ['weight', 'height', 'body_composition'],
     })
   }
 
   async isAvailable() {
-    return hasWithingsCredentials()
+    return isWithingsDirectConnectAvailable()
   }
 
   async availabilityDetails() {
-    if (!hasWithingsCredentials()) {
+    if (!isWithingsDirectConnectAvailable()) {
       return {
         available: false,
-        reason: 'credentials_missing',
+        reason: 'app_not_configured', // no bundled OAuth in this build
         platform: 'web',
       }
     }
@@ -132,22 +130,16 @@ export class WithingsConnector extends BaseConnector {
   }
 
   async checkPermissions() {
-    if (!hasWithingsCredentials()) return 'not_asked'
+    if (!isWithingsDirectConnectAvailable()) return 'not_asked'
     return hasWithingsTokens() ? 'granted' : 'not_asked'
   }
 
   async requestPermissions() {
-    if (!hasWithingsCredentials()) return 'denied'
-    const state = `ht_${Date.now()}`
-    sessionStorage.setItem('withings_oauth_state', state)
-    const url = buildWithingsAuthUrl(state)
-    window.location.href = url
-    return 'not_asked'
+    if (!isWithingsDirectConnectAvailable()) return 'denied'
+    return connectWithingsAccount()
   }
 
-  /**
-   * Opens Withings OAuth (alias for requestPermissions on web).
-   */
+  /** Opens Withings OAuth (alias for requestPermissions). */
   startOAuth() {
     return this.requestPermissions()
   }

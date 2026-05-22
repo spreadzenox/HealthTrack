@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { CONNECTORS } from '../connectors/connectorRegistry'
 import { getConnectorSettings, setConnectorSettings } from '../settings/connectorSettings'
-import { hasWithingsCredentials } from '../settings/withingsSettings'
-import { Link } from 'react-router-dom'
+import { isWithingsDirectConnectAvailable } from '../settings/withingsConnectConfig'
 import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
 import { useDebug } from '../contexts/DebugContext'
 import DebugPanel from '../components/DebugPanel'
@@ -127,11 +126,22 @@ function ConnectorCard({ connector }) {
     setSettingsActionStatus(ok ? 'ok' : 'err')
   }
 
+  const handleOpenWithingsApp = async () => {
+    setSettingsActionStatus(null)
+    if (typeof connector.openWithingsApp !== 'function') return
+    const ok = await connector.openWithingsApp()
+    setSettingsActionStatus(ok ? 'ok' : 'err')
+  }
+
   const handleRequestPermissions = async () => {
     setPermissions('checking')
     try {
       const result = await withTimeout(connector.requestPermissions(), 15000, 'denied')
-      setPermissions(result)
+      setPermissions(result === 'not_asked' && isWithings ? 'not_asked' : result)
+      if (isWithings && result === 'granted') {
+        setConnectorSettings(connector.id, { enabled: true })
+        reloadSettings()
+      }
     } catch {
       setPermissions('denied')
     }
@@ -189,8 +199,8 @@ function ConnectorCard({ connector }) {
   }
 
   const isWithings = connector.id === 'withings'
-  const withingsNeedsCreds = isWithings && !hasWithingsCredentials()
-  const canSync = availability === 'available' && permissions === 'granted' && !withingsNeedsCreds
+  const isHealthConnect = connector.id === 'health_connect'
+  const canSync = availability === 'available' && permissions === 'granted'
 
   return (
     <div className={`connector-card ${settings.enabled ? 'connector-card-enabled' : ''}`}>
@@ -352,20 +362,30 @@ function ConnectorCard({ connector }) {
             </div>
           )}
 
-          {withingsNeedsCreds && (
+          {isHealthConnect && availability === 'available' && permissions !== 'granted' && (
             <div className="connector-alert connector-alert-info">
               <p>
-                Configurez d&apos;abord vos identifiants API Withings dans{' '}
-                <Link to="/settings">Paramètres</Link> (Client ID, secret et URL de redirection).
+                <strong>Balance Withings :</strong> si l&apos;app Withings est installée et reliée à
+                Health Connect, activez ce connecteur puis autorisez <strong>poids, taille et masse grasse</strong>{' '}
+                dans l&apos;écran de permissions.
               </p>
             </div>
           )}
 
-          {availability === 'available' && !withingsNeedsCreds && permissions !== 'granted' && (
+          {isWithings && availability === 'unavailable' && availabilityReason === 'app_not_configured' && (
+            <div className="connector-alert connector-alert-info">
+              <p>
+                La connexion compte Withings sera disponible dans la prochaine version APK officielle.
+                En attendant, activez <strong>Health Connect</strong> ci-dessus (Withings → Health Connect).
+              </p>
+            </div>
+          )}
+
+          {availability === 'available' && permissions !== 'granted' && (
             <div className="connector-alert connector-alert-info">
               <p>
                 {isWithings
-                  ? 'Connectez votre compte Withings pour importer poids, taille et composition corporelle.'
+                  ? 'Un clic : connexion à votre compte Withings (tous les biomarqueurs Body Scan, sans configuration développeur).'
                   : 'Autorisez l\'accès à vos données de santé pour démarrer la synchronisation.'}
               </p>
               <button
@@ -373,8 +393,26 @@ function ConnectorCard({ connector }) {
                 className="btn btn-secondary connector-btn"
                 onClick={handleRequestPermissions}
               >
-                {isWithings ? 'Connecter Withings' : 'Demander les autorisations'}
+                {isWithings ? 'Connecter mon compte Withings' : 'Demander les autorisations'}
               </button>
+            </div>
+          )}
+
+          {isHealthConnect && availability === 'available' && permissions === 'granted' && (
+            <div className="connector-alert connector-alert-info">
+              <p>
+                <strong>Withings Body Scan :</strong> dans l&apos;app Withings, vérifiez que le partage vers{' '}
+                Health Connect est activé (Paramètres → Health Connect). Puis synchronisez ci-dessous.
+              </p>
+              {typeof connector.openWithingsApp === 'function' && (
+                <button
+                  type="button"
+                  className="btn btn-secondary connector-btn"
+                  onClick={handleOpenWithingsApp}
+                >
+                  Ouvrir l&apos;app Withings
+                </button>
+              )}
             </div>
           )}
 
@@ -446,8 +484,15 @@ export default function Connectors() {
       <h2 className="page-title">Connecteurs</h2>
       <p className="page-intro">
         Connectez des sources de données santé externes pour importer automatiquement vos mesures
-        (montre connectée, balance, etc.) dans HealthTrack. Toutes les données restent{' '}
+        (montre, balance Withings, etc.) dans HealthTrack. Toutes les données restent{' '}
         <strong>uniquement sur cet appareil</strong>.
+        {isWithingsDirectConnectAvailable() && (
+          <>
+            {' '}
+            <strong>Withings Body Scan</strong> : compte Withings en un clic pour les biomarqueurs
+            avancés ; <strong>Health Connect</strong> en complément (montre, partage Withings → HC).
+          </>
+        )}
       </p>
 
       <div className="connectors-list">

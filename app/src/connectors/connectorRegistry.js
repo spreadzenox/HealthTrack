@@ -10,18 +10,30 @@
  */
 import { HealthConnectConnector } from './HealthConnectConnector'
 import { WithingsConnector } from './WithingsConnector'
+import { isWithingsDirectConnectAvailable } from '../settings/withingsConnectConfig'
 
-/** @type {import('./BaseConnector').BaseConnector[]} */
-export const CONNECTORS = [
+const ALL_CONNECTORS = [
   new HealthConnectConnector(),
   new WithingsConnector(),
 ]
 
 /**
- * Look up a connector by its stable id.
+ * Connectors shown in the UI.
+ * Withings direct OAuth appears when credentials are bundled at build time or in
+ * mock/demo mode (tests). Health Connect remains the simple path for watch + basic scale data.
+ *
+ * @type {import('./BaseConnector').BaseConnector[]}
+ */
+export const CONNECTORS = ALL_CONNECTORS.filter((c) => {
+  if (c.id === 'withings') return isWithingsDirectConnectAvailable()
+  return true
+})
+
+/**
+ * Look up a connector by its stable id (includes hidden connectors).
  * @param {string} id
  * @returns {import('./BaseConnector').BaseConnector | undefined}
  */
 export function getConnector(id) {
-  return CONNECTORS.find((c) => c.id === id)
+  return ALL_CONNECTORS.find((c) => c.id === id)
 }

@@ -44,6 +44,14 @@ HC_PERMS=(
   android.permission.health.WRITE_EXERCISE
   android.permission.health.READ_TOTAL_CALORIES_BURNED
   android.permission.health.WRITE_TOTAL_CALORIES_BURNED
+  android.permission.health.READ_WEIGHT
+  android.permission.health.WRITE_WEIGHT
+  android.permission.health.READ_HEIGHT
+  android.permission.health.WRITE_HEIGHT
+  android.permission.health.READ_BODY_FAT
+  android.permission.health.WRITE_BODY_FAT
+  android.permission.health.READ_BASAL_METABOLIC_RATE
+  android.permission.health.WRITE_BASAL_METABOLIC_RATE
 )
 for PERM in "${HC_PERMS[@]}"; do
   adb shell pm grant com.healthtrack.app "$PERM" 2>/dev/null && echo "OK $PERM" || echo "SKIP $PERM"

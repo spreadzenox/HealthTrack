@@ -1,6 +1,9 @@
 /**
  * Withings OAuth credentials and tokens — stored locally only.
+ * Credentials come from build-time env (official app) or legacy localStorage (dev).
  */
+
+import { getBuiltInWithingsCredentials } from './withingsBuiltInCredentials'
 
 const CREDS_KEY = 'healthtrack_withings_credentials'
 const TOKENS_KEY = 'healthtrack_withings_tokens'
@@ -10,6 +13,9 @@ const USER_KEY = 'healthtrack_withings_user'
  * @returns {{ clientId: string, clientSecret: string, redirectUri: string }}
  */
 export function getWithingsCredentials() {
+  const builtIn = getBuiltInWithingsCredentials()
+  if (builtIn) return builtIn
+
   try {
     const raw = localStorage.getItem(CREDS_KEY)
     if (raw) return JSON.parse(raw)
