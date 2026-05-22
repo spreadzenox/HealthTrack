@@ -111,7 +111,7 @@ export class WithingsConnector extends BaseConnector {
       id: 'withings',
       name: 'Withings Body Scan',
       description:
-        'Balance Withings Body Scan : poids, taille, masse grasse, masse musculaire, BMR, âge vasculaire et autres biomarqueurs.',
+        'Connexion directe au compte Withings (métriques avancées Body Scan). Sur Android, préférez Health Connect si Withings y est déjà connecté.',
       dataTypes: ['weight', 'height', 'body_composition'],
     })
   }

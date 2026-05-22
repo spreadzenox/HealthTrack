@@ -60,7 +60,7 @@ function BodyCompositionCard({ payload }) {
 
   return (
     <div>
-      <h3 className="nutrition-section-title">Dernière mesure Withings</h3>
+      <h3 className="nutrition-section-title">Dernière composition corporelle</h3>
       <div className="nutrition-body-grid">
         {items.map(({ key, label, value }) => (
           <div key={key} className="nutrition-body-item">
@@ -130,24 +130,20 @@ export default function Nutrition() {
           <strong>Poids :</strong> {profile.weightKg} kg
           {profile.weightAt && (
             <span className="nutrition-profile-hint">
-              {' '}(Withings, {new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' }).format(new Date(profile.weightAt))})
+              {' '}
+              ({new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' }).format(new Date(profile.weightAt))})
             </span>
           )}
         </div>
         <div>
           <strong>Taille :</strong> {profile.heightCm} cm
-          {profile.heightAt && (
-            <span className="nutrition-profile-hint">
-              {' '}(Withings)
-            </span>
-          )}
         </div>
         {bmi != null && <div><strong>IMC :</strong> {bmi}</div>}
         {dailyKcal != null && <div><strong>Énergie recommandée :</strong> ~{dailyKcal} kcal/jour</div>}
         {profile.source === 'default' && (
           <p className="nutrition-profile-hint">
-            Connectez votre balance{' '}
-            <Link to="/connectors">Withings Body Scan</Link> pour personnaliser les objectifs.
+            Activez <Link to="/connectors">Health Connect</Link> (Withings doit y être connecté) pour
+            personnaliser les objectifs avec votre poids et votre taille.
           </p>
         )}
       </div>

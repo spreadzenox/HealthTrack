@@ -10,18 +10,30 @@
  */
 import { HealthConnectConnector } from './HealthConnectConnector'
 import { WithingsConnector } from './WithingsConnector'
+import { hasBuiltInWithingsCredentials } from '../settings/withingsBuiltInCredentials'
 
-/** @type {import('./BaseConnector').BaseConnector[]} */
-export const CONNECTORS = [
+const ALL_CONNECTORS = [
   new HealthConnectConnector(),
   new WithingsConnector(),
 ]
 
 /**
- * Look up a connector by its stable id.
+ * Connectors shown in the UI.
+ * Withings direct OAuth is hidden unless credentials are bundled at build time —
+ * on Android, use Health Connect (Withings app → Health Connect → HealthTrack).
+ *
+ * @type {import('./BaseConnector').BaseConnector[]}
+ */
+export const CONNECTORS = ALL_CONNECTORS.filter((c) => {
+  if (c.id === 'withings') return hasBuiltInWithingsCredentials()
+  return true
+})
+
+/**
+ * Look up a connector by its stable id (includes hidden connectors).
  * @param {string} id
  * @returns {import('./BaseConnector').BaseConnector | undefined}
  */
 export function getConnector(id) {
-  return CONNECTORS.find((c) => c.id === id)
+  return ALL_CONNECTORS.find((c) => c.id === id)
 }
