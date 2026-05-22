@@ -9,10 +9,12 @@
  * rather than importing individual connectors directly.
  */
 import { HealthConnectConnector } from './HealthConnectConnector'
+import { WithingsConnector } from './WithingsConnector'
 
 /** @type {import('./BaseConnector').BaseConnector[]} */
 export const CONNECTORS = [
   new HealthConnectConnector(),
+  new WithingsConnector(),
 ]
 
 /**

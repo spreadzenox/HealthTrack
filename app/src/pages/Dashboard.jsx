@@ -12,6 +12,7 @@ const SOURCE_LABELS = {
   app_cigarette: 'Tabac (app)',
   samsung_watch: 'Montre Samsung',
   health_connect: 'Health Connect',
+  withings: 'Withings Body Scan',
   scale: 'Balance connectée',
 }
 

@@ -517,6 +517,17 @@ describe('VARIABLE_META', () => {
   it('vitamin_d has direction higher_better', () => {
     expect(VARIABLE_META.vitamin_d_ug.direction).toBe('higher_better')
   })
+
+  it('includes Withings Body Scan variables', () => {
+    const withingsKeys = [
+      'weight_kg', 'bmi', 'fat_ratio_pct', 'muscle_mass_kg',
+      'visceral_fat_index', 'bmr_kcal', 'vascular_age_years',
+    ]
+    for (const key of withingsKeys) {
+      expect(VARIABLE_META).toHaveProperty(key)
+      expect(VARIABLE_META[key].group).toBe('body')
+    }
+  })
 })
 
 // ---------------------------------------------------------------------------

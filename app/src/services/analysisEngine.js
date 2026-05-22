@@ -298,6 +298,91 @@ export const VARIABLE_META = {
     direction: 'lower_better',
     group: 'mineral',
   },
+  // ── Withings Body Scan (balance connectée) ─────────────────────────────────
+  weight_kg: {
+    label: 'Poids',
+    unit: 'kg',
+    format: (v) => `${v.toFixed(1)} kg`,
+    direction: 'neutral',
+    group: 'body',
+  },
+  bmi: {
+    label: 'IMC',
+    unit: '',
+    format: (v) => `${v.toFixed(1)}`,
+    direction: 'neutral',
+    group: 'body',
+  },
+  fat_ratio_pct: {
+    label: 'Masse grasse (%)',
+    unit: '%',
+    format: (v) => `${v.toFixed(1)} %`,
+    direction: 'lower_better',
+    group: 'body',
+  },
+  fat_mass_kg: {
+    label: 'Masse grasse',
+    unit: 'kg',
+    format: (v) => `${v.toFixed(2)} kg`,
+    direction: 'lower_better',
+    group: 'body',
+  },
+  muscle_mass_kg: {
+    label: 'Masse musculaire',
+    unit: 'kg',
+    format: (v) => `${v.toFixed(2)} kg`,
+    direction: 'higher_better',
+    group: 'body',
+  },
+  bone_mass_kg: {
+    label: 'Masse osseuse',
+    unit: 'kg',
+    format: (v) => `${v.toFixed(2)} kg`,
+    direction: 'higher_better',
+    group: 'body',
+  },
+  hydration_pct: {
+    label: 'Hydratation',
+    unit: '%',
+    format: (v) => `${v.toFixed(1)} %`,
+    direction: 'higher_better',
+    group: 'body',
+  },
+  visceral_fat_index: {
+    label: 'Indice graisse viscérale',
+    unit: '',
+    format: (v) => `${v.toFixed(1)}`,
+    direction: 'lower_better',
+    group: 'body',
+  },
+  bmr_kcal: {
+    label: 'Métabolisme basal (Withings)',
+    unit: 'kcal',
+    format: (v) => `${Math.round(v)} kcal`,
+    direction: 'neutral',
+    group: 'body',
+  },
+  vascular_age_years: {
+    label: 'Âge vasculaire',
+    unit: 'ans',
+    format: (v) => `${Math.round(v)} ans`,
+    direction: 'lower_better',
+    group: 'body',
+  },
+  standing_hr_bpm: {
+    label: 'FC debout (balance)',
+    unit: 'bpm',
+    format: (v) => `${Math.round(v)} bpm`,
+    direction: 'neutral',
+    group: 'body',
+  },
+  pwv_mps: {
+    label: 'Vitesse d’onde de pouls',
+    unit: 'm/s',
+    format: (v) => `${v.toFixed(1)} m/s`,
+    direction: 'lower_better',
+    group: 'body',
+  },
 }
 
 // ─── Step 1 — build daily dataset ────────────────────────────────────────────
@@ -381,9 +466,44 @@ export function buildDailyDataset(entries) {
         sodium_mg: 0,
         mealCount: 0,
         cigaretteCount: 0,
+        weight_kg: 0,
+        bmi: 0,
+        fat_ratio_pct: 0,
+        fat_mass_kg: 0,
+        muscle_mass_kg: 0,
+        bone_mass_kg: 0,
+        hydration_pct: 0,
+        visceral_fat_index: 0,
+        bmr_kcal: 0,
+        vascular_age_years: 0,
+        standing_hr_bpm: 0,
+        pwv_mps: 0,
+        _heightCm: 0,
       })
     }
     return days.get(dateKey)
+  }
+
+  function applyBodyComposition(day, payload) {
+    if (!payload) return
+    if (payload.valueKg > 0) day.weight_kg = payload.valueKg
+    if (payload.fatRatioPct > 0) day.fat_ratio_pct = payload.fatRatioPct
+    if (payload.fatMassKg > 0) day.fat_mass_kg = payload.fatMassKg
+    if (payload.muscleMassKg > 0) day.muscle_mass_kg = payload.muscleMassKg
+    if (payload.boneMassKg > 0) day.bone_mass_kg = payload.boneMassKg
+    if (payload.hydrationPct > 0) day.hydration_pct = payload.hydrationPct
+    if (payload.visceralFatIndex > 0) day.visceral_fat_index = payload.visceralFatIndex
+    if (payload.bmrKcal > 0) day.bmr_kcal = payload.bmrKcal
+    if (payload.vascularAgeYears > 0) day.vascular_age_years = payload.vascularAgeYears
+    if (payload.standingHrBpm > 0) day.standing_hr_bpm = payload.standingHrBpm
+    if (payload.pwvMps > 0) day.pwv_mps = payload.pwvMps
+  }
+
+  function updateBmi(day) {
+    if (day.weight_kg > 0 && day._heightCm > 0) {
+      const h = day._heightCm / 100
+      day.bmi = Math.round((day.weight_kg / (h * h)) * 10) / 10
+    }
   }
 
   for (const e of entries) {
@@ -472,6 +592,30 @@ export function buildDailyDataset(entries) {
         break
       }
 
+      case 'weight': {
+        const kg = e.payload?.valueKg
+        if (typeof kg === 'number' && kg > 0) {
+          day.weight_kg = kg
+          updateBmi(day)
+        }
+        break
+      }
+
+      case 'height': {
+        const cm = e.payload?.valueCm
+        if (typeof cm === 'number' && cm > 0) {
+          day._heightCm = cm
+          updateBmi(day)
+        }
+        break
+      }
+
+      case 'body_composition': {
+        applyBodyComposition(day, e.payload)
+        updateBmi(day)
+        break
+      }
+
       case 'food': {
         const items = e.payload?.items
         if (!Array.isArray(items) || items.length === 0) break
@@ -548,6 +692,18 @@ export function buildDailyDataset(entries) {
       sodium_mg:        day.sodium_mg,
       mealCount:        day.mealCount,
       cigaretteCount:   day.cigaretteCount,
+      weight_kg:        day.weight_kg,
+      bmi:              day.bmi,
+      fat_ratio_pct:    day.fat_ratio_pct,
+      fat_mass_kg:      day.fat_mass_kg,
+      muscle_mass_kg:   day.muscle_mass_kg,
+      bone_mass_kg:     day.bone_mass_kg,
+      hydration_pct:    day.hydration_pct,
+      visceral_fat_index: day.visceral_fat_index,
+      bmr_kcal:         day.bmr_kcal,
+      vascular_age_years: day.vascular_age_years,
+      standing_hr_bpm:  day.standing_hr_bpm,
+      pwv_mps:          day.pwv_mps,
     })
   }
 
