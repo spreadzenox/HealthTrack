@@ -2,11 +2,14 @@ import { useState, useEffect, useMemo } from 'react'
 import { listEntries, listEntriesForAnalysis } from '../storage/localHealthStorage'
 import { seriesByDay, seriesByHourToday } from '../services/wellbeingSeries'
 import { computeTodayPrediction } from '../services/analysisEngine'
+import { pickLabelIndices } from '../utils/format'
 import './WellbeingCharts.css'
 
 const W = 320
 const H = 160
-const PAD = { top: 12, right: 8, bottom: 28, left: 28 }
+const PAD = { top: 12, right: 16, bottom: 28, left: 22 }
+// ~45 px de viewBox par étiquette « 07/10 » : au-delà elles se chevauchent sur un écran de 412 px
+const MAX_X_LABELS = 7
 
 function linePath(points) {
   if (points.length === 0) return ''
@@ -81,15 +84,18 @@ function WellbeingLineChart({ points, xLabels, emptyMessage, predictionPoint }) 
           />
         )
       })}
-      <text x={4} y={PAD.top + 4} className="wellbeing-chart-axis-label" fontSize="10">
-        5
-      </text>
-      <text x={4} y={PAD.top + innerH / 2 + 4} className="wellbeing-chart-axis-label" fontSize="10">
-        2
-      </text>
-      <text x={4} y={PAD.top + innerH + 4} className="wellbeing-chart-axis-label" fontSize="10">
-        0
-      </text>
+      {[0, 1, 2, 3, 4, 5].map((g) => (
+        <text
+          key={g}
+          x={PAD.left - 8}
+          y={PAD.top + innerH * (1 - g / 5) + 3}
+          textAnchor="end"
+          className="wellbeing-chart-axis-label"
+          fontSize="9"
+        >
+          {g}
+        </text>
+      ))}
       {d && <path d={d} className="wellbeing-chart-line" fill="none" />}
       {dPred && (
         <path d={dPred} className="wellbeing-chart-pred-line" fill="none" />
@@ -101,7 +107,8 @@ function WellbeingLineChart({ points, xLabels, emptyMessage, predictionPoint }) 
           <circle key={i} cx={p.x} cy={p.y} r={4} className="wellbeing-chart-dot" />
         )
       )}
-      {allLabels.map((label, i) => {
+      {pickLabelIndices(allLabels.length, MAX_X_LABELS).map((i) => {
+        const label = allLabels[i]
         const x = scaled[i]?.x ?? PAD.left
         const isPred = scaled[i]?.isPrediction ?? false
         return (

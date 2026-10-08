@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-08",
+  "kind": "correctif",
+  "title": "Tableau de bord et Paramètres plus lisibles",
+  "items": [
+    "Le graphique du bien-être n'affiche plus de dates qui se chevauchent, et l'échelle 0 à 5 est complète.",
+    "Le sommeil s'affiche en heures (« 6 h 30 — endormi ») au lieu de minutes, et les derniers mots anglais ont été traduits.",
+    "La page Paramètres ne déborde plus de l'écran et ses liens sont aux couleurs de l'app."
+  ]
+}
