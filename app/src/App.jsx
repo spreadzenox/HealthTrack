@@ -8,6 +8,7 @@ import Settings from './pages/Settings'
 import Recommendations from './pages/Recommendations'
 import Nutrition from './pages/Nutrition'
 import WithingsCallback from './pages/WithingsCallback'
+import WhatsNew from './pages/WhatsNew'
 import { DebugProvider } from './contexts/DebugContext'
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="connectors" element={<Connectors />} />
             <Route path="settings" element={<Settings />} />
             <Route path="recommendations" element={<Recommendations />} />
+            <Route path="nouveautes" element={<WhatsNew />} />
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
           </Route>
         </Routes>

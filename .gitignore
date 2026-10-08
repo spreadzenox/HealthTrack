@@ -45,3 +45,6 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Captures de la vérification visuelle (npm run visual)
+app/.visual/
