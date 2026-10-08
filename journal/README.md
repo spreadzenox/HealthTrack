@@ -186,6 +186,10 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
   - merge : `gh api -X PUT repos/spreadzenox/HealthTrack/pulls/<n>/merge -f merge_method=squash -f sha=<sha>`
   - release : `gh api repos/spreadzenox/HealthTrack/releases/latest --jq .tag_name`
   - attendre la CI sans boucle active : outil Monitor (boucle `until` sur les check-runs) ou abonnement à la PR.
+- **Mécanique de la routine** : la tâche planifiée « HealthTrack — amélioration autonome » réveille
+  toutes les 2 h une session « orchestrateur » qui crée une **session neuve avec le dépôt attaché**
+  (seul moyen d'avoir le droit de pousser) et lui transmet le prompt du run. Chaque run est donc
+  indépendant : sa seule mémoire est ce dossier. Sessions de run étiquetées `healthtrack-routine`.
 - **CI** : `Tests` (Vitest, rapide) sur PR ; `Test — émulateur Samsung Galaxy A56` (long) ;
   `Build & Release` sur push `main` → release `v<run_number>` + APK (sauf si le push ne touche
   que `journal/` : un run de pure veille ne publie donc pas de release vide).
