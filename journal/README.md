@@ -94,11 +94,17 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
 2. **Compte rendu** : créer `journal/runs/AAAA-MM-JJ-HHMM-<slug>.md` (modèle ci-dessous) et
    mettre à jour `BACKLOG.md` (cocher, ajouter, re-prioriser).
 3. Commit(s) clairs, push, PR vers `main` intitulée `[Auto] <résumé>`, corps = résumé du run.
-4. Attendre la CI **Tests / Frontend (Vitest)** (s'abonner à l'activité de la PR) ; si le
-   changement touche `android/` ou Health Connect, attendre aussi le workflow émulateur.
+4. Attendre la CI (s'abonner à l'activité de la PR, pas de boucle d'attente) : **Frontend (Vitest)**
+   et **Build APK** doivent être verts (*Build APK* échoue = la release échouera aussi). Les jobs
+   émulateur sont longs : les attendre seulement si le changement touche `android/`, Capacitor
+   ou Health Connect.
 5. CI verte → **fusionner (squash)** : le push sur `main` déclenche le build de l'APK et la
    release que l'utilisateur installera en 1 clic. CI rouge → corriger et recommencer.
-6. Si le run ne peut pas aboutir : laisser la PR ouverte, documenter précisément l'état
+6. Après la fusion, vérifier que le workflow **Build & Release** de `main` a réussi et publié
+   la release `v<N>` avec son APK. S'il échoue (même sans lien avec ton changement : image des
+   runners, action obsolète…), le réparer est la priorité absolue — sans release, l'utilisateur
+   ne reçoit plus rien.
+7. Si le run ne peut pas aboutir : laisser la PR ouverte, documenter précisément l'état
    et la suite dans le compte rendu — le run suivant reprendra.
 
 ### Modèle de compte rendu
