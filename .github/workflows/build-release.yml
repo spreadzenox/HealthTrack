@@ -5,6 +5,10 @@ name: Build & Release
 on:
   push:
     branches: [main]
+    # Un push qui ne touche que le journal de la routine ne change pas l'app :
+    # pas de nouvelle release (sinon bannière de mise à jour pour rien).
+    paths-ignore:
+      - "journal/**"
   workflow_dispatch:
 
 permissions:
