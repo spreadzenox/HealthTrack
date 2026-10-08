@@ -1,5 +1,9 @@
 /**
- * Compare weekly food intake vs official nutrient targets.
+ * Compare recent food intake vs official nutrient targets (ANSES).
+ *
+ * On compare la moyenne **par jour saisi** (jours avec au moins un repas) sur les
+ * 7 derniers jours à l'apport journalier recommandé : un jour sans saisie ne fait
+ * pas baisser la moyenne, et la cible n'est pas cumulée (pas de « 120 g de fibres »).
  */
 
 import { aggregateNutrition } from './nutritionKPIs'
@@ -11,95 +15,109 @@ import {
   LOWER_IS_BETTER_NUTRIENTS,
 } from './nutrientReferenceIntakes'
 
+export const RECENT_WINDOW_DAYS = 7
+
+/** Sections affichées, dans l'ordre. Les nutriments absents de la liste vont dans « Minéraux ». */
+const GROUPS = [
+  { title: 'Essentiels', keys: ['protein_g', 'fiber_g', 'omega3_g'] },
+  { title: 'Vitamines', keys: ['vitamin_c_mg', 'vitamin_d_ug', 'vitamin_b12_ug', 'vitamin_b9_ug', 'vitamin_a_ug', 'vitamin_e_mg'] },
+  { title: 'Minéraux', keys: ['calcium_mg', 'iron_mg', 'magnesium_mg', 'zinc_mg', 'potassium_mg'] },
+  { title: 'À limiter', keys: ['sodium_mg'] },
+]
+
+/** Sous ce ratio énergie moyenne / besoins, des repas manquent probablement. */
+const INCOMPLETE_ENERGY_RATIO = 0.5
+
 /**
- * Monday 00:00:00 of the current week (local time).
+ * Minuit (heure locale) du premier jour de la fenêtre de `days` jours incluant aujourd'hui.
  */
-export function getCurrentWeekStart() {
+export function getRecentWindowStart(days = RECENT_WINDOW_DAYS) {
   const now = new Date()
-  const day = now.getDay()
-  const diff = day === 0 ? -6 : 1 - day
-  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  monday.setDate(monday.getDate() + diff)
-  return monday
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1))
+}
+
+function localDayKey(iso) {
+  const d = new Date(iso)
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
 }
 
 /**
- * @returns {{ start: Date, end: Date, label: string }}
+ * Nombre au format français, sans décimale inutile (1 décimale sous 10).
  */
-export function getCurrentWeekRange() {
-  const start = getCurrentWeekStart()
-  const end = new Date()
-  const fmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' })
-  return {
-    start,
-    end,
-    label: `${fmt.format(start)} – ${fmt.format(end)}`,
-  }
+export function formatNutrientAmount(value) {
+  const v = Number(value) || 0
+  const digits = Math.abs(v) < 10 ? 1 : 0
+  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: digits }).format(v)
+}
+
+function statusFor(pct, limit) {
+  if (limit) return pct <= 100 ? 'ok' : 'over'
+  if (pct >= 100) return 'ok'
+  if (pct >= 70) return 'partial'
+  return 'low'
 }
 
 /**
- * Filters food entries to the current calendar week (Mon–today).
- */
-export function filterEntriesCurrentWeek(entries) {
-  const weekStart = getCurrentWeekStart().toISOString()
-  return (entries || []).filter(
-    (e) => e.type === 'food' && e.at >= weekStart,
-  )
-}
-
-/**
- * @param {Array} foodEntries  entries already filtered to current week
+ * @param {Array} entries  toutes les entrées (filtrées ici)
  * @param {object} profile  from getBodyProfile
- * @param {number} daysInWeek  days elapsed in week (for prorated targets), default 7
+ * @param {{ days?: number }} [opts]
  */
-export function compareWeeklyIntake(foodEntries, profile, daysInWeek = 7) {
-  const filtered = filterEntriesCurrentWeek(foodEntries)
+export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAYS } = {}) {
+  const start = getRecentWindowStart(days)
+  const now = new Date()
+  const filtered = (entries || []).filter((e) => {
+    if (e.type !== 'food' || !e.payload?.items?.length) return false
+    const t = new Date(e.at)
+    return t >= start && t <= now
+  })
   const { totals, mealCount } = aggregateNutrition(filtered, {})
-
+  const loggedDays = new Set(filtered.map((e) => localDayKey(e.at))).size
   const dailyTargets = computeDailyNutrientTargets(profile)
-  const elapsed = Math.min(
-    daysInWeek,
-    Math.max(1, Math.ceil((Date.now() - getCurrentWeekStart().getTime()) / (24 * 60 * 60 * 1000))),
-  )
+  const divisor = Math.max(1, loggedDays)
 
   const rows = NUTRITION_TAB_FIELDS.map((key) => {
-    const actual = totals[key] ?? 0
-    const dailyTarget = dailyTargets[key] ?? 0
-    const weeklyTarget = dailyTarget * elapsed
-    const lowerBetter = LOWER_IS_BETTER_NUTRIENTS.has(key)
-
-    let pct
-    if (lowerBetter) {
-      pct = weeklyTarget > 0
-        ? Math.min(100, Math.round((weeklyTarget / Math.max(actual, 0.01)) * 100))
-        : 100
-    } else {
-      pct = weeklyTarget > 0
-        ? Math.min(150, Math.round((actual / weeklyTarget) * 100))
-        : 0
-    }
-
+    const perDay = (totals[key] ?? 0) / divisor
+    const target = dailyTargets[key] ?? 0
+    const limit = LOWER_IS_BETTER_NUTRIENTS.has(key)
+    const pct = target > 0 ? Math.round((perDay / target) * 100) : 0
     return {
       key,
       label: NUTRIENT_LABELS[key] || key,
       unit: NUTRIENT_UNITS[key] || '',
-      actual: Math.round(actual * 10) / 10,
-      weeklyTarget: Math.round(weeklyTarget * 10) / 10,
-      dailyTarget,
-      pct: Math.min(100, pct),
-      pctRaw: pct,
-      lowerBetter,
-      status: lowerBetter
-        ? (actual <= weeklyTarget ? 'ok' : 'over')
-        : (pct >= 100 ? 'ok' : pct >= 70 ? 'partial' : 'low'),
+      perDay,
+      target,
+      limit,
+      pct,
+      barPct: Math.min(100, pct),
+      status: statusFor(pct, limit),
     }
   })
+
+  const byKey = Object.fromEntries(rows.map((r) => [r.key, r]))
+  const grouped = new Set(GROUPS.flatMap((g) => g.keys))
+  const groups = GROUPS.map((g) => ({
+    title: g.title,
+    rows: [
+      ...g.keys.filter((k) => byKey[k]).map((k) => byKey[k]),
+      ...(g.title === 'Minéraux' ? rows.filter((r) => !grouped.has(r.key)) : []),
+    ],
+  })).filter((g) => g.rows.length > 0)
+
+  const energyPerDay = (totals.energy_kcal ?? 0) / divisor
+  const energyTarget = dailyTargets.energy_kcal || 0
+  const fmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' })
 
   return {
     totals,
     mealCount,
-    elapsedDays: elapsed,
+    loggedDays,
+    windowDays: days,
     rows,
-    weekLabel: getCurrentWeekRange().label,
+    groups,
+    reachedCount: rows.filter((r) => !r.limit && r.status === 'ok').length,
+    targetCount: rows.filter((r) => !r.limit).length,
+    energyPerDay,
+    likelyIncomplete: mealCount > 0 && energyTarget > 0 && energyPerDay < energyTarget * INCOMPLETE_ENERGY_RATIO,
+    periodLabel: `${fmt.format(start)} – ${fmt.format(now)}`,
   }
 }

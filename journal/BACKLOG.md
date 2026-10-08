@@ -76,23 +76,26 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 **Nutrition** — cibles cumulées douteuses (fibres 120 g sur 4 jours ? sodium 8 000 mg présenté comme objectif ?), barres toutes rouges, alignement irrégulier, décimales inutiles.
-2. 🏗️ **Baselines personnelles FC repos / VFC** (R#1) — quick win à fort impact, socle du radar et de la readiness.
-3. 🏗️ **Modèle avancé** — colinéarité (voir C3) : les pistes du modèle restent cohérentes mais il est fragile.
-4. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes (et donnera enfin des pistes comportementales : café, alcool, écran tard…).
-5. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
-6. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
-7. 🎨 C1 — barre d'onglets en bas.
+1. 🏗️ **Baselines personnelles FC repos / VFC** (R#1) — quick win à fort impact, socle du radar et de la readiness.
+2. 🏗️ **Modèle avancé** — colinéarité (voir C3) : les pistes du modèle restent cohérentes mais il est fragile.
+3. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes (et donnera enfin des pistes comportementales : café, alcool, écran tard…).
+4. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
+5. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
+6. 🎨 C1 — barre d'onglets en bas.
 
 ## Idées en vrac (à trier)
 
 _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ici ce qui n'a pas encore de chantier)_
 
+- Repères nutritionnels : vérifier chaque valeur contre ANSES 2021 (ex. magnésium AS 420/360 mg vs 380/300 dans le code) et afficher la source au tap ; ajouter AG saturés / sucres ajoutés dans « À limiter » quand la base distinguera sucres ajoutés.
+- Données de démo : repas plus complets (~2 000 kcal/j) pour que la page Nutrition de démo soit représentative.
+- Nutrition : tendance sur 4 semaines par nutriment et suggestions d'aliments riches pour les repères « bas » récurrents.
 - Graphique bien-être « Par jour » : les points sont espacés par index, pas par date → un jour sans note disparaît. Passer à un axe temporel (trous visibles).
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-08 — Nutrition : moyenne par jour saisi sur 7 jours vs repère journalier, sodium en limite, groupes, alerte saisie incomplète, chiffres FR (PR à venir)
 - [x] 2026-10-08 — Recommandations « Pistes à tester » : leviers actionnables, plus de conseil à contre-sens, confiance statistique (BH + n effectif) (#56, v62)
 - [x] 2026-10-08 — Paramètres sans débordement, axe du graphique bien-être lisible, sommeil en « h min » et libellés traduits (#55, v61)
 - [x] 2026-10-08 — Mise en place du journal, de la vérification visuelle (`npm run visual`) et de la page « Nouveautés » (#52, v59)
