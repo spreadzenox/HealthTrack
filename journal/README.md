@@ -41,7 +41,7 @@ modèle avancé, puis tags de comportements.
 |---|---|---|
 | 08/10 17:00 — [Mise en place](runs/2026-10-08-1700-mise-en-place.md) | 🏗️ | PR #52 fusionnée → v59 |
 | 08/10 17:40 — [Lisibilité tableau de bord / Paramètres](runs/2026-10-08-1740-debordements-libelles.md) | 🐛 | PR #55 fusionnée au run suivant → v61 |
-| 08/10 18:30 — [Pistes à tester (Recommandations)](runs/2026-10-08-1830-pistes-a-tester.md) | 🏗️ | PR #56 |
+| 08/10 18:30 — [Pistes à tester (Recommandations)](runs/2026-10-08-1830-pistes-a-tester.md) | 🏗️ | PR #56 fusionnée → v62 |
 
 ---
 
