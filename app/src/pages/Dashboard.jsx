@@ -4,6 +4,7 @@ import { listEntries } from '../storage/localHealthStorage'
 import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
+import BaselineCards from '../components/BaselineCards'
 import { formatAt, formatDuration, sleepStateLabel, periodLabel } from '../utils/format'
 
 const SOURCE_LABELS = {
@@ -100,6 +101,7 @@ export default function Dashboard() {
 
       {!loading && !error && (
         <>
+          <BaselineCards />
           <WellbeingCharts />
           <h3 className="section-title">Dernières entrées</h3>
           {entries.length === 0 ? (

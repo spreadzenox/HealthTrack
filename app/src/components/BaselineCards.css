@@ -1,0 +1,132 @@
+.baselines {
+  margin: 24px 0 8px;
+}
+
+.baseline-cards {
+  display: grid;
+  gap: 10px;
+}
+
+.baseline-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+}
+
+.baseline-card.is-insufficient {
+  border-left-color: rgba(255, 255, 255, 0.15);
+}
+
+.baseline-card.is-favourable {
+  border-left-color: #6fcf97;
+}
+
+.baseline-card.is-unfavourable {
+  border-left-color: #f7b733;
+}
+
+.baseline-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+.baseline-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.baseline-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(78, 205, 196, 0.15);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.baseline-badge.is-favourable {
+  background: rgba(111, 207, 151, 0.15);
+  color: #6fcf97;
+}
+
+.baseline-badge.is-unfavourable {
+  background: rgba(247, 183, 51, 0.15);
+  color: #f7b733;
+}
+
+.baseline-card-value {
+  margin: 8px 0 6px;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.baseline-card-value strong {
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.baseline-card-sub {
+  font-size: 0.8rem;
+}
+
+.baseline-range {
+  position: relative;
+  height: 8px;
+  margin: 10px 0 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.baseline-range-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  background: rgba(78, 205, 196, 0.35);
+}
+
+.baseline-range-marker {
+  position: absolute;
+  top: -4px;
+  width: 4px;
+  height: 16px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.baseline-range-marker.is-favourable {
+  background: #6fcf97;
+}
+
+.baseline-range-marker.is-unfavourable {
+  background: #f7b733;
+}
+
+.baseline-card-note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.baseline-hint {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid #f7b733;
+  background: rgba(247, 183, 51, 0.08);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.baseline-footnote {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
