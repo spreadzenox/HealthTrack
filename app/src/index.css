@@ -47,3 +47,12 @@ input[type="file"] {
   overflow: hidden;
   z-index: -1;
 }
+
+a {
+  color: var(--accent);
+}
+
+/* Les URL longues (ex. redirection Withings) ne doivent jamais élargir la page */
+code {
+  overflow-wrap: anywhere;
+}

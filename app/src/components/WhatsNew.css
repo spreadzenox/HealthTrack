@@ -112,7 +112,7 @@
 .whats-new-settings-link {
   display: block;
   padding: 12px 14px;
-  margin-top: 8px;
+  margin: 8px 0 24px;
   background: var(--surface);
   border-radius: var(--radius);
   color: var(--text);

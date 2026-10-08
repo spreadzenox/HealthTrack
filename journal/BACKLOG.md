@@ -74,22 +74,22 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 **Paramètres : débordement horizontal** — l'URL de redirection Withings en `<code>` ne passe pas à la ligne (signalé par `npm run visual`) ; liens bleus par défaut → couleur d'accent.
-2. 🐛 **Graphique bien-être (tableau de bord)** — les dates de l'axe X se chevauchent sur 412 px.
-3. 🎨 **Tableau de bord** — « 390 min — asleep » (→ « 6 h 30 »), « (day) » en anglais, flux d'entrées brut très long : regrouper par jour/type.
-4. 🐛 **Recommandations** — textes fautifs (« Un fc moyenne… »), « Impact estimé : 48 % de corrélation » trompeur, leviers non actionnables en Top 3 → puis C3 rigueur statistique (R#3).
-5. 🐛 **Nutrition** — cibles cumulées douteuses (fibres 120 g sur 4 jours ? sodium 8 000 mg présenté comme objectif ?), barres toutes rouges, alignement irrégulier, décimales inutiles.
-6. 🏗️ **Baselines personnelles FC repos / VFC** (R#1) — quick win à fort impact, socle du radar et de la readiness.
-7. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes.
-8. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
-9. 🎨 C1 — barre d'onglets en bas.
+1. 🐛 **Recommandations** — textes fautifs (« Un fc moyenne… »), « Impact estimé : 48 % de corrélation » trompeur, leviers non actionnables en Top 3 → puis C3 rigueur statistique (R#3).
+2. 🐛 **Nutrition** — cibles cumulées douteuses (fibres 120 g sur 4 jours ? sodium 8 000 mg présenté comme objectif ?), barres toutes rouges, alignement irrégulier, décimales inutiles.
+3. 🏗️ **Baselines personnelles FC repos / VFC** (R#1) — quick win à fort impact, socle du radar et de la readiness.
+4. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes.
+5. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
+6. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
+7. 🎨 C1 — barre d'onglets en bas.
 
 ## Idées en vrac (à trier)
 
 _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ici ce qui n'a pas encore de chantier)_
 
+- Graphique bien-être « Par jour » : les points sont espacés par index, pas par date → un jour sans note disparaît. Passer à un axe temporel (trous visibles).
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-08 — Paramètres sans débordement, axe du graphique bien-être lisible, sommeil en « h min » et libellés traduits (run 17:40)
 - [x] 2026-10-08 — Mise en place du journal, de la vérification visuelle (`npm run visual`) et de la page « Nouveautés » (#52, v59)

@@ -10,6 +10,8 @@ une release à chaque changement validé, et tient ce journal.
 
 **Nouveau dans l'app** (à voir dans Paramètres → Nouveautés après la mise à jour en 1 clic)
 - Page « Nouveautés » et bandeau qui résume les changements depuis votre dernière visite.
+- Tableau de bord plus lisible : dates du graphique bien-être qui ne se chevauchent plus, sommeil en
+  « 6 h 30 — endormi », plus de mots anglais ; page Paramètres qui ne déborde plus de l'écran.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -21,13 +23,13 @@ une release à chaque changement validé, et tient ce journal.
 - Avec une clé Gemini **gratuite**, Google peut utiliser et faire relire les photos analysées → un
   avertissement dans l'app est prévu (backlog R#9).
 
-**Prochaines priorités** — défauts visibles relevés par l'audit (débordement dans Paramètres, axe du
-graphique illisible, textes des Recommandations, cibles Nutrition), puis baselines personnelles
-FC repos / VFC et tags de comportements.
+**Prochaines priorités** — textes et chiffres trompeurs des Recommandations, cibles Nutrition, puis
+baselines personnelles FC repos / VFC et tags de comportements.
 
 | Run | Type | Résultat |
 |---|---|---|
 | 08/10 17:00 — [Mise en place](runs/2026-10-08-1700-mise-en-place.md) | 🏗️ | PR #52 fusionnée → v59 |
+| 08/10 17:40 — [Lisibilité tableau de bord / Paramètres](runs/2026-10-08-1740-debordements-libelles.md) | 🐛 | voir compte rendu |
 
 ---
 

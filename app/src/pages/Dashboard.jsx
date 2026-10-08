@@ -4,7 +4,7 @@ import { listEntries } from '../storage/localHealthStorage'
 import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
-import { formatAt } from '../utils/format'
+import { formatAt, formatDuration, sleepStateLabel, periodLabel } from '../utils/format'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
@@ -140,7 +140,7 @@ export default function Dashboard() {
                     {e.type === 'steps' && typeof e.payload?.value === 'number' && (
                       <p className="entry-wellbeing-score">
                         <strong>{e.payload.value.toLocaleString('fr-FR')}</strong> pas
-                        {e.payload.period && ` (${e.payload.period})`}
+                        {e.payload.period && ` ${periodLabel(e.payload.period)}`}
                       </p>
                     )}
                     {e.type === 'heart_rate' && typeof e.payload?.bpm === 'number' && (
@@ -161,19 +161,19 @@ export default function Dashboard() {
                     {e.type === 'calories' && typeof e.payload?.value === 'number' && (
                       <p className="entry-wellbeing-score">
                         <strong>{Math.round(e.payload.value).toLocaleString('fr-FR')}</strong> kcal
-                        {e.payload.period && ` (${e.payload.period})`}
+                        {e.payload.period && ` ${periodLabel(e.payload.period)}`}
                       </p>
                     )}
                     {e.type === 'sleep' && typeof e.payload?.durationMinutes === 'number' && (
                       <p className="entry-wellbeing-score">
-                        <strong>{Math.round(e.payload.durationMinutes)}</strong> min
-                        {e.payload.sleepState && ` — ${e.payload.sleepState}`}
+                        <strong>{formatDuration(e.payload.durationMinutes)}</strong>
+                        {e.payload.sleepState && ` — ${sleepStateLabel(e.payload.sleepState)}`}
                       </p>
                     )}
                     {e.type === 'activity' && e.payload?.workoutType && (
                       <p className="entry-wellbeing-score">
                         {e.payload.workoutType}
-                        {e.payload.durationSeconds && ` — ${Math.round(e.payload.durationSeconds / 60)} min`}
+                        {e.payload.durationSeconds && ` — ${formatDuration(e.payload.durationSeconds / 60)}`}
                         {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
                       </p>
                     )}

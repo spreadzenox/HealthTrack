@@ -119,6 +119,45 @@ describe('Dashboard', () => {
     expect(card).toHaveTextContent('4')
   })
 
+  it('shows sleep duration in hours and French sleep state', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValueOnce([
+      {
+        id: 3,
+        type: 'sleep',
+        source: 'health_connect',
+        at: '2026-04-10T23:00:00',
+        payload: { durationMinutes: 390, sleepState: 'asleep' },
+        created_at: '',
+      },
+    ])
+    renderDashboard()
+    await screen.findByText(/Sommeil/)
+    const card = screen.getByRole('listitem')
+    expect(card).toHaveTextContent('6 h 30')
+    expect(card).toHaveTextContent('endormi')
+    expect(card).not.toHaveTextContent('asleep')
+  })
+
+  it('shows daily steps with a French period label', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValueOnce([
+      {
+        id: 4,
+        type: 'steps',
+        source: 'health_connect',
+        at: '2026-04-10T00:00:00',
+        payload: { value: 8200, period: 'day' },
+        created_at: '',
+      },
+    ])
+    renderDashboard()
+    await screen.findByText(/pas/)
+    const card = screen.getByRole('listitem')
+    expect(card).toHaveTextContent('sur la journée')
+    expect(card).not.toHaveTextContent('(day)')
+  })
+
   it('renders the "Ajouter un bien-être" button', async () => {
     renderDashboard()
     const btn = screen.getByRole('button', { name: /Ajouter un bien-être/i })
