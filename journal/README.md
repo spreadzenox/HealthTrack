@@ -20,6 +20,11 @@ une release à chaque changement validé, et tient ce journal.
   du jour (fini les « 120 g de fibres » cumulés et la page vide le lundi), sodium présenté comme une
   limite à ne pas dépasser, nutriments classés, « N repères atteints », alerte quand des repas
   manquent visiblement, chiffres à la française (v63).
+- **Votre cœur vs votre norme** (tableau de bord) : FC au repos et VFC des 7 derniers jours
+  comparées à *vos* valeurs habituelles des 60 jours précédents, avec une barre « plage normale »
+  et un repère « dans votre norme / plus haute / plus basse que d'habitude ». Message prudent si
+  l'écart va dans le mauvais sens (fatigue, stress, alcool, début d'infection…), jamais un
+  diagnostic. Il faut ~3 semaines de mesures de la montre pour établir la norme.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -38,8 +43,11 @@ une release à chaque changement validé, et tient ce journal.
 - Le modèle « Recommandations avancées » est fragile (variables redondantes pas / calories) :
   ses pistes restent cohérentes, mais il sera fiabilisé prochainement.
 
-**Prochaines priorités** — baselines personnelles FC repos / VFC, fiabilisation du
-modèle avancé, puis tags de comportements.
+- Le test sur émulateur **Android 16 (API 36)** échoue à la création de l'émulateur (problème
+  côté GitHub, sans lien avec le code) ; Android 15 et la publication des releases fonctionnent.
+
+**Prochaines priorités** — fiabilisation du modèle avancé, tags de comportements, puis
+« radar » fatigue / début de maladie qui s'appuiera sur la norme cardiaque.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -47,6 +55,7 @@ modèle avancé, puis tags de comportements.
 | 08/10 17:40 — [Lisibilité tableau de bord / Paramètres](runs/2026-10-08-1740-debordements-libelles.md) | 🐛 | PR #55 fusionnée au run suivant → v61 |
 | 08/10 18:30 — [Pistes à tester (Recommandations)](runs/2026-10-08-1830-pistes-a-tester.md) | 🏗️ | PR #56 fusionnée → v62 |
 | 08/10 20:30 — [Page Nutrition juste et lisible](runs/2026-10-08-2030-nutrition.md) | 🐛 | PR #58 fusionnée → v63 |
+| 08/10 22:30 — [Cœur vs votre norme (FC repos / VFC)](runs/2026-10-08-2230-norme-coeur.md) | 🏗️ | PR en cours |
 
 ---
 

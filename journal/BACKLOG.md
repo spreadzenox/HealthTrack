@@ -31,7 +31,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 
 ### C2 — Écran « Aujourd'hui »
 - [ ] Remplacer le flux brut « Dernières entrées » par des résumés du jour (sommeil h/min, pas, FC repos, repas, cigarettes)
-- [ ] **Baselines personnelles FC repos / VFC** (R#1) : moyenne 7 j vs plage normale 60 j, z-score, CV → cartes « dans / hors de ta norme »
+- [x] **Baselines personnelles FC repos / VFC** (R#1) : moyenne 7 j vs norme des 60 j précédents (± 1 ET, VFC en log), cartes sur le tableau de bord (#PR)
+- [ ] Baselines, étape 2 : ajouter sommeil (durée) et une mini-courbe 30 j avec la bande de norme ; CV 7 j de la VFC
 - [ ] Régularité du sommeil (R#6) : écart-type coucher/lever 14 j + SRI simplifié
 - [ ] Tendance de poids lissée (R#8, EMA α≈0,1) et objectif de pas fondé sur les preuves (R#10, défaut 7 000, adaptatif)
 - [ ] « Radar » signes de maladie / surmenage (R#12) : ≥ 2 métriques hors norme ≥ 2 nuits, jamais de diagnostic
@@ -76,10 +77,10 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🏗️ **Baselines personnelles FC repos / VFC** (R#1) — quick win à fort impact, socle du radar et de la readiness.
-2. 🏗️ **Modèle avancé** — colinéarité (voir C3) : les pistes du modèle restent cohérentes mais il est fragile.
-3. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes (et donnera enfin des pistes comportementales : café, alcool, écran tard…).
-4. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
+1. 🏗️ **Modèle avancé** — colinéarité (voir C3) : les pistes du modèle restent cohérentes mais il est fragile.
+2. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes (et donnera enfin des pistes comportementales : café, alcool, écran tard…).
+3. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
+4. 🏗️ **Radar** (R#12) — réutilise `services/baselines.js` (FC repos, VFC + sommeil), persistance ≥ 2 nuits.
 5. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
 6. 🎨 C1 — barre d'onglets en bas.
 
@@ -91,10 +92,12 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Données de démo : repas plus complets (~2 000 kcal/j) pour que la page Nutrition de démo soit représentative.
 - Nutrition : tendance sur 4 semaines par nutriment et suggestions d'aliments riches pour les repères « bas » récurrents.
 - Graphique bien-être « Par jour » : les points sont espacés par index, pas par date → un jour sans note disparaît. Passer à un axe temporel (trous visibles).
+- CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-08 — Tableau de bord : FC au repos et VFC comparées à votre norme personnelle (#PR)
 - [x] 2026-10-08 — Nutrition : moyenne par jour saisi sur 7 jours vs repère journalier, sodium en limite, groupes, alerte saisie incomplète, chiffres FR (#58, v63)
 - [x] 2026-10-08 — Recommandations « Pistes à tester » : leviers actionnables, plus de conseil à contre-sens, confiance statistique (BH + n effectif) (#56, v62)
 - [x] 2026-10-08 — Paramètres sans débordement, axe du graphique bien-être lisible, sommeil en « h min » et libellés traduits (#55, v61)

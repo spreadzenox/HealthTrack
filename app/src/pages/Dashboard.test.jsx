@@ -7,6 +7,10 @@ vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
 }))
 
+vi.mock('../components/BaselineCards', () => ({
+  default: () => <div data-testid="baseline-cards" />,
+}))
+
 vi.mock('../components/WellbeingCharts', () => ({
   default: () => <div data-testid="wellbeing-charts" />,
 }))
