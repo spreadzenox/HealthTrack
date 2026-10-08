@@ -1,5 +1,38 @@
 # Journal de bord de Claude — HealthTrack
 
+## 📅 Semaine en cours — S41 (lundi 5 → dimanche 11 octobre 2026)
+
+> Résumé tenu à jour à chaque run : **c'est ce que lit le propriétaire chaque semaine.**
+> Le premier run d'une nouvelle semaine archive ce bloc dans `semaines/AAAA-Sww.md` et en ouvre un neuf.
+
+**En bref** — La routine autonome est en place : Claude améliore HealthTrack toutes les 2 h, publie
+une release à chaque changement validé, et tient ce journal.
+
+**Nouveau dans l'app** (à voir dans Paramètres → Nouveautés après la mise à jour en 1 clic)
+- Page « Nouveautés » et bandeau qui résume les changements depuis votre dernière visite.
+
+**En coulisses**
+- Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
+- CI Android réparée : le build de l'APK échouait sur les runners GitHub actuels → sans correctif,
+  plus aucune release n'aurait été publiée (release v59 = premier build réparé).
+- Veille initiale : 28 idées classées et sourcées (`RESEARCH.md`), intégrées au backlog.
+
+**Points d'attention**
+- Avec une clé Gemini **gratuite**, Google peut utiliser et faire relire les photos analysées → un
+  avertissement dans l'app est prévu (backlog R#9).
+
+**Prochaines priorités** — défauts visibles relevés par l'audit (débordement dans Paramètres, axe du
+graphique illisible, textes des Recommandations, cibles Nutrition), puis baselines personnelles
+FC repos / VFC et tags de comportements.
+
+| Run | Type | Résultat |
+|---|---|---|
+| 08/10 17:00 — [Mise en place](runs/2026-10-08-1700-mise-en-place.md) | 🏗️ | PR #52 fusionnée → v59 |
+
+---
+
+## Charte
+
 Ce dossier appartient à Claude. C'est sa mémoire entre deux exécutions de la routine
 autonome (une toutes les 2 h) : chaque exécution démarre sans aucun souvenir et
 **doit lire ce fichier en premier**. Claude peut et doit faire évoluer cette charte
@@ -7,10 +40,11 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 
 | Fichier | Rôle |
 |---|---|
-| `README.md` | Charte : mission, principes, protocole d'un run (ce fichier) |
+| `README.md` | Résumé de la semaine en cours (en tête) + charte : mission, principes, protocole d'un run |
 | `BACKLOG.md` | Vision, chantiers long terme, backlog priorisé, idées en vrac |
 | `RESEARCH.md` | Veille : besoins utilisateurs, ce qui marche en health tech, avancées ML — avec sources |
 | `runs/AAAA-MM-JJ-HHMM-<slug>.md` | Un compte rendu par exécution (un fichier par run = pas de conflit Git) |
+| `semaines/AAAA-Sww.md` | Résumés des semaines passées |
 
 ---
 
@@ -93,18 +127,22 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
    bénéfice : « Le graphique du sommeil se lit mieux sur petit écran », pas « refactor CSS »).
 2. **Compte rendu** : créer `journal/runs/AAAA-MM-JJ-HHMM-<slug>.md` (modèle ci-dessous) et
    mettre à jour `BACKLOG.md` (cocher, ajouter, re-prioriser).
-3. Commit(s) clairs, push, PR vers `main` intitulée `[Auto] <résumé>`, corps = résumé du run.
-4. Attendre la CI (s'abonner à l'activité de la PR, pas de boucle d'attente) : **Frontend (Vitest)**
+3. **Résumé de la semaine** (en tête de ce fichier) : l'enrichir — ce que l'utilisateur verra dans
+   l'app, ce qui a changé en coulisses, les points d'attention, une ligne dans le tableau des runs.
+   Écrit pour l'utilisateur (clair, concret, sans jargon). Nouvelle semaine ISO (lundi, heure de
+   Paris) → déplacer l'ancien bloc dans `semaines/AAAA-Sww.md` et repartir d'un bloc vide.
+4. Commit(s) clairs, push, PR vers `main` intitulée `[Auto] <résumé>`, corps = résumé du run.
+5. Attendre la CI (s'abonner à l'activité de la PR, pas de boucle d'attente) : **Frontend (Vitest)**
    et **Build APK** doivent être verts (*Build APK* échoue = la release échouera aussi). Les jobs
    émulateur sont longs : les attendre seulement si le changement touche `android/`, Capacitor
    ou Health Connect.
-5. CI verte → **fusionner (squash)** : le push sur `main` déclenche le build de l'APK et la
+6. CI verte **et** vérifications du §3.4 faites → **fusionner (squash)** : le push sur `main` déclenche le build de l'APK et la
    release que l'utilisateur installera en 1 clic. CI rouge → corriger et recommencer.
-6. Après la fusion, vérifier que le workflow **Build & Release** de `main` a réussi et publié
+7. Après la fusion, vérifier que le workflow **Build & Release** de `main` a réussi et publié
    la release `v<N>` avec son APK. S'il échoue (même sans lien avec ton changement : image des
    runners, action obsolète…), le réparer est la priorité absolue — sans release, l'utilisateur
    ne reçoit plus rien.
-7. Si le run ne peut pas aboutir : laisser la PR ouverte, documenter précisément l'état
+8. Si le run ne peut pas aboutir (ou si une vérification du §3.4 échoue) : laisser la PR ouverte, documenter précisément l'état
    et la suite dans le compte rendu — le run suivant reprendra.
 
 ### Modèle de compte rendu
@@ -141,5 +179,9 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
   ad hoc dans le scratchpad en s'inspirant de `visual-check.mjs`.
 - **Données de démo** : enrichir `demoData.mjs` quand une nouvelle donnée apparaît, pour
   que les captures restent représentatives.
+- **GitHub** : outils `mcp__github__*` s'ils sont présents ; sinon la CLI `gh`, préconfigurée via le
+  proxy du conteneur (`gh pr create`, `gh pr checks <n> --watch`, `gh pr merge <n> --squash`,
+  `gh run list --workflow build-release.yml`, `gh release list`).
 - **CI** : `Tests` (Vitest, rapide) sur PR ; `Test — émulateur Samsung Galaxy A56` (long) ;
-  `Build & Release` sur push `main` → release `v<run_number>` + APK.
+  `Build & Release` sur push `main` → release `v<run_number>` + APK (sauf si le push ne touche
+  que `journal/` : un run de pure veille ne publie donc pas de release vide).
