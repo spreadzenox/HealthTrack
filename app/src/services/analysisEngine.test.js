@@ -567,7 +567,7 @@ describe('computeBasicCorrelations', () => {
     }
   })
 
-  it('returns top 3 negative-impact variables sorted by impact', () => {
+  it('returns at most 3 levers', () => {
     const entries = []
     for (let d = 1; d <= 7; d++) {
       const date = `2026-01-${String(d).padStart(2, '0')}`
@@ -576,7 +576,7 @@ describe('computeBasicCorrelations', () => {
     }
     const result = computeBasicCorrelations(entries)
     expect(result.status).toBe('ok')
-    expect(result.topNegativeFactors.length).toBeLessThanOrEqual(3)
+    expect(result.levers.length).toBeLessThanOrEqual(3)
   })
 
   it('includes datasetDays in result', () => {
@@ -589,7 +589,7 @@ describe('computeBasicCorrelations', () => {
     expect(result.datasetDays).toBe(7)
   })
 
-  it('includes lower_better variable in topNegativeFactors when r is strongly negative', () => {
+  it('includes lower_better variable in levers when r is strongly negative', () => {
     // alcohol is lower_better. When it correlates negatively with wellbeing (r < -0.15)
     // it should appear in the Top 3 (more alcohol → worse wellbeing).
     const entries = []
@@ -605,12 +605,12 @@ describe('computeBasicCorrelations', () => {
     // If alcohol data produced a correlation, it must be included in top factors
     const alcoholCorr = result.correlations.find((c) => c.variable === 'alcohol_g')
     if (alcoholCorr && alcoholCorr.r < -0.15) {
-      const inTop3 = result.topNegativeFactors.some((f) => f.variable === 'alcohol_g')
+      const inTop3 = result.levers.some((f) => f.variable === 'alcohol_g')
       expect(inTop3).toBe(true)
     }
   })
 
-  it('excludes lower_better variable from topNegativeFactors when r is positive', () => {
+  it('excludes lower_better variable from levers when r is positive', () => {
     // If a lower_better variable has a positive correlation (r > 0),
     // it should NOT be flagged as harmful (positive r means more of it → better wellbeing).
     const entries = []
@@ -626,7 +626,7 @@ describe('computeBasicCorrelations', () => {
     expect(result.status).toBe('ok')
     const alcoholCorr = result.correlations.find((c) => c.variable === 'alcohol_g')
     if (alcoholCorr && alcoholCorr.r > 0) {
-      const inTop3 = result.topNegativeFactors.some((f) => f.variable === 'alcohol_g')
+      const inTop3 = result.levers.some((f) => f.variable === 'alcohol_g')
       expect(inTop3).toBe(false)
     }
   })
@@ -675,7 +675,7 @@ describe('computeBasicCorrelations', () => {
     }
   })
 
-  it('does NOT include a variable in topNegativeFactors when r is positive and another has r < -threshold', () => {
+  it('does NOT include a variable in levers when r is positive and another has r < -threshold', () => {
     // The filter requires r < -threshold for all directions (higher_better, lower_better, neutral).
     // We use lifestyle variables (not lagged) to avoid lag interference:
     // - sleep (higher_better): MORE sleep = LOWER wellbeing → r < 0, should appear in main filter
@@ -698,7 +698,7 @@ describe('computeBasicCorrelations', () => {
       // Only test the invariant if the setup actually produced the expected correlations
       if (sleepCorr && sleepCorr.r < -0.2 && stepsCorr && stepsCorr.r > 0) {
         // Main filter should be non-empty (sleep qualifies). steps (r > 0) must not appear.
-        const stepsInTop3 = result.topNegativeFactors.some((f) => f.variable === 'steps')
+        const stepsInTop3 = result.levers.some((f) => f.variable === 'steps')
         expect(stepsInTop3).toBe(false)
       }
     }
@@ -1186,5 +1186,130 @@ describe('countTotalDataDays', () => {
     expect(totalDays).toBe(3)
     expect(wellbeingDays).toBe(2)
     expect(totalDays).toBeGreaterThan(wellbeingDays)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Levers ("pistes à tester") — actionable, coherent with data, FDR-qualified
+// ---------------------------------------------------------------------------
+
+/** Deterministic pseudo-random wellbeing scores 1..5 */
+function scoreForDay(d) {
+  return 1 + ((d * 7 + (d % 3) * 2) % 5)
+}
+
+function dateForDay(d) {
+  const dt = new Date(Date.UTC(2026, 0, 1 + d))
+  return dt.toISOString().slice(0, 10)
+}
+
+function buildLeverScenario({ days = 40, stepsSign = 0 } = {}) {
+  const entries = []
+  for (let d = 0; d < days; d++) {
+    const date = dateForDay(d)
+    const w = scoreForDay(d)
+    const noise = ((d * 13) % 7) - 3
+    entries.push(makeWellbeing(date, w))
+    entries.push(makeSleep(date, 330 + 30 * w + noise * 5))          // actionable, r > 0
+    entries.push(makeCigarette(date, Math.max(0, 7 - w + (noise > 1 ? 1 : 0)))) // actionable, r < 0
+    entries.push(makeHeartRate(date, 78 - 3 * w + noise))             // NOT actionable
+    entries.push(makeHRV(date, 30 + 6 * w + noise))                   // NOT actionable
+    const steps = stepsSign === 0
+      ? 6000 + ((d * 11) % 4) * 700
+      : 8000 + stepsSign * 900 * w + noise * 100
+    entries.push(makeSteps(date, steps))
+  }
+  return entries
+}
+
+describe('computeBasicCorrelations — statistical qualification', () => {
+  it('every correlation carries n, effective n, p, q, strength and evidence', () => {
+    const result = computeBasicCorrelations(buildLeverScenario())
+    expect(result.status).toBe('ok')
+    for (const c of result.correlations) {
+      expect(c.n).toBe(40)
+      expect(c.nEff).toBeGreaterThanOrEqual(3)
+      expect(c.nEff).toBeLessThanOrEqual(40)
+      expect(c.p).toBeGreaterThanOrEqual(0)
+      expect(c.q).toBeGreaterThanOrEqual(c.p - 1e-12)
+      expect(['négligeable', 'faible', 'modéré', 'fort']).toContain(c.strength)
+      expect(['solide', 'à confirmer', 'incertain']).toContain(c.evidence)
+    }
+  })
+
+  it('a variable unrelated to wellbeing is rated "incertain"', () => {
+    const result = computeBasicCorrelations(buildLeverScenario())
+    const steps = result.correlations.find((c) => c.variable === 'steps')
+    expect(steps).toBeDefined()
+    expect(steps.evidence).toBe('incertain')
+  })
+})
+
+describe('computeBasicCorrelations — levers', () => {
+  it('only proposes actionable variables (never heart rate, HRV or body metrics)', () => {
+    const result = computeBasicCorrelations(buildLeverScenario())
+    const vars = result.levers.map((l) => l.variable)
+    expect(vars).toContain('sleepMinutes')
+    for (const v of vars) {
+      expect(['restingHR', 'avgHR', 'hrv_ms', 'spo2_pct', 'weight_kg', 'dailyCaloriesHC']).not.toContain(v)
+    }
+  })
+
+  it('every lever has a French action, a sign coherent with the data and q < 0.2', () => {
+    const result = computeBasicCorrelations(buildLeverScenario())
+    expect(result.levers.length).toBeGreaterThan(0)
+    for (const l of result.levers) {
+      expect(typeof l.action).toBe('string')
+      expect(l.action.length).toBeGreaterThan(3)
+      expect(l.q).toBeLessThan(0.2)
+      if (VARIABLE_META[l.variable].direction === 'higher_better') expect(l.r).toBeGreaterThan(0)
+      if (VARIABLE_META[l.variable].direction === 'lower_better') expect(l.r).toBeLessThan(0)
+    }
+    const cig = result.levers.find((l) => l.variable === 'cigaretteCount')
+    if (cig) expect(cig.action).toMatch(/moins/i)
+  })
+
+  it('never advises more of a "good" variable when data links it to LOWER wellbeing', () => {
+    const result = computeBasicCorrelations(buildLeverScenario({ stepsSign: -1 }))
+    const steps = result.correlations.find((c) => c.variable === 'steps')
+    expect(steps.r).toBeLessThan(-0.5)
+    expect(result.levers.some((l) => l.variable === 'steps')).toBe(false)
+  })
+
+  it('proposes a positively correlated "good" variable as a lever', () => {
+    const result = computeBasicCorrelations(buildLeverScenario({ stepsSign: 1 }))
+    const steps = result.levers.find((l) => l.variable === 'steps')
+    expect(steps).toBeDefined()
+    expect(steps.action).toMatch(/march/i)
+  })
+
+  it('returns no lever when nothing is clearly linked to wellbeing', () => {
+    // Steps chosen to be uncorrelated with scoreForDay (r ≈ 0.06)
+    const steps = [6000, 7500, 6000, 7500, 7500, 6000, 6000, 7500, 6000, 7500, 7500, 6000]
+    const entries = []
+    for (let d = 0; d < 12; d++) {
+      const date = dateForDay(d)
+      entries.push(makeWellbeing(date, scoreForDay(d)))
+      entries.push(makeSteps(date, steps[d]))
+    }
+    const result = computeBasicCorrelations(entries)
+    expect(result.status).toBe('ok')
+    expect(result.levers).toEqual([])
+  })
+})
+
+describe('computeAdvancedAnalysis — recommendations coherence', () => {
+  it('never recommends increasing steps when the model links steps to lower wellbeing', () => {
+    const result = computeAdvancedAnalysis(buildLeverScenario({ stepsSign: -1 }))
+    expect(result.status).toBe('ok')
+    const stepsImp = result.featureImportance.find((f) => f.variable === 'steps')
+    if (stepsImp && stepsImp.coefficient < 0) {
+      for (const advice of result.topRecommendations) {
+        expect(advice).not.toMatch(/march|augmenter votre pas/i)
+      }
+    }
+    for (const advice of result.topRecommendations) {
+      expect(advice).not.toMatch(/fc repos|variabilité/i)
+    }
   })
 })

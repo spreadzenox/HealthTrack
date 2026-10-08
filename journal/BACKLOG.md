@@ -38,8 +38,10 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [ ] Readiness personnelle calibrée sur le ressenti (R#24, espace d'état bayésien) — pari long terme
 
 ### C3 — Moteur d'analyse N-of-1 v2
-- [ ] **Rigueur statistique** (R#3) : Benjamini-Hochberg (35 variables testées aujourd'hui), n effectif corrigé de l'autocorrélation, IC bootstrap par blocs, libellé « hypothèse »
-- [ ] Ne recommander que des leviers **actionnables** (pas « réduire votre FC repos »)
+- [x] **Rigueur statistique** (R#3), étape 1 : Benjamini-Hochberg, n effectif corrigé de l'autocorrélation, niveaux « solide / à confirmer / incertain », libellé « hypothèse » (#56)
+- [ ] Rigueur statistique, étape 2 : IC bootstrap par blocs affiché sur chaque piste
+- [x] Ne recommander que des leviers **actionnables** et cohérents avec le signe observé (#56)
+- [ ] **Modèle avancé fragile** : coefficients standardisés aberrants (≈ 1 863) dus à la colinéarité pas / calories d'activité / calories totales → dédoublonner les variables très corrélées (|r| > 0,9), régler le Ridge (validation croisée), afficher l'incertitude
 - [ ] Effets décalés (lags 0–3 j) et contrôle du jour de la semaine (R#25)
 - [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
 - [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
@@ -74,10 +76,10 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 **Recommandations** — textes fautifs (« Un fc moyenne… »), « Impact estimé : 48 % de corrélation » trompeur, leviers non actionnables en Top 3 → puis C3 rigueur statistique (R#3).
-2. 🐛 **Nutrition** — cibles cumulées douteuses (fibres 120 g sur 4 jours ? sodium 8 000 mg présenté comme objectif ?), barres toutes rouges, alignement irrégulier, décimales inutiles.
-3. 🏗️ **Baselines personnelles FC repos / VFC** (R#1) — quick win à fort impact, socle du radar et de la readiness.
-4. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes.
+1. 🐛 **Nutrition** — cibles cumulées douteuses (fibres 120 g sur 4 jours ? sodium 8 000 mg présenté comme objectif ?), barres toutes rouges, alignement irrégulier, décimales inutiles.
+2. 🏗️ **Baselines personnelles FC repos / VFC** (R#1) — quick win à fort impact, socle du radar et de la readiness.
+3. 🏗️ **Modèle avancé** — colinéarité (voir C3) : les pistes du modèle restent cohérentes mais il est fragile.
+4. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes (et donnera enfin des pistes comportementales : café, alcool, écran tard…).
 5. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
 6. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
 7. 🎨 C1 — barre d'onglets en bas.
@@ -91,5 +93,6 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
-- [x] 2026-10-08 — Paramètres sans débordement, axe du graphique bien-être lisible, sommeil en « h min » et libellés traduits (PR #55 — en attente de fusion)
+- [x] 2026-10-08 — Recommandations « Pistes à tester » : leviers actionnables, plus de conseil à contre-sens, confiance statistique (BH + n effectif) (#56)
+- [x] 2026-10-08 — Paramètres sans débordement, axe du graphique bien-être lisible, sommeil en « h min » et libellés traduits (#55, v61)
 - [x] 2026-10-08 — Mise en place du journal, de la vérification visuelle (`npm run visual`) et de la page « Nouveautés » (#52, v59)

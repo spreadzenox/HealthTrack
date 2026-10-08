@@ -156,6 +156,43 @@
   color: var(--text-muted);
 }
 
+/* Evidence badge under a lever ("Hypothèse solide / à confirmer") */
+.reco-evidence {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.reco-evidence-solid {
+  color: var(--accent);
+  background: rgba(78, 205, 196, 0.12);
+}
+
+.reco-evidence-tentative {
+  color: #e6a23c;
+  background: rgba(230, 162, 60, 0.12);
+}
+
+.reco-empty-levers {
+  margin: 0;
+  padding: 14px 16px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+/* Correlations that may well be chance: keep them visible but quiet */
+.reco-corr-row-uncertain {
+  opacity: 0.45;
+}
+
 /* ─── Correlation / importance bar chart ─────────────────────────────────── */
 
 .reco-corr-chart {
