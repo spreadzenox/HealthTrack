@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-08",
+  "kind": "correctif",
+  "title": "Page Nutrition plus juste et plus lisible",
+  "items": [
+    "Vos apports sont maintenant une moyenne par jour saisi sur les 7 derniers jours, comparée au repère du jour (30 g de fibres, et non plus « 120 g » cumulés sur la semaine). Un jour sans saisie ne fait plus baisser vos chiffres, et le lundi la page n'est plus vide.",
+    "Le sodium est présenté comme une limite à ne pas dépasser (max 2 000 mg/j), plus comme un objectif à atteindre.",
+    "Nutriments classés (essentiels, vitamines, minéraux, à limiter), nombre de repères atteints, légende des couleurs, chiffres à la française (1,4 g ; 2 619 kcal).",
+    "Si vos jours saisis comptent moins de la moitié de vos besoins en énergie, la page vous prévient que des repas manquent sans doute."
+  ]
+}

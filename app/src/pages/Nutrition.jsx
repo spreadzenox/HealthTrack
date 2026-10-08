@@ -2,37 +2,45 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntriesForAnalysis } from '../storage/localHealthStorage'
 import { getBodyProfile, getLatestBodyComposition, computeBmi } from '../services/bodyProfile'
-import { compareWeeklyIntake } from '../services/nutritionIntakeCompare'
+import { compareRecentIntake, formatNutrientAmount } from '../services/nutritionIntakeCompare'
 import { computeDailyEnergyKcal } from '../services/nutrientReferenceIntakes'
 import './Nutrition.css'
 
+const formatNumber = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)
+
+const STATUS_TEXT = {
+  ok: 'atteint',
+  partial: 'proche',
+  low: 'bas',
+  over: 'dépassé',
+}
+
 function NutrientBar({ row }) {
-  const barClass =
-    row.status === 'ok'
-      ? 'nutrition-bar-ok'
-      : row.status === 'over'
-        ? 'nutrition-bar-over'
-        : row.status === 'partial'
-          ? 'nutrition-bar-partial'
-          : 'nutrition-bar-low'
+  const barClass = `nutrition-bar-${row.status}`
+  const amount = `${formatNutrientAmount(row.perDay)} ${row.unit}/j`
+  const reference = row.limit
+    ? `max ${formatNutrientAmount(row.target)} ${row.unit}`
+    : `obj. ${formatNutrientAmount(row.target)} ${row.unit}`
 
   return (
     <div className="nutrition-bar-row">
-      <span className="nutrition-bar-label">{row.label}</span>
+      <div className="nutrition-bar-head">
+        <span className="nutrition-bar-label">{row.label}</span>
+        <span className="nutrition-bar-value">
+          <strong>{amount}</strong> · {reference}
+        </span>
+      </div>
       <div className="nutrition-bar-wrap">
         <div
           className={`nutrition-bar-fill ${barClass}`}
-          style={{ width: `${row.pct}%` }}
+          style={{ width: `${row.barPct}%` }}
           role="progressbar"
-          aria-valuenow={row.pct}
+          aria-valuenow={row.barPct}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`${row.label} : ${row.pct}%`}
+          aria-label={`${row.label} : ${row.pct} % ${row.limit ? 'de la limite' : 'de l’objectif'}, ${STATUS_TEXT[row.status]}`}
         />
       </div>
-      <span className="nutrition-bar-value">
-        {row.actual} / {row.weeklyTarget} {row.unit}
-      </span>
     </div>
   )
 }
@@ -66,7 +74,7 @@ function BodyCompositionCard({ payload }) {
           <div key={key} className="nutrition-body-item">
             <span>{label}</span>
             <strong>
-              {value}
+              {typeof value === 'number' ? formatNumber(value) : value}
               {key.includes('Pct') ? ' %' : key.includes('Kcal') ? ' kcal' : key.includes('Years') ? ' ans' : key.includes('Bpm') ? ' bpm' : key.includes('Mps') ? ' m/s' : key.includes('Kg') ? ' kg' : ''}
             </strong>
           </div>
@@ -101,7 +109,7 @@ export default function Nutrition() {
 
   const comparison = useMemo(() => {
     if (!profile) return null
-    return compareWeeklyIntake(entries, profile)
+    return compareRecentIntake(entries, profile)
   }, [entries, profile])
 
   const bodyComp = useMemo(() => getLatestBodyComposition(entries), [entries])
@@ -121,13 +129,13 @@ export default function Nutrition() {
     <section className="food-page nutrition-page">
       <h2 className="page-title">Nutrition</h2>
       <p className="nutrition-intro">
-        Apports de la <strong>semaine en cours</strong> par rapport aux recommandations officielles
-        (ANSES), personnalisées selon votre poids et votre taille.
+        Vos apports moyens <strong>par jour saisi</strong> sur les 7 derniers jours, comparés aux
+        repères officiels (ANSES) personnalisés selon votre poids et votre taille.
       </p>
 
       <div className="nutrition-profile-card">
         <div>
-          <strong>Poids :</strong> {profile.weightKg} kg
+          <strong>Poids :</strong> {formatNumber(profile.weightKg)} kg
           {profile.weightAt && (
             <span className="nutrition-profile-hint">
               {' '}(Withings, {new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' }).format(new Date(profile.weightAt))})
@@ -142,8 +150,8 @@ export default function Nutrition() {
             </span>
           )}
         </div>
-        {bmi != null && <div><strong>IMC :</strong> {bmi}</div>}
-        {dailyKcal != null && <div><strong>Énergie recommandée :</strong> ~{dailyKcal} kcal/jour</div>}
+        {bmi != null && <div><strong>IMC :</strong> {formatNumber(bmi)}</div>}
+        {dailyKcal != null && <div><strong>Énergie recommandée :</strong> ~{formatNumber(dailyKcal)} kcal/jour</div>}
         {profile.source === 'default' && (
           <p className="nutrition-profile-hint">
             Connectez votre balance{' '}
@@ -154,7 +162,7 @@ export default function Nutrition() {
 
       {comparison && comparison.mealCount === 0 ? (
         <div className="nutrition-empty">
-          <p>Aucun repas enregistré cette semaine.</p>
+          <p>Aucun repas enregistré ces 7 derniers jours.</p>
           <p>
             <Link to="/food" className="btn">Ajouter un repas</Link>
           </p>
@@ -162,13 +170,39 @@ export default function Nutrition() {
       ) : comparison ? (
         <>
           <p className="nutrition-intro">
-            Période : {comparison.weekLabel} · {comparison.mealCount} repas · objectifs sur{' '}
-            {comparison.elapsedDays} jour{comparison.elapsedDays > 1 ? 's' : ''}
+            {comparison.periodLabel} · {comparison.mealCount} repas · {comparison.loggedDays} jour
+            {comparison.loggedDays > 1 ? 's' : ''} saisi{comparison.loggedDays > 1 ? 's' : ''}
           </p>
-          <h3 className="nutrition-section-title">Vitamines & minéraux</h3>
-          {comparison.rows.map((row) => (
-            <NutrientBar key={row.key} row={row} />
+          <p className="nutrition-summary">
+            <strong>{comparison.reachedCount}</strong> repère{comparison.reachedCount > 1 ? 's' : ''} atteint
+            {comparison.reachedCount > 1 ? 's' : ''} sur {comparison.targetCount}
+          </p>
+          {comparison.likelyIncomplete && (
+            <p className="nutrition-warning">
+              Vos jours saisis comptent en moyenne {formatNutrientAmount(comparison.energyPerDay)} kcal,
+              moins de la moitié de vos besoins : des repas manquent sans doute, les apports
+              ci-dessous sont donc sous-estimés.
+            </p>
+          )}
+          <div className="nutrition-legend" aria-hidden="true">
+            <span><i className="nutrition-dot nutrition-bar-ok" /> atteint</span>
+            <span><i className="nutrition-dot nutrition-bar-partial" /> proche (≥ 70 %)</span>
+            <span><i className="nutrition-dot nutrition-bar-low" /> bas</span>
+            <span><i className="nutrition-dot nutrition-bar-over" /> limite dépassée</span>
+          </div>
+          {comparison.groups.map((group) => (
+            <div key={group.title}>
+              <h3 className="nutrition-section-title">{group.title}</h3>
+              {group.rows.map((row) => (
+                <NutrientBar key={row.key} row={row} />
+              ))}
+            </div>
           ))}
+          <p className="nutrition-footnote">
+            Repères indicatifs pour un adulte, calculés à partir d’estimations (photos, portions).
+            Ce n’est pas un diagnostic de carence : en cas de doute, parlez-en à un médecin ou à
+            un·e diététicien·ne.
+          </p>
         </>
       ) : null}
 
