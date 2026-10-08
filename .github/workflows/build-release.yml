@@ -47,6 +47,10 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Le paquet par défaut « tools » n'existe plus dans les cmdline-tools récents
+          # (« Failed to find package 'tools' ») : on n'installe que platform-tools.
+          packages: platform-tools
 
       - name: Install Android platform and build-tools
         run: |

@@ -1,6 +1,7 @@
 import { Outlet, NavLink } from 'react-router-dom'
 import UpdateBanner from './components/UpdateBanner'
 import WellbeingPrompt from './components/WellbeingPrompt'
+import WhatsNewBanner from './components/WhatsNewBanner'
 import { useAutoSync } from './hooks/useAutoSync'
 import './App.css'
 
@@ -41,6 +42,7 @@ export default function Layout() {
         </nav>
       </header>
       <main className="main">
+        <WhatsNewBanner />
         <Outlet />
       </main>
     </div>

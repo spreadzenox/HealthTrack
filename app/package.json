@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "cap:sync": "npm run build && npx cap sync",
     "cap:open:android": "npx cap open android",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "visual": "node scripts/visual/visual-check.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.2.0",

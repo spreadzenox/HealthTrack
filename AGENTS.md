@@ -17,7 +17,13 @@ No backend required. Opens at `http://localhost:5173`.
 - **Frontend**: `cd app && npm run test` — Vitest + jsdom, no backend or API keys needed.
 - **Lint**: `cd app && npm run lint` — ESLint. Note: the codebase has some pre-existing lint errors.
 
+- **Visual check**: `cd app && npm run visual` — starts Vite, seeds ~75 days of demo data, screenshots every page in a Galaxy A56-sized viewport (Playwright/Chromium) into `app/.visual/` and fails on uncaught JS errors. Options are documented at the top of `app/scripts/visual/visual-check.mjs`.
+
 See `CONTRIBUTING.md` for TDD conventions and test file locations.
+
+### Autonomous improvement routine
+
+A scheduled Claude routine improves the app every 2 hours. Its charter, backlog, research notes and per-run reports live in `journal/` (start with `journal/README.md`). User-visible changes get an entry in `app/src/data/changelog/` (one JSON file per change), shown in-app on the « Nouveautés » page.
 
 ### Gotchas
 

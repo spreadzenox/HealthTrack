@@ -69,6 +69,10 @@ jobs:
 
       - name: Configurer Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Le paquet par défaut « tools » n'existe plus dans les cmdline-tools récents
+          # (« Failed to find package 'tools' ») : on n'installe que platform-tools.
+          packages: platform-tools
 
       - name: Installer les composants SDK (platform-36, build-tools, platform-35)
         run: |
@@ -147,6 +151,10 @@ jobs:
 
       - name: Configurer Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Le paquet par défaut « tools » n'existe plus dans les cmdline-tools récents
+          # (« Failed to find package 'tools' ») : on n'installe que platform-tools.
+          packages: platform-tools
 
       - name: Installer image système API 35
         run: |
@@ -269,6 +277,10 @@ jobs:
 
       - name: Configurer Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Le paquet par défaut « tools » n'existe plus dans les cmdline-tools récents
+          # (« Failed to find package 'tools' ») : on n'installe que platform-tools.
+          packages: platform-tools
 
       - name: Installer image système API 36
         run: |

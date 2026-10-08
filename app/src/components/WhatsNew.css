@@ -1,0 +1,120 @@
+.whats-new-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 16px;
+  padding: 10px 12px 10px 14px;
+  background: rgba(78, 205, 196, 0.1);
+  border: 1px solid rgba(78, 205, 196, 0.35);
+  border-radius: var(--radius);
+}
+
+.whats-new-banner-text {
+  flex: 1;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.whats-new-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.whats-new-banner-link {
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #0f0f1a;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.whats-new-banner-close {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.whats-new-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.whats-new-entry {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border-left: 3px solid transparent;
+}
+
+.whats-new-entry.is-unseen {
+  border-left-color: var(--accent);
+}
+
+.whats-new-entry-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.whats-new-kind {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.whats-new-kind.kind-nouveau {
+  color: var(--accent);
+  background: rgba(78, 205, 196, 0.12);
+}
+
+.whats-new-kind.kind-correctif {
+  color: #f5a623;
+  background: rgba(245, 166, 35, 0.12);
+}
+
+.whats-new-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-left: auto;
+}
+
+.whats-new-entry-title {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.whats-new-items {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.whats-new-settings-link {
+  display: block;
+  padding: 12px 14px;
+  margin-top: 8px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+}

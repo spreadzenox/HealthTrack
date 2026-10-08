@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import {
   isDebugUnlocked,
@@ -15,6 +16,7 @@ import {
   clearWithingsAuth,
 } from '../settings/withingsSettings'
 import '../Food.css'
+import '../components/WhatsNew.css'
 
 export default function Settings() {
   const [apiKey, setApiKey] = useState('')
@@ -70,6 +72,10 @@ export default function Settings() {
   return (
     <section className="food-page">
       <h2 className="page-title">Paramètres</h2>
+
+      <Link to="/nouveautes" className="whats-new-settings-link">
+        Nouveautés de l'application →
+      </Link>
 
       <div className="settings-block">
         <h3 className="section-title">Analyse des ingrédients (mode autonome)</h3>
