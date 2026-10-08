@@ -19,7 +19,7 @@ une release à chaque changement validé, et tient ce journal.
 - **Page Nutrition corrigée** : moyenne par jour saisi sur les 7 derniers jours comparée au repère
   du jour (fini les « 120 g de fibres » cumulés et la page vide le lundi), sodium présenté comme une
   limite à ne pas dépasser, nutriments classés, « N repères atteints », alerte quand des repas
-  manquent visiblement, chiffres à la française.
+  manquent visiblement, chiffres à la française (v63).
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -46,7 +46,7 @@ modèle avancé, puis tags de comportements.
 | 08/10 17:00 — [Mise en place](runs/2026-10-08-1700-mise-en-place.md) | 🏗️ | PR #52 fusionnée → v59 |
 | 08/10 17:40 — [Lisibilité tableau de bord / Paramètres](runs/2026-10-08-1740-debordements-libelles.md) | 🐛 | PR #55 fusionnée au run suivant → v61 |
 | 08/10 18:30 — [Pistes à tester (Recommandations)](runs/2026-10-08-1830-pistes-a-tester.md) | 🏗️ | PR #56 fusionnée → v62 |
-| 08/10 20:30 — [Page Nutrition juste et lisible](runs/2026-10-08-2030-nutrition.md) | 🐛 | PR en cours |
+| 08/10 20:30 — [Page Nutrition juste et lisible](runs/2026-10-08-2030-nutrition.md) | 🐛 | PR #58 fusionnée → v63 |
 
 ---
 
