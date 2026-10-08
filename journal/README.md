@@ -179,9 +179,17 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
   ad hoc dans le scratchpad en s'inspirant de `visual-check.mjs`.
 - **Données de démo** : enrichir `demoData.mjs` quand une nouvelle donnée apparaît, pour
   que les captures restent représentatives.
-- **GitHub** : outils `mcp__github__*` s'ils sont présents ; sinon la CLI `gh`, préconfigurée via le
-  proxy du conteneur (`gh pr create`, `gh pr checks <n> --watch`, `gh pr merge <n> --squash`,
-  `gh run list --workflow build-release.yml`, `gh release list`).
+- **GitHub** : outils `mcp__github__*` s'ils sont présents ; sinon `gh api` (REST uniquement — le
+  GraphQL est bloqué dans les sessions, donc pas de `gh pr create` / `gh pr checks`) :
+  - PR : `gh api repos/spreadzenox/HealthTrack/pulls -f title='[Auto] …' -f head=<branche> -f base=main -f body=…`
+  - checks : `gh api repos/spreadzenox/HealthTrack/commits/<sha>/check-runs --jq '.check_runs[]|[.name,.status,.conclusion]|@tsv'`
+  - merge : `gh api -X PUT repos/spreadzenox/HealthTrack/pulls/<n>/merge -f merge_method=squash -f sha=<sha>`
+  - release : `gh api repos/spreadzenox/HealthTrack/releases/latest --jq .tag_name`
+  - attendre la CI sans boucle active : outil Monitor (boucle `until` sur les check-runs) ou abonnement à la PR.
+- **Mécanique de la routine** : la tâche planifiée « HealthTrack — amélioration autonome » réveille
+  toutes les 2 h une session « orchestrateur » qui crée une **session neuve avec le dépôt attaché**
+  (seul moyen d'avoir le droit de pousser) et lui transmet le prompt du run. Chaque run est donc
+  indépendant : sa seule mémoire est ce dossier. Sessions de run étiquetées `healthtrack-routine`.
 - **CI** : `Tests` (Vitest, rapide) sur PR ; `Test — émulateur Samsung Galaxy A56` (long) ;
   `Build & Release` sur push `main` → release `v<run_number>` + APK (sauf si le push ne touche
   que `journal/` : un run de pure veille ne publie donc pas de release vide).
