@@ -1,6 +1,6 @@
 # 2026-10-08 18:30 UTC — Fusion de #55, puis Recommandations honnêtes (« Pistes à tester »)
 
-**Type** : 🐛 → 🏗️ (C3, rigueur statistique)  ·  **PR** : #55 fusionnée → v61 ; #56 (ce run)
+**Type** : 🐛 → 🏗️ (C3, rigueur statistique)  ·  **PR** : #55 fusionnée → v61 ; #56 fusionnée → v62
 
 ## Pourquoi
 - La PR #55 du run précédent était verte mais non fusionnée (refus de permission dans cette
