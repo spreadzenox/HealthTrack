@@ -25,6 +25,13 @@
  */
 
 import { computeTotalsFromItems, NUTRITION_FIELDS } from './nutritionKPIs'
+import {
+  effectiveSampleSize,
+  correlationPValue,
+  benjaminiHochberg,
+  correlationStrength,
+  evidenceLevel,
+} from './statistics'
 
 // ─── Public constants ────────────────────────────────────────────────────────
 
@@ -848,37 +855,28 @@ export function computeBasicCorrelations(entries) {
     if (vec.every((v) => v === 0)) continue
     const r = pearsonCorrelation(wellbeingVec, vec)
     if (r === null) continue
+    const nEff = effectiveSampleSize(wellbeingVec, vec)
     correlations.push({
       variable: key,
       label: VARIABLE_META[key].label,
       r,
+      n,
+      nEff,
+      p: correlationPValue(r, nEff),
       direction: VARIABLE_META[key].direction,
       group: VARIABLE_META[key].group,
     })
   }
 
+  // Honest qualification: effective n (autocorrelation), p-value, FDR q-value.
+  const qValues = benjaminiHochberg(correlations.map((c) => c.p))
+  correlations.forEach((c, i) => {
+    c.q = qValues[i]
+    c.strength = correlationStrength(c.r)
+    c.evidence = evidenceLevel(c.q)
+  })
+
   correlations.sort((a, b) => Math.abs(b.r) - Math.abs(a.r))
-
-  // "Factors to improve" logic:
-  // - higher_better: r < -threshold → having less of a good thing is associated with lower wellbeing
-  // - lower_better: r < -threshold → having more of a bad thing is associated with lower wellbeing
-  //   (positive r for a lower_better variable means "more bad thing → better wellbeing", which is
-  //   a spurious / confusing correlation and should NOT be flagged as a problem to fix)
-  // - neutral: only negative r (r < -threshold) is actionable as "reduce this"
-  const CORR_THRESHOLD = 0.2
-  const negativeFactors = correlations
-    .filter((c) => {
-      if (c.direction === 'higher_better') return c.r < -CORR_THRESHOLD
-      if (c.direction === 'lower_better') return c.r < -CORR_THRESHOLD
-      return c.r < -CORR_THRESHOLD
-    })
-    .sort((a, b) => Math.abs(b.r) - Math.abs(a.r))
-    .slice(0, 3)
-
-  const topNegativeFactors =
-    negativeFactors.length > 0
-      ? negativeFactors
-      : correlations.slice(0, 3)
 
   // Reliability assessment for the basic mode:
   // - With 5–9 days, Pearson r is computed but has high uncertainty (treat as exploratory)
@@ -890,28 +888,62 @@ export function computeBasicCorrelations(entries) {
     datasetDays: n,
     reliability,
     correlations,
-    topNegativeFactors: topNegativeFactors.map((c) => ({
-      ...c,
-      impact: Math.abs(c.r),
-      advice: buildBasicAdvice(c),
-    })),
+    levers: correlations
+      .filter((c) => c.q < LEVER_MAX_Q && leverAction(c.variable, c.r))
+      .slice(0, 3)
+      .map((c) => ({ ...c, action: leverAction(c.variable, c.r) })),
   }
 }
 
-function buildBasicAdvice({ variable, r, direction }) {
-  const meta = VARIABLE_META[variable]
-  const label = meta?.label ?? variable
+// ─── Levers (actionable variables) ───────────────────────────────────────────
 
-  if (direction === 'higher_better' && r < 0) {
-    return `Augmenter votre apport en ${label.toLowerCase()} pourrait améliorer votre bien-être.`
-  }
-  if (direction === 'lower_better' && r < 0) {
-    return `Réduire votre ${label.toLowerCase()} pourrait améliorer votre bien-être.`
-  }
-  if (r > 0) {
-    return `Un ${label.toLowerCase()} plus élevé est associé à un meilleur bien-être.`
-  }
-  return `Un ${label.toLowerCase()} plus bas est associé à un meilleur bien-être.`
+/** Correlations whose FDR-adjusted p-value is above this are never proposed. */
+export const LEVER_MAX_Q = 0.2
+
+/**
+ * Variables the user can act on directly, with the healthy action in plain
+ * French. Physiological outcomes (heart rate, HRV, SpO₂, body composition…)
+ * are deliberately absent: "reduce your resting HR" is not something one does.
+ */
+export const LEVER_ACTIONS = {
+  sleepMinutes: 'Dormir un peu plus longtemps',
+  steps: 'Marcher davantage',
+  activityCalories: 'Bouger davantage (activité physique)',
+  protein_g: 'Manger un peu plus de protéines',
+  fiber_g: 'Manger plus de fibres (légumes, légumineuses, céréales complètes)',
+  sugar_g: 'Manger moins sucré',
+  saturated_fat_g: 'Limiter les graisses saturées (charcuterie, fritures, beurre)',
+  omega3_g: 'Manger plus d’oméga-3 (poissons gras, noix, huile de colza)',
+  alcohol_g: 'Boire moins d’alcool',
+  cigaretteCount: 'Fumer moins de cigarettes',
+  fodmap_score: 'Alléger les repas riches en FODMAP',
+  vitamin_c_mg: 'Plus de fruits et légumes riches en vitamine C',
+  vitamin_d_ug: 'Plus de vitamine D (poissons gras, œufs, soleil)',
+  vitamin_b12_ug: 'Plus de vitamine B12 (produits animaux, aliments enrichis)',
+  vitamin_b9_ug: 'Plus de folates (légumes verts, légumineuses)',
+  vitamin_a_ug: 'Plus de vitamine A (carottes, patate douce, légumes verts)',
+  vitamin_e_mg: 'Plus de vitamine E (oléagineux, huiles végétales)',
+  calcium_mg: 'Plus de calcium (laitages, eaux calciques, amandes)',
+  iron_mg: 'Plus de fer (légumineuses, viande, épinards)',
+  magnesium_mg: 'Plus de magnésium (oléagineux, céréales complètes, chocolat noir)',
+  zinc_mg: 'Plus de zinc (fruits de mer, viande, graines)',
+  potassium_mg: 'Plus de potassium (fruits, légumes, légumineuses)',
+  sodium_mg: 'Manger moins salé',
+}
+
+/**
+ * Returns the action to suggest for this variable, or null when the variable
+ * is not actionable or when the observed sign contradicts the healthy
+ * direction (e.g. more omega-3 linked to LOWER wellbeing → no advice: the
+ * link is probably indirect, and advising the opposite of the data is wrong).
+ */
+export function leverAction(variable, r) {
+  const action = LEVER_ACTIONS[variable]
+  const direction = VARIABLE_META[variable]?.direction
+  if (!action) return null
+  if (direction === 'higher_better' && r > 0) return action
+  if (direction === 'lower_better' && r < 0) return action
+  return null
 }
 
 // ─── Step 5 — advanced ML analysis (OLS multiple regression) ─────────────────
@@ -1200,7 +1232,7 @@ export function computeAdvancedAnalysis(entries) {
         group: c.group,
         advice: buildAdvancedAdvice(c.variable, c.r, dataset),
       })),
-      topRecommendations: basic.topNegativeFactors.map((f) => f.advice),
+      topRecommendations: basic.levers.map((l) => buildAdvancedAdvice(l.variable, l.r, dataset)).filter(Boolean),
       residuals: null,
       todayPrediction: null,
     }
@@ -1241,13 +1273,11 @@ export function computeAdvancedAnalysis(entries) {
 
   featureImportance.sort((a, b) => b.importance - a.importance)
 
-  const negImpact = featureImportance
-    .filter((f) => f.direction === 'negative' && f.importance > 0.05)
-    .slice(0, 5)
-
-  const topRecommendations = negImpact.length > 0
-    ? negImpact.map((f) => f.advice)
-    : featureImportance.slice(0, 3).map((f) => f.advice)
+  // Only actionable variables whose effect sign matches the healthy direction.
+  const topRecommendations = featureImportance
+    .filter((f) => f.importance > 0.05 && f.advice)
+    .slice(0, 3)
+    .map((f) => f.advice)
 
   // Hold-out residuals: predict the last HOLD_OUT_DAYS days using the model
   // trained WITHOUT those days — genuine out-of-sample evaluation.
@@ -1481,26 +1511,9 @@ function std(arr) {
 // ─── Advanced advice builder ──────────────────────────────────────────────────
 
 function buildAdvancedAdvice(variable, coefficient, dataset) {
+  const action = leverAction(variable, coefficient)
+  if (!action) return null
   const meta = VARIABLE_META[variable]
-  const label = meta?.label ?? variable
   const avg = mean(dataset.map((d) => d[variable] ?? 0))
-  const formattedAvg = meta ? meta.format(avg) : avg.toFixed(1)
-
-  if (coefficient < 0) {
-    if (meta?.direction === 'higher_better') {
-      return `Votre ${label.toLowerCase()} moyen est de ${formattedAvg}. L'augmenter devrait significativement améliorer votre bien-être selon le modèle.`
-    }
-    if (meta?.direction === 'lower_better') {
-      return `Votre ${label.toLowerCase()} est actuellement de ${formattedAvg}. Le réduire est associé à un meilleur bien-être selon le modèle.`
-    }
-    return `Votre ${label.toLowerCase()} actuel (${formattedAvg}) a un impact négatif sur votre bien-être. Essayez d'ajuster ce paramètre.`
-  } else {
-    if (meta?.direction === 'higher_better') {
-      return `Votre ${label.toLowerCase()} moyen est de ${formattedAvg}. Ce facteur impacte positivement votre bien-être : continuez ainsi !`
-    }
-    if (meta?.direction === 'lower_better') {
-      return `Votre ${label.toLowerCase()} est actuellement de ${formattedAvg}. Continuer à le maintenir bas est bénéfique pour votre bien-être.`
-    }
-    return `Votre ${label.toLowerCase()} actuel (${formattedAvg}) contribue positivement à votre bien-être.`
-  }
+  return `${action} — votre moyenne actuelle : ${meta.format(avg)}.`
 }

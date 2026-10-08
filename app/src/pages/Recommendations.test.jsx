@@ -175,7 +175,7 @@ describe('CorrelationBar color logic', () => {
         { variable: 'protein_g', label: 'Protéines', r: -0.97, direction: 'higher_better' },
         { variable: 'fat_g',     label: 'Lipides',   r:  0.65, direction: 'neutral' },
       ],
-      topNegativeFactors: [],
+      levers: [],
     })
 
     listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
@@ -230,5 +230,65 @@ describe('Recommendations navigation link', () => {
     render(<App />)
     const link = await screen.findByRole('link', { name: /Recommandations/i })
     expect(link).toHaveAttribute('href', '/recommendations')
+  })
+})
+
+// ─── Levers ("Pistes à tester") ──────────────────────────────────────────────
+
+describe('Recommendations levers', () => {
+  const baseCorr = { n: 40, nEff: 31.6, p: 0.001, q: 0.004, strength: 'modéré', evidence: 'solide' }
+
+  async function renderWithBasic(result) {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const analysisModule = await import('../services/analysisEngine')
+    const spy = vi.spyOn(analysisModule, 'computeBasicCorrelations').mockReturnValue(result)
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
+    renderPage()
+    await waitFor(() => expect(screen.queryByText(/Calcul des analyses/i)).not.toBeInTheDocument())
+    return spy
+  }
+
+  it('shows each lever as an action with its strength, r, effective days and evidence level', async () => {
+    const lever = {
+      ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
+      direction: 'higher_better', action: 'Marcher davantage',
+    }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [lever], levers: [lever],
+    })
+    expect(await screen.findByText(/Pistes à tester/i)).toBeInTheDocument()
+    expect(screen.getByText('Marcher davantage')).toBeInTheDocument()
+    expect(screen.getByText(/lien modéré/i)).toBeInTheDocument()
+    expect(screen.getByText(/r = \+0,42/)).toBeInTheDocument()
+    expect(screen.getByText(/32 jours/)).toBeInTheDocument()
+    expect(screen.getByText(/solide/i)).toBeInTheDocument()
+    expect(screen.getByText(/ne prouve pas une cause/i)).toBeInTheDocument()
+    expect(screen.queryByText(/% de corrélation/i)).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('explains that no lever stands out yet when the list is empty', async () => {
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 12, reliability: 'good',
+      correlations: [{ ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.05, q: 0.9, evidence: 'incertain', strength: 'négligeable' }],
+      levers: [],
+    })
+    expect(await screen.findByText(/Aucune piste ne se dégage/i)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('fades uncertain correlations in the chart', async () => {
+    const solid = { ...baseCorr, variable: 'sleepMinutes', label: 'Durée de sommeil', r: 0.5, direction: 'higher_better' }
+    const weak = { ...baseCorr, variable: 'fat_g', label: 'Lipides', r: -0.1, q: 0.8, evidence: 'incertain', direction: 'neutral' }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [solid, weak], levers: [],
+    })
+    const weakRow = (await screen.findByText('Lipides')).closest('.reco-corr-row')
+    const solidRow = screen.getByText('Durée de sommeil').closest('.reco-corr-row')
+    expect(weakRow).toHaveClass('reco-corr-row-uncertain')
+    expect(solidRow).not.toHaveClass('reco-corr-row-uncertain')
+    spy.mockRestore()
   })
 })

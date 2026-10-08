@@ -17,12 +17,16 @@ import './Recommendations.css'
 
 // ─── Correlation bar chart (SVG) ─────────────────────────────────────────────
 
-function CorrelationBar({ label, r, impact }) {
+function formatR(r) {
+  return (r >= 0 ? '+' : '−') + Math.abs(r).toFixed(2).replace('.', ',')
+}
+
+function CorrelationBar({ label, r, impact, uncertain }) {
   const pct = Math.round(Math.abs(impact) * 100)
   // Green = positive correlation with wellbeing, red = negative correlation.
   const isPositive = r >= 0
   return (
-    <div className="reco-corr-row">
+    <div className={'reco-corr-row' + (uncertain ? ' reco-corr-row-uncertain' : '')}>
       <span className="reco-corr-label">{label}</span>
       <div className="reco-corr-bar-wrap">
         <div
@@ -31,7 +35,7 @@ function CorrelationBar({ label, r, impact }) {
           aria-label={`${pct}%`}
         />
       </div>
-      <span className="reco-corr-value">{r >= 0 ? '+' : ''}{r.toFixed(2)}</span>
+      <span className="reco-corr-value">{formatR(r)}</span>
     </div>
   )
 }
@@ -60,17 +64,37 @@ function ImportanceBar({ label, importance, direction }) {
 
 // ─── Advice card ─────────────────────────────────────────────────────────────
 
-function AdviceCard({ rank, advice, impact }) {
+function AdviceCard({ rank, advice }) {
   return (
     <li className="reco-advice-card">
       <span className="reco-advice-rank">{rank}</span>
       <div className="reco-advice-content">
         <p className="reco-advice-text">{advice}</p>
-        {impact !== undefined && (
-          <p className="reco-advice-impact">
-            Impact estimé : <strong>{Math.round(impact * 100)}%</strong> de corrélation
-          </p>
-        )}
+      </div>
+    </li>
+  )
+}
+
+// ─── Lever card ("piste à tester") ───────────────────────────────────────────
+
+const EVIDENCE_CLASS = {
+  solide: 'reco-evidence-solid',
+  'à confirmer': 'reco-evidence-tentative',
+}
+
+function LeverCard({ rank, lever }) {
+  const days = Math.round(lever.nEff)
+  return (
+    <li className="reco-advice-card">
+      <span className="reco-advice-rank">{rank}</span>
+      <div className="reco-advice-content">
+        <p className="reco-advice-text">{lever.action}</p>
+        <p className="reco-advice-impact">
+          Lien {lever.strength} avec votre bien-être (r = {formatR(lever.r)}, ≈ {days} jours indépendants)
+        </p>
+        <span className={'reco-evidence ' + (EVIDENCE_CLASS[lever.evidence] ?? '')}>
+          Hypothèse {lever.evidence}
+        </span>
       </div>
     </li>
   )
@@ -114,49 +138,59 @@ function BasicTab({ entries }) {
     )
   }
 
-  const { datasetDays, reliability, correlations, topNegativeFactors } = result
+  const { datasetDays, reliability, correlations } = result
+  const levers = result.levers ?? []
 
   return (
     <div className="reco-tab-content">
       <p className="reco-meta">
         Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} avec score bien-être</strong>
         {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
-        Méthode : corrélation de Pearson entre chaque variable et le bien-être.
+        Méthode : corrélation de Pearson entre chaque variable et le bien-être, corrigée pour
+        les jours qui se ressemblent (autocorrélation) et pour le nombre de variables testées
+        (Benjamini-Hochberg).
         {reliability === 'exploratory' && (
           <> <span className="reco-reliability-warn">⚠ Données exploratoires — continuez à enregistrer votre bien-être pour améliorer la fiabilité (objectif : 10 jours).</span></>
         )}
       </p>
 
-      {topNegativeFactors.length > 0 && (
-        <section className="reco-section">
-          <h3 className="reco-section-title">
-            🎯 Top 3 — facteurs à améliorer en priorité
-          </h3>
-          <p className="reco-section-hint">
-            Ces variables sont statistiquement les plus liées à une baisse de votre bien-être.
-          </p>
+      <section className="reco-section">
+        <h3 className="reco-section-title">🎯 Pistes à tester</h3>
+        <p className="reco-section-hint">
+          Ce sur quoi vous pouvez agir et qui va de pair avec un meilleur bien-être dans vos
+          données. Ce sont des hypothèses : une corrélation ne prouve pas une cause. Essayez
+          une piste pendant deux semaines et observez.
+        </p>
+        {levers.length > 0 ? (
           <ol className="reco-advice-list">
-            {topNegativeFactors.map((f, i) => (
-              <AdviceCard
-                key={f.variable}
-                rank={i + 1}
-                advice={f.advice}
-                impact={f.impact}
-              />
+            {levers.map((l, i) => (
+              <LeverCard key={l.variable} rank={i + 1} lever={l} />
             ))}
           </ol>
-        </section>
-      )}
+        ) : (
+          <p className="reco-empty-levers">
+            Aucune piste ne se dégage encore nettement de vos données : les liens observés
+            peuvent être dus au hasard. Continuez à noter votre bien-être chaque jour.
+          </p>
+        )}
+      </section>
 
       {correlations.length > 0 && (
         <section className="reco-section">
           <h3 className="reco-section-title">📈 Corrélations avec votre bien-être</h3>
           <p className="reco-section-hint">
-            Barres vertes = corrélation positive avec votre bien-être · Barres rouges = corrélation négative.
+            Vert = va de pair avec un meilleur bien-être · Rouge = avec un moins bon.
+            Barres pâles = lien incertain, possiblement dû au hasard.
           </p>
           <div className="reco-corr-chart">
             {correlations.map((c) => (
-              <CorrelationBar key={c.variable} label={c.label} r={c.r} impact={Math.abs(c.r)} />
+              <CorrelationBar
+                key={c.variable}
+                label={c.label}
+                r={c.r}
+                impact={Math.abs(c.r)}
+                uncertain={c.evidence === 'incertain'}
+              />
             ))}
           </div>
         </section>
@@ -248,10 +282,12 @@ function AdvancedTab({ entries }) {
       {topRecommendations?.length > 0 && (
         <section className="reco-section">
           <h3 className="reco-section-title">
-            🤖 Recommandations du modèle ML
+            🤖 Pistes suggérées par le modèle
           </h3>
           <p className="reco-section-hint">
-            Ces conseils sont générés par régression sur l'ensemble de vos données historiques.
+            Seuls les facteurs sur lesquels vous pouvez agir, et dont l'effet estimé va dans le
+            sens attendu, sont proposés. Ce sont des hypothèses issues d'une régression sur vos
+            données, pas des certitudes.
           </p>
           <ol className="reco-advice-list">
             {topRecommendations.map((advice, i) => (
