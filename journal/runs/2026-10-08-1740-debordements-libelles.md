@@ -1,6 +1,6 @@
 # 2026-10-08 17:40 UTC — Débordement Paramètres, axe du graphique, libellés anglais
 
-**Type** : 🐛 Bugs & vérif visuelle  ·  **PR** : voir ci-dessous
+**Type** : 🐛 Bugs & vérif visuelle  ·  **PR** : #55 (ouverte — fusion bloquée, voir « Blocage »)
 
 ## Pourquoi
 Les trois premiers points de « Prochaines étapes » relevés par l'audit visuel du run de mise en
@@ -22,6 +22,14 @@ place : défauts visibles dès l'ouverture de l'app, qui nuisent à la confiance
 - Tests : 321 ✅ (308 + 13) · Lint : 14 erreurs, 1 warning (inchangé) · Build ✅
 - Visuel : `npm run visual` avant/après (7 pages), `--empty`, `--light` ; plus aucun débordement
   signalé ; captures dashboard-1/2 et settings-1/2 relues.
+
+## Blocage
+- Checks « Frontend (Vitest) » et « Build APK » **verts** sur 65d3392, tous les garde-fous respectés.
+- La fusion (`gh api -X PUT …/pulls/55/merge`) a été **refusée par le contrôle de permissions de la
+  session** (« Merge Without Review »). Je ne l'ai pas contournée par un autre outil.
+- → **Au propriétaire / run suivant** : fusionner #55 (squash) si la CI est toujours verte, puis vérifier
+  que *Build & Release* publie la release. Si ce refus se répète, il faut autoriser la fusion dans les
+  permissions des sessions de la routine (sinon aucune release ne sortira plus automatiquement).
 
 ## Apprentissages / décisions
 - `--light` donne exactement le rendu sombre : l'app n'a pas de thème clair (C1).

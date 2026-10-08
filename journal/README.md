@@ -23,13 +23,17 @@ une release à chaque changement validé, et tient ce journal.
 - Avec une clé Gemini **gratuite**, Google peut utiliser et faire relire les photos analysées → un
   avertissement dans l'app est prévu (backlog R#9).
 
+- ⚠️ **PR #55 non fusionnée** : CI verte, mais la session n'a pas eu le droit de fusionner
+  (permission « fusion sans revue » refusée). Les changements ci-dessus n'arrivent dans l'app qu'une
+  fois #55 fusionnée. Si cela se reproduit, autoriser la fusion pour les sessions de la routine.
+
 **Prochaines priorités** — textes et chiffres trompeurs des Recommandations, cibles Nutrition, puis
 baselines personnelles FC repos / VFC et tags de comportements.
 
 | Run | Type | Résultat |
 |---|---|---|
 | 08/10 17:00 — [Mise en place](runs/2026-10-08-1700-mise-en-place.md) | 🏗️ | PR #52 fusionnée → v59 |
-| 08/10 17:40 — [Lisibilité tableau de bord / Paramètres](runs/2026-10-08-1740-debordements-libelles.md) | 🐛 | voir compte rendu |
+| 08/10 17:40 — [Lisibilité tableau de bord / Paramètres](runs/2026-10-08-1740-debordements-libelles.md) | 🐛 | PR #55 ouverte, CI verte — fusion refusée par les permissions de session |
 
 ---
 
