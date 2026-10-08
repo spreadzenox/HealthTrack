@@ -55,7 +55,7 @@ une release à chaque changement validé, et tient ce journal.
 | 08/10 17:40 — [Lisibilité tableau de bord / Paramètres](runs/2026-10-08-1740-debordements-libelles.md) | 🐛 | PR #55 fusionnée au run suivant → v61 |
 | 08/10 18:30 — [Pistes à tester (Recommandations)](runs/2026-10-08-1830-pistes-a-tester.md) | 🏗️ | PR #56 fusionnée → v62 |
 | 08/10 20:30 — [Page Nutrition juste et lisible](runs/2026-10-08-2030-nutrition.md) | 🐛 | PR #58 fusionnée → v63 |
-| 08/10 22:30 — [Cœur vs votre norme (FC repos / VFC)](runs/2026-10-08-2230-norme-coeur.md) | 🏗️ | PR #60 |
+| 08/10 22:30 — [Cœur vs votre norme (FC repos / VFC)](runs/2026-10-08-2230-norme-coeur.md) | 🏗️ | PR #60 fusionnée → v64 |
 
 ---
 
