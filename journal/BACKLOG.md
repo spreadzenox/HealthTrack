@@ -31,44 +31,64 @@ HealthTrack devient un **coach de santé personnel local-first** :
 
 ### C2 — Écran « Aujourd'hui »
 - [ ] Remplacer le flux brut « Dernières entrées » par des résumés du jour (sommeil h/min, pas, FC repos, repas, cigarettes)
-- [ ] Lignes de base personnelles (médiane 28 j ± écart) et écart du jour, codé couleur
-- [ ] Score de forme explicable (composantes visibles), avec incertitude
-- [ ] 1–3 actions du jour issues du moteur d'analyse
+- [ ] **Baselines personnelles FC repos / VFC** (R#1) : moyenne 7 j vs plage normale 60 j, z-score, CV → cartes « dans / hors de ta norme »
+- [ ] Régularité du sommeil (R#6) : écart-type coucher/lever 14 j + SRI simplifié
+- [ ] Tendance de poids lissée (R#8, EMA α≈0,1) et objectif de pas fondé sur les preuves (R#10, défaut 7 000, adaptatif)
+- [ ] « Radar » signes de maladie / surmenage (R#12) : ≥ 2 métriques hors norme ≥ 2 nuits, jamais de diagnostic
+- [ ] Readiness personnelle calibrée sur le ressenti (R#24, espace d'état bayésien) — pari long terme
 
 ### C3 — Moteur d'analyse N-of-1 v2
-- [ ] Afficher n et intervalle de confiance pour chaque corrélation ; masquer/griser les non significatives
-- [ ] Correction des comparaisons multiples (Benjamini-Hochberg) — 35 variables testées aujourd'hui
+- [ ] **Rigueur statistique** (R#3) : Benjamini-Hochberg (35 variables testées aujourd'hui), n effectif corrigé de l'autocorrélation, IC bootstrap par blocs, libellé « hypothèse »
 - [ ] Ne recommander que des leviers **actionnables** (pas « réduire votre FC repos »)
-- [ ] Effets décalés et contrôle du jour de la semaine
-- [ ] Détection d'anomalies (FC repos/VFC/sommeil vs ligne de base) → alerte douce « signal inhabituel »
-- [ ] Expériences personnelles (protocole ABAB, analyse avant/après)
+- [ ] Effets décalés (lags 0–3 j) et contrôle du jour de la semaine (R#25)
+- [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
+- [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
+- [ ] Analyse avant/après d'un événement (R#21, régression segmentée)
+- [ ] « Jours similaires » (R#28, kNN sur vecteurs journaliers)
 
 ### C4 — Saisie sans friction
-- [ ] Check-in bien-être enrichi : tags (stress, alcool, caféine, symptômes…) en 2 taps
-- [ ] Repas : saisie texte/voix via Gemini, « refaire ce repas », correction des quantités
-- [ ] Code-barres (Open Food Facts) — évaluer l'impact vie privée (requête produit, aucune donnée santé)
+- [ ] **Tags de comportements en 1 tap** (R#2) sous le check-in : alcool, café après 14 h, repas tardif, écran tard, stress, sport le soir, malade → analyse « jours avec / sans » (≥ 5/5)
+- [ ] **Analyse photo fiabilisée** (R#4) : sortie JSON à schéma, grammes modifiables avant sauvegarde, confiance, question de portion
+- [ ] **Saisie texte / dictée + « comme hier » + favoris** (R#5) — la photo seule est *plus* difficile que le texte d'après une étude terrain
+- [ ] Cigarettes avec contexte (R#7) : déclencheur optionnel, heatmap horaire, « envie résistée »
+- [ ] WHO-5 hebdomadaire (R#11) pour valider le score quotidien
+- [ ] Code-barres Open Food Facts + % ultra-transformés (R#17)
+- [ ] Notifications locales intelligentes (R#15) : ≤ 2/j, heure apprise, effet mesuré
 
 ### C5 — Coach IA (Gemini) ancré dans les données
-- [ ] Résumé hebdomadaire généré à partir d'agrégats locaux, opt-in, garde-fous
+- [ ] **Transparence Gemini** (R#9) : modèle configurable (`gemini-2.5-flash` → 3.5 Flash-Lite / 3.8 Flash), avertissement « clé gratuite = données potentiellement relues par Google », retrait EXIF/GPS avant envoi
+- [ ] Revue hebdo IA ancrée (R#13) : JSON calculé localement → Gemini rédige, chaque chiffre cité vérifié automatiquement, termine par une expérience proposée
+- [ ] « Demander à HealthTrack » (R#22) : function calling sur des outils locaux, le LLM ne voit que leurs sorties
+- [ ] Import de bilans sanguins (R#26) ; LLM on-device optionnel (R#27, Gemma via LiteRT-LM — benchmarker l'A56 d'abord)
 
-### C6 — Qualité & fondations
+### C6 — Qualité, données & fondations
+- [ ] Sync Health Connect en arrière-plan + historique complet (R#16) ; écrire les repas dans HC (R#23)
+- [ ] Sauvegarde chiffrée automatique (R#19, AES-GCM + PBKDF2) — protège contre la perte de données
+- [ ] Dépense énergétique adaptative / TDEE (R#18)
 - [ ] Lint à 0 erreur (baseline 14 erreurs, 1 warning au 2026-10-08)
 - [ ] Performance IndexedDB : `listEntries` fait un `getAll()` + filtre JS à chaque appel → utiliser les index
 - [ ] Code splitting (bundle principal > 500 kB, avertissement Vite)
 
 ## Prochaines étapes (ordre conseillé)
 
-1. 🐛 **Paramètres : débordement horizontal** — l'URL de redirection Withings en `<code>` ne passe pas à la ligne (signalé par `npm run visual`). Ajouter `overflow-wrap:anywhere` et vérifier toutes les pages.
-2. 🐛 **Graphique bien-être (tableau de bord)** — les dates de l'axe X se chevauchent sur 412 px ; n'afficher qu'une date sur deux/trois ou format court.
-3. 🎨 **Tableau de bord** — sommeil affiché « 390 min — asleep » (→ « 6 h 30 »), « (day) » en anglais dans pas/calories, flux d'entrées très long : regrouper par jour/type.
-4. 🐛 **Recommandations** — textes grammaticalement faux (« Un fc moyenne… », « fc » en minuscules), « Impact estimé : 48 % de corrélation » trompeur, leviers non actionnables en Top 3.
-5. 🐛 **Nutrition** — objectifs sur « 4 jours » : vérifier le calcul des cibles (fibres 120 g ? sodium 8000 mg présenté comme objectif à atteindre ?), barres toutes rouges, alignement des barres irrégulier, décimales inutiles.
-6. 🎨 Liens bleus par défaut du navigateur dans Paramètres → couleur d'accent.
-7. 🎨 C1 — barre d'onglets en bas.
+Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
+puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
+
+1. 🐛 **Paramètres : débordement horizontal** — l'URL de redirection Withings en `<code>` ne passe pas à la ligne (signalé par `npm run visual`) ; liens bleus par défaut → couleur d'accent.
+2. 🐛 **Graphique bien-être (tableau de bord)** — les dates de l'axe X se chevauchent sur 412 px.
+3. 🎨 **Tableau de bord** — « 390 min — asleep » (→ « 6 h 30 »), « (day) » en anglais, flux d'entrées brut très long : regrouper par jour/type.
+4. 🐛 **Recommandations** — textes fautifs (« Un fc moyenne… »), « Impact estimé : 48 % de corrélation » trompeur, leviers non actionnables en Top 3 → puis C3 rigueur statistique (R#3).
+5. 🐛 **Nutrition** — cibles cumulées douteuses (fibres 120 g sur 4 jours ? sodium 8 000 mg présenté comme objectif ?), barres toutes rouges, alignement irrégulier, décimales inutiles.
+6. 🏗️ **Baselines personnelles FC repos / VFC** (R#1) — quick win à fort impact, socle du radar et de la readiness.
+7. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes.
+8. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
+9. 🎨 C1 — barre d'onglets en bas.
 
 ## Idées en vrac (à trier)
 
-_(complété par les runs de recherche — voir `RESEARCH.md`)_
+_(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ici ce qui n'a pas encore de chantier)_
+
+- Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
