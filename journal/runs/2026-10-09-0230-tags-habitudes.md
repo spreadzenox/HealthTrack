@@ -1,6 +1,6 @@
 # 2026-10-09 02:30 UTC — Tags d'habitudes dans le check-in + analyse « jours avec / sans »
 
-**Type** : 🏗️ (fonctionnalité + analyse)  ·  **PR** : voir ci-dessous
+**Type** : 🏗️ (fonctionnalité + analyse)  ·  **PR** : #64 fusionnée → v66 (Build & Release ✅, APK publié)
 
 ## Pourquoi
 Item n°1 des « Prochaines étapes » (C4, R#2) : les pistes actuelles ne portent que sur des données
