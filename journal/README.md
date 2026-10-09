@@ -112,7 +112,7 @@ une release à chaque changement validé, et tient ce journal.
 | 09/10 08:30 — [Radar forme](runs/2026-10-09-0830-radar-forme.md) | 🏗️ | PR #69 fusionnée → v69 |
 | 09/10 10:30 — [Analyse photo corrigeable](runs/2026-10-09-1030-analyse-photo.md) | 🏗️ | PR #71 fusionnée → v70 |
 | 09/10 12:30 — [Supprimer une saisie, sauvegarde complète](runs/2026-10-09-1230-supprimer-sauvegarde.md) | 🐛 | PR #72 fusionnée → v71 |
-| 09/10 14:30 — [Modifier un repas enregistré](runs/2026-10-09-1430-modifier-repas.md) | 🏗️ | PR #74 fusionnée → release à vérifier |
+| 09/10 14:30 — [Modifier un repas enregistré](runs/2026-10-09-1430-modifier-repas.md) | 🏗️ | PR #74 fusionnée → v72 |
 
 ---
 

@@ -1,6 +1,6 @@
 # 2026-10-09 14:30 UTC — Modifier un repas enregistré
 
-**Type** : 🏗️  ·  **PR** : #74 (fusionnée)
+**Type** : 🏗️  ·  **PR** : #74 (fusionnée → release v72, APK publié)
 
 ## Pourquoi
 Priorité n°1 du backlog depuis le run 12:30 : on pouvait supprimer un repas mal saisi, mais pas le
