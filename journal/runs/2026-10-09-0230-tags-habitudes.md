@@ -32,7 +32,7 @@ ouverte : #51 `cursor/*`, non touchée).
   autres séries), effets simulés (alcool −0,8 le lendemain, écran tard −0,3, stress −0,9…).
 
 ## Vérifications
-- Tests : 404 ✅ (384 + 20) · Lint : 14 erreurs, 1 warning (inchangé) · Build ✅
+- Tests : 403 ✅ (384 + 19) · Lint : 14 erreurs, 1 warning (inchangé) · Build ✅
 - Visuel : 7 pages démo sans erreur JS ni débordement. Relu : section « Vos habitudes » (alcool
   « solide », stress / écran tard « à confirmer », café « incertain » en pâle, Malade en
   collecte), modale de check-in avec les 7 puces (tient dans l'écran A56), entrée bien-être avec
