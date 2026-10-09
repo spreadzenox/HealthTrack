@@ -83,7 +83,6 @@ function ConnectorCard({ connector }) {
   }, [])
 
   useEffect(() => {
-    const currentSettings = getConnectorSettings(connector.id)
     reloadSettings()
     const detailsFn = connector.availabilityDetails
       ? connector.availabilityDetails.bind(connector)

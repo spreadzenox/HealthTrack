@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-09",
+  "kind": "correctif",
+  "title": "Supprimer une saisie par erreur, et une sauvegarde vraiment complète",
+  "items": [
+    "Un repas, une note de bien-être ou une cigarette enregistrés par erreur peuvent enfin être supprimés : bouton « Supprimer » sur la carte (tableau de bord ou Alimentation), puis « Confirmer ». Les graphiques et analyses se mettent à jour aussitôt.",
+    "Les données de la montre et de la balance ne sont pas supprimables ici : elles reviendraient à la prochaine synchronisation.",
+    "Correctif important : la sauvegarde (Données → Télécharger la sauvegarde) ne contenait pas tout. Au-delà de quelques milliers de mesures (fréquence cardiaque, VFC, poids…), les plus anciennes étaient laissées de côté. Elle contient désormais toutes vos données — pensez à refaire une sauvegarde.",
+    "Les ingrédients s’affichent à la française : « Riz blanc cuit : 180 g »."
+  ]
+}

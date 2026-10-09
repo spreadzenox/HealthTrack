@@ -6,6 +6,7 @@ import Food from './Food'
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
   createEntry: vi.fn(),
+  deleteEntry: vi.fn(),
 }))
 
 describe('Food', () => {
@@ -162,5 +163,27 @@ describe('Food — correction avant enregistrement', () => {
     render(<BrowserRouter><Food /></BrowserRouter>)
     expect(await screen.findByText('Fromage')).toBeInTheDocument()
     expect(screen.getByText('≈ 393 kcal')).toBeInTheDocument()
+  })
+})
+
+describe('Food — supprimer un repas', () => {
+  it('retire le repas de la liste après confirmation', async () => {
+    const { listEntries, deleteEntry } = await import('../storage/localHealthStorage')
+    deleteEntry.mockResolvedValue()
+    listEntries.mockResolvedValue([
+      { id: 9, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { dish: 'Pâtes au pesto', items: [{ ingredient: 'Pâtes', quantity: '200 g' }] } },
+    ])
+    render(
+      <BrowserRouter>
+        <Food />
+      </BrowserRouter>
+    )
+    await screen.findByText('Pâtes au pesto')
+    expect(screen.getByText('Pâtes : 200 g')).toBeInTheDocument()
+    listEntries.mockResolvedValue([])
+    fireEvent.click(screen.getByRole('button', { name: /Supprimer ce repas/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Confirmer/i }))
+    await screen.findByText(/Aucun repas enregistré/i)
+    expect(deleteEntry).toHaveBeenCalledWith(9)
   })
 })

@@ -5,6 +5,8 @@ import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { analyzeWithGemini } from '../services/geminiStandalone'
 import { formatAt } from '../utils/format'
 import MealEditor from '../components/MealEditor'
+import DeleteEntryButton from '../components/DeleteEntryButton'
+import { isDeletableEntry } from '../utils/entries'
 import { mealKcal } from '../services/mealEditing'
 
 /** Ce qui est enregistré pour chaque ingrédient (le signalement « absent de la base » reste à l'écran). */
@@ -262,14 +264,23 @@ export default function Food() {
                 )}
               </div>
               {e.payload?.dish && <p className="meal-dish">{e.payload.dish}</p>}
-              <ul className="meal-items">
-                {e.payload?.items?.slice(0, 6).map((item, i) => (
-                  <li key={i}>{item.ingredient}: {item.quantity}</li>
-                ))}
-                {e.payload?.items?.length > 6 && (
-                  <li className="meal-more">+{e.payload.items.length - 6}</li>
+              <div className="entry-card-row">
+                <ul className="meal-items">
+                  {e.payload?.items?.slice(0, 6).map((item, i) => (
+                    <li key={i}>{item.ingredient}{'\u00a0'}: {item.quantity}</li>
+                  ))}
+                  {e.payload?.items?.length > 6 && (
+                    <li className="meal-more">+{e.payload.items.length - 6}</li>
+                  )}
+                </ul>
+                {isDeletableEntry(e) && (
+                  <DeleteEntryButton
+                    entryId={e.id}
+                    label="ce repas"
+                    onDeleted={(id) => setRecentMeals((meals) => meals.filter((m) => m.id !== id))}
+                  />
                 )}
-              </ul>
+              </div>
             </li>
           ))}
         </ul>

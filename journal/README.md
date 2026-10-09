@@ -59,6 +59,12 @@ une release à chaque changement validé, et tient ce journal.
   marquées « à vérifier ». Avant, un aliment au nom légèrement différent de la base disparaissait
   sans prévenir : il est désormais retrouvé (accents, virgules) ou signalé, avec « Remplacer ».
   Le nom du plat et les kcal apparaissent dans « Derniers repas ».
+- **Supprimer une saisie par erreur** : repas, note de bien-être ou cigarette ont un bouton
+  « Supprimer » (avec confirmation) sur le tableau de bord et dans Alimentation ; les analyses se
+  recalculent aussitôt. Les données de la montre/balance ne sont pas supprimables (elles
+  reviendraient à la synchro).
+- **Sauvegarde vraiment complète** : la sauvegarde JSON laissait de côté les mesures les plus
+  anciennes au-delà de quelques milliers (FC, VFC, poids…) — elle contient maintenant tout.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -69,6 +75,9 @@ une release à chaque changement validé, et tient ce journal.
   des futures analyses (expériences personnelles, radar).
 
 **Points d'attention**
+- ⚠️ **Refaites une sauvegarde** (Données → Télécharger la sauvegarde) après la mise à jour : les
+  sauvegardes faites avant la v71 peuvent être incomplètes si vous avez beaucoup de mesures de la
+  montre. Rien n'a été perdu sur le téléphone lui-même, seulement dans le fichier exporté.
 - Avec une clé Gemini **gratuite**, Google peut utiliser et faire relire les photos analysées →
   désormais signalé dans l'app. Le passage à Gemini 3.8 Flash n'a pas pu être testé avec une vraie
   clé : **si l'analyse photo échoue, essayez un autre modèle dans Paramètres** et dites-le-moi.
@@ -83,8 +92,8 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — un tableau de bord moins encombré (entrées regroupées par jour, barre
-d'onglets en bas), puis saisie d'un repas par texte / « comme hier » et modification d'un repas.
+**Prochaines priorités** — modifier un repas déjà enregistré, un tableau de bord moins encombré
+(entrées regroupées par jour, barre d'onglets en bas), puis saisie d'un repas par texte / « comme hier ».
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -99,6 +108,7 @@ d'onglets en bas), puis saisie d'un repas par texte / « comme hier » et modifi
 | 09/10 06:30 — [Mesures lisibles, libellés justes](runs/2026-10-09-0630-libelles-justes.md) | 🐛 | PR #68 fusionnée → v68 |
 | 09/10 08:30 — [Radar forme](runs/2026-10-09-0830-radar-forme.md) | 🏗️ | PR #69 fusionnée → v69 |
 | 09/10 10:30 — [Analyse photo corrigeable](runs/2026-10-09-1030-analyse-photo.md) | 🏗️ | PR #71 fusionnée → v70 |
+| 09/10 12:30 — [Supprimer une saisie, sauvegarde complète](runs/2026-10-09-1230-supprimer-sauvegarde.md) | 🐛 | PR #72 |
 
 ---
 

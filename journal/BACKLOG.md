@@ -73,6 +73,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [ ] Sauvegarde chiffrée automatique (R#19, AES-GCM + PBKDF2) — protège contre la perte de données
 - [ ] Dépense énergétique adaptative / TDEE (R#18)
 - [ ] Lint à 0 erreur (baseline 14 erreurs, 1 warning au 2026-10-08)
+- [x] **Sauvegarde exhaustive** : l'export n'applique plus les plafonds de l'analyse (perte silencieuse des données anciennes) (#72)
 - [ ] Performance IndexedDB : `listEntries` fait un `getAll()` + filtre JS à chaque appel → utiliser les index
 - [ ] Code splitting (bundle principal > 500 kB, avertissement Vite)
 
@@ -81,7 +82,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 Run bugs & visuel (dernier : 09/10 06:30 ; 2 runs de fond depuis) — à faire au prochain run.
+1. 🏗️ Modifier un repas enregistré avec `MealEditor` (la suppression est livrée, #72).
 2. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type, résumé du jour ; rapprocher Radar et cartes cœur.
 3. 🎨 C1 — barre d'onglets en bas.
 4. 🏗️ Saisie texte / « comme hier » / favoris (R#5) + modifier un repas, en réutilisant `MealEditor`.
@@ -101,12 +102,16 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
 - Tableau de bord : poids + composition corporelle Withings créent deux cartes pour la même pesée → fusionner à l'affichage.
-- Repas (tableau de bord) : afficher les kcal du repas (fait sur Alimentation) et permettre de supprimer / modifier une entrée.
-- Alimentation : « Derniers repas » affiche « nom: 150 g » (pas d'espace avant « : » à la française) ; liste de 20 repas très longue → regrouper par jour.
+- Repas (tableau de bord) : afficher les kcal du repas (fait sur Alimentation) ; modifier une entrée (suppression livrée #72).
+- Paramètres : « Déconnecter Withings » affiché même quand rien n'est connecté.
+- Nutrition : « 1728 mg/j » sans espace dans la capture (Intl donne « 1 728 ») — vérifier sur téléphone le rendu de l'espace fine insécable en gras.
+- Suppression des données synchronisées (pesée aberrante…) : nécessiterait une liste d'exclusion persistante pour que la synchro ne les réimporte pas.
+- Alimentation : liste de 20 repas très longue → regrouper par jour.
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-09 — Supprimer un repas / une note / une cigarette saisis par erreur ; sauvegarde JSON complète (plus de troncature des données anciennes) ; « nom : 150 g » (#72)
 - [x] 2026-10-09 — Analyse photo corrigeable : grammes modifiables, ajout/suppression/remplacement d'ingrédients, kcal, « à vérifier », schéma JSON Gemini, noms rapprochés de la base (#71, v70)
 - [x] 2026-10-09 — « Radar forme » sur le tableau de bord : FC repos, VFC et sommeil vs votre norme, alerte si ≥ 2 signaux s'écartent ensemble (#69, v69)
 - [x] 2026-10-09 — Chasse aux bugs : pesées Withings lisibles (plus de JSON brut), VFC / SpO₂ / FC repos titrées avec unités françaises, activités traduites, « Hypothèse incertaine », plus de « −0,00 » (#68, v68)
