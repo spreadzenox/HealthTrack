@@ -1,5 +1,6 @@
 .app {
-  padding-bottom: 24px;
+  /* Laisse la place à la barre d'onglets fixe (60 px ; la zone gestuelle est déjà dans le body). */
+  padding-bottom: 72px;
 }
 
 .update-banner {
@@ -31,64 +32,27 @@
   font-size: 0.9rem;
 }
 
+/* En-tête compact : la navigation est dans la barre d'onglets en bas. */
 .header {
-  padding: 20px 0 16px;
-  text-align: center;
-}
-
-.header-brand {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 10px;
+  padding: 14px 0 12px;
 }
 
 .header-logo {
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   display: block;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(78, 205, 196, 0.22);
+  border-radius: 9px;
+  box-shadow: 0 2px 10px rgba(78, 205, 196, 0.2);
 }
 
-.header-brand h1 {
+.header h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--text);
-}
-
-.header-sub {
-  margin: 4px 0 12px;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.nav {
-  display: flex;
-  gap: 4px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.nav-link {
-  padding: 8px 14px;
-  border-radius: var(--radius);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: background 0.2s, color 0.2s;
-}
-
-.nav-link:hover {
-  color: var(--text);
-  background: var(--surface);
-}
-
-.nav-link.active {
-  color: var(--accent);
-  background: rgba(78, 205, 196, 0.12);
 }
 
 .main {

@@ -44,6 +44,7 @@ const DEFAULT_ROUTES = [
   ['/connectors', 'connectors'],
   ['/recommendations', 'recommendations'],
   ['/settings', 'settings'],
+  ['/plus', 'plus'],
 ]
 
 const FAKE_MEAL_ANALYSIS = {
