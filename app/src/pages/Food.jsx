@@ -4,6 +4,15 @@ import { listEntries, createEntry } from '../storage/localHealthStorage'
 import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { analyzeWithGemini } from '../services/geminiStandalone'
 import { formatAt } from '../utils/format'
+import MealEditor from '../components/MealEditor'
+import { mealKcal } from '../services/mealEditing'
+
+/** Ce qui est enregistré pour chaque ingrédient (le signalement « absent de la base » reste à l'écran). */
+function itemForStorage(item) {
+  const stored = { ...item }
+  delete stored.unknown
+  return stored
+}
 
 export default function Food() {
   const [file, setFile] = useState(null)
@@ -12,6 +21,7 @@ export default function Food() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
+  const [items, setItems] = useState([])
   const [savedId, setSavedId] = useState(null)
   const [recentMeals, setRecentMeals] = useState([])
   const cameraInputRef = useRef(null)
@@ -21,7 +31,9 @@ export default function Food() {
     try {
       const data = await listEntries({ type: 'food', limit: 20 })
       setRecentMeals(data)
-    } catch {}
+    } catch {
+      // Liste indisponible : la page reste utilisable pour analyser une photo
+    }
   }
 
   useEffect(() => {
@@ -74,6 +86,7 @@ export default function Food() {
       const apiKey = getGeminiApiKey()
       const data = await analyzeWithGemini(file, apiKey)
       setResult(data)
+      setItems(data.items || [])
     } catch (err) {
       setError(err.message || "Erreur lors de l'analyse.")
     } finally {
@@ -82,14 +95,20 @@ export default function Food() {
   }
 
   const saveMeal = async () => {
-    if (!result?.items?.length) return
+    const toSave = items.filter((it) => it.ingredient)
+    if (!toSave.length) return
     setSaving(true)
     setError(null)
     try {
       const id = await createEntry({
         type: 'food',
         source: 'app_food',
-        payload: { items: result.items, provider: result.provider, ...(result.model ? { model: result.model } : {}) },
+        payload: {
+          items: toSave.map(itemForStorage),
+          provider: result.provider,
+          ...(result.model ? { model: result.model } : {}),
+          ...(result.dish ? { dish: result.dish } : {}),
+        },
       })
       setSavedId(id)
       loadRecent()
@@ -105,6 +124,7 @@ export default function Food() {
     setFile(null)
     setPreview(null)
     setResult(null)
+    setItems([])
     setSavedId(null)
     setError(null)
     if (cameraInputRef.current) cameraInputRef.current.value = ''
@@ -191,18 +211,23 @@ export default function Food() {
 
       {error && <div className="error-msg" role="alert">{error}</div>}
 
-      {result?.items?.length > 0 && (
+      {result && !loading && (
         <section className="results" aria-labelledby="results-title">
-          <h2 id="results-title">Ingrédients détectés</h2>
+          <h2 id="results-title">{result.dish || 'Ingrédients détectés'}</h2>
           <p className="provider-tag">Source : {result.model || result.provider}</p>
-          <ul>
-            {result.items.map((item, i) => (
-              <li key={i}>
-                <span className="ingredient">{item.ingredient}</span>
-                <span className="quantity">{item.quantity}</span>
-              </li>
-            ))}
-          </ul>
+          {result.items?.length > 0 ? (
+            !savedId && (
+              <p className="results-hint">
+                Vérifiez les quantités avant d&apos;enregistrer : l&apos;estimation sur photo peut se
+                tromper de plusieurs dizaines de grammes.
+              </p>
+            )
+          ) : (
+            <p className="results-hint">
+              Aucun ingrédient reconnu. Ajoutez-les ci-dessous ou essayez une autre photo.
+            </p>
+          )}
+          <MealEditor items={items} onChange={setItems} disabled={Boolean(savedId) || saving} />
           <div className="actions">
             {savedId ? (
               <p className="saved-msg">✓ Repas enregistré</p>
@@ -211,7 +236,7 @@ export default function Food() {
                 type="button"
                 className="btn"
                 onClick={saveMeal}
-                disabled={saving}
+                disabled={saving || items.length === 0}
               >
                 {saving ? 'Enregistrement…' : 'Enregistrer ce repas'}
               </button>
@@ -223,10 +248,6 @@ export default function Food() {
         </section>
       )}
 
-      {result?.items?.length === 0 && !loading && result !== null && (
-        <p className="loading">Aucun ingrédient détecté. Essayez une autre photo.</p>
-      )}
-
       <h3 className="section-title">Derniers repas enregistrés</h3>
       {recentMeals.length === 0 ? (
         <p className="empty-hint">Aucun repas enregistré pour l&apos;instant.</p>
@@ -234,7 +255,13 @@ export default function Food() {
         <ul className="meals-list">
           {recentMeals.map((e) => (
             <li key={e.id} className="meal-card">
-              <time className="meal-at">{formatAt(e.at)}</time>
+              <div className="meal-head">
+                <time className="meal-at">{formatAt(e.at)}</time>
+                {mealKcal(e.payload?.items) > 0 && (
+                  <span className="meal-kcal">≈ {mealKcal(e.payload.items).toLocaleString('fr-FR')} kcal</span>
+                )}
+              </div>
+              {e.payload?.dish && <p className="meal-dish">{e.payload.dish}</p>}
               <ul className="meal-items">
                 {e.payload?.items?.slice(0, 6).map((item, i) => (
                   <li key={i}>{item.ingredient}: {item.quantity}</li>

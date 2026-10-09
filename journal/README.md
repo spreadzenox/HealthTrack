@@ -53,6 +53,12 @@ une release à chaque changement validé, et tient ce journal.
   avec vos valeurs vs habituelles et des conseils prudents (repos, sommeil, entraînement allégé ;
   professionnel de santé si fièvre ou symptômes qui durent). Jamais un diagnostic. ~2 semaines de
   mesures nécessaires.
+- **Analyse photo corrigeable** (Alimentation) : après l'analyse, chaque ingrédient a ses grammes
+  modifiables (champ ou − / + 10 g) avec ses kcal et le total du repas ; supprimez un ingrédient
+  mal reconnu, ajoutez un oubli par recherche. Les estimations douteuses (huile, sauce) sont
+  marquées « à vérifier ». Avant, un aliment au nom légèrement différent de la base disparaissait
+  sans prévenir : il est désormais retrouvé (accents, virgules) ou signalé, avec « Remplacer ».
+  Le nom du plat et les kcal apparaissent dans « Derniers repas ».
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -71,11 +77,14 @@ une release à chaque changement validé, et tient ce journal.
   de la routine.
 - Le test sur émulateur **Android 16 (API 36)** échoue à la création de l'émulateur (problème
   côté GitHub, sans lien avec le code) ; Android 15 et la publication des releases fonctionnent.
+- Analyse photo : la réponse est maintenant demandée à Gemini dans un format strict ; si un modèle
+  le refuse, l'app réessaie automatiquement sans. Non testé avec une vraie clé : **si l'analyse
+  photo échoue depuis la mise à jour, dites-le-moi**.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — analyse photo fiabilisée (grammes modifiables), puis un tableau de bord
-moins encombré (entrées regroupées par jour, barre d'onglets en bas).
+**Prochaines priorités** — un tableau de bord moins encombré (entrées regroupées par jour, barre
+d'onglets en bas), puis saisie d'un repas par texte / « comme hier » et modification d'un repas.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -89,6 +98,7 @@ moins encombré (entrées regroupées par jour, barre d'onglets en bas).
 | 09/10 04:30 — [Transparence Gemini](runs/2026-10-09-0430-transparence-gemini.md) | 🔒 | PR #66 fusionnée → v67 |
 | 09/10 06:30 — [Mesures lisibles, libellés justes](runs/2026-10-09-0630-libelles-justes.md) | 🐛 | PR #68 fusionnée → v68 |
 | 09/10 08:30 — [Radar forme](runs/2026-10-09-0830-radar-forme.md) | 🏗️ | PR #69 fusionnée → v69 |
+| 09/10 10:30 — [Analyse photo corrigeable](runs/2026-10-09-1030-analyse-photo.md) | 🏗️ | PR #71 fusionnée → v70 |
 
 ---
 
@@ -235,7 +245,8 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
 - **Vérification visuelle** : `cd app && npm run visual` — lance Vite, injecte ~75 jours de
   données de démo corrélées (`scripts/visual/demoData.mjs`), capture chaque page dans un
   viewport Galaxy A56 (412×915, Chromium/Playwright). Options : `--empty`, `--light`,
-  `--routes=/,/food`, `--radar` (début d'infection simulé), `--update-banner`, `--wellbeing-prompt`, `--whats-new`, `--out=`,
+  `--routes=/,/food`, `--radar` (début d'infection simulé), `--food-analysis` (analyse photo
+  simulée sur /food, réponse Gemini factice), `--update-banner`, `--wellbeing-prompt`, `--whats-new`, `--out=`,
   `--click="Recommandations avancées"` (clique un bouton avant la capture, ex. un onglet).
   Pour une interaction précise (clic, saisie, modale), écrire un petit script Playwright
   ad hoc dans le scratchpad en s'inspirant de `visual-check.mjs`.
