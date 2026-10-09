@@ -1,0 +1,89 @@
+/* Barre d'onglets fixée en bas, à portée de pouce (5 entrées, cibles ≥ 56 px). */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  background: rgba(20, 20, 36, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 max(8px, calc((100vw - 480px) / 2)) var(--safe-bottom);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tabbar-link {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 2px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tabbar-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 30px;
+  border-radius: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tabbar-icon svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tabbar-icon circle {
+  fill: currentColor;
+  stroke: none;
+}
+
+.tabbar-link.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tabbar-link.active .tabbar-icon {
+  background: rgba(78, 205, 196, 0.15);
+}
+
+.tabbar-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+  border-radius: 12px;
+}
+
+.tabbar-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tabbar-badge {
+  position: absolute;
+  top: 3px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff6b6b;
+  box-shadow: 0 0 0 2px rgba(20, 20, 36, 0.96);
+}

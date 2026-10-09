@@ -94,7 +94,7 @@ export default function Food() {
   const analyze = async () => {
     if (!file) return
     if (!hasGeminiApiKey()) {
-      setError('Ajoutez votre clé API Gemini dans Paramètres pour analyser une photo.')
+      setError('Ajoutez votre clé API Gemini dans Plus → Paramètres pour analyser une photo.')
       return
     }
     setLoading(true)

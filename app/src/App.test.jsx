@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within, fireEvent } from '@testing-library/react'
 import App from './App'
 
 describe('App', () => {
@@ -7,27 +7,18 @@ describe('App', () => {
     const { container } = render(<App />)
     expect(container.querySelector('img.header-logo')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /HealthTrack/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Tableau de bord/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Alimentation/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Données/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Nutrition/i })).toBeInTheDocument()
+    const nav = screen.getByRole('navigation', { name: 'Principal' })
+    expect(within(nav).getByRole('link', { name: /Accueil/ })).toHaveAttribute('href', '/')
+    expect(within(nav).getByRole('link', { name: /Repas/ })).toHaveAttribute('href', '/food')
+    expect(within(nav).getByRole('link', { name: /Nutrition/ })).toHaveAttribute('href', '/nutrition')
+    expect(within(nav).getByRole('link', { name: /Analyses/ })).toHaveAttribute('href', '/recommendations')
+    expect(within(nav).getByRole('link', { name: /Plus/ })).toHaveAttribute('href', '/plus')
   })
 
-  it('dashboard link points to /', () => {
+  it('reaches secondary pages through « Plus »', async () => {
     render(<App />)
-    const dashboardLink = screen.getByRole('link', { name: /Tableau de bord/i })
-    expect(dashboardLink).toHaveAttribute('href', '/')
-  })
-
-  it('food link points to /food', () => {
-    render(<App />)
-    const foodLink = screen.getByRole('link', { name: /Alimentation/i })
-    expect(foodLink).toHaveAttribute('href', '/food')
-  })
-
-  it('data link points to /data', () => {
-    render(<App />)
-    const dataLink = screen.getByRole('link', { name: /Données/i })
-    expect(dataLink).toHaveAttribute('href', '/data')
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Principal' })).getByRole('link', { name: /Plus/ }))
+    expect(await screen.findByRole('link', { name: /Données/ })).toHaveAttribute('href', '/data')
+    expect(screen.getByRole('link', { name: /Paramètres/ })).toHaveAttribute('href', '/settings')
   })
 })

@@ -24,7 +24,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 ## Chantiers long terme (découpés en étapes livrables)
 
 ### C1 — Navigation & design system mobile
-- [ ] Barre d'onglets en bas (5 entrées max) au lieu des 7 liens qui occupent ~¼ de l'écran
+- [x] **Barre d'onglets en bas** : Accueil, Repas, Nutrition, Analyses, Plus (→ Données, Connecteurs, Paramètres, Nouveautés), en-tête compact (run 22:30)
+- [ ] Vérifier la barre sur téléphone (zone gestuelle Android, edge-to-edge) ; au besoin `viewport-fit=cover` + `--safe-area-inset-*` de Capacitor
 - [ ] Tokens de design (espacements, typographie, couleurs sémantiques) + composants communs (Card, Stat, Badge, EmptyState)
 - [ ] Mode clair (`prefers-color-scheme`) — vérifier avec `npm run visual -- --light`
 - [ ] Accessibilité : contrastes, cibles tactiles ≥ 44 px, libellés ARIA
@@ -84,14 +85,16 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🎨 C1 — barre d'onglets en bas.
-2. 🐛 Chasse aux bugs sur les interactions (formulaires, modales, import d'une ancienne sauvegarde) — dernier run 🐛 : 09/10 20:30.
-3. 🔭 Veille (dernière : 08/10 17:00) — saisie texte/dictée des repas, état de l'art 2026.
+1. 🔭 Veille (dernière : 08/10 17:00) — saisie texte/dictée des repas, état de l'art 2026.
+2. 🏗️ Effets décalés (lags 0–3 j) et contrôle du jour de la semaine (C3).
+3. 🐛 Chasse aux bugs sur les interactions (formulaires, modales, import d'une ancienne sauvegarde) — dernier run 🐛 : 09/10 20:30.
 4. 🏗️ Saisie texte libre / dictée → Gemini, vers `NewMealForm`.
 5. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
 
 ## Idées en vrac (à trier)
 
+- CI émulateur : la capture « startup » montre l'écran d'accueil d'Android, pas l'app → lancer l'activité et capturer après chargement, pour vérifier zones système et rendu WebView réel.
+- Titre de page « Recommandations » vs onglet « Analyses » : harmoniser quand la page sera retravaillée (« Analyses » couvre aussi habitudes et modèle).
 _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ici ce qui n'a pas encore de chantier)_
 
 - Repères nutritionnels : vérifier chaque valeur contre ANSES 2021 (ex. magnésium AS 420/360 mg vs 380/300 dans le code) et afficher la source au tap ; ajouter AG saturés / sucres ajoutés dans « À limiter » quand la base distinguera sucres ajoutés.
@@ -116,6 +119,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-09 — Barre d'onglets en bas + page « Plus » + en-tête compact (run 22:30)
 - [x] 2026-10-09 — Analyses : sommeil rattaché au jour du réveil (avant : nuit suivante), éveils non comptés ; « 7 h 11 » ; bouton Nutrition vide (run 20:30)
 - [x] 2026-10-09 — Alimentation : « Saisir sans photo », « Repas habituels » et « Refaire » (#78, v74)
 - [x] 2026-10-09 — Tableau de bord « Vos derniers jours » : une carte par jour avec résumé + saisies, 14 jours chargés (#76, v73)

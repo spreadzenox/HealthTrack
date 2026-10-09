@@ -82,6 +82,10 @@ une release à chaque changement validé, et tient ce journal.
   maintenant pour le jour du réveil (comme sur le tableau de bord et le Radar), et les éveils / le
   temps « au lit » ne gonflent plus la durée. **Vos pistes peuvent changer** après la mise à jour :
   c'est voulu (sur la démo, « Dormir un peu plus longtemps » passe de invisible à n°1).
+- **Barre d'onglets en bas** : la navigation passe en bas de l'écran, à portée de pouce — Accueil,
+  Repas, Nutrition, Analyses (= Recommandations) et **Plus** (Données, Connecteurs, Paramètres,
+  Nouveautés, avec un point rouge s'il y a du nouveau). L'en-tête tient sur une ligne : le contenu
+  commence ~170 px plus haut sur chaque page.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -108,10 +112,13 @@ une release à chaque changement validé, et tient ce journal.
   photo échoue depuis la mise à jour, dites-le-moi**.
 - Après la v75, les **Recommandations** (basiques et avancées) peuvent changer : correction du
   rattachement du sommeil, pas un caprice du modèle.
+- **Barre d'onglets** : vérifiée seulement dans un navigateur simulant l'A56. **Si elle est
+  cachée en partie par la barre de navigation Android** (boutons ou trait gestuel), dites-le-moi :
+  c'est un réglage d'affichage bord à bord à ajuster.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — barre d'onglets en bas, effets décalés (J-1 → J) dans les analyses, puis
+**Prochaines priorités** — veille (état de l'art 2026), effets décalés (J-1 → J) dans les analyses, puis
 saisie d'un repas en texte libre / dictée.
 
 | Run | Type | Résultat |
@@ -132,6 +139,7 @@ saisie d'un repas en texte libre / dictée.
 | 09/10 16:30 — [Vos derniers jours (tableau de bord)](runs/2026-10-09-1630-journal-par-jour.md) | 🎨 | PR #76 fusionnée → v73 |
 | 09/10 18:30 — [Repas sans photo, repas habituels](runs/2026-10-09-1830-repas-sans-photo.md) | 🏗️ | PR #78 fusionnée → v74 |
 | 09/10 20:30 — [Sommeil au bon jour dans les analyses](runs/2026-10-09-2030-sommeil-analyses.md) | 🐛 | PR #80 fusionnée → v75 |
+| 09/10 22:30 — [Barre d'onglets en bas](runs/2026-10-09-2230-barre-onglets.md) | 🎨 | PR #81 (en cours) |
 
 ---
 

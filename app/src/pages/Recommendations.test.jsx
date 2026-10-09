@@ -238,7 +238,7 @@ describe('Recommendations navigation link', () => {
   it('is present in the App navigation', async () => {
     const App = (await import('../App')).default
     render(<App />)
-    const link = await screen.findByRole('link', { name: /Recommandations/i })
+    const link = await screen.findByRole('link', { name: /Analyses/ })
     expect(link).toHaveAttribute('href', '/recommendations')
   })
 })

@@ -160,7 +160,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
           })}
         </div>
         <p className="wellbeing-tags-hint">
-          Ces tags permettent de voir, dans Recommandations, ce qui va de pair avec vos bons et
+          Ces tags permettent de voir, dans Analyses, ce qui va de pair avec vos bons et
           moins bons jours.
         </p>
 

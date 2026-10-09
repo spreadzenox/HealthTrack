@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-09",
+  "kind": "amélioration",
+  "title": "Nouvelle barre d’onglets en bas de l’écran",
+  "items": [
+    "La navigation passe en bas, à portée de pouce : Accueil, Repas, Nutrition, Analyses et Plus. Fini les 7 liens qui occupaient le quart supérieur de chaque page.",
+    "L’en-tête est réduit à une ligne : vous voyez directement le contenu de la page.",
+    "« Plus » regroupe Données (sauvegarde, import), Connecteurs, Paramètres et Nouveautés ; un point rouge signale les nouveautés non lues.",
+    "La page « Recommandations » s’ouvre depuis l’onglet « Analyses »."
+  ]
+}
