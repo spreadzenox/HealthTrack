@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices } from './format'
+import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel } from './format'
 
 describe('formatDuration', () => {
   it('affiche heures et minutes', () => {
@@ -62,5 +62,41 @@ describe('pickLabelIndices', () => {
     expect(pickLabelIndices(0, 6)).toEqual([])
     expect(pickLabelIndices(1, 6)).toEqual([0])
     expect(pickLabelIndices(14, 1)).toEqual([13])
+  })
+})
+
+describe('formatSigned', () => {
+  it('affiche le signe et la virgule française', () => {
+    expect(formatSigned(0.364, 2)).toBe('+0,36')
+    expect(formatSigned(-0.284, 2)).toBe('−0,28')
+    expect(formatSigned(-1.25, 1)).toBe('−1,3')
+  })
+  it("n'affiche jamais « −0,00 » : une valeur qui s'arrondit à zéro est neutre", () => {
+    expect(formatSigned(-0.001, 2)).toBe('0,00')
+    expect(formatSigned(0.004, 2)).toBe('0,00')
+    expect(formatSigned(-0.04, 1)).toBe('0,0')
+  })
+})
+
+describe('workoutTypeLabel', () => {
+  it('traduit les types d’activité Health Connect courants', () => {
+    expect(workoutTypeLabel('cycling')).toBe('Vélo')
+    expect(workoutTypeLabel('running')).toBe('Course à pied')
+    expect(workoutTypeLabel('walking')).toBe('Marche')
+    expect(workoutTypeLabel('strengthTraining')).toBe('Renforcement musculaire')
+  })
+  it('rend lisible un type inconnu plutôt que de l’afficher brut', () => {
+    expect(workoutTypeLabel('dumbbellLateralRaise')).toBe('Dumbbell lateral raise')
+  })
+  it('renvoie une chaîne vide sans type', () => {
+    expect(workoutTypeLabel(undefined)).toBe('')
+  })
+})
+
+describe('evidenceLabel', () => {
+  it('accorde le niveau de confiance avec « hypothèse »', () => {
+    expect(evidenceLabel('solide')).toBe('Hypothèse solide')
+    expect(evidenceLabel('à confirmer')).toBe('Hypothèse à confirmer')
+    expect(evidenceLabel('incertain')).toBe('Hypothèse incertaine')
   })
 })

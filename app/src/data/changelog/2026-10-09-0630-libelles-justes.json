@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-09",
+  "kind": "correctif",
+  "title": "Des mesures affichées clairement, en français",
+  "items": [
+    "Tableau de bord : vos pesées Withings s’affichent enfin lisiblement (« 77,2 kg », « Masse grasse 24,1 % · Muscles 32,4 kg », taille en cm) au lieu d’une suite de données techniques.",
+    "Les mesures de la montre ont chacune leur titre : « FC au repos », « VFC » en ms et « Saturation en oxygène » en %, au lieu de « Fréquence cardiaque » partout et d’unités en anglais (« millisecond », « percent »).",
+    "Les activités sportives sont traduites : « Vélo », « Course à pied », « Marche »… au lieu de « cycling » ou « running ».",
+    "Recommandations : « Hypothèse incertaine » correctement accordé, plus de « −0,00 » pour un lien nul, et le graphique du modèle avancé parle de lien avec votre bien-être, pas d’« impact » (une association n’est pas une preuve de cause).",
+    "Page Données : les cartes Exporter / Importer ne commencent plus par un grand vide."
+  ]
+}

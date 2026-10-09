@@ -143,7 +143,7 @@ export const VARIABLE_META = {
     group: 'lifestyle',
   },
   hrv_ms: {
-    label: 'Variabilité FC (HRV)',
+    label: 'Variabilité cardiaque',
     unit: 'ms',
     format: (v) => `${Math.round(v)} ms`,
     direction: 'higher_better',

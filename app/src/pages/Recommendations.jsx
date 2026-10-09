@@ -16,13 +16,14 @@ import {
 } from '../services/analysisEngine'
 import { computeTagEffects, MIN_TAG_DAYS } from '../services/behaviorTags'
 import { isDebugModeEnabled } from '../settings/debugMode'
+import { formatSigned, evidenceLabel } from '../utils/format'
 import { useAutoSync } from '../hooks/useAutoSync'
 import './Recommendations.css'
 
 // ─── Correlation bar chart (SVG) ─────────────────────────────────────────────
 
 function formatR(r) {
-  return (r >= 0 ? '+' : '−') + Math.abs(r).toFixed(2).replace('.', ',')
+  return formatSigned(r, 2)
 }
 
 function CorrelationBar({ label, r, impact, uncertain }) {
@@ -97,7 +98,7 @@ function LeverCard({ rank, lever }) {
           Lien {lever.strength} avec votre bien-être (r = {formatR(lever.r)}, ≈ {days} jours indépendants)
         </p>
         <span className={'reco-evidence ' + (EVIDENCE_CLASS[lever.evidence] ?? '')}>
-          Hypothèse {lever.evidence}
+          {evidenceLabel(lever.evidence)}
         </span>
       </div>
     </li>
@@ -111,7 +112,7 @@ function frScore(v) {
 }
 
 function frDiff(v) {
-  return (v >= 0 ? '+' : '−') + frScore(Math.abs(v))
+  return formatSigned(v, 1)
 }
 
 function TagEffectCard({ effect }) {
@@ -132,7 +133,7 @@ function TagEffectCard({ effect }) {
         {effect.nWith} jour{effect.nWith > 1 ? 's' : ''} avec · {effect.nWithout} sans
       </p>
       <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
-        Hypothèse {effect.evidence}
+        {evidenceLabel(effect.evidence)}
       </span>
     </li>
   )
@@ -397,8 +398,8 @@ function AdvancedTab({ entries }) {
             🔬 Importance des variables (coefficients standardisés)
           </h3>
           <p className="reco-section-hint">
-            Vert = impact positif sur votre bien-être · Rouge = impact négatif.
-            Taille de la barre = force de l'impact.
+            Vert = va de pair avec un meilleur bien-être · Rouge = avec un moins bon.
+            Taille de la barre = poids de la variable dans le modèle (une association, pas une preuve de cause).
           </p>
           <div className="reco-corr-chart">
             {featureImportance.map((f) => (
@@ -432,7 +433,7 @@ function AdvancedTab({ entries }) {
                   <span className="reco-residual-actual">Réel : <strong>{r.actual.toFixed(1).replace('.', ',')}</strong></span>
                   <span className="reco-residual-pred">Prédit : <strong>{r.predicted.toFixed(1).replace('.', ',')}</strong></span>
                   <span className={'reco-residual-diff ' + (diff >= 0 ? 'reco-diff-pos' : 'reco-diff-neg')}>
-                    {diff >= 0 ? '+' : ''}{diff.toFixed(1).replace('.', ',')}
+                    {formatSigned(diff, 1)}
                   </span>
                 </div>
               )

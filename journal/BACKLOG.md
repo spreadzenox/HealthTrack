@@ -79,10 +79,10 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 Run bugs & vérif visuelle (`--empty`, interactions : modale de check-in, onglets) — dû (4 runs de fond d'affilée).
-2. 🏗️ **Radar** (R#12) — réutilise `services/baselines.js` (FC repos, VFC + sommeil), persistance ≥ 2 nuits.
-3. 🏗️ **Analyse photo fiabilisée** (R#4) — schéma JSON (`responseSchema`), grammes modifiables avant sauvegarde.
-4. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
+1. 🏗️ **Radar** (R#12) — réutilise `services/baselines.js` (FC repos, VFC + sommeil), persistance ≥ 2 nuits.
+2. 🏗️ **Analyse photo fiabilisée** (R#4) — schéma JSON (`responseSchema`), grammes modifiables avant sauvegarde.
+3. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type, résumé du jour.
+4. 🐛 Run bugs & visuel vers le 4ᵉ run de fond (dernier : 09/10 06:30).
 5. 🎨 C1 — barre d'onglets en bas.
 
 ## Idées en vrac (à trier)
@@ -97,10 +97,14 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Démo : le dernier jour de données est « hier » quand le run tourne après minuit (heure de Paris) → la prédiction du jour et « Par heure (aujourd'hui) » ne sont jamais visibles dans les captures ; faire finir la démo « aujourd'hui ».
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
+- Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
+- Tableau de bord : poids + composition corporelle Withings créent deux cartes pour la même pesée → fusionner à l'affichage.
+- Repas (Alimentation / tableau de bord) : afficher les kcal du repas et permettre de supprimer / modifier une entrée.
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-09 — Chasse aux bugs : pesées Withings lisibles (plus de JSON brut), VFC / SpO₂ / FC repos titrées avec unités françaises, activités traduites, « Hypothèse incertaine », plus de « −0,00 » (#68, v68)
 - [x] 2026-10-09 — Transparence Gemini : photo réduite et sans métadonnées, modèle 3.8 Flash réglable avec repli, avertissement clé gratuite (#66, v67)
 - [x] 2026-10-09 — Tags d'habitudes dans le check-in + section « Vos habitudes » (jours avec / sans, permutation + BH) (#64, v66)
 - [x] 2026-10-09 — Recommandations avancées fiabilisées : coefficients corrigés, doublons écartés, Ridge réglé par validation croisée, seuil d'effet, chiffres FR

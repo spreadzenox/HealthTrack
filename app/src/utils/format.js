@@ -74,3 +74,85 @@ export function pickLabelIndices(n, max) {
   for (let i = n - 1; i >= 0; i -= step) indices.unshift(i)
   return indices
 }
+
+/**
+ * Nombre signé à la française : 0.364 → « +0,36 », -0.28 → « −0,28 ».
+ * Une valeur qui s'arrondit à zéro s'affiche « 0,00 » (jamais « −0,00 »).
+ * @param {number} value
+ * @param {number} digits - décimales
+ * @returns {string}
+ */
+export function formatSigned(value, digits) {
+  const text = Math.abs(value).toFixed(digits)
+  const abs = text.replace('.', ',')
+  if (Number(text) === 0) return abs
+  return (value > 0 ? '+' : '−') + abs
+}
+
+const WORKOUT_TYPE_LABELS = {
+  walking: 'Marche',
+  running: 'Course à pied',
+  runningTreadmill: 'Course sur tapis',
+  cycling: 'Vélo',
+  biking: 'Vélo',
+  bikingStationary: "Vélo d'appartement",
+  hiking: 'Randonnée',
+  swimming: 'Natation',
+  swimmingPool: 'Natation en piscine',
+  swimmingOpenWater: 'Natation en eau libre',
+  strengthTraining: 'Renforcement musculaire',
+  traditionalStrengthTraining: 'Musculation',
+  functionalStrengthTraining: 'Renforcement fonctionnel',
+  weightlifting: 'Haltérophilie',
+  highIntensityIntervalTraining: 'HIIT',
+  crossTraining: 'Cross-training',
+  elliptical: 'Vélo elliptique',
+  rowing: 'Aviron',
+  rowingMachine: 'Rameur',
+  yoga: 'Yoga',
+  pilates: 'Pilates',
+  stretching: 'Étirements',
+  dance: 'Danse',
+  dancing: 'Danse',
+  soccer: 'Football',
+  basketball: 'Basket',
+  tennis: 'Tennis',
+  tableTennis: 'Tennis de table',
+  badminton: 'Badminton',
+  volleyball: 'Volley',
+  handball: 'Handball',
+  rugby: 'Rugby',
+  boxing: 'Boxe',
+  martialArts: 'Arts martiaux',
+  climbing: 'Escalade',
+  rockClimbing: 'Escalade',
+  skiing: 'Ski',
+  downhillSkiing: 'Ski alpin',
+  crossCountrySkiing: 'Ski de fond',
+  snowboarding: 'Snowboard',
+  golf: 'Golf',
+  stairClimbing: 'Montée d’escaliers',
+  meditation: 'Méditation',
+  guidedBreathing: 'Respiration guidée',
+  other: 'Autre activité',
+}
+
+/** Type d'activité Health Connect (« cycling ») → libellé français (« Vélo »). */
+export function workoutTypeLabel(type) {
+  if (!type) return ''
+  if (WORKOUT_TYPE_LABELS[type]) return WORKOUT_TYPE_LABELS[type]
+  // Type non traduit : « dumbbellLateralRaise » → « Dumbbell lateral raise » plutôt que brut.
+  const words = String(type).replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
+  return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
+const EVIDENCE_LABELS = {
+  solide: 'Hypothèse solide',
+  'à confirmer': 'Hypothèse à confirmer',
+  incertain: 'Hypothèse incertaine',
+}
+
+/** Niveau de confiance statistique → libellé accordé (« Hypothèse incertaine »). */
+export function evidenceLabel(evidence) {
+  return EVIDENCE_LABELS[evidence] ?? `Hypothèse ${evidence}`
+}

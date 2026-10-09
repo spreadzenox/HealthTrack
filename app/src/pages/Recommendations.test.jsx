@@ -301,6 +301,17 @@ describe('Recommendations levers', () => {
     expect(solidRow).not.toHaveClass('reco-corr-row-uncertain')
     spy.mockRestore()
   })
+  it('shows a near-zero correlation as 0,00 (never −0,00)', async () => {
+    const tiny = { ...baseCorr, variable: 'fat_g', label: 'Lipides', r: -0.001, q: 0.99, evidence: 'incertain', direction: 'neutral' }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [tiny], levers: [],
+    })
+    const row = (await screen.findByText('Lipides')).closest('.reco-corr-row')
+    expect(row).toHaveTextContent('0,00')
+    expect(row).not.toHaveTextContent('−0,00')
+    spy.mockRestore()
+  })
 })
 
 describe('Recommendations — behaviour tags', () => {
@@ -339,5 +350,20 @@ describe('Recommendations — behaviour tags', () => {
     expect(card).toHaveTextContent(/Hypothèse solide/i)
     // A tag used on fewer than 5 days is listed as still being collected.
     expect(screen.getByText(/En cours de collecte/i)).toHaveTextContent(/Malade/)
+  })
+
+  it('labels an unconvincing tag « Hypothèse incertaine » (agreement with hypothèse)', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const entries = taggedEntries()
+    // Stress on even days: unrelated to the score pattern (period 3) → no clear effect.
+    for (const e of entries) {
+      if (e.type !== 'wellbeing') continue
+      const d = Number(e.at.slice(8, 10))
+      if (d % 2 === 0) e.payload.tags = [...(e.payload.tags ?? []), 'stress']
+    }
+    listEntriesForAnalysis.mockResolvedValue(entries)
+    renderPage()
+    const card = (await screen.findByText('Stress')).closest('.reco-tag-card')
+    expect(card).toHaveTextContent(/Hypothèse incertaine/)
   })
 })

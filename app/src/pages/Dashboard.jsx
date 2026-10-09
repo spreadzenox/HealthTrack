@@ -6,7 +6,7 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import BaselineCards from '../components/BaselineCards'
 import { getTagMeta } from '../services/behaviorTags'
-import { formatAt, formatDuration, sleepStateLabel, periodLabel } from '../utils/format'
+import { formatAt, formatDuration, sleepStateLabel, periodLabel, workoutTypeLabel } from '../utils/format'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
@@ -28,6 +28,41 @@ const TYPE_LABELS = {
   steps: 'Pas',
   heart_rate: 'Fréquence cardiaque',
   calories: 'Calories',
+  body_composition: 'Composition corporelle',
+  height: 'Taille',
+}
+
+const HEART_SUBTYPE_LABELS = {
+  restingHeartRate: 'FC au repos',
+  heartRateVariability: 'VFC',
+  oxygenSaturation: 'Saturation en oxygène',
+}
+
+// Health Connect renvoie « millisecond » / « percent » : on affiche des unités françaises fixes.
+const HEART_SUBTYPE_UNITS = {
+  heartRateVariability: 'ms',
+  oxygenSaturation: '%',
+}
+
+function entryTitle(e) {
+  if (e.type === 'heart_rate' && HEART_SUBTYPE_LABELS[e.payload?.subtype]) {
+    return HEART_SUBTYPE_LABELS[e.payload.subtype]
+  }
+  return TYPE_LABELS[e.type] || e.type
+}
+
+function frNumber(v) {
+  return v.toLocaleString('fr-FR', { maximumFractionDigits: 1 })
+}
+
+/** Principales mesures d'une composition corporelle Withings, en français. */
+function bodyCompositionParts(p) {
+  const parts = []
+  if (typeof p.valueKg === 'number') parts.push(`${frNumber(p.valueKg)} kg`)
+  if (typeof p.fatRatioPct === 'number') parts.push(`Masse grasse ${frNumber(p.fatRatioPct)} %`)
+  if (typeof p.muscleMassKg === 'number') parts.push(`Muscles ${frNumber(p.muscleMassKg)} kg`)
+  if (typeof p.hydrationPct === 'number') parts.push(`Hydratation ${frNumber(p.hydrationPct)} %`)
+  return parts
 }
 
 export default function Dashboard() {
@@ -73,10 +108,10 @@ export default function Dashboard() {
     <section className="dashboard">
       <h2 className="page-title">Tableau de bord</h2>
       <p className="dashboard-intro">
-        HealthTrack centralise vos données santé: <strong>alimentation</strong> (photo → ingrédients),{' '}
+        HealthTrack centralise vos données santé : <strong>alimentation</strong> (photo → ingrédients),{' '}
         <strong>montre Samsung Fit 3</strong> (pas, sommeil, fréquence cardiaque) via Health Connect,{' '}
         et bien plus. Configurez les sources dans{' '}
-        <a href="/connectors" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Connecteurs</a>.
+        <Link to="/connectors" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Connecteurs</Link>.
       </p>
 
       <div className="dashboard-actions">
@@ -114,7 +149,7 @@ export default function Dashboard() {
               {entries.map((e) => (
                 <li key={e.id} className="entry-card" data-type={e.type}>
                   <div className="entry-card-header">
-                    <span className="entry-type">{TYPE_LABELS[e.type] || e.type}</span>
+                    <span className="entry-type">{entryTitle(e)}</span>
                     <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
                     <time className="entry-at">{formatAt(e.at)}</time>
                   </div>
@@ -158,16 +193,27 @@ export default function Dashboard() {
                     {e.type === 'heart_rate' && typeof e.payload?.bpm === 'number' && (
                       <p className="entry-wellbeing-score">
                         <strong>{e.payload.bpm}</strong> bpm
-                        {e.payload.subtype === 'restingHeartRate' && ' (repos)'}
-                        {e.payload.subtype === 'oxygenSaturation' && ' SpO₂ %'}
-                        {e.payload.subtype === 'heartRateVariability' && ' HRV ms'}
                       </p>
                     )}
                     {e.type === 'heart_rate' && typeof e.payload?.value === 'number' && typeof e.payload?.bpm === 'undefined' && (
                       <p className="entry-wellbeing-score">
-                        <strong>{e.payload.value}</strong> {e.payload.unit}
-                        {e.payload.subtype === 'oxygenSaturation' && ' (SpO₂)'}
-                        {e.payload.subtype === 'heartRateVariability' && ' (HRV)'}
+                        <strong>{frNumber(e.payload.value)}</strong>{' '}
+                        {HEART_SUBTYPE_UNITS[e.payload.subtype] ?? e.payload.unit}
+                      </p>
+                    )}
+                    {e.type === 'weight' && typeof e.payload?.valueKg === 'number' && (
+                      <p className="entry-wellbeing-score">
+                        <strong>{frNumber(e.payload.valueKg)}</strong> kg
+                      </p>
+                    )}
+                    {e.type === 'height' && typeof e.payload?.valueCm === 'number' && (
+                      <p className="entry-wellbeing-score">
+                        <strong>{frNumber(e.payload.valueCm)}</strong> cm
+                      </p>
+                    )}
+                    {e.type === 'body_composition' && e.payload && (
+                      <p className="entry-wellbeing-score">
+                        {bodyCompositionParts(e.payload).join(' · ') || 'Mesure enregistrée'}
                       </p>
                     )}
                     {e.type === 'calories' && typeof e.payload?.value === 'number' && (
@@ -184,12 +230,12 @@ export default function Dashboard() {
                     )}
                     {e.type === 'activity' && e.payload?.workoutType && (
                       <p className="entry-wellbeing-score">
-                        {e.payload.workoutType}
+                        {workoutTypeLabel(e.payload.workoutType)}
                         {e.payload.durationSeconds && ` — ${formatDuration(e.payload.durationSeconds / 60)}`}
                         {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
                       </p>
                     )}
-                    {!['food', 'wellbeing', 'cigarette', 'steps', 'heart_rate', 'calories', 'sleep', 'activity'].includes(e.type) && (
+                    {!['food', 'wellbeing', 'cigarette', 'steps', 'heart_rate', 'calories', 'sleep', 'activity', 'weight', 'height', 'body_composition'].includes(e.type) && (
                       <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
                     )}
                   </div>

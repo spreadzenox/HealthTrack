@@ -41,6 +41,11 @@ une release à chaque changement validé, et tient ce journal.
   prévient qu'avec une clé **gratuite**, Google peut utiliser les photos. Modèle par défaut :
   **Gemini 3.8 Flash** (l'ancien 2.5 n'est plus ouvert aux nouvelles clés), réglable dans Paramètres,
   avec bascule automatique si un modèle n'est pas disponible.
+- **Mesures lisibles** : vos pesées Withings apparaissent enfin en « 77,2 kg » / « Masse grasse
+  24,1 % » dans « Dernières entrées » (avant : une ligne de données techniques) ; VFC, FC au repos
+  et saturation en oxygène ont leur propre titre et des unités françaises (avant :
+  « millisecond », « percent ») ; activités traduites (« Vélo » au lieu de « cycling ») ;
+  « Hypothèse incertaine » accordé, plus de « −0,00 ».
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -61,7 +66,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le test sur émulateur **Android 16 (API 36)** échoue à la création de l'émulateur (problème
   côté GitHub, sans lien avec le code) ; Android 15 et la publication des releases fonctionnent.
 
-**Prochaines priorités** — un run de chasse aux bugs, puis « radar » fatigue / début de maladie qui
+**Prochaines priorités** — « radar » fatigue / début de maladie qui
 s'appuiera sur la norme cardiaque, puis analyse photo fiabilisée (grammes modifiables).
 
 | Run | Type | Résultat |
@@ -74,6 +79,7 @@ s'appuiera sur la norme cardiaque, puis analyse photo fiabilisée (grammes modif
 | 09/10 00:30 — [Recommandations avancées fiabilisées](runs/2026-10-09-0030-modele-avance.md) | 🏗️ | PR #62 fusionnée → v65 |
 | 09/10 02:30 — [Tags d'habitudes](runs/2026-10-09-0230-tags-habitudes.md) | 🏗️ | PR #64 fusionnée → v66 |
 | 09/10 04:30 — [Transparence Gemini](runs/2026-10-09-0430-transparence-gemini.md) | 🔒 | PR #66 fusionnée → v67 |
+| 09/10 06:30 — [Mesures lisibles, libellés justes](runs/2026-10-09-0630-libelles-justes.md) | 🐛 | PR #68 fusionnée → v68 |
 
 ---
 

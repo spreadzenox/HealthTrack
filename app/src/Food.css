@@ -91,6 +91,10 @@
   padding: 16px;
 }
 
+.data-block .section-title {
+  margin-top: 0;
+}
+
 .data-hint {
   margin: 0 0 12px;
   font-size: 0.9rem;
