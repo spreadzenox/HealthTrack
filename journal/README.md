@@ -123,7 +123,7 @@ libre / dictée.
 | 09/10 12:30 — [Supprimer une saisie, sauvegarde complète](runs/2026-10-09-1230-supprimer-sauvegarde.md) | 🐛 | PR #72 fusionnée → v71 |
 | 09/10 14:30 — [Modifier un repas enregistré](runs/2026-10-09-1430-modifier-repas.md) | 🏗️ | PR #74 fusionnée → v72 |
 | 09/10 16:30 — [Vos derniers jours (tableau de bord)](runs/2026-10-09-1630-journal-par-jour.md) | 🎨 | PR #76 fusionnée → v73 |
-| 09/10 18:30 — [Repas sans photo, repas habituels](runs/2026-10-09-1830-repas-sans-photo.md) | 🏗️ | PR en cours |
+| 09/10 18:30 — [Repas sans photo, repas habituels](runs/2026-10-09-1830-repas-sans-photo.md) | 🏗️ | PR #78 fusionnée → v74 |
 
 ---
 
