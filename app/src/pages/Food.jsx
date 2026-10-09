@@ -7,14 +7,8 @@ import { formatAt } from '../utils/format'
 import MealEditor from '../components/MealEditor'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import { isDeletableEntry } from '../utils/entries'
-import { mealKcal } from '../services/mealEditing'
-
-/** Ce qui est enregistré pour chaque ingrédient (le signalement « absent de la base » reste à l'écran). */
-function itemForStorage(item) {
-  const stored = { ...item }
-  delete stored.unknown
-  return stored
-}
+import { itemForStorage, mealKcal } from '../services/mealEditing'
+import SavedMealEditor from '../components/SavedMealEditor'
 
 export default function Food() {
   const [file, setFile] = useState(null)
@@ -26,6 +20,7 @@ export default function Food() {
   const [items, setItems] = useState([])
   const [savedId, setSavedId] = useState(null)
   const [recentMeals, setRecentMeals] = useState([])
+  const [editingId, setEditingId] = useState(null)
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
 
@@ -264,23 +259,46 @@ export default function Food() {
                 )}
               </div>
               {e.payload?.dish && <p className="meal-dish">{e.payload.dish}</p>}
-              <div className="entry-card-row">
-                <ul className="meal-items">
-                  {e.payload?.items?.slice(0, 6).map((item, i) => (
-                    <li key={i}>{item.ingredient}{'\u00a0'}: {item.quantity}</li>
-                  ))}
-                  {e.payload?.items?.length > 6 && (
-                    <li className="meal-more">+{e.payload.items.length - 6}</li>
+              {editingId === e.id ? (
+                <SavedMealEditor
+                  entry={e}
+                  onCancel={() => setEditingId(null)}
+                  onSaved={() => {
+                    setEditingId(null)
+                    loadRecent()
+                  }}
+                />
+              ) : (
+                <div className="entry-card-row">
+                  <ul className="meal-items">
+                    {e.payload?.items?.slice(0, 6).map((item, i) => (
+                      <li key={i}>{item.ingredient}{'\u00a0'}: {item.quantity}</li>
+                    ))}
+                    {e.payload?.items?.length > 6 && (
+                      <li className="meal-more">+{e.payload.items.length - 6}</li>
+                    )}
+                  </ul>
+                  {isDeletableEntry(e) && (
+                    <div className="entry-edit">
+                      <button
+                        type="button"
+                        className="entry-delete-btn"
+                        onClick={() => setEditingId(e.id)}
+                        aria-label="Modifier ce repas"
+                      >
+                        Modifier
+                      </button>
+                    </div>
                   )}
-                </ul>
-                {isDeletableEntry(e) && (
-                  <DeleteEntryButton
-                    entryId={e.id}
-                    label="ce repas"
-                    onDeleted={(id) => setRecentMeals((meals) => meals.filter((m) => m.id !== id))}
-                  />
-                )}
-              </div>
+                  {isDeletableEntry(e) && (
+                    <DeleteEntryButton
+                      entryId={e.id}
+                      label="ce repas"
+                      onDeleted={(id) => setRecentMeals((meals) => meals.filter((m) => m.id !== id))}
+                    />
+                  )}
+                </div>
+              )}
             </li>
           ))}
         </ul>

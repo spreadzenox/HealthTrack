@@ -25,6 +25,7 @@ import {
   exportToJson,
   importFromJson,
   deleteEntry,
+  updateEntry,
 } from './localHealthStorage'
 
 describe('createEntry / listEntries', () => {
@@ -222,5 +223,44 @@ describe('deleteEntry', () => {
     await createEntry({ type: 'steps', source: 'test', payload: {}, at: '2026-01-01T10:00:00Z' })
     await deleteEntry(9999)
     expect(await countAllEntries()).toBe(1)
+  })
+})
+
+describe('updateEntry', () => {
+  it('replaces payload and at, keeps id/type/source/created_at and stamps updated_at', async () => {
+    const id = await createEntry({ type: 'food', source: 'app_food', payload: { items: [{ ingredient: 'Riz', quantity_g: 100 }] }, at: '2026-01-01T12:00:00Z' })
+    const [before] = await listEntries({})
+    await updateEntry(id, { payload: { items: [{ ingredient: 'Riz', quantity_g: 150 }] }, at: '2026-01-01T11:30:00.000Z' })
+    const [after] = await listEntries({})
+    expect(after.id).toBe(id)
+    expect(after.type).toBe('food')
+    expect(after.source).toBe('app_food')
+    expect(after.created_at).toBe(before.created_at)
+    expect(after.at).toBe('2026-01-01T11:30:00.000Z')
+    expect(after.payload.items[0].quantity_g).toBe(150)
+    expect(after.updated_at).toBeTruthy()
+    expect(await countAllEntries()).toBe(1)
+  })
+
+  it('ignores fields other than payload and at', async () => {
+    const id = await createEntry({ type: 'food', source: 'app_food', payload: { a: 1 }, at: '2026-01-01T12:00:00Z' })
+    await updateEntry(id, { payload: { a: 2 }, type: 'steps', source: 'hack', id: 42 })
+    const [after] = await listEntries({})
+    expect(after).toMatchObject({ id, type: 'food', source: 'app_food', at: '2026-01-01T12:00:00Z', payload: { a: 2 } })
+  })
+
+  it('rejects for an unknown id without creating anything', async () => {
+    await expect(updateEntry(9999, { payload: {} })).rejects.toThrow(/introuvable/)
+    expect(await countAllEntries()).toBe(0)
+  })
+
+  it('keeps updated_at through export / import', async () => {
+    const id = await createEntry({ type: 'food', source: 'app_food', payload: {}, at: '2026-01-01T12:00:00Z' })
+    await updateEntry(id, { payload: { dish: 'Soupe' } })
+    const json = await exportToJson()
+    await importFromJson(json)
+    const [e] = await listEntries({})
+    expect(e.payload.dish).toBe('Soupe')
+    expect(e.updated_at).toBeTruthy()
   })
 })

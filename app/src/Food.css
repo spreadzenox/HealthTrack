@@ -182,3 +182,33 @@
   font-weight: 600;
   font-size: 0.95rem;
 }
+
+/* Modification d'un repas enregistré */
+.saved-meal-editor {
+  margin-top: 8px;
+}
+
+.sme-time {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.sme-time input {
+  min-height: 44px;
+  padding: 0 8px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font: inherit;
+  color-scheme: dark;
+}
+
+.saved-meal-editor .actions {
+  margin-top: 8px;
+}

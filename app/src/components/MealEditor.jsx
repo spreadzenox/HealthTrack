@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { itemKcal, mealKcal, searchIngredients, setItemGrams } from '../services/mealEditing'
 import './MealEditor.css'
 
@@ -10,6 +10,7 @@ const DEFAULT_G = 100
  * remplacement par recherche dans la base, kcal par ingrédient et total.
  */
 export default function MealEditor({ items, onChange, disabled = false }) {
+  const searchId = useId()
   const [query, setQuery] = useState('')
   const [replaceIndex, setReplaceIndex] = useState(null)
   const suggestions = searchIngredients(query, 6)
@@ -129,10 +130,10 @@ export default function MealEditor({ items, onChange, disabled = false }) {
 
       {!disabled && (
         <div className="meal-editor-add">
-          <label className="mei-search-label" htmlFor="meal-editor-search">{searchLabel}</label>
+          <label className="mei-search-label" htmlFor={searchId}>{searchLabel}</label>
           <div className="mei-search-row">
             <input
-              id="meal-editor-search"
+              id={searchId}
               type="search"
               className="mei-search"
               placeholder="ex. riz, poulet, huile d’olive…"

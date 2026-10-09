@@ -648,3 +648,12 @@
   font-size: 0.8rem;
   color: var(--error);
 }
+
+/* « Modifier » à côté de « Supprimer » (même style discret) */
+.entry-edit {
+  margin: -12px -8px -12px auto;
+}
+
+.entry-edit + .entry-delete:not(.entry-delete-confirm) {
+  margin-left: 0;
+}
