@@ -206,7 +206,7 @@
 
 .reco-corr-row {
   display: grid;
-  grid-template-columns: 160px 1fr 48px;
+  grid-template-columns: 160px 1fr 56px;
   align-items: center;
   gap: 8px;
 }
@@ -246,6 +246,7 @@
   color: var(--text-muted);
   text-align: right;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* ─── Residuals table ─────────────────────────────────────────────────────── */
@@ -424,4 +425,8 @@
 .reco-debug-body li {
   margin: 2px 0;
   word-break: break-all;
+}
+
+.reco-meta--dropped {
+  margin-top: -10px;
 }

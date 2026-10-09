@@ -196,10 +196,10 @@ export default function WellbeingCharts() {
         <div className="wellbeing-prediction-badge">
           <span className="wellbeing-prediction-icon" aria-hidden="true">🤖</span>
           <span className="wellbeing-prediction-label">Prédiction ML aujourd'hui</span>
-          <span className="wellbeing-prediction-value">{todayPrediction.predicted.toFixed(1)} / 5</span>
+          <span className="wellbeing-prediction-value">{todayPrediction.predicted.toFixed(1).replace('.', ',')} / 5</span>
           {todayPrediction.actual != null && (
             <span className="wellbeing-prediction-actual">
-              · réel : {todayPrediction.actual.toFixed(1)}
+              · réel : {todayPrediction.actual.toFixed(1).replace('.', ',')}
             </span>
           )}
         </div>

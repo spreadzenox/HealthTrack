@@ -14,6 +14,8 @@
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
+ *   npm run visual -- --routes=/recommendations --click="Recommandations avancées"
+ *                                          # clique un bouton (nom accessible) avant la capture
  *
  * Sortie : <out>/<page>.png (page entière), <out>/tiles/<page>-<n>.png (un écran
  * par image, à regarder en priorité) + <out>/report.json. Code de sortie 1 si une page
@@ -182,6 +184,13 @@ async function main() {
       try {
         await page.goto(baseUrl + path, { waitUntil: 'networkidle', timeout: 20000 })
         await page.waitForTimeout(700)
+        if (args.click) {
+          const button = page.getByRole('button', { name: String(args.click) }).first()
+          if (await button.count()) {
+            await button.click()
+            await page.waitForTimeout(700)
+          }
+        }
         const file = join(outDir, `${name}.png`)
         await page.screenshot({ path: file, fullPage: !args.viewport })
         current.screenshot = file

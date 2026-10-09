@@ -10,6 +10,9 @@ import {
   MIN_DAYS_ADVANCED,
   HOLD_OUT_DAYS,
   MAX_FEATURES_RATIO,
+  MAX_FEATURES,
+  COLLINEARITY_MAX_R,
+  MIN_ADVICE_EFFECT,
 } from '../services/analysisEngine'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { useAutoSync } from '../hooks/useAutoSync'
@@ -248,7 +251,7 @@ function AdvancedTab({ entries }) {
           .</>
         )}
         {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
-          <> Variables sélectionnées : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate} (top {Math.round(MAX_FEATURES_RATIO * 100)}% par corrélation).</>
+          <> Variables retenues : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate} (les plus liées au bien-être, {MAX_FEATURES} au plus).</>
         )}
         {modelInfo?.overfit_risk && (
           <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours — R² entraînement non fiable.</span></>
@@ -260,6 +263,16 @@ function AdvancedTab({ entries }) {
           <> <span className="reco-reliability-ok">✓ Le modèle généralise correctement (R² LOO positif).</span></>
         )}
       </p>
+      {modelInfo?.droppedCollinear?.length > 0 && (
+        <p className="reco-meta reco-meta--dropped">
+          Variables redondantes écartées :{' '}
+          {modelInfo.droppedCollinear
+            .map((d) => `${d.label} (≈ ${d.keptInsteadLabel})`)
+            .join(', ')}
+          . Elles évoluent presque exactement comme une variable déjà retenue : les garder
+          fausserait l'estimation de leur effet.
+        </p>
+      )}
       {modelInfo?.method === 'ols_linear_regression' && (
         <details className="reco-method-note">
           <summary>Comment fonctionne ce modèle ?</summary>
@@ -267,7 +280,7 @@ function AdvancedTab({ entries }) {
             Chaque type de donnée est enregistré à une fréquence différente (ex : pas quotidiens, repas plusieurs fois/jour, bien-être manuellement). Pour harmoniser, toutes les entrées sont agrégées par <strong>jour calendaire</strong> (somme pour les pas/calories/nutriments, moyenne pour la fréquence cardiaque et le bien-être). Les nutriments sont ensuite <strong>lissés sur {modelInfo.lagDays} jours</strong> avec une pondération décroissante (un repas d'aujourd'hui influence le bien-être des ~10 prochains jours, avec un impact qui décroît linéairement).
           </p>
           <p>
-            Le modèle est une régression linéaire multiple (OLS + Ridge) entraîné <em>entièrement sur vos données locales</em>. Pour limiter le sur-apprentissage, une <strong>pré-sélection</strong> retient les {Math.round(MAX_FEATURES_RATIO * 100)}% de variables les plus corrélées au bien-être sur les données d'entraînement, avant d'ajuster la régression. Le <strong>R² entraînement</strong> mesure à quel point le modèle s'ajuste aux données qu'il a vues — il peut être élevé simplement parce qu'il y a plus de variables que de jours. Le <strong>R² LOO</strong> (Leave-One-Out) est une mesure honnête : pour chaque jour, le modèle est ré-entraîné sans ce jour puis prédit. Un R² LOO négatif ou très inférieur au R² entraînement signale un sur-apprentissage — dans ce cas le modèle est marqué comme non fiable et les recommandations sont indicatives.
+            Le modèle est une régression linéaire multiple (OLS + Ridge) entraîné <em>entièrement sur vos données locales</em>. Pour limiter le sur-apprentissage, une <strong>pré-sélection</strong> retient les variables les plus corrélées au bien-être sur les données d'entraînement ({MAX_FEATURES} au plus, et pas plus d'une pour {Math.round(1 / MAX_FEATURES_RATIO)} jours de données), en écartant les <strong>doublons</strong> (deux variables corrélées à plus de {Math.round(COLLINEARITY_MAX_R * 100)} %, comme les pas et les calories d'activité : seule la plus liée au bien-être est gardée). La force de la régularisation Ridge{modelInfo.lambda != null && <> (λ = {String(modelInfo.lambda).replace('.', ',')})</>} est choisie automatiquement par validation croisée : plus vos données sont bruitées, plus les effets estimés sont prudemment réduits vers zéro. Seuls les effets d'au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type sont proposés comme pistes. Le <strong>R² entraînement</strong> mesure à quel point le modèle s'ajuste aux données qu'il a vues — il peut être élevé simplement parce qu'il y a plus de variables que de jours. Le <strong>R² LOO</strong> (Leave-One-Out) est une mesure honnête : pour chaque jour, le modèle est ré-entraîné sans ce jour puis prédit. Un R² LOO négatif ou très inférieur au R² entraînement signale un sur-apprentissage — dans ce cas le modèle est marqué comme non fiable et les recommandations sont indicatives.
           </p>
           <p>
             Pour éviter le sur-apprentissage dans la section « Prédit vs réel », le modèle est entraîné sur toutes les données <strong>sauf les {HOLD_OUT_DAYS} derniers jours</strong>. Ces jours sont ensuite prédits sans que le modèle les ait vus, ce qui garantit des prédictions honnêtement hors-échantillon. La prédiction affichée sur le tableau de bord utilise également ce modèle.
@@ -335,10 +348,10 @@ function AdvancedTab({ entries }) {
               return (
                 <div key={r.dateKey} className="reco-residual-row">
                   <span className="reco-residual-date">{d}/{m}</span>
-                  <span className="reco-residual-actual">Réel : <strong>{r.actual.toFixed(1)}</strong></span>
-                  <span className="reco-residual-pred">Prédit : <strong>{r.predicted.toFixed(1)}</strong></span>
+                  <span className="reco-residual-actual">Réel : <strong>{r.actual.toFixed(1).replace('.', ',')}</strong></span>
+                  <span className="reco-residual-pred">Prédit : <strong>{r.predicted.toFixed(1).replace('.', ',')}</strong></span>
                   <span className={'reco-residual-diff ' + (diff >= 0 ? 'reco-diff-pos' : 'reco-diff-neg')}>
-                    {diff >= 0 ? '+' : ''}{diff.toFixed(1)}
+                    {diff >= 0 ? '+' : ''}{diff.toFixed(1).replace('.', ',')}
                   </span>
                 </div>
               )

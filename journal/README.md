@@ -25,6 +25,11 @@ une release à chaque changement validé, et tient ce journal.
   et un repère « dans votre norme / plus haute / plus basse que d'habitude ». Message prudent si
   l'écart va dans le mauvais sens (fatigue, stress, alcool, début d'infection…), jamais un
   diagnostic. Il faut ~3 semaines de mesures de la montre pour établir la norme.
+- **Recommandations avancées fiabilisées** : une erreur de calcul gonflait le poids des variables
+  à grands nombres (les pas comptaient ~2 000× trop) ; le modèle écarte désormais les données qui
+  disent la même chose (et le dit), règle tout seul sa prudence, et ne propose une piste que si
+  l'effet est suffisant. Sur données de test, ses prédictions hors-échantillon sont meilleures
+  (R² 0,46 → 0,57). Chiffres à la française sur cette page (v65).
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -40,14 +45,12 @@ une release à chaque changement validé, et tient ce journal.
 - La PR #55 restée en attente a été fusionnée au run suivant (release v61) : la fusion passe par
   l'outil GitHub MCP. Si une fusion est de nouveau refusée, autoriser la fusion pour les sessions
   de la routine.
-- Le modèle « Recommandations avancées » est fragile (variables redondantes pas / calories) :
-  ses pistes restent cohérentes, mais il sera fiabilisé prochainement.
 
 - Le test sur émulateur **Android 16 (API 36)** échoue à la création de l'émulateur (problème
   côté GitHub, sans lien avec le code) ; Android 15 et la publication des releases fonctionnent.
 
-**Prochaines priorités** — fiabilisation du modèle avancé, tags de comportements, puis
-« radar » fatigue / début de maladie qui s'appuiera sur la norme cardiaque.
+**Prochaines priorités** — tags de comportements (café, alcool, écran tard…), transparence
+Gemini, puis « radar » fatigue / début de maladie qui s'appuiera sur la norme cardiaque.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -56,6 +59,7 @@ une release à chaque changement validé, et tient ce journal.
 | 08/10 18:30 — [Pistes à tester (Recommandations)](runs/2026-10-08-1830-pistes-a-tester.md) | 🏗️ | PR #56 fusionnée → v62 |
 | 08/10 20:30 — [Page Nutrition juste et lisible](runs/2026-10-08-2030-nutrition.md) | 🐛 | PR #58 fusionnée → v63 |
 | 08/10 22:30 — [Cœur vs votre norme (FC repos / VFC)](runs/2026-10-08-2230-norme-coeur.md) | 🏗️ | PR #60 fusionnée → v64 |
+| 09/10 00:30 — [Recommandations avancées fiabilisées](runs/2026-10-09-0030-modele-avance.md) | 🏗️ | PR #62 |
 
 ---
 
@@ -202,7 +206,8 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
 - **Vérification visuelle** : `cd app && npm run visual` — lance Vite, injecte ~75 jours de
   données de démo corrélées (`scripts/visual/demoData.mjs`), capture chaque page dans un
   viewport Galaxy A56 (412×915, Chromium/Playwright). Options : `--empty`, `--light`,
-  `--routes=/,/food`, `--update-banner`, `--wellbeing-prompt`, `--whats-new`, `--out=`.
+  `--routes=/,/food`, `--update-banner`, `--wellbeing-prompt`, `--whats-new`, `--out=`,
+  `--click="Recommandations avancées"` (clique un bouton avant la capture, ex. un onglet).
   Pour une interaction précise (clic, saisie, modale), écrire un petit script Playwright
   ad hoc dans le scratchpad en s'inspirant de `visual-check.mjs`.
 - **Données de démo** : enrichir `demoData.mjs` quand une nouvelle donnée apparaît, pour
