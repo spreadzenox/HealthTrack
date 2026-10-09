@@ -430,3 +430,59 @@
 .reco-meta--dropped {
   margin-top: -10px;
 }
+
+/* Behaviour tags (« jours avec / sans ») */
+.reco-tag-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reco-tag-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
+.reco-tag-card-uncertain {
+  opacity: 0.6;
+}
+
+.reco-tag-name {
+  margin: 0 0 4px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.reco-tag-compare {
+  margin: 0 0 2px;
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.reco-tag-diff-neg {
+  color: #e57373;
+  white-space: nowrap;
+}
+
+.reco-tag-diff-pos {
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.reco-tag-days {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.reco-tag-pending {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}

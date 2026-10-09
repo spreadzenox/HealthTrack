@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-09",
+  "kind": "nouveau",
+  "title": "Tags d’habitudes : alcool, café, écran tard, stress…",
+  "items": [
+    "En notant votre bien-être, vous pouvez cocher en un tap ce qui s’est passé aujourd’hui : alcool, café après 14 h, repas tardif, écran tard, sport le soir, stress, malade. C’est facultatif.",
+    "Nouvelle section « Vos habitudes » dans Recommandations : votre bien-être les jours avec chaque tag, comparé aux jours sans. Pour les habitudes du soir (alcool, écran tard…), c’est le lendemain qui est comparé.",
+    "Chaque comparaison indique le nombre de jours et un niveau de confiance (« solide », « à confirmer », « incertain ») qui tient compte du hasard. Il faut au moins 5 jours avec et 5 jours sans un tag pour le comparer.",
+    "Les tags apparaissent aussi dans les dernières entrées du tableau de bord. Comme le reste, ils ne quittent jamais votre téléphone."
+  ]
+}

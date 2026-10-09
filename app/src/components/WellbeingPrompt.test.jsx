@@ -50,6 +50,44 @@ describe('WellbeingPrompt (uncontrolled)', () => {
   })
 })
 
+describe('WellbeingPrompt — behaviour tags', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('shows optional behaviour tags as toggle buttons', () => {
+    render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    const alcohol = screen.getByRole('button', { name: /Alcool/i })
+    expect(alcohol).toHaveAttribute('aria-pressed', 'false')
+    fireEvent.click(alcohol)
+    expect(alcohol).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(alcohol)
+    expect(alcohol).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('saves selected tags with the score', async () => {
+    const { createEntry } = await import('../storage/localHealthStorage')
+    render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: /Note 2 sur 5/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Stress/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Écran tard/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer/i }))
+    expect(createEntry).toHaveBeenCalledWith({
+      type: 'wellbeing',
+      source: 'app_wellbeing',
+      payload: { score: 2, tags: ['late_screen', 'stress'] },
+    })
+  })
+
+  it('resets tags when the dialog is reopened', () => {
+    const { rerender } = render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: /Alcool/i }))
+    rerender(<WellbeingPrompt open={false} onClose={vi.fn()} />)
+    rerender(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    expect(screen.getByRole('button', { name: /Alcool/i })).toHaveAttribute('aria-pressed', 'false')
+  })
+})
+
 describe('WellbeingPrompt (controlled)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
