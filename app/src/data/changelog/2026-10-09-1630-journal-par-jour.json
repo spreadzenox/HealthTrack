@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-09",
+  "kind": "amélioration",
+  "title": "Tableau de bord : vos derniers jours en un coup d’œil",
+  "items": [
+    "La longue liste « Dernières entrées » (une carte par mesure de fréquence cardiaque, par cigarette…) devient « Vos derniers jours » : une carte par jour avec son résumé — sommeil, pas, FC au repos, VFC, plage de FC, dépense, bien-être, repas (≈ kcal) et cigarettes.",
+    "La nuit compte pour le jour du réveil : « Aujourd’hui » affiche le sommeil de la nuit passée.",
+    "Sous le résumé, vos saisies et événements du jour avec leur heure (repas, notes de bien-être, cigarettes, activités, pesées) ; « Supprimer » reste disponible. Trois jours sont affichés, « Voir les jours précédents » remonte jusqu’à deux semaines."
+  ]
+}

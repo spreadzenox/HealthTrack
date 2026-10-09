@@ -68,6 +68,11 @@ une release à chaque changement validé, et tient ce journal.
 - **Modifier un repas enregistré** (Alimentation → « Modifier ») : corrigez les grammes, retirez ou
   ajoutez un ingrédient, changez l'heure (un déjeuner enregistré le soir) — kcal recalculées en
   direct, analyses mises à jour aussitôt.
+- **Tableau de bord « Vos derniers jours »** : fini la longue liste d'une carte par mesure de FC ou
+  par cigarette. Une carte par jour avec son résumé (sommeil de la nuit — rangé au jour du réveil —,
+  pas, FC au repos, VFC, plage de FC, dépense, bien-être, repas ≈ kcal, cigarettes), puis vos saisies
+  du jour avec leur heure (toujours supprimables). 3 jours affichés, « Voir les jours précédents »
+  remonte jusqu'à 2 semaines.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -95,8 +100,8 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — un tableau de bord moins encombré
-(entrées regroupées par jour, barre d'onglets en bas), puis saisie d'un repas par texte / « comme hier ».
+**Prochaines priorités** — saisie d'un repas par texte / « comme hier » / favoris, puis barre
+d'onglets en bas.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -113,6 +118,7 @@ une release à chaque changement validé, et tient ce journal.
 | 09/10 10:30 — [Analyse photo corrigeable](runs/2026-10-09-1030-analyse-photo.md) | 🏗️ | PR #71 fusionnée → v70 |
 | 09/10 12:30 — [Supprimer une saisie, sauvegarde complète](runs/2026-10-09-1230-supprimer-sauvegarde.md) | 🐛 | PR #72 fusionnée → v71 |
 | 09/10 14:30 — [Modifier un repas enregistré](runs/2026-10-09-1430-modifier-repas.md) | 🏗️ | PR #74 fusionnée → v72 |
+| 09/10 16:30 — [Vos derniers jours (tableau de bord)](runs/2026-10-09-1630-journal-par-jour.md) | 🎨 | PR #76 fusionnée → release à vérifier |
 
 ---
 

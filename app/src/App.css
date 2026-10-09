@@ -337,7 +337,66 @@
   color: var(--danger, #e74c3c);
 }
 
-/* Dashboard entries */
+/* Dashboard : journal des derniers jours (une carte par jour, résumé + saisies) */
+.day-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.day-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 16px 6px;
+  margin-bottom: 14px;
+}
+
+.day-card-title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.day-card-date {
+  margin-left: 6px;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.day-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.day-summary-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 5px 8px;
+  min-width: 0;
+}
+
+.day-summary-item dt {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.day-summary-item dd {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.day-more-btn {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
 .entries-list {
   list-style: none;
   margin: 0;
@@ -345,29 +404,30 @@
 }
 
 .entry-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 12px 16px;
-  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 12px 12px;
+  margin-bottom: 8px;
   border-left: 3px solid var(--accent);
 }
 
 .entry-card[data-type="food"] { border-left-color: var(--accent); }
 .entry-card[data-type="activity"] { border-left-color: #3498db; }
-.entry-card[data-type="steps"] { border-left-color: #2ecc71; }
-.entry-card[data-type="heart_rate"] { border-left-color: #e74c3c; }
-.entry-card[data-type="calories"] { border-left-color: #e67e22; }
-.entry-card[data-type="sleep"] { border-left-color: #9b59b6; }
-.entry-card[data-type="weight"] { border-left-color: #95a5a6; }
+.entry-card[data-type="weight"],
+.entry-card[data-type="body_composition"],
+.entry-card[data-type="height"] { border-left-color: #95a5a6; }
 .entry-card[data-type="cigarette"] { border-left-color: #7f8c8d; }
-.entry-card[data-type="wellbeing"] { border-left-color: var(--accent); }
+.entry-card[data-type="wellbeing"] { border-left-color: #9b59b6; }
 
 .entry-card-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-bottom: 6px;
+}
+
+.entry-card-header + .entry-card-row:has(.entry-card-body > *) {
+  margin-top: 6px;
 }
 
 .entry-type {
@@ -384,10 +444,15 @@
   border-radius: 4px;
 }
 
+/* Saisie sans contenu (« Cigarette ») : « Supprimer » sur la ligne du titre */
+.entry-card-header > .entry-delete {
+  margin: -12px -8px -12px auto;
+}
+
 .entry-at {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
   color: var(--text-muted);
-  margin-left: auto;
 }
 
 .entry-card-body {
@@ -582,10 +647,6 @@
   flex: 1;
 }
 
-.entry-card[data-type="wellbeing"] {
-  border-left-color: #9b59b6;
-}
-
 /* Suppression d'une saisie (repas, bien-être, cigarette) — discrète, confirmée en 2 temps.
    Contenu court (« 1 cigarette ») : bouton sur la même ligne ; contenu long (repas) : bouton dessous,
    à droite. La confirmation prend toujours toute la largeur. */
@@ -656,4 +717,11 @@
 
 .entry-edit + .entry-delete:not(.entry-delete-confirm) {
   margin-left: 0;
+}
+
+/* Cartes du journal plus étroites : la question au-dessus, « Annuler / Confirmer » ensemble dessous */
+.day-card .entry-delete-question {
+  flex-basis: 100%;
+  padding-right: 8px;
+  text-align: right;
 }

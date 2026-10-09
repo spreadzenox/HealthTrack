@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import WellbeingCharts from '../components/WellbeingCharts'
@@ -9,7 +9,8 @@ import HealthRadar from '../components/HealthRadar'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import { isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
-import { formatAt, formatDuration, sleepStateLabel, periodLabel, workoutTypeLabel } from '../utils/format'
+import { formatDuration, workoutTypeLabel } from '../utils/format'
+import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
@@ -35,22 +36,7 @@ const TYPE_LABELS = {
   height: 'Taille',
 }
 
-const HEART_SUBTYPE_LABELS = {
-  restingHeartRate: 'FC au repos',
-  heartRateVariability: 'VFC',
-  oxygenSaturation: 'Saturation en oxygène',
-}
-
-// Health Connect renvoie « millisecond » / « percent » : on affiche des unités françaises fixes.
-const HEART_SUBTYPE_UNITS = {
-  heartRateVariability: 'ms',
-  oxygenSaturation: '%',
-}
-
 function entryTitle(e) {
-  if (e.type === 'heart_rate' && HEART_SUBTYPE_LABELS[e.payload?.subtype]) {
-    return HEART_SUBTYPE_LABELS[e.payload.subtype]
-  }
   return TYPE_LABELS[e.type] || e.type
 }
 
@@ -60,6 +46,15 @@ const DELETE_LABELS = {
   wellbeing: 'cette note de bien-être',
   cigarette: 'cette cigarette',
 }
+
+/** Types qui ont un affichage dédié ; les autres montrent leurs données brutes. */
+const ITEM_TYPES_WITH_RENDERER = ['food', 'wellbeing', 'cigarette', 'activity', 'weight', 'height', 'body_composition']
+
+/** Jours affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
+const INITIAL_DAYS = 3
+const MORE_DAYS = 4
+/** Fenêtre chargée pour le journal (les mesures horaires de la montre rendent un « limit » fixe trop court). */
+const JOURNAL_WINDOW_DAYS = 14
 
 function frNumber(v) {
   return v.toLocaleString('fr-FR', { maximumFractionDigits: 1 })
@@ -75,15 +70,166 @@ function bodyCompositionParts(p) {
   return parts
 }
 
+function timeOf(at) {
+  return new Date(at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+}
+
+/** Contenu d'une saisie ou d'un événement du jour (repas, bien-être, pesée…). */
+function EntryBody({ e }) {
+  const count = typeof e.payload?.count === 'number' ? e.payload.count : 1
+  return (
+    <div className="entry-card-body">
+      {e.type === 'food' && e.payload?.items?.length > 0 && (
+        <ul className="entry-items">
+          {e.payload.items.slice(0, 5).map((item, i) => (
+            <li key={i}>{item.ingredient}{'\u00a0'}: {item.quantity}</li>
+          ))}
+          {e.payload.items.length > 5 && (
+            <li className="entry-more">+{e.payload.items.length - 5} autres</li>
+          )}
+        </ul>
+      )}
+      {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
+        <p className="entry-wellbeing-score">
+          Note : <strong>{e.payload.score}</strong> / 5
+        </p>
+      )}
+      {e.type === 'wellbeing' && Array.isArray(e.payload?.tags) && e.payload.tags.some(getTagMeta) && (
+        <p className="entry-wellbeing-tags">
+          {e.payload.tags
+            .map(getTagMeta)
+            .filter(Boolean)
+            .map((t) => `${t.emoji} ${t.label}`)
+            .join(' · ')}
+        </p>
+      )}
+      {e.type === 'cigarette' && count > 1 && (
+        <p className="entry-wellbeing-score"><strong>{count}</strong> cigarettes</p>
+      )}
+      {e.type === 'weight' && typeof e.payload?.valueKg === 'number' && (
+        <p className="entry-wellbeing-score">
+          <strong>{frNumber(e.payload.valueKg)}</strong> kg
+        </p>
+      )}
+      {e.type === 'height' && typeof e.payload?.valueCm === 'number' && (
+        <p className="entry-wellbeing-score">
+          <strong>{frNumber(e.payload.valueCm)}</strong> cm
+        </p>
+      )}
+      {e.type === 'body_composition' && e.payload && (
+        <p className="entry-wellbeing-score">
+          {bodyCompositionParts(e.payload).join(' · ') || 'Mesure enregistrée'}
+        </p>
+      )}
+      {e.type === 'activity' && e.payload?.workoutType && (
+        <p className="entry-wellbeing-score">
+          {workoutTypeLabel(e.payload.workoutType)}
+          {e.payload.durationSeconds && ` — ${formatDuration(e.payload.durationSeconds / 60)}`}
+          {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
+        </p>
+      )}
+      {!ITEM_TYPES_WITH_RENDERER.includes(e.type) && (
+        <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
+      )}
+    </div>
+  )
+}
+
+/** Résumé chiffré d'une journée : seules les valeurs disponibles sont affichées. */
+function summaryChips(s) {
+  const chips = []
+  const fr = (v) => v.toLocaleString('fr-FR')
+  if (s.sleepMinutes != null) chips.push(['Sommeil', formatDuration(s.sleepMinutes)])
+  if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
+  if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
+  if (s.hrv != null) chips.push(['VFC', `${Math.round(s.hrv)} ms`])
+  if (s.spo2 != null) chips.push(['SpO₂', `${frNumber(s.spo2)} %`])
+  if (s.heartRate) {
+    const { min, max } = s.heartRate
+    chips.push(['FC', min === max ? `${Math.round(min)} bpm` : `${Math.round(min)} à ${Math.round(max)} bpm`])
+  }
+  if (s.burnedKcal != null) chips.push(['Dépense', `${fr(s.burnedKcal)} kcal`])
+  if (s.wellbeing) chips.push(['Bien-être', `${frNumber(s.wellbeing.average)} / 5`])
+  if (s.meals > 0) {
+    chips.push(['Repas', s.mealKcal > 0 ? `${s.meals} · ≈ ${fr(s.mealKcal)} kcal` : String(s.meals)])
+  }
+  if (s.cigarettes > 0) chips.push(['Cigarettes', String(s.cigarettes)])
+  return chips
+}
+
+/** Une cigarette seule n'a rien à afficher sous son titre. */
+function hasBody(e) {
+  return !(e.type === 'cigarette' && !(e.payload?.count > 1))
+}
+
+function DeleteButton({ e }) {
+  return <DeleteEntryButton entryId={e.id} label={DELETE_LABELS[e.type] || 'cette entrée'} />
+}
+
+function DayCard({ day }) {
+  const { title, date } = dayHeading(day.dateKey)
+  const chips = summaryChips(day.summary)
+  return (
+    <li className="day-card">
+      <h4 className="day-card-title">
+        {title} <span className="day-card-date">{date}</span>
+      </h4>
+      {chips.length > 0 && (
+        <dl className="day-summary">
+          {chips.map(([label, value]) => (
+            <div key={label} className="day-summary-item">
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      {day.items.length > 0 && (
+        <ul className="entries-list">
+          {day.items.map((e) => (
+            <li key={e.id} className="entry-card" data-type={e.type}>
+              <div className="entry-card-header">
+                <time className="entry-at" dateTime={e.at}>{timeOf(e.at)}</time>
+                <span className="entry-type">{entryTitle(e)}</span>
+                {!isDeletableEntry(e) && (
+                  <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
+                )}
+                {isDeletableEntry(e) && !hasBody(e) && <DeleteButton e={e} />}
+              </div>
+              {hasBody(e) && (
+                <div className="entry-card-row">
+                  <EntryBody e={e} />
+                  {isDeletableEntry(e) && <DeleteButton e={e} />}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  )
+}
+
+/** Entrées des derniers jours ; repli sur les 30 dernières si rien de récent (synchro ancienne). */
+async function loadJournalEntries() {
+  const now = new Date()
+  const since = new Date(now.getFullYear(), now.getMonth(), now.getDate() - JOURNAL_WINDOW_DAYS + 1)
+  const recent = await listEntries({ since: since.toISOString(), limit: 5000 })
+  if (recent.length > 0) return recent
+  return listEntries({ limit: 30 })
+}
+
 export default function Dashboard() {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
+  const [visibleDays, setVisibleDays] = useState(INITIAL_DAYS)
+  const days = useMemo(() => buildDailyJournal(entries), [entries])
 
   const loadEntries = useCallback(async () => {
     try {
-      const data = await listEntries({ limit: 30 })
+      const data = await loadJournalEntries()
       setEntries(data)
     } catch (e) {
       setError(e.message)
@@ -96,7 +242,7 @@ export default function Dashboard() {
     let cancelled = false
     async function load() {
       try {
-        const data = await listEntries({ limit: 30 })
+        const data = await loadJournalEntries()
         if (!cancelled) setEntries(data)
       } catch (e) {
         if (!cancelled) setError(e.message)
@@ -150,114 +296,28 @@ export default function Dashboard() {
           <HealthRadar />
           <BaselineCards />
           <WellbeingCharts />
-          <h3 className="section-title">Dernières entrées</h3>
-          {entries.length === 0 ? (
+          <h3 className="section-title">Vos derniers jours</h3>
+          {days.length === 0 ? (
             <p className="empty-hint">
               Aucune donnée pour l'instant. <Link to="/food">Enregistrez un repas</Link> pour commencer.
             </p>
           ) : (
-            <ul className="entries-list">
-              {entries.map((e) => (
-                <li key={e.id} className="entry-card" data-type={e.type}>
-                  <div className="entry-card-header">
-                    <span className="entry-type">{entryTitle(e)}</span>
-                    <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
-                    <time className="entry-at">{formatAt(e.at)}</time>
-                  </div>
-                  <div className="entry-card-row">
-                    <div className="entry-card-body">
-                      {e.type === 'food' && e.payload?.items?.length > 0 && (
-                        <ul className="entry-items">
-                          {e.payload.items.slice(0, 5).map((item, i) => (
-                            <li key={i}>{item.ingredient}{'\u00a0'}: {item.quantity}</li>
-                          ))}
-                          {e.payload.items.length > 5 && (
-                            <li className="entry-more">+{e.payload.items.length - 5} autres</li>
-                          )}
-                        </ul>
-                      )}
-                      {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
-                        <p className="entry-wellbeing-score">
-                          Note : <strong>{e.payload.score}</strong> / 5
-                        </p>
-                      )}
-                      {e.type === 'wellbeing' && Array.isArray(e.payload?.tags) && e.payload.tags.some(getTagMeta) && (
-                        <p className="entry-wellbeing-tags">
-                          {e.payload.tags
-                            .map(getTagMeta)
-                            .filter(Boolean)
-                            .map((t) => `${t.emoji} ${t.label}`)
-                            .join(' · ')}
-                        </p>
-                      )}
-                      {e.type === 'cigarette' && (
-                        <p className="entry-wellbeing-score">
-                          <strong>{typeof e.payload?.count === 'number' ? e.payload.count : 1}</strong>{' '}
-                          cigarette{(typeof e.payload?.count === 'number' ? e.payload.count : 1) > 1 ? 's' : ''}
-                        </p>
-                      )}
-                      {e.type === 'steps' && typeof e.payload?.value === 'number' && (
-                        <p className="entry-wellbeing-score">
-                          <strong>{e.payload.value.toLocaleString('fr-FR')}</strong> pas
-                          {e.payload.period && ` ${periodLabel(e.payload.period)}`}
-                        </p>
-                      )}
-                      {e.type === 'heart_rate' && typeof e.payload?.bpm === 'number' && (
-                        <p className="entry-wellbeing-score">
-                          <strong>{e.payload.bpm}</strong> bpm
-                        </p>
-                      )}
-                      {e.type === 'heart_rate' && typeof e.payload?.value === 'number' && typeof e.payload?.bpm === 'undefined' && (
-                        <p className="entry-wellbeing-score">
-                          <strong>{frNumber(e.payload.value)}</strong>{' '}
-                          {HEART_SUBTYPE_UNITS[e.payload.subtype] ?? e.payload.unit}
-                        </p>
-                      )}
-                      {e.type === 'weight' && typeof e.payload?.valueKg === 'number' && (
-                        <p className="entry-wellbeing-score">
-                          <strong>{frNumber(e.payload.valueKg)}</strong> kg
-                        </p>
-                      )}
-                      {e.type === 'height' && typeof e.payload?.valueCm === 'number' && (
-                        <p className="entry-wellbeing-score">
-                          <strong>{frNumber(e.payload.valueCm)}</strong> cm
-                        </p>
-                      )}
-                      {e.type === 'body_composition' && e.payload && (
-                        <p className="entry-wellbeing-score">
-                          {bodyCompositionParts(e.payload).join(' · ') || 'Mesure enregistrée'}
-                        </p>
-                      )}
-                      {e.type === 'calories' && typeof e.payload?.value === 'number' && (
-                        <p className="entry-wellbeing-score">
-                          <strong>{Math.round(e.payload.value).toLocaleString('fr-FR')}</strong> kcal
-                          {e.payload.period && ` ${periodLabel(e.payload.period)}`}
-                        </p>
-                      )}
-                      {e.type === 'sleep' && typeof e.payload?.durationMinutes === 'number' && (
-                        <p className="entry-wellbeing-score">
-                          <strong>{formatDuration(e.payload.durationMinutes)}</strong>
-                          {e.payload.sleepState && ` — ${sleepStateLabel(e.payload.sleepState)}`}
-                        </p>
-                      )}
-                      {e.type === 'activity' && e.payload?.workoutType && (
-                        <p className="entry-wellbeing-score">
-                          {workoutTypeLabel(e.payload.workoutType)}
-                          {e.payload.durationSeconds && ` — ${formatDuration(e.payload.durationSeconds / 60)}`}
-                          {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
-                        </p>
-                      )}
-                      {!['food', 'wellbeing', 'cigarette', 'steps', 'heart_rate', 'calories', 'sleep', 'activity', 'weight', 'height', 'body_composition'].includes(e.type) && (
-                        <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
-                      )}
-                    </div>
-                    {isDeletableEntry(e) && (
-                      <DeleteEntryButton entryId={e.id} label={DELETE_LABELS[e.type] || 'cette entrée'} />
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="day-list">
+                {days.slice(0, visibleDays).map((day) => (
+                  <DayCard key={day.dateKey} day={day} />
+                ))}
+              </ul>
+              {days.length > visibleDays && (
+                <button
+                  type="button"
+                  className="btn btn-secondary day-more-btn"
+                  onClick={() => setVisibleDays((n) => n + MORE_DAYS)}
+                >
+                  Voir les jours précédents
+                </button>
+              )}
+            </>
           )}
         </>
       )}
