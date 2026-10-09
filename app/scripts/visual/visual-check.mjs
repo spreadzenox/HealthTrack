@@ -12,6 +12,7 @@
  *   npm run visual -- --update-banner      # simule une release plus récente
  *   npm run visual -- --wellbeing-prompt   # laisse la modale bien-être s'ouvrir
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
+ *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --routes=/recommendations --click="Recommandations avancées"
@@ -166,7 +167,7 @@ async function main() {
 
     // Base propre + données de démo injectées via le module de stockage de l'app.
     await page.goto(baseUrl, { waitUntil: 'load' })
-    const entries = args.empty ? [] : generateDemoEntries()
+    const entries = args.empty ? [] : generateDemoEntries({ illness: Boolean(args.radar) })
     const seedResult = await page.evaluate(async (list) => {
       await new Promise((res) => {
         const req = indexedDB.deleteDatabase('HealthTrack')

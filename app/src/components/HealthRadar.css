@@ -1,0 +1,91 @@
+.radar {
+  margin: 20px 0 8px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border-left: 3px solid rgba(255, 255, 255, 0.15);
+}
+
+.radar.is-calm {
+  border-left-color: #6fcf97;
+}
+
+.radar.is-watch {
+  border-left-color: #f7b733;
+}
+
+.radar.is-alert {
+  border-left-color: #ff8a5c;
+  background: linear-gradient(0deg, rgba(255, 138, 92, 0.08), rgba(255, 138, 92, 0.08)), var(--surface);
+}
+
+.radar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+.radar-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.radar-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: rgba(111, 207, 151, 0.15);
+  color: #6fcf97;
+}
+
+.radar.is-watch .radar-badge {
+  background: rgba(247, 183, 51, 0.15);
+  color: #f7b733;
+}
+
+.radar.is-alert .radar-badge {
+  background: rgba(255, 138, 92, 0.18);
+  color: #ff8a5c;
+}
+
+.radar-text {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.radar.is-calm .radar-text,
+.radar.is-insufficient .radar-text,
+.radar.is-stale .radar-text {
+  color: var(--text-muted);
+}
+
+.radar-signals {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.radar-signal-usual {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.radar-advice {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.radar-footnote {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}

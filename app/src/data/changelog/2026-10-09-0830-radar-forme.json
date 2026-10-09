@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-09",
+  "kind": "nouveau",
+  "title": "Radar forme : repérer tôt la fatigue ou un début de maladie",
+  "items": [
+    "Nouveau en haut du tableau de bord : le « Radar forme » compare chaque jour votre FC au repos, votre VFC et votre durée de sommeil à vos valeurs habituelles des 60 jours précédents.",
+    "Il ne se déclenche que si au moins deux signaux s’écartent en même temps dans le mauvais sens (FC plus haute, VFC plus basse, nuit plus courte) : « À surveiller » pour un jour, « Depuis N jours » si cela se répète.",
+    "Il affiche vos valeurs du jour à côté de vos valeurs habituelles et donne des conseils prudents (repos, sommeil, hydratation, entraînement allégé), avec un renvoi vers un professionnel de santé en cas de fièvre ou de symptômes qui durent. C’est une observation, jamais un diagnostic.",
+    "Il faut environ 2 semaines de mesures de la montre pour qu’il s’active."
+  ]
+}
