@@ -35,7 +35,7 @@ une release à chaque changement validé, et tient ce journal.
   habitudes » dans Recommandations : bien-être les jours avec vs sans chaque tag (le lendemain pour
   les habitudes du soir), avec nombre de jours et niveau de confiance. Il faut 5 jours avec et 5
   sans pour qu'un tag soit comparé — **pensez à les cocher**, c'est ce qui permettra ensuite des
-  pistes du type « moins d'écran le soir ».
+  pistes du type « moins d'écran le soir ». (v66)
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -66,7 +66,7 @@ puis « radar » fatigue / début de maladie qui s'appuiera sur la norme cardiaq
 | 08/10 20:30 — [Page Nutrition juste et lisible](runs/2026-10-08-2030-nutrition.md) | 🐛 | PR #58 fusionnée → v63 |
 | 08/10 22:30 — [Cœur vs votre norme (FC repos / VFC)](runs/2026-10-08-2230-norme-coeur.md) | 🏗️ | PR #60 fusionnée → v64 |
 | 09/10 00:30 — [Recommandations avancées fiabilisées](runs/2026-10-09-0030-modele-avance.md) | 🏗️ | PR #62 fusionnée → v65 |
-| 09/10 02:30 — [Tags d'habitudes](runs/2026-10-09-0230-tags-habitudes.md) | 🏗️ | PR en cours |
+| 09/10 02:30 — [Tags d'habitudes](runs/2026-10-09-0230-tags-habitudes.md) | 🏗️ | PR #64 fusionnée → v66 |
 
 ---
 
