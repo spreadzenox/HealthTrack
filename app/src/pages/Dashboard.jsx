@@ -5,6 +5,7 @@ import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import BaselineCards from '../components/BaselineCards'
+import HealthRadar from '../components/HealthRadar'
 import { getTagMeta } from '../services/behaviorTags'
 import { formatAt, formatDuration, sleepStateLabel, periodLabel, workoutTypeLabel } from '../utils/format'
 
@@ -137,6 +138,7 @@ export default function Dashboard() {
 
       {!loading && !error && (
         <>
+          <HealthRadar />
           <BaselineCards />
           <WellbeingCharts />
           <h3 className="section-title">Dernières entrées</h3>

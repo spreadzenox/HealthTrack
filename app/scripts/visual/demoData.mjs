@@ -49,10 +49,12 @@ function at(day, hours, minutes = 0) {
 }
 
 /**
- * @param {{ days?: number, seed?: number, now?: Date }} [opts]
+ * @param {{ days?: number, seed?: number, now?: Date, illness?: boolean }} [opts]
+ *   illness : simule un début d'infection les 3 derniers jours (FC repos ↑, VFC ↓, sommeil ↓)
+ *   pour voir le « Radar forme » en alerte.
  * @returns {Array<{ type: string, source: string, at: string, payload: object }>}
  */
-export function generateDemoEntries({ days = 75, seed = 42, now = new Date() } = {}) {
+export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), illness = false } = {}) {
   const rand = mulberry32(seed)
   const noise = (amp) => (rand() - 0.5) * 2 * amp
   const entries = []
@@ -68,11 +70,12 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date() } =
     day.setDate(day.getDate() - i)
     const weekend = day.getDay() === 0 || day.getDay() === 6
 
-    const sleepMin = Math.round(420 + noise(70) + (weekend ? 40 : 0))
+    const sick = illness && i <= 2
+    const sleepMin = Math.round(420 + noise(70) + (weekend ? 40 : 0)) - (sick ? 80 : 0)
     const steps = Math.max(1500, Math.round(8000 + noise(4500) + (weekend ? -1500 : 0)))
     const cigarettes = Math.max(0, Math.round(4 - (days - i) / 25 + noise(3)))
-    const restingHr = Math.round(62 - (sleepMin - 420) / 40 + cigarettes * 0.4 + noise(3))
-    const hrv = Math.round(48 + (sleepMin - 420) / 8 - cigarettes + noise(6))
+    const restingHr = Math.round(62 - (sleepMin - 420) / 40 + cigarettes * 0.4 + noise(3)) + (sick ? 9 : 0)
+    const hrv = Math.round(48 + (sleepMin - 420) / 8 - cigarettes + noise(6)) - (sick ? 12 : 0)
 
     const bedtime = new Date(day)
     bedtime.setDate(bedtime.getDate() - 1)

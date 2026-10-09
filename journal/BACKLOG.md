@@ -35,7 +35,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [ ] Baselines, étape 2 : ajouter sommeil (durée) et une mini-courbe 30 j avec la bande de norme ; CV 7 j de la VFC
 - [ ] Régularité du sommeil (R#6) : écart-type coucher/lever 14 j + SRI simplifié
 - [ ] Tendance de poids lissée (R#8, EMA α≈0,1) et objectif de pas fondé sur les preuves (R#10, défaut 7 000, adaptatif)
-- [ ] « Radar » signes de maladie / surmenage (R#12) : ≥ 2 métriques hors norme ≥ 2 nuits, jamais de diagnostic
+- [x] **« Radar forme »** (R#12) : FC repos / VFC / sommeil vs norme 60 j, ≥ 2 signaux défavorables (|z| ≥ 1,5), « à surveiller » 1 jour, alerte ≥ 2 jours, jamais de diagnostic
+- [ ] Radar, étape 2 : fréquence respiratoire et température si Health Connect les fournit ; mini-courbe 14 j ; recalibrer les seuils sur retours réels
 - [ ] Readiness personnelle calibrée sur le ressenti (R#24, espace d'état bayésien) — pari long terme
 
 ### C3 — Moteur d'analyse N-of-1 v2
@@ -79,11 +80,11 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🏗️ **Radar** (R#12) — réutilise `services/baselines.js` (FC repos, VFC + sommeil), persistance ≥ 2 nuits.
-2. 🏗️ **Analyse photo fiabilisée** (R#4) — schéma JSON (`responseSchema`), grammes modifiables avant sauvegarde.
-3. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type, résumé du jour.
+1. 🏗️ **Analyse photo fiabilisée** (R#4) — schéma JSON (`responseSchema`), grammes modifiables avant sauvegarde.
+2. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type, résumé du jour ; rapprocher Radar et cartes cœur.
+3. 🎨 C1 — barre d'onglets en bas.
 4. 🐛 Run bugs & visuel vers le 4ᵉ run de fond (dernier : 09/10 06:30).
-5. 🎨 C1 — barre d'onglets en bas.
+5. 🔭 Veille (dernière : 08/10 17:00) — saisie texte/dictée des repas, état de l'art 2026.
 
 ## Idées en vrac (à trier)
 
@@ -104,6 +105,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-09 — « Radar forme » sur le tableau de bord : FC repos, VFC et sommeil vs votre norme, alerte si ≥ 2 signaux s'écartent ensemble (#69)
 - [x] 2026-10-09 — Chasse aux bugs : pesées Withings lisibles (plus de JSON brut), VFC / SpO₂ / FC repos titrées avec unités françaises, activités traduites, « Hypothèse incertaine », plus de « −0,00 » (#68, v68)
 - [x] 2026-10-09 — Transparence Gemini : photo réduite et sans métadonnées, modèle 3.8 Flash réglable avec repli, avertissement clé gratuite (#66, v67)
 - [x] 2026-10-09 — Tags d'habitudes dans le check-in + section « Vos habitudes » (jours avec / sans, permutation + BH) (#64, v66)
