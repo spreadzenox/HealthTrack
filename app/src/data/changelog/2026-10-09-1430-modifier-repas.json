@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-09",
+  "kind": "nouveau",
+  "title": "Modifier un repas déjà enregistré",
+  "items": [
+    "Dans Alimentation → « Derniers repas enregistrés », touchez « Modifier » sur un repas : corrigez les grammes (champ ou − / + 10 g), retirez un ingrédient en trop ou ajoutez un oubli par recherche, avec les kcal recalculées en direct.",
+    "Vous pouvez aussi changer l’heure du repas, par exemple pour un déjeuner photographié mais enregistré le soir. Une heure dans le futur est refusée.",
+    "Nutrition, graphiques et Recommandations tiennent compte de la correction dès l’enregistrement. Les anciens repas enregistrés en texte (« 150g ») retrouvent leurs grammes modifiables."
+  ]
+}

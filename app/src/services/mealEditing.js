@@ -93,6 +93,13 @@ export function setItemGrams(item, value) {
   return { ...item, quantity_g: grams, quantity: quantityLabel(grams) }
 }
 
+/** Ce qui est enregistré pour chaque ingrédient (le signalement « absent de la base » reste à l'écran). */
+export function itemForStorage(item) {
+  const stored = { ...item }
+  delete stored.unknown
+  return stored
+}
+
 /** kcal estimées d'un élément, ou null si inconnu ou sans grammes. */
 export function itemKcal(item) {
   const p100 = nutritionMap[item?.ingredient]
@@ -104,4 +111,42 @@ export function itemKcal(item) {
 /** Total des kcal connues du repas. */
 export function mealKcal(items) {
   return (items || []).reduce((sum, it) => sum + (itemKcal(it) ?? 0), 0)
+}
+
+/** Grammes lisibles dans un ancien libellé texte (« 150g », « 12,5 g »), sinon undefined. */
+function gramsFromLabel(label) {
+  const m = /^\s*(\d+(?:[.,]\d+)?)\s*g\s*$/i.exec(String(label ?? ''))
+  return m ? parseGrams(m[1]) : undefined
+}
+
+/**
+ * Ingrédients d'un repas déjà enregistré, prêts pour `MealEditor` : grammes retrouvés (y compris
+ * dans les anciens libellés texte), aliments absents de la base signalés. Une quantité textuelle
+ * non convertible (« 1 bol ») est conservée telle quelle, sans grammes inventés.
+ */
+export function itemsForEditing(items) {
+  return (items || [])
+    .filter((raw) => raw && String(raw.ingredient ?? '').trim())
+    .map((raw) => {
+      const grams = raw.quantity_g ?? gramsFromLabel(raw.quantity)
+      const item = normalizeMealItem({ ...raw, quantity_g: grams })
+      if (item.quantity_g == null && raw.quantity) item.quantity = raw.quantity
+      return item
+    })
+}
+
+const pad = (n) => String(n).padStart(2, '0')
+
+/** Date ISO → valeur d'un champ `datetime-local` (heure locale, à la minute), '' si invalide. */
+export function atToLocalInput(at) {
+  const d = new Date(at)
+  if (Number.isNaN(d.getTime())) return ''
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+/** Valeur d'un champ `datetime-local` (heure locale) → date ISO, null si invalide. */
+export function localInputToAt(value) {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(String(value ?? ''))) return null
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? null : d.toISOString()
 }

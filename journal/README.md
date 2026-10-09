@@ -65,6 +65,9 @@ une release à chaque changement validé, et tient ce journal.
   reviendraient à la synchro).
 - **Sauvegarde vraiment complète** : la sauvegarde JSON laissait de côté les mesures les plus
   anciennes au-delà de quelques milliers (FC, VFC, poids…) — elle contient maintenant tout.
+- **Modifier un repas enregistré** (Alimentation → « Modifier ») : corrigez les grammes, retirez ou
+  ajoutez un ingrédient, changez l'heure (un déjeuner enregistré le soir) — kcal recalculées en
+  direct, analyses mises à jour aussitôt.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -92,7 +95,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — modifier un repas déjà enregistré, un tableau de bord moins encombré
+**Prochaines priorités** — un tableau de bord moins encombré
 (entrées regroupées par jour, barre d'onglets en bas), puis saisie d'un repas par texte / « comme hier ».
 
 | Run | Type | Résultat |
@@ -109,6 +112,7 @@ une release à chaque changement validé, et tient ce journal.
 | 09/10 08:30 — [Radar forme](runs/2026-10-09-0830-radar-forme.md) | 🏗️ | PR #69 fusionnée → v69 |
 | 09/10 10:30 — [Analyse photo corrigeable](runs/2026-10-09-1030-analyse-photo.md) | 🏗️ | PR #71 fusionnée → v70 |
 | 09/10 12:30 — [Supprimer une saisie, sauvegarde complète](runs/2026-10-09-1230-supprimer-sauvegarde.md) | 🐛 | PR #72 fusionnée → v71 |
+| 09/10 14:30 — [Modifier un repas enregistré](runs/2026-10-09-1430-modifier-repas.md) | 🏗️ | PR #74 fusionnée → release à vérifier |
 
 ---
 

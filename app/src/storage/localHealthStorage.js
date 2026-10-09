@@ -254,6 +254,36 @@ export async function deleteEntry(id) {
 }
 
 /**
+ * Modify an app entry in place: only `payload` and `at` can change (type, source, id and
+ * created_at are kept). Stamps `updated_at`. Rejects if the entry does not exist.
+ * @param {number} id
+ * @param {{ payload?: object, at?: string }} changes
+ * @returns {Promise<void>}
+ */
+export async function updateEntry(id, changes = {}) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const store = tx.objectStore(STORE_NAME)
+    let missing = false
+    const req = store.get(id)
+    req.onsuccess = () => {
+      const row = req.result
+      if (!row) {
+        missing = true
+        return
+      }
+      if (changes.payload !== undefined) row.payload = changes.payload
+      if (changes.at) row.at = changes.at
+      row.updated_at = new Date().toISOString()
+      store.put(row)
+    }
+    tx.oncomplete = () => (missing ? reject(new Error('Entrée introuvable')) : resolve())
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+/**
  * Export ALL entries as JSON string (for download / backup).
  * No per-type limit here: a backup must never silently drop old data.
  * @returns {Promise<string>}
@@ -307,6 +337,7 @@ export async function importFromJson(json, opts = {}) {
         at: e.at || new Date().toISOString(),
         created_at: e.created_at || new Date().toISOString(),
       }
+      if (e.updated_at) row.updated_at = e.updated_at
       store.add(row)
       count++
     }

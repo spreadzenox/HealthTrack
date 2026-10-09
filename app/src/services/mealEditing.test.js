@@ -6,6 +6,9 @@ import {
   itemKcal,
   mealKcal,
   setItemGrams,
+  itemsForEditing,
+  atToLocalInput,
+  localInputToAt,
 } from './mealEditing.js'
 
 describe('matchIngredientName', () => {
@@ -101,5 +104,50 @@ describe('setItemGrams', () => {
     const r = setItemGrams({ ingredient: 'Abondance', quantity_g: 10, quantity: '10 g' }, '')
     expect(r.quantity_g).toBeUndefined()
     expect(r.quantity).toBe('portion non précisée')
+  })
+})
+
+describe('itemsForEditing', () => {
+  it('reprend les grammes enregistrés et signale les aliments absents de la base', () => {
+    const items = itemsForEditing([
+      { ingredient: 'Abondance', quantity: '80 g', quantity_g: 80, confidence: 'low' },
+      { ingredient: 'Fromage lunaire', quantity: '20 g', quantity_g: 20 },
+    ])
+    expect(items[0]).toEqual({ ingredient: 'Abondance', quantity: '80 g', quantity_g: 80, confidence: 'low' })
+    expect(items[1]).toMatchObject({ ingredient: 'Fromage lunaire', quantity_g: 20, unknown: true })
+  })
+
+  it('retrouve les grammes des anciens repas enregistrés en texte (« 150g », « 200 g »)', () => {
+    const items = itemsForEditing([
+      { ingredient: 'Abondance', quantity: '150g' },
+      { ingredient: 'Abondance', quantity: '200 g' },
+      { ingredient: 'Abondance', quantity: '12,5 g' },
+    ])
+    expect(items.map((it) => it.quantity_g)).toEqual([150, 200, 13])
+  })
+
+  it('garde une quantité textuelle non convertible (« 1 bol ») sans inventer de grammes', () => {
+    const [item] = itemsForEditing([{ ingredient: 'Abondance', quantity: '1 bol' }])
+    expect(item.quantity_g).toBeUndefined()
+    expect(item.quantity).toBe('1 bol')
+  })
+
+  it('ignore les éléments sans nom et accepte une liste absente', () => {
+    expect(itemsForEditing([{ quantity: '10 g' }, null])).toEqual([])
+    expect(itemsForEditing(undefined)).toEqual([])
+  })
+})
+
+describe('heure du repas (champ datetime-local)', () => {
+  it('fait l’aller-retour en heure locale', () => {
+    const at = new Date(2026, 9, 9, 12, 34).toISOString()
+    expect(atToLocalInput(at)).toBe('2026-10-09T12:34')
+    expect(localInputToAt('2026-10-09T12:34')).toBe(at)
+  })
+
+  it('renvoie une chaîne vide / null pour une valeur invalide', () => {
+    expect(atToLocalInput('n’importe quoi')).toBe('')
+    expect(localInputToAt('')).toBeNull()
+    expect(localInputToAt('abc')).toBeNull()
   })
 })

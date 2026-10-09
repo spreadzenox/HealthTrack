@@ -7,6 +7,7 @@ vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
   createEntry: vi.fn(),
   deleteEntry: vi.fn(),
+  updateEntry: vi.fn(),
 }))
 
 describe('Food', () => {
@@ -185,5 +186,94 @@ describe('Food — supprimer un repas', () => {
     fireEvent.click(screen.getByRole('button', { name: /Confirmer/i }))
     await screen.findByText(/Aucun repas enregistré/i)
     expect(deleteEntry).toHaveBeenCalledWith(9)
+  })
+})
+
+describe('Food — modifier un repas enregistré', () => {
+  const meal = {
+    id: 7, type: 'food', source: 'app_food', at: '2026-10-09T10:30:00.000Z',
+    payload: {
+      dish: 'Fromage', provider: 'gemini', model: 'gemini-3.8-flash',
+      items: [
+        { ingredient: 'Abondance', quantity: '100 g', quantity_g: 100 },
+        { ingredient: 'Fromage lunaire', quantity: '20 g', quantity_g: 20 },
+      ],
+    },
+  }
+
+  it('corrige les grammes, retire un ingrédient et change l’heure', async () => {
+    const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockResolvedValue()
+    listEntries.mockResolvedValue([meal])
+    const onUpdate = vi.fn()
+    window.addEventListener('health-entries-updated', onUpdate)
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Fromage')
+    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '50' } })
+    fireEvent.click(screen.getByRole('button', { name: /Supprimer Fromage lunaire/i }))
+    fireEvent.change(screen.getByLabelText(/Heure du repas/i), { target: { value: '2026-10-08T20:15' } })
+    const updated = {
+      ...meal,
+      at: new Date(2026, 9, 8, 20, 15).toISOString(),
+      payload: { ...meal.payload, items: [{ ingredient: 'Abondance', quantity: '50 g', quantity_g: 50 }] },
+    }
+    listEntries.mockResolvedValue([updated])
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer les modifications/i }))
+    await vi.waitFor(() => expect(screen.queryByLabelText(/Grammes de Abondance/i)).not.toBeInTheDocument())
+    expect(await screen.findByText('≈ 197 kcal')).toBeInTheDocument()
+    expect(updateEntry).toHaveBeenCalledWith(7, { payload: updated.payload, at: updated.at })
+    expect(onUpdate).toHaveBeenCalled()
+    expect(screen.queryByLabelText(/Grammes de Abondance/i)).not.toBeInTheDocument()
+    window.removeEventListener('health-entries-updated', onUpdate)
+  })
+
+  it('n’envoie pas l’heure si elle n’a pas changé', async () => {
+    const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockClear()
+    updateEntry.mockResolvedValue()
+    listEntries.mockResolvedValue([meal])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Fromage')
+    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '120' } })
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer les modifications/i }))
+    await vi.waitFor(() => expect(updateEntry).toHaveBeenCalled())
+    expect(updateEntry.mock.calls[0][1].at).toBeUndefined()
+  })
+
+  it('Annuler referme l’éditeur sans rien enregistrer', async () => {
+    const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockClear()
+    listEntries.mockResolvedValue([meal])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Fromage')
+    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '500' } })
+    fireEvent.click(screen.getByRole('button', { name: /^Annuler$/ }))
+    expect(screen.queryByLabelText(/Grammes de Abondance/i)).not.toBeInTheDocument()
+    expect(screen.getByText('≈ 393 kcal')).toBeInTheDocument()
+    expect(updateEntry).not.toHaveBeenCalled()
+  })
+
+  it('refuse une heure dans le futur', async () => {
+    const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockClear()
+    listEntries.mockResolvedValue([meal])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Fromage')
+    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.change(screen.getByLabelText(/Heure du repas/i), { target: { value: '2999-01-01T12:00' } })
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer les modifications/i }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(/futur/)
+    expect(updateEntry).not.toHaveBeenCalled()
+  })
+
+  it('pas de bouton Modifier pour un repas venant d’une autre source', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([{ ...meal, source: 'health_connect' }])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Fromage')
+    expect(screen.queryByRole('button', { name: /Modifier ce repas/i })).not.toBeInTheDocument()
   })
 })
