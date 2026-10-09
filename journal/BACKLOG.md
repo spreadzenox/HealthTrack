@@ -45,6 +45,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] Ne recommander que des leviers **actionnables** et cohérents avec le signe observé (#56)
 - [x] **Modèle avancé fiabilisé** : bug d'échelle des coefficients standardisés corrigé, doublons |r| > 0,9 écartés (et affichés), ≤ 10 variables, Ridge λ par validation croisée LOO, seuil d'effet 0,1 ET pour les pistes, prédiction du jour alignée sur le même modèle
 - [ ] Modèle avancé, étape 2 : incertitude par piste (IC bootstrap par blocs, stabilité du signe) ; LOO imbriqué si le coût le permet
+- [x] **Sommeil au jour du réveil dans les analyses** (corrélations, modèle avancé, prédiction du jour) ; éveils / « au lit » non additionnés aux phases (run 20:30)
 - [ ] Effets décalés (lags 0–3 j) et contrôle du jour de la semaine (R#25)
 - [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
 - [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
@@ -83,8 +84,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 Chasse aux bugs (`--empty`, `--light`, cas limites) — dernier run 🐛 : 09/10 12:30.
-2. 🎨 C1 — barre d'onglets en bas.
+1. 🎨 C1 — barre d'onglets en bas.
+2. 🐛 Chasse aux bugs sur les interactions (formulaires, modales, import d'une ancienne sauvegarde) — dernier run 🐛 : 09/10 20:30.
 3. 🔭 Veille (dernière : 08/10 17:00) — saisie texte/dictée des repas, état de l'art 2026.
 4. 🏗️ Saisie texte libre / dictée → Gemini, vers `NewMealForm`.
 5. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
@@ -109,11 +110,13 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Nutrition : « 1728 mg/j » sans espace dans la capture (Intl donne « 1 728 ») — vérifier sur téléphone le rendu de l'espace fine insécable en gras.
 - Suppression des données synchronisées (pesée aberrante…) : nécessiterait une liste d'exclusion persistante pour que la synchro ne les réimporte pas.
 - Alimentation : liste de 20 repas très longue → regrouper par jour (réutiliser `buildDailyJournal` / `dayHeading`).
-- Sommeil : le journal le range au jour du réveil, `buildDailyDataset` (analyses) au jour du coucher — harmoniser (impact sur les corrélations J-1 → J à vérifier).
+- Journal du tableau de bord : une nuit enregistrée seulement « au lit » n'apparaît pas (ignorée) — réutiliser `nightlySleep` en gardant les siestes courtes.
+- Nutrition : « 1728 mg/j » en gras sans espace dans les captures (police / U+202F ?) — vérifier sur téléphone.
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-09 — Analyses : sommeil rattaché au jour du réveil (avant : nuit suivante), éveils non comptés ; « 7 h 11 » ; bouton Nutrition vide (run 20:30)
 - [x] 2026-10-09 — Alimentation : « Saisir sans photo », « Repas habituels » et « Refaire » (#78, v74)
 - [x] 2026-10-09 — Tableau de bord « Vos derniers jours » : une carte par jour avec résumé + saisies, 14 jours chargés (#76, v73)
 - [x] 2026-10-09 — Modifier un repas enregistré (grammes, ingrédients, heure) depuis Alimentation ; `updateEntry` sans changement de schéma (#74, v72)
