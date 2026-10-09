@@ -88,7 +88,7 @@ moins encombré (entrées regroupées par jour, barre d'onglets en bas).
 | 09/10 02:30 — [Tags d'habitudes](runs/2026-10-09-0230-tags-habitudes.md) | 🏗️ | PR #64 fusionnée → v66 |
 | 09/10 04:30 — [Transparence Gemini](runs/2026-10-09-0430-transparence-gemini.md) | 🔒 | PR #66 fusionnée → v67 |
 | 09/10 06:30 — [Mesures lisibles, libellés justes](runs/2026-10-09-0630-libelles-justes.md) | 🐛 | PR #68 fusionnée → v68 |
-| 09/10 08:30 — [Radar forme](runs/2026-10-09-0830-radar-forme.md) | 🏗️ | PR #69 fusionnée |
+| 09/10 08:30 — [Radar forme](runs/2026-10-09-0830-radar-forme.md) | 🏗️ | PR #69 fusionnée → v69 |
 
 ---
 
