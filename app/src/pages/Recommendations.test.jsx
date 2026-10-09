@@ -302,3 +302,42 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 })
+
+describe('Recommendations — behaviour tags', () => {
+  // 30 days; alcohol every 3rd day, the following day is worse.
+  function taggedEntries() {
+    const entries = makeEntries(30)
+    for (const e of entries) {
+      if (e.type !== 'wellbeing') continue
+      const d = Number(e.at.slice(8, 10))
+      e.payload = {
+        score: (d - 1) % 3 === 0 ? 2 : 4,
+        ...(d % 3 === 0 && { tags: ['alcohol'] }),
+        ...(d === 4 && { tags: ['sick'] }),
+      }
+    }
+    return entries
+  }
+
+  it('invites the user to add tags when none were ever used', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(10))
+    renderPage()
+    expect(await screen.findByText(/Vos habitudes/i)).toBeInTheDocument()
+    expect(screen.getByText(/Ajoutez des tags/i)).toBeInTheDocument()
+  })
+
+  it('compares days with and without each tag, with the day the effect is measured', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(taggedEntries())
+    renderPage()
+    const card = (await screen.findByText('Alcool')).closest('.reco-tag-card')
+    expect(card).toHaveTextContent(/Le lendemain/i)
+    expect(card).toHaveTextContent(/2,0 \/ 5/)
+    expect(card).toHaveTextContent(/4,0 sans/)
+    expect(card).toHaveTextContent(/−2,0 point/)
+    expect(card).toHaveTextContent(/Hypothèse solide/i)
+    // A tag used on fewer than 5 days is listed as still being collected.
+    expect(screen.getByText(/En cours de collecte/i)).toHaveTextContent(/Malade/)
+  })
+})

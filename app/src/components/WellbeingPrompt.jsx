@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createEntry } from '../storage/localHealthStorage'
+import { BEHAVIOR_TAGS } from '../services/behaviorTags'
 
 const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
 
@@ -31,6 +32,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
 
   const [internalOpen, setInternalOpen] = useState(false)
   const [selected, setSelected] = useState(null)
+  const [tags, setTags] = useState([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
 
@@ -45,6 +47,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
     const visible = isControlled ? controlledOpen : internalOpen
     if (visible) {
       setSelected(null)
+      setTags([])
       setError(null)
     }
   }, [isControlled ? controlledOpen : internalOpen]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -58,6 +61,10 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
       setInternalOpen(false)
       markSessionAnswered()
     }
+  }
+
+  const toggleTag = (id) => {
+    setTags((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]))
   }
 
   const handleSkip = () => {
@@ -76,7 +83,11 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
       await createEntry({
         type: 'wellbeing',
         source: 'app_wellbeing',
-        payload: { score: selected },
+        payload: {
+          score: selected,
+          // Stored in a stable order; omitted when empty (same shape as before tags existed).
+          ...(tags.length > 0 && { tags: BEHAVIOR_TAGS.map((t) => t.id).filter((id) => tags.includes(id)) }),
+        },
       })
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
       if (!isControlled) {
@@ -128,6 +139,30 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
             </button>
           ))}
         </div>
+
+        <p className="wellbeing-tags-title" id="wellbeing-tags-title">
+          Aujourd&apos;hui <span className="wellbeing-tags-optional">(facultatif)</span>
+        </p>
+        <div className="wellbeing-tags" role="group" aria-labelledby="wellbeing-tags-title">
+          {BEHAVIOR_TAGS.map((t) => {
+            const on = tags.includes(t.id)
+            return (
+              <button
+                key={t.id}
+                type="button"
+                className={'wellbeing-tag' + (on ? ' wellbeing-tag-selected' : '')}
+                aria-pressed={on}
+                onClick={() => toggleTag(t.id)}
+              >
+                <span aria-hidden>{t.emoji}</span> {t.label}
+              </button>
+            )
+          })}
+        </div>
+        <p className="wellbeing-tags-hint">
+          Ces tags permettent de voir, dans Recommandations, ce qui va de pair avec vos bons et
+          moins bons jours.
+        </p>
 
         {error && (
           <p className="wellbeing-modal-error" role="alert">

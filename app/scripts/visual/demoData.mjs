@@ -57,6 +57,10 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date() } =
   const noise = (amp) => (rand() - 0.5) * 2 * amp
   const entries = []
   let weight = 78.4
+  // Tags de comportements : RNG séparé pour ne pas décaler les autres séries.
+  // Utilisés depuis 40 jours seulement (comme un utilisateur qui découvre la fonction).
+  const tagRand = mulberry32(seed + 1000)
+  let prevTags = []
 
   for (let i = days; i >= 0; i--) {
     const day = new Date(now)
@@ -139,18 +143,31 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date() } =
       entries.push({ type: 'body_composition', source: 'withings', at: at(day, 7, 30), payload: body })
     }
 
+    const tags = []
+    if (i <= 40) {
+      if (tagRand() < 0.2) tags.push('alcohol')
+      if (tagRand() < 0.3) tags.push('late_screen')
+      if (tagRand() < 0.2) tags.push('stress')
+      if (tagRand() < 0.25) tags.push('coffee_late')
+      if (i === 12 || i === 13) tags.push('sick')
+    }
     const score =
       2.6 +
       (sleepMin - 420) / 60 +
       (steps - 8000) / 6000 -
-      cigarettes * 0.15 +
+      cigarettes * 0.15 -
+      (prevTags.includes('alcohol') ? 0.8 : 0) -
+      (prevTags.includes('late_screen') ? 0.3 : 0) -
+      (tags.includes('stress') ? 0.9 : 0) -
+      (tags.includes('sick') ? 1.5 : 0) +
       noise(0.6)
     entries.push({
       type: 'wellbeing',
       source: 'app_wellbeing',
       at: at(day, 21, 30),
-      payload: { score: Math.max(0, Math.min(5, Math.round(score))) },
+      payload: { score: Math.max(0, Math.min(5, Math.round(score))), ...(tags.length > 0 && { tags }) },
     })
+    prevTags = tags
   }
 
   return entries

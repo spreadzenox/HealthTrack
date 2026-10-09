@@ -123,6 +123,26 @@ describe('Dashboard', () => {
     expect(card).toHaveTextContent('4')
   })
 
+  it('shows behaviour tags of a wellbeing entry in French', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValueOnce([
+      {
+        id: 3,
+        type: 'wellbeing',
+        source: 'app_wellbeing',
+        at: '2026-04-10T21:00:00',
+        payload: { score: 3, tags: ['alcohol', 'late_screen', 'unknown_tag'] },
+        created_at: '',
+      },
+    ])
+    renderDashboard()
+    await screen.findByText(/Note :/)
+    const card = screen.getByRole('listitem')
+    expect(card).toHaveTextContent('Alcool')
+    expect(card).toHaveTextContent('Écran tard')
+    expect(card).not.toHaveTextContent('unknown_tag')
+  })
+
   it('shows sleep duration in hours and French sleep state', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValueOnce([

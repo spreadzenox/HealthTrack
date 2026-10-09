@@ -5,6 +5,7 @@ import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import BaselineCards from '../components/BaselineCards'
+import { getTagMeta } from '../services/behaviorTags'
 import { formatAt, formatDuration, sleepStateLabel, periodLabel } from '../utils/format'
 
 const SOURCE_LABELS = {
@@ -131,6 +132,15 @@ export default function Dashboard() {
                     {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
                       <p className="entry-wellbeing-score">
                         Note : <strong>{e.payload.score}</strong> / 5
+                      </p>
+                    )}
+                    {e.type === 'wellbeing' && Array.isArray(e.payload?.tags) && e.payload.tags.some(getTagMeta) && (
+                      <p className="entry-wellbeing-tags">
+                        {e.payload.tags
+                          .map(getTagMeta)
+                          .filter(Boolean)
+                          .map((t) => `${t.emoji} ${t.label}`)
+                          .join(' · ')}
                       </p>
                     )}
                     {e.type === 'cigarette' && (

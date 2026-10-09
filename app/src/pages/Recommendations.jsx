@@ -14,6 +14,7 @@ import {
   COLLINEARITY_MAX_R,
   MIN_ADVICE_EFFECT,
 } from '../services/analysisEngine'
+import { computeTagEffects, MIN_TAG_DAYS } from '../services/behaviorTags'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { useAutoSync } from '../hooks/useAutoSync'
 import './Recommendations.css'
@@ -103,6 +104,84 @@ function LeverCard({ rank, lever }) {
   )
 }
 
+// ─── Behaviour tags (« jours avec / sans ») ──────────────────────────────────
+
+function frScore(v) {
+  return v.toFixed(1).replace('.', ',')
+}
+
+function frDiff(v) {
+  return (v >= 0 ? '+' : '−') + frScore(Math.abs(v))
+}
+
+function TagEffectCard({ effect }) {
+  const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
+  return (
+    <li className={'reco-tag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
+      <p className="reco-tag-name">
+        <span aria-hidden>{effect.emoji}</span> {effect.label}
+      </p>
+      <p className="reco-tag-compare">
+        {when} : bien-être <strong>{frScore(effect.meanWith)} / 5</strong> contre{' '}
+        {frScore(effect.meanWithout)} sans{' '}
+        <span className={effect.diff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
+          ({frDiff(effect.diff)} point{Math.abs(effect.diff) >= 2 ? 's' : ''})
+        </span>
+      </p>
+      <p className="reco-tag-days">
+        {effect.nWith} jour{effect.nWith > 1 ? 's' : ''} avec · {effect.nWithout} sans
+      </p>
+      <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
+        Hypothèse {effect.evidence}
+      </span>
+    </li>
+  )
+}
+
+function TagsSection({ entries }) {
+  const result = useMemo(() => computeTagEffects(entries), [entries])
+  return (
+    <section className="reco-section">
+      <h3 className="reco-section-title">🏷️ Vos habitudes</h3>
+      {result.status === 'no_tags' ? (
+        <p className="reco-section-hint">
+          Ajoutez des tags (alcool, café après 14 h, écran tard, stress…) quand vous notez votre
+          bien-être. Après {MIN_TAG_DAYS} jours avec et {MIN_TAG_DAYS} jours sans, vous verrez
+          ici comment chacun va de pair avec votre bien-être.
+        </p>
+      ) : (
+        <>
+          <p className="reco-section-hint">
+            Votre bien-être les jours avec chaque tag, comparé aux jours sans. Pour les habitudes
+            du soir, c&apos;est le lendemain qui compte. Ce sont des hypothèses : d&apos;autres
+            choses peuvent changer ces jours-là.
+          </p>
+          {result.effects.length > 0 ? (
+            <ul className="reco-tag-list">
+              {result.effects.map((e) => (
+                <TagEffectCard key={e.tagId} effect={e} />
+              ))}
+            </ul>
+          ) : (
+            <p className="reco-empty-levers">
+              Pas encore assez de jours pour comparer : il faut {MIN_TAG_DAYS} jours avec un tag
+              et {MIN_TAG_DAYS} sans.
+            </p>
+          )}
+          {result.pending.length > 0 && (
+            <p className="reco-tag-pending">
+              En cours de collecte :{' '}
+              {result.pending
+                .map((t) => `${t.emoji} ${t.label} (${Math.min(t.nWith, MIN_TAG_DAYS)}/${MIN_TAG_DAYS} jours avec${t.nWithout < MIN_TAG_DAYS ? `, ${t.nWithout}/${MIN_TAG_DAYS} sans` : ''})`)
+                .join(' · ')}
+            </p>
+          )}
+        </>
+      )}
+    </section>
+  )
+}
+
 // ─── Not enough data placeholder ─────────────────────────────────────────────
 
 function NotEnoughData({ currentDays, minDays, tabLabel }) {
@@ -177,6 +256,8 @@ function BasicTab({ entries }) {
           </p>
         )}
       </section>
+
+      <TagsSection entries={entries} />
 
       {correlations.length > 0 && (
         <section className="reco-section">

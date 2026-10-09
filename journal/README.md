@@ -30,6 +30,12 @@ une release à chaque changement validé, et tient ce journal.
   disent la même chose (et le dit), règle tout seul sa prudence, et ne propose une piste que si
   l'effet est suffisant. Sur données de test, ses prédictions hors-échantillon sont meilleures
   (R² 0,46 → 0,57). Chiffres à la française sur cette page (v65).
+- **Tags d'habitudes** : en notant votre bien-être, cochez en un tap alcool, café après 14 h,
+  repas tardif, écran tard, sport le soir, stress ou malade (facultatif). Nouvelle section « Vos
+  habitudes » dans Recommandations : bien-être les jours avec vs sans chaque tag (le lendemain pour
+  les habitudes du soir), avec nombre de jours et niveau de confiance. Il faut 5 jours avec et 5
+  sans pour qu'un tag soit comparé — **pensez à les cocher**, c'est ce qui permettra ensuite des
+  pistes du type « moins d'écran le soir ».
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -49,8 +55,8 @@ une release à chaque changement validé, et tient ce journal.
 - Le test sur émulateur **Android 16 (API 36)** échoue à la création de l'émulateur (problème
   côté GitHub, sans lien avec le code) ; Android 15 et la publication des releases fonctionnent.
 
-**Prochaines priorités** — tags de comportements (café, alcool, écran tard…), transparence
-Gemini, puis « radar » fatigue / début de maladie qui s'appuiera sur la norme cardiaque.
+**Prochaines priorités** — transparence Gemini (clé gratuite, photos), un run de chasse aux bugs,
+puis « radar » fatigue / début de maladie qui s'appuiera sur la norme cardiaque.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -60,6 +66,7 @@ Gemini, puis « radar » fatigue / début de maladie qui s'appuiera sur la norme
 | 08/10 20:30 — [Page Nutrition juste et lisible](runs/2026-10-08-2030-nutrition.md) | 🐛 | PR #58 fusionnée → v63 |
 | 08/10 22:30 — [Cœur vs votre norme (FC repos / VFC)](runs/2026-10-08-2230-norme-coeur.md) | 🏗️ | PR #60 fusionnée → v64 |
 | 09/10 00:30 — [Recommandations avancées fiabilisées](runs/2026-10-09-0030-modele-avance.md) | 🏗️ | PR #62 fusionnée → v65 |
+| 09/10 02:30 — [Tags d'habitudes](runs/2026-10-09-0230-tags-habitudes.md) | 🏗️ | PR en cours |
 
 ---
 
