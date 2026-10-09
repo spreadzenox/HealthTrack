@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-09",
+  "kind": "nouveau",
+  "title": "Alimentation : saisir un repas sans photo, refaire un repas habituel",
+  "items": [
+    "Nouveau bouton « Saisir sans photo » : cherchez chaque aliment, ajustez les grammes, et le repas est enregistré avec ses kcal. Aucune clé Gemini nécessaire, rien n’est envoyé en ligne.",
+    "« Repas habituels » : vos repas les plus fréquents s’affichent en haut de la page. Un tap les reprend avec les quantités de la dernière fois ; vous pouvez ajuster avant d’enregistrer.",
+    "Chaque repas de la liste a un bouton « Refaire » : pratique pour le petit-déjeuner de tous les jours ou les restes d’hier. L’heure est celle du moment, modifiable."
+  ]
+}

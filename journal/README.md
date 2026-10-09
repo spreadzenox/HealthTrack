@@ -73,6 +73,10 @@ une release à chaque changement validé, et tient ce journal.
   pas, FC au repos, VFC, plage de FC, dépense, bien-être, repas ≈ kcal, cigarettes), puis vos saisies
   du jour avec leur heure (toujours supprimables). 3 jours affichés, « Voir les jours précédents »
   remonte jusqu'à 2 semaines.
+- **Repas sans photo** (Alimentation) : « ✍️ Saisir sans photo » — cherchez les aliments, ajustez
+  les grammes, c'est enregistré (sans clé Gemini, rien ne part en ligne). « **Repas habituels** » :
+  vos repas les plus fréquents en haut de la page, repris en un tap avec les quantités de la
+  dernière fois ; bouton « Refaire » sur chaque repas de la liste.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -100,8 +104,8 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — saisie d'un repas par texte / « comme hier » / favoris, puis barre
-d'onglets en bas.
+**Prochaines priorités** — chasse aux bugs, barre d'onglets en bas, puis saisie d'un repas en texte
+libre / dictée.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -119,6 +123,7 @@ d'onglets en bas.
 | 09/10 12:30 — [Supprimer une saisie, sauvegarde complète](runs/2026-10-09-1230-supprimer-sauvegarde.md) | 🐛 | PR #72 fusionnée → v71 |
 | 09/10 14:30 — [Modifier un repas enregistré](runs/2026-10-09-1430-modifier-repas.md) | 🏗️ | PR #74 fusionnée → v72 |
 | 09/10 16:30 — [Vos derniers jours (tableau de bord)](runs/2026-10-09-1630-journal-par-jour.md) | 🎨 | PR #76 fusionnée → v73 |
+| 09/10 18:30 — [Repas sans photo, repas habituels](runs/2026-10-09-1830-repas-sans-photo.md) | 🏗️ | PR en cours |
 
 ---
 

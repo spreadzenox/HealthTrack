@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
 import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
@@ -9,6 +9,10 @@ import DeleteEntryButton from '../components/DeleteEntryButton'
 import { isDeletableEntry } from '../utils/entries'
 import { itemForStorage, mealKcal } from '../services/mealEditing'
 import SavedMealEditor from '../components/SavedMealEditor'
+import NewMealForm from '../components/NewMealForm'
+import { frequentMeals, mealLabel } from '../services/quickMeals'
+
+const RECENT_SHOWN = 20
 
 export default function Food() {
   const [file, setFile] = useState(null)
@@ -21,12 +25,15 @@ export default function Food() {
   const [savedId, setSavedId] = useState(null)
   const [recentMeals, setRecentMeals] = useState([])
   const [editingId, setEditingId] = useState(null)
+  // Saisie sans photo : { title, dish?, items } ; quickSaved = confirmation après enregistrement
+  const [quickMeal, setQuickMeal] = useState(null)
+  const [quickSaved, setQuickSaved] = useState(false)
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
 
   const loadRecent = async () => {
     try {
-      const data = await listEntries({ type: 'food', limit: 20 })
+      const data = await listEntries({ type: 'food', limit: 100 })
       setRecentMeals(data)
     } catch {
       // Liste indisponible : la page reste utilisable pour analyser une photo
@@ -36,6 +43,21 @@ export default function Food() {
   useEffect(() => {
     loadRecent()
   }, [])
+
+  const habits = useMemo(() => frequentMeals(recentMeals), [recentMeals])
+
+  const startQuickMeal = (meal) => {
+    setQuickSaved(false)
+    setEditingId(null)
+    // nonce : un nouveau « Refaire » remplace le formulaire ouvert, même pour un repas au même nom
+    setQuickMeal({ title: 'Nouveau repas', items: [], ...meal, nonce: Date.now() })
+  }
+
+  const redo = (payload) => startQuickMeal({
+    title: `Refaire : ${mealLabel(payload)}`,
+    dish: payload?.dish,
+    items: payload?.items,
+  })
 
   const handleFile = (f) => {
     if (!f?.type?.startsWith('image/')) return
@@ -131,7 +153,7 @@ export default function Food() {
   return (
     <section className="food-page">
       <h2 className="page-title">Alimentation</h2>
-      <p className="page-intro">Prenez une photo de votre assiette pour obtenir les ingrédients et quantités, puis enregistrez le repas.</p>
+      <p className="page-intro">Photographiez votre assiette, saisissez-la à la main ou refaites un repas habituel en un tap.</p>
 
       <div
         className="upload-zone"
@@ -173,6 +195,53 @@ export default function Food() {
           <p className="hint">Utilisez l&apos;appareil photo ou la galerie sur mobile</p>
         )}
       </div>
+
+      {!quickMeal && (
+        <button type="button" className="btn btn-secondary quick-meal-btn" onClick={() => startQuickMeal()}>
+          ✍️ Saisir sans photo
+        </button>
+      )}
+
+      {!quickMeal && habits.length > 0 && (
+        <div className="meal-habits">
+          <h3 className="section-title">Repas habituels</h3>
+          <ul className="meal-habits-list">
+            {habits.map((h) => (
+              <li key={h.key}>
+                <button
+                  type="button"
+                  className="meal-habit"
+                  onClick={() => redo({ dish: h.dish, items: h.items })}
+                  aria-label={`Refaire ${h.label}${h.count > 1 ? ` (${h.count} fois)` : ''}`}
+                >
+                  <span className="meal-habit-name">{h.label}</span>
+                  <span className="meal-habit-meta">
+                    {h.kcal > 0 ? `≈ ${h.kcal.toLocaleString('fr-FR')} kcal` : `${h.items.length} ingr.`}
+                    {h.count > 1 && ` · ${h.count} fois`}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {quickMeal && (
+        <NewMealForm
+          key={quickMeal.nonce}
+          title={quickMeal.title}
+          dish={quickMeal.dish}
+          initialItems={quickMeal.items}
+          onCancel={() => setQuickMeal(null)}
+          onSaved={() => {
+            setQuickMeal(null)
+            setQuickSaved(true)
+            loadRecent()
+          }}
+        />
+      )}
+
+      {quickSaved && !quickMeal && <p className="saved-msg quick-saved" role="status">✓ Repas enregistré</p>}
 
       {preview && (
         <div className="preview-wrap">
@@ -250,7 +319,7 @@ export default function Food() {
         <p className="empty-hint">Aucun repas enregistré pour l&apos;instant.</p>
       ) : (
         <ul className="meals-list">
-          {recentMeals.map((e) => (
+          {recentMeals.slice(0, RECENT_SHOWN).map((e) => (
             <li key={e.id} className="meal-card">
               <div className="meal-head">
                 <time className="meal-at">{formatAt(e.at)}</time>
@@ -278,6 +347,18 @@ export default function Food() {
                       <li className="meal-more">+{e.payload.items.length - 6}</li>
                     )}
                   </ul>
+                  {e.payload?.items?.length > 0 && (
+                    <div className="entry-edit">
+                      <button
+                        type="button"
+                        className="entry-delete-btn"
+                        onClick={() => redo(e.payload)}
+                        aria-label="Refaire ce repas"
+                      >
+                        Refaire
+                      </button>
+                    </div>
+                  )}
                   {isDeletableEntry(e) && (
                     <div className="entry-edit">
                       <button

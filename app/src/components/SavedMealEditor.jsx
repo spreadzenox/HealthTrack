@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { updateEntry } from '../storage/localHealthStorage'
 import { atToLocalInput, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
+import { mealTimeError } from '../services/quickMeals'
 import MealEditor from './MealEditor'
-
-/** Marge tolérée pour une heure « maintenant » saisie à la minute près. */
-const FUTURE_TOLERANCE_MS = 5 * 60 * 1000
 
 /**
  * Modification d'un repas déjà enregistré : ingrédients, grammes et heure du repas.
@@ -27,12 +25,9 @@ export default function SavedMealEditor({ entry, onSaved, onCancel }) {
     const changes = { payload: { ...entry.payload, items: toSave.map(itemForStorage) } }
     if (time !== initialTime) {
       const at = localInputToAt(time)
-      if (!at) {
-        setError('Heure invalide.')
-        return
-      }
-      if (new Date(at).getTime() > Date.now() + FUTURE_TOLERANCE_MS) {
-        setError('L’heure du repas ne peut pas être dans le futur.')
+      const timeError = mealTimeError(at)
+      if (timeError) {
+        setError(timeError)
         return
       }
       changes.at = at
