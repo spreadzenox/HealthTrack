@@ -77,6 +77,11 @@ une release à chaque changement validé, et tient ce journal.
   les grammes, c'est enregistré (sans clé Gemini, rien ne part en ligne). « **Repas habituels** » :
   vos repas les plus fréquents en haut de la page, repris en un tap avec les quantités de la
   dernière fois ; bouton « Refaire » sur chaque repas de la liste.
+- **Recommandations : le sommeil compte enfin au bon jour.** Les analyses rattachaient chaque nuit
+  au jour du *coucher* : votre bien-être du soir était comparé à la nuit qui suivait. Une nuit compte
+  maintenant pour le jour du réveil (comme sur le tableau de bord et le Radar), et les éveils / le
+  temps « au lit » ne gonflent plus la durée. **Vos pistes peuvent changer** après la mise à jour :
+  c'est voulu (sur la démo, « Dormir un peu plus longtemps » passe de invisible à n°1).
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -101,11 +106,13 @@ une release à chaque changement validé, et tient ce journal.
 - Analyse photo : la réponse est maintenant demandée à Gemini dans un format strict ; si un modèle
   le refuse, l'app réessaie automatiquement sans. Non testé avec une vraie clé : **si l'analyse
   photo échoue depuis la mise à jour, dites-le-moi**.
+- Après la v75, les **Recommandations** (basiques et avancées) peuvent changer : correction du
+  rattachement du sommeil, pas un caprice du modèle.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — chasse aux bugs, barre d'onglets en bas, puis saisie d'un repas en texte
-libre / dictée.
+**Prochaines priorités** — barre d'onglets en bas, effets décalés (J-1 → J) dans les analyses, puis
+saisie d'un repas en texte libre / dictée.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -124,6 +131,7 @@ libre / dictée.
 | 09/10 14:30 — [Modifier un repas enregistré](runs/2026-10-09-1430-modifier-repas.md) | 🏗️ | PR #74 fusionnée → v72 |
 | 09/10 16:30 — [Vos derniers jours (tableau de bord)](runs/2026-10-09-1630-journal-par-jour.md) | 🎨 | PR #76 fusionnée → v73 |
 | 09/10 18:30 — [Repas sans photo, repas habituels](runs/2026-10-09-1830-repas-sans-photo.md) | 🏗️ | PR #78 fusionnée → v74 |
+| 09/10 20:30 — [Sommeil au bon jour dans les analyses](runs/2026-10-09-2030-sommeil-analyses.md) | 🐛 | PR #NN en cours |
 
 ---
 

@@ -181,6 +181,35 @@ describe('buildDailyDataset', () => {
     expect(ds[0].sleepMinutes).toBeCloseTo(420)
   })
 
+  it('attaches a night to the wake-up day, not the bedtime day', () => {
+    // Bien-être noté le soir du 1er, puis nuit du 1er au 2 : cette nuit doit
+    // expliquer le bien-être du 2, pas celui du 1er (qui la précède).
+    const bed = new Date(2026, 0, 1, 23, 0).toISOString()
+    const wake = new Date(2026, 0, 2, 6, 30).toISOString()
+    const entries = [
+      { type: 'wellbeing', source: 'app_wellbeing', at: new Date(2026, 0, 1, 21, 0).toISOString(), payload: { score: 2 } },
+      { type: 'wellbeing', source: 'app_wellbeing', at: new Date(2026, 0, 2, 21, 0).toISOString(), payload: { score: 4 } },
+      { type: 'sleep', source: 'health_connect', at: bed, payload: { durationMinutes: 450, endDate: wake, sleepState: 'asleep' } },
+    ]
+    const ds = buildDailyDataset(entries)
+    expect(ds.map((d) => d.dateKey)).toEqual(['2026-01-01', '2026-01-02'])
+    expect(ds[0].sleepMinutes).toBe(0)
+    expect(ds[1].sleepMinutes).toBe(450)
+  })
+
+  it('does not count awake / in-bed segments on top of sleep stages', () => {
+    const at = (h, m) => new Date(2026, 0, 2, h, m).toISOString()
+    const entries = [
+      makeWellbeing('2026-01-02', 3),
+      { type: 'sleep', at: at(0, 0), payload: { durationMinutes: 480, endDate: at(8, 0), sleepState: 'inBed' } },
+      { type: 'sleep', at: at(0, 0), payload: { durationMinutes: 200, endDate: at(3, 20), sleepState: 'light' } },
+      { type: 'sleep', at: at(3, 20), payload: { durationMinutes: 30, endDate: at(3, 50), sleepState: 'awake' } },
+      { type: 'sleep', at: at(3, 50), payload: { durationMinutes: 250, endDate: at(8, 0), sleepState: 'deep' } },
+    ]
+    const ds = buildDailyDataset(entries)
+    expect(ds[0].sleepMinutes).toBe(450)
+  })
+
   it('sums steps per day', () => {
     const entries = [
       makeWellbeing('2026-01-01', 4),
@@ -479,6 +508,10 @@ describe('VARIABLE_META', () => {
     for (const key of hcKeys) {
       expect(VARIABLE_META).toHaveProperty(key)
     }
+  })
+
+  it('formats sleep duration in hours and minutes', () => {
+    expect(VARIABLE_META.sleepMinutes.format(431)).toBe('7 h 11')
   })
 
   it('avgHR has direction neutral', () => {
@@ -1047,6 +1080,18 @@ describe('buildTodayRow', () => {
     const result = buildTodayRow(entries, [])
     expect(result).not.toBeNull()
     expect(result.steps).toBe(5000)
+    expect(result.sleepMinutes).toBe(420)
+  })
+
+  it("counts last night's sleep (started yesterday evening) for today", () => {
+    const now = new Date()
+    const bed = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 0)
+    const wake = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0)
+    const entries = [
+      { type: 'sleep', source: 'health_connect', at: bed.toISOString(), payload: { durationMinutes: 420, endDate: wake.toISOString() } },
+    ]
+    const result = buildTodayRow(entries, [])
+    expect(result).not.toBeNull()
     expect(result.sleepMinutes).toBe(420)
   })
 

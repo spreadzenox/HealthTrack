@@ -25,6 +25,8 @@
  */
 
 import { computeTotalsFromItems, NUTRITION_FIELDS } from './nutritionKPIs'
+import { nightlySleep } from './radar'
+import { formatDuration } from '../utils/format'
 import {
   effectiveSampleSize,
   correlationPValue,
@@ -110,7 +112,7 @@ export const VARIABLE_META = {
   sleepMinutes: {
     label: 'Durée de sommeil',
     unit: 'min',
-    format: (v) => `${Math.round(v)} min`,
+    format: (v) => formatDuration(v),
     direction: 'higher_better',
     group: 'lifestyle',
   },
@@ -561,13 +563,9 @@ export function buildDailyDataset(entries) {
         break
       }
 
-      case 'sleep': {
-        const mins = e.payload?.durationMinutes
-        if (typeof mins === 'number' && mins > 0) {
-          day.sleepMinutes += mins
-        }
+      case 'sleep':
+        // Rattaché au jour du réveil après la boucle (voir nightlySleep).
         break
-      }
 
       case 'steps': {
         const val = e.payload?.value
@@ -692,6 +690,13 @@ export function buildDailyDataset(entries) {
       default:
         break
     }
+  }
+
+  // Une nuit compte pour le jour du réveil : elle peut expliquer le bien-être
+  // de ce jour-là, pas celui de la veille (souvent noté avant de se coucher).
+  // Phases additionnées, éveils ignorés, « au lit » seulement à défaut de phases.
+  for (const [dk, mins] of nightlySleep(entries)) {
+    if (days.has(dk)) days.get(dk).sleepMinutes = mins
   }
 
   const result = []
@@ -1018,6 +1023,13 @@ export function buildTodayRow(entries, historicalRawDataset) {
 
   let hasAnyData = false
 
+  // La nuit dernière (commencée hier soir) compte pour aujourd'hui.
+  const lastNight = nightlySleep(entries).get(todayKey)
+  if (lastNight) {
+    row.sleepMinutes = lastNight
+    hasAnyData = true
+  }
+
   for (const e of entries) {
     if (!e.at || localDateKey(e.at) !== todayKey) continue
     hasAnyData = true
@@ -1040,11 +1052,8 @@ export function buildTodayRow(entries, historicalRawDataset) {
         }
         break
       }
-      case 'sleep': {
-        const mins = e.payload?.durationMinutes
-        if (typeof mins === 'number' && mins > 0) row.sleepMinutes += mins
+      case 'sleep':
         break
-      }
       case 'steps': {
         const val = e.payload?.value
         if (typeof val === 'number' && val > 0) row.steps += val
