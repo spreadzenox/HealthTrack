@@ -1,6 +1,6 @@
 # 2026-10-09 12:30 UTC — Supprimer une saisie, sauvegarde complète
 
-**Type** : 🐛  ·  **PR** : #72 (voir fin du compte rendu pour l'état)
+**Type** : 🐛  ·  **PR** : #72 (fusionnée → release v71, APK publié)
 
 ## Pourquoi
 Run bugs & visuel prévu (priorité n°1 du backlog, dernier le 09/10 06:30). Lecture de toutes les
