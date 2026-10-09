@@ -65,6 +65,55 @@ describe('analyzeWithGemini', () => {
   })
 })
 
+describe('analyzeWithGemini — réponse structurée', () => {
+  const photo = () => new File(['x'], 'p.jpg', { type: 'image/jpeg' })
+  beforeEach(() => {
+    localStorage.clear()
+    globalThis.fetch = vi.fn()
+  })
+
+  it('impose un schéma JSON (ingrédients, grammes, confiance, nom du plat)', async () => {
+    fetch.mockResolvedValue(okResponse('{"not_food": false, "ingredients": []}'))
+    await analyzeWithGemini(photo(), 'KEY')
+    const schema = JSON.parse(fetch.mock.calls[0][1].body).generationConfig.responseSchema
+    expect(schema.type).toBe('OBJECT')
+    expect(schema.required).toContain('not_food')
+    const item = schema.properties.ingredients.items
+    expect(Object.keys(item.properties)).toEqual(expect.arrayContaining(['ingredient', 'quantity_g', 'confidence']))
+    expect(item.properties.confidence.enum).toEqual(['high', 'medium', 'low'])
+    expect(schema.properties.dish.type).toBe('STRING')
+  })
+
+  it('réessaie sans schéma si le modèle refuse le schéma (400)', async () => {
+    fetch
+      .mockResolvedValueOnce(errResponse(400, 'Invalid JSON payload: unknown field response_schema'))
+      .mockResolvedValueOnce(okResponse('{"not_food": false, "ingredients": [{"ingredient": "Abondance", "quantity_g": 30}]}'))
+    const res = await analyzeWithGemini(photo(), 'KEY')
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(fetch.mock.calls[0][0]).toBe(fetch.mock.calls[1][0])
+    expect(JSON.parse(fetch.mock.calls[1][1].body).generationConfig.responseSchema).toBeUndefined()
+    expect(res.items).toHaveLength(1)
+  })
+
+  it('rapproche les noms de la base, garde les inconnus signalés, la confiance et le plat', async () => {
+    fetch.mockResolvedValue(okResponse(JSON.stringify({
+      not_food: false,
+      dish: 'Plateau de fromages',
+      ingredients: [
+        { ingredient: 'abondance', quantity_g: 40.4, confidence: 'low' },
+        { ingredient: 'Fromage lunaire', quantity_g: 20, confidence: 'medium' },
+        { ingredient: '', quantity_g: 10 },
+      ],
+    })))
+    const res = await analyzeWithGemini(photo(), 'KEY')
+    expect(res.dish).toBe('Plateau de fromages')
+    expect(res.items).toEqual([
+      { ingredient: 'Abondance', quantity: '40 g', quantity_g: 40, confidence: 'low' },
+      { ingredient: 'Fromage lunaire', quantity: '20 g', quantity_g: 20, confidence: 'medium', unknown: true },
+    ])
+  })
+})
+
 describe('extractResponseText', () => {
   it('ignore les parties « pensée » et concatène le texte', () => {
     const data = { candidates: [{ content: { parts: [{ thought: true, text: 'je réfléchis' }, { text: '{"a":' }, { text: '1}' }] } }] }

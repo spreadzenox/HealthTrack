@@ -149,3 +149,36 @@
   outline: none;
   border-color: var(--accent);
 }
+
+/* Résultat d'analyse et repas enregistrés */
+.results .results-hint {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.meal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.meal-head .meal-at {
+  margin-bottom: 0;
+}
+
+.meal-kcal {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.meal-dish {
+  margin: 0 0 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}

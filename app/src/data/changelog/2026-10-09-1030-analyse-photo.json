@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-09",
+  "kind": "amélioré",
+  "title": "Analyse photo : corrigez les quantités avant d’enregistrer",
+  "items": [
+    "Après l’analyse d’une photo, chaque ingrédient a ses grammes modifiables (champ ou boutons − / + de 10 g) et les kcal se recalculent aussitôt, avec le total du repas.",
+    "Vous pouvez supprimer un ingrédient mal reconnu ou en ajouter un oublié grâce à la recherche (« riz », « huile d’olive »…).",
+    "Les estimations peu sûres (huile, sauce, aliment caché) sont marquées « à vérifier ». Un aliment introuvable dans la base n’est plus ignoré en silence : il est signalé et vous pouvez le remplacer.",
+    "L’analyse demande à Gemini une réponse au format strict et le nom du plat, ce qui la rend plus fiable. Les derniers repas affichent le nom du plat et leurs kcal."
+  ]
+}

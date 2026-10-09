@@ -1,0 +1,198 @@
+.meal-editor-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.meal-editor .meal-editor-item {
+  display: block;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.meal-editor-item:last-child {
+  border-bottom: none;
+}
+
+.mei-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mei-name {
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.meal-editor .is-unknown .mei-name {
+  color: #f0b35a;
+}
+
+.mei-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(240, 179, 90, 0.16);
+  color: #f0b35a;
+}
+
+.mei-warn {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.mei-link {
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 10px;
+}
+
+.mei-warn .mei-link {
+  display: block;
+  margin-top: 6px;
+}
+
+.mei-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.mei-step,
+.mei-remove {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  color: var(--accent);
+  background: rgba(78, 205, 196, 0.1);
+}
+
+.mei-step:disabled {
+  opacity: 0.4;
+}
+
+.mei-remove {
+  margin-left: auto;
+  font-size: 1rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mei-grams {
+  width: 72px;
+  height: 44px;
+  padding: 0 8px;
+  font-size: 1rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.mei-grams:focus,
+.mei-search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.mei-unit {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.mei-kcal {
+  min-width: 64px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.meal-editor-total {
+  margin: 12px 0 0;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.meal-editor-add {
+  margin-top: 16px;
+}
+
+.mei-search-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.mei-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mei-search {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  font-size: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.mei-suggestions {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 4px 0;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.meal-editor .mei-suggestions li {
+  display: block;
+  padding: 12px;
+  min-height: 44px;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.meal-editor .mei-suggestions li + li {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mei-suggestions li:active,
+.mei-suggestions li:focus {
+  background: rgba(78, 205, 196, 0.12);
+  outline: none;
+}
+
+.mei-none {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.mei-total-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

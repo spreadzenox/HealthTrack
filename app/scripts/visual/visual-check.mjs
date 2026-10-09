@@ -13,6 +13,8 @@
  *   npm run visual -- --wellbeing-prompt   # laisse la modale bien-être s'ouvrir
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
+ *   npm run visual -- --routes=/food --food-analysis
+ *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --routes=/recommendations --click="Recommandations avancées"
@@ -43,6 +45,24 @@ const DEFAULT_ROUTES = [
   ['/recommendations', 'recommendations'],
   ['/settings', 'settings'],
 ]
+
+const FAKE_MEAL_ANALYSIS = {
+  not_food: false,
+  dish: 'Poulet, riz et haricots verts',
+  ingredients: [
+    { ingredient: 'Poulet, filet sans peau grillé/poêlé', quantity_g: 140, confidence: 'high' },
+    { ingredient: 'riz blanc, cuit', quantity_g: 180, confidence: 'medium' },
+    { ingredient: 'Haricot vert, cuit', quantity_g: 90, confidence: 'medium' },
+    { ingredient: "Huile d'olive vierge extra", quantity_g: 10, confidence: 'low' },
+    { ingredient: 'Sauce maison du chef', quantity_g: 30, confidence: 'low' },
+  ],
+}
+
+// PNG 1×1 (la photo elle-même n'est pas analysée : la réponse est factice)
+const DEMO_PHOTO = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+  'base64'
+)
 
 function parseArgs(argv) {
   const args = {}
@@ -136,6 +156,23 @@ async function main() {
         }),
       })
     )
+    if (args['food-analysis']) {
+      // Analyse photo sans clé réelle ni appel réseau : réponse Gemini factice.
+      await context.addInitScript(() => {
+        try {
+          localStorage.setItem('healthtrack_gemini_api_key', 'demo-key')
+        } catch {
+          /* ignore */
+        }
+      })
+      await context.route('https://generativelanguage.googleapis.com/**', (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(FAKE_MEAL_ANALYSIS) }] } }] }),
+        })
+      )
+    }
     if (!args['whats-new']) {
       await context.addInitScript((latestId) => {
         try {
@@ -185,6 +222,11 @@ async function main() {
       try {
         await page.goto(baseUrl + path, { waitUntil: 'networkidle', timeout: 20000 })
         await page.waitForTimeout(700)
+        if (args['food-analysis'] && path === '/food') {
+          await page.locator('#gallery-upload').setInputFiles({ name: 'repas.png', mimeType: 'image/png', buffer: DEMO_PHOTO })
+          await page.getByRole('button', { name: 'Analyser les ingrédients' }).click()
+          await page.getByRole('heading', { name: FAKE_MEAL_ANALYSIS.dish }).waitFor({ timeout: 10000 })
+        }
         if (args.click) {
           const button = page.getByRole('button', { name: String(args.click) }).first()
           if (await button.count()) {

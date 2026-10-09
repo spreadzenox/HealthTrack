@@ -54,7 +54,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 ### C4 — Saisie sans friction
 - [x] **Tags de comportements en 1 tap** (R#2) sous le check-in : alcool, café après 14 h, repas tardif, écran tard, stress, sport le soir, malade → analyse « jours avec / sans » (≥ 5/5, permutation + BH)
 - [ ] Tags, étape 2 : tags comme leviers dans « Pistes à tester » (« Moins d'écran le soir ») et variables du modèle avancé ; choix « hier soir / aujourd'hui » si les check-ins du matin sont fréquents ; tags personnalisés
-- [ ] **Analyse photo fiabilisée** (R#4) : sortie JSON à schéma, grammes modifiables avant sauvegarde, confiance, question de portion
+- [x] **Analyse photo fiabilisée** (R#4) : `responseSchema` (repli sans), noms rapprochés de la base, inconnus signalés/remplaçables, grammes modifiables, confiance « à vérifier », kcal
+- [ ] Analyse photo, étape 2 : question de portion quand la confiance est basse (« petite / moyenne / grande assiette ? ») ; photo de référence (main, carte) ; modifier/supprimer un repas enregistré avec `MealEditor`
 - [ ] **Saisie texte / dictée + « comme hier » + favoris** (R#5) — la photo seule est *plus* difficile que le texte d'après une étude terrain
 - [ ] Cigarettes avec contexte (R#7) : déclencheur optionnel, heatmap horaire, « envie résistée »
 - [ ] WHO-5 hebdomadaire (R#11) pour valider le score quotidien
@@ -80,10 +81,10 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🏗️ **Analyse photo fiabilisée** (R#4) — schéma JSON (`responseSchema`), grammes modifiables avant sauvegarde.
+1. 🐛 Run bugs & visuel (dernier : 09/10 06:30 ; 2 runs de fond depuis) — à faire au prochain run.
 2. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type, résumé du jour ; rapprocher Radar et cartes cœur.
 3. 🎨 C1 — barre d'onglets en bas.
-4. 🐛 Run bugs & visuel vers le 4ᵉ run de fond (dernier : 09/10 06:30).
+4. 🏗️ Saisie texte / « comme hier » / favoris (R#5) + modifier un repas, en réutilisant `MealEditor`.
 5. 🔭 Veille (dernière : 08/10 17:00) — saisie texte/dictée des repas, état de l'art 2026.
 
 ## Idées en vrac (à trier)
@@ -100,11 +101,13 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
 - Tableau de bord : poids + composition corporelle Withings créent deux cartes pour la même pesée → fusionner à l'affichage.
-- Repas (Alimentation / tableau de bord) : afficher les kcal du repas et permettre de supprimer / modifier une entrée.
+- Repas (tableau de bord) : afficher les kcal du repas (fait sur Alimentation) et permettre de supprimer / modifier une entrée.
+- Alimentation : « Derniers repas » affiche « nom: 150 g » (pas d'espace avant « : » à la française) ; liste de 20 repas très longue → regrouper par jour.
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-09 — Analyse photo corrigeable : grammes modifiables, ajout/suppression/remplacement d'ingrédients, kcal, « à vérifier », schéma JSON Gemini, noms rapprochés de la base (#PR)
 - [x] 2026-10-09 — « Radar forme » sur le tableau de bord : FC repos, VFC et sommeil vs votre norme, alerte si ≥ 2 signaux s'écartent ensemble (#69, v69)
 - [x] 2026-10-09 — Chasse aux bugs : pesées Withings lisibles (plus de JSON brut), VFC / SpO₂ / FC repos titrées avec unités françaises, activités traduites, « Hypothèse incertaine », plus de « −0,00 » (#68, v68)
 - [x] 2026-10-09 — Transparence Gemini : photo réduite et sans métadonnées, modèle 3.8 Flash réglable avec repli, avertissement clé gratuite (#66, v67)

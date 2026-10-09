@@ -4,6 +4,29 @@
 import { INGREDIENT_NAMES } from '../data/ingredientNames.js'
 import { getGeminiModelFallbacks } from '../settings/geminiModel.js'
 import { prepareImageForGemini } from './imagePrep.js'
+import { normalizeMealItem } from './mealEditing.js'
+
+const RESPONSE_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    not_food: { type: 'BOOLEAN' },
+    reason: { type: 'STRING' },
+    dish: { type: 'STRING' },
+    ingredients: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          ingredient: { type: 'STRING' },
+          quantity_g: { type: 'NUMBER' },
+          confidence: { type: 'STRING', enum: ['high', 'medium', 'low'] },
+        },
+        required: ['ingredient', 'quantity_g'],
+      },
+    },
+  },
+  required: ['not_food'],
+}
 
 const geminiUrl = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
 
@@ -23,9 +46,11 @@ RÈGLES DE RÉPONSE :
 
 2) Si l'image montre un plat ou des aliments : liste chaque ingrédient visible avec une estimation du poids en grammes. Choisis le nom le plus pertinent dans la liste ci-dessus pour chaque aliment.
    Réponds UNIQUEMENT ce JSON (aucun texte avant ni après) :
-   {"not_food": false, "ingredients": [{"ingredient": "Nom exact copié de la liste", "quantity_g": nombre}]}
+   {"not_food": false, "dish": "nom court du plat en français", "ingredients": [{"ingredient": "Nom exact copié de la liste", "quantity_g": nombre, "confidence": "high" | "medium" | "low"}]}
    - "ingredient" : exactement une chaîne prise dans la liste exhaustive ci-dessus (copie à l'identique).
-   - "quantity_g" : nombre (grammes), entier ou décimal.
+   - "quantity_g" : nombre (grammes), entier ou décimal. Estime la portion d'après les repères visibles (assiette ≈ 26 cm, couverts, verre, main).
+   - "confidence" : "high" si l'aliment et sa quantité sont clairement visibles, "medium" si l'un des deux est estimé, "low" si tu devines (aliment caché, sauce, huile de cuisson).
+   - Pense aux éléments peu visibles mais caloriques (huile, beurre, sauce, fromage râpé, boisson) s'ils sont probables, avec "confidence": "low".
 
 Interdiction : ne réponds pas avec du texte libre, des explications ou du markdown. Uniquement le JSON.`
 }
@@ -39,6 +64,14 @@ export function extractResponseText(data) {
     .filter((p) => typeof p?.text === 'string' && !p.thought)
     .map((p) => p.text)
     .join('')
+}
+
+function postGemini(model, apiKey, body) {
+  return fetch(`${geminiUrl(model)}?key=${encodeURIComponent(apiKey)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body,
+  })
 }
 
 async function readErrorMessage(res) {
@@ -55,31 +88,38 @@ async function readErrorMessage(res) {
  * Analyse une photo avec l'API Gemini (clé fournie par l'utilisateur).
  * @param {File} file - fichier image
  * @param {string} apiKey - clé API Gemini
- * @returns {Promise<{ provider: string, items: Array<{ ingredient: string, quantity: string, quantity_g?: number }> }>}
+ * @returns {Promise<{ provider: string, model: string, dish?: string, items: Array<{ ingredient: string, quantity: string, quantity_g?: number, confidence?: string, unknown?: boolean }> }>}
  * @throws si not_food (message = reason) ou erreur API
  */
 export async function analyzeWithGemini(file, apiKey) {
   // Seule l'image (réduite, sans métadonnées GPS/appareil) et le prompt partent chez Google
   const { base64, mimeType } = await prepareImageForGemini(file)
-  const body = JSON.stringify({
+  const buildBody = (withSchema) => JSON.stringify({
     contents: [{
       parts: [
         { text: buildPrompt() },
         { inlineData: { mimeType, data: base64 } },
       ],
     }],
-    generationConfig: { responseMimeType: 'application/json' },
+    generationConfig: {
+      responseMimeType: 'application/json',
+      ...(withSchema ? { responseSchema: RESPONSE_SCHEMA } : {}),
+    },
   })
 
   let data = null
   let usedModel = null
   let firstError = null
+  let withSchema = true
   for (const model of getGeminiModelFallbacks()) {
-    const res = await fetch(`${geminiUrl(model)}?key=${encodeURIComponent(apiKey)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body,
-    })
+    let res = await postGemini(model, apiKey, buildBody(withSchema))
+    if (!res.ok && res.status === 400 && withSchema) {
+      const message = await readErrorMessage(res)
+      // Un modèle qui ne connaît pas le schéma de réponse : même requête sans schéma
+      if (!/schema/i.test(message)) throw new Error(message)
+      withSchema = false
+      res = await postGemini(model, apiKey, buildBody(false))
+    }
     if (res.ok) {
       data = await res.json()
       usedModel = model
@@ -116,20 +156,11 @@ export async function analyzeWithGemini(file, apiKey) {
     throw new Error(reason)
   }
 
-  const allowedSet = new Set(INGREDIENT_NAMES.map((n) => n.trim()))
-  const ingredients = (parsed.ingredients || []).filter(
-    (it) => (it.ingredient || '').trim() && allowedSet.has(String(it.ingredient).trim())
-  )
-  const items = ingredients.map((it) => {
-    const name = String(it.ingredient).trim()
-    const qtyG = it.quantity_g != null ? Number(it.quantity_g) : null
-    const quantity = qtyG != null && !Number.isNaN(qtyG) ? `${Math.round(qtyG)} g` : 'portion non précisée'
-    return {
-      ingredient: name,
-      quantity,
-      quantity_g: qtyG != null && !Number.isNaN(qtyG) ? qtyG : undefined,
-    }
-  })
+  // Noms rapprochés de la base (casse, accents) ; un nom inconnu est gardé et signalé pour correction
+  const items = (Array.isArray(parsed.ingredients) ? parsed.ingredients : [])
+    .filter((it) => String(it?.ingredient ?? '').trim())
+    .map(normalizeMealItem)
+  const dish = typeof parsed.dish === 'string' && parsed.dish.trim() ? parsed.dish.trim() : undefined
 
-  return { provider: 'gemini', model: usedModel, items }
+  return { provider: 'gemini', model: usedModel, items, ...(dish ? { dish } : {}) }
 }
