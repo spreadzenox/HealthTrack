@@ -61,7 +61,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [ ] Notifications locales intelligentes (R#15) : ≤ 2/j, heure apprise, effet mesuré
 
 ### C5 — Coach IA (Gemini) ancré dans les données
-- [ ] **Transparence Gemini** (R#9) : modèle configurable (`gemini-2.5-flash` → 3.5 Flash-Lite / 3.8 Flash), avertissement « clé gratuite = données potentiellement relues par Google », retrait EXIF/GPS avant envoi
+- [x] **Transparence Gemini** (R#9) : modèle configurable (3.8 Flash par défaut, repli auto sur les autres modèles), avertissement « clé gratuite », photo réduite et sans EXIF/GPS avant envoi
 - [ ] Revue hebdo IA ancrée (R#13) : JSON calculé localement → Gemini rédige, chaque chiffre cité vérifié automatiquement, termine par une expérience proposée
 - [ ] « Demander à HealthTrack » (R#22) : function calling sur des outils locaux, le LLM ne voit que leurs sorties
 - [ ] Import de bilans sanguins (R#26) ; LLM on-device optionnel (R#27, Gemma via LiteRT-LM — benchmarker l'A56 d'abord)
@@ -79,9 +79,9 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
-2. 🐛 Run bugs & vérif visuelle (`--empty`, interactions : modale de check-in, onglets).
-3. 🏗️ **Radar** (R#12) — réutilise `services/baselines.js` (FC repos, VFC + sommeil), persistance ≥ 2 nuits.
+1. 🐛 Run bugs & vérif visuelle (`--empty`, interactions : modale de check-in, onglets) — dû (4 runs de fond d'affilée).
+2. 🏗️ **Radar** (R#12) — réutilise `services/baselines.js` (FC repos, VFC + sommeil), persistance ≥ 2 nuits.
+3. 🏗️ **Analyse photo fiabilisée** (R#4) — schéma JSON (`responseSchema`), grammes modifiables avant sauvegarde.
 4. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
 5. 🎨 C1 — barre d'onglets en bas.
 
@@ -96,10 +96,12 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Mode clair : `npm run visual -- --light` rend la même chose que le sombre — l'app n'a pas de thème clair (C1), ce n'est pas un bug du script.
 - Démo : le dernier jour de données est « hier » quand le run tourne après minuit (heure de Paris) → la prédiction du jour et « Par heure (aujourd'hui) » ne sont jamais visibles dans les captures ; faire finir la démo « aujourd'hui ».
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.
+- Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-09 — Transparence Gemini : photo réduite et sans métadonnées, modèle 3.8 Flash réglable avec repli, avertissement clé gratuite
 - [x] 2026-10-09 — Tags d'habitudes dans le check-in + section « Vos habitudes » (jours avec / sans, permutation + BH) (#64, v66)
 - [x] 2026-10-09 — Recommandations avancées fiabilisées : coefficients corrigés, doublons écartés, Ridge réglé par validation croisée, seuil d'effet, chiffres FR
 - [x] 2026-10-08 — Tableau de bord : FC au repos et VFC comparées à votre norme personnelle (#60, v64)

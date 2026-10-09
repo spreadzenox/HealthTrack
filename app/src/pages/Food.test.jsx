@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Food from './Food'
 
@@ -91,5 +91,19 @@ describe('Food', () => {
       </BrowserRouter>
     )
     expect(screen.queryByRole('button', { name: /Analyser les ingrédients/i })).not.toBeInTheDocument()
+  })
+
+  it('explique ce qui part chez Google avant l’analyse (photo sans GPS, clé gratuite)', async () => {
+    render(
+      <BrowserRouter>
+        <Food />
+      </BrowserRouter>
+    )
+    expect(screen.queryByText(/sans position GPS/i)).not.toBeInTheDocument()
+    const file = new File(['x'], 'repas.jpg', { type: 'image/jpeg' })
+    fireEvent.change(screen.getByLabelText(/Choisir depuis la galerie/i), { target: { files: [file] } })
+    const note = await screen.findByText(/sans position GPS/i)
+    expect(note).toHaveTextContent(/Google Gemini/)
+    expect(note).toHaveTextContent(/clé gratuite/i)
   })
 })

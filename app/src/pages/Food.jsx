@@ -89,7 +89,7 @@ export default function Food() {
       const id = await createEntry({
         type: 'food',
         source: 'app_food',
-        payload: { items: result.items, provider: result.provider },
+        payload: { items: result.items, provider: result.provider, ...(result.model ? { model: result.model } : {}) },
       })
       setSavedId(id)
       loadRecent()
@@ -174,6 +174,14 @@ export default function Food() {
         </div>
       )}
 
+      {preview && !result && (
+        <p className="hint gemini-privacy">
+          🔒 Seule la photo, réduite et sans position GPS ni infos de l&apos;appareil, est envoyée à
+          Google Gemini avec votre clé. Avec une clé gratuite, Google peut l&apos;utiliser pour
+          améliorer ses produits.
+        </p>
+      )}
+
       {loading && (
         <div className="loading">
           <div className="spinner" aria-hidden />
@@ -186,7 +194,7 @@ export default function Food() {
       {result?.items?.length > 0 && (
         <section className="results" aria-labelledby="results-title">
           <h2 id="results-title">Ingrédients détectés</h2>
-          <p className="provider-tag">Source: {result.provider}</p>
+          <p className="provider-tag">Source : {result.model || result.provider}</p>
           <ul>
             {result.items.map((item, i) => (
               <li key={i}>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
+import { GEMINI_MODELS, getGeminiModel, setGeminiModel } from '../settings/geminiModel'
 import {
   isDebugUnlocked,
   isDebugModeEnabled,
@@ -21,6 +22,7 @@ import '../components/WhatsNew.css'
 export default function Settings() {
   const [apiKey, setApiKey] = useState('')
   const [saved, setSaved] = useState(false)
+  const [geminiModel, setGeminiModelState] = useState(() => getGeminiModel())
 
   // Debug mode state
   const { refreshDebugMode } = useDebug()
@@ -112,6 +114,43 @@ export default function Settings() {
             Enregistrer
           </button>
           {saved && <span className="saved-msg">✓ Enregistré</span>}
+        </div>
+
+        <label htmlFor="gemini-model" className="input-label">
+          Modèle Gemini
+        </label>
+        <select
+          id="gemini-model"
+          className="settings-input"
+          value={geminiModel}
+          onChange={(e) => {
+            setGeminiModel(e.target.value)
+            setGeminiModelState(getGeminiModel())
+          }}
+        >
+          {GEMINI_MODELS.map((m) => (
+            <option key={m.id} value={m.id}>{m.label}</option>
+          ))}
+        </select>
+        <p className="hint">
+          Si le modèle choisi n&apos;est pas disponible pour votre clé (ou son quota est épuisé), l&apos;app essaie
+          automatiquement les autres.
+        </p>
+
+        <div className="gemini-privacy">
+          <p className="hint">
+            <strong>🔒 Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans
+            métadonnées (position GPS, date, modèle de téléphone). Aucune autre donnée de santé
+            ne quitte l&apos;appareil.
+          </p>
+          <p className="hint">
+            <strong>⚠️ Avec une clé gratuite</strong>, Google peut utiliser les photos envoyées pour
+            améliorer ses produits, et elles peuvent être relues par des personnes. Pour l&apos;éviter,
+            activez la facturation sur votre projet Google AI Studio (offre payante).{' '}
+            <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener noreferrer">
+              Conditions Gemini
+            </a>
+          </p>
         </div>
       </div>
 

@@ -15,7 +15,9 @@ export function setGeminiApiKey(key) {
     } else {
       localStorage.setItem(STORAGE_KEY, String(key).trim())
     }
-  } catch (_) {}
+  } catch {
+    // stockage indisponible : rien à faire
+  }
 }
 
 export function hasGeminiApiKey() {
