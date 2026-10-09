@@ -1,6 +1,6 @@
 # 2026-10-09 04:30 UTC — Transparence Gemini (photo sans métadonnées, modèle récent, avertissement clé gratuite)
 
-**Type** : 🏗️ (vie privée)  ·  **PR** : voir le tableau du résumé de la semaine
+**Type** : 🏗️ (vie privée)  ·  **PR** : #66 (fusionnée → release v67)
 
 ## Pourquoi
 Item n° 1 des « Prochaines étapes » (R#9). Trois constats :
