@@ -6,6 +6,8 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import BaselineCards from '../components/BaselineCards'
 import HealthRadar from '../components/HealthRadar'
+import DeleteEntryButton from '../components/DeleteEntryButton'
+import { isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
 import { formatAt, formatDuration, sleepStateLabel, periodLabel, workoutTypeLabel } from '../utils/format'
 
@@ -50,6 +52,13 @@ function entryTitle(e) {
     return HEART_SUBTYPE_LABELS[e.payload.subtype]
   }
   return TYPE_LABELS[e.type] || e.type
+}
+
+/** Libellé utilisé dans « Supprimer … ? ». */
+const DELETE_LABELS = {
+  food: 'ce repas',
+  wellbeing: 'cette note de bien-être',
+  cigarette: 'cette cigarette',
 }
 
 function frNumber(v) {
@@ -155,90 +164,95 @@ export default function Dashboard() {
                     <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
                     <time className="entry-at">{formatAt(e.at)}</time>
                   </div>
-                  <div className="entry-card-body">
-                    {e.type === 'food' && e.payload?.items?.length > 0 && (
-                      <ul className="entry-items">
-                        {e.payload.items.slice(0, 5).map((item, i) => (
-                          <li key={i}>{item.ingredient}: {item.quantity}</li>
-                        ))}
-                        {e.payload.items.length > 5 && (
-                          <li className="entry-more">+{e.payload.items.length - 5} autres</li>
-                        )}
-                      </ul>
-                    )}
-                    {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
-                      <p className="entry-wellbeing-score">
-                        Note : <strong>{e.payload.score}</strong> / 5
-                      </p>
-                    )}
-                    {e.type === 'wellbeing' && Array.isArray(e.payload?.tags) && e.payload.tags.some(getTagMeta) && (
-                      <p className="entry-wellbeing-tags">
-                        {e.payload.tags
-                          .map(getTagMeta)
-                          .filter(Boolean)
-                          .map((t) => `${t.emoji} ${t.label}`)
-                          .join(' · ')}
-                      </p>
-                    )}
-                    {e.type === 'cigarette' && (
-                      <p className="entry-wellbeing-score">
-                        <strong>{typeof e.payload?.count === 'number' ? e.payload.count : 1}</strong>{' '}
-                        cigarette{(typeof e.payload?.count === 'number' ? e.payload.count : 1) > 1 ? 's' : ''}
-                      </p>
-                    )}
-                    {e.type === 'steps' && typeof e.payload?.value === 'number' && (
-                      <p className="entry-wellbeing-score">
-                        <strong>{e.payload.value.toLocaleString('fr-FR')}</strong> pas
-                        {e.payload.period && ` ${periodLabel(e.payload.period)}`}
-                      </p>
-                    )}
-                    {e.type === 'heart_rate' && typeof e.payload?.bpm === 'number' && (
-                      <p className="entry-wellbeing-score">
-                        <strong>{e.payload.bpm}</strong> bpm
-                      </p>
-                    )}
-                    {e.type === 'heart_rate' && typeof e.payload?.value === 'number' && typeof e.payload?.bpm === 'undefined' && (
-                      <p className="entry-wellbeing-score">
-                        <strong>{frNumber(e.payload.value)}</strong>{' '}
-                        {HEART_SUBTYPE_UNITS[e.payload.subtype] ?? e.payload.unit}
-                      </p>
-                    )}
-                    {e.type === 'weight' && typeof e.payload?.valueKg === 'number' && (
-                      <p className="entry-wellbeing-score">
-                        <strong>{frNumber(e.payload.valueKg)}</strong> kg
-                      </p>
-                    )}
-                    {e.type === 'height' && typeof e.payload?.valueCm === 'number' && (
-                      <p className="entry-wellbeing-score">
-                        <strong>{frNumber(e.payload.valueCm)}</strong> cm
-                      </p>
-                    )}
-                    {e.type === 'body_composition' && e.payload && (
-                      <p className="entry-wellbeing-score">
-                        {bodyCompositionParts(e.payload).join(' · ') || 'Mesure enregistrée'}
-                      </p>
-                    )}
-                    {e.type === 'calories' && typeof e.payload?.value === 'number' && (
-                      <p className="entry-wellbeing-score">
-                        <strong>{Math.round(e.payload.value).toLocaleString('fr-FR')}</strong> kcal
-                        {e.payload.period && ` ${periodLabel(e.payload.period)}`}
-                      </p>
-                    )}
-                    {e.type === 'sleep' && typeof e.payload?.durationMinutes === 'number' && (
-                      <p className="entry-wellbeing-score">
-                        <strong>{formatDuration(e.payload.durationMinutes)}</strong>
-                        {e.payload.sleepState && ` — ${sleepStateLabel(e.payload.sleepState)}`}
-                      </p>
-                    )}
-                    {e.type === 'activity' && e.payload?.workoutType && (
-                      <p className="entry-wellbeing-score">
-                        {workoutTypeLabel(e.payload.workoutType)}
-                        {e.payload.durationSeconds && ` — ${formatDuration(e.payload.durationSeconds / 60)}`}
-                        {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
-                      </p>
-                    )}
-                    {!['food', 'wellbeing', 'cigarette', 'steps', 'heart_rate', 'calories', 'sleep', 'activity', 'weight', 'height', 'body_composition'].includes(e.type) && (
-                      <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
+                  <div className="entry-card-row">
+                    <div className="entry-card-body">
+                      {e.type === 'food' && e.payload?.items?.length > 0 && (
+                        <ul className="entry-items">
+                          {e.payload.items.slice(0, 5).map((item, i) => (
+                            <li key={i}>{item.ingredient}{'\u00a0'}: {item.quantity}</li>
+                          ))}
+                          {e.payload.items.length > 5 && (
+                            <li className="entry-more">+{e.payload.items.length - 5} autres</li>
+                          )}
+                        </ul>
+                      )}
+                      {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
+                        <p className="entry-wellbeing-score">
+                          Note : <strong>{e.payload.score}</strong> / 5
+                        </p>
+                      )}
+                      {e.type === 'wellbeing' && Array.isArray(e.payload?.tags) && e.payload.tags.some(getTagMeta) && (
+                        <p className="entry-wellbeing-tags">
+                          {e.payload.tags
+                            .map(getTagMeta)
+                            .filter(Boolean)
+                            .map((t) => `${t.emoji} ${t.label}`)
+                            .join(' · ')}
+                        </p>
+                      )}
+                      {e.type === 'cigarette' && (
+                        <p className="entry-wellbeing-score">
+                          <strong>{typeof e.payload?.count === 'number' ? e.payload.count : 1}</strong>{' '}
+                          cigarette{(typeof e.payload?.count === 'number' ? e.payload.count : 1) > 1 ? 's' : ''}
+                        </p>
+                      )}
+                      {e.type === 'steps' && typeof e.payload?.value === 'number' && (
+                        <p className="entry-wellbeing-score">
+                          <strong>{e.payload.value.toLocaleString('fr-FR')}</strong> pas
+                          {e.payload.period && ` ${periodLabel(e.payload.period)}`}
+                        </p>
+                      )}
+                      {e.type === 'heart_rate' && typeof e.payload?.bpm === 'number' && (
+                        <p className="entry-wellbeing-score">
+                          <strong>{e.payload.bpm}</strong> bpm
+                        </p>
+                      )}
+                      {e.type === 'heart_rate' && typeof e.payload?.value === 'number' && typeof e.payload?.bpm === 'undefined' && (
+                        <p className="entry-wellbeing-score">
+                          <strong>{frNumber(e.payload.value)}</strong>{' '}
+                          {HEART_SUBTYPE_UNITS[e.payload.subtype] ?? e.payload.unit}
+                        </p>
+                      )}
+                      {e.type === 'weight' && typeof e.payload?.valueKg === 'number' && (
+                        <p className="entry-wellbeing-score">
+                          <strong>{frNumber(e.payload.valueKg)}</strong> kg
+                        </p>
+                      )}
+                      {e.type === 'height' && typeof e.payload?.valueCm === 'number' && (
+                        <p className="entry-wellbeing-score">
+                          <strong>{frNumber(e.payload.valueCm)}</strong> cm
+                        </p>
+                      )}
+                      {e.type === 'body_composition' && e.payload && (
+                        <p className="entry-wellbeing-score">
+                          {bodyCompositionParts(e.payload).join(' · ') || 'Mesure enregistrée'}
+                        </p>
+                      )}
+                      {e.type === 'calories' && typeof e.payload?.value === 'number' && (
+                        <p className="entry-wellbeing-score">
+                          <strong>{Math.round(e.payload.value).toLocaleString('fr-FR')}</strong> kcal
+                          {e.payload.period && ` ${periodLabel(e.payload.period)}`}
+                        </p>
+                      )}
+                      {e.type === 'sleep' && typeof e.payload?.durationMinutes === 'number' && (
+                        <p className="entry-wellbeing-score">
+                          <strong>{formatDuration(e.payload.durationMinutes)}</strong>
+                          {e.payload.sleepState && ` — ${sleepStateLabel(e.payload.sleepState)}`}
+                        </p>
+                      )}
+                      {e.type === 'activity' && e.payload?.workoutType && (
+                        <p className="entry-wellbeing-score">
+                          {workoutTypeLabel(e.payload.workoutType)}
+                          {e.payload.durationSeconds && ` — ${formatDuration(e.payload.durationSeconds / 60)}`}
+                          {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
+                        </p>
+                      )}
+                      {!['food', 'wellbeing', 'cigarette', 'steps', 'heart_rate', 'calories', 'sleep', 'activity', 'weight', 'height', 'body_composition'].includes(e.type) && (
+                        <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
+                      )}
+                    </div>
+                    {isDeletableEntry(e) && (
+                      <DeleteEntryButton entryId={e.id} label={DELETE_LABELS[e.type] || 'cette entrée'} />
                     )}
                   </div>
                 </li>

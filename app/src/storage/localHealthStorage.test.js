@@ -24,6 +24,7 @@ import {
   getLatestEntryAt,
   exportToJson,
   importFromJson,
+  deleteEntry,
 } from './localHealthStorage'
 
 describe('createEntry / listEntries', () => {
@@ -176,5 +177,50 @@ describe('exportToJson / importFromJson', () => {
     const entries = await listEntries({})
     expect(entries.length).toBe(1)
     expect(entries[0].payload.value).toBe(1000)
+  })
+
+  it('exports every entry, beyond the per-type analysis limits (no silent data loss)', async () => {
+    const many = Array.from({ length: 1205 }, (_, i) => ({
+      type: 'hrv',
+      source: 'health_connect',
+      payload: { value: 40 + (i % 10) },
+      at: new Date(Date.UTC(2023, 0, 1) + i * 86400000).toISOString(),
+    }))
+    many.push({ type: 'sleep', source: 'health_connect', payload: {}, at: '2022-06-01T22:00:00Z' })
+    await upsertEntries(many)
+
+    const parsed = JSON.parse(await exportToJson())
+    expect(parsed.entries.length).toBe(1206)
+    expect(parsed.entries.some((e) => e.at === '2023-01-01T00:00:00.000Z')).toBe(true)
+
+    globalThis.indexedDB = new IDBFactory()
+    const { imported } = await importFromJson(JSON.stringify(parsed))
+    expect(imported).toBe(1206)
+    expect(await countAllEntries()).toBe(1206)
+  })
+
+  it('imports an old-style file (bare array, entries without created_at)', async () => {
+    const old = JSON.stringify([{ type: 'food', source: 'food_photo', payload: { items: [] }, at: '2025-03-01T12:00:00Z' }])
+    const { imported } = await importFromJson(old)
+    expect(imported).toBe(1)
+    const [e] = await listEntries({})
+    expect(e.type).toBe('food')
+    expect(e.created_at).toBeTruthy()
+  })
+})
+
+describe('deleteEntry', () => {
+  it('removes only the entry with the given id', async () => {
+    const keep = await createEntry({ type: 'cigarette', source: 'cigarette_app', payload: { count: 1 }, at: '2026-01-01T09:00:00Z' })
+    const drop = await createEntry({ type: 'cigarette', source: 'cigarette_app', payload: { count: 1 }, at: '2026-01-01T10:00:00Z' })
+    await deleteEntry(drop)
+    const entries = await listEntries({})
+    expect(entries.map((e) => e.id)).toEqual([keep])
+  })
+
+  it('is a no-op for an unknown id', async () => {
+    await createEntry({ type: 'steps', source: 'test', payload: {}, at: '2026-01-01T10:00:00Z' })
+    await deleteEntry(9999)
+    expect(await countAllEntries()).toBe(1)
   })
 })

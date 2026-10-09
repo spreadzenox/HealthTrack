@@ -239,13 +239,34 @@ export async function listEntriesForAnalysis() {
 }
 
 /**
- * Export all entries as JSON string (for download / backup).
- * Uses per-type limits (same as listEntriesForAnalysis) so that high-frequency
- * types cannot crowd out other types in the export file.
+ * Delete one entry by id (no-op if it does not exist).
+ * @param {number} id
+ * @returns {Promise<void>}
+ */
+export async function deleteEntry(id) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite')
+    tx.objectStore(STORE_NAME).delete(id)
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+/**
+ * Export ALL entries as JSON string (for download / backup).
+ * No per-type limit here: a backup must never silently drop old data.
  * @returns {Promise<string>}
  */
 export async function exportToJson() {
-  const entries = await listEntriesForAnalysis()
+  const db = await openDB()
+  const entries = await new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly')
+    const req = tx.objectStore(STORE_NAME).getAll()
+    req.onerror = () => reject(req.error)
+    req.onsuccess = () => resolve(req.result || [])
+  })
+  entries.sort((a, b) => (b.at < a.at ? -1 : 1))
   return JSON.stringify(
     { version: 1, exportedAt: new Date().toISOString(), entries },
     null,

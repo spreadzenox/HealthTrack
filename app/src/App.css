@@ -585,3 +585,66 @@
 .entry-card[data-type="wellbeing"] {
   border-left-color: #9b59b6;
 }
+
+/* Suppression d'une saisie (repas, bien-être, cigarette) — discrète, confirmée en 2 temps.
+   Contenu court (« 1 cigarette ») : bouton sur la même ligne ; contenu long (repas) : bouton dessous,
+   à droite. La confirmation prend toujours toute la largeur. */
+.entry-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  column-gap: 8px;
+}
+
+.entry-card-row > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.entry-delete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0 4px;
+  margin: -12px -8px -12px auto;
+}
+
+/* + 8px compense la marge négative : sinon la confirmation tiendrait « pile » sur la ligne du contenu */
+.entry-delete-confirm {
+  flex-basis: calc(100% + 8px);
+  margin-top: 4px;
+}
+
+.entry-delete-btn {
+  min-height: 44px;
+  padding: 0 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.entry-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.entry-delete-btn-danger {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.entry-delete-question {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.entry-delete-error {
+  flex-basis: 100%;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--error);
+}

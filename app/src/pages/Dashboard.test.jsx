@@ -5,6 +5,7 @@ import Dashboard from './Dashboard'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
+  deleteEntry: vi.fn(),
 }))
 
 vi.mock('../components/BaselineCards', () => ({
@@ -311,5 +312,32 @@ describe('Dashboard', () => {
     await waitFor(() => {
       expect(listEntries.mock.calls.length).toBeGreaterThan(callsBefore)
     })
+  })
+
+  it('propose de supprimer une saisie de l’app, pas une donnée synchronisée', async () => {
+    const { listEntries, deleteEntry } = await import('../storage/localHealthStorage')
+    deleteEntry.mockResolvedValue()
+    const cig = { id: 1, type: 'cigarette', source: 'app_cigarette', at: '2026-04-11T10:00:00', payload: { count: 1 } }
+    const hr = { id: 2, type: 'heart_rate', source: 'health_connect', at: '2026-04-11T09:00:00', payload: { bpm: 70 } }
+    listEntries.mockResolvedValue([cig, hr])
+    renderDashboard()
+    const buttons = await screen.findAllByRole('button', { name: /^Supprimer/ })
+    expect(buttons).toHaveLength(1)
+    expect(buttons[0]).toHaveAccessibleName(/cette cigarette/i)
+
+    listEntries.mockResolvedValue([hr])
+    fireEvent.click(buttons[0])
+    fireEvent.click(screen.getByRole('button', { name: /Confirmer/i }))
+    await waitFor(() => expect(deleteEntry).toHaveBeenCalledWith(1))
+    await waitFor(() => expect(screen.queryByText('Cigarette')).not.toBeInTheDocument())
+  })
+
+  it('affiche les ingrédients d’un repas à la française (« nom : 150 g »)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 5, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { items: [{ ingredient: 'Riz', quantity: '150 g' }] } },
+    ])
+    renderDashboard()
+    expect(await screen.findByText('Riz : 150 g')).toBeInTheDocument()
   })
 })
