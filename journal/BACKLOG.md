@@ -42,7 +42,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Rigueur statistique** (R#3), étape 1 : Benjamini-Hochberg, n effectif corrigé de l'autocorrélation, niveaux « solide / à confirmer / incertain », libellé « hypothèse » (#56)
 - [ ] Rigueur statistique, étape 2 : IC bootstrap par blocs affiché sur chaque piste
 - [x] Ne recommander que des leviers **actionnables** et cohérents avec le signe observé (#56)
-- [ ] **Modèle avancé fragile** : coefficients standardisés aberrants (≈ 1 863) dus à la colinéarité pas / calories d'activité / calories totales → dédoublonner les variables très corrélées (|r| > 0,9), régler le Ridge (validation croisée), afficher l'incertitude
+- [x] **Modèle avancé fiabilisé** : bug d'échelle des coefficients standardisés corrigé, doublons |r| > 0,9 écartés (et affichés), ≤ 10 variables, Ridge λ par validation croisée LOO, seuil d'effet 0,1 ET pour les pistes, prédiction du jour alignée sur le même modèle
+- [ ] Modèle avancé, étape 2 : incertitude par piste (IC bootstrap par blocs, stabilité du signe) ; LOO imbriqué si le coût le permet
 - [ ] Effets décalés (lags 0–3 j) et contrôle du jour de la semaine (R#25)
 - [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
 - [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
@@ -77,12 +78,11 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🏗️ **Modèle avancé** — colinéarité (voir C3) : les pistes du modèle restent cohérentes mais il est fragile.
-2. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes (et donnera enfin des pistes comportementales : café, alcool, écran tard…).
-3. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
-4. 🏗️ **Radar** (R#12) — réutilise `services/baselines.js` (FC repos, VFC + sommeil), persistance ≥ 2 nuits.
-5. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
-6. 🎨 C1 — barre d'onglets en bas.
+1. 🏗️ **Tags de comportements** (R#2) — enrichit toutes les analyses suivantes (et donnera enfin des pistes comportementales : café, alcool, écran tard…).
+2. 🔒 **Transparence Gemini** (R#9) — avertissement clé gratuite + retrait EXIF/GPS (vie privée).
+3. 🏗️ **Radar** (R#12) — réutilise `services/baselines.js` (FC repos, VFC + sommeil), persistance ≥ 2 nuits.
+4. 🎨 C2 — flux « Dernières entrées » très long (chaque mesure FC) : regrouper par jour/type.
+5. 🎨 C1 — barre d'onglets en bas.
 
 ## Idées en vrac (à trier)
 
@@ -92,11 +92,14 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Données de démo : repas plus complets (~2 000 kcal/j) pour que la page Nutrition de démo soit représentative.
 - Nutrition : tendance sur 4 semaines par nutriment et suggestions d'aliments riches pour les repères « bas » récurrents.
 - Graphique bien-être « Par jour » : les points sont espacés par index, pas par date → un jour sans note disparaît. Passer à un axe temporel (trous visibles).
+- Mode clair : `npm run visual -- --light` rend la même chose que le sombre — l'app n'a pas de thème clair (C1), ce n'est pas un bug du script.
+- Démo : le dernier jour de données est « hier » quand le run tourne après minuit (heure de Paris) → la prédiction du jour et « Par heure (aujourd'hui) » ne sont jamais visibles dans les captures ; faire finir la démo « aujourd'hui ».
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-09 — Recommandations avancées fiabilisées : coefficients corrigés, doublons écartés, Ridge réglé par validation croisée, seuil d'effet, chiffres FR
 - [x] 2026-10-08 — Tableau de bord : FC au repos et VFC comparées à votre norme personnelle (#60, v64)
 - [x] 2026-10-08 — Nutrition : moyenne par jour saisi sur 7 jours vs repère journalier, sodium en limite, groupes, alerte saisie incomplète, chiffres FR (#58, v63)
 - [x] 2026-10-08 — Recommandations « Pistes à tester » : leviers actionnables, plus de conseil à contre-sens, confiance statistique (BH + n effectif) (#56, v62)

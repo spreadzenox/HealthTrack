@@ -54,6 +54,34 @@ export const MIN_DAYS_ADVANCED = 7
 export const MAX_FEATURES_RATIO = 0.5
 
 /**
+ * Absolute cap on the number of variables in the advanced model, whatever the
+ * history length — beyond ~10 predictors a daily wellbeing score cannot
+ * support interpretable coefficients.
+ */
+export const MAX_FEATURES = 10
+
+/**
+ * Two candidate variables whose |Pearson r| exceeds this threshold carry the
+ * same information (e.g. steps / activity calories / total calories).  Only
+ * the one most correlated with wellbeing is kept: fitting both makes their
+ * coefficients explode in opposite directions.
+ */
+export const COLLINEARITY_MAX_R = 0.9
+
+/**
+ * Ridge penalties tried for the advanced model (features are standardised).
+ * The one with the lowest leave-one-out error is kept.
+ */
+export const RIDGE_LAMBDAS = [0.1, 0.3, 1, 3, 10, 30, 100, 300]
+
+/**
+ * Minimum |standardised coefficient| for the advanced model to suggest a
+ * lever: below 0.1 SD of wellbeing per SD of the variable, the effect is too
+ * small to be worth acting on (and is usually noise).
+ */
+export const MIN_ADVICE_EFFECT = 0.1
+
+/**
  * Meal influence half-life: a meal affects wellbeing for this many days
  * with linearly decreasing weight (1.0 → 0.0 over LAG_DAYS days).
  */
@@ -71,6 +99,11 @@ export const LAG_DAYS = 10.5
 export const HOLD_OUT_DAYS = 2
 
 // ─── Variable metadata ───────────────────────────────────────────────────────
+
+/** Fixed-decimal number written the French way (« 4,32 »). */
+function frDecimal(v, digits) {
+  return v.toFixed(digits).replace('.', ',')
+}
 
 export const VARIABLE_META = {
   // ── Lifestyle ──────────────────────────────────────────────────────────────
@@ -119,7 +152,7 @@ export const VARIABLE_META = {
   spo2_pct: {
     label: 'Saturation en oxygène (SpO₂)',
     unit: '%',
-    format: (v) => `${v.toFixed(1)} %`,
+    format: (v) => `${frDecimal(v, 1)} %`,
     direction: 'higher_better',
     group: 'lifestyle',
   },
@@ -141,56 +174,56 @@ export const VARIABLE_META = {
   protein_g: {
     label: 'Protéines',
     unit: 'g',
-    format: (v) => `${v.toFixed(1)} g`,
+    format: (v) => `${frDecimal(v, 1)} g`,
     direction: 'higher_better',
     group: 'macro',
   },
   fat_g: {
     label: 'Lipides',
     unit: 'g',
-    format: (v) => `${v.toFixed(1)} g`,
+    format: (v) => `${frDecimal(v, 1)} g`,
     direction: 'neutral',
     group: 'macro',
   },
   carbohydrates_g: {
     label: 'Glucides',
     unit: 'g',
-    format: (v) => `${v.toFixed(1)} g`,
+    format: (v) => `${frDecimal(v, 1)} g`,
     direction: 'neutral',
     group: 'macro',
   },
   fiber_g: {
     label: 'Fibres',
     unit: 'g',
-    format: (v) => `${v.toFixed(1)} g`,
+    format: (v) => `${frDecimal(v, 1)} g`,
     direction: 'higher_better',
     group: 'macro',
   },
   sugar_g: {
     label: 'Sucres',
     unit: 'g',
-    format: (v) => `${v.toFixed(1)} g`,
+    format: (v) => `${frDecimal(v, 1)} g`,
     direction: 'lower_better',
     group: 'macro',
   },
   saturated_fat_g: {
     label: 'Acides gras saturés',
     unit: 'g',
-    format: (v) => `${v.toFixed(1)} g`,
+    format: (v) => `${frDecimal(v, 1)} g`,
     direction: 'lower_better',
     group: 'macro',
   },
   omega3_g: {
     label: 'Oméga-3',
     unit: 'g',
-    format: (v) => `${v.toFixed(2)} g`,
+    format: (v) => `${frDecimal(v, 2)} g`,
     direction: 'higher_better',
     group: 'macro',
   },
   alcohol_g: {
     label: 'Alcool',
     unit: 'g',
-    format: (v) => `${v.toFixed(1)} g`,
+    format: (v) => `${frDecimal(v, 1)} g`,
     direction: 'lower_better',
     group: 'macro',
   },
@@ -214,7 +247,7 @@ export const VARIABLE_META = {
     unit: '',
     format: (v) => {
       const labels = ['Aucun', 'Faible', 'Modéré', 'Élevé']
-      return labels[Math.round(v)] ?? `${v.toFixed(1)}`
+      return labels[Math.round(v)] ?? `${frDecimal(v, 1)}`
     },
     direction: 'lower_better',
     group: 'fodmap',
@@ -223,42 +256,42 @@ export const VARIABLE_META = {
   vitamin_c_mg: {
     label: 'Vitamine C',
     unit: 'mg',
-    format: (v) => `${v.toFixed(1)} mg`,
+    format: (v) => `${frDecimal(v, 1)} mg`,
     direction: 'higher_better',
     group: 'vitamin',
   },
   vitamin_d_ug: {
     label: 'Vitamine D',
     unit: 'µg',
-    format: (v) => `${v.toFixed(2)} µg`,
+    format: (v) => `${frDecimal(v, 2)} µg`,
     direction: 'higher_better',
     group: 'vitamin',
   },
   vitamin_b12_ug: {
     label: 'Vitamine B12',
     unit: 'µg',
-    format: (v) => `${v.toFixed(2)} µg`,
+    format: (v) => `${frDecimal(v, 2)} µg`,
     direction: 'higher_better',
     group: 'vitamin',
   },
   vitamin_b9_ug: {
     label: 'Folates (B9)',
     unit: 'µg',
-    format: (v) => `${v.toFixed(1)} µg`,
+    format: (v) => `${frDecimal(v, 1)} µg`,
     direction: 'higher_better',
     group: 'vitamin',
   },
   vitamin_a_ug: {
     label: 'Vitamine A',
     unit: 'µg',
-    format: (v) => `${v.toFixed(1)} µg`,
+    format: (v) => `${frDecimal(v, 1)} µg`,
     direction: 'higher_better',
     group: 'vitamin',
   },
   vitamin_e_mg: {
     label: 'Vitamine E',
     unit: 'mg',
-    format: (v) => `${v.toFixed(2)} mg`,
+    format: (v) => `${frDecimal(v, 2)} mg`,
     direction: 'higher_better',
     group: 'vitamin',
   },
@@ -266,42 +299,42 @@ export const VARIABLE_META = {
   calcium_mg: {
     label: 'Calcium',
     unit: 'mg',
-    format: (v) => `${v.toFixed(1)} mg`,
+    format: (v) => `${frDecimal(v, 1)} mg`,
     direction: 'higher_better',
     group: 'mineral',
   },
   iron_mg: {
     label: 'Fer',
     unit: 'mg',
-    format: (v) => `${v.toFixed(2)} mg`,
+    format: (v) => `${frDecimal(v, 2)} mg`,
     direction: 'higher_better',
     group: 'mineral',
   },
   magnesium_mg: {
     label: 'Magnésium',
     unit: 'mg',
-    format: (v) => `${v.toFixed(1)} mg`,
+    format: (v) => `${frDecimal(v, 1)} mg`,
     direction: 'higher_better',
     group: 'mineral',
   },
   zinc_mg: {
     label: 'Zinc',
     unit: 'mg',
-    format: (v) => `${v.toFixed(2)} mg`,
+    format: (v) => `${frDecimal(v, 2)} mg`,
     direction: 'higher_better',
     group: 'mineral',
   },
   potassium_mg: {
     label: 'Potassium',
     unit: 'mg',
-    format: (v) => `${v.toFixed(1)} mg`,
+    format: (v) => `${frDecimal(v, 1)} mg`,
     direction: 'higher_better',
     group: 'mineral',
   },
   sodium_mg: {
     label: 'Sodium',
     unit: 'mg',
-    format: (v) => `${v.toFixed(1)} mg`,
+    format: (v) => `${frDecimal(v, 1)} mg`,
     direction: 'lower_better',
     group: 'mineral',
   },
@@ -309,56 +342,56 @@ export const VARIABLE_META = {
   weight_kg: {
     label: 'Poids',
     unit: 'kg',
-    format: (v) => `${v.toFixed(1)} kg`,
+    format: (v) => `${frDecimal(v, 1)} kg`,
     direction: 'neutral',
     group: 'body',
   },
   bmi: {
     label: 'IMC',
     unit: '',
-    format: (v) => `${v.toFixed(1)}`,
+    format: (v) => `${frDecimal(v, 1)}`,
     direction: 'neutral',
     group: 'body',
   },
   fat_ratio_pct: {
     label: 'Masse grasse (%)',
     unit: '%',
-    format: (v) => `${v.toFixed(1)} %`,
+    format: (v) => `${frDecimal(v, 1)} %`,
     direction: 'lower_better',
     group: 'body',
   },
   fat_mass_kg: {
     label: 'Masse grasse',
     unit: 'kg',
-    format: (v) => `${v.toFixed(2)} kg`,
+    format: (v) => `${frDecimal(v, 2)} kg`,
     direction: 'lower_better',
     group: 'body',
   },
   muscle_mass_kg: {
     label: 'Masse musculaire',
     unit: 'kg',
-    format: (v) => `${v.toFixed(2)} kg`,
+    format: (v) => `${frDecimal(v, 2)} kg`,
     direction: 'higher_better',
     group: 'body',
   },
   bone_mass_kg: {
     label: 'Masse osseuse',
     unit: 'kg',
-    format: (v) => `${v.toFixed(2)} kg`,
+    format: (v) => `${frDecimal(v, 2)} kg`,
     direction: 'higher_better',
     group: 'body',
   },
   hydration_pct: {
     label: 'Hydratation',
     unit: '%',
-    format: (v) => `${v.toFixed(1)} %`,
+    format: (v) => `${frDecimal(v, 1)} %`,
     direction: 'higher_better',
     group: 'body',
   },
   visceral_fat_index: {
     label: 'Indice graisse viscérale',
     unit: '',
-    format: (v) => `${v.toFixed(1)}`,
+    format: (v) => `${frDecimal(v, 1)}`,
     direction: 'lower_better',
     group: 'body',
   },
@@ -386,7 +419,7 @@ export const VARIABLE_META = {
   pwv_mps: {
     label: 'Vitesse d’onde de pouls',
     unit: 'm/s',
-    format: (v) => `${v.toFixed(1)} m/s`,
+    format: (v) => `${frDecimal(v, 1)} m/s`,
     direction: 'lower_better',
     group: 'body',
   },
@@ -1156,10 +1189,57 @@ function _fitModelOnRows(trainRows, allowedKeys = null) {
     ...featureKeys.map((k, j) => ((row[k] ?? 0) - featureMeans[j]) / featureStds[j]),
   ])
 
-  const beta = olsWithRidgeFallback(X, y)
-  if (!beta) return null
+  const tuned = tuneRidge(X, y)
+  if (!tuned) return null
 
-  return { featureKeys, featureMeans, featureStds, beta, X, y }
+  return { featureKeys, featureMeans, featureStds, ...tuned, X, y }
+}
+
+/**
+ * Greedy collinearity pruning: walks `rankedKeys` in order (most relevant
+ * first) and drops any key whose |r| with an already-kept key exceeds
+ * COLLINEARITY_MAX_R.
+ *
+ * @param {string[]} rankedKeys
+ * @param {Array<Object>} rows
+ * @param {number} [maxR=COLLINEARITY_MAX_R]
+ * @returns {{ keys: string[], dropped: Array<{variable, keptInstead, r}> }}
+ */
+export function pruneCollinearFeatures(rankedKeys, rows, maxR = COLLINEARITY_MAX_R) {
+  const keys = []
+  const dropped = []
+  const vecs = {}
+  for (const key of rankedKeys) {
+    vecs[key] = rows.map((d) => d[key] ?? 0)
+    const twin = keys
+      .map((k) => ({ k, r: Math.abs(pearsonCorrelation(vecs[k], vecs[key]) ?? 0) }))
+      .find((c) => c.r > maxR)
+    if (twin) dropped.push({ variable: key, keptInstead: twin.k, r: twin.r })
+    else keys.push(key)
+  }
+  return { keys, dropped }
+}
+
+/**
+ * Feature selection for the advanced model, on the training rows only:
+ * rank candidates by |Pearson r| with wellbeing, drop near-duplicates, then
+ * keep the top K = min(MAX_FEATURES, max(2, floor(n_train × MAX_FEATURES_RATIO))).
+ */
+function _selectFeatureKeys(trainRows) {
+  const wellbeingVec = trainRows.map((d) => d.wellbeing)
+  const ranked = Object.keys(VARIABLE_META)
+    .map((k) => {
+      const vec = trainRows.map((d) => d[k] ?? 0)
+      if (vec.every((v) => v === 0)) return null
+      const r = pearsonCorrelation(wellbeingVec, vec)
+      return r !== null ? { key: k, absR: Math.abs(r) } : null
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.absR - a.absR)
+    .map((c) => c.key)
+  const k = Math.min(MAX_FEATURES, Math.max(2, Math.floor(trainRows.length * MAX_FEATURES_RATIO)))
+  const { keys, dropped } = pruneCollinearFeatures(ranked, trainRows)
+  return { keys: keys.slice(0, k), dropped: dropped.filter((d) => keys.indexOf(d.keptInstead) < k) }
 }
 
 /**
@@ -1196,24 +1276,13 @@ export function computeAdvancedAnalysis(entries) {
   const trainRows = dataset.slice(0, n - HOLD_OUT_DAYS)
   const holdOutRows = dataset.slice(n - HOLD_OUT_DAYS)
 
-  // ── Feature pre-selection ─────────────────────────────────────────────────
-  // With a small training set (~7–15 days) and ~30 candidate features, OLS
-  // massively overfits even with Ridge.  Pre-select the K features with the
-  // highest |Pearson r| to wellbeing on the training rows, where
-  // K = floor(n_train × MAX_FEATURES_RATIO), minimum 2.
-  const wellbeingTrainVec = trainRows.map((d) => d.wellbeing)
   const allCandidateKeys = Object.keys(VARIABLE_META)
-  const preSelectionK = Math.max(2, Math.floor(trainRows.length * MAX_FEATURES_RATIO))
-  const candidateCorrs = allCandidateKeys
-    .map((k) => {
-      const vec = trainRows.map((d) => d[k] ?? 0)
-      if (vec.every((v) => v === 0)) return null
-      const r = pearsonCorrelation(wellbeingTrainVec, vec)
-      return r !== null ? { key: k, absR: Math.abs(r) } : null
-    })
-    .filter(Boolean)
-    .sort((a, b) => b.absR - a.absR)
-  const selectedKeys = candidateCorrs.slice(0, preSelectionK).map((c) => c.key)
+  const { keys: selectedKeys, dropped } = _selectFeatureKeys(trainRows)
+  const droppedCollinear = dropped.map((d) => ({
+    ...d,
+    label: VARIABLE_META[d.variable].label,
+    keptInsteadLabel: VARIABLE_META[d.keptInstead].label,
+  }))
 
   const fit = _fitModelOnRows(trainRows, selectedKeys.length > 0 ? selectedKeys : null)
   if (!fit) {
@@ -1238,23 +1307,19 @@ export function computeAdvancedAnalysis(entries) {
     }
   }
 
-  const { featureKeys, featureMeans, featureStds, beta, X: Xtrain, y: ytrain } = fit
+  const { featureKeys, featureMeans, featureStds, beta, lambda, r2_loo, X: Xtrain, y: ytrain } = fit
 
   // In-sample R² on the training partition (for display — expected to be high)
   const yPredTrain = Xtrain.map((row) => row.reduce((s, x, j) => s + x * beta[j], 0))
   const r2 = computeR2(ytrain, yPredTrain)
 
-  // LOO cross-validated R² on the training partition
-  const r2_loo = computeR2LOO(Xtrain, ytrain)
-
   const stdY = std(ytrain)
 
-  // Standardised beta coefficients (feature importance)
-  const rawImportances = featureKeys.map((key, j) => {
-    const betaJ = beta[j + 1]
-    const stdX = featureStds[j]
-    return stdY > 0 ? (betaJ * stdX) / stdY : 0
-  })
+  // Standardised beta coefficients (feature importance).  X is already
+  // standardised, so beta[j] is "wellbeing points per 1 SD of the feature":
+  // dividing by SD(y) is enough (multiplying again by SD(x) inflated
+  // coefficients by the feature's scale — e.g. ×2 000 for steps).
+  const rawImportances = featureKeys.map((key, j) => (stdY > 0 ? beta[j + 1] / stdY : 0))
 
   const maxRawImportance = Math.max(...rawImportances.map(Math.abs))
 
@@ -1275,7 +1340,7 @@ export function computeAdvancedAnalysis(entries) {
 
   // Only actionable variables whose effect sign matches the healthy direction.
   const topRecommendations = featureImportance
-    .filter((f) => f.importance > 0.05 && f.advice)
+    .filter((f) => Math.abs(f.coefficient) >= MIN_ADVICE_EFFECT && f.advice)
     .slice(0, 3)
     .map((f) => f.advice)
 
@@ -1313,6 +1378,8 @@ export function computeAdvancedAnalysis(entries) {
       nFeaturesFinal: featureKeys.length,
       nFeaturesCandidate: allCandidateKeys.length,
       lagDays: LAG_DAYS,
+      lambda,
+      droppedCollinear,
       overfit_risk,
       model_reliable,
     },
@@ -1346,7 +1413,8 @@ export function computeTodayPrediction(entries) {
 
   // Train on all days except the last HOLD_OUT_DAYS
   const trainRows = dataset.slice(0, dataset.length - HOLD_OUT_DAYS)
-  const fit = _fitModelOnRows(trainRows)
+  const { keys } = _selectFeatureKeys(trainRows)
+  const fit = _fitModelOnRows(trainRows, keys.length > 0 ? keys : null)
   if (!fit) return null
 
   const { featureKeys, featureMeans, featureStds, beta } = fit
@@ -1389,7 +1457,7 @@ function _predictToday(entries, rawDataset, featureKeys, featureMeans, featureSt
  * @param {number}    [lambda=0]  Ridge penalty (L2 regularisation)
  * @returns {number[]|null}  k-length coefficient vector, or null on failure
  */
-function olsNormalEquations(X, y, lambda = 0) {
+export function olsNormalEquations(X, y, lambda = 0) {
   const n = X.length
   if (n === 0) return null
   const k = X[0].length
@@ -1442,24 +1510,6 @@ function olsNormalEquations(X, y, lambda = 0) {
   return beta
 }
 
-/**
- * Fits Ridge regression, automatically tuning lambda when the plain OLS is
- * singular (n_samples < n_features or near-collinear columns).
- * Tries λ = 0, 0.01, 0.1, 1, 10, 100 in sequence; returns the first solution found.
- *
- * @param {number[][]} X
- * @param {number[]}   y
- * @returns {number[]|null}
- */
-function olsWithRidgeFallback(X, y) {
-  const lambdas = [0, 0.01, 0.1, 1, 10, 100]
-  for (const lam of lambdas) {
-    const beta = olsNormalEquations(X, y, lam)
-    if (beta !== null) return beta
-  }
-  return null
-}
-
 function computeR2(yTrue, yPred) {
   const yMean = mean(yTrue)
   const ssTot = yTrue.reduce((s, v) => s + (v - yMean) ** 2, 0)
@@ -1469,31 +1519,111 @@ function computeR2(yTrue, yPred) {
 }
 
 /**
- * Leave-One-Out cross-validated R².
+ * Exact leave-one-out predictions of a Ridge fit with penalty `lambda`,
+ * without refitting n times: for a linear smoother, the LOO residual is
+ * e_i / (1 − h_ii) where h_ii = x_i (XᵀX + λD)⁻¹ x_iᵀ.  O(n·k²) instead of
+ * O(n²·k²) — matters on a phone with a year of history.
+ * Returns null when the system is singular or a point has leverage ≈ 1.
  *
- * For each observation i, fits the model on all other n-1 observations,
- * then predicts observation i.  The resulting R² is an honest estimate
- * of out-of-sample performance and is not inflated by in-sample fitting.
+ * @param {number[][]} X  n × k design matrix (intercept column first, not penalised)
+ * @param {number[]}   y
+ * @param {number}     lambda
+ * @returns {number[]|null}
+ */
+export function ridgeLooPredictions(X, y, lambda) {
+  const n = X.length
+  if (n === 0) return null
+  const k = X[0].length
+  const Ainv = invertMatrix(ridgeGram(X, lambda))
+  if (!Ainv) return null
+  const Xty = new Array(k).fill(0)
+  for (let i = 0; i < n; i++) for (let j = 0; j < k; j++) Xty[j] += X[i][j] * y[i]
+  const beta = Ainv.map((row) => row.reduce((s, a, j) => s + a * Xty[j], 0))
+
+  const yHat = new Array(n)
+  for (let i = 0; i < n; i++) {
+    const xi = X[i]
+    let h = 0
+    for (let j = 0; j < k; j++) {
+      let t = 0
+      for (let l = 0; l < k; l++) t += Ainv[j][l] * xi[l]
+      h += xi[j] * t
+    }
+    if (1 - h < 1e-9) return null
+    const fitted = xi.reduce((s, x, j) => s + x * beta[j], 0)
+    yHat[i] = y[i] - (y[i] - fitted) / (1 - h)
+  }
+  return yHat
+}
+
+/** XᵀX + λ·diag(0, 1, …, 1) — the intercept (column 0) is not penalised. */
+function ridgeGram(X, lambda) {
+  const k = X[0].length
+  const A = Array.from({ length: k }, () => new Array(k).fill(0))
+  for (const row of X) {
+    for (let j = 0; j < k; j++) {
+      for (let l = 0; l < k; l++) A[j][l] += row[j] * row[l]
+    }
+  }
+  for (let j = 1; j < k; j++) A[j][j] += lambda
+  return A
+}
+
+/** Gauss-Jordan inverse with partial pivoting; null when singular. */
+function invertMatrix(M) {
+  const k = M.length
+  const aug = M.map((row, i) => [...row, ...Array.from({ length: k }, (_, j) => (i === j ? 1 : 0))])
+  for (let col = 0; col < k; col++) {
+    let maxRow = col
+    for (let row = col + 1; row < k; row++) {
+      if (Math.abs(aug[row][col]) > Math.abs(aug[maxRow][col])) maxRow = row
+    }
+    ;[aug[col], aug[maxRow]] = [aug[maxRow], aug[col]]
+    const pivot = aug[col][col]
+    if (Math.abs(pivot) < 1e-10) return null
+    for (let j = 0; j < 2 * k; j++) aug[col][j] /= pivot
+    for (let row = 0; row < k; row++) {
+      if (row === col) continue
+      const factor = aug[row][col]
+      if (factor === 0) continue
+      for (let j = 0; j < 2 * k; j++) aug[row][j] -= factor * aug[col][j]
+    }
+  }
+  return aug.map((row) => row.slice(k))
+}
+
+/**
+ * Fits Ridge regression with the penalty chosen by leave-one-out
+ * cross-validation among RIDGE_LAMBDAS (lowest LOO squared error).
  *
- * Returns null when n < MIN_DAYS_ADVANCED + 1 (not enough data to LOO).
+ * r2_loo is the LOO R² at the chosen penalty — slightly optimistic since the
+ * penalty itself was picked on it, but far more honest than the training R².
+ * Too few rows for LOO → the smallest penalty that solves, r2_loo = null.
  *
  * @param {number[][]} X  n × k design matrix (intercept column first)
- * @param {number[]}   y  n-length response vector
- * @returns {number|null}
+ * @param {number[]}   y
+ * @returns {{ beta: number[], lambda: number, r2_loo: number|null }|null}
  */
-function computeR2LOO(X, y) {
-  const n = X.length
-  if (n < MIN_DAYS_ADVANCED + 1) return null
-
-  const yHat = new Array(n).fill(0)
-  for (let i = 0; i < n; i++) {
-    const Xtrain = X.filter((_, idx) => idx !== i)
-    const ytrain = y.filter((_, idx) => idx !== i)
-    const beta = olsWithRidgeFallback(Xtrain, ytrain)
-    if (!beta) return null
-    yHat[i] = X[i].reduce((s, x, j) => s + x * beta[j], 0)
+function tuneRidge(X, y) {
+  if (X.length < MIN_DAYS_ADVANCED + 1) {
+    for (const lambda of RIDGE_LAMBDAS) {
+      const beta = olsNormalEquations(X, y, lambda)
+      if (beta) return { beta, lambda, r2_loo: null }
+    }
+    return null
   }
-  return computeR2(y, yHat)
+
+  let best = null
+  for (const lambda of RIDGE_LAMBDAS) {
+    const yHat = ridgeLooPredictions(X, y, lambda)
+    if (!yHat) continue
+    const sse = y.reduce((s, v, i) => s + (v - yHat[i]) ** 2, 0)
+    if (!best || sse < best.sse - 1e-12) best = { lambda, sse, yHat }
+  }
+  if (!best) return null
+  const beta = olsNormalEquations(X, y, best.lambda)
+  if (!beta) return null
+  return { beta, lambda: best.lambda, r2_loo: computeR2(y, best.yHat) }
 }
 
 function mean(arr) {

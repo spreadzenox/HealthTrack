@@ -19,6 +19,13 @@ import {
   LAG_DAYS,
   VARIABLE_META,
   MAX_FEATURES_RATIO,
+  MAX_FEATURES,
+  COLLINEARITY_MAX_R,
+  RIDGE_LAMBDAS,
+  MIN_ADVICE_EFFECT,
+  pruneCollinearFeatures,
+  ridgeLooPredictions,
+  olsNormalEquations,
 } from './analysisEngine'
 
 // ---------------------------------------------------------------------------
@@ -1310,6 +1317,162 @@ describe('computeAdvancedAnalysis — recommendations coherence', () => {
     }
     for (const advice of result.topRecommendations) {
       expect(advice).not.toMatch(/fc repos|variabilité/i)
+    }
+  })
+})
+
+// ---------------------------------------------------------------------------
+// computeAdvancedAnalysis — collinearity & Ridge tuning
+// ---------------------------------------------------------------------------
+
+// Deterministic pseudo-random generator (LCG) in [0, 1)
+function seededRandom(seed) {
+  let x = seed
+  return () => {
+    x = (x * 1103515245 + 12345) % 2147483648
+    return x / 2147483648
+  }
+}
+
+/**
+ * Real-world shaped scenario: steps, activity calories and total calories are
+ * near-duplicates of each other (|r| > 0.99); sleep carries the real signal.
+ */
+function buildCollinearScenario({ days = 60 } = {}) {
+  const rand = seededRandom(7)
+  const entries = []
+  for (let d = 0; d < days; d++) {
+    const date = dateForDay(d)
+    const steps = 4000 + rand() * 8000
+    const sleep = 360 + rand() * 120
+    const w = Math.max(0, Math.min(5, 1 + (sleep - 360) / 40 + steps / 12000 + (rand() - 0.5)))
+    entries.push(makeWellbeing(date, Math.round(w)))
+    entries.push(makeSleep(date, sleep))
+    entries.push(makeSteps(date, steps))
+    entries.push(makeActivity(date, steps * 0.04 + rand() * 2))
+    entries.push(makeCaloriesHC(date, 1800 + steps * 0.04 + rand() * 3))
+  }
+  return entries
+}
+
+describe('pruneCollinearFeatures', () => {
+  it('keeps the first (most relevant) of two near-duplicate features and reports the dropped one', () => {
+    const rows = Array.from({ length: 20 }, (_, i) => ({
+      a: i,
+      b: 2 * i + (i % 2 ? 0.01 : -0.01),
+      c: (i * 7) % 5,
+    }))
+    const { keys, dropped } = pruneCollinearFeatures(['a', 'b', 'c'], rows)
+    expect(keys).toEqual(['a', 'c'])
+    expect(dropped).toEqual([{ variable: 'b', keptInstead: 'a', r: expect.any(Number) }])
+    expect(dropped[0].r).toBeGreaterThan(COLLINEARITY_MAX_R)
+  })
+
+  it('keeps everything when no pair exceeds the threshold', () => {
+    const rows = Array.from({ length: 20 }, (_, i) => ({ a: i, c: (i * 7) % 5 }))
+    expect(pruneCollinearFeatures(['a', 'c'], rows).keys).toEqual(['a', 'c'])
+  })
+})
+
+describe('computeAdvancedAnalysis — collinearity & Ridge tuning', () => {
+  it('keeps a single representative of near-duplicate variables', () => {
+    const result = computeAdvancedAnalysis(buildCollinearScenario())
+    expect(result.modelInfo.method).toBe('ols_linear_regression')
+    const vars = result.featureImportance.map((f) => f.variable)
+    const dupes = ['steps', 'activityCalories', 'dailyCaloriesHC'].filter((v) => vars.includes(v))
+    expect(dupes).toHaveLength(1)
+    expect(result.modelInfo.droppedCollinear.length).toBeGreaterThanOrEqual(2)
+    for (const d of result.modelInfo.droppedCollinear) {
+      expect(d).toHaveProperty('label')
+      expect(d).toHaveProperty('keptInsteadLabel')
+    }
+  })
+
+  it('standardised coefficients stay in a plausible range (no explosion from collinearity)', () => {
+    const result = computeAdvancedAnalysis(buildCollinearScenario())
+    for (const f of result.featureImportance) {
+      expect(Math.abs(f.coefficient)).toBeLessThan(2)
+    }
+  })
+
+  it('chooses the Ridge penalty by cross-validation from RIDGE_LAMBDAS', () => {
+    const result = computeAdvancedAnalysis(buildCollinearScenario())
+    expect(RIDGE_LAMBDAS).toContain(result.modelInfo.lambda)
+  })
+
+  it('shrinks harder when the features carry no signal', () => {
+    const rand = seededRandom(11)
+    const entries = []
+    for (let d = 0; d < 60; d++) {
+      const date = dateForDay(d)
+      entries.push(makeWellbeing(date, Math.floor(rand() * 5) + 1))
+      entries.push(makeSleep(date, 360 + rand() * 120))
+      entries.push(makeSteps(date, 4000 + rand() * 8000))
+      entries.push(makeAvgHR(date, 60 + rand() * 20))
+    }
+    const noise = computeAdvancedAnalysis(entries)
+    const signal = computeAdvancedAnalysis(buildCollinearScenario())
+    expect(noise.modelInfo.lambda).toBeGreaterThan(signal.modelInfo.lambda)
+  })
+
+  it('suggests nothing from features that carry no signal', () => {
+    const rand = seededRandom(11)
+    const entries = []
+    for (let d = 0; d < 60; d++) {
+      const date = dateForDay(d)
+      entries.push(makeWellbeing(date, Math.floor(rand() * 5) + 1))
+      entries.push(makeSleep(date, 360 + rand() * 120))
+      entries.push(makeSteps(date, 4000 + rand() * 8000))
+      entries.push(makeCigarette(date, Math.floor(rand() * 6)))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    const meaningful = result.featureImportance.filter((f) => Math.abs(f.coefficient) >= MIN_ADVICE_EFFECT)
+    expect(meaningful).toEqual([])
+    expect(result.topRecommendations).toEqual([])
+  })
+
+  it('only suggests levers whose standardised effect reaches MIN_ADVICE_EFFECT', () => {
+    const result = computeAdvancedAnalysis(buildLeverScenario({ days: 60, stepsSign: 1 }))
+    const advised = result.featureImportance.filter((f) => result.topRecommendations.includes(f.advice))
+    expect(advised.length).toBe(result.topRecommendations.length)
+    for (const f of advised) expect(Math.abs(f.coefficient)).toBeGreaterThanOrEqual(MIN_ADVICE_EFFECT)
+  })
+
+  it('writes decimals the French way in every variable format', () => {
+    for (const meta of Object.values(VARIABLE_META)) {
+      expect(meta.format(4.326)).not.toMatch(/\d\.\d/)
+    }
+  })
+
+  it('caps the number of model variables at MAX_FEATURES', () => {
+    const result = computeAdvancedAnalysis(buildLeverScenario({ days: 60, stepsSign: 1 }))
+    expect(result.modelInfo.nFeaturesFinal).toBeLessThanOrEqual(MAX_FEATURES)
+  })
+
+  it('today prediction uses the same model as the advanced analysis', () => {
+    const entries = buildCollinearScenario({ days: 30 })
+    const today = new Date().toISOString().slice(0, 10)
+    entries.push(makeSleep(today, 450))
+    entries.push(makeSteps(today, 9000))
+    const fromAnalysis = computeAdvancedAnalysis(entries).todayPrediction
+    const standalone = computeTodayPrediction(entries)
+    expect(fromAnalysis).not.toBeNull()
+    expect(standalone.predicted).toBeCloseTo(fromAnalysis.predicted, 10)
+  })
+})
+
+describe('ridgeLooPredictions', () => {
+  it('matches refitting the Ridge model n times without each row', () => {
+    const rand = seededRandom(3)
+    const X = Array.from({ length: 25 }, () => [1, rand() * 2 - 1, rand() * 2 - 1, rand() * 2 - 1])
+    const y = X.map((r) => 2 + r[1] - 0.5 * r[2] + rand() * 0.3)
+    for (const lambda of [0.1, 3, 100]) {
+      const fast = ridgeLooPredictions(X, y, lambda)
+      X.forEach((row, i) => {
+        const beta = olsNormalEquations(X.filter((_, j) => j !== i), y.filter((_, j) => j !== i), lambda)
+        const brute = row.reduce((s, x, j) => s + x * beta[j], 0)
+        expect(fast[i]).toBeCloseTo(brute, 8)
+      })
     }
   })
 })

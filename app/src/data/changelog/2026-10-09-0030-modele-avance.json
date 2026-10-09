@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-09",
+  "kind": "correctif",
+  "title": "Recommandations avancées plus fiables",
+  "items": [
+    "Le modèle des « Recommandations avancées » ne mélange plus des données qui disent la même chose (par exemple pas et calories d’activité, ou plusieurs vitamines apportées par les mêmes aliments) : il garde la plus parlante et indique celles qu’il a écartées.",
+    "Correction d’une erreur de calcul qui gonflait artificiellement le poids de certaines variables (les pas surtout) : l’importance de chaque facteur est maintenant juste.",
+    "La prudence du modèle s’ajuste toute seule à vos données : plus elles sont « bruitées », plus les effets estimés sont modérés. Résultat sur des données de test : des prédictions nettement plus justes sur les jours que le modèle n’a pas vus.",
+    "Une piste n’est proposée que si son effet estimé est suffisant pour valoir la peine d’agir — fini les conseils fondés sur des effets minuscules.",
+    "Chiffres à la française dans cette page et pour la prédiction du jour (« 4,32 mg », « 3,0 / 5 »)."
+  ]
+}

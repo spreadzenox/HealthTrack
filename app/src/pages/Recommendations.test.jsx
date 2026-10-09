@@ -127,6 +127,16 @@ describe('Recommendations page', () => {
     expect(screen.queryByText(/Analyse sur/i)).not.toBeNull()
   })
 
+  it('lists redundant variables left out of the advanced model', async () => {
+    // In makeEntries, sleep and steps both grow linearly with the day → r = 1
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
+    renderPage()
+    fireEvent.click(await screen.findByRole('button', { name: /Recommandations avancées/i }))
+    expect(await screen.findByText(/Variables redondantes écartées/i)).toBeInTheDocument()
+    expect(screen.getByText(/redondantes écartées/i).closest('p').textContent).toMatch(/Pas quotidiens \(≈ Durée de sommeil\)/)
+  })
+
   it('shows remaining-days message when some but not enough data for advanced', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
