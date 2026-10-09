@@ -1,6 +1,6 @@
 # 2026-10-09 20:30 UTC — Analyses : le sommeil rattaché au jour du réveil
 
-**Type** : 🐛  ·  **PR** : #NN (en cours)
+**Type** : 🐛  ·  **PR** : #80 (fusionnée → v75)
 
 ## Pourquoi
 Run de chasse aux bugs (le dernier datait de 12:30, trois gros chantiers depuis). Les captures
