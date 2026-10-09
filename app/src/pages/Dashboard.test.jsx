@@ -182,6 +182,87 @@ describe('Dashboard', () => {
     expect(card).not.toHaveTextContent('(day)')
   })
 
+  function renderOne(entry) {
+    return import('../storage/localHealthStorage').then(({ listEntries }) => {
+      listEntries.mockResolvedValueOnce([{ id: 99, created_at: '', at: '2026-04-10T07:30:00', ...entry }])
+      renderDashboard()
+    })
+  }
+
+  it('shows HRV as « VFC » in milliseconds, with the unit Health Connect really sends', async () => {
+    await renderOne({
+      type: 'heart_rate', source: 'health_connect',
+      payload: { value: 46, unit: 'millisecond', subtype: 'heartRateVariability' },
+    })
+    const card = await screen.findByRole('listitem')
+    expect(card).toHaveTextContent('VFC')
+    expect(card).toHaveTextContent('46 ms')
+    expect(card).not.toHaveTextContent('millisecond')
+    expect(card).not.toHaveTextContent('HRV')
+    expect(card).not.toHaveTextContent('Fréquence cardiaque')
+  })
+
+  it('shows oxygen saturation with its own title and a % unit', async () => {
+    await renderOne({
+      type: 'heart_rate', source: 'health_connect',
+      payload: { value: 97, unit: 'percent', subtype: 'oxygenSaturation' },
+    })
+    const card = await screen.findByRole('listitem')
+    expect(card).toHaveTextContent('Saturation en oxygène')
+    expect(card).toHaveTextContent('97 %')
+    expect(card).not.toHaveTextContent('percent')
+  })
+
+  it('titles resting heart rate « FC au repos »', async () => {
+    await renderOne({
+      type: 'heart_rate', source: 'health_connect',
+      payload: { bpm: 58, unit: 'bpm', subtype: 'restingHeartRate' },
+    })
+    const card = await screen.findByRole('listitem')
+    expect(card).toHaveTextContent('FC au repos')
+    expect(card).toHaveTextContent('58 bpm')
+  })
+
+  it('shows a Withings weight in kg instead of raw data', async () => {
+    await renderOne({
+      type: 'weight', source: 'withings',
+      payload: { valueKg: 77.2, deviceid: 'abc123', model: 'Body Scan' },
+    })
+    const card = await screen.findByRole('listitem')
+    expect(card).toHaveTextContent('Poids')
+    expect(card).toHaveTextContent('77,2 kg')
+    expect(card).not.toHaveTextContent('deviceid')
+  })
+
+  it('summarises a body composition measurement in French', async () => {
+    await renderOne({
+      type: 'body_composition', source: 'withings',
+      payload: { valueKg: 77.2, fatRatioPct: 24.1, muscleMassKg: 32.4, deviceid: 'abc123' },
+    })
+    const card = await screen.findByRole('listitem')
+    expect(card).toHaveTextContent('Composition corporelle')
+    expect(card).toHaveTextContent('Masse grasse 24,1 %')
+    expect(card).toHaveTextContent('Muscles 32,4 kg')
+    expect(card).not.toHaveTextContent('deviceid')
+  })
+
+  it('shows height in cm', async () => {
+    await renderOne({ type: 'height', source: 'withings', payload: { valueCm: 170 } })
+    const card = await screen.findByRole('listitem')
+    expect(card).toHaveTextContent('Taille')
+    expect(card).toHaveTextContent('170 cm')
+  })
+
+  it('translates the workout type of an activity', async () => {
+    await renderOne({
+      type: 'activity', source: 'health_connect',
+      payload: { workoutType: 'cycling', durationSeconds: 3360, totalCalories: 329 },
+    })
+    const card = await screen.findByRole('listitem')
+    expect(card).toHaveTextContent('Vélo — 56 min — 329 kcal')
+    expect(card).not.toHaveTextContent('cycling')
+  })
+
   it('renders the "Ajouter un bien-être" button', async () => {
     renderDashboard()
     const btn = screen.getByRole('button', { name: /Ajouter un bien-être/i })

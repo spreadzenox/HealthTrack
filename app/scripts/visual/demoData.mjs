@@ -124,7 +124,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date() } =
         type: 'activity',
         source: 'health_connect',
         at: at(day, 18),
-        payload: { workoutType: rand() < 0.5 ? 'running' : 'biking', durationSeconds: 1800 + Math.round(rand() * 1800), totalCalories: Math.round(250 + rand() * 250), totalDistanceMeters: Math.round(4000 + rand() * 6000), endDate: at(day, 19), connector: 'health_connect' },
+        payload: { workoutType: rand() < 0.5 ? 'running' : 'cycling', durationSeconds: 1800 + Math.round(rand() * 1800), totalCalories: Math.round(250 + rand() * 250), totalDistanceMeters: Math.round(4000 + rand() * 6000), endDate: at(day, 19), connector: 'health_connect' },
       })
     }
     for (let c = 0; c < cigarettes; c++) {
