@@ -1,6 +1,6 @@
 # 2026-10-09 06:30 UTC — Chasse aux bugs : mesures lisibles et libellés justes
 
-**Type** : 🐛  ·  **PR** : (voir ci-dessous)
+**Type** : 🐛  ·  **PR** : #68 (fusionnée → release v68)
 
 ## Pourquoi
 Run bugs & visuel dû (4 runs de fond d'affilée depuis le 08/10 20:30). `npm run visual` (démo,
