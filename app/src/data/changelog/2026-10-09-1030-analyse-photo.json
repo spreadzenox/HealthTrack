@@ -1,6 +1,6 @@
 {
   "date": "2026-10-09",
-  "kind": "amélioré",
+  "kind": "amélioration",
   "title": "Analyse photo : corrigez les quantités avant d’enregistrer",
   "items": [
     "Après l’analyse d’une photo, chaque ingrédient a ses grammes modifiables (champ ou boutons − / + de 10 g) et les kcal se recalculent aussitôt, avec le total du repas.",
