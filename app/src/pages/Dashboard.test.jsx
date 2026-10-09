@@ -56,212 +56,165 @@ describe('Dashboard', () => {
     expect(screen.getByText(/Connecteurs/i)).toBeInTheDocument()
   })
 
-  it('loads health entries from local storage on mount', async () => {
+  it('loads the last two weeks of entries from local storage on mount', async () => {
     renderDashboard()
-    await screen.findByText(/Dernières entrées/i)
+    await screen.findByText(/Vos derniers jours/i)
     const { listEntries } = await import('../storage/localHealthStorage')
-    expect(listEntries).toHaveBeenCalledWith({ limit: 30 })
+    const [opts] = listEntries.mock.calls[0]
+    expect(opts.limit).toBeGreaterThanOrEqual(1000)
+    const since = new Date(opts.since)
+    const days = (Date.now() - since.getTime()) / 86400000
+    expect(days).toBeGreaterThan(12)
+    expect(days).toBeLessThan(15)
+  })
+
+  it('falls back to the 30 latest entries when nothing is recent', async () => {
+    renderDashboard()
+    await screen.findByText(/Vos derniers jours/i)
+    const { listEntries } = await import('../storage/localHealthStorage')
+    await waitFor(() => expect(listEntries).toHaveBeenCalledWith({ limit: 30 }))
   })
 
   it('shows empty hint when no entries', async () => {
     renderDashboard()
-    await screen.findByText(/Dernières entrées/i)
+    await screen.findByText(/Vos derniers jours/i)
     expect(screen.getByText(/Aucune donnée/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Enregistrez un repas/i })).toHaveAttribute('href', '/food')
   })
 
+  async function renderEntries(entries) {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValueOnce(entries.map((e, i) => ({ id: i + 1, created_at: '', ...e })))
+    renderDashboard()
+    return screen.findAllByRole('listitem')
+  }
+
+  function summaryValue(label) {
+    const term = screen.getByText(label, { selector: 'dt' })
+    return term.nextElementSibling.textContent
+  }
+
+  it('groups entries by day, most recent first, with the date in French', async () => {
+    await renderEntries([
+      { type: 'cigarette', source: 'app_cigarette', at: '2026-04-11T10:00:00', payload: { count: 1 } },
+      { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T15:00:00', payload: { count: 1 } },
+    ])
+    const titles = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent)
+    expect(titles[0]).toMatch(/11 avril/)
+    expect(titles[1]).toMatch(/10 avril/)
+    expect(titles[0]).toMatch(/^Samedi/)
+  })
+
   it('shows food entries when returned', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValueOnce([
-      {
-        id: 1,
-        type: 'food',
-        source: 'app_food',
-        at: '2025-03-01T12:00:00Z',
-        payload: { items: [{ ingredient: 'rice', quantity: '1 cup' }] },
-        created_at: '',
-      },
+    await renderEntries([
+      { type: 'food', source: 'app_food', at: '2025-03-01T12:00:00Z', payload: { items: [{ ingredient: 'rice', quantity: '1 cup' }] } },
     ])
-    renderDashboard()
-    await screen.findByText(/rice/)
+    expect(screen.getByText(/rice/)).toBeInTheDocument()
     expect(screen.getByText(/1 cup/)).toBeInTheDocument()
+    expect(summaryValue('Repas')).toBe('1')
   })
 
-  it('shows cigarette entries in recent list', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValueOnce([
-      {
-        id: 10,
-        type: 'cigarette',
-        source: 'app_cigarette',
-        at: '2026-04-10T15:00:00',
-        payload: { count: 1 },
-        created_at: '',
-      },
+  it('lists each cigarette with its time and counts them in the day summary', async () => {
+    await renderEntries([
+      { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T15:00:00', payload: { count: 1 } },
+      { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T09:05:00', payload: { count: 2 } },
     ])
-    renderDashboard()
-    await screen.findByText(/Cigarette/i)
-    const card = screen.getByRole('listitem')
-    expect(card).toHaveTextContent('1 cigarette')
+    expect(summaryValue('Cigarettes')).toBe('3')
+    const rows = document.querySelectorAll('.entry-card[data-type="cigarette"]')
+    expect(rows).toHaveLength(2)
+    expect(rows[0]).toHaveTextContent('15:00')
+    expect(rows[1]).toHaveTextContent('09:05')
+    expect(rows[1]).toHaveTextContent('2 cigarettes')
   })
 
-  it('shows wellbeing score in recent entries', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValueOnce([
-      {
-        id: 2,
-        type: 'wellbeing',
-        source: 'app_wellbeing',
-        at: '2026-04-10T09:00:00',
-        payload: { score: 4 },
-        created_at: '',
-      },
+  it('shows wellbeing score in the entry and the day summary', async () => {
+    await renderEntries([
+      { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T09:00:00', payload: { score: 4 } },
     ])
-    renderDashboard()
-    await screen.findByText(/Note :/)
-    const card = screen.getByRole('listitem')
-    expect(card).toHaveTextContent('Bien-être')
-    expect(card).toHaveTextContent('4')
+    expect(screen.getByText(/Note :/)).toHaveTextContent('Note : 4 / 5')
+    expect(summaryValue('Bien-être')).toBe('4 / 5')
   })
 
   it('shows behaviour tags of a wellbeing entry in French', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValueOnce([
-      {
-        id: 3,
-        type: 'wellbeing',
-        source: 'app_wellbeing',
-        at: '2026-04-10T21:00:00',
-        payload: { score: 3, tags: ['alcohol', 'late_screen', 'unknown_tag'] },
-        created_at: '',
-      },
+    await renderEntries([
+      { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T21:00:00', payload: { score: 3, tags: ['alcohol', 'late_screen', 'unknown_tag'] } },
     ])
-    renderDashboard()
-    await screen.findByText(/Note :/)
-    const card = screen.getByRole('listitem')
-    expect(card).toHaveTextContent('Alcool')
-    expect(card).toHaveTextContent('Écran tard')
-    expect(card).not.toHaveTextContent('unknown_tag')
+    const row = document.querySelector('.entry-card[data-type="wellbeing"]')
+    expect(row).toHaveTextContent('Alcool')
+    expect(row).toHaveTextContent('Écran tard')
+    expect(row).not.toHaveTextContent('unknown_tag')
   })
 
-  it('shows sleep duration in hours and French sleep state', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValueOnce([
-      {
-        id: 3,
-        type: 'sleep',
-        source: 'health_connect',
-        at: '2026-04-10T23:00:00',
-        payload: { durationMinutes: 390, sleepState: 'asleep' },
-        created_at: '',
-      },
+  it('summarises the night on the wake-up day, in hours', async () => {
+    await renderEntries([
+      { type: 'sleep', source: 'health_connect', at: '2026-04-10T23:00:00', payload: { durationMinutes: 390, sleepState: 'asleep' } },
     ])
-    renderDashboard()
-    await screen.findByText(/Sommeil/)
-    const card = screen.getByRole('listitem')
-    expect(card).toHaveTextContent('6 h 30')
-    expect(card).toHaveTextContent('endormi')
-    expect(card).not.toHaveTextContent('asleep')
+    expect(summaryValue('Sommeil')).toBe('6 h 30')
+    expect(screen.getByRole('heading', { level: 4 })).toHaveTextContent('11 avril')
+    expect(document.querySelector('.entry-card')).toBeNull()
   })
 
-  it('shows daily steps with a French period label', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValueOnce([
-      {
-        id: 4,
-        type: 'steps',
-        source: 'health_connect',
-        at: '2026-04-10T00:00:00',
-        payload: { value: 8200, period: 'day' },
-        created_at: '',
-      },
+  it('summarises watch measurements instead of listing one card per sample', async () => {
+    await renderEntries([
+      { type: 'steps', source: 'health_connect', at: '2026-04-10T00:00:00', payload: { value: 8200, period: 'day' } },
+      { type: 'calories', source: 'health_connect', at: '2026-04-10T00:00:00', payload: { value: 2233, period: 'day' } },
+      { type: 'heart_rate', source: 'health_connect', at: '2026-04-10T09:00:00', payload: { bpm: 82 } },
+      { type: 'heart_rate', source: 'health_connect', at: '2026-04-10T14:00:00', payload: { bpm: 76, subtype: 'heartRate' } },
+      { type: 'heart_rate', source: 'health_connect', at: '2026-04-10T07:00:00', payload: { bpm: 58, unit: 'bpm', subtype: 'restingHeartRate' } },
+      { type: 'heart_rate', source: 'health_connect', at: '2026-04-10T06:30:00', payload: { value: 46, unit: 'millisecond', subtype: 'heartRateVariability' } },
+      { type: 'heart_rate', source: 'health_connect', at: '2026-04-10T06:31:00', payload: { value: 97, unit: 'percent', subtype: 'oxygenSaturation' } },
     ])
-    renderDashboard()
-    await screen.findByText(/pas/)
-    const card = screen.getByRole('listitem')
-    expect(card).toHaveTextContent('sur la journée')
-    expect(card).not.toHaveTextContent('(day)')
-  })
-
-  function renderOne(entry) {
-    return import('../storage/localHealthStorage').then(({ listEntries }) => {
-      listEntries.mockResolvedValueOnce([{ id: 99, created_at: '', at: '2026-04-10T07:30:00', ...entry }])
-      renderDashboard()
-    })
-  }
-
-  it('shows HRV as « VFC » in milliseconds, with the unit Health Connect really sends', async () => {
-    await renderOne({
-      type: 'heart_rate', source: 'health_connect',
-      payload: { value: 46, unit: 'millisecond', subtype: 'heartRateVariability' },
-    })
-    const card = await screen.findByRole('listitem')
-    expect(card).toHaveTextContent('VFC')
-    expect(card).toHaveTextContent('46 ms')
-    expect(card).not.toHaveTextContent('millisecond')
-    expect(card).not.toHaveTextContent('HRV')
-    expect(card).not.toHaveTextContent('Fréquence cardiaque')
-  })
-
-  it('shows oxygen saturation with its own title and a % unit', async () => {
-    await renderOne({
-      type: 'heart_rate', source: 'health_connect',
-      payload: { value: 97, unit: 'percent', subtype: 'oxygenSaturation' },
-    })
-    const card = await screen.findByRole('listitem')
-    expect(card).toHaveTextContent('Saturation en oxygène')
-    expect(card).toHaveTextContent('97 %')
-    expect(card).not.toHaveTextContent('percent')
-  })
-
-  it('titles resting heart rate « FC au repos »', async () => {
-    await renderOne({
-      type: 'heart_rate', source: 'health_connect',
-      payload: { bpm: 58, unit: 'bpm', subtype: 'restingHeartRate' },
-    })
-    const card = await screen.findByRole('listitem')
-    expect(card).toHaveTextContent('FC au repos')
-    expect(card).toHaveTextContent('58 bpm')
+    expect(summaryValue('Pas')).toMatch(/^8\s200$/)
+    expect(summaryValue('Dépense')).toMatch(/^2\s233 kcal$/)
+    expect(summaryValue('FC')).toBe('76 à 82 bpm')
+    expect(summaryValue('FC au repos')).toBe('58 bpm')
+    expect(summaryValue('VFC')).toBe('46 ms')
+    expect(summaryValue('SpO₂')).toBe('97 %')
+    expect(document.querySelector('.entry-card')).toBeNull()
+    expect(document.body).not.toHaveTextContent('millisecond')
+    expect(document.body).not.toHaveTextContent('percent')
   })
 
   it('shows a Withings weight in kg instead of raw data', async () => {
-    await renderOne({
-      type: 'weight', source: 'withings',
-      payload: { valueKg: 77.2, deviceid: 'abc123', model: 'Body Scan' },
-    })
-    const card = await screen.findByRole('listitem')
-    expect(card).toHaveTextContent('Poids')
-    expect(card).toHaveTextContent('77,2 kg')
-    expect(card).not.toHaveTextContent('deviceid')
+    await renderEntries([{ type: 'weight', source: 'withings', at: '2026-04-10T07:30:00', payload: { valueKg: 77.2, deviceid: 'abc123', model: 'Body Scan' } }])
+    const row = document.querySelector('.entry-card')
+    expect(row).toHaveTextContent('Poids')
+    expect(row).toHaveTextContent('77,2 kg')
+    expect(row).toHaveTextContent('Withings')
+    expect(row).not.toHaveTextContent('deviceid')
   })
 
   it('summarises a body composition measurement in French', async () => {
-    await renderOne({
-      type: 'body_composition', source: 'withings',
-      payload: { valueKg: 77.2, fatRatioPct: 24.1, muscleMassKg: 32.4, deviceid: 'abc123' },
-    })
-    const card = await screen.findByRole('listitem')
-    expect(card).toHaveTextContent('Composition corporelle')
-    expect(card).toHaveTextContent('Masse grasse 24,1 %')
-    expect(card).toHaveTextContent('Muscles 32,4 kg')
-    expect(card).not.toHaveTextContent('deviceid')
+    await renderEntries([{ type: 'body_composition', source: 'withings', at: '2026-04-10T07:30:00', payload: { valueKg: 77.2, fatRatioPct: 24.1, muscleMassKg: 32.4, deviceid: 'abc123' } }])
+    const row = document.querySelector('.entry-card')
+    expect(row).toHaveTextContent('Composition corporelle')
+    expect(row).toHaveTextContent('Masse grasse 24,1 %')
+    expect(row).toHaveTextContent('Muscles 32,4 kg')
+    expect(row).not.toHaveTextContent('deviceid')
   })
 
   it('shows height in cm', async () => {
-    await renderOne({ type: 'height', source: 'withings', payload: { valueCm: 170 } })
-    const card = await screen.findByRole('listitem')
-    expect(card).toHaveTextContent('Taille')
-    expect(card).toHaveTextContent('170 cm')
+    await renderEntries([{ type: 'height', source: 'withings', at: '2026-04-10T07:30:00', payload: { valueCm: 170 } }])
+    const row = document.querySelector('.entry-card')
+    expect(row).toHaveTextContent('Taille')
+    expect(row).toHaveTextContent('170 cm')
   })
 
   it('translates the workout type of an activity', async () => {
-    await renderOne({
-      type: 'activity', source: 'health_connect',
-      payload: { workoutType: 'cycling', durationSeconds: 3360, totalCalories: 329 },
-    })
-    const card = await screen.findByRole('listitem')
-    expect(card).toHaveTextContent('Vélo — 56 min — 329 kcal')
-    expect(card).not.toHaveTextContent('cycling')
+    await renderEntries([{ type: 'activity', source: 'health_connect', at: '2026-04-10T18:00:00', payload: { workoutType: 'cycling', durationSeconds: 3360, totalCalories: 329 } }])
+    const row = document.querySelector('.entry-card')
+    expect(row).toHaveTextContent('Vélo — 56 min — 329 kcal')
+    expect(row).not.toHaveTextContent('cycling')
+  })
+
+  it('shows 3 days first, then older days on demand', async () => {
+    await renderEntries(
+      [10, 9, 8, 7, 6].map((d) => ({ type: 'cigarette', source: 'app_cigarette', at: `2026-04-${String(d).padStart(2, '0')}T10:00:00`, payload: { count: 1 } })),
+    )
+    expect(screen.getAllByRole('heading', { level: 4 })).toHaveLength(3)
+    fireEvent.click(screen.getByRole('button', { name: /Voir les jours précédents/i }))
+    expect(screen.getAllByRole('heading', { level: 4 })).toHaveLength(5)
+    expect(screen.queryByRole('button', { name: /Voir les jours précédents/i })).not.toBeInTheDocument()
   })
 
   it('renders the "Ajouter un bien-être" button', async () => {
@@ -294,7 +247,7 @@ describe('Dashboard', () => {
   it('reloads entries when health-entries-updated event fires', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     renderDashboard()
-    await screen.findByText(/Dernières entrées/i)
+    await screen.findByText(/Vos derniers jours/i)
     const callsBefore = listEntries.mock.calls.length
 
     listEntries.mockResolvedValueOnce([
