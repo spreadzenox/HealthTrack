@@ -2,9 +2,10 @@
  * Appel direct à l'API Gemini depuis le frontend (mode standalone, sans backend).
  */
 import { INGREDIENT_NAMES } from '../data/ingredientNames.js'
+import { getGeminiModelFallbacks } from '../settings/geminiModel.js'
+import { prepareImageForGemini } from './imagePrep.js'
 
-const GEMINI_MODEL = 'gemini-2.5-flash'
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`
+const geminiUrl = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
 
 function buildPrompt() {
   // Liste exhaustive : un nom par ligne pour limiter la taille du prompt tout en restant lisible
@@ -30,19 +31,24 @@ Interdiction : ne réponds pas avec du texte libre, des explications ou du markd
 }
 
 /**
- * Lit le fichier image en base64 (sans le préfixe data:...).
+ * Texte de la réponse : concatène les parties texte, en ignorant les « pensées » des modèles récents.
  */
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      const dataUrl = reader.result
-      const base64 = dataUrl.indexOf(',') >= 0 ? dataUrl.split(',')[1] : dataUrl
-      resolve(base64)
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
+export function extractResponseText(data) {
+  const parts = data?.candidates?.[0]?.content?.parts || []
+  return parts
+    .filter((p) => typeof p?.text === 'string' && !p.thought)
+    .map((p) => p.text)
+    .join('')
+}
+
+async function readErrorMessage(res) {
+  const errText = await res.text()
+  try {
+    const errJson = JSON.parse(errText)
+    return errJson.error?.message || errJson.message || errText
+  } catch {
+    return errText
+  }
 }
 
 /**
@@ -53,41 +59,44 @@ function fileToBase64(file) {
  * @throws si not_food (message = reason) ou erreur API
  */
 export async function analyzeWithGemini(file, apiKey) {
-  const base64 = await fileToBase64(file)
-  const mimeType = file.type || 'image/jpeg'
-  const prompt = buildPrompt()
-
-  const res = await fetch(`${GEMINI_URL}?key=${encodeURIComponent(apiKey)}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{
-        parts: [
-          { text: prompt },
-          {
-            inlineData: {
-              mimeType: mimeType,
-              data: base64,
-            },
-          },
-        ],
-      }],
-    }),
+  // Seule l'image (réduite, sans métadonnées GPS/appareil) et le prompt partent chez Google
+  const { base64, mimeType } = await prepareImageForGemini(file)
+  const body = JSON.stringify({
+    contents: [{
+      parts: [
+        { text: buildPrompt() },
+        { inlineData: { mimeType, data: base64 } },
+      ],
+    }],
+    generationConfig: { responseMimeType: 'application/json' },
   })
 
-  if (!res.ok) {
-    const errText = await res.text()
-    let message = errText
-    try {
-      const errJson = JSON.parse(errText)
-      message = errJson.error?.message || errJson.message || errText
-    } catch (_) {}
-    throw new Error(message)
+  let data = null
+  let usedModel = null
+  let firstError = null
+  for (const model of getGeminiModelFallbacks()) {
+    const res = await fetch(`${geminiUrl(model)}?key=${encodeURIComponent(apiKey)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+    })
+    if (res.ok) {
+      data = await res.json()
+      usedModel = model
+      break
+    }
+    const message = await readErrorMessage(res)
+    // Requête ou clé invalide : changer de modèle n'y changerait rien
+    if (res.status === 400 || res.status === 401) throw new Error(message)
+    // Modèle introuvable, non ouvert à ce compte, quota épuisé ou surchargé : on essaie le suivant
+    firstError ??= message
+  }
+  if (!data) {
+    throw new Error(firstError || "Aucun modèle Gemini n'est disponible pour cette clé.")
   }
 
-  const data = await res.json()
-  const textPart = data.candidates?.[0]?.content?.parts?.[0]?.text
-  if (!textPart || typeof textPart !== 'string') {
+  const textPart = extractResponseText(data)
+  if (!textPart) {
     throw new Error('Réponse Gemini invalide (pas de texte).')
   }
 
@@ -98,7 +107,7 @@ export async function analyzeWithGemini(file, apiKey) {
   let parsed
   try {
     parsed = JSON.parse(jsonStr)
-  } catch (e) {
+  } catch {
     throw new Error('Réponse Gemini invalide (JSON attendu).')
   }
 
@@ -122,5 +131,5 @@ export async function analyzeWithGemini(file, apiKey) {
     }
   })
 
-  return { provider: 'gemini', items }
+  return { provider: 'gemini', model: usedModel, items }
 }

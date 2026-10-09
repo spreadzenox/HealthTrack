@@ -36,6 +36,11 @@ une release à chaque changement validé, et tient ce journal.
   les habitudes du soir), avec nombre de jours et niveau de confiance. Il faut 5 jours avec et 5
   sans pour qu'un tag soit comparé — **pensez à les cocher**, c'est ce qui permettra ensuite des
   pistes du type « moins d'écran le soir ». (v66)
+- **Analyse photo plus discrète** : la photo est réduite et débarrassée de sa position GPS, de sa
+  date et du modèle du téléphone avant l'envoi à Gemini ; l'app explique ce qui part chez Google et
+  prévient qu'avec une clé **gratuite**, Google peut utiliser les photos. Modèle par défaut :
+  **Gemini 3.8 Flash** (l'ancien 2.5 n'est plus ouvert aux nouvelles clés), réglable dans Paramètres,
+  avec bascule automatique si un modèle n'est pas disponible.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -46,8 +51,9 @@ une release à chaque changement validé, et tient ce journal.
   des futures analyses (expériences personnelles, radar).
 
 **Points d'attention**
-- Avec une clé Gemini **gratuite**, Google peut utiliser et faire relire les photos analysées → un
-  avertissement dans l'app est prévu (backlog R#9).
+- Avec une clé Gemini **gratuite**, Google peut utiliser et faire relire les photos analysées →
+  désormais signalé dans l'app. Le passage à Gemini 3.8 Flash n'a pas pu être testé avec une vraie
+  clé : **si l'analyse photo échoue, essayez un autre modèle dans Paramètres** et dites-le-moi.
 - La PR #55 restée en attente a été fusionnée au run suivant (release v61) : la fusion passe par
   l'outil GitHub MCP. Si une fusion est de nouveau refusée, autoriser la fusion pour les sessions
   de la routine.
@@ -55,8 +61,8 @@ une release à chaque changement validé, et tient ce journal.
 - Le test sur émulateur **Android 16 (API 36)** échoue à la création de l'émulateur (problème
   côté GitHub, sans lien avec le code) ; Android 15 et la publication des releases fonctionnent.
 
-**Prochaines priorités** — transparence Gemini (clé gratuite, photos), un run de chasse aux bugs,
-puis « radar » fatigue / début de maladie qui s'appuiera sur la norme cardiaque.
+**Prochaines priorités** — un run de chasse aux bugs, puis « radar » fatigue / début de maladie qui
+s'appuiera sur la norme cardiaque, puis analyse photo fiabilisée (grammes modifiables).
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -67,6 +73,7 @@ puis « radar » fatigue / début de maladie qui s'appuiera sur la norme cardiaq
 | 08/10 22:30 — [Cœur vs votre norme (FC repos / VFC)](runs/2026-10-08-2230-norme-coeur.md) | 🏗️ | PR #60 fusionnée → v64 |
 | 09/10 00:30 — [Recommandations avancées fiabilisées](runs/2026-10-09-0030-modele-avance.md) | 🏗️ | PR #62 fusionnée → v65 |
 | 09/10 02:30 — [Tags d'habitudes](runs/2026-10-09-0230-tags-habitudes.md) | 🏗️ | PR #64 fusionnée → v66 |
+| 09/10 04:30 — [Transparence Gemini](runs/2026-10-09-0430-transparence-gemini.md) | 🔒 | PR en cours |
 
 ---
 

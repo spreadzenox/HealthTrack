@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-09",
+  "kind": "amélioration",
+  "title": "Analyse photo : plus de confidentialité et un modèle Gemini récent",
+  "items": [
+    "Avant l’envoi à Gemini, la photo du repas est réduite et débarrassée de ses informations cachées : position GPS, date, modèle du téléphone. Rien d’autre ne quitte votre appareil.",
+    "L’app vous prévient maintenant que, si votre clé Gemini est gratuite, Google peut utiliser les photos envoyées pour améliorer ses produits et les faire relire par des personnes (détails dans Paramètres).",
+    "L’analyse utilise par défaut Gemini 3.8 Flash, le modèle Flash le plus récent. Vous pouvez en choisir un autre dans Paramètres ; si un modèle n’est pas disponible pour votre clé, l’app essaie automatiquement les autres.",
+    "Envoi beaucoup plus léger (photo réduite à 1 280 pixels de côté) : l’analyse va plus vite sur une connexion mobile."
+  ]
+}
