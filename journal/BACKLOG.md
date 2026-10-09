@@ -56,7 +56,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [ ] Tags, étape 2 : tags comme leviers dans « Pistes à tester » (« Moins d'écran le soir ») et variables du modèle avancé ; choix « hier soir / aujourd'hui » si les check-ins du matin sont fréquents ; tags personnalisés
 - [x] **Analyse photo fiabilisée** (R#4) : `responseSchema` (repli sans), noms rapprochés de la base, inconnus signalés/remplaçables, grammes modifiables, confiance « à vérifier », kcal
 - [ ] Analyse photo, étape 2 : question de portion quand la confiance est basse (« petite / moyenne / grande assiette ? ») ; photo de référence (main, carte) ; ~~modifier/supprimer un repas enregistré~~ (livré #72 + run 14:30)
-- [ ] **Saisie texte / dictée + « comme hier » + favoris** (R#5) — la photo seule est *plus* difficile que le texte d'après une étude terrain
+- [x] **Saisie sans photo + « Refaire » + repas habituels** (R#5) : composition manuelle par recherche, repas fréquents déduits de l'historique, heure modifiable (run 18:30)
+- [ ] Saisie, étape 2 : texte libre / dictée → Gemini (« 2 œufs, une tartine ») vers le même éditeur ; « Refaire » depuis le journal du tableau de bord ; favoris épinglés si besoin
 - [ ] Cigarettes avec contexte (R#7) : déclencheur optionnel, heatmap horaire, « envie résistée »
 - [ ] WHO-5 hebdomadaire (R#11) pour valider le score quotidien
 - [ ] Code-barres Open Food Facts + % ultra-transformés (R#17)
@@ -82,10 +83,11 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🏗️ Saisie texte / « comme hier » / favoris (R#5), en réutilisant `MealEditor` (« refaire ce repas » depuis un repas enregistré = presque gratuit).
+1. 🐛 Chasse aux bugs (`--empty`, `--light`, cas limites) — dernier run 🐛 : 09/10 12:30.
 2. 🎨 C1 — barre d'onglets en bas.
 3. 🔭 Veille (dernière : 08/10 17:00) — saisie texte/dictée des repas, état de l'art 2026.
-4. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
+4. 🏗️ Saisie texte libre / dictée → Gemini, vers `NewMealForm`.
+5. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
 
 ## Idées en vrac (à trier)
 
@@ -112,6 +114,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-09 — Alimentation : « Saisir sans photo », « Repas habituels » et « Refaire » (run 18:30)
 - [x] 2026-10-09 — Tableau de bord « Vos derniers jours » : une carte par jour avec résumé + saisies, 14 jours chargés (#76, v73)
 - [x] 2026-10-09 — Modifier un repas enregistré (grammes, ingrédients, heure) depuis Alimentation ; `updateEntry` sans changement de schéma (#74, v72)
 - [x] 2026-10-09 — Supprimer un repas / une note / une cigarette saisis par erreur ; sauvegarde JSON complète (plus de troncature des données anciennes) ; « nom : 150 g » (#72) → v71
