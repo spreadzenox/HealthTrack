@@ -1,6 +1,6 @@
 # 2026-10-09 16:30 UTC — Tableau de bord : « Vos derniers jours »
 
-**Type** : 🎨  ·  **PR** : #76
+**Type** : 🎨  ·  **PR** : #76 (fusionnée → release v73, APK publié)
 
 ## Pourquoi
 Priorité n°1 du backlog (C2). Le bas du tableau de bord était un flux brut de 30 cartes : une par
