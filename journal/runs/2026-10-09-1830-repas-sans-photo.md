@@ -1,6 +1,6 @@
 # 2026-10-09 18:30 UTC — Alimentation : saisir sans photo, repas habituels, « Refaire »
 
-**Type** : 🏗️  ·  **PR** : voir le tableau du résumé de la semaine
+**Type** : 🏗️  ·  **PR** : #78 (fusionnée → v74)
 
 ## Pourquoi
 Priorité n°1 du backlog (C4, R#5) : la photo était le **seul** moyen d'enregistrer un repas — il
