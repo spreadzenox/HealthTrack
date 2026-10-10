@@ -1,6 +1,6 @@
 # 2026-10-10 06:30 UTC — Analyses : contrôle du week-end
 
-**Type** : 🏗️  ·  **PR** : #NN (voir plus bas)
+**Type** : 🏗️  ·  **PR** : #86 (fusionnée → voir release)
 
 ## Pourquoi
 1er item des « Prochaines étapes » (C3, R#25) et recommandation de la veille du 10/10 §C : le bien-être varie

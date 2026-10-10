@@ -169,7 +169,7 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 00:30 — [Veille + barres système Android](runs/2026-10-10-0030-veille-zones-systeme.md) | 🔭 | PR #82 fusionnée → v77 |
 | 10/10 02:30 — [Repas décrit en quelques mots](runs/2026-10-10-0230-repas-decrit.md) | 🏗️ | PR #84 fusionnée → v78 |
 | 10/10 04:30 — [Restaurer une sauvegarde sans risque](runs/2026-10-10-0430-import-sur.md) | 🐛 | PR #85 fusionnée → v79 |
-| 10/10 06:30 — [Analyses : contrôle du week-end](runs/2026-10-10-0630-controle-week-end.md) | 🏗️ | PR en cours |
+| 10/10 06:30 — [Analyses : contrôle du week-end](runs/2026-10-10-0630-controle-week-end.md) | 🏗️ | PR #86 |
 
 ---
 
