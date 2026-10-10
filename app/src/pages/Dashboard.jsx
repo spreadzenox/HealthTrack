@@ -11,6 +11,7 @@ import { isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
 import { formatDuration, workoutTypeLabel } from '../utils/format'
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
+import { mealKcal } from '../services/mealEditing'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
@@ -79,6 +80,7 @@ function EntryBody({ e }) {
   const count = typeof e.payload?.count === 'number' ? e.payload.count : 1
   return (
     <div className="entry-card-body">
+      {e.type === 'food' && e.payload?.dish && <p className="entry-dish">{e.payload.dish}</p>}
       {e.type === 'food' && e.payload?.items?.length > 0 && (
         <ul className="entry-items">
           {e.payload.items.slice(0, 5).map((item, i) => (
@@ -191,6 +193,9 @@ function DayCard({ day }) {
               <div className="entry-card-header">
                 <time className="entry-at" dateTime={e.at}>{timeOf(e.at)}</time>
                 <span className="entry-type">{entryTitle(e)}</span>
+                {e.type === 'food' && mealKcal(e.payload?.items) > 0 && (
+                  <span className="entry-kcal">≈ {mealKcal(e.payload.items).toLocaleString('fr-FR')} kcal</span>
+                )}
                 {!isDeletableEntry(e) && (
                   <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
                 )}
@@ -263,12 +268,15 @@ export default function Dashboard() {
   return (
     <section className="dashboard">
       <h2 className="page-title">Tableau de bord</h2>
-      <p className="dashboard-intro">
-        HealthTrack centralise vos données santé : <strong>alimentation</strong> (photo → ingrédients),{' '}
-        <strong>montre Samsung Fit 3</strong> (pas, sommeil, fréquence cardiaque) via Health Connect,{' '}
-        et bien plus. Configurez les sources dans{' '}
-        <Link to="/connectors" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Connecteurs</Link>.
-      </p>
+      {/* Présentation utile au premier lancement seulement : avec des données, elle repoussait tout le contenu. */}
+      {!loading && !error && days.length === 0 && (
+        <p className="dashboard-intro">
+          HealthTrack centralise vos données santé : <strong>alimentation</strong> (photo → ingrédients),{' '}
+          <strong>montre Samsung Fit 3</strong> (pas, sommeil, fréquence cardiaque) via Health Connect,{' '}
+          et bien plus. Configurez les sources dans{' '}
+          <Link to="/connectors" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Connecteurs</Link>.
+        </p>
+      )}
 
       <div className="dashboard-actions">
         <button

@@ -400,6 +400,18 @@
   color: var(--text);
 }
 
+.entry-kcal {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.entry-dish {
+  margin: 0 0 2px;
+  font-weight: 600;
+  color: var(--text);
+}
+
 .entry-source {
   font-size: 0.75rem;
   color: var(--text-muted);

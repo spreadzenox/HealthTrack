@@ -127,6 +127,10 @@ une release à chaque changement validé, et tient ce journal.
   pour l'alimentation, et la page Analyses dit sur combien de jours elle est connue. Démo (repas oubliés ~1 jour sur
   9) : un faux lien « FODMAP » disparaît, « Fumer moins de cigarettes » redevient une piste avancée. **Vos pistes
   peuvent changer** : c'est voulu.
+- **Tableau de bord plus direct** : la présentation de l'app n'apparaît plus qu'au premier lancement (sans données) —
+  vos chiffres commencent ~225 px plus haut ; « Prédiction ML » devient « Prédiction du jour » ; plus de grand cadre
+  vide « Par heure » tant que le bien-être du jour n'est pas noté ; chaque repas de « Vos derniers jours » affiche ses
+  kcal (≈ 479 kcal) et le nom du plat.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -169,7 +173,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — effets décalés (J-1 → J), formulaires, introduction du tableau de bord, mise à jour de Capacitor.
+**Prochaines priorités** — effets décalés (J-1 → J), formulaires, journal du tableau de bord (poids fusionné, noms courts), mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -199,6 +203,7 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 12:30 — [Mesure absente ≠ 0 dans les analyses](runs/2026-10-10-1230-valeurs-manquantes.md) | 🐛 | PR #89 fusionnée → v83 |
 | 10/10 14:30 — [Chiffres cohérents, textes à jour](runs/2026-10-10-1430-chiffres-coherents.md) | 🐛 | PR #90 fusionnée → v84 |
 | 10/10 16:30 — [Repas oublié ≠ jeûne dans les analyses](runs/2026-10-10-1630-repas-manquants.md) | 🐛 | PR #91 fusionnée → v85 |
+| 10/10 18:30 — [Tableau de bord plus direct](runs/2026-10-10-1830-accueil-plus-direct.md) | 🎨 | PR #92 en cours |
 
 ---
 

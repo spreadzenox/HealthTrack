@@ -97,11 +97,13 @@ puis l'analyse (statistiques, radar), puis la restitution (revue IA, notificatio
 1. 🏗️ Effets décalés (lags 0–3 j) dans les analyses (C3). Contrôle du week-end : fait partout (runs 06:30 et 08:30).
 2. 🐛 Chasse aux bugs (jours sans repas saisi : fait, run 16:30) : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 3. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
-4. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
+4. 🎨 Journal du tableau de bord, étape 2 : ~~kcal et nom du plat sur chaque ligne repas~~ (run 18:30), poids + composition fusionnés, « Modifier » un repas depuis le journal, noms d'aliments courts ; rapprocher Radar et cartes cœur.
 
 ## Idées en vrac (à trier)
 
-- Tableau de bord : l'introduction (« centralise vos données… montre Samsung Fit 3 ») occupe le haut de l'écran même avec des données → la masquer/raccourcir quand des données existent ; « Prédiction ML » → « Prédiction du jour » (jargon).
+- ~~Tableau de bord : introduction affichée même avec des données ; « Prédiction ML » ; cadre « Par heure » vide~~ (run 10/10 18:30).
+- Tableau de bord : Radar forme et « Votre cœur vs votre norme » répètent chacun un paragraphe d'explication (« Une observation, pas un diagnostic ») → un seul bloc « Forme » avec une explication repliable.
+- Journal : noms Ciqual très longs (« Poulet, cuisse, viande bouillie/cuite à l'eau : 150 g ») → nom court (avant la 1re virgule + précision au tap ?).
 - ~~Cartes cœur : arrondi qui contredisait le statut (« 61 » dans « 61–65 » mais « plus basse »)~~ (run 10/10 14:30) ; Paramètres « ce qui est envoyé » à jour avec le repas décrit (run 14:30).
 - Titre de page « Recommandations » vs onglet « Analyses » : harmoniser quand la page sera retravaillée (« Analyses » couvre aussi habitudes et modèle).
 _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ici ce qui n'a pas encore de chantier)_
@@ -128,6 +130,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-10 — Tableau de bord plus direct : intro seulement sans données, « Prédiction du jour », « Par heure » masqué si vide, kcal + plat sur chaque repas du journal (run 18:30)
 - [x] 2026-10-10 — Analyses : jour sans repas saisi ≠ jeûne (lissage, FODMAP, nombre de repas, prédiction du jour ; couverture affichée ; R² LOO démo 0,37 → 0,44) (run 16:30)
 - [x] 2026-10-10 — Analyses : mesure absente ≠ 0 (paires complètes, couverture ≥ 50 % dans le modèle avancé, démo avec jours sans montre ; R² LOO démo 0,09 → 0,44) (run 12:30)
 - [x] 2026-10-10 — « Vos habitudes » : week-end comparé au week-end, semaine à la semaine (run 08:30)
