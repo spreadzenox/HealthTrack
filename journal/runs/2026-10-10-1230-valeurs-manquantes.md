@@ -1,6 +1,6 @@
 # 2026-10-10 12:30 UTC — Analyses : mesure absente ≠ 0 (montre non portée, pas de pesée)
 
-**Type** : 🐛  ·  **PR** : voir tableau du README
+**Type** : 🐛  ·  **PR** : #89 (fusionnée)
 
 ## Pourquoi
 Priorité n° 2 du backlog, même famille que le bug de la prédiction du jour (run 10:30) : à l'entraînement,

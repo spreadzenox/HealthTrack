@@ -187,7 +187,7 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 06:30 — [Analyses : contrôle du week-end](runs/2026-10-10-0630-controle-week-end.md) | 🏗️ | PR #86 fusionnée → v80 |
 | 10/10 08:30 — [Vos habitudes à type de jour égal](runs/2026-10-10-0830-habitudes-week-end.md) | 🏗️ | PR #87 fusionnée → v81 |
 | 10/10 10:30 — [Prédiction du jour sur journée incomplète](runs/2026-10-10-1030-prediction-du-jour.md) | 🐛 | PR #88 fusionnée → v82 |
-| 10/10 12:30 — [Mesure absente ≠ 0 dans les analyses](runs/2026-10-10-1230-valeurs-manquantes.md) | 🐛 | PR en cours |
+| 10/10 12:30 — [Mesure absente ≠ 0 dans les analyses](runs/2026-10-10-1230-valeurs-manquantes.md) | 🐛 | PR #89 fusionnée → v83 |
 
 ---
 
