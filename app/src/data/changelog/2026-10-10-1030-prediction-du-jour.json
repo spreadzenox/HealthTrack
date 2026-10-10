@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-10",
+  "kind": "correctif",
+  "title": "La prédiction du jour n’affiche plus « 0 / 5 » le matin",
+  "items": [
+    "Sur le tableau de bord, la « Prédiction ML aujourd’hui » lisait la journée en cours comme une journée terminée : le matin, 0 pas, aucun repas et pas encore de FC au repos étaient pris pour de vraies valeurs, et la prédiction tombait souvent à 0 / 5.",
+    "Désormais, ce qui n’est pas encore connu compte comme une journée habituelle pour vous : votre nuit, vos mesures du matin et vos jours précédents font la prédiction, et les pas déjà faits comptent dès qu’ils dépassent votre habitude.",
+    "Une petite mention le rappelle sous la prédiction : c’est une estimation, pas une mesure."
+  ]
+}

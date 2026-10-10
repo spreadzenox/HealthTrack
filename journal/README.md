@@ -109,6 +109,10 @@ une release à chaque changement validé, et tient ce journal.
   souvent meilleure, week-end oblige — l'effet réel pouvait disparaître. Les lendemains de week-end sont maintenant
   comparés à d'autres jours de week-end, et la semaine à la semaine. Quand ça change le résultat, la carte l'indique
   (« Week-end comparé au week-end, semaine à la semaine : −0,8 point »).
+- **Prédiction du jour corrigée** (tableau de bord) : le matin, elle affichait souvent **0 / 5** car la journée en
+  cours (0 pas, pas encore de repas ni de FC au repos) était lue comme une journée terminée. Ce qui n'est pas encore
+  connu compte désormais comme une journée habituelle pour vous (démo : 0,0 → 2,3), avec une mention « une
+  estimation, pas une mesure ».
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -149,7 +153,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — effets décalés (J-1 → J) dans les analyses, chasse aux bugs des formulaires, mise à jour de Capacitor.
+**Prochaines priorités** — jours sans mesure de la montre comptés comme 0 dans les analyses (même famille que le bug de la prédiction), effets décalés (J-1 → J), formulaires, mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -174,7 +178,8 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 02:30 — [Repas décrit en quelques mots](runs/2026-10-10-0230-repas-decrit.md) | 🏗️ | PR #84 fusionnée → v78 |
 | 10/10 04:30 — [Restaurer une sauvegarde sans risque](runs/2026-10-10-0430-import-sur.md) | 🐛 | PR #85 fusionnée → v79 |
 | 10/10 06:30 — [Analyses : contrôle du week-end](runs/2026-10-10-0630-controle-week-end.md) | 🏗️ | PR #86 fusionnée → v80 |
-| 10/10 08:30 — [Vos habitudes à type de jour égal](runs/2026-10-10-0830-habitudes-week-end.md) | 🏗️ | PR #87 |
+| 10/10 08:30 — [Vos habitudes à type de jour égal](runs/2026-10-10-0830-habitudes-week-end.md) | 🏗️ | PR #87 fusionnée → v81 |
+| 10/10 10:30 — [Prédiction du jour sur journée incomplète](runs/2026-10-10-1030-prediction-du-jour.md) | 🐛 | PR #88 |
 
 ---
 

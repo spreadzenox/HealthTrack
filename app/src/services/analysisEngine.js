@@ -1210,11 +1210,14 @@ export function buildTodayRow(entries, historicalRawDataset) {
   const byDate = new Map(historicalRawDataset.map((d) => [d.dateKey, d]))
   byDate.set(todayKey, todayRaw)
 
+  // Today's meals are not over yet: today's raw intake is estimated as at
+  // least the (weighted) average of the previous days, so that an empty
+  // breakfast-time log does not read as a day of fasting.
   const targetDate = new Date(todayKey + 'T00:00:00Z')
-  const weightedSums = Object.fromEntries(LAGGED_NUTRITION_KEYS.map((k) => [k, 0]))
-  let totalWeight = 0
+  const prevSums = Object.fromEntries(LAGGED_NUTRITION_KEYS.map((k) => [k, 0]))
+  let prevWeight = 0
 
-  for (let delta = 0; delta <= LAG_DAYS; delta++) {
+  for (let delta = 1; delta <= LAG_DAYS; delta++) {
     const w = 1 - delta / LAG_DAYS
     if (w <= 0) continue
     const d = new Date(targetDate)
@@ -1222,16 +1225,20 @@ export function buildTodayRow(entries, historicalRawDataset) {
     const dk = d.toISOString().slice(0, 10)
     const srcRow = byDate.get(dk)
     if (!srcRow) continue
-    totalWeight += w
+    prevWeight += w
     for (const key of LAGGED_NUTRITION_KEYS) {
-      weightedSums[key] += (srcRow[key] ?? 0) * w
+      prevSums[key] += (srcRow[key] ?? 0) * w
     }
   }
 
-  if (totalWeight > 0) {
-    for (const key of LAGGED_NUTRITION_KEYS) {
-      todayRaw[key] = weightedSums[key] / totalWeight
+  for (const key of LAGGED_NUTRITION_KEYS) {
+    const todaySoFar = todayRaw[key] ?? 0
+    if (prevWeight === 0) {
+      todayRaw[key] = todaySoFar
+      continue
     }
+    const todayEstimate = Math.max(todaySoFar, prevSums[key] / prevWeight)
+    todayRaw[key] = (todayEstimate + prevSums[key]) / (1 + prevWeight)
   }
 
   return todayRaw
@@ -1517,6 +1524,20 @@ export function computeTodayPrediction(entries) {
   return _predictToday(entries, rawDataset, featureKeys, featureMeans, featureStds, beta)
 }
 
+/** Day totals that keep growing until midnight (today's value is a lower bound). */
+const CUMULATIVE_TODAY_KEYS = new Set([
+  'steps', 'activityCalories', 'dailyCaloriesHC', 'cigaretteCount', 'mealCount', 'fodmap_score',
+])
+
+/** Measurements that may simply not be taken yet today. */
+const MEASURED_TODAY_KEYS = {
+  sleepMinutes: (row) => row.sleepMinutes > 0,
+  restingHR: (row) => row._hrCount > 0,
+  avgHR: (row) => row._avgHRCount > 0,
+  hrv_ms: (row) => row._hrvCount > 0,
+  spo2_pct: (row) => row._spo2Count > 0,
+}
+
 /**
  * Internal helper: given an already-fitted model, build today's feature row
  * and return a prediction.
@@ -1526,10 +1547,26 @@ function _predictToday(entries, rawDataset, featureKeys, featureMeans, featureSt
   if (!built) return null
   const [todayRow] = withWeekendFlag([built])
 
-  const xToday = [
-    1,
-    ...featureKeys.map((k, j) => ((todayRow[k] ?? 0) - featureMeans[j]) / featureStds[j]),
-  ]
+  // The day is still in progress: a value not known yet counts as a typical
+  // day (the training mean), never as 0.
+  const assumedTypical = []
+  const values = featureKeys.map((k, j) => {
+    const v = todayRow[k] ?? 0
+    const mean = featureMeans[j]
+    if (CUMULATIVE_TODAY_KEYS.has(k)) {
+      // Running totals only grow until midnight: at least what is already done.
+      if (v < mean) assumedTypical.push(k)
+      return Math.max(v, mean)
+    }
+    const measured = MEASURED_TODAY_KEYS[k]
+    if (measured && !measured(todayRow)) {
+      assumedTypical.push(k)
+      return mean
+    }
+    return v
+  })
+
+  const xToday = [1, ...values.map((v, j) => (v - featureMeans[j]) / featureStds[j])]
   const rawPred = xToday.reduce((s, x, j) => s + x * beta[j], 0)
   // Clamp to valid wellbeing range [0, 5]
   const predicted = Math.max(0, Math.min(5, rawPred))
@@ -1539,6 +1576,7 @@ function _predictToday(entries, rawDataset, featureKeys, featureMeans, featureSt
     dateKey: todayRow.dateKey,
     predicted,
     actual,
+    assumedTypical,
   }
 }
 
