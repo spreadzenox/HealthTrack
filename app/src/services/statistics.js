@@ -109,3 +109,41 @@ export function residualizeByGroup(values, groups) {
     return v - s.total / s.count
   })
 }
+
+/**
+ * Removes from `values` the linear part explained by the covariates (plus an
+ * intercept), by Gram-Schmidt orthogonalisation. Correlating two series
+ * residualized on the same covariates gives their partial correlation.
+ * Constant or redundant covariates are skipped; `used` counts the others
+ * (the degrees of freedom spent on the control).
+ *
+ * @param {number[]} values
+ * @param {number[][]} covariates  each the same length as values
+ * @returns {{ residuals: number[], used: number }}
+ */
+export function residualize(values, covariates) {
+  const n = values.length
+  const centre = (v) => {
+    const m = v.reduce((s, x) => s + x, 0) / n
+    return v.map((x) => x - m)
+  }
+  const dot = (a, b) => a.reduce((s, x, i) => s + x * b[i], 0)
+  const basis = []
+  for (const cov of covariates) {
+    let u = centre(cov)
+    const norm0 = dot(u, u)
+    for (const b of basis) {
+      const c = dot(u, b) / dot(b, b)
+      u = u.map((x, i) => x - c * b[i])
+    }
+    // Nothing left once the intercept and previous covariates are removed.
+    if (!(dot(u, u) > 1e-10 * Math.max(norm0, 1e-300)) || norm0 === 0) continue
+    basis.push(u)
+  }
+  let residuals = centre(values)
+  for (const b of basis) {
+    const c = dot(residuals, b) / dot(b, b)
+    residuals = residuals.map((x, i) => x - c * b[i])
+  }
+  return { residuals, used: basis.length }
+}

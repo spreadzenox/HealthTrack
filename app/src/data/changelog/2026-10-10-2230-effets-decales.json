@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-10",
+  "kind": "nouveau",
+  "title": "Analyses : les effets décalés",
+  "items": [
+    "Nouvelle section « Effets décalés » dans Analyses : ce que vous avez fait 1 à 3 jours avant (sommeil, pas, séance de sport, cigarettes) est comparé à votre bien-être du jour. Exemple : « La veille, 192 kcal d’activité de plus que d’habitude → bien-être du jour +0,4 point ».",
+    "Pour ne pas se tromper de cause, le calcul tient compte de votre bien-être de la veille (une bonne passe qui dure), de ce que vous avez fait le jour même et du week-end.",
+    "Seuls les liens solides sont affichés : tester plusieurs délais multiplie les occasions de hasard. Ce sont des hypothèses à tester, pas des certitudes.",
+    "Il faut au moins 14 jours dont la veille est aussi notée : pensez à noter votre bien-être chaque jour."
+  ]
+}

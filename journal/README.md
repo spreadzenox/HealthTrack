@@ -131,6 +131,10 @@ une release à chaque changement validé, et tient ce journal.
   vos chiffres commencent ~225 px plus haut ; « Prédiction ML » devient « Prédiction du jour » ; plus de grand cadre
   vide « Par heure » tant que le bien-être du jour n'est pas noté ; chaque repas de « Vos derniers jours » affiche ses
   kcal (≈ 479 kcal) et le nom du plat.
+- **Effets décalés** (Analyses) : nouvelle section qui compare votre bien-être du jour à ce que vous avez fait 1, 2 ou
+  3 jours avant (sommeil, pas, séance de sport, cigarettes) — « La veille, 192 kcal d'activité de plus que d'habitude →
+  +0,4 point ». Le calcul tient compte du bien-être de la veille, de la journée elle-même et du week-end ; seuls les
+  liens solides s'affichent. Il faut 14 jours dont la veille est aussi notée.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -170,10 +174,15 @@ une release à chaque changement validé, et tient ce journal.
   paraît trop haute (espace vide sous les onglets) ou encore cachée, dites-le-moi.
 - Après la mise à jour « mesure absente ≠ 0 », les **Analyses** peuvent changer nettement si vous ne portez pas la
   montre tous les jours ou ne vous pesez pas quotidiennement : c'est la correction d'un biais, pas une instabilité.
+- Run du 10/10 20:30 bloqué : après une fusion, la session a refusé toutes les commandes (« Merge Without Review »).
+  Rien de cassé ; si cela se répète, autoriser `git`/`npm` et la fusion pour les sessions de la routine. Les runs
+  fusionnent désormais tout à la fin.
+- **Effets décalés** : volontairement prudents (seulement les liens solides) ; il est normal de ne rien voir pendant
+  plusieurs semaines.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — effets décalés (J-1 → J), formulaires, journal du tableau de bord (poids fusionné, noms courts), mise à jour de Capacitor.
+**Prochaines priorités** — chasse aux bugs (formulaires, modales), journal du tableau de bord (poids fusionné, noms courts), mise à jour de Capacitor, veille.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -204,6 +213,8 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 14:30 — [Chiffres cohérents, textes à jour](runs/2026-10-10-1430-chiffres-coherents.md) | 🐛 | PR #90 fusionnée → v84 |
 | 10/10 16:30 — [Repas oublié ≠ jeûne dans les analyses](runs/2026-10-10-1630-repas-manquants.md) | 🐛 | PR #91 fusionnée → v85 |
 | 10/10 18:30 — [Tableau de bord plus direct](runs/2026-10-10-1830-accueil-plus-direct.md) | 🎨 | PR #92 fusionnée → v86 |
+| 10/10 20:30 — [Run bloqué (permissions)](runs/2026-10-10-2030-bloque-permissions.md) | 🧹 | PR #93 fusionnée (journal), compte rendu repris ici |
+| 10/10 22:30 — [Effets décalés](runs/2026-10-10-2230-effets-decales.md) | 🏗️ | PR #95 (fusion en fin de run, release attendue v87) |
 
 ---
 

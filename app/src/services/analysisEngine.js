@@ -521,15 +521,17 @@ export function countTotalDataDays(entries) {
 /**
  * Aggregates raw health entries into one feature-row per calendar day.
  * Only days that contain at least one wellbeing score are included (wellbeing
- * is the target variable for every analysis).
+ * is the target variable for every analysis), unless includeDaysWithoutWellbeing
+ * is set (wellbeing null): lagged effects need the days before a score too.
  *
  * Nutrition fields in the day row are the raw daily totals
  * (not yet time-lagged — see buildLaggedDataset).
  *
  * @param {Array} entries  raw entries from listEntries()
+ * @param {{ includeDaysWithoutWellbeing?: boolean }} [options]
  * @returns {Array<DayRow>}  sorted ascending by dateKey
  */
-export function buildDailyDataset(entries) {
+export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false } = {}) {
   if (!entries || entries.length === 0) return []
 
   const days = new Map()
@@ -764,10 +766,10 @@ export function buildDailyDataset(entries) {
 
   const result = []
   for (const [, day] of days) {
-    if (day._wellbeingCount === 0) continue
+    if (day._wellbeingCount === 0 && !includeDaysWithoutWellbeing) continue
     result.push({
       dateKey:            day.dateKey,
-      wellbeing:          day._wellbeingSum / day._wellbeingCount,
+      wellbeing:          day._wellbeingCount > 0 ? day._wellbeingSum / day._wellbeingCount : null,
       sleepMinutes:       day.sleepMinutes,
       steps:              day.steps,
       activityCalories:   day.activityCalories,
