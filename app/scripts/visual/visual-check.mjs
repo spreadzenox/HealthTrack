@@ -17,6 +17,8 @@
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
+ *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
+ *                                          # (variables --safe-area-inset-* injectées par Capacitor, en px)
  *   npm run visual -- --routes=/recommendations --click="Recommandations avancées"
  *                                          # clique un bouton (nom accessible) avant la capture
  *
@@ -182,6 +184,26 @@ async function main() {
           /* ignore */
         }
       }, latestChangelogId())
+    }
+    if (args.insets) {
+      // Comme Capacitor (SystemBars) sur Android 15+ : encarts injectés sur <html>, barres système
+      // dessinées en bandes semi-transparentes pour voir ce qui passerait dessous.
+      const [top, bottom] = String(args.insets).split(',').map((v) => Number(v) || 0)
+      await context.addInitScript(
+        ({ top, bottom }) => {
+          window.addEventListener('DOMContentLoaded', () => {
+            document.documentElement.style.setProperty('--safe-area-inset-top', `${top}px`)
+            document.documentElement.style.setProperty('--safe-area-inset-bottom', `${bottom}px`)
+            for (const [edge, height] of [['top', top], ['bottom', bottom]]) {
+              const bar = document.createElement('div')
+              bar.setAttribute('aria-hidden', 'true')
+              bar.style.cssText = `position:fixed;left:0;right:0;${edge}:0;height:${height}px;z-index:2147483647;pointer-events:none;background:rgba(255,0,80,0.35)`
+              document.body.appendChild(bar)
+            }
+          })
+        },
+        { top, bottom }
+      )
     }
     if (!args['wellbeing-prompt']) {
       await context.addInitScript(() => {

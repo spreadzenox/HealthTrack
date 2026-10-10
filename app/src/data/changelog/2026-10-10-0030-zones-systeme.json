@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-10",
+  "kind": "correctif",
+  "title": "Barre d’onglets toujours au-dessus des boutons d’Android",
+  "items": [
+    "Sur Android 15 et 16, l’app s’affiche sous la barre d’état et la barre de navigation du téléphone. La barre d’onglets et l’en-tête se placent maintenant au-dessus d’elles, quel que soit le mode de navigation (boutons ou gestes).",
+    "Quand vous faites défiler une page, le texte ne passe plus sous l’heure et les icônes en haut de l’écran, qui s’affichent maintenant en clair sur le fond sombre de l’app.",
+    "La fenêtre « Comment vous sentez-vous ? » et l’assistant de connexion restent eux aussi dans la zone visible."
+  ]
+}

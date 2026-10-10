@@ -6,9 +6,14 @@ set -euo pipefail
 echo "=== Émulateur Samsung A56 en ligne ==="
 adb devices
 
-echo "=== Résolution de l'écran ==="
+# Les réglages hw.lcd.* de l'AVD ne sont pas repris par l'émulateur (écran 320 × 640) :
+# on impose l'écran du Galaxy A56 (1080 × 2340) et une densité donnant ~412 dp de large,
+# comme le viewport de `npm run visual`.
+echo "=== Écran du Galaxy A56 ==="
+adb shell wm size 1080x2340 || true
+adb shell wm density 420 || true
+sleep 2
 adb shell wm size
-echo "=== Densité de l'écran ==="
 adb shell wm density
 
 echo "=== Installation de l'APK HealthTrack ==="
@@ -49,13 +54,8 @@ for PERM in "${HC_PERMS[@]}"; do
   adb shell pm grant com.healthtrack.app "$PERM" 2>/dev/null && echo "OK $PERM" || echo "SKIP $PERM"
 done
 
-echo "=== Lancement de HealthTrack ==="
-adb shell am start -n com.healthtrack.app/.MainActivity
-sleep 5
-
-echo "=== Capture d'écran de HealthTrack au démarrage ==="
-adb exec-out screencap -p > screenshot_startup.png
-ls -lh screenshot_startup.png
+echo "=== Version de la WebView Android ==="
+adb shell dumpsys package com.google.android.webview 2>/dev/null | grep -m1 versionName || echo "WebView : version inconnue"
 
 echo "=== Exécution des tests instrumentés Health Connect ==="
 adb shell am instrument -w \
@@ -66,11 +66,68 @@ adb shell am instrument -w \
 echo "=== Résultat des tests ==="
 cat instrumented_test_output.txt
 
-echo "=== Navigation vers la page Connecteurs ==="
-adb shell input tap 810 260 2>/dev/null || true
+# Les tests instrumentés ferment l'app : on la relance ensuite et on attend que la
+# WebView ait réellement affiché l'interface (5 s ne suffisent pas sur l'émulateur
+# logiciel : la première capture était un écran blanc).
+wait_for_text() {
+  local text="$1" timeout="$2" waited=0
+  while [ "$waited" -lt "$timeout" ]; do
+    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
+    if adb exec-out cat /sdcard/ui.xml 2>/dev/null | grep -q "$text"; then
+      return 0
+    fi
+    sleep 3
+    waited=$((waited + 3))
+  done
+  return 1
+}
+
+# Centre des bornes « [x1,y1][x2,y2] » du premier nœud dont le texte ou la description vaut $1
+# (ou commence par « $1 ( », ex. « Plus (nouveautés non lues) »).
+center_of() {
+  adb exec-out cat /sdcard/ui.xml 2>/dev/null \
+    | tr '>' '\n' \
+    | grep -m1 -E "(text|content-desc)=\"$1(\"| \\()" \
+    | sed -E 's/.*bounds="\[([0-9]+),([0-9]+)\]\[([0-9]+),([0-9]+)\]".*/\1 \2 \3 \4/' \
+    | awk 'NF == 4 { printf "%d %d", ($1 + $3) / 2, ($2 + $4) / 2 }'
+}
+
+echo "=== Relance de HealthTrack (interface réelle) ==="
+adb shell am start -W -n com.healthtrack.app/.MainActivity
+if wait_for_text "Accueil" 120; then
+  echo "Interface affichée (onglet « Accueil » trouvé)."
+else
+  echo "AVERTISSEMENT : « Accueil » introuvable après 120 s — capture quand même."
+fi
 sleep 3
-adb exec-out screencap -p > screenshot_connectors_page.png
-ls -lh screenshot_connectors_page.png
+adb exec-out screencap -p > screenshot_app.png
+adb exec-out cat /sdcard/ui.xml > ui_app.xml 2>/dev/null || true
+
+echo "=== Encarts système (barres d'état / navigation) ==="
+adb shell dumpsys window windows 2>/dev/null | grep -m5 -iE "navigationBars|statusBars|mInsetsState" || true
+
+# Première ouverture : la modale « Comment vous sentez-vous ? » peut couvrir la page.
+POS=$(center_of "Plus tard" || true)
+if [ -n "$POS" ]; then
+  echo "Fermeture de la modale bien-être ($POS)"
+  adb shell input tap $POS
+  sleep 2
+  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
+fi
+
+echo "=== Onglet « Plus » de la barre du bas ==="
+POS=$(center_of "Plus" || true)
+if [ -n "$POS" ]; then
+  echo "Tap sur « Plus » ($POS)"
+  adb shell input tap $POS
+  sleep 4
+else
+  echo "AVERTISSEMENT : onglet « Plus » introuvable dans l'arbre d'accessibilité."
+fi
+adb exec-out screencap -p > screenshot_plus.png
+adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
+adb exec-out cat /sdcard/ui.xml > ui_plus.xml 2>/dev/null || true
+ls -lh screenshot_app.png screenshot_plus.png
 
 echo "=== Vérification du succès des tests ==="
 if grep -q "FAILURES!!!" instrumented_test_output.txt; then

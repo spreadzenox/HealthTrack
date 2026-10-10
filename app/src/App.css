@@ -5,7 +5,7 @@
 
 .update-banner {
   position: sticky;
-  top: 0;
+  top: var(--safe-top);
   z-index: 10;
   background: var(--accent);
   color: var(--bg);
@@ -467,7 +467,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 16px;
+  padding: calc(20px + var(--safe-top)) 16px calc(20px + var(--safe-bottom));
 }
 
 .wellbeing-modal {

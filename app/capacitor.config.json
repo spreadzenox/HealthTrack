@@ -1,5 +1,10 @@
 {
   "appId": "com.healthtrack.app",
   "appName": "HealthTrack",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "SystemBars": {
+      "style": "DARK"
+    }
+  }
 }

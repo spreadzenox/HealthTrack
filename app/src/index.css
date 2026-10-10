@@ -11,8 +11,11 @@
   --text-muted: #9898a8;
   --error: #e74c3c;
   --radius: 12px;
-  --safe-top: env(safe-area-inset-top, 0);
-  --safe-bottom: env(safe-area-inset-bottom, 0);
+  /* Android 15+ affiche l'app sous les barres système (edge-to-edge). Capacitor injecte
+     --safe-area-inset-* (valeurs natives, justes même sur les WebView ≤ 139 dont env()
+     est faux) grâce à viewport-fit=cover dans index.html ; env() reste le repli. */
+  --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
 }
 
 body {
@@ -23,6 +26,18 @@ body {
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   padding: var(--safe-top) 0 var(--safe-bottom);
+}
+
+/* Fond opaque sous la barre d'état : le contenu qui défile ne passe pas sous l'heure et les icônes. */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--safe-top);
+  z-index: 30;
+  background: var(--bg);
 }
 
 #root {
