@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-10",
+  "kind": "amélioration",
+  "title": "Tableau de bord plus direct",
+  "items": [
+    "La présentation de l’app (« HealthTrack centralise vos données… ») n’apparaît plus qu’au premier lancement, tant qu’il n’y a aucune donnée : vos chiffres commencent nettement plus haut sur l’écran.",
+    "« Prédiction ML » devient « Prédiction du jour » : le même calcul, sans jargon.",
+    "Le graphique « Par heure (aujourd’hui) » n’affiche plus un grand cadre vide tant que vous n’avez pas noté votre bien-être du jour : il apparaît dès la première note.",
+    "Dans « Vos derniers jours », chaque repas affiche ses calories estimées (≈ 479 kcal) et le nom du plat quand il est connu."
+  ]
+}

@@ -48,12 +48,28 @@ describe('Dashboard', () => {
     listEntries.mockResolvedValue([])
   })
 
-  it('renders dashboard title and intro', () => {
+  it('renders dashboard title and, without any data, the introduction', async () => {
     renderDashboard()
     expect(screen.getByRole('heading', { name: /Tableau de bord/i })).toBeInTheDocument()
-    expect(screen.getByText(/HealthTrack centralise/i)).toBeInTheDocument()
+    expect(await screen.findByText(/HealthTrack centralise/i)).toBeInTheDocument()
     expect(screen.getByText(/montre Samsung Fit 3/i)).toBeInTheDocument()
-    expect(screen.getByText(/Connecteurs/i)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Connecteurs/i })).toHaveAttribute('href', '/connectors')
+  })
+
+  it("masque l'introduction dès que des données existent (le contenu commence plus haut)", async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
+    ])
+    renderDashboard()
+    await screen.findByText(/Vos derniers jours/i)
+    await screen.findAllByText(/3 \/ 5/)
+    expect(screen.queryByText(/HealthTrack centralise/i)).not.toBeInTheDocument()
+  })
+
+  it("n'affiche pas l'introduction pendant le chargement (pas de saut de mise en page)", () => {
+    renderDashboard()
+    expect(screen.queryByText(/HealthTrack centralise/i)).not.toBeInTheDocument()
   })
 
   it('loads the last two weeks of entries from local storage on mount', async () => {
@@ -292,5 +308,18 @@ describe('Dashboard', () => {
     ])
     renderDashboard()
     expect(await screen.findByText('Riz : 150 g')).toBeInTheDocument()
+  })
+
+  it('affiche les kcal et le nom du plat sur la ligne du repas', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      {
+        id: 6, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00',
+        payload: { dish: 'Riz au poulet', items: [{ ingredient: 'Riz blanc cuit', quantity: '200 g', quantity_g: 200 }] },
+      },
+    ])
+    renderDashboard()
+    const card = (await screen.findByText('Riz au poulet')).closest('.entry-card')
+    expect(card.textContent).toMatch(/≈\s?\d+\s?kcal/)
   })
 })

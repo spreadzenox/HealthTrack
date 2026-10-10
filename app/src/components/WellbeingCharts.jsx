@@ -189,13 +189,15 @@ export default function WellbeingCharts() {
         Bien-être (0–5)
       </h2>
       <p className="wellbeing-charts-hint">
-        Moyennes par jour et par heure aujourd'hui — données locales uniquement.
+        {hourSeries.length > 0
+          ? "Moyennes par jour et par heure aujourd'hui — données locales uniquement."
+          : 'Moyenne par jour — données locales uniquement.'}
       </p>
 
       {todayPrediction != null && (
         <div className="wellbeing-prediction-badge">
           <span className="wellbeing-prediction-icon" aria-hidden="true">🤖</span>
-          <span className="wellbeing-prediction-label">Prédiction ML aujourd'hui</span>
+          <span className="wellbeing-prediction-label">Prédiction du jour</span>
           <span className="wellbeing-prediction-value">{todayPrediction.predicted.toFixed(1).replace('.', ',')} / 5</span>
           {todayPrediction.actual != null && (
             <span className="wellbeing-prediction-actual">
@@ -221,19 +223,22 @@ export default function WellbeingCharts() {
         />
         {showPredictionOnChart && (
           <p className="wellbeing-chart-pred-legend">
-            <span className="wellbeing-pred-dot-legend" aria-hidden="true" /> Prédiction ML (pas encore de score aujourd'hui)
+            <span className="wellbeing-pred-dot-legend" aria-hidden="true" /> Prédiction du jour (pas encore de note aujourd'hui)
           </p>
         )}
       </div>
 
-      <div className="wellbeing-chart-block">
-        <h3 className="wellbeing-chart-subtitle">Par heure (aujourd'hui)</h3>
-        <WellbeingLineChart
-          points={hourPoints}
-          xLabels={hourLabels}
-          emptyMessage="Aucune note aujourd'hui pour l'instant."
-        />
-      </div>
+      {/* Sans note aujourd'hui, ce bloc n'était qu'un grand cadre vide : il apparaît à la première note. */}
+      {hourSeries.length > 0 && (
+        <div className="wellbeing-chart-block">
+          <h3 className="wellbeing-chart-subtitle">Par heure (aujourd'hui)</h3>
+          <WellbeingLineChart
+            points={hourPoints}
+            xLabels={hourLabels}
+            emptyMessage="Aucune note aujourd'hui pour l'instant."
+          />
+        </div>
+      )}
     </section>
   )
 }
