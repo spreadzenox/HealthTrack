@@ -366,7 +366,45 @@ describe('Recommendations — behaviour tags', () => {
     const card = (await screen.findByText('Stress')).closest('.reco-tag-card')
     expect(card).toHaveTextContent(/Hypothèse incertaine/)
   })
+  it('shows the week-end-controlled difference when it differs from the raw one', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const tagsModule = await import('../services/behaviorTags')
+    const spy = vi.spyOn(tagsModule, 'computeTagEffects').mockReturnValue({
+      status: 'ok',
+      trackedDays: 40,
+      effects: [
+        {
+          tagId: 'alcohol', label: 'Alcool', emoji: '🍷', effectDay: 'next',
+          nWith: 12, nWithout: 28, meanWith: 4.1, meanWithout: 3.5,
+          diff: -0.3, diffRaw: 0.6, p: 0.04, q: 0.04, evidence: 'à confirmer',
+        },
+        {
+          tagId: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same',
+          nWith: 10, nWithout: 30, meanWith: 2.8, meanWithout: 3.8,
+          diff: -1.0, diffRaw: -1.0, p: 0.001, q: 0.002, evidence: 'solide',
+        },
+      ],
+      pending: [
+        { tagId: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next', nWith: 6, nWithout: 30, weekendOnly: true },
+      ],
+    })
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(10))
+    renderPage()
+    const alcohol = (await screen.findByText('Alcool')).closest('.reco-tag-card')
+    expect(alcohol).toHaveTextContent(/\+0,6 point/)
+    expect(alcohol).toHaveTextContent(/week-end comparé au week-end.*−0,3 point/i)
+    const stress = screen.getByText('Stress').closest('.reco-tag-card')
+    expect(stress).not.toHaveTextContent(/week-end comparé/i)
+    expect(screen.getByText(/Vos habitudes/).closest('section')).toHaveTextContent(
+      /week-ends sont comparés aux week-ends/i,
+    )
+    expect(screen.getByText(/En cours de collecte/i)).toHaveTextContent(
+      /Repas tardif \(pas encore comparable : jours avec et sans jamais du même type/,
+    )
+    spy.mockRestore()
+  })
 })
+
 
 // ─── Week-end control ────────────────────────────────────────────────────────
 

@@ -49,7 +49,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [ ] Modèle avancé, étape 2 : incertitude par piste (IC bootstrap par blocs, stabilité du signe) ; LOO imbriqué si le coût le permet
 - [x] **Sommeil au jour du réveil dans les analyses** (corrélations, modèle avancé, prédiction du jour) ; éveils / « au lit » non additionnés aux phases (run 20:30)
 - [x] **Contrôle du week-end** (R#25, étape 1) : corrélations partielles (centrage par groupe week-end / semaine, 1 ddl retiré), variable « week-end » forcée et non pénalisée dans le modèle avancé, effet affiché ; ≥ 3 jours de chaque (run 10/10 06:30)
-- [ ] Contrôle du week-end, étape 2 : l'appliquer aussi à « Vos habitudes » (tags ; l'alcool est plus fréquent le week-end) — stratifier la comparaison avec/sans par type de jour
+- [x] **Contrôle du week-end, étape 2** : « Vos habitudes » stratifié par type du jour mesuré (écart intra-strate pondéré CMH, permutation dans les strates, écart brut conservé, tag non séparable laissé en collecte) (run 10/10 08:30)
 - [ ] Effets décalés (lags 0–3 j) sur sommeil / activité / tags (le lissage 10,5 j des nutriments existe déjà)
 - [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
 - [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
@@ -90,7 +90,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🏗️ Contrôle du week-end dans « Vos habitudes » (tags), puis effets décalés (lags 0–3 j) dans les analyses (C3). Week-end dans corrélations et modèle avancé : fait (run 06:30).
+1. 🏗️ Effets décalés (lags 0–3 j) dans les analyses (C3). Contrôle du week-end : fait partout (runs 06:30 et 08:30).
 2. 🐛 Suite de la chasse aux bugs : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 3. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
 4. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
@@ -122,6 +122,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-10 — « Vos habitudes » : week-end comparé au week-end, semaine à la semaine (run 08:30)
 - [x] 2026-10-10 — Analyses : contrôle du week-end (corrélations partielles, variable de contrôle non pénalisée dans le modèle avancé, moyennes week-end / semaine affichées) (run 06:30)
 - [x] 2026-10-10 — Import de sauvegarde sûr : aperçu, « Ajouter » sans doublons, « Remplacer » confirmé, mauvais fichier refusé (run 04:30)
 - [x] 2026-10-10 — Repas décrit en quelques mots (texte ou dictée) → Gemini → éditeur ; recherche « œuf » avec ligature (run 02:30)

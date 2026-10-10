@@ -121,8 +121,13 @@ function frDiff(v) {
   return formatSigned(v, 1)
 }
 
+// Show the week-end-controlled difference only when it really differs from the raw one.
+const TAG_WEEKEND_SHIFT = 0.1
+
 function TagEffectCard({ effect }) {
   const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
+  const rawDiff = effect.diffRaw ?? effect.diff
+  const weekendShift = Math.abs(effect.diff - rawDiff) >= TAG_WEEKEND_SHIFT
   return (
     <li className={'reco-tag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
       <p className="reco-tag-name">
@@ -131,10 +136,18 @@ function TagEffectCard({ effect }) {
       <p className="reco-tag-compare">
         {when} : bien-être <strong>{frScore(effect.meanWith)} / 5</strong> contre{' '}
         {frScore(effect.meanWithout)} sans{' '}
-        <span className={effect.diff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
-          ({frDiff(effect.diff)} point{Math.abs(effect.diff) >= 2 ? 's' : ''})
+        <span className={rawDiff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
+          ({frDiff(rawDiff)} point{Math.abs(rawDiff) >= 2 ? 's' : ''})
         </span>
       </p>
+      {weekendShift && (
+        <p className="reco-tag-compare">
+          📅 Week-end comparé au week-end, semaine à la semaine :{' '}
+          <span className={effect.diff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
+            {frDiff(effect.diff)} point{Math.abs(effect.diff) >= 2 ? 's' : ''}
+          </span>
+        </p>
+      )}
       <p className="reco-tag-days">
         {effect.nWith} jour{effect.nWith > 1 ? 's' : ''} avec · {effect.nWithout} sans
       </p>
@@ -160,8 +173,9 @@ function TagsSection({ entries }) {
         <>
           <p className="reco-section-hint">
             Votre bien-être les jours avec chaque tag, comparé aux jours sans. Pour les habitudes
-            du soir, c&apos;est le lendemain qui compte. Ce sont des hypothèses : d&apos;autres
-            choses peuvent changer ces jours-là.
+            du soir, c&apos;est le lendemain qui compte. Les week-ends sont comparés aux week-ends
+            et les jours de semaine entre eux. Ce sont des hypothèses : d&apos;autres choses
+            peuvent changer ces jours-là.
           </p>
           {result.effects.length > 0 ? (
             <ul className="reco-tag-list">
@@ -179,7 +193,11 @@ function TagsSection({ entries }) {
             <p className="reco-tag-pending">
               En cours de collecte :{' '}
               {result.pending
-                .map((t) => `${t.emoji} ${t.label} (${Math.min(t.nWith, MIN_TAG_DAYS)}/${MIN_TAG_DAYS} jours avec${t.nWithout < MIN_TAG_DAYS ? `, ${t.nWithout}/${MIN_TAG_DAYS} sans` : ''})`)
+                .map((t) =>
+                  t.weekendOnly
+                    ? `${t.emoji} ${t.label} (pas encore comparable : jours avec et sans jamais du même type, semaine ou week-end)`
+                    : `${t.emoji} ${t.label} (${Math.min(t.nWith, MIN_TAG_DAYS)}/${MIN_TAG_DAYS} jours avec${t.nWithout < MIN_TAG_DAYS ? `, ${t.nWithout}/${MIN_TAG_DAYS} sans` : ''})`,
+                )
                 .join(' · ')}
             </p>
           )}

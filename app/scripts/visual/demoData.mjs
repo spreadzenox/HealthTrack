@@ -148,7 +148,9 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
 
     const tags = []
     if (i <= 40) {
-      if (tagRand() < 0.2) tags.push('alcohol')
+      // Alcohol mostly on Friday / Saturday evenings (the next day is a week-end day).
+      const beforeWeekend = day.getDay() === 5 || day.getDay() === 6
+      if (tagRand() < (beforeWeekend ? 0.6 : 0.1)) tags.push('alcohol')
       if (tagRand() < 0.3) tags.push('late_screen')
       if (tagRand() < 0.2) tags.push('stress')
       if (tagRand() < 0.25) tags.push('coffee_late')

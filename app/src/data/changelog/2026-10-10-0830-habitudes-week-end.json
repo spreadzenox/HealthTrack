@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-10",
+  "kind": "amélioration",
+  "title": "Vos habitudes : un verre le vendredi n’est plus jugé sur l’humeur du samedi",
+  "items": [
+    "Beaucoup d’habitudes (un verre, se coucher tard…) tombent surtout avant le week-end, et l’on se sent souvent mieux le week-end. Comparer simplement « jours avec » et « jours sans » pouvait donc masquer un effet, ou en inventer un.",
+    "Dans Analyses → « Vos habitudes », les lendemains de week-end sont maintenant comparés à des jours de week-end, et les jours de semaine entre eux.",
+    "Quand cela change nettement le résultat, la carte l’affiche : « Week-end comparé au week-end, semaine à la semaine : −0,8 point », sous l’écart brut.",
+    "Si une habitude tombe toujours avant le même type de jour, elle reste « en cours de collecte » plutôt que d’afficher une comparaison trompeuse."
+  ]
+}
