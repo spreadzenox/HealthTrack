@@ -194,7 +194,7 @@ describe('buildDailyDataset', () => {
     ]
     const ds = buildDailyDataset(entries)
     expect(ds.map((d) => d.dateKey)).toEqual(['2026-01-01', '2026-01-02'])
-    expect(ds[0].sleepMinutes).toBe(0)
+    expect(ds[0].sleepMinutes).toBeNull()
     expect(ds[1].sleepMinutes).toBe(450)
   })
 
@@ -322,10 +322,10 @@ describe('buildDailyDataset', () => {
     expect(ds[0].avgHR).toBeCloseTo(75)
   })
 
-  it('avgHR is 0 when no heartRate subtype entries exist', () => {
+  it('avgHR is null (not measured) when no heartRate subtype entries exist', () => {
     const entries = [makeWellbeing('2026-01-01', 4)]
     const ds = buildDailyDataset(entries)
-    expect(ds[0].avgHR).toBe(0)
+    expect(ds[0].avgHR).toBeNull()
   })
 
   it('computes hrv_ms (HRV average) from heartRateVariability subtype entries', () => {
@@ -338,10 +338,10 @@ describe('buildDailyDataset', () => {
     expect(ds[0].hrv_ms).toBeCloseTo(50)
   })
 
-  it('hrv_ms is 0 when no HRV entries exist', () => {
+  it('hrv_ms is null (not measured) when no HRV entries exist', () => {
     const entries = [makeWellbeing('2026-01-01', 4)]
     const ds = buildDailyDataset(entries)
-    expect(ds[0].hrv_ms).toBe(0)
+    expect(ds[0].hrv_ms).toBeNull()
   })
 
   it('computes spo2_pct (SpO₂ average) from oxygenSaturation subtype entries', () => {
@@ -354,10 +354,10 @@ describe('buildDailyDataset', () => {
     expect(ds[0].spo2_pct).toBeCloseTo(98)
   })
 
-  it('spo2_pct is 0 when no SpO₂ entries exist', () => {
+  it('spo2_pct is null (not measured) when no SpO₂ entries exist', () => {
     const entries = [makeWellbeing('2026-01-01', 4)]
     const ds = buildDailyDataset(entries)
-    expect(ds[0].spo2_pct).toBe(0)
+    expect(ds[0].spo2_pct).toBeNull()
   })
 
   it('computes dailyCaloriesHC from calories type entries', () => {
@@ -370,10 +370,10 @@ describe('buildDailyDataset', () => {
     expect(ds[0].dailyCaloriesHC).toBeCloseTo(2500)
   })
 
-  it('dailyCaloriesHC is 0 when no calories HC entries exist', () => {
+  it('dailyCaloriesHC is null (not measured) when no calories HC entries exist', () => {
     const entries = [makeWellbeing('2026-01-01', 4)]
     const ds = buildDailyDataset(entries)
-    expect(ds[0].dailyCaloriesHC).toBe(0)
+    expect(ds[0].dailyCaloriesHC).toBeNull()
   })
 
   it('restingHR and avgHR are tracked separately for the same day', () => {
@@ -1709,5 +1709,110 @@ describe('olsNormalEquations — unpenalized control columns', () => {
     const free = olsNormalEquations(X, y, 1e6, 2)
     expect(Math.abs(shrunk[1])).toBeLessThan(0.01)
     expect(free[1]).toBeCloseTo(3, 3)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Valeurs manquantes : montre non portée, pas de pesée ≠ 0
+// ---------------------------------------------------------------------------
+
+function makeWeight(dateStr, kg) {
+  return { type: 'weight', source: 'withings', at: `${dateStr}T06:30:00Z`, payload: { valueKg: kg } }
+}
+
+describe('valeurs manquantes (mesure absente ≠ 0)', () => {
+  function dateOf(i) {
+    const d = new Date(Date.UTC(2026, 0, 1 + i))
+    return d.toISOString().slice(0, 10)
+  }
+
+  it('buildDailyDataset : une mesure non prise vaut null, un compteur sans saisie vaut 0', () => {
+    const ds = buildDailyDataset([makeWellbeing('2026-01-05', 3)])
+    expect(ds).toHaveLength(1)
+    for (const k of ['sleepMinutes', 'steps', 'restingHR', 'avgHR', 'hrv_ms', 'spo2_pct', 'dailyCaloriesHC', 'weight_kg', 'bmi', 'fat_ratio_pct']) {
+      expect(ds[0][k]).toBeNull()
+    }
+    for (const k of ['activityCalories', 'cigaretteCount', 'kcal', 'mealCount', 'alcohol_g']) {
+      expect(ds[0][k]).toBe(0)
+    }
+  })
+
+  it('corrélation basique : seuls les jours mesurés comptent (FC repos absente certains jours)', () => {
+    const entries = []
+    for (let i = 0; i < 30; i++) {
+      const date = dateOf(i)
+      const wb = i % 5
+      entries.push(makeWellbeing(date, wb))
+      // Montre oubliée un jour sur trois, plutôt les mauvais jours.
+      if (i % 3 !== 0) entries.push(makeHeartRate(date, 70 - 3 * wb))
+      else entries.push(makeWellbeing(date, 0))
+    }
+    const result = computeBasicCorrelations(entries)
+    const hr = result.correlations.find((c) => c.variable === 'restingHR')
+    expect(hr).toBeDefined()
+    expect(hr.n).toBe(20)
+    expect(hr.r).toBeLessThan(-0.9)
+  })
+
+  it('corrélation basique : une mesure prise trop rarement n\'est pas analysée', () => {
+    const entries = []
+    for (let i = 0; i < 20; i++) {
+      const date = dateOf(i)
+      entries.push(makeWellbeing(date, i % 5))
+      if (i < MIN_DAYS_BASIC - 1) entries.push(makeHRV(date, 40 + i))
+    }
+    const result = computeBasicCorrelations(entries)
+    expect(result.correlations.find((c) => c.variable === 'hrv_ms')).toBeUndefined()
+  })
+
+  it('modèle avancé : la moyenne affichée dans un conseil ignore les nuits non enregistrées', () => {
+    const entries = []
+    for (let i = 0; i < 40; i++) {
+      const date = dateOf(i)
+      const sleep = 400 + (i % 4) * 30
+      entries.push(makeWellbeing(date, Math.round((sleep - 400) / 30) + 1))
+      if (i % 4 !== 1) entries.push(makeSleep(date, sleep))
+      entries.push(makeSteps(date, 6000 + ((i * 1777) % 5000)))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    expect(result.status).toBe('ok')
+    const sleep = result.featureImportance.find((f) => f.variable === 'sleepMinutes')
+    expect(sleep).toBeDefined()
+    // Nuits enregistrées ≈ (400 + 460 + 490) / 3 = 450 min ≈ 7 h 30 ; en comptant les nuits manquantes à 0 : ≈ 5 h 37.
+    expect(sleep.advice).toMatch(/7 h [23]\d/)
+  })
+
+  it('modèle avancé : une mesure présente moins d\'un jour sur deux n\'entre pas dans le modèle', () => {
+    const entries = []
+    for (let i = 0; i < 40; i++) {
+      const date = dateOf(i)
+      const wb = (i * 7) % 6
+      entries.push(makeWellbeing(date, wb))
+      entries.push(makeSteps(date, 3000 + wb * 1500 + ((i * 313) % 700)))
+      if (i % 3 === 0) entries.push(makeWeight(date, 80 - wb))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    expect(result.status).toBe('ok')
+    expect(result.featureImportance.map((f) => f.variable)).not.toContain('weight_kg')
+  })
+
+  it('prédiction du jour : une mesure du modèle absente aujourd\'hui (pas encore pesé) compte comme habituelle', () => {
+    const now = new Date()
+    const keyOf = (off) => localDateKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - off, 12).toISOString())
+    const entries = []
+    let meanWb = 0
+    for (let off = 40; off >= 1; off--) {
+      const date = keyOf(off)
+      const wb = off % 6
+      meanWb += wb / 40
+      entries.push(makeWellbeing(date, wb))
+      // Pesée quotidienne fortement liée au bien-être : le poids entre dans le modèle.
+      entries.push(makeWeight(date, 80 - wb * 0.8))
+    }
+    entries.push({ type: 'sleep', source: 'health_connect', at: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7).toISOString(), payload: { durationMinutes: 440 } })
+    const result = computeTodayPrediction(entries)
+    expect(result).not.toBeNull()
+    expect(Math.abs(result.predicted - meanWb)).toBeLessThan(0.75)
+    expect(result.assumedTypical).toContain('weight_kg')
   })
 })

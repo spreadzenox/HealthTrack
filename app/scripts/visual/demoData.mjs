@@ -63,6 +63,9 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // Utilisés depuis 40 jours seulement (comme un utilisateur qui découvre la fonction).
   const tagRand = mulberry32(seed + 1000)
   let prevTags = []
+  // Montre oubliée ou déchargée ~1 jour sur 8 (pas de nuit, de FC ni de VFC ; le téléphone compte
+  // toujours les pas). RNG séparé ; jamais sur les 4 derniers jours (cartes du tableau de bord stables).
+  const watchRand = mulberry32(seed + 2000)
 
   for (let i = days; i >= 0; i--) {
     const day = new Date(now)
@@ -77,16 +80,20 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
     const restingHr = Math.round(62 - (sleepMin - 420) / 40 + cigarettes * 0.4 + noise(3)) + (sick ? 9 : 0)
     const hrv = Math.round(48 + (sleepMin - 420) / 8 - cigarettes + noise(6)) - (sick ? 12 : 0)
 
+    const watchOff = watchRand() < 0.12 && i > 3
+
     const bedtime = new Date(day)
     bedtime.setDate(bedtime.getDate() - 1)
     bedtime.setHours(23, Math.round(rand() * 50), 0, 0)
     const wake = new Date(bedtime.getTime() + sleepMin * 60000)
-    entries.push({
-      type: 'sleep',
-      source: 'health_connect',
-      at: bedtime.toISOString(),
-      payload: { durationMinutes: sleepMin, endDate: wake.toISOString(), unit: 'minute', sleepState: 'asleep', connector: 'health_connect' },
-    })
+    if (!watchOff) {
+      entries.push({
+        type: 'sleep',
+        source: 'health_connect',
+        at: bedtime.toISOString(),
+        payload: { durationMinutes: sleepMin, endDate: wake.toISOString(), unit: 'minute', sleepState: 'asleep', connector: 'health_connect' },
+      })
+    }
 
     if (i === 0) continue // aujourd'hui : journée en cours, seulement le sommeil de la nuit
 
@@ -102,26 +109,27 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       at: at(day, 0),
       payload: { value: Math.round(1900 + steps * 0.045 + noise(120)), unit: 'kcal', period: 'day', endDate: at(day, 23, 59), connector: 'health_connect' },
     })
-    entries.push({
+    const watchEntries = [{
       type: 'heart_rate',
       source: 'health_connect',
       at: at(day, 7),
       payload: { bpm: restingHr, unit: 'bpm', subtype: 'restingHeartRate', connector: 'health_connect' },
-    })
+    }]
     for (const h of [9, 14, 19]) {
-      entries.push({
+      watchEntries.push({
         type: 'heart_rate',
         source: 'health_connect',
         at: at(day, h),
         payload: { bpm: Math.round(restingHr + 15 + noise(12)), unit: 'bpm', subtype: 'heartRate', connector: 'health_connect' },
       })
     }
-    entries.push({
+    watchEntries.push({
       type: 'heart_rate',
       source: 'health_connect',
       at: at(day, 6, 30),
       payload: { value: hrv, unit: 'ms', subtype: 'heartRateVariability', connector: 'health_connect' },
     })
+    if (!watchOff) entries.push(...watchEntries)
     if (rand() < 0.35) {
       entries.push({
         type: 'activity',

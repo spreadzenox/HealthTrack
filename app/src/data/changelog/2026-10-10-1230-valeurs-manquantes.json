@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-10",
+  "kind": "correctif",
+  "title": "Analyses : une nuit sans montre ne compte plus comme une nuit blanche",
+  "items": [
+    "Quand la montre n’était pas portée (ou la balance pas utilisée), les analyses comptaient ce jour-là 0 minute de sommeil, une FC au repos de 0 ou un poids de 0 kg — ce qui brouillait les liens avec votre bien-être, voire en inventait.",
+    "Désormais, un jour sans mesure est simplement ignoré pour cette mesure dans « Pistes à tester » et les corrélations ; dans les recommandations avancées, il compte comme un jour habituel, et une mesure prise moins d’un jour sur deux n’entre pas dans le modèle.",
+    "Les moyennes affichées (« votre moyenne actuelle : 7 h 13 ») ne tiennent compte que des jours mesurés. Vos pistes peuvent changer après la mise à jour : c’est voulu."
+  ]
+}
