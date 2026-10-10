@@ -105,6 +105,10 @@ une release à chaque changement validé, et tient ce journal.
   corrélations, les pistes et le modèle avancé tiennent maintenant compte du jour de la semaine ; la page Analyses
   affiche votre bien-être moyen le week-end et en semaine, et l'effet propre du week-end (« +0,4 point »).
   **Vos pistes peuvent légèrement changer** : c'est voulu.
+- **Vos habitudes, à type de jour égal** : un verre le vendredi soir était jugé sur votre humeur du samedi… qui est
+  souvent meilleure, week-end oblige — l'effet réel pouvait disparaître. Les lendemains de week-end sont maintenant
+  comparés à d'autres jours de week-end, et la semaine à la semaine. Quand ça change le résultat, la carte l'indique
+  (« Week-end comparé au week-end, semaine à la semaine : −0,8 point »).
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -145,7 +149,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — week-end aussi dans « Vos habitudes », effets décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
+**Prochaines priorités** — effets décalés (J-1 → J) dans les analyses, chasse aux bugs des formulaires, mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -169,7 +173,8 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 00:30 — [Veille + barres système Android](runs/2026-10-10-0030-veille-zones-systeme.md) | 🔭 | PR #82 fusionnée → v77 |
 | 10/10 02:30 — [Repas décrit en quelques mots](runs/2026-10-10-0230-repas-decrit.md) | 🏗️ | PR #84 fusionnée → v78 |
 | 10/10 04:30 — [Restaurer une sauvegarde sans risque](runs/2026-10-10-0430-import-sur.md) | 🐛 | PR #85 fusionnée → v79 |
-| 10/10 06:30 — [Analyses : contrôle du week-end](runs/2026-10-10-0630-controle-week-end.md) | 🏗️ | PR #86 |
+| 10/10 06:30 — [Analyses : contrôle du week-end](runs/2026-10-10-0630-controle-week-end.md) | 🏗️ | PR #86 fusionnée → v80 |
+| 10/10 08:30 — [Vos habitudes à type de jour égal](runs/2026-10-10-0830-habitudes-week-end.md) | 🏗️ | PR en cours |
 
 ---
 

@@ -5,6 +5,7 @@ import {
   getTagMeta,
   nextDateKey,
   permutationPValue,
+  stratifiedPermutationPValue,
   computeTagEffects,
 } from './behaviorTags'
 
@@ -54,6 +55,27 @@ describe('permutationPValue', () => {
 
   it('never returns 0 (add-one estimator)', () => {
     expect(permutationPValue([0, 0, 0, 0, 0], [5, 5, 5, 5, 5])).toBeGreaterThan(0)
+  })
+})
+
+describe('stratifiedPermutationPValue', () => {
+  it('equals the plain test with a single stratum', () => {
+    const a = [2, 3, 3, 2, 4, 3]
+    const b = [3, 4, 4, 3, 5]
+    expect(stratifiedPermutationPValue([{ a, b }])).toBe(permutationPValue(a, b))
+  })
+
+  it('only shuffles labels within each stratum', () => {
+    // Inside each stratum the groups are identical: no effect, whatever the
+    // gap between strata (group A sits mostly in the high stratum).
+    const strata = [
+      { a: [5, 4, 5, 4, 5, 4, 5, 4], b: [4, 5] },
+      { a: [2, 1], b: [1, 2, 1, 2, 1, 2, 1, 2] },
+    ]
+    expect(stratifiedPermutationPValue(strata)).toBeGreaterThan(0.5)
+    const a = strata.flatMap((s) => s.a)
+    const b = strata.flatMap((s) => s.b)
+    expect(permutationPValue(a, b)).toBeLessThan(0.05)
   })
 })
 
@@ -162,5 +184,58 @@ describe('computeTagEffects', () => {
     expect(Math.abs(res.effects[0].diff)).toBeGreaterThanOrEqual(Math.abs(res.effects[1].diff))
     for (const e of res.effects) expect(e.q).toBeGreaterThanOrEqual(e.p)
     expect(res.effects[0].tagId).toBe('stress')
+  })
+
+  describe('week-end control', () => {
+    // Day 0 = Tuesday 1 Sept 2026. Wellbeing is higher on Saturdays and Sundays.
+    // Alcohol: every Friday (→ Saturday), Saturdays of even weeks (→ Sunday) and
+    // Tuesdays of weeks 0, 3 and 6 (→ Wednesday): mostly before a week-end day.
+    function weekendData(alcoholEffect) {
+      const entries = []
+      const alcoholDays = new Set()
+      for (let i = 0; i < 56; i++) {
+        const dow = new Date(2026, 8, 1 + i).getDay()
+        const week = Math.floor(i / 7)
+        if (dow === 5 || (dow === 6 && week % 2 === 0) || (dow === 2 && week % 3 === 0)) alcoholDays.add(i)
+      }
+      for (let i = 0; i < 56; i++) {
+        const dow = new Date(2026, 8, 1 + i).getDay()
+        const base = dow === 0 || dow === 6 ? 4.5 : 3
+        const score = base + (alcoholDays.has(i - 1) ? alcoholEffect : 0)
+        entries.push(checkin(i, score, alcoholDays.has(i) ? ['alcohol'] : ['stress']))
+      }
+      return entries
+    }
+
+    it('does not credit a tag with the week-end mood', () => {
+      const e = computeTagEffects(weekendData(0)).effects.find((x) => x.tagId === 'alcohol')
+      // Raw comparison: days after alcohol look much better (they are week-ends).
+      expect(e.diffRaw).toBeGreaterThan(0.8)
+      expect(e.meanWith - e.meanWithout).toBeCloseTo(e.diffRaw)
+      // Same type of day compared with the same type of day: no effect.
+      expect(Math.abs(e.diff)).toBeLessThan(0.05)
+      expect(e.p).toBeGreaterThan(0.3)
+      expect(e.evidence).not.toBe('solide')
+    })
+
+    it('still finds a real effect hidden by the week-end', () => {
+      const e = computeTagEffects(weekendData(-1)).effects.find((x) => x.tagId === 'alcohol')
+      // Raw: the week-end bonus (+1.5) masks the hangover (−1).
+      expect(e.diffRaw).toBeGreaterThan(0)
+      expect(e.diff).toBeCloseTo(-1)
+      expect(e.p).toBeLessThan(0.01)
+    })
+
+    it('leaves a tag that only ever happens before a week-end as pending', () => {
+      const entries = []
+      for (let i = 0; i < 56; i++) {
+        const dow = new Date(2026, 8, 1 + i).getDay()
+        const base = dow === 0 || dow === 6 ? 4.5 : 3
+        entries.push(checkin(i, base, dow === 5 || dow === 6 ? ['alcohol'] : ['stress']))
+      }
+      const res = computeTagEffects(entries)
+      expect(res.effects.find((x) => x.tagId === 'alcohol')).toBeUndefined()
+      expect(res.pending.find((x) => x.tagId === 'alcohol')).toMatchObject({ weekendOnly: true })
+    })
   })
 })

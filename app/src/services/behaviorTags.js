@@ -8,9 +8,17 @@
  * tags). Evening behaviours are measured on the NEXT day's wellbeing, the
  * others on the same day. Only days since the first tag ever used count, so
  * the history recorded before the feature existed is not read as "without".
+ *
+ * Week-end control: wellbeing differs between week-ends and weekdays, and many
+ * tags (alcohol…) are more frequent before a week-end. The comparison is
+ * therefore stratified by the type of the day the wellbeing is measured on:
+ * week-end days are compared with week-end days, weekdays with weekdays, and
+ * the two differences are pooled (weights n_with·n_without / n, as in
+ * Cochran-Mantel-Haenszel). The permutation test shuffles labels within each
+ * stratum only. The raw (unstratified) difference is kept as `diffRaw`.
  */
 import { localDateKey } from './analysisEngine'
-import { benjaminiHochberg, evidenceLevel } from './statistics'
+import { benjaminiHochberg, evidenceLevel, isWeekendKey } from './statistics'
 
 /** Minimum number of days with AND without a tag before comparing them. */
 export const MIN_TAG_DAYS = 5
@@ -61,29 +69,65 @@ function mulberry32(seed) {
   }
 }
 
+// Pooled within-stratum difference of means (strata lacking a group are skipped).
+function stratifiedDiff(strata) {
+  let num = 0
+  let den = 0
+  for (const { a, b } of strata) {
+    if (a.length === 0 || b.length === 0) continue
+    const w = (a.length * b.length) / (a.length + b.length)
+    num += w * (mean(a) - mean(b))
+    den += w
+  }
+  return den > 0 ? num / den : null
+}
+
 /**
  * Two-sided permutation test on the difference of means between two groups.
  * Uses the add-one estimator (never 0), see Phipson & Smyth 2010.
  */
 export function permutationPValue(a, b, permutations = PERMUTATIONS) {
-  const pooled = [...a, ...b]
-  const nA = a.length
-  const observed = Math.abs(mean(a) - mean(b))
-  const total = pooled.reduce((s, v) => s + v, 0)
+  return stratifiedPermutationPValue([{ a, b }], permutations)
+}
+
+/**
+ * Same test on the pooled within-stratum difference (see `stratifiedDiff`):
+ * group labels are only shuffled inside each stratum.
+ * @param {Array<{ a: number[], b: number[] }>} strata
+ */
+export function stratifiedPermutationPValue(strata, permutations = PERMUTATIONS) {
+  const used = strata
+    .filter(({ a, b }) => a.length > 0 && b.length > 0)
+    .map(({ a, b }) => {
+      const pooled = [...a, ...b]
+      return {
+        pooled,
+        nA: a.length,
+        total: pooled.reduce((s, v) => s + v, 0),
+        w: (a.length * b.length) / pooled.length,
+      }
+    })
+  if (used.length === 0) return 1
+  const den = used.reduce((s, st) => s + st.w, 0)
+  const observed = Math.abs(stratifiedDiff(strata))
   const rand = mulberry32(12345)
   let extreme = 0
   for (let k = 0; k < permutations; k++) {
-    // Partial Fisher-Yates: the first nA slots become group A.
-    for (let i = 0; i < nA; i++) {
-      const j = i + Math.floor(rand() * (pooled.length - i))
-      const tmp = pooled[i]
-      pooled[i] = pooled[j]
-      pooled[j] = tmp
+    let num = 0
+    for (const st of used) {
+      const { pooled, nA } = st
+      // Partial Fisher-Yates: the first nA slots become group A.
+      for (let i = 0; i < nA; i++) {
+        const j = i + Math.floor(rand() * (pooled.length - i))
+        const tmp = pooled[i]
+        pooled[i] = pooled[j]
+        pooled[j] = tmp
+      }
+      let sumA = 0
+      for (let i = 0; i < nA; i++) sumA += pooled[i]
+      num += st.w * (sumA / nA - (st.total - sumA) / (pooled.length - nA))
     }
-    let sumA = 0
-    for (let i = 0; i < nA; i++) sumA += pooled[i]
-    const diff = Math.abs(sumA / nA - (total - sumA) / (pooled.length - nA))
-    if (diff >= observed - 1e-12) extreme++
+    if (Math.abs(num / den) >= observed - 1e-12) extreme++
   }
   return (extreme + 1) / (permutations + 1)
 }
@@ -92,9 +136,13 @@ export function permutationPValue(a, b, permutations = PERMUTATIONS) {
  * @param {Array} entries  health entries (only wellbeing ones are used)
  * @returns {{ status: 'no_tags' } | {
  *   status: 'ok', trackedDays: number,
- *   effects: Array<{ tagId, label, emoji, effectDay, nWith, nWithout, meanWith, meanWithout, diff, p, q, evidence }>,
- *   pending: Array<{ tagId, label, emoji, effectDay, nWith, nWithout }>,
+ *   effects: Array<{ tagId, label, emoji, effectDay, nWith, nWithout, meanWith, meanWithout,
+ *     diff, diffRaw, p, q, evidence }>,
+ *   pending: Array<{ tagId, label, emoji, effectDay, nWith, nWithout, weekendOnly? }>,
  * }}
+ * `diff` is the week-end-controlled difference, `meanWith` / `meanWithout` /
+ * `diffRaw` the plain ones. `weekendOnly`: enough days, but the tag always
+ * falls on the same type of day as all comparable days → not separable.
  */
 export function computeTagEffects(entries) {
   // Per day: mean wellbeing score and union of known tags.
@@ -126,16 +174,27 @@ export function computeTagEffects(entries) {
   for (const tag of BEHAVIOR_TAGS) {
     const withTag = []
     const withoutTag = []
+    const strata = { weekend: { a: [], b: [] }, weekday: { a: [], b: [] } }
     for (const k of tracked) {
-      const outcomeDay = days.get(tag.effectDay === 'next' ? nextDateKey(k) : k)
+      const outcomeKey = tag.effectDay === 'next' ? nextDateKey(k) : k
+      const outcomeDay = days.get(outcomeKey)
       if (!outcomeDay) continue
       const score = outcomeDay.sum / outcomeDay.count
-      ;(days.get(k).tags.has(tag.id) ? withTag : withoutTag).push(score)
+      const has = days.get(k).tags.has(tag.id)
+      ;(has ? withTag : withoutTag).push(score)
+      const stratum = strata[isWeekendKey(outcomeKey) ? 'weekend' : 'weekday']
+      ;(has ? stratum.a : stratum.b).push(score)
     }
     const base = { tagId: tag.id, label: tag.label, emoji: tag.emoji, effectDay: tag.effectDay }
     if (withTag.length === 0) continue
     if (withTag.length < MIN_TAG_DAYS || withoutTag.length < MIN_TAG_DAYS) {
       pending.push({ ...base, nWith: withTag.length, nWithout: withoutTag.length })
+      continue
+    }
+    const strataList = [strata.weekend, strata.weekday]
+    const diff = stratifiedDiff(strataList)
+    if (diff === null) {
+      pending.push({ ...base, nWith: withTag.length, nWithout: withoutTag.length, weekendOnly: true })
       continue
     }
     const meanWith = mean(withTag)
@@ -146,8 +205,9 @@ export function computeTagEffects(entries) {
       nWithout: withoutTag.length,
       meanWith,
       meanWithout,
-      diff: meanWith - meanWithout,
-      p: permutationPValue(withTag, withoutTag),
+      diff,
+      diffRaw: meanWith - meanWithout,
+      p: stratifiedPermutationPValue(strataList),
     })
   }
 
