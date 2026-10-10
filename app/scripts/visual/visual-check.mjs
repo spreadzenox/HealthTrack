@@ -17,6 +17,8 @@
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
+ *   npm run visual -- --routes=/data --import          # aperçu d'une sauvegarde choisie (avant import)
+ *   npm run visual -- --routes=/data --import=replace  # … puis confirmation « Remplacer mes données »
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -274,6 +276,23 @@ async function main() {
           }
           await page.evaluate(() => document.querySelector('.new-meal')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(500)
+        }
+        if (args.import && path === '/data') {
+          // Sauvegarde de démo (+ une entrée illisible) choisie dans le sélecteur de fichier.
+          const backup = {
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            entries: [...generateDemoEntries(), { type: 'food' }],
+          }
+          await page.locator('input[type="file"]').setInputFiles({
+            name: 'healthtrack-export.json',
+            mimeType: 'application/json',
+            buffer: Buffer.from(JSON.stringify(backup)),
+          })
+          await page.getByRole('button', { name: 'Ajouter à mes données' }).waitFor({ timeout: 10000 })
+          if (args.import === 'replace') await page.getByRole('button', { name: 'Remplacer mes données' }).click()
+          await page.evaluate(() => document.querySelector('.import-preview')?.scrollIntoView({ block: 'start' }))
+          await page.waitForTimeout(400)
         }
         if (args.click) {
           const button = page.getByRole('button', { name: String(args.click) }).first()

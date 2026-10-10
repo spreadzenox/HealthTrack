@@ -95,6 +95,11 @@ une release à chaque changement validé, et tient ce journal.
   aliments et leurs grammes s'affichent, à corriger avant d'enregistrer. L'huile ou le beurre de cuisson probables
   sont ajoutés et marqués « à vérifier ». Seul le texte part chez Google ; les calories sont calculées sur le
   téléphone. Chercher « œuf » avec le œ du clavier fonctionne enfin.
+- **Restaurer une sauvegarde sans risque** (Plus → Données → Importer) : avant, choisir un fichier effaçait
+  **immédiatement** toutes vos données — y compris si c'était le mauvais fichier. Désormais vous voyez d'abord le
+  contenu (date, nombre d'entrées, période, repas / notes / mesures), puis vous choisissez « **Ajouter à mes
+  données** » (sans doublons, rien de perdu) ou « Remplacer mes données » (avec confirmation). Un fichier qui n'est
+  pas une sauvegarde HealthTrack est refusé sans rien toucher.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -133,8 +138,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — chasse aux bugs sur les formulaires et l'import d'anciennes sauvegardes, contrôle du
-week-end puis effets décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
+**Prochaines priorités** — contrôle du week-end puis effets décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -156,7 +160,8 @@ week-end puis effets décalés (J-1 → J) dans les analyses, mise à jour de Ca
 | 09/10 20:30 — [Sommeil au bon jour dans les analyses](runs/2026-10-09-2030-sommeil-analyses.md) | 🐛 | PR #80 fusionnée → v75 |
 | 09/10 22:30 — [Barre d'onglets en bas](runs/2026-10-09-2230-barre-onglets.md) | 🎨 | PR #81 fusionnée → v76 |
 | 10/10 00:30 — [Veille + barres système Android](runs/2026-10-10-0030-veille-zones-systeme.md) | 🔭 | PR #82 fusionnée → v77 |
-| 10/10 02:30 — [Repas décrit en quelques mots](runs/2026-10-10-0230-repas-decrit.md) | 🏗️ | PR en cours |
+| 10/10 02:30 — [Repas décrit en quelques mots](runs/2026-10-10-0230-repas-decrit.md) | 🏗️ | PR #84 fusionnée → v78 |
+| 10/10 04:30 — [Restaurer une sauvegarde sans risque](runs/2026-10-10-0430-import-sur.md) | 🐛 | PR en cours |
 
 ---
 
