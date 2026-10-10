@@ -24,4 +24,9 @@ describe('zones système (edge-to-edge Android)', () => {
       expect(read(file), file).not.toMatch(/env\(safe-area-inset/)
     }
   })
+
+  it('icônes claires dans les barres système (fond de l’app toujours sombre)', () => {
+    const config = JSON.parse(read('../capacitor.config.json'))
+    expect(config.plugins?.SystemBars?.style).toBe('DARK')
+  })
 })

@@ -20,7 +20,7 @@ puis l'écran d'accueil d'Android).
 - **Constat sur émulateur API 36 (WebView 133)** avant correctif : l'heure et les icônes recouvrent le bandeau
   de mise à jour, le trait gestuel passe sur les libellés des onglets, les boutons de la modale bien-être sont
   coupés en bas.
-- **Correctif** : `viewport-fit=cover` (sans lui, Capacitor 8.2 n'injecte pas `--safe-area-inset-*`, et
+- **Correctif** : icônes de la barre d'état en clair (`SystemBars.style = "DARK"` dans `capacitor.config.json` : elles étaient sombres sur fond sombre) ; `viewport-fit=cover` (sans lui, Capacitor 8.2 n'injecte pas `--safe-area-inset-*`, et
   `env()` est faux sur les WebView ≤ 139) ; `--safe-top/--safe-bottom` = variable Capacitor puis `env()` en
   repli ; fond opaque sous la barre d'état (`body::before`) ; bandeau de mise à jour collé sous la barre
   d'état ; modale bien-être et assistant Connecteurs dans la zone visible.
