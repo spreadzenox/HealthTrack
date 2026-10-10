@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:connectors": "vitest run src/connectors src/services/bodyProfile.test.js src/fixtures",
     "test:watch": "vitest",
     "cap:sync": "npm run build && npx cap sync",
     "cap:open:android": "npx cap open android",

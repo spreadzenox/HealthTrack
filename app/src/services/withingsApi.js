@@ -9,6 +9,12 @@ import {
   setWithingsTokens,
   setWithingsUserProfile,
 } from '../settings/withingsSettings'
+import { isWithingsMockMode } from '../settings/withingsConnectConfig'
+import {
+  mockExchangeWithingsCode,
+  mockFetchWithingsMeasures,
+  mockFetchAndCacheWithingsUser,
+} from './withingsMockApi'
 
 const AUTH_URL = 'https://account.withings.com/oauth2_user/authorize2'
 const TOKEN_URL = 'https://wbsapi.withings.net/v2/oauth2'
@@ -37,6 +43,8 @@ export function buildWithingsAuthUrl(state) {
  * @param {string} code
  */
 export async function exchangeWithingsCode(code) {
+  if (isWithingsMockMode()) return mockExchangeWithingsCode(code)
+
   const { clientId, clientSecret, redirectUri } = getWithingsCredentials()
   const body = new URLSearchParams({
     action: 'requesttoken',
@@ -74,7 +82,7 @@ export async function ensureWithingsAccessToken() {
   const tokens = getWithingsTokens()
   if (!tokens?.accessToken) throw new Error('Non connecté à Withings')
 
-  if (tokens.expiresAt > Date.now() + 60_000) {
+  if (isWithingsMockMode() || tokens.expiresAt > Date.now() + 60_000) {
     return tokens.accessToken
   }
 
@@ -129,6 +137,8 @@ async function withingsPost(path, params) {
  * @param {number} enddate
  */
 export async function fetchWithingsMeasures(startdate, enddate) {
+  if (isWithingsMockMode()) return mockFetchWithingsMeasures(startdate, enddate)
+
   return withingsPost('/measure', {
     action: 'getmeas',
     startdate: String(Math.floor(startdate)),
@@ -140,6 +150,8 @@ export async function fetchWithingsMeasures(startdate, enddate) {
  * Loads user profile (sex, age) from Withings and caches it locally.
  */
 export async function fetchAndCacheWithingsUser() {
+  if (isWithingsMockMode()) return mockFetchAndCacheWithingsUser()
+
   const body = await withingsPost('/v2/user', { action: 'get' })
   const users = body?.users || []
   const user = users[0]

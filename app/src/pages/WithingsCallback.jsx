@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { exchangeWithingsCode, fetchAndCacheWithingsUser } from '../services/withingsApi'
+import { setConnectorSettings } from '../settings/connectorSettings'
 import '../Food.css'
 
 /**
@@ -39,6 +40,7 @@ export default function WithingsCallback() {
         } catch {
           // non-blocking
         }
+        setConnectorSettings('withings', { enabled: true })
         setStatus('ok')
         window.dispatchEvent(new CustomEvent('health-entries-updated'))
         setTimeout(() => navigate('/connectors', { replace: true }), 1500)

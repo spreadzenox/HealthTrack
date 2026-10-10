@@ -189,6 +189,16 @@ describe('triggerAutoSync', () => {
     expect(c.sync).not.toHaveBeenCalled()
   })
 
+  it('includes withings in background sync when enabled', async () => {
+    const c = makeConnector({ id: 'withings' })
+    CONNECTORS.push(c)
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null })
+
+    await triggerAutoSync()
+
+    expect(c.sync).toHaveBeenCalledOnce()
+  })
+
   it('processes multiple connectors independently', async () => {
     const c1 = makeConnector({ id: 'c1' })
     const c2 = makeConnector({ id: 'c2', isAvailable: vi.fn().mockResolvedValue(false) })
