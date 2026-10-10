@@ -221,8 +221,10 @@ jobs:
         with:
           name: screenshots-samsung-a56-api35
           path: |
-            screenshot_startup.png
-            screenshot_connectors_page.png
+            screenshot_app.png
+            screenshot_plus.png
+            ui_app.xml
+            ui_plus.xml
           if-no-files-found: warn
 
       - name: Publier le rapport de tests instrumentés (API 35)
@@ -353,8 +355,10 @@ jobs:
         with:
           name: screenshots-samsung-a56-api36
           path: |
-            screenshot_startup.png
-            screenshot_connectors_page.png
+            screenshot_app.png
+            screenshot_plus.png
+            ui_app.xml
+            ui_plus.xml
           if-no-files-found: warn
 
       - name: Publier le rapport de tests instrumentés (API 36)
