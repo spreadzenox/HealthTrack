@@ -118,6 +118,9 @@ une release à chaque changement validé, et tient ce journal.
   liens. Ces jours sont maintenant ignorés pour la mesure concernée (ou comptés comme un jour habituel dans le modèle
   avancé). Sur la démo, avec 1 jour sur 8 sans montre, le sommeil redevient la piste n° 1 (avant : invisible) et le
   modèle avancé prédit bien mieux les jours qu'il n'a pas vus (R² 0,09 → 0,44). **Vos pistes peuvent changer** : c'est voulu.
+- **Chiffres cohérents et textes à jour** : la carte FC au repos pouvait dire « 61 bpm — plus basse que
+  d'habitude » avec une norme « 61–65 » (arrondi) ; elle affiche maintenant une décimale dans ce cas (« 60,5 » vs
+  « 60,6–65,1 »). Paramètres : l'app dit clairement que la photo **ou le texte** d'un repas décrit part chez Google.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -188,6 +191,7 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 08:30 — [Vos habitudes à type de jour égal](runs/2026-10-10-0830-habitudes-week-end.md) | 🏗️ | PR #87 fusionnée → v81 |
 | 10/10 10:30 — [Prédiction du jour sur journée incomplète](runs/2026-10-10-1030-prediction-du-jour.md) | 🐛 | PR #88 fusionnée → v82 |
 | 10/10 12:30 — [Mesure absente ≠ 0 dans les analyses](runs/2026-10-10-1230-valeurs-manquantes.md) | 🐛 | PR #89 fusionnée → v83 |
+| 10/10 14:30 — [Chiffres cohérents, textes à jour](runs/2026-10-10-1430-chiffres-coherents.md) | 🐛 | PR #90 fusionnée → v84 |
 
 ---
 

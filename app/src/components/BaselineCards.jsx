@@ -13,7 +13,16 @@ const STATUS_LABELS = {
   below: 'Plus basse que d’habitude',
 }
 
-const fmt = (v) => Math.round(v).toLocaleString('fr-FR')
+const fmtWith = (digits) => (v) =>
+  v.toLocaleString('fr-FR', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+
+// Entiers par défaut ; une décimale quand l'arrondi contredirait le statut
+// (ex. moyenne 60,6 sous une norme 61,4–65 → « 61 » dans « 61–65 » mais « plus basse »).
+function formatterFor(b) {
+  const r = Math.round
+  const looksWithin = r(b.recentMean) >= r(b.low) && r(b.recentMean) <= r(b.high)
+  return fmtWith(looksWithin === (b.status === 'within') ? 0 : 1)
+}
 
 function statusClass(b) {
   if (b.status === 'within') return 'is-within'
@@ -54,6 +63,7 @@ function BaselineCard({ b }) {
       </div>
     )
   }
+  const fmt = formatterFor(b)
   const label = `${metric.label} : ${fmt(b.recentMean)} ${metric.unit} en moyenne sur ${RECENT_DAYS} jours, ` +
     `${STATUS_LABELS[b.status].toLowerCase()} (norme ${fmt(b.low)}–${fmt(b.high)} ${metric.unit})`
   return (
