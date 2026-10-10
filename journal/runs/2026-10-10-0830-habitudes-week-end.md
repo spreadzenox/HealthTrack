@@ -1,6 +1,6 @@
 # 2026-10-10 08:30 UTC — Vos habitudes : comparaison stratifiée week-end / semaine
 
-**Type** : 🏗️  ·  **PR** : voir tableau du résumé
+**Type** : 🏗️  ·  **PR** : #87
 
 ## Pourquoi
 1er item des « Prochaines étapes » (C3, R#25 étape 2), annoncé par le run 06:30 : « Vos habitudes » (tags)
