@@ -1,6 +1,6 @@
 # 2026-10-10 00:30 UTC — Veille ciblée + barre d'onglets au-dessus des barres Android
 
-**Type** : 🔭 (+ 🐛 quick win)  ·  **PR** : #82
+**Type** : 🔭 (+ 🐛 quick win)  ·  **PR** : #82 (fusionnée → v77, APK publié)
 
 ## Pourquoi
 La veille n'avait pas tourné depuis le 08/10 17:00 (1er item des « Prochaines étapes »). Le run précédent

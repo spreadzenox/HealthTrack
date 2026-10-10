@@ -148,7 +148,7 @@ décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
 | 09/10 18:30 — [Repas sans photo, repas habituels](runs/2026-10-09-1830-repas-sans-photo.md) | 🏗️ | PR #78 fusionnée → v74 |
 | 09/10 20:30 — [Sommeil au bon jour dans les analyses](runs/2026-10-09-2030-sommeil-analyses.md) | 🐛 | PR #80 fusionnée → v75 |
 | 09/10 22:30 — [Barre d'onglets en bas](runs/2026-10-09-2230-barre-onglets.md) | 🎨 | PR #81 fusionnée → v76 |
-| 10/10 00:30 — [Veille + barres système Android](runs/2026-10-10-0030-veille-zones-systeme.md) | 🔭 | PR #82 |
+| 10/10 00:30 — [Veille + barres système Android](runs/2026-10-10-0030-veille-zones-systeme.md) | 🔭 | PR #82 fusionnée → v77 |
 
 ---
 
