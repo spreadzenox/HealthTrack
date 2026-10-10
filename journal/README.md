@@ -90,6 +90,11 @@ une release à chaque changement validé, et tient ce journal.
   la barre d'état et la barre de navigation. Vérifié sur un émulateur Android 16 : l'heure recouvrait
   le haut de page, le trait gestuel passait sur les onglets et les boutons de la fenêtre « Comment vous
   sentez-vous ? » étaient coupés. Corrigé : tout reste dans la zone visible (v77).
+- **Décrire un repas en quelques mots** (Repas → « Décrire ou saisir sans photo ») : écrivez ou dictez avec le
+  micro du clavier « 2 œufs au plat, une tartine beurrée et un café », touchez « Remplir avec Gemini » : les
+  aliments et leurs grammes s'affichent, à corriger avant d'enregistrer. L'huile ou le beurre de cuisson probables
+  sont ajoutés et marqués « à vérifier ». Seul le texte part chez Google ; les calories sont calculées sur le
+  téléphone. Chercher « œuf » avec le œ du clavier fonctionne enfin.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -121,13 +126,15 @@ une release à chaque changement validé, et tient ce journal.
   photo échoue depuis la mise à jour, dites-le-moi**.
 - Après la v75, les **Recommandations** (basiques et avancées) peuvent changer : correction du
   rattachement du sommeil, pas un caprice du modèle.
+- **Repas décrit en texte** : pas pu être testé avec une vraie clé Gemini. **Essayez-le sur 2–3 repas** et dites-moi
+  si des aliments manquent ou si les grammes sont aberrants : le prompt sera ajusté.
 - **Barre d'onglets** : corrigée et vérifiée sur émulateur Android 16 (v77). Si sur votre A56 elle
   paraît trop haute (espace vide sous les onglets) ou encore cachée, dites-le-moi.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — saisie d'un repas en texte libre / dictée, contrôle du week-end puis effets
-décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
+**Prochaines priorités** — chasse aux bugs sur les formulaires et l'import d'anciennes sauvegardes, contrôle du
+week-end puis effets décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -149,6 +156,7 @@ décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
 | 09/10 20:30 — [Sommeil au bon jour dans les analyses](runs/2026-10-09-2030-sommeil-analyses.md) | 🐛 | PR #80 fusionnée → v75 |
 | 09/10 22:30 — [Barre d'onglets en bas](runs/2026-10-09-2230-barre-onglets.md) | 🎨 | PR #81 fusionnée → v76 |
 | 10/10 00:30 — [Veille + barres système Android](runs/2026-10-10-0030-veille-zones-systeme.md) | 🔭 | PR #82 fusionnée → v77 |
+| 10/10 02:30 — [Repas décrit en quelques mots](runs/2026-10-10-0230-repas-decrit.md) | 🏗️ | PR en cours |
 
 ---
 

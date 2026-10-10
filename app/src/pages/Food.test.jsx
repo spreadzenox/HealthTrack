@@ -358,3 +358,78 @@ describe('Food — saisie sans photo', () => {
     expect(createEntry).not.toHaveBeenCalled()
   })
 })
+
+describe('Food — décrire un repas en quelques mots', () => {
+  beforeEach(async () => {
+    localStorage.clear()
+    const { listEntries, createEntry } = await import('../storage/localHealthStorage')
+    createEntry.mockReset()
+    createEntry.mockResolvedValue(7)
+    listEntries.mockResolvedValue([])
+  })
+
+  it('remplit le repas à partir de la description, puis enregistre après correction', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const gemini = await import('../services/geminiStandalone')
+    const spy = vi.spyOn(gemini, 'analyzeMealText').mockResolvedValue({
+      provider: 'gemini',
+      model: 'gemini-3.8-flash',
+      dish: 'Fromage et pain',
+      items: [{ ingredient: 'Abondance', quantity: '30 g', quantity_g: 30, confidence: 'medium' }],
+    })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
+    expect(screen.getByText(/Seul ce texte est envoyé à Google Gemini/i)).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText(/Décrivez votre repas/i), { target: { value: 'un morceau d’abondance' } })
+    fireEvent.click(screen.getByRole('button', { name: /Remplir avec Gemini/i }))
+    expect(spy).toHaveBeenCalledWith('un morceau d’abondance', 'KEY')
+    expect(await screen.findByLabelText(/Grammes de Abondance/i)).toHaveValue(30)
+    expect(screen.getByRole('heading', { name: 'Fromage et pain' })).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '45' } })
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer ce repas/i }))
+    await screen.findByText(/Repas enregistré/)
+    const { createEntry } = await import('../storage/localHealthStorage')
+    expect(createEntry.mock.calls[0][0].payload).toEqual({
+      items: [{ ingredient: 'Abondance', quantity: '45 g', quantity_g: 45, confidence: 'medium' }],
+      provider: 'gemini_text',
+      model: 'gemini-3.8-flash',
+      dish: 'Fromage et pain',
+    })
+    spy.mockRestore()
+  })
+
+  it('affiche l’erreur de Gemini et laisse la saisie manuelle possible', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const gemini = await import('../services/geminiStandalone')
+    const spy = vi.spyOn(gemini, 'analyzeMealText').mockRejectedValue(new Error('Ce texte ne décrit pas un repas.'))
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
+    fireEvent.change(screen.getByLabelText(/Décrivez votre repas/i), { target: { value: 'bonjour' } })
+    fireEvent.click(screen.getByRole('button', { name: /Remplir avec Gemini/i }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Ce texte ne décrit pas un repas.')
+    expect(screen.getByLabelText(/Ajouter un ingrédient/i)).toBeEnabled()
+    spy.mockRestore()
+  })
+
+  it('sans clé Gemini : pas de champ de description, renvoi vers les Paramètres', () => {
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
+    expect(screen.queryByLabelText(/Décrivez votre repas/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/clé Gemini dans Plus → Paramètres/i)).toBeInTheDocument()
+  })
+
+  it('« Refaire » ne propose pas de description (le repas est déjà rempli)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([{
+      id: 1, type: 'food', source: 'app_food', at: '2026-10-07T12:00:00Z',
+      payload: { items: [{ ingredient: 'Abondance', quantity: '50 g', quantity_g: 50 }] },
+    }])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.click(await screen.findByRole('button', { name: /Refaire ce repas/i }))
+    expect(screen.queryByLabelText(/Décrivez votre repas/i)).not.toBeInTheDocument()
+  })
+})

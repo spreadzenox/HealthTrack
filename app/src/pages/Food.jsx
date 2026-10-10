@@ -153,7 +153,7 @@ export default function Food() {
   return (
     <section className="food-page">
       <h2 className="page-title">Alimentation</h2>
-      <p className="page-intro">Photographiez votre assiette, saisissez-la à la main ou refaites un repas habituel en un tap.</p>
+      <p className="page-intro">Photographiez votre assiette, décrivez-la en quelques mots ou refaites un repas habituel en un tap.</p>
 
       <div
         className="upload-zone"
@@ -198,7 +198,7 @@ export default function Food() {
 
       {!quickMeal && (
         <button type="button" className="btn btn-secondary quick-meal-btn" onClick={() => startQuickMeal()}>
-          ✍️ Saisir sans photo
+          ✍️ Décrire ou saisir sans photo
         </button>
       )}
 

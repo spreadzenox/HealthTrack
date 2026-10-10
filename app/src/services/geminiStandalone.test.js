@@ -4,7 +4,7 @@ vi.mock('./imagePrep', () => ({
   prepareImageForGemini: vi.fn(async () => ({ base64: 'QUJD', mimeType: 'image/jpeg' })),
 }))
 
-import { analyzeWithGemini, extractResponseText } from './geminiStandalone'
+import { analyzeWithGemini, analyzeMealText, extractResponseText, MEAL_TEXT_MAX_LENGTH } from './geminiStandalone'
 import { prepareImageForGemini } from './imagePrep'
 import { setGeminiModel } from '../settings/geminiModel'
 
@@ -121,5 +121,62 @@ describe('extractResponseText', () => {
   })
   it('renvoie une chaîne vide si rien', () => {
     expect(extractResponseText({})).toBe('')
+  })
+})
+
+describe('analyzeMealText — repas décrit en quelques mots', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    globalThis.fetch = vi.fn()
+  })
+
+  it("n'envoie que la description (aucune image) avec le schéma JSON", async () => {
+    fetch.mockResolvedValue(okResponse('{"not_food": false, "ingredients": []}'))
+    await analyzeMealText('  2 œufs au plat et une tartine beurrée  ', 'KEY')
+    const body = JSON.parse(fetch.mock.calls[0][1].body)
+    const parts = body.contents[0].parts
+    expect(parts.some((p) => p.inlineData)).toBe(false)
+    const text = parts.map((p) => p.text).join('\n')
+    expect(text).toContain('2 œufs au plat et une tartine beurrée')
+    expect(body.generationConfig.responseSchema.properties.ingredients).toBeDefined()
+  })
+
+  it('rappelle les unités ménagères françaises et les matières grasses de cuisson', async () => {
+    fetch.mockResolvedValue(okResponse('{"not_food": false, "ingredients": []}'))
+    await analyzeMealText('une omelette', 'KEY')
+    const prompt = JSON.parse(fetch.mock.calls[0][1].body).contents[0].parts[0].text
+    expect(prompt).toMatch(/cuillère à soupe/i)
+    expect(prompt).toMatch(/tranche de pain/i)
+    expect(prompt).toMatch(/matière grasse|huile|beurre/i)
+  })
+
+  it('rapproche les noms de la base et garde le nom du plat', async () => {
+    fetch.mockResolvedValue(okResponse(JSON.stringify({
+      not_food: false,
+      dish: 'Omelette',
+      ingredients: [{ ingredient: 'abondance', quantity_g: 30, confidence: 'medium' }],
+    })))
+    const res = await analyzeMealText('omelette au fromage', 'KEY')
+    expect(res.dish).toBe('Omelette')
+    expect(res.provider).toBe('gemini')
+    expect(res.items).toEqual([{ ingredient: 'Abondance', quantity: '30 g', quantity_g: 30, confidence: 'medium' }])
+  })
+
+  it('remonte la raison si le texte ne décrit pas un repas', async () => {
+    fetch.mockResolvedValue(okResponse('{"not_food": true, "reason": "Ce texte ne décrit pas un repas."}'))
+    await expect(analyzeMealText('bonjour', 'KEY')).rejects.toThrow('Ce texte ne décrit pas un repas.')
+  })
+
+  it('refuse une description vide sans appeler Gemini', async () => {
+    await expect(analyzeMealText('   ', 'KEY')).rejects.toThrow(/Décrivez/)
+    expect(fetch).not.toHaveBeenCalled()
+  })
+
+  it('tronque une description trop longue', async () => {
+    fetch.mockResolvedValue(okResponse('{"not_food": false, "ingredients": []}'))
+    await analyzeMealText('pâtes '.repeat(400), 'KEY')
+    const prompt = JSON.parse(fetch.mock.calls[0][1].body).contents[0].parts[0].text
+    const described = prompt.split('DESCRIPTION DU REPAS')[1]
+    expect(described.length).toBeLessThan(MEAL_TEXT_MAX_LENGTH + 200)
   })
 })
