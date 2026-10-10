@@ -1,6 +1,6 @@
 # 2026-10-10 16:30 UTC — Analyses : jour sans repas saisi ≠ jeûne
 
-**Type** : 🐛 (moteur d'analyse)  ·  **PR** : #PR (voir ci-dessous)
+**Type** : 🐛 (moteur d'analyse)  ·  **PR** : #91 (fusionnée)
 
 ## Pourquoi
 Item n° 2 des « Prochaines étapes », suite logique du run 12:30 (mesure absente ≠ 0). Dans `buildLaggedDataset`, un
