@@ -21,7 +21,15 @@ describe('Settings — Gemini', () => {
   it('prévient qu’une clé gratuite permet à Google d’utiliser les photos', () => {
     renderSettings()
     expect(screen.getByText(/Avec une clé gratuite/i)).toBeInTheDocument()
-    expect(screen.getByText(/relues par des personnes/i)).toBeInTheDocument()
+    expect(screen.getByText(/relus par des personnes/i)).toBeInTheDocument()
+  })
+
+  it('dit tout ce qui part chez Google : la photo, ou le texte d’un repas décrit', () => {
+    renderSettings()
+    const sent = screen.getByText(/Ce qui est envoyé/i).closest('p')
+    expect(sent).toHaveTextContent(/photo du repas/i)
+    expect(sent).toHaveTextContent(/texte/i)
+    expect(screen.getByText(/Sans clé/i)).toHaveTextContent(/description/i)
   })
 
   it('permet de choisir le modèle Gemini et l’enregistre', () => {

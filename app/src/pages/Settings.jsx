@@ -82,8 +82,8 @@ export default function Settings() {
       <div className="settings-block">
         <h3 className="section-title">Analyse des ingrédients (mode autonome)</h3>
         <p className="page-intro">
-          Pour utiliser l'analyse photo <strong>sans serveur</strong>, ajoutez votre clé API Gemini.
-          Elle reste sur cet appareil et n'est jamais envoyée ailleurs qu'à Google.
+          Pour analyser un repas en photo ou décrit en quelques mots <strong>sans serveur</strong>, ajoutez
+          votre clé API Gemini. Elle reste sur cet appareil et n'est jamais envoyée ailleurs qu'à Google.
         </p>
         <p className="hint">
           Créez une clé gratuite sur{' '}
@@ -106,8 +106,8 @@ export default function Settings() {
         />
         <p id="gemini-key-hint" className="hint">
           {hasGeminiApiKey()
-            ? 'Une clé est enregistrée (analyse photo disponible).'
-            : "Sans clé, l'analyse photo n'est pas disponible : ajoutez une clé ci-dessus."}
+            ? 'Une clé est enregistrée (analyse photo et description disponibles).'
+            : "Sans clé, ni l'analyse photo ni le remplissage à partir d'une description ne sont disponibles ; la saisie manuelle reste possible."}
         </p>
         <div className="actions">
           <button type="button" className="btn" onClick={handleSave}>
@@ -140,12 +140,12 @@ export default function Settings() {
         <div className="gemini-privacy">
           <p className="hint">
             <strong>🔒 Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans
-            métadonnées (position GPS, date, modèle de téléphone). Aucune autre donnée de santé
-            ne quitte l&apos;appareil.
+            métadonnées (position GPS, date, modèle de téléphone), ou le texte d&apos;un repas décrit. Les
+            calories sont calculées sur le téléphone ; aucune autre donnée de santé ne quitte l&apos;appareil.
           </p>
           <p className="hint">
-            <strong>⚠️ Avec une clé gratuite</strong>, Google peut utiliser les photos envoyées pour
-            améliorer ses produits, et elles peuvent être relues par des personnes. Pour l&apos;éviter,
+            <strong>⚠️ Avec une clé gratuite</strong>, Google peut utiliser les photos et textes envoyés pour
+            améliorer ses produits, et ils peuvent être relus par des personnes. Pour l&apos;éviter,
             activez la facturation sur votre projet Google AI Studio (offre payante).{' '}
             <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener noreferrer">
               Conditions Gemini

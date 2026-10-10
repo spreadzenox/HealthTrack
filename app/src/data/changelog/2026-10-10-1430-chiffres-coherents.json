@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-10",
+  "kind": "correctif",
+  "title": "« Votre cœur vs votre norme » : des chiffres qui ne se contredisent plus",
+  "items": [
+    "La carte FC au repos pouvait afficher « 61 bpm — plus basse que d’habitude » avec une norme « 61–65 bpm » : les valeurs étaient arrondies à l’entier, pas le calcul. Dans ce cas, la carte affiche maintenant une décimale (« 60,5 bpm », norme « 60,6–65,1 »).",
+    "Paramètres : l’app indique désormais clairement ce qui part chez Google — la photo du repas, ou le texte d’un repas décrit — et rappelle que la saisie manuelle fonctionne sans clé.",
+    "Données : le texte d’introduction mentionne enfin les mesures de la montre et de la balance, déjà enregistrées sur l’appareil."
+  ]
+}

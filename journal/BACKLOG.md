@@ -100,6 +100,8 @@ puis l'analyse (statistiques, radar), puis la restitution (revue IA, notificatio
 
 ## Idées en vrac (à trier)
 
+- Tableau de bord : l'introduction (« centralise vos données… montre Samsung Fit 3 ») occupe le haut de l'écran même avec des données → la masquer/raccourcir quand des données existent ; « Prédiction ML » → « Prédiction du jour » (jargon).
+- ~~Cartes cœur : arrondi qui contredisait le statut (« 61 » dans « 61–65 » mais « plus basse »)~~ (run 10/10 14:30) ; Paramètres « ce qui est envoyé » à jour avec le repas décrit (run 14:30).
 - Titre de page « Recommandations » vs onglet « Analyses » : harmoniser quand la page sera retravaillée (« Analyses » couvre aussi habitudes et modèle).
 _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ici ce qui n'a pas encore de chantier)_
 

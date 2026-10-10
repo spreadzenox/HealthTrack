@@ -49,6 +49,15 @@ describe('BaselineCards', () => {
     expect(screen.getByText(/Votre norme : 59–61 bpm/)).toBeInTheDocument()
   })
 
+  it('shows a decimal when rounding would put an out-of-norm mean inside the displayed range', async () => {
+    // Norme ≈ 59,0–61,0 ; moyenne 58,6 → « plus basse », mais arrondie elle s'afficherait « 59 » dans « 59–61 ».
+    listEntries.mockResolvedValue([...history(rhr, 60), rhr(0, 58.6), rhr(1, 58.6), rhr(2, 58.6)])
+    renderCards()
+    expect(await screen.findByText('Plus basse que d’habitude')).toBeInTheDocument()
+    expect(screen.getByText('58,6')).toBeInTheDocument()
+    expect(screen.getByText(/Votre norme : 59,0–61,0 bpm/)).toBeInTheDocument()
+  })
+
   it('flags an unfavourable deviation with a cautious, non-diagnostic hint', async () => {
     listEntries.mockResolvedValue([
       ...history(rhr, 60), rhr(0, 66), rhr(1, 66), rhr(2, 66),
