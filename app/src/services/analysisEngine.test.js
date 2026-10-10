@@ -1107,6 +1107,22 @@ describe('buildTodayRow', () => {
     expect(result.cigaretteCount).toBe(2)
   })
 
+  it("sans repas encore aujourd'hui, l'apport lissé reste celui des jours précédents (pas un jeûne)", () => {
+    const now = new Date()
+    const entries = []
+    for (let off = 5; off >= 1; off--) {
+      const date = localDateKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - off, 12).toISOString())
+      entries.push(makeWellbeing(date, 3))
+      entries.push(makeFood(date, [{ ingredient: 'Riz blanc cuit', quantity_g: 200 }]))
+    }
+    const historicalRaw = buildDailyDataset(entries)
+    const prevKcal = historicalRaw[0].kcal
+    entries.push({ type: 'sleep', source: 'health_connect', at: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7).toISOString(), payload: { durationMinutes: 420 } })
+    const result = buildTodayRow(entries, historicalRaw)
+    expect(prevKcal).toBeGreaterThan(0)
+    expect(result.kcal).toBeCloseTo(prevKcal, 5)
+  })
+
   it('today wellbeing is null when no wellbeing score today', () => {
     const todayStr = localDateKey(new Date().toISOString())
     const entries = [
@@ -1201,6 +1217,66 @@ describe('computeTodayPrediction', () => {
         expect(predWithWellbeing.actual).toBeCloseTo(5, 1)
       }
     }
+  })
+})
+
+describe('computeTodayPrediction — journée en cours incomplète', () => {
+  // Historique réaliste : les jours à beaucoup de pas sont les meilleurs jours,
+  // la FC au repos et le sommeil sont mesurés chaque jour.
+  function dayKeyOffset(offset) {
+    const now = new Date()
+    return localDateKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - offset, 12).toISOString())
+  }
+  function todayAt(hour) {
+    const now = new Date()
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour).toISOString()
+  }
+  function history() {
+    const entries = []
+    let meanWb = 0
+    for (let off = 40; off >= 1; off--) {
+      const date = dayKeyOffset(off)
+      const steps = 4000 + ((off * 3571) % 8000)
+      const wb = Math.max(0, Math.min(5, Math.round((steps - 3000) / 2000)))
+      meanWb += wb / 40
+      entries.push(makeWellbeing(date, wb))
+      entries.push(makeSteps(date, steps))
+      entries.push(makeSleep(date, 420 + (off % 5) * 10))
+      entries.push(makeHeartRate(date, 60 + (off % 3)))
+      entries.push(makeFood(date, [{ ingredient: 'Riz blanc cuit', quantity_g: 200 }]))
+    }
+    return { entries, meanWb }
+  }
+
+  it('le matin (nuit seule, aucun pas ni repas encore) : prédiction proche de la moyenne, pas 0', () => {
+    const { entries, meanWb } = history()
+    entries.push({ type: 'sleep', source: 'health_connect', at: todayAt(7), payload: { durationMinutes: 440 } })
+    const result = computeTodayPrediction(entries)
+    expect(result).not.toBeNull()
+    expect(Math.abs(result.predicted - meanWb)).toBeLessThan(0.75)
+  })
+
+  it('quelques pas déjà faits ne font pas chuter la prédiction', () => {
+    const { entries, meanWb } = history()
+    entries.push({ type: 'steps', source: 'health_connect', at: todayAt(9), payload: { value: 800 } })
+    const result = computeTodayPrediction(entries)
+    expect(Math.abs(result.predicted - meanWb)).toBeLessThan(0.75)
+  })
+
+  it('beaucoup de pas déjà faits comptent : prédiction au-dessus de la moyenne', () => {
+    const { entries, meanWb } = history()
+    entries.push({ type: 'steps', source: 'health_connect', at: todayAt(17), payload: { value: 12000 } })
+    const result = computeTodayPrediction(entries)
+    expect(result.predicted).toBeGreaterThan(meanWb + 0.75)
+  })
+
+  it('indique sur quoi la prédiction s\'appuie', () => {
+    const { entries } = history()
+    entries.push({ type: 'sleep', source: 'health_connect', at: todayAt(7), payload: { durationMinutes: 440 } })
+    const result = computeTodayPrediction(entries)
+    expect(result.assumedTypical).toContain('steps')
+    expect(result.assumedTypical).toContain('restingHR')
+    expect(result.assumedTypical).not.toContain('sleepMinutes')
   })
 })
 

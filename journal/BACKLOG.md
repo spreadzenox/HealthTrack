@@ -50,6 +50,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Sommeil au jour du réveil dans les analyses** (corrélations, modèle avancé, prédiction du jour) ; éveils / « au lit » non additionnés aux phases (run 20:30)
 - [x] **Contrôle du week-end** (R#25, étape 1) : corrélations partielles (centrage par groupe week-end / semaine, 1 ddl retiré), variable « week-end » forcée et non pénalisée dans le modèle avancé, effet affiché ; ≥ 3 jours de chaque (run 10/10 06:30)
 - [x] **Contrôle du week-end, étape 2** : « Vos habitudes » stratifié par type du jour mesuré (écart intra-strate pondéré CMH, permutation dans les strates, écart brut conservé, tag non séparable laissé en collecte) (run 10/10 08:30)
+- [x] **Prédiction du jour sur journée incomplète** : les totaux du jour (pas, dépense, cigarettes…) comptent pour max(déjà fait, moyenne), les mesures pas encore prises (FC repos, VFC, SpO₂, sommeil) pour la moyenne, l'apport du jour pour au moins la moyenne lissée des jours précédents ; mention « journée habituelle » (run 10/10 10:30)
+- [ ] Valeurs manquantes à l'entraînement : un jour sans FC repos / VFC / SpO₂ mesurée vaut 0 dans `buildDailyDataset` (montre non portée) → imputer la moyenne (ou indicateur « manquant ») dans les corrélations et le modèle avancé ; vérifier sur la démo avec des trous
 - [ ] Effets décalés (lags 0–3 j) sur sommeil / activité / tags (le lissage 10,5 j des nutriments existe déjà)
 - [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
 - [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
@@ -91,7 +93,7 @@ Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les donné
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
 1. 🏗️ Effets décalés (lags 0–3 j) dans les analyses (C3). Contrôle du week-end : fait partout (runs 06:30 et 08:30).
-2. 🐛 Suite de la chasse aux bugs : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
+2. 🐛 Valeurs manquantes à l'entraînement (montre non portée = 0) — même famille que le bug de la prédiction du jour (run 10:30). Puis suite de la chasse aux bugs : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 3. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
 4. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
 

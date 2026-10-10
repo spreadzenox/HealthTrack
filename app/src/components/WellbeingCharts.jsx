@@ -202,6 +202,12 @@ export default function WellbeingCharts() {
               · réel : {todayPrediction.actual.toFixed(1).replace('.', ',')}
             </span>
           )}
+          {todayPrediction.assumedTypical?.length > 0 && (
+            <span className="wellbeing-prediction-note">
+              Journée en cours : ce qui n'est pas encore connu (pas, repas, mesures…) compte comme une journée
+              habituelle. Une estimation, pas une mesure.
+            </span>
+          )}
         </div>
       )}
 
