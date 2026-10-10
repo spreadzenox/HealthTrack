@@ -6,9 +6,14 @@ set -euo pipefail
 echo "=== Émulateur Samsung A56 en ligne ==="
 adb devices
 
-echo "=== Résolution de l'écran ==="
+# Les réglages hw.lcd.* de l'AVD ne sont pas repris par l'émulateur (écran 320 × 640) :
+# on impose l'écran du Galaxy A56 (1080 × 2340) et une densité donnant ~412 dp de large,
+# comme le viewport de `npm run visual`.
+echo "=== Écran du Galaxy A56 ==="
+adb shell wm size 1080x2340 || true
+adb shell wm density 420 || true
+sleep 2
 adb shell wm size
-echo "=== Densité de l'écran ==="
 adb shell wm density
 
 echo "=== Installation de l'APK HealthTrack ==="

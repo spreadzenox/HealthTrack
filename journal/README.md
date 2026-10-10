@@ -86,12 +86,21 @@ une release à chaque changement validé, et tient ce journal.
   Repas, Nutrition, Analyses (= Recommandations) et **Plus** (Données, Connecteurs, Paramètres,
   Nouveautés, avec un point rouge s'il y a du nouveau). L'en-tête tient sur une ligne : le contenu
   commence ~170 px plus haut sur chaque page.
+- **Barre d'onglets au-dessus des boutons d'Android** : sur Android 15/16, l'app est dessinée sous
+  la barre d'état et la barre de navigation. Vérifié sur un émulateur Android 16 : l'heure recouvrait
+  le haut de page, le trait gestuel passait sur les onglets et les boutons de la fenêtre « Comment vous
+  sentez-vous ? » étaient coupés. Corrigé : tout reste dans la zone visible (v77).
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
 - CI Android réparée : le build de l'APK échouait sur les runners GitHub actuels → sans correctif,
   plus aucune release n'aurait été publiée (release v59 = premier build réparé).
 - Veille initiale : 28 idées classées et sourcées (`RESEARCH.md`), intégrées au backlog.
+- Le test sur émulateur Android capture enfin **l'app réellement ouverte** (avant : écran blanc puis
+  écran d'accueil d'Android) — c'est ce qui a révélé le problème des barres système.
+- Veille du 10/10 : saisie des repas en texte par IA (le modèle ne doit donner qu'aliments et grammes,
+  les nutriments venant de la table locale), effet du jour de la semaine sur le bien-être, régularité
+  du sommeil, coachs IA. Détails dans `RESEARCH.md`.
 - Nouveau module statistique testé (n effectif, p-valeurs, correction Benjamini-Hochberg) : socle
   des futures analyses (expériences personnelles, radar).
 
@@ -112,14 +121,13 @@ une release à chaque changement validé, et tient ce journal.
   photo échoue depuis la mise à jour, dites-le-moi**.
 - Après la v75, les **Recommandations** (basiques et avancées) peuvent changer : correction du
   rattachement du sommeil, pas un caprice du modèle.
-- **Barre d'onglets** : vérifiée seulement dans un navigateur simulant l'A56. **Si elle est
-  cachée en partie par la barre de navigation Android** (boutons ou trait gestuel), dites-le-moi :
-  c'est un réglage d'affichage bord à bord à ajuster.
+- **Barre d'onglets** : corrigée et vérifiée sur émulateur Android 16 (v77). Si sur votre A56 elle
+  paraît trop haute (espace vide sous les onglets) ou encore cachée, dites-le-moi.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — veille (état de l'art 2026), effets décalés (J-1 → J) dans les analyses, puis
-saisie d'un repas en texte libre / dictée.
+**Prochaines priorités** — saisie d'un repas en texte libre / dictée, contrôle du week-end puis effets
+décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -140,6 +148,7 @@ saisie d'un repas en texte libre / dictée.
 | 09/10 18:30 — [Repas sans photo, repas habituels](runs/2026-10-09-1830-repas-sans-photo.md) | 🏗️ | PR #78 fusionnée → v74 |
 | 09/10 20:30 — [Sommeil au bon jour dans les analyses](runs/2026-10-09-2030-sommeil-analyses.md) | 🐛 | PR #80 fusionnée → v75 |
 | 09/10 22:30 — [Barre d'onglets en bas](runs/2026-10-09-2230-barre-onglets.md) | 🎨 | PR #81 fusionnée → v76 |
+| 10/10 00:30 — [Veille + barres système Android](runs/2026-10-10-0030-veille-zones-systeme.md) | 🔭 | PR #82 |
 
 ---
 
@@ -288,7 +297,14 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
   viewport Galaxy A56 (412×915, Chromium/Playwright). Options : `--empty`, `--light`,
   `--routes=/,/food`, `--radar` (début d'infection simulé), `--food-analysis` (analyse photo
   simulée sur /food, réponse Gemini factice), `--update-banner`, `--wellbeing-prompt`, `--whats-new`, `--out=`,
-  `--click="Recommandations avancées"` (clique un bouton avant la capture, ex. un onglet).
+  `--click="Recommandations avancées"` (clique un bouton avant la capture, ex. un onglet),
+  `--viewport` (capture de l'écran visible, pour les éléments fixes), `--insets=24,48` (simule les
+  barres système d'Android 15+ ; à combiner avec `--viewport`).
+- **Captures sur émulateur Android réel** : chaque PR produit les artefacts `screenshots-samsung-a56-api35`
+  et `-api36` (`screenshot_app.png`, `screenshot_plus.png` + arbres `ui_*.xml`). Les récupérer avec
+  `gh api repos/spreadzenox/HealthTrack/actions/runs/<id>/artifacts` puis `…/artifacts/<id>/zip`, et les
+  regarder pour tout changement d'interface. Toujours utiliser `var(--safe-top)` / `var(--safe-bottom)`,
+  jamais `env(safe-area-inset-*)` directement (WebView ≤ 139).
   Pour une interaction précise (clic, saisie, modale), écrire un petit script Playwright
   ad hoc dans le scratchpad en s'inspirant de `visual-check.mjs`.
 - **Données de démo** : enrichir `demoData.mjs` quand une nouvelle donnée apparaît, pour

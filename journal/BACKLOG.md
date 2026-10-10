@@ -25,7 +25,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 
 ### C1 — Navigation & design system mobile
 - [x] **Barre d'onglets en bas** : Accueil, Repas, Nutrition, Analyses, Plus (→ Données, Connecteurs, Paramètres, Nouveautés), en-tête compact (run 22:30)
-- [ ] Vérifier la barre sur téléphone (zone gestuelle Android, edge-to-edge) ; au besoin `viewport-fit=cover` + `--safe-area-inset-*` de Capacitor
+- [x] **Zones système Android 15+** : `viewport-fit=cover` + `--safe-area-inset-*` injectées par Capacitor (repli `env()`), fond sous la barre d'état, modales dans la zone visible ; CI émulateur qui capture l'app réellement affichée ; `npm run visual -- --viewport --insets=24,48` (run 10/10 00:30)
+- [ ] Capacitor 8.4 (insets natifs sur API ≤ 34, correctifs 8.3–8.4) + aligner `@capacitor/cli` (^7.6 aujourd'hui) — vérifier avec les captures émulateur
 - [ ] Tokens de design (espacements, typographie, couleurs sémantiques) + composants communs (Card, Stat, Badge, EmptyState)
 - [ ] Mode clair (`prefers-color-scheme`) — vérifier avec `npm run visual -- --light`
 - [ ] Accessibilité : contrastes, cibles tactiles ≥ 44 px, libellés ARIA
@@ -47,7 +48,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Modèle avancé fiabilisé** : bug d'échelle des coefficients standardisés corrigé, doublons |r| > 0,9 écartés (et affichés), ≤ 10 variables, Ridge λ par validation croisée LOO, seuil d'effet 0,1 ET pour les pistes, prédiction du jour alignée sur le même modèle
 - [ ] Modèle avancé, étape 2 : incertitude par piste (IC bootstrap par blocs, stabilité du signe) ; LOO imbriqué si le coût le permet
 - [x] **Sommeil au jour du réveil dans les analyses** (corrélations, modèle avancé, prédiction du jour) ; éveils / « au lit » non additionnés aux phases (run 20:30)
-- [ ] Effets décalés (lags 0–3 j) et contrôle du jour de la semaine (R#25)
+- [ ] Effets décalés (lags 0–3 j) et contrôle du jour de la semaine (R#25) — commencer par une variable « week-end » de contrôle (veille 10/10 §C : bien-être et activité montent ensemble le week-end)
 - [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
 - [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
 - [ ] Analyse avant/après d'un événement (R#21, régression segmentée)
@@ -59,7 +60,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Analyse photo fiabilisée** (R#4) : `responseSchema` (repli sans), noms rapprochés de la base, inconnus signalés/remplaçables, grammes modifiables, confiance « à vérifier », kcal
 - [ ] Analyse photo, étape 2 : question de portion quand la confiance est basse (« petite / moyenne / grande assiette ? ») ; photo de référence (main, carte) ; ~~modifier/supprimer un repas enregistré~~ (livré #72 + run 14:30)
 - [x] **Saisie sans photo + « Refaire » + repas habituels** (R#5) : composition manuelle par recherche, repas fréquents déduits de l'historique, heure modifiable (run 18:30)
-- [ ] Saisie, étape 2 : texte libre / dictée → Gemini (« 2 œufs, une tartine ») vers le même éditeur ; « Refaire » depuis le journal du tableau de bord ; favoris épinglés si besoin
+- [ ] Saisie, étape 2 : texte libre / dictée → Gemini (« 2 œufs, une tartine ») vers le même éditeur — le LLM ne sort que aliments + grammes + confiance, prompt avec unités ménagères françaises et matières grasses de cuisson demandées (veille 10/10 §B) ; « Refaire » depuis le journal du tableau de bord ; favoris épinglés si besoin
 - [ ] Cigarettes avec contexte (R#7) : déclencheur optionnel, heatmap horaire, « envie résistée »
 - [ ] WHO-5 hebdomadaire (R#11) pour valider le score quotidien
 - [ ] Code-barres Open Food Facts + % ultra-transformés (R#17)
@@ -85,15 +86,14 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🔭 Veille (dernière : 08/10 17:00) — saisie texte/dictée des repas, état de l'art 2026.
-2. 🏗️ Effets décalés (lags 0–3 j) et contrôle du jour de la semaine (C3).
-3. 🐛 Chasse aux bugs sur les interactions (formulaires, modales, import d'une ancienne sauvegarde) — dernier run 🐛 : 09/10 20:30.
-4. 🏗️ Saisie texte libre / dictée → Gemini, vers `NewMealForm`.
+1. 🏗️ Saisie texte libre / dictée → Gemini, vers l'éditeur de repas (veille 10/10 §B pour le prompt).
+2. 🐛 Chasse aux bugs sur les interactions (formulaires, modales, import d'une ancienne sauvegarde) — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`).
+3. 🏗️ Contrôle « week-end » puis effets décalés (lags 0–3 j) dans les analyses (C3).
+4. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
 5. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
 
 ## Idées en vrac (à trier)
 
-- CI émulateur : la capture « startup » montre l'écran d'accueil d'Android, pas l'app → lancer l'activité et capturer après chargement, pour vérifier zones système et rendu WebView réel.
 - Titre de page « Recommandations » vs onglet « Analyses » : harmoniser quand la page sera retravaillée (« Analyses » couvre aussi habitudes et modèle).
 _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ici ce qui n'a pas encore de chantier)_
 
@@ -119,6 +119,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-10 — Veille ciblée (bord à bord Android, saisie texte, jour de la semaine, coach IA) ; barre d'onglets / en-tête / modales au-dessus des barres système Android 15+ ; CI émulateur qui capture l'app réelle (run 00:30)
 - [x] 2026-10-09 — Barre d'onglets en bas + page « Plus » + en-tête compact (run 22:30)
 - [x] 2026-10-09 — Analyses : sommeil rattaché au jour du réveil (avant : nuit suivante), éveils non comptés ; « 7 h 11 » ; bouton Nutrition vide (run 20:30)
 - [x] 2026-10-09 — Alimentation : « Saisir sans photo », « Repas habituels » et « Refaire » (#78, v74)

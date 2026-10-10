@@ -5,6 +5,77 @@
 
 ---
 
+## 2026-10-10 — Veille ciblée : affichage Android 15+, saisie texte des repas, analyses décalées, coach IA
+
+> Run 🔭 court et ciblé sur les 4 prochains chantiers du backlog. Références `[V2-n]` en fin de section.
+
+### A. Affichage bord à bord Android 15+ (risque concret pour la barre d'onglets)
+- Android 15 (API 35) impose l'affichage bord à bord aux apps qui ciblent SDK ≥ 35 ; Android 16 supprime
+  l'échappatoire `windowOptOutEdgeToEdgeEnforcement` [V2-1]. HealthTrack cible SDK 36 → la WebView est
+  dessinée **sous** la barre d'état et la barre de navigation sur le Galaxy A56.
+- Lecture du code de Capacitor 8.2 (`SystemBars.java`) : les variables `--safe-area-inset-*` ne sont injectées
+  **que si** la page déclare `viewport-fit=cover` ; et sur les WebView ≤ 139, `env(safe-area-inset-*)` renvoie
+  souvent 0 ou une valeur fausse [V2-1]. HealthTrack n'avait pas `viewport-fit=cover` et n'utilisait que `env()`
+  → la barre d'onglets (fixée en bas) pouvait passer sous la barre de navigation Android. **Corrigé ce run.**
+- Recommandation de référence : `viewport-fit=cover` + `var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))`,
+  Capacitor ≥ 8.3.2 (insets natifs aussi sur API ≤ 34, corrections 8.3–8.4) [V2-1][V2-2]. → Backlog : monter
+  `@capacitor/android`/`core` en 8.4 (et aligner `@capacitor/cli`, encore en ^7.6) dans un run dédié, test émulateur à l'appui.
+
+### B. Saisie d'un repas en texte libre / dictée (C4 étape 2)
+- Pas de benchmark 2026 du « texte libre → nutriments » par LLM généraliste. Le meilleur indice : sur des rappels
+  de 24 h (NHANES), un LLM « nu » se trompe de ~650 kcal en moyenne ; avec exemples / ajustement fin, ~170–190 kcal
+  [V2-3]. Les LLM estiment mal les **portions** et les ingrédients cachés (huile, sauces, sel) [V2-4][V2-5].
+- Les apps photo grand public (MyFitnessPal, LoseIt!, CalAI…) **sous-estiment d'environ un tiers** l'énergie et les
+  graisses (NIH, NUTRITION 2026) [V2-6] ; à l'inverse, la grande cohorte PREDICT (10 000 repas) trouve un biais moyen
+  modéré (+139 kcal/repas) quand la décomposition est bonne [V2-6].
+- **Conséquence de conception (confirme l'architecture actuelle)** : le LLM ne doit sortir que *aliments + grammes +
+  confiance* (schéma JSON), les nutriments viennent de la table CIQUAL locale ; l'utilisateur corrige les grammes
+  (éditeur déjà existant). Ajouter au prompt : unités ménagères françaises (« 1 c. à soupe d'huile ≈ 10 g »,
+  « 1 tranche de pain ≈ 35 g »), et demander explicitement les matières grasses de cuisson. SnappyMeal (2025) :
+  les utilisateurs plébiscitent le choix entre plusieurs modes de saisie (photo, texte, voix) [V2-4].
+
+### C. Analyses : jour de la semaine et effets décalés (C3)
+- Grande étude britannique (~49 000 adultes, BMJ Mental Health 2025) : bien-être meilleur l'été, variations plus
+  fortes le week-end, effet du jour de la semaine réel mais modeste [V2-7]. Une partie de l'« effet week-end »
+  vient de **qui répond quand** (sélection) [V2-8] — en N-of-1, l'équivalent est : on note plus volontiers son
+  bien-être certains jours. → contrôler le jour de la semaine (week-end vs semaine) avant d'attribuer un effet
+  à un levier (ex. « plus de pas » corrélé au bien-être parce que les deux montent le samedi).
+- Régularité du sommeil : l'indice SRI prédit mieux la mortalité que la durée (UK Biobank, 60 977 personnes,
+  −20 à −48 % de risque, observationnel) [V2-9] ; régularité aussi liée à moins de dépression/anxiété et
+  d'événements cardiovasculaires [V2-10]. Renforce R#6 (régularité) — à présenter sans culpabiliser.
+
+### D. Coach IA et rétention
+- Pas encore d'essai randomisé publié et solide d'un coach LLM nourri de données de montre ; des prépublications
+  (HabitBot, 46 adultes, 12 semaines) et un coach Stanford (MHC-Coach) dont les messages générés battent des
+  messages écrits par des humains [V2-11]. Oura Advisor, WHOOP, Fitbit AI Coach sont en production sans essais publiés.
+  → garder la revue hebdo IA (R#13) ancrée sur des agrégats et vérifiée, sans promesse d'efficacité.
+- Abandon des apps de suivi : perte de motivation, données jugées **inexactes ou inutiles**, essais d'autres apps
+  [V2-12][V2-13]. Les deux leviers sous notre contrôle : fiabilité visible (corriger, montrer l'incertitude) et
+  « à quoi ça me sert » (actions concrètes, expériences N-of-1).
+
+### Idées ajoutées au backlog
+- 🐛 **Barre d'onglets / en-tête au-dessus des barres système Android** (livré ce run) + capture CI de l'app réelle.
+- 🏗️ Capacitor 8.4 (insets natifs, corrections), alignement du CLI.
+- 🏗️ Saisie texte : prompt avec unités ménagères françaises et matières grasses de cuisson demandées explicitement.
+- 🏗️ Analyses : variable « week-end » de contrôle dans les corrélations et le modèle avancé (avant les lags).
+
+### Sources (V2)
+[V2-1] Capawesome, « Capacitor edge-to-edge and safe areas guide » (2026) — https://capawesome.io/blog/capacitor-edge-to-edge-and-safe-areas-guide/
+[V2-2] Capgo, « Capacitor edge-to-edge display native config » — https://capgo.app/blog/capacitor-edge-to-edge-display-native-config/
+[V2-3] Carrillo-Larco, LLMs for energy and macronutrients estimation from 24-h recalls (arXiv 2509.13268, 2025) — https://arxiv.org/abs/2509.13268v1
+[V2-4] SnappyMeal: multimodal AI food logging (arXiv 2511.03907, 2025) — https://arxiv.org/pdf/2511.03907
+[V2-5] Evaluating Gemini in food image-based nutrition description (arXiv 2511.08215) — https://arxiv.org/pdf/2511.08215
+[V2-6] Biolayne, « Can we use AI to accurately track calories with a picture? » (synthèse NIH NUTRITION 2026, PREDICT) — https://biolayne.com/reps/issue-44/can-we-use-ai-to-accurately-track-calories-with-a-picture/
+[V2-7] BMJ Mental Health 2025, heure, jour et saison du bien-être (~49 000 adultes) — https://pubmed.ncbi.nlm.nih.gov/39904722/
+[V2-8] Day-of-the-week effects in subjective well-being: does selectivity matter? — https://novaresearch.unl.pt/en/publications/day-of-the-week-effects-in-subjective-well-being-does-selectivity-2/
+[V2-9] Windred et al., Sleep regularity is a stronger predictor of mortality risk than sleep duration (Sleep, 2023) — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10782501/
+[V2-10] Cribb et al., eLife 2023, régularité du sommeil et mortalité — https://elifesciences.org/articles/94131
+[V2-11] Sahha, panorama des coachs IA santé (2026) — https://sahha.ai/blog/ai-health-coaching-platforms/ ; HabitBot (prépublication JMIR) — https://preprints.jmir.org/preprint/111609
+[V2-12] Mustafa et al., User engagement and abandonment of mHealth (2022) — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8872344/
+[V2-13] Epstein et al., Beyond abandonment to next steps (CHI 2016) — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5428074/
+
+---
+
 ## 2026-10-08 — HealthTrack — Recherche pour le backlog produit (octobre 2026)
 
 > Contexte : app santé personnelle, local-first (IndexedDB, pas de backend), React + Vite + Capacitor, UI en français.
