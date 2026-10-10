@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-10",
+  "kind": "correctif",
+  "title": "Restaurer une sauvegarde sans risque",
+  "items": [
+    "Données → Importer : choisir un fichier n’efface plus rien tout de suite. Vous voyez d’abord son contenu (date de la sauvegarde, nombre d’entrées, période couverte, repas / notes / mesures).",
+    "« Ajouter à mes données » (recommandé) ne reprend que ce qui manque : importer deux fois le même fichier ne crée pas de doublons, et rien de ce que vous avez saisi depuis n’est perdu.",
+    "« Remplacer mes données » demande une confirmation qui dit combien d’entrées actuelles seront supprimées.",
+    "Un fichier qui n’est pas une sauvegarde HealthTrack est refusé sans toucher à vos données (avant, il pouvait tout effacer). Les entrées illisibles d’une ancienne sauvegarde sont signalées et ignorées."
+  ]
+}

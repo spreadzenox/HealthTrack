@@ -6,6 +6,8 @@ import Data from './Data'
 vi.mock('../storage/localHealthStorage', () => ({
   exportToJson: vi.fn(),
   importFromJson: vi.fn(),
+  parseBackup: vi.fn(),
+  countAllEntries: vi.fn(),
 }))
 
 vi.mock('@capacitor/core', () => ({
@@ -159,5 +161,108 @@ describe('Data page — export (Android native)', () => {
       fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
     })
     expect(screen.getByText(/Documents de votre appareil/i)).toBeInTheDocument()
+  })
+})
+
+describe('Data page — import (aperçu puis choix)', () => {
+  const summary = {
+    entries: new Array(3).fill({}),
+    invalid: 0,
+    exportedAt: '2026-10-01T10:00:00.000Z',
+    firstAt: '2026-01-02T08:00:00Z',
+    lastAt: '2026-09-30T12:00:00Z',
+    byType: { food: 1, steps: 2 },
+  }
+
+  beforeEach(async () => {
+    const storage = await import('../storage/localHealthStorage')
+    storage.importFromJson.mockReset()
+    storage.parseBackup.mockReset()
+    storage.countAllEntries.mockReset()
+    storage.parseBackup.mockReturnValue(summary)
+    storage.countAllEntries.mockResolvedValue(10)
+    storage.importFromJson.mockResolvedValue({ imported: 3, skipped: 0, invalid: 0 })
+  })
+
+  async function chooseFile() {
+    renderData()
+    const input = screen.getByLabelText(/Choisir un fichier de sauvegarde/i)
+    const file = { name: 'healthtrack-export-2026-10-01.json', text: () => Promise.resolve('{"entries":[]}') }
+    await act(async () => {
+      fireEvent.change(input, { target: { files: [file] } })
+    })
+  }
+
+  it('shows a preview of the backup without importing anything yet', async () => {
+    const { importFromJson } = await import('../storage/localHealthStorage')
+    await chooseFile()
+    expect(screen.getByText(/3 entrées/)).toBeInTheDocument()
+    expect(screen.getByText(/2 janv\. 2026/)).toBeInTheDocument()
+    expect(screen.getByText(/30 sept\. 2026/)).toBeInTheDocument()
+    expect(screen.getByText(/1 repas/)).toBeInTheDocument()
+    expect(importFromJson).not.toHaveBeenCalled()
+  })
+
+  it('« Ajouter » merges with the current data', async () => {
+    const { importFromJson } = await import('../storage/localHealthStorage')
+    importFromJson.mockResolvedValue({ imported: 2, skipped: 1, invalid: 0 })
+    await chooseFile()
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Ajouter à mes données/i }))
+    })
+    expect(importFromJson).toHaveBeenCalledWith('{"entries":[]}', { merge: true })
+    expect(screen.getByText(/2 entrées ajoutées/)).toBeInTheDocument()
+    expect(screen.getByText(/1 déjà présente/)).toBeInTheDocument()
+  })
+
+  it('« Remplacer » asks for a second confirmation mentioning current data', async () => {
+    const { importFromJson } = await import('../storage/localHealthStorage')
+    await chooseFile()
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Remplacer mes données/i }))
+    })
+    expect(importFromJson).not.toHaveBeenCalled()
+    expect(screen.getByText(/10 entrées actuelles seront supprimées/)).toBeInTheDocument()
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Confirmer le remplacement/i }))
+    })
+    expect(importFromJson).toHaveBeenCalledWith('{"entries":[]}', { merge: false })
+    expect(screen.getByText(/3 entrées importées/)).toBeInTheDocument()
+  })
+
+  it('« Annuler » closes the preview without importing', async () => {
+    const { importFromJson } = await import('../storage/localHealthStorage')
+    await chooseFile()
+    fireEvent.click(screen.getByRole('button', { name: /^Annuler$/ }))
+    expect(screen.queryByRole('button', { name: /Ajouter à mes données/i })).not.toBeInTheDocument()
+    expect(importFromJson).not.toHaveBeenCalled()
+  })
+
+  it('shows an error and imports nothing when the file is not a backup', async () => {
+    const { importFromJson, parseBackup } = await import('../storage/localHealthStorage')
+    parseBackup.mockImplementation(() => {
+      throw new Error("Ce fichier n'est pas une sauvegarde HealthTrack (aucune entrée reconnue).")
+    })
+    await chooseFile()
+    expect(screen.getByText(/pas une sauvegarde HealthTrack/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Ajouter à mes données/i })).not.toBeInTheDocument()
+    expect(importFromJson).not.toHaveBeenCalled()
+  })
+
+  it('says when nothing new was added', async () => {
+    const { importFromJson } = await import('../storage/localHealthStorage')
+    importFromJson.mockResolvedValue({ imported: 0, skipped: 3, invalid: 0 })
+    await chooseFile()
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Ajouter à mes données/i }))
+    })
+    expect(screen.getByText(/Aucune nouvelle entrée \(3 déjà présentes/)).toBeInTheDocument()
+  })
+
+  it('mentions unreadable entries that will be ignored', async () => {
+    const { parseBackup } = await import('../storage/localHealthStorage')
+    parseBackup.mockReturnValue({ ...summary, invalid: 2 })
+    await chooseFile()
+    expect(screen.getByText(/2 entrées illisibles seront ignorées/)).toBeInTheDocument()
   })
 })

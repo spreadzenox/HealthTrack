@@ -75,6 +75,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 
 ### C6 — Qualité, données & fondations
 - [ ] Sync Health Connect en arrière-plan + historique complet (R#16) ; écrire les repas dans HC (R#23)
+- [x] **Import sûr** : aperçu avant import, « Ajouter » sans doublons ou « Remplacer » confirmé, fichier invalide refusé sans rien effacer, entrées illisibles ignorées (run 10/10 04:30)
 - [ ] Sauvegarde chiffrée automatique (R#19, AES-GCM + PBKDF2) — protège contre la perte de données
 - [ ] Dépense énergétique adaptative / TDEE (R#18)
 - [ ] Lint à 0 erreur (baseline 14 erreurs, 1 warning au 2026-10-08)
@@ -87,8 +88,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 Chasse aux bugs sur les interactions (formulaires, modales, import d'une ancienne sauvegarde) — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`).
-2. 🏗️ Contrôle « week-end » puis effets décalés (lags 0–3 j) dans les analyses (C3).
+1. 🏗️ Contrôle « week-end » puis effets décalés (lags 0–3 j) dans les analyses (C3).
+2. 🐛 Suite de la chasse aux bugs : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 3. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
 4. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
 
@@ -119,6 +120,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-10 — Import de sauvegarde sûr : aperçu, « Ajouter » sans doublons, « Remplacer » confirmé, mauvais fichier refusé (run 04:30)
 - [x] 2026-10-10 — Repas décrit en quelques mots (texte ou dictée) → Gemini → éditeur ; recherche « œuf » avec ligature (run 02:30)
 - [x] 2026-10-10 — Veille ciblée (bord à bord Android, saisie texte, jour de la semaine, coach IA) ; barre d'onglets / en-tête / modales au-dessus des barres système Android 15+ ; CI émulateur qui capture l'app réelle (run 00:30)
 - [x] 2026-10-09 — Barre d'onglets en bas + page « Plus » + en-tête compact (run 22:30)

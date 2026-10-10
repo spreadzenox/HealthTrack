@@ -304,44 +304,122 @@ export async function exportToJson() {
   )
 }
 
+const NOT_A_BACKUP = "Ce fichier n'est pas une sauvegarde HealthTrack (aucune entrée reconnue)."
+
+function isNonEmptyString(v) {
+  return typeof v === 'string' && v.trim() !== ''
+}
+
+/** Normalise une entrée de sauvegarde ; renvoie null si elle est illisible. */
+function normalizeBackupEntry(e, now) {
+  if (!e || typeof e !== 'object' || Array.isArray(e)) return null
+  if (!isNonEmptyString(e.type) || !isNonEmptyString(e.source)) return null
+  // Sans date fiable, l'entrée fausserait les analyses (elle tomberait « aujourd'hui »).
+  if (!isNonEmptyString(e.at) || Number.isNaN(new Date(e.at).getTime())) return null
+  let payload = e.payload
+  if (typeof payload === 'string') {
+    try {
+      payload = JSON.parse(payload)
+    } catch {
+      payload = {}
+    }
+  }
+  if (!payload || typeof payload !== 'object') payload = {}
+  const row = {
+    type: e.type,
+    source: e.source,
+    payload,
+    at: e.at,
+    created_at: isNonEmptyString(e.created_at) ? e.created_at : now,
+  }
+  if (e.updated_at) row.updated_at = e.updated_at
+  return row
+}
+
 /**
- * Import entries from a previously exported JSON.
+ * Lit et vérifie un fichier de sauvegarde, sans rien écrire (aperçu avant import).
+ * Accepte le format actuel `{ version, exportedAt, entries }` et l'ancien tableau nu.
  * @param {string} json
- * @param {{ merge?: boolean }} [opts] - if merge=true, add to existing; else replace all
- * @returns {Promise<{ imported: number }>}
+ * @returns {{ entries: object[], invalid: number, exportedAt: string|null, firstAt: string|null, lastAt: string|null, byType: Record<string, number> }}
+ * @throws si le JSON est illisible ou ne ressemble pas à une sauvegarde HealthTrack
  */
-export async function importFromJson(json, opts = {}) {
+export function parseBackup(json) {
   let data
   try {
     data = JSON.parse(json)
   } catch {
     throw new Error('Fichier JSON invalide')
   }
-  const entries = Array.isArray(data) ? data : data.entries
-  if (!Array.isArray(entries) || entries.length === 0) {
-    return { imported: 0 }
+  const raw = Array.isArray(data) ? data : data && typeof data === 'object' ? data.entries : undefined
+  if (!Array.isArray(raw)) throw new Error(NOT_A_BACKUP)
+
+  const now = new Date().toISOString()
+  const entries = []
+  const byType = {}
+  let firstAt = null
+  let lastAt = null
+  let firstMs = Infinity
+  let lastMs = -Infinity
+  for (const e of raw) {
+    const row = normalizeBackupEntry(e, now)
+    if (!row) continue
+    entries.push(row)
+    byType[row.type] = (byType[row.type] || 0) + 1
+    const ms = new Date(row.at).getTime()
+    if (ms < firstMs) {
+      firstMs = ms
+      firstAt = row.at
+    }
+    if (ms > lastMs) {
+      lastMs = ms
+      lastAt = row.at
+    }
   }
+  if (raw.length > 0 && entries.length === 0) throw new Error(NOT_A_BACKUP)
+
+  const exportedAt = !Array.isArray(data) && isNonEmptyString(data.exportedAt) ? data.exportedAt : null
+  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType }
+}
+
+/**
+ * Import entries from a previously exported JSON.
+ * Le fichier est vérifié avant toute écriture : un mauvais fichier ou une sauvegarde vide
+ * n'efface jamais les données existantes.
+ * @param {string} json
+ * @param {{ merge?: boolean }} [opts] - merge=true : ajoute seulement les entrées absentes
+ *   (même source, date et type) ; sinon remplace tout
+ * @returns {Promise<{ imported: number, skipped: number, invalid: number }>}
+ */
+export async function importFromJson(json, opts = {}) {
+  const { entries, invalid } = parseBackup(json)
+  if (entries.length === 0) return { imported: 0, skipped: 0, invalid }
+
   const db = await openDB()
+  const existingKeys = opts.merge
+    ? await new Promise((resolve, reject) => {
+        const req = db.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME).getAll()
+        req.onerror = () => reject(req.error)
+        req.onsuccess = () => resolve(new Set((req.result || []).map((e) => `${e.source}|${e.at}|${e.type}`)))
+      })
+    : null
+
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
     const store = tx.objectStore(STORE_NAME)
     if (!opts.merge) {
       store.clear()
     }
-    let count = 0
-    for (const e of entries) {
-      const row = {
-        type: e.type,
-        source: e.source,
-        payload: e.payload || {},
-        at: e.at || new Date().toISOString(),
-        created_at: e.created_at || new Date().toISOString(),
+    let imported = 0
+    let skipped = 0
+    for (const row of entries) {
+      if (existingKeys?.has(`${row.source}|${row.at}|${row.type}`)) {
+        skipped++
+        continue
       }
-      if (e.updated_at) row.updated_at = e.updated_at
       store.add(row)
-      count++
+      imported++
     }
-    tx.oncomplete = () => resolve({ imported: count })
+    tx.oncomplete = () => resolve({ imported, skipped, invalid })
     tx.onerror = () => reject(tx.error)
   })
 }

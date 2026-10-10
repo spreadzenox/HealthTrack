@@ -24,6 +24,7 @@ import {
   getLatestEntryAt,
   exportToJson,
   importFromJson,
+  parseBackup,
   deleteEntry,
   updateEntry,
 } from './localHealthStorage'
@@ -207,6 +208,103 @@ describe('exportToJson / importFromJson', () => {
     const [e] = await listEntries({})
     expect(e.type).toBe('food')
     expect(e.created_at).toBeTruthy()
+  })
+})
+
+describe('parseBackup', () => {
+  it('summarizes a backup: counts, date range, export date, types', () => {
+    const json = JSON.stringify({
+      version: 1,
+      exportedAt: '2026-10-01T10:00:00.000Z',
+      entries: [
+        { type: 'food', source: 'food_photo', payload: { items: [] }, at: '2026-09-30T12:00:00Z' },
+        { type: 'steps', source: 'health_connect', payload: { value: 1 }, at: '2026-01-02T08:00:00Z' },
+        { type: 'steps', source: 'health_connect', payload: { value: 2 }, at: '2026-05-02T08:00:00Z' },
+      ],
+    })
+    const b = parseBackup(json)
+    expect(b.entries).toHaveLength(3)
+    expect(b.invalid).toBe(0)
+    expect(b.exportedAt).toBe('2026-10-01T10:00:00.000Z')
+    expect(b.firstAt).toBe('2026-01-02T08:00:00Z')
+    expect(b.lastAt).toBe('2026-09-30T12:00:00Z')
+    expect(b.byType).toEqual({ food: 1, steps: 2 })
+  })
+
+  it('rejects invalid JSON', () => {
+    expect(() => parseBackup('{oops')).toThrow(/JSON invalide/)
+  })
+
+  it('rejects a JSON file that is not a HealthTrack backup', () => {
+    expect(() => parseBackup(JSON.stringify({ name: 'autre appli' }))).toThrow(/pas une sauvegarde HealthTrack/)
+    expect(() => parseBackup(JSON.stringify([{ foo: 1 }, { bar: 2 }]))).toThrow(/pas une sauvegarde HealthTrack/)
+  })
+
+  it('accepts an empty backup', () => {
+    const b = parseBackup(JSON.stringify({ version: 1, entries: [] }))
+    expect(b.entries).toHaveLength(0)
+  })
+
+  it('skips unreadable entries (no type, no source, no valid date) and counts them', () => {
+    const json = JSON.stringify([
+      { type: 'food', source: 'food_photo', payload: {}, at: '2026-01-01T12:00:00Z' },
+      { source: 'food_photo', at: '2026-01-01T12:00:00Z' },
+      { type: 'food', at: '2026-01-01T12:00:00Z' },
+      { type: 'food', source: 'x', at: 'pas une date' },
+      { type: 'food', source: 'x' },
+      null,
+      'texte',
+    ])
+    const b = parseBackup(json)
+    expect(b.entries).toHaveLength(1)
+    expect(b.invalid).toBe(6)
+  })
+
+  it('decodes a payload stored as a JSON string', () => {
+    const b = parseBackup(JSON.stringify([{ type: 'steps', source: 's', at: '2026-01-01T00:00:00Z', payload: '{"value":42}' }]))
+    expect(b.entries[0].payload).toEqual({ value: 42 })
+  })
+})
+
+describe('importFromJson — safety', () => {
+  it('never wipes existing data when the file is not a HealthTrack backup', async () => {
+    await createEntry({ type: 'food', source: 'food_photo', payload: {}, at: '2026-01-01T12:00:00Z' })
+    await expect(importFromJson(JSON.stringify([{ foo: 1 }]))).rejects.toThrow(/pas une sauvegarde/)
+    expect(await countAllEntries()).toBe(1)
+  })
+
+  it('does not wipe existing data with an empty backup', async () => {
+    await createEntry({ type: 'food', source: 'food_photo', payload: {}, at: '2026-01-01T12:00:00Z' })
+    const res = await importFromJson(JSON.stringify({ version: 1, entries: [] }))
+    expect(res.imported).toBe(0)
+    expect(await countAllEntries()).toBe(1)
+  })
+
+  it('merge adds only entries that are not already present', async () => {
+    await createEntry({ type: 'steps', source: 'hc', payload: { value: 1 }, at: '2026-01-01T00:00:00Z' })
+    const json = JSON.stringify([
+      { type: 'steps', source: 'hc', payload: { value: 1 }, at: '2026-01-01T00:00:00Z' },
+      { type: 'steps', source: 'hc', payload: { value: 2 }, at: '2026-01-02T00:00:00Z' },
+    ])
+    const res = await importFromJson(json, { merge: true })
+    expect(res).toMatchObject({ imported: 1, skipped: 1 })
+    expect(await countAllEntries()).toBe(2)
+    // Importing the same file again adds nothing
+    const again = await importFromJson(json, { merge: true })
+    expect(again).toMatchObject({ imported: 0, skipped: 2 })
+    expect(await countAllEntries()).toBe(2)
+  })
+
+  it('replace imports valid entries and reports skipped invalid ones', async () => {
+    await createEntry({ type: 'food', source: 'food_photo', payload: {}, at: '2026-01-01T12:00:00Z' })
+    const json = JSON.stringify([
+      { type: 'steps', source: 'hc', payload: { value: 2 }, at: '2026-01-02T00:00:00Z' },
+      { type: 'steps' },
+    ])
+    const res = await importFromJson(json)
+    expect(res).toMatchObject({ imported: 1, invalid: 1 })
+    const all = await listEntries({})
+    expect(all.map((e) => e.type)).toEqual(['steps'])
   })
 })
 

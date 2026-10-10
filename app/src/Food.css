@@ -117,6 +117,55 @@
   z-index: -1;
 }
 
+/* Aperçu d'une sauvegarde avant import : rien n'est écrit avant un choix explicite */
+.import-preview {
+  border: 1px solid rgba(78, 205, 196, 0.35);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.import-preview p {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.import-preview-title {
+  font-weight: 600;
+}
+
+.import-preview-line {
+  color: var(--text-muted);
+}
+
+.import-preview-line strong {
+  color: var(--text);
+}
+
+.import-preview-warning {
+  color: #f0b27a;
+}
+
+.import-preview-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.import-preview-actions .btn {
+  min-height: 48px;
+}
+
+.btn-danger {
+  background: var(--error);
+  color: #fff;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #c0392b;
+}
+
 /* Paramètres */
 .settings-block {
   margin-bottom: 28px;
