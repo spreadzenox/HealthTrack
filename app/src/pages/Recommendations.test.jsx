@@ -491,3 +491,50 @@ describe('Recommendations — week-end in the advanced model', () => {
     spy.mockRestore()
   })
 })
+
+describe('Recommendations — lagged effects', () => {
+  // 40 days; wellbeing follows the steps of the day before (deterministic pseudo-noise).
+  function laggedEntries() {
+    const entries = []
+    const steps = []
+    for (let i = 0; i < 40; i++) {
+      const date = new Date(Date.UTC(2026, 0, 1 + i)).toISOString().slice(0, 10)
+      steps.push(4000 + ((i * 7919) % 8000))
+      entries.push({ type: 'steps', source: 'health_connect', at: `${date}T22:00:00Z`, payload: { value: steps[i] } })
+      const prev = i > 0 ? steps[i - 1] : 8000
+      const score = Math.round((2.5 + (prev - 8000) / 2500 + (((i * 31) % 7) - 3) / 10) * 10) / 10
+      entries.push({ type: 'wellbeing', source: 'app_wellbeing', at: `${date}T20:00:00Z`, payload: { score } })
+    }
+    return entries
+  }
+
+  it('shows the effect of the day before, with its size, timing and evidence', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(laggedEntries())
+    renderPage()
+    const section = (await screen.findByText(/Effets décalés/)).closest('section')
+    const card = section.querySelector('.reco-lag-card')
+    expect(card).toHaveTextContent(/Pas quotidiens/)
+    expect(card).toHaveTextContent(/La veille/)
+    expect(card).toHaveTextContent(/pas de plus que d’habitude/)
+    expect(card).toHaveTextContent(/\+\d,\d point/)
+    expect(card).toHaveTextContent(/Marcher davantage/)
+    expect(card).toHaveTextContent(/Hypothèse solide/)
+  })
+
+  it('says how many consecutive days are still needed', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(8))
+    renderPage()
+    const section = (await screen.findByText(/Effets décalés/)).closest('section')
+    expect(section).toHaveTextContent(/7 sur 14/)
+  })
+
+  it('says when no delayed effect stands out', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
+    renderPage()
+    const section = (await screen.findByText(/Effets décalés/)).closest('section')
+    expect(section).toHaveTextContent(/Aucun effet décalé net/)
+  })
+})

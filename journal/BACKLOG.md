@@ -54,7 +54,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Valeurs manquantes à l'entraînement** : mesure absente (montre non portée, pas de pesée) = null ; corrélations sur paires complètes, modèle avancé avec couverture ≥ 50 % et trous à la moyenne, prédiction du jour idem ; démo avec jours sans montre (run 10/10 12:30)
 - [x] **Jours sans repas saisi ≠ jeûne** : ignorés dans le lissage nutritionnel, nutriments / FODMAP / nombre de repas inconnus sans repas, couverture affichée, prédiction du jour idem ; démo avec repas oubliés (run 10/10 16:30)
 - [ ] Lissage nutritionnel sur **tous** les jours avec repas (aujourd'hui seulement les jours avec note de bien-être servent de source)
-- [ ] Effets décalés (lags 0–3 j) sur sommeil / activité / tags (le lissage 10,5 j des nutriments existe déjà)
+- [x] **Effets décalés** (lags 1–3 j) sur sommeil / pas / activité / cigarettes : corrélation partielle (bien-être de la veille, valeurs du jour même, week-end), BH sur tous les délais, seuil q < 0,05, section « Effets décalés » (run 10/10 22:30)
+- [ ] Effets décalés, étape 2 : tags du soir comme contrôles, piste décalée dans « Pistes à tester », mini-graphique par délai
 - [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
 - [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
 - [ ] Analyse avant/après d'un événement (R#21, régression segmentée)
@@ -94,10 +95,10 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🏗️ Effets décalés (lags 0–3 j) dans les analyses (C3). Contrôle du week-end : fait partout (runs 06:30 et 08:30).
-2. 🐛 Chasse aux bugs (jours sans repas saisi : fait, run 16:30) : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
-3. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
-4. 🎨 Journal du tableau de bord, étape 2 : ~~kcal et nom du plat sur chaque ligne repas~~ (run 18:30), poids + composition fusionnés, « Modifier » un repas depuis le journal, noms d'aliments courts ; rapprocher Radar et cartes cœur.
+1. 🐛 Chasse aux bugs (jours sans repas saisi : fait, run 16:30) : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
+2. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
+3. 🎨 Journal du tableau de bord, étape 2 : ~~kcal et nom du plat sur chaque ligne repas~~ (run 18:30), poids + composition fusionnés, « Modifier » un repas depuis le journal, noms d'aliments courts ; rapprocher Radar et cartes cœur.
+4. 🔭 Veille (la dernière date du 10/10 00:30) : effets décalés / modèles « cross-lagged » en N-of-1, puissance attendue, retours d'utilisateurs d'apps de suivi.
 
 ## Idées en vrac (à trier)
 
@@ -130,6 +131,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-10 — Analyses : effets décalés (veille, 2 et 3 jours avant) avec contrôle de la veille, du jour même et du week-end (run 22:30)
 - [x] 2026-10-10 — Tableau de bord plus direct : intro seulement sans données, « Prédiction du jour », « Par heure » masqué si vide, kcal + plat sur chaque repas du journal (run 18:30)
 - [x] 2026-10-10 — Analyses : jour sans repas saisi ≠ jeûne (lissage, FODMAP, nombre de repas, prédiction du jour ; couverture affichée ; R² LOO démo 0,37 → 0,44) (run 16:30)
 - [x] 2026-10-10 — Analyses : mesure absente ≠ 0 (paires complètes, couverture ≥ 50 % dans le modèle avancé, démo avec jours sans montre ; R² LOO démo 0,09 → 0,44) (run 12:30)

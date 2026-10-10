@@ -63,6 +63,8 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // Utilisés depuis 40 jours seulement (comme un utilisateur qui découvre la fonction).
   const tagRand = mulberry32(seed + 1000)
   let prevTags = []
+  // Séance de sport la veille → un peu mieux le lendemain (effet décalé, section « Effets décalés »).
+  let prevWorkout = false
   // Montre oubliée ou déchargée ~1 jour sur 8 (pas de nuit, de FC ni de VFC ; le téléphone compte
   // toujours les pas). RNG séparé ; jamais sur les 4 derniers jours (cartes du tableau de bord stables).
   const watchRand = mulberry32(seed + 2000)
@@ -134,7 +136,8 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       payload: { value: hrv, unit: 'ms', subtype: 'heartRateVariability', connector: 'health_connect' },
     })
     if (!watchOff) entries.push(...watchEntries)
-    if (rand() < 0.35) {
+    const workout = rand() < 0.35
+    if (workout) {
       entries.push({
         type: 'activity',
         source: 'health_connect',
@@ -178,6 +181,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       (prevTags.includes('late_screen') ? 0.3 : 0) -
       (tags.includes('stress') ? 0.9 : 0) -
       (tags.includes('sick') ? 1.5 : 0) +
+      (prevWorkout ? 0.35 : 0) +
       (weekend ? 0.4 : 0) +
       noise(0.6)
     entries.push({
@@ -187,6 +191,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       payload: { score: Math.max(0, Math.min(5, Math.round(score))), ...(tags.length > 0 && { tags }) },
     })
     prevTags = tags
+    prevWorkout = workout
   }
 
   return entries

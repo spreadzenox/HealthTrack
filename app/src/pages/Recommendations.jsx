@@ -16,6 +16,7 @@ import {
   MIN_WEEKEND_DAYS,
 } from '../services/analysisEngine'
 import { computeTagEffects, MIN_TAG_DAYS } from '../services/behaviorTags'
+import { computeLaggedEffects, LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel } from '../utils/format'
 import { useAutoSync } from '../hooks/useAutoSync'
@@ -207,6 +208,69 @@ function TagsSection({ entries }) {
   )
 }
 
+// ─── Lagged effects (« la veille », « 2 jours avant ») ───────────────────────
+
+function LaggedEffectCard({ effect }) {
+  const points = Math.abs(effect.effectPerSd) >= 2 ? 'points' : 'point'
+  return (
+    <li className={'reco-tag-card reco-lag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
+      <p className="reco-tag-name">{effect.label}</p>
+      <p className="reco-tag-compare">
+        {effect.when}, {effect.format(effect.sd)} de plus que d’habitude → bien-être du jour{' '}
+        <span className={effect.effectPerSd < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
+          <strong>{frDiff(effect.effectPerSd)} {points}</strong>
+        </span>
+      </p>
+      {effect.action && <p className="reco-tag-compare">🎯 Piste : {effect.action}</p>}
+      <p className="reco-tag-days">
+        Lien {effect.strength} (r = {formatR(effect.r)}, ≈ {Math.round(effect.nEff)} jours indépendants)
+      </p>
+      <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
+        {evidenceLabel(effect.evidence)}
+      </span>
+    </li>
+  )
+}
+
+function LaggedEffectsSection({ entries }) {
+  const result = useMemo(() => computeLaggedEffects(entries), [entries])
+  const lags = `${LAGS[0]} à ${LAGS[LAGS.length - 1]} jours`
+  return (
+    <section className="reco-section">
+      <h3 className="reco-section-title">⏳ Effets décalés</h3>
+      {result.status === 'not_enough_data' ? (
+        <p className="reco-section-hint">
+          Ce que vous faites (sommeil, pas, activité, cigarettes) peut agir sur votre bien-être
+          {' '}{lags} plus tard. Il faut des notes de bien-être sur des jours qui se suivent :{' '}
+          {result.currentDays} sur {MIN_LAG_PAIRS} pour l&apos;instant (un jour compte quand la
+          veille est aussi notée).
+        </p>
+      ) : (
+        <>
+          <p className="reco-section-hint">
+            Votre bien-être comparé à ce que vous avez fait {lags} avant, à bien-être de la veille
+            égal (une bonne passe qui dure n&apos;est pas créditée à vos habitudes) et à journée
+            égale (sommeil, pas… du jour même), week-end compris. Seuls les liens solides sont
+            affichés. Ce sont des hypothèses : une corrélation ne prouve pas une cause.
+          </p>
+          {result.effects.length > 0 ? (
+            <ul className="reco-tag-list">
+              {result.effects.map((e) => (
+                <LaggedEffectCard key={e.variable} effect={e} />
+              ))}
+            </ul>
+          ) : (
+            <p className="reco-empty-levers">
+              Aucun effet décalé net dans vos données pour l&apos;instant (sommeil, pas, activité et
+              cigarettes testés {lags} avant, quand ils sont mesurés).
+            </p>
+          )}
+        </>
+      )}
+    </section>
+  )
+}
+
 // ─── Not enough data placeholder ─────────────────────────────────────────────
 
 function NotEnoughData({ currentDays, minDays, tabLabel }) {
@@ -314,6 +378,8 @@ function BasicTab({ entries }) {
       </section>
 
       <TagsSection entries={entries} />
+
+      <LaggedEffectsSection entries={entries} />
 
       {correlations.length > 0 && (
         <section className="reco-section">
