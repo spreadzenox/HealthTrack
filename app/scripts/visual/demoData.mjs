@@ -163,6 +163,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       (prevTags.includes('late_screen') ? 0.3 : 0) -
       (tags.includes('stress') ? 0.9 : 0) -
       (tags.includes('sick') ? 1.5 : 0) +
+      (weekend ? 0.4 : 0) +
       noise(0.6)
     entries.push({
       type: 'wellbeing',

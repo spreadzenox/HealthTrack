@@ -33,6 +33,8 @@ import {
   benjaminiHochberg,
   correlationStrength,
   evidenceLevel,
+  isWeekendKey,
+  residualizeByGroup,
 } from './statistics'
 
 // ─── Public constants ────────────────────────────────────────────────────────
@@ -99,6 +101,16 @@ export const LAG_DAYS = 10.5
  * in-sample residuals approach.
  */
 export const HOLD_OUT_DAYS = 2
+
+/**
+ * Week-end days and weekdays needed (each) before the analyses control for
+ * the day of the week. Below that, a group mean is mostly noise and removing
+ * it would destroy more signal than confounding.
+ */
+export const MIN_WEEKEND_DAYS = 3
+
+/** Pseudo-variable added to the advanced model to absorb the week-end effect. */
+const WEEKEND_KEY = 'isWeekend'
 
 // ─── Variable metadata ───────────────────────────────────────────────────────
 
@@ -859,6 +871,51 @@ export function pearsonCorrelation(x, y) {
   return num / Math.sqrt(sdX * sdY)
 }
 
+// ─── Day-of-week control ─────────────────────────────────────────────────────
+
+/**
+ * Wellbeing and many behaviours move together with the calendar: on
+ * week-ends people sleep longer, walk more (or less) and often feel better.
+ * Without control, "more steps → better wellbeing" may only mean "Saturday".
+ *
+ * Returns the week-end flags of the rows and whether there are enough days in
+ * each group (MIN_WEEKEND_DAYS) to control for it, with the mean wellbeing of
+ * both groups for display.
+ */
+export function weekendControl(rows) {
+  const flags = rows.map((d) => (isWeekendKey(d.dateKey) ? 1 : 0))
+  const weekendDays = flags.filter((f) => f === 1).length
+  const weekdayDays = flags.length - weekendDays
+  const applied = weekendDays >= MIN_WEEKEND_DAYS && weekdayDays >= MIN_WEEKEND_DAYS
+  const groupMean = (flag) => {
+    const vals = rows.filter((_, i) => flags[i] === flag).map((d) => d.wellbeing)
+    return vals.length > 0 ? mean(vals) : null
+  }
+  return {
+    applied,
+    flags,
+    weekendDays,
+    weekdayDays,
+    weekendMean: groupMean(1),
+    weekdayMean: groupMean(0),
+  }
+}
+
+/** Rows with the 0/1 week-end pseudo-variable used by the advanced model. */
+function withWeekendFlag(rows) {
+  return rows.map((d) => ({ ...d, [WEEKEND_KEY]: isWeekendKey(d.dateKey) ? 1 : 0 }))
+}
+
+/**
+ * Fits the advanced model on the training rows, with the week-end flag as a
+ * forced control variable when there are enough days of both kinds.
+ */
+function _fitAdvancedModel(trainRows) {
+  const { keys } = _selectFeatureKeys(trainRows)
+  const controlKeys = weekendControl(trainRows).applied ? [WEEKEND_KEY] : []
+  return _fitModelOnRows(withWeekendFlag(trainRows), keys.length > 0 ? keys : null, controlKeys)
+}
+
 // ─── Step 4 — basic correlations ─────────────────────────────────────────────
 
 /**
@@ -887,20 +944,29 @@ export function computeBasicCorrelations(entries) {
   const wellbeingVec = dataset.map((d) => d.wellbeing)
   const featureKeys = Object.keys(VARIABLE_META)
 
+  // Partial correlation controlling for week-end vs weekday: both series are
+  // centred within each group, and one degree of freedom is spent on it.
+  const weekend = weekendControl(dataset)
+  const control = (vec) => (weekend.applied ? residualizeByGroup(vec, weekend.flags) : vec)
+  const wellbeingCtl = control(wellbeingVec)
+
   const correlations = []
   for (const key of featureKeys) {
     const vec = dataset.map((d) => d[key] ?? 0)
     if (vec.every((v) => v === 0)) continue
-    const r = pearsonCorrelation(wellbeingVec, vec)
-    if (r === null) continue
-    const nEff = effectiveSampleSize(wellbeingVec, vec)
+    const rRaw = pearsonCorrelation(wellbeingVec, vec)
+    if (rRaw === null) continue
+    const vecCtl = control(vec)
+    const r = weekend.applied ? pearsonCorrelation(wellbeingCtl, vecCtl) : rRaw
+    const nEff = effectiveSampleSize(wellbeingCtl, vecCtl)
     correlations.push({
       variable: key,
       label: VARIABLE_META[key].label,
       r,
+      rRaw,
       n,
       nEff,
-      p: correlationPValue(r, nEff),
+      p: correlationPValue(r, weekend.applied ? nEff - 1 : nEff),
       direction: VARIABLE_META[key].direction,
       group: VARIABLE_META[key].group,
     })
@@ -925,6 +991,13 @@ export function computeBasicCorrelations(entries) {
     status: 'ok',
     datasetDays: n,
     reliability,
+    weekendControl: {
+      applied: weekend.applied,
+      weekendDays: weekend.weekendDays,
+      weekdayDays: weekend.weekdayDays,
+      weekendMean: weekend.weekendMean,
+      weekdayMean: weekend.weekdayMean,
+    },
     correlations,
     levers: correlations
       .filter((c) => c.q < LEVER_MAX_Q && leverAction(c.variable, c.r))
@@ -1178,12 +1251,15 @@ export function buildTodayRow(entries, historicalRawDataset) {
  * @returns {{ featureKeys, featureMeans, featureStds, beta, X, y } | null}
  *   null when Ridge still cannot produce a solution (degenerate data)
  */
-function _fitModelOnRows(trainRows, allowedKeys = null) {
+function _fitModelOnRows(trainRows, allowedKeys = null, controlKeys = []) {
   const candidateKeys = allowedKeys ?? Object.keys(VARIABLE_META)
-  const featureKeys = candidateKeys.filter((k) => {
+  // Control variables come first, right after the intercept: like the
+  // intercept they are not shrunk by Ridge (a shrunk control would leave part
+  // of its effect to be wrongly picked up by correlated variables).
+  const featureKeys = controlKeys.concat(candidateKeys.filter((k) => {
     const vec = trainRows.map((d) => d[k] ?? 0)
     return !vec.every((v) => v === 0)
-  })
+  }))
   if (featureKeys.length === 0) return null
 
   const featureMeans = featureKeys.map((k) => mean(trainRows.map((d) => d[k] ?? 0)))
@@ -1198,7 +1274,7 @@ function _fitModelOnRows(trainRows, allowedKeys = null) {
     ...featureKeys.map((k, j) => ((row[k] ?? 0) - featureMeans[j]) / featureStds[j]),
   ])
 
-  const tuned = tuneRidge(X, y)
+  const tuned = tuneRidge(X, y, 1 + controlKeys.length)
   if (!tuned) return null
 
   return { featureKeys, featureMeans, featureStds, ...tuned, X, y }
@@ -1235,12 +1311,14 @@ export function pruneCollinearFeatures(rankedKeys, rows, maxR = COLLINEARITY_MAX
  * keep the top K = min(MAX_FEATURES, max(2, floor(n_train × MAX_FEATURES_RATIO))).
  */
 function _selectFeatureKeys(trainRows) {
-  const wellbeingVec = trainRows.map((d) => d.wellbeing)
+  const weekend = weekendControl(trainRows)
+  const control = (vec) => (weekend.applied ? residualizeByGroup(vec, weekend.flags) : vec)
+  const wellbeingVec = control(trainRows.map((d) => d.wellbeing))
   const ranked = Object.keys(VARIABLE_META)
     .map((k) => {
       const vec = trainRows.map((d) => d[k] ?? 0)
       if (vec.every((v) => v === 0)) return null
-      const r = pearsonCorrelation(wellbeingVec, vec)
+      const r = pearsonCorrelation(wellbeingVec, control(vec))
       return r !== null ? { key: k, absR: Math.abs(r) } : null
     })
     .filter(Boolean)
@@ -1293,7 +1371,8 @@ export function computeAdvancedAnalysis(entries) {
     keptInsteadLabel: VARIABLE_META[d.keptInstead].label,
   }))
 
-  const fit = _fitModelOnRows(trainRows, selectedKeys.length > 0 ? selectedKeys : null)
+  const controlKeys = weekendControl(trainRows).applied ? [WEEKEND_KEY] : []
+  const fit = _fitModelOnRows(withWeekendFlag(trainRows), selectedKeys.length > 0 ? selectedKeys : null, controlKeys)
   if (!fit) {
     const basic = computeBasicCorrelations(entries)
     if (basic.status !== 'ok') return { status: 'not_enough_data', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS, currentDays: n }
@@ -1330,9 +1409,17 @@ export function computeAdvancedAnalysis(entries) {
   // coefficients by the feature's scale — e.g. ×2 000 for steps).
   const rawImportances = featureKeys.map((key, j) => (stdY > 0 ? beta[j + 1] / stdY : 0))
 
-  const maxRawImportance = Math.max(...rawImportances.map(Math.abs))
+  // The week-end flag is a control, not a lever: report its effect in
+  // wellbeing points (week-end minus weekday, all else equal) and keep it out
+  // of the importance ranking.
+  const weekendIdx = featureKeys.indexOf(WEEKEND_KEY)
+  const weekendEffect = weekendIdx >= 0 ? beta[weekendIdx + 1] / featureStds[weekendIdx] : null
+  const variableIdx = featureKeys.map((_, j) => j).filter((j) => j !== weekendIdx)
 
-  const featureImportance = featureKeys.map((key, j) => {
+  const maxRawImportance = Math.max(...variableIdx.map((j) => Math.abs(rawImportances[j])))
+
+  const featureImportance = variableIdx.map((j) => {
+    const key = featureKeys[j]
     const stdCoeff = rawImportances[j]
     return {
       variable: key,
@@ -1355,7 +1442,7 @@ export function computeAdvancedAnalysis(entries) {
 
   // Hold-out residuals: predict the last HOLD_OUT_DAYS days using the model
   // trained WITHOUT those days — genuine out-of-sample evaluation.
-  const residuals = holdOutRows.map((row) => {
+  const residuals = withWeekendFlag(holdOutRows).map((row) => {
     const xRow = [
       1,
       ...featureKeys.map((k, j) => ((row[k] ?? 0) - featureMeans[j]) / featureStds[j]),
@@ -1383,12 +1470,13 @@ export function computeAdvancedAnalysis(entries) {
       r2,
       r2_loo,
       method: 'ols_linear_regression',
-      nFeatures: featureKeys.length,
-      nFeaturesFinal: featureKeys.length,
+      nFeatures: variableIdx.length,
+      nFeaturesFinal: variableIdx.length,
       nFeaturesCandidate: allCandidateKeys.length,
       lagDays: LAG_DAYS,
       lambda,
       droppedCollinear,
+      weekendEffect,
       overfit_risk,
       model_reliable,
     },
@@ -1422,8 +1510,7 @@ export function computeTodayPrediction(entries) {
 
   // Train on all days except the last HOLD_OUT_DAYS
   const trainRows = dataset.slice(0, dataset.length - HOLD_OUT_DAYS)
-  const { keys } = _selectFeatureKeys(trainRows)
-  const fit = _fitModelOnRows(trainRows, keys.length > 0 ? keys : null)
+  const fit = _fitAdvancedModel(trainRows)
   if (!fit) return null
 
   const { featureKeys, featureMeans, featureStds, beta } = fit
@@ -1435,8 +1522,9 @@ export function computeTodayPrediction(entries) {
  * and return a prediction.
  */
 function _predictToday(entries, rawDataset, featureKeys, featureMeans, featureStds, beta) {
-  const todayRow = buildTodayRow(entries, rawDataset)
-  if (!todayRow) return null
+  const built = buildTodayRow(entries, rawDataset)
+  if (!built) return null
+  const [todayRow] = withWeekendFlag([built])
 
   const xToday = [
     1,
@@ -1466,7 +1554,7 @@ function _predictToday(entries, rawDataset, featureKeys, featureMeans, featureSt
  * @param {number}    [lambda=0]  Ridge penalty (L2 regularisation)
  * @returns {number[]|null}  k-length coefficient vector, or null on failure
  */
-export function olsNormalEquations(X, y, lambda = 0) {
+export function olsNormalEquations(X, y, lambda = 0, unpenalized = 1) {
   const n = X.length
   if (n === 0) return null
   const k = X[0].length
@@ -1482,8 +1570,9 @@ export function olsNormalEquations(X, y, lambda = 0) {
     }
   }
 
-  // Apply Ridge penalty to all columns except the intercept (col 0)
-  for (let j = 1; j < k; j++) {
+  // Apply Ridge penalty to all columns except the intercept (col 0) and the
+  // control variables that follow it
+  for (let j = unpenalized; j < k; j++) {
     A[j][j] += lambda
   }
 
@@ -1539,11 +1628,11 @@ function computeR2(yTrue, yPred) {
  * @param {number}     lambda
  * @returns {number[]|null}
  */
-export function ridgeLooPredictions(X, y, lambda) {
+export function ridgeLooPredictions(X, y, lambda, unpenalized = 1) {
   const n = X.length
   if (n === 0) return null
   const k = X[0].length
-  const Ainv = invertMatrix(ridgeGram(X, lambda))
+  const Ainv = invertMatrix(ridgeGram(X, lambda, unpenalized))
   if (!Ainv) return null
   const Xty = new Array(k).fill(0)
   for (let i = 0; i < n; i++) for (let j = 0; j < k; j++) Xty[j] += X[i][j] * y[i]
@@ -1565,8 +1654,11 @@ export function ridgeLooPredictions(X, y, lambda) {
   return yHat
 }
 
-/** XᵀX + λ·diag(0, 1, …, 1) — the intercept (column 0) is not penalised. */
-function ridgeGram(X, lambda) {
+/**
+ * XᵀX + λ·diag(0, …, 0, 1, …, 1) — the first `unpenalized` columns (intercept,
+ * controls) are not penalised.
+ */
+function ridgeGram(X, lambda, unpenalized = 1) {
   const k = X[0].length
   const A = Array.from({ length: k }, () => new Array(k).fill(0))
   for (const row of X) {
@@ -1574,7 +1666,7 @@ function ridgeGram(X, lambda) {
       for (let l = 0; l < k; l++) A[j][l] += row[j] * row[l]
     }
   }
-  for (let j = 1; j < k; j++) A[j][j] += lambda
+  for (let j = unpenalized; j < k; j++) A[j][j] += lambda
   return A
 }
 
@@ -1611,12 +1703,13 @@ function invertMatrix(M) {
  *
  * @param {number[][]} X  n × k design matrix (intercept column first)
  * @param {number[]}   y
+ * @param {number}     [unpenalized=1]  leading columns left unpenalised
  * @returns {{ beta: number[], lambda: number, r2_loo: number|null }|null}
  */
-function tuneRidge(X, y) {
+function tuneRidge(X, y, unpenalized = 1) {
   if (X.length < MIN_DAYS_ADVANCED + 1) {
     for (const lambda of RIDGE_LAMBDAS) {
-      const beta = olsNormalEquations(X, y, lambda)
+      const beta = olsNormalEquations(X, y, lambda, unpenalized)
       if (beta) return { beta, lambda, r2_loo: null }
     }
     return null
@@ -1624,13 +1717,13 @@ function tuneRidge(X, y) {
 
   let best = null
   for (const lambda of RIDGE_LAMBDAS) {
-    const yHat = ridgeLooPredictions(X, y, lambda)
+    const yHat = ridgeLooPredictions(X, y, lambda, unpenalized)
     if (!yHat) continue
     const sse = y.reduce((s, v, i) => s + (v - yHat[i]) ** 2, 0)
     if (!best || sse < best.sse - 1e-12) best = { lambda, sse, yHat }
   }
   if (!best) return null
-  const beta = olsNormalEquations(X, y, best.lambda)
+  const beta = olsNormalEquations(X, y, best.lambda, unpenalized)
   if (!beta) return null
   return { beta, lambda: best.lambda, r2_loo: computeR2(y, best.yHat) }
 }

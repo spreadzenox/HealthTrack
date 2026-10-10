@@ -7,6 +7,8 @@ import {
   benjaminiHochberg,
   correlationStrength,
   evidenceLevel,
+  isWeekendKey,
+  residualizeByGroup,
 } from './statistics'
 
 describe('normalCdf', () => {
@@ -108,5 +110,25 @@ describe('evidenceLevel', () => {
     expect(evidenceLevel(0.01)).toBe('solide')
     expect(evidenceLevel(0.1)).toBe('à confirmer')
     expect(evidenceLevel(0.5)).toBe('incertain')
+  })
+})
+
+describe('isWeekendKey', () => {
+  it('is true for Saturday and Sunday only', () => {
+    expect(isWeekendKey('2026-10-10')).toBe(true) // samedi
+    expect(isWeekendKey('2026-10-11')).toBe(true) // dimanche
+    expect(isWeekendKey('2026-10-12')).toBe(false) // lundi
+    expect(isWeekendKey('2026-10-09')).toBe(false) // vendredi
+  })
+})
+
+describe('residualizeByGroup', () => {
+  it('subtracts the mean of each group', () => {
+    expect(residualizeByGroup([1, 3, 10, 14], [0, 0, 1, 1])).toEqual([-1, 1, -2, 2])
+  })
+
+  it('removes a pure group effect entirely', () => {
+    const res = residualizeByGroup([5, 5, 2, 2], [1, 1, 0, 0])
+    expect(res.every((v) => v === 0)).toBe(true)
   })
 })

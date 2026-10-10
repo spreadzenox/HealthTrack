@@ -13,6 +13,7 @@ import {
   MAX_FEATURES,
   COLLINEARITY_MAX_R,
   MIN_ADVICE_EFFECT,
+  MIN_WEEKEND_DAYS,
 } from '../services/analysisEngine'
 import { computeTagEffects, MIN_TAG_DAYS } from '../services/behaviorTags'
 import { isDebugModeEnabled } from '../settings/debugMode'
@@ -87,8 +88,12 @@ const EVIDENCE_CLASS = {
   'à confirmer': 'reco-evidence-tentative',
 }
 
+/** Below this change, the week-end control is not worth mentioning on a lever. */
+const WEEKEND_R_SHIFT = 0.1
+
 function LeverCard({ rank, lever }) {
   const days = Math.round(lever.nEff)
+  const weekendShift = lever.rRaw != null && Math.abs(lever.rRaw - lever.r) >= WEEKEND_R_SHIFT
   return (
     <li className="reco-advice-card">
       <span className="reco-advice-rank">{rank}</span>
@@ -96,6 +101,7 @@ function LeverCard({ rank, lever }) {
         <p className="reco-advice-text">{lever.action}</p>
         <p className="reco-advice-impact">
           Lien {lever.strength} avec votre bien-être (r = {formatR(lever.r)}, ≈ {days} jours indépendants)
+          {weekendShift && <> · r = {formatR(lever.rRaw)} sans tenir compte du week-end</>}
         </p>
         <span className={'reco-evidence ' + (EVIDENCE_CLASS[lever.evidence] ?? '')}>
           {evidenceLabel(lever.evidence)}
@@ -205,6 +211,28 @@ function NotEnoughData({ currentDays, minDays, tabLabel }) {
   )
 }
 
+// ─── Week-end control note ───────────────────────────────────────────────────
+
+function WeekendNote({ control }) {
+  if (!control) return null
+  if (!control.applied) {
+    return (
+      <p className="reco-meta">
+        📅 Pas encore assez de jours de week-end et de semaine notés ({MIN_WEEKEND_DAYS} de chaque)
+        pour tenir compte du jour de la semaine.
+      </p>
+    )
+  }
+  return (
+    <p className="reco-meta">
+      📅 Liens calculés en tenant compte du week-end (bien-être moyen :{' '}
+      <strong>{frScore(control.weekendMean)} le week-end</strong>,{' '}
+      <strong>{frScore(control.weekdayMean)} en semaine</strong>) : une habitude plus fréquente
+      le samedi n'est pas créditée de la bonne humeur du week-end.
+    </p>
+  )
+}
+
 // ─── Basic tab ────────────────────────────────────────────────────────────────
 
 function BasicTab({ entries }) {
@@ -236,6 +264,7 @@ function BasicTab({ entries }) {
           <> <span className="reco-reliability-warn">⚠ Données exploratoires — continuez à enregistrer votre bien-être pour améliorer la fiabilité (objectif : 10 jours).</span></>
         )}
       </p>
+      <WeekendNote control={result.weekendControl} />
 
       <section className="reco-section">
         <h3 className="reco-section-title">🎯 Pistes à tester</h3>
@@ -345,6 +374,16 @@ function AdvancedTab({ entries }) {
           <> <span className="reco-reliability-ok">✓ Le modèle généralise correctement (R² LOO positif).</span></>
         )}
       </p>
+      {modelInfo?.weekendEffect != null && (
+        <p className="reco-meta">
+          📅 Le jour de la semaine est pris en compte : à habitudes égales,{' '}
+          {Math.abs(modelInfo.weekendEffect) < 0.05
+            ? <>votre bien-être n'est <strong>pas différent le week-end</strong>.</>
+            : <>votre bien-être est estimé à <strong>{frDiff(modelInfo.weekendEffect)}{' '}
+              point{Math.abs(modelInfo.weekendEffect) >= 2 ? 's' : ''} le week-end</strong> par
+              rapport à la semaine. Cet effet n'est attribué à aucune habitude.</>}
+        </p>
+      )}
       {modelInfo?.droppedCollinear?.length > 0 && (
         <p className="reco-meta reco-meta--dropped">
           Variables redondantes écartées :{' '}
@@ -363,6 +402,12 @@ function AdvancedTab({ entries }) {
           </p>
           <p>
             Le modèle est une régression linéaire multiple (OLS + Ridge) entraîné <em>entièrement sur vos données locales</em>. Pour limiter le sur-apprentissage, une <strong>pré-sélection</strong> retient les variables les plus corrélées au bien-être sur les données d'entraînement ({MAX_FEATURES} au plus, et pas plus d'une pour {Math.round(1 / MAX_FEATURES_RATIO)} jours de données), en écartant les <strong>doublons</strong> (deux variables corrélées à plus de {Math.round(COLLINEARITY_MAX_R * 100)} %, comme les pas et les calories d'activité : seule la plus liée au bien-être est gardée). La force de la régularisation Ridge{modelInfo.lambda != null && <> (λ = {String(modelInfo.lambda).replace('.', ',')})</>} est choisie automatiquement par validation croisée : plus vos données sont bruitées, plus les effets estimés sont prudemment réduits vers zéro. Seuls les effets d'au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type sont proposés comme pistes. Le <strong>R² entraînement</strong> mesure à quel point le modèle s'ajuste aux données qu'il a vues — il peut être élevé simplement parce qu'il y a plus de variables que de jours. Le <strong>R² LOO</strong> (Leave-One-Out) est une mesure honnête : pour chaque jour, le modèle est ré-entraîné sans ce jour puis prédit. Un R² LOO négatif ou très inférieur au R² entraînement signale un sur-apprentissage — dans ce cas le modèle est marqué comme non fiable et les recommandations sont indicatives.
+          </p>
+          <p>
+            Le <strong>week-end</strong> entre dans le modèle comme variable de contrôle (non
+            réduite par Ridge) dès qu'il y a au moins {MIN_WEEKEND_DAYS} jours notés de chaque
+            sorte : sinon une habitude plus fréquente le samedi récupérerait la bonne (ou mauvaise)
+            humeur propre au week-end.
           </p>
           <p>
             Pour éviter le sur-apprentissage dans la section « Prédit vs réel », le modèle est entraîné sur toutes les données <strong>sauf les {HOLD_OUT_DAYS} derniers jours</strong>. Ces jours sont ensuite prédits sans que le modèle les ait vus, ce qui garantit des prédictions honnêtement hors-échantillon. La prédiction affichée sur le tableau de bord utilise également ce modèle.

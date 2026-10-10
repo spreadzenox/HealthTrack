@@ -84,3 +84,28 @@ export function evidenceLevel(q) {
   if (q < 0.2) return 'à confirmer'
   return 'incertain'
 }
+
+/** True for a Saturday or Sunday local date key (YYYY-MM-DD). */
+export function isWeekendKey(dateKey) {
+  const day = new Date(dateKey + 'T00:00:00Z').getUTCDay()
+  return day === 0 || day === 6
+}
+
+/**
+ * Removes a binary covariate from a series by subtracting each group's mean.
+ * Correlating two series residualized this way gives their partial
+ * correlation controlling for the group (e.g. week-end vs weekday).
+ */
+export function residualizeByGroup(values, groups) {
+  const sums = new Map()
+  values.forEach((v, i) => {
+    const s = sums.get(groups[i]) ?? { total: 0, count: 0 }
+    s.total += v
+    s.count += 1
+    sums.set(groups[i], s)
+  })
+  return values.map((v, i) => {
+    const s = sums.get(groups[i])
+    return v - s.total / s.count
+  })
+}

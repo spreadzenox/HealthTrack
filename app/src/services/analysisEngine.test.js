@@ -26,6 +26,7 @@ import {
   pruneCollinearFeatures,
   ridgeLooPredictions,
   olsNormalEquations,
+  MIN_WEEKEND_DAYS,
 } from './analysisEngine'
 
 // ---------------------------------------------------------------------------
@@ -1519,5 +1520,118 @@ describe('ridgeLooPredictions', () => {
         expect(fast[i]).toBeCloseTo(brute, 8)
       })
     }
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Day-of-week control (week-end vs semaine)
+// ---------------------------------------------------------------------------
+
+/**
+ * 28 days from Monday 2026-09-07. Wellbeing is higher on week-ends; steps
+ * too — but within weekdays and within week-ends, steps and wellbeing are
+ * unrelated (pseudo-random, independent wiggles). A naive correlation sees
+ * "more steps → better wellbeing"; it is only the week-end.
+ */
+function weekendConfoundedEntries({ days = 28, stepsDriveWellbeing = false } = {}) {
+  const entries = []
+  for (let i = 0; i < days; i++) {
+    const d = new Date(Date.UTC(2026, 8, 7 + i))
+    const date = d.toISOString().slice(0, 10)
+    const weekend = d.getUTCDay() === 0 || d.getUTCDay() === 6
+    const stepsWiggle = Math.sin(i * 2.3) * 1500
+    const wbWiggle = Math.cos(i * 1.7) * 0.4
+    const steps = Math.round((weekend ? 12000 : 6000) + stepsWiggle)
+    const wellbeing = stepsDriveWellbeing
+      ? 3 + stepsWiggle / 1500 + wbWiggle * 0.1
+      : (weekend ? 4.5 : 3) + wbWiggle
+    entries.push(makeWellbeing(date, wellbeing))
+    entries.push(makeSteps(date, steps))
+    entries.push(makeSleep(date, 420 + Math.round(Math.sin(i * 0.9) * 30)))
+  }
+  return entries
+}
+
+describe('computeBasicCorrelations — week-end control', () => {
+  it('reports the week-end effect on wellbeing', () => {
+    const result = computeBasicCorrelations(weekendConfoundedEntries())
+    expect(result.weekendControl.applied).toBe(true)
+    expect(result.weekendControl.weekendDays).toBe(8)
+    expect(result.weekendControl.weekdayDays).toBe(20)
+    expect(result.weekendControl.weekendMean).toBeGreaterThan(result.weekendControl.weekdayMean + 1)
+  })
+
+  it('does not attribute a week-end effect to steps', () => {
+    const result = computeBasicCorrelations(weekendConfoundedEntries())
+    const steps = result.correlations.find((c) => c.variable === 'steps')
+    expect(steps.rRaw).toBeGreaterThan(0.8)
+    expect(Math.abs(steps.r)).toBeLessThan(0.4)
+    expect(result.levers.map((l) => l.variable)).not.toContain('steps')
+  })
+
+  it('keeps a genuine within-week effect', () => {
+    const result = computeBasicCorrelations(weekendConfoundedEntries({ stepsDriveWellbeing: true }))
+    const steps = result.correlations.find((c) => c.variable === 'steps')
+    expect(steps.r).toBeGreaterThan(0.8)
+    expect(result.levers.map((l) => l.variable)).toContain('steps')
+  })
+
+  it('is not applied without enough week-end days (r stays the raw correlation)', () => {
+    // Monday → Friday 2026-09-07..11, then Monday → Friday again: no week-end at all.
+    const entries = []
+    for (const date of ['2026-09-07', '2026-09-08', '2026-09-09', '2026-09-10', '2026-09-11',
+      '2026-09-14', '2026-09-15', '2026-09-16', '2026-09-17', '2026-09-18', '2026-09-19']) {
+      const k = entries.length
+      entries.push(makeWellbeing(date, 2 + (k % 4)))
+      entries.push(makeSteps(date, 5000 + (k % 4) * 1000 + k * 7))
+    }
+    const result = computeBasicCorrelations(entries)
+    expect(MIN_WEEKEND_DAYS).toBeGreaterThan(1)
+    expect(result.weekendControl.applied).toBe(false)
+    const steps = result.correlations.find((c) => c.variable === 'steps')
+    expect(steps.r).toBeCloseTo(steps.rRaw, 10)
+  })
+})
+
+describe('computeAdvancedAnalysis — week-end control', () => {
+  it('estimates the week-end effect and does not turn it into a steps lever', () => {
+    const result = computeAdvancedAnalysis(weekendConfoundedEntries())
+    expect(result.status).toBe('ok')
+    expect(result.modelInfo.weekendEffect).toBeGreaterThan(0.8)
+    expect(result.featureImportance.map((f) => f.variable)).not.toContain('isWeekend')
+    expect(result.topRecommendations.join(' ')).not.toMatch(/Marcher/)
+  })
+
+  it('still finds a genuine steps effect', () => {
+    const result = computeAdvancedAnalysis(weekendConfoundedEntries({ stepsDriveWellbeing: true }))
+    expect(result.topRecommendations.join(' ')).toMatch(/Marcher/)
+  })
+
+  it('has no week-end effect when there are not enough week-ends', () => {
+    const entries = []
+    for (let d = 5; d <= 9 + MIN_DAYS_ADVANCED; d++) {
+      const date = `2026-01-${String(d).padStart(2, '0')}`
+      entries.push(makeWellbeing(date, 2 + (d % 3)))
+      entries.push(makeSteps(date, 5000 + d * 500))
+    }
+    // Keep only weekdays
+    const weekdays = entries.filter((e) => {
+      const day = new Date(e.at).getUTCDay()
+      return day !== 0 && day !== 6
+    })
+    const result = computeAdvancedAnalysis(weekdays)
+    if (result.status === 'ok') expect(result.modelInfo.weekendEffect).toBeNull()
+  })
+})
+
+describe('olsNormalEquations — unpenalized control columns', () => {
+  it('does not shrink the leading columns when unpenalized > 1', () => {
+    // y = 2 + 3·x1 exactly; with a huge penalty only x1 (col 1) left free keeps its slope
+    const X = [[1, -1, 0.5], [1, 0, -1], [1, 1, 0.5], [1, 2, 0]]
+    const y = X.map((r) => 2 + 3 * r[1])
+    const shrunk = olsNormalEquations(X, y, 1e6)
+    const free = olsNormalEquations(X, y, 1e6, 2)
+    expect(Math.abs(shrunk[1])).toBeLessThan(0.01)
+    expect(free[1]).toBeCloseTo(3, 3)
   })
 })
