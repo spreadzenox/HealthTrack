@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-10",
+  "kind": "amélioration",
+  "title": "Analyses : le week-end n’est plus pris pour une habitude",
+  "items": [
+    "Le week-end, on dort, on marche et on se sent souvent différemment. Avant, une habitude plus fréquente le samedi pouvait être créditée de la bonne humeur du week-end (« marcher davantage » alors que c’était juste samedi).",
+    "Les corrélations et les pistes à tester tiennent désormais compte du jour de la semaine : la page Analyses affiche votre bien-être moyen le week-end et en semaine.",
+    "Le modèle avancé estime l’effet du week-end à part (« +0,4 point le week-end ») sans l’attribuer à une habitude. Il faut au moins 3 jours notés de week-end et 3 de semaine.",
+    "Quand la prise en compte du week-end change nettement un lien, la piste indique aussi la valeur d’avant, pour comparer."
+  ]
+}

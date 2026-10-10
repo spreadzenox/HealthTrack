@@ -367,3 +367,69 @@ describe('Recommendations — behaviour tags', () => {
     expect(card).toHaveTextContent(/Hypothèse incertaine/)
   })
 })
+
+// ─── Week-end control ────────────────────────────────────────────────────────
+
+describe('Recommendations — week-end control', () => {
+  const baseCorr = { n: 40, nEff: 31.6, p: 0.001, q: 0.004, strength: 'modéré', evidence: 'solide' }
+
+  async function renderWithBasic(result) {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const analysisModule = await import('../services/analysisEngine')
+    const spy = vi.spyOn(analysisModule, 'computeBasicCorrelations').mockReturnValue(result)
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
+    renderPage()
+    await waitFor(() => expect(screen.queryByText(/Calcul des analyses/i)).not.toBeInTheDocument())
+    return spy
+  }
+
+  it('says the week-end is taken into account, with both averages', async () => {
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good', correlations: [], levers: [],
+      weekendControl: { applied: true, weekendDays: 11, weekdayDays: 29, weekendMean: 3.64, weekdayMean: 3.2 },
+    })
+    expect(await screen.findByText(/en tenant compte du week-end/i)).toBeInTheDocument()
+    expect(screen.getByText(/3,6 le week-end/)).toBeInTheDocument()
+    expect(screen.getByText(/3,2 en semaine/)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('says when there are not enough week-end days yet', async () => {
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 6, reliability: 'exploratory', correlations: [], levers: [],
+      weekendControl: { applied: false, weekendDays: 1, weekdayDays: 5, weekendMean: 4, weekdayMean: 3 },
+    })
+    expect(await screen.findByText(/pas encore assez de jours de week-end/i)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('shows the raw r on a lever when the week-end changed it noticeably', async () => {
+    const lever = {
+      ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.31, rRaw: 0.52,
+      direction: 'higher_better', action: 'Marcher davantage',
+    }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good', correlations: [lever], levers: [lever],
+      weekendControl: { applied: true, weekendDays: 11, weekdayDays: 29, weekendMean: 3.6, weekdayMean: 3.2 },
+    })
+    expect(await screen.findByText(/\+0,52 sans tenir compte du week-end/)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+})
+
+describe('Recommendations — week-end in the advanced model', () => {
+  it('shows the estimated week-end effect', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const analysisModule = await import('../services/analysisEngine')
+    const spy = vi.spyOn(analysisModule, 'computeAdvancedAnalysis').mockReturnValue({
+      status: 'ok', datasetDays: 40,
+      modelInfo: { r2: 0.6, r2_loo: 0.4, method: 'ols_linear_regression', nFeaturesFinal: 3, nFeaturesCandidate: 40, lagDays: 10.5, lambda: 3, droppedCollinear: [], weekendEffect: 0.42, model_reliable: true },
+      featureImportance: [], topRecommendations: [], residuals: null, todayPrediction: null,
+    })
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(12))
+    renderPage()
+    fireEvent.click(await screen.findByRole('button', { name: /Recommandations avancées/i }))
+    expect(await screen.findByText(/\+0,4 point le week-end/)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+})

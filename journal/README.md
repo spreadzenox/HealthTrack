@@ -100,6 +100,11 @@ une release à chaque changement validé, et tient ce journal.
   contenu (date, nombre d'entrées, période, repas / notes / mesures), puis vous choisissez « **Ajouter à mes
   données** » (sans doublons, rien de perdu) ou « Remplacer mes données » (avec confirmation). Un fichier qui n'est
   pas une sauvegarde HealthTrack est refusé sans rien toucher.
+- **Analyses : le week-end n'est plus pris pour une habitude.** Le week-end, on dort, marche et se sent
+  différemment ; une habitude plus fréquente le samedi pouvait être créditée de la bonne humeur du week-end. Les
+  corrélations, les pistes et le modèle avancé tiennent maintenant compte du jour de la semaine ; la page Analyses
+  affiche votre bien-être moyen le week-end et en semaine, et l'effet propre du week-end (« +0,4 point »).
+  **Vos pistes peuvent légèrement changer** : c'est voulu.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -111,6 +116,8 @@ une release à chaque changement validé, et tient ce journal.
 - Veille du 10/10 : saisie des repas en texte par IA (le modèle ne doit donner qu'aliments et grammes,
   les nutriments venant de la table locale), effet du jour de la semaine sur le bien-être, régularité
   du sommeil, coachs IA. Détails dans `RESEARCH.md`.
+- Modèle avancé : la variable « week-end » est un contrôle **non réduit** par la régularisation (sinon une partie
+  de son effet retombait sur les pas) ; sur la démo, il retrouve exactement l'effet simulé (+0,4 point).
 - Nouveau module statistique testé (n effectif, p-valeurs, correction Benjamini-Hochberg) : socle
   des futures analyses (expériences personnelles, radar).
 
@@ -138,7 +145,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — contrôle du week-end puis effets décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
+**Prochaines priorités** — week-end aussi dans « Vos habitudes », effets décalés (J-1 → J) dans les analyses, mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -162,6 +169,7 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 00:30 — [Veille + barres système Android](runs/2026-10-10-0030-veille-zones-systeme.md) | 🔭 | PR #82 fusionnée → v77 |
 | 10/10 02:30 — [Repas décrit en quelques mots](runs/2026-10-10-0230-repas-decrit.md) | 🏗️ | PR #84 fusionnée → v78 |
 | 10/10 04:30 — [Restaurer une sauvegarde sans risque](runs/2026-10-10-0430-import-sur.md) | 🐛 | PR #85 fusionnée → v79 |
+| 10/10 06:30 — [Analyses : contrôle du week-end](runs/2026-10-10-0630-controle-week-end.md) | 🏗️ | PR #86 |
 
 ---
 
