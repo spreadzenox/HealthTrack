@@ -1,6 +1,6 @@
 # 2026-10-10 18:30 UTC — Tableau de bord plus direct
 
-**Type** : 🎨 (UI / ergonomie)  ·  **PR** : voir ci-dessous
+**Type** : 🎨 (UI / ergonomie)  ·  **PR** : #92 (fusionnée → v86)
 
 ## Pourquoi
 Les 5 runs précédents étaient tous dans le moteur d'analyse (🐛 / 🏗️) : un run 🎨 était dû. Idées en vrac du backlog :

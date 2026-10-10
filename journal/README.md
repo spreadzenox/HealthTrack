@@ -203,7 +203,7 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 12:30 — [Mesure absente ≠ 0 dans les analyses](runs/2026-10-10-1230-valeurs-manquantes.md) | 🐛 | PR #89 fusionnée → v83 |
 | 10/10 14:30 — [Chiffres cohérents, textes à jour](runs/2026-10-10-1430-chiffres-coherents.md) | 🐛 | PR #90 fusionnée → v84 |
 | 10/10 16:30 — [Repas oublié ≠ jeûne dans les analyses](runs/2026-10-10-1630-repas-manquants.md) | 🐛 | PR #91 fusionnée → v85 |
-| 10/10 18:30 — [Tableau de bord plus direct](runs/2026-10-10-1830-accueil-plus-direct.md) | 🎨 | PR #92 en cours |
+| 10/10 18:30 — [Tableau de bord plus direct](runs/2026-10-10-1830-accueil-plus-direct.md) | 🎨 | PR #92 fusionnée → v86 |
 
 ---
 
