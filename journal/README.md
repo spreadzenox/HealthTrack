@@ -214,7 +214,7 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 16:30 — [Repas oublié ≠ jeûne dans les analyses](runs/2026-10-10-1630-repas-manquants.md) | 🐛 | PR #91 fusionnée → v85 |
 | 10/10 18:30 — [Tableau de bord plus direct](runs/2026-10-10-1830-accueil-plus-direct.md) | 🎨 | PR #92 fusionnée → v86 |
 | 10/10 20:30 — [Run bloqué (permissions)](runs/2026-10-10-2030-bloque-permissions.md) | 🧹 | PR #93 fusionnée (journal), compte rendu repris ici |
-| 10/10 22:30 — [Effets décalés](runs/2026-10-10-2230-effets-decales.md) | 🏗️ | PR en cours |
+| 10/10 22:30 — [Effets décalés](runs/2026-10-10-2230-effets-decales.md) | 🏗️ | PR #95 (fusion en fin de run, release attendue v87) |
 
 ---
 

@@ -1,6 +1,6 @@
 # 2026-10-10 22:30 UTC — Effets décalés (J-1 → J)
 
-**Type** : 🏗️ (travail de fond, moteur d'analyse)  ·  **PR** : voir le résumé de la semaine (ouverte puis fusionnée en fin de run)
+**Type** : 🏗️ (travail de fond, moteur d'analyse)  ·  **PR** : #95 (fusionnée en fin de run si CI verte)
 
 ## Pourquoi
 « Effets décalés » était l'item n° 1 des « Prochaines étapes » depuis plusieurs runs. Les corrélations du jour même
