@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-10",
+  "kind": "nouveau",
+  "title": "Décrivez votre repas en quelques mots",
+  "items": [
+    "Repas → « Décrire ou saisir sans photo » : écrivez ou dictez (micro du clavier) « 2 œufs au plat, une tartine beurrée et un café », puis « Remplir avec Gemini ». Les aliments et leurs grammes apparaissent, à vérifier et corriger avant d’enregistrer.",
+    "Gemini tient compte des mesures de tous les jours (cuillère, tranche, bol, verre) et ajoute l’huile ou le beurre de cuisson probables, marqués « à vérifier ».",
+    "Seul votre texte part chez Google, avec votre clé ; les calories et nutriments sont calculés sur le téléphone. Sans clé, la recherche d’aliments reste disponible.",
+    "Rechercher « œuf » avec le œ du clavier trouve enfin les œufs de la base."
+  ]
+}

@@ -60,7 +60,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Analyse photo fiabilisée** (R#4) : `responseSchema` (repli sans), noms rapprochés de la base, inconnus signalés/remplaçables, grammes modifiables, confiance « à vérifier », kcal
 - [ ] Analyse photo, étape 2 : question de portion quand la confiance est basse (« petite / moyenne / grande assiette ? ») ; photo de référence (main, carte) ; ~~modifier/supprimer un repas enregistré~~ (livré #72 + run 14:30)
 - [x] **Saisie sans photo + « Refaire » + repas habituels** (R#5) : composition manuelle par recherche, repas fréquents déduits de l'historique, heure modifiable (run 18:30)
-- [ ] Saisie, étape 2 : texte libre / dictée → Gemini (« 2 œufs, une tartine ») vers le même éditeur — le LLM ne sort que aliments + grammes + confiance, prompt avec unités ménagères françaises et matières grasses de cuisson demandées (veille 10/10 §B) ; « Refaire » depuis le journal du tableau de bord ; favoris épinglés si besoin
+- [x] **Repas décrit en texte / dictée → Gemini** vers le même éditeur : aliments + grammes + confiance seulement, repères ménagers français, matières grasses de cuisson ajoutées « à vérifier » ; œ → oe dans la recherche (run 10/10 02:30)
+- [ ] Saisie, étape 3 : « Refaire » depuis le journal du tableau de bord ; favoris épinglés si besoin ; mesurer la précision par mode (`provider` = gemini / gemini_text / manual) ; bouton micro dédié seulement si le micro du clavier ne suffit pas
 - [ ] Cigarettes avec contexte (R#7) : déclencheur optionnel, heatmap horaire, « envie résistée »
 - [ ] WHO-5 hebdomadaire (R#11) pour valider le score quotidien
 - [ ] Code-barres Open Food Facts + % ultra-transformés (R#17)
@@ -86,11 +87,10 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🏗️ Saisie texte libre / dictée → Gemini, vers l'éditeur de repas (veille 10/10 §B pour le prompt).
-2. 🐛 Chasse aux bugs sur les interactions (formulaires, modales, import d'une ancienne sauvegarde) — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`).
-3. 🏗️ Contrôle « week-end » puis effets décalés (lags 0–3 j) dans les analyses (C3).
-4. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
-5. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
+1. 🐛 Chasse aux bugs sur les interactions (formulaires, modales, import d'une ancienne sauvegarde) — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`).
+2. 🏗️ Contrôle « week-end » puis effets décalés (lags 0–3 j) dans les analyses (C3).
+3. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
+4. 🎨 Journal du tableau de bord, étape 2 : kcal sur chaque ligne repas, poids + composition fusionnés, « Modifier » un repas depuis le journal ; rapprocher Radar et cartes cœur.
 
 ## Idées en vrac (à trier)
 
@@ -119,6 +119,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-10 — Repas décrit en quelques mots (texte ou dictée) → Gemini → éditeur ; recherche « œuf » avec ligature (run 02:30)
 - [x] 2026-10-10 — Veille ciblée (bord à bord Android, saisie texte, jour de la semaine, coach IA) ; barre d'onglets / en-tête / modales au-dessus des barres système Android 15+ ; CI émulateur qui capture l'app réelle (run 00:30)
 - [x] 2026-10-09 — Barre d'onglets en bas + page « Plus » + en-tête compact (run 22:30)
 - [x] 2026-10-09 — Analyses : sommeil rattaché au jour du réveil (avant : nuit suivante), éveils non comptés ; « 7 h 11 » ; bouton Nutrition vide (run 20:30)

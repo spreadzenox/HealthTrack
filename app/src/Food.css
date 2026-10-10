@@ -288,6 +288,53 @@
   margin-top: 8px;
 }
 
+/* Repas décrit en quelques mots → Gemini */
+.meal-describe {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.meal-describe label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.meal-describe textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 64px;
+  padding: 10px 12px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.meal-describe textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.meal-describe .btn {
+  width: 100%;
+  min-height: 48px;
+}
+
+.meal-describe .hint {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  text-align: left;
+}
+
 .quick-saved {
   margin: 4px 0 12px;
 }

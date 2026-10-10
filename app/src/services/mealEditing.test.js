@@ -39,6 +39,10 @@ describe('searchIngredients', () => {
     expect(res[0].startsWith('Abricot')).toBe(true)
     expect(res[0].length).toBeLessThanOrEqual(res[1].length)
   })
+  it('« œuf » (ligature du clavier) trouve les « Oeuf » de la base', () => {
+    expect(searchIngredients('œuf dur')).toContain('Oeuf dur')
+    expect(matchIngredientName('Œuf poché')).toBe('Oeuf poché')
+  })
   it('ne renvoie rien pour une requête de moins de 2 caractères', () => {
     expect(searchIngredients('a')).toEqual([])
     expect(searchIngredients('  ')).toEqual([])

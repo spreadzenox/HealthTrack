@@ -8,12 +8,14 @@ import nutritionMap from '../data/ingredientsNutrition.json'
 const MAX_GRAMS = 5000
 const CONFIDENCES = new Set(['high', 'medium', 'low'])
 
-/** Minuscules, sans accents ni virgules ou apostrophes, espaces simplifiés. */
+/** Minuscules, sans accents ni ligatures (œ → oe), virgules ou apostrophes, espaces simplifiés. */
 export function normalizeName(s) {
   return String(s ?? '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+    .replace(/œ/g, 'oe')
+    .replace(/æ/g, 'ae')
     .replace(/[’',;]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()

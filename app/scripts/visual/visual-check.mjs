@@ -15,6 +15,8 @@
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
  *   npm run visual -- --routes=/food --food-analysis
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
+ *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
+ *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -58,6 +60,19 @@ const FAKE_MEAL_ANALYSIS = {
     { ingredient: 'Haricot vert, cuit', quantity_g: 90, confidence: 'medium' },
     { ingredient: "Huile d'olive vierge extra", quantity_g: 10, confidence: 'low' },
     { ingredient: 'Sauce maison du chef', quantity_g: 30, confidence: 'low' },
+  ],
+}
+
+const MEAL_TEXT = 'Deux œufs au plat, une tartine beurrée et un café'
+const FAKE_MEAL_TEXT_ANALYSIS = {
+  not_food: false,
+  dish: 'Œufs au plat et tartine beurrée',
+  ingredients: [
+    { ingredient: 'Oeuf au plat, sans matière grasse', quantity_g: 110, confidence: 'high' },
+    { ingredient: 'Pain (aliment moyen)', quantity_g: 35, confidence: 'high' },
+    { ingredient: 'Beurre à 80% MG minimum, doux', quantity_g: 10, confidence: 'medium' },
+    { ingredient: 'Café expresso, non instantané, sans sucres ajoutés, prêt à boire', quantity_g: 100, confidence: 'medium' },
+    { ingredient: "Huile d'olive vierge extra", quantity_g: 5, confidence: 'low' },
   ],
 }
 
@@ -159,8 +174,8 @@ async function main() {
         }),
       })
     )
-    if (args['food-analysis']) {
-      // Analyse photo sans clé réelle ni appel réseau : réponse Gemini factice.
+    if (args['food-analysis'] || args['meal-text']) {
+      // Analyse photo ou texte sans clé réelle ni appel réseau : réponse Gemini factice.
       await context.addInitScript(() => {
         try {
           localStorage.setItem('healthtrack_gemini_api_key', 'demo-key')
@@ -172,7 +187,7 @@ async function main() {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(FAKE_MEAL_ANALYSIS) }] } }] }),
+          body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(args['meal-text'] ? FAKE_MEAL_TEXT_ANALYSIS : FAKE_MEAL_ANALYSIS) }] } }] }),
         })
       )
     }
@@ -249,6 +264,16 @@ async function main() {
           await page.locator('#gallery-upload').setInputFiles({ name: 'repas.png', mimeType: 'image/png', buffer: DEMO_PHOTO })
           await page.getByRole('button', { name: 'Analyser les ingrédients' }).click()
           await page.getByRole('heading', { name: FAKE_MEAL_ANALYSIS.dish }).waitFor({ timeout: 10000 })
+        }
+        if (args['meal-text'] && path === '/food') {
+          await page.getByRole('button', { name: /Décrire ou saisir sans photo/ }).click()
+          await page.getByLabel('Décrivez votre repas').fill(MEAL_TEXT)
+          if (args['meal-text'] !== 'form') {
+            await page.getByRole('button', { name: /Remplir avec Gemini/ }).click()
+            await page.getByRole('heading', { name: FAKE_MEAL_TEXT_ANALYSIS.dish }).waitFor({ timeout: 10000 })
+          }
+          await page.evaluate(() => document.querySelector('.new-meal')?.scrollIntoView({ block: 'start' }))
+          await page.waitForTimeout(500)
         }
         if (args.click) {
           const button = page.getByRole('button', { name: String(args.click) }).first()
