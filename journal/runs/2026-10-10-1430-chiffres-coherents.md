@@ -1,6 +1,6 @@
 # 2026-10-10 14:30 UTC — Chasse aux bugs visuelle : chiffres cohérents, textes à jour
 
-**Type** : 🐛  ·  **PR** : #NN (voir tableau du résumé)
+**Type** : 🐛  ·  **PR** : #90 (fusionnée)
 
 ## Pourquoi
 Les 4 runs précédents ont tous porté sur le moteur d'analyse ; la charte demande ≥ 1 run sur 4 de vérification
