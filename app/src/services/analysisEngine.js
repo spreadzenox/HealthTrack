@@ -442,6 +442,56 @@ export const VARIABLE_META = {
 // ─── Step 1 — build daily dataset ────────────────────────────────────────────
 
 /**
+ * Measurements: a day without any value is unknown (watch not worn, phone not
+ * synced, no weigh-in), not 0. In the daily dataset they are null; counters
+ * (cigarettes, meals, workouts, nutrients) stay at 0 when nothing was logged.
+ */
+export const MEASURED_KEYS = [
+  'sleepMinutes', 'steps', 'dailyCaloriesHC',
+  'restingHR', 'avgHR', 'hrv_ms', 'spo2_pct',
+  'weight_kg', 'bmi', 'fat_ratio_pct', 'fat_mass_kg', 'muscle_mass_kg', 'bone_mass_kg',
+  'hydration_pct', 'visceral_fat_index', 'bmr_kcal', 'vascular_age_years', 'standing_hr_bpm', 'pwv_mps',
+]
+
+/**
+ * Share of the training days on which a measurement must be known to enter
+ * the advanced model (the other days get its average, which would otherwise
+ * dominate the variable).
+ */
+export const MIN_FEATURE_COVERAGE = 0.5
+
+function isKnown(v) {
+  return typeof v === 'number' && Number.isFinite(v)
+}
+
+/** Rows on which `key` is known. */
+function rowsWithKnown(rows, key) {
+  return rows.filter((d) => isKnown(d[key]))
+}
+
+/** Mean of the known values of `key`, or null when it is never known. */
+function knownMean(rows, key) {
+  const vals = rows.map((d) => d[key]).filter(isKnown)
+  return vals.length > 0 ? mean(vals) : null
+}
+
+/**
+ * Replaces unknown measurements by their mean over `meanRows` (the training
+ * days), i.e. "a usual day" — never by 0, which would read as a day without
+ * sleep or with a resting heart rate of 0.
+ */
+function fillMissing(rows, meanRows = rows) {
+  const means = Object.fromEntries(MEASURED_KEYS.map((k) => [k, knownMean(meanRows, k) ?? 0]))
+  return rows.map((d) => {
+    const filled = { ...d }
+    for (const k of MEASURED_KEYS) {
+      if (!isKnown(filled[k])) filled[k] = means[k]
+    }
+    return filled
+  })
+}
+
+/**
  * @param {string} iso
  * @returns {string} YYYY-MM-DD in local calendar
  */
@@ -764,6 +814,12 @@ export function buildDailyDataset(entries) {
     })
   }
 
+  for (const row of result) {
+    for (const k of MEASURED_KEYS) {
+      if (!(row[k] > 0)) row[k] = null
+    }
+  }
+
   result.sort((a, b) => (a.dateKey < b.dateKey ? -1 : 1))
   return result
 }
@@ -913,7 +969,7 @@ function withWeekendFlag(rows) {
 function _fitAdvancedModel(trainRows) {
   const { keys } = _selectFeatureKeys(trainRows)
   const controlKeys = weekendControl(trainRows).applied ? [WEEKEND_KEY] : []
-  return _fitModelOnRows(withWeekendFlag(trainRows), keys.length > 0 ? keys : null, controlKeys)
+  return _fitModelOnRows(withWeekendFlag(fillMissing(trainRows)), keys.length > 0 ? keys : null, controlKeys)
 }
 
 // ─── Step 4 — basic correlations ─────────────────────────────────────────────
@@ -952,21 +1008,29 @@ export function computeBasicCorrelations(entries) {
 
   const correlations = []
   for (const key of featureKeys) {
-    const vec = dataset.map((d) => d[key] ?? 0)
+    // Only the days on which the variable is known (watch worn, weigh-in…).
+    const rows = rowsWithKnown(dataset, key)
+    if (rows.length < MIN_DAYS_BASIC) continue
+    const vec = rows.map((d) => d[key])
     if (vec.every((v) => v === 0)) continue
-    const rRaw = pearsonCorrelation(wellbeingVec, vec)
+    const complete = rows.length === n
+    const wb = complete ? wellbeingVec : rows.map((d) => d.wellbeing)
+    const rRaw = pearsonCorrelation(wb, vec)
     if (rRaw === null) continue
-    const vecCtl = control(vec)
-    const r = weekend.applied ? pearsonCorrelation(wellbeingCtl, vecCtl) : rRaw
-    const nEff = effectiveSampleSize(wellbeingCtl, vecCtl)
+    const wk = complete ? weekend : weekendControl(rows)
+    const ctl = (v) => (wk.applied ? residualizeByGroup(v, wk.flags) : v)
+    const wbCtl = complete ? wellbeingCtl : ctl(wb)
+    const vecCtl = ctl(vec)
+    const r = wk.applied ? pearsonCorrelation(wbCtl, vecCtl) : rRaw
+    const nEff = effectiveSampleSize(wbCtl, vecCtl)
     correlations.push({
       variable: key,
       label: VARIABLE_META[key].label,
       r,
       rRaw,
-      n,
+      n: rows.length,
       nEff,
-      p: correlationPValue(r, weekend.applied ? nEff - 1 : nEff),
+      p: correlationPValue(r, wk.applied ? nEff - 1 : nEff),
       direction: VARIABLE_META[key].direction,
       group: VARIABLE_META[key].group,
     })
@@ -1321,18 +1385,28 @@ function _selectFeatureKeys(trainRows) {
   const weekend = weekendControl(trainRows)
   const control = (vec) => (weekend.applied ? residualizeByGroup(vec, weekend.flags) : vec)
   const wellbeingVec = control(trainRows.map((d) => d.wellbeing))
+  const minKnown = Math.max(MIN_DAYS_BASIC, Math.ceil(trainRows.length * MIN_FEATURE_COVERAGE))
   const ranked = Object.keys(VARIABLE_META)
     .map((k) => {
-      const vec = trainRows.map((d) => d[k] ?? 0)
+      const rows = rowsWithKnown(trainRows, k)
+      if (rows.length < minKnown) return null
+      const vec = rows.map((d) => d[k])
       if (vec.every((v) => v === 0)) return null
-      const r = pearsonCorrelation(wellbeingVec, control(vec))
+      let r
+      if (rows.length === trainRows.length) {
+        r = pearsonCorrelation(wellbeingVec, control(vec))
+      } else {
+        const wk = weekendControl(rows)
+        const ctl = (v) => (wk.applied ? residualizeByGroup(v, wk.flags) : v)
+        r = pearsonCorrelation(ctl(rows.map((d) => d.wellbeing)), ctl(vec))
+      }
       return r !== null ? { key: k, absR: Math.abs(r) } : null
     })
     .filter(Boolean)
     .sort((a, b) => b.absR - a.absR)
     .map((c) => c.key)
   const k = Math.min(MAX_FEATURES, Math.max(2, Math.floor(trainRows.length * MAX_FEATURES_RATIO)))
-  const { keys, dropped } = pruneCollinearFeatures(ranked, trainRows)
+  const { keys, dropped } = pruneCollinearFeatures(ranked, fillMissing(trainRows))
   return { keys: keys.slice(0, k), dropped: dropped.filter((d) => keys.indexOf(d.keptInstead) < k) }
 }
 
@@ -1379,7 +1453,7 @@ export function computeAdvancedAnalysis(entries) {
   }))
 
   const controlKeys = weekendControl(trainRows).applied ? [WEEKEND_KEY] : []
-  const fit = _fitModelOnRows(withWeekendFlag(trainRows), selectedKeys.length > 0 ? selectedKeys : null, controlKeys)
+  const fit = _fitModelOnRows(withWeekendFlag(fillMissing(trainRows)), selectedKeys.length > 0 ? selectedKeys : null, controlKeys)
   if (!fit) {
     const basic = computeBasicCorrelations(entries)
     if (basic.status !== 'ok') return { status: 'not_enough_data', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS, currentDays: n }
@@ -1449,7 +1523,7 @@ export function computeAdvancedAnalysis(entries) {
 
   // Hold-out residuals: predict the last HOLD_OUT_DAYS days using the model
   // trained WITHOUT those days — genuine out-of-sample evaluation.
-  const residuals = withWeekendFlag(holdOutRows).map((row) => {
+  const residuals = withWeekendFlag(fillMissing(holdOutRows, trainRows)).map((row) => {
     const xRow = [
       1,
       ...featureKeys.map((k, j) => ((row[k] ?? 0) - featureMeans[j]) / featureStds[j]),
@@ -1551,8 +1625,13 @@ function _predictToday(entries, rawDataset, featureKeys, featureMeans, featureSt
   // day (the training mean), never as 0.
   const assumedTypical = []
   const values = featureKeys.map((k, j) => {
-    const v = todayRow[k] ?? 0
     const mean = featureMeans[j]
+    if (!isKnown(todayRow[k])) {
+      // Not measured today (e.g. no weigh-in yet): a usual day.
+      assumedTypical.push(k)
+      return mean
+    }
+    const v = todayRow[k]
     if (CUMULATIVE_TODAY_KEYS.has(k)) {
       // Running totals only grow until midnight: at least what is already done.
       if (v < mean) assumedTypical.push(k)
@@ -1784,6 +1863,6 @@ function buildAdvancedAdvice(variable, coefficient, dataset) {
   const action = leverAction(variable, coefficient)
   if (!action) return null
   const meta = VARIABLE_META[variable]
-  const avg = mean(dataset.map((d) => d[variable] ?? 0))
+  const avg = knownMean(dataset, variable) ?? 0
   return `${action} — votre moyenne actuelle : ${meta.format(avg)}.`
 }

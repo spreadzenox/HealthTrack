@@ -277,7 +277,8 @@ function BasicTab({ entries }) {
         {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
         Méthode : corrélation de Pearson entre chaque variable et le bien-être, corrigée pour
         les jours qui se ressemblent (autocorrélation) et pour le nombre de variables testées
-        (Benjamini-Hochberg).
+        (Benjamini-Hochberg). Un jour sans mesure (montre non portée, pas de pesée) est ignoré
+        pour cette mesure, jamais compté comme 0.
         {reliability === 'exploratory' && (
           <> <span className="reco-reliability-warn">⚠ Données exploratoires — continuez à enregistrer votre bien-être pour améliorer la fiabilité (objectif : 10 jours).</span></>
         )}
@@ -380,7 +381,8 @@ function AdvancedTab({ entries }) {
           .</>
         )}
         {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
-          <> Variables retenues : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate} (les plus liées au bien-être, {MAX_FEATURES} au plus).</>
+          <> Variables retenues : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate} (les plus liées au bien-être, {MAX_FEATURES} au plus,
+          mesurées au moins un jour sur deux ; un jour sans mesure compte comme un jour habituel).</>
         )}
         {modelInfo?.overfit_risk && (
           <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours — R² entraînement non fiable.</span></>

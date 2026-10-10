@@ -113,6 +113,11 @@ une release à chaque changement validé, et tient ce journal.
   cours (0 pas, pas encore de repas ni de FC au repos) était lue comme une journée terminée. Ce qui n'est pas encore
   connu compte désormais comme une journée habituelle pour vous (démo : 0,0 → 2,3), avec une mention « une
   estimation, pas une mesure ».
+- **Analyses : une nuit sans montre n'est plus une nuit blanche.** Les jours où la montre n'était pas portée (ou sans
+  pesée), les analyses comptaient 0 minute de sommeil, une FC au repos de 0, un poids de 0 kg… ce qui noyait les vrais
+  liens. Ces jours sont maintenant ignorés pour la mesure concernée (ou comptés comme un jour habituel dans le modèle
+  avancé). Sur la démo, avec 1 jour sur 8 sans montre, le sommeil redevient la piste n° 1 (avant : invisible) et le
+  modèle avancé prédit bien mieux les jours qu'il n'a pas vus (R² 0,09 → 0,44). **Vos pistes peuvent changer** : c'est voulu.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -150,10 +155,12 @@ une release à chaque changement validé, et tient ce journal.
   si des aliments manquent ou si les grammes sont aberrants : le prompt sera ajusté.
 - **Barre d'onglets** : corrigée et vérifiée sur émulateur Android 16 (v77). Si sur votre A56 elle
   paraît trop haute (espace vide sous les onglets) ou encore cachée, dites-le-moi.
+- Après la mise à jour « mesure absente ≠ 0 », les **Analyses** peuvent changer nettement si vous ne portez pas la
+  montre tous les jours ou ne vous pesez pas quotidiennement : c'est la correction d'un biais, pas une instabilité.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — jours sans mesure de la montre comptés comme 0 dans les analyses (même famille que le bug de la prédiction), effets décalés (J-1 → J), formulaires, mise à jour de Capacitor.
+**Prochaines priorités** — effets décalés (J-1 → J), jours sans repas saisi dans les analyses nutritionnelles, formulaires, mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -179,7 +186,8 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 04:30 — [Restaurer une sauvegarde sans risque](runs/2026-10-10-0430-import-sur.md) | 🐛 | PR #85 fusionnée → v79 |
 | 10/10 06:30 — [Analyses : contrôle du week-end](runs/2026-10-10-0630-controle-week-end.md) | 🏗️ | PR #86 fusionnée → v80 |
 | 10/10 08:30 — [Vos habitudes à type de jour égal](runs/2026-10-10-0830-habitudes-week-end.md) | 🏗️ | PR #87 fusionnée → v81 |
-| 10/10 10:30 — [Prédiction du jour sur journée incomplète](runs/2026-10-10-1030-prediction-du-jour.md) | 🐛 | PR #88 |
+| 10/10 10:30 — [Prédiction du jour sur journée incomplète](runs/2026-10-10-1030-prediction-du-jour.md) | 🐛 | PR #88 fusionnée → v82 |
+| 10/10 12:30 — [Mesure absente ≠ 0 dans les analyses](runs/2026-10-10-1230-valeurs-manquantes.md) | 🐛 | PR en cours |
 
 ---
 
