@@ -66,6 +66,10 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // Montre oubliée ou déchargée ~1 jour sur 8 (pas de nuit, de FC ni de VFC ; le téléphone compte
   // toujours les pas). RNG séparé ; jamais sur les 4 derniers jours (cartes du tableau de bord stables).
   const watchRand = mulberry32(seed + 2000)
+  // Repas pas saisis ~1 jour sur 9, plus souvent après une courte nuit (on note moins quand on est
+  // fatigué) : l'alimentation n'agit pas sur le bien-être dans la démo, un lien serait un artefact.
+  // RNG séparé ; jamais sur les 4 derniers jours.
+  const mealRand = mulberry32(seed + 3000)
 
   for (let i = days; i >= 0; i--) {
     const day = new Date(now)
@@ -142,9 +146,10 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       entries.push({ type: 'cigarette', source: 'app_cigarette', at: at(day, 9 + c * 2, 10 + c), payload: { count: 1 } })
     }
     const mealCount = rand() < 0.7 ? 2 : 1
+    const mealsForgotten = mealRand() < (sleepMin < 390 ? 0.35 : 0.06) && i > 3
     for (let m = 0; m < mealCount; m++) {
       const meal = MEALS[Math.floor(rand() * MEALS.length)]
-      entries.push({ type: 'food', source: 'app_food', at: at(day, m === 0 ? 12 : 20, 15), payload: { items: toItems(meal), provider: 'gemini' } })
+      if (!mealsForgotten) entries.push({ type: 'food', source: 'app_food', at: at(day, m === 0 ? 12 : 20, 15), payload: { items: toItems(meal), provider: 'gemini' } })
     }
     if (i % 3 === 0) {
       weight += noise(0.4) - 0.05

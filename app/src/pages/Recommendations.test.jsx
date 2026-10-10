@@ -432,6 +432,26 @@ describe('Recommendations — week-end control', () => {
     spy.mockRestore()
   })
 
+  it("says on how many days the food intake is known when meals are missing", async () => {
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, nutritionDays: 31, reliability: 'good', correlations: [], levers: [],
+      weekendControl: { applied: false, weekendDays: 2, weekdayDays: 38 },
+    })
+    expect(await screen.findByText(/alimentation connue sur 31 jours sur 40/i)).toBeInTheDocument()
+    expect(screen.getByText(/pas un jeûne/i)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it("does not mention food coverage when meals are logged every day", async () => {
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, nutritionDays: 40, reliability: 'good', correlations: [], levers: [],
+      weekendControl: { applied: false, weekendDays: 2, weekdayDays: 38 },
+    })
+    await screen.findByText(/Analyse sur/i)
+    expect(screen.queryByText(/alimentation connue sur/i)).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
   it('says when there are not enough week-end days yet', async () => {
     const spy = await renderWithBasic({
       status: 'ok', datasetDays: 6, reliability: 'exploratory', correlations: [], levers: [],
