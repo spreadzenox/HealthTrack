@@ -481,10 +481,11 @@ function knownMean(rows, key) {
  * sleep or with a resting heart rate of 0.
  */
 function fillMissing(rows, meanRows = rows) {
-  const means = Object.fromEntries(MEASURED_KEYS.map((k) => [k, knownMean(meanRows, k) ?? 0]))
+  const keys = [...MEASURED_KEYS, ...NUTRITION_KEYS]
+  const means = Object.fromEntries(keys.map((k) => [k, knownMean(meanRows, k) ?? 0]))
   return rows.map((d) => {
     const filled = { ...d }
-    for (const k of MEASURED_KEYS) {
+    for (const k of keys) {
       if (!isKnown(filled[k])) filled[k] = means[k]
     }
     return filled
@@ -838,6 +839,23 @@ const LAGGED_NUTRITION_KEYS = NUTRITION_FIELDS.filter((f) => f !== 'energy_kcal'
   .concat(['kcal'])
   .filter((f) => f !== 'fodmap_score')
 
+/** Nutrition variables: unknown (null) once smoothed when no meal was logged. */
+const NUTRITION_KEYS = [...LAGGED_NUTRITION_KEYS, 'fodmap_score', 'mealCount']
+
+/**
+ * True when a series does not vary (all 0, or the same smoothed intake every
+ * day up to floating-point noise): correlating it would only measure noise.
+ */
+function isConstant(vec) {
+  const m = mean(vec)
+  const ss = vec.reduce((s, v) => s + (v - m) ** 2, 0)
+  return ss <= 1e-20 * vec.length * Math.max(m * m, 1e-300)
+}
+
+function hasMeals(row) {
+  return Boolean(row) && row.mealCount > 0
+}
+
 /**
  * Applies a linear-decay temporal window to nutrition features.
  *
@@ -879,7 +897,8 @@ export function buildLaggedDataset(dataset) {
       const dk = d.toISOString().slice(0, 10)
 
       const srcRow = byDate.get(dk)
-      if (!srcRow) continue
+      // A day without any meal logged is unknown (forgotten log), not a fast.
+      if (!hasMeals(srcRow)) continue
 
       totalWeight += w
       for (const key of LAGGED_NUTRITION_KEYS) {
@@ -887,10 +906,14 @@ export function buildLaggedDataset(dataset) {
       }
     }
 
-    if (totalWeight > 0) {
-      for (const key of LAGGED_NUTRITION_KEYS) {
-        laggedRow[key] = weightedSums[key] / totalWeight
-      }
+    for (const key of LAGGED_NUTRITION_KEYS) {
+      laggedRow[key] = totalWeight > 0 ? weightedSums[key] / totalWeight : null
+    }
+    if (!hasMeals(targetRow)) {
+      // Nothing logged that day: neither the FODMAP load nor the number of
+      // meals is known (0 would mostly measure the days the log was forgotten).
+      laggedRow.fodmap_score = null
+      laggedRow.mealCount = null
     }
 
     return laggedRow
@@ -1012,7 +1035,7 @@ export function computeBasicCorrelations(entries) {
     const rows = rowsWithKnown(dataset, key)
     if (rows.length < MIN_DAYS_BASIC) continue
     const vec = rows.map((d) => d[key])
-    if (vec.every((v) => v === 0)) continue
+    if (isConstant(vec)) continue
     const complete = rows.length === n
     const wb = complete ? wellbeingVec : rows.map((d) => d.wellbeing)
     const rRaw = pearsonCorrelation(wb, vec)
@@ -1054,6 +1077,8 @@ export function computeBasicCorrelations(entries) {
   return {
     status: 'ok',
     datasetDays: n,
+    // Days whose (smoothed) food intake is known: at least one meal logged in the window.
+    nutritionDays: dataset.filter((d) => isKnown(d.kcal)).length,
     reliability,
     weekendControl: {
       applied: weekend.applied,
@@ -1288,7 +1313,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
     d.setUTCDate(d.getUTCDate() - delta)
     const dk = d.toISOString().slice(0, 10)
     const srcRow = byDate.get(dk)
-    if (!srcRow) continue
+    if (!hasMeals(srcRow)) continue
     prevWeight += w
     for (const key of LAGGED_NUTRITION_KEYS) {
       prevSums[key] += (srcRow[key] ?? 0) * w
@@ -1298,7 +1323,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
   for (const key of LAGGED_NUTRITION_KEYS) {
     const todaySoFar = todayRaw[key] ?? 0
     if (prevWeight === 0) {
-      todayRaw[key] = todaySoFar
+      todayRaw[key] = todayRaw.mealCount > 0 ? todaySoFar : null
       continue
     }
     const todayEstimate = Math.max(todaySoFar, prevSums[key] / prevWeight)
@@ -1391,7 +1416,7 @@ function _selectFeatureKeys(trainRows) {
       const rows = rowsWithKnown(trainRows, k)
       if (rows.length < minKnown) return null
       const vec = rows.map((d) => d[k])
-      if (vec.every((v) => v === 0)) return null
+      if (isConstant(vec)) return null
       let r
       if (rows.length === trainRows.length) {
         r = pearsonCorrelation(wellbeingVec, control(vec))

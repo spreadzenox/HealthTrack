@@ -279,6 +279,13 @@ function BasicTab({ entries }) {
         les jours qui se ressemblent (autocorrélation) et pour le nombre de variables testées
         (Benjamini-Hochberg). Un jour sans mesure (montre non portée, pas de pesée) est ignoré
         pour cette mesure, jamais compté comme 0.
+        {result.nutritionDays != null && result.nutritionDays < datasetDays && (
+          <>
+            {' '}Alimentation connue sur {result.nutritionDays} jour{result.nutritionDays > 1 ? 's' : ''} sur {datasetDays} :
+            un jour sans repas saisi ne compte pas comme 0 kcal (un oubli n'est pas un jeûne), et sans aucun
+            repas saisi sur les 10 jours précédents, l'alimentation du jour est ignorée.
+          </>
+        )}
         {reliability === 'exploratory' && (
           <> <span className="reco-reliability-warn">⚠ Données exploratoires — continuez à enregistrer votre bien-être pour améliorer la fiabilité (objectif : 10 jours).</span></>
         )}

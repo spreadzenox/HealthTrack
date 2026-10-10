@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-10",
+  "kind": "correctif",
+  "title": "Analyses : un repas oublié n'est plus compté comme un jeûne",
+  "items": [
+    "Un jour où vous n’aviez saisi aucun repas comptait comme 0 kcal, 0 g de fibres, 0 vitamine… et tirait vers le bas votre alimentation des jours suivants. Si vous oubliez plutôt les jours de fatigue, l’app pouvait inventer des liens entre alimentation et bien-être.",
+    "Ces jours sont maintenant ignorés pour l’alimentation : seuls les jours avec au moins un repas saisi comptent. Sans aucun repas saisi sur les 10 jours précédents, l’alimentation du jour est mise de côté, et la page Analyses indique sur combien de jours elle est connue.",
+    "Sur les données de démonstration (repas oubliés environ 1 jour sur 9), un faux lien « FODMAP ↔ bien-être » disparaît, « Fumer moins de cigarettes » redevient une piste du modèle avancé et ses prédictions sur des jours jamais vus s’améliorent. Vos pistes peuvent changer : c’est voulu."
+  ]
+}

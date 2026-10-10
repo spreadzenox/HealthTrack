@@ -121,6 +121,12 @@ une release à chaque changement validé, et tient ce journal.
 - **Chiffres cohérents et textes à jour** : la carte FC au repos pouvait dire « 61 bpm — plus basse que
   d'habitude » avec une norme « 61–65 » (arrondi) ; elle affiche maintenant une décimale dans ce cas (« 60,5 » vs
   « 60,6–65,1 »). Paramètres : l'app dit clairement que la photo **ou le texte** d'un repas décrit part chez Google.
+- **Analyses : un repas oublié n'est plus un jeûne.** Un jour sans aucun repas saisi comptait comme 0 kcal, 0 fibre,
+  0 vitamine… et faisait baisser l'alimentation « lissée » des 10 jours suivants. Comme on oublie plutôt de noter
+  les jours de fatigue, l'app pouvait inventer des liens alimentation ↔ bien-être. Ces jours sont maintenant ignorés
+  pour l'alimentation, et la page Analyses dit sur combien de jours elle est connue. Démo (repas oubliés ~1 jour sur
+  9) : un faux lien « FODMAP » disparaît, « Fumer moins de cigarettes » redevient une piste avancée. **Vos pistes
+  peuvent changer** : c'est voulu.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -163,7 +169,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — effets décalés (J-1 → J), jours sans repas saisi dans les analyses nutritionnelles, formulaires, mise à jour de Capacitor.
+**Prochaines priorités** — effets décalés (J-1 → J), formulaires, introduction du tableau de bord, mise à jour de Capacitor.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -192,6 +198,7 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 10:30 — [Prédiction du jour sur journée incomplète](runs/2026-10-10-1030-prediction-du-jour.md) | 🐛 | PR #88 fusionnée → v82 |
 | 10/10 12:30 — [Mesure absente ≠ 0 dans les analyses](runs/2026-10-10-1230-valeurs-manquantes.md) | 🐛 | PR #89 fusionnée → v83 |
 | 10/10 14:30 — [Chiffres cohérents, textes à jour](runs/2026-10-10-1430-chiffres-coherents.md) | 🐛 | PR #90 fusionnée → v84 |
+| 10/10 16:30 — [Repas oublié ≠ jeûne dans les analyses](runs/2026-10-10-1630-repas-manquants.md) | 🐛 | PR #PR |
 
 ---
 

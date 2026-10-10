@@ -1816,3 +1816,107 @@ describe('valeurs manquantes (mesure absente ≠ 0)', () => {
     expect(result.assumedTypical).toContain('weight_kg')
   })
 })
+
+describe('jours sans repas saisi (oubli de saisie ≠ jeûne)', () => {
+  function dateOf(i) {
+    const d = new Date(Date.UTC(2026, 0, 1 + i))
+    return d.toISOString().slice(0, 10)
+  }
+  const RICE = [{ ingredient: 'Riz blanc cuit', quantity_g: 200 }]
+
+  it('buildLaggedDataset : un jour sans repas ne tire pas la moyenne lissée vers 0', () => {
+    const raw = buildDailyDataset([
+      makeWellbeing('2026-01-01', 3),
+      makeFood('2026-01-01', RICE),
+      makeWellbeing('2026-01-02', 3),
+    ])
+    expect(raw[0].kcal).toBeGreaterThan(0)
+    const lagged = buildLaggedDataset(raw)
+    expect(lagged[1].kcal).toBeCloseTo(raw[0].kcal, 5)
+    expect(lagged[1].fiber_g).toBeCloseTo(raw[0].fiber_g, 5)
+  })
+
+  it("buildLaggedDataset : aucun repas dans la fenêtre → nutrition inconnue (null), pas 0", () => {
+    const raw = buildDailyDataset([makeWellbeing('2026-01-01', 3), makeWellbeing('2026-01-02', 4)])
+    const lagged = buildLaggedDataset(raw)
+    for (const k of ['kcal', 'protein_g', 'fiber_g', 'alcohol_g', 'sodium_mg', 'fodmap_score', 'mealCount']) {
+      expect(lagged[1][k]).toBeNull()
+    }
+    // Les autres compteurs restent des compteurs.
+    expect(lagged[1].cigaretteCount).toBe(0)
+  })
+
+  it('corrélation basique : oublier de saisir ses repas les mauvais jours ne crée pas de faux lien', () => {
+    // Même repas tous les jours saisis ; repas oubliés les jours à 1/5.
+    const entries = []
+    for (let i = 0; i < 30; i++) {
+      const date = dateOf(i)
+      const bad = i % 4 === 0
+      entries.push(makeWellbeing(date, bad ? 1 : 4 - (i % 2)))
+      if (!bad) entries.push(makeFood(date, RICE))
+    }
+    const result = computeBasicCorrelations(entries)
+    expect(result.status).toBe('ok')
+    // Apport constant les jours saisis : aucun lien ne doit apparaître.
+    for (const key of ['kcal', 'carbohydrates_g', 'mealCount']) {
+      const c = result.correlations.find((x) => x.variable === key)
+      if (c) expect(Math.abs(c.r)).toBeLessThan(0.05)
+    }
+  })
+
+  it("corrélation basique : n compte seulement les jours où l'apport est connu", () => {
+    // Repas saisis les 15 premiers jours puis plus rien.
+    const entries = []
+    for (let i = 0; i < 30; i++) {
+      const date = dateOf(i)
+      entries.push(makeWellbeing(date, (i * 3) % 5))
+      if (i < 15) entries.push(makeFood(date, [{ ingredient: 'Riz blanc cuit', quantity_g: 100 + i * 20 }]))
+    }
+    const result = computeBasicCorrelations(entries)
+    const kcal = result.correlations.find((c) => c.variable === 'kcal')
+    expect(kcal).toBeDefined()
+    // Jours 0–24 : un repas dans les 10 jours précédents ; jours 25–29 : inconnu.
+    expect(kcal.n).toBe(25)
+    expect(result.nutritionDays).toBe(25)
+  })
+
+  it('modèle avancé : des jours sans aucun repas récent ne produisent ni NaN ni erreur', () => {
+    const entries = []
+    for (let i = 0; i < 40; i++) {
+      const date = dateOf(i)
+      const sleep = 400 + (i % 4) * 30
+      entries.push(makeWellbeing(date, Math.round((sleep - 400) / 30) + 1))
+      entries.push(makeSleep(date, sleep))
+      if (i >= 10 && i < 22) entries.push(makeFood(date, [{ ingredient: 'Riz blanc cuit', quantity_g: 100 + (i % 3) * 80 }]))
+    }
+    const result = computeAdvancedAnalysis(entries)
+    expect(result.status).toBe('ok')
+    for (const f of result.featureImportance) {
+      expect(Number.isFinite(f.coefficient ?? f.importance ?? 0)).toBe(true)
+    }
+    expect(Number.isFinite(result.modelInfo.r2)).toBe(true)
+  })
+
+  it("buildTodayRow : un jour précédent sans repas saisi n'abaisse pas l'apport estimé", () => {
+    const now = new Date()
+    const entries = []
+    for (let off = 5; off >= 1; off--) {
+      const date = localDateKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - off, 12).toISOString())
+      entries.push(makeWellbeing(date, 3))
+      if (off !== 2) entries.push(makeFood(date, RICE))
+    }
+    const historicalRaw = buildDailyDataset(entries)
+    const mealKcal = historicalRaw[0].kcal
+    entries.push({ type: 'sleep', source: 'health_connect', at: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7).toISOString(), payload: { durationMinutes: 420 } })
+    const result = buildTodayRow(entries, historicalRaw)
+    expect(result.kcal).toBeCloseTo(mealKcal, 5)
+  })
+
+  it("buildTodayRow : aucun repas ni aujourd'hui ni avant → apport inconnu (null)", () => {
+    const todayStr = localDateKey(new Date().toISOString())
+    const entries = [{ type: 'steps', source: 'health_connect', at: `${todayStr}T10:00:00Z`, payload: { value: 3000 } }]
+    const result = buildTodayRow(entries, [])
+    expect(result.kcal).toBeNull()
+    expect(result.fiber_g).toBeNull()
+  })
+})
