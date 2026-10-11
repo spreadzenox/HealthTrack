@@ -111,6 +111,32 @@ describe('buildDailyJournal', () => {
     expect(s.burnedKcal).toBeNull()
   })
 
+  it('fusionne le poids et la composition corporelle d’une même pesée', () => {
+    const [day] = buildDailyJournal([
+      e('weight', '2026-10-08T07:30:00', { valueKg: 77.2, fatRatioPct: 24.1 }, 'withings'),
+      e('body_composition', '2026-10-08T07:30:00', { valueKg: 77.2, fatRatioPct: 24.1 }, 'withings'),
+      e('weight', '2026-10-08T19:00:00', { valueKg: 78 }, 'withings'),
+    ])
+    expect(day.items.map((i) => i.type)).toEqual(['weight', 'body_composition'])
+  })
+
+  it('reporte le poids sur la composition quand elle ne le contient pas', () => {
+    const [day] = buildDailyJournal([
+      e('weight', '2026-10-08T07:30:00', { valueKg: 77.2 }, 'withings'),
+      e('body_composition', '2026-10-08T07:30:00', { fatRatioPct: 24.1 }, 'withings'),
+    ])
+    expect(day.items).toHaveLength(1)
+    expect(day.items[0].payload).toEqual({ fatRatioPct: 24.1, valueKg: 77.2 })
+  })
+
+  it('garde deux pesées de sources différentes au même instant', () => {
+    const [day] = buildDailyJournal([
+      e('weight', '2026-10-08T07:30:00', { valueKg: 77.2 }, 'scale'),
+      e('body_composition', '2026-10-08T07:30:00', { fatRatioPct: 24.1 }, 'withings'),
+    ])
+    expect(day.items).toHaveLength(2)
+  })
+
   it('renvoie une liste vide sans entrées', () => {
     expect(buildDailyJournal([])).toEqual([])
     expect(buildDailyJournal(undefined)).toEqual([])

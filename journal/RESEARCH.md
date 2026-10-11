@@ -5,6 +5,51 @@
 
 ---
 
+## 2026-10-11 — Veille courte : effets décalés sommeil → humeur, abandon de la saisie, régularité du sommeil
+
+> Run 🔭 court (3 recherches), centré sur les prochains chantiers C3 (effets décalés, étape 2) et C4 (saisie). Références `[V3-n]`.
+
+### A. Effets décalés sommeil → humeur (C3)
+- Une étude N-of-1 sur 4 ans de données Oura + humeur auto-déclarée (modèle VAR, tests de Granger) trouve que la
+  qualité de sommeil prédit l'humeur dépressive/anxieuse **à 2 jours** de décalage, probablement de façon
+  bidirectionnelle [V3-1]. → Conforte nos délais 1–3 j et le contrôle par le bien-être de la veille ; ajouter le
+  sens inverse (bien-être J → sommeil J+1) serait une piste honnête (« l'un et l'autre s'influencent »).
+- Une étude Oura (Chee et al., résumée par Oura) : dormir plus que sa moyenne → meilleure humeur **le jour même**,
+  pas le lendemain [V3-3]. → Afficher les effets décalés à côté de l'effet du jour même pour éviter la sur-lecture.
+- Modèles personnalisés >> modèles poolés pour décoder l'humeur depuis une montre (R² 0,09–0,31 en individuel) [V3-2].
+  → Ordre de grandeur réaliste : ne pas promettre plus que R² ≈ 0,3–0,5 sur nos prédictions.
+
+### B. Pourquoi on abandonne la saisie (C4)
+- Première raison d'abandon des apps de nutrition : le **temps de saisie** (37 % des abandons, JMIR mHealth 2023) [V3-4].
+- Br. J. Health Psychology (oct. 2025, via eMarketer) : **honte** de saisir des aliments « malsains » et découragement
+  face à des objectifs imposés par l'app [V3-5]. → Pas de jugement sur un repas (pas de rouge / « mauvais choix »),
+  objectifs proposés et non imposés ; repas plus courts à relire (noms courts, livré ce run).
+- Le suivi s'arrête souvent quand il a « répondu à la question » ; concevoir aussi pour l'après-suivi (pause sans
+  culpabilité, résumé de ce qui a été appris) [V3-6].
+
+### C. Régularité du sommeil (C2)
+- Senthil et al. (IEEE BHI 2025, MIT Media Lab, 48 personnes × 2 semaines) : un **SRI** plus élevé est associé à une
+  meilleure qualité de sommeil et à un meilleur bien-être le lendemain [V3-7]. Psychological Medicine : la régularité
+  (pas seulement la durée) est liée au risque de dépression / anxiété [V3-8]. → Confirme l'item « Régularité du
+  sommeil (R#6) » du backlog, à calculer depuis les heures de coucher / lever Health Connect.
+
+### Idées ajoutées au backlog
+- 🏗️ Effets décalés : tester aussi le sens inverse (bien-être → sommeil suivant), présenté comme « influence mutuelle ».
+- 🎨 Saisie sans jugement : audit des couleurs / mots des repas et de la Nutrition (aucun « mauvais » repas).
+- 🏗️ « Ce que vous avez appris » : résumé imprimable des liens solides, pour faire une pause sans tout perdre.
+
+### Sources (V3)
+- [V3-1] Brozena, *VAR of Longitudinal Sleep and Self-report Mood Data*, arXiv 2510.02511 — https://arxiv.org/abs/2510.02511v1
+- [V3-2] Décodage personnalisé de l'humeur avec Bangle.js 2 (préprint JMIR) — https://preprints.jmir.org/preprint/98561
+- [V3-3] Oura, résumé de Chee et al. (sommeil et préparation ressentie) — https://ouraring.com/blog/fr/study-uses-oura-to-uncover-link-between-sleep-and-self-reported-readiness/
+- [V3-4] Abandon des apps de nutrition (JMIR mHealth 2023, résumé WUR) — https://edepot.wur.nl/636781
+- [V3-5] eMarketer, *AI will power the next phase of health app growth* — https://www.emarketer.com/content/ai-will-power-next-phase-of-health-app-growth
+- [V3-6] Epstein et al., *Beyond Abandonment to Next Steps* (CHI) — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5428074/ ; https://escholarship.org/uc/item/0655n3p4
+- [V3-7] Senthil et al., *Circadian sleep alignment, sleep regularity and well-being* (MIT Media Lab) — https://www.media.mit.edu/publications/associations-between-circadian-sleep-alignment-sleep-regularity-and-well-being-evidence-from-wearable-data/
+- [V3-8] *Regular sleep patterns, not just duration* (Psychological Medicine) — https://resolve.cambridge.org/core/journals/psychological-medicine/article/regular-sleep-patterns-not-just-duration-critical-for-mental-health-association-of-accelerometerderived-sleep-regularity-with-incident-depression-and-anxiety/5366789D09649C83C3F1B17C20A832D1
+
+---
+
 ## 2026-10-10 — Veille ciblée : affichage Android 15+, saisie texte des repas, analyses décalées, coach IA
 
 > Run 🔭 court et ciblé sur les 4 prochains chantiers du backlog. Références `[V2-n]` en fin de section.

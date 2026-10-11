@@ -82,6 +82,26 @@ function finalize(day) {
 }
 
 /**
+ * Une pesée Withings crée une entrée « poids » et une « composition corporelle » au même instant :
+ * on n'en garde qu'une (la composition, avec le poids), pour ne pas afficher deux cartes.
+ */
+function mergeWeighIns(entries) {
+  const key = (e) => `${e.source}|${e.at}`
+  const weights = new Map(entries.filter((e) => e.type === 'weight').map((e) => [key(e), e]))
+  const merged = new Set()
+  const out = []
+  for (const e of entries) {
+    if (e.type === 'body_composition' && weights.has(key(e))) {
+      merged.add(key(e))
+      const valueKg = weights.get(key(e)).payload?.valueKg
+      const hasKg = isNum(e.payload?.valueKg) || !isNum(valueKg)
+      out.push(hasKg ? e : { ...e, payload: { ...e.payload, valueKg } })
+    } else out.push(e)
+  }
+  return out.filter((e) => !(e.type === 'weight' && merged.has(key(e))))
+}
+
+/**
  * @param {Array} entries - entrées brutes (ordre indifférent)
  * @returns {Array<{dateKey: string, summary: object, items: Array}>} jours, le plus récent en premier
  */
@@ -92,7 +112,7 @@ export function buildDailyJournal(entries) {
     return days.get(key)
   }
   // Ordre chronologique : « la dernière valeur » d'un jour est bien la plus récente.
-  const sorted = (entries || []).filter((e) => e?.at).sort((a, b) => (a.at < b.at ? -1 : 1))
+  const sorted = mergeWeighIns((entries || []).filter((e) => e?.at)).sort((a, b) => (a.at < b.at ? -1 : 1))
 
   for (const e of sorted) {
     const p = e.payload || {}

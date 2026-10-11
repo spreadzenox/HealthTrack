@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel } from './format'
+import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel, shortFoodName } from './format'
 
 describe('formatDuration', () => {
   it('affiche heures et minutes', () => {
@@ -98,5 +98,27 @@ describe('evidenceLabel', () => {
     expect(evidenceLabel('solide')).toBe('Hypothèse solide')
     expect(evidenceLabel('à confirmer')).toBe('Hypothèse à confirmer')
     expect(evidenceLabel('incertain')).toBe('Hypothèse incertaine')
+  })
+})
+
+describe('shortFoodName', () => {
+  it('retire la cuisson et les précisions d’un nom Ciqual', () => {
+    expect(shortFoodName('Saumon, cuit à la vapeur')).toBe('Saumon')
+    expect(shortFoodName("Brocoli, bouilli/cuit à l'eau (aliment moyen)")).toBe('Brocoli')
+    expect(shortFoodName("Pomme de terre, bouillie/cuite à l'eau")).toBe('Pomme de terre')
+    expect(shortFoodName('Haricot vert, cuit')).toBe('Haricot vert')
+  })
+  it('garde la précision qui distingue l’aliment après un mot seul', () => {
+    expect(shortFoodName("Poulet, cuisse, viande bouillie/cuite à l'eau")).toBe('Poulet, cuisse')
+    expect(shortFoodName('Fromage, emmental')).toBe('Fromage, emmental')
+    expect(shortFoodName('Pain, baguette, courante')).toBe('Pain, baguette')
+  })
+  it('laisse un nom simple tel quel', () => {
+    expect(shortFoodName('Riz blanc cuit')).toBe('Riz blanc cuit')
+    expect(shortFoodName('  Café  ')).toBe('Café')
+  })
+  it('renvoie une chaîne vide sans nom', () => {
+    expect(shortFoodName(undefined)).toBe('')
+    expect(shortFoodName('')).toBe('')
   })
 })
