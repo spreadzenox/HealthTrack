@@ -204,10 +204,22 @@ describe('Dashboard', () => {
   it('summarises a body composition measurement in French', async () => {
     await renderEntries([{ type: 'body_composition', source: 'withings', at: '2026-04-10T07:30:00', payload: { valueKg: 77.2, fatRatioPct: 24.1, muscleMassKg: 32.4, deviceid: 'abc123' } }])
     const row = document.querySelector('.entry-card')
-    expect(row).toHaveTextContent('Composition corporelle')
+    expect(row).toHaveTextContent('Pesée')
     expect(row).toHaveTextContent('Masse grasse 24,1 %')
     expect(row).toHaveTextContent('Muscles 32,4 kg')
     expect(row).not.toHaveTextContent('deviceid')
+  })
+
+  it('affiche une seule carte « Pesée » pour le poids et la composition d’une même pesée', async () => {
+    const body = { valueKg: 77.2, fatRatioPct: 24.1 }
+    await renderEntries([
+      { type: 'weight', source: 'withings', at: '2026-04-10T07:30:00', payload: body },
+      { type: 'body_composition', source: 'withings', at: '2026-04-10T07:30:00', payload: body },
+    ])
+    const rows = document.querySelectorAll('.entry-card')
+    expect(rows).toHaveLength(1)
+    expect(rows[0]).toHaveTextContent('Pesée')
+    expect(rows[0]).toHaveTextContent('77,2 kg · Masse grasse 24,1 %')
   })
 
   it('shows height in cm', async () => {
@@ -309,6 +321,17 @@ describe('Dashboard', () => {
     ])
     renderDashboard()
     expect(await screen.findByText('Riz : 150 g')).toBeInTheDocument()
+  })
+
+  it('raccourcit les noms d’aliments Ciqual (nom complet en infobulle)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const name = "Poulet, cuisse, viande bouillie/cuite à l'eau"
+    listEntries.mockResolvedValue([
+      { id: 7, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { items: [{ ingredient: name, quantity: '150 g' }] } },
+    ])
+    renderDashboard()
+    const item = await screen.findByText('Poulet, cuisse : 150 g')
+    expect(item).toHaveAttribute('title', name)
   })
 
   it('affiche les kcal et le nom du plat sur la ligne du repas', async () => {

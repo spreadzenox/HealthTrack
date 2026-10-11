@@ -9,7 +9,7 @@ import HealthRadar from '../components/HealthRadar'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import { isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
-import { formatDuration, workoutTypeLabel } from '../utils/format'
+import { formatDuration, workoutTypeLabel, shortFoodName } from '../utils/format'
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 import { mealKcal } from '../services/mealEditing'
 
@@ -33,7 +33,7 @@ const TYPE_LABELS = {
   steps: 'Pas',
   heart_rate: 'Fréquence cardiaque',
   calories: 'Calories',
-  body_composition: 'Composition corporelle',
+  body_composition: 'Pesée',
   height: 'Taille',
 }
 
@@ -84,7 +84,7 @@ function EntryBody({ e }) {
       {e.type === 'food' && e.payload?.items?.length > 0 && (
         <ul className="entry-items">
           {e.payload.items.slice(0, 5).map((item, i) => (
-            <li key={i}>{item.ingredient}{'\u00a0'}: {item.quantity}</li>
+            <li key={i} title={item.ingredient}>{shortFoodName(item.ingredient)}{'\u00a0'}: {item.quantity}</li>
           ))}
           {e.payload.items.length > 5 && (
             <li className="entry-more">+{e.payload.items.length - 5} autres</li>

@@ -55,7 +55,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Jours sans repas saisi ≠ jeûne** : ignorés dans le lissage nutritionnel, nutriments / FODMAP / nombre de repas inconnus sans repas, couverture affichée, prédiction du jour idem ; démo avec repas oubliés (run 10/10 16:30)
 - [ ] Lissage nutritionnel sur **tous** les jours avec repas (aujourd'hui seulement les jours avec note de bien-être servent de source)
 - [x] **Effets décalés** (lags 1–3 j) sur sommeil / pas / activité / cigarettes : corrélation partielle (bien-être de la veille, valeurs du jour même, week-end), BH sur tous les délais, seuil q < 0,05, section « Effets décalés » (run 10/10 22:30)
-- [ ] Effets décalés, étape 2 : tags du soir comme contrôles, piste décalée dans « Pistes à tester », mini-graphique par délai
+- [ ] Effets décalés, étape 2 : tags du soir comme contrôles, piste décalée dans « Pistes à tester », mini-graphique par délai ; sens inverse (bien-être J → sommeil J+1) présenté comme « influence mutuelle » (veille 11/10, [V3-1])
 - [ ] Intervalles de prédiction honnêtes (R#20, conformal split + couverture empirique affichée)
 - [ ] **Mode Expérience N-of-1** (R#14) : modèles prêts (« pas de café après 14 h »…), ABAB randomisé, test de permutation
 - [ ] Analyse avant/après d'un événement (R#21, régression segmentée)
@@ -97,15 +97,18 @@ puis l'analyse (statistiques, radar), puis la restitution (revue IA, notificatio
 
 1. 🐛 Chasse aux bugs (courbe du bien-être sur calendrier : fait, run 11/10 00:30 ; modifier une note de bien-être : fait, run 11/10 02:30) : formulaires (heure `datetime-local` sur l'A56), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 2. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
-3. 🎨 Journal du tableau de bord, étape 2 : ~~kcal et nom du plat sur chaque ligne repas~~ (run 18:30), poids + composition fusionnés, « Modifier » un repas depuis le journal, noms d'aliments courts ; rapprocher Radar et cartes cœur.
-4. 🔭 Veille (la dernière date du 10/10 00:30) : effets décalés / modèles « cross-lagged » en N-of-1, puissance attendue, retours d'utilisateurs d'apps de suivi.
+3. 🎨 Journal du tableau de bord, étape 3 : ~~kcal et nom du plat~~ (run 18:30), ~~poids + composition fusionnés, noms d'aliments courts~~ (run 11/10 04:30) ; « Modifier » / « Refaire » un repas depuis le journal ; rapprocher Radar et cartes cœur.
+4. 🏗️ Régularité du sommeil (R#6, confortée par la veille du 11/10) : écart-type coucher / lever 14 j + SRI simplifié sur le tableau de bord.
+5. 🔭 Prochaine veille vers le 12/10 soir : puissance attendue des analyses N-of-1, retours d'utilisateurs d'apps de suivi (forums, avis Play Store).
 
 ## Idées en vrac (à trier)
 
 - ~~Tableau de bord : introduction affichée même avec des données ; « Prédiction ML » ; cadre « Par heure » vide~~ (run 10/10 18:30).
 - ~~Modifier une note de bien-être~~ (run 11/10 02:30 : « Modifier » dans le journal, même fenêtre pré-remplie, heure conservée).
 - Tableau de bord : Radar forme et « Votre cœur vs votre norme » répètent chacun un paragraphe d'explication (« Une observation, pas un diagnostic ») → un seul bloc « Forme » avec une explication repliable.
-- Journal : noms Ciqual très longs (« Poulet, cuisse, viande bouillie/cuite à l'eau : 150 g ») → nom court (avant la 1re virgule + précision au tap ?).
+- ~~Journal : noms Ciqual très longs~~ → `shortFoodName` (run 11/10 04:30). À étendre à la liste de la page Repas si elle reste longue.
+- Saisie sans jugement (veille 11/10, [V3-5]) : vérifier qu'aucun repas / nutriment n'est présenté comme « mauvais » (couleurs, mots).
+- « Ce que vous avez appris » (veille 11/10, [V3-6]) : résumé des liens solides à garder, pour faire une pause sans culpabilité.
 - ~~Cartes cœur : arrondi qui contredisait le statut (« 61 » dans « 61–65 » mais « plus basse »)~~ (run 10/10 14:30) ; Paramètres « ce qui est envoyé » à jour avec le repas décrit (run 14:30).
 - Titre de page « Recommandations » vs onglet « Analyses » : harmoniser quand la page sera retravaillée (« Analyses » couvre aussi habitudes et modèle).
 _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ici ce qui n'a pas encore de chantier)_
@@ -119,7 +122,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
-- Tableau de bord : poids + composition corporelle Withings créent deux cartes pour la même pesée → fusionner à l'affichage.
+- ~~Tableau de bord : poids + composition corporelle Withings créent deux cartes~~ → une carte « Pesée » (run 11/10 04:30).
 - Repas (tableau de bord) : afficher les kcal du repas (fait sur Alimentation) ; « Modifier » aussi depuis le tableau de bord (livré sur Alimentation) ; ~~modifier une note de bien-être~~ (run 11/10 02:30).
 - Champ heure `datetime-local` : vérifier son rendu sur l'A56 (format FR, sélecteur natif).
 - Paramètres : « Déconnecter Withings » affiché même quand rien n'est connecté.
@@ -132,6 +135,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-11 — Veille courte (V3) + journal plus court : noms d'aliments courts, une seule carte « Pesée » (run 04:30)
 - [x] 2026-10-11 — Modifier une note de bien-être (note + tags, heure conservée) depuis « Vos derniers jours » (run 02:30)
 - [x] 2026-10-10 — Analyses : effets décalés (veille, 2 et 3 jours avant) avec contrôle de la veille, du jour même et du week-end (run 22:30)
 - [x] 2026-10-10 — Tableau de bord plus direct : intro seulement sans données, « Prédiction du jour », « Par heure » masqué si vide, kcal + plat sur chaque repas du journal (run 18:30)

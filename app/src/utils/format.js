@@ -156,3 +156,26 @@ const EVIDENCE_LABELS = {
 export function evidenceLabel(evidence) {
   return EVIDENCE_LABELS[evidence] ?? `Hypothèse ${evidence}`
 }
+
+/** Mots qui décrivent la préparation plutôt que l'aliment (« cuit à la vapeur », « aliment moyen »). */
+const FOOD_PREPARATION_WORDS = [
+  'cuit', 'bouilli', 'vapeur', 'cru', 'frit', 'rôti', 'grill', 'poêl', 'brais', 'sauté',
+  'préemballé', 'prêt à', 'surgelé', 'appertisé', 'égoutté', 'aliment moyen',
+]
+
+/**
+ * Nom d'aliment court pour les listes : « Poulet, cuisse, viande bouillie/cuite à l'eau » → « Poulet, cuisse ».
+ * Garde la première partie, plus la deuxième si la première n'est qu'un mot et que la deuxième précise
+ * l'aliment (« Fromage, emmental ») plutôt que sa cuisson (« Saumon, cuit à la vapeur » → « Saumon »).
+ */
+export function shortFoodName(name) {
+  const parts = String(name ?? '')
+    .replace(/\s*\([^)]*\)/g, '')
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
+  if (parts.length === 0) return ''
+  const [first, second] = parts
+  const describesFood = second && !FOOD_PREPARATION_WORDS.some((w) => second.toLowerCase().includes(w))
+  return !first.includes(' ') && describesFood ? `${first}, ${second}` : first
+}
