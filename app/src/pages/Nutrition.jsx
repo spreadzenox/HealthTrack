@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntriesForAnalysis } from '../storage/localHealthStorage'
-import { getBodyProfile, getLatestBodyComposition, computeBmi } from '../services/bodyProfile'
+import { getBodyProfile, getLatestBodyComposition } from '../services/bodyProfile'
 import { compareRecentIntake, formatNutrientAmount } from '../services/nutritionIntakeCompare'
-import { computeDailyEnergyKcal } from '../services/nutrientReferenceIntakes'
+import BodyProfileCard from '../components/BodyProfileCard'
 import './Nutrition.css'
 
 const formatNumber = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)
@@ -113,8 +113,6 @@ export default function Nutrition() {
   }, [entries, profile])
 
   const bodyComp = useMemo(() => getLatestBodyComposition(entries), [entries])
-  const bmi = profile ? computeBmi(profile.weightKg, profile.heightCm) : null
-  const dailyKcal = profile ? computeDailyEnergyKcal(profile) : null
 
   if (loading) {
     return (
@@ -130,35 +128,10 @@ export default function Nutrition() {
       <h2 className="page-title">Nutrition</h2>
       <p className="nutrition-intro">
         Vos apports moyens <strong>par jour saisi</strong> sur les 7 derniers jours, comparés aux
-        repères officiels (ANSES) personnalisés selon votre poids et votre taille.
+        repères officiels (ANSES) personnalisés selon votre profil.
       </p>
 
-      <div className="nutrition-profile-card">
-        <div>
-          <strong>Poids :</strong> {formatNumber(profile.weightKg)} kg
-          {profile.weightAt && (
-            <span className="nutrition-profile-hint">
-              {' '}(Withings, {new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' }).format(new Date(profile.weightAt))})
-            </span>
-          )}
-        </div>
-        <div>
-          <strong>Taille :</strong> {profile.heightCm} cm
-          {profile.heightAt && (
-            <span className="nutrition-profile-hint">
-              {' '}(Withings)
-            </span>
-          )}
-        </div>
-        {bmi != null && <div><strong>IMC :</strong> {formatNumber(bmi)}</div>}
-        {dailyKcal != null && <div><strong>Énergie recommandée :</strong> ~{formatNumber(dailyKcal)} kcal/jour</div>}
-        {profile.source === 'default' && (
-          <p className="nutrition-profile-hint">
-            Connectez votre balance{' '}
-            <Link to="/connectors">Withings Body Scan</Link> pour personnaliser les objectifs.
-          </p>
-        )}
-      </div>
+      <BodyProfileCard profile={profile} onSaved={load} />
 
       {comparison && comparison.mealCount === 0 ? (
         <div className="nutrition-empty">

@@ -66,13 +66,25 @@ export function hasWithingsTokens() {
   return Boolean(t?.accessToken)
 }
 
+// Les profils enregistrés avant la v93 avaient le sexe inversé (gender Withings 0 = homme lu comme femme).
+const USER_PROFILE_VERSION = 2
+
 /**
  * @returns {{ sex?: 'M'|'F', age?: number } | null}
  */
 export function getWithingsUserProfile() {
   try {
     const raw = localStorage.getItem(USER_KEY)
-    if (raw) return JSON.parse(raw)
+    if (!raw) return null
+    const stored = JSON.parse(raw)
+    if (!stored || typeof stored !== 'object') return null
+    const { v, ...profile } = stored
+    if (v !== USER_PROFILE_VERSION) {
+      if (profile.sex === 'M') profile.sex = 'F'
+      else if (profile.sex === 'F') profile.sex = 'M'
+      setWithingsUserProfile(profile)
+    }
+    return profile
   } catch { /* ignore */ }
   return null
 }
@@ -82,7 +94,7 @@ export function setWithingsUserProfile(profile) {
     localStorage.removeItem(USER_KEY)
     return
   }
-  localStorage.setItem(USER_KEY, JSON.stringify(profile))
+  localStorage.setItem(USER_KEY, JSON.stringify({ ...profile, v: USER_PROFILE_VERSION }))
 }
 
 export function clearWithingsAuth() {

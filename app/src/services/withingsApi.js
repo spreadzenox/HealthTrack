@@ -137,6 +137,22 @@ export async function fetchWithingsMeasures(startdate, enddate) {
 }
 
 /**
+ * Profil Withings → { sex, age }. API Withings : gender 0 = homme, 1 = femme.
+ * @param {{ gender?: number, birthdate?: number }} user
+ */
+export function withingsUserToProfile(user, now = new Date()) {
+  let age
+  if (user?.birthdate) {
+    const birth = new Date(user.birthdate * 1000)
+    age = now.getFullYear() - birth.getFullYear()
+    const m = now.getMonth() - birth.getMonth()
+    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age -= 1
+  }
+  const sex = user?.gender === 0 ? 'M' : user?.gender === 1 ? 'F' : undefined
+  return { sex, age: age > 0 ? age : undefined }
+}
+
+/**
  * Loads user profile (sex, age) from Withings and caches it locally.
  */
 export async function fetchAndCacheWithingsUser() {
@@ -145,17 +161,7 @@ export async function fetchAndCacheWithingsUser() {
   const user = users[0]
   if (!user) return null
 
-  let age
-  if (user.birthdate) {
-    const birth = new Date(user.birthdate * 1000)
-    const now = new Date()
-    age = now.getFullYear() - birth.getFullYear()
-    const m = now.getMonth() - birth.getMonth()
-    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age -= 1
-  }
-
-  const sex = user.gender === 1 ? 'M' : user.gender === 0 ? 'F' : undefined
-  const profile = { sex, age: age > 0 ? age : undefined }
+  const profile = withingsUserToProfile(user)
   setWithingsUserProfile(profile)
   return profile
 }

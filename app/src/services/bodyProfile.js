@@ -1,45 +1,58 @@
 /**
- * Body profile (weight, height) from Withings entries or manual fallback.
+ * Profil corporel (poids, taille, sexe, âge) pour les repères nutritionnels.
+ * Priorité : profil saisi dans l'app > Withings > valeur par défaut (signalée dans `origins`).
  */
 
 import { listEntries } from '../storage/localHealthStorage'
 import { getWithingsUserProfile } from '../settings/withingsSettings'
+import { getBodySettings, ageFromBirthYear } from '../settings/bodySettings'
 
-const DEFAULT_WEIGHT_KG = 70
-const DEFAULT_HEIGHT_CM = 170
+export const DEFAULT_WEIGHT_KG = 70
+export const DEFAULT_HEIGHT_CM = 170
+
+function latest(entries, type, valueKey) {
+  return entries
+    .filter((e) => e.type === type && e.payload?.[valueKey] > 0)
+    .sort((a, b) => (b.at < a.at ? -1 : 1))[0]
+}
+
+function originOf(entry) {
+  return entry.source === 'withings' ? 'withings' : 'manual'
+}
 
 /**
  * @param {Array<{ type: string, source?: string, at: string, payload?: object }>} [entries]
- * @returns {Promise<{ weightKg: number, heightCm: number, sex?: 'M'|'F', age?: number, source: string }>}
+ * @returns {Promise<{ weightKg: number, heightCm: number, sex?: 'M'|'F', age?: number, source: string,
+ *   origins: { weight: string, height: string, sex: string, age: string }, weightAt?: string, heightAt?: string }>}
  */
 export async function getBodyProfile(entries) {
   const data = entries ?? await listEntries({ limit: 5000 })
-  const withings = data.filter((e) => e.source === 'withings')
-
-  const weightEntry = withings
-    .filter((e) => e.type === 'weight' && e.payload?.valueKg > 0)
-    .sort((a, b) => (b.at < a.at ? -1 : 1))[0]
-
-  const heightEntry = withings
-    .filter((e) => e.type === 'height' && e.payload?.valueCm > 0)
-    .sort((a, b) => (b.at < a.at ? -1 : 1))[0]
-
-  const weightKg = weightEntry?.payload?.valueKg ?? DEFAULT_WEIGHT_KG
-  const heightCm = heightEntry?.payload?.valueCm ?? DEFAULT_HEIGHT_CM
-
+  const manual = getBodySettings()
   const withingsUser = getWithingsUserProfile() || {}
-  const source = weightEntry && heightEntry
+
+  const weightEntry = latest(data, 'weight', 'valueKg')
+  const heightEntry = manual.heightCm ? null : latest(data, 'height', 'valueCm')
+  const manualAge = ageFromBirthYear(manual.birthYear)
+
+  const origins = {
+    weight: weightEntry ? originOf(weightEntry) : 'default',
+    height: manual.heightCm ? 'manual' : heightEntry ? originOf(heightEntry) : 'default',
+    sex: manual.sex ? 'manual' : withingsUser.sex ? 'withings' : 'default',
+    age: manualAge ? 'manual' : withingsUser.age ? 'withings' : 'default',
+  }
+  const source = origins.weight === 'withings' && origins.height === 'withings'
     ? 'withings'
-    : weightEntry || heightEntry
-      ? 'withings_partial'
-      : 'default'
+    : origins.weight === 'default' && origins.height === 'default'
+      ? 'default'
+      : 'mixed'
 
   return {
-    weightKg,
-    heightCm,
-    sex: withingsUser.sex,
-    age: withingsUser.age,
+    weightKg: weightEntry?.payload?.valueKg ?? DEFAULT_WEIGHT_KG,
+    heightCm: manual.heightCm ?? heightEntry?.payload?.valueCm ?? DEFAULT_HEIGHT_CM,
+    sex: manual.sex ?? withingsUser.sex,
+    age: manualAge ?? withingsUser.age,
     source,
+    origins,
     weightAt: weightEntry?.at,
     heightAt: heightEntry?.at,
   }
