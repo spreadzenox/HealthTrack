@@ -1,6 +1,6 @@
 # 2026-10-11 12:30 UTC — Nutrition : niveau d'activité et profil dans la sauvegarde
 
-**Type** : 🏗️  ·  **PR** : #PRNUM
+**Type** : 🏗️  ·  **PR** : #102
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte, « Build & Release » v93 (PR #101) vert, APK publié.

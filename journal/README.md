@@ -259,7 +259,7 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 06:30 — [Régularité du sommeil](runs/2026-10-11-0630-regularite-sommeil.md) | 🏗️ | PR #99 fusionnée → v91 |
 | 11/10 08:30 — [Repas rangés par jour](runs/2026-10-11-0830-repas-par-jour.md) | 🎨 | PR #100 fusionnée → v92 |
 | 11/10 10:30 — [Nutrition : profil juste](runs/2026-10-11-1030-profil-nutrition.md) | 🐛 | PR #101 fusionnée → v93 |
-| 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #PRNUM (fusion en fin de run, release attendue v94) |
+| 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #102 (fusion en fin de run, release attendue v94) |
 
 ---
 
