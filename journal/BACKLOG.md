@@ -95,7 +95,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 Chasse aux bugs (courbe du bien-être sur calendrier : fait, run 11/10 00:30) : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
+1. 🐛 Chasse aux bugs (courbe du bien-être sur calendrier : fait, run 11/10 00:30 ; modifier une note de bien-être : fait, run 11/10 02:30) : formulaires (heure `datetime-local` sur l'A56), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 2. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
 3. 🎨 Journal du tableau de bord, étape 2 : ~~kcal et nom du plat sur chaque ligne repas~~ (run 18:30), poids + composition fusionnés, « Modifier » un repas depuis le journal, noms d'aliments courts ; rapprocher Radar et cartes cœur.
 4. 🔭 Veille (la dernière date du 10/10 00:30) : effets décalés / modèles « cross-lagged » en N-of-1, puissance attendue, retours d'utilisateurs d'apps de suivi.
@@ -103,7 +103,7 @@ puis l'analyse (statistiques, radar), puis la restitution (revue IA, notificatio
 ## Idées en vrac (à trier)
 
 - ~~Tableau de bord : introduction affichée même avec des données ; « Prédiction ML » ; cadre « Par heure » vide~~ (run 10/10 18:30).
-- Modifier une note de bien-être (aujourd'hui : supprimer puis re-saisir) — même éditeur léger que pour les repas.
+- ~~Modifier une note de bien-être~~ (run 11/10 02:30 : « Modifier » dans le journal, même fenêtre pré-remplie, heure conservée).
 - Tableau de bord : Radar forme et « Votre cœur vs votre norme » répètent chacun un paragraphe d'explication (« Une observation, pas un diagnostic ») → un seul bloc « Forme » avec une explication repliable.
 - Journal : noms Ciqual très longs (« Poulet, cuisse, viande bouillie/cuite à l'eau : 150 g ») → nom court (avant la 1re virgule + précision au tap ?).
 - ~~Cartes cœur : arrondi qui contredisait le statut (« 61 » dans « 61–65 » mais « plus basse »)~~ (run 10/10 14:30) ; Paramètres « ce qui est envoyé » à jour avec le repas décrit (run 14:30).
@@ -120,7 +120,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
 - Tableau de bord : poids + composition corporelle Withings créent deux cartes pour la même pesée → fusionner à l'affichage.
-- Repas (tableau de bord) : afficher les kcal du repas (fait sur Alimentation) ; « Modifier » aussi depuis le tableau de bord (livré sur Alimentation) ; modifier une note de bien-être.
+- Repas (tableau de bord) : afficher les kcal du repas (fait sur Alimentation) ; « Modifier » aussi depuis le tableau de bord (livré sur Alimentation) ; ~~modifier une note de bien-être~~ (run 11/10 02:30).
 - Champ heure `datetime-local` : vérifier son rendu sur l'A56 (format FR, sélecteur natif).
 - Paramètres : « Déconnecter Withings » affiché même quand rien n'est connecté.
 - Nutrition : « 1728 mg/j » sans espace dans la capture (Intl donne « 1 728 ») — vérifier sur téléphone le rendu de l'espace fine insécable en gras.
@@ -132,6 +132,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-11 — Modifier une note de bien-être (note + tags, heure conservée) depuis « Vos derniers jours » (run 02:30)
 - [x] 2026-10-10 — Analyses : effets décalés (veille, 2 et 3 jours avant) avec contrôle de la veille, du jour même et du week-end (run 22:30)
 - [x] 2026-10-10 — Tableau de bord plus direct : intro seulement sans données, « Prédiction du jour », « Par heure » masqué si vide, kcal + plat sur chaque repas du journal (run 18:30)
 - [x] 2026-10-10 — Analyses : jour sans repas saisi ≠ jeûne (lissage, FODMAP, nombre de repas, prédiction du jour ; couverture affichée ; R² LOO démo 0,37 → 0,44) (run 16:30)

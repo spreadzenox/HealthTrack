@@ -138,6 +138,9 @@ une release à chaque changement validé, et tient ce journal.
 - **Courbe du bien-être aux vraies dates** (tableau de bord) : « 14 derniers jours » veut enfin dire 14 jours du
   calendrier. Avant, la courbe reprenait vos 14 dernières notes à intervalles réguliers : après une semaine sans noter,
   d'anciennes notes semblaient dater d'hier. Un jour sans note laisse maintenant un trou dans la courbe.
+- **Modifier une note de bien-être** (tableau de bord → « Vos derniers jours » → « Modifier ») : corrigez la note ou
+  cochez après coup un tag oublié (alcool, écran tard…) sans supprimer ni re-saisir ; l'heure de la note est gardée,
+  donc elle reste au bon jour dans les analyses.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -180,12 +183,14 @@ une release à chaque changement validé, et tient ce journal.
 - Run du 10/10 20:30 bloqué : après une fusion, la session a refusé toutes les commandes (« Merge Without Review »).
   Rien de cassé ; si cela se répète, autoriser `git`/`npm` et la fusion pour les sessions de la routine. Les runs
   fusionnent désormais tout à la fin.
+- Run du 11/10 02:30 : PR #97 (modifier une note de bien-être) prête, CI verte, mais la session a de nouveau refusé la
+  fusion (« Merge Without Review »). Le run suivant la fusionnera ; sinon, fusionnez-la vous-même ou autorisez la fusion pour la routine.
 - **Effets décalés** : volontairement prudents (seulement les liens solides) ; il est normal de ne rien voir pendant
   plusieurs semaines.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — bugs de formulaires (heure d'un repas sur l'A56, modifier une note de bien-être), journal du tableau de bord (poids fusionné, noms courts), mise à jour de Capacitor, veille.
+**Prochaines priorités** — bugs de formulaires (heure d'un repas sur l'A56), journal du tableau de bord (poids fusionné, noms courts), mise à jour de Capacitor, veille.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -218,7 +223,8 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 18:30 — [Tableau de bord plus direct](runs/2026-10-10-1830-accueil-plus-direct.md) | 🎨 | PR #92 fusionnée → v86 |
 | 10/10 20:30 — [Run bloqué (permissions)](runs/2026-10-10-2030-bloque-permissions.md) | 🧹 | PR #93 fusionnée (journal), compte rendu repris ici |
 | 10/10 22:30 — [Effets décalés](runs/2026-10-10-2230-effets-decales.md) | 🏗️ | PR #95 fusionnée → v87 |
-| 11/10 00:30 — [Courbe du bien-être aux vraies dates](runs/2026-10-11-0030-courbe-calendrier.md) | 🐛 | PR #96 (fusion en fin de run, release attendue v88) |
+| 11/10 00:30 — [Courbe du bien-être aux vraies dates](runs/2026-10-11-0030-courbe-calendrier.md) | 🐛 | PR #96 fusionnée → v88 |
+| 11/10 02:30 — [Modifier une note de bien-être](runs/2026-10-11-0230-modifier-bien-etre.md) | 🐛 | PR #97 ouverte, CI verte — fusion refusée par les permissions de la session (à fusionner) |
 
 ---
 

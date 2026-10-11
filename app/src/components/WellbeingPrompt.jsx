@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createEntry } from '../storage/localHealthStorage'
+import { createEntry, updateEntry } from '../storage/localHealthStorage'
 import { BEHAVIOR_TAGS } from '../services/behaviorTags'
 
 const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
@@ -22,12 +22,27 @@ function markSessionAnswered() {
 
 const SCORES = [0, 1, 2, 3, 4, 5]
 
+function isToday(iso) {
+  const d = new Date(iso)
+  return !Number.isNaN(d.getTime()) && d.toDateString() === new Date().toDateString()
+}
+
+/** Tags dans l'ordre stable ; clé omise sans tag (même forme qu'avant l'existence des tags). */
+function withTags(payload, tags) {
+  const rest = { ...payload }
+  delete rest.tags
+  const ordered = BEHAVIOR_TAGS.map((t) => t.id).filter((id) => tags.includes(id))
+  return ordered.length > 0 ? { ...rest, tags: ordered } : rest
+}
+
 /**
  * WellbeingPrompt can work in two modes:
  * - Uncontrolled (no props): shows automatically once per session.
  * - Controlled (open + onClose props): caller manages visibility.
+ * With `entry` (controlled mode), it edits that saved note in place: score and tags change,
+ * the time and the other payload fields are kept.
  */
-export default function WellbeingPrompt({ open: controlledOpen, onClose: controlledOnClose } = {}) {
+export default function WellbeingPrompt({ open: controlledOpen, onClose: controlledOnClose, entry } = {}) {
   const isControlled = controlledOpen !== undefined
 
   const [internalOpen, setInternalOpen] = useState(false)
@@ -42,15 +57,16 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
     }
   }, [isControlled])
 
-  // Reset selected score whenever the dialog opens
+  // Reset (or prefill with the edited note) whenever the dialog opens
   useEffect(() => {
     const visible = isControlled ? controlledOpen : internalOpen
     if (visible) {
-      setSelected(null)
-      setTags([])
+      const score = entry?.payload?.score
+      setSelected(typeof score === 'number' ? score : null)
+      setTags(Array.isArray(entry?.payload?.tags) ? entry.payload.tags : [])
       setError(null)
     }
-  }, [isControlled ? controlledOpen : internalOpen]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isControlled ? controlledOpen : internalOpen, entry]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const open = isControlled ? controlledOpen : internalOpen
 
@@ -80,15 +96,15 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
     setSaving(true)
     setError(null)
     try {
-      await createEntry({
-        type: 'wellbeing',
-        source: 'app_wellbeing',
-        payload: {
-          score: selected,
-          // Stored in a stable order; omitted when empty (same shape as before tags existed).
-          ...(tags.length > 0 && { tags: BEHAVIOR_TAGS.map((t) => t.id).filter((id) => tags.includes(id)) }),
-        },
-      })
+      if (entry) {
+        await updateEntry(entry.id, { payload: withTags({ ...entry.payload, score: selected }, tags) })
+      } else {
+        await createEntry({
+          type: 'wellbeing',
+          source: 'app_wellbeing',
+          payload: withTags({ score: selected }, tags),
+        })
+      }
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
       if (!isControlled) {
         markSessionAnswered()
@@ -113,10 +129,12 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
         aria-describedby="wellbeing-modal-desc"
       >
         <h2 id="wellbeing-modal-title" className="wellbeing-modal-title">
-          Comment vous sentez-vous ?
+          {entry ? 'Modifier votre note' : 'Comment vous sentez-vous ?'}
         </h2>
         <p id="wellbeing-modal-desc" className="wellbeing-modal-desc">
-          Notez votre bien-être de 0 (très bas) à 5 (très bien). Les données restent sur cet appareil.
+          {entry
+            ? 'Corrigez la note ou les tags ; l’heure de la note ne change pas.'
+            : 'Notez votre bien-être de 0 (très bas) à 5 (très bien). Les données restent sur cet appareil.'}
         </p>
 
         <div className="wellbeing-circles" role="group" aria-label="Note de bien-être de 0 à 5">
@@ -141,7 +159,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
         </div>
 
         <p className="wellbeing-tags-title" id="wellbeing-tags-title">
-          Aujourd&apos;hui <span className="wellbeing-tags-optional">(facultatif)</span>
+          {entry && !isToday(entry.at) ? 'Ce jour-là' : 'Aujourd’hui'} <span className="wellbeing-tags-optional">(facultatif)</span>
         </p>
         <div className="wellbeing-tags" role="group" aria-labelledby="wellbeing-tags-title">
           {BEHAVIOR_TAGS.map((t) => {

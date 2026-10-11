@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-11",
+  "kind": "nouveau",
+  "title": "Modifier une note de bien-être",
+  "items": [
+    "Sur le tableau de bord, chaque note de bien-être de « Vos derniers jours » a maintenant un bouton « Modifier » : corrigez la note ou cochez / décochez un tag oublié (alcool, écran tard…) sans tout supprimer.",
+    "L’heure de la note ne change pas, et les analyses se recalculent aussitôt.",
+    "Pour un jour passé, les tags sont proposés pour « ce jour-là » plutôt qu’« aujourd’hui »."
+  ]
+}
