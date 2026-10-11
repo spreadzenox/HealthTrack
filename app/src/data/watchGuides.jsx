@@ -1,5 +1,5 @@
 /**
- * Contenu des guides « Votre montre n’apparaît pas ? » (page Connecteurs), par marque.
+ * Contenu des guides « Votre montre n’apparaît pas ? » (page Connecteurs), par marque.
  * Sources : gadgetbridge.org/basics/pairing/huawei-honor-pairing/,
  * gadgetbridge.org/basics/integrations/health-connect/ (consultées le 11/10/2026) ; journal/IDEES.md (I1).
  */
@@ -26,13 +26,13 @@ export const WATCH_GUIDES = [
         désinstallez-le). <strong>Ne désappairez pas la montre</strong> depuis Huawei Health : cela invaliderait la clé.
       </>,
       <>
-        Dans Gadgetbridge : « + » (Ajouter) → choisissez la montre → appui long sur son nom → <em>Auth key</em> →
+        Dans Gadgetbridge : « + » (Ajouter) → choisissez la montre → appui long sur son nom → <em>Auth key</em> →
         saisissez l’ID de compte, puis connectez.
       </>,
       <>
         Gadgetbridge → Réglages → <em>Intégrations externes</em> → <strong>Health Connect</strong> : activez,
         autorisez les types (FC, VFC, SpO₂, sommeil, respiration, température…) et cochez
-        « Synchroniser après la synchro de l’appareil ».
+        « Synchroniser après la synchro de l’appareil ».
       </>,
       HC_IN_HEALTHTRACK,
     ],
@@ -59,7 +59,7 @@ export const WATCH_GUIDES = [
     title: 'Xiaomi / Redmi / Amazfit',
     intro: 'Zepp (Amazfit) et Mi Fitness (Xiaomi, Redmi) écrivent dans Health Connect.',
     steps: [
-      <>Dans <strong>Zepp</strong> ou <strong>Mi Fitness</strong>, ouvrez votre profil et cherchez « Health Connect » (comptes ou applis tierces) → activez.</>,
+      <>Dans <strong>Zepp</strong> ou <strong>Mi Fitness</strong>, ouvrez votre profil et cherchez « Health Connect » (comptes ou applis tierces) → activez.</>,
       HC_IN_HEALTHTRACK,
       <>Alternative sans compte constructeur : Gadgetbridge prend aussi en charge la plupart des montres Xiaomi et Amazfit.</>,
     ],
@@ -69,7 +69,7 @@ export const WATCH_GUIDES = [
     title: 'Garmin',
     intro: 'Garmin Connect écrit une partie de vos données dans Health Connect depuis 2025.',
     steps: [
-      <>Dans <strong>Garmin Connect</strong>, cherchez « Health Connect » dans les applications connectées → activez.</>,
+      <>Dans <strong>Garmin Connect</strong>, cherchez « Health Connect » dans les applications connectées → activez.</>,
       HC_IN_HEALTHTRACK,
     ],
   },
@@ -78,7 +78,7 @@ export const WATCH_GUIDES = [
     title: 'Withings, Oura, Polar, Fitbit, Coros…',
     intro: 'La plupart de ces apps savent écrire dans Health Connect.',
     steps: [
-      <>Dans l’app de l’appareil, cherchez « Health Connect » dans les réglages ou les partenaires → activez.</>,
+      <>Dans l’app de l’appareil, cherchez « Health Connect » dans les réglages ou les partenaires → activez.</>,
       HC_IN_HEALTHTRACK,
       <>Withings : HealthTrack peut aussi se connecter directement à votre compte (carte ci-dessus) pour tous les biomarqueurs de la balance.</>,
     ],

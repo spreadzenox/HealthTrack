@@ -26,7 +26,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] **Guide « Montre Huawei / Honor → Gadgetbridge → Health Connect »** dans Connecteurs (I1) + guides Samsung, Xiaomi / Amazfit, Garmin, autres (`src/data/watchGuides.jsx`) (run 11/10 20:30)
 - [x] **Lire plus de types Health Connect** (I2) : respiration, température, tension, glycémie (nouveaux types d'entrée), poids, masse grasse ; autorisation partielle non bloquante + « Autoriser ces mesures » ; puces dans « Vos derniers jours » ; copie HC d'une pesée Withings écartée (run 11/10 20:30)
 - [ ] Types HC, étape 2 : température **cutanée** (`SkinTemperatureRecord`, patch natif du plugin) si Gadgetbridge / Samsung l'écrivent ainsi ; respiration et température comme variables des Analyses et du Radar ; vérifier sur la vraie GT 6 Pro ce qui arrive
-- [ ] **« Mes appareils »** (I3) : apps santé installées (`<queries>` + petit plugin natif) → connecteur conseillé + guide ; puis appareils BLE appairés (`getBondedDevices`)
+- [x] **« Mes appareils »** (I3), étape 1 : 19 apps santé détectées (`<queries>` + `AppLauncher.canOpenUrl`, sans plugin natif), sources réelles d'après `payload.sourceName` des mesures HC, statuts Reçu / En pause / À brancher / Relayé, « Voir le guide » + « Ouvrir l'app » (`src/devices/healthApps.js`) (run 12/10 00:30)
+- [ ] « Mes appareils », étape 2 : appareils BLE appairés (`getBondedDevices`, petit plugin natif) → montre identifiée par son nom (« HUAWEI WATCH GT 6 Pro-XXX ») ; ouvrir directement l'écran Health Connect de l'app (deep links) ; bandeau sur l'accueil quand une app est « À brancher » ou « En pause » ; vérifier les libellés `sourceName` réels sur l'A56
 - [ ] **Couche BLE générique, étape 1** (I8) : `@capacitor-community/bluetooth-le` 8.3, registre `DeviceDriver` + empreinte, profil FC 0x180D avec RR → VFC (parsing des trames en TDD) ; empreinte des appareils inconnus stockée en local
 - [ ] Couche BLE, étape 2 : balance 0x181D/0x181B, tensiomètre 0x1810, thermomètre 0x1809, oxymètre 0x1822, glycémie (RACP) ; Current Time Service
 - [ ] Couche BLE, étape 3 : Companion Device Manager (réveil quand l'appareil revient à portée), synchro en arrière-plan
@@ -115,7 +116,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] **Profil corporel juste** : sexe Withings corrigé (0 = homme), profil saisi dans l'app (sexe, année, taille, poids → pesée `app_weight`), provenance de chaque valeur affichée (run 11/10 10:30)
 - [x] **Profil, étape 2** : profil (sexe, année, taille, activité) dans la sauvegarde JSON (champ `profile` optionnel, anciens fichiers acceptés ; « Ajouter » complète, « Remplacer » restaure) ; niveau d'activité choisi ou estimé d'après les pas des 14 derniers jours (×1,4 à ×1,85) (run 11/10 12:30)
 - [ ] Dépense énergétique adaptative / TDEE (R#18)
-- [ ] Lint à 0 erreur (baseline 14 erreurs, 1 warning au 2026-10-08)
+- [ ] Lint à 0 erreur (6 erreurs, 1 warning au 12/10 après correction des espaces insécables de `watchGuides.jsx`)
 - [x] **Sauvegarde exhaustive** : l'export n'applique plus les plafonds de l'analyse (perte silencieuse des données anciennes) (#72)
 - [ ] Performance IndexedDB : `listEntries` fait un `getAll()` + filtre JS à chaque appel → utiliser les index
 - [ ] Code splitting (bundle principal > 500 kB, avertissement Vite)
@@ -126,8 +127,7 @@ Logique (réorientée le 11/10 soir) : d'abord **brancher les données du propri
 sans saisie, puis la couche BLE générique, puis l'humeur estimée. Le travail d'analyse (C3) continue en fond.
 
 1. ~~🏗️ C7 — types Health Connect (I2) + guide Huawei → Gadgetbridge (I1)~~ (run 11/10 20:30).
-2. 🏗️ **C7 — « Mes appareils »** (I3) : détection des apps santé installées → ouvre directement le bon guide
-   (`WATCH_GUIDES` est prêt à être ciblé par marque).
+2. ~~🏗️ C7 — « Mes appareils » (I3)~~ (run 12/10 00:30) ; étape 2 (appareils BLE appairés, bandeau d'accueil) après retour du propriétaire.
 3. 🏗️ **C8 — Météo / pression / air / pollen** (I4) comme variables des Analyses.
 4. 🏗️ **C7 — Couche BLE générique, étape 1** (I8) : registre de pilotes + FC 0x180D / RR → VFC.
 5. 🏗️ **C8 — Temps d'écran / téléphone au lit** (I6).

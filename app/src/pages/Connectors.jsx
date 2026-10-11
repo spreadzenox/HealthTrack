@@ -7,6 +7,7 @@ import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
 import { useDebug } from '../contexts/DebugContext'
 import DebugPanel from '../components/DebugPanel'
 import WatchGuides from '../components/WatchGuides'
+import MyDevices from '../components/MyDevices'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
 import './Connectors.css'
 
@@ -470,6 +471,8 @@ export default function Connectors() {
         (montre connectée, balance, etc.) dans HealthTrack. Toutes les données restent{' '}
         <strong>uniquement sur cet appareil</strong>.
       </p>
+
+      <MyDevices />
 
       <div className="connectors-list">
         {CONNECTORS.map((connector) => (

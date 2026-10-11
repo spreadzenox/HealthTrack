@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "nouveau",
+  "title": "Mes appareils : HealthTrack repère vos apps de montre",
+  "items": [
+    "Plus → Connecteurs → « Mes appareils » : HealthTrack repère tout seul les apps de montre et de santé installées sur le téléphone (Huawei Health, Samsung Health, Garmin Connect, Zepp, Mi Fitness, Fitbit, Withings, Oura, Polar, Gadgetbridge…).",
+    "Pour chacune, il dit où vous en êtes : « Reçu » (avec la date des dernières mesures et leur type), « En pause » si plus rien n'arrive depuis 3 jours, « À brancher » avec le réglage à activer, ou « Relayé » quand une passerelle comme Gadgetbridge s'en charge.",
+    "« Voir le guide » ouvre directement le bon guide pas à pas, « Ouvrir Huawei Health » (ou Garmin…) ouvre l'app concernée en un tap.",
+    "Rien ne quitte le téléphone : la liste des apps est lue sur place et n'est enregistrée nulle part."
+  ]
+}

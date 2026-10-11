@@ -18,7 +18,7 @@ export default function WatchGuides() {
         quelques minutes.
       </p>
       {WATCH_GUIDES.map((g) => (
-        <details key={g.id} className="watch-guide">
+        <details key={g.id} id={`guide-${g.id}`} className="watch-guide">
           <summary>{g.title}</summary>
           <p className="watch-guide-intro">{g.intro}</p>
           <ol className="watch-guide-steps">
