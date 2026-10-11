@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildDailyJournal, dayHeading, JOURNAL_SUMMARY_TYPES } from './dailyJournal'
+import { buildDailyJournal, dayHeading, groupMealsByDay, JOURNAL_SUMMARY_TYPES } from './dailyJournal'
 
 let nextId = 1
 function e(type, at, payload = {}, source = 'health_connect') {
@@ -163,5 +163,37 @@ describe('dayHeading', () => {
 
   it('ajoute l’année quand elle diffère', () => {
     expect(dayHeading('2025-12-31', now).date).toBe('31 décembre 2025')
+  })
+})
+
+describe('groupMealsByDay', () => {
+  const meal = (id, at, items = [{ ingredient: 'Abondance', quantity: '100 g', quantity_g: 100 }]) =>
+    ({ id, type: 'food', at, payload: { items } })
+
+  it('regroupe les repas par jour local, le plus récent en premier, avec le total de kcal', () => {
+    const days = groupMealsByDay([
+      meal('a', '2026-10-09T12:15:00'),
+      meal('b', '2026-10-10T20:15:00'),
+      meal('c', '2026-10-10T12:15:00'),
+    ])
+    expect(days.map((d) => d.dateKey)).toEqual(['2026-10-10', '2026-10-09'])
+    expect(days[0].meals.map((m) => m.id)).toEqual(['b', 'c'])
+    expect(days[0].kcal).toBe(786)
+    expect(days[1].kcal).toBe(393)
+  })
+
+  it('ne garde que les maxDays jours les plus récents', () => {
+    const meals = [meal('a', '2026-10-10T12:00:00'), meal('b', '2026-10-09T12:00:00'), meal('c', '2026-10-08T12:00:00')]
+    expect(groupMealsByDay(meals, { maxDays: 2 }).map((d) => d.dateKey)).toEqual(['2026-10-10', '2026-10-09'])
+  })
+
+  it('un repas sans aliment reconnu compte 0 kcal sans faire échouer le total', () => {
+    const [day] = groupMealsByDay([meal('a', '2026-10-10T12:00:00', []), { id: 'b', type: 'food', at: '2026-10-10T08:00:00' }])
+    expect(day.meals).toHaveLength(2)
+    expect(day.kcal).toBe(0)
+  })
+
+  it('ignore les entrées sans date valide', () => {
+    expect(groupMealsByDay([{ id: 'x', type: 'food', at: 'n’importe quoi' }])).toEqual([])
   })
 })

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-11",
+  "kind": "amélioration",
+  "title": "Repas : la liste se lit jour par jour",
+  "items": [
+    "Page Repas : vos derniers repas sont rangés sous un titre par jour (« Hier 10 octobre », « Vendredi 9 octobre ») avec le nombre de repas et le total estimé de la journée (« 2 repas · ≈ 994 kcal »).",
+    "Noms d'aliments courts (« Poulet, cuisse : 150 g » au lieu de « Poulet, cuisse, viande bouillie/cuite à l'eau : 150 g ») ; le nom complet reste visible en modifiant le repas.",
+    "Les 5 derniers jours s'affichent d'emblée ; « Voir les jours précédents » remonte plus loin. Refaire, Modifier et Supprimer restent sur chaque repas."
+  ]
+}

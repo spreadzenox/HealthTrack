@@ -107,7 +107,7 @@ puis l'analyse (statistiques, radar), puis la restitution (revue IA, notificatio
 - ~~Tableau de bord : introduction affichée même avec des données ; « Prédiction ML » ; cadre « Par heure » vide~~ (run 10/10 18:30).
 - ~~Modifier une note de bien-être~~ (run 11/10 02:30 : « Modifier » dans le journal, même fenêtre pré-remplie, heure conservée).
 - Tableau de bord : Radar forme et « Votre cœur vs votre norme » répètent chacun un paragraphe d'explication (« Une observation, pas un diagnostic ») → un seul bloc « Forme » avec une explication repliable.
-- ~~Journal : noms Ciqual très longs~~ → `shortFoodName` (run 11/10 04:30). À étendre à la liste de la page Repas si elle reste longue.
+- ~~Journal : noms Ciqual très longs~~ → `shortFoodName` (run 11/10 04:30), étendu à la page Repas (run 11/10 08:30).
 - Saisie sans jugement (veille 11/10, [V3-5]) : vérifier qu'aucun repas / nutriment n'est présenté comme « mauvais » (couleurs, mots).
 - « Ce que vous avez appris » (veille 11/10, [V3-6]) : résumé des liens solides à garder, pour faire une pause sans culpabilité.
 - ~~Cartes cœur : arrondi qui contredisait le statut (« 61 » dans « 61–65 » mais « plus basse »)~~ (run 10/10 14:30) ; Paramètres « ce qui est envoyé » à jour avec le repas décrit (run 14:30).
@@ -130,13 +130,14 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Paramètres : « Déconnecter Withings » affiché même quand rien n'est connecté.
 - Nutrition : « 1728 mg/j » sans espace dans la capture (Intl donne « 1 728 ») — vérifier sur téléphone le rendu de l'espace fine insécable en gras.
 - Suppression des données synchronisées (pesée aberrante…) : nécessiterait une liste d'exclusion persistante pour que la synchro ne les réimporte pas.
-- Alimentation : liste de 20 repas très longue → regrouper par jour (réutiliser `buildDailyJournal` / `dayHeading`).
+- ~~Alimentation : liste de 20 repas très longue → regrouper par jour~~ (run 11/10 08:30 : `groupMealsByDay`, 5 jours puis « Voir les jours précédents »).
 - Journal du tableau de bord : une nuit enregistrée seulement « au lit » n'apparaît pas (ignorée) — réutiliser `nightlySleep` en gardant les siestes courtes.
 - Nutrition : « 1728 mg/j » en gras sans espace dans les captures (police / U+202F ?) — vérifier sur téléphone.
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-11 — Page Repas : repas regroupés par jour (titre, nombre de repas, total ≈ kcal), noms courts, 5 jours puis « Voir les jours précédents » (run 08:30)
 - [x] 2026-10-11 — Veille courte (V3) + journal plus court : noms d'aliments courts, une seule carte « Pesée » (run 04:30)
 - [x] 2026-10-11 — Modifier une note de bien-être (note + tags, heure conservée) depuis « Vos derniers jours » (run 02:30)
 - [x] 2026-10-10 — Analyses : effets décalés (veille, 2 et 3 jours avant) avec contrôle de la veille, du jour même et du week-end (run 22:30)

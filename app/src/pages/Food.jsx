@@ -3,7 +3,8 @@ import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
 import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { analyzeWithGemini } from '../services/geminiStandalone'
-import { formatAt } from '../utils/format'
+import { shortFoodName } from '../utils/format'
+import { groupMealsByDay, dayHeading } from '../services/dailyJournal'
 import MealEditor from '../components/MealEditor'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import { isDeletableEntry } from '../utils/entries'
@@ -12,7 +13,13 @@ import SavedMealEditor from '../components/SavedMealEditor'
 import NewMealForm from '../components/NewMealForm'
 import { frequentMeals, mealLabel } from '../services/quickMeals'
 
-const RECENT_SHOWN = 20
+/** Jours de repas affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
+const INITIAL_DAYS = 5
+const MORE_DAYS = 7
+
+function timeOf(at) {
+  return new Date(at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+}
 
 export default function Food() {
   const [file, setFile] = useState(null)
@@ -25,6 +32,7 @@ export default function Food() {
   const [savedId, setSavedId] = useState(null)
   const [recentMeals, setRecentMeals] = useState([])
   const [editingId, setEditingId] = useState(null)
+  const [visibleDays, setVisibleDays] = useState(INITIAL_DAYS)
   // Saisie sans photo : { title, dish?, items } ; quickSaved = confirmation après enregistrement
   const [quickMeal, setQuickMeal] = useState(null)
   const [quickSaved, setQuickSaved] = useState(false)
@@ -45,6 +53,7 @@ export default function Food() {
   }, [])
 
   const habits = useMemo(() => frequentMeals(recentMeals), [recentMeals])
+  const mealDays = useMemo(() => groupMealsByDay(recentMeals), [recentMeals])
 
   const startQuickMeal = (meal) => {
     setQuickSaved(false)
@@ -318,71 +327,96 @@ export default function Food() {
       {recentMeals.length === 0 ? (
         <p className="empty-hint">Aucun repas enregistré pour l&apos;instant.</p>
       ) : (
-        <ul className="meals-list">
-          {recentMeals.slice(0, RECENT_SHOWN).map((e) => (
-            <li key={e.id} className="meal-card">
-              <div className="meal-head">
-                <time className="meal-at">{formatAt(e.at)}</time>
-                {mealKcal(e.payload?.items) > 0 && (
-                  <span className="meal-kcal">≈ {mealKcal(e.payload.items).toLocaleString('fr-FR')} kcal</span>
-                )}
-              </div>
-              {e.payload?.dish && <p className="meal-dish">{e.payload.dish}</p>}
-              {editingId === e.id ? (
-                <SavedMealEditor
-                  entry={e}
-                  onCancel={() => setEditingId(null)}
-                  onSaved={() => {
-                    setEditingId(null)
-                    loadRecent()
-                  }}
-                />
-              ) : (
-                <div className="entry-card-row">
-                  <ul className="meal-items">
-                    {e.payload?.items?.slice(0, 6).map((item, i) => (
-                      <li key={i}>{item.ingredient}{'\u00a0'}: {item.quantity}</li>
-                    ))}
-                    {e.payload?.items?.length > 6 && (
-                      <li className="meal-more">+{e.payload.items.length - 6}</li>
-                    )}
-                  </ul>
-                  {e.payload?.items?.length > 0 && (
-                    <div className="entry-edit">
-                      <button
-                        type="button"
-                        className="entry-delete-btn"
-                        onClick={() => redo(e.payload)}
-                        aria-label="Refaire ce repas"
-                      >
-                        Refaire
-                      </button>
-                    </div>
-                  )}
-                  {isDeletableEntry(e) && (
-                    <div className="entry-edit">
-                      <button
-                        type="button"
-                        className="entry-delete-btn"
-                        onClick={() => setEditingId(e.id)}
-                        aria-label="Modifier ce repas"
-                      >
-                        Modifier
-                      </button>
-                    </div>
-                  )}
-                  {isDeletableEntry(e) && (
-                    <DeleteEntryButton
-                      entryId={e.id}
-                      label="ce repas"
-                      onDeleted={(id) => setRecentMeals((meals) => meals.filter((m) => m.id !== id))}
-                    />
-                  )}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
+        <>
+          {mealDays.slice(0, visibleDays).map((day) => {
+            const { title, date } = dayHeading(day.dateKey)
+            return (
+              <section key={day.dateKey} className="meal-day" aria-label={`${title} ${date}`}>
+                <h4 className="meal-day-title">
+                  <span>{title} <span className="meal-day-date">{date}</span></span>
+                  <span className="meal-day-total">
+                    {day.meals.length} repas
+                    {day.kcal > 0 && ` · ≈ ${day.kcal.toLocaleString('fr-FR')} kcal`}
+                  </span>
+                </h4>
+                <ul className="meals-list">
+                  {day.meals.map((e) => (
+                    <li key={e.id} className="meal-card">
+                      <div className="meal-head">
+                        <time className="meal-at" dateTime={e.at}>{timeOf(e.at)}</time>
+                        {mealKcal(e.payload?.items) > 0 && (
+                          <span className="meal-kcal">≈ {mealKcal(e.payload.items).toLocaleString('fr-FR')} kcal</span>
+                        )}
+                      </div>
+                      {e.payload?.dish && <p className="meal-dish">{e.payload.dish}</p>}
+                      {editingId === e.id ? (
+                        <SavedMealEditor
+                          entry={e}
+                          onCancel={() => setEditingId(null)}
+                          onSaved={() => {
+                            setEditingId(null)
+                            loadRecent()
+                          }}
+                        />
+                      ) : (
+                        <div className="entry-card-row">
+                          <ul className="meal-items">
+                            {e.payload?.items?.slice(0, 6).map((item, i) => (
+                              <li key={i} title={item.ingredient}>{shortFoodName(item.ingredient)}{'\u00a0'}: {item.quantity}</li>
+                            ))}
+                            {e.payload?.items?.length > 6 && (
+                              <li className="meal-more">+{e.payload.items.length - 6}</li>
+                            )}
+                          </ul>
+                          {e.payload?.items?.length > 0 && (
+                            <div className="entry-edit">
+                              <button
+                                type="button"
+                                className="entry-delete-btn"
+                                onClick={() => redo(e.payload)}
+                                aria-label="Refaire ce repas"
+                              >
+                                Refaire
+                              </button>
+                            </div>
+                          )}
+                          {isDeletableEntry(e) && (
+                            <div className="entry-edit">
+                              <button
+                                type="button"
+                                className="entry-delete-btn"
+                                onClick={() => setEditingId(e.id)}
+                                aria-label="Modifier ce repas"
+                              >
+                                Modifier
+                              </button>
+                            </div>
+                          )}
+                          {isDeletableEntry(e) && (
+                            <DeleteEntryButton
+                              entryId={e.id}
+                              label="ce repas"
+                              onDeleted={(id) => setRecentMeals((meals) => meals.filter((m) => m.id !== id))}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )
+          })}
+          {mealDays.length > visibleDays && (
+            <button
+              type="button"
+              className="btn btn-secondary day-more-btn"
+              onClick={() => setVisibleDays((n) => n + MORE_DAYS)}
+            >
+              Voir les jours précédents
+            </button>
+          )}
+        </>
       )}
     </section>
   )

@@ -189,3 +189,26 @@ export function dayHeading(dateKey, now = new Date()) {
   if (y !== now.getFullYear()) opts.year = 'numeric'
   return { title, date: date.toLocaleDateString('fr-FR', opts) }
 }
+
+/**
+ * Repas regroupés par jour local (page Alimentation) : le plus récent en premier, repas du soir avant
+ * celui du midi, avec le total de kcal estimé du jour.
+ * @param {Array<{id, at, payload?: {items?: Array}}>} meals
+ * @param {{maxDays?: number}} [opts]
+ * @returns {Array<{dateKey: string, meals: Array, kcal: number}>}
+ */
+export function groupMealsByDay(meals, { maxDays = Infinity } = {}) {
+  const days = new Map()
+  for (const m of meals) {
+    if (Number.isNaN(new Date(m.at).getTime())) continue
+    const key = localDateKey(m.at)
+    if (!days.has(key)) days.set(key, { dateKey: key, meals: [], kcal: 0 })
+    const day = days.get(key)
+    day.meals.push(m)
+    day.kcal += mealKcal(m.payload?.items)
+  }
+  return [...days.values()]
+    .sort((a, b) => (a.dateKey < b.dateKey ? 1 : -1))
+    .slice(0, maxDays)
+    .map((d) => ({ ...d, meals: d.meals.sort((a, b) => new Date(b.at) - new Date(a.at)) }))
+}
