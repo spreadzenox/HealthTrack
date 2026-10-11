@@ -19,6 +19,7 @@
  *        resting heart rate, oxygen saturation, HRV.
  */
 import { BaseConnector } from './BaseConnector'
+import { healthConnectBodySamplesToEntries } from './healthConnectBodySync'
 import { debugInfo, debugWarn, debugError, debugDebug } from '../utils/debugLog'
 
 const TAG = 'HealthConnect'
@@ -34,6 +35,11 @@ const READ_TYPES = [
   'calories',
   'distance',
   'workouts',
+  // Body Scan / Withings via Health Connect (no developer OAuth setup)
+  'weight',
+  'height',
+  'bodyFat',
+  'basalCalories',
 ]
 
 /**
@@ -252,11 +258,11 @@ export class HealthConnectConnector extends BaseConnector {
   constructor() {
     super({
       id: 'health_connect',
-      name: 'Health Connect (Samsung Fit 3)',
+      name: 'Health Connect',
       description:
-        'Importe les données de la Samsung Galaxy Fit 3 via Android Health Connect : ' +
-        'pas à pas, sommeil, fréquence cardiaque, activités sportives, calories, SpO₂.',
-      dataTypes: ['steps', 'sleep', 'heart_rate', 'activity', 'calories'],
+        'Samsung Galaxy Fit 3, balance Withings Body Scan (via l’app Withings → Health Connect), ' +
+        'pas, sommeil, fréquence cardiaque, poids, taille, masse grasse et activités.',
+      dataTypes: ['steps', 'sleep', 'heart_rate', 'activity', 'calories', 'weight', 'height', 'body_composition'],
     })
   }
 
@@ -501,6 +507,36 @@ export class HealthConnectConnector extends BaseConnector {
    *
    * Returns true when an intent was dispatched, false in web/test environments.
    */
+  /**
+   * Opens the Withings app so the user can verify Health Connect sharing is enabled.
+   */
+  async openWithingsApp() {
+    debugInfo(TAG, 'Tentative ouverture Withings')
+    const AppLauncher = await getAppLauncher()
+    if (!AppLauncher) {
+      debugWarn(TAG, 'AppLauncher non disponible')
+      return false
+    }
+    const urls = [
+      'withings-bd2://',
+      'market://details?id=com.withings.wiscale2',
+      'https://play.google.com/store/apps/details?id=com.withings.wiscale2',
+    ]
+    for (const url of urls) {
+      try {
+        const result = await AppLauncher.openUrl({ url })
+        if (result?.completed) {
+          debugInfo(TAG, `Withings ouvert via : ${url}`)
+          return true
+        }
+      } catch (e) {
+        debugDebug(TAG, `URL Withings échouée : ${url}`, { error: e?.message })
+      }
+    }
+    debugError(TAG, 'Impossible d\'ouvrir Withings')
+    return false
+  }
+
   async openSamsungHealth() {
     debugInfo(TAG, 'Tentative ouverture Samsung Health')
     const AppLauncher = await getAppLauncher()
@@ -932,6 +968,90 @@ export class HealthConnectConnector extends BaseConnector {
     } catch (e) {
       debugError(TAG, `Erreur lecture calories : ${e?.message || e}`, { error: e })
       errors.push(`calories: ${e.message || e}`)
+    }
+
+    // ── Weight (Withings / scales via Health Connect) ─────────────────────
+    try {
+      debugDebug(TAG, 'Lecture poids…')
+      const { samples } = await Health.readSamples({
+        dataType: 'weight',
+        startDate,
+        endDate,
+        limit: 500,
+        ascending: true,
+      })
+      debugInfo(TAG, `Poids : ${samples.length} entrées`)
+      const entries = healthConnectBodySamplesToEntries(samples, 'weight')
+      if (entries.length > 0) {
+        await writer(entries)
+        synced += entries.length
+      }
+    } catch (e) {
+      debugError(TAG, `Erreur lecture poids : ${e?.message || e}`, { error: e })
+      errors.push(`weight: ${e.message || e}`)
+    }
+
+    // ── Height ─────────────────────────────────────────────────────────────
+    try {
+      debugDebug(TAG, 'Lecture taille…')
+      const { samples } = await Health.readSamples({
+        dataType: 'height',
+        startDate,
+        endDate,
+        limit: 50,
+        ascending: true,
+      })
+      debugInfo(TAG, `Taille : ${samples.length} entrées`)
+      const entries = healthConnectBodySamplesToEntries(samples, 'height')
+      if (entries.length > 0) {
+        await writer(entries)
+        synced += entries.length
+      }
+    } catch (e) {
+      debugError(TAG, `Erreur lecture taille : ${e?.message || e}`, { error: e })
+      errors.push(`height: ${e.message || e}`)
+    }
+
+    // ── Body fat % ─────────────────────────────────────────────────────────
+    try {
+      debugDebug(TAG, 'Lecture masse grasse…')
+      const { samples } = await Health.readSamples({
+        dataType: 'bodyFat',
+        startDate,
+        endDate,
+        limit: 500,
+        ascending: true,
+      })
+      debugInfo(TAG, `Masse grasse : ${samples.length} entrées`)
+      const entries = healthConnectBodySamplesToEntries(samples, 'bodyFat')
+      if (entries.length > 0) {
+        await writer(entries)
+        synced += entries.length
+      }
+    } catch (e) {
+      debugError(TAG, `Erreur lecture masse grasse : ${e?.message || e}`, { error: e })
+      errors.push(`bodyFat: ${e.message || e}`)
+    }
+
+    // ── Basal metabolic rate ───────────────────────────────────────────────
+    try {
+      debugDebug(TAG, 'Lecture métabolisme basal…')
+      const { samples } = await Health.readSamples({
+        dataType: 'basalCalories',
+        startDate,
+        endDate,
+        limit: 100,
+        ascending: true,
+      })
+      debugInfo(TAG, `BMR : ${samples.length} entrées`)
+      const entries = healthConnectBodySamplesToEntries(samples, 'basalCalories')
+      if (entries.length > 0) {
+        await writer(entries)
+        synced += entries.length
+      }
+    } catch (e) {
+      debugError(TAG, `Erreur lecture BMR : ${e?.message || e}`, { error: e })
+      errors.push(`basalCalories: ${e.message || e}`)
     }
 
     // ── Workouts / Activities ──────────────────────────────────────────────

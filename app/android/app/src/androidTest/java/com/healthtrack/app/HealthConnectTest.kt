@@ -2,9 +2,13 @@ package com.healthtrack.app
 
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.records.StepsRecord
+import androidx.health.connect.client.records.WeightRecord
+import androidx.health.connect.client.units.Percentage
+import androidx.health.connect.client.units.Mass
 import androidx.health.connect.client.records.metadata.Metadata as HealthMetadata
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
@@ -19,6 +23,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.Instant
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 /**
@@ -181,6 +186,56 @@ class HealthConnectTest {
         )
         val inserted = response.records.first()
         assertNotEquals("La durée de sommeil ne doit pas être nulle", sleepStart, inserted.endTime)
+    }
+
+    // ── Body composition (Withings via Health Connect) ─────────────────────────
+
+    @Test
+    fun healthConnect_canWriteAndReadWeight() = runBlocking {
+        val weightTime = TEST_START.plus(2, ChronoUnit.MINUTES)
+        val weightRecord = WeightRecord(
+            time = weightTime,
+            zoneOffset = ZoneOffset.UTC,
+            weight = Mass.kilograms(73.5),
+            metadata = HealthMetadata.unknownRecordingMethod(),
+        )
+        client.insertRecords(listOf(weightRecord))
+
+        val response = client.readRecords(
+            ReadRecordsRequest(
+                recordType = WeightRecord::class,
+                timeRangeFilter = TimeRangeFilter.between(
+                    TEST_START,
+                    TEST_END.plus(5, ChronoUnit.MINUTES)
+                ),
+            )
+        )
+        assertTrue("Un poids doit être lisible", response.records.isNotEmpty())
+        assertEquals(73.5, response.records.first().weight.inKilograms, 0.01)
+    }
+
+    @Test
+    fun healthConnect_canWriteAndReadBodyFat() = runBlocking {
+        val fatTime = TEST_START.plus(3, ChronoUnit.MINUTES)
+        val fatRecord = BodyFatRecord(
+            time = fatTime,
+            zoneOffset = ZoneOffset.UTC,
+            percentage = Percentage(19.2),
+            metadata = HealthMetadata.unknownRecordingMethod(),
+        )
+        client.insertRecords(listOf(fatRecord))
+
+        val response = client.readRecords(
+            ReadRecordsRequest(
+                recordType = BodyFatRecord::class,
+                timeRangeFilter = TimeRangeFilter.between(
+                    TEST_START,
+                    TEST_END.plus(5, ChronoUnit.MINUTES)
+                ),
+            )
+        )
+        assertTrue("Une masse grasse doit être lisible", response.records.isNotEmpty())
+        assertEquals(19.2, response.records.first().percentage.value, 0.1)
     }
 
     // ── Full connector smoke test ─────────────────────────────────────────────

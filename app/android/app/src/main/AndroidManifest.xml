@@ -22,6 +22,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Withings OAuth callback (built-in credentials, optional direct API) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="com.healthtrack.app"
+                    android:host="connectors"
+                    android:pathPrefix="/withings/callback" />
+            </intent-filter>
+
         </activity>
 
         <provider
@@ -52,6 +63,8 @@
         <package android:name="com.google.android.apps.healthdata" />
         <!-- Samsung Health app -->
         <package android:name="com.sec.android.app.shealth" />
+        <!-- Withings app -->
+        <package android:name="com.withings.wiscale2" />
         <!-- Samsung Health deep-link scheme -->
         <intent>
             <action android:name="android.intent.action.VIEW" />

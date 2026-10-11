@@ -4,6 +4,7 @@
 
 import { listEntries } from '../storage/localHealthStorage'
 import { getWithingsUserProfile } from '../settings/withingsSettings'
+import { BODY_MEASUREMENT_SOURCES } from '../constants/bodyMeasurementSources'
 
 const DEFAULT_WEIGHT_KG = 70
 const DEFAULT_HEIGHT_CM = 170
@@ -14,13 +15,13 @@ const DEFAULT_HEIGHT_CM = 170
  */
 export async function getBodyProfile(entries) {
   const data = entries ?? await listEntries({ limit: 5000 })
-  const withings = data.filter((e) => e.source === 'withings')
+  const bodyEntries = data.filter((e) => BODY_MEASUREMENT_SOURCES.includes(e.source))
 
-  const weightEntry = withings
+  const weightEntry = bodyEntries
     .filter((e) => e.type === 'weight' && e.payload?.valueKg > 0)
     .sort((a, b) => (b.at < a.at ? -1 : 1))[0]
 
-  const heightEntry = withings
+  const heightEntry = bodyEntries
     .filter((e) => e.type === 'height' && e.payload?.valueCm > 0)
     .sort((a, b) => (b.at < a.at ? -1 : 1))[0]
 
@@ -28,10 +29,11 @@ export async function getBodyProfile(entries) {
   const heightCm = heightEntry?.payload?.valueCm ?? DEFAULT_HEIGHT_CM
 
   const withingsUser = getWithingsUserProfile() || {}
+  const measureSource = weightEntry?.source || heightEntry?.source
   const source = weightEntry && heightEntry
-    ? 'withings'
+    ? measureSource || 'health_connect'
     : weightEntry || heightEntry
-      ? 'withings_partial'
+      ? `${measureSource || 'health_connect'}_partial`
       : 'default'
 
   return {
@@ -50,7 +52,7 @@ export async function getBodyProfile(entries) {
  */
 export function getLatestBodyComposition(entries) {
   const comp = (entries || [])
-    .filter((e) => e.type === 'body_composition' && e.source === 'withings')
+    .filter((e) => e.type === 'body_composition' && BODY_MEASUREMENT_SOURCES.includes(e.source))
     .sort((a, b) => (b.at < a.at ? -1 : 1))[0]
   return comp?.payload ?? null
 }

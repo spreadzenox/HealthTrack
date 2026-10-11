@@ -73,6 +73,9 @@ describe('HealthConnectConnector', () => {
     expect(connector.dataTypes).toContain('heart_rate')
     expect(connector.dataTypes).toContain('activity')
     expect(connector.dataTypes).toContain('calories')
+    expect(connector.dataTypes).toContain('weight')
+    expect(connector.dataTypes).toContain('height')
+    expect(connector.dataTypes).toContain('body_composition')
   })
 
   describe('isAvailable', () => {
@@ -393,6 +396,40 @@ describe('HealthConnectConnector', () => {
       expect(hrEntries.length).toBeGreaterThan(0)
       expect(hrEntries[0].payload.bpm).toBe(72)
       expect(hrEntries[0].payload.subtype).toBe('heartRate')
+    })
+
+    it('syncs weight from Health Connect (Withings via HC)', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(({ dataType }) => {
+        if (dataType === 'weight') {
+          return Promise.resolve({
+            samples: [
+              {
+                startDate: '2026-01-02T07:00:00Z',
+                value: 72.5,
+                unit: 'kilogram',
+                sourceName: 'Withings',
+              },
+            ],
+          })
+        }
+        return Promise.resolve({ samples: [] })
+      })
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+
+      const { written, writer } = makeWriter()
+      await connector.sync({
+        since: new Date('2026-01-01T00:00:00Z'),
+        until: new Date('2026-01-03T12:00:00Z'),
+        writer,
+      })
+
+      const weightEntries = written.filter((e) => e.type === 'weight')
+      expect(weightEntries.length).toBe(1)
+      expect(weightEntries[0].source).toBe('health_connect')
+      expect(weightEntries[0].payload.valueKg).toBe(72.5)
+      expect(weightEntries[0].payload.sourceName).toBe('Withings')
     })
 
     it('syncs workouts as activity entries', async () => {

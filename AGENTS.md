@@ -29,4 +29,5 @@ A scheduled Claude routine improves the app every 2 hours. Its charter, backlog,
 
 - AI food analysis requires a `GEMINI_API_KEY` set in the app's Settings page (stored locally, never in the repo).
 - To build an APK: see `app/BUILD_APK.md`. CI builds are triggered automatically on push to `main`.
+- **Withings (one-click)** : add GitHub repo secrets `WITHINGS_CLIENT_ID` and `WITHINGS_CLIENT_SECRET` (one developer app at developer.withings.com). Users tap « Connecter mon compte Withings » — no Client ID form. Tests use `VITE_WITHINGS_MOCK` (Vitest) and synthetic fixtures in `app/src/fixtures/`.
 - The in-app update banner calls `https://api.github.com/repos/spreadzenox/HealthTrack/releases/latest` — the repo must be **public** for this to work without authentication.
