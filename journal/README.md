@@ -32,7 +32,7 @@ balances, tensiomètres standard), temps d'écran.
 
 | Run | Type | Résultat |
 |---|---|---|
-| 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR à fusionner (voir compte rendu) |
+| 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → release suivante |
 
 ---
 
