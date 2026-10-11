@@ -60,7 +60,8 @@
   color: var(--text-muted);
 }
 
-.nutrition-profile-sex {
+.nutrition-profile-sex,
+.nutrition-profile-activity-choice {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -69,9 +70,19 @@
   border: none;
 }
 
-.nutrition-profile-sex legend {
+.nutrition-profile-sex legend,
+.nutrition-profile-activity-choice legend {
   width: 100%;
   padding: 0;
+}
+
+.nutrition-profile-activity-choice {
+  margin-top: 12px;
+}
+
+.nutrition-profile-activity-choice .nutrition-profile-hint {
+  width: 100%;
+  margin: 0;
 }
 
 .nutrition-sex-option {

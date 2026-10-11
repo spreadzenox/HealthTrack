@@ -21,10 +21,33 @@ export function computeBmr({ weightKg, heightCm, sex = 'M', age = 30 }) {
 }
 
 /**
- * Besoins énergétiques journaliers (activité modérée ×1,55).
+ * Niveaux d'activité physique (facteur appliqué au métabolisme de base, repères EFSA/FAO).
+ * `minSteps` : pas quotidiens moyens à partir desquels le niveau est estimé (Tudor-Locke).
+ */
+export const ACTIVITY_LEVELS = [
+  { id: 'sedentary', label: 'Sédentaire', factor: 1.4, minSteps: 0, hint: 'surtout assis, peu de marche' },
+  { id: 'moderate', label: 'Modérément actif', factor: 1.55, minSteps: 5000, hint: 'marche régulière ou sport 1–2 fois par semaine' },
+  { id: 'active', label: 'Actif', factor: 1.7, minSteps: 7500, hint: 'beaucoup de marche ou sport 3–4 fois par semaine' },
+  { id: 'very_active', label: 'Très actif', factor: 1.85, minSteps: 10000, hint: 'métier physique ou sport presque tous les jours' },
+]
+
+export const DEFAULT_ACTIVITY = 'moderate'
+
+export function activityLevel(id) {
+  return ACTIVITY_LEVELS.find((l) => l.id === id) ?? ACTIVITY_LEVELS.find((l) => l.id === DEFAULT_ACTIVITY)
+}
+
+/** Niveau estimé à partir des pas quotidiens moyens. */
+export function activityFromSteps(meanSteps) {
+  if (typeof meanSteps !== 'number' || !Number.isFinite(meanSteps)) return undefined
+  return [...ACTIVITY_LEVELS].reverse().find((l) => meanSteps >= l.minSteps).id
+}
+
+/**
+ * Besoins énergétiques journaliers : métabolisme de base × niveau d'activité (modéré ×1,55 par défaut).
  */
 export function computeDailyEnergyKcal(profile) {
-  return Math.round(computeBmr(profile) * 1.55)
+  return Math.round(computeBmr(profile) * activityLevel(profile.activity).factor)
 }
 
 /**

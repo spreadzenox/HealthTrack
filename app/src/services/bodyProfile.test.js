@@ -31,7 +31,8 @@ describe('bodyProfile', () => {
   it('signale chaque valeur par défaut (rien de saisi, pas de Withings)', async () => {
     const profile = await getBodyProfile([])
     expect(profile).toMatchObject({ weightKg: 70, heightCm: 170, sex: undefined, age: undefined })
-    expect(profile.origins).toEqual({ weight: 'default', height: 'default', sex: 'default', age: 'default' })
+    expect(profile.origins).toEqual({ weight: 'default', height: 'default', sex: 'default', age: 'default', activity: 'default' })
+    expect(profile.activity).toBe('moderate')
   })
 
   it('utilise le profil saisi dans l\'app (sexe, année de naissance, taille)', async () => {
@@ -72,5 +73,47 @@ describe('bodyProfile', () => {
     expect(profile.weightKg).toBe(71)
     expect(profile.weightAt).toBe('2026-06-02T08:00:00Z')
     expect(profile.origins.weight).toBe('manual')
+  })
+
+  describe('niveau d\'activité', () => {
+    const NOW = new Date('2026-10-11T12:00:00')
+    const stepsDays = (values, { period = 'day' } = {}) => values.map((v, i) => {
+      const d = new Date(NOW)
+      d.setDate(d.getDate() - (i + 1))
+      d.setHours(0, 0, 0, 0)
+      return { type: 'steps', source: 'health_connect', at: d.toISOString(), payload: { value: v, period } }
+    })
+
+    it('est estimé d\'après la moyenne des pas des 14 derniers jours (aujourd\'hui exclu)', async () => {
+      const entries = [
+        ...stepsDays([8000, 9000, 8500, 7600, 9900, 8100, 8400, 8800]),
+        // Aujourd'hui (journée en cours) : ne compte pas.
+        { type: 'steps', source: 'health_connect', at: new Date('2026-10-11T08:00:00').toISOString(), payload: { value: 200, period: 'day' } },
+      ]
+      const profile = await getBodyProfile(entries, NOW)
+      expect(profile.activity).toBe('active')
+      expect(profile.origins.activity).toBe('steps')
+      expect(profile.meanSteps).toBe(8538)
+      expect(profile.stepsDays).toBe(8)
+    })
+
+    it('ignore les jours sans pas et reste par défaut sous 7 jours mesurés', async () => {
+      const profile = await getBodyProfile(stepsDays([12000, 0, 11000, 13000, 0, 12500, 11800]), NOW)
+      expect(profile.origins.activity).toBe('default')
+      expect(profile.activity).toBe('moderate')
+    })
+
+    it('ne compte pas les pas de plus de 14 jours', async () => {
+      const old = stepsDays(new Array(20).fill(15000)).slice(14)
+      const profile = await getBodyProfile(old, NOW)
+      expect(profile.origins.activity).toBe('default')
+    })
+
+    it('le niveau choisi dans l\'app prime sur l\'estimation', async () => {
+      setBodySettings({ activity: 'sedentary' })
+      const profile = await getBodyProfile(stepsDays(new Array(10).fill(12000)), NOW)
+      expect(profile.activity).toBe('sedentary')
+      expect(profile.origins.activity).toBe('manual')
+    })
   })
 })

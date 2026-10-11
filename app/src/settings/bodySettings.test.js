@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { getBodySettings, setBodySettings, ageFromBirthYear } from './bodySettings'
+import { getBodySettings, setBodySettings, ageFromBirthYear, sanitizeBodySettings } from './bodySettings'
 
 describe('bodySettings', () => {
   beforeEach(() => localStorage.clear())
@@ -18,6 +18,20 @@ describe('bodySettings', () => {
     expect(getBodySettings()).toEqual({ heightCm: 172 })
     setBodySettings({ sex: 'M', birthYear: '1985', heightCm: '' })
     expect(getBodySettings()).toEqual({ sex: 'M', birthYear: 1985 })
+  })
+
+  it('mémorise le niveau d\'activité choisi (valeur inconnue écartée)', () => {
+    setBodySettings({ sex: 'F', activity: 'active' })
+    expect(getBodySettings()).toEqual({ sex: 'F', activity: 'active' })
+    setBodySettings({ activity: 'marathon' })
+    expect(getBodySettings()).toEqual({})
+  })
+
+  it('sanitizeBodySettings nettoie un profil venu d\'ailleurs (sauvegarde)', () => {
+    expect(sanitizeBodySettings({ sex: 'M', birthYear: 1980, heightCm: 180, activity: 'moderate', extra: 1 }))
+      .toEqual({ sex: 'M', birthYear: 1980, heightCm: 180, activity: 'moderate' })
+    expect(sanitizeBodySettings(null)).toEqual({})
+    expect(sanitizeBodySettings('oops')).toEqual({})
   })
 
   it('ignore un contenu illisible', () => {

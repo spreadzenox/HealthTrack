@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import { createEntry } from '../storage/localHealthStorage'
 import { getBodySettings, setBodySettings } from '../settings/bodySettings'
 import { computeBmi } from '../services/bodyProfile'
-import { computeDailyEnergyKcal } from '../services/nutrientReferenceIntakes'
+import { computeDailyEnergyKcal, ACTIVITY_LEVELS, activityLevel } from '../services/nutrientReferenceIntakes'
 
 const formatNumber = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)
+const formatInt = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(v)
 const formatDate = (iso) => new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' }).format(new Date(iso))
 
 const SEX_LABEL = { M: 'Homme', F: 'Femme' }
@@ -28,6 +29,7 @@ function ProfileForm({ profile, onCancel, onSaved }) {
   const [birthYear, setBirthYear] = useState(manual.birthYear ? String(manual.birthYear) : '')
   const [height, setHeight] = useState(origins.height === 'default' ? '' : String(profile.heightCm))
   const [weight, setWeight] = useState(origins.weight === 'default' ? '' : formatNumber(profile.weightKg))
+  const [activity, setActivity] = useState(manual.activity ?? '')
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
   const thisYear = new Date().getFullYear()
@@ -59,6 +61,7 @@ function ProfileForm({ profile, onCancel, onSaved }) {
         heightCm: heightCm === null || keepWithings(origins.height, heightCm, profile.heightCm)
           ? undefined
           : heightCm,
+        activity: activity || undefined,
       })
       const weightChanged = weightKg !== null
         && (origins.weight === 'default' || Math.abs(weightKg - profile.weightKg) >= 0.05)
@@ -95,6 +98,20 @@ function ProfileForm({ profile, onCancel, onSaved }) {
         <input id="profile-weight" className="settings-input" inputMode="decimal" placeholder="ex. 68,5"
           value={weight} onChange={(e) => setWeight(e.target.value)} />
       </div>
+      <fieldset className="nutrition-profile-activity-choice">
+        <legend className="input-label">Niveau d'activité</legend>
+        {[{ id: '', label: 'Automatique' }, ...ACTIVITY_LEVELS].map((l) => (
+          <label key={l.id || 'auto'} className={`nutrition-sex-option${activity === l.id ? ' selected' : ''}`}>
+            <input type="radio" name="activity" value={l.id} checked={activity === l.id} onChange={() => setActivity(l.id)} />
+            {l.label}
+          </label>
+        ))}
+        <p className="nutrition-profile-hint">
+          {activity
+            ? `${activityLevel(activity).label} : ${activityLevel(activity).hint}.`
+            : 'Automatique : estimé d\'après vos pas des 14 derniers jours (modérément actif sans montre).'}
+        </p>
+      </fieldset>
       <p className="nutrition-profile-hint">
         Un nouveau poids est enregistré comme une pesée du jour. Tout reste sur cet appareil.
       </p>
@@ -114,8 +131,10 @@ function ProfileForm({ profile, onCancel, onSaved }) {
 export default function BodyProfileCard({ profile, onSaved }) {
   const [editing, setEditing] = useState(false)
   const { origins } = profile
-  const anyDefault = Object.values(origins).some((o) => o === 'default')
-  const allDefault = Object.values(origins).every((o) => o === 'default')
+  // L'activité par défaut (×1,55) est une hypothèse raisonnable : elle ne déclenche pas l'avertissement.
+  const bodyOrigins = [origins.weight, origins.height, origins.sex, origins.age]
+  const anyDefault = bodyOrigins.some((o) => o === 'default')
+  const allDefault = bodyOrigins.every((o) => o === 'default')
   const bmi = computeBmi(profile.weightKg, profile.heightCm)
   const dailyKcal = computeDailyEnergyKcal(profile)
 
@@ -163,6 +182,13 @@ export default function BodyProfileCard({ profile, onSaved }) {
         <strong>Âge :</strong>{' '}
         {profile.age ? `${profile.age} ans` : 'non renseigné'}
         {origins.age === 'default' && <Hint>(30 ans par défaut)</Hint>}
+      </div>
+      <div className="nutrition-profile-activity">
+        <strong>Activité :</strong> <span>{activityLevel(profile.activity).label}</span>
+        {origins.activity === 'steps' && (
+          <Hint>(≈ {formatInt(profile.meanSteps)} pas/jour en moyenne sur {profile.stepsDays} jours)</Hint>
+        )}
+        {origins.activity === 'default' && <Hint>(par défaut)</Hint>}
       </div>
       {bmi != null && <div><strong>IMC :</strong> {formatNumber(bmi)}</div>}
       <div><strong>Énergie recommandée :</strong> ~{formatNumber(dailyKcal)} kcal/jour</div>

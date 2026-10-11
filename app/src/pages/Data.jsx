@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { exportToJson, importFromJson, parseBackup, countAllEntries } from '../storage/localHealthStorage'
+import { activityLevel } from '../services/nutrientReferenceIntakes'
 import '../Food.css'
 
 async function isAndroidNative() {
@@ -35,13 +36,24 @@ function describeBackupContent(byType) {
   return parts.join(' · ')
 }
 
-function importResultMessage({ imported, skipped = 0, invalid = 0 }, merge) {
+/** « Profil : femme · née en 1990 · 163 cm · actif » */
+function describeProfile(profile) {
+  const parts = []
+  if (profile.sex) parts.push(profile.sex === 'F' ? 'femme' : 'homme')
+  if (profile.birthYear) parts.push(`${profile.sex === 'F' ? 'née' : profile.sex === 'M' ? 'né' : 'naissance'} en ${profile.birthYear}`)
+  if (profile.heightCm) parts.push(`${profile.heightCm} cm`)
+  if (profile.activity) parts.push(activityLevel(profile.activity).label.toLowerCase())
+  return `Profil : ${parts.join(' · ')}`
+}
+
+function importResultMessage({ imported, skipped = 0, invalid = 0, profileRestored = false }, merge) {
   let msg
   if (imported === 0) msg = 'Aucune nouvelle entrée'
   else if (merge) msg = plural(imported, 'entrée ajoutée', 'entrées ajoutées')
   else msg = plural(imported, 'entrée importée', 'entrées importées')
   if (skipped) msg += ` (${plural(skipped, 'déjà présente', 'déjà présentes')}, non dupliquée${skipped > 1 ? 's' : ''})`
   if (invalid) msg += ` · ${plural(invalid, 'entrée illisible ignorée', 'entrées illisibles ignorées')}`
+  if (profileRestored) msg += '. Profil (sexe, âge, taille, activité) restauré'
   return `${msg}. Le tableau de bord se met à jour.`
 }
 
@@ -151,7 +163,7 @@ export default function Data() {
         <div className="data-block">
           <h3 className="section-title">Exporter (sauvegarde)</h3>
           <p className="data-hint">
-            Téléchargez un fichier JSON contenant toutes vos entrées.
+            Téléchargez un fichier JSON contenant toutes vos entrées et votre profil (sexe, âge, taille, activité).
             Sur Android, le fichier est enregistré dans le dossier <strong>Documents</strong> de votre appareil
             (application Fichiers &gt; Téléphone &gt; Documents).
             Sur navigateur, le fichier est téléchargé via votre navigateur — enregistrez-le dans un dossier persistant.
@@ -202,6 +214,9 @@ export default function Data() {
                 )}
               </p>
               <p className="import-preview-line">{describeBackupContent(pending.summary.byType)}</p>
+              {pending.summary.profile && (
+                <p className="import-preview-line">{describeProfile(pending.summary.profile)}</p>
+              )}
               {pending.summary.invalid > 0 && (
                 <p className="import-preview-warning">
                   {plural(pending.summary.invalid, 'entrée illisible sera ignorée', 'entrées illisibles seront ignorées')}.

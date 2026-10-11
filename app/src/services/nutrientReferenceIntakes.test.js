@@ -3,6 +3,8 @@ import {
   computeBmr,
   computeDailyEnergyKcal,
   computeDailyNutrientTargets,
+  ACTIVITY_LEVELS,
+  activityFromSteps,
 } from './nutrientReferenceIntakes'
 
 describe('nutrientReferenceIntakes', () => {
@@ -17,6 +19,29 @@ describe('nutrientReferenceIntakes', () => {
   it('computes daily energy with activity factor', () => {
     const kcal = computeDailyEnergyKcal(profile)
     expect(kcal).toBeGreaterThan(computeBmr(profile))
+  })
+
+  it('applique le niveau d\'activité (×1,55 par défaut, comme avant)', () => {
+    const bmr = computeBmr(profile)
+    expect(computeDailyEnergyKcal(profile)).toBe(Math.round(bmr * 1.55))
+    expect(computeDailyEnergyKcal({ ...profile, activity: 'sedentary' })).toBe(Math.round(bmr * 1.4))
+    expect(computeDailyEnergyKcal({ ...profile, activity: 'very_active' })).toBe(Math.round(bmr * 1.85))
+    expect(computeDailyEnergyKcal({ ...profile, activity: 'inconnu' })).toBe(Math.round(bmr * 1.55))
+  })
+
+  it('les niveaux d\'activité sont ordonnés et libellés en français', () => {
+    expect(ACTIVITY_LEVELS.map((l) => l.id)).toEqual(['sedentary', 'moderate', 'active', 'very_active'])
+    expect(ACTIVITY_LEVELS.map((l) => l.factor)).toEqual([1.4, 1.55, 1.7, 1.85])
+    expect(ACTIVITY_LEVELS[0].label).toBe('Sédentaire')
+  })
+
+  it('déduit le niveau d\'activité des pas quotidiens moyens', () => {
+    expect(activityFromSteps(3200)).toBe('sedentary')
+    expect(activityFromSteps(4999)).toBe('sedentary')
+    expect(activityFromSteps(5000)).toBe('moderate')
+    expect(activityFromSteps(8200)).toBe('active')
+    expect(activityFromSteps(12000)).toBe('very_active')
+    expect(activityFromSteps(null)).toBeUndefined()
   })
 
   it('scales protein with weight (0.83 g/kg)', () => {

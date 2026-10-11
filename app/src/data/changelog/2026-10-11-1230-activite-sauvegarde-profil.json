@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-11",
+  "kind": "amélioration",
+  "title": "Nutrition : énergie adaptée à votre activité, profil sauvegardé",
+  "items": [
+    "Votre besoin en énergie tenait compte d'une activité « modérée » pour tout le monde. Il s'adapte maintenant à vos pas : avec une montre, la moyenne des 14 derniers jours est indiquée sur la carte « Votre profil » (« Activité : Actif (≈ 8 200 pas/jour en moyenne sur 14 jours) »).",
+    "Vous pouvez aussi choisir vous-même votre niveau d'activité (Sédentaire, Modérément actif, Actif, Très actif) dans « Modifier », par exemple si vous faites du vélo ou de la natation, que la montre compte mal en pas.",
+    "La sauvegarde (Plus → Données) contient maintenant aussi votre profil : sexe, année de naissance, taille et activité. À la restauration, l'aperçu l'affiche. « Ajouter » ne complète que ce qui manque, « Remplacer » le restaure. Les anciennes sauvegardes restent acceptées."
+  ]
+}
