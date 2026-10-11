@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { localDateKey, localHour, seriesByDay, seriesByHourToday } from './wellbeingSeries'
+import { localDateKey, localHour, seriesByCalendarDay, seriesByHourToday } from './wellbeingSeries'
 
 describe('wellbeingSeries', () => {
   it('localDateKey returns YYYY-MM-DD', () => {
@@ -13,26 +13,55 @@ describe('wellbeingSeries', () => {
     expect(h).toBeLessThanOrEqual(23)
   })
 
-  it('seriesByDay averages scores per day and caps length', () => {
+  it('seriesByCalendarDay averages scores per day', () => {
+    const now = new Date(2026, 3, 10, 15, 0, 0)
     const entries = [
       { at: '2026-04-08T10:00:00', payload: { score: 4 } },
       { at: '2026-04-08T18:00:00', payload: { score: 2 } },
       { at: '2026-04-09T12:00:00', payload: { score: 5 } },
       { at: '2026-04-09T12:00:00', payload: { score: 1 } },
     ]
-    const s = seriesByDay(entries, 14)
-    expect(s.length).toBe(2)
-    const d8 = s.find((x) => x.dateKey.endsWith('04-08'))
-    const d9 = s.find((x) => x.dateKey.endsWith('04-09'))
+    const s = seriesByCalendarDay(entries, 14, now)
+    const d8 = s.find((x) => x.dateKey === '2026-04-08')
+    const d9 = s.find((x) => x.dateKey === '2026-04-09')
     expect(d8.average).toBe(3)
     expect(d8.count).toBe(2)
     expect(d9.average).toBe(3)
     expect(d9.count).toBe(2)
   })
 
-  it('seriesByDay ignores invalid scores', () => {
-    const s = seriesByDay([{ at: '2026-04-01T12:00:00', payload: { score: 99 } }], 14)
-    expect(s).toEqual([])
+  it('seriesByCalendarDay couvre les N jours du calendrier finissant aujourd\'hui, trous compris', () => {
+    const now = new Date(2026, 3, 10, 15, 0, 0)
+    const entries = [
+      { at: '2026-04-01T12:00:00', payload: { score: 4 } },
+      { at: '2026-04-09T12:00:00', payload: { score: 2 } },
+    ]
+    const s = seriesByCalendarDay(entries, 14, now)
+    expect(s).toHaveLength(14)
+    expect(s[0].dateKey).toBe('2026-03-28')
+    expect(s[13].dateKey).toBe('2026-04-10')
+    expect(s.map((d) => d.offset)).toEqual([...Array(14).keys()])
+    // Jours sans note : null, pas 0 ni absents
+    expect(s.find((d) => d.dateKey === '2026-04-05')).toMatchObject({ average: null, count: 0 })
+    expect(s.find((d) => d.dateKey === '2026-04-01').average).toBe(4)
+    expect(s.find((d) => d.dateKey === '2026-04-09').average).toBe(2)
+  })
+
+  it('seriesByCalendarDay ignore les notes plus anciennes que la fenêtre (pas de vieilles notes présentées comme récentes)', () => {
+    const now = new Date(2026, 3, 30, 9, 0, 0)
+    const entries = [
+      { at: '2026-04-01T12:00:00', payload: { score: 4 } },
+      { at: '2026-04-02T12:00:00', payload: { score: 2 } },
+    ]
+    const s = seriesByCalendarDay(entries, 14, now)
+    expect(s).toHaveLength(14)
+    expect(s.every((d) => d.average === null)).toBe(true)
+  })
+
+  it('seriesByCalendarDay ignores invalid scores', () => {
+    const now = new Date(2026, 3, 1, 15, 0, 0)
+    const s = seriesByCalendarDay([{ at: '2026-04-01T12:00:00', payload: { score: 99 } }], 14, now)
+    expect(s.every((d) => d.average === null)).toBe(true)
   })
 
   it('seriesByHourToday only includes today', () => {

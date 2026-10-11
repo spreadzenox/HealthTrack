@@ -95,7 +95,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 Chasse aux bugs (jours sans repas saisi : fait, run 16:30) : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
+1. 🐛 Chasse aux bugs (courbe du bien-être sur calendrier : fait, run 11/10 00:30) : formulaires (heure `datetime-local` sur l'A56, modifier une note de bien-être), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 2. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
 3. 🎨 Journal du tableau de bord, étape 2 : ~~kcal et nom du plat sur chaque ligne repas~~ (run 18:30), poids + composition fusionnés, « Modifier » un repas depuis le journal, noms d'aliments courts ; rapprocher Radar et cartes cœur.
 4. 🔭 Veille (la dernière date du 10/10 00:30) : effets décalés / modèles « cross-lagged » en N-of-1, puissance attendue, retours d'utilisateurs d'apps de suivi.
@@ -103,6 +103,7 @@ puis l'analyse (statistiques, radar), puis la restitution (revue IA, notificatio
 ## Idées en vrac (à trier)
 
 - ~~Tableau de bord : introduction affichée même avec des données ; « Prédiction ML » ; cadre « Par heure » vide~~ (run 10/10 18:30).
+- Modifier une note de bien-être (aujourd'hui : supprimer puis re-saisir) — même éditeur léger que pour les repas.
 - Tableau de bord : Radar forme et « Votre cœur vs votre norme » répètent chacun un paragraphe d'explication (« Une observation, pas un diagnostic ») → un seul bloc « Forme » avec une explication repliable.
 - Journal : noms Ciqual très longs (« Poulet, cuisse, viande bouillie/cuite à l'eau : 150 g ») → nom court (avant la 1re virgule + précision au tap ?).
 - ~~Cartes cœur : arrondi qui contredisait le statut (« 61 » dans « 61–65 » mais « plus basse »)~~ (run 10/10 14:30) ; Paramètres « ce qui est envoyé » à jour avec le repas décrit (run 14:30).
@@ -112,7 +113,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Repères nutritionnels : vérifier chaque valeur contre ANSES 2021 (ex. magnésium AS 420/360 mg vs 380/300 dans le code) et afficher la source au tap ; ajouter AG saturés / sucres ajoutés dans « À limiter » quand la base distinguera sucres ajoutés.
 - Données de démo : repas plus complets (~2 000 kcal/j) pour que la page Nutrition de démo soit représentative.
 - Nutrition : tendance sur 4 semaines par nutriment et suggestions d'aliments riches pour les repères « bas » récurrents.
-- Graphique bien-être « Par jour » : les points sont espacés par index, pas par date → un jour sans note disparaît. Passer à un axe temporel (trous visibles).
+- ~~Graphique bien-être « Par jour » : points espacés par index, 14 dernières notes au lieu de 14 jours~~ → axe calendrier, trous visibles, `--wellbeing-gap` (run 11/10 00:30).
 - Mode clair : `npm run visual -- --light` rend la même chose que le sombre — l'app n'a pas de thème clair (C1), ce n'est pas un bug du script.
 - Démo : le dernier jour de données est « hier » quand le run tourne après minuit (heure de Paris) → la prédiction du jour et « Par heure (aujourd'hui) » ne sont jamais visibles dans les captures ; faire finir la démo « aujourd'hui ».
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.

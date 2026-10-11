@@ -24,11 +24,16 @@ export function localHour(iso) {
 }
 
 /**
+ * Moyenne de bien-être pour chacun des `days` derniers jours du calendrier (aujourd'hui inclus).
+ * Un jour sans note a `average: null` : le graphique place chaque note à sa vraie date, sans
+ * rapprocher deux notes séparées par une interruption de saisie.
  * @param {Array<{ at: string, payload?: { score?: number } }>} entries
- * @param {number} [maxDays=14]
- * @returns {Array<{ dateKey: string, average: number, count: number }>} ascending by date
+ * @param {number} [days=14]
+ * @param {Date} [now=new Date()]
+ * @returns {Array<{ dateKey: string, offset: number, average: number|null, count: number }>}
+ *   du plus ancien (offset 0) à aujourd'hui (offset days-1)
  */
-export function seriesByDay(entries, maxDays = 14) {
+export function seriesByCalendarDay(entries, days = 14, now = new Date()) {
   const byDay = new Map()
   for (const e of entries) {
     const score = e.payload?.score
@@ -39,11 +44,12 @@ export function seriesByDay(entries, maxDays = 14) {
     cur.count += 1
     byDay.set(key, cur)
   }
-  const keys = [...byDay.keys()].sort()
-  const sliced = keys.length > maxDays ? keys.slice(-maxDays) : keys
-  return sliced.map((dateKey) => {
-    const { sum, count } = byDay.get(dateKey)
-    return { dateKey, average: sum / count, count }
+  return Array.from({ length: days }, (_, offset) => {
+    // new Date(y, m, d - k) reste juste aux changements d'heure (pas d'arithmétique en ms)
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1 - offset), 12)
+    const dateKey = localDateKey(day.toISOString())
+    const agg = byDay.get(dateKey)
+    return { dateKey, offset, average: agg ? agg.sum / agg.count : null, count: agg ? agg.count : 0 }
   })
 }
 

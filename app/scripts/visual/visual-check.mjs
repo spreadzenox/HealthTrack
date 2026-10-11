@@ -13,6 +13,7 @@
  *   npm run visual -- --wellbeing-prompt   # laisse la modale bien-être s'ouvrir
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
+ *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/food --food-analysis
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
@@ -244,7 +245,14 @@ async function main() {
 
     // Base propre + données de démo injectées via le module de stockage de l'app.
     await page.goto(baseUrl, { waitUntil: 'load' })
-    const entries = args.empty ? [] : generateDemoEntries({ illness: Boolean(args.radar) })
+    let entries = args.empty ? [] : generateDemoEntries({ illness: Boolean(args.radar) })
+    if (args['wellbeing-gap']) {
+      // Saisie interrompue (vacances…) : pas de note de bien-être entre 9 et 4 jours avant aujourd'hui.
+      const dayStart = (n) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - n); return d }
+      const from = dayStart(9)
+      const to = dayStart(3)
+      entries = entries.filter((e) => e.type !== 'wellbeing' || new Date(e.at) < from || new Date(e.at) >= to)
+    }
     const seedResult = await page.evaluate(async (list) => {
       await new Promise((res) => {
         const req = indexedDB.deleteDatabase('HealthTrack')

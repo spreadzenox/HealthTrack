@@ -135,6 +135,9 @@ une release à chaque changement validé, et tient ce journal.
   3 jours avant (sommeil, pas, séance de sport, cigarettes) — « La veille, 192 kcal d'activité de plus que d'habitude →
   +0,4 point ». Le calcul tient compte du bien-être de la veille, de la journée elle-même et du week-end ; seuls les
   liens solides s'affichent. Il faut 14 jours dont la veille est aussi notée.
+- **Courbe du bien-être aux vraies dates** (tableau de bord) : « 14 derniers jours » veut enfin dire 14 jours du
+  calendrier. Avant, la courbe reprenait vos 14 dernières notes à intervalles réguliers : après une semaine sans noter,
+  d'anciennes notes semblaient dater d'hier. Un jour sans note laisse maintenant un trou dans la courbe.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -182,7 +185,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — chasse aux bugs (formulaires, modales), journal du tableau de bord (poids fusionné, noms courts), mise à jour de Capacitor, veille.
+**Prochaines priorités** — bugs de formulaires (heure d'un repas sur l'A56, modifier une note de bien-être), journal du tableau de bord (poids fusionné, noms courts), mise à jour de Capacitor, veille.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -214,7 +217,8 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 16:30 — [Repas oublié ≠ jeûne dans les analyses](runs/2026-10-10-1630-repas-manquants.md) | 🐛 | PR #91 fusionnée → v85 |
 | 10/10 18:30 — [Tableau de bord plus direct](runs/2026-10-10-1830-accueil-plus-direct.md) | 🎨 | PR #92 fusionnée → v86 |
 | 10/10 20:30 — [Run bloqué (permissions)](runs/2026-10-10-2030-bloque-permissions.md) | 🧹 | PR #93 fusionnée (journal), compte rendu repris ici |
-| 10/10 22:30 — [Effets décalés](runs/2026-10-10-2230-effets-decales.md) | 🏗️ | PR #95 (fusion en fin de run, release attendue v87) |
+| 10/10 22:30 — [Effets décalés](runs/2026-10-10-2230-effets-decales.md) | 🏗️ | PR #95 fusionnée → v87 |
+| 11/10 00:30 — [Courbe du bien-être aux vraies dates](runs/2026-10-11-0030-courbe-calendrier.md) | 🐛 | PR #96 (fusion en fin de run, release attendue v88) |
 
 ---
 
@@ -361,7 +365,7 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
 - **Vérification visuelle** : `cd app && npm run visual` — lance Vite, injecte ~75 jours de
   données de démo corrélées (`scripts/visual/demoData.mjs`), capture chaque page dans un
   viewport Galaxy A56 (412×915, Chromium/Playwright). Options : `--empty`, `--light`,
-  `--routes=/,/food`, `--radar` (début d'infection simulé), `--food-analysis` (analyse photo
+  `--routes=/,/food`, `--radar` (début d'infection simulé), `--wellbeing-gap` (pas de note de J−9 à J−4), `--food-analysis` (analyse photo
   simulée sur /food, réponse Gemini factice), `--update-banner`, `--wellbeing-prompt`, `--whats-new`, `--out=`,
   `--click="Recommandations avancées"` (clique un bouton avant la capture, ex. un onglet),
   `--viewport` (capture de l'écran visible, pour les éléments fixes), `--insets=24,48` (simule les
