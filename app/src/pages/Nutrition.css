@@ -27,6 +27,100 @@
   color: var(--text-muted);
 }
 
+.nutrition-profile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -6px 0 4px;
+}
+
+.nutrition-profile-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.nutrition-profile-card > .nutrition-profile-title {
+  margin-bottom: 12px;
+}
+
+.nutrition-profile-edit {
+  min-height: 44px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nutrition-profile-hint-inline {
+  color: var(--text-muted);
+}
+
+.nutrition-profile-sex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.nutrition-profile-sex legend {
+  width: 100%;
+  padding: 0;
+}
+
+.nutrition-sex-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.nutrition-sex-option.selected {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nutrition-sex-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nutrition-profile-fields .settings-input {
+  max-width: none;
+  background: var(--bg);
+}
+
+.nutrition-profile-error {
+  margin: 10px 0 0;
+  color: var(--error);
+  font-size: 0.85rem;
+}
+
+.nutrition-profile-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.nutrition-profile-actions .btn {
+  flex: 1;
+}
+
 .nutrition-section-title {
   font-size: 1rem;
   font-weight: 600;

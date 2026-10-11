@@ -1,13 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Nutrition from './Nutrition'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntriesForAnalysis: vi.fn().mockResolvedValue([]),
+  createEntry: vi.fn().mockResolvedValue(1),
 }))
 
-import { listEntriesForAnalysis } from '../storage/localHealthStorage'
+import { listEntriesForAnalysis, createEntry } from '../storage/localHealthStorage'
 
 const yesterdayNoon = () => {
   const d = new Date()
@@ -19,6 +20,7 @@ const yesterdayNoon = () => {
 describe('Nutrition page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.clear()
   })
 
   it('renders title and profile section', async () => {
@@ -63,5 +65,56 @@ describe('Nutrition page', () => {
     await waitFor(() => {
       expect(screen.getByText(/aucun repas/i)).toBeInTheDocument()
     })
+  })
+
+  it('signale les valeurs par défaut et invite à compléter le profil', async () => {
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    expect(await screen.findByText(/70 kg/)).toBeInTheDocument()
+    expect(screen.getAllByText(/par défaut/).length).toBeGreaterThanOrEqual(4)
+    expect(screen.getByRole('button', { name: /compléter mon profil/i })).toBeInTheDocument()
+  })
+
+  it('enregistre le profil saisi et une pesée, puis recalcule les repères', async () => {
+    const dispatchSpy = vi.spyOn(window, 'dispatchEvent')
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    fireEvent.click(await screen.findByRole('button', { name: /compléter mon profil/i }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Femme' }))
+    fireEvent.change(screen.getByLabelText(/année de naissance/i), { target: { value: '1990' } })
+    fireEvent.change(screen.getByLabelText(/taille/i), { target: { value: '165' } })
+    fireEvent.change(screen.getByLabelText(/poids/i), { target: { value: '60,5' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+
+    await waitFor(() => expect(createEntry).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'weight', source: 'app_weight', payload: { valueKg: 60.5 } }),
+    ))
+    expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'health-entries-updated' }))
+    expect(JSON.parse(localStorage.getItem('healthtrack_body_profile'))).toEqual({ sex: 'F', birthYear: 1990, heightCm: 165 })
+    expect(await screen.findByText('Femme')).toBeInTheDocument()
+    expect(screen.getByText(/165 cm/)).toBeInTheDocument()
+    expect(screen.queryByText('Chargement…')).not.toBeInTheDocument()
+    dispatchSpy.mockRestore()
+  })
+
+  it('n\'ajoute pas de pesée si le poids n\'a pas changé', async () => {
+    listEntriesForAnalysis.mockResolvedValue([
+      { type: 'weight', source: 'withings', at: yesterdayNoon(), payload: { valueKg: 77.2 } },
+    ])
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    fireEvent.click(await screen.findByRole('button', { name: /modifier/i }))
+    expect(screen.getByLabelText(/poids/i)).toHaveValue('77,2')
+    fireEvent.click(screen.getByRole('radio', { name: 'Homme' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+    expect(await screen.findByText('Homme')).toBeInTheDocument()
+    expect(createEntry).not.toHaveBeenCalled()
+    listEntriesForAnalysis.mockResolvedValue([])
+  })
+
+  it('refuse un poids invalide sans rien enregistrer', async () => {
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    fireEvent.click(await screen.findByRole('button', { name: /compléter mon profil/i }))
+    fireEvent.change(screen.getByLabelText(/poids/i), { target: { value: '7' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(/poids/i)
+    expect(createEntry).not.toHaveBeenCalled()
   })
 })

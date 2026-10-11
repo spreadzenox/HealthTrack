@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-11",
+  "kind": "correctif",
+  "title": "Nutrition : des repères calculés pour vous",
+  "items": [
+    "Avec une balance Withings, le sexe était lu à l'envers : un homme recevait les repères d'une femme (et inversement) — énergie, fer, magnésium, zinc. C'est corrigé, y compris pour le profil déjà enregistré.",
+    "Sans balance, les repères étaient calculés pour un homme de 30 ans, 70 kg et 170 cm, sans le dire. La carte « Votre profil » indique maintenant chaque valeur « par défaut ».",
+    "« Compléter mon profil » (page Nutrition) : sexe, année de naissance, taille et poids, en quelques secondes. Le poids est enregistré comme une pesée du jour (visible et supprimable sur le tableau de bord). Tout reste sur le téléphone."
+  ]
+}
