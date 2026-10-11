@@ -15,6 +15,7 @@ beforeEach(() => {
 })
 
 // Import after IDB is set up
+import { getBodySettings, setBodySettings } from '../settings/bodySettings'
 import {
   createEntry,
   listEntries,
@@ -360,5 +361,62 @@ describe('updateEntry', () => {
     const [e] = await listEntries({})
     expect(e.payload.dish).toBe('Soupe')
     expect(e.updated_at).toBeTruthy()
+  })
+})
+
+describe('sauvegarde — profil (sexe, année, taille, activité)', () => {
+  beforeEach(() => localStorage.clear())
+  const entry = { type: 'steps', source: 'hc', payload: { value: 1 }, at: '2026-01-01T00:00:00Z' }
+
+  it('exporte le profil saisi dans l\'app avec les entrées', async () => {
+    setBodySettings({ sex: 'F', birthYear: 1990, heightCm: 163, activity: 'active' })
+    await createEntry(entry)
+    const parsed = JSON.parse(await exportToJson())
+    expect(parsed.version).toBe(1)
+    expect(parsed.profile).toEqual({ sex: 'F', birthYear: 1990, heightCm: 163, activity: 'active' })
+  })
+
+  it('n\'ajoute pas de profil vide à la sauvegarde', async () => {
+    await createEntry(entry)
+    expect(JSON.parse(await exportToJson())).not.toHaveProperty('profile')
+  })
+
+  it('l\'aperçu lit le profil (nettoyé) ; un ancien fichier sans profil reste accepté', () => {
+    const b = parseBackup(JSON.stringify({ version: 1, entries: [entry], profile: { sex: 'M', heightCm: 999, foo: 1 } }))
+    expect(b.profile).toEqual({ sex: 'M' })
+    expect(parseBackup(JSON.stringify({ version: 1, entries: [entry] })).profile).toBeNull()
+    expect(parseBackup(JSON.stringify([entry])).profile).toBeNull()
+    expect(parseBackup(JSON.stringify({ version: 1, entries: [entry], profile: 'oops' })).profile).toBeNull()
+  })
+
+  it('remplacer restaure le profil de la sauvegarde', async () => {
+    setBodySettings({ sex: 'M', heightCm: 180 })
+    const json = JSON.stringify({ version: 1, entries: [entry], profile: { sex: 'F', birthYear: 1990 } })
+    const res = await importFromJson(json)
+    expect(res.profileRestored).toBe(true)
+    expect(getBodySettings()).toEqual({ sex: 'F', birthYear: 1990 })
+  })
+
+  it('remplacer avec un ancien fichier sans profil garde le profil actuel', async () => {
+    setBodySettings({ sex: 'M', heightCm: 180 })
+    const res = await importFromJson(JSON.stringify([entry]))
+    expect(res.profileRestored).toBe(false)
+    expect(getBodySettings()).toEqual({ sex: 'M', heightCm: 180 })
+  })
+
+  it('ajouter complète seulement ce qui manque (le profil actuel prime)', async () => {
+    setBodySettings({ sex: 'M' })
+    const json = JSON.stringify({ version: 1, entries: [entry], profile: { sex: 'F', birthYear: 1990, heightCm: 163 } })
+    const res = await importFromJson(json, { merge: true })
+    expect(res.profileRestored).toBe(true)
+    expect(getBodySettings()).toEqual({ sex: 'M', birthYear: 1990, heightCm: 163 })
+  })
+
+  it('ajouter ne signale rien si le profil actuel est déjà complet', async () => {
+    setBodySettings({ sex: 'M', birthYear: 1985, heightCm: 180 })
+    const json = JSON.stringify({ version: 1, entries: [entry], profile: { sex: 'F', birthYear: 1990 } })
+    const res = await importFromJson(json, { merge: true })
+    expect(res.profileRestored).toBe(false)
+    expect(getBodySettings()).toEqual({ sex: 'M', birthYear: 1985, heightCm: 180 })
   })
 })

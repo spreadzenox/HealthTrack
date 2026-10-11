@@ -5,6 +5,7 @@
  *
  * Schema v2: added compound index 'source_at' for efficient connector sync queries.
  */
+import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
 
 const DB_NAME = 'HealthTrack'
 const STORE_NAME = 'health_entries'
@@ -286,6 +287,7 @@ export async function updateEntry(id, changes = {}) {
 /**
  * Export ALL entries as JSON string (for download / backup).
  * No per-type limit here: a backup must never silently drop old data.
+ * Le profil saisi dans l'app (sexe, année, taille, activité) est joint s'il existe.
  * @returns {Promise<string>}
  */
 export async function exportToJson() {
@@ -297,11 +299,10 @@ export async function exportToJson() {
     req.onsuccess = () => resolve(req.result || [])
   })
   entries.sort((a, b) => (b.at < a.at ? -1 : 1))
-  return JSON.stringify(
-    { version: 1, exportedAt: new Date().toISOString(), entries },
-    null,
-    2
-  )
+  const backup = { version: 1, exportedAt: new Date().toISOString(), entries }
+  const profile = getBodySettings()
+  if (Object.keys(profile).length > 0) backup.profile = profile
+  return JSON.stringify(backup, null, 2)
 }
 
 const NOT_A_BACKUP = "Ce fichier n'est pas une sauvegarde HealthTrack (aucune entrée reconnue)."
@@ -338,9 +339,10 @@ function normalizeBackupEntry(e, now) {
 
 /**
  * Lit et vérifie un fichier de sauvegarde, sans rien écrire (aperçu avant import).
- * Accepte le format actuel `{ version, exportedAt, entries }` et l'ancien tableau nu.
+ * Accepte le format actuel `{ version, exportedAt, entries, profile? }` et l'ancien tableau nu.
  * @param {string} json
- * @returns {{ entries: object[], invalid: number, exportedAt: string|null, firstAt: string|null, lastAt: string|null, byType: Record<string, number> }}
+ * @returns {{ entries: object[], invalid: number, exportedAt: string|null, firstAt: string|null, lastAt: string|null,
+ *   byType: Record<string, number>, profile: object|null }}
  * @throws si le JSON est illisible ou ne ressemble pas à une sauvegarde HealthTrack
  */
 export function parseBackup(json) {
@@ -378,7 +380,27 @@ export function parseBackup(json) {
   if (raw.length > 0 && entries.length === 0) throw new Error(NOT_A_BACKUP)
 
   const exportedAt = !Array.isArray(data) && isNonEmptyString(data.exportedAt) ? data.exportedAt : null
-  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType }
+  const cleanProfile = Array.isArray(data) ? {} : sanitizeBodySettings(data.profile)
+  const profile = Object.keys(cleanProfile).length > 0 ? cleanProfile : null
+  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile }
+}
+
+/**
+ * Restaure le profil d'une sauvegarde. Remplacer : le profil du fichier remplace l'actuel.
+ * Ajouter : il ne complète que les champs vides (ce qui est saisi sur l'appareil prime).
+ * @returns {boolean} true si le profil a changé
+ */
+function restoreProfile(profile, merge) {
+  if (!profile) return false
+  try {
+    const current = getBodySettings()
+    const next = merge ? { ...profile, ...current } : profile
+    if (JSON.stringify(sanitizeBodySettings(next)) === JSON.stringify(current)) return false
+    setBodySettings(next)
+    return true
+  } catch {
+    return false
+  }
 }
 
 /**
@@ -388,11 +410,11 @@ export function parseBackup(json) {
  * @param {string} json
  * @param {{ merge?: boolean }} [opts] - merge=true : ajoute seulement les entrées absentes
  *   (même source, date et type) ; sinon remplace tout
- * @returns {Promise<{ imported: number, skipped: number, invalid: number }>}
+ * @returns {Promise<{ imported: number, skipped: number, invalid: number, profileRestored: boolean }>}
  */
 export async function importFromJson(json, opts = {}) {
-  const { entries, invalid } = parseBackup(json)
-  if (entries.length === 0) return { imported: 0, skipped: 0, invalid }
+  const { entries, invalid, profile } = parseBackup(json)
+  if (entries.length === 0) return { imported: 0, skipped: 0, invalid, profileRestored: false }
 
   const db = await openDB()
   const existingKeys = opts.merge
@@ -419,7 +441,7 @@ export async function importFromJson(json, opts = {}) {
       store.add(row)
       imported++
     }
-    tx.oncomplete = () => resolve({ imported, skipped, invalid })
+    tx.oncomplete = () => resolve({ imported, skipped, invalid, profileRestored: restoreProfile(profile, opts.merge) })
     tx.onerror = () => reject(tx.error)
   })
 }

@@ -86,7 +86,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Import sûr** : aperçu avant import, « Ajouter » sans doublons ou « Remplacer » confirmé, fichier invalide refusé sans rien effacer, entrées illisibles ignorées (run 10/10 04:30)
 - [ ] Sauvegarde chiffrée automatique (R#19, AES-GCM + PBKDF2) — protège contre la perte de données
 - [x] **Profil corporel juste** : sexe Withings corrigé (0 = homme), profil saisi dans l'app (sexe, année, taille, poids → pesée `app_weight`), provenance de chaque valeur affichée (run 11/10 10:30)
-- [ ] Profil, étape 2 : profil (sexe, année, taille) dans la sauvegarde JSON (champ optionnel, anciens fichiers acceptés) ; niveau d'activité réglable ou déduit des pas (×1,55 fixe aujourd'hui)
+- [x] **Profil, étape 2** : profil (sexe, année, taille, activité) dans la sauvegarde JSON (champ `profile` optionnel, anciens fichiers acceptés ; « Ajouter » complète, « Remplacer » restaure) ; niveau d'activité choisi ou estimé d'après les pas des 14 derniers jours (×1,4 à ×1,85) (run 11/10 12:30)
 - [ ] Dépense énergétique adaptative / TDEE (R#18)
 - [ ] Lint à 0 erreur (baseline 14 erreurs, 1 warning au 2026-10-08)
 - [x] **Sauvegarde exhaustive** : l'export n'applique plus les plafonds de l'analyse (perte silencieuse des données anciennes) (#72)

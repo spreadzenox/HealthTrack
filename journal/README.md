@@ -156,6 +156,12 @@ une release à chaque changement validé, et tient ce journal.
   Sans balance, tout était calculé pour un homme de 30 ans, 70 kg, 170 cm sans le dire : la carte « Votre profil »
   signale maintenant chaque valeur « par défaut », et **« Compléter mon profil »** permet de saisir sexe, année de
   naissance, taille et poids (le poids devient une pesée du jour, supprimable).
+- **Énergie adaptée à votre activité** (Nutrition → « Votre profil ») : le besoin en calories supposait une activité
+  « modérée » pour tout le monde. Avec une montre, il s'appuie maintenant sur vos pas des 14 derniers jours
+  (« Activité : Actif (≈ 8 200 pas/jour…) ») ; vous pouvez aussi choisir vous-même entre Sédentaire, Modérément actif,
+  Actif et Très actif (utile si vous faites du vélo ou de la natation). Les repères glucides, lipides et sucres suivent.
+- **Le profil est dans la sauvegarde** : sexe, année de naissance, taille et activité partent avec le fichier
+  (Plus → Données) et sont restaurés à l'import. L'aperçu les affiche, et les anciennes sauvegardes restent acceptées.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -208,7 +214,7 @@ une release à chaque changement validé, et tient ce journal.
   un moment, puis les accepte de nouveau : si une fusion reste bloquée, autoriser la fusion pour la routine.
 - **Ouvrez Nutrition → « Votre profil »** après la mise à jour : si vous utilisez Withings, vérifiez que le sexe affiché
   est le bon (la correction inverse l'ancienne valeur enregistrée) ; sinon, complétez le profil en 20 secondes. Le
-  profil (hors poids) n'est pas encore dans la sauvegarde JSON.
+  profil est inclus dans la sauvegarde depuis la v94.
 - **Effets décalés** : volontairement prudents (seulement les liens solides) ; il est normal de ne rien voir pendant
   plusieurs semaines.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
@@ -252,7 +258,8 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 04:30 — [Veille + journal plus court](runs/2026-10-11-0430-veille-journal-court.md) | 🔭 | PR #98 fusionnée → v90 |
 | 11/10 06:30 — [Régularité du sommeil](runs/2026-10-11-0630-regularite-sommeil.md) | 🏗️ | PR #99 fusionnée → v91 |
 | 11/10 08:30 — [Repas rangés par jour](runs/2026-10-11-0830-repas-par-jour.md) | 🎨 | PR #100 fusionnée → v92 |
-| 11/10 10:30 — [Nutrition : profil juste](runs/2026-10-11-1030-profil-nutrition.md) | 🐛 | PR #101 (fusion en fin de run, release attendue v93) |
+| 11/10 10:30 — [Nutrition : profil juste](runs/2026-10-11-1030-profil-nutrition.md) | 🐛 | PR #101 fusionnée → v93 |
+| 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #PRNUM (fusion en fin de run, release attendue v94) |
 
 ---
 

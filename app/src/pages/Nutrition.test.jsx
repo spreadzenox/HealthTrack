@@ -117,4 +117,37 @@ describe('Nutrition page', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(/poids/i)
     expect(createEntry).not.toHaveBeenCalled()
   })
+
+  it('indique le niveau d\'activité utilisé (par défaut sans pas mesurés)', async () => {
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    expect(await screen.findByText(/^Activité :/)).toBeInTheDocument()
+    expect(screen.getByText('Modérément actif')).toBeInTheDocument()
+    expect(screen.getByText(/\(par défaut\)/, { selector: '.nutrition-profile-activity *' })).toBeInTheDocument()
+  })
+
+  it('estime le niveau d\'activité d\'après les pas des 14 derniers jours', async () => {
+    const days = Array.from({ length: 10 }, (_, i) => {
+      const d = new Date()
+      d.setDate(d.getDate() - (i + 1))
+      d.setHours(0, 0, 0, 0)
+      return { type: 'steps', source: 'health_connect', at: d.toISOString(), payload: { value: 11000, period: 'day' } }
+    })
+    listEntriesForAnalysis.mockResolvedValue(days)
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    expect(await screen.findByText('Très actif')).toBeInTheDocument()
+    expect(screen.getByText(/11\s000 pas\/jour en moyenne/)).toBeInTheDocument()
+    listEntriesForAnalysis.mockResolvedValue([])
+  })
+
+  it('enregistre le niveau d\'activité choisi et recalcule l\'énergie', async () => {
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    // Homme 30 ans, 70 kg, 170 cm : 1 617,5 kcal × 1,55 ≈ 2 507
+    expect(await screen.findByText(/~2\s507 kcal\/jour/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /compléter mon profil/i }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Sédentaire' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+    expect(await screen.findByText(/~2\s265 kcal\/jour/)).toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem('healthtrack_body_profile'))).toEqual({ activity: 'sedentary' })
+    expect(screen.getByText('Sédentaire')).toBeInTheDocument()
+  })
 })

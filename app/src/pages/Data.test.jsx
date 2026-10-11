@@ -265,4 +265,26 @@ describe('Data page — import (aperçu puis choix)', () => {
     await chooseFile()
     expect(screen.getByText(/2 entrées illisibles seront ignorées/)).toBeInTheDocument()
   })
+
+  it('montre le profil contenu dans la sauvegarde', async () => {
+    const { parseBackup } = await import('../storage/localHealthStorage')
+    parseBackup.mockReturnValue({ ...summary, profile: { sex: 'F', birthYear: 1990, heightCm: 163, activity: 'active' } })
+    await chooseFile()
+    expect(screen.getByText('Profil : femme · née en 1990 · 163 cm · actif')).toBeInTheDocument()
+  })
+
+  it('n\'affiche pas de ligne profil pour une ancienne sauvegarde', async () => {
+    await chooseFile()
+    expect(screen.queryByText(/^Profil :/)).not.toBeInTheDocument()
+  })
+
+  it('signale que le profil a été restauré', async () => {
+    const { importFromJson } = await import('../storage/localHealthStorage')
+    importFromJson.mockResolvedValue({ imported: 3, skipped: 0, invalid: 0, profileRestored: true })
+    await chooseFile()
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Ajouter à mes données/i }))
+    })
+    expect(screen.getByText(/Profil \(sexe, âge, taille, activité\) restauré/)).toBeInTheDocument()
+  })
 })
