@@ -228,7 +228,22 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — mise à jour de Capacitor, un seul bloc d'explication Radar + cœur, régularité du sommeil dans les Analyses, effets décalés étape 2.
+**💡 Nouvelles directions et meilleures idées** (run idées du 11/10 au soir, détails dans `IDEES.md`)
+- Vos directions du 11/10 sont intégrées à la charte et le backlog est réorienté : **tout capter automatiquement**,
+  **tous les objets connectés** (nouveaux chantiers C7 / C8 / C9), **humeur estimée** sans saisie.
+- ⌚ **Votre Huawei Watch GT 6 Pro peut arriver dans HealthTrack dès maintenant, sans attendre de code** : l'app libre
+  **Gadgetbridge** (F-Droid) la prend en charge depuis décembre 2025 et écrit dans Health Connect depuis février 2026
+  (FC, FC au repos, VFC, SpO₂, sommeil, température, respiration, séances). Appairage **sans réinitialiser** la montre
+  (il faut votre ID de compte Huawei et retirer les permissions de Huawei Health sans désappairer). Contreparties : on
+  quitte l'app Huawei au quotidien, le stress ne passe pas. Le prochain run de code ajoute ce guide pas à pas dans
+  Connecteurs et la lecture de la respiration / température / tension / poids depuis Health Connect.
+- Les meilleures idées ensuite : « Mes appareils » (l'app détecte vos apps santé et propose le bon branchement),
+  météo / pression / pollen automatiques, temps d'écran et « téléphone au lit », couche Bluetooth générique (ceintures
+  cardio, balances, tensiomètres standard), humeur estimée qui pré-remplit le check-in, import des conversations Omi.
+- Bon à savoir : Fitbit coupe son API le 30/10/2026 ; Limitless (racheté par Meta) ne fonctionne plus dans l'UE ;
+  Omi est le seul enregistreur de conversations vraiment ouvert.
+
+**Prochaines priorités** — brancher la montre Huawei (guide + types Health Connect manquants), « Mes appareils », météo / pollen automatiques, puis la couche Bluetooth générique.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -269,7 +284,8 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 10:30 — [Nutrition : profil juste](runs/2026-10-11-1030-profil-nutrition.md) | 🐛 | PR #101 fusionnée → v93 |
 | 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #102 fusionnée → v94 |
 | 11/10 14:30 — [Arrondis des habitudes, nuits « au lit »](runs/2026-10-11-1430-petits-bugs.md) | 🐛 | PR #103 fusionnée → v95 |
-| 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR #104 (fusion en fin de run, release attendue v96) |
+| 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR #104 fusionnée → v96 |
+| 11/10 18:30 — [Idées : objets connectés, humeur, conversations](runs/2026-10-11-1830-idees-objets-connectes.md) | 💡 | Journal seul (pas de release) |
 
 ---
 
