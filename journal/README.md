@@ -148,6 +148,9 @@ une release à chaque changement validé, et tient ce journal.
   variation (« Coucher vers 23 h 35 ± 20 min »), un indice de régularité sur 100 et, si c'est le cas, « Le week-end, vos
   nuits sont décalées de 1 h plus tard ». Des horaires stables sont associés à un meilleur bien-être le lendemain ; la
   carte le dit prudemment, sans note ni reproche. Il faut 7 nuits de montre sur 14 jours.
+- **Page Repas plus lisible** : vos derniers repas sont rangés par jour (« Hier 10 octobre — 1 repas · ≈ 479 kcal »),
+  chaque repas n'affiche que son heure et des noms d'aliments courts (« Café, non instantané » au lieu de « Café, non
+  instantané, sans sucres ajoutés, prêt à boire ») ; 5 jours d'emblée, « Voir les jours précédents » pour remonter.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -239,7 +242,8 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 00:30 — [Courbe du bien-être aux vraies dates](runs/2026-10-11-0030-courbe-calendrier.md) | 🐛 | PR #96 fusionnée → v88 |
 | 11/10 02:30 — [Modifier une note de bien-être](runs/2026-10-11-0230-modifier-bien-etre.md) | 🐛 | PR #97 fusionnée au run suivant → v89 |
 | 11/10 04:30 — [Veille + journal plus court](runs/2026-10-11-0430-veille-journal-court.md) | 🔭 | PR #98 fusionnée → v90 |
-| 11/10 06:30 — [Régularité du sommeil](runs/2026-10-11-0630-regularite-sommeil.md) | 🏗️ | PR #99 (fusion en fin de run, release attendue v91) |
+| 11/10 06:30 — [Régularité du sommeil](runs/2026-10-11-0630-regularite-sommeil.md) | 🏗️ | PR #99 fusionnée → v91 |
+| 11/10 08:30 — [Repas rangés par jour](runs/2026-10-11-0830-repas-par-jour.md) | 🎨 | PR #100 (fusion en fin de run, release attendue v92) |
 
 ---
 

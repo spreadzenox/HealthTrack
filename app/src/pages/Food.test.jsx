@@ -433,3 +433,36 @@ describe('Food — décrire un repas en quelques mots', () => {
     expect(screen.queryByLabelText(/Décrivez votre repas/i)).not.toBeInTheDocument()
   })
 })
+
+describe('Food — derniers repas regroupés par jour', () => {
+  const poulet = (id, at) => ({
+    id, type: 'food', source: 'app_food', at,
+    payload: { items: [{ ingredient: "Poulet, cuisse, viande bouillie/cuite à l'eau", quantity: '150 g', quantity_g: 150 }] },
+  })
+
+  it('un titre par jour avec le total estimé, l’heure seule et des noms d’aliments courts', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([poulet(1, '2026-10-05T20:15:00'), poulet(2, '2026-10-05T12:15:00'), poulet(3, '2026-10-04T12:15:00')])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    const days = await screen.findAllByRole('heading', { level: 4 })
+    expect(days).toHaveLength(2)
+    expect(days[0]).toHaveTextContent(/5 octobre/)
+    expect(days[0]).toHaveTextContent(/2 repas/)
+    expect(days[1]).toHaveTextContent(/1 repas/)
+    expect(screen.getAllByText('20:15', { selector: '.meal-at' })).toHaveLength(1)
+    const item = screen.getAllByText('Poulet, cuisse : 150 g')[0]
+    expect(item).toHaveAttribute('title', "Poulet, cuisse, viande bouillie/cuite à l'eau")
+  })
+
+  it('affiche les jours les plus récents puis « Voir les jours précédents »', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue(
+      Array.from({ length: 10 }, (_, i) => poulet(i, `2026-09-${String(20 - i).padStart(2, '0')}T12:15:00`)),
+    )
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    expect(await screen.findAllByRole('heading', { level: 4 })).toHaveLength(5)
+    fireEvent.click(screen.getByRole('button', { name: /Voir les jours précédents/i }))
+    expect(screen.getAllByRole('heading', { level: 4 })).toHaveLength(10)
+    expect(screen.queryByRole('button', { name: /Voir les jours précédents/i })).not.toBeInTheDocument()
+  })
+})

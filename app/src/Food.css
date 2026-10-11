@@ -396,3 +396,33 @@
 .meal-card .entry-edit + .entry-edit {
   margin-left: 0;
 }
+
+/* Derniers repas regroupés par jour */
+.meal-day + .meal-day {
+  margin-top: 18px;
+}
+
+.meal-day-title {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.meal-day-date {
+  margin-left: 4px;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.meal-day-total {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
