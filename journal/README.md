@@ -167,6 +167,10 @@ une release à chaque changement validé, et tient ce journal.
   n'enregistre que comme « au lit » apparaît enfin dans « Vos derniers jours ». « Déconnecter Withings » n'est plus
   affiché sans compte connecté.
 
+- **Modifier ou refaire un repas depuis l'accueil** (« Vos derniers jours ») : « Modifier » corrige grammes, aliments et
+  heure sur place, sans quitter le tableau de bord ; « Refaire » ouvre la page Repas avec le même repas pré-rempli. En
+  changeant d'onglet, la page s'affiche maintenant depuis le haut (avant : à la hauteur où l'on était sur la précédente).
+
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
 - CI Android réparée : le build de l'APK échouait sur les runners GitHub actuels → sans correctif,
@@ -224,7 +228,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — mise à jour de Capacitor, « Modifier » un repas depuis le tableau de bord, régularité du sommeil dans les Analyses, effets décalés étape 2.
+**Prochaines priorités** — mise à jour de Capacitor, un seul bloc d'explication Radar + cœur, régularité du sommeil dans les Analyses, effets décalés étape 2.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -264,7 +268,8 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 08:30 — [Repas rangés par jour](runs/2026-10-11-0830-repas-par-jour.md) | 🎨 | PR #100 fusionnée → v92 |
 | 11/10 10:30 — [Nutrition : profil juste](runs/2026-10-11-1030-profil-nutrition.md) | 🐛 | PR #101 fusionnée → v93 |
 | 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #102 fusionnée → v94 |
-| 11/10 14:30 — [Arrondis des habitudes, nuits « au lit »](runs/2026-10-11-1430-petits-bugs.md) | 🐛 | PR #103 (fusion en fin de run, release attendue v95) |
+| 11/10 14:30 — [Arrondis des habitudes, nuits « au lit »](runs/2026-10-11-1430-petits-bugs.md) | 🐛 | PR #103 fusionnée → v95 |
+| 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR #104 (fusion en fin de run, release attendue v96) |
 
 ---
 

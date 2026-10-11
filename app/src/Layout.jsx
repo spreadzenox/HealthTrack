@@ -1,4 +1,5 @@
-import { Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
 import UpdateBanner from './components/UpdateBanner'
 import WellbeingPrompt from './components/WellbeingPrompt'
 import WhatsNewBanner from './components/WhatsNewBanner'
@@ -8,6 +9,11 @@ import './App.css'
 
 export default function Layout() {
   useAutoSync()
+  // Nouvelle page = en haut de la page (sinon on arrive au milieu, à la hauteur de la page précédente)
+  const { pathname } = useLocation()
+  useEffect(() => {
+    document.documentElement.scrollTop = 0
+  }, [pathname])
   return (
     <div className="app">
       <WellbeingPrompt />

@@ -21,4 +21,12 @@ describe('App', () => {
     expect(await screen.findByRole('link', { name: /Données/ })).toHaveAttribute('href', '/data')
     expect(screen.getByRole('link', { name: /Paramètres/ })).toHaveAttribute('href', '/settings')
   })
+
+  it('changer de page remonte en haut (on ne reste pas au milieu de la page précédente)', async () => {
+    render(<App />)
+    document.documentElement.scrollTop = 1200
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Principal' })).getByRole('link', { name: /Repas/ }))
+    await screen.findByRole('heading', { name: 'Alimentation' })
+    expect(document.documentElement.scrollTop).toBe(0)
+  })
 })

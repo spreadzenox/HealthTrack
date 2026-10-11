@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
@@ -8,6 +8,7 @@ import BaselineCards from '../components/BaselineCards'
 import HealthRadar from '../components/HealthRadar'
 import SleepRegularityCard from '../components/SleepRegularityCard'
 import DeleteEntryButton from '../components/DeleteEntryButton'
+import SavedMealEditor from '../components/SavedMealEditor'
 import { isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
 import { formatDuration, workoutTypeLabel, shortFoodName } from '../utils/format'
@@ -186,7 +187,40 @@ function EditButton({ e, onEdit }) {
   )
 }
 
-function DayCard({ day, onEdit }) {
+/** Repas : « Refaire » (page Repas pré-remplie) et « Modifier » sur place, comme sur la page Repas. */
+function MealButtons({ e, onEditMeal, onRedoMeal }) {
+  const hasItems = e.payload?.items?.length > 0
+  return (
+    <>
+      {hasItems && (
+        <div className="entry-edit">
+          <button
+            type="button"
+            className="entry-delete-btn"
+            onClick={() => onRedoMeal({ dish: e.payload.dish, items: e.payload.items })}
+            aria-label="Refaire ce repas"
+          >
+            Refaire
+          </button>
+        </div>
+      )}
+      {hasItems && isDeletableEntry(e) && (
+        <div className="entry-edit">
+          <button
+            type="button"
+            className="entry-delete-btn"
+            onClick={() => onEditMeal(e.id)}
+            aria-label="Modifier ce repas"
+          >
+            Modifier
+          </button>
+        </div>
+      )}
+    </>
+  )
+}
+
+function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
   const { title, date } = dayHeading(day.dateKey)
   const chips = summaryChips(day.summary)
   return (
@@ -219,10 +253,13 @@ function DayCard({ day, onEdit }) {
                 )}
                 {isDeletableEntry(e) && !hasBody(e) && <DeleteButton e={e} />}
               </div>
-              {hasBody(e) && (
-                <div className="entry-card-row">
+              {e.type === 'food' && editingMealId === e.id ? (
+                <SavedMealEditor entry={e} onCancel={() => onEditMeal(null)} onSaved={() => onEditMeal(null)} />
+              ) : hasBody(e) && (
+                <div className={`entry-card-row${e.type === 'food' && e.payload?.items?.length ? ' entry-card-row-stacked' : ''}`}>
                   <EntryBody e={e} />
                   <EditButton e={e} onEdit={onEdit} />
+                  {e.type === 'food' && <MealButtons e={e} onEditMeal={onEditMeal} onRedoMeal={onRedoMeal} />}
                   {isDeletableEntry(e) && <DeleteButton e={e} />}
                 </div>
               )}
@@ -249,6 +286,9 @@ export default function Dashboard() {
   const [error, setError] = useState(null)
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
   const [editingWellbeing, setEditingWellbeing] = useState(null)
+  const [editingMealId, setEditingMealId] = useState(null)
+  const navigate = useNavigate()
+  const redoMeal = useCallback((meal) => navigate('/food', { state: { redoMeal: meal } }), [navigate])
   const [visibleDays, setVisibleDays] = useState(INITIAL_DAYS)
   const days = useMemo(() => buildDailyJournal(entries), [entries])
 
@@ -339,7 +379,14 @@ export default function Dashboard() {
             <>
               <ul className="day-list">
                 {days.slice(0, visibleDays).map((day) => (
-                  <DayCard key={day.dateKey} day={day} onEdit={setEditingWellbeing} />
+                  <DayCard
+                    key={day.dateKey}
+                    day={day}
+                    onEdit={setEditingWellbeing}
+                    editingMealId={editingMealId}
+                    onEditMeal={setEditingMealId}
+                    onRedoMeal={redoMeal}
+                  />
                 ))}
               </ul>
               {days.length > visibleDays && (

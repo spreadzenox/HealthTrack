@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import Food from './Food'
 
 vi.mock('../storage/localHealthStorage', () => ({
@@ -464,5 +464,16 @@ describe('Food — derniers repas regroupés par jour', () => {
     fireEvent.click(screen.getByRole('button', { name: /Voir les jours précédents/i }))
     expect(screen.getAllByRole('heading', { level: 4 })).toHaveLength(10)
     expect(screen.queryByRole('button', { name: /Voir les jours précédents/i })).not.toBeInTheDocument()
+  })
+
+  it('ouvre le formulaire « Refaire » quand on arrive du tableau de bord', async () => {
+    const redoMeal = { dish: 'Riz au poulet', items: [{ ingredient: 'Riz blanc cuit', quantity: '150 g', quantity_g: 150 }] }
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/food', state: { redoMeal } }]}>
+        <Food />
+      </MemoryRouter>
+    )
+    expect(await screen.findByText(/Refaire : Riz au poulet/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Décrire ou saisir sans photo/ })).not.toBeInTheDocument()
   })
 })

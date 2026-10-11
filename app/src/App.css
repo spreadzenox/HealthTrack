@@ -691,8 +691,14 @@
   margin: -12px -8px -12px auto;
 }
 
-.entry-edit + .entry-delete:not(.entry-delete-confirm) {
+.entry-edit + .entry-delete:not(.entry-delete-confirm),
+.entry-edit + .entry-edit {
   margin-left: 0;
+}
+
+/* Plusieurs boutons (repas : Refaire, Modifier, Supprimer) : contenu pleine largeur, boutons alignés dessous */
+.entry-card-row-stacked > :first-child {
+  flex-basis: 100%;
 }
 
 /* Cartes du journal plus étroites : la question au-dessus, « Annuler / Confirmer » ensemble dessous */

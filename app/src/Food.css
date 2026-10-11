@@ -393,10 +393,6 @@
   flex-basis: 100%;
 }
 
-.meal-card .entry-edit + .entry-edit {
-  margin-left: 0;
-}
-
 /* Derniers repas regroupés par jour */
 .meal-day + .meal-day {
   margin-top: 18px;

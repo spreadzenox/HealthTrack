@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-11",
+  "kind": "amélioration",
+  "title": "Modifier ou refaire un repas depuis l'accueil",
+  "items": [
+    "Tableau de bord → « Vos derniers jours » : chaque repas a maintenant « Refaire » et « Modifier », comme sur la page Repas. « Modifier » ouvre la correction sur place (grammes, ingrédients, heure) sans quitter l'accueil.",
+    "« Refaire » ouvre la page Repas avec le même repas pré-rempli : ajustez les grammes si besoin, puis enregistrez.",
+    "En changeant d'onglet, la nouvelle page s'affiche depuis le haut, au lieu de s'ouvrir au milieu, à la hauteur où vous étiez sur la page précédente."
+  ]
+}
