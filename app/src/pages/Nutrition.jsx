@@ -89,8 +89,8 @@ export default function Nutrition() {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  // « Chargement… » seulement au premier affichage : une mise à jour (profil, repas) ne fait pas clignoter la page.
   const load = useCallback(async () => {
-    setLoading(true)
     try {
       const data = await listEntriesForAnalysis()
       setEntries(data)

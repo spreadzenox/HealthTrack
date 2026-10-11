@@ -91,6 +91,8 @@ describe('Nutrition page', () => {
     expect(JSON.parse(localStorage.getItem('healthtrack_body_profile'))).toEqual({ sex: 'F', birthYear: 1990, heightCm: 165 })
     expect(await screen.findByText('Femme')).toBeInTheDocument()
     expect(screen.getByText(/165 cm/)).toBeInTheDocument()
+    expect(screen.queryByText('Chargement…')).not.toBeInTheDocument()
+    dispatchSpy.mockRestore()
   })
 
   it('n\'ajoute pas de pesée si le poids n\'a pas changé', async () => {

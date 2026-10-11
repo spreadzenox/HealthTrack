@@ -38,6 +38,10 @@
   11/10/2026) · Femme · 36 ans · ~1 956 kcal » ; tableau de bord : « 10:39 Poids 58,4 kg — Supprimer ». Aucune erreur JS.
 
 ## Apprentissages / décisions
+- CI rouge au premier push (Vitest, Node 20) : après « Enregistrer », la page se rechargeait deux fois (événement
+  `health-entries-updated` + rappel) et chaque rechargement remplaçait tout par « Chargement… » — l'élément trouvé par
+  le test était aussitôt détaché, et l'utilisateur voyait la page clignoter. « Chargement… » n'apparaît plus qu'au
+  premier affichage ; le test vérifie l'absence de clignotement.
 - Profil (sexe, année, taille) en `localStorage` et pas dans IndexedDB : pas de migration de schéma ; **limite** : il
   n'est pas dans la sauvegarde JSON (le poids, lui, y est). Noté au backlog.
 - Le niveau d'activité reste fixé à ×1,55 (modéré) : à rendre réglable ou à déduire des pas plus tard.
