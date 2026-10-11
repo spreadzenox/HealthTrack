@@ -1,6 +1,6 @@
 # 2026-10-11 06:30 UTC — Régularité du sommeil
 
-**Type** : 🏗️  ·  **PR** : voir le tableau du résumé de la semaine
+**Type** : 🏗️  ·  **PR** : #99
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte, « Build & Release » v90 vert.

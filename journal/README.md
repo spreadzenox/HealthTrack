@@ -239,7 +239,7 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 00:30 — [Courbe du bien-être aux vraies dates](runs/2026-10-11-0030-courbe-calendrier.md) | 🐛 | PR #96 fusionnée → v88 |
 | 11/10 02:30 — [Modifier une note de bien-être](runs/2026-10-11-0230-modifier-bien-etre.md) | 🐛 | PR #97 fusionnée au run suivant → v89 |
 | 11/10 04:30 — [Veille + journal plus court](runs/2026-10-11-0430-veille-journal-court.md) | 🔭 | PR #98 fusionnée → v90 |
-| 11/10 06:30 — [Régularité du sommeil](runs/2026-10-11-0630-regularite-sommeil.md) | 🏗️ | PR en cours |
+| 11/10 06:30 — [Régularité du sommeil](runs/2026-10-11-0630-regularite-sommeil.md) | 🏗️ | PR #99 (fusion en fin de run, release attendue v91) |
 
 ---
 
