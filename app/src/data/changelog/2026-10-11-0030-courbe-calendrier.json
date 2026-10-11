@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-11",
+  "kind": "correctif",
+  "title": "Courbe du bien-être : les vraies dates",
+  "items": [
+    "La courbe « Par jour (14 derniers jours) » montre maintenant exactement les 14 derniers jours du calendrier. Avant, elle reprenait vos 14 dernières notes, régulièrement espacées : après une semaine sans noter, d’anciennes notes semblaient dater d’hier.",
+    "Un jour sans note laisse un trou dans la courbe au lieu d’être enjambé par une ligne : vous voyez quand vous n’avez pas noté.",
+    "La prédiction du jour se place sur aujourd’hui ; elle n’est reliée à la courbe que si vous avez noté hier.",
+    "Sans note depuis plus de 14 jours, la courbe le dit au lieu d’afficher des valeurs anciennes."
+  ]
+}
