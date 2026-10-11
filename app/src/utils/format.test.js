@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel, shortFoodName } from './format'
+import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel, shortFoodName, formatClock } from './format'
 
 describe('formatDuration', () => {
   it('affiche heures et minutes', () => {
@@ -120,5 +120,13 @@ describe('shortFoodName', () => {
   it('renvoie une chaîne vide sans nom', () => {
     expect(shortFoodName(undefined)).toBe('')
     expect(shortFoodName('')).toBe('')
+  })
+})
+
+describe('formatClock', () => {
+  it('formats minutes after midnight as a French clock time rounded to 5 min', () => {
+    expect(formatClock(23 * 60 + 27)).toBe('23 h 25')
+    expect(formatClock(7 * 60)).toBe('7 h')
+    expect(formatClock(1439)).toBe('0 h')
   })
 })

@@ -32,6 +32,14 @@ export function formatDuration(minutes) {
   return m === 0 ? `${h} h` : `${h} h ${String(m).padStart(2, '0')}`
 }
 
+/** Minutes après minuit → « 23 h 25 » (arrondi à 5 min). */
+export function formatClock(minutes) {
+  const m = (Math.round(minutes / 5) * 5) % 1440
+  const h = Math.floor(m / 60)
+  const mm = m % 60
+  return mm === 0 ? `${h} h` : `${h} h ${String(mm).padStart(2, '0')}`
+}
+
 const SLEEP_STATE_LABELS = {
   asleep: 'endormi',
   awake: 'éveillé',

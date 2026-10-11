@@ -35,7 +35,8 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [x] **Remplacer le flux brut « Dernières entrées » par des résumés du jour** : « Vos derniers jours », une carte par jour (sommeil au jour du réveil, pas, FC repos, VFC, plage FC, dépense, bien-être, repas/kcal, cigarettes) + saisies du jour (#76)
 - [x] **Baselines personnelles FC repos / VFC** (R#1) : moyenne 7 j vs norme des 60 j précédents (± 1 ET, VFC en log), cartes sur le tableau de bord (#60)
 - [ ] Baselines, étape 2 : ajouter sommeil (durée) et une mini-courbe 30 j avec la bande de norme ; CV 7 j de la VFC
-- [ ] Régularité du sommeil (R#6) : écart-type coucher/lever 14 j + SRI simplifié
+- [x] **Régularité du sommeil** (R#6) : coucher / lever moyens ± ET sur 14 j, SRI simplifié (nuits consécutives), décalage du week-end, carte du tableau de bord (run 11/10 06:30)
+- [ ] Régularité, étape 2 : ET des horaires / SRI comme variable des Analyses et piste « heures fixes » ; mini-graphique des horaires 14 j
 - [ ] Tendance de poids lissée (R#8, EMA α≈0,1) et objectif de pas fondé sur les preuves (R#10, défaut 7 000, adaptatif)
 - [x] **« Radar forme »** (R#12) : FC repos / VFC / sommeil vs norme 60 j, ≥ 2 signaux défavorables (|z| ≥ 1,5), « à surveiller » 1 jour, alerte ≥ 2 jours, jamais de diagnostic
 - [ ] Radar, étape 2 : fréquence respiratoire et température si Health Connect les fournit ; mini-courbe 14 j ; recalibrer les seuils sur retours réels
@@ -98,7 +99,7 @@ puis l'analyse (statistiques, radar), puis la restitution (revue IA, notificatio
 1. 🐛 Chasse aux bugs (courbe du bien-être sur calendrier : fait, run 11/10 00:30 ; modifier une note de bien-être : fait, run 11/10 02:30) : formulaires (heure `datetime-local` sur l'A56), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 2. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
 3. 🎨 Journal du tableau de bord, étape 3 : ~~kcal et nom du plat~~ (run 18:30), ~~poids + composition fusionnés, noms d'aliments courts~~ (run 11/10 04:30) ; « Modifier » / « Refaire » un repas depuis le journal ; rapprocher Radar et cartes cœur.
-4. 🏗️ Régularité du sommeil (R#6, confortée par la veille du 11/10) : écart-type coucher / lever 14 j + SRI simplifié sur le tableau de bord.
+4. 🏗️ Régularité du sommeil, étape 2 (étape 1 livrée run 11/10 06:30) : variable « régularité » dans les Analyses et piste « heures fixes ».
 5. 🔭 Prochaine veille vers le 12/10 soir : puissance attendue des analyses N-of-1, retours d'utilisateurs d'apps de suivi (forums, avis Play Store).
 
 ## Idées en vrac (à trier)
@@ -117,6 +118,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Données de démo : repas plus complets (~2 000 kcal/j) pour que la page Nutrition de démo soit représentative.
 - Nutrition : tendance sur 4 semaines par nutriment et suggestions d'aliments riches pour les repères « bas » récurrents.
 - ~~Graphique bien-être « Par jour » : points espacés par index, 14 dernières notes au lieu de 14 jours~~ → axe calendrier, trous visibles, `--wellbeing-gap` (run 11/10 00:30).
+- Radar / journal : chaque enregistrement de sommeil est rattaché au jour de *sa* fin ; si une source fournit des phases séparées, une phase finie avant minuit tomberait la veille → réutiliser `mainSleepPeriods` (sleepRegularity.js).
 - Mode clair : `npm run visual -- --light` rend la même chose que le sombre — l'app n'a pas de thème clair (C1), ce n'est pas un bug du script.
 - Démo : le dernier jour de données est « hier » quand le run tourne après minuit (heure de Paris) → la prédiction du jour et « Par heure (aujourd'hui) » ne sont jamais visibles dans les captures ; faire finir la démo « aujourd'hui ».
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.

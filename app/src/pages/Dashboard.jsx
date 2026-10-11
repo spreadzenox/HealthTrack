@@ -6,6 +6,7 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import BaselineCards from '../components/BaselineCards'
 import HealthRadar from '../components/HealthRadar'
+import SleepRegularityCard from '../components/SleepRegularityCard'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import { isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
@@ -327,6 +328,7 @@ export default function Dashboard() {
         <>
           <HealthRadar />
           <BaselineCards />
+          <SleepRegularityCard />
           <WellbeingCharts />
           <h3 className="section-title">Vos derniers jours</h3>
           {days.length === 0 ? (

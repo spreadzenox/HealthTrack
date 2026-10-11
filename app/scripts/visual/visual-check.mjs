@@ -315,14 +315,21 @@ async function main() {
         // Découpe en écrans successifs (plus lisibles qu'une capture très haute).
         const height = await page.evaluate(() => document.documentElement.scrollHeight)
         const vp = page.viewportSize()
+        // La barre d'onglets fixe recouvre le bas du 1er écran : les écrans se chevauchent
+        // de sa hauteur pour que ce qu'elle cache apparaisse en haut de l'écran suivant.
+        const overlap = await page.evaluate(() => document.querySelector('.tabbar')?.getBoundingClientRect().height || 0)
+        const step = vp.height - Math.round(overlap)
         current.tiles = []
-        for (let k = 0; k * vp.height < height && k < 12; k++) {
+        for (let k = 0; (k === 0 || k * step + overlap < height) && k < 12; k++) {
           const tile = join(outDir, 'tiles', `${name}-${k + 1}.png`)
           mkdirSync(dirname(tile), { recursive: true })
-          const h = Math.min(vp.height, height - k * vp.height)
-          await page.screenshot({ path: tile, fullPage: true, clip: { x: 0, y: k * vp.height, width: vp.width, height: h } })
+          const h = Math.min(vp.height, height - k * step)
+          // Écrans suivants : barre masquée, sinon elle cache de nouveau le même contenu
+          if (k === 1) await page.evaluate(() => document.querySelector('.tabbar')?.style.setProperty('visibility', 'hidden'))
+          await page.screenshot({ path: tile, fullPage: true, clip: { x: 0, y: k * step, width: vp.width, height: h } })
           current.tiles.push(tile)
         }
+        await page.evaluate(() => document.querySelector('.tabbar')?.style.removeProperty('visibility'))
         current.overflowX = await page.evaluate(
           () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
         )

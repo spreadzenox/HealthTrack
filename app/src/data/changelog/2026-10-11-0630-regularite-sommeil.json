@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-11",
+  "kind": "nouveau",
+  "title": "Régularité du sommeil sur le tableau de bord",
+  "items": [
+    "Nouvelle carte « Régularité du sommeil » : votre heure habituelle de coucher et de lever sur les 14 derniers jours, avec leur variation (« Coucher vers 23 h 35 ± 20 min »).",
+    "Un indice de régularité de 0 à 100 : la chance d'être dans le même état (endormi ou éveillé) à la même heure d'un jour au suivant.",
+    "Si vos nuits sont décalées le week-end, la carte le dit (« décalées de 1 h 10 plus tard ») : des horaires stables sont associés à un meilleur bien-être le lendemain. Une observation, pas un diagnostic.",
+    "Il faut 7 nuits enregistrées par la montre sur les 14 derniers jours."
+  ]
+}
