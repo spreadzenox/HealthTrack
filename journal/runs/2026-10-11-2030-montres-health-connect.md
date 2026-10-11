@@ -1,6 +1,6 @@
 # 2026-10-11 20:30 UTC (22:30 Paris) — Montres dans Health Connect : guide Huawei → Gadgetbridge, 6 nouveaux types
 
-**Type** : 🏗️ (C7, objets connectés)  ·  **PR** : voir le tableau du README
+**Type** : 🏗️ (C7, objets connectés)  ·  **PR** : #106
 
 ## Pourquoi
 - Première priorité de code après le run idées de 18:30 (directions du propriétaire du 11/10, priorité n° 2) :

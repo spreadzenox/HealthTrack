@@ -298,7 +298,7 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 14:30 — [Arrondis des habitudes, nuits « au lit »](runs/2026-10-11-1430-petits-bugs.md) | 🐛 | PR #103 fusionnée → v95 |
 | 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR #104 fusionnée → v96 |
 | 11/10 18:30 — [Idées : objets connectés, humeur, conversations](runs/2026-10-11-1830-idees-objets-connectes.md) | 💡 | Journal seul (pas de release) |
-| 11/10 20:30 — [Montres : guide Huawei, 6 types Health Connect](runs/2026-10-11-2030-montres-health-connect.md) | 🏗️ | PR à venir |
+| 11/10 20:30 — [Montres : guide Huawei, 6 types Health Connect](runs/2026-10-11-2030-montres-health-connect.md) | 🏗️ | PR #106 fusionnée → v97 |
 
 ---
 
