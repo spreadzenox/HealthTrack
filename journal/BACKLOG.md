@@ -3,25 +3,51 @@
 > Document vivant, maintenu par Claude à chaque run. Cocher ce qui est livré (avec le n° de PR),
 > re-prioriser librement. Les idées viennent de l'audit de l'app, de `RESEARCH.md` et des runs.
 
-## Vision (horizon 6–12 mois)
+## Vision (horizon 6–12 mois) — réorientée le 11/10/2026 (directions du propriétaire, voir charte §0)
 
-HealthTrack devient un **coach de santé personnel local-first** :
+HealthTrack devient le **hub ultime de la santé, de l'humeur et de la vie** — un « humain augmenté par les
+données », local-first :
 
-1. **Aujourd'hui en un coup d'œil** — un écran d'accueil qui répond à « comment je vais et
-   que faire aujourd'hui ? » : état de forme vs *ma* ligne de base (sommeil, VFC, FC repos),
-   1 à 3 actions concrètes, saisie express.
-2. **Saisie quasi nulle** — synchro auto (Health Connect, Withings), photo/texte/voix → repas
-   via Gemini, check-in humeur + tags en 2 taps, repas récurrents.
-3. **Comprendre ce qui marche *pour moi*** — moteur d'analyse N-of-1 honnête : effets
-   décalés (J-1 → J), lignes de base personnelles, détection d'anomalies, incertitude
-   affichée, correction des comparaisons multiples, puis **expériences personnelles**
-   (« 2 semaines sans café après 14 h » avec analyse avant/après).
-4. **Coach IA ancré** — résumés hebdo et questions/réponses générés par Gemini à partir
-   d'agrégats calculés localement (jamais les données brutes), avec garde-fous santé.
-5. **Habitudes durables** — objectifs, séries, rappels contextuels (notifications locales).
+1. **Tout capter automatiquement** (priorité n° 1) — la saisie manuelle devient le dernier recours, en un geste.
+2. **Tous les objets connectés** (priorité n° 2) — autodétection des appareils et apps santé, données brutes,
+   Health Connect + couche BLE générique (profils standard puis familles de protocoles), guides pas à pas quand une
+   étape manuelle est inévitable. Cas pilote : Huawei Watch GT 6 Pro du propriétaire.
+3. **Humeur et bien-être estimés passivement** (priorité n° 3) — sommeil, VFC, activité, écran, mobilité, voix,
+   conversations ; sur l'appareil ; toujours « estimation », jamais diagnostic.
+4. **Comprendre ce qui marche *pour moi*** — moteur N-of-1 honnête (déjà riche : C3), expériences personnelles.
+5. **Coach et assistant** — résumés, prévisions, alertes précoces, actions concrètes.
 6. **Confiance** — zéro régression, données jamais perdues, transparence sur les méthodes.
 
+Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
+
 ## Chantiers long terme (découpés en étapes livrables)
+
+### C7 — Objets connectés : autodétection et données brutes (priorité n° 2)
+- [ ] **Guide « Montre Huawei / Honor → Gadgetbridge → Health Connect »** dans Connecteurs (I1) — chemin immédiat pour la GT 6 Pro, zéro code natif ; même carte pour Zepp / Mi Fitness (« activez Health Connect »)
+- [ ] **Lire plus de types Health Connect** (I2) : fréquence respiratoire, température, poids, masse grasse, tension, glycémie (déjà supportés par `@capgo/capacitor-health` 8.4.5, absents de `READ_TYPES`) ; refus d'une nouvelle permission sans casser la synchro ; température cutanée (`SkinTemperatureRecord`) = ajout natif
+- [ ] **« Mes appareils »** (I3) : apps santé installées (`<queries>` + petit plugin natif) → connecteur conseillé + guide ; puis appareils BLE appairés (`getBondedDevices`)
+- [ ] **Couche BLE générique, étape 1** (I8) : `@capacitor-community/bluetooth-le` 8.3, registre `DeviceDriver` + empreinte, profil FC 0x180D avec RR → VFC (parsing des trames en TDD) ; empreinte des appareils inconnus stockée en local
+- [ ] Couche BLE, étape 2 : balance 0x181D/0x181B, tensiomètre 0x1810, thermomètre 0x1809, oxymètre 0x1822, glycémie (RACP) ; Current Time Service
+- [ ] Couche BLE, étape 3 : Companion Device Manager (réveil quand l'appareil revient à portée), synchro en arrière-plan
+- [ ] Imports de fichiers constructeurs (I14) : Garmin FIT, Huawei JSON (export RGPD), Samsung / Oura / Zepp CSV
+- [ ] OAuth cloud ouverts à un particulier : Polar AccessLink (gratuit), Whoop, Oura
+- [ ] Pilote BLE Huawei direct (I20) — pari long terme, depuis `huawei-lpv2` (MIT), jamais de code Gadgetbridge (AGPL)
+- [ ] Recommandations matériel dans l'app (I21) : ceinture FC pour une VFC fiable, tensiomètre / balance BLE standard
+
+### C8 — Capture passive du contexte (priorité n° 1)
+- [ ] **Météo, pression, qualité de l'air, pollen** (I4, Open-Meteo sans clé, position approximative) → variables des Analyses
+- [ ] **Temps d'écran et téléphone au lit** (I6, UsageStatsManager) → variables + sommeil estimé sans montre
+- [ ] Calendrier → charge de la journée (I11)
+- [ ] Mobilité / temps dehors (I15, sans coordonnées précises)
+- [ ] Repas détectés dans la galerie (I12)
+- [ ] Check-in en un geste : notification / widget, tags avec intensité (I13)
+
+### C9 — Humeur estimée et conversations (priorité n° 3)
+- [ ] **Humeur estimée** (I7) : régression personnelle des check-ins sur les écarts à la norme, fourchette, ≥ 7 jours valides / 14, pré-remplit le check-in
+- [ ] « Votre semaine en clair » (I9, gabarit local, Gemini optionnel)
+- [ ] Journal vocal (I17) : dictée → transcription locale → résumé / sentiment
+- [ ] Import Omi (I10) via la clé développeur personnelle ; Plaud quand son SDK sortira de bêta ; rappel sur le consentement d'autrui
+- [ ] Bilans sanguins par photo / PDF (I16)
 
 ### C1 — Navigation & design system mobile
 - [x] **Barre d'onglets en bas** : Accueil, Repas, Nutrition, Analyses, Plus (→ Données, Connecteurs, Paramètres, Nouveautés), en-tête compact (run 22:30)
@@ -95,14 +121,18 @@ HealthTrack devient un **coach de santé personnel local-first** :
 
 ## Prochaines étapes (ordre conseillé)
 
-Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
-puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
+Logique (réorientée le 11/10 soir) : d'abord **brancher les données du propriétaire** (montre Huawei) et capter plus
+sans saisie, puis la couche BLE générique, puis l'humeur estimée. Le travail d'analyse (C3) continue en fond.
 
-1. 🐛 Chasse aux bugs (arrondis des habitudes, nuits « au lit », Withings : faits, run 11/10 14:30) : modales, sélecteur d'heure sur captures émulateur — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
-2. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
-3. 🎨 Journal du tableau de bord, étape 3 : ~~kcal et nom du plat~~ (run 18:30), ~~poids + composition fusionnés, noms d'aliments courts~~ (run 11/10 04:30), ~~« Modifier » / « Refaire » un repas depuis le journal~~ (run 11/10 16:30) ; rapprocher Radar et cartes cœur (un seul bloc d'explication).
-4. 🏗️ Régularité du sommeil, étape 2 (étape 1 livrée run 11/10 06:30) : variable « régularité » dans les Analyses et piste « heures fixes ».
-5. 🔭 Prochaine veille vers le 12/10 soir : puissance attendue des analyses N-of-1, retours d'utilisateurs d'apps de suivi (forums, avis Play Store).
+1. 🏗️ **C7 — Lire plus de types Health Connect** (I2) + **guide Huawei → Gadgetbridge → Health Connect** (I1) dans
+   Connecteurs : la GT 6 Pro du propriétaire arrive dans l'app sans code natif.
+2. 🏗️ **C7 — « Mes appareils »** (I3) : détection des apps santé installées → connecteur conseillé.
+3. 🏗️ **C8 — Météo / pression / air / pollen** (I4) comme variables des Analyses.
+4. 🏗️ **C7 — Couche BLE générique, étape 1** (I8) : registre de pilotes + FC 0x180D / RR → VFC.
+5. 🏗️ **C8 — Temps d'écran / téléphone au lit** (I6).
+6. 🏗️ **C9 — Humeur estimée** (I7), puis Radar maladie étape 2 avec respiration et température (I5).
+7. 🐛 / 🎨 en alternance : Capacitor 8.4 + CLI 8 (C1, aussi utile au plugin BLE), un seul bloc Radar + cœur.
+8. 💡 Prochain run idées (12/10 08:00 Paris) : retours réels GT 6 Pro + Gadgetbridge, bagues et CGM, Gemini Nano sur A56.
 
 ## Idées en vrac (à trier)
 
@@ -123,6 +153,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Radar / journal : chaque enregistrement de sommeil est rattaché au jour de *sa* fin ; si une source fournit des phases séparées, une phase finie avant minuit tomberait la veille → réutiliser `mainSleepPeriods` (sleepRegularity.js).
 - Mode clair : `npm run visual -- --light` rend la même chose que le sombre — l'app n'a pas de thème clair (C1), ce n'est pas un bug du script.
 - Démo : le dernier jour de données est « hier » quand le run tourne après minuit (heure de Paris) → la prédiction du jour et « Par heure (aujourd'hui) » ne sont jamais visibles dans les captures ; faire finir la démo « aujourd'hui ».
+- CI : test émulateur API 36 `HealthConnectTest.healthConnect_canWriteAndReadSleep` instable (rouge sur la PR #105, journal seul, vert sur main juste avant) → rendre le test robuste (attente / relecture) si cela se répète.
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
@@ -140,6 +171,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-11 — Run idées : directions du propriétaire dans la charte, `IDEES.md` (21 idées), chantiers C7–C9, backlog réorienté (run 20:30 Paris)
 - [x] 2026-10-11 — Chasse aux bugs : arrondis cohérents dans « Vos habitudes », nuits « au lit » dans le journal, « Déconnecter Withings » seulement si connecté, message d'heure effacée (run 14:30)
 - [x] 2026-10-11 — Nutrition : sexe Withings corrigé, « Votre profil » avec valeurs par défaut signalées et formulaire (sexe, année, taille, poids) (run 10:30)
 - [x] 2026-10-11 — Page Repas : repas regroupés par jour (titre, nombre de repas, total ≈ kcal), noms courts, 5 jours puis « Voir les jours précédents » (run 08:30)

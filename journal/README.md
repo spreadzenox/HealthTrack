@@ -228,7 +228,22 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — mise à jour de Capacitor, un seul bloc d'explication Radar + cœur, régularité du sommeil dans les Analyses, effets décalés étape 2.
+**💡 Nouvelles directions et meilleures idées** (run idées du 11/10 au soir, détails dans `IDEES.md`)
+- Vos directions du 11/10 sont intégrées à la charte et le backlog est réorienté : **tout capter automatiquement**,
+  **tous les objets connectés** (nouveaux chantiers C7 / C8 / C9), **humeur estimée** sans saisie.
+- ⌚ **Votre Huawei Watch GT 6 Pro peut arriver dans HealthTrack dès maintenant, sans attendre de code** : l'app libre
+  **Gadgetbridge** (F-Droid) la prend en charge depuis décembre 2025 et écrit dans Health Connect depuis février 2026
+  (FC, FC au repos, VFC, SpO₂, sommeil, température, respiration, séances). Appairage **sans réinitialiser** la montre
+  (il faut votre ID de compte Huawei et retirer les permissions de Huawei Health sans désappairer). Contreparties : on
+  quitte l'app Huawei au quotidien, le stress ne passe pas. Le prochain run de code ajoute ce guide pas à pas dans
+  Connecteurs et la lecture de la respiration / température / tension / poids depuis Health Connect.
+- Les meilleures idées ensuite : « Mes appareils » (l'app détecte vos apps santé et propose le bon branchement),
+  météo / pression / pollen automatiques, temps d'écran et « téléphone au lit », couche Bluetooth générique (ceintures
+  cardio, balances, tensiomètres standard), humeur estimée qui pré-remplit le check-in, import des conversations Omi.
+- Bon à savoir : Fitbit coupe son API le 30/10/2026 ; Limitless (racheté par Meta) ne fonctionne plus dans l'UE ;
+  Omi est le seul enregistreur de conversations vraiment ouvert.
+
+**Prochaines priorités** — brancher la montre Huawei (guide + types Health Connect manquants), « Mes appareils », météo / pollen automatiques, puis la couche Bluetooth générique.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -269,7 +284,8 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 10:30 — [Nutrition : profil juste](runs/2026-10-11-1030-profil-nutrition.md) | 🐛 | PR #101 fusionnée → v93 |
 | 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #102 fusionnée → v94 |
 | 11/10 14:30 — [Arrondis des habitudes, nuits « au lit »](runs/2026-10-11-1430-petits-bugs.md) | 🐛 | PR #103 fusionnée → v95 |
-| 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR #104 (fusion en fin de run, release attendue v96) |
+| 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR #104 fusionnée → v96 |
+| 11/10 18:30 — [Idées : objets connectés, humeur, conversations](runs/2026-10-11-1830-idees-objets-connectes.md) | 💡 | Journal seul (pas de release) |
 
 ---
 
@@ -285,10 +301,49 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `README.md` | Résumé de la semaine en cours (en tête) + charte : mission, principes, protocole d'un run |
 | `BACKLOG.md` | Vision, chantiers long terme, backlog priorisé, idées en vrac |
 | `RESEARCH.md` | Veille : besoins utilisateurs, ce qui marche en health tech, avancées ML — avec sources |
+| `IDEES.md` | Idées des runs « idées » (08 h / 20 h Paris), classées impact × faisabilité, avec sources et pistes |
 | `runs/AAAA-MM-JJ-HHMM-<slug>.md` | Un compte rendu par exécution (un fichier par run = pas de conflit Git) |
 | `semaines/AAAA-Sww.md` | Résumés des semaines passées |
 
 ---
+
+## 0. Directions du propriétaire (11 octobre 2026) — priment sur le choix libre du mode
+
+- **Vision** : HealthTrack devient le **hub ultime de la santé, de l'humeur et de la vie** de l'utilisateur, voire un
+  assistant personnel : un « humain augmenté par les données » (connaissance de soi et décisions guidées par beaucoup
+  de données, sans modification du corps). Il faut donc **capter beaucoup de données**. Tout reste sur le téléphone :
+  ne pas brider les idées par excès de prudence sur la vie privée.
+- **Priorité n° 1 — simplifier la vie** : tout ce qui peut être capté automatiquement doit l'être ; la saisie manuelle
+  devient le dernier recours, en un geste minimum.
+- **Priorité n° 2 — objets connectés (gros chantier)** : détecter automatiquement les équipements / apps santé présents
+  ou connectés au téléphone et récupérer leurs données sans intervention. Cas concret : **Huawei Watch GT 6 Pro**
+  (absente de Health Connect). Puis Samsung, Garmin, Fitbit, Xiaomi/Zepp, Withings, Oura, Polar… Étape manuelle
+  inévitable → guide pas à pas dans l'app.
+  - **Données brutes d'abord** (montre, bague, capteurs) ; sans API ouverte : reverse engineering à des fins
+    d'interopérabilité (protocoles BLE documentés, exports, sauvegardes, captures BLE), viser une **connexion BLE
+    directe** (plugin Capacitor natif si besoin). Respecter les licences (Gadgetbridge = AGPL : **ne pas copier son
+    code**, réimplémenter d'après la documentation du protocole), ne jamais committer clés, secrets ni firmware
+    propriétaire, documenter les limites (montre appairée à une seule app à la fois…).
+  - **Approche générique** : couche de connexion avec autodétection (scan BLE, empreinte : nom annoncé, UUID de
+    services, données fabricant, Device Information Service) → choix automatique du pilote. D'abord les **profils BLE
+    standard** (FC 0x180D, batterie, balance, tensiomètre, glycémie, oxymètre, vélo/course…), puis les **familles de
+    protocoles propriétaires** partagées entre modèles. Registre de pilotes extensible, détection des capacités plutôt
+    que listes de modèles, repli propre pour un appareil inconnu (empreinte collectée localement).
+- **Priorité n° 3 — humeur et bien-être captés automatiquement** (inspiration Emobot) : estimation à partir de
+  signaux passifs (sommeil, VFC, activité, usage du téléphone, voix, visage, conversations), traitée sur l'appareil,
+  toujours présentée comme une **estimation**, jamais un diagnostic.
+- **Conversations** : importer les résumés des enregistreurs (Omi, Plaud, Limitless, Bee… et équivalents) ou faire
+  pareil avec le micro du téléphone, pour le journal et l'humeur ; stockage local ; rappel simple (sans blocage) que
+  l'enregistrement d'autrui peut demander leur accord selon le pays.
+- **Recommandations de matériel** utile (capteurs, wearables) quand elles servent le suivi.
+- **Runs « idées »** (08 h et 20 h, heure de Paris) : pas de code produit ; se mettre à la place de l'utilisateur,
+  chercher (Reddit QS / Biohackers / wearables…, LinkedIn, wearables récents, reverse engineering, enregistreurs de
+  conversations, humeur, ML embarqué, meilleures apps) et enrichir **`IDEES.md`** (idées classées par impact et
+  faisabilité, besoin servi, sources, dates, pistes d'implémentation), puis faire entrer les meilleures dans
+  `BACKLOG.md`. Les garde-fous de fusion s'appliquent (tests verts même si seul le journal change).
+
+Conséquence sur le principe 3 ci-dessous : « local-first » reste la règle (rien ne sort de l'appareil hors Gemini
+déclenché par l'utilisateur), mais **à l'intérieur du téléphone** on capte large.
 
 ## 1. Mission
 
@@ -341,6 +396,7 @@ Repères (pas des règles rigides) :
 | Type | Quand | Contenu |
 |---|---|---|
 | 🐛 **Bugs & vérif visuelle** | ≥ 1 run sur 4 ; toujours après un gros chantier | `npm run visual` (+ `--empty`, `--light`), lire **chaque** capture, traquer erreurs console, débordements, états vides/erreur, cas limites ; écrire le test qui reproduit puis corriger |
+| 💡 **Idées** | runs de 08 h et 20 h (heure de Paris) | Pas de code produit : recherche orientée utilisateur → `IDEES.md` + meilleures idées dans `BACKLOG.md` |
 | 🔭 **Recherche** | ~1 run sur 6, jamais deux de suite | Recherche web (besoins réels, apps qui marchent, publications ML/santé récentes) → `RESEARCH.md` + nouvelles idées priorisées dans `BACKLOG.md`. Finir si possible par un quick win issu de la recherche |
 | 🎨 **UI / ergonomie** | régulièrement | Réduire la friction (moins de taps), lisibilité, hiérarchie visuelle, cohérence du design system, accessibilité (contraste, tailles tactiles ≥ 44 px), mode clair. Captures avant/après obligatoires |
 | 🏗️ **Travail de fond** | le reste du temps | Nouvelles fonctionnalités, moteur d'analyse / ML, architecture, performance, dette technique, tests |
