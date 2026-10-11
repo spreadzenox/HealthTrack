@@ -18,9 +18,10 @@ vi.mock('../components/WellbeingCharts', () => ({
 
 // Stub WellbeingPrompt to make controlled-mode testing simple
 vi.mock('../components/WellbeingPrompt', () => ({
-  default: ({ open, onClose }) =>
+  default: ({ open, onClose, entry }) =>
     open ? (
       <div role="dialog" aria-label="wellbeing-prompt-stub">
+        {entry && <p>Édition de l’entrée {entry.id}</p>}
         <button type="button" onClick={onClose}>Fermer</button>
       </div>
     ) : null,
@@ -321,5 +322,26 @@ describe('Dashboard', () => {
     renderDashboard()
     const card = (await screen.findByText('Riz au poulet')).closest('.entry-card')
     expect(card.textContent).toMatch(/≈\s?\d+\s?kcal/)
+  })
+
+  it('propose de modifier une note de bien-être de l’app (et seulement elle)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const wb = { id: 11, type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-11T10:00:00', payload: { score: 3 } }
+    const food = { id: 12, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { items: [{ ingredient: 'Riz', quantity: '150 g' }] } }
+    listEntries.mockResolvedValue([wb, food])
+    renderDashboard()
+    const buttons = await screen.findAllByRole('button', { name: /^Modifier/ })
+    expect(buttons).toHaveLength(1)
+    expect(buttons[0]).toHaveAccessibleName(/cette note de bien-être/i)
+    fireEvent.click(buttons[0])
+    expect(screen.getByRole('dialog')).toHaveTextContent('Édition de l’entrée 11')
+    fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('le bouton « Ajouter un bien-être » ouvre une note vierge', async () => {
+    renderDashboard()
+    fireEvent.click(screen.getByRole('button', { name: /Ajouter un bien-être/i }))
+    expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
   })
 })
