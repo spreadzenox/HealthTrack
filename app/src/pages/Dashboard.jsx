@@ -168,7 +168,24 @@ function DeleteButton({ e }) {
   return <DeleteEntryButton entryId={e.id} label={DELETE_LABELS[e.type] || 'cette entrée'} />
 }
 
-function DayCard({ day }) {
+/** « Modifier » une note de bien-être saisie dans l'app (même style discret que « Supprimer »). */
+function EditButton({ e, onEdit }) {
+  if (!onEdit || e.type !== 'wellbeing' || !isDeletableEntry(e)) return null
+  return (
+    <div className="entry-edit">
+      <button
+        type="button"
+        className="entry-delete-btn"
+        onClick={() => onEdit(e)}
+        aria-label={`Modifier ${DELETE_LABELS.wellbeing}`}
+      >
+        Modifier
+      </button>
+    </div>
+  )
+}
+
+function DayCard({ day, onEdit }) {
   const { title, date } = dayHeading(day.dateKey)
   const chips = summaryChips(day.summary)
   return (
@@ -204,6 +221,7 @@ function DayCard({ day }) {
               {hasBody(e) && (
                 <div className="entry-card-row">
                   <EntryBody e={e} />
+                  <EditButton e={e} onEdit={onEdit} />
                   {isDeletableEntry(e) && <DeleteButton e={e} />}
                 </div>
               )}
@@ -229,6 +247,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
+  const [editingWellbeing, setEditingWellbeing] = useState(null)
   const [visibleDays, setVisibleDays] = useState(INITIAL_DAYS)
   const days = useMemo(() => buildDailyJournal(entries), [entries])
 
@@ -290,6 +309,11 @@ export default function Dashboard() {
       </div>
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
+      <WellbeingPrompt
+        open={editingWellbeing !== null}
+        entry={editingWellbeing}
+        onClose={() => setEditingWellbeing(null)}
+      />
 
       {loading && (
         <div className="loading">
@@ -313,7 +337,7 @@ export default function Dashboard() {
             <>
               <ul className="day-list">
                 {days.slice(0, visibleDays).map((day) => (
-                  <DayCard key={day.dateKey} day={day} />
+                  <DayCard key={day.dateKey} day={day} onEdit={setEditingWellbeing} />
                 ))}
               </ul>
               {days.length > visibleDays && (
