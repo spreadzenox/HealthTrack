@@ -18,7 +18,7 @@ import {
 import { computeTagEffects, MIN_TAG_DAYS } from '../services/behaviorTags'
 import { computeLaggedEffects, LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { isDebugModeEnabled } from '../settings/debugMode'
-import { formatSigned, evidenceLabel } from '../utils/format'
+import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
 import { useAutoSync } from '../hooks/useAutoSync'
 import './Recommendations.css'
 
@@ -114,8 +114,8 @@ function LeverCard({ rank, lever }) {
 
 // ─── Behaviour tags (« jours avec / sans ») ──────────────────────────────────
 
-function frScore(v) {
-  return v.toFixed(1).replace('.', ',')
+function frScore(v, digits = 1) {
+  return v.toFixed(digits).replace('.', ',')
 }
 
 function frDiff(v) {
@@ -129,16 +129,17 @@ function TagEffectCard({ effect }) {
   const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
   const rawDiff = effect.diffRaw ?? effect.diff
   const weekendShift = Math.abs(effect.diff - rawDiff) >= TAG_WEEKEND_SHIFT
+  const digits = scoreDecimals(effect.meanWith, effect.meanWithout, rawDiff)
   return (
     <li className={'reco-tag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
       <p className="reco-tag-name">
         <span aria-hidden>{effect.emoji}</span> {effect.label}
       </p>
       <p className="reco-tag-compare">
-        {when} : bien-être <strong>{frScore(effect.meanWith)} / 5</strong> contre{' '}
-        {frScore(effect.meanWithout)} sans{' '}
+        {when} : bien-être <strong>{frScore(effect.meanWith, digits)} / 5</strong> contre{' '}
+        {frScore(effect.meanWithout, digits)} sans{' '}
         <span className={rawDiff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
-          ({frDiff(rawDiff)} point{Math.abs(rawDiff) >= 2 ? 's' : ''})
+          ({formatSigned(rawDiff, digits)} point{Math.abs(rawDiff) >= 2 ? 's' : ''})
         </span>
       </p>
       {weekendShift && (

@@ -97,6 +97,15 @@ export function formatSigned(value, digits) {
   return (value > 0 ? '+' : '−') + abs
 }
 
+/**
+ * Décimales pour afficher deux moyennes et leur écart (« 2,3 contre 2,3 sans (−0,1 point) ») :
+ * 1 si l'écart des moyennes arrondies est bien l'écart affiché, sinon 2 pour que les chiffres collent.
+ */
+export function scoreDecimals(a, b, diff) {
+  const shown = Math.round(a * 10) - Math.round(b * 10)
+  return shown === Math.round(diff * 10) ? 1 : 2
+}
+
 const WORKOUT_TYPE_LABELS = {
   walking: 'Marche',
   running: 'Course à pied',

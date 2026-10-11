@@ -66,7 +66,7 @@ export function frequentMeals(entries, { limit = 4 } = {}) {
 /** Message d'erreur pour l'heure d'un repas (ISO), ou null si elle est acceptable. */
 export function mealTimeError(at, now = Date.now()) {
   const t = at ? new Date(at).getTime() : NaN
-  if (Number.isNaN(t)) return 'Heure invalide.'
+  if (Number.isNaN(t)) return 'Choisissez la date et l’heure du repas.'
   if (t > now + FUTURE_TOLERANCE_MS) return 'L’heure du repas ne peut pas être dans le futur.'
   return null
 }

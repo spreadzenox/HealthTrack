@@ -65,6 +65,21 @@ describe('buildDailyJournal', () => {
     expect(days[0].summary.sleepMinutes).toBe(461)
   })
 
+  it('compte une nuit enregistrée seulement « au lit » (comme le Radar et les Analyses)', () => {
+    const [day] = buildDailyJournal([
+      e('sleep', '2026-10-07T23:10:00', { durationMinutes: 430, sleepState: 'inBed', endDate: '2026-10-08T06:20:00' }),
+    ])
+    expect(day.summary.sleepMinutes).toBe(430)
+  })
+
+  it('ne double pas une nuit qui a à la fois « au lit » et des phases', () => {
+    const [day] = buildDailyJournal([
+      e('sleep', '2026-10-07T23:00:00', { durationMinutes: 480, sleepState: 'inBed', endDate: '2026-10-08T07:00:00' }),
+      e('sleep', '2026-10-07T23:20:00', { durationMinutes: 420, sleepState: 'light', endDate: '2026-10-08T06:20:00' }),
+    ])
+    expect(day.summary.sleepMinutes).toBe(420)
+  })
+
   it('déduit le réveil de la durée quand la fin manque', () => {
     const [day] = buildDailyJournal([
       e('sleep', '2026-10-07T23:00:00', { durationMinutes: 480 }),

@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-11",
+  "kind": "correctif",
+  "title": "Chiffres des habitudes cohérents, nuits « au lit » visibles",
+  "items": [
+    "Analyses → « Vos habitudes » : une carte pouvait dire « 2,3 contre 2,3 sans (−0,1 point) » à cause des arrondis. Quand c'est le cas, les moyennes et l'écart s'affichent maintenant avec deux décimales, pour que les chiffres collent.",
+    "Tableau de bord → « Vos derniers jours » : une nuit que la montre n'enregistre que comme « au lit » (sans phases de sommeil) n'apparaissait pas. Elle est maintenant affichée, comme elle était déjà comptée dans le Radar et les Analyses.",
+    "Paramètres : le bouton « Déconnecter Withings » n'apparaît plus quand aucun compte n'est connecté, et confirme la déconnexion.",
+    "Repas : si l'heure du repas est effacée, le message dit maintenant « Choisissez la date et l'heure du repas » au lieu de « Heure invalide »."
+  ]
+}
