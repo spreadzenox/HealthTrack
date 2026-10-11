@@ -33,6 +33,7 @@ function emptyDay(dateKey) {
     dateKey,
     items: [],
     _sleep: 0,
+    _inBed: 0,
     _dayTotals: { steps: [], calories: [] },
     _partials: { steps: 0, calories: 0 },
     _hasPartial: { steps: false, calories: false },
@@ -64,7 +65,8 @@ function finalize(day) {
     dateKey: day.dateKey,
     items: day.items.sort((a, b) => (b.at < a.at ? -1 : 1)),
     summary: {
-      sleepMinutes: day._sleep > 0 ? day._sleep : null,
+      // « Au lit » seulement si la nuit n'a pas de phases (sinon il les chevauche)
+      sleepMinutes: day._sleep > 0 ? day._sleep : day._inBed > 0 ? day._inBed : null,
       steps: dailyTotal(day, 'steps'),
       burnedKcal: isNum(dailyTotal(day, 'calories')) ? Math.round(dailyTotal(day, 'calories')) : null,
       restingHr: last(day._resting),
@@ -118,8 +120,9 @@ export function buildDailyJournal(entries) {
     const p = e.payload || {}
     if (e.type === 'sleep') {
       const day = getDay(sleepDateKey(e))
-      if (isNum(p.durationMinutes) && p.durationMinutes > 0 && !NOT_ASLEEP.has(p.sleepState)) {
-        day._sleep += p.durationMinutes
+      if (isNum(p.durationMinutes) && p.durationMinutes > 0) {
+        if (!NOT_ASLEEP.has(p.sleepState)) day._sleep += p.durationMinutes
+        else if (p.sleepState === 'inBed') day._inBed += p.durationMinutes
       }
       continue
     }

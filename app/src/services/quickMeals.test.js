@@ -100,7 +100,7 @@ describe('mealTimeError', () => {
   })
 
   it('refuse une heure invalide ou dans le futur', () => {
-    expect(mealTimeError(null, now)).toBe('Heure invalide.')
+    expect(mealTimeError(null, now)).toBe('Choisissez la date et l’heure du repas.')
     expect(mealTimeError('2026-10-09T20:00:00.000Z', now)).toMatch(/futur/)
   })
 })

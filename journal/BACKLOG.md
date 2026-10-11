@@ -98,7 +98,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 Logique : d'abord corriger ce qui nuit à la confiance, puis enrichir les données (tags, baselines),
 puis l'analyse (statistiques, radar), puis la restitution (revue IA, notifications).
 
-1. 🐛 Chasse aux bugs (courbe du bien-être sur calendrier : fait, run 11/10 00:30 ; modifier une note de bien-être : fait, run 11/10 02:30) : formulaires (heure `datetime-local` sur l'A56), modales — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
+1. 🐛 Chasse aux bugs (arrondis des habitudes, nuits « au lit », Withings : faits, run 11/10 14:30) : modales, sélecteur d'heure sur captures émulateur — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 2. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
 3. 🎨 Journal du tableau de bord, étape 3 : ~~kcal et nom du plat~~ (run 18:30), ~~poids + composition fusionnés, noms d'aliments courts~~ (run 11/10 04:30) ; « Modifier » / « Refaire » un repas depuis le journal ; rapprocher Radar et cartes cœur.
 4. 🏗️ Régularité du sommeil, étape 2 (étape 1 livrée run 11/10 06:30) : variable « régularité » dans les Analyses et piste « heures fixes ».
@@ -128,16 +128,18 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
 - ~~Tableau de bord : poids + composition corporelle Withings créent deux cartes~~ → une carte « Pesée » (run 11/10 04:30).
 - Repas (tableau de bord) : afficher les kcal du repas (fait sur Alimentation) ; « Modifier » aussi depuis le tableau de bord (livré sur Alimentation) ; ~~modifier une note de bien-être~~ (run 11/10 02:30).
-- Champ heure `datetime-local` : vérifier son rendu sur l'A56 (format FR, sélecteur natif).
-- Paramètres : « Déconnecter Withings » affiché même quand rien n'est connecté.
+- Champ heure `datetime-local` : format de la WebView = langue du téléphone (Chromium headless reste en US dans les captures, run 11/10 14:30) ; message clair si l'heure est effacée (run 14:30). Reste à voir le sélecteur sur les captures émulateur.
+- ~~Paramètres : « Déconnecter Withings » affiché même quand rien n'est connecté~~ (run 11/10 14:30).
 - Suppression des données synchronisées (pesée aberrante…) : nécessiterait une liste d'exclusion persistante pour que la synchro ne les réimporte pas.
 - ~~Alimentation : liste de 20 repas très longue → regrouper par jour~~ (run 11/10 08:30 : `groupMealsByDay`, 5 jours puis « Voir les jours précédents »).
-- Journal du tableau de bord : une nuit enregistrée seulement « au lit » n'apparaît pas (ignorée) — réutiliser `nightlySleep` en gardant les siestes courtes.
+- ~~Journal du tableau de bord : une nuit enregistrée seulement « au lit » n'apparaît pas~~ (run 11/10 14:30).
+- Analyses : libellé « Calories brûlées totales … » tronqué dans la liste des corrélations ; la page reste titrée « Recommandations » alors que l'onglet dit « Analyses ».
 - ~~Nutrition : « 1728 mg/j » sans espace~~ : c'est l'espace fine insécable (U+202F) d'Intl, très étroite à côté d'un « 1 » ; pas un bug (run 11/10 10:30).
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
 
+- [x] 2026-10-11 — Chasse aux bugs : arrondis cohérents dans « Vos habitudes », nuits « au lit » dans le journal, « Déconnecter Withings » seulement si connecté, message d'heure effacée (run 14:30)
 - [x] 2026-10-11 — Nutrition : sexe Withings corrigé, « Votre profil » avec valeurs par défaut signalées et formulaire (sexe, année, taille, poids) (run 10:30)
 - [x] 2026-10-11 — Page Repas : repas regroupés par jour (titre, nombre de repas, total ≈ kcal), noms courts, 5 jours puis « Voir les jours précédents » (run 08:30)
 - [x] 2026-10-11 — Veille courte (V3) + journal plus court : noms d'aliments courts, une seule carte « Pesée » (run 04:30)

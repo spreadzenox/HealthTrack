@@ -14,6 +14,7 @@ import {
   getWithingsCredentials,
   setWithingsCredentials,
   hasWithingsCredentials,
+  hasWithingsTokens,
   clearWithingsAuth,
 } from '../settings/withingsSettings'
 import '../Food.css'
@@ -35,6 +36,8 @@ export default function Settings() {
   const [withingsSecret, setWithingsSecret] = useState('')
   const [withingsRedirect, setWithingsRedirect] = useState('')
   const [withingsSaved, setWithingsSaved] = useState(false)
+  const [withingsConnected, setWithingsConnected] = useState(() => hasWithingsTokens())
+  const [withingsDisconnected, setWithingsDisconnected] = useState(false)
 
   useEffect(() => {
     setApiKey(getGeminiApiKey())
@@ -216,15 +219,20 @@ export default function Settings() {
             Enregistrer Withings
           </button>
           {withingsSaved && <span className="saved-msg">✓ Enregistré</span>}
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => {
-              clearWithingsAuth()
-            }}
-          >
-            Déconnecter Withings
-          </button>
+          {withingsConnected && (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => {
+                clearWithingsAuth()
+                setWithingsConnected(false)
+                setWithingsDisconnected(true)
+              }}
+            >
+              Déconnecter Withings
+            </button>
+          )}
+          {withingsDisconnected && <span className="saved-msg">✓ Compte Withings déconnecté</span>}
         </div>
       </div>
 

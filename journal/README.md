@@ -162,6 +162,10 @@ une release à chaque changement validé, et tient ce journal.
   Actif et Très actif (utile si vous faites du vélo ou de la natation). Les repères glucides, lipides et sucres suivent.
 - **Le profil est dans la sauvegarde** : sexe, année de naissance, taille et activité partent avec le fichier
   (Plus → Données) et sont restaurés à l'import. L'aperçu les affiche, et les anciennes sauvegardes restent acceptées.
+- **Petites corrections** : dans Analyses → « Vos habitudes », une carte pouvait afficher « 2,3 contre 2,3 sans
+  (−0,1 point) » (arrondis) — les chiffres collent maintenant (deux décimales dans ce cas). Une nuit que la montre
+  n'enregistre que comme « au lit » apparaît enfin dans « Vos derniers jours ». « Déconnecter Withings » n'est plus
+  affiché sans compte connecté.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -220,7 +224,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — bugs de formulaires (heure d'un repas sur l'A56), mise à jour de Capacitor, régularité du sommeil dans les Analyses, effets décalés étape 2.
+**Prochaines priorités** — mise à jour de Capacitor, « Modifier » un repas depuis le tableau de bord, régularité du sommeil dans les Analyses, effets décalés étape 2.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -259,7 +263,8 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 06:30 — [Régularité du sommeil](runs/2026-10-11-0630-regularite-sommeil.md) | 🏗️ | PR #99 fusionnée → v91 |
 | 11/10 08:30 — [Repas rangés par jour](runs/2026-10-11-0830-repas-par-jour.md) | 🎨 | PR #100 fusionnée → v92 |
 | 11/10 10:30 — [Nutrition : profil juste](runs/2026-10-11-1030-profil-nutrition.md) | 🐛 | PR #101 fusionnée → v93 |
-| 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #102 (fusion en fin de run, release attendue v94) |
+| 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #102 fusionnée → v94 |
+| 11/10 14:30 — [Arrondis des habitudes, nuits « au lit »](runs/2026-10-11-1430-petits-bugs.md) | 🐛 | PR #103 (fusion en fin de run, release attendue v95) |
 
 ---
 
