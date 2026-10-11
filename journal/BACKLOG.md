@@ -23,8 +23,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 ## Chantiers long terme (découpés en étapes livrables)
 
 ### C7 — Objets connectés : autodétection et données brutes (priorité n° 2)
-- [ ] **Guide « Montre Huawei / Honor → Gadgetbridge → Health Connect »** dans Connecteurs (I1) — chemin immédiat pour la GT 6 Pro, zéro code natif ; même carte pour Zepp / Mi Fitness (« activez Health Connect »)
-- [ ] **Lire plus de types Health Connect** (I2) : fréquence respiratoire, température, poids, masse grasse, tension, glycémie (déjà supportés par `@capgo/capacitor-health` 8.4.5, absents de `READ_TYPES`) ; refus d'une nouvelle permission sans casser la synchro ; température cutanée (`SkinTemperatureRecord`) = ajout natif
+- [x] **Guide « Montre Huawei / Honor → Gadgetbridge → Health Connect »** dans Connecteurs (I1) + guides Samsung, Xiaomi / Amazfit, Garmin, autres (`src/data/watchGuides.jsx`) (run 11/10 20:30)
+- [x] **Lire plus de types Health Connect** (I2) : respiration, température, tension, glycémie (nouveaux types d'entrée), poids, masse grasse ; autorisation partielle non bloquante + « Autoriser ces mesures » ; puces dans « Vos derniers jours » ; copie HC d'une pesée Withings écartée (run 11/10 20:30)
+- [ ] Types HC, étape 2 : température **cutanée** (`SkinTemperatureRecord`, patch natif du plugin) si Gadgetbridge / Samsung l'écrivent ainsi ; respiration et température comme variables des Analyses et du Radar ; vérifier sur la vraie GT 6 Pro ce qui arrive
 - [ ] **« Mes appareils »** (I3) : apps santé installées (`<queries>` + petit plugin natif) → connecteur conseillé + guide ; puis appareils BLE appairés (`getBondedDevices`)
 - [ ] **Couche BLE générique, étape 1** (I8) : `@capacitor-community/bluetooth-le` 8.3, registre `DeviceDriver` + empreinte, profil FC 0x180D avec RR → VFC (parsing des trames en TDD) ; empreinte des appareils inconnus stockée en local
 - [ ] Couche BLE, étape 2 : balance 0x181D/0x181B, tensiomètre 0x1810, thermomètre 0x1809, oxymètre 0x1822, glycémie (RACP) ; Current Time Service
@@ -124,9 +125,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 Logique (réorientée le 11/10 soir) : d'abord **brancher les données du propriétaire** (montre Huawei) et capter plus
 sans saisie, puis la couche BLE générique, puis l'humeur estimée. Le travail d'analyse (C3) continue en fond.
 
-1. 🏗️ **C7 — Lire plus de types Health Connect** (I2) + **guide Huawei → Gadgetbridge → Health Connect** (I1) dans
-   Connecteurs : la GT 6 Pro du propriétaire arrive dans l'app sans code natif.
-2. 🏗️ **C7 — « Mes appareils »** (I3) : détection des apps santé installées → connecteur conseillé.
+1. ~~🏗️ C7 — types Health Connect (I2) + guide Huawei → Gadgetbridge (I1)~~ (run 11/10 20:30).
+2. 🏗️ **C7 — « Mes appareils »** (I3) : détection des apps santé installées → ouvre directement le bon guide
+   (`WATCH_GUIDES` est prêt à être ciblé par marque).
 3. 🏗️ **C8 — Météo / pression / air / pollen** (I4) comme variables des Analyses.
 4. 🏗️ **C7 — Couche BLE générique, étape 1** (I8) : registre de pilotes + FC 0x180D / RR → VFC.
 5. 🏗️ **C8 — Temps d'écran / téléphone au lit** (I6).

@@ -228,4 +228,37 @@ describe('Connectors page', () => {
     }
   }, 20000)
 
+  it('propose d’autoriser les nouvelles mesures quand la synchro est déjà autorisée', async () => {
+    const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    const c = CONNECTORS[0]
+    c.availabilityDetails.mockResolvedValue({ available: true })
+    c.checkPermissions.mockImplementation(async () => {
+      c.missingReadTypes = ['respiratoryRate', 'bloodPressure']
+      return 'granted'
+    })
+    c.requestPermissions.mockImplementation(async () => {
+      c.missingReadTypes = []
+      return 'granted'
+    })
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+
+    const { unmount } = renderConnectors()
+    expect(await screen.findByText(/fréquence respiratoire, tension artérielle/)).toBeInTheDocument()
+    // La synchro reste possible en attendant.
+    expect(screen.getByRole('button', { name: /Importer l'historique/ })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Autoriser ces mesures/ }))
+    await waitFor(() => expect(c.requestPermissions).toHaveBeenCalled())
+    await waitFor(() => expect(screen.queryByRole('button', { name: /Autoriser ces mesures/ })).not.toBeInTheDocument())
+    delete c.missingReadTypes
+    unmount()
+  })
+
+  it('affiche les guides par marque (montre Huawei absente de Health Connect)', async () => {
+    const { CONNECTORS } = await import('../connectors/connectorRegistry')
+    CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'unavailable' })
+    CONNECTORS[0].checkPermissions.mockResolvedValue('not_asked')
+    renderConnectors()
+    expect(screen.getByText(/Huawei \/ Honor/)).toBeInTheDocument()
+  })
 })

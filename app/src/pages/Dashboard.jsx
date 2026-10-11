@@ -37,6 +37,10 @@ const TYPE_LABELS = {
   calories: 'Calories',
   body_composition: 'Pesée',
   height: 'Taille',
+  respiratory_rate: 'Respiration',
+  body_temperature: 'Température',
+  blood_pressure: 'Tension',
+  blood_glucose: 'Glycémie',
 }
 
 function entryTitle(e) {
@@ -148,6 +152,12 @@ function summaryChips(s) {
   if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
   if (s.hrv != null) chips.push(['VFC', `${Math.round(s.hrv)} ms`])
   if (s.spo2 != null) chips.push(['SpO₂', `${frNumber(s.spo2)} %`])
+  if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
+  if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])
+  if (s.bloodPressure) chips.push(['Tension', `${s.bloodPressure.systolic}/${s.bloodPressure.diastolic} mmHg`])
+  if (s.glucoseMgDl != null) {
+    chips.push(['Glycémie', `${(s.glucoseMgDl / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g/L`])
+  }
   if (s.heartRate) {
     const { min, max } = s.heartRate
     chips.push(['FC', min === max ? `${Math.round(min)} bpm` : `${Math.round(min)} à ${Math.round(max)} bpm`])
@@ -332,7 +342,7 @@ export default function Dashboard() {
       {!loading && !error && days.length === 0 && (
         <p className="dashboard-intro">
           HealthTrack centralise vos données santé : <strong>alimentation</strong> (photo → ingrédients),{' '}
-          <strong>montre Samsung Fit 3</strong> (pas, sommeil, fréquence cardiaque) via Health Connect,{' '}
+          <strong>montre ou bague connectée</strong> (pas, sommeil, cœur, respiration) via Health Connect,{' '}
           et bien plus. Configurez les sources dans{' '}
           <Link to="/connectors" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Connecteurs</Link>.
         </p>

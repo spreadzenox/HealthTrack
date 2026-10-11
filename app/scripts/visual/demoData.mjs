@@ -135,6 +135,19 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       at: at(day, 6, 30),
       payload: { value: hrv, unit: 'ms', subtype: 'heartRateVariability', connector: 'health_connect' },
     })
+    // Respiration et température de nuit (montre via Gadgetbridge → Health Connect) ; valeurs
+    // déterministes pour ne pas décaler le tirage aléatoire des autres données de démo.
+    watchEntries.push({
+      type: 'respiratory_rate',
+      source: 'health_connect',
+      at: at(day, 4),
+      payload: { value: 13.6 + ((i * 7) % 5) / 5, unit: 'rpm', connector: 'health_connect' },
+    }, {
+      type: 'body_temperature',
+      source: 'health_connect',
+      at: at(day, 4),
+      payload: { valueC: 36.3 + ((i * 3) % 4) / 10, connector: 'health_connect' },
+    })
     if (!watchOff) entries.push(...watchEntries)
     const workout = rand() < 0.35
     if (workout) {

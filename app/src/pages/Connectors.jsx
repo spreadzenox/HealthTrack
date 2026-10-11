@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom'
 import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
 import { useDebug } from '../contexts/DebugContext'
 import DebugPanel from '../components/DebugPanel'
+import WatchGuides from '../components/WatchGuides'
+import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
 import './Connectors.css'
 
 /**
@@ -63,6 +65,8 @@ function ConnectorCard({ connector }) {
   const [availabilityReason, setAvailabilityReason] = useState(null)
   const [availabilityNativeReason, setAvailabilityNativeReason] = useState(null)
   const [permissions, setPermissions] = useState('checking')
+  // Types Health Connect demandés mais pas encore autorisés (ex. ajoutés par une mise à jour)
+  const [missingTypes, setMissingTypes] = useState([])
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState(null)
   const [historyDays, setHistoryDays] = useState(DEFAULT_HISTORY_DAYS)
@@ -105,6 +109,7 @@ function ConnectorCard({ connector }) {
       .then((p) => {
         // p is undefined if the availability check threw (caught below)
         if (p !== undefined) setPermissions(p === 'not_asked' ? 'not_asked' : p)
+        setMissingTypes(connector.missingReadTypes || [])
       })
       .catch(() => {
         setAvailability('unavailable')
@@ -131,6 +136,7 @@ function ConnectorCard({ connector }) {
     try {
       const result = await withTimeout(connector.requestPermissions(), 15000, 'denied')
       setPermissions(result)
+      setMissingTypes(connector.missingReadTypes || [])
     } catch {
       setPermissions('denied')
     }
@@ -377,6 +383,22 @@ function ConnectorCard({ connector }) {
             </div>
           )}
 
+          {canSync && missingTypes.length > 0 && (
+            <div className="connector-alert connector-alert-info">
+              <p>
+                <strong>Nouvelles mesures disponibles</strong> : {missingTypes.map((t) => READ_TYPE_LABELS[t] || t).join(', ')}.
+                Autorisez-les pour les recevoir de votre montre, balance ou tensiomètre (rien d’autre ne change).
+              </p>
+              <button
+                type="button"
+                className="btn btn-secondary connector-btn"
+                onClick={handleRequestPermissions}
+              >
+                Autoriser ces mesures
+              </button>
+            </div>
+          )}
+
           {canSync && (
             <div className="connector-sync-section">
               {!settings.lastSyncAt && (
@@ -454,6 +476,8 @@ export default function Connectors() {
           <ConnectorCard key={connector.id} connector={connector} />
         ))}
       </div>
+
+      <WatchGuides />
 
       {debugMode && <DebugPanel filter="HealthConnect" />}
     </section>
