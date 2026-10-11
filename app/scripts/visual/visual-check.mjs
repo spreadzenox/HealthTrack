@@ -25,7 +25,7 @@
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
  *                                          # (variables --safe-area-inset-* injectées par Capacitor, en px)
  *   npm run visual -- --routes=/recommendations --click="Recommandations avancées"
- *                                          # clique un bouton (nom accessible) avant la capture
+ *                                          # clique un bouton (nom accessible) ou un volet <summary> avant la capture
  *
  * Sortie : <out>/<page>.png (page entière), <out>/tiles/<page>-<n>.png (un écran
  * par image, à regarder en priorité) + <out>/report.json. Code de sortie 1 si une page
@@ -303,7 +303,9 @@ async function main() {
           await page.waitForTimeout(400)
         }
         if (args.click) {
-          const button = page.getByRole('button', { name: String(args.click) }).first()
+          // Un bouton, ou à défaut un volet repliable (<summary>) qui contient ce texte
+          let button = page.getByRole('button', { name: String(args.click) }).first()
+          if (!(await button.count())) button = page.locator('summary', { hasText: String(args.click) }).first()
           if (await button.count()) {
             await button.click()
             await page.waitForTimeout(700)

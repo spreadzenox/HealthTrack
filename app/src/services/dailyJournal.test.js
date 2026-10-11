@@ -152,6 +152,44 @@ describe('buildDailyJournal', () => {
     expect(day.items).toHaveLength(2)
   })
 
+  it('écarte la copie Health Connect d’une pesée déjà importée par Withings', () => {
+    // Withings écrit aussi ses pesées dans Health Connect : sans cela, chaque pesée apparaîtrait deux fois.
+    const [day] = buildDailyJournal([
+      e('weight', '2026-10-08T07:30:00', { valueKg: 77.2 }, 'withings'),
+      e('body_composition', '2026-10-08T07:30:00', { valueKg: 77.2, fatRatioPct: 24.1 }, 'withings'),
+      e('weight', '2026-10-08T07:30:05', { valueKg: 77.2 }),
+      e('body_composition', '2026-10-08T07:30:05', { fatRatioPct: 24.1 }),
+    ])
+    expect(day.items).toHaveLength(1)
+    expect(day.items[0].source).toBe('withings')
+  })
+
+  it('garde une pesée Health Connect seule (balance d’une autre marque)', () => {
+    const [day] = buildDailyJournal([
+      e('weight', '2026-10-08T07:30:00', { valueKg: 77.2 }),
+      e('body_composition', '2026-10-08T07:30:00', { fatRatioPct: 24.1 }),
+    ])
+    expect(day.items).toHaveLength(1)
+    expect(day.items[0].payload).toMatchObject({ valueKg: 77.2, fatRatioPct: 24.1 })
+  })
+
+  it('résume respiration, température, tension et glycémie sans les lister ni les compter comme FC', () => {
+    const [day] = buildDailyJournal([
+      e('respiratory_rate', '2026-10-08T02:00:00', { value: 14 }),
+      e('respiratory_rate', '2026-10-08T03:00:00', { value: 15 }),
+      e('body_temperature', '2026-10-08T03:00:00', { valueC: 36.4 }),
+      e('body_temperature', '2026-10-08T07:00:00', { valueC: 36.7 }),
+      e('blood_pressure', '2026-10-08T08:00:00', { systolic: 124, diastolic: 79 }),
+      e('blood_glucose', '2026-10-08T08:00:00', { mgDl: 95 }),
+    ])
+    expect(day.items).toEqual([])
+    expect(day.summary.respiratoryRate).toBe(14.5)
+    expect(day.summary.temperatureC).toBe(36.7)
+    expect(day.summary.bloodPressure).toEqual({ systolic: 124, diastolic: 79 })
+    expect(day.summary.glucoseMgDl).toBe(95)
+    expect(day.summary.heartRate).toBeNull()
+  })
+
   it('renvoie une liste vide sans entrées', () => {
     expect(buildDailyJournal([])).toEqual([])
     expect(buildDailyJournal(undefined)).toEqual([])

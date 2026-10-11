@@ -1,0 +1,94 @@
+.watch-guides {
+  margin-bottom: 32px;
+}
+
+.watch-guides-title {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.watch-guides-intro {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.watch-guide {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 8px;
+  padding: 0 14px;
+}
+
+.watch-guide summary {
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text);
+  list-style: none;
+}
+
+.watch-guide summary::-webkit-details-marker {
+  display: none;
+}
+
+.watch-guide summary::after {
+  content: '›';
+  margin-left: auto;
+  padding-left: 12px;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+
+.watch-guide[open] summary::after {
+  transform: rotate(90deg);
+}
+
+.watch-guide-intro,
+.watch-guide-caveats {
+  margin: 0 0 10px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.watch-guide-caveats {
+  border-left: 3px solid rgba(255, 193, 7, 0.6);
+  padding-left: 10px;
+}
+
+.watch-guide-steps {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.watch-guide-steps li {
+  margin-bottom: 6px;
+  overflow-wrap: anywhere;
+}
+
+.watch-guide-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 14px;
+  font-size: 0.86rem;
+}
+
+.watch-guide-links a {
+  color: var(--accent, #4ecdc4);
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}

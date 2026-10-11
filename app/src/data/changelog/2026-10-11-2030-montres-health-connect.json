@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-11",
+  "kind": "nouveau",
+  "title": "Votre montre Huawei (et les autres) dans HealthTrack",
+  "items": [
+    "Plus → Connecteurs → « Votre montre n'apparaît pas ? » : un guide pas à pas par marque. Pour les montres Huawei / Honor (dont la Watch GT 6 Pro), qui n'envoient rien à Health Connect : l'app libre Gadgetbridge prend le relais, sans réinitialiser la montre. Guides aussi pour Samsung, Xiaomi / Amazfit, Garmin, Withings, Oura, Polar…",
+    "HealthTrack lit maintenant aussi la fréquence respiratoire, la température, la tension artérielle, la glycémie, le poids et la masse grasse depuis Health Connect. Elles apparaissent dans « Vos derniers jours » (ex. « Respiration 14,4 /min », « Température 36,5 °C »).",
+    "Après la mise à jour, la carte Health Connect propose « Autoriser ces mesures » : un tap suffit. En attendant, la synchronisation continue comme avant.",
+    "Une pesée Withings qui arrive aussi par Health Connect n'est affichée qu'une fois."
+  ]
+}

@@ -296,15 +296,39 @@ describe('HealthConnectConnector', () => {
       expect(await connector.checkPermissions()).toBe('granted')
     })
 
-    it('returns denied when any type is denied', async () => {
+    it('returns granted when only some types are authorized, and lists the missing ones', async () => {
+      // Après une mise à jour qui demande de nouveaux types (respiration, tension…), les anciens
+      // types restent autorisés : la synchro ne doit pas s'arrêter pour autant.
       const { Health } = await import('@capgo/capacitor-health')
       Health.checkAuthorization.mockResolvedValue({
-        readAuthorized: ['steps'],
-        readDenied: ['sleep'],
+        readAuthorized: ['steps', 'sleep'],
+        readDenied: ['respiratoryRate', 'bloodPressure'],
+        writeAuthorized: [],
+        writeDenied: [],
+      })
+      expect(await connector.checkPermissions()).toBe('granted')
+      expect(connector.missingReadTypes).toEqual(['respiratoryRate', 'bloodPressure'])
+    })
+
+    it('returns denied when every type is denied', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.checkAuthorization.mockResolvedValue({
+        readAuthorized: [],
+        readDenied: ['steps', 'sleep'],
         writeAuthorized: [],
         writeDenied: [],
       })
       expect(await connector.checkPermissions()).toBe('denied')
+    })
+
+    it('asks for the new vital-sign types', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.checkAuthorization.mockResolvedValue({ readAuthorized: [], readDenied: [] })
+      await connector.checkPermissions()
+      const { read } = Health.checkAuthorization.mock.calls[0][0]
+      for (const t of ['respiratoryRate', 'bodyTemperature', 'bloodPressure', 'bloodGlucose', 'weight', 'bodyFat']) {
+        expect(read).toContain(t)
+      }
     })
 
     it('returns not_asked when nothing is authorized or denied', async () => {
@@ -467,5 +491,98 @@ describe('HealthConnectConnector', () => {
       expect(result.synced).toBe(0)
       expect(written.length).toBe(0)
     })
+  })
+})
+
+describe('HealthConnectConnector — mesures vitales et corps', () => {
+  const RANGE = { since: new Date('2026-01-01T00:00:00Z'), until: new Date('2026-01-01T12:00:00Z') }
+  let connector
+  let written
+  const writer = async (entries) => { written.push(...entries) }
+
+  beforeEach(async () => {
+    connector = new HealthConnectConnector()
+    vi.clearAllMocks()
+    _resetHealthPluginCache()
+    written = []
+    const { Health } = await import('@capgo/capacitor-health')
+    Health.queryAggregated.mockResolvedValue({ samples: [] })
+    Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+    Health.checkAuthorization.mockResolvedValue(undefined)
+  })
+
+  function mockSamples(byType) {
+    return import('@capgo/capacitor-health').then(({ Health }) => {
+      Health.readSamples.mockImplementation(({ dataType }) => Promise.resolve({ samples: byType[dataType] || [] }))
+    })
+  }
+
+  const sample = (value, extra = {}) => ({
+    startDate: '2026-01-01T03:00:00Z', endDate: '2026-01-01T03:00:00Z', value, platformId: 'p', sourceName: 'nodomain.freeyourgadget.gadgetbridge', ...extra,
+  })
+
+  it('stores respiratory rate, body temperature, blood pressure and glucose as their own entry types', async () => {
+    await mockSamples({
+      respiratoryRate: [sample(14.5, { unit: 'bpm' })],
+      bodyTemperature: [sample(36.7, { unit: 'celsius' })],
+      bloodPressure: [sample(124, { unit: 'mmHg', systolic: 124, diastolic: 79 })],
+      bloodGlucose: [sample(95, { unit: 'mg/dL' })],
+    })
+    await connector.sync({ ...RANGE, writer })
+    const byType = Object.fromEntries(written.map((e) => [e.type, e]))
+    expect(byType.respiratory_rate.payload.value).toBe(14.5)
+    expect(byType.body_temperature.payload.valueC).toBe(36.7)
+    expect(byType.blood_pressure.payload).toMatchObject({ systolic: 124, diastolic: 79 })
+    expect(byType.blood_glucose.payload.mgDl).toBe(95)
+    for (const e of written) {
+      expect(e.source).toBe('health_connect')
+      expect(e.payload.sourceName).toBe('nodomain.freeyourgadget.gadgetbridge')
+    }
+    // Jamais rangées dans heart_rate : elles fausseraient la FC du jour.
+    expect(written.some((e) => e.type === 'heart_rate')).toBe(false)
+  })
+
+  it('stores weight and body fat like a weigh-in', async () => {
+    await mockSamples({ weight: [sample(77.24)], bodyFat: [sample(23.1)] })
+    await connector.sync({ ...RANGE, writer })
+    expect(written.find((e) => e.type === 'weight').payload.valueKg).toBe(77.2)
+    expect(written.find((e) => e.type === 'body_composition').payload.fatRatioPct).toBe(23.1)
+  })
+
+  it('ignores implausible values', async () => {
+    await mockSamples({
+      respiratoryRate: [sample(0)],
+      bodyTemperature: [sample(98.6)],
+      bloodPressure: [sample(0, { systolic: 0, diastolic: 0 })],
+      weight: [sample(-1)],
+    })
+    await connector.sync({ ...RANGE, writer })
+    expect(written).toEqual([])
+  })
+
+  it('only reads the types that are authorized when the authorization is known', async () => {
+    const { Health } = await import('@capgo/capacitor-health')
+    Health.checkAuthorization.mockResolvedValue({ readAuthorized: ['steps', 'heartRate'], readDenied: ['bloodPressure'] })
+    await mockSamples({})
+    const result = await connector.sync({ ...RANGE, writer })
+    const read = Health.readSamples.mock.calls.map((c) => c[0].dataType)
+    expect(read).toContain('steps')
+    expect(read).toContain('heartRate')
+    expect(read).not.toContain('bloodPressure')
+    expect(read).not.toContain('sleep')
+    expect(Health.queryWorkouts).not.toHaveBeenCalled()
+    expect(result.errors).toEqual([])
+  })
+
+  it('keeps syncing the other types when a new type fails', async () => {
+    const { Health } = await import('@capgo/capacitor-health')
+    Health.readSamples.mockImplementation(({ dataType }) => {
+      if (dataType === 'bloodGlucose') return Promise.reject(new Error('SecurityException'))
+      if (dataType === 'steps') return Promise.resolve({ samples: [sample(500)] })
+      return Promise.resolve({ samples: [] })
+    })
+    const result = await connector.sync({ ...RANGE, writer })
+    expect(written.some((e) => e.type === 'steps')).toBe(true)
+    expect(result.errors.join(' ')).toContain('bloodGlucose')
   })
 })

@@ -16,7 +16,9 @@
  * the Capacitor bridge is absent: isAvailable() returns false gracefully.
  *
  * Reads: steps, sleep, heart rate, activity (workouts), calories, distance,
- *        resting heart rate, oxygen saturation, HRV.
+ *        resting heart rate, oxygen saturation, HRV, and (since the 11/10/2026 update)
+ *        respiratory rate, body temperature, blood pressure, blood glucose, weight, body fat
+ *        — written for instance by Gadgetbridge (Huawei / Xiaomi / Amazfit watches), Withings, Omron…
  */
 import { BaseConnector } from './BaseConnector'
 import { debugInfo, debugWarn, debugError, debugDebug } from '../utils/debugLog'
@@ -24,7 +26,7 @@ import { debugInfo, debugWarn, debugError, debugDebug } from '../utils/debugLog'
 const TAG = 'HealthConnect'
 
 /** Data types fetched from Health Connect (must match @capgo/capacitor-health identifiers). */
-const READ_TYPES = [
+const CORE_READ_TYPES = [
   'steps',
   'sleep',
   'heartRate',
@@ -34,6 +36,86 @@ const READ_TYPES = [
   'calories',
   'distance',
   'workouts',
+]
+
+/**
+ * Types added after the first release. Users who already granted CORE_READ_TYPES keep syncing
+ * while these are not yet granted (see checkPermissions).
+ */
+const EXTRA_READ_TYPES = [
+  'respiratoryRate',
+  'bodyTemperature',
+  'bloodPressure',
+  'bloodGlucose',
+  'weight',
+  'bodyFat',
+]
+
+const READ_TYPES = [...CORE_READ_TYPES, ...EXTRA_READ_TYPES]
+
+/** Libellés français des types Health Connect (écran Connecteurs). */
+export const READ_TYPE_LABELS = {
+  steps: 'pas',
+  sleep: 'sommeil',
+  heartRate: 'fréquence cardiaque',
+  restingHeartRate: 'FC au repos',
+  heartRateVariability: 'VFC',
+  oxygenSaturation: 'SpO₂',
+  calories: 'calories',
+  distance: 'distance',
+  workouts: 'séances de sport',
+  respiratoryRate: 'fréquence respiratoire',
+  bodyTemperature: 'température',
+  bloodPressure: 'tension artérielle',
+  bloodGlucose: 'glycémie',
+  weight: 'poids',
+  bodyFat: 'masse grasse',
+}
+
+const isNum = (v) => typeof v === 'number' && Number.isFinite(v)
+const round1 = (v) => Math.round(v * 10) / 10
+
+/**
+ * Lectures ponctuelles (mesures vitales et pesées) : une entrée par échantillon, valeurs
+ * aberrantes écartées. Chacune a son propre type d'entrée : ranger la respiration dans
+ * « heart_rate » fausserait la plage de FC du jour.
+ */
+const POINT_READERS = [
+  {
+    dataType: 'respiratoryRate',
+    type: 'respiratory_rate',
+    toPayload: (s) => (isNum(s.value) && s.value >= 4 && s.value <= 60 ? { value: round1(s.value), unit: 'rpm' } : null),
+  },
+  {
+    dataType: 'bodyTemperature',
+    type: 'body_temperature',
+    toPayload: (s) => (isNum(s.value) && s.value >= 30 && s.value <= 45 ? { valueC: round1(s.value) } : null),
+  },
+  {
+    dataType: 'bloodPressure',
+    type: 'blood_pressure',
+    toPayload: (s) => {
+      const sys = s.systolic ?? s.value
+      const dia = s.diastolic
+      if (!isNum(sys) || !isNum(dia) || sys < 50 || sys > 260 || dia < 30 || dia > 160 || dia >= sys) return null
+      return { systolic: Math.round(sys), diastolic: Math.round(dia), unit: 'mmHg' }
+    },
+  },
+  {
+    dataType: 'bloodGlucose',
+    type: 'blood_glucose',
+    toPayload: (s) => (isNum(s.value) && s.value >= 20 && s.value <= 600 ? { mgDl: Math.round(s.value) } : null),
+  },
+  {
+    dataType: 'weight',
+    type: 'weight',
+    toPayload: (s) => (isNum(s.value) && s.value >= 20 && s.value <= 350 ? { valueKg: round1(s.value) } : null),
+  },
+  {
+    dataType: 'bodyFat',
+    type: 'body_composition',
+    toPayload: (s) => (isNum(s.value) && s.value > 2 && s.value < 75 ? { fatRatioPct: round1(s.value) } : null),
+  },
 ]
 
 /**
@@ -51,6 +133,12 @@ function toEntryType(dataType) {
     calories: 'calories',
     distance: 'activity',
     workouts: 'activity',
+    respiratoryRate: 'respiratory_rate',
+    bodyTemperature: 'body_temperature',
+    bloodPressure: 'blood_pressure',
+    bloodGlucose: 'blood_glucose',
+    weight: 'weight',
+    bodyFat: 'body_composition',
   }
   return map[dataType] || dataType
 }
@@ -252,12 +340,15 @@ export class HealthConnectConnector extends BaseConnector {
   constructor() {
     super({
       id: 'health_connect',
-      name: 'Health Connect (Samsung Fit 3)',
+      name: 'Health Connect (montre, bague, balance…)',
       description:
-        'Importe les données de la Samsung Galaxy Fit 3 via Android Health Connect : ' +
-        'pas à pas, sommeil, fréquence cardiaque, activités sportives, calories, SpO₂.',
-      dataTypes: ['steps', 'sleep', 'heart_rate', 'activity', 'calories'],
+        'Importe tout ce que vos apps santé écrivent dans Android Health Connect (Samsung Health, ' +
+        'Gadgetbridge, Zepp, Garmin, Withings…) : pas, sommeil, fréquence cardiaque, VFC, SpO₂, ' +
+        'respiration, température, tension, glycémie, poids, séances de sport.',
+      dataTypes: ['steps', 'sleep', 'heart_rate', 'activity', 'calories', 'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weight', 'body_composition'],
     })
+    /** Types demandés mais non autorisés (dernière vérification). */
+    this.missingReadTypes = []
   }
 
   async isAvailable() {
@@ -587,13 +678,19 @@ export class HealthConnectConnector extends BaseConnector {
       debugInfo(TAG, 'Appel Health.checkAuthorization()…', { readTypes: READ_TYPES })
       const status = await Health.checkAuthorization({ read: READ_TYPES, write: [] })
       debugInfo(TAG, 'Résultat checkAuthorization()', status)
-      if (status.readDenied && status.readDenied.length > 0) {
-        debugWarn(TAG, `Permissions refusées pour : ${status.readDenied.join(', ')}`)
-        return 'denied'
-      }
-      if (status.readAuthorized && status.readAuthorized.length > 0) {
-        debugInfo(TAG, `Permissions accordées pour : ${status.readAuthorized.join(', ')}`)
+      const authorized = status?.readAuthorized || []
+      const denied = (status?.readDenied || []).filter((t) => READ_TYPES.includes(t))
+      this.missingReadTypes = authorized.length > 0 ? denied : []
+      // Autorisation partielle = synchro de ce qui est permis (ex. nouveaux types ajoutés par une
+      // mise à jour, ou une mesure refusée volontairement) : ne pas tout bloquer.
+      if (authorized.length > 0) {
+        debugInfo(TAG, `Permissions accordées pour : ${authorized.join(', ')}`)
+        if (denied.length > 0) debugWarn(TAG, `Permissions manquantes pour : ${denied.join(', ')}`)
         return 'granted'
+      }
+      if (denied.length > 0) {
+        debugWarn(TAG, `Permissions refusées pour : ${denied.join(', ')}`)
+        return 'denied'
       }
       debugInfo(TAG, 'Permissions non encore demandées')
       return 'not_asked'
@@ -657,6 +754,19 @@ export class HealthConnectConnector extends BaseConnector {
     let synced = 0
     const skipped = 0
 
+    // Types autorisés : on ne lit pas ceux qui ne le sont pas (erreur SecurityException sinon).
+    // Autorisation inconnue (bridge ancien, erreur) → on tente tout, comme avant.
+    let authorizedTypes = null
+    try {
+      if (typeof Health.checkAuthorization === 'function') {
+        const status = await Health.checkAuthorization({ read: READ_TYPES, write: [] })
+        if (status?.readAuthorized?.length > 0) authorizedTypes = new Set(status.readAuthorized)
+      }
+    } catch (e) {
+      debugWarn(TAG, `checkAuthorization avant synchro échouée (non bloquant) : ${e?.message || e}`)
+    }
+    const canRead = (dataType) => !authorizedTypes || authorizedTypes.has(dataType)
+
     // Determine if this is a large historical fetch (> 30 days)
     const rangeMs = (until || new Date()).getTime() - since.getTime()
     const isHistorical = rangeMs > 30 * 24 * 60 * 60 * 1000
@@ -667,7 +777,7 @@ export class HealthConnectConnector extends BaseConnector {
     })
 
     // ── Steps ──────────────────────────────────────────────────────────────
-    try {
+    if (canRead('steps')) try {
       debugDebug(TAG, 'Lecture des pas…')
       if (isHistorical) {
         const { samples } = await Health.queryAggregated({
@@ -723,7 +833,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Sleep ──────────────────────────────────────────────────────────────
-    try {
+    if (canRead('sleep')) try {
       debugDebug(TAG, 'Lecture du sommeil…')
       const { samples } = await Health.readSamples({
         dataType: 'sleep',
@@ -755,7 +865,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Heart rate ─────────────────────────────────────────────────────────
-    try {
+    if (canRead('heartRate')) try {
       debugDebug(TAG, 'Lecture fréquence cardiaque…')
       const { samples } = await Health.readSamples({
         dataType: 'heartRate',
@@ -786,7 +896,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Resting heart rate ─────────────────────────────────────────────────
-    try {
+    if (canRead('restingHeartRate')) try {
       debugDebug(TAG, 'Lecture FC repos…')
       const { samples } = await Health.readSamples({
         dataType: 'restingHeartRate',
@@ -817,7 +927,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Oxygen saturation (SpO₂) ───────────────────────────────────────────
-    try {
+    if (canRead('oxygenSaturation')) try {
       debugDebug(TAG, 'Lecture SpO₂…')
       const { samples } = await Health.readSamples({
         dataType: 'oxygenSaturation',
@@ -848,7 +958,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── HRV ───────────────────────────────────────────────────────────────
-    try {
+    if (canRead('heartRateVariability')) try {
       debugDebug(TAG, 'Lecture HRV…')
       const { samples } = await Health.readSamples({
         dataType: 'heartRateVariability',
@@ -879,7 +989,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Calories ───────────────────────────────────────────────────────────
-    try {
+    if (canRead('calories')) try {
       debugDebug(TAG, 'Lecture calories…')
       if (isHistorical) {
         const { samples } = await Health.queryAggregated({
@@ -935,7 +1045,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Workouts / Activities ──────────────────────────────────────────────
-    try {
+    if (canRead('workouts')) try {
       debugDebug(TAG, 'Lecture activités/entraînements…')
       const { workouts } = await Health.queryWorkouts({
         startDate,
@@ -964,6 +1074,39 @@ export class HealthConnectConnector extends BaseConnector {
     } catch (e) {
       debugError(TAG, `Erreur lecture activités : ${e?.message || e}`, { error: e })
       errors.push(`workouts: ${e.message || e}`)
+    }
+
+    // ── Mesures vitales et pesées (respiration, température, tension, glycémie, poids, masse grasse)
+    for (const reader of POINT_READERS) {
+      if (!canRead(reader.dataType)) continue
+      try {
+        const { samples } = await Health.readSamples({
+          dataType: reader.dataType,
+          startDate,
+          endDate,
+          limit: 1000,
+          ascending: true,
+        })
+        const entries = []
+        for (const s of samples || []) {
+          const payload = reader.toPayload(s)
+          if (!payload || !s.startDate) continue
+          entries.push({
+            type: reader.type,
+            source: 'health_connect',
+            at: s.startDate,
+            payload: { ...payload, platformId: s.platformId, sourceName: s.sourceName, connector: 'health_connect' },
+          })
+        }
+        debugInfo(TAG, `${reader.dataType} : ${entries.length} entrées retenues sur ${(samples || []).length}`)
+        if (entries.length) {
+          await writer(entries)
+          synced += entries.length
+        }
+      } catch (e) {
+        debugError(TAG, `Erreur lecture ${reader.dataType} : ${e?.message || e}`, { error: e })
+        errors.push(`${reader.dataType}: ${e.message || e}`)
+      }
     }
 
     debugInfo(TAG, 'Synchronisation terminée', { synced, skipped, errors })

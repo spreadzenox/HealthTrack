@@ -57,7 +57,6 @@ export function withingsGroupToEntries(grp) {
   const bodyPayload = { deviceid: grp.deviceid, model: grp.model }
   let hasBody = false
   let weightKg = null
-  let heightCm = null
   const entries = []
 
   for (const m of measures) {
@@ -79,7 +78,6 @@ export function withingsGroupToEntries(grp) {
         payload: { valueKg: val, ...bodyPayload },
       })
     } else if (typeId === WITHINGS_MEASURE_TYPES.HEIGHT) {
-      heightCm = val
       entries.push({
         type: 'height',
         source: SOURCE,

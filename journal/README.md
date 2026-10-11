@@ -171,6 +171,12 @@ une release à chaque changement validé, et tient ce journal.
   heure sur place, sans quitter le tableau de bord ; « Refaire » ouvre la page Repas avec le même repas pré-rempli. En
   changeant d'onglet, la page s'affiche maintenant depuis le haut (avant : à la hauteur où l'on était sur la précédente).
 
+- **Votre montre Huawei (et les autres) dans HealthTrack** (Plus → Connecteurs → « Votre montre n'apparaît pas ? ») :
+  guide pas à pas pour la **Watch GT 6 Pro** via l'app libre Gadgetbridge (sans réinitialiser la montre), et guides
+  Samsung, Xiaomi / Amazfit, Garmin, Withings, Oura, Polar… HealthTrack lit aussi désormais **respiration, température,
+  tension, glycémie, poids et masse grasse** depuis Health Connect ; ils apparaissent dans « Vos derniers jours ». Après la
+  mise à jour, touchez **« Autoriser ces mesures »** sur la carte Health Connect (la synchro continue en attendant).
+
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
 - CI Android réparée : le build de l'APK échouait sur les runners GitHub actuels → sans correctif,
@@ -190,6 +196,9 @@ une release à chaque changement validé, et tient ce journal.
   suivantes la montrent désormais.
 - Nouveau module statistique testé (n effectif, p-valeurs, correction Benjamini-Hochberg) : socle
   des futures analyses (expériences personnelles, radar).
+
+- Bug évité de justesse (run 22:30) : demander de nouveaux types à Health Connect aurait **coupé la synchro automatique**
+  (une seule permission manquante = « refusé »). Corrigé et testé avant la mise à jour.
 
 **Points d'attention**
 - ⚠️ **Refaites une sauvegarde** (Données → Télécharger la sauvegarde) après la mise à jour : les
@@ -225,6 +234,9 @@ une release à chaque changement validé, et tient ce journal.
   profil est inclus dans la sauvegarde depuis la v94.
 - **Effets décalés** : volontairement prudents (seulement les liens solides) ; il est normal de ne rien voir pendant
   plusieurs semaines.
+- ⌚ **Montre Huawei** : suivez le guide (Connecteurs), puis dites-moi **ce qui arrive vraiment** dans « Vos derniers
+  jours » (respiration ? température ? sommeil complet ?) : c'est ce qui décidera des prochaines étapes (température
+  cutanée, analyses).
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
@@ -243,7 +255,7 @@ une release à chaque changement validé, et tient ce journal.
 - Bon à savoir : Fitbit coupe son API le 30/10/2026 ; Limitless (racheté par Meta) ne fonctionne plus dans l'UE ;
   Omi est le seul enregistreur de conversations vraiment ouvert.
 
-**Prochaines priorités** — brancher la montre Huawei (guide + types Health Connect manquants), « Mes appareils », météo / pollen automatiques, puis la couche Bluetooth générique.
+**Prochaines priorités** — « Mes appareils » (détection des apps santé installées → bon guide), météo / pollen automatiques, puis la couche Bluetooth générique.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -286,6 +298,7 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 14:30 — [Arrondis des habitudes, nuits « au lit »](runs/2026-10-11-1430-petits-bugs.md) | 🐛 | PR #103 fusionnée → v95 |
 | 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR #104 fusionnée → v96 |
 | 11/10 18:30 — [Idées : objets connectés, humeur, conversations](runs/2026-10-11-1830-idees-objets-connectes.md) | 💡 | Journal seul (pas de release) |
+| 11/10 20:30 — [Montres : guide Huawei, 6 types Health Connect](runs/2026-10-11-2030-montres-health-connect.md) | 🏗️ | PR #106 fusionnée → v97 |
 
 ---
 

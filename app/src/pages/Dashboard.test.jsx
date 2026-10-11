@@ -60,7 +60,7 @@ describe('Dashboard', () => {
     renderDashboard()
     expect(screen.getByRole('heading', { name: /Tableau de bord/i })).toBeInTheDocument()
     expect(await screen.findByText(/HealthTrack centralise/i)).toBeInTheDocument()
-    expect(screen.getByText(/montre Samsung Fit 3/i)).toBeInTheDocument()
+    expect(screen.getByText(/montre ou bague connectée/i)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Connecteurs/i })).toHaveAttribute('href', '/connectors')
   })
 

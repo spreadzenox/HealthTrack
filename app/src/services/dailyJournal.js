@@ -9,7 +9,10 @@ import { localDateKey } from './analysisEngine'
 import { mealKcal } from './mealEditing'
 
 /** Types uniquement résumés (jamais listés individuellement). */
-export const JOURNAL_SUMMARY_TYPES = ['heart_rate', 'steps', 'calories', 'sleep']
+export const JOURNAL_SUMMARY_TYPES = [
+  'heart_rate', 'steps', 'calories', 'sleep',
+  'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose',
+]
 
 /** Phases qui ne comptent pas comme du sommeil. */
 const NOT_ASLEEP = new Set(['awake', 'inBed', 'outOfBed'])
@@ -41,6 +44,10 @@ function emptyDay(dateKey) {
     _resting: [],
     _hrv: [],
     _spo2: [],
+    _resp: [],
+    _temp: [],
+    _bp: [],
+    _glucose: [],
     _wellbeing: [],
     cigarettes: 0,
     meals: 0,
@@ -72,6 +79,12 @@ function finalize(day) {
       restingHr: last(day._resting),
       hrv: last(day._hrv),
       spo2: last(day._spo2),
+      respiratoryRate: day._resp.length
+        ? Math.round((day._resp.reduce((a, v) => a + v, 0) / day._resp.length) * 10) / 10
+        : null,
+      temperatureC: last(day._temp),
+      bloodPressure: last(day._bp),
+      glucoseMgDl: last(day._glucose),
       heartRate: hr.length ? { min: Math.min(...hr), max: Math.max(...hr), count: hr.length } : null,
       wellbeing: wb.length
         ? { average: Math.round((wb.reduce((s, v) => s + v, 0) / wb.length) * 10) / 10, count: wb.length }
@@ -100,7 +113,26 @@ function mergeWeighIns(entries) {
       out.push(hasKg ? e : { ...e, payload: { ...e.payload, valueKg } })
     } else out.push(e)
   }
-  return out.filter((e) => !(e.type === 'weight' && merged.has(key(e))))
+  return dropHealthConnectCopies(out.filter((e) => !(e.type === 'weight' && merged.has(key(e)))))
+}
+
+const WEIGH_IN_TYPES = new Set(['weight', 'body_composition'])
+const SAME_WEIGH_IN_MS = 10 * 60 * 1000
+
+/**
+ * Withings (et d'autres balances) écrivent aussi leurs pesées dans Health Connect : la copie
+ * relue par Health Connect, à quelques minutes d'une pesée importée directement, est écartée.
+ */
+function dropHealthConnectCopies(entries) {
+  const direct = entries
+    .filter((e) => WEIGH_IN_TYPES.has(e.type) && e.source !== 'health_connect')
+    .map((e) => new Date(e.at).getTime())
+  if (!direct.length) return entries
+  return entries.filter((e) => {
+    if (!WEIGH_IN_TYPES.has(e.type) || e.source !== 'health_connect') return true
+    const t = new Date(e.at).getTime()
+    return !direct.some((d) => Math.abs(d - t) <= SAME_WEIGH_IN_MS)
+  })
 }
 
 /**
@@ -148,6 +180,18 @@ export function buildDailyJournal(entries) {
         else day._hr.push(v)
         break
       }
+      case 'respiratory_rate':
+        if (isNum(p.value) && p.value > 0) day._resp.push(p.value)
+        break
+      case 'body_temperature':
+        if (isNum(p.valueC)) day._temp.push(p.valueC)
+        break
+      case 'blood_pressure':
+        if (isNum(p.systolic) && isNum(p.diastolic)) day._bp.push({ systolic: p.systolic, diastolic: p.diastolic })
+        break
+      case 'blood_glucose':
+        if (isNum(p.mgDl)) day._glucose.push(p.mgDl)
+        break
       case 'wellbeing':
         if (isNum(p.score)) day._wellbeing.push(p.score)
         day.items.push(e)
