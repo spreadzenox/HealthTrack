@@ -144,6 +144,10 @@ une release à chaque changement validé, et tient ce journal.
 - **« Vos derniers jours » plus court à lire** : les aliments ont un nom court (« Poulet, cuisse : 150 g » au lieu de
   « Poulet, cuisse, viande bouillie/cuite à l'eau : 150 g ») — un repas tient sur 3 lignes au lieu de 5 ; une pesée
   Withings n'affiche plus deux cartes (« Poids » + « Composition corporelle ») mais une seule « Pesée ».
+- **Régularité du sommeil** (tableau de bord) : votre heure habituelle de coucher et de lever sur 14 jours, avec leur
+  variation (« Coucher vers 23 h 35 ± 20 min »), un indice de régularité sur 100 et, si c'est le cas, « Le week-end, vos
+  nuits sont décalées de 1 h plus tard ». Des horaires stables sont associés à un meilleur bien-être le lendemain ; la
+  carte le dit prudemment, sans note ni reproche. Il faut 7 nuits de montre sur 14 jours.
 
 **En coulisses**
 - Outil de vérification visuelle (`npm run visual`) : chaque run capture l'app comme sur un Galaxy A56.
@@ -160,6 +164,8 @@ une release à chaque changement validé, et tient ce journal.
 - Veille du 11/10 : sommeil → humeur avec 2 jours de décalage (étude N-of-1 sur 4 ans), le temps de saisie et la
   honte de noter un repas « malsain » comme premières causes d'abandon, régularité du sommeil liée au bien-être du
   lendemain. Détails et idées dans `RESEARCH.md`.
+- Outil de captures : la barre d'onglets cachait toujours une bande de contenu en bas du 1er écran ; les captures
+  suivantes la montrent désormais.
 - Nouveau module statistique testé (n effectif, p-valeurs, correction Benjamini-Hochberg) : socle
   des futures analyses (expériences personnelles, radar).
 
@@ -197,7 +203,7 @@ une release à chaque changement validé, et tient ce journal.
 - Le Radar n'a été vérifié que sur données simulées : **dites-moi s'il se déclenche à tort ou trop
   tard** chez vous, les seuils seront ajustés.
 
-**Prochaines priorités** — bugs de formulaires (heure d'un repas sur l'A56), mise à jour de Capacitor, régularité du sommeil, effets décalés étape 2.
+**Prochaines priorités** — bugs de formulaires (heure d'un repas sur l'A56), mise à jour de Capacitor, régularité du sommeil dans les Analyses, effets décalés étape 2.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -232,7 +238,8 @@ une release à chaque changement validé, et tient ce journal.
 | 10/10 22:30 — [Effets décalés](runs/2026-10-10-2230-effets-decales.md) | 🏗️ | PR #95 fusionnée → v87 |
 | 11/10 00:30 — [Courbe du bien-être aux vraies dates](runs/2026-10-11-0030-courbe-calendrier.md) | 🐛 | PR #96 fusionnée → v88 |
 | 11/10 02:30 — [Modifier une note de bien-être](runs/2026-10-11-0230-modifier-bien-etre.md) | 🐛 | PR #97 fusionnée au run suivant → v89 |
-| 11/10 04:30 — [Veille + journal plus court](runs/2026-10-11-0430-veille-journal-court.md) | 🔭 | PR #98 (fusion en fin de run, release attendue v90) |
+| 11/10 04:30 — [Veille + journal plus court](runs/2026-10-11-0430-veille-journal-court.md) | 🔭 | PR #98 fusionnée → v90 |
+| 11/10 06:30 — [Régularité du sommeil](runs/2026-10-11-0630-regularite-sommeil.md) | 🏗️ | PR #99 (fusion en fin de run, release attendue v91) |
 
 ---
 

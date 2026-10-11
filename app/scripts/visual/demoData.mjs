@@ -90,7 +90,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
 
     const bedtime = new Date(day)
     bedtime.setDate(bedtime.getDate() - 1)
-    bedtime.setHours(23, Math.round(rand() * 50), 0, 0)
+    bedtime.setHours(23, Math.round(rand() * 50) + (weekend ? 45 : 0), 0, 0) // couché plus tard le week-end
     const wake = new Date(bedtime.getTime() + sleepMin * 60000)
     if (!watchOff) {
       entries.push({
