@@ -20,6 +20,8 @@
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
  *   npm run visual -- --routes=/data --import          # aperçu d'une sauvegarde choisie (avant import)
  *   npm run visual -- --routes=/data --import=replace  # … puis confirmation « Remplacer mes données »
+ *   npm run visual -- --routes=/connectors --devices   # « Mes appareils » : simule Huawei Health + Garmin installés
+ *   npm run visual -- --devices=com.huawei.health,nodomain.freeyourgadget.gadgetbridge  # paquets choisis
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -222,6 +224,13 @@ async function main() {
         },
         { top, bottom }
       )
+    }
+    if (args.devices) {
+      // « Mes appareils » : apps santé « installées » (lu par src/components/MyDevices.jsx).
+      const packages = args.devices === true ? ['com.huawei.health', 'com.garmin.android.apps.connectmobile'] : String(args.devices).split(',')
+      await context.addInitScript((pkgs) => {
+        window.__healthtrackFakeInstalledPackages = pkgs
+      }, packages)
     }
     if (!args['wellbeing-prompt']) {
       await context.addInitScript(() => {

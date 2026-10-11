@@ -52,6 +52,28 @@
         <package android:name="com.google.android.apps.healthdata" />
         <!-- Samsung Health app -->
         <package android:name="com.sec.android.app.shealth" />
+        <!-- « Mes appareils » (src/devices/healthApps.js) : apps santé / montres détectées.
+             Toute app ajoutée au catalogue doit être déclarée ici (vérifié par healthApps.test.js). -->
+        <package android:name="com.huawei.health" />
+        <package android:name="com.hihonor.health" />
+        <package android:name="nodomain.freeyourgadget.gadgetbridge" />
+        <package android:name="nodomain.freeyourgadget.gadgetbridge.nightly" />
+        <package android:name="nl.appyhapps.healthsync" />
+        <package android:name="com.huami.watch.hmwatchmanager" />
+        <package android:name="com.xiaomi.hm.health" />
+        <package android:name="com.mi.health" />
+        <package android:name="com.xiaomi.wearable" />
+        <package android:name="com.garmin.android.apps.connectmobile" />
+        <package android:name="com.fitbit.FitbitMobile" />
+        <package android:name="com.google.android.apps.fitness" />
+        <package android:name="com.google.android.apps.wear.companion" />
+        <package android:name="com.withings.wiscale2" />
+        <package android:name="com.ouraring.oura" />
+        <package android:name="fi.polar.polarflow" />
+        <package android:name="com.stt.android.suunto" />
+        <package android:name="com.yf.smart.coros.dist" />
+        <package android:name="com.whoop.android" />
+        <package android:name="com.strava" />
         <!-- Samsung Health deep-link scheme -->
         <intent>
             <action android:name="android.intent.action.VIEW" />

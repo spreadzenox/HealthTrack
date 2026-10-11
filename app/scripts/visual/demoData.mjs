@@ -97,7 +97,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
         type: 'sleep',
         source: 'health_connect',
         at: bedtime.toISOString(),
-        payload: { durationMinutes: sleepMin, endDate: wake.toISOString(), unit: 'minute', sleepState: 'asleep', connector: 'health_connect' },
+        payload: { durationMinutes: sleepMin, endDate: wake.toISOString(), unit: 'minute', sleepState: 'asleep', connector: 'health_connect', sourceName: 'Gadgetbridge' },
       })
     }
 
@@ -107,33 +107,33 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       type: 'steps',
       source: 'health_connect',
       at: at(day, 0),
-      payload: { value: steps, unit: 'count', period: 'day', endDate: at(day, 23, 59), connector: 'health_connect' },
+      payload: { value: steps, unit: 'count', period: 'day', endDate: at(day, 23, 59), connector: 'health_connect', sourceName: 'Gadgetbridge' },
     })
     entries.push({
       type: 'calories',
       source: 'health_connect',
       at: at(day, 0),
-      payload: { value: Math.round(1900 + steps * 0.045 + noise(120)), unit: 'kcal', period: 'day', endDate: at(day, 23, 59), connector: 'health_connect' },
+      payload: { value: Math.round(1900 + steps * 0.045 + noise(120)), unit: 'kcal', period: 'day', endDate: at(day, 23, 59), connector: 'health_connect', sourceName: 'Gadgetbridge' },
     })
     const watchEntries = [{
       type: 'heart_rate',
       source: 'health_connect',
       at: at(day, 7),
-      payload: { bpm: restingHr, unit: 'bpm', subtype: 'restingHeartRate', connector: 'health_connect' },
+      payload: { bpm: restingHr, unit: 'bpm', subtype: 'restingHeartRate', connector: 'health_connect', sourceName: 'Gadgetbridge' },
     }]
     for (const h of [9, 14, 19]) {
       watchEntries.push({
         type: 'heart_rate',
         source: 'health_connect',
         at: at(day, h),
-        payload: { bpm: Math.round(restingHr + 15 + noise(12)), unit: 'bpm', subtype: 'heartRate', connector: 'health_connect' },
+        payload: { bpm: Math.round(restingHr + 15 + noise(12)), unit: 'bpm', subtype: 'heartRate', connector: 'health_connect', sourceName: 'Gadgetbridge' },
       })
     }
     watchEntries.push({
       type: 'heart_rate',
       source: 'health_connect',
       at: at(day, 6, 30),
-      payload: { value: hrv, unit: 'ms', subtype: 'heartRateVariability', connector: 'health_connect' },
+      payload: { value: hrv, unit: 'ms', subtype: 'heartRateVariability', connector: 'health_connect', sourceName: 'Gadgetbridge' },
     })
     // Respiration et température de nuit (montre via Gadgetbridge → Health Connect) ; valeurs
     // déterministes pour ne pas décaler le tirage aléatoire des autres données de démo.
@@ -141,12 +141,12 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       type: 'respiratory_rate',
       source: 'health_connect',
       at: at(day, 4),
-      payload: { value: 13.6 + ((i * 7) % 5) / 5, unit: 'rpm', connector: 'health_connect' },
+      payload: { value: 13.6 + ((i * 7) % 5) / 5, unit: 'rpm', connector: 'health_connect', sourceName: 'Gadgetbridge' },
     }, {
       type: 'body_temperature',
       source: 'health_connect',
       at: at(day, 4),
-      payload: { valueC: 36.3 + ((i * 3) % 4) / 10, connector: 'health_connect' },
+      payload: { valueC: 36.3 + ((i * 3) % 4) / 10, connector: 'health_connect', sourceName: 'Gadgetbridge' },
     })
     if (!watchOff) entries.push(...watchEntries)
     const workout = rand() < 0.35
@@ -155,7 +155,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
         type: 'activity',
         source: 'health_connect',
         at: at(day, 18),
-        payload: { workoutType: rand() < 0.5 ? 'running' : 'cycling', durationSeconds: 1800 + Math.round(rand() * 1800), totalCalories: Math.round(250 + rand() * 250), totalDistanceMeters: Math.round(4000 + rand() * 6000), endDate: at(day, 19), connector: 'health_connect' },
+        payload: { workoutType: rand() < 0.5 ? 'running' : 'cycling', durationSeconds: 1800 + Math.round(rand() * 1800), totalCalories: Math.round(250 + rand() * 250), totalDistanceMeters: Math.round(4000 + rand() * 6000), endDate: at(day, 19), connector: 'health_connect', sourceName: 'Gadgetbridge' },
       })
     }
     for (let c = 0; c < cigarettes; c++) {
