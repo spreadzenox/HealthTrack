@@ -1,6 +1,6 @@
 # 2026-10-11 16:30 UTC — Modifier / Refaire un repas depuis l'accueil
 
-**Type** : 🎨  ·  **PR** : voir le tableau du résumé de la semaine
+**Type** : 🎨  ·  **PR** : #104
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte, « Build & Release » v95 (PR #103) publié avec son APK.

@@ -269,7 +269,7 @@ une release à chaque changement validé, et tient ce journal.
 | 11/10 10:30 — [Nutrition : profil juste](runs/2026-10-11-1030-profil-nutrition.md) | 🐛 | PR #101 fusionnée → v93 |
 | 11/10 12:30 — [Activité et profil sauvegardé](runs/2026-10-11-1230-activite-sauvegarde-profil.md) | 🏗️ | PR #102 fusionnée → v94 |
 | 11/10 14:30 — [Arrondis des habitudes, nuits « au lit »](runs/2026-10-11-1430-petits-bugs.md) | 🐛 | PR #103 fusionnée → v95 |
-| 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR en cours (fusion en fin de run, release attendue v96) |
+| 11/10 16:30 — [Modifier / Refaire un repas depuis l'accueil](runs/2026-10-11-1630-repas-depuis-accueil.md) | 🎨 | PR #104 (fusion en fin de run, release attendue v96) |
 
 ---
 
