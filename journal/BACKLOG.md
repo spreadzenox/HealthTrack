@@ -153,6 +153,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Radar / journal : chaque enregistrement de sommeil est rattaché au jour de *sa* fin ; si une source fournit des phases séparées, une phase finie avant minuit tomberait la veille → réutiliser `mainSleepPeriods` (sleepRegularity.js).
 - Mode clair : `npm run visual -- --light` rend la même chose que le sombre — l'app n'a pas de thème clair (C1), ce n'est pas un bug du script.
 - Démo : le dernier jour de données est « hier » quand le run tourne après minuit (heure de Paris) → la prédiction du jour et « Par heure (aujourd'hui) » ne sont jamais visibles dans les captures ; faire finir la démo « aujourd'hui ».
+- CI : test émulateur API 36 `HealthConnectTest.healthConnect_canWriteAndReadSleep` instable (rouge sur la PR #105, journal seul, vert sur main juste avant) → rendre le test robuste (attente / relecture) si cela se répète.
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).

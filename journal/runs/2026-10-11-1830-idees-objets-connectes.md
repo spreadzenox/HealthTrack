@@ -35,6 +35,8 @@
 
 ## Vérifications
 - Tests : 755 ✅ (inchangé, seul `journal/` modifié) · pas de build / visuel nécessaires (aucun code produit modifié).
+- CI de la PR : Vitest ✅, Build APK ✅ ; émulateur API 36 ❌ sur `HealthConnectTest.healthConnect_canWriteAndReadSleep`
+  alors que l'APK est identique à main (vert sur 433b402) → test instable, job relancé une fois (à surveiller : noté au backlog).
 - Sites inaccessibles : **Reddit** (outil bloqué, miroirs 403), page Health Kit de developer.huawei.com (rendu JS),
   support.garmin.com (403). LinkedIn Emobot lisible (dates relatives seulement).
 
