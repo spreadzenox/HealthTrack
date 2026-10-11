@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
 import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
@@ -67,6 +68,17 @@ export default function Food() {
     dish: payload?.dish,
     items: payload?.items,
   })
+
+  // « Refaire » depuis le tableau de bord : le repas arrive dans l'état de navigation, consommé une seule fois
+  const location = useLocation()
+  const navigate = useNavigate()
+  const redoFromNav = location.state?.redoMeal
+  useEffect(() => {
+    if (!redoFromNav) return
+    redo(redoFromNav)
+    navigate(location.pathname, { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [redoFromNav])
 
   const handleFile = (f) => {
     if (!f?.type?.startsWith('image/')) return

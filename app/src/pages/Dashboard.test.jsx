@@ -6,6 +6,13 @@ import Dashboard from './Dashboard'
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
   deleteEntry: vi.fn(),
+  updateEntry: vi.fn(),
+}))
+
+const navigateMock = vi.fn()
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => navigateMock,
 }))
 
 vi.mock('../components/BaselineCards', () => ({
@@ -347,11 +354,11 @@ describe('Dashboard', () => {
     expect(card.textContent).toMatch(/≈\s?\d+\s?kcal/)
   })
 
-  it('propose de modifier une note de bien-être de l’app (et seulement elle)', async () => {
+  it('propose de modifier une note de bien-être de l’app', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     const wb = { id: 11, type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-11T10:00:00', payload: { score: 3 } }
-    const food = { id: 12, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { items: [{ ingredient: 'Riz', quantity: '150 g' }] } }
-    listEntries.mockResolvedValue([wb, food])
+    const synced = { id: 13, type: 'wellbeing', source: 'health_connect', at: '2026-04-11T11:00:00', payload: { score: 4 } }
+    listEntries.mockResolvedValue([wb, synced])
     renderDashboard()
     const buttons = await screen.findAllByRole('button', { name: /^Modifier/ })
     expect(buttons).toHaveLength(1)
@@ -366,5 +373,48 @@ describe('Dashboard', () => {
     renderDashboard()
     fireEvent.click(screen.getByRole('button', { name: /Ajouter un bien-être/i }))
     expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
+  })
+
+  it('modifie un repas sur place, sans quitter le tableau de bord', async () => {
+    const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
+    const food = {
+      id: 12, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00',
+      payload: { dish: 'Riz', items: [{ ingredient: 'Riz blanc cuit', quantity: '150 g', quantity_g: 150 }] },
+    }
+    listEntries.mockResolvedValue([food])
+    updateEntry.mockResolvedValue(undefined)
+    renderDashboard()
+    fireEvent.click(await screen.findByRole('button', { name: 'Modifier ce repas' }))
+    expect(screen.getByLabelText('Heure du repas')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Annuler' }))
+    expect(screen.queryByLabelText('Heure du repas')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Modifier ce repas' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer les modifications' }))
+    await waitFor(() => expect(updateEntry).toHaveBeenCalledWith(12, expect.objectContaining({ payload: expect.any(Object) })))
+    await waitFor(() => expect(screen.queryByLabelText('Heure du repas')).not.toBeInTheDocument())
+  })
+
+  it('« Refaire » ouvre la page Repas pré-remplie avec ce repas', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const items = [{ ingredient: 'Riz blanc cuit', quantity: '150 g', quantity_g: 150 }]
+    listEntries.mockResolvedValue([
+      { id: 12, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { dish: 'Riz', items } },
+    ])
+    navigateMock.mockClear()
+    renderDashboard()
+    fireEvent.click(await screen.findByRole('button', { name: 'Refaire ce repas' }))
+    expect(navigateMock).toHaveBeenCalledWith('/food', { state: { redoMeal: { dish: 'Riz', items } } })
+  })
+
+  it('pas de « Modifier » ni « Refaire » sur un repas importé d’une autre source sans aliments', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 14, type: 'food', source: 'health_connect', at: '2026-04-11T12:00:00', payload: { dish: 'Déjeuner' } },
+    ])
+    renderDashboard()
+    await screen.findByText(/Vos derniers jours/i)
+    await screen.findAllByText(/Déjeuner/)
+    expect(screen.queryByRole('button', { name: 'Modifier ce repas' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Refaire ce repas' })).not.toBeInTheDocument()
   })
 })

@@ -69,7 +69,7 @@ HealthTrack devient un **coach de santé personnel local-first** :
 - [ ] Analyse photo, étape 2 : question de portion quand la confiance est basse (« petite / moyenne / grande assiette ? ») ; photo de référence (main, carte) ; ~~modifier/supprimer un repas enregistré~~ (livré #72 + run 14:30)
 - [x] **Saisie sans photo + « Refaire » + repas habituels** (R#5) : composition manuelle par recherche, repas fréquents déduits de l'historique, heure modifiable (run 18:30)
 - [x] **Repas décrit en texte / dictée → Gemini** vers le même éditeur : aliments + grammes + confiance seulement, repères ménagers français, matières grasses de cuisson ajoutées « à vérifier » ; œ → oe dans la recherche (run 10/10 02:30)
-- [ ] Saisie, étape 3 : « Refaire » depuis le journal du tableau de bord ; favoris épinglés si besoin ; mesurer la précision par mode (`provider` = gemini / gemini_text / manual) ; bouton micro dédié seulement si le micro du clavier ne suffit pas
+- [ ] Saisie, étape 3 : ~~« Refaire » / « Modifier » depuis le journal du tableau de bord~~ (run 11/10 16:30) ; favoris épinglés si besoin ; mesurer la précision par mode (`provider` = gemini / gemini_text / manual) ; bouton micro dédié seulement si le micro du clavier ne suffit pas
 - [ ] Cigarettes avec contexte (R#7) : déclencheur optionnel, heatmap horaire, « envie résistée »
 - [ ] WHO-5 hebdomadaire (R#11) pour valider le score quotidien
 - [ ] Code-barres Open Food Facts + % ultra-transformés (R#17)
@@ -100,7 +100,7 @@ puis l'analyse (statistiques, radar), puis la restitution (revue IA, notificatio
 
 1. 🐛 Chasse aux bugs (arrondis des habitudes, nuits « au lit », Withings : faits, run 11/10 14:30) : modales, sélecteur d'heure sur captures émulateur — regarder aussi les captures émulateur réelles (artefacts `screenshots-samsung-a56-api3x`). Import d'anciennes sauvegardes : fait (run 04:30).
 2. 🏗️ Capacitor 8.4 + CLI 8 (C1), avec captures émulateur avant/après.
-3. 🎨 Journal du tableau de bord, étape 3 : ~~kcal et nom du plat~~ (run 18:30), ~~poids + composition fusionnés, noms d'aliments courts~~ (run 11/10 04:30) ; « Modifier » / « Refaire » un repas depuis le journal ; rapprocher Radar et cartes cœur.
+3. 🎨 Journal du tableau de bord, étape 3 : ~~kcal et nom du plat~~ (run 18:30), ~~poids + composition fusionnés, noms d'aliments courts~~ (run 11/10 04:30), ~~« Modifier » / « Refaire » un repas depuis le journal~~ (run 11/10 16:30) ; rapprocher Radar et cartes cœur (un seul bloc d'explication).
 4. 🏗️ Régularité du sommeil, étape 2 (étape 1 livrée run 11/10 06:30) : variable « régularité » dans les Analyses et piste « heures fixes ».
 5. 🔭 Prochaine veille vers le 12/10 soir : puissance attendue des analyses N-of-1, retours d'utilisateurs d'apps de suivi (forums, avis Play Store).
 
@@ -127,7 +127,8 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
 - ~~Tableau de bord : poids + composition corporelle Withings créent deux cartes~~ → une carte « Pesée » (run 11/10 04:30).
-- Repas (tableau de bord) : afficher les kcal du repas (fait sur Alimentation) ; « Modifier » aussi depuis le tableau de bord (livré sur Alimentation) ; ~~modifier une note de bien-être~~ (run 11/10 02:30).
+- ~~Repas (tableau de bord) : kcal du repas, « Modifier » / « Refaire » depuis le tableau de bord, modifier une note de bien-être~~ (runs 10/10 18:30, 11/10 02:30, 11/10 16:30).
+- ~~Navigation : en changeant d'onglet, la page s'ouvrait à la hauteur de défilement de la précédente~~ → retour en haut dans `Layout` (run 11/10 16:30).
 - Champ heure `datetime-local` : format de la WebView = langue du téléphone (Chromium headless reste en US dans les captures, run 11/10 14:30) ; message clair si l'heure est effacée (run 14:30). Reste à voir le sélecteur sur les captures émulateur.
 - ~~Paramètres : « Déconnecter Withings » affiché même quand rien n'est connecté~~ (run 11/10 14:30).
 - Suppression des données synchronisées (pesée aberrante…) : nécessiterait une liste d'exclusion persistante pour que la synchro ne les réimporte pas.
