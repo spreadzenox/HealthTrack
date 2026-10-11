@@ -1,6 +1,6 @@
 # 2026-10-11 02:30 UTC — Modifier une note de bien-être
 
-**Type** : 🐛 / 🏗️ (formulaires)  ·  **PR** : voir tableau du résumé (fusion en fin de run si CI verte)
+**Type** : 🐛 / 🏗️ (formulaires)  ·  **PR** : #97 (ouverte — CI verte, fusion refusée)
 
 ## Pourquoi
 Premier item du backlog (« Prochaines étapes » n° 1, idée en vrac) : une note de bien-être mal saisie, ou un tag
@@ -33,3 +33,10 @@ la plus utile pour « Vos habitudes » : il faut pouvoir les compléter après c
 - 🐛 Formulaires restants : heure `datetime-local` sur l'A56 (captures émulateur), modale de check-in sur /food.
 - 🎨 Journal du tableau de bord, étape 2 (poids fusionné, noms courts, « Modifier » un repas depuis le journal).
 - 🏗️ Effets décalés, étape 2.
+
+## Blocage
+- Checks « Frontend (Vitest) » et « Build APK » verts sur `a1d4994`. La fusion squash a été **refusée par le
+  classificateur de permissions de la session** (« Merge Without Review »), comme au run du 10/10 20:30. Pas de
+  contournement tenté.
+- **Run suivant** : vérifier que #97 est toujours verte et sans conflit, la fusionner (squash) en premier, puis
+  vérifier la release (v89) et corriger la ligne du tableau du résumé.
