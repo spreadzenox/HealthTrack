@@ -24,6 +24,8 @@
  *   npm run visual -- --devices=com.huawei.health,nodomain.freeyourgadget.gadgetbridge  # paquets choisis
  *   npm run visual -- --routes=/connectors --ble          # « Capteurs Bluetooth » : faux Bluetooth, recherche lancée
  *   npm run visual -- --routes=/connectors --ble=measure  # … puis mesure cardio en direct sur la ceinture simulée
+ *   npm run visual -- --routes=/connectors --ble=receive  # … attente d'une mesure du tensiomètre simulé (1 reçue)
+ *   npm run visual -- --routes=/connectors --ble=received # … mesures du tensiomètre reçues et enregistrées
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -236,9 +238,10 @@ async function main() {
     }
     if (args.ble) {
       // « Capteurs Bluetooth » : faux client BLE (lu par src/devices/ble/bleService.js), sans adresse réelle.
-      await context.addInitScript(() => {
+      await context.addInitScript((mode) => {
         const dv = (bytes) => new DataView(Uint8Array.from(bytes).buffer)
         const HR = '0000180d-0000-1000-8000-00805f9b34fb'
+        let onDisconnect = null
         window.__healthtrackFakeBle = {
           scanMs: 300,
           initialize: async () => {},
@@ -251,9 +254,23 @@ async function main() {
             cb({ device: { deviceId: 'fake-x', name: '' }, rssi: -90, manufacturerData: { 6: dv([1]) } })
           },
           stopLEScan: async () => {},
-          connect: async () => {},
+          connect: async (_id, cb) => {
+            onDisconnect = cb
+          },
           disconnect: async () => {},
-          startNotifications: async (_id, _s, _c, cb) => {
+          startNotifications: async (_id, _s, c, cb) => {
+            if (c.startsWith('00002a35')) {
+              // tensiomètre : mesure du jour (mmHg, horodatée, pouls) puis, en mode « received », une ancienne et déconnexion
+              const sf = (v) => [v & 0xff, (v >> 8) & 0x0f]
+              const d = new Date()
+              const ts = [d.getFullYear() & 0xff, d.getFullYear() >> 8, d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), 0]
+              setTimeout(() => cb(dv([0x06, ...sf(127), ...sf(81), ...sf(96), ...ts, ...sf(63)])), 200)
+              if (mode === 'received') {
+                setTimeout(() => cb(dv([0x04, ...sf(122), ...sf(79), ...sf(93), ...sf(66)])), 400)
+                setTimeout(() => onDisconnect?.(), 600)
+              }
+              return
+            }
             let i = 0
             window.__fakeBleTimer = setInterval(() => {
               const rr = 960 + (i++ % 3) * 25
@@ -262,7 +279,7 @@ async function main() {
           },
           stopNotifications: async () => clearInterval(window.__fakeBleTimer),
         }
-      })
+      }, String(args.ble))
     }
     if (!args['wellbeing-prompt']) {
       await context.addInitScript(() => {
@@ -349,6 +366,10 @@ async function main() {
           if (args.ble === 'measure') {
             await page.getByRole('button', { name: /Mesurer ma VFC/ }).click()
             await page.waitForTimeout(2500)
+          }
+          if (args.ble === 'receive' || args.ble === 'received') {
+            await page.getByRole('button', { name: 'Recevoir la mesure' }).click()
+            await page.waitForTimeout(1200)
           }
           await page.evaluate(() => document.querySelector('.ble-devices')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(300)

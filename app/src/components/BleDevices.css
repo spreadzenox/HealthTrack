@@ -36,3 +36,21 @@
   font-size: 1rem;
   color: var(--text-muted);
 }
+
+.ble-received {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ble-received li {
+  padding: 6px 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+}
+
+.ble-received li:first-child {
+  border-top: none;
+}

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { uuid16, shortUuid, buildFingerprint, fingerprintKey, identifyDevice, DRIVERS } from './drivers'
+import { READERS } from './measurements'
 
 const dv = (bytes) => new DataView(Uint8Array.from(bytes).buffer)
 const HR = '0000180d-0000-1000-8000-00805f9b34fb'
@@ -71,11 +72,16 @@ describe('identifyDevice', () => {
     expect(identifyDevice({ name: '[TV] Salon', services: [], companyIds: [0x0075], serviceData: [] }).vendor?.name).toBe('Samsung')
   })
 
-  it('reconnaît les profils santé standard pas encore gérés (tensiomètre, balance…)', () => {
+  it('lit les appareils de mesure standard (tensiomètre, balance…) en mode réception', () => {
     const bp = identifyDevice({ name: 'BP7000', services: ['1810'], companyIds: [], serviceData: [] })
-    expect(bp.driver.id).toBe('ble_blood_pressure')
-    expect(bp.driver.supported).toBe(false)
+    expect(bp.driver).toMatchObject({ id: 'ble_blood_pressure', supported: true, mode: 'receive' })
     expect(identifyDevice({ name: '', services: ['181d'], companyIds: [], serviceData: [] }).driver.id).toBe('ble_weight_scale')
+  })
+
+  it('chaque pilote en mode réception a un lecteur, les autres profils restent annoncés', () => {
+    for (const d of DRIVERS.filter((x) => x.mode === 'receive')) expect(READERS[d.id], d.id).toBeDefined()
+    const glucose = identifyDevice({ name: '', services: ['1808'], companyIds: [], serviceData: [] })
+    expect(glucose.driver).toMatchObject({ id: 'ble_glucose', supported: false })
   })
 
   it('classe un appareil sans indice comme inconnu', () => {

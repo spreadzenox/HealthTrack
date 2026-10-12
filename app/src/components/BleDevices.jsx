@@ -1,10 +1,12 @@
 /**
  * « Capteurs Bluetooth » (page Connecteurs) : recherche des appareils à proximité, identification
  * automatique par profil Bluetooth standard ou famille de fabricant (src/devices/ble/drivers.js),
- * et mesure cardio en direct (FC + VFC) sur tout appareil au profil 0x180D.
+ * mesure cardio en direct (FC + VFC) sur tout appareil au profil 0x180D, et réception des mesures des
+ * tensiomètres, balances, thermomètres et oxymètres standard.
  */
 import { useEffect, useRef, useState } from 'react'
-import { isBleAvailable, scanDevices, startHeartRateSession } from '../devices/ble/bleService'
+import { isBleAvailable, receiveMeasurements, scanDevices, startHeartRateSession } from '../devices/ble/bleService'
+import { describeMeasurement, measurementsToEntries } from '../devices/ble/measurements'
 import { summarizeHeartRateSession, sessionToEntries } from '../devices/ble/heartRate'
 import { upsertEntries } from '../storage/localHealthStorage'
 import { openGuide } from '../utils/openGuide'
@@ -52,10 +54,11 @@ export default function BleDevices({
   available = isBleAvailable(),
   scan = scanDevices,
   startSession = startHeartRateSession,
+  receive = receiveMeasurements,
   save = upsertEntries,
   sessionMs = SESSION_MS,
 }) {
-  const [phase, setPhase] = useState('idle') // idle | scanning | done | measuring | result
+  const [phase, setPhase] = useState('idle') // idle | scanning | done | measuring | receiving | result | received
   const [devices, setDevices] = useState([])
   const [error, setError] = useState(null)
   const [live, setLive] = useState(null) // { device, startedAt, bpm, beats }
@@ -65,6 +68,9 @@ export default function BleDevices({
   const stopRef = useRef(null)
   const finishingRef = useRef(false)
   const deviceRef = useRef(null)
+  const [incoming, setIncoming] = useState(null) // { device, items }
+  const cancelRef = useRef(null)
+  const cancelledRef = useRef(false)
 
   useEffect(() => {
     if (phase !== 'measuring') return undefined
@@ -78,7 +84,13 @@ export default function BleDevices({
   }, [phase, sessionMs])
 
   // quitter la page pendant une mesure : on coupe proprement la connexion
-  useEffect(() => () => stopRef.current?.(), [])
+  useEffect(
+    () => () => {
+      stopRef.current?.()
+      cancelRef.current?.()
+    },
+    [],
+  )
 
   async function runScan() {
     setPhase('scanning')
@@ -115,6 +127,50 @@ export default function BleDevices({
       setLive(null)
       setPhase('done')
     }
+  }
+
+  async function receiveFrom(device) {
+    cancelledRef.current = false
+    setError(null)
+    setResult(null)
+    setIncoming({ device, items: [] })
+    setPhase('receiving')
+    let session
+    try {
+      session = await receive(device.deviceId, device.driver.id, {
+        onMeasurement: (m) => setIncoming((cur) => (cur ? { ...cur, items: [...cur.items, m] } : cur)),
+      })
+    } catch {
+      setError(`Connexion impossible à ${device.name || 'cet appareil'} : allumez-le (le symbole Bluetooth doit clignoter) et réessayez.`)
+      setIncoming(null)
+      setPhase('done')
+      return
+    }
+    cancelRef.current = session.cancel
+    const measurements = await session.done
+    cancelRef.current = null
+    if (cancelledRef.current) {
+      cancelledRef.current = false
+      return
+    }
+    const entries = measurementsToEntries(measurements, { deviceName: device.name || device.driver.label })
+    if (entries.length > 0) {
+      try {
+        await save(entries)
+      } catch {
+        setError('Mesure reçue mais pas enregistrée (stockage indisponible).')
+      }
+    }
+    setResult({ device, measurements, saved: entries.length })
+    setIncoming(null)
+    setPhase('received')
+  }
+
+  async function cancelReceive() {
+    cancelledRef.current = true
+    setIncoming(null)
+    setPhase('done')
+    await cancelRef.current?.()
   }
 
   async function finish({ disconnected = false, cancel = false } = {}) {
@@ -176,6 +232,55 @@ export default function BleDevices({
             </button>
           </div>
         </div>
+      ) : phase === 'receiving' && incoming ? (
+        <div className="my-device ble-live" aria-live="polite">
+          <p className="ble-live-title">En attente de {incoming.device.name || incoming.device.driver.label}…</p>
+          <p className="my-device-message">
+            {incoming.device.driver.howTo} : la mesure arrive ici dès que l’appareil l’envoie (les mesures gardées en mémoire aussi).
+          </p>
+          {incoming.items.length > 0 && (
+            <ul className="ble-received">
+              {incoming.items.slice(-5).map((m, i) => (
+                <li key={i}>{describeMeasurement(m)}</li>
+              ))}
+            </ul>
+          )}
+          <p className="my-device-meta">La première fois, Android peut demander d’appairer l’appareil (parfois avec un code affiché sur son écran).</p>
+          <div className="my-device-actions">
+            <button type="button" className="btn btn-secondary connector-btn" onClick={cancelReceive}>
+              Annuler
+            </button>
+          </div>
+        </div>
+      ) : phase === 'received' && result ? (
+        <div className="my-device ble-result">
+          {result.saved > 0 ? (
+            <>
+              <p className="ble-live-title">
+                {result.saved === 1 ? '1 mesure enregistrée' : `${result.saved} mesures enregistrées`} — {result.device.name || result.device.driver.label}
+              </p>
+              <ul className="ble-received">
+                {result.measurements.slice(-5).map((m, i) => (
+                  <li key={i}>{describeMeasurement(m)}</li>
+                ))}
+              </ul>
+              <p className="my-device-meta">
+                Retrouvez-les dans « Vos derniers jours » et les Analyses. Une mesure isolée compte peu : c’est la tendance qui parle.
+                Une estimation, pas un diagnostic — en cas de valeur inhabituelle, parlez-en à un professionnel de santé.
+              </p>
+            </>
+          ) : (
+            <p className="my-device-message">
+              Aucune mesure reçue. Faites la mesure, puis appuyez sur « Recevoir la mesure » tant que l’appareil affiche le symbole
+              Bluetooth. Si l’appareil demande un appairage, acceptez-le dans Android puis réessayez.
+            </p>
+          )}
+          <div className="my-device-actions">
+            <button type="button" className="btn btn-secondary connector-btn" onClick={() => setPhase('done')}>
+              OK
+            </button>
+          </div>
+        </div>
       ) : phase === 'result' && result ? (
         <div className="my-device ble-result">
           {result.summary ? (
@@ -225,9 +330,14 @@ export default function BleDevices({
                     {d.bonded && <p className="my-device-meta">Appairée à ce téléphone</p>}
                     {(d.driver.supported || (d.driver.kind === 'vendor' && d.vendor?.guideId)) && (
                       <div className="my-device-actions">
-                        {d.driver.supported && (
+                        {d.driver.mode === 'live' && (
                           <button type="button" className="btn btn-primary connector-btn" onClick={() => measure(d)}>
                             Mesurer ma VFC (5 min)
+                          </button>
+                        )}
+                        {d.driver.mode === 'receive' && (
+                          <button type="button" className="btn btn-primary connector-btn" onClick={() => receiveFrom(d)}>
+                            Recevoir la mesure
                           </button>
                         )}
                         {d.driver.kind === 'vendor' && (

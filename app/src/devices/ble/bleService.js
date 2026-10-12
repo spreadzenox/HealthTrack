@@ -1,10 +1,12 @@
 /**
  * Accès au Bluetooth du téléphone (`@capacitor-community/bluetooth-le`) pour la couche générique :
  * recherche des appareils (annonces BLE + appareils déjà appairés), mesure cardio en direct,
+ * réception des mesures des appareils standard (tensiomètre, balance, thermomètre, oxymètre),
  * mémoire locale des appareils inconnus (empreinte sans adresse MAC, pour ajouter un pilote plus tard).
  */
 import { buildFingerprint, fingerprintKey, identifyDevice, uuid16 } from './drivers'
 import { parseHeartRateMeasurement } from './heartRate'
+import { READERS } from './measurements'
 
 const HR_SERVICE = uuid16(0x180d)
 const HR_MEASUREMENT = uuid16(0x2a37)
@@ -107,6 +109,77 @@ export async function startHeartRateSession(deviceId, { onSample, onDisconnect, 
   return async function stop() {
     await ble.stopNotifications(deviceId, HR_SERVICE, HR_MEASUREMENT).catch(() => {})
     await ble.disconnect(deviceId).catch(() => {})
+  }
+}
+
+/**
+ * Réception des mesures d'un appareil standard (pilote de `READERS`) : connexion, abonnement aux
+ * indications, puis attente. Fin quand l'appareil se déconnecte (il le fait après avoir tout envoyé),
+ * après `idleMs` sans nouvelle mesure, `settleMs` après la première (oxymètre continu) ou `timeoutMs`.
+ * @returns {Promise<{ done: Promise<object[]>, cancel: () => Promise<void> }>}
+ */
+export async function receiveMeasurements(
+  deviceId,
+  driverId,
+  { onMeasurement, client, timeoutMs = 60_000, idleMs = 5000, settleMs = 15_000 } = {},
+) {
+  const reader = READERS[driverId]
+  if (!reader) throw new Error(`Pas de lecteur pour ${driverId}`)
+  const ble = client || (await getClient())
+  await ready(ble)
+  const measurements = []
+  const subscribed = []
+  let finish = () => {}
+  const ended = new Promise((resolve) => {
+    finish = resolve
+  })
+  let idleTimer = null
+  let settleTimer = null
+  const timeout = setTimeout(() => finish(), timeoutMs)
+
+  await ble.connect(deviceId, () => finish())
+  for (const c of reader.characteristics) {
+    const service = uuid16(c.service ?? reader.service)
+    const characteristic = uuid16(c.uuid)
+    try {
+      await ble.startNotifications(deviceId, service, characteristic, (view) => {
+        const m = c.parse(view)
+        if (!m) return
+        measurements.push(m)
+        onMeasurement?.(m)
+        clearTimeout(idleTimer)
+        idleTimer = setTimeout(() => finish(), idleMs)
+        if (!settleTimer) settleTimer = setTimeout(() => finish(), settleMs)
+      })
+      subscribed.push([service, characteristic])
+    } catch (e) {
+      if (!c.optional) {
+        clearTimeout(timeout)
+        await ble.disconnect(deviceId).catch(() => {})
+        throw e
+      }
+    }
+  }
+  if (subscribed.length === 0) {
+    clearTimeout(timeout)
+    await ble.disconnect(deviceId).catch(() => {})
+    throw new Error('Aucune mesure disponible sur cet appareil')
+  }
+
+  const done = ended.then(async () => {
+    clearTimeout(timeout)
+    clearTimeout(idleTimer)
+    clearTimeout(settleTimer)
+    for (const [service, characteristic] of subscribed) await ble.stopNotifications(deviceId, service, characteristic).catch(() => {})
+    await ble.disconnect(deviceId).catch(() => {})
+    return measurements
+  })
+  return {
+    done,
+    cancel: async () => {
+      finish()
+      await done
+    },
   }
 }
 
