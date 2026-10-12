@@ -1,6 +1,6 @@
 # 2026-10-12 16:30 UTC (18:30 Paris) — Nettoyage, étape 2 (D1)
 
-**Type** : 🧹🎨 (D1, un peu de D6)  ·  **PR** : voir le tableau du résumé de la semaine
+**Type** : 🧹🎨 (D1, un peu de D6)  ·  **PR** : #119 (fusionnée → v107, APK publié)
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte, main vert (v106, a019ba0), Build & Release OK.
