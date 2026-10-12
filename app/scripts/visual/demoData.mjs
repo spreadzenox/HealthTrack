@@ -72,6 +72,11 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // fatigué) : l'alimentation n'agit pas sur le bien-être dans la démo, un lien serait un artefact.
   // RNG séparé ; jamais sur les 4 derniers jours.
   const mealRand = mulberry32(seed + 3000)
+  // Météo (Open-Meteo, journées terminées seulement) : RNG séparé ; une chute de pression d'au moins
+  // 5 hPa en un jour retire un peu de bien-être (utilisateur « sensible à la météo »). Graine choisie pour
+  // éviter une corrélation fortuite pollen / pollution (la graine 4000 en donnait une, artefact du hasard).
+  const weatherRand = mulberry32(seed + 4003)
+  let pressure = 1016
 
   for (let i = days; i >= 0; i--) {
     const day = new Date(now)
@@ -80,6 +85,8 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
     const weekend = day.getDay() === 0 || day.getDay() === 6
 
     const sick = illness && i <= 2
+    const prevPressure = pressure
+    pressure = Math.round((pressure + (1015 - pressure) * 0.25 + (weatherRand() - 0.5) * 14) * 10) / 10
     const sleepMin = Math.round(420 + noise(70) + (weekend ? 40 : 0)) - (sick ? 80 : 0)
     const steps = Math.max(1500, Math.round(8000 + noise(4500) + (weekend ? -1500 : 0)))
     const cigarettes = Math.max(0, Math.round(4 - (days - i) / 25 + noise(3)))
@@ -195,7 +202,8 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       (tags.includes('stress') ? 0.9 : 0) -
       (tags.includes('sick') ? 1.5 : 0) +
       (prevWorkout ? 0.35 : 0) +
-      (weekend ? 0.4 : 0) +
+      (weekend ? 0.4 : 0) -
+      (pressure - prevPressure <= -5 ? 0.6 : 0) + // chute de pression : un peu moins bien (sensibilité météo)
       noise(0.6)
     entries.push({
       type: 'wellbeing',
@@ -205,6 +213,34 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
     })
     prevTags = tags
     prevWorkout = workout
+
+    if (i >= 1) {
+      const tMax = Math.round((17 - (days - i) * 0.06 + (weatherRand() - 0.5) * 6) * 10) / 10
+      const sunny = weatherRand()
+      const date = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`
+      entries.push({
+        type: 'weather',
+        source: 'open_meteo',
+        at: at(day, 12),
+        payload: {
+          date,
+          tempMaxC: tMax,
+          tempMinC: Math.round((tMax - 7 - weatherRand() * 3) * 10) / 10,
+          precipMm: sunny < 0.35 ? Math.round(weatherRand() * 80) / 10 : 0,
+          sunshineH: Math.round(sunny * 9 * 10) / 10,
+          pressureHpa: pressure,
+          pressureChangeHpa: Math.round((pressure - prevPressure) * 10) / 10,
+          humidityPct: Math.round(65 + (1 - sunny) * 25),
+          aqi: Math.round(15 + weatherRand() * 30),
+          pollen: { grass: Math.round(weatherRand() * 15) },
+          pollenMax: null,
+          place: 'Paris',
+          connector: 'open_meteo',
+        },
+      })
+      const last = entries[entries.length - 1].payload
+      last.pollenMax = last.pollen.grass
+    }
   }
 
   return entries

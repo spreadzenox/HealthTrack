@@ -9,6 +9,8 @@
 const KPA_TO_MMHG = 7.50062
 const LB_TO_KG = 0.45359237
 const FUTURE_TOLERANCE_MS = 24 * 3600 * 1000
+// Plus ancien qu'un an : horloge jamais réglée (souvent remise au 1er janvier 2000 avec les piles).
+const MAX_AGE_MS = 365 * 24 * 3600 * 1000
 
 const round1 = (v) => Math.round(v * 10) / 10
 const round2 = (v) => Math.round(v * 100) / 100
@@ -18,9 +20,9 @@ const inRange = (v, min, max) => typeof v === 'number' && Number.isFinite(v) && 
 export function readSfloat(view, offset) {
   const raw = view.getUint16(offset, true)
   let mantissa = raw & 0x0fff
-  if (mantissa >= 0x07fe && mantissa <= 0x0802) return null // NaN, NRes, ±INF, réservé
-  if (mantissa >= 0x0800) mantissa -= 0x1000
   let exp = raw >> 12
+  if (exp === 0 && mantissa >= 0x07fe && mantissa <= 0x0802) return null // NaN, NRes, ±INF, réservé
+  if (mantissa >= 0x0800) mantissa -= 0x1000
   if (exp >= 0x8) exp -= 0x10
   return exp < 0 ? mantissa / 10 ** -exp : mantissa * 10 ** exp
 }
@@ -29,21 +31,22 @@ export function readSfloat(view, offset) {
 export function readFloat(view, offset) {
   const raw = view.getUint32(offset, true)
   let mantissa = raw & 0xffffff
-  if (mantissa >= 0x7ffffe && mantissa <= 0x800002) return null
-  if (mantissa >= 0x800000) mantissa -= 0x1000000
   let exp = raw >>> 24
+  if (exp === 0 && mantissa >= 0x7ffffe && mantissa <= 0x800002) return null
+  if (mantissa >= 0x800000) mantissa -= 0x1000000
   if (exp >= 0x80) exp -= 0x100
   return exp < 0 ? mantissa / 10 ** -exp : mantissa * 10 ** exp
 }
 
-/** Date Time (7 octets, heure locale de l'appareil). Horloge non réglée ou dans le futur → null (heure de réception). */
+/** Date Time (7 octets, heure locale de l'appareil). Horloge non réglée, dans le futur ou > 1 an → null (heure de réception). */
 function readDateTime(view, offset, now) {
   const year = view.getUint16(offset, true)
   const month = view.getUint8(offset + 2)
   const day = view.getUint8(offset + 3)
   if (year < 2000 || month < 1 || month > 12 || day < 1 || day > 31) return null
   const at = new Date(year, month - 1, day, view.getUint8(offset + 4), view.getUint8(offset + 5), view.getUint8(offset + 6))
-  if (Number.isNaN(at.getTime()) || at.getTime() > now.getTime() + FUTURE_TOLERANCE_MS) return null
+  const t = at.getTime()
+  if (Number.isNaN(t) || t > now.getTime() + FUTURE_TOLERANCE_MS || t < now.getTime() - MAX_AGE_MS) return null
   return at
 }
 
@@ -133,7 +136,8 @@ function spo2Result(spo2, pulse, at) {
 export function parsePlxSpotCheck(view, { now = new Date() } = {}) {
   if (!fits(view, 0, 5)) return null
   const flags = view.getUint8(0)
-  const at = flags & 0x01 && fits(view, 5, 7) ? readDateTime(view, 5, now) : null
+  // Bit 4 : « Device Clock is Not Set ».
+  const at = flags & 0x01 && !(flags & 0x10) && fits(view, 5, 7) ? readDateTime(view, 5, now) : null
   return spo2Result(readSfloat(view, 1), readSfloat(view, 3), at)
 }
 
@@ -169,15 +173,19 @@ export const READERS = {
 
 /**
  * Entrées HealthTrack, même forme que celles de Health Connect, source « ble ».
- * Sans horodatage de l'appareil, l'heure de réception. Une entrée par type et par instant (la dernière gagne) :
+ * Sans horodatage de l'appareil, l'heure de réception (dernière mesure de chaque type seulement). Une entrée par type et par instant (la dernière gagne) :
  * un oxymètre continu envoie une valeur par seconde, une balance envoie le poids sur deux caractéristiques.
  */
 export function measurementsToEntries(measurements, { deviceName, now = new Date() } = {}) {
   const base = { sourceName: deviceName || 'Appareil Bluetooth', connector: 'ble' }
   const byKey = new Map()
   const add = (type, at, payload) => byKey.set(`${type}|${at}`, { type, source: 'ble', at, payload: { ...payload, ...base } })
+  // Sans horodatage, les mesures en mémoire renvoyées à chaque connexion prendraient toutes l'heure de
+  // réception (doublons d'une connexion à l'autre) : seule la dernière reçue de chaque type est gardée.
+  const lastUntimed = new Map()
+  for (const m of measurements || []) if (m && !m.at) lastUntimed.set(m.kind, m)
   for (const m of measurements || []) {
-    if (!m) continue
+    if (!m || (!m.at && lastUntimed.get(m.kind) !== m)) continue
     const at = (m.at || now).toISOString()
     if (m.kind === 'blood_pressure') {
       add('blood_pressure', at, { systolic: m.systolic, diastolic: m.diastolic, unit: 'mmHg', ...(m.pulseBpm != null && { pulseBpm: m.pulseBpm }) })

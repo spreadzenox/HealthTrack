@@ -24,6 +24,12 @@
 - **Tensiomètre, balance, thermomètre, oxymètre Bluetooth** (même écran) : tout appareil au profil standard est
   « Compatible ». « Recevoir la mesure », vous faites la mesure, et tension + pouls, poids + masse grasse, température
   ou SpO₂ s'affichent puis s'enregistrent tout seuls (mesures en mémoire comprises, sans doublon).
+- **Météo, pression et air** (Plus → Connecteurs) : un geste (« Utiliser ma position approximative » ou votre ville) et
+  la température, le soleil, la pluie, la pression atmosphérique (et sa variation), la qualité de l'air et les pollens
+  arrivent tout seuls chaque jour, 3 mois d'historique d'un coup. Les Analyses regardent si une pression qui chute, le
+  pollen ou la pollution pèsent sur votre bien-être ; une puce « Météo » s'ajoute à chaque journée.
+- **Capteurs Bluetooth plus fiables** : la mesure de VFC n'échoue plus sur un premier battement mal capté, un
+  tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
 - Détection sans code natif : le plugin déjà présent `@capacitor/app-launcher` + la liste des apps déclarée dans le
@@ -34,6 +40,10 @@
   fabricant — jamais son adresse), puis un registre de « pilotes » choisit quoi en faire. Ajouter un appareil = ajouter un
   pilote, pas une liste de modèles. Les appareils inconnus sont notés sur le téléphone pour les prendre en charge plus tard.
 - Sur Android 12+, la recherche Bluetooth ne demande **pas** la position (seulement « Appareils à proximité »).
+- Météo : seule une position arrondie à ≈ 10 km part vers Open-Meteo (gratuit, sans compte), aucune donnée de santé.
+  L'app demande l'autorisation de position **approximative** seulement, et seulement si vous touchez le bouton.
+- Une relecture complète du code Bluetooth des derniers jours a trouvé 6 bugs invisibles à l'écran (courses
+  d'annulation, horloges d'appareils) : tous corrigés avec un test. Je referai cette relecture après chaque gros chantier.
 - Le workflow **Tests** de main était rouge par intermittence (un test de la page Nutrition qui lisait un libellé du
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
@@ -47,14 +57,17 @@
 - Si vous avez un **tensiomètre, une balance ou un thermomètre Bluetooth**, essayez « Recevoir la mesure » : la lecture
   suit la norme Bluetooth mais n'a pas encore été testée sur un vrai appareil. Dites-moi la marque et ce qui s'affiche.
 
-**Prochaines priorités** — météo / pression / pollen automatiques, réception Bluetooth automatique (l'appareil de
-mesure est reconnu dès qu'il réapparaît), temps d'écran.
+- **À essayer** : activez « Météo, pression et air » et dites-moi si votre ville et la météo du jour s'affichent bien.
+
+**Prochaines priorités** — réception Bluetooth automatique (l'appareil de mesure est reconnu dès qu'il réapparaît),
+temps d'écran, météo étape 2 (prévision du jour, tag « mal de tête »).
 
 | Run | Type | Résultat |
 |---|---|---|
 | 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → v98 |
 | 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #108 fusionnée → v99 |
 | 12/10 04:30 — [Mesures Bluetooth](runs/2026-10-12-0430-mesures-bluetooth.md) | 🏗️🐛 | PR #109 fusionnée → v100, PR #110 (test instable) |
+| 12/10 06:30 — [Météo automatique + bugs BLE](runs/2026-10-12-0630-meteo-automatique.md) | 🐛🏗️ | PR en cours |
 
 ---
 

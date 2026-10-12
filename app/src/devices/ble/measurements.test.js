@@ -26,6 +26,8 @@ describe('nombres IEEE-11073', () => {
     expect(readSfloat(dv(sf(-5)), 0)).toBe(-5)
     expect(readSfloat(dv(u16(0x07ff)), 0)).toBeNull() // NaN
     expect(readSfloat(dv(u16(0x0800)), 0)).toBeNull() // NRes
+    // Les valeurs spéciales n'existent qu'avec l'exposant 0 : 204,7 (mantisse 2047, exposant −1) est une vraie mesure.
+    expect(readSfloat(dv(sf(2047, -1)), 0)).toBeCloseTo(204.7)
   })
 
   it('lit un FLOAT 32 bits', () => {
@@ -113,10 +115,31 @@ describe('horodatage de l’appareil', () => {
     expect(parseWeight(dv([0x02, ...u16(14000), ...ts(0, 0, 0, 0, 0, 0)])).at).toBeNull()
     expect(parseWeight(dv([0x02, ...u16(14000), ...ts(2099, 1, 1, 0, 0, 0)]), { now: new Date(2026, 9, 12) }).at).toBeNull()
   })
+
+  it('horloge jamais réglée (remise au 1er janvier 2000, plus d’un an en arrière) → heure de réception', () => {
+    const now = new Date(2026, 9, 12)
+    expect(parseWeight(dv([0x02, ...u16(14000), ...ts(2000, 1, 1, 10, 0, 0)]), { now }).at).toBeNull()
+    expect(parseWeight(dv([0x02, ...u16(14000), ...ts(2026, 3, 1, 10, 0, 0)]), { now }).at).toEqual(new Date(2026, 2, 1, 10, 0, 0))
+  })
+
+  it('oxymètre qui signale lui-même son horloge non réglée (bit 4) → heure de réception', () => {
+    const m = parsePlxSpotCheck(dv([0x11, ...sf(97), ...sf(66), ...ts(2026, 10, 12, 8, 0, 0)]), { now: new Date(2026, 9, 12, 9) })
+    expect(m.at).toBeNull()
+  })
 })
 
 describe('measurementsToEntries', () => {
   const now = new Date('2026-10-12T05:00:00.000Z')
+
+  it('sans horodatage, seule la dernière mesure de chaque type compte (la mémoire renvoyée à chaque connexion ne s’empile pas)', () => {
+    const entries = measurementsToEntries([
+      { kind: 'blood_pressure', systolic: 140, diastolic: 90, pulseBpm: 70, at: null },
+      { kind: 'blood_pressure', systolic: 125, diastolic: 80, pulseBpm: 62, at: null },
+      { kind: 'blood_pressure', systolic: 118, diastolic: 76, pulseBpm: 60, at: new Date('2026-10-11T05:45:00.000Z') },
+    ], { now })
+    expect(entries).toHaveLength(2)
+    expect(entries.find((e) => e.at === now.toISOString()).payload.systolic).toBe(125)
+  })
 
   it('produit les mêmes types d’entrée que Health Connect, source « ble »', () => {
     const entries = measurementsToEntries([

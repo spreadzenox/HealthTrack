@@ -38,6 +38,20 @@ describe('VFC', () => {
     expect(rejected).toBe(3)
   })
 
+  it('un premier battement aberrant ne bloque pas toute la mesure : la référence se recale', () => {
+    const { kept, rejected, pairs } = cleanRrIntervals([1500, ...new Array(300).fill(800)])
+    expect(rejected).toBe(3)
+    expect(kept).toHaveLength(298)
+    expect(pairs.every((d) => d === 0)).toBe(true)
+  })
+
+  it('changement de rythme franc (on se lève) : recalage après quelques battements', () => {
+    const rr = [...new Array(50).fill(1000), ...new Array(50).fill(700)]
+    const { kept, rejected } = cleanRrIntervals(rr)
+    expect(rejected).toBe(3)
+    expect(kept).toHaveLength(97)
+  })
+
   it('calcule le RMSSD sur les différences successives', () => {
     // différences : 20, -20, 20 → RMSSD 20
     expect(rmssd([1000, 1020, 1000, 1020])).toBeCloseTo(20, 6)

@@ -1920,3 +1920,65 @@ describe('jours sans repas saisi (oubli de saisie ≠ jeûne)', () => {
     expect(result.fiber_g).toBeNull()
   })
 })
+
+describe('contexte météo et air (entrées « weather »)', () => {
+  function makeWeather(dateStr, payload) {
+    return { type: 'weather', source: 'open_meteo', at: `${dateStr}T10:00:00Z`, payload: { date: dateStr, ...payload } }
+  }
+
+  it('remplit les variables météo du jour, y compris les valeurs négatives ou nulles', () => {
+    const ds = buildDailyDataset([
+      makeWellbeing('2026-01-10', 3),
+      makeWeather('2026-01-10', { tempMaxC: -2.5, sunshineH: 0, pressureHpa: 1031.2, pressureChangeHpa: -7.4, aqi: 18, pollenMax: 0 }),
+      makeWellbeing('2026-01-11', 4),
+    ])
+    expect(ds[0]).toMatchObject({
+      weather_temp_max_c: -2.5,
+      weather_sunshine_h: 0,
+      weather_pressure_hpa: 1031.2,
+      weather_pressure_change_hpa: -7.4,
+      air_aqi: 18,
+      pollen_max: 0,
+    })
+    // Jour sans météo : inconnu, jamais 0 °C ni 0 hPa
+    expect(ds[1].weather_temp_max_c).toBeNull()
+    expect(ds[1].weather_pressure_hpa).toBeNull()
+  })
+
+  it('variables du groupe « environnement », jamais proposées comme leviers', () => {
+    for (const k of ['weather_temp_max_c', 'weather_sunshine_h', 'weather_pressure_hpa', 'weather_pressure_change_hpa', 'air_aqi', 'pollen_max']) {
+      expect(VARIABLE_META[k].group).toBe('environment')
+      expect(VARIABLE_META[k].label.length).toBeGreaterThan(3)
+    }
+    // Pollen fortement lié à un moins bon bien-être : corrélation affichée, mais pas de « piste à tester ».
+    const entries = []
+    for (let d = 0; d < 20; d++) {
+      const date = dateForDay(d)
+      const pollen = (d * 37) % 100
+      entries.push(makeWellbeing(date, Math.round(5 - pollen / 25)))
+      entries.push(makeWeather(date, { pollenMax: pollen, tempMaxC: 15 }))
+    }
+    const result = computeBasicCorrelations(entries)
+    const pollen = result.correlations.find((c) => c.variable === 'pollen_max')
+    expect(pollen.r).toBeLessThan(-0.8)
+    expect(result.levers.some((l) => l.variable === 'pollen_max')).toBe(false)
+  })
+
+  it('une journée avec seulement la météo ne compte pas comme une journée de données', () => {
+    expect(countTotalDataDays([makeWeather('2026-01-10', { tempMaxC: 10 }), makeWellbeing('2026-01-11', 3)])).toBe(1)
+  })
+
+  it('prédiction du jour : la météo d’aujourd’hui (pas encore enregistrée) compte comme une journée habituelle', () => {
+    const entries = []
+    for (let d = 0; d < 20; d++) {
+      const date = dateForDay(d)
+      const p = 1000 + ((d * 7) % 30)
+      entries.push(makeWellbeing(date, Math.round((p - 1000) / 6)))
+      entries.push(makeWeather(date, { pressureHpa: p }))
+    }
+    entries.push(makeSteps(localDateKey(new Date().toISOString()), 1000))
+    const pred = computeTodayPrediction(entries)
+    expect(pred).not.toBeNull()
+    expect(Number.isFinite(pred.predicted)).toBe(true)
+  })
+})

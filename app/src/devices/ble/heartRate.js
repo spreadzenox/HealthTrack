@@ -9,6 +9,9 @@
 const RR_MIN_MS = 300 // 200 bpm
 const RR_MAX_MS = 2000 // 30 bpm
 const RR_MAX_JUMP = 0.2 // saut relatif max entre deux battements retenus (battement manqué / en trop)
+// Après ce nombre de rejets plausibles d'affilée, c'est la référence qui était aberrante (premier battement
+// faussé) ou le rythme qui a changé (on se lève) : le battement suivant devient la nouvelle référence.
+const RR_RESYNC_AFTER = 3
 const MIN_CLEAN_RR = 50
 const MIN_CLEAN_SECONDS = 60
 const MAX_REJECTED_RATIO = 0.2
@@ -43,7 +46,8 @@ export function parseHeartRateMeasurement(view) {
 }
 
 /**
- * Garde les RR plausibles (300–2000 ms) qui ne s'écartent pas de plus de 20 % du dernier RR retenu.
+ * Garde les RR plausibles (300–2000 ms) qui ne s'écartent pas de plus de 20 % du dernier RR retenu
+ * (référence recalée après RR_RESYNC_AFTER rejets plausibles consécutifs).
  * `pairs` = différences entre battements retenus réellement consécutifs (pour le RMSSD).
  * @param {number[]} rr
  */
@@ -53,13 +57,18 @@ export function cleanRrIntervals(rr) {
   let last = null
   let lastWasKept = false
   let rejected = 0
+  let jumpsInARow = 0
   for (const v of rr) {
-    const ok = v >= RR_MIN_MS && v <= RR_MAX_MS && (last === null || Math.abs(v - last) <= RR_MAX_JUMP * last)
+    const plausible = v >= RR_MIN_MS && v <= RR_MAX_MS
+    const resync = plausible && jumpsInARow >= RR_RESYNC_AFTER
+    const ok = plausible && (last === null || resync || Math.abs(v - last) <= RR_MAX_JUMP * last)
     if (!ok) {
       rejected++
+      if (plausible) jumpsInARow++
       lastWasKept = false
       continue
     }
+    jumpsInARow = 0
     if (lastWasKept) pairs.push(v - last)
     kept.push(v)
     last = v

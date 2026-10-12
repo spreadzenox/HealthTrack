@@ -68,6 +68,13 @@ describe('startHeartRateSession', () => {
     await stop()
     expect(client.disconnect).toHaveBeenCalledWith('H')
   })
+
+  it('abonnement refusé : se déconnecte avant de signaler l’erreur', async () => {
+    const client = fakeClient()
+    client.startNotifications.mockRejectedValue(new Error('Insufficient authentication'))
+    await expect(startHeartRateSession('H', { client })).rejects.toThrow('Insufficient authentication')
+    expect(client.disconnect).toHaveBeenCalledWith('H')
+  })
 })
 
 describe('receiveMeasurements', () => {

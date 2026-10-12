@@ -1,0 +1,110 @@
+.weather-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+
+.weather-card .my-devices-title {
+  margin: 0;
+}
+
+.weather-card .my-device-head {
+  margin-bottom: 8px;
+}
+
+.weather-search {
+  margin-top: 14px;
+}
+
+.weather-search-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.weather-search-row {
+  display: flex;
+  gap: 8px;
+}
+
+.weather-search-input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  font-size: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.weather-places {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.weather-place {
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.weather-place-name {
+  font-weight: 600;
+}
+
+.weather-place-detail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.weather-place-current {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.weather-today {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.weather-today-label {
+  color: var(--text-muted);
+}
+
+.weather-note {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffd54f;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.weather-error {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: #ff8a65;
+  line-height: 1.45;
+}

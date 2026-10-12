@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "correctif",
+  "title": "Capteurs Bluetooth plus fiables",
+  "items": [
+    "Mesure de VFC : un premier battement mal capté (ou un changement de rythme quand on se lève) ne fait plus échouer toute la mesure.",
+    "Un tensiomètre ou une balance dont l’horloge n’a jamais été réglée n’enregistre plus ses mesures « en l’an 2000 » : elles prennent l’heure de réception.",
+    "Les mesures sans heure gardées en mémoire par l’appareil ne s’accumulent plus à chaque connexion.",
+    "« Annuler » pendant la connexion à un capteur coupe bien la connexion, et une nouvelle tentative n’est plus perturbée par l’ancienne."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "nouveau",
+  "title": "Météo, pression, qualité de l’air et pollens captés tout seuls",
+  "items": [
+    "Plus → Connecteurs → « Météo, pression et air » : un seul geste (« Utiliser ma position approximative » ou le nom de votre ville) et HealthTrack récupère chaque jour la température, le soleil, la pluie, la pression atmosphérique et sa variation, la qualité de l’air et les pollens. Les 3 derniers mois arrivent d’un coup.",
+    "Les Analyses vérifient si ces conditions pèsent sur votre bien-être (pression qui chute, pollen, pollution…), toujours présentées comme des hypothèses. Ce ne sont jamais des « pistes à tester » : on ne choisit pas la météo.",
+    "Une puce « Météo » s’ajoute à chaque journée de « Vos derniers jours », et la carte signale une forte baisse de pression.",
+    "Seule une position arrondie (à environ 10 km près) est envoyée au service gratuit Open-Meteo, sans compte : aucune donnée de santé ne quitte le téléphone. « Désactiver » efface le lieu."
+  ]
+}

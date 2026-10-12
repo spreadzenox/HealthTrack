@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
+import { weatherSummaryParts } from '../services/weather'
 import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
@@ -41,6 +42,7 @@ const TYPE_LABELS = {
   body_temperature: 'Température',
   blood_pressure: 'Tension',
   blood_glucose: 'Glycémie',
+  weather: 'Météo',
 }
 
 function entryTitle(e) {
@@ -168,6 +170,10 @@ function summaryChips(s) {
     chips.push(['Repas', s.mealKcal > 0 ? `${s.meals} · ≈ ${fr(s.mealKcal)} kcal` : String(s.meals)])
   }
   if (s.cigarettes > 0) chips.push(['Cigarettes', String(s.cigarettes)])
+  if (s.weather) {
+    const w = weatherSummaryParts(s.weather)
+    if (w.length) chips.push(['Météo', w[0]])
+  }
   return chips
 }
 
