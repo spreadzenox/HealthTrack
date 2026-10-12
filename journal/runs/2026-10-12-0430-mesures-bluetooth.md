@@ -1,6 +1,6 @@
 # 2026-10-12 04:30 Paris (02:30 UTC) — Couche Bluetooth, étape 2 : tensiomètres, balances, thermomètres, oxymètres
 
-**Type** : 🏗️ (C7, objets connectés, I8) + 🐛 (test instable sur main)  ·  **PR** : #109
+**Type** : 🏗️ (C7, objets connectés, I8) + 🐛 (test instable sur main)  ·  **PR** : #109 (fusionnée → v100) + #110 (correctif du test instable)
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte ; Build & Release v99 ✅ (APK publié). Mais le workflow **Tests** de main était
@@ -11,8 +11,12 @@
   profil standard, thermomètres, oxymètres PLX). Zéro saisie : la mesure arrive toute seule.
 
 ## Ce qui a été fait
-- **Test instable** : `src/test/setup.js` → `configure({ asyncUtilTimeout: 3000 })` (findBy* / waitFor attendent 3 s au
-  lieu d'1 s). Aucun test ne change, tous plus robustes sur un runner lent.
+- **Test instable**, 1re tentative (#109) : `configure({ asyncUtilTimeout: 3000 })` dans `src/test/setup.js`. **Insuffisant** :
+  Tests de main de nouveau rouge après #109, même test, échec en **186 ms** → pas un délai dépassé.
+  **Vraie cause** (#110) : `findByText('Femme')` trouvait le **libellé « Femme » du formulaire** encore ouvert ; le
+  formulaire se fermait aussitôt, l'élément était détaché, et `toBeInTheDocument()` échouait (« could not be found in the
+  document »). Correctif : attendre la fermeture du formulaire (`waitFor` sans bouton « Enregistrer »), puis `getByText`.
+  Même course latente corrigée dans le test « Homme » suivant. Le délai de 3 s est gardé (inoffensif).
 - `src/devices/ble/measurements.js` : nombres IEEE-11073 (SFLOAT 16 bits, FLOAT 32 bits, valeurs spéciales NaN / NRes /
   ±INF → null), horodatage de l'appareil (heure locale ; horloge non réglée ou > 24 h dans le futur → heure de réception) ;
   décodeurs 0x2A35 tension (mmHg / kPa, pouls), 0x2A9D poids (5 g ou 0,01 lb, 0xFFFF ignoré), 0x2A9C composition
@@ -37,6 +41,9 @@
   `--ble=receive` (« Tension 127/81 mmHg · pouls 63 » en direct), `--ble=received` (2 mesures enregistrées).
 
 ## Apprentissages / décisions
+- Piège de test : `expect(await findByText(x)).toBeInTheDocument()` échoue si `x` existe aussi dans un élément sur le
+  point de disparaître (formulaire qui se ferme). Attendre l'état final (`waitFor`) avant de chercher le texte.
+  Un échec CI rapide (≪ délai) n'est jamais un problème de lenteur : lire la durée du test avant de corriger.
 - Les appareils de mesure standard n'annoncent souvent qu'**après** une mesure, puis coupent : le bon geste est « mesurer
   puis Recevoir », ou « Recevoir puis mesurer » si l'appareil est déjà allumé. Les deux sont expliqués à l'écran.
 - Beaucoup de tensiomètres (Omron…) exigent un **appairage** : Android le déclenche tout seul à l'abonnement à une
