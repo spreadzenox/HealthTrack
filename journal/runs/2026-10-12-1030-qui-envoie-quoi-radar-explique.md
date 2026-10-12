@@ -1,6 +1,6 @@
 # 2026-10-12 08:30 UTC (10:30 Paris) — « Qui envoie quoi » + Radar expliqué
 
-**Type** : 🏗️  ·  **PR** : voir la PR « [Auto] Qui envoie quoi + Radar expliqué »
+**Type** : 🏗️  ·  **PR** : #113 (fusionnée)
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte ; Tests, émulateur et Build & Release (v102) verts sur main (214cdf4).
