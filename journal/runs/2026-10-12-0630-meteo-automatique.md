@@ -1,6 +1,6 @@
 # 2026-10-12 06:30 Paris (04:30 UTC) — Chasse aux bugs Bluetooth + météo / pression / air automatiques
 
-**Type** : 🐛 (relecture critique de la couche BLE des 3 derniers runs) + 🏗️ (C8, I4 : capture passive du contexte)  ·  **PR** : voir le tableau du résumé
+**Type** : 🐛 (relecture critique de la couche BLE des 3 derniers runs) + 🏗️ (C8, I4 : capture passive du contexte)  ·  **PR** : #111
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte ; Build & Release v101 ✅, Tests de main ✅ (le test instable de #110 est réglé).

@@ -67,7 +67,7 @@ temps d'écran, météo étape 2 (prévision du jour, tag « mal de tête »).
 | 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → v98 |
 | 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #108 fusionnée → v99 |
 | 12/10 04:30 — [Mesures Bluetooth](runs/2026-10-12-0430-mesures-bluetooth.md) | 🏗️🐛 | PR #109 fusionnée → v100, PR #110 (test instable) |
-| 12/10 06:30 — [Météo automatique + bugs BLE](runs/2026-10-12-0630-meteo-automatique.md) | 🐛🏗️ | PR en cours |
+| 12/10 06:30 — [Météo automatique + bugs BLE](runs/2026-10-12-0630-meteo-automatique.md) | 🐛🏗️ | PR #111 → release à la fusion |
 
 ---
 
