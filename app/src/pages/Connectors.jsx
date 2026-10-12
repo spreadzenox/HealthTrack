@@ -10,6 +10,7 @@ import WatchGuides from '../components/WatchGuides'
 import MyDevices from '../components/MyDevices'
 import BleDevices from '../components/BleDevices'
 import WeatherCard from '../components/WeatherCard'
+import PhoneUsageCard from '../components/PhoneUsageCard'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
 import './Connectors.css'
 
@@ -483,6 +484,8 @@ export default function Connectors() {
       </div>
 
       <WeatherCard />
+
+      <PhoneUsageCard />
 
       <BleDevices />
 

@@ -47,9 +47,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 ### C8 — Capture passive du contexte (priorité n° 1)
 - [x] **Météo, pression, qualité de l'air, pollen** (I4) : Open-Meteo sans clé, position arrondie ≈ 10 km (géoloc approximative ou ville), 92 jours d'historique, mise à jour ≤ 3 h à l'ouverture, 6 variables « environnement » dans les Analyses (jamais des leviers), puce Météo dans le journal, carte dans Connecteurs (`src/services/weather*.js`) (run 12/10 06:30)
 - [ ] Météo, étape 2 : prévision du jour dans la prédiction (remplacer l'entrée du jour → `upsertEntries` à faire évoluer), effet décalé de la pression (J−1), tag « mal de tête » avec intensité pour tester la sensibilité à la pression, rappel du matin « pression en chute »
-- [ ] **Temps d'écran et téléphone au lit** (I6, UsageStatsManager) → variables + sommeil estimé sans montre
-- [ ] **Sommeil estimé par le téléphone** (I25, même plugin Kotlin `PhoneUsage` que I6) : plus longue période écran éteint 20 h–12 h + charge → `sleep` source `phone_estimate`, jamais prioritaire sur une montre
-- [ ] I6 / I25 : guide « Autoriser les paramètres restreints » (Android 15+, APK hors store) avant l'accès aux données d'utilisation ; plugin maison autour de `queryEvents` (le plugin Capgo ne l'expose pas)
+- [x] **Temps d'écran, écran tard, déverrouillages + sommeil estimé par le téléphone** (I6 + I25) : plugin Java maison `PhoneUsagePlugin` (événements écran seulement, `queryEvents`), entrées `phone_usage` par journée terminée, 3 variables « mode de vie », nuit estimée utilisée seulement sans montre (pas par le Radar), carte + guide d'accès (paramètres restreints) dans Connecteurs, puces du journal (run 12/10 12:30 Paris)
+- [ ] Téléphone, étape 2 : pré-cocher « Écran tard » dans le check-in quand > 30 min ; nuits estimées dans la carte Régularité ; charge (`ACTION_POWER_CONNECTED`) pour affiner la nuit ; correction en un geste (« je me suis couché à… ») ; catégories d'apps (option explicite) ; vérifier l'accès sur l'A56
 - [ ] **Courbe caféine (et alcool)** (I27) : « ☕ maintenant » en 1 tap, modèle à 1 compartiment (T½ 5 h ajustable), « caféine restante au coucher » comme variable / levier
 - [ ] Pas du téléphone sans Health Connect (I36) ; routine / temps à la maison sans GPS (I37, Wi-Fi haché)
 - [ ] Calendrier → charge de la journée (I11)

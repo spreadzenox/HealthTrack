@@ -1921,6 +1921,41 @@ describe('jours sans repas saisi (oubli de saisie ≠ jeûne)', () => {
   })
 })
 
+describe('téléphone (entrées « phone_usage »)', () => {
+  function makePhone(dateStr, payload) {
+    return { type: 'phone_usage', source: 'phone', at: `${dateStr}T10:00:00Z`, payload: { date: dateStr, ...payload } }
+  }
+
+  it('temps d’écran, écran tard et déverrouillages du jour ; inconnus sans journal (jamais 0)', () => {
+    const ds = buildDailyDataset([
+      makeWellbeing('2026-01-10', 3),
+      makePhone('2026-01-10', { screenMinutes: 185, lateScreenMinutes: 0, unlocks: 64, sleepEstimate: { minutes: 440 } }),
+      makeWellbeing('2026-01-11', 4),
+    ])
+    expect(ds[0]).toMatchObject({ screen_minutes: 185, screen_late_minutes: 0, phone_unlocks: 64, sleepMinutes: 440 })
+    expect(ds[1].screen_minutes).toBeNull()
+    expect(ds[1].sleepMinutes).toBeNull()
+  })
+
+  it('leviers du mode de vie (moins d’écran), la nuit de la montre prime sur l’estimation', () => {
+    for (const k of ['screen_minutes', 'screen_late_minutes', 'phone_unlocks']) {
+      expect(VARIABLE_META[k].group).toBe('lifestyle')
+      expect(VARIABLE_META[k].direction).toBe('lower_better')
+    }
+    expect(VARIABLE_META.screen_late_minutes.format(95)).toBe('1 h 35')
+    const ds = buildDailyDataset([
+      makeWellbeing('2026-01-10', 3),
+      makePhone('2026-01-10', { screenMinutes: 100, sleepEstimate: { minutes: 500 } }),
+      { type: 'sleep', source: 'health_connect', at: '2026-01-09T23:00:00', payload: { durationMinutes: 420, endDate: '2026-01-10T06:00:00', sleepState: 'asleep' } },
+    ])
+    expect(ds[0].sleepMinutes).toBe(420)
+  })
+
+  it('une journée avec seulement le temps d’écran ne compte pas comme une journée de données', () => {
+    expect(countTotalDataDays([makePhone('2026-01-10', { screenMinutes: 10 }), makeWellbeing('2026-01-11', 3)])).toBe(1)
+  })
+})
+
 describe('contexte météo et air (entrées « weather »)', () => {
   function makeWeather(dateStr, payload) {
     return { type: 'weather', source: 'open_meteo', at: `${dateStr}T10:00:00Z`, payload: { date: dateStr, ...payload } }

@@ -76,6 +76,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // 5 hPa en un jour retire un peu de bien-être (utilisateur « sensible à la météo »). Graine choisie pour
   // éviter une corrélation fortuite pollen / pollution (la graine 4000 en donnait une, artefact du hasard).
   const weatherRand = mulberry32(seed + 4003)
+  const phoneRand = mulberry32(seed + 5009)
   let pressure = 1016
 
   for (let i = days; i >= 0; i--) {
@@ -240,6 +241,23 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       })
       const last = entries[entries.length - 1].payload
       last.pollenMax = last.pollen.grass
+    }
+
+    if (i >= 1) {
+      // Téléphone (temps d'écran) : journées terminées.
+      const date = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`
+      entries.push({
+        type: 'phone_usage',
+        source: 'phone',
+        at: at(day, 12),
+        payload: {
+          date,
+          screenMinutes: Math.round(120 + phoneRand() * 140),
+          lateScreenMinutes: Math.round(20 + phoneRand() * 70),
+          unlocks: Math.round(35 + phoneRand() * 40),
+          sleepEstimate: null,
+        },
+      })
     }
   }
 

@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "nouveau",
+  "title": "Votre téléphone devient un capteur : temps d’écran et sommeil estimé",
+  "items": [
+    "Plus → Connecteurs → « Temps d’écran et sommeil » : touchez « Activer », autorisez HealthTrack dans « Accès aux données d’utilisation » (le guide pas à pas s’affiche), et c’est tout.",
+    "Chaque jour arrivent tout seuls votre temps d’écran, l’écran tard le soir (22 h – 4 h) et le nombre de déverrouillages. Ils apparaissent dans « Vos derniers jours » (puce « Écran ») et les Analyses vérifient s’ils pèsent sur votre bien-être.",
+    "Les nuits sans montre, HealthTrack estime votre sommeil d’après la plus longue période sans écran (un coup d’œil à l’heure en pleine nuit ne la coupe pas). C’est une estimation, marquée « Sommeil (estimé) » ; une montre qui envoie son sommeil passe toujours avant.",
+    "Seuls les allumages et extinctions de l’écran sont lus : jamais vos apps ni vos messages, et rien ne quitte le téléphone."
+  ]
+}

@@ -50,12 +50,20 @@ export const RADAR_METRICS = [
  * Les phases (léger, profond, paradoxal, « endormi ») sont additionnées ; les éveils
  * sont ignorés ; « au lit » ne sert que si c'est le seul enregistrement de la nuit
  * (sinon il chevauche les phases et serait compté deux fois).
+ * `phoneFallback` : une nuit sans montre prend la durée estimée par le téléphone (entrée `phone_usage`) ;
+ * le Radar ne l'utilise pas (trop imprécise pour signaler un écart).
  * @returns {Map<string, number>} jour (YYYY-MM-DD) → minutes
  */
-export function nightlySleep(entries) {
+export function nightlySleep(entries, { phoneFallback = false } = {}) {
   const asleep = new Map()
   const inBed = new Map()
+  const phone = new Map()
   for (const e of entries || []) {
+    if (phoneFallback && e?.type === 'phone_usage') {
+      const est = e.payload?.sleepEstimate
+      if (e.payload?.date && Number.isFinite(est?.minutes) && est.minutes > 0) phone.set(e.payload.date, est.minutes)
+      continue
+    }
     if (e?.type !== 'sleep' || !e.at) continue
     const mins = e.payload?.durationMinutes
     if (typeof mins !== 'number' || !Number.isFinite(mins) || mins <= 0) continue
@@ -65,7 +73,9 @@ export function nightlySleep(entries) {
     if (!state || ASLEEP_STATES.has(state)) asleep.set(key, (asleep.get(key) || 0) + mins)
     else if (state === 'inBed') inBed.set(key, (inBed.get(key) || 0) + mins)
   }
-  const out = new Map(inBed)
+  // Nuit estimée par le téléphone (temps d'écran) : seulement les nuits sans montre.
+  const out = new Map(phone)
+  for (const [key, mins] of inBed) out.set(key, mins)
   for (const [key, mins] of asleep) out.set(key, mins)
   const [min, max] = SLEEP_METRIC.plausible
   for (const [key, mins] of out) if (mins < min || mins > max) out.delete(key)
