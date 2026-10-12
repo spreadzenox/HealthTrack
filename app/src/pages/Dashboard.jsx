@@ -8,6 +8,7 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import BaselineCards from '../components/BaselineCards'
 import HealthRadar from '../components/HealthRadar'
+import MoodEstimateCard from '../components/MoodEstimateCard'
 import SleepRegularityCard from '../components/SleepRegularityCard'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import SavedMealEditor from '../components/SavedMealEditor'
@@ -386,6 +387,7 @@ export default function Dashboard() {
       {!loading && !error && (
         <>
           <HealthRadar />
+          <MoodEstimateCard />
           <BaselineCards />
           <SleepRegularityCard />
           <WellbeingCharts />

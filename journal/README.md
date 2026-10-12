@@ -36,6 +36,12 @@
   l'écran tard (22 h–4 h) et les déverrouillages — puce « Écran » dans « Vos derniers jours », variables des Analyses.
   Les nuits **sans montre**, le sommeil est estimé d'après la plus longue période sans écran (« Sommeil (estimé) ») ;
   la montre passe toujours avant. Seuls les allumages / extinctions de l'écran sont lus, rien ne sort du téléphone.
+- **Humeur estimée** (accueil, sous le Radar) : sans rien saisir, HealthTrack dit si vous êtes « dans votre plage
+  habituelle », au-dessus ou en dessous, d'après votre sommeil, VFC, FC au repos, pas de la veille et écran tard comparés
+  à vos 4 dernières semaines (chaque signal affiché avec sa valeur habituelle). Après 14 jours de notes de bien-être,
+  l'app apprend ce qui suit **votre** humeur et donne une note sur 5 avec une fourchette — seulement si elle prédit vos
+  notes mieux que votre simple moyenne. Toujours « une estimation, pas un diagnostic » ; si elle reste basse environ deux
+  semaines, un mot doux (proche, médecin, 3114).
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -59,12 +65,16 @@
   pour les prochaines captures du téléphone (pas sans montre, montre appairée identifiée par son nom…).
 - « Qui envoie quoi » : une mesure est « habituelle » si elle arrive au moins 7 jours sur 14 ; alerte après 3 jours
   sans rien — une pesée ou une séance ne déclenche donc jamais d'alerte.
+- Humeur estimée : l'estimation ne **pré-remplit pas** le check-in, volontairement — une note pré-remplie serait
+  souvent validée telle quelle et l'app apprendrait sa propre réponse. Elle tourne entièrement sur le téléphone.
 - Le workflow **Tests** de main était rouge par intermittence (un test de la page Nutrition qui lisait un libellé du
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
 - **À essayer** : Connecteurs → « Temps d'écran et sommeil » → Activer. Dites-moi si Android a affiché « Paramètre
   restreint » (le guide explique quoi faire) et si la « Nuit estimée » du lendemain matin colle à votre nuit réelle.
+- **À regarder** : la carte « Humeur estimée » de l'accueil colle-t-elle à votre ressenti ? Dites-moi les jours où elle
+  se trompe nettement (et dans quel sens) : c'est ce qui permettra de régler les seuils.
 - « Mes appareils » n'a été vérifié que sur captures simulées : **dites-moi ce que la carte affiche sur votre A56**
   (Huawei Health doit apparaître ; si une app manque ou si une app est mal nommée, c'est à corriger).
 - **À essayer avec la GT 6 Pro** : lancez une séance, activez sur la montre la diffusion / le partage de la fréquence
@@ -96,8 +106,7 @@
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités** — l'estimation d'humeur « plage habituelle » (le temps d'écran et le sommeil estimé la
-nourrissent) et le briefing du matin ; réception Bluetooth automatique ; bandeau d'accueil quand une mesure s'arrête.
+**Prochaines priorités** — le briefing du matin (humeur estimée + Radar + météo + une action) ; réception Bluetooth automatique ; bandeau d'accueil quand une mesure s'arrête.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -108,6 +117,7 @@ nourrissent) et le briefing du matin ; réception Bluetooth automatique ; bandea
 | 12/10 08:30 — [Idées : téléphone, bagues, action](runs/2026-10-12-0830-idees-telephone-bagues-action.md) | 💡 | 17 idées (I22–I38), journal seul |
 | 12/10 10:30 — [Qui envoie quoi + Radar expliqué](runs/2026-10-12-1030-qui-envoie-quoi-radar-explique.md) | 🏗️ | PR #113 fusionnée → v103 |
 | 12/10 12:30 — [Temps d'écran + sommeil par le téléphone](runs/2026-10-12-1030-temps-ecran-sommeil-telephone.md) | 🏗️ | PR #114 fusionnée → v104 |
+| 12/10 14:30 — [Humeur estimée](runs/2026-10-12-1230-humeur-estimee.md) | 🏗️ | PR #115 (voir compte rendu) |
 
 ---
 
