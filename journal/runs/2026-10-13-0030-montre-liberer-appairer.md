@@ -1,6 +1,6 @@
 # 2026-10-13 00:30 Paris (22:30 UTC) — Priorité montre : libérer et appairer (D3 b)
 
-**Type** : ⌚🏗️ (priorité absolue, étape b)  ·  **PR** : voir tableau du README
+**Type** : ⌚🏗️ (priorité absolue, étape b)  ·  **PR** : #125 (fusionnée → v110, APK publié ; CI Vitest, Build APK et émulateur A56 Android 15 / 16 vertes)
 
 ## Pourquoi
 - Démarrage : main vert (bf809a6, v109, Build & Release ✅), aucune PR « [Auto] » ouverte (seule #51 cursor/*, non touchée).
