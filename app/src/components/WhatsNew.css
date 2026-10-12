@@ -108,13 +108,3 @@
   font-size: 0.9rem;
   line-height: 1.45;
 }
-
-.whats-new-settings-link {
-  display: block;
-  padding: 12px 14px;
-  margin: 8px 0 24px;
-  background: var(--surface);
-  border-radius: var(--radius);
-  color: var(--text);
-  text-decoration: none;
-}

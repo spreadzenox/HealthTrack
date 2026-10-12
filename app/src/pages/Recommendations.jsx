@@ -15,7 +15,7 @@ import {
   MIN_ADVICE_EFFECT,
   MIN_WEEKEND_DAYS,
 } from '../services/analysisEngine'
-import { computeTagEffects, MIN_TAG_DAYS } from '../services/behaviorTags'
+import { computeTagEffects, MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN } from '../services/behaviorTags'
 import { computeLaggedEffects, LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
@@ -152,6 +152,7 @@ function TagEffectCard({ effect }) {
       )}
       <p className="reco-tag-days">
         {effect.nWith} jour{effect.nWith > 1 ? 's' : ''} avec · {effect.nWithout} sans
+        {effect.auto && ` · mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`}
       </p>
       <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
         {evidenceLabel(effect.evidence)}
@@ -167,7 +168,7 @@ function TagsSection({ entries }) {
       <h3 className="reco-section-title">🏷️ Vos habitudes</h3>
       {result.status === 'no_tags' ? (
         <p className="reco-section-hint">
-          Ajoutez des tags (alcool, café après 14 h, écran tard, stress…) quand vous notez votre
+          Ajoutez des tags (alcool, café après 14 h, stress…) quand vous notez votre
           bien-être. Après {MIN_TAG_DAYS} jours avec et {MIN_TAG_DAYS} jours sans, vous verrez
           ici comment chacun va de pair avec votre bien-être.
         </p>
@@ -666,8 +667,8 @@ function RecoDebugPanel({ entries, totalDbCount }) {
 // ─── Page root ────────────────────────────────────────────────────────────────
 
 const TABS = [
-  { id: 'basic', label: 'Recommandations basiques', minDays: MIN_DAYS_BASIC },
-  { id: 'advanced', label: 'Recommandations avancées', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS },
+  { id: 'basic', label: 'Analyse simple', minDays: MIN_DAYS_BASIC },
+  { id: 'advanced', label: 'Analyse avancée', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS },
 ]
 
 export default function Recommendations() {
@@ -706,7 +707,7 @@ export default function Recommendations() {
 
   return (
     <section className="reco-page">
-      <h2 className="page-title">Recommandations</h2>
+      <h2 className="page-title">Analyses</h2>
       <p className="reco-intro">
         Analyse locale de vos données de santé pour identifier les facteurs qui influencent
         le plus votre <strong>bien-être</strong>. Tout est calculé directement sur votre appareil.

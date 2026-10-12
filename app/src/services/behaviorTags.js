@@ -29,6 +29,9 @@ const PERMUTATIONS = 2000
 /**
  * effectDay: 'next' → compared on the following day's wellbeing (evening
  * behaviours whose effect shows the day after), 'same' → same day.
+ * auto: the tag is measured by the app itself when that capture is on ('phone_usage': late screen
+ * from the phone's screen events) — the check-in then no longer asks for it, and the measured value
+ * wins over a declared tag for the same evening (never ask for something the app already captures).
  * radarCause: a known, harmless reason for resting HR / HRV / sleep to drift
  * for a night or two — the radar then says « probably linked to… » instead of
  * raising a worry (radar.js, explainRadar).
@@ -37,7 +40,7 @@ export const BEHAVIOR_TAGS = [
   { id: 'alcohol', label: 'Alcool', emoji: '🍷', effectDay: 'next', radarCause: true },
   { id: 'coffee_late', label: 'Café après 14 h', emoji: '☕', effectDay: 'next' },
   { id: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next', radarCause: true },
-  { id: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next' },
+  { id: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next', auto: 'phone_usage' },
   { id: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next', radarCause: true },
   { id: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same', radarCause: true },
   { id: 'travel', label: 'Voyage', emoji: '✈️', effectDay: 'same', radarCause: true },
@@ -46,6 +49,39 @@ export const BEHAVIOR_TAGS = [
 ]
 
 const TAGS_BY_ID = Object.fromEntries(BEHAVIOR_TAGS.map((t) => [t.id, t]))
+
+/** Minutes of screen between 22:00 and 04:00 from which an evening counts as « Écran tard ». */
+export const AUTO_LATE_SCREEN_MIN = 30
+
+/**
+ * Tags the check-in should not ask for, because the app measures them itself.
+ * @param {{ phoneUsage?: boolean }} captures  which automatic captures are on
+ */
+export function autoDetectedTagIds({ phoneUsage = false } = {}) {
+  return BEHAVIOR_TAGS.filter((t) => t.auto === 'phone_usage' && phoneUsage).map((t) => t.id)
+}
+
+/** 'YYYY-MM-DD' → the previous calendar day. */
+function previousDateKey(key) {
+  const [y, m, d] = key.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d - 1)).toISOString().slice(0, 10)
+}
+
+/**
+ * Measured tags per evening: Map<tagId, Map<dateKey, boolean>>.
+ * A phone_usage entry of day D carries the screen time of the evening of D−1 (22:00 → 04:00).
+ */
+function measuredTags(entries) {
+  const late = new Map()
+  for (const e of entries) {
+    if (e.type !== 'phone_usage') continue
+    const date = e.payload?.date
+    const mins = e.payload?.lateScreenMinutes
+    if (typeof date !== 'string' || typeof mins !== 'number' || Number.isNaN(mins)) continue
+    late.set(previousDateKey(date), mins >= AUTO_LATE_SCREEN_MIN)
+  }
+  return new Map([['late_screen', late]])
+}
 
 export function getTagMeta(id) {
   return TAGS_BY_ID[id] ?? null
@@ -171,8 +207,13 @@ export function computeTagEffects(entries) {
 
   const keys = [...days.keys()].sort()
   const firstTagged = keys.find((k) => days.get(k).tags.size > 0)
-  if (!firstTagged) return { status: 'no_tags' }
-  const tracked = keys.filter((k) => k >= firstTagged)
+  const measured = measuredTags(entries)
+  const anyMeasured = [...measured.values()].some((m) => keys.some((k) => m.has(k)))
+  if (!firstTagged && !anyMeasured) return { status: 'no_tags' }
+  // Declared tags only count from the first tag ever used (older days are not « without »);
+  // a measured evening always counts.
+  const declaredFrom = firstTagged ?? '9999-12-31'
+  const tracked = new Set()
 
   const effects = []
   const pending = []
@@ -180,17 +221,24 @@ export function computeTagEffects(entries) {
     const withTag = []
     const withoutTag = []
     const strata = { weekend: { a: [], b: [] }, weekday: { a: [], b: [] } }
-    for (const k of tracked) {
+    const tagMeasured = measured.get(tag.id)
+    let usedMeasure = false
+    for (const k of keys) {
+      const isMeasured = tagMeasured?.has(k) ?? false
+      if (!isMeasured && k < declaredFrom) continue
       const outcomeKey = tag.effectDay === 'next' ? nextDateKey(k) : k
       const outcomeDay = days.get(outcomeKey)
       if (!outcomeDay) continue
+      tracked.add(k)
       const score = outcomeDay.sum / outcomeDay.count
-      const has = days.get(k).tags.has(tag.id)
+      const has = isMeasured ? tagMeasured.get(k) : days.get(k).tags.has(tag.id)
+      if (isMeasured) usedMeasure = true
       ;(has ? withTag : withoutTag).push(score)
       const stratum = strata[isWeekendKey(outcomeKey) ? 'weekend' : 'weekday']
       ;(has ? stratum.a : stratum.b).push(score)
     }
     const base = { tagId: tag.id, label: tag.label, emoji: tag.emoji, effectDay: tag.effectDay }
+    if (usedMeasure) base.auto = true
     if (withTag.length === 0) continue
     if (withTag.length < MIN_TAG_DAYS || withoutTag.length < MIN_TAG_DAYS) {
       pending.push({ ...base, nWith: withTag.length, nWithout: withoutTag.length })
@@ -223,5 +271,5 @@ export function computeTagEffects(entries) {
   })
   effects.sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff))
 
-  return { status: 'ok', trackedDays: tracked.length, effects, pending }
+  return { status: 'ok', trackedDays: tracked.size, effects, pending }
 }

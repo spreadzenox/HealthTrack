@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "amélioration",
+  "title": "Une app plus simple : moins de questions, moins de doublons",
+  "items": [
+    "« Écran tard » n’est plus demandé dans le check-in quand « Temps d’écran et sommeil » est activé : le téléphone le mesure tout seul (au moins 30 min d’écran après 22 h). Dans Analyses → Vos habitudes, ces soirées mesurées sont comparées automatiquement ; vos anciens tags restent pris en compte.",
+    "Accueil : la carte « Humeur estimée » est retirée. Elle doublait la « Prédiction du jour » et devinait l’humeur à partir de vos comportements (sommeil, pas, écran), qui sont justement ce que l’app cherche à relier à votre humeur. Elle reviendra plus tard, fondée sur des signaux directs de votre état.",
+    "L’onglet Analyses s’appelle maintenant « Analyses » partout (« Analyse simple » / « Analyse avancée »).",
+    "Paramètres : le lien « Nouveautés » en double est retiré (il est dans Plus) ; le mode debug devient un simple interrupteur « Mode diagnostic », sans adresse MAC à saisir."
+  ]
+}

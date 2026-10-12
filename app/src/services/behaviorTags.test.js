@@ -7,6 +7,8 @@ import {
   permutationPValue,
   stratifiedPermutationPValue,
   computeTagEffects,
+  autoDetectedTagIds,
+  AUTO_LATE_SCREEN_MIN,
 } from './behaviorTags'
 
 // Builds a wellbeing check-in at 21:30 local time, `daysAgo` days before a fixed date.
@@ -237,5 +239,69 @@ describe('computeTagEffects', () => {
       expect(res.effects.find((x) => x.tagId === 'alcohol')).toBeUndefined()
       expect(res.pending.find((x) => x.tagId === 'alcohol')).toMatchObject({ weekendOnly: true })
     })
+  })
+})
+
+// phone_usage of the day dayIndex: its late screen covers the evening BEFORE (22:00 → 04:00).
+function phoneDay(dayIndex, lateScreenMinutes) {
+  const d = new Date(2026, 8, 1, 12, 0)
+  d.setDate(d.getDate() + dayIndex)
+  const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return { type: 'phone_usage', source: 'phone', at: d.toISOString(), payload: { date, screenMinutes: 200, lateScreenMinutes, unlocks: 40 } }
+}
+
+describe('late screen detected by the phone (no check-in tag needed)', () => {
+  it('declares late_screen as automatic from phone_usage', () => {
+    expect(getTagMeta('late_screen').auto).toBe('phone_usage')
+    expect(AUTO_LATE_SCREEN_MIN).toBe(30)
+  })
+
+  it('analyses late screen from phone_usage even when no tag was ever used', () => {
+    // Evening of day i: late screen when i is even; phone_usage of day i+1 carries it.
+    const entries = []
+    for (let i = 0; i < 20; i++) {
+      entries.push(checkin(i, i % 2 === 1 ? 1 : 4))
+      entries.push(phoneDay(i + 1, i % 2 === 0 ? 75 : 5))
+    }
+    const res = computeTagEffects(entries)
+    expect(res.status).toBe('ok')
+    const e = res.effects.find((x) => x.tagId === 'late_screen')
+    expect(e).toBeDefined()
+    expect(e.auto).toBe(true)
+    expect(e.nWith).toBe(10)
+    expect(e.nWithout).toBe(9)
+    expect(e.diff).toBeCloseTo(-3)
+  })
+
+  it('the measured value wins over the declared tag, the tag still counts where nothing was measured', () => {
+    const entries = []
+    for (let i = 0; i < 20; i++) {
+      // Days 0-9: declared only (tag on even days). Days 10-19: measured, and contradicts a stale tag.
+      const tags = i < 10 && i % 2 === 0 ? ['late_screen'] : i >= 10 ? ['late_screen'] : []
+      entries.push(checkin(i, i % 2 === 1 ? 1 : 4, tags))
+      if (i >= 10) entries.push(phoneDay(i + 1, i % 2 === 0 ? 60 : 0))
+    }
+    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'late_screen')
+    expect(e.nWith).toBe(10)
+    expect(e.nWithout).toBe(9)
+    expect(e.diff).toBeCloseTo(-3)
+  })
+
+  it('does not count days without a phone measurement as "without" for a user who never tagged', () => {
+    const entries = []
+    for (let i = 0; i < 20; i++) entries.push(checkin(i, 3, i === 0 ? ['alcohol'] : []))
+    for (let i = 15; i < 19; i++) entries.push(phoneDay(i + 1, 60))
+    const res = computeTagEffects(entries)
+    const pending = res.pending.find((x) => x.tagId === 'late_screen')
+    // 4 measured late evenings; the 15 earlier untagged, unmeasured days still count as « sans »
+    // only because tagging had started (day 0) — they are declared days.
+    expect(pending.nWith).toBe(4)
+  })
+})
+
+describe('autoDetectedTagIds', () => {
+  it('lists late_screen only when the phone capture is on', () => {
+    expect(autoDetectedTagIds({ phoneUsage: true })).toEqual(['late_screen'])
+    expect(autoDetectedTagIds({ phoneUsage: false })).toEqual([])
   })
 })

@@ -12,13 +12,83 @@ données », local-first :
 2. **Tous les objets connectés** (priorité n° 2) — autodétection des appareils et apps santé, données brutes,
    Health Connect + couche BLE générique (profils standard puis familles de protocoles), guides pas à pas quand une
    étape manuelle est inévitable. Cas pilote : Huawei Watch GT 6 Pro du propriétaire.
-3. **Humeur et bien-être estimés passivement** (priorité n° 3) — sommeil, VFC, activité, écran, mobilité, voix,
-   conversations ; sur l'appareil ; toujours « estimation », jamais diagnostic.
+3. **Humeur et bien-être estimés passivement** (priorité n° 3) — par signaux émotionnels **directs** (visage, voix,
+   réseaux sociaux, auto-déclaration ; directives du 12/10 : sommeil / activité / écran sont des X, jamais des entrées) ;
+   sur l'appareil ; toujours « estimation », jamais diagnostic.
 4. **Comprendre ce qui marche *pour moi*** — moteur N-of-1 honnête (déjà riche : C3), expériences personnelles.
 5. **Coach et assistant** — résumés, prévisions, alertes précoces, actions concrètes.
 6. **Confiance** — zéro régression, données jamais perdues, transparence sur les méthodes.
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
+
+## ⚠️ Directives du 12/10/2026 — chantiers D1 → D6, dans cet ordre, avant toute nouvelle fonctionnalité
+
+Texte complet : charte §00. Les chantiers C1–C9 plus bas passent **après** (sauf ce qui sert directement un D).
+
+### D1 — Passe de nettoyage (ne jamais demander ce que l'app capte déjà)
+Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) — ✅ fait ce run, ☐ à faire :
+- [x] Check-in : « Écran tard » plus demandé quand la capture « Temps d'écran » est active ; « Vos habitudes » le
+      compare d'après le téléphone (≥ 30 min entre 22 h et 4 h), la mesure prime sur un tag déclaré, anciens tags gardés
+- [x] Accueil : carte « Humeur estimée » retirée (doublon de « Prédiction du jour » + entrées comportementales = cercle
+      interdit par D5) ; service `moodEstimate.js` gardé pour sa calibration (réutilisable en D4)
+- [x] Paramètres : lien « Nouveautés » en double retiré (déjà dans Plus) ; mode debug déverrouillé par adresse MAC
+      saisie à la main → simple interrupteur « Mode diagnostic » (servira l'écran de diagnostic de D3)
+- [x] Analyses : titre « Recommandations » → « Analyses », onglets « Analyse simple / avancée »
+- [ ] Check-in, suite : « Sport le soir » auto-détecté depuis les séances Health Connect (début ≥ 18 h) quand une
+      montre envoie des séances ; « Repas tardif » depuis l'heure des repas saisis (mais un repas non saisi ≠ pas de
+      repas tardif → seulement si l'utilisateur saisit ses repas régulièrement) ; « Voyage » depuis un changement de
+      fuseau horaire
+- [ ] Accueil : « Radar forme » + « Votre cœur vs votre norme » + « Régularité du sommeil » = 3 cartes et 3 paragraphes
+      d'explication (« une observation, pas un diagnostic » ×2) → un seul bloc « Forme » avec explication repliable
+- [ ] Analyses : « Écran tard » apparaît 2 fois (tag mesuré dans « Vos habitudes » + variable continue « Écran tard
+      (veille au soir) » dans les corrélations) → n'en garder qu'une présentation
+- [ ] Analyses : la liste des corrélations affiche ~45 variables dont ~35 « incertaines » pâles → n'afficher que les
+      liens au moins « à confirmer » + « voir les N autres »
+- [ ] Paramètres : la configuration Withings (Client ID / Secret / URL) est dans Paramètres, l'interrupteur dans
+      Connecteurs → tout regrouper dans la carte Withings des Connecteurs
+- [ ] Accueil : « + 1 cigarette » toujours visible même pour un non-fumeur → n'afficher que si des cigarettes ont été
+      saisies ces 30 derniers jours (sinon dans « Ajouter… »)
+- [ ] Connecteurs : intro + 6 blocs empilés → ordre par statut (ce qui envoie / ce qui reste à brancher)
+
+### D2 — Performance (mesurer d'abord)
+- [ ] Mesure : temps de chargement par page (script Playwright, données de démo × 3 ans), nombre d'entrées lues par page,
+      profil des calculs (`computeAdvancedAnalysis`, `buildDailyDataset`) ; chiffres dans le compte rendu
+- [ ] `listEntries` / `listEntriesForAnalysis` : `getAll()` + filtre JS → requêtes par index (type, date) et par plage
+- [ ] Cache d'agrégats journaliers / hebdo précalculés, invalidés à l'écriture (`health-entries-updated`)
+- [ ] Mémoïsation, sous-échantillonnage des longues séries, Web Worker pour l'analyse, graphiques chargés en différé
+      (+ code splitting : bundle principal > 500 kB)
+- [ ] Test / budget anti-régression (temps ou nombre de lectures par page)
+
+### D3 — Huawei Watch GT 6 Pro en direct (sans Gadgetbridge)
+- [ ] Diagnostic d'abord : journal de connexion BLE lisible + écran « Diagnostic montre » (scan, services vus, étapes,
+      erreurs) + **export des logs** (fichier JSON / partage) pour le run suivant ; s'appuie sur le « Mode diagnostic »
+- [ ] Guide d'appairage : montre liée à Huawei Santé → que faire exactement (dissocier / réinitialiser, conséquences)
+- [ ] Protocole Huawei (« Link Protocol v2 ») réimplémenté d'après la doc publique (`huawei-lpv2` MIT, notes publiques),
+      jamais de code Gadgetbridge (AGPL) : trames TLV, chiffrement, authentification, tests sur trames d'exemple
+- [ ] Récupération FC / sommeil / pas / SpO₂ / stress-VFC, puis resynchro en arrière-plan
+
+### D4 — Humeur par signaux émotionnels directs (visage, voix, réseaux sociaux)
+- [ ] Étude des limites Android réelles (caméra / micro en arrière-plan, service de premier plan, indicateurs,
+      Accessibility, UsageStats) + choix du modèle local (MediaPipe / TFLite / ONNX) → `RESEARCH.md`
+- [ ] Capture opportuniste (au déverrouillage / à l'usage), scores seuls stockés, jamais d'image ni d'audio brut
+- [ ] Usage des réseaux sociaux (UsageStats par app) — décider : entrée de l'estimateur **ou** X (D5)
+
+### D5 — Anti-circularité (Y ≠ X)
+- [ ] Liste déclarée des entrées de l'estimateur d'humeur + test qui échoue si une variable est aussi un facteur des
+      corrélations / du modèle / des tags
+- [x] Estimateur comportemental retiré de l'affichage (carte « Humeur estimée », run 12/10 16:30 Paris)
+- [ ] Revue des pièges : ordre temporel (X avant Y — ex. pas **du jour** vs bien-être du jour), comparaisons multiples
+      (déjà BH), taille minimale, formulations « va de pair » partout
+
+### D6 — Science personnelle, pas de normes imposées
+- [ ] `LEVER_ACTIONS` + `VARIABLE_META.direction` (`higher_better` / `lower_better`) dans `analysisEngine.js` codent un
+      sens « sain » : `leverAction` **masque** une piste quand les données contredisent la norme → montrer la réalité
+      personnelle (« chez vous, plus d'écran le soir va avec une meilleure humeur ») et formuler les pistes de façon
+      neutre (« Tester : plus / moins de … »), la norme générale présentée comme hypothèse
+- [ ] Couleurs vert / rouge des corrélations et des tags : vert = « va avec un meilleur bien-être » (descriptif, OK) —
+      vérifier qu'aucun libellé ne juge le comportement ; Radar / cartes cœur « plus basse que d'habitude » en vert
+      (norme implicite) → neutre
+- [ ] Nutrition : repères ANSES présentés comme hypothèses générales, jamais comme des fautes
 
 ## Chantiers long terme (découpés en étapes livrables)
 
@@ -58,7 +128,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 
 ### C9 — Humeur estimée et conversations (priorité n° 3)
 - [x] **Humeur estimée « plage habituelle »** (I7 + I31, étape 1) : sommeil, VFC, FC repos, pas de la veille, écran tard vs norme 28 j, indice ± 0,75, Ridge calibrée sur les check-ins dès 14 j seulement si LOO ≥ 10 % mieux que la moyenne (note /5 + fourchette 80 %), bas ≥ 10 j / 14 → renvoi doux (3114), carte sur l'accueil (`moodEstimate.js`, `MoodEstimateCard`) (run 12/10 14:30 Paris)
-- [ ] Humeur estimée, étape 2 : régularité (écart du coucher) et temps dehors comme signaux ; mini-courbe 14 j ; « l'estimation disait 3,2 » affiché **après** le check-in (mesure de précision) — pas de pré-remplissage (boucle auto-confirmée)
+- [ ] ~~Humeur estimée, étape 2~~ (abandonné le 12/10 : entrées comportementales interdites par D5 → voir D4) : régularité (écart du coucher) et temps dehors comme signaux ; mini-courbe 14 j ; « l'estimation disait 3,2 » affiché **après** le check-in (mesure de précision) — pas de pré-remplissage (boucle auto-confirmée)
 - [ ] **Journal libre (dictée / texte) → tags, intensités, caféine, alcool, symptômes extraits** (I26, Gemini JSON + confirmation en 1 tap, repli mots-clés sans clé)
 - [ ] « Votre semaine en clair » (I9, gabarit local, Gemini optionnel)
 - [ ] Journal vocal (I17) : dictée → transcription locale → résumé / sentiment
@@ -145,22 +215,22 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 
 ## Prochaines étapes (ordre conseillé)
 
-Logique (réorientée le 11/10 soir) : d'abord **brancher les données du propriétaire** (montre Huawei) et capter plus
-sans saisie, puis la couche BLE générique, puis l'humeur estimée. Le travail d'analyse (C3) continue en fond.
+Réordonnées le 12/10 (16:30 Paris) selon les directives du 12/10 : D1 → D6 avant tout le reste, hors runs « idées ».
 
-1. ~~🏗️ C7 — types Health Connect (I2) + guide Huawei → Gadgetbridge (I1)~~ (run 11/10 20:30).
-2. ~~🏗️ C7 — « Mes appareils » (I3)~~ (run 12/10 00:30) ; étape 2 (appareils BLE appairés, bandeau d'accueil) après retour du propriétaire.
-3. ~~🏗️ C8 — Météo / pression / air / pollen (I4)~~ (run 12/10 06:30, #111).
-4. ~~🏗️ C7 — Couche BLE générique, étapes 1–2 (I8)~~ (runs 12/10 02:30 → 06:30).
-5. ~~🏗️ C8 — Temps d'écran + sommeil estimé par le téléphone (I6 + I25)~~ (run 12/10 12:30 Paris, #114).
-6. ~~🏗️ C2 — Radar expliqué (I22) + « Qui envoie quoi » (I23)~~ (run 12/10 10:30 Paris) ; étape 2 : bandeau d'accueil.
-7. ~~🏗️ C9 — Indice « plage habituelle » (I31 / I7)~~ (run 12/10 14:30 Paris) ; ensuite **Briefing du matin (I24)** qui l'affiche
-   (humeur estimée + Radar + météo + une action) — prochain run 🏗️ conseillé, après un run 🐛 (beaucoup de 🏗️ d'affilée).
-8. 🏗️ C9 — Journal libre → tags (I26) puis courbe caféine (I27).
-9. 🏗️ C7 — Bague Colmi en direct (I28), après lecture détaillée du protocole au prochain run idées.
-10. 🐛 / 🎨 en alternance : Capacitor 8.4 + CLI 8 (C1), un seul bloc Radar + cœur.
-11. 💡 Prochain run idées (12/10 20:30 Paris) : voir « À creuser » dans `IDEES.md` (VFC GT 6 Pro, protocole Colmi,
-    vérification des développeurs Android 2027).
+1. 🧹 D1 — fin du nettoyage : un seul bloc « Forme » sur l'accueil, corrélations incertaines repliées, doublon
+   « Écran tard » des Analyses, Withings regroupé dans Connecteurs, « + 1 cigarette » conditionnel, tags « Sport le
+   soir » / « Voyage » auto-détectés.
+2. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
+   Worker, graphiques différés ; budget anti-régression.
+3. ⌚ D3 — Huawei en direct : écran de diagnostic + export des logs **en premier** (le propriétaire pourra renvoyer ce
+   qu'il voit), puis guide d'appairage, puis protocole.
+4. 🙂 D4 — humeur par visage / voix / réseaux sociaux (recherche des limites Android, puis capture opportuniste).
+5. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
+6. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
+7. Ensuite seulement : briefing du matin (I24, à reconsidérer : il ajoute un écran — plutôt fusionner des cartes
+   existantes), réception BLE automatique, Colmi (I28), journal libre (I26).
+8. 💡 Prochain run idées (12/10 20:30 Paris) : privilégier les idées qui **simplifient et consolident** ; creuser D3
+   (protocole Huawei LPv2, état de la GT 6 Pro) et D4 (modèles locaux d'émotion faciale / vocale, limites Android).
 
 ## Idées en vrac (à trier)
 
@@ -199,6 +269,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-12 — Directives du 12/10 reportées (charte §00, chantiers D1–D6) + nettoyage, étape 1 : « Écran tard » mesuré plus demandé, « Humeur estimée » retirée, doublons Paramètres, « Mode diagnostic », titre « Analyses » (run 16:30 Paris)
 - [x] 2026-10-12 — « Qui envoie quoi » dans Mes appareils (mesure arrêtée signalée, mesures jamais reçues) + Radar expliqué par les tags de la veille, tags Voyage / Vaccin (run 10:30 Paris)
 - [x] 2026-10-12 — Run idées : 17 nouvelles idées (I22–I38) dans `IDEES.md`, backlog réorienté (Radar expliqué, « qui envoie quoi », sommeil par le téléphone, plage habituelle, briefing du matin) (run 08:30 Paris)
 - [x] 2026-10-12 — Capteurs Bluetooth : recherche et reconnaissance automatique par profil standard / famille, mesure FC + VFC en direct sur toute ceinture cardio ou montre qui diffuse sa FC (run 02:30)

@@ -6,8 +6,10 @@
 > Le premier run d'une nouvelle semaine archive ce bloc dans `semaines/AAAA-Sww.md` et en ouvre un neuf.
 > Semaine précédente : [`semaines/2026-S41.md`](semaines/2026-S41.md) (mise en place de la routine, v59 → v97).
 
-**En bref** — Semaine tournée vers vos directions du 11/10 : brancher automatiquement montres et apps santé
-(priorité n° 2), capter plus sans saisie (priorité n° 1), puis l'humeur estimée.
+**En bref** — Début de semaine tourné vers vos directions du 11/10 (brancher montres et apps, capter sans saisie).
+**Depuis vos directives du 12/10, la routine a changé de cap** : plus de nouvelles fonctionnalités avant d'avoir fait,
+dans l'ordre, le nettoyage (D1), la performance (D2), la connexion directe à la GT 6 Pro (D3), l'humeur par visage /
+voix (D4), l'anti-circularité (D5) et une science personnelle sans normes imposées (D6). Premier pas livré : le nettoyage.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -36,12 +38,12 @@
   l'écran tard (22 h–4 h) et les déverrouillages — puce « Écran » dans « Vos derniers jours », variables des Analyses.
   Les nuits **sans montre**, le sommeil est estimé d'après la plus longue période sans écran (« Sommeil (estimé) ») ;
   la montre passe toujours avant. Seuls les allumages / extinctions de l'écran sont lus, rien ne sort du téléphone.
-- **Humeur estimée** (accueil, sous le Radar) : sans rien saisir, HealthTrack dit si vous êtes « dans votre plage
-  habituelle », au-dessus ou en dessous, d'après votre sommeil, VFC, FC au repos, pas de la veille et écran tard comparés
-  à vos 4 dernières semaines (chaque signal affiché avec sa valeur habituelle). Après 14 jours de notes de bien-être,
-  l'app apprend ce qui suit **votre** humeur et donne une note sur 5 avec une fourchette — seulement si elle prédit vos
-  notes mieux que votre simple moyenne. Toujours « une estimation, pas un diagnostic » ; si elle reste basse environ deux
-  semaines, un mot doux (proche, médecin, 3114).
+- **Plus simple (nettoyage, étape 1)** : « Écran tard » n'est plus demandé au check-in quand « Temps d'écran » est
+  activé — le téléphone le mesure (≥ 30 min après 22 h) et « Vos habitudes » s'en sert tout seul. La carte « Humeur
+  estimée » (ajoutée plus tôt aujourd'hui) est **retirée** : elle doublait « Prédiction du jour » et devinait l'humeur à
+  partir de vos comportements, ce que vos directives interdisent ; elle reviendra fondée sur le visage / la voix.
+  L'onglet s'appelle « Analyses » partout ; Paramètres perd le lien Nouveautés en double et le mode debug à adresse MAC
+  devient un simple interrupteur « Mode diagnostic ». Liste complète et raisons : compte rendu du run 16:30.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -73,8 +75,8 @@
 **Points d'attention**
 - **À essayer** : Connecteurs → « Temps d'écran et sommeil » → Activer. Dites-moi si Android a affiché « Paramètre
   restreint » (le guide explique quoi faire) et si la « Nuit estimée » du lendemain matin colle à votre nuit réelle.
-- **À regarder** : la carte « Humeur estimée » de l'accueil colle-t-elle à votre ressenti ? Dites-moi les jours où elle
-  se trompe nettement (et dans quel sens) : c'est ce qui permettra de régler les seuils.
+- **Votre avis compte pour le nettoyage** : s'il y a un écran, une carte ou une question que vous ne regardez jamais,
+  dites-le ; la liste de ce que je compte encore retirer ou fusionner est dans `BACKLOG.md` › D1.
 - « Mes appareils » n'a été vérifié que sur captures simulées : **dites-moi ce que la carte affiche sur votre A56**
   (Huawei Health doit apparaître ; si une app manque ou si une app est mal nommée, c'est à corriger).
 - **À essayer avec la GT 6 Pro** : lancez une séance, activez sur la montre la diffusion / le partage de la fréquence
@@ -106,7 +108,9 @@
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités** — le briefing du matin (humeur estimée + Radar + météo + une action) ; réception Bluetooth automatique ; bandeau d'accueil quand une mesure s'arrête.
+**Prochaines priorités** (vos directives du 12/10) — finir le nettoyage (un seul bloc « Forme » sur l'accueil,
+corrélations incertaines repliées, Withings regroupé) ; puis **mesurer** la lenteur des courbes et l'éliminer ; puis
+l'écran de diagnostic de la GT 6 Pro avec export des journaux, première étape de la connexion directe sans Gadgetbridge.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -118,6 +122,7 @@
 | 12/10 10:30 — [Qui envoie quoi + Radar expliqué](runs/2026-10-12-1030-qui-envoie-quoi-radar-explique.md) | 🏗️ | PR #113 fusionnée → v103 |
 | 12/10 12:30 — [Temps d'écran + sommeil par le téléphone](runs/2026-10-12-1030-temps-ecran-sommeil-telephone.md) | 🏗️ | PR #114 fusionnée → v104 |
 | 12/10 14:30 — [Humeur estimée](runs/2026-10-12-1230-humeur-estimee.md) | 🏗️🐛 | PR #115 fusionnée → v105 (+ test Nutrition instable corrigé) |
+| 12/10 16:30 — [Directives du 12/10 + nettoyage](runs/2026-10-12-1430-nettoyage-directives.md) | 🧹 | PR en cours |
 
 ---
 
@@ -138,6 +143,50 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `semaines/AAAA-Sww.md` | Résumés des semaines passées |
 
 ---
+
+## 00. Directives du propriétaire (12 octobre 2026) — priment sur tout le reste
+
+Constat du propriétaire : l'app devient un « sac à features ». **Hors runs « idées », les runs traitent ces chantiers
+dans cet ordre, avant toute nouvelle fonctionnalité** (chantiers D1–D6 de `BACKLOG.md`) :
+
+1. **D1 — Passe de nettoyage.** Inventaire de chaque écran, champ, carte, réglage ; supprimer / fusionner le redondant,
+   le peu utile, le désormais captable automatiquement. **Ne jamais demander une donnée que l'app capte déjà**
+   (ex. « écran tard » auto-détecté → plus demandé). Données existantes toujours lisibles (migration, import / export) :
+   seuls l'affichage et la saisie sont simplifiés. Lister dans le compte rendu ce qui est retiré et pourquoi.
+2. **D2 — Performance.** L'app lag au chargement des courbes. **Mesurer d'abord** (profil, temps par page, volume lu
+   dans IndexedDB), puis : cache d'agrégats journaliers / hebdo invalidés à l'écriture, requêtes IndexedDB par index et
+   par plage, mémoïsation, sous-échantillonnage des longues séries, calculs lourds en Web Worker, graphiques différés.
+   Une mesure / un test anti-régression ; chiffres avant / après dans le compte rendu.
+3. **D3 — Montre Huawei en direct, sans app tierce.** La GT 6 Pro ne se connecte pas, même avec Gadgetbridge.
+   HealthTrack fait tout elle-même (seules étapes manuelles : autorisations Android) : découverte BLE, connexion,
+   authentification, récupération (FC, sommeil, pas, SpO₂, stress / VFC…), resynchro en arrière-plan. Protocole Huawei
+   réimplémenté d'après la documentation et les observations publiques, **sans code AGPL**, tests sur trames d'exemple.
+   Commencer par **diagnostiquer** l'échec actuel : journal de connexion lisible + écran de diagnostic. Documenter la
+   contrainte d'appairage (montre liée à Huawei Santé → quoi faire exactement). Ce qui n'est pas vérifiable sans la
+   montre : livré avec un mode diagnostic qui permet au propriétaire **d'exporter les logs** pour le run suivant.
+4. **D4 — Humeur « à la Emobot » : signaux émotionnels directs.** Visage (caméra frontale, modèle local d'émotions
+   faciales : MediaPipe / TFLite / ONNX), voix (timbre, prosodie : modèle local d'émotion vocale), usage des réseaux
+   sociaux (temps, apps, contenu si faisable). Captation la plus continue possible, **traitement 100 % sur l'appareil,
+   aucune image ni audio brut conservé** (seulement les scores). Documenter les vraies limites d'Android (caméra / micro
+   en arrière-plan, service de premier plan + notification, indicateurs de confidentialité, Accessibility, UsageStats) ;
+   construire le meilleur possible dedans (ex. capture opportuniste au déverrouillage / à l'usage).
+5. **D5 — Pas de raisonnement circulaire (non négociable).** Y = humeur, estimée **uniquement** par des signaux
+   émotionnels directs (visage, voix, auto-déclaration). X = comportements et contexte (sommeil, activité, écran,
+   alimentation…), qui servent seulement à expliquer Y. Les réseaux sociaux sont soit dans l'estimateur, soit dans les
+   X : choisir et documenter. **Liste déclarée des entrées de l'estimateur + test qui échoue** si une variable est à la
+   fois entrée de l'estimateur et facteur des corrélations. Retirer les entrées comportementales des estimateurs
+   existants. Contrôler aussi : ordre temporel (X avant Y), comparaisons multiples, taille d'échantillon minimale,
+   formulations qui ne confondent pas corrélation et causalité.
+6. **D6 — Science personnelle, pas de normes imposées.** Le but : vérifier, pour **cet** utilisateur, quels facteurs
+   influent réellement sur son humeur et son bien-être ; ses données font foi (si l'écran le soir va chez lui avec une
+   meilleure humeur, l'app le montre tel quel). Aucun X codé « bon » ou « mauvais », aucun score / alerte / conseil qui
+   pénalise un comportement par principe. Les normes générales = hypothèses (quoi examiner d'abord, quoi tester, a
+   priori faible), supplantées par les données personnelles dès qu'elles suffisent ; quand elles se contredisent, le
+   dire simplement, sans culpabiliser. Revoir scores, conseils et messages normatifs (ex. « écran tard = mauvais »).
+
+Runs « idées » : privilégier les idées qui **simplifient et consolident** plutôt que celles qui ajoutent des écrans.
+Conséquence sur §0 ci-dessous : la priorité n° 3 (humeur) ne s'appuie plus sur sommeil / VFC / activité / écran comme
+entrées de l'estimation (ce sont des X), mais sur des signaux émotionnels directs.
 
 ## 0. Directions du propriétaire (11 octobre 2026) — priment sur le choix libre du mode
 
@@ -306,7 +355,7 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
   viewport Galaxy A56 (412×915, Chromium/Playwright). Options : `--empty`, `--light`,
   `--routes=/,/food`, `--radar` (début d'infection simulé), `--wellbeing-gap` (pas de note de J−9 à J−4), `--food-analysis` (analyse photo
   simulée sur /food, réponse Gemini factice), `--update-banner`, `--wellbeing-prompt`, `--whats-new`, `--out=`,
-  `--click="Recommandations avancées"` (clique un bouton avant la capture, ex. un onglet),
+  `--click="Analyse avancée"` (clique un bouton avant la capture, ex. un onglet),
   `--viewport` (capture de l'écran visible, pour les éléments fixes), `--insets=24,48` (simule les
   barres système d'Android 15+ ; à combiner avec `--viewport`).
 - **Captures sur émulateur Android réel** : chaque PR produit les artefacts `screenshots-samsung-a56-api35`
