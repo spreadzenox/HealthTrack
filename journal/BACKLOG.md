@@ -28,8 +28,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] Types HC, étape 2 : température **cutanée** (`SkinTemperatureRecord`, patch natif du plugin) si Gadgetbridge / Samsung l'écrivent ainsi ; respiration et température comme variables des Analyses et du Radar ; vérifier sur la vraie GT 6 Pro ce qui arrive
 - [x] **« Mes appareils »** (I3), étape 1 : 19 apps santé détectées (`<queries>` + `AppLauncher.canOpenUrl`, sans plugin natif), sources réelles d'après `payload.sourceName` des mesures HC, statuts Reçu / En pause / À brancher / Relayé, « Voir le guide » + « Ouvrir l'app » (`src/devices/healthApps.js`) (run 12/10 00:30)
 - [ ] « Mes appareils », étape 2 : appareils BLE appairés (`getBondedDevices`, petit plugin natif) → montre identifiée par son nom (« HUAWEI WATCH GT 6 Pro-XXX ») ; ouvrir directement l'écran Health Connect de l'app (deep links) ; bandeau sur l'accueil quand une app est « À brancher » ou « En pause » ; vérifier les libellés `sourceName` réels sur l'A56
-- [ ] **Couche BLE générique, étape 1** (I8) : `@capacitor-community/bluetooth-le` 8.3, registre `DeviceDriver` + empreinte, profil FC 0x180D avec RR → VFC (parsing des trames en TDD) ; empreinte des appareils inconnus stockée en local
-- [ ] Couche BLE, étape 2 : balance 0x181D/0x181B, tensiomètre 0x1810, thermomètre 0x1809, oxymètre 0x1822, glycémie (RACP) ; Current Time Service
+- [x] **Couche BLE générique, étape 1** (I8) : `@capacitor-community/bluetooth-le` 8.3.0, empreinte sans MAC + registre de pilotes au score (11 profils standard reconnus, 13 familles de montres), FC 0x180D + RR → VFC RMSSD (filtre d'artefacts, qualité), mesure 5 min dans Connecteurs, appareils appairés reconnus, empreintes inconnues en local, `neverForLocation` (`src/devices/ble/`) (run 12/10 02:30)
+- [ ] Couche BLE, étape 2 : tensiomètre 0x1810 / balance 0x181D-0x181B / thermomètre 0x1809 / oxymètre 0x1822 (indications, SFLOAT / FLOAT IEEE-11073), glycémie (RACP) ; Current Time Service ; export des empreintes inconnues (Paramètres ou sauvegarde) ; Device Information Service (0x180A) lu à la connexion
+- [ ] Couche BLE, étape 2 bis : FC diffusée par la montre pendant une séance → enregistrement de la séance (FC continue, zones) ; VFC du matin en 1 geste (rappel, dernier capteur mémorisé, reconnexion auto)
 - [ ] Couche BLE, étape 3 : Companion Device Manager (réveil quand l'appareil revient à portée), synchro en arrière-plan
 - [ ] Imports de fichiers constructeurs (I14) : Garmin FIT, Huawei JSON (export RGPD), Samsung / Oura / Zepp CSV
 - [ ] OAuth cloud ouverts à un particulier : Polar AccessLink (gratuit), Whoop, Oura
@@ -116,7 +117,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] **Profil corporel juste** : sexe Withings corrigé (0 = homme), profil saisi dans l'app (sexe, année, taille, poids → pesée `app_weight`), provenance de chaque valeur affichée (run 11/10 10:30)
 - [x] **Profil, étape 2** : profil (sexe, année, taille, activité) dans la sauvegarde JSON (champ `profile` optionnel, anciens fichiers acceptés ; « Ajouter » complète, « Remplacer » restaure) ; niveau d'activité choisi ou estimé d'après les pas des 14 derniers jours (×1,4 à ×1,85) (run 11/10 12:30)
 - [ ] Dépense énergétique adaptative / TDEE (R#18)
-- [ ] Lint à 0 erreur (6 erreurs, 1 warning au 12/10 après correction des espaces insécables de `watchGuides.jsx`)
+- [ ] Lint à 0 erreur (6 erreurs, 1 warning au 12/10 02:30)
 - [x] **Sauvegarde exhaustive** : l'export n'applique plus les plafonds de l'analyse (perte silencieuse des données anciennes) (#72)
 - [ ] Performance IndexedDB : `listEntries` fait un `getAll()` + filtre JS à chaque appel → utiliser les index
 - [ ] Code splitting (bundle principal > 500 kB, avertissement Vite)
@@ -129,7 +130,7 @@ sans saisie, puis la couche BLE générique, puis l'humeur estimée. Le travail 
 1. ~~🏗️ C7 — types Health Connect (I2) + guide Huawei → Gadgetbridge (I1)~~ (run 11/10 20:30).
 2. ~~🏗️ C7 — « Mes appareils » (I3)~~ (run 12/10 00:30) ; étape 2 (appareils BLE appairés, bandeau d'accueil) après retour du propriétaire.
 3. 🏗️ **C8 — Météo / pression / air / pollen** (I4) comme variables des Analyses.
-4. 🏗️ **C7 — Couche BLE générique, étape 1** (I8) : registre de pilotes + FC 0x180D / RR → VFC.
+4. ~~🏗️ C7 — Couche BLE générique, étape 1 (I8)~~ (run 12/10 02:30) → étape 2 (tensiomètre, balance, thermomètre, oxymètre) juste après la météo.
 5. 🏗️ **C8 — Temps d'écran / téléphone au lit** (I6).
 6. 🏗️ **C9 — Humeur estimée** (I7), puis Radar maladie étape 2 avec respiration et température (I5).
 7. 🐛 / 🎨 en alternance : Capacitor 8.4 + CLI 8 (C1, aussi utile au plugin BLE), un seul bloc Radar + cœur.
@@ -172,6 +173,8 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-12 — Capteurs Bluetooth : recherche et reconnaissance automatique par profil standard / famille, mesure FC + VFC en direct sur toute ceinture cardio ou montre qui diffuse sa FC (run 02:30)
+- [x] 2026-10-12 — « Mes appareils » : 19 apps santé détectées, statut et guide pour chacune (run 00:30, #107)
 - [x] 2026-10-11 — Run idées : directions du propriétaire dans la charte, `IDEES.md` (21 idées), chantiers C7–C9, backlog réorienté (run 20:30 Paris)
 - [x] 2026-10-11 — Chasse aux bugs : arrondis cohérents dans « Vos habitudes », nuits « au lit » dans le journal, « Déconnecter Withings » seulement si connecté, message d'heure effacée (run 14:30)
 - [x] 2026-10-11 — Nutrition : sexe Withings corrigé, « Votre profil » avec valeurs par défaut signalées et formulaire (sexe, année, taille, poids) (run 10:30)

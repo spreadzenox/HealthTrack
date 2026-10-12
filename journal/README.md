@@ -16,23 +16,37 @@
   exact à activer) ou « Relayé » (Huawei Health quand Gadgetbridge envoie déjà). « Voir le guide » ouvre le bon guide,
   « Ouvrir Huawei Health » ouvre l'app en un tap. Avec votre GT 6 Pro : tant que Gadgetbridge n'envoie rien, la carte
   Huawei Health reste « À brancher ».
+- **Capteurs Bluetooth** (Plus → Connecteurs, sous Health Connect et Withings) : « Rechercher autour de moi » trouve les
+  appareils proches et les reconnaît tout seul par leur profil Bluetooth standard. Une **ceinture cardio** (Polar H10,
+  Garmin HRM, Wahoo…) ou une **montre qui diffuse sa fréquence cardiaque** → « Mesurer ma VFC (5 min) » : pouls en direct,
+  puis FC et VFC enregistrées (elles nourrissent « Votre cœur », le Radar et les analyses). Tensiomètres, balances,
+  thermomètres, oxymètres sont déjà reconnus (« Bientôt »). Votre GT 6 Pro apparaît « Via son app » avec le guide Huawei.
 
 **En coulisses**
 - Détection sans code natif : le plugin déjà présent `@capacitor/app-launcher` + la liste des apps déclarée dans le
   manifeste Android (obligatoire depuis Android 11 ; un test vérifie que chaque app du catalogue y figure).
 - Les mesures Health Connect gardaient déjà le nom de l'app d'origine : c'est lui qui dit quelle app envoie vraiment.
 - Lint : 18 → 6 erreurs (caractères invisibles dans les guides de montres).
+- Première brique de la **couche Bluetooth générique** : chaque appareil est identifié par son empreinte (nom, services,
+  fabricant — jamais son adresse), puis un registre de « pilotes » choisit quoi en faire. Ajouter un appareil = ajouter un
+  pilote, pas une liste de modèles. Les appareils inconnus sont notés sur le téléphone pour les prendre en charge plus tard.
+- Sur Android 12+, la recherche Bluetooth ne demande **pas** la position (seulement « Appareils à proximité »).
 
 **Points d'attention**
 - « Mes appareils » n'a été vérifié que sur captures simulées : **dites-moi ce que la carte affiche sur votre A56**
   (Huawei Health doit apparaître ; si une app manque ou si une app est mal nommée, c'est à corriger).
+- **À essayer avec la GT 6 Pro** : lancez une séance, activez sur la montre la diffusion / le partage de la fréquence
+  cardiaque, puis Connecteurs → Capteurs Bluetooth → Rechercher. Si elle apparaît « Compatible », c'est la première
+  donnée **brute** de la montre qui arrive sans passer par une autre app. Dites-moi ce qui s'affiche (et le nom exact du
+  réglage sur la montre).
 
-**Prochaines priorités** — météo / pression / pollen automatiques, couche Bluetooth générique (ceintures cardio,
-balances, tensiomètres standard), temps d'écran.
+**Prochaines priorités** — météo / pression / pollen automatiques, Bluetooth étape 2 (tensiomètres, balances,
+thermomètres, oxymètres standard), temps d'écran.
 
 | Run | Type | Résultat |
 |---|---|---|
-| 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → release suivante |
+| 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → v98 |
+| 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #PR |
 
 ---
 

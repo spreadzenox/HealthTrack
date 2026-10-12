@@ -8,6 +8,7 @@ import { useDebug } from '../contexts/DebugContext'
 import DebugPanel from '../components/DebugPanel'
 import WatchGuides from '../components/WatchGuides'
 import MyDevices from '../components/MyDevices'
+import BleDevices from '../components/BleDevices'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
 import './Connectors.css'
 
@@ -479,6 +480,8 @@ export default function Connectors() {
           <ConnectorCard key={connector.id} connector={connector} />
         ))}
       </div>
+
+      <BleDevices />
 
       <WatchGuides />
 

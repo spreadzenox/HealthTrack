@@ -1,0 +1,38 @@
+.ble-list {
+  margin-top: 12px;
+}
+
+.ble-empty,
+.ble-tip,
+.ble-unknown {
+  margin-top: 10px;
+}
+
+.ble-error {
+  color: #ff8a65;
+}
+
+.ble-live-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.ble-live-bpm {
+  margin: 8px 0 0;
+  color: var(--text);
+}
+
+.ble-live-value {
+  font-size: 2.6rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.ble-live-unit {
+  font-size: 1rem;
+  color: var(--text-muted);
+}

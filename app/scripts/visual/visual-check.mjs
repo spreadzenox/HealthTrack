@@ -22,6 +22,8 @@
  *   npm run visual -- --routes=/data --import=replace  # … puis confirmation « Remplacer mes données »
  *   npm run visual -- --routes=/connectors --devices   # « Mes appareils » : simule Huawei Health + Garmin installés
  *   npm run visual -- --devices=com.huawei.health,nodomain.freeyourgadget.gadgetbridge  # paquets choisis
+ *   npm run visual -- --routes=/connectors --ble          # « Capteurs Bluetooth » : faux Bluetooth, recherche lancée
+ *   npm run visual -- --routes=/connectors --ble=measure  # … puis mesure cardio en direct sur la ceinture simulée
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -232,6 +234,36 @@ async function main() {
         window.__healthtrackFakeInstalledPackages = pkgs
       }, packages)
     }
+    if (args.ble) {
+      // « Capteurs Bluetooth » : faux client BLE (lu par src/devices/ble/bleService.js), sans adresse réelle.
+      await context.addInitScript(() => {
+        const dv = (bytes) => new DataView(Uint8Array.from(bytes).buffer)
+        const HR = '0000180d-0000-1000-8000-00805f9b34fb'
+        window.__healthtrackFakeBle = {
+          scanMs: 300,
+          initialize: async () => {},
+          isEnabled: async () => true,
+          getBondedDevices: async () => [{ deviceId: 'fake-watch', name: 'HUAWEI WATCH GT 6 Pro-A1B' }],
+          requestLEScan: async (_o, cb) => {
+            cb({ device: { deviceId: 'fake-h10', name: 'Polar H10 9A1B2C3D' }, rssi: -58, uuids: [HR], manufacturerData: { 107: dv([1]) } })
+            cb({ device: { deviceId: 'fake-bp', name: 'BP7000' }, rssi: -72, uuids: ['00001810-0000-1000-8000-00805f9b34fb'] })
+            cb({ device: { deviceId: 'fake-tv', name: '[TV] Salon' }, rssi: -80, manufacturerData: { 117: dv([1]) } })
+            cb({ device: { deviceId: 'fake-x', name: '' }, rssi: -90, manufacturerData: { 6: dv([1]) } })
+          },
+          stopLEScan: async () => {},
+          connect: async () => {},
+          disconnect: async () => {},
+          startNotifications: async (_id, _s, _c, cb) => {
+            let i = 0
+            window.__fakeBleTimer = setInterval(() => {
+              const rr = 960 + (i++ % 3) * 25
+              cb(dv([0x10, 62 + (i % 2), rr & 0xff, rr >> 8]))
+            }, 200)
+          },
+          stopNotifications: async () => clearInterval(window.__fakeBleTimer),
+        }
+      })
+    }
     if (!args['wellbeing-prompt']) {
       await context.addInitScript(() => {
         try {
@@ -310,6 +342,16 @@ async function main() {
           if (args.import === 'replace') await page.getByRole('button', { name: 'Remplacer mes données' }).click()
           await page.evaluate(() => document.querySelector('.import-preview')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(400)
+        }
+        if (args.ble) {
+          await page.getByRole('button', { name: 'Rechercher autour de moi' }).click()
+          await page.waitForTimeout(700)
+          if (args.ble === 'measure') {
+            await page.getByRole('button', { name: /Mesurer ma VFC/ }).click()
+            await page.waitForTimeout(2500)
+          }
+          await page.evaluate(() => document.querySelector('.ble-devices')?.scrollIntoView({ block: 'start' }))
+          await page.waitForTimeout(300)
         }
         if (args.click) {
           // Un bouton, ou à défaut un volet repliable (<summary>) qui contient ce texte

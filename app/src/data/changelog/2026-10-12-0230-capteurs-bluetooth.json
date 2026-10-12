@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-12",
+  "kind": "nouveau",
+  "title": "Capteurs Bluetooth : ceinture cardio et VFC en direct",
+  "items": [
+    "Plus → Connecteurs → « Capteurs Bluetooth » : « Rechercher autour de moi » trouve les appareils à proximité et les reconnaît tout seuls par leur profil Bluetooth standard, quelle que soit la marque.",
+    "Ceinture cardio (Polar H10, Garmin HRM, Wahoo TICKR…) ou montre qui diffuse sa fréquence cardiaque : « Mesurer ma VFC (5 min) » affiche votre pouls en direct puis enregistre la fréquence cardiaque et la VFC (RMSSD, battements parasites écartés). Elles apparaissent ensuite dans « Votre cœur » et les analyses.",
+    "Tensiomètres, balances, thermomètres et oxymètres Bluetooth sont déjà reconnus (« Bientôt ») : leur lecture arrive dans une prochaine version.",
+    "Votre montre Huawei, Samsung, Xiaomi… est repérée (« Via son app ») avec le bon guide : elle reste reliée à son app officielle.",
+    "Sur Android 12 et plus, aucune autorisation de position n'est demandée : seulement « Appareils à proximité ». Rien ne quitte le téléphone."
+  ]
+}
