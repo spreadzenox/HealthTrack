@@ -28,6 +28,12 @@
   la température, le soleil, la pluie, la pression atmosphérique (et sa variation), la qualité de l'air et les pollens
   arrivent tout seuls chaque jour, 3 mois d'historique d'un coup. Les Analyses regardent si une pression qui chute, le
   pollen ou la pollution pèsent sur votre bien-être ; une puce « Météo » s'ajoute à chaque journée.
+- **Ce que votre montre envoie vraiment** (Mes appareils) : chaque app liste ses mesures reçues (cœur, FC repos, VFC,
+  SpO₂, sommeil, pas…). Si une mesure qui arrivait chaque jour s'arrête, un encadré jaune le dit (« VFC : plus rien
+  depuis 4 jours ») avec quoi vérifier ; « Jamais reçu en 30 jours : SpO₂ » montre le partage qui manque.
+- **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
+  nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
+  « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
 - **Capteurs Bluetooth plus fiables** : la mesure de VFC n'échoue plus sur un premier battement mal capté, un
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
@@ -44,6 +50,8 @@
   L'app demande l'autorisation de position **approximative** seulement, et seulement si vous touchez le bouton.
 - Une relecture complète du code Bluetooth des derniers jours a trouvé 6 bugs invisibles à l'écran (courses
   d'annulation, horloges d'appareils) : tous corrigés avec un test. Je referai cette relecture après chaque gros chantier.
+- « Qui envoie quoi » : une mesure est « habituelle » si elle arrive au moins 7 jours sur 14 ; alerte après 3 jours
+  sans rien — une pesée ou une séance ne déclenche donc jamais d'alerte.
 - Le workflow **Tests** de main était rouge par intermittence (un test de la page Nutrition qui lisait un libellé du
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
@@ -60,8 +68,9 @@
 - **À surveiller (2027)** : Google impose la « vérification des développeurs » pour installer une app hors Play Store
   (déjà en vigueur au Brésil, en Indonésie, à Singapour et en Thaïlande depuis le 30/09/2026, partout en 2027). La mise
   à jour en 1 clic de HealthTrack pourrait être concernée ; j'étudie les options au prochain run idées.
-- **Question GT 6 Pro** : si vous passez par Gadgetbridge, la **VFC** arrive-t-elle ? (Plus → Connecteurs → Mes
-  appareils, ligne Gadgetbridge). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
+- **Question GT 6 Pro** : si vous passez par Gadgetbridge, la **VFC** arrive-t-elle ? L'app le dit maintenant toute
+  seule : Plus → Connecteurs → Mes appareils, ligne Gadgetbridge (« … VFC … » dans la liste, ou « Jamais reçu en 30
+  jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
 - **Radar expliqué** : si la FC repos monte après un verre ou un sport tardif, l'app dira « probablement lié à hier
@@ -78,8 +87,8 @@
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités** — temps d'écran + sommeil estimé par le téléphone, Radar expliqué et « qui envoie quoi »,
-puis l'estimation « plage habituelle » et le briefing du matin ; réception Bluetooth automatique.
+**Prochaines priorités** — temps d'écran + sommeil estimé par le téléphone, puis l'estimation « plage habituelle » et
+le briefing du matin ; réception Bluetooth automatique ; bandeau d'accueil quand une mesure s'arrête.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -88,6 +97,7 @@ puis l'estimation « plage habituelle » et le briefing du matin ; réception Bl
 | 12/10 04:30 — [Mesures Bluetooth](runs/2026-10-12-0430-mesures-bluetooth.md) | 🏗️🐛 | PR #109 fusionnée → v100, PR #110 (test instable) |
 | 12/10 06:30 — [Météo automatique + bugs BLE](runs/2026-10-12-0630-meteo-automatique.md) | 🐛🏗️ | PR #111 fusionnée → v102 |
 | 12/10 08:30 — [Idées : téléphone, bagues, action](runs/2026-10-12-0830-idees-telephone-bagues-action.md) | 💡 | 17 idées (I22–I38), journal seul |
+| 12/10 10:30 — [Qui envoie quoi + Radar expliqué](runs/2026-10-12-1030-qui-envoie-quoi-radar-explique.md) | 🏗️ | PR en cours |
 
 ---
 

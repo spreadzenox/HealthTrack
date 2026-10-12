@@ -89,3 +89,14 @@
   color: var(--text-muted);
   line-height: 1.4;
 }
+
+/* Écart expliqué par un tag (alcool, voyage…) : ton apaisé, pas d'alerte orange. */
+.radar.is-explained {
+  border-left-color: #8fb3ff;
+  background: var(--surface);
+}
+
+.radar.is-explained .radar-badge {
+  background: rgba(143, 179, 255, 0.15);
+  color: #8fb3ff;
+}

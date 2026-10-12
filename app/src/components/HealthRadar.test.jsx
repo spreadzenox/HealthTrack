@@ -80,4 +80,31 @@ describe('HealthRadar', () => {
     render(<HealthRadar />)
     expect(await screen.findByText(/synchronisez votre montre/i)).toBeInTheDocument()
   })
+
+  const checkin = (n, tags, h = 21) => ({ type: 'wellbeing', at: dayAt(n, h), payload: { score: 6, tags } })
+
+  it('explains a flagged day with the alcohol noted the evening before, without worrying', async () => {
+    mockEntries([...history(), rhr(0, 66), hrv(0, 40), sleep(0, 450), checkin(1, ['alcohol'])])
+    render(<HealthRadar />)
+    expect(await screen.findByText('Explicable')).toBeInTheDocument()
+    expect(screen.getByText(/Probablement lié à 🍷 Alcool \(hier\)/)).toBeInTheDocument()
+    expect(screen.queryByText('À surveiller')).not.toBeInTheDocument()
+    expect(document.querySelector('.radar.is-explained')).not.toBeNull()
+  })
+
+  it('« Malade » noted: confirms and refers to a professional instead of explaining', async () => {
+    mockEntries([...history(), rhr(0, 67), hrv(0, 38), sleep(0, 380), rhr(1, 66), hrv(1, 40), sleep(1, 450), checkin(0, ['sick'], 9)])
+    render(<HealthRadar />)
+    expect(await screen.findByText('Depuis 2 jours')).toBeInTheDocument()
+    expect(screen.getByText(/Vous avez noté « Malade »/)).toBeInTheDocument()
+    expect(screen.queryByText(/Probablement lié/)).not.toBeInTheDocument()
+  })
+
+  it('alert over 2 days with one tagged evening: keeps the alert and mentions the partial cause', async () => {
+    mockEntries([...history(), rhr(0, 67), hrv(0, 38), sleep(0, 380), rhr(1, 66), hrv(1, 40), sleep(1, 450), checkin(2, ['evening_sport'])])
+    render(<HealthRadar />)
+    expect(await screen.findByText('Depuis 2 jours')).toBeInTheDocument()
+    expect(screen.getByText(/peut en expliquer une partie, pas tout/)).toBeInTheDocument()
+    expect(screen.getByText(/Sport le soir/)).toBeInTheDocument()
+  })
 })

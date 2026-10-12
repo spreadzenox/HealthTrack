@@ -13,6 +13,8 @@
  *   npm run visual -- --wellbeing-prompt   # laisse la modale bien-être s'ouvrir
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
+ *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
+ *   npm run visual -- --routes=/connectors --hrv-gap  # plus de VFC depuis 4 jours (« qui envoie quoi »)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/food --food-analysis
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
@@ -332,6 +334,18 @@ async function main() {
       const from = dayStart(9)
       const to = dayStart(3)
       entries = entries.filter((e) => e.type !== 'wellbeing' || new Date(e.at) < from || new Date(e.at) >= to)
+    }
+    const daysAgo = (n, h) => { const d = new Date(); d.setHours(h, 0, 0, 0); d.setDate(d.getDate() - n); return d }
+    if (args.radar === 'explained') {
+      // Check-in du matin avec « Voyage » chacun des jours simulés « malades » : radar expliqué.
+      for (const n of [0, 1, 2]) {
+        entries.push({ type: 'wellbeing', source: 'app_wellbeing', at: daysAgo(n, 8).toISOString(), payload: { score: 3, tags: ['travel'] } })
+      }
+    }
+    if (args['hrv-gap']) {
+      // La montre n'envoie plus sa VFC depuis 4 jours (le reste continue d'arriver).
+      const from = daysAgo(4, 0)
+      entries = entries.filter((e) => e.payload?.subtype !== 'heartRateVariability' || new Date(e.at) < from)
     }
     const seedResult = await page.evaluate(async (list) => {
       await new Promise((res) => {

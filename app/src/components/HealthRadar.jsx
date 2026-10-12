@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { listEntries } from '../storage/localHealthStorage'
-import { computeRadar, RADAR_DAYS, RADAR_BASELINE_DAYS } from '../services/radar'
+import { computeRadar, explainRadar, RADAR_DAYS, RADAR_BASELINE_DAYS } from '../services/radar'
 import { localDateKey } from '../services/wellbeingSeries'
 import { formatDuration } from '../utils/format'
 import './HealthRadar.css'
@@ -29,6 +29,12 @@ function dayLabel(dateKey) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
+/** « l’alcool (hier), le voyage (aujourd’hui) » */
+function causeList(causes) {
+  const parts = causes.map((c) => `${c.tag.emoji} ${c.tag.label} (${dayLabel(c.dateKey).toLowerCase()})`)
+  return parts.length > 1 ? `${parts.slice(0, -1).join(', ')} et ${parts[parts.length - 1]}` : parts[0]
+}
+
 function checkedList(metrics) {
   const names = metrics.map((m) => (m.key === 'sleepMinutes' ? 'sommeil' : m.label))
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} et ${names[names.length - 1]}` : names[0]
@@ -40,13 +46,15 @@ export default function HealthRadar() {
   const load = useCallback(async () => {
     try {
       const since = new Date(Date.now() - HISTORY_DAYS * 86400000).toISOString()
-      const [heart, sleep] = await Promise.all([
+      const [heart, sleep, wellbeing] = await Promise.all([
         listEntries({ type: 'heart_rate', since, limit: Infinity }),
         listEntries({ type: 'sleep', since, limit: Infinity }),
+        listEntries({ type: 'wellbeing', since, limit: Infinity }),
       ])
       const entries = [...heart, ...sleep]
       const hasData = entries.some((e) => e.type === 'sleep' || ['restingHeartRate', 'heartRateVariability'].includes(e.payload?.subtype))
-      setState({ hasData, radar: computeRadar(entries) })
+      const radar = computeRadar(entries)
+      setState({ hasData, radar, why: explainRadar(radar, wellbeing) })
     } catch {
       setState({ hasData: false })
     }
@@ -60,16 +68,17 @@ export default function HealthRadar() {
   }, [load])
 
   if (!state?.hasData) return null
-  const { radar } = state
+  const { radar, why } = state
   const flagged = radar.level === 'watch' || radar.level === 'alert'
+  const explained = flagged && why?.explained && !why.sick
 
   return (
-    <section className={`radar is-${radar.level}`} aria-labelledby="radar-title">
+    <section className={`radar is-${radar.level}${explained ? ' is-explained' : ''}`} aria-labelledby="radar-title">
       <div className="radar-header">
         <h3 id="radar-title" className="radar-title">Radar forme</h3>
         {(radar.level === 'calm' || flagged) && (
           <span className="radar-badge">
-            {radar.level === 'alert' ? `Depuis ${radar.streak} jours` : BADGES[radar.level]}
+            {explained ? 'Explicable' : radar.level === 'alert' ? `Depuis ${radar.streak} jours` : BADGES[radar.level]}
           </span>
         )}
       </div>
@@ -107,7 +116,18 @@ export default function HealthRadar() {
               </li>
             ))}
           </ul>
-          {radar.level === 'watch' ? (
+          {why?.sick ? (
+            <p className="radar-advice" role="note">
+              Vous avez noté « Malade » : ces écarts vont dans le même sens. Reposez-vous, hydratez-vous et allégez
+              l’entraînement. Si la fièvre ou les symptômes persistent ou s’aggravent, consultez un professionnel de santé.
+            </p>
+          ) : explained ? (
+            <p className="radar-advice">
+              Probablement lié à {causeList(why.causes)}, noté dans vos check-ins : ce genre d’écart passe en général en
+              une à deux nuits. S’il continue sans raison, le radar vous le dira.
+              {radar.level === 'alert' && ' En cas de fièvre ou de symptômes, consultez un professionnel de santé.'}
+            </p>
+          ) : radar.level === 'watch' ? (
             <p className="radar-advice">
               Un jour isolé est fréquent : nuit courte, alcool, stress, entraînement intense… Ménagez-vous et voyez
               si cela se confirme demain.
@@ -117,6 +137,11 @@ export default function HealthRadar() {
               Ce type d’écart prolongé accompagne souvent la fatigue, le surmenage ou le début d’une infection.
               Priorisez le repos et le sommeil, hydratez-vous et allégez l’entraînement. En cas de fièvre ou de
               symptômes qui persistent, consultez un professionnel de santé.
+            </p>
+          )}
+          {!explained && !why?.sick && why?.causes.length > 0 && (
+            <p className="radar-advice">
+              À noter : {causeList(why.causes)} peut en expliquer une partie, pas tout.
             </p>
           )}
         </>

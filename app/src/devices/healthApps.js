@@ -111,11 +111,97 @@ export async function detectInstalledApps(isInstalled) {
 }
 
 /**
+ * Mesure suivie dans « qui envoie quoi » : le type d'entrée, affiné par le sous-type pour la FC
+ * (Health Connect range FC, FC repos, VFC et SpO₂ dans « heart_rate »). Ordre = ordre d'affichage.
+ */
+export const METRICS = [
+  { key: 'heartRate', label: 'cœur', watch: true },
+  { key: 'restingHeartRate', label: 'FC repos', watch: true },
+  { key: 'heartRateVariability', label: 'VFC', watch: true },
+  { key: 'oxygenSaturation', label: 'SpO₂', watch: true },
+  { key: 'sleep', label: 'sommeil', watch: true },
+  { key: 'steps', label: 'pas', watch: true },
+  { key: 'calories', label: 'dépense' },
+  { key: 'activity', label: 'séances' },
+  { key: 'respiratory_rate', label: 'respiration' },
+  { key: 'body_temperature', label: 'température' },
+  { key: 'blood_pressure', label: 'tension' },
+  { key: 'blood_glucose', label: 'glycémie' },
+  { key: 'weight', label: 'poids' },
+  { key: 'body_composition', label: 'masse grasse' },
+]
+const METRIC_BY_KEY = new Map(METRICS.map((m) => [m.key, m]))
+
+/** Clé de mesure d'une entrée (null si non suivie). */
+export function metricKey(entry) {
+  const key = entry?.type === 'heart_rate' ? entry.payload?.subtype || 'heartRate' : entry?.type
+  return METRIC_BY_KEY.has(key) ? key : null
+}
+
+const DAY_MS = 24 * 3600 * 1000
+/** Une mesure est « habituelle » si elle est arrivée au moins 7 jours sur les 14 qui précèdent la dernière. */
+const HABIT_WINDOW_DAYS = 14
+const HABIT_MIN_DAYS = 7
+/** Une mesure habituelle est « arrêtée » après 3 jours pleins sans rien. */
+const STOP_AFTER_DAYS = 3
+
+/**
+ * « Qui envoie quoi » pour une source : par mesure, la dernière date, le nombre de jours reçus,
+ * et si une mesure habituelle s'est arrêtée (« plus de VFC depuis 4 jours »). Fonction pure.
+ * Les jours comptés sont des tranches de 24 h avant la dernière mesure (indépendant du fuseau).
+ * @param {Array<{ at: string, type: string, payload?: object }>} entries entrées d'une même source
+ * @param {Date} now
+ * @returns {Array<{ key: string, label: string, lastAt: string, days: number, habitual: boolean, stopped: boolean, gapDays: number }>}
+ */
+export function sourceCoverage(entries, now = new Date()) {
+  const byKey = new Map()
+  for (const e of entries || []) {
+    const key = metricKey(e)
+    const t = Date.parse(e?.at)
+    if (!key || !Number.isFinite(t)) continue
+    const cur = byKey.get(key) || []
+    cur.push(t)
+    byKey.set(key, cur)
+  }
+  return METRICS.filter((m) => byKey.has(m.key)).map((m) => {
+    const times = byKey.get(m.key)
+    const last = Math.max(...times)
+    const recentDays = new Set()
+    for (const t of times) {
+      const d = Math.floor((last - t) / DAY_MS)
+      if (d < HABIT_WINDOW_DAYS) recentDays.add(d)
+    }
+    const habitual = recentDays.size >= HABIT_MIN_DAYS
+    const gapDays = Math.max(0, Math.floor((now.getTime() - last) / DAY_MS))
+    return {
+      key: m.key,
+      label: m.label,
+      lastAt: new Date(last).toISOString(),
+      days: recentDays.size,
+      habitual,
+      stopped: habitual && gapDays >= STOP_AFTER_DAYS,
+      gapDays,
+    }
+  })
+}
+
+/**
+ * Mesures courantes d'une montre jamais reçues de cette source (« Pas reçu : VFC, SpO₂ »).
+ * Seulement pour une source qui envoie déjà du cœur : une balance n'a pas à envoyer de VFC.
+ */
+export function missingWatchMetrics(metrics) {
+  const keys = new Set((metrics || []).map((m) => m.key))
+  if (!keys.has('heartRate') && !keys.has('restingHeartRate')) return []
+  return METRICS.filter((m) => m.watch && !keys.has(m.key)).map((m) => m.label)
+}
+
+/**
  * Apps qui ont réellement écrit des mesures Health Connect lues par HealthTrack.
  * @param {Array<{ source: string, at: string, type: string, payload?: object }>} entries
- * @returns {Array<{ name: string, app: object|null, lastAt: string, count: number, types: string[] }>}
+ * @param {Date} [now]
+ * @returns {Array<{ name: string, app: object|null, lastAt: string, count: number, types: string[], metrics: object[] }>}
  */
-export function summarizeHealthConnectSources(entries) {
+export function summarizeHealthConnectSources(entries, now = new Date()) {
   const bySource = new Map()
   for (const e of entries || []) {
     if (e?.source !== 'health_connect') continue
@@ -123,14 +209,15 @@ export function summarizeHealthConnectSources(entries) {
     if (!raw) continue
     const app = matchHealthApp(raw)
     const key = app ? app.id : raw
-    const cur = bySource.get(key) || { name: app ? app.name : raw, app, lastAt: e.at, count: 0, types: new Set() }
+    const cur = bySource.get(key) || { name: app ? app.name : raw, app, lastAt: e.at, count: 0, types: new Set(), entries: [] }
     cur.count += 1
     cur.types.add(e.type)
+    cur.entries.push(e)
     if (e.at > cur.lastAt) cur.lastAt = e.at
     bySource.set(key, cur)
   }
   return [...bySource.values()]
-    .map((s) => ({ ...s, types: [...s.types].sort() }))
+    .map(({ entries: own, ...s }) => ({ ...s, types: [...s.types].sort(), metrics: sourceCoverage(own, now) }))
     .sort((a, b) => (b.lastAt < a.lastAt ? -1 : 1))
 }
 

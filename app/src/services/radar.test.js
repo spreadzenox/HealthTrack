@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeRadar, nightlySleep, RADAR_DAYS } from './radar'
+import { computeRadar, nightlySleep, explainRadar, RADAR_DAYS } from './radar'
 import { localDateKey } from './wellbeingSeries'
 
 const NOW = new Date(2026, 4, 21, 14, 0)
@@ -150,5 +150,67 @@ describe('computeRadar', () => {
     const hist = normalHistory().filter((e) => e.payload.subtype === 'restingHeartRate')
     const r = computeRadar([...hist, ...recent([{ n: 0, rhr: 75 }])], NOW)
     expect(r.level).toBe('insufficient')
+  })
+})
+
+describe('explainRadar', () => {
+  const key = (n) => localDateKey(new Date(2026, 4, 21 - n, 12).toISOString())
+  const checkin = (n, tags, h = 21) => ({ type: 'wellbeing', at: dayAt(n, h), payload: { score: 6, tags } })
+  const watch = { level: 'watch', streak: 1, dateKey: key(0) }
+  const alert = { level: 'alert', streak: 2, dateKey: key(0) }
+
+  it('rien à expliquer quand le radar est calme ou sans données', () => {
+    expect(explainRadar({ level: 'calm', streak: 0, dateKey: key(0) }, [checkin(1, ['alcohol'])])).toBe(null)
+    expect(explainRadar({ level: 'insufficient', streak: 0, dateKey: null }, [])).toBe(null)
+    expect(explainRadar(null, [])).toBe(null)
+  })
+
+  it('alcool noté la veille au soir : explique un jour à surveiller', () => {
+    const ex = explainRadar(watch, [checkin(1, ['alcohol', 'stress'])])
+    expect(ex.explained).toBe(true)
+    expect(ex.sick).toBe(false)
+    expect(ex.causes.map((c) => [c.tag.id, c.dateKey])).toEqual([['alcohol', key(1)], ['stress', key(1)]])
+  })
+
+  it('alcool noté le lendemain matin (check-in au réveil) : compte aussi', () => {
+    expect(explainRadar(watch, [checkin(0, ['alcohol'], 8)]).explained).toBe(true)
+  })
+
+  it('un tag de l’avant-veille ne compte pas pour un seul jour signalé', () => {
+    const ex = explainRadar(watch, [checkin(2, ['alcohol'])])
+    expect(ex.causes).toEqual([])
+    expect(ex.explained).toBe(false)
+  })
+
+  it('alerte sur 2 jours : expliquée seulement si chaque jour a sa cause', () => {
+    // une seule soirée arrosée (J-2) n'explique pas J0
+    const partial = explainRadar(alert, [checkin(2, ['alcohol'])])
+    expect(partial.causes.map((c) => c.tag.id)).toEqual(['alcohol'])
+    expect(partial.explained).toBe(false)
+    // voyage J-1 + alcool J-2 : les deux jours sont couverts
+    expect(explainRadar(alert, [checkin(2, ['alcohol']), checkin(1, ['travel'])]).explained).toBe(true)
+  })
+
+  it('« Malade » confirme sans expliquer', () => {
+    const ex = explainRadar(watch, [checkin(0, ['sick'], 9)])
+    expect(ex.sick).toBe(true)
+    expect(ex.explained).toBe(false)
+    expect(ex.causes).toEqual([])
+  })
+
+  it('ignore les entrées sans tags ou d’un autre type', () => {
+    const ex = explainRadar(watch, [{ type: 'wellbeing', at: dayAt(1), payload: { score: 5 } }, { type: 'meal', at: dayAt(1), payload: { tags: ['alcohol'] } }])
+    expect(ex).toEqual({ causes: [], explained: false, sick: false })
+  })
+})
+
+describe('explainRadar — causes retenues', () => {
+  it('écran tard ou café ne suffisent pas à expliquer un écart de FC repos / VFC', () => {
+    const key0 = localDateKey(new Date(2026, 4, 21, 12).toISOString())
+    const ex = explainRadar({ level: 'watch', streak: 1, dateKey: key0 }, [
+      { type: 'wellbeing', at: dayAt(1, 21), payload: { score: 6, tags: ['late_screen', 'coffee_late'] } },
+    ])
+    expect(ex.explained).toBe(false)
+    expect(ex.causes).toEqual([])
   })
 })
