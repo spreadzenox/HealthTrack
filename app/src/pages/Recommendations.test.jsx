@@ -63,21 +63,21 @@ describe('Recommendations page', () => {
 
   it('renders the page title', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /Recommandations/i })
-    expect(screen.getByRole('heading', { name: /Recommandations/i })).toBeInTheDocument()
+    await screen.findByRole('heading', { name: /^Analyses$/i })
+    expect(screen.getByRole('heading', { name: /^Analyses$/i })).toBeInTheDocument()
   })
 
   it('renders both tab buttons', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /Recommandations/i })
-    expect(screen.getByRole('button', { name: /Recommandations basiques/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Recommandations avancées/i })).toBeInTheDocument()
+    await screen.findByRole('heading', { name: /^Analyses$/i })
+    expect(screen.getByRole('button', { name: /Analyse simple/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Analyse avancée/i })).toBeInTheDocument()
   })
 
   it('shows basic tab by default', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /Recommandations/i })
-    const basicBtn = screen.getByRole('button', { name: /Recommandations basiques/i })
+    await screen.findByRole('heading', { name: /^Analyses$/i })
+    const basicBtn = screen.getByRole('button', { name: /Analyse simple/i })
     expect(basicBtn).toHaveAttribute('aria-selected', 'true')
   })
 
@@ -89,8 +89,8 @@ describe('Recommendations page', () => {
 
   it('switches to advanced tab on click', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /Recommandations/i })
-    const advancedBtn = screen.getByRole('button', { name: /Recommandations avancées/i })
+    await screen.findByRole('heading', { name: /^Analyses$/i })
+    const advancedBtn = screen.getByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(advancedBtn)
     expect(advancedBtn).toHaveAttribute('aria-selected', 'true')
     await screen.findByText(/Données insuffisantes/i)
@@ -118,8 +118,8 @@ describe('Recommendations page', () => {
     listEntriesForAnalysis.mockResolvedValue(makeEntries(9))
     renderPage()
     // Switch to advanced tab
-    await screen.findByRole('button', { name: /Recommandations avancées/i })
-    fireEvent.click(screen.getAllByRole('button', { name: /Recommandations avancées/i })[0])
+    await screen.findByRole('button', { name: /Analyse avancée/i })
+    fireEvent.click(screen.getAllByRole('button', { name: /Analyse avancée/i })[0])
     await waitFor(() => {
       expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
     })
@@ -132,7 +132,7 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
     renderPage()
-    fireEvent.click(await screen.findByRole('button', { name: /Recommandations avancées/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /Analyse avancée/i }))
     expect(await screen.findByText(/Variables redondantes écartées/i)).toBeInTheDocument()
     expect(screen.getByText(/redondantes écartées/i).closest('p').textContent).toMatch(/Pas quotidiens \(≈ Durée de sommeil\)/)
   })
@@ -142,7 +142,7 @@ describe('Recommendations page', () => {
     listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
     renderPage()
     // Click advanced tab after initial render (button should be there immediately)
-    const advBtn = await screen.findByRole('button', { name: /Recommandations avancées/i })
+    const advBtn = await screen.findByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(advBtn)
     await waitFor(() => {
       expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
@@ -227,7 +227,7 @@ describe('Recommendations auto-sync', () => {
       </BrowserRouter>
     )
 
-    await screen.findByRole('heading', { name: /Recommandations/i })
+    await screen.findByRole('heading', { name: /^Analyses$/i })
     expect(useAutoSync).toHaveBeenCalled()
   })
 })
@@ -486,7 +486,7 @@ describe('Recommendations — week-end in the advanced model', () => {
     })
     listEntriesForAnalysis.mockResolvedValue(makeEntries(12))
     renderPage()
-    fireEvent.click(await screen.findByRole('button', { name: /Recommandations avancées/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /Analyse avancée/i }))
     expect(await screen.findByText(/\+0,4 point le week-end/)).toBeInTheDocument()
     spy.mockRestore()
   })

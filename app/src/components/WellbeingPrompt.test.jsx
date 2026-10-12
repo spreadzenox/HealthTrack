@@ -80,6 +80,29 @@ describe('WellbeingPrompt — behaviour tags', () => {
     })
   })
 
+  it('no longer asks for « Écran tard » when the phone measures it', () => {
+    localStorage.setItem('healthtrack_phone_usage', JSON.stringify({ enabled: true }))
+    try {
+      render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+      expect(screen.queryByRole('button', { name: /Écran tard/i })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Alcool/i })).toBeInTheDocument()
+      expect(screen.getByText(/Écran tard : mesuré par le téléphone/i)).toBeInTheDocument()
+    } finally {
+      localStorage.removeItem('healthtrack_phone_usage')
+    }
+  })
+
+  it('keeps showing « Écran tard » on an old note that has it, so it can be removed', () => {
+    localStorage.setItem('healthtrack_phone_usage', JSON.stringify({ enabled: true }))
+    try {
+      const entry = { id: 3, type: 'wellbeing', at: new Date().toISOString(), payload: { score: 3, tags: ['late_screen'] } }
+      render(<WellbeingPrompt open={true} onClose={vi.fn()} entry={entry} />)
+      expect(screen.getByRole('button', { name: /Écran tard/i })).toHaveAttribute('aria-pressed', 'true')
+    } finally {
+      localStorage.removeItem('healthtrack_phone_usage')
+    }
+  })
+
   it('resets tags when the dialog is reopened', () => {
     const { rerender } = render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: /Alcool/i }))

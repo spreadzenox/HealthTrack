@@ -17,6 +17,12 @@
  *     note estimée sur 5 avec une fourchette (± 1,28 erreur LOO ≈ 80 %) et les signaux qui
  *     comptent le plus pour vous.
  * Une estimation, jamais un diagnostic : l'UI doit le dire.
+ *
+ * ⚠️ N'est plus affiché depuis le 12/10/2026 (passe de nettoyage) : il doublait la « Prédiction du
+ * jour » et ses entrées sont des comportements (sommeil, pas, écran…) — contraire à la règle
+ * anti-circularité du propriétaire (Y = humeur estimée seulement par des signaux émotionnels directs :
+ * visage, voix, auto-déclaration ; X = comportements). Conservé pour sa calibration (Ridge + garde-fou
+ * LOO), réutilisable quand les signaux directs (chantier D4) existeront.
  */
 
 import { buildDailyDataset, olsNormalEquations, ridgeLooPredictions, RIDGE_LAMBDAS } from './analysisEngine'

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createEntry, updateEntry } from '../storage/localHealthStorage'
-import { BEHAVIOR_TAGS } from '../services/behaviorTags'
+import { BEHAVIOR_TAGS, autoDetectedTagIds, AUTO_LATE_SCREEN_MIN } from '../services/behaviorTags'
+import { getPhoneUsageSettings } from '../services/phoneUsageSync'
 
 const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
 
@@ -69,6 +70,10 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   }, [isControlled ? controlledOpen : internalOpen, entry]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const open = isControlled ? controlledOpen : internalOpen
+
+  // Never ask for what the app already measures (an old note keeps its tag visible, to remove it).
+  const autoIds = open ? autoDetectedTagIds({ phoneUsage: getPhoneUsageSettings().enabled }) : []
+  const shownTags = BEHAVIOR_TAGS.filter((t) => !autoIds.includes(t.id) || tags.includes(t.id))
 
   const close = () => {
     if (isControlled) {
@@ -162,7 +167,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
           {entry && !isToday(entry.at) ? 'Ce jour-là' : 'Aujourd’hui'} <span className="wellbeing-tags-optional">(facultatif)</span>
         </p>
         <div className="wellbeing-tags" role="group" aria-labelledby="wellbeing-tags-title">
-          {BEHAVIOR_TAGS.map((t) => {
+          {shownTags.map((t) => {
             const on = tags.includes(t.id)
             return (
               <button
@@ -180,6 +185,8 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
         <p className="wellbeing-tags-hint">
           Ces tags permettent de voir, dans Analyses, ce qui va de pair avec vos bons et
           moins bons jours.
+          {autoIds.includes('late_screen') &&
+            ` Écran tard : mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h), rien à cocher.`}
         </p>
 
         {error && (

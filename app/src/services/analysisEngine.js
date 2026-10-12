@@ -9,8 +9,8 @@
  *                                  nutrition features so that each meal influences wellbeing
  *                                  over the following ~1.5 weeks (linearly decreasing weight).
  *   3. pearsonCorrelation        – pure Pearson r between two numeric arrays
- *   4. computeBasicCorrelations  – "Recommandations basiques" (≥ MIN_DAYS_BASIC days)
- *   5. computeAdvancedAnalysis   – "Recommandations avancées"  (≥ MIN_DAYS_ADVANCED days)
+ *   4. computeBasicCorrelations  – "Analyse simple" (≥ MIN_DAYS_BASIC days)
+ *   5. computeAdvancedAnalysis   – "Analyse avancée"          (≥ MIN_DAYS_ADVANCED days)
  *      Uses multiple linear regression (OLS via normal equations) for feature importance.
  *
  * Time-lag model

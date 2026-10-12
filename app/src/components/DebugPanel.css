@@ -141,7 +141,7 @@
 .debug-toggle-label {
   font-size: 0.95rem;
   font-weight: 500;
-  color: var(--color-text, #1e293b);
+  color: var(--text);
 }
 
 .hint-error {
