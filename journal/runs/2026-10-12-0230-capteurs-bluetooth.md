@@ -1,6 +1,6 @@
 # 2026-10-12 02:30 Paris (00:30 UTC) — Couche Bluetooth générique, étape 1 : capteurs cardio et VFC
 
-**Type** : 🏗️ (C7, objets connectés, I8)  ·  **PR** : #PR
+**Type** : 🏗️ (C7, objets connectés, I8)  ·  **PR** : #108
 
 ## Pourquoi
 - Priorité n° 2 du propriétaire : connexion **directe** aux appareils, approche générique (profils BLE standard d'abord,

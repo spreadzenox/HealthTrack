@@ -46,7 +46,7 @@ thermomètres, oxymètres standard), temps d'écran.
 | Run | Type | Résultat |
 |---|---|---|
 | 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → v98 |
-| 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #PR |
+| 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #108 |
 
 ---
 
