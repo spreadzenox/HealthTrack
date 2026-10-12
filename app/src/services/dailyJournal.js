@@ -11,7 +11,7 @@ import { mealKcal } from './mealEditing'
 /** Types uniquement résumés (jamais listés individuellement). */
 export const JOURNAL_SUMMARY_TYPES = [
   'heart_rate', 'steps', 'calories', 'sleep',
-  'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose',
+  'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weather',
 ]
 
 /** Phases qui ne comptent pas comme du sommeil. */
@@ -49,6 +49,8 @@ function emptyDay(dateKey) {
     _bp: [],
     _glucose: [],
     _wellbeing: [],
+    _weather: null,
+    _hasOwnData: false,
     cigarettes: 0,
     meals: 0,
     mealKcal: 0,
@@ -84,6 +86,7 @@ function finalize(day) {
         : null,
       temperatureC: last(day._temp),
       bloodPressure: last(day._bp),
+      weather: day._weather,
       glucoseMgDl: last(day._glucose),
       heartRate: hr.length ? { min: Math.min(...hr), max: Math.max(...hr), count: hr.length } : null,
       wellbeing: wb.length
@@ -152,6 +155,7 @@ export function buildDailyJournal(entries) {
     const p = e.payload || {}
     if (e.type === 'sleep') {
       const day = getDay(sleepDateKey(e))
+      day._hasOwnData = true
       if (isNum(p.durationMinutes) && p.durationMinutes > 0) {
         if (!NOT_ASLEEP.has(p.sleepState)) day._sleep += p.durationMinutes
         else if (p.sleepState === 'inBed') day._inBed += p.durationMinutes
@@ -159,6 +163,11 @@ export function buildDailyJournal(entries) {
       continue
     }
     const day = getDay(localDateKey(e.at))
+    if (e.type === 'weather') {
+      day._weather = p
+      continue
+    }
+    day._hasOwnData = true
     switch (e.type) {
       case 'steps':
       case 'calories': {
@@ -210,7 +219,9 @@ export function buildDailyJournal(entries) {
     }
   }
 
+  // La météo arrive toute seule : une journée sans aucune autre donnée n'est pas affichée.
   return [...days.values()]
+    .filter((d) => d._hasOwnData)
     .sort((a, b) => (a.dateKey < b.dateKey ? 1 : -1))
     .map(finalize)
 }

@@ -44,8 +44,10 @@
 
     <!-- Capteurs Bluetooth (src/devices/ble, @capacitor-community/bluetooth-le) : sur Android 12+, la recherche
          ne sert jamais à localiser l'utilisateur (neverForLocation) → pas d'autorisation de position demandée.
-         La position n'est nécessaire qu'au scan BLE d'Android 11 et moins. -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="30" />
+         La position précise n'est nécessaire qu'au scan BLE d'Android 11 et moins.
+         Position approximative (toutes versions) : météo / pression / air (src/services/weather.js), demandée
+         seulement si l'utilisateur touche « Utiliser ma position approximative », arrondie à ≈ 10 km. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
         android:usesPermissionFlags="neverForLocation"

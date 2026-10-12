@@ -200,6 +200,22 @@ describe('buildDailyJournal', () => {
   })
 })
 
+describe('buildDailyJournal — météo', () => {
+  const w = (date, payload) => e('weather', `${date}T10:00:00.000Z`, { date, tempMaxC: 14, tempMinC: 6, pressureHpa: 1012, ...payload }, 'open_meteo')
+
+  it('la météo est résumée dans la journée, jamais listée comme une saisie', () => {
+    const [day] = buildDailyJournal([w('2026-10-11', {}), e('steps', '2026-10-11T20:00:00.000Z', { value: 5000, period: 'day' })])
+    expect(day.items).toEqual([])
+    expect(day.summary.weather).toMatchObject({ tempMaxC: 14, pressureHpa: 1012 })
+    expect(JOURNAL_SUMMARY_TYPES).toContain('weather')
+  })
+
+  it('une journée qui n’a que la météo n’apparaît pas (rien de vous ce jour-là)', () => {
+    const days = buildDailyJournal([w('2026-10-10', {}), w('2026-10-11', {}), e('steps', '2026-10-11T20:00:00.000Z', { value: 5000, period: 'day' })])
+    expect(days.map((d) => d.dateKey)).toEqual(['2026-10-11'])
+  })
+})
+
 describe('dayHeading', () => {
   const now = new Date('2026-10-09T18:30:00')
 

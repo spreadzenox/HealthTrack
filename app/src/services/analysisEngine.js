@@ -437,6 +437,62 @@ export const VARIABLE_META = {
     direction: 'lower_better',
     group: 'body',
   },
+  // ── Environnement (météo et air, Open-Meteo) : contexte, jamais un levier ──
+  weather_temp_max_c: {
+    label: 'Température max',
+    unit: '°C',
+    format: (v) => `${frDecimal(v, 1)} °C`,
+    direction: 'neutral',
+    group: 'environment',
+  },
+  weather_sunshine_h: {
+    label: 'Ensoleillement',
+    unit: 'h',
+    format: (v) => `${frDecimal(v, 1)} h`,
+    direction: 'neutral',
+    group: 'environment',
+  },
+  weather_pressure_hpa: {
+    label: 'Pression atmosphérique',
+    unit: 'hPa',
+    format: (v) => `${Math.round(v)} hPa`,
+    direction: 'neutral',
+    group: 'environment',
+  },
+  weather_pressure_change_hpa: {
+    label: 'Variation de pression',
+    unit: 'hPa',
+    format: (v) => `${v > 0 ? '+' : ''}${frDecimal(v, 1)} hPa`,
+    direction: 'neutral',
+    group: 'environment',
+  },
+  air_aqi: {
+    label: 'Pollution de l’air',
+    unit: '',
+    format: (v) => `${Math.round(v)}`,
+    direction: 'neutral',
+    group: 'environment',
+  },
+  pollen_max: {
+    label: 'Pollen (pic du jour)',
+    unit: 'grains/m³',
+    format: (v) => `${Math.round(v)} grains/m³`,
+    direction: 'neutral',
+    group: 'environment',
+  },
+}
+
+/**
+ * Météo et air : inconnus (null) sans relevé du jour. Contrairement aux mesures, 0 est une vraie
+ * valeur (0 °C, aucun soleil, pression stable), donc pas de conversion « ≤ 0 → inconnu ».
+ */
+export const WEATHER_KEYS = {
+  weather_temp_max_c: 'tempMaxC',
+  weather_sunshine_h: 'sunshineH',
+  weather_pressure_hpa: 'pressureHpa',
+  weather_pressure_change_hpa: 'pressureChangeHpa',
+  air_aqi: 'aqi',
+  pollen_max: 'pollenMax',
 }
 
 // ─── Step 1 — build daily dataset ────────────────────────────────────────────
@@ -481,7 +537,7 @@ function knownMean(rows, key) {
  * sleep or with a resting heart rate of 0.
  */
 function fillMissing(rows, meanRows = rows) {
-  const keys = [...MEASURED_KEYS, ...NUTRITION_KEYS]
+  const keys = [...MEASURED_KEYS, ...NUTRITION_KEYS, ...Object.keys(WEATHER_KEYS)]
   const means = Object.fromEntries(keys.map((k) => [k, knownMean(meanRows, k) ?? 0]))
   return rows.map((d) => {
     const filled = { ...d }
@@ -514,7 +570,8 @@ export function localDateKey(iso) {
  */
 export function countTotalDataDays(entries) {
   if (!entries || entries.length === 0) return 0
-  const days = new Set(entries.filter((e) => e.at).map((e) => localDateKey(e.at)))
+  // La météo arrive toute seule chaque jour : elle ne fait pas d'une journée une journée de données.
+  const days = new Set(entries.filter((e) => e.at && e.type !== 'weather').map((e) => localDateKey(e.at)))
   return days.size
 }
 
@@ -586,6 +643,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
         standing_hr_bpm: 0,
         pwv_mps: 0,
         _heightCm: 0,
+        ...Object.fromEntries(Object.keys(WEATHER_KEYS).map((k) => [k, null])),
       })
     }
     return days.get(dateKey)
@@ -752,6 +810,14 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
         break
       }
 
+      case 'weather': {
+        const p = e.payload || {}
+        for (const [key, field] of Object.entries(WEATHER_KEYS)) {
+          if (isKnown(p[field])) day[key] = p[field]
+        }
+        break
+      }
+
       default:
         break
     }
@@ -814,6 +880,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       vascular_age_years: day.vascular_age_years,
       standing_hr_bpm:  day.standing_hr_bpm,
       pwv_mps:          day.pwv_mps,
+      ...Object.fromEntries(Object.keys(WEATHER_KEYS).map((k) => [k, day[k]])),
     })
   }
 

@@ -102,10 +102,16 @@ export async function startHeartRateSession(deviceId, { onSample, onDisconnect, 
   const ble = client || (await getClient())
   await ready(ble)
   await ble.connect(deviceId, () => onDisconnect?.())
-  await ble.startNotifications(deviceId, HR_SERVICE, HR_MEASUREMENT, (view) => {
-    const m = parseHeartRateMeasurement(view)
-    if (m) onSample?.({ at: Date.now(), ...m })
-  })
+  try {
+    await ble.startNotifications(deviceId, HR_SERVICE, HR_MEASUREMENT, (view) => {
+      const m = parseHeartRateMeasurement(view)
+      if (m) onSample?.({ at: Date.now(), ...m })
+    })
+  } catch (e) {
+    // Abonnement refusé (appairage exigé, diffusion coupée…) : ne pas laisser l'appareil connecté.
+    await ble.disconnect(deviceId).catch(() => {})
+    throw e
+  }
   return async function stop() {
     await ble.stopNotifications(deviceId, HR_SERVICE, HR_MEASUREMENT).catch(() => {})
     await ble.disconnect(deviceId).catch(() => {})
@@ -137,7 +143,12 @@ export async function receiveMeasurements(
   let settleTimer = null
   const timeout = setTimeout(() => finish(), timeoutMs)
 
-  await ble.connect(deviceId, () => finish())
+  try {
+    await ble.connect(deviceId, () => finish())
+  } catch (e) {
+    clearTimeout(timeout)
+    throw e
+  }
   for (const c of reader.characteristics) {
     const service = uuid16(c.service ?? reader.service)
     const characteristic = uuid16(c.uuid)

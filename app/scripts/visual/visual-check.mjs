@@ -26,6 +26,8 @@
  *   npm run visual -- --routes=/connectors --ble=measure  # … puis mesure cardio en direct sur la ceinture simulée
  *   npm run visual -- --routes=/connectors --ble=receive  # … attente d'une mesure du tensiomètre simulé (1 reçue)
  *   npm run visual -- --routes=/connectors --ble=received # … mesures du tensiomètre reçues et enregistrées
+ *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
+ *    --empty → carte « Météo, pression et air » à activer)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -183,6 +185,26 @@ async function main() {
         }),
       })
     )
+    // Météo : jamais d'appel réseau réel. Avec les données de démo, météo activée (Paris) et à jour.
+    await context.route('https://*.open-meteo.com/**', (route) => route.abort())
+    if (!args.empty) {
+      await context.addInitScript(() => {
+        try {
+          localStorage.setItem(
+            'healthtrack_weather',
+            JSON.stringify({
+              enabled: true,
+              location: { lat: 48.9, lon: 2.4, name: 'Paris' },
+              lastSyncAt: new Date(Date.now() - 40 * 60000).toISOString(),
+              lastError: null,
+              today: { tempMaxC: 14.2, tempMinC: 6.8, precipMm: 2.4, sunshineH: 1.5, pressureHpa: 1004, pressureChangeHpa: -8.2, aqi: 24, pollen: { grass: 3 }, pollenMax: 3 },
+            }),
+          )
+        } catch {
+          /* ignore */
+        }
+      })
+    }
     if (args['food-analysis'] || args['meal-text']) {
       // Analyse photo ou texte sans clé réelle ni appel réseau : réponse Gemini factice.
       await context.addInitScript(() => {

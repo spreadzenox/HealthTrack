@@ -70,7 +70,9 @@ export default function BleDevices({
   const deviceRef = useRef(null)
   const [incoming, setIncoming] = useState(null) // { device, items }
   const cancelRef = useRef(null)
-  const cancelledRef = useRef(false)
+  // Numéro de la réception en cours : une réception annulée (ou remplacée) qui aboutit après coup est ignorée.
+  const receiveSeqRef = useRef(0)
+  const aliveRef = useRef(true)
 
   useEffect(() => {
     if (phase !== 'measuring') return undefined
@@ -84,13 +86,14 @@ export default function BleDevices({
   }, [phase, sessionMs])
 
   // quitter la page pendant une mesure : on coupe proprement la connexion
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    aliveRef.current = true
+    return () => {
+      aliveRef.current = false
       stopRef.current?.()
       cancelRef.current?.()
-    },
-    [],
-  )
+    }
+  }, [])
 
   async function runScan() {
     setPhase('scanning')
@@ -115,14 +118,19 @@ export default function BleDevices({
     setLive({ device, startedAt: Date.now(), bpm: null, beats: 0 })
     setPhase('measuring')
     try {
-      stopRef.current = await startSession(device.deviceId, {
+      const stop = await startSession(device.deviceId, {
         onSample: (s) => {
           samplesRef.current.push(s)
           setLive((l) => (l ? { ...l, bpm: s.bpm || l.bpm, beats: l.beats + (s.rrMs?.length || 0) } : l))
         },
         onDisconnect: () => finish({ disconnected: true }),
       })
+      // Annulé, terminé ou page quittée pendant la connexion : on coupe tout de suite.
+      if (finishingRef.current || !aliveRef.current) await stop()
+      else stopRef.current = stop
     } catch {
+      if (finishingRef.current || !aliveRef.current) return
+      finishingRef.current = true
       setError(`Connexion impossible à ${device.name || 'cet appareil'} : est-il allumé et libre (pas connecté à une autre app) ?`)
       setLive(null)
       setPhase('done')
@@ -130,7 +138,8 @@ export default function BleDevices({
   }
 
   async function receiveFrom(device) {
-    cancelledRef.current = false
+    const seq = ++receiveSeqRef.current
+    const stale = () => seq !== receiveSeqRef.current || !aliveRef.current
     setError(null)
     setResult(null)
     setIncoming({ device, items: [] })
@@ -141,18 +150,21 @@ export default function BleDevices({
         onMeasurement: (m) => setIncoming((cur) => (cur ? { ...cur, items: [...cur.items, m] } : cur)),
       })
     } catch {
+      if (stale()) return
       setError(`Connexion impossible à ${device.name || 'cet appareil'} : allumez-le (le symbole Bluetooth doit clignoter) et réessayez.`)
       setIncoming(null)
       setPhase('done')
       return
     }
-    cancelRef.current = session.cancel
-    const measurements = await session.done
-    cancelRef.current = null
-    if (cancelledRef.current) {
-      cancelledRef.current = false
+    if (stale()) {
+      // Annulé pendant la connexion : on referme cette session.
+      await session.cancel()
       return
     }
+    cancelRef.current = session.cancel
+    const measurements = await session.done
+    if (stale()) return
+    cancelRef.current = null
     const entries = measurementsToEntries(measurements, { deviceName: device.name || device.driver.label })
     if (entries.length > 0) {
       try {
@@ -167,10 +179,12 @@ export default function BleDevices({
   }
 
   async function cancelReceive() {
-    cancelledRef.current = true
+    receiveSeqRef.current++
+    const cancel = cancelRef.current
+    cancelRef.current = null
     setIncoming(null)
     setPhase('done')
-    await cancelRef.current?.()
+    await cancel?.()
   }
 
   async function finish({ disconnected = false, cancel = false } = {}) {

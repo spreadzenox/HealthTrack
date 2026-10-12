@@ -158,4 +158,37 @@ describe('BleDevices', () => {
     expect(await screen.findByText(/Connexion impossible à BP7000/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Recevoir la mesure' })).toBeInTheDocument()
   })
+
+  it('« Annuler » pendant la connexion du capteur cardio : la session qui arrive après est aussitôt coupée', async () => {
+    let connected
+    const stop = vi.fn(async () => {})
+    const startSession = vi.fn(() => new Promise((resolve) => { connected = () => resolve(stop) }))
+    const save = vi.fn(async () => {})
+    render(<BleDevices available scan={async ({ onUpdate }) => (onUpdate([H10]), [H10])} startSession={startSession} save={save} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Rechercher autour de moi' }))
+    fireEvent.click(await screen.findByRole('button', { name: /Mesurer ma VFC/ }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Annuler' }))
+    await act(async () => connected())
+    expect(stop).toHaveBeenCalled()
+    expect(save).not.toHaveBeenCalled()
+  })
+
+  it('« Annuler » pendant la connexion à un tensiomètre, puis nouvel essai : l’ancienne session est refermée et ignorée', async () => {
+    const resolvers = []
+    const first = { done: new Promise(() => {}), cancel: vi.fn(async () => {}) }
+    const second = { done: Promise.resolve([]), cancel: vi.fn(async () => {}) }
+    const receive = vi.fn(() => new Promise((resolve) => resolvers.push(resolve)))
+    const save = vi.fn(async () => {})
+    render(<BleDevices available scan={async ({ onUpdate }) => (onUpdate([BP]), [BP])} receive={receive} save={save} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Rechercher autour de moi' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Recevoir la mesure' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Annuler' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Recevoir la mesure' }))
+    await act(async () => resolvers[0](first))
+    expect(first.cancel).toHaveBeenCalled()
+    // la nouvelle réception est toujours affichée
+    expect(screen.getByRole('button', { name: 'Annuler' })).toBeInTheDocument()
+    await act(async () => resolvers[1](second))
+    expect(second.cancel).not.toHaveBeenCalled()
+  })
 })

@@ -7,6 +7,7 @@
  */
 import { useEffect } from 'react'
 import { triggerAutoSync } from '../connectors/autoSync'
+import { syncWeather } from '../services/weatherSync'
 
 /**
  * Call inside any component that should trigger an auto-sync on mount.
@@ -21,6 +22,8 @@ import { triggerAutoSync } from '../connectors/autoSync'
 export function useAutoSync() {
   useEffect(() => {
     triggerAutoSync()
+    // Météo / air : au plus toutes les 3 h, seulement si l'utilisateur l'a activée.
+    syncWeather()
     // No cleanup needed — the sync is self-contained.
   }, [])
 }
