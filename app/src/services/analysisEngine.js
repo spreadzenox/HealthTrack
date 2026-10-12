@@ -26,6 +26,7 @@
 
 import { computeTotalsFromItems, NUTRITION_FIELDS } from './nutritionKPIs'
 import { nightlySleep } from './radar'
+import { formatScreenMinutes } from './phoneUsage'
 import { formatDuration } from '../utils/format'
 import {
   effectiveSampleSize,
@@ -252,6 +253,28 @@ export const VARIABLE_META = {
     label: 'Cigarettes',
     unit: 'cig.',
     format: (v) => `${Math.round(v)} cigarette${Math.round(v) > 1 ? 's' : ''}`,
+    direction: 'lower_better',
+    group: 'lifestyle',
+  },
+  // ── Téléphone (temps d'écran, PhoneUsage) : leviers, inconnus sans journal Android ──
+  screen_minutes: {
+    label: 'Temps d’écran',
+    unit: 'min',
+    format: (v) => formatScreenMinutes(v),
+    direction: 'lower_better',
+    group: 'lifestyle',
+  },
+  screen_late_minutes: {
+    label: 'Écran tard (veille au soir, 22 h–4 h)',
+    unit: 'min',
+    format: (v) => formatScreenMinutes(v),
+    direction: 'lower_better',
+    group: 'lifestyle',
+  },
+  phone_unlocks: {
+    label: 'Déverrouillages du téléphone',
+    unit: '',
+    format: (v) => `${Math.round(v)}`,
     direction: 'lower_better',
     group: 'lifestyle',
   },
@@ -495,6 +518,16 @@ export const WEATHER_KEYS = {
   pollen_max: 'pollenMax',
 }
 
+/**
+ * Téléphone (entrées `phone_usage`, journées terminées) : inconnus (null) sans journal du jour ;
+ * 0 est une vraie valeur (aucun écran tard).
+ */
+export const PHONE_USAGE_KEYS = {
+  screen_minutes: 'screenMinutes',
+  screen_late_minutes: 'lateScreenMinutes',
+  phone_unlocks: 'unlocks',
+}
+
 // ─── Step 1 — build daily dataset ────────────────────────────────────────────
 
 /**
@@ -537,7 +570,7 @@ function knownMean(rows, key) {
  * sleep or with a resting heart rate of 0.
  */
 function fillMissing(rows, meanRows = rows) {
-  const keys = [...MEASURED_KEYS, ...NUTRITION_KEYS, ...Object.keys(WEATHER_KEYS)]
+  const keys = [...MEASURED_KEYS, ...NUTRITION_KEYS, ...Object.keys(WEATHER_KEYS), ...Object.keys(PHONE_USAGE_KEYS)]
   const means = Object.fromEntries(keys.map((k) => [k, knownMean(meanRows, k) ?? 0]))
   return rows.map((d) => {
     const filled = { ...d }
@@ -560,6 +593,9 @@ export function localDateKey(iso) {
   return `${y}-${m}-${day}`
 }
 
+/** Entrées qui arrivent toutes seules chaque jour (contexte), sans action de l'utilisateur. */
+const AUTO_CONTEXT_TYPES = new Set(['weather', 'phone_usage'])
+
 /**
  * Returns the number of distinct calendar days (YYYY-MM-DD) that have any
  * entry, regardless of type. Used to inform the user how many total days of
@@ -570,8 +606,8 @@ export function localDateKey(iso) {
  */
 export function countTotalDataDays(entries) {
   if (!entries || entries.length === 0) return 0
-  // La météo arrive toute seule chaque jour : elle ne fait pas d'une journée une journée de données.
-  const days = new Set(entries.filter((e) => e.at && e.type !== 'weather').map((e) => localDateKey(e.at)))
+  // La météo et le temps d'écran arrivent tout seuls chaque jour : ils ne font pas d'une journée une journée de données.
+  const days = new Set(entries.filter((e) => e.at && !AUTO_CONTEXT_TYPES.has(e.type)).map((e) => localDateKey(e.at)))
   return days.size
 }
 
@@ -644,6 +680,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
         pwv_mps: 0,
         _heightCm: 0,
         ...Object.fromEntries(Object.keys(WEATHER_KEYS).map((k) => [k, null])),
+        ...Object.fromEntries(Object.keys(PHONE_USAGE_KEYS).map((k) => [k, null])),
       })
     }
     return days.get(dateKey)
@@ -818,6 +855,14 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
         break
       }
 
+      case 'phone_usage': {
+        const p = e.payload || {}
+        for (const [key, field] of Object.entries(PHONE_USAGE_KEYS)) {
+          if (isKnown(p[field])) day[key] = p[field]
+        }
+        break
+      }
+
       default:
         break
     }
@@ -826,7 +871,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
   // Une nuit compte pour le jour du réveil : elle peut expliquer le bien-être
   // de ce jour-là, pas celui de la veille (souvent noté avant de se coucher).
   // Phases additionnées, éveils ignorés, « au lit » seulement à défaut de phases.
-  for (const [dk, mins] of nightlySleep(entries)) {
+  for (const [dk, mins] of nightlySleep(entries, { phoneFallback: true })) {
     if (days.has(dk)) days.get(dk).sleepMinutes = mins
   }
 
@@ -881,6 +926,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       standing_hr_bpm:  day.standing_hr_bpm,
       pwv_mps:          day.pwv_mps,
       ...Object.fromEntries(Object.keys(WEATHER_KEYS).map((k) => [k, day[k]])),
+      ...Object.fromEntries(Object.keys(PHONE_USAGE_KEYS).map((k) => [k, day[k]])),
     })
   }
 
@@ -1185,6 +1231,9 @@ export const LEVER_ACTIONS = {
   omega3_g: 'Manger plus d’oméga-3 (poissons gras, noix, huile de colza)',
   alcohol_g: 'Boire moins d’alcool',
   cigaretteCount: 'Fumer moins de cigarettes',
+  screen_minutes: 'Passer moins de temps sur le téléphone',
+  screen_late_minutes: 'Lâcher le téléphone plus tôt le soir',
+  phone_unlocks: 'Prendre moins souvent son téléphone',
   fodmap_score: 'Alléger les repas riches en FODMAP',
   vitamin_c_mg: 'Plus de fruits et légumes riches en vitamine C',
   vitamin_d_ug: 'Plus de vitamine D (poissons gras, œufs, soleil)',
@@ -1255,7 +1304,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
   let hasAnyData = false
 
   // La nuit dernière (commencée hier soir) compte pour aujourd'hui.
-  const lastNight = nightlySleep(entries).get(todayKey)
+  const lastNight = nightlySleep(entries, { phoneFallback: true }).get(todayKey)
   if (lastNight) {
     row.sleepMinutes = lastNight
     hasAnyData = true

@@ -12,6 +12,7 @@ import { mealKcal } from './mealEditing'
 export const JOURNAL_SUMMARY_TYPES = [
   'heart_rate', 'steps', 'calories', 'sleep',
   'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weather',
+  'phone_usage',
 ]
 
 /** Phases qui ne comptent pas comme du sommeil. */
@@ -50,6 +51,7 @@ function emptyDay(dateKey) {
     _glucose: [],
     _wellbeing: [],
     _weather: null,
+    _phone: null,
     _hasOwnData: false,
     cigarettes: 0,
     meals: 0,
@@ -67,6 +69,11 @@ function dailyTotal(day, kind) {
   return day._hasPartial[kind] ? day._partials[kind] : null
 }
 
+function phoneSleep(day) {
+  const mins = day._phone?.sleepEstimate?.minutes
+  return isNum(mins) && mins > 0 ? mins : null
+}
+
 function finalize(day) {
   const hr = day._hr
   const wb = day._wellbeing
@@ -75,7 +82,10 @@ function finalize(day) {
     items: day.items.sort((a, b) => (b.at < a.at ? -1 : 1)),
     summary: {
       // « Au lit » seulement si la nuit n'a pas de phases (sinon il les chevauche)
-      sleepMinutes: day._sleep > 0 ? day._sleep : day._inBed > 0 ? day._inBed : null,
+      // À défaut de montre : nuit estimée par le téléphone (temps d'écran)
+      sleepMinutes: day._sleep > 0 ? day._sleep : day._inBed > 0 ? day._inBed : phoneSleep(day),
+      sleepEstimated: !(day._sleep > 0 || day._inBed > 0) && phoneSleep(day) != null,
+      screenMinutes: isNum(day._phone?.screenMinutes) ? day._phone.screenMinutes : null,
       steps: dailyTotal(day, 'steps'),
       burnedKcal: isNum(dailyTotal(day, 'calories')) ? Math.round(dailyTotal(day, 'calories')) : null,
       restingHr: last(day._resting),
@@ -165,6 +175,11 @@ export function buildDailyJournal(entries) {
     const day = getDay(localDateKey(e.at))
     if (e.type === 'weather') {
       day._weather = p
+      continue
+    }
+    if (e.type === 'phone_usage') {
+      // Arrive tout seul chaque jour, comme la météo : ne fait pas apparaître une journée à lui seul.
+      getDay(p.date || localDateKey(e.at))._phone = p
       continue
     }
     day._hasOwnData = true

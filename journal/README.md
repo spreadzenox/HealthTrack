@@ -31,6 +31,11 @@
 - **Ce que votre montre envoie vraiment** (Mes appareils) : chaque app liste ses mesures reçues (cœur, FC repos, VFC,
   SpO₂, sommeil, pas…). Si une mesure qui arrivait chaque jour s'arrête, un encadré jaune le dit (« VFC : plus rien
   depuis 4 jours ») avec quoi vérifier ; « Jamais reçu en 30 jours : SpO₂ » montre le partage qui manque.
+- **Temps d'écran et sommeil** (Plus → Connecteurs, sous la météo) : « Activer », autoriser HealthTrack dans « Accès
+  aux données d'utilisation » (guide pas à pas dans l'app), et chaque jour arrivent tout seuls le temps d'écran,
+  l'écran tard (22 h–4 h) et les déverrouillages — puce « Écran » dans « Vos derniers jours », variables des Analyses.
+  Les nuits **sans montre**, le sommeil est estimé d'après la plus longue période sans écran (« Sommeil (estimé) ») ;
+  la montre passe toujours avant. Seuls les allumages / extinctions de l'écran sont lus, rien ne sort du téléphone.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -50,12 +55,16 @@
   L'app demande l'autorisation de position **approximative** seulement, et seulement si vous touchez le bouton.
 - Une relecture complète du code Bluetooth des derniers jours a trouvé 6 bugs invisibles à l'écran (courses
   d'annulation, horloges d'appareils) : tous corrigés avec un test. Je referai cette relecture après chaque gros chantier.
+- Premier **plugin natif maison** (`PhoneUsagePlugin.java`, quelques dizaines de lignes, aucune dépendance) : le modèle
+  pour les prochaines captures du téléphone (pas sans montre, montre appairée identifiée par son nom…).
 - « Qui envoie quoi » : une mesure est « habituelle » si elle arrive au moins 7 jours sur 14 ; alerte après 3 jours
   sans rien — une pesée ou une séance ne déclenche donc jamais d'alerte.
 - Le workflow **Tests** de main était rouge par intermittence (un test de la page Nutrition qui lisait un libellé du
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
+- **À essayer** : Connecteurs → « Temps d'écran et sommeil » → Activer. Dites-moi si Android a affiché « Paramètre
+  restreint » (le guide explique quoi faire) et si la « Nuit estimée » du lendemain matin colle à votre nuit réelle.
 - « Mes appareils » n'a été vérifié que sur captures simulées : **dites-moi ce que la carte affiche sur votre A56**
   (Huawei Health doit apparaître ; si une app manque ou si une app est mal nommée, c'est à corriger).
 - **À essayer avec la GT 6 Pro** : lancez une séance, activez sur la montre la diffusion / le partage de la fréquence
@@ -87,8 +96,8 @@
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités** — temps d'écran + sommeil estimé par le téléphone, puis l'estimation « plage habituelle » et
-le briefing du matin ; réception Bluetooth automatique ; bandeau d'accueil quand une mesure s'arrête.
+**Prochaines priorités** — l'estimation d'humeur « plage habituelle » (le temps d'écran et le sommeil estimé la
+nourrissent) et le briefing du matin ; réception Bluetooth automatique ; bandeau d'accueil quand une mesure s'arrête.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -98,6 +107,7 @@ le briefing du matin ; réception Bluetooth automatique ; bandeau d'accueil quan
 | 12/10 06:30 — [Météo automatique + bugs BLE](runs/2026-10-12-0630-meteo-automatique.md) | 🐛🏗️ | PR #111 fusionnée → v102 |
 | 12/10 08:30 — [Idées : téléphone, bagues, action](runs/2026-10-12-0830-idees-telephone-bagues-action.md) | 💡 | 17 idées (I22–I38), journal seul |
 | 12/10 10:30 — [Qui envoie quoi + Radar expliqué](runs/2026-10-12-1030-qui-envoie-quoi-radar-explique.md) | 🏗️ | PR #113 fusionnée → v103 |
+| 12/10 12:30 — [Temps d'écran + sommeil par le téléphone](runs/2026-10-12-1030-temps-ecran-sommeil-telephone.md) | 🏗️ | PR en cours (voir compte rendu) |
 
 ---
 

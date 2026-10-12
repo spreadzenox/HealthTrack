@@ -266,3 +266,26 @@ describe('groupMealsByDay', () => {
     expect(groupMealsByDay([{ id: 'x', type: 'food', at: 'n’importe quoi' }])).toEqual([])
   })
 })
+
+describe('buildDailyJournal — téléphone', () => {
+  const ph = (date, payload) => e('phone_usage', `${date}T10:00:00.000Z`, { date, screenMinutes: 150, lateScreenMinutes: 20, unlocks: 40, ...payload }, 'phone')
+  const steps = (date) => e('steps', `${date}T20:00:00.000Z`, { value: 5000, period: 'day' })
+
+  it('temps d’écran résumé ; sans montre, la nuit estimée par le téléphone (marquée « estimé »)', () => {
+    const [day] = buildDailyJournal([ph('2026-10-11', { sleepEstimate: { minutes: 430 } }), steps('2026-10-11')])
+    expect(day.items).toEqual([])
+    expect(day.summary).toMatchObject({ screenMinutes: 150, sleepMinutes: 430, sleepEstimated: true })
+    expect(JOURNAL_SUMMARY_TYPES).toContain('phone_usage')
+  })
+
+  it('la nuit de la montre prime sur l’estimation', () => {
+    const sleep = e('sleep', '2026-10-10T23:00:00.000', { durationMinutes: 400, endDate: '2026-10-11T06:00:00.000', sleepState: 'light' })
+    const [day] = buildDailyJournal([ph('2026-10-11', { sleepEstimate: { minutes: 430 } }), sleep])
+    expect(day.summary).toMatchObject({ sleepMinutes: 400, sleepEstimated: false })
+  })
+
+  it('une journée qui n’a que le téléphone n’apparaît pas', () => {
+    const days = buildDailyJournal([ph('2026-10-10', {}), ph('2026-10-11', {}), steps('2026-10-11')])
+    expect(days.map((d) => d.dateKey)).toEqual(['2026-10-11'])
+  })
+})

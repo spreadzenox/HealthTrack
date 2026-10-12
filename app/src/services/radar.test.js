@@ -55,6 +55,19 @@ describe('nightlySleep', () => {
     expect([...nights.values()]).toEqual([420])
   })
 
+  it('nuit estimée par le téléphone : seulement avec phoneFallback, et seulement sans montre', () => {
+    const phone = (n, minutes) => ({
+      type: 'phone_usage',
+      at: new Date(2026, 4, 21 - n, 12).toISOString(),
+      payload: { date: localDateKey(new Date(2026, 4, 21 - n, 12).toISOString()), screenMinutes: 100, sleepEstimate: { minutes } },
+    })
+    const entries = [sleep(1, 420), phone(1, 480), phone(2, 390)]
+    expect([...nightlySleep(entries).values()]).toEqual([420])
+    const withPhone = nightlySleep(entries, { phoneFallback: true })
+    expect(withPhone.get(localDateKey(new Date(2026, 4, 20, 12).toISOString()))).toBe(420)
+    expect(withPhone.get(localDateKey(new Date(2026, 4, 19, 12).toISOString()))).toBe(390)
+  })
+
   it('falls back to the "in bed" time when it is the only record of the night', () => {
     expect([...nightlySleep([sleep(1, 480, 'inBed')]).values()]).toEqual([480])
   })

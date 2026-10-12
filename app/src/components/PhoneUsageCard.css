@@ -1,0 +1,10 @@
+.phone-usage-steps {
+  margin: 4px 0 8px;
+  padding-left: 20px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.phone-usage-steps li + li {
+  margin-top: 4px;
+}

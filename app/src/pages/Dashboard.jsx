@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import { weatherSummaryParts } from '../services/weather'
+import { formatScreenMinutes } from '../services/phoneUsage'
 import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
@@ -43,6 +44,7 @@ const TYPE_LABELS = {
   blood_pressure: 'Tension',
   blood_glucose: 'Glycémie',
   weather: 'Météo',
+  phone_usage: 'Téléphone',
 }
 
 function entryTitle(e) {
@@ -149,7 +151,7 @@ function EntryBody({ e }) {
 function summaryChips(s) {
   const chips = []
   const fr = (v) => v.toLocaleString('fr-FR')
-  if (s.sleepMinutes != null) chips.push(['Sommeil', formatDuration(s.sleepMinutes)])
+  if (s.sleepMinutes != null) chips.push([s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil', formatDuration(s.sleepMinutes)])
   if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
   if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
   if (s.hrv != null) chips.push(['VFC', `${Math.round(s.hrv)} ms`])
@@ -170,6 +172,7 @@ function summaryChips(s) {
     chips.push(['Repas', s.mealKcal > 0 ? `${s.meals} · ≈ ${fr(s.mealKcal)} kcal` : String(s.meals)])
   }
   if (s.cigarettes > 0) chips.push(['Cigarettes', String(s.cigarettes)])
+  if (s.screenMinutes != null) chips.push(['Écran', formatScreenMinutes(s.screenMinutes)])
   if (s.weather) {
     const w = weatherSummaryParts(s.weather)
     if (w.length) chips.push(['Météo', w[0]])

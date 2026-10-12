@@ -28,6 +28,8 @@
  *   npm run visual -- --routes=/connectors --ble=measure  # … puis mesure cardio en direct sur la ceinture simulée
  *   npm run visual -- --routes=/connectors --ble=receive  # … attente d'une mesure du tensiomètre simulé (1 reçue)
  *   npm run visual -- --routes=/connectors --ble=received # … mesures du tensiomètre reçues et enregistrées
+ *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
+ *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
@@ -304,6 +306,32 @@ async function main() {
           stopNotifications: async () => clearInterval(window.__fakeBleTimer),
         }
       }, String(args.ble))
+    }
+    if (args.phone) {
+      // « Temps d'écran et sommeil » : faux plugin PhoneUsage (lu par src/services/phoneUsageSync.js).
+      // --phone → accès accordé et activé ; --phone=ask → accès pas encore accordé (guide pas à pas).
+      await context.addInitScript((mode) => {
+        const granted = mode !== 'ask'
+        try {
+          localStorage.setItem('healthtrack_phone_usage', JSON.stringify({ enabled: true }))
+        } catch {
+          /* ignore */
+        }
+        const at = (d, h, m) => new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - d, h, m).getTime()
+        const events = []
+        for (let d = 9; d >= 0; d--) {
+          for (const [h, m, mins] of [[3, 12, 1], [7, 5, 18], [12, 30, 40], [18, 10, 85], [22, 35, 55 + d * 3]]) {
+            const t = at(d, h, m)
+            if (t + mins * 60000 > Date.now()) continue
+            events.push({ t, e: 'on' }, { t: t + 4000, e: 'unlock' }, { t: t + mins * 60000, e: 'off' })
+          }
+        }
+        window.__healthtrackFakePhoneUsage = {
+          checkAccess: async () => ({ granted, supported: true }),
+          openAccessSettings: async () => {},
+          queryScreenEvents: async () => ({ events }),
+        }
+      }, String(args.phone))
     }
     if (!args['wellbeing-prompt']) {
       await context.addInitScript(() => {
