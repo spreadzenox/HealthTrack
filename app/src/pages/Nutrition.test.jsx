@@ -89,7 +89,10 @@ describe('Nutrition page', () => {
     ))
     expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'health-entries-updated' }))
     expect(JSON.parse(localStorage.getItem('healthtrack_body_profile'))).toEqual({ sex: 'F', birthYear: 1990, heightCm: 165 })
-    expect(await screen.findByText('Femme')).toBeInTheDocument()
+    // Le formulaire contient aussi un libellé « Femme » : attendre sa fermeture, sinon on peut trouver
+    // ce libellé juste avant qu'il disparaisse (échec intermittent sur la CI).
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Enregistrer' })).toBeNull())
+    expect(screen.getByText('Femme')).toBeInTheDocument()
     expect(screen.getByText(/165 cm/)).toBeInTheDocument()
     expect(screen.queryByText('Chargement…')).not.toBeInTheDocument()
     dispatchSpy.mockRestore()
@@ -104,7 +107,8 @@ describe('Nutrition page', () => {
     expect(screen.getByLabelText(/poids/i)).toHaveValue('77,2')
     fireEvent.click(screen.getByRole('radio', { name: 'Homme' }))
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
-    expect(await screen.findByText('Homme')).toBeInTheDocument()
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Enregistrer' })).toBeNull())
+    expect(screen.getByText('Homme')).toBeInTheDocument()
     expect(createEntry).not.toHaveBeenCalled()
     listEntriesForAnalysis.mockResolvedValue([])
   })

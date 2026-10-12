@@ -34,8 +34,8 @@
   fabricant — jamais son adresse), puis un registre de « pilotes » choisit quoi en faire. Ajouter un appareil = ajouter un
   pilote, pas une liste de modèles. Les appareils inconnus sont notés sur le téléphone pour les prendre en charge plus tard.
 - Sur Android 12+, la recherche Bluetooth ne demande **pas** la position (seulement « Appareils à proximité »).
-- Le workflow **Tests** de main était rouge après #108 (un test de la page Nutrition trop juste en temps sur la CI, sans
-  rapport avec le Bluetooth) : délai d'attente des tests porté de 1 à 3 s, tout est vert. L'APK v99 était bien publié.
+- Le workflow **Tests** de main était rouge par intermittence (un test de la page Nutrition qui lisait un libellé du
+  formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
 - « Mes appareils » n'a été vérifié que sur captures simulées : **dites-moi ce que la carte affiche sur votre A56**
@@ -54,7 +54,7 @@ mesure est reconnu dès qu'il réapparaît), temps d'écran.
 |---|---|---|
 | 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → v98 |
 | 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #108 fusionnée → v99 |
-| 12/10 04:30 — [Mesures Bluetooth](runs/2026-10-12-0430-mesures-bluetooth.md) | 🏗️🐛 | PR #109 |
+| 12/10 04:30 — [Mesures Bluetooth](runs/2026-10-12-0430-mesures-bluetooth.md) | 🏗️🐛 | PR #109 fusionnée → v100, PR #110 (test instable) |
 
 ---
 
