@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-13",
+  "kind": "nouveau",
+  "title": "Montre Huawei : libérer et appairer, pas à pas",
+  "items": [
+    "Plus → Connecteurs → « Montre Huawei en direct » → nouvel encadré « Libérer et appairer la montre » : HealthTrack vous dit l’étape suivante et le geste qui la débloque.",
+    "Une montre Huawei n’accepte qu’une app à la fois. « Désinstaller Huawei Health » ouvre directement la boîte de désinstallation d’Android (vous confirmez), « Réglages de Huawei Health » permet de lui retirer le Bluetooth à la place.",
+    "Réinitialisation guidée, avec le menu exact de la montre (Paramètres → Système et mises à jour → Réinitialiser) et ce qui sera perdu. Ne dissociez jamais la montre dans Huawei Santé : cela invalide sa clé sans la libérer.",
+    "« Appairer la montre » cherche votre montre et lance l’appairage Android : il suffit d’accepter la demande. Si Android garde un ancien appairage, l’app vous l’explique et ouvre les réglages Bluetooth.",
+    "Plan B si vous voulez garder Huawei Santé : votre identifiant de compte Huawei (17 à 19 chiffres), gardé uniquement sur ce téléphone, servira à l’étape suivante (authentification)."
+  ]
+}

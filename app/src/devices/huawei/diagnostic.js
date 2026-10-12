@@ -82,7 +82,7 @@ export function verdictFor(report) {
   const classicFail = (report.watch?.attempts || []).find((a) => a.transport === 'classic' && /^connect:fail/.test(a.steps[0] || ''))
   const classicLine = classicFail
     ? /non appairée/.test(classicFail.steps[0])
-      ? "Bluetooth classique (celui des GT 3 à GT 7) : la montre n'est pas appairée à Android. L'assistant d'appairage arrive à l'étape suivante."
+      ? "Bluetooth classique (celui des GT 3 à GT 7) : la montre n'est pas appairée à Android. Suivez « Libérer et appairer la montre » ci-dessous."
       : `Bluetooth classique (celui des GT 3 à GT 7) refusé : ${classicFail.steps[0].replace(/^connect:fail \((Bluetooth classique : )?|\)$/g, '')}.`
     : null
   if (step('bluetooth')?.status === 'fail') {
@@ -125,7 +125,7 @@ export function verdictFor(report) {
       title: 'La montre ne répond pas',
       advice: [
         holder ? `Elle est probablement liée à ${holder.name} et ignore les autres apps.` : 'Elle attend peut-être un appairage Android.',
-        'Exportez le journal et transmettez-le : la suite (libération et authentification) en dépendra.',
+        'Suivez « Libérer et appairer la montre » ci-dessous, puis relancez le test et exportez le journal.',
         classicLine,
         keep,
       ].filter(Boolean),

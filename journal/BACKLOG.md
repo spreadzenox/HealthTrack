@@ -81,13 +81,16 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       « Montre Huawei en direct » dans Connecteurs (7 étapes, verdict, apps concurrentes repérées), export du journal
       (Documents ou presse-papiers, sans MAC complète), spécification `protocoles/huawei.md`
 - [ ] **Lire le journal du propriétaire** (`journal/diagnostics/` ou ce qu'il fournit) dès qu'il arrive → ajuster (b)/(c)
-- [ ] **(b) Détection et libération** : quelle app tient la montre (apps installées ✓, état d'appairage Android,
-      réponse aux paramètres du lien ✓) ; bouton « Désinstaller <app> » (`Intent.ACTION_DELETE` + permission
-      `REQUEST_DELETE_PACKAGES`, ajout au plugin natif) et « Réglages de <app> » (retirer « Appareils à proximité ») ;
-      guide pas à pas de réinitialisation de la GT 6 Pro (menu exact : Paramètres → Système → Réinitialiser — à
-      vérifier) ; plan B « garder Huawei Santé » via l'identifiant de compte Huawei ; jamais « dissocier »
-- [ ] **(b bis) Assistant d'appairage Android** : `createBond` depuis l'app (plugin natif), état de liaison, retour
-      au diagnostic
+- [x] **(b) Détection et libération** (run 13/10 00:30) : encadré « Libérer et appairer la montre » sous le test
+      (`setup.js` + `WatchSetup.jsx`) : app qui tient la montre → « Désinstaller » (`ACTION_DELETE`,
+      `REQUEST_DELETE_PACKAGES`, `AppManagerPlugin.java`) ou « Réglages » ; réinitialisation guidée (menu Huawei
+      officiel) ; plan B identifiant de compte Huawei (17–19 chiffres, gardé en local) ; jamais « dissocier »
+- [x] **(b bis) Assistant d'appairage Android** (run 13/10 00:30) : `BtClassic.discover` (recherche classique) +
+      `pair` (`createBond`, attente de l'état), ancien appairage d'avant la réinitialisation détecté → réglages Bluetooth
+- [ ] À vérifier sur la vraie montre (journal du propriétaire) : la recherche classique trouve-t-elle la GT 6 Pro sur
+      son écran d'appairage ? Boîte Android (code à comparer ?) ; verrou antivol après réinitialisation ?
+- [ ] Le diagnostic n'est pas assez sûr pour dire « liée à une autre app » quand l'app a déjà été désinstallée : à
+      l'étape (c), un échec d'authentification (« key negotiation ») le prouvera → afficher alors l'étape « Réinitialiser »
 - [ ] **(c) Authentification** d'après le mode lu en (a) : HiChain (1/0x33, 1/0x2C, 1/0x28 ; HKDF, AES-GCM, Web Crypto
       ou Java), clés stockées en local seulement. ⚠️ Constantes issues de l'app Huawei (publiées en MIT par
       `huawei-lpv2`) : **ne pas committer sans accord explicite du propriétaire** → saisie / import unique sur le
@@ -263,10 +266,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⌚ **D3 (b) — détection et libération** (**prochain run hors idées**) : lire d'abord `journal/diagnostics/` (journal
-   du propriétaire) ; boutons « Désinstaller » / « Réglages » de l'app qui tient la montre (plugin natif, `ACTION_DELETE`),
-   guide de réinitialisation pas à pas, plan B identifiant de compte Huawei, assistant d'appairage Android (`createBond`).
-2. ⌚ D3 (c) — authentification HiChain d'après le mode lu dans le journal (accord du propriétaire sur les constantes).
+1. ⌚ **Lire le journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`) : mode d'authentification, retour
+   sur l'assistant « Libérer et appairer ».
+2. ⌚ **D3 (c) — authentification** (**prochain run hors idées**) : HiChain (liaison par PIN puis authentification, HKDF,
+   AES-GCM) écrite depuis la spec, tests sur trames d'exemple ; constantes Huawei saisies / importées sur le téléphone
+   (jamais dans le dépôt) sauf accord du propriétaire ; utilise l'identifiant de compte du plan B s'il est saisi.
 3. ⌚ D3 (d) — synchronisation FC / sommeil / pas / SpO₂ / VFC / séances, puis resynchro en arrière-plan.
 4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
    Worker, graphiques différés ; budget anti-régression.
@@ -317,6 +321,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-13 — D3 (b) : assistant « Libérer et appairer la montre » (désinstallation / réglages de l'app qui la tient, réinitialisation guidée, plan B compte Huawei, appairage Android `createBond`) (run 00:30 Paris)
 - [x] 2026-10-12 — Priorité absolue « montre » reportée (charte §000, backlog) + D3 (a) : test de connexion directe à la montre Huawei (RFCOMM + BLE), journal exportable, spécification `protocoles/huawei.md` (run 22:30 Paris)
 - [x] 2026-10-12 — Directives du 12/10 reportées (charte §00, chantiers D1–D6) + nettoyage, étape 1 : « Écran tard » mesuré plus demandé, « Humeur estimée » retirée, doublons Paramètres, « Mode diagnostic », titre « Analyses » (run 16:30 Paris)
 - [x] 2026-10-12 — « Qui envoie quoi » dans Mes appareils (mesure arrêtée signalée, mesures jamais reçues) + Radar expliqué par les tags de la veille, tags Voyage / Vaccin (run 10:30 Paris)
