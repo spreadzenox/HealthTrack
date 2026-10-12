@@ -59,8 +59,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] Mémoïsation, sous-échantillonnage des longues séries, Web Worker pour l'analyse, graphiques chargés en différé
       (+ code splitting : bundle principal > 500 kB)
 - [ ] Test / budget anti-régression (temps ou nombre de lectures par page)
+- Piste détaillée (run idées 12/10 20:30, I43) : index composé `[type, date]` (migration = ajout d'index seul),
+  `listEntries({types, from, to})` par `IDBKeyRange`, magasin `daily_agg` versionné, LTTB ≥ 2 000 points dans un Worker,
+  test « Accueil lit ≤ N entrées » — `localHealthStorage.js` fait aujourd'hui 7 `getAll()` sur tout le store
 
 ### D3 — Huawei Watch GT 6 Pro en direct (sans Gadgetbridge)
+- Cause probable (run idées 12/10 20:30, I39) : montre liée à Huawei Santé → « Authentication key negotiation failed » ;
+  sorties documentées = réinitialisation d'usine puis appairage à HealthTrack seul (le plus simple), ou identifiant de
+  compte Huawei (17–19 chiffres) ; les modèles récents utilisent l'authentification « HiChain », **non documentée sous
+  licence permissive** → le diagnostic doit d'abord révéler le mode d'authentification annoncé par la GT 6 Pro
 - [ ] Diagnostic d'abord : journal de connexion BLE lisible + écran « Diagnostic montre » (scan, services vus, étapes,
       erreurs) + **export des logs** (fichier JSON / partage) pour le run suivant ; s'appuie sur le « Mode diagnostic »
 - [ ] Guide d'appairage : montre liée à Huawei Santé → que faire exactement (dissocier / réinitialiser, conséquences)
@@ -72,7 +79,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] Étude des limites Android réelles (caméra / micro en arrière-plan, service de premier plan, indicateurs,
       Accessibility, UsageStats) + choix du modèle local (MediaPipe / TFLite / ONNX) → `RESEARCH.md`
 - [ ] Capture opportuniste (au déverrouillage / à l'usage), scores seuls stockés, jamais d'image ni d'audio brut
-- [ ] Usage des réseaux sociaux (UsageStats par app) — décider : entrée de l'estimateur **ou** X (D5)
+- [ ] Usage des réseaux sociaux (UsageStats par app) — décider : entrée de l'estimateur **ou** X (D5).
+      Proposition (I42) : **X**, minutes par app sociale via `queryEvents` du plugin existant, exclu de l'estimateur
+- [ ] Visage (I40) : MediaPipe Face Detector + HSEmotion-B0 LiteRT (8 Mo, Apache-2.0) quelques secondes à chaque
+      ouverture de l'app → sourire / valence / confiance seuls stockés ; étape 2 service caméra démarré depuis l'app
+      (Android 14+ interdit de le créer en arrière-plan ; pas de capture au déverrouillage sans ouvrir l'app)
+- [ ] Voix (I41) : dictée du soir = note déclarée + tags extraits + indices prosodiques (audio effacé), modèle SER
+      seulement s'il tient sur l'A56 (≤ 20 Mo, < 300 ms) — remplace à terme le formulaire de check-in (D1)
 
 ### D5 — Anti-circularité (Y ≠ X)
 - [ ] Liste déclarée des entrées de l'estimateur d'humeur + test qui échoue si une variable est aussi un facteur des
@@ -80,6 +93,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] Estimateur comportemental retiré de l'affichage (carte « Humeur estimée », run 12/10 16:30 Paris)
 - [ ] Revue des pièges : ordre temporel (X avant Y — ex. pas **du jour** vs bien-être du jour), comparaisons multiples
       (déjà BH), taille minimale, formulations « va de pair » partout
+- [ ] Garde-fous visibles (I46) : X de la veille, ≥ 30 paires pour afficher / ≥ 90 jours pour « solide », préblanchiment
+      AR(1), « k liens nets sur m testés » ; expériences ABAB randomisées pour un lien à confirmer (I45, plus tard)
 
 ### D6 — Science personnelle, pas de normes imposées
 - [ ] `LEVER_ACTIONS` + `VARIABLE_META.direction` (`higher_better` / `lower_better`) dans `analysisEngine.js` codent un
@@ -90,6 +105,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       vérifier qu'aucun libellé ne juge le comportement ; Radar / cartes cœur « plus basse que d'habitude » en vert
       (norme implicite) → neutre
 - [ ] Nutrition : repères ANSES présentés comme hypothèses générales, jamais comme des fautes
+- [ ] « Votre cas vs l'hypothèse générale » (I44) : `direction` → `generalHypothesis` { sens, source } utilisé pour
+      l'ordre d'examen et un texte en petit ; a priori faible = rétrécissement vers zéro, jamais vers la norme
 
 ## Chantiers long terme (découpés en étapes livrables)
 
@@ -213,6 +230,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **Sauvegarde exhaustive** : l'export n'applique plus les plafonds de l'analyse (perte silencieuse des données anciennes) (#72)
 - [ ] Performance IndexedDB : `listEntries` fait un `getAll()` + filtre JS à chaque appel → utiliser les index
 - [ ] Code splitting (bundle principal > 500 kB, avertissement Vite)
+- [x] Tests instables corrigés (run 12/10 20:30) : `Recommendations.test.jsx` attendait la fin de « Chargement » au
+      lieu de l'analyse (rouge une fois sur main, run Tests 309) ; `PhoneUsageCard.test.jsx` cliquait avant que l'accès
+      accordé soit appliqué (rouge sur la PR #121)
+- [ ] Mise à jour en 1 clic après 2027 (I48) : compte « distribution limitée » (gratuit, ≤ 20 appareils) ou parcours
+      avancé unique de 24 h ; message clair dans la bannière si Android bloque — à décider avec le propriétaire
 
 ## Prochaines étapes (ordre conseillé)
 
@@ -228,10 +250,10 @@ Réordonnées le 12/10 (16:30 Paris) selon les directives du 12/10 : D1 → D6 a
 4. 🙂 D4 — humeur par visage / voix / réseaux sociaux (recherche des limites Android, puis capture opportuniste).
 5. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
 6. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
-7. Ensuite seulement : briefing du matin (I24, à reconsidérer : il ajoute un écran — plutôt fusionner des cartes
-   existantes), réception BLE automatique, Colmi (I28), journal libre (I26).
-8. 💡 Prochain run idées (12/10 20:30 Paris) : privilégier les idées qui **simplifient et consolident** ; creuser D3
-   (protocole Huawei LPv2, état de la GT 6 Pro) et D4 (modèles locaux d'émotion faciale / vocale, limites Android).
+7. Ensuite seulement : **un seul flux du jour** (I47 : briefing du matin + dictée du soir + bloc « Forme » fusionnés,
+   remplace I24), réception BLE automatique, Colmi (I28).
+8. 💡 Prochain run idées (13/10 08:30 Paris) : wiki `huawei-lpv2` (trames d'exemple pour les tests D3), MediaPipe +
+   LiteRT.js dans la WebView Samsung, plus petit modèle de voix FR, texte officiel du compte « distribution limitée ».
 
 ## Idées en vrac (à trier)
 

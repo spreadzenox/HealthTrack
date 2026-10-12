@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import PhoneUsageCard from './PhoneUsageCard'
 import { getPhoneUsageSettings, enablePhoneUsage } from '../services/phoneUsageSync'
 
@@ -41,6 +41,9 @@ describe('PhoneUsageCard', () => {
     const p = props({ checkAccess: vi.fn(async () => ({ granted: true, supported: true })) })
     render(<PhoneUsageCard {...p} />)
     await waitFor(() => expect(p.checkAccess).toHaveBeenCalled())
+    // Laisser React appliquer `setAccess(granted)` avant le clic : sinon « Activer » part
+    // vers les réglages Android (test instable en CI, PR #121).
+    await act(async () => { await p.checkAccess.mock.results[0].value })
     fireEvent.click(screen.getByRole('button', { name: 'Activer' }))
     await waitFor(() => expect(p.sync).toHaveBeenCalledWith({ force: true }))
     expect(p.openSettings).not.toHaveBeenCalled()

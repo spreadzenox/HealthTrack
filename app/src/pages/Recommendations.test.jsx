@@ -100,17 +100,17 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage()
+    // Wait for the analysis itself (not just the end of « Chargement », which can
+    // be observed before loading has even started — flaky on CI, run 309).
     await waitFor(() => {
-      expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(/Corrélations avec votre bien-être/i) ||
+        screen.queryByText(/facteurs à améliorer/i) ||
+        screen.queryByText(/Analyse sur/i)
+      ).toBeTruthy()
     })
     // Not-enough-data placeholder for basic should NOT appear
     expect(screen.queryByText(/Données insuffisantes pour les recommandations basiques/i)).not.toBeInTheDocument()
-    // Analysis metadata or sections should be visible
-    expect(
-      screen.queryByText(/Corrélations avec votre bien-être/i) ||
-      screen.queryByText(/facteurs à améliorer/i) ||
-      screen.queryByText(/Analyse sur/i)
-    ).toBeTruthy()
   })
 
   it('shows advanced analysis after 9+ days (MIN_DAYS_ADVANCED + HOLD_OUT_DAYS)', async () => {
