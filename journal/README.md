@@ -21,6 +21,9 @@
   Garmin HRM, Wahoo…) ou une **montre qui diffuse sa fréquence cardiaque** → « Mesurer ma VFC (5 min) » : pouls en direct,
   puis FC et VFC enregistrées (elles nourrissent « Votre cœur », le Radar et les analyses). Tensiomètres, balances,
   thermomètres, oxymètres sont déjà reconnus (« Bientôt »). Votre GT 6 Pro apparaît « Via son app » avec le guide Huawei.
+- **Tensiomètre, balance, thermomètre, oxymètre Bluetooth** (même écran) : tout appareil au profil standard est
+  « Compatible ». « Recevoir la mesure », vous faites la mesure, et tension + pouls, poids + masse grasse, température
+  ou SpO₂ s'affichent puis s'enregistrent tout seuls (mesures en mémoire comprises, sans doublon).
 
 **En coulisses**
 - Détection sans code natif : le plugin déjà présent `@capacitor/app-launcher` + la liste des apps déclarée dans le
@@ -31,6 +34,8 @@
   fabricant — jamais son adresse), puis un registre de « pilotes » choisit quoi en faire. Ajouter un appareil = ajouter un
   pilote, pas une liste de modèles. Les appareils inconnus sont notés sur le téléphone pour les prendre en charge plus tard.
 - Sur Android 12+, la recherche Bluetooth ne demande **pas** la position (seulement « Appareils à proximité »).
+- Le workflow **Tests** de main était rouge après #108 (un test de la page Nutrition trop juste en temps sur la CI, sans
+  rapport avec le Bluetooth) : délai d'attente des tests porté de 1 à 3 s, tout est vert. L'APK v99 était bien publié.
 
 **Points d'attention**
 - « Mes appareils » n'a été vérifié que sur captures simulées : **dites-moi ce que la carte affiche sur votre A56**
@@ -39,14 +44,17 @@
   cardiaque, puis Connecteurs → Capteurs Bluetooth → Rechercher. Si elle apparaît « Compatible », c'est la première
   donnée **brute** de la montre qui arrive sans passer par une autre app. Dites-moi ce qui s'affiche (et le nom exact du
   réglage sur la montre).
+- Si vous avez un **tensiomètre, une balance ou un thermomètre Bluetooth**, essayez « Recevoir la mesure » : la lecture
+  suit la norme Bluetooth mais n'a pas encore été testée sur un vrai appareil. Dites-moi la marque et ce qui s'affiche.
 
-**Prochaines priorités** — météo / pression / pollen automatiques, Bluetooth étape 2 (tensiomètres, balances,
-thermomètres, oxymètres standard), temps d'écran.
+**Prochaines priorités** — météo / pression / pollen automatiques, réception Bluetooth automatique (l'appareil de
+mesure est reconnu dès qu'il réapparaît), temps d'écran.
 
 | Run | Type | Résultat |
 |---|---|---|
 | 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → v98 |
-| 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #108 |
+| 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #108 fusionnée → v99 |
+| 12/10 04:30 — [Mesures Bluetooth](runs/2026-10-12-0430-mesures-bluetooth.md) | 🏗️🐛 | PR #109 |
 
 ---
 

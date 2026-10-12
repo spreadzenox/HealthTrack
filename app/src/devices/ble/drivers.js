@@ -84,22 +84,24 @@ export function findWearableVendor(fp) {
 const hasService = (fp, n) => fp.services.includes(n.toString(16).padStart(4, '0'))
 
 /** Pilote d'un profil standard : reconnu par son service GATT, quel que soit le fabricant. */
-function standardDriver(id, service, label, measures, supported = false) {
-  return { id, kind: 'standard', service, label, measures, supported, match: (fp) => (hasService(fp, service) ? 80 : 0) }
+function standardDriver(id, service, label, measures, { mode = null, howTo = null } = {}) {
+  return { id, kind: 'standard', service, label, measures, supported: mode !== null, mode, howTo, match: (fp) => (hasService(fp, service) ? 80 : 0) }
 }
 
 /**
  * `supported` : HealthTrack sait déjà lire ses mesures. Les autres sont reconnus et annoncés (étape suivante).
+ * `mode` : `live` = mesure en direct (cardio), `receive` = l'appareil envoie ses mesures une fois prises
+ * (lecteurs dans ./measurements.js) ; `howTo` : le geste à faire pendant l'attente.
  * Les montres propriétaires ne sont jamais connectées directement : elles sont appairées à leur app
  * officielle (une seule app à la fois), leurs données passent par cette app → Health Connect.
  */
 export const DRIVERS = [
-  standardDriver('ble_heart_rate', 0x180d, 'Capteur cardio', 'fréquence cardiaque et VFC', true),
-  standardDriver('ble_blood_pressure', 0x1810, 'Tensiomètre', 'tension artérielle et pouls'),
-  standardDriver('ble_weight_scale', 0x181d, 'Balance', 'poids'),
-  standardDriver('ble_body_composition', 0x181b, 'Balance impédancemètre', 'poids et composition corporelle'),
-  standardDriver('ble_thermometer', 0x1809, 'Thermomètre', 'température'),
-  standardDriver('ble_pulse_oximeter', 0x1822, 'Oxymètre', 'SpO₂ et pouls'),
+  standardDriver('ble_heart_rate', 0x180d, 'Capteur cardio', 'fréquence cardiaque et VFC', { mode: 'live' }),
+  standardDriver('ble_blood_pressure', 0x1810, 'Tensiomètre', 'tension artérielle et pouls', { mode: 'receive', howTo: 'Lancez une mesure sur le tensiomètre' }),
+  standardDriver('ble_weight_scale', 0x181d, 'Balance', 'poids', { mode: 'receive', howTo: 'Montez sur la balance' }),
+  standardDriver('ble_body_composition', 0x181b, 'Balance impédancemètre', 'poids et masse grasse', { mode: 'receive', howTo: 'Montez pieds nus sur la balance' }),
+  standardDriver('ble_thermometer', 0x1809, 'Thermomètre', 'température', { mode: 'receive', howTo: 'Prenez votre température' }),
+  standardDriver('ble_pulse_oximeter', 0x1822, 'Oxymètre', 'SpO₂', { mode: 'receive', howTo: 'Placez votre doigt dans l’oxymètre' }),
   standardDriver('ble_glucose', 0x1808, 'Lecteur de glycémie', 'glycémie'),
   standardDriver('ble_cycling_power', 0x1818, 'Capteur de puissance vélo', 'puissance'),
   standardDriver('ble_cycling_speed', 0x1816, 'Capteur vitesse / cadence vélo', 'vitesse et cadence'),

@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "nouveau",
+  "title": "Tensiomètre, balance, thermomètre, oxymètre : mesures reçues en Bluetooth",
+  "items": [
+    "Plus → Connecteurs → « Capteurs Bluetooth » : un tensiomètre, une balance (y compris impédancemètre), un thermomètre ou un oxymètre au profil Bluetooth standard est maintenant « Compatible », quelle que soit la marque.",
+    "« Recevoir la mesure », puis faites votre mesure : la tension (et le pouls), le poids et la masse grasse, la température ou la SpO₂ s'affichent dès que l'appareil les envoie, avec celles gardées en mémoire, et sont enregistrées sans rien saisir.",
+    "Les mesures rejoignent « Vos derniers jours » et les Analyses, comme celles de Health Connect. Une mesure renvoyée deux fois n'est enregistrée qu'une fois.",
+    "La première fois, Android peut demander d'appairer l'appareil (parfois avec un code affiché sur son écran) : acceptez, puis réessayez si besoin."
+  ]
+}
