@@ -57,8 +57,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] Check-in en un geste : notification / widget, tags avec intensité (I13)
 
 ### C9 — Humeur estimée et conversations (priorité n° 3)
-- [ ] **Humeur estimée** (I7) : régression personnelle des check-ins sur les écarts à la norme, fourchette, ≥ 7 jours valides / 14, pré-remplit le check-in
-- [ ] **Indice « dans votre plage habituelle »** (I31, précise I7 : z-scores 28 j façon Sahha / Emobot, poids appris sur les check-ins dès 14 j, bande perso, renvoi doux vers un professionnel si bas ≥ 2 semaines)
+- [x] **Humeur estimée « plage habituelle »** (I7 + I31, étape 1) : sommeil, VFC, FC repos, pas de la veille, écran tard vs norme 28 j, indice ± 0,75, Ridge calibrée sur les check-ins dès 14 j seulement si LOO ≥ 10 % mieux que la moyenne (note /5 + fourchette 80 %), bas ≥ 10 j / 14 → renvoi doux (3114), carte sur l'accueil (`moodEstimate.js`, `MoodEstimateCard`) (run 12/10 14:30 Paris)
+- [ ] Humeur estimée, étape 2 : régularité (écart du coucher) et temps dehors comme signaux ; mini-courbe 14 j ; « l'estimation disait 3,2 » affiché **après** le check-in (mesure de précision) — pas de pré-remplissage (boucle auto-confirmée)
 - [ ] **Journal libre (dictée / texte) → tags, intensités, caféine, alcool, symptômes extraits** (I26, Gemini JSON + confirmation en 1 tap, repli mots-clés sans clé)
 - [ ] « Votre semaine en clair » (I9, gabarit local, Gemini optionnel)
 - [ ] Journal vocal (I17) : dictée → transcription locale → résumé / sentiment
@@ -152,10 +152,10 @@ sans saisie, puis la couche BLE générique, puis l'humeur estimée. Le travail 
 2. ~~🏗️ C7 — « Mes appareils » (I3)~~ (run 12/10 00:30) ; étape 2 (appareils BLE appairés, bandeau d'accueil) après retour du propriétaire.
 3. ~~🏗️ C8 — Météo / pression / air / pollen (I4)~~ (run 12/10 06:30, #111).
 4. ~~🏗️ C7 — Couche BLE générique, étapes 1–2 (I8)~~ (runs 12/10 02:30 → 06:30).
-5. 🏗️ **C8 — Temps d'écran + sommeil estimé par le téléphone** (I6 + I25, un seul plugin Kotlin `PhoneUsage`, guide
-   « paramètres restreints »).
+5. ~~🏗️ C8 — Temps d'écran + sommeil estimé par le téléphone (I6 + I25)~~ (run 12/10 12:30 Paris, #114).
 6. ~~🏗️ C2 — Radar expliqué (I22) + « Qui envoie quoi » (I23)~~ (run 12/10 10:30 Paris) ; étape 2 : bandeau d'accueil.
-7. 🏗️ **C9 — Indice « plage habituelle » (I31 / I7)**, puis **Briefing du matin (I24)** qui l'affiche.
+7. ~~🏗️ C9 — Indice « plage habituelle » (I31 / I7)~~ (run 12/10 14:30 Paris) ; ensuite **Briefing du matin (I24)** qui l'affiche
+   (humeur estimée + Radar + météo + une action) — prochain run 🏗️ conseillé, après un run 🐛 (beaucoup de 🏗️ d'affilée).
 8. 🏗️ C9 — Journal libre → tags (I26) puis courbe caféine (I27).
 9. 🏗️ C7 — Bague Colmi en direct (I28), après lecture détaillée du protocole au prochain run idées.
 10. 🐛 / 🎨 en alternance : Capacitor 8.4 + CLI 8 (C1), un seul bloc Radar + cœur.

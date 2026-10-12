@@ -1,0 +1,46 @@
+.mood-signals {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.mood-signals li {
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.35;
+}
+
+.mood-signals li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.mood-signals li.is-favourable::before {
+  background: #6fcf97;
+}
+
+.mood-signals li.is-unfavourable::before {
+  background: #f7b733;
+}
+
+.mood-signal-name {
+  color: var(--text-muted);
+}
+
+.mood-signal-usual {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.mood-note {
+  margin-top: 8px;
+}
