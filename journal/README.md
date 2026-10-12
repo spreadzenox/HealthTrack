@@ -10,6 +10,8 @@
 **Depuis vos directives du 12/10, la routine a changé de cap** : plus de nouvelles fonctionnalités avant d'avoir fait,
 dans l'ordre, le nettoyage (D1), la performance (D2), la connexion directe à la GT 6 Pro (D3), l'humeur par visage /
 voix (D4), l'anti-circularité (D5) et une science personnelle sans normes imposées (D6). Premier pas livré : le nettoyage.
+**Depuis le soir du 12/10, une priorité absolue passe avant tout** : faire de HealthTrack l'app qui parle directement à
+votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 : le **test de connexion directe**.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -50,6 +52,11 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
   explications de calcul des cartes Radar / cœur / régularité sont repliées sous « Comment c'est calculé ». Withings →
   les identifiants se règlent dans sa carte des Connecteurs (plus dans Paramètres). Le conseil « horaires réguliers »
   devient une hypothèse générale que vos données confirmeront ou non (directive D6).
+- **Montre Huawei en direct — le test** (Plus → Connecteurs, juste sous « Mes appareils ») : « Tester la connexion
+  directe » déroule 7 étapes (Bluetooth, apps qui peuvent tenir la montre, recherche, connexion, services, canal Huawei,
+  première trame du protocole) et conclut en clair (« La montre répond à HealthTrack », « La montre ne répond pas »…).
+  **Rien n'est modifié sur la montre** (ni appairage, ni réinitialisation). « Enregistrer le journal » (dossier
+  Documents) ou « Copier le journal » : c'est ce fichier qu'il me faut pour la suite.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -57,6 +64,14 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Découverte clé (run 22:30)** : la GT 6 Pro ne parle pas en Bluetooth basse consommation mais en **Bluetooth
+  « classique »** (comme les GT 3 à GT 7) ; elle doit donc être appairée à Android. HealthTrack a reçu son **2e plugin
+  natif maison** (`BtClassicPlugin.java`, une connexion à la fois, rien gardé côté natif) ; le test essaie le classique
+  puis le BLE. Le protocole est décrit avec nos mots dans `journal/protocoles/huawei.md` (sources citées, aucun code
+  copié de Gadgetbridge) ; le code est écrit à partir de ce document, avec des tests sur trames d'exemple.
+- Votre montre attend très probablement l'authentification « HiChain » ; l'étape d'authentification aura besoin de
+  constantes publiées par un projet libre mais issues de l'app Huawei : **je vous demanderai votre accord** avant
+  (ou une saisie unique sur le téléphone, jamais dans le dépôt).
 - Détection sans code natif : le plugin déjà présent `@capacitor/app-launcher` + la liste des apps déclarée dans le
   manifeste Android (obligatoire depuis Android 11 ; un test vérifie que chaque app du catalogue y figure).
 - Les mesures Health Connect gardaient déjà le nom de l'app d'origine : c'est lui qui dit quelle app envoie vraiment.
@@ -79,6 +94,11 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
+- **🎯 À faire en priorité (2 minutes)** : mettez à jour, montre au poignet près du téléphone, puis Plus → Connecteurs →
+  « Montre Huawei en direct » → **Tester la connexion directe**, puis **Enregistrer le journal** et déposez le fichier
+  `healthtrack-diagnostic-montre-….json` dans le dépôt (`journal/diagnostics/`) ou envoyez-le-moi. Il dit si la montre
+  répond en Bluetooth classique, et surtout **quelle méthode d'authentification elle attend** : tout le reste en dépend.
+  Le test n'a pas besoin de couper Huawei Santé ; ne dissociez pas la montre dans Huawei Santé.
 - **À essayer** : Connecteurs → « Temps d'écran et sommeil » → Activer. Dites-moi si Android a affiché « Paramètre
   restreint » (le guide explique quoi faire) et si la « Nuit estimée » du lendemain matin colle à votre nuit réelle.
 - **Votre avis compte pour le nettoyage** : s'il y a un écran, une carte ou une question que vous ne regardez jamais,
@@ -130,10 +150,11 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités** (vos directives du 12/10) — nettoyage étapes 1 et 2 faites ; prochain run : **mesurer** la
-lenteur des courbes et l'éliminer ; puis l'écran de diagnostic de la GT 6 Pro avec export des journaux, première étape
-de la connexion directe sans Gadgetbridge. Les derniers restes du nettoyage (un seul bloc « Forme » sur l'accueil,
-Connecteurs triés par statut) se feront en passant.
+**Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étape (a) diagnostic livrée ;
+prochain run : (b) **détection et libération** (bouton qui ouvre la désinstallation / les réglages de l'app qui tient la
+montre, guide de réinitialisation pas à pas, plan B identifiant de compte Huawei) et assistant d'appairage Android ;
+puis (c) authentification d'après votre journal, (d) synchronisation. Ensuite : performance des courbes, restes du
+nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -148,6 +169,7 @@ Connecteurs triés par statut) se feront en passant.
 | 12/10 16:30 — [Directives du 12/10 + nettoyage](runs/2026-10-12-1430-nettoyage-directives.md) | 🧹 | PR #117 fusionnée → v106 |
 | 12/10 18:30 — [Nettoyage, étape 2](runs/2026-10-12-1630-nettoyage-etape-2.md) | 🧹 | PR #119 fusionnée → v107 |
 | 12/10 20:30 — [Idées : montre en direct, visage / voix, science perso](runs/2026-10-12-2030-idees-directives.md) | 💡 | 10 idées (I39–I48), 2 tests instables corrigés — PR #121 fusionnée → v108 |
+| 12/10 22:30 — [Priorité montre : test de connexion directe](runs/2026-10-12-2230-montre-diagnostic.md) | ⌚🏗️ | PR « [Auto] » — voir le compte rendu |
 
 ---
 
@@ -166,10 +188,41 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `IDEES.md` | Idées des runs « idées » (08 h / 20 h Paris), classées impact × faisabilité, avec sources et pistes |
 | `runs/AAAA-MM-JJ-HHMM-<slug>.md` | Un compte rendu par exécution (un fichier par run = pas de conflit Git) |
 | `semaines/AAAA-Sww.md` | Résumés des semaines passées |
+| `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---
 
-## 00. Directives du propriétaire (12 octobre 2026) — priment sur tout le reste
+## 000. PRIORITÉ ABSOLUE (propriétaire, 12 octobre 2026 au soir) — la montre d'abord
+
+**HealthTrack devient l'app principale de communication avec la ou les montres, sans Gadgetbridge ni app constructeur.**
+Hors runs « idées », **chaque run travaille d'abord sur ce chantier (D3)**, avant le nettoyage et la performance,
+jusqu'à ce que la Huawei Watch GT 6 Pro du propriétaire remonte ses données dans HealthTrack. Les runs « idées » de
+08 h et 20 h y consacrent aussi une bonne part de leur recherche.
+
+- **Parcours visé, en un minimum de gestes** : autodétection (scan BLE + appareils appairés, empreinte : nom, services,
+  données fabricant, Device Information Service) → savoir ce qui tient la montre (apps installées : Huawei Santé,
+  Gadgetbridge, Zepp, Mi Fitness… dans `<queries>` ; appairage système ; réponse aux paramètres du lien et à
+  l'authentification) → **libération** (bouton qui ouvre la boîte de désinstallation Android de l'app concurrente,
+  `ACTION_DELETE` + `REQUEST_DELETE_PACKAGES`, ou ses réglages pour lui retirer le Bluetooth ; Android interdit la
+  désinstallation silencieuse et la réinitialisation à distance : un geste de l'utilisateur, guide pas à pas avec le
+  menu exact de la montre ; **jamais** « dissocier dans Huawei Santé » ; plan B identifiant de compte Huawei) →
+  **assistant d'appairage** (liaison Android, authentification Huawei, clés générées et stockées en local seulement) →
+  **synchronisation** (FC, sommeil, pas, SpO₂, stress / VFC, séances) puis resynchro en arrière-plan (WorkManager ou
+  service de premier plan) → IndexedDB.
+- **Méthode** : plugin Capacitor natif (Java / Kotlin) pour le Bluetooth et le protocole. Étudier Gadgetbridge (paquets
+  Huawei, issues / PR GT 6, HiChain), `zyv/huawei-lpv2` (MIT), CCC eh19, toute doc publique ; rétro-ingénierie
+  d'interopérabilité permise (directive UE 2009/24, art. 6).
+- **Licence (décision du propriétaire)** : réimplémentation totale, HealthTrack ne passe pas sous AGPL. Lire pour
+  comprendre, **jamais** copier ni traduire ligne à ligne. D'abord la spécification avec nos mots
+  (**`protocoles/huawei.md`**, sources citées), puis le code à partir d'elle. Pilote compact : seulement ce dont
+  HealthTrack a besoin.
+- Jamais de firmware, d'APK, de code décompilé propriétaire ni de clé extraite d'une app constructeur dans le dépôt.
+- **Étapes livrables, chacune mergeable seule** : (a) écran de diagnostic qui déroule chaque étape et exporte un
+  journal (le propriétaire le renvoie, le run suivant le lit) ; (b) détection et libération ; (c) authentification ;
+  (d) synchronisation et resynchro en arrière-plan. Tests sur trames d'exemple à chaque étape.
+- Un **pilote dans un registre générique**, pour ajouter d'autres montres et familles de protocoles ensuite.
+
+## 00. Directives du propriétaire (12 octobre 2026) — priment sur tout le reste, sauf la priorité absolue (§000)
 
 Constat du propriétaire : l'app devient un « sac à features ». **Hors runs « idées », les runs traitent ces chantiers
 dans cet ordre, avant toute nouvelle fonctionnalité** (chantiers D1–D6 de `BACKLOG.md`) :
@@ -182,7 +235,7 @@ dans cet ordre, avant toute nouvelle fonctionnalité** (chantiers D1–D6 de `BA
    dans IndexedDB), puis : cache d'agrégats journaliers / hebdo invalidés à l'écriture, requêtes IndexedDB par index et
    par plage, mémoïsation, sous-échantillonnage des longues séries, calculs lourds en Web Worker, graphiques différés.
    Une mesure / un test anti-régression ; chiffres avant / après dans le compte rendu.
-3. **D3 — Montre Huawei en direct, sans app tierce.** La GT 6 Pro ne se connecte pas, même avec Gadgetbridge.
+3. **D3 — Montre Huawei en direct, sans app tierce** (remplacé et promu par la **priorité absolue, §000**). La GT 6 Pro ne se connecte pas, même avec Gadgetbridge.
    HealthTrack fait tout elle-même (seules étapes manuelles : autorisations Android) : découverte BLE, connexion,
    authentification, récupération (FC, sommeil, pas, SpO₂, stress / VFC…), resynchro en arrière-plan. Protocole Huawei
    réimplémenté d'après la documentation et les observations publiques, **sans code AGPL**, tests sur trames d'exemple.
@@ -291,6 +344,7 @@ page **Nouveautés**. Chaque semaine doit donc apporter des progrès visibles et
 1. `git fetch origin main` puis partir de `origin/main` à jour sur la branche de travail.
 2. `cd app && npm ci`.
 3. Lire ce fichier, `BACKLOG.md`, et les **5 derniers comptes rendus** (`ls journal/runs | tail -5`).
+   Regarder aussi `journal/diagnostics/` : un journal de montre déposé par le propriétaire oriente la priorité absolue (§000).
 4. Vérifier les PR ouvertes par la routine (titre préfixé `[Auto]`) : une PR rouge ou en
    conflit d'un run précédent est **la priorité absolue** — la réparer et la fusionner
    avant toute autre chose (ou la fermer en expliquant pourquoi dans le compte rendu).

@@ -21,6 +21,12 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🎯 PRIORITÉ ABSOLUE (12/10/2026 au soir) — D3 avant tout, hors runs « idées »
+
+HealthTrack devient l'app principale de communication avec la ou les montres, sans Gadgetbridge ni app constructeur,
+jusqu'à ce que la GT 6 Pro du propriétaire remonte ses données. Texte complet : charte §000. Spécification du
+protocole : `protocoles/huawei.md` (réimplémentation totale, jamais de code Gadgetbridge). Étapes (a) → (d) en D3 ci-dessous.
+
 ## ⚠️ Directives du 12/10/2026 — chantiers D1 → D6, dans cet ordre, avant toute nouvelle fonctionnalité
 
 Texte complet : charte §00. Les chantiers C1–C9 plus bas passent **après** (sauf ce qui sert directement un D).
@@ -63,17 +69,34 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   `listEntries({types, from, to})` par `IDBKeyRange`, magasin `daily_agg` versionné, LTTB ≥ 2 000 points dans un Worker,
   test « Accueil lit ≤ N entrées » — `localHealthStorage.js` fait aujourd'hui 7 `getAll()` sur tout le store
 
-### D3 — Huawei Watch GT 6 Pro en direct (sans Gadgetbridge)
-- Cause probable (run idées 12/10 20:30, I39) : montre liée à Huawei Santé → « Authentication key negotiation failed » ;
-  sorties documentées = réinitialisation d'usine puis appairage à HealthTrack seul (le plus simple), ou identifiant de
-  compte Huawei (17–19 chiffres) ; les modèles récents utilisent l'authentification « HiChain », **non documentée sous
-  licence permissive** → le diagnostic doit d'abord révéler le mode d'authentification annoncé par la GT 6 Pro
-- [ ] Diagnostic d'abord : journal de connexion BLE lisible + écran « Diagnostic montre » (scan, services vus, étapes,
-      erreurs) + **export des logs** (fichier JSON / partage) pour le run suivant ; s'appuie sur le « Mode diagnostic »
-- [ ] Guide d'appairage : montre liée à Huawei Santé → que faire exactement (dissocier / réinitialiser, conséquences)
-- [ ] Protocole Huawei (« Link Protocol v2 ») réimplémenté d'après la doc publique (`huawei-lpv2` MIT, notes publiques),
-      jamais de code Gadgetbridge (AGPL) : trames TLV, chiffrement, authentification, tests sur trames d'exemple
-- [ ] Récupération FC / sommeil / pas / SpO₂ / stress-VFC, puis resynchro en arrière-plan
+### D3 — Huawei Watch GT 6 Pro en direct (sans Gadgetbridge) — 🎯 PRIORITÉ ABSOLUE
+- Cause probable de l'échec actuel (run idées 12/10 20:30, I39) : montre liée à Huawei Santé → « Authentication key
+  negotiation failed » ; sorties documentées = réinitialisation d'usine puis appairage à HealthTrack seul, ou
+  identifiant de compte Huawei (17 chiffres) pour garder Huawei Santé
+- **Découverte du run 12/10 22:30** : les GT 3 → GT 7 (dont la GT 6 Pro) parlent en **Bluetooth classique (RFCOMM)**,
+  service SDP `82FF3820-…`, pas en BLE GATT ; montre appairée à Android requise. Mode d'authentification attendu :
+  HiChain (étiquette 7 des paramètres du lien) — à confirmer par le journal du propriétaire
+- [x] **(a) Diagnostic** (run 12/10 22:30) : couche protocole (trame, CRC, TLV, tranches, paramètres du lien décodés
+      dont le mode d'authentification), transports RFCOMM (plugin natif `BtClassicPlugin.java`) puis BLE FE86, écran
+      « Montre Huawei en direct » dans Connecteurs (7 étapes, verdict, apps concurrentes repérées), export du journal
+      (Documents ou presse-papiers, sans MAC complète), spécification `protocoles/huawei.md`
+- [ ] **Lire le journal du propriétaire** (`journal/diagnostics/` ou ce qu'il fournit) dès qu'il arrive → ajuster (b)/(c)
+- [ ] **(b) Détection et libération** : quelle app tient la montre (apps installées ✓, état d'appairage Android,
+      réponse aux paramètres du lien ✓) ; bouton « Désinstaller <app> » (`Intent.ACTION_DELETE` + permission
+      `REQUEST_DELETE_PACKAGES`, ajout au plugin natif) et « Réglages de <app> » (retirer « Appareils à proximité ») ;
+      guide pas à pas de réinitialisation de la GT 6 Pro (menu exact : Paramètres → Système → Réinitialiser — à
+      vérifier) ; plan B « garder Huawei Santé » via l'identifiant de compte Huawei ; jamais « dissocier »
+- [ ] **(b bis) Assistant d'appairage Android** : `createBond` depuis l'app (plugin natif), état de liaison, retour
+      au diagnostic
+- [ ] **(c) Authentification** d'après le mode lu en (a) : HiChain (1/0x33, 1/0x2C, 1/0x28 ; HKDF, AES-GCM, Web Crypto
+      ou Java), clés stockées en local seulement. ⚠️ Constantes issues de l'app Huawei (publiées en MIT par
+      `huawei-lpv2`) : **ne pas committer sans accord explicite du propriétaire** → saisie / import unique sur le
+      téléphone, ou demander. Tests sur trames d'exemple
+- [ ] **(d) Synchronisation** : informations produit (1/7), heure (1/5), minute par minute (7/0x0A-0x0B : pas, FC,
+      SpO₂, FC repos), sommeil (7/0x0C-0x0D puis fichiers 0x2C), RR → VFC / stress, séances (0x17) → IndexedDB
+      (source `huawei_direct`) ; puis resynchro en arrière-plan (WorkManager / service de premier plan)
+- [ ] Pilote enregistré dans le registre générique (`src/devices/ble/drivers.js` → registre de familles de protocoles,
+      transport classique ou BLE) pour ajouter d'autres montres ensuite
 
 ### D4 — Humeur par signaux émotionnels directs (visage, voix, réseaux sociaux)
 - [ ] Étude des limites Android réelles (caméra / micro en arrière-plan, service de premier plan, indicateurs,
@@ -238,22 +261,24 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 ## Prochaines étapes (ordre conseillé)
 
-Réordonnées le 12/10 (16:30 Paris) selon les directives du 12/10 : D1 → D6 avant tout le reste, hors runs « idées ».
+Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⚡ D2 — performance (**prochain run hors idées**) : **mesurer d'abord** (temps par page, volume IndexedDB) puis
-   index / plages, cache d'agrégats, Worker, graphiques différés ; budget anti-régression. (D1 étapes 1 et 2 livrées ;
-   les restes de D1 — bloc « Forme » unique, ordre des Connecteurs, tags auto-détectés — se feront en passant.)
-2. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /
+1. ⌚ **D3 (b) — détection et libération** (**prochain run hors idées**) : lire d'abord `journal/diagnostics/` (journal
+   du propriétaire) ; boutons « Désinstaller » / « Réglages » de l'app qui tient la montre (plugin natif, `ACTION_DELETE`),
+   guide de réinitialisation pas à pas, plan B identifiant de compte Huawei, assistant d'appairage Android (`createBond`).
+2. ⌚ D3 (c) — authentification HiChain d'après le mode lu dans le journal (accord du propriétaire sur les constantes).
+3. ⌚ D3 (d) — synchronisation FC / sommeil / pas / SpO₂ / VFC / séances, puis resynchro en arrière-plan.
+4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
+   Worker, graphiques différés ; budget anti-régression.
+5. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /
    « Voyage » auto-détectés ; `--border` inexistant utilisé par `.settings-input` (corriger globalement).
-3. ⌚ D3 — Huawei en direct : écran de diagnostic + export des logs **en premier** (le propriétaire pourra renvoyer ce
-   qu'il voit), puis guide d'appairage, puis protocole.
-4. 🙂 D4 — humeur par visage / voix / réseaux sociaux (recherche des limites Android, puis capture opportuniste).
-5. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
-6. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
-7. Ensuite seulement : **un seul flux du jour** (I47 : briefing du matin + dictée du soir + bloc « Forme » fusionnés,
-   remplace I24), réception BLE automatique, Colmi (I28).
-8. 💡 Prochain run idées (13/10 08:30 Paris) : wiki `huawei-lpv2` (trames d'exemple pour les tests D3), MediaPipe +
-   LiteRT.js dans la WebView Samsung, plus petit modèle de voix FR, texte officiel du compte « distribution limitée ».
+6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB).
+7. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
+8. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
+9. Ensuite seulement : **un seul flux du jour** (I47), réception BLE automatique, Colmi (I28).
+10. 💡 Prochain run idées (13/10 08:30 Paris) : une bonne part sur la montre — valeurs réelles des paramètres du lien
+    des GT 5 / GT 6, HiChain sans constantes d'app, réinitialisation de la GT 6 Pro (menu exact), RFCOMM et One UI ;
+    puis MediaPipe + LiteRT dans la WebView, plus petit modèle de voix FR.
 
 ## Idées en vrac (à trier)
 
@@ -292,6 +317,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-12 — Priorité absolue « montre » reportée (charte §000, backlog) + D3 (a) : test de connexion directe à la montre Huawei (RFCOMM + BLE), journal exportable, spécification `protocoles/huawei.md` (run 22:30 Paris)
 - [x] 2026-10-12 — Directives du 12/10 reportées (charte §00, chantiers D1–D6) + nettoyage, étape 1 : « Écran tard » mesuré plus demandé, « Humeur estimée » retirée, doublons Paramètres, « Mode diagnostic », titre « Analyses » (run 16:30 Paris)
 - [x] 2026-10-12 — « Qui envoie quoi » dans Mes appareils (mesure arrêtée signalée, mesures jamais reçues) + Radar expliqué par les tags de la veille, tags Voyage / Vaccin (run 10:30 Paris)
 - [x] 2026-10-12 — Run idées : 17 nouvelles idées (I22–I38) dans `IDEES.md`, backlog réorienté (Radar expliqué, « qui envoie quoi », sommeil par le téléphone, plage habituelle, briefing du matin) (run 08:30 Paris)

@@ -6,7 +6,8 @@
  */
 import { useEffect, useState } from 'react'
 import { listEntries } from '../storage/localHealthStorage'
-import { detectInstalledApps, summarizeHealthConnectSources, adviseDevices, missingWatchMetrics } from '../devices/healthApps'
+import { summarizeHealthConnectSources, adviseDevices, missingWatchMetrics } from '../devices/healthApps'
+import { detectPhoneApps, openPhoneApp } from '../devices/phoneApps'
 import { formatAgo } from '../utils/timeAgo'
 import { openGuide } from '../utils/openGuide'
 import './MyDevices.css'
@@ -20,43 +21,16 @@ const STATUS = {
   action: { label: 'À brancher', className: 'device-status-action' },
 }
 
-function isNative() {
-  return typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
-}
-
-async function getAppLauncher() {
-  try {
-    return (await import('@capacitor/app-launcher')).AppLauncher
-  } catch {
-    return null
-  }
-}
-
-async function defaultDetect() {
-  // Outil de captures (`npm run visual -- --devices`) : apps « installées » simulées dans le navigateur.
-  const fake = typeof window !== 'undefined' ? window.__healthtrackFakeInstalledPackages : null
-  if (Array.isArray(fake)) return detectInstalledApps(async (pkg) => fake.includes(pkg))
-  if (!isNative()) return null
-  const launcher = await getAppLauncher()
-  if (!launcher) return null
-  return detectInstalledApps(async (pkg) => (await launcher.canOpenUrl({ url: pkg }))?.value === true)
-}
-
 async function defaultLoadEntries() {
   const since = new Date(Date.now() - SOURCE_WINDOW_DAYS * 24 * 3600 * 1000).toISOString()
   return listEntries({ source: 'health_connect', since, limit: Number.MAX_SAFE_INTEGER })
-}
-
-async function defaultOpenApp(pkg) {
-  const launcher = await getAppLauncher()
-  await launcher?.openUrl({ url: pkg })
 }
 
 /**
  * @param {{ detect?: () => Promise<object[]|null>, loadEntries?: () => Promise<object[]>, openApp?: (pkg: string) => Promise<void>, now?: Date }} props
  *   `detect` renvoie null quand la détection n'est pas possible (navigateur).
  */
-export default function MyDevices({ detect = defaultDetect, loadEntries = defaultLoadEntries, openApp = defaultOpenApp, now }) {
+export default function MyDevices({ detect = detectPhoneApps, loadEntries = defaultLoadEntries, openApp = openPhoneApp, now }) {
   const [state, setState] = useState({ loading: true, rows: [], canDetect: false })
 
   useEffect(() => {

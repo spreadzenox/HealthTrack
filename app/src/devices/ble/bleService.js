@@ -21,14 +21,14 @@ export function isBleAvailable() {
   return typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
 }
 
-async function getClient() {
+export async function getClient() {
   // Outil de captures (`npm run visual -- --ble`) : faux Bluetooth dans le navigateur.
   if (typeof window !== 'undefined' && window.__healthtrackFakeBle) return window.__healthtrackFakeBle
   if (!clientPromise) clientPromise = import('@capacitor-community/bluetooth-le').then((m) => m.BleClient)
   return clientPromise
 }
 
-async function ready(client) {
+export async function ready(client) {
   if (!initialized) {
     // neverForLocation : HealthTrack ne déduit jamais de position des appareils vus (pas de localisation demandée sur Android 12+).
     await client.initialize({ androidNeverForLocation: true })

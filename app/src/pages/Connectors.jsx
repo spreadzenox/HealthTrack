@@ -8,6 +8,7 @@ import DebugPanel from '../components/DebugPanel'
 import WatchGuides from '../components/WatchGuides'
 import MyDevices from '../components/MyDevices'
 import BleDevices from '../components/BleDevices'
+import WatchDiagnostic from '../components/WatchDiagnostic'
 import WithingsSetup from '../components/WithingsSetup'
 import WeatherCard from '../components/WeatherCard'
 import PhoneUsageCard from '../components/PhoneUsageCard'
@@ -469,6 +470,8 @@ export default function Connectors() {
       </p>
 
       <MyDevices />
+
+      <WatchDiagnostic />
 
       <div className="connectors-list">
         {CONNECTORS.map((connector) => (

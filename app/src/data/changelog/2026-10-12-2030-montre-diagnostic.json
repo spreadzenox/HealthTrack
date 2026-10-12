@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "nouveau",
+  "title": "Votre montre Huawei en direct : le test de connexion",
+  "items": [
+    "Plus → Connecteurs → « Montre Huawei en direct » : HealthTrack apprend à parler directement à votre montre Huawei ou Honor, sans Huawei Santé ni Gadgetbridge. « Tester la connexion directe » vérifie 7 étapes et vous dit en clair où ça bloque.",
+    "Le test ne modifie rien sur la montre : ni appairage, ni réinitialisation. Il repère aussi les apps qui peuvent tenir la montre (Huawei Santé, Gadgetbridge…).",
+    "« Enregistrer le journal » (dossier Documents) ou « Copier le journal » : transmettez-le, il indique notamment la méthode d’authentification attendue par votre montre, la prochaine étape de la connexion directe. Le journal ne contient ni donnée de santé ni l’adresse Bluetooth complète.",
+    "Important : ne dissociez pas la montre dans Huawei Santé, cela invalide sa clé sans la libérer."
+  ]
+}
