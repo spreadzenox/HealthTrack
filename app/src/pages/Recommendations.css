@@ -486,3 +486,16 @@
   color: var(--text-muted);
   line-height: 1.5;
 }
+
+/* Liens incertains repliés sous la liste des corrélations nettes */
+.reco-corr-more {
+  margin-top: 0.75rem;
+}
+.reco-corr-more summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.9rem;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}

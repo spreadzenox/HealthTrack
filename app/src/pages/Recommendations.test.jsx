@@ -301,6 +301,44 @@ describe('Recommendations levers', () => {
     expect(solidRow).not.toHaveClass('reco-corr-row-uncertain')
     spy.mockRestore()
   })
+  it('folds uncertain correlations behind « Voir les N liens incertains »', async () => {
+    const solid = { ...baseCorr, variable: 'sleepMinutes', label: 'Durée de sommeil', r: 0.5, direction: 'higher_better' }
+    const weak1 = { ...baseCorr, variable: 'fat_g', label: 'Lipides', r: -0.1, q: 0.8, evidence: 'incertain', direction: 'neutral' }
+    const weak2 = { ...baseCorr, variable: 'sugar_g', label: 'Sucres', r: 0.08, q: 0.9, evidence: 'incertain', direction: 'neutral' }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [solid, weak1, weak2], levers: [],
+    })
+    const summary = await screen.findByText(/Voir les 2 liens incertains/i)
+    const details = summary.closest('details')
+    expect(details).not.toHaveAttribute('open')
+    expect(details).toContainElement(screen.getByText('Lipides'))
+    expect(details).not.toContainElement(screen.getByText('Durée de sommeil'))
+    spy.mockRestore()
+  })
+
+  it('says so when no correlation is clear yet, uncertain ones stay reachable', async () => {
+    const weak = { ...baseCorr, variable: 'fat_g', label: 'Lipides', r: -0.1, q: 0.8, evidence: 'incertain', direction: 'neutral' }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [weak], levers: [],
+    })
+    expect(await screen.findByText(/Aucun lien net pour l’instant/i)).toBeInTheDocument()
+    expect(screen.getByText(/Voir le lien incertain/i)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('does not repeat « Écran tard » in the chart (already in « Vos habitudes », measured by the phone)', async () => {
+    const late = { ...baseCorr, variable: 'screen_late_minutes', label: 'Écran tard (veille au soir, 22 h–4 h)', r: 0.5 }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [late], levers: [],
+    })
+    await screen.findByText(/Pistes à tester/i)
+    expect(screen.queryByText(/Écran tard \(veille au soir/)).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
   it('shows a near-zero correlation as 0,00 (never −0,00)', async () => {
     const tiny = { ...baseCorr, variable: 'fat_g', label: 'Lipides', r: -0.001, q: 0.99, evidence: 'incertain', direction: 'neutral' }
     const spy = await renderWithBasic({

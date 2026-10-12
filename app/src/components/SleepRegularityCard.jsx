@@ -3,6 +3,7 @@ import { listEntries } from '../storage/localHealthStorage'
 import { computeSleepRegularity, REGULARITY_DAYS, MIN_NIGHTS } from '../services/sleepRegularity'
 import { formatDuration, formatClock } from '../utils/format'
 import './BaselineCards.css'
+import MethodNote from './MethodNote'
 
 // 14 jours + la veille du premier (coucher avant minuit) + marge pour la comparaison à 24 h
 const HISTORY_DAYS = REGULARITY_DAYS + 2
@@ -93,14 +94,14 @@ export default function SleepRegularityCard() {
       </div>
       {showTip && (
         <p className="baseline-hint" role="note">
-          Se coucher et se lever à des heures proches chaque jour, week-end compris (à 1 h près), est associé à un
-          sommeil de meilleure qualité et à un meilleur bien-être le lendemain. Une observation, pas un diagnostic.
+          Hypothèse générale (études) : des horaires proches chaque jour, week-end compris, iraient avec un meilleur
+          sommeil et un meilleur bien-être le lendemain. Vos Analyses diront si c’est vrai chez vous.
         </p>
       )}
-      <p className="baseline-footnote">
+      <MethodNote>
         {result.nights} nuits sur les {REGULARITY_DAYS} derniers jours. L’indice (0 à 100) mesure la chance d’être
         dans le même état — endormi ou éveillé — à la même heure d’un jour au suivant.
-      </p>
+      </MethodNote>
     </section>
   )
 }

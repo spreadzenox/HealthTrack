@@ -6,6 +6,7 @@ import { formatScreenMinutes } from '../services/phoneUsage'
 import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
+import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
 import BaselineCards from '../components/BaselineCards'
 import HealthRadar from '../components/HealthRadar'
 import SleepRegularityCard from '../components/SleepRegularityCard'
@@ -365,7 +366,7 @@ export default function Dashboard() {
         >
           + Ajouter un bien-être
         </button>
-        <CigaretteQuickAdd />
+        {!loading && shouldShowCigaretteCounter(entries) && <CigaretteQuickAdd />}
       </div>
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />

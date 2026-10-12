@@ -38,16 +38,17 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       montre envoie des séances ; « Repas tardif » depuis l'heure des repas saisis (mais un repas non saisi ≠ pas de
       repas tardif → seulement si l'utilisateur saisit ses repas régulièrement) ; « Voyage » depuis un changement de
       fuseau horaire
-- [ ] Accueil : « Radar forme » + « Votre cœur vs votre norme » + « Régularité du sommeil » = 3 cartes et 3 paragraphes
-      d'explication (« une observation, pas un diagnostic » ×2) → un seul bloc « Forme » avec explication repliable
-- [ ] Analyses : « Écran tard » apparaît 2 fois (tag mesuré dans « Vos habitudes » + variable continue « Écran tard
+- [x] Accueil : explications de méthode des 3 cartes repliées sous « Comment c'est calculé » ; conseil de régularité
+      présenté comme hypothèse générale (D6) (run 12/10 18:30 Paris)
+- [ ] Accueil, suite : « Radar forme » + « Votre cœur vs votre norme » + « Régularité du sommeil » → un seul bloc « Forme »
+- [x] Analyses : « Écran tard » apparaît 2 fois (tag mesuré dans « Vos habitudes » + variable continue « Écran tard
       (veille au soir) » dans les corrélations) → n'en garder qu'une présentation
-- [ ] Analyses : la liste des corrélations affiche ~45 variables dont ~35 « incertaines » pâles → n'afficher que les
+- [x] Analyses : la liste des corrélations affiche ~45 variables dont ~35 « incertaines » pâles → n'afficher que les
       liens au moins « à confirmer » + « voir les N autres »
-- [ ] Paramètres : la configuration Withings (Client ID / Secret / URL) est dans Paramètres, l'interrupteur dans
+- [x] Paramètres : la configuration Withings (Client ID / Secret / URL) est dans Paramètres, l'interrupteur dans
       Connecteurs → tout regrouper dans la carte Withings des Connecteurs
-- [ ] Accueil : « + 1 cigarette » toujours visible même pour un non-fumeur → n'afficher que si des cigarettes ont été
-      saisies ces 30 derniers jours (sinon dans « Ajouter… »)
+- [x] Accueil : « + 1 cigarette » seulement si une cigarette notée ces 14 jours, ou épinglé dans Paramètres → Cigarettes
+      (run 12/10 18:30 Paris ; écran tard dédoublonné, corrélations incertaines repliées, Withings regroupé : même run)
 - [ ] Connecteurs : intro + 6 blocs empilés → ordre par statut (ce qui envoie / ce qui reste à brancher)
 
 ### D2 — Performance (mesurer d'abord)
@@ -217,11 +218,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (16:30 Paris) selon les directives du 12/10 : D1 → D6 avant tout le reste, hors runs « idées ».
 
-1. 🧹 D1 — fin du nettoyage : un seul bloc « Forme » sur l'accueil, corrélations incertaines repliées, doublon
-   « Écran tard » des Analyses, Withings regroupé dans Connecteurs, « + 1 cigarette » conditionnel, tags « Sport le
-   soir » / « Voyage » auto-détectés.
-2. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
-   Worker, graphiques différés ; budget anti-régression.
+1. ⚡ D2 — performance (**prochain run hors idées**) : **mesurer d'abord** (temps par page, volume IndexedDB) puis
+   index / plages, cache d'agrégats, Worker, graphiques différés ; budget anti-régression. (D1 étapes 1 et 2 livrées ;
+   les restes de D1 — bloc « Forme » unique, ordre des Connecteurs, tags auto-détectés — se feront en passant.)
+2. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /
+   « Voyage » auto-détectés ; `--border` inexistant utilisé par `.settings-input` (corriger globalement).
 3. ⌚ D3 — Huawei en direct : écran de diagnostic + export des logs **en premier** (le propriétaire pourra renvoyer ce
    qu'il voit), puis guide d'appairage, puis protocole.
 4. 🙂 D4 — humeur par visage / voix / réseaux sociaux (recherche des limites Android, puis capture opportuniste).

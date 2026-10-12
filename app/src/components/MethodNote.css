@@ -1,0 +1,15 @@
+.method-note {
+  margin-top: 0.25rem;
+}
+.method-note summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-muted, var(--muted));
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
+.method-note .baseline-footnote,
+.method-note p {
+  margin-top: 0.25rem;
+}

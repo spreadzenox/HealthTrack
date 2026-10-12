@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import { computeHeartBaselines, RECENT_DAYS, BASELINE_DAYS } from '../services/baselines'
 import './BaselineCards.css'
+import MethodNote from './MethodNote'
 
 // 7 jours récents + 60 jours de norme, avec un peu de marge
 const HISTORY_DAYS = RECENT_DAYS + BASELINE_DAYS + 2
@@ -129,10 +130,10 @@ export default function BaselineCards() {
               parlez-en à un professionnel de santé.
             </p>
           )}
-          <p className="baseline-footnote">
+          <MethodNote>
             Moyenne des {RECENT_DAYS} derniers jours comparée à votre norme personnelle (moyenne ± 1 écart-type
             des {BASELINE_DAYS} jours précédents). Une observation, pas un diagnostic.
-          </p>
+          </MethodNote>
         </>
       )}
     </section>

@@ -4,6 +4,7 @@ import { computeRadar, explainRadar, RADAR_DAYS, RADAR_BASELINE_DAYS } from '../
 import { localDateKey } from '../services/wellbeingSeries'
 import { formatDuration } from '../utils/format'
 import './HealthRadar.css'
+import MethodNote from './MethodNote'
 
 const HISTORY_DAYS = RADAR_DAYS + RADAR_BASELINE_DAYS + 2
 
@@ -148,10 +149,10 @@ export default function HealthRadar() {
       )}
 
       {radar.level !== 'insufficient' && (
-        <p className="radar-footnote">
+        <MethodNote>
           Chaque jour est comparé à votre norme des {RADAR_BASELINE_DAYS} jours précédents. Alerte seulement si au moins
           deux signaux s’écartent ensemble. Une observation, pas un diagnostic.
-        </p>
+        </MethodNote>
       )}
     </section>
   )

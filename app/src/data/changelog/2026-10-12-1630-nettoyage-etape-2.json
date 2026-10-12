@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "amélioration",
+  "title": "Encore plus simple : l’essentiel d’abord, le détail sur demande",
+  "items": [
+    "Analyses : seules les corrélations au moins « à confirmer » s’affichent ; les liens incertains (souvent dus au hasard) sont repliés derrière « Voir les N liens incertains ». « Écran tard » n’apparaît plus deux fois : il est comparé dans « Vos habitudes », d’après le téléphone.",
+    "Accueil : le bouton « + 1 cigarette » n’apparaît que si vous avez noté une cigarette ces 14 derniers jours. Pour noter la première, ou le garder toujours visible : Paramètres → Cigarettes.",
+    "Accueil : les explications de calcul du Radar forme, de « Votre cœur vs votre norme » et de la régularité du sommeil sont repliées sous « Comment c’est calculé ». Le conseil sur les horaires réguliers est présenté pour ce qu’il est : une hypothèse générale, que vos Analyses confirmeront ou non chez vous.",
+    "Withings : les identifiants API se règlent maintenant directement dans la carte Withings (Plus → Connecteurs), à côté de l’interrupteur, au lieu d’un bloc à part dans Paramètres. Les identifiants déjà enregistrés sont conservés."
+  ]
+}

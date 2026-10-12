@@ -449,3 +449,28 @@
 .connector-steps em {
   color: var(--text);
 }
+
+/* Identifiants Withings, repliés une fois enregistrés */
+.withings-setup {
+  margin: 0.5rem 0 0.75rem;
+}
+.withings-setup summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--accent);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.withings-setup .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+/* Dans une carte (fond --surface), un champ --surface sans bordure (--border n'existe pas) est invisible */
+.withings-setup .settings-input {
+  background: var(--bg);
+  border-color: var(--text-muted);
+}
