@@ -92,3 +92,84 @@
   line-height: 1.45;
   color: var(--text-muted);
 }
+
+/* Assistant « Libérer et appairer la montre » (WatchSetup.jsx) */
+.watch-setup {
+  margin-top: 12px;
+}
+
+.watch-setup-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.watch-setup-chip {
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.watch-setup-chip.active {
+  border-color: var(--accent);
+  background: rgba(78, 205, 196, 0.15);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.watch-setup-current .watch-diag-icon {
+  background: rgba(78, 205, 196, 0.25);
+  color: var(--accent);
+}
+
+.watch-setup-current > .watch-diag-label {
+  font-weight: 600;
+}
+
+.watch-setup-todo .watch-diag-label,
+.watch-setup-skip .watch-diag-label {
+  color: var(--text-muted);
+}
+
+.watch-setup-body {
+  font-weight: 400;
+  margin-top: 6px;
+}
+
+.watch-setup-text {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.watch-setup-guide,
+.watch-setup-warnings {
+  margin: 0 0 8px;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.watch-setup-warnings {
+  color: #ffc107;
+}
+
+.watch-setup-account {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.watch-setup-account .settings-input {
+  width: 100%;
+  box-sizing: border-box;
+}

@@ -11,6 +11,7 @@ import { runHuaweiDiagnostic, STEPS } from '../devices/huawei/diagnostic'
 import { detectPhoneApps } from '../devices/phoneApps'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import { formatAgo } from '../utils/timeAgo'
+import WatchSetup from './WatchSetup'
 import './WatchDiagnostic.css'
 
 const LAST_KEY = 'healthtrack_watch_diagnostic_last'
@@ -37,11 +38,18 @@ function saveLast(report) {
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
 
 const NativeBtClassic = registerPlugin('BtClassic')
+const NativeAppManager = registerPlugin('AppManager')
 
 /** Plugin RFCOMM : faux plugin des captures (`npm run visual -- --ble=watch`), natif dans l'app, sinon aucun. */
 function classicPlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeBtClassic) return window.__healthtrackFakeBtClassic
   return isNative() ? NativeBtClassic : null
+}
+
+/** Boîte de désinstallation / réglages d'une app : faux plugin des captures, natif dans l'app, sinon aucun. */
+function appManagerPlugin() {
+  if (typeof window !== 'undefined' && window.__healthtrackFakeAppManager) return window.__healthtrackFakeAppManager
+  return isNative() ? NativeAppManager : null
 }
 
 async function defaultRun(onUpdate) {
@@ -72,9 +80,11 @@ async function defaultCopy(text) {
 }
 
 /**
- * @param {{ run?: Function, available?: boolean, save?: Function, copy?: Function }} props
+ * @param {{ run?: Function, available?: boolean, save?: Function, copy?: Function, setup?: object|null }} props
+ * `setup` : dépendances de l'assistant « Libérer et appairer » ({ detectApps, classic, appManager }), null pour le masquer.
  */
-export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy }) {
+export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup }) {
+  const setupDeps = setup === undefined ? { detectApps: detectPhoneApps, classic: classicPlugin(), appManager: appManagerPlugin() } : setup
   const [report, setReport] = useState(loadLast)
   const [running, setRunning] = useState(false)
   const [message, setMessage] = useState(null)
@@ -165,6 +175,7 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
         </div>
       )}
       {message && <p className="my-device-message">{message}</p>}
+      {available && setupDeps && <WatchSetup {...setupDeps} verdict={report?.verdict?.code || null} onRunTest={running ? undefined : start} />}
     </section>
   )
 }

@@ -30,6 +30,7 @@
  *   npm run visual -- --routes=/connectors --ble=received # … mesures du tensiomètre reçues et enregistrées
  *   npm run visual -- --routes=/connectors --ble=watch --devices  # « Montre Huawei en direct » : test, la montre répond
  *   npm run visual -- --routes=/connectors --ble=watch-silent --devices  # … la montre ne répond pas (liée à Huawei Santé)
+ *   npm run visual -- --routes=/connectors --ble=watch-silent --devices --setup  # … assistant « Libérer et appairer »
  *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -289,8 +290,12 @@ async function main() {
           // GT 6 Pro : Bluetooth classique (RFCOMM) ; « watch-silent » = montre liée à Huawei Santé, muette
           const listeners = {}
           const hex = linkAnswer.map((b) => b.toString(16).padStart(2, '0')).join('')
+          window.__healthtrackFakeAppManager = { uninstall: async () => {}, openSettings: async () => {} }
           window.__healthtrackFakeBtClassic = {
             listBonded: async () => ({ devices: [{ deviceId: 'fake-watch', name: 'HUAWEI WATCH GT 6 Pro-A1B', type: 3, uuids: ['82ff3820-8411-400c-b85a-55bdb32cf060'] }] }),
+            discover: async () => ({ devices: [{ deviceId: 'fake-watch', name: 'HUAWEI WATCH GT 6 Pro-A1B', rssi: -50 }] }),
+            pair: async () => ({ state: 'bonded' }),
+            openBluetoothSettings: async () => {},
             addListener: async (e, cb) => {
               listeners[e] = cb
               return { remove: async () => {} }
@@ -475,9 +480,12 @@ async function main() {
           await page.waitForTimeout(400)
         }
         if (args.ble === 'watch' || args.ble === 'watch-silent') {
-          await page.getByRole('button', { name: 'Tester la connexion directe' }).click()
+          const testButton = page.getByRole('button', { name: 'Tester la connexion directe' })
+          await testButton.evaluate((el) => el.scrollIntoView({ block: 'center' }))
+          await testButton.click()
           await page.getByRole('button', { name: 'Relancer le test' }).waitFor({ timeout: 30000 })
-          await page.evaluate(() => document.querySelector('.watch-diag')?.scrollIntoView({ block: 'start' }))
+          // --setup : capture centrée sur l'assistant « Libérer et appairer la montre »
+          await page.evaluate((sel) => document.querySelector(sel)?.scrollIntoView({ block: 'start' }), args.setup ? '.watch-setup' : '.watch-diag')
           await page.waitForTimeout(300)
         } else if (args.ble) {
           await page.getByRole('button', { name: 'Rechercher autour de moi' }).click()

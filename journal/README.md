@@ -11,7 +11,8 @@
 dans l'ordre, le nettoyage (D1), la performance (D2), la connexion directe à la GT 6 Pro (D3), l'humeur par visage /
 voix (D4), l'anti-circularité (D5) et une science personnelle sans normes imposées (D6). Premier pas livré : le nettoyage.
 **Depuis le soir du 12/10, une priorité absolue passe avant tout** : faire de HealthTrack l'app qui parle directement à
-votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 : le **test de connexion directe**.
+votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 : le **test de connexion directe** ;
+deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »**. Reste : l'authentification, puis la synchro.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -57,6 +58,12 @@ votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 
   première trame du protocole) et conclut en clair (« La montre répond à HealthTrack », « La montre ne répond pas »…).
   **Rien n'est modifié sur la montre** (ni appairage, ni réinitialisation). « Enregistrer le journal » (dossier
   Documents) ou « Copier le journal » : c'est ce fichier qu'il me faut pour la suite.
+- **Montre Huawei — libérer et appairer** (même carte, sous le test) : un encadré dit l'étape suivante et le geste qui
+  la débloque. ① « Désinstaller Huawei Health » ouvre la boîte de désinstallation d'Android (vous confirmez) ou
+  « Réglages de Huawei Health » pour lui retirer le Bluetooth ; ② réinitialisation guidée avec le menu officiel
+  (Paramètres → Système et mises à jour → Réinitialiser) ; ③ « Appairer la montre » la cherche et lance l'appairage
+  Android (s'il reste un ancien appairage, l'app vous envoie l'oublier dans les réglages Bluetooth) ; ④ relancer le test.
+  **Plan B** « Garder Huawei Santé » : votre identifiant de compte Huawei (17 à 19 chiffres), gardé sur le téléphone.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -64,6 +71,11 @@ votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Libération et appairage (run 13/10 00:30)** : 3e plugin natif maison (`AppManagerPlugin.java` : boîte de
+  désinstallation et page de l'app, nouvelle autorisation `REQUEST_DELETE_PACKAGES`, l'utilisateur confirme toujours)
+  et `BtClassicPlugin` qui sait chercher en Bluetooth classique et demander l'appairage Android. Recherche : la GT 6 Pro
+  est « en grande partie prise en charge » par Gadgetbridge depuis déc. 2025 et un contributeur l'utilise sans jamais
+  l'avoir liée à Huawei Santé : la clé se négocie localement, sans compte ni service en ligne — bon signe pour nous.
 - **Découverte clé (run 22:30)** : la GT 6 Pro ne parle pas en Bluetooth basse consommation mais en **Bluetooth
   « classique »** (comme les GT 3 à GT 7) ; elle doit donc être appairée à Android. HealthTrack a reçu son **2e plugin
   natif maison** (`BtClassicPlugin.java`, une connexion à la fois, rien gardé côté natif) ; le test essaie le classique
@@ -94,6 +106,11 @@ votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
+- **🎯 Nouveau (après le test)** : si le test dit « La montre ne répond pas », suivez l'encadré « Libérer et appairer
+  la montre ». **Avant de réinitialiser**, sachez que les mesures pas encore synchronisées sur la montre seront perdues
+  (celles de Huawei Santé y restent) et que **HealthTrack ne lit pas encore vos données** (authentification et synchro :
+  prochains runs). Si vous préférez attendre, choisissez « Garder Huawei Santé » et ne réinitialisez rien pour l'instant.
+  Dites-moi si la montre a demandé un mot de passe / compte Huawei après réinitialisation (non documenté).
 - **🎯 À faire en priorité (2 minutes)** : mettez à jour, montre au poignet près du téléphone, puis Plus → Connecteurs →
   « Montre Huawei en direct » → **Tester la connexion directe**, puis **Enregistrer le journal** et déposez le fichier
   `healthtrack-diagnostic-montre-….json` dans le dépôt (`journal/diagnostics/`) ou envoyez-le-moi. Il dit si la montre
@@ -150,10 +167,9 @@ votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étape (a) diagnostic livrée ;
-prochain run : (b) **détection et libération** (bouton qui ouvre la désinstallation / les réglages de l'app qui tient la
-montre, guide de réinitialisation pas à pas, plan B identifiant de compte Huawei) et assistant d'appairage Android ;
-puis (c) authentification d'après votre journal, (d) synchronisation. Ensuite : performance des courbes, restes du
+**Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
+(b) libération + appairage livrées ; prochain run : (c) **authentification HiChain** (d'après votre journal s'il arrive),
+puis (d) synchronisation. Ensuite : performance des courbes, restes du
 nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
@@ -170,6 +186,7 @@ nettoyage, humeur par le visage / la voix.
 | 12/10 18:30 — [Nettoyage, étape 2](runs/2026-10-12-1630-nettoyage-etape-2.md) | 🧹 | PR #119 fusionnée → v107 |
 | 12/10 20:30 — [Idées : montre en direct, visage / voix, science perso](runs/2026-10-12-2030-idees-directives.md) | 💡 | 10 idées (I39–I48), 2 tests instables corrigés — PR #121 fusionnée → v108 |
 | 12/10 22:30 — [Priorité montre : test de connexion directe](runs/2026-10-12-2230-montre-diagnostic.md) | ⌚🏗️ | PR #123 fusionnée → v109 |
+| 13/10 00:30 — [Montre : libérer et appairer](runs/2026-10-13-0030-montre-liberer-appairer.md) | ⌚🏗️ | PR #125 |
 
 ---
 
