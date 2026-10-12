@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom'
 import Settings from './Settings'
 import { DebugProvider } from '../contexts/DebugContext'
 import { getGeminiModel } from '../settings/geminiModel'
-import { setWithingsTokens, hasWithingsTokens } from '../settings/withingsSettings'
 
 function renderSettings() {
   return render(
@@ -45,17 +44,19 @@ describe('Settings — Gemini', () => {
 describe('Settings — Withings', () => {
   beforeEach(() => localStorage.clear())
 
-  it('n’affiche pas « Déconnecter Withings » quand aucun compte n’est connecté', () => {
+  it('ne contient plus la configuration Withings (déplacée dans la carte Withings des Connecteurs)', () => {
     renderSettings()
-    expect(screen.queryByRole('button', { name: /Déconnecter Withings/i })).not.toBeInTheDocument()
+    expect(screen.queryByText(/Withings/i)).not.toBeInTheDocument()
   })
+})
 
-  it('déconnecte le compte Withings et le confirme', () => {
-    setWithingsTokens({ accessToken: 'a', refreshToken: 'r', expiresAt: Date.now() + 1000 })
+describe('Settings — Cigarettes', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('épingle le bouton « + 1 cigarette » de l’accueil', () => {
     renderSettings()
-    fireEvent.click(screen.getByRole('button', { name: /Déconnecter Withings/i }))
-    expect(hasWithingsTokens()).toBe(false)
-    expect(screen.queryByRole('button', { name: /Déconnecter Withings/i })).not.toBeInTheDocument()
-    expect(screen.getByText(/Compte Withings déconnecté/i)).toBeInTheDocument()
+    fireEvent.click(screen.getByLabelText(/Toujours afficher le bouton cigarette/i))
+    expect(localStorage.getItem('healthtrack_cigarette_counter')).toBe('on')
+    expect(screen.getByText('Bouton toujours affiché')).toBeInTheDocument()
   })
 })

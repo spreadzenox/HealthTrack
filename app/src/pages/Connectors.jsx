@@ -2,13 +2,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { CONNECTORS } from '../connectors/connectorRegistry'
 import { getConnectorSettings, setConnectorSettings } from '../settings/connectorSettings'
 import { hasWithingsCredentials } from '../settings/withingsSettings'
-import { Link } from 'react-router-dom'
 import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
 import { useDebug } from '../contexts/DebugContext'
 import DebugPanel from '../components/DebugPanel'
 import WatchGuides from '../components/WatchGuides'
 import MyDevices from '../components/MyDevices'
 import BleDevices from '../components/BleDevices'
+import WithingsSetup from '../components/WithingsSetup'
 import WeatherCard from '../components/WeatherCard'
 import PhoneUsageCard from '../components/PhoneUsageCard'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
@@ -361,14 +361,7 @@ function ConnectorCard({ connector }) {
             </div>
           )}
 
-          {withingsNeedsCreds && (
-            <div className="connector-alert connector-alert-info">
-              <p>
-                Configurez d&apos;abord vos identifiants API Withings dans{' '}
-                <Link to="/settings">Paramètres</Link> (Client ID, secret et URL de redirection).
-              </p>
-            </div>
-          )}
+          {isWithings && <WithingsSetup onChange={recheckAvailability} />}
 
           {availability === 'available' && !withingsNeedsCreds && permissions !== 'granted' && (
             <div className="connector-alert connector-alert-info">

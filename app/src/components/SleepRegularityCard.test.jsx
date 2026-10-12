@@ -60,7 +60,9 @@ describe('SleepRegularityCard', () => {
     render(<SleepRegularityCard />)
     expect(await screen.findByText(/Le week-end, vos nuits sont décalées de/)).toBeInTheDocument()
     expect(screen.getByText(/2 h plus tard/)).toBeInTheDocument()
-    expect(screen.getByRole('note')).toHaveTextContent(/pas un diagnostic/)
+    // D6 : la norme générale est présentée comme une hypothèse, que les données personnelles tranchent
+    expect(screen.getByRole('note')).toHaveTextContent(/Hypothèse générale/)
+    expect(screen.getByRole('note')).toHaveTextContent(/chez vous/)
   })
 
   it('flags variable hours without blaming', async () => {

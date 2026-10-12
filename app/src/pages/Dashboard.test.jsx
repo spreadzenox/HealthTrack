@@ -259,9 +259,28 @@ describe('Dashboard', () => {
     expect(btn).toBeInTheDocument()
   })
 
-  it('renders the cigarette quick-add button', async () => {
+  it('hides the cigarette quick-add button for a non-smoker (no recent cigarette)', async () => {
+    localStorage.clear()
     renderDashboard()
-    expect(screen.getByRole('button', { name: /Ajouter une cigarette/i })).toBeInTheDocument()
+    await screen.findByRole('button', { name: /Ajouter un bien-être/i })
+    await waitFor(() => expect(screen.queryByText(/Chargement des données/i)).not.toBeInTheDocument())
+    expect(screen.queryByRole('button', { name: /Ajouter une cigarette/i })).not.toBeInTheDocument()
+  })
+
+  it('shows the cigarette quick-add button once a recent cigarette is logged', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'cigarette', source: 'app_cigarette', at: new Date().toISOString(), payload: { count: 1 } },
+    ])
+    renderDashboard()
+    expect(await screen.findByRole('button', { name: /Ajouter une cigarette/i })).toBeInTheDocument()
+  })
+
+  it('shows the cigarette quick-add button when pinned in Settings', async () => {
+    localStorage.setItem('healthtrack_cigarette_counter', 'on')
+    renderDashboard()
+    expect(await screen.findByRole('button', { name: /Ajouter une cigarette/i })).toBeInTheDocument()
+    localStorage.clear()
   })
 
   it('opens the wellbeing modal when the button is clicked', async () => {

@@ -317,6 +317,56 @@ function WeekendNote({ control }) {
   )
 }
 
+/**
+ * Variables déjà présentées ailleurs dans l'onglet : « Écran tard » est comparé dans « Vos habitudes »
+ * (soirées mesurées par le téléphone), ne pas le répéter en variable continue.
+ */
+const CHART_HIDDEN_VARIABLES = new Set(['screen_late_minutes'])
+
+/**
+ * Corrélations : les liens au moins « à confirmer » visibles, les incertains (souvent ~35 sur 45,
+ * possiblement dus au hasard) repliés derrière « Voir les N liens incertains ».
+ */
+function CorrelationsSection({ correlations }) {
+  const shown = correlations.filter((c) => !CHART_HIDDEN_VARIABLES.has(c.variable))
+  if (shown.length === 0) return null
+  const clear = shown.filter((c) => c.evidence !== 'incertain')
+  const uncertain = shown.filter((c) => c.evidence === 'incertain')
+  const bars = (list) => (
+    <div className="reco-corr-chart">
+      {list.map((c) => (
+        <CorrelationBar
+          key={c.variable}
+          label={c.label}
+          r={c.r}
+          impact={Math.abs(c.r)}
+          uncertain={c.evidence === 'incertain'}
+        />
+      ))}
+    </div>
+  )
+  return (
+    <section className="reco-section">
+      <h3 className="reco-section-title">📈 Corrélations avec votre bien-être</h3>
+      <p className="reco-section-hint">
+        Vert = va de pair avec un meilleur bien-être · Rouge = avec un moins bon.
+      </p>
+      {clear.length > 0 ? bars(clear) : (
+        <p className="reco-empty-levers">Aucun lien net pour l’instant : continuez à noter votre bien-être.</p>
+      )}
+      {uncertain.length > 0 && (
+        <details className="reco-corr-more">
+          <summary>
+            {uncertain.length === 1 ? 'Voir le lien incertain' : `Voir les ${uncertain.length} liens incertains`}
+          </summary>
+          <p className="reco-section-hint">Barres pâles = lien incertain, possiblement dû au hasard.</p>
+          {bars(uncertain)}
+        </details>
+      )}
+    </section>
+  )
+}
+
 // ─── Basic tab ────────────────────────────────────────────────────────────────
 
 function BasicTab({ entries }) {
@@ -383,26 +433,7 @@ function BasicTab({ entries }) {
 
       <LaggedEffectsSection entries={entries} />
 
-      {correlations.length > 0 && (
-        <section className="reco-section">
-          <h3 className="reco-section-title">📈 Corrélations avec votre bien-être</h3>
-          <p className="reco-section-hint">
-            Vert = va de pair avec un meilleur bien-être · Rouge = avec un moins bon.
-            Barres pâles = lien incertain, possiblement dû au hasard.
-          </p>
-          <div className="reco-corr-chart">
-            {correlations.map((c) => (
-              <CorrelationBar
-                key={c.variable}
-                label={c.label}
-                r={c.r}
-                impact={Math.abs(c.r)}
-                uncertain={c.evidence === 'incertain'}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      <CorrelationsSection correlations={correlations} />
 
       <p className="reco-disclaimer">
         Ces résultats sont uniquement basés sur vos propres données et ne constituent pas un avis médical.

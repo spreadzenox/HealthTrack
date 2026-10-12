@@ -44,6 +44,12 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
   partir de vos comportements, ce que vos directives interdisent ; elle reviendra fondée sur le visage / la voix.
   L'onglet s'appelle « Analyses » partout ; Paramètres perd le lien Nouveautés en double et le mode debug à adresse MAC
   devient un simple interrupteur « Mode diagnostic ». Liste complète et raisons : compte rendu du run 16:30.
+- **Plus simple (nettoyage, étape 2)** : Analyses → seules les corrélations nettes s'affichent, les ~35 « incertaines »
+  sont repliées (« Voir les 35 liens incertains ») et « Écran tard » n'apparaît plus deux fois. Accueil → « + 1
+  cigarette » n'apparaît que si vous en avez noté une ces 14 jours (Paramètres → Cigarettes pour l'épingler), les
+  explications de calcul des cartes Radar / cœur / régularité sont repliées sous « Comment c'est calculé ». Withings →
+  les identifiants se règlent dans sa carte des Connecteurs (plus dans Paramètres). Le conseil « horaires réguliers »
+  devient une hypothèse générale que vos données confirmeront ou non (directive D6).
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -108,9 +114,10 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités** (vos directives du 12/10) — finir le nettoyage (un seul bloc « Forme » sur l'accueil,
-corrélations incertaines repliées, Withings regroupé) ; puis **mesurer** la lenteur des courbes et l'éliminer ; puis
-l'écran de diagnostic de la GT 6 Pro avec export des journaux, première étape de la connexion directe sans Gadgetbridge.
+**Prochaines priorités** (vos directives du 12/10) — nettoyage étapes 1 et 2 faites ; prochain run : **mesurer** la
+lenteur des courbes et l'éliminer ; puis l'écran de diagnostic de la GT 6 Pro avec export des journaux, première étape
+de la connexion directe sans Gadgetbridge. Les derniers restes du nettoyage (un seul bloc « Forme » sur l'accueil,
+Connecteurs triés par statut) se feront en passant.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -123,6 +130,7 @@ l'écran de diagnostic de la GT 6 Pro avec export des journaux, première étape
 | 12/10 12:30 — [Temps d'écran + sommeil par le téléphone](runs/2026-10-12-1030-temps-ecran-sommeil-telephone.md) | 🏗️ | PR #114 fusionnée → v104 |
 | 12/10 14:30 — [Humeur estimée](runs/2026-10-12-1230-humeur-estimee.md) | 🏗️🐛 | PR #115 fusionnée → v105 (+ test Nutrition instable corrigé) |
 | 12/10 16:30 — [Directives du 12/10 + nettoyage](runs/2026-10-12-1430-nettoyage-directives.md) | 🧹 | PR #117 fusionnée → v106 |
+| 12/10 18:30 — [Nettoyage, étape 2](runs/2026-10-12-1630-nettoyage-etape-2.md) | 🧹 | PR en cours |
 
 ---
 
