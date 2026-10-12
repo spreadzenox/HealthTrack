@@ -20,6 +20,7 @@
 
 import { BASELINE_METRICS, dailyValues } from './baselines'
 import { localDateKey } from './wellbeingSeries'
+import { BEHAVIOR_TAGS } from './behaviorTags'
 
 export const RADAR_DAYS = 3
 export const RADAR_BASELINE_DAYS = 60
@@ -143,4 +144,51 @@ export function computeRadar(entries, now = new Date()) {
   }
   const level = streak >= 2 ? 'alert' : streak === 1 ? 'watch' : 'calm'
   return { ...result, level, streak, dateKey: latest.key, signals: streak > 0 ? latest.signals : [] }
+}
+
+function prevDateKey(key) {
+  const [y, m, d] = key.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d - 1)).toISOString().slice(0, 10)
+}
+
+/**
+ * « Radar expliqué » (journal/IDEES.md, I22) : un écart de FC repos / VFC / sommeil suit souvent
+ * un verre, un sport tardif, un voyage ou un vaccin. Si l'utilisateur a noté un tel tag dans son
+ * check-in le jour signalé ou la veille, le radar le dit (« probablement lié à… ») au lieu de
+ * s'inquiéter — le reproche n° 1 fait aux alertes des montres. Le tag « Malade » ne l'explique pas :
+ * il confirme.
+ * Un check-in du soir (« Alcool » le 3) comme du lendemain matin (« Alcool » noté le 4 au réveil)
+ * tombe dans la fenêtre [veille, jour] du jour signalé.
+ * @param {{ level: string, dateKey: string|null, streak: number }} radar résultat de computeRadar
+ * @param {object[]} wellbeingEntries check-ins (payload.tags)
+ * @returns {null | { causes: { tag: object, dateKey: string }[], explained: boolean, sick: boolean }}
+ *   `explained` : chacun des jours signalés de la série a une cause la veille ou le jour même.
+ */
+export function explainRadar(radar, wellbeingEntries) {
+  if (!radar || (radar.level !== 'watch' && radar.level !== 'alert') || !radar.dateKey) return null
+  const flaggedDays = [radar.dateKey]
+  for (let i = 1; i < radar.streak; i++) flaggedDays.push(prevDateKey(flaggedDays[i - 1]))
+  const window = new Set(flaggedDays.flatMap((d) => [d, prevDateKey(d)]))
+
+  const tagsByDay = new Map()
+  for (const e of wellbeingEntries || []) {
+    if (e?.type !== 'wellbeing' || !e.at || !Array.isArray(e.payload?.tags)) continue
+    const key = localDateKey(e.at)
+    if (!window.has(key)) continue
+    const set = tagsByDay.get(key) || new Set()
+    for (const t of e.payload.tags) set.add(t)
+    tagsByDay.set(key, set)
+  }
+
+  const latest = new Map() // tag id → jour le plus récent
+  for (const [key, set] of tagsByDay) {
+    for (const id of set) if (!latest.has(id) || key > latest.get(id)) latest.set(id, key)
+  }
+  const causes = BEHAVIOR_TAGS.filter((t) => t.radarCause && latest.has(t.id)).map((tag) => ({ tag, dateKey: latest.get(tag.id) }))
+  const hasCause = (day) => [day, prevDateKey(day)].some((k) => BEHAVIOR_TAGS.some((t) => t.radarCause && tagsByDay.get(k)?.has(t.id)))
+  return {
+    causes,
+    explained: causes.length > 0 && flaggedDays.every(hasCause),
+    sick: latest.has('sick'),
+  }
 }

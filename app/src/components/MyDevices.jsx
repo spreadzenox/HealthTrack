@@ -1,30 +1,17 @@
 /**
  * « Mes appareils » (page Connecteurs) : apps santé / montres repérées sur le téléphone et apps qui
  * envoient réellement des mesures via Health Connect, avec ce qu'il reste à faire pour chacune
- * (« Voir le guide », « Ouvrir l'app »). Logique dans src/devices/healthApps.js.
+ * (« Voir le guide », « Ouvrir l'app »), et « qui envoie quoi » : mesures reçues par app, mesure
+ * habituelle qui s'arrête, mesures courantes d'une montre jamais reçues. Logique dans src/devices/healthApps.js.
  */
 import { useEffect, useState } from 'react'
 import { listEntries } from '../storage/localHealthStorage'
-import { detectInstalledApps, summarizeHealthConnectSources, adviseDevices } from '../devices/healthApps'
+import { detectInstalledApps, summarizeHealthConnectSources, adviseDevices, missingWatchMetrics } from '../devices/healthApps'
 import { formatAgo } from '../utils/timeAgo'
 import { openGuide } from '../utils/openGuide'
 import './MyDevices.css'
 
 const SOURCE_WINDOW_DAYS = 30
-
-const TYPE_LABELS = {
-  heart_rate: 'cœur',
-  sleep: 'sommeil',
-  steps: 'pas',
-  calories: 'dépense',
-  activity: 'séances',
-  respiratory_rate: 'respiration',
-  body_temperature: 'température',
-  blood_pressure: 'tension',
-  blood_glucose: 'glycémie',
-  weight: 'poids',
-  body_composition: 'masse grasse',
-}
 
 const STATUS = {
   ok: { label: 'Reçu', className: 'device-status-ok' },
@@ -80,8 +67,9 @@ export default function MyDevices({ detect = defaultDetect, loadEntries = defaul
         loadEntries().catch(() => []),
       ])
       if (cancelled) return
-      const sources = summarizeHealthConnectSources(entries)
-      const rows = adviseDevices({ installed: installed || [], sources, now: now || new Date() })
+      const at = now || new Date()
+      const sources = summarizeHealthConnectSources(entries, at)
+      const rows = adviseDevices({ installed: installed || [], sources, now: at })
       setState({ loading: false, rows, canDetect: installed !== null })
     })()
     return () => {
@@ -110,7 +98,11 @@ export default function MyDevices({ detect = defaultDetect, loadEntries = defaul
           <ul className="my-devices-list">
             {rows.map((row) => {
               const st = STATUS[row.status]
-              const types = Object.keys(TYPE_LABELS).filter((t) => row.source?.types.includes(t)).map((t) => TYPE_LABELS[t])
+              const metrics = row.source?.metrics || []
+              const types = metrics.map((m) => m.label)
+              // Une mesure qui s'arrête alors que l'app envoie encore le reste (sinon « En pause » suffit).
+              const stopped = row.status === 'ok' ? metrics.filter((m) => m.stopped) : []
+              const missing = row.status === 'ok' ? missingWatchMetrics(metrics) : []
               const showGuide = row.status === 'action' && !!row.guideId
               const showOpen = canDetect && !!row.package && (row.status === 'action' || row.status === 'stale')
               return (
@@ -124,6 +116,19 @@ export default function MyDevices({ detect = defaultDetect, loadEntries = defaul
                     <p className="my-device-meta">
                       Dernières mesures {formatAgo(row.source.lastAt, now || new Date())}
                       {types.length > 0 && ` · ${types.join(', ')}`}
+                    </p>
+                  )}
+                  {stopped.map((m) => (
+                    <p key={m.key} className="my-device-alert" role="status">
+                      {m.label[0].toUpperCase() + m.label.slice(1)} : plus rien depuis {m.gapDays} jours, alors que cette mesure
+                      arrivait chaque jour. Ouvrez l’app de la montre pour synchroniser, ou vérifiez que ce partage est
+                      toujours activé.
+                    </p>
+                  ))}
+                  {missing.length > 0 && (
+                    <p className="my-device-meta">
+                      Jamais reçu en 30 jours : {missing.join(', ')}. Si votre montre en est capable, activez ce partage
+                      vers Health Connect dans {row.name}.
                     </p>
                   )}
                   {(showGuide || showOpen) && (

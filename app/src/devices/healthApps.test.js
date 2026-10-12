@@ -7,6 +7,9 @@ import {
   detectInstalledApps,
   summarizeHealthConnectSources,
   adviseDevices,
+  sourceCoverage,
+  missingWatchMetrics,
+  metricKey,
 } from './healthApps'
 import { WATCH_GUIDES } from '../data/watchGuides'
 
@@ -148,5 +151,66 @@ describe('adviseDevices', () => {
 
   it('rien de détecté : liste vide', () => {
     expect(adviseDevices({ installed: [], sources: [], now: NOW })).toEqual([])
+  })
+})
+
+describe('sourceCoverage (« qui envoie quoi »)', () => {
+  const hr = (at, subtype) => ({ at, type: 'heart_rate', payload: subtype ? { subtype } : {} })
+  /** Une mesure par jour pendant `n` jours, la dernière il y a `endDaysAgo` jours. */
+  const daily = (n, endDaysAgo, make) =>
+    Array.from({ length: n }, (_, i) => make(new Date(NOW.getTime() - (endDaysAgo + i) * 86400000 - 3600000).toISOString()))
+
+  it('sépare FC, FC repos, VFC et SpO₂ rangées dans « heart_rate »', () => {
+    expect(metricKey(hr('2026-10-12T05:00:00Z'))).toBe('heartRate')
+    expect(metricKey(hr('2026-10-12T05:00:00Z', 'heartRateVariability'))).toBe('heartRateVariability')
+    expect(metricKey({ type: 'sleep' })).toBe('sleep')
+    expect(metricKey({ type: 'wellbeing' })).toBe(null)
+  })
+
+  it('VFC reçue chaque jour puis arrêtée depuis 4 jours : signalée ; FC toujours là : non', () => {
+    const entries = [
+      ...daily(20, 4, (at) => hr(at, 'heartRateVariability')),
+      ...daily(24, 0, (at) => hr(at)),
+    ]
+    const cov = sourceCoverage(entries, NOW)
+    const vfc = cov.find((m) => m.key === 'heartRateVariability')
+    expect(vfc).toMatchObject({ label: 'VFC', habitual: true, stopped: true, gapDays: 4 })
+    expect(cov.find((m) => m.key === 'heartRate')).toMatchObject({ habitual: true, stopped: false, gapDays: 0 })
+    // ordre d'affichage : cœur avant VFC
+    expect(cov.map((m) => m.key)).toEqual(['heartRate', 'heartRateVariability'])
+  })
+
+  it('mesure occasionnelle (pesée, séance) : jamais signalée comme arrêtée', () => {
+    const entries = [
+      { at: '2026-09-20T07:00:00Z', type: 'weight' },
+      { at: '2026-09-25T07:00:00Z', type: 'weight' },
+      { at: '2026-10-01T07:00:00Z', type: 'activity' },
+    ]
+    const cov = sourceCoverage(entries, NOW)
+    expect(cov.every((m) => !m.stopped && !m.habitual)).toBe(true)
+    expect(cov.find((m) => m.key === 'weight').lastAt).toBe('2026-09-25T07:00:00.000Z')
+  })
+
+  it('plusieurs mesures le même jour comptent pour un seul jour', () => {
+    const entries = Array.from({ length: 30 }, (_, i) => hr(new Date(NOW.getTime() - 3600000 - i * 600000).toISOString()))
+    expect(sourceCoverage(entries, NOW)[0]).toMatchObject({ days: 1, habitual: false })
+  })
+
+  it('ignore dates invalides et types non suivis ; liste vide sans entrée', () => {
+    expect(sourceCoverage([{ at: 'n/a', type: 'sleep' }, { at: '2026-10-12T05:00:00Z', type: 'meal' }], NOW)).toEqual([])
+    expect(sourceCoverage(undefined, NOW)).toEqual([])
+  })
+
+  it('montre : mesures courantes jamais reçues ; balance : rien à réclamer', () => {
+    const watch = sourceCoverage([hr('2026-10-12T05:00:00Z'), { at: '2026-10-12T05:00:00Z', type: 'sleep' }], NOW)
+    expect(missingWatchMetrics(watch)).toEqual(['FC repos', 'VFC', 'SpO₂', 'pas'])
+    expect(missingWatchMetrics(sourceCoverage([{ at: '2026-10-12T05:00:00Z', type: 'weight' }], NOW))).toEqual([])
+  })
+
+  it('summarizeHealthConnectSources joint la couverture à chaque source', () => {
+    const entries = daily(10, 0, (at) => ({ source: 'health_connect', at, type: 'heart_rate', payload: { sourceName: 'Gadgetbridge', subtype: 'heartRateVariability' } }))
+    const [gb] = summarizeHealthConnectSources(entries, NOW)
+    expect(gb.metrics).toHaveLength(1)
+    expect(gb.metrics[0]).toMatchObject({ label: 'VFC', days: 10, habitual: true, stopped: false })
   })
 })

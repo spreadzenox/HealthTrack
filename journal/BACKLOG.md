@@ -36,7 +36,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] Couche BLE : réception **automatique** — appareil de mesure mémorisé, reconnexion dès qu'il réapparaît (app ouverte), sans toucher au téléphone
 - [ ] Couche BLE, étape 2 bis : FC diffusée par la montre pendant une séance → enregistrement de la séance (FC continue, zones) ; VFC du matin en 1 geste (rappel, dernier capteur mémorisé, reconnexion auto)
 - [ ] Couche BLE, étape 3 : Companion Device Manager (réveil quand l'appareil revient à portée), synchro en arrière-plan
-- [ ] **« Qui envoie quoi »** (I23) : matrice source × mesure sur 30 j dans « Mes appareils », trou signalé quand un type habituel s'arrête (≥ 3 j) — fonction pure `sourceCoverage`
+- [x] **« Qui envoie quoi »** (I23) : mesures détaillées par app (FC / FC repos / VFC / SpO₂ séparées), mesure habituelle (≥ 7 j / 14) arrêtée depuis ≥ 3 j signalée, « Jamais reçu en 30 jours » pour une montre (`sourceCoverage`, `missingWatchMetrics`) (run 12/10 10:30 Paris)
+- [ ] « Qui envoie quoi », étape 2 : bandeau sur l'accueil quand une mesure habituelle s'arrête ; sources BLE dans la même vue
 - [ ] **Bague Colmi / Yawell en direct** (I28) : pilote BLE réimplémenté d'après le protocole MIT (`tahnok/colmi_r02_client`, notes.tahnok.ca), FC en direct + batterie puis historique FC / SpO₂ / pas / sommeil ; jamais de code Gadgetbridge
 - [ ] Imports de fichiers constructeurs (I14) : Garmin FIT, Huawei JSON (export RGPD), Samsung / Oura / Zepp CSV
 - [ ] OAuth cloud ouverts à un particulier : Polar AccessLink (gratuit), Whoop, Oura
@@ -82,7 +83,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] Tendance de poids lissée (R#8, EMA α≈0,1) et objectif de pas fondé sur les preuves (R#10, défaut 7 000, adaptatif)
 - [x] **« Radar forme »** (R#12) : FC repos / VFC / sommeil vs norme 60 j, ≥ 2 signaux défavorables (|z| ≥ 1,5), « à surveiller » 1 jour, alerte ≥ 2 jours, jamais de diagnostic
 - [ ] Radar, étape 2 : fréquence respiratoire et température si Health Connect les fournit ; mini-courbe 14 j ; recalibrer les seuils sur retours réels
-- [ ] **Radar expliqué** (I22) : tag confondant la veille (alcool, sport le soir, repas tardif ; nouveaux tags voyage / vaccin) → « probablement lié à… » ; « Je me sens bien / Je couve quelque chose » en 1 tap (entrée `radar_feedback`) pour recalibrer
+- [x] **Radar expliqué** (I22) : tags « cause » (alcool, sport le soir, repas tardif, stress, nouveaux Voyage / Vaccin) le jour signalé ou la veille → « Probablement lié à… », badge « Explicable » ; série expliquée seulement si chaque jour a sa cause ; « Malade » confirme (`explainRadar`) (run 12/10 10:30 Paris)
+- [ ] Radar expliqué, étape 2 : « Je me sens bien / Je couve quelque chose » en 1 tap (entrée `radar_feedback`) + recalibration des seuils ; tags voyage / vaccin comme contrôles des Analyses
 - [ ] **Briefing du matin** (I24) : carte « Votre journée » jusqu'à midi (nuit vs norme, cœur / Radar, pression / pollen, énergie prévue en fourchette) + une seule action tirée des pistes solides
 - [ ] Contrôle qualité des nuits (I32) : nuits « 100 % léger » / sans phases / tronquées exclues des moyennes de phases
 - [ ] Glycémie après les repas (I29) : pic, retour à la base, aire 0–2 h sur la carte du repas (HC ← Juggluco / Libre / Dexcom), sans conseil d'insuline
@@ -153,8 +155,7 @@ sans saisie, puis la couche BLE générique, puis l'humeur estimée. Le travail 
 4. ~~🏗️ C7 — Couche BLE générique, étapes 1–2 (I8)~~ (runs 12/10 02:30 → 06:30).
 5. 🏗️ **C8 — Temps d'écran + sommeil estimé par le téléphone** (I6 + I25, un seul plugin Kotlin `PhoneUsage`, guide
    « paramètres restreints »).
-6. 🏗️ **C2 — Radar expliqué (I22) + « Qui envoie quoi » (I23)** : petits, purs, fondés sur de vrais reproches — bons
-   candidats pour un run court ou un run 🐛 qui a du temps.
+6. ~~🏗️ C2 — Radar expliqué (I22) + « Qui envoie quoi » (I23)~~ (run 12/10 10:30 Paris) ; étape 2 : bandeau d'accueil.
 7. 🏗️ **C9 — Indice « plage habituelle » (I31 / I7)**, puis **Briefing du matin (I24)** qui l'affiche.
 8. 🏗️ C9 — Journal libre → tags (I26) puis courbe caféine (I27).
 9. 🏗️ C7 — Bague Colmi en direct (I28), après lecture détaillée du protocole au prochain run idées.
@@ -199,6 +200,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-12 — « Qui envoie quoi » dans Mes appareils (mesure arrêtée signalée, mesures jamais reçues) + Radar expliqué par les tags de la veille, tags Voyage / Vaccin (run 10:30 Paris)
 - [x] 2026-10-12 — Run idées : 17 nouvelles idées (I22–I38) dans `IDEES.md`, backlog réorienté (Radar expliqué, « qui envoie quoi », sommeil par le téléphone, plage habituelle, briefing du matin) (run 08:30 Paris)
 - [x] 2026-10-12 — Capteurs Bluetooth : recherche et reconnaissance automatique par profil standard / famille, mesure FC + VFC en direct sur toute ceinture cardio ou montre qui diffuse sa FC (run 02:30)
 - [x] 2026-10-12 — « Mes appareils » : 19 apps santé détectées, statut et guide pour chacune (run 00:30, #107)

@@ -17,7 +17,7 @@
  * Cochran-Mantel-Haenszel). The permutation test shuffles labels within each
  * stratum only. The raw (unstratified) difference is kept as `diffRaw`.
  */
-import { localDateKey } from './analysisEngine'
+import { localDateKey } from './wellbeingSeries'
 import { benjaminiHochberg, evidenceLevel, isWeekendKey } from './statistics'
 
 /** Minimum number of days with AND without a tag before comparing them. */
@@ -29,14 +29,19 @@ const PERMUTATIONS = 2000
 /**
  * effectDay: 'next' → compared on the following day's wellbeing (evening
  * behaviours whose effect shows the day after), 'same' → same day.
+ * radarCause: a known, harmless reason for resting HR / HRV / sleep to drift
+ * for a night or two — the radar then says « probably linked to… » instead of
+ * raising a worry (radar.js, explainRadar).
  */
 export const BEHAVIOR_TAGS = [
-  { id: 'alcohol', label: 'Alcool', emoji: '🍷', effectDay: 'next' },
+  { id: 'alcohol', label: 'Alcool', emoji: '🍷', effectDay: 'next', radarCause: true },
   { id: 'coffee_late', label: 'Café après 14 h', emoji: '☕', effectDay: 'next' },
-  { id: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next' },
+  { id: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next', radarCause: true },
   { id: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next' },
-  { id: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next' },
-  { id: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same' },
+  { id: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next', radarCause: true },
+  { id: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same', radarCause: true },
+  { id: 'travel', label: 'Voyage', emoji: '✈️', effectDay: 'same', radarCause: true },
+  { id: 'vaccine', label: 'Vaccin', emoji: '💉', effectDay: 'next', radarCause: true },
   { id: 'sick', label: 'Malade', emoji: '🤒', effectDay: 'same' },
 ]
 

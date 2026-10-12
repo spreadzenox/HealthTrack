@@ -46,6 +46,20 @@ describe('MyDevices', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
+  it('qui envoie quoi : FC, VFC… détaillées, VFC arrêtée signalée, mesures de montre jamais reçues', async () => {
+    const day = (i) => new Date(NOW.getTime() - i * 86400000 - 3600000).toISOString()
+    const gb = (at, subtype) => ({ source: 'health_connect', at, type: 'heart_rate', payload: { sourceName: 'Gadgetbridge', subtype } })
+    const entries = [
+      ...Array.from({ length: 20 }, (_, i) => gb(day(i), 'heartRate')),
+      ...Array.from({ length: 15 }, (_, i) => gb(day(i + 5), 'heartRateVariability')),
+      hc('Gadgetbridge', day(0), 'sleep'),
+    ]
+    render(<MyDevices detect={async () => [app('gadgetbridge')]} loadEntries={async () => entries} now={NOW} />)
+    expect(await screen.findByText(/Dernières mesures il y a 1 h · cœur, VFC, sommeil/)).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('VFC : plus rien depuis 5 jours')
+    expect(screen.getByText(/Jamais reçu en 30 jours : FC repos, SpO₂, pas\./)).toBeInTheDocument()
+  })
+
   it('navigateur (pas de détection) : sources réelles seulement, sans bouton « Ouvrir »', async () => {
     render(<MyDevices detect={async () => null} loadEntries={async () => [hc('Samsung Health', '2026-10-01T05:00:00Z', 'steps')]} now={NOW} />)
     expect(await screen.findByText('En pause')).toBeInTheDocument()

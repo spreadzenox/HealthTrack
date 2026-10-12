@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-12",
+  "kind": "nouveau",
+  "title": "Ce que votre montre envoie vraiment, et un Radar qui connaît vos soirées",
+  "items": [
+    "Plus → Connecteurs → « Mes appareils » : pour chaque app, la liste précise des mesures reçues (cœur, FC repos, VFC, SpO₂, sommeil, pas…). Si une mesure qui arrivait chaque jour s’arrête (« VFC : plus rien depuis 4 jours »), un encadré le signale et dit quoi vérifier.",
+    "Pour une montre, « Jamais reçu en 30 jours » liste les mesures courantes qui n’arrivent pas (par exemple la SpO₂) : vous savez tout de suite quel partage activer.",
+    "Radar forme : si vous avez noté « Alcool », « Sport le soir », « Repas tardif », « Stress », « Voyage » ou « Vaccin » la veille ou le jour même, le radar ne s’inquiète plus : « Probablement lié à… », badge « Explicable ». Avec « Malade », il le confirme et rappelle quand consulter.",
+    "Deux nouveaux tags dans le check-in : « Voyage » et « Vaccin »."
+  ]
+}
