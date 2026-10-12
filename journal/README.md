@@ -56,18 +56,38 @@
   réglage sur la montre).
 - Si vous avez un **tensiomètre, une balance ou un thermomètre Bluetooth**, essayez « Recevoir la mesure » : la lecture
   suit la norme Bluetooth mais n'a pas encore été testée sur un vrai appareil. Dites-moi la marque et ce qui s'affiche.
-
 - **À essayer** : activez « Météo, pression et air » et dites-moi si votre ville et la météo du jour s'affichent bien.
+- **À surveiller (2027)** : Google impose la « vérification des développeurs » pour installer une app hors Play Store
+  (déjà en vigueur au Brésil, en Indonésie, à Singapour et en Thaïlande depuis le 30/09/2026, partout en 2027). La mise
+  à jour en 1 clic de HealthTrack pourrait être concernée ; j'étudie les options au prochain run idées.
+- **Question GT 6 Pro** : si vous passez par Gadgetbridge, la **VFC** arrive-t-elle ? (Plus → Connecteurs → Mes
+  appareils, ligne Gadgetbridge). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
-**Prochaines priorités** — réception Bluetooth automatique (l'appareil de mesure est reconnu dès qu'il réapparaît),
-temps d'écran, météo étape 2 (prévision du jour, tag « mal de tête »).
+**Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Radar expliqué** : si la FC repos monte après un verre ou un sport tardif, l'app dira « probablement lié à hier
+  soir » au lieu de sonner l'alerte — le reproche n° 1 fait aux alertes maladie des montres.
+- **« Qui envoie quoi »** : pour chaque montre / app, quelles mesures arrivent vraiment, et une alerte si l'une
+  s'arrête (« plus de VFC depuis 4 jours »).
+- **Votre sommeil sans montre** : estimé par le téléphone (écran éteint, charge), plus le temps d'écran du soir.
+- **« Dans votre plage habituelle »** : une estimation d'humeur à la Emobot / Sahha (écart à vos habitudes de sommeil,
+  pas, écran tard, sorties), calibrée par vos check-ins, jamais un diagnostic.
+- **Briefing du matin** : une carte « Votre journée » (nuit, cœur, pression / pollen, énergie prévue) et **une** action.
+- **Racontez votre journée** (dictée) → tags, cafés, verres, symptômes remplis tout seuls, confirmés en 1 tap.
+- **Bague Colmi (~35 €)** : une des rares bagues au protocole Bluetooth documenté sous licence libre (MIT) → données brutes
+  sans app ni compte. Idée de matériel bon marché pour compléter la montre (sommeil, SpO₂ la nuit).
+- Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
+  (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
+
+**Prochaines priorités** — temps d'écran + sommeil estimé par le téléphone, Radar expliqué et « qui envoie quoi »,
+puis l'estimation « plage habituelle » et le briefing du matin ; réception Bluetooth automatique.
 
 | Run | Type | Résultat |
 |---|---|---|
 | 12/10 00:30 — [Mes appareils](runs/2026-10-12-0030-mes-appareils.md) | 🏗️ | PR #107 fusionnée → v98 |
 | 12/10 02:30 — [Capteurs Bluetooth](runs/2026-10-12-0230-capteurs-bluetooth.md) | 🏗️ | PR #108 fusionnée → v99 |
 | 12/10 04:30 — [Mesures Bluetooth](runs/2026-10-12-0430-mesures-bluetooth.md) | 🏗️🐛 | PR #109 fusionnée → v100, PR #110 (test instable) |
-| 12/10 06:30 — [Météo automatique + bugs BLE](runs/2026-10-12-0630-meteo-automatique.md) | 🐛🏗️ | PR #111 → release à la fusion |
+| 12/10 06:30 — [Météo automatique + bugs BLE](runs/2026-10-12-0630-meteo-automatique.md) | 🐛🏗️ | PR #111 fusionnée → v102 |
+| 12/10 08:30 — [Idées : téléphone, bagues, action](runs/2026-10-12-0830-idees-telephone-bagues-action.md) | 💡 | 17 idées (I22–I38), journal seul |
 
 ---
 

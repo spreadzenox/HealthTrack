@@ -36,6 +36,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] Couche BLE : réception **automatique** — appareil de mesure mémorisé, reconnexion dès qu'il réapparaît (app ouverte), sans toucher au téléphone
 - [ ] Couche BLE, étape 2 bis : FC diffusée par la montre pendant une séance → enregistrement de la séance (FC continue, zones) ; VFC du matin en 1 geste (rappel, dernier capteur mémorisé, reconnexion auto)
 - [ ] Couche BLE, étape 3 : Companion Device Manager (réveil quand l'appareil revient à portée), synchro en arrière-plan
+- [ ] **« Qui envoie quoi »** (I23) : matrice source × mesure sur 30 j dans « Mes appareils », trou signalé quand un type habituel s'arrête (≥ 3 j) — fonction pure `sourceCoverage`
+- [ ] **Bague Colmi / Yawell en direct** (I28) : pilote BLE réimplémenté d'après le protocole MIT (`tahnok/colmi_r02_client`, notes.tahnok.ca), FC en direct + batterie puis historique FC / SpO₂ / pas / sommeil ; jamais de code Gadgetbridge
 - [ ] Imports de fichiers constructeurs (I14) : Garmin FIT, Huawei JSON (export RGPD), Samsung / Oura / Zepp CSV
 - [ ] OAuth cloud ouverts à un particulier : Polar AccessLink (gratuit), Whoop, Oura
 - [ ] Pilote BLE Huawei direct (I20) — pari long terme, depuis `huawei-lpv2` (MIT), jamais de code Gadgetbridge (AGPL)
@@ -45,6 +47,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] **Météo, pression, qualité de l'air, pollen** (I4) : Open-Meteo sans clé, position arrondie ≈ 10 km (géoloc approximative ou ville), 92 jours d'historique, mise à jour ≤ 3 h à l'ouverture, 6 variables « environnement » dans les Analyses (jamais des leviers), puce Météo dans le journal, carte dans Connecteurs (`src/services/weather*.js`) (run 12/10 06:30)
 - [ ] Météo, étape 2 : prévision du jour dans la prédiction (remplacer l'entrée du jour → `upsertEntries` à faire évoluer), effet décalé de la pression (J−1), tag « mal de tête » avec intensité pour tester la sensibilité à la pression, rappel du matin « pression en chute »
 - [ ] **Temps d'écran et téléphone au lit** (I6, UsageStatsManager) → variables + sommeil estimé sans montre
+- [ ] **Sommeil estimé par le téléphone** (I25, même plugin Kotlin `PhoneUsage` que I6) : plus longue période écran éteint 20 h–12 h + charge → `sleep` source `phone_estimate`, jamais prioritaire sur une montre
+- [ ] I6 / I25 : guide « Autoriser les paramètres restreints » (Android 15+, APK hors store) avant l'accès aux données d'utilisation ; plugin maison autour de `queryEvents` (le plugin Capgo ne l'expose pas)
+- [ ] **Courbe caféine (et alcool)** (I27) : « ☕ maintenant » en 1 tap, modèle à 1 compartiment (T½ 5 h ajustable), « caféine restante au coucher » comme variable / levier
+- [ ] Pas du téléphone sans Health Connect (I36) ; routine / temps à la maison sans GPS (I37, Wi-Fi haché)
 - [ ] Calendrier → charge de la journée (I11)
 - [ ] Mobilité / temps dehors (I15, sans coordonnées précises)
 - [ ] Repas détectés dans la galerie (I12)
@@ -52,6 +58,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 
 ### C9 — Humeur estimée et conversations (priorité n° 3)
 - [ ] **Humeur estimée** (I7) : régression personnelle des check-ins sur les écarts à la norme, fourchette, ≥ 7 jours valides / 14, pré-remplit le check-in
+- [ ] **Indice « dans votre plage habituelle »** (I31, précise I7 : z-scores 28 j façon Sahha / Emobot, poids appris sur les check-ins dès 14 j, bande perso, renvoi doux vers un professionnel si bas ≥ 2 semaines)
+- [ ] **Journal libre (dictée / texte) → tags, intensités, caféine, alcool, symptômes extraits** (I26, Gemini JSON + confirmation en 1 tap, repli mots-clés sans clé)
 - [ ] « Votre semaine en clair » (I9, gabarit local, Gemini optionnel)
 - [ ] Journal vocal (I17) : dictée → transcription locale → résumé / sentiment
 - [ ] Import Omi (I10) via la clé développeur personnelle ; Plaud quand son SDK sortira de bêta ; rappel sur le consentement d'autrui
@@ -74,6 +82,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] Tendance de poids lissée (R#8, EMA α≈0,1) et objectif de pas fondé sur les preuves (R#10, défaut 7 000, adaptatif)
 - [x] **« Radar forme »** (R#12) : FC repos / VFC / sommeil vs norme 60 j, ≥ 2 signaux défavorables (|z| ≥ 1,5), « à surveiller » 1 jour, alerte ≥ 2 jours, jamais de diagnostic
 - [ ] Radar, étape 2 : fréquence respiratoire et température si Health Connect les fournit ; mini-courbe 14 j ; recalibrer les seuils sur retours réels
+- [ ] **Radar expliqué** (I22) : tag confondant la veille (alcool, sport le soir, repas tardif ; nouveaux tags voyage / vaccin) → « probablement lié à… » ; « Je me sens bien / Je couve quelque chose » en 1 tap (entrée `radar_feedback`) pour recalibrer
+- [ ] **Briefing du matin** (I24) : carte « Votre journée » jusqu'à midi (nuit vs norme, cœur / Radar, pression / pollen, énergie prévue en fourchette) + une seule action tirée des pistes solides
+- [ ] Contrôle qualité des nuits (I32) : nuits « 100 % léger » / sans phases / tronquées exclues des moyennes de phases
+- [ ] Glycémie après les repas (I29) : pic, retour à la base, aire 0–2 h sur la carte du repas (HC ← Juggluco / Libre / Dexcom), sans conseil d'insuline
 - [ ] Readiness personnelle calibrée sur le ressenti (R#24, espace d'état bayésien) — pari long terme
 
 ### C3 — Moteur d'analyse N-of-1 v2
@@ -107,12 +119,15 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] Cigarettes avec contexte (R#7) : déclencheur optionnel, heatmap horaire, « envie résistée »
 - [ ] WHO-5 hebdomadaire (R#11) pour valider le score quotidien
 - [ ] Code-barres Open Food Facts + % ultra-transformés (R#17)
+- [ ] Plans « si… alors… » (I30) : 1 à 3 plans choisis, notification locale seulement quand la condition est vraie, ≤ 1 / j
+- [ ] Cycle menstruel (I34, HC `MenstruationPeriod`) comme variable de contrôle ; risque migraine / allergie du jour (I35) après ≥ 30 épisodes
 - [ ] Notifications locales intelligentes (R#15) : ≤ 2/j, heure apprise, effet mesuré
 
 ### C5 — Coach IA (Gemini) ancré dans les données
 - [x] **Transparence Gemini** (R#9) : modèle configurable (3.8 Flash par défaut, repli auto sur les autres modèles), avertissement « clé gratuite », photo réduite et sans EXIF/GPS avant envoi
 - [ ] Revue hebdo IA ancrée (R#13) : JSON calculé localement → Gemini rédige, chaque chiffre cité vérifié automatiquement, termine par une expérience proposée
 - [ ] « Demander à HealthTrack » (R#22) : function calling sur des outils locaux, le LLM ne voit que leurs sorties
+- [ ] **Réglage IA** (I33) : désactivée / à la demande / proactive ; ton sans culpabilité. Gemini Nano indisponible sur l'A56 (ML Kit GenAI, 08/10/2026) → LLM local = LiteRT-LM + Gemma 3 1B (I38), plus tard
 - [ ] Import de bilans sanguins (R#26) ; LLM on-device optionnel (R#27, Gemma via LiteRT-LM — benchmarker l'A56 d'abord)
 
 ### C6 — Qualité, données & fondations
@@ -134,12 +149,18 @@ sans saisie, puis la couche BLE générique, puis l'humeur estimée. Le travail 
 
 1. ~~🏗️ C7 — types Health Connect (I2) + guide Huawei → Gadgetbridge (I1)~~ (run 11/10 20:30).
 2. ~~🏗️ C7 — « Mes appareils » (I3)~~ (run 12/10 00:30) ; étape 2 (appareils BLE appairés, bandeau d'accueil) après retour du propriétaire.
-3. 🏗️ **C8 — Météo / pression / air / pollen** (I4) comme variables des Analyses.
-4. ~~🏗️ C7 — Couche BLE générique, étape 1 (I8)~~ (run 12/10 02:30) → étape 2 (tensiomètre, balance, thermomètre, oxymètre) juste après la météo.
-5. 🏗️ **C8 — Temps d'écran / téléphone au lit** (I6).
-6. 🏗️ **C9 — Humeur estimée** (I7), puis Radar maladie étape 2 avec respiration et température (I5).
-7. 🐛 / 🎨 en alternance : Capacitor 8.4 + CLI 8 (C1, aussi utile au plugin BLE), un seul bloc Radar + cœur.
-8. 💡 Prochain run idées (12/10 08:00 Paris) : retours réels GT 6 Pro + Gadgetbridge, bagues et CGM, Gemini Nano sur A56.
+3. ~~🏗️ C8 — Météo / pression / air / pollen (I4)~~ (run 12/10 06:30, #111).
+4. ~~🏗️ C7 — Couche BLE générique, étapes 1–2 (I8)~~ (runs 12/10 02:30 → 06:30).
+5. 🏗️ **C8 — Temps d'écran + sommeil estimé par le téléphone** (I6 + I25, un seul plugin Kotlin `PhoneUsage`, guide
+   « paramètres restreints »).
+6. 🏗️ **C2 — Radar expliqué (I22) + « Qui envoie quoi » (I23)** : petits, purs, fondés sur de vrais reproches — bons
+   candidats pour un run court ou un run 🐛 qui a du temps.
+7. 🏗️ **C9 — Indice « plage habituelle » (I31 / I7)**, puis **Briefing du matin (I24)** qui l'affiche.
+8. 🏗️ C9 — Journal libre → tags (I26) puis courbe caféine (I27).
+9. 🏗️ C7 — Bague Colmi en direct (I28), après lecture détaillée du protocole au prochain run idées.
+10. 🐛 / 🎨 en alternance : Capacitor 8.4 + CLI 8 (C1), un seul bloc Radar + cœur.
+11. 💡 Prochain run idées (12/10 20:30 Paris) : voir « À creuser » dans `IDEES.md` (VFC GT 6 Pro, protocole Colmi,
+    vérification des développeurs Android 2027).
 
 ## Idées en vrac (à trier)
 
@@ -178,6 +199,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-12 — Run idées : 17 nouvelles idées (I22–I38) dans `IDEES.md`, backlog réorienté (Radar expliqué, « qui envoie quoi », sommeil par le téléphone, plage habituelle, briefing du matin) (run 08:30 Paris)
 - [x] 2026-10-12 — Capteurs Bluetooth : recherche et reconnaissance automatique par profil standard / famille, mesure FC + VFC en direct sur toute ceinture cardio ou montre qui diffuse sa FC (run 02:30)
 - [x] 2026-10-12 — « Mes appareils » : 19 apps santé détectées, statut et guide pour chacune (run 00:30, #107)
 - [x] 2026-10-11 — Run idées : directions du propriétaire dans la charte, `IDEES.md` (21 idées), chantiers C7–C9, backlog réorienté (run 20:30 Paris)
