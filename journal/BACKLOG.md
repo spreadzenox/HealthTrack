@@ -230,8 +230,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **Sauvegarde exhaustive** : l'export n'applique plus les plafonds de l'analyse (perte silencieuse des données anciennes) (#72)
 - [ ] Performance IndexedDB : `listEntries` fait un `getAll()` + filtre JS à chaque appel → utiliser les index
 - [ ] Code splitting (bundle principal > 500 kB, avertissement Vite)
-- [x] Test instable `Recommendations.test.jsx` (« shows analysis when basic has enough data ») : attendait la fin de
-      « Chargement » au lieu de l'analyse elle-même — rouge une fois sur main (run Tests 309) ; corrigé run 12/10 20:30
+- [x] Tests instables corrigés (run 12/10 20:30) : `Recommendations.test.jsx` attendait la fin de « Chargement » au
+      lieu de l'analyse (rouge une fois sur main, run Tests 309) ; `PhoneUsageCard.test.jsx` cliquait avant que l'accès
+      accordé soit appliqué (rouge sur la PR #121)
 - [ ] Mise à jour en 1 clic après 2027 (I48) : compte « distribution limitée » (gratuit, ≤ 20 appareils) ou parcours
       avancé unique de 24 h ; message clair dans la bannière si Android bloque — à décider avec le propriétaire
 

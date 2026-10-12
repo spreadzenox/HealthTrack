@@ -1,6 +1,6 @@
 # 2026-10-12 20:30 Paris (18:30 UTC) — Idées : montre en direct, visage / voix, science personnelle
 
-**Type** : 💡 (run « idées » de 20 h, pas de code produit ; + 1 test instable corrigé)  ·  **PR** : « [Auto] Run idées 12/10 20:30 »
+**Type** : 💡 (run « idées » de 20 h, pas de code produit ; + 2 tests instables corrigés)  ·  **PR** : « [Auto] Run idées 12/10 20:30 »
 
 ## Pourquoi
 - Démarrage : seule PR ouverte = #51 (`cursor/*`, pas à la routine, non touchée). main vert (4f1e243), Build & Release
@@ -12,6 +12,9 @@
 ## Ce qui a été fait
 - **Test instable corrigé** : le test attendait la disparition de « Chargement », ce qui peut se produire *avant*
   que le chargement commence ; il attend désormais l'analyse elle-même. Code de test seulement, aucune modification de l'app.
+- **2e test instable** révélé par la CI de cette PR (`PhoneUsageCard.test.jsx`, « accès déjà accordé ») : le clic
+  sur « Activer » pouvait arriver avant que React applique « accès accordé » → l'app partait vers les réglages au
+  lieu de lire. Le test attend maintenant la fin de la vérification d'accès. 3 exécutions locales vertes.
 - `IDEES.md` : nouvelle section en tête — signaux utilisateurs, faits clés datés et sourcés, **10 idées (I39–I48)**
   notées impact × faisabilité, toutes rattachées à un chantier D, pistes d'implémentation, liste « à creuser ».
   I7 / I31 (humeur comportementale) marquées abandonnées (D5) ; I24 et I26 fusionnées dans I47 / I41.
