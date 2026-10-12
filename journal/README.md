@@ -169,7 +169,7 @@ nettoyage, humeur par le visage / la voix.
 | 12/10 16:30 — [Directives du 12/10 + nettoyage](runs/2026-10-12-1430-nettoyage-directives.md) | 🧹 | PR #117 fusionnée → v106 |
 | 12/10 18:30 — [Nettoyage, étape 2](runs/2026-10-12-1630-nettoyage-etape-2.md) | 🧹 | PR #119 fusionnée → v107 |
 | 12/10 20:30 — [Idées : montre en direct, visage / voix, science perso](runs/2026-10-12-2030-idees-directives.md) | 💡 | 10 idées (I39–I48), 2 tests instables corrigés — PR #121 fusionnée → v108 |
-| 12/10 22:30 — [Priorité montre : test de connexion directe](runs/2026-10-12-2230-montre-diagnostic.md) | ⌚🏗️ | PR « [Auto] » — voir le compte rendu |
+| 12/10 22:30 — [Priorité montre : test de connexion directe](runs/2026-10-12-2230-montre-diagnostic.md) | ⌚🏗️ | PR #123 fusionnée → v109 |
 
 ---
 

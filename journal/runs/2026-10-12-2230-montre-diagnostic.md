@@ -1,6 +1,6 @@
 # 2026-10-12 22:30 Paris (20:30 UTC) — Priorité montre : test de connexion directe (D3 a)
 
-**Type** : ⌚🏗️ (priorité absolue, étape a)  ·  **PR** : voir le tableau du résumé (ouverte puis fusionnée si CI verte)
+**Type** : ⌚🏗️ (priorité absolue, étape a)  ·  **PR** : #123 (fusionnée → v109, APK publié ; CI Vitest + Build APK vertes)
 
 ## Pourquoi
 - Démarrage : main vert (37a9c36, v108), aucune PR « [Auto] » ouverte ou rouge.
