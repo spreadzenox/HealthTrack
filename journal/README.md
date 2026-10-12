@@ -122,7 +122,7 @@ l'écran de diagnostic de la GT 6 Pro avec export des journaux, première étape
 | 12/10 10:30 — [Qui envoie quoi + Radar expliqué](runs/2026-10-12-1030-qui-envoie-quoi-radar-explique.md) | 🏗️ | PR #113 fusionnée → v103 |
 | 12/10 12:30 — [Temps d'écran + sommeil par le téléphone](runs/2026-10-12-1030-temps-ecran-sommeil-telephone.md) | 🏗️ | PR #114 fusionnée → v104 |
 | 12/10 14:30 — [Humeur estimée](runs/2026-10-12-1230-humeur-estimee.md) | 🏗️🐛 | PR #115 fusionnée → v105 (+ test Nutrition instable corrigé) |
-| 12/10 16:30 — [Directives du 12/10 + nettoyage](runs/2026-10-12-1430-nettoyage-directives.md) | 🧹 | PR #117 |
+| 12/10 16:30 — [Directives du 12/10 + nettoyage](runs/2026-10-12-1430-nettoyage-directives.md) | 🧹 | PR #117 fusionnée → v106 |
 
 ---
 
