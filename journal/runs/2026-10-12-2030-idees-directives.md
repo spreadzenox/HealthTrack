@@ -1,6 +1,6 @@
 # 2026-10-12 20:30 Paris (18:30 UTC) — Idées : montre en direct, visage / voix, science personnelle
 
-**Type** : 💡 (run « idées » de 20 h, pas de code produit ; + 2 tests instables corrigés)  ·  **PR** : « [Auto] Run idées 12/10 20:30 »
+**Type** : 💡 (run « idées » de 20 h, pas de code produit ; + 2 tests instables corrigés)  ·  **PR** : #121 (fusionnée → v108, APK publié)
 
 ## Pourquoi
 - Démarrage : seule PR ouverte = #51 (`cursor/*`, pas à la routine, non touchée). main vert (4f1e243), Build & Release
