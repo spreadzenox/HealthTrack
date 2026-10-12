@@ -1,6 +1,6 @@
 # 2026-10-12 12:30 UTC (14:30 Paris) — Humeur estimée « plage habituelle »
 
-**Type** : 🏗️  ·  **PR** : voir ci-dessous
+**Type** : 🏗️  ·  **PR** : #115
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte, main vert (v104, 4a19aab, Build & Release ✅).
@@ -30,6 +30,12 @@
 - Visuel : `npm run visual` complet OK (aucune erreur JS) ; lu : accueil (carte « Aujourd'hui · Dans votre plage
   habituelle · 1,9 / 5 entre 0,8 et 3,0 », sommeil 6 h 30 vs 7 h 19, pas 8 585 vs 7 645, calibrée sur 67 notes),
   `--empty` (carte masquée), `--light`. Espacement de la ligne « Ce qui suit… » corrigé après la première capture.
+
+- **CI : `Nutrition.test.jsx` rouge à nouveau** (sans lien avec ce changement, déjà instable avant #110). Cause : à
+  l'enregistrement du profil, le formulaire se ferme tout de suite mais le profil affiché n'est mis à jour qu'après le
+  rechargement asynchrone (`load` → `getBodyProfile`) ; le test lisait « Homme » en `getByText` (course). Son échec
+  sautait aussi la remise à zéro du mock de pesée → le test suivant échouait en cascade. Corrigé : `findByText` et
+  remise à zéro du mock dans `beforeEach`.
 
 ## Apprentissages / décisions
 - **Pas de pré-remplissage du check-in** avec l'estimation (proposé par I7) : la note pré-remplie serait souvent

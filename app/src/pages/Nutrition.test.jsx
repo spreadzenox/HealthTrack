@@ -20,6 +20,8 @@ const yesterdayNoon = () => {
 describe('Nutrition page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Un test qui échoue avant de remettre le mock à zéro ne doit pas faire échouer les suivants.
+    listEntriesForAnalysis.mockResolvedValue([])
     localStorage.clear()
   })
 
@@ -90,10 +92,11 @@ describe('Nutrition page', () => {
     expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'health-entries-updated' }))
     expect(JSON.parse(localStorage.getItem('healthtrack_body_profile'))).toEqual({ sex: 'F', birthYear: 1990, heightCm: 165 })
     // Le formulaire contient aussi un libellé « Femme » : attendre sa fermeture, sinon on peut trouver
-    // ce libellé juste avant qu'il disparaisse (échec intermittent sur la CI).
+    // ce libellé juste avant qu'il disparaisse (échec intermittent sur la CI). Le profil affiché n'est mis à
+    // jour qu'après le rechargement asynchrone qui suit la fermeture : findBy, pas getBy.
     await waitFor(() => expect(screen.queryByRole('button', { name: 'Enregistrer' })).toBeNull())
-    expect(screen.getByText('Femme')).toBeInTheDocument()
-    expect(screen.getByText(/165 cm/)).toBeInTheDocument()
+    expect(await screen.findByText('Femme')).toBeInTheDocument()
+    expect(await screen.findByText(/165 cm/)).toBeInTheDocument()
     expect(screen.queryByText('Chargement…')).not.toBeInTheDocument()
     dispatchSpy.mockRestore()
   })
@@ -108,7 +111,7 @@ describe('Nutrition page', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Homme' }))
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     await waitFor(() => expect(screen.queryByRole('button', { name: 'Enregistrer' })).toBeNull())
-    expect(screen.getByText('Homme')).toBeInTheDocument()
+    expect(await screen.findByText('Homme')).toBeInTheDocument()
     expect(createEntry).not.toHaveBeenCalled()
     listEntriesForAnalysis.mockResolvedValue([])
   })
