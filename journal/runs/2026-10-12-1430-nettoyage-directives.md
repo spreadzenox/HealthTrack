@@ -1,6 +1,6 @@
 # 2026-10-12 14:30 UTC (16:30 Paris) — Directives du 12/10 + nettoyage, étape 1
 
-**Type** : 🧹🎨 (D1)  ·  **PR** : voir tableau du résumé de la semaine
+**Type** : 🧹🎨 (D1)  ·  **PR** : #117 (fusionnée → v106, APK publié)
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte, main vert (v105, 9ff9780).
