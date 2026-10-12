@@ -1,6 +1,6 @@
 # 2026-10-12 12:30 UTC (14:30 Paris) — Humeur estimée « plage habituelle »
 
-**Type** : 🏗️  ·  **PR** : #115
+**Type** : 🏗️🐛  ·  **PR** : #115 (fusionnée → v105, APK publié)
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte, main vert (v104, 4a19aab, Build & Release ✅).
