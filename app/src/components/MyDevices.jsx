@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { listEntries } from '../storage/localHealthStorage'
 import { detectInstalledApps, summarizeHealthConnectSources, adviseDevices } from '../devices/healthApps'
 import { formatAgo } from '../utils/timeAgo'
+import { openGuide } from '../utils/openGuide'
 import './MyDevices.css'
 
 const SOURCE_WINDOW_DAYS = 30
@@ -62,13 +63,6 @@ async function defaultLoadEntries() {
 async function defaultOpenApp(pkg) {
   const launcher = await getAppLauncher()
   await launcher?.openUrl({ url: pkg })
-}
-
-function openGuide(guideId) {
-  const el = document.getElementById(`guide-${guideId}`)
-  if (!el) return
-  el.open = true
-  el.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
 }
 
 /**
