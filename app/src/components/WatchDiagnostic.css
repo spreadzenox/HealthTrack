@@ -1,0 +1,94 @@
+.watch-diag-report {
+  margin-top: 12px;
+}
+
+.watch-diag-watch {
+  margin: 0 0 8px;
+  font-weight: 600;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.watch-diag-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.watch-diag-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.watch-diag-icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+.watch-diag-ok .watch-diag-icon {
+  background: rgba(78, 205, 196, 0.15);
+  color: var(--accent);
+}
+
+.watch-diag-warn .watch-diag-icon {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.watch-diag-fail .watch-diag-icon {
+  background: rgba(255, 138, 101, 0.15);
+  color: #ff8a65;
+}
+
+.watch-diag-skip .watch-diag-label,
+.watch-diag-pending .watch-diag-label {
+  color: var(--text-muted);
+}
+
+.watch-diag-detail {
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.watch-diag-verdict {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: rgba(255, 138, 101, 0.1);
+  border-left: 3px solid #ff8a65;
+}
+
+.watch-diag-verdict-ok {
+  background: rgba(78, 205, 196, 0.1);
+  border-left-color: var(--accent);
+}
+
+.watch-diag-verdict-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.watch-diag-verdict ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}

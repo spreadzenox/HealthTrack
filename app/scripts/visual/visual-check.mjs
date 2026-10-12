@@ -28,6 +28,8 @@
  *   npm run visual -- --routes=/connectors --ble=measure  # … puis mesure cardio en direct sur la ceinture simulée
  *   npm run visual -- --routes=/connectors --ble=receive  # … attente d'une mesure du tensiomètre simulé (1 reçue)
  *   npm run visual -- --routes=/connectors --ble=received # … mesures du tensiomètre reçues et enregistrées
+ *   npm run visual -- --routes=/connectors --ble=watch --devices  # « Montre Huawei en direct » : test, la montre répond
+ *   npm run visual -- --routes=/connectors --ble=watch-silent --devices  # … la montre ne répond pas (liée à Huawei Santé)
  *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -49,6 +51,7 @@ import { mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { generateDemoEntries } from './demoData.mjs'
+import { encodeFrame } from '../../src/devices/huawei/protocol.js'
 
 // Même fuseau que le navigateur simulé, pour que les heures des données de démo soient cohérentes.
 process.env.TZ = 'Europe/Paris'
@@ -264,10 +267,41 @@ async function main() {
     }
     if (args.ble) {
       // « Capteurs Bluetooth » : faux client BLE (lu par src/devices/ble/bleService.js), sans adresse réelle.
-      await context.addInitScript((mode) => {
+      // Réponse de la montre simulée aux paramètres du lien (protocole v2, authentification v2, 1 étiquette récente)
+      const linkAnswer = Array.from(
+        encodeFrame(1, 1, [
+          { tag: 1, value: [2] },
+          { tag: 2, value: [0x02, 0x00] },
+          { tag: 3, value: [0x01, 0xf4] },
+          { tag: 4, value: [0x00, 0x1e] },
+          { tag: 5, value: [0x00, 0x02, ...Array(16).fill(0x42)] },
+          { tag: 7, value: [0x01] },
+        ]),
+      )
+      await context.addInitScript(({ mode, linkAnswer }) => {
         const dv = (bytes) => new DataView(Uint8Array.from(bytes).buffer)
+        const DIS = '0000180a-0000-1000-8000-00805f9b34fb'
+        const FE86 = '0000fe86-0000-1000-8000-00805f9b34fb'
+        let watchNotify = null
         const HR = '0000180d-0000-1000-8000-00805f9b34fb'
         let onDisconnect = null
+        if (mode === 'watch' || mode === 'watch-silent') {
+          // GT 6 Pro : Bluetooth classique (RFCOMM) ; « watch-silent » = montre liée à Huawei Santé, muette
+          const listeners = {}
+          const hex = linkAnswer.map((b) => b.toString(16).padStart(2, '0')).join('')
+          window.__healthtrackFakeBtClassic = {
+            listBonded: async () => ({ devices: [{ deviceId: 'fake-watch', name: 'HUAWEI WATCH GT 6 Pro-A1B', type: 3, uuids: ['82ff3820-8411-400c-b85a-55bdb32cf060'] }] }),
+            addListener: async (e, cb) => {
+              listeners[e] = cb
+              return { remove: async () => {} }
+            },
+            connect: async () => {},
+            write: async () => {
+              if (mode === 'watch') setTimeout(() => listeners.data?.({ value: hex }), 150)
+            },
+            disconnect: async () => {},
+          }
+        }
         window.__healthtrackFakeBle = {
           scanMs: 300,
           initialize: async () => {},
@@ -284,7 +318,23 @@ async function main() {
             onDisconnect = cb
           },
           disconnect: async () => {},
+          getServices: async () => [
+            { uuid: DIS, characteristics: [{ uuid: '00002a24-0000-1000-8000-00805f9b34fb' }] },
+            { uuid: FE86, characteristics: [{ uuid: '0000fe01-0000-1000-8000-00805f9b34fb' }, { uuid: '0000fe02-0000-1000-8000-00805f9b34fb' }] },
+          ],
+          read: async (_id, _s, c) => {
+            if (c.startsWith('00002a24')) return dv([...new TextEncoder().encode('GT6 Pro')])
+            if (c.startsWith('00002a26')) return dv([...new TextEncoder().encode('6.0.0.110')])
+            throw new Error('absent')
+          },
+          write: async () => {
+            if (mode === 'watch') setTimeout(() => watchNotify?.(dv(linkAnswer)), 100)
+          },
           startNotifications: async (_id, _s, c, cb) => {
+            if (c.startsWith('0000fe02')) {
+              watchNotify = cb
+              return
+            }
             if (c.startsWith('00002a35')) {
               // tensiomètre : mesure du jour (mmHg, horodatée, pouls) puis, en mode « received », une ancienne et déconnexion
               const sf = (v) => [v & 0xff, (v >> 8) & 0x0f]
@@ -305,7 +355,7 @@ async function main() {
           },
           stopNotifications: async () => clearInterval(window.__fakeBleTimer),
         }
-      }, String(args.ble))
+      }, { mode: String(args.ble), linkAnswer })
     }
     if (args.phone) {
       // « Temps d'écran et sommeil » : faux plugin PhoneUsage (lu par src/services/phoneUsageSync.js).
@@ -424,7 +474,12 @@ async function main() {
           await page.evaluate(() => document.querySelector('.import-preview')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(400)
         }
-        if (args.ble) {
+        if (args.ble === 'watch' || args.ble === 'watch-silent') {
+          await page.getByRole('button', { name: 'Tester la connexion directe' }).click()
+          await page.getByRole('button', { name: 'Relancer le test' }).waitFor({ timeout: 30000 })
+          await page.evaluate(() => document.querySelector('.watch-diag')?.scrollIntoView({ block: 'start' }))
+          await page.waitForTimeout(300)
+        } else if (args.ble) {
           await page.getByRole('button', { name: 'Rechercher autour de moi' }).click()
           await page.waitForTimeout(700)
           if (args.ble === 'measure') {

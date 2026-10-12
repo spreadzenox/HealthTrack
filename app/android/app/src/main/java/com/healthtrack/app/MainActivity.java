@@ -9,6 +9,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         // Plugins maison (non publiés sur npm) : à enregistrer avant super.onCreate.
         registerPlugin(PhoneUsagePlugin.class);
+        registerPlugin(BtClassicPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }
