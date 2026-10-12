@@ -107,7 +107,7 @@ nourrissent) et le briefing du matin ; réception Bluetooth automatique ; bandea
 | 12/10 06:30 — [Météo automatique + bugs BLE](runs/2026-10-12-0630-meteo-automatique.md) | 🐛🏗️ | PR #111 fusionnée → v102 |
 | 12/10 08:30 — [Idées : téléphone, bagues, action](runs/2026-10-12-0830-idees-telephone-bagues-action.md) | 💡 | 17 idées (I22–I38), journal seul |
 | 12/10 10:30 — [Qui envoie quoi + Radar expliqué](runs/2026-10-12-1030-qui-envoie-quoi-radar-explique.md) | 🏗️ | PR #113 fusionnée → v103 |
-| 12/10 12:30 — [Temps d'écran + sommeil par le téléphone](runs/2026-10-12-1030-temps-ecran-sommeil-telephone.md) | 🏗️ | PR en cours (voir compte rendu) |
+| 12/10 12:30 — [Temps d'écran + sommeil par le téléphone](runs/2026-10-12-1030-temps-ecran-sommeil-telephone.md) | 🏗️ | PR #114 fusionnée → v104 |
 
 ---
 

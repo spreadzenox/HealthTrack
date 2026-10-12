@@ -1,6 +1,6 @@
 # 2026-10-12 10:30 UTC (12:30 Paris) — Temps d'écran et sommeil estimé par le téléphone
 
-**Type** : 🏗️  ·  **PR** : voir ci-dessous
+**Type** : 🏗️  ·  **PR** : #114 (fusionnée)
 
 ## Pourquoi
 - Démarrage : aucune PR [Auto] ouverte, main vert (v103, 85fa2ee).
