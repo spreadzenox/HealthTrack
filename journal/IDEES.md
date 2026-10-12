@@ -9,6 +9,177 @@
 
 ---
 
+## Run du 12/10/2026 08:30 (Paris) — tout capter depuis le téléphone, bagues ouvertes, du chiffre à l'action
+
+Question du jour, côté utilisateur : *« j'ai une montre, un téléphone et une vie chargée : qu'est-ce qui, sans rien
+saisir, me dirait chaque matin où j'en suis et quoi faire, et m'éviterait les fausses alertes ? »*
+
+### Ce que veulent les gens (nouveaux signaux, 2025–2026)
+
+1. **Un seul tableau de bord, humeur + santé + habitudes** : « Frustrated with fragmented tracking apps – would you use
+   an all-in-one dashboard for mood, health, and habits? » (r/QuantifiedSelf, via gummysearch) [T]. Confirme le créneau.
+2. **Le tag manuel tue l'adoption** : le *Lifestyle Logging* de Garmin est le « biggest gripe » de ses utilisateurs ;
+   Garmin préparerait un auto-logging (fuite the5krunner, 06/11/2025) [V]. « 3 clics par case oui / non » = abandon [T].
+3. **L'IA doit rester sous contrôle** : forum Whoop, 09/02 et 29/05/2026 : « Use of AI/LLMs needs to be under the
+   control of the user », « not be forced to engage with the AI coach » [V]. Garmin Active Intelligence jugé
+   « generic… just some math and some platitudes » [T]. → IA **optionnelle**, ancrée dans les chiffres, désactivable.
+4. **Lassitude des abonnements** (Whoop, Oura 5,99 €/mois, Google Health 9,99 $/mois, Garmin Connect+) [T] → notre
+   gratuité locale est un argument.
+5. **Fausses alertes maladie** : alcool, voyage, vaccin, gros entraînement déclenchent les alertes (10/2026) [T].
+6. **Bilans sanguins** : saisie « time consuming » dans un tableur, envie de tendances multi-labos [T].
+7. **Ce que font les meilleurs en 2026** : Whoop fusionne Journal / Outlook / Check-ins en **un flux quotidien**
+   (matin, journée, soir) et extrait les comportements d'un **journal vocal ou texte libre** (05/09/2026) [V] ;
+   Bevel « Energy Bank » (énergie de la journée) [T] ; Samsung « Vitals » (écarts nocturnes à la norme) [T] ;
+   Oura : migraine (brevet 08/2026), ménopause, cycle [T] ; Alan **Mo** (France) : « dans 10 ans nous aurons tous
+   notre compagnon de santé personnel », apprécié parce qu'il **dit quand il ne sait pas et cite ses sources** [V].
+8. **Ce qui change vraiment les comportements** : JITAI (méta-analyse 2025, g = 0,15, durable) et intentions
+   « si X alors Y » (SMD ≈ 0,24–0,33) : petits effets, robustes et quasi gratuits à implémenter [T]. Les streaks
+   rigides culpabilisent [T, faible].
+
+*Reddit toujours bloqué (old.reddit, `.json`, miroirs en 503) : passé par gummysearch, redlib, forums officiels et
+presse. LinkedIn : rien d'exploitable via les moteurs. npmjs.com en 403 (versions de plugins non vérifiées).*
+
+### Faits clés trouvés ce matin
+
+- **GT 6 Pro + Gadgetbridge, retours réels** [V] (Codeberg #5428, 8 participants, 09/2025 → 06/2026 ; #6271) : FC,
+  SpO₂, stress, température cutanée, sommeil, séances, mises à jour firmware, réponses aux notifications **fonctionnent**
+  chez un propriétaire de GT 6 Pro ; un contributeur l'utilise « depuis longtemps uniquement avec Gadgetbridge ».
+  Limites : appels VoIP, cadrans partiels, ECG non fonctionnel ; **la VFC n'est jamais mentionnée** (à vérifier chez le
+  propriétaire). La page officielle marque la GT 6 Pro « Mostly supported » mais « not tested ».
+  **Gadgetbridge 0.95.0 / 0.95.1 sortis aujourd'hui (12/10/2026)** : tension artérielle → Health Connect, altitude,
+  export FIT des séances Huawei, export FIT en lot [V]. 0.93 (08/2026) a corrigé les phases de sommeil tronquées dans HC.
+  « HR Data Broadcasts » existe sur les montres Huawei, parfois seulement en mode économie ; GT 6 non confirmé [V].
+  Packages : Health Sync = `nl.appyhapps.healthsync` [V] ; Huawei Health = `com.huawei.health` [T].
+- **Bagues Colmi / Yawell (R02 → R12, ~30–45 €)** [V] : « Highly supported » dans Gadgetbridge sans app constructeur ;
+  FC (intervalle réglable), SpO₂, stress, phases de sommeil, pas, VFC selon firmware, température (R09, Yawell R05).
+  **Protocole documenté sous licence MIT** (`tahnok/colmi_r02_client` + notes.tahnok.ca : trames de 16 octets avec
+  somme de contrôle). → **la première bague à données brutes 100 % locales, réimplémentable légalement.**
+  PineTime / InfiniTime : FC 0x2A37 standard, doc BLE publique [V]. Bangle.js 2 : FC standard via une app
+  communautaire [T]. Oura, Ultrahuman, RingConn, Galaxy Ring : aucun BLE ouvert, passer par HC [H].
+- **CGM** : Juggluco (Libre 2/3, Dexcom G7, Sibionics) → Health Connect + broadcasts xDrip [V] ; Dexcom → HC avec
+  **3 h de retard** [V] ; Lingo sur Android depuis 12/2025 (US / UK) [T]. En France, un Libre s'achète en pharmacie
+  sans ordonnance pour un non-diabétique [H]. HealthTrack lit déjà la glycémie HC (run 11/10).
+- **Types HC réellement écrits** : Samsung = pas, exercice, FC, sommeil avec phases (pas de VFC / SpO₂ / température
+  listés) [V] ; Garmin = activité, FC, sommeil, poids (pas de stress / Body Battery / VFC) [T] → **la couverture varie
+  par firmware : la mesurer dans l'app** plutôt que la supposer.
+- **Téléphone seul** :
+  - **ML Kit GenAI (Gemini Nano) : aucun Galaxy A, A56 compris** (page du 08/10/2026) [V] → résumé / sentiment hors
+    ligne = LiteRT-LM + Gemma 3 1B int4 (~529 Mo, ~1,1 Go RAM ; 47–55 tok/s sur S24 Ultra, A56 estimé 15–25) [V/H].
+  - **APK installé hors Play Store (Android 15+)** : l'accès aux données d'utilisation (temps d'écran), l'écoute des
+    notifications et l'accessibilité sont des « paramètres restreints » → l'utilisateur doit d'abord ouvrir Infos de
+    l'appli → ⋮ → **« Autoriser les paramètres restreints »** [T]. Le guide in-app doit le prévoir.
+  - **Vérification des développeurs Android** : appliquée depuis le 30/09/2026 au Brésil, en Indonésie, à Singapour et
+    en Thaïlande, **mondiale en 2027** [T] → risque pour l'installation de l'APK GitHub ; à surveiller (point
+    d'attention propriétaire).
+  - Sleep API Google Play (lumière + mouvement, `SleepSegmentEvent`) : guide toujours en ligne, codelab « deprecated »
+    [V] → plan B : coucher / lever estimés par l'écran (R² ≈ 0,9 avec l'actigraphie, Borger 2019) [T].
+  - `@capgo/capacitor-android-usagestatsmanager` n'expose pas `queryEvents` [V doc] → petit plugin Kotlin maison.
+  - Preuves humeur passive : LifeSense (n = 1013, 2024) : plus de temps à la maison **que sa propre moyenne** → PHQ-8
+    plus élevé 2 semaines après (β = 0,22) ; modèles à 5–6 % de variance expliquée [V]. MONDY n-of-1 (08/2026, n = 11) :
+    les modèles personnels ne battent la moyenne personnelle que chez 8 / 11 [V]. Revue JMIR 08/2025 : sommeil
+    d'abord, puis pas / mobilité, appels, écran nocturne [V]. → **écart à sa plage habituelle, modestie affichée.**
+  - **Emobot** (désormais emobothealth.com, cap sur la psychiatrie US) : visage pendant l'usage normal, voix réduite
+    sur l'appareil à des caractéristiques acoustiques, pas, sorties, usage nocturne ; installation 3 min puis rien ;
+    bandes de « plage habituelle » + alerte de rechute ; résumé hebdo « Insight » ; MADRS r = 0,895 (n = 45, données
+    fabricant, non publiées) [V]. **Sahha** : score 0–100 sur 6 habitudes (pas, heures actives, inactivité, régularité
+    activité / sommeil, alignement circadien), r = −0,28 avec la dépression DASS, non diagnostique [T] → modèle simple
+    à imiter.
+  - Voix FR hors ligne : `SpeechRecognizer` on-device (fr-FR à tester sur l'A56), Vosk small-fr 41 Mo (WER 24 %),
+    Whisper-small FR affiné (WER ~12 %, 250 Mo) [V/T]. Sentiment FR : `distilcamembert-base-sentiment` [T].
+- **Conversations** : Omi (MIT, API REST + **serveur MCP**, gratuit en transcription locale) reste le seul ouvert ;
+  Plaud NotePin S (CES 2026, vendu en UE) sans API publique ; Limitless coupé dans l'UE ; Bee US / iOS ; Sandbar
+  Stream (bague de notes vocales, été 2026) [V/T]. Aucune app Android open source de lifelogging micro continu [T].
+
+### Idées classées (impact × faisabilité) — nouvelles ou fortement précisées
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I22 | **Radar avec facteurs explicatifs** : alcool / sport du soir / malade / voyage tagués la veille → « explication probable » au lieu d'une alerte ; « Je me sens bien / pas bien » en 1 tap pour calibrer | Moins de fausses alertes | 4 | 5 | 20 |
+| I23 | **« Qui envoie quoi »** : matrice source × mesure sur 30 j (d'après `sourceName` HC / BLE), trous signalés (« plus de VFC depuis 4 j ») | Objets connectés fiables | 4 | 5 | 20 |
+| I24 | **Briefing du matin** : une carte « Votre journée » (sommeil vs norme, cœur, Radar, météo / pression, énergie prévue) + **une** action ; IA optionnelle | Des actions, pas des graphiques | 5 | 4 | 20 |
+| I25 | **Sommeil estimé par le téléphone** (plus longue période écran éteint, charge, immobilité) quand aucune montre n'envoie | Zéro saisie sans montre | 5 | 4 | 20 |
+| I26 | **Journal libre (dictée / texte) → tags et intensités extraits** (Gemini JSON, confirmation en 1 tap) | Saisie en un geste | 5 | 4 | 20 |
+| I27 | **Courbe caféine (et alcool)** : modèle à 1 compartiment, demi-vie ajustable, « caféine restante au coucher » comme variable | Sommeil, décisions | 4 | 5 | 20 |
+| I28 | **Bague Colmi / Yawell en direct** (pilote BLE réimplémenté d'après le protocole MIT) : FC, SpO₂, sommeil, pas, sans app | Données brutes, matériel bon marché | 4 | 3 | 12 |
+| I29 | **Glycémie après les repas** (HC ← Juggluco / Libre / Dexcom) : courbe 2 h superposée au repas, aire sous la courbe ; avertir du retard Dexcom | Relier alimentation et métabolisme | 4 | 4 | 16 |
+| I30 | **Plans « si… alors… »** choisis par l'utilisateur (« si VFC basse → marche 20 min, pas d'alcool »), notification locale seulement quand la condition est vraie, ≤ 1 / j | Passer à l'action | 4 | 3 | 12 |
+| I31 | **Indice « dans votre plage habituelle »** (style Sahha / Emobot) : z-scores 28 j de sommeil, régularité, pas, écran tard, temps à la maison → bande perso, calibré par le check-in | Humeur estimée (affine I7) | 5 | 4 | 20 |
+| I32 | **Contrôle qualité des nuits** : nuits « 100 % léger » ou sans phases, nuits tronquées → exclues des moyennes de phases | Fiabilité | 3 | 5 | 15 |
+| I33 | **Réglage IA** (désactivée / à la demande / proactive) + ton sans culpabilité (pas de streak cassé) | Confiance | 3 | 5 | 15 |
+| I34 | **Cycle menstruel** (HC `MenstruationPeriod`, température) → phase comme variable de contrôle des Analyses | Hub complet | 4 | 3 | 12 |
+| I35 | **Risque migraine / allergie du jour** (pression 24 h, pollen, dette de sommeil, saut de caféine) — seulement après ≥ 30 épisodes tagués | Anticiper | 4 | 3 | 12 |
+| I36 | **Pas du téléphone sans Health Connect** (`TYPE_STEP_COUNTER`, relevé périodique) | Activité sans montre | 3 | 4 | 12 |
+| I37 | **Routine et temps à la maison sans GPS** (Wi-Fi dominant la nuit, haché ; transitions d'activité) | Humeur (meilleur signal intra-personne) | 4 | 3 | 12 |
+| I38 | **LLM local** (LiteRT-LM + Gemma 3 1B, téléchargement optionnel) pour le résumé hebdo hors ligne — Gemini Nano indisponible sur A56 | Assistant sans cloud | 3 | 2 | 6 |
+
+Mises à jour d'idées existantes : **I6** (temps d'écran) — prévoir le guide « Autoriser les paramètres restreints » et
+un plugin Kotlin `queryEvents` maison ; **I14** — import FIT d'autant plus utile que Gadgetbridge 0.95 exporte en lot ;
+**I21** (matériel) — ajouter la bague Colmi R10 (~35 €, ouverte), ceinture Coospo H6 (~30 €) / Polar H10, tensiomètre
+A&D UA-651BLE (profil standard déclaré), Medisana BU 572 ; Omron / Beurer / Withings : profil standard **non garanti**.
+
+### Détail et pistes d'implémentation
+
+**I22 — Radar expliqué.** `radar.js` connaît déjà les signaux ; `behaviorTags.js` les tags (alcool, sport le soir,
+malade…). Si un tag « confondant » existe la veille (alcool, sport le soir, repas tardif) ou un voyage / vaccin
+(nouveaux tags), le niveau reste affiché mais le message devient « Probablement lié à l'alcool d'hier soir » ; tag
+« malade » → confirmation. Bouton « Je me sens bien / Je couve quelque chose » stocké (entrée `radar_feedback`) pour
+recalibrer plus tard les seuils. Tests purs sur des séries synthétiques. Petit, visible, fondé sur un vrai reproche.
+
+**I23 — Qui envoie quoi.** Dans « Mes appareils » : pour chaque source détectée, les types reçus sur 30 jours avec la
+date du dernier ; alerte douce si un type habituel s'arrête (≥ 3 j sans alors qu'il arrivait chaque jour). Fonction
+pure `sourceCoverage(entries, now)` → testable. Répond au « est-ce que ma montre envoie vraiment la VFC ? ».
+
+**I24 — Briefing du matin.** En haut du tableau de bord jusqu'à midi : 3 lignes calculées localement (sommeil de la
+nuit vs norme, cœur / Radar, contexte météo — pression en chute, pollen) + « Énergie prévue » (prédiction du jour
+existante, fourchette) + **une** suggestion tirée des « Pistes à tester » solides. Gemini seulement si l'utilisateur
+l'active (I33). Gabarit testable, aucun chiffre inventé.
+
+**I25 — Sommeil par le téléphone.** Plugin Kotlin `PhoneUsage` (même que I6) : événements `SCREEN_INTERACTIVE /
+NON_INTERACTIVE`, `KEYGUARD_HIDDEN`, + état de charge ; plus longue période sans interaction entre 20 h et 12 h →
+`sleep` source `phone_estimate`, confiance « estimée », jamais prioritaire sur une montre (dédoublonnage par source).
+Correction en un geste (« je me suis couché à… »).
+
+**I26 — Journal libre → tags.** Réutiliser la dictée du repas décrit (run 10/10) : un champ « Racontez votre journée »
+→ Gemini (schéma JSON : tags connus + intensité, caféine (heures, quantités), alcool (verres), symptômes, personnes
+vues, humeur 1–5) → écran de confirmation pré-coché → entrées habituelles. Le texte reste en local ; seul le texte
+saisi part vers Gemini avec la clé de l'utilisateur. Repli sans clé : mots-clés locaux (« café », « verre de vin »).
+
+**I27 — Caféine.** Saisie en 1 tap (« ☕ maintenant ») ou extraite par I26 ; C(t) = Σ dose·e^(−ln2·Δt/T½), T½ = 5 h par
+défaut ; « caféine restante à l'heure habituelle de coucher » = variable des Analyses et levier (« dernier café avant
+14 h »). Alcool : élimination linéaire ~0,1–0,15 g/L/h, présenté prudemment.
+
+**I28 — Bague Colmi.** Pilote dans le registre BLE (`match` : nom annoncé « R02_… / R10_… », service UART Nordic
+6E40FFF0…) ; trames de 16 octets (commande, données, somme de contrôle) ; d'abord FC en direct + batterie, puis
+historique FC / SpO₂ / pas / sommeil. Réimplémenter **depuis les notes de protocole MIT**, jamais depuis Gadgetbridge
+(AGPL). Tests sur trames d'octets. Limite : la bague ne doit pas être connectée en même temps à son app.
+
+**I29 — Glycémie post-repas.** Entrées `blood_glucose` déjà lues ; pour chaque repas, fenêtre 0–2 h : pic, temps au
+pic, aire au-dessus de la valeur avant le repas ; carte du repas « +38 mg/dL, retour en 1 h 40 ». Avertissement
+« outil de curiosité, pas un avis médical » ; aucun conseil d'insuline (sinon dispositif médical).
+
+**I31 — Plage habituelle.** Reprend I7 avec le modèle Sahha / Emobot : par signal, z-score sur 28 j ; indice = moyenne
+pondérée (poids appris par Ridge sur les check-ins quand ≥ 14 jours, sinon égaux) ; affichage en bande « dans / au-dessus
+/ en dessous de votre habitude » ; ≥ 7 jours valides / 14 ; mention « estimation, pas un diagnostic » ; si l'indice
+reste bas ≥ 2 semaines : renvoi doux vers un professionnel (et 3114 en cas de détresse).
+
+### Sources (consultées le 12/10/2026)
+
+- Besoins / apps : https://gummysearch.com/r/QuantifiedSelf ; https://the5krunner.com/2025/11/06/garmin-connect-auto-logging-leak/ ; https://www.community.whoop.com/t/some-feedback-after-9-months-increased-ai-intrusion/13756 ; https://www.techradar.com/health-fitness/smartwatches/garmins-new-subscription-ai-feature-is-hilariously-bad-so-far ; https://gadgetsandwearables.com/2026/09/05/whoop-custom-journal-workout-tracking-update/ ; https://thenextweb.com/news/whoop-doctors-fitbit-air-google-health-ai ; https://idevice.com/oura-wants-your-ring-to-see-a-migraine-coming ; https://www.maddyness.com/2026/04/21/dans-10-ans-nous-aurons-tous-notre-compagnon-de-sante-la-french-tech-deploie-deja-ses-agents-ia/ ; https://ubiehealth.com/doctors-note/wearable-tracking-detect-illness-prior-symptoms-49101q7 ; https://pubmed.ncbi.nlm.nih.gov/35236896/ ; https://f-droid.org/packages/com.uc.caffeine/ ; https://fis.uni-bamberg.de/handle/uniba/116116
+- Appareils : https://gadgetbridge.org/gadgets/wearables/huawei-honor/ ; https://codeberg.org/Freeyourgadget/Gadgetbridge/issues/5428 ; https://codeberg.org/Freeyourgadget/Gadgetbridge/issues/6271 ; https://gadgetbridge.org/blog/release-0_95_01/ ; https://consumer.huawei.com/ca/support/content/en-us15827504/ ; https://healthsync.app/ ; https://gadgetbridge.org/gadgets/rings/yawell/ ; https://github.com/tahnok/colmi_r02_client ; https://github.com/InfiniTimeOrg/InfiniTime/blob/main/doc/ble.md ; https://www.juggluco.nl/Juggluco/index.html ; https://www.dexcom.com/en-us/faqs/can-i-share-glucose-data-with-google-health-connect ; https://developer.samsung.com/health/health-connect-faq.html ; https://gadgetbridge.org/basics/pairing/huami-xiaomi-server/ ; https://developer.garmin.com/gc-developer-program/health-api/ ; https://f-droid.org/packages/com.health.openscale/
+- Téléphone / ML / humeur : https://developers.google.com/ml-kit/genai ; https://huggingface.co/litert-community/Gemma3-1B-IT ; https://developers.google.com/location-context/sleep ; https://9to5google.com/2024/09/12/android-15-sideloaded-apps-restrictions/ ; https://capgo.app/docs/plugins/android-usagestatsmanager/ ; https://f1000research.com/articles/8-754 ; https://pmc.ncbi.nlm.nih.gov/articles/PMC10955925/ ; https://pmc.ncbi.nlm.nih.gov/articles/PMC12411791 ; https://pmc.ncbi.nlm.nih.gov/articles/PMC13507524/ ; https://emobothealth.com ; https://sahha.ai/mental-health-api/ ; https://alphacephei.com/vosk/models ; https://developer.android.com/reference/android/speech/SpeechRecognizer
+- Conversations : https://github.com/BasedHardware/omi ; https://www.omi.me/pricing ; https://dataconomy.com/2026/01/05/plaud-launches-notepin-s-ai-notetaker-at-ces-2026/ ; https://www.uctoday.com/devices-workspace-tech/sandbar-ai-voice-note-taking-ring/
+
+### À creuser au prochain run idées (12/10 20:30)
+
+- VFC de la GT 6 Pro via Gadgetbridge → HC : présente ou non ? (demander au propriétaire ; lire `sourceName` des VFC).
+- Protocole Colmi : lire notes.tahnok.ca en détail (commandes d'historique, sommeil) avant d'estimer l'effort.
+- Vérification des développeurs Android 2027 : options pour un APK distribué hors store (compte développeur gratuit ?
+  « advanced flow ») — impact direct sur la mise à jour en 1 clic.
+- Tensiomètres / balances vendus en France qui implémentent vraiment les profils standard (tests communautaires).
+- Reddit : retenter (miroirs, archives) ; LinkedIn : posts Emobot / Withings / Alan.
+
+---
+
 ## Run du 11/10/2026 20:30 (Paris) — objets connectés, capture passive, humeur, conversations
 
 ### Ce que veulent les gens (synthèse)
