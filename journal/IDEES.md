@@ -9,6 +9,166 @@
 
 ---
 
+## Run du 12/10/2026 20:30 (Paris) — directives du 12/10 : montre en direct, visage / voix, science personnelle, simplifier
+
+Premier run « idées » depuis les directives du 12/10. Question du jour, côté utilisateur : *« je ne veux plus rien
+saisir ni rien régler : comment ma montre, mon visage et ma voix peuvent-ils dire à l'app ce qu'elle me demande
+aujourd'hui, et comment être sûr que ce qu'elle m'apprend vaut pour moi et pas pour “les gens en général” ? »*
+Consigne du propriétaire suivie : privilégier ce qui **simplifie et consolide** plutôt que de nouveaux écrans.
+
+### Ce que veulent les gens (signaux du jour)
+
+1. **Simple à noter, clair à lire** : sur r/QuantifiedSelf et le forum QS, la demande récurrente n'est pas « plus de
+   variables » mais « une saisie minimale + une analyse lisible de ce qui influe sur mon humeur » ; un utilisateur qui
+   tient un simple tracker humeur / habitudes depuis un mois découvre « l'ennui au travail → humeur juste OK » [T].
+   Un développeur QS : « la complexité, c'est le moteur d'analyse qui trie la montagne de données » [T]. → Confirme
+   D1 et D6 : moins de cartes, des conclusions personnelles mieux expliquées.
+2. **Le sourire est le signal facial qui marche** : étude smartphone 12/2025 (arXiv 2512.11905) : 233 personnes,
+   405 448 clips filmés pendant l'usage normal du téléphone ; le sourire suit les enquêtes de bonheur nationales
+   (r = 0,92) et les rythmes de la journée (r = 0,80 avec la méthode DRM) ; plus de sourire ↔ plus d'activité et de
+   lumière ; **aucun effet trouvé pour l'usage du smartphone** [V]. Pilote bipolaire 2021 (n = 5) : la vidéo ne
+   reconnaissait guère que la joie, la voix était plus fiable [T]. → Ne pas promettre 8 émotions : viser **sourire +
+   valence**, agrégés sur la journée.
+3. **Emobot** : essai EmoDTx (NCT06860165, dépression unipolaire, visage vs MADRS / PHQ-9) — fin prévue 12/2025,
+   **aucun résultat publié trouvé** [T]. Leur promesse reste invérifiée publiquement → HealthTrack affiche toujours
+   « estimation ».
+
+*Reddit direct toujours bloqué (passé par miroirs / moteurs) ; LinkedIn non exploitable.*
+
+### Faits clés (vérifiés aujourd'hui)
+
+- **Pourquoi la GT 6 Pro ne se connecte pas (hypothèse n° 1)** [V doc Gadgetbridge] : une montre Huawei déjà liée à
+  Huawei Santé refuse toute autre app avec l'erreur **« Authentication key negotiation failed »**. Deux sorties
+  documentées : **réinitialisation d'usine** de la montre, ou fournir l'**identifiant de compte Huawei** (17 chiffres,
+  19 dans les versions récentes, trouvé dans un cookie de cloud.huawei.com ou par `adb logcat`), en désinstallant
+  Huawei Santé ou en lui retirant ses autorisations ; **ne pas** dissocier la montre dans Huawei Santé (ça invalide
+  la clé). Les modèles récents passent par une authentification « **HiChain** » (« New Auth Protocol » dans GB 0.90+) ;
+  une PR GB ouverte (#6367) montre que l'échec d'un seul contrôle de jeton bloque toute reconnexion automatique.
+  Un contributeur GB : « GT 6 Pro jamais connectée à Huawei Health, compte Huawei pas nécessaire » [V]. → Pour
+  HealthTrack : **montre réinitialisée et appairée uniquement à HealthTrack** = le chemin le plus simple et le plus
+  robuste ; l'identifiant de compte est un plan B pour qui veut garder Huawei Santé.
+- **Protocole Huawei** [V] : `zyv/huawei-lpv2` (Python, **MIT**, 133 commits) = la base légale de réimplémentation
+  (LPv2 : trames TLV, chiffrement, authentification « classique ») ; son fork note que l'ingénierie inverse de LPv2 est
+  **incomplète** et qu'un **LPv3** est apparu ; conférence CCC eh19 (Kudera, 2019 : Jadx + Frida). **Rien de public
+  sous licence permissive pour HiChain** → l'écran de diagnostic (D3) doit d'abord dire **quel mode
+  d'authentification la GT 6 Pro annonce** avant d'écrire du code d'authentification.
+- **Visage sur l'appareil** [V] : **HSEmotion EfficientNet-B0 en LiteRT** (Hugging Face `litert-community`,
+  **Apache-2.0**, **8 Mo** fp16) : visage recadré 224×224 → 8 classes (colère, mépris, dégoût, peur, joie, neutre,
+  tristesse, surprise) ; ~2 ms GPU Pixel 8a, 13 ms via TFLite GPU, LiteRT.js / WebGPU 2,6 ms dans un navigateur ;
+  une variante HSEmotion donne aussi **valence et éveil**. Alternative ultra-légère : les **52 blendshapes** de
+  MediaPipe Face Landmarker (Apache-2.0, < 1 ms CPU) + classifieur par prototypes (68 % sur 7 émotions, n = 31,
+  mieux que les juges humains à 59 %) [V].
+- **Voix sur l'appareil** [T] : emotion2vec (~19 M paramètres d'après un article, plausible sur mobile, aucune mesure
+  Android publiée) ; un élève distillé de 9,7 Mo ONNX tourne en WASM mais ne prédit que 18 indices d'expression,
+  pas des émotions ; distillations CNN 4–5 M paramètres. → À **mesurer** sur l'A56 avant de promettre.
+- **Limites Android réelles** [V doc Android] : depuis Android 14, un service de premier plan *caméra* ou *micro*
+  ne peut être **créé** que quand l'app est au premier plan (sinon `SecurityException`) ; interdit depuis
+  `BOOT_COMPLETED` (micro dès Android 14, caméra dès 15) ; lancer une activité depuis l'arrière-plan est bloqué sauf
+  exceptions (notification plein écran). Conséquence : **pas de capture déclenchée au déverrouillage** sans que
+  l'utilisateur ouvre l'app ; en revanche un service caméra **démarré depuis l'app** peut continuer, avec notification
+  permanente et voyant vert. [H, à tester sur A56 : One UI peut le tuer.]
+- **Vérification des développeurs Android** [T] : compte « **distribution limitée** » gratuit, **sans pièce
+  d'identité, jusqu'à 20 appareils** ; « parcours avancé » pour l'utilisateur (mode développeur, redémarrage, **attente
+  unique de 24 h**, puis installations d'apps non vérifiées permises durablement) ; ADB non concerné. Dates
+  contradictoires selon les sources (août / septembre 2026 dans 4 pays, mondial 2027). → Pour le propriétaire (un seul
+  téléphone) : soit un compte « distribution limitée » (signature inchangée), soit le parcours avancé une fois. Pas
+  d'urgence, mais à **décider avant 2027**.
+- **Performance** [T] : sous-échantillonnage LTTB (garde pics et creux, ex. 100 000 → 1 200 points visuellement
+  identiques), à faire **hors du rendu** (Web Worker), seuil usuel ≈ 2 000 points ; chaque nœud SVG coûte en mobile →
+  limiter les points dessinés. Côté HealthTrack : `localHealthStorage.js` fait **7 `getAll()`** sur tout le store.
+- **Science personnelle** [V/T] : simulation iMTracker (app de déclencheurs de crises) : **~90 jours** suffisent pour
+  détecter des associations fortes, modèles bayésiens à puissance comparable ; Daza 2018 : les analyses N-of-1
+  observationnelles **suggèrent** des causes que seule une expérience personnelle (périodes alternées) peut confirmer ;
+  pratique N-of-1 : tests de permutation + BH + **préblanchiment** des séries autocorrélées, et attention aux
+  décalages circulaires sur une série en tendance ; modèle bayésien à retards distribués avec erreurs AR (arXiv
+  2112.13991) pour les effets décalés.
+
+### Idées classées (impact × faisabilité) — nouvelles, toutes au service de D1–D6
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I39 | **Diagnostic GT 6 Pro guidé** : l'écran de diagnostic (D3) nomme l'étape qui échoue (scan → service Huawei → paramètres de lien → authentification) et la cause probable (« liée à Huawei Santé ») avec **une** consigne (« réinitialiser la montre puis l'appairer à HealthTrack » ou plan B identifiant de compte) ; journal exportable | Comprendre pourquoi ça ne marche pas | 5 | 4 | 20 |
+| I40 | **Sourire et valence pendant l'usage de HealthTrack** : MediaPipe (détection) + HSEmotion-B0 LiteRT (8 Mo, Apache-2.0) quelques secondes à chaque ouverture de l'app ; seuls 3 nombres stockés (sourire, valence, confiance) ; puis option « capture continue » (service caméra lancé depuis l'app, voyant vert assumé) | Humeur sans saisie (D4) | 5 | 3 | 15 |
+| I41 | **Dictée du soir = auto-déclaration + voix** : un seul geste (« Racontez votre journée ») donne la note déclarée, les tags extraits (I26) **et** des indices vocaux (débit, hauteur, énergie, score emotion2vec si l'A56 suit) ; l'audio est effacé après calcul | Remplace le formulaire de check-in (D1 + D4) | 5 | 3 | 15 |
+| I42 | **Réseaux sociaux = X, jamais Y** : minutes par app sociale via `queryEvents` (plugin existant étendu aux apps au premier plan) comme facteur des Analyses ; exclues de l'estimateur, consigné dans la liste déclarée (D5) ; pas d'Accessibility (contenu illisible proprement, intrusif) | Comprendre l'effet des réseaux chez moi | 4 | 4 | 16 |
+| I43 | **Lecture par plage + agrégats journaliers** : index `[type, date]` + `IDBKeyRange` à la place des 7 `getAll()`, magasin `daily_agg` versionné invalidé par `health-entries-updated`, LTTB ≥ 2 000 points dans un Worker, test budget « entrées lues par page » | L'app ne lague plus (D2) | 5 | 4 | 20 |
+| I44 | **« Votre cas vs l'hypothèse générale »** : chaque lien montré avec son sens **chez vous**, l'a priori général en petit (« en général : moins d'écran le soir, meilleur sommeil — chez vous : l'inverse, 62 jours ») ; a priori faible = rétrécissement **vers zéro**, jamais vers la norme | Science personnelle sans culpabilité (D6) | 5 | 4 | 20 |
+| I45 | **Expériences personnelles randomisées** (ABAB, 2 × 7 jours, l'app tire l'ordre) pour passer de « va de pair » à « chez vous, ça cause » ; proposé seulement pour un lien « à confirmer » qui intéresse l'utilisateur | Corrélation ≠ causalité (D5) | 4 | 3 | 12 |
+| I46 | **Garde-fous statistiques visibles** : X mesuré **avant** Y (veille → jour), ≥ 30 jours appariés pour afficher un lien, ≥ 90 jours pour « solide », préblanchiment avant permutation, nombre de tests affiché (« 1 lien net sur 42 testés ») | Confiance (D5) | 4 | 4 | 16 |
+| I47 | **Un seul flux du jour** (à la Whoop 09/2026) : briefing du matin, dictée du soir et carte « Forme » fusionnés dans une carte qui change avec l'heure → accueil plus court | Moins de cartes (D1) | 4 | 3 | 12 |
+| I48 | **Mise à jour en 1 clic après 2027** : compte « distribution limitée » gratuit (≤ 20 appareils, sans pièce d'identité) ou parcours avancé unique de 24 h ; message clair dans la bannière de mise à jour si Android bloque | Continuer d'installer l'app | 3 | 4 | 12 |
+
+Mises à jour d'idées existantes : **I7 / I31** (humeur « plage habituelle » comportementale) → **abandonnées** au
+profit de I40 / I41 (D5) ; **I20** (pilote Huawei direct) → précédé de I39 (diagnostic) et conditionné au mode
+d'authentification réellement annoncé par la GT 6 Pro ; **I26** (journal libre) fusionne avec I41 ; **I24**
+(briefing du matin) fusionne dans I47.
+
+### Détail et pistes d'implémentation
+
+**I39 — Diagnostic GT 6 Pro.** Étapes journalisées (horodatage, octets en hex tronqués, jamais d'adresse MAC
+complète) : (1) scan → nom annoncé « HUAWEI WATCH GT 6 Pro-xxx », services et données fabricant ; (2) connexion GATT,
+liste des services (service propriétaire Huawei attendu, à confirmer [H]) ; (3) demande des paramètres de lien → le
+mode d'authentification annoncé ; (4) authentification → code d'erreur. Chaque échec → une phrase et une action.
+Export JSON par la feuille de partage Android. Tests : parseur de trames LPv2 d'exemple (en-tête 0x5A, longueur,
+service, commande, TLV, CRC16) écrit **depuis la doc MIT**. Livrable même sans montre : le propriétaire exporte le
+journal, le run suivant le lit.
+
+**I40 — Visage.** Pipeline : `getUserMedia` caméra frontale (WebView, autorisation Android) → MediaPipe Face
+Detector (tâches web, Apache-2.0) → recadrage → HSEmotion-B0 via LiteRT.js (WebGPU / WASM) ou ONNX Runtime Web ;
+toutes les 500 ms pendant 5 s à l'ouverture de l'app → médianes. Entrée `face_affect` { smile, valence, arousal?,
+conf, nFrames } ; aucune image en mémoire après inférence (canvas vidé). Indicateur visible « 📷 lecture du
+visage » + interrupteur. Étape 2 : plugin natif service de premier plan type `camera`, démarré depuis l'app,
+1 image / 5 min écran allumé et déverrouillé, voyant vert et notification assumés. Valider d'abord : le score du
+jour suit-il le check-in de l'utilisateur ? (corrélation affichée honnêtement, même faible).
+
+**I41 — Dictée du soir.** `SpeechRecognizer` hors ligne (fr-FR) pour le texte ; en parallèle, `AudioRecord` →
+caractéristiques prosodiques (F0 moyenne / variabilité, énergie, débit syllabique, pauses) calculées en JS / natif,
+puis audio effacé. Score SER seulement si un modèle ≤ 20 Mo tient < 300 ms sur l'A56 (à mesurer). Stockage :
+`voice_affect` { pitchVar, energy, rate, pauses, ser? }. Les indices vocaux sont des **entrées de l'estimateur**
+(Y), jamais des X.
+
+**I42 — Réseaux sociaux.** `PhoneUsagePlugin` lit déjà `queryEvents` pour l'écran ; ajouter
+`ACTIVITY_RESUMED / PAUSED` par paquet, filtrer une liste d'apps sociales (Instagram, TikTok, Facebook, X,
+Snapchat, Reddit, YouTube…) → `social_minutes`, `social_late` (22 h–4 h). Déclaré dans `MOOD_ESTIMATOR_INPUTS`
+comme **exclu** ; test D5 vérifie qu'il n'y figure pas. Les gens se demandent vraiment « est-ce que TikTok me
+plombe ? » : c'est un X idéal.
+
+**I43 — Performance.** Mesurer d'abord (temps par page, entrées lues) avec 3 ans de démo ; puis migration IndexedDB
+v+1 ajoutant un index composé `[type, date]` (rétrocompatible : index seulement) ; `listEntries({types, from, to})`
+par `IDBKeyRange.bound` ; magasin `daily_agg` (clé `date`, valeurs par variable, `version` du calcul) reconstruit
+paresseusement ; `analysisWorker.js` (Vite `?worker`) pour `computeAdvancedAnalysis` ; LTTB pur testé ; budget en
+test : « Accueil lit ≤ N entrées ».
+
+**I44 — Votre cas vs l'hypothèse générale.** Remplacer `VARIABLE_META.direction` (`higher_better` /
+`lower_better`) par `generalHypothesis` { sens, source } **utilisé seulement** pour ordonner ce qu'on regarde
+d'abord et pour un texte en petit. Le sens affiché vient toujours des données ; si le sens personnel contredit
+l'hypothèse avec un lien au moins « à confirmer » : « Chez vous, c'est l'inverse de ce qu'on observe en général ».
+Couleurs : vert / rouge = effet **sur votre bien-être**, jamais un jugement du comportement.
+
+**I46 — Garde-fous.** Fonction pure `analysisGuards(dataset)` testée : décale tous les X d'un jour quand Y est le
+bien-être déclaré le soir (sauf X explicitement « du jour avant la saisie »), refuse d'afficher sous 30 paires,
+préblanchit (AR(1)) avant le test, affiche « k liens nets sur m testés ». Phrase type : « va de pair avec », jamais
+« améliore » ou « cause ».
+
+### Sources (consultées le 12/10/2026)
+
+- Besoins : https://forum.quantifiedself.com/t/my-notes-to-developers-as-promised-building-that-perfect-quantified-self-app/447 ; https://pol1.lr.ggtyler.dev/r/QuantifiedSelf ; https://arxiv.org/abs/2512.11905 ; https://reunir.unir.net/items/bc1e403a-9611-409c-a50e-4b404eff604a/full ; https://www.centerwatch.com/clinical-trials/listings/NCT06860165/validation-of-emodtx-as-a-digital-endpoint-for-mood-monitoring-in-adult-patients-suffering-from-unipolar-depression
+- Huawei : https://gadgetbridge.org/basics/pairing/huawei-honor-pairing/ ; https://zff.dev/Freeyourgadget/website/issues/226 ; https://codeberg.org/Freeyourgadget/Gadgetbridge/pulls/6367 ; https://zff.dev/Freeyourgadget/Gadgetbridge/issues/6271 ; https://github.com/zyv/huawei-lpv2 ; https://www.github.com/psolyca ; https://media.ccc.de/v/eh19-186-all-your-fitness-data-belongs-to-you-reverse-engineering-the-huawei-health-android-app
+- Visage / voix : https://huggingface.co/litert-community/HSEmotion-B0-LiteRT ; https://arxiv.org/pdf/2203.13436 ; https://www.mdpi.com/1424-8220/26/3/1060 ; https://pub.dev/documentation/face_detection_tflite/6.7.0/face_detection_tflite_native/FaceBlendshapesModel-class.html ; https://huggingface.co/thomashallock/emotion2vec-web-distill ; https://arxiv.org/pdf/2602.09121 ; https://arxiv.org/pdf/2210.14977
+- Android : https://developer.android.com/develop/background-work/services/fgs/changes ; https://developer.android.com/about/versions/15/changes/foreground-service-types ; https://developer.android.com/guide/components/activities/background-starts ; https://www.androidauthority.com/how-android-app-verification-works-3603559/ ; https://thehackernews.com/2026/03/google-adds-24-hour-wait-for-unverified.html ; https://www.neowin.net/amp/google-relaxes-android-sideloading-requirement-for-experienced-users/
+- Perf / stats : https://dev.to/wellallytech/health-data-visualization-building-high-performance-charts-for-millions-of-points-3n66 ; https://arxiv.org/html/2307.05389v1 ; https://www.medrxiv.org/content/10.1101/2020.04.28.20082339.full.pdf ; https://pmc.ncbi.nlm.nih.gov/articles/PMC6087468 ; https://arxiv.org/abs/2112.13991v1
+
+### À creuser au prochain run idées (13/10 08:30)
+
+- Wiki de `zyv/huawei-lpv2` : format exact des trames, mode d'authentification, liste des services → préparer les
+  trames d'exemple des tests D3. UUID du service Huawei annoncé par la GT 6 Pro (à lire dans le journal du propriétaire).
+- MediaPipe Face Detector + LiteRT.js dans une WebView Android 15 (Samsung) : WebGPU disponible ? sinon WASM, latence.
+- Modèle SER le plus petit utilisable en français (emotion2vec base vs distillations) : taille, licence, latence.
+- Google : texte officiel du compte « distribution limitée » (est-il compatible avec une release GitHub publique ?).
+- Reddit : r/Huawei et r/Gadgetbridge sur la GT 6 / HiChain (miroirs).
+
+---
+
 ## Run du 12/10/2026 08:30 (Paris) — tout capter depuis le téléphone, bagues ouvertes, du chiffre à l'action
 
 Question du jour, côté utilisateur : *« j'ai une montre, un téléphone et une vie chargée : qu'est-ce qui, sans rien

@@ -93,8 +93,14 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
   suit la norme Bluetooth mais n'a pas encore été testée sur un vrai appareil. Dites-moi la marque et ce qui s'affiche.
 - **À essayer** : activez « Météo, pression et air » et dites-moi si votre ville et la météo du jour s'affichent bien.
 - **À surveiller (2027)** : Google impose la « vérification des développeurs » pour installer une app hors Play Store
-  (déjà en vigueur au Brésil, en Indonésie, à Singapour et en Thaïlande depuis le 30/09/2026, partout en 2027). La mise
-  à jour en 1 clic de HealthTrack pourrait être concernée ; j'étudie les options au prochain run idées.
+  (déjà en vigueur dans 4 pays, partout en 2027). Bonne nouvelle (run idées 20:30) : il existe un compte développeur
+  **« distribution limitée » gratuit, sans pièce d'identité, jusqu'à 20 téléphones**, et sinon un « parcours avancé »
+  à faire une seule fois sur votre téléphone (mode développeur, 24 h d'attente). La mise à jour en 1 clic restera
+  donc possible ; **à décider ensemble avant 2027** (rien à faire aujourd'hui).
+- **Votre GT 6 Pro et Huawei Santé** : la cause la plus probable de l'échec de connexion, même avec Gadgetbridge, est
+  documentée : une montre **liée à Huawei Santé refuse les autres apps** (« Authentication key negotiation failed »).
+  La solution la plus simple sera de réinitialiser la montre puis de l'appairer **uniquement** à HealthTrack. **Ne
+  faites rien pour l'instant** : l'écran de diagnostic (prochains runs) le confirmera d'abord et vous guidera pas à pas.
 - **Question GT 6 Pro** : si vous passez par Gadgetbridge, la **VFC** arrive-t-elle ? L'app le dit maintenant toute
   seule : Plus → Connecteurs → Mes appareils, ligne Gadgetbridge (« … VFC … » dans la liste, ou « Jamais reçu en 30
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
@@ -111,6 +117,16 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
 - **Racontez votre journée** (dictée) → tags, cafés, verres, symptômes remplis tout seuls, confirmés en 1 tap.
 - **Bague Colmi (~35 €)** : une des rares bagues au protocole Bluetooth documenté sous licence libre (MIT) → données brutes
   sans app ni compte. Idée de matériel bon marché pour compléter la montre (sommeil, SpO₂ la nuit).
+- **Humeur par le visage, sans photo gardée** (run 20:30) : un petit modèle libre (8 Mo) lit le **sourire** et le
+  ressenti (agréable / désagréable) quelques secondes quand vous ouvrez l'app, puis ne garde que 3 nombres. Une étude
+  2025 (233 personnes) montre que le sourire pendant l'usage du téléphone suit très bien le bien-être. Android
+  interdit d'allumer la caméra en arrière-plan au déverrouillage : la capture se fera pendant l'usage de l'app.
+- **Une seule dictée le soir à la place du formulaire** : vous racontez votre journée, l'app en tire votre note, les
+  tags, et des indices de la voix (débit, énergie), puis efface l'audio.
+- **Votre cas vs « en général »** : chaque lien montrera son sens **chez vous**, la norme générale en petit (« en
+  général : moins d'écran le soir aide — chez vous : c'est l'inverse, sur 62 jours »), sans jamais vous culpabiliser.
+- **Réseaux sociaux** : le temps passé par app (Instagram, TikTok…) deviendra un **facteur** testé contre votre humeur,
+  jamais un ingrédient de l'estimation (sinon le lien serait tautologique).
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
@@ -131,6 +147,7 @@ Connecteurs triés par statut) se feront en passant.
 | 12/10 14:30 — [Humeur estimée](runs/2026-10-12-1230-humeur-estimee.md) | 🏗️🐛 | PR #115 fusionnée → v105 (+ test Nutrition instable corrigé) |
 | 12/10 16:30 — [Directives du 12/10 + nettoyage](runs/2026-10-12-1430-nettoyage-directives.md) | 🧹 | PR #117 fusionnée → v106 |
 | 12/10 18:30 — [Nettoyage, étape 2](runs/2026-10-12-1630-nettoyage-etape-2.md) | 🧹 | PR #119 fusionnée → v107 |
+| 12/10 20:30 — [Idées : montre en direct, visage / voix, science perso](runs/2026-10-12-2030-idees-directives.md) | 💡 | 10 idées (I39–I48), journal + 1 test instable corrigé |
 
 ---
 
