@@ -28,6 +28,7 @@ export function createFakeWatch({
   battery = 87,
   negotiation = [{ tag: 1, value: [1] }],
   silentOn = null,
+  garbleHichain = null, // { size } : 1re réponse 0x28 = étiquette 1 illisible (simule la GT 6 Pro, log 13/10)
   minuteBlocks = [],
   sleepBlocks = [],
   totals = null,
@@ -52,6 +53,12 @@ export function createFakeWatch({
   const replyJson = (json, final = false) => reply(1, 0x28, [{ tag: 1, value: Array.from(utf8(final ? 'done' : JSON.stringify(json))) }, { tag: 4, value: [final ? 1 : 0] }])
 
   async function hichain(m) {
+    if (garbleHichain && !state.garbled) {
+      // Réponse 0x28 avec une étiquette 1 qui n'est pas du JSON (octets 0xFF) et type 0 : reproduit
+      // « Réponse HiChain illisible » vu sur la vraie GT 6 Pro (trame reçue de 835 octets).
+      state.garbled = true
+      return reply(1, 0x28, [{ tag: 1, value: new Array(garbleHichain.size || 64).fill(0xff) }, { tag: 4, value: [0] }])
+    }
     const json = JSON.parse(new TextDecoder().decode(m.tlvs.find((t) => t.tag === 1).value))
     const p = json.payload
     const code = json.message & 0x0f

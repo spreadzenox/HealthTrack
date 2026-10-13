@@ -17,6 +17,7 @@ import {
   createCipher,
   decryptPin,
   frameKey,
+  inspectHichainReply,
   newAuthId,
   parseHichainReply,
   parseSecurityNegotiation,
@@ -141,6 +142,7 @@ export async function connectAndAuthenticate({
     outcome: null,
     log: [],
     frames: [],
+    hichain: [],
   }
   const emit = () => onUpdate(JSON.parse(JSON.stringify(report)))
   const log = (msg, level = 'info') => {
@@ -204,8 +206,26 @@ export async function connectAndAuthenticate({
     set('negotiate', 'ok', 'HiChain')
 
     let requestId = now()
+    let hichainStep = 0
     const exchange = (timeout) => async (json, op) => {
       const reply = await session.request(DEVICE_CONFIG, CMD.HICHAIN, hichainTlvs(json, op, requestId), { plain: true, timeout })
+      // Analyse sûre de chaque réponse 0x28 (noms des champs et codes seulement, jamais les valeurs)
+      // pour que le journal exporté nomme l'étape et le code exacts si la montre répond autrement.
+      const i = inspectHichainReply(reply.tlvs)
+      report.hichain.push({
+        step: hichainStep++,
+        operation: op === OP_BIND ? 'bind' : 'auth',
+        class: i.classification,
+        message: i.messageHex,
+        errorCode: i.errorCode,
+        resultCode: i.resultCode,
+        type: i.type,
+        jsonLength: i.jsonLength,
+        tags: i.tags.map((t) => `${t.tag}/${t.size}`),
+        payloadKeys: i.payloadKeys,
+        head: i.head,
+      })
+      emit()
       return parseHichainReply(reply.tlvs)
     }
 

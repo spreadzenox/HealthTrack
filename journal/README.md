@@ -15,8 +15,15 @@ votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 
 deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »** ; troisième pas (13/10 02:30) :
 **l'authentification** (« Connexion à la montre ») ; quatrième pas (13/10 04:30) : **la lecture des mesures** (pas, cœur,
 SpO₂, FC repos, sommeil) à chaque connexion ; cinquième pas (13/10 06:30) : la **synchro automatique** à l'ouverture
-de l'app ; sixième pas (13/10 10:30) : **phases du sommeil, VFC de la nuit et séances**. Rien n'est encore essayé sur
-la vraie montre. Reste : synchro app fermée, stress, VFC de journée.
+de l'app ; sixième pas (13/10 10:30) : **phases du sommeil, VFC de la nuit et séances**.
+**Vous avez essayé « Se connecter à la montre » sur votre vraie GT 6 Pro et renvoyé le journal (13/10 09:04) : merci,
+c'est la première vraie donnée.** Elle dit que la montre parle **HiChain 3** (le protocole récent de Huawei), que les
+premières étapes passent (lien, négociation, PIN reçu), et que ça **bloque juste après, quand la montre répond au
+message d'appairage** : HealthTrack ne sait pas encore lire cette réponse. Ce run (11:04) a donc renforcé l'outil de
+diagnostic pour **capter exactement ce que la montre renvoie** (sans aucune donnée sensible) ; le prochain journal que
+vous enverrez me dira comment décoder cette réponse. **Ce qu'il me faut au prochain run : relancer « Se connecter à la
+montre », puis « Enregistrer le journal » et me le transmettre.** Reste ensuite : débloquer l'appairage, puis synchro
+app fermée, stress, VFC de journée.
 Le run « idées » de 08:30 a tranché **comment relire la montre app fermée** (voir « Meilleures idées »).
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
@@ -89,6 +96,10 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   vos **nuits par phases** (léger, profond, paradoxal, réveils) avec le **score de sommeil** de la montre, la **VFC
   moyenne de la nuit** (« Votre cœur », Analyses) et vos **séances** (type, durée, calories, distance, pas, FC mini /
   maxi). Une nuit détaillée remplace le sommeil simple lu plus tôt pour la même nuit : rien n'est compté deux fois.
+- **Montre Huawei — « Se connecter » dit où ça bloque** (run 13/10 11:04) : quand l'appairage s'arrête, l'écran nomme
+  désormais l'étape et la raison exactes, et le journal que vous enregistrez contient de nouveaux détails techniques
+  (toujours sans clé, sans PIN ni adresse) pour que je comprenne ce que votre GT 6 Pro attend. **Rien n'est modifié sur
+  la montre.**
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -96,6 +107,14 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **1er journal réel de la GT 6 Pro analysé (run 13/10 11:04)** : le journal du 13/10 09:04 est enregistré dans le dépôt
+  (`diagnostics/2026-10-13-0904-gt6pro.json`). Il établit **HiChain 3** (type 4, chiffrement GCM, authVersion 1) et un
+  blocage **au décodage de la réponse d'appairage (trame de 835 octets)**, sans code d'erreur. Nouvel analyseur
+  `inspectHichainReply` : chaque réponse du protocole est résumée sans secret dans le journal (`report.hichain` :
+  structure, code de message, noms des champs, 1ers octets si ce n'est pas du JSON). Spec `protocoles/huawei.md` §6.7.
+  Hypothèse à confirmer au prochain journal : HiChain 3 (« New Auth Protocol ») a une réponse plus riche que l'ancien
+  schéma ISO qu'on a implémenté (sa taille le suggère). Point ouvert noté : PIN à déchiffrer en GCM plutôt qu'en CBC
+  pour le type 4.
 - **Sommeil détaillé et séances (run 13/10 10:30)** : la montre envoie les nuits sous forme de **fichier** (protocole
   de téléchargement par blocs, décrit avec nos mots dans `protocoles/huawei.md` §7.6) ; HealthTrack demande d'abord à
   la montre **ce qu'elle sait faire** (§7.8) et saute ce qu'elle ne connaît pas. Cette liste de capacités est écrite
@@ -266,6 +285,7 @@ nettoyage, humeur par le visage / la voix.
 | 13/10 06:30 — [Montre : synchro automatique](runs/2026-10-13-0630-montre-synchro-auto.md) | ⌚🏗️ | PR #131 fusionnée → v113 |
 | 13/10 08:30 — [Idées : montre app fermée, humeur réaliste, une réponse par jour](runs/2026-10-13-0830-idees-montre-fond-une-reponse.md) | 💡 | 8 idées (I49–I56), journal seul |
 | 13/10 10:30 — [Montre : sommeil détaillé, VFC, séances](runs/2026-10-13-1030-montre-sommeil-seances.md) | ⌚🏗️ | PR #134 fusionnée → v114 |
+| 13/10 11:04 — [Montre : 1er journal réel GT 6 Pro + analyseur HiChain](runs/2026-10-13-1104-montre-hichain-journal-reel.md) | ⌚🏗️ | voir compte rendu |
 
 ---
 

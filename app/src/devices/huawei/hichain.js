@@ -18,7 +18,7 @@ import {
   sha256,
   utf8,
 } from './crypto'
-import { decodeTlvs, encodeTlvs, resultCode, TAG_RESULT } from './protocol'
+import { decodeTlvs, encodeTlvs, resultCode, RESULT_SUCCESS, toHex, TAG_RESULT } from './protocol'
 
 export const CMD = { DEVICE_STATUS: 0x16, SECURITY_NEGOTIATION: 0x33, PIN_CODE: 0x2c, HICHAIN: 0x28 }
 export const OP_BIND = 1
@@ -121,26 +121,90 @@ export function hichainTlvs(json, operation, requestId) {
   ]
 }
 
-/** Réponse 1/0x28 de la montre → { final, payload, message } ; lève une erreur si `errorCode` ≠ 0. */
-export function parseHichainReply(tlvs) {
-  const get = (tag) => tlvs.find((t) => t.tag === tag)?.value
+/** Liste des étiquettes et de leur taille, pour nommer une réponse dans le journal (« 1/58, 4/1 »). */
+const describeTags = (tags) => (tags.length ? tags.map((t) => `${t.tag}/${t.size}`).join(', ') : 'aucune')
+
+/**
+ * Analyse **sans secret** d'une réponse 1/0x28, pour le journal de diagnostic et pour nommer l'étape
+ * et le code précis quand la montre répond autrement que prévu (§6.2). Ne rend jamais de valeur
+ * sensible (isoSalt, token, peerAuthId, clé) : seulement les NOMS des champs et les codes de
+ * protocole (message, code d'erreur, code de résultat, type, tailles).
+ * @returns {{ classification, tags, type, resultCode, jsonLength, isJson, keys, payloadKeys,
+ *   message, messageHex, errorCode, head }}
+ */
+export function inspectHichainReply(tlvs = []) {
+  const list = Array.isArray(tlvs) ? tlvs : []
+  const get = (tag) => list.find((t) => t.tag === tag)?.value
+  const tags = list.map((t) => ({ tag: t.tag, size: t.value?.length ?? 0 }))
+  const rc = resultCode(list)
   const type = get(4)?.length ? uint(get(4)) : 0
-  const text = get(1) ? new TextDecoder().decode(get(1)) : ''
-  if (type !== 0) return { final: true, payload: null, message: null, text }
+  const tag1 = get(1)
+  const base = {
+    tags,
+    type,
+    resultCode: rc,
+    jsonLength: tag1?.length ?? 0,
+    isJson: false,
+    keys: null,
+    payloadKeys: null,
+    message: null,
+    messageHex: null,
+    errorCode: null,
+    head: null,
+    classification: 'unknown',
+  }
+  if (!list.length) return { ...base, classification: 'empty' }
+  if (type !== 0) return { ...base, classification: 'final' }
+  if (!tag1 || !tag1.length) return { ...base, classification: rc !== null && rc !== RESULT_SUCCESS ? 'result_error' : 'no_payload' }
   let json
   try {
-    json = JSON.parse(text)
+    json = JSON.parse(new TextDecoder().decode(tag1))
   } catch {
-    throw new Error(`Réponse HiChain illisible (code ${resultCode(tlvs) ?? '?'})`)
+    return { ...base, head: toHex(tag1.slice(0, 12)), classification: 'json_unparsable' }
   }
-  const payload = json?.payload && typeof json.payload === 'object' ? json.payload : json
-  const err = Number(payload?.errorCode ?? json?.errorCode ?? 0)
-  if (err) {
-    const e = new Error(`La montre a refusé l'étape HiChain (erreur ${err})`)
-    e.code = 'watch_error'
+  const payload = json?.payload && typeof json.payload === 'object' ? json.payload : null
+  const message = typeof json?.message === 'number' ? json.message : null
+  const err = Number(payload?.errorCode ?? json?.errorCode ?? 0) || null
+  return {
+    ...base,
+    isJson: true,
+    keys: Object.keys(json || {}).sort(),
+    payloadKeys: payload ? Object.keys(payload).sort() : null,
+    message,
+    messageHex: message !== null ? `0x${(message >>> 0).toString(16)}` : null,
+    errorCode: err,
+    classification: err ? 'json_error' : 'json_ok',
+  }
+}
+
+/**
+ * Réponse 1/0x28 de la montre → { final, payload, message, inspection } ; lève une erreur précise
+ * (classification + code), avec l'analyse attachée (`e.inspection`), si la montre refuse l'étape ou
+ * répond dans un format inattendu (§6.2).
+ */
+export function parseHichainReply(tlvs) {
+  const inspection = inspectHichainReply(tlvs)
+  const fail = (message, code) => {
+    const e = new Error(message)
+    if (code) e.code = code
+    e.inspection = inspection
     throw e
   }
-  return { final: false, payload, message: json?.message ?? null }
+  const get = (tag) => tlvs.find((t) => t.tag === tag)?.value
+  if (inspection.classification === 'final') return { final: true, payload: null, message: null, text: get(1) ? new TextDecoder().decode(get(1)) : '', inspection }
+  if (inspection.classification === 'result_error') fail(`La montre a répondu par une erreur (code ${inspection.resultCode})`, 'watch_error')
+  if (inspection.classification === 'no_payload') fail(`Réponse HiChain sans charge utile (étiquettes reçues : ${describeTags(inspection.tags)})`)
+  if (inspection.classification === 'json_unparsable') {
+    fail(
+      `Réponse HiChain illisible : l'étiquette 1 (${inspection.jsonLength} octets, débute par ${inspection.head}) n'est pas du JSON${
+        inspection.resultCode !== null ? ` · code ${inspection.resultCode}` : ''
+      }`,
+    )
+  }
+  if (inspection.errorCode) fail(`La montre a refusé l'étape HiChain (erreur ${inspection.errorCode})`, 'watch_error')
+  const json = JSON.parse(new TextDecoder().decode(get(1)))
+  const payload = json?.payload && typeof json.payload === 'object' ? json.payload : json
+  return { final: false, payload, message: json?.message ?? null, inspection }
 }
 
 const hexField = (payload, field, length) => {

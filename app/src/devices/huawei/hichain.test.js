@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { groupId, newAuthId, securityNegotiationTlvs, parseSecurityNegotiation, parseHichainReply, hichainTlvs, parseDigestSecrets, digestSecretFor, createCipher, pinBaseKey } from './hichain'
+import { groupId, newAuthId, securityNegotiationTlvs, parseSecurityNegotiation, parseHichainReply, inspectHichainReply, hichainTlvs, parseDigestSecrets, digestSecretFor, createCipher, pinBaseKey } from './hichain'
 import { sha256, utf8, hexOf, randomBytes } from './crypto'
 import { toHex } from './protocol'
 
@@ -42,6 +42,59 @@ describe('HiChain — messages et calculs (§6)', () => {
     expect(parseHichainReply(json({ message: 0x8001, payload: { isoSalt: 'AA' } })).payload.isoSalt).toBe('AA')
     expect(parseHichainReply([{ tag: 1, value: utf8('fin') }, { tag: 4, value: Uint8Array.of(1) }]).final).toBe(true)
     expect(() => parseHichainReply(json({ payload: { errorCode: 12 } }))).toThrow(/erreur 12/)
+  })
+
+  describe('inspectHichainReply — analyse sûre d’une réponse 0x28 (§6.2)', () => {
+    const jsonReply = (o) => [{ tag: 1, value: utf8(JSON.stringify(o)) }, { tag: 4, value: Uint8Array.of(0) }]
+
+    it('réponse ISO normale : classe json_ok, message, noms des champs mais jamais les valeurs', () => {
+      const i = inspectHichainReply(jsonReply({ message: 0x8001, payload: { isoSalt: 'DEADBEEF', peerAuthId: 'CAFE', token: 'F00D' } }))
+      expect(i.classification).toBe('json_ok')
+      expect(i.messageHex).toBe('0x8001')
+      expect(i.payloadKeys).toEqual(['isoSalt', 'peerAuthId', 'token'])
+      // structure seulement : aucune valeur sensible ne doit fuir
+      const dump = JSON.stringify(i)
+      expect(dump).not.toContain('DEADBEEF')
+      expect(dump).not.toContain('CAFE')
+      expect(dump).not.toContain('F00D')
+    })
+
+    it('étiquette 1 présente mais pas du JSON → json_unparsable, avec sa taille et ses premiers octets (cas GT 6 Pro)', () => {
+      const blob = new Array(835).fill(0xff)
+      const i = inspectHichainReply([{ tag: 1, value: blob }, { tag: 4, value: [0] }])
+      expect(i.classification).toBe('json_unparsable')
+      expect(i.jsonLength).toBe(835)
+      expect(i.isJson).toBe(false)
+      expect(i.head).toMatch(/^ff ff/)
+      expect(() => parseHichainReply([{ tag: 1, value: blob }, { tag: 4, value: [0] }])).toThrow(/illisible.*835 octets/)
+    })
+
+    it('sans étiquette 1 → no_payload ; avec un code de résultat d’erreur → result_error ; message final → final', () => {
+      const noPayload = inspectHichainReply([{ tag: 4, value: [0] }])
+      expect(noPayload.classification).toBe('no_payload')
+      expect(() => parseHichainReply([{ tag: 4, value: [0] }])).toThrow(/sans charge utile/)
+
+      const err = inspectHichainReply([{ tag: 0x7f, value: [0, 1, 0x86, 0xa2] }])
+      expect(err.classification).toBe('result_error')
+      expect(err.resultCode).toBe(100002)
+      expect(() => parseHichainReply([{ tag: 0x7f, value: [0, 1, 0x86, 0xa2] }])).toThrow(/erreur \(code 100002\)/)
+
+      expect(inspectHichainReply([{ tag: 1, value: utf8('fin') }, { tag: 4, value: [1] }]).classification).toBe('final')
+      expect(inspectHichainReply([]).classification).toBe('empty')
+    })
+
+    it('errorCode JSON ≠ 0 → json_error, et parseHichainReply lève « erreur N » avec l’analyse attachée', () => {
+      const i = inspectHichainReply(jsonReply({ message: 0x8001, payload: { errorCode: 2001 } }))
+      expect(i.classification).toBe('json_error')
+      expect(i.errorCode).toBe(2001)
+      try {
+        parseHichainReply(jsonReply({ payload: { errorCode: 2001 } }))
+        throw new Error('aurait dû lever')
+      } catch (e) {
+        expect(e.inspection.classification).toBe('json_error')
+        expect(e.code).toBe('watch_error')
+      }
+    })
   })
 
   it('constantes du PIN : lues dans le format de huawei-lpv2 ou collées, choisies selon la version', () => {

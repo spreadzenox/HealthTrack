@@ -1,0 +1,46 @@
+{
+  "format": "healthtrack-watch-connect",
+  "version": 1,
+  "appVersion": "114",
+  "startedAt": "2026-10-13T09:04:14.418Z",
+  "watch": { "name": "HUAWEI WATCH GT 6 Pro-169", "id": "…:01:69" },
+  "steps": [
+    { "id": "connect", "label": "Connexion à la montre", "status": "ok", "detail": "Bluetooth classique" },
+    { "id": "link", "label": "Paramètres du lien", "status": "ok", "detail": "HiChain 3 (chiffrement GCM) · version 1" },
+    { "id": "negotiate", "label": "Négociation de sécurité", "status": "ok", "detail": "HiChain" },
+    { "id": "bind", "label": "Premier appairage (PIN et clé)", "status": "fail", "detail": "Réponse HiChain illisible (code ?)" },
+    { "id": "auth", "label": "Authentification", "status": "skip", "detail": null },
+    { "id": "check", "label": "Échange chiffré (batterie)", "status": "skip", "detail": null },
+    { "id": "sync", "label": "Lecture des mesures", "status": "skip", "detail": null }
+  ],
+  "linkParams": {
+    "protocolVersion": 2, "maxFrameSize": 1022, "maxLinkSize": 1011, "connectionIntervalMs": 0,
+    "authVersion": 1, "serverNonceLength": 16, "deviceSupportType": 4, "authMode": "hichain3",
+    "authAlgo": null, "bondState": 0, "encryptMethod": null, "result": null,
+    "otherTags": [ { "tag": 13, "hex": "00" }, { "tag": 15, "hex": "01" }, { "tag": 16, "hex": "00" } ]
+  },
+  "scheme": "hichain", "firstPairing": true, "battery": null, "sync": null,
+  "outcome": { "code": "failed", "title": "La connexion s'est arretee en route" },
+  "log": [
+    { "t": 121, "level": "info", "msg": "connect -> ok : Bluetooth classique" },
+    { "t": 151, "level": "info", "msg": "link -> ok : HiChain 3 (chiffrement GCM) . version 1" },
+    { "t": 202, "level": "info", "msg": "etat de la montre : 1" },
+    { "t": 240, "level": "info", "msg": "negotiate -> ok : HiChain" },
+    { "t": 283, "level": "info", "msg": "PIN recu (64 octets)" },
+    { "t": 370, "level": "error", "msg": "bind -> fail : Reponse HiChain illisible (code ?)" },
+    { "t": 370, "level": "info", "msg": "resultat : failed" }
+  ],
+  "frames": [
+    { "t": 122, "dir": "out", "size": 16, "head": "1/0x1" },
+    { "t": 150, "dir": "in", "size": 58, "head": "1/0x1" },
+    { "t": 151, "dir": "out", "size": 10, "head": "1/0x16" },
+    { "t": 202, "dir": "in", "size": 11, "head": "1/0x16" },
+    { "t": 202, "dir": "out", "size": 65, "head": "1/0x33" },
+    { "t": 239, "dir": "in", "size": 137, "head": "1/0x33" },
+    { "t": 240, "dir": "out", "size": 10, "head": "1/0x2c" },
+    { "t": 282, "dir": "in", "size": 108, "head": "1/0x2c" },
+    { "t": 284, "dir": "out", "size": 695, "head": "1/0x28" },
+    { "t": 369, "dir": "in", "size": 835, "head": "1/0x28" }
+  ],
+  "finishedAt": "2026-10-13T09:04:14.788Z"
+}
