@@ -64,6 +64,8 @@ describe('WeatherCard', () => {
     expect(screen.getByText(/Pression en forte baisse/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Mettre à jour' }))
     await waitFor(() => expect(sync).toHaveBeenCalledWith({ force: true }))
+    // « Désactiver » reste inactif tant que la mise à jour tourne : attendre la fin avant de cliquer.
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Désactiver' })).toBeEnabled())
     fireEvent.click(screen.getByRole('button', { name: 'Désactiver' }))
     expect(getWeatherSettings().enabled).toBe(false)
     expect(screen.getByRole('button', { name: 'Utiliser ma position approximative' })).toBeInTheDocument()

@@ -40,6 +40,12 @@
 - Tests : **1100 ✅** (81 fichiers) · Build ✅ · Lint : **6 erreurs** (baseline inchangée) · `npm run visual` : toutes
   les pages OK, aucune erreur JS ; capture `/connectors` relue (inchangée, aucun code produit modifié).
 
+## Après le merge (#144)
+- Le workflow « Tests » de main avait échoué sur `1fe1354` (17:00 UTC) : `WeatherCard.test.jsx` › « activée … et
+  désactivation », **test instable**. Le bouton « Désactiver » reste `disabled` tant que la mise à jour (`busy`) tourne ;
+  le test cliquait dès que `sync` avait été **appelé**, parfois avant le rendu `busy = false` → clic ignoré. Correctif
+  **dans le test seul** : attendre que le bouton soit actif avant de cliquer (PR séparée). 5 exécutions locales vertes.
+
 ## Apprentissages / décisions
 - **Reconstituer la longueur** à partir des noms et tailles (sans valeurs) a suffi à trouver la cause : l'instrument
   des runs 14:30 / 18:30 a payé, mais pas pour la raison prévue.
