@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-13",
+  "kind": "amélioration",
+  "title": "Montre Huawei : « Se connecter » donne aussi la taille des champs",
+  "items": [
+    "Quand votre GT 6 Pro répond dans son nouveau format d’appairage (« New Auth Protocol »), l’écran « Se connecter à la montre » indique désormais non seulement les champs repérés mais aussi leur taille (par exemple « challenge (16 o), epk (32 o), salt (16 o) »).",
+    "Le journal que vous enregistrez porte la même précision (noms et tailles des champs, jamais leurs valeurs). C’est exactement ce qu’il me faut pour décoder la réponse de votre montre d’un seul journal, sans avoir à vous en redemander un autre.",
+    "Rien n’est modifié sur la montre. Il me suffit que vous relanciez « Se connecter à la montre » puis « Enregistrer le journal » et que vous me le transmettiez."
+  ]
+}

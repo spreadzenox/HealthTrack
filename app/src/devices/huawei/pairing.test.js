@@ -100,16 +100,27 @@ describe('connexion authentifiée à une montre Huawei (HiChain)', () => {
     expect(report.hichain[0].head).toMatch(/^ff ff/)
   })
 
-  it('réponse « New Auth Protocol » (HiChain 3) : le journal nomme les champs SPEKE, sans valeur', async () => {
+  it('réponse « New Auth Protocol » (HiChain 3) : le journal nomme et dimensionne les champs SPEKE, sans valeur', async () => {
     const watch = createFakeWatch({ deviceSupportType: 4, encryptMethod: 1, authVersion: 1, newAuthHichain: true })
     const report = await run(watch, { keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS })
     expect(report.outcome.code).toBe('failed')
-    expect(report.steps.find((s) => s.id === 'bind').detail).toMatch(/champs repérés : challenge, epk, salt/)
+    // L'écran nomme les champs ET leur taille en octets (epk 32, salt 16, challenge 16) : de quoi
+    // décoder la réponse d'un seul journal (§6.8).
+    expect(report.steps.find((s) => s.id === 'bind').detail).toMatch(/champs repérés : challenge \(16 o\), epk \(32 o\), salt \(16 o\)/)
     const emb = report.hichain[0].structure.embeddedJson
     expect(emb.payloadKeys).toEqual(['challenge', 'epk', 'salt'])
+    expect(emb.payloadFields).toEqual([
+      { key: 'challenge', bytes: 16 },
+      { key: 'epk', bytes: 32 },
+      { key: 'salt', bytes: 16 },
+    ])
     expect(emb.message).toBe('0x8001')
-    // l'analyse ne porte que des noms de champs, jamais leurs valeurs
-    expect(Object.keys(emb).sort()).toEqual(['keys', 'message', 'offset', 'payloadKeys'])
+    // L'analyse ne porte que des noms et des tailles de champs, jamais leurs valeurs.
+    expect(Object.keys(emb).sort()).toEqual(['fields', 'keys', 'message', 'offset', 'payloadFields', 'payloadKeys'])
+    const json = JSON.stringify(report.hichain[0])
+    for (const field of emb.payloadFields) expect(field).not.toHaveProperty('value')
+    // Aucune valeur hexadécimale de 32/64 caractères (challenge/salt/epk) ne fuit dans le journal.
+    expect(json).not.toMatch(/[0-9a-f]{32}/i)
   })
 
   it('montre appairée à Android retrouvée par son nom', async () => {

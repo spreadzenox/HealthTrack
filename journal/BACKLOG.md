@@ -112,6 +112,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       TLV imbriqués ; `head` 12 → 32 octets ; l'écran nomme les champs repérés ; `report.hichain[].structure` dans le
       journal ; fausse montre `newAuthHichain`. Spec `protocoles/huawei.md` §6.8 (recherche New Auth : SPEKE/STS, X25519,
       Ed25519, HKDF/HMAC, AES-GCM, codes de messages, champs — même Gadgetbridge ne décode pas encore la GT 6 Pro)
+- [x] **(a quater) Instrument : taille de chaque champ de la réponse HiChain 3** (run 13/10 18:30) : `probeStructure`
+      rapporte, à côté de `payloadKeys`, deux listes **de tailles seulement** (`fields`, `payloadFields`) — octets pour un
+      hexadécimal, caractères pour une autre chaîne, type sinon ; **jamais la valeur**. L'écran et le journal affichent
+      « champs repérés : challenge (16 o), epk (32 o), salt (16 o) ». Objectif : décoder la réponse d'un **seul** journal
+      (noms + tailles + code de message), sans second aller-retour. Testé (fausse montre + réponse d'exemple avec
+      signature 64 o et champ en clair ; vérif anti-fuite). Spec §6.7.
 - [x] **(c bis) Primitives crypto « New Auth Protocol »** (run 13/10 16:30) : X25519 (multiplication scalaire sur point
       **quelconque** pour le SPEKE, ECDH, paire de clés) et Ed25519 (signature / vérification / clé publique) ajoutés à
       `crypto.js` sur **@noble/curves** (MIT), vérifiés sur vecteurs RFC 7748 / 8032 (8 tests). HKDF/HMAC/AES-GCM existaient.
@@ -337,9 +343,10 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 
 1. ⌚ **D3 — HiChain 3 de la GT 6 Pro, PRIORITÉ, EN ATTENTE DU PROPRIÉTAIRE** : le 1er journal réel (13/10 09:04) montre
    l'appairage bloqué au décodage de la réponse 0x28 (835 octets, format « New Auth », §6.8). Instrument qui révèle les
-   **champs** livré (a ter, 14:30) ; **primitives crypto X25519 / Ed25519 livrées (c bis, 16:30)**. Débloquage réel =
-   **demander au propriétaire de relancer « Se connecter à la montre » et de renvoyer le journal** : `report.hichain[].structure`
-   donnera les noms de champs → run suivant assemble le StepOne SPEKE (c ter, §6.8) à partir des primitives.
+   **champs** (a ter, 14:30) **et leurs tailles** (a quater, 18:30) livré ; **primitives crypto X25519 / Ed25519 livrées
+   (c bis, 16:30)**. Débloquage réel = **demander au propriétaire de relancer « Se connecter à la montre » et de renvoyer
+   le journal** : `report.hichain[].structure` donne maintenant **noms + tailles** des champs → run suivant assemble le
+   StepOne SPEKE (c ter, §6.8) à partir des primitives, **d'un seul journal, sans second aller-retour**.
 2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`).
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
@@ -393,6 +400,9 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-13 — D3 (a quater) : l'instrument de diagnostic donne la **taille** de chaque champ de la réponse « New Auth » (octets / caractères / type, jamais la valeur) → décoder d'un seul journal ; écran « challenge (16 o), epk (32 o)… » (run 18:30 Paris)
+- [x] 2026-10-13 — D3 (c bis) : primitives crypto « New Auth » X25519 / Ed25519 sur @noble/curves, vecteurs RFC 7748 / 8032 (run 16:30 Paris)
+- [x] 2026-10-13 — D3 (a ter) : l'instrument révèle les **champs** d'une réponse « New Auth » non-JSON (noms, sans valeur) ; spec §6.8 (run 14:30 Paris)
 - [x] 2026-10-13 — D3 (d ter) : resynchro automatique de la montre à l'ouverture / au retour dans l'app (≤ 30 min, essais espacés, pause sur clé refusée), ligne d'état (run 06:30 Paris)
 - [x] 2026-10-13 — D3 (d) : synchronisation simple (heure, sommeil léger / profond, minutes → pas, calories, FC, SpO₂, FC repos) → IndexedDB, « Synchroniser la montre » (run 04:30 Paris)
 - [x] 2026-10-13 — D3 (c) : authentification HiChain (liaison par PIN, authentification, trames chiffrées), encadré « Connexion à la montre », constantes du PIN téléchargées sur le téléphone (run 02:30 Paris)

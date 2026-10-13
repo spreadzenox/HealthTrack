@@ -83,21 +83,38 @@ describe('HiChain — messages et calculs (§6)', () => {
       expect(inspectHichainReply([]).classification).toBe('empty')
     })
 
-    it('réponse « New Auth Protocol » (préfixe binaire + JSON intégré) → structure nomme les champs, jamais les valeurs (§6.8)', () => {
+    it('réponse « New Auth Protocol » (préfixe binaire + JSON intégré) → structure nomme et dimensionne les champs, jamais les valeurs (§6.8)', () => {
       // GT 6 Pro : étiquette 1 non directement JSON, mais un JSON SPEKE noyé après un préfixe binaire.
-      const payload = { challenge: 'A1B2C3', salt: 'D4E5F6', epk: '0011223344556677' }
+      // Tailles réalistes : challenge 16, salt 16, epk 32 octets + une signature Ed25519 de 64 octets.
+      const payload = {
+        challenge: hexOf(randomBytes(16)),
+        salt: hexOf(randomBytes(16)),
+        epk: hexOf(randomBytes(32)),
+        signature: hexOf(randomBytes(64)),
+        version: '2.0.16',
+      }
       const bytes = [0x01, 0x00, 0x00, 0x03, 0x35, ...utf8(JSON.stringify({ message: 32769, payload }))]
       const i = inspectHichainReply([{ tag: 1, value: bytes }, { tag: 4, value: [0] }])
       expect(i.classification).toBe('json_unparsable')
-      expect(i.structure.embeddedJson.payloadKeys).toEqual(['challenge', 'epk', 'salt'])
+      expect(i.structure.embeddedJson.payloadKeys).toEqual(['challenge', 'epk', 'salt', 'signature', 'version'])
       expect(i.structure.embeddedJson.keys).toEqual(['message', 'payload'])
       expect(i.structure.embeddedJson.message).toBe('0x8001')
       expect(i.structure.embeddedJson.offset).toBe(5)
-      // aucune valeur de champ ne doit fuir dans l'analyse
+      // Tailles en octets pour un hexadécimal, en caractères pour une autre chaîne — jamais la valeur.
+      expect(i.structure.embeddedJson.payloadFields).toEqual([
+        { key: 'challenge', bytes: 16 },
+        { key: 'epk', bytes: 32 },
+        { key: 'salt', bytes: 16 },
+        { key: 'signature', bytes: 64 },
+        { key: 'version', chars: 6 },
+      ])
+      // aucune valeur de champ ne doit fuir dans l'analyse (hex, ni la chaîne « version »)
       const dump = JSON.stringify(i)
-      for (const v of ['A1B2C3', 'D4E5F6', '0011223344556677']) expect(dump).not.toContain(v)
-      // parseHichainReply surface les champs repérés dans son message d'erreur
-      expect(() => parseHichainReply([{ tag: 1, value: bytes }, { tag: 4, value: [0] }])).toThrow(/champs repérés : challenge, epk, salt/)
+      for (const v of Object.values(payload)) expect(dump).not.toContain(v)
+      // parseHichainReply surface les champs repérés ET leur taille dans son message d'erreur
+      expect(() => parseHichainReply([{ tag: 1, value: bytes }, { tag: 4, value: [0] }])).toThrow(
+        /champs repérés : challenge \(16 o\), epk \(32 o\), salt \(16 o\), signature \(64 o\), version \(6 car\.\)/,
+      )
     })
 
     it('charge utile portée par une autre étiquette que la 1 → no_payload avec structure sondée', () => {
