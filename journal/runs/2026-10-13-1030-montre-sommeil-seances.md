@@ -1,6 +1,6 @@
 # 2026-10-13 10:30 Paris (08:30 UTC) — Priorité montre : capacités, séances, sommeil détaillé (D3 d bis)
 
-**Type** : ⌚🏗️ (priorité absolue, étape d bis)  ·  **PR** : « [Auto] Montre Huawei : phases du sommeil, VFC de la nuit et séances (D3 d bis) »
+**Type** : ⌚🏗️ (priorité absolue, étape d bis)  ·  **PR** : #134
 
 ## Pourquoi
 - Démarrage : main vert (f92c4c7 ; Tests et émulateur A56 verts, v113 publiée avec APK), aucune PR « [Auto] » ouverte

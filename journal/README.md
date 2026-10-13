@@ -265,7 +265,7 @@ nettoyage, humeur par le visage / la voix.
 | 13/10 04:30 — [Montre : lecture des mesures](runs/2026-10-13-0430-montre-synchro.md) | ⌚🏗️ | PR #129 fusionnée → v112 |
 | 13/10 06:30 — [Montre : synchro automatique](runs/2026-10-13-0630-montre-synchro-auto.md) | ⌚🏗️ | PR #131 fusionnée → v113 |
 | 13/10 08:30 — [Idées : montre app fermée, humeur réaliste, une réponse par jour](runs/2026-10-13-0830-idees-montre-fond-une-reponse.md) | 💡 | 8 idées (I49–I56), journal seul |
-| 13/10 10:30 — [Montre : sommeil détaillé, VFC, séances](runs/2026-10-13-1030-montre-sommeil-seances.md) | ⌚🏗️ | PR en cours |
+| 13/10 10:30 — [Montre : sommeil détaillé, VFC, séances](runs/2026-10-13-1030-montre-sommeil-seances.md) | ⌚🏗️ | PR #134 |
 
 ---
 
