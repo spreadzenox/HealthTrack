@@ -31,6 +31,8 @@
  *   npm run visual -- --routes=/connectors --ble=watch --devices  # « Montre Huawei en direct » : test, la montre répond
  *   npm run visual -- --routes=/connectors --ble=watch-silent --devices  # … la montre ne répond pas (liée à Huawei Santé)
  *   npm run visual -- --routes=/connectors --ble=watch-silent --devices --setup  # … assistant « Libérer et appairer »
+ *   npm run visual -- --routes=/connectors --ble=watch --connect       # … « Connexion à la montre » (avant import des paramètres)
+ *   npm run visual -- --routes=/connectors --ble=watch --connect=done  # … montre appairée et authentifiée (rapport factice)
  *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -259,6 +261,31 @@ async function main() {
         { top, bottom }
       )
     }
+    if (args.connect === 'done') {
+      // --connect=done : « Connexion à la montre » réussie (rapport factice déjà en mémoire)
+      await context.addInitScript(() => {
+        const step = (id, label, status, detail = null) => ({ id, label, status, detail })
+        const t = new Date(Date.now() - 120000).toISOString()
+        localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: '00', v2: '00', v3: '00' }))
+        localStorage.setItem(
+          'healthtrack_watch_connect_last',
+          JSON.stringify({
+            startedAt: t,
+            finishedAt: t,
+            steps: [
+              step('connect', 'Connexion à la montre', 'ok', 'Bluetooth classique'),
+              step('link', 'Paramètres du lien', 'ok', 'HiChain · version 2 · GCM'),
+              step('negotiate', 'Négociation de sécurité', 'ok', 'HiChain'),
+              step('bind', 'Premier appairage (PIN et clé)', 'ok', 'clé gardée sur ce téléphone'),
+              step('auth', 'Authentification', 'ok', 'trames chiffrées (AES-GCM)'),
+              step('check', 'Échange chiffré (batterie)', 'ok', 'batterie 87 %'),
+            ],
+            outcome: { code: 'connected', title: 'Montre appairée à HealthTrack' },
+            log: [],
+          }),
+        )
+      })
+    }
     if (args.devices) {
       // « Mes appareils » : apps santé « installées » (lu par src/components/MyDevices.jsx).
       const packages = args.devices === true ? ['com.huawei.health', 'com.garmin.android.apps.connectmobile'] : String(args.devices).split(',')
@@ -485,7 +512,7 @@ async function main() {
           await testButton.click()
           await page.getByRole('button', { name: 'Relancer le test' }).waitFor({ timeout: 30000 })
           // --setup : capture centrée sur l'assistant « Libérer et appairer la montre »
-          await page.evaluate((sel) => document.querySelector(sel)?.scrollIntoView({ block: 'start' }), args.setup ? '.watch-setup' : '.watch-diag')
+          await page.evaluate((sel) => document.querySelector(sel)?.scrollIntoView({ block: 'start' }), args.connect ? '.watch-connect' : args.setup ? '.watch-setup' : '.watch-diag')
           await page.waitForTimeout(300)
         } else if (args.ble) {
           await page.getByRole('button', { name: 'Rechercher autour de moi' }).click()

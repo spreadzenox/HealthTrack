@@ -12,6 +12,10 @@ import { detectPhoneApps } from '../devices/phoneApps'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import { formatAgo } from '../utils/timeAgo'
 import WatchSetup from './WatchSetup'
+import WatchConnect from './WatchConnect'
+import { connectAndAuthenticate, findBondedWatch } from '../devices/huawei/pairing'
+import { classicTransport, HUAWEI_RFCOMM_UUID, HONOR_RFCOMM_UUID } from '../devices/huawei/transports'
+import { loadSetup } from '../devices/huawei/setup'
 import './WatchDiagnostic.css'
 
 const LAST_KEY = 'healthtrack_watch_diagnostic_last'
@@ -57,6 +61,26 @@ async function defaultRun(onUpdate) {
   return runHuaweiDiagnostic({ client, classic: classicPlugin(), ready, detectApps: detectPhoneApps, onUpdate, appVersion: CURRENT_VERSION })
 }
 
+/** Connexion authentifiée (étape c) à la montre appairée à Android, en Bluetooth classique. */
+async function defaultConnect({ secrets, rebind, onUpdate }) {
+  const classic = classicPlugin()
+  if (!classic) throw new Error('Connexion possible seulement dans l’app Android.')
+  const watch = await findBondedWatch(classic)
+  if (!watch) throw new Error('Aucune montre Huawei appairée à Android : suivez d’abord « Libérer et appairer la montre ».')
+  const honor = /honor/i.test(watch.name) && (watch.uuids || []).map((u) => String(u).toLowerCase()).includes(HONOR_RFCOMM_UUID)
+  const setupState = loadSetup()
+  return connectAndAuthenticate({
+    transport: classicTransport(classic, watch.deviceId, honor ? HONOR_RFCOMM_UUID : HUAWEI_RFCOMM_UUID),
+    watchKey: watch.deviceId,
+    watchName: watch.name,
+    secrets,
+    rebind,
+    accountId: setupState.choice === 'keep' ? setupState.accountId || null : null,
+    onUpdate,
+    appVersion: CURRENT_VERSION,
+  })
+}
+
 async function defaultSave(json, filename) {
   if (isNative()) {
     const { Filesystem, Directory } = await import('@capacitor/filesystem')
@@ -81,9 +105,11 @@ async function defaultCopy(text) {
 
 /**
  * @param {{ run?: Function, available?: boolean, save?: Function, copy?: Function, setup?: object|null }} props
+ * `connect` : connexion authentifiée (pairing.js), null pour masquer « Connexion à la montre ».
  * `setup` : dépendances de l'assistant « Libérer et appairer » ({ detectApps, classic, appManager }), null pour le masquer.
  */
-export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup }) {
+export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect }) {
+  const connectFn = connect === undefined ? (classicPlugin() ? defaultConnect : null) : connect
   const setupDeps = setup === undefined ? { detectApps: detectPhoneApps, classic: classicPlugin(), appManager: appManagerPlugin() } : setup
   const [report, setReport] = useState(loadLast)
   const [running, setRunning] = useState(false)
@@ -176,6 +202,7 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
       )}
       {message && <p className="my-device-message">{message}</p>}
       {available && setupDeps && <WatchSetup {...setupDeps} verdict={report?.verdict?.code || null} onRunTest={running ? undefined : start} />}
+      {available && connectFn && <WatchConnect connect={connectFn} save={save} copy={copy} />}
     </section>
   )
 }

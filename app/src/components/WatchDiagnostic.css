@@ -173,3 +173,22 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+/* Connexion authentifiée (WatchConnect.jsx) */
+.watch-connect-secrets {
+  margin: 8px 0 10px;
+}
+
+.watch-connect-paste {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.watch-connect-paste textarea {
+  width: 100%;
+  margin: 8px 0;
+  font-family: monospace;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+}
