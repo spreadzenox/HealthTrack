@@ -25,10 +25,17 @@ vous enverrez me dira comment décoder cette réponse. Le run de 14:30 a creusé
 quand la montre répond dans son nouveau format, l'app repère et nomme désormais les **champs** de sa réponse (sans
 jamais leurs valeurs) — c'est exactement ce qu'il me faut pour écrire le décodage. Il a aussi confirmé, en étudiant
 le protocole à fond, que **même Gadgetbridge ne sait pas encore connecter la GT 6 Pro** en direct : c'est un travail
-de frontière, pas un retard de notre côté. **Ce qu'il me faut au prochain run : relancer « Se connecter à la
+de frontière, pas un retard de notre côté *(corrigé à 20:30 : c'était une fausse piste, voir ci-dessous)*. **Ce qu'il me faut au prochain run : relancer « Se connecter à la
 montre », puis « Enregistrer le journal » et me le transmettre.** Reste ensuite : écrire le décodage du nouveau format,
 puis synchro app fermée, stress, VFC de journée.
 Le run « idées » de 08:30 a tranché **comment relire la montre app fermée** (voir « Meilleures idées »).
+**Votre 2e journal (17:03, app v118) a tout débloqué côté compréhension — merci.** La réponse de la montre n'est
+**pas** un nouveau format : c'est l'**ancien format, que HealthTrack sait déjà traiter**, avec simplement **un octet de
+trop à la fin** (804 caractères de texte + 1 octet final). Le lecteur de l'app, trop strict, refusait tout le message à
+cause de cet octet ; Gadgetbridge, lui, l'ignore. Les runs de 11:04 à 18:30 avaient donc fait fausse route en préparant un
+nouveau protocole (travail mis de côté, utile pour des montres Honor). **Le correctif, petit et testable, est en tête du
+backlog pour le run de 22:30.** Ensuite il faudra **un nouveau journal** : soit la montre accepte notre PIN et
+l'appairage va plus loin, soit le journal dira précisément quel calcul ajuster.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -254,6 +261,13 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **« Ma nuit en un coup d'œil » dans le briefing du matin** (run 13/10 20:30) : comme les nouveaux « Vitals » de
+  Samsung, FC repos, VFC, SpO₂, respiration et sommeil de la nuit, chacun avec une flèche par rapport à **votre** plage
+  habituelle — sans nouvelle carte, intégré au briefing unique. Aussi : **vos traitements ou compléments vus comme des
+  expériences** (« avant / après » sur vos propres données) et **l'import de vos analyses de sang** par photo, lues sur
+  le téléphone (Oura et Whoop le font depuis cet été).
+- **Omi, le collier qui écoute, en direct** (run 13/10 20:30) : il est entièrement libre et son protocole Bluetooth est
+  publié → HealthTrack pourra le lire **sans leur cloud**, transcrire sur le téléphone et ne garder que le texte.
 - **La montre relue sans ouvrir l'app** (run 13/10 08:30) : Android sait prévenir une app quand une montre Bluetooth
   « classique » se connecte (« appareil compagnon »), même app fermée, et l'autorise alors à travailler en fond. Plan :
   vous confirmez une fois « associer la montre », puis à chaque reconnexion (et toutes les heures en secours)
@@ -293,13 +307,11 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
 
 **Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
 (b) libération + appairage, (c) authentification ISO, (d) lecture des mesures et synchro automatique livrées. Blocage
-réel : la GT 6 Pro répond à l'appairage dans son **nouveau format (« New Auth Protocol »)** que l'ancien schéma ne lit
-pas. **Dès que vous renvoyez un journal** (relancer « Se connecter à la montre » → « Enregistrer le journal »), l'app
-me donnera les **noms ET les tailles des champs** de cette réponse (depuis le run 18:30) ; le run suivant écrira alors
-le **décodage du nouveau format d'un seul journal**, sans second aller-retour. Les briques de base de ce décodage
-(X25519 / Ed25519) sont **déjà en place depuis le run 16:30** : il ne restera qu'à les assembler dans le bon ordre
-d'après votre journal. Puis synchro app fermée, stress / VFC de journée. Ensuite :
-performance des courbes, restes du nettoyage, humeur par le visage / la voix.
+réel, **compris grâce à votre journal de 17:03** : la réponse d'appairage de la GT 6 Pro est au format que l'app connaît
+déjà, suivie d'**un octet de fin** que le lecteur de l'app refusait. **Run de 22:30 : lecture tolérante** (comme
+Gadgetbridge), testée sur une copie fidèle de cette trame. **Ensuite : relancer « Se connecter à la montre » →
+« Enregistrer le journal »** pour voir l'étape suivante (votre PIN accepté ou non). Puis synchro app fermée, stress /
+VFC de journée. Ensuite : performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -325,6 +337,7 @@ performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 | 13/10 14:30 — [Montre : champs de la réponse HiChain 3 + spec New Auth](runs/2026-10-13-1250-montre-hichain3-champs.md) | ⌚🏗️ | PR #138 fusionnée → v116 |
 | 13/10 16:30 — [Montre : primitives crypto New Auth (X25519 / Ed25519)](runs/2026-10-13-1430-montre-crypto-newauth.md) | ⌚🏗️ | PR #140 fusionnée → v117 |
 | 13/10 18:30 — [Montre : taille des champs de la réponse New Auth](runs/2026-10-13-1830-montre-tailles-champs-newauth.md) | ⌚🏗️ | PR #142 fusionnée → v118 |
+| 13/10 20:30 — [Idées : journal 17:03 décodé (octet de fin), lecture du matin, analyses](runs/2026-10-13-2030-idees-journal-1703-octet-de-fin.md) | 💡⌚ | 6 idées (I57–I62), diagnostic analysé (§6.9), journal seul |
 
 ---
 

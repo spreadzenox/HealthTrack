@@ -310,6 +310,9 @@ une vérification qu'aucune valeur ne fuit dans le journal.
 
 ## 6.8 HiChain 3 « New Auth Protocol » (SPEKE / STS) — plan de décodage
 
+> ⚠️ **Corrigé le 13/10 20:30 (§6.9)** : le journal de 17:03 montre que la GT 6 Pro répond en **ISO classique**
+> (isoSalt / token), pas en SPEKE. Ce paragraphe reste valable comme référence pour les Honor (PAKE) uniquement.
+
 Recherche du 13/10/2026 (run 14:30 Paris) dans [G] (lecture seule, faits seulement ; la couche PAKE y est attribuée en
 commentaire au code OpenHarmony `base/security/device_auth`, Apache-2.0 [OH]) et recoupée avec [OH]. **Aucun code
 copié.** Ce qui suit est le **modèle structurel** de la famille « New Auth Protocol », à confirmer sur la GT 6 Pro par
@@ -377,6 +380,63 @@ Sources de cette section : [G] fichiers `service/devices/huawei/HiChainPakeUtils
 [OH] `base/security/device_auth` (modules `PakeTask`, `KeyManagerImpl`, `BlockCipherUtils`, `crypto_hash_to_point.c`),
 à vérifier directement ; [I] PR #6367 (reprise d'authentification sur transport BR). Contrôlé par un agent de recherche
 qui n'a rapporté que des faits.
+
+## 6.9 Journal réel du 13/10 17:03 (app v118) : la réponse est de l'**ISO classique** + un octet de fin
+
+Analyse du run « idées » du 13/10 20:30 Paris, sur `journal/diagnostics/2026-10-13-1703-gt6pro.json` (app **v118** = la
+version qui contient l'instrument des runs 14:30 et 18:30 ; aucun correctif de décodage n'a été livré après la v118,
+donc ce journal reflète bien le code actuel de main).
+
+**Comparaison avec le journal de 09:04 (v114)** : déroulé **identique à l'octet près** — mêmes 10 trames, mêmes
+tailles (16/58, 10/11, 65/137, 10/108, **695 → 835**), mêmes paramètres du lien (`deviceSupportType` 4, authVersion 1,
+`serverNonceLength` 16), même échec à l'étape « bind ». La montre est donc stable et reproductible ; seule la
+**lisibilité du journal** a changé (v114 : « illisible (code ?) » ; v118 : en-tête, noms et tailles des champs).
+
+**Ce que dit la réponse (trame 10, étiquette 1 = 805 octets)** :
+
+| Niveau | Champs (taille) |
+|---|---|
+| enveloppe | `appId` (17 car. = « com.huawei.health »), `authForm` 0, `connDeviceId` (32 o), `groupAndModuleVersion` (5 car.), `groupId` (32 o), `groupName` (17 car.), `groupOp`, `groupType`, **`message` = 0x8001**, `ownerName` (vide), `peerDeviceId` (32 o), `requestId` (13 car.) |
+| `payload` | **`isoSalt` (16 o)**, `operationCode`, **`peerAuthId` (64 o)**, `peerUserType`, **`token` (32 o)**, `version` (objet) |
+
+🩺 **Conclusion 1 — ce n'est pas le « New Auth Protocol »** (hypothèse des runs 11:04 → 18:30, §6.7–6.8, **réfutée**) :
+pas d'`epk`, de `salt`/`challenge` SPEKE ni de signature. C'est exactement la **réponse de début ISO** de §6.2 :
+`message` 0x8001 = réponse à notre 0x0001, aléa de la montre `isoSalt` (16 o), son identité `peerAuthId`, et son jeton
+`token` = HMAC-SHA256 (32 o) que `runHichain` sait déjà vérifier (`watchToken`, §6.3). La GT 6 Pro annonce « HiChain 3 »
+(`deviceSupportType` 4 → mode de négociation 4, GCM) mais **parle ISO pour la liaison** — ce qui concorde avec le
+constat du §6.8 : Gadgetbridge envoie la GT 6 / GT 7 vers l'ISO (`supportsHiChainPake()` faux pour elles). L'estimation
+« un StepOne ISO pèse ~250–350 octets » du §6.8 était fausse : elle oubliait l'enveloppe de groupe (groupId,
+peerDeviceId, connDeviceId : 3 × 64 caractères).
+
+🩺 **Conclusion 2 — la cause exacte de l'échec : un octet en trop après le JSON.** En reconstituant un JSON avec ces
+noms et ces tailles (`version` = `{"minVersion":"1.0.0","currentVersion":"2.0.16"}`, comme le nôtre), on obtient
+**804 caractères** ; l'étiquette 1 en fait **805**. L'objet JSON se termine donc 1 octet avant la fin : très
+probablement un **NUL terminal** (chaîne C sérialisée avec son `\0`), éventuellement un saut de ligne. Preuve
+interne au journal : `findEmbeddedJson` (diagnostic, accolades équilibrées) analyse sans erreur l'objet à
+l'**offset 0**, alors que `JSON.parse` sur l'étiquette entière échoue (`classification: json_unparsable`). JavaScript
+refuse tout caractère après la valeur JSON ; le `org.json` d'Android, utilisé par Gadgetbridge, lit le premier objet
+et **ignore la suite** — ce qui explique que le même octet ne gêne pas Gadgetbridge.
+
+**Correctif à faire (prochain run de code, 22:30)** — `src/devices/huawei/hichain.js` :
+1. Une fonction unique `decodeHichainJson(bytes)` utilisée **partout** où l'étiquette 1 est lue (`inspectHichainReply`,
+   `parseHichainReply` y compris la branche `final` et le `JSON.parse` de fin) : décoder en UTF-8, **retirer les NUL et
+   blancs de fin** ; si `JSON.parse` échoue encore, retomber sur l'objet à accolades équilibrées **à l'offset 0
+   uniquement** (lecture tolérante façon `org.json`), et consigner dans `inspection` un indicateur `trailingBytes`
+   (nombre d'octets ignorés, jamais leur valeur).
+2. Tests sur trame d'exemple : JSON ISO 0x8001 de **804 caractères + `0x00`** (champs aux tailles du journal :
+   isoSalt 16 o, peerAuthId 64 o, token 32 o, enveloppe de groupe) → `classification: json_ok`, `payload.isoSalt` lu,
+   `trailingBytes: 1` ; variantes `\n`, `\0\0`, et un vrai non-JSON qui reste `json_unparsable`.
+3. Fausse montre (`testing/fakeWatch.js`) : option « JSON + NUL terminal » sur **toutes** ses réponses 0x28 →
+   le parcours `runHichain` complet (0x8001 → 0x8002 → 0x8003 → 0x8004) passe de bout en bout.
+4. Relecture du libellé d'erreur : retirer « probable New Auth Protocol » quand les champs sont ceux de l'ISO
+   (`isoSalt` + `token`) ; garder la piste SPEKE (§6.8) seulement si `epk`/`salt`/`challenge` apparaissent.
+5. Rien d'autre ne change côté envoi : notre message de 695 octets (sans NUL) a été **accepté** par la montre (elle a
+   répondu 0x8001, pas une erreur) → ne pas ajouter de NUL à nos envois.
+
+**Prochaine embûche probable** (à rendre lisible dans le journal dès ce correctif) : la vérification du `token` de la
+montre (`token_mismatch` = dérivation PIN → clé de base, §6.3, ou ordre des identifiants dans le HMAC ; `peerAuthId`
+de la montre fait 64 o, le nôtre 32 o). Le journal doit dire « jeton différent » distinctement d'une erreur de format.
+Les primitives X25519 / Ed25519 (c bis) restent utiles si une autre montre (Honor) parle vraiment SPEKE.
 
 ## 7. Données santé utiles (étape d)
 
@@ -560,6 +620,7 @@ une heure de recouvrement (7 jours la première fois) ; les doublons sont écart
 | (a bis) Analyse sûre des réponses 0x28 (`inspectHichainReply`) consignée dans le journal (`report.hichain`) ; étape et code précis nommés à l'écran ; déclenché par le journal réel GT 6 Pro (§6.7) | ✅ run 13/10 11:04 | `hichain.js` (`inspectHichainReply`), `pairing.js`, `testing/fakeWatch.js` (`garbleHichain`) |
 | (a ter) Révéler les **champs** d'une réponse « New Auth » non-JSON (`probeStructure` : JSON intégré / TLV imbriqués) ; `head` 32 octets ; champs nommés à l'écran (§6.7) | ✅ run 13/10 14:30 | `hichain.js` (`probeStructure`, `findEmbeddedJson`), `testing/fakeWatch.js` (`newAuthHichain`) |
 | (a quater) **Taille** de chaque champ (`fields`, `payloadFields` — octets / caractères / type, jamais la valeur) ; « challenge (16 o), epk (32 o)… » à l'écran et au journal, pour décoder d'un seul journal (§6.7) | ✅ run 13/10 18:30 | `hichain.js` (`describeFieldSizes`, `probeStructure`), `pairing.js` |
+| (a quinquies) Lecture tolérante du JSON HiChain (NUL / octets de fin ignorés, `trailingBytes`), trame d'exemple ISO 0x8001 de 805 octets, fausse montre « JSON + NUL » (§6.9) | ☐ run 13/10 22:30 | `hichain.js`, `testing/fakeWatch.js` |
 | (b) Détection et libération (boîte de désinstallation, réglages de l'app, guide de réinitialisation, plan B compte Huawei) + assistant d'appairage Android | ✅ run 13/10 00:30 | `src/devices/huawei/setup.js`, `components/WatchSetup.jsx`, `AppManagerPlugin.java`, `BtClassicPlugin.java` (`discover`, `pair`, `openBluetoothSettings`) |
 | (c) Authentification HiChain (§6) : état, négociation, PIN, liaison, authentification, clé des trames, chiffrement GCM / CBC ; clés gardées en local ; constantes du PIN téléchargées sur le téléphone | ✅ run 13/10 02:30 (à valider sur la montre) | `src/devices/huawei/crypto.js`, `session.js`, `hichain.js`, `pairing.js`, `components/WatchConnect.jsx` |
 | (c bis) Primitives « New Auth Protocol » (§6.8) : X25519 (multiplication scalaire sur point quelconque, ECDH), Ed25519 (signature / vérification) sur @noble/curves (MIT) ; vecteurs RFC 7748 / 8032 | ✅ run 13/10 16:30 | `src/devices/huawei/crypto.js` (`x25519ScalarMult`, `x25519SharedSecret`, `x25519Base`, `generateX25519KeyPair`, `ed25519Sign/Verify/PublicKey`, `generateEd25519KeyPair`) |

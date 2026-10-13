@@ -123,7 +123,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       `crypto.js` sur **@noble/curves** (MIT), vérifiés sur vecteurs RFC 7748 / 8032 (8 tests). HKDF/HMAC/AES-GCM existaient.
       @noble car Web Crypto ne fait X25519 que sur la base standard (pas de point dérivé) et marche sur toute WebView.
       Elligator2 **volontairement non ajouté** (forme Huawei non documentée → pas à l'aveugle). Spec §6.8 mise à jour.
-- [ ] **(c ter) Assembler le StepOne « New Auth Protocol »** (après le prochain journal, qui donnera les noms de champs) :
+- [ ] **(a quinquies) Lecture tolérante du JSON HiChain** (run 13/10 22:30, §6.9) : la GT 6 Pro répond en **ISO** avec un
+      octet de fin (NUL) après le JSON → `decodeHichainJson` unique, `trailingBytes`, trame d'exemple 805 octets, fausse
+      montre « JSON + NUL » sur tout le parcours, libellé sans « New Auth » quand les champs sont ISO
+- [ ] ⏸️ **(c ter) EN ATTENTE — la GT 6 Pro parle ISO, pas SPEKE (journal 17:03, §6.9) ; utile seulement pour les Honor.**
+      Assembler le StepOne « New Auth Protocol » :
       à partir des primitives (c bis), StepOne SPEKE + preuves `kcfData` (HMAC) + échange d'identité Ed25519 chiffré GCM,
       d'après §6.8 ; à confirmer sur la montre : PIN → point de base (Elligator2), signature « pré-hachée SHA-256 » ;
       tests sur trames d'exemple, fausse montre New Auth complète
@@ -185,6 +189,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       publiée faible (AUC ≈ 0,6) → tendance 7 j calibrée par l'auto-déclaration ; openSMILE écarté (licence
       commerciale) → prosodie maison + pitchy (0BSD) ; `appops CAMERA allow` : aucun retour fiable sur Android 14–16,
       démarrage depuis l'app ou une notification = voie robuste (le « niveau 2 » reste à **tester** sur l'A56)
+- [ ] Faits du run idées 13/10 20:30 : poids HSEmotion VA sans licence affichée, appris sur AffectNet (recherche non
+      commerciale [H]) → **blendshapes MediaPipe (sourire) par défaut**, valence en option téléchargée, licence affichée ;
+      aucune mesure publiée de MediaPipe en WebView Samsung → mesurer sur l'A56. Transcription locale :
+      `createOnDeviceSpeechRecognizer` (API 31+, pack fr-FR à télécharger, garde `isOnDeviceRecognitionAvailable`)
 - [ ] Voix (I41) : dictée du soir = note déclarée + tags extraits + indices prosodiques (audio effacé), modèle SER
       seulement s'il tient sur l'A56 (≤ 20 Mo, < 300 ms) — remplace à terme le formulaire de check-in (D1)
 
@@ -341,12 +349,19 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⌚ **D3 — HiChain 3 de la GT 6 Pro, PRIORITÉ, EN ATTENTE DU PROPRIÉTAIRE** : le 1er journal réel (13/10 09:04) montre
-   l'appairage bloqué au décodage de la réponse 0x28 (835 octets, format « New Auth », §6.8). Instrument qui révèle les
-   **champs** (a ter, 14:30) **et leurs tailles** (a quater, 18:30) livré ; **primitives crypto X25519 / Ed25519 livrées
-   (c bis, 16:30)**. Débloquage réel = **demander au propriétaire de relancer « Se connecter à la montre » et de renvoyer
-   le journal** : `report.hichain[].structure` donne maintenant **noms + tailles** des champs → run suivant assemble le
-   StepOne SPEKE (c ter, §6.8) à partir des primitives, **d'un seul journal, sans second aller-retour**.
+1. ⌚ **D3 — À FAIRE AU RUN DE 22:30 : lecture tolérante du JSON HiChain (a quinquies, §6.9 de `protocoles/huawei.md`).**
+   Le 2e journal réel (13/10 17:03, v118, `diagnostics/2026-10-13-1703-gt6pro.json`) **tranche** : la réponse 0x28 de
+   835 octets est une réponse **ISO classique** (`message` 0x8001 ; payload `isoSalt` 16 o, `peerAuthId` 64 o, `token`
+   32 o — **pas** de SPEKE / New Auth), en JSON valide **suivi d'un octet de fin** (JSON reconstitué = 804 car., étiquette
+   = 805 → NUL terminal probable ; `findEmbeddedJson` lit l'objet à l'offset 0, `JSON.parse` strict échoue). À corriger
+   dans `hichain.js` : `decodeHichainJson(bytes)` unique (retirer NUL / blancs de fin, sinon objet équilibré à l'offset
+   0, `trailingBytes` consigné sans valeur) utilisé dans `inspectHichainReply` **et** `parseHichainReply` (branche
+   `final` comprise). Tests : trame d'exemple ISO 0x8001 804 car. + `0x00` → `json_ok`, `isoSalt` lu ; variantes `\n`,
+   `\0\0` ; vrai non-JSON → toujours `json_unparsable`. Fausse montre : réponses « JSON + NUL » sur tout le parcours
+   0x8001 → 0x8004. Libellé : ne plus dire « New Auth » quand les champs sont ISO. Ne **pas** ajouter de NUL à nos
+   envois (la montre a accepté nos 695 octets). Ensuite, rendre lisible la prochaine embûche probable :
+   `token_mismatch` (dérivation PIN → clé, ordre des identifiants ; `peerAuthId` montre 64 o vs nôtre 32 o). Puis
+   **redemander un journal** au propriétaire. Le SPEKE (c ter) passe **en attente** (Honor seulement).
 2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`).
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
@@ -360,8 +375,12 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 8. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
 9. Ensuite seulement : **briefing du jour unique** (I47 → I51, gabarits, jamais de chiffre inventé), **mode calme**
    (I52, tendances 7 / 30 j), une question du soir (I54), réception BLE automatique, Colmi (I28).
-10. 💡 Prochain run idées (13/10 20:30 Paris) : lien Bluetooth permanent de la GT 6 Pro (CDM « connectée »),
-    licence des poids HSEmotion valence, MediaPipe dans une WebView Samsung, commandes 1/0x03 attendues.
+10. Nouvelles idées du run 13/10 20:30 (toutes **sans nouvel écran**) : **I58** « Ma nuit en un coup d'œil » absorbé par
+    le briefing I51 (signaux de la nuit vs votre plage habituelle, à la Samsung Vitals) ; **I60** traitements /
+    compléments = expériences avant / après ; **I59** import d'analyses (OCR sur l'appareil) ; **I62** bruit ambiant
+    comme X ; **I61** pilote Omi direct (BLE MIT documenté) + transcription locale — après D4.
+11. 💡 Prochain run idées (14/10 08:30 Paris) : réponse au jeton / messages 0x8002-0x8003 selon le prochain journal,
+    reconnaissance vocale locale fr-FR sur l'A56, licence AffectNet, OCR de comptes rendus de labo français.
 
 ## Idées en vrac (à trier)
 
