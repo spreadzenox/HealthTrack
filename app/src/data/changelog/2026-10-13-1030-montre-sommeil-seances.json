@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-13",
+  "kind": "nouveau",
+  "title": "Montre Huawei : phases du sommeil, VFC de la nuit et séances",
+  "items": [
+    "Chaque synchro de la montre ramène maintenant aussi vos nuits détaillées : léger, profond, paradoxal et réveils, avec le score de sommeil de la montre.",
+    "La VFC moyenne de la nuit arrive avec (dans « Votre cœur » et les Analyses), sans ceinture cardio.",
+    "Vos séances enregistrées sur la montre (course, marche, vélo, natation, yoga, renforcement…) arrivent avec leur durée, leurs calories, leur distance, leurs pas et la FC mini / maxi.",
+    "Quand une nuit détaillée arrive, elle remplace le sommeil simple (léger / profond) lu plus tôt pour la même nuit : rien n’est compté deux fois.",
+    "HealthTrack demande d’abord à la montre ce qu’elle sait faire, et le note dans le journal de connexion : si votre modèle ne connaît pas une de ces lectures, elle est simplement sautée."
+  ]
+}

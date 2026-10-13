@@ -72,6 +72,15 @@ export function decodeTlvs(bytes) {
   return out
 }
 
+/** Comme decodeTlvs, mais [] si le corps n'est pas une suite de TLV (bloc de fichier brut). */
+export function tryDecodeTlvs(bytes) {
+  try {
+    return decodeTlvs(bytes)
+  } catch {
+    return []
+  }
+}
+
 /** Trame complète (non découpée) pour un service / une commande. */
 export function encodeFrame(serviceId, commandId, tlvs = []) {
   const payload = [serviceId, commandId, ...encodeTlvs(tlvs)]
@@ -124,7 +133,9 @@ export function decodeFrame(bytes) {
 
 /**
  * Rassemble les notifications BLE (une trame peut arriver en plusieurs morceaux, et un message en
- * plusieurs tranches). `push(bytes)` renvoie les messages complets : { serviceId, commandId, tlvs }.
+ * plusieurs tranches). `push(bytes)` renvoie les messages complets : { serviceId, commandId, tlvs, raw }.
+ * `raw` = corps brut après service et commande (les blocs de fichier 0x2C/0x05 ne sont pas en TLV ;
+ * leurs `tlvs` sont alors vides).
  */
 export function createReassembler() {
   let buffer = []
@@ -157,7 +168,8 @@ export function createReassembler() {
           }
         }
         if (payload && payload.length >= 2) {
-          messages.push({ serviceId: payload[0], commandId: payload[1], tlvs: decodeTlvs(payload.slice(2)) })
+          const raw = Uint8Array.from(payload.slice(2))
+          messages.push({ serviceId: payload[0], commandId: payload[1], tlvs: tryDecodeTlvs(raw), raw })
         }
       }
       return messages

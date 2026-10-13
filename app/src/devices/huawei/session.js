@@ -4,7 +4,7 @@
  * réponses et les rend à qui les attend. Une fois authentifié, un `cipher` chiffre / déchiffre les
  * TLV (étiquettes 0x7C, 0x7D, 0x7E, journal/protocoles/huawei.md §3).
  */
-import { createReassembler, encodeFrames, toHex } from './protocol'
+import { createReassembler, encodeFrames, toHex, tryDecodeTlvs } from './protocol'
 
 const TAG_ENCRYPTED = 0x7c
 
@@ -16,6 +16,7 @@ const TAG_ENCRYPTED = 0x7c
 export function createSession(transport, { timeoutMs = 8000, onFrame = () => {}, onMessage = () => {}, maxFrameSize = 244 } = {}) {
   const reassembler = createReassembler()
   const waiters = []
+  const listeners = []
   let cipher = null
   let closed = false
   let pending = Promise.resolve()
@@ -33,13 +34,17 @@ export function createSession(transport, { timeoutMs = 8000, onFrame = () => {},
     if (enc && enc.value[0] === 1) {
       if (!cipher) return onMessage({ ...m, encrypted: true })
       try {
-        message = { ...m, tlvs: await cipher.open(m.serviceId, m.commandId, m.tlvs) }
+        const raw = cipher.openBytes ? await cipher.openBytes(m.serviceId, m.commandId, m.tlvs) : null
+        message = raw ? { ...m, raw, tlvs: tryDecodeTlvs(raw) } : { ...m, tlvs: await cipher.open(m.serviceId, m.commandId, m.tlvs) }
       } catch (e) {
         return onMessage({ ...m, error: e?.message || String(e) })
       }
     }
     const i = waiters.findIndex((w) => w.serviceId === message.serviceId && w.commandId === message.commandId)
-    if (i < 0) return onMessage(message)
+    if (i < 0) {
+      const l = listeners.find((x) => x.serviceId === message.serviceId && x.commandId === message.commandId)
+      return l ? l.handler(message) : onMessage(message)
+    }
     const [w] = waiters.splice(i, 1)
     clearTimeout(w.timer)
     w.resolve(message)
@@ -100,6 +105,15 @@ export function createSession(transport, { timeoutMs = 8000, onFrame = () => {},
         fail(e)
       }
       return answer
+    },
+    /** Reçoit les messages poussés par la montre pour ce service / cette commande (blocs de fichier). */
+    listen(serviceId, commandId, handler) {
+      const l = { serviceId, commandId, handler }
+      listeners.push(l)
+      return () => {
+        const i = listeners.indexOf(l)
+        if (i >= 0) listeners.splice(i, 1)
+      }
     },
     async close() {
       closed = true
