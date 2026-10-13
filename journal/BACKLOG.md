@@ -352,7 +352,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⌚ **D3 — ATTENDRE / LIRE LE 3e JOURNAL** (app ≥ v119, lecture tolérante + variantes du jeton livrées le 13/10 22:30,
+1. ⌚ **D3 — ATTENDRE / LIRE LE 3e JOURNAL** (app ≥ v120, lecture tolérante + variantes du jeton livrées le 13/10 22:30,
    §6.9–6.10). Selon le journal : `bind` ok → vérifier `auth`, `check` (batterie), `sync` sur la vraie montre ;
    `tokenCheck.matched` = « X + ordre » → implémenter cet ordre côté téléphone (jeton du téléphone en miroir) ;
    `tokenCheck.matched` nul → regarder les tailles (`idPeer` 64 o = identifiant texte de 64 caractères ?) et la casse
