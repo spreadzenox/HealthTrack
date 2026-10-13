@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-13",
+  "kind": "correctif",
+  "title": "Montre Huawei : l’appairage lit enfin la réponse de votre GT 6 Pro",
+  "items": [
+    "Grâce à votre journal de 17:03 : la réponse d’appairage de la GT 6 Pro se termine par un octet de trop, que HealthTrack refusait. Elle est maintenant lue normalement, comme le fait Android.",
+    "Si la montre vérifie le PIN avec un calcul légèrement différent, HealthTrack essaie de lui-même les variantes plausibles et continue avec la bonne ; sinon le journal indique laquelle correspond (jamais de valeur secrète).",
+    "À faire de votre côté : relancer « Se connecter à la montre », puis « Enregistrer le journal » et me le transmettre. Si tout passe, vos mesures arrivent directement dans HealthTrack."
+  ]
+}

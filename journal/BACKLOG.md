@@ -123,9 +123,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       `crypto.js` sur **@noble/curves** (MIT), vérifiés sur vecteurs RFC 7748 / 8032 (8 tests). HKDF/HMAC/AES-GCM existaient.
       @noble car Web Crypto ne fait X25519 que sur la base standard (pas de point dérivé) et marche sur toute WebView.
       Elligator2 **volontairement non ajouté** (forme Huawei non documentée → pas à l'aveugle). Spec §6.8 mise à jour.
-- [ ] **(a quinquies) Lecture tolérante du JSON HiChain** (run 13/10 22:30, §6.9) : la GT 6 Pro répond en **ISO** avec un
+- [x] **(a quinquies) Lecture tolérante du JSON HiChain** (livré 13/10 22:30, §6.9) : la GT 6 Pro répond en **ISO** avec un
       octet de fin (NUL) après le JSON → `decodeHichainJson` unique, `trailingBytes`, trame d'exemple 805 octets, fausse
       montre « JSON + NUL » sur tout le parcours, libellé sans « New Auth » quand les champs sont ISO
+- [x] **(a sexies) Diagnostic du jeton (I57)** (livré 13/10 22:30, §6.10) : 5 variantes de clé de base du PIN essayées
+      (la bonne est retenue et nommée dans le journal) ; sinon 4 ordres de calcul testés, `tokenCheck` (nom + tailles,
+      jamais de valeur) ; un jeton différent à la liaison ne conclut plus « PIN refusé / montre liée ailleurs »
 - [ ] ⏸️ **(c ter) EN ATTENTE — la GT 6 Pro parle ISO, pas SPEKE (journal 17:03, §6.9) ; utile seulement pour les Honor.**
       Assembler le StepOne « New Auth Protocol » :
       à partir des primitives (c bis), StepOne SPEKE + preuves `kcfData` (HMAC) + échange d'identité Ed25519 chiffré GCM,
@@ -349,19 +352,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⌚ **D3 — À FAIRE AU RUN DE 22:30 : lecture tolérante du JSON HiChain (a quinquies, §6.9 de `protocoles/huawei.md`).**
-   Le 2e journal réel (13/10 17:03, v118, `diagnostics/2026-10-13-1703-gt6pro.json`) **tranche** : la réponse 0x28 de
-   835 octets est une réponse **ISO classique** (`message` 0x8001 ; payload `isoSalt` 16 o, `peerAuthId` 64 o, `token`
-   32 o — **pas** de SPEKE / New Auth), en JSON valide **suivi d'un octet de fin** (JSON reconstitué = 804 car., étiquette
-   = 805 → NUL terminal probable ; `findEmbeddedJson` lit l'objet à l'offset 0, `JSON.parse` strict échoue). À corriger
-   dans `hichain.js` : `decodeHichainJson(bytes)` unique (retirer NUL / blancs de fin, sinon objet équilibré à l'offset
-   0, `trailingBytes` consigné sans valeur) utilisé dans `inspectHichainReply` **et** `parseHichainReply` (branche
-   `final` comprise). Tests : trame d'exemple ISO 0x8001 804 car. + `0x00` → `json_ok`, `isoSalt` lu ; variantes `\n`,
-   `\0\0` ; vrai non-JSON → toujours `json_unparsable`. Fausse montre : réponses « JSON + NUL » sur tout le parcours
-   0x8001 → 0x8004. Libellé : ne plus dire « New Auth » quand les champs sont ISO. Ne **pas** ajouter de NUL à nos
-   envois (la montre a accepté nos 695 octets). Ensuite, rendre lisible la prochaine embûche probable :
-   `token_mismatch` (dérivation PIN → clé, ordre des identifiants ; `peerAuthId` montre 64 o vs nôtre 32 o). Puis
-   **redemander un journal** au propriétaire. Le SPEKE (c ter) passe **en attente** (Honor seulement).
+1. ⌚ **D3 — ATTENDRE / LIRE LE 3e JOURNAL** (app ≥ v119, lecture tolérante + variantes du jeton livrées le 13/10 22:30,
+   §6.9–6.10). Selon le journal : `bind` ok → vérifier `auth`, `check` (batterie), `sync` sur la vraie montre ;
+   `tokenCheck.matched` = « X + ordre » → implémenter cet ordre côté téléphone (jeton du téléphone en miroir) ;
+   `tokenCheck.matched` nul → regarder les tailles (`idPeer` 64 o = identifiant texte de 64 caractères ?) et la casse
+   / le format de notre `peerAuthId` ; erreur 0x8002+ → lire `class`/`errorCode` de l'étape 2 ; `trailingBytes` > 1 sur
+   une autre réponse → rien à faire (déjà toléré). Ne **pas** ajouter de NUL à nos envois.
 2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`).
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de

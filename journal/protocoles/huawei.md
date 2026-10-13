@@ -417,7 +417,7 @@ l'**offset 0**, alors que `JSON.parse` sur l'étiquette entière échoue (`class
 refuse tout caractère après la valeur JSON ; le `org.json` d'Android, utilisé par Gadgetbridge, lit le premier objet
 et **ignore la suite** — ce qui explique que le même octet ne gêne pas Gadgetbridge.
 
-**Correctif à faire (prochain run de code, 22:30)** — `src/devices/huawei/hichain.js` :
+**Correctif (livré le 13/10 22:30, voir §6.10)** — `src/devices/huawei/hichain.js` :
 1. Une fonction unique `decodeHichainJson(bytes)` utilisée **partout** où l'étiquette 1 est lue (`inspectHichainReply`,
    `parseHichainReply` y compris la branche `final` et le `JSON.parse` de fin) : décoder en UTF-8, **retirer les NUL et
    blancs de fin** ; si `JSON.parse` échoue encore, retomber sur l'objet à accolades équilibrées **à l'offset 0
@@ -437,6 +437,28 @@ et **ignore la suite** — ce qui explique que le même octet ne gêne pas Gadge
 montre (`token_mismatch` = dérivation PIN → clé de base, §6.3, ou ordre des identifiants dans le HMAC ; `peerAuthId`
 de la montre fait 64 o, le nôtre 32 o). Le journal doit dire « jeton différent » distinctement d'une erreur de format.
 Les primitives X25519 / Ed25519 (c bis) restent utiles si une autre montre (Honor) parle vraiment SPEKE.
+
+## 6.10 Livré le 13/10 22:30 : lecture tolérante + diagnostic du jeton
+
+**Lecture** — `decodeHichainJson(octets)` est la seule porte d'entrée de l'étiquette 1 d'une réponse 0x28 (analyse
+`inspectHichainReply`, décodage `parseHichainReply`, message final). Règle : décoder en UTF-8 ; l'étiquette doit
+**commencer** par `{` ; on prend l'objet à accolades équilibrées (en respectant chaînes et échappements) qui part de
+l'offset 0, on l'analyse en JSON strict, et tout ce qui suit est ignoré et **compté** (`trailingBytes`, jamais la
+valeur). Un JSON qui ne commence pas à l'offset 0 reste « illisible » (piste d'un vrai autre format, §6.8, analysée
+par le diagnostic structurel). Le texte d'un message final est rendu sans NUL / blancs de fin.
+
+**Jeton de la montre** (`token` de la réponse 0x8001) — si la référence (§6.3) ne le reproduit pas :
+1. *Clé de base de la liaison*, variantes essayées dans l'ordre : SHA-256 du PIN en hex majuscule (référence),
+   en hex minuscule, SHA-256 des octets bruts du PIN, PIN brut, et — si le PIN est déjà du texte imprimable
+   contenant des minuscules — SHA-256 de ce texte en majuscules. La première qui reproduit le jeton est **retenue**
+   pour toute la suite de la liaison (jeton du téléphone, clé de session), et son nom est écrit dans le journal.
+   Motif : le journal réel annonce un PIN de **64 octets** (pas 6 chiffres) : sa forme exacte n'est pas certaine.
+2. Sinon, pour chaque clé de base, 3 autres ordres de concaténation (aléas inversés, identifiants inversés, ordre du
+   jeton du téléphone) sont essayés **pour nommer** la combinaison dans l'erreur (`tokenCheck.matched`), sans
+   poursuivre (le calcul en miroir côté téléphone serait une supposition).
+3. `report.tokenCheck` = `{ matched, tried, variants, sizes: { idSelf, idPeer, randSelf, randPeer, seed } }` : noms et
+   tailles seulement. À la liaison, un jeton différent mène à l'issue « failed » (journal à transmettre), plus à
+   « PIN refusé » : la montre a bien remis un PIN et répondu 0x8001, l'écart vient plus probablement de notre calcul.
 
 ## 7. Données santé utiles (étape d)
 

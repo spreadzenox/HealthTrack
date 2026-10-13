@@ -21,7 +21,7 @@ import {
   newAuthId,
   parseHichainReply,
   parseSecurityNegotiation,
-  pinBaseKey,
+  pinBaseKeyVariants,
   runHichain,
   hichainTlvs,
   securityNegotiationTlvs,
@@ -143,6 +143,7 @@ export async function connectAndAuthenticate({
     log: [],
     frames: [],
     hichain: [],
+    tokenCheck: null,
   }
   const emit = () => onUpdate(JSON.parse(JSON.stringify(report)))
   const log = (msg, level = 'info') => {
@@ -224,6 +225,7 @@ export async function connectAndAuthenticate({
         tags: i.tags.map((t) => `${t.tag}/${t.size}`),
         payloadKeys: i.payloadKeys,
         head: i.head,
+        trailingBytes: i.trailingBytes,
         structure: i.structure,
       })
       emit()
@@ -242,7 +244,8 @@ export async function connectAndAuthenticate({
       const pinMsg = await session.request(DEVICE_CONFIG, CMD.PIN_CODE, [{ tag: 1 }], { plain: true })
       const pin = await decryptPin(pinMsg.tlvs, { ...lp, secrets })
       log(`PIN reçu (${pin.length} octets)`)
-      const bound = await runHichain({ operation: OP_BIND, baseKey: await pinBaseKey(pin), authId: keys.authId, requestId, exchange: stepTimeouts(exchange, bindTimeoutMs, timeoutMs), rand })
+      const bound = await runHichain({ operation: OP_BIND, baseKeys: await pinBaseKeyVariants(pin), authId: keys.authId, requestId, exchange: stepTimeouts(exchange, bindTimeoutMs, timeoutMs), rand })
+      if (bound.baseVariant !== 'sha256-hex-majuscule') log(`clé de base du PIN : variante « ${bound.baseVariant} » (§6.10)`)
       Object.assign(keys, { authToken: hexOf(bound.authToken), boundAt: new Date(now()).toISOString() })
       keyStore.set(watchKey, keys)
       set('bind', 'ok', 'clé gardée sur ce téléphone')
@@ -258,6 +261,7 @@ export async function connectAndAuthenticate({
       auth = await runHichain({ operation: OP_AUTH, baseKey: bytesOfHex(keys.authToken), authId: keys.authId, requestId, exchange: exchange(timeoutMs), rand })
     } catch (e) {
       if ((e?.code === 'token_mismatch' || e?.code === 'watch_error') && !report.firstPairing) {
+        if (e.tokenCheck) report.tokenCheck = e.tokenCheck
         set('auth', 'fail', e.message)
         return finish('key_rejected', 'La montre ne reconnaît plus la clé de HealthTrack')
       }
@@ -297,6 +301,7 @@ export async function connectAndAuthenticate({
     return finish('connected', report.firstPairing ? 'Montre appairée à HealthTrack' : 'Montre connectée à HealthTrack')
   } catch (e) {
     const msg = e?.message || String(e)
+    if (e?.tokenCheck) report.tokenCheck = e.tokenCheck
     set(current, 'fail', msg)
     if (current === 'connect') return finish('connect_failed', 'Connexion à la montre impossible')
     if (current === 'bind' && /PIN refusé|Déchiffrement/.test(msg)) return finish('pin_failed', 'Premier appairage refusé')

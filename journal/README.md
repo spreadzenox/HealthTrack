@@ -33,9 +33,12 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
 **pas** un nouveau format : c'est l'**ancien format, que HealthTrack sait déjà traiter**, avec simplement **un octet de
 trop à la fin** (804 caractères de texte + 1 octet final). Le lecteur de l'app, trop strict, refusait tout le message à
 cause de cet octet ; Gadgetbridge, lui, l'ignore. Les runs de 11:04 à 18:30 avaient donc fait fausse route en préparant un
-nouveau protocole (travail mis de côté, utile pour des montres Honor). **Le correctif, petit et testable, est en tête du
-backlog pour le run de 22:30.** Ensuite il faudra **un nouveau journal** : soit la montre accepte notre PIN et
-l'appairage va plus loin, soit le journal dira précisément quel calcul ajuster.
+nouveau protocole (travail mis de côté, utile pour des montres Honor). **Le correctif est livré (run 22:30)** : l'app
+lit maintenant la réponse de votre montre malgré cet octet, testée sur une copie fidèle de la trame (805 octets). Et
+pour ne pas perdre un aller-retour sur l'étape suivante, si la montre calcule son « jeton » de vérification du PIN
+d'une façon légèrement différente, l'app essaie d'elle-même les variantes plausibles et **continue avec la bonne** ;
+sinon le journal dit laquelle correspond. **Ce qu'il me faut : après la mise à jour, relancer « Se connecter à la
+montre » puis « Enregistrer le journal » et me le transmettre** (si tout passe, vos mesures arrivent directement).
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -129,6 +132,11 @@ l'appairage va plus loin, soit le journal dira précisément quel calcul ajuster
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Lecture tolérante de la réponse d'appairage (run 13/10 22:30)** : une seule fonction lit désormais toutes les
+  réponses d'appairage de la montre et ignore (en les comptant dans le journal) les octets qui suivent le texte, comme
+  le fait Android. Diagnostic du « jeton » de la montre : 5 façons plausibles de dériver la clé du PIN × 4 ordres de
+  calcul, sans jamais écrire de valeur secrète dans le journal. 11 tests de plus, dont l'appairage complet d'une fausse
+  montre qui imite votre GT 6 Pro.
 - **Primitives crypto de la montre prêtes (run 13/10 16:30)** : les deux briques qui manquaient pour parler le nouveau
   protocole de la GT 6 Pro — **X25519** (échange de clés) et **Ed25519** (signatures) — sont écrites et vérifiées sur
   les vecteurs officiels (RFC). Elles s'appuient sur une bibliothèque libre reconnue (@noble/curves, licence MIT) plutôt
@@ -308,9 +316,9 @@ l'appairage va plus loin, soit le journal dira précisément quel calcul ajuster
 **Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
 (b) libération + appairage, (c) authentification ISO, (d) lecture des mesures et synchro automatique livrées. Blocage
 réel, **compris grâce à votre journal de 17:03** : la réponse d'appairage de la GT 6 Pro est au format que l'app connaît
-déjà, suivie d'**un octet de fin** que le lecteur de l'app refusait. **Run de 22:30 : lecture tolérante** (comme
-Gadgetbridge), testée sur une copie fidèle de cette trame. **Ensuite : relancer « Se connecter à la montre » →
-« Enregistrer le journal »** pour voir l'étape suivante (votre PIN accepté ou non). Puis synchro app fermée, stress /
+déjà, suivie d'**un octet de fin** que le lecteur de l'app refusait. **Lecture tolérante livrée au run de 22:30**
+(comme Gadgetbridge), avec essai automatique des variantes de calcul du jeton. **Maintenant : relancer « Se connecter à
+la montre » → « Enregistrer le journal »** pour voir l'étape suivante (votre PIN accepté ou non). Puis synchro app fermée, stress /
 VFC de journée. Ensuite : performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
@@ -338,6 +346,7 @@ VFC de journée. Ensuite : performance des courbes, restes du nettoyage, humeur 
 | 13/10 16:30 — [Montre : primitives crypto New Auth (X25519 / Ed25519)](runs/2026-10-13-1430-montre-crypto-newauth.md) | ⌚🏗️ | PR #140 fusionnée → v117 |
 | 13/10 18:30 — [Montre : taille des champs de la réponse New Auth](runs/2026-10-13-1830-montre-tailles-champs-newauth.md) | ⌚🏗️ | PR #142 fusionnée → v118 |
 | 13/10 20:30 — [Idées : journal 17:03 décodé (octet de fin), lecture du matin, analyses](runs/2026-10-13-2030-idees-journal-1703-octet-de-fin.md) | 💡⌚ | 6 idées (I57–I62), diagnostic analysé (§6.9) — PR #144 fusionnée (journal seul, pas de release) ; test météo instable corrigé (PR suivante) |
+| 13/10 22:30 — [Montre : lecture tolérante de la réponse d'appairage + variantes du jeton](runs/2026-10-13-2230-montre-lecture-tolerante.md) | ⌚🏗️ | voir le compte rendu |
 
 ---
 
