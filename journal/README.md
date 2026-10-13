@@ -14,8 +14,8 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
 votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 : le **test de connexion directe** ;
 deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »** ; troisième pas (13/10 02:30) :
 **l'authentification** (« Connexion à la montre ») ; quatrième pas (13/10 04:30) : **la lecture des mesures** (pas, cœur,
-SpO₂, FC repos, sommeil) à chaque connexion. Rien n'est encore essayé sur la vraie montre. Reste : synchro automatique,
-phases du sommeil, VFC / stress, séances.
+SpO₂, FC repos, sommeil) à chaque connexion ; cinquième pas (13/10 06:30) : la **synchro automatique** à l'ouverture
+de l'app. Rien n'est encore essayé sur la vraie montre. Reste : phases du sommeil, VFC / stress, séances, synchro app fermée.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -78,6 +78,11 @@ phases du sommeil, VFC / stress, séances.
   « Montre Huawei ») et nourrissent l'accueil, « Votre cœur » et les Analyses. 7 jours la première fois, puis seulement
   le nouveau, sans doublon. Le bouton devient « **Synchroniser la montre** ». « Mes appareils » dit alors que vos
   données passent par la montre en direct (Huawei Health n'est plus nécessaire pour elles).
+- **Montre Huawei — synchro automatique** (même encadré) : une fois la montre connectée une première fois, plus besoin
+  de toucher « Synchroniser la montre » : HealthTrack la relit **tout seul quand vous ouvrez l'app ou y revenez**, au
+  plus toutes les 30 min. Une ligne dit quand et ce qui est arrivé (« 38 minutes → 9 mesures »). Montre loin ou
+  Bluetooth coupé : rien en erreur, l'app réessaie plus tard (essais espacés jusqu'à 4 h). Clé refusée : synchro
+  automatique en pause, la carte le dit.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -85,6 +90,10 @@ phases du sommeil, VFC / stress, séances.
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Synchro automatique (run 13/10 06:30)** : une seule connexion à la montre à la fois (la manuelle attend
+  l'automatique), jamais de réappairage ni de constantes en automatique, rien tant que HealthTrack n'a pas sa clé.
+  La synchro **app fermée** (tâche de fond Android) demandera du code natif : prochaine grosse étape après les sommeils
+  détaillés / VFC.
 - **Synchronisation (run 13/10 04:30)** : commandes de données décrites avec nos mots (`protocoles/huawei.md` §7 :
   minute par minute avec masques de champs, sommeil, heure, totaux), code écrit depuis cette spec, testé sur un exemple
   de trame et avec la fausse montre. Les mesures sont **agrégées à l'écriture** (pas / calories par heure, cœur par
@@ -204,8 +213,8 @@ phases du sommeil, VFC / stress, séances.
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
 **Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
-(b) libération + appairage, (c) authentification et (d) lecture des mesures livrées ; prochain run : **synchro automatique** à l'ouverture,
-puis phases du sommeil, VFC / stress et séances (et corrections d'après votre journal s'il arrive). Ensuite : performance des courbes, restes du
+(b) libération + appairage, (c) authentification, (d) lecture des mesures et synchro automatique à l'ouverture livrées ;
+prochain run : **phases du sommeil, VFC / stress et séances**, puis synchro app fermée (et corrections d'après votre journal s'il arrive). Ensuite : performance des courbes, restes du
 nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
@@ -225,6 +234,7 @@ nettoyage, humeur par le visage / la voix.
 | 13/10 00:30 — [Montre : libérer et appairer](runs/2026-10-13-0030-montre-liberer-appairer.md) | ⌚🏗️ | PR #125 fusionnée → v110 |
 | 13/10 02:30 — [Montre : authentification HiChain](runs/2026-10-13-0230-montre-authentification.md) | ⌚🏗️ | PR #127 fusionnée → v111 |
 | 13/10 04:30 — [Montre : lecture des mesures](runs/2026-10-13-0430-montre-synchro.md) | ⌚🏗️ | PR #129 fusionnée → v112 |
+| 13/10 06:30 — [Montre : synchro automatique](runs/2026-10-13-0630-montre-synchro-auto.md) | ⌚🏗️ | PR en cours |
 
 ---
 

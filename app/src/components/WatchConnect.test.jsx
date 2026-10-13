@@ -54,6 +54,15 @@ describe('WatchConnect', () => {
     await waitFor(() => expect(connect.mock.calls[1][0].rebind).toBe(true))
   })
 
+  it('affiche l’état de la synchro automatique et le met à jour quand elle se termine', async () => {
+    render(<WatchConnect connect={vi.fn()} save={vi.fn()} copy={vi.fn()} />)
+    expect(screen.queryByText(/Synchro automatique/)).toBeNull()
+    const at = new Date().toISOString()
+    localStorage.setItem('healthtrack_watch_autosync', JSON.stringify({ at, auto: true, outcome: 'connected', label: '42 minutes → 9 mesures', failures: 0, everConnected: true }))
+    window.dispatchEvent(new CustomEvent('watch-sync-updated'))
+    expect(await screen.findByText(/Synchro automatique à chaque ouverture de l’app .*42 minutes → 9 mesures/)).toBeTruthy()
+  })
+
   it('exporte le journal', async () => {
     localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify(connected))
     const save = vi.fn(async () => 'ok')

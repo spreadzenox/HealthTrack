@@ -4,10 +4,11 @@
  * 3 constantes publiques (huawei-lpv2, MIT) sont nécessaires : téléchargées ou collées d'un geste,
  * gardées en local, jamais dans le code de l'app. Logique dans src/devices/huawei/pairing.js.
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CONNECT_STEPS, SECRETS_SOURCE_URL, connectAdvice, loadSecrets, saveSecrets } from '../devices/huawei/pairing'
 import { parseDigestSecrets } from '../devices/huawei/hichain'
 import { formatAgo } from '../utils/timeAgo'
+import { describeAutoSync, getWatchAutoSyncState } from '../services/watchAutoSync'
 
 const LAST_KEY = 'healthtrack_watch_connect_last'
 const ICONS = { ok: '✓', warn: '!', fail: '✕', skip: '–', running: '…', pending: '·' }
@@ -37,6 +38,14 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
   const [running, setRunning] = useState(false)
   const [message, setMessage] = useState(null)
   const [paste, setPaste] = useState('')
+  const [auto, setAuto] = useState(() => getWatchAutoSyncState())
+
+  useEffect(() => {
+    // la synchro automatique (ouverture de l'app) met à jour la ligne d'état
+    const refresh = () => setAuto(getWatchAutoSyncState())
+    window.addEventListener('watch-sync-updated', refresh)
+    return () => window.removeEventListener('watch-sync-updated', refresh)
+  }, [])
 
   const keep = (s) => {
     saveSecrets(s)
@@ -92,6 +101,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
   }
 
   const code = report?.outcome?.code
+  const autoLine = describeAutoSync(auto, { formatAgo })
   const steps = report?.steps || CONNECT_STEPS.map((s) => ({ ...s, status: 'pending' }))
 
   return (
@@ -100,8 +110,9 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
       <p className="my-devices-intro">
         Une fois la montre appairée, HealthTrack s’y connecte seule : elle obtient une clé que la montre ne donne qu’à une app à la fois,
         et la garde <strong>sur ce téléphone uniquement</strong>. Chaque connexion lit ensuite les nouvelles mesures (pas, cœur, SpO₂,
-        sommeil).
+        sommeil), et HealthTrack resynchronise tout seul quand vous ouvrez l’app.
       </p>
+      {autoLine && <p className="my-device-meta watch-connect-auto">{autoLine}</p>}
 
       {!secrets && (
         <div className="watch-connect-secrets">
