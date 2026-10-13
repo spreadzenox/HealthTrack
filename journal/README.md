@@ -224,7 +224,7 @@ nettoyage, humeur par le visage / la voix.
 | 12/10 22:30 — [Priorité montre : test de connexion directe](runs/2026-10-12-2230-montre-diagnostic.md) | ⌚🏗️ | PR #123 fusionnée → v109 |
 | 13/10 00:30 — [Montre : libérer et appairer](runs/2026-10-13-0030-montre-liberer-appairer.md) | ⌚🏗️ | PR #125 fusionnée → v110 |
 | 13/10 02:30 — [Montre : authentification HiChain](runs/2026-10-13-0230-montre-authentification.md) | ⌚🏗️ | PR #127 fusionnée → v111 |
-| 13/10 04:30 — [Montre : lecture des mesures](runs/2026-10-13-0430-montre-synchro.md) | ⌚🏗️ | PR en cours |
+| 13/10 04:30 — [Montre : lecture des mesures](runs/2026-10-13-0430-montre-synchro.md) | ⌚🏗️ | PR #129 |
 
 ---
 

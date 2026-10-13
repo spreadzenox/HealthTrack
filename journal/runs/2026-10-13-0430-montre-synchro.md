@@ -1,6 +1,6 @@
 # 2026-10-13 04:30 Paris (02:30 UTC) — Priorité montre : synchronisation des mesures (D3 d)
 
-**Type** : ⌚🏗️ (priorité absolue, étape d)  ·  **PR** : voir tableau du résumé
+**Type** : ⌚🏗️ (priorité absolue, étape d)  ·  **PR** : #129
 
 ## Pourquoi
 - Démarrage : main vert (4973bcf, v111 ; l'émulateur A56 est revenu au vert sur #128), aucune PR « [Auto] » ouverte
