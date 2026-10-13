@@ -337,7 +337,7 @@ VFC de journée. Ensuite : performance des courbes, restes du nettoyage, humeur 
 | 13/10 14:30 — [Montre : champs de la réponse HiChain 3 + spec New Auth](runs/2026-10-13-1250-montre-hichain3-champs.md) | ⌚🏗️ | PR #138 fusionnée → v116 |
 | 13/10 16:30 — [Montre : primitives crypto New Auth (X25519 / Ed25519)](runs/2026-10-13-1430-montre-crypto-newauth.md) | ⌚🏗️ | PR #140 fusionnée → v117 |
 | 13/10 18:30 — [Montre : taille des champs de la réponse New Auth](runs/2026-10-13-1830-montre-tailles-champs-newauth.md) | ⌚🏗️ | PR #142 fusionnée → v118 |
-| 13/10 20:30 — [Idées : journal 17:03 décodé (octet de fin), lecture du matin, analyses](runs/2026-10-13-2030-idees-journal-1703-octet-de-fin.md) | 💡⌚ | 6 idées (I57–I62), diagnostic analysé (§6.9), journal seul |
+| 13/10 20:30 — [Idées : journal 17:03 décodé (octet de fin), lecture du matin, analyses](runs/2026-10-13-2030-idees-journal-1703-octet-de-fin.md) | 💡⌚ | 6 idées (I57–I62), diagnostic analysé (§6.9) — PR #144 fusionnée (journal seul, pas de release) ; test météo instable corrigé (PR suivante) |
 
 ---
 
