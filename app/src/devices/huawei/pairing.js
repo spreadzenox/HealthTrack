@@ -44,6 +44,7 @@ export const CONNECT_STEPS = [
   { id: 'bind', label: 'Premier appairage (PIN et clé)' },
   { id: 'auth', label: 'Authentification' },
   { id: 'check', label: 'Échange chiffré (batterie)' },
+  { id: 'sync', label: 'Lecture des mesures' },
 ]
 
 const readJson = (storage, key) => {
@@ -122,6 +123,7 @@ export async function connectAndAuthenticate({
   now = () => Date.now(),
   rand = randomBytes,
   appVersion = 'dev',
+  sync = null,
 } = {}) {
   const t0 = now()
   const report = {
@@ -135,6 +137,7 @@ export async function connectAndAuthenticate({
     scheme: null,
     firstPairing: false,
     battery: null,
+    sync: null,
     outcome: null,
     log: [],
     frames: [],
@@ -259,6 +262,17 @@ export async function connectAndAuthenticate({
       await session.send(0x1a, 0x05, [{ tag: 1, value: Array.from(new TextEncoder().encode(accountId)) }]).catch(() => {})
       log('identifiant de compte Huawei transmis')
     }
+    if (sync) {
+      // Lecture des mesures (étape d) : un échec ici n'annule pas la connexion réussie
+      current = 'sync'
+      set('sync', 'running')
+      try {
+        report.sync = await sync(session, { log })
+        set('sync', 'ok', report.sync?.label || null)
+      } catch (e) {
+        set('sync', 'warn', e?.message || String(e))
+      }
+    }
     return finish('connected', report.firstPairing ? 'Montre appairée à HealthTrack' : 'Montre connectée à HealthTrack')
   } catch (e) {
     const msg = e?.message || String(e)
@@ -281,7 +295,9 @@ function stepTimeouts(exchange, first, rest) {
 export function connectAdvice(report) {
   switch (report?.outcome?.code) {
     case 'connected':
-      return ['La montre parle maintenant à HealthTrack, avec une clé gardée sur ce téléphone. La lecture des données arrive à la prochaine étape.']
+      return report.sync
+        ? ['La montre parle à HealthTrack, avec une clé gardée sur ce téléphone. Les mesures lues sont dans votre historique (source « Montre Huawei »).']
+        : ['La montre parle maintenant à HealthTrack, avec une clé gardée sur ce téléphone.']
     case 'need_secrets':
       return ['Le premier appairage a besoin de 3 constantes publiques (projet huawei-lpv2, licence MIT). Touchez « Télécharger les paramètres » : elles restent sur ce téléphone.']
     case 'key_rejected':
