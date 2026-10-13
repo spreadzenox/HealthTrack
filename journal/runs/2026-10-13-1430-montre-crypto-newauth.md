@@ -1,6 +1,6 @@
 # 2026-10-13 16:30 Paris (14:30 UTC) — Priorité montre : primitives crypto « New Auth Protocol » (X25519 / Ed25519)
 
-**Type** : ⌚🏗️ (priorité absolue — montre)  ·  **PR** : #NN (à compléter)
+**Type** : ⌚🏗️ (priorité absolue — montre)  ·  **PR** : #140 (fusionnée)
 
 ## Pourquoi
 - Démarrage : **main vert** (21e2c3f ; **v116** publiée, Build APK + émulateurs A56 API 35/36 + Frontend Vitest tous
