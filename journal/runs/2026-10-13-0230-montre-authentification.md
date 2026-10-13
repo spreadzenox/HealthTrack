@@ -1,6 +1,6 @@
 # 2026-10-13 02:30 Paris (00:30 UTC) — Priorité montre : authentification HiChain (D3 c)
 
-**Type** : ⌚🏗️ (priorité absolue, étape c)  ·  **PR** : #127 (voir « Vérifications » pour l'état du merge)
+**Type** : ⌚🏗️ (priorité absolue, étape c)  ·  **PR** : #127 (fusionnée → **v111**, APK publié ; CI Vitest, Build APK et émulateur A56 Android 15 / 16 vertes sur la PR)
 
 ## Pourquoi
 - Démarrage : main vert (eee2f57, v110), aucune PR « [Auto] » ouverte ni rouge (seule #51 cursor/*, non touchée).
@@ -37,6 +37,10 @@
 - Visuel : `npm run visual` (8 pages) OK, `--empty` OK ; Connecteurs `--ble=watch --devices --connect` (encadré avant
   import) et `--ble=watch --connect=done` (montre authentifiée, 6 étapes vertes) regardés : lisible, boutons dans la
   largeur, rien ne déborde.
+- Après merge : « Build & Release » ✅ → v111 avec `HealthTrack-v111.apk`. Le workflow « émulateur A56 » de main a
+  échoué à la compilation des tests Android : `junit:4.13.2` et `hamcrest-core:1.3` introuvables sur Maven Central
+  (panne réseau du dépôt, aucun fichier Android modifié ; le même workflow était vert sur la PR, même code, et le même
+  échec passager avait touché 5ceed92). Rien à corriger dans le code ; à surveiller s'il se répète.
 - Non vérifiable ici : la vraie montre (aucune trame réelle publique de GT 6 Pro) et le Java (inchangé ce run).
 
 ## Apprentissages / décisions
