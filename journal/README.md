@@ -116,6 +116,13 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Primitives crypto de la montre prêtes (run 13/10 16:30)** : les deux briques qui manquaient pour parler le nouveau
+  protocole de la GT 6 Pro — **X25519** (échange de clés) et **Ed25519** (signatures) — sont écrites et vérifiées sur
+  les vecteurs officiels (RFC). Elles s'appuient sur une bibliothèque libre reconnue (@noble/curves, licence MIT) plutôt
+  que sur le moteur du navigateur, qui ne sait pas faire le calcul exact dont le protocole a besoin et dépendrait d'une
+  version très récente de la WebView. **Rien de visible dans l'app** : c'est la fondation sur laquelle le prochain
+  décodage s'écrira vite une fois votre journal reçu. (Une 3ᵉ brique, « Elligator2 », n'a **pas** été ajoutée à l'aveugle :
+  sa forme exacte chez Huawei n'est pas publique ; on l'ajoutera quand la montre nous l'aura montrée.)
 - **« New Auth Protocol » HiChain 3 étudié à fond (run 13/10 14:30)** : recherche dans le code libre (lecture seule,
   faits seulement, aucun code copié) + doc OpenHarmony. Trois enseignements : (1) 🩺 **même Gadgetbridge ne décode pas
   encore la GT 6 Pro** (sa couche moderne n'est activée que pour des Honor ; les Huawei GT 6 / GT 7 retombent sur
@@ -282,8 +289,9 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
 (b) libération + appairage, (c) authentification ISO, (d) lecture des mesures et synchro automatique livrées. Blocage
 réel : la GT 6 Pro répond à l'appairage dans son **nouveau format (« New Auth Protocol »)** que l'ancien schéma ne lit
 pas. **Dès que vous renvoyez un journal** (relancer « Se connecter à la montre » → « Enregistrer le journal »), l'app
-me donnera les **noms des champs** de cette réponse ; le run suivant écrira alors le **décodage du nouveau format**
-(crypto X25519 / Ed25519 / AES-GCM, d'après la spec §6.8). Puis synchro app fermée, stress / VFC de journée. Ensuite :
+me donnera les **noms des champs** de cette réponse ; le run suivant écrira alors le **décodage du nouveau format**.
+Les briques de base de ce décodage (X25519 / Ed25519) sont **déjà en place depuis le run 16:30** : il ne restera qu'à
+les assembler dans le bon ordre d'après votre journal. Puis synchro app fermée, stress / VFC de journée. Ensuite :
 performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
@@ -308,6 +316,7 @@ performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 | 13/10 10:30 — [Montre : sommeil détaillé, VFC, séances](runs/2026-10-13-1030-montre-sommeil-seances.md) | ⌚🏗️ | PR #134 fusionnée → v114 |
 | 13/10 11:04 — [Montre : 1er journal réel GT 6 Pro + analyseur HiChain](runs/2026-10-13-1104-montre-hichain-journal-reel.md) | ⌚🏗️ | PR #136 fusionnée → v115 |
 | 13/10 14:30 — [Montre : champs de la réponse HiChain 3 + spec New Auth](runs/2026-10-13-1250-montre-hichain3-champs.md) | ⌚🏗️ | PR #138 fusionnée → v116 |
+| 13/10 16:30 — [Montre : primitives crypto New Auth (X25519 / Ed25519)](runs/2026-10-13-1430-montre-crypto-newauth.md) | ⌚🏗️ | PR #140 |
 
 ---
 

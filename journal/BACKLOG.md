@@ -112,10 +112,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       TLV imbriqués ; `head` 12 → 32 octets ; l'écran nomme les champs repérés ; `report.hichain[].structure` dans le
       journal ; fausse montre `newAuthHichain`. Spec `protocoles/huawei.md` §6.8 (recherche New Auth : SPEKE/STS, X25519,
       Ed25519, HKDF/HMAC, AES-GCM, codes de messages, champs — même Gadgetbridge ne décode pas encore la GT 6 Pro)
-- [ ] **(c ter) Implémenter le StepOne « New Auth Protocol »** (après le prochain journal, qui donnera les noms de champs) :
-      crypto manquante dans `crypto.js` (X25519, Elligator2, HKDF, HMAC, Ed25519 pré-haché SHA-256, AES-128-GCM), StepOne
-      SPEKE + preuves `kcfData` + échange d'identité Ed25519 chiffré, d'après §6.8 ; tests sur trames d'exemple, fausse
-      montre New Auth complète
+- [x] **(c bis) Primitives crypto « New Auth Protocol »** (run 13/10 16:30) : X25519 (multiplication scalaire sur point
+      **quelconque** pour le SPEKE, ECDH, paire de clés) et Ed25519 (signature / vérification / clé publique) ajoutés à
+      `crypto.js` sur **@noble/curves** (MIT), vérifiés sur vecteurs RFC 7748 / 8032 (8 tests). HKDF/HMAC/AES-GCM existaient.
+      @noble car Web Crypto ne fait X25519 que sur la base standard (pas de point dérivé) et marche sur toute WebView.
+      Elligator2 **volontairement non ajouté** (forme Huawei non documentée → pas à l'aveugle). Spec §6.8 mise à jour.
+- [ ] **(c ter) Assembler le StepOne « New Auth Protocol »** (après le prochain journal, qui donnera les noms de champs) :
+      à partir des primitives (c bis), StepOne SPEKE + preuves `kcfData` (HMAC) + échange d'identité Ed25519 chiffré GCM,
+      d'après §6.8 ; à confirmer sur la montre : PIN → point de base (Elligator2), signature « pré-hachée SHA-256 » ;
+      tests sur trames d'exemple, fausse montre New Auth complète
 - [x] **(d) Synchronisation, version simple** (run 13/10 04:30) : spec §7 (heure 1/5, sommeil 7/0x0C-0x0D, minutes
       7/0x0A-0x0B avec masques de champs, totaux 7/0x03, séances 0x17, fichiers 0x2C) ; `sync.js` + `services/watchSync.js` :
       pas et calories par heure, FC par 10 min, SpO₂, FC repos par jour, sommeil léger / profond → IndexedDB (source
@@ -330,11 +335,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⌚ **D3 (c bis) — HiChain 3 de la GT 6 Pro, PRIORITÉ** : le 1er journal réel (13/10 09:04) montre l'appairage bloqué
-   au décodage de la réponse 0x28 (835 octets). Analyseur livré le 13/10 11:04 (a bis) → **demander au propriétaire de
-   relancer « Se connecter à la montre » et de renvoyer le journal** : `report.hichain` dira la structure de la réponse
-   (JSON ? champs ? 1ers octets) et donc si HiChain 3 a un format plus riche que l'ISO (§6.7). Puis corriger : format de
-   la réponse de début, et PIN GCM vs CBC en type 4.
+1. ⌚ **D3 — HiChain 3 de la GT 6 Pro, PRIORITÉ, EN ATTENTE DU PROPRIÉTAIRE** : le 1er journal réel (13/10 09:04) montre
+   l'appairage bloqué au décodage de la réponse 0x28 (835 octets, format « New Auth », §6.8). Instrument qui révèle les
+   **champs** livré (a ter, 14:30) ; **primitives crypto X25519 / Ed25519 livrées (c bis, 16:30)**. Débloquage réel =
+   **demander au propriétaire de relancer « Se connecter à la montre » et de renvoyer le journal** : `report.hichain[].structure`
+   donnera les noms de champs → run suivant assemble le StepOne SPEKE (c ter, §6.8) à partir des primitives.
 2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`).
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
