@@ -1,6 +1,6 @@
 # 2026-10-13 04:30 Paris (02:30 UTC) — Priorité montre : synchronisation des mesures (D3 d)
 
-**Type** : ⌚🏗️ (priorité absolue, étape d)  ·  **PR** : #129
+**Type** : ⌚🏗️ (priorité absolue, étape d)  ·  **PR** : #129 (fusionnée → **v112**, APK publié ; Vitest, Build APK et émulateur A56 Android 15 verts ; Android 16 vert à la relance)
 
 ## Pourquoi
 - Démarrage : main vert (4973bcf, v111 ; l'émulateur A56 est revenu au vert sur #128), aucune PR « [Auto] » ouverte
@@ -34,6 +34,11 @@
   Lint : 6 erreurs, 1 warning (inchangé) · Build ✅
 - Visuel : `npm run visual` (8 pages) OK, `--empty` OK, Connecteurs `--ble=watch --connect=done` regardé (étape
   « Lecture des mesures — 1 248 minutes, 2 nuits → 214 mesures », bouton « Synchroniser la montre ») : lisible, rien ne déborde.
+- CI de la PR : l'émulateur **Android 16** a échoué une fois sur `HealthConnectTest.healthConnect_canWriteAndReadSleep`
+  (« Conflict found, but couldn't read the entry », côté Health Connect de l'émulateur ; aucun fichier Android modifié)
+  → relancé une fois : vert. Test instrumenté instable (enregistrement de sommeil en conflit) : à rendre robuste s'il se
+  répète (identifiant client unique par exécution).
+- Après merge : « Build & Release » ✅ → **v112** avec `HealthTrack-v112.apk`.
 - Non vérifiable ici : la vraie montre (aucune trame réelle publique), unités exactes des calories / de la distance.
 
 ## Apprentissages / décisions
