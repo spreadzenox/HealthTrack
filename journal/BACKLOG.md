@@ -98,6 +98,18 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       (SHA-256 de « health_group_name|com.huawei.health ») ; fausse montre de test (`testing/fakeWatch.js`)
 - [ ] **(c bis) Valider sur la vraie GT 6 Pro** (journal `healthtrack-connexion-montre-….json`) : format du PIN, message
       final, valeurs réelles du type de prise en charge / chiffrement ; reprise automatique après « jeton différent »
+- [x] **(d) Synchronisation, version simple** (run 13/10 04:30) : spec §7 (heure 1/5, sommeil 7/0x0C-0x0D, minutes
+      7/0x0A-0x0B avec masques de champs, totaux 7/0x03, séances 0x17, fichiers 0x2C) ; `sync.js` + `services/watchSync.js` :
+      pas et calories par heure, FC par 10 min, SpO₂, FC repos par jour, sommeil léger / profond → IndexedDB (source
+      `huawei_watch`, sans doublon, fenêtre depuis la dernière synchro, 7 j la 1re fois) ; étape « Lecture des mesures » à
+      chaque connexion, bouton « Synchroniser la montre » ; « Mes appareils » compte la montre en direct comme passerelle
+      de Huawei Health ; fausse montre étendue (blocs minute / sommeil / totaux)
+- [ ] **(d bis) Fichiers détaillés** (0x2C) : lire d'abord 1/0x03 (commandes prises en charge) ; phases du sommeil
+      (paradoxal, éveil : dictionnaire 700013 ou `sleep_state`), RR → VFC (RMSSD, `heartRate.js`) et stress ; séances (0x17)
+- [ ] **(d ter) Resynchro en arrière-plan** : à l'ouverture de l'app (comme `phoneUsageSync`, au plus toutes les 30 min),
+      puis WorkManager / service de premier plan (code natif : la session HiChain doit tourner côté Java ou dans la WebView réveillée)
+- [ ] Valider (d) sur la vraie montre : unités des calories (kcal ?) et de la distance, valeur « pas de mesure » (0 / 0xFF),
+      blocs vides, fuseau 1/5
       (PR #6367 : fermer, attendre ≈ 6 s, réessayer une fois) ; envoi de l'identifiant de compte (0x1A/0x05, étiquette 3
       selon la prise en charge) à vérifier ; mode classique / HiChain Lite non pris en charge (bracelets anciens)
 - [ ] **(d) Synchronisation** : informations produit (1/7), heure (1/5), minute par minute (7/0x0A-0x0B : pas, FC,
@@ -273,9 +285,8 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 
 1. ⌚ **Lire le journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`) : mode d'authentification, retour
    sur l'assistant « Libérer et appairer ».
-2. ⌚ **D3 (d) — synchronisation** (**prochain run hors idées**) : spec §7 détaillée (agent de recherche, faits
-   seulement), puis informations produit (1/7), heure (1/5), minute par minute (7/0x0A-0x0B), sommeil, RR → VFC, séances
-   → IndexedDB (source `huawei_direct`, migration testée), tests sur trames d'exemple ; puis resynchro en arrière-plan.
+2. ⌚ **D3 (d ter) — resynchro automatique** à l'ouverture de l'app (prochain run hors idées), puis **(d bis)** fichiers
+   détaillés 0x2C (phases du sommeil, RR → VFC / stress) et séances ; (d) version simple livrée le 13/10 04:30.
 3. ⌚ D3 (c bis) — lire le journal de connexion du propriétaire dès qu'il arrive et corriger l'authentification.
 4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
    Worker, graphiques différés ; budget anti-régression.
@@ -326,6 +337,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-13 — D3 (d) : synchronisation simple (heure, sommeil léger / profond, minutes → pas, calories, FC, SpO₂, FC repos) → IndexedDB, « Synchroniser la montre » (run 04:30 Paris)
 - [x] 2026-10-13 — D3 (c) : authentification HiChain (liaison par PIN, authentification, trames chiffrées), encadré « Connexion à la montre », constantes du PIN téléchargées sur le téléphone (run 02:30 Paris)
 - [x] 2026-10-13 — D3 (b) : assistant « Libérer et appairer la montre » (désinstallation / réglages de l'app qui la tient, réinitialisation guidée, plan B compte Huawei, appairage Android `createBond`) (run 00:30 Paris)
 - [x] 2026-10-12 — Priorité absolue « montre » reportée (charte §000, backlog) + D3 (a) : test de connexion directe à la montre Huawei (RFCOMM + BLE), journal exportable, spécification `protocoles/huawei.md` (run 22:30 Paris)

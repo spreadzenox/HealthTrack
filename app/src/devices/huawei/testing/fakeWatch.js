@@ -3,7 +3,7 @@
  * §4–6 (paramètres du lien, état, négociation, PIN, liaison, authentification, trames chiffrées).
  * Les constantes du PIN sont des valeurs de test aléatoires, pas celles de Huawei.
  */
-import { createReassembler, encodeFrames } from '../protocol'
+import { createReassembler, decodeTlvs, encodeFrames } from '../protocol'
 import { aesCbcEncrypt, aesGcmDecrypt, aesGcmEncrypt, bytesEqual, bytesOfHex, hexOf, randomBytes, utf8 } from '../crypto'
 import { createCipher, digestSecretFor, frameKey, phoneToken, pinBaseKey, psk, returnCodeMac, sessionKey, watchToken } from '../hichain'
 
@@ -20,6 +20,9 @@ export function createFakeWatch({
   battery = 87,
   negotiation = [{ tag: 1, value: [1] }],
   silentOn = null,
+  minuteBlocks = [],
+  sleepBlocks = [],
+  totals = null,
 } = {}) {
   const r = createReassembler()
   const tokens = new Map() // authId (texte) → clé longue durée
@@ -96,6 +99,23 @@ export function createFakeWatch({
     }
     if (m.serviceId === 1 && m.commandId === 0x28) return hichain({ ...m, tlvs })
     if (m.serviceId === 1 && m.commandId === 8) return reply(1, 8, await state.cipher.seal(1, 8, [{ tag: 1, value: [battery] }]))
+    // Données santé (§7), toujours chiffrées : blocs fournis tels quels (corps TLV d'une réponse)
+    const sealed = async (tlv) => reply(m.serviceId, m.commandId, await state.cipher.seal(m.serviceId, m.commandId, tlv))
+    if (m.serviceId === 1 && m.commandId === 5) return sealed([{ tag: 1, value: tlvs.find((t) => t.tag === 1)?.value || [] }])
+    if (m.serviceId === 7) {
+      const index = () => {
+        const inner = decodeTlvs(tlvs.find((t) => t.tag === 0x81).value)
+        const v = inner.find((t) => t.tag === 2).value
+        return v[0] * 256 + v[1]
+      }
+      if (m.commandId === 0x0a || m.commandId === 0x0c) {
+        const n = (m.commandId === 0x0a ? minuteBlocks : sleepBlocks).length
+        return sealed([{ tag: 0x81, value: [2, 2, n >> 8, n & 0xff] }])
+      }
+      if (m.commandId === 0x0b) return sealed(minuteBlocks[index()])
+      if (m.commandId === 0x0d) return sealed(sleepBlocks[index()])
+      if (m.commandId === 0x03 && totals) return sealed(totals)
+    }
   }
 
   let queue = Promise.resolve()

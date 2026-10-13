@@ -19,7 +19,7 @@ describe('connexion authentifiée à une montre Huawei (HiChain)', () => {
     expect(report.outcome.code).toBe('connected')
     expect(report.firstPairing).toBe(true)
     expect(report.battery).toBe(87)
-    expect(report.steps.map((s) => s.status)).toEqual(['ok', 'ok', 'ok', 'ok', 'ok', 'ok'])
+    expect(report.steps.map((s) => s.status)).toEqual(['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'skip'])
     expect(watch.seen).toEqual(['1/1', '1/22', '1/51', '1/44', '1/40', '1/40', '1/40', '1/40', '1/40', '1/40', '1/40', '1/8*'])
     const keys = keyStore.get('AA:BB:CC:DD:EE:FF')
     expect(keys.authId).toMatch(/^[0-9A-F]{32}$/)

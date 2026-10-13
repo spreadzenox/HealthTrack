@@ -247,7 +247,7 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
           </li>
         ))}
       </ol>
-      {!plan.current && <p className="watch-setup-text">Montre prête. Prochaine version : l’authentification, puis la synchronisation de vos données.</p>}
+      {!plan.current && <p className="watch-setup-text">Montre prête : touchez « Se connecter à la montre » ci-dessous pour lire vos mesures.</p>}
       {message && (
         <p className="my-device-message" role="status">
           {message}

@@ -26,7 +26,7 @@ describe('WatchConnect', () => {
     expect(await screen.findByText('Montre appairée à HealthTrack')).toBeTruthy()
     expect(connect.mock.calls[0][0].secrets.v1).toBe(hex16(1).replace(/ /g, ''))
     expect(connect.mock.calls[0][0].rebind).toBe(false)
-    expect(screen.getByRole('button', { name: 'Se reconnecter' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Synchroniser la montre' })).toBeTruthy()
   })
 
   it('téléchargement impossible → texte collé accepté ; texte invalide refusé', async () => {

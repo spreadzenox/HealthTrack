@@ -1,6 +1,6 @@
 /**
- * « Connexion à la montre » (carte « Montre Huawei en direct », chantier D3 étape c) : HealthTrack
- * s'authentifie auprès de la montre (HiChain) et garde la clé sur le téléphone. Au premier appairage,
+ * « Connexion à la montre » (carte « Montre Huawei en direct », chantier D3 étapes c et d) : HealthTrack
+ * s'authentifie auprès de la montre (HiChain), garde la clé sur le téléphone, puis lit les mesures. Au premier appairage,
  * 3 constantes publiques (huawei-lpv2, MIT) sont nécessaires : téléchargées ou collées d'un geste,
  * gardées en local, jamais dans le code de l'app. Logique dans src/devices/huawei/pairing.js.
  */
@@ -99,7 +99,8 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
       <p id="watch-connect-title" className="watch-diag-watch">Connexion à la montre</p>
       <p className="my-devices-intro">
         Une fois la montre appairée, HealthTrack s’y connecte seule : elle obtient une clé que la montre ne donne qu’à une app à la fois,
-        et la garde <strong>sur ce téléphone uniquement</strong>.
+        et la garde <strong>sur ce téléphone uniquement</strong>. Chaque connexion lit ensuite les nouvelles mesures (pas, cœur, SpO₂,
+        sommeil).
       </p>
 
       {!secrets && (
@@ -130,7 +131,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
 
       <div className="my-device-actions">
         <button type="button" className="btn btn-primary connector-btn" onClick={() => start(false)} disabled={running}>
-          {running ? 'Connexion…' : code === 'connected' ? 'Se reconnecter' : 'Se connecter à la montre'}
+          {running ? 'Connexion…' : code === 'connected' ? 'Synchroniser la montre' : 'Se connecter à la montre'}
         </button>
         {(code === 'key_rejected' || code === 'pin_failed' || code === 'connected') && !running && (
           <button type="button" className="btn btn-secondary connector-btn" onClick={() => start(true)} disabled={!secrets}>
