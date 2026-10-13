@@ -4,7 +4,8 @@
 > de code (décision du propriétaire : HealthTrack ne passe pas sous AGPL). Le code de HealthTrack
 > (`app/src/devices/huawei/`) est écrit **à partir de ce document**, pas à partir des sources ci-dessous.
 > Chaque fait porte son niveau de confiance : ✅ vérifié par un test / une trame de référence, 📖 lu dans une source,
-> ❓ supposé, à confirmer par le journal de diagnostic de la GT 6 Pro du propriétaire.
+> ❓ supposé, à confirmer par le journal de diagnostic de la GT 6 Pro du propriétaire, 🩺 **confirmé par le journal de
+> la vraie GT 6 Pro du propriétaire** (`journal/diagnostics/`).
 
 ## Sources
 
@@ -83,8 +84,14 @@ Demande : étiquettes 1, 2, 3, 4 vides (✅ `linkParamsRequest`). Réponse :
 | 9 | état de liaison |
 | 0x0C | méthode de chiffrement (1 = GCM) |
 
-❓ Valeurs d'une GT 6 Pro : inconnues (aucun journal public). Hypothèse : type 1 ou 3 (HiChain), chiffrement GCM.
-**C'est la première chose que le diagnostic de HealthTrack lit et exporte.**
+🩺 **Valeurs réelles de la GT 6 Pro du propriétaire** (journal `2026-10-13-0904-gt6pro.json`, logiciel app 114) :
+`protocolVersion` 2, `maxFrameSize` 1022, `maxLinkSize` 1011, `authVersion` **1**, `serverNonceLength` 16 (aléa de la
+montre de 16 octets), `deviceSupportType` **4** → `authMode` « hichain3 » (**HiChain 3, chiffrement GCM**),
+`authAlgo` absent, `bondState` **0** (non liée côté lien), `encryptMethod` **absent (null)**, `result` absent.
+Étiquettes supplémentaires renvoyées : 13 = `00`, 15 = `01`, 16 = `00` (rôle à confirmer ; probablement des options de
+lien HarmonyOS 6 — 15 pourrait être un drapeau de capacité). À noter : **le type vaut 4 mais l'étiquette 0x0C
+(méthode de chiffrement) est absente** → c'est le type 4 qui impose GCM, pas l'étiquette 0x0C (voir §6.7, point ouvert
+sur le PIN). C'est la première chose que le diagnostic de HealthTrack lit et exporte.
 
 ## 5. Séquence de connexion (vue d'ensemble)
 
@@ -207,6 +214,74 @@ durée obtenue alors.
 - GT 6 Pro (ATM-B29, logiciel 6.00.165) : même chemin que la GT 5, rien de spécifique à l'authentification [I #5428].
 - Après une mise à jour majeure de la montre, la clé gardée peut être refusée : refaire PIN + liaison [I #6978].
 - La variante PAKE (SPEKE / STS) ne concerne que des Honor [I #6472].
+
+### 6.7 HiChain 3 (authMode 4) et diagnostic du journal GT 6 Pro (13/10)
+
+Relecture du 13/10/2026 (run 11:04 Paris) à partir du **journal de la vraie GT 6 Pro** du propriétaire
+(`journal/diagnostics/2026-10-13-0904-gt6pro.json`, expurgé : ni clé, ni PIN, ni adresse complète ; seules les tailles
+et en-têtes des trames y figurent).
+
+**Déroulé observé, trame par trame** (tout en clair jusqu'à l'échec ; service 1 partout) :
+
+| # | Sens | Taille | Service / cmd | Rôle (§5–6) | Résultat |
+|---|---|---|---|---|---|
+| 1 | → | 16 | 1/0x01 | demande des paramètres du lien | ok |
+| 2 | ← | 58 | 1/0x01 | paramètres du lien (→ §4, hichain3) | ok |
+| 3 | → | 10 | 1/0x16 | demande d'état de l'appareil | ok |
+| 4 | ← | 11 | 1/0x16 | état = 1 (continuer) | ok |
+| 5 | → | 65 | 1/0x33 | négociation de sécurité (mode 4) | ok |
+| 6 | ← | 137 | 1/0x33 | réponse : HiChain accepté | ok |
+| 7 | → | 10 | 1/0x2C | demande du PIN | ok |
+| 8 | ← | 108 | 1/0x2C | PIN chiffré + IV (déchiffré : 64 octets) | ok |
+| 9 | → | 695 | 1/0x28 | **liaison, message de début** (§6.2) | envoyé |
+| 10 | ← | 835 | 1/0x28 | réponse de la montre | **illisible côté HealthTrack** |
+
+🩺 **Ce que le journal établit** : la montre parle bien **HiChain 3** (`deviceSupportType` 4, GCM), **authVersion 1**,
+`serverNonceLength` 16. La négociation (0x33) réussit, le PIN (0x2C) est reçu. L'appairage échoue au **traitement de
+la réponse 0x28 reçue (835 octets)** après l'envoi du message de début (695 octets) : HealthTrack n'a pas su décoder
+cette réponse (« Réponse HiChain illisible »), **sans code de résultat 0x7F** (d'où le « code ? »).
+
+**Rôle des frames d'authentification** (consolidé, §6.1–6.2) :
+- **1/0x01** paramètres du lien : annonce `authMode`, `authVersion`, l'aléa de la montre, la taille des trames.
+- **1/0x16** état de l'appareil : la montre dit si on peut poursuivre (étiquette 1 = 0 ou 1).
+- **1/0x33** négociation de sécurité : le téléphone propose le mode (4 pour hichain3) et son identifiant ; la montre
+  confirme le schéma.
+- **1/0x2C** PIN : au premier appairage, la montre renvoie un PIN chiffré (clé = constante « digest secret », §6.3).
+- **1/0x28** HiChain proprement dit : suite de messages JSON (début → jeton → échange → confirmation), chacun avec
+  étiquette 1 = JSON, 2 = code d'opération, 3 = identifiant de requête (§6.2).
+
+**Pourquoi la réponse 0x28 est-elle illisible ? (diagnostic)** — Ce qu'on peut écarter avec le journal seul :
+- **Pas un découpage en tranches** : 835 < `maxLinkSize` (1011), la réponse tient dans une trame entière (en-tête
+  « 1/0x28 », pas de tranche). Le réassembleur n'est pas en cause.
+- **Pas un corps chiffré** : les messages 0x28 sont en clair (pas d'étiquette 0x7C) ; ce n'est pas un problème de clé
+  de trame (la clé de trame n'existe qu'après l'authentification).
+- **Pas un code d'erreur 0x7F** : il n'y en avait pas (« code ? »), donc la montre n'a pas répondu « refusé N ».
+
+Hypothèses restantes, par ordre de vraisemblance :
+1. 📖❓ **Format « New Auth Protocol » (HiChain 3) plus riche que l'ISO** que HealthTrack implémente (§6.2). Une réponse
+   de début ISO (isoSalt 16 + peerAuthId + peerUserType + token 32, en JSON hexadécimal) pèse ~250–350 octets ; **835
+   octets, c'est beaucoup plus**. HiChain 3 peut transporter en plus du matériel signé (certificat / clé publique de la
+   montre, signature), ce qui gonflerait la réponse et changerait sa structure (étiquette 1 pas forcément du JSON, ou
+   JSON avec d'autres champs). C'est l'hypothèse la plus probable vu la taille.
+2. ❓ **Étiquette 1 présente mais pas du JSON attendu** (autre sérialisation, préfixe binaire, ou JSON tronqué par un
+   champ non prévu). L'analyseur amélioré (ci-dessous) dira lequel.
+3. ❓ **Étiquette 1 absente**, l'information étant portée par d'autres étiquettes propres à HiChain 3.
+
+**Point ouvert — déchiffrement du PIN en type 4 sans étiquette 0x0C.** La montre est type 4 (GCM) mais n'a pas renvoyé
+l'étiquette 0x0C (`encryptMethod` null). Aujourd'hui `decryptPin` choisit GCM **uniquement** si `encryptMethod === 1`,
+donc il a déchiffré le PIN en **CBC** et obtenu 64 octets « valides » (padding PKCS#7 accepté) — mais c'est peut-être du
+bruit. Le chiffrement des trames (§6.5), lui, utilise déjà GCM « si `encryptMethod === 1` **ou** type 4 ». Il faut
+sans doute aligner le PIN sur la même règle (GCM dès le type 4). **Non corrigé à l'aveugle** : la correction ne peut pas
+être validée sans la montre et ne change pas l'échec actuel (qui est en aval, au décodage de la réponse de début). À
+trancher au prochain journal, qui dira si le PIN est cohérent (jeton de la montre reconnu).
+
+**Ce que le prochain journal apportera** (analyseur amélioré, §9 étape a bis) : chaque réponse 0x28 est désormais
+**analysée sans secret** et consignée dans le journal exporté, sous `report.hichain` : classification
+(`json_ok` / `json_unparsable` / `no_payload` / `result_error` / `final` / `empty`), `message` (code hexadécimal),
+`errorCode`, `resultCode`, `type`, liste des étiquettes et de leur taille, **noms** des champs JSON (`payloadKeys`,
+jamais leurs valeurs) et, si l'étiquette 1 n'est pas du JSON, ses **premiers octets** en hexadécimal. Pour la trame de
+835 octets, cela dira immédiatement si c'est le cas 1, 2 ou 3 ci-dessus. L'écran nomme aussi l'étape et la raison
+exacte (« l'étiquette 1 (835 octets, débute par …) n'est pas du JSON »).
 
 ## 7. Données santé utiles (étape d)
 
@@ -387,6 +462,7 @@ une heure de recouvrement (7 jours la première fois) ; les doublons sont écart
 | Étape | État | Code |
 |---|---|---|
 | (a) Diagnostic : trame, TLV, CRC, tranches, paramètres du lien, transports RFCOMM + BLE, export du journal | ✅ run 12/10 22:30 | `src/devices/huawei/protocol.js`, `transports.js`, `diagnostic.js`, `BtClassicPlugin.java`, `components/WatchDiagnostic.jsx` |
+| (a bis) Analyse sûre des réponses 0x28 (`inspectHichainReply`) consignée dans le journal (`report.hichain`) ; étape et code précis nommés à l'écran ; déclenché par le journal réel GT 6 Pro (§6.7) | ✅ run 13/10 11:04 | `hichain.js` (`inspectHichainReply`), `pairing.js`, `testing/fakeWatch.js` (`garbleHichain`) |
 | (b) Détection et libération (boîte de désinstallation, réglages de l'app, guide de réinitialisation, plan B compte Huawei) + assistant d'appairage Android | ✅ run 13/10 00:30 | `src/devices/huawei/setup.js`, `components/WatchSetup.jsx`, `AppManagerPlugin.java`, `BtClassicPlugin.java` (`discover`, `pair`, `openBluetoothSettings`) |
 | (c) Authentification HiChain (§6) : état, négociation, PIN, liaison, authentification, clé des trames, chiffrement GCM / CBC ; clés gardées en local ; constantes du PIN téléchargées sur le téléphone | ✅ run 13/10 02:30 (à valider sur la montre) | `src/devices/huawei/crypto.js`, `session.js`, `hichain.js`, `pairing.js`, `components/WatchConnect.jsx` |
 | (d) Synchronisation (§7.1–7.4, 7.7) : heure, sommeil simple, minutes (pas, calories, distance, FC, SpO₂, FC repos), totaux → IndexedDB | ✅ run 13/10 04:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `services/watchSync.js` |

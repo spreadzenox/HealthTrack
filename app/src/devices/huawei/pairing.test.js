@@ -87,6 +87,19 @@ describe('connexion authentifiée à une montre Huawei (HiChain)', () => {
     expect(mute.steps.find((s) => s.id === 'negotiate').detail).toMatch(/Pas de réponse/)
   })
 
+  it('réponse 0x28 illisible (cas GT 6 Pro) : le journal nomme l’étape, la classe et la structure, sans secret', async () => {
+    const watch = createFakeWatch({ deviceSupportType: 4, encryptMethod: 1, authVersion: 1, garbleHichain: { size: 835 } })
+    const report = await run(watch, { keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS })
+    expect(report.outcome.code).toBe('failed')
+    const bind = report.steps.find((s) => s.id === 'bind')
+    expect(bind.status).toBe('fail')
+    expect(bind.detail).toMatch(/illisible.*835 octets/)
+    // l'analyse structurée est dans le journal exporté, pour le run suivant
+    expect(report.hichain).toHaveLength(1)
+    expect(report.hichain[0]).toMatchObject({ operation: 'bind', class: 'json_unparsable', jsonLength: 835 })
+    expect(report.hichain[0].head).toMatch(/^ff ff/)
+  })
+
   it('montre appairée à Android retrouvée par son nom', async () => {
     const classic = { listBonded: async () => ({ devices: [{ name: 'Galaxy Buds', deviceId: '1' }, { name: 'HUAWEI WATCH GT 6 Pro-1A2', deviceId: '2' }] }) }
     expect((await findBondedWatch(classic)).deviceId).toBe('2')

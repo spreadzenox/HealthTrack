@@ -96,8 +96,17 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       clés en local (`healthtrack_watch_keys`) ; encadré « Connexion à la montre » (`WatchConnect.jsx`) ; constantes du
       PIN **téléchargées sur le téléphone** (huawei-lpv2, MIT) ou collées, jamais dans le dépôt ; `groupId` calculé
       (SHA-256 de « health_group_name|com.huawei.health ») ; fausse montre de test (`testing/fakeWatch.js`)
-- [ ] **(c bis) Valider sur la vraie GT 6 Pro** (journal `healthtrack-connexion-montre-….json`) : format du PIN, message
-      final, valeurs réelles du type de prise en charge / chiffrement ; reprise automatique après « jeton différent »
+- [x] **(a bis) Analyse sûre des réponses 0x28** (run 13/10 11:04) : déclenché par le **1er journal de la vraie GT 6 Pro**
+      (`diagnostics/2026-10-13-0904-gt6pro.json`). `inspectHichainReply` (hichain.js) + capture dans `report.hichain`
+      (classification, `message`, `errorCode`, `resultCode`, `type`, tailles d'étiquettes, **noms** des champs JSON, 1ers
+      octets si non-JSON — jamais de valeur) ; l'écran nomme l'étape et le code exacts. Spec `protocoles/huawei.md` §6.7
+- [ ] **(c bis) Valider sur la vraie GT 6 Pro** (journal `healthtrack-connexion-montre-….json`) :
+      🩺 **Journal du 13/10 09:04 reçu** → HiChain 3 (type 4, GCM, authVersion 1), appairage bloqué au **décodage de la
+      réponse 0x28 (835 octets)** après l'envoi du message de début (695 octets), **sans code 0x7F** (§6.7). Le prochain
+      journal portera `report.hichain` : il dira si l'étiquette 1 est du JSON, ses champs ou ses 1ers octets → on saura si
+      HiChain 3 (« New Auth Protocol ») a un format de réponse plus riche que l'ISO implémenté (hypothèse n°1, taille).
+      **Point ouvert** : type 4 sans étiquette 0x0C → le PIN est aujourd'hui déchiffré en CBC ; sans doute l'aligner sur
+      GCM (comme les trames, §6.5), à trancher au prochain journal. Reste aussi : reprise auto après « jeton différent »
 - [x] **(d) Synchronisation, version simple** (run 13/10 04:30) : spec §7 (heure 1/5, sommeil 7/0x0C-0x0D, minutes
       7/0x0A-0x0B avec masques de champs, totaux 7/0x03, séances 0x17, fichiers 0x2C) ; `sync.js` + `services/watchSync.js` :
       pas et calories par heure, FC par 10 min, SpO₂, FC repos par jour, sommeil léger / profond → IndexedDB (source
@@ -312,12 +321,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⌚ **Lire le journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`) : mode d'authentification, retour
-   sur l'assistant « Libérer et appairer ».
-2. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager) — prochain
-   run hors idées. (d) livré le 13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le
-   13/10 10:30 ; reste de (d bis) : stress, VFC de journée, échantillons de séance (après d quater).
-3. ⌚ D3 (c bis) — lire le journal de connexion du propriétaire dès qu'il arrive et corriger l'authentification.
+1. ⌚ **D3 (c bis) — HiChain 3 de la GT 6 Pro, PRIORITÉ** : le 1er journal réel (13/10 09:04) montre l'appairage bloqué
+   au décodage de la réponse 0x28 (835 octets). Analyseur livré le 13/10 11:04 (a bis) → **demander au propriétaire de
+   relancer « Se connecter à la montre » et de renvoyer le journal** : `report.hichain` dira la structure de la réponse
+   (JSON ? champs ? 1ers octets) et donc si HiChain 3 a un format plus riche que l'ISO (§6.7). Puis corriger : format de
+   la réponse de début, et PIN GCM vs CBC en type 4.
+2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`).
+3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
+   13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
+   (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**
 4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
    Worker, graphiques différés ; budget anti-régression.
 5. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /

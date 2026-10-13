@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-13",
+  "kind": "amélioration",
+  "title": "Montre Huawei : « Se connecter » dit précisément où ça bloque",
+  "items": [
+    "Quand l’appairage de la montre s’arrête, l’écran « Se connecter à la montre » nomme maintenant l’étape et la raison exactes au lieu d’un simple « Réponse illisible ».",
+    "Le journal que vous enregistrez (ou copiez) contient de nouvelles informations techniques sur l’échange avec la montre — toujours sans clé, sans PIN ni adresse complète : elles me servent à comprendre ce que votre GT 6 Pro attend et à faire avancer la connexion directe.",
+    "Rien n’est modifié sur la montre : refaire « Se connecter à la montre » puis « Enregistrer le journal » suffit pour m’envoyer ces détails."
+  ]
+}
