@@ -83,6 +83,32 @@ describe('HiChain — messages et calculs (§6)', () => {
       expect(inspectHichainReply([]).classification).toBe('empty')
     })
 
+    it('réponse « New Auth Protocol » (préfixe binaire + JSON intégré) → structure nomme les champs, jamais les valeurs (§6.8)', () => {
+      // GT 6 Pro : étiquette 1 non directement JSON, mais un JSON SPEKE noyé après un préfixe binaire.
+      const payload = { challenge: 'A1B2C3', salt: 'D4E5F6', epk: '0011223344556677' }
+      const bytes = [0x01, 0x00, 0x00, 0x03, 0x35, ...utf8(JSON.stringify({ message: 32769, payload }))]
+      const i = inspectHichainReply([{ tag: 1, value: bytes }, { tag: 4, value: [0] }])
+      expect(i.classification).toBe('json_unparsable')
+      expect(i.structure.embeddedJson.payloadKeys).toEqual(['challenge', 'epk', 'salt'])
+      expect(i.structure.embeddedJson.keys).toEqual(['message', 'payload'])
+      expect(i.structure.embeddedJson.message).toBe('0x8001')
+      expect(i.structure.embeddedJson.offset).toBe(5)
+      // aucune valeur de champ ne doit fuir dans l'analyse
+      const dump = JSON.stringify(i)
+      for (const v of ['A1B2C3', 'D4E5F6', '0011223344556677']) expect(dump).not.toContain(v)
+      // parseHichainReply surface les champs repérés dans son message d'erreur
+      expect(() => parseHichainReply([{ tag: 1, value: bytes }, { tag: 4, value: [0] }])).toThrow(/champs repérés : challenge, epk, salt/)
+    })
+
+    it('charge utile portée par une autre étiquette que la 1 → no_payload avec structure sondée', () => {
+      const payload = { challenge: 'AA', epk: 'BB' }
+      const inner = Array.from(utf8(JSON.stringify({ message: 32769, payload })))
+      const i = inspectHichainReply([{ tag: 2, value: inner }, { tag: 4, value: [0] }])
+      expect(i.classification).toBe('no_payload')
+      expect(i.structure.embeddedJson.payloadKeys).toEqual(['challenge', 'epk'])
+      expect(JSON.stringify(i)).not.toContain('AA')
+    })
+
     it('errorCode JSON ≠ 0 → json_error, et parseHichainReply lève « erreur N » avec l’analyse attachée', () => {
       const i = inspectHichainReply(jsonReply({ message: 0x8001, payload: { errorCode: 2001 } }))
       expect(i.classification).toBe('json_error')

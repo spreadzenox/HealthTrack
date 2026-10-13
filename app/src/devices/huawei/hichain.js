@@ -18,7 +18,7 @@ import {
   sha256,
   utf8,
 } from './crypto'
-import { decodeTlvs, encodeTlvs, resultCode, RESULT_SUCCESS, toHex, TAG_RESULT } from './protocol'
+import { decodeTlvs, encodeTlvs, resultCode, RESULT_SUCCESS, toHex, tryDecodeTlvs, TAG_RESULT } from './protocol'
 
 export const CMD = { DEVICE_STATUS: 0x16, SECURITY_NEGOTIATION: 0x33, PIN_CODE: 0x2c, HICHAIN: 0x28 }
 export const OP_BIND = 1
@@ -125,6 +125,64 @@ export function hichainTlvs(json, operation, requestId) {
 const describeTags = (tags) => (tags.length ? tags.map((t) => `${t.tag}/${t.size}`).join(', ') : 'aucune')
 
 /**
+ * Cherche un objet JSON **intégré** dans des octets qui ne sont pas directement du JSON (préfixe
+ * binaire, en-tête, ou JSON noyé dans une autre sérialisation). Rend `{ offset, json }` au premier
+ * objet accolades équilibrées analysable, sinon null. Sert uniquement au diagnostic : l'appelant
+ * n'en extrait que les **noms** de champs, jamais les valeurs.
+ */
+function findEmbeddedJson(bytes) {
+  const text = new TextDecoder('utf-8', { fatal: false }).decode(Uint8Array.from(bytes || []))
+  for (let start = text.indexOf('{'); start !== -1; start = text.indexOf('{', start + 1)) {
+    let depth = 0
+    let inStr = false
+    let esc = false
+    for (let i = start; i < text.length; i++) {
+      const c = text[i]
+      if (inStr) {
+        if (esc) esc = false
+        else if (c === '\\') esc = true
+        else if (c === '"') inStr = false
+      } else if (c === '"') inStr = true
+      else if (c === '{') depth++
+      else if (c === '}' && --depth === 0) {
+        try {
+          const json = JSON.parse(text.slice(start, i + 1))
+          if (json && typeof json === 'object') return { offset: start, json }
+        } catch {
+          /* pas du JSON à cet endroit : on cherche l'accolade suivante */
+        }
+        break
+      }
+    }
+  }
+  return null
+}
+
+/**
+ * Analyse **structurelle** (jamais de valeur) d'octets qui ne sont pas directement du JSON, pour que
+ * le journal du propriétaire dise de quoi est faite une réponse HiChain 3 (« New Auth Protocol »,
+ * §6.8) : noms des champs d'un éventuel JSON intégré, et liste d'étiquettes si les octets sont des
+ * TLV imbriqués. Rend null si rien de reconnaissable.
+ */
+function probeStructure(bytes) {
+  if (!bytes || !bytes.length) return null
+  const out = {}
+  const emb = findEmbeddedJson(bytes)
+  if (emb) {
+    const payload = emb.json?.payload && typeof emb.json.payload === 'object' ? emb.json.payload : null
+    out.embeddedJson = {
+      offset: emb.offset,
+      message: typeof emb.json?.message === 'number' ? `0x${(emb.json.message >>> 0).toString(16)}` : null,
+      keys: Object.keys(emb.json).sort(),
+      payloadKeys: payload ? Object.keys(payload).sort() : null,
+    }
+  }
+  const tlv = tryDecodeTlvs(bytes)
+  if (tlv.length > 1) out.tlv = tlv.map((t) => ({ tag: t.tag, size: t.value.length }))
+  return Object.keys(out).length ? out : null
+}
+
+/**
  * Analyse **sans secret** d'une réponse 1/0x28, pour le journal de diagnostic et pour nommer l'étape
  * et le code précis quand la montre répond autrement que prévu (§6.2). Ne rend jamais de valeur
  * sensible (isoSalt, token, peerAuthId, clé) : seulement les NOMS des champs et les codes de
@@ -151,16 +209,26 @@ export function inspectHichainReply(tlvs = []) {
     messageHex: null,
     errorCode: null,
     head: null,
+    structure: null,
     classification: 'unknown',
   }
   if (!list.length) return { ...base, classification: 'empty' }
   if (type !== 0) return { ...base, classification: 'final' }
-  if (!tag1 || !tag1.length) return { ...base, classification: rc !== null && rc !== RESULT_SUCCESS ? 'result_error' : 'no_payload' }
+  if (!tag1 || !tag1.length) {
+    // Étiquette 1 absente : la charge utile (HiChain 3) peut être portée par une autre étiquette →
+    // on sonde la première étiquette non triviale pour nommer ses champs dans le journal.
+    const other = list.find((t) => t.tag !== 4 && t.tag !== TAG_RESULT && t.value?.length)
+    return {
+      ...base,
+      structure: other ? probeStructure(other.value) : null,
+      classification: rc !== null && rc !== RESULT_SUCCESS ? 'result_error' : 'no_payload',
+    }
+  }
   let json
   try {
     json = JSON.parse(new TextDecoder().decode(tag1))
   } catch {
-    return { ...base, head: toHex(tag1.slice(0, 12)), classification: 'json_unparsable' }
+    return { ...base, head: toHex(tag1.slice(0, 32)), structure: probeStructure(tag1), classification: 'json_unparsable' }
   }
   const payload = json?.payload && typeof json.payload === 'object' ? json.payload : null
   const message = typeof json?.message === 'number' ? json.message : null
@@ -195,10 +263,14 @@ export function parseHichainReply(tlvs) {
   if (inspection.classification === 'result_error') fail(`La montre a répondu par une erreur (code ${inspection.resultCode})`, 'watch_error')
   if (inspection.classification === 'no_payload') fail(`Réponse HiChain sans charge utile (étiquettes reçues : ${describeTags(inspection.tags)})`)
   if (inspection.classification === 'json_unparsable') {
+    const emb = inspection.structure?.embeddedJson
+    const hint = emb?.payloadKeys?.length
+      ? ` · champs repérés : ${emb.payloadKeys.join(', ')} (probable « New Auth Protocol » HiChain 3, §6.8)`
+      : ''
     fail(
       `Réponse HiChain illisible : l'étiquette 1 (${inspection.jsonLength} octets, débute par ${inspection.head}) n'est pas du JSON${
         inspection.resultCode !== null ? ` · code ${inspection.resultCode}` : ''
-      }`,
+      }${hint}`,
     )
   }
   if (inspection.errorCode) fail(`La montre a refusé l'étape HiChain (erreur ${inspection.errorCode})`, 'watch_error')

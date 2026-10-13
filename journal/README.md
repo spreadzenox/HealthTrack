@@ -21,9 +21,13 @@ c'est la première vraie donnée.** Elle dit que la montre parle **HiChain 3** (
 premières étapes passent (lien, négociation, PIN reçu), et que ça **bloque juste après, quand la montre répond au
 message d'appairage** : HealthTrack ne sait pas encore lire cette réponse. Ce run (11:04) a donc renforcé l'outil de
 diagnostic pour **capter exactement ce que la montre renvoie** (sans aucune donnée sensible) ; le prochain journal que
-vous enverrez me dira comment décoder cette réponse. **Ce qu'il me faut au prochain run : relancer « Se connecter à la
-montre », puis « Enregistrer le journal » et me le transmettre.** Reste ensuite : débloquer l'appairage, puis synchro
-app fermée, stress, VFC de journée.
+vous enverrez me dira comment décoder cette réponse. Le run de 14:30 a creusé le sujet et **renforcé encore l'outil** :
+quand la montre répond dans son nouveau format, l'app repère et nomme désormais les **champs** de sa réponse (sans
+jamais leurs valeurs) — c'est exactement ce qu'il me faut pour écrire le décodage. Il a aussi confirmé, en étudiant
+le protocole à fond, que **même Gadgetbridge ne sait pas encore connecter la GT 6 Pro** en direct : c'est un travail
+de frontière, pas un retard de notre côté. **Ce qu'il me faut au prochain run : relancer « Se connecter à la
+montre », puis « Enregistrer le journal » et me le transmettre.** Reste ensuite : écrire le décodage du nouveau format,
+puis synchro app fermée, stress, VFC de journée.
 Le run « idées » de 08:30 a tranché **comment relire la montre app fermée** (voir « Meilleures idées »).
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
@@ -100,6 +104,11 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   désormais l'étape et la raison exactes, et le journal que vous enregistrez contient de nouveaux détails techniques
   (toujours sans clé, sans PIN ni adresse) pour que je comprenne ce que votre GT 6 Pro attend. **Rien n'est modifié sur
   la montre.**
+- **Montre Huawei — « Se connecter » repère les champs de la réponse** (run 13/10 14:30) : quand votre montre répond
+  dans son nouveau format d'appairage, l'écran affiche les **champs repérés** dans sa réponse (« champs repérés :
+  challenge, epk, salt »), et le journal en garde la structure complète (noms des champs seulement, jamais les valeurs).
+  C'est précisément ce qu'il me faut pour écrire le décodage de votre montre au prochain run. **Rien n'est modifié sur
+  la montre** : relancer « Se connecter à la montre » puis « Enregistrer le journal » suffit.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -107,6 +116,15 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **« New Auth Protocol » HiChain 3 étudié à fond (run 13/10 14:30)** : recherche dans le code libre (lecture seule,
+  faits seulement, aucun code copié) + doc OpenHarmony. Trois enseignements : (1) 🩺 **même Gadgetbridge ne décode pas
+  encore la GT 6 Pro** (sa couche moderne n'est activée que pour des Honor ; les Huawei GT 6 / GT 7 retombent sur
+  l'ancien schéma, comme nous) ; (2) la réponse de 835 octets est au format « New Auth » (SPEKE / clés publiques et
+  signatures Ed25519), d'où sa taille ; (3) le **PIN** se déchiffre bien en CBC pour cette montre (ça dépend d'un
+  réglage de lien, pas du type 4) — l'ancienne hypothèse « passer le PIN en GCM » était **fausse**, rien à changer.
+  Tout est consigné dans `protocoles/huawei.md` §6.8 (algorithmes, codes, champs) : la base pour écrire le décodage dès
+  que le prochain journal donnera les noms de champs réels. L'instrument de diagnostic a été renforcé pour les révéler
+  (champ `structure`, en-tête 32 octets, champs nommés à l'écran), avec une fausse montre « New Auth » pour les tests.
 - **1er journal réel de la GT 6 Pro analysé (run 13/10 11:04)** : le journal du 13/10 09:04 est enregistré dans le dépôt
   (`diagnostics/2026-10-13-0904-gt6pro.json`). Il établit **HiChain 3** (type 4, chiffrement GCM, authVersion 1) et un
   blocage **au décodage de la réponse d'appairage (trame de 835 octets)**, sans code d'erreur. Nouvel analyseur
@@ -261,9 +279,12 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
 **Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
-(b) libération + appairage, (c) authentification, (d) lecture des mesures et synchro automatique à l'ouverture livrées ;
-prochain run : **phases du sommeil, VFC / stress et séances**, puis synchro app fermée (plan « appareil compagnon » + Java) (et corrections d'après votre journal s'il arrive). Ensuite : performance des courbes, restes du
-nettoyage, humeur par le visage / la voix.
+(b) libération + appairage, (c) authentification ISO, (d) lecture des mesures et synchro automatique livrées. Blocage
+réel : la GT 6 Pro répond à l'appairage dans son **nouveau format (« New Auth Protocol »)** que l'ancien schéma ne lit
+pas. **Dès que vous renvoyez un journal** (relancer « Se connecter à la montre » → « Enregistrer le journal »), l'app
+me donnera les **noms des champs** de cette réponse ; le run suivant écrira alors le **décodage du nouveau format**
+(crypto X25519 / Ed25519 / AES-GCM, d'après la spec §6.8). Puis synchro app fermée, stress / VFC de journée. Ensuite :
+performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -286,6 +307,7 @@ nettoyage, humeur par le visage / la voix.
 | 13/10 08:30 — [Idées : montre app fermée, humeur réaliste, une réponse par jour](runs/2026-10-13-0830-idees-montre-fond-une-reponse.md) | 💡 | 8 idées (I49–I56), journal seul |
 | 13/10 10:30 — [Montre : sommeil détaillé, VFC, séances](runs/2026-10-13-1030-montre-sommeil-seances.md) | ⌚🏗️ | PR #134 fusionnée → v114 |
 | 13/10 11:04 — [Montre : 1er journal réel GT 6 Pro + analyseur HiChain](runs/2026-10-13-1104-montre-hichain-journal-reel.md) | ⌚🏗️ | PR #136 fusionnée → v115 |
+| 13/10 14:30 — [Montre : champs de la réponse HiChain 3 + spec New Auth](runs/2026-10-13-1250-montre-hichain3-champs.md) | ⌚🏗️ | PR #NN |
 
 ---
 
