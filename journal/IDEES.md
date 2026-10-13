@@ -9,6 +9,209 @@
 
 ---
 
+## Run du 13/10/2026 08:30 (Paris) — montre app fermée, humeur réaliste, une seule réponse par jour
+
+Question du jour, côté utilisateur : *« ma montre est maintenant lue par HealthTrack quand j'ouvre l'app ; comment
+faire pour qu'elle le soit **sans que j'y pense**, sans vider ma batterie, et comment l'app peut-elle me donner **une
+seule réponse claire par jour** au lieu de dix cartes ? »* Une bonne part sur la montre (priorité absolue), puis
+visage / voix (D4) et la simplification (consigne : consolider plutôt qu'ajouter des écrans).
+
+### Ce que veulent les gens (signaux du jour)
+
+1. **Une réponse par jour, des tendances plutôt qu'une note par nuit** : l'« orthosomnie » (anxiété causée par le
+   score de sommeil) est maintenant un sujet clinique ; les cliniciens conseillent de regarder des **tendances
+   hebdomadaires** [T GMA 07/2025]. Oura agrège 31 jours en un « stress cumulé » de fond [T 11/2025] ; Samsung
+   n'affiche des conseils d'Energy Score **que si le score est bas** [T Samsung 09/2025] ; Bevel plaît parce qu'il
+   ramène tout à « es-tu prêt ? » [T 05/2026].
+2. **Les « coachs IA » déçoivent quand ils inventent** : Whoop Coach — résumé du jour devenu quasi identique chaque
+   jour, ignorant le contexte donné ; **caféine, alcool et dénivelé inventés**, maladie supposée à tort ; apprécié
+   pour sa mémoire (suivi après une maladie) [V forum Whoop ; V Gear Patrol 06/07/2026]. Garmin Active Intelligence
+   (abonnement Connect+) jugée « générique » [T TechRadar 2025]. → **Les chiffres viennent toujours du moteur, un
+   texte au plus les reformule.**
+3. **Bearable** exige ≥ 3 jours avec et 3 sans un facteur (30 j conseillés) et respecte l'ordre horaire (la caféine
+   du soir n'explique pas le symptôme du matin) [V bearable.app] — même logique que D5 / I46.
+4. **Sortir de Huawei Health** : Gadgetbridge et Huawei Health ne cohabitent pas (la clé est renouvelée à chaque
+   réappairage par l'autre app, GT 6 sur Galaxy A34 One UI 8, issue GB #6010, 04/2026) [V] ; VFC souvent absente
+   via Gadgetbridge (GT 5, #6461, 07/2026 ; Watch Fit 3, #6271) [V].
+
+*Reddit toujours inaccessible directement (old.reddit bloqué, miroirs non indexés) : signaux pris via la presse et
+les forums cités ; LinkedIn non exploité.*
+
+### Faits clés (vérifiés aujourd'hui)
+
+**Montre — synchro app fermée (D3 d quater)**
+- **Companion Device Manager (CDM) et Bluetooth classique** [V doc Android, màj 01/10/2026] :
+  `startObservingDevicePresence` prend en charge le **Bluetooth classique** — l'événement est la **connexion /
+  déconnexion** de la montre (pas une détection de portée) ; l'app **n'a pas besoin de tourner** pour le recevoir.
+  Android 16 : `ObservingDevicePresenceRequest.setAssociationId` + `CompanionDeviceService.onDevicePresenceEvent`
+  (`EVENT_BT_CONNECTED`) ; le système lie alors le service, ce qui **remonte la priorité du processus**. Permission
+  `REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE`.
+- Une fois associée, l'app peut demander `REQUEST_COMPANION_RUN_IN_BACKGROUND` et
+  `REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND` : le CDM est une **exemption officielle** à
+  l'interdiction de démarrer un service de premier plan depuis l'arrière-plan [V].
+- **Association d'une montre déjà appairée** : possible avec un filtre limité à son adresse et « appareil unique »,
+  **une seule confirmation** de l'utilisateur (comportement observé chez Gadgetbridge, qui recommande d'ailleurs
+  d'activer cette option contre les arrêts du service) [V doc GB].
+- Service de premier plan type `connectedDevice` : `FOREGROUND_SERVICE_CONNECTED_DEVICE` + `BLUETOOTH_CONNECT`
+  accordée (déjà demandée par HealthTrack) [V]. Le type `dataSync` est limité à **6 h / 24 h** depuis Android 15 [V].
+- **`@capacitor/background-runner` est inutilisable** : JS exécuté dans QuickJS, **sans `crypto.subtle`** (donc ni
+  AES-GCM, ni HKDF, ni HMAC) et sans Bluetooth ; ≥ 15 min entre deux exécutions [V README + code natif]. → Porter en
+  **Java** le strict nécessaire de la synchro (trames, AES-GCM `javax.crypto` avec la clé déjà négociée, commandes
+  7/0x0A-0x0D) ; l'appairage HiChain reste en JS au premier plan.
+- **Leçons de reconnexion** (PR GB #6367, ouverte 07/2026) [V] : un socket RFCOMM resté ouvert bloque toute
+  reconnexion ; la montre peut refuser une clé valide **pendant des heures** après une séparation nocturne ; selon un
+  mainteneur, des reconnexions agressives hors de portée peuvent pousser la montre à **réinitialiser l'appairage**.
+  → toujours fermer le socket, essais espacés et plafonnés (déjà le cas dans `watchAutoSync.js`), jamais de boucle.
+- Gadgetbridge relit les montres au **déverrouillage du téléphone** (`USER_PRESENT`) avec un intervalle minimal
+  réglable (#6775, 09/2026) [V] — même logique que notre synchro « à l'ouverture », étendue au déverrouillage.
+- **GT 6 Pro chez Gadgetbridge** [V] : phases du sommeil (TruSleep) depuis 0.87.0 ; stress / VFC / SpO₂ / température
+  « pas sur toutes les montres » ; plantage du parseur de **séances enregistrées automatiquement** sur GT 6 Pro
+  (#5784, 02/2026, corrigé) → nos tests de séances devront couvrir ce cas ; la GT 6 Pro (firmware 6.0.0.188) demande
+  **35 jours de calendrier** (#6356) — sans intérêt santé, à ignorer proprement.
+- **One UI 8** [T] : pour qu'une app tourne en fond, il faut **à la fois** batterie « Sans restriction » **et** « Applis
+  jamais en veille » ; « mettre en veille les applis inutilisées » coupe les tâches après ~3 jours sans usage [V
+  dontkillmyapp]. ❓ La GT 6 Pro garde-t-elle un lien Bluetooth permanent (appels) ? Si oui, l'événement « connectée »
+  ne viendra qu'aux reconnexions → filet WorkManager horaire indispensable.
+
+**Humeur sur l'appareil (D4)**
+- **WebGPU très probablement indisponible sur le Galaxy A56** : la liste de blocage Chromium n'autorise sur Android
+  que les GPU ARM, Qualcomm, Intel (et Imagination sur Android 16) ; le GPU Xclipse (AMD, Samsung) n'y est pas [V
+  source Chromium]. → LiteRT.js tournerait en WASM CPU. **MediaPipe Tasks (web)** passe par **WebGL2**, pas WebGPU :
+  utilisable dans la WebView (fichiers `.wasm` et `.task` embarqués, ~3,6 Mo [E]).
+- **Visage** : `HSEmotion-B0-LiteRT` (8 Mo, Apache-2.0) = **8 classes sans valence** [V] ; la variante
+  `enet_b0_8_va_mtl` donne **valence + éveil**, 16 Mo, **60 ± 32 ms** sur Galaxy Fold 3 CPU, code Apache-2.0 mais
+  **licence des poids non précisée** [V] → à vérifier avant usage ; sinon blendshapes MediaPipe (sourire) seuls.
+- **Le signal est faible au niveau individuel** : MoodCam / FacePsy (25 personnes, 4 semaines, photos de 10 s au
+  déverrouillage) : **AUC 0,58–0,64** pour la valence [V arXiv 2412.12625]. L'étude « sourires » de Google (r = 0,92)
+  est **populationnelle** [T]. Voix spontanée : r valence 0,41 (PRIORI 2018), 61,6 % sur 3 classes (EMOVOME 2024) [T].
+  → afficher des **tendances lissées sur 7 jours**, calibrées par l'auto-déclaration, jamais un score ponctuel.
+- **Caméra en arrière-plan** : service caméra créé en arrière-plan → `SecurityException` (API 34+), seules
+  exceptions : notification, widget, `PendingIntent` d'une app visible… ; `cameraserver` coupe en plus les apps
+  inactives ; **aucun retour fiable** que `appops set … CAMERA allow` contourne cela sur Android 14–16 [V doc ; T
+  AOSP]. → Le « niveau 2 » demandé reste à tester sur l'A56, mais la voie robuste est : service démarré **depuis
+  l'app** ou **depuis une notification** (exemption officielle). Shizuku démarre sans PC (débogage sans fil) mais doit
+  être **relancé à chaque redémarrage** [V].
+- **Voix** : emotion2vec+ (code MIT, poids non précisés, ~90 M paramètres pour « base », pas d'ONNX officiel) [V] ;
+  wav2vec2 « emotion » ONNX (MIT) **anglais seulement** [V] ; audeering valence/éveil = **non commercial** [T] ;
+  **openSMILE exige une licence commerciale** pour un produit [T] → réimplémenter un petit sous-ensemble prosodique ;
+  **pitchy** (hauteur de voix, JS, 0BSD) [V].
+- **Emobot** : essai EmoDTx (98 patients) terminé fin 2025, **toujours aucun résultat publié** [T clinicaltrials.gov].
+
+**IA locale pour expliquer ses données**
+- **Gemini Nano (ML Kit GenAI)** : bêta, **Galaxy A56 absent** de la liste (côté Samsung : S26, Z Fold7/8, Z Flip8),
+  premier plan seulement [V doc 08/10/2026]. MediaPipe LLM Inference mobile → remplacé par **LiteRT-LM** [V].
+  **Gemma 4 E2B** (02/04/2026, **Apache-2.0**, ~1,5 Go en 4 bits) [T] ; aucune mesure de vitesse sur un milieu de
+  gamme. → Possible plus tard via un plugin natif et un téléchargement à la demande, **uniquement pour reformuler**
+  des chiffres calculés par le moteur.
+- **Glucose en continu sans ordonnance** : Lingo écrit dans **Health Connect** (valeurs / 5 min, ~3 h de délai) [T
+  vendeur] ; HealthTrack lit déjà la glycémie Health Connect (C7) → rien à construire, juste à le dire.
+
+### Idées classées (impact × faisabilité) — nouvelles ou fortement précisées
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I49 | **Montre « sans y penser » : présence CDM + synchro Java** — association CDM en un geste (montre déjà appairée), événement « montre connectée » → service `connectedDevice` court qui relit 7/0x0A-0x0D en Java avec la clé déjà négociée, écrit un fichier que le JS importe à l'ouverture ; filet WorkManager horaire ; relecture au déverrouillage | Données de la montre sans ouvrir l'app (D3 d quater) | 5 | 3 | 15 |
+| I50 | **Guide « ne pas tuer HealthTrack » One UI** : un seul écran, 2 interrupteurs (batterie « Sans restriction » + « Applis jamais en veille »), détection de l'état (`isIgnoringBatteryOptimizations`) et rappel si la synchro de fond n'a rien ramené depuis 24 h | Synchro fiable sur Samsung | 4 | 5 | 20 |
+| I51 | **Briefing du jour unique** (précise I47) : un état (« en forme / habituel / à ménager »), 1–2 causes **chiffrées** tirées des écarts à vos habitudes, 1 piste ; texte par gabarits déterministes (jamais un chiffre inventé) ; les cartes actuelles deviennent son détail | Une seule réponse par jour (D1) | 5 | 4 | 20 |
+| I52 | **Mode calme** : un réglage qui remplace les notes par nuit par des **flèches de tendance 7 / 30 jours** ; conseils affichés seulement quand la tendance s'écarte de votre habituel | Anxiété du score (orthosomnie), moins de chiffres | 4 | 5 | 20 |
+| I53 | **Humeur visage, version réaliste** (précise I40) : MediaPipe Face Landmarker web (WebGL2, pas WebGPU sur l'A56) → blendshapes sourire / sourcils pendant 2 s à l'ouverture ; valence par `enet_b0_8_va_mtl` ONNX seulement si la licence des poids le permet ; **tendance 7 j** calibrée par l'auto-déclaration, précision affichée (« AUC ≈ 0,6 dans les études ») | Humeur sans saisie, honnête (D4) | 4 | 4 | 16 |
+| I54 | **Une question du soir, la plus utile** : au lieu d'un formulaire, une seule question choisie là où l'incertitude d'un lien est la plus forte (apprentissage actif) ; réponse en 1 tap depuis la notification | Zéro saisie par défaut (D1) | 4 | 3 | 12 |
+| I55 | **Voix niveau 1 sans modèle** (précise I41) : 15–30 s de dictée → hauteur (pitchy, 0BSD), variabilité, énergie, débit, pauses, comparés à **votre** ligne de base ; audio effacé ; modèle SER (emotion2vec ONNX int8 ~90 Mo) seulement plus tard, après mesure sur l'A56 | Voix comme signal direct (D4) | 4 | 4 | 16 |
+| I56 | **Expliquer ses données avec une IA locale** : Gemma 4 E2B (Apache-2.0) par LiteRT-LM, téléchargé à la demande, qui **reformule** les résultats du moteur et cite les jours ; repli Gemini (clé de l'utilisateur) | Comprendre ses données, hors ligne | 3 | 2 | 6 |
+
+Mises à jour d'idées existantes : **I20 / D3** → (d quater) suit I49 (CDM + Java), `background-runner` écarté ;
+**I40** → remplacé par I53 (pas de WebGPU sur Xclipse, licence des poids à vérifier, tendance 7 j) ; **I41** → I55
+(openSMILE écarté pour licence) ; **I47** → précisé par I51 (gabarits, jamais de chiffres inventés) ; **I24 / I13**
+→ I54 pour la saisie du soir. Le « niveau 2 » caméra (service lancé au déverrouillage) reste demandé par le
+propriétaire : à **tester** sur l'A56 avec l'écran de diagnostic prévu, sans promettre qu'Android le permette.
+
+### Détail et pistes d'implémentation
+
+**I49 — Montre sans y penser.** (1) `CompanionPlugin.java` : `associate` avec `BluetoothDeviceFilter` sur l'adresse de
+la montre appairée, `setSingleDevice(true)` → l'utilisateur confirme une fois ; puis `startObservingDevicePresence`
+(API 31–35) ou `ObservingDevicePresenceRequest.setAssociationId` (36+). (2) `WatchPresenceService extends
+CompanionDeviceService` : sur `EVENT_BT_CONNECTED` (ou `onDeviceAppeared`), démarrer `WatchSyncService` (premier
+plan, `connectedDevice`, notification « Synchro de la montre… » de quelques secondes). (3) **Java minimal** écrit
+depuis `protocoles/huawei.md` §2, §3, §6.5, §7 (pas depuis le JS ni Gadgetbridge) : trame + CRC, TLV, AES-GCM avec la
+clé de session dérivée des secrets déjà stockés (à déplacer de `localStorage` vers un stockage lisible par Java,
+chiffré par le Keystore), commandes 1/5, 7/0x0A-0x0D ; sortie = JSON brut dans un fichier de l'app, importé par
+`services/watchSync.js` (mêmes parseurs, mêmes dédoublonnages) à l'ouverture. (4) En cas d'échec d'authentification
+en fond : **jamais** de réappairage, une notification « Ouvrez HealthTrack pour reconnecter la montre ». (5) Filet :
+`PeriodicWorkRequest` 1 h (batterie non faible) + `USER_PRESENT`, mêmes délais et plafonds que `watchAutoSync`.
+Tests : JVM (trames d'exemple de la spec, vecteurs AES-GCM), et la fausse montre JS pour l'import.
+
+**I50 — Guide One UI.** Réutilise le plugin existant (`isIgnoringBatteryOptimizations`,
+`ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`) ; pour « Applis jamais en veille », pas d'API → texte pas à pas
+(Paramètres → Batterie → Limites d'utilisation en arrière-plan → Applis jamais en veille → +). S'affiche dans
+« Connexion à la montre » seulement si la synchro de fond est activée et a échoué / n'a rien ramené.
+
+**I51 — Briefing du jour.** Entrées : écarts robustes (médiane / MAD 28 j) de sommeil, FC repos, VFC, pas, + météo ;
+sortie : un état et ≤ 2 causes triées par |z|, chacune avec son chiffre et « d'habitude » ; 1 piste tirée des liens
+personnels (D6, jamais d'une norme). Gabarits FR testés. Fusionne « Prédiction du jour », Radar et cartes cœur sur
+l'accueil (D1). LLM éventuel (I56) : reformulation seulement.
+
+**I52 — Mode calme.** Paramètre unique ; les composants qui affichent une note par nuit lisent `calmMode` et montrent
+la moyenne 7 j + flèche (seuil = 0,5 MAD). Aucune donnée supprimée.
+
+**I53 — Visage.** `@mediapipe/tasks-vision` hébergé dans `public/` (pas de CDN, hors ligne), délégué GPU puis CPU ;
+2 s à l'ouverture de l'accueil si l'interrupteur « Lecture du visage » est actif ; stocke `face_affect` { smile,
+browDown, valence?, nFrames, conf } ; canvas vidé. Écran de diagnostic : latence par image, délégué utilisé,
+`navigator.gpu` présent ou non → mesure réelle sur l'A56 avant d'aller plus loin.
+
+**I54 — Une question du soir.** Le moteur d'analyse connaît l'incertitude de chaque lien (intervalle) ; choisir la
+variable non captable dont l'information attendue est la plus grande ; notification locale à l'heure habituelle du
+check-in ; réponses Oui / Non / note en 1 tap (action de notification). Remplace à terme les champs du check-in.
+
+**I55 — Voix.** `getUserMedia({audio})` dans la WebView → `AudioWorklet` → trames de 30 ms : RMS, détection de parole
+par énergie, F0 par pitchy ; résumé { f0Med, f0Var, energy, speechRatio, pauseMean, rate } ; ligne de base
+personnelle 28 j ; entrée de l'estimateur (Y), jamais un X (D5).
+
+### Sources (consultées le 13/10/2026)
+
+- Montre / Android : https://developer.android.com/reference/android/companion/CompanionDeviceManager ;
+  https://developer.android.com/reference/android/companion/ObservingDevicePresenceRequest ;
+  https://developer.android.com/reference/android/companion/DevicePresenceEvent ;
+  https://developer.android.com/reference/android/companion/CompanionDeviceService ;
+  https://developer.android.com/develop/connectivity/bluetooth/companion-device-pairing ;
+  https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start ;
+  https://developer.android.com/develop/background-work/services/fgs/service-types ;
+  https://developer.android.com/about/versions/15/behavior-changes-15 ;
+  https://github.com/ionic-team/capacitor-background-runner ; https://dontkillmyapp.com/samsung ;
+  https://www.sammyfans.com/2026/01/02/samsung-phone-can-stop-battery-drain-one-ui-8/ ;
+  https://gadgetbridge.org/basics/topics/background-service/ ; https://gadgetbridge.org/basics/topics/huawei-honor/ ;
+  https://codeberg.org/Freeyourgadget/Gadgetbridge/issues/5784 ; …/issues/6356 ; …/issues/6010 ; …/issues/6978 ;
+  …/issues/6461 ; …/issues/6775 ; https://codeberg.org/Freeyourgadget/Gadgetbridge/pulls/6367
+- Humeur : https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker ;
+  https://chromium.googlesource.com/chromium/src.git/+/main/gpu/config/webgpu_blocklist_impl.cc ;
+  https://developer.chrome.com/blog/new-in-webgpu-121 ; https://github.com/av-savchenko/face-emotion-recognition ;
+  https://huggingface.co/litert-community/HSEmotion-B0-LiteRT ; https://arxiv.org/html/2412.12625v1 ;
+  https://arxiv.org/abs/2512.11905 ; https://github.com/ddlBoJack/emotion2vec ;
+  https://huggingface.co/onnx-community/wav2vec2-emotion-recognition-ONNX ; https://github.com/ianprime0509/pitchy ;
+  https://pypi.org/project/opensmile/2.2.0/ ; https://shizuku.rikka.app/guide/setup/ ;
+  https://clinicaltrials.gov/study/NCT06860165 ; https://arxiv.org/abs/2402.17496
+- Besoins / apps : https://www.community.whoop.com/t/ai-coach-lacks-customizability-after-coming-out-of-beta/15909 ;
+  https://www.gearpatrol.com/fitness/whoop-ai-reddit-user-feedback-pros-cons/ ; https://bearable.app/support/tips/what-are-factors/ ;
+  https://news.samsung.com/global/samsung-highlights-sleep-and-wellness-innovations-at-world-sleep-2025 ;
+  https://support.apple.com/en-ie/123002 ; https://blog.google/products/fitbit/personal-health-coach-public-preview/ ;
+  https://www.techradar.com/health-fitness/smartwatches/garmins-new-subscription-ai-feature-is-hilariously-bad-so-far ;
+  https://forum.quantifiedself.com/t/statistics-how-many-rows-did-you-need-to-get-a-robust-pattern/8848
+- IA locale / glucose : https://developers.google.com/ml-kit/genai ;
+  https://developers.google.com/edge/mediapipe/solutions/genai/llm_inference ;
+  https://developers.googleblog.com/blazing-fast-on-device-genai-with-litert-lm/ ;
+  https://www.hellolingo.com/blog/health-connect-integration-guide
+
+### À creuser au prochain run idées (13/10 20:30)
+
+- Lien Bluetooth permanent de la GT 6 Pro (appels / HFP) : l'événement CDM « connectée » arrive-t-il seulement aux
+  reconnexions ? (journal du propriétaire, ou documentation Huawei sur les appels Bluetooth de la GT 6 Pro).
+- Licence des poids `enet_b0_8_va_mtl` (HSEmotion) : demander / lire les fichiers du dépôt du modèle.
+- Mesure de MediaPipe Face Landmarker dans une WebView Samsung (retours publiés, `chrome://gpu` d'un Xclipse 540).
+- Commandes 1/0x03 (prises en charge) attendues d'une GT 6 Pro pour TruSleep / stress / VFC — à confirmer par le
+  journal du propriétaire.
+- Vitesse de Gemma 4 E2B sur un Exynos 1580 (AI Edge Gallery) si des mesures paraissent.
+
+---
+
 ## Run du 12/10/2026 20:30 (Paris) — directives du 12/10 : montre en direct, visage / voix, science personnelle, simplifier
 
 Premier run « idées » depuis les directives du 12/10. Question du jour, côté utilisateur : *« je ne veux plus rien

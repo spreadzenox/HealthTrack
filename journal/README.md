@@ -16,6 +16,7 @@ deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »
 **l'authentification** (« Connexion à la montre ») ; quatrième pas (13/10 04:30) : **la lecture des mesures** (pas, cœur,
 SpO₂, FC repos, sommeil) à chaque connexion ; cinquième pas (13/10 06:30) : la **synchro automatique** à l'ouverture
 de l'app. Rien n'est encore essayé sur la vraie montre. Reste : phases du sommeil, VFC / stress, séances, synchro app fermée.
+Le run « idées » de 08:30 a tranché **comment relire la montre app fermée** (voir « Meilleures idées »).
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -140,6 +141,12 @@ de l'app. Rien n'est encore essayé sur la vraie montre. Reste : phases du somme
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
+- **Visage « dès le déverrouillage » (run idées 13/10 08:30)** : Android 14+ refuse qu'une app démarre la caméra depuis
+  l'arrière-plan, et rien de fiable ne montre que la commande `appops … CAMERA allow` (Shizuku / ADB) lève ce verrou.
+  Je le **testerai** sur votre A56 avec un écran de diagnostic comme vous l'avez demandé, mais la voie sûre sera : un
+  service lancé depuis l'app (ou depuis une notification), voyant vert visible. Autre fait : les études publiées
+  trouvent un lien **modeste** entre visage et humeur chez un individu ; l'app montrera donc une tendance sur 7 jours,
+  pas une note à l'instant.
 - **🎯 Nouveau (13/10 04:30)** : si la connexion réussit, l'étape « Lecture des mesures » dit combien de minutes et de
   nuits ont été lues. Comparez un jour avec Huawei Santé (pas, FC) : si les **calories** ou les pas semblent faux d'un
   facteur 10 ou 1 000, dites-le-moi (l'unité exacte n'est pas documentée).
@@ -188,6 +195,19 @@ de l'app. Rien n'est encore essayé sur la vraie montre. Reste : phases du somme
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **La montre relue sans ouvrir l'app** (run 13/10 08:30) : Android sait prévenir une app quand une montre Bluetooth
+  « classique » se connecte (« appareil compagnon »), même app fermée, et l'autorise alors à travailler en fond. Plan :
+  vous confirmez une fois « associer la montre », puis à chaque reconnexion (et toutes les heures en secours)
+  HealthTrack relit la montre en quelques secondes. Le petit moteur de lecture sera réécrit en Java, car le JavaScript
+  ne peut pas tourner app fermée avec le chiffrement nécessaire. Sur Samsung, il faudra mettre HealthTrack en batterie
+  « Sans restriction » **et** dans « Applis jamais en veille » (l'app vous guidera seulement si la synchro échoue).
+- **Une seule réponse par jour** (run 13/10 08:30) : ce que les gens reprochent aux « coachs IA » (Whoop, Garmin), c'est
+  un texte générique et des **chiffres inventés**. Idée : un briefing du matin unique (un état, une ou deux causes
+  chiffrées tirées de **vos** habitudes, une piste), écrit par des gabarits — jamais un chiffre inventé — qui remplace
+  plusieurs cartes de l'accueil. Et un **mode calme** : des tendances sur 7 / 30 jours au lieu d'une note par nuit,
+  contre l'anxiété du score.
+- **Une question du soir, pas un formulaire** (run 13/10 08:30) : l'app ne pose qu'une question, celle qui l'aide le
+  plus à trancher un lien encore incertain, et vous répondez d'un tap depuis la notification.
 - **Radar expliqué** : si la FC repos monte après un verre ou un sport tardif, l'app dira « probablement lié à hier
   soir » au lieu de sonner l'alerte — le reproche n° 1 fait aux alertes maladie des montres.
 - **« Qui envoie quoi »** : pour chaque montre / app, quelles mesures arrivent vraiment, et une alerte si l'une
@@ -214,7 +234,7 @@ de l'app. Rien n'est encore essayé sur la vraie montre. Reste : phases du somme
 
 **Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
 (b) libération + appairage, (c) authentification, (d) lecture des mesures et synchro automatique à l'ouverture livrées ;
-prochain run : **phases du sommeil, VFC / stress et séances**, puis synchro app fermée (et corrections d'après votre journal s'il arrive). Ensuite : performance des courbes, restes du
+prochain run : **phases du sommeil, VFC / stress et séances**, puis synchro app fermée (plan « appareil compagnon » + Java) (et corrections d'après votre journal s'il arrive). Ensuite : performance des courbes, restes du
 nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
@@ -235,6 +255,7 @@ nettoyage, humeur par le visage / la voix.
 | 13/10 02:30 — [Montre : authentification HiChain](runs/2026-10-13-0230-montre-authentification.md) | ⌚🏗️ | PR #127 fusionnée → v111 |
 | 13/10 04:30 — [Montre : lecture des mesures](runs/2026-10-13-0430-montre-synchro.md) | ⌚🏗️ | PR #129 fusionnée → v112 |
 | 13/10 06:30 — [Montre : synchro automatique](runs/2026-10-13-0630-montre-synchro-auto.md) | ⌚🏗️ | PR #131 fusionnée → v113 |
+| 13/10 08:30 — [Idées : montre app fermée, humeur réaliste, une réponse par jour](runs/2026-10-13-0830-idees-montre-fond-une-reponse.md) | 💡 | 8 idées (I49–I56), journal seul |
 
 ---
 
