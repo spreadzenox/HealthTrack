@@ -1,6 +1,6 @@
 # 2026-10-13 11:04 Paris (09:04 UTC) — Priorité montre : 1er journal réel GT 6 Pro + analyseur HiChain (D3 c bis / a bis)
 
-**Type** : ⌚🏗️ (priorité absolue — exploitation du journal fourni par le propriétaire)  ·  **PR** : à ouvrir « [Auto] »
+**Type** : ⌚🏗️ (priorité absolue — exploitation du journal fourni par le propriétaire)  ·  **PR** : #136 (fusionnée → **v115**, APK publié ; Vitest, Build APK et émulateurs A56 Android 15 / 16 verts sur la PR)
 
 ## Pourquoi
 - Démarrage : main vert (40a67f6 ; v114 publiée avec APK, check du dernier commit OK), **aucune PR « [Auto] » ouverte**
