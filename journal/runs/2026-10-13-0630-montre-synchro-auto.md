@@ -1,6 +1,6 @@
 # 2026-10-13 06:30 Paris (04:30 UTC) — Priorité montre : resynchro automatique (D3 d ter)
 
-**Type** : ⌚🏗️ (priorité absolue, étape d ter)  ·  **PR** : voir le tableau du résumé de la semaine
+**Type** : ⌚🏗️ (priorité absolue, étape d ter)  ·  **PR** : #131 (fusionnée → **v113**, APK publié ; Vitest, Build APK et émulateur A56 Android 15 / 16 verts sur la PR)
 
 ## Pourquoi
 - Démarrage : main vert (008c913, v112 ; Tests, émulateur A56 et Build & Release verts), aucune PR « [Auto] » ouverte
