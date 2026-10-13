@@ -9,6 +9,137 @@
 
 ---
 
+## Run du 13/10/2026 20:30 (Paris) — la montre débloquée par un octet, puis consolider la journée
+
+Question du jour, côté utilisateur : *« ma montre répond enfin à HealthTrack — qu'est-ce qui manque pour que ça marche
+pour de bon, et qu'est-ce qui me donnerait, chaque matin, une lecture de mon état aussi utile que les "Vitals" de
+Samsung ou le "Health Radar" d'Oura, sans ajouter d'écran ? »* Une grosse part sur la montre (journal du propriétaire de
+17:03, priorité absolue), puis ce que font les leaders cet été / automne, puis conversations et humeur (D4).
+
+### Montre — ce que tranche le journal de 17:03 (détail : `protocoles/huawei.md` §6.9)
+
+- **La GT 6 Pro parle l'ISO classique pour la liaison, pas le « New Auth » (SPEKE)** : réponse `message` 0x8001 avec
+  `isoSalt` (16 o), `peerAuthId` (64 o), `token` (32 o) — exactement ce que `runHichain` sait vérifier. L'hypothèse
+  SPEKE des runs 11:04 → 18:30 est **réfutée** pour cette montre [V journal].
+- **Cause de l'échec : 1 octet en trop après le JSON** (JSON reconstitué à ces tailles = 804 car., étiquette = 805).
+  `JSON.parse` refuse tout caractère après l'objet ; **Gadgetbridge** lit l'étiquette en UTF-8 sans rien retirer
+  (`getString` = `new String(bytes, UTF_8)`) puis `new JSONObject(...)`, et le `org.json` d'Android ignore ce qui suit
+  l'objet → même trame, aucun problème chez eux [V code GB `HuaweiTLV.java`, `DeviceConfig.java`, lecture seule].
+- **Calcul du jeton cohérent avec le nôtre** [V GB `GetHiChainRequest.java`, lecture seule] : PSK = HMAC(SHA-256(hex
+  du PIN), graine 32 o) ; jeton de la montre = HMAC(PSK, aléa montre ‖ aléa téléphone ‖ id téléphone ‖ id montre) ;
+  jeton du téléphone dans l'autre ordre (aléa tél. ‖ aléa montre ‖ id montre ‖ id tél.) — identique à `watchToken` /
+  `phoneToken`. Seul point à surveiller : la casse de l'hexadécimal du PIN (majuscules chez nous) et le format exact de
+  notre identifiant → si `token_mismatch` survient, c'est là qu'il faudra regarder (test des deux casses en diagnostic).
+- **Lien Bluetooth permanent ?** Pas de réponse publique : fiches commerçants « BT 6.0, BLE / BR/EDR » [T] ; les appels
+  Bluetooth exigent Huawei Santé [T Huawei]. → À lire dans un futur journal (événements de connexion CDM), pas à deviner.
+
+### Ce que font les leaders (signaux de l'été / automne 2026)
+
+1. **Samsung Health « Vitals »** (été 2026) : chaque matin, revue des signaux de la nuit **comparés à la ligne de base
+   personnelle**, + « Fitness Index », charge cardio, et suivi du **bruit ambiant** (santé auditive) [T Digital Trends,
+   Wareable, Samsung Newsroom — pages 403 en direct, résumés de recherche].
+2. **Oura Ring 5** (05/2026) : « Health Radar » (tendances de **tension pendant le sommeil**, respiration nocturne),
+   **GLP-1 Insights** (doses, effets, poids, données de la bague au même endroit), **import de résultats d'analyses**
+   à côté des données de la bague [T CNBC 28/05, Athletech 26/06].
+3. **Whoop** : Advanced Labs (bilans sanguins), dossiers médicaux reliés, Blood Pressure Insights recadré par la FDA
+   (06/2026 : affichage **sans classes** « normal / élevé ») [T Athletech 26/06]. → Rappel utile pour nous : montrer des
+   tendances personnelles, pas des catégories cliniques.
+4. **Apple Watch Series 12 / Ultra 4** (10/2026) : jugées encore derrière Oura / Whoop sur le suivi santé [T Bloomberg
+   08/10].
+
+Lecture pour HealthTrack : tout le monde converge vers **une lecture du matin relative à soi** + **biomarqueurs
+importés** (analyses) + **traitements suivis avec leurs effets**. Nous avons déjà le moteur « écarts à vos habitudes » :
+il manque le **regroupement** (I51) et deux sources (analyses, traitements), pas des écrans.
+
+### Conversations et humeur (D4)
+
+- **Omi** est **entièrement open source (MIT, firmware compris)** et documente son protocole BLE : service audio
+  `19B10000-E8F2-537E-4F6C-D104768A1214`, flux `…0001`, codec `…0002` (20 = Opus 16 kHz mono, trames 10 ms ; 21 =
+  Opus 20 ms sur le CV1), en-tête de 3 octets par notification [V docs.omi.me ; T SDK communautaire]. → Un **pilote
+  Omi direct** dans notre registre BLE générique est faisable **sans leur cloud** ; pas besoin d'API d'export.
+- **Transcription sur l'appareil** : `SpeechRecognizer.createOnDeviceSpeechRecognizer` (API 31+),
+  `checkRecognitionSupport` / `triggerModelDownload` pour le pack de langue ; lever d'exception si aucun reconnaisseur
+  local → garde `isOnDeviceRecognitionAvailable` [V doc Android]. Français local sur l'A56 : ❓ à vérifier sur
+  l'appareil (écran de diagnostic).
+- **Bruit ambiant au micro** : les sonomètres de téléphone ne respectent aucune norme ; Android mesure au mieux entre
+  **40 et 80 dB(A)** [V Arbetsmiljöverket]. → niveau relatif (calme / animé), jamais une alerte auditive « médicale ».
+- **Poids HSEmotion valence / éveil (`enet_b0_8_va_mtl`)** : le code est Apache-2.0, **aucune licence n'est indiquée
+  pour les poids** [V dépôt] ; ils sont appris sur AffectNet, dont la licence est réservée à la recherche non
+  commerciale [H, à confirmer]. → HealthTrack est gratuit et personnel, mais par prudence : **blendshapes MediaPipe
+  (sourire) par défaut**, modèle de valence en option téléchargée par l'utilisateur, licence affichée.
+- MediaPipe dans une WebView Samsung (Xclipse) : **aucune mesure publiée** trouvée → la mesure sur l'A56 (écran de
+  diagnostic I53) reste la seule source fiable.
+
+*Reddit toujours inaccessible directement ; la recherche générique « quantified self 2026 » ne renvoie que des
+annuaires. LinkedIn non exploité. Pages Samsung / Wareable / eMarketer en 403 : passé par les résumés de recherche.*
+
+### Idées classées (impact × faisabilité) — consolider plutôt qu'ajouter
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I57 | **Lecture HiChain tolérante + diagnostic du jeton** : JSON suivi d'octets de fin accepté (comme `org.json`), `trailingBytes` au journal ; si le jeton diffère, le journal dit lequel des calculs (casse du PIN, ordre des identifiants) aurait correspondu — sans jamais écrire de valeur | Que la GT 6 Pro s'appaire enfin (D3) | 5 | 5 | **25** |
+| I58 | **« Ma nuit en un coup d'œil » dans le briefing** (précise I51, à la Samsung Vitals) : FC repos, VFC, SpO₂, respiration, durée / régularité du sommeil, chacun en **flèche par rapport à votre plage habituelle** (médiane ± MAD 28 j), une phrase si ≥ 2 signaux sortent de la plage ; aucune classe clinique | Une lecture du matin relative à soi (D1, D6) | 5 | 4 | 20 |
+| I59 | **Import de résultats d'analyses** : photo ou PDF → ML Kit Text Recognition **sur l'appareil** → biomarqueurs (ferritine, vitamine D, HbA1c, LDL…) reconnus par gabarits, l'utilisateur confirme en 1 écran ; repli Gemini (sa clé) seulement s'il le choisit ; courbes dans « Vos données » | Biomarqueurs à côté des données de la montre (Oura / Whoop) | 4 | 3 | 12 |
+| I60 | **Traitements et compléments = expériences** : prise en 1 tap (ou rappel actionnable), puis « avant / après » personnel sur sommeil, FC repos, humeur avec les garde-fous D5 (ordre temporel, ≥ 14 j de chaque côté) ; jamais de conseil médical | Savoir si un traitement change quelque chose chez moi | 4 | 4 | 16 |
+| I61 | **Pilote Omi direct** (registre BLE générique) : flux Opus 16 kHz → décodage → transcription locale (`createOnDeviceSpeechRecognizer` fr-FR) → résumé / tags dans le journal ; audio jamais conservé ; rappel sur l'accord des personnes enregistrées | Conversations dans le journal, sans cloud | 3 | 3 | 9 |
+| I62 | **Niveau sonore ambiant** (réutilise le service micro de D4, quelques secondes par heure) : minutes « calme / animé / bruyant » comme **X** des Analyses (jamais entrée de l'estimateur d'humeur, consigné dans la liste D5) | Le bruit pèse-t-il sur mon sommeil / humeur ? | 3 | 4 | 12 |
+
+Mises à jour d'idées existantes : **I20 / D3 (c ter)** → **en attente** (la GT 6 Pro n'utilise pas SPEKE ; garder pour
+Honor) ; **I51** → absorbe I58 (pas de nouvelle carte) ; **I53** → défaut = blendshapes MediaPipe, valence en option
+(licence des poids) ; **I41 / I55** → la transcription locale d'I61 sert aussi la dictée du soir.
+
+### Détail et pistes d'implémentation
+
+**I57 — HiChain tolérant.** Voir §6.9 et « Prochaines étapes » n°1 du backlog. En plus : si `token_mismatch`, calculer
+en local 2–3 variantes (PIN hex minuscule / majuscule ; identifiants inversés) et consigner **seulement le nom** de la
+variante qui correspond (`tokenVariant: "pin_lower"`), jamais les octets — un seul journal suffit alors à corriger.
+
+**I58 — Ma nuit.** `src/services/` : fonction pure `nightSignals(entries, date)` → { signal, valeur, plage, sens } en
+réutilisant les écarts robustes déjà calculés pour « Votre cœur vs votre norme » ; rendu dans la carte du briefing
+(I51) ; tests sur séries d'exemple (plage < 14 nuits → « pas encore de plage habituelle »).
+
+**I59 — Analyses.** Plugin natif ML Kit Text Recognition v2 (latin, sur l'appareil, ~4 Mo) ; dictionnaire FR / EN des
+biomarqueurs courants avec unités et conversions (mmol/L ↔ mg/dL) ; type d'entrée `lab_result` { analyte, valeur,
+unité, plage du labo, date } ; la plage **du labo** affichée telle quelle, pas d'interprétation ; export / import JSON.
+
+**I60 — Traitements.** Type `intake` { nom, dose, heure } ; action de notification « Pris » ; analyse = comparaison
+avant / après avec intervalle bootstrap, ou ABAB (I45) si l'utilisateur veut tester ; texte « va de pair avec », pas
+« fait ».
+
+**I61 — Omi.** `devices/omi/` : empreinte = service `19B10000-…` ; lecture du codec, abonnement au flux, retrait de
+l'en-tête 3 o, décodage Opus (libopus WASM ou `MediaCodec` natif) → PCM 16 kHz → reconnaisseur local ; seul le texte
+et un résumé sont stockés.
+
+**I62 — Bruit.** `AudioRecord` dans le service de premier plan micro (D4) : RMS → dBFS relatif, calibration absente
+assumée ; 3 classes par seuils personnels ; agrégat quotidien seulement.
+
+### Sources (consultées le 13/10/2026)
+
+- Montre : `journal/diagnostics/2026-10-13-1703-gt6pro.json` ; https://codeberg.org/Freeyourgadget/Gadgetbridge
+  (lecture seule : `devices/huawei/HuaweiTLV.java`, `devices/huawei/packets/DeviceConfig.java`,
+  `service/devices/huawei/requests/GetHiChainRequest.java`) ; https://consumer.huawei.com/ph/support/content/en-us16066730 ;
+  https://www.nahdionline.com/en-sa/huawei-gt6-pro-46mm-atum-b29m-titanium-metal/pdp/103682622
+- Leaders : https://www.bloomberg.com/news/articles/2026-10-08/apple-watch-series-12-ultra-4-new-features-aren-t-enough-to-beat-oura-whoop ;
+  https://athletechnews.com/oura-whoop-push-deeper-into-healthcare/ ;
+  https://www.cnbc.com/2026/05/28/oura-ring-smallest-wearable-health-fitness.html ;
+  https://www.digitaltrends.com/wearables/samsung-healths-biggest-update-yet-will-turn-your-galaxy-watch-into-a-health-coach/ ;
+  https://www.wareable.com/samsung/samsung-galaxy-watch-health-platform-update-vitals-fitness-index-cardio-load-new-features
+- Conversations / humeur : https://docs.omi.me/doc/developer/Protocol ; https://github.com/BasedHardware/omi ;
+  https://developer.android.com/reference/android/speech/SpeechRecognizer ;
+  https://www.av.se/en/health-and-safety/noise/mata-ljud-och-buller/noise-exposure-app/ ;
+  https://github.com/av-savchenko/face-emotion-recognition ; https://github.com/av-savchenko/hsemotion
+
+### À creuser au prochain run idées (14/10 08:30)
+
+- Selon le journal suivant du propriétaire : jeton accepté ou non (I57), puis réponses 0x8002 / 0x8003 (format de
+  `encAuthToken`, présence du même octet de fin).
+- Reconnaissance vocale **locale en français** sur Galaxy A56 (One UI 8) : `checkRecognitionSupport("fr-FR")`.
+- Licence AffectNet / poids HSEmotion VA : texte exact.
+- ML Kit Text Recognition sur des comptes rendus de laboratoire français (mise en page en tableau).
+- Reddit via un autre chemin (archives, agrégateurs) pour r/Huawei et r/QuantifiedSelf.
+
+---
+
 ## Run du 13/10/2026 08:30 (Paris) — montre app fermée, humeur réaliste, une seule réponse par jour
 
 Question du jour, côté utilisateur : *« ma montre est maintenant lue par HealthTrack quand j'ouvre l'app ; comment
