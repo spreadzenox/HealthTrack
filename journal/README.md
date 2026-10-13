@@ -307,7 +307,7 @@ performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 | 13/10 08:30 — [Idées : montre app fermée, humeur réaliste, une réponse par jour](runs/2026-10-13-0830-idees-montre-fond-une-reponse.md) | 💡 | 8 idées (I49–I56), journal seul |
 | 13/10 10:30 — [Montre : sommeil détaillé, VFC, séances](runs/2026-10-13-1030-montre-sommeil-seances.md) | ⌚🏗️ | PR #134 fusionnée → v114 |
 | 13/10 11:04 — [Montre : 1er journal réel GT 6 Pro + analyseur HiChain](runs/2026-10-13-1104-montre-hichain-journal-reel.md) | ⌚🏗️ | PR #136 fusionnée → v115 |
-| 13/10 14:30 — [Montre : champs de la réponse HiChain 3 + spec New Auth](runs/2026-10-13-1250-montre-hichain3-champs.md) | ⌚🏗️ | PR #NN |
+| 13/10 14:30 — [Montre : champs de la réponse HiChain 3 + spec New Auth](runs/2026-10-13-1250-montre-hichain3-champs.md) | ⌚🏗️ | PR #138 fusionnée → v116 |
 
 ---
 

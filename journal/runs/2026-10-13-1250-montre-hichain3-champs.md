@@ -1,6 +1,6 @@
 # 2026-10-13 14:30 Paris (12:30 UTC) — Priorité montre : révéler les champs de la réponse HiChain 3 + spec « New Auth Protocol »
 
-**Type** : ⌚🏗️ (priorité absolue — montre)  ·  **PR** : #NN (à ouvrir)
+**Type** : ⌚🏗️ (priorité absolue — montre)  ·  **PR** : #138 (fusionnée → **v116**, APK publié ; Frontend Vitest et Build APK verts sur la PR)
 
 ## Pourquoi
 - Démarrage : main vert (1baa2e3 ; v115 publiée avec APK, Tests + émulateurs A56 verts), **aucune PR « [Auto] » ouverte**
