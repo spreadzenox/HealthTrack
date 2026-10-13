@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-13",
+  "kind": "nouveau",
+  "title": "Montre Huawei : synchro automatique à l’ouverture de l’app",
+  "items": [
+    "Une fois la montre connectée à HealthTrack, plus besoin de toucher « Synchroniser la montre » : l’app relit la montre toute seule quand vous l’ouvrez ou y revenez, au plus toutes les 30 minutes.",
+    "La carte « Connexion à la montre » dit quand a eu lieu la dernière synchro et ce qu’elle a ramené (« 38 minutes → 9 mesures »).",
+    "Montre hors de portée ou Bluetooth coupé : rien ne s’affiche en erreur, l’app réessaie plus tard en espaçant les essais (jusqu’à 4 h) pour ménager la batterie.",
+    "Si la montre ne reconnaît plus la clé de HealthTrack, la synchro automatique se met en pause et la carte vous le dit ; une reconnexion manuelle la relance.",
+    "Une seule connexion à la fois : si vous touchez « Synchroniser la montre » pendant une synchro automatique, l’app attend qu’elle finisse."
+  ]
+}

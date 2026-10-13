@@ -268,6 +268,10 @@ async function main() {
         const t = new Date(Date.now() - 120000).toISOString()
         localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: '00', v2: '00', v3: '00' }))
         localStorage.setItem(
+          'healthtrack_watch_autosync',
+          JSON.stringify({ at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: 9, failures: 0, everConnected: true }),
+        )
+        localStorage.setItem(
           'healthtrack_watch_connect_last',
           JSON.stringify({
             startedAt: t,

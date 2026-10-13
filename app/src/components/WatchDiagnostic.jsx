@@ -13,10 +13,7 @@ import { CURRENT_VERSION } from '../services/updateCheck'
 import { formatAgo } from '../utils/timeAgo'
 import WatchSetup from './WatchSetup'
 import WatchConnect from './WatchConnect'
-import { connectAndAuthenticate, findBondedWatch } from '../devices/huawei/pairing'
-import { classicTransport, HUAWEI_RFCOMM_UUID, HONOR_RFCOMM_UUID } from '../devices/huawei/transports'
-import { loadSetup } from '../devices/huawei/setup'
-import { createWatchSync } from '../services/watchSync'
+import { classicPlugin, connectBondedWatch } from '../services/watchAutoSync'
 import './WatchDiagnostic.css'
 
 const LAST_KEY = 'healthtrack_watch_diagnostic_last'
@@ -42,14 +39,7 @@ function saveLast(report) {
 
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
 
-const NativeBtClassic = registerPlugin('BtClassic')
 const NativeAppManager = registerPlugin('AppManager')
-
-/** Plugin RFCOMM : faux plugin des captures (`npm run visual -- --ble=watch`), natif dans l'app, sinon aucun. */
-function classicPlugin() {
-  if (typeof window !== 'undefined' && window.__healthtrackFakeBtClassic) return window.__healthtrackFakeBtClassic
-  return isNative() ? NativeBtClassic : null
-}
 
 /** Boîte de désinstallation / réglages d'une app : faux plugin des captures, natif dans l'app, sinon aucun. */
 function appManagerPlugin() {
@@ -62,26 +52,8 @@ async function defaultRun(onUpdate) {
   return runHuaweiDiagnostic({ client, classic: classicPlugin(), ready, detectApps: detectPhoneApps, onUpdate, appVersion: CURRENT_VERSION })
 }
 
-/** Connexion authentifiée (étape c) à la montre appairée à Android, en Bluetooth classique, puis lecture des mesures (étape d). */
-async function defaultConnect({ secrets, rebind, onUpdate }) {
-  const classic = classicPlugin()
-  if (!classic) throw new Error('Connexion possible seulement dans l’app Android.')
-  const watch = await findBondedWatch(classic)
-  if (!watch) throw new Error('Aucune montre Huawei appairée à Android : suivez d’abord « Libérer et appairer la montre ».')
-  const honor = /honor/i.test(watch.name) && (watch.uuids || []).map((u) => String(u).toLowerCase()).includes(HONOR_RFCOMM_UUID)
-  const setupState = loadSetup()
-  return connectAndAuthenticate({
-    transport: classicTransport(classic, watch.deviceId, honor ? HONOR_RFCOMM_UUID : HUAWEI_RFCOMM_UUID),
-    watchKey: watch.deviceId,
-    watchName: watch.name,
-    secrets,
-    rebind,
-    accountId: setupState.choice === 'keep' ? setupState.accountId || null : null,
-    onUpdate,
-    appVersion: CURRENT_VERSION,
-    sync: createWatchSync({ watchKey: watch.deviceId, watchName: watch.name }),
-  })
-}
+/** Connexion authentifiée (étape c) puis lecture des mesures (étape d) : services/watchAutoSync.js. */
+const defaultConnect = ({ secrets, rebind, onUpdate }) => connectBondedWatch({ secrets, rebind, onUpdate })
 
 async function defaultSave(json, filename) {
   if (isNative()) {

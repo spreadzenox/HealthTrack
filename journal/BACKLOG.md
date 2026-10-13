@@ -106,8 +106,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       de Huawei Health ; fausse montre étendue (blocs minute / sommeil / totaux)
 - [ ] **(d bis) Fichiers détaillés** (0x2C) : lire d'abord 1/0x03 (commandes prises en charge) ; phases du sommeil
       (paradoxal, éveil : dictionnaire 700013 ou `sleep_state`), RR → VFC (RMSSD, `heartRate.js`) et stress ; séances (0x17)
-- [ ] **(d ter) Resynchro en arrière-plan** : à l'ouverture de l'app (comme `phoneUsageSync`, au plus toutes les 30 min),
-      puis WorkManager / service de premier plan (code natif : la session HiChain doit tourner côté Java ou dans la WebView réveillée)
+- [x] **(d ter) Resynchro à l'ouverture** (run 13/10 06:30) : `services/watchAutoSync.js` — à l'ouverture de l'app et
+      au retour dans l'app (`visibilitychange`), au plus toutes les 30 min, seulement si une clé HealthTrack existe pour
+      la montre appairée ; verrou partagé avec « Synchroniser la montre » (une connexion à la fois), essais espacés après
+      échec (30 min → 4 h), pause sur clé refusée / PIN / méthode non prise en charge jusqu'à une connexion manuelle
+      réussie ; ligne d'état dans « Connexion à la montre »
+- [ ] **(d quater) Resynchro en arrière-plan, app fermée** : WorkManager / service de premier plan ; la session HiChain
+      et le protocole tournent aujourd'hui en JS → soit WebView réveillée (plugin Capacitor background-runner ?), soit
+      portage Java du strict nécessaire (trames, AES-GCM, commandes 7/x) avec la clé de session ; à évaluer
 - [ ] Valider (d) sur la vraie montre : unités des calories (kcal ?) et de la distance, valeur « pas de mesure » (0 / 0xFF),
       blocs vides, fuseau 1/5
       (PR #6367 : fermer, attendre ≈ 6 s, réessayer une fois) ; envoi de l'identifiant de compte (0x1A/0x05, étiquette 3
@@ -285,8 +291,8 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 
 1. ⌚ **Lire le journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`) : mode d'authentification, retour
    sur l'assistant « Libérer et appairer ».
-2. ⌚ **D3 (d ter) — resynchro automatique** à l'ouverture de l'app (prochain run hors idées), puis **(d bis)** fichiers
-   détaillés 0x2C (phases du sommeil, RR → VFC / stress) et séances ; (d) version simple livrée le 13/10 04:30.
+2. ⌚ **D3 (d bis)** fichiers détaillés 0x2C (phases du sommeil, RR → VFC / stress) et séances (prochain run hors
+   idées) ; puis **(d quater)** arrière-plan app fermée. (d) livré le 13/10 04:30, (d ter) resynchro à l'ouverture le 13/10 06:30.
 3. ⌚ D3 (c bis) — lire le journal de connexion du propriétaire dès qu'il arrive et corriger l'authentification.
 4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
    Worker, graphiques différés ; budget anti-régression.
@@ -337,6 +343,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-13 — D3 (d ter) : resynchro automatique de la montre à l'ouverture / au retour dans l'app (≤ 30 min, essais espacés, pause sur clé refusée), ligne d'état (run 06:30 Paris)
 - [x] 2026-10-13 — D3 (d) : synchronisation simple (heure, sommeil léger / profond, minutes → pas, calories, FC, SpO₂, FC repos) → IndexedDB, « Synchroniser la montre » (run 04:30 Paris)
 - [x] 2026-10-13 — D3 (c) : authentification HiChain (liaison par PIN, authentification, trames chiffrées), encadré « Connexion à la montre », constantes du PIN téléchargées sur le téléphone (run 02:30 Paris)
 - [x] 2026-10-13 — D3 (b) : assistant « Libérer et appairer la montre » (désinstallation / réglages de l'app qui la tient, réinitialisation guidée, plan B compte Huawei, appairage Android `createBond`) (run 00:30 Paris)
