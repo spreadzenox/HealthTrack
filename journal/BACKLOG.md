@@ -91,10 +91,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       son écran d'appairage ? Boîte Android (code à comparer ?) ; verrou antivol après réinitialisation ?
 - [ ] Le diagnostic n'est pas assez sûr pour dire « liée à une autre app » quand l'app a déjà été désinstallée : à
       l'étape (c), un échec d'authentification (« key negotiation ») le prouvera → afficher alors l'étape « Réinitialiser »
-- [ ] **(c) Authentification** d'après le mode lu en (a) : HiChain (1/0x33, 1/0x2C, 1/0x28 ; HKDF, AES-GCM, Web Crypto
-      ou Java), clés stockées en local seulement. ⚠️ Constantes issues de l'app Huawei (publiées en MIT par
-      `huawei-lpv2`) : **ne pas committer sans accord explicite du propriétaire** → saisie / import unique sur le
-      téléphone, ou demander. Tests sur trames d'exemple
+- [x] **(c) Authentification** (run 13/10 02:30) : HiChain écrit depuis la spec §6 (état 1/0x16, négociation 1/0x33,
+      PIN 1/0x2C, liaison + authentification 1/0x28, clé des trames HKDF, chiffrement GCM / CBC à compteur), Web Crypto,
+      clés en local (`healthtrack_watch_keys`) ; encadré « Connexion à la montre » (`WatchConnect.jsx`) ; constantes du
+      PIN **téléchargées sur le téléphone** (huawei-lpv2, MIT) ou collées, jamais dans le dépôt ; `groupId` calculé
+      (SHA-256 de « health_group_name|com.huawei.health ») ; fausse montre de test (`testing/fakeWatch.js`)
+- [ ] **(c bis) Valider sur la vraie GT 6 Pro** (journal `healthtrack-connexion-montre-….json`) : format du PIN, message
+      final, valeurs réelles du type de prise en charge / chiffrement ; reprise automatique après « jeton différent »
+      (PR #6367 : fermer, attendre ≈ 6 s, réessayer une fois) ; envoi de l'identifiant de compte (0x1A/0x05, étiquette 3
+      selon la prise en charge) à vérifier ; mode classique / HiChain Lite non pris en charge (bracelets anciens)
 - [ ] **(d) Synchronisation** : informations produit (1/7), heure (1/5), minute par minute (7/0x0A-0x0B : pas, FC,
       SpO₂, FC repos), sommeil (7/0x0C-0x0D puis fichiers 0x2C), RR → VFC / stress, séances (0x17) → IndexedDB
       (source `huawei_direct`) ; puis resynchro en arrière-plan (WorkManager / service de premier plan)
@@ -268,10 +273,10 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 
 1. ⌚ **Lire le journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`) : mode d'authentification, retour
    sur l'assistant « Libérer et appairer ».
-2. ⌚ **D3 (c) — authentification** (**prochain run hors idées**) : HiChain (liaison par PIN puis authentification, HKDF,
-   AES-GCM) écrite depuis la spec, tests sur trames d'exemple ; constantes Huawei saisies / importées sur le téléphone
-   (jamais dans le dépôt) sauf accord du propriétaire ; utilise l'identifiant de compte du plan B s'il est saisi.
-3. ⌚ D3 (d) — synchronisation FC / sommeil / pas / SpO₂ / VFC / séances, puis resynchro en arrière-plan.
+2. ⌚ **D3 (d) — synchronisation** (**prochain run hors idées**) : spec §7 détaillée (agent de recherche, faits
+   seulement), puis informations produit (1/7), heure (1/5), minute par minute (7/0x0A-0x0B), sommeil, RR → VFC, séances
+   → IndexedDB (source `huawei_direct`, migration testée), tests sur trames d'exemple ; puis resynchro en arrière-plan.
+3. ⌚ D3 (c bis) — lire le journal de connexion du propriétaire dès qu'il arrive et corriger l'authentification.
 4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
    Worker, graphiques différés ; budget anti-régression.
 5. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /
@@ -321,6 +326,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-13 — D3 (c) : authentification HiChain (liaison par PIN, authentification, trames chiffrées), encadré « Connexion à la montre », constantes du PIN téléchargées sur le téléphone (run 02:30 Paris)
 - [x] 2026-10-13 — D3 (b) : assistant « Libérer et appairer la montre » (désinstallation / réglages de l'app qui la tient, réinitialisation guidée, plan B compte Huawei, appairage Android `createBond`) (run 00:30 Paris)
 - [x] 2026-10-12 — Priorité absolue « montre » reportée (charte §000, backlog) + D3 (a) : test de connexion directe à la montre Huawei (RFCOMM + BLE), journal exportable, spécification `protocoles/huawei.md` (run 22:30 Paris)
 - [x] 2026-10-12 — Directives du 12/10 reportées (charte §00, chantiers D1–D6) + nettoyage, étape 1 : « Écran tard » mesuré plus demandé, « Humeur estimée » retirée, doublons Paramètres, « Mode diagnostic », titre « Analyses » (run 16:30 Paris)

@@ -1,0 +1,65 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import WatchConnect from './WatchConnect'
+
+const hex16 = (n) => Array.from({ length: 16 }, (_, i) => ((i + n) & 0xff).toString(16).padStart(2, '0')).join(' ')
+const FILE = `DIGEST_SECRETS = {\n  AuthVersion.V1: "${hex16(1)}",\n  AuthVersion.V2: "${hex16(2)}",\n  AuthVersion.V3: "${hex16(3)}",\n}`
+
+const connected = {
+  startedAt: '2026-10-13T00:30:00.000Z',
+  finishedAt: '2026-10-13T00:30:05.000Z',
+  steps: [{ id: 'auth', label: 'Authentification', status: 'ok', detail: 'trames chiffrées (AES-GCM)' }],
+  outcome: { code: 'connected', title: 'Montre appairée à HealthTrack' },
+}
+
+describe('WatchConnect', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('télécharge les constantes d’un geste, les garde en local, puis se connecte avec', async () => {
+    const connect = vi.fn(async () => connected)
+    render(<WatchConnect connect={connect} fetchSecrets={async () => FILE} save={vi.fn()} copy={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Télécharger les paramètres' }))
+    expect(await screen.findByText(/enregistrés sur ce téléphone/)).toBeTruthy()
+    expect(JSON.parse(localStorage.getItem('healthtrack_huawei_secrets')).v2).toBe(hex16(2).replace(/ /g, ''))
+    expect(screen.queryByRole('button', { name: 'Télécharger les paramètres' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
+    expect(await screen.findByText('Montre appairée à HealthTrack')).toBeTruthy()
+    expect(connect.mock.calls[0][0].secrets.v1).toBe(hex16(1).replace(/ /g, ''))
+    expect(connect.mock.calls[0][0].rebind).toBe(false)
+    expect(screen.getByRole('button', { name: 'Se reconnecter' })).toBeTruthy()
+  })
+
+  it('téléchargement impossible → texte collé accepté ; texte invalide refusé', async () => {
+    render(<WatchConnect connect={vi.fn()} fetchSecrets={async () => { throw new Error('hors ligne') }} save={vi.fn()} copy={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Télécharger les paramètres' }))
+    expect(await screen.findByText(/hors ligne/)).toBeTruthy()
+    const area = screen.getByLabelText('Constantes Huawei v1, v2, v3')
+    fireEvent.change(area, { target: { value: 'v1: 00' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Utiliser ce texte' }))
+    expect(await screen.findByText(/Texte non reconnu/)).toBeTruthy()
+    fireEvent.change(area, { target: { value: `v1: ${hex16(1)}\nv2: ${hex16(2)}\nv3: ${hex16(3)}` } })
+    fireEvent.click(screen.getByRole('button', { name: 'Utiliser ce texte' }))
+    await waitFor(() => expect(localStorage.getItem('healthtrack_huawei_secrets')).toBeTruthy())
+  })
+
+  it('clé refusée → conseils sans « dissocier » et bouton « Refaire l’appairage » (rebind)', async () => {
+    localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: 'a', v2: 'b', v3: 'c' }))
+    const rejected = { ...connected, outcome: { code: 'key_rejected', title: 'La montre ne reconnaît plus la clé de HealthTrack' } }
+    const connect = vi.fn(async () => rejected)
+    render(<WatchConnect connect={connect} save={vi.fn()} copy={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
+    expect(await screen.findByText(/ne reconnaît plus/)).toBeTruthy()
+    expect(screen.queryByText(/dissocier/i)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Refaire l’appairage' }))
+    await waitFor(() => expect(connect.mock.calls[1][0].rebind).toBe(true))
+  })
+
+  it('exporte le journal', async () => {
+    localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify(connected))
+    const save = vi.fn(async () => 'ok')
+    render(<WatchConnect connect={vi.fn()} save={save} copy={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le journal' }))
+    await waitFor(() => expect(save).toHaveBeenCalled())
+    expect(save.mock.calls[0][1]).toBe('healthtrack-connexion-montre-2026-10-13-00-30.json')
+  })
+})

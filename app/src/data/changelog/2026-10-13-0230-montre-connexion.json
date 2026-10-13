@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-13",
+  "kind": "nouveau",
+  "title": "Montre Huawei : HealthTrack se connecte elle-même",
+  "items": [
+    "Plus → Connecteurs → « Montre Huawei en direct » → nouvel encadré « Connexion à la montre » : une fois la montre libérée et appairée, « Se connecter à la montre » fait l’authentification complète, sans Huawei Santé ni Gadgetbridge.",
+    "Au premier appairage, la montre remet une clé à HealthTrack ; elle est gardée uniquement sur ce téléphone et sert ensuite à chaque connexion, sans rien demander.",
+    "Ce premier appairage a besoin de 3 constantes publiques : « Télécharger les paramètres » les récupère en un geste (ou collez-les). Elles restent sur le téléphone.",
+    "Si la montre ne reconnaît plus la clé (réinitialisée, ou reprise par une autre app), l’app le dit et propose « Refaire l’appairage ».",
+    "Le journal de connexion (« Enregistrer le journal ») ne contient ni clé, ni PIN, ni adresse complète : c’est lui qu’il me faut si quelque chose coince. La lecture de vos mesures arrive à l’étape suivante."
+  ]
+}

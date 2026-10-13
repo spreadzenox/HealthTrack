@@ -12,7 +12,8 @@ dans l'ordre, le nettoyage (D1), la performance (D2), la connexion directe à la
 voix (D4), l'anti-circularité (D5) et une science personnelle sans normes imposées (D6). Premier pas livré : le nettoyage.
 **Depuis le soir du 12/10, une priorité absolue passe avant tout** : faire de HealthTrack l'app qui parle directement à
 votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 : le **test de connexion directe** ;
-deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »**. Reste : l'authentification, puis la synchro.
+deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »** ; troisième pas (13/10 02:30) :
+**l'authentification** (« Connexion à la montre », non encore essayée sur la vraie montre). Reste : la synchro des mesures.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -64,6 +65,12 @@ deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »
   (Paramètres → Système et mises à jour → Réinitialiser) ; ③ « Appairer la montre » la cherche et lance l'appairage
   Android (s'il reste un ancien appairage, l'app vous envoie l'oublier dans les réglages Bluetooth) ; ④ relancer le test.
   **Plan B** « Garder Huawei Santé » : votre identifiant de compte Huawei (17 à 19 chiffres), gardé sur le téléphone.
+- **Montre Huawei — connexion** (même carte, encadré « Connexion à la montre ») : une fois la montre libérée et
+  appairée, « **Se connecter à la montre** » fait toute l'authentification comme le ferait Huawei Santé : la montre remet
+  une clé à HealthTrack, gardée **sur le téléphone uniquement**, qui sert ensuite à chaque connexion. Le premier
+  appairage a besoin de 3 constantes publiques : « **Télécharger les paramètres** » (un geste) ou les coller. Si la
+  montre ne reconnaît plus la clé, « Refaire l'appairage ». Journal exportable sans clé ni PIN. **Vos mesures ne
+  remontent pas encore** : c'est l'étape suivante.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -71,6 +78,12 @@ deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Authentification (run 13/10 02:30)** : protocole HiChain (le même que Huawei Santé, issu d'OpenHarmony) réécrit
+  de zéro d'après notre spécification (`protocoles/huawei.md` §6, recoupée avec le code Apache-2.0 d'OpenHarmony),
+  chiffrement des échanges ensuite (AES-GCM / CBC), 1 050 tests dont une **fausse montre** qui joue l'autre côté. Bonne
+  surprise : l'identifiant de groupe que Gadgetbridge garde en dur se calcule à partir de deux noms publics, donc
+  **une seule constante Huawei** reste nécessaire, et seulement au premier appairage (déchiffrer le PIN). Elle n'est pas
+  dans le code : l'app la télécharge sur votre téléphone depuis le projet libre huawei-lpv2 (MIT).
 - **Libération et appairage (run 13/10 00:30)** : 3e plugin natif maison (`AppManagerPlugin.java` : boîte de
   désinstallation et page de l'app, nouvelle autorisation `REQUEST_DELETE_PACKAGES`, l'utilisateur confirme toujours)
   et `BtClassicPlugin` qui sait chercher en Bluetooth classique et demander l'appairage Android. Recherche : la GT 6 Pro
@@ -106,6 +119,14 @@ deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
+- **🎯 Nouveau (13/10 02:30) — à essayer quand vous voulez passer à HealthTrack seule** : après « Libérer et appairer »
+  (réinitialisation + appairage Android), « Connexion à la montre » → « Télécharger les paramètres » → « Se connecter à
+  la montre ». Puis **Enregistrer le journal** et déposez-le dans `journal/diagnostics/` : rien n'a encore été essayé
+  sur une vraie GT 6 Pro, le journal me dira à quelle étape ça coince. Tant que la synchro des mesures n'est pas là
+  (prochains runs), le plan B « Garder Huawei Santé » reste possible.
+- **Décision à valider** : pour respecter « jamais de clé d'app constructeur dans le dépôt », l'app **télécharge** les 3
+  constantes du PIN depuis GitHub (huawei-lpv2, licence MIT) d'un geste de votre part, au lieu de les embarquer. C'est
+  la seule requête réseau de l'étape, elle n'envoie aucune donnée. Si vous préférez que je les intègre à l'app, dites-le.
 - **🎯 Nouveau (après le test)** : si le test dit « La montre ne répond pas », suivez l'encadré « Libérer et appairer
   la montre ». **Avant de réinitialiser**, sachez que les mesures pas encore synchronisées sur la montre seront perdues
   (celles de Huawei Santé y restent) et que **HealthTrack ne lit pas encore vos données** (authentification et synchro :
@@ -187,6 +208,7 @@ nettoyage, humeur par le visage / la voix.
 | 12/10 20:30 — [Idées : montre en direct, visage / voix, science perso](runs/2026-10-12-2030-idees-directives.md) | 💡 | 10 idées (I39–I48), 2 tests instables corrigés — PR #121 fusionnée → v108 |
 | 12/10 22:30 — [Priorité montre : test de connexion directe](runs/2026-10-12-2230-montre-diagnostic.md) | ⌚🏗️ | PR #123 fusionnée → v109 |
 | 13/10 00:30 — [Montre : libérer et appairer](runs/2026-10-13-0030-montre-liberer-appairer.md) | ⌚🏗️ | PR #125 fusionnée → v110 |
+| 13/10 02:30 — [Montre : authentification HiChain](runs/2026-10-13-0230-montre-authentification.md) | ⌚🏗️ | PR #127 — voir le compte rendu |
 
 ---
 

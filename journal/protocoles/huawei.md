@@ -12,6 +12,7 @@
 |---|---|---|---|
 | [L] | `github.com/zyv/huawei-lpv2` (Y. Zaytsev, 2019) — `huawei/protocol.py`, tests | MIT | trame, TLV, entiers variables, trame de référence |
 | [G] | `codeberg.org/Freeyourgadget/Gadgetbridge`, commit d4bd8367 (12/10/2026), paquets `devices/huawei` et `service/devices/huawei` | **AGPL — lecture seule** | ordre des étapes, numéros de services / commandes / étiquettes |
+| [OH] | `github.com/openharmony/security_device_auth` — protocole ISO (`services/protocol/src/iso_protocol/`, `services/legacy/authenticators/`) | Apache-2.0 | dérivations HiChain, codes de messages, identifiant de groupe |
 | [W] | gadgetbridge.org : « Huawei / Honor pairing », « Huawei / Honor specifics » | CC | contraintes d'appairage, clé invalidée |
 | [I] | Gadgetbridge issues #5428 (support GT 6 / GT 6 Pro, 28/09/2025), #6978, #6472 ; PR #3721, #6367 | — | état du support, cas d'échec |
 
@@ -102,24 +103,110 @@ Demande : étiquettes 1, 2, 3, 4 vides (✅ `linkParamsRequest`). Réponse :
    heure Unix sur 4 octets, fuseau sur 2), batterie (1/8), services et commandes pris en charge (1/2, 1/3).
 6. Synchronisation des données (§7).
 
-## 6. HiChain (résumé)
+## 6. HiChain (authentification des GT 3 → GT 7)
 
-- Il s'agit du protocole d'authentification d'appareils de Huawei / OpenHarmony (« device auth »), variante **ISO** :
-  échange symétrique fondé sur une clé pré-partagée, transporté en JSON dans la commande 1/0x28 (étiquette 1 = JSON,
-  2 = code d'opération, 3 = identifiant de requête sur 8 octets).
-- Deux opérations : **liaison** (première fois, fondée sur le PIN) et **authentification** (avec la clé longue durée
-  obtenue à la liaison).
-- Déroulé : échange d'aléas et d'un « sel » → clé pré-partagée = HMAC-SHA256 du sel avec (SHA-256 du PIN) ou la clé
-  stockée → jetons croisés (HMAC sur aléas et identifiants) → clé de session par HKDF-SHA256 → en liaison, la montre
-  renvoie, chiffrée en AES-GCM, la **clé longue durée** que le téléphone garde → clé de chiffrement des trames dérivée
-  par HKDF.
-- Aucun code n'est affiché sur la montre : le PIN est demandé à la montre (1/0x2C) puis déchiffré avec une constante.
-- ⚠️ **Constantes d'application** : les modes classique / Lite / la lecture du PIN utilisent des constantes de 16 octets
-  qui viennent de l'app Huawei. Elles sont publiées sous licence MIT dans [L], mais la consigne du propriétaire interdit
-  de committer une clé extraite d'une app constructeur. **Décision à prendre à l'étape (c)** : ne pas les committer et
-  les faire saisir / importer une fois sur le téléphone (stockage local), ou obtenir l'accord explicite du propriétaire.
-  Le diagnostic (étape a) n'en a pas besoin.
-- 📖 Une variante PAKE (SPEKE, X25519 / Ed25519) existe pour certaines Honor récentes, pas pour les Huawei GT [I #6472].
+Lecture du 13/10/2026 (run 02:30 Paris) : [G] (commit de master du 13/10, lecture seule, faits seulement) recoupé avec
+**[OH]** `github.com/openharmony/security_device_auth` (Apache-2.0), protocole « ISO » (`iso_protocol_common.c`,
+`iso_task_common.c`, `das_module_defines.h`). Les deux concordent sur chaque point ci-dessous.
+
+### 6.1 Déroulé (téléphone = client)
+
+1. Paramètres du lien (1/1), puis **état de l'appareil** (1/0x16, étiquette 1 vide ; réponse étiquette 1 : absente, 0
+   ou 1 = on continue).
+2. **Négociation de sécurité** (1/0x33, en clair). Mode demandé : 2 si le type de prise en charge (§4, étiquette 7)
+   vaut 1, 2 ou 3 ; 4 s'il vaut 4. Étiquettes envoyées, dans l'ordre : 1 = mode ; 2 = `01` (« pas une reconnexion ») ;
+   5 = identifiant du téléphone (32 caractères ASCII, §6.4) ; 3 = `01` ; 4 = `00` ; en mode 4 seulement 6 vide et
+   7 = modèle du téléphone ; 0x0D = `01` si la méthode de chiffrement vaut 1. Réponse : étiquette 1 = 1 → type
+   « 100000 » (HiChain) ; étiquette 2 = type (xor 4 si l'étiquette 1 valait 4) ; 0x7F = erreur. HiChain si type =
+   100000 ou si type xor 1 ou type xor 2 vaut 4 ; HiChain Lite si type = 1 ou 2 (non pris en charge par HealthTrack).
+3. **Premier appairage seulement** (aucune clé gardée pour cette montre) : **PIN** (1/0x2C, §6.3), puis échange
+   **LIAISON** (code d'opération 1) qui donne la clé longue durée, puis aussitôt une **AUTHENTIFICATION** (code 2).
+4. **Connexions suivantes** : AUTHENTIFICATION seule, avec la clé gardée. Pas de 1/0x13, 1/0x0F, 1/0x0E en HiChain.
+5. Le choix liaison / authentification est **local** (la montre ne le dit pas). Si la montre refuse la clé gardée
+   (jeton faux), c'est soit qu'une autre app l'a liée depuis (clé remplacée), soit un raté passager après une perte de
+   portée ([G] PR #6367 : fermer la connexion, attendre ≈ 6 s, réessayer avec la même clé). HealthTrack réessaie une
+   fois, puis propose de refaire l'appairage (PIN + liaison).
+6. Délais : 30 s pour la 1re étape de la liaison (la montre peut demander une confirmation), 5–8 s sinon.
+
+### 6.2 Messages 1/0x28 (en clair, découpables en tranches)
+
+- Téléphone → montre : étiquette 1 = JSON (UTF-8), 2 = code d'opération (1 octet), 3 = identifiant de requête (8 octets
+  gros-boutistes ; HealthTrack : l'heure en millisecondes, un nouveau par opération).
+- Montre → téléphone : étiquette 1 = JSON, étiquette 4 = type (0 = JSON ; autre = message final de l'opération, texte
+  non utilisé). `errorCode` non nul dans la charge utile = échec de l'étape.
+- Enveloppe de chaque message du téléphone : `authForm` 0, `groupAndModuleVersion` "2.0.1", `message` (code ci-dessous),
+  `payload` (objet, toujours avec `version` = {`minVersion` "1.0.0", `currentVersion` "2.0.16"}).
+  - Liaison, en plus : `requestId` (décimal, en texte), `groupId`, `groupName` "health_group_name", `groupOp` 2,
+    `groupType` 256, `peerDeviceId` et `connDeviceId` (identifiant du téléphone en clair), `appId`
+    "com.huawei.health", `ownerName` "".
+  - Authentification, étapes 1 et 2 : `isDeviceLevel` false.
+- ✅ **`groupId`** = SHA-256 de « health_group_name|com.huawei.health » en hexadécimal majuscule (règle OpenHarmony
+  des groupes pair à pair : nom du groupe, barre verticale, identifiant d'app) — vérifié égal à la valeur de [G] :
+  **aucune constante à stocker**.
+- Codes `message` : liaison 0x0001 → 0x8001, 0x0002 → 0x8002, 0x0003 → 0x8003, 0x0004 → message final ;
+  authentification 0x0011 → 0x8011, 0x0012 → 0x8012, 0x0013 → message final (pas d'échange de clé).
+- Charges utiles (octets toujours en **hexadécimal majuscule**, lecture insensible à la casse) :
+
+| Message | Champs |
+|---|---|
+| téléphone, début | `isoSalt` (16 octets aléatoires = aléaTél), `peerAuthId` (§6.4), `operationCode`, `seed` (32 octets aléatoires), `peerUserType` 0 ; authentification : `pkgName` "com.huawei.devicegroupmanage", `serviceType` = groupId, `keyLength` 32 |
+| montre, début | `isoSalt` (aléaMontre, 16 octets), `peerAuthId` (identifiant de la montre), `peerUserType`, `token` (32) |
+| téléphone, jeton | `peerAuthId`, `token` (32) |
+| montre, jeton | `returnCodeMac` (32) |
+| téléphone, échange (liaison) | `nonce` (12), `encData` (défi de 16 octets chiffré + étiquette 16) |
+| montre, échange (liaison) | `nonce` (12), `encAuthToken` (clé longue durée 32 octets chiffrée + étiquette 16) |
+| téléphone, confirmation | `nonce` (12), `encResult` (4 + 16), `operationCode` |
+
+### 6.3 Calculs (HMAC = HMAC-SHA256 ; HKDF = RFC 5869 SHA-256 ; GCM = AES-256-GCM, étiquette 16 octets en fin)
+
+1. **Clé de base** : liaison = SHA-256 du texte « PIN en hexadécimal majuscule » (les octets du PIN déchiffré, écrits
+   en hexadécimal, pris comme caractères ASCII) ; authentification = la clé longue durée (32 octets).
+2. **PSK** = HMAC(clé de base, `seed`).
+3. Jeton attendu de la montre = HMAC(PSK, aléaMontre ‖ aléaTél ‖ idTél ‖ idMontre). Différent → PIN ou clé faux.
+4. Jeton du téléphone = HMAC(PSK, aléaTél ‖ aléaMontre ‖ idMontre ‖ idTél).
+5. `returnCodeMac` attendu = HMAC(PSK, 4 octets nuls).
+6. **Clé de session** = HKDF(PSK, sel = aléaTél ‖ aléaMontre, info = « hichain_iso_session_key », 32 octets).
+7. Liaison : `encData` = GCM(clé de session, nonce aléatoire 12, AAD = « hichain_iso_exchange », défi aléatoire 16) ;
+   la réponse `encAuthToken` se déchiffre en GCM avec la clé de session, le nonce de la montre et **AAD = le défi** →
+   **clé longue durée** (32 octets), gardée sur le téléphone.
+8. Confirmation : `encResult` = GCM(clé de session, nouveau nonce 12, AAD = « hichain_iso_result », 4 octets nuls).
+9. **Clé des trames** (après l'authentification seulement) = HKDF(clé de session, sel = aléaTél ‖ aléaMontre, info =
+   « hichain_return_key », 32 octets). Valable pour cette connexion, jamais gardée.
+
+**PIN (1/0x2C, premier appairage)** : demande = étiquette 1 vide ; réponse : 1 = PIN chiffré, 2 = IV. Déchiffrement
+AES-GCM (sans AAD) si la méthode de chiffrement vaut 1, sinon AES-CBC + PKCS#7, **avec une constante de 16 octets de
+l'app Huawei** choisie selon la version d'authentification (§4) : v1 pour 1 et 4, v2 pour 2, v3 pour 3 et plus.
+
+⚠️ **Constantes « digest secret » v1 / v2 / v3** : publiées sous licence MIT par [L] (`DIGEST_SECRETS` de
+`huawei/protocol.py`), mais extraites à l'origine de l'app Huawei → **jamais dans le dépôt**. HealthTrack les
+télécharge **sur le téléphone, d'un geste de l'utilisateur**, depuis le fichier de [L] (ou les fait coller), et les
+garde en local. Elles ne servent qu'au premier appairage ; la connexion de tous les jours n'utilise que la clé longue
+durée obtenue alors.
+
+### 6.4 Identifiants
+
+- **Identifiant du téléphone** : 16 octets aléatoires écrits en 32 caractères hexadécimaux majuscules, tiré une fois
+  par montre et **gardé** (la confiance de la montre y est attachée). Octets bruts (HMAC, 1/0x33 étiquette 5) = les 32
+  caractères ASCII ; champ JSON `peerAuthId` = hexadécimal majuscule de ces 32 octets (64 caractères) ;
+  `peerDeviceId` / `connDeviceId` = les 32 caractères tels quels. Ni l'Android ID ni une adresse réelle.
+- **Identifiant de la montre** = octets obtenus en décodant son `peerAuthId` (contenu ❓).
+
+### 6.5 Chiffrement des trames ensuite (§3)
+
+- AES-**GCM** (sans AAD) si la méthode de chiffrement vaut 1 **ou** le type de prise en charge vaut 4 ; sinon AES-CBC
+  + PKCS#7. Clé = clé des trames (32 octets → AES-256).
+- IV de 16 octets : type 4 → 16 octets aléatoires ; sinon 12 aléatoires + compteur 32 bits gros-boutiste, incrémenté
+  avant chaque envoi, qui part de 0 en HiChain (1er IV = 1) et repasse à 1 après 0xFFFFFFFF.
+- Restent en clair : 1/0x01, 0x16, 0x33, 0x2C, 0x28, 0x13, 0x0F, 0x0E. Une réponse est déchiffrée dès que 0x7C vaut 1.
+
+### 6.6 Compte Huawei (plan B) et cas connus
+
+- Après l'authentification, l'identifiant de compte se donne en 0x1A/0x05 : étiquette 1 = identifiant (texte, ou un
+  octet nul si aucun), étiquette 3 = `01` si la montre annonce l'« optimisation d'appairage multi-comptes » (❓ comment
+  le savoir : à lire à l'étape d).
+- GT 6 Pro (ATM-B29, logiciel 6.00.165) : même chemin que la GT 5, rien de spécifique à l'authentification [I #5428].
+- Après une mise à jour majeure de la montre, la clé gardée peut être refusée : refaire PIN + liaison [I #6978].
+- La variante PAKE (SPEKE / STS) ne concerne que des Honor [I #6472].
 
 ## 7. Données santé utiles (étape d)
 
@@ -169,5 +256,5 @@ calculer la VFC (RMSSD) depuis des RR (`src/devices/ble/heartRate.js`).
 |---|---|---|
 | (a) Diagnostic : trame, TLV, CRC, tranches, paramètres du lien, transports RFCOMM + BLE, export du journal | ✅ run 12/10 22:30 | `src/devices/huawei/protocol.js`, `transports.js`, `diagnostic.js`, `BtClassicPlugin.java`, `components/WatchDiagnostic.jsx` |
 | (b) Détection et libération (boîte de désinstallation, réglages de l'app, guide de réinitialisation, plan B compte Huawei) + assistant d'appairage Android | ✅ run 13/10 00:30 | `src/devices/huawei/setup.js`, `components/WatchSetup.jsx`, `AppManagerPlugin.java`, `BtClassicPlugin.java` (`discover`, `pair`, `openBluetoothSettings`) |
-| (c) Authentification (HiChain d'après le mode lu en (a)) + clés stockées en local | ☐ | — |
+| (c) Authentification HiChain (§6) : état, négociation, PIN, liaison, authentification, clé des trames, chiffrement GCM / CBC ; clés gardées en local ; constantes du PIN téléchargées sur le téléphone | ✅ run 13/10 02:30 (à valider sur la montre) | `src/devices/huawei/crypto.js`, `session.js`, `hichain.js`, `pairing.js`, `components/WatchConnect.jsx` |
 | (d) Synchronisation (§7) puis resynchro en arrière-plan | ☐ | — |
