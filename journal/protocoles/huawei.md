@@ -296,6 +296,18 @@ réponse non-JSON, sans jamais rendre de valeur (champ `structure`) :
 - L'en-tête (`head`) passe de 12 à **32 octets**, et l'écran nomme les champs repérés (« champs repérés : challenge,
   epk, salt »). Si la charge utile est portée par une autre étiquette que la 1, elle est sondée de la même façon.
 
+**Instrument renforcé (run 13/10 18:30) — la taille de chaque champ, pour décoder d'un seul journal.** Nommer les
+champs ne suffit pas à écrire le décodeur : il faut savoir **combien d'octets** fait chacun (une clé publique X25519 =
+32, un `salt` / `challenge` = 16, une signature Ed25519 = 64…). `probeStructure` ajoute donc, à côté de `payloadKeys`,
+deux listes **de tailles seulement** (`fields` pour l'objet entier, `payloadFields` pour le `payload`) : pour chaque
+champ, sa taille **en octets** si sa valeur est un hexadécimal, en caractères si c'est une autre chaîne, sinon son type
+(`number`, `bool`, `object`…). **Jamais la valeur** — une taille n'est pas un secret, au même titre que `jsonLength`
+ou `tag/size` déjà consignés. L'écran et le journal affichent désormais « champs repérés : challenge (16 o), epk (32 o),
+salt (16 o) ». Avec cela, le run qui recevra le prochain journal pourra mapper chaque champ sur son rôle SPEKE (§6.8)
+**sans second aller-retour** : noms + tailles + code de message suffisent à écrire l'assemblage. Testé sur la fausse
+montre « New Auth » et sur une réponse d'exemple (challenge / salt 16, epk 32, signature 64, `version` en clair), avec
+une vérification qu'aucune valeur ne fuit dans le journal.
+
 ## 6.8 HiChain 3 « New Auth Protocol » (SPEKE / STS) — plan de décodage
 
 Recherche du 13/10/2026 (run 14:30 Paris) dans [G] (lecture seule, faits seulement ; la couche PAKE y est attribuée en
@@ -546,6 +558,8 @@ une heure de recouvrement (7 jours la première fois) ; les doublons sont écart
 |---|---|---|
 | (a) Diagnostic : trame, TLV, CRC, tranches, paramètres du lien, transports RFCOMM + BLE, export du journal | ✅ run 12/10 22:30 | `src/devices/huawei/protocol.js`, `transports.js`, `diagnostic.js`, `BtClassicPlugin.java`, `components/WatchDiagnostic.jsx` |
 | (a bis) Analyse sûre des réponses 0x28 (`inspectHichainReply`) consignée dans le journal (`report.hichain`) ; étape et code précis nommés à l'écran ; déclenché par le journal réel GT 6 Pro (§6.7) | ✅ run 13/10 11:04 | `hichain.js` (`inspectHichainReply`), `pairing.js`, `testing/fakeWatch.js` (`garbleHichain`) |
+| (a ter) Révéler les **champs** d'une réponse « New Auth » non-JSON (`probeStructure` : JSON intégré / TLV imbriqués) ; `head` 32 octets ; champs nommés à l'écran (§6.7) | ✅ run 13/10 14:30 | `hichain.js` (`probeStructure`, `findEmbeddedJson`), `testing/fakeWatch.js` (`newAuthHichain`) |
+| (a quater) **Taille** de chaque champ (`fields`, `payloadFields` — octets / caractères / type, jamais la valeur) ; « challenge (16 o), epk (32 o)… » à l'écran et au journal, pour décoder d'un seul journal (§6.7) | ✅ run 13/10 18:30 | `hichain.js` (`describeFieldSizes`, `probeStructure`), `pairing.js` |
 | (b) Détection et libération (boîte de désinstallation, réglages de l'app, guide de réinitialisation, plan B compte Huawei) + assistant d'appairage Android | ✅ run 13/10 00:30 | `src/devices/huawei/setup.js`, `components/WatchSetup.jsx`, `AppManagerPlugin.java`, `BtClassicPlugin.java` (`discover`, `pair`, `openBluetoothSettings`) |
 | (c) Authentification HiChain (§6) : état, négociation, PIN, liaison, authentification, clé des trames, chiffrement GCM / CBC ; clés gardées en local ; constantes du PIN téléchargées sur le téléphone | ✅ run 13/10 02:30 (à valider sur la montre) | `src/devices/huawei/crypto.js`, `session.js`, `hichain.js`, `pairing.js`, `components/WatchConnect.jsx` |
 | (c bis) Primitives « New Auth Protocol » (§6.8) : X25519 (multiplication scalaire sur point quelconque, ECDH), Ed25519 (signature / vérification) sur @noble/curves (MIT) ; vecteurs RFC 7748 / 8032 | ✅ run 13/10 16:30 | `src/devices/huawei/crypto.js` (`x25519ScalarMult`, `x25519SharedSecret`, `x25519Base`, `generateX25519KeyPair`, `ed25519Sign/Verify/PublicKey`, `generateEd25519KeyPair`) |

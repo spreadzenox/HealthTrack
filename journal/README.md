@@ -109,6 +109,12 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   challenge, epk, salt »), et le journal en garde la structure complète (noms des champs seulement, jamais les valeurs).
   C'est précisément ce qu'il me faut pour écrire le décodage de votre montre au prochain run. **Rien n'est modifié sur
   la montre** : relancer « Se connecter à la montre » puis « Enregistrer le journal » suffit.
+- **Montre Huawei — « Se connecter » donne aussi la taille des champs** (run 13/10 18:30) : à côté des noms, l'écran et
+  le journal indiquent maintenant la **taille** de chaque champ (« challenge (16 o), epk (32 o), salt (16 o) »). C'est
+  la pièce qui me manquait pour **décoder votre montre d'un seul journal**, sans avoir à vous en redemander un autre
+  (les tailles disent quel champ est la clé publique, laquelle est la signature…). Toujours **sans aucune valeur** et
+  **sans rien modifier sur la montre** : il suffit de relancer « Se connecter à la montre » puis « Enregistrer le
+  journal » et de me le transmettre.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -289,9 +295,10 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
 (b) libération + appairage, (c) authentification ISO, (d) lecture des mesures et synchro automatique livrées. Blocage
 réel : la GT 6 Pro répond à l'appairage dans son **nouveau format (« New Auth Protocol »)** que l'ancien schéma ne lit
 pas. **Dès que vous renvoyez un journal** (relancer « Se connecter à la montre » → « Enregistrer le journal »), l'app
-me donnera les **noms des champs** de cette réponse ; le run suivant écrira alors le **décodage du nouveau format**.
-Les briques de base de ce décodage (X25519 / Ed25519) sont **déjà en place depuis le run 16:30** : il ne restera qu'à
-les assembler dans le bon ordre d'après votre journal. Puis synchro app fermée, stress / VFC de journée. Ensuite :
+me donnera les **noms ET les tailles des champs** de cette réponse (depuis le run 18:30) ; le run suivant écrira alors
+le **décodage du nouveau format d'un seul journal**, sans second aller-retour. Les briques de base de ce décodage
+(X25519 / Ed25519) sont **déjà en place depuis le run 16:30** : il ne restera qu'à les assembler dans le bon ordre
+d'après votre journal. Puis synchro app fermée, stress / VFC de journée. Ensuite :
 performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
@@ -317,6 +324,7 @@ performance des courbes, restes du nettoyage, humeur par le visage / la voix.
 | 13/10 11:04 — [Montre : 1er journal réel GT 6 Pro + analyseur HiChain](runs/2026-10-13-1104-montre-hichain-journal-reel.md) | ⌚🏗️ | PR #136 fusionnée → v115 |
 | 13/10 14:30 — [Montre : champs de la réponse HiChain 3 + spec New Auth](runs/2026-10-13-1250-montre-hichain3-champs.md) | ⌚🏗️ | PR #138 fusionnée → v116 |
 | 13/10 16:30 — [Montre : primitives crypto New Auth (X25519 / Ed25519)](runs/2026-10-13-1430-montre-crypto-newauth.md) | ⌚🏗️ | PR #140 fusionnée → v117 |
+| 13/10 18:30 — [Montre : taille des champs de la réponse New Auth](runs/2026-10-13-1830-montre-tailles-champs-newauth.md) | ⌚🏗️ | PR #__ (en cours) |
 
 ---
 

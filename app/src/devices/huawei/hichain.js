@@ -158,11 +158,37 @@ function findEmbeddedJson(bytes) {
   return null
 }
 
+/** Chaîne hexadécimale ? (longueur paire, uniquement 0-9a-f). */
+const isHexString = (v) => typeof v === 'string' && v.length > 0 && v.length % 2 === 0 && /^[0-9a-f]+$/i.test(v)
+
+/**
+ * Taille — **jamais la valeur** — de chaque champ d'un objet, triée par nom. Un hexadécimal rend sa
+ * taille en octets (epk 32, salt 16, signature 64…), une autre chaîne son nombre de caractères, le
+ * reste son type. Une taille n'est pas un secret (comme `jsonLength` ou `tag/size`, déjà consignés) :
+ * c'est précisément ce qu'il faut pour décoder la réponse « New Auth » d'un seul journal (§6.8),
+ * sans second aller-retour.
+ */
+function describeFieldSizes(obj) {
+  if (!obj || typeof obj !== 'object') return null
+  return Object.keys(obj)
+    .sort()
+    .map((key) => {
+      const v = obj[key]
+      if (isHexString(v)) return { key, bytes: v.length / 2 }
+      if (typeof v === 'string') return { key, chars: v.length }
+      if (typeof v === 'number') return { key, kind: 'number' }
+      if (typeof v === 'boolean') return { key, kind: 'bool' }
+      if (Array.isArray(v)) return { key, kind: 'array' }
+      if (v && typeof v === 'object') return { key, kind: 'object' }
+      return { key, kind: v === null ? 'null' : typeof v }
+    })
+}
+
 /**
  * Analyse **structurelle** (jamais de valeur) d'octets qui ne sont pas directement du JSON, pour que
  * le journal du propriétaire dise de quoi est faite une réponse HiChain 3 (« New Auth Protocol »,
- * §6.8) : noms des champs d'un éventuel JSON intégré, et liste d'étiquettes si les octets sont des
- * TLV imbriqués. Rend null si rien de reconnaissable.
+ * §6.8) : noms **et tailles** des champs d'un éventuel JSON intégré, et liste d'étiquettes si les
+ * octets sont des TLV imbriqués. Rend null si rien de reconnaissable.
  */
 function probeStructure(bytes) {
   if (!bytes || !bytes.length) return null
@@ -175,6 +201,8 @@ function probeStructure(bytes) {
       message: typeof emb.json?.message === 'number' ? `0x${(emb.json.message >>> 0).toString(16)}` : null,
       keys: Object.keys(emb.json).sort(),
       payloadKeys: payload ? Object.keys(payload).sort() : null,
+      fields: describeFieldSizes(emb.json),
+      payloadFields: payload ? describeFieldSizes(payload) : null,
     }
   }
   const tlv = tryDecodeTlvs(bytes)
@@ -264,8 +292,10 @@ export function parseHichainReply(tlvs) {
   if (inspection.classification === 'no_payload') fail(`Réponse HiChain sans charge utile (étiquettes reçues : ${describeTags(inspection.tags)})`)
   if (inspection.classification === 'json_unparsable') {
     const emb = inspection.structure?.embeddedJson
-    const hint = emb?.payloadKeys?.length
-      ? ` · champs repérés : ${emb.payloadKeys.join(', ')} (probable « New Auth Protocol » HiChain 3, §6.8)`
+    const named = emb?.payloadFields?.length ? emb.payloadFields : null
+    const fmtField = (f) => (f.bytes != null ? `${f.key} (${f.bytes} o)` : f.chars != null ? `${f.key} (${f.chars} car.)` : f.key)
+    const hint = named
+      ? ` · champs repérés : ${named.map(fmtField).join(', ')} (probable « New Auth Protocol » HiChain 3, §6.8)`
       : ''
     fail(
       `Réponse HiChain illisible : l'étiquette 1 (${inspection.jsonLength} octets, débute par ${inspection.head}) n'est pas du JSON${
