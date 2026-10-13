@@ -420,3 +420,143 @@ describe('sauvegarde — profil (sexe, année, taille, activité)', () => {
     expect(getBodySettings()).toEqual({ sex: 'M', birthYear: 1985, heightCm: 180 })
   })
 })
+
+describe('lectures par index (D2 performance)', () => {
+  // Jeu varié : types, sources, dates (dont égalités) — le résultat indexé doit être celui du filtre complet
+  const sample = () => {
+    const out = []
+    const types = ['heart_rate', 'sleep', 'wellbeing', 'steps']
+    const sources = ['health_connect', 'app_wellbeing', 'huawei_watch']
+    for (let i = 0; i < 120; i++) {
+      const day = String(1 + (i % 28)).padStart(2, '0')
+      const hour = String((i * 7) % 24).padStart(2, '0')
+      out.push({ type: types[i % 4], source: sources[i % 3], at: `2026-0${1 + (i % 3)}-${day}T${hour}:00:00.000Z`, payload: { i } })
+    }
+    return out
+  }
+  const naive = (all, o) => {
+    let e = all
+    if (o.type) e = e.filter((x) => x.type === o.type)
+    if (o.source) e = e.filter((x) => x.source === o.source)
+    if (o.since) e = e.filter((x) => x.at >= o.since)
+    if (o.until) e = e.filter((x) => x.at <= o.until)
+    return e.map((x) => x.at).sort().reverse().slice(0, o.limit ?? 100)
+  }
+  const cases = [
+    { type: 'heart_rate', since: '2026-02-10T00:00:00.000Z', limit: Infinity },
+    { type: 'sleep', since: '2026-01-05T00:00:00.000Z', until: '2026-02-20T00:00:00.000Z', limit: Infinity },
+    { type: 'wellbeing', limit: 5 },
+    { source: 'health_connect', since: '2026-02-01T00:00:00.000Z', limit: Number.MAX_SAFE_INTEGER },
+    { since: '2026-03-01T00:00:00.000Z', limit: 5000 },
+    { since: '2026-01-15T00:00:00.000Z', until: '2026-01-20T00:00:00.000Z' },
+    { type: 'steps', source: 'huawei_watch', since: '2026-01-01T00:00:00.000Z', limit: Infinity },
+    { limit: 30 },
+    {},
+  ]
+
+  it.each(cases)('même résultat que le filtre complet : %o', async (opts) => {
+    const all = sample()
+    await upsertEntries(all)
+    const got = await listEntries(opts)
+    expect(got.map((e) => e.at)).toEqual(naive(all, opts))
+    for (const e of got) {
+      if (opts.type) expect(e.type).toBe(opts.type)
+      if (opts.source) expect(e.source).toBe(opts.source)
+    }
+  })
+
+  it('ne relit pas toute la base quand un type, une source ou une date est donné', async () => {
+    await upsertEntries(sample())
+    const proto = globalThis.IDBObjectStore.prototype
+    const orig = proto.getAll
+    let fullReads = 0
+    proto.getAll = function (...a) {
+      fullReads++
+      return orig.apply(this, a)
+    }
+    try {
+      await listEntries({ type: 'heart_rate', since: '2026-02-01T00:00:00.000Z', limit: Infinity })
+      await listEntries({ type: 'food', limit: 100 })
+      await listEntries({ source: 'health_connect', since: '2026-02-01T00:00:00.000Z' })
+      await listEntries({ since: '2026-03-01T00:00:00.000Z', limit: 5000 })
+      await getLatestEntryAt('health_connect')
+    } finally {
+      proto.getAll = orig
+    }
+    expect(fullReads).toBe(0)
+  })
+
+  it('getLatestEntryAt lit la plus récente de la source via l\'index', async () => {
+    const all = sample()
+    await upsertEntries(all)
+    const want = all.filter((e) => e.source === 'huawei_watch').map((e) => e.at).sort().at(-1)
+    expect(await getLatestEntryAt('huawei_watch')).toBe(want)
+  })
+
+  it('migration v2 → v3 : les données restent, l\'index [type, at] est ajouté', async () => {
+    // Base telle que l'écrivait la version 2
+    await new Promise((resolve, reject) => {
+      const req = indexedDB.open('HealthTrack', 2)
+      req.onupgradeneeded = () => {
+        const store = req.result.createObjectStore('health_entries', { keyPath: 'id', autoIncrement: true })
+        store.createIndex('at', 'at', { unique: false })
+        store.createIndex('type', 'type', { unique: false })
+        store.createIndex('source', 'source', { unique: false })
+        store.createIndex('source_at', ['source', 'at'], { unique: false })
+        store.add({ type: 'sleep', source: 'old', payload: { h: 7 }, at: '2025-12-01T07:00:00.000Z', created_at: '2025-12-01T07:00:00.000Z' })
+        store.add({ type: 'sleep', source: 'old', payload: { h: 6 }, at: '2025-12-02T07:00:00.000Z', created_at: '2025-12-02T07:00:00.000Z' })
+      }
+      req.onsuccess = () => {
+        req.result.close()
+        resolve()
+      }
+      req.onerror = () => reject(req.error)
+    })
+    const got = await listEntries({ type: 'sleep', since: '2025-12-02T00:00:00.000Z', limit: Infinity })
+    expect(got.map((e) => e.payload.h)).toEqual([6])
+    expect(await countAllEntries()).toBe(2)
+    const db = await new Promise((resolve) => {
+      const req = indexedDB.open('HealthTrack')
+      req.onsuccess = () => resolve(req.result)
+    })
+    expect(db.version).toBe(3)
+    expect([...db.transaction('health_entries').objectStore('health_entries').indexNames]).toContain('type_at')
+    db.close()
+  })
+})
+
+describe('listEntriesForAnalysis par index (D2 performance)', () => {
+  it('garde les N plus récents par type sans relire toute la base', async () => {
+    // 'sleep' est plafonné à 500 : 530 nuits, dont des doublons d'heure à la limite
+    const rows = []
+    for (let i = 0; i < 530; i++) {
+      const d = new Date(Date.UTC(2024, 0, 1) + Math.floor(i / 2) * 86400000).toISOString()
+      rows.push({ type: 'sleep', source: i % 2 ? 'a' : 'b', at: d, payload: { i } })
+    }
+    rows.push({ type: 'wellbeing', source: 'app', at: '2025-01-01T08:00:00.000Z', payload: {} })
+    rows.push({ type: 'nouveau_type', source: 'x', at: '2025-01-02T08:00:00.000Z', payload: {} })
+    await upsertEntries(rows)
+
+    const proto = globalThis.IDBObjectStore.prototype
+    const orig = proto.getAll
+    let fullReads = 0
+    proto.getAll = function (...a) {
+      fullReads++
+      return orig.apply(this, a)
+    }
+    let got
+    try {
+      got = await listEntriesForAnalysis()
+    } finally {
+      proto.getAll = orig
+    }
+    expect(fullReads).toBe(0)
+
+    const sleep = got.filter((e) => e.type === 'sleep')
+    expect(sleep).toHaveLength(500)
+    const want = rows.filter((e) => e.type === 'sleep').map((e) => e.at).sort().reverse().slice(0, 500)
+    expect(sleep.map((e) => e.at)).toEqual(want)
+    expect(got.filter((e) => e.type === 'wellbeing')).toHaveLength(1)
+    expect(got.filter((e) => e.type === 'nouveau_type')).toHaveLength(1)
+  })
+})

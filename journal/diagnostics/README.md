@@ -14,6 +14,8 @@ Il y a **deux sortes de journaux** :
 
 Journaux déjà reçus :
 - `2026-10-13-0904-gt6pro.json` — GT 6 Pro, appairage bloqué à « Réponse HiChain illisible » (HiChain 3, voir §6.7).
+- `2026-10-13-1703-gt6pro.json` — GT 6 Pro, app v118 : réponse ISO 0x8001 + 1 octet de fin (§6.9).
+- `2026-10-13-2042-gt6pro-v119.md` — GT 6 Pro, app v119 (avant le correctif v120) : échec identique, résumé seulement.
 
 Les journaux ne contiennent ni l'adresse Bluetooth complète de la montre (seulement ses 2 derniers octets), ni aucune
 donnée de santé, ni clé, ni PIN, ni aucune valeur des échanges d'authentification (seulement des noms de champs et des

@@ -4,12 +4,14 @@
  * Survives app updates. Use Export/Import to survive reinstallation.
  *
  * Schema v2: added compound index 'source_at' for efficient connector sync queries.
+ * Schema v3: added compound index 'type_at' — listEntries reads a type / source / date range through
+ * the indexes instead of loading the whole store (perf D2).
  */
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
 
 const DB_NAME = 'HealthTrack'
 const STORE_NAME = 'health_entries'
-const DB_VERSION = 2
+const DB_VERSION = 3
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -34,6 +36,10 @@ function openDB() {
       if (oldVersion < 2 && !store.indexNames.contains('source_at')) {
         store.createIndex('source_at', ['source', 'at'], { unique: false })
       }
+      // v3: same for a type within a date range (index only, entries untouched)
+      if (oldVersion < 3 && !store.indexNames.contains('type_at')) {
+        store.createIndex('type_at', ['type', 'at'], { unique: false })
+      }
     }
   })
 }
@@ -46,11 +52,11 @@ export async function listEntries(opts = {}) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
-    const store = tx.objectStore(STORE_NAME)
-    const req = store.getAll()
+    const req = indexedRead(tx.objectStore(STORE_NAME), opts)
     req.onerror = () => reject(req.error)
     req.onsuccess = () => {
       let entries = req.result || []
+      // Les filtres restent appliqués : l'index ne fait que réduire ce qui est lu
       if (opts.type) entries = entries.filter((e) => e.type === opts.type)
       if (opts.source) entries = entries.filter((e) => e.source === opts.source)
       if (opts.since) entries = entries.filter((e) => e.at >= opts.since)
@@ -60,6 +66,21 @@ export async function listEntries(opts = {}) {
       resolve(entries.slice(0, limit))
     }
   })
+}
+
+// Borne haute d'une date ISO (aucune date réelle ne la dépasse)
+const AT_MAX = '\uffff'
+
+/** Plus petite lecture couvrant les filtres : index [type, at], [source, at], at ou type ; sinon tout. */
+function indexedRead(store, { type, source, since, until }) {
+  const from = since ?? ''
+  const to = until ?? AT_MAX
+  if (type && (since || until)) return store.index('type_at').getAll(IDBKeyRange.bound([type, from], [type, to]))
+  if (source && (since || until)) return store.index('source_at').getAll(IDBKeyRange.bound([source, from], [source, to]))
+  if (type) return store.index('type').getAll(IDBKeyRange.only(type))
+  if (source) return store.index('source').getAll(IDBKeyRange.only(source))
+  if (since || until) return store.index('at').getAll(IDBKeyRange.bound(from, to))
+  return store.getAll()
 }
 
 /**
@@ -73,15 +94,10 @@ export async function getLatestEntryAt(source) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
-    const store = tx.objectStore(STORE_NAME)
-    const req = store.getAll()
+    const range = IDBKeyRange.bound([source, ''], [source, AT_MAX])
+    const req = tx.objectStore(STORE_NAME).index('source_at').openCursor(range, 'prev')
     req.onerror = () => reject(req.error)
-    req.onsuccess = () => {
-      const entries = (req.result || []).filter((e) => e.source === source)
-      if (entries.length === 0) return resolve(null)
-      entries.sort((a, b) => (b.at < a.at ? -1 : 1))
-      resolve(entries[0].at)
-    }
+    req.onsuccess = () => resolve(req.result?.value.at ?? null)
   })
 }
 
@@ -213,30 +229,55 @@ export async function listEntriesForAnalysis() {
   const DEFAULT_LIMIT = 1000
 
   const db = await openDB()
-  const allEntries = await new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readonly')
-    const store = tx.objectStore(STORE_NAME)
-    const req = store.getAll()
+  const store = () => db.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME)
+  const request = (req) =>
+    new Promise((resolve, reject) => {
+      req.onerror = () => reject(req.error)
+      req.onsuccess = () => resolve(req.result)
+    })
+
+  // Types présents : clés uniques de l'index 'type', sans lire les entrées
+  const types = await new Promise((resolve, reject) => {
+    const found = []
+    const req = store().index('type').openKeyCursor(null, 'nextunique')
     req.onerror = () => reject(req.error)
-    req.onsuccess = () => resolve(req.result || [])
+    req.onsuccess = () => {
+      const cursor = req.result
+      if (!cursor) return resolve(found)
+      found.push(cursor.key)
+      cursor.continue()
+    }
   })
 
-  // Group by type, sort each group descending by `at`, apply per-type limit
-  const byType = {}
-  for (const entry of allEntries) {
-    const t = entry.type || '__unknown__'
-    if (!byType[t]) byType[t] = []
-    byType[t].push(entry)
-  }
-
-  const result = []
-  for (const [type, entries] of Object.entries(byType)) {
-    entries.sort((a, b) => (b.at < a.at ? -1 : 1))
+  const perType = await Promise.all(types.map(async (type) => {
     const limit = TYPE_LIMITS[type] ?? DEFAULT_LIMIT
-    result.push(...entries.slice(0, limit))
-  }
-
-  return result
+    const typeIndex = store().index('type')
+    const count = await request(typeIndex.count(IDBKeyRange.only(type)))
+    let entries
+    if (count <= limit) {
+      entries = await request(typeIndex.getAll(IDBKeyRange.only(type)))
+    } else {
+      // Date de la N-ième plus récente (clés seules), puis lecture de cette date à aujourd'hui
+      const nth = await new Promise((resolve, reject) => {
+        const req = store().index('type_at').openKeyCursor(IDBKeyRange.bound([type, ''], [type, AT_MAX]), 'prev')
+        let skipped = false
+        req.onerror = () => reject(req.error)
+        req.onsuccess = () => {
+          const cursor = req.result
+          if (!cursor) return resolve('')
+          if (!skipped && limit > 1) {
+            skipped = true
+            return cursor.advance(limit - 1)
+          }
+          resolve(cursor.key[1])
+        }
+      })
+      entries = await request(store().index('type_at').getAll(IDBKeyRange.bound([type, nth], [type, AT_MAX])))
+    }
+    entries.sort((a, b) => (b.at < a.at ? -1 : 1))
+    return entries.slice(0, limit)
+  }))
+  return perType.flat()
 }
 
 /**

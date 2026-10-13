@@ -58,13 +58,17 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] Connecteurs : intro + 6 blocs empilés → ordre par statut (ce qui envoie / ce qui reste à brancher)
 
 ### D2 — Performance (mesurer d'abord)
-- [ ] Mesure : temps de chargement par page (script Playwright, données de démo × 3 ans), nombre d'entrées lues par page,
-      profil des calculs (`computeAdvancedAnalysis`, `buildDailyDataset`) ; chiffres dans le compte rendu
-- [ ] `listEntries` / `listEntriesForAnalysis` : `getAll()` + filtre JS → requêtes par index (type, date) et par plage
+- [x] Mesure : `npm run perf` (build de prod, 3 ans de démo, `--dense`, CPU ×4) — temps stabilisé, temps bloquant,
+      lectures IndexedDB par page (run 14/10 00:30 ; chiffres dans son compte rendu). Reste : profil fin des calculs
+- [x] `listEntries` / `getLatestEntryAt` / `listEntriesForAnalysis` : requêtes par index et par plage, index
+      `type_at` (schéma v3) — Accueil 3 046 → 1 289 ms, 128 552 → 16 884 enregistrements lus (run 14/10 00:30)
 - [ ] Cache d'agrégats journaliers / hebdo précalculés, invalidés à l'écriture (`health-entries-updated`)
 - [ ] Mémoïsation, sous-échantillonnage des longues séries, Web Worker pour l'analyse, graphiques chargés en différé
       (+ code splitting : bundle principal > 500 kB)
-- [ ] Test / budget anti-régression (temps ou nombre de lectures par page)
+- [x] Test anti-régression : Vitest échoue si une lecture filtrée relit tout le magasin (run 14/10 00:30)
+- [ ] Budget `npm run perf` en CI (lectures par page ≤ N, temps bloquant de l'Accueil) — les temps sont bruités
+      (± 200 ms), viser plutôt le nombre d'enregistrements lus
+- [ ] Accueil : `WellbeingCharts` lit encore `listEntriesForAnalysis` (≈ 15 k entrées) → agrégats journaliers
 - Piste détaillée (run idées 12/10 20:30, I43) : index composé `[type, date]` (migration = ajout d'index seul),
   `listEntries({types, from, to})` par `IDBKeyRange`, magasin `daily_agg` versionné, LTTB ≥ 2 000 points dans un Worker,
   test « Accueil lit ≤ N entrées » — `localHealthStorage.js` fait aujourd'hui 7 `getAll()` sur tout le store
@@ -352,7 +356,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⌚ **D3 — ATTENDRE / LIRE LE 3e JOURNAL** (app ≥ v120, lecture tolérante + variantes du jeton livrées le 13/10 22:30,
+1. ⌚ **D3 — ATTENDRE / LIRE LE JOURNAL v120** (le test du 13/10 20:42 était en v119, avant le correctif : échec
+   identique attendu, `diagnostics/2026-10-13-2042-gt6pro-v119.md`) (app ≥ v120, lecture tolérante + variantes du jeton livrées le 13/10 22:30,
    §6.9–6.10). Selon le journal : `bind` ok → vérifier `auth`, `check` (batterie), `sync` sur la vraie montre ;
    `tokenCheck.matched` = « X + ordre » → implémenter cet ordre côté téléphone (jeton du téléphone en miroir) ;
    `tokenCheck.matched` nul → regarder les tailles (`idPeer` 64 o = identifiant texte de 64 caractères ?) et la casse
@@ -362,8 +367,9 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
    (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**
-4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
-   Worker, graphiques différés ; budget anti-régression.
+4. ⚡ D2 — performance : mesure (`npm run perf`) et lectures par index **livrées le 14/10 00:30** ; reste le calcul
+   (tâche longue ≈ 0,6–0,9 s sur Accueil / Analyses) : cache d'agrégats journaliers, Worker pour l'analyse,
+   graphiques différés + découpage du bundle, budget en CI.
 5. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /
    « Voyage » auto-détectés ; `--border` inexistant utilisé par `.settings-input` (corriger globalement).
 6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB).

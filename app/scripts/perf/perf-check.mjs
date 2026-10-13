@@ -1,0 +1,260 @@
+#!/usr/bin/env node
+/**
+ * Mesure de performance (directive D2 « mesurer d'abord ») : construit l'app (vite build), la sert
+ * (vite preview), injecte des données de démo sur une longue période dans IndexedDB, puis charge
+ * chaque page dans un viewport ≈ Galaxy A56 et relève :
+ *   - `settledMs`  : temps entre la navigation et la fin de la dernière tâche longue (> 50 ms) suivie de
+ *                    1 s de calme (≈ « page utilisable ») ;
+ *   - `tbtMs`      : temps bloquant total (somme des tâches longues au-delà de 50 ms) ;
+ *   - `longestMs`  : tâche longue la plus longue ;
+ *   - `idbReads` / `idbRecords` : nombre de lectures IndexedDB (getAll, get, count, curseurs) et
+ *                    d'enregistrements renvoyés.
+ * Chaque page est mesurée `--runs` fois (médiane). Le processeur est ralenti (`--cpu`, ×4 par défaut,
+ * via CDP) pour approcher un téléphone milieu de gamme.
+ *
+ * Usage :
+ *   npm run perf                       # 3 ans de démo, toutes les pages, 3 passages, CPU ×4
+ *   npm run perf -- --days=365         # 1 an
+ *   npm run perf -- --dense            # + fréquence cardiaque toutes les heures (≈ montre synchronisée)
+ *   npm run perf -- --routes=/,/data   # pages choisies
+ *   npm run perf -- --runs=5 --cpu=6
+ *   npm run perf -- --no-build         # réutilise dist/
+ *
+ * Sortie : tableau dans la console + `.perf/report.json`.
+ */
+import { spawn, execSync } from 'node:child_process'
+import { createRequire } from 'node:module'
+import { mkdirSync, readdirSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { generateDemoEntries } from '../visual/demoData.mjs'
+
+process.env.TZ = 'Europe/Paris'
+const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+
+const DEFAULT_ROUTES = ['/', '/food', '/nutrition', '/data', '/connectors', '/recommendations', '/settings', '/plus']
+
+function parseArgs(argv) {
+  const args = {}
+  for (const a of argv) {
+    const m = a.match(/^--([^=]+)(?:=(.*))?$/)
+    if (m) args[m[1]] = m[2] ?? true
+  }
+  return args
+}
+
+async function loadPlaywright() {
+  try {
+    return await import('playwright')
+  } catch {
+    const globalRoot = execSync('npm root -g').toString().trim()
+    return createRequire(join(globalRoot, 'noop.js'))('playwright')
+  }
+}
+
+async function waitForServer(url, timeoutMs = 30000) {
+  const start = Date.now()
+  while (Date.now() - start < timeoutMs) {
+    try {
+      if ((await fetch(url)).ok) return
+    } catch {
+      /* pas encore prêt */
+    }
+    await new Promise((r) => setTimeout(r, 300))
+  }
+  throw new Error(`Serveur injoignable : ${url}`)
+}
+
+/** Fréquence cardiaque toutes les heures (comme une montre synchronisée), en plus de la démo. */
+export function denseHeartRate(days, now = new Date()) {
+  const out = []
+  for (let i = days; i >= 0; i--) {
+    for (let h = 0; h < 24; h++) {
+      const at = new Date(now)
+      at.setDate(at.getDate() - i)
+      at.setHours(h, 17, 0, 0)
+      if (at > now) continue
+      const bpm = Math.round(62 + 18 * Math.sin(((h - 4) / 24) * 2 * Math.PI) + ((i * 7 + h * 13) % 9))
+      out.push({ type: 'heart_rate', source: 'perf_dense', at: at.toISOString(), payload: { bpm } })
+    }
+  }
+  return out
+}
+
+export const median = (xs) => {
+  const s = [...xs].sort((a, b) => a - b)
+  return s.length ? (s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2) : 0
+}
+
+function latestChangelogId() {
+  const files = readdirSync(join(APP_DIR, 'src/data/changelog')).filter((f) => f.endsWith('.json'))
+  return files.sort().at(-1)?.replace(/\.json$/, '') ?? null
+}
+
+/** Script injecté : compte les lectures IndexedDB et suit les tâches longues. */
+function instrument() {
+  const stats = { idbReads: 0, idbRecords: 0, longTasks: [] }
+  window.__perf = stats
+  const wrap = (proto, name, count) => {
+    const orig = proto[name]
+    if (!orig) return
+    proto[name] = function (...a) {
+      const req = orig.apply(this, a)
+      stats.idbReads++
+      req.addEventListener('success', () => {
+        stats.idbRecords += count(req.result)
+      })
+      return req
+    }
+  }
+  const many = (r) => (Array.isArray(r) ? r.length : 0)
+  const one = (r) => (r === undefined ? 0 : 1)
+  for (const P of [IDBObjectStore.prototype, IDBIndex.prototype]) {
+    wrap(P, 'getAll', many)
+    wrap(P, 'get', one)
+    wrap(P, 'count', () => 0)
+    wrap(P, 'openCursor', one)
+  }
+  // Chaque continue() d'un curseur = un enregistrement de plus
+  const cont = IDBCursor.prototype.continue
+  IDBCursor.prototype.continue = function (...a) {
+    stats.idbRecords++
+    return cont.apply(this, a)
+  }
+  try {
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) stats.longTasks.push({ start: e.startTime, duration: e.duration })
+    }).observe({ type: 'longtask', buffered: true })
+  } catch {
+    /* longtask non pris en charge */
+  }
+}
+
+async function main() {
+  const args = parseArgs(process.argv.slice(2))
+  const days = Number(args.days || 1095)
+  const runs = Number(args.runs || 3)
+  const cpu = Number(args.cpu || 4)
+  const port = Number(args.port || 5299)
+  const routes = args.routes ? String(args.routes).split(',') : DEFAULT_ROUTES
+  const outDir = resolve(APP_DIR, args.out || '.perf')
+  mkdirSync(outDir, { recursive: true })
+
+  if (!args['no-build']) execSync('npx vite build --logLevel error', { cwd: APP_DIR, stdio: 'inherit' })
+  const server = spawn(join(APP_DIR, 'node_modules/.bin/vite'), ['preview', '--port', String(port), '--strictPort', '--host', '127.0.0.1'], {
+    cwd: APP_DIR,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+  const cleanup = () => server.kill('SIGTERM')
+  process.on('exit', cleanup)
+  const baseUrl = `http://127.0.0.1:${port}`
+
+  try {
+    await waitForServer(baseUrl)
+    const { chromium } = await loadPlaywright()
+    const browser = await chromium.launch()
+    const context = await browser.newContext({
+      viewport: { width: 412, height: 915 },
+      deviceScaleFactor: 2,
+      isMobile: true,
+      hasTouch: true,
+      locale: 'fr-FR',
+      timezoneId: 'Europe/Paris',
+    })
+    await context.route('https://api.github.com/**', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: '{"tag_name":"v0","assets":[]}' }))
+    await context.route('https://*.open-meteo.com/**', (r) => r.abort())
+    await context.addInitScript((latestId) => {
+      try {
+        if (latestId) localStorage.setItem('healthtrack-whats-new-last-seen', latestId)
+        // Pas de modale bien-être par-dessus la page mesurée
+        sessionStorage.setItem('healthtrack-wellbeing-prompt-session', '1')
+      } catch {
+        /* ignore */
+      }
+    }, latestChangelogId())
+    await context.addInitScript(instrument)
+
+    const page = await context.newPage()
+    const errors = []
+    page.on('pageerror', (e) => errors.push(String(e)))
+
+    // Données : la base est créée par l'app (bon schéma), puis remplie en une transaction.
+    let entries = generateDemoEntries({ days })
+    if (args.dense) entries = entries.concat(denseHeartRate(days))
+    await page.goto(baseUrl, { waitUntil: 'networkidle' })
+    const seeded = await page.evaluate(async (list) => {
+      const db = await new Promise((res, rej) => {
+        const req = indexedDB.open('HealthTrack')
+        req.onsuccess = () => res(req.result)
+        req.onerror = () => rej(req.error)
+      })
+      const now = new Date().toISOString()
+      await new Promise((res, rej) => {
+        const tx = db.transaction('health_entries', 'readwrite')
+        const store = tx.objectStore('health_entries')
+        store.clear()
+        for (const e of list) store.add({ type: e.type, source: e.source, payload: e.payload || {}, at: e.at || now, created_at: now })
+        tx.oncomplete = res
+        tx.onerror = () => rej(tx.error)
+      })
+      db.close()
+      return list.length
+    }, entries)
+
+    const cdp = await context.newCDPSession(page)
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu })
+
+    const results = []
+    for (const path of routes) {
+      const samples = []
+      for (let i = 0; i < runs; i++) {
+        await page.goto(baseUrl + path, { waitUntil: 'load', timeout: 60000 })
+        // Attendre 1 s sans nouvelle tâche longue (60 s au plus)
+        const m = await page.evaluate(async () => {
+          const p = window.__perf
+          const t0 = performance.now()
+          let seen = -1
+          let calmSince = performance.now()
+          while (performance.now() - t0 < 60000) {
+            await new Promise((r) => setTimeout(r, 100))
+            if (p.longTasks.length !== seen) {
+              seen = p.longTasks.length
+              calmSince = performance.now()
+            } else if (performance.now() - calmSince >= 1000) break
+          }
+          const last = p.longTasks.at(-1)
+          const settled = last ? last.start + last.duration : performance.getEntriesByType('navigation')[0]?.loadEventEnd || 0
+          return {
+            settledMs: Math.round(settled),
+            tbtMs: Math.round(p.longTasks.reduce((s, t) => s + Math.max(0, t.duration - 50), 0)),
+            longestMs: Math.round(Math.max(0, ...p.longTasks.map((t) => t.duration))),
+            idbReads: p.idbReads,
+            idbRecords: p.idbRecords,
+          }
+        })
+        samples.push(m)
+      }
+      const pick = (k) => Math.round(median(samples.map((s) => s[k])))
+      results.push({ path, settledMs: pick('settledMs'), tbtMs: pick('tbtMs'), longestMs: pick('longestMs'), idbReads: pick('idbReads'), idbRecords: pick('idbRecords') })
+    }
+
+    await browser.close()
+    const report = { at: new Date().toISOString(), days, dense: Boolean(args.dense), entries: seeded, cpuSlowdown: cpu, runs, results, pageErrors: errors }
+    writeFileSync(join(outDir, 'report.json'), JSON.stringify(report, null, 2))
+    console.log(`\n${seeded} entrées (${days} jours${args.dense ? ', FC horaire' : ''}), CPU ×${cpu}, médiane de ${runs} passages\n`)
+    console.table(results)
+    if (errors.length) {
+      console.error('Erreurs JS :', errors)
+      process.exitCode = 1
+    }
+  } finally {
+    cleanup()
+  }
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((e) => {
+    console.error(e)
+    process.exit(1)
+  })
+}
