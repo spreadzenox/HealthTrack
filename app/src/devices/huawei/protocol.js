@@ -83,6 +83,28 @@ export function encodeFrame(serviceId, commandId, tlvs = []) {
 }
 
 /**
+ * Message découpé en trames d'au plus `maxFrameSize` octets (paramètre 2 du lien) : un message qui
+ * tient dans une trame part entier ; sinon tranches 1 (début), 2 (milieu), 3 (fin), chacune avec un
+ * octet d'index, la 1re seule portant service et commande. Voir journal/protocoles/huawei.md §2.
+ */
+export function encodeFrames(serviceId, commandId, tlvs = [], maxFrameSize = 244) {
+  const payload = [serviceId, commandId, ...encodeTlvs(tlvs)]
+  if (payload.length + 6 <= maxFrameSize) return [encodeFrame(serviceId, commandId, tlvs)]
+  const chunk = maxFrameSize - 7
+  if (chunk < 1) throw new Error('Taille de tranche trop petite')
+  const frames = []
+  for (let i = 0, index = 0; i < payload.length; i += chunk, index++) {
+    const part = payload.slice(i, i + chunk)
+    const flag = i === 0 ? 1 : i + chunk >= payload.length ? 3 : 2
+    const len = part.length + 2
+    const head = [MAGIC, len >> 8, len & 0xff, flag, index & 0xff, ...part]
+    const crc = crc16(head)
+    frames.push(Uint8Array.from([...head, crc >> 8, crc & 0xff]))
+  }
+  return frames
+}
+
+/**
  * Lit une trame reçue. Drapeau de tranche 0 = trame entière ; 1, 2, 3 = première, milieu, dernière
  * tranche d'un message découpé (un octet d'index suit alors le drapeau).
  * @returns {{ slice: number, sliceIndex: number|null, body: Uint8Array }}
