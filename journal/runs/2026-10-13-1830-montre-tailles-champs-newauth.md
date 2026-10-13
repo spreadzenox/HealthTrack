@@ -1,6 +1,6 @@
 # 2026-10-13 18:30 Paris (16:30 UTC) — Priorité montre : taille des champs de la réponse « New Auth »
 
-**Type** : ⌚🏗️ (priorité absolue — montre)  ·  **PR** : #__ (à fusionner → vXXX après garde-fous)
+**Type** : ⌚🏗️ (priorité absolue — montre)  ·  **PR** : #142 (à fusionner → vXXX après garde-fous)
 
 ## Pourquoi
 - Démarrage : **main vert** (f1a7dcc ; **v117** publiée, Tests Vitest + émulateur A56 verts sur le dernier commit de
