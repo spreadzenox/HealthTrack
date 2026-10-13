@@ -343,10 +343,20 @@ Huawei expose peut-être ses champs (challenge/salt/epk, ou un `exAuthInfo` chif
 **Il faut voir les noms de champs réels** : c'est précisément ce que l'instrument renforcé (§6.7) rapportera au prochain
 journal.
 
-**Prochaine étape, une fois les champs connus** (run suivant) : réimplémenter, d'après cette spec, le StepOne SPEKE
-(X25519 d'abord, le plus probable vu `epk` 32 octets), les preuves `kcfData`, puis l'échange d'identité Ed25519 chiffré
-GCM. Tests sur trames d'exemple à chaque étape, fausse montre « New Auth » étendue. Crypto nécessaire : X25519,
-Elligator2, HKDF-SHA256, HMAC-SHA256, Ed25519 (pré-haché SHA-256), AES-128-GCM — à ajouter à `crypto.js`.
+**Primitives prêtes (run 13/10 16:30)** : X25519 (multiplication scalaire sur un point **quelconque** — indispensable
+au SPEKE, dont la base est dérivée du PIN — ECDH, paire de clés) et Ed25519 (signature / vérification / clé publique)
+sont dans `crypto.js`, sur **@noble/curves** (MIT, audité), vérifiées sur les vecteurs RFC 7748 §5.2 / §6.1 et RFC 8032
+§7.1. Choix de @noble plutôt que Web Crypto : `crypto.subtle` ne sait faire X25519 que sur la base standard (pas de
+multiplication sur point dérivé), et @noble marche à l'identique quelle que soit la version de la WebView de l'A56.
+HKDF-SHA256, HMAC-SHA256, AES-128-GCM existaient déjà. **Volontairement non ajouté : Elligator2 (hash-to-curve)** — la
+forme exacte du *map-to-point* de la variante Huawei n'est pas documentée publiquement ; l'implémenter à l'aveugle
+serait un pari. @noble expose `_map_to_curve_elligator2_curve25519` si le besoin se confirme au prochain journal.
+
+**Prochaine étape, une fois les champs connus** (run suivant) : à partir des primitives ci-dessus et de cette spec,
+assembler le StepOne SPEKE (X25519 d'abord, le plus probable vu `epk` 32 octets), les preuves `kcfData` (HMAC-SHA256),
+puis l'échange d'identité Ed25519 chiffré GCM. Tests sur trames d'exemple à chaque étape, fausse montre « New Auth »
+étendue. Point ouvert : le PIN → point de base SPEKE (Elligator2) et la signature « pré-hachée SHA-256 » (§6.8) restent
+à confirmer sur la montre réelle.
 
 Sources de cette section : [G] fichiers `service/devices/huawei/HiChainPakeUtils.java`,
 `.../requests/GetHiChainPakeRequest.java`, `.../requests/GetHiChainRequest.java`, `.../requests/GetSecurityNegotiationRequest.java`,
@@ -538,6 +548,7 @@ une heure de recouvrement (7 jours la première fois) ; les doublons sont écart
 | (a bis) Analyse sûre des réponses 0x28 (`inspectHichainReply`) consignée dans le journal (`report.hichain`) ; étape et code précis nommés à l'écran ; déclenché par le journal réel GT 6 Pro (§6.7) | ✅ run 13/10 11:04 | `hichain.js` (`inspectHichainReply`), `pairing.js`, `testing/fakeWatch.js` (`garbleHichain`) |
 | (b) Détection et libération (boîte de désinstallation, réglages de l'app, guide de réinitialisation, plan B compte Huawei) + assistant d'appairage Android | ✅ run 13/10 00:30 | `src/devices/huawei/setup.js`, `components/WatchSetup.jsx`, `AppManagerPlugin.java`, `BtClassicPlugin.java` (`discover`, `pair`, `openBluetoothSettings`) |
 | (c) Authentification HiChain (§6) : état, négociation, PIN, liaison, authentification, clé des trames, chiffrement GCM / CBC ; clés gardées en local ; constantes du PIN téléchargées sur le téléphone | ✅ run 13/10 02:30 (à valider sur la montre) | `src/devices/huawei/crypto.js`, `session.js`, `hichain.js`, `pairing.js`, `components/WatchConnect.jsx` |
+| (c bis) Primitives « New Auth Protocol » (§6.8) : X25519 (multiplication scalaire sur point quelconque, ECDH), Ed25519 (signature / vérification) sur @noble/curves (MIT) ; vecteurs RFC 7748 / 8032 | ✅ run 13/10 16:30 | `src/devices/huawei/crypto.js` (`x25519ScalarMult`, `x25519SharedSecret`, `x25519Base`, `generateX25519KeyPair`, `ed25519Sign/Verify/PublicKey`, `generateEd25519KeyPair`) |
 | (d) Synchronisation (§7.1–7.4, 7.7) : heure, sommeil simple, minutes (pas, calories, distance, FC, SpO₂, FC repos), totaux → IndexedDB | ✅ run 13/10 04:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `services/watchSync.js` |
 | (d bis) Capacités (§7.8), séances (totaux, §7.5), sommeil détaillé par fichier (phases, score, VFC de la nuit, §7.6) | ✅ run 13/10 10:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `files.js`, `session.js` (messages bruts), `services/watchSync.js` |
 | (d bis, suite) Stress (`rrisqi`), VFC de journée (dictionnaire 500044), échantillons de séance | ☐ | — |

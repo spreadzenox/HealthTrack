@@ -4,6 +4,8 @@
  * Tout est en Uint8Array ; aucune clé ne quitte le téléphone.
  */
 
+import { x25519, ed25519 } from '@noble/curves/ed25519.js'
+
 const subtle = () => {
   const s = globalThis.crypto?.subtle
   if (!s) throw new Error('Web Crypto indisponible')
@@ -101,4 +103,60 @@ export async function aesCbcDecrypt(key, iv, cipher) {
   } catch {
     throw new Error('Déchiffrement AES-CBC refusé (clé ou données invalides)')
   }
+}
+
+/**
+ * Courbes Curve25519 pour le « New Auth Protocol » HiChain 3 (protocoles/huawei.md §6.8).
+ * Sur @noble/curves (MIT, audité) plutôt que Web Crypto : le SPEKE multiplie un scalaire par un
+ * point de base DÉRIVÉ du mot de passe, or `crypto.subtle` ne sait faire X25519 que sur la base
+ * standard. @noble/curves marche aussi à l'identique quelle que soit la version de la WebView.
+ * Tout reste en Uint8Array de 32 octets ; aucune clé ne quitte le téléphone.
+ */
+
+/** Point de base standard de X25519 (u = 9, RFC 7748). */
+export const x25519Base = () => Uint8Array.from(x25519.GuBytes)
+
+/**
+ * Multiplication scalaire X25519 (RFC 7748) : `scalar` × point `u` (coordonnée de Montgomery).
+ * Le scalaire est bridé (« clamp ») par la bibliothèque comme l'exige X25519. Sert à la fois à
+ * l'ECDH standard (`u` = base ou clé publique du pair) et au SPEKE (`u` = base dérivée du PIN).
+ */
+export function x25519ScalarMult(scalar, u) {
+  return x25519.scalarMult(u8(scalar), u8(u))
+}
+
+/** Secret partagé ECDH X25519 = scalaire privé × clé publique du pair (32 octets). */
+export function x25519SharedSecret(privateKey, peerPublicKey) {
+  return x25519.getSharedSecret(u8(privateKey), u8(peerPublicKey))
+}
+
+/** Paire de clés X25519 éphémère : { privateKey, publicKey } (32 octets chacune). */
+export function generateX25519KeyPair() {
+  const { secretKey, publicKey } = x25519.keygen()
+  return { privateKey: Uint8Array.from(secretKey), publicKey: Uint8Array.from(publicKey) }
+}
+
+/** Clé publique Ed25519 à partir de la clé secrète de 32 octets (RFC 8032). */
+export function ed25519PublicKey(secretKey) {
+  return ed25519.getPublicKey(u8(secretKey))
+}
+
+/** Signature Ed25519 (64 octets) du message par la clé secrète de 32 octets. */
+export function ed25519Sign(message, secretKey) {
+  return ed25519.sign(u8(message), u8(secretKey))
+}
+
+/** Vérifie une signature Ed25519. Renvoie false (ne jette jamais) sur entrée invalide. */
+export function ed25519Verify(signature, message, publicKey) {
+  try {
+    return ed25519.verify(u8(signature), u8(message), u8(publicKey))
+  } catch {
+    return false
+  }
+}
+
+/** Paire de clés Ed25519 : { secretKey, publicKey } (32 octets chacune). */
+export function generateEd25519KeyPair() {
+  const { secretKey, publicKey } = ed25519.keygen()
+  return { secretKey: Uint8Array.from(secretKey), publicKey: Uint8Array.from(publicKey) }
 }
