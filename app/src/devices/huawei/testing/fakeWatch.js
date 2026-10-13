@@ -4,8 +4,8 @@
  * Les constantes du PIN sont des valeurs de test aléatoires, pas celles de Huawei.
  */
 import { crc16, createReassembler, decodeTlvs, encodeFrames, encodeTlvs } from '../protocol'
-import { aesCbcEncrypt, aesGcmDecrypt, aesGcmEncrypt, bytesEqual, bytesOfHex, hexOf, randomBytes, utf8 } from '../crypto'
-import { createCipher, digestSecretFor, frameKey, phoneToken, pinBaseKey, psk, returnCodeMac, sessionKey, watchToken } from '../hichain'
+import { aesCbcEncrypt, aesGcmDecrypt, aesGcmEncrypt, bytesEqual, bytesOfHex, concatBytes, hexOf, hmacSha256, randomBytes, utf8 } from '../crypto'
+import { createCipher, digestSecretFor, frameKey, phoneToken, pinBaseKeyVariants, psk, returnCodeMac, sessionKey, WATCH_TOKEN_ORDERS } from '../hichain'
 
 export const TEST_SECRETS = { v1: hexOf(randomBytes(16)), v2: hexOf(randomBytes(16)), v3: hexOf(randomBytes(16)) }
 
@@ -31,6 +31,9 @@ export function createFakeWatch({
   garbleHichain = null, // { size } : 1re réponse 0x28 = étiquette 1 illisible (simule la GT 6 Pro, log 13/10)
   newAuthHichain = null, // true/{ prefix } : 1re réponse 0x28 au format « New Auth Protocol » HiChain 3 (§6.8) :
   // préfixe binaire + JSON intégré (challenge/salt/epk) → ni l'ISO ni le parseur direct ne savent la lire
+  trailingNul = 0, // octets NUL ajoutés après chaque JSON 0x28 (GT 6 Pro, journal 13/10 17:03 : 804 car. + 1, §6.9)
+  pinBaseVariant = 'sha256-hex-majuscule', // clé de base de la liaison calculée par la montre (§6.10)
+  tokenOrder = 'reference', // ordre de concaténation du jeton de la montre (WATCH_TOKEN_ORDERS, §6.10)
   minuteBlocks = [],
   sleepBlocks = [],
   totals = null,
@@ -52,7 +55,10 @@ export function createFakeWatch({
   const reply = (serviceId, commandId, tlvs) => {
     for (const f of encodeFrames(serviceId, commandId, tlvs, 244)) setTimeout(() => push?.(f), 0)
   }
-  const replyJson = (json, final = false) => reply(1, 0x28, [{ tag: 1, value: Array.from(utf8(final ? 'done' : JSON.stringify(json))) }, { tag: 4, value: [final ? 1 : 0] }])
+  const replyJson = (json, final = false) =>
+    reply(1, 0x28, [{ tag: 1, value: [...utf8(final ? 'done' : JSON.stringify(json)), ...new Array(trailingNul).fill(0)] }, { tag: 4, value: [final ? 1 : 0] }])
+  const pinBase = async () => (await pinBaseKeyVariants(pin)).find((v) => v.name === pinBaseVariant).key
+  const watchToken = (k, ids) => hmacSha256(k, concatBytes(...WATCH_TOKEN_ORDERS[tokenOrder](ids)))
 
   async function hichain(m) {
     if (garbleHichain && !state.garbled) {
@@ -76,7 +82,7 @@ export function createFakeWatch({
     if (code === 1) {
       const op = p.operationCode
       const authId = new TextDecoder().decode(bytesOfHex(p.peerAuthId))
-      const base = op === 1 ? await pinBaseKey(pin) : tokens.get(authId)
+      const base = op === 1 ? await pinBase() : tokens.get(authId)
       if (!base) return replyJson({ payload: { errorCode: 2001 } })
       const randSelf = bytesOfHex(p.isoSalt)
       const randPeer = randomBytes(16)

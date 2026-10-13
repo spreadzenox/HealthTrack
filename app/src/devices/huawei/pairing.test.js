@@ -87,6 +87,33 @@ describe('connexion authentifiée à une montre Huawei (HiChain)', () => {
     expect(mute.steps.find((s) => s.id === 'negotiate').detail).toMatch(/Pas de réponse/)
   })
 
+  it('GT 6 Pro (journal 13/10 17:03) : JSON 0x28 suivi d’un NUL sur tout le parcours → appairage complet (§6.9)', async () => {
+    const watch = createFakeWatch({ deviceSupportType: 4, encryptMethod: 1, authVersion: 1, trailingNul: 1 })
+    const report = await run(watch, { keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS })
+    expect(report.outcome.code).toBe('connected')
+    expect(report.steps.find((s) => s.id === 'bind').status).toBe('ok')
+    // toutes les réponses 0x28 (liaison + authentification) sont lues, l'octet de fin est compté dans le journal
+    expect(report.hichain.map((h) => h.class)).not.toContain('json_unparsable')
+    expect(report.hichain[0]).toMatchObject({ operation: 'bind', class: 'json_ok', message: '0x8001', trailingBytes: 1 })
+    expect(report.tokenCheck).toBeNull()
+  })
+
+  it('jeton calculé par la montre avec une autre clé de base du PIN → variante retenue, nommée dans le journal (§6.10)', async () => {
+    const watch = createFakeWatch({ trailingNul: 1, pin: Uint8Array.of(0xab, 0xcd, 0xef, 0x12), pinBaseVariant: 'sha256-hex-minuscule' })
+    const report = await run(watch, { keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS })
+    expect(report.outcome.code).toBe('connected')
+    expect(report.log.map((l) => l.msg).join('\n')).toMatch(/variante « sha256-hex-minuscule »/)
+  })
+
+  it('jeton dans un autre ordre → échec « failed » (pas « PIN refusé ») qui nomme la combinaison, sans valeur', async () => {
+    const watch = createFakeWatch({ tokenOrder: 'identifiants-inversés' })
+    const report = await run(watch, { keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS })
+    expect(report.outcome.code).toBe('failed')
+    expect(report.steps.find((s) => s.id === 'bind').detail).toMatch(/variante « sha256-hex-majuscule \+ identifiants-inversés »/)
+    expect(report.tokenCheck).toMatchObject({ matched: 'sha256-hex-majuscule + identifiants-inversés', sizes: { idSelf: 32, randPeer: 16, seed: 32 } })
+    expect(JSON.stringify(report.tokenCheck)).not.toMatch(/[0-9a-f]{32}/i)
+  })
+
   it('réponse 0x28 illisible (cas GT 6 Pro) : le journal nomme l’étape, la classe et la structure, sans secret', async () => {
     const watch = createFakeWatch({ deviceSupportType: 4, encryptMethod: 1, authVersion: 1, garbleHichain: { size: 835 } })
     const report = await run(watch, { keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS })

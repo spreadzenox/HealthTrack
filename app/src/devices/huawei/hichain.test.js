@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { groupId, newAuthId, securityNegotiationTlvs, parseSecurityNegotiation, parseHichainReply, inspectHichainReply, hichainTlvs, parseDigestSecrets, digestSecretFor, createCipher, pinBaseKey } from './hichain'
+import { decodeHichainJson, groupId, newAuthId, securityNegotiationTlvs, parseSecurityNegotiation, parseHichainReply, inspectHichainReply, hichainTlvs, parseDigestSecrets, digestSecretFor, createCipher, pinBaseKey } from './hichain'
 import { sha256, utf8, hexOf, randomBytes } from './crypto'
 import { toHex } from './protocol'
 
@@ -42,6 +42,87 @@ describe('HiChain — messages et calculs (§6)', () => {
     expect(parseHichainReply(json({ message: 0x8001, payload: { isoSalt: 'AA' } })).payload.isoSalt).toBe('AA')
     expect(parseHichainReply([{ tag: 1, value: utf8('fin') }, { tag: 4, value: Uint8Array.of(1) }]).final).toBe(true)
     expect(() => parseHichainReply(json({ payload: { errorCode: 12 } }))).toThrow(/erreur 12/)
+  })
+
+  describe('decodeHichainJson — JSON suivi d’octets de fin (journal GT 6 Pro du 13/10 17:03, §6.9)', () => {
+    // Trame d'exemple : réponse ISO 0x8001 aux noms et tailles du journal réel (valeurs factices),
+    // 804 caractères de JSON + 1 octet NUL = étiquette 1 de 805 octets.
+    const hex = (n) => 'AB'.repeat(n)
+    const isoStart = {
+      appId: 'com.huawei.health',
+      authForm: 0,
+      connDeviceId: hex(32),
+      groupAndModuleVersion: '2.0.1',
+      groupId: hex(32),
+      groupName: 'x'.repeat(17),
+      groupOp: 2,
+      groupType: 256,
+      message: 0x8001,
+      ownerName: '',
+      payload: { isoSalt: hex(16), operationCode: 1, peerAuthId: hex(64), peerUserType: 1, token: hex(32), version: { minVersion: '1.0.0', currentVersion: '2.0.16' } },
+      peerDeviceId: hex(32),
+      requestId: '1'.repeat(13),
+    }
+    const body = Array.from(utf8(JSON.stringify(isoStart)))
+    const reply = (bytes) => [{ tag: 1, value: bytes }, { tag: 2, value: [1] }, { tag: 3, value: new Array(8).fill(0) }, { tag: 4, value: [0] }, { tag: 5, value: [1] }]
+
+    it('la trame d’exemple a bien la taille du journal : 804 + 1 = 805 octets', () => {
+      expect(body).toHaveLength(804)
+      expect(toHex([...body, 0].slice(0, 4))).toBe('7b 22 61 70')
+    })
+
+    it('JSON + NUL terminal → lu, 1 octet de fin compté (jamais sa valeur)', () => {
+      const d = decodeHichainJson([...body, 0x00])
+      expect(d.json.payload.isoSalt).toBe(hex(16))
+      expect(d.trailingBytes).toBe(1)
+    })
+
+    it('variantes : saut de ligne, deux NUL, blancs, puis octet quelconque après l’objet', () => {
+      expect(decodeHichainJson([...body, 0x0a]).trailingBytes).toBe(1)
+      expect(decodeHichainJson([...body, 0, 0]).trailingBytes).toBe(2)
+      expect(decodeHichainJson([...body, 0x20, 0x0d, 0x0a, 0]).trailingBytes).toBe(4)
+      // lecture tolérante façon org.json : l'objet à l'offset 0 suffit, la suite est ignorée
+      const junk = decodeHichainJson([...body, 0xff, 0x01])
+      expect(junk.json.message).toBe(0x8001)
+      expect(junk.trailingBytes).toBe(2)
+      // JSON exact : rien d'ignoré
+      expect(decodeHichainJson(body).trailingBytes).toBe(0)
+    })
+
+    it('pas un objet JSON à l’offset 0 → null (le JSON intégré reste du ressort du diagnostic)', () => {
+      expect(decodeHichainJson(new Array(64).fill(0xff))).toBeNull()
+      expect(decodeHichainJson([0x01, 0x00, ...body])).toBeNull()
+      expect(decodeHichainJson(utf8('{"a":'))).toBeNull()
+      expect(decodeHichainJson([])).toBeNull()
+    })
+
+    it('inspectHichainReply : json_ok, message 0x8001, champs ISO, trailingBytes ; aucune valeur', () => {
+      const i = inspectHichainReply(reply([...body, 0x00]))
+      expect(i.classification).toBe('json_ok')
+      expect(i.messageHex).toBe('0x8001')
+      expect(i.jsonLength).toBe(805)
+      expect(i.trailingBytes).toBe(1)
+      expect(i.payloadKeys).toEqual(['isoSalt', 'operationCode', 'peerAuthId', 'peerUserType', 'token', 'version'])
+      expect(JSON.stringify(i)).not.toContain(hex(16))
+    })
+
+    it('parseHichainReply lit la charge utile ISO malgré l’octet de fin', () => {
+      const r = parseHichainReply(reply([...body, 0x00]))
+      expect(r.final).toBe(false)
+      expect(r.message).toBe(0x8001)
+      expect(r.payload.isoSalt).toBe(hex(16))
+      expect(r.payload.token).toBe(hex(32))
+    })
+
+    it('message final suivi d’un NUL → texte sans le NUL', () => {
+      expect(parseHichainReply([{ tag: 1, value: [...utf8('done'), 0] }, { tag: 4, value: [1] }]).text).toBe('done')
+    })
+
+    it('champs ISO dans un JSON réellement illisible → le message ne parle plus de « New Auth »', () => {
+      const bytes = [0x01, 0x02, ...body]
+      expect(() => parseHichainReply(reply(bytes))).toThrow(/réponse ISO/)
+      expect(() => parseHichainReply(reply(bytes))).not.toThrow(/New Auth/)
+    })
   })
 
   describe('inspectHichainReply — analyse sûre d’une réponse 0x28 (§6.2)', () => {

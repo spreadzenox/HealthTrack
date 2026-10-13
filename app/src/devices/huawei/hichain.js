@@ -99,9 +99,38 @@ export async function decryptPin(tlvs, { authVersion, encryptMethod, secrets }) 
 /** Clé de base : liaison = SHA-256 du PIN en hexadécimal majuscule ; authentification = clé longue durée. */
 export const pinBaseKey = (pinBytes) => sha256(utf8(upperHex(pinBytes)))
 
+/**
+ * Variantes plausibles de la clé de base de la liaison (§6.10), la référence (§6.3) en premier. Si la
+ * montre a calculé son jeton autrement, la première variante qui le reproduit est retenue : un seul
+ * journal suffit alors à trancher, sans aller-retour avec le propriétaire. Noms seulement, jamais de valeur.
+ */
+export async function pinBaseKeyVariants(pinBytes) {
+  const pin = Uint8Array.from(pinBytes)
+  const out = [
+    { name: 'sha256-hex-majuscule', key: await pinBaseKey(pin) },
+    { name: 'sha256-hex-minuscule', key: await sha256(utf8(hexOf(pin))) },
+    { name: 'sha256-octets', key: await sha256(pin) },
+    { name: 'pin-brut', key: pin },
+  ]
+  // PIN déjà écrit en texte (ex. 64 caractères hexadécimaux) : sa casse peut compter
+  const text = new TextDecoder().decode(pin)
+  if (/^[\x21-\x7e]+$/.test(text) && text.toUpperCase() !== text) out.push({ name: 'sha256-texte-majuscule', key: await sha256(utf8(text.toUpperCase())) })
+  return out
+}
+
 export const psk = (baseKey, seed) => hmacSha256(baseKey, seed)
 export const watchToken = (k, { randSelf, randPeer, idSelf, idPeer }) => hmacSha256(k, concatBytes(randPeer, randSelf, idSelf, idPeer))
 export const phoneToken = (k, { randSelf, randPeer, idSelf, idPeer }) => hmacSha256(k, concatBytes(randSelf, randPeer, idPeer, idSelf))
+/**
+ * Ordres de concaténation du jeton de la montre (§6.10) : la référence (§6.3) d'abord ; les autres ne
+ * servent qu'à nommer, dans le journal, l'ordre que la montre aurait employé.
+ */
+export const WATCH_TOKEN_ORDERS = {
+  reference: ({ randSelf, randPeer, idSelf, idPeer }) => [randPeer, randSelf, idSelf, idPeer],
+  'aléas-inversés': ({ randSelf, randPeer, idSelf, idPeer }) => [randSelf, randPeer, idSelf, idPeer],
+  'identifiants-inversés': ({ randSelf, randPeer, idSelf, idPeer }) => [randPeer, randSelf, idPeer, idSelf],
+  'ordre-du-téléphone': ({ randSelf, randPeer, idSelf, idPeer }) => [randSelf, randPeer, idPeer, idSelf],
+}
 export const returnCodeMac = (k) => hmacSha256(k, new Uint8Array(4))
 export const sessionKey = (k, { randSelf, randPeer }) => hkdfSha256(k, concatBytes(randSelf, randPeer), utf8('hichain_iso_session_key'), 32)
 export const frameKey = (sk, { randSelf, randPeer }) => hkdfSha256(sk, concatBytes(randSelf, randPeer), utf8('hichain_return_key'), 32)
@@ -133,29 +162,57 @@ const describeTags = (tags) => (tags.length ? tags.map((t) => `${t.tag}/${t.size
 function findEmbeddedJson(bytes) {
   const text = new TextDecoder('utf-8', { fatal: false }).decode(Uint8Array.from(bytes || []))
   for (let start = text.indexOf('{'); start !== -1; start = text.indexOf('{', start + 1)) {
-    let depth = 0
-    let inStr = false
-    let esc = false
-    for (let i = start; i < text.length; i++) {
-      const c = text[i]
-      if (inStr) {
-        if (esc) esc = false
-        else if (c === '\\') esc = true
-        else if (c === '"') inStr = false
-      } else if (c === '"') inStr = true
-      else if (c === '{') depth++
-      else if (c === '}' && --depth === 0) {
-        try {
-          const json = JSON.parse(text.slice(start, i + 1))
-          if (json && typeof json === 'object') return { offset: start, json }
-        } catch {
-          /* pas du JSON à cet endroit : on cherche l'accolade suivante */
-        }
-        break
-      }
-    }
+    const json = objectAt(text, start)
+    if (json) return { offset: start, json }
   }
   return null
+}
+
+/** Fin (index de l'accolade fermante) de l'objet qui commence à `start`, ou -1 s'il n'est pas refermé. */
+function objectEnd(text, start) {
+  let depth = 0
+  let inStr = false
+  let esc = false
+  for (let i = start; i < text.length; i++) {
+    const c = text[i]
+    if (inStr) {
+      if (esc) esc = false
+      else if (c === '\\') esc = true
+      else if (c === '"') inStr = false
+    } else if (c === '"') inStr = true
+    else if (c === '{') depth++
+    else if (c === '}' && --depth === 0) return i
+  }
+  return -1
+}
+
+/** Objet JSON à accolades équilibrées commençant exactement à `start`, sinon null. */
+function objectAt(text, start) {
+  const end = objectEnd(text, start)
+  if (end < 0) return null
+  try {
+    const json = JSON.parse(text.slice(start, end + 1))
+    return json && typeof json === 'object' ? json : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Lecture **tolérante** de l'étiquette 1 d'une réponse 0x28 (§6.9) : la GT 6 Pro termine son JSON
+ * par un octet de plus (NUL de chaîne C probable), que `JSON.parse` refuse mais que le `org.json`
+ * d'Android ignore. On lit l'objet qui commence à l'offset 0 et on compte les octets laissés après
+ * (`trailingBytes`, jamais leur valeur). Rend `{ json, trailingBytes }`, ou null si l'étiquette ne
+ * commence pas par un objet JSON (un JSON plus loin reste l'affaire du diagnostic, `probeStructure`).
+ */
+export function decodeHichainJson(bytes) {
+  const raw = Uint8Array.from(bytes || [])
+  const text = new TextDecoder('utf-8', { fatal: false }).decode(raw)
+  if (text[0] !== '{') return null
+  const end = objectEnd(text, 0)
+  const json = end < 0 ? null : objectAt(text, 0)
+  if (!json) return null
+  return { json, trailingBytes: raw.length - utf8(text.slice(0, end + 1)).length }
 }
 
 /** Chaîne hexadécimale ? (longueur paire, uniquement 0-9a-f). */
@@ -238,6 +295,7 @@ export function inspectHichainReply(tlvs = []) {
     errorCode: null,
     head: null,
     structure: null,
+    trailingBytes: 0,
     classification: 'unknown',
   }
   if (!list.length) return { ...base, classification: 'empty' }
@@ -252,18 +310,16 @@ export function inspectHichainReply(tlvs = []) {
       classification: rc !== null && rc !== RESULT_SUCCESS ? 'result_error' : 'no_payload',
     }
   }
-  let json
-  try {
-    json = JSON.parse(new TextDecoder().decode(tag1))
-  } catch {
-    return { ...base, head: toHex(tag1.slice(0, 32)), structure: probeStructure(tag1), classification: 'json_unparsable' }
-  }
+  const decoded = decodeHichainJson(tag1)
+  if (!decoded) return { ...base, head: toHex(tag1.slice(0, 32)), structure: probeStructure(tag1), classification: 'json_unparsable' }
+  const { json, trailingBytes } = decoded
   const payload = json?.payload && typeof json.payload === 'object' ? json.payload : null
   const message = typeof json?.message === 'number' ? json.message : null
   const err = Number(payload?.errorCode ?? json?.errorCode ?? 0) || null
   return {
     ...base,
     isJson: true,
+    trailingBytes,
     keys: Object.keys(json || {}).sort(),
     payloadKeys: payload ? Object.keys(payload).sort() : null,
     message,
@@ -287,16 +343,17 @@ export function parseHichainReply(tlvs) {
     throw e
   }
   const get = (tag) => tlvs.find((t) => t.tag === tag)?.value
-  if (inspection.classification === 'final') return { final: true, payload: null, message: null, text: get(1) ? new TextDecoder().decode(get(1)) : '', inspection }
+  if (inspection.classification === 'final') return { final: true, payload: null, message: null, text: get(1) ? new TextDecoder().decode(Uint8Array.from(get(1))).replace(/[\0\s]+$/, '') : '', inspection }
   if (inspection.classification === 'result_error') fail(`La montre a répondu par une erreur (code ${inspection.resultCode})`, 'watch_error')
   if (inspection.classification === 'no_payload') fail(`Réponse HiChain sans charge utile (étiquettes reçues : ${describeTags(inspection.tags)})`)
   if (inspection.classification === 'json_unparsable') {
     const emb = inspection.structure?.embeddedJson
     const named = emb?.payloadFields?.length ? emb.payloadFields : null
     const fmtField = (f) => (f.bytes != null ? `${f.key} (${f.bytes} o)` : f.chars != null ? `${f.key} (${f.chars} car.)` : f.key)
-    const hint = named
-      ? ` · champs repérés : ${named.map(fmtField).join(', ')} (probable « New Auth Protocol » HiChain 3, §6.8)`
-      : ''
+    // isoSalt + token = réponse de début ISO (§6.9) ; epk / salt / challenge = piste SPEKE (§6.8)
+    const keys = named ? named.map((f) => f.key) : []
+    const kind = keys.includes('isoSalt') && keys.includes('token') ? 'réponse ISO' : keys.some((k) => ['epk', 'salt', 'challenge'].includes(k)) ? 'probable « New Auth Protocol » HiChain 3, §6.8' : null
+    const hint = named ? ` · champs repérés : ${named.map(fmtField).join(', ')}${kind ? ` (${kind})` : ''}` : ''
     fail(
       `Réponse HiChain illisible : l'étiquette 1 (${inspection.jsonLength} octets, débute par ${inspection.head}) n'est pas du JSON${
         inspection.resultCode !== null ? ` · code ${inspection.resultCode}` : ''
@@ -304,7 +361,7 @@ export function parseHichainReply(tlvs) {
     )
   }
   if (inspection.errorCode) fail(`La montre a refusé l'étape HiChain (erreur ${inspection.errorCode})`, 'watch_error')
-  const json = JSON.parse(new TextDecoder().decode(get(1)))
+  const { json } = decodeHichainJson(get(1))
   const payload = json?.payload && typeof json.payload === 'object' ? json.payload : json
   return { final: false, payload, message: json?.message ?? null, inspection }
 }
@@ -322,7 +379,7 @@ const hexField = (payload, field, length) => {
  * un message 1/0x28 et rend la réponse décodée (parseHichainReply).
  * @returns {{ authToken?: Uint8Array, sessionKey: Uint8Array, randSelf: Uint8Array, randPeer: Uint8Array }}
  */
-export async function runHichain({ operation, baseKey, authId, requestId, exchange, rand = randomBytes }) {
+export async function runHichain({ operation, baseKey, baseKeys = null, authId, requestId, exchange, rand = randomBytes }) {
   const codes = MESSAGES[operation]
   const bind = operation === OP_BIND
   const gid = await groupId()
@@ -371,13 +428,19 @@ export async function runHichain({ operation, baseKey, authId, requestId, exchan
   const randPeer = hexField(start.payload, 'isoSalt', 16)
   const idPeer = hexField(start.payload, 'peerAuthId')
   const ids = { randSelf, randPeer, idSelf, idPeer }
-  const k = await psk(baseKey, seed)
-  if (!bytesEqual(await watchToken(k, ids), hexField(start.payload, 'token', 32))) {
-    const e = new Error(bind ? 'PIN refusé par la montre (jeton différent)' : 'Clé refusée par la montre (jeton différent)')
-    e.code = 'token_mismatch'
-    throw e
+  const theirs = hexField(start.payload, 'token', 32)
+  const candidates = baseKeys || [{ name: 'reference', key: baseKey }]
+  let k = null
+  let baseVariant = null
+  for (const c of candidates) {
+    const kc = await psk(c.key, seed)
+    if (bytesEqual(await watchToken(kc, ids), theirs)) {
+      k = kc
+      baseVariant = c.name
+      break
+    }
   }
-
+  if (!k) throw await tokenMismatch({ bind, candidates, seed, ids, theirs })
   // 2. Jeton du téléphone
   const tokenReply = await exchange(envelope(codes.token, { peerAuthId: upperHex(idSelf), token: upperHex(await phoneToken(k, ids)) }, authOnly), operation)
   if (tokenReply.final || !bytesEqual(await returnCodeMac(k), hexField(tokenReply.payload, 'returnCodeMac', 32))) {
@@ -400,7 +463,38 @@ export async function runHichain({ operation, baseKey, authId, requestId, exchan
   const nonce = rand(12)
   const encResult = await aesGcmEncrypt(sk, nonce, new Uint8Array(4), utf8('hichain_iso_result'))
   await exchange(envelope(codes.confirm, { nonce: upperHex(nonce), encResult: upperHex(encResult), operationCode: operation }), operation)
-  return { authToken, sessionKey: sk, randSelf, randPeer }
+  return { authToken, sessionKey: sk, randSelf, randPeer, baseVariant }
+}
+
+/**
+ * Erreur « jeton différent », avec un diagnostic **sans secret** (§6.10) : tailles des éléments du
+ * calcul et, si une combinaison (clé de base × ordre) reproduit le jeton de la montre, son nom.
+ */
+async function tokenMismatch({ bind, candidates, seed, ids, theirs }) {
+  let matched = null
+  search: for (const c of candidates) {
+    const kc = await psk(c.key, seed)
+    for (const [order, parts] of Object.entries(WATCH_TOKEN_ORDERS)) {
+      if (order === 'reference') continue
+      if (bytesEqual(await hmacSha256(kc, concatBytes(...parts(ids))), theirs)) {
+        matched = `${c.name} + ${order}`
+        break search
+      }
+    }
+  }
+  const tried = candidates.length * Object.keys(WATCH_TOKEN_ORDERS).length
+  const what = bind ? 'Jeton de la montre différent du calcul de HealthTrack' : 'Clé refusée par la montre (jeton différent)'
+  const e = new Error(
+    `${what} · ${matched ? `il correspond à la variante « ${matched} », pas encore prise en charge` : `aucune des ${tried} variantes essayées ne le reproduit`} (§6.10)`,
+  )
+  e.code = 'token_mismatch'
+  e.tokenCheck = {
+    matched,
+    tried,
+    variants: candidates.map((c) => c.name),
+    sizes: { idSelf: ids.idSelf.length, idPeer: ids.idPeer.length, randSelf: ids.randSelf.length, randPeer: ids.randPeer.length, seed: seed.length },
+  }
+  return e
 }
 
 /**
