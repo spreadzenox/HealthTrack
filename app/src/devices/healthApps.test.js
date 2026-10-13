@@ -214,3 +214,16 @@ describe('sourceCoverage (« qui envoie quoi »)', () => {
     expect(gb.metrics[0]).toMatchObject({ label: 'VFC', days: 10, habitual: true, stopped: false })
   })
 })
+
+describe('montre Huawei lue en direct', () => {
+  it('devient une source qui couvre Huawei Health (« Vos données passent par… »)', () => {
+    const now = new Date('2026-10-13T08:00:00Z')
+    const entries = [{ source: 'huawei_watch', at: '2026-10-13T06:00:00.000Z', type: 'steps', payload: { value: 300, sourceName: 'HUAWEI WATCH GT 6 Pro-1A2' } }]
+    const sources = summarizeHealthConnectSources(entries, now)
+    expect(sources).toEqual([expect.objectContaining({ name: 'Montre Huawei (en direct)', count: 1, types: ['steps'] })])
+    const installed = [{ id: 'huawei_health', name: 'Huawei Health', package: 'com.huawei.health', writesHealthConnect: false, guideId: 'huawei' }]
+    const rows = adviseDevices({ installed, sources, now })
+    expect(rows.find((r) => r.id === 'huawei_health')).toMatchObject({ status: 'bridged', message: 'Vos données passent par Montre Huawei (en direct).' })
+    expect(rows.find((r) => r.id === 'huawei_direct')).toMatchObject({ status: 'ok' })
+  })
+})

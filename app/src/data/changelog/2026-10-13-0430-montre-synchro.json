@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-13",
+  "kind": "nouveau",
+  "title": "Montre Huawei : vos mesures arrivent dans HealthTrack",
+  "items": [
+    "Une fois la montre connectée (Plus → Connecteurs → « Montre Huawei en direct » → « Connexion à la montre »), chaque connexion lit maintenant ses mesures : pas, calories, fréquence cardiaque, SpO₂, FC de repos et sommeil (léger / profond).",
+    "La première fois, HealthTrack relit les 7 derniers jours ; ensuite, seulement ce qui est nouveau depuis la dernière synchro, sans doublon.",
+    "Le bouton devient « Synchroniser la montre » ; l’étape « Lecture des mesures » dit combien de minutes et de nuits ont été lues.",
+    "Les mesures apparaissent partout dans l’app (accueil, « Votre cœur », Analyses), avec la source « Montre Huawei ». « Mes appareils » indique que Huawei Health n’est plus nécessaire pour ces données.",
+    "Pas encore lus : les phases détaillées du sommeil (paradoxal, éveils), la VFC / le stress et les séances : prochaines versions. Pas encore essayé sur une vraie GT 6 Pro : si une étape coince, « Enregistrer le journal » me dira où."
+  ]
+}

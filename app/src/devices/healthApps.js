@@ -195,8 +195,18 @@ export function missingWatchMetrics(metrics) {
   return METRICS.filter((m) => m.watch && !keys.has(m.key)).map((m) => m.label)
 }
 
+/** Montre Huawei lue en direct par HealthTrack (sans Huawei Santé) : passerelle comme Gadgetbridge. */
+export const DIRECT_HUAWEI = {
+  id: 'huawei_direct',
+  name: 'Montre Huawei (en direct)',
+  source: 'huawei_watch',
+  bridgeFor: ['huawei_health', 'honor_health'],
+  guideId: null,
+}
+
 /**
- * Apps qui ont réellement écrit des mesures Health Connect lues par HealthTrack.
+ * Apps qui ont réellement écrit des mesures Health Connect lues par HealthTrack, plus la montre
+ * Huawei lue en direct (source « huawei_watch »).
  * @param {Array<{ source: string, at: string, type: string, payload?: object }>} entries
  * @param {Date} [now]
  * @returns {Array<{ name: string, app: object|null, lastAt: string, count: number, types: string[], metrics: object[] }>}
@@ -204,10 +214,11 @@ export function missingWatchMetrics(metrics) {
 export function summarizeHealthConnectSources(entries, now = new Date()) {
   const bySource = new Map()
   for (const e of entries || []) {
-    if (e?.source !== 'health_connect') continue
-    const raw = e.payload?.sourceName
+    const direct = e?.source === DIRECT_HUAWEI.source
+    if (e?.source !== 'health_connect' && !direct) continue
+    const raw = direct ? DIRECT_HUAWEI.name : e.payload?.sourceName
     if (!raw) continue
-    const app = matchHealthApp(raw)
+    const app = direct ? DIRECT_HUAWEI : matchHealthApp(raw)
     const key = app ? app.id : raw
     const cur = bySource.get(key) || { name: app ? app.name : raw, app, lastAt: e.at, count: 0, types: new Set(), entries: [] }
     cur.count += 1

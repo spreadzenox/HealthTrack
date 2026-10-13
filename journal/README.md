@@ -13,7 +13,9 @@ voix (D4), l'anti-circularité (D5) et une science personnelle sans normes impos
 **Depuis le soir du 12/10, une priorité absolue passe avant tout** : faire de HealthTrack l'app qui parle directement à
 votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 : le **test de connexion directe** ;
 deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »** ; troisième pas (13/10 02:30) :
-**l'authentification** (« Connexion à la montre », non encore essayée sur la vraie montre). Reste : la synchro des mesures.
+**l'authentification** (« Connexion à la montre ») ; quatrième pas (13/10 04:30) : **la lecture des mesures** (pas, cœur,
+SpO₂, FC repos, sommeil) à chaque connexion. Rien n'est encore essayé sur la vraie montre. Reste : synchro automatique,
+phases du sommeil, VFC / stress, séances.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
@@ -71,6 +73,11 @@ deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »
   appairage a besoin de 3 constantes publiques : « **Télécharger les paramètres** » (un geste) ou les coller. Si la
   montre ne reconnaît plus la clé, « Refaire l'appairage ». Journal exportable sans clé ni PIN. **Vos mesures ne
   remontent pas encore** : c'est l'étape suivante.
+- **Montre Huawei — vos mesures** (même encadré) : une fois connectée, chaque connexion lit la montre : **pas,
+  calories, fréquence cardiaque, SpO₂, FC de repos et sommeil** (léger / profond) arrivent dans l'historique (source
+  « Montre Huawei ») et nourrissent l'accueil, « Votre cœur » et les Analyses. 7 jours la première fois, puis seulement
+  le nouveau, sans doublon. Le bouton devient « **Synchroniser la montre** ». « Mes appareils » dit alors que vos
+  données passent par la montre en direct (Huawei Health n'est plus nécessaire pour elles).
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -78,6 +85,11 @@ deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Synchronisation (run 13/10 04:30)** : commandes de données décrites avec nos mots (`protocoles/huawei.md` §7 :
+  minute par minute avec masques de champs, sommeil, heure, totaux), code écrit depuis cette spec, testé sur un exemple
+  de trame et avec la fausse montre. Les mesures sont **agrégées à l'écriture** (pas / calories par heure, cœur par
+  10 min) : l'historique reste léger, ce qui aide aussi la performance des courbes. Aucun changement de format de
+  données : export / import inchangés.
 - **Authentification (run 13/10 02:30)** : protocole HiChain (le même que Huawei Santé, issu d'OpenHarmony) réécrit
   de zéro d'après notre spécification (`protocoles/huawei.md` §6, recoupée avec le code Apache-2.0 d'OpenHarmony),
   chiffrement des échanges ensuite (AES-GCM / CBC), 1 050 tests dont une **fausse montre** qui joue l'autre côté. Bonne
@@ -119,6 +131,9 @@ deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
+- **🎯 Nouveau (13/10 04:30)** : si la connexion réussit, l'étape « Lecture des mesures » dit combien de minutes et de
+  nuits ont été lues. Comparez un jour avec Huawei Santé (pas, FC) : si les **calories** ou les pas semblent faux d'un
+  facteur 10 ou 1 000, dites-le-moi (l'unité exacte n'est pas documentée).
 - **🎯 Nouveau (13/10 02:30) — à essayer quand vous voulez passer à HealthTrack seule** : après « Libérer et appairer »
   (réinitialisation + appairage Android), « Connexion à la montre » → « Télécharger les paramètres » → « Se connecter à
   la montre ». Puis **Enregistrer le journal** et déposez-le dans `journal/diagnostics/` : rien n'a encore été essayé
@@ -189,8 +204,8 @@ deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
 **Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
-(b) libération + appairage livrées ; prochain run : (c) **authentification HiChain** (d'après votre journal s'il arrive),
-puis (d) synchronisation. Ensuite : performance des courbes, restes du
+(b) libération + appairage, (c) authentification et (d) lecture des mesures livrées ; prochain run : **synchro automatique** à l'ouverture,
+puis phases du sommeil, VFC / stress et séances (et corrections d'après votre journal s'il arrive). Ensuite : performance des courbes, restes du
 nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
@@ -209,6 +224,7 @@ nettoyage, humeur par le visage / la voix.
 | 12/10 22:30 — [Priorité montre : test de connexion directe](runs/2026-10-12-2230-montre-diagnostic.md) | ⌚🏗️ | PR #123 fusionnée → v109 |
 | 13/10 00:30 — [Montre : libérer et appairer](runs/2026-10-13-0030-montre-liberer-appairer.md) | ⌚🏗️ | PR #125 fusionnée → v110 |
 | 13/10 02:30 — [Montre : authentification HiChain](runs/2026-10-13-0230-montre-authentification.md) | ⌚🏗️ | PR #127 fusionnée → v111 |
+| 13/10 04:30 — [Montre : lecture des mesures](runs/2026-10-13-0430-montre-synchro.md) | ⌚🏗️ | PR en cours |
 
 ---
 

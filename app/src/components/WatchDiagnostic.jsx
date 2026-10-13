@@ -16,6 +16,7 @@ import WatchConnect from './WatchConnect'
 import { connectAndAuthenticate, findBondedWatch } from '../devices/huawei/pairing'
 import { classicTransport, HUAWEI_RFCOMM_UUID, HONOR_RFCOMM_UUID } from '../devices/huawei/transports'
 import { loadSetup } from '../devices/huawei/setup'
+import { createWatchSync } from '../services/watchSync'
 import './WatchDiagnostic.css'
 
 const LAST_KEY = 'healthtrack_watch_diagnostic_last'
@@ -61,7 +62,7 @@ async function defaultRun(onUpdate) {
   return runHuaweiDiagnostic({ client, classic: classicPlugin(), ready, detectApps: detectPhoneApps, onUpdate, appVersion: CURRENT_VERSION })
 }
 
-/** Connexion authentifiée (étape c) à la montre appairée à Android, en Bluetooth classique. */
+/** Connexion authentifiée (étape c) à la montre appairée à Android, en Bluetooth classique, puis lecture des mesures (étape d). */
 async function defaultConnect({ secrets, rebind, onUpdate }) {
   const classic = classicPlugin()
   if (!classic) throw new Error('Connexion possible seulement dans l’app Android.')
@@ -78,6 +79,7 @@ async function defaultConnect({ secrets, rebind, onUpdate }) {
     accountId: setupState.choice === 'keep' ? setupState.accountId || null : null,
     onUpdate,
     appVersion: CURRENT_VERSION,
+    sync: createWatchSync({ watchKey: watch.deviceId, watchName: watch.name }),
   })
 }
 
