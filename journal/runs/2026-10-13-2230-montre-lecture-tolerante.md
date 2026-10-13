@@ -1,6 +1,6 @@
 # 2026-10-13 22:30 Paris (20:30 UTC) — Montre : lecture tolérante de la réponse d'appairage + variantes du jeton
 
-**Type** : ⌚🏗️ (priorité absolue D3)  ·  **PR** : voir « Livraison » ci-dessous
+**Type** : ⌚🏗️ (priorité absolue D3)  ·  **PR** : #146 (fusionnée → release v120 avec APK)
 
 ## Pourquoi
 - Démarrage : main à `8a3cf12` (PR #144 journal + #145 test météo). Aucune PR « [Auto] » rouge ou en conflit.
@@ -38,5 +38,9 @@
 - Variantes d'ordre seulement **nommées**, pas poursuivies : le jeton du téléphone en miroir serait une supposition.
 
 ## Suite proposée
-1. Lire le 3e journal du propriétaire (v ≥ 119) : `bind` ok → `auth` / `check` / `sync` ; sinon `tokenCheck`.
+1. Lire le 3e journal du propriétaire (v ≥ 120) : `bind` ok → `auth` / `check` / `sync` ; sinon `tokenCheck`.
 2. Puis (d quater) arrière-plan app fermée.
+
+## Après le merge
+- PR #146 : checks « Frontend (Vitest) », « Build APK » et émulateurs A56 (API 35, 36) verts → fusionnée (squash,
+  `89d1caa`). « Build & Release » vert → **release v120** publiée avec `HealthTrack-v120.apk`.
