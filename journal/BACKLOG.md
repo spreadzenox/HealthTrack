@@ -114,6 +114,18 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] **(d quater) Resynchro en arrière-plan, app fermée** : WorkManager / service de premier plan ; la session HiChain
       et le protocole tournent aujourd'hui en JS → soit WebView réveillée (plugin Capacitor background-runner ?), soit
       portage Java du strict nécessaire (trames, AES-GCM, commandes 7/x) avec la clé de session ; à évaluer
+      → **tranché au run idées 13/10 08:30 (I49)** : `@capacitor/background-runner` écarté (QuickJS sans
+      `crypto.subtle` ni Bluetooth). Plan : ① association **Companion Device Manager** de la montre déjà appairée
+      (1 confirmation ; le CDM gère le Bluetooth classique : événement à la connexion / déconnexion, exemption
+      officielle pour démarrer un service de premier plan depuis l'arrière-plan) ; ② `CompanionDeviceService` →
+      service `connectedDevice` court ; ③ **client Java « synchro seule »** écrit depuis la spec (§2, §3, §6.5, §7),
+      clé lisible par Java (Keystore), sortie fichier importé par le JS à l'ouverture ; échec d'auth en fond =
+      notification, jamais de réappairage ; ④ filet WorkManager 1 h + déverrouillage (`USER_PRESENT`) ; ⑤ socket
+      toujours fermé, essais plafonnés (PR GB #6367 : des reconnexions agressives peuvent faire réinitialiser la montre)
+- [ ] (d quater, avec ①) **Guide One UI** (I50) : batterie « Sans restriction » **et** « Applis jamais en veille »,
+      affiché seulement si la synchro de fond n'a rien ramené depuis 24 h
+- [ ] Séances (0x17) : couvrir dans les tests les séances **enregistrées automatiquement** (plantage connu sur GT 6 Pro
+      chez GB, #5784) ; ignorer proprement la demande de 35 jours de calendrier de la montre (#6356)
 - [ ] Valider (d) sur la vraie montre : unités des calories (kcal ?) et de la distance, valeur « pas de mesure » (0 / 0xFF),
       blocs vides, fuseau 1/5
       (PR #6367 : fermer, attendre ≈ 6 s, réessayer une fois) ; envoi de l'identifiant de compte (0x1A/0x05, étiquette 3
@@ -133,6 +145,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] Visage (I40) : MediaPipe Face Detector + HSEmotion-B0 LiteRT (8 Mo, Apache-2.0) quelques secondes à chaque
       ouverture de l'app → sourire / valence / confiance seuls stockés ; étape 2 service caméra démarré depuis l'app
       (Android 14+ interdit de le créer en arrière-plan ; pas de capture au déverrouillage sans ouvrir l'app)
+- [ ] Faits du run idées 13/10 08:30 (I53, I55) : **pas de WebGPU sur le GPU Xclipse de l'A56** (liste de blocage
+      Chromium) → MediaPipe Tasks web (WebGL2) ou natif ; HSEmotion-B0 LiteRT = 8 classes **sans valence**, la variante
+      valence / éveil (`enet_b0_8_va_mtl`, 16 Mo) a une **licence des poids non précisée** ; précision individuelle
+      publiée faible (AUC ≈ 0,6) → tendance 7 j calibrée par l'auto-déclaration ; openSMILE écarté (licence
+      commerciale) → prosodie maison + pitchy (0BSD) ; `appops CAMERA allow` : aucun retour fiable sur Android 14–16,
+      démarrage depuis l'app ou une notification = voie robuste (le « niveau 2 » reste à **tester** sur l'A56)
 - [ ] Voix (I41) : dictée du soir = note déclarée + tags extraits + indices prosodiques (audio effacé), modèle SER
       seulement s'il tient sur l'A56 (≤ 20 Mo, < 300 ms) — remplace à terme le formulaire de check-in (D1)
 
@@ -292,7 +310,7 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 1. ⌚ **Lire le journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`) : mode d'authentification, retour
    sur l'assistant « Libérer et appairer ».
 2. ⌚ **D3 (d bis)** fichiers détaillés 0x2C (phases du sommeil, RR → VFC / stress) et séances (prochain run hors
-   idées) ; puis **(d quater)** arrière-plan app fermée. (d) livré le 13/10 04:30, (d ter) resynchro à l'ouverture le 13/10 06:30.
+   idées) ; puis **(d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le 13/10 04:30, (d ter) resynchro à l'ouverture le 13/10 06:30.
 3. ⌚ D3 (c bis) — lire le journal de connexion du propriétaire dès qu'il arrive et corriger l'authentification.
 4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
    Worker, graphiques différés ; budget anti-régression.
@@ -301,10 +319,10 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB).
 7. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
 8. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
-9. Ensuite seulement : **un seul flux du jour** (I47), réception BLE automatique, Colmi (I28).
-10. 💡 Prochain run idées (13/10 08:30 Paris) : une bonne part sur la montre — valeurs réelles des paramètres du lien
-    des GT 5 / GT 6, HiChain sans constantes d'app, réinitialisation de la GT 6 Pro (menu exact), RFCOMM et One UI ;
-    puis MediaPipe + LiteRT dans la WebView, plus petit modèle de voix FR.
+9. Ensuite seulement : **briefing du jour unique** (I47 → I51, gabarits, jamais de chiffre inventé), **mode calme**
+   (I52, tendances 7 / 30 j), une question du soir (I54), réception BLE automatique, Colmi (I28).
+10. 💡 Prochain run idées (13/10 20:30 Paris) : lien Bluetooth permanent de la GT 6 Pro (CDM « connectée »),
+    licence des poids HSEmotion valence, MediaPipe dans une WebView Samsung, commandes 1/0x03 attendues.
 
 ## Idées en vrac (à trier)
 
