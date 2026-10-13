@@ -13,7 +13,20 @@ import {
   setTimeTlvs,
   syncWindow,
   watchEntries,
+  CAPABILITY_QUERY,
+  canDo,
+  commandsTlvs,
+  describeCapabilities,
+  hasExpand,
+  parseCommands,
+  parseServices,
+  parseWorkoutList,
+  parseWorkoutTotals,
+  workoutListTlvs,
 } from './sync'
+import { SLEEP_FIELD } from './files'
+import { field, sleepSequenceFile } from './testing/sampleFiles'
+import { clearWatchNights } from '../../services/watchSync'
 import { connectAndAuthenticate, createKeyStore } from './pairing'
 import { createFakeWatch, TEST_SECRETS } from './testing/fakeWatch'
 import { createWatchSync, getWatchSyncState } from '../../services/watchSync'
@@ -173,7 +186,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.sync).toMatchObject({ minutes: 3, nights: 1, totals: { steps: 5400, kcal: 0, distanceM: 0 } })
     expect(report.sync.label).toMatch(/^3 minutes, 1 nuit → \d+ mesures$/)
     // tout ce qui suit l'authentification part chiffré
-    expect(watch.seen.slice(watch.seen.indexOf('1/8*'))).toEqual(['1/8*', '1/5*', '7/12*', '7/13*', '7/10*', '7/11*', '7/11*', '7/3*'])
+    expect(watch.seen.slice(watch.seen.indexOf('1/8*'))).toEqual(['1/8*', '1/5*', '1/2*', '1/3*', '1/49*', '7/12*', '7/13*', '7/10*', '7/11*', '7/11*', '7/3*', '23/7*', '44/1*', '44/6*'])
     expect(written.filter((e) => e.type === 'steps').map((e) => e.payload.value)).toEqual([200])
     expect(written.filter((e) => e.type === 'sleep').map((e) => e.payload.sleepState)).toEqual(['light', 'deep'])
     expect(getWatchSyncState('AA:BB', storage).until).toBe(Date.UTC(2026, 9, 13, 2))
@@ -185,5 +198,113 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'X', timeoutMs: 300, bindTimeoutMs: 300, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
     expect(report.outcome.code).toBe('connected')
     expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/Pas de réponse/) })
+  })
+
+  it('séances et sommeil détaillé : capacités lues, fichier téléchargé par blocs, nuit détaillée à la place des périodes simples', async () => {
+    const now = Date.UTC(2026, 9, 13, 8, 10)
+    const bed = Math.floor(Date.UTC(2026, 9, 12, 22) / 1000)
+    const run = Math.floor(Date.UTC(2026, 9, 12, 17) / 1000)
+    const file = sleepSequenceFile([
+      { startSec: bed, endSec: bed + 9 * 3600, fields: [field(SLEEP_FIELD.BED, bed), field(SLEEP_FIELD.VALID, 1), field(SLEEP_FIELD.SCORE, 78), field(SLEEP_FIELD.HRV, 38.2)], stages: [[10, 4], [200, 1], [90, 3], [80, 2], [20, 4]] },
+    ])
+    for (const filePlain of [false, true]) {
+      const watch = createFakeWatch({
+        sleepBlocks: [sleepBlock(0, [{ type: 6, startSec: bed + 600, minutes: 200 }])],
+        workouts: [{ number: 7, body: [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: be(7, 2) }, { tag: 4, value: be(run, 4) }, { tag: 5, value: be(run + 1800, 4) }, { tag: 6, value: be(310, 4) }, { tag: 7, value: be(5200, 4) }, { tag: 8, value: be(4800, 4) }, { tag: 0x0c, value: [96, 171] }, { tag: 0x12, value: be(1750, 4) }, { tag: 0x14, value: [1] }]) }] }],
+        files: { sequence_data: file },
+        expand: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80], // capacité 143
+        filePlain,
+      })
+      const written = []
+      const cleared = []
+      const sync = createWatchSync({ watchKey: 'W', storage: memoryStorage(), now: () => now, write: async (e) => (written.push(...e), { inserted: e.length }), clear: async (n) => cleared.push(...n) })
+      const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'W', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+      expect(report.outcome.code).toBe('connected')
+      expect(report.sync).toMatchObject({ nights: 1, detailedNights: 1, workouts: 1 })
+      expect(report.sync.capabilities).toMatch(/séances oui.*sommeil dictionnaire oui/)
+      expect(report.sync.label).toMatch(/1 nuit, 1 séance → \d+ mesures$/)
+      expect(watch.seen).toContain('1/55*')
+      expect(watch.seen.filter((x) => x.startsWith('44/4')).length).toBe(Math.ceil(file.length / 64))
+      expect(watch.seen.filter((x) => x === '44/4').length).toBe(filePlain ? Math.ceil(file.length / 64) : 0)
+      const sleep = written.filter((e) => e.type === 'sleep')
+      expect(sleep.map((e) => [e.payload.sleepState, e.payload.durationMinutes])).toEqual([['awake', 10], ['light', 200], ['deep', 90], ['rem', 80], ['awake', 20]])
+      expect(sleep.every((e) => e.payload.detail && e.payload.sleepScore === 78)).toBe(true)
+      expect(written.find((e) => e.payload.subtype === 'heartRateVariability')).toMatchObject({ at: '2026-10-13T04:40:15.000Z', payload: { value: 38.2, unit: 'ms', during: 'sleep' } })
+      expect(written.find((e) => e.type === 'activity').payload).toMatchObject({ workoutType: 'running', durationSeconds: 1750, totalCalories: 310, totalDistanceMeters: 5200, steps: 4800, minHeartRate: 96, maxHeartRate: 171, endDate: '2026-10-12T17:30:00.000Z' })
+      expect(cleared).toHaveLength(1)
+    }
+  })
+
+  it('montre sans séances ni fichiers : ni 0x17 ni 0x2C demandés, la synchro de base passe', async () => {
+    const watch = createFakeWatch({ unsupported: [0x17, 0x2c] })
+    const sync = createWatchSync({ watchKey: 'Y', storage: memoryStorage(), write: async () => ({ inserted: 0 }) })
+    const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'Y', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+    expect(report.outcome.code).toBe('connected')
+    expect(watch.seen.some((x) => x.startsWith('23/') || x.startsWith('44/'))).toBe(false)
+    expect(report.sync.capabilities).toMatch(/séances non, fichiers 0x2C non/)
+  })
+})
+
+describe('montre Huawei : capacités et séances (§7.5, 7.8)', () => {
+  it('services : un octet par service demandé ; commandes : tableau aligné sur la demande', () => {
+    const services = parseServices([{ tag: 2, value: [1, 0, 1] }], [7, 0x17, 0x2c])
+    expect([...services]).toEqual([[7, true], [0x17, false], [0x2c, true]])
+    const query = [[7, [0x0a, 0x16]], [0x20, [9]]]
+    const req = decodeTlvs(Uint8Array.from(commandsTlvs(query)[0].value))
+    expect(req.map((t) => [t.tag, Array.from(t.value)])).toEqual([[2, [7]], [3, [0x0a, 0x16]], [2, [0x20]], [3, [9]]])
+    const reply = [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [7] }, { tag: 4, value: [1, 0] }, { tag: 2, value: [0x20] }, { tag: 4, value: [1] }]) }]
+    const cmds = parseCommands(reply, query)
+    expect(cmds.get('7/10')).toBe(true)
+    expect(cmds.get('7/22')).toBe(false)
+    expect(cmds.get('32/9')).toBe(true)
+    expect(CAPABILITY_QUERY.every(([, c]) => c.length > 0)).toBe(true)
+  })
+
+  it('capacités étendues : bit N, poids faible d’abord ; « non » seulement si la montre l’a dit', () => {
+    const bytes = new Array(30).fill(0)
+    bytes[17] = 0x80 // 143
+    bytes[29] = 0x08 // 235
+    expect(hasExpand(bytes, 143)).toBe(true)
+    expect(hasExpand(bytes, 235)).toBe(true)
+    expect(hasExpand(bytes, 142)).toBe(false)
+    expect(hasExpand(null, 143)).toBe(false)
+    expect(canDo(null, 0x17, 7)).toBe(true)
+    expect(canDo({ services: new Map([[0x17, false]]) }, 0x17)).toBe(false)
+    expect(canDo({ services: new Map([[0x17, true]]), commands: new Map([['23/7', false]]) }, 0x17, 7)).toBe(false)
+    expect(describeCapabilities(null)).toBe('capacités inconnues')
+  })
+
+  it('séances : liste (numéros de la montre) et totaux ; type inconnu → « other »', () => {
+    expect(decodeTlvs(Uint8Array.from(workoutListTlvs(0, 1760306400000)[0].value)).map((t) => t.tag)).toEqual([3, 4])
+    const list = [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, 2] }, { tag: 0x85, value: encodeTlvs([{ tag: 6, value: [0, 12] }]) }, { tag: 0x85, value: encodeTlvs([{ tag: 6, value: [1, 2] }]) }]) }]
+    expect(parseWorkoutList(list)).toEqual([12, 258])
+    const totals = (extra) => [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, 12] }, { tag: 4, value: be(1000, 4) }, { tag: 5, value: be(1600, 4) }, ...extra]) }]
+    expect(parseWorkoutTotals(totals([{ tag: 0x14, value: [99] }]))).toEqual({ number: 12, start: 1_000_000, end: 1_600_000, kcal: 0, distanceM: 0, steps: 0, durationSec: 600, sport: 'other' })
+    expect(parseWorkoutTotals(totals([{ tag: 0x14, value: [137] }, { tag: 0x0c, value: [0, 255] }])).sport).toBe('yoga')
+    expect(parseWorkoutTotals(totals([{ tag: 0x0c, value: [0, 255] }]))).not.toHaveProperty('hrMax')
+    expect(parseWorkoutTotals([{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, 1] }]) }])).toBeNull()
+  })
+
+  it('entrées : une nuit détaillée remplace les périodes simples qui la recoupent ; nuit non terminée attendue', () => {
+    const s = Date.UTC(2026, 9, 12, 22)
+    const night = { start: s, end: s + 8 * 3600_000, score: 80, hrvMs: 40, stages: [{ start: s, minutes: 480, stage: 'light' }] }
+    const simple = [{ start: s + 3600_000, minutes: 60, stage: 'deep' }, { start: s - 6 * 3600_000, minutes: 30, stage: 'light' }]
+    const out = watchEntries({ sleep: simple, nights: [night] }, { until: s + 9 * 3600_000 })
+    expect(out.filter((e) => e.type === 'sleep').map((e) => [e.at, e.payload.detail || false])).toEqual([
+      [new Date(s - 6 * 3600_000).toISOString(), false],
+      [new Date(s).toISOString(), true],
+    ])
+    expect(watchEntries({ nights: [night] }, { until: s + 3600_000 }).filter((e) => e.payload.detail)).toEqual([])
+  })
+
+  it('clearWatchNights efface les entrées sommeil de la montre dans la nuit', async () => {
+    const calls = []
+    const n = await clearWatchNights([{ start: 0, end: 3600_000 }], {
+      list: async (q) => (calls.push(q), [{ id: 4 }, { id: 9 }]),
+      remove: async (id) => calls.push(id),
+    })
+    expect(n).toBe(2)
+    expect(calls[0]).toMatchObject({ type: 'sleep', source: 'huawei_watch', since: '1970-01-01T00:00:00.000Z', until: '1970-01-01T00:59:59.999Z' })
+    expect(calls.slice(1)).toEqual([4, 9])
   })
 })

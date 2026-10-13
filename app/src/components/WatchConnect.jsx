@@ -110,7 +110,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
       <p className="my-devices-intro">
         Une fois la montre appairée, HealthTrack s’y connecte seule : elle obtient une clé que la montre ne donne qu’à une app à la fois,
         et la garde <strong>sur ce téléphone uniquement</strong>. Chaque connexion lit ensuite les nouvelles mesures (pas, cœur, SpO₂,
-        sommeil), et HealthTrack resynchronise tout seul quand vous ouvrez l’app.
+        sommeil avec ses phases, VFC de la nuit, séances), et HealthTrack resynchronise tout seul quand vous ouvrez l’app.
       </p>
       {autoLine && <p className="my-device-meta watch-connect-auto">{autoLine}</p>}
 

@@ -259,24 +259,101 @@ heures = secondes Unix UTC sur 4 octets. Tous ces messages sont **chiffrés** un
   les éléments 0x83. Lire les entiers sur 1 à 4 octets.
 
 ### 7.5 Séances — service 0x17
-- 0x17/0x07 nombre : `81 T{ 3 = début, 4 = fin }` → `81 T{ 2 = nombre, 0x85 T{ 6 = numéro de séance, 7 = nombre de
-  blocs de données, 8 = nombre d'allures, … } … }`.
-- 0x17/0x08 totaux : `81 T{ 2 = numéro }` → `81 T{ 4 = début, 5 = fin, 6 = calories, 7 = distance (m), 8 = pas,
-  0x12 = durée (s), 0x14 = type (1 octet), 0x0C = FC mini / maxi, … }`. Pas de FC moyenne (à calculer depuis 0x17/0x0A).
+Relecture du 13/10/2026 (run 10:30 Paris), [G] master, faits seulement rapportés par un agent de recherche.
+- **0x17/0x07 liste** : demande `81 T{ 3 = début, 4 = fin }` (secondes, **dans** le conteneur, contrairement à 7/0x0A).
+  Réponse `81 T{ 2 = nombre (2 octets), puis un 0x85 par séance : T{ 6 = numéro de séance (2 octets), 7 = nombre de
+  blocs d'échantillons, 8 = nombre de blocs d'allure, … } }`. Le **numéro** est l'identifiant propre à la montre (pas
+  une position) ; les sous-blocs sont numérotés de 0 à n − 1. Si le nombre annoncé ≠ nombre de 0x85, couper la
+  période en deux et redemander (pas fait par HealthTrack pour l'instant : on prend les 0x85 reçus).
+- **0x17/0x08 totaux** : demande `81 T{ 2 = numéro }`. Réponse `81 T{ … }` :
 
-### 7.6 Fichiers détaillés (sommeil par phases, RR → VFC / stress) — service 0x2C
-- 1 = ouverture (1 = nom, 2 = type, 5 = début, 6 = fin, 0x0C = dictionnaire pour le type 0x16) → 3 = identifiant,
-  4 = taille ; 3 = infos (taille de bloc, 5 = « sans chiffrement » pour la commande 4) ; 4 = demande d'un bloc
-  (1 = identifiant, 2 = position, 3 = taille) ; 5 = bloc **brut** poussé par la montre (identifiant 1 octet, position
-  4 octets, 1 octet inconnu, données ; ou TLV chiffré s'il commence par `7C 01 01`) ; 6 = fin.
-- Types : 0x0E état du sommeil, 0x0F données du sommeil, 0x10 RR, 0x16 « séquences » (dictionnaire 700013 = phases du
-  sommeil, codes 1 léger, 2 paradoxal, 3 profond, 4 éveil, 5 sieste). `sleep_state` = suites de 16 octets
-  **petit-boutistes** : début, fin, 8 octets inconnus.
-- Ce qu'une montre sait faire se lit dans 1/0x03 (commandes prises en charge) : 7/0x16 = TruSleep, 0x20/0x09 = stress
-  automatique, bit étendu 143 = sommeil par dictionnaire. ❓ À lire chez la GT 6 Pro (prochaine étape).
+| Étiquette | Sens | Format |
+|---|---|---|
+| 2 | numéro | 2 octets |
+| 3 | état | 1 octet |
+| 4 / 5 | début / fin | secondes, 4 octets |
+| 6 | calories | 4 octets, kcal ❓ |
+| 7 | distance | 4 octets, m |
+| 8 | pas | 4 octets |
+| 0x0C | FC mini, FC maxi | 2 × 1 octet |
+| 0x0E | effet d'entraînement aérobie | × 0,1 |
+| 0x11 | temps de récupération | 2 octets, minutes |
+| 0x12 | durée active | 4 octets, secondes |
+| 0x14 | type de sport | 1 octet non signé |
+
+- Types (0x14) : 1 course, 2 marche, 3 vélo, 4 randonnée en montagne, 5 course en salle, 6 natation en piscine, 7 vélo
+  d'appartement, 8 natation en eau libre, 11 trail, 13 marche en salle, 14 randonnée, 21 corde à sauter, 128 tennis de
+  table, 129 badminton, 130 tennis, 131 football, 132 basket, 133 volley, 134 elliptique, 135 rameur, 136 stepper,
+  137 yoga, 138 pilates, 139 aérobic, 140 renforcement, 141 spinning, 143 HIIT, 145 CrossFit, 146 entraînement
+  fonctionnel, 177 escaliers, 200 aviron, 224 padel, 255 autre. Inconnu → « autre ».
+- Échantillons (0x17/0x0A, FC par seconde, vitesse…) et allures (0x17/**0x0C**) : décrits dans [G], **pas encore lus**
+  par HealthTrack (étape suivante possible : FC moyenne et courbe de la séance).
+
+### 7.6 Fichiers détaillés — service 0x2C
+**Déroulé** (tous les messages sont chiffrés sauf mention) :
+1. `0x2C/0x01` ouverture : demande `1 = nom` (texte), `2 = type` (1 octet), `5 = début`, `6 = fin` (secondes),
+   `0x0C = dictionnaire` (4 octets, seulement pour le type 0x16). Réponse : `3 = identifiant du fichier` (1 octet),
+   `4 = taille` (4 octets). Taille 0 ou 0xFFFFFFFF = rien à lire → passer à l'étape 5.
+2. `0x2C/0x03` infos : demande `1 = identifiant` + étiquettes 2 à 5 vides. Réponse : `3 = taille d'un paquet poussé`,
+   `4 = taille maxi d'un bloc` (4 octets), `5 = sans chiffrement` (booléen).
+3. `0x2C/0x04` demande d'un bloc : `1 = identifiant`, `2 = position` (4 octets), `3 = taille` (min(reste, bloc maxi)),
+   `4 = dictionnaire` (type 0x16). Envoyée **en clair** si « sans chiffrement ».
+4. `0x2C/0x05` poussé par la montre (un ou plusieurs par bloc), **pas en TLV** : identifiant (1 octet), position
+   (4 octets gros-boutistes), 1 octet inconnu, puis les données. S'il commence par `7C 01 01`, c'est l'enveloppe
+   chiffrée habituelle (§6.5) : déchiffrer, on retrouve la même disposition. Recommencer 3 jusqu'à la taille annoncée.
+5. `0x2C/0x06` fin : `1 = identifiant`, `2 = 1` (succès).
+- (Une empreinte SHA-256 existe en 0x2C/0x02, inutile pour une lecture demandée par le téléphone.)
+- Ancien service 0x0A (montres plus anciennes, noms séparés par « ; ») : non géré par HealthTrack.
+
+**Types** : 0x0E `sleep_state.bin`, 0x0F `sleep_data.bin` (capteurs bruts, inutile), 0x10 `rrisqi_data.bin`
+(stress), 0x16 `sequence_data` (dictionnaire).
+
+**Sommeil détaillé = fichier `sequence_data`, type 0x16, dictionnaire 700013** (tout en gros-boutiste) :
+- En-tête de fichier, 32 octets : taille des données (4), dictionnaire (4), type (2), version (2), 20 réservés.
+- Puis des enregistrements (un par nuit ou sieste), chacun : en-tête de 32 octets = début (4), fin (4), version des
+  données (1), type de résumé (1), longueur du résumé (2), longueur du détail (4), 16 octets inconnus ; puis le
+  **résumé** (longueur annoncée), puis le **détail**.
+- Résumé (type 2, version 1) : TLV ; des conteneurs contiennent des groupes `3 = numéro de champ` (4 octets),
+  `4 = type de valeur` (1, 2, 4 = entier ; 3 = entier long ; 6 = réel double 8 octets ; 5 = texte), `5 = valeur`.
+  Champs utiles (heures en secondes) : 700013298 coucher, 700013686 endormissement, 700013156 réveil, 700013973 lever,
+  700013786 données valides, 700013245 **score de sommeil**, 700013878 **VFC moyenne** (ms ❓), 700013580 FC moyenne,
+  700013436 / 700013502 FC mini / maxi, 700013635 réveils, 700013713 latence, 700013232 efficacité.
+- Détail : **petit-boutiste**, suites de 8 octets : durée en secondes (4, multiple de 60), phase (1), 3 octets
+  inconnus. Les phases se suivent sans trou depuis l'**heure de coucher** (si données valides), sinon depuis
+  l'endormissement, arrondie à la minute. Phases : **1 léger, 2 paradoxal, 3 profond, 4 éveil, 5 sieste**.
+- `sleep_state.bin` (type 0x0E) : petit-boutiste, enregistrements de 16 octets = début, fin, 8 inconnus → fenêtres
+  de sommeil sans phases ; inutile si le dictionnaire répond.
+
+**Stress** (`rrisqi_data.bin`, type 0x10, gros-boutiste) : en-tête (taille 8, masque 2, version 2), enregistrements
+à partir de l'octet 48 pour la version 3 ; 66 octets chacun : début (4), fin (4), algorithme (4), **score** (1),
+**niveau** (1), 4 drapeaux (1 chacun), 12 réels de 4 octets. La montre calcule elle-même le score. Ce ne sont **pas**
+des intervalles RR. Pas encore lu par HealthTrack (aucun type « stress » dans l'historique pour l'instant).
+
+**VFC hors sommeil** : pas par fichier, mais par le module « data dictionary sync » (classe 500044, champ 500044831 =
+RMSSD, réel double), réservé aux montres qui annoncent la capacité 235. ❓ Imbrication exacte incertaine → plus tard.
+
+### 7.8 Ce que la montre sait faire — service 1 (après l'authentification)
+- **1/0x02 services** : demande `1 = liste des numéros de service` (octets). Réponse `2 = un octet par service
+  demandé`, dans le même ordre, 1 = pris en charge. (Le service 1 est toujours pris en charge.)
+- **1/0x03 commandes** : demande `81 T{ 2 = service, 3 = liste de commandes, 2 = service, 3 = …}`. Réponse
+  `81 T{ 2 = service, 4 = un octet par commande demandée (1 = oui), … }` : un tableau aligné sur la demande, pas une
+  liste ni un masque. Garder la demande petite (une trame).
+- **1/0x37 capacités étendues** (si 1/0x37 est annoncé par 1/0x03) : demande `1` vide ; réponse `1 = octets` où la
+  capacité N est le bit (N mod 8), poids faible d'abord, de l'octet ⌊N / 8⌋. Utiles : **143 sommeil par
+  dictionnaire**, **235 VFC**, 107 apnée, 206 émotion.
+- **1/0x31 réglages liés** : demande étiquettes 1 à 6 vides ; réponse `2 = masque` : 0x02 sommeil « nouvelle synchro »
+  (service 0x2C), 0x04 RR / stress nouvelle synchro, 0x08 GPS.
+- Indices : 7/0x16 présent = TruSleep ; 0x20/0x09 = stress automatique ; 0x17/0x01 = séances.
+- 📖 GT 6 / GT 6 Pro (issue #5428) : traitée comme une montre Bluetooth classique Huawei sans particularité ; FC, SpO₂,
+  stress, température, séances et sommeil confirmés par un testeur. ❓ La voie « dictionnaire » (143) est probable
+  pour HarmonyOS 6, à confirmer par le journal.
 
 ### 7.7 Ordre suivi par HealthTrack
-Heure (1/5) → sommeil (0x0C puis 0x0D) → minutes (0x0A puis 0x0B) → totaux (0x03). Depuis la dernière synchro moins
+Heure (1/5) → capacités (1/0x02, 1/0x03, 1/0x31, 1/0x37 ; chaque échec est toléré) → sommeil simple (0x0C
+puis 0x0D) → minutes (0x0A puis 0x0B) → totaux (0x03) → séances (0x17/0x07 puis 0x08 par séance) → sommeil détaillé
+(0x2C, dictionnaire 700013, depuis la dernière synchro moins un jour). Une nuit détaillée **remplace** les périodes
+simples (léger / profond) de la même nuit, déjà écrites ou non. Les lectures facultatives ne sont tentées que si les
+capacités ne disent pas « non » (capacités illisibles = on essaie, et un échec ne bloque pas le reste). Depuis la dernière synchro moins
 une heure de recouvrement (7 jours la première fois) ; les doublons sont écartés à l'écriture.
 
 ## 8. Contraintes d'appairage et « libération » de la montre
@@ -313,4 +390,6 @@ une heure de recouvrement (7 jours la première fois) ; les doublons sont écart
 | (b) Détection et libération (boîte de désinstallation, réglages de l'app, guide de réinitialisation, plan B compte Huawei) + assistant d'appairage Android | ✅ run 13/10 00:30 | `src/devices/huawei/setup.js`, `components/WatchSetup.jsx`, `AppManagerPlugin.java`, `BtClassicPlugin.java` (`discover`, `pair`, `openBluetoothSettings`) |
 | (c) Authentification HiChain (§6) : état, négociation, PIN, liaison, authentification, clé des trames, chiffrement GCM / CBC ; clés gardées en local ; constantes du PIN téléchargées sur le téléphone | ✅ run 13/10 02:30 (à valider sur la montre) | `src/devices/huawei/crypto.js`, `session.js`, `hichain.js`, `pairing.js`, `components/WatchConnect.jsx` |
 | (d) Synchronisation (§7.1–7.4, 7.7) : heure, sommeil simple, minutes (pas, calories, distance, FC, SpO₂, FC repos), totaux → IndexedDB | ✅ run 13/10 04:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `services/watchSync.js` |
-| (d bis) Fichiers détaillés (phases du sommeil, RR → VFC), séances, resynchro en arrière-plan | ☐ | — |
+| (d bis) Capacités (§7.8), séances (totaux, §7.5), sommeil détaillé par fichier (phases, score, VFC de la nuit, §7.6) | ✅ run 13/10 10:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `files.js`, `session.js` (messages bruts), `services/watchSync.js` |
+| (d bis, suite) Stress (`rrisqi`), VFC de journée (dictionnaire 500044), échantillons de séance | ☐ | — |
+| (d quater) Resynchro en arrière-plan, app fermée | ☐ | plan I49 |

@@ -15,7 +15,8 @@ votre GT 6 Pro, sans Huawei Santé ni Gadgetbridge. Premier pas livré à 22:30 
 deuxième pas (13/10 00:30) : l'assistant **« Libérer et appairer la montre »** ; troisième pas (13/10 02:30) :
 **l'authentification** (« Connexion à la montre ») ; quatrième pas (13/10 04:30) : **la lecture des mesures** (pas, cœur,
 SpO₂, FC repos, sommeil) à chaque connexion ; cinquième pas (13/10 06:30) : la **synchro automatique** à l'ouverture
-de l'app. Rien n'est encore essayé sur la vraie montre. Reste : phases du sommeil, VFC / stress, séances, synchro app fermée.
+de l'app ; sixième pas (13/10 10:30) : **phases du sommeil, VFC de la nuit et séances**. Rien n'est encore essayé sur
+la vraie montre. Reste : synchro app fermée, stress, VFC de journée.
 Le run « idées » de 08:30 a tranché **comment relire la montre app fermée** (voir « Meilleures idées »).
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
@@ -84,6 +85,10 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   plus toutes les 30 min. Une ligne dit quand et ce qui est arrivé (« 38 minutes → 9 mesures »). Montre loin ou
   Bluetooth coupé : rien en erreur, l'app réessaie plus tard (essais espacés jusqu'à 4 h). Clé refusée : synchro
   automatique en pause, la carte le dit.
+- **Montre Huawei — sommeil détaillé, VFC, séances** (run 13/10 10:30, rien à toucher) : chaque synchro ramène aussi
+  vos **nuits par phases** (léger, profond, paradoxal, réveils) avec le **score de sommeil** de la montre, la **VFC
+  moyenne de la nuit** (« Votre cœur », Analyses) et vos **séances** (type, durée, calories, distance, pas, FC mini /
+  maxi). Une nuit détaillée remplace le sommeil simple lu plus tôt pour la même nuit : rien n'est compté deux fois.
 - **Radar forme qui connaît vos soirées** : avec « Alcool », « Sport le soir », « Repas tardif », « Stress » ou les
   nouveaux tags **« Voyage »** et **« Vaccin »** notés la veille ou le jour même, le Radar ne s'inquiète plus :
   « Probablement lié à… », badge « Explicable ». Avec « Malade », il confirme et rappelle quand consulter.
@@ -91,6 +96,10 @@ Le run « idées » de 08:30 a tranché **comment relire la montre app fermée**
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Sommeil détaillé et séances (run 13/10 10:30)** : la montre envoie les nuits sous forme de **fichier** (protocole
+  de téléchargement par blocs, décrit avec nos mots dans `protocoles/huawei.md` §7.6) ; HealthTrack demande d'abord à
+  la montre **ce qu'elle sait faire** (§7.8) et saute ce qu'elle ne connaît pas. Cette liste de capacités est écrite
+  dans le journal de connexion : c'est elle qui me dira, quand vous l'enverrez, ce que la GT 6 Pro accepte.
 - **Synchro automatique (run 13/10 06:30)** : une seule connexion à la montre à la fois (la manuelle attend
   l'automatique), jamais de réappairage ni de constantes en automatique, rien tant que HealthTrack n'a pas sa clé.
   La synchro **app fermée** (tâche de fond Android) demandera du code natif : prochaine grosse étape après les sommeils
@@ -256,6 +265,7 @@ nettoyage, humeur par le visage / la voix.
 | 13/10 04:30 — [Montre : lecture des mesures](runs/2026-10-13-0430-montre-synchro.md) | ⌚🏗️ | PR #129 fusionnée → v112 |
 | 13/10 06:30 — [Montre : synchro automatique](runs/2026-10-13-0630-montre-synchro-auto.md) | ⌚🏗️ | PR #131 fusionnée → v113 |
 | 13/10 08:30 — [Idées : montre app fermée, humeur réaliste, une réponse par jour](runs/2026-10-13-0830-idees-montre-fond-une-reponse.md) | 💡 | 8 idées (I49–I56), journal seul |
+| 13/10 10:30 — [Montre : sommeil détaillé, VFC, séances](runs/2026-10-13-1030-montre-sommeil-seances.md) | ⌚🏗️ | PR #134 |
 
 ---
 

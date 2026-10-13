@@ -250,8 +250,11 @@ export function createCipher({ key, gcm, randomIv = false, counter = 0, rand = r
   }
   return {
     async seal(serviceId, commandId, tlvs) {
+      return this.sealBytes(serviceId, commandId, Uint8Array.from(encodeTlvs(tlvs)))
+    },
+    /** Chiffre un corps quelconque (TLV encodés, ou bloc brut côté montre de test). */
+    async sealBytes(serviceId, commandId, plain) {
       const iv = nextIv()
-      const plain = Uint8Array.from(encodeTlvs(tlvs))
       const cipher = gcm ? await aesGcmEncrypt(key, iv, plain) : await aesCbcEncrypt(key, iv, plain)
       return [
         { tag: 0x7c, value: [1] },
@@ -259,11 +262,15 @@ export function createCipher({ key, gcm, randomIv = false, counter = 0, rand = r
         { tag: 0x7e, value: Array.from(cipher) },
       ]
     },
-    async open(serviceId, commandId, tlvs) {
+    /** Corps déchiffré tel quel (TLV, ou bloc de fichier brut pour 0x2C/0x05). */
+    async openBytes(serviceId, commandId, tlvs) {
       const iv = tlvs.find((t) => t.tag === 0x7d)?.value
       const data = tlvs.find((t) => t.tag === 0x7e)?.value
       if (!iv || !data) throw new Error('Trame chiffrée incomplète')
-      return decodeTlvs(gcm ? await aesGcmDecrypt(key, iv, data) : await aesCbcDecrypt(key, iv, data))
+      return Uint8Array.from(gcm ? await aesGcmDecrypt(key, iv, data) : await aesCbcDecrypt(key, iv, data))
+    },
+    async open(serviceId, commandId, tlvs) {
+      return decodeTlvs(await this.openBytes(serviceId, commandId, tlvs))
     },
   }
 }

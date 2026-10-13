@@ -7,13 +7,21 @@
  * Agrégation pour garder l'historique léger : pas et calories par heure, FC par tranche de 10 min,
  * SpO₂ telle quelle, FC de repos une par jour. Seules les tranches terminées avant `until` (arrondi à
  * l'heure) sont rendues : la synchro suivante repart de là, sans tranche à moitié comptée.
+ *
+ * Étape d bis (§7.5, 7.6, 7.8) : capacités de la montre, séances (totaux) et sommeil détaillé
+ * (phases, score, VFC de la nuit) par fichier. Chacune est facultative : un échec n'arrête rien.
  */
-import { decodeTlvs, resultCode, RESULT_SUCCESS } from './protocol'
+import { decodeTlvs, encodeTlvs, resultCode, RESULT_SUCCESS } from './protocol'
+import { downloadFile, FILE_TYPE, FILES, parseSleepSequence, SLEEP_DICTIONARY } from './files'
 
 export const DEVICE_CONFIG = 1
 export const SET_TIME = 0x05
 export const FITNESS = 7
 export const FIT = { TOTALS: 0x03, MINUTE_COUNT: 0x0a, MINUTE_DATA: 0x0b, SLEEP_COUNT: 0x0c, SLEEP_DATA: 0x0d }
+export const CONFIG = { SERVICES: 0x02, COMMANDS: 0x03, SETTINGS: 0x31, EXPAND: 0x37 }
+export const WORKOUT = 0x17
+export const WORKOUT_CMD = { LIST: 0x07, TOTALS: 0x08 }
+export const STRESS = 0x20
 
 export const WATCH_SOURCE = 'huawei_watch'
 /** Début minimal accepté par certaines montres (1/1/2000) : jamais 0. */
@@ -136,6 +144,162 @@ export function parseTotals(tlvs) {
   return total
 }
 
+// ── Capacités (§7.8) ───────────────────────────────────────────────────────────
+
+/** Services et commandes demandés (petite demande : une seule trame). */
+export const CAPABILITY_QUERY = [
+  [DEVICE_CONFIG, [CONFIG.SETTINGS, CONFIG.EXPAND]],
+  [FITNESS, [FIT.MINUTE_COUNT, FIT.SLEEP_COUNT, 0x16]],
+  [WORKOUT, [0x01, WORKOUT_CMD.LIST]],
+  [STRESS, [0x09]],
+  [FILES, [0x01, 0x04]],
+]
+export const EXPAND = { SLEEP_DICTIONARY: 143, HRV: 235, APNEA: 107, EMOTION: 206 }
+
+export const servicesTlvs = (ids) => [{ tag: 1, value: ids }]
+/** Réponse 1/0x02 → Map service → bool (un octet par service demandé, même ordre). */
+export function parseServices(tlvs, ids) {
+  const flags = find(tlvs, 2) || []
+  return new Map(ids.map((id, i) => [id, flags[i] === 1]))
+}
+export function commandsTlvs(query) {
+  const body = []
+  for (const [service, cmds] of query) body.push({ tag: 2, value: [service] }, { tag: 3, value: cmds })
+  return [{ tag: 0x81, value: encodeTlvs(body) }]
+}
+/** Réponse 1/0x03 → Map « service/commande » → bool (tableau aligné sur la demande). */
+export function parseCommands(tlvs, query) {
+  const out = new Map()
+  const body = inner(tlvs)
+  let service = null
+  for (const t of body) {
+    if (t.tag === 2) service = t.value[0]
+    if (t.tag === 4 && service != null) {
+      const cmds = query.find(([s]) => s === service)?.[1] || []
+      cmds.forEach((c, i) => out.set(`${service}/${c}`, t.value[i] === 1))
+    }
+  }
+  return out
+}
+/** Capacité étendue N : bit (N mod 8), poids faible d'abord, de l'octet ⌊N / 8⌋. */
+export const hasExpand = (bytes, n) => Boolean(bytes && (bytes[n >> 3] ?? 0) & (1 << (n & 7)))
+
+/**
+ * Lit ce que la montre sait faire. Chaque question peut échouer : la réponse vaut alors null
+ * (« on ne sait pas » → l'appelant essaie quand même).
+ */
+export async function readCapabilities(session, log = () => {}, { timeout = 3000 } = {}) {
+  const opt = { timeout }
+  const caps = { services: null, commands: null, settings: null, expand: null }
+  const ask = async (label, fn) => {
+    try {
+      return await fn()
+    } catch (e) {
+      log(`capacités : ${label} non lu (${e?.message || e})`, 'warn')
+      return null
+    }
+  }
+  const ids = CAPABILITY_QUERY.map(([s]) => s).filter((s) => s !== DEVICE_CONFIG)
+  caps.services = await ask('services', async () => parseServices((await session.request(DEVICE_CONFIG, CONFIG.SERVICES, servicesTlvs(ids), opt)).tlvs, ids))
+  caps.commands = await ask('commandes', async () => parseCommands((await session.request(DEVICE_CONFIG, CONFIG.COMMANDS, commandsTlvs(CAPABILITY_QUERY), opt)).tlvs, CAPABILITY_QUERY))
+  if (caps.commands?.get(`1/${CONFIG.SETTINGS}`) !== false) {
+    caps.settings = await ask('réglages', async () => {
+      const v = find((await session.request(DEVICE_CONFIG, CONFIG.SETTINGS, [1, 2, 3, 4, 5, 6].map((tag) => ({ tag })), opt)).tlvs, 2)
+      return v ? uint(v) : null
+    })
+  }
+  if (caps.commands?.get(`1/${CONFIG.EXPAND}`)) {
+    caps.expand = await ask('capacités étendues', async () => Array.from(find((await session.request(DEVICE_CONFIG, CONFIG.EXPAND, [{ tag: 1 }], opt)).tlvs, 1) || []))
+  }
+  return caps
+}
+
+/** « non » seulement si la montre l'a dit ; inconnu → oui (on essaie). */
+export function canDo(caps, service, command = null) {
+  if (caps?.services?.get(service) === false) return false
+  if (command != null && caps?.commands?.get(`${service}/${command}`) === false) return false
+  return true
+}
+
+/** Résumé lisible des capacités (journal de diagnostic, sans donnée personnelle). */
+export function describeCapabilities(caps) {
+  if (!caps) return 'capacités inconnues'
+  const yes = (v) => (v == null ? '?' : v ? 'oui' : 'non')
+  const parts = [
+    `séances ${yes(caps.services?.get(WORKOUT))}`,
+    `fichiers 0x2C ${yes(caps.services?.get(FILES))}`,
+    `TruSleep ${yes(caps.commands?.get(`${FITNESS}/22`))}`,
+    `stress auto ${yes(caps.commands?.get(`${STRESS}/9`))}`,
+  ]
+  if (caps.settings != null) parts.push(`réglages 0x${caps.settings.toString(16)}`)
+  if (caps.expand) parts.push(`sommeil dictionnaire ${yes(hasExpand(caps.expand, EXPAND.SLEEP_DICTIONARY))}`, `VFC ${yes(hasExpand(caps.expand, EXPAND.HRV))}`)
+  return parts.join(', ')
+}
+
+// ── Séances (§7.5) ─────────────────────────────────────────────────────────────
+
+/** Code de sport Huawei → type d'activité HealthTrack (mêmes noms que Health Connect). */
+export const WORKOUT_TYPES = {
+  1: 'running', 2: 'walking', 3: 'cycling', 4: 'hiking', 5: 'runningTreadmill', 6: 'swimmingPool', 7: 'bikingStationary',
+  8: 'swimmingOpenWater', 11: 'running', 13: 'walking', 14: 'hiking', 21: 'jumpRope', 128: 'tableTennis', 129: 'badminton',
+  130: 'tennis', 131: 'soccer', 132: 'basketball', 133: 'volleyball', 134: 'elliptical', 135: 'rowingMachine',
+  136: 'stairClimbing', 137: 'yoga', 138: 'pilates', 139: 'dance', 140: 'strengthTraining', 141: 'bikingStationary',
+  143: 'highIntensityIntervalTraining', 145: 'crossTraining', 146: 'functionalStrengthTraining', 177: 'stairClimbing',
+  200: 'rowing', 224: 'tennis', 255: 'other',
+}
+
+export const workoutListTlvs = (startMs, endMs) => [
+  { tag: 0x81, value: encodeTlvs([{ tag: 3, value: int(Math.max(MIN_START_SEC, Math.floor(startMs / 1000)), 4) }, { tag: 4, value: int(Math.floor(endMs / 1000), 4) }]) },
+]
+/** Réponse 0x17/0x07 → numéros de séance (identifiants de la montre). */
+export const parseWorkoutList = (tlvs) =>
+  inner(tlvs)
+    .filter((t) => t.tag === 0x85)
+    .map((t) => find(decodeTlvs(t.value), 6))
+    .filter(Boolean)
+    .map(uint)
+export const workoutTotalsTlvs = (number) => [{ tag: 0x81, value: [0x02, 0x02, ...int(number, 2)] }]
+
+/** Réponse 0x17/0x08 → { number, start, end (ms), kcal, distanceM, steps, durationSec, sport, hrMin?, hrMax? } ou null. */
+export function parseWorkoutTotals(tlvs) {
+  const b = inner(tlvs)
+  const start = uint(find(b, 4)) * 1000
+  const end = uint(find(b, 5)) * 1000
+  if (!start || !(end > start)) return null
+  const code = find(b, 0x14)?.[0]
+  const w = {
+    number: uint(find(b, 2)),
+    start,
+    end,
+    kcal: uint(find(b, 6)),
+    distanceM: uint(find(b, 7)),
+    steps: uint(find(b, 8)),
+    durationSec: uint(find(b, 0x12)) || Math.round((end - start) / 1000),
+    sport: WORKOUT_TYPES[code] || 'other',
+  }
+  const hr = find(b, 0x0c)
+  if (hr?.length >= 2) {
+    if (hr[0] > 0 && hr[0] < 255) w.hrMin = hr[0]
+    if (hr[1] > 0 && hr[1] < 255) w.hrMax = hr[1]
+  }
+  return w
+}
+
+async function readWorkouts(session, since, until, log) {
+  const list = parseWorkoutList((await session.request(WORKOUT, WORKOUT_CMD.LIST, workoutListTlvs(since, until))).tlvs)
+  log(`séances : ${list.length}`)
+  const out = []
+  for (const n of list) {
+    try {
+      const w = parseWorkoutTotals((await session.request(WORKOUT, WORKOUT_CMD.TOTALS, workoutTotalsTlvs(n))).tlvs)
+      if (w && w.start >= since - DAY && w.start < until) out.push(w)
+    } catch (e) {
+      log(`séance ${n} non lue : ${e?.message || e}`, 'warn')
+    }
+  }
+  return out
+}
+
 const iso = (ms) => new Date(ms).toISOString()
 const floorTo = (ms, step) => Math.floor(ms / step) * step
 /** Minuit local du jour de `ms`. */
@@ -149,7 +313,7 @@ const localDayStart = (ms) => {
  * Minutes et périodes de sommeil → entrées HealthTrack (source « huawei_watch »).
  * `until` : seules les tranches terminées avant cet instant (ms) sont rendues.
  */
-export function watchEntries({ minutes = [], sleep = [] }, { until, sourceName = 'Montre Huawei' }) {
+export function watchEntries({ minutes = [], sleep = [], nights = [], workouts = [] }, { until, sourceName = 'Montre Huawei' }) {
   const base = { connector: WATCH_SOURCE, sourceName }
   const out = []
   const hourly = new Map()
@@ -182,8 +346,38 @@ export function watchEntries({ minutes = [], sleep = [] }, { until, sourceName =
   }
   // FC de repos : une par jour terminé, à minuit + 45 s (aucune autre entrée n'y tombe)
   for (const [day, bpm] of resting) out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(day + 45_000), payload: { bpm, unit: 'bpm', subtype: 'restingHeartRate', ...base } })
+  // Une nuit détaillée (fichier) remplace les périodes simples qui la recoupent
+  const detailed = (p) => nights.some((n) => p.start < n.end && p.start + p.minutes * 60_000 > n.start)
+  for (const n of nights) {
+    if (!(n.end <= until)) continue
+    const night = { nightStart: iso(n.start), nightEnd: iso(n.end), ...(n.score ? { sleepScore: n.score } : {}) }
+    for (const p of n.stages) {
+      out.push({ type: 'sleep', source: WATCH_SOURCE, at: iso(p.start), payload: { durationMinutes: p.minutes, sleepState: p.stage, endDate: iso(p.start + p.minutes * 60_000), detail: true, ...night, ...base } })
+    }
+    // VFC moyenne de la nuit, au réveil + 15 s (aucune autre entrée de FC n'y tombe)
+    if (n.hrvMs) out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(floorTo(n.end, 60_000) + 15_000), payload: { value: n.hrvMs, unit: 'ms', subtype: 'heartRateVariability', during: 'sleep', ...base } })
+  }
+  for (const w of workouts) {
+    if (!(w.end <= until)) continue
+    out.push({
+      type: 'activity',
+      source: WATCH_SOURCE,
+      at: iso(w.start),
+      payload: {
+        workoutType: w.sport,
+        durationSeconds: w.durationSec,
+        ...(w.kcal ? { totalCalories: w.kcal } : {}),
+        ...(w.distanceM ? { totalDistanceMeters: w.distanceM } : {}),
+        ...(w.steps ? { steps: w.steps } : {}),
+        ...(w.hrMin ? { minHeartRate: w.hrMin } : {}),
+        ...(w.hrMax ? { maxHeartRate: w.hrMax } : {}),
+        endDate: iso(w.end),
+        ...base,
+      },
+    })
+  }
   for (const p of sleep) {
-    if (p.stage === 'unknown') continue
+    if (p.stage === 'unknown' || detailed(p)) continue
     out.push({ type: 'sleep', source: WATCH_SOURCE, at: iso(p.start), payload: { durationMinutes: p.minutes, sleepState: p.stage, endDate: iso(p.start + p.minutes * 60_000), ...base } })
   }
   return out.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0))
@@ -207,10 +401,12 @@ async function readBlocks(session, countCmd, dataCmd, since, until, parse, log, 
 
 /**
  * Déroule la synchro sur une session authentifiée. Ne garde que [since, until).
- * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null }>}
+ * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], capabilities: string }>}
  */
 export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset() }) {
   await session.request(DEVICE_CONFIG, SET_TIME, setTimeTlvs(now, tzOffsetMinutes)).catch(() => log('heure non réglée (sans réponse)', 'warn'))
+  const caps = await readCapabilities(session, log)
+  log(`capacités : ${describeCapabilities(caps)}`)
   const sleep = (await readBlocks(session, FIT.SLEEP_COUNT, FIT.SLEEP_DATA, since, until, parseSleepBlock, log, 'sommeil')).filter(
     (p) => p.start >= since - DAY && p.start < until,
   )
@@ -223,7 +419,29 @@ export async function readWatchData(session, { since, until, now = until, log = 
   } catch (e) {
     log(`totaux du jour non lus : ${e?.message || e}`, 'warn')
   }
-  return { minutes, sleep, totals }
+  let workouts = []
+  if (canDo(caps, WORKOUT, WORKOUT_CMD.LIST)) {
+    try {
+      workouts = await readWorkouts(session, since, until, log)
+    } catch (e) {
+      log(`séances non lues : ${e?.message || e}`, 'warn')
+    }
+  }
+  let nights = []
+  if (canDo(caps, FILES, 0x01) && (!caps?.expand || hasExpand(caps.expand, EXPAND.SLEEP_DICTIONARY))) {
+    try {
+      const file = await downloadFile(
+        session,
+        { name: 'sequence_data', type: FILE_TYPE.SEQUENCE, startMs: since - DAY, endMs: until, dictionary: SLEEP_DICTIONARY },
+        { log },
+      )
+      nights = file ? parseSleepSequence(file).filter((n) => n.end > since && n.end <= until) : []
+      log(`sommeil détaillé : ${nights.length} nuit${nights.length > 1 ? 's' : ''}`)
+    } catch (e) {
+      log(`sommeil détaillé non lu : ${e?.message || e}`, 'warn')
+    }
+  }
+  return { minutes, sleep, totals, workouts, nights, capabilities: describeCapabilities(caps) }
 }
 
 /** Période à relire : depuis la dernière synchro (7 jours la première fois), jusqu'à l'heure pleine. */

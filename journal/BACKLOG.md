@@ -104,8 +104,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       `huawei_watch`, sans doublon, fenêtre depuis la dernière synchro, 7 j la 1re fois) ; étape « Lecture des mesures » à
       chaque connexion, bouton « Synchroniser la montre » ; « Mes appareils » compte la montre en direct comme passerelle
       de Huawei Health ; fausse montre étendue (blocs minute / sommeil / totaux)
-- [ ] **(d bis) Fichiers détaillés** (0x2C) : lire d'abord 1/0x03 (commandes prises en charge) ; phases du sommeil
-      (paradoxal, éveil : dictionnaire 700013 ou `sleep_state`), RR → VFC (RMSSD, `heartRate.js`) et stress ; séances (0x17)
+- [x] **(d bis) Capacités, séances, sommeil détaillé** (run 13/10 10:30) : 1/0x02, 1/0x03, 1/0x31, 1/0x37 lus et
+      résumés dans le journal ; séances 0x17/0x07 + 0x08 → entrées `activity` (type, durée, kcal, distance, pas, FC
+      mini / maxi) ; fichier 0x2C `sequence_data` (dictionnaire 700013) → phases léger / profond / paradoxal / éveil,
+      score, VFC moyenne de la nuit ; une nuit détaillée remplace les périodes simples (même déjà écrites). Spec §7.5–7.8
+- [ ] **(d bis, suite)** stress (`rrisqi_data.bin`, score de la montre → nouveau type d'entrée ?), VFC de journée
+      (dictionnaire 500044, capacité 235), échantillons de séance (0x17/0x0A : FC moyenne, courbe), ancien service 0x0A
+      pour les montres sans 0x2C ; découpe de la période si 0x17/0x07 annonce plus de séances qu'il n'en rend
 - [x] **(d ter) Resynchro à l'ouverture** (run 13/10 06:30) : `services/watchAutoSync.js` — à l'ouverture de l'app et
       au retour dans l'app (`visibilitychange`), au plus toutes les 30 min, seulement si une clé HealthTrack existe pour
       la montre appairée ; verrou partagé avec « Synchroniser la montre » (une connexion à la fois), essais espacés après
@@ -309,8 +314,9 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 
 1. ⌚ **Lire le journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`) : mode d'authentification, retour
    sur l'assistant « Libérer et appairer ».
-2. ⌚ **D3 (d bis)** fichiers détaillés 0x2C (phases du sommeil, RR → VFC / stress) et séances (prochain run hors
-   idées) ; puis **(d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le 13/10 04:30, (d ter) resynchro à l'ouverture le 13/10 06:30.
+2. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager) — prochain
+   run hors idées. (d) livré le 13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le
+   13/10 10:30 ; reste de (d bis) : stress, VFC de journée, échantillons de séance (après d quater).
 3. ⌚ D3 (c bis) — lire le journal de connexion du propriétaire dès qu'il arrive et corriger l'authentification.
 4. ⚡ D2 — performance : **mesurer d'abord** (temps par page, volume IndexedDB) puis index / plages, cache d'agrégats,
    Worker, graphiques différés ; budget anti-régression.

@@ -125,6 +125,7 @@ const WORKOUT_TYPE_LABELS = {
   crossTraining: 'Cross-training',
   elliptical: 'Vélo elliptique',
   rowing: 'Aviron',
+  jumpRope: 'Corde à sauter',
   rowingMachine: 'Rameur',
   yoga: 'Yoga',
   pilates: 'Pilates',

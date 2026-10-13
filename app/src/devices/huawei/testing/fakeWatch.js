@@ -3,13 +3,21 @@
  * §4–6 (paramètres du lien, état, négociation, PIN, liaison, authentification, trames chiffrées).
  * Les constantes du PIN sont des valeurs de test aléatoires, pas celles de Huawei.
  */
-import { createReassembler, decodeTlvs, encodeFrames } from '../protocol'
+import { crc16, createReassembler, decodeTlvs, encodeFrames, encodeTlvs } from '../protocol'
 import { aesCbcEncrypt, aesGcmDecrypt, aesGcmEncrypt, bytesEqual, bytesOfHex, hexOf, randomBytes, utf8 } from '../crypto'
 import { createCipher, digestSecretFor, frameKey, phoneToken, pinBaseKey, psk, returnCodeMac, sessionKey, watchToken } from '../hichain'
 
 export const TEST_SECRETS = { v1: hexOf(randomBytes(16)), v2: hexOf(randomBytes(16)), v3: hexOf(randomBytes(16)) }
 
 const up = (b) => hexOf(b, true)
+
+/** Trame non découpée dont le corps n'est pas en TLV (bloc de fichier en clair). */
+function rawFrame(serviceId, commandId, body) {
+  const len = body.length + 3
+  const head = [0x5a, len >> 8, len & 0xff, 0x00, serviceId, commandId, ...body]
+  const crc = crc16(head)
+  return Uint8Array.from([...head, crc >> 8, crc & 0xff])
+}
 
 export function createFakeWatch({
   authVersion = 2,
@@ -23,6 +31,13 @@ export function createFakeWatch({
   minuteBlocks = [],
   sleepBlocks = [],
   totals = null,
+  unsupported = [], // services absents (« 0x17 », etc.) annoncés par 1/0x02
+  expand = null, // octets des capacités étendues (1/0x37) ; null = commande absente
+  workouts = [], // [{ number, body }] : body = corps TLV de la réponse 0x17/0x08
+  files = {}, // nom → octets (0x2C)
+  maxBlock = 64,
+  pushSize = 40,
+  filePlain = false,
 } = {}) {
   const r = createReassembler()
   const tokens = new Map() // authId (texte) → clé longue durée
@@ -102,6 +117,35 @@ export function createFakeWatch({
     // Données santé (§7), toujours chiffrées : blocs fournis tels quels (corps TLV d'une réponse)
     const sealed = async (tlv) => reply(m.serviceId, m.commandId, await state.cipher.seal(m.serviceId, m.commandId, tlv))
     if (m.serviceId === 1 && m.commandId === 5) return sealed([{ tag: 1, value: tlvs.find((t) => t.tag === 1)?.value || [] }])
+    if (m.serviceId === 1 && m.commandId === 2) {
+      const ids = tlvs.find((t) => t.tag === 1).value
+      return sealed([{ tag: 2, value: Array.from(ids, (id) => (unsupported.includes(id) ? 0 : 1)) }])
+    }
+    if (m.serviceId === 1 && m.commandId === 3) {
+      const body = decodeTlvs(tlvs.find((t) => t.tag === 0x81).value)
+      const out = []
+      for (const t of body) {
+        if (t.tag === 2) out.push({ tag: 2, value: t.value })
+        if (t.tag === 3) {
+          const service = out[out.length - 1].value[0]
+          const yes = (c) => !unsupported.includes(service) && !(service === 1 && c === 0x37 && !expand)
+          out.push({ tag: 4, value: Array.from(t.value, (c) => (yes(c) ? 1 : 0)) })
+        }
+      }
+      return sealed([{ tag: 0x81, value: encodeTlvs(out) }])
+    }
+    if (m.serviceId === 1 && m.commandId === 0x31) return sealed([{ tag: 2, value: [0x06] }])
+    if (m.serviceId === 1 && m.commandId === 0x37 && expand) return sealed([{ tag: 1, value: expand }])
+    if (m.serviceId === 0x17 && m.commandId === 7) {
+      const items = workouts.map((w) => ({ tag: 0x85, value: encodeTlvs([{ tag: 6, value: [w.number >> 8, w.number & 0xff] }, { tag: 7, value: [0, 1] }]) }))
+      return sealed([{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, workouts.length] }, ...items]) }])
+    }
+    if (m.serviceId === 0x17 && m.commandId === 8) {
+      const v = decodeTlvs(tlvs.find((t) => t.tag === 0x81).value).find((t) => t.tag === 2).value
+      const w = workouts.find((x) => x.number === v[0] * 256 + v[1])
+      return w ? sealed(w.body) : sealed([{ tag: 0x7f, value: [0, 1, 0x86, 0xa1] }])
+    }
+    if (m.serviceId === 0x2c) return fileService(m.commandId, tlvs, sealed)
     if (m.serviceId === 7) {
       const index = () => {
         const inner = decodeTlvs(tlvs.find((t) => t.tag === 0x81).value)
@@ -115,6 +159,41 @@ export function createFakeWatch({
       if (m.commandId === 0x0b) return sealed(minuteBlocks[index()])
       if (m.commandId === 0x0d) return sealed(sleepBlocks[index()])
       if (m.commandId === 0x03 && totals) return sealed(totals)
+    }
+  }
+
+  const opened = new Map() // identifiant → octets
+  async function fileService(cmd, tlvs, sealed) {
+    const get = (tag) => tlvs.find((t) => t.tag === tag)?.value
+    const u = (b) => Array.from(b || []).reduce((v, x) => v * 256 + x, 0)
+    if (cmd === 1) {
+      const name = new TextDecoder().decode(get(1))
+      const data = files[name]
+      const id = opened.size + 1
+      if (data) opened.set(id, data)
+      const size = data ? data.length : 0
+      return sealed([{ tag: 3, value: [id] }, { tag: 4, value: [size >>> 24, (size >> 16) & 0xff, (size >> 8) & 0xff, size & 0xff] }])
+    }
+    if (cmd === 3) return sealed([{ tag: 1, value: get(1) }, { tag: 2, value: [5] }, { tag: 3, value: [0, pushSize] }, { tag: 4, value: [0, 0, 0, maxBlock] }, { tag: 5, value: [filePlain ? 1 : 0] }])
+    if (cmd === 4) {
+      const id = get(1)[0]
+      const offset = u(get(2))
+      const size = u(get(3))
+      const data = opened.get(id)
+      for (let at = offset; at < offset + size; at += pushSize) {
+        const chunk = Array.from(data.slice(at, Math.min(at + pushSize, offset + size)))
+        const raw = [id, at >>> 24, (at >> 16) & 0xff, (at >> 8) & 0xff, at & 0xff, 0, ...chunk]
+        // bloc brut, chiffré dans l'enveloppe habituelle (7C 01 01 …) sauf « sans chiffrement »
+        if (filePlain) {
+          const frame = rawFrame(0x2c, 5, raw)
+          setTimeout(() => push?.(frame), 0)
+        } else reply(0x2c, 5, await state.cipher.sealBytes(0x2c, 5, Uint8Array.from(raw)))
+      }
+      return
+    }
+    if (cmd === 6) {
+      opened.delete(get(1)?.[0])
+      return
     }
   }
 
