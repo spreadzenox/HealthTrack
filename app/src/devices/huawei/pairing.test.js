@@ -100,6 +100,18 @@ describe('connexion authentifiée à une montre Huawei (HiChain)', () => {
     expect(report.hichain[0].head).toMatch(/^ff ff/)
   })
 
+  it('réponse « New Auth Protocol » (HiChain 3) : le journal nomme les champs SPEKE, sans valeur', async () => {
+    const watch = createFakeWatch({ deviceSupportType: 4, encryptMethod: 1, authVersion: 1, newAuthHichain: true })
+    const report = await run(watch, { keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS })
+    expect(report.outcome.code).toBe('failed')
+    expect(report.steps.find((s) => s.id === 'bind').detail).toMatch(/champs repérés : challenge, epk, salt/)
+    const emb = report.hichain[0].structure.embeddedJson
+    expect(emb.payloadKeys).toEqual(['challenge', 'epk', 'salt'])
+    expect(emb.message).toBe('0x8001')
+    // l'analyse ne porte que des noms de champs, jamais leurs valeurs
+    expect(Object.keys(emb).sort()).toEqual(['keys', 'message', 'offset', 'payloadKeys'])
+  })
+
   it('montre appairée à Android retrouvée par son nom', async () => {
     const classic = { listBonded: async () => ({ devices: [{ name: 'Galaxy Buds', deviceId: '1' }, { name: 'HUAWEI WATCH GT 6 Pro-1A2', deviceId: '2' }] }) }
     expect((await findBondedWatch(classic)).deviceId).toBe('2')

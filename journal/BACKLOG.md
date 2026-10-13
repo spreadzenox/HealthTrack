@@ -102,11 +102,20 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       octets si non-JSON — jamais de valeur) ; l'écran nomme l'étape et le code exacts. Spec `protocoles/huawei.md` §6.7
 - [ ] **(c bis) Valider sur la vraie GT 6 Pro** (journal `healthtrack-connexion-montre-….json`) :
       🩺 **Journal du 13/10 09:04 reçu** → HiChain 3 (type 4, GCM, authVersion 1), appairage bloqué au **décodage de la
-      réponse 0x28 (835 octets)** après l'envoi du message de début (695 octets), **sans code 0x7F** (§6.7). Le prochain
-      journal portera `report.hichain` : il dira si l'étiquette 1 est du JSON, ses champs ou ses 1ers octets → on saura si
-      HiChain 3 (« New Auth Protocol ») a un format de réponse plus riche que l'ISO implémenté (hypothèse n°1, taille).
-      **Point ouvert** : type 4 sans étiquette 0x0C → le PIN est aujourd'hui déchiffré en CBC ; sans doute l'aligner sur
-      GCM (comme les trames, §6.5), à trancher au prochain journal. Reste aussi : reprise auto après « jeton différent »
+      réponse 0x28 (835 octets)** après l'envoi du message de début (695 octets), **sans code 0x7F** (§6.7).
+      Établi (run 14:30) : l'étiquette 1 de cette réponse **n'est pas du JSON** → format « New Auth Protocol » (§6.8).
+      **Point du PIN tranché** : GCM/CBC dépend de `encryptMethod` (0x0C), pas du type 4 → CBC pour la GT 6 Pro, ce que
+      `decryptPin` fait déjà ; **rien à changer** (l'hypothèse GCM en type 4 était fausse). Reste : reprise auto après
+      « jeton différent »
+- [x] **(a ter) Instrument renforcé : révéler les champs de la réponse HiChain 3** (run 13/10 14:30) : `inspectHichainReply`
+      sonde une réponse non-JSON et rapporte, **sans valeur**, un JSON intégré (`offset`, `message`, noms des champs) ou des
+      TLV imbriqués ; `head` 12 → 32 octets ; l'écran nomme les champs repérés ; `report.hichain[].structure` dans le
+      journal ; fausse montre `newAuthHichain`. Spec `protocoles/huawei.md` §6.8 (recherche New Auth : SPEKE/STS, X25519,
+      Ed25519, HKDF/HMAC, AES-GCM, codes de messages, champs — même Gadgetbridge ne décode pas encore la GT 6 Pro)
+- [ ] **(c ter) Implémenter le StepOne « New Auth Protocol »** (après le prochain journal, qui donnera les noms de champs) :
+      crypto manquante dans `crypto.js` (X25519, Elligator2, HKDF, HMAC, Ed25519 pré-haché SHA-256, AES-128-GCM), StepOne
+      SPEKE + preuves `kcfData` + échange d'identité Ed25519 chiffré, d'après §6.8 ; tests sur trames d'exemple, fausse
+      montre New Auth complète
 - [x] **(d) Synchronisation, version simple** (run 13/10 04:30) : spec §7 (heure 1/5, sommeil 7/0x0C-0x0D, minutes
       7/0x0A-0x0B avec masques de champs, totaux 7/0x03, séances 0x17, fichiers 0x2C) ; `sync.js` + `services/watchSync.js` :
       pas et calories par heure, FC par 10 min, SpO₂, FC repos par jour, sommeil léger / profond → IndexedDB (source

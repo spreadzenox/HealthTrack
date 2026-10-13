@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-13",
+  "kind": "amélioration",
+  "title": "Montre Huawei : « Se connecter » repère les champs de la réponse",
+  "items": [
+    "Quand votre GT 6 Pro répond dans son nouveau format d’appairage (« New Auth Protocol »), l’écran « Se connecter à la montre » nomme désormais les champs repérés dans sa réponse (par exemple « champs repérés : challenge, epk, salt ») au lieu de dire seulement « réponse illisible ».",
+    "Le journal que vous enregistrez contient maintenant la structure exacte de cette réponse (noms des champs, jamais leurs valeurs) : c’est précisément ce qu’il me faut pour écrire le décodage de votre montre.",
+    "Rien n’est modifié sur la montre. Il me suffit que vous relanciez « Se connecter à la montre » puis « Enregistrer le journal » et que vous me le transmettiez."
+  ]
+}

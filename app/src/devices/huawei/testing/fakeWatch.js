@@ -29,6 +29,8 @@ export function createFakeWatch({
   negotiation = [{ tag: 1, value: [1] }],
   silentOn = null,
   garbleHichain = null, // { size } : 1re réponse 0x28 = étiquette 1 illisible (simule la GT 6 Pro, log 13/10)
+  newAuthHichain = null, // true/{ prefix } : 1re réponse 0x28 au format « New Auth Protocol » HiChain 3 (§6.8) :
+  // préfixe binaire + JSON intégré (challenge/salt/epk) → ni l'ISO ni le parseur direct ne savent la lire
   minuteBlocks = [],
   sleepBlocks = [],
   totals = null,
@@ -58,6 +60,15 @@ export function createFakeWatch({
       // « Réponse HiChain illisible » vu sur la vraie GT 6 Pro (trame reçue de 835 octets).
       state.garbled = true
       return reply(1, 0x28, [{ tag: 1, value: new Array(garbleHichain.size || 64).fill(0xff) }, { tag: 4, value: [0] }])
+    }
+    if (newAuthHichain && !state.newAuthed) {
+      // Réponse « New Auth Protocol » (HiChain 3, §6.8) : préfixe binaire (en-tête propre à la montre)
+      // suivi d'un JSON intégré portant les champs SPEKE. Les valeurs sont factices.
+      state.newAuthed = true
+      const prefix = newAuthHichain.prefix || [0x01, 0x00, 0x00, 0x03, 0x35]
+      const payload = { challenge: up(randomBytes(16)), salt: up(randomBytes(16)), epk: up(randomBytes(32)) }
+      const body = Array.from(utf8(JSON.stringify({ message: 32769, payload })))
+      return reply(1, 0x28, [{ tag: 1, value: [...prefix, ...body] }, { tag: 4, value: [0] }])
     }
     const json = JSON.parse(new TextDecoder().decode(m.tlvs.find((t) => t.tag === 1).value))
     const p = json.payload

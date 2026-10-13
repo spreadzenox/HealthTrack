@@ -267,13 +267,14 @@ Hypothèses restantes, par ordre de vraisemblance :
    champ non prévu). L'analyseur amélioré (ci-dessous) dira lequel.
 3. ❓ **Étiquette 1 absente**, l'information étant portée par d'autres étiquettes propres à HiChain 3.
 
-**Point ouvert — déchiffrement du PIN en type 4 sans étiquette 0x0C.** La montre est type 4 (GCM) mais n'a pas renvoyé
-l'étiquette 0x0C (`encryptMethod` null). Aujourd'hui `decryptPin` choisit GCM **uniquement** si `encryptMethod === 1`,
-donc il a déchiffré le PIN en **CBC** et obtenu 64 octets « valides » (padding PKCS#7 accepté) — mais c'est peut-être du
-bruit. Le chiffrement des trames (§6.5), lui, utilise déjà GCM « si `encryptMethod === 1` **ou** type 4 ». Il faut
-sans doute aligner le PIN sur la même règle (GCM dès le type 4). **Non corrigé à l'aveugle** : la correction ne peut pas
-être validée sans la montre et ne change pas l'échec actuel (qui est en aval, au décodage de la réponse de début). À
-trancher au prochain journal, qui dira si le PIN est cohérent (jeton de la montre reconnu).
+**Point tranché (run 13/10 14:30) — le PIN se déchiffre bien en CBC pour cette montre.** On avait noté un doute : la
+montre est type 4 mais n'a pas renvoyé l'étiquette 0x0C (`encryptMethod` null) et `decryptPin` déchiffre alors en CBC.
+La relecture de la logique de référence (recherche du 13/10 14:30, [G] `HuaweiCrypto.decryptPinCode`) lève le doute :
+📖 **le choix GCM / CBC du PIN dépend uniquement de `encryptMethod` (0x0C) — GCM si 1, CBC sinon —, jamais du type de
+prise en charge.** Comme la GT 6 Pro ne renvoie pas 0x0C, c'est **CBC**, exactement ce que fait déjà `decryptPin`.
+Rien à changer de ce côté : la clé du PIN reste la constante « digest secret » v1 (v1 pour authVersion 1 et 4). Le
+chiffrement des **trames** (§6.5) a sa propre règle (GCM si type 4), sans rapport avec le PIN. L'échec actuel est bien
+**en aval**, au décodage de la réponse de début (§6.8), pas au PIN.
 
 **Ce que le prochain journal apportera** (analyseur amélioré, §9 étape a bis) : chaque réponse 0x28 est désormais
 **analysée sans secret** et consignée dans le journal exporté, sous `report.hichain` : classification
@@ -282,6 +283,78 @@ trancher au prochain journal, qui dira si le PIN est cohérent (jeton de la mont
 jamais leurs valeurs) et, si l'étiquette 1 n'est pas du JSON, ses **premiers octets** en hexadécimal. Pour la trame de
 835 octets, cela dira immédiatement si c'est le cas 1, 2 ou 3 ci-dessus. L'écran nomme aussi l'étape et la raison
 exacte (« l'étiquette 1 (835 octets, débute par …) n'est pas du JSON »).
+
+**Instrument renforcé (run 13/10 14:30) — révéler les champs de la réponse HiChain 3.** Comme le journal a établi que
+l'étiquette 1 de la réponse de 835 octets **n'est pas du JSON** (le code v114 ne pouvait lever « illisible » qu'au
+`JSON.parse` de l'étiquette 1, sans code de résultat), `inspectHichainReply` **sonde maintenant la structure** d'une
+réponse non-JSON, sans jamais rendre de valeur (champ `structure`) :
+- **JSON intégré** : si un objet JSON est noyé derrière un préfixe binaire ou dans une autre étiquette, on en rend
+  l'`offset`, le `message` (code hexadécimal) et les **noms** des champs (`keys`, `payloadKeys`) — jamais les valeurs.
+  C'est ce qui révèlera au prochain journal les champs SPEKE de la réponse (`challenge`, `salt`, `epk`, `kcfData`,
+  `exAuthInfo`… voir §6.8).
+- **TLV imbriqués** : si les octets sont une suite de TLV, on rend la liste `{étiquette, taille}`.
+- L'en-tête (`head`) passe de 12 à **32 octets**, et l'écran nomme les champs repérés (« champs repérés : challenge,
+  epk, salt »). Si la charge utile est portée par une autre étiquette que la 1, elle est sondée de la même façon.
+
+## 6.8 HiChain 3 « New Auth Protocol » (SPEKE / STS) — plan de décodage
+
+Recherche du 13/10/2026 (run 14:30 Paris) dans [G] (lecture seule, faits seulement ; la couche PAKE y est attribuée en
+commentaire au code OpenHarmony `base/security/device_auth`, Apache-2.0 [OH]) et recoupée avec [OH]. **Aucun code
+copié.** Ce qui suit est le **modèle structurel** de la famille « New Auth Protocol », à confirmer sur la GT 6 Pro par
+le prochain journal (les champs exacts de la variante Huawei sont encore ❓).
+
+**🩺 Fait de cadrage majeur** : dans Gadgetbridge, la couche PAKE (`supportsHiChainPake()`) est activée **uniquement
+pour des Honor** (Watch 5 / 5 Pro / 6). Les coordinateurs **Huawei GT 6 (Pro) et GT 7** héritent du défaut `false` :
+quand la négociation annonce HiChain ou HiChain 3, le code Huawei repart vers l'**ISO** (`GetHiChainRequest`). **Même
+Gadgetbridge ne sait donc pas encore décoder la réponse de début de la GT 6 Pro** : il l'envoie au parseur ISO, d'où
+le même blocage que nous. C'est un travail de frontière, pas un retard de notre côté. [G : `HuaweiCoordinator.java`,
+`huaweiwatchgt6/HuaweiWatchGT6Coordinator.java`, `honorwatch6/HonorWatch6Coordinator.java`, `HuaweiSupportProvider.java`]
+
+**Pourquoi 835 octets** : la réponse « New Auth » transporte du matériel d'identité **signé** (clé publique + signature
+Ed25519) que l'ISO n'a jamais eu. Un StepOne ISO (isoSalt 16 + peerAuthId + peerUserType + token 32, en JSON
+hexadécimal) pèse ~250–350 octets ; 835 est cohérent avec epk (32) + salt (16) + challenge (16), le tout en
+hexadécimal, plus un bloc d'identité signé.
+
+**Algorithme** [G `HiChainPakeUtils.java`, attribué à [OH]] :
+- **PAKE = SPEKE**. Deux variantes : **EC-SPEKE sur X25519 / Curve25519** (RFC 7748, `epk` de 32 octets) ou
+  **DL-SPEKE** modulaire (groupes Oakley 14 / 15, 2048 / 3072 bits). Le point de base vient d'un *hash-to-curve*
+  (Elligator2 sur Curve25519) de la clé dérivée du PIN.
+- Hachage SHA-256, dérivation **HKDF-SHA256**, preuves **HMAC-SHA256**, identités **Ed25519** (RFC 8032, pré-haché
+  SHA-256), échange chiffré **AES-128-GCM** (IV de 12 octets en préfixe, étiquette 128 bits).
+- Chaînes d'info HKDF (ASCII, [OH]) : `hichain_speke_base_info` (clé du mot de passe depuis le PIN + sel),
+  `hichain_speke_sessionkey_info` (clé de session + clé de preuve `kcfKey`), `hichain_return_key`,
+  `hichain_tmp_auth_enc_key` (clé temporaire de reconnexion). AAD d'échange : `hichain_exchange_request` /
+  `hichain_exchange_response`.
+- Preuve : `kcfData = HMAC-SHA256(kcfKey, défiSoi ‖ défiPair)`, vérifiée sur `défiPair ‖ défiSoi`.
+
+**Messages (réponse = requête | 0x8000)** [G `GetHiChainPakeRequest.java`, `DeviceConfig.HiChain.Response`] :
+- Liaison (operationCode 1) : **1** début `{challenge, epk, salt?, serviceType:"WEAR_MBB", operationCode, version}`
+  → **0x8001** `{challenge, salt, epk}` ; **2** confirmation `{challenge, epk, kcfData}` → **0x8002** `{kcfData}` ;
+  **3** échange `{exAuthInfo}` → **0x8003** `{exAuthInfo}` — `exAuthInfo` = GCM( `{authId, authPk}` JSON ‖ signature
+  Ed25519 de 64 octets ), c'est ce bloc qui gonfle la trame.
+- Reconnexion (STS, operationCode 2) : **0x11** `{challenge, epk, serviceType, peerAuthId, keyLength:32}` →
+  **0x8011** `{challenge, epk, salt, nonce}` ; **0x12** `{challenge, epk, kcfData}` → **0x8012** `{kcfData}`.
+- La négociation 0x33 peut renvoyer un type de paire (étiquette 2 : 1 = premier appairage, 2 = reconnexion).
+
+**Cadre d'incertitude** : chez Honor, tout est enveloppé dans un TLV MBB (étiquette 1 = type de données, 2 = charge) et
+l'appairage **commence par un échange de clés X25519 brut** avant le moindre JSON. **Notre capture est différente** :
+la GT 6 Pro reçoit notre StepOne **ISO en clair** et répond 835 octets dont l'étiquette 1 n'est pas du JSON. La variante
+Huawei expose peut-être ses champs (challenge/salt/epk, ou un `exAuthInfo` chiffré) **autrement** que le modèle Honor.
+**Il faut voir les noms de champs réels** : c'est précisément ce que l'instrument renforcé (§6.7) rapportera au prochain
+journal.
+
+**Prochaine étape, une fois les champs connus** (run suivant) : réimplémenter, d'après cette spec, le StepOne SPEKE
+(X25519 d'abord, le plus probable vu `epk` 32 octets), les preuves `kcfData`, puis l'échange d'identité Ed25519 chiffré
+GCM. Tests sur trames d'exemple à chaque étape, fausse montre « New Auth » étendue. Crypto nécessaire : X25519,
+Elligator2, HKDF-SHA256, HMAC-SHA256, Ed25519 (pré-haché SHA-256), AES-128-GCM — à ajouter à `crypto.js`.
+
+Sources de cette section : [G] fichiers `service/devices/huawei/HiChainPakeUtils.java`,
+`.../requests/GetHiChainPakeRequest.java`, `.../requests/GetHiChainRequest.java`, `.../requests/GetSecurityNegotiationRequest.java`,
+`devices/huawei/HuaweiCrypto.java`, `devices/huawei/packets/DeviceConfig.java`, `devices/huawei/HuaweiCoordinator.java`,
+`devices/huawei/huaweiwatchgt6/HuaweiWatchGT6Coordinator.java` (cite l'issue [I] #5428), `.../huaweiwatchgt7/…` (#6731) ;
+[OH] `base/security/device_auth` (modules `PakeTask`, `KeyManagerImpl`, `BlockCipherUtils`, `crypto_hash_to_point.c`),
+à vérifier directement ; [I] PR #6367 (reprise d'authentification sur transport BR). Contrôlé par un agent de recherche
+qui n'a rapporté que des faits.
 
 ## 7. Données santé utiles (étape d)
 

@@ -224,6 +224,7 @@ export async function connectAndAuthenticate({
         tags: i.tags.map((t) => `${t.tag}/${t.size}`),
         payloadKeys: i.payloadKeys,
         head: i.head,
+        structure: i.structure,
       })
       emit()
       return parseHichainReply(reply.tlvs)
