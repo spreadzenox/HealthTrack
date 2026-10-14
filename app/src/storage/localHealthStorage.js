@@ -102,6 +102,44 @@ export async function getLatestEntryAt(source) {
   })
 }
 
+const dedupKey = (e) => `${e.source}|${e.at}|${e.type}`
+
+/**
+ * Clés « source|at|type » déjà en base qui peuvent entrer en collision avec le lot : pour chaque source
+ * du lot, seule la plage [premier at, dernier at] est lue par l'index [source, at] (perf D2 : une
+ * synchro ne relit plus toute la base). Repli sur la lecture complète si une source ou une date n'est
+ * pas une chaîne (clé d'index impossible).
+ */
+function existingDedupKeys(db, entries, now) {
+  const ranges = new Map()
+  let indexable = true
+  for (const e of entries) {
+    const at = e.at || now
+    if (typeof e.source !== 'string' || typeof at !== 'string') {
+      indexable = false
+      break
+    }
+    const r = ranges.get(e.source)
+    if (!r) ranges.set(e.source, { from: at, to: at })
+    else {
+      if (at < r.from) r.from = at
+      if (at > r.to) r.to = at
+    }
+  }
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly')
+    const store = tx.objectStore(STORE_NAME)
+    const keys = new Set()
+    const reads = indexable
+      ? [...ranges].map(([source, { from, to }]) => store.index('source_at').getAll(IDBKeyRange.bound([source, from], [source, to])))
+      : [store.getAll()]
+    for (const req of reads) req.onsuccess = () => (req.result || []).forEach((e) => keys.add(dedupKey(e)))
+    tx.oncomplete = () => resolve(keys)
+    tx.onerror = () => reject(tx.error)
+    tx.onabort = () => reject(tx.error)
+  })
+}
+
 /**
  * Bulk insert entries, skipping duplicates based on (source, at, type).
  * Returns the count of actually inserted entries.
@@ -113,19 +151,9 @@ export async function upsertEntries(newEntries) {
 
   const db = await openDB()
 
-  // Build a set of existing keys for dedup: "source|at|type"
-  const existingKeys = await new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readonly')
-    const store = tx.objectStore(STORE_NAME)
-    const req = store.getAll()
-    req.onerror = () => reject(req.error)
-    req.onsuccess = () => {
-      const keys = new Set((req.result || []).map((e) => `${e.source}|${e.at}|${e.type}`))
-      resolve(keys)
-    }
-  })
-
   const now = new Date().toISOString()
+  const existingKeys = await existingDedupKeys(db, newEntries, now)
+
   let inserted = 0
   let skipped = 0
 
@@ -135,7 +163,7 @@ export async function upsertEntries(newEntries) {
 
     for (const entry of newEntries) {
       const at = entry.at || now
-      const key = `${entry.source}|${at}|${entry.type}`
+      const key = dedupKey({ ...entry, at })
       if (existingKeys.has(key)) {
         skipped++
         continue

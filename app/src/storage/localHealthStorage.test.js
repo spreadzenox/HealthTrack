@@ -2,7 +2,7 @@
  * Tests for localHealthStorage utility functions.
  * IndexedDB is provided by fake-indexeddb in the jsdom environment.
  */
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // Provide fake-indexeddb before importing the module under test
 import 'fake-indexeddb/auto'
@@ -86,6 +86,52 @@ describe('upsertEntries', () => {
     const base = { source: 'health_connect', at: '2026-01-05T10:00:00Z', payload: {} }
     const r = await upsertEntries([{ ...base, type: 'steps' }, { ...base, type: 'heart_rate' }])
     expect(r.inserted).toBe(2)
+  })
+
+  it('dedups per source within the batch range, other sources and dates untouched (perf D2)', async () => {
+    await createEntry({ type: 'steps', source: 'huawei_watch', payload: {}, at: '2026-01-05T10:00:00Z' })
+    await createEntry({ type: 'steps', source: 'health_connect', payload: {}, at: '2026-01-05T11:00:00Z' })
+    await createEntry({ type: 'steps', source: 'huawei_watch', payload: {}, at: '2026-01-07T10:00:00Z' })
+    const r = await upsertEntries([
+      { type: 'steps', source: 'huawei_watch', payload: {}, at: '2026-01-05T10:00:00Z' }, // doublon
+      { type: 'steps', source: 'huawei_watch', payload: {}, at: '2026-01-05T11:00:00Z' }, // autre source à cette heure
+      { type: 'steps', source: 'huawei_watch', payload: {}, at: '2026-01-07T10:00:00Z' }, // doublon en borne haute
+      { type: 'steps', source: 'health_connect', payload: {}, at: '2026-01-05T11:00:00Z' }, // doublon
+      { type: 'steps', source: 'health_connect', payload: {}, at: '2026-01-05T11:00:00Z' }, // doublon dans le lot
+    ])
+    expect(r).toEqual({ inserted: 1, skipped: 4 })
+    expect(await countAllEntries()).toBe(4)
+  })
+
+  it('reads only the batch sources and date range, never the whole store (perf D2)', async () => {
+    const old = Array.from({ length: 50 }, (_, i) => ({
+      type: 'heart_rate',
+      source: 'huawei_watch',
+      payload: {},
+      at: new Date(Date.UTC(2025, 0, 1, i)).toISOString(),
+    }))
+    await upsertEntries(old)
+    await createEntry({ type: 'steps', source: 'other', payload: {}, at: '2026-01-05T10:00:00Z' })
+    const storeGetAll = vi.spyOn(IDBObjectStore.prototype, 'getAll')
+    const indexGetAll = vi.spyOn(IDBIndex.prototype, 'getAll')
+    try {
+      const r = await upsertEntries([{ type: 'steps', source: 'huawei_watch', payload: {}, at: '2026-01-05T10:00:00Z' }])
+      expect(r.inserted).toBe(1)
+      expect(storeGetAll).not.toHaveBeenCalled()
+      // la requête est terminée : seuls les enregistrements de la source et de la plage du lot ont été lus
+      const read = indexGetAll.mock.results.reduce((n, res) => n + res.value.result.length, 0)
+      expect(read).toBe(0)
+    } finally {
+      storeGetAll.mockRestore()
+      indexGetAll.mockRestore()
+    }
+  })
+
+  it('still dedups entries without a date or a source', async () => {
+    const r1 = await upsertEntries([{ type: 'note', payload: {}, at: '2026-01-05T10:00:00Z' }])
+    const r2 = await upsertEntries([{ type: 'note', payload: {}, at: '2026-01-05T10:00:00Z' }])
+    expect(r1.inserted).toBe(1)
+    expect(r2).toEqual({ inserted: 0, skipped: 1 })
   })
 })
 
