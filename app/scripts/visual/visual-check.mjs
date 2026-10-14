@@ -34,6 +34,8 @@
  *   npm run visual -- --routes=/connectors --ble=watch --connect       # … « Connexion à la montre » (avant import des paramètres)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done  # … montre appairée et authentifiée (rapport factice)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=stalled  # … la montre n'a pas répondu pour le sommeil
+ *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion  # … « Synchro dès que la montre se reconnecte » (à activer)
+ *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion=on  # … activée, montre vue il y a 5 min
  *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -295,6 +297,20 @@ async function main() {
           }),
         )
       }, args.connect === 'stalled')
+    }
+    if (args.companion) {
+      // Montre en appareil compagnon (src/services/watchPresence.js) : Android 13+, association à faire ou faite
+      await context.addInitScript((on) => {
+        const state = { associations: on ? [{ id: 7, deviceId: 'fake-watch' }] : [] }
+        window.__healthtrackFakeCompanion = {
+          status: async () => ({ supported: true, associations: state.associations, ...(on ? { last: { at: Date.now() - 5 * 60000, event: 'appeared', appearedCount: 3 } } : {}) }),
+          associate: async ({ deviceId }) => {
+            state.associations = [{ id: 7, deviceId }]
+            return { associated: true, id: 7 }
+          },
+          addListener: async () => ({ remove: async () => {} }),
+        }
+      }, args.companion === 'on')
     }
     if (args.devices) {
       // « Mes appareils » : apps santé « installées » (lu par src/components/MyDevices.jsx).

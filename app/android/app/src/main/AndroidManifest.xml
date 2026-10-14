@@ -25,6 +25,18 @@
 
         </activity>
 
+        <!-- Montre en appareil compagnon (CompanionPlugin.java, WatchPresenceService.java) : Android lie ce
+             service quand la montre associée se connecte au téléphone → resynchro sans ouvrir l'app (I72). -->
+        <service
+            android:name=".WatchPresenceService"
+            android:exported="true"
+            android:permission="android.permission.BIND_COMPANION_DEVICE_SERVICE"
+            tools:targetApi="tiramisu">
+            <intent-filter>
+                <action android:name="android.companion.CompanionDeviceService" />
+            </intent-filter>
+        </service>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -44,6 +56,10 @@
     <!-- Montre Huawei en direct (AppManagerPlugin.java) : ouvrir la boîte de désinstallation de l'app qui tient
          la montre (Huawei Santé, Gadgetbridge…). L'utilisateur confirme toujours ; rien n'est désinstallé en silence. -->
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+
+    <!-- Présence de la montre associée (CompanionPlugin.java) : permission normale, accordée à l'installation. -->
+    <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
+    <uses-feature android:name="android.software.companion_device_setup" android:required="false" />
 
     <!-- Temps d'écran et sommeil estimé par le téléphone (PhoneUsagePlugin.java, src/services/phoneUsage.js) :
          seulement les événements écran allumé / éteint / déverrouillé, rien ne quitte le téléphone.

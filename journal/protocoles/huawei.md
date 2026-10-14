@@ -797,4 +797,5 @@ Lecture seule des issues / PR de [G] via l'API REST de Codeberg (le site web ré
 | (d) Synchronisation (§7.1–7.4, 7.7) : heure, sommeil simple, minutes (pas, calories, distance, FC, SpO₂, FC repos), totaux → IndexedDB | ✅ run 13/10 04:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `services/watchSync.js` |
 | (d bis) Capacités (§7.8), séances (totaux, §7.5), sommeil détaillé par fichier (phases, score, VFC de la nuit, §7.6) | ✅ run 13/10 10:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `files.js`, `session.js` (messages bruts), `services/watchSync.js` |
 | (d bis, suite) Stress (`rrisqi`), VFC de journée (dictionnaire 500044), échantillons de séance | ☐ | — |
-| (d quater) Resynchro en arrière-plan, app fermée | ☐ | plan I49 |
+| (d quater ①②) Montre en appareil compagnon (Android 13+) : association CDM sur l'adresse de la montre appairée, présence observée (connexion Bluetooth classique) → resynchro JS app en arrière-plan, horodatage gardé app tuée (§7.10, I72) | ✅ run 15/10 00:30 (à valider sur l'A56) | `CompanionPlugin.java`, `WatchPresenceService.java`, `services/watchPresence.js`, `components/WatchPresence.jsx` |
+| (d quater ③) Resynchro app fermée (client Java « synchro seule ») | ☐ | plan I49 / I72 |

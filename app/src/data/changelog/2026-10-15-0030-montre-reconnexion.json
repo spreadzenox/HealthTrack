@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-15",
+  "kind": "nouveau",
+  "title": "Montre Huawei : synchro dès qu'elle se reconnecte",
+  "items": [
+    "Plus → Connecteurs, carte « Montre Huawei » : sous « Synchroniser la montre », touchez « Activer » puis confirmez dans la boîte Android (Android 13 ou plus). La montre devient un « appareil compagnon » de HealthTrack.",
+    "Ensuite, chaque fois que la montre se reconnecte au téléphone, HealthTrack relit ses mesures, même si l'app est en arrière-plan. Mêmes règles qu'à l'ouverture : au plus toutes les 30 minutes, jamais de reconnexions en rafale.",
+    "La carte dit quand la montre a été vue pour la dernière fois. Si l'app a été complètement fermée, la synchro se fait à la prochaine ouverture."
+  ]
+}
