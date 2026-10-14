@@ -492,6 +492,64 @@ inattendue et `returnCodeMac` faux ; « La montre n'a pas remis de clé » et l'
 quel champ manquait), consigner `errorCode` / `trailingBytes` de chaque réponse, et si la montre se tait ou coupe
 juste après l'authentification, proposer l'identifiant de compte Huawei.
 
+## 6.12 Fin d'association côté montre (run du 14/10 10:30, après les captures du propriétaire)
+
+🩺 **Constat (captures du 14/10 ≈ 09:35, app v123)** : tout passe côté téléphone (lien, HiChain 3 GCM version 1,
+négociation, authentification, échange chiffré, batterie 86 %), mais **la montre reste sur son écran d'accueil**
+« Association — scannez le QR code pour télécharger l'app Santé… ajoutez cette HUAWEI WATCH », puis affiche
+« Échec de l'association ». La lecture des mesures rend « 0 minute, 1 nuit → 0 mesure ». La montre ne se considère donc
+pas liée : la clé est bien négociée, mais **l'app compagnon n'a pas joué la phase de configuration qui suit**.
+Tant que la montre est sur cet écran, elle n'enregistre très probablement rien.
+
+Lecture seule de [G] master `bb7a1e83a2` (13/10/2026), faits seulement, rédigés avec nos mots :
+
+- 📖 [G] n'a **aucun message « appairage terminé »** : après l'authentification, la même file de messages part au premier
+  appairage et aux reconnexions. Seuls trois messages ont un rôle d'association : **1/0x3E**, **1/0x30** et **0x1A/0x05**.
+  HealthTrack n'en envoyait aucun (0x1A/0x05 seulement si un identifiant de compte était saisi).
+- 📖 La montre peut aussi **demander les informations du téléphone** (1/0x10) à tout moment après l'authentification ; [G]
+  y répond toujours. HealthTrack ignorait ce message (« message spontané »). Une montre qui attend cette réponse peut
+  plausiblement rester sur son écran d'association.
+- 📖 [G] marque l'appareil « initialisé » à la fin de cette file ; il n'en tire aucun accusé de la montre.
+
+### File jouée par HealthTrack après l'authentification (`src/devices/huawei/association.js`)
+Tout est chiffré (§6.5). Chaque message est facultatif : échec ou silence tolérés, consignés dans le journal
+(`report.association.steps` : nom, envoyé / accepté / refusé / sans réponse, code 0x7F, jamais de valeur personnelle).
+Capacités d'abord (§7.8, la demande 1/0x03 couvre aussi 1/0x30, 1/0x35, 1/0x3D, 1/0x3E, 0x1A/0x05–0x06, 7/0x02, 7/0x0E,
+7/0x17, 7/0x24) ; un message n'est sauté que si la montre a dit « non ».
+
+| Ordre | S/C | Rôle | Contenu (étiquettes) | Condition | Réponse |
+|---|---|---|---|---|---|
+| 1 | 1/0x07 | infos produit | 1 à 0x0A vides ; on ne lit que modèle (0x0A) et version logicielle (0x07) pour le journal ❓ numéros des champs | toujours | TLV |
+| 2 | 0x1A/0x05 | compte étendu | 1 = identifiant de compte en ASCII, **ou un seul octet 0x00 sans compte** ; 3 = 1 si capacité étendue 172 | commandes 0x1A/5 et 0x1A/6 | non lue |
+| 3 | 1/0x30 | **accords acceptés** | 0x81 { 3 × 0x82 { 3 = nom, 4 = 1 (accepté), 5 = version « 20230508-20230508-0-0 », 6 = heure en ms écrite en chiffres ASCII } } ; noms : `software_update_service_statement`, `device_information_management`, `user_license_agreement` | 1/0x30 | non lue |
+| 4 | 1/0x3F | capacités du téléphone | 1 = 6 octets `FD F7 33 FA 29 37` (valeur publique annoncée par [G]) | capacité étendue 182 | non lue |
+| 5 | 1/0x3E | **statut d'installation** | 1 = 1 (« appareil principal »), 2 = nom Bluetooth de la montre (UTF-8), 3 = 0 | capacité étendue 109 (inconnue = on envoie) | **aucune** : on n'attend pas |
+| 6 | 1/0x3D | état de port | 1 vide | capacité 109 | non lue |
+| 7 | 1/0x35 | état de connexion | 1 = 1 | 1/0x35 | non lue |
+| 8 | 7/0x02 | profil (taille, poids, âge, sexe) | 1 = taille cm, 2 = poids kg, 3 = âge (1 octet chacun) ; 4 = date de naissance `année<<16 | mois<<8 | jour` (4 octets, si connue, 1er juillet par défaut faute de date exacte ❓) ; 5 = sexe 1 homme, 2 femme, 3 inconnu (3 seulement si capacité 0x57) ; 6 = pas de marche ≈ 0,42 × taille, 7 = pas de course ≈ 0,83 × taille | toujours | non lue |
+| 9 | 7/0x0E | seuils de remontée | 0x81 { 3 × 2 = 5 octets : type, type de valeur, valeur (2), action } : (1, 3, 500, 2), (3, 3, 100, 2), (4, 3, 3600 ou 21600 avant 6 h, 2) | 7/0x0E | non lue |
+| 10 | 1/0x32, 0x0C/0x01, 1/0x04 | fuseau, langue, format | 1/0x32 : 1 = heure Unix (4), 2 = décalage (2), 3 = nom du fuseau ; 0x0C/0x01 : 1 = « fr-FR », 2 = 0 (métrique) ; 1/0x04 : 0x81 { 2 = 3 (jour d'abord), 3 = 2 (24 h) } | toujours | non lue |
+| 11 | 7/0x17, 7/0x24 | **FC et SpO₂ automatiques activées** | 1 = 1 | une seule fois par montre (`keys.configuredAt`) ; [G] ne l'envoie qu'au changement de réglage | — |
+
+Réponse aux demandes de la montre (écoute installée dès l'authentification) :
+- **1/0x10 infos du téléphone** : la montre liste des étiquettes sans valeur ; on répond une étiquette par étiquette
+  demandée : 2 (fabricant) et 4 (modèle) vides, 8 = « 14 », 0x11 = version d'app sur 4 octets (1600103320 =
+  16.1.3.320, valeur que [G] annonce), 0x15 vide, 0 et 0x0F omises, toute autre = un octet 0. Si le message ne porte que
+  0x7F = 100000 c'est un accusé : on ne répond pas.
+- 1/0x38 (contrôle de permissions) : format de réponse non consigné → seulement journalisé.
+
+### La montre se considère-t-elle associée ?
+Aucun accusé direct (1/0x3E est sans réponse). Indicateurs consignés dans `report.association` :
+- `deviceStatus` lu en 1/0x16 avant la négociation (valeur brute) ; ❓ sens des valeurs au-delà de −1 / 0 / 1 inconnu ;
+- liste des messages acceptés / refusés, nombre de demandes 1/0x10 reçues et servies ;
+- **confirmation du propriétaire en un geste** à l'écran (« La montre affiche son cadran » / « Encore l'écran
+  d'association ») : c'est l'information décisive tant qu'aucun message ne la donne ; elle part dans le journal.
+- Une lecture qui ramène des mesures datées d'après la connexion prouve aussi l'association.
+
+Hypothèse de travail ❓ : 1/0x3E (+ 1/0x30) fait quitter l'écran d'association ; si la montre affiche encore « Échec de
+l'association » après cette file, la suite est d'appairer depuis cet écran (montre fraîchement réinitialisée,
+HealthTrack lancé pendant que l'écran est affiché) et de lire dans le journal quelles demandes la montre a faites.
+
 ## 7. Données santé utiles (étape d)
 
 Lecture du 13/10/2026 (run 04:30 Paris) : [G] (master, lecture seule, faits seulement, rapportés par un agent de
@@ -678,6 +736,7 @@ une heure de recouvrement (7 jours la première fois) ; les doublons sont écart
 | (b) Détection et libération (boîte de désinstallation, réglages de l'app, guide de réinitialisation, plan B compte Huawei) + assistant d'appairage Android | ✅ run 13/10 00:30 | `src/devices/huawei/setup.js`, `components/WatchSetup.jsx`, `AppManagerPlugin.java`, `BtClassicPlugin.java` (`discover`, `pair`, `openBluetoothSettings`) |
 | (c) Authentification HiChain (§6) : état, négociation, PIN, liaison, authentification, clé des trames, chiffrement GCM / CBC ; clés gardées en local ; constantes du PIN téléchargées sur le téléphone | ✅ run 13/10 02:30 (à valider sur la montre) | `src/devices/huawei/crypto.js`, `session.js`, `hichain.js`, `pairing.js`, `components/WatchConnect.jsx` |
 | (c bis) Primitives « New Auth Protocol » (§6.8) : X25519 (multiplication scalaire sur point quelconque, ECDH), Ed25519 (signature / vérification) sur @noble/curves (MIT) ; vecteurs RFC 7748 / 8032 | ✅ run 13/10 16:30 | `src/devices/huawei/crypto.js` (`x25519ScalarMult`, `x25519SharedSecret`, `x25519Base`, `generateX25519KeyPair`, `ed25519Sign/Verify/PublicKey`, `generateEd25519KeyPair`) |
+| (c ter) Fin d'association côté montre (§6.12) : accords 1/0x30, statut 1/0x3E, compte 0x1A/0x05 sans compte, profil 7/0x02, seuils 7/0x0E, fuseau / langue / format, FC et SpO₂ auto, réponses 1/0x10 ; indicateurs + confirmation du propriétaire | ✅ run 14/10 10:30 (à valider sur la montre) | `src/devices/huawei/association.js`, `pairing.js`, `components/WatchConnect.jsx` |
 | (d) Synchronisation (§7.1–7.4, 7.7) : heure, sommeil simple, minutes (pas, calories, distance, FC, SpO₂, FC repos), totaux → IndexedDB | ✅ run 13/10 04:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `services/watchSync.js` |
 | (d bis) Capacités (§7.8), séances (totaux, §7.5), sommeil détaillé par fichier (phases, score, VFC de la nuit, §7.6) | ✅ run 13/10 10:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `files.js`, `session.js` (messages bruts), `services/watchSync.js` |
 | (d bis, suite) Stress (`rrisqi`), VFC de journée (dictionnaire 500044), échantillons de séance | ☐ | — |

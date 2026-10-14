@@ -52,14 +52,14 @@ export async function clearWatchNights(nights, { list = listEntries, remove = de
 }
 
 /**
- * Rend la fonction `sync(session, { log })` attendue par pairing.connectAndAuthenticate.
+ * Rend la fonction `sync(session, { log, caps })` attendue par pairing.connectAndAuthenticate.
  */
 export function createWatchSync({ watchKey, watchName, write = upsertEntries, clear = clearWatchNights, storage = globalThis.localStorage, now = () => Date.now() } = {}) {
-  return async (session, { log = () => {} } = {}) => {
+  return async (session, { log = () => {}, caps = null } = {}) => {
     const t = now()
     const { since, until } = syncWindow(getWatchSyncState(watchKey, storage)?.until, t)
     log(`lecture du ${new Date(since).toISOString().slice(0, 16)} au ${new Date(until).toISOString().slice(0, 16)} (UTC)`)
-    const data = await readWatchData(session, { since, until, now: t, log })
+    const data = await readWatchData(session, { since, until, now: t, log, caps })
     const entries = watchEntries(data, { until, sourceName: watchName || 'Montre Huawei' })
     const nightsToWrite = (data.nights || []).filter((n) => n.end <= until)
     if (nightsToWrite.length) await clear(nightsToWrite)

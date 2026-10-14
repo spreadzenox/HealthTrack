@@ -17,7 +17,7 @@ describe('WatchConnect', () => {
 
   it('télécharge les constantes d’un geste, les garde en local, puis se connecte avec', async () => {
     const connect = vi.fn(async () => connected)
-    render(<WatchConnect connect={connect} fetchSecrets={async () => FILE} save={vi.fn()} copy={vi.fn()} />)
+    render(<WatchConnect connect={connect} fetchSecrets={async () => FILE} />)
     fireEvent.click(screen.getByRole('button', { name: 'Télécharger les paramètres' }))
     expect(await screen.findByText(/enregistrés sur ce téléphone/)).toBeTruthy()
     expect(JSON.parse(localStorage.getItem('healthtrack_huawei_secrets')).v2).toBe(hex16(2).replace(/ /g, ''))
@@ -30,7 +30,7 @@ describe('WatchConnect', () => {
   })
 
   it('téléchargement impossible → texte collé accepté ; texte invalide refusé', async () => {
-    render(<WatchConnect connect={vi.fn()} fetchSecrets={async () => { throw new Error('hors ligne') }} save={vi.fn()} copy={vi.fn()} />)
+    render(<WatchConnect connect={vi.fn()} fetchSecrets={async () => { throw new Error('hors ligne') }} />)
     fireEvent.click(screen.getByRole('button', { name: 'Télécharger les paramètres' }))
     expect(await screen.findByText(/hors ligne/)).toBeTruthy()
     const area = screen.getByLabelText('Constantes Huawei v1, v2, v3')
@@ -46,7 +46,7 @@ describe('WatchConnect', () => {
     localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: 'a', v2: 'b', v3: 'c' }))
     const rejected = { ...connected, outcome: { code: 'key_rejected', title: 'La montre ne reconnaît plus la clé de HealthTrack' } }
     const connect = vi.fn(async () => rejected)
-    render(<WatchConnect connect={connect} save={vi.fn()} copy={vi.fn()} />)
+    render(<WatchConnect connect={connect} />)
     fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
     expect(await screen.findByText(/ne reconnaît plus/)).toBeTruthy()
     expect(screen.queryByText(/dissocier/i)).toBeNull()
@@ -55,7 +55,7 @@ describe('WatchConnect', () => {
   })
 
   it('affiche l’état de la synchro automatique et le met à jour quand elle se termine', async () => {
-    render(<WatchConnect connect={vi.fn()} save={vi.fn()} copy={vi.fn()} />)
+    render(<WatchConnect connect={vi.fn()} />)
     expect(screen.queryByText(/Synchro automatique/)).toBeNull()
     const at = new Date().toISOString()
     localStorage.setItem('healthtrack_watch_autosync', JSON.stringify({ at, auto: true, outcome: 'connected', label: '42 minutes → 9 mesures', failures: 0, everConnected: true }))
@@ -63,12 +63,38 @@ describe('WatchConnect', () => {
     expect(await screen.findByText(/Synchro automatique à chaque ouverture de l’app .*42 minutes → 9 mesures/)).toBeTruthy()
   })
 
-  it('exporte le journal', async () => {
+  it('remonte le rapport final à la carte (journal commun)', async () => {
+    localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: 'a', v2: 'b', v3: 'c' }))
+    const onReport = vi.fn()
+    render(<WatchConnect connect={async () => connected} onReport={onReport} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
+    await waitFor(() => expect(onReport).toHaveBeenCalledWith(connected))
+    expect(screen.queryByRole('button', { name: 'Enregistrer le journal' })).toBeNull()
+  })
+
+  it('association côté montre : demande ce que montre la montre, garde la réponse pour le journal', async () => {
+    const report = { ...connected, association: { sentSetupStatus: true, accepted: 9, refused: 0, steps: [], freshData: false, userSaw: null } }
+    localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify(report))
+    const onReport = vi.fn()
+    render(<WatchConnect connect={vi.fn()} onReport={onReport} />)
+    expect(screen.getByText('Fin d’association envoyée à la montre')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Encore « Association »' }))
+    expect(await screen.findByText('La montre affiche encore son écran d’association')).toBeTruthy()
+    expect(screen.getByText(/réinitialisez-la/)).toBeTruthy()
+    expect(JSON.parse(localStorage.getItem('healthtrack_watch_connect_last')).association.userSaw).toBe('pairing_screen')
+    expect(onReport.mock.calls[0][0].association.userSaw).toBe('pairing_screen')
+  })
+
+  it('mesures fraîches reçues : association confirmée, sans question', () => {
+    localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify({ ...connected, association: { freshData: true, userSaw: null } }))
+    render(<WatchConnect connect={vi.fn()} />)
+    expect(screen.getByText('La montre se considère associée à HealthTrack')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Son cadran' })).toBeNull()
+  })
+
+  it('ancienne connexion sans fin d’association : invite à resynchroniser', () => {
     localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify(connected))
-    const save = vi.fn(async () => 'ok')
-    render(<WatchConnect connect={vi.fn()} save={save} copy={vi.fn()} />)
-    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le journal' }))
-    await waitFor(() => expect(save).toHaveBeenCalled())
-    expect(save.mock.calls[0][1]).toBe('healthtrack-connexion-montre-2026-10-13-00-30.json')
+    render(<WatchConnect connect={vi.fn()} />)
+    expect(screen.getByText(/termine maintenant l’association/)).toBeTruthy()
   })
 })

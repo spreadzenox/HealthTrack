@@ -1,5 +1,5 @@
 /**
- * « Connexion à la montre » (carte « Montre Huawei en direct », chantier D3 étapes c et d) : HealthTrack
+ * « Connexion à la montre » (cœur de la carte « Montre Huawei », chantier D3 étapes c et d) : HealthTrack
  * s'authentifie auprès de la montre (HiChain), garde la clé sur le téléphone, puis lit les mesures. Au premier appairage,
  * 3 constantes publiques (huawei-lpv2, MIT) sont nécessaires : téléchargées ou collées d'un geste,
  * gardées en local, jamais dans le code de l'app. Logique dans src/devices/huawei/pairing.js.
@@ -7,20 +7,13 @@
 import { useEffect, useState } from 'react'
 import { CONNECT_STEPS, SECRETS_SOURCE_URL, connectAdvice, loadSecrets, saveSecrets } from '../devices/huawei/pairing'
 import { parseDigestSecrets } from '../devices/huawei/hichain'
+import { associationState } from '../devices/huawei/association'
+import { loadLastConnect, saveLastConnect } from '../devices/huawei/journal'
 import { formatAgo } from '../utils/timeAgo'
 import { describeAutoSync, getWatchAutoSyncState } from '../services/watchAutoSync'
 
-const LAST_KEY = 'healthtrack_watch_connect_last'
 const ICONS = { ok: '✓', warn: '!', fail: '✕', skip: '–', running: '…', pending: '·' }
 
-function loadLast() {
-  try {
-    const v = JSON.parse(localStorage.getItem(LAST_KEY) || 'null')
-    return v && Array.isArray(v.steps) ? v : null
-  } catch {
-    return null
-  }
-}
 
 async function defaultFetchSecrets() {
   const res = await fetch(SECRETS_SOURCE_URL)
@@ -29,11 +22,12 @@ async function defaultFetchSecrets() {
 }
 
 /**
- * @param {{ connect: Function, fetchSecrets?: Function, save: Function, copy: Function }} props
+ * @param {{ connect: Function, fetchSecrets?: Function, onReport?: Function }} props
  * `connect({ secrets, rebind, onUpdate })` → rapport (pairing.connectAndAuthenticate).
+ * `onReport(rapport)` : rapport final, pour l'export du journal commun de la carte (WatchDiagnostic).
  */
-export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, save, copy }) {
-  const [report, setReport] = useState(loadLast)
+export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, onReport = () => {} }) {
+  const [report, setReport] = useState(loadLastConnect)
   const [secrets, setSecrets] = useState(() => loadSecrets())
   const [running, setRunning] = useState(false)
   const [message, setMessage] = useState(null)
@@ -77,12 +71,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
     setMessage(null)
     try {
       const final = await connect({ secrets, rebind, onUpdate: (r) => setReport(r) })
-      setReport(final)
-      try {
-        localStorage.setItem(LAST_KEY, JSON.stringify(final))
-      } catch {
-        /* rapport seulement affiché */
-      }
+      keepReport(final)
     } catch (e) {
       setMessage(e?.message || String(e))
     } finally {
@@ -90,27 +79,29 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
     }
   }
 
-  const exportWith = async (fn) => {
-    const json = JSON.stringify(report, null, 2)
-    const filename = `healthtrack-connexion-montre-${(report.startedAt || new Date().toISOString()).slice(0, 16).replace(/[T:]/g, '-')}.json`
-    try {
-      setMessage(await fn(json, filename))
-    } catch (e) {
-      setMessage(`Export impossible : ${e?.message || e}`)
-    }
+  const keepReport = (r) => {
+    setReport(r)
+    onReport(r)
+    saveLastConnect(r)
+  }
+
+  /** Ce que le propriétaire voit sur la montre : l'information décisive, gardée dans le journal (§6.12). */
+  const tellWhatWatchShows = (userSaw) => {
+    if (!report?.association) return
+    keepReport({ ...report, association: { ...report.association, userSaw, userSawAt: new Date().toISOString() } })
   }
 
   const code = report?.outcome?.code
   const autoLine = describeAutoSync(auto, { formatAgo })
+  const assoc = code === 'connected' ? associationState(report) : null
   const steps = report?.steps || CONNECT_STEPS.map((s) => ({ ...s, status: 'pending' }))
 
   return (
-    <div className="my-device watch-setup watch-connect" aria-labelledby="watch-connect-title">
-      <p id="watch-connect-title" className="watch-diag-watch">Connexion à la montre</p>
+    <div className="watch-connect" aria-label="Connexion à la montre">
       <p className="my-devices-intro">
-        Une fois la montre appairée, HealthTrack s’y connecte seule : elle obtient une clé que la montre ne donne qu’à une app à la fois,
-        et la garde <strong>sur ce téléphone uniquement</strong>. Chaque connexion lit ensuite les nouvelles mesures (pas, cœur, SpO₂,
-        sommeil avec ses phases, VFC de la nuit, séances), et HealthTrack resynchronise tout seul quand vous ouvrez l’app.
+        HealthTrack parle directement à votre montre, sans Huawei Santé ni Gadgetbridge. La clé que la montre lui remet reste{' '}
+        <strong>sur ce téléphone uniquement</strong> ; chaque connexion lit les nouvelles mesures (pas, cœur, SpO₂, sommeil, VFC de la
+        nuit, séances), et HealthTrack resynchronise tout seul quand vous ouvrez l’app.
       </p>
       {autoLine && <p className="my-device-meta watch-connect-auto">{autoLine}</p>}
 
@@ -176,18 +167,40 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
               </ul>
             </div>
           )}
+          {assoc && (
+            <div className={`watch-assoc ${assoc.code === 'confirmed' ? 'watch-assoc-ok' : ''}`} aria-live="polite">
+              <p className="watch-assoc-title">{assoc.title}</p>
+              {assoc.code === 'likely' && (
+                <>
+                  <p className="my-device-meta">
+                    HealthTrack a envoyé ce qu’une app compagnon envoie après l’appairage (accords, appareil principal, profil, fuseau). Que
+                    montre la montre maintenant ?
+                  </p>
+                  <div className="my-device-actions">
+                    <button type="button" className="btn btn-secondary connector-btn" onClick={() => tellWhatWatchShows('watchface')}>
+                      Son cadran
+                    </button>
+                    <button type="button" className="btn btn-secondary connector-btn" onClick={() => tellWhatWatchShows('pairing_screen')}>
+                      Encore « Association »
+                    </button>
+                  </div>
+                </>
+              )}
+              {assoc.code === 'confirmed' && <p className="my-device-meta">Elle enregistre vos mesures : elles arrivent à chaque synchro.</p>}
+              {assoc.code === 'not_associated' && (
+                <p className="my-device-meta">
+                  Enregistrez le journal et transmettez-le : il dit ce que la montre a accepté et demandé. Si elle affiche « Échec de
+                  l’association », réinitialisez-la (Dépannage, plus bas), puis touchez « Refaire l’appairage » pendant que son écran
+                  d’association est affiché.
+                </p>
+              )}
+              {assoc.code === 'pending' && (
+                <p className="my-device-meta">Touchez « Synchroniser la montre » : HealthTrack termine maintenant l’association côté montre.</p>
+              )}
+            </div>
+          )}
           {report.finishedAt && (
-            <>
-              <p className="my-device-meta">Dernière connexion : {formatAgo(report.finishedAt)} · journal sans clé, sans PIN ni adresse complète.</p>
-              <div className="my-device-actions">
-                <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith(save)}>
-                  Enregistrer le journal
-                </button>
-                <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith((json) => copy(json))}>
-                  Copier le journal
-                </button>
-              </div>
-            </>
+            <p className="my-device-meta">Dernière connexion : {formatAgo(report.finishedAt)} · journal sans clé, sans PIN ni adresse complète.</p>
           )}
         </div>
       )}

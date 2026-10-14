@@ -186,7 +186,11 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.sync).toMatchObject({ minutes: 3, nights: 1, totals: { steps: 5400, kcal: 0, distanceM: 0 } })
     expect(report.sync.label).toMatch(/^3 minutes, 1 nuit → \d+ mesures$/)
     // tout ce qui suit l'authentification part chiffré
-    expect(watch.seen.slice(watch.seen.indexOf('1/8*'))).toEqual(['1/8*', '1/5*', '1/2*', '1/3*', '1/49*', '7/12*', '7/13*', '7/10*', '7/11*', '7/11*', '7/3*', '23/7*', '44/1*', '44/6*'])
+    expect(watch.seen.slice(watch.seen.indexOf('1/8*'))).toEqual([
+      '1/8*', '1/5*', '1/2*', '1/3*', '1/49*',
+      // fin d'association (§6.12)
+      '1/7*', '26/5*', '1/48*', '1/62*', '1/61*', '1/53*', '7/2*', '7/14*', '1/50*', '12/1*', '1/4*', '7/23*', '7/36*',
+      '7/12*', '7/13*', '7/10*', '7/11*', '7/11*', '7/3*', '23/7*', '44/1*', '44/6*'])
     expect(written.filter((e) => e.type === 'steps').map((e) => e.payload.value)).toEqual([200])
     expect(written.filter((e) => e.type === 'sleep').map((e) => e.payload.sleepState)).toEqual(['light', 'deep'])
     expect(getWatchSyncState('AA:BB', storage).until).toBe(Date.UTC(2026, 9, 13, 2))

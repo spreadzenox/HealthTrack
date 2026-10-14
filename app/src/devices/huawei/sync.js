@@ -55,6 +55,10 @@ export function setTimeTlvs(nowMs, offsetMinutes) {
   ]
 }
 
+/** Règle l'heure de la montre (1/0x05) ; un silence est seulement consigné. */
+export const setWatchTime = (session, now, tzOffsetMinutes, log = () => {}) =>
+  session.request(DEVICE_CONFIG, SET_TIME, setTimeTlvs(now, tzOffsetMinutes)).catch(() => log('heure non réglée (sans réponse)', 'warn'))
+
 /** Demande de nombre de blocs (0x0A / 0x0C) : `81` vide puis début et fin au premier niveau. */
 export function countTlvs(startMs, endMs) {
   return [
@@ -154,6 +158,12 @@ export const CAPABILITY_QUERY = [
   [STRESS, [0x09]],
   [FILES, [0x01, 0x04]],
 ]
+/** Fusionne des demandes de capacités : une entrée par service, commandes sans doublon, ordre gardé. */
+export function mergeCapabilityQueries(...queries) {
+  const by = new Map()
+  for (const q of queries) for (const [service, cmds] of q) by.set(service, [...new Set([...(by.get(service) || []), ...cmds])])
+  return [...by.entries()]
+}
 export const EXPAND = { SLEEP_DICTIONARY: 143, HRV: 235, APNEA: 107, EMOTION: 206 }
 
 export const servicesTlvs = (ids) => [{ tag: 1, value: ids }]
@@ -188,7 +198,7 @@ export const hasExpand = (bytes, n) => Boolean(bytes && (bytes[n >> 3] ?? 0) & (
  * Lit ce que la montre sait faire. Chaque question peut échouer : la réponse vaut alors null
  * (« on ne sait pas » → l'appelant essaie quand même).
  */
-export async function readCapabilities(session, log = () => {}, { timeout = 3000 } = {}) {
+export async function readCapabilities(session, log = () => {}, { timeout = 3000, query = CAPABILITY_QUERY } = {}) {
   const opt = { timeout }
   const caps = { services: null, commands: null, settings: null, expand: null }
   const ask = async (label, fn) => {
@@ -199,9 +209,9 @@ export async function readCapabilities(session, log = () => {}, { timeout = 3000
       return null
     }
   }
-  const ids = CAPABILITY_QUERY.map(([s]) => s).filter((s) => s !== DEVICE_CONFIG)
+  const ids = [...new Set(query.map(([s]) => s))].filter((s) => s !== DEVICE_CONFIG)
   caps.services = await ask('services', async () => parseServices((await session.request(DEVICE_CONFIG, CONFIG.SERVICES, servicesTlvs(ids), opt)).tlvs, ids))
-  caps.commands = await ask('commandes', async () => parseCommands((await session.request(DEVICE_CONFIG, CONFIG.COMMANDS, commandsTlvs(CAPABILITY_QUERY), opt)).tlvs, CAPABILITY_QUERY))
+  caps.commands = await ask('commandes', async () => parseCommands((await session.request(DEVICE_CONFIG, CONFIG.COMMANDS, commandsTlvs(query), opt)).tlvs, query))
   if (caps.commands?.get(`1/${CONFIG.SETTINGS}`) !== false) {
     caps.settings = await ask('réglages', async () => {
       const v = find((await session.request(DEVICE_CONFIG, CONFIG.SETTINGS, [1, 2, 3, 4, 5, 6].map((tag) => ({ tag })), opt)).tlvs, 2)
@@ -403,9 +413,10 @@ async function readBlocks(session, countCmd, dataCmd, since, until, parse, log, 
  * Déroule la synchro sur une session authentifiée. Ne garde que [since, until).
  * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], capabilities: string }>}
  */
-export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset() }) {
-  await session.request(DEVICE_CONFIG, SET_TIME, setTimeTlvs(now, tzOffsetMinutes)).catch(() => log('heure non réglée (sans réponse)', 'warn'))
-  const caps = await readCapabilities(session, log)
+export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset(), caps: knownCaps = null }) {
+  // heure et capacités déjà envoyées / lues par la fin d'association (pairing.js) : pas de seconde fois
+  if (!knownCaps) await setWatchTime(session, now, tzOffsetMinutes, log)
+  const caps = knownCaps || (await readCapabilities(session, log))
   log(`capacités : ${describeCapabilities(caps)}`)
   const sleep = (await readBlocks(session, FIT.SLEEP_COUNT, FIT.SLEEP_DATA, since, until, parseSleepBlock, log, 'sommeil')).filter(
     (p) => p.start >= since - DAY && p.start < until,

@@ -140,7 +140,7 @@ export function verdictFor(report) {
       title: 'La montre répond à HealthTrack',
       advice: [
         `Protocole v${lp.protocolVersion ?? '?'}, méthode attendue : ${authModeLabel(lp)} (version ${lp.authVersion ?? '?'}${lp.encryptMethod === 1 ? ', chiffrement GCM' : ''}).`,
-        "Étape suivante : « Connexion à la montre » plus bas (authentification puis lecture des mesures). Le journal exporté dit quelle méthode la montre attend.",
+        "Étape suivante : « Se connecter à la montre », en haut de cette carte (authentification puis lecture des mesures). Le journal exporté dit quelle méthode la montre attend.",
         appsLine,
       ].filter(Boolean),
     }

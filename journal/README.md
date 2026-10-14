@@ -46,7 +46,24 @@ surveiller : un utilisateur de GT 7 a dû saisir son **identifiant de compte Hua
 coupe juste après l'authentification, c'est la piste (le plan B de l'app le permet déjà). **Toujours la même demande :
 avec la v120 ou plus, « Se connecter à la montre » puis « Enregistrer le journal ».**
 
+**Vos captures du 14/10 (09:35, v123) : la connexion directe marche de bout en bout — merci !** Authentification,
+trames chiffrées, batterie 86 % : HealthTrack parle vraiment à votre GT 6 Pro sans Huawei Santé. Mais la **montre**,
+elle, restait sur « Association… scannez le QR code » puis « Échec de l'association », d'où 0 mesure : il manquait ce
+qu'une app compagnon envoie juste après l'appairage (accords, « appareil principal », profil, fuseau, réponse aux
+questions de la montre). **C'est livré (run 10:30, v124)**, et la montre n'a plus qu'une seule carte. **Ce qu'il me
+faut : après la mise à jour, « Synchroniser la montre », regarder la montre, toucher « Son cadran » ou « Encore
+« Association » », puis « Enregistrer le journal » et me le transmettre.** Si elle affiche encore « Échec de
+l'association » : la réinitialiser (Dépannage → Libérer et appairer), puis « Refaire l'appairage » pendant que son écran
+d'association est affiché.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre Huawei — fin de l'association et une seule carte (run 14/10 10:30)** : à chaque connexion, HealthTrack
+  envoie maintenant à la montre ce qu'une app compagnon envoie après l'appairage (accords acceptés, « appareil
+  principal », compte vide, taille / poids, fuseau, langue, format 24 h) et répond quand elle demande des infos sur le
+  téléphone ; FC et SpO₂ automatiques activées une fois. Nouvelle étape « Fin d'association côté montre », et deux
+  boutons pour dire en un geste ce que la montre affiche (gardé dans le journal). Plus → Connecteurs : une seule carte
+  « Montre Huawei », connexion en haut, **un seul** « Enregistrer le journal » (connexion + test), test et libération
+  rangés sous « Dépannage ».
 - **Pages plus légères (run 14/10 06:30)** : l'app ne charge plus tout d'un bloc ; chaque page arrive quand vous
   l'ouvrez, la base des aliments seulement quand un écran en a besoin (fichier lu au lancement : 2,1 → 0,5 Mo). Le
   petit gel d'≈ 0,1 s à l'ouverture de chaque page disparaît (Repas, Connecteurs, Analyses… prêts en 0,1 s au lieu de
@@ -397,6 +414,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 04:30 — [Performance : calculs dans un Web Worker + cache](runs/2026-10-14-0430-perf-calculs-worker.md) | ⚡ | PR #149 fusionnée → v122 |
 | 14/10 06:30 — [Performance : découpage du fichier principal](runs/2026-10-14-0630-perf-decoupage-bundle.md) | ⚡ | PR #151 fusionnée → v123 |
 | 14/10 08:30 — [Idées : appairage recoupé, paliers de confiance, contexte auto](runs/2026-10-14-0830-idees-appairage-recoupe-paliers.md) | 💡⌚ | 6 idées (I63–I68), spec §6.11 — journal seul |
+| 14/10 10:30 — [Montre : fin d'association côté montre + une seule carte](runs/2026-10-14-1030-montre-association.md) | ⌚🧹 | PR à fusionner → v124 |
 
 ---
 
