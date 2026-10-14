@@ -460,6 +460,38 @@ par le diagnostic structurel). Le texte d'un message final est rendu sans NUL / 
    tailles seulement. À la liaison, un jeton différent mène à l'issue « failed » (journal à transmettre), plus à
    « PIN refusé » : la montre a bien remis un PIN et répondu 0x8001, l'écart vient plus probablement de notre calcul.
 
+## 6.11 Recoupement complet de l'appairage (run « idées » du 14/10 08:30)
+
+Lecture seule de [G] master `bb7a1e83a2` (13/10/2026), faits seulement, rédigés avec nos mots ; la logique ISO de [G]
+n'a pas changé depuis 09/2024. Objet : vérifier, **avant** le prochain journal, les étapes qui suivent la réponse
+0x8001, pour que la prochaine embûche soit lisible du premier coup.
+
+| Point | [G] | HealthTrack | Verdict |
+|---|---|---|---|
+| Chiffrement du PIN (1/0x2C) | GCM si méthode de chiffrement = 1, sinon CBC + PKCS#7 ; le type d'appareil 4 **ne compte pas** ici | idem (`decryptPin`) | ✅ |
+| Forme du PIN | octets opaques, longueur jamais vérifiée | idem ; 64 octets sur la GT 6 Pro | ✅ normal |
+| Clé de base de la liaison | SHA-256 du texte hex **majuscule** des octets du PIN, même si ces octets sont déjà du texte | référence = 1re variante | ✅ |
+| Identifiants | téléphone : 32 caractères hex majuscules, octets ASCII ; JSON `peerAuthId` = hex de ces 32 octets ; montre : `peerAuthId` décodé de l'hex | idem (§6.4) | ✅ |
+| Jetons, `returnCodeMac`, clé de session, AAD (exchange / défi / result), clé des trames | §6.3 | idem | ✅ |
+| Fin de liaison | réponse à étiquette 4 non nulle → authentification enchaînée aussitôt | idem | ✅ |
+| Authentification | codes 0x11 → 0x13 (l'étape 3 est sautée), nouvel identifiant de requête, `pkgName` / `serviceType` / `keyLength`, `isDeviceLevel` false, clé de base = clé longue durée brute | idem | ✅ |
+| Trames ensuite | GCM si méthode = 1 **ou** type 4, IV aléatoire de 16 octets | idem (`createCipher`) | ✅ |
+| Après l'authentification | infos produit → heure → batterie → services pris en charge → services dynamiques, dont l'**identifiant de compte Huawei** | compte envoyé seulement s'il est saisi (plan B) | ⚠️ à surveiller |
+| Modèles | aucun cas particulier GT 6 / GT 6 Pro / GT 7 ; SPEKE seulement pour Honor Watch 5 / 5 Pro / 6 (PR #6472) | ISO | ✅ |
+
+Retours récents ([G] Codeberg) : #6731 (09/2026) une GT 7 s'appaire avec le type « GT 6 (Pro) » **et** l'identifiant de
+compte Huawei ; #6978 (07/10/2026) clé gardée refusée sous HarmonyOS 7 → refaire la liaison résout (clé remplacée par
+une autre app) ; PR #6367 (ouverte) refus ponctuel d'une clé valide → fermer le canal, attendre, réessayer, sans
+reconnexion agressive ; #4193 (corrigé 11/2025) : sans l'indicateur « premier appairage », l'app tente
+l'authentification au lieu de la liaison et n'aboutit jamais. Arrière-plan : PR #6905 (02/10/2026) relance après que
+le système a tué le processus ; PR #6823 (23/09/2026) appairage « compagnon » des montres classiques déjà appairées.
+
+**Conséquences pour le code (I63)** : aucune correction de calcul à faire à l'aveugle. Rendre distinctes dans le
+journal les erreurs des étapes 2 à 4 (aujourd'hui « Code de retour de la montre invalide » mélange réponse finale
+inattendue et `returnCodeMac` faux ; « La montre n'a pas remis de clé » et l'échec de déchiffrement GCM ne disent pas
+quel champ manquait), consigner `errorCode` / `trailingBytes` de chaque réponse, et si la montre se tait ou coupe
+juste après l'authentification, proposer l'identifiant de compte Huawei.
+
 ## 7. Données santé utiles (étape d)
 
 Lecture du 13/10/2026 (run 04:30 Paris) : [G] (master, lecture seule, faits seulement, rapportés par un agent de

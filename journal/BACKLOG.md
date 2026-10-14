@@ -370,6 +370,11 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
    / le format de notre `peerAuthId` ; erreur 0x8002+ → lire `class`/`errorCode` de l'étape 2 ; `trailingBytes` > 1 sur
    une autre réponse → rien à faire (déjà toléré). Ne **pas** ajouter de NUL à nos envois.
 2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`).
+   **En attendant (run de code, petit, sans risque) — I63** : rendre lisibles d'avance les étapes 0x8002 → 0x8004 et
+   0x11 → 0x13 (erreurs typées `final_unexpected` / `return_mac_mismatch` / `auth_token_missing` /
+   `auth_token_decrypt_failed` / `final_error` + `errorCode`, `trailingBytes` par réponse, scénarios fausse montre) ;
+   si la montre coupe ou se tait juste après l'authentification → issue qui propose l'identifiant de compte Huawei
+   (cas GB #6731). Recoupement complet avec Gadgetbridge : `protocoles/huawei.md` §6.11 (aucun calcul à changer).
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
    (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**
@@ -378,7 +383,10 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
    index, `WellbeingCharts` par agrégats, budget en CI (enregistrements lus).
 5. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /
    « Voyage » auto-détectés ; `--border` inexistant utilisé par `.settings-input` (corriger globalement).
-6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB).
+6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
+   faits du 14/10 : visage = blendshapes MediaPipe par défaut (AUC visage ≈ 0,6 → tendance 7 j), voix = prosodie
+   maison (I67), réseaux sociaux = temps au premier plan par app seulement ; sur Android 15+, « paramètres restreints »
+   bloque aussi l'accès aux données d'utilisation des APK hors magasin → le guide doit l'expliquer.
 7. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
 8. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
 9. Ensuite seulement : **briefing du jour unique** (I47 → I51, gabarits, jamais de chiffre inventé), **mode calme**
@@ -387,8 +395,15 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
     le briefing I51 (signaux de la nuit vs votre plage habituelle, à la Samsung Vitals) ; **I60** traitements /
     compléments = expériences avant / après ; **I59** import d'analyses (OCR sur l'appareil) ; **I62** bruit ambiant
     comme X ; **I61** pilote Omi direct (BLE MIT documenté) + transcription locale — après D4.
-11. 💡 Prochain run idées (14/10 08:30 Paris) : réponse au jeton / messages 0x8002-0x8003 selon le prochain journal,
-    reconnaissance vocale locale fr-FR sur l'A56, licence AffectNet, OCR de comptes rendus de labo français.
+11. Nouvelles idées du run 14/10 08:30 (toutes **sans nouvel écran**) : **I64** paliers de confiance bayésiens
+    (« piste / probable / solide ») à la place des p-valeurs, avec contrôle des faux positifs — à faire **avec D5** ;
+    **I65** contexte détecté tout seul (« Voyage » par changement de fuseau, « Sport le soir », « Sieste ») — à faire
+    **avec les restes de D1** (remplace l'item « tags auto-détectés ») ; **I67** voix = prosodie maison (pas de modèle
+    d'émotion vocale : licences NC) + transcription système → repli Vosk small-fr — **dans D4** ; **I66** (absorbé
+    par I60) comportements suivis en une phrase + plan ABAB ; **I68** export FIT / CSV par type. Idée **écartée** :
+    deviner « alcool / caféine » d'après la FC / VFC de la nuit (circulaire, D5).
+12. 💡 Prochain run idées (14/10 20:30 Paris) : journal v120+ s'il arrive ; licence AffectNet ; Whisper / Vosk fr sur
+    Exynos 1580 ; comptes rendus de labo français ; compte Huawei exigé ou non par une montre jamais liée.
 
 ## Idées en vrac (à trier)
 
