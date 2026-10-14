@@ -1,6 +1,6 @@
 # 2026-10-14 14:30 Paris (12:30 UTC) — Nettoyage : Connecteurs par statut, bloc « Votre forme »
 
-**Type** : 🧹 (consigne du propriétaire « nettoyer l'UI », puis D1)  ·  **PR** : « [Auto] Nettoyage : Connecteurs par statut, accueil « Votre forme » »
+**Type** : 🧹 (consigne du propriétaire « nettoyer l'UI », puis D1)  ·  **PR** : #156, fusionnée → **v126** (APK publié)
 
 ## Pourquoi
 - Démarrage : main à `c45cc56` (#155, **v125 publiée avec son APK**). Aucune PR « [Auto] » rouge ou en conflit.
