@@ -33,6 +33,7 @@
  *   npm run visual -- --routes=/connectors --ble=watch-silent --devices --setup  # … assistant « Libérer et appairer »
  *   npm run visual -- --routes=/connectors --ble=watch --connect       # … « Connexion à la montre » (avant import des paramètres)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done  # … montre appairée et authentifiée (rapport factice)
+ *   npm run visual -- --routes=/connectors --ble=watch --connect=stalled  # … la montre n'a pas répondu pour le sommeil
  *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -261,15 +262,16 @@ async function main() {
         { top, bottom }
       )
     }
-    if (args.connect === 'done') {
+    if (args.connect === 'done' || args.connect === 'stalled') {
       // --connect=done : « Connexion à la montre » réussie (rapport factice déjà en mémoire)
-      await context.addInitScript(() => {
+      // --connect=stalled : … mais la montre n'a pas répondu pour le sommeil (I69)
+      await context.addInitScript((stalled) => {
         const step = (id, label, status, detail = null) => ({ id, label, status, detail })
         const t = new Date(Date.now() - 120000).toISOString()
         localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: '00', v2: '00', v3: '00' }))
         localStorage.setItem(
           'healthtrack_watch_autosync',
-          JSON.stringify({ at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: 9, battery: 84, failures: 0, everConnected: true }),
+          JSON.stringify({ at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: stalled ? 0 : 9, stalled: stalled ? ['sommeil'] : null, battery: 84, failures: 0, everConnected: true }),
         )
         localStorage.setItem(
           'healthtrack_watch_connect_last',
@@ -292,7 +294,7 @@ async function main() {
             log: [],
           }),
         )
-      })
+      }, args.connect === 'stalled')
     }
     if (args.devices) {
       // « Mes appareils » : apps santé « installées » (lu par src/components/MyDevices.jsx).

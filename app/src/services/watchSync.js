@@ -6,7 +6,7 @@
  * Protocole : src/devices/huawei/sync.js.
  */
 import { deleteEntry, listEntries, upsertEntries } from '../storage/localHealthStorage'
-import { countEntryKinds, readWatchData, syncWindow, totalsEntries, WATCH_SOURCE, watchEntries } from '../devices/huawei/sync'
+import { countEntryKinds, readWatchData, stalledServices, syncWindow, totalsEntries, WATCH_SOURCE, watchEntries } from '../devices/huawei/sync'
 
 const KEY = 'healthtrack_watch_sync'
 /**
@@ -119,8 +119,13 @@ export function createWatchSync({
     if (nights) parts.push(plural(nights, 'nuit', 'nuits'))
     if (workouts) parts.push(plural(workouts, 'séance', 'séances'))
     if (data.totals?.steps) parts.push(`${plural(data.totals.steps, 'pas', 'pas')} aujourd'hui`)
+    // Où la montre a calé (I69) : dit à l'écran, détaillé dans le journal (`services`, `hints`)
+    const stalled = stalledServices(data.services).map((r) => r.label)
     return {
-      label: `${parts.join(', ')} → ${plural(inserted, 'mesure', 'mesures')}`,
+      label: `${parts.join(', ')} → ${plural(inserted, 'mesure', 'mesures')}${stalled.length ? ` · sans réponse : ${stalled.join(', ')}` : ''}`,
+      stalled,
+      services: data.services || [],
+      hints: data.hints || [],
       inserted,
       minutes: data.minutes.length,
       nights,

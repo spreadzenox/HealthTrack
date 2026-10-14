@@ -384,7 +384,7 @@ export async function connectAndAuthenticate({
       try {
         report.sync = await sync(session, { log, caps })
         if (report.association && report.sync?.minutes > 0) report.association.freshData = true
-        set('sync', 'ok', report.sync?.label || null)
+        set('sync', report.sync?.stalled?.length ? 'warn' : 'ok', report.sync?.label || null)
       } catch (e) {
         set('sync', 'warn', e?.message || String(e))
       }

@@ -44,7 +44,7 @@ export const RESET_WARNINGS = [
 /** Plan B : garder Huawei Santé et donner à HealthTrack l'identifiant de compte Huawei (gadgetbridge.org, « Huawei Account »). */
 export const KEEP_STEPS = [
   'Gardez Huawei Santé et la montre liée comme aujourd’hui : rien à réinitialiser.',
-  'HealthTrack se présentera à la montre avec votre identifiant de compte Huawei (17 à 19 chiffres), gardé seulement sur ce téléphone.',
+  'HealthTrack se présentera à la montre avec votre identifiant de compte Huawei (15 à 20 chiffres), gardé seulement sur ce téléphone.',
   'Pour le trouver : connectez-vous sur cloud.huawei.com depuis un ordinateur, ouvrez les outils de développement (F12) → Stockage → Cookies : valeur de « userId ».',
   'Limite : Huawei Santé et HealthTrack ne peuvent pas être connectées à la montre en même temps ; retirez à Huawei Santé « Appareils à proximité » pendant que HealthTrack synchronise.',
 ]

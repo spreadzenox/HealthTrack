@@ -73,7 +73,7 @@ describe('WatchSetup', () => {
     const input = screen.getByLabelText('Identifiant de compte Huawei')
     fireEvent.change(input, { target: { value: '123' } })
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
-    expect(await screen.findByText('Identifiant attendu : 17 à 19 chiffres.')).toBeInTheDocument()
+    expect(await screen.findByText('Identifiant attendu : 15 à 20 chiffres.')).toBeInTheDocument()
     fireEvent.change(input, { target: { value: '1234 5678 9012 34567' } })
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     await screen.findByText('Identifiant gardé sur ce téléphone.')

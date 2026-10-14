@@ -383,10 +383,13 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    `sync.kinds`, « minutes : N reçues… », types de sommeil ≠ 6 / 7. **Priorité absolue close quand des mesures
    apparaissent dans l'historique.**
 2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`). I63 (erreurs typées
-   des étapes 0x8002 → 0x13) devient secondaire : l'appairage passe. **En attendant le journal : I69** (run idées
+   des étapes 0x8002 → 0x13) devient secondaire : l'appairage passe. **I69 ✅ livré (run 14/10 22:30)** (run idées
    14/10 20:30, score 25) — journal de synchro par service (réponse / vide / délai / non pris en charge), séances lues
    selon la longueur de chaque bloc (#5784), 0x2C expiré = piste du canal RFCOMM auxiliaire (#6448, à ne coder qu'au
-   vu du journal), « stress : à activer sur la montre » ; texte du plan B « 16 à 19 chiffres ». Compte Huawei **non
+   vu du journal), « stress : à activer sur la montre » ; texte du plan B « 16 à 19 chiffres ». Livré : `report.sync.services`
+   (issue par lecture, sans valeur), `hints`, lecture qui continue après un service muet, bloc / séance / minute
+   illisible sauté, état « sans réponse pour : … » sur la carte, plan B « 15 à 20 chiffres » (= `normalizeAccountId`).
+   Reste d'I69 : « stress à activer » quand HealthTrack lira le stress (pas encore lu). Compte Huawei **non
    requis** pour une montre jamais liée (#6271) : question close.
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 précisé par **I72** (présence compagnon :
    `onDevicePresenceEvent` API 36 / `onDeviceAppeared` API 33–35, service `connectedDevice` court à `BT_CONNECTED`,
