@@ -47,11 +47,40 @@ describe('identifyDevice', () => {
     expect(r.vendor?.name).toBe('Huawei / Honor')
   })
 
-  it('oriente une montre propriétaire vers son app et son guide', () => {
-    const r = identifyDevice({ name: 'HUAWEI WATCH GT 6 Pro-A1B', services: ['fe86'], companyIds: [0x027d], serviceData: [] })
+  it('confie une montre Huawei / Honor au pilote de connexion directe (famille de protocole)', () => {
+    for (const f of [
+      { name: 'HUAWEI WATCH GT 6 Pro-A1B', services: ['fe86'], companyIds: [0x027d] },
+      { name: 'HUAWEI WATCH GT 6 Pro-A1B', services: [], companyIds: [] }, // appairée : nom seul
+      { name: 'HONOR Band 9-1C2', services: [], companyIds: [] },
+      { name: '', services: ['fe86'], companyIds: [] }, // service Huawei sans nom
+    ]) {
+      const r = identifyDevice({ serviceData: [], ...f })
+      expect(r.driver.id).toBe('huawei_link')
+      expect(r.driver).toMatchObject({ kind: 'family', mode: 'direct', supported: true })
+      expect(r.direct?.id).toBe('huawei_link')
+    }
+  })
+
+  it('une montre Huawei qui diffuse sa FC garde la mesure cardio ET la connexion directe', () => {
+    const r = identifyDevice({ name: 'HUAWEI WATCH GT 6 Pro-A1B', services: ['180d'], companyIds: [], serviceData: [] })
+    expect(r.driver.id).toBe('ble_heart_rate')
+    expect(r.direct?.id).toBe('huawei_link')
+  })
+
+  it('oriente une montre d’une autre marque vers son app et son guide', () => {
+    const r = identifyDevice({ name: 'Galaxy Watch7 (A1B2)', services: [], companyIds: [0x0075], serviceData: [] })
     expect(r.driver.id).toBe('vendor_watch')
     expect(r.driver.supported).toBe(false)
-    expect(r.vendor).toMatchObject({ name: 'Huawei / Honor', guideId: 'huawei' })
+    expect(r.direct).toBeNull()
+    expect(r.vendor).toMatchObject({ name: 'Samsung', guideId: 'samsung' })
+  })
+
+  it('chaque famille de protocole déclare ses transports, ce qu’elle lit et où se trouve sa carte', () => {
+    for (const d of DRIVERS.filter((x) => x.kind === 'family')) {
+      expect(d.transports.length).toBeGreaterThan(0)
+      expect(d.measures).toBeTruthy()
+      expect(d.cardId).toBeTruthy()
+    }
   })
 
   it('reconnaît la famille par le seul identifiant fabricant', () => {

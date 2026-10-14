@@ -71,7 +71,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       (`data/nutritionTable.js`, `ingredientNames.js` supprimé = clés de la table), JSON en `JSON.parse` : fichier
       principal 2 125 → 514 ko, temps bloquant de chaque page 100–150 → 0–17 ms ; CSS gardé d'emblée dans l'ordre
       d'origine (`pageStyles.js`) ; garde-fou `bundleGuard.test.js` (run 14/10 06:30)
-- [ ] Nutrition par le runner (28 lectures, 15 k entrées) ; `upsertEntries` relit tout le magasin à chaque synchro
+- [x] Nutrition par index (28 → 5 lectures) ; `upsertEntries` par source et plage (run 14/10 16:30, PR #158)
 - [ ] Sous-échantillonnage des longues séries, graphiques chargés en différé
 - [x] Test anti-régression : Vitest échoue si une lecture filtrée relit tout le magasin (run 14/10 00:30)
 - [ ] Budget `npm run perf` en CI (lectures par page ≤ N, temps bloquant de l'Accueil) — les temps sont bruités
@@ -191,8 +191,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] **(d) Synchronisation** : informations produit (1/7), heure (1/5), minute par minute (7/0x0A-0x0B : pas, FC,
       SpO₂, FC repos), sommeil (7/0x0C-0x0D puis fichiers 0x2C), RR → VFC / stress, séances (0x17) → IndexedDB
       (source `huawei_direct`) ; puis resynchro en arrière-plan (WorkManager / service de premier plan)
-- [ ] Pilote enregistré dans le registre générique (`src/devices/ble/drivers.js` → registre de familles de protocoles,
-      transport classique ou BLE) pour ajouter d'autres montres ensuite
+- [x] Pilote enregistré dans le registre générique (run 14/10 18:30) : `drivers.js` a une 3e sorte de pilote,
+      `kind: 'family'` (`huawei_link` : `mode: 'direct'`, `transports: ['rfcomm','ble']`, `cardId`, score 60 entre
+      profil standard 80 et « via son app » 50) ; `identifyDevice` renvoie aussi `direct` (famille qui sait s'y
+      connecter même quand un profil standard gagne) ; `isHuaweiWearable` (diagnostic) = `isHuaweiLinkDevice` du registre ;
+      Capteurs Bluetooth : « Connexion directe » + « Se connecter en direct » (ouvre la carte, même repliée)
+- [ ] Registre, suite : brancher le diagnostic / la connexion sur le pilote choisi (`driver.transports`) plutôt que sur
+      des appels Huawei en dur, quand une 2e famille arrivera (Colmi I28, Xiaomi / Zepp)
 
 ### D4 — Humeur par signaux émotionnels directs (visage, voix, réseaux sociaux)
 - [ ] Étude des limites Android réelles (caméra / micro en arrière-plan, service de premier plan, indicateurs,

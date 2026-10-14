@@ -41,7 +41,7 @@ export async function ready(client) {
 
 function describe(scan, { bonded = false } = {}) {
   const fingerprint = buildFingerprint(scan)
-  const { driver, vendor } = identifyDevice(fingerprint)
+  const { driver, vendor, direct } = identifyDevice(fingerprint)
   return {
     deviceId: scan.device.deviceId,
     name: fingerprint.name,
@@ -49,6 +49,7 @@ function describe(scan, { bonded = false } = {}) {
     bonded,
     fingerprint,
     driver,
+    direct,
     vendor,
   }
 }
