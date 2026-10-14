@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
-import { listEntries, listEntriesForAnalysis } from '../storage/localHealthStorage'
+import { listEntries } from '../storage/localHealthStorage'
 import { seriesByCalendarDay, seriesByHourToday } from '../services/wellbeingSeries'
-import { computeTodayPrediction } from '../services/analysisEngine'
+import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { pickLabelIndices } from '../utils/format'
 import './WellbeingCharts.css'
 
@@ -127,27 +127,33 @@ function WellbeingLineChart({ points, xDomain, labels, emptyMessage, predictionP
 
 export default function WellbeingCharts() {
   const [entries, setEntries] = useState([])
-  const [todayPrediction, setTodayPrediction] = useState(null)
+  // Prédiction en cache (données inchangées depuis le dernier calcul) : affichée dès le premier rendu
+  const [todayPrediction, setTodayPrediction] = useState(() => peekAnalysis('todayPrediction').result ?? null)
   const [loading, setLoading] = useState(true)
 
-  const load = async () => {
-    try {
-      const [wellbeingData, allData] = await Promise.all([
-        listEntries({ type: 'wellbeing', limit: 2000 }),
-        listEntriesForAnalysis(),
-      ])
-      setEntries(wellbeingData)
-      setTodayPrediction(computeTodayPrediction(allData))
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
+    let alive = true
+    const load = async () => {
+      try {
+        const wellbeingData = await listEntries({ type: 'wellbeing', limit: 2000 })
+        if (alive) setEntries(wellbeingData)
+      } finally {
+        if (alive) setLoading(false)
+      }
+      // Calcul lourd hors du fil principal (Web Worker) : les courbes s'affichent sans l'attendre
+      try {
+        const prediction = await getAnalysis('todayPrediction')
+        if (alive) setTodayPrediction(prediction ?? null)
+      } catch {
+        /* pas de prédiction : le badge reste masqué */
+      }
+    }
     load()
-    const onUpdate = () => load()
-    window.addEventListener('health-entries-updated', onUpdate)
-    return () => window.removeEventListener('health-entries-updated', onUpdate)
+    window.addEventListener('health-entries-updated', load)
+    return () => {
+      alive = false
+      window.removeEventListener('health-entries-updated', load)
+    }
   }, [])
 
   const daySeries = useMemo(() => seriesByCalendarDay(entries, DAYS), [entries])

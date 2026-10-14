@@ -178,7 +178,8 @@ export function computeLaggedEffects(entries) {
     effects.push({
       ...best,
       label: VARIABLE_META[variable].label,
-      format: VARIABLE_META[variable].format,
+      // Texte déjà formaté (pas de fonction : le résultat traverse le Web Worker et le cache)
+      sdText: VARIABLE_META[variable].format(best.sd),
       when: lagLabel(variable, best.lag),
       strength: correlationStrength(best.r),
       evidence: evidenceLevel(best.q),
