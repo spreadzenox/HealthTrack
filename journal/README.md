@@ -56,7 +56,22 @@ faut : après la mise à jour, « Synchroniser la montre », regarder la montre,
 l'association » : la réinitialiser (Dépannage → Libérer et appairer), puis « Refaire l'appairage » pendant que son écran
 d'association est affiché.
 
+**Votre journal du 14/10 (10:22, v124) : la montre est associée — merci !** Mais 0 mesure, à cause de HealthTrack :
+il demandait à la montre l'historique **d'une période vide** (de 10 h à 10 h, la date de reprise avait avancé alors
+que rien n'était arrivé), et il **ne gardait pas** les totaux du jour qu'elle envoyait (603 pas, 529 m, 20 kcal).
+**Corrigé (run 12:30, v125)** : la prochaine synchro relit **tout ce que la montre garde en mémoire**, puis chaque
+synchro reprend à la dernière qui a vraiment reçu des données (6 h relues par sécurité) ; les totaux du jour sont
+enregistrés. Les messages que la montre envoie d'elle-même ne contiennent aucune mesure (vérifié dans Gadgetbridge).
+Et comme demandé (« maintenant que ça marche tu peux nettoyer l'UI »), la carte montre est réduite à l'essentiel.
+**Ce qu'il me faut : après la mise à jour, « Synchroniser la montre », puis regarder si des mesures apparaissent dans
+l'historique (Accueil → vos derniers jours). Si ce n'est pas le cas : Diagnostic → « Enregistrer le journal ».**
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre Huawei — vos mesures arrivent, carte simplifiée (run 14/10 12:30)** : la synchro relit tout l'historique de
+  la montre la première fois, puis reprend là où elle a vraiment reçu des données ; pas, distance et calories du jour
+  enregistrés (sans double comptage avec les heures). Plus → Connecteurs : la carte dit « Connectée · batterie · dernière
+  synchro · nouvelles mesures » avec « Synchroniser la montre » ; tout le technique (étapes, « Refaire l'appairage »,
+  test, « Libérer et appairer », journal) est sous « Diagnostic », replié.
 - **Montre Huawei — fin de l'association et une seule carte (run 14/10 10:30)** : à chaque connexion, HealthTrack
   envoie maintenant à la montre ce qu'une app compagnon envoie après l'appairage (accords acceptés, « appareil
   principal », compte vide, taille / poids, fuseau, langue, format 24 h) et répond quand elle demande des infos sur le
@@ -414,7 +429,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 04:30 — [Performance : calculs dans un Web Worker + cache](runs/2026-10-14-0430-perf-calculs-worker.md) | ⚡ | PR #149 fusionnée → v122 |
 | 14/10 06:30 — [Performance : découpage du fichier principal](runs/2026-10-14-0630-perf-decoupage-bundle.md) | ⚡ | PR #151 fusionnée → v123 |
 | 14/10 08:30 — [Idées : appairage recoupé, paliers de confiance, contexte auto](runs/2026-10-14-0830-idees-appairage-recoupe-paliers.md) | 💡⌚ | 6 idées (I63–I68), spec §6.11 — journal seul |
-| 14/10 10:30 — [Montre : fin d'association côté montre + une seule carte](runs/2026-10-14-1030-montre-association.md) | ⌚🧹 | PR à fusionner → v124 |
+| 14/10 10:30 — [Montre : fin d'association côté montre + une seule carte](runs/2026-10-14-1030-montre-association.md) | ⌚🧹 | PR #154 fusionnée → v124 |
+| 14/10 12:30 — [Montre : fenêtre de synchro, totaux du jour, carte simplifiée](runs/2026-10-14-1230-montre-mesures.md) | ⌚🧹 | PR à fusionner → v125 |
 
 ---
 
@@ -466,6 +482,13 @@ jusqu'à ce que la Huawei Watch GT 6 Pro du propriétaire remonte ses données d
   journal (le propriétaire le renvoie, le run suivant le lit) ; (b) détection et libération ; (c) authentification ;
   (d) synchronisation et resynchro en arrière-plan. Tests sur trames d'exemple à chaque étape.
 - Un **pilote dans un registre générique**, pour ajouter d'autres montres et familles de protocoles ensuite.
+- **Consigne du propriétaire du 14/10/2026 (≈ 12:25), mot pour mot : « Maintenant que ça marche tu peux nettoyer
+  l'UI ».** La connexion à la GT 6 Pro fonctionne (association acceptée par la montre, journal v124). L'interface de la
+  montre se réduit à une seule carte : par défaut l'état (connectée, batterie, dernière synchro, mesures) et
+  « Synchroniser la montre » ; tout le technique (étapes, « Refaire l'appairage », test, « Libérer et appairer », export
+  du journal) dans « Diagnostic » replié, sans perdre l'export ; pas de bandeaux redondants. Ensuite : passe de
+  nettoyage générale (D1), puis performance (D2). La priorité absolue reste active **tant que de vraies mesures
+  n'apparaissent pas dans l'historique** (run du 14/10 12:30 : fenêtre de synchro et totaux du jour corrigés).
 
 ## 00. Directives du propriétaire (12 octobre 2026) — priment sur tout le reste, sauf la priorité absolue (§000)
 

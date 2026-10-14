@@ -23,7 +23,7 @@ describe('WatchConnect', () => {
     expect(JSON.parse(localStorage.getItem('healthtrack_huawei_secrets')).v2).toBe(hex16(2).replace(/ /g, ''))
     expect(screen.queryByRole('button', { name: 'Télécharger les paramètres' })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
-    expect(await screen.findByText('Montre appairée à HealthTrack')).toBeTruthy()
+    expect(await screen.findByText(/trames chiffrées/)).toBeTruthy()
     expect(connect.mock.calls[0][0].secrets.v1).toBe(hex16(1).replace(/ /g, ''))
     expect(connect.mock.calls[0][0].rebind).toBe(false)
     expect(screen.getByRole('button', { name: 'Synchroniser la montre' })).toBeTruthy()
@@ -54,13 +54,15 @@ describe('WatchConnect', () => {
     await waitFor(() => expect(connect.mock.calls[1][0].rebind).toBe(true))
   })
 
-  it('affiche l’état de la synchro automatique et le met à jour quand elle se termine', async () => {
+  it('affiche l’état de la montre et le met à jour quand une synchro se termine', async () => {
     render(<WatchConnect connect={vi.fn()} />)
-    expect(screen.queryByText(/Synchro automatique/)).toBeNull()
+    expect(screen.queryByText('Connectée')).toBeNull()
     const at = new Date().toISOString()
-    localStorage.setItem('healthtrack_watch_autosync', JSON.stringify({ at, auto: true, outcome: 'connected', label: '42 minutes → 9 mesures', failures: 0, everConnected: true }))
+    localStorage.setItem('healthtrack_watch_autosync', JSON.stringify({ at, auto: true, outcome: 'connected', inserted: 9, battery: 84, failures: 0, everConnected: true }))
     window.dispatchEvent(new CustomEvent('watch-sync-updated'))
-    expect(await screen.findByText(/Synchro automatique à chaque ouverture de l’app .*42 minutes → 9 mesures/)).toBeTruthy()
+    expect(await screen.findByText('Connectée')).toBeTruthy()
+    expect(screen.getByText(/batterie 84 % · synchro .* · 9 nouvelles mesures/)).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Synchroniser la montre' })).toBeTruthy()
   })
 
   it('remonte le rapport final à la carte (journal commun)', async () => {
@@ -88,13 +90,14 @@ describe('WatchConnect', () => {
   it('mesures fraîches reçues : association confirmée, sans question', () => {
     localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify({ ...connected, association: { freshData: true, userSaw: null } }))
     render(<WatchConnect connect={vi.fn()} />)
-    expect(screen.getByText('La montre se considère associée à HealthTrack')).toBeTruthy()
+    // plus de bandeau redondant une fois l'association confirmée
+    expect(screen.queryByText('La montre se considère associée à HealthTrack')).toBeNull()
     expect(screen.queryByRole('button', { name: 'Son cadran' })).toBeNull()
   })
 
   it('ancienne connexion sans fin d’association : invite à resynchroniser', () => {
     localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify(connected))
     render(<WatchConnect connect={vi.fn()} />)
-    expect(screen.getByText(/termine maintenant l’association/)).toBeTruthy()
+    expect(screen.getByText(/termine l’association côté montre/)).toBeTruthy()
   })
 })

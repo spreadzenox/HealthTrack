@@ -39,7 +39,7 @@ export function classicPlugin() {
   return isNative() ? NativeBtClassic : null
 }
 
-/** État de la connexion automatique : { at, outcome, title, label, inserted, auto, failures, everConnected } ou {}. */
+/** État de la dernière connexion (manuelle ou automatique) : { at, outcome, title, label, inserted, battery, auto, failures, everConnected } ou {}. */
 export function getWatchAutoSyncState(storage = globalThis.localStorage) {
   try {
     const v = JSON.parse(storage?.getItem(STATE_KEY) || 'null')
@@ -60,6 +60,7 @@ export function recordWatchConnection(report, { auto = false, storage = globalTh
     title: report?.outcome?.title || null,
     label: report?.sync?.label || null,
     inserted: report?.sync?.inserted ?? null,
+    battery: report?.battery ?? (code === 'connected' ? null : prev.battery ?? null),
     failures: code === 'connected' ? 0 : (prev.failures || 0) + 1,
     everConnected: code === 'connected' || !!prev.everConnected,
   }
@@ -174,17 +175,26 @@ async function runIfStale({
 }
 
 /** Phrase d'état pour la carte « Connexion à la montre », ou null s'il n'y a encore rien eu. */
-export function describeAutoSync(state, { now = Date.now(), formatAgo } = {}) {
-  // rien à dire tant que la montre n'a jamais été connectée (l'automatique ne tourne qu'avec une clé)
+const plural = (n, one, many) => `${n.toLocaleString('fr-FR')} ${n > 1 ? many : one}`
+
+/**
+ * État de la montre en une ligne pour la carte : { tone: 'ok' | 'warn', title, text } ou null tant
+ * qu'elle n'a jamais été connectée.
+ */
+export function describeWatchStatus(state, { now = Date.now(), formatAgo } = {}) {
   if (!state?.at || !state.everConnected) return null
   const when = formatAgo(state.at, new Date(now))
   if (isAutoSyncPaused(state)) {
-    return `Synchro automatique en pause : ${state.title || 'connexion refusée'} (${when}). Reconnectez la montre ci-dessus pour la relancer.`
+    return { tone: 'warn', title: 'Synchro en pause', text: `${state.title || 'connexion refusée'} (${when}). « Synchroniser la montre » la relance.` }
   }
   if (state.outcome === 'connected') {
-    return `Synchro automatique à chaque ouverture de l’app (au plus toutes les 30 min). Dernière : ${when}${state.label ? `, ${state.label}` : ''}.`
+    const parts = []
+    if (state.battery != null) parts.push(`batterie ${state.battery} %`)
+    parts.push(`synchro ${when}`)
+    if (state.inserted != null) parts.push(state.inserted > 0 ? `${plural(state.inserted, 'nouvelle mesure', 'nouvelles mesures')}` : 'rien de nouveau')
+    return { tone: 'ok', title: 'Connectée', text: parts.join(' · ') }
   }
   const retryMin = Math.round(autoSyncInterval(state) / 60000)
   const retry = retryMin >= 60 ? `${Math.round(retryMin / 60)} h` : `${retryMin} min`
-  return `Dernière synchro ${state.auto ? 'automatique ' : ''}échouée (${when}) : ${state.title || 'montre injoignable'}. Nouvel essai à l’ouverture de l’app, dans ${retry} au plus tôt.`
+  return { tone: 'warn', title: 'Dernière synchro échouée', text: `${state.title || 'montre injoignable'} (${when}). Nouvel essai à l’ouverture de l’app, dans ${retry} au plus tôt.` }
 }

@@ -82,4 +82,18 @@ describe('session Huawei', () => {
     await s.send(1, 8, [{ tag: 3, value: [1] }], { plain: true })
     expect(w.received[1].tlvs[0].tag).toBe(3)
   })
+
+  it('message chiffré reçu avant la clé de session : gardé, puis remis dès que la clé est posée', async () => {
+    let push
+    const transport = { open: async (onData) => (push = onData), send: async () => {}, close: async () => {} }
+    const got = []
+    const s = createSession(transport, { onMessage: (m) => got.push(m) })
+    await s.open()
+    push(encodeFrame(1, 0x10, [{ tag: 0x7c, value: [1] }, { tag: 0x7e, value: [0] }]))
+    await new Promise((r) => setTimeout(r, 0))
+    expect(got).toEqual([])
+    s.setCipher({ seal: async () => [], open: async () => [{ tag: 2 }] })
+    await new Promise((r) => setTimeout(r, 0))
+    expect(got.map((m) => [m.serviceId, m.commandId, m.tlvs[0].tag])).toEqual([[1, 0x10, 2]])
+  })
 })

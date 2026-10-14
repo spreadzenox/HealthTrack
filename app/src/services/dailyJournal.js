@@ -63,10 +63,14 @@ function last(values) {
   return values.length ? values[values.length - 1] : null
 }
 
-/** Total journalier si la source en fournit un (le plus grand, s'il y a des doublons), sinon la somme. */
+/**
+ * Total journalier : le plus grand entre le total fourni par la source (Health Connect agrégé, total du
+ * jour de la montre, lu en cours de journée) et la somme des tranches, qui comptent les mêmes pas.
+ */
 function dailyTotal(day, kind) {
-  if (day._dayTotals[kind].length) return Math.max(...day._dayTotals[kind])
-  return day._hasPartial[kind] ? day._partials[kind] : null
+  const totals = day._dayTotals[kind]
+  if (!totals.length) return day._hasPartial[kind] ? day._partials[kind] : null
+  return Math.max(...totals, day._hasPartial[kind] ? day._partials[kind] : 0)
 }
 
 function phoneSleep(day) {

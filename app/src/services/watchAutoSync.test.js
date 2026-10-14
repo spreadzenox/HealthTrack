@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import {
   autoSyncInterval,
   connectBondedWatch,
-  describeAutoSync,
+  describeWatchStatus,
   getWatchAutoSyncState,
   recordWatchConnection,
   syncWatchIfStale,
@@ -129,21 +129,29 @@ describe('syncWatchIfStale', () => {
   })
 })
 
-describe('describeAutoSync', () => {
+describe('describeWatchStatus', () => {
   const now = T0 + 20 * 60_000
   const at = new Date(T0).toISOString()
   it('rien tant que la montre n’a jamais été connectée', () => {
-    expect(describeAutoSync({}, { now, formatAgo })).toBeNull()
-    expect(describeAutoSync({ at, outcome: 'connect_failed', failures: 1 }, { now, formatAgo })).toBeNull()
+    expect(describeWatchStatus({}, { now, formatAgo })).toBeNull()
+    expect(describeWatchStatus({ at, outcome: 'connect_failed', failures: 1 }, { now, formatAgo })).toBeNull()
   })
-  it('dernière synchro réussie, échec avec prochain essai, pause', () => {
-    expect(describeAutoSync({ at, outcome: 'connected', label: '12 minutes → 3 mesures', everConnected: true }, { now, formatAgo })).toBe(
-      'Synchro automatique à chaque ouverture de l’app (au plus toutes les 30 min). Dernière : il y a moins d’une heure, 12 minutes → 3 mesures.',
-    )
-    expect(describeAutoSync({ at, auto: true, outcome: 'connect_failed', title: 'Connexion à la montre impossible', failures: 2, everConnected: true }, { now, formatAgo })).toMatch(
-      /^Dernière synchro automatique échouée .* Connexion à la montre impossible\. .*dans 2 h au plus tôt\.$/,
-    )
-    expect(describeAutoSync({ at, outcome: 'key_rejected', title: 'La montre ne reconnaît plus la clé de HealthTrack', everConnected: true }, { now, formatAgo })).toMatch(/^Synchro automatique en pause/)
+  it('connectée (batterie, synchro, mesures), échec avec prochain essai, pause', () => {
+    expect(describeWatchStatus({ at, outcome: 'connected', inserted: 12, battery: 84, everConnected: true }, { now, formatAgo })).toEqual({
+      tone: 'ok',
+      title: 'Connectée',
+      text: 'batterie 84 % · synchro il y a moins d’une heure · 12 nouvelles mesures',
+    })
+    expect(describeWatchStatus({ at, outcome: 'connected', inserted: 0, everConnected: true }, { now, formatAgo }).text).toMatch(/rien de nouveau$/)
+    expect(describeWatchStatus({ at, auto: true, outcome: 'connect_failed', title: 'Connexion à la montre impossible', failures: 2, everConnected: true }, { now, formatAgo })).toMatchObject({
+      tone: 'warn',
+      text: expect.stringMatching(/^Connexion à la montre impossible .*dans 2 h au plus tôt\.$/),
+    })
+    expect(describeWatchStatus({ at, outcome: 'key_rejected', title: 'Clé refusée', everConnected: true }, { now, formatAgo }).title).toBe('Synchro en pause')
+  })
+  it('la batterie lue à la connexion est gardée', () => {
+    const storage = memoryStorage()
+    expect(recordWatchConnection({ outcome: { code: 'connected' }, battery: 84, sync: { inserted: 3 } }, { storage, now: () => T0 })).toMatchObject({ battery: 84, inserted: 3 })
   })
 })
 

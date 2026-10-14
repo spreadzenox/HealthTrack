@@ -730,7 +730,9 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       case 'steps': {
         const val = e.payload?.value
         if (typeof val === 'number' && val > 0) {
-          day.steps += val
+          // Total du jour (Health Connect agrégé, montre) et tranches couvrent les mêmes pas : le plus grand des deux
+          if (e.payload?.period === 'day') day._stepsDay = Math.max(day._stepsDay || 0, val)
+          else day.steps += val
         }
         break
       }
@@ -775,7 +777,8 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       case 'calories': {
         const cal = e.payload?.value
         if (typeof cal === 'number' && cal > 0) {
-          day.dailyCaloriesHC += cal
+          if (e.payload?.period === 'day') day._kcalDay = Math.max(day._kcalDay || 0, cal)
+          else day.dailyCaloriesHC += cal
         }
         break
       }
@@ -882,13 +885,13 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       dateKey:            day.dateKey,
       wellbeing:          day._wellbeingCount > 0 ? day._wellbeingSum / day._wellbeingCount : null,
       sleepMinutes:       day.sleepMinutes,
-      steps:              day.steps,
+      steps:              Math.max(day._stepsDay || 0, day.steps),
       activityCalories:   day.activityCalories,
       restingHR:          day._hrCount > 0 ? day._hrSum / day._hrCount : 0,
       avgHR:              day._avgHRCount > 0 ? day._avgHRSum / day._avgHRCount : 0,
       hrv_ms:             day._hrvCount > 0 ? day._hrvSum / day._hrvCount : 0,
       spo2_pct:           day._spo2Count > 0 ? day._spo2Sum / day._spo2Count : 0,
-      dailyCaloriesHC:    day.dailyCaloriesHC,
+      dailyCaloriesHC:    Math.max(day._kcalDay || 0, day.dailyCaloriesHC),
       kcal:               day.kcal,
       protein_g:        day.protein_g,
       fat_g:            day.fat_g,
@@ -1336,7 +1339,10 @@ export function buildTodayRow(entries, historicalRawDataset) {
         break
       case 'steps': {
         const val = e.payload?.value
-        if (typeof val === 'number' && val > 0) row.steps += val
+        if (typeof val === 'number' && val > 0) {
+          if (e.payload?.period === 'day') row._stepsDay = Math.max(row._stepsDay || 0, val)
+          else row.steps += val
+        }
         break
       }
       case 'activity': {
@@ -1362,7 +1368,10 @@ export function buildTodayRow(entries, historicalRawDataset) {
       }
       case 'calories': {
         const cal = e.payload?.value
-        if (typeof cal === 'number' && cal > 0) row.dailyCaloriesHC += cal
+        if (typeof cal === 'number' && cal > 0) {
+          if (e.payload?.period === 'day') row._kcalDay = Math.max(row._kcalDay || 0, cal)
+          else row.dailyCaloriesHC += cal
+        }
         break
       }
       case 'food': {
@@ -1406,6 +1415,8 @@ export function buildTodayRow(entries, historicalRawDataset) {
   // Finalise averaged metrics
   const todayRaw = {
     ...row,
+    steps:      Math.max(row._stepsDay || 0, row.steps),
+    dailyCaloriesHC: Math.max(row._kcalDay || 0, row.dailyCaloriesHC),
     restingHR:  row._hrCount    > 0 ? row._hrSum    / row._hrCount    : 0,
     avgHR:      row._avgHRCount > 0 ? row._avgHRSum  / row._avgHRCount : 0,
     hrv_ms:     row._hrvCount   > 0 ? row._hrvSum    / row._hrvCount   : 0,

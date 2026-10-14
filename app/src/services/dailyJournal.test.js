@@ -47,6 +47,15 @@ describe('buildDailyJournal', () => {
     expect(day.summary.steps).toBe(8200)
   })
 
+  it('total du jour lu en cours de journée (montre) : la somme des heures, plus complète, l’emporte', () => {
+    const [day] = buildDailyJournal([
+      e('steps', '2026-10-08T00:00:50', { value: 603, period: 'day' }),
+      e('steps', '2026-10-08T10:00:00', { value: 5000 }),
+      e('steps', '2026-10-08T18:00:00', { value: 3000 }),
+    ])
+    expect(day.summary.steps).toBe(8000)
+  })
+
   it('additionne les pas partiels sans total journalier', () => {
     const [day] = buildDailyJournal([
       e('steps', '2026-10-08T10:00:00', { value: 500 }),

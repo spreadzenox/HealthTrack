@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-14",
+  "kind": "correctif",
+  "title": "Montre Huawei : vos mesures arrivent enfin, et une carte plus simple",
+  "items": [
+    "La montre répondait bien, mais HealthTrack lui demandait l'historique d'une période vide (de 10 h à 10 h) : rien n'était enregistré. La prochaine synchro relit maintenant tout ce que la montre garde en mémoire, puis chaque synchro reprend là où la précédente a vraiment reçu des données, en relisant les 6 dernières heures par sécurité (sans doublon).",
+    "Les pas, la distance et les calories du jour lus sur la montre sont maintenant enregistrés (source « Montre Huawei ») et mis à jour à chaque synchro, sans compter deux fois ce qui arrive aussi heure par heure.",
+    "Plus → Connecteurs : la carte « Montre Huawei » montre l'essentiel (connectée, batterie, dernière synchro, nouvelles mesures) et le bouton « Synchroniser la montre ». Les étapes techniques, « Refaire l'appairage », le test, « Libérer et appairer » et l'export du journal sont rangés sous « Diagnostic », replié."
+  ]
+}
