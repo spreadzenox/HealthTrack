@@ -362,19 +362,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
 
-1. ⌚ **D3 — ATTENDRE / LIRE LE JOURNAL v120** (le test du 13/10 20:42 était en v119, avant le correctif : échec
-   identique attendu, `diagnostics/2026-10-13-2042-gt6pro-v119.md`) (app ≥ v120, lecture tolérante + variantes du jeton livrées le 13/10 22:30,
-   §6.9–6.10). Selon le journal : `bind` ok → vérifier `auth`, `check` (batterie), `sync` sur la vraie montre ;
-   `tokenCheck.matched` = « X + ordre » → implémenter cet ordre côté téléphone (jeton du téléphone en miroir) ;
-   `tokenCheck.matched` nul → regarder les tailles (`idPeer` 64 o = identifiant texte de 64 caractères ?) et la casse
-   / le format de notre `peerAuthId` ; erreur 0x8002+ → lire `class`/`errorCode` de l'étape 2 ; `trailingBytes` > 1 sur
-   une autre réponse → rien à faire (déjà toléré). Ne **pas** ajouter de NUL à nos envois.
-2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`).
-   **En attendant (run de code, petit, sans risque) — I63** : rendre lisibles d'avance les étapes 0x8002 → 0x8004 et
-   0x11 → 0x13 (erreurs typées `final_unexpected` / `return_mac_mismatch` / `auth_token_missing` /
-   `auth_token_decrypt_failed` / `final_error` + `errorCode`, `trailingBytes` par réponse, scénarios fausse montre) ;
-   si la montre coupe ou se tait juste après l'authentification → issue qui propose l'identifiant de compte Huawei
-   (cas GB #6731). Recoupement complet avec Gadgetbridge : `protocoles/huawei.md` §6.11 (aucun calcul à changer).
+1. ⌚ **D3 — LIRE LE JOURNAL v124+ (fin d'association)**. Captures du 14/10 09:35 (v123) : HiChain complet ✅ sur la
+   vraie montre, mais la montre reste sur « Association » / « Échec de l'association » et 0 mesure
+   (`diagnostics/2026-10-14-0935-gt6pro.md`). Livré le 14/10 10:30 : file de fin d'association (§6.12 : 1/0x3E, 1/0x30,
+   0x1A/0x05, 7/0x02, 7/0x0E, fuseau / langue / format, FC / SpO₂ auto, réponse 1/0x10) + `report.association` + réponse
+   du propriétaire en un geste. Lire : `connect.association.steps` (codes), `phoneInfoRequests`, `userSaw`, `freshData`,
+   capacité 109. Toujours « Échec » → réinitialisation + « Refaire l'appairage » pendant l'écran d'association ; cadran
+   mais 0 mesure → comptes 7/0x0A sur la période, dictionnaire 700013.
+2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`). I63 (erreurs typées
+   des étapes 0x8002 → 0x13) devient secondaire : l'appairage passe.
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
    (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**

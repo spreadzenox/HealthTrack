@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import WatchDiagnostic, { watchJournal } from './WatchDiagnostic'
+import WatchDiagnostic from './WatchDiagnostic'
+import { watchJournal } from '../devices/huawei/journal'
 
 const REPORT = {
   startedAt: '2026-10-12T20:00:00.000Z',

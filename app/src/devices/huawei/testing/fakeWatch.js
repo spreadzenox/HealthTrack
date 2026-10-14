@@ -44,10 +44,12 @@ export function createFakeWatch({
   maxBlock = 64,
   pushSize = 40,
   filePlain = false,
+  silentAssociation = false, // n'accepte aucun message de fin d'association (§6.12) : tout reste sans réponse
+  askPhoneInfo = null, // [étiquettes] : après l'authentification, la montre demande les infos du téléphone (1/0x10)
 } = {}) {
   const r = createReassembler()
   const tokens = new Map() // authId (texte) → clé longue durée
-  const state = { op: null, sk: null, k: null, ids: null, cipher: null }
+  const state = { op: null, sk: null, k: null, ids: null, cipher: null, associated: false, phoneInfo: null, agreements: null }
   const seen = []
   let push
   let close
@@ -110,6 +112,10 @@ export function createFakeWatch({
     if (state.op === 2) {
       const key = await frameKey(state.sk, state.ids)
       state.cipher = createCipher({ key, gcm: encryptMethod === 1 || deviceSupportType === 4, randomIv: deviceSupportType === 4 })
+      if (askPhoneInfo) {
+        const c = state.cipher
+        setTimeout(async () => reply(1, 0x10, await c.seal(1, 0x10, askPhoneInfo.map((tag) => ({ tag })))), 0)
+      }
     }
     return replyJson(null, true)
   }
@@ -157,6 +163,22 @@ export function createFakeWatch({
         }
       }
       return sealed([{ tag: 0x81, value: encodeTlvs(out) }])
+    }
+    // Fin d'association (§6.12) : 1/0x3E sans réponse ; les autres accusés « succès »
+    const ok = [0x7f, [0, 1, 0x86, 0xa0]]
+    if (m.serviceId === 1 && m.commandId === 0x10) {
+      state.phoneInfo = tlvs.map((t) => t.tag)
+      return
+    }
+    if (m.serviceId === 1 && m.commandId === 0x3e) {
+      state.associated = new TextDecoder().decode(Uint8Array.from(tlvs.find((t) => t.tag === 2)?.value || []))
+      return
+    }
+    const assoc = { 1: [0x04, 0x07, 0x30, 0x32, 0x35, 0x3d], 7: [0x02, 0x0e, 0x17, 0x24], 0x1a: [0x05], 0x0c: [0x01] }
+    if (assoc[m.serviceId]?.includes(m.commandId)) {
+      if (silentAssociation) return
+      if (m.serviceId === 1 && m.commandId === 0x30) state.agreements = decodeTlvs(tlvs.find((t) => t.tag === 0x81).value).length
+      return sealed([{ tag: ok[0], value: ok[1] }])
     }
     if (m.serviceId === 1 && m.commandId === 0x31) return sealed([{ tag: 2, value: [0x06] }])
     if (m.serviceId === 1 && m.commandId === 0x37 && expand) return sealed([{ tag: 1, value: expand }])
@@ -225,6 +247,7 @@ export function createFakeWatch({
   return {
     seen,
     tokens,
+    state,
     /** La montre « oublie » ses clés (réinitialisation, ou liaison par une autre app). */
     reset: () => tokens.clear(),
     transport: {

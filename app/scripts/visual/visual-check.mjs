@@ -283,9 +283,11 @@ async function main() {
               step('bind', 'Premier appairage (PIN et clé)', 'ok', 'clé gardée sur ce téléphone'),
               step('auth', 'Authentification', 'ok', 'trames chiffrées (AES-GCM)'),
               step('check', 'Échange chiffré (batterie)', 'ok', 'batterie 87 %'),
+              step('associate', 'Fin d’association côté montre', 'ok', '11 acceptés, appareil principal déclaré'),
               step('sync', 'Lecture des mesures', 'ok', '1 248 minutes, 2 nuits → 214 mesures'),
             ],
             sync: { label: '1 248 minutes, 2 nuits → 214 mesures', inserted: 214 },
+            association: { deviceStatus: 1, sentSetupStatus: true, accepted: 11, refused: 0, steps: [], freshData: false, userSaw: null },
             outcome: { code: 'connected', title: 'Montre appairée à HealthTrack' },
             log: [],
           }),
@@ -513,6 +515,8 @@ async function main() {
           await page.waitForTimeout(400)
         }
         if (args.ble === 'watch' || args.ble === 'watch-silent') {
+          // le test vit sous « Dépannage », replié une fois la montre connectée
+          await page.evaluate(() => document.querySelectorAll('details.watch-trouble').forEach((d) => (d.open = true)))
           const testButton = page.getByRole('button', { name: 'Tester la connexion directe' })
           await testButton.evaluate((el) => el.scrollIntoView({ block: 'center' }))
           await testButton.click()

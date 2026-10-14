@@ -13,7 +13,8 @@ import { detectPhoneApps } from '../devices/phoneApps'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import { formatAgo } from '../utils/timeAgo'
 import WatchSetup from './WatchSetup'
-import WatchConnect, { loadLastConnect } from './WatchConnect'
+import WatchConnect from './WatchConnect'
+import { loadLastConnect, watchJournal } from '../devices/huawei/journal'
 import { classicPlugin, connectBondedWatch } from '../services/watchAutoSync'
 import './WatchDiagnostic.css'
 
@@ -78,14 +79,6 @@ async function defaultCopy(text) {
   return 'Journal copié : collez-le dans un message.'
 }
 
-/** Journal commun de la carte : dernière connexion et dernier test, chacun tel quel (sans clé, PIN ni adresse complète). */
-export function watchJournal({ connect = null, diagnostic = null } = {}, now = new Date()) {
-  const latest = [connect?.startedAt, diagnostic?.startedAt].filter(Boolean).sort().pop() || now.toISOString()
-  return {
-    json: JSON.stringify({ format: 'healthtrack-watch-journal', version: 1, exportedAt: now.toISOString(), connect, diagnostic }, null, 2),
-    filename: `healthtrack-journal-montre-${latest.slice(0, 16).replace(/[T:]/g, '-')}.json`,
-  }
-}
 
 /**
  * @param {{ run?: Function, available?: boolean, save?: Function, copy?: Function, setup?: object|null }} props

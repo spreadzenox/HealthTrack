@@ -204,6 +204,8 @@
 }
 
 .watch-trouble > summary {
+  list-style: none;
+  gap: 8px;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -232,4 +234,17 @@
 
 .watch-assoc p:last-child {
   margin-bottom: 0;
+}
+
+.watch-trouble > summary::-webkit-details-marker {
+  display: none;
+}
+
+.watch-trouble > summary::before {
+  content: '▸';
+  color: var(--accent);
+}
+
+.watch-trouble[open] > summary::before {
+  content: '▾';
 }

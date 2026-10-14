@@ -27,6 +27,8 @@ import {
   securityNegotiationTlvs,
 } from './hichain'
 import { redactDeviceId } from './diagnostic'
+import { ASSOCIATION_QUERY, runAssociation, servePhoneInfo } from './association'
+import { CAPABILITY_QUERY, describeCapabilities, mergeCapabilityQueries, readCapabilities, setWatchTime } from './sync'
 import { isHuaweiWatchName } from './setup'
 
 /** Demande des paramètres du lien : étiquettes 1 à 4 vides (comme linkParamsRequest). */
@@ -45,6 +47,7 @@ export const CONNECT_STEPS = [
   { id: 'bind', label: 'Premier appairage (PIN et clé)' },
   { id: 'auth', label: 'Authentification' },
   { id: 'check', label: 'Échange chiffré (batterie)' },
+  { id: 'associate', label: 'Fin d’association côté montre' },
   { id: 'sync', label: 'Lecture des mesures' },
 ]
 
@@ -117,6 +120,7 @@ export async function connectAndAuthenticate({
   secrets = null,
   rebind = false,
   accountId = null,
+  profile = null,
   model = 'Android',
   onUpdate = () => {},
   timeoutMs = 8000,
@@ -138,6 +142,7 @@ export async function connectAndAuthenticate({
     scheme: null,
     firstPairing: false,
     battery: null,
+    association: null,
     sync: null,
     outcome: null,
     log: [],
@@ -190,7 +195,8 @@ export async function connectAndAuthenticate({
     set('negotiate', 'running')
     const status = await session.request(DEVICE_CONFIG, CMD.DEVICE_STATUS, [{ tag: 1 }], { plain: true })
     const st = status.tlvs.find((t) => t.tag === 1)?.value
-    log(`état de la montre : ${st?.length ? st[0] : 'non précisé'}`)
+    const deviceStatus = st?.length ? st[0] : null
+    log(`état de la montre : ${deviceStatus ?? 'non précisé'}`)
     const keys = keyStore.get(watchKey) || {}
     if (!keys.authId) {
       keys.authId = newAuthId(rand)
@@ -271,6 +277,8 @@ export async function connectAndAuthenticate({
     const lpType = lp.deviceSupportType
     session.setCipher(createCipher({ key, gcm: lp.encryptMethod === 1 || lpType === 4, randomIv: lpType === 4, rand }))
     set('auth', 'ok', `trames chiffrées (${lp.encryptMethod === 1 || lpType === 4 ? 'AES-GCM' : 'AES-CBC'})`)
+    // la montre peut demander les infos du téléphone à tout moment désormais (§6.12)
+    const phoneInfo = servePhoneInfo(session, log)
 
     current = 'check'
     set('check', 'running')
@@ -283,21 +291,62 @@ export async function connectAndAuthenticate({
       report.battery = level?.length === 1 ? level[0] : null
       set('check', 'ok', report.battery !== null ? `batterie ${report.battery} %` : 'réponse chiffrée reçue')
     }
-    if (accountId) {
-      await session.send(0x1a, 0x05, [{ tag: 1, value: Array.from(new TextEncoder().encode(accountId)) }]).catch(() => {})
-      log('identifiant de compte Huawei transmis')
+
+    // Fin d'association (§6.12) : sans elle, la montre reste sur « Association… » et n'enregistre rien.
+    // Un échec ici n'annule pas la connexion réussie.
+    current = 'associate'
+    set('associate', 'running')
+    let caps = null
+    try {
+      const tzOffsetMinutes = -new Date(now()).getTimezoneOffset()
+      await setWatchTime(session, now(), tzOffsetMinutes, log)
+      caps = await readCapabilities(session, log, { query: mergeCapabilityQueries(CAPABILITY_QUERY, ASSOCIATION_QUERY) })
+      log(`capacités : ${describeCapabilities(caps)}`)
+      const firstTime = !keys.configuredAt
+      const a = await runAssociation(session, {
+        caps,
+        watchName,
+        accountId,
+        profile: (typeof profile === 'function' ? await profile().catch(() => null) : profile) || {},
+        firstTime,
+        now: now(),
+        tzOffsetMinutes,
+        zone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+        timeout: Math.min(timeoutMs, 1500),
+        log,
+      })
+      report.association = {
+        deviceStatus,
+        sentSetupStatus: a.sentSetupStatus,
+        accepted: a.accepted,
+        refused: a.refused,
+        steps: a.steps.map(({ id, status, code }) => ({ id, status, ...(code != null ? { code } : {}) })),
+        phoneInfoRequests: phoneInfo.stats,
+        freshData: false,
+        userSaw: null,
+      }
+      if (firstTime) {
+        keys.configuredAt = new Date(now()).toISOString()
+        keyStore.set(watchKey, keys)
+      }
+      set('associate', a.sentSetupStatus || a.accepted ? 'ok' : 'warn', `${a.accepted} accepté${a.accepted > 1 ? 's' : ''}${a.refused ? `, ${a.refused} refusé${a.refused > 1 ? 's' : ''}` : ''}${a.sentSetupStatus ? ', appareil principal déclaré' : ''}`)
+    } catch (e) {
+      set('associate', 'warn', e?.message || String(e))
     }
     if (sync) {
       // Lecture des mesures (étape d) : un échec ici n'annule pas la connexion réussie
       current = 'sync'
       set('sync', 'running')
       try {
-        report.sync = await sync(session, { log })
+        report.sync = await sync(session, { log, caps })
+        if (report.association && report.sync?.minutes > 0) report.association.freshData = true
         set('sync', 'ok', report.sync?.label || null)
       } catch (e) {
         set('sync', 'warn', e?.message || String(e))
       }
     }
+    if (report.association) report.association.phoneInfoRequests = { ...phoneInfo.stats }
+    phoneInfo.stop()
     return finish('connected', report.firstPairing ? 'Montre appairée à HealthTrack' : 'Montre connectée à HealthTrack')
   } catch (e) {
     const msg = e?.message || String(e)

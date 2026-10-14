@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-14",
+  "kind": "amélioration",
+  "title": "Montre Huawei : fin de l'association côté montre, une seule carte",
+  "items": [
+    "Votre montre affichait encore « Association… » puis « Échec de l'association » alors que HealthTrack s'y connectait : il manquait ce qu'une app compagnon envoie juste après l'appairage. HealthTrack l'envoie maintenant à chaque connexion : accords acceptés, « appareil principal », compte (vide), votre profil (taille, poids), fuseau, langue et format de l'heure, et il répond quand la montre demande des informations sur le téléphone. La fréquence cardiaque et la SpO₂ automatiques sont activées une fois.",
+    "Une nouvelle étape « Fin d'association côté montre » dit ce que la montre a accepté. Juste en dessous, deux boutons « Son cadran » / « Encore « Association » » : un geste pour dire ce que la montre affiche, et le journal le garde.",
+    "Plus → Connecteurs : la montre n'a plus qu'une carte, « Montre Huawei ». La connexion et la synchro sont en haut, et un seul « Enregistrer le journal » réunit la dernière connexion et le dernier test. Le test, la libération et l'appairage sont rangés sous « Dépannage » (déplié tant que la montre n'a jamais été connectée)."
+  ]
+}

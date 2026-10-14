@@ -7,20 +7,13 @@
 import { useEffect, useState } from 'react'
 import { CONNECT_STEPS, SECRETS_SOURCE_URL, connectAdvice, loadSecrets, saveSecrets } from '../devices/huawei/pairing'
 import { parseDigestSecrets } from '../devices/huawei/hichain'
+import { associationState } from '../devices/huawei/association'
+import { loadLastConnect, saveLastConnect } from '../devices/huawei/journal'
 import { formatAgo } from '../utils/timeAgo'
 import { describeAutoSync, getWatchAutoSyncState } from '../services/watchAutoSync'
 
-const LAST_KEY = 'healthtrack_watch_connect_last'
 const ICONS = { ok: '✓', warn: '!', fail: '✕', skip: '–', running: '…', pending: '·' }
 
-export function loadLastConnect() {
-  try {
-    const v = JSON.parse(localStorage.getItem(LAST_KEY) || 'null')
-    return v && Array.isArray(v.steps) ? v : null
-  } catch {
-    return null
-  }
-}
 
 async function defaultFetchSecrets() {
   const res = await fetch(SECRETS_SOURCE_URL)
@@ -78,13 +71,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
     setMessage(null)
     try {
       const final = await connect({ secrets, rebind, onUpdate: (r) => setReport(r) })
-      setReport(final)
-      onReport(final)
-      try {
-        localStorage.setItem(LAST_KEY, JSON.stringify(final))
-      } catch {
-        /* rapport seulement affiché */
-      }
+      keepReport(final)
     } catch (e) {
       setMessage(e?.message || String(e))
     } finally {
@@ -92,8 +79,21 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
     }
   }
 
+  const keepReport = (r) => {
+    setReport(r)
+    onReport(r)
+    saveLastConnect(r)
+  }
+
+  /** Ce que le propriétaire voit sur la montre : l'information décisive, gardée dans le journal (§6.12). */
+  const tellWhatWatchShows = (userSaw) => {
+    if (!report?.association) return
+    keepReport({ ...report, association: { ...report.association, userSaw, userSawAt: new Date().toISOString() } })
+  }
+
   const code = report?.outcome?.code
   const autoLine = describeAutoSync(auto, { formatAgo })
+  const assoc = code === 'connected' ? associationState(report) : null
   const steps = report?.steps || CONNECT_STEPS.map((s) => ({ ...s, status: 'pending' }))
 
   return (
@@ -165,6 +165,38 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
                   <li key={a}>{a}</li>
                 ))}
               </ul>
+            </div>
+          )}
+          {assoc && (
+            <div className={`watch-assoc ${assoc.code === 'confirmed' ? 'watch-assoc-ok' : ''}`} aria-live="polite">
+              <p className="watch-assoc-title">{assoc.title}</p>
+              {assoc.code === 'likely' && (
+                <>
+                  <p className="my-device-meta">
+                    HealthTrack a envoyé ce qu’une app compagnon envoie après l’appairage (accords, appareil principal, profil, fuseau). Que
+                    montre la montre maintenant ?
+                  </p>
+                  <div className="my-device-actions">
+                    <button type="button" className="btn btn-secondary connector-btn" onClick={() => tellWhatWatchShows('watchface')}>
+                      Son cadran
+                    </button>
+                    <button type="button" className="btn btn-secondary connector-btn" onClick={() => tellWhatWatchShows('pairing_screen')}>
+                      Encore « Association »
+                    </button>
+                  </div>
+                </>
+              )}
+              {assoc.code === 'confirmed' && <p className="my-device-meta">Elle enregistre vos mesures : elles arrivent à chaque synchro.</p>}
+              {assoc.code === 'not_associated' && (
+                <p className="my-device-meta">
+                  Enregistrez le journal et transmettez-le : il dit ce que la montre a accepté et demandé. Si elle affiche « Échec de
+                  l’association », réinitialisez-la (Dépannage, plus bas), puis touchez « Refaire l’appairage » pendant que son écran
+                  d’association est affiché.
+                </p>
+              )}
+              {assoc.code === 'pending' && (
+                <p className="my-device-meta">Touchez « Synchroniser la montre » : HealthTrack termine maintenant l’association côté montre.</p>
+              )}
             </div>
           )}
           {report.finishedAt && (

@@ -12,6 +12,16 @@ import { classicTransport, HONOR_RFCOMM_UUID, HUAWEI_RFCOMM_UUID } from '../devi
 import { loadSetup } from '../devices/huawei/setup'
 import { createWatchSync, getWatchSyncState } from './watchSync'
 import { CURRENT_VERSION } from './updateCheck'
+import { getBodyProfile } from './bodyProfile'
+import { getBodySettings } from '../settings/bodySettings'
+import { listEntries } from '../storage/localHealthStorage'
+
+/** Profil envoyé à la montre (7/0x02) : taille, poids, âge, sexe connus de HealthTrack (lectures par index). */
+export async function watchProfile() {
+  const [weights, heights] = await Promise.all([listEntries({ type: 'weight' }), listEntries({ type: 'height' })])
+  const p = await getBodyProfile([...weights, ...heights])
+  return { heightCm: p.heightCm, weightKg: p.weightKg, age: p.age, sex: p.sex, birthYear: getBodySettings().birthYear ?? null }
+}
 
 export const WATCH_AUTO_SYNC_MS = 30 * 60 * 1000
 const MAX_BACKOFF_STEPS = 3 // 30 min × 2³ = 4 h
@@ -113,6 +123,7 @@ export async function connectBondedWatch({
       secrets,
       rebind,
       accountId: setupState.choice === 'keep' ? setupState.accountId || null : null,
+      profile: watchProfile,
       onUpdate,
       appVersion: CURRENT_VERSION,
       sync: createWatchSync({ watchKey: watch.deviceId, watchName: watch.name, storage }),
