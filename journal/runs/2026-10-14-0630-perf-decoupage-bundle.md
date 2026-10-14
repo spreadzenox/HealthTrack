@@ -1,6 +1,6 @@
 # 2026-10-14 06:30 Paris (04:30 UTC) — Performance, étape 3 : découpage du fichier principal
 
-**Type** : ⚡ D2 (performance)  ·  **PR** : voir « Après le merge »
+**Type** : ⚡ D2 (performance)  ·  **PR** : #151 (fusionnée → release v123 avec APK)
 
 ## Pourquoi
 - Démarrage : main à `d91e7fa` (journal de la PR #149, release v122 vérifiée au run précédent), workflows de main
@@ -46,7 +46,7 @@ suivante). La table (1,48 Mo) existe en deux exemplaires dans l'APK (app + Worke
 la sienne).
 
 ## Vérifications
-- Tests : **1152 ✅** (88 fichiers ; 1145 avant) · Build ✅ · Lint : **6 erreurs** (baseline inchangée)
+- Tests : **1153 ✅** (88 fichiers ; 1145 avant) · Build ✅ · Lint : **6 erreurs** (baseline inchangée)
 - `npm run visual` : toutes les pages OK, aucune erreur JS ; **20 captures identiques au pixel près à main** (la
   seule différence, Paramètres, était le curseur clignotant : 2 passages de la même version diffèrent, le 3e est
   identique à main). `--empty` et `--light` OK ; `--food-analysis` et `--meal-text` relus : ingrédients rapprochés de
@@ -61,3 +61,8 @@ la sienne).
 1. ⌚ Lire le journal v120+ du propriétaire dès qu'il arrive.
 2. ⚡ D2 suite : Nutrition par le runner (28 lectures), `upsertEntries` par index, `WellbeingCharts` par agrégats,
    budget CI sur les enregistrements lus.
+
+## Après le merge
+- PR #151 : « Frontend (Vitest) », « Build APK » et émulateurs A56 (API 35, 36 — vraie WebView Android, Worker en
+  module ES compris) verts → fusionnée (squash, `d77611a`). « Build & Release » vert → **release v123** publiée avec
+  `HealthTrack-v123.apk`.

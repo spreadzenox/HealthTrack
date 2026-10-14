@@ -380,7 +380,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 13/10 22:30 — [Montre : lecture tolérante de la réponse d'appairage + variantes du jeton](runs/2026-10-13-2230-montre-lecture-tolerante.md) | ⌚🏗️ | PR #146 fusionnée → v120 |
 | 14/10 00:30 — [Test v119 consigné + performance : mesure et lectures par index](runs/2026-10-14-0030-perf-lectures-indexees.md) | ⌚⚡ | PR #148 fusionnée → v121 |
 | 14/10 04:30 — [Performance : calculs dans un Web Worker + cache](runs/2026-10-14-0430-perf-calculs-worker.md) | ⚡ | PR #149 fusionnée → v122 |
-| 14/10 06:30 — [Performance : découpage du fichier principal](runs/2026-10-14-0630-perf-decoupage-bundle.md) | ⚡ | PR en cours |
+| 14/10 06:30 — [Performance : découpage du fichier principal](runs/2026-10-14-0630-perf-decoupage-bundle.md) | ⚡ | PR #151 fusionnée → v123 |
 
 ---
 
