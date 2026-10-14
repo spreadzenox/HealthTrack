@@ -96,15 +96,59 @@ export async function findBondedWatch(classic) {
   return devices.find((d) => isHuaweiWatchName(d.name)) || null
 }
 
-/** Résumé d'une trame pour le journal : sens, taille, service / commande, jamais le contenu. */
-function frameSummary(dir, bytes) {
-  try {
-    const { slice, body } = decodeFrame(bytes)
-    const head = slice <= 1 && body.length >= 2 ? `${body[0]}/0x${body[1].toString(16)}` : `tranche ${slice}`
-    return { dir, size: bytes.length, head }
-  } catch {
-    return { dir, size: bytes.length, head: '?' }
+/**
+ * Messages que la montre envoie d'elle-même (journal v124, huawei.md §7.9) : aucun ne porte de mesure,
+ * aucun n'attend de réponse pour que la synchro marche. Nommés dans le journal pour le diagnostic.
+ */
+export const SPONTANEOUS = {
+  '55/1': 'synchro de réglages (objectifs…)',
+  '55/2': 'événement de synchro',
+  '55/4': 'dictionnaire de synchro',
+  '15/4': 'demande de météo',
+  '52/1': 'message entre apps (P2P)',
+  '8/8': 'réveils',
+  '26/5': 'compte',
+  '31/1': 'demande de données GPS',
+  '37/1': 'appli musique ouverte',
+}
+
+/**
+ * Résumé d'un morceau reçu ou envoyé pour le journal : sens, taille, service / commande, jamais le
+ * contenu. Le Bluetooth classique livre des morceaux arbitraires : plusieurs trames collées, ou une
+ * trame coupée (« suite » : la fin d'une trame commencée dans le morceau précédent). Ces morceaux
+ * étaient notés « ? » (journal v124) alors que le message était bien reçu.
+ */
+export function frameSummary(dir, bytes) {
+  const data = Array.from(bytes || [])
+  const heads = []
+  let i = 0
+  while (i < data.length) {
+    if (data[i] !== 0x5a || i + 3 > data.length) {
+      heads.push('suite')
+      break
+    }
+    const total = ((data[i + 1] << 8) | data[i + 2]) + 5
+    if (i + total > data.length) {
+      heads.push(`${headOf(data.slice(i))} (début)`)
+      break
+    }
+    try {
+      const { slice, body } = decodeFrame(data.slice(i, i + total))
+      heads.push(slice <= 1 && body.length >= 2 ? `${body[0]}/0x${body[1].toString(16)}${slice === 1 ? ' tranche 1' : ''}` : `tranche ${slice}`)
+    } catch {
+      heads.push('?')
+    }
+    i += total
   }
+  return { dir, size: data.length, head: heads.join(' + ') || '?' }
+}
+
+/** Service / commande d'une trame incomplète (en-tête lisible), sinon « trame ». */
+function headOf(d) {
+  const slice = d[3]
+  const at = slice ? 5 : 4
+  if (slice > 1 || d.length < at + 2) return slice > 1 ? `tranche ${slice}` : 'trame'
+  return `${d[at]}/0x${d[at + 1].toString(16)}`
 }
 
 /**
@@ -171,7 +215,7 @@ export async function connectAndAuthenticate({
   const session = createSession(transport, {
     timeoutMs,
     onFrame: (dir, bytes) => report.frames.push({ t: now() - t0, ...frameSummary(dir, bytes) }),
-    onMessage: (m) => log(m.error ? `message ignoré : ${m.error}` : `message spontané ${m.serviceId}/0x${(m.commandId ?? 0).toString(16)}`),
+    onMessage: (m) => log(m.error ? `message ignoré : ${m.error}` : `message spontané ${m.serviceId}/0x${(m.commandId ?? 0).toString(16)}${SPONTANEOUS[`${m.serviceId}/${m.commandId}`] ? ` (${SPONTANEOUS[`${m.serviceId}/${m.commandId}`]})` : ''}`),
   })
   let current = 'connect'
   try {

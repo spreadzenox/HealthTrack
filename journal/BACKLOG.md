@@ -80,6 +80,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   test « Accueil lit ≤ N entrées » — `localHealthStorage.js` fait aujourd'hui 7 `getAll()` sur tout le store
 
 ### D3 — Huawei Watch GT 6 Pro en direct (sans Gadgetbridge) — 🎯 PRIORITÉ ABSOLUE
+- [x] **(d quinquies) Fenêtre et totaux** (run 14/10 12:30, journal v124) : fenêtre jamais vide (1re synchro depuis 2000,
+      reprise − 6 h, état v2), totaux du jour stockés (`period: 'day'`, max avec les heures), messages spontanés nommés
+      (aucune mesure, spec §7.9), trames « ? » expliquées, course « message chiffré avant la clé » corrigée
+- [x] **UI montre nettoyée** (consigne du 14/10, run 12:30) : une carte = état + « Synchroniser la montre » ; « Diagnostic »
+      replié pour tout le reste
 - Cause probable de l'échec actuel (run idées 12/10 20:30, I39) : montre liée à Huawei Santé → « Authentication key
   negotiation failed » ; sorties documentées = réinitialisation d'usine puis appairage à HealthTrack seul, ou
   identifiant de compte Huawei (17 chiffres) pour garder Huawei Santé
@@ -361,14 +366,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 ## Prochaines étapes (ordre conseillé)
 
 Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
+**14/10 12:25, consigne du propriétaire : « Maintenant que ça marche tu peux nettoyer l'UI »** (charte §000) : carte
+montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage général), puis D2 (performance).
 
-1. ⌚ **D3 — LIRE LE JOURNAL v124+ (fin d'association)**. Captures du 14/10 09:35 (v123) : HiChain complet ✅ sur la
-   vraie montre, mais la montre reste sur « Association » / « Échec de l'association » et 0 mesure
-   (`diagnostics/2026-10-14-0935-gt6pro.md`). Livré le 14/10 10:30 : file de fin d'association (§6.12 : 1/0x3E, 1/0x30,
-   0x1A/0x05, 7/0x02, 7/0x0E, fuseau / langue / format, FC / SpO₂ auto, réponse 1/0x10) + `report.association` + réponse
-   du propriétaire en un geste. Lire : `connect.association.steps` (codes), `phoneInfoRequests`, `userSaw`, `freshData`,
-   capacité 109. Toujours « Échec » → réinitialisation + « Refaire l'appairage » pendant l'écran d'association ; cadran
-   mais 0 mesure → comptes 7/0x0A sur la période, dictionnaire 700013.
+1. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
+   ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).
+   Livré le 14/10 12:30 : première synchro depuis 2000, reprise sur la dernière synchro avec données − 6 h, état v2,
+   totaux du jour stockés, journal détaillé (`sync.kinds`, types de sommeil, mesures par minute). Prochain journal : lire
+   `sync.kinds`, « minutes : N reçues… », types de sommeil ≠ 6 / 7. **Priorité absolue close quand des mesures
+   apparaissent dans l'historique.**
 2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`). I63 (erreurs typées
    des étapes 0x8002 → 0x13) devient secondaire : l'appairage passe.
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
@@ -438,6 +444,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-14 — D3 (d quinquies) : fenêtre de synchro jamais vide (1re depuis 2000, reprise − 6 h), totaux du jour stockés, carte montre simplifiée (état + « Synchroniser », « Diagnostic » replié) (run 12:30 Paris)
 - [x] 2026-10-13 — D3 (a quater) : l'instrument de diagnostic donne la **taille** de chaque champ de la réponse « New Auth » (octets / caractères / type, jamais la valeur) → décoder d'un seul journal ; écran « challenge (16 o), epk (32 o)… » (run 18:30 Paris)
 - [x] 2026-10-13 — D3 (c bis) : primitives crypto « New Auth » X25519 / Ed25519 sur @noble/curves, vecteurs RFC 7748 / 8032 (run 16:30 Paris)
 - [x] 2026-10-13 — D3 (a ter) : l'instrument révèle les **champs** d'une réponse « New Auth » non-JSON (noms, sans valeur) ; spec §6.8 (run 14:30 Paris)

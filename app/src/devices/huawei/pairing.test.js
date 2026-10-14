@@ -160,3 +160,18 @@ describe('connexion authentifiée à une montre Huawei (HiChain)', () => {
     expect((await findBondedWatch(classic)).deviceId).toBe('2')
   })
 })
+
+describe('journal : résumé des morceaux reçus (trames « ? » du journal v124)', () => {
+  it('nomme chaque trame d’un morceau qui en colle plusieurs, et les fins de trame', async () => {
+    const { frameSummary } = await import('./pairing')
+    const { encodeFrames, encodeTlvs } = await import('./protocol')
+    const a = Array.from(encodeFrames(7, 0x0b, [{ tag: 1, value: [1, 2, 3] }])[0])
+    const b = Array.from(encodeFrames(55, 0x01, [{ tag: 1 }])[0])
+    expect(frameSummary('in', [...a, ...b]).head).toBe('7/0xb + 55/0x1')
+    expect(frameSummary('in', a.slice(0, 7)).head).toBe('7/0xb (début)')
+    expect(frameSummary('in', a.slice(7)).head).toBe('suite')
+    const big = encodeFrames(7, 0x0b, [{ tag: 0x81, value: encodeTlvs([{ tag: 3, value: new Array(600).fill(1) }]) }], 244).map((f) => Array.from(f))
+    expect(big.length).toBeGreaterThan(1)
+    expect(frameSummary('in', big.flat()).head).toBe(['7/0xb tranche 1', ...big.slice(1).map((f) => `tranche ${f[3]}`)].join(' + '))
+  })
+})

@@ -1,6 +1,8 @@
 /**
- * « Connexion à la montre » (cœur de la carte « Montre Huawei », chantier D3 étapes c et d) : HealthTrack
- * s'authentifie auprès de la montre (HiChain), garde la clé sur le téléphone, puis lit les mesures. Au premier appairage,
+ * Cœur de la carte « Montre Huawei » (chantier D3 étapes c et d) : par défaut, une ligne d'état (connectée,
+ * batterie, dernière synchro, mesures) et « Synchroniser la montre ». Les étapes techniques, « Refaire
+ * l'appairage » et ce que la carte passe en `children` (test, libération, export du journal) sont repliés sous
+ * « Diagnostic ». HealthTrack s'authentifie auprès de la montre (HiChain), garde la clé sur le téléphone, puis lit les mesures. Au premier appairage,
  * 3 constantes publiques (huawei-lpv2, MIT) sont nécessaires : téléchargées ou collées d'un geste,
  * gardées en local, jamais dans le code de l'app. Logique dans src/devices/huawei/pairing.js.
  */
@@ -10,7 +12,7 @@ import { parseDigestSecrets } from '../devices/huawei/hichain'
 import { associationState } from '../devices/huawei/association'
 import { loadLastConnect, saveLastConnect } from '../devices/huawei/journal'
 import { formatAgo } from '../utils/timeAgo'
-import { describeAutoSync, getWatchAutoSyncState } from '../services/watchAutoSync'
+import { describeWatchStatus, getWatchAutoSyncState } from '../services/watchAutoSync'
 
 const ICONS = { ok: '✓', warn: '!', fail: '✕', skip: '–', running: '…', pending: '·' }
 
@@ -22,11 +24,12 @@ async function defaultFetchSecrets() {
 }
 
 /**
- * @param {{ connect: Function, fetchSecrets?: Function, onReport?: Function }} props
+ * @param {{ connect: Function, fetchSecrets?: Function, onReport?: Function, children?: any }} props
  * `connect({ secrets, rebind, onUpdate })` → rapport (pairing.connectAndAuthenticate).
  * `onReport(rapport)` : rapport final, pour l'export du journal commun de la carte (WatchDiagnostic).
+ * `children` : outils de dépannage ajoutés en bas de « Diagnostic ».
  */
-export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, onReport = () => {} }) {
+export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, onReport = () => {}, children = null }) {
   const [report, setReport] = useState(loadLastConnect)
   const [secrets, setSecrets] = useState(() => loadSecrets())
   const [running, setRunning] = useState(false)
@@ -92,18 +95,23 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
   }
 
   const code = report?.outcome?.code
-  const autoLine = describeAutoSync(auto, { formatAgo })
+  const status = describeWatchStatus(auto, { formatAgo })
   const assoc = code === 'connected' ? associationState(report) : null
   const steps = report?.steps || CONNECT_STEPS.map((s) => ({ ...s, status: 'pending' }))
+  const everConnected = Boolean(auto?.everConnected) || code === 'connected'
 
   return (
     <div className="watch-connect" aria-label="Connexion à la montre">
-      <p className="my-devices-intro">
-        HealthTrack parle directement à votre montre, sans Huawei Santé ni Gadgetbridge. La clé que la montre lui remet reste{' '}
-        <strong>sur ce téléphone uniquement</strong> ; chaque connexion lit les nouvelles mesures (pas, cœur, SpO₂, sommeil, VFC de la
-        nuit, séances), et HealthTrack resynchronise tout seul quand vous ouvrez l’app.
-      </p>
-      {autoLine && <p className="my-device-meta watch-connect-auto">{autoLine}</p>}
+      {status ? (
+        <p className={`watch-status watch-status-${status.tone}`} aria-live="polite">
+          <strong>{status.title}</strong> · {status.text}
+        </p>
+      ) : (
+        <p className="my-devices-intro">
+          HealthTrack parle directement à votre montre, sans Huawei Santé ni Gadgetbridge, et relit ses mesures à chaque ouverture de
+          l’app. La clé de la montre reste <strong>sur ce téléphone</strong>.
+        </p>
+      )}
 
       {!secrets && (
         <div className="watch-connect-secrets">
@@ -133,78 +141,75 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
 
       <div className="my-device-actions">
         <button type="button" className="btn btn-primary connector-btn" onClick={() => start(false)} disabled={running}>
-          {running ? 'Connexion…' : code === 'connected' ? 'Synchroniser la montre' : 'Se connecter à la montre'}
+          {running ? 'Connexion…' : everConnected ? 'Synchroniser la montre' : 'Se connecter à la montre'}
         </button>
-        {(code === 'key_rejected' || code === 'pin_failed' || code === 'connected') && !running && (
-          <button type="button" className="btn btn-secondary connector-btn" onClick={() => start(true)} disabled={!secrets}>
-            Refaire l’appairage
-          </button>
-        )}
       </div>
-
-      {report && (
-        <div className="watch-diag-report" aria-live="polite">
-          <ol className="watch-diag-steps">
-            {steps.map((s) => (
-              <li key={s.id} className={`watch-diag-step watch-diag-${s.status}`}>
-                <span className="watch-diag-icon" aria-hidden="true">
-                  {ICONS[s.status] || '·'}
-                </span>
-                <span className="watch-diag-label">
-                  {s.label}
-                  {s.detail && <span className="watch-diag-detail"> — {s.detail}</span>}
-                </span>
-              </li>
-            ))}
-          </ol>
-          {report.outcome && (
-            <div className={`watch-diag-verdict ${code === 'connected' ? 'watch-diag-verdict-ok' : ''}`}>
-              <p className="watch-diag-verdict-title">{report.outcome.title}</p>
-              <ul>
-                {connectAdvice(report).map((a) => (
-                  <li key={a}>{a}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {assoc && (
-            <div className={`watch-assoc ${assoc.code === 'confirmed' ? 'watch-assoc-ok' : ''}`} aria-live="polite">
-              <p className="watch-assoc-title">{assoc.title}</p>
-              {assoc.code === 'likely' && (
-                <>
-                  <p className="my-device-meta">
-                    HealthTrack a envoyé ce qu’une app compagnon envoie après l’appairage (accords, appareil principal, profil, fuseau). Que
-                    montre la montre maintenant ?
-                  </p>
-                  <div className="my-device-actions">
-                    <button type="button" className="btn btn-secondary connector-btn" onClick={() => tellWhatWatchShows('watchface')}>
-                      Son cadran
-                    </button>
-                    <button type="button" className="btn btn-secondary connector-btn" onClick={() => tellWhatWatchShows('pairing_screen')}>
-                      Encore « Association »
-                    </button>
-                  </div>
-                </>
-              )}
-              {assoc.code === 'confirmed' && <p className="my-device-meta">Elle enregistre vos mesures : elles arrivent à chaque synchro.</p>}
-              {assoc.code === 'not_associated' && (
-                <p className="my-device-meta">
-                  Enregistrez le journal et transmettez-le : il dit ce que la montre a accepté et demandé. Si elle affiche « Échec de
-                  l’association », réinitialisez-la (Dépannage, plus bas), puis touchez « Refaire l’appairage » pendant que son écran
-                  d’association est affiché.
-                </p>
-              )}
-              {assoc.code === 'pending' && (
-                <p className="my-device-meta">Touchez « Synchroniser la montre » : HealthTrack termine maintenant l’association côté montre.</p>
-              )}
-            </div>
-          )}
-          {report.finishedAt && (
-            <p className="my-device-meta">Dernière connexion : {formatAgo(report.finishedAt)} · journal sans clé, sans PIN ni adresse complète.</p>
-          )}
-        </div>
-      )}
       {message && <p className="my-device-message">{message}</p>}
+
+      <details className="watch-trouble" open={!everConnected || (code && code !== 'connected') || undefined}>
+        <summary>Diagnostic</summary>
+        {report && (
+          <div className="watch-diag-report" aria-live="polite">
+            <ol className="watch-diag-steps">
+              {steps.map((s) => (
+                <li key={s.id} className={`watch-diag-step watch-diag-${s.status}`}>
+                  <span className="watch-diag-icon" aria-hidden="true">
+                    {ICONS[s.status] || '·'}
+                  </span>
+                  <span className="watch-diag-label">
+                    {s.label}
+                    {s.detail && <span className="watch-diag-detail"> — {s.detail}</span>}
+                  </span>
+                </li>
+              ))}
+            </ol>
+            {report.outcome && code !== 'connected' && (
+              <div className="watch-diag-verdict">
+                <p className="watch-diag-verdict-title">{report.outcome.title}</p>
+                <ul>
+                  {connectAdvice(report).map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {assoc && assoc.code !== 'confirmed' && (
+              <div className="watch-assoc" aria-live="polite">
+                <p className="watch-assoc-title">{assoc.title}</p>
+                {assoc.code === 'likely' && (
+                  <>
+                    <p className="my-device-meta">Que montre la montre maintenant ?</p>
+                    <div className="my-device-actions">
+                      <button type="button" className="btn btn-secondary connector-btn" onClick={() => tellWhatWatchShows('watchface')}>
+                        Son cadran
+                      </button>
+                      <button type="button" className="btn btn-secondary connector-btn" onClick={() => tellWhatWatchShows('pairing_screen')}>
+                        Encore « Association »
+                      </button>
+                    </div>
+                  </>
+                )}
+                {assoc.code === 'not_associated' && (
+                  <p className="my-device-meta">
+                    Si elle affiche « Échec de l’association », réinitialisez-la (« Libérer et appairer », plus bas), puis touchez « Refaire
+                    l’appairage » pendant que son écran d’association est affiché.
+                  </p>
+                )}
+                {assoc.code === 'pending' && <p className="my-device-meta">« Synchroniser la montre » termine l’association côté montre.</p>}
+              </div>
+            )}
+            {report.finishedAt && <p className="my-device-meta">Dernière connexion : {formatAgo(report.finishedAt)}.</p>}
+          </div>
+        )}
+        {(code === 'key_rejected' || code === 'pin_failed' || code === 'connected') && !running && (
+          <div className="my-device-actions">
+            <button type="button" className="btn btn-secondary connector-btn" onClick={() => start(true)} disabled={!secrets}>
+              Refaire l’appairage
+            </button>
+          </div>
+        )}
+        {children}
+      </details>
     </div>
   )
 }

@@ -69,7 +69,7 @@ describe('WatchDiagnostic', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Tester la connexion directe' })).not.toBeDisabled())
   })
 
-  it('une seule carte : connexion en tête, dépannage replié une fois connectée, un journal commun exporté', async () => {
+  it('une seule carte : état + « Synchroniser » en tête, tout le reste replié sous « Diagnostic », un journal commun exporté', async () => {
     const connected = {
       startedAt: '2026-10-14T07:30:00.000Z',
       finishedAt: '2026-10-14T07:30:09.000Z',
@@ -78,11 +78,19 @@ describe('WatchDiagnostic', () => {
     }
     localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify(connected))
     localStorage.setItem('healthtrack_watch_diagnostic_last', JSON.stringify(REPORT))
+    localStorage.setItem('healthtrack_watch_autosync', JSON.stringify({ at: new Date().toISOString(), outcome: 'connected', inserted: 7, battery: 84, failures: 0, everConnected: true }))
     const save = vi.fn(async () => 'ok')
     const { container } = render(<WatchDiagnostic available run={vi.fn()} save={save} copy={vi.fn()} setup={null} connect={vi.fn()} />)
     expect(screen.getAllByRole('heading')).toHaveLength(1)
-    expect(screen.getByText('Montre connectée à HealthTrack')).toBeInTheDocument()
-    expect(container.querySelector('details.watch-trouble').open).toBe(false)
+    expect(screen.getByText(/batterie 84 % · synchro .* · 7 nouvelles mesures/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Synchroniser la montre' })).toBeInTheDocument()
+    // plus de bandeau « Montre connectée » : le titre du résultat n'est montré qu'en cas d'échec
+    expect(screen.queryByText('Montre connectée à HealthTrack')).toBeNull()
+    const diag = container.querySelector('details.watch-trouble')
+    expect(diag.open).toBe(false)
+    expect(diag.querySelector('summary').textContent).toBe('Diagnostic')
+    for (const name of ['Enregistrer le journal', 'Refaire l’appairage', 'Relancer le test']) expect(diag.contains(screen.getByRole('button', { name }))).toBe(true)
+    expect(container.querySelectorAll('details.watch-trouble')).toHaveLength(1)
     expect(screen.getAllByRole('button', { name: 'Enregistrer le journal' })).toHaveLength(1)
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le journal' }))
     await waitFor(() => expect(save).toHaveBeenCalled())

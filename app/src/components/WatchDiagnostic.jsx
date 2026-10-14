@@ -1,8 +1,8 @@
 /**
- * « Montre Huawei » (page Connecteurs) : la seule carte de la montre (chantier D3). En tête, la
- * connexion et la synchro (WatchConnect) ; un seul journal exportable réunit la dernière connexion
- * et le dernier test ; repliés sous « Dépannage », le test de connexion directe (étape a, rien
- * n'est modifié sur la montre) et l'assistant « Libérer et appairer » (WatchSetup).
+ * « Montre Huawei » (page Connecteurs) : la seule carte de la montre (chantier D3). Par défaut, l'état
+ * et « Synchroniser la montre » (WatchConnect). Repliés sous « Diagnostic » : les étapes de la
+ * connexion, un seul journal exportable (dernière connexion + dernier test), le test de connexion
+ * directe (étape a, rien n'est modifié sur la montre) et l'assistant « Libérer et appairer » (WatchSetup).
  * Logique dans src/devices/huawei/diagnostic.js, pairing.js et setup.js.
  */
 import { useState } from 'react'
@@ -120,21 +120,32 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
 
   const steps = report?.steps || STEPS.map((s) => ({ ...s, status: 'pending' }))
   const showConnect = available && Boolean(connectFn)
-  // tant que la montre n'a jamais été connectée, le dépannage (test, libération, appairage) est déplié
-  const troubleOpen = !showConnect || connectReport?.outcome?.code !== 'connected'
+
+  const exportBlock = (journal.connect || journal.diagnostic) && (
+    <div className="watch-journal">
+      <div className="my-device-actions">
+        <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith(save)}>
+          Enregistrer le journal
+        </button>
+        <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith((json) => copy(json))}>
+          Copier le journal
+        </button>
+      </div>
+      <p className="my-device-meta">Sans clé, sans PIN ni adresse Bluetooth complète.</p>
+    </div>
+  )
 
   const test = (
     <>
-      <p className="my-devices-intro">
-        Le test vérifie chaque étape de la connexion directe <strong>sans rien modifier sur la montre</strong> (ni appairage, ni
-        réinitialisation).
-      </p>
       {!available ? (
-        <p className="my-devices-intro">Dans l’app Android, un bouton lance le test, montre allumée près du téléphone.</p>
+        <p className="my-devices-intro">Dans l’app Android, un bouton teste la connexion directe, montre allumée près du téléphone.</p>
       ) : (
-        <button type="button" className="btn btn-secondary connector-btn" onClick={start} disabled={running}>
-          {running ? 'Test en cours…' : report ? 'Relancer le test' : 'Tester la connexion directe'}
-        </button>
+        <>
+          <p className="my-device-meta">Le test vérifie chaque étape sans rien modifier sur la montre.</p>
+          <button type="button" className="btn btn-secondary connector-btn" onClick={start} disabled={running}>
+            {running ? 'Test en cours…' : report ? 'Relancer le test' : 'Tester la connexion directe'}
+          </button>
+        </>
       )}
       {report && (
         <div className="watch-diag-report" aria-live="polite">
@@ -172,33 +183,18 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
   return (
     <section className="my-devices watch-diag" aria-labelledby="watch-diag-title">
       <h3 id="watch-diag-title" className="my-devices-title">Montre Huawei</h3>
-      {showConnect && <WatchConnect connect={connectFn} onReport={setConnectReport} />}
-
-      {(journal.connect || journal.diagnostic) && (
-        <div className="watch-journal">
-          <p className="my-device-meta">
-            Journal de la montre ({[journal.connect && 'dernière connexion', journal.diagnostic && 'dernier test'].filter(Boolean).join(' + ')}) : sans
-            clé, sans PIN ni adresse Bluetooth complète.
-          </p>
-          <div className="my-device-actions">
-            <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith(save)}>
-              Enregistrer le journal
-            </button>
-            <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith((json) => copy(json))}>
-              Copier le journal
-            </button>
-          </div>
-        </div>
-      )}
-      {message && <p className="my-device-message">{message}</p>}
-
       {showConnect ? (
-        <details className="watch-trouble" open={troubleOpen}>
-          <summary>Dépannage : tester, libérer et appairer la montre</summary>
+        <WatchConnect connect={connectFn} onReport={setConnectReport}>
+          {exportBlock}
+          {message && <p className="my-device-message">{message}</p>}
           {test}
-        </details>
+        </WatchConnect>
       ) : (
-        test
+        <>
+          {test}
+          {exportBlock}
+          {message && <p className="my-device-message">{message}</p>}
+        </>
       )}
     </section>
   )

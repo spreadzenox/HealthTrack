@@ -269,7 +269,7 @@ async function main() {
         localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: '00', v2: '00', v3: '00' }))
         localStorage.setItem(
           'healthtrack_watch_autosync',
-          JSON.stringify({ at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: 9, failures: 0, everConnected: true }),
+          JSON.stringify({ at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: 9, battery: 84, failures: 0, everConnected: true }),
         )
         localStorage.setItem(
           'healthtrack_watch_connect_last',
@@ -287,7 +287,7 @@ async function main() {
               step('sync', 'Lecture des mesures', 'ok', '1 248 minutes, 2 nuits → 214 mesures'),
             ],
             sync: { label: '1 248 minutes, 2 nuits → 214 mesures', inserted: 214 },
-            association: { deviceStatus: 1, sentSetupStatus: true, accepted: 11, refused: 0, steps: [], freshData: false, userSaw: null },
+            association: { deviceStatus: 1, sentSetupStatus: true, accepted: 11, refused: 0, steps: [], freshData: false, userSaw: 'watchface' },
             outcome: { code: 'connected', title: 'Montre appairée à HealthTrack' },
             log: [],
           }),

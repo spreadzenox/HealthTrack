@@ -695,8 +695,39 @@ Heure (1/5) → capacités (1/0x02, 1/0x03, 1/0x31, 1/0x37 ; chaque échec est t
 puis 0x0D) → minutes (0x0A puis 0x0B) → totaux (0x03) → séances (0x17/0x07 puis 0x08 par séance) → sommeil détaillé
 (0x2C, dictionnaire 700013, depuis la dernière synchro moins un jour). Une nuit détaillée **remplace** les périodes
 simples (léger / profond) de la même nuit, déjà écrites ou non. Les lectures facultatives ne sont tentées que si les
-capacités ne disent pas « non » (capacités illisibles = on essaie, et un échec ne bloque pas le reste). Depuis la dernière synchro moins
-une heure de recouvrement (7 jours la première fois) ; les doublons sont écartés à l'écriture.
+capacités ne disent pas « non » (capacités illisibles = on essaie, et un échec ne bloque pas le reste). Fenêtre (depuis le 14/10 12:30) :
+**première synchro depuis le 1/1/2000** (la montre rend ce qu'elle garde), ensuite depuis la **dernière synchro qui a
+reçu des données** moins **6 h** de recouvrement, 30 jours au plus, jusqu'à l'heure pleine ; les doublons sont écartés
+à l'écriture. Les **totaux du jour** (7/0x03) sont écrits comme « total du jour » et remplacés à chaque synchro (§7.9).
+
+### 7.9 Messages spontanés de la montre et fenêtre de synchro (run du 14/10 12:30, journal v124)
+Lecture de [G] master `75337cf73a` (14/10/2026), lecture seule, faits seulement rapportés par un agent de recherche.
+
+| Message | Rôle | Réponse de [G] | Mesure ? |
+|---|---|---|---|
+| 0x37 (55)/0x01 | synchro de réglages « appareil uni » : 1 = paquet source, 2 = destination, 0x7F = code, 0x83 → 0x84 { 5 = numéro de réglage, 6 = action, 7 = données } (ex. objectifs) | aucune | non |
+| 55/0x02 | événement de synchro : 1 / 2 = paquets, 3 = événement, 4 = niveau, 5 = données | aucune | non |
+| 55/0x04 | dictionnaire de synchro (non décodé par [G]) | aucune | non |
+| 0x0F (15)/0x04 | demande de météo (0x7F = 100010) | erreur « météo désactivée » ou écho 100000 en clair | non |
+| 0x34 (52)/0x01 | message entre apps (P2P) : 1 = commande (1 ping, 2 données, 3 accusé), 2 = numéro, 3 / 4 = paquets… | accusé seulement pour les paquets connus | non |
+| 8/0x08 | réveils (commande inconnue de [G]) | aucune | non |
+| 0x1A (26)/0x05 | compte (réponse tardive à notre 0x1A/0x05) | aucune | non |
+| 0x1F (31)/0x01 | demande d'éphémérides GPS : 0x81 { 2 = opération, 3 = heure } | ignorée sans fichier | non |
+| 0x25 (37)/0x01 | appli musique ouverte sur la montre | accusé + infos du morceau | non |
+
+- 📖 **Aucun message spontané ne porte de mesure** : [G] ne reçoit ni FC ni pas « en direct ». 7/0x1C (FC en temps réel)
+  est un **réglage** (1 = booléen), pas un flux. Le seul flux est l'intervalle RR de la calibration du stress
+  (0x19/0x01 début `1 = 3`, fin `1 = 4` ; données 0x19/0x05 : 0x82 → 0x83 { 4 = RR (2 octets), 5 = qualité, 0 = à jeter }).
+  Stress, TruSleep, ECG : par fichiers. HealthTrack ne répond à aucun de ces messages (rien n'en dépend) et les nomme
+  dans le journal (`pairing.js`, `SPONTANEOUS`).
+- 📖 **Sommeil simple (7/0x0D)** : [G] ne connaît que 6 = léger, 7 = profond ; il **garde** les autres types comme
+  « inconnu ». HealthTrack les écarte de l'historique mais note les types bruts dans le journal (« types 6×3, 9×1 »).
+- 📖 **Totaux 7/0x03** : un conteneur 0x83 par type ou source, additionnés ; 5 = pas, 6 = calories, 7 = distance ;
+  rien d'autre. 🩺 GT 6 Pro : 603 pas, 20 kcal, 529 m à 10:22 UTC.
+- 📖 **Fenêtre** : [G] lit de la dernière mesure stockée jusqu'à **maintenant** ; la première fois depuis
+  946 684 800 (1/1/2000). 🩺 Le défaut v124 (fenêtre 10:00 → 10:00) venait de HealthTrack (§7.7 mis à jour).
+- 📖 **Tranches** : drapeau 1 / 2 / 3 + compteur (ignoré à la réception), service et commande dans la 1re seulement,
+  taille d'envoi par défaut 0xF4. 🩺 Les « ? » du journal v124 étaient des morceaux RFCOMM (trames collées / coupées).
 
 ## 8. Contraintes d'appairage et « libération » de la montre
 

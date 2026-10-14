@@ -20,6 +20,7 @@ export function createSession(transport, { timeoutMs = 8000, onFrame = () => {},
   let cipher = null
   let closed = false
   let pending = Promise.resolve()
+  const early = []
 
   const fail = (err) => {
     for (const w of waiters.splice(0)) {
@@ -32,7 +33,9 @@ export function createSession(transport, { timeoutMs = 8000, onFrame = () => {},
     let message = m
     const enc = m.tlvs.find((t) => t.tag === TAG_ENCRYPTED)
     if (enc && enc.value[0] === 1) {
-      if (!cipher) return onMessage({ ...m, encrypted: true })
+      // chiffré avant que la clé de session soit posée (la montre parle juste après l'authentification) :
+      // gardé et relu dès setCipher, au lieu d'être perdu
+      if (!cipher) return void early.push(m)
       try {
         const raw = cipher.openBytes ? await cipher.openBytes(m.serviceId, m.commandId, m.tlvs) : null
         message = raw ? { ...m, raw, tlvs: tryDecodeTlvs(raw) } : { ...m, tlvs: await cipher.open(m.serviceId, m.commandId, m.tlvs) }
@@ -68,6 +71,7 @@ export function createSession(transport, { timeoutMs = 8000, onFrame = () => {},
     },
     setCipher(c) {
       cipher = c
+      for (const m of early.splice(0)) pending = pending.then(() => deliver(m))
     },
     setMaxFrameSize(n) {
       if (Number.isInteger(n) && n > 16) maxFrameSize = n

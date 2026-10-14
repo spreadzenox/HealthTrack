@@ -12,6 +12,11 @@ import {
   parseTotals,
   setTimeTlvs,
   syncWindow,
+  totalsEntries,
+  countEntryKinds,
+  RESUME_MAX_DAYS,
+  describeMinutes,
+  describeTypes,
   watchEntries,
   CAPABILITY_QUERY,
   canDo,
@@ -29,7 +34,7 @@ import { field, sleepSequenceFile } from './testing/sampleFiles'
 import { clearWatchNights } from '../../services/watchSync'
 import { connectAndAuthenticate, createKeyStore } from './pairing'
 import { createFakeWatch, TEST_SECRETS } from './testing/fakeWatch'
-import { createWatchSync, getWatchSyncState } from '../../services/watchSync'
+import { clearWatchDayTotals, createWatchSync, getWatchSyncState, SYNC_STATE_VERSION } from '../../services/watchSync'
 
 const hex = (s) => Uint8Array.from(s.trim().split(/\s+/), (h) => parseInt(h, 16))
 const be = (n, size) => Array.from({ length: size }, (_, i) => Math.floor(n / 2 ** (8 * (size - 1 - i))) & 0xff)
@@ -87,10 +92,12 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
       { type: 6, startSec: 1760308400, minutes: 0 },
     ])
     expect(parseSleepBlock(tlvs)).toEqual([
-      { start: 1760300000000, minutes: 95, stage: 'light' },
-      { start: 1760305700000, minutes: 40, stage: 'deep' },
-      { start: 1760308100000, minutes: 5, stage: 'unknown' },
+      { start: 1760300000000, minutes: 95, stage: 'light', type: 6 },
+      { start: 1760305700000, minutes: 40, stage: 'deep', type: 7 },
+      { start: 1760308100000, minutes: 5, stage: 'unknown', type: 9 },
     ])
+    expect(describeTypes(parseSleepBlock(tlvs))).toBe('6×1, 7×1, 9×1')
+    expect(describeMinutes([{ steps: 5, hr: 70 }, { hr: 71, spo2: 97 }, {}])).toBe('pas 1, FC 2, SpO₂ 1')
   })
 
   it('demandes : heure + fuseau, nombre de blocs (jamais avant 2000), numéro de bloc', () => {
@@ -146,12 +153,47 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
     expect(entries.map((e) => [e.payload.subtype, e.payload.bpm, e.at])).toEqual([['restingHeartRate', 57, new Date(day + 45_000).toISOString()]])
   })
 
-  it('fenêtre : 7 jours la première fois, puis depuis la fin de la précédente, jusqu’à l’heure pleine', () => {
+  it('fenêtre : depuis le 1/1/2000 la première fois, puis depuis la précédente moins 6 h (30 jours au plus), jusqu’à l’heure pleine', () => {
     const now = Date.UTC(2026, 9, 13, 2, 47)
     const first = syncWindow(null, now)
     expect(first.until).toBe(Date.UTC(2026, 9, 13, 2))
-    expect(first.until - first.since).toBe(7 * 24 * 3600_000)
-    expect(syncWindow(Date.UTC(2026, 9, 12, 20), now).since).toBe(Date.UTC(2026, 9, 12, 20))
+    expect(first.since).toBe(MIN_START_SEC * 1000)
+    expect(syncWindow(Date.UTC(2026, 9, 12, 20), now).since).toBe(Date.UTC(2026, 9, 12, 14))
+    expect(syncWindow(Date.UTC(2026, 6, 1), now).since).toBe(first.until - RESUME_MAX_DAYS * 24 * 3600_000)
+  })
+
+  it('journal v124 : resynchro dans la même heure → la fenêtre n’est plus vide (10:00 → 10:00 avant)', () => {
+    const now = Date.parse('2026-10-14T10:22:00Z')
+    const w = syncWindow(Date.parse('2026-10-14T10:00:00Z'), now)
+    expect(new Date(w.until).toISOString()).toBe('2026-10-14T10:00:00.000Z')
+    expect(new Date(w.since).toISOString()).toBe('2026-10-14T04:00:00.000Z')
+    expect(w.since).toBeLessThan(w.until)
+  })
+
+  it('totaux du jour (journal v124 : 603 pas, 20 kcal, 529 m) → entrées « total du jour » à minuit + 50 s', () => {
+    const now = Date.parse('2026-10-14T10:22:00Z')
+    const out = totalsEntries({ steps: 603, kcal: 20, distanceM: 529 }, now, { sourceName: 'HUAWEI WATCH GT 6 Pro-1A2' })
+    const midnight = new Date(now)
+    midnight.setHours(0, 0, 50, 0)
+    expect(out).toEqual([
+      { type: 'steps', source: WATCH_SOURCE, at: midnight.toISOString(), payload: expect.objectContaining({ value: 603, distanceM: 529, period: 'day', endDate: '2026-10-14T10:22:00.000Z', sourceName: 'HUAWEI WATCH GT 6 Pro-1A2' }) },
+      { type: 'calories', source: WATCH_SOURCE, at: midnight.toISOString(), payload: expect.objectContaining({ value: 20, unit: 'kcal', period: 'day' }) },
+    ])
+    expect(totalsEntries({ steps: 0, kcal: 0, distanceM: 0 }, now)).toEqual([])
+    expect(totalsEntries(null, now)).toEqual([])
+    expect(countEntryKinds(out)).toEqual({ steps_jour: 1, calories_jour: 1 })
+  })
+
+  it('le total du jour précédent est retiré avant d’écrire le nouveau (et seulement lui)', async () => {
+    const at = '2026-10-13T22:00:50.000Z'
+    const stored = [
+      { id: 1, type: 'steps', source: WATCH_SOURCE, at, payload: { value: 603, period: 'day' } },
+      { id: 2, type: 'steps', source: WATCH_SOURCE, at, payload: { value: 40 } },
+    ]
+    const removed = []
+    const n = await clearWatchDayTotals([{ type: 'steps', at }], { list: async () => stored, remove: async (id) => removed.push(id) })
+    expect(n).toBe(1)
+    expect(removed).toEqual([1])
   })
 })
 
@@ -184,16 +226,49 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.outcome.code).toBe('connected')
     expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'ok' })
     expect(report.sync).toMatchObject({ minutes: 3, nights: 1, totals: { steps: 5400, kcal: 0, distanceM: 0 } })
-    expect(report.sync.label).toMatch(/^3 minutes, 1 nuit → \d+ mesures$/)
+    expect(report.sync.label).toMatch(/^3 minutes, 1 nuit, 5\u202f400 pas aujourd'hui → \d+ mesures$/)
+    expect(report.sync.firstSync).toBe(true)
+    expect(report.sync.kinds).toMatchObject({ steps: 1, steps_jour: 1, heartRate: 2 })
     // tout ce qui suit l'authentification part chiffré
     expect(watch.seen.slice(watch.seen.indexOf('1/8*'))).toEqual([
       '1/8*', '1/5*', '1/2*', '1/3*', '1/49*',
       // fin d'association (§6.12)
       '1/7*', '26/5*', '1/48*', '1/62*', '1/61*', '1/53*', '7/2*', '7/14*', '1/50*', '12/1*', '1/4*', '7/23*', '7/36*',
       '7/12*', '7/13*', '7/10*', '7/11*', '7/11*', '7/3*', '23/7*', '44/1*', '44/6*'])
-    expect(written.filter((e) => e.type === 'steps').map((e) => e.payload.value)).toEqual([200])
+    expect(written.filter((e) => e.type === 'steps' && !e.payload.period).map((e) => e.payload.value)).toEqual([200])
     expect(written.filter((e) => e.type === 'sleep').map((e) => e.payload.sleepState)).toEqual(['light', 'deep'])
-    expect(getWatchSyncState('AA:BB', storage).until).toBe(Date.UTC(2026, 9, 13, 2))
+    expect(written.find((e) => e.payload.period === 'day')).toMatchObject({ type: 'steps', payload: { value: 5400 } })
+    expect(getWatchSyncState('AA:BB', storage)).toMatchObject({ v: SYNC_STATE_VERSION, until: Date.UTC(2026, 9, 13, 2) })
+  })
+
+  it('journal v124 : état ancien (sans version, fenêtre vide) → première synchro ; une synchro sans rien ne fait pas avancer la reprise', async () => {
+    const now = Date.parse('2026-10-14T10:22:00Z')
+    const storage = memoryStorage()
+    storage.setItem('healthtrack_watch_sync', JSON.stringify({ W: { until: Date.parse('2026-10-14T10:00:00Z'), inserted: 0 } }))
+    const logs = []
+    const asked = []
+    const session = {
+      request: async (service, command, tlvs) => {
+        asked.push(`${service}/${command}`)
+        if (command === 0x0a || command === 0x0c) {
+          asked.push(`début ${new Date(tlvs.find((t) => t.tag === 3) && parseInt(tlvs.find((t) => t.tag === 3).value.map((b) => b.toString(16).padStart(2, '0')).join(''), 16) * 1000).toISOString()}`)
+          return { tlvs: [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, 0] }]) }] }
+        }
+        if (command === 0x03) return { tlvs: [{ tag: 0x81, value: encodeTlvs([{ tag: 0x83, value: encodeTlvs([{ tag: 5, value: be(603, 2) }, { tag: 6, value: [20] }, { tag: 7, value: be(529, 2) }]) }]) }] }
+        throw new Error('non pris en charge')
+      },
+    }
+    const written = []
+    const sync = createWatchSync({ watchKey: 'W', storage, now: () => now, write: async (e) => (written.push(...e), { inserted: e.length }), clearTotals: async () => 0 })
+    const out = await sync(session, { log: (m) => logs.push(m), caps: { services: new Map([[0x17, false], [0x2c, false]]), commands: null } })
+    expect(out.firstSync).toBe(true)
+    expect(out.since).toBe('2000-01-01T00:00:00.000Z')
+    expect(asked).toContain('début 2000-01-01T00:00:00.000Z')
+    expect(out.totals).toEqual({ steps: 603, kcal: 20, distanceM: 529 })
+    expect(written.map((e) => [e.type, e.payload.value, e.payload.period])).toEqual([['steps', 603, 'day'], ['calories', 20, 'day']])
+    // rien d'autre reçu : la reprise reste « première synchro »
+    expect(getWatchSyncState('W', storage)).toMatchObject({ v: SYNC_STATE_VERSION, until: null })
+    expect(logs.some((m) => /première synchro/.test(m))).toBe(true)
   })
 
   it('montre qui ne répond pas aux mesures : connexion gardée, étape « Lecture des mesures » en avertissement', async () => {

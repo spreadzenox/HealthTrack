@@ -121,7 +121,7 @@ export function parseMinuteBlock(tlvs) {
   return out
 }
 
-/** Réponse 7/0x0D → [{ start (ms), minutes, stage: 'light' | 'deep' | 'unknown' }]. */
+/** Réponse 7/0x0D → [{ start (ms), minutes, stage: 'light' | 'deep' | 'unknown', type }] (type brut gardé pour le journal). */
 export function parseSleepBlock(tlvs) {
   const out = []
   for (const item of inner(tlvs).filter((t) => t.tag === 0x83)) {
@@ -131,7 +131,7 @@ export function parseSleepBlock(tlvs) {
     if (!span || span.length < 6) continue
     const minutes = uint(span.slice(4, 6))
     if (minutes <= 0) continue
-    out.push({ start: uint(span.slice(0, 4)) * 1000, minutes, stage: SLEEP_STAGES[type] || 'unknown' })
+    out.push({ start: uint(span.slice(0, 4)) * 1000, minutes, stage: SLEEP_STAGES[type] || 'unknown', type })
   }
   return out
 }
@@ -303,6 +303,7 @@ async function readWorkouts(session, since, until, log) {
     try {
       const w = parseWorkoutTotals((await session.request(WORKOUT, WORKOUT_CMD.TOTALS, workoutTotalsTlvs(n))).tlvs)
       if (w && w.start >= since - DAY && w.start < until) out.push(w)
+      else log(`séance ${n} hors période ou incomplète`)
     } catch (e) {
       log(`séance ${n} non lue : ${e?.message || e}`, 'warn')
     }
@@ -409,6 +410,20 @@ async function readBlocks(session, countCmd, dataCmd, since, until, parse, log, 
   return out
 }
 
+/** « 6×3, 7×1 » : types bruts des périodes de sommeil (seuls 6 et 7 sont connus, §7.3). */
+export const describeTypes = (periods) =>
+  Object.entries(periods.reduce((acc, p) => ({ ...acc, [p.type]: (acc[p.type] || 0) + 1 }), {}))
+    .map(([t, n]) => `${t}×${n}`)
+    .join(', ')
+
+/** « pas 120, FC 45, SpO₂ 3 » : nombre de minutes portant chaque mesure. */
+export function describeMinutes(minutes) {
+  const labels = { steps: 'pas', kcal: 'kcal', distanceM: 'distance', hr: 'FC', spo2: 'SpO₂', restingHr: 'FC repos' }
+  const n = {}
+  for (const m of minutes) for (const k of Object.keys(labels)) if (m[k]) n[k] = (n[k] || 0) + 1
+  return Object.entries(n).map(([k, c]) => `${labels[k]} ${c}`).join(', ') || 'aucune mesure'
+}
+
 /**
  * Déroule la synchro sur une session authentifiée. Ne garde que [since, until).
  * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], capabilities: string }>}
@@ -418,12 +433,12 @@ export async function readWatchData(session, { since, until, now = until, log = 
   if (!knownCaps) await setWatchTime(session, now, tzOffsetMinutes, log)
   const caps = knownCaps || (await readCapabilities(session, log))
   log(`capacités : ${describeCapabilities(caps)}`)
-  const sleep = (await readBlocks(session, FIT.SLEEP_COUNT, FIT.SLEEP_DATA, since, until, parseSleepBlock, log, 'sommeil')).filter(
-    (p) => p.start >= since - DAY && p.start < until,
-  )
-  const minutes = (await readBlocks(session, FIT.MINUTE_COUNT, FIT.MINUTE_DATA, since, until, parseMinuteBlock, log, 'minutes')).filter(
-    (m) => m.t >= since && m.t < until,
-  )
+  const sleepAll = await readBlocks(session, FIT.SLEEP_COUNT, FIT.SLEEP_DATA, since, until, parseSleepBlock, log, 'sommeil')
+  const sleep = sleepAll.filter((p) => p.start >= since - DAY && p.start < until)
+  if (sleepAll.length) log(`sommeil : ${sleepAll.length} période${sleepAll.length > 1 ? 's' : ''} (types ${describeTypes(sleepAll)}), ${sleep.length} dans la période`)
+  const minutesAll = await readBlocks(session, FIT.MINUTE_COUNT, FIT.MINUTE_DATA, since, until, parseMinuteBlock, log, 'minutes')
+  const minutes = minutesAll.filter((m) => m.t >= since && m.t < until)
+  if (minutesAll.length) log(`minutes : ${minutesAll.length} reçues, ${minutes.length} dans la période (${describeMinutes(minutes)})`)
   let totals = null
   try {
     totals = parseTotals((await session.request(FITNESS, FIT.TOTALS, [{ tag: 1 }])).tlvs)
@@ -455,9 +470,43 @@ export async function readWatchData(session, { since, until, now = until, log = 
   return { minutes, sleep, totals, workouts, nights, capabilities: describeCapabilities(caps) }
 }
 
-/** Période à relire : depuis la dernière synchro (7 jours la première fois), jusqu'à l'heure pleine. */
-export function syncWindow(lastUntil, nowMs, { firstDays = 7 } = {}) {
+/** Reprise après une longue absence : jamais plus de 30 jours relus. */
+export const RESUME_MAX_DAYS = 30
+/** Recouvrement relu à chaque synchro (doublons écartés à l'écriture) : la fenêtre n'est jamais vide. */
+export const SYNC_OVERLAP_MS = 6 * HOUR
+
+/**
+ * Période à relire, jusqu'à l'heure pleine. Première synchro : depuis le 1/1/2000 (§7.2), la montre
+ * rend tout ce qu'elle a encore. Ensuite : depuis la dernière synchro réussie moins 6 h de recouvrement
+ * (une synchro relancée dans la même heure relit donc quand même les dernières heures), 30 jours au plus.
+ */
+export function syncWindow(lastUntil, nowMs, { maxDays = RESUME_MAX_DAYS, overlapMs = SYNC_OVERLAP_MS } = {}) {
   const until = floorTo(nowMs, HOUR)
-  const since = lastUntil ? Math.min(lastUntil, until) : until - firstDays * DAY
-  return { since, until }
+  if (!lastUntil) return { since: MIN_START_SEC * 1000, until }
+  return { since: Math.max(until - maxDays * DAY, Math.min(lastUntil, until) - overlapMs), until }
+}
+
+/**
+ * Totaux du jour (7/0x03, de minuit à maintenant) → entrées « total du jour » (`period: 'day'`), à minuit
+ * local + 50 s (aucune tranche horaire n'y tombe). Le journal garde le plus grand entre ce total et la
+ * somme des tranches horaires : rien n'est compté deux fois. Une synchro suivante remplace ces entrées.
+ */
+export function totalsEntries(totals, nowMs, { sourceName = 'Montre Huawei' } = {}) {
+  if (!totals) return []
+  const base = { connector: WATCH_SOURCE, sourceName, period: 'day', endDate: iso(nowMs) }
+  const at = iso(localDayStart(nowMs) + 50_000)
+  const out = []
+  if (totals.steps > 0) out.push({ type: 'steps', source: WATCH_SOURCE, at, payload: { value: totals.steps, unit: 'count', ...(totals.distanceM > 0 ? { distanceM: totals.distanceM } : {}), ...base } })
+  if (totals.kcal > 0) out.push({ type: 'calories', source: WATCH_SOURCE, at, payload: { value: totals.kcal, unit: 'kcal', ...base } })
+  return out
+}
+
+/** Nombre d'entrées par genre (journal de diagnostic : ce qui a vraiment été écrit). */
+export function countEntryKinds(entries) {
+  const out = {}
+  for (const e of entries) {
+    const k = e.payload?.period === 'day' ? `${e.type}_jour` : e.payload?.subtype || e.type
+    out[k] = (out[k] || 0) + 1
+  }
+  return out
 }
