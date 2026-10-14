@@ -7,7 +7,7 @@
  * sans appairage ni authentification) : le diagnostic ne peut pas casser la liaison existante.
  * Le rapport ne contient jamais l'adresse MAC complète (seulement ses 2 derniers octets).
  */
-import { buildFingerprint, findWearableVendor, uuid16 } from '../ble/drivers'
+import { buildFingerprint, isHuaweiLinkDevice, uuid16 } from '../ble/drivers'
 import { bleTransport, classicTransport, HUAWEI_RFCOMM_UUID, HONOR_RFCOMM_UUID } from './transports'
 import {
   HUAWEI_SERVICE,
@@ -50,12 +50,8 @@ export function redactDeviceId(id) {
   return s.length > 4 ? `…${s.slice(-4)}` : s
 }
 
-const isHuaweiService = (fp) => fp.services.includes('fe86')
-
-/** Une annonce ou un appareil appairé ressemble-t-il à une montre / un bracelet Huawei ou Honor ? */
-export function isHuaweiWearable(fp) {
-  return findWearableVendor(fp)?.id === 'huawei' || isHuaweiService(fp) || (fp.companyIds.includes(0x027d) && /watch|band/i.test(fp.name))
-}
+/** Une annonce ou un appareil appairé ressemble-t-il à une montre / un bracelet Huawei ou Honor ? (registre BLE) */
+export const isHuaweiWearable = isHuaweiLinkDevice
 
 /** Choix de la montre : vue en annonce d'abord (elle accepte une connexion), puis la plus proche, puis appairée. */
 export function pickWatch(candidates) {

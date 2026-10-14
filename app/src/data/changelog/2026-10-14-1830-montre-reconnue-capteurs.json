@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-14",
+  "kind": "amélioration",
+  "title": "Votre montre Huawei reconnue en « Connexion directe »",
+  "items": [
+    "Plus → Connecteurs → Capteurs Bluetooth : une montre ou un bracelet Huawei / Honor trouvé par la recherche s'affiche « Connexion directe » (HealthTrack lit lui-même ses pas, son cœur, sa SpO₂, son sommeil et ses séances) au lieu de « Via son app ».",
+    "Le bouton « Se connecter en direct » ouvre directement la carte « Montre Huawei », même si elle était repliée.",
+    "Une montre Huawei qui diffuse aussi sa fréquence cardiaque garde « Mesurer ma VFC (5 min) » en plus de ce bouton."
+  ]
+}

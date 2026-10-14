@@ -36,7 +36,7 @@ describe('scanDevices', () => {
     const list = await scanDevices({ durationMs: 0, client, onUpdate: (l) => updates.push(l.length) })
     expect(client.initialize).toHaveBeenCalledWith({ androidNeverForLocation: true })
     expect(list.map((d) => d.deviceId)).toEqual(['H', 'W', 'U'])
-    expect(list[1]).toMatchObject({ bonded: true, vendor: { id: 'huawei' } })
+    expect(list[1]).toMatchObject({ bonded: true, vendor: { id: 'huawei' }, driver: { id: 'huawei_link' }, direct: { id: 'huawei_link' } })
     expect(updates).toEqual([1, 2, 3])
     expect(client.stopLEScan).toHaveBeenCalled()
   })

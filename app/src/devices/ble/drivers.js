@@ -4,6 +4,9 @@
  * (identifiant d'entreprise, nom annoncé), jamais par liste de modèles.
  *
  * Registre ordonné : le pilote au meilleur score gagne. Pour ajouter un appareil : ajouter un pilote ici.
+ * Trois sortes de pilotes : `standard` (profil GATT du Bluetooth SIG), `family` (protocole propriétaire partagé
+ * par toute une gamme, que HealthTrack parle lui-même : connexion directe), `vendor` (montre reconnue dont les
+ * données passent encore par son app officielle).
  */
 
 const BASE_UUID_SUFFIX = '-0000-1000-8000-00805f9b34fb'
@@ -81,6 +84,21 @@ export function findWearableVendor(fp) {
   return company?.wearableOnly ? company : null
 }
 
+const HUAWEI_COMPANY_ID = 0x027d
+
+/**
+ * Montre ou bracelet Huawei / Honor (famille « Huawei Link », spec journal/protocoles/huawei.md) : nom de montre,
+ * service propriétaire FE86 (BLE), ou identifiant Huawei avec « watch » / « band » dans le nom.
+ * Jamais un téléphone ou des écouteurs de la marque.
+ */
+export function isHuaweiLinkDevice(fp) {
+  return (
+    findWearableVendor(fp)?.id === 'huawei' ||
+    fp.services.includes('fe86') ||
+    (fp.companyIds.includes(HUAWEI_COMPANY_ID) && /watch|band/i.test(fp.name))
+  )
+}
+
 const hasService = (fp, n) => fp.services.includes(n.toString(16).padStart(4, '0'))
 
 /** Pilote d'un profil standard : reconnu par son service GATT, quel que soit le fabricant. */
@@ -92,8 +110,10 @@ function standardDriver(id, service, label, measures, { mode = null, howTo = nul
  * `supported` : HealthTrack sait déjà lire ses mesures. Les autres sont reconnus et annoncés (étape suivante).
  * `mode` : `live` = mesure en direct (cardio), `receive` = l'appareil envoie ses mesures une fois prises
  * (lecteurs dans ./measurements.js) ; `howTo` : le geste à faire pendant l'attente.
- * Les montres propriétaires ne sont jamais connectées directement : elles sont appairées à leur app
- * officielle (une seule app à la fois), leurs données passent par cette app → Health Connect.
+ * `mode: 'direct'` (famille de protocole) : HealthTrack parle lui-même à la montre ; `transports` = liaisons
+ * possibles (RFCOMM = Bluetooth classique, ble = GATT), `cardId` = carte de connexion dans Connecteurs.
+ * Les autres montres propriétaires restent appairées à leur app officielle (une seule app à la fois) : leurs
+ * données passent par cette app → Health Connect.
  */
 export const DRIVERS = [
   standardDriver('ble_heart_rate', 0x180d, 'Capteur cardio', 'fréquence cardiaque et VFC', { mode: 'live' }),
@@ -108,6 +128,18 @@ export const DRIVERS = [
   standardDriver('ble_running_speed', 0x1814, 'Capteur de foulée', 'vitesse et cadence de course'),
   standardDriver('ble_fitness_machine', 0x1826, 'Appareil de fitness', 'séances (tapis, vélo, rameur)'),
   {
+    id: 'huawei_link',
+    kind: 'family',
+    label: 'Montre Huawei / Honor',
+    measures: 'pas, cœur, SpO₂, sommeil et séances',
+    supported: true,
+    mode: 'direct',
+    transports: ['rfcomm', 'ble'],
+    cardId: 'watch-diag-title',
+    // sous un profil standard (une montre qui diffuse sa FC reste d'abord un capteur cardio), au-dessus de « via son app »
+    match: (fp) => (isHuaweiLinkDevice(fp) ? 60 : 0),
+  },
+  {
     id: 'vendor_watch',
     kind: 'vendor',
     label: 'Montre ou bracelet',
@@ -119,7 +151,11 @@ export const DRIVERS = [
 
 const UNKNOWN = { id: 'unknown', kind: 'unknown', label: 'Appareil non reconnu', measures: null, supported: false }
 
-/** @returns {{ driver: object, vendor: object|null, score: number }} */
+/**
+ * `driver` : le pilote au meilleur score ; `direct` : la famille de protocole qui sait aussi s'y connecter
+ * en direct (même quand un profil standard l'emporte), sinon null.
+ * @returns {{ driver: object, vendor: object|null, score: number, direct: object|null }}
+ */
 export function identifyDevice(fp) {
   const vendor = findVendor(fp)
   let best = null
@@ -131,5 +167,6 @@ export function identifyDevice(fp) {
       bestScore = score
     }
   }
-  return { driver: best || UNKNOWN, vendor, score: bestScore }
+  const direct = DRIVERS.find((d) => d.mode === 'direct' && d.match(fp) > 0) || null
+  return { driver: best || UNKNOWN, vendor, score: bestScore, direct }
 }

@@ -525,6 +525,8 @@ async function main() {
           await page.evaluate((sel) => document.querySelector(sel)?.scrollIntoView({ block: 'start' }), args.connect ? '.watch-connect' : args.setup ? '.watch-setup' : '.watch-diag')
           await page.waitForTimeout(300)
         } else if (args.ble) {
+          // « Capteurs Bluetooth » vit sous « Brancher une autre source », replié quand une source envoie déjà
+          await page.evaluate(() => document.querySelectorAll('details.connectors-more').forEach((d) => (d.open = true)))
           await page.getByRole('button', { name: 'Rechercher autour de moi' }).click()
           await page.waitForTimeout(700)
           if (args.ble === 'measure') {

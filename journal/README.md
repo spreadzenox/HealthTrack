@@ -72,8 +72,17 @@ radar, cœur et horaires de sommeil dans un seul bloc « Votre forme ».
 Le run de 16:30 (toujours pas de nouveau journal montre) a repris la performance : **la page Nutrition s'ouvre ≈ 4×
 plus vite** (1,25 s → 0,27 s sur 3 ans de données) et **l'enregistrement d'une synchro** (montre, Health Connect…)
 ne relit plus toute la base (≈ 10× plus rapide), ce qui compte pour la première synchro complète de votre montre.
+Le run de 18:30 (toujours pas de nouveau journal montre) a rangé la montre dans le **registre générique des
+appareils**, comme le demande la priorité absolue : la famille de protocole « Huawei Link » y est un pilote à part
+entière (transports classique et BLE, ce qu'il lit, sa carte). Visible pour vous : dans **Capteurs Bluetooth**, votre
+GT 6 Pro apparaît « Connexion directe » avec un bouton qui ouvre la carte de la montre, au lieu de « Via son app ».
+**Toujours la même demande : « Synchroniser la montre », puis regarder si des mesures arrivent ; sinon Diagnostic →
+« Enregistrer le journal ».**
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Votre montre Huawei reconnue en « Connexion directe » (run 14/10 18:30)** : Plus → Connecteurs → Capteurs
+  Bluetooth, une montre ou un bracelet Huawei / Honor trouvé par la recherche n'est plus présenté « Via son app » mais
+  « Connexion directe », avec « Se connecter en direct » qui ouvre la carte « Montre Huawei » (même repliée).
 - **Nutrition plus rapide, synchros plus légères (run 14/10 16:30)** : la page Nutrition ne lit plus que vos repas
   récents, vos pas des 14 derniers jours et vos mesures corporelles (5 lectures ciblées au lieu de 28, 756
   enregistrements au lieu de ≈ 15 000) ; chaque synchro ne compare ses mesures qu'à celles de la même source et de
@@ -448,7 +457,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 10:30 — [Montre : fin d'association côté montre + une seule carte](runs/2026-10-14-1030-montre-association.md) | ⌚🧹 | PR #154 fusionnée → v124 |
 | 14/10 12:30 — [Montre : fenêtre de synchro, totaux du jour, carte simplifiée](runs/2026-10-14-1230-montre-mesures.md) | ⌚🧹 | PR #155 fusionnée → v125 |
 | 14/10 14:30 — [Nettoyage : Connecteurs par statut, bloc « Votre forme »](runs/2026-10-14-1430-nettoyage-connecteurs-forme.md) | 🧹 | PR #156 fusionnée → v126 |
-| 14/10 16:30 — [Performance : Nutrition et synchros par index](runs/2026-10-14-1630-perf-nutrition-upsert.md) | ⚡ | PR « [Auto] Performance : Nutrition et synchros lues par index » |
+| 14/10 16:30 — [Performance : Nutrition et synchros par index](runs/2026-10-14-1630-perf-nutrition-upsert.md) | ⚡ | PR #158 fusionnée → v127 |
+| 14/10 18:30 — [Montre : pilote « Huawei Link » dans le registre générique](runs/2026-10-14-1830-montre-registre-pilotes.md) | ⌚🏗️ | PR « [Auto] Montre : pilote Huawei dans le registre générique des appareils » |
 
 ---
 

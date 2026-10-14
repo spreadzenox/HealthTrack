@@ -9,6 +9,7 @@ const dev = (deviceId, f, extra = {}) => ({ deviceId, name: f.name, rssi: -60, b
 
 const H10 = dev('H', fp('Polar H10 1A2B3C4D', ['180d'], [107]))
 const WATCH = dev('W', fp('HUAWEI WATCH GT 6 Pro-A1B', [], [0x027d]), { bonded: true })
+const GALAXY = dev('S', fp('Galaxy Watch7 (A1B2)', [], [0x0075]))
 const BP = dev('B', fp('BP7000', ['1810']))
 const GLU = dev('G', fp('Meter', ['1808']))
 const UNK = dev('U', fp('Mystery', [], [4660]))
@@ -22,8 +23,8 @@ describe('BleDevices', () => {
 
   it('liste les appareils trouvés avec ce que HealthTrack en fait', async () => {
     const scan = vi.fn(async ({ onUpdate }) => {
-      onUpdate([H10, BP, WATCH, GLU, UNK])
-      return [H10, BP, WATCH, GLU, UNK]
+      onUpdate([H10, BP, WATCH, GALAXY, GLU, UNK])
+      return [H10, BP, WATCH, GALAXY, GLU, UNK]
     })
     render(
       <>
@@ -34,20 +35,45 @@ describe('BleDevices', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Rechercher autour de moi' }))
     expect(await screen.findByText('Polar H10 1A2B3C4D')).toBeInTheDocument()
     expect(screen.getAllByText('Compatible')).toHaveLength(2)
+    // montre Huawei : connexion directe, sans son app
+    expect(screen.getByText('Connexion directe')).toBeInTheDocument()
+    expect(screen.getByText(/HealthTrack se connecte directement à elle/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Mesurer ma VFC/ })).toBeInTheDocument()
     // appareil de mesure standard : réception directe
     expect(screen.getByRole('button', { name: 'Recevoir la mesure' })).toBeInTheDocument()
-    // montre propriétaire → son app + guide
-    expect(screen.getByText('Via son app')).toBeInTheDocument()
     expect(screen.getByText(/Appairée à ce téléphone/)).toBeInTheDocument()
+    // montre d'une autre marque → son app + guide
+    expect(screen.getByText('Via son app')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Voir le guide' }))
-    expect(document.getElementById('guide-huawei').open).toBe(true)
+    expect(document.getElementById('guide-samsung').open).toBe(true)
     // profil standard reconnu, pas encore lu
     expect(screen.getByText('Bientôt')).toBeInTheDocument()
     expect(screen.getByText(/Lecteur de glycémie reconnu/)).toBeInTheDocument()
     // inconnus regroupés
     expect(screen.getByText(/1 autre appareil non reconnu/)).toBeInTheDocument()
     expect(screen.queryByText('Mystery')).toBeNull()
+  })
+
+  it('« Se connecter en direct » ouvre la carte de la montre, même repliée', async () => {
+    const scan = async ({ onUpdate }) => {
+      onUpdate([WATCH])
+      return [WATCH]
+    }
+    render(
+      <>
+        <BleDevices available scan={scan} />
+        <details>
+          <summary>Brancher une autre source</summary>
+          <h3 id="watch-diag-title">Montre Huawei</h3>
+        </details>
+      </>,
+    )
+    const target = document.getElementById('watch-diag-title')
+    target.scrollIntoView = vi.fn()
+    fireEvent.click(screen.getByRole('button', { name: 'Rechercher autour de moi' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Se connecter en direct' }))
+    expect(target.closest('details').open).toBe(true)
+    expect(target.scrollIntoView).toHaveBeenCalled()
   })
 
   it('aucun appareil : conseils pour allumer le capteur', async () => {

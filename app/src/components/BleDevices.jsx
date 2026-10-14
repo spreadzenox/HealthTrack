@@ -29,6 +29,12 @@ function formatClock(ms) {
 
 function deviceView(d) {
   const { driver, vendor } = d
+  if (driver.mode === 'direct') {
+    return {
+      status: { label: 'Connexion directe', className: 'device-status-ok' },
+      message: `${driver.label} : HealthTrack se connecte directement à elle (${driver.measures}), sans l’app du fabricant.`,
+    }
+  }
   if (driver.supported) {
     return {
       status: { label: 'Compatible', className: 'device-status-ok' },
@@ -45,6 +51,15 @@ function deviceView(d) {
     status: { label: 'Via son app', className: 'device-status-action' },
     message: `Montre ${vendor.name} : elle reste reliée à son app officielle (une montre ne parle qu’à une app à la fois) ; ses données arrivent par Health Connect.`,
   }
+}
+
+/** Ouvre (et déplie au besoin) la carte de connexion directe d'une famille de protocole dans Connecteurs. */
+function openDirectCard(cardId) {
+  const el = document.getElementById(cardId)
+  if (!el) return
+  const details = el.closest('details')
+  if (details) details.open = true
+  el.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
 }
 
 /**
@@ -215,7 +230,7 @@ export default function BleDevices({
 
   const recognized = devices.filter((d) => d.driver.id !== 'unknown')
   const unknownCount = devices.length - recognized.length
-  const hasWatch = recognized.some((d) => d.driver.kind === 'vendor')
+  const hasWatch = recognized.some((d) => d.driver.kind === 'vendor' || d.driver.kind === 'family')
 
   return (
     <section className="my-devices ble-devices" aria-labelledby="ble-devices-title">
@@ -342,7 +357,7 @@ export default function BleDevices({
                     </div>
                     <p className="my-device-message">{v.message}</p>
                     {d.bonded && <p className="my-device-meta">Appairée à ce téléphone</p>}
-                    {(d.driver.supported || (d.driver.kind === 'vendor' && d.vendor?.guideId)) && (
+                    {(d.driver.supported || d.direct || (d.driver.kind === 'vendor' && d.vendor?.guideId)) && (
                       <div className="my-device-actions">
                         {d.driver.mode === 'live' && (
                           <button type="button" className="btn btn-primary connector-btn" onClick={() => measure(d)}>
@@ -352,6 +367,15 @@ export default function BleDevices({
                         {d.driver.mode === 'receive' && (
                           <button type="button" className="btn btn-primary connector-btn" onClick={() => receiveFrom(d)}>
                             Recevoir la mesure
+                          </button>
+                        )}
+                        {d.direct && (
+                          <button
+                            type="button"
+                            className={`btn ${d.driver.mode === 'direct' ? 'btn-primary' : 'btn-secondary'} connector-btn`}
+                            onClick={() => openDirectCard(d.direct.cardId)}
+                          >
+                            Se connecter en direct
                           </button>
                         )}
                         {d.driver.kind === 'vendor' && (
