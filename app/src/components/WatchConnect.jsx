@@ -1,5 +1,5 @@
 /**
- * « Connexion à la montre » (carte « Montre Huawei en direct », chantier D3 étapes c et d) : HealthTrack
+ * « Connexion à la montre » (cœur de la carte « Montre Huawei », chantier D3 étapes c et d) : HealthTrack
  * s'authentifie auprès de la montre (HiChain), garde la clé sur le téléphone, puis lit les mesures. Au premier appairage,
  * 3 constantes publiques (huawei-lpv2, MIT) sont nécessaires : téléchargées ou collées d'un geste,
  * gardées en local, jamais dans le code de l'app. Logique dans src/devices/huawei/pairing.js.
@@ -13,7 +13,7 @@ import { describeAutoSync, getWatchAutoSyncState } from '../services/watchAutoSy
 const LAST_KEY = 'healthtrack_watch_connect_last'
 const ICONS = { ok: '✓', warn: '!', fail: '✕', skip: '–', running: '…', pending: '·' }
 
-function loadLast() {
+export function loadLastConnect() {
   try {
     const v = JSON.parse(localStorage.getItem(LAST_KEY) || 'null')
     return v && Array.isArray(v.steps) ? v : null
@@ -29,11 +29,12 @@ async function defaultFetchSecrets() {
 }
 
 /**
- * @param {{ connect: Function, fetchSecrets?: Function, save: Function, copy: Function }} props
+ * @param {{ connect: Function, fetchSecrets?: Function, onReport?: Function }} props
  * `connect({ secrets, rebind, onUpdate })` → rapport (pairing.connectAndAuthenticate).
+ * `onReport(rapport)` : rapport final, pour l'export du journal commun de la carte (WatchDiagnostic).
  */
-export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, save, copy }) {
-  const [report, setReport] = useState(loadLast)
+export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, onReport = () => {} }) {
+  const [report, setReport] = useState(loadLastConnect)
   const [secrets, setSecrets] = useState(() => loadSecrets())
   const [running, setRunning] = useState(false)
   const [message, setMessage] = useState(null)
@@ -78,6 +79,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
     try {
       const final = await connect({ secrets, rebind, onUpdate: (r) => setReport(r) })
       setReport(final)
+      onReport(final)
       try {
         localStorage.setItem(LAST_KEY, JSON.stringify(final))
       } catch {
@@ -90,27 +92,16 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
     }
   }
 
-  const exportWith = async (fn) => {
-    const json = JSON.stringify(report, null, 2)
-    const filename = `healthtrack-connexion-montre-${(report.startedAt || new Date().toISOString()).slice(0, 16).replace(/[T:]/g, '-')}.json`
-    try {
-      setMessage(await fn(json, filename))
-    } catch (e) {
-      setMessage(`Export impossible : ${e?.message || e}`)
-    }
-  }
-
   const code = report?.outcome?.code
   const autoLine = describeAutoSync(auto, { formatAgo })
   const steps = report?.steps || CONNECT_STEPS.map((s) => ({ ...s, status: 'pending' }))
 
   return (
-    <div className="my-device watch-setup watch-connect" aria-labelledby="watch-connect-title">
-      <p id="watch-connect-title" className="watch-diag-watch">Connexion à la montre</p>
+    <div className="watch-connect" aria-label="Connexion à la montre">
       <p className="my-devices-intro">
-        Une fois la montre appairée, HealthTrack s’y connecte seule : elle obtient une clé que la montre ne donne qu’à une app à la fois,
-        et la garde <strong>sur ce téléphone uniquement</strong>. Chaque connexion lit ensuite les nouvelles mesures (pas, cœur, SpO₂,
-        sommeil avec ses phases, VFC de la nuit, séances), et HealthTrack resynchronise tout seul quand vous ouvrez l’app.
+        HealthTrack parle directement à votre montre, sans Huawei Santé ni Gadgetbridge. La clé que la montre lui remet reste{' '}
+        <strong>sur ce téléphone uniquement</strong> ; chaque connexion lit les nouvelles mesures (pas, cœur, SpO₂, sommeil, VFC de la
+        nuit, séances), et HealthTrack resynchronise tout seul quand vous ouvrez l’app.
       </p>
       {autoLine && <p className="my-device-meta watch-connect-auto">{autoLine}</p>}
 
@@ -177,17 +168,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
             </div>
           )}
           {report.finishedAt && (
-            <>
-              <p className="my-device-meta">Dernière connexion : {formatAgo(report.finishedAt)} · journal sans clé, sans PIN ni adresse complète.</p>
-              <div className="my-device-actions">
-                <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith(save)}>
-                  Enregistrer le journal
-                </button>
-                <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith((json) => copy(json))}>
-                  Copier le journal
-                </button>
-              </div>
-            </>
+            <p className="my-device-meta">Dernière connexion : {formatAgo(report.finishedAt)} · journal sans clé, sans PIN ni adresse complète.</p>
           )}
         </div>
       )}

@@ -1,8 +1,9 @@
 /**
- * « Montre Huawei en direct » (page Connecteurs) : diagnostic de la connexion directe à une montre
- * Huawei / Honor, sans Huawei Santé ni Gadgetbridge (chantier D3, étape a). Déroule chaque étape,
- * conclut, et exporte un journal (sans adresse MAC complète) à transmettre pour la suite.
- * Logique dans src/devices/huawei/diagnostic.js.
+ * « Montre Huawei » (page Connecteurs) : la seule carte de la montre (chantier D3). En tête, la
+ * connexion et la synchro (WatchConnect) ; un seul journal exportable réunit la dernière connexion
+ * et le dernier test ; repliés sous « Dépannage », le test de connexion directe (étape a, rien
+ * n'est modifié sur la montre) et l'assistant « Libérer et appairer » (WatchSetup).
+ * Logique dans src/devices/huawei/diagnostic.js, pairing.js et setup.js.
  */
 import { useState } from 'react'
 import { registerPlugin } from '@capacitor/core'
@@ -12,7 +13,7 @@ import { detectPhoneApps } from '../devices/phoneApps'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import { formatAgo } from '../utils/timeAgo'
 import WatchSetup from './WatchSetup'
-import WatchConnect from './WatchConnect'
+import WatchConnect, { loadLastConnect } from './WatchConnect'
 import { classicPlugin, connectBondedWatch } from '../services/watchAutoSync'
 import './WatchDiagnostic.css'
 
@@ -77,6 +78,15 @@ async function defaultCopy(text) {
   return 'Journal copié : collez-le dans un message.'
 }
 
+/** Journal commun de la carte : dernière connexion et dernier test, chacun tel quel (sans clé, PIN ni adresse complète). */
+export function watchJournal({ connect = null, diagnostic = null } = {}, now = new Date()) {
+  const latest = [connect?.startedAt, diagnostic?.startedAt].filter(Boolean).sort().pop() || now.toISOString()
+  return {
+    json: JSON.stringify({ format: 'healthtrack-watch-journal', version: 1, exportedAt: now.toISOString(), connect, diagnostic }, null, 2),
+    filename: `healthtrack-journal-montre-${latest.slice(0, 16).replace(/[T:]/g, '-')}.json`,
+  }
+}
+
 /**
  * @param {{ run?: Function, available?: boolean, save?: Function, copy?: Function, setup?: object|null }} props
  * `connect` : connexion authentifiée (pairing.js), null pour masquer « Connexion à la montre ».
@@ -86,6 +96,7 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
   const connectFn = connect === undefined ? (classicPlugin() ? defaultConnect : null) : connect
   const setupDeps = setup === undefined ? { detectApps: detectPhoneApps, classic: classicPlugin(), appManager: appManagerPlugin() } : setup
   const [report, setReport] = useState(loadLast)
+  const [connectReport, setConnectReport] = useState(loadLastConnect)
   const [running, setRunning] = useState(false)
   const [message, setMessage] = useState(null)
 
@@ -103,10 +114,10 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
     }
   }
 
+  const finished = (r) => (r?.finishedAt ? r : null)
+  const journal = { connect: finished(connectReport), diagnostic: finished(report) }
   const exportWith = async (fn) => {
-    if (!report) return
-    const json = JSON.stringify(report, null, 2)
-    const filename = `healthtrack-diagnostic-montre-${(report.startedAt || new Date().toISOString()).slice(0, 16).replace(/[T:]/g, '-')}.json`
+    const { json, filename } = watchJournal(journal)
     try {
       setMessage(await fn(json, filename))
     } catch (e) {
@@ -115,26 +126,25 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
   }
 
   const steps = report?.steps || STEPS.map((s) => ({ ...s, status: 'pending' }))
+  const showConnect = available && Boolean(connectFn)
+  // tant que la montre n'a jamais été connectée, le dépannage (test, libération, appairage) est déplié
+  const troubleOpen = !showConnect || connectReport?.outcome?.code !== 'connected'
 
-  return (
-    <section className="my-devices watch-diag" aria-labelledby="watch-diag-title">
-      <h3 id="watch-diag-title" className="my-devices-title">Montre Huawei en direct</h3>
+  const test = (
+    <>
       <p className="my-devices-intro">
-        HealthTrack apprend à parler directement à votre montre Huawei ou Honor, sans Huawei Santé ni Gadgetbridge. Ce test vérifie
-        chaque étape <strong>sans rien modifier sur la montre</strong> (ni appairage, ni réinitialisation), puis vous donne un journal à
-        me transmettre.
+        Le test vérifie chaque étape de la connexion directe <strong>sans rien modifier sur la montre</strong> (ni appairage, ni
+        réinitialisation).
       </p>
-
       {!available ? (
         <p className="my-devices-intro">Dans l’app Android, un bouton lance le test, montre allumée près du téléphone.</p>
       ) : (
-        <button type="button" className="btn btn-primary connector-btn" onClick={start} disabled={running}>
+        <button type="button" className="btn btn-secondary connector-btn" onClick={start} disabled={running}>
           {running ? 'Test en cours…' : report ? 'Relancer le test' : 'Tester la connexion directe'}
         </button>
       )}
-
       {report && (
-        <div className="my-device watch-diag-report" aria-live="polite">
+        <div className="watch-diag-report" aria-live="polite">
           {report.watch?.name && <p className="watch-diag-watch">{report.watch.name}</p>}
           <ol className="watch-diag-steps">
             {steps.map((s) => (
@@ -159,24 +169,44 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
               </ul>
             </div>
           )}
-          {report.finishedAt && (
-            <>
-              <p className="my-device-meta">Dernier test : {formatAgo(report.finishedAt)} · {report.log.length} lignes de journal, sans votre adresse Bluetooth complète.</p>
-              <div className="my-device-actions">
-                <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith(save)}>
-                  Enregistrer le journal
-                </button>
-                <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith((json) => copy(json))}>
-                  Copier le journal
-                </button>
-              </div>
-            </>
-          )}
+          {report.finishedAt && <p className="my-device-meta">Dernier test : {formatAgo(report.finishedAt)}.</p>}
+        </div>
+      )}
+      {available && setupDeps && <WatchSetup {...setupDeps} verdict={report?.verdict?.code || null} onRunTest={running ? undefined : start} />}
+    </>
+  )
+
+  return (
+    <section className="my-devices watch-diag" aria-labelledby="watch-diag-title">
+      <h3 id="watch-diag-title" className="my-devices-title">Montre Huawei</h3>
+      {showConnect && <WatchConnect connect={connectFn} onReport={setConnectReport} />}
+
+      {(journal.connect || journal.diagnostic) && (
+        <div className="watch-journal">
+          <p className="my-device-meta">
+            Journal de la montre ({[journal.connect && 'dernière connexion', journal.diagnostic && 'dernier test'].filter(Boolean).join(' + ')}) : sans
+            clé, sans PIN ni adresse Bluetooth complète.
+          </p>
+          <div className="my-device-actions">
+            <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith(save)}>
+              Enregistrer le journal
+            </button>
+            <button type="button" className="btn btn-secondary connector-btn" onClick={() => exportWith((json) => copy(json))}>
+              Copier le journal
+            </button>
+          </div>
         </div>
       )}
       {message && <p className="my-device-message">{message}</p>}
-      {available && setupDeps && <WatchSetup {...setupDeps} verdict={report?.verdict?.code || null} onRunTest={running ? undefined : start} />}
-      {available && connectFn && <WatchConnect connect={connectFn} save={save} copy={copy} />}
+
+      {showConnect ? (
+        <details className="watch-trouble" open={troubleOpen}>
+          <summary>Dépannage : tester, libérer et appairer la montre</summary>
+          {test}
+        </details>
+      ) : (
+        test
+      )}
     </section>
   )
 }

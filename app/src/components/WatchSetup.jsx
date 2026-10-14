@@ -1,5 +1,5 @@
 /**
- * « Libérer et appairer la montre » (carte « Montre Huawei en direct », chantier D3 étape b) :
+ * « Libérer et appairer la montre » (dépannage de la carte « Montre Huawei », chantier D3 étape b) :
  * l'app qui tient la montre (boîte de désinstallation ou réglages Android), la réinitialisation
  * guidée depuis la montre, l'appairage Android, puis le test. Plan B : garder Huawei Santé avec
  * l'identifiant de compte Huawei. Chaque geste est confirmé par l'utilisateur ; rien n'est envoyé
