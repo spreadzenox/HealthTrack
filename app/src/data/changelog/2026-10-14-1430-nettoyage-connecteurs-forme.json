@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-14",
+  "kind": "amélioration",
+  "title": "Connecteurs rangés par statut, accueil plus court",
+  "items": [
+    "Plus → Connecteurs : ce qui envoie déjà vos mesures (montre connectée, Health Connect activé, météo…) s'affiche en premier ; tout ce qui reste à brancher (autres sources, capteurs Bluetooth, guides par marque) est replié sous « Brancher une autre source ». Au premier lancement, cette liste est ouverte.",
+    "Les pastilles techniques « Plateforme / Permissions » n'apparaissent plus sur une source désactivée, et l'introduction de la page tient en une ligne.",
+    "Accueil : « Radar forme », « Votre cœur vs votre norme » et « Régularité du sommeil » forment un seul bloc « Votre forme », avec une seule explication « Comment c'est calculé » au lieu de trois. Le nombre de nuits prises en compte s'affiche à côté de l'indice de régularité."
+  ]
+}

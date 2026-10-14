@@ -3,7 +3,6 @@ import { listEntries } from '../storage/localHealthStorage'
 import { computeSleepRegularity, REGULARITY_DAYS, MIN_NIGHTS } from '../services/sleepRegularity'
 import { formatDuration, formatClock } from '../utils/format'
 import './BaselineCards.css'
-import MethodNote from './MethodNote'
 
 // 14 jours + la veille du premier (coucher avant minuit) + marge pour la comparaison à 24 h
 const HISTORY_DAYS = REGULARITY_DAYS + 2
@@ -44,8 +43,7 @@ export default function SleepRegularityCard() {
 
   if (result.status === 'insufficient') {
     return (
-      <section className="baselines" aria-labelledby="sleep-regularity-title">
-        <h3 id="sleep-regularity-title" className="section-title">Régularité du sommeil</h3>
+      <div className="baselines">
         <div className="baseline-card is-insufficient">
           <p className="baseline-card-note">
             Encore {result.missingNights} nuit{result.missingNights > 1 ? 's' : ''} enregistrée
@@ -53,7 +51,7 @@ export default function SleepRegularityCard() {
             ({MIN_NIGHTS} nuits sur les {REGULARITY_DAYS} derniers jours).
           </p>
         </div>
-      </section>
+      </div>
     )
   }
 
@@ -63,11 +61,10 @@ export default function SleepRegularityCard() {
   const showTip = result.level === 'variable' || (shift != null && Math.abs(shift) >= 60)
 
   return (
-    <section className="baselines" aria-labelledby="sleep-regularity-title">
-      <h3 id="sleep-regularity-title" className="section-title">Régularité du sommeil</h3>
+    <div className="baselines">
       <div className={`baseline-card ${level.className}`}>
         <div className="baseline-card-header">
-          <span className="baseline-card-title">Vos horaires</span>
+          <span className="baseline-card-title">Horaires de sommeil</span>
           <span className={`baseline-badge ${level.className}`}>{level.label}</span>
         </div>
         <div className="sleep-reg-times">
@@ -83,6 +80,7 @@ export default function SleepRegularityCard() {
         {result.sri != null && (
           <p className="baseline-card-value">
             Indice de régularité : <strong>{result.sri}</strong> / 100
+            <span className="baseline-card-sub"> · {result.nights} nuits</span>
           </p>
         )}
         {showShift && (
@@ -98,10 +96,6 @@ export default function SleepRegularityCard() {
           sommeil et un meilleur bien-être le lendemain. Vos Analyses diront si c’est vrai chez vous.
         </p>
       )}
-      <MethodNote>
-        {result.nights} nuits sur les {REGULARITY_DAYS} derniers jours. L’indice (0 à 100) mesure la chance d’être
-        dans le même état — endormi ou éveillé — à la même heure d’un jour au suivant.
-      </MethodNote>
-    </section>
+    </div>
   )
 }

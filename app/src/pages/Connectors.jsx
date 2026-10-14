@@ -13,6 +13,10 @@ import WithingsSetup from '../components/WithingsSetup'
 import WeatherCard from '../components/WeatherCard'
 import PhoneUsageCard from '../components/PhoneUsageCard'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
+import { splitSourcesByStatus } from '../connectors/connectorsLayout'
+import { getWeatherSettings } from '../services/weatherSync'
+import { getPhoneUsageSettings } from '../services/phoneUsageSync'
+import { getWatchAutoSyncState } from '../services/watchAutoSync'
 import './Connectors.css'
 
 /**
@@ -62,6 +66,58 @@ function StatusBadge({ status }) {
   }
   const { label, className } = labels[status] || { label: status, className: '' }
   return <span className={`connector-badge ${className}`}>{label}</span>
+}
+
+const SYSTEM_UPDATE = (
+  <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>
+)
+
+/** Message affiché quand Health Connect est indisponible, selon la raison remontée par le natif. */
+const UNAVAILABLE_MESSAGES = {
+  provider_update_required: {
+    title: 'Health Connect nécessite une mise à jour.',
+    body: (
+      <>
+        Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un <strong>module système</strong>{' '}
+        intégré — il n&apos;est pas dans le Play Store. Pour le mettre à jour, allez dans {SYSTEM_UPDATE} et installez la
+        dernière version.
+      </>
+    ),
+    settings: true,
+  },
+  sdk_unavailable: {
+    title: 'Health Connect non disponible sur cet appareil.',
+    body: (
+      <>
+        Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
+        <strong>module système intégré</strong> — assurez-vous que votre appareil est à jour via {SYSTEM_UPDATE}.
+      </>
+    ),
+    settings: true,
+  },
+  timeout: {
+    title: 'Health Connect ne répond pas.',
+    body: (
+      <>
+        Le module natif Health Connect n&apos;a pas répondu dans les délais (10 s). Cela peut indiquer que le module
+        système est bloqué ou nécessite une mise à jour. Essayez de mettre à jour via {SYSTEM_UPDATE}, puis relancez
+        l&apos;application.
+      </>
+    ),
+    settings: false,
+  },
+  default: {
+    title: 'Health Connect non disponible.',
+    body: (
+      <>
+        Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est <strong>intégré au système</strong>{' '}
+        — assurez-vous que votre appareil est à jour via {SYSTEM_UPDATE}. Sur Android 8–13 uniquement, installez
+        &quot;Health Connect&quot; depuis le Play Store. Activez ensuite la synchronisation dans Samsung Health →
+        Paramètres → Health Connect.
+      </>
+    ),
+    settings: true,
+  },
 }
 
 function ConnectorCard({ connector }) {
@@ -220,147 +276,47 @@ function ConnectorCard({ connector }) {
           </label>
         </div>
         <p className="connector-description">{connector.description}</p>
-        <div className="connector-badges">
-          <span className="connector-badge-label">Plateforme :</span>
-          <StatusBadge status={availability} />
-          <span className="connector-badge-label">Permissions :</span>
-          <StatusBadge status={permissions} />
-        </div>
+        {settings.enabled && (
+          <div className="connector-badges">
+            <span className="connector-badge-label">Plateforme :</span>
+            <StatusBadge status={availability} />
+            <span className="connector-badge-label">Permissions :</span>
+            <StatusBadge status={permissions} />
+          </div>
+        )}
       </div>
 
       {settings.enabled && (
         <div className="connector-body">
-          {availability === 'unavailable' && availabilityReason === 'provider_update_required' && (
-            <div className="connector-alert connector-alert-warning">
-              <strong>Health Connect nécessite une mise à jour.</strong>{' '}
-              Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
-              <strong>module système</strong> intégré — il n&apos;est pas dans le Play Store.{' '}
-              Pour le mettre à jour, allez dans{' '}
-              <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>{' '}
-              et installez la dernière version.
-              {availabilityNativeReason && (
-                <p className="connector-native-reason">Détail : {availabilityNativeReason}</p>
-              )}
-              {settingsActionStatus === 'err' && (
-                <p className="connector-native-reason connector-native-reason-err">
-                  Impossible d&apos;ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
-                </p>
-              )}
-              {settingsActionStatus === 'ok' && (
-                <p className="connector-native-reason connector-native-reason-ok">Paramètres Health Connect ouverts.</p>
-              )}
-              <div className="connector-alert-actions">
-                <button
-                  type="button"
-                  className="btn btn-secondary connector-btn"
-                  onClick={handleOpenSettings}
-                >
-                  Ouvrir les paramètres Health Connect
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary connector-btn"
-                  onClick={recheckAvailability}
-                >
-                  Revérifier la disponibilité
-                </button>
+          {availability === 'unavailable' && (() => {
+            const msg = UNAVAILABLE_MESSAGES[availabilityReason] || UNAVAILABLE_MESSAGES.default
+            return (
+              <div className="connector-alert connector-alert-warning">
+                <strong>{msg.title}</strong> {msg.body}
+                {msg.settings && availabilityNativeReason && (
+                  <p className="connector-native-reason">Détail : {availabilityNativeReason}</p>
+                )}
+                {settingsActionStatus === 'err' && (
+                  <p className="connector-native-reason connector-native-reason-err">
+                    Impossible d&apos;ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
+                  </p>
+                )}
+                {settingsActionStatus === 'ok' && (
+                  <p className="connector-native-reason connector-native-reason-ok">Paramètres Health Connect ouverts.</p>
+                )}
+                <div className="connector-alert-actions">
+                  {msg.settings && (
+                    <button type="button" className="btn btn-secondary connector-btn" onClick={handleOpenSettings}>
+                      Ouvrir les paramètres Health Connect
+                    </button>
+                  )}
+                  <button type="button" className="btn btn-secondary connector-btn" onClick={recheckAvailability}>
+                    Revérifier la disponibilité
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-
-          {availability === 'unavailable' && availabilityReason === 'sdk_unavailable' && (
-            <div className="connector-alert connector-alert-warning">
-              <strong>Health Connect non disponible sur cet appareil.</strong>{' '}
-              Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
-              <strong>module système intégré</strong> — assurez-vous que votre appareil est à jour via{' '}
-              <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>.
-              {availabilityNativeReason && (
-                <p className="connector-native-reason">Détail : {availabilityNativeReason}</p>
-              )}
-              {settingsActionStatus === 'err' && (
-                <p className="connector-native-reason connector-native-reason-err">
-                  Impossible d&apos;ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
-                </p>
-              )}
-              {settingsActionStatus === 'ok' && (
-                <p className="connector-native-reason connector-native-reason-ok">Paramètres Health Connect ouverts.</p>
-              )}
-              <div className="connector-alert-actions">
-                <button
-                  type="button"
-                  className="btn btn-secondary connector-btn"
-                  onClick={handleOpenSettings}
-                >
-                  Ouvrir les paramètres Health Connect
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary connector-btn"
-                  onClick={recheckAvailability}
-                >
-                  Revérifier la disponibilité
-                </button>
-              </div>
-            </div>
-          )}
-
-          {availability === 'unavailable' && availabilityReason === 'timeout' && (
-            <div className="connector-alert connector-alert-warning">
-              <strong>Health Connect ne répond pas.</strong>{' '}
-              Le module natif Health Connect n&apos;a pas répondu dans les délais (10 s).
-              Cela peut indiquer que le module système est bloqué ou nécessite une mise à jour.
-              Essayez de mettre à jour via{' '}
-              <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>,
-              puis relancez l&apos;application.
-              <div className="connector-alert-actions">
-                <button
-                  type="button"
-                  className="btn btn-secondary connector-btn"
-                  onClick={recheckAvailability}
-                >
-                  Revérifier la disponibilité
-                </button>
-              </div>
-            </div>
-          )}
-
-          {availability === 'unavailable' && availabilityReason !== 'provider_update_required' && availabilityReason !== 'sdk_unavailable' && availabilityReason !== 'timeout' && (
-            <div className="connector-alert connector-alert-warning">
-              <strong>Health Connect non disponible.</strong>{' '}
-              Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est{' '}
-              <strong>intégré au système</strong> — assurez-vous que votre appareil est à jour via{' '}
-              <strong>Paramètres → Mise à jour du logiciel → Mises à jour du système Google</strong>.{' '}
-              Sur Android 8–13 uniquement, installez &quot;Health Connect&quot; depuis le Play Store.{' '}
-              Activez ensuite la synchronisation dans Samsung Health → Paramètres → Health Connect.
-              {availabilityNativeReason && (
-                <p className="connector-native-reason">Détail : {availabilityNativeReason}</p>
-              )}
-              {settingsActionStatus === 'err' && (
-                <p className="connector-native-reason connector-native-reason-err">
-                  Impossible d&apos;ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
-                </p>
-              )}
-              {settingsActionStatus === 'ok' && (
-                <p className="connector-native-reason connector-native-reason-ok">Paramètres Health Connect ouverts.</p>
-              )}
-              <div className="connector-alert-actions">
-                <button
-                  type="button"
-                  className="btn btn-secondary connector-btn"
-                  onClick={handleOpenSettings}
-                >
-                  Ouvrir les paramètres Health Connect
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary connector-btn"
-                  onClick={recheckAvailability}
-                >
-                  Revérifier la disponibilité
-                </button>
-              </div>
-            </div>
-          )}
+            )
+          })()}
 
           {isWithings && <WithingsSetup onChange={recheckAvailability} />}
 
@@ -459,33 +415,50 @@ function ConnectorCard({ connector }) {
 
 export default function Connectors() {
   const { debugMode } = useDebug()
+  // Classement figé à l'ouverture : une carte qu'on active ne saute pas d'un groupe à l'autre sous le doigt.
+  const [layout] = useState(() =>
+    splitSourcesByStatus({
+      connectorIds: CONNECTORS.map((c) => c.id),
+      isConnectorEnabled: (id) => Boolean(getConnectorSettings(id)?.enabled),
+      weatherEnabled: Boolean(getWeatherSettings().enabled),
+      phoneUsageEnabled: Boolean(getPhoneUsageSettings().enabled),
+      watchEverConnected: Boolean(getWatchAutoSyncState()?.everConnected),
+    })
+  )
+
+  const renderSource = (id) => {
+    if (id === 'watch') return <WatchDiagnostic key={id} />
+    if (id === 'weather') return <WeatherCard key={id} />
+    if (id === 'phone') return <PhoneUsageCard key={id} />
+    if (id === 'ble') return <BleDevices key={id} />
+    if (id === 'guides') return <WatchGuides key={id} />
+    const connector = CONNECTORS.find((c) => c.id === id)
+    return connector ? (
+      <div key={id} className="connectors-list">
+        <ConnectorCard connector={connector} />
+      </div>
+    ) : null
+  }
+
+  const nothingActive = layout.active.length === 0
 
   return (
     <section className="food-page">
       <h2 className="page-title">Connecteurs</h2>
       <p className="page-intro">
-        Connectez des sources de données santé externes pour importer automatiquement vos mesures
-        (montre connectée, balance, etc.) dans HealthTrack. Toutes les données restent{' '}
-        <strong>uniquement sur cet appareil</strong>.
+        Ce qui envoie déjà vos mesures, puis ce qui reste à brancher. Tout reste <strong>sur cet appareil</strong>.
       </p>
 
       <MyDevices />
 
-      <WatchDiagnostic />
+      {layout.active.map(renderSource)}
 
-      <div className="connectors-list">
-        {CONNECTORS.map((connector) => (
-          <ConnectorCard key={connector.id} connector={connector} />
-        ))}
-      </div>
-
-      <WeatherCard />
-
-      <PhoneUsageCard />
-
-      <BleDevices />
-
-      <WatchGuides />
+      <details className="connectors-more" open={nothingActive}>
+        <summary className="connectors-more-summary">
+          {nothingActive ? 'Sources à brancher' : 'Brancher une autre source'}
+        </summary>
+        {layout.toConnect.map(renderSource)}
+      </details>
 
       {debugMode && <DebugPanel filter="HealthConnect" />}
     </section>
