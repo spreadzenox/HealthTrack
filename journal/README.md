@@ -39,6 +39,12 @@ pour ne pas perdre un aller-retour sur l'étape suivante, si la montre calcule s
 d'une façon légèrement différente, l'app essaie d'elle-même les variantes plausibles et **continue avec la bonne** ;
 sinon le journal dit laquelle correspond. **Ce qu'il me faut : après la mise à jour, relancer « Se connecter à la
 montre » puis « Enregistrer le journal » et me le transmettre** (si tout passe, vos mesures arrivent directement).
+**Run « idées » du 14/10 08:30** : en attendant votre prochain journal, j'ai vérifié une à une, dans le code libre
+de Gadgetbridge, **toutes les étapes qui suivent** celle qui bloquait (fin de l'appairage, authentification,
+chiffrement des échanges) : nos calculs sont identiques, et votre PIN de 64 octets est normal pour ce modèle. Un point à
+surveiller : un utilisateur de GT 7 a dû saisir son **identifiant de compte Huawei** pour finir ; si votre montre
+coupe juste après l'authentification, c'est la piste (le plan B de l'app le permet déjà). **Toujours la même demande :
+avec la v120 ou plus, « Se connecter à la montre » puis « Enregistrer le journal ».**
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Pages plus légères (run 14/10 06:30)** : l'app ne charge plus tout d'un bloc ; chaque page arrive quand vous
@@ -300,6 +306,15 @@ montre » puis « Enregistrer le journal » et me le transmettre** (si tout pass
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Savoir plus tôt ce qui marche chez vous, sans se tromper** (run 14/10 08:30) : au lieu d'attendre un mois de
+  données, chaque lien des Analyses aurait un niveau « piste / probable / solide » qui monte à mesure que les preuves
+  s'accumulent (une étude 2026 obtient une direction fiable en ≈ 5 jours au lieu de 32), avec un garde-fou contre les
+  faux liens quand on en teste beaucoup. Même écran, mots plus clairs.
+- **Votre contexte noté tout seul** (run 14/10 08:30) : « Voyage » quand le fuseau horaire du téléphone change, « Sport
+  le soir » d'après la montre, « Sieste » d'après le sommeil de jour — cochés d'office, retirables d'un tap.
+- **La voix sans modèle sous licence restrictive** (run 14/10 08:30) : les modèles d'« émotion vocale » libres sont
+  interdits d'usage commercial ; l'app mesurera plutôt elle-même le ton, l'énergie, le débit et les pauses, comparés
+  à vos habitudes. Bon à savoir : le visage ne suit l'humeur que faiblement (étude MoodCam) → tendance sur 7 jours.
 - **« Ma nuit en un coup d'œil » dans le briefing du matin** (run 13/10 20:30) : comme les nouveaux « Vitals » de
   Samsung, FC repos, VFC, SpO₂, respiration et sommeil de la nuit, chacun avec une flèche par rapport à **votre** plage
   habituelle — sans nouvelle carte, intégré au briefing unique. Aussi : **vos traitements ou compléments vus comme des
@@ -381,6 +396,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 00:30 — [Test v119 consigné + performance : mesure et lectures par index](runs/2026-10-14-0030-perf-lectures-indexees.md) | ⌚⚡ | PR #148 fusionnée → v121 |
 | 14/10 04:30 — [Performance : calculs dans un Web Worker + cache](runs/2026-10-14-0430-perf-calculs-worker.md) | ⚡ | PR #149 fusionnée → v122 |
 | 14/10 06:30 — [Performance : découpage du fichier principal](runs/2026-10-14-0630-perf-decoupage-bundle.md) | ⚡ | PR #151 fusionnée → v123 |
+| 14/10 08:30 — [Idées : appairage recoupé, paliers de confiance, contexte auto](runs/2026-10-14-0830-idees-appairage-recoupe-paliers.md) | 💡⌚ | 6 idées (I63–I68), spec §6.11 — journal seul |
 
 ---
 

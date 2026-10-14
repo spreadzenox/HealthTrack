@@ -9,6 +9,157 @@
 
 ---
 
+## Run du 14/10/2026 08:30 (Paris) — la montre recoupée de bout en bout, des preuves plus tôt, zéro saisie de contexte
+
+Question du jour, côté utilisateur : *« ma montre va bientôt parler à HealthTrack — que faut-il pour que la suite de
+l'appairage passe du premier coup, et comment l'app peut-elle me dire plus tôt, sans se tromper, ce qui marche chez
+moi, sans me demander de noter mon contexte ? »* Pas de nouveau journal de la GT 6 Pro depuis le correctif v120 : la
+recherche montre a donc porté sur **les étapes d'après** (0x8002 → authentification → trames chiffrées), pour qu'aucun
+aller-retour ne soit perdu.
+
+### Montre — recoupement complet de l'appairage avec Gadgetbridge (détail : `protocoles/huawei.md` §6.11)
+
+Lecture seule de Gadgetbridge master `bb7a1e83a2` (13/10/2026), faits seulement, aucun code copié. La logique ISO
+(`GetHiChainRequest.java`) n'a pas bougé depuis 09/2024 [V].
+- **Chaque calcul de HealthTrack correspond** [V] : PIN (1/0x2C) déchiffré en GCM **seulement** si la méthode de
+  chiffrement vaut 1, sinon CBC (le type d'appareil 4 n'entre **pas** en jeu pour le PIN, contrairement aux trames) ;
+  PIN traité comme des octets opaques, **ré-encodé en hex majuscule même s'il ressemble déjà à du texte** (notre
+  référence) ; identifiant du téléphone = 32 caractères hex majuscules, octets ASCII dans les HMAC ; identifiant de la
+  montre = son `peerAuthId` décodé de l'hex ; ordres des deux jetons, `returnCodeMac`, clé de session, AAD = le défi
+  pour `encAuthToken`, AAD fixes des étapes 3 et 4, clé des trames « hichain_return_key », trames en GCM avec un IV
+  aléatoire de 16 octets dès que le type vaut 4. → Le PIN de **64 octets** du journal est donc normal pour ce modèle.
+- **Aucun cas particulier pour la GT 6 / GT 6 Pro / GT 7** dans Gadgetbridge (coordinateurs « Bluetooth classique »
+  simples) ; le protocole SPEKE n'est activé que pour les Honor Watch 5 / 5 Pro / 6 (PR #6472, 17/07/2026) [V].
+- **Retours d'utilisateurs** [V issues Codeberg] : #6731 (09/2026) une GT 7 s'appaire en choisissant le type « GT 6
+  (Pro) » **et en saisissant l'identifiant de compte Huawei** ; #6978 (07/10/2026) GT 7 sous HarmonyOS 7 : « Authentication
+  key negotiation failed » avec la clé gardée → **refaire la liaison** a suffi (une autre app avait remplacé la clé) ;
+  PR #6367 (ouverte) : la montre refuse parfois une clé valide ou se fige → fermer le canal, attendre, réessayer, sans
+  reconnexions agressives.
+- **Arrière-plan** : PR #6905 (02/10/2026, signalements GT 6) relance la connexion après que le système a tué l'app ;
+  PR #6823 (23/09/2026) l'appairage « appareil compagnon » gère les montres classiques déjà appairées [V]. → Conforte
+  le plan I49 (CDM + filet).
+- **Gadgetbridge 0.94 (17/09) ajoute la GT 7, 0.95 (12/10) 15 appareils** ; les cadrans ne s'installent plus sous
+  HarmonyOS 6.1+ [V gadgetbridge.org]. Aucun firmware GT 6 Pro daté sept.–oct. trouvé (GT 6 globale : 6.1.0.118 en
+  07/2026) [T HuaweiCentral].
+
+### Ce que font les leaders (sept.–oct. 2026)
+
+- **Google Health (12/10)** : détection automatique de **100+ types d'activité** (séance ≥ 15 min à FC élevée
+  enregistrée en < 30 min, « moitié moins de séances manquées »), rapport mensuel « Health Guardian » [V blog.google].
+- **WHOOP Journal (18/09)** : on dit à l'app quel **comportement** suivre (routine du soir, complément) et elle en mesure
+  l'effet sur la récupération — de la science personnelle grand public ; chaque activité affiche sa **provenance**
+  (auto-détectée / importée) [T].
+- **Huawei GT 7 (IFA, 02/09)** : briefing du matin + « Physical Readiness » [V AndroidHeadlines].
+- **Samsung « Fitness Index »** compare aux pairs — exactement ce que D6 écarte ; « Vitals » (écarts à soi) reste le bon
+  modèle [T].
+- **Fitbit → Google Health forcé (10/2026)** : colère des fidèles (« aucune des fonctions que j'aimais n'est restée ») [T
+  TechRadar] → argument pour l'archive locale que HealthTrack constitue.
+- **Lassitude** : > 1 Américain sur 3 a cessé de suivre une métrique parce qu'elle le faisait se sentir plus mal
+  (enquête commanditée, biais possible) [T KVIA 27/08] ; ≈ 1/3 des suiveurs de sommeil à risque d'orthosomnie [T].
+
+### Science personnelle (D5 / D6)
+
+- **Paliers de confiance bayésiens** : arXiv 2601.03299 (01/2026) — des signaux de **direction** fiables en ≈ 5 jours au
+  lieu de 32 avec un seuil fixe, ≈ 6 % de fausses découvertes à J30, sur données synthétiques [V].
+- **Modèles individuels > modèles universels** pour l'humeur (prédiction jusqu'à 3 semaines, validation « une personne
+  laissée de côté » défavorable aux modèles communs) [T PMC10902386, Appl. Sci. 2026] → conforte D6.
+- **Interventions déclenchées par capteurs** : effets proximaux faibles dans un essai micro-randomisé 2026 [T] → pas
+  d'alertes « faites ceci maintenant ».
+
+### Humeur, voix, analyses (D4)
+
+- **Visage** : MoodCam (arXiv 2412.12625, 25 personnes × 4 semaines, ≈ 16 000 interactions) → AUC **0,58–0,64** pour la
+  valence [V]. Signal faible : confirme « tendance sur 7 jours, jamais une note à l'instant ». Licence : code HSEmotion
+  Apache-2.0, poids sans licence séparée, AffectNet sur accord (texte non lisible publiquement) [V/H] → **défaut
+  MediaPipe** (blendshapes sourire / froncement, Apache-2.0), HSEmotion seulement en téléchargement facultatif.
+- **Voix** : les modèles d'émotion vocale sont NC (audEERING CC-BY-NC-SA) ou flous (emotion2vec), openSMILE payant en
+  commercial [V/T] → **prosodie maison** (F0, énergie, débit, pauses) : quelques Ko, aucune licence.
+- **Transcription fr-FR** : API système sur l'appareil (`isOnDeviceRecognitionAvailable`, `checkRecognitionSupport`)
+  **non confirmée sur Samsung** (pas d'API publique du moteur Samsung) [V/T] ; repli **Vosk small-fr** (41 Mo,
+  Apache-2.0, WER ≈ 19–24 %) [V] ; Parakeet v3 (WER fr ≈ 5 %, CC-BY-4.0) mais ≈ 890 Mo → téléchargement facultatif.
+- **Bilan sanguin** : ML Kit Text Recognition v2 hors ligne [V] ; aucun analyseur libre français trouvé ; la France
+  impose LOINC pour la biologie structurée (Ségur) et une traduction LOINC fr-FR existe [V] → dictionnaire maison
+  d'≈ 40 analytes (alias → LOINC → unité → conversions) ; **PDF texte avant OCR**.
+- **Réseaux sociaux** : sur Android 15+, le blocage « paramètres restreints » des APK installés hors magasin couvre aussi
+  l'**accès aux données d'utilisation** [T Android Authority] → le guide « Temps d'écran » doit l'expliquer ; le
+  « contenu vu » exigerait l'Accessibilité (fragile, intrusif) → écarté.
+
+### Idées classées (impact × faisabilité) — consolider plutôt qu'ajouter
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I63 | **Suite d'appairage « sans aller-retour »** : rendre lisibles d'avance dans le journal les étapes 0x8002 → 0x8004 et 0x11 → 0x13 (`returnCodeMac` faux ≠ défi refusé ≠ clé non déchiffrée), consigner `trailingBytes` à chaque réponse, et si la montre coupe juste après l'authentification, le dire et proposer l'identifiant de compte Huawei (cas #6731) | Que la GT 6 Pro aille au bout dès le prochain essai (D3) | 5 | 5 | **25** |
+| I64 | **Paliers de confiance bayésiens** à la place des p-valeurs dans les Analyses : « piste / probable / solide » par lien, a priori faible tiré de la littérature (D6), contraction du postérieur, contrôle des faux positifs sur l'ensemble des liens (D5) ; mêmes cartes, mots changés | Savoir plus tôt, sans se tromper, ce qui joue chez moi | 5 | 4 | 20 |
+| I65 | **Contexte détecté tout seul** : « Voyage » (changement de fuseau du téléphone), « Sport le soir » (FC ≥ 60 % de la réserve ≥ 15 min après 18 h, ou séance de la montre), « Sieste » (sommeil de jour de la montre) → tags pré-cochés, retirables d'un tap, provenance affichée | Zéro saisie de contexte (D1) | 4 | 5 | 20 |
+| I66 | **Comportements suivis en une phrase** (précise I60, à la WHOOP Journal) : « je teste le magnésium le soir » → tag récurrent + proposition d'un plan ABAB, analysé avec I64 | Expériences personnelles sans formulaire | 4 | 3 | 12 |
+| I67 | **Voix sans modèle sous licence** : prosodie maison (F0 par autocorrélation, énergie RMS, débit via la transcription, part de pauses), suivie en écart à sa propre base ; transcription système → repli Vosk small-fr | Humeur par la voix, légale et légère (D4) | 4 | 3 | 12 |
+| I68 | **Archive « sources jetables »** : la montre ou l'app d'origine peuvent changer (Fitbit → Google Health), HealthTrack garde tout ; export FIT / CSV par type en plus du JSON | Ne plus perdre son historique | 3 | 4 | 12 |
+
+**Idée écartée (D5)** : *suggérer « alcool / caféine hier ? » à partir d'une FC de nuit haute et d'une VFC basse*.
+Le tag serait alors en partie déduit des signaux qu'on veut ensuite expliquer par lui : la corrélation « alcool → VFC
+basse » serait gonflée (biais de sélection). Si un jour on le fait, ces tags suggérés seront marqués et **exclus** des
+corrélations avec les signaux qui les ont déclenchés.
+
+Mises à jour : **I52** (mode calme) conforté par les chiffres de lassitude et d'orthosomnie ; **I53** défaut MediaPipe
+confirmé (AUC visage ≈ 0,6) ; **I59** → PDF texte d'abord, dictionnaire LOINC fr ; **I49** conforté par GB #6905 /
+#6823 ; **I60** absorbe I66.
+
+### Détail et pistes d'implémentation
+
+**I63 — Suite d'appairage.** `hichain.js` : chaque étape lève une erreur typée (`return_mac_mismatch`,
+`auth_token_decrypt_failed`, `final_error` avec `errorCode`) écrite telle quelle dans `report.hichain.steps[]` (codes,
+tailles, `trailingBytes`, jamais de valeur) ; fausse montre : un scénario par erreur. Après l'authentification, si la
+première trame chiffrée (infos produit / batterie) n'a pas de réponse ou si la montre coupe en < 5 s : issue
+« account_required? » qui propose le plan B (champ déjà présent, envoyé en 0x1A/0x05). Clé refusée : fermer, attendre
+≈ 6 s, une seule nouvelle tentative, puis proposer la liaison (déjà en place, à vérifier contre #6978).
+
+**I64 — Paliers.** `src/services/` : pour chaque paire (X, Y), modèle normal conjugué sur la différence standardisée
+(jours X haut vs bas, X la veille de Y), a priori N(0, τ²) faible (ou centré sur l'effet publié si une hypothèse
+générale existe, toujours affiché comme tel) ; palier = P(effet > 0) et largeur de l'intervalle ; seuil ajusté au
+nombre de liens testés (Benjamini-Hochberg sur les probabilités a posteriori converties, ou « local FDR »). Calcul dans
+le Worker existant. Tests : séries synthétiques (effet nul → jamais « solide » sur 500 tirages > 5 %).
+
+**I65 — Contexte auto.** Fuseau : `Intl.DateTimeFormat().resolvedOptions().timeZone` noté chaque jour à l'ouverture
+(aucune permission) ; un changement → « Voyage » ce jour-là et les 2 suivants. Sport du soir : séances montre / Health
+Connect déjà importées, sinon FC minute. Provenance (`source: "auto"`) dans l'entrée ; un tap retire.
+
+**I67 — Prosodie.** Plugin natif `AudioRecord` du service micro (D4) ; trames de 30 ms : RMS, F0 (autocorrélation
+50–400 Hz), voisement ; agrégats par prise (moyenne, écart-type, part de pauses) ; débit = mots / s de la
+transcription ; seuls les nombres sont gardés. Entrées déclarées de l'estimateur (liste D5).
+
+**I68 — Archive.** Export par type (FIT pour les séances, CSV pour les séries) depuis l'écran d'export existant ; pas de
+nouvel écran.
+
+### Sources (consultées le 14/10/2026)
+
+- Montre : https://codeberg.org/Freeyourgadget/Gadgetbridge (lecture seule, master `bb7a1e83a2` : `devices/huawei/HuaweiCrypto.java`,
+  `devices/huawei/packets/DeviceConfig.java`, `service/devices/huawei/requests/GetHiChainRequest.java`,
+  `service/devices/huawei/HuaweiSupportProvider.java`, coordinateurs GT 6 / GT 7) ; issues #6731, #6978, #4193 ;
+  PR #6367, #6472, #6823, #6905 ; https://gadgetbridge.org/blog/release-0_94_00/ ; https://gadgetbridge.org/basics/topics/huawei-honor/ ;
+  https://www.huaweicentral.com/standard-huawei-watch-gt-6-global-users-receive-harmonyos-6-1/
+- Leaders : https://blog.google/products-and-platforms/products/google-health/fitbit-google-health-updates/ ;
+  https://www.whoop.com/us/en/thelocker/2026-whats-new/ ; https://www.androidheadlines.com/2026/09/huawei-watch-gt-7-watch-6-series-arrive.html ;
+  https://9to5google.com/2026/06/04/samsung-health-ai-redesign-galaxy-watch-9/ ; https://techradar.com/health-fitness/fitness-apps/i-hate-the-new-google-health-app-fitbit-fans-bemoan-the-end-of-an-era-as-last-holdouts-are-forced-to-switch-to-googles-alternative ;
+  https://kvia.com/stacker-wellness/2026/08/27/survey-how-health-tracking-is-affecting-americans-sleep-and-mental-health/ ;
+  https://academic.oup.com/sleep/article/49/Supplement_1/A246/8674102
+- Science perso : https://arxiv.org/abs/2601.03299 ; https://arxiv.org/abs/2606.13556 ; https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10902386/
+- Humeur / voix / analyses : https://arxiv.org/abs/2412.12625 ; https://github.com/av-savchenko/face-emotion-recognition ;
+  https://ai.google.dev/mediapipe/solutions/vision/face_landmarker ; https://zenodo.org/records/6221127 ;
+  https://alphacephei.com/vosk/models ; https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3 ;
+  https://developer.android.com/reference/android/speech/SpeechRecognizer ;
+  https://developers.google.com/ml-kit/tips/installation-paths ; https://www.health-data-hub.fr/sites/default/files/2025-01/loinc%20%281%29.pdf ;
+  https://androidauthority.com/android-15-restricted-settings-sideloading-3481098
+- Inaccessibles : Reddit (direct et via extraits), page WHOOP (lue par extrait de recherche), corps de l'article TechRadar.
+
+### À creuser au prochain run idées (14/10 20:30)
+
+- Le journal v120+ du propriétaire s'il arrive : jeton accepté ? étape atteinte ?
+- Texte de la licence AffectNet (formulaire d'accès) ; benchmarks Whisper / Vosk fr sur Exynos 1580.
+- Mises en page réelles de comptes rendus Biogroup / Cerballiance (exemples publics anonymisés).
+- Huawei : le « compte Huawei » est-il exigé par une montre jamais liée (GT 6 Pro) après l'authentification ?
+
+---
+
 ## Run du 13/10/2026 20:30 (Paris) — la montre débloquée par un octet, puis consolider la journée
 
 Question du jour, côté utilisateur : *« ma montre répond enfin à HealthTrack — qu'est-ce qui manque pour que ça marche
