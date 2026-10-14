@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-14",
+  "kind": "amélioration",
+  "title": "Accueil plus rapide à s'afficher",
+  "items": [
+    "HealthTrack ne relit plus toutes vos données à chaque carte : il va chercher directement les jours et les types utiles. Sur 3 ans de données, l'Accueil s'affiche environ deux fois plus vite, et jusqu'à trois fois plus vite quand la montre envoie beaucoup de mesures.",
+    "Repas et Connecteurs s'ouvrent aussi plus vite. Rien ne change dans vos données ni à l'écran.",
+    "Ce n'est qu'une première étape : les calculs des Analyses seront accélérés ensuite."
+  ]
+}

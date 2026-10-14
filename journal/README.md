@@ -41,6 +41,9 @@ sinon le journal dit laquelle correspond. **Ce qu'il me faut : après la mise à
 montre » puis « Enregistrer le journal » et me le transmettre** (si tout passe, vos mesures arrivent directement).
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Accueil plus rapide (run 14/10 00:30)** : l'app ne relit plus toutes vos données pour chaque carte. Mesuré sur
+  3 ans de données, téléphone simulé : l'Accueil se stabilise en **1,3 s au lieu de 3 s** (1,7 s au lieu de 5,6 s si
+  la montre envoie une mesure par heure) ; Repas et Connecteurs aussi. Rien ne change à l'écran ni dans vos données.
 - **Mes appareils** (Plus → Connecteurs, en haut) : HealthTrack repère tout seul les apps de montre et de santé du
   téléphone (Huawei Health, Samsung Health, Garmin, Zepp, Mi Fitness, Fitbit, Withings, Oura, Polar, Gadgetbridge… 19 apps)
   et dit pour chacune « Reçu » (date et types des dernières mesures), « En pause », « À brancher » (avec le réglage
@@ -132,6 +135,11 @@ montre » puis « Enregistrer le journal » et me le transmettre** (si tout pass
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Performance, étape 1 (run 14/10 00:30)** : nouvel outil `npm run perf` qui chronomètre chaque page et compte les
+  lectures de la base. Il a trouvé la cause principale du lag : chaque carte rechargeait **toute** la base (128 552
+  lectures pour 16 069 mesures sur l'Accueil). Les lectures passent maintenant par les index (type, source, date) ;
+  base passée en version 3 (un index ajouté, données intactes, migration testée) ; un test empêche le retour en
+  arrière. Reste à accélérer les **calculs** des Analyses (≈ 1 s), prochaine étape.
 - **Lecture tolérante de la réponse d'appairage (run 13/10 22:30)** : une seule fonction lit désormais toutes les
   réponses d'appairage de la montre et ignore (en les comptant dans le journal) les octets qui suivent le texte, comme
   le fait Android. Diagnostic du « jeton » de la montre : 5 façons plausibles de dériver la clé du PIN × 4 ordres de
@@ -215,6 +223,11 @@ montre » puis « Enregistrer le journal » et me le transmettre** (si tout pass
   formulaire juste avant sa fermeture ; aucun impact sur l'app, l'APK était bien publié). Cause trouvée et corrigée (#110).
 
 **Points d'attention**
+- **Votre test de 20:42 (v119)** : échec identique, c'est normal — il a été fait **juste avant** que le correctif
+  soit publié (v120 à 20:53 UTC). **Installez la v120 ou plus (bandeau de mise à jour), relancez « Se connecter à la
+  montre » puis « Enregistrer le journal ».** Résumé consigné dans `diagnostics/2026-10-13-2042-gt6pro-v119.md`.
+- Base de données passée en version 3 (v121) : ne réinstallez pas un APK plus ancien par-dessus sans export préalable
+  (Android refuse alors d'ouvrir la base). Les mises à jour normales ne posent aucun problème.
 - **Visage « dès le déverrouillage » (run idées 13/10 08:30)** : Android 14+ refuse qu'une app démarre la caméra depuis
   l'arrière-plan, et rien de fiable ne montre que la commande `appops … CAMERA allow` (Shizuku / ADB) lève ce verrou.
   Je le **testerai** sur votre A56 avec un écran de diagnostic comme vous l'avez demandé, mais la voie sûre sera : un
@@ -319,7 +332,7 @@ réel, **compris grâce à votre journal de 17:03** : la réponse d'appairage de
 déjà, suivie d'**un octet de fin** que le lecteur de l'app refusait. **Lecture tolérante livrée au run de 22:30**
 (comme Gadgetbridge), avec essai automatique des variantes de calcul du jeton. **Maintenant : relancer « Se connecter à
 la montre » → « Enregistrer le journal »** pour voir l'étape suivante (votre PIN accepté ou non). Puis synchro app fermée, stress /
-VFC de journée. Ensuite : performance des courbes, restes du nettoyage, humeur par le visage / la voix.
+VFC de journée. En attendant votre journal : performance des courbes (lectures par index livrées le 14/10 00:30, calculs ensuite), restes du nettoyage, humeur par le visage / la voix.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -347,6 +360,7 @@ VFC de journée. Ensuite : performance des courbes, restes du nettoyage, humeur 
 | 13/10 18:30 — [Montre : taille des champs de la réponse New Auth](runs/2026-10-13-1830-montre-tailles-champs-newauth.md) | ⌚🏗️ | PR #142 fusionnée → v118 |
 | 13/10 20:30 — [Idées : journal 17:03 décodé (octet de fin), lecture du matin, analyses](runs/2026-10-13-2030-idees-journal-1703-octet-de-fin.md) | 💡⌚ | 6 idées (I57–I62), diagnostic analysé (§6.9) — PR #144 fusionnée (journal seul, pas de release) ; test météo instable corrigé (PR suivante) |
 | 13/10 22:30 — [Montre : lecture tolérante de la réponse d'appairage + variantes du jeton](runs/2026-10-13-2230-montre-lecture-tolerante.md) | ⌚🏗️ | PR #146 fusionnée → v120 |
+| 14/10 00:30 — [Test v119 consigné + performance : mesure et lectures par index](runs/2026-10-14-0030-perf-lectures-indexees.md) | ⌚⚡ | PR en cours |
 
 ---
 
