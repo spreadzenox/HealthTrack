@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-14",
+  "kind": "amélioration",
+  "title": "Démarrage et changement de page plus fluides",
+  "items": [
+    "L'app ne charge plus tout d'un bloc au démarrage : chaque page arrive quand vous l'ouvrez, et la base des aliments (3 550 aliments) seulement quand un écran en a besoin. Le fichier lu au lancement passe de 2,1 Mo à 0,5 Mo.",
+    "Mesuré sur un téléphone simulé : le petit gel d'environ 0,1 s à l'ouverture de chaque page disparaît (Repas, Connecteurs, Analyses, Paramètres… s'affichent en 0,1 s au lieu de 0,3 s). Rien ne change à l'écran ni dans vos données."
+  ]
+}

@@ -1,10 +1,10 @@
 /**
  * Appel direct à l'API Gemini depuis le frontend (mode standalone, sans backend).
  */
-import { INGREDIENT_NAMES } from '../data/ingredientNames.js'
+import { loadNutritionTable } from '../data/nutritionTable'
 import { getGeminiModelFallbacks } from '../settings/geminiModel.js'
 import { prepareImageForGemini } from './imagePrep.js'
-import { normalizeMealItem } from './mealEditing.js'
+import { ingredientNames, normalizeMealItem } from './mealEditing.js'
 
 const RESPONSE_SCHEMA = {
   type: 'OBJECT',
@@ -32,7 +32,7 @@ const geminiUrl = (model) => `https://generativelanguage.googleapis.com/v1beta/m
 
 function buildPrompt() {
   // Liste exhaustive : un nom par ligne pour limiter la taille du prompt tout en restant lisible
-  const namesList = INGREDIENT_NAMES.join('\n')
+  const namesList = ingredientNames().join('\n')
   return `Tu analyses une photo de plat/repas. Tu ne dois répondre QUE par du JSON valide, rien d'autre (pas de texte, pas de markdown).
 
 LISTE EXHAUSTIVE DES INGRÉDIENTS AUTORISÉS (tu DOIS utiliser exactement un de ces noms, copié à l'identique, pour chaque ingrédient détecté) :
@@ -164,6 +164,7 @@ function toMealResult({ parsed, model }, notFoodFallback) {
 export async function analyzeWithGemini(file, apiKey) {
   // Seule l'image (réduite, sans métadonnées GPS/appareil) et le prompt partent chez Google
   const { base64, mimeType } = await prepareImageForGemini(file)
+  await loadNutritionTable()
   const response = await requestMealJson([
     { text: buildPrompt() },
     { inlineData: { mimeType, data: base64 } },
@@ -175,7 +176,7 @@ export async function analyzeWithGemini(file, apiKey) {
 export const MEAL_TEXT_MAX_LENGTH = 500
 
 function buildTextPrompt(description) {
-  const namesList = INGREDIENT_NAMES.join('\n')
+  const namesList = ingredientNames().join('\n')
   return `Tu convertis la description d'un repas, écrite ou dictée en français, en liste d'ingrédients pesés. Tu ne dois répondre QUE par du JSON valide, rien d'autre (pas de texte, pas de markdown).
 
 LISTE EXHAUSTIVE DES INGRÉDIENTS AUTORISÉS (tu DOIS utiliser exactement un de ces noms, copié à l'identique, pour chaque ingrédient) :
@@ -213,6 +214,7 @@ ${description}`
 export async function analyzeMealText(text, apiKey) {
   const description = String(text ?? '').trim().slice(0, MEAL_TEXT_MAX_LENGTH)
   if (!description) throw new Error('Décrivez votre repas en quelques mots.')
+  await loadNutritionTable()
   const response = await requestMealJson([{ text: buildTextPrompt(description) }], apiKey)
   return toMealResult(response, 'Ce texte ne semble pas décrire un repas.')
 }

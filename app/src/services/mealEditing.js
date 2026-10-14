@@ -1,9 +1,10 @@
 /**
  * Édition d'un repas avant enregistrement : noms d'ingrédients rapprochés de la base Ciqual,
  * recherche d'ingrédients, grammes modifiables et kcal estimées.
+ * La base est chargée à la demande (`data/nutritionTable`) : tant qu'elle ne l'est pas, les kcal
+ * valent null / 0 ; le rapprochement et la recherche, eux, exigent qu'elle le soit.
  */
-import { INGREDIENT_NAMES } from '../data/ingredientNames.js'
-import nutritionMap from '../data/ingredientsNutrition.json'
+import { getNutritionTable } from '../data/nutritionTable'
 
 const MAX_GRAMS = 5000
 const CONFIDENCES = new Set(['high', 'medium', 'low'])
@@ -21,14 +22,33 @@ export function normalizeName(s) {
     .trim()
 }
 
-const CANONICAL = INGREDIENT_NAMES.map((n) => n.trim())
-const CANONICAL_SET = new Set(CANONICAL)
-const BY_NORMALIZED = new Map()
-for (const name of CANONICAL) {
-  const key = normalizeName(name)
-  if (!BY_NORMALIZED.has(key)) BY_NORMALIZED.set(key, name)
+let indexes = null
+
+/** Index des noms canoniques, construits une fois la base chargée. */
+function nameIndexes() {
+  const table = getNutritionTable()
+  if (!table) throw new Error('Table nutritionnelle non chargée (loadNutritionTable)')
+  if (indexes?.table !== table) {
+    const names = Object.keys(table)
+    const byNormalized = new Map()
+    for (const name of names) {
+      const key = normalizeName(name)
+      if (!byNormalized.has(key)) byNormalized.set(key, name)
+    }
+    indexes = {
+      table,
+      names: new Set(names),
+      byNormalized,
+      search: names.map((name) => ({ name, norm: normalizeName(name) })),
+    }
+  }
+  return indexes
 }
-const SEARCH_INDEX = CANONICAL.map((name) => ({ name, norm: normalizeName(name) }))
+
+/** Noms canoniques de la base, dans son ordre (prompt Gemini). Base chargée requise. */
+export function ingredientNames() {
+  return [...nameIndexes().names]
+}
 
 /**
  * Nom canonique de la base correspondant à `name` (casse, accents et espaces ignorés), sinon null.
@@ -37,8 +57,9 @@ export function matchIngredientName(name) {
   if (name == null) return null
   const exact = String(name).trim()
   if (!exact) return null
-  if (CANONICAL_SET.has(exact)) return exact
-  return BY_NORMALIZED.get(normalizeName(exact)) ?? null
+  const { names, byNormalized } = nameIndexes()
+  if (names.has(exact)) return exact
+  return byNormalized.get(normalizeName(exact)) ?? null
 }
 
 /**
@@ -49,7 +70,7 @@ export function searchIngredients(query, limit = 8) {
   const q = normalizeName(query)
   if (q.length < 2) return []
   const words = q.split(' ')
-  return SEARCH_INDEX
+  return nameIndexes().search
     .filter(({ norm }) => words.every((w) => norm.includes(w)))
     .sort((a, b) => {
       const pa = a.norm.startsWith(q) ? 0 : a.norm.startsWith(words[0]) ? 1 : 2
@@ -104,7 +125,7 @@ export function itemForStorage(item) {
 
 /** kcal estimées d'un élément, ou null si inconnu ou sans grammes. */
 export function itemKcal(item) {
-  const p100 = nutritionMap[item?.ingredient]
+  const p100 = getNutritionTable()?.[item?.ingredient]
   const grams = Number(item?.quantity_g)
   if (!p100 || !Number.isFinite(grams) || item?.quantity_g == null) return null
   return Math.round(((p100.energy_kcal || 0) * grams) / 100)

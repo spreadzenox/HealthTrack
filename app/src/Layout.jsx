@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import UpdateBanner from './components/UpdateBanner'
 import WellbeingPrompt from './components/WellbeingPrompt'
@@ -6,6 +6,15 @@ import WhatsNewBanner from './components/WhatsNewBanner'
 import TabBar from './components/TabBar'
 import { useAutoSync } from './hooks/useAutoSync'
 import './App.css'
+
+/** Pendant le chargement d'une page (fichier séparé, quelques ms). */
+function PageLoading() {
+  return (
+    <div className="loading" role="status">
+      <div className="spinner" aria-hidden />
+    </div>
+  )
+}
 
 export default function Layout() {
   useAutoSync()
@@ -24,7 +33,9 @@ export default function Layout() {
       </header>
       <main className="main">
         <WhatsNewBanner />
-        <Outlet />
+        <Suspense fallback={<PageLoading />}>
+          <Outlet />
+        </Suspense>
       </main>
       <TabBar />
     </div>

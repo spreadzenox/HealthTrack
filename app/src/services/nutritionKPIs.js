@@ -1,9 +1,10 @@
 /**
  * Calcul des totaux nutritionnels à partir des entrées repas (items avec ingredient + quantity_g).
- * Utilise la base ingredientsNutrition (name -> per_100g) pour le calcul côté client.
+ * Utilise la base ingredientsNutrition (name -> per_100g) pour le calcul côté client : elle est
+ * chargée à la demande (`loadNutritionTable()`), à attendre avant d'appeler ces fonctions.
  */
 
-import nutritionMap from '../data/ingredientsNutrition.json'
+import { getNutritionTable } from '../data/nutritionTable'
 
 /**
  * All numeric fields that can be summed from ingredientsNutrition.json
@@ -38,6 +39,9 @@ export const NUTRITION_FIELDS = [
  * @returns {object} totals for all NUTRITION_FIELDS plus fodmap_score (max of items)
  */
 export function computeTotalsFromItems(items) {
+  const nutritionMap = getNutritionTable()
+  // Erreur franche plutôt que des totaux à zéro (qui seraient ensuite mis en cache)
+  if (!nutritionMap) throw new Error('Table nutritionnelle non chargée (loadNutritionTable)')
   const totals = Object.fromEntries(NUTRITION_FIELDS.map((f) => [f, 0]))
   let maxFodmap = 0
 

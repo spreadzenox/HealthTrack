@@ -4,6 +4,7 @@
  * Utilisé par `analysis.worker.js` et, en repli (pas de Worker, Worker en échec), directement.
  */
 import { listEntriesForAnalysis } from '../storage/localHealthStorage'
+import { loadNutritionTable } from '../data/nutritionTable'
 import {
   computeTodayPrediction,
   computeBasicCorrelations,
@@ -40,5 +41,7 @@ export const ANALYSIS_TASKS = {
 export async function runAnalysisTask(task) {
   const fn = ANALYSIS_TASKS[task]
   if (!fn) throw new Error(`Tâche d'analyse inconnue : ${task}`)
+  // Les nutriments des repas entrent dans le jeu de données : table chargée avant tout calcul
+  await loadNutritionTable()
   return fn()
 }

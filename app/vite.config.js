@@ -13,5 +13,9 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(appVersion),
   },
+  // Gros JSON (table Ciqual) émis en `JSON.parse("…")`, bien plus rapide à évaluer qu'un littéral
+  json: { stringify: true },
+  // Worker d'analyse en module ES (créé avec `type: 'module'`) : il charge la table Ciqual à la demande
+  worker: { format: 'es' },
   server: {},
 })

@@ -5,13 +5,22 @@ import { mealTimeError } from '../services/quickMeals'
 import { analyzeMealText, MEAL_TEXT_MAX_LENGTH } from '../services/geminiStandalone'
 import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import MealEditor from './MealEditor'
+import NutritionTableGate from './NutritionTableGate'
 
 /**
  * Saisie d'un repas sans photo : vide (ingrédients ajoutés par recherche, ou déduits par Gemini
  * d'une description en quelques mots) ou pré-rempli à partir d'un repas déjà enregistré
  * (« Refaire »). Heure par défaut : maintenant.
  */
-export default function NewMealForm({ title, dish, initialItems, onSaved, onCancel }) {
+export default function NewMealForm(props) {
+  return (
+    <NutritionTableGate>
+      <NewMealFormForm {...props} />
+    </NutritionTableGate>
+  )
+}
+
+function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
   const [items, setItems] = useState(() => itemsForEditing(initialItems))
   // Description libre → Gemini, seulement pour un repas vide (pas pour « Refaire »)
   const [describable] = useState(() => items.length === 0)
