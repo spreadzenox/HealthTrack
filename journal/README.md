@@ -69,8 +69,15 @@ l'historique (Accueil → vos derniers jours). Si ce n'est pas le cas : Diagnost
 Le run de 14:30 a poursuivi le nettoyage (aucun nouveau journal montre reçu entre-temps) : **Connecteurs** montre
 d'abord ce qui envoie déjà vos mesures et replie le reste sous « Brancher une autre source » ; l'**Accueil** réunit
 radar, cœur et horaires de sommeil dans un seul bloc « Votre forme ».
+Le run de 16:30 (toujours pas de nouveau journal montre) a repris la performance : **la page Nutrition s'ouvre ≈ 4×
+plus vite** (1,25 s → 0,27 s sur 3 ans de données) et **l'enregistrement d'une synchro** (montre, Health Connect…)
+ne relit plus toute la base (≈ 10× plus rapide), ce qui compte pour la première synchro complète de votre montre.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Nutrition plus rapide, synchros plus légères (run 14/10 16:30)** : la page Nutrition ne lit plus que vos repas
+  récents, vos pas des 14 derniers jours et vos mesures corporelles (5 lectures ciblées au lieu de 28, 756
+  enregistrements au lieu de ≈ 15 000) ; chaque synchro ne compare ses mesures qu'à celles de la même source et de
+  la même période. Rien ne change à l'écran.
 - **Connecteurs rangés, accueil plus court (run 14/10 14:30)** : Plus → Connecteurs affiche en premier ce qui envoie
   déjà vos mesures (montre, Health Connect, météo…) ; les autres sources, capteurs Bluetooth et guides par marque sont
   sous « Brancher une autre source », replié. Plus de pastilles « Non disponible / Non demandé » sur une source que
@@ -441,6 +448,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 10:30 — [Montre : fin d'association côté montre + une seule carte](runs/2026-10-14-1030-montre-association.md) | ⌚🧹 | PR #154 fusionnée → v124 |
 | 14/10 12:30 — [Montre : fenêtre de synchro, totaux du jour, carte simplifiée](runs/2026-10-14-1230-montre-mesures.md) | ⌚🧹 | PR #155 fusionnée → v125 |
 | 14/10 14:30 — [Nettoyage : Connecteurs par statut, bloc « Votre forme »](runs/2026-10-14-1430-nettoyage-connecteurs-forme.md) | 🧹 | PR #156 fusionnée → v126 |
+| 14/10 16:30 — [Performance : Nutrition et synchros par index](runs/2026-10-14-1630-perf-nutrition-upsert.md) | ⚡ | PR « [Auto] Performance : Nutrition et synchros lues par index » |
 
 ---
 

@@ -12,7 +12,7 @@ import { activityFromSteps, DEFAULT_ACTIVITY } from './nutrientReferenceIntakes'
 export const DEFAULT_WEIGHT_KG = 70
 export const DEFAULT_HEIGHT_CM = 170
 
-const STEPS_WINDOW_DAYS = 14
+export const STEPS_WINDOW_DAYS = 14
 const MIN_STEPS_DAYS = 7
 
 function latest(entries, type, valueKey) {

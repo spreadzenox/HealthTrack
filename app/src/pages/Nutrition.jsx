@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { listEntriesForAnalysis } from '../storage/localHealthStorage'
+import { loadNutritionEntries } from '../services/nutritionData'
 import { getBodyProfile, getLatestBodyComposition } from '../services/bodyProfile'
 import { compareRecentIntake, formatNutrientAmount } from '../services/nutritionIntakeCompare'
 import BodyProfileCard from '../components/BodyProfileCard'
@@ -92,7 +92,7 @@ export default function Nutrition() {
   // « Chargement… » seulement au premier affichage : une mise à jour (profil, repas) ne fait pas clignoter la page.
   const load = useCallback(async () => {
     try {
-      const data = await listEntriesForAnalysis()
+      const data = await loadNutritionEntries()
       setEntries(data)
       setProfile(await getBodyProfile(data))
     } finally {

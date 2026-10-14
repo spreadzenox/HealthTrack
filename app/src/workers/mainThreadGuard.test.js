@@ -31,3 +31,17 @@ describe('calculs lourds hors du fil principal', () => {
     expect(offenders).toEqual([])
   })
 })
+
+// Lecture de toute la base (≈ 15 000 entrées sur 3 ans) : réservée au panneau de diagnostic des Analyses.
+// Un écran lit ce dont il a besoin par index (`listEntries` avec type / source / plage, ex. `loadNutritionEntries`).
+const WHOLE_BASE_ALLOWED = ['src/pages/Recommendations.jsx']
+
+describe('pas de lecture de toute la base depuis un écran', () => {
+  it("seul le panneau de diagnostic appelle listEntriesForAnalysis", () => {
+    const offenders = uiFiles(SRC)
+      .filter((file) => /\blistEntriesForAnalysis\b/.test(readFileSync(file, 'utf8')))
+      .map((file) => file.replace(SRC, 'src'))
+      .filter((file) => !WHOLE_BASE_ALLOWED.includes(file))
+    expect(offenders).toEqual([])
+  })
+})

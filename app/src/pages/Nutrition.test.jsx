@@ -4,11 +4,14 @@ import { MemoryRouter } from 'react-router-dom'
 import Nutrition from './Nutrition'
 
 vi.mock('../storage/localHealthStorage', () => ({
-  listEntriesForAnalysis: vi.fn().mockResolvedValue([]),
   createEntry: vi.fn().mockResolvedValue(1),
 }))
+vi.mock('../services/nutritionData', () => ({
+  loadNutritionEntries: vi.fn().mockResolvedValue([]),
+}))
 
-import { listEntriesForAnalysis, createEntry } from '../storage/localHealthStorage'
+import { createEntry } from '../storage/localHealthStorage'
+import { loadNutritionEntries } from '../services/nutritionData'
 
 const yesterdayNoon = () => {
   const d = new Date()
@@ -21,7 +24,7 @@ describe('Nutrition page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     // Un test qui échoue avant de remettre le mock à zéro ne doit pas faire échouer les suivants.
-    listEntriesForAnalysis.mockResolvedValue([])
+    loadNutritionEntries.mockResolvedValue([])
     localStorage.clear()
   })
 
@@ -39,7 +42,7 @@ describe('Nutrition page', () => {
   })
 
   it('shows per-day averages vs daily targets, sodium as a limit', async () => {
-    listEntriesForAnalysis.mockResolvedValueOnce([
+    loadNutritionEntries.mockResolvedValueOnce([
       {
         type: 'food',
         at: yesterdayNoon(),
@@ -102,7 +105,7 @@ describe('Nutrition page', () => {
   })
 
   it('n\'ajoute pas de pesée si le poids n\'a pas changé', async () => {
-    listEntriesForAnalysis.mockResolvedValue([
+    loadNutritionEntries.mockResolvedValue([
       { type: 'weight', source: 'withings', at: yesterdayNoon(), payload: { valueKg: 77.2 } },
     ])
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
@@ -113,7 +116,7 @@ describe('Nutrition page', () => {
     await waitFor(() => expect(screen.queryByRole('button', { name: 'Enregistrer' })).toBeNull())
     expect(await screen.findByText('Homme')).toBeInTheDocument()
     expect(createEntry).not.toHaveBeenCalled()
-    listEntriesForAnalysis.mockResolvedValue([])
+    loadNutritionEntries.mockResolvedValue([])
   })
 
   it('refuse un poids invalide sans rien enregistrer', async () => {
@@ -139,11 +142,11 @@ describe('Nutrition page', () => {
       d.setHours(0, 0, 0, 0)
       return { type: 'steps', source: 'health_connect', at: d.toISOString(), payload: { value: 11000, period: 'day' } }
     })
-    listEntriesForAnalysis.mockResolvedValue(days)
+    loadNutritionEntries.mockResolvedValue(days)
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
     expect(await screen.findByText('Très actif')).toBeInTheDocument()
     expect(screen.getByText(/11\s000 pas\/jour en moyenne/)).toBeInTheDocument()
-    listEntriesForAnalysis.mockResolvedValue([])
+    loadNutritionEntries.mockResolvedValue([])
   })
 
   it('enregistre le niveau d\'activité choisi et recalcule l\'énergie', async () => {

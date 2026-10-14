@@ -383,8 +383,9 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
    (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**
 4. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
-   **découpage du bundle (14/10 06:30)** ; reste : Nutrition par le runner (28 lectures, ≈ 0,8 s), `upsertEntries` par
-   index, `WellbeingCharts` par agrégats, budget en CI (enregistrements lus).
+   **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
+   index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
+   agrégats, budget en CI (enregistrements lus), Recommandations : panneau debug seul à lire toute la base (garde-fou).
 5. 🧹 D1 — restes : tags « Sport le soir » / « Voyage » auto-détectés (I65) ; relire Paramètres et Analyses (titres
    et explications en double). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;

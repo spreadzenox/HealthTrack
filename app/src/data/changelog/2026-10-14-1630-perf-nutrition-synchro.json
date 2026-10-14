@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-14",
+  "kind": "amélioration",
+  "title": "Nutrition plus rapide, synchros plus légères",
+  "items": [
+    "La page Nutrition s'ouvre environ 4 fois plus vite : elle ne lit plus que vos repas récents, vos pas des 14 derniers jours et vos mesures corporelles, au lieu de toutes vos données.",
+    "Chaque synchronisation (montre, Health Connect, Withings…) n'est plus comparée qu'aux mesures de la même source sur la même période : l'enregistrement est environ 10 fois plus rapide, en particulier lors de la première synchro complète de la montre."
+  ]
+}
