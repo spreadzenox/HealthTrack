@@ -78,6 +78,11 @@ entière (transports classique et BLE, ce qu'il lit, sa carte). Visible pour vou
 GT 6 Pro apparaît « Connexion directe » avec un bouton qui ouvre la carte de la montre, au lieu de « Via son app ».
 **Toujours la même demande : « Synchroniser la montre », puis regarder si des mesures arrivent ; sinon Diagnostic →
 « Enregistrer le journal ».**
+**Run « idées » de 20:30** (toujours pas de nouveau journal) : j'ai passé en revue les problèmes de synchro déjà
+rencontrés par d'autres propriétaires de Huawei, pour que votre prochain journal suffise si l'historique reste vide.
+Bonne nouvelle : **une GT 6 Pro jamais liée à Huawei Santé n'a pas besoin de compte Huawei** (confirmé par un
+contributeur qui l'utilise ainsi). Gadgetbridge synchronise bien pas, distance et sommeil de ce modèle ; le seul piège
+connu concerne les **séances enregistrées automatiquement**, et le prochain run de code en tiendra compte.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Votre montre Huawei reconnue en « Connexion directe » (run 14/10 18:30)** : Plus → Connecteurs → Capteurs
@@ -363,6 +368,16 @@ GT 6 Pro apparaît « Connexion directe » avec un bouton qui ouvre la carte de 
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Des Analyses qu'on peut croire** (run 14/10 20:30) : HealthTrack corrige déjà ce que les autres apps de corrélation
+  (Exist, Bearable) ne corrigent pas, c'est-à-dire les faux liens qui apparaissent quand on teste beaucoup de choses.
+  L'idée : afficher pour chaque lien **sa force et la confiance qu'on peut lui accorder**, séparément, avec « jours avec /
+  sans » et « lien observé, pas une cause ». Mêmes cartes, des mots plus clairs.
+- **Un seul rendez-vous par jour** (run 14/10 20:30) : WHOOP vient de fusionner ses 4 écrans quotidiens en un seul
+  parcours. Pour HealthTrack, ce serait le matin votre nuit et une piste, et le soir **une seule question**, avec une phrase
+  libre à dire à voix haute si vous voulez. L'app vous **propose** des tags et n'enregistre rien sans un tap : c'est la
+  leçon des coachs IA de WHOOP et Google, qui inscrivaient un alcool ou une caféine jamais pris.
+- **La montre relue sans ouvrir l'app, plan précisé** (run 14/10 20:30) : Android prévient l'app quand votre montre se
+  reconnecte (une API récente sur Android 16). HealthTrack la relit alors en moins d'une minute, sans jamais insister.
 - **Savoir plus tôt ce qui marche chez vous, sans se tromper** (run 14/10 08:30) : au lieu d'attendre un mois de
   données, chaque lien des Analyses aurait un niveau « piste / probable / solide » qui monte à mesure que les preuves
   s'accumulent (une étude 2026 obtient une direction fiable en ≈ 5 jours au lieu de 32), avec un garde-fou contre les
@@ -458,7 +473,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 12:30 — [Montre : fenêtre de synchro, totaux du jour, carte simplifiée](runs/2026-10-14-1230-montre-mesures.md) | ⌚🧹 | PR #155 fusionnée → v125 |
 | 14/10 14:30 — [Nettoyage : Connecteurs par statut, bloc « Votre forme »](runs/2026-10-14-1430-nettoyage-connecteurs-forme.md) | 🧹 | PR #156 fusionnée → v126 |
 | 14/10 16:30 — [Performance : Nutrition et synchros par index](runs/2026-10-14-1630-perf-nutrition-upsert.md) | ⚡ | PR #158 fusionnée → v127 |
-| 14/10 18:30 — [Montre : pilote « Huawei Link » dans le registre générique](runs/2026-10-14-1830-montre-registre-pilotes.md) | ⌚🏗️ | PR « [Auto] Montre : pilote Huawei dans le registre générique des appareils » |
+| 14/10 18:30 — [Montre : pilote « Huawei Link » dans le registre générique](runs/2026-10-14-1830-montre-registre-pilotes.md) | ⌚🏗️ | PR #159 fusionnée → v128 |
+| 14/10 20:30 — [Idées : pièges de synchro, Analyses lisibles, un parcours par jour](runs/2026-10-14-2030-idees-synchro-confiance-parcours.md) | 💡⌚ | 6 idées (I69–I74), spec §7.10 — journal seul |
 
 ---
 

@@ -9,6 +9,165 @@
 
 ---
 
+## Run du 14/10/2026 20:30 (Paris) — si la montre envoie encore 0 mesure, relire app fermée, un seul parcours par jour
+
+Question du jour, côté utilisateur : *« ma montre est associée, mais si demain l'historique est encore vide, qu'est-ce
+qui peut bloquer ? Et une fois que ça marche, comment l'avoir sans y penser, avec une app qui me pose moins de
+questions et ne m'invente rien ? »* Aucun nouveau journal du propriétaire depuis v124 (`diagnostics/` inchangé). La
+recherche montre a donc porté sur **les pièges connus de la synchro** (après l'association) et sur l'arrière-plan.
+
+### Montre — ce qui peut encore bloquer la synchro (lecture seule, faits seulement, aucun code copié)
+
+Codeberg refuse la lecture web (HTTP 429) ; l'API REST `codeberg.org/api/v1` répond : issues et PR lues sur la source.
+- **Compte Huawei inutile pour une montre jamais liée** [V #6271, 10/06/2026] : un contributeur Huawei de Gadgetbridge
+  (GB) utilise une GT 6 Pro jamais connectée à Huawei Santé, « Huawei Account not required » ; l'identifiant ne sert qu'à
+  partager la montre avec Huawei Santé. Seul manque signalé : la mise à jour AGPS. → **Ferme la question ouverte du
+  run 08:30** (compte exigé ?). L'identifiant observé fait 16 à 18 chiffres selon les comptes (#6271, #6010), pas
+  toujours 17 : vérifié, le plan B accepte 15 à 20 chiffres (`normalizeAccountId`) ; seul le texte « 17 à 19
+  chiffres » de l'assistant est à corriger (« 16 à 19 ») au prochain run de code.
+- **Synchro confirmée sur GT 6 Pro par GB** [V #5784, 02/2026] : pas, distance, sommeil OK ; seules les **séances
+  enregistrées automatiquement** échouaient (« longueur des données ≠ masque ») → la lecture d'une séance doit suivre
+  la longueur annoncée de chaque bloc interne et ignorer un bloc vide, au lieu de rejeter la séance.
+- **Deuxième canal RFCOMM** [V PR #6448, fusionnée 07/2026] : sur les Huawei Watch 3 / 4 / 5 (pas la série GT), la
+  synchro santé exige un **canal auxiliaire** ; la montre envoie une table de routage des services, et le
+  téléchargement de fichiers (service 0x2C) peut ne marcher que sur ce canal (essai principal, bascule sur délai
+  dépassé). [H] Peu probable sur la GT 6 Pro (GB la synchronise sur un seul canal), mais c'est **le premier suspect si
+  le sommeil détaillé ne vient jamais** : le journal doit dire si 0x2C a répondu ou expiré.
+- **Stress et VFC dépendent du modèle** [V doc GB Huawei/Honor] : le stress doit être activé et calibré sur la montre ;
+  VFC absente sur GT 5 HarmonyOS 5.1 (#6461 ouverte). → « Jamais reçu : stress » doit dire « à activer sur la montre ».
+- **Clé remplacée** [V #6978, 08/10/2026] : si une autre app (ou une mise à jour HarmonyOS 6.1 → 7) a refait l'appairage,
+  l'ancienne clé est morte ; la solution est un **appairage initial complet**, pas une reconnexion. Reconnexions
+  répétées à longue distance = montre instable (#6367) → espacer, jamais boucler. Déjà le comportement de HealthTrack.
+- **Deux apps à la fois : impossible** [V #6010, 15/04/2026 ; #6271 18/06/2026] — confirme la consigne « une seule
+  app ». Alterner est possible en retirant le Bluetooth à l'app inactive (automatisable via Shizuku, #7025, 11/10/2026).
+
+### Arrière-plan — le plan I49 précisé (sources Android, mises à jour 01/10/2026)
+
+- `CompanionDeviceService` : en Bluetooth classique, l'événement arrive **à la connexion de la montre**
+  (`EVENT_BT_CONNECTED`), sans scan ; le système lie le service et relève la priorité de l'app, « qui n'a pas besoin de
+  rester ouverte » [V]. `onDeviceAppeared` est **déprécié en API 36** au profit de `onDevicePresenceEvent` +
+  `startObservingDevicePresence(ObservingDevicePresenceRequest)` (permission
+  `REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE`) → coder les deux chemins selon la version.
+- Démarrer le service de premier plan `connectedDevice` depuis l'arrière-plan est permis aux apps associées avec
+  `REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND` [V]. Sur Samsung : batterie « Sans restriction » et
+  hors « applis en veille » [T dontkillmyapp, 07/2024, One UI 7 / 8 non couverts].
+- GB sous Android 15 recommande « connexion déclenchée par l'appareil » plutôt que la reconnexion automatique [V #5429].
+
+### Humeur et voix — faits de licence et de faisabilité (D4)
+
+- **AffectNet** : licence « usage académique, non commercial, sans redistribution » [T copie de l'accord v2,
+  30/03/2023] ; **HSEmotion / EmotiEffLib** : code Apache-2.0, mais **aucune licence propre aux poids**, entraînés sur
+  AffectNet [V dépôts consultés le 14/10]. FER+ : étiquettes MIT mais images FER2013 floues ; RAF-DB : site en 503.
+  → Pour un APK distribué, **pas de poids issus d'AffectNet** : MediaPipe Face Landmarker (52 blendshapes, page du
+  09/10/2026) + règles maison, suivies en écart à soi.
+- **Restriction Android confirmée** [V doc FGS, 01/10/2026] : depuis Android 14, impossible de *créer* un service
+  caméra / micro depuis l'arrière-plan, et **les exemptions habituelles ne lèvent pas cette règle** ; seules marchent
+  une activité visible ou un geste sur notification / widget. Aucune source ne montre que `appops … CAMERA allow`
+  contourne la vérification (elle porte sur l'état du processus). → Le diagnostic D4 le testera, mais le service se
+  lance depuis l'app ou d'un tap sur sa notification.
+- **Transcription française sur le téléphone** : `createOnDeviceSpeechRecognizer` sans liste officielle de langues,
+  tester `checkRecognitionSupport("fr-FR")` sur l'A56 [V] ; ML Kit GenAI Speech (alpha, fr-FR en bêta, API 31+,
+  08/10/2026) [V] ; repli **Vosk small-fr 0.22** (41 Mo, Apache-2.0, WER ≈ 19–27 %) [V] ; **Parakeet TDT 0.6B v3**
+  (CC-BY-4.0, WER FR ≈ 5 %) [V] mais ≈ 1,2 Go en ONNX INT8 [T] ; Voxtral Mini 4B (Apache-2.0) trop gros ; Moonshine :
+  anciens modèles non anglais sous licence non commerciale. Aucun banc whisper.cpp sur Exynos 1580 trouvé.
+- **Littérature** : modèles **personnalisés > universels** pour l'humeur / dépression [V JMIR 2025 ; npj Digit Med
+  2024] ; voix : débit plus lent et voix plus douce quand la dépression s'aggrave [T RADAR-CNS] ; visage en conditions
+  réelles AUC 0,58–0,64 [V MoodCam]. Conforte : z-scores par personne, agrégat quotidien, tendance 7 j.
+
+### Ce que veulent les gens (signaux du jour)
+
+- **« Les coachs IA inventent »** : Google Health 5.0 (ex-Fitbit, 19/05/2026) voit de la natation dans une marche, IA
+  affichée avant les chiffres → promesse d'une IA « plus concise, qui demande l'intention » [T 9to5Google 27/05/2026] ;
+  WHOOP Coach a enregistré caféine ou alcool jamais pris, supposé une maladie à tort [V Gear Patrol 06/07/2026] ;
+  Garmin « platitudes » [T the5krunner 20/04/2026]. Pew : 18 % jugent les chatbots santé très exacts [T 04/2026].
+- **Scores composites non validés** : aucune preuve que suivre un « readiness » améliore quoi que ce soit ; seule la
+  tendance personnelle sur plusieurs jours est utile [V gadgetsandwearables 21/09/2026].
+- **Consolidation chez WHOOP** (05/09/2026) [V] : Journal, Daily Outlook, check-ins et Day in Review fusionnés en **un
+  seul parcours quotidien** terminé par une réflexion du soir ; comportements personnalisés et saisie à la voix / texte
+  libre. Apple watchOS 27 (14/09/2026) : Readiness 0–10, résumés IA, import de labo [V]. Oura : signaux de tension
+  nocturne sur 30 j, **alerte seulement sur un motif durable** [T 06/2026].
+- **Apps de corrélation personnelle** : Exist affiche **force** et **confiance** séparées, minimum 3 semaines, teste
+  aussi le lendemain [V kb.exist.io] ; Bearable : ≥ 3 jours avec / 3 sans, ordre horaire respecté [T]. **Aucune ne
+  corrige les comparaisons multiples** ni l'autocorrélation — HealthTrack le fait déjà (Benjamini-Hochberg,
+  `effectiveSampleSize`, décalages J / J+1 corrigés ensemble) : c'est un vrai point fort, à rendre lisible.
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I69 | **Synchro qui dit où elle cale** : par service (7/0x0A, 7/0x0C, 0x17, 0x2C, stress), le journal note « réponse / vide / délai dépassé / non pris en charge » ; séances lues selon la longueur annoncée de chaque bloc (un bloc vide n'annule plus la séance, #5784) ; si 0x2C expire alors que la montre le déclare, le dire (piste canal auxiliaire, #6448) ; « Jamais reçu : stress » → « à activer et calibrer sur la montre » | Que le prochain journal suffise si l'historique reste vide (D3) | 5 | 5 | **25** |
+| I70 | **Force et confiance, séparées et honnêtes** (fusionne avec I64) : chaque lien des Analyses montre sa force (taille d'effet) et sa confiance (déjà corrigée pour les tests multiples et l'autocorrélation), « jours avec / sans » (≥ 5 chacun), et la mention « lien observé, pas une cause » ; une phrase d'aide dit que l'app corrige les faux positifs | Croire ce que disent les Analyses, sans jargon (D5, D6) | 4 | 5 | 20 |
+| I71 | **Un seul parcours par jour** (précise I51 / I54) : matin = état de la nuit vs votre plage + une piste ; soir = **une** question (celle qui tranche le lien le plus incertain) + réflexion libre facultative ; remplace check-in séparé, briefing et question du soir. Chiffres d'abord, texte ensuite, jamais un chiffre inventé | Moins de saisie, moins d'écrans (D1) | 5 | 3 | 15 |
+| I72 | **Arrière-plan par présence de la montre** (précise I49) : association compagnon, `onDevicePresenceEvent` (API 36) / `onDeviceAppeared` (API 33–35), à `BT_CONNECTED` un service `connectedDevice` court (< 1 min) relit la montre ; permission `REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND` ; jamais de boucle de reconnexion | Données à jour sans ouvrir l'app (D3 d quater) | 5 | 3 | 15 |
+| I73 | **Visage sans poids AffectNet** (précise I53) : MediaPipe blendshapes + règles maison, z-score par personne, agrégat quotidien ; service lancé depuis l'app ou d'un tap sur sa notification (Android 14+), le diagnostic teste quand même `appops` | Humeur par le visage, distribuable légalement (D4) | 4 | 4 | 16 |
+| I74 | **Phrase du soir à la voix, toujours confirmée** (précise I66 / I67) : transcription sur le téléphone (`checkRecognitionSupport("fr-FR")`, repli Vosk small-fr) → tags **proposés**, jamais enregistrés sans un tap (leçon WHOOP / Google) ; le texte n'entre pas dans l'estimateur d'humeur s'il sert de X (liste D5) | Noter son contexte en 5 secondes | 4 | 3 | 12 |
+
+**Écartée** : *afficher Huawei Santé et HealthTrack connectés en même temps* — impossible côté montre (#6010). L'alternance
+par retrait du Bluetooth via Shizuku (#7025) reste une note pour le plan B, pas un chantier.
+**Mise à jour** : I52 (mode calme) absorbe « alerte seulement sur un motif durable » (Oura, 30 j) ; I59 (labo) conforté
+par Apple / WHOOP / Oura (import PDF), toujours sur le téléphone.
+
+### Détail et pistes d'implémentation
+
+**I69 — Synchro lisible.** `devices/huawei/sync.js` (ou équivalent) : `report.sync.services[]` = `{ service, command,
+outcome: 'ok' | 'empty' | 'timeout' | 'unsupported' | 'error', count }`, sans valeur ; tests fausse montre : un scénario
+par issue, une séance avec un bloc interne vide (longueur 0) qui doit être gardée. Aucune trame nouvelle : on ne fait
+que nommer ce qui se passe déjà. Le canal auxiliaire n'est **pas** codé à l'aveugle : seulement si le journal montre
+0x2C en délai dépassé (spec à écrire alors, §7.10).
+
+**I70 — Force / confiance.** `services/statistics.js` a déjà q-valeurs et n effectif : exposer `effect` (d de Cohen ou
+écart en unités de Y) et `confidence` (palier depuis q et n effectif) séparément dans le résultat ; l'UI des
+Analyses change ses mots, pas sa structure. Test : séries synthétiques nulles → « solide » < 5 % des cas.
+
+**I71 — Parcours unique.** Pas de nouvelle page : la carte du matin de l'Accueil et la notification du soir partagent un
+même objet « journée » ; le formulaire bien-être devient la réponse du soir (une question + champs facultatifs repliés).
+
+**I72 — Arrière-plan.** Plugin natif `CompanionPlugin.java` (association par `AssociationRequest` filtré sur le nom de
+la montre appairée), `HuaweiPresenceService extends CompanionDeviceService` ; le client de synchro réécrit en Java
+d'après `protocoles/huawei.md` (déjà prévu par I49) ; écriture dans un tampon lu par la WebView à l'ouverture si
+IndexedDB n'est pas joignable app fermée.
+
+**I73 / I74** : voir I53 / I67 ; entrées déclarées dans la liste de l'estimateur (D5).
+
+### Sources (consultées le 14/10/2026)
+
+- Montre : https://codeberg.org/Freeyourgadget/Gadgetbridge/issues/6271 · /issues/6731 · /issues/6978 · /issues/6370 ·
+  /issues/6010 · /issues/6341 · /issues/5784 · /issues/6461 · /issues/5429 · /issues/7025 ; PR /pulls/6448 (lue via
+  l'API : « second RFCOMM channel … Watch 3, 4, 5 », 20/07/2026), /6539, /6367, /6823, /6701, /6816, /5585, /5176 ;
+  https://gadgetbridge.org/basics/pairing/huawei-honor-pairing/ ; https://gadgetbridge.org/basics/topics/huawei-honor/
+- Android : https://developer.android.com/reference/android/companion/CompanionDeviceService ;
+  https://developer.android.com/reference/android/companion/DevicePresenceEvent ;
+  https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start ;
+  https://developer.android.com/develop/background-work/services/fgs/changes ; https://dontkillmyapp.com/samsung ;
+  https://developer.android.com/reference/android/speech/SpeechRecognizer ;
+  https://developers.google.com/ml-kit/genai/speech-recognition/android
+- ML : https://github.com/sb-ai-lab/EmotiEffLib ; https://github.com/av-savchenko/face-emotion-recognition ;
+  https://studylib.net/doc/27680111/affectnet-agreement-v2-30mar2023 ; https://github.com/microsoft/FERPlus ;
+  https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker ; https://alphacephei.com/vosk/models ;
+  https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3 ; https://huggingface.co/kyutai/stt-1b-en_fr ;
+  https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602 ; https://github.com/moonshine-ai/moonshine ;
+  https://www.jmir.org/2025/1/e57418 ; https://www.nature.com/articles/s41746-024-01035-6 ; https://arxiv.org/abs/2412.12625 ;
+  https://www.isca-archive.org/interspeech_2025/hidalgojulia25_interspeech.html
+- Besoins / marché : https://9to5google.com/2026/05/27/google-health-roadmap-fitbit-backlash/ ;
+  https://www.gearpatrol.com/fitness/whoop-ai-reddit-user-feedback-pros-cons/ ;
+  https://the5krunner.com/2026/04/20/garmin-connect-plus-review/ ;
+  https://gadgetsandwearables.com/2026/09/21/wearable-readiness-scores-science/ ;
+  https://gadgetsandwearables.com/2026/09/05/whoop-custom-journal-workout-tracking-update/ ;
+  https://apple.com/newsroom/2026/09/apple-advances-health-and-fitness-capabilities-using-apple-intelligence/ ;
+  https://medtechdive.com/news/oura-to-add-blood-pressure-feature-following-fda-policy-change/821427/ ;
+  https://kb.exist.io/article/37-what-are-correlations ; https://kb.exist.io/article/18-how-long-does-it-take-to-find-correlations ;
+  https://bearable.app/support/tips/what-are-factors/ ; https://gadgetbridge.org/blog/category/releases/
+- Inaccessibles : reddit.com (bloqué, passé par la presse qui en rend compte), LinkedIn (rien d'exploitable), Codeberg
+  en lecture web (429, API REST OK), whdeng.cn (RAF-DB, 503), PyPI emotiefflib, page « correlations » d'exist.io (404).
+
+### À creuser au prochain run idées (15/10 08:30)
+
+- Le journal v125+ du propriétaire s'il arrive : `sync.kinds`, minutes reçues, sommeil, et 0x2C répondu ou expiré.
+- `checkRecognitionSupport("fr-FR")` et ML Kit GenAI Speech sur One UI 8 (rapports d'utilisateurs).
+- Licence exacte des modèles MediaPipe Face Landmarker (model card).
+
+---
+
 ## Run du 14/10/2026 08:30 (Paris) — la montre recoupée de bout en bout, des preuves plus tôt, zéro saisie de contexte
 
 Question du jour, côté utilisateur : *« ma montre va bientôt parler à HealthTrack — que faut-il pour que la suite de

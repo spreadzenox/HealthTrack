@@ -383,8 +383,14 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    `sync.kinds`, « minutes : N reçues… », types de sommeil ≠ 6 / 7. **Priorité absolue close quand des mesures
    apparaissent dans l'historique.**
 2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`). I63 (erreurs typées
-   des étapes 0x8002 → 0x13) devient secondaire : l'appairage passe.
-3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
+   des étapes 0x8002 → 0x13) devient secondaire : l'appairage passe. **En attendant le journal : I69** (run idées
+   14/10 20:30, score 25) — journal de synchro par service (réponse / vide / délai / non pris en charge), séances lues
+   selon la longueur de chaque bloc (#5784), 0x2C expiré = piste du canal RFCOMM auxiliaire (#6448, à ne coder qu'au
+   vu du journal), « stress : à activer sur la montre » ; texte du plan B « 16 à 19 chiffres ». Compte Huawei **non
+   requis** pour une montre jamais liée (#6271) : question close.
+3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 précisé par **I72** (présence compagnon :
+   `onDevicePresenceEvent` API 36 / `onDeviceAppeared` API 33–35, service `connectedDevice` court à `BT_CONNECTED`,
+   `REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND`, jamais de boucle) + client Java, filet WorkManager. (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
    (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**
 4. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
@@ -412,8 +418,16 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
     d'émotion vocale : licences NC) + transcription système → repli Vosk small-fr — **dans D4** ; **I66** (absorbé
     par I60) comportements suivis en une phrase + plan ABAB ; **I68** export FIT / CSV par type. Idée **écartée** :
     deviner « alcool / caféine » d'après la FC / VFC de la nuit (circulaire, D5).
-12. 💡 Prochain run idées (14/10 20:30 Paris) : journal v120+ s'il arrive ; licence AffectNet ; Whisper / Vosk fr sur
-    Exynos 1580 ; comptes rendus de labo français ; compte Huawei exigé ou non par une montre jamais liée.
+12. Nouvelles idées du run 14/10 20:30 (toutes **sans nouvel écran**) : **I69** synchro qui dit où elle cale (→ n°2) ;
+    **I70** force et confiance séparées (fusionne I64, **avec D5**) — HealthTrack corrige déjà tests multiples et
+    autocorrélation, ce qu'Exist / Bearable ne font pas : le rendre lisible ; **I71** un seul parcours par jour (précise
+    I51 / I54, n°9) ; **I72** arrière-plan par présence (→ n°3) ; **I73** visage **sans poids AffectNet** (licence non
+    commerciale ; MediaPipe blendshapes, **dans D4**) ; **I74** phrase du soir à la voix, tags toujours confirmés
+    (**dans D4**). Fait D4 confirmé (doc Android 01/10/2026) : service caméra / micro impossible à créer depuis
+    l'arrière-plan sur Android 14+, exemptions comprises ; rien ne montre que `appops` le contourne.
+13. 💡 Prochain run idées (15/10 08:30 Paris) : journal v125+ s'il arrive (0x2C répondu ou expiré ?) ;
+    `checkRecognitionSupport("fr-FR")` / ML Kit GenAI Speech sur One UI 8 ; licence des modèles MediaPipe Face
+    Landmarker ; comptes rendus de labo français.
 
 ## Idées en vrac (à trier)
 

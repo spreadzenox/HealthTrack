@@ -729,6 +729,27 @@ Lecture de [G] master `75337cf73a` (14/10/2026), lecture seule, faits seulement 
 - 📖 **Tranches** : drapeau 1 / 2 / 3 + compteur (ignoré à la réception), service et commande dans la 1re seulement,
   taille d'envoi par défaut 0xF4. 🩺 Les « ? » du journal v124 étaient des morceaux RFCOMM (trames collées / coupées).
 
+### 7.10 Pièges de synchro connus (run « idées » du 14/10 20:30)
+Lecture seule des issues / PR de [G] via l'API REST de Codeberg (le site web répond 429), faits seulement.
+
+- 📖 **GT 6 Pro synchronisée par [G]** (issue 5784, 02/2026) : pas, distance, sommeil OK. Échec seulement sur les
+  **séances enregistrées automatiquement** : un bloc interne de séance peut annoncer une longueur différente de ce
+  que son masque de champs laisse prévoir, ou être vide. Règle pour HealthTrack : lire chaque bloc **selon sa longueur
+  annoncée**, ignorer un bloc de longueur 0, ne jamais rejeter toute la séance pour un bloc.
+- 📖 **Canal RFCOMM auxiliaire** (PR 6448, fusionnée 07/2026) : sur les Huawei **Watch 3 / 4 / 5** (pas la série GT),
+  la montre envoie une **table de routage** des services vers un 2e canal, nécessaire à la synchro santé ; le service
+  0x2C (fichiers, §7.6) a parfois besoin de ce canal même s'il n'y figure pas (essai sur le principal, bascule après
+  délai dépassé). [H] Non attendu sur la GT 6 Pro ; à spécifier seulement si un journal montre 0x2C en délai dépassé.
+- 📖 **Stress / VFC selon le modèle** (doc [G] Huawei / Honor ; issue 6461) : le stress doit être activé et calibré
+  sur la montre ; VFC absente sur certaines GT 5.
+- 📖 **Compte Huawei** (issue 6271, 06/2026) : **non requis** pour une montre jamais liée à Huawei Santé ; nécessaire
+  seulement pour la partager avec Huawei Santé. Identifiants observés de 16 à 18 chiffres (6271, 6010).
+- 📖 **Clé remplacée** (issue 6978, 10/2026) : une autre app ou une mise à jour HarmonyOS 6.1 → 7 invalide la clé ;
+  remède = appairage initial complet. Reconnexions répétées à distance = montre instable (PR 6367) : espacer.
+- 📖 **Arrière-plan** (issue 5429 ; doc Android `CompanionDeviceService`) : en Bluetooth classique, la présence
+  compagnon se déclenche à la connexion de la montre (`EVENT_BT_CONNECTED`) ; `onDeviceAppeared` déprécié en API 36
+  (`onDevicePresenceEvent`). Plan d'implémentation : `IDEES.md` I72.
+
 ## 8. Contraintes d'appairage et « libération » de la montre
 
 - Une montre n'accepte **qu'une app liée** à la fois. Si Huawei Santé refait la liaison, la clé gardée par une autre app
