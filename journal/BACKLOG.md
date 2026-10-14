@@ -180,6 +180,18 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       clé lisible par Java (Keystore), sortie fichier importé par le JS à l'ouverture ; échec d'auth en fond =
       notification, jamais de réappairage ; ④ filet WorkManager 1 h + déverrouillage (`USER_PRESENT`) ; ⑤ socket
       toujours fermé, essais plafonnés (PR GB #6367 : des reconnexions agressives peuvent faire réinitialiser la montre)
+- [x] **(d quater ①②) Appareil compagnon + présence** (run 15/10 00:30, I72) : `CompanionPlugin.java` (association
+      CDM filtrée sur l'adresse de la montre appairée, `setSingleDevice`, `startObservingDevicePresence`, `status`,
+      `disassociate`), `WatchPresenceService` (`onDeviceAppeared` API 33–35, `onDevicePresenceEvent` API 36 : horodatage
+      en `SharedPreferences` + événement `watchPresence` vers le JS) ; `services/watchPresence.js` : montre reconnectée →
+      `syncWatchIfStale` (mêmes règles) ; ligne + « Activer » dans la carte. Couvre l'app **en arrière-plan** (processus
+      vivant, WebView non mise en pause : `KeepRunning` Capacitor) ; **app tuée → reste ③ client Java « synchro seule »**
+- [ ] À vérifier sur l'A56 : la boîte CDM trouve-t-elle la montre déjà appairée (appareils liés inclus par le
+      service de découverte) ? `onDeviceAppeared` arrive-t-il à la connexion Bluetooth classique ? La synchro JS
+      tourne-t-elle app en arrière-plan sous One UI ? → ajouter `presence` au journal exporté si le propriétaire ne voit
+      jamais « reconnectée il y a … »
+- [ ] (d quater ③) client Java « synchro seule » depuis la spec (§2, §3, §6.5, §7), clé lisible par Java, tampon
+      importé à l'ouverture — démarré par `WatchPresenceService` quand le JS ne répond pas
 - [ ] (d quater, avec ①) **Guide One UI** (I50) : batterie « Sans restriction » **et** « Applis jamais en veille »,
       affiché seulement si la synchro de fond n'a rien ramené depuis 24 h
 - [ ] Séances (0x17) : couvrir dans les tests les séances **enregistrées automatiquement** (plantage connu sur GT 6 Pro

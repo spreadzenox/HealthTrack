@@ -89,8 +89,20 @@ vos pas ni votre cœur ; maintenant chaque mesure est lue séparément, une séa
 et la carte dit pour quoi la montre n'a pas répondu. Votre prochain journal dira mesure par mesure ce qui arrive.
 **Toujours la même demande : « Synchroniser la montre », puis regarder si des mesures arrivent ; sinon Diagnostic →
 « Enregistrer le journal ».**
+**Run du 15/10 00:30** (toujours pas de nouveau journal) : premier pas vers la **synchro sans ouvrir l'app**. Sous
+« Synchroniser la montre », une ligne « Synchro dès que la montre se reconnecte au téléphone » et un bouton
+**« Activer »** : Android vous demande une fois d'autoriser HealthTrack à gérer la montre (« appareil compagnon »).
+Ensuite, Android prévient HealthTrack chaque fois que la montre se reconnecte, et l'app la relit **même en
+arrière-plan** (tant qu'elle n'a pas été fermée de force ; mêmes règles qu'à l'ouverture : 30 min au plus, jamais de
+reconnexions en rafale). La ligne dit quand la montre a été vue pour la dernière fois. App complètement fermée : la
+synchro attend encore l'ouverture ; ce sera l'étape suivante (un petit client de synchro natif).
+**Ce qu'il me faut : touchez « Activer » ; si la boîte Android ne s'ouvre pas ou si la ligne ne dit jamais
+« reconnectée il y a … », dites-le-moi (ou Diagnostic → « Enregistrer le journal »).**
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre Huawei : synchro quand elle se reconnecte (run 15/10 00:30)** : Plus → Connecteurs, carte « Montre
+  Huawei », « Activer » sous « Synchroniser la montre » (Android 13+, une confirmation) ; HealthTrack relit la montre
+  dès qu'elle se reconnecte au téléphone, même en arrière-plan, et dit quand elle a été vue.
 - **Montre Huawei : une lecture qui cale n'arrête plus la synchro (run 14/10 22:30)** : si la montre ne répond pas pour
   une mesure, les autres sont quand même lues ; séance ou minute mal formée sautée ; la carte dit « sans réponse de la
   montre pour : … » ; le journal détaille chaque lecture. Plan B : identifiant Huawei de 15 à 20 chiffres.
@@ -484,7 +496,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 16:30 — [Performance : Nutrition et synchros par index](runs/2026-10-14-1630-perf-nutrition-upsert.md) | ⚡ | PR #158 fusionnée → v127 |
 | 14/10 18:30 — [Montre : pilote « Huawei Link » dans le registre générique](runs/2026-10-14-1830-montre-registre-pilotes.md) | ⌚🏗️ | PR #159 fusionnée → v128 |
 | 14/10 20:30 — [Idées : pièges de synchro, Analyses lisibles, un parcours par jour](runs/2026-10-14-2030-idees-synchro-confiance-parcours.md) | 💡⌚ | 6 idées (I69–I74), spec §7.10 — journal seul (#160) |
-| 14/10 22:30 — [Montre : synchro qui dit où elle cale (I69)](runs/2026-10-14-2230-montre-synchro-lisible.md) | ⌚ | PR à venir |
+| 14/10 22:30 — [Montre : synchro qui dit où elle cale (I69)](runs/2026-10-14-2230-montre-synchro-lisible.md) | ⌚ | PR #161 fusionnée → v129 |
+| 15/10 00:30 — [Montre : synchro à la reconnexion (appareil compagnon, I72 ①②)](runs/2026-10-15-0030-montre-appareil-compagnon.md) | ⌚ | PR à venir |
 
 ---
 

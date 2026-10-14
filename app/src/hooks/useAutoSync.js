@@ -10,6 +10,7 @@ import { triggerAutoSync } from '../connectors/autoSync'
 import { syncWeather } from '../services/weatherSync'
 import { syncPhoneUsage } from '../services/phoneUsageSync'
 import { syncWatchIfStale } from '../services/watchAutoSync'
+import { listenWatchPresence } from '../services/watchPresence'
 
 /**
  * Call inside any component that should trigger an auto-sync on mount.
@@ -30,6 +31,8 @@ export function useAutoSync() {
     syncPhoneUsage()
     // Montre Huawei en direct : au plus toutes les 30 min, seulement si HealthTrack a sa clé.
     syncWatchIfStale()
+    // … quand la montre associée se reconnecte au téléphone, même app en arrière-plan (une seule écoute) ;
+    listenWatchPresence()
     // … et au retour dans l'app (déverrouillage, changement d'app) : la montre a de nouvelles minutes.
     const onVisible = () => {
       if (document.visibilityState === 'visible') syncWatchIfStale()
