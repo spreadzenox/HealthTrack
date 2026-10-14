@@ -1,6 +1,6 @@
 # 2026-10-14 04:30 Paris (02:30 UTC) — Performance, étape 2 : calculs d'analyse dans un Web Worker + cache invalidé à l'écriture
 
-**Type** : ⚡ D2 (performance)  ·  **PR** : voir fin
+**Type** : ⚡ D2 (performance)  ·  **PR** : #149 (fusionnée → release v122 avec APK)
 
 ## Pourquoi
 - Démarrage : main à `ce59d18` (PR #148 fusionnée), « Build & Release » → **release v121 avec `HealthTrack-v121.apk`**
@@ -67,3 +67,11 @@ geler l'écran** ; à chaud (cache) : 0,6 s et 0,45 s, aucun Worker lancé.
 2. ⚡ D2 suite : découpage du bundle (pages en `React.lazy`, table Ciqual chargée à la demande) — il reste ≈ 150 ms de
    tâche longue sur chaque page ; page Nutrition (28 lectures, 15 k entrées) par le runner ; `upsertEntries` relit tout
    le magasin à chaque synchro (index `source_at` suffirait).
+
+## Après le merge
+- 1er passage CI : « Frontend (Vitest) » rouge sur un test des Analyses qui attendait un texte « Chargement » inexistant
+  puis lisait le résultat de façon synchrone (passait en local par chance de timing, plus maintenant que le calcul est
+  asynchrone). Corrigé (`findByText`, 2 tests), et `__dirname` du garde-fou remplacé (lint revenu à 6). 5 passages locaux
+  stables.
+- PR #149 : « Frontend (Vitest) », « Build APK » et émulateurs A56 (API 35, 36) verts → fusionnée (squash, `cb91353`).
+  « Build & Release » vert → **release v122** publiée avec `HealthTrack-v122.apk`.
