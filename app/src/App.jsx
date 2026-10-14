@@ -1,16 +1,24 @@
+import { lazy } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
 import Dashboard from './pages/Dashboard'
-import Food from './pages/Food'
-import Data from './pages/Data'
-import Connectors from './pages/Connectors'
-import Settings from './pages/Settings'
-import Recommendations from './pages/Recommendations'
-import Nutrition from './pages/Nutrition'
-import WithingsCallback from './pages/WithingsCallback'
-import WhatsNew from './pages/WhatsNew'
-import More from './pages/More'
+import './pageStyles'
 import { DebugProvider } from './contexts/DebugContext'
+import { loadNutritionTable } from './data/nutritionTable'
+
+// Perf D2 : seul l'Accueil est dans le fichier principal ; les autres pages arrivent à la demande
+// (fichiers séparés, chargés en quelques ms depuis l'APK). Celles qui calculent des nutriments
+// attendent aussi la table Ciqual, pour ne jamais s'afficher sans elle.
+const withNutrition = (load) => lazy(() => Promise.all([load(), loadNutritionTable()]).then(([mod]) => mod))
+const Food = withNutrition(() => import('./pages/Food'))
+const Nutrition = withNutrition(() => import('./pages/Nutrition'))
+const Recommendations = withNutrition(() => import('./pages/Recommendations'))
+const Data = lazy(() => import('./pages/Data'))
+const Connectors = lazy(() => import('./pages/Connectors'))
+const Settings = lazy(() => import('./pages/Settings'))
+const WithingsCallback = lazy(() => import('./pages/WithingsCallback'))
+const WhatsNew = lazy(() => import('./pages/WhatsNew'))
+const More = lazy(() => import('./pages/More'))
 
 export default function App() {
   return (

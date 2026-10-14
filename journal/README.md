@@ -41,6 +41,10 @@ sinon le journal dit laquelle correspond. **Ce qu'il me faut : après la mise à
 montre » puis « Enregistrer le journal » et me le transmettre** (si tout passe, vos mesures arrivent directement).
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Pages plus légères (run 14/10 06:30)** : l'app ne charge plus tout d'un bloc ; chaque page arrive quand vous
+  l'ouvrez, la base des aliments seulement quand un écran en a besoin (fichier lu au lancement : 2,1 → 0,5 Mo). Le
+  petit gel d'≈ 0,1 s à l'ouverture de chaque page disparaît (Repas, Connecteurs, Analyses… prêts en 0,1 s au lieu de
+  0,3 s). Rien ne change à l'écran (captures identiques au pixel près).
 - **Accueil et Analyses sans blocage (run 14/10 04:30)** : la « Prédiction du jour » et les calculs des Analyses
   tournent en arrière-plan, et leur résultat est gardé tant que vos données ne changent pas. Mesuré sur 3 ans de
   données : l'Accueil est utilisable en **0,3 s au lieu de 1,3 s**, les Analyses en **0,3 s au lieu de 1,5 s** ; en
@@ -139,6 +143,11 @@ montre » puis « Enregistrer le journal » et me le transmettre** (si tout pass
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Performance, étape 3 (run 14/10 06:30)** : la table des aliments (1,3 Mo) et toutes les pages sauf l'Accueil sont
+  chargées à la demande ; les calculs nutritionnels attendent la table (jamais de total faux mis en cache). Piège évité :
+  des styles partagés vivaient dans le CSS d'autres pages, le CSS reste donc chargé d'emblée dans son ordre d'origine.
+  Un test empêche le retour de la table ou d'une page dans le fichier principal. Reste : la page Nutrition (≈ 0,8 s, 28
+  lectures de la base).
 - **Performance, étape 2 (run 14/10 04:30)** : le profil a montré que l'Accueil recalculait un modèle de prédiction
   (≈ 0,9 s) à chaque ouverture, et les Analyses trois fois le même tableau de jours (≈ 1,3 s). Ces calculs passent dans
   un **Web Worker** (hors de l'écran) avec un **cache** invalidé à chaque écriture dans la base ; un test empêche un
@@ -371,6 +380,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 13/10 22:30 — [Montre : lecture tolérante de la réponse d'appairage + variantes du jeton](runs/2026-10-13-2230-montre-lecture-tolerante.md) | ⌚🏗️ | PR #146 fusionnée → v120 |
 | 14/10 00:30 — [Test v119 consigné + performance : mesure et lectures par index](runs/2026-10-14-0030-perf-lectures-indexees.md) | ⌚⚡ | PR #148 fusionnée → v121 |
 | 14/10 04:30 — [Performance : calculs dans un Web Worker + cache](runs/2026-10-14-0430-perf-calculs-worker.md) | ⚡ | PR #149 fusionnée → v122 |
+| 14/10 06:30 — [Performance : découpage du fichier principal](runs/2026-10-14-0630-perf-decoupage-bundle.md) | ⚡ | PR en cours |
 
 ---
 

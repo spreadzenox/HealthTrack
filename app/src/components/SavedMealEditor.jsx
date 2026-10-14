@@ -3,12 +3,21 @@ import { updateEntry } from '../storage/localHealthStorage'
 import { atToLocalInput, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
 import { mealTimeError } from '../services/quickMeals'
 import MealEditor from './MealEditor'
+import NutritionTableGate from './NutritionTableGate'
 
 /**
  * Modification d'un repas déjà enregistré : ingrédients, grammes et heure du repas.
  * Seuls `payload.items` et `at` changent ; le plat, la source et le modèle sont conservés.
  */
-export default function SavedMealEditor({ entry, onSaved, onCancel }) {
+export default function SavedMealEditor(props) {
+  return (
+    <NutritionTableGate>
+      <SavedMealEditorForm {...props} />
+    </NutritionTableGate>
+  )
+}
+
+function SavedMealEditorForm({ entry, onSaved, onCancel }) {
   const [items, setItems] = useState(() => itemsForEditing(entry.payload?.items))
   const initialTime = atToLocalInput(entry.at)
   const [time, setTime] = useState(initialTime)

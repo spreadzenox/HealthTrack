@@ -17,6 +17,7 @@ import { getTagMeta } from '../services/behaviorTags'
 import { formatDuration, workoutTypeLabel, shortFoodName } from '../utils/format'
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 import { mealKcal } from '../services/mealEditing'
+import { useNutritionTable } from '../data/nutritionTable'
 
 const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
@@ -312,7 +313,10 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const redoMeal = useCallback((meal) => navigate('/food', { state: { redoMeal: meal } }), [navigate])
   const [visibleDays, setVisibleDays] = useState(INITIAL_DAYS)
-  const days = useMemo(() => buildDailyJournal(entries), [entries])
+  // kcal des repas : table Ciqual chargée à la demande, journal recalculé à son arrivée
+  const nutritionTable = useNutritionTable()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const days = useMemo(() => buildDailyJournal(entries), [entries, nutritionTable])
 
   const loadEntries = useCallback(async () => {
     try {
