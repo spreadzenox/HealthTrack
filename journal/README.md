@@ -440,7 +440,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 08:30 — [Idées : appairage recoupé, paliers de confiance, contexte auto](runs/2026-10-14-0830-idees-appairage-recoupe-paliers.md) | 💡⌚ | 6 idées (I63–I68), spec §6.11 — journal seul |
 | 14/10 10:30 — [Montre : fin d'association côté montre + une seule carte](runs/2026-10-14-1030-montre-association.md) | ⌚🧹 | PR #154 fusionnée → v124 |
 | 14/10 12:30 — [Montre : fenêtre de synchro, totaux du jour, carte simplifiée](runs/2026-10-14-1230-montre-mesures.md) | ⌚🧹 | PR #155 fusionnée → v125 |
-| 14/10 14:30 — [Nettoyage : Connecteurs par statut, bloc « Votre forme »](runs/2026-10-14-1430-nettoyage-connecteurs-forme.md) | 🧹 | PR à fusionner → v126 |
+| 14/10 14:30 — [Nettoyage : Connecteurs par statut, bloc « Votre forme »](runs/2026-10-14-1430-nettoyage-connecteurs-forme.md) | 🧹 | PR #156 fusionnée → v126 |
 
 ---
 
