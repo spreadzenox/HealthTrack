@@ -143,6 +143,12 @@ describe('describeWatchStatus', () => {
       text: 'batterie 84 % · synchro il y a moins d’une heure · 12 nouvelles mesures',
     })
     expect(describeWatchStatus({ at, outcome: 'connected', inserted: 0, everConnected: true }, { now, formatAgo }).text).toMatch(/rien de nouveau$/)
+    // I69 : la montre a calé sur une lecture → dit à l'écran, ton d'avertissement
+    expect(describeWatchStatus({ at, outcome: 'connected', inserted: 0, stalled: ['sommeil', 'minutes'], everConnected: true }, { now, formatAgo })).toMatchObject({
+      tone: 'warn',
+      title: 'Connectée',
+      text: expect.stringMatching(/rien de nouveau · sans réponse de la montre pour : sommeil, minutes$/),
+    })
     expect(describeWatchStatus({ at, auto: true, outcome: 'connect_failed', title: 'Connexion à la montre impossible', failures: 2, everConnected: true }, { now, formatAgo })).toMatchObject({
       tone: 'warn',
       text: expect.stringMatching(/^Connexion à la montre impossible .*dans 2 h au plus tôt\.$/),
@@ -151,7 +157,8 @@ describe('describeWatchStatus', () => {
   })
   it('la batterie lue à la connexion est gardée', () => {
     const storage = memoryStorage()
-    expect(recordWatchConnection({ outcome: { code: 'connected' }, battery: 84, sync: { inserted: 3 } }, { storage, now: () => T0 })).toMatchObject({ battery: 84, inserted: 3 })
+    expect(recordWatchConnection({ outcome: { code: 'connected' }, battery: 84, sync: { inserted: 3 } }, { storage, now: () => T0 })).toMatchObject({ battery: 84, inserted: 3, stalled: null })
+    expect(recordWatchConnection({ outcome: { code: 'connected' }, sync: { inserted: 0, stalled: ['sommeil'] } }, { storage, now: () => T0 }).stalled).toEqual(['sommeil'])
   })
 })
 

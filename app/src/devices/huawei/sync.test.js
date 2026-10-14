@@ -28,6 +28,11 @@ import {
   parseWorkoutList,
   parseWorkoutTotals,
   workoutListTlvs,
+  outcomeOf,
+  readWatchData,
+  describeServices,
+  syncHints,
+  stalledServices,
 } from './sync'
 import { SLEEP_FIELD } from './files'
 import { field, sleepSequenceFile } from './testing/sampleFiles'
@@ -271,12 +276,36 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(logs.some((m) => /première synchro/.test(m))).toBe(true)
   })
 
-  it('montre qui ne répond pas aux mesures : connexion gardée, étape « Lecture des mesures » en avertissement', async () => {
-    const watch = createFakeWatch({ silentOn: 0x0c })
-    const sync = createWatchSync({ watchKey: 'X', storage: memoryStorage(), write: async () => ({ inserted: 0 }) })
+  it('I69 : sommeil sans réponse → les minutes sont quand même lues, l’étape dit où la montre a calé', async () => {
+    const now = Date.UTC(2026, 9, 13, 2, 47)
+    const start = Math.floor(Date.UTC(2026, 9, 12, 20) / 1000)
+    const watch = createFakeWatch({ silentOn: 0x0c, minuteBlocks: [minuteBlock(0, start, [{ offset: 0, bytes: minute(120, 6, 90, 72) }])] })
+    const sync = createWatchSync({ watchKey: 'X', storage: memoryStorage(), now: () => now, write: async (e) => ({ inserted: e.length }) })
     const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'X', timeoutMs: 300, bindTimeoutMs: 300, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
     expect(report.outcome.code).toBe('connected')
-    expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/Pas de réponse/) })
+    expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/^1 minute → \d+ mesures? · sans réponse : sommeil$/) })
+    expect(report.sync.stalled).toEqual(['sommeil'])
+    expect(report.sync.services.map((r) => [r.id, r.outcome, r.count])).toEqual([
+      ['sleep', 'timeout', 0], ['minutes', 'ok', 1], ['totals', 'empty', 0], ['workouts', 'empty', 0], ['sleepFile', 'empty', 0],
+    ])
+    expect(report.sync.services[1]).toMatchObject({ command: '7/0x0A', units: 1 })
+    expect(report.log.some((l) => /lectures : sommeil : sans réponse, minutes : reçu \(1\)/.test(l.msg))).toBe(true)
+  })
+
+  it('I69 : un bloc minute sans réponse arrête ce service, ce qui est déjà lu est gardé', async () => {
+    const now = Date.UTC(2026, 9, 13, 2, 47)
+    const start = Math.floor(Date.UTC(2026, 9, 12, 20) / 1000)
+    const blocks = [0, 1, 2].map((i) => minuteBlock(i, start + i * 3600, [{ offset: 0, bytes: minute(100, 5, 80, 70) }]))
+    const watch = createFakeWatch({ minuteBlocks: blocks, silentBlock: 1 })
+    const written = []
+    const sync = createWatchSync({ watchKey: 'Z', storage: memoryStorage(), now: () => now, write: async (e) => (written.push(...e), { inserted: e.length }) })
+    const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'Z', timeoutMs: 300, bindTimeoutMs: 300, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+    expect(report.sync.minutes).toBe(1)
+    expect(report.sync.services.find((r) => r.id === 'minutes')).toMatchObject({ outcome: 'ok', count: 1, units: 3, failed: 2 })
+    // un seul bloc tenté après le silence : pas 2 délais d'attente de plus
+    expect(watch.seen.filter((x) => x === '7/11*')).toHaveLength(2)
+    expect(written.filter((e) => e.type === 'steps' && !e.payload.period).map((e) => e.payload.value)).toEqual([100])
+    expect(report.sync.stalled).toEqual([])
   })
 
   it('séances et sommeil détaillé : capacités lues, fichier téléchargé par blocs, nuit détaillée à la place des périodes simples', async () => {
@@ -321,6 +350,58 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.outcome.code).toBe('connected')
     expect(watch.seen.some((x) => x.startsWith('23/') || x.startsWith('44/'))).toBe(false)
     expect(report.sync.capabilities).toMatch(/séances non, fichiers 0x2C non/)
+  })
+})
+
+describe('montre Huawei : issue de chaque lecture (I69, §7.10)', () => {
+  it('une minute plus courte que son masque est sautée, pas tout le bloc', () => {
+    const tlvs = minuteBlock(0, 1727040000, [
+      { offset: 0, bytes: minute(80, 4, 60, 72) },
+      { offset: 1, bytes: [0x02, 0x00] }, // pas annoncés sur 2 octets, 1 seul reçu
+      { offset: 2, bytes: minute(100, 5, 75, 80) },
+    ])
+    expect(parseMinuteBlock(decodeTlvs(encodeTlvs(tlvs))).map((m) => m.steps)).toEqual([80, 100])
+  })
+
+  it('outcomeOf : délai dépassé, refus, erreur', () => {
+    expect(outcomeOf(new Error('Pas de réponse de la montre (7/12) en 8 s'))).toBe('timeout')
+    expect(outcomeOf(new Error('fichier sequence_data : bloc 0 incomplet'))).toBe('timeout')
+    expect(outcomeOf(new Error('fichier sequence_data refusé (code 100009)'))).toBe('refused')
+    expect(outcomeOf(new Error('TLV 3 tronqué'))).toBe('error')
+  })
+
+  it('séances : une séance illisible n’empêche pas de lire les autres', async () => {
+    const run = Math.floor(Date.UTC(2026, 9, 12, 17) / 1000)
+    const good = [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: be(8, 2) }, { tag: 4, value: be(run, 4) }, { tag: 5, value: be(run + 1800, 4) }, { tag: 0x14, value: [1] }]) }]
+    const session = {
+      request: async (service, command, tlvs) => {
+        if (service === 7 && (command === 0x0a || command === 0x0c)) return { tlvs: [{ tag: 0x81, value: [2, 2, 0, 0] }] }
+        if (service === 7) return { tlvs: [{ tag: 0x81, value: [] }] }
+        if (service === 0x17 && command === 0x07) return { tlvs: [{ tag: 0x81, value: encodeTlvs([7, 8].map((n) => ({ tag: 0x85, value: encodeTlvs([{ tag: 6, value: be(n, 2) }]) }))) }] }
+        if (service === 0x17 && command === 0x08) {
+          const n = tlvs[0].value[3]
+          // séance 7 : corps plus court que la longueur annoncée (séance automatique, #5784)
+          return n === 7 ? { tlvs: [{ tag: 0x81, value: Uint8Array.from([0x04, 0x04, 0x01]) }] } : { tlvs: good }
+        }
+        throw new Error('non pris en charge')
+      },
+    }
+    const caps = { services: new Map([[0x2c, false]]), commands: null }
+    const data = await readWatchData(session, { since: Date.UTC(2026, 9, 12), until: Date.UTC(2026, 9, 13), caps })
+    expect(data.workouts.map((w) => w.number)).toEqual([8])
+    expect(data.services.find((r) => r.id === 'workouts')).toMatchObject({ outcome: 'ok', count: 1, units: 2, failed: 1 })
+    expect(data.services.find((r) => r.id === 'sleepFile')).toMatchObject({ outcome: 'unsupported' })
+    expect(describeServices(data.services)).toBe('sommeil : vide, minutes : vide, totaux du jour : vide, séances : reçu (1), 1 bloc perdu, sommeil détaillé : non pris en charge')
+  })
+
+  it('pistes : fichiers déclarés mais muets → canal auxiliaire ; pas du jour sans historique ; rien n’aboutit', () => {
+    const caps = { services: new Map([[0x2c, true]]) }
+    const reads = (outcomes) => Object.entries(outcomes).map(([id, outcome]) => ({ id, outcome }))
+    expect(syncHints(reads({ minutes: 'ok', sleepFile: 'timeout' }), { caps })).toEqual([expect.stringMatching(/canal RFCOMM auxiliaire/)])
+    expect(syncHints(reads({ minutes: 'ok', sleepFile: 'timeout' }), { caps: { services: new Map([[0x2c, null]]) } })).toEqual([])
+    expect(syncHints(reads({ minutes: 'empty', totals: 'ok' }), { totals: { steps: 603 } })).toEqual([expect.stringMatching(/aucun bloc minute/)])
+    expect(syncHints(reads({ sleep: 'timeout', minutes: 'timeout', totals: 'error', workouts: 'unsupported' }))).toEqual([expect.stringMatching(/aucune lecture/)])
+    expect(stalledServices(reads({ sleep: 'timeout', minutes: 'empty', totals: 'refused' })).map((r) => r.id)).toEqual(['sleep', 'totals'])
   })
 })
 

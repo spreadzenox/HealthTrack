@@ -116,7 +116,11 @@ export function parseMinuteBlock(tlvs) {
     const offset = raw > 127 ? raw - 256 : raw
     const data = find(sub, 6)
     if (!data?.length) continue
-    out.push({ t: start + offset * 60_000, ...parseMinuteBytes(data) })
+    try {
+      out.push({ t: start + offset * 60_000, ...parseMinuteBytes(data) })
+    } catch {
+      // minute plus courte que son masque ne l'annonce (§7.10) : seule cette minute est perdue
+    }
   }
   return out
 }
@@ -295,20 +299,25 @@ export function parseWorkoutTotals(tlvs) {
   return w
 }
 
+/** Séances : une séance illisible (bloc vide ou plus court qu'annoncé, §7.10) n'empêche pas de lire les autres. */
 async function readWorkouts(session, since, until, log) {
   const list = parseWorkoutList((await session.request(WORKOUT, WORKOUT_CMD.LIST, workoutListTlvs(since, until))).tlvs)
   log(`séances : ${list.length}`)
-  const out = []
+  const items = []
+  let failed = 0
+  let failure = null
   for (const n of list) {
     try {
       const w = parseWorkoutTotals((await session.request(WORKOUT, WORKOUT_CMD.TOTALS, workoutTotalsTlvs(n))).tlvs)
-      if (w && w.start >= since - DAY && w.start < until) out.push(w)
+      if (w && w.start >= since - DAY && w.start < until) items.push(w)
       else log(`séance ${n} hors période ou incomplète`)
     } catch (e) {
+      failed++
+      failure = failure || outcomeOf(e)
       log(`séance ${n} non lue : ${e?.message || e}`, 'warn')
     }
   }
-  return out
+  return { items, outcome: items.length ? 'ok' : failure || (list.length ? 'ok' : 'empty'), units: list.length, failed }
 }
 
 const iso = (ms) => new Date(ms).toISOString()
@@ -394,20 +403,97 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
   return out.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0))
 }
 
+/**
+ * Nombre de blocs puis chaque bloc. Un bloc refusé ou illisible est sauté ; un bloc sans réponse arrête la
+ * lecture de ce service (la montre ne répond plus), mais ce qui est déjà lu est gardé.
+ * @returns {Promise<{ items: object[], outcome: string, units: number, failed: number }>}
+ */
 async function readBlocks(session, countCmd, dataCmd, since, until, parse, log, label) {
   const count = parseCount((await session.request(FITNESS, countCmd, countTlvs(since, until))).tlvs)
   log(`${label} : ${count} bloc${count > 1 ? 's' : ''}`)
-  const out = []
+  const items = []
+  let failed = 0
+  let failure = null
   for (let i = 0; i < count; i++) {
-    const reply = await session.request(FITNESS, dataCmd, blockTlvs(i))
+    let reply
+    try {
+      reply = await session.request(FITNESS, dataCmd, blockTlvs(i))
+    } catch (e) {
+      failed += count - i
+      failure = outcomeOf(e)
+      log(`${label} : bloc ${i} non lu (${e?.message || e}), ${count - i} bloc${count - i > 1 ? 's' : ''} abandonné${count - i > 1 ? 's' : ''}`, 'warn')
+      break
+    }
     const code = resultCode(reply.tlvs)
     if (code !== null && code !== RESULT_SUCCESS) {
+      failed++
+      failure = failure || 'refused'
       log(`${label} : bloc ${i} refusé (code ${code})`, 'warn')
       continue
     }
-    out.push(...parse(reply.tlvs))
+    try {
+      items.push(...parse(reply.tlvs))
+    } catch (e) {
+      failed++
+      failure = failure || 'error'
+      log(`${label} : bloc ${i} illisible (${e?.message || e})`, 'warn')
+    }
   }
-  return out
+  const outcome = items.length ? 'ok' : failure || (count ? 'ok' : 'empty')
+  return { items, outcome, units: count, failed }
+}
+
+// ── Issue de chaque lecture (I69) ──────────────────────────────────────────────
+
+/** Ce qui est lu, dans l'ordre de la synchro : nom dans le journal et commande (§7). */
+export const SYNC_READS = [
+  { id: 'sleep', label: 'sommeil', command: '7/0x0C' },
+  { id: 'minutes', label: 'minutes', command: '7/0x0A' },
+  { id: 'totals', label: 'totaux du jour', command: '7/0x03' },
+  { id: 'workouts', label: 'séances', command: '0x17/0x07' },
+  { id: 'sleepFile', label: 'sommeil détaillé', command: '0x2C' },
+]
+/** Issue d'une lecture : ok · empty (rien) · timeout · refused · unsupported (la montre a dit non) · error. */
+export function outcomeOf(e) {
+  const msg = e?.message || String(e)
+  if (/^Pas de réponse|incomplet/.test(msg)) return 'timeout'
+  return /refusé/.test(msg) ? 'refused' : 'error'
+}
+const OUTCOME_LABELS = { ok: 'reçu', empty: 'vide', timeout: 'sans réponse', refused: 'refusé', unsupported: 'non pris en charge', error: 'erreur' }
+
+/** Une lecture du journal : { id, label, command, outcome, count, units?, failed? } — des nombres, jamais de valeur. */
+const serviceRead = (id, outcome, extra = {}) => ({ ...SYNC_READS.find((r) => r.id === id), outcome, ...extra })
+
+/** « sommeil : sans réponse, minutes : vide » : lectures qui n'ont rien rendu (toutes si `all`). */
+export function describeServices(services = [], { all = false } = {}) {
+  return services
+    .filter((s) => all || s.outcome !== 'ok' || s.failed)
+    .map((s) => `${s.label} : ${OUTCOME_LABELS[s.outcome] || s.outcome}${s.outcome === 'ok' ? ` (${s.count})` : ''}${s.failed ? `, ${s.failed} bloc${s.failed > 1 ? 's' : ''} perdu${s.failed > 1 ? 's' : ''}` : ''}`)
+    .join(', ')
+}
+
+/** Lectures où la montre a calé (sans réponse, refus, erreur) : ce que l'utilisateur doit savoir. */
+export const stalledServices = (services = []) => services.filter((s) => ['timeout', 'refused', 'error'].includes(s.outcome))
+
+/**
+ * Pistes pour le journal quand l'historique reste vide (§7.10), sans valeur personnelle.
+ * @returns {string[]}
+ */
+export function syncHints(services = [], { caps = null, totals = null } = {}) {
+  const get = (id) => services.find((s) => s.id === id)
+  const hints = []
+  if (get('sleepFile')?.outcome === 'timeout' && caps?.services?.get(FILES) === true) {
+    hints.push('fichiers 0x2C déclarés mais sans réponse : piste du canal RFCOMM auxiliaire (§7.10, PR 6448)')
+  }
+  const minutes = get('minutes')
+  if (minutes?.outcome === 'empty' && totals?.steps > 0) {
+    hints.push('aucun bloc minute alors que la montre compte des pas aujourd’hui : historique pas encore écrit, ou période demandée refusée (§7.2)')
+  }
+  const stalled = stalledServices(services)
+  if (stalled.length && stalled.length === services.filter((s) => s.outcome !== 'unsupported').length) {
+    hints.push('aucune lecture n’a abouti : montre occupée ou liaison instable, réessayer montre près du téléphone')
+  }
+  return hints
 }
 
 /** « 6×3, 7×1 » : types bruts des périodes de sommeil (seuls 6 et 7 sont connus, §7.3). */
@@ -426,48 +512,60 @@ export function describeMinutes(minutes) {
 
 /**
  * Déroule la synchro sur une session authentifiée. Ne garde que [since, until).
- * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], capabilities: string }>}
+ * Chaque lecture est indépendante : un service qui cale n'empêche pas de lire les suivants (`services`).
+ * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], services: object[], hints: string[], capabilities: string }>}
  */
 export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset(), caps: knownCaps = null }) {
   // heure et capacités déjà envoyées / lues par la fin d'association (pairing.js) : pas de seconde fois
   if (!knownCaps) await setWatchTime(session, now, tzOffsetMinutes, log)
   const caps = knownCaps || (await readCapabilities(session, log))
   log(`capacités : ${describeCapabilities(caps)}`)
-  const sleepAll = await readBlocks(session, FIT.SLEEP_COUNT, FIT.SLEEP_DATA, since, until, parseSleepBlock, log, 'sommeil')
-  const sleep = sleepAll.filter((p) => p.start >= since - DAY && p.start < until)
-  if (sleepAll.length) log(`sommeil : ${sleepAll.length} période${sleepAll.length > 1 ? 's' : ''} (types ${describeTypes(sleepAll)}), ${sleep.length} dans la période`)
-  const minutesAll = await readBlocks(session, FIT.MINUTE_COUNT, FIT.MINUTE_DATA, since, until, parseMinuteBlock, log, 'minutes')
-  const minutes = minutesAll.filter((m) => m.t >= since && m.t < until)
-  if (minutesAll.length) log(`minutes : ${minutesAll.length} reçues, ${minutes.length} dans la période (${describeMinutes(minutes)})`)
-  let totals = null
-  try {
-    totals = parseTotals((await session.request(FITNESS, FIT.TOTALS, [{ tag: 1 }])).tlvs)
-  } catch (e) {
-    log(`totaux du jour non lus : ${e?.message || e}`, 'warn')
-  }
-  let workouts = []
-  if (canDo(caps, WORKOUT, WORKOUT_CMD.LIST)) {
+  const services = []
+  /** Lit un service sans jamais arrêter la synchro : l'issue est consignée, l'échec rend `fallback`. */
+  const attempt = async (id, fn, fallback) => {
     try {
-      workouts = await readWorkouts(session, since, until, log)
+      const r = await fn()
+      services.push(serviceRead(id, r.outcome, { count: r.outcome === 'empty' ? 0 : r.items.length, ...(r.units != null ? { units: r.units } : {}), ...(r.failed ? { failed: r.failed } : {}) }))
+      return r.items
     } catch (e) {
-      log(`séances non lues : ${e?.message || e}`, 'warn')
+      const label = SYNC_READS.find((r) => r.id === id).label
+      log(`${label} non lu : ${e?.message || e}`, 'warn')
+      services.push(serviceRead(id, outcomeOf(e), { count: 0 }))
+      return fallback
     }
   }
+  const skip = (id) => services.push(serviceRead(id, 'unsupported', { count: 0 }))
+
+  const sleepAll = await attempt('sleep', () => readBlocks(session, FIT.SLEEP_COUNT, FIT.SLEEP_DATA, since, until, parseSleepBlock, log, 'sommeil'), [])
+  const sleep = sleepAll.filter((p) => p.start >= since - DAY && p.start < until)
+  if (sleepAll.length) log(`sommeil : ${sleepAll.length} période${sleepAll.length > 1 ? 's' : ''} (types ${describeTypes(sleepAll)}), ${sleep.length} dans la période`)
+  const minutesAll = await attempt('minutes', () => readBlocks(session, FIT.MINUTE_COUNT, FIT.MINUTE_DATA, since, until, parseMinuteBlock, log, 'minutes'), [])
+  const minutes = minutesAll.filter((m) => m.t >= since && m.t < until)
+  if (minutesAll.length) log(`minutes : ${minutesAll.length} reçues, ${minutes.length} dans la période (${describeMinutes(minutes)})`)
+  const [totals = null] = await attempt('totals', async () => {
+    const t = parseTotals((await session.request(FITNESS, FIT.TOTALS, [{ tag: 1 }])).tlvs)
+    return { items: [t], outcome: t.steps || t.kcal || t.distanceM ? 'ok' : 'empty' }
+  }, [])
+  let workouts = []
+  if (canDo(caps, WORKOUT, WORKOUT_CMD.LIST)) workouts = await attempt('workouts', () => readWorkouts(session, since, until, log), [])
+  else skip('workouts')
   let nights = []
   if (canDo(caps, FILES, 0x01) && (!caps?.expand || hasExpand(caps.expand, EXPAND.SLEEP_DICTIONARY))) {
-    try {
+    nights = await attempt('sleepFile', async () => {
       const file = await downloadFile(
         session,
         { name: 'sequence_data', type: FILE_TYPE.SEQUENCE, startMs: since - DAY, endMs: until, dictionary: SLEEP_DICTIONARY },
         { log },
       )
-      nights = file ? parseSleepSequence(file).filter((n) => n.end > since && n.end <= until) : []
-      log(`sommeil détaillé : ${nights.length} nuit${nights.length > 1 ? 's' : ''}`)
-    } catch (e) {
-      log(`sommeil détaillé non lu : ${e?.message || e}`, 'warn')
-    }
-  }
-  return { minutes, sleep, totals, workouts, nights, capabilities: describeCapabilities(caps) }
+      const items = file ? parseSleepSequence(file).filter((n) => n.end > since && n.end <= until) : []
+      log(`sommeil détaillé : ${items.length} nuit${items.length > 1 ? 's' : ''}`)
+      return { items, outcome: items.length ? 'ok' : 'empty' }
+    }, [])
+  } else skip('sleepFile')
+  log(`lectures : ${describeServices(services, { all: true })}`)
+  const hints = syncHints(services, { caps, totals })
+  for (const h of hints) log(`piste : ${h}`, 'warn')
+  return { minutes, sleep, totals, workouts, nights, services, hints, capabilities: describeCapabilities(caps) }
 }
 
 /** Reprise après une longue absence : jamais plus de 30 jours relus. */

@@ -39,7 +39,7 @@ export function classicPlugin() {
   return isNative() ? NativeBtClassic : null
 }
 
-/** État de la dernière connexion (manuelle ou automatique) : { at, outcome, title, label, inserted, battery, auto, failures, everConnected } ou {}. */
+/** État de la dernière connexion (manuelle ou automatique) : { at, outcome, title, label, inserted, stalled, battery, auto, failures, everConnected } ou {}. */
 export function getWatchAutoSyncState(storage = globalThis.localStorage) {
   try {
     const v = JSON.parse(storage?.getItem(STATE_KEY) || 'null')
@@ -60,6 +60,7 @@ export function recordWatchConnection(report, { auto = false, storage = globalTh
     title: report?.outcome?.title || null,
     label: report?.sync?.label || null,
     inserted: report?.sync?.inserted ?? null,
+    stalled: report?.sync?.stalled?.length ? report.sync.stalled : null,
     battery: report?.battery ?? (code === 'connected' ? null : prev.battery ?? null),
     failures: code === 'connected' ? 0 : (prev.failures || 0) + 1,
     everConnected: code === 'connected' || !!prev.everConnected,
@@ -192,7 +193,8 @@ export function describeWatchStatus(state, { now = Date.now(), formatAgo } = {})
     if (state.battery != null) parts.push(`batterie ${state.battery} %`)
     parts.push(`synchro ${when}`)
     if (state.inserted != null) parts.push(state.inserted > 0 ? `${plural(state.inserted, 'nouvelle mesure', 'nouvelles mesures')}` : 'rien de nouveau')
-    return { tone: 'ok', title: 'Connectée', text: parts.join(' · ') }
+    if (state.stalled?.length) parts.push(`sans réponse de la montre pour : ${state.stalled.join(', ')}`)
+    return { tone: state.stalled?.length ? 'warn' : 'ok', title: 'Connectée', text: parts.join(' · ') }
   }
   const retryMin = Math.round(autoSyncInterval(state) / 60000)
   const retry = retryMin >= 60 ? `${Math.round(retryMin / 60)} h` : `${retryMin} min`

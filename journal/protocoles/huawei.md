@@ -740,6 +740,11 @@ Lecture seule des issues / PR de [G] via l'API REST de Codeberg (le site web ré
   la montre envoie une **table de routage** des services vers un 2e canal, nécessaire à la synchro santé ; le service
   0x2C (fichiers, §7.6) a parfois besoin de ce canal même s'il n'y figure pas (essai sur le principal, bascule après
   délai dépassé). [H] Non attendu sur la GT 6 Pro ; à spécifier seulement si un journal montre 0x2C en délai dépassé.
+- ✅ **Appliqué dans HealthTrack (run 14/10 22:30, `sync.js`)** : chaque lecture (7/0x0C, 7/0x0A, 7/0x03, 0x17/0x07,
+  0x2C) est indépendante et son issue consignée (`report.sync.services` : reçu / vide / sans réponse / refusé / non pris
+  en charge / erreur, nombres seulement) ; un bloc sans réponse arrête ce service seulement (ce qui est lu est gardé) ;
+  un bloc refusé ou illisible, une séance ou une minute plus courte qu'annoncé sont sautés ; pistes (`hints`) : 0x2C
+  déclaré mais muet → canal auxiliaire, aucun bloc minute alors que les totaux du jour ont des pas.
 - 📖 **Stress / VFC selon le modèle** (doc [G] Huawei / Honor ; issue 6461) : le stress doit être activé et calibré
   sur la montre ; VFC absente sur certaines GT 5.
 - 📖 **Compte Huawei** (issue 6271, 06/2026) : **non requis** pour une montre jamais liée à Huawei Santé ; nécessaire

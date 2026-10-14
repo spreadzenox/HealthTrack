@@ -83,8 +83,17 @@ rencontrés par d'autres propriétaires de Huawei, pour que votre prochain journ
 Bonne nouvelle : **une GT 6 Pro jamais liée à Huawei Santé n'a pas besoin de compte Huawei** (confirmé par un
 contributeur qui l'utilise ainsi). Gadgetbridge synchronise bien pas, distance et sommeil de ce modèle ; le seul piège
 connu concerne les **séances enregistrées automatiquement**, et le prochain run de code en tiendra compte.
+**Run de 22:30** (toujours pas de nouveau journal) : la synchro de la montre **ne s'arrête plus à la première mesure
+qui cale**. Avant, si votre montre ne répondait pas pour le sommeil, HealthTrack abandonnait tout et ne lisait même pas
+vos pas ni votre cœur ; maintenant chaque mesure est lue séparément, une séance ou une minute mal formée est sautée,
+et la carte dit pour quoi la montre n'a pas répondu. Votre prochain journal dira mesure par mesure ce qui arrive.
+**Toujours la même demande : « Synchroniser la montre », puis regarder si des mesures arrivent ; sinon Diagnostic →
+« Enregistrer le journal ».**
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre Huawei : une lecture qui cale n'arrête plus la synchro (run 14/10 22:30)** : si la montre ne répond pas pour
+  une mesure, les autres sont quand même lues ; séance ou minute mal formée sautée ; la carte dit « sans réponse de la
+  montre pour : … » ; le journal détaille chaque lecture. Plan B : identifiant Huawei de 15 à 20 chiffres.
 - **Votre montre Huawei reconnue en « Connexion directe » (run 14/10 18:30)** : Plus → Connecteurs → Capteurs
   Bluetooth, une montre ou un bracelet Huawei / Honor trouvé par la recherche n'est plus présenté « Via son app » mais
   « Connexion directe », avec « Se connecter en direct » qui ouvre la carte « Montre Huawei » (même repliée).
@@ -474,7 +483,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 14:30 — [Nettoyage : Connecteurs par statut, bloc « Votre forme »](runs/2026-10-14-1430-nettoyage-connecteurs-forme.md) | 🧹 | PR #156 fusionnée → v126 |
 | 14/10 16:30 — [Performance : Nutrition et synchros par index](runs/2026-10-14-1630-perf-nutrition-upsert.md) | ⚡ | PR #158 fusionnée → v127 |
 | 14/10 18:30 — [Montre : pilote « Huawei Link » dans le registre générique](runs/2026-10-14-1830-montre-registre-pilotes.md) | ⌚🏗️ | PR #159 fusionnée → v128 |
-| 14/10 20:30 — [Idées : pièges de synchro, Analyses lisibles, un parcours par jour](runs/2026-10-14-2030-idees-synchro-confiance-parcours.md) | 💡⌚ | 6 idées (I69–I74), spec §7.10 — journal seul |
+| 14/10 20:30 — [Idées : pièges de synchro, Analyses lisibles, un parcours par jour](runs/2026-10-14-2030-idees-synchro-confiance-parcours.md) | 💡⌚ | 6 idées (I69–I74), spec §7.10 — journal seul (#160) |
+| 14/10 22:30 — [Montre : synchro qui dit où elle cale (I69)](runs/2026-10-14-2230-montre-synchro-lisible.md) | ⌚ | PR à venir |
 
 ---
 

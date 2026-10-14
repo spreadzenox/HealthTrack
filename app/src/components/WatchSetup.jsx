@@ -188,7 +188,7 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
             onSubmit={(e) => {
               e.preventDefault()
               const id = normalizeAccountId(accountInput)
-              if (!id) return setMessage('Identifiant attendu : 17 à 19 chiffres.')
+              if (!id) return setMessage('Identifiant attendu : 15 à 20 chiffres.')
               update({ ...state, accountId: id })
               setAccountInput('')
               setMessage('Identifiant gardé sur ce téléphone.')

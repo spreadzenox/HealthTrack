@@ -37,6 +37,8 @@ export function createFakeWatch({
   minuteBlocks = [],
   sleepBlocks = [],
   totals = null,
+  silentTotals = false, // ne répond pas aux totaux du jour (7/0x03)
+  silentBlock = null, // n° du premier bloc minute (7/0x0B) resté sans réponse
   unsupported = [], // services absents (« 0x17 », etc.) annoncés par 1/0x02
   expand = null, // octets des capacités étendues (1/0x37) ; null = commande absente
   workouts = [], // [{ number, body }] : body = corps TLV de la réponse 0x17/0x08
@@ -202,9 +204,10 @@ export function createFakeWatch({
         const n = (m.commandId === 0x0a ? minuteBlocks : sleepBlocks).length
         return sealed([{ tag: 0x81, value: [2, 2, n >> 8, n & 0xff] }])
       }
+      if (m.commandId === 0x0b && silentBlock != null && index() >= silentBlock) return
       if (m.commandId === 0x0b) return sealed(minuteBlocks[index()])
       if (m.commandId === 0x0d) return sealed(sleepBlocks[index()])
-      if (m.commandId === 0x03 && totals) return sealed(totals)
+      if (m.commandId === 0x03 && !silentTotals) return sealed(totals || [{ tag: 0x81, value: [] }])
     }
   }
 

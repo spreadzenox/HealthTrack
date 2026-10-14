@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-14",
+  "kind": "amélioration",
+  "title": "Montre Huawei : une lecture qui cale n'arrête plus la synchro",
+  "items": [
+    "Si la montre ne répond pas pour une mesure (par exemple le sommeil), HealthTrack lit quand même les suivantes (pas, cœur, SpO₂, totaux du jour, séances) au lieu d'abandonner toute la synchro.",
+    "Une séance ou une minute mal formée est simplement sautée : les autres sont gardées.",
+    "Plus → Connecteurs, carte « Montre Huawei » : la ligne d'état dit pour quelles mesures la montre n'a pas répondu, et le journal de diagnostic détaille chaque lecture (reçu, vide, sans réponse, non pris en charge).",
+    "Plan B (garder Huawei Santé) : l'identifiant de compte Huawei accepte de 15 à 20 chiffres."
+  ]
+}
