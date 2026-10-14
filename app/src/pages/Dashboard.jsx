@@ -7,9 +7,7 @@ import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
-import BaselineCards from '../components/BaselineCards'
-import HealthRadar from '../components/HealthRadar'
-import SleepRegularityCard from '../components/SleepRegularityCard'
+import FormeSection from '../components/FormeSection'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import SavedMealEditor from '../components/SavedMealEditor'
 import { isDeletableEntry } from '../utils/entries'
@@ -392,9 +390,7 @@ export default function Dashboard() {
 
       {!loading && !error && (
         <>
-          <HealthRadar />
-          <BaselineCards />
-          <SleepRegularityCard />
+          <FormeSection />
           <WellbeingCharts />
           <h3 className="section-title">Vos derniers jours</h3>
           {days.length === 0 ? (

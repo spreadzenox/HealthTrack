@@ -66,7 +66,16 @@ Et comme demandé (« maintenant que ça marche tu peux nettoyer l'UI »), la ca
 **Ce qu'il me faut : après la mise à jour, « Synchroniser la montre », puis regarder si des mesures apparaissent dans
 l'historique (Accueil → vos derniers jours). Si ce n'est pas le cas : Diagnostic → « Enregistrer le journal ».**
 
+Le run de 14:30 a poursuivi le nettoyage (aucun nouveau journal montre reçu entre-temps) : **Connecteurs** montre
+d'abord ce qui envoie déjà vos mesures et replie le reste sous « Brancher une autre source » ; l'**Accueil** réunit
+radar, cœur et horaires de sommeil dans un seul bloc « Votre forme ».
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Connecteurs rangés, accueil plus court (run 14/10 14:30)** : Plus → Connecteurs affiche en premier ce qui envoie
+  déjà vos mesures (montre, Health Connect, météo…) ; les autres sources, capteurs Bluetooth et guides par marque sont
+  sous « Brancher une autre source », replié. Plus de pastilles « Non disponible / Non demandé » sur une source que
+  vous n'avez pas activée. Accueil : un seul bloc « Votre forme » (radar, FC au repos, VFC, horaires de sommeil) avec
+  une seule explication « Comment c'est calculé ».
 - **Montre Huawei — vos mesures arrivent, carte simplifiée (run 14/10 12:30)** : la synchro relit tout l'historique de
   la montre la première fois, puis reprend là où elle a vraiment reçu des données ; pas, distance et calories du jour
   enregistrés (sans double comptage avec les heures). Plus → Connecteurs : la carte dit « Connectée · batterie · dernière
@@ -430,7 +439,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 06:30 — [Performance : découpage du fichier principal](runs/2026-10-14-0630-perf-decoupage-bundle.md) | ⚡ | PR #151 fusionnée → v123 |
 | 14/10 08:30 — [Idées : appairage recoupé, paliers de confiance, contexte auto](runs/2026-10-14-0830-idees-appairage-recoupe-paliers.md) | 💡⌚ | 6 idées (I63–I68), spec §6.11 — journal seul |
 | 14/10 10:30 — [Montre : fin d'association côté montre + une seule carte](runs/2026-10-14-1030-montre-association.md) | ⌚🧹 | PR #154 fusionnée → v124 |
-| 14/10 12:30 — [Montre : fenêtre de synchro, totaux du jour, carte simplifiée](runs/2026-10-14-1230-montre-mesures.md) | ⌚🧹 | PR à fusionner → v125 |
+| 14/10 12:30 — [Montre : fenêtre de synchro, totaux du jour, carte simplifiée](runs/2026-10-14-1230-montre-mesures.md) | ⌚🧹 | PR #155 fusionnée → v125 |
+| 14/10 14:30 — [Nettoyage : Connecteurs par statut, bloc « Votre forme »](runs/2026-10-14-1430-nettoyage-connecteurs-forme.md) | 🧹 | PR à fusionner → v126 |
 
 ---
 

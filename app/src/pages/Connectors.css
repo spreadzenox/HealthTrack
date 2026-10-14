@@ -3,7 +3,39 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+}
+
+/* Sources pas encore branchées (D1 : ordre par statut), repliées dès qu'une source envoie. */
+.connectors-more {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 8px;
+}
+
+.connectors-more > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.connectors-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.connectors-more > summary::before {
+  content: '▸';
+  color: var(--accent);
+}
+
+.connectors-more[open] > summary::before {
+  content: '▾';
 }
 
 /* ── Connector card ────────────────────────────────────────────────────── */

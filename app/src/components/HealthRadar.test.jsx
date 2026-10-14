@@ -72,7 +72,6 @@ describe('HealthRadar', () => {
     expect(await screen.findByText('Depuis 2 jours')).toBeInTheDocument()
     expect(screen.getByText(/6 h 20/)).toBeInTheDocument()
     expect(screen.getByText(/professionnel de santé/)).toBeInTheDocument()
-    expect(screen.getByText(/pas un diagnostic/i)).toBeInTheDocument()
   })
 
   it('asks to sync the watch when the recent days have no measurements', async () => {

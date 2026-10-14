@@ -84,7 +84,17 @@ describe('Connectors page', () => {
     expect(toggle).not.toBeChecked()
   })
 
+  it('n’affiche pas les badges techniques tant que la source est désactivée', async () => {
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: false, lastSyncAt: null, lastSyncResult: null })
+    renderConnectors()
+    await screen.findByText('Test Connector')
+    expect(screen.queryByText('Plateforme :')).not.toBeInTheDocument()
+  })
+
   it('shows availability and permission badges', async () => {
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
     renderConnectors()
     // The connector is not available (mocked to return false)
     await waitFor(() => {
@@ -93,7 +103,8 @@ describe('Connectors page', () => {
   })
 
   it('enables the connector when toggle is clicked', async () => {
-    const { setConnectorSettings } = await import('../settings/connectorSettings')
+    const { getConnectorSettings, setConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: false, lastSyncAt: null, lastSyncResult: null })
     renderConnectors()
     const toggle = screen.getByRole('checkbox', { name: /Activer Test Connector/i })
     fireEvent.click(toggle)
@@ -184,6 +195,8 @@ describe('Connectors page', () => {
   })
 
   it('resolves to "Non disponible" when isAvailable never resolves (timeout fallback)', async () => {
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
     const { CONNECTORS } = await import('../connectors/connectorRegistry')
     CONNECTORS[0].availabilityDetails.mockReturnValue(neverResolves())
     CONNECTORS[0].isAvailable.mockReturnValue(neverResolves())
@@ -206,6 +219,8 @@ describe('Connectors page', () => {
   }, 20000)
 
   it('resolves to "Non demandé" when checkPermissions never resolves (timeout fallback)', async () => {
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
     const { CONNECTORS } = await import('../connectors/connectorRegistry')
     CONNECTORS[0].isAvailable.mockResolvedValue(false)
     // Explicitly mock availabilityDetails so it resolves immediately (state from a prior
@@ -260,5 +275,25 @@ describe('Connectors page', () => {
     CONNECTORS[0].checkPermissions.mockResolvedValue('not_asked')
     renderConnectors()
     expect(screen.getByText(/Huawei \/ Honor/)).toBeInTheDocument()
+  })
+  it('ordre par statut : une source active passe en tête, le reste est replié sous « Brancher une autre source »', async () => {
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+    const { container, unmount } = renderConnectors()
+    const more = container.querySelector('details.connectors-more')
+    expect(more.open).toBe(false)
+    expect(screen.getByText('Brancher une autre source')).toBeInTheDocument()
+    expect(more.contains(screen.getByText('Test Connector'))).toBe(false)
+    expect(more.contains(screen.getByText(/Huawei \/ Honor/))).toBe(true)
+    unmount()
+  })
+
+  it('premier lancement : rien de branché, « Sources à brancher » ouvert', async () => {
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: false, lastSyncAt: null, lastSyncResult: null })
+    const { container, unmount } = renderConnectors()
+    expect(container.querySelector('details.connectors-more').open).toBe(true)
+    expect(screen.getByText('Sources à brancher')).toBeInTheDocument()
+    unmount()
   })
 })

@@ -66,7 +66,6 @@ describe('BaselineCards', () => {
     renderCards()
     expect(await screen.findByText('Plus haute que d’habitude')).toBeInTheDocument()
     expect(screen.getByText('Plus basse que d’habitude')).toBeInTheDocument()
-    expect(screen.getByText(/pas un diagnostic/i)).toBeInTheDocument()
     expect(screen.getByText(/professionnel de santé/i)).toBeInTheDocument()
   })
 })

@@ -46,7 +46,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       fuseau horaire
 - [x] Accueil : explications de méthode des 3 cartes repliées sous « Comment c'est calculé » ; conseil de régularité
       présenté comme hypothèse générale (D6) (run 12/10 18:30 Paris)
-- [ ] Accueil, suite : « Radar forme » + « Votre cœur vs votre norme » + « Régularité du sommeil » → un seul bloc « Forme »
+- [x] Accueil, suite : « Radar forme » + « Votre cœur vs votre norme » + « Régularité du sommeil » → un seul bloc
+      « Votre forme », une seule explication de méthode (run 14/10 14:30)
 - [x] Analyses : « Écran tard » apparaît 2 fois (tag mesuré dans « Vos habitudes » + variable continue « Écran tard
       (veille au soir) » dans les corrélations) → n'en garder qu'une présentation
 - [x] Analyses : la liste des corrélations affiche ~45 variables dont ~35 « incertaines » pâles → n'afficher que les
@@ -55,7 +56,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       Connecteurs → tout regrouper dans la carte Withings des Connecteurs
 - [x] Accueil : « + 1 cigarette » seulement si une cigarette notée ces 14 jours, ou épinglé dans Paramètres → Cigarettes
       (run 12/10 18:30 Paris ; écran tard dédoublonné, corrélations incertaines repliées, Withings regroupé : même run)
-- [ ] Connecteurs : intro + 6 blocs empilés → ordre par statut (ce qui envoie / ce qui reste à brancher)
+- [x] Connecteurs : intro + 6 blocs empilés → ordre par statut (ce qui envoie en tête, le reste replié sous « Brancher
+      une autre source ») ; pastilles techniques masquées sur une source désactivée ; `--border` défini (run 14/10 14:30)
 
 ### D2 — Performance (mesurer d'abord)
 - [x] Mesure : `npm run perf` (build de prod, 3 ans de démo, `--dense`, CPU ×4) — temps stabilisé, temps bloquant,
@@ -383,8 +385,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
 4. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)** ; reste : Nutrition par le runner (28 lectures, ≈ 0,8 s), `upsertEntries` par
    index, `WellbeingCharts` par agrégats, budget en CI (enregistrements lus).
-5. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /
-   « Voyage » auto-détectés ; `--border` inexistant utilisé par `.settings-input` (corriger globalement).
+5. 🧹 D1 — restes : tags « Sport le soir » / « Voyage » auto-détectés (I65) ; relire Paramètres et Analyses (titres
+   et explications en double). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
    faits du 14/10 : visage = blendshapes MediaPipe par défaut (AUC visage ≈ 0,6 → tendance 7 j), voix = prosodie
    maison (I67), réseaux sociaux = temps au premier plan par app seulement ; sur Android 15+, « paramètres restreints »
@@ -445,6 +447,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 ## Livré
 
 - [x] 2026-10-14 — D3 (d quinquies) : fenêtre de synchro jamais vide (1re depuis 2000, reprise − 6 h), totaux du jour stockés, carte montre simplifiée (état + « Synchroniser », « Diagnostic » replié) (run 12:30 Paris)
+- [x] 2026-10-14 — D1 : Connecteurs ordonnés par statut (actif en tête, « Brancher une autre source » replié), pastilles masquées si désactivé, accueil « Votre forme » (1 titre, 1 explication), `--border` défini (run 14:30 Paris)
 - [x] 2026-10-13 — D3 (a quater) : l'instrument de diagnostic donne la **taille** de chaque champ de la réponse « New Auth » (octets / caractères / type, jamais la valeur) → décoder d'un seul journal ; écran « challenge (16 o), epk (32 o)… » (run 18:30 Paris)
 - [x] 2026-10-13 — D3 (c bis) : primitives crypto « New Auth » X25519 / Ed25519 sur @noble/curves, vecteurs RFC 7748 / 8032 (run 16:30 Paris)
 - [x] 2026-10-13 — D3 (a ter) : l'instrument révèle les **champs** d'une réponse « New Auth » non-JSON (noms, sans valeur) ; spec §6.8 (run 14:30 Paris)
