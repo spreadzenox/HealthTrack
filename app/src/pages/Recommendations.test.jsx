@@ -128,11 +128,8 @@ describe('Recommendations page', () => {
     // Switch to advanced tab
     await screen.findByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(screen.getAllByRole('button', { name: /Analyse avancée/i })[0])
-    await waitFor(() => {
-      expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
-    })
-    // Should show advanced analysis, not not-enough-data
-    expect(screen.queryByText(/Analyse sur/i)).not.toBeNull()
+    // Should show advanced analysis, not not-enough-data (computed asynchronously)
+    expect(await screen.findByText(/Analyse sur/i)).toBeInTheDocument()
   })
 
   it('lists redundant variables left out of the advanced model', async () => {
@@ -152,11 +149,8 @@ describe('Recommendations page', () => {
     // Click advanced tab after initial render (button should be there immediately)
     const advBtn = await screen.findByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(advBtn)
-    await waitFor(() => {
-      expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
-    })
-    // 3 days < 7 required for advanced — should show not-enough-data
-    expect(screen.getByText(/Données insuffisantes pour les recommandations avancées/i)).toBeInTheDocument()
+    // 3 days < 7 required for advanced — should show not-enough-data (computed asynchronously)
+    expect(await screen.findByText(/Données insuffisantes pour les recommandations avancées/i)).toBeInTheDocument()
   })
 
   it('reloads when health-entries-updated event fires', async () => {

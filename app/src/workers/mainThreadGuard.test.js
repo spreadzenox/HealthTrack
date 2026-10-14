@@ -5,10 +5,11 @@
  */
 import { describe, it, expect } from 'vitest'
 import { readdirSync, readFileSync } from 'node:fs'
-import { join, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const HEAVY = ['computeTodayPrediction', 'computeBasicCorrelations', 'computeAdvancedAnalysis', 'computeLaggedEffects', 'computeTagEffects']
-const SRC = resolve(__dirname, '..')
+const SRC = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 function uiFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
