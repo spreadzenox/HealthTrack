@@ -19,6 +19,11 @@
  *   npm run perf -- --routes=/,/data   # pages choisies
  *   npm run perf -- --runs=5 --cpu=6
  *   npm run perf -- --no-build         # réutilise dist/
+ *   npm run perf -- --keep-cache       # garde le cache des analyses entre passages (ouverture « à chaud »)
+ *
+ * Par défaut le cache des analyses (`healthtrack-analysis-cache-v1`) est vidé avant chaque passage :
+ * la mesure est celle d'une ouverture après une écriture (pire cas). Les tâches lourdes tournent alors
+ * dans un Web Worker, hors du fil principal, et ne comptent pas dans les tâches longues de la page.
  *
  * Sortie : tableau dans la console + `.perf/report.json`.
  */
@@ -198,6 +203,8 @@ async function main() {
         tx.onerror = () => rej(tx.error)
       })
       db.close()
+      // Écriture hors de l'app : invalider les caches comme le ferait une écriture normale
+      localStorage.setItem('healthtrack-data-revision', String(Date.now()))
       return list.length
     }, entries)
 
@@ -208,6 +215,7 @@ async function main() {
     for (const path of routes) {
       const samples = []
       for (let i = 0; i < runs; i++) {
+        if (!args['keep-cache']) await page.evaluate(() => localStorage.removeItem('healthtrack-analysis-cache-v1'))
         await page.goto(baseUrl + path, { waitUntil: 'load', timeout: 60000 })
         // Attendre 1 s sans nouvelle tâche longue (60 s au plus)
         const m = await page.evaluate(async () => {

@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react'
 import WellbeingCharts from './WellbeingCharts'
 import { computeTodayPrediction } from '../services/analysisEngine'
 import { listEntries } from '../storage/localHealthStorage'
+import { _resetAnalysisRunner } from '../services/analysisRunner'
+import { bumpDataRevision } from '../storage/dataRevision'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn().mockResolvedValue([]),
@@ -12,6 +14,11 @@ vi.mock('../storage/localHealthStorage', () => ({
 vi.mock('../services/analysisEngine', () => ({
   computeTodayPrediction: vi.fn(),
 }))
+
+beforeEach(() => {
+  localStorage.clear()
+  _resetAnalysisRunner()
+})
 
 describe('WellbeingCharts — prédiction du jour', () => {
   beforeEach(() => {
@@ -127,5 +134,38 @@ describe('WellbeingCharts — axe du calendrier (« 14 derniers jours » = 14 jo
     const { container } = render(<WellbeingCharts />)
     await screen.findByText(/Par jour/)
     expect(container.querySelector('.wellbeing-chart-pred-line')).not.toBeNull()
+  })
+})
+
+describe('WellbeingCharts — prédiction en cache (perf D2)', () => {
+  beforeEach(() => {
+    computeTodayPrediction.mockReset()
+    listEntries.mockResolvedValue([])
+  })
+
+  it('ne recalcule pas la prédiction tant que les données ne changent pas', async () => {
+    computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
+    const first = render(<WellbeingCharts />)
+    expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
+    first.unmount()
+    _resetAnalysisRunner() // relance de l'app : seul le cache persistant reste
+
+    render(<WellbeingCharts />)
+    // Servie par le cache, sans recalcul
+    expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
+    expect(computeTodayPrediction).toHaveBeenCalledTimes(1)
+  })
+
+  it('recalcule après une écriture dans la base', async () => {
+    computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
+    const first = render(<WellbeingCharts />)
+    expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
+    first.unmount()
+
+    bumpDataRevision()
+    computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 3.4, actual: null, assumedTypical: [] })
+    render(<WellbeingCharts />)
+    expect(await screen.findByText('3,4 / 5')).toBeInTheDocument()
+    expect(computeTodayPrediction).toHaveBeenCalledTimes(2)
   })
 })

@@ -8,6 +8,7 @@
  * the indexes instead of loading the whole store (perf D2).
  */
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
+import { bumpDataRevision } from './dataRevision'
 
 const DB_NAME = 'HealthTrack'
 const STORE_NAME = 'health_entries'
@@ -154,6 +155,7 @@ export async function upsertEntries(newEntries) {
     tx.onerror = () => reject(tx.error)
   })
 
+  if (inserted > 0) bumpDataRevision()
   return { inserted, skipped }
 }
 
@@ -177,7 +179,10 @@ export async function createEntry(entry) {
     const store = tx.objectStore(STORE_NAME)
     const req = store.add(row)
     req.onerror = () => reject(req.error)
-    req.onsuccess = () => resolve(req.result)
+    req.onsuccess = () => {
+      bumpDataRevision()
+      resolve(req.result)
+    }
   })
 }
 
@@ -290,7 +295,10 @@ export async function deleteEntry(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
     tx.objectStore(STORE_NAME).delete(id)
-    tx.oncomplete = () => resolve()
+    tx.oncomplete = () => {
+      bumpDataRevision()
+      resolve()
+    }
     tx.onerror = () => reject(tx.error)
   })
 }
@@ -320,7 +328,11 @@ export async function updateEntry(id, changes = {}) {
       row.updated_at = new Date().toISOString()
       store.put(row)
     }
-    tx.oncomplete = () => (missing ? reject(new Error('Entrée introuvable')) : resolve())
+    tx.oncomplete = () => {
+      if (missing) return reject(new Error('Entrée introuvable'))
+      bumpDataRevision()
+      resolve()
+    }
     tx.onerror = () => reject(tx.error)
   })
 }
@@ -482,7 +494,10 @@ export async function importFromJson(json, opts = {}) {
       store.add(row)
       imported++
     }
-    tx.oncomplete = () => resolve({ imported, skipped, invalid, profileRestored: restoreProfile(profile, opts.merge) })
+    tx.oncomplete = () => {
+      if (imported > 0 || !opts.merge) bumpDataRevision()
+      resolve({ imported, skipped, invalid, profileRestored: restoreProfile(profile, opts.merge) })
+    }
     tx.onerror = () => reject(tx.error)
   })
 }

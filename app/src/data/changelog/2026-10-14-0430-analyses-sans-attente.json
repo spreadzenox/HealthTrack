@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-14",
+  "kind": "amélioration",
+  "title": "Accueil et Analyses sans temps de blocage",
+  "items": [
+    "Les calculs les plus lourds (« Prédiction du jour » sur l'Accueil, corrélations, habitudes et effets décalés des Analyses) tournent désormais en arrière-plan : l'écran reste fluide pendant qu'ils se font, au lieu de se figer près d'une seconde.",
+    "Leur résultat est gardé tant que vos données ne changent pas : en rouvrant l'app ou l'onglet Analyses, tout s'affiche aussitôt, sans tout recalculer. Une nouvelle note, un repas ou une synchro de la montre relancent le calcul automatiquement.",
+    "Mesuré sur 3 ans de données (téléphone simulé) : l'Accueil devient utilisable en 0,3 s au lieu de 1,3 s, les Analyses en 0,3 s au lieu de 1,5 s. Rien ne change à l'écran ni dans vos données."
+  ]
+}

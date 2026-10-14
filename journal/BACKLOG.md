@@ -63,8 +63,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] `listEntries` / `getLatestEntryAt` / `listEntriesForAnalysis` : requêtes par index et par plage, index
       `type_at` (schéma v3) — Accueil 3 046 → 1 289 ms, 128 552 → 16 884 enregistrements lus (run 14/10 00:30)
 - [ ] Cache d'agrégats journaliers / hebdo précalculés, invalidés à l'écriture (`health-entries-updated`)
-- [ ] Mémoïsation, sous-échantillonnage des longues séries, Web Worker pour l'analyse, graphiques chargés en différé
-      (+ code splitting : bundle principal > 500 kB)
+- [x] Web Worker pour l'analyse + cache des résultats invalidé à chaque écriture (révision des données) : Accueil
+      1 289 → 271 ms, Analyses 1 503 → 295 ms ; garde-fou « aucun écran n'importe un calcul lourd » (run 14/10 04:30)
+- [ ] Code splitting : pages en `React.lazy`, table Ciqual (1,5 Mo) chargée à la demande — ≈ 150 ms de tâche longue
+      d'évaluation du bundle (2,1 Mo) sur chaque page
+- [ ] Nutrition par le runner (28 lectures, 15 k entrées) ; `upsertEntries` relit tout le magasin à chaque synchro
+- [ ] Sous-échantillonnage des longues séries, graphiques chargés en différé
 - [x] Test anti-régression : Vitest échoue si une lecture filtrée relit tout le magasin (run 14/10 00:30)
 - [ ] Budget `npm run perf` en CI (lectures par page ≤ N, temps bloquant de l'Accueil) — les temps sont bruités
       (± 200 ms), viser plutôt le nombre d'enregistrements lus
@@ -367,9 +371,9 @@ Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 (CDM + client Java, filet WorkManager). (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
    (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**
-4. ⚡ D2 — performance : mesure (`npm run perf`) et lectures par index **livrées le 14/10 00:30** ; reste le calcul
-   (tâche longue ≈ 0,6–0,9 s sur Accueil / Analyses) : cache d'agrégats journaliers, Worker pour l'analyse,
-   graphiques différés + découpage du bundle, budget en CI.
+4. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), **calculs dans un Worker + cache (14/10 04:30)** ;
+   reste : découpage du bundle (React.lazy + Ciqual à la demande), Nutrition par le runner, `upsertEntries` par index,
+   budget en CI.
 5. 🧹 D1 — restes : bloc « Forme » unique sur l'accueil, Connecteurs ordonnés par statut, tags « Sport le soir » /
    « Voyage » auto-détectés ; `--border` inexistant utilisé par `.settings-input` (corriger globalement).
 6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB).

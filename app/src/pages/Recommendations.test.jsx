@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Recommendations from './Recommendations'
+import { _resetAnalysisRunner } from '../services/analysisRunner'
+import { bumpDataRevision } from '../storage/dataRevision'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntriesForAnalysis: vi.fn(),
@@ -13,6 +15,12 @@ vi.mock('../hooks/useAutoSync', () => ({
   useAutoSync: vi.fn(),
 }))
 
+
+// Chaque test part d'un cache d'analyses vide (perf D2)
+beforeEach(() => {
+  localStorage.clear()
+  _resetAnalysisRunner()
+})
 
 // Helper to build a minimal set of entries (no real health data)
 function makeEntries(days = 0) {
@@ -120,11 +128,8 @@ describe('Recommendations page', () => {
     // Switch to advanced tab
     await screen.findByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(screen.getAllByRole('button', { name: /Analyse avancée/i })[0])
-    await waitFor(() => {
-      expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
-    })
-    // Should show advanced analysis, not not-enough-data
-    expect(screen.queryByText(/Analyse sur/i)).not.toBeNull()
+    // Should show advanced analysis, not not-enough-data (computed asynchronously)
+    expect(await screen.findByText(/Analyse sur/i)).toBeInTheDocument()
   })
 
   it('lists redundant variables left out of the advanced model', async () => {
@@ -144,11 +149,8 @@ describe('Recommendations page', () => {
     // Click advanced tab after initial render (button should be there immediately)
     const advBtn = await screen.findByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(advBtn)
-    await waitFor(() => {
-      expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
-    })
-    // 3 days < 7 required for advanced — should show not-enough-data
-    expect(screen.getByText(/Données insuffisantes pour les recommandations avancées/i)).toBeInTheDocument()
+    // 3 days < 7 required for advanced — should show not-enough-data (computed asynchronously)
+    expect(await screen.findByText(/Données insuffisantes pour les recommandations avancées/i)).toBeInTheDocument()
   })
 
   it('reloads when health-entries-updated event fires', async () => {
@@ -159,10 +161,25 @@ describe('Recommendations page', () => {
 
     const callsBefore = listEntriesForAnalysis.mock.calls.length
 
-    // Simulate new data arriving
+    // Simulate new data arriving (a real write bumps the data revision before the event)
     listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
+    bumpDataRevision()
     window.dispatchEvent(new CustomEvent('health-entries-updated'))
     await waitFor(() => expect(listEntriesForAnalysis.mock.calls.length).toBeGreaterThan(callsBefore))
+  })
+
+  it('serves an already computed tab from the cache without recomputing (perf D2)', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue([])
+    const first = renderPage()
+    await screen.findByText(/Enregistrez votre bien-être/i)
+    first.unmount()
+    _resetAnalysisRunner() // app restarted: only the persisted cache remains
+    const calls = listEntriesForAnalysis.mock.calls.length
+
+    renderPage()
+    expect(screen.getByText(/Enregistrez votre bien-être/i)).toBeInTheDocument()
+    expect(listEntriesForAnalysis.mock.calls.length).toBe(calls)
   })
 })
 

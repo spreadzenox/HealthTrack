@@ -1,9 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
+import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import {
-  computeBasicCorrelations,
-  computeAdvancedAnalysis,
-  countTotalDataDays,
   buildDailyDataset,
   localDateKey,
   MIN_DAYS_BASIC,
@@ -15,8 +13,8 @@ import {
   MIN_ADVICE_EFFECT,
   MIN_WEEKEND_DAYS,
 } from '../services/analysisEngine'
-import { computeTagEffects, MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN } from '../services/behaviorTags'
-import { computeLaggedEffects, LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
+import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN } from '../services/behaviorTags'
+import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
 import { useAutoSync } from '../hooks/useAutoSync'
@@ -161,8 +159,7 @@ function TagEffectCard({ effect }) {
   )
 }
 
-function TagsSection({ entries }) {
-  const result = useMemo(() => computeTagEffects(entries), [entries])
+function TagsSection({ result }) {
   return (
     <section className="reco-section">
       <h3 className="reco-section-title">🏷️ Vos habitudes</h3>
@@ -218,7 +215,7 @@ function LaggedEffectCard({ effect }) {
     <li className={'reco-tag-card reco-lag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
       <p className="reco-tag-name">{effect.label}</p>
       <p className="reco-tag-compare">
-        {effect.when}, {effect.format(effect.sd)} de plus que d’habitude → bien-être du jour{' '}
+        {effect.when}, {effect.sdText} de plus que d’habitude → bien-être du jour{' '}
         <span className={effect.effectPerSd < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
           <strong>{frDiff(effect.effectPerSd)} {points}</strong>
         </span>
@@ -234,8 +231,7 @@ function LaggedEffectCard({ effect }) {
   )
 }
 
-function LaggedEffectsSection({ entries }) {
-  const result = useMemo(() => computeLaggedEffects(entries), [entries])
+function LaggedEffectsSection({ result }) {
   const lags = `${LAGS[0]} à ${LAGS[LAGS.length - 1]} jours`
   return (
     <section className="reco-section">
@@ -369,9 +365,8 @@ function CorrelationsSection({ correlations }) {
 
 // ─── Basic tab ────────────────────────────────────────────────────────────────
 
-function BasicTab({ entries }) {
-  const result = useMemo(() => computeBasicCorrelations(entries), [entries])
-  const totalDays = useMemo(() => countTotalDataDays(entries), [entries])
+function BasicTab({ analysis }) {
+  const { correlations: result, tagEffects, laggedEffects, totalDays } = analysis
 
   if (result.status === 'not_enough_data') {
     return (
@@ -429,9 +424,9 @@ function BasicTab({ entries }) {
         )}
       </section>
 
-      <TagsSection entries={entries} />
+      <TagsSection result={tagEffects} />
 
-      <LaggedEffectsSection entries={entries} />
+      <LaggedEffectsSection result={laggedEffects} />
 
       <CorrelationsSection correlations={correlations} />
 
@@ -444,9 +439,8 @@ function BasicTab({ entries }) {
 
 // ─── Advanced tab ─────────────────────────────────────────────────────────────
 
-function AdvancedTab({ entries }) {
-  const result = useMemo(() => computeAdvancedAnalysis(entries), [entries])
-  const totalDays = useMemo(() => countTotalDataDays(entries), [entries])
+function AdvancedTab({ analysis }) {
+  const { result, totalDays } = analysis
 
   if (result.status === 'not_enough_data') {
     return (
@@ -702,39 +696,59 @@ const TABS = [
   { id: 'advanced', label: 'Analyse avancée', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS },
 ]
 
+const TAB_TASKS = { basic: 'basicAnalysis', advanced: 'advancedAnalysis' }
+
 export default function Recommendations() {
   useAutoSync()
 
   const [tab, setTab] = useState('basic')
-  const [entries, setEntries] = useState([])
+  // Résultats par onglet, calculés dans un Web Worker et gardés en cache tant que les données ne
+  // changent pas (perf D2) : un onglet déjà calculé s'affiche tout de suite.
+  const [analyses, setAnalyses] = useState(() => ({ basic: peekAnalysis('basicAnalysis').result ?? null }))
+  const [debugEntries, setDebugEntries] = useState([])
   const [totalDbCount, setTotalDbCount] = useState(null)
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [revision, setRevision] = useState(0)
   const debugMode = isDebugModeEnabled()
 
-  const load = async () => {
-    try {
-      // Load entries per type with independent caps so high-frequency types
-      // (e.g. heart_rate) cannot crowd out lower-frequency ones (wellbeing, sleep…)
-      const [data, dbTotal] = await Promise.all([
-        listEntriesForAnalysis(),
-        debugMode ? countAllEntries() : Promise.resolve(null),
-      ])
-      setEntries(data)
-      if (dbTotal !== null) setTotalDbCount(dbTotal)
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    load()
-    const onUpdate = () => load()
+    const onUpdate = () => setRevision((r) => r + 1)
     window.addEventListener('health-entries-updated', onUpdate)
     return () => window.removeEventListener('health-entries-updated', onUpdate)
   }, [])
+
+  useEffect(() => {
+    let alive = true
+    // Onglet déjà calculé et données inchangées : servi par le cache, sans recalcul
+    getAnalysis(TAB_TASKS[tab])
+      .then((result) => {
+        if (alive) setAnalyses((a) => ({ ...a, [tab]: result }))
+      })
+      .catch((e) => {
+        if (alive) setError(e.message)
+      })
+    return () => {
+      alive = false
+    }
+  }, [tab, revision])
+
+  useEffect(() => {
+    if (!debugMode) return
+    let alive = true
+    Promise.all([listEntriesForAnalysis(), countAllEntries()])
+      .then(([data, dbTotal]) => {
+        if (!alive) return
+        setDebugEntries(data)
+        setTotalDbCount(dbTotal)
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [debugMode, revision])
+
+  const current = analyses[tab]
+  const loading = current == null && !error
 
   return (
     <section className="reco-page">
@@ -770,9 +784,9 @@ export default function Recommendations() {
 
       {!loading && !error && (
         <>
-          {debugMode && <RecoDebugPanel entries={entries} totalDbCount={totalDbCount} />}
-          {tab === 'basic' && <BasicTab entries={entries} />}
-          {tab === 'advanced' && <AdvancedTab entries={entries} />}
+          {debugMode && <RecoDebugPanel entries={debugEntries} totalDbCount={totalDbCount} />}
+          {tab === 'basic' && <BasicTab analysis={current} />}
+          {tab === 'advanced' && <AdvancedTab analysis={current} />}
         </>
       )}
     </section>
