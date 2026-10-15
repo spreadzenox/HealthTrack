@@ -178,6 +178,12 @@ qu'on puisse ranger. Pour HealthTrack, quatre pistes concrètes, toutes pour ret
 - **Moins de tags à cocher** : « Sport le soir » (séances de la montre), « Voyage » (changement de fuseau) et « Repas
   tardif » (heure des repas) seront déduits, comme « Écran tard ».
 - **« Pas pertinent pour moi »** sur chaque lien des Analyses, comme le fait Exist.
+**Run de 22:30** (nettoyage, pas de nouveau journal montre) : sur l'Accueil, **la « Prédiction du jour » ne
+s'affiche plus deux fois** (grande carte au-dessus du graphique + légende dessous) : une seule ligne sous la courbe
+avec la valeur, l'explication se déplie d'un geste. L'hypothèse générale sur la régularité du sommeil tient aussi en
+une ligne repliée sous vos chiffres. Et **premier tag déduit** : si votre montre (ou Health Connect) enregistre vos
+séances, la saisie du bien-être ne demande plus « Sport le soir » — une séance commencée après 18 h suffit ; un tag
+noté à la main compte toujours (séance sans montre). Analyses le signale « déduit de vos séances ».
 Point d'attention : pour installer hors Play Store en 2027, le parcours « avancé » d'Android peut rester activé
 **indéfiniment** après une attente unique de 24 h ; la mise à jour en 1 clic devrait donc continuer sans compte.
 
@@ -578,7 +584,7 @@ Point d'attention : pour installer hors Play Store en 2027, le parcours « avanc
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités (15/10 18:30)** — montre **en maintenance** à votre demande ; ordre : **nettoyage de l'UI (D1)**, performance des courbes (D2), humeur par le visage / la voix (D4), anti-circularité (D5), science personnelle (D6). Historique : **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
+**Prochaines priorités (15/10 22:30)** — montre **en maintenance** à votre demande ; ordre : **nettoyage de l'UI (D1 : « Voyage » / « Repas tardif » déduits, Données, Nutrition)**, performance des courbes (D2), humeur par le visage / la voix (D4), anti-circularité (D5), science personnelle (D6). Historique : **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
 (b) libération + appairage, (c) authentification ISO, (d) lecture des mesures et synchro automatique livrées. Blocage
 réel, **compris grâce à votre journal de 17:03** : la réponse d'appairage de la GT 6 Pro est au format que l'app connaît
 déjà, suivie d'**un octet de fin** que le lecteur de l'app refusait. **Lecture tolérante livrée au run de 22:30**
@@ -633,6 +639,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 16:30 — [Montre : relue aussi app en arrière-plan](runs/2026-10-15-1630-montre-arriere-plan.md) | ⌚ | PR #169 fusionnée → v136 |
 | 15/10 18:30 — [Montre en maintenance, nettoyage : journal du jour et Paramètres](runs/2026-10-15-1830-nettoyage-journal-parametres.md) | 🧹 | PR #170 fusionnée → v137 |
 | 15/10 20:30 — [Idées : alléger sans rien perdre (SpO₂, stress ressenti, tags déduits)](runs/2026-10-15-2030-idees-alleger.md) | 💡🧹⚡ | 6 idées (I82–I87) — journal seul |
+| 15/10 22:30 — [Nettoyage : prédiction unique, « Sport le soir » déduit](runs/2026-10-15-2230-accueil-donnee-sport-deduit.md) | 🧹 | PR en cours (voir compte rendu) |
 
 ---
 

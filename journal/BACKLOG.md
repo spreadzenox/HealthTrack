@@ -68,14 +68,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       « Moyenne par jour — données locales uniquement » du graphique bien-être retiré (run 15/10 18:30)
 - [x] Paramètres : Gemini en un paragraphe (5 → 2 blocs de texte), modèle replié sous « Choisir le modèle »,
       interrupteurs Cigarettes / Diagnostic à libellé fixe et explicite (run 15/10 18:30)
-- [ ] Accueil : carte « Prédiction du jour » + point orange du graphique disent la même chose → n'en garder qu'un ;
-      relire la page Données et Nutrition (prochain run D1)
-- [ ] **I85** (run idées 15/10 20:30, score 16) : check-in réduit à ce que seul l'utilisateur sait — « Sport le soir »
-      déduit des séances (montre / Health Connect, début ≥ 18 h), « Voyage » d'un changement de fuseau, « Repas
-      tardif » des repas saisis (jours avec ≥ 2 repas) ; masqués dans la saisie quand la source existe (comme
-      « Écran tard ») ; précise la ligne « Check-in, suite » ci-dessus
-- [ ] **I87** (score 15) : Accueil « la donnée avant l'interprétation » (leçon Google Health 05/2026) — chiffres et
-      courbes d'abord, interprétation en une ligne repliable ; avec la fusion « Prédiction du jour » ci-dessus
+- [x] Accueil : « Prédiction du jour » en une seule ligne sous la courbe (carte au-dessus retirée), explication
+      repliée ; hypothèse « horaires réguliers » repliée en une ligne (I87, run 15/10 22:30)
+- [ ] Relire la page Données et Nutrition (prochain run D1)
+- [x] **I85 ①** « Sport le soir » déduit des séances (montre / Health Connect, début ≥ 18 h, ≥ 10 min) : masqué
+      dans la saisie s'il y a une séance enregistrée ces 14 jours ; le tag déclaré compte encore (OU), jours hors
+      de la plage des séances non lus comme « sans » ; Analyses : « déduit de vos séances » (run 15/10 22:30)
+- [ ] **I85 ②** « Voyage » d'un changement de fuseau (fuseau `Intl` mémorisé à chaque ouverture), « Repas tardif »
+      des repas saisis (jours avec ≥ 2 repas) ; masqués dans la saisie quand la source existe. Le radar
+      (« probablement lié à… ») ne lit encore que les tags déclarés : lui faire lire aussi les séances du soir.
 - [ ] **I86** (score 12, absorbe I80) : « Pas pertinent pour moi » sur chaque lien des Analyses (masqué partout,
       réversible, exporté) ; force et confiance séparées, en mots
 
@@ -450,8 +451,8 @@ Avant : réordonnées le 12/10 (22:30 Paris) : priorité absolue = D3 (montre), 
 **14/10 12:25, consigne du propriétaire : « Maintenant que ça marche tu peux nettoyer l'UI »** (charte §000) : carte
 montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage général), puis D2 (performance).
 
-1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits) : « Prédiction du jour » en double avec le point
-   du graphique ; pages Données et Nutrition à relire ; tags « Sport le soir » / « Voyage » auto-détectés (I65) ; relire Paramètres et Analyses (titres
+1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits ; 22:30 : prédiction unique, « Sport le soir »
+   déduit) : pages Données et Nutrition à relire ; « Voyage » / « Repas tardif » déduits (I85 ②) ; relire Paramètres et Analyses (titres
    et explications en double). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **d'abord I82 (SpO₂ minute → tranches de 10 min ; run idées 15/10 20:30)**, cause probable
    du lag sur le vrai téléphone depuis que la montre synchronise, invisible dans la démo ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
@@ -566,6 +567,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-15 — D1 : « Prédiction du jour » en une ligne sous la courbe, hypothèse sommeil repliée (I87) ; I85 ① « Sport le soir » déduit des séances (saisie, Analyses) (run 22:30 Paris)
 - [x] 2026-10-15 — Run « idées » 20:30 : I82–I87 (SpO₂ en tranches, stress ressenti côté Y, check-in réduit, courbes
       MinMaxLTTB, donnée avant interprétation, « Pas pertinent ») ; I80 absorbée par I86 ; I48 précisée (parcours avancé)
 - [x] 2026-10-15 — (PR #170 → v137) Charte : D3 en maintenance (consigne du 15/10), D1 en tête ; D1 : cigarettes du jour sur une ligne, « Écran tard » mesuré non répété, Paramètres allégés ; test App instable corrigé (`useLayoutEffect`) (run 18:30 Paris)

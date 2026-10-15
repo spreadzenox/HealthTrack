@@ -32,6 +32,9 @@ const PERMUTATIONS = 2000
  * auto: the tag is measured by the app itself when that capture is on ('phone_usage': late screen
  * from the phone's screen events) — the check-in then no longer asks for it, and the measured value
  * wins over a declared tag for the same evening (never ask for something the app already captures).
+ * 'workouts': « Sport le soir » from the workouts recorded by the watch or Health Connect (start ≥ 18:00);
+ * there a declared tag still counts on an evening nothing was recorded (sport without the watch): a
+ * recorded workout adds the tag, it never removes one (`declaredAlsoCounts`).
  * radarCause: a known, harmless reason for resting HR / HRV / sleep to drift
  * for a night or two — the radar then says « probably linked to… » instead of
  * raising a worry (radar.js, explainRadar).
@@ -41,7 +44,7 @@ export const BEHAVIOR_TAGS = [
   { id: 'coffee_late', label: 'Café après 14 h', emoji: '☕', effectDay: 'next' },
   { id: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next', radarCause: true },
   { id: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next', auto: 'phone_usage' },
-  { id: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next', radarCause: true },
+  { id: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next', radarCause: true, auto: 'workouts', declaredAlsoCounts: true },
   { id: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same', radarCause: true },
   { id: 'travel', label: 'Voyage', emoji: '✈️', effectDay: 'same', radarCause: true },
   { id: 'vaccine', label: 'Vaccin', emoji: '💉', effectDay: 'next', radarCause: true },
@@ -53,12 +56,25 @@ const TAGS_BY_ID = Object.fromEntries(BEHAVIOR_TAGS.map((t) => [t.id, t]))
 /** Minutes of screen between 22:00 and 04:00 from which an evening counts as « Écran tard ». */
 export const AUTO_LATE_SCREEN_MIN = 30
 
+/** A workout starting from this hour (local time) counts as « Sport le soir ». */
+export const EVENING_SPORT_FROM_HOUR = 18
+
+/** Shorter recorded sessions (a walk to the bus picked up by the watch…) are not a workout. */
+const MIN_WORKOUT_SECONDS = 10 * 60
+
+/** A recorded workout (watch / Health Connect session), not a distance-only `activity` entry. */
+export function isWorkoutEntry(e) {
+  const secs = e?.type === 'activity' ? e.payload?.durationSeconds : null
+  return typeof secs === 'number' && secs >= MIN_WORKOUT_SECONDS
+}
+
 /**
  * Tags the check-in should not ask for, because the app measures them itself.
- * @param {{ phoneUsage?: boolean }} captures  which automatic captures are on
+ * @param {{ phoneUsage?: boolean, workouts?: boolean }} captures  which automatic captures are on
  */
-export function autoDetectedTagIds({ phoneUsage = false } = {}) {
-  return BEHAVIOR_TAGS.filter((t) => t.auto === 'phone_usage' && phoneUsage).map((t) => t.id)
+export function autoDetectedTagIds({ phoneUsage = false, workouts = false } = {}) {
+  const on = { phone_usage: phoneUsage, workouts }
+  return BEHAVIOR_TAGS.filter((t) => t.auto && on[t.auto]).map((t) => t.id)
 }
 
 /** 'YYYY-MM-DD' → the previous calendar day. */
@@ -80,7 +96,31 @@ function measuredTags(entries) {
     if (typeof date !== 'string' || typeof mins !== 'number' || Number.isNaN(mins)) continue
     late.set(previousDateKey(date), mins >= AUTO_LATE_SCREEN_MIN)
   }
-  return new Map([['late_screen', late]])
+  return new Map([['late_screen', late], ['evening_sport', eveningSport(entries)]])
+}
+
+/**
+ * Evenings with a recorded workout (start ≥ EVENING_SPORT_FROM_HOUR). Days between the first and the last
+ * recorded workout without one are « without »; outside that span nothing is known (watch not worn yet,
+ * or no longer synced).
+ */
+function eveningSport(entries) {
+  const evenings = new Set()
+  let first = null
+  let last = null
+  for (const e of entries) {
+    if (!isWorkoutEntry(e)) continue
+    const start = new Date(e.at)
+    if (Number.isNaN(start.getTime())) continue
+    const key = localDateKey(e.at)
+    if (first === null || key < first) first = key
+    if (last === null || key > last) last = key
+    if (start.getHours() >= EVENING_SPORT_FROM_HOUR) evenings.add(key)
+  }
+  const out = new Map()
+  if (first === null) return out
+  for (let k = first; k <= last; k = nextDateKey(k)) out.set(k, evenings.has(k))
+  return out
 }
 
 export function getTagMeta(id) {
@@ -231,7 +271,8 @@ export function computeTagEffects(entries) {
       if (!outcomeDay) continue
       tracked.add(k)
       const score = outcomeDay.sum / outcomeDay.count
-      const has = isMeasured ? tagMeasured.get(k) : days.get(k).tags.has(tag.id)
+      const declared = days.get(k).tags.has(tag.id)
+      const has = isMeasured ? tagMeasured.get(k) || (tag.declaredAlsoCounts === true && declared) : declared
       if (isMeasured) usedMeasure = true
       ;(has ? withTag : withoutTag).push(score)
       const stratum = strata[isWeekendKey(outcomeKey) ? 'weekend' : 'weekday']

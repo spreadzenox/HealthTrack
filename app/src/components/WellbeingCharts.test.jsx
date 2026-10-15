@@ -40,6 +40,40 @@ describe('WellbeingCharts — prédiction du jour', () => {
   })
 })
 
+describe('WellbeingCharts — une seule mention de la prédiction (nettoyage D1)', () => {
+  beforeEach(() => {
+    computeTodayPrediction.mockReset()
+    listEntries.mockResolvedValue([])
+  })
+
+  it("n'affiche plus de grande carte au-dessus du graphique : la valeur est dans la légende du point", async () => {
+    computeTodayPrediction.mockReturnValue({ dateKey: 'x', predicted: 1.6, actual: null, assumedTypical: ['steps'] })
+    const { container } = render(<WellbeingCharts />)
+    expect(await screen.findByText('1,6 / 5')).toBeInTheDocument()
+    expect(container.querySelector('.wellbeing-prediction-badge')).toBeNull()
+    expect(screen.getAllByText(/Prédiction du jour/)).toHaveLength(1)
+    // La valeur suit le graphique, l'explication est repliée
+    const legend = container.querySelector('.wellbeing-chart-pred-legend')
+    expect(legend).toHaveTextContent('1,6 / 5')
+    expect(legend.closest('details')).not.toBeNull()
+    expect(legend.closest('details').open).toBe(false)
+  })
+
+  it('une fois la note du jour saisie : prédiction et réel sur une ligne, sans point orange', async () => {
+    const now = new Date()
+    now.setHours(9, 0, 0, 0)
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: now.toISOString(), payload: { score: 3 } },
+    ])
+    computeTodayPrediction.mockReturnValue({ dateKey: 'x', predicted: 3.1, actual: 3, assumedTypical: [] })
+    const { container } = render(<WellbeingCharts />)
+    expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
+    expect(container.querySelector('.wellbeing-chart-pred-dot')).toBeNull()
+    expect(container.querySelector('.wellbeing-chart-pred-legend')).toHaveTextContent(/réel : 3,0/)
+    expect(screen.getAllByText(/Prédiction du jour/)).toHaveLength(1)
+  })
+})
+
 describe('WellbeingCharts — libellés et bloc « Par heure »', () => {
   beforeEach(() => {
     computeTodayPrediction.mockReset()
@@ -49,7 +83,7 @@ describe('WellbeingCharts — libellés et bloc « Par heure »', () => {
   it('parle de « Prédiction du jour », sans jargon « ML »', async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
     render(<WellbeingCharts />)
-    expect(await screen.findByText('Prédiction du jour')).toBeInTheDocument()
+    expect(await screen.findByText(/Prédiction du jour/)).toBeInTheDocument()
     expect(screen.queryByText(/\bML\b/)).not.toBeInTheDocument()
   })
 

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-15",
+  "kind": "amélioration",
+  "title": "Accueil : vos données d'abord, « Sport le soir » déduit",
+  "items": [
+    "La « Prédiction du jour » n'apparaît plus deux fois (grande carte au-dessus du graphique et légende au-dessous) : une seule ligne sous la courbe, avec la valeur ; l'explication se déplie d'un geste.",
+    "Horaires de sommeil : l'hypothèse générale sur la régularité tient en une ligne repliée, sous vos chiffres.",
+    "Si votre montre ou Health Connect enregistre vos séances, la saisie du bien-être ne demande plus « Sport le soir » : une séance commencée après 18 h suffit. Un tag « Sport le soir » que vous aviez noté reste pris en compte (séance sans montre, par exemple), et Analyses précise « déduit de vos séances »."
+  ]
+}

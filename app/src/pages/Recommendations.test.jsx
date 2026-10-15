@@ -458,6 +458,27 @@ describe('Recommendations — behaviour tags', () => {
     )
     spy.mockRestore()
   })
+  it('says where an automatic tag comes from: screen from the phone, evening sport from workouts', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const tagsModule = await import('../services/behaviorTags')
+    const base = { nWith: 10, nWithout: 30, meanWith: 3, meanWithout: 3.5, diff: -0.5, diffRaw: -0.5, p: 0.01, q: 0.02, evidence: 'à confirmer', auto: true }
+    const spy = vi.spyOn(tagsModule, 'computeTagEffects').mockReturnValue({
+      status: 'ok',
+      trackedDays: 40,
+      effects: [
+        { ...base, tagId: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next' },
+        { ...base, tagId: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next' },
+      ],
+      pending: [],
+    })
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(10))
+    renderPage()
+    const sport = (await screen.findByText('Sport le soir')).closest('.reco-tag-card')
+    expect(sport).toHaveTextContent(/déduit de vos séances/)
+    expect(sport).not.toHaveTextContent(/téléphone/)
+    expect(screen.getByText('Écran tard').closest('.reco-tag-card')).toHaveTextContent(/mesuré par le téléphone/)
+    spy.mockRestore()
+  })
 })
 
 

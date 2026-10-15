@@ -91,10 +91,14 @@ export default function SleepRegularityCard() {
         )}
       </div>
       {showTip && (
-        <p className="baseline-hint" role="note">
-          Hypothèse générale (études) : des horaires proches chaque jour, week-end compris, iraient avec un meilleur
-          sommeil et un meilleur bien-être le lendemain. Vos Analyses diront si c’est vrai chez vous.
-        </p>
+        // La donnée d'abord (I87) : l'hypothèse générale tient en une ligne, dépliable
+        <details className="baseline-hint-fold">
+          <summary>Hypothèse générale à tester chez vous</summary>
+          <p className="baseline-hint" role="note">
+            Hypothèse générale (études) : des horaires proches chaque jour, week-end compris, iraient avec un meilleur
+            sommeil et un meilleur bien-être le lendemain. Vos Analyses diront si c’est vrai chez vous.
+          </p>
+        </details>
       )}
     </div>
   )

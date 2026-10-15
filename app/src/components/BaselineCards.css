@@ -130,3 +130,25 @@
   color: var(--text-muted);
   line-height: 1.4;
 }
+
+.baseline-hint-fold summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.baseline-hint-fold summary::before {
+  content: '';
+  width: 3px;
+  height: 14px;
+  background: #f7b733;
+  border-radius: 2px;
+}
+
+.baseline-hint-fold .baseline-hint {
+  margin-top: 4px;
+}
