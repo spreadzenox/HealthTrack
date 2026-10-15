@@ -511,7 +511,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 22:30 — [Montre : synchro qui dit où elle cale (I69)](runs/2026-10-14-2230-montre-synchro-lisible.md) | ⌚ | PR #161 fusionnée → v129 |
 | 15/10 00:30 — [Montre : synchro à la reconnexion (appareil compagnon, I72 ①②)](runs/2026-10-15-0030-montre-appareil-compagnon.md) | ⌚ | PR #162 fusionnée → v130 |
 | 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR #163 fusionnée par le propriétaire → v131 |
-| 15/10 06:30 — [Montre : clé confiée au coffre natif](runs/2026-10-15-0630-montre-coffre-cle.md) | ⌚ | PR à fusionner (voir compte rendu) |
+| 15/10 06:30 — [Montre : clé confiée au coffre natif](runs/2026-10-15-0630-montre-coffre-cle.md) | ⌚ | PR #164 (checks verts) → fusion squash |
 
 ---
 

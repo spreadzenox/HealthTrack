@@ -32,7 +32,9 @@
 - `npm run visual` (démo, 8 pages) : aucune erreur JS ; capture Connecteurs relue, inchangée (aucun changement visible → pas d'entrée « Nouveautés »).
 
 ## Merge
-- Voir la PR : fusion en squash si « Frontend (Vitest) », « Build APK » et « Protocole montre (Java) » sont verts.
+- PR #164 : **tous les checks verts** sur le premier commit (Frontend (Vitest), Build APK — donc
+  `WatchVaultPlugin` compile —, Publier l'APK, Protocole montre (Java), émulateurs A56 API 35 et 36) → fusion
+  en squash par ce run, puis vérification de la release.
 
 ## Sécurité / vie privée
 - La clé était déjà en clair dans le stockage de la WebView ; la copie native est **plus** protégée (Keystore).
