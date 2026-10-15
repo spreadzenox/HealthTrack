@@ -450,6 +450,12 @@
   font-style: italic;
 }
 
+.entry-cigarette-times {
+  margin: 0;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .entry-wellbeing-score {
   margin: 0;
   font-size: 0.95rem;

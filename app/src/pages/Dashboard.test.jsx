@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Dashboard from './Dashboard'
 
@@ -138,17 +138,50 @@ describe('Dashboard', () => {
     expect(summaryValue('Repas')).toBe('1')
   })
 
-  it('lists each cigarette with its time and counts them in the day summary', async () => {
+  it('groups the cigarettes of a day into one row listing their times (no row per cigarette)', async () => {
     await renderEntries([
       { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T15:00:00', payload: { count: 1 } },
+      { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T11:30:00', payload: { count: 1 } },
       { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T09:05:00', payload: { count: 2 } },
     ])
-    expect(summaryValue('Cigarettes')).toBe('3')
+    expect(summaryValue('Cigarettes')).toBe('4')
     const rows = document.querySelectorAll('.entry-card[data-type="cigarette"]')
-    expect(rows).toHaveLength(2)
+    expect(rows).toHaveLength(1)
+    expect(rows[0]).toHaveTextContent('Cigarettes')
+    expect(rows[0]).toHaveTextContent('09:05 ×2 · 11:30 · 15:00')
+    // Une seule action : retirer la dernière notée (celle de 15:00, id 1)
+    expect(within(rows[0]).getAllByRole('button')).toHaveLength(1)
+    fireEvent.click(within(rows[0]).getByRole('button', { name: 'Supprimer la dernière cigarette (15:00)' }))
+    fireEvent.click(within(rows[0]).getByRole('button', { name: 'Confirmer' }))
+    const { deleteEntry } = await import('../storage/localHealthStorage')
+    await waitFor(() => expect(deleteEntry).toHaveBeenCalledWith(1))
+  })
+
+  it('keeps a single cigarette as a plain row with its delete button', async () => {
+    await renderEntries([
+      { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T15:00:00', payload: { count: 1 } },
+    ])
+    const rows = document.querySelectorAll('.entry-card[data-type="cigarette"]')
+    expect(rows).toHaveLength(1)
     expect(rows[0]).toHaveTextContent('15:00')
-    expect(rows[1]).toHaveTextContent('09:05')
-    expect(rows[1]).toHaveTextContent('2 cigarettes')
+    expect(within(rows[0]).getByRole('button', { name: 'Supprimer cette cigarette' })).toBeInTheDocument()
+  })
+
+  it('ne répète pas le tag « Écran tard » un jour où le téléphone a mesuré l’écran', async () => {
+    await renderEntries([
+      { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T21:30:00', payload: { score: 3, tags: ['late_screen', 'alcohol'] } },
+      { type: 'phone_usage', source: 'phone_usage', at: '2026-04-10T12:00:00', payload: { date: '2026-04-10', screenMinutes: 200 } },
+    ])
+    const row = document.querySelector('.entry-card[data-type="wellbeing"]')
+    expect(row).not.toHaveTextContent('Écran tard')
+    expect(row).toHaveTextContent('Alcool')
+  })
+
+  it('garde le tag « Écran tard » déclaré un jour sans mesure de l’écran', async () => {
+    await renderEntries([
+      { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T21:30:00', payload: { score: 3, tags: ['late_screen'] } },
+    ])
+    expect(document.querySelector('.entry-card[data-type="wellbeing"]')).toHaveTextContent('Écran tard')
   })
 
   it('shows wellbeing score in the entry and the day summary', async () => {

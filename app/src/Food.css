@@ -422,3 +422,15 @@
   font-size: 0.85rem;
   color: var(--text-muted);
 }
+
+.settings-advanced {
+  margin: 0.75rem 0;
+}
+
+.settings-advanced > summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: var(--accent);
+}

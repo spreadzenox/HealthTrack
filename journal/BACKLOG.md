@@ -21,7 +21,12 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
-## 🎯 PRIORITÉ ABSOLUE (12/10/2026 au soir) — D3 avant tout, hors runs « idées »
+## ⌚ D3 EN MAINTENANCE (15/10/2026) — ex-priorité absolue du 12/10 au soir
+
+**15/10, propriétaire : « Ça marche côté montre, plus besoin de se concentrer là-dessus ».** D3 n'est plus traité
+en premier : seulement régression, journal de diagnostic du propriétaire, ou complément utile (stress, VFC de journée,
+séances auto, resynchro de fond). **D1 (nettoyage de l'UI) repasse en tête.** Historique ci-dessous.
+
 
 HealthTrack devient l'app principale de communication avec la ou les montres, sans Gadgetbridge ni app constructeur,
 jusqu'à ce que la GT 6 Pro du propriétaire remonte ses données. Texte complet : charte §000. Spécification du
@@ -58,6 +63,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       (run 12/10 18:30 Paris ; écran tard dédoublonné, corrélations incertaines repliées, Withings regroupé : même run)
 - [x] Connecteurs : intro + 6 blocs empilés → ordre par statut (ce qui envoie en tête, le reste replié sous « Brancher
       une autre source ») ; pastilles techniques masquées sur une source désactivée ; `--border` défini (run 14/10 14:30)
+- [x] Accueil, journal du jour : une ligne par cigarette → une seule ligne « Cigarettes 09:10 · 11:11 · 13:12 »
+      (« Supprimer » = la dernière) ; tag déclaré « Écran tard » masqué un jour où l'écran est mesuré ; sous-titre
+      « Moyenne par jour — données locales uniquement » du graphique bien-être retiré (run 15/10 18:30)
+- [x] Paramètres : Gemini en un paragraphe (5 → 2 blocs de texte), modèle replié sous « Choisir le modèle »,
+      interrupteurs Cigarettes / Diagnostic à libellé fixe et explicite (run 15/10 18:30)
+- [ ] Accueil : carte « Prédiction du jour » + point orange du graphique disent la même chose → n'en garder qu'un ;
+      relire la page Données et Nutrition (prochain run D1)
 
 ### D2 — Performance (mesurer d'abord)
 - [x] Mesure : `npm run perf` (build de prod, 3 ans de démo, `--dense`, CPU ×4) — temps stabilisé, temps bloquant,
@@ -414,17 +426,33 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 ## Prochaines étapes (ordre conseillé)
 
-Réordonnées le 12/10 (22:30 Paris) : **priorité absolue = D3 (montre)**, puis D1 → D6 (sauf D3), hors runs « idées ».
+**Réordonnées le 15/10 (18:30 Paris), consigne du propriétaire « Ça marche côté montre, plus besoin de se
+concentrer là-dessus »** : D3 en maintenance → **D1 (nettoyage de l'UI) en tête**, puis D2, D4, D5, D6 ; la montre
+seulement sur régression ou journal reçu. Liste réordonnée en conséquence (montre en 6–8).
+Avant : réordonnées le 12/10 (22:30 Paris) : priorité absolue = D3 (montre), puis D1 → D6 (sauf D3), hors runs « idées ».
 **14/10 12:25, consigne du propriétaire : « Maintenant que ça marche tu peux nettoyer l'UI »** (charte §000) : carte
 montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage général), puis D2 (performance).
 
-1. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
+1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits) : « Prédiction du jour » en double avec le point
+   du graphique ; pages Données et Nutrition à relire ; tags « Sport le soir » / « Voyage » auto-détectés (I65) ; relire Paramètres et Analyses (titres
+   et explications en double). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
+2. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
+   **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
+   index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
+   agrégats, budget en CI (enregistrements lus), Recommandations : panneau debug seul à lire toute la base (garde-fou).
+3. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
+   faits du 14/10 : visage = blendshapes MediaPipe par défaut (AUC visage ≈ 0,6 → tendance 7 j), voix = prosodie
+   maison (I67), réseaux sociaux = temps au premier plan par app seulement ; sur Android 15+, « paramètres restreints »
+   bloque aussi l'accès aux données d'utilisation des APK hors magasin → le guide doit l'expliquer.
+4. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
+5. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
+6. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
    ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).
    Livré le 14/10 12:30 : première synchro depuis 2000, reprise sur la dernière synchro avec données − 6 h, état v2,
    totaux du jour stockés, journal détaillé (`sync.kinds`, types de sommeil, mesures par minute). Prochain journal : lire
    `sync.kinds`, « minutes : N reçues… », types de sommeil ≠ 6 / 7. **Priorité absolue close quand des mesures
    apparaissent dans l'historique.**
-2. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`). I63 (erreurs typées
+7. ⌚ **Lire chaque nouveau journal du propriétaire** dès qu'il arrive (`journal/diagnostics/`). I63 (erreurs typées
    des étapes 0x8002 → 0x13) devient secondaire : l'appairage passe. **I69 ✅ livré (run 14/10 22:30)** (run idées
    14/10 20:30, score 25) — journal de synchro par service (réponse / vide / délai / non pris en charge), séances lues
    selon la longueur de chaque bloc (#5784), 0x2C expiré = piste du canal RFCOMM auxiliaire (#6448, à ne coder qu'au
@@ -433,7 +461,7 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    illisible sauté, état « sans réponse pour : … » sur la carte, plan B « 15 à 20 chiffres » (= `normalizeAccountId`).
    Reste d'I69 : « stress à activer » quand HealthTrack lira le stress (pas encore lu). Compte Huawei **non
    requis** pour une montre jamais liée (#6271) : question close.
-3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 précisé par **I72** (présence compagnon :
+8. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 précisé par **I72** (présence compagnon :
    `onDevicePresenceEvent` API 36 / `onDeviceAppeared` API 33–35, service `connectedDevice` court à `BT_CONNECTED`,
    `REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND`, jamais de boucle) + client Java, filet WorkManager.
    **Complété par I75 (run idées 15/10 08:30)** : la présence compagnon ne se déclenche qu'à la connexion du **lien
@@ -449,18 +477,6 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    journal) ; reste la validation sur l'A56, le guide One UI (I50), ③ g, puis I76 (stress, VFC de journée).
    **État au 15/10 16:30** : ③ g livré (app en arrière-plan → natif, liaison unique) ; reste la validation sur l'A56,
    le guide One UI (I50, si rien en 24 h), puis I76 (stress, VFC de journée) et les séances automatiques (#5784).
-4. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
-   **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
-   index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
-   agrégats, budget en CI (enregistrements lus), Recommandations : panneau debug seul à lire toute la base (garde-fou).
-5. 🧹 D1 — restes : tags « Sport le soir » / « Voyage » auto-détectés (I65) ; relire Paramètres et Analyses (titres
-   et explications en double). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
-6. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
-   faits du 14/10 : visage = blendshapes MediaPipe par défaut (AUC visage ≈ 0,6 → tendance 7 j), voix = prosodie
-   maison (I67), réseaux sociaux = temps au premier plan par app seulement ; sur Android 15+, « paramètres restreints »
-   bloque aussi l'accès aux données d'utilisation des APK hors magasin → le guide doit l'expliquer.
-7. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
-8. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
 9. Ensuite seulement : **briefing du jour unique** (I47 → I51, gabarits, jamais de chiffre inventé), **mode calme**
    (I52, tendances 7 / 30 j), une question du soir (I54), réception BLE automatique, Colmi (I28).
 10. Nouvelles idées du run 13/10 20:30 (toutes **sans nouvel écran**) : **I58** « Ma nuit en un coup d'œil » absorbé par
@@ -528,6 +544,8 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Pièges à éviter (RESEARCH §4.5) : le LLM ne calcule jamais de score ; pas de corrélation brute sans correction ; pas de culpabilisation des séries cassées ni d'incitation à « optimiser » le sommeil (orthosomnie) ; notifications rares.
 
 ## Livré
+
+- [x] 2026-10-15 — Charte : D3 en maintenance (consigne du 15/10), D1 en tête ; D1 : cigarettes du jour sur une ligne, « Écran tard » mesuré non répété, Paramètres allégés ; test App instable corrigé (`useLayoutEffect`) (run 18:30 Paris)
 
 - [x] 2026-10-15 — D3 (d quater ③ c) : clé de la montre confiée au coffre natif (Keystore Android) après chaque connexion réussie, retirée si refusée (8 tests JUnit, 7 Vitest) (run 06:30 Paris)
 - [x] 2026-10-15 — D3 (d quater ③ a) : cœur Java du client « synchro seule », identique au pilote JS (vecteurs communs, 13 tests JUnit, job CI) (run 02:30 Paris)

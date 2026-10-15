@@ -156,7 +156,20 @@ retour dans l'app. Maintenant, dès que l'app n'est plus **à l'écran**, c'est 
 ligne dit maintenant « relue en arrière-plan il y a … ». **Même demande** : laissez l'app en arrière-plan ou fermée
 2–3 h, puis regardez la ligne et votre historique ; sinon Diagnostic → « Enregistrer le journal ».
 
+**15/10, votre message « Ça marche côté montre, plus besoin de se concentrer là-dessus » : bien reçu, merci.** La
+montre passe **en maintenance** (je n'y reviens que pour une régression, un journal que vous m'envoyez, ou un
+complément utile comme le stress) et **le nettoyage de l'interface repasse en tête**, comme vous le demandiez le 14/10.
+**Run de 18:30**, premier pas : sur l'Accueil, **les cigarettes d'une journée tiennent sur une ligne** (« 09:10 ·
+11:11 · 13:12 », « Supprimer » retire la dernière) au lieu d'une carte chacune ; le tag « Écran tard » d'une ancienne
+note n'est plus répété un jour où le téléphone a mesuré l'écran ; les **Paramètres** sont plus courts (Gemini en un
+paragraphe, choix du modèle replié, interrupteurs aux libellés clairs). Et un petit défaut corrigé : en changeant de
+page, la nouvelle s'affichait parfois un instant à la hauteur de l'ancienne (c'est aussi ce qui avait mis un test en
+rouge sur la dernière version).
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Accueil et Paramètres plus légers (run 15/10 18:30)** : cigarettes du jour sur une seule ligne ; « Écran tard »
+  déclaré non répété quand l'écran est mesuré ; Paramètres Gemini en un paragraphe, modèle replié ; retour en haut de
+  page immédiat au changement de page.
 - **Montre Huawei : relue aussi app en arrière-plan (run 15/10 16:30)** : app seulement en arrière-plan, la montre est
   relue tout de suite par la partie Android (reconnexion, déverrouillage, ~2 h) ; jamais deux connexions à la fois
   (« Montre occupée » au lieu d'un échec) ; la ligne dit « relue en arrière-plan il y a … ».
@@ -546,7 +559,7 @@ ligne dit maintenant « relue en arrière-plan il y a … ». **Même demande** 
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités** — **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
+**Prochaines priorités (15/10 18:30)** — montre **en maintenance** à votre demande ; ordre : **nettoyage de l'UI (D1)**, performance des courbes (D2), humeur par le visage / la voix (D4), anti-circularité (D5), science personnelle (D6). Historique : **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
 (b) libération + appairage, (c) authentification ISO, (d) lecture des mesures et synchro automatique livrées. Blocage
 réel, **compris grâce à votre journal de 17:03** : la réponse d'appairage de la GT 6 Pro est au format que l'app connaît
 déjà, suivie d'**un octet de fin** que le lecteur de l'app refusait. **Lecture tolérante livrée au run de 22:30**
@@ -598,7 +611,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 10:30 — [Montre : lectures en Java, captures importées à l'ouverture](runs/2026-10-15-1030-montre-lectures-java.md) | ⌚ | PR #166 fusionnée → v133 |
 | 15/10 12:30 — [Montre : relue app fermée quand elle se reconnecte](runs/2026-10-15-1230-montre-synchro-app-fermee.md) | ⌚ | PR #167 fusionnée → v134 |
 | 15/10 14:30 — [Montre : relue au déverrouillage et toutes les ~2 h](runs/2026-10-15-1430-montre-declencheurs.md) | ⌚ | PR #168 fusionnée → v135 |
-| 15/10 16:30 — [Montre : relue aussi app en arrière-plan](runs/2026-10-15-1630-montre-arriere-plan.md) | ⌚ | PR « [Auto] » (voir compte rendu) |
+| 15/10 16:30 — [Montre : relue aussi app en arrière-plan](runs/2026-10-15-1630-montre-arriere-plan.md) | ⌚ | PR #169 fusionnée → v136 |
+| 15/10 18:30 — [Montre en maintenance, nettoyage : journal du jour et Paramètres](runs/2026-10-15-1830-nettoyage-journal-parametres.md) | 🧹 | PR « [Auto] » (voir compte rendu) |
 
 ---
 
@@ -621,7 +635,17 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 
 ---
 
-## 000. PRIORITÉ ABSOLUE (propriétaire, 12 octobre 2026 au soir) — la montre d'abord
+## 000. PRIORITÉ ABSOLUE (propriétaire, 12 octobre 2026 au soir) — la montre d'abord → **EN MAINTENANCE depuis le 15/10**
+
+> **Mise à jour du propriétaire du 15 octobre 2026, mot pour mot : « Ça marche côté montre, plus besoin de se
+> concentrer là-dessus ».** Objectif atteint : HealthTrack appaire, authentifie et relit la GT 6 Pro sans
+> Gadgetbridge ni Huawei Santé. **D3 passe en maintenance** : les runs ne le traitent plus en premier. On n'y revient
+> que pour (1) corriger une régression, (2) exploiter un journal de diagnostic envoyé par le propriétaire, ou
+> (3) compléter au fil de l'eau (types de données manquants : stress, VFC de journée, séances auto ; resynchro en
+> arrière-plan) quand c'est le travail le plus utile du moment. **L'ordre redevient celui du §00 : D1 (nettoyage de
+> l'UI) en tête, puis D2, D4, D5, D6.** Les règles ci-dessous (parcours, licence, méthode, pilote générique) restent
+> valables pour tout travail sur les montres.
+
 
 **HealthTrack devient l'app principale de communication avec la ou les montres, sans Gadgetbridge ni app constructeur.**
 Hors runs « idées », **chaque run travaille d'abord sur ce chantier (D3)**, avant le nettoyage et la performance,
@@ -658,7 +682,7 @@ jusqu'à ce que la Huawei Watch GT 6 Pro du propriétaire remonte ses données d
   nettoyage générale (D1), puis performance (D2). La priorité absolue reste active **tant que de vraies mesures
   n'apparaissent pas dans l'historique** (run du 14/10 12:30 : fenêtre de synchro et totaux du jour corrigés).
 
-## 00. Directives du propriétaire (12 octobre 2026) — priment sur tout le reste, sauf la priorité absolue (§000)
+## 00. Directives du propriétaire (12 octobre 2026) — priment sur tout le reste (la montre §000 est en maintenance depuis le 15/10)
 
 Constat du propriétaire : l'app devient un « sac à features ». **Hors runs « idées », les runs traitent ces chantiers
 dans cet ordre, avant toute nouvelle fonctionnalité** (chantiers D1–D6 de `BACKLOG.md`) :

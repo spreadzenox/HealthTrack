@@ -10,7 +10,7 @@ import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
 import FormeSection from '../components/FormeSection'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import SavedMealEditor from '../components/SavedMealEditor'
-import { isDeletableEntry } from '../utils/entries'
+import { groupCigarettes, isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
 import { formatDuration, workoutTypeLabel, shortFoodName } from '../utils/format'
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
@@ -88,7 +88,11 @@ function timeOf(at) {
 }
 
 /** Contenu d'une saisie ou d'un événement du jour (repas, bien-être, pesée…). */
-function EntryBody({ e }) {
+function EntryBody({ e, measuredScreen = false }) {
+  // Tag déclaré « Écran tard » : inutile de le répéter un jour où le téléphone a mesuré l'écran (chiffre « Écran » du jour)
+  const shownTags = Array.isArray(e.payload?.tags)
+    ? e.payload.tags.map(getTagMeta).filter((t) => t && !(measuredScreen && t.auto === 'phone_usage'))
+    : []
   const count = typeof e.payload?.count === 'number' ? e.payload.count : 1
   return (
     <div className="entry-card-body">
@@ -108,11 +112,9 @@ function EntryBody({ e }) {
           Note : <strong>{e.payload.score}</strong> / 5
         </p>
       )}
-      {e.type === 'wellbeing' && Array.isArray(e.payload?.tags) && e.payload.tags.some(getTagMeta) && (
+      {e.type === 'wellbeing' && shownTags.length > 0 && (
         <p className="entry-wellbeing-tags">
-          {e.payload.tags
-            .map(getTagMeta)
-            .filter(Boolean)
+          {shownTags
             .map((t) => `${t.emoji} ${t.label}`)
             .join(' · ')}
         </p>
@@ -180,6 +182,34 @@ function summaryChips(s) {
     if (w.length) chips.push(['Météo', w[0]])
   }
   return chips
+}
+
+function CigaretteGroupRow({ group }) {
+  const times = group.entries
+    .map((e) => {
+      const count = typeof e.payload?.count === 'number' ? e.payload.count : 1
+      return count > 1 ? `${timeOf(e.at)} ×${count}` : timeOf(e.at)
+    })
+    .join(' · ')
+  const lastDeletable = [...group.entries].reverse().find(isDeletableEntry)
+  return (
+    <li className="entry-card" data-type="cigarette">
+      <div className="entry-card-header">
+        <span className="entry-type">Cigarettes</span>
+      </div>
+      <div className="entry-card-row">
+        <div className="entry-card-body">
+          <p className="entry-cigarette-times">{times}</p>
+        </div>
+        {lastDeletable && (
+          <DeleteEntryButton
+            entryId={lastDeletable.id}
+            label={`la dernière cigarette (${timeOf(lastDeletable.at)})`}
+          />
+        )}
+      </div>
+    </li>
+  )
 }
 
 /** Une cigarette seule n'a rien à afficher sous son titre. */
@@ -261,7 +291,9 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
       )}
       {day.items.length > 0 && (
         <ul className="entries-list">
-          {day.items.map((e) => (
+          {groupCigarettes(day.items).map((e) => e.type === 'cigarette_group' ? (
+            <CigaretteGroupRow key={e.id} group={e} />
+          ) : (
             <li key={e.id} className="entry-card" data-type={e.type}>
               <div className="entry-card-header">
                 <time className="entry-at" dateTime={e.at}>{timeOf(e.at)}</time>
@@ -278,7 +310,7 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
                 <SavedMealEditor entry={e} onCancel={() => onEditMeal(null)} onSaved={() => onEditMeal(null)} />
               ) : hasBody(e) && (
                 <div className={`entry-card-row${e.type === 'food' && e.payload?.items?.length ? ' entry-card-row-stacked' : ''}`}>
-                  <EntryBody e={e} />
+                  <EntryBody e={e} measuredScreen={day.summary?.screenMinutes != null} />
                   <EditButton e={e} onEdit={onEdit} />
                   {e.type === 'food' && <MealButtons e={e} onEditMeal={onEditMeal} onRedoMeal={onRedoMeal} />}
                   {isDeletableEntry(e) && <DeleteButton e={e} />}
