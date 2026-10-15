@@ -224,8 +224,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] Étude des limites Android réelles (caméra / micro en arrière-plan, service de premier plan, indicateurs,
       Accessibility, UsageStats) + choix du modèle local (MediaPipe / TFLite / ONNX) → `RESEARCH.md`
 - [ ] Capture opportuniste (au déverrouillage / à l'usage), scores seuls stockés, jamais d'image ni d'audio brut
-- [ ] Usage des réseaux sociaux (UsageStats par app) — décider : entrée de l'estimateur **ou** X (D5).
-      Proposition (I42) : **X**, minutes par app sociale via `queryEvents` du plugin existant, exclu de l'estimateur
+- [ ] Usage des réseaux sociaux (UsageStats par app) — **décidé au run idées du 15/10 08:30 (I78) : X**, minutes par
+      app sociale via `queryEvents` du plugin existant, **exclu de l'estimateur** (lien avec l'affect très faible et dans
+      les deux sens, Elmer et al. 2025) ; estimateur = visage + voix + auto-déclaration
 - [ ] Visage (I40) : MediaPipe Face Detector + HSEmotion-B0 LiteRT (8 Mo, Apache-2.0) quelques secondes à chaque
       ouverture de l'app → sourire / valence / confiance seuls stockés ; étape 2 service caméra démarré depuis l'app
       (Android 14+ interdit de le créer en arrière-plan ; pas de capture au déverrouillage sans ouvrir l'app)
@@ -245,6 +246,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 ### D5 — Anti-circularité (Y ≠ X)
 - [ ] Liste déclarée des entrées de l'estimateur d'humeur + test qui échoue si une variable est aussi un facteur des
       corrélations / du modèle / des tags
+      (I78 : `ESTIMATOR_INPUTS = ['face', 'voice', 'selfReport']`, `socialMediaMinutes` en X ; la capacité « émotion »
+      de la montre, si elle est lue un jour, est un X)
 - [x] Estimateur comportemental retiré de l'affichage (carte « Humeur estimée », run 12/10 16:30 Paris)
 - [ ] Revue des pièges : ordre temporel (X avant Y — ex. pas **du jour** vs bien-être du jour), comparaisons multiples
       (déjà BH), taille minimale, formulations « va de pair » partout
@@ -414,7 +417,12 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    requis** pour une montre jamais liée (#6271) : question close.
 3. ⌚ **D3 (d quater)** arrière-plan app fermée, selon le plan I49 précisé par **I72** (présence compagnon :
    `onDevicePresenceEvent` API 36 / `onDeviceAppeared` API 33–35, service `connectedDevice` court à `BT_CONNECTED`,
-   `REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND`, jamais de boucle) + client Java, filet WorkManager. (d) livré le
+   `REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND`, jamais de boucle) + client Java, filet WorkManager.
+   **Complété par I75 (run idées 15/10 08:30)** : la présence compagnon ne se déclenche qu'à la connexion du **lien
+   Bluetooth système**, rien si aucune app ne l'ouvre → deuxième déclencheur au **déverrouillage** (récepteur dynamique
+   dans un service actif, comme Gadgetbridge) + filet périodique ~2 h ; relancer la connexion si Android redémarre le
+   service sans intent (#6869). Reste de (d bis) précisé par **I76** : stress = fichier 0x2C type 0x10 (`files.js` sait
+   déjà télécharger), VFC de journée = dictionnaire 500044 (§7.11) ; phases du sommeil et VFC de la nuit déjà lues. (d) livré le
    13/10 04:30, (d ter) le 13/10 06:30, (d bis) capacités / séances / sommeil détaillé le 13/10 10:30 ; reste de
    (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**
 4. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
@@ -449,9 +457,16 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
     commerciale ; MediaPipe blendshapes, **dans D4**) ; **I74** phrase du soir à la voix, tags toujours confirmés
     (**dans D4**). Fait D4 confirmé (doc Android 01/10/2026) : service caméra / micro impossible à créer depuis
     l'arrière-plan sur Android 14+, exemptions comprises ; rien ne montre que `appops` le contourne.
-13. 💡 Prochain run idées (15/10 08:30 Paris) : journal v125+ s'il arrive (0x2C répondu ou expiré ?) ;
-    `checkRecognitionSupport("fr-FR")` / ML Kit GenAI Speech sur One UI 8 ; licence des modèles MediaPipe Face
-    Landmarker ; comptes rendus de labo français.
+13. Nouvelles idées du run 15/10 08:30 (toutes **sans nouvel écran**) : **I75** deux déclencheurs pour la synchro
+    app fermée (→ n°3, score 20) ; **I78** réseaux sociaux = X, décidé (→ D4 / D5, score 20) ; **I76** stress et VFC de
+    journée (→ n°3, 16) ; **I79** bilan du mois automatique dans le parcours du matin (avec I71, 16) ; **I80** rien
+    d'imposé à l'écran : cartes d'interprétation masquables, état de synchro honnête par source (leçon Samsung Health
+    7.0, 12) ; **I77** empreintes Huawei Link verrouillées par des tests + repli UUID SDP Honor (10, petit) ; **I81**
+    lieux étiquetés comme X (9). Faits : poids **MediaPipe Face Landmarker sous Apache-2.0** (I73 débloquée) ; pas de
+    modèle d'émotion vocale redistribuable et utile (I67 confirmée) ; ML Kit GenAI Speech encore alpha.
+14. 💡 Prochain run idées (15/10 20:30 Paris) : journal v125+ s'il arrive ; la GT 6 Pro rétablit-elle seule le lien
+    Bluetooth système (condition d'I75) ; entrées du fichier stress (RRI) et dictionnaire VFC 500044 pour §7.11 bis ; comptes rendus de
+    labo français.
 
 ## Idées en vrac (à trier)
 

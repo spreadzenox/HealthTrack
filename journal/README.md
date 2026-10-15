@@ -110,6 +110,16 @@ natif**. Après chaque synchro réussie, HealthTrack range la clé de la montre 
 une clé du « Keystore » qui ne quitte jamais le téléphone, même dans une sauvegarde) ; si la montre la refuse, elle
 en est retirée. Rien de visible ; le journal de connexion dit « nativeKey : stored ». Restent : lire les mesures en
 Java, puis le lancer quand la montre se reconnecte app fermée.
+**Run « idées » du 15/10 08:30** (toujours pas de nouveau journal) : un point important pour la synchro app fermée.
+Android ne prévient l'app que quand **le lien Bluetooth de la montre s'ouvre**, et rien ne garantit qu'il s'ouvre
+tout seul. Gadgetbridge ne compte d'ailleurs pas dessus : il relit la montre quand vous **déverrouillez le téléphone**,
+au plus une fois par période. HealthTrack fera les deux, avec en plus une relecture de secours toutes les ~2 h.
+Côté humeur, deux décisions :
+- la lecture du visage peut utiliser le modèle de Google (MediaPipe), dont la licence permet de le livrer dans l'app ;
+- votre temps sur les réseaux sociaux sera un **facteur** examiné par les Analyses, jamais une entrée de l'humeur
+  estimée (sinon la corrélation serait truquée).
+**Point d'attention** : Google impose la vérification des développeurs pour les apps installées hors Play Store,
+partout à partir de 2027. Installer HealthTrack depuis GitHub restera possible, par un parcours « avancé ».
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Montre Huawei : synchro quand elle se reconnecte (run 15/10 00:30)** : Plus → Connecteurs, carte « Montre
@@ -401,6 +411,15 @@ Java, puis le lancer quand la montre se reconnecte app fermée.
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **La montre à jour sans jamais ouvrir l'app** (run 15/10 08:30) : deux déclencheurs plutôt qu'un. Quand la montre
+  se reconnecte, et quand vous déverrouillez le téléphone (comme Gadgetbridge), au plus une fois par demi-heure. Plus
+  une relecture de secours toutes les ~2 h. Ensuite viendront votre **stress** et votre **VFC de journée** (les phases
+  du sommeil et la VFC de la nuit sont déjà lues).
+- **Rien d'imposé à l'écran** (run 15/10 08:30) : la refonte de Samsung Health s'est fait descendre en septembre
+  (note 1,7). Les reproches : montre qui ne synchronise plus toute seule, carte « IA » impossible à masquer, menus
+  trop longs. Pour HealthTrack : chaque carte d'interprétation masquable d'un appui long, et un état de synchro honnête.
+  Et une fois par mois, un **bilan du mois** dans le rendez-vous du matin, comme le nouveau « Health Guardian » de la
+  Pixel Watch 5.
 - **Des Analyses qu'on peut croire** (run 14/10 20:30) : HealthTrack corrige déjà ce que les autres apps de corrélation
   (Exist, Bearable) ne corrigent pas, c'est-à-dire les faux liens qui apparaissent quand on teste beaucoup de choses.
   L'idée : afficher pour chaque lien **sa force et la confiance qu'on peut lui accorder**, séparément, avec « jours avec /
@@ -511,7 +530,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 22:30 — [Montre : synchro qui dit où elle cale (I69)](runs/2026-10-14-2230-montre-synchro-lisible.md) | ⌚ | PR #161 fusionnée → v129 |
 | 15/10 00:30 — [Montre : synchro à la reconnexion (appareil compagnon, I72 ①②)](runs/2026-10-15-0030-montre-appareil-compagnon.md) | ⌚ | PR #162 fusionnée → v130 |
 | 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR #163 fusionnée par le propriétaire → v131 |
-| 15/10 06:30 — [Montre : clé confiée au coffre natif](runs/2026-10-15-0630-montre-coffre-cle.md) | ⌚ | PR #164 (checks verts) → fusion squash |
+| 15/10 06:30 — [Montre : clé confiée au coffre natif](runs/2026-10-15-0630-montre-coffre-cle.md) | ⌚ | PR #164 fusionnée → v132 |
+| 15/10 08:30 — [Idées : synchro sans y penser, stress / VFC, humeur sur des bases légales](runs/2026-10-15-0830-idees-declencheurs-licences.md) | 💡⌚ | 7 idées (I75–I81), spec §7.11 — journal seul |
 
 ---
 

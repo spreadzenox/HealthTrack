@@ -755,6 +755,48 @@ Lecture seule des issues / PR de [G] via l'API REST de Codeberg (le site web ré
   compagnon se déclenche à la connexion de la montre (`EVENT_BT_CONNECTED`) ; `onDeviceAppeared` déprécié en API 36
   (`onDevicePresenceEvent`). Plan d'implémentation : `IDEES.md` I72.
 
+### 7.11 Arrière-plan, stress, VFC, sommeil détaillé — faits du run « idées » du 15/10/2026 08:30
+
+Lecture [G] master du 15/10 (API REST Codeberg), faits seulement, rédigés par nous ; aucune trame ni structure de
+code reprise. Sert de base à I75 / I76 / I77 (`IDEES.md`).
+
+- **Déclencheurs de synchro.** [G] ne relit **pas** la montre à la reconnexion (risque de course, issue 6266) : la
+  synchro part d'un geste ou du **déverrouillage de l'écran**, avec un intervalle minimum. Côté Android, la présence
+  compagnon d'un appareil Bluetooth classique ne se déclenche qu'à la connexion / déconnexion du **lien système** :
+  rien ne se passe si aucune app n'ouvre ce lien. → HealthTrack combine présence compagnon + déverrouillage (récepteur
+  dynamique dans un service déjà actif) + filet périodique, toujours avec le verrou de 30 min (I75).
+- **Service relancé par Android** (issue 6869, PR 6905, confirmé sur GT 6 en 0.95.1) : un service « sticky »
+  redémarré **sans intent** doit relancer lui-même la connexion.
+- **Ordre de synchro chez [G]** : nombre de blocs de sommeil (7/0x0C), puis de minutes (7/0x0A), totaux (7/0x03),
+  puis téléchargements de fichiers (sommeil détaillé, stress, ECG), puis séances dans une file séparée. Pas de
+  nouvelle synchro tant qu'une est en cours. Début = dernier échantillon stocké, à défaut 1/1/2000.
+- **Messages spontanés de la montre** : batterie, synchro « dictionnaire » (config / événement / données), P2P, météo,
+  GPS, appels, musique, et **demande de fichier initiée par la montre** (0x2C/0x07, à acquitter). Aucun message du
+  type « nouvelles données disponibles » : c'est toujours au téléphone de demander.
+- **Stress** : fichier « rrisqi_data.bin » (intervalles RR + score). Nouveau flux : service 0x2C, type de fichier
+  0x10 ; ancien flux : service 0x0A. La montre annonce lequel elle gère dans ses capacités (1/0x31). Contenu : un
+  en-tête (taille, masque, version) puis des entrées de **66 octets** (début, fin, algorithme, score, niveau,
+  drapeaux, caractéristiques). Le stress affiché est celui calculé par la montre ; il faut l'activer / le calibrer
+  sur la montre.
+- **VFC** : pas un fichier. Elle passe par la synchro « dictionnaire » P2P (canal `hw.watch.health.filesync`),
+  **classe 500044**, valeur RMSSD (type 500044831) ; requête = classe + plage de temps ; réponse = blocs TLV avec
+  début, fin, date de modification, puis couples (type, valeur en double). [G] ne la reçoit pas d'une GT 5
+  HarmonyOS 5.1 (issue 6461) : ne rien promettre.
+- **Sommeil détaillé** : HarmonyOS 5+ → fichier **« sequence_data »** (type 0x16, classe 700013 : résumé + phases) ;
+  montres plus anciennes → « sleep_state.bin » (0x0E) / « sleep_data.bin » (0x0F), dont [G] n'exploite que les
+  débuts / fins.
+- **Téléchargement 0x2C, en mots** : ① ouverture (nom, type, début, fin) → la montre rend nom, type, identifiant,
+  taille (0 = rien à lire, taille négative = refus) ; ② empreinte du fichier (facultatif) ; ③ infos de transfert
+  (délai, taille de rafale, taille maximale d'un bloc, indicateur de chiffrement à ignorer) ; ④ demande de bloc
+  (0x04 : décalage + taille), les données arrivent seules en messages 0x05 jusqu'à la taille demandée, puis bloc
+  suivant ; ⑤ accusé de fin (0x06). Ancien flux 0x0A : étape « paramètres » en plus et paquets numérotés.
+- **Famille et empreintes** : même protocole pour GT 2 → GT 7 (et Pro), Watch 3 / 4 / 5 / 6 (PR 7074 du 15/10 :
+  préfixes « huawei watch 6- » / « huawei watch 6 pro- »), Ultimate, D2, Watch Fit 2 → 5 Pro, en RFCOMM ; Band 2 →
+  11 Pro, Honor Band 3 → 10, Watch Fit 1, GT 2e en BLE (service FE86, caractéristiques FE01 écriture / FE02
+  lecture). UUID SDP Huawei `82FF3820-8411-400C-B85A-55BDB32CF060` (§1), Honor `C9770A18-4C3D-453A-8AAF-D7EC7BBD2785`.
+  Les Watch 4 / 5 / Ultimate ouvrent un **second canal** RFCOMM (négocié par 0x3C) sur lequel 0x2C peut seul
+  répondre (§7.10). Préfixe de nom comparé en minuscules.
+
 ## 8. Contraintes d'appairage et « libération » de la montre
 
 - Une montre n'accepte **qu'une app liée** à la fois. Si Huawei Santé refait la liaison, la clé gardée par une autre app
