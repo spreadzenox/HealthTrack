@@ -639,7 +639,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 16:30 — [Montre : relue aussi app en arrière-plan](runs/2026-10-15-1630-montre-arriere-plan.md) | ⌚ | PR #169 fusionnée → v136 |
 | 15/10 18:30 — [Montre en maintenance, nettoyage : journal du jour et Paramètres](runs/2026-10-15-1830-nettoyage-journal-parametres.md) | 🧹 | PR #170 fusionnée → v137 |
 | 15/10 20:30 — [Idées : alléger sans rien perdre (SpO₂, stress ressenti, tags déduits)](runs/2026-10-15-2030-idees-alleger.md) | 💡🧹⚡ | 6 idées (I82–I87) — journal seul |
-| 15/10 22:30 — [Nettoyage : prédiction unique, « Sport le soir » déduit](runs/2026-10-15-2230-accueil-donnee-sport-deduit.md) | 🧹 | PR en cours (voir compte rendu) |
+| 15/10 22:30 — [Nettoyage : prédiction unique, « Sport le soir » déduit](runs/2026-10-15-2230-accueil-donnee-sport-deduit.md) | 🧹 | PR #173 fusionnée → v138 |
 
 ---
 
