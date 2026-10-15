@@ -9,15 +9,16 @@ import android.os.Build;
 import android.util.Log;
 
 import com.healthtrack.app.huawei.BackgroundSync;
+import com.healthtrack.app.huawei.LinkLock;
 import com.healthtrack.app.huawei.WatchVault;
 
 import java.security.SecureRandom;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Relecture de la montre app tuée (huawei.md §9.1 e, f) : lancée par WatchPresenceService quand la montre se
- * reconnecte ou que le téléphone est déverrouillé pendant qu'elle est là, et par WatchSyncJob (filet ~2 h), quand
- * aucune page de l'app ne tourne (sinon le JS s'en charge). Clé lue dans le coffre
+ * Relecture de la montre app tuée ou en arrière-plan (huawei.md §9.1 e, f, g) : lancée par WatchPresenceService
+ * quand la montre se reconnecte ou que le téléphone est déverrouillé pendant qu'elle est là, et par WatchSyncJob
+ * (filet ~2 h), quand l'app n'est pas à l'écran (sinon le JS s'en charge). La liaison est partagée avec la page
+ * (LinkLock) : jamais deux connexions à la fois. Clé lue dans le coffre
  * (WatchVaultPlugin), connexion RFCOMM, lectures, capture déposée pour l'import à l'ouverture
  * (WatchCapturePlugin). Règles et état : BackgroundSync. Une clé refusée est retirée du coffre.
  */
@@ -27,13 +28,13 @@ final class BackgroundWatchSync {
     private static final String TAG = "HealthTrackWatch";
     private static final long CONNECT_TIMEOUT_MS = 15_000;
     private static final long REQUEST_TIMEOUT_MS = 12_000;
-    private static final AtomicBoolean busy = new AtomicBoolean(false);
 
     private BackgroundWatchSync() {
     }
 
+    /** Une relecture native est en cours (la liaison est à elle). */
     static boolean isBusy() {
-        return busy.get();
+        return LinkLock.NATIVE.equals(LinkLock.SHARED.holder());
     }
 
     static BackgroundSync.State load(Context context, String address) {
@@ -87,12 +88,12 @@ final class BackgroundWatchSync {
     }
 
     /** Relit la montre `address` si c'est dû ; rend la décision (run, app, busy, paused, no_key, recent, absent, no_permission). */
-    static String maybeStart(Context context, String address, boolean appAlive) {
-        return maybeStart(context, address, appAlive, BackgroundSync.TRIGGER_PRESENCE, null);
+    static String maybeStart(Context context, String address, boolean appForeground) {
+        return maybeStart(context, address, appForeground, BackgroundSync.TRIGGER_PRESENCE, null);
     }
 
     /** Idem pour un déclencheur donné ; `onDone` (facultatif) n'est appelé qu'à la fin d'une relecture lancée (« run »). */
-    static String maybeStart(Context context, String address, boolean appAlive, String trigger, Runnable onDone) {
+    static String maybeStart(Context context, String address, boolean appForeground, String trigger, Runnable onDone) {
         Context app = context.getApplicationContext();
         String addr = WatchVault.normalizeAddress(address);
         String decision = addr == null ? "no_watch" : !canConnect(app) ? "no_permission" : null;
@@ -101,12 +102,12 @@ final class BackgroundWatchSync {
             return decision;
         }
         BackgroundSync.State state = load(app, addr);
-        WatchVault.Credentials creds = appAlive || state.paused ? null : WatchVaultPlugin.read(app, addr);
-        decision = BackgroundSync.decide(trigger, state, System.currentTimeMillis(), appAlive, busy.get(),
-                appAlive || creds != null, presence(app));
+        WatchVault.Credentials creds = appForeground || state.paused ? null : WatchVaultPlugin.read(app, addr);
+        decision = BackgroundSync.decide(trigger, state, System.currentTimeMillis(), appForeground,
+                LinkLock.SHARED.holder() != null, appForeground || creds != null, presence(app));
+        if ("run".equals(decision) && !LinkLock.SHARED.tryAcquire(LinkLock.NATIVE)) decision = "busy";
         note(app, decision, trigger);
         if (!"run".equals(decision)) return decision;
-        if (!busy.compareAndSet(false, true)) return "busy";
         new Thread(() -> {
             try {
                 BluetoothManager bm = (BluetoothManager) app.getSystemService(Context.BLUETOOTH_SERVICE);
@@ -124,7 +125,7 @@ final class BackgroundWatchSync {
             } catch (RuntimeException e) {
                 Log.w(TAG, "relecture en arrière-plan interrompue", e);
             } finally {
-                busy.set(false);
+                LinkLock.SHARED.release(LinkLock.NATIVE);
                 if (onDone != null) onDone.run();
             }
         }, "huawei-background-sync").start();

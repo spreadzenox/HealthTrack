@@ -12,7 +12,7 @@ import com.healthtrack.app.huawei.BackgroundSync;
 
 /**
  * Filet de la relecture app tuée (huawei.md §9.1 f) : toutes les ~2 h (Android choisit le moment, batterie pas
- * faible), relit la montre connue si aucune page de l'app ne tourne, avec les règles de BackgroundSync (30 min,
+ * faible), relit la montre connue si l'app n'est pas à l'écran, avec les règles de BackgroundSync (30 min,
  * pause, montre partie → rien). Programmée à la première reprise recopiée par le JS, gardée après un redémarrage.
  * JobScheduler du système : aucune dépendance ajoutée.
  */
@@ -47,7 +47,7 @@ public class WatchSyncJob extends JobService {
         Context app = getApplicationContext();
         String address = BackgroundWatchSync.knownAddress(app);
         if (address == null) return false;
-        String decision = BackgroundWatchSync.maybeStart(app, address, CompanionPlugin.isAppAlive(),
+        String decision = BackgroundWatchSync.maybeStart(app, address, CompanionPlugin.isAppInForeground(),
                 BackgroundSync.TRIGGER_PERIODIC, () -> jobFinished(params, false));
         return "run".equals(decision);
     }

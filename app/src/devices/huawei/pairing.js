@@ -396,6 +396,8 @@ export async function connectAndAuthenticate({
     const msg = e?.message || String(e)
     if (e?.tokenCheck) report.tokenCheck = e.tokenCheck
     set(current, 'fail', msg)
+    // liaison prise par la relecture native d'arrière-plan (LinkLock, §9.1 g) : pas un échec de la montre
+    if (current === 'connect' && e?.code === 'busy') return finish('busy', 'Montre occupée : relecture en arrière-plan en cours, réessayez dans une minute')
     if (current === 'connect') return finish('connect_failed', 'Connexion à la montre impossible')
     if (current === 'bind' && /PIN refusé|Déchiffrement/.test(msg)) return finish('pin_failed', 'Premier appairage refusé')
     return finish('failed', 'La connexion s’est arrêtée en route')

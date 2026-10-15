@@ -155,6 +155,15 @@ describe('connexion authentifiée à une montre Huawei (HiChain)', () => {
     expect(json).not.toMatch(/[0-9a-f]{32}/i)
   })
 
+  it('liaison déjà prise par la relecture d’arrière-plan (§9.1 g) → « busy », rien n’est envoyé', async () => {
+    const watch = createFakeWatch()
+    const busy = Object.assign(new Error('Montre occupée : relecture en arrière-plan en cours'), { code: 'busy' })
+    const transport = { ...watch.transport, open: async () => { throw busy }, send: async () => { throw new Error('rien à envoyer') } }
+    const report = await run(watch, { transport, keyStore: createKeyStore(memoryStorage()) })
+    expect(report.outcome.code).toBe('busy')
+    expect(report.outcome.title).toMatch(/arrière-plan/)
+  })
+
   it('montre appairée à Android retrouvée par son nom', async () => {
     const classic = { listBonded: async () => ({ devices: [{ name: 'Galaxy Buds', deviceId: '1' }, { name: 'HUAWEI WATCH GT 6 Pro-1A2', deviceId: '2' }] }) }
     expect((await findBondedWatch(classic)).deviceId).toBe('2')

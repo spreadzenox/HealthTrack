@@ -845,6 +845,7 @@ code reprise. Sert de base à I75 / I76 / I77 (`IDEES.md`).
 | (d quater ③ d) **Lectures santé en Java** (sommeil 7/0x0C–0x0D, minutes 7/0x0A–0x0B, totaux 7/0x03) gardées **brutes** dans une capture JSON (boîte de dépôt privée), importée à l'ouverture par le JS avec ses analyseurs (une seule implémentation du décodage) ; trames et capture **identiques au pilote JS** (vecteur `read`) ; pas encore déclenché app tuée | ✅ run 15/10 10:30 | `huawei/WatchReader.java`, `huawei/CaptureInbox.java`, `WatchCapturePlugin.java`, `src/devices/huawei/capture.js`, `services/watchCaptures.js`, `watchSync.importWatchCapture` |
 | (d quater ③ e) **Relecture app tuée à la reconnexion** : `WatchPresenceService` → `BackgroundWatchSync` quand aucune page de l'app ne tourne ; règles et fenêtre dans `BackgroundSync` (pur Java : 30 min → 4 h, pause après `key_rejected`, fenêtre = `syncWindow`, vecteurs `windows`) ; RFCOMM, coffre, `WatchReader`, `CaptureInbox` ; reprise recopiée par le JS (`shareResume`), état lu par le JS (`background`) | ✅ run 15/10 12:30 (à valider sur l'A56) | `huawei/BackgroundSync.java`, `BackgroundWatchSync.java`, `WatchPresenceService.java`, `WatchCapturePlugin.java` (`background`, `shareResume`), `services/watchCaptures.js`, `watchAutoSync.js`, `watchPresence.js` |
 | (d quater ③ f) Autres déclencheurs (I75) : déverrouillage (`USER_PRESENT`, récepteur dynamique du service compagnon) + filet ~2 h (JobScheduler persistant) ; « absent » si la montre est partie ; notification « clé refusée » ; état natif dans le journal | ✅ run 15/10 14:30 (à valider sur l'A56) | `huawei/BackgroundSync.java` (`decide(trigger…)`, `presenceOf`), `WatchPresenceService.java`, `WatchSyncJob.java`, `WatchNotifications.java`, `BackgroundWatchSync.java`, `src/devices/huawei/journal.js` (`backgroundForJournal`) |
+| (d quater ③ g) App en arrière-plan non tuée : relecture native dès que l'app n'est plus à l'écran ; liaison unique page / natif (`LinkLock`) ; issue `busy` non consignée côté JS | ✅ run 15/10 16:30 (à valider sur l'A56) | `huawei/LinkLock.java`, `CompanionPlugin.java` (`isAppInForeground`), `BtClassicPlugin.java`, `BackgroundWatchSync.java`, `src/devices/huawei/pairing.js`, `src/services/watchPresence.js` |
 
 ### 9.1 Client Java « synchro seule » (D3 d quater ③) — architecture (run du 15/10 02:30)
 
@@ -922,7 +923,7 @@ de pilote JS). Écrit depuis cette spécification (§2, §3, §4, §6.1–§6.5)
   sans nouvelle « apparition ») ; ② **filet** — `WatchSyncJob` (JobService système, identifiant 7301, période 2 h,
   souplesse 30 min, `setPersisted` + RECEIVE_BOOT_COMPLETED, batterie pas faible), programmé à chaque reprise recopiée
   par le JS et à chaque apparition, une seule fois. Les deux appellent `maybeStart(…, trigger)` avec l'adresse connue
-  de la relecture (préférences, recopiée par le JS) et `CompanionPlugin.isAppAlive()`. Décision
+  de la relecture (préférences, recopiée par le JS) et `CompanionPlugin.isAppAlive()` (devenu `isAppInForeground()` en ③ g). Décision
   `BackgroundSync.decide(trigger, état, …, présence)` : mêmes règles que ③ e, plus « absent » quand le dernier
   événement du service compagnon est « disappeared » (sauf pour la reconnexion signalée, qui prouve la présence ;
   présence inconnue sans association → on essaie). Le job ne finit qu'à la fin de la relecture lancée (`onDone`).
@@ -930,5 +931,18 @@ de pilote JS). Écrit depuis cette spécification (§2, §3, §4, §6.1–§6.5)
   (job programmé) ; le journal exporté les contient (`backgroundForJournal` : jamais d'adresse ni de clé).
   Clé refusée → `WatchNotifications.keyRejected` (canal `watch_sync`, ouvre l'app), silencieuse si les
   notifications ne sont pas autorisées (demandées après « Activer », `requestNotifications`).
-  Limite : app en arrière-plan **non tuée** → décision « app » (le JS relira au retour au premier plan) → ③ g.
+  Limite levée par ③ g ci-dessous.
+- **App en arrière-plan non tuée (③ g, run du 15/10 16:30)** : « l'app gère » ne veut plus dire « une page existe »
+  mais « l'app est **à l'écran** » (`CompanionPlugin.isAppInForeground()` : plugin chargé et activité entre
+  `onStart` et `onStop`, comme `visibilitychange` côté page). En arrière-plan, la page peut être gelée par Android en
+  pleine synchro : la relecture native passe, avec les mêmes règles. Pour que la page et le natif n'ouvrent jamais
+  deux connexions RFCOMM à la montre, une **liaison unique** (`huawei/LinkLock`, un titulaire « app » ou « native ») :
+  `BtClassicPlugin.connect` la prend (sinon rejet code `busy`) et la rend à la fermeture, à l'échec de connexion et à
+  la coupure par la montre (seulement si le fil de lecture lit encore le socket courant) ; la relecture native la
+  prend après sa décision (« busy » si la page la tient) et la rend en fin de relecture. On ne rend jamais la
+  liaison de l'autre. Côté JS : une connexion rejetée `busy` donne l'issue `busy` (« Montre occupée : relecture en
+  arrière-plan… »), qui n'est **pas** consignée (ni échec compté, ni délai doublé) ; l'écoute de présence ne relit
+  plus quand la page est cachée (le natif s'en charge) ; au retour à l'écran, `syncWatchIfStale` range la capture et
+  compte la relecture native dans les 30 min. Limite : une connexion de la page laissée ouverte par une page gelée
+  bloque le natif jusqu'à sa coupure (la montre ferme un lien inactif).
 

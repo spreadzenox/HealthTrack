@@ -21,6 +21,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.healthtrack.app.huawei.LinkLock;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -241,6 +242,11 @@ public class BtClassicPlugin extends Plugin {
             return;
         }
         closeQuietly();
+        // Liaison partagée avec la relecture d'arrière-plan (§9.1 g) : jamais deux connexions à la montre.
+        if (!LinkLock.SHARED.tryAcquire(LinkLock.APP)) {
+            call.reject("Montre occupée : relecture en arrière-plan en cours", "busy");
+            return;
+        }
         new Thread(() -> {
             BluetoothSocket s = null;
             try {
@@ -263,11 +269,13 @@ public class BtClassicPlugin extends Plugin {
                     socket = s;
                     out = s.getOutputStream();
                 }
-                startReader(s.getInputStream());
+                startReader(s, s.getInputStream());
                 call.resolve();
             } catch (SecurityException e) {
+                LinkLock.SHARED.release(LinkLock.APP);
                 call.reject("Autorisation « Appareils à proximité » manquante");
             } catch (Exception e) {
+                LinkLock.SHARED.release(LinkLock.APP);
                 if (s != null) {
                     try {
                         s.close();
@@ -280,7 +288,7 @@ public class BtClassicPlugin extends Plugin {
         }).start();
     }
 
-    private void startReader(InputStream in) {
+    private void startReader(BluetoothSocket s, InputStream in) {
         reader = new Thread(() -> {
             byte[] buf = new byte[2048];
             try {
@@ -292,6 +300,14 @@ public class BtClassicPlugin extends Plugin {
                 }
             } catch (IOException ignored) {
                 // socket fermé
+            }
+            synchronized (this) {
+                // coupure par la montre : la liaison est rendue (sauf si une nouvelle connexion l'a déjà reprise)
+                if (socket == s) {
+                    socket = null;
+                    out = null;
+                    LinkLock.SHARED.release(LinkLock.APP);
+                }
             }
             notifyListeners("disconnected", new JSObject());
         });
@@ -339,6 +355,7 @@ public class BtClassicPlugin extends Plugin {
         }
         socket = null;
         out = null;
+        LinkLock.SHARED.release(LinkLock.APP);
     }
 
     private static String toHex(byte[] b, int n) {

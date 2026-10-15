@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-15",
+  "kind": "amélioration",
+  "title": "Montre Huawei : relue aussi quand l'app est en arrière-plan",
+  "items": [
+    "Quand HealthTrack est seulement en arrière-plan (pas fermé), la montre est maintenant relue tout de suite par la partie Android de l'app, comme app fermée : à la reconnexion, au déverrouillage et toutes les ~2 h. Avant, elle attendait votre retour dans l'app.",
+    "L'app et la relecture de fond ne se connectent jamais à la montre en même temps ; si vous touchez « Synchroniser la montre » pendant une relecture de fond, la carte dit « Montre occupée » au lieu d'un échec.",
+    "La ligne sous « Synchroniser la montre » dit désormais « relue en arrière-plan il y a … »."
+  ]
+}

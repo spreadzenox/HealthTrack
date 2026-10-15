@@ -66,14 +66,20 @@ export function describePresence(presence, { now = Date.now(), formatAgo } = {})
     const verb = presence.last.event === 'disappeared' ? 'déconnectée' : 'reconnectée'
     parts.push(`${verb} ${formatAgo(presence.last.at, new Date(now))}`)
   }
-  if (presence.background?.at) parts.push(`relue app fermée ${formatAgo(presence.background.at, new Date(now))}`)
+  if (presence.background?.at) parts.push(`relue en arrière-plan ${formatAgo(presence.background.at, new Date(now))}`)
   return { enabled: true, text: parts.join(' · ') }
 }
 
 let listening = null
 
-/** Écoute unique des événements de présence ; rend true si l'écoute est en place. */
-export function listenWatchPresence({ plugin = companionPlugin(), sync = syncWatchIfStale } = {}) {
+const pageVisible = () => typeof document === 'undefined' || document.visibilityState !== 'hidden'
+
+/**
+ * Écoute unique des événements de présence ; rend true si l'écoute est en place. App en arrière-plan, la page
+ * peut être gelée par Android en pleine synchro : la relecture native s'en charge (§9.1 g) et la capture est
+ * rangée au retour à l'écran (syncWatchIfStale sur « visibilitychange »).
+ */
+export function listenWatchPresence({ plugin = companionPlugin(), sync = syncWatchIfStale, isVisible = pageVisible } = {}) {
   if (!plugin?.addListener) return Promise.resolve(false)
   if (listening) return listening
   const notify = () => {
@@ -83,7 +89,7 @@ export function listenWatchPresence({ plugin = companionPlugin(), sync = syncWat
     try {
       await plugin.addListener('watchPresence', async (e) => {
         notify()
-        if (e?.event === 'appeared') await sync()
+        if (e?.event === 'appeared' && isVisible()) await sync()
       })
       await plugin.addListener('companionAssociated', notify)
       return true

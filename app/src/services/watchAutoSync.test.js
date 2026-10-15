@@ -79,6 +79,16 @@ describe('syncWatchIfStale', () => {
     expect(autoSyncInterval({ failures: 9 })).toBe(8 * WATCH_AUTO_SYNC_MS)
   })
 
+  it('montre occupée par la relecture native (§9.1 g) : ni échec compté, ni délai allongé', async () => {
+    const storage = memoryStorage()
+    const keyStore = paired(storage)
+    const connect = vi.fn(async () => report('busy'))
+    await syncWatchIfStale({ classic: fakeClassic(), storage, keyStore, connect, now: () => T0 })
+    expect(connect).toHaveBeenCalledTimes(1)
+    expect(getWatchAutoSyncState(storage).failures || 0).toBe(0)
+    expect(getWatchAutoSyncState(storage).outcome).not.toBe('busy')
+  })
+
   it('clé refusée : pause jusqu’à une connexion manuelle réussie', async () => {
     const storage = memoryStorage()
     const keyStore = paired(storage)
@@ -201,7 +211,7 @@ describe('syncWatchIfStale — relecture app fermée (client Java, §9.1 e)', ()
     expect(connect).not.toHaveBeenCalled()
   })
 
-  it('relue app fermée il y a 10 min : rien avant 30 min', async () => {
+  it('relue en arrière-plan il y a 10 min : rien avant 30 min', async () => {
     const storage = memoryStorage()
     const connect = vi.fn(async () => report('connected'))
     const background = bgOf({ busy: false, lastSuccessAt: T0 - 10 * 60_000 })

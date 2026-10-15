@@ -5,10 +5,11 @@ import java.security.GeneralSecurityException;
 import java.util.Random;
 
 /**
- * Relecture de la montre app tuée (journal/protocoles/huawei.md §9.1 e) : décide s'il faut relire, rejoue
+ * Relecture de la montre app tuée ou en arrière-plan (journal/protocoles/huawei.md §9.1 e, g) : décide s'il faut relire, rejoue
  * reconnexion → batterie → lectures, dépose la capture et tient l'état. Mêmes règles que le JS
  * (src/services/watchAutoSync.js) : 30 min au moins entre deux essais, doublées à chaque échec (4 h au plus),
- * pause définitive après une clé refusée (jamais de réappairage en arrière-plan), un seul essai à la fois.
+ * pause définitive après une clé refusée (jamais de réappairage en arrière-plan), une seule liaison à la fois
+ * (LinkLock, partagé avec la page).
  * Fenêtre de lecture identique à `syncWindow` (src/devices/huawei/sync.js) ; la reprise est recopiée par le JS
  * après chaque synchro. Sans dépendance Android (testé sur la JVM) ; ne lève jamais.
  */
@@ -69,17 +70,13 @@ public final class BackgroundSync {
     }
 
     /**
-     * « run » s'il faut relire maintenant, sinon la raison : app (l'app ouverte s'en charge), busy, paused,
-     * no_key, recent.
-     */
-    /**
      * Même décision selon le déclencheur : au déverrouillage et au filet périodique, une montre que le service
      * compagnon sait partie n'est pas tentée (« absent » : ni connexion de 15 s, ni échec compté). La reconnexion
      * signalée prouve la présence ; sans appareil compagnon (inconnue), on essaie.
      */
-    public static String decide(String trigger, State s, long nowMs, boolean appAlive, boolean busy, boolean hasKey,
-                                int presence) {
-        String d = decide(s, nowMs, appAlive, busy, hasKey);
+    public static String decide(String trigger, State s, long nowMs, boolean appForeground, boolean busy,
+                                boolean hasKey, int presence) {
+        String d = decide(s, nowMs, appForeground, busy, hasKey);
         if ("run".equals(d) && !TRIGGER_PRESENCE.equals(trigger) && presence == ABSENT) return "absent";
         return d;
     }
@@ -91,8 +88,13 @@ public final class BackgroundSync {
         return UNKNOWN;
     }
 
-    public static String decide(State s, long nowMs, boolean appAlive, boolean busy, boolean hasKey) {
-        if (appAlive) return "app";
+    /**
+     * « run » s'il faut relire maintenant, sinon la raison : app (l'app est à l'écran, le JS s'en charge), busy
+     * (la liaison est déjà prise, par la page ou par une relecture native : LinkLock), paused, no_key, recent.
+     * App en arrière-plan mais pas tuée (§9.1 g) : `appForeground` faux, la relecture native passe.
+     */
+    public static String decide(State s, long nowMs, boolean appForeground, boolean busy, boolean hasKey) {
+        if (appForeground) return "app";
         if (busy) return "busy";
         if (s.paused) return "paused";
         if (!hasKey) return "no_key";

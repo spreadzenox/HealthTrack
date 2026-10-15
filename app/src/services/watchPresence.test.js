@@ -121,6 +121,14 @@ describe('listenWatchPresence', () => {
     expect(sync).toHaveBeenCalledTimes(1)
   })
 
+  it('app en arrière-plan : la relecture native s’en charge (§9.1 g), le JS range la capture au retour', async () => {
+    const plugin = fakeCompanion()
+    const sync = vi.fn(async () => ({ ran: true }))
+    await listenWatchPresence({ plugin, sync, isVisible: () => false })
+    await plugin.listeners.watchPresence({ event: 'appeared', at: 1 })
+    expect(sync).not.toHaveBeenCalled()
+  })
+
   it('montre partie : aucune synchro', async () => {
     const plugin = fakeCompanion()
     const sync = vi.fn(async () => ({ ran: true }))
@@ -153,17 +161,17 @@ describe('listenWatchPresence', () => {
 })
 
 describe('relecture app fermée sur la ligne de présence', () => {
-  it('la ligne dit quand la montre a été relue app fermée', async () => {
+  it('la ligne dit quand la montre a été relue en arrière-plan', async () => {
     const now = 1_700_000_000_000
     const plugin = fakeCompanion({ associations: [{ id: 7, deviceId: WATCH.deviceId }], last: { at: now - 5 * 60000, event: 'appeared', appearedCount: 2 } })
     const background = vi.fn(async () => ({ lastSuccessAt: now - 4 * 60000, battery: 71 }))
     const p = await getWatchPresence({ plugin, watch: WATCH, background })
     expect(background).toHaveBeenCalledWith({ deviceId: WATCH.deviceId })
     expect(p.background).toEqual({ at: new Date(now - 4 * 60000).toISOString(), battery: 71 })
-    expect(describePresence(p, { now, formatAgo: ago }).text).toBe('Synchro auto même app fermée (reconnexion, déverrouillage, ~2 h) · reconnectée il y a 5 min · relue app fermée il y a 4 min')
+    expect(describePresence(p, { now, formatAgo: ago }).text).toBe('Synchro auto même app fermée (reconnexion, déverrouillage, ~2 h) · reconnectée il y a 5 min · relue en arrière-plan il y a 4 min')
   })
 
-  it('jamais relue app fermée (ou pas d’association) : rien de plus', async () => {
+  it('jamais relue en arrière-plan (ou pas d’association) : rien de plus', async () => {
     const background = vi.fn(async () => ({ lastSuccessAt: 0 }))
     expect((await getWatchPresence({ plugin: fakeCompanion({ associations: [{ id: 7, deviceId: WATCH.deviceId }] }), watch: WATCH, background })).background).toBeNull()
     await getWatchPresence({ plugin: fakeCompanion(), watch: WATCH, background })
