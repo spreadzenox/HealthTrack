@@ -35,7 +35,7 @@
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done  # … montre appairée et authentifiée (rapport factice)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=stalled  # … la montre n'a pas répondu pour le sommeil
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion  # … « Synchro dès que la montre se reconnecte » (à activer)
- *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion=on  # … activée, montre vue il y a 5 min
+ *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion=on  # … activée, montre vue il y a 5 min, relue app fermée il y a 3 min
  *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -309,6 +309,15 @@ async function main() {
             return { associated: true, id: 7 }
           },
           addListener: async () => ({ remove: async () => {} }),
+        }
+        // Relecture app fermée (BackgroundWatchSync.java) : montre relue il y a 3 min
+        if (on) {
+          window.__healthtrackFakeWatchCapture = {
+            list: async () => ({ captures: [] }),
+            remove: async () => ({ removed: 0 }),
+            background: async () => ({ busy: false, lastSuccessAt: Date.now() - 3 * 60000, battery: 74 }),
+            shareResume: async () => {},
+          }
         }
       }, args.companion === 'on')
     }

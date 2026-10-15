@@ -16,7 +16,7 @@ import { getBodyProfile } from './bodyProfile'
 import { getBodySettings } from '../settings/bodySettings'
 import { listEntries } from '../storage/localHealthStorage'
 import { syncVaultAfterConnection, vaultPlugin } from './watchVault'
-import { importPendingCaptures } from './watchCaptures'
+import { getBackgroundSync, importPendingCaptures, shareResumeWithNative } from './watchCaptures'
 
 /** Profil envoyé à la montre (7/0x02) : taille, poids, âge, sexe connus de HealthTrack (lectures par index). */
 export async function watchProfile() {
@@ -113,6 +113,7 @@ export async function connectBondedWatch({
   watch: knownWatch = null,
   now = () => Date.now(),
   vault = vaultPlugin(),
+  capture,
 } = {}) {
   if (!classic) throw new Error('Connexion possible seulement dans l’app Android.')
   return withWatchLock(async () => {
@@ -137,6 +138,8 @@ export async function connectBondedWatch({
     const nativeKey = await syncVaultAfterConnection({ report, watch, keyStore: keyStore || createKeyStore(storage), plugin: vault })
     if (nativeKey && report && typeof report === 'object') report.nativeKey = nativeKey
     recordWatchConnection(report, { auto, storage, now })
+    // Reprise recopiée au client Java : la relecture app tuée lit la même fenêtre et attend 30 min (§9.1 e)
+    if (report?.outcome?.code === 'connected') await shareResumeWithNative({ deviceId: watch.deviceId, state: getWatchSyncState(watch.deviceId, storage), plugin: capture })
     return report
   })
 }
@@ -163,6 +166,7 @@ async function runIfStale({
   now = () => Date.now(),
   connect = connectAndAuthenticate,
   importCaptures = importPendingCaptures,
+  background = getBackgroundSync,
 } = {}) {
   try {
     // Ce que le client Java a relu app tuée (§9.1 d) passe d'abord : la synchro en direct peut alors être inutile
@@ -174,7 +178,14 @@ async function runIfStale({
     const watch = await findBondedWatch(classic)
     if (!watch) return { ran: false, reason: 'no_watch' }
     if (!keyStore.get(watch.deviceId)?.authToken) return { ran: false, reason: 'not_paired' }
-    const last = Math.max(Date.parse(state.at || '') || 0, Date.parse(getWatchSyncState(watch.deviceId, storage)?.at || '') || 0)
+    // Relecture app tuée (client Java) : en cours, clé refusée, ou récente → mêmes règles que les nôtres
+    const bg = await background({ deviceId: watch.deviceId })
+    if (bg?.busy) return { ran: false, reason: 'busy' }
+    if (bg?.paused && bg.outcome === 'key_rejected' && (Date.parse(state.at || '') || 0) < (bg.lastAttemptAt || 0)) {
+      recordWatchConnection({ outcome: { code: 'key_rejected', title: 'Clé refusée par la montre (relecture en arrière-plan)' } }, { auto: true, storage, now })
+      return { ran: false, reason: 'paused' }
+    }
+    const last = Math.max(Date.parse(state.at || '') || 0, Date.parse(getWatchSyncState(watch.deviceId, storage)?.at || '') || 0, bg?.lastSuccessAt || 0)
     if (now() - last < autoSyncInterval(state)) return { ran: false, reason: 'recent' }
     const report = await connectBondedWatch({ classic, watch, keyStore, storage, connect, now, auto: true })
     return { ran: true, outcome: report?.outcome?.code || null }

@@ -52,8 +52,8 @@ public class CompanionPlugin extends Plugin {
         return (CompanionDeviceManager) getContext().getSystemService(Context.COMPANION_DEVICE_SERVICE);
     }
 
-    /** Appelé par WatchPresenceService : garde l'horodatage et prévient le JS s'il tourne. */
-    static void recordPresence(Context context, String event, int associationId) {
+    /** Appelé par WatchPresenceService : garde l'horodatage et prévient le JS s'il tourne (rend true dans ce cas). */
+    static boolean recordPresence(Context context, String event, int associationId) {
         long now = System.currentTimeMillis();
         SharedPreferences p = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = p.edit().putLong("lastAt", now).putString("lastEvent", event).putInt("lastAssociation", associationId);
@@ -66,7 +66,9 @@ public class CompanionPlugin extends Plugin {
             data.put("at", now);
             data.put("associationId", associationId);
             plugin.notifyListeners("watchPresence", data);
+            return true;
         }
+        return false;
     }
 
     @PluginMethod

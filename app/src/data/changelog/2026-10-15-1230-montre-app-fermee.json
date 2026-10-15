@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-15",
+  "kind": "nouveau",
+  "title": "Montre Huawei : relue même quand l'app est fermée",
+  "items": [
+    "Si vous avez touché « Activer » sous « Synchroniser la montre » (Plus → Connecteurs, carte « Montre Huawei »), HealthTrack relit maintenant votre montre quand elle se reconnecte au téléphone, même si l'app est complètement fermée.",
+    "Mêmes règles qu'à l'ouverture : au plus une lecture toutes les 30 minutes, jamais de nouvel appairage en arrière-plan. Les mesures lues sont rangées dans votre historique à la prochaine ouverture, sans doublon.",
+    "La ligne sous « Synchroniser la montre » dit « relue app fermée il y a … ». Si la montre refusait la connexion, la carte affiche « Synchro en pause » et « Synchroniser la montre » la relance."
+  ]
+}

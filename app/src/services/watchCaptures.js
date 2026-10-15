@@ -6,7 +6,7 @@
  * écriture qui échoue laisse la capture pour la prochaine ouverture. Ne lève jamais.
  */
 import { registerPlugin } from '@capacitor/core'
-import { importWatchCapture } from './watchSync'
+import { importWatchCapture, SYNC_STATE_VERSION } from './watchSync'
 import { isValidCapture } from '../devices/huawei/capture'
 
 const NativeCapture = registerPlugin('WatchCapture')
@@ -74,4 +74,32 @@ export async function importPendingCaptures({ plugin = capturePlugin(), storage 
     }
   }
   return out
+}
+
+/**
+ * Où en est la relecture app tuée (BackgroundWatchSync.java) pour `deviceId` : { busy, lastSuccessAt, lastAttemptAt,
+ * paused, outcome, battery, failures, lastDecision } (horodatages en ms) ou null (hors de l'app, ancienne version).
+ */
+export async function getBackgroundSync({ deviceId, plugin = capturePlugin() } = {}) {
+  if (!deviceId || !plugin?.background) return null
+  try {
+    return (await plugin.background({ deviceId })) || null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Recopie au natif la reprise de la dernière synchro du JS (état `healthtrack_watch_sync` de la montre), pour que la
+ * relecture app tuée lise la même fenêtre et respecte les 30 min. Rend true si le natif l'a reçue.
+ */
+export async function shareResumeWithNative({ deviceId, state, plugin = capturePlugin() } = {}) {
+  const at = Date.parse(state?.at || '')
+  if (!deviceId || !plugin?.shareResume || !Number.isFinite(at)) return false
+  try {
+    await plugin.shareResume({ deviceId, until: state.v === SYNC_STATE_VERSION && state.until > 0 ? state.until : 0, at })
+    return true
+  } catch {
+    return false
+  }
 }
