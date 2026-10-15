@@ -195,11 +195,6 @@ export default function WellbeingCharts() {
       <h2 id="wellbeing-charts-title" className="section-title">
         Bien-être (0–5)
       </h2>
-      <p className="wellbeing-charts-hint">
-        {hourSeries.length > 0
-          ? "Moyennes par jour et par heure aujourd'hui — données locales uniquement."
-          : 'Moyenne par jour — données locales uniquement.'}
-      </p>
 
       {todayPrediction != null && (
         <div className="wellbeing-prediction-badge">

@@ -32,7 +32,13 @@ describe('Settings — Gemini', () => {
     expect(screen.getByText(/Sans clé/i)).toHaveTextContent(/description/i)
   })
 
-  it('permet de choisir le modèle Gemini et l’enregistre', () => {
+  it('dit simplement qu’une clé est enregistrée', () => {
+    localStorage.setItem('healthtrack_gemini_api_key', 'AIzaTest')
+    renderSettings()
+    expect(screen.getByText('✓ Clé enregistrée')).toBeInTheDocument()
+  })
+
+  it('permet de choisir le modèle Gemini (replié sous « Choisir le modèle ») et l’enregistre', () => {
     renderSettings()
     const select = screen.getByLabelText(/Modèle Gemini/i)
     expect(select.value).toBe('gemini-3.8-flash')
@@ -57,6 +63,6 @@ describe('Settings — Cigarettes', () => {
     renderSettings()
     fireEvent.click(screen.getByLabelText(/Toujours afficher le bouton cigarette/i))
     expect(localStorage.getItem('healthtrack_cigarette_counter')).toBe('on')
-    expect(screen.getByText('Bouton toujours affiché')).toBeInTheDocument()
+    expect(screen.getByLabelText(/Toujours afficher le bouton cigarette/i).querySelector('input')).toBeChecked()
   })
 })

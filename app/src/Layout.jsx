@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react'
+import { Suspense, useLayoutEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import UpdateBanner from './components/UpdateBanner'
 import WellbeingPrompt from './components/WellbeingPrompt'
@@ -18,9 +18,11 @@ function PageLoading() {
 
 export default function Layout() {
   useAutoSync()
-  // Nouvelle page = en haut de la page (sinon on arrive au milieu, à la hauteur de la page précédente)
+  // Nouvelle page = en haut de la page (sinon on arrive au milieu, à la hauteur de la page précédente).
+  // useLayoutEffect : appliqué au même rendu que la nouvelle page (avec useEffect, elle s'affichait
+  // un instant à l'ancienne hauteur — et le test App échouait au hasard en CI).
   const { pathname } = useLocation()
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.scrollTop = 0
   }, [pathname])
   return (

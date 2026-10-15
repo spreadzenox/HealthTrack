@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-15",
+  "kind": "amélioration",
+  "title": "Accueil et Paramètres plus légers",
+  "items": [
+    "Les cigarettes d'une journée tiennent sur une seule ligne (« 09:10 · 11:11 · 13:12 ») au lieu d'une ligne chacune ; « Supprimer » retire la dernière notée. Le total reste dans le résumé du jour.",
+    "Un jour où le téléphone a mesuré votre temps d'écran, le tag « Écran tard » d'une ancienne note de bien-être n'est plus répété : le chiffre « Écran » du jour suffit. Vos anciennes notes ne changent pas.",
+    "Paramètres : la section Gemini tient en un paragraphe ; le choix du modèle est replié sous « Choisir le modèle » (l'app passe déjà d'elle-même à un autre modèle si besoin). Les interrupteurs « Cigarettes » et « Mode diagnostic » disent simplement ce qu'ils font.",
+    "Correctif : changer de page remonte en haut dès l'affichage, sans montrer un instant la nouvelle page à la hauteur de l'ancienne."
+  ]
+}

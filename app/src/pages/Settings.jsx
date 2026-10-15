@@ -39,16 +39,12 @@ export default function Settings() {
       <h2 className="page-title">Paramètres</h2>
 
       <div className="settings-block">
-        <h3 className="section-title">Analyse des ingrédients (mode autonome)</h3>
+        <h3 className="section-title">Analyse des repas (Gemini)</h3>
         <p className="page-intro">
-          Pour analyser un repas en photo ou décrit en quelques mots <strong>sans serveur</strong>, ajoutez
-          votre clé API Gemini. Elle reste sur cet appareil et n'est jamais envoyée ailleurs qu'à Google.
-        </p>
-        <p className="hint">
-          Créez une clé gratuite sur{' '}
+          Pour remplir un repas depuis une photo ou une description, ajoutez votre clé Gemini, gratuite sur{' '}
           <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
             Google AI Studio
-          </a>.
+          </a>. Elle reste sur ce téléphone. Sans clé, la saisie manuelle reste possible.
         </p>
         <label htmlFor="gemini-key" className="input-label">
           Clé API Gemini
@@ -61,40 +57,41 @@ export default function Settings() {
           onChange={(e) => setApiKey(e.target.value)}
           placeholder="Ex: AIza..."
           className="settings-input"
-          aria-describedby="gemini-key-hint"
         />
-        <p id="gemini-key-hint" className="hint">
-          {hasGeminiApiKey()
-            ? 'Une clé est enregistrée (analyse photo et description disponibles).'
-            : "Sans clé, ni l'analyse photo ni le remplissage à partir d'une description ne sont disponibles ; la saisie manuelle reste possible."}
-        </p>
         <div className="actions">
           <button type="button" className="btn" onClick={handleSave}>
             Enregistrer
           </button>
-          {saved && <span className="saved-msg">✓ Enregistré</span>}
+          {saved ? (
+            <span className="saved-msg">✓ Enregistré</span>
+          ) : (
+            hasGeminiApiKey() && <span className="saved-msg">✓ Clé enregistrée</span>
+          )}
         </div>
 
-        <label htmlFor="gemini-model" className="input-label">
-          Modèle Gemini
-        </label>
-        <select
-          id="gemini-model"
-          className="settings-input"
-          value={geminiModel}
-          onChange={(e) => {
-            setGeminiModel(e.target.value)
-            setGeminiModelState(getGeminiModel())
-          }}
-        >
-          {GEMINI_MODELS.map((m) => (
-            <option key={m.id} value={m.id}>{m.label}</option>
-          ))}
-        </select>
-        <p className="hint">
-          Si le modèle choisi n&apos;est pas disponible pour votre clé (ou son quota est épuisé), l&apos;app essaie
-          automatiquement les autres.
-        </p>
+        <details className="settings-advanced">
+          <summary>Choisir le modèle</summary>
+          <label htmlFor="gemini-model" className="input-label">
+            Modèle Gemini
+          </label>
+          <select
+            id="gemini-model"
+            className="settings-input"
+            value={geminiModel}
+            onChange={(e) => {
+              setGeminiModel(e.target.value)
+              setGeminiModelState(getGeminiModel())
+            }}
+          >
+            {GEMINI_MODELS.map((m) => (
+              <option key={m.id} value={m.id}>{m.label}</option>
+            ))}
+          </select>
+          <p className="hint">
+            S&apos;il n&apos;est pas disponible pour votre clé (ou son quota est épuisé), l&apos;app essaie
+            automatiquement les autres.
+          </p>
+        </details>
 
         <div className="gemini-privacy">
           <p className="hint">
@@ -115,10 +112,6 @@ export default function Settings() {
 
       <div className="settings-block">
         <h3 className="section-title">Cigarettes</h3>
-        <p className="page-intro">
-          Le bouton « + 1 cigarette » de l&apos;accueil n&apos;apparaît que si une cigarette a été notée ces
-          14 derniers jours. Activez-le ici pour noter la première, ou pour le garder toujours visible.
-        </p>
         <div className="debug-toggle-row">
           <label className="connector-toggle" aria-label="Toujours afficher le bouton cigarette">
             <input
@@ -134,20 +127,14 @@ export default function Settings() {
               <span className="toggle-thumb" />
             </span>
           </label>
-          <span className="debug-toggle-label">
-            {cigarettePinned ? 'Bouton toujours affiché' : 'Bouton affiché seulement si vous fumez'}
-          </span>
+          <span className="debug-toggle-label">Toujours afficher « + 1 cigarette » sur l&apos;accueil</span>
         </div>
+        <p className="hint">Sinon, le bouton n&apos;apparaît que si une cigarette a été notée ces 14 derniers jours.</p>
       </div>
 
       {/* ── Mode diagnostic ─────────────────────────────────────────────────────── */}
       <div className="settings-block">
         <h3 className="section-title">Mode diagnostic</h3>
-        <p className="page-intro">
-          Affiche les journaux techniques (connexions, analyses) dans l'application, pour
-          comprendre un problème ou les transmettre.
-        </p>
-
         <div className="debug-toggle-row">
           <label className="connector-toggle" aria-label="Activer le mode diagnostic">
             <input
@@ -161,10 +148,9 @@ export default function Settings() {
               <span className="toggle-thumb" />
             </span>
           </label>
-          <span className="debug-toggle-label">
-            {debugEnabled ? 'Mode diagnostic activé' : 'Mode diagnostic désactivé'}
-          </span>
+          <span className="debug-toggle-label">Afficher les journaux techniques</span>
         </div>
+        <p className="hint">Connexions et analyses, pour comprendre un problème ou les transmettre.</p>
       </div>
     </section>
   )
