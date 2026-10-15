@@ -33,20 +33,38 @@ public class CompanionPlugin extends Plugin {
     static final String PREFS = "healthtrack_companion";
     private static final int REQUEST_ASSOCIATE = 4242;
     private static CompanionPlugin active;
+    private static volatile boolean foreground;
 
     @Override
     public void load() {
         active = this;
+        foreground = true;
+    }
+
+    @Override
+    protected void handleOnStart() {
+        foreground = true;
+    }
+
+    @Override
+    protected void handleOnStop() {
+        foreground = false;
     }
 
     @Override
     protected void handleOnDestroy() {
-        if (active == this) active = null;
+        if (active == this) {
+            active = null;
+            foreground = false;
+        }
     }
 
-    /** Une page de l'app tourne (le JS gère alors la montre). */
-    static boolean isAppAlive() {
-        return active != null;
+    /**
+     * L'app est à l'écran (le JS gère alors la montre). En arrière-plan, même vivante, la page peut être gelée par
+     * Android : la relecture native prend le relais (§9.1 g), le JS range la capture au retour à l'écran.
+     */
+    static boolean isAppInForeground() {
+        return active != null && foreground;
     }
 
     private static boolean supported() {

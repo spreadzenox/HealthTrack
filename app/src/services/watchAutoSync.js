@@ -137,6 +137,8 @@ export async function connectBondedWatch({
     // Clé confiée au coffre natif pour la synchro app fermée (§9.1 c) ; état consigné dans le journal
     const nativeKey = await syncVaultAfterConnection({ report, watch, keyStore: keyStore || createKeyStore(storage), plugin: vault })
     if (nativeKey && report && typeof report === 'object') report.nativeKey = nativeKey
+    // montre occupée par la relecture native (§9.1 g) : elle relit déjà, rien à compter
+    if (report?.outcome?.code === 'busy') return report
     recordWatchConnection(report, { auto, storage, now })
     // Reprise recopiée au client Java : la relecture app tuée lit la même fenêtre et attend 30 min (§9.1 e)
     if (report?.outcome?.code === 'connected') await shareResumeWithNative({ deviceId: watch.deviceId, state: getWatchSyncState(watch.deviceId, storage), plugin: capture })

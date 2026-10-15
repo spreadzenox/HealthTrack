@@ -147,7 +147,19 @@ quand vous touchez « Activer »). La ligne sous « Synchroniser la montre » le
 **Même demande qu'à 12:30, et en plus : après la mise à jour, fermez HealthTrack et revenez-y 2–3 h plus tard sans
 rien toucher ; la ligne doit dire « relue app fermée il y a … ». Sinon : Diagnostic → « Enregistrer le journal ».**
 
+**Run du 15/10 16:30** (toujours pas de nouveau journal) : un trou bouché dans la synchro de fond. Quand HealthTrack
+était seulement **en arrière-plan** (pas fermé : le cas le plus courant, téléphone en poche), la relecture native
+s'effaçait en se disant « l'app s'en charge », alors qu'Android peut geler la page : rien n'arrivait avant votre
+retour dans l'app. Maintenant, dès que l'app n'est plus **à l'écran**, c'est la partie Android qui relit la montre
+(mêmes règles), et un verrou garantit qu'il n'y a jamais deux connexions à la montre en même temps ; si vous touchez
+« Synchroniser la montre » pendant une relecture de fond, la carte dit « Montre occupée » au lieu d'un échec. La
+ligne dit maintenant « relue en arrière-plan il y a … ». **Même demande** : laissez l'app en arrière-plan ou fermée
+2–3 h, puis regardez la ligne et votre historique ; sinon Diagnostic → « Enregistrer le journal ».
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre Huawei : relue aussi app en arrière-plan (run 15/10 16:30)** : app seulement en arrière-plan, la montre est
+  relue tout de suite par la partie Android (reconnexion, déverrouillage, ~2 h) ; jamais deux connexions à la fois
+  (« Montre occupée » au lieu d'un échec) ; la ligne dit « relue en arrière-plan il y a … ».
 - **Montre Huawei : relue au déverrouillage et toutes les ~2 h (run 15/10 14:30)** : app fermée, la montre est aussi
   relue quand vous déverrouillez le téléphone et toutes les ~2 h (30 min au moins entre deux lectures, rien si elle
   est partie) ; notification si elle refuse la connexion. Ligne « Synchro auto même app fermée (reconnexion,
@@ -585,7 +597,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 08:30 — [Idées : synchro sans y penser, stress / VFC, humeur sur des bases légales](runs/2026-10-15-0830-idees-declencheurs-licences.md) | 💡⌚ | 7 idées (I75–I81), spec §7.11 — journal seul (#165) |
 | 15/10 10:30 — [Montre : lectures en Java, captures importées à l'ouverture](runs/2026-10-15-1030-montre-lectures-java.md) | ⌚ | PR #166 fusionnée → v133 |
 | 15/10 12:30 — [Montre : relue app fermée quand elle se reconnecte](runs/2026-10-15-1230-montre-synchro-app-fermee.md) | ⌚ | PR #167 fusionnée → v134 |
-| 15/10 14:30 — [Montre : relue au déverrouillage et toutes les ~2 h](runs/2026-10-15-1430-montre-declencheurs.md) | ⌚ | PR « [Auto] » (voir compte rendu) |
+| 15/10 14:30 — [Montre : relue au déverrouillage et toutes les ~2 h](runs/2026-10-15-1430-montre-declencheurs.md) | ⌚ | PR #168 fusionnée → v135 |
+| 15/10 16:30 — [Montre : relue aussi app en arrière-plan](runs/2026-10-15-1630-montre-arriere-plan.md) | ⌚ | PR « [Auto] » (voir compte rendu) |
 
 ---
 

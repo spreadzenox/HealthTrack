@@ -213,8 +213,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       pas faible ; pas de WorkManager = aucune dépendance) ; `decide(trigger, …)` → « absent » si la montre est partie ;
       notification « clé refusée » (POST_NOTIFICATIONS demandée à « Activer ») ; bloc `background` dans le journal
       exporté. À valider sur l'A56
-- [ ] (d quater ③ g) Relecture native aussi quand l'app est **en arrière-plan mais pas tuée** (aujourd'hui
-      « app » → rien jusqu'au retour au premier plan) : verrou partagé JS / natif, puis laisser le natif relire
+- [x] **(d quater ③ g) Relecture native app en arrière-plan non tuée** (run 15/10 16:30) : « app » = app **à
+      l'écran** (`isAppInForeground`, onStart/onStop) ; liaison unique page / natif `huawei/LinkLock` (BtClassicPlugin
+      rejette `busy`) ; issue JS `busy` non consignée ; écoute de présence muette page cachée. À valider sur l'A56
+      (reste : connexion de page gelée laissée ouverte → natif bloqué jusqu'à la coupure ; à surveiller dans le journal)
 - [ ] (d quater ③ h) Service relancé par Android sans intent (#6869) : vérifier sur le journal de l'A56 si la
       présence se perd après un redémarrage, sinon rien à faire
 - [ ] (d quater, avec ①) **Guide One UI** (I50) : batterie « Sans restriction » **et** « Applis jamais en veille »,
@@ -445,6 +447,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    reste ③ f (déverrouillage + filet ~2 h + notification clé refusée), puis le guide One UI (I50).
    **État au 15/10 14:30** : ③ f livré (déverrouillage, filet JobScheduler ~2 h, notification, état natif dans le
    journal) ; reste la validation sur l'A56, le guide One UI (I50), ③ g, puis I76 (stress, VFC de journée).
+   **État au 15/10 16:30** : ③ g livré (app en arrière-plan → natif, liaison unique) ; reste la validation sur l'A56,
+   le guide One UI (I50, si rien en 24 h), puis I76 (stress, VFC de journée) et les séances automatiques (#5784).
 4. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
