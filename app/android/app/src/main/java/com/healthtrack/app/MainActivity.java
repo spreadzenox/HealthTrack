@@ -13,6 +13,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(AppManagerPlugin.class);
         registerPlugin(CompanionPlugin.class);
         registerPlugin(WatchVaultPlugin.class);
+        registerPlugin(WatchCapturePlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

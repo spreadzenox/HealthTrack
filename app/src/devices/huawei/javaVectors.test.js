@@ -16,6 +16,8 @@ import { createSession } from './session'
 import { createFakeWatch } from './testing/fakeWatch'
 import { CMD, OP_AUTH, createCipher, frameKey, hichainTlvs, parseHichainReply, psk, returnCodeMac, runHichain, securityNegotiationTlvs, watchToken } from './hichain'
 import { bytesOfHex, hexOf, utf8 } from './crypto'
+import { blockTlvs, countTlvs, FIT, FITNESS, parseCount } from './sync'
+import { READ_WINDOW, readWatchOptions } from './testing/sampleBlocks'
 
 const FILE = resolve(dirname(fileURLToPath(import.meta.url)), '../../../android/app/src/test/resources/huawei/link-vectors.json')
 
@@ -114,14 +116,11 @@ async function authVector() {
 
 /**
  * Reconnexion complète à une fausse GT 6 Pro (HiChain 3 : type 4, GCM, IV aléatoire, JSON + NUL) telle que
- * pairing.js la joue : paramètres du lien, état, négociation, authentification, puis batterie chiffrée.
- * Trames enregistrées dans l'ordre ; l'aléa de la montre est rendu déterministe le temps de l'échange.
+ * pairing.js la joue : paramètres du lien, état, négociation, authentification, puis batterie chiffrée,
+ * puis `after(session)` s'il est donné. Trames enregistrées dans l'ordre ; l'aléa de la montre est rendu
+ * déterministe le temps de l'échange.
  */
-async function handshakeVector() {
-  const authToken = seq(0x13, 32)
-  const authId = 'FEDCBA9876543210FEDCBA9876543210'
-  const requestId = 1760000000001
-  const random = [hex(seq(0x23, 16)), hex(seq(0x33, 32)), hex(seq(0x53, 12)), hex(seq(0x73, 16))]
+async function reconnectTranscript({ authToken, authId, requestId, random, watchOptions = {}, after = null }) {
   let state = 0x2545f491
   const spy = vi.spyOn(globalThis.crypto, 'getRandomValues').mockImplementation((arr) => {
     for (let i = 0; i < arr.length; i++) {
@@ -133,7 +132,7 @@ async function handshakeVector() {
     return arr
   })
   try {
-    const watch = createFakeWatch({ deviceSupportType: 4, encryptMethod: 1, authVersion: 1, trailingNul: 1, battery: 64 })
+    const watch = createFakeWatch({ deviceSupportType: 4, encryptMethod: 1, authVersion: 1, trailingNul: 1, battery: 64, ...watchOptions })
     watch.tokens.set(authId, authToken)
     const steps = []
     const transport = {
@@ -159,11 +158,62 @@ async function handshakeVector() {
     const auth = await runHichain({ operation: OP_AUTH, baseKey: authToken, authId, requestId, exchange, rand })
     session.setCipher(createCipher({ key: await frameKey(auth.sessionKey, auth), gcm: true, randomIv: true, rand }))
     const battery = await session.request(1, 8, [{ tag: 1 }])
+    const extra = after ? await after(session) : null
     await session.close()
-    return { authToken: hex(authToken), authId, requestId, random, battery: battery.tlvs.find((t) => t.tag === 1).value[0], steps }
+    return { battery: battery.tlvs.find((t) => t.tag === 1).value[0], steps, extra }
   } finally {
     spy.mockRestore()
   }
+}
+
+async function handshakeVector() {
+  const authToken = seq(0x13, 32)
+  const authId = 'FEDCBA9876543210FEDCBA9876543210'
+  const requestId = 1760000000001
+  const random = [hex(seq(0x23, 16)), hex(seq(0x33, 32)), hex(seq(0x53, 12)), hex(seq(0x73, 16))]
+  const { battery, steps } = await reconnectTranscript({ authToken, authId, requestId, random })
+  return { authToken: hex(authToken), authId, requestId, random, battery, steps }
+}
+
+/**
+ * Lecture santé après la reconnexion, dans l'ordre de readWatchData (sommeil, minutes, totaux), telle que
+ * WatchReader.java doit la jouer ; `capture` = ce que le Java doit garder (TLV déchiffrés de chaque réponse).
+ */
+async function readVector() {
+  const authToken = seq(0x17, 32)
+  const authId = '00112233445566778899AABBCCDDEEFF'
+  const requestId = 1760500000002
+  const random = [hex(seq(0x27, 16)), hex(seq(0x37, 32)), hex(seq(0x57, 12)), ...Array.from({ length: 7 }, (_, i) => hex(seq(0x80 + i, 16)))]
+  const { since, until, at } = READ_WINDOW
+  const replies = []
+  const { battery, steps } = await reconnectTranscript({
+    authToken,
+    authId,
+    requestId,
+    random,
+    watchOptions: readWatchOptions(),
+    after: async (session) => {
+      for (const [countCmd, dataCmd] of [[FIT.SLEEP_COUNT, FIT.SLEEP_DATA], [FIT.MINUTE_COUNT, FIT.MINUTE_DATA]]) {
+        const n = parseCount((await session.request(FITNESS, countCmd, countTlvs(since, until))).tlvs)
+        for (let i = 0; i < n; i++) replies.push({ s: FITNESS, c: dataCmd, i, hex: hex(Uint8Array.from(encodeTlvs((await session.request(FITNESS, dataCmd, blockTlvs(i))).tlvs))) })
+      }
+      replies.push({ s: FITNESS, c: FIT.TOTALS, i: -1, hex: hex(Uint8Array.from(encodeTlvs((await session.request(FITNESS, FIT.TOTALS, [{ tag: 1 }])).tlvs))) })
+    },
+  })
+  const capture = {
+    v: 1,
+    since,
+    until,
+    at,
+    battery,
+    reads: [
+      { id: 'sleep', outcome: 'ok', units: 1, failed: 0 },
+      { id: 'minutes', outcome: 'ok', units: 2, failed: 0 },
+      { id: 'totals', outcome: 'ok', units: 0, failed: 0 },
+    ],
+    replies,
+  }
+  return { authToken: hex(authToken), authId, requestId, random, steps, capture }
 }
 
 describe('vecteurs communs du client Java « synchro seule »', () => {
@@ -175,6 +225,7 @@ describe('vecteurs communs du client Java « synchro seule »', () => {
       cipher: await cipherVectors(),
       auth: await authVector(),
       handshake: await handshakeVector(),
+      read: await readVector(),
     }
     const text = `${JSON.stringify(vectors, null, 2)}\n`
     if (process.env.UPDATE_VECTORS) writeFileSync(FILE, text)

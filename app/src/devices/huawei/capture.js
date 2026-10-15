@@ -1,0 +1,84 @@
+/**
+ * Captures du client Java « synchro seule » (chantier D3 d quater ③ d, journal/protocoles/huawei.md §9.1) :
+ * app tuée, le Java relit la montre et garde ses réponses **brutes** (TLV déchiffrés, WatchReader.java) ;
+ * à l'ouverture, le JS les décode ici avec les analyseurs de la synchro en direct (sync.js), pour qu'il n'y
+ * ait qu'une seule implémentation du décodage santé. Même forme de résultat que readWatchData.
+ */
+import { bytesOfHex } from './crypto'
+import { decodeTlvs } from './protocol'
+import { FIT, FITNESS, parseMinuteBlock, parseSleepBlock, parseTotals, SYNC_READS, syncHints } from './sync'
+
+export const CAPTURE_VERSION = 1
+const DAY = 24 * 3600_000
+const OUTCOMES = ['ok', 'empty', 'timeout', 'refused', 'error']
+
+const isMs = (v) => Number.isFinite(v) && v > 0
+
+/** Capture lisible (format v1, dates cohérentes, réponses en hexadécimal) ? */
+export function isValidCapture(c) {
+  return (
+    !!c &&
+    c.v === CAPTURE_VERSION &&
+    isMs(c.since) &&
+    isMs(c.until) &&
+    c.since < c.until &&
+    isMs(c.at) &&
+    Array.isArray(c.replies) &&
+    c.replies.every((r) => Number.isInteger(r?.s) && Number.isInteger(r?.c) && Number.isInteger(r?.i) && typeof r.hex === 'string' && /^([0-9a-f]{2})*$/i.test(r.hex)) &&
+    (c.reads == null || Array.isArray(c.reads))
+  )
+}
+
+/**
+ * Capture → { minutes, sleep, totals, workouts, nights, services, hints, capabilities, battery } comme readWatchData.
+ * Une réponse illisible est comptée perdue (`failed`), jamais bloquante. Lève si la capture n'est pas lisible.
+ */
+export function dataFromCapture(capture) {
+  if (!isValidCapture(capture)) throw new Error('Capture de la montre illisible')
+  const { since, until } = capture
+  const reads = new Map((capture.reads || []).map((r) => [r.id, r]))
+  const decoded = { sleep: [], minutes: [], totals: null }
+  const lost = { sleep: 0, minutes: 0, totals: 0 }
+  const kinds = { [FIT.SLEEP_DATA]: ['sleep', parseSleepBlock], [FIT.MINUTE_DATA]: ['minutes', parseMinuteBlock] }
+  for (const r of capture.replies) {
+    if (r.s !== FITNESS) continue
+    try {
+      const tlvs = decodeTlvs(bytesOfHex(r.hex))
+      if (r.c === FIT.TOTALS) decoded.totals = parseTotals(tlvs)
+      else if (kinds[r.c]) decoded[kinds[r.c][0]].push(...kinds[r.c][1](tlvs))
+    } catch {
+      const id = r.c === FIT.TOTALS ? 'totals' : kinds[r.c]?.[0]
+      if (id) lost[id]++
+    }
+  }
+  const sleep = decoded.sleep.filter((p) => p.start >= since - DAY && p.start < until)
+  const minutes = decoded.minutes.filter((m) => m.t >= since && m.t < until)
+  const services = ['sleep', 'minutes', 'totals'].map((id) => {
+    const native = reads.get(id) || {}
+    const items = id === 'totals' ? (decoded.totals ? [decoded.totals] : []) : decoded[id]
+    let outcome = OUTCOMES.includes(native.outcome) ? native.outcome : items.length ? 'ok' : 'empty'
+    if (id === 'totals' && decoded.totals) outcome = decoded.totals.steps || decoded.totals.kcal || decoded.totals.distanceM ? 'ok' : 'empty'
+    else if (items.length) outcome = 'ok'
+    else if (outcome === 'ok' && lost[id]) outcome = 'error'
+    const failed = (Number.isInteger(native.failed) ? native.failed : 0) + lost[id]
+    return {
+      ...SYNC_READS.find((s) => s.id === id),
+      outcome,
+      count: outcome === 'empty' ? 0 : items.length,
+      ...(Number.isInteger(native.units) && id !== 'totals' ? { units: native.units } : {}),
+      ...(failed ? { failed } : {}),
+    }
+  })
+  const totals = decoded.totals
+  return {
+    minutes,
+    sleep,
+    totals,
+    workouts: [],
+    nights: [],
+    services,
+    hints: syncHints(services, { totals }),
+    capabilities: 'synchro en arrière-plan (sommeil, minutes, totaux)',
+    battery: Number.isInteger(capture.battery) && capture.battery >= 0 ? capture.battery : null,
+  }
+}
