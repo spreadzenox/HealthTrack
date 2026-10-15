@@ -46,6 +46,12 @@
 - `npm run visual` complet : 8 pages ok, aucune erreur JS ; `dashboard-3` (ligne « Cigarettes 09:10 · 11:11 · 13:12 »)
   et `settings-1/2` relues.
 
+- PR #170 : Vitest, Build APK, Protocole montre (Java), émulateur API 35 verts → fusionnée (squash), **v137 publiée
+  avec son APK**. Émulateur **API 36 rouge**, comme sur main depuis `91a20b9` : `HealthConnectTest.healthConnect_canWriteAndReadSleep`
+  → `HealthConnectException: Conflict found, but couldn't read the entry` à l'`insertRecords` d'une session de sommeil
+  (test natif inchangé depuis #120, vert à 14:42 ; le diff de ce run ne touche que du JS / CSS). Piste : image système
+  API 36 (préversion) ou module Health Connect mis à jour côté runner. Non bloquant (pas un garde-fou), à instruire.
+
 ## Sécurité / vie privée
 - Rien de nouveau ne sort du téléphone ; aucune donnée ni schéma modifié (affichage seulement).
 
@@ -57,4 +63,6 @@
 1. 🧹 D1 : « Prédiction du jour » (carte + point orange) en double → n'en garder qu'un ; relire Données et Nutrition ;
    tags auto-détectés (I65 : « Voyage » par fuseau, « Sport le soir » par séances).
 2. ⚡ D2 : `WellbeingCharts` par agrégats journaliers, budget de lectures en CI.
-3. ⌚ Maintenance : lire tout journal du propriétaire ; job émulateur API 36 fragile au lancement (à surveiller).
+3. 🐛 Émulateur API 36 : `canWriteAndReadSleep` en « Conflict found » depuis 15:58 — vérifier la version de l'image
+   et du module Health Connect, tester un `clientRecordId` unique par exécution (sans affaiblir le test).
+4. ⌚ Maintenance : lire tout journal du propriétaire.

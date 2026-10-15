@@ -545,7 +545,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
-- [x] 2026-10-15 — Charte : D3 en maintenance (consigne du 15/10), D1 en tête ; D1 : cigarettes du jour sur une ligne, « Écran tard » mesuré non répété, Paramètres allégés ; test App instable corrigé (`useLayoutEffect`) (run 18:30 Paris)
+- [x] 2026-10-15 — (PR #170 → v137) Charte : D3 en maintenance (consigne du 15/10), D1 en tête ; D1 : cigarettes du jour sur une ligne, « Écran tard » mesuré non répété, Paramètres allégés ; test App instable corrigé (`useLayoutEffect`) (run 18:30 Paris)
 
 - [x] 2026-10-15 — D3 (d quater ③ c) : clé de la montre confiée au coffre natif (Keystore Android) après chaque connexion réussie, retirée si refusée (8 tests JUnit, 7 Vitest) (run 06:30 Paris)
 - [x] 2026-10-15 — D3 (d quater ③ a) : cœur Java du client « synchro seule », identique au pilote JS (vecteurs communs, 13 tests JUnit, job CI) (run 02:30 Paris)
