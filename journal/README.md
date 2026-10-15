@@ -165,6 +165,21 @@ note n'est plus répété un jour où le téléphone a mesuré l'écran ; les **
 paragraphe, choix du modèle replié, interrupteurs aux libellés clairs). Et un petit défaut corrigé : en changeant de
 page, la nouvelle s'affichait parfois un instant à la hauteur de l'ancienne (c'est aussi ce qui avait mis un test en
 rouge sur la dernière version).
+**Run « idées » de 20:30** (pas de nouveau journal montre) : comment **alléger sans rien perdre**. Trois refontes
+d'apps santé se sont fait rejeter cette année (Google Health qui remplace Fitbit en mai, MyFitnessPal en avril,
+Samsung Health en septembre), toujours pour la même raison : du texte d'interprétation devant les données, et rien
+qu'on puisse ranger. Pour HealthTrack, quatre pistes concrètes, toutes pour retirer plutôt qu'ajouter :
+- **Probable cause du lag des courbes sur votre téléphone** : la montre enregistre votre **SpO₂ minute par minute**
+  (une ligne par minute), et l'Accueil relit tout ça. Elle sera rangée par tranches de 10 min, comme le cœur
+  (minimum gardé pour les nuits). La démo de test ne le montrait pas.
+- **Le tag « Stress » de la saisie** sera traité comme une partie de votre humeur, pas comme sa cause (dire « je suis
+  stressé » et « je vais mal » au même moment, ce n'est pas un lien qu'on découvre). Votre stress mesuré par la montre
+  prendra sa place dans les Analyses.
+- **Moins de tags à cocher** : « Sport le soir » (séances de la montre), « Voyage » (changement de fuseau) et « Repas
+  tardif » (heure des repas) seront déduits, comme « Écran tard ».
+- **« Pas pertinent pour moi »** sur chaque lien des Analyses, comme le fait Exist.
+Point d'attention : pour installer hors Play Store en 2027, le parcours « avancé » d'Android peut rester activé
+**indéfiniment** après une attente unique de 24 h ; la mise à jour en 1 clic devrait donc continuer sans compte.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Accueil et Paramètres plus légers (run 15/10 18:30)** : cigarettes du jour sur une seule ligne ; « Écran tard »
@@ -487,6 +502,10 @@ rouge sur la dernière version).
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Alléger sans rien perdre** (run 15/10 20:30) : SpO₂ de la montre rangée par tranches de 10 min (probable cause du
+  lag des courbes) ; stress ressenti compté dans l'humeur et non comme sa cause ; « Sport le soir », « Voyage »,
+  « Repas tardif » déduits au lieu d'être demandés ; « Pas pertinent pour moi » sur les liens des Analyses ; sur
+  l'Accueil, les données avant le texte (leçon des refontes rejetées de Google Health et MyFitnessPal).
 - **La montre à jour sans jamais ouvrir l'app** (run 15/10 08:30) : deux déclencheurs plutôt qu'un. Quand la montre
   se reconnecte, et quand vous déverrouillez le téléphone (comme Gadgetbridge), au plus une fois par demi-heure. Plus
   une relecture de secours toutes les ~2 h. Ensuite viendront votre **stress** et votre **VFC de journée** (les phases
@@ -613,6 +632,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 14:30 — [Montre : relue au déverrouillage et toutes les ~2 h](runs/2026-10-15-1430-montre-declencheurs.md) | ⌚ | PR #168 fusionnée → v135 |
 | 15/10 16:30 — [Montre : relue aussi app en arrière-plan](runs/2026-10-15-1630-montre-arriere-plan.md) | ⌚ | PR #169 fusionnée → v136 |
 | 15/10 18:30 — [Montre en maintenance, nettoyage : journal du jour et Paramètres](runs/2026-10-15-1830-nettoyage-journal-parametres.md) | 🧹 | PR #170 fusionnée → v137 |
+| 15/10 20:30 — [Idées : alléger sans rien perdre (SpO₂, stress ressenti, tags déduits)](runs/2026-10-15-2030-idees-alleger.md) | 💡🧹⚡ | 6 idées (I82–I87) — journal seul |
 
 ---
 

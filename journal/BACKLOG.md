@@ -70,13 +70,27 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       interrupteurs Cigarettes / Diagnostic à libellé fixe et explicite (run 15/10 18:30)
 - [ ] Accueil : carte « Prédiction du jour » + point orange du graphique disent la même chose → n'en garder qu'un ;
       relire la page Données et Nutrition (prochain run D1)
+- [ ] **I85** (run idées 15/10 20:30, score 16) : check-in réduit à ce que seul l'utilisateur sait — « Sport le soir »
+      déduit des séances (montre / Health Connect, début ≥ 18 h), « Voyage » d'un changement de fuseau, « Repas
+      tardif » des repas saisis (jours avec ≥ 2 repas) ; masqués dans la saisie quand la source existe (comme
+      « Écran tard ») ; précise la ligne « Check-in, suite » ci-dessus
+- [ ] **I87** (score 15) : Accueil « la donnée avant l'interprétation » (leçon Google Health 05/2026) — chiffres et
+      courbes d'abord, interprétation en une ligne repliable ; avec la fusion « Prédiction du jour » ci-dessus
+- [ ] **I86** (score 12, absorbe I80) : « Pas pertinent pour moi » sur chaque lien des Analyses (masqué partout,
+      réversible, exporté) ; force et confiance séparées, en mots
 
 ### D2 — Performance (mesurer d'abord)
 - [x] Mesure : `npm run perf` (build de prod, 3 ans de démo, `--dense`, CPU ×4) — temps stabilisé, temps bloquant,
       lectures IndexedDB par page (run 14/10 00:30 ; chiffres dans son compte rendu). Reste : profil fin des calculs
 - [x] `listEntries` / `getLatestEntryAt` / `listEntriesForAnalysis` : requêtes par index et par plage, index
       `type_at` (schéma v3) — Accueil 3 046 → 1 289 ms, 128 552 → 16 884 enregistrements lus (run 14/10 00:30)
+- [ ] **I82** (run idées 15/10 20:30, score 20) : **SpO₂ de la montre en tranches de 10 min** (min / moyenne / max / n)
+      au lieu d'une entrée `heart_rate` par minute (`devices/huawei/sync.js`), migration rétrocompatible de l'existant,
+      Accueil (`HealthRadar`, `BaselineCards`) qui ne lit que les sous-types utiles ; démo `--dense` enrichie d'une
+      SpO₂ minute pour reproduire le cas réel du propriétaire, chiffres avant / après
 - [ ] Cache d'agrégats journaliers / hebdo précalculés, invalidés à l'écriture (`health-entries-updated`)
+- [ ] **I83** (score 16) : courbes à résolution adaptée — MinMaxLTTB (`utils/downsample.js`) au-delà de ~2 points
+      par pixel, périodes longues servies par les agrégats ci-dessus
 - [x] Web Worker pour l'analyse + cache des résultats invalidé à chaque écriture (révision des données) : Accueil
       1 289 → 271 ms, Analyses 1 503 → 295 ms ; garde-fou « aucun écran n'importe un calcul lourd » (run 14/10 04:30)
 - [x] Code splitting : pages en `React.lazy` (sauf l'Accueil), table Ciqual chargée à la demande
@@ -422,7 +436,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       lieu de l'analyse (rouge une fois sur main, run Tests 309) ; `PhoneUsageCard.test.jsx` cliquait avant que l'accès
       accordé soit appliqué (rouge sur la PR #121)
 - [ ] Mise à jour en 1 clic après 2027 (I48) : compte « distribution limitée » (gratuit, ≤ 20 appareils) ou parcours
-      avancé unique de 24 h ; message clair dans la bannière si Android bloque — à décider avec le propriétaire
+      avancé unique de 24 h ; message clair dans la bannière si Android bloque — à décider avec le propriétaire.
+      Précisé le 15/10 20:30 : le parcours avancé peut rester activé **indéfiniment** après l'attente unique de 24 h
+      (app « Android Developer Verifier », déploiement progressif) et **ADB n'est pas concerné** → probable solution
+      sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
 
@@ -436,7 +453,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
 1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits) : « Prédiction du jour » en double avec le point
    du graphique ; pages Données et Nutrition à relire ; tags « Sport le soir » / « Voyage » auto-détectés (I65) ; relire Paramètres et Analyses (titres
    et explications en double). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
-2. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
+2. ⚡ D2 — performance : **d'abord I82 (SpO₂ minute → tranches de 10 min ; run idées 15/10 20:30)**, cause probable
+   du lag sur le vrai téléphone depuis que la montre synchronise, invisible dans la démo ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
    agrégats, budget en CI (enregistrements lus), Recommandations : panneau debug seul à lire toute la base (garde-fou).
@@ -445,6 +463,9 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    maison (I67), réseaux sociaux = temps au premier plan par app seulement ; sur Android 15+, « paramètres restreints »
    bloque aussi l'accès aux données d'utilisation des APK hors magasin → le guide doit l'expliquer.
 4. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
+   **I84 (run idées 15/10 20:30, score 20, petit et livrable seul)** : le tag « Stress » ressenti (même instant que
+   la note) passe côté Y — retiré des facteurs des Analyses, inclus dans `selfReport` de `ESTIMATOR_INPUTS` ; le
+   stress physiologique de la montre (I76) sera le facteur. Bon premier pas concret de D5.
 5. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
 6. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
    ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).
@@ -545,6 +566,8 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-15 — Run « idées » 20:30 : I82–I87 (SpO₂ en tranches, stress ressenti côté Y, check-in réduit, courbes
+      MinMaxLTTB, donnée avant interprétation, « Pas pertinent ») ; I80 absorbée par I86 ; I48 précisée (parcours avancé)
 - [x] 2026-10-15 — (PR #170 → v137) Charte : D3 en maintenance (consigne du 15/10), D1 en tête ; D1 : cigarettes du jour sur une ligne, « Écran tard » mesuré non répété, Paramètres allégés ; test App instable corrigé (`useLayoutEffect`) (run 18:30 Paris)
 
 - [x] 2026-10-15 — D3 (d quater ③ c) : clé de la montre confiée au coffre natif (Keystore Android) après chaque connexion réussie, retirée si refusée (8 tests JUnit, 7 Vitest) (run 06:30 Paris)

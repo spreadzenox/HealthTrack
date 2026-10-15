@@ -9,6 +9,141 @@
 
 ---
 
+## Run du 15/10/2026 20:30 (Paris) — alléger sans rien perdre : moins de volume, moins de saisie, moins de sermons
+
+Question du jour, côté utilisateur : *« la montre marche, mais l'app me paraît chargée et lente ; qu'est-ce que je
+peux arrêter de saisir, qu'est-ce qui ne sert à rien à l'écran, et pourquoi les courbes rament ? »* Montre en
+maintenance depuis ce matin (consigne du 15/10), D1 en tête. Aucun nouveau journal (`diagnostics/` inchangé).
+Recherche web + **lecture du code** (les sous-agents de recherche étaient indisponibles ce run).
+
+### Ce qu'on apprend des autres (faits)
+
+- **Google Health remplace l'app Fitbit (19/05/2026) : rejet massif** [T WebProNews, TechRadar, helentech] — post
+  Reddit « Thanks, Google, for ruining Fitbit » ≈ 2 000 votes en quelques jours, avis Play surtout à 1 étoile, ≈ 50 %
+  d'insatisfaits dans un sondage [T]. Griefs : **des paragraphes de résumé IA à faire défiler avant de voir ses
+  données** ; tableau de bord à la fois chargé et moins informatif ; **impossible de retirer ou réordonner** les
+  tuiles ; détails déplacés (« un geste de plus »). Feuille de route de Google du 27/05 : tableaux de bord
+  personnalisables (ajouter / retirer / réordonner), coach IA « plus concis, moins de commentaires sur une petite
+  marche », graphiques horaires remis en vue principale.
+- **MyFitnessPal 26.16.0 (04/2026)** [T mwm.ai] : le journal remplacé par un écran « Aujourd'hui » → note moyenne
+  −1,7 étoile, sans retour possible. Avec Samsung Health 7.0 (run de 08:30), **trois refontes rejetées en 2026 pour la
+  même raison** : l'interprétation passe devant la donnée, et l'utilisateur ne peut pas la ranger.
+- **Exist.io** [V kb.exist.io] : chaque corrélation affiche **force et confiance séparément** (une relation forte
+  peut avoir une confiance faible faute de données) ; l'utilisateur peut **noter une corrélation négativement, elle
+  disparaît partout** ; si rien le jour même, Exist teste le lendemain. Rappel explicite : coïncidence, tierce
+  variable ou sens inverse possibles.
+- **Statistique N-of-1** [T vignette CRAN nof1kit ; Daza 2018] : sans tenir compte de l'autocorrélation, jusqu'à
+  ≈ 40 % de faux positifs à 5 % nominal sur un planning lent (≈ 10 % avec un modèle AR(1)). **Vérifié dans le code :
+  HealthTrack corrige déjà** (`statistics.js` : `effectiveSampleSize` par autocorrélation lag-1, `benjaminiHochberg`,
+  résidualisation week-end) et teste le décalage (`laggedEffects.js`). Rien à refaire ; à garder en tête pour D5.
+- **Une seule question d'humeur suffit** [V *Assessment* 2023, WUSTL] : en suivi intensif, un item unique a une
+  validité prédictive significative dans la plupart des modèles (r = 0,24–0,61 avec les échelles longues), le gain
+  des items multiples est modeste. Méta-analyse EMA : observance ≈ 79 % à ≈ 6 sollicitations / jour sur ≈ 7 jours
+  [V PMC9999286]. → Conforte la note unique 0–5 du check-in ; ne rien y ajouter.
+- **Affichage des longues séries** [V arXiv 2305.00332, IEEE VIS 2023] : **MinMaxLTTB** (pré-sélection min/max puis
+  LTTB sur quelques multiples de la cible) garde le rendu de LTTB avec un gain de plus d'un ordre de grandeur ;
+  c'est le défaut de plotly-resampler. Implémentation JS triviale (~40 lignes), sans dépendance.
+- **Health Connect** [V page Jetpack] : 1.1.0 stable (22/04/2026), 1.2.0-alpha04 ; types « pleine conscience » et
+  « température cutanée » disponibles — pas d'autre nouveau type confirmé pour 2026.
+- **Installation hors Play Store** [T 9to5Google 18/08/2026, The Hacker News 03/2026] : le parcours avancé (Options
+  pour les développeurs → « Autoriser les apps de développeurs non vérifiés », **attente unique de 24 h**,
+  redémarrage, puis réglage gardé 7 jours ou **indéfiniment**) arrive progressivement via l'app « Android Developer
+  Verifier » ; **les installations par ADB ne sont pas concernées**. → Pour le propriétaire : une fois le réglage
+  activé « indéfiniment », la mise à jour en 1 clic continue (précise I48).
+- **MediaPipe Face Landmarker sur téléphone** : aucun chiffre public sur un milieu de gamme ; ≈ 1–5 ms par image sur
+  puce haut de gamme d'après des tiers [T pub.dev mediapipe_face_mesh, Qualcomm AI Hub] → à mesurer nous-mêmes sur
+  l'A56 (écran de diagnostic D4), quelques images par minute restent négligeables côté calcul ; la caméra elle-même
+  coûte plus que le modèle [H].
+
+### Ce que dit le code (vérifié ce run)
+
+- **SpO₂ stockée minute par minute** : `devices/huawei/sync.js` (`watchEntries`) écrit **une entrée `heart_rate`
+  par minute mesurée** pour la SpO₂, alors que la FC est déjà regroupée en tranches de 10 min (min / moyenne / max).
+  Or l'Accueil (`HealthRadar.jsx`, `BaselineCards.jsx`) lit **tout le type `heart_rate`** sur la période. Avec la
+  SpO₂ continue de la GT 6 Pro, ça peut faire des centaines d'entrées par jour [H : volume réel à lire dans le
+  prochain journal ou `countAllEntries` par sous-type] → **risque direct de lenteur des courbes** sur le vrai
+  téléphone, que la démo `npm run perf` ne reproduit pas (pas de SpO₂ minute dans la démo).
+- **Tag « Stress » du check-in** (`behaviorTags.js`, `effectDay: 'same'`) : c'est un **ressenti émotionnel déclaré
+  au même moment que la note de bien-être**. Le présenter ensuite comme un facteur du bien-être du jour est presque
+  tautologique (même source, même instant) — exactement le cercle que D5 interdit. Le stress **physiologique** de la
+  montre (fichier 0x2C, I76), lui, est un vrai X.
+- **Tags encore demandés alors que la montre sait** : « Sport le soir » (les séances de la montre sont lues depuis
+  le 13/10), « Voyage » (changement de fuseau détectable à l'ouverture), « Repas tardif » (heure des repas saisis).
+- **Courbes** : graphiques SVG maison (pas de bibliothèque) ; `WellbeingCharts` lit jusqu'à 2 000 notes pour 14
+  jours affichés ; aucune réduction de points pour les longues séries.
+
+### Idées classées (impact × faisabilité) — toutes retirent ou allègent, aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I82 | **SpO₂ en tranches de 10 min** (min / moyenne / max / n, comme la FC) au lieu d'une entrée par minute ; migration rétrocompatible qui regroupe l'existant ; lectures de l'Accueil limitées aux sous-types utiles ; `npm run perf --dense` enrichi d'une SpO₂ minute pour reproduire le cas réel | Courbes et Accueil fluides avec une vraie montre (D2) | 5 | 4 | **20** |
+| I84 | **« Stress » ressenti = côté Y** : retiré des facteurs des Analyses (il entre dans la liste déclarée des entrées auto-déclarées de l'estimateur, D5) ; le stress physiologique de la montre prend la place de facteur quand il sera lu (I76) ; anciens tags gardés et lisibles | Des liens honnêtes, pas « je suis stressé → je vais mal » (D5) | 4 | 5 | **20** |
+| I85 | **Check-in réduit à ce que seul l'utilisateur sait** : « Sport le soir » déduit des séances (début ≥ 18 h), « Voyage » d'un changement de fuseau, « Repas tardif » des repas saisis (seulement les jours où des repas sont notés) ; ces tags disparaissent de la saisie quand la source existe (même règle que « Écran tard ») ; restent Alcool, Café après 14 h, Vaccin, Malade (+ Stress côté Y) | Ne jamais demander ce que l'app capte déjà (D1) — précise I65 | 4 | 4 | **16** |
+| I83 | **Courbes à résolution adaptée** : au-delà de ~2 points par pixel, MinMaxLTTB (≈ 40 lignes, testé sur séries synthétiques : extrêmes conservés) ; périodes longues servies par les agrégats journaliers (D2 « cache d'agrégats »), le brut seulement pour aujourd'hui | Plus de lag au chargement des courbes (D2) | 4 | 4 | 16 |
+| I87 | **La donnée avant l'interprétation** (leçon Google Health 05/2026) : sur l'Accueil, chiffres et courbes d'abord, texte d'interprétation en une ligne repliable ; « Prédiction du jour » fusionnée dans le point orange du graphique (déjà en D1) | Voir ses données sans faire défiler du texte (D1) | 3 | 5 | 15 |
+| I86 | **« Pas pertinent pour moi »** sur chaque lien des Analyses (comme Exist) : masqué partout, réversible ; force et confiance affichées séparément, en mots (« lien net, encore peu de jours ») ; fusionne I80 | Garder le contrôle, ne jamais subir un lien évident ou faux (D6) | 3 | 4 | 12 |
+
+**Écartée** : *questionnaire d'humeur à plusieurs items* — l'item unique suffit en suivi quotidien (gain modeste,
+observance meilleure). **Mises à jour** : I65 précisée par I85 ; I80 absorbée par I86 ; I48 précisée (parcours avancé
+« indéfiniment » + ADB non concerné).
+
+### Détail et pistes d'implémentation
+
+**I82 — SpO₂ en tranches.** Dans `watchEntries`, regrouper `m.spo2` par `HR_SLOT` comme la FC :
+`{ value: moyenne, min, max, samples, subtype: 'oxygenSaturation' }` à `iso(s) + 30 s` (jamais la même clé
+qu'une tranche de FC). Migration au démarrage (une fois, drapeau en `localStorage`/méta) : lire les SpO₂
+`huawei_watch` par plage, réécrire par tranche, supprimer les minutes, en une transaction par jour ; test sur une
+base fake-indexeddb avec anciennes entrées + export/import d'un ancien fichier. Vérifier que la nuit (désaturations
+minimales) garde l'info utile : le `min` de la tranche. Mesurer avant / après avec `npm run perf --dense` après
+ajout de 1 SpO₂ / 5 min sur 3 ans dans la démo.
+
+**I84 — Stress côté Y.** `behaviorTags.js` : propriété `side: 'Y'` sur `stress` ; le moteur de corrélation filtre
+les tags `side: 'Y'` ; la future `ESTIMATOR_INPUTS` (D5, `services/mood/estimatorInputs.js`) inclut `selfReport`
+(note + stress ressenti). Test anti-circularité : aucune variable de `ESTIMATOR_INPUTS` dans les X. Texte dans
+« Comment c'est calculé » : « votre stress ressenti fait partie de votre humeur ; il n'est pas présenté comme sa cause ».
+
+**I85 — Tags déduits.** `behaviorTags.js` a déjà `auto: 'phone_usage'` pour l'écran : ajouter `auto: 'workouts'`
+(séance dont le début ≥ 18 h, source montre ou Health Connect) et `auto: 'timezone'` (fuseau `Intl` mémorisé à
+chaque ouverture, changement = voyage pour le jour). `auto: 'meals'` seulement si ≥ 2 repas notés ce jour-là. Même
+mécanique que « Écran tard » : masqué dans la saisie quand la source est active, mesure prioritaire sur le tag
+déclaré, anciens tags conservés.
+
+**I83 — Réduction de points.** `utils/downsample.js` : `minMaxLttb(points, target, ratio = 4)` ; appliqué dans les
+composants de courbes quand `points.length > 2 × largeur`. Avec les agrégats journaliers de D2 (store ou cache mémoire
+invalidé à l'écriture), la plupart des vues ne lisent plus le brut.
+
+**I86 / I87** : dans la passe D1 en cours (Accueil puis Analyses) ; « Pas pertinent » stocké en réglage local
+(liste d'identifiants de liens), exporté avec la sauvegarde.
+
+### Sources (consultées le 15/10/2026)
+
+- Refontes : https://www.webpronews.com/fitbit-loyalists-revolt-as-google-health-app-replaces-trusted-tracker/ ;
+  https://www.techradar.com/health-fitness/fitbit-fans-arent-happy-about-the-official-apps-redesign-heres-why ;
+  https://helentech.jp/news-google-health-fitbit-user-backlash-86718/ ;
+  https://mwm.ai/articles/myfitnesspal-v26-16-0-replaces-diary-with-new-ui-sparking-rating-drop-in-april-2026
+- Analyses : https://kb.exist.io/article/37-what-are-correlations ;
+  https://kb.exist.io/article/55-will-exist-find-correlations-across-multiple-days ;
+  https://archive.linux.duke.edu/cran/web/packages/nof1kit/vignettes/nof1kit.html ;
+  https://statsof1.netlify.com/2018_daza_latexversion.pdf ; https://arxiv.org/pdf/2306.14019
+- Humeur : https://profiles.wustl.edu/en/publications/examining-the-concurrent-and-predictive-validity-of-single-items-/ ;
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC9999286 ; https://pmc.ncbi.nlm.nih.gov/articles/PMC3640573
+- Courbes : https://arxiv.org/pdf/2305.00332 ; https://ar5iv.labs.arxiv.org/html/2304.00900
+- Android : https://developer.android.com/jetpack/androidx/releases/health-connect ;
+  https://9to5google.com/2026/08/18/google-gradually-rolling-out-androids-advanced-sideloading-ahead-of-developer-verification/ ;
+  https://thehackernews.com/2026/03/google-adds-24-hour-wait-for-unverified.html
+- ML : https://pub.dev/documentation/mediapipe_face_mesh/2.9.0/ ; https://aihub.qualcomm.com/jobs/jp2j204x5
+- Non consultés : Reddit (non tenté ce run), contraintes Android de la caméra en service de premier plan (recherche
+  non aboutie ce run → à reprendre au prochain run idées, avant de coder le service D4).
+
+### À creuser au prochain run idées (16/10 08:30)
+
+- Règles exactes Android 14–16 / One UI pour un service de premier plan `camera` qui reprend l'image au
+  déverrouillage (accès « pendant l'utilisation », effet de `appops … allow`), avant le premier code D4.
+- Volume réel de SpO₂ / FC par jour sur la GT 6 Pro (journal du propriétaire ou compteur par sous-type).
+- Bearable / Welltory : formulations des liens et plaintes d'utilisateurs (« évident », « moralisateur »).
+
+---
+
 ## Run du 15/10/2026 08:30 (Paris) — la montre sans y penser, la suite des mesures, l'humeur sur des bases légales
 
 Question du jour, côté utilisateur : *« ma montre parle enfin à HealthTrack ; comment l'avoir à jour sans jamais
