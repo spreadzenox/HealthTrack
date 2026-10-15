@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "Accueil plus fluide avec la montre",
+  "items": [
+    "Votre montre Huawei envoie la SpO₂ minute par minute : HealthTrack la range maintenant par tranches de 10 minutes (moyenne, minimum et maximum, comme la fréquence cardiaque), au lieu d'une ligne par minute.",
+    "Les mesures déjà enregistrées sont regroupées une fois, au premier lancement après la mise à jour (et après l'import d'une ancienne sauvegarde) ; le minimum de chaque tranche garde les baisses de la nuit.",
+    "Mesuré avec 30 jours de SpO₂ : l'Accueil est utilisable en 0,5 s au lieu de 2 s, sans à-coups. Rien ne change à l'écran."
+  ]
+}

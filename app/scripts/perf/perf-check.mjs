@@ -16,6 +16,8 @@
  *   npm run perf                       # 3 ans de démo, toutes les pages, 3 passages, CPU ×4
  *   npm run perf -- --days=365         # 1 an
  *   npm run perf -- --dense            # + fréquence cardiaque toutes les heures (≈ montre synchronisée)
+ *   npm run perf -- --spo2=minute      # + SpO₂ de la montre à la minute sur 30 j (format ≤ v138, I82)
+ *   npm run perf -- --spo2=slot        # + la même SpO₂ en tranches de 10 min (format actuel) ; --spo2-days=N
  *   npm run perf -- --routes=/,/data   # pages choisies
  *   npm run perf -- --runs=5 --cpu=6
  *   npm run perf -- --no-build         # réutilise dist/
@@ -81,6 +83,26 @@ export function denseHeartRate(days, now = new Date()) {
       if (at > now) continue
       const bpm = Math.round(62 + 18 * Math.sin(((h - 4) / 24) * 2 * Math.PI) + ((i * 7 + h * 13) % 9))
       out.push({ type: 'heart_rate', source: 'perf_dense', at: at.toISOString(), payload: { bpm } })
+    }
+  }
+  return out
+}
+
+/**
+ * SpO₂ de la montre Huawei sur `days` jours, une mesure par minute : `minute` = une entrée par minute (format
+ * jusqu'à la v138), `slot` = une entrée par tranche de 10 min (I82). Mêmes valeurs dans les deux cas.
+ */
+export function watchSpo2(days, mode, now = new Date()) {
+  const out = []
+  const end = Math.floor(now.getTime() / 600_000) * 600_000
+  const base = { unit: '%', subtype: 'oxygenSaturation', connector: 'huawei_watch' }
+  for (let s = end - days * 86_400_000; s < end; s += 600_000) {
+    const values = Array.from({ length: 10 }, (_, m) => 94 + ((s / 60_000 + m) * 7) % 6)
+    if (mode === 'slot') {
+      const value = Math.round(values.reduce((a, v) => a + v, 0) / 10)
+      out.push({ type: 'heart_rate', source: 'huawei_watch', at: new Date(s + 20_000).toISOString(), payload: { value, samples: 10, min: Math.min(...values), max: Math.max(...values), ...base } })
+    } else {
+      values.forEach((value, m) => out.push({ type: 'heart_rate', source: 'huawei_watch', at: new Date(s + m * 60_000 + 30_000).toISOString(), payload: { value, ...base } }))
     }
   }
   return out
@@ -186,6 +208,7 @@ async function main() {
     // Données : la base est créée par l'app (bon schéma), puis remplie en une transaction.
     let entries = generateDemoEntries({ days })
     if (args.dense) entries = entries.concat(denseHeartRate(days))
+    if (args.spo2) entries = entries.concat(watchSpo2(Number(args['spo2-days'] || 30), args.spo2))
     await page.goto(baseUrl, { waitUntil: 'networkidle' })
     const seeded = await page.evaluate(async (list) => {
       const db = await new Promise((res, rej) => {
@@ -247,9 +270,9 @@ async function main() {
     }
 
     await browser.close()
-    const report = { at: new Date().toISOString(), days, dense: Boolean(args.dense), entries: seeded, cpuSlowdown: cpu, runs, results, pageErrors: errors }
+    const report = { at: new Date().toISOString(), days, dense: Boolean(args.dense), spo2: args.spo2 || null, entries: seeded, cpuSlowdown: cpu, runs, results, pageErrors: errors }
     writeFileSync(join(outDir, 'report.json'), JSON.stringify(report, null, 2))
-    console.log(`\n${seeded} entrées (${days} jours${args.dense ? ', FC horaire' : ''}), CPU ×${cpu}, médiane de ${runs} passages\n`)
+    console.log(`\n${seeded} entrées (${days} jours${args.dense ? ', FC horaire' : ''}${args.spo2 ? `, SpO₂ ${args.spo2}` : ''}), CPU ×${cpu}, médiane de ${runs} passages\n`)
     console.table(results)
     if (errors.length) {
       console.error('Erreurs JS :', errors)

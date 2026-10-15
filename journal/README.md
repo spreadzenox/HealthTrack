@@ -187,7 +187,18 @@ noté à la main compte toujours (séance sans montre). Analyses le signale « d
 Point d'attention : pour installer hors Play Store en 2027, le parcours « avancé » d'Android peut rester activé
 **indéfiniment** après une attente unique de 24 h ; la mise à jour en 1 clic devrait donc continuer sans compte.
 
+**Run du 16/10 00:30** (performance, pas de nouveau journal montre) : **la cause probable du lag de l'Accueil sur votre
+téléphone est traitée.** Votre montre envoie la SpO₂ minute par minute, et HealthTrack en faisait une ligne par minute
+(≈ 1 440 par jour) que l'Accueil relisait à chaque ouverture. Elle est maintenant rangée **par tranches de 10 min**
+(moyenne, minimum, maximum, comme le cœur ; le minimum garde les baisses de la nuit). Ce qui est déjà enregistré est
+regroupé une seule fois, en arrière-plan, au premier lancement après la mise à jour (et après l'import d'une ancienne
+sauvegarde). Mesuré avec 30 jours de SpO₂ minute sur un téléphone simulé : **Accueil utilisable en 0,5 s au lieu de
+2 s**, temps de blocage 912 → 31 ms. Rien ne change à l'écran. **Dites-moi si l'Accueil vous paraît encore lent.**
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Accueil plus fluide avec la montre (run 16/10 00:30)** : SpO₂ de la montre rangée par tranches de 10 min
+  (moyenne, min, max) au lieu d'une ligne par minute ; l'existant est regroupé une fois. Accueil 2 s → 0,5 s mesuré
+  avec 30 jours de SpO₂.
 - **Accueil et Paramètres plus légers (run 15/10 18:30)** : cigarettes du jour sur une seule ligne ; « Écran tard »
   déclaré non répété quand l'écran est mesuré ; Paramètres Gemini en un paragraphe, modèle replié ; retour en haut de
   page immédiat au changement de page.
@@ -640,6 +651,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 18:30 — [Montre en maintenance, nettoyage : journal du jour et Paramètres](runs/2026-10-15-1830-nettoyage-journal-parametres.md) | 🧹 | PR #170 fusionnée → v137 |
 | 15/10 20:30 — [Idées : alléger sans rien perdre (SpO₂, stress ressenti, tags déduits)](runs/2026-10-15-2030-idees-alleger.md) | 💡🧹⚡ | 6 idées (I82–I87) — journal seul |
 | 15/10 22:30 — [Nettoyage : prédiction unique, « Sport le soir » déduit](runs/2026-10-15-2230-accueil-donnee-sport-deduit.md) | 🧹 | PR #173 fusionnée → v138 |
+| 16/10 00:30 — [Perf : SpO₂ de la montre en tranches de 10 min](runs/2026-10-16-0030-spo2-tranches.md) | ⚡ | PR à venir |
 
 ---
 

@@ -606,3 +606,23 @@ describe('listEntriesForAnalysis par index (D2 performance)', () => {
     expect(got.filter((e) => e.type === 'nouveau_type')).toHaveLength(1)
   })
 })
+
+describe('rewriteSourceEntries', () => {
+  it('retire et ajoute en une transaction, sans toucher aux autres sources ni aux identifiants non listés', async () => {
+    const { rewriteSourceEntries } = await import('./localHealthStorage')
+    await upsertEntries([1, 2, 3, 4, 5].map((m) => ({ type: 'heart_rate', source: 'w', at: `2026-10-14T02:0${m}:30.000Z`, payload: { value: 90 + m } })))
+    await upsertEntries([{ type: 'steps', source: 'other', at: '2026-10-14T02:03:00.000Z', payload: { value: 1 } }])
+    const r = await rewriteSourceEntries('w', (entries) => ({
+      remove: entries.filter((e) => e.payload.value !== 93).map((e) => e.id),
+      add: [{ type: 'heart_rate', at: '2026-10-14T02:00:20.000Z', payload: { value: 92 } }, { type: 'heart_rate', at: '2026-10-14T02:03:30.000Z', payload: { value: 0 } }],
+    }))
+    // la 2e entrée ajoutée a la clé d'une entrée gardée : ignorée
+    expect(r).toEqual({ removed: 4, added: 1 })
+    const all = await listEntries({ limit: 100 })
+    expect(all.map((e) => [e.source, e.at.slice(11, 19), e.payload.value]).sort()).toEqual([
+      ['other', '02:03:00', 1],
+      ['w', '02:00:20', 92],
+      ['w', '02:03:30', 93],
+    ])
+  })
+})

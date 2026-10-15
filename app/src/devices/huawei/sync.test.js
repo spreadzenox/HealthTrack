@@ -122,7 +122,7 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
     expect(parseTotals([{ tag: 0x81, value: body }])).toEqual({ steps: 4300, kcal: 150, distanceM: 3100 })
   })
 
-  it('entrées : pas et calories par heure, FC par 10 min, SpO₂, FC repos par jour terminé, sommeil — tranches finies seulement', () => {
+  it('entrées : pas et calories par heure, FC et SpO₂ par 10 min, FC repos par jour terminé, sommeil — tranches finies seulement', () => {
     const h0 = Date.UTC(2026, 9, 12, 8) // 08:00 UTC
     const minutes = [
       { t: h0, steps: 100, kcal: 5, hr: 70 },
@@ -140,7 +140,8 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
       ['08:00', 75],
       ['08:10', 90],
     ])
-    expect(pick('heart_rate', 'oxygenSaturation')).toEqual([expect.objectContaining({ at: new Date(h0 + 5 * 60_000 + 30_000).toISOString(), payload: expect.objectContaining({ value: 97 }) })])
+    // SpO₂ par tranche de 10 min (I82), à la tranche + 20 s
+    expect(pick('heart_rate', 'oxygenSaturation')).toEqual([expect.objectContaining({ at: new Date(h0 + 20_000).toISOString(), payload: expect.objectContaining({ value: 97, min: 97, max: 97, samples: 1 }) })])
     expect(pick('sleep')).toEqual([expect.objectContaining({ payload: expect.objectContaining({ durationMinutes: 90, sleepState: 'deep' }) })])
     // aucune collision sur la clé de dédoublonnage (source, at, type)
     const keys = entries.map((e) => `${e.source}|${e.at}|${e.type}`)

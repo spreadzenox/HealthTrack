@@ -28,7 +28,7 @@ export const WATCH_SOURCE = 'huawei_watch'
 export const MIN_START_SEC = 946684800
 
 const HOUR = 3600_000
-const HR_SLOT = 10 * 60_000
+export const HR_SLOT = 10 * 60_000
 const DAY = 24 * HOUR
 const SLEEP_STAGES = { 6: 'light', 7: 'deep' }
 
@@ -329,6 +329,15 @@ const localDayStart = (ms) => {
   return d.getTime()
 }
 
+/** Décalage de l'entrée SpO₂ d'une tranche (distinct de la FC : + 0, VFC : + 15 s, ancienne SpO₂ minute : + 30 s). */
+export const SPO2_SLOT_OFFSET = 20_000
+
+/** Entrée SpO₂ d'une tranche de 10 min commençant à `s` (ms) : moyenne arrondie, min, max, nombre de minutes. */
+export function spo2SlotEntry(s, values, base = { connector: WATCH_SOURCE }) {
+  const value = Math.round(values.reduce((a, v) => a + v, 0) / values.length)
+  return { type: 'heart_rate', source: WATCH_SOURCE, at: iso(s + SPO2_SLOT_OFFSET), payload: { value, unit: '%', subtype: 'oxygenSaturation', samples: values.length, min: Math.min(...values), max: Math.max(...values), ...base } }
+}
+
 /**
  * Minutes et périodes de sommeil → entrées HealthTrack (source « huawei_watch »).
  * `until` : seules les tranches terminées avant cet instant (ms) sont rendues.
@@ -338,6 +347,7 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
   const out = []
   const hourly = new Map()
   const slots = new Map()
+  const spo2Slots = new Map()
   const resting = new Map()
   for (const m of minutes) {
     if (!(m.t < until)) continue
@@ -349,9 +359,10 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
       hourly.set(h, b)
     }
     const s = floorTo(m.t, HR_SLOT)
-    if (m.hr && s + HR_SLOT <= until) slots.set(s, [...(slots.get(s) || []), m.hr])
-    // SpO₂ à la minute + 30 s : jamais la même heure qu'une tranche de FC (même type d'entrée)
-    if (m.spo2) out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(floorTo(m.t, 60_000) + 30_000), payload: { value: m.spo2, unit: '%', subtype: 'oxygenSaturation', ...base } })
+    if (s + HR_SLOT <= until) {
+      if (m.hr) slots.set(s, [...(slots.get(s) || []), m.hr])
+      if (m.spo2) spo2Slots.set(s, [...(spo2Slots.get(s) || []), m.spo2])
+    }
     const day = localDayStart(m.t)
     if (m.restingHr && day + DAY <= until) resting.set(day, m.restingHr) // la dernière valeur du jour
   }
@@ -364,6 +375,9 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
     const bpm = Math.round(values.reduce((a, v) => a + v, 0) / values.length)
     out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(s), payload: { bpm, unit: 'bpm', subtype: 'heartRate', samples: values.length, min: Math.min(...values), max: Math.max(...values), ...base } })
   }
+  // SpO₂ par tranche de 10 min (I82 : une entrée par minute alourdissait toutes les lectures) ; le min garde
+  // les désaturations de la nuit. À la tranche + 20 s : jamais la clé d'une FC ni d'une ancienne minute (+ 30 s).
+  for (const [s, values] of spo2Slots) out.push(spo2SlotEntry(s, values, base))
   // FC de repos : une par jour terminé, à minuit + 45 s (aucune autre entrée n'y tombe)
   for (const [day, bpm] of resting) out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(day + 45_000), payload: { bpm, unit: 'bpm', subtype: 'restingHeartRate', ...base } })
   // Une nuit détaillée (fichier) remplace les périodes simples qui la recoupent
