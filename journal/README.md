@@ -105,6 +105,11 @@ authentification avec la clé déjà gardée (jamais de nouvel appairage en arri
 bug sur un protocole qui marche enfin, le pilote actuel (celui validé sur votre montre) **génère les octets
 attendus**, et le Java doit envoyer exactement les mêmes, jusqu'à une reconnexion complète simulée de votre GT 6 Pro.
 Il n'est pas encore branché ; restent : lui confier la clé, lui faire lire les mesures, le lancer à la reconnexion.
+**Run du 15/10 06:30** (toujours pas de nouveau journal ; #163 fusionnée, v131) : la **clé est confiée au client
+natif**. Après chaque synchro réussie, HealthTrack range la clé de la montre dans un coffre d'Android (chiffrée par
+une clé du « Keystore » qui ne quitte jamais le téléphone, même dans une sauvegarde) ; si la montre la refuse, elle
+en est retirée. Rien de visible ; le journal de connexion dit « nativeKey : stored ». Restent : lire les mesures en
+Java, puis le lancer quand la montre se reconnecte app fermée.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Montre Huawei : synchro quand elle se reconnecte (run 15/10 00:30)** : Plus → Connecteurs, carte « Montre
@@ -505,7 +510,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 20:30 — [Idées : pièges de synchro, Analyses lisibles, un parcours par jour](runs/2026-10-14-2030-idees-synchro-confiance-parcours.md) | 💡⌚ | 6 idées (I69–I74), spec §7.10 — journal seul (#160) |
 | 14/10 22:30 — [Montre : synchro qui dit où elle cale (I69)](runs/2026-10-14-2230-montre-synchro-lisible.md) | ⌚ | PR #161 fusionnée → v129 |
 | 15/10 00:30 — [Montre : synchro à la reconnexion (appareil compagnon, I72 ①②)](runs/2026-10-15-0030-montre-appareil-compagnon.md) | ⌚ | PR #162 fusionnée → v130 |
-| 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR #163 verte, **non fusionnée** (merge refusé par les permissions de la session) |
+| 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR #163 fusionnée par le propriétaire → v131 |
+| 15/10 06:30 — [Montre : clé confiée au coffre natif](runs/2026-10-15-0630-montre-coffre-cle.md) | ⌚ | PR à fusionner (voir compte rendu) |
 
 ---
 

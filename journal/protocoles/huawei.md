@@ -799,7 +799,8 @@ Lecture seule des issues / PR de [G] via l'API REST de Codeberg (le site web ré
 | (d bis, suite) Stress (`rrisqi`), VFC de journée (dictionnaire 500044), échantillons de séance | ☐ | — |
 | (d quater ①②) Montre en appareil compagnon (Android 13+) : association CDM sur l'adresse de la montre appairée, présence observée (connexion Bluetooth classique) → resynchro JS app en arrière-plan, horodatage gardé app tuée (§7.10, I72) | ✅ run 15/10 00:30 (à valider sur l'A56) | `CompanionPlugin.java`, `WatchPresenceService.java`, `services/watchPresence.js`, `components/WatchPresence.jsx` |
 | (d quater ③ a) Cœur Java du client « synchro seule » (§9.1) : trames, TLV, tranches, rassemblage, chiffrement GCM / CBC, authentification ISO avec la clé gardée, reconnexion jusqu'à la batterie chiffrée ; **octet pour octet identique au pilote JS** (vecteurs communs) ; pas encore branché | ✅ run 15/10 02:30 | `android/…/huawei/LinkCodec.java`, `LinkCipher.java`, `IsoAuth.java`, `WatchLink.java`, `WatchHandshake.java`, `MiniJson.java` ; vecteurs `src/devices/huawei/javaVectors.test.js` → `android/app/src/test/resources/huawei/link-vectors.json` |
-| (d quater ③ b–d) Transport RFCOMM Java, clé confiée au natif (Keystore), lectures 7/x en Java vers un tampon importé par le JS à l'ouverture, démarrage par `WatchPresenceService` quand le JS est absent | ☐ | §9.1 |
+| (d quater ③ c) **Clé confiée au natif** : après chaque connexion réussie, le JS dépose authId + clé longue durée dans un coffre AES-GCM (clé AES-256 du Keystore Android, non exportable ; données associées = adresse de la montre) ; clé refusée → retirée ; `nativeKey` dans le journal | ✅ run 15/10 06:30 (à valider sur l'A56) | `huawei/WatchVault.java` (pur, testé JVM), `WatchVaultPlugin.java`, `src/services/watchVault.js`, `watchAutoSync.js` |
+| (d quater ③ d–e) Lectures 7/x en Java vers un tampon importé par le JS à l'ouverture, démarrage par `WatchPresenceService` quand le JS est absent | ☐ | §9.1 |
 
 ### 9.1 Client Java « synchro seule » (D3 d quater ③) — architecture (run du 15/10 02:30)
 
@@ -823,3 +824,12 @@ de pilote JS). Écrit depuis cette spécification (§2, §3, §4, §6.1–§6.5)
   (d) lectures 7/0x0A–0x0B, 7/0x0C–0x0D, 7/0x03 en Java, écrites **brutes** (corps déchiffrés) dans un tampon local
   que le JS importe à l'ouverture avec son analyseur existant (une seule implémentation du décodage santé) ;
   (e) démarrage par `WatchPresenceService` (service de premier plan `connectedDevice`) quand le JS ne répond pas.
+- **Coffre de la clé (③ c, run du 15/10 06:30)** : `WatchVault` (pur Java) scelle `{authId, authToken, name,
+  savedAt}` en AES-GCM ; format `version (1) ‖ longueur IV (1) ‖ IV (12, tiré par le fournisseur, exigé par le
+  Keystore) ‖ chiffré + étiquette 16 o` ; données associées `healthtrack-watch-vault-v1|ADRESSE` (une copie ne
+  s'ouvre que pour sa montre). `WatchVaultPlugin` garde la copie dans les préférences `healthtrack_watch_vault`
+  (clé `watch:ADRESSE`, Base64), la clé AES-256 vit dans le Keystore (alias `healthtrack_watch_vault`) et n'en sort
+  jamais : une sauvegarde Android restaurée ailleurs ne s'ouvre pas (`status` l'efface alors). Le JS ne relit
+  jamais la clé depuis le natif (`status` dit seulement « gardée » et la date). Le client Java la lira par
+  `WatchVaultPlugin.read(context, adresse)`. Dépôt après chaque issue `connected`, retrait après `key_rejected`
+  (le JS oublie alors aussi la clé, jamais de réappairage en arrière-plan).

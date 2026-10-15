@@ -12,6 +12,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(BtClassicPlugin.class);
         registerPlugin(AppManagerPlugin.class);
         registerPlugin(CompanionPlugin.class);
+        registerPlugin(WatchVaultPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

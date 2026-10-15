@@ -194,8 +194,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       `LinkCipher`, `IsoAuth` opération 2 seule, `WatchLink`, `WatchHandshake`, `MiniJson`) + `RfcommTransport` ;
       **octet pour octet identique au pilote JS** (vecteurs générés par `javaVectors.test.js`, dont la transcription
       d'une reconnexion GT 6 Pro type 4) ; `npm run test:java`, job CI « Protocole montre (Java) ». Pas encore branché
-- [ ] (d quater ③ c) clé longue durée + identifiant confiés au natif par le JS après chaque connexion réussie
-      (chiffrés par une clé Android Keystore)
+- [x] **(d quater ③ c) Clé confiée au natif** (run 15/10 06:30) : coffre `WatchVault` (AES-GCM, clé AES-256 du
+      Keystore, données associées = adresse), `WatchVaultPlugin` (store / status / clear, rien ne revient au JS),
+      `watchVault.js` : dépôt après `connected`, retrait après `key_rejected`, `nativeKey` dans le journal
 - [ ] (d quater ③ d) lectures 7/0x0A–0x0B, 7/0x0C–0x0D, 7/0x03 en Java → tampon de **corps déchiffrés bruts**
       importé par `watchSync` à l'ouverture (le JS garde le seul décodeur santé) ; heure 1/5 avant
 - [ ] (d quater ③ e) démarrage par `WatchPresenceService` (service de premier plan `connectedDevice`) quand le JS ne
@@ -489,6 +490,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-15 — D3 (d quater ③ c) : clé de la montre confiée au coffre natif (Keystore Android) après chaque connexion réussie, retirée si refusée (8 tests JUnit, 7 Vitest) (run 06:30 Paris)
 - [x] 2026-10-15 — D3 (d quater ③ a) : cœur Java du client « synchro seule », identique au pilote JS (vecteurs communs, 13 tests JUnit, job CI) (run 02:30 Paris)
 - [x] 2026-10-14 — D3 (d quinquies) : fenêtre de synchro jamais vide (1re depuis 2000, reprise − 6 h), totaux du jour stockés, carte montre simplifiée (état + « Synchroniser », « Diagnostic » replié) (run 12:30 Paris)
 - [x] 2026-10-14 — D1 : Connecteurs ordonnés par statut (actif en tête, « Brancher une autre source » replié), pastilles masquées si désactivé, accueil « Votre forme » (1 titre, 1 explication), `--border` défini (run 14:30 Paris)
@@ -496,7 +498,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - [x] 2026-10-13 — D3 (c bis) : primitives crypto « New Auth » X25519 / Ed25519 sur @noble/curves, vecteurs RFC 7748 / 8032 (run 16:30 Paris)
 - [x] 2026-10-13 — D3 (a ter) : l'instrument révèle les **champs** d'une réponse « New Auth » non-JSON (noms, sans valeur) ; spec §6.8 (run 14:30 Paris)
 - [x] 2026-10-13 — D3 (d ter) : resynchro automatique de la montre à l'ouverture / au retour dans l'app (≤ 30 min, essais espacés, pause sur clé refusée), ligne d'état (run 06:30 Paris)
-- [x] 2026-10-13 — D3 (d) : synchronisation simple (heure, sommeil léger / profond, minutes → pas, calories, FC, SpO₂, FC repos) → IndexedDB, « Synchroniser la montre » (run 04:30 Paris)
+- [x] 2026-10-13 — D3 (d) : synchronisation simple (heure, sommeil léger / profond, minutes → pas, calories, FC, SpO₂, FC repos) → IndexedDB, « Synchroniser la montre » (run 06:30 Paris)
 - [x] 2026-10-13 — D3 (c) : authentification HiChain (liaison par PIN, authentification, trames chiffrées), encadré « Connexion à la montre », constantes du PIN téléchargées sur le téléphone (run 02:30 Paris)
 - [x] 2026-10-13 — D3 (b) : assistant « Libérer et appairer la montre » (désinstallation / réglages de l'app qui la tient, réinitialisation guidée, plan B compte Huawei, appairage Android `createBond`) (run 00:30 Paris)
 - [x] 2026-10-12 — Priorité absolue « montre » reportée (charte §000, backlog) + D3 (a) : test de connexion directe à la montre Huawei (RFCOMM + BLE), journal exportable, spécification `protocoles/huawei.md` (run 22:30 Paris)

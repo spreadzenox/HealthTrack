@@ -88,6 +88,21 @@ describe('syncWatchIfStale', () => {
     expect(getWatchAutoSyncState(storage)).toMatchObject({ outcome: 'connected', auto: false, failures: 0 })
   })
 
+  it('connexion réussie : clé confiée au coffre natif (synchro app fermée) ; clé refusée : retirée', async () => {
+    const storage = memoryStorage()
+    const keyStore = paired(storage)
+    const vault = { store: vi.fn(async () => ({ stored: true })), clear: vi.fn(async () => {}) }
+    const ok = await connectBondedWatch({ classic: fakeClassic(), storage, keyStore, vault, connect: vi.fn(async () => report('connected')) })
+    expect(ok.nativeKey).toBe('stored')
+    expect(vault.store).toHaveBeenCalledWith({ deviceId: WATCH.deviceId, name: WATCH.name, authId: 'x', authToken: 'ab'.repeat(32) })
+    const ko = await connectBondedWatch({ classic: fakeClassic(), storage, keyStore, vault, connect: vi.fn(async () => report('key_rejected')) })
+    expect(ko.nativeKey).toBe('cleared')
+    expect(vault.clear).toHaveBeenCalledWith({ deviceId: WATCH.deviceId })
+    // hors de l'app (pas de coffre) : rien de consigné, la connexion n'en souffre pas
+    const web = await connectBondedWatch({ classic: fakeClassic(), storage, keyStore, vault: null, connect: vi.fn(async () => report('connected')) })
+    expect(web.nativeKey).toBe('unavailable')
+  })
+
   it('une connexion manuelle en cours bloque l’automatique (une seule connexion à la fois)', async () => {
     const storage = memoryStorage()
     const keyStore = paired(storage)

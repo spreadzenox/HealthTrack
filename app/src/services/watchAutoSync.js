@@ -15,6 +15,7 @@ import { CURRENT_VERSION } from './updateCheck'
 import { getBodyProfile } from './bodyProfile'
 import { getBodySettings } from '../settings/bodySettings'
 import { listEntries } from '../storage/localHealthStorage'
+import { syncVaultAfterConnection, vaultPlugin } from './watchVault'
 
 /** Profil envoyé à la montre (7/0x02) : taille, poids, âge, sexe connus de HealthTrack (lectures par index). */
 export async function watchProfile() {
@@ -110,6 +111,7 @@ export async function connectBondedWatch({
   connect = connectAndAuthenticate,
   watch: knownWatch = null,
   now = () => Date.now(),
+  vault = vaultPlugin(),
 } = {}) {
   if (!classic) throw new Error('Connexion possible seulement dans l’app Android.')
   return withWatchLock(async () => {
@@ -130,6 +132,9 @@ export async function connectBondedWatch({
       appVersion: CURRENT_VERSION,
       sync: createWatchSync({ watchKey: watch.deviceId, watchName: watch.name, storage }),
     })
+    // Clé confiée au coffre natif pour la synchro app fermée (§9.1 c) ; état consigné dans le journal
+    const nativeKey = await syncVaultAfterConnection({ report, watch, keyStore: keyStore || createKeyStore(storage), plugin: vault })
+    if (nativeKey && report && typeof report === 'object') report.nativeKey = nativeKey
     recordWatchConnection(report, { auto, storage, now })
     return report
   })
