@@ -612,7 +612,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 12:30 — [Montre : relue app fermée quand elle se reconnecte](runs/2026-10-15-1230-montre-synchro-app-fermee.md) | ⌚ | PR #167 fusionnée → v134 |
 | 15/10 14:30 — [Montre : relue au déverrouillage et toutes les ~2 h](runs/2026-10-15-1430-montre-declencheurs.md) | ⌚ | PR #168 fusionnée → v135 |
 | 15/10 16:30 — [Montre : relue aussi app en arrière-plan](runs/2026-10-15-1630-montre-arriere-plan.md) | ⌚ | PR #169 fusionnée → v136 |
-| 15/10 18:30 — [Montre en maintenance, nettoyage : journal du jour et Paramètres](runs/2026-10-15-1830-nettoyage-journal-parametres.md) | 🧹 | PR « [Auto] » (voir compte rendu) |
+| 15/10 18:30 — [Montre en maintenance, nettoyage : journal du jour et Paramètres](runs/2026-10-15-1830-nettoyage-journal-parametres.md) | 🧹 | PR #170 fusionnée → v137 |
 
 ---
 
