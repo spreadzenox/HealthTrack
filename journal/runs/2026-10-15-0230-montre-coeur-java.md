@@ -40,6 +40,12 @@
 - `npm run visual` (démo, 8 pages) : aucune erreur JS ; captures Connecteurs et Accueil relues, inchangées (aucun
   changement visible → pas d'entrée « Nouveautés »).
 
+## Merge
+- PR #163 : **tous les checks verts** (Frontend (Vitest), Build APK, Publier l'APK, Protocole montre (Java),
+  émulateurs A56 API 35 et 36). **Non fusionnée** : le contrôle de permissions de la session (mode auto) a refusé
+  l'action de merge (« Merge Without Review »). Ce run ne l'a pas contourné. **À faire** : le run suivant (ou le
+  propriétaire) fusionne #163 en squash si elle est toujours verte et sans conflit, puis vérifie la release.
+
 ## Apprentissages / décisions
 - Faire générer les vecteurs par le JS validé sur la montre plutôt que les écrire à la main : toute divergence de
   sérialisation (ordre des champs JSON, IV, tranches) est attrapée avant d'avoir un téléphone sous la main.

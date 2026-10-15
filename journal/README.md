@@ -505,7 +505,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 20:30 — [Idées : pièges de synchro, Analyses lisibles, un parcours par jour](runs/2026-10-14-2030-idees-synchro-confiance-parcours.md) | 💡⌚ | 6 idées (I69–I74), spec §7.10 — journal seul (#160) |
 | 14/10 22:30 — [Montre : synchro qui dit où elle cale (I69)](runs/2026-10-14-2230-montre-synchro-lisible.md) | ⌚ | PR #161 fusionnée → v129 |
 | 15/10 00:30 — [Montre : synchro à la reconnexion (appareil compagnon, I72 ①②)](runs/2026-10-15-0030-montre-appareil-compagnon.md) | ⌚ | PR #162 fusionnée → v130 |
-| 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR à venir |
+| 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR #163 verte, **non fusionnée** (merge refusé par les permissions de la session) |
 
 ---
 
