@@ -798,4 +798,28 @@ Lecture seule des issues / PR de [G] via l'API REST de Codeberg (le site web ré
 | (d bis) Capacités (§7.8), séances (totaux, §7.5), sommeil détaillé par fichier (phases, score, VFC de la nuit, §7.6) | ✅ run 13/10 10:30 (à valider sur la montre) | `src/devices/huawei/sync.js`, `files.js`, `session.js` (messages bruts), `services/watchSync.js` |
 | (d bis, suite) Stress (`rrisqi`), VFC de journée (dictionnaire 500044), échantillons de séance | ☐ | — |
 | (d quater ①②) Montre en appareil compagnon (Android 13+) : association CDM sur l'adresse de la montre appairée, présence observée (connexion Bluetooth classique) → resynchro JS app en arrière-plan, horodatage gardé app tuée (§7.10, I72) | ✅ run 15/10 00:30 (à valider sur l'A56) | `CompanionPlugin.java`, `WatchPresenceService.java`, `services/watchPresence.js`, `components/WatchPresence.jsx` |
-| (d quater ③) Resynchro app fermée (client Java « synchro seule ») | ☐ | plan I49 / I72 |
+| (d quater ③ a) Cœur Java du client « synchro seule » (§9.1) : trames, TLV, tranches, rassemblage, chiffrement GCM / CBC, authentification ISO avec la clé gardée, reconnexion jusqu'à la batterie chiffrée ; **octet pour octet identique au pilote JS** (vecteurs communs) ; pas encore branché | ✅ run 15/10 02:30 | `android/…/huawei/LinkCodec.java`, `LinkCipher.java`, `IsoAuth.java`, `WatchLink.java`, `WatchHandshake.java`, `MiniJson.java` ; vecteurs `src/devices/huawei/javaVectors.test.js` → `android/app/src/test/resources/huawei/link-vectors.json` |
+| (d quater ③ b–d) Transport RFCOMM Java, clé confiée au natif (Keystore), lectures 7/x en Java vers un tampon importé par le JS à l'ouverture, démarrage par `WatchPresenceService` quand le JS est absent | ☐ | §9.1 |
+
+### 9.1 Client Java « synchro seule » (D3 d quater ③) — architecture (run du 15/10 02:30)
+
+But : relire la montre quand Android signale sa reconnexion **alors que l'app est tuée** (pas de WebView, donc pas
+de pilote JS). Écrit depuis cette spécification (§2, §3, §4, §6.1–§6.5), jamais depuis Gadgetbridge.
+
+- **Paquet sans Android** `com.healthtrack.app.huawei` (testable sur la JVM, `npm run test:java`, job CI
+  « Protocole montre (Java) ») : `LinkCodec` (trame §2, TLV §3, tranches, rassemblage), `LinkCipher` (§6.5 : 0x7C /
+  0x7D / 0x7E, IV aléatoire de 16 o en type 4 sinon 12 aléatoires + compteur ; HMAC, HKDF, AES-GCM, AES-CBC), `IsoAuth`
+  (opération 2 seulement, §6.2–§6.3 : jamais de PIN ni de liaison en arrière-plan), `WatchLink` (session bloquante,
+  fil de lecture, délai par requête, messages non demandés mis de côté), `WatchHandshake` (1/1 → 1/0x16 → 1/0x33 →
+  1/0x28 × 3 → chiffrement, puis 1/8), `MiniJson` (lecture tolérante du JSON + NUL de la GT 6 Pro, §6.9).
+- **Équivalence prouvée** : le pilote JS (validé sur la vraie GT 6 Pro le 14/10) génère des vecteurs (trames,
+  tranches, rassemblage avec octets parasites, chiffrement, authentification, **transcription complète d'une
+  reconnexion** à une fausse GT 6 Pro type 4 / GCM / IV aléatoire / JSON + NUL) ; le Java doit envoyer exactement
+  les mêmes octets. `javaVectors.test.js` échoue si le fichier n'est plus à jour.
+- **Règles en arrière-plan** : clé refusée (`key_rejected`) = arrêt et notification, jamais de réappairage ; un seul
+  essai par reconnexion signalée, mêmes 30 min minimum que le JS, socket toujours fermé (PR [G] 6367).
+- **Suite** : (b) transport RFCOMM (`BluetoothSocket` → `WatchLink.Transport`, UUID §1) ; (c) clé longue durée et
+  identifiant confiés au natif par le JS après chaque connexion réussie (chiffrés par une clé Android Keystore) ;
+  (d) lectures 7/0x0A–0x0B, 7/0x0C–0x0D, 7/0x03 en Java, écrites **brutes** (corps déchiffrés) dans un tampon local
+  que le JS importe à l'ouverture avec son analyseur existant (une seule implémentation du décodage santé) ;
+  (e) démarrage par `WatchPresenceService` (service de premier plan `connectedDevice`) quand le JS ne répond pas.
