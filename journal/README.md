@@ -120,6 +120,12 @@ Côté humeur, deux décisions :
   estimée (sinon la corrélation serait truquée).
 **Point d'attention** : Google impose la vérification des développeurs pour les apps installées hors Play Store,
 partout à partir de 2027. Installer HealthTrack depuis GitHub restera possible, par un parcours « avancé ».
+**Run du 15/10 10:30** (toujours pas de nouveau journal) : rien de nouveau à l'écran, un morceau de plus de la
+**synchro app fermée**. Le client natif sait maintenant **lire vos mesures** (sommeil, minutes de pas / cœur / SpO₂,
+totaux du jour) et les déposer dans une petite boîte privée du téléphone ; à l'ouverture suivante, HealthTrack les
+range dans votre historique avec exactement le même décodeur que la synchro habituelle (rien n'est compté deux fois).
+Vérifié octet pour octet contre le pilote validé sur votre montre. Reste la dernière pièce : **le lancer tout seul**
+(montre qui se reconnecte, déverrouillage, filet toutes les ~2 h).
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Montre Huawei : synchro quand elle se reconnecte (run 15/10 00:30)** : Plus → Connecteurs, carte « Montre
@@ -254,6 +260,12 @@ partout à partir de 2027. Installer HealthTrack depuis GitHub restera possible,
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Synchro app fermée, lectures (run 15/10 10:30)** : `WatchReader.java` joue les mêmes demandes que la synchro JS
+  (sommeil, minutes, totaux, mêmes règles quand la montre cale) et garde les réponses **brutes** dans une capture
+  (fichier privé, 48 au plus) ; à l'ouverture, le JS les décode avec ses analyseurs et les écrit par le même chemin
+  que la synchro en direct (une capture ancienne ne fait jamais reculer la reprise ni remplacer un total du jour plus
+  récent). Nouveau plugin natif « WatchCapture » (lister / retirer). Vecteur commun JS ↔ Java : mêmes trames, même
+  capture, mêmes entrées écrites. Spec `protocoles/huawei.md` §9.1.
 - **Performance, étape 3 (run 14/10 06:30)** : la table des aliments (1,3 Mo) et toutes les pages sauf l'Accueil sont
   chargées à la demande ; les calculs nutritionnels attendent la table (jamais de total faux mis en cache). Piège évité :
   des styles partagés vivaient dans le CSS d'autres pages, le CSS reste donc chargé d'emblée dans son ordre d'origine.
@@ -531,7 +543,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 00:30 — [Montre : synchro à la reconnexion (appareil compagnon, I72 ①②)](runs/2026-10-15-0030-montre-appareil-compagnon.md) | ⌚ | PR #162 fusionnée → v130 |
 | 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR #163 fusionnée par le propriétaire → v131 |
 | 15/10 06:30 — [Montre : clé confiée au coffre natif](runs/2026-10-15-0630-montre-coffre-cle.md) | ⌚ | PR #164 fusionnée → v132 |
-| 15/10 08:30 — [Idées : synchro sans y penser, stress / VFC, humeur sur des bases légales](runs/2026-10-15-0830-idees-declencheurs-licences.md) | 💡⌚ | 7 idées (I75–I81), spec §7.11 — journal seul |
+| 15/10 08:30 — [Idées : synchro sans y penser, stress / VFC, humeur sur des bases légales](runs/2026-10-15-0830-idees-declencheurs-licences.md) | 💡⌚ | 7 idées (I75–I81), spec §7.11 — journal seul (#165) |
+| 15/10 10:30 — [Montre : lectures en Java, captures importées à l'ouverture](runs/2026-10-15-1030-montre-lectures-java.md) | ⌚ | PR « [Auto] » (voir compte rendu) |
 
 ---
 

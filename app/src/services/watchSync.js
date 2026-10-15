@@ -6,7 +6,8 @@
  * Protocole : src/devices/huawei/sync.js.
  */
 import { deleteEntry, listEntries, upsertEntries } from '../storage/localHealthStorage'
-import { countEntryKinds, readWatchData, stalledServices, syncWindow, totalsEntries, WATCH_SOURCE, watchEntries } from '../devices/huawei/sync'
+import { countEntryKinds, describeServices, readWatchData, stalledServices, syncWindow, totalsEntries, WATCH_SOURCE, watchEntries } from '../devices/huawei/sync'
+import { dataFromCapture } from '../devices/huawei/capture'
 
 const KEY = 'healthtrack_watch_sync'
 /**
@@ -92,51 +93,97 @@ export function createWatchSync({
     const { since, until } = syncWindow(lastUntil, t)
     log(`lecture du ${new Date(since).toISOString().slice(0, 16)} au ${new Date(until).toISOString().slice(0, 16)} (UTC)${lastUntil ? '' : ' — première synchro'}`)
     const data = await readWatchData(session, { since, until, now: t, log, caps })
-    const sourceName = watchName || 'Montre Huawei'
-    const totals = totalsEntries(data.totals, t, { sourceName })
-    const entries = [...watchEntries(data, { until, sourceName }), ...totals]
-    const nightsToWrite = (data.nights || []).filter((n) => n.end <= until)
-    if (nightsToWrite.length) await clear(nightsToWrite)
-    if (totals.length) {
-      try {
-        await clearTotals(totals)
-      } catch (e) {
-        log(`ancien total du jour non retiré : ${e?.message || e}`, 'warn')
-      }
-    }
-    const result = entries.length ? await write(entries) : { inserted: 0 }
-    const inserted = result?.inserted ?? 0
-    const nights = countNights(data.sleep, data.nights)
-    const workouts = (data.workouts || []).length
-    const kinds = countEntryKinds(entries)
-    log(`à écrire : ${Object.entries(kinds).map(([k, n]) => `${k} ${n}`).join(', ') || 'rien'} → ${inserted} nouvelle${inserted > 1 ? 's' : ''}`)
-    // La reprise n'avance que si la montre a rendu quelque chose : sinon la prochaine relit la même période
-    const gotData = data.minutes.length > 0 || data.sleep.length > 0 || workouts > 0 || (data.nights || []).length > 0
-    const resume = gotData ? until : lastUntil
-    setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at: new Date(t).toISOString(), inserted, minutes: data.minutes.length, nights, workouts, kinds }, storage)
-    if (inserted > 0 && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('health-entries-updated'))
-    const parts = [plural(data.minutes.length, 'minute', 'minutes')]
-    if (nights) parts.push(plural(nights, 'nuit', 'nuits'))
-    if (workouts) parts.push(plural(workouts, 'séance', 'séances'))
-    if (data.totals?.steps) parts.push(`${plural(data.totals.steps, 'pas', 'pas')} aujourd'hui`)
-    // Où la montre a calé (I69) : dit à l'écran, détaillé dans le journal (`services`, `hints`)
-    const stalled = stalledServices(data.services).map((r) => r.label)
-    return {
-      label: `${parts.join(', ')} → ${plural(inserted, 'mesure', 'mesures')}${stalled.length ? ` · sans réponse : ${stalled.join(', ')}` : ''}`,
-      stalled,
-      services: data.services || [],
-      hints: data.hints || [],
-      inserted,
-      minutes: data.minutes.length,
-      nights,
-      detailedNights: (data.nights || []).length,
-      workouts,
-      kinds,
-      capabilities: data.capabilities,
-      totals: data.totals,
-      since: new Date(since).toISOString(),
-      until: new Date(until).toISOString(),
-      firstSync: !lastUntil,
+    return writeWatchData(data, { t, since, until, lastUntil, watchKey, watchName, write, clear, clearTotals, storage, log })
+  }
+}
+
+/**
+ * Écrit ce que la montre a rendu (synchro en direct ou capture du client Java) et met à jour l'état de reprise.
+ * `withTotals: false` : totaux du jour ignorés (capture plus ancienne que la dernière synchro).
+ */
+async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watchName, write, clear, clearTotals, storage, log, withTotals = true, keepAt = null }) {
+  const sourceName = watchName || 'Montre Huawei'
+  const totals = withTotals ? totalsEntries(data.totals, t, { sourceName }) : []
+  const entries = [...watchEntries(data, { until, sourceName }), ...totals]
+  const nightsToWrite = (data.nights || []).filter((n) => n.end <= until)
+  if (nightsToWrite.length) await clear(nightsToWrite)
+  if (totals.length) {
+    try {
+      await clearTotals(totals)
+    } catch (e) {
+      log(`ancien total du jour non retiré : ${e?.message || e}`, 'warn')
     }
   }
+  const result = entries.length ? await write(entries) : { inserted: 0 }
+  const inserted = result?.inserted ?? 0
+  const nights = countNights(data.sleep, data.nights)
+  const workouts = (data.workouts || []).length
+  const kinds = countEntryKinds(entries)
+  log(`à écrire : ${Object.entries(kinds).map(([k, n]) => `${k} ${n}`).join(', ') || 'rien'} → ${inserted} nouvelle${inserted > 1 ? 's' : ''}`)
+  // La reprise n'avance que si la montre a rendu quelque chose : sinon la prochaine relit la même période
+  const gotData = data.minutes.length > 0 || data.sleep.length > 0 || workouts > 0 || (data.nights || []).length > 0
+  const resume = gotData ? Math.max(until, lastUntil || 0) : lastUntil
+  const at = keepAt && Date.parse(keepAt) > t ? keepAt : new Date(t).toISOString()
+  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds }, storage)
+  if (inserted > 0 && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('health-entries-updated'))
+  const parts = [plural(data.minutes.length, 'minute', 'minutes')]
+  if (nights) parts.push(plural(nights, 'nuit', 'nuits'))
+  if (workouts) parts.push(plural(workouts, 'séance', 'séances'))
+  if (data.totals?.steps) parts.push(`${plural(data.totals.steps, 'pas', 'pas')} aujourd'hui`)
+  // Où la montre a calé (I69) : dit à l'écran, détaillé dans le journal (`services`, `hints`)
+  const stalled = stalledServices(data.services).map((r) => r.label)
+  return {
+    label: `${parts.join(', ')} → ${plural(inserted, 'mesure', 'mesures')}${stalled.length ? ` · sans réponse : ${stalled.join(', ')}` : ''}`,
+    stalled,
+    services: data.services || [],
+    hints: data.hints || [],
+    inserted,
+    minutes: data.minutes.length,
+    nights,
+    detailedNights: (data.nights || []).length,
+    workouts,
+    kinds,
+    capabilities: data.capabilities,
+    totals: data.totals,
+    since: new Date(since).toISOString(),
+    until: new Date(until).toISOString(),
+    firstSync: !lastUntil,
+  }
+}
+
+/**
+ * Importe une capture du client Java « synchro seule » (app tuée, §9.1 d) : décodée par les analyseurs de la
+ * synchro en direct, écrite sans doublon. Une capture plus ancienne que la dernière synchro ne fait jamais
+ * reculer la reprise ni remplacer un total du jour plus récent. Lève si la capture est illisible.
+ */
+export async function importWatchCapture(capture, {
+  watchKey,
+  watchName,
+  write = upsertEntries,
+  clear = clearWatchNights,
+  clearTotals = clearWatchDayTotals,
+  storage = globalThis.localStorage,
+  log = () => {},
+} = {}) {
+  const data = dataFromCapture(capture)
+  const prev = getWatchSyncState(watchKey, storage)
+  const lastUntil = resumeFrom(prev)
+  const newer = !(Date.parse(prev?.at || '') >= capture.at)
+  log(`capture en arrière-plan du ${new Date(capture.at).toISOString().slice(0, 16)} (UTC) : ${describeServices(data.services, { all: true })}`)
+  const report = await writeWatchData(data, {
+    t: capture.at,
+    since: capture.since,
+    until: capture.until,
+    lastUntil,
+    watchKey,
+    watchName,
+    write,
+    clear,
+    clearTotals,
+    storage,
+    log,
+    withTotals: newer,
+    keepAt: prev?.at || null,
+  })
+  return { ...report, battery: data.battery, background: true }
 }

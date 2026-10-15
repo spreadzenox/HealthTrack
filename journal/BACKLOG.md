@@ -197,10 +197,17 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **(d quater ③ c) Clé confiée au natif** (run 15/10 06:30) : coffre `WatchVault` (AES-GCM, clé AES-256 du
       Keystore, données associées = adresse), `WatchVaultPlugin` (store / status / clear, rien ne revient au JS),
       `watchVault.js` : dépôt après `connected`, retrait après `key_rejected`, `nativeKey` dans le journal
-- [ ] (d quater ③ d) lectures 7/0x0A–0x0B, 7/0x0C–0x0D, 7/0x03 en Java → tampon de **corps déchiffrés bruts**
-      importé par `watchSync` à l'ouverture (le JS garde le seul décodeur santé) ; heure 1/5 avant
+- [x] **(d quater ③ d) Lectures en Java** (run 15/10 10:30) : `WatchReader` (sommeil, minutes, totaux, mêmes
+      demandes et même tolérance que `readWatchData`) → capture JSON de **réponses déchiffrées brutes** dans
+      `CaptureInbox` (fichiers privés, 48 au plus) ; plugin « WatchCapture » ; à l'ouverture, `importPendingCaptures`
+      décode avec les analyseurs JS (`capture.js`) et écrit par le même chemin que la synchro en direct
+      (`writeWatchData`) ; vecteur `read` : trames et capture identiques au pilote JS. Heure 1/5 **non** envoyée en
+      arrière-plan (la synchro en direct la règle) ; séances et fichiers 0x2C laissés à la synchro en direct
 - [ ] (d quater ③ e) démarrage par `WatchPresenceService` (service de premier plan `connectedDevice`) quand le JS ne
-      répond pas ; 30 min mini, un essai par reconnexion, `key_rejected` → notification, jamais de réappairage
+      répond pas ; 30 min mini, un essai par reconnexion, `key_rejected` → notification, jamais de réappairage.
+      Avec I75 : + déverrouillage + filet ~2 h. Morceaux prêts : `RfcommTransport`, `WatchVaultPlugin.read`,
+      `WatchHandshake.authenticate`, `WatchReader.read`, `WatchCapturePlugin.inbox(ctx).put(...)`. Manque : fenêtre
+      (le JS recopie `until` vers le natif après chaque synchro), orchestration dans le service, verrou avec le JS
 - [ ] (d quater, avec ①) **Guide One UI** (I50) : batterie « Sans restriction » **et** « Applis jamais en veille »,
       affiché seulement si la synchro de fond n'a rien ramené depuis 24 h
 - [ ] Séances (0x17) : couvrir dans les tests les séances **enregistrées automatiquement** (plantage connu sur GT 6 Pro

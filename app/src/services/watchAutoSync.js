@@ -16,6 +16,7 @@ import { getBodyProfile } from './bodyProfile'
 import { getBodySettings } from '../settings/bodySettings'
 import { listEntries } from '../storage/localHealthStorage'
 import { syncVaultAfterConnection, vaultPlugin } from './watchVault'
+import { importPendingCaptures } from './watchCaptures'
 
 /** Profil envoyé à la montre (7/0x02) : taille, poids, âge, sexe connus de HealthTrack (lectures par index). */
 export async function watchProfile() {
@@ -161,8 +162,11 @@ async function runIfStale({
   keyStore = createKeyStore(storage),
   now = () => Date.now(),
   connect = connectAndAuthenticate,
+  importCaptures = importPendingCaptures,
 } = {}) {
   try {
+    // Ce que le client Java a relu app tuée (§9.1 d) passe d'abord : la synchro en direct peut alors être inutile
+    if (!isWatchBusy()) await withWatchLock(() => importCaptures({ storage }))
     if (!classic) return { ran: false, reason: 'unavailable' }
     if (isWatchBusy()) return { ran: false, reason: 'busy' }
     const state = getWatchAutoSyncState(storage)

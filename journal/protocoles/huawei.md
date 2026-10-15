@@ -842,7 +842,8 @@ code reprise. Sert de base à I75 / I76 / I77 (`IDEES.md`).
 | (d quater ①②) Montre en appareil compagnon (Android 13+) : association CDM sur l'adresse de la montre appairée, présence observée (connexion Bluetooth classique) → resynchro JS app en arrière-plan, horodatage gardé app tuée (§7.10, I72) | ✅ run 15/10 00:30 (à valider sur l'A56) | `CompanionPlugin.java`, `WatchPresenceService.java`, `services/watchPresence.js`, `components/WatchPresence.jsx` |
 | (d quater ③ a) Cœur Java du client « synchro seule » (§9.1) : trames, TLV, tranches, rassemblage, chiffrement GCM / CBC, authentification ISO avec la clé gardée, reconnexion jusqu'à la batterie chiffrée ; **octet pour octet identique au pilote JS** (vecteurs communs) ; pas encore branché | ✅ run 15/10 02:30 | `android/…/huawei/LinkCodec.java`, `LinkCipher.java`, `IsoAuth.java`, `WatchLink.java`, `WatchHandshake.java`, `MiniJson.java` ; vecteurs `src/devices/huawei/javaVectors.test.js` → `android/app/src/test/resources/huawei/link-vectors.json` |
 | (d quater ③ c) **Clé confiée au natif** : après chaque connexion réussie, le JS dépose authId + clé longue durée dans un coffre AES-GCM (clé AES-256 du Keystore Android, non exportable ; données associées = adresse de la montre) ; clé refusée → retirée ; `nativeKey` dans le journal | ✅ run 15/10 06:30 (à valider sur l'A56) | `huawei/WatchVault.java` (pur, testé JVM), `WatchVaultPlugin.java`, `src/services/watchVault.js`, `watchAutoSync.js` |
-| (d quater ③ d–e) Lectures 7/x en Java vers un tampon importé par le JS à l'ouverture, démarrage par `WatchPresenceService` quand le JS est absent | ☐ | §9.1 |
+| (d quater ③ d) **Lectures santé en Java** (sommeil 7/0x0C–0x0D, minutes 7/0x0A–0x0B, totaux 7/0x03) gardées **brutes** dans une capture JSON (boîte de dépôt privée), importée à l'ouverture par le JS avec ses analyseurs (une seule implémentation du décodage) ; trames et capture **identiques au pilote JS** (vecteur `read`) ; pas encore déclenché app tuée | ✅ run 15/10 10:30 | `huawei/WatchReader.java`, `huawei/CaptureInbox.java`, `WatchCapturePlugin.java`, `src/devices/huawei/capture.js`, `services/watchCaptures.js`, `watchSync.importWatchCapture` |
+| (d quater ③ e) Démarrage du client Java app tuée (présence compagnon + déverrouillage + filet ~2 h, I75) : RFCOMM, coffre, `WatchReader`, dépôt dans `CaptureInbox` ; reprise (`until`) recopiée par le JS vers le natif | ☐ | §9.1, §7.11 |
 
 ### 9.1 Client Java « synchro seule » (D3 d quater ③) — architecture (run du 15/10 02:30)
 
@@ -875,3 +876,23 @@ de pilote JS). Écrit depuis cette spécification (§2, §3, §4, §6.1–§6.5)
   jamais la clé depuis le natif (`status` dit seulement « gardée » et la date). Le client Java la lira par
   `WatchVaultPlugin.read(context, adresse)`. Dépôt après chaque issue `connected`, retrait après `key_rejected`
   (le JS oublie alors aussi la clé, jamais de réappairage en arrière-plan).
+- **Lectures et captures (③ d, run du 15/10 10:30)** : `WatchReader.read(link, since, until, now, délai)` joue, sur
+  la session authentifiée, exactement les demandes de `readWatchData` pour les trois lectures « de base », dans le
+  même ordre : 7/0x0C (compte, `81` vide + début §7.2 jamais avant le 1/1/2000 + fin) puis 7/0x0D bloc par bloc
+  (`81` { 02 = n sur 2 o }), 7/0x0A puis 7/0x0B de même, enfin 7/0x03 (`01` vide). Pas de réglage de l'heure ni de
+  capacités, pas de séances ni de fichiers 0x2C en arrière-plan (la synchro en direct s'en charge à l'ouverture).
+  Tolérance du §7.10 : bloc refusé (code 0x7F ≠ 100000) sauté et compté, bloc sans réponse = fin du service (blocs
+  restants comptés perdus), une lecture qui cale n'empêche pas la suivante ; ne lève jamais.
+  **Rien n'est décodé en Java** : chaque réponse est gardée comme ses TLV déchiffrés ré-encodés.
+  Format de la capture (v1, JSON) : `{ v: 1, since, until, at (ms), battery (-1 si inconnue), address?, name?,
+  reads: [{ id: sleep|minutes|totals, outcome: ok|empty|timeout|refused|error, units, failed }], replies: [{ s, c,
+  i (n° de bloc, -1 pour les totaux), hex }] }`. Dépôt : `CaptureInbox` (fichiers
+  `capture-<ms sur 13 chiffres>-<n sur 3>.json` dans `files/watch-captures`, écriture temporaire + renommage, 48 au
+  plus, jamais un autre fichier lu ou effacé). À l'ouverture (`syncWatchIfStale`, avant toute connexion, sous le
+  verrou montre), `importPendingCaptures` lit les captures (plugin « WatchCapture » : `list`, `remove`), les décode
+  par `dataFromCapture` (mêmes analyseurs et mêmes filtres de période que `readWatchData`) et les écrit par le même
+  chemin que la synchro en direct (`writeWatchData`). Une capture plus ancienne que la dernière synchro ne fait pas
+  reculer la reprise et n'écrit pas son total du jour ; une capture illisible est retirée, une écriture qui échoue
+  la garde. **Équivalence prouvée** : vecteur `read` (reconnexion + lectures face à la fausse GT 6 Pro) — le Java
+  envoie les mêmes trames et produit la même capture, et la capture décodée donne exactement les entrées de la
+  synchro en direct (`capture.test.js`).
