@@ -188,6 +188,50 @@ export async function upsertEntries(newEntries) {
 }
 
 /**
+ * Réécrit en une seule transaction (tout ou rien) les entrées d'une source : `rewrite(entries)` reçoit les
+ * entrées de la source (lues par l'index [source, at]) et rend { remove: ids[], add: entrées[] }. Les entrées
+ * ajoutées dont la clé (source, at, type) existe déjà, hors entrées retirées, sont ignorées.
+ * @returns {Promise<{ removed: number, added: number }>}
+ */
+export async function rewriteSourceEntries(source, rewrite) {
+  const db = await openDB()
+  const now = new Date().toISOString()
+  let removed = 0
+  let added = 0
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const store = tx.objectStore(STORE_NAME)
+    const req = store.index('source_at').getAll(IDBKeyRange.bound([source, ''], [source, AT_MAX]))
+    req.onsuccess = () => {
+      const entries = req.result || []
+      const { remove = [], add = [] } = rewrite(entries) || {}
+      const gone = new Set(remove)
+      const keys = new Set(entries.filter((e) => !gone.has(e.id)).map(dedupKey))
+      // Identifiants consécutifs supprimés par plage (≈ 4× plus rapide qu'un delete par entrée)
+      const ids = [...gone].sort((a, b) => a - b)
+      for (let from = 0, i = 1; i <= ids.length; i++) {
+        if (i < ids.length && ids[i] === ids[i - 1] + 1) continue
+        store.delete(IDBKeyRange.bound(ids[from], ids[i - 1]))
+        from = i
+      }
+      removed = ids.length
+      for (const e of add) {
+        const row = { type: e.type, source, payload: e.payload || {}, at: e.at || now, created_at: now }
+        if (keys.has(dedupKey(row))) continue
+        keys.add(dedupKey(row))
+        store.add(row)
+        added++
+      }
+    }
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+    tx.onabort = () => reject(tx.error)
+  })
+  if (removed || added) bumpDataRevision()
+  return { removed, added }
+}
+
+/**
  * @param {{ type: string, source: string, payload: object, at?: string }} entry
  * @returns {Promise<number>} id
  */

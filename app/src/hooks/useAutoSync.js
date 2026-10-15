@@ -11,6 +11,7 @@ import { syncWeather } from '../services/weatherSync'
 import { syncPhoneUsage } from '../services/phoneUsageSync'
 import { syncWatchIfStale } from '../services/watchAutoSync'
 import { listenWatchPresence } from '../services/watchPresence'
+import { compactWatchSpo2Once } from '../services/spo2Slots'
 
 /**
  * Call inside any component that should trigger an auto-sync on mount.
@@ -24,13 +25,18 @@ import { listenWatchPresence } from '../services/watchPresence'
  */
 export function useAutoSync() {
   useEffect(() => {
+    // Une fois par téléphone : anciennes SpO₂ « minute » de la montre regroupées par 10 min (I82, perf)
+    // (avant la synchro de la montre, qui pourrait sinon écrire la même tranche en parallèle)
+    const compacted = compactWatchSpo2Once().then((r) => {
+      if (r?.removed) window.dispatchEvent(new CustomEvent('health-entries-updated'))
+    })
     triggerAutoSync()
     // Météo / air : au plus toutes les 3 h, seulement si l'utilisateur l'a activée.
     syncWeather()
     // Temps d'écran / sommeil estimé : au plus toutes les 30 min, seulement si activé et autorisé.
     syncPhoneUsage()
     // Montre Huawei en direct : au plus toutes les 30 min, seulement si HealthTrack a sa clé.
-    syncWatchIfStale()
+    compacted.finally(() => syncWatchIfStale())
     // … quand la montre associée se reconnecte au téléphone, même app en arrière-plan (une seule écoute) ;
     listenWatchPresence()
     // … et au retour dans l'app (déverrouillage, changement d'app) : la montre a de nouvelles minutes.

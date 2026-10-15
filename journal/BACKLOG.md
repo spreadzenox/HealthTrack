@@ -85,7 +85,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       lectures IndexedDB par page (run 14/10 00:30 ; chiffres dans son compte rendu). Reste : profil fin des calculs
 - [x] `listEntries` / `getLatestEntryAt` / `listEntriesForAnalysis` : requêtes par index et par plage, index
       `type_at` (schéma v3) — Accueil 3 046 → 1 289 ms, 128 552 → 16 884 enregistrements lus (run 14/10 00:30)
-- [ ] **I82** (run idées 15/10 20:30, score 20) : **SpO₂ de la montre en tranches de 10 min** (min / moyenne / max / n)
+- [x] **I82** (livré 16/10 00:30 : Accueil 1 954 → 546 ms, 107 k → 12,5 k enregistrements lus avec 30 j de SpO₂ minute) (run idées 15/10 20:30, score 20) : **SpO₂ de la montre en tranches de 10 min** (min / moyenne / max / n)
       au lieu d'une entrée `heart_rate` par minute (`devices/huawei/sync.js`), migration rétrocompatible de l'existant,
       Accueil (`HealthRadar`, `BaselineCards`) qui ne lit que les sous-types utiles ; démo `--dense` enrichie d'une
       SpO₂ minute pour reproduire le cas réel du propriétaire, chiffres avant / après
@@ -452,10 +452,11 @@ Avant : réordonnées le 12/10 (22:30 Paris) : priorité absolue = D3 (montre), 
 montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage général), puis D2 (performance).
 
 1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits ; 22:30 : prédiction unique, « Sport le soir »
-   déduit) : pages Données et Nutrition à relire ; « Voyage » / « Repas tardif » déduits (I85 ②) ; relire Paramètres et Analyses (titres
+   déduit) : pages Données (paragraphe « Exporter » de 7 lignes) et Nutrition à relire ; « Voyage » / « Repas tardif » déduits (I85 ②) ; relire Paramètres et Analyses (titres
    et explications en double). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
-2. ⚡ D2 — performance : **d'abord I82 (SpO₂ minute → tranches de 10 min ; run idées 15/10 20:30)**, cause probable
-   du lag sur le vrai téléphone depuis que la montre synchronise, invisible dans la démo ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
+2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
+   de SpO₂ minute) ; **suite : lecture `heart_rate` partagée ou par sous-type pour l'Accueil (12,5 k enregistrements lus
+   pour 4,3 k tranches)** ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
    agrégats, budget en CI (enregistrements lus), Recommandations : panneau debug seul à lire toute la base (garde-fou).
@@ -567,6 +568,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-16 — D2 / I82 : SpO₂ de la montre en tranches de 10 min + migration unique (et après import) ; Accueil 1 954 → 546 ms, 107 k → 12,5 k enregistrements lus (30 j de SpO₂ minute) ; `npm run perf -- --spo2=minute|slot` (run 00:30 Paris)
 - [x] 2026-10-15 — D1 : « Prédiction du jour » en une ligne sous la courbe, hypothèse sommeil repliée (I87) ; I85 ① « Sport le soir » déduit des séances (saisie, Analyses) (PR #173 → v138, run 22:30 Paris)
 - [x] 2026-10-15 — Run « idées » 20:30 : I82–I87 (SpO₂ en tranches, stress ressenti côté Y, check-in réduit, courbes
       MinMaxLTTB, donnée avant interprétation, « Pas pertinent ») ; I80 absorbée par I86 ; I48 précisée (parcours avancé)
