@@ -27,7 +27,7 @@ describe('WatchPresence', () => {
     const companion = setup()
     render(<WatchPresence />)
     fireEvent.click(await screen.findByRole('button', { name: 'Activer' }))
-    expect(await screen.findByText(/^Synchro dès que la montre se reconnecte au téléphone$/)).toBeTruthy()
+    expect(await screen.findByText(/^Synchro auto même app fermée \(reconnexion, déverrouillage, ~2 h\)$/)).toBeTruthy()
     expect(companion.associate).toHaveBeenCalledWith({ deviceId: WATCH.deviceId, name: WATCH.name })
     expect(screen.queryByRole('button', { name: 'Activer' })).toBeNull()
   })

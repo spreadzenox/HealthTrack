@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-15",
+  "kind": "amélioration",
+  "title": "Montre Huawei : relue au déverrouillage et toutes les ~2 h",
+  "items": [
+    "App fermée, HealthTrack relit maintenant aussi votre montre quand vous déverrouillez le téléphone pendant qu'elle est connectée, et toutes les 2 heures environ (même après un redémarrage du téléphone, jamais quand la batterie est faible).",
+    "Mêmes règles : au plus une lecture toutes les 30 minutes, rien n'est tenté si la montre est partie, jamais de nouvel appairage en arrière-plan.",
+    "Si la montre refuse la connexion en arrière-plan, une notification « Synchro de la montre en pause » vous le dit ; Android vous demande une fois de l'autoriser quand vous touchez « Activer ».",
+    "Le journal de la montre (Diagnostic → « Enregistrer le journal ») dit aussi ce que la synchro de fond a décidé et pourquoi."
+  ]
+}

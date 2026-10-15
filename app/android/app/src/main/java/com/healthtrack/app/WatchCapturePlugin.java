@@ -1,7 +1,11 @@
 package com.healthtrack.app;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -77,6 +81,8 @@ public class WatchCapturePlugin extends Plugin {
         ret.put("battery", s.battery);
         ret.put("lastDecision", p.getString("lastDecision", null));
         ret.put("lastDecisionAt", p.getLong("lastDecisionAt", 0));
+        ret.put("lastTrigger", p.getString("lastTrigger", null));
+        ret.put("periodic", WatchSyncJob.isScheduled(getContext()));
         call.resolve(ret);
     }
 
@@ -92,5 +98,17 @@ public class WatchCapturePlugin extends Plugin {
         }
         BackgroundWatchSync.shareFromApp(getContext(), address, until, at);
         call.resolve();
+    }
+
+    /** Android 13+ : demande l'autorisation des notifications (« synchro en pause », WatchNotifications). */
+    @PluginMethod
+    public void requestNotifications(PluginCall call) {
+        JSObject ret = new JSObject();
+        Activity activity = getActivity();
+        boolean needed = Build.VERSION.SDK_INT >= 33
+                && getContext().checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
+        if (needed && activity != null) activity.requestPermissions(new String[] {Manifest.permission.POST_NOTIFICATIONS}, 7303);
+        ret.put("asked", needed && activity != null);
+        call.resolve(ret);
     }
 }

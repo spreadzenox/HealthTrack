@@ -76,6 +76,35 @@ public class BackgroundSyncTest {
     }
 
     @Test
+    public void declencheurs_deverrouillage_et_periodique() {
+        BackgroundSync.State s = new BackgroundSync.State();
+        long now = 1_760_500_000_000L;
+        // La reconnexion signalée prouve la présence : l'état connu ne compte pas.
+        assertEquals("run", BackgroundSync.decide(BackgroundSync.TRIGGER_PRESENCE, s, now, false, false, true, BackgroundSync.ABSENT));
+        // Déverrouillage / filet : montre partie → on ne tente rien (pas d'échec compté, pas de recul).
+        assertEquals("absent", BackgroundSync.decide(BackgroundSync.TRIGGER_UNLOCK, s, now, false, false, true, BackgroundSync.ABSENT));
+        assertEquals("absent", BackgroundSync.decide(BackgroundSync.TRIGGER_PERIODIC, s, now, false, false, true, BackgroundSync.ABSENT));
+        assertEquals("run", BackgroundSync.decide(BackgroundSync.TRIGGER_UNLOCK, s, now, false, false, true, BackgroundSync.PRESENT));
+        // Présence inconnue (pas d'appareil compagnon) : le filet essaie quand même.
+        assertEquals("run", BackgroundSync.decide(BackgroundSync.TRIGGER_PERIODIC, s, now, false, false, true, BackgroundSync.UNKNOWN));
+        // Les règles communes passent avant : app ouverte, pause, sans clé, 30 min.
+        assertEquals("app", BackgroundSync.decide(BackgroundSync.TRIGGER_UNLOCK, s, now, true, false, true, BackgroundSync.ABSENT));
+        assertEquals("no_key", BackgroundSync.decide(BackgroundSync.TRIGGER_PERIODIC, s, now, false, false, false, BackgroundSync.PRESENT));
+        s.lastAttemptAt = now - 10 * MIN;
+        assertEquals("recent", BackgroundSync.decide(BackgroundSync.TRIGGER_UNLOCK, s, now, false, false, true, BackgroundSync.PRESENT));
+        s.paused = true;
+        assertEquals("paused", BackgroundSync.decide(BackgroundSync.TRIGGER_PERIODIC, s, now, false, false, true, BackgroundSync.PRESENT));
+    }
+
+    @Test
+    public void presence_lue_du_service_compagnon() {
+        assertEquals(BackgroundSync.UNKNOWN, BackgroundSync.presenceOf(null));
+        assertEquals(BackgroundSync.PRESENT, BackgroundSync.presenceOf("appeared"));
+        assertEquals(BackgroundSync.ABSENT, BackgroundSync.presenceOf("disappeared"));
+        assertEquals(BackgroundSync.UNKNOWN, BackgroundSync.presenceOf("autre"));
+    }
+
+    @Test
     public void synchro_de_l_app_partagee() {
         BackgroundSync.State s = new BackgroundSync.State();
         s.failures = 3;

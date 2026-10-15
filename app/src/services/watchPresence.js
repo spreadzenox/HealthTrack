@@ -9,7 +9,7 @@
  */
 import { registerPlugin } from '@capacitor/core'
 import { syncWatchIfStale } from './watchAutoSync'
-import { getBackgroundSync } from './watchCaptures'
+import { getBackgroundSync, requestWatchNotifications } from './watchCaptures'
 
 const NativeCompanion = registerPlugin('Companion')
 
@@ -43,20 +43,25 @@ export async function getWatchPresence({ plugin = companionPlugin(), watch = nul
   }
 }
 
-/** Boîte Android « Autoriser HealthTrack à gérer la montre ? » ; rend { associated, id } ou lève (refus, annulation). */
-export async function enableWatchPresence({ plugin = companionPlugin(), watch = null } = {}) {
+/**
+ * Boîte Android « Autoriser HealthTrack à gérer la montre ? » ; rend { associated, id } ou lève (refus, annulation).
+ * Une fois accepté, demande aussi les notifications (seule : « synchro en pause » si la montre refuse la clé).
+ */
+export async function enableWatchPresence({ plugin = companionPlugin(), watch = null, notify = requestWatchNotifications } = {}) {
   if (!plugin) throw new Error('Possible seulement dans l’app, sur Android 13 ou plus.')
   if (!watch?.deviceId) throw new Error('Aucune montre appairée à Android.')
-  return plugin.associate({ deviceId: watch.deviceId, name: watch.name || null })
+  const result = await plugin.associate({ deviceId: watch.deviceId, name: watch.name || null })
+  await notify()
+  return result
 }
 
 /** Ligne de la carte montre : { enabled, text } ou null quand Android ne le permet pas. */
 export function describePresence(presence, { now = Date.now(), formatAgo } = {}) {
   if (!presence?.supported) return null
   if (!presence.association) {
-    return { enabled: false, text: 'Synchro dès que la montre se reconnecte au téléphone, même app en arrière-plan.' }
+    return { enabled: false, text: 'Synchro dès que la montre se reconnecte au téléphone, même app fermée.' }
   }
-  const parts = ['Synchro dès que la montre se reconnecte au téléphone']
+  const parts = ['Synchro auto même app fermée (reconnexion, déverrouillage, ~2 h)']
   if (presence.last?.at) {
     const verb = presence.last.event === 'disappeared' ? 'déconnectée' : 'reconnectée'
     parts.push(`${verb} ${formatAgo(presence.last.at, new Date(now))}`)

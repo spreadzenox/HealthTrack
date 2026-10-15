@@ -21,11 +21,26 @@ export function saveLastConnect(report, storage = globalThis.localStorage) {
   }
 }
 
+const BG_TIMES = ['lastUntil', 'lastAttemptAt', 'lastSuccessAt', 'lastDecisionAt']
+const BG_FIELDS = ['busy', 'failures', 'paused', 'outcome', 'battery', 'lastDecision', 'lastTrigger', 'periodic']
+
+/**
+ * État de la relecture app fermée (WatchCapture.background) réduit à ce qui aide au diagnostic : décisions,
+ * déclencheur (presence / unlock / periodic), issues, horodatages ISO ; jamais d'adresse ni de clé.
+ */
+export function backgroundForJournal(bg) {
+  if (!bg || typeof bg !== 'object') return null
+  const out = {}
+  for (const k of BG_FIELDS) if (k in bg) out[k] = bg[k] ?? null
+  for (const k of BG_TIMES) if (k in bg) out[k] = bg[k] > 0 ? new Date(bg[k]).toISOString() : null
+  return out
+}
+
 /** Journal commun : chaque rapport tel quel ; nom daté du plus récent. */
-export function watchJournal({ connect = null, diagnostic = null } = {}, now = new Date()) {
+export function watchJournal({ connect = null, diagnostic = null, background = null } = {}, now = new Date()) {
   const latest = [connect?.startedAt, diagnostic?.startedAt].filter(Boolean).sort().pop() || now.toISOString()
   return {
-    json: JSON.stringify({ format: 'healthtrack-watch-journal', version: 1, exportedAt: now.toISOString(), connect, diagnostic }, null, 2),
+    json: JSON.stringify({ format: 'healthtrack-watch-journal', version: 1, exportedAt: now.toISOString(), connect, diagnostic, background }, null, 2),
     filename: `healthtrack-journal-montre-${latest.slice(0, 16).replace(/[T:]/g, '-')}.json`,
   }
 }

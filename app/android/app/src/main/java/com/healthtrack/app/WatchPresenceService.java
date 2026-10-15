@@ -4,19 +4,54 @@ import android.companion.AssociationInfo;
 import android.companion.CompanionDeviceManager;
 import android.companion.CompanionDeviceService;
 import android.companion.DevicePresenceEvent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.MacAddress;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.healthtrack.app.huawei.BackgroundSync;
+
 /**
  * Lié par Android tant que la montre associée (CompanionPlugin) est connectée au téléphone : garde l'heure de
  * sa dernière apparition et prévient le JS, qui relit la montre (src/services/watchPresence.js). Si aucune page
- * de l'app ne tourne (app tuée), le client Java relit la montre lui-même (BackgroundWatchSync, §9.1 e).
+ * de l'app ne tourne (app tuée), le client Java relit la montre lui-même (BackgroundWatchSync, §9.1 e). Tant
+ * qu'il est lié, il relit aussi au déverrouillage du téléphone (§9.1 f : le lien Bluetooth peut rester ouvert des
+ * heures sans nouvelle « apparition »), toujours avec la règle des 30 min.
  */
 @RequiresApi(api = 33)
 public class WatchPresenceService extends CompanionDeviceService {
+
+    // ACTION_USER_PRESENT n'est pas livré aux récepteurs du manifeste : récepteur dynamique, vivant avec le service.
+    private final BroadcastReceiver unlock = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String address = BackgroundWatchSync.knownAddress(context);
+            if (address != null) {
+                BackgroundWatchSync.maybeStart(context, address, CompanionPlugin.isAppAlive(),
+                        BackgroundSync.TRIGGER_UNLOCK, null);
+            }
+        }
+    };
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        registerReceiver(unlock, new IntentFilter(Intent.ACTION_USER_PRESENT), Context.RECEIVER_NOT_EXPORTED);
+    }
+
+    @Override
+    public void onDestroy() {
+        try {
+            unregisterReceiver(unlock);
+        } catch (IllegalArgumentException ignored) {
+            // déjà retiré
+        }
+        super.onDestroy();
+    }
 
     @Override
     @SuppressWarnings("deprecation")
@@ -44,6 +79,7 @@ public class WatchPresenceService extends CompanionDeviceService {
         boolean appAlive = CompanionPlugin.recordPresence(this, "appeared", associationId);
         if (mac == null) mac = addressOf(associationId);
         if (mac != null) BackgroundWatchSync.maybeStart(this, mac.toString(), appAlive);
+        if (BackgroundWatchSync.knownAddress(this) != null) WatchSyncJob.ensureScheduled(this);
     }
 
     private MacAddress addressOf(int associationId) {

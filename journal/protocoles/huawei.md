@@ -844,7 +844,7 @@ code reprise. Sert de base à I75 / I76 / I77 (`IDEES.md`).
 | (d quater ③ c) **Clé confiée au natif** : après chaque connexion réussie, le JS dépose authId + clé longue durée dans un coffre AES-GCM (clé AES-256 du Keystore Android, non exportable ; données associées = adresse de la montre) ; clé refusée → retirée ; `nativeKey` dans le journal | ✅ run 15/10 06:30 (à valider sur l'A56) | `huawei/WatchVault.java` (pur, testé JVM), `WatchVaultPlugin.java`, `src/services/watchVault.js`, `watchAutoSync.js` |
 | (d quater ③ d) **Lectures santé en Java** (sommeil 7/0x0C–0x0D, minutes 7/0x0A–0x0B, totaux 7/0x03) gardées **brutes** dans une capture JSON (boîte de dépôt privée), importée à l'ouverture par le JS avec ses analyseurs (une seule implémentation du décodage) ; trames et capture **identiques au pilote JS** (vecteur `read`) ; pas encore déclenché app tuée | ✅ run 15/10 10:30 | `huawei/WatchReader.java`, `huawei/CaptureInbox.java`, `WatchCapturePlugin.java`, `src/devices/huawei/capture.js`, `services/watchCaptures.js`, `watchSync.importWatchCapture` |
 | (d quater ③ e) **Relecture app tuée à la reconnexion** : `WatchPresenceService` → `BackgroundWatchSync` quand aucune page de l'app ne tourne ; règles et fenêtre dans `BackgroundSync` (pur Java : 30 min → 4 h, pause après `key_rejected`, fenêtre = `syncWindow`, vecteurs `windows`) ; RFCOMM, coffre, `WatchReader`, `CaptureInbox` ; reprise recopiée par le JS (`shareResume`), état lu par le JS (`background`) | ✅ run 15/10 12:30 (à valider sur l'A56) | `huawei/BackgroundSync.java`, `BackgroundWatchSync.java`, `WatchPresenceService.java`, `WatchCapturePlugin.java` (`background`, `shareResume`), `services/watchCaptures.js`, `watchAutoSync.js`, `watchPresence.js` |
-| (d quater ③ f) Autres déclencheurs (I75) : déverrouillage (récepteur dynamique dans un service déjà actif) + filet ~2 h (WorkManager) ; notification « clé refusée » | ☐ | §7.11 |
+| (d quater ③ f) Autres déclencheurs (I75) : déverrouillage (`USER_PRESENT`, récepteur dynamique du service compagnon) + filet ~2 h (JobScheduler persistant) ; « absent » si la montre est partie ; notification « clé refusée » ; état natif dans le journal | ✅ run 15/10 14:30 (à valider sur l'A56) | `huawei/BackgroundSync.java` (`decide(trigger…)`, `presenceOf`), `WatchPresenceService.java`, `WatchSyncJob.java`, `WatchNotifications.java`, `BackgroundWatchSync.java`, `src/devices/huawei/journal.js` (`backgroundForJournal`) |
 
 ### 9.1 Client Java « synchro seule » (D3 d quater ③) — architecture (run du 15/10 02:30)
 
@@ -916,4 +916,19 @@ de pilote JS). Écrit depuis cette spécification (§2, §3, §4, §6.1–§6.5)
   dernière connexion de l'app → automatique en pause (« Synchroniser la montre » la relance) ; relecture native
   réussie compte dans les 30 min. La ligne de présence ajoute « relue app fermée il y a … ». Process : le service
   compagnon est lié par Android tant que la montre est connectée, ce qui garde le process le temps de la relecture.
+- **Autres déclencheurs (③ f, run du 15/10 14:30)**, d'après §7.11 : ① **déverrouillage** — `ACTION_USER_PRESENT`
+  n'est pas livré aux récepteurs du manifeste, donc récepteur dynamique enregistré par `WatchPresenceService` dans
+  `onCreate` (le service vit tant que la montre est connectée : c'est justement le cas utile, lien ouvert des heures
+  sans nouvelle « apparition ») ; ② **filet** — `WatchSyncJob` (JobService système, identifiant 7301, période 2 h,
+  souplesse 30 min, `setPersisted` + RECEIVE_BOOT_COMPLETED, batterie pas faible), programmé à chaque reprise recopiée
+  par le JS et à chaque apparition, une seule fois. Les deux appellent `maybeStart(…, trigger)` avec l'adresse connue
+  de la relecture (préférences, recopiée par le JS) et `CompanionPlugin.isAppAlive()`. Décision
+  `BackgroundSync.decide(trigger, état, …, présence)` : mêmes règles que ③ e, plus « absent » quand le dernier
+  événement du service compagnon est « disappeared » (sauf pour la reconnexion signalée, qui prouve la présence ;
+  présence inconnue sans association → on essaie). Le job ne finit qu'à la fin de la relecture lancée (`onDone`).
+  Dernière décision et déclencheur (`lastTrigger`) gardés ; `WatchCapture.background` rend aussi `periodic`
+  (job programmé) ; le journal exporté les contient (`backgroundForJournal` : jamais d'adresse ni de clé).
+  Clé refusée → `WatchNotifications.keyRejected` (canal `watch_sync`, ouvre l'app), silencieuse si les
+  notifications ne sont pas autorisées (demandées après « Activer », `requestNotifications`).
+  Limite : app en arrière-plan **non tuée** → décision « app » (le JS relira au retour au premier plan) → ③ g.
 

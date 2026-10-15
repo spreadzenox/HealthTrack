@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { getBackgroundSync, importPendingCaptures, shareResumeWithNative } from './watchCaptures'
+import { getBackgroundSync, importPendingCaptures, requestWatchNotifications, shareResumeWithNative } from './watchCaptures'
 import { getWatchSyncState, importWatchCapture, SYNC_STATE_VERSION } from './watchSync'
 import { syncWatchIfStale } from './watchAutoSync'
 import { READ_WINDOW } from '../devices/huawei/testing/sampleBlocks'
@@ -105,5 +105,16 @@ describe('relecture app fermée : état et reprise partagés avec le natif', () 
     expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 0, at: Date.parse(at) })
     expect(await shareResumeWithNative({ deviceId: 'X', state: null, plugin })).toBe(false)
     expect(await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1, at }, plugin: { shareResume: async () => Promise.reject(new Error('x')) } })).toBe(false)
+  })
+})
+
+describe('requestWatchNotifications', () => {
+  it('demande l’autorisation au natif, ne lève jamais', async () => {
+    const plugin = { requestNotifications: vi.fn(async () => ({ asked: true })) }
+    expect(await requestWatchNotifications({ plugin })).toBe(true)
+    plugin.requestNotifications.mockRejectedValueOnce(new Error('pas d’activité'))
+    expect(await requestWatchNotifications({ plugin })).toBe(false)
+    expect(await requestWatchNotifications({ plugin: {} })).toBe(false)
+    expect(await requestWatchNotifications({ plugin: null })).toBe(false)
   })
 })

@@ -44,6 +44,11 @@ public class CompanionPlugin extends Plugin {
         if (active == this) active = null;
     }
 
+    /** Une page de l'app tourne (le JS gère alors la montre). */
+    static boolean isAppAlive() {
+        return active != null;
+    }
+
     private static boolean supported() {
         return Build.VERSION.SDK_INT >= 33;
     }

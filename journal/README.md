@@ -136,8 +136,22 @@ la carte passe en « Synchro en pause » et « Synchroniser la montre » la rela
 (balayez-la des apps récentes), éteignez puis rallumez le Bluetooth de la montre ou éloignez-la quelques minutes,
 attendez ~1 min après son retour, puis rouvrez l'app : la ligne doit dire « relue app fermée il y a … ». Sinon,
 dites-le-moi.**
+**Run du 15/10 14:30** (toujours pas de nouveau journal) : **les deux autres déclencheurs de la synchro app fermée
+sont livrés**, comme décidé par le run « idées » de 08:30. App fermée, HealthTrack relit maintenant aussi la montre
+**quand vous déverrouillez le téléphone** pendant qu'elle est connectée, et **toutes les ~2 h** par une tâche
+d'Android (gardée après un redémarrage, jamais batterie faible). Toujours les mêmes règles : 30 min au moins entre deux
+lectures, rien tenté si la montre est partie, jamais de nouvel appairage. Si la montre refuse la clé en arrière-plan,
+une **notification** « Synchro de la montre en pause » vous le dit (Android vous demande une fois de l'autoriser
+quand vous touchez « Activer »). La ligne sous « Synchroniser la montre » le résume : « Synchro auto même app fermée
+(reconnexion, déverrouillage, ~2 h) ». Le journal exporté dit désormais ce que la synchro de fond a décidé et pourquoi.
+**Même demande qu'à 12:30, et en plus : après la mise à jour, fermez HealthTrack et revenez-y 2–3 h plus tard sans
+rien toucher ; la ligne doit dire « relue app fermée il y a … ». Sinon : Diagnostic → « Enregistrer le journal ».**
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre Huawei : relue au déverrouillage et toutes les ~2 h (run 15/10 14:30)** : app fermée, la montre est aussi
+  relue quand vous déverrouillez le téléphone et toutes les ~2 h (30 min au moins entre deux lectures, rien si elle
+  est partie) ; notification si elle refuse la connexion. Ligne « Synchro auto même app fermée (reconnexion,
+  déverrouillage, ~2 h) ».
 - **Montre Huawei : relue même app fermée (run 15/10 12:30)** : une fois « Activer » touché sous « Synchroniser la
   montre », HealthTrack relit la montre quand elle se reconnecte au téléphone **même si l'app est complètement
   fermée** (30 min au moins entre deux lectures) ; les mesures arrivent dans l'historique à l'ouverture suivante. La
@@ -274,6 +288,12 @@ dites-le-moi.**
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Synchro app fermée, déclencheurs (run 15/10 14:30)** : récepteur `USER_PRESENT` dynamique dans
+  `WatchPresenceService` (vivant tant que la montre est connectée) et `WatchSyncJob` (JobScheduler du système,
+  2 h ± 30 min, persistant, aucune dépendance ajoutée), programmé dès la première reprise recopiée par le JS.
+  `BackgroundSync.decide(trigger, …)` : au déverrouillage et au filet, montre que le service compagnon sait partie
+  → « absent » (ni connexion de 15 s ni échec compté). Notification « clé refusée » (`WatchNotifications`). Journal
+  exporté : bloc `background` (décision, déclencheur, issue, horodatages ; jamais d'adresse ni de clé).
 - **Synchro app fermée, lancement (run 15/10 12:30)** : `WatchPresenceService` lance `BackgroundWatchSync` quand la
   montre se reconnecte et qu'aucune page de l'app ne tourne ; `BackgroundSync.java` (pur, testé sur la JVM) décide
   (30 min → 4 h, pause après clé refusée), calcule la même fenêtre que le JS (vecteurs communs) et rejoue reconnexion →
@@ -564,7 +584,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 06:30 — [Montre : clé confiée au coffre natif](runs/2026-10-15-0630-montre-coffre-cle.md) | ⌚ | PR #164 fusionnée → v132 |
 | 15/10 08:30 — [Idées : synchro sans y penser, stress / VFC, humeur sur des bases légales](runs/2026-10-15-0830-idees-declencheurs-licences.md) | 💡⌚ | 7 idées (I75–I81), spec §7.11 — journal seul (#165) |
 | 15/10 10:30 — [Montre : lectures en Java, captures importées à l'ouverture](runs/2026-10-15-1030-montre-lectures-java.md) | ⌚ | PR #166 fusionnée → v133 |
-| 15/10 12:30 — [Montre : relue app fermée quand elle se reconnecte](runs/2026-10-15-1230-montre-synchro-app-fermee.md) | ⌚ | PR « [Auto] » (voir compte rendu) |
+| 15/10 12:30 — [Montre : relue app fermée quand elle se reconnecte](runs/2026-10-15-1230-montre-synchro-app-fermee.md) | ⌚ | PR #167 fusionnée → v134 |
+| 15/10 14:30 — [Montre : relue au déverrouillage et toutes les ~2 h](runs/2026-10-15-1430-montre-declencheurs.md) | ⌚ | PR « [Auto] » (voir compte rendu) |
 
 ---
 
