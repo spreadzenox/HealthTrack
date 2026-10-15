@@ -9,6 +9,151 @@
 
 ---
 
+## Run du 15/10/2026 08:30 (Paris) — la montre sans y penser, la suite des mesures, l'humeur sur des bases légales
+
+Question du jour, côté utilisateur : *« ma montre parle enfin à HealthTrack ; comment l'avoir à jour sans jamais
+ouvrir l'app, avec aussi mon stress, ma VFC et mes phases de sommeil ? Et l'humeur par le visage, c'est faisable
+légalement dans une APK publique ? »* Aucun nouveau journal du propriétaire depuis v124 (`diagnostics/` inchangé) ;
+v132 publiée (coffre de la clé). Recherche en 3 volets parallèles (montre, humeur / ML, besoins / marché).
+
+### Montre — ce qui change le plan (lecture seule, faits seulement, aucun code copié ; détail `protocoles/huawei.md` §7.11)
+
+- **La présence « appareil compagnon » ne suffit pas seule** [V doc `CompanionDeviceService`, 16/09/2026] : en
+  Bluetooth classique, l'événement n'arrive qu'à la connexion / déconnexion **du lien Bluetooth au niveau système**.
+  Si personne n'ouvre ce lien (app tuée, montre revenue à portée), le service n'est jamais lié. → Il faut un
+  **deuxième déclencheur**. Gadgetbridge (GB) n'utilise justement **pas** la reconnexion (jugée risquée, #6266,
+  20/06/2026) mais une **synchro au déverrouillage de l'écran** avec un intervalle minimum [T doc GB « sync »]. Le
+  futur service caméra de D4 réagit déjà au déverrouillage : un seul service peut porter les deux.
+- **Redémarrage par le système** [V #6869 / PR #6905, fusionnée 02/10, confirmée 13/10 sur GT 6] : quand Android
+  relance un service « sticky » sans intent, il faut relancer la connexion soi-même ; sinon plus aucune synchro.
+  → règle à reprendre dans `WatchPresenceService` (③ e).
+- **Ordre de synchro de GB** [V] : sommeil (7/0x0C) → minutes (7/0x0A) → totaux (7/0x03) → fichiers (TruSleep,
+  stress, ECG) → séances, dans une file à part ; rien si déjà occupé ; début = dernier échantillon, sinon 1/1/2000.
+  HealthTrack fait déjà presque pareil (minutes avant sommeil : sans importance).
+- **Stress, VFC, sommeil détaillé : trois chemins différents** (le 3e est déjà lu par HealthTrack) [V code GB master, 15/10] : stress = **fichier**
+  « rrisqi_data.bin » (service 0x2C, type 0x10, entrées de 66 octets : début, fin, score, niveau…) ; VFC = **synchro
+  « dictionnaire »** P2P (classe 500044, valeur RMSSD), pas un fichier ; sommeil détaillé HarmonyOS 5+ = fichier
+  **« sequence_data »** (type 0x16, classe 700013). Téléchargement 0x2C en 5 étapes (init → hash facultatif → infos →
+  blocs → accusé). GB lui-même ne sort pas la VFC d'une GT 5 (#6461 ouverte) : ne rien promettre sur la VFC.
+- **Watch 6 / Watch 6 Pro** : PR GB #7074 (ouverte le 15/10) les ajoute, en Bluetooth classique, préfixes
+  « huawei watch 6- » / « huawei watch 6 pro- » [V]. Même famille → notre pilote doit les reconnaître par empreinte.
+- **Rien de neuf** côté synchro GT 6 Pro depuis le 10/10 (recherches « GT6 », « TruSleep », « HarmonyOS ») [V].
+
+### Humeur, voix, réseaux sociaux (D4 / D5)
+
+- **MediaPipe Face Landmarker : poids sous Apache-2.0** [V fiches de modèle Blendshape V2 et Face Mesh V2] → la piste
+  I73 est **légalement ouverte** pour une APK publique. Usage prévu « divertissement AR, pas de décision critique » :
+  présenter l'humeur comme estimation de bien-être, jamais comme diagnostic (déjà la règle). Un seul travail récent
+  sur les blendshapes : LSTM sur 27 blendshapes, 3 classes, 72 % [V arXiv 2501.13432, Frontiers 02/2026] — entraîné
+  sur FER2013 (licence floue) → on garde les règles maison suivies en écart à soi.
+- **Voix** : le seul modèle français redistribuable (Lajavaness, Apache-2.0) plafonne à F1-macro 0,45 et pèse un
+  wav2vec2 « large » [V] ; emotion2vec+ : licence FunASR maison (redistribuable, non OSI, révisable) [V] ; openSMILE
+  interdit en produit commercial [T]. → Confirme I67 : prosodie maison (F0, énergie, débit, pauses), signal faible.
+- **Transcription** : ML Kit GenAI Speech toujours **alpha**, fr-FR en bêta, mode avancé réservé aux Pixel [V
+  13/10/2026] ; aucune source sur le moteur hors ligne par défaut de One UI → tester `isOnDeviceRecognitionAvailable`
+  sur l'A56 (repli Vosk inchangé).
+- **Réseaux sociaux** : lien avec l'affect **très faible** (β 0,00–0,04, Elmer et al., *Emotion* 2025) [T], dans les
+  deux sens → **décision D5 : l'usage des réseaux sociaux est un facteur X, jamais une entrée de l'estimateur**.
+  L'estimateur se limite au visage, à la voix et à l'auto-déclaration.
+- **Emobot** (emobothealth.com) : préprint 03/2026, r = 0,895 avec la MADRS sur n = 45 (poster ASCP 05/2026), voix +
+  visage + mouvement + comportement à l'écran, dossier FDA De Novo en préparation [V] — financé par Emobot.
+- **Distribution hors Play Store** [T Android Authority] : vérification obligatoire des développeurs pour le
+  sideload, déjà en vigueur dans 4 pays depuis le 30/09/2026, partout en 2027 → point d'attention pour le
+  propriétaire (installer depuis GitHub restera possible par un parcours « avancé »).
+
+### Ce que veulent les gens (signaux du jour)
+
+- **Samsung Health 7.0, contre-exemple parfait** [V unstar.app, 2 082 avis, 20/06–06/09/2026] : note 1,74 contre 2,57
+  pour la 6.x ; plaintes : montre qui ne synchronise plus sans geste manuel (193), données perdues (189), navigation
+  trop longue (146), **carte d'insight IA impossible à masquer** (69, presque toutes à 1 étoile).
+- **Le modèle qui s'impose** : un bilan du matin par rapport à **votre** base (Galaxy Watch 9 « Vitals », 7 → 28 j)
+  [T], et un **rapport mensuel automatique** (Pixel Watch 5 « Health Guardian », 12/08/2026) [V].
+- **Gadgetbridge 0.95** (12/10/2026) [V] : liste des séances dont la synchro a échoué, export FIT par lot.
+- **Lieux étiquetés** (« travail », « maison ») : une étude JMIR 2026 teste s'ils améliorent la prédiction de
+  l'affect [T] ; mobilité GPS et humeur liées dans les deux sens avec décalage [T JMIR 2024].
+- **Présenter des résultats N-of-1** : mots qualitatifs (« mieux / pire ») + un repère visuel plutôt que des chiffres
+  seuls ; les croyances de départ pèsent sur la confiance → montrer la donnée, accompagner [T Self-E CHI 2021,
+  insuffisance cardiaque]. Conforte I70.
+- **Conversations** : Limitless (Meta) fermé à la vente, support jusqu'à ≈ 12/2026 ; Bee (Amazon) sans export ; Omi
+  toujours ouvert et auto-hébergeable [V/T] → I61 (Omi direct) reste la seule piste viable.
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I75 | **Deux déclencheurs pour la synchro app fermée** : présence compagnon (si le lien système existe) **+** déverrouillage de l'écran avec intervalle minimum (≥ 30 min), plus un filet WorkManager toutes les ~2 h ; relance de la connexion si Android redémarre le service sans intent (#6869) ; un seul service natif, partagé plus tard avec la lecture du visage (D4) | Montre à jour sans jamais ouvrir l'app (D3 d quater) | 5 | 4 | **20** |
+| I78 | **Réseaux sociaux = X, décidé et testé** : la liste déclarée des entrées de l'estimateur (D5) = visage, voix, auto-déclaration ; le temps sur les réseaux sociaux (UsageStats, déjà accordé pour « Temps d'écran ») entre dans les Analyses comme facteur ; le test anti-circularité l'impose | Savoir si les réseaux me font du bien ou non, sans tautologie (D5, D6) | 4 | 5 | **20** |
+| I76 | **Stress et VFC de journée par la montre** (phases du sommeil et VFC de la nuit déjà lues depuis le 13/10 via `sequence_data`) : fichier stress 0x2C type 0x10 (même téléchargement que le sommeil, `files.js`) et synchro dictionnaire classe 500044 (VFC), chacun dans le journal par service (I69) ; « non fourni par la montre » plutôt qu'un vide | Les données qui comptent le plus pour la récupération et comme X de l'humeur (D3 d bis) | 4 | 4 | **16** |
+| I79 | **Bilan du mois, automatique** : le 1er du mois, le parcours du matin (I71) affiche une fois « ce que le mois dit de vous » (vos tendances vs votre base, liens devenus solides ou abandonnés), puis disparaît | Prendre du recul sans ouvrir les Analyses (leçon Pixel Health Guardian) | 4 | 4 | 16 |
+| I80 | **Rien d'imposé à l'écran** (leçon Samsung Health 7.0) : toute carte d'interprétation de l'Accueil masquable d'un appui long, état de synchro honnête par source (dernière réussite, échecs listés comme GB 0.95) | Garder le contrôle, ne jamais subir un « insight » | 3 | 4 | 12 |
+| I77 | **Empreintes Huawei Link : verrouiller par des tests** — vérifié ce run : `isHuaweiWatchName` et `isHuaweiLinkDevice` reconnaissent déjà « HUAWEI WATCH 6 Pro-… », « HONOR Band 9-… » et FE86 sans liste de modèles ; manquent l'UUID SDP Honor (`C9770A18-…`) comme repli quand le nom est générique, et des tests sur des noms réels | Brancher d'autres montres Huawei / Honor sans attendre (D3 registre) | 2 | 5 | 10 |
+| I81 | **Lieux étiquetés comme contexte** : regroupement des positions approximatives sur le téléphone, l'utilisateur nomme 2–3 lieux d'un tap (« maison », « travail »), temps passé par lieu = X | Comprendre l'effet de ses journées hors de chez soi | 3 | 3 | 9 |
+
+**Vérifié dans le code ce run** : le sommeil détaillé (`sequence_data`, phases, score, VFC de la nuit) est **déjà lu**
+par le pilote JS depuis le 13/10 ; le client Java (③ d) le recevra brut comme le reste. **Écartée** : *modèle d'émotion vocale pré-entraîné dans l'APK* (Lajavaness trop lourd et faible, emotion2vec sous
+licence révisable, audeering non commercial). **Mise à jour** : I73 (visage) **débloquée côté licence** (Apache-2.0) ;
+I72 complétée par I75 (la présence seule ne couvre pas le cas « app tuée, montre revenue »).
+
+### Détail et pistes d'implémentation
+
+**I75 — Deux déclencheurs.** `WatchPresenceService` (③ e) reste le point d'entrée ; un récepteur
+`ACTION_USER_PRESENT` enregistré **dynamiquement** dans un service de premier plan déjà actif (ce broadcast implicite
+n'est plus reçu par un récepteur déclaré dans le manifeste) ; sans service actif, filet `PeriodicWorkRequest` (2 h,
+contrainte Bluetooth activé) qui ouvre RFCOMM < 1 min. Même verrou que le JS (30 min, un essai, socket fermé).
+`onStartCommand(null intent)` → relancer la connexion. Test JVM : planificateur pur (dernière synchro, occupé, clé
+refusée → jamais d'essai).
+
+**I78 — Liste déclarée.** `src/services/mood/estimatorInputs.js` exporte `ESTIMATOR_INPUTS = ['face', 'voice',
+'selfReport']` ; le moteur de corrélation refuse tout X de cette liste ; `socialMediaMinutes` (par catégorie
+d'apps : réseaux sociaux connus) rejoint les variables quotidiennes. Test : intersection vide, et le test échoue si on
+y ajoute `socialMediaMinutes`.
+
+**I76 — Stress et VFC de journée.** Le téléchargement 0x2C existe déjà (`devices/huawei/files.js`, type `STRESS`
+déclaré mais non lu) : ajouter la lecture des entrées de 66 octets (début, fin, score, niveau) d'après §7.11, trames
+d'exemple construites par nous ; VFC de journée = synchro dictionnaire (classe 500044), à spécifier en §7.11 bis avant
+tout code. Ne lancer que si les capacités de la GT 6 Pro l'annoncent (`stress auto`, `VFC` déjà notés dans le journal).
+À noter : la montre déclare aussi une capacité « émotion » (`EXPAND.EMOTION`) — c'est un calcul physiologique de la
+montre ; s'il est lu un jour, ce sera un **X**, pas une entrée de l'estimateur d'humeur (D5).
+
+**I77** : tests sur des noms réels (« HUAWEI WATCH GT 6 Pro-1A2 », « HUAWEI WATCH 6 Pro-3F1 », « HONOR Band 9-xxx »,
+« HUAWEI WATCH FIT 4 Pro-… ») + repli sur l'UUID SDP Honor dans `isHuaweiLinkDevice`. Petit, à glisser dans un run montre.
+
+**I79 / I80 / I81** : après I71 (parcours unique) ; I80 réutilise le « Mode calme » (I52).
+
+### Sources (consultées le 15/10/2026)
+
+- Montre : https://codeberg.org/Freeyourgadget/Gadgetbridge/pulls/7074 · /issues/7055 · /issues/7035 · /issues/6978 ·
+  /issues/6869 · /pulls/6905 · /issues/6461 · /issues/6266 · /pulls/6701 · /pulls/6816 · /pulls/6579 · /issues/6938
+  (via l'API REST) ; https://gadgetbridge.org/basics/features/sync/ ; https://gadgetbridge.org/basics/topics/huawei-honor/
+- Android : https://developer.android.com/reference/android/companion/CompanionDeviceService ;
+  https://developer.android.com/reference/android/companion/CompanionDeviceManager ;
+  https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start
+- Humeur / ML : https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker ; fiches
+  https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Blendshape%20V2.pdf et …Face%20Mesh%20V2.pdf ;
+  https://arxiv.org/abs/2501.13432 ; https://huggingface.co/emotion2vec/emotion2vec_plus_base ;
+  https://raw.githubusercontent.com/modelscope/FunASR/main/MODEL_LICENSE ;
+  https://huggingface.co/Lajavaness/wav2vec2-lg-xlsr-fr-speech-emotion-recognition ;
+  https://developers.google.com/ml-kit/genai/speech-recognition/android ; https://developers.google.com/edge/litert/next/npu ;
+  https://support.google.com/android/answer/12623953 ; https://www.medrxiv.org/content/10.64898/2026.03.08.26347894v1 ;
+  https://emobothealth.com
+- Besoins / marché : https://unstar.app/blog/samsung-health-update-not-syncing-watch-layout-reviews-2026 ;
+  https://blog.google/products-and-platforms/devices/pixel/pixel-watch-5/ ;
+  https://www.techadvisor.com/article/3225480/huawei-watch-6-official-as-pixel-watch-5-rival.html ;
+  https://gadgetbridge.org/blog/release-0_95_01/ ; https://docs.omi.me/ ;
+  https://techcrunch.com/2026/01/12/why-amazon-bought-bee-an-ai-wearable/ ; https://news.samsung.com/us/samsung-whats-new-galaxy-watch9/ ;
+  https://www.jmir.org/2024/1/e55635 ; https://jeffhuang.com/papers/SelfE_CHI21.pdf
+- Inaccessibles : old.reddit.com, channelnews.com.au et androidauthority.com (403), mhealth.jmir.org e90970 (vide),
+  thieme-connect.com (anti-robot), recherche de code GitHub (hors périmètre de la session).
+
+### À creuser au prochain run idées (15/10 20:30)
+
+- Le journal v125+ du propriétaire s'il arrive : mesures reçues, capacités annoncées (téléchargement de fichiers ?).
+- La GT 6 Pro rétablit-elle d'elle-même le lien Bluetooth système avec le téléphone sans app active (condition
+  d'I75) ? Retours d'utilisateurs Gadgetbridge.
+- Détail des entrées du fichier stress (RRI) et de la synchro dictionnaire VFC (classe 500044), pour écrire §7.11 bis.
+
+---
+
 ## Run du 14/10/2026 20:30 (Paris) — si la montre envoie encore 0 mesure, relire app fermée, un seul parcours par jour
 
 Question du jour, côté utilisateur : *« ma montre est associée, mais si demain l'historique est encore vide, qu'est-ce
