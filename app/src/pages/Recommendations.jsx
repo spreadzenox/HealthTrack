@@ -13,7 +13,7 @@ import {
   MIN_ADVICE_EFFECT,
   MIN_WEEKEND_DAYS,
 } from '../services/analysisEngine'
-import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN } from '../services/behaviorTags'
+import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR } from '../services/behaviorTags'
 import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
@@ -150,7 +150,8 @@ function TagEffectCard({ effect }) {
       )}
       <p className="reco-tag-days">
         {effect.nWith} jour{effect.nWith > 1 ? 's' : ''} avec · {effect.nWithout} sans
-        {effect.auto && ` · mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`}
+        {effect.auto && effect.tagId === 'evening_sport' && ` · déduit de vos séances (début après ${EVENING_SPORT_FROM_HOUR} h)`}
+        {effect.auto && effect.tagId !== 'evening_sport' && ` · mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`}
       </p>
       <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
         {evidenceLabel(effect.evidence)}

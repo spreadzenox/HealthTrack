@@ -9,6 +9,8 @@ import {
   computeTagEffects,
   autoDetectedTagIds,
   AUTO_LATE_SCREEN_MIN,
+  EVENING_SPORT_FROM_HOUR,
+  isWorkoutEntry,
 } from './behaviorTags'
 
 // Builds a wellbeing check-in at 21:30 local time, `daysAgo` days before a fixed date.
@@ -303,5 +305,68 @@ describe('autoDetectedTagIds', () => {
   it('lists late_screen only when the phone capture is on', () => {
     expect(autoDetectedTagIds({ phoneUsage: true })).toEqual(['late_screen'])
     expect(autoDetectedTagIds({ phoneUsage: false })).toEqual([])
+  })
+
+  it('lists evening_sport only when workouts are captured (watch or Health Connect)', () => {
+    expect(autoDetectedTagIds({ workouts: true })).toEqual(['evening_sport'])
+    expect(autoDetectedTagIds({ phoneUsage: true, workouts: true })).toEqual(['late_screen', 'evening_sport'])
+  })
+})
+
+// Workout starting at `hour` on day dayIndex.
+function workout(dayIndex, hour, minutes = 45, source = 'huawei_watch') {
+  const d = new Date(2026, 8, 1, hour, 0)
+  d.setDate(d.getDate() + dayIndex)
+  return { type: 'activity', source, at: d.toISOString(), payload: { workoutType: 'running', durationSeconds: minutes * 60 } }
+}
+
+describe('evening sport deduced from workouts (I85)', () => {
+  it('declares evening_sport as automatic from workouts, from 18:00', () => {
+    expect(getTagMeta('evening_sport').auto).toBe('workouts')
+    expect(EVENING_SPORT_FROM_HOUR).toBe(18)
+  })
+
+  it('recognises workouts, not distance-only activity entries or very short ones', () => {
+    expect(isWorkoutEntry(workout(0, 19))).toBe(true)
+    expect(isWorkoutEntry(workout(0, 19, 5))).toBe(false)
+    expect(isWorkoutEntry({ type: 'activity', at: '2026-09-01T18:00:00Z', payload: { distanceMeters: 300 } })).toBe(false)
+    expect(isWorkoutEntry({ type: 'steps', at: '2026-09-01T18:00:00Z', payload: { durationSeconds: 3600 } })).toBe(false)
+  })
+
+  it('analyses evening sport from recorded workouts, with no tag ever used', () => {
+    // Evening sport on even days (19:00), morning sport on some odd days (does not count), next day better.
+    const entries = []
+    for (let i = 0; i < 20; i++) {
+      entries.push(checkin(i, i % 2 === 1 ? 4 : 2))
+      if (i % 2 === 0) entries.push(workout(i, 19))
+      else if (i % 4 === 1) entries.push(workout(i, 8))
+    }
+    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'evening_sport')
+    expect(e).toBeDefined()
+    expect(e.auto).toBe(true)
+    // Evenings 0..18 even → next day measured on 1..19 (10 with); odd evenings 1..17 → 9 without (19 has no next day)
+    expect(e.nWith).toBe(10)
+    expect(e.nWithout).toBe(9)
+    expect(e.diff).toBeCloseTo(2)
+  })
+
+  it('a declared « Sport le soir » still counts on an evening the watch did not record', () => {
+    const entries = []
+    for (let i = 0; i < 20; i++) {
+      const declared = i === 4 || i === 6 // sport without the watch
+      entries.push(checkin(i, i % 2 === 1 ? 4 : 2, declared ? ['evening_sport'] : []))
+      if (i % 2 === 0 && !declared) entries.push(workout(i, 19))
+    }
+    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'evening_sport')
+    expect(e.nWith).toBe(10)
+  })
+
+  it('does not read days before the first recorded workout as « without » for a user who never tagged', () => {
+    const entries = []
+    for (let i = 0; i < 20; i++) entries.push(checkin(i, 3))
+    for (const i of [14, 16, 18]) entries.push(workout(i, 19))
+    const res = computeTagEffects(entries)
+    const pending = res.pending.find((x) => x.tagId === 'evening_sport')
+    expect(pending).toMatchObject({ nWith: 3, nWithout: 2 })
   })
 })

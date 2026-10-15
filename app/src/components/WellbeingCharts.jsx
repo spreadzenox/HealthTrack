@@ -125,6 +125,33 @@ function WellbeingLineChart({ points, xDomain, labels, emptyMessage, predictionP
   )
 }
 
+const fmt = (v) => v.toFixed(1).replace('.', ',')
+
+/**
+ * Une seule mention de la prédiction, sous le graphique (nettoyage D1 / I87) : avant, une grande carte
+ * au-dessus et une légende au-dessous disaient la même chose. L'explication est repliée.
+ */
+function PredictionLegend({ prediction, onChart }) {
+  const line = (
+    <span className="wellbeing-chart-pred-legend">
+      {onChart && <span className="wellbeing-pred-dot-legend" aria-hidden="true" />}
+      <span>Prédiction du jour :</span>
+      <strong className="wellbeing-prediction-value">{fmt(prediction.predicted)} / 5</strong>
+      {prediction.actual != null && <span>· réel : {fmt(prediction.actual)}</span>}
+    </span>
+  )
+  if (!(prediction.assumedTypical?.length > 0)) return <p className="wellbeing-pred-row">{line}</p>
+  return (
+    <details className="wellbeing-pred-row wellbeing-pred-details">
+      <summary>{line}</summary>
+      <p className="wellbeing-prediction-note">
+        Journée en cours : ce qui n'est pas encore connu (pas, repas, mesures…) compte comme une journée
+        habituelle. Une estimation, pas une mesure.
+      </p>
+    </details>
+  )
+}
+
 export default function WellbeingCharts() {
   const [entries, setEntries] = useState([])
   // Prédiction en cache (données inchangées depuis le dernier calcul) : affichée dès le premier rendu
@@ -196,25 +223,6 @@ export default function WellbeingCharts() {
         Bien-être (0–5)
       </h2>
 
-      {todayPrediction != null && (
-        <div className="wellbeing-prediction-badge">
-          <span className="wellbeing-prediction-icon" aria-hidden="true">🤖</span>
-          <span className="wellbeing-prediction-label">Prédiction du jour</span>
-          <span className="wellbeing-prediction-value">{todayPrediction.predicted.toFixed(1).replace('.', ',')} / 5</span>
-          {todayPrediction.actual != null && (
-            <span className="wellbeing-prediction-actual">
-              · réel : {todayPrediction.actual.toFixed(1).replace('.', ',')}
-            </span>
-          )}
-          {todayPrediction.assumedTypical?.length > 0 && (
-            <span className="wellbeing-prediction-note">
-              Journée en cours : ce qui n'est pas encore connu (pas, repas, mesures…) compte comme une journée
-              habituelle. Une estimation, pas une mesure.
-            </span>
-          )}
-        </div>
-      )}
-
       <div className="wellbeing-chart-block">
         <h3 className="wellbeing-chart-subtitle">Par jour ({DAYS} derniers jours)</h3>
         <WellbeingLineChart
@@ -227,10 +235,8 @@ export default function WellbeingCharts() {
             : "Pas encore assez de données. Enregistrez votre bien-être à l'ouverture de l'app."}
           predictionPoint={showPredictionOnChart ? { x: DAYS - 1, v: todayPrediction.predicted } : null}
         />
-        {showPredictionOnChart && (
-          <p className="wellbeing-chart-pred-legend">
-            <span className="wellbeing-pred-dot-legend" aria-hidden="true" /> Prédiction du jour (pas encore de note aujourd'hui)
-          </p>
+        {todayPrediction != null && (
+          <PredictionLegend prediction={todayPrediction} onChart={showPredictionOnChart} />
         )}
       </div>
 

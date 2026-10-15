@@ -5,6 +5,7 @@ import WellbeingPrompt from './WellbeingPrompt'
 vi.mock('../storage/localHealthStorage', () => ({
   createEntry: vi.fn(() => Promise.resolve(1)),
   updateEntry: vi.fn(() => Promise.resolve()),
+  listEntries: vi.fn(() => Promise.resolve([])),
 }))
 
 describe('WellbeingPrompt (uncontrolled)', () => {
@@ -90,6 +91,23 @@ describe('WellbeingPrompt — behaviour tags', () => {
     } finally {
       localStorage.removeItem('healthtrack_phone_usage')
     }
+  })
+
+  it('no longer asks for « Sport le soir » when workouts are recorded (watch / Health Connect)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValueOnce([
+      { id: 9, type: 'activity', source: 'huawei_watch', at: new Date().toISOString(), payload: { workoutType: 'running', durationSeconds: 2400 } },
+    ])
+    render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    expect(await screen.findByText(/Sport le soir : déduit de vos séances/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Sport le soir/i })).not.toBeInTheDocument()
+    expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'activity' }))
+  })
+
+  it('still asks for « Sport le soir » when no workout is recorded', async () => {
+    render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    expect(screen.getByRole('button', { name: /Sport le soir/i })).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: /Sport le soir/i })).toBeInTheDocument())
   })
 
   it('keeps showing « Écran tard » on an old note that has it, so it can be removed', () => {

@@ -86,7 +86,7 @@
 }
 
 .wellbeing-chart-pred-legend {
-  margin: 6px 0 0;
+  margin: 0;
   font-size: 0.75rem;
   color: var(--text-muted);
   display: flex;
@@ -103,46 +103,38 @@
   flex-shrink: 0;
 }
 
-/* ─── ML prediction badge ────────────────────────────────────────────────── */
+/* ─── Prédiction du jour : une ligne sous le graphique ─────────────────── */
 
-.wellbeing-prediction-badge {
-  display: flex;
-  align-items: center;
+.wellbeing-pred-row {
+  margin: 6px 0 0;
+}
+
+.wellbeing-chart-pred-legend {
   flex-wrap: wrap;
-  gap: 6px;
-  background: rgba(243, 156, 18, 0.12);
-  border: 1px solid rgba(243, 156, 18, 0.35);
-  border-radius: var(--radius);
-  padding: 10px 14px;
-  margin-bottom: 14px;
-  font-size: 0.88rem;
 }
 
-.wellbeing-prediction-icon {
-  font-size: 1.1rem;
-  flex-shrink: 0;
+.wellbeing-pred-details > summary {
+  cursor: pointer;
+  list-style: none;
 }
 
-.wellbeing-prediction-label {
-  color: var(--text-muted);
-  flex: 1;
-  min-width: 0;
+.wellbeing-pred-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.wellbeing-pred-details > summary .wellbeing-chart-pred-legend::after {
+  content: 'ⓘ';
+  opacity: 0.7;
 }
 
 .wellbeing-prediction-value {
   font-weight: 700;
-  font-size: 1rem;
   color: #f39c12;
 }
 
-.wellbeing-prediction-actual {
-  color: var(--text-muted);
-  font-size: 0.82rem;
-}
-
 .wellbeing-prediction-note {
-  flex-basis: 100%;
+  margin: 4px 0 0;
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   line-height: 1.35;
 }

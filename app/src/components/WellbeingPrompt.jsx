@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { createEntry, updateEntry } from '../storage/localHealthStorage'
-import { BEHAVIOR_TAGS, autoDetectedTagIds, AUTO_LATE_SCREEN_MIN } from '../services/behaviorTags'
+import { createEntry, updateEntry, listEntries } from '../storage/localHealthStorage'
+import { BEHAVIOR_TAGS, autoDetectedTagIds, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR, isWorkoutEntry } from '../services/behaviorTags'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
 
 const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
@@ -22,6 +22,20 @@ function markSessionAnswered() {
 }
 
 const SCORES = [0, 1, 2, 3, 4, 5]
+
+/** Séances relues sur cette période : au-delà, la montre n'est sans doute plus portée ni synchronisée. */
+const WORKOUT_CAPTURE_DAYS = 14
+
+/** Vrai si une montre ou Health Connect a enregistré une séance récemment (« Sport le soir » est alors déduit). */
+async function workoutsRecorded() {
+  try {
+    const since = new Date(Date.now() - WORKOUT_CAPTURE_DAYS * 86_400_000).toISOString()
+    const recent = await listEntries({ type: 'activity', since, limit: 200 })
+    return recent.some(isWorkoutEntry)
+  } catch {
+    return false
+  }
+}
 
 function isToday(iso) {
   const d = new Date(iso)
@@ -51,6 +65,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   const [tags, setTags] = useState([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const [workouts, setWorkouts] = useState(false)
 
   useEffect(() => {
     if (!isControlled && !hasAnsweredThisSession()) {
@@ -71,8 +86,17 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
 
   const open = isControlled ? controlledOpen : internalOpen
 
+  useEffect(() => {
+    if (!open) return undefined
+    let alive = true
+    workoutsRecorded().then((v) => alive && setWorkouts(v))
+    return () => {
+      alive = false
+    }
+  }, [open])
+
   // Never ask for what the app already measures (an old note keeps its tag visible, to remove it).
-  const autoIds = open ? autoDetectedTagIds({ phoneUsage: getPhoneUsageSettings().enabled }) : []
+  const autoIds = open ? autoDetectedTagIds({ phoneUsage: getPhoneUsageSettings().enabled, workouts }) : []
   const shownTags = BEHAVIOR_TAGS.filter((t) => !autoIds.includes(t.id) || tags.includes(t.id))
 
   const close = () => {
@@ -187,6 +211,8 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
           moins bons jours.
           {autoIds.includes('late_screen') &&
             ` Écran tard : mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h), rien à cocher.`}
+          {autoIds.includes('evening_sport') &&
+            ` Sport le soir : déduit de vos séances (début après ${EVENING_SPORT_FROM_HOUR} h).`}
         </p>
 
         {error && (

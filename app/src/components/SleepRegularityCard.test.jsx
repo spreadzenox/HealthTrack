@@ -63,6 +63,8 @@ describe('SleepRegularityCard', () => {
     // D6 : la norme générale est présentée comme une hypothèse, que les données personnelles tranchent
     expect(screen.getByRole('note')).toHaveTextContent(/Hypothèse générale/)
     expect(screen.getByRole('note')).toHaveTextContent(/chez vous/)
+    // D1 / I87 : la donnée d'abord, l'hypothèse en une ligne repliée
+    expect(screen.getByRole('note').closest('details')?.open).toBe(false)
   })
 
   it('flags variable hours without blaming', async () => {
