@@ -4,6 +4,7 @@ import {
   connectBondedWatch,
   describeWatchStatus,
   getWatchAutoSyncState,
+  isAutoSyncPaused,
   recordWatchConnection,
   syncWatchIfStale,
   WATCH_AUTO_SYNC_MS,
@@ -186,5 +187,61 @@ describe('syncWatchIfStale — appels simultanés', () => {
     const [a, b] = await Promise.all([syncWatchIfStale(opts), syncWatchIfStale(opts)])
     expect(a).toEqual(b)
     expect(connect).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('syncWatchIfStale — relecture app fermée (client Java, §9.1 e)', () => {
+  const bgOf = (v) => vi.fn(async () => v)
+
+  it('relecture native en cours : pas de seconde connexion', async () => {
+    const storage = memoryStorage()
+    const connect = vi.fn()
+    const res = await syncWatchIfStale({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0, background: bgOf({ busy: true }) })
+    expect(res).toEqual({ ran: false, reason: 'busy' })
+    expect(connect).not.toHaveBeenCalled()
+  })
+
+  it('relue app fermée il y a 10 min : rien avant 30 min', async () => {
+    const storage = memoryStorage()
+    const connect = vi.fn(async () => report('connected'))
+    const background = bgOf({ busy: false, lastSuccessAt: T0 - 10 * 60_000 })
+    expect(await syncWatchIfStale({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0, background })).toEqual({ ran: false, reason: 'recent' })
+    expect((await syncWatchIfStale({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0 + 21 * 60_000, background })).ran).toBe(true)
+    expect(background).toHaveBeenCalledWith({ deviceId: WATCH.deviceId })
+  })
+
+  it('clé refusée en arrière-plan : l’automatique se met en pause et la carte le dit', async () => {
+    const storage = memoryStorage()
+    const connect = vi.fn()
+    const background = bgOf({ busy: false, paused: true, outcome: 'key_rejected', lastAttemptAt: T0 - 60_000 })
+    expect(await syncWatchIfStale({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0, background })).toEqual({ ran: false, reason: 'paused' })
+    const state = getWatchAutoSyncState(storage)
+    expect(state).toMatchObject({ outcome: 'key_rejected', auto: true })
+    expect(isAutoSyncPaused(state)).toBe(true)
+    expect(connect).not.toHaveBeenCalled()
+  })
+
+  it('une pause native plus ancienne que la dernière connexion de l’app est ignorée', async () => {
+    const storage = memoryStorage()
+    recordWatchConnection(report('connected'), { storage, now: () => T0 - 40 * 60_000 })
+    const connect = vi.fn(async () => report('connected'))
+    const background = bgOf({ busy: false, paused: true, outcome: 'key_rejected', lastAttemptAt: T0 - 50 * 60_000 })
+    expect(await syncWatchIfStale({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0, background })).toEqual({ ran: true, outcome: 'connected' })
+  })
+
+  it('connexion réussie : la reprise de la synchro est recopiée au natif', async () => {
+    const storage = memoryStorage()
+    const until = Date.UTC(2026, 9, 13, 5)
+    const connect = vi.fn(async () => {
+      storage.setItem('healthtrack_watch_sync', JSON.stringify({ [WATCH.deviceId]: { v: 2, until, at: new Date(T0).toISOString() } }))
+      return report('connected')
+    })
+    const capture = { shareResume: vi.fn(async () => {}) }
+    await connectBondedWatch({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0, vault: null, capture })
+    expect(capture.shareResume).toHaveBeenCalledWith({ deviceId: WATCH.deviceId, until, at: T0 })
+    capture.shareResume.mockClear()
+    connect.mockImplementation(async () => report('unreachable'))
+    await connectBondedWatch({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0, vault: null, capture })
+    expect(capture.shareResume).not.toHaveBeenCalled()
   })
 })

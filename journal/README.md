@@ -126,8 +126,22 @@ totaux du jour) et les déposer dans une petite boîte privée du téléphone ; 
 range dans votre historique avec exactement le même décodeur que la synchro habituelle (rien n'est compté deux fois).
 Vérifié octet pour octet contre le pilote validé sur votre montre. Reste la dernière pièce : **le lancer tout seul**
 (montre qui se reconnecte, déverrouillage, filet toutes les ~2 h).
+**Run du 15/10 12:30** (toujours pas de nouveau journal) : **la synchro app fermée est branchée.** Si vous avez touché
+« Activer » (montre « appareil compagnon »), quand la montre se reconnecte au téléphone alors que HealthTrack est
+**complètement fermé**, Android réveille l'app, qui relit la montre toute seule (même clé, mêmes 30 min au moins entre
+deux lectures, jamais de nouvel appairage) ; vos mesures sont rangées dans l'historique à la prochaine ouverture. La
+ligne sous « Synchroniser la montre » dit « relue app fermée il y a … ». Si la montre refusait la clé en arrière-plan,
+la carte passe en « Synchro en pause » et « Synchroniser la montre » la relance. Restent les deux autres déclencheurs
+(au déverrouillage du téléphone, et un filet toutes les ~2 h). **Ce qu'il me faut : fermez complètement HealthTrack
+(balayez-la des apps récentes), éteignez puis rallumez le Bluetooth de la montre ou éloignez-la quelques minutes,
+attendez ~1 min après son retour, puis rouvrez l'app : la ligne doit dire « relue app fermée il y a … ». Sinon,
+dites-le-moi.**
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre Huawei : relue même app fermée (run 15/10 12:30)** : une fois « Activer » touché sous « Synchroniser la
+  montre », HealthTrack relit la montre quand elle se reconnecte au téléphone **même si l'app est complètement
+  fermée** (30 min au moins entre deux lectures) ; les mesures arrivent dans l'historique à l'ouverture suivante. La
+  ligne dit « relue app fermée il y a … ».
 - **Montre Huawei : synchro quand elle se reconnecte (run 15/10 00:30)** : Plus → Connecteurs, carte « Montre
   Huawei », « Activer » sous « Synchroniser la montre » (Android 13+, une confirmation) ; HealthTrack relit la montre
   dès qu'elle se reconnecte au téléphone, même en arrière-plan, et dit quand elle a été vue.
@@ -260,6 +274,11 @@ Vérifié octet pour octet contre le pilote validé sur votre montre. Reste la d
   tensiomètre à l'horloge non réglée n'enregistre plus « en l'an 2000 », « Annuler » coupe vraiment la connexion.
 
 **En coulisses**
+- **Synchro app fermée, lancement (run 15/10 12:30)** : `WatchPresenceService` lance `BackgroundWatchSync` quand la
+  montre se reconnecte et qu'aucune page de l'app ne tourne ; `BackgroundSync.java` (pur, testé sur la JVM) décide
+  (30 min → 4 h, pause après clé refusée), calcule la même fenêtre que le JS (vecteurs communs) et rejoue reconnexion →
+  lectures → capture. Le JS recopie sa reprise au natif après chaque synchro et lit l'état natif (relecture en cours =
+  pas de 2e connexion). Spec §9.1.
 - **Synchro app fermée, lectures (run 15/10 10:30)** : `WatchReader.java` joue les mêmes demandes que la synchro JS
   (sommeil, minutes, totaux, mêmes règles quand la montre cale) et garde les réponses **brutes** dans une capture
   (fichier privé, 48 au plus) ; à l'ouverture, le JS les décode avec ses analyseurs et les écrit par le même chemin
@@ -544,7 +563,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR #163 fusionnée par le propriétaire → v131 |
 | 15/10 06:30 — [Montre : clé confiée au coffre natif](runs/2026-10-15-0630-montre-coffre-cle.md) | ⌚ | PR #164 fusionnée → v132 |
 | 15/10 08:30 — [Idées : synchro sans y penser, stress / VFC, humeur sur des bases légales](runs/2026-10-15-0830-idees-declencheurs-licences.md) | 💡⌚ | 7 idées (I75–I81), spec §7.11 — journal seul (#165) |
-| 15/10 10:30 — [Montre : lectures en Java, captures importées à l'ouverture](runs/2026-10-15-1030-montre-lectures-java.md) | ⌚ | PR « [Auto] » (voir compte rendu) |
+| 15/10 10:30 — [Montre : lectures en Java, captures importées à l'ouverture](runs/2026-10-15-1030-montre-lectures-java.md) | ⌚ | PR #166 fusionnée → v133 |
+| 15/10 12:30 — [Montre : relue app fermée quand elle se reconnecte](runs/2026-10-15-1230-montre-synchro-app-fermee.md) | ⌚ | PR « [Auto] » (voir compte rendu) |
 
 ---
 

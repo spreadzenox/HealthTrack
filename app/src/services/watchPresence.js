@@ -3,12 +3,13 @@
  * dans la boîte Android, le système prévient HealthTrack quand la montre se reconnecte au téléphone
  * (CompanionPlugin.java, WatchPresenceService.java), même app en arrière-plan, sans scan ni sondage. La
  * resynchro passe par `syncWatchIfStale` : mêmes règles (clé connue, 30 min au plus, pause après un refus),
- * donc jamais de reconnexions en rafale (PR GB 6367). App tuée : Android garde seulement l'heure de passage,
- * la synchro se fait à la prochaine ouverture (le client Java « synchro seule » viendra ensuite).
+ * donc jamais de reconnexions en rafale (PR GB 6367). App tuée : le client Java relit la montre lui-même
+ * (BackgroundWatchSync.java, mêmes règles) et ses mesures sont rangées à l'ouverture suivante (watchCaptures.js).
  * Ne lève jamais, sauf `enableWatchPresence` (message pour l'utilisateur).
  */
 import { registerPlugin } from '@capacitor/core'
 import { syncWatchIfStale } from './watchAutoSync'
+import { getBackgroundSync } from './watchCaptures'
 
 const NativeCompanion = registerPlugin('Companion')
 
@@ -22,8 +23,11 @@ export function companionPlugin() {
 
 const sameDevice = (a, b) => !!a && !!b && String(a).toLowerCase() === String(b).toLowerCase()
 
-/** { supported, association: { id, deviceId, name } | null, last: { at (ISO), event, appearedCount } | null } */
-export async function getWatchPresence({ plugin = companionPlugin(), watch = null } = {}) {
+/**
+ * { supported, association: { id, deviceId, name } | null, last: { at (ISO), event, appearedCount } | null,
+ * background: dernière relecture app fermée { at (ISO), battery } | null }
+ */
+export async function getWatchPresence({ plugin = companionPlugin(), watch = null, background = getBackgroundSync } = {}) {
   const none = { supported: false, association: null, last: null }
   if (!plugin) return none
   try {
@@ -31,7 +35,9 @@ export async function getWatchPresence({ plugin = companionPlugin(), watch = nul
     if (!s?.supported) return none
     const association = (s.associations || []).find((a) => sameDevice(a.deviceId, watch?.deviceId)) || null
     const last = s.last?.at ? { at: new Date(s.last.at).toISOString(), event: s.last.event || null, appearedCount: s.last.appearedCount ?? 0 } : null
-    return { supported: true, association, last }
+    const bg = association ? await background({ deviceId: watch?.deviceId }) : null
+    const relued = bg?.lastSuccessAt > 0 ? { at: new Date(bg.lastSuccessAt).toISOString(), battery: bg.battery >= 0 ? bg.battery : null } : null
+    return { supported: true, association, last, background: relued }
   } catch {
     return none
   }
@@ -55,6 +61,7 @@ export function describePresence(presence, { now = Date.now(), formatAgo } = {})
     const verb = presence.last.event === 'disappeared' ? 'déconnectée' : 'reconnectée'
     parts.push(`${verb} ${formatAgo(presence.last.at, new Date(now))}`)
   }
+  if (presence.background?.at) parts.push(`relue app fermée ${formatAgo(presence.background.at, new Date(now))}`)
   return { enabled: true, text: parts.join(' · ') }
 }
 

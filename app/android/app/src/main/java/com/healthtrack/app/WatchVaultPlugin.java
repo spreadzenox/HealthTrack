@@ -106,6 +106,12 @@ public class WatchVaultPlugin extends Plugin {
         call.resolve();
     }
 
+    /** Retire la clé de la montre (refusée en arrière-plan, BackgroundWatchSync). */
+    static void forget(Context context, String address) {
+        String addr = WatchVault.normalizeAddress(address);
+        if (addr != null) remove(context, addr);
+    }
+
     private static void remove(Context context, String address) {
         SharedPreferences p = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         if (p.contains(slot(address))) p.edit().remove(slot(address)).apply();

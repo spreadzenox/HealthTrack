@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { importPendingCaptures } from './watchCaptures'
+import { getBackgroundSync, importPendingCaptures, shareResumeWithNative } from './watchCaptures'
 import { getWatchSyncState, importWatchCapture, SYNC_STATE_VERSION } from './watchSync'
 import { syncWatchIfStale } from './watchAutoSync'
 import { READ_WINDOW } from '../devices/huawei/testing/sampleBlocks'
@@ -84,5 +84,26 @@ describe('importPendingCaptures', () => {
     const importCaptures = vi.fn(async () => ({ imported: 1 }))
     expect(await syncWatchIfStale({ classic: null, storage: memoryStorage(), importCaptures })).toEqual({ ran: false, reason: 'unavailable' })
     expect(importCaptures).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('relecture app fermée : état et reprise partagés avec le natif', () => {
+  it('getBackgroundSync : état du natif, null hors de l’app ou si le plugin lève', async () => {
+    const plugin = { background: vi.fn(async () => ({ busy: false, lastSuccessAt: 5 })) }
+    expect(await getBackgroundSync({ deviceId: 'AA:BB:CC:DD:EE:FF', plugin })).toEqual({ busy: false, lastSuccessAt: 5 })
+    expect(plugin.background).toHaveBeenCalledWith({ deviceId: 'AA:BB:CC:DD:EE:FF' })
+    expect(await getBackgroundSync({ deviceId: 'AA:BB:CC:DD:EE:FF', plugin: null })).toBeNull()
+    expect(await getBackgroundSync({ deviceId: 'AA:BB:CC:DD:EE:FF', plugin: { background: async () => Promise.reject(new Error('not implemented')) } })).toBeNull()
+  })
+
+  it('shareResumeWithNative : reprise v2 recopiée, état ancien = première synchro, rien sans date', async () => {
+    const plugin = { shareResume: vi.fn(async () => {}) }
+    const at = '2026-10-15T08:00:00.000Z'
+    expect(await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1000, at }, plugin })).toBe(true)
+    expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 1000, at: Date.parse(at) })
+    await shareResumeWithNative({ deviceId: 'X', state: { v: 1, until: 1000, at }, plugin })
+    expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 0, at: Date.parse(at) })
+    expect(await shareResumeWithNative({ deviceId: 'X', state: null, plugin })).toBe(false)
+    expect(await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1, at }, plugin: { shareResume: async () => Promise.reject(new Error('x')) } })).toBe(false)
   })
 })

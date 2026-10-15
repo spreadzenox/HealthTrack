@@ -843,7 +843,8 @@ code reprise. Sert de base à I75 / I76 / I77 (`IDEES.md`).
 | (d quater ③ a) Cœur Java du client « synchro seule » (§9.1) : trames, TLV, tranches, rassemblage, chiffrement GCM / CBC, authentification ISO avec la clé gardée, reconnexion jusqu'à la batterie chiffrée ; **octet pour octet identique au pilote JS** (vecteurs communs) ; pas encore branché | ✅ run 15/10 02:30 | `android/…/huawei/LinkCodec.java`, `LinkCipher.java`, `IsoAuth.java`, `WatchLink.java`, `WatchHandshake.java`, `MiniJson.java` ; vecteurs `src/devices/huawei/javaVectors.test.js` → `android/app/src/test/resources/huawei/link-vectors.json` |
 | (d quater ③ c) **Clé confiée au natif** : après chaque connexion réussie, le JS dépose authId + clé longue durée dans un coffre AES-GCM (clé AES-256 du Keystore Android, non exportable ; données associées = adresse de la montre) ; clé refusée → retirée ; `nativeKey` dans le journal | ✅ run 15/10 06:30 (à valider sur l'A56) | `huawei/WatchVault.java` (pur, testé JVM), `WatchVaultPlugin.java`, `src/services/watchVault.js`, `watchAutoSync.js` |
 | (d quater ③ d) **Lectures santé en Java** (sommeil 7/0x0C–0x0D, minutes 7/0x0A–0x0B, totaux 7/0x03) gardées **brutes** dans une capture JSON (boîte de dépôt privée), importée à l'ouverture par le JS avec ses analyseurs (une seule implémentation du décodage) ; trames et capture **identiques au pilote JS** (vecteur `read`) ; pas encore déclenché app tuée | ✅ run 15/10 10:30 | `huawei/WatchReader.java`, `huawei/CaptureInbox.java`, `WatchCapturePlugin.java`, `src/devices/huawei/capture.js`, `services/watchCaptures.js`, `watchSync.importWatchCapture` |
-| (d quater ③ e) Démarrage du client Java app tuée (présence compagnon + déverrouillage + filet ~2 h, I75) : RFCOMM, coffre, `WatchReader`, dépôt dans `CaptureInbox` ; reprise (`until`) recopiée par le JS vers le natif | ☐ | §9.1, §7.11 |
+| (d quater ③ e) **Relecture app tuée à la reconnexion** : `WatchPresenceService` → `BackgroundWatchSync` quand aucune page de l'app ne tourne ; règles et fenêtre dans `BackgroundSync` (pur Java : 30 min → 4 h, pause après `key_rejected`, fenêtre = `syncWindow`, vecteurs `windows`) ; RFCOMM, coffre, `WatchReader`, `CaptureInbox` ; reprise recopiée par le JS (`shareResume`), état lu par le JS (`background`) | ✅ run 15/10 12:30 (à valider sur l'A56) | `huawei/BackgroundSync.java`, `BackgroundWatchSync.java`, `WatchPresenceService.java`, `WatchCapturePlugin.java` (`background`, `shareResume`), `services/watchCaptures.js`, `watchAutoSync.js`, `watchPresence.js` |
+| (d quater ③ f) Autres déclencheurs (I75) : déverrouillage (récepteur dynamique dans un service déjà actif) + filet ~2 h (WorkManager) ; notification « clé refusée » | ☐ | §7.11 |
 
 ### 9.1 Client Java « synchro seule » (D3 d quater ③) — architecture (run du 15/10 02:30)
 
@@ -896,3 +897,23 @@ de pilote JS). Écrit depuis cette spécification (§2, §3, §4, §6.1–§6.5)
   la garde. **Équivalence prouvée** : vecteur `read` (reconnexion + lectures face à la fausse GT 6 Pro) — le Java
   envoie les mêmes trames et produit la même capture, et la capture décodée donne exactement les entrées de la
   synchro en direct (`capture.test.js`).
+- **Relecture app tuée (③ e, run du 15/10 12:30)** : `WatchPresenceService` reçoit « montre apparue » (API 33–35
+  `onDeviceAppeared`, API 36 `onDevicePresenceEvent` → adresse retrouvée par l'identifiant d'association).
+  `CompanionPlugin.recordPresence` dit si une page de l'app tourne : si oui, le JS relit (rien ne change) ; sinon
+  `BackgroundWatchSync.maybeStart` décide avec `BackgroundSync.decide` : `app` (page vivante), `busy` (relecture en
+  cours, un seul fil), `paused` (clé refusée), `no_key` (rien dans le coffre), `no_permission` (BLUETOOTH_CONNECT
+  absent), `recent` (moins de 30 min × 2^échecs, 4 h au plus, depuis le dernier essai **de l'app ou du natif**), sinon
+  `run` : fil `huawei-background-sync` → RFCOMM (15 s) → `WatchHandshake.authenticate` (clé du coffre, identifiant de
+  requête = heure) → batterie → `WatchReader.read` sur `BackgroundSync.window(lastUntil, maintenant)` (identique à
+  `syncWindow` : heure pleine, 6 h relues, 30 jours au plus, tout l'historique s'il n'y a pas de reprise) → capture
+  (adresse, nom, batterie) dans `CaptureInbox`. Issue : `connected` (échecs remis à 0, reprise avancée seulement si
+  la montre a rendu des blocs), `unreachable` / `failed` (échec +1), `key_rejected` (pause + clé retirée du coffre ;
+  jamais de réappairage). État : préférences `healthtrack_watch_background` (adresse, `lastUntil`, `lastAttemptAt`,
+  `lastSuccessAt`, `failures`, `paused`, `outcome`, `battery`, dernière décision et son heure ; jamais de clé).
+  **Côté JS** : après chaque connexion réussie, `shareResumeWithNative` recopie `{ until (0 si état < v2), at }`
+  (`WatchCapture.shareResume` : reprise jamais reculée, échecs et pause effacés). `syncWatchIfStale` lit
+  `WatchCapture.background` : relecture native en cours → `busy` ; clé refusée en arrière-plan plus récente que la
+  dernière connexion de l'app → automatique en pause (« Synchroniser la montre » la relance) ; relecture native
+  réussie compte dans les 30 min. La ligne de présence ajoute « relue app fermée il y a … ». Process : le service
+  compagnon est lié par Android tant que la montre est connectée, ce qui garde le process le temps de la relecture.
+

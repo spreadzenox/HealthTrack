@@ -16,7 +16,7 @@ import { createSession } from './session'
 import { createFakeWatch } from './testing/fakeWatch'
 import { CMD, OP_AUTH, createCipher, frameKey, hichainTlvs, parseHichainReply, psk, returnCodeMac, runHichain, securityNegotiationTlvs, watchToken } from './hichain'
 import { bytesOfHex, hexOf, utf8 } from './crypto'
-import { blockTlvs, countTlvs, FIT, FITNESS, parseCount } from './sync'
+import { blockTlvs, countTlvs, FIT, FITNESS, parseCount, syncWindow } from './sync'
 import { READ_WINDOW, readWatchOptions } from './testing/sampleBlocks'
 
 const FILE = resolve(dirname(fileURLToPath(import.meta.url)), '../../../android/app/src/test/resources/huawei/link-vectors.json')
@@ -216,6 +216,20 @@ async function readVector() {
   return { authToken: hex(authToken), authId, requestId, random, steps, capture }
 }
 
+/** Fenêtres de lecture (`syncWindow`) que BackgroundSync.window doit reproduire. */
+function windowVectors() {
+  const now = Date.UTC(2026, 9, 15, 6, 20, 13)
+  const cases = [
+    [0, now],
+    [Date.UTC(2026, 9, 14, 6), now],
+    [Date.UTC(2026, 9, 15, 5, 30), now],
+    [Date.UTC(2026, 9, 15, 9), now],
+    [Date.UTC(2026, 6, 1), now],
+    [Date.UTC(2026, 9, 15, 2), Date.UTC(2026, 9, 15, 3, 0, 0)],
+  ]
+  return cases.map(([lastUntil, nowMs]) => ({ lastUntil, now: nowMs, ...syncWindow(lastUntil || null, nowMs) }))
+}
+
 describe('vecteurs communs du client Java « synchro seule »', () => {
   it('le fichier lu par les tests Java correspond au pilote JS', async () => {
     const vectors = {
@@ -226,6 +240,7 @@ describe('vecteurs communs du client Java « synchro seule »', () => {
       auth: await authVector(),
       handshake: await handshakeVector(),
       read: await readVector(),
+      windows: windowVectors(),
     }
     const text = `${JSON.stringify(vectors, null, 2)}\n`
     if (process.env.UPDATE_VECTORS) writeFileSync(FILE, text)
