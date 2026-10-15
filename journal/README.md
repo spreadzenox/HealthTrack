@@ -98,6 +98,13 @@ reconnexions en rafale). La ligne dit quand la montre a été vue pour la derni�
 synchro attend encore l'ouverture ; ce sera l'étape suivante (un petit client de synchro natif).
 **Ce qu'il me faut : touchez « Activer » ; si la boîte Android ne s'ouvre pas ou si la ligne ne dit jamais
 « reconnectée il y a … », dites-le-moi (ou Diagnostic → « Enregistrer le journal »).**
+**Run du 15/10 02:30** (toujours pas de nouveau journal) : rien de nouveau à l'écran, mais le plus gros morceau
+de la **synchro app fermée** a commencé. Quand l'app est tuée, il n'y a plus de page web pour faire tourner le pilote
+de la montre ; il faut donc un petit client **natif** (Java). Ce run en livre le cœur : trames, chiffrement et
+authentification avec la clé déjà gardée (jamais de nouvel appairage en arrière-plan). Pour ne pas réintroduire de
+bug sur un protocole qui marche enfin, le pilote actuel (celui validé sur votre montre) **génère les octets
+attendus**, et le Java doit envoyer exactement les mêmes, jusqu'à une reconnexion complète simulée de votre GT 6 Pro.
+Il n'est pas encore branché ; restent : lui confier la clé, lui faire lire les mesures, le lancer à la reconnexion.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Montre Huawei : synchro quand elle se reconnecte (run 15/10 00:30)** : Plus → Connecteurs, carte « Montre
@@ -497,7 +504,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 14/10 18:30 — [Montre : pilote « Huawei Link » dans le registre générique](runs/2026-10-14-1830-montre-registre-pilotes.md) | ⌚🏗️ | PR #159 fusionnée → v128 |
 | 14/10 20:30 — [Idées : pièges de synchro, Analyses lisibles, un parcours par jour](runs/2026-10-14-2030-idees-synchro-confiance-parcours.md) | 💡⌚ | 6 idées (I69–I74), spec §7.10 — journal seul (#160) |
 | 14/10 22:30 — [Montre : synchro qui dit où elle cale (I69)](runs/2026-10-14-2230-montre-synchro-lisible.md) | ⌚ | PR #161 fusionnée → v129 |
-| 15/10 00:30 — [Montre : synchro à la reconnexion (appareil compagnon, I72 ①②)](runs/2026-10-15-0030-montre-appareil-compagnon.md) | ⌚ | PR à venir |
+| 15/10 00:30 — [Montre : synchro à la reconnexion (appareil compagnon, I72 ①②)](runs/2026-10-15-0030-montre-appareil-compagnon.md) | ⌚ | PR #162 fusionnée → v130 |
+| 15/10 02:30 — [Montre : cœur Java de la synchro app fermée](runs/2026-10-15-0230-montre-coeur-java.md) | ⌚ | PR #163 verte, **non fusionnée** (merge refusé par les permissions de la session) |
 
 ---
 

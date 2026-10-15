@@ -190,8 +190,16 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       service de découverte) ? `onDeviceAppeared` arrive-t-il à la connexion Bluetooth classique ? La synchro JS
       tourne-t-elle app en arrière-plan sous One UI ? → ajouter `presence` au journal exporté si le propriétaire ne voit
       jamais « reconnectée il y a … »
-- [ ] (d quater ③) client Java « synchro seule » depuis la spec (§2, §3, §6.5, §7), clé lisible par Java, tampon
-      importé à l'ouverture — démarré par `WatchPresenceService` quand le JS ne répond pas
+- [x] **(d quater ③ a) Cœur Java** (run 15/10 02:30) : paquet sans Android `com.healthtrack.app.huawei` (`LinkCodec`,
+      `LinkCipher`, `IsoAuth` opération 2 seule, `WatchLink`, `WatchHandshake`, `MiniJson`) + `RfcommTransport` ;
+      **octet pour octet identique au pilote JS** (vecteurs générés par `javaVectors.test.js`, dont la transcription
+      d'une reconnexion GT 6 Pro type 4) ; `npm run test:java`, job CI « Protocole montre (Java) ». Pas encore branché
+- [ ] (d quater ③ c) clé longue durée + identifiant confiés au natif par le JS après chaque connexion réussie
+      (chiffrés par une clé Android Keystore)
+- [ ] (d quater ③ d) lectures 7/0x0A–0x0B, 7/0x0C–0x0D, 7/0x03 en Java → tampon de **corps déchiffrés bruts**
+      importé par `watchSync` à l'ouverture (le JS garde le seul décodeur santé) ; heure 1/5 avant
+- [ ] (d quater ③ e) démarrage par `WatchPresenceService` (service de premier plan `connectedDevice`) quand le JS ne
+      répond pas ; 30 min mini, un essai par reconnexion, `key_rejected` → notification, jamais de réappairage
 - [ ] (d quater, avec ①) **Guide One UI** (I50) : batterie « Sans restriction » **et** « Applis jamais en veille »,
       affiché seulement si la synchro de fond n'a rien ramené depuis 24 h
 - [ ] Séances (0x17) : couvrir dans les tests les séances **enregistrées automatiquement** (plantage connu sur GT 6 Pro
@@ -481,6 +489,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-15 — D3 (d quater ③ a) : cœur Java du client « synchro seule », identique au pilote JS (vecteurs communs, 13 tests JUnit, job CI) (run 02:30 Paris)
 - [x] 2026-10-14 — D3 (d quinquies) : fenêtre de synchro jamais vide (1re depuis 2000, reprise − 6 h), totaux du jour stockés, carte montre simplifiée (état + « Synchroniser », « Diagnostic » replié) (run 12:30 Paris)
 - [x] 2026-10-14 — D1 : Connecteurs ordonnés par statut (actif en tête, « Brancher une autre source » replié), pastilles masquées si désactivé, accueil « Votre forme » (1 titre, 1 explication), `--border` défini (run 14:30 Paris)
 - [x] 2026-10-13 — D3 (a quater) : l'instrument de diagnostic donne la **taille** de chaque champ de la réponse « New Auth » (octets / caractères / type, jamais la valeur) → décoder d'un seul journal ; écran « challenge (16 o), epk (32 o)… » (run 18:30 Paris)

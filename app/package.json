@@ -14,7 +14,8 @@
     "cap:open:android": "npx cap open android",
     "postinstall": "patch-package",
     "visual": "node scripts/visual/visual-check.mjs",
-    "perf": "node scripts/perf/perf-check.mjs"
+    "perf": "node scripts/perf/perf-check.mjs",
+    "test:java": "bash scripts/java-protocol-test.sh"
   },
   "dependencies": {
     "@capacitor-community/bluetooth-le": "8.3.0",
