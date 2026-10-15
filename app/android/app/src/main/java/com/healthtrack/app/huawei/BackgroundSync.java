@@ -20,6 +20,15 @@ public final class BackgroundSync {
     static final long OVERLAP_MS = 6 * HOUR;
     static final int MAX_DAYS = 30;
 
+    /** Ce qui réveille la relecture (§9.1 f) : reconnexion signalée, déverrouillage, filet périodique. */
+    public static final String TRIGGER_PRESENCE = "presence";
+    public static final String TRIGGER_UNLOCK = "unlock";
+    public static final String TRIGGER_PERIODIC = "periodic";
+    /** Présence de la montre d'après le dernier événement du service compagnon. */
+    public static final int ABSENT = 0;
+    public static final int PRESENT = 1;
+    public static final int UNKNOWN = -1;
+
     /** Ouvre la connexion à la montre (RFCOMM dans l'app). */
     public interface Opener {
         WatchLink.Transport open() throws IOException;
@@ -63,6 +72,25 @@ public final class BackgroundSync {
      * « run » s'il faut relire maintenant, sinon la raison : app (l'app ouverte s'en charge), busy, paused,
      * no_key, recent.
      */
+    /**
+     * Même décision selon le déclencheur : au déverrouillage et au filet périodique, une montre que le service
+     * compagnon sait partie n'est pas tentée (« absent » : ni connexion de 15 s, ni échec compté). La reconnexion
+     * signalée prouve la présence ; sans appareil compagnon (inconnue), on essaie.
+     */
+    public static String decide(String trigger, State s, long nowMs, boolean appAlive, boolean busy, boolean hasKey,
+                                int presence) {
+        String d = decide(s, nowMs, appAlive, busy, hasKey);
+        if ("run".equals(d) && !TRIGGER_PRESENCE.equals(trigger) && presence == ABSENT) return "absent";
+        return d;
+    }
+
+    /** Dernier événement de présence (« appeared » / « disappeared ») → PRESENT / ABSENT / UNKNOWN. */
+    public static int presenceOf(String lastEvent) {
+        if ("appeared".equals(lastEvent)) return PRESENT;
+        if ("disappeared".equals(lastEvent)) return ABSENT;
+        return UNKNOWN;
+    }
+
     public static String decide(State s, long nowMs, boolean appAlive, boolean busy, boolean hasKey) {
         if (appAlive) return "app";
         if (busy) return "busy";

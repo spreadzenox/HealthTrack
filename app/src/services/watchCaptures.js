@@ -78,7 +78,7 @@ export async function importPendingCaptures({ plugin = capturePlugin(), storage 
 
 /**
  * Où en est la relecture app tuée (BackgroundWatchSync.java) pour `deviceId` : { busy, lastSuccessAt, lastAttemptAt,
- * paused, outcome, battery, failures, lastDecision } (horodatages en ms) ou null (hors de l'app, ancienne version).
+ * paused, outcome, battery, failures, lastDecision, lastTrigger, periodic } (horodatages en ms) ou null (hors de l'app, ancienne version).
  */
 export async function getBackgroundSync({ deviceId, plugin = capturePlugin() } = {}) {
   if (!deviceId || !plugin?.background) return null
@@ -98,6 +98,20 @@ export async function shareResumeWithNative({ deviceId, state, plugin = captureP
   if (!deviceId || !plugin?.shareResume || !Number.isFinite(at)) return false
   try {
     await plugin.shareResume({ deviceId, until: state.v === SYNC_STATE_VERSION && state.until > 0 ? state.until : 0, at })
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Demande à Android (13+) d'autoriser les notifications de l'app : la seule est « synchro de la montre en pause »
+ * quand la montre refuse la clé app fermée (WatchNotifications.java). Rend true si la demande a pu partir.
+ */
+export async function requestWatchNotifications({ plugin = capturePlugin() } = {}) {
+  if (!plugin?.requestNotifications) return false
+  try {
+    await plugin.requestNotifications()
     return true
   } catch {
     return false

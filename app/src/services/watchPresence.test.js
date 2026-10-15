@@ -56,8 +56,19 @@ describe('getWatchPresence', () => {
 describe('enableWatchPresence', () => {
   it('demande l’association de la montre appairée (adresse et nom)', async () => {
     const plugin = fakeCompanion()
-    expect(await enableWatchPresence({ plugin, watch: WATCH })).toEqual({ associated: true, id: 7 })
+    const notify = vi.fn(async () => true)
+    expect(await enableWatchPresence({ plugin, watch: WATCH, notify })).toEqual({ associated: true, id: 7 })
     expect(plugin.associate).toHaveBeenCalledWith({ deviceId: WATCH.deviceId, name: WATCH.name })
+    // seule notification de l'app : « synchro en pause » si la montre refuse la clé app fermée
+    expect(notify).toHaveBeenCalledTimes(1)
+  })
+
+  it('association refusée : pas de demande de notifications', async () => {
+    const plugin = fakeCompanion()
+    plugin.associate.mockRejectedValueOnce(new Error('annulé'))
+    const notify = vi.fn(async () => true)
+    await expect(enableWatchPresence({ plugin, watch: WATCH, notify })).rejects.toThrow(/annulé/)
+    expect(notify).not.toHaveBeenCalled()
   })
 
   it('sans montre ni plugin : message clair', async () => {
@@ -85,7 +96,8 @@ describe('describePresence', () => {
       { now, formatAgo: ago },
     )
     expect(d.enabled).toBe(true)
-    expect(d.text).toMatch(/dès que la montre se reconnecte/)
+    expect(d.text).toMatch(/même app fermée/)
+    expect(d.text).toMatch(/déverrouillage/)
     expect(d.text).toMatch(/reconnectée il y a 5 min/)
   })
 
@@ -148,7 +160,7 @@ describe('relecture app fermée sur la ligne de présence', () => {
     const p = await getWatchPresence({ plugin, watch: WATCH, background })
     expect(background).toHaveBeenCalledWith({ deviceId: WATCH.deviceId })
     expect(p.background).toEqual({ at: new Date(now - 4 * 60000).toISOString(), battery: 71 })
-    expect(describePresence(p, { now, formatAgo: ago }).text).toBe('Synchro dès que la montre se reconnecte au téléphone · reconnectée il y a 5 min · relue app fermée il y a 4 min')
+    expect(describePresence(p, { now, formatAgo: ago }).text).toBe('Synchro auto même app fermée (reconnexion, déverrouillage, ~2 h) · reconnectée il y a 5 min · relue app fermée il y a 4 min')
   })
 
   it('jamais relue app fermée (ou pas d’association) : rien de plus', async () => {

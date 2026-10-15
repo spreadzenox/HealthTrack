@@ -36,7 +36,8 @@ describe('WatchDiagnostic', () => {
     })
     const save = vi.fn(async () => 'Journal enregistré.')
     const copy = vi.fn(async () => 'Journal copié.')
-    render(<WatchDiagnostic available run={run} save={save} copy={copy} setup={null} connect={null} />)
+    const background = vi.fn(async () => ({ lastDecision: 'absent', lastTrigger: 'unlock', periodic: true, lastSuccessAt: 0 }))
+    render(<WatchDiagnostic available run={run} save={save} copy={copy} setup={null} connect={null} background={background} />)
     fireEvent.click(screen.getByRole('button', { name: 'Tester la connexion directe' }))
     expect(await screen.findByText('La montre ne répond pas')).toBeInTheDocument()
     expect(screen.getByText('HUAWEI WATCH GT 6 Pro-F2')).toBeInTheDocument()
@@ -49,6 +50,8 @@ describe('WatchDiagnostic', () => {
     expect(JSON.parse(json).format).toBe('healthtrack-watch-journal')
     expect(JSON.parse(json).diagnostic.verdict.code).toBe('no_answer')
     expect(JSON.parse(json).connect).toBeNull()
+    // relecture app fermée : dernière décision et déclencheur, pour le run suivant
+    expect(JSON.parse(json).background).toEqual({ lastDecision: 'absent', lastTrigger: 'unlock', periodic: true, lastSuccessAt: null })
     expect(filename).toBe('healthtrack-journal-montre-2026-10-12-20-00.json')
 
     fireEvent.click(screen.getByRole('button', { name: 'Copier le journal' }))

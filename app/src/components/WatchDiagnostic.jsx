@@ -14,7 +14,9 @@ import { CURRENT_VERSION } from '../services/updateCheck'
 import { formatAgo } from '../utils/timeAgo'
 import WatchSetup from './WatchSetup'
 import WatchConnect from './WatchConnect'
-import { loadLastConnect, watchJournal } from '../devices/huawei/journal'
+import { backgroundForJournal, loadLastConnect, watchJournal } from '../devices/huawei/journal'
+import { findBondedWatch } from '../devices/huawei/pairing'
+import { getBackgroundSync } from '../services/watchCaptures'
 import { classicPlugin, connectBondedWatch } from '../services/watchAutoSync'
 import './WatchDiagnostic.css'
 
@@ -85,7 +87,14 @@ async function defaultCopy(text) {
  * `connect` : connexion authentifiée (pairing.js), null pour masquer « Connexion à la montre ».
  * `setup` : dépendances de l'assistant « Libérer et appairer » ({ detectApps, classic, appManager }), null pour le masquer.
  */
-export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect }) {
+/** État de la relecture app fermée de la montre appairée (journal exporté), null hors de l'app. */
+async function defaultBackground() {
+  const classic = classicPlugin()
+  const watch = classic ? await findBondedWatch(classic).catch(() => null) : null
+  return watch ? getBackgroundSync({ deviceId: watch.deviceId }) : null
+}
+
+export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground }) {
   const connectFn = connect === undefined ? (classicPlugin() ? defaultConnect : null) : connect
   const setupDeps = setup === undefined ? { detectApps: detectPhoneApps, classic: classicPlugin(), appManager: appManagerPlugin() } : setup
   const [report, setReport] = useState(loadLast)
@@ -110,7 +119,8 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
   const finished = (r) => (r?.finishedAt ? r : null)
   const journal = { connect: finished(connectReport), diagnostic: finished(report) }
   const exportWith = async (fn) => {
-    const { json, filename } = watchJournal(journal)
+    const bg = backgroundForJournal(await Promise.resolve().then(background).catch(() => null))
+    const { json, filename } = watchJournal({ ...journal, background: bg })
     try {
       setMessage(await fn(json, filename))
     } catch (e) {

@@ -208,9 +208,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       prouvée par vecteurs, 30 min → 4 h, pause + clé retirée après `key_rejected`) ; reprise recopiée par le JS
       (`shareResume`), état lu par le JS (`background` : en cours → pas de 2e connexion, clé refusée → pause, relue →
       compte dans les 30 min) ; ligne « relue app fermée il y a … ». À valider sur l'A56
-- [ ] (d quater ③ f) **Autres déclencheurs (I75)** : déverrouillage (récepteur `USER_PRESENT` dynamique dans un service
-      déjà actif) + filet ~2 h (WorkManager périodique, contrainte Bluetooth) via `BackgroundWatchSync.maybeStart` ;
-      notification « clé refusée, ouvrez HealthTrack » (canal dédié, POST_NOTIFICATIONS)
+- [x] **(d quater ③ f) Autres déclencheurs (I75)** (run 15/10 14:30) : déverrouillage (récepteur `USER_PRESENT`
+      dynamique dans `WatchPresenceService`) + filet `WatchSyncJob` (JobScheduler 2 h ± 30 min, persistant, batterie
+      pas faible ; pas de WorkManager = aucune dépendance) ; `decide(trigger, …)` → « absent » si la montre est partie ;
+      notification « clé refusée » (POST_NOTIFICATIONS demandée à « Activer ») ; bloc `background` dans le journal
+      exporté. À valider sur l'A56
+- [ ] (d quater ③ g) Relecture native aussi quand l'app est **en arrière-plan mais pas tuée** (aujourd'hui
+      « app » → rien jusqu'au retour au premier plan) : verrou partagé JS / natif, puis laisser le natif relire
+- [ ] (d quater ③ h) Service relancé par Android sans intent (#6869) : vérifier sur le journal de l'A56 si la
+      présence se perd après un redémarrage, sinon rien à faire
 - [ ] (d quater, avec ①) **Guide One UI** (I50) : batterie « Sans restriction » **et** « Applis jamais en veille »,
       affiché seulement si la synchro de fond n'a rien ramené depuis 24 h
 - [ ] Séances (0x17) : couvrir dans les tests les séances **enregistrées automatiquement** (plantage connu sur GT 6 Pro
@@ -437,6 +443,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    (d bis) : stress, VFC de journée, échantillons de séance. **À ne traiter qu'une fois l'appairage réel débloqué.**
    **État au 15/10 12:30** : client Java complet et **lancé tout seul à la reconnexion de la montre app tuée** (③ a–e) ;
    reste ③ f (déverrouillage + filet ~2 h + notification clé refusée), puis le guide One UI (I50).
+   **État au 15/10 14:30** : ③ f livré (déverrouillage, filet JobScheduler ~2 h, notification, état natif dans le
+   journal) ; reste la validation sur l'A56, le guide One UI (I50), ③ g, puis I76 (stress, VFC de journée).
 4. ⚡ D2 — performance : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par

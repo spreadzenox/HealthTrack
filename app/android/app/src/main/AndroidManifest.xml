@@ -37,6 +37,12 @@
             </intent-filter>
         </service>
 
+        <!-- Filet de la relecture app tuée (WatchSyncJob.java) : toutes les ~2 h, gardé après un redémarrage. -->
+        <service
+            android:name=".WatchSyncJob"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -60,6 +66,10 @@
     <!-- Présence de la montre associée (CompanionPlugin.java) : permission normale, accordée à l'installation. -->
     <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
     <uses-feature android:name="android.software.companion_device_setup" android:required="false" />
+    <!-- Filet de synchro de la montre gardé après un redémarrage (WatchSyncJob, setPersisted). -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Seule notification : « synchro de la montre en pause » si elle refuse la clé app fermée (WatchNotifications). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- Temps d'écran et sommeil estimé par le téléphone (PhoneUsagePlugin.java, src/services/phoneUsage.js) :
          seulement les événements écran allumé / éteint / déverrouillé, rien ne quitte le téléphone.

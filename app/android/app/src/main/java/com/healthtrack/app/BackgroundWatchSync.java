@@ -15,8 +15,9 @@ import java.security.SecureRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Relecture de la montre app tuée (huawei.md §9.1 e) : lancée par WatchPresenceService quand la montre se
- * reconnecte et qu'aucune page de l'app ne tourne (sinon le JS s'en charge). Clé lue dans le coffre
+ * Relecture de la montre app tuée (huawei.md §9.1 e, f) : lancée par WatchPresenceService quand la montre se
+ * reconnecte ou que le téléphone est déverrouillé pendant qu'elle est là, et par WatchSyncJob (filet ~2 h), quand
+ * aucune page de l'app ne tourne (sinon le JS s'en charge). Clé lue dans le coffre
  * (WatchVaultPlugin), connexion RFCOMM, lectures, capture déposée pour l'import à l'ouverture
  * (WatchCapturePlugin). Règles et état : BackgroundSync. Une clé refusée est retirée du coffre.
  */
@@ -62,9 +63,22 @@ final class BackgroundWatchSync {
                 .apply();
     }
 
-    private static void note(Context context, String decision) {
+    private static void note(Context context, String decision, String trigger) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
-                .putString("lastDecision", decision).putLong("lastDecisionAt", System.currentTimeMillis()).apply();
+                .putString("lastDecision", decision).putString("lastTrigger", trigger)
+                .putLong("lastDecisionAt", System.currentTimeMillis()).apply();
+    }
+
+    /** Montre connue de la relecture (recopiée par le JS après sa première synchro), sinon null. */
+    static String knownAddress(Context context) {
+        String a = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("address", null);
+        return WatchVault.normalizeAddress(a);
+    }
+
+    /** Présence d'après le dernier événement du service compagnon (UNKNOWN sans association). */
+    static int presence(Context context) {
+        return BackgroundSync.presenceOf(
+                context.getSharedPreferences(CompanionPlugin.PREFS, Context.MODE_PRIVATE).getString("lastEvent", null));
     }
 
     private static boolean canConnect(Context context) {
@@ -72,20 +86,27 @@ final class BackgroundWatchSync {
                 || context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
     }
 
-    /** Relit la montre `address` si c'est dû ; rend la décision (run, app, busy, paused, no_key, recent, no_permission). */
+    /** Relit la montre `address` si c'est dû ; rend la décision (run, app, busy, paused, no_key, recent, absent, no_permission). */
     static String maybeStart(Context context, String address, boolean appAlive) {
+        return maybeStart(context, address, appAlive, BackgroundSync.TRIGGER_PRESENCE, null);
+    }
+
+    /** Idem pour un déclencheur donné ; `onDone` (facultatif) n'est appelé qu'à la fin d'une relecture lancée (« run »). */
+    static String maybeStart(Context context, String address, boolean appAlive, String trigger, Runnable onDone) {
         Context app = context.getApplicationContext();
         String addr = WatchVault.normalizeAddress(address);
-        if (addr == null) return "no_watch";
-        if (!canConnect(app)) {
-            note(app, "no_permission");
-            return "no_permission";
+        String decision = addr == null ? "no_watch" : !canConnect(app) ? "no_permission" : null;
+        if (decision != null) {
+            if (addr != null) note(app, decision, trigger);
+            return decision;
         }
         BackgroundSync.State state = load(app, addr);
         WatchVault.Credentials creds = appAlive || state.paused ? null : WatchVaultPlugin.read(app, addr);
-        String decision = BackgroundSync.decide(state, System.currentTimeMillis(), appAlive, busy.get(), appAlive || creds != null);
-        note(app, decision);
-        if (!"run".equals(decision) || !busy.compareAndSet(false, true)) return decision;
+        decision = BackgroundSync.decide(trigger, state, System.currentTimeMillis(), appAlive, busy.get(),
+                appAlive || creds != null, presence(app));
+        note(app, decision, trigger);
+        if (!"run".equals(decision)) return decision;
+        if (!busy.compareAndSet(false, true)) return "busy";
         new Thread(() -> {
             try {
                 BluetoothManager bm = (BluetoothManager) app.getSystemService(Context.BLUETOOTH_SERVICE);
@@ -95,12 +116,16 @@ final class BackgroundWatchSync {
                         addr, creds.name, creds.authId, creds.authToken,
                         WatchCapturePlugin.inbox(app)::put, now, now, new SecureRandom(), REQUEST_TIMEOUT_MS);
                 save(app, addr, state);
-                if ("key_rejected".equals(r.outcome)) WatchVaultPlugin.forget(app, addr);
-                Log.i(TAG, "relecture en arrière-plan : " + r.outcome);
+                if ("key_rejected".equals(r.outcome)) {
+                    WatchVaultPlugin.forget(app, addr);
+                    WatchNotifications.keyRejected(app, creds.name);
+                }
+                Log.i(TAG, "relecture en arrière-plan (" + trigger + ") : " + r.outcome);
             } catch (RuntimeException e) {
                 Log.w(TAG, "relecture en arrière-plan interrompue", e);
             } finally {
                 busy.set(false);
+                if (onDone != null) onDone.run();
             }
         }, "huawei-background-sync").start();
         return decision;
@@ -113,5 +138,6 @@ final class BackgroundWatchSync {
         BackgroundSync.State s = load(context, addr);
         BackgroundSync.shareFromApp(s, until, atMs);
         save(context, addr, s);
+        WatchSyncJob.ensureScheduled(context);
     }
 }
