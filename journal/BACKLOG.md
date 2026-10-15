@@ -567,7 +567,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
-- [x] 2026-10-15 — D1 : « Prédiction du jour » en une ligne sous la courbe, hypothèse sommeil repliée (I87) ; I85 ① « Sport le soir » déduit des séances (saisie, Analyses) (run 22:30 Paris)
+- [x] 2026-10-15 — D1 : « Prédiction du jour » en une ligne sous la courbe, hypothèse sommeil repliée (I87) ; I85 ① « Sport le soir » déduit des séances (saisie, Analyses) (PR #173 → v138, run 22:30 Paris)
 - [x] 2026-10-15 — Run « idées » 20:30 : I82–I87 (SpO₂ en tranches, stress ressenti côté Y, check-in réduit, courbes
       MinMaxLTTB, donnée avant interprétation, « Pas pertinent ») ; I80 absorbée par I86 ; I48 précisée (parcours avancé)
 - [x] 2026-10-15 — (PR #170 → v137) Charte : D3 en maintenance (consigne du 15/10), D1 en tête ; D1 : cigarettes du jour sur une ligne, « Écran tard » mesuré non répété, Paramètres allégés ; test App instable corrigé (`useLayoutEffect`) (run 18:30 Paris)

@@ -45,6 +45,9 @@
   hypothèse sommeil repliée (capture pleine page), `recommendations-2` (« Sport le soir … déduit de vos séances (début
   après 18 h) »). `--empty` (/, /recommendations) et `--light` (/) ok.
 
+- PR #173 : Vitest, Build APK, Protocole montre (Java), émulateurs A56 API 35 et 36 verts → fusionnée (squash),
+  **v138 publiée avec son APK** (« Build & Release » vert).
+
 ## Sécurité / vie privée
 - Rien ne sort du téléphone ; aucun schéma ni donnée modifié (affichage, saisie et analyse seulement). Anciens tags
   « Sport le soir » conservés et toujours comptés.
