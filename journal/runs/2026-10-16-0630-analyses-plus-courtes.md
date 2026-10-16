@@ -49,3 +49,7 @@
 2. 🧹 D1 : « Voyage » déduit (I85 ②b) ; relire Repas (`food-*`).
 3. ⚡ D2 : lecture `heart_rate` partagée / par sous-type pour l'Accueil.
 4. 🔁 D5 : I84 (« Stress » ressenti côté Y) + `ESTIMATOR_INPUTS` et test anti-circularité.
+
+## Livraison
+- PR #180 : Vitest, Build APK, Protocole montre (Java), émulateurs A56 API 35 et 36 verts → fusionnée (squash),
+  **v142 publiée avec son APK** (« Build & Release » vert).
