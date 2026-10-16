@@ -275,6 +275,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       accepté par le contrôle FGS (`MODE_ALLOWED`) **mais** très probablement effacé par `PermissionPolicyService`
       (`BACKGROUND_CAMERA` / `RECORD_BACKGROUND_AUDIO` = `internal|role`) ; micro de fond = silence pendant appels et
       autres captures. Modèle : MediaPipe Face Landmarker (blendshapes, Apache-2.0) en natif
+- [ ] **I94 (run idées 16/10 20:30, décision)** moteur du visage = **LiteRT seul** (`litert:2.3.0`, aucune dépendance
+      d'envoi) + les 3 `.tflite` Apache-2.0 du Face Landmarker exécutés en Java, **pas MediaPipe Tasks ni ML Kit**
+      (télémétrie Google sans option : mediapipe #6291, `RemoteLoggingClient` dans `tasks-core 1.1.1`, conditions ML Kit ;
+      14,4 Mo de `.so` arm64 contre 5,6). Spec d'abord (`protocoles/visage.md`), `.task` téléchargé + SHA-256 au build,
+      test d'équivalence vs MediaPipe hors app (écart < 0,05). Mesuré : ≈ 10 ms / image (1 cœur x86) → coût = la caméra
+- [ ] **I96** une seule autorisation « travailler en arrière-plan » (montre + visage) : `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`
+      en une ligne dans la carte montre, consigne One UI « Applis jamais en veille » seulement sur Samsung et seulement
+      si le journal natif montre des trous ; exporté dans le diagnostic (aucune demande d'exclusion aujourd'hui)
 - [ ] **I88** service « Lecture du visage » (`FaceSenseService`, type `camera`, `START_NOT_STICKY`) : rafales de 3
       images ≈ 320×240 au déverrouillage puis ~3 min écran allumé, veille écran éteint, saut si caméra prise / appel /
       chaleur ; service tué → notification « Reprendre » (posté par le récepteur de déverrouillage ou `WatchSyncJob`) ;
@@ -324,6 +332,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       AR(1), « k liens nets sur m testés » ; expériences ABAB randomisées pour un lien à confirmer (I45, plus tard)
 
 ### D6 — Science personnelle, pas de normes imposées
+- [ ] **I97 (16/10 20:30)** Radar forme : `higherIsBetter` → `generalHypothesis` ; écart signalé « inhabituel chez
+      vous » dans les deux sens ; « va avec une moins bonne forme » seulement s'il est appris sur vos notes (FDR, n ≥ 30)
 - [ ] `LEVER_ACTIONS` + `VARIABLE_META.direction` (`higher_better` / `lower_better`) dans `analysisEngine.js` codent un
       sens « sain » : `leverAction` **masque** une piste quand les données contredisent la norme → montrer la réalité
       personnelle (« chez vous, plus d'écran le soir va avec une meilleure humeur ») et formuler les pistes de façon
@@ -489,7 +499,7 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    pour 4,3 k tranches)** ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
-   agrégats, budget en CI (enregistrements lus), Recommandations : panneau debug seul à lire toute la base (garde-fou).
+   agrégats, budget en CI (enregistrements lus ; **taille de l'APK, I95 : `abiFilters` arm64 + x86_64 avant toute lib native**), Recommandations : panneau debug seul à lire toute la base (garde-fou).
 3. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
    **plan vérifié au run idées du 16/10 08:30** : I92 d'abord (petit, D5 — **fait 16/10 16:30**), puis I88 (service + diagnostic, validé
    sur l'A56 avant tout affichage), I90 (indices et tendance 14 j), I89 (test Shizuku / ADB), I91 (voix), I93 ;
@@ -562,8 +572,9 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
     7.0, 12) ; **I77** empreintes Huawei Link verrouillées par des tests + repli UUID SDP Honor (10, petit) ; **I81**
     lieux étiquetés comme X (9). Faits : poids **MediaPipe Face Landmarker sous Apache-2.0** (I73 débloquée) ; pas de
     modèle d'émotion vocale redistribuable et utile (I67 confirmée) ; ML Kit GenAI Speech encore alpha.
-14. 💡 Prochain run idées (16/10 20:30 Paris) : taille APK / inférence de MediaPipe en arm64 (Exynos 1580) ;
-    retours Samsung sur un service caméra de fond ; Bearable / Welltory (formulations). Ancien :
+14. 💡 Prochain run idées (17/10 08:30 Paris) : spec `protocoles/visage.md` (ancres du détecteur, 146 points des
+    blendshapes) ; GT 6 Pro et veille profonde One UI ; Welltory / Exist (liens « évidents »). **Fait au run 16/10 20:30** :
+    taille et télémétrie (I94, I95), Samsung (I96), Bearable / Exist (→ I70 confirmé, I97). Ancien :
     (15/10 20:30 Paris) : journal v125+ s'il arrive ; la GT 6 Pro rétablit-elle seule le lien
     Bluetooth système (condition d'I75) ; entrées du fichier stress (RRI) et dictionnaire VFC 500044 pour §7.11 bis ; comptes rendus de
     labo français.
@@ -605,6 +616,9 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-16 — Run « idées » 20:30 : bibliothèques du visage mesurées (MediaPipe / ML Kit / LiteRT : taille,
+      télémétrie sans option chez Google) → **I94 LiteRT seul** ; modèles exécutés ≈ 10 ms / image ; I95 APK maigre,
+      I96 arrière-plan en un geste (Samsung), I97 Radar neutre
 - [x] 2026-10-16 — Run « idées » 08:30 : plan D4 vérifié sur Android (règles FGS caméra / micro, `appops` lu dans AOSP,
       partage du micro) + leçons Emobot (préprint 12/2025) et FacePsy → I88–I93 ; I92 placé en tête de D5
 - [x] 2026-10-16 — D1 : Repas 3 → 2 écrans — Photo / Galerie / Décrire sur une ligne, intro et aide « sur mobile » retirées, aliments d'un repas à la suite (run 10:30 Paris)

@@ -9,6 +9,145 @@
 
 ---
 
+## Run du 16/10/2026 20:30 (Paris) — le visage sans Google dans la boucle, un APK qui reste léger, Samsung en veille
+
+Question du jour, côté utilisateur : *« la lecture du visage va tourner sur mon téléphone toute la journée. Est-ce
+qu'elle va alourdir chaque mise à jour, ralentir le téléphone, ou envoyer quelque chose chez Google ? Et est-ce que
+Samsung ne va pas la tuer en douce ? »* Ce sont les trois points laissés « à creuser » par le run de 08:30, avant le
+premier code D4 (I88). Montre en maintenance, aucun nouveau journal (`diagnostics/` inchangé). Cette fois, **mesures
+faites dans la session** (bibliothèques téléchargées depuis le dépôt Maven de Google, modèles exécutés), plus
+recherche web et lecture du code de HealthTrack.
+
+### Ce qu'on apprend (faits)
+
+- **MediaPipe Tasks et ML Kit envoient des statistiques d'usage à Google, sans option pour l'empêcher.**
+  - MediaPipe [V GitHub google-ai-edge/mediapipe #6291, réponse d'un mainteneur du 06/07/2026] : une télémétrie
+    (« clearcut », vers `play.googleapis.com`) est apparue entre 0.10.21 et 0.10.35, **elle « sera déployée sur toutes
+    les plateformes »**, il n'y aura **pas d'API pour la couper** ; seules issues : compiler MediaPipe soi-même ou
+    bloquer l'hôte. Google affirme n'envoyer « jamais aucune donnée d'entrée ».
+  - Vérifié dans l'AAR Android `tasks-core 1.1.1` (publié le 14/10/2026) [V] : classes
+    `tasks/core/logging/RemoteLoggingClient`, `TasksStatsLogger`, et dépendances `transport-backend-cct` /
+    `transport-runtime` (le canal d'envoi de Google).
+  - ML Kit [V conditions d'utilisation ML Kit] : images et résultats restent sur l'appareil, **mais les API envoient
+    des métriques de performance et d'usage**, à déclarer aux utilisateurs ; `face-detection 16.1.7` dépend des mêmes
+    `transport-*`, de `firebase-components` et des Play Services.
+  - **LiteRT seul** (`com.google.ai.edge.litert:litert:2.3.0`, l'exécuteur TFLite) [V pom et AAR] : une seule
+    dépendance (`litert-api`), **aucune bibliothèque d'envoi**, aucune chaîne `clearcut` / `play.googleapis` dans sa
+    bibliothèque native.
+  - Pour HealthTrack : ce ne sont pas des données de santé, mais **c'est un envoi réseau à chaque lecture du visage**,
+    toute la journée, contraire à l'esprit « rien ne sort du téléphone ».
+- **Taille, mesurée sur les AAR** [V, scratchpad du run] :
+
+  | Brique | `.so` arm64 (non compressé / compressé) | Toutes ABI (non compressé) | Modèles |
+  |---|---|---|---|
+  | MediaPipe `tasks-core` + `tasks-vision` 1.1.1 | 14,4 Mo / 6,6 Mo | 63 Mo | + `face_landmarker.task` 3,8 Mo |
+  | ML Kit `face-detection` 16.1.7 (groupé) | 8,5 Mo / 3,4 Mo | 33 Mo | inclus (4 détecteurs, 1,7 Mo) ; **sourire et yeux seulement** |
+  | **LiteRT 2.3.0** | **5,6 Mo / 2,3 Mo** | 17 Mo (3 ABI) | + les 3 `.tflite` du `.task` : 3,7 Mo |
+
+  L'APK actuel (v147) fait **6,8 Mo** et le `build.gradle` n'a **aucun `abiFilters`** : toute bibliothèque native est
+  embarquée pour 4 architectures. MediaPipe tel quel ferait passer l'APK à ≈ 40–70 Mo selon le stockage des `.so`, et
+  chaque mise à jour en 1 clic (plusieurs par jour) téléchargerait tout.
+- **Le pipeline du visage est petit et rapide** [V, modèles du `.task` exécutés avec LiteRT, 1 cœur, conteneur x86] :
+  détecteur 128 × 128 → 896 ancres (**1,7 ms**) ; maillage 256 × 256 → 478 points × 3 + présence (**7,9 ms**) ;
+  blendshapes : 146 points (x, y) → 52 coefficients (**0,8 ms**). ≈ **10 ms par image** ; sur les cœurs A720 de
+  l'Exynos 1580, ordre de grandeur 15–30 ms [H, à mesurer par le diagnostic I88]. L'énergie d'une rafale est donc
+  dominée par **l'ouverture de la caméra**, pas par le modèle. Aucun chiffre publié pour un téléphone milieu de gamme
+  (Qualcomm AI Hub : NPU / GPU haut de gamme seulement).
+- **Samsung** [T guides récents d'éditeurs d'apps ; aucun retour précis sur un service caméra de fond trouvé] : One UI
+  met les apps jugées inactives en « veille » puis « veille profonde » (gelées), **même si l'optimisation de batterie
+  d'Android est désactivée** ; il faut aussi les ajouter à **Paramètres → Batterie → Limites d'utilisation en
+  arrière-plan → Applis jamais en veille**. Côté HealthTrack [V code] : **aucune** demande d'exclusion de
+  l'optimisation de batterie (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`) ni guide One UI, alors que la directive D4 la
+  demande et que la synchro de fond de la montre (`WatchSyncJob`, ~2 h) en dépend aussi.
+- **Formulation des liens chez les autres** [V aides officielles] : Bearable affiche un effet dès **3 jours avec et
+  3 jours sans** le facteur, sans incertitude ni mise en garde sur la causalité, et regarde les 7 jours suivants ;
+  Exist sépare **force** et **confiance** (étoiles sur 5, basse quand il y a peu de données), dit que la corrélation
+  ne donne pas la cause, et teste aussi « le lendemain ». Plainte récurrente sur r/BearableApp [T, agrégateur] :
+  « les retours ne m'aident pas à décider ». HealthTrack corrige déjà tests multiples (FDR) et autocorrélation, mais
+  propose une piste dès **5 jours** (`MIN_DAYS_BASIC`) : I70 (force et confiance séparées) reste la bonne réponse.
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I96 | **Une seule autorisation « Travailler en arrière-plan »** pour la montre et le visage : demande Android d'exclusion de l'optimisation de batterie (un geste) + ligne One UI « Applis jamais en veille » avec le chemin exact, affichée seulement sur un Samsung et seulement si des relectures ou des rafales manquent | Montre et visage qui tiennent la journée sans y penser (D3 maintenance, D4) | 4 | 4 | **16** |
+| I94 | **Le visage avec LiteRT seul, sans MediaPipe Tasks ni ML Kit** : les 3 modèles Apache-2.0 du Face Landmarker exécutés en Java (détecteur → recadrage → maillage → 146 points → 52 blendshapes) ; aucune télémétrie, ≈ 4× moins lourd ; vérifié image par image contre MediaPipe dans un test hors app | Rien ne sort du téléphone, mises à jour légères (D4, principes) | 5 | 3 | **15** |
+| I95 | **APK maigre et surveillé** : `abiFilters 'arm64-v8a', 'x86_64'` (téléphone + émulateur de CI), budget de taille vérifié en CI (échoue si l'APK grossit de plus de 2 Mo sans le dire dans la PR) | Mise à jour en 1 clic qui reste rapide (D2) | 3 | 5 | **15** |
+| I97 | **Radar forme sans « mauvais sens »** : un écart inhabituel dans les deux sens est signalé « inhabituel chez vous » ; le sens « va avec une moins bonne forme » n'est affiché que s'il est appris sur vos notes (≥ 30 jours), sinon donné comme hypothèse générale en petit | Pas de norme imposée (D6) | 3 | 4 | 12 |
+
+**Écartées** : *MediaPipe Tasks* (télémétrie sans option, 14 Mo par architecture) ; *ML Kit* (télémétrie, Play
+Services, seulement sourire et yeux : FacePsy montrait que la tête et les yeux comptent, mais les sourcils et la
+mobilité de l'expression manqueraient) ; *compiler MediaPipe soi-même* (Bazel, maintenance lourde pour 3 modèles) ;
+*bloquer l'hôte de télémétrie* (fragile, l'app a besoin d'Internet pour Gemini et les mises à jour).
+
+### Détail et pistes d'implémentation
+
+**I94 — Pipeline visage maison sur LiteRT.** À écrire comme la montre : d'abord une spécification avec nos mots
+(`journal/protocoles/visage.md` : entrées / sorties de chaque modèle, ancres du détecteur, recadrage, les 146 indices
+de points attendus par le modèle de blendshapes, noms des 52 sorties, sources : fiche du modèle, code Apache-2.0 de
+MediaPipe **lu seulement**). Puis :
+- dépendance `com.google.ai.edge.litert:litert:2.3.0` ; les 3 `.tflite` extraits du `.task` officiel au moment du
+  build (tâche Gradle qui télécharge le `.task` depuis `storage.googleapis.com/mediapipe-models/…`, vérifie son
+  SHA-256 et le dézippe dans `assets/` ; rien de binaire dans le dépôt) ;
+- `FaceEstimator.java` : image YUV 320 × 240 → RGB 128 × 128 → détecteur (896 ancres SSD, NMS, garde le plus grand
+  visage) → recadrage pivoté selon les yeux, 256 × 256 → maillage (478 points + présence ; rejet sous 0,5) → 146
+  points normalisés → 52 coefficients → la dizaine d'indices d'I90 (sourire, yeux, sourcils, bouche, tangage, lacet,
+  mobilité entre images, qualité) ;
+- **test d'équivalence hors app** (script Python du dossier `scripts/`, avec `ai-edge-litert` et `mediapipe` en
+  dépendances de dev uniquement) : sur quelques images publiques sous licence libre, nos blendshapes doivent coller à
+  ceux de MediaPipe (écart absolu < 0,05) ; les valeurs attendues sont gardées en JSON pour un test JUnit sur
+  l'émulateur x86_64 de la CI ;
+- 1 thread, XNNPACK, interprète gardé en mémoire tant que le service vit ; temps d'inférence noté dans le diagnostic.
+
+**I95 — APK maigre.** `android { defaultConfig { ndk { abiFilters 'arm64-v8a', 'x86_64' } } }` (l'A56 est arm64 ;
+x86_64 garde l'émulateur de la CI). Étape CI dans « Build APK » : taille de l'APK écrite dans le résumé du job, échec
+si elle dépasse la valeur notée dans `app/android/apk-budget.txt` (mise à jour volontaire dans la PR qui ajoute une
+bibliothèque). Mesurer aussi `useLegacyPackaging true` (`.so` compressés : téléchargement plus léger, ≈ 3 Mo gagnés
+pour LiteRT, au prix d'une extraction à l'installation).
+
+**I96 — Arrière-plan en un geste.** Permission `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` ; dans le plugin natif
+existant, `isIgnoringBatteryOptimizations()` et `ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` (boîte Android avec le
+paquet). Où : **une ligne** dans la carte de la montre (sous « Synchro auto même app fermée ») et plus tard dans
+l'interrupteur « Lecture du visage », jamais une page à part. One UI : détecté par `Build.MANUFACTURER`; la consigne
+« Applis jamais en veille » n'apparaît que si le journal natif montre des trous (aucune relecture ~2 h depuis plus de
+6 h alors que la montre était connectée, ou service visage mort) ; bouton qui ouvre les réglages de batterie de
+l'app (`ACTION_APPLICATION_DETAILS_SETTINGS`, le menu Samsung n'a pas d'Intent public stable). Le diagnostic exporte
+`batteryOptimizationIgnored`, `manufacturer`, `oneUiVersion` (propriété `ro.build.version.oneui` si lisible).
+
+**I97 — Radar neutre.** `radar.js` : remplacer `higherIsBetter` par `generalHypothesis` (comme D6 pour les pistes) ;
+sortie « inhabituel » si |z| ≥ seuil, dans les deux sens ; l'étiquette « accompagne souvent la fatigue » ne reste que
+comme hypothèse générale en petit, remplacée par « chez vous : … » quand la corrélation personnelle avec la note du
+lendemain est connue (FDR, n ≥ 30).
+
+### Sources (consultées le 16/10/2026)
+
+- MediaPipe, télémétrie : https://github.com/google-ai-edge/mediapipe/issues/6291 ;
+  dépôt Maven Google (AAR et pom téléchargés et inspectés) :
+  https://dl.google.com/android/maven2/com/google/mediapipe/tasks-core/1.1.1/ ,
+  https://dl.google.com/android/maven2/com/google/mediapipe/tasks-vision/1.1.1/ ,
+  https://dl.google.com/android/maven2/com/google/mlkit/face-detection/16.1.7/ ,
+  https://dl.google.com/android/maven2/com/google/ai/edge/litert/litert/2.3.0/
+- Modèle : https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task
+  (exécuté avec `ai-edge-litert`, rien gardé dans le dépôt)
+- ML Kit : https://developers.google.com/ml-kit/terms ; https://developers.google.com/ml-kit/vision/face-detection/android
+- Samsung : https://docs.sportstracklive.com/android-battery-saving/samsung ;
+  https://www.xda-developers.com/samsungs-one-ui-3-update-annoying-app-killing-behavior
+- Bearable : https://bearable.app/support/howto/the-factor-effect-report/ ; https://bearable.app/support/tips/what-are-factors/ ;
+  https://gummysearch.com/r/BearableApp/ — Exist : https://kb.exist.io/article/37-what-are-correlations ;
+  https://kb.exist.io/article/55-will-exist-find-correlations-across-multiple-days
+- Benchmarks : https://pub.dev/documentation/mediapipe_face_mesh/2.9.0/ (Dimensity 9400, maillage 1–5 ms)
+- Non trouvés : retour d'utilisateur Samsung sur un service caméra de premier plan de longue durée (à mesurer par le
+  diagnostic I88) ; temps d'inférence publié sur Exynos 1580.
+
+### À creuser au prochain run idées (17/10 08:30)
+
+- Spécification `protocoles/visage.md` : ancres exactes du détecteur court-portée, liste des 146 points d'entrée des
+  blendshapes (code MediaPipe Apache-2.0, lecture seule).
+- La GT 6 Pro et la veille profonde de One UI : un propriétaire de Huawei sur Samsung qui l'a vécue avec Gadgetbridge ?
+- Welltory / Exist : plaintes sur des liens « évidents » (reporté depuis le 15/10).
+
+---
+
 ## Run du 16/10/2026 08:30 (Paris) — l'humeur par le visage et la voix : ce qu'Android permet vraiment sur l'A56
 
 Question du jour, côté utilisateur : *« je veux que l'app sache comment je vais sans que je le note, en lisant mon
