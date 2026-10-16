@@ -40,6 +40,9 @@
 - `npm run visual` : 8 pages ok, aucune erreur JS ; relues `nutrition-1` (avant / après), `data-1` (avant / après) ;
   `--empty` (Nutrition « Compléter mon profil » : 2 lignes + lien Withings) et `--light` ok.
 
+- PR #176 : Vitest, Build APK, Protocole montre (Java), émulateurs A56 API 35 et 36 verts → fusionnée (squash),
+  **v140 publiée avec son APK** (« Build & Release » vert).
+
 ## Sécurité / vie privée
 - Rien ne sort du téléphone ; aucune donnée ni schéma modifié ; export / import inchangés (seul le texte change).
 
