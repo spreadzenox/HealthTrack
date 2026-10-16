@@ -1,6 +1,6 @@
 # 2026-10-16 18:30 Paris (16:30 UTC) — Pistes personnelles : plus de piste cachée parce que contraire à la norme (D6)
 
-**Type** : 🧭 D6  ·  **PR** : « [Auto] Pistes personnelles : vos données font foi, même contre la norme »
+**Type** : 🧭 D6  ·  **PR** : #187 « [Auto] Pistes personnelles : vos données font foi, même contre la norme »
 
 ## Pourquoi
 - Démarrage : main à `0c55e5a` (#186, v146 publiée avec son APK) ; « Tests », « Build & Release » et émulateur A56

@@ -754,8 +754,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 10:30 — [Nettoyage : page Repas plus compacte](runs/2026-10-16-1030-repas-plus-compact.md) | 🧹 | PR #183 fusionnée → v143 |
 | 16/10 12:30 — [Nettoyage : Accueil et Nutrition plus courts](runs/2026-10-16-1230-accueil-nutrition-courts.md) | 🧹 | PR #184 fusionnée → v144 |
 | 16/10 14:30 — [Nettoyage : Accueil sans doublons](runs/2026-10-16-1430-accueil-sans-doublons.md) | 🧹 | PR #185 fusionnée → v145 |
-| 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | #186 fusionnée (v146) |
-| 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR à fusionner |
+| 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | PR #186 fusionnée → v146 |
+| 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR #187 |
 
 ---
 
