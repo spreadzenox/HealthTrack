@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "Accueil sans doublons",
+  "items": [
+    "Dans « Vos derniers jours », votre note de bien-être tient sur une ligne (« 21:30 Bien-être 3 / 5 », avec Modifier et Supprimer) et n'est plus répétée dans une tuile du résumé. Si vous avez noté plusieurs fois dans la journée, la tuile reste et donne la moyenne.",
+    "Les cigarettes d'une journée affichent leur total dans l'en-tête de leur ligne (« Cigarettes 3 ») au lieu d'une tuile à part."
+  ]
+}

@@ -71,7 +71,7 @@ describe('Dashboard', () => {
     ])
     renderDashboard()
     await screen.findByText(/Vos derniers jours/i)
-    await screen.findAllByText(/3 \/ 5/)
+    await waitFor(() => expect(document.querySelector('.entry-score')).toHaveTextContent('3 / 5'))
     expect(screen.queryByText(/HealthTrack centralise/i)).not.toBeInTheDocument()
   })
 
@@ -144,10 +144,11 @@ describe('Dashboard', () => {
       { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T11:30:00', payload: { count: 1 } },
       { type: 'cigarette', source: 'app_cigarette', at: '2026-04-10T09:05:00', payload: { count: 2 } },
     ])
-    expect(summaryValue('Cigarettes')).toBe('4')
+    // Le total est dans l'en-tête de la ligne, plus dans une tuile du résumé qui le répétait
+    expect(screen.queryByText('Cigarettes', { selector: 'dt' })).not.toBeInTheDocument()
     const rows = document.querySelectorAll('.entry-card[data-type="cigarette"]')
     expect(rows).toHaveLength(1)
-    expect(rows[0]).toHaveTextContent('Cigarettes')
+    expect(rows[0].querySelector('.entry-card-header')).toHaveTextContent('Cigarettes4')
     expect(rows[0]).toHaveTextContent('09:05 ×2 · 11:30 · 15:00')
     // Une seule action : retirer la dernière notée (celle de 15:00, id 1)
     expect(within(rows[0]).getAllByRole('button')).toHaveLength(1)
@@ -184,12 +185,24 @@ describe('Dashboard', () => {
     expect(document.querySelector('.entry-card[data-type="wellbeing"]')).toHaveTextContent('Écran tard')
   })
 
-  it('shows wellbeing score in the entry and the day summary', async () => {
+  it('shows a single wellbeing score once, in the entry header (no repeated summary tile)', async () => {
     await renderEntries([
       { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T09:00:00', payload: { score: 4 } },
     ])
-    expect(screen.getByText(/Note :/)).toHaveTextContent('Note : 4 / 5')
-    expect(summaryValue('Bien-être')).toBe('4 / 5')
+    const row = document.querySelector('.entry-card[data-type="wellbeing"]')
+    expect(row.querySelector('.entry-card-header')).toHaveTextContent('09:00Bien-être4 / 5')
+    expect(row).not.toHaveTextContent('Note :')
+    expect(within(row).getByRole('button', { name: /Modifier/ })).toBeInTheDocument()
+    expect(within(row).getByRole('button', { name: /Supprimer/ })).toBeInTheDocument()
+    expect(screen.queryByText('Bien-être', { selector: 'dt' })).not.toBeInTheDocument()
+  })
+
+  it('keeps the wellbeing average tile when a day has several notes', async () => {
+    await renderEntries([
+      { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T09:00:00', payload: { score: 4 } },
+      { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T21:00:00', payload: { score: 2 } },
+    ])
+    expect(summaryValue('Bien-être')).toBe('3 / 5')
   })
 
   it('shows behaviour tags of a wellbeing entry in French', async () => {

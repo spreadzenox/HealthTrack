@@ -87,12 +87,16 @@ function timeOf(at) {
   return new Date(at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 }
 
-/** Contenu d'une saisie ou d'un événement du jour (repas, bien-être, pesée…). */
-function EntryBody({ e, measuredScreen = false }) {
-  // Tag déclaré « Écran tard » : inutile de le répéter un jour où le téléphone a mesuré l'écran (chiffre « Écran » du jour)
-  const shownTags = Array.isArray(e.payload?.tags)
+/** Tags affichés d'une note ; « Écran tard » déclaré est inutile un jour où le téléphone a mesuré l'écran. */
+function visibleTags(e, measuredScreen) {
+  return Array.isArray(e.payload?.tags)
     ? e.payload.tags.map(getTagMeta).filter((t) => t && !(measuredScreen && t.auto === 'phone_usage'))
     : []
+}
+
+/** Contenu d'une saisie ou d'un événement du jour (repas, bien-être, pesée…). */
+function EntryBody({ e, measuredScreen = false }) {
+  const shownTags = visibleTags(e, measuredScreen)
   const count = typeof e.payload?.count === 'number' ? e.payload.count : 1
   return (
     <div className="entry-card-body">
@@ -106,11 +110,6 @@ function EntryBody({ e, measuredScreen = false }) {
             <li className="entry-more">+{e.payload.items.length - 5} autres</li>
           )}
         </ul>
-      )}
-      {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
-        <p className="entry-wellbeing-score">
-          Note : <strong>{e.payload.score}</strong> / 5
-        </p>
       )}
       {e.type === 'wellbeing' && shownTags.length > 0 && (
         <p className="entry-wellbeing-tags">
@@ -171,11 +170,11 @@ function summaryChips(s) {
     chips.push(['FC', min === max ? `${Math.round(min)} bpm` : `${Math.round(min)} à ${Math.round(max)} bpm`])
   }
   if (s.burnedKcal != null) chips.push(['Dépense', `${fr(s.burnedKcal)} kcal`])
-  if (s.wellbeing) chips.push(['Bien-être', `${frNumber(s.wellbeing.average)} / 5`])
+  // Une seule note, ou des cigarettes : déjà lisibles dans les lignes du jour, juste en dessous
+  if (s.wellbeing?.count > 1) chips.push(['Bien-être', `${frNumber(s.wellbeing.average)} / 5`])
   if (s.meals > 0) {
     chips.push(['Repas', s.mealKcal > 0 ? `${s.meals} · ≈ ${fr(s.mealKcal)} kcal` : String(s.meals)])
   }
-  if (s.cigarettes > 0) chips.push(['Cigarettes', String(s.cigarettes)])
   if (s.screenMinutes != null) chips.push(['Écran', formatScreenMinutes(s.screenMinutes)])
   if (s.weather) {
     const w = weatherSummaryParts(s.weather)
@@ -196,6 +195,7 @@ function CigaretteGroupRow({ group }) {
     <li className="entry-card" data-type="cigarette">
       <div className="entry-card-header">
         <span className="entry-type">Cigarettes</span>
+        <span className="entry-kcal">{group.entries.reduce((n, e) => n + (e.payload?.count > 0 ? e.payload.count : 1), 0)}</span>
       </div>
       <div className="entry-card-row">
         <div className="entry-card-body">
@@ -212,8 +212,9 @@ function CigaretteGroupRow({ group }) {
   )
 }
 
-/** Une cigarette seule n'a rien à afficher sous son titre. */
-function hasBody(e) {
+/** Une cigarette seule, ou une note sans tag (note dans l'en-tête), n'a rien à afficher sous son titre. */
+function hasBody(e, measuredScreen) {
+  if (e.type === 'wellbeing') return visibleTags(e, measuredScreen).length > 0
   return !(e.type === 'cigarette' && !(e.payload?.count > 1))
 }
 
@@ -274,6 +275,7 @@ function MealButtons({ e, onEditMeal, onRedoMeal }) {
 function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
   const { title, date } = dayHeading(day.dateKey)
   const chips = summaryChips(day.summary)
+  const measuredScreen = day.summary?.screenMinutes != null
   return (
     <li className="day-card">
       <h4 className="day-card-title">
@@ -301,16 +303,20 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
                 {e.type === 'food' && mealKcal(e.payload?.items) > 0 && (
                   <span className="entry-kcal">≈ {mealKcal(e.payload.items).toLocaleString('fr-FR')} kcal</span>
                 )}
+                {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
+                  <span className="entry-kcal entry-score"><strong>{e.payload.score}</strong> / 5</span>
+                )}
                 {!isDeletableEntry(e) && (
                   <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
                 )}
-                {isDeletableEntry(e) && !hasBody(e) && <DeleteButton e={e} />}
+                {!hasBody(e, measuredScreen) && <EditButton e={e} onEdit={onEdit} />}
+                {isDeletableEntry(e) && !hasBody(e, measuredScreen) && <DeleteButton e={e} />}
               </div>
               {e.type === 'food' && editingMealId === e.id ? (
                 <SavedMealEditor entry={e} onCancel={() => onEditMeal(null)} onSaved={() => onEditMeal(null)} />
-              ) : hasBody(e) && (
+              ) : hasBody(e, measuredScreen) && (
                 <div className={`entry-card-row${e.type === 'food' && e.payload?.items?.length ? ' entry-card-row-stacked' : ''}`}>
-                  <EntryBody e={e} measuredScreen={day.summary?.screenMinutes != null} />
+                  <EntryBody e={e} measuredScreen={measuredScreen} />
                   <EditButton e={e} onEdit={onEdit} />
                   {e.type === 'food' && <MealButtons e={e} onEditMeal={onEditMeal} onRedoMeal={onRedoMeal} />}
                   {isDeletableEntry(e) && <DeleteButton e={e} />}

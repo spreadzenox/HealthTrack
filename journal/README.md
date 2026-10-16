@@ -246,7 +246,15 @@ derniers jours », les aliments d'un repas sont à la suite (« Poulet : 150 g �
 (« ≈ 614 kcal par jour saisi sur ~2 619 : des repas manquent sans doute ») et remplace le « 1 repère atteint sur 14 »,
 trompeur dans ce cas.
 
+**Run du 16/10 14:30** (nettoyage, pas de nouveau journal montre) : sur l'**Accueil**, chaque jour ne dit plus deux
+fois la même chose. Votre note de bien-être tient sur **une ligne** (« 21:30 Bien-être 3 / 5 · Modifier · Supprimer »)
+et la tuile « Bien-être » du résumé, qui la répétait, disparaît (elle reste quand vous avez noté plusieurs fois dans la
+journée : elle donne alors la moyenne). Même chose pour les cigarettes : le total est dans l'en-tête de leur ligne
+(« Cigarettes 3 »), plus dans une tuile à part.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Accueil sans doublons (run 16/10 14:30)** : note de bien-être sur une ligne, tuiles « Bien-être » (une seule
+  note) et « Cigarettes » retirées du résumé du jour, qui les répétait.
 - **Accueil et Nutrition plus courts (run 16/10 12:30)** : aliments d'un repas à la suite sur l'Accueil (4 → 3
   écrans) ; Nutrition : avertissement « repas manquants » en une phrase, à la place du compte de repères trompeur.
 - **Page Repas plus compacte (run 16/10 10:30)** : Photo, Galerie et Décrire sur une ligne ; aliments d'un repas à
@@ -724,7 +732,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 06:30 — [Nettoyage : Analyses plus courtes](runs/2026-10-16-0630-analyses-plus-courtes.md) | 🧹 | PR #180 fusionnée → v142 |
 | 16/10 08:30 — [Idées : visage et voix, plan Android vérifié](runs/2026-10-16-0830-idees-visage-voix-android.md) | 💡🙂 | 6 idées (I88–I93) — journal seul |
 | 16/10 10:30 — [Nettoyage : page Repas plus compacte](runs/2026-10-16-1030-repas-plus-compact.md) | 🧹 | PR #183 fusionnée → v143 |
-| 16/10 12:30 — [Nettoyage : Accueil et Nutrition plus courts](runs/2026-10-16-1230-accueil-nutrition-courts.md) | 🧹 | PR à fusionner |
+| 16/10 12:30 — [Nettoyage : Accueil et Nutrition plus courts](runs/2026-10-16-1230-accueil-nutrition-courts.md) | 🧹 | PR #184 fusionnée → v144 |
+| 16/10 14:30 — [Nettoyage : Accueil sans doublons](runs/2026-10-16-1430-accueil-sans-doublons.md) | 🧹 | PR à fusionner |
 
 ---
 
