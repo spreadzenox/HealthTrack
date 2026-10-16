@@ -267,6 +267,18 @@ chercher à marcher davantage ») avec « Contraire à l'hypothèse générale :
 règle pour les effets « la veille » et l'analyse avancée. Seule exception, par prudence : l'app ne suggère jamais de
 boire ou de fumer davantage ; le lien reste visible tel quel dans les corrélations.
 
+**Run « idées » de 20:30** (pas de nouveau journal montre) : avant d'écrire la lecture du visage, j'ai **téléchargé et
+mesuré** les bibliothèques possibles. Découverte importante : celles de Google (MediaPipe, ML Kit) **envoient des
+statistiques d'usage à Google**, sans réglage pour l'empêcher (pas vos images, mais un envoi à chaque utilisation),
+et alourdiraient l'app de 15 à 60 Mo. Décision : HealthTrack utilisera seulement le **moteur de calcul nu** (LiteRT,
+aucun envoi, ≈ 6 Mo) avec les mêmes modèles libres de Google, assemblés par l'app. Mesuré : ≈ **10 ms par image**,
+c'est la caméra qui coûtera la batterie, pas le calcul. Deux autres points pour vous :
+- votre téléphone Samsung peut **endormir** HealthTrack même quand Android l'autorise ; une ligne vous proposera de
+  la laisser travailler en arrière-plan (montre et visage), et le chemin « Applis jamais en veille » s'affichera
+  seulement si des relectures manquent ;
+- le **Radar forme** dira « inhabituel chez vous » au lieu de juger un sens « mauvais », tant que vos propres
+  données n'ont pas montré ce qui va avec votre forme.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Vos données font foi, même contre la norme (run 16/10 18:30)** : une piste contraire à l'hypothèse générale
   n'est plus cachée ; elle s'affiche « Ne pas chercher à … » avec « Contraire à l'hypothèse générale » (jamais plus
@@ -610,6 +622,9 @@ boire ou de fumer davantage ; le lien reste visible tel quel dans les corrélati
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Le visage lu sans que rien ne parte chez Google** (run 16/10 20:30) : moteur LiteRT seul + modèles libres, au
+  lieu des bibliothèques de Google qui envoient des statistiques d'usage sans option ; app 4× moins alourdie ; une
+  ligne pour que Samsung n'endorme ni la montre ni le visage.
 - **Lire votre visage toute la journée, sur un plan qu'Android autorise** (run 16/10 08:30) : un interrupteur, des
   images prises au déverrouillage et toutes les ~3 min écran allumé, un geste sur une notification si le service
   s'arrête ; une tendance sur 14 jours calibrée sur vous (comme Emobot), et la question du soir posée moins souvent une
@@ -755,7 +770,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 12:30 — [Nettoyage : Accueil et Nutrition plus courts](runs/2026-10-16-1230-accueil-nutrition-courts.md) | 🧹 | PR #184 fusionnée → v144 |
 | 16/10 14:30 — [Nettoyage : Accueil sans doublons](runs/2026-10-16-1430-accueil-sans-doublons.md) | 🧹 | PR #185 fusionnée → v145 |
 | 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | PR #186 fusionnée → v146 |
-| 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR #187 |
+| 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR #187 fusionnée → v147 |
+| 16/10 20:30 — [Idées : le visage sans télémétrie, APK léger, Samsung](runs/2026-10-16-2030-idees-visage-litert.md) | 💡🙂 | 4 idées (I94–I97) — journal seul |
 
 ---
 
