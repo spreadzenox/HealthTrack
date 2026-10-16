@@ -70,13 +70,16 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       interrupteurs Cigarettes / Diagnostic à libellé fixe et explicite (run 15/10 18:30)
 - [x] Accueil : « Prédiction du jour » en une seule ligne sous la courbe (carte au-dessus retirée), explication
       repliée ; hypothèse « horaires réguliers » repliée en une ligne (I87, run 15/10 22:30)
-- [ ] Relire la page Données et Nutrition (prochain run D1)
+- [x] Relire la page Données et Nutrition (run 16/10 02:30)
 - [x] **I85 ①** « Sport le soir » déduit des séances (montre / Health Connect, début ≥ 18 h, ≥ 10 min) : masqué
       dans la saisie s'il y a une séance enregistrée ces 14 jours ; le tag déclaré compte encore (OU), jours hors
       de la plage des séances non lus comme « sans » ; Analyses : « déduit de vos séances » (run 15/10 22:30)
-- [ ] **I85 ②** « Voyage » d'un changement de fuseau (fuseau `Intl` mémorisé à chaque ouverture), « Repas tardif »
-      des repas saisis (jours avec ≥ 2 repas) ; masqués dans la saisie quand la source existe. Le radar
-      (« probablement lié à… ») ne lit encore que les tags déclarés : lui faire lire aussi les séances du soir.
+- [x] **I85 ②a** « Repas tardif » déduit des repas notés (≥ 21 h ou avant 4 h la nuit suivante ; soir connu
+      seulement avec ≥ 2 repas notés ; tag déclaré compte encore) ; masqué dans la saisie si ≥ 2 repas notés sur
+      7 des 14 derniers jours ; le radar lit les tags mesurés (séance du soir, repas tardif) (run 16/10 04:30)
+- [ ] **I85 ②b** « Voyage » d'un changement de fuseau. Attention : `computeTagEffects` ne lit que les entrées ; un
+      fuseau mémorisé en localStorage ne serait ni exporté ni vu des Analyses → l'enregistrer comme entrée légère
+      (`type: 'context'`, `payload: { date, tzOffset, tz }`, une par jour au plus) pour qu'il survive à l'export.
 - [ ] **I86** (score 12, absorbe I80) : « Pas pertinent pour moi » sur chaque lien des Analyses (masqué partout,
       réversible, exporté) ; force et confiance séparées, en mots
 
@@ -452,8 +455,8 @@ Avant : réordonnées le 12/10 (22:30 Paris) : priorité absolue = D3 (montre), 
 montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage général), puis D2 (performance).
 
 1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits ; 22:30 : prédiction unique, « Sport le soir »
-   déduit ; **16/10 02:30 : Données et Nutrition faites** — profil en 2 lignes, intros fusionnées) : « Voyage » /
-   « Repas tardif » déduits (I85 ②) ; relire Repas et Analyses (titres et explications en double) ; avertissement
+   déduit ; **16/10 02:30 : Données et Nutrition faites** — profil en 2 lignes, intros fusionnées ; **16/10 04:30 :
+   « Repas tardif » déduit + radar sur tags mesurés**) : « Voyage » déduit (I85 ②b, entrée `context` par jour) ; relire Repas et Analyses (titres et explications en double) ; avertissement
    « repas manquants » de Nutrition à resserrer. Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
    de SpO₂ minute) ; **suite : lecture `heart_rate` partagée ou par sous-type pour l'Accueil (12,5 k enregistrements lus
@@ -569,6 +572,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-16 — D1 : I85 ②a « Repas tardif » déduit des repas notés (saisie, Analyses) ; Radar forme lit séances du soir et repas tardifs (run 04:30 Paris)
 - [x] 2026-10-16 — D2 / I82 : SpO₂ de la montre en tranches de 10 min + migration unique (et après import) ; Accueil 1 954 → 546 ms, 107 k → 12,5 k enregistrements lus (30 j de SpO₂ minute) ; `npm run perf -- --spo2=minute|slot` (run 00:30 Paris)
 - [x] 2026-10-15 — D1 : « Prédiction du jour » en une ligne sous la courbe, hypothèse sommeil repliée (I87) ; I85 ① « Sport le soir » déduit des séances (saisie, Analyses) (PR #173 → v138, run 22:30 Paris)
 - [x] 2026-10-15 — Run « idées » 20:30 : I82–I87 (SpO₂ en tranches, stress ressenti côté Y, check-in réduit, courbes

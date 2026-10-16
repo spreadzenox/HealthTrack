@@ -204,6 +204,18 @@ describe('explainRadar', () => {
     expect(explainRadar(alert, [checkin(2, ['alcohol']), checkin(1, ['travel'])]).explained).toBe(true)
   })
 
+  it('séance du soir enregistrée par la montre ou repas tardif noté : expliquent aussi, sans tag (I85)', () => {
+    const workout = { type: 'activity', at: dayAt(1, 19), payload: { durationSeconds: 3600 } }
+    const ex = explainRadar(watch, [workout])
+    expect(ex.explained).toBe(true)
+    expect(ex.causes.map((c) => [c.tag.id, c.dateKey])).toEqual([['evening_sport', key(1)]])
+    const meals = [{ type: 'food', at: dayAt(1, 12), payload: {} }, { type: 'food', at: dayAt(1, 22), payload: {} }]
+    expect(explainRadar(watch, meals).causes.map((c) => c.tag.id)).toEqual(['late_meal'])
+    // repas sans retard, séance du matin : rien à expliquer
+    const calm = [{ type: 'food', at: dayAt(1, 12), payload: {} }, { type: 'food', at: dayAt(1, 19), payload: {} }, { ...workout, at: dayAt(1, 8) }]
+    expect(explainRadar(watch, calm).explained).toBe(false)
+  })
+
   it('« Malade » confirme sans expliquer', () => {
     const ex = explainRadar(watch, [checkin(0, ['sick'], 9)])
     expect(ex.sick).toBe(true)

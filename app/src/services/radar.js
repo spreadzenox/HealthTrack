@@ -20,7 +20,7 @@
 
 import { BASELINE_METRICS, dailyValues } from './baselines'
 import { localDateKey } from './wellbeingSeries'
-import { BEHAVIOR_TAGS } from './behaviorTags'
+import { BEHAVIOR_TAGS, measuredTagsByDay } from './behaviorTags'
 
 export const RADAR_DAYS = 3
 export const RADAR_BASELINE_DAYS = 60
@@ -170,7 +170,8 @@ function prevDateKey(key) {
  * Un check-in du soir (« Alcool » le 3) comme du lendemain matin (« Alcool » noté le 4 au réveil)
  * tombe dans la fenêtre [veille, jour] du jour signalé.
  * @param {{ level: string, dateKey: string|null, streak: number }} radar résultat de computeRadar
- * @param {object[]} wellbeingEntries check-ins (payload.tags)
+ * Les tags mesurés comptent aussi (séance du soir enregistrée, repas tardif noté) : ils n'ont pas à être cochés.
+ * @param {object[]} wellbeingEntries check-ins (payload.tags), et les séances (`activity`) / repas (`food`)
  * @returns {null | { causes: { tag: object, dateKey: string }[], explained: boolean, sick: boolean }}
  *   `explained` : chacun des jours signalés de la série a une cause la veille ou le jour même.
  */
@@ -188,6 +189,14 @@ export function explainRadar(radar, wellbeingEntries) {
     const set = tagsByDay.get(key) || new Set()
     for (const t of e.payload.tags) set.add(t)
     tagsByDay.set(key, set)
+  }
+  for (const [tagId, days] of measuredTagsByDay(wellbeingEntries || [])) {
+    for (const [key, has] of days) {
+      if (!has || !window.has(key)) continue
+      const set = tagsByDay.get(key) || new Set()
+      set.add(tagId)
+      tagsByDay.set(key, set)
+    }
   }
 
   const latest = new Map() // tag id → jour le plus récent

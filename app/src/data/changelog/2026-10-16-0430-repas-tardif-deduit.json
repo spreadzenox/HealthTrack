@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "« Repas tardif » déduit de vos repas",
+  "items": [
+    "Si vous notez vos repas régulièrement (au moins 2 repas par jour, 7 jours sur les 14 derniers), la saisie du bien-être ne demande plus « Repas tardif » : un repas noté après 21 h (ou après minuit) suffit. Un jour où un seul repas est noté n'est jamais compté « sans repas tardif », et un tag que vous cochez reste pris en compte. Analyses précise « déduit de vos repas notés ».",
+    "Radar forme : une séance du soir enregistrée par la montre ou un repas tardif noté peuvent maintenant expliquer un écart (« probablement lié à… »), sans rien cocher."
+  ]
+}

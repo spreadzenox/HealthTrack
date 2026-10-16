@@ -53,8 +53,10 @@ describe('WellbeingPrompt (uncontrolled)', () => {
 })
 
 describe('WellbeingPrompt — behaviour tags', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks()
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockImplementation(() => Promise.resolve([]))
   })
 
   it('shows optional behaviour tags as toggle buttons', () => {
@@ -102,6 +104,32 @@ describe('WellbeingPrompt — behaviour tags', () => {
     expect(await screen.findByText(/Sport le soir : déduit de vos séances/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Sport le soir/i })).not.toBeInTheDocument()
     expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'activity' }))
+  })
+
+  it('no longer asks for « Repas tardif » when meals are noted regularly (≥ 2 a day, 7 of 14 days)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const meals = []
+    for (let d = 1; d <= 7; d++) {
+      for (const h of [12, 19]) {
+        const at = new Date()
+        at.setDate(at.getDate() - d)
+        at.setHours(h, 0, 0, 0)
+        meals.push({ id: `${d}-${h}`, type: 'food', at: at.toISOString(), payload: { items: [] } })
+      }
+    }
+    listEntries.mockImplementation(async ({ type }) => (type === 'food' ? meals : []))
+    render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    expect(await screen.findByText(/Repas tardif : déduit de vos repas notés \(après 21 h\)/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Repas tardif/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Sport le soir/i })).toBeInTheDocument()
+  })
+
+  it('still asks for « Repas tardif » when meals are rarely noted', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockImplementation(async ({ type }) => (type === 'food' ? [{ id: 1, type: 'food', at: new Date().toISOString(), payload: {} }] : []))
+    render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'food' })))
+    expect(screen.getByRole('button', { name: /Repas tardif/i })).toBeInTheDocument()
   })
 
   it('still asks for « Sport le soir » when no workout is recorded', async () => {

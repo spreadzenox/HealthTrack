@@ -35,6 +35,9 @@ const PERMUTATIONS = 2000
  * 'workouts': « Sport le soir » from the workouts recorded by the watch or Health Connect (start ≥ 18:00);
  * there a declared tag still counts on an evening nothing was recorded (sport without the watch): a
  * recorded workout adds the tag, it never removes one (`declaredAlsoCounts`).
+ * 'meals': « Repas tardif » from the meals noted (a meal from 21:00, or after midnight); an evening is only
+ * known when ≥ 2 meals were noted that day (one noted meal says nothing about the others), and a declared
+ * tag still counts on the other evenings.
  * radarCause: a known, harmless reason for resting HR / HRV / sleep to drift
  * for a night or two — the radar then says « probably linked to… » instead of
  * raising a worry (radar.js, explainRadar).
@@ -42,7 +45,7 @@ const PERMUTATIONS = 2000
 export const BEHAVIOR_TAGS = [
   { id: 'alcohol', label: 'Alcool', emoji: '🍷', effectDay: 'next', radarCause: true },
   { id: 'coffee_late', label: 'Café après 14 h', emoji: '☕', effectDay: 'next' },
-  { id: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next', radarCause: true },
+  { id: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next', radarCause: true, auto: 'meals', declaredAlsoCounts: true },
   { id: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next', auto: 'phone_usage' },
   { id: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next', radarCause: true, auto: 'workouts', declaredAlsoCounts: true },
   { id: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same', radarCause: true },
@@ -59,6 +62,17 @@ export const AUTO_LATE_SCREEN_MIN = 30
 /** A workout starting from this hour (local time) counts as « Sport le soir ». */
 export const EVENING_SPORT_FROM_HOUR = 18
 
+/** A meal noted from this hour (local time), or before LATE_MEAL_UNTIL_HOUR the night after, is « Repas tardif ». */
+export const LATE_MEAL_FROM_HOUR = 21
+const LATE_MEAL_UNTIL_HOUR = 4
+
+/** Meals noted on a day before it tells anything about a late meal (no late one among them = « without »). */
+const MIN_MEALS_PER_DAY = 2
+
+/** Late meals are deduced (and no longer asked) when ≥ 2 meals were noted on this many of the last 14 days. */
+const REGULAR_MEAL_DAYS = 7
+const REGULAR_MEAL_WINDOW_DAYS = 14
+
 /** Shorter recorded sessions (a walk to the bus picked up by the watch…) are not a workout. */
 const MIN_WORKOUT_SECONDS = 10 * 60
 
@@ -70,10 +84,10 @@ export function isWorkoutEntry(e) {
 
 /**
  * Tags the check-in should not ask for, because the app measures them itself.
- * @param {{ phoneUsage?: boolean, workouts?: boolean }} captures  which automatic captures are on
+ * @param {{ phoneUsage?: boolean, workouts?: boolean, meals?: boolean }} captures  which automatic captures are on
  */
-export function autoDetectedTagIds({ phoneUsage = false, workouts = false } = {}) {
-  const on = { phone_usage: phoneUsage, workouts }
+export function autoDetectedTagIds({ phoneUsage = false, workouts = false, meals = false } = {}) {
+  const on = { phone_usage: phoneUsage, workouts, meals }
   return BEHAVIOR_TAGS.filter((t) => t.auto && on[t.auto]).map((t) => t.id)
 }
 
@@ -84,10 +98,10 @@ function previousDateKey(key) {
 }
 
 /**
- * Measured tags per evening: Map<tagId, Map<dateKey, boolean>>.
+ * Measured tags per evening: Map<tagId, Map<dateKey, boolean>> (an evening missing from a map is unknown).
  * A phone_usage entry of day D carries the screen time of the evening of D−1 (22:00 → 04:00).
  */
-function measuredTags(entries) {
+export function measuredTagsByDay(entries) {
   const late = new Map()
   for (const e of entries) {
     if (e.type !== 'phone_usage') continue
@@ -96,7 +110,7 @@ function measuredTags(entries) {
     if (typeof date !== 'string' || typeof mins !== 'number' || Number.isNaN(mins)) continue
     late.set(previousDateKey(date), mins >= AUTO_LATE_SCREEN_MIN)
   }
-  return new Map([['late_screen', late], ['evening_sport', eveningSport(entries)]])
+  return new Map([['late_screen', late], ['evening_sport', eveningSport(entries)], ['late_meal', lateMeals(entries)]])
 }
 
 /**
@@ -121,6 +135,52 @@ function eveningSport(entries) {
   if (first === null) return out
   for (let k = first; k <= last; k = nextDateKey(k)) out.set(k, evenings.has(k))
   return out
+}
+
+/** Evening a meal belongs to: its day, or the day before for a meal after midnight (before 04:00). */
+function mealEvening(e) {
+  const at = new Date(e.at)
+  if (Number.isNaN(at.getTime())) return null
+  const key = localDateKey(e.at)
+  return at.getHours() < LATE_MEAL_UNTIL_HOUR ? { key: previousDateKey(key), late: true } : { key, late: at.getHours() >= LATE_MEAL_FROM_HOUR }
+}
+
+/** Evenings with a late meal (true), or with ≥ MIN_MEALS_PER_DAY meals noted and none late (false). */
+function lateMeals(entries) {
+  const days = new Map()
+  for (const e of entries) {
+    if (e.type !== 'food') continue
+    const m = mealEvening(e)
+    if (!m) continue
+    const day = days.get(m.key) ?? { count: 0, late: false }
+    day.count += 1
+    day.late ||= m.late
+    days.set(m.key, day)
+  }
+  const out = new Map()
+  for (const [key, day] of days) {
+    if (day.late) out.set(key, true)
+    else if (day.count >= MIN_MEALS_PER_DAY) out.set(key, false)
+  }
+  return out
+}
+
+/**
+ * True when meals are noted regularly enough (≥ 2 meals on REGULAR_MEAL_DAYS of the last 14 days) for
+ * « Repas tardif » to be deduced instead of asked.
+ * @param {Array} foodEntries  recent `food` entries
+ */
+export function mealsLoggedRegularly(foodEntries, now = new Date()) {
+  const since = now.getTime() - REGULAR_MEAL_WINDOW_DAYS * 86_400_000
+  const counts = new Map()
+  for (const e of foodEntries || []) {
+    if (e?.type !== 'food') continue
+    const t = new Date(e.at).getTime()
+    if (Number.isNaN(t) || t < since || t > now.getTime()) continue
+    const key = localDateKey(e.at)
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+  }
+  return [...counts.values()].filter((n) => n >= MIN_MEALS_PER_DAY).length >= REGULAR_MEAL_DAYS
 }
 
 export function getTagMeta(id) {
@@ -247,7 +307,7 @@ export function computeTagEffects(entries) {
 
   const keys = [...days.keys()].sort()
   const firstTagged = keys.find((k) => days.get(k).tags.size > 0)
-  const measured = measuredTags(entries)
+  const measured = measuredTagsByDay(entries)
   const anyMeasured = [...measured.values()].some((m) => keys.some((k) => m.has(k)))
   if (!firstTagged && !anyMeasured) return { status: 'no_tags' }
   // Declared tags only count from the first tag ever used (older days are not « without »);
