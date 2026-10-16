@@ -9,6 +9,155 @@
 
 ---
 
+## Run du 16/10/2026 08:30 (Paris) — l'humeur par le visage et la voix : ce qu'Android permet vraiment sur l'A56
+
+Question du jour, côté utilisateur : *« je veux que l'app sache comment je vais sans que je le note, en lisant mon
+visage quand j'utilise mon téléphone. Est-ce que ça peut marcher sur mon Galaxy A56, toute la journée, sans vider la
+batterie, et est-ce que ça vaut quelque chose ? »* C'est le sujet que le run du 15/10 20:30 a laissé « à creuser
+avant tout code D4 ». Montre en maintenance, aucun nouveau journal (`diagnostics/` inchangé). Recherche web, **lecture
+du code d'Android (AOSP main)** et du code de HealthTrack.
+
+### Ce qu'on apprend (faits)
+
+- **Emobot a publié ses premiers chiffres** [V medRxiv 10.64898/2025.12.20.25341076, préprint 22/12/2025, étude
+  financée par Emobot] : app **EmoDTx**, qui analyse le visage par la **caméra frontale pendant l'usage normal du
+  téléphone** avec un modèle maison ; le score (« FADS », dynamique de l'expressivité) résume **14 jours**. 17 patients
+  déprimés, 34 visites : ρ = 0,65 avec le PHQ-9 (IC 95 % 0,50–0,87), et les **variations** d'une visite à l'autre
+  suivent celles du PHQ-9 (ρ = 0,67). Petit échantillon, analyse intermédiaire (17 % des 98 prévus), comparé à un
+  auto-questionnaire. **Leçon pour HealthTrack : Emobot mesure une tendance sur deux semaines, pas une émotion à
+  l'instant.**
+- **FacePsy** [V arXiv 2406.17181, MobileHCI 2024, Stevens ; code `github.com/stevenshci/FacePsy`, licence du code
+  non affichée → lecture seule, rien copié], la référence citée par Emobot : service Android qui prend une **rafale de
+  10 s à 2,5 images/s au déverrouillage et à l'ouverture de 35 apps** (réseaux sociaux, messagerie…), ML Kit (sourire,
+  yeux ouverts, angles de la tête) + 12 unités d'action, images effacées après extraction, notification « collecte
+  active » et voyant vert. 25 personnes, 4 semaines : **modèle personnalisé AUROC 0,81 contre 0,67 pour un modèle
+  universel** ; indices les plus liés le matin : **ouverture des yeux et inclinaison de la tête** (r ≈ 0,33–0,35),
+  plus que le sourire. AUROC 0,62 dès le 1er jour, 0,71 dès le 7e.
+- **Android, règles vérifiées (doc officielle, 16/10/2026)** :
+  - un service de premier plan `camera` ou `microphone` **doit être créé pendant qu'une activité de l'app est
+    visible** (Android 14+) ; les exemptions générales (batterie « sans restriction », superposition…) **ne lèvent
+    pas** ce verrou. Exemptions qui le lèvent : démarrage par **un geste sur une notification**, un widget, un composant
+    système, le service vocal par défaut, un propriétaire d'appareil ;
+  - une fois créé, le service garde la caméra en arrière-plan (c'est son rôle : « continuer d'accéder à la caméra
+    depuis l'arrière-plan ») ;
+  - un récepteur `BOOT_COMPLETED` ne peut **pas** lancer un service `camera` (Android 15) ni `microphone` (Android 14) ;
+  - Android 16 n'ajoute rien sur la caméra (quotas des tâches lancées depuis un service seulement).
+- **`appops set com.healthtrack.app CAMERA allow`, tranché par le code d'Android** [V AOSP main, lecture seule] :
+  - le contrôle à la création du service (`ForegroundServiceTypePolicy`) accorde la caméra **sans condition** quand le
+    mode est `MODE_ALLOWED`, et seulement « si l'app est au premier plan » quand il est `MODE_FOREGROUND` ;
+  - **mais** `CAMERA` et `RECORD_AUDIO` déclarent une permission d'arrière-plan (`BACKGROUND_CAMERA`,
+    `RECORD_BACKGROUND_AUDIO`) de niveau `internal|role`, impossible à accorder par `pm grant` ; le service de
+    politique des permissions (`PermissionPolicyService`) en déduit `MODE_FOREGROUND` et **resynchronise le mode à
+    chaque changement d'app-op, de permission, de mise à jour de l'app et au démarrage** [V code ; effet sur un vrai
+    téléphone : H fort] → un `appops … allow` est très probablement **effacé en quelques instants**. C'est
+    l'explication la plus simple du « aucun retour fiable » noté le 13/10.
+- **Micro, règles de partage (doc officielle)** : deux apps ordinaires ne captent jamais en même temps ; l'app dont
+  l'écran est au premier plan, ou une source « sensible » (`VOICE_COMMUNICATION` des appels / visios), gagne ; **un
+  appel en cours gagne toujours**. Les autres reçoivent du **silence** (détectable : `isClientSilenced()`). Donc un
+  micro de fond n'entend jamais vos appels ni vos messages vocaux, c'est-à-dire justement quand vous parlez.
+- **Code de HealthTrack** : `targetSdk 36` ; déjà 2 services natifs et un récepteur de déverrouillage
+  (`WatchPresenceService`, `WatchSyncJob`) dont on peut reprendre le modèle ; `moodEstimate.js` garde encore ses
+  entrées **comportementales** (sommeil, pas, écran tard avec `higherIsBetter: false`) : code mort qui contredit
+  D5 / D6 ; aucune `ESTIMATOR_INPUTS` encore.
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I88 | **« Lecture du visage » en un interrupteur, sur un plan qu'Android autorise** : service `camera` créé depuis l'app ouverte, rafales courtes au déverrouillage et toutes les ~3 min écran allumé, veille écran éteint ; s'il est tué : **notification « Reprendre » d'un geste** (exemption officielle), jamais de relance automatique | Humeur captée sans rien saisir, toute la journée (D4) | 5 | 3 | **15** |
+| I90 | **Le visage mesuré comme Emobot / FacePsy** : par rafale, une dizaine de nombres (sourire, yeux, sourcils, tête, mobilité) ; par jour et par moment (matin / après-midi / soir) ; affiché en **tendance 14 jours vs votre plage**, calibré sur **vos** notes (modèle personnel, pas universel) | Une estimation qui vaut quelque chose pour vous (D4, D6) | 5 | 3 | **15** |
+| I92 | **Nettoyer `moodEstimate.js` avant D4** : retirer les entrées comportementales (sommeil, pas, écran tard « mauvais »), garder la calibration (Ridge + garde-fou LOO) pour les signaux directs ; poser `ESTIMATOR_INPUTS = ['face', 'voice', 'selfReport']` + le test anti-circularité | Pas de cercle, pas de norme cachée (D5, D6) — petit et livrable seul | 3 | 5 | **15** |
+| I89 | **Shizuku / ADB testé, pas promis** : le guide demandé reste, mais dans le Diagnostic ; l'app lit elle-même le mode app-op brut de la caméra et du micro (`unsafeCheckOpRawNoThrow`) juste après, 10 s plus tard, après une mise à jour et après un redémarrage, et le dit (« accès permanent : tenu / effacé par Android ») | Savoir en un journal si le « niveau 2 » tient sur l'A56 (D4) | 3 | 4 | 12 |
+| I91 | **La voix là où elle existe vraiment** : d'abord la dictée du soir (app au premier plan, prosodie + note + tags proposés, audio effacé) ; échantillons de fond seulement en option, jamais pendant un appel ou une autre capture, rejetés s'ils sont silencieux ou si ce n'est pas votre voix | Voix utile sans micro « espion » inutile (D4) | 4 | 3 | 12 |
+| I93 | **Moins de notes à saisir quand le visage suffit** : une fois l'estimation calibrée, la question du soir n'est posée qu'un jour sur deux tirés au hasard, plus les jours où l'estimation hésite (le hasard évite de fausser la calibration) | Saisie au dernier recours (D1, directions du 11/10) | 4 | 3 | 12 |
+
+**Écartées** : *capture continue de la vidéo* (batterie, chaleur, rien de plus que des rafales d'après FacePsy) ;
+*modèle d'émotion « universel » affiché seul* (FacePsy : 0,67 contre 0,81 personnalisé ; Emobot : tendance 14 j) ;
+*analyse du contenu consulté sur les réseaux sociaux* (il faudrait lire l'écran par un service d'accessibilité :
+faisable mais lourd, et ça mélangerait X et Y ; le temps par app, déjà décidé en X, suffit pour l'instant).
+
+### Détail et pistes d'implémentation
+
+**I88 — Service visage.** Natif Java, sur le modèle de `WatchPresenceService` :
+- `FaceSenseService`, `foregroundServiceType="camera"`, permissions `CAMERA` + `FOREGROUND_SERVICE_CAMERA` ;
+  `startForegroundService` appelé **uniquement** depuis l'interrupteur de l'app ouverte (plugin Capacitor `FaceSense`)
+  ou depuis l'action « Reprendre » d'une notification (`PendingIntent.getForegroundService`).
+- `START_NOT_STICKY` : une relance automatique d'Android viendrait de l'arrière-plan et lèverait une
+  `SecurityException`. À la place, le récepteur de déverrouillage déjà vivant (`WatchPresenceService`, ou
+  `WatchSyncJob` toutes les ~2 h) remarque « interrupteur activé mais service absent » et poste la notification
+  « Lecture du visage arrêtée · Reprendre » (une fois, pas en boucle) ; même chose après un redémarrage.
+- Récepteurs dynamiques `SCREEN_ON` / `USER_PRESENT` / `SCREEN_OFF` dans le service : rafale au déverrouillage, puis
+  une toutes les ~3 min écran allumé et déverrouillé, rien écran éteint.
+- Rafale : Camera2 (ou CameraX `ImageAnalysis`), caméra frontale, ≈ 320 × 240 YUV, 3 images à ≈ 2,5 /s, caméra fermée
+  en moins de 2 s. Sautée si la caméra est prise (`CameraManager.AvailabilityCallback`), si un appel est en cours, ou
+  si la marge thermique est faible (`PowerManager.getThermalHeadroom` > 0,8). Aucune image écrite sur le disque.
+- Batterie [H, à mesurer] : ≈ 140 rafales par jour (≈ 60 déverrouillages + 4 h d'écran / 3 min) × ≈ 1 J (caméra
+  ≈ 0,7 W pendant 1,5 s + inférence) ≈ 0,04 Wh, soit **≈ 0,2 % d'une batterie de 5 000 mAh par jour** ; même cinq fois
+  plus resterait sous 1 %. Mesure réelle dans le diagnostic : `BATTERY_PROPERTY_CHARGE_COUNTER` avant / après 1 h,
+  nombre de rafales, durée moyenne de caméra ouverte.
+- Diagnostic exportable (comme la montre) : version d'Android / One UI, service vivant ou non, rafales faites / sautées
+  (et pourquoi), visage trouvé ou non, temps d'inférence, notification « Reprendre » utilisée. **Aucune image, aucun
+  score individuel** dans le journal.
+
+**I90 — Ce qu'on garde d'une rafale.** MediaPipe Face Landmarker (poids Apache-2.0, I73) en natif (LiteRT ;
+taille ajoutée à l'APK à mesurer, arm64 seulement) : sur 52 coefficients de « blendshapes », n'en garder qu'une dizaine
+utiles et lisibles : sourire (moyenne gauche / droite), ouverture des yeux (1 − clignement), sourcils froncés /
+levés, bouche abaissée, angles de la tête (tangage, lacet), mobilité de l'expression entre les 3 images, + présence
+du visage et qualité (luminosité, taille du visage). Entrée stockée : `{ at, subtype: 'face_burst', values: {…} }`.
+Agrégats par jour et par moment (matin / après-midi / soir : moyenne, écart, nombre de rafales). Affichage :
+**une ligne** dans le bloc humeur existant, « Expressivité des 14 derniers jours : dans votre plage / plus basse que
+d'habitude », jamais une émotion à l'instant, jamais un diagnostic. Calibration : la régression Ridge + garde-fou LOO
+de `moodEstimate.js` (≥ 14 jours de notes), qui choisit **pour vous** quels indices comptent.
+
+**I92 — Nettoyage préalable.** `moodEstimate.js` : retirer `MOOD_SIGNALS` comportementaux et tout ce qui les lit ;
+extraire la calibration dans `services/mood/calibration.js` (générique : entrées = colonnes de signaux directs) ;
+`services/mood/estimatorInputs.js` exporte `ESTIMATOR_INPUTS` ; test : aucune clé d'`ESTIMATOR_INPUTS` (ni ses
+colonnes, ni le tag « Stress » ressenti, I84) n'apparaît dans les facteurs de `analysisEngine` / `behaviorTags`.
+
+**I89 — Shizuku / ADB.** Dans le diagnostic du visage : commande à copier (`appops set com.healthtrack.app CAMERA
+allow`, idem `RECORD_AUDIO`), puis lecture du mode brut par l'app (`AppOpsManager.unsafeCheckOpRawNoThrow(
+OPSTR_CAMERA, uid, package)`) à 0 s, 10 s, à l'ouverture suivante, après une mise à jour et après un redémarrage.
+Si le mode tient en `allow` (contrairement à ce que prévoit le code d'AOSP, par exemple un comportement propre à
+Samsung), l'app peut relancer le service depuis l'arrière-plan sans notification. Sinon le guide le dit en une ligne
+et on s'en tient à « Reprendre ».
+
+**I91 — Voix.** Étape 1 : la dictée du soir (I41 / I74) donne prosodie (hauteur, énergie, débit, pauses ; maison +
+pitchy 0BSD, I67) et la note, l'audio est effacé. Étape 2, en option : service `microphone` créé avec celui du visage,
+échantillon de 5 s seulement si `AudioManager.getActiveRecordingConfigurations()` est vide et pas d'appel ; rejeté si
+`isClientSilenced()`, si aucune voix n'est détectée, ou si la hauteur sort de la plage de **votre** voix apprise
+pendant les dictées (filtre simple, à valider). Rappel non bloquant sur l'accord des personnes enregistrées.
+
+**I93 — Question du soir allégée.** Tirage d'un jour sur deux, plus les jours où l'intervalle de l'estimation est
+large ; les jours tirés sont marqués pour que la calibration n'utilise que des jours choisis sans regarder
+l'estimation (sinon biais de sélection). Une note donnée spontanément compte toujours.
+
+### Sources (consultées le 16/10/2026)
+
+- Emobot : https://www.medrxiv.org/content/10.64898/2025.12.20.25341076.full.pdf (NCT06860165) ;
+  https://france-biotech.fr/wp-content/uploads/2025/06/Communique-de-Presse-EMOBOT-Vivatech-11-juin-2025-FR-Version-1.pdf
+- FacePsy : https://arxiv.org/html/2406.17181v1 ; MoodCam : https://arxiv.org/pdf/2412.12625 ;
+  MoodCapture : https://dl.acm.org/doi/10.1145/3613904.3642680
+- Android : https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start ;
+  https://developer.android.com/develop/background-work/services/fgs/changes ;
+  https://developer.android.com/about/versions/15/behavior-changes-15 ;
+  https://developer.android.com/develop/background-work/services/fgs/service-types ;
+  https://developer.android.com/media/platform/sharing-audio-input
+- AOSP (lecture seule) : https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/ForegroundServiceTypePolicy.java ;
+  https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/services/core/java/com/android/server/policy/PermissionPolicyService.java ;
+  https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/res/AndroidManifest.xml
+- Non trouvés : retours d'utilisateurs Samsung One UI 7 / 8 sur un service caméra de fond (recherche sans résultat
+  utile) → à mesurer par le diagnostic ; chiffres de consommation publiés pour MediaPipe sur téléphone (aucun).
+
+### À creuser au prochain run idées (16/10 20:30)
+
+- Taille réelle ajoutée à l'APK par MediaPipe Tasks Vision (ou LiteRT seul + modèles) en arm64, et temps d'inférence
+  publié sur un Exynos 1580.
+- Reddit / forums : propriétaires de Samsung qui utilisent une app caméra de fond (voyant vert, coupures, « Applis
+  jamais en veille »).
+- Bearable / Welltory : formulations des liens et plaintes (« évident », « moralisateur ») — reporté du 15/10.
+
+---
+
 ## Run du 15/10/2026 20:30 (Paris) — alléger sans rien perdre : moins de volume, moins de saisie, moins de sermons
 
 Question du jour, côté utilisateur : *« la montre marche, mais l'app me paraît chargée et lente ; qu'est-ce que je

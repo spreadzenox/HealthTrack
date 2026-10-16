@@ -269,8 +269,22 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       des appels Huawei en dur, quand une 2e famille arrivera (Colmi I28, Xiaomi / Zepp)
 
 ### D4 — Humeur par signaux émotionnels directs (visage, voix, réseaux sociaux)
-- [ ] Étude des limites Android réelles (caméra / micro en arrière-plan, service de premier plan, indicateurs,
-      Accessibility, UsageStats) + choix du modèle local (MediaPipe / TFLite / ONNX) → `RESEARCH.md`
+- [x] Étude des limites Android réelles (run idées 16/10 08:30, `IDEES.md` I88–I93) : service `camera` / `microphone`
+      à créer **app visible** (exemptions générales sans effet) ou par **geste sur une notification** ; il garde la
+      caméra en arrière-plan ensuite ; interdit depuis `BOOT_COMPLETED` (A14 micro, A15 caméra) ; `appops CAMERA allow`
+      accepté par le contrôle FGS (`MODE_ALLOWED`) **mais** très probablement effacé par `PermissionPolicyService`
+      (`BACKGROUND_CAMERA` / `RECORD_BACKGROUND_AUDIO` = `internal|role`) ; micro de fond = silence pendant appels et
+      autres captures. Modèle : MediaPipe Face Landmarker (blendshapes, Apache-2.0) en natif
+- [ ] **I88** service « Lecture du visage » (`FaceSenseService`, type `camera`, `START_NOT_STICKY`) : rafales de 3
+      images ≈ 320×240 au déverrouillage puis ~3 min écran allumé, veille écran éteint, saut si caméra prise / appel /
+      chaleur ; service tué → notification « Reprendre » (posté par le récepteur de déverrouillage ou `WatchSyncJob`) ;
+      diagnostic exportable (rafales faites / sautées, inférence, batterie `CHARGE_COUNTER`, jamais d'image ni de score)
+- [ ] **I90** par rafale ~10 nombres (sourire, yeux, sourcils, tête, mobilité, qualité) ; agrégats jour × moment ;
+      une ligne « expressivité 14 j vs votre plage », calibrée sur vos notes (Ridge + LOO) — leçons Emobot (FADS 14 j,
+      ρ 0,65) et FacePsy (personnel 0,81 vs universel 0,67 ; yeux et tête > sourire)
+- [ ] **I89** guide Shizuku / ADB dans le Diagnostic, avec lecture du mode app-op brut (0 s, 10 s, après mise à jour,
+      après redémarrage) : « accès permanent tenu / effacé par Android »
+- [ ] **I93** une fois calibré : question du soir un jour sur deux tiré au hasard + jours incertains
 - [ ] Capture opportuniste (au déverrouillage / à l'usage), scores seuls stockés, jamais d'image ni d'audio brut
 - [ ] Usage des réseaux sociaux (UsageStats par app) — **décidé au run idées du 15/10 08:30 (I78) : X**, minutes par
       app sociale via `queryEvents` du plugin existant, **exclu de l'estimateur** (lien avec l'affect très faible et dans
@@ -289,9 +303,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       aucune mesure publiée de MediaPipe en WebView Samsung → mesurer sur l'A56. Transcription locale :
       `createOnDeviceSpeechRecognizer` (API 31+, pack fr-FR à télécharger, garde `isOnDeviceRecognitionAvailable`)
 - [ ] Voix (I41) : dictée du soir = note déclarée + tags extraits + indices prosodiques (audio effacé), modèle SER
-      seulement s'il tient sur l'A56 (≤ 20 Mo, < 300 ms) — remplace à terme le formulaire de check-in (D1)
+      seulement s'il tient sur l'A56 (≤ 20 Mo, < 300 ms) — remplace à terme le formulaire de check-in (D1).
+      **I91** (16/10) : la dictée d'abord ; échantillons de fond en option, seulement sans appel ni autre capture
+      (`getActiveRecordingConfigurations()` vide), rejetés si `isClientSilenced()` ou hors de la plage de votre voix
 
 ### D5 — Anti-circularité (Y ≠ X)
+- [ ] **I92 (16/10, petit, avant tout code D4)** : `moodEstimate.js` débarrassé de ses entrées comportementales
+      (sommeil, pas, écran tard `higherIsBetter: false` = norme cachée, D6) ; calibration extraite
+      (`services/mood/calibration.js`) ; `ESTIMATOR_INPUTS` + test anti-circularité livrés avec
 - [ ] Liste déclarée des entrées de l'estimateur d'humeur + test qui échoue si une variable est aussi un facteur des
       corrélations / du modèle / des tags
       (I78 : `ESTIMATOR_INPUTS = ['face', 'voice', 'selfReport']`, `socialMediaMinutes` en X ; la capacité « émotion »
@@ -466,6 +485,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
    agrégats, budget en CI (enregistrements lus), Recommandations : panneau debug seul à lire toute la base (garde-fou).
 3. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
+   **plan vérifié au run idées du 16/10 08:30** : I92 d'abord (petit, D5), puis I88 (service + diagnostic, validé
+   sur l'A56 avant tout affichage), I90 (indices et tendance 14 j), I89 (test Shizuku / ADB), I91 (voix), I93 ;
    faits du 14/10 : visage = blendshapes MediaPipe par défaut (AUC visage ≈ 0,6 → tendance 7 j), voix = prosodie
    maison (I67), réseaux sociaux = temps au premier plan par app seulement ; sur Android 15+, « paramètres restreints »
    bloque aussi l'accès aux données d'utilisation des APK hors magasin → le guide doit l'expliquer.
@@ -534,7 +555,9 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
     7.0, 12) ; **I77** empreintes Huawei Link verrouillées par des tests + repli UUID SDP Honor (10, petit) ; **I81**
     lieux étiquetés comme X (9). Faits : poids **MediaPipe Face Landmarker sous Apache-2.0** (I73 débloquée) ; pas de
     modèle d'émotion vocale redistribuable et utile (I67 confirmée) ; ML Kit GenAI Speech encore alpha.
-14. 💡 Prochain run idées (15/10 20:30 Paris) : journal v125+ s'il arrive ; la GT 6 Pro rétablit-elle seule le lien
+14. 💡 Prochain run idées (16/10 20:30 Paris) : taille APK / inférence de MediaPipe en arm64 (Exynos 1580) ;
+    retours Samsung sur un service caméra de fond ; Bearable / Welltory (formulations). Ancien :
+    (15/10 20:30 Paris) : journal v125+ s'il arrive ; la GT 6 Pro rétablit-elle seule le lien
     Bluetooth système (condition d'I75) ; entrées du fichier stress (RRI) et dictionnaire VFC 500044 pour §7.11 bis ; comptes rendus de
     labo français.
 
@@ -575,6 +598,9 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-16 — Run « idées » 08:30 : plan D4 vérifié sur Android (règles FGS caméra / micro, `appops` lu dans AOSP,
+      partage du micro) + leçons Emobot (préprint 12/2025) et FacePsy → I88–I93 ; I92 placé en tête de D5
+- [x] 2026-10-16 — D1 : Analyses 4 → 3 écrans, méthode sous « Comment c'est calculé », une ligne par section, onglet avancé replié (PR #180 → v142, run 06:30 Paris)
 - [x] 2026-10-16 — D1 : I85 ②a « Repas tardif » déduit des repas notés (saisie, Analyses) ; Radar forme lit séances du soir et repas tardifs (PR #178 → v141, run 04:30 Paris)
 - [x] 2026-10-16 — D2 / I82 : SpO₂ de la montre en tranches de 10 min + migration unique (et après import) ; Accueil 1 954 → 546 ms, 107 k → 12,5 k enregistrements lus (30 j de SpO₂ minute) ; `npm run perf -- --spo2=minute|slot` (run 00:30 Paris)
 - [x] 2026-10-15 — D1 : « Prédiction du jour » en une ligne sous la courbe, hypothèse sommeil repliée (I87) ; I85 ① « Sport le soir » déduit des séances (saisie, Analyses) (PR #173 → v138, run 22:30 Paris)

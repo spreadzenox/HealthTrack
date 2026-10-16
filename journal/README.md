@@ -216,6 +216,26 @@ méthode est sous **« Comment c'est calculé »**, replié ; chaque section n'a
 avancé : R² et autres détails techniques rangés sous « Comment fonctionne ce modèle ? ». Les badges « Hypothèse … »
 restent sur chaque carte.
 
+**Run « idées » du 16/10 08:30** (pas de nouveau journal montre) : avant d'écrire la **lecture du visage** que vous
+avez demandée (« niveau 2 »), j'ai vérifié ce qu'Android permet vraiment, jusque dans son code source.
+- **Ça peut marcher toute la journée.** Le service est démarré une fois depuis l'interrupteur « Lecture du visage » de
+  l'app ; ensuite il garde la caméra en arrière-plan. Il prend quelques images au déverrouillage, puis toutes les
+  ~3 min tant que l'écran est allumé, et se met en veille écran éteint. Estimation : **≈ 0,2 % de batterie par jour**,
+  à confirmer sur votre A56.
+- **S'il est tué** (redémarrage, Samsung qui fait le ménage), Android lui interdit de reprendre seul la caméra. Vous
+  recevrez une notification « Lecture du visage arrêtée · **Reprendre** » : un geste suffit.
+- **La commande Shizuku / ADB `appops … CAMERA allow` ne tiendra très probablement pas** : le code d'Android remet ce
+  réglage à « pendant l'utilisation » dès qu'il le voit changer. Le guide restera dans le Diagnostic, et l'app vérifiera
+  elle-même si le réglage a tenu sur votre téléphone.
+- **Emobot a publié ses premiers chiffres** (décembre 2025) : leur app lit le visage pendant l'usage normal du
+  téléphone et résume **deux semaines** ; ça suit bien un questionnaire de dépression (17 patients). Une autre étude
+  montre qu'un modèle **appris sur vous** fait nettement mieux qu'un modèle universel. HealthTrack fera pareil : une
+  tendance sur 14 jours, calibrée sur vos notes, jamais « vous êtes triste » à l'instant.
+- **La voix** : Android coupe le micro des apps en arrière-plan pendant vos appels et vos messages vocaux, donc
+  justement quand vous parlez. La voix viendra d'abord d'une courte dictée le soir.
+Premier pas de code prévu : un petit nettoyage de l'ancien estimateur d'humeur (qui jugeait encore « écran tard =
+mauvais »), puis le service visage avec son écran de diagnostic à exporter.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Analyses plus courtes (run 16/10 06:30)** : une ligne de résumé puis vos pistes ; la méthode (week-end, tags,
   effets décalés) réunie sous « Comment c'est calculé », replié ; une ligne d'explication par section ; onglet avancé :
@@ -548,6 +568,10 @@ restent sur chaque carte.
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Lire votre visage toute la journée, sur un plan qu'Android autorise** (run 16/10 08:30) : un interrupteur, des
+  images prises au déverrouillage et toutes les ~3 min écran allumé, un geste sur une notification si le service
+  s'arrête ; une tendance sur 14 jours calibrée sur vous (comme Emobot), et la question du soir posée moins souvent une
+  fois l'estimation fiable.
 - **Alléger sans rien perdre** (run 15/10 20:30) : SpO₂ de la montre rangée par tranches de 10 min (probable cause du
   lag des courbes) ; stress ressenti compté dans l'humeur et non comme sa cause ; « Sport le soir », « Voyage »,
   « Repas tardif » déduits au lieu d'être demandés ; « Pas pertinent pour moi » sur les liens des Analyses ; sur
@@ -684,6 +708,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 02:30 — [Nettoyage : Nutrition et Vos données plus courtes](runs/2026-10-16-0230-nutrition-donnees-courtes.md) | 🧹 | PR #176 fusionnée → v140 |
 | 16/10 04:30 — [Nettoyage : « Repas tardif » déduit des repas](runs/2026-10-16-0430-repas-tardif-deduit.md) | 🧹 | PR #178 fusionnée → v141 |
 | 16/10 06:30 — [Nettoyage : Analyses plus courtes](runs/2026-10-16-0630-analyses-plus-courtes.md) | 🧹 | PR #180 fusionnée → v142 |
+| 16/10 08:30 — [Idées : visage et voix, plan Android vérifié](runs/2026-10-16-0830-idees-visage-voix-android.md) | 💡🙂 | 6 idées (I88–I93) — journal seul |
 
 ---
 
