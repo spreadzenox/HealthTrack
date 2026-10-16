@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "Analyses : vos données font foi, même contre la norme",
+  "items": [
+    "Quand vos données vont à l'inverse de ce que dit la norme générale (par exemple : chez vous, les jours où vous marchez plus ne vont pas avec un meilleur bien-être), la piste n'est plus cachée : elle s'affiche sans jugement (« Ne pas chercher à marcher davantage ») avec la mention « Contraire à l'hypothèse générale : chez vous, vos données font foi ».",
+    "Même règle pour les effets « la veille » et pour les pistes de l'analyse avancée. Seule exception : l'app ne suggère jamais de boire ou de fumer davantage ; le lien observé reste visible, tel quel, dans la liste des corrélations."
+  ]
+}

@@ -260,7 +260,17 @@ l'estimateur et facteur. L'ancien estimateur « Humeur estimée » (sommeil, pas
 calibration personnelle est gardée pour le visage et la voix. Choix noté : les réseaux sociaux seront un **facteur**,
 pas une entrée de l'humeur.
 
+**Run du 16/10 18:30** (votre règle D6, science personnelle) : les Analyses **cachaient** une piste quand vos données
+allaient à l'inverse de la norme générale (par exemple : chez vous, plus de pas les jours où vous allez moins bien, ou
+écran le soir les jours où vous allez mieux). Ce n'est plus le cas : la piste s'affiche sans jugement (« Ne pas
+chercher à marcher davantage ») avec « Contraire à l'hypothèse générale : chez vous, vos données font foi ». Même
+règle pour les effets « la veille » et l'analyse avancée. Seule exception, par prudence : l'app ne suggère jamais de
+boire ou de fumer davantage ; le lien reste visible tel quel dans les corrélations.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Vos données font foi, même contre la norme (run 16/10 18:30)** : une piste contraire à l'hypothèse générale
+  n'est plus cachée ; elle s'affiche « Ne pas chercher à … » avec « Contraire à l'hypothèse générale » (jamais plus
+  d'alcool ni de tabac).
 - **Le stress ressenti n'est plus une « cause » (run 16/10 16:30)** : la carte « Stress » quitte « Vos habitudes »
   (il fait partie de l'humeur) ; le tag reste dans la saisie et sert toujours au Radar.
 - **Accueil sans doublons (run 16/10 14:30)** : note de bien-être sur une ligne, tuiles « Bien-être » (une seule
@@ -744,7 +754,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 10:30 — [Nettoyage : page Repas plus compacte](runs/2026-10-16-1030-repas-plus-compact.md) | 🧹 | PR #183 fusionnée → v143 |
 | 16/10 12:30 — [Nettoyage : Accueil et Nutrition plus courts](runs/2026-10-16-1230-accueil-nutrition-courts.md) | 🧹 | PR #184 fusionnée → v144 |
 | 16/10 14:30 — [Nettoyage : Accueil sans doublons](runs/2026-10-16-1430-accueil-sans-doublons.md) | 🧹 | PR #185 fusionnée → v145 |
-| 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | PR à fusionner |
+| 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | #186 fusionnée (v146) |
+| 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR à fusionner |
 
 ---
 

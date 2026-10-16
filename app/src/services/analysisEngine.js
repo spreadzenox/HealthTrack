@@ -1207,9 +1207,9 @@ export function computeBasicCorrelations(entries) {
     },
     correlations,
     levers: correlations
-      .filter((c) => c.q < LEVER_MAX_Q && leverAction(c.variable, c.r))
+      .filter((c) => c.q < LEVER_MAX_Q && leverSuggestion(c.variable, c.r))
       .slice(0, 3)
-      .map((c) => ({ ...c, action: leverAction(c.variable, c.r) })),
+      .map((c) => ({ ...c, ...leverSuggestion(c.variable, c.r) })),
   }
 }
 
@@ -1219,9 +1219,12 @@ export function computeBasicCorrelations(entries) {
 export const LEVER_MAX_Q = 0.2
 
 /**
- * Variables the user can act on directly, with the healthy action in plain
- * French. Physiological outcomes (heart rate, HRV, SpO₂, body composition…)
- * are deliberately absent: "reduce your resting HR" is not something one does.
+ * Variables the user can act on directly, with the action that the general
+ * hypothesis (literature, health guidelines) would suggest, in plain French.
+ * Physiological outcomes (heart rate, HRV, SpO₂, body composition…) are
+ * deliberately absent: "reduce your resting HR" is not something one does.
+ * Each action starts with a verb so that its counter phrase reads well
+ * (« Ne pas chercher à marcher davantage »).
  */
 export const LEVER_ACTIONS = {
   sleepMinutes: 'Dormir un peu plus longtemps',
@@ -1238,33 +1241,50 @@ export const LEVER_ACTIONS = {
   screen_late_minutes: 'Lâcher le téléphone plus tôt le soir',
   phone_unlocks: 'Prendre moins souvent son téléphone',
   fodmap_score: 'Alléger les repas riches en FODMAP',
-  vitamin_c_mg: 'Plus de fruits et légumes riches en vitamine C',
-  vitamin_d_ug: 'Plus de vitamine D (poissons gras, œufs, soleil)',
-  vitamin_b12_ug: 'Plus de vitamine B12 (produits animaux, aliments enrichis)',
-  vitamin_b9_ug: 'Plus de folates (légumes verts, légumineuses)',
-  vitamin_a_ug: 'Plus de vitamine A (carottes, patate douce, légumes verts)',
-  vitamin_e_mg: 'Plus de vitamine E (oléagineux, huiles végétales)',
-  calcium_mg: 'Plus de calcium (laitages, eaux calciques, amandes)',
-  iron_mg: 'Plus de fer (légumineuses, viande, épinards)',
-  magnesium_mg: 'Plus de magnésium (oléagineux, céréales complètes, chocolat noir)',
-  zinc_mg: 'Plus de zinc (fruits de mer, viande, graines)',
-  potassium_mg: 'Plus de potassium (fruits, légumes, légumineuses)',
+  vitamin_c_mg: 'Manger plus de fruits et légumes riches en vitamine C',
+  vitamin_d_ug: 'Manger plus de vitamine D (poissons gras, œufs)',
+  vitamin_b12_ug: 'Manger plus de vitamine B12 (produits animaux, aliments enrichis)',
+  vitamin_b9_ug: 'Manger plus de folates (légumes verts, légumineuses)',
+  vitamin_a_ug: 'Manger plus de vitamine A (carottes, patate douce, légumes verts)',
+  vitamin_e_mg: 'Manger plus de vitamine E (oléagineux, huiles végétales)',
+  calcium_mg: 'Manger plus de calcium (laitages, eaux calciques, amandes)',
+  iron_mg: 'Manger plus de fer (légumineuses, viande, épinards)',
+  magnesium_mg: 'Manger plus de magnésium (oléagineux, céréales complètes, chocolat noir)',
+  zinc_mg: 'Manger plus de zinc (fruits de mer, viande, graines)',
+  potassium_mg: 'Manger plus de potassium (fruits, légumes, légumineuses)',
   sodium_mg: 'Manger moins salé',
 }
 
 /**
- * Returns the action to suggest for this variable, or null when the variable
- * is not actionable or when the observed sign contradicts the healthy
- * direction (e.g. more omega-3 linked to LOWER wellbeing → no advice: the
- * link is probably indirect, and advising the opposite of the data is wrong).
+ * Substances for which the app never phrases a counter-norm suggestion
+ * (« ne pas chercher à boire moins »), even when the personal data point
+ * that way: the link stays visible, as is, among the correlations.
  */
-export function leverAction(variable, r) {
+const NO_COUNTER_SUGGESTION = new Set(['alcohol_g', 'cigaretteCount'])
+
+function lowerFirst(text) {
+  return text.charAt(0).toLowerCase() + text.slice(1)
+}
+
+/**
+ * What to suggest for this variable, following the sign of the personal link
+ * (D6 : les données de l'utilisateur font foi, aucun sens d'effet présupposé).
+ * When the data go the way of the general hypothesis, its action is suggested;
+ * when they go the other way, the app says so neutrally (« Ne pas chercher à
+ * marcher davantage ») with `againstNorm: true`, instead of hiding the link.
+ * Returns null for non-actionable variables, a null link, or a counter-norm
+ * link on alcohol / tobacco.
+ */
+export function leverSuggestion(variable, r) {
   const action = LEVER_ACTIONS[variable]
+  if (!action || !r) return null
   const direction = VARIABLE_META[variable]?.direction
-  if (!action) return null
-  if (direction === 'higher_better' && r > 0) return action
-  if (direction === 'lower_better' && r < 0) return action
-  return null
+  const normSign = direction === 'higher_better' ? 1 : direction === 'lower_better' ? -1 : 0
+  if (normSign === 0) return null
+  if (Math.sign(r) === normSign) return { action, againstNorm: false }
+  if (NO_COUNTER_SUGGESTION.has(variable)) return null
+  const bare = action.replace(/\s*\([^)]*\)$/, '')
+  return { action: `Ne pas chercher à ${lowerFirst(bare)}`, againstNorm: true }
 }
 
 // ─── Step 5 — advanced ML analysis (OLS multiple regression) ─────────────────
@@ -2014,9 +2034,10 @@ function std(arr) {
 // ─── Advanced advice builder ──────────────────────────────────────────────────
 
 function buildAdvancedAdvice(variable, coefficient, dataset) {
-  const action = leverAction(variable, coefficient)
-  if (!action) return null
+  const suggestion = leverSuggestion(variable, coefficient)
+  if (!suggestion) return null
   const meta = VARIABLE_META[variable]
   const avg = knownMean(dataset, variable) ?? 0
-  return `${action} — votre moyenne actuelle : ${meta.format(avg)}.`
+  const note = suggestion.againstNorm ? ' Contraire à l’hypothèse générale : chez vous, vos données font foi.' : ''
+  return `${suggestion.action} — votre moyenne actuelle : ${meta.format(avg)}.${note}`
 }

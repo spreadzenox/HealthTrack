@@ -23,7 +23,7 @@
 import {
   buildDailyDataset,
   pearsonCorrelation,
-  leverAction,
+  leverSuggestion,
   VARIABLE_META,
   MIN_WEEKEND_DAYS,
 } from './analysisEngine'
@@ -175,6 +175,7 @@ export function computeLaggedEffects(entries) {
       .filter((t) => t.variable === variable)
       .sort((a, b) => a.p - b.p)[0]
     if (!best || best.q >= LAG_MAX_Q) continue
+    const suggestion = leverSuggestion(variable, best.r)
     effects.push({
       ...best,
       label: VARIABLE_META[variable].label,
@@ -183,7 +184,8 @@ export function computeLaggedEffects(entries) {
       when: lagLabel(variable, best.lag),
       strength: correlationStrength(best.r),
       evidence: evidenceLevel(best.q),
-      action: leverAction(variable, best.r),
+      action: suggestion?.action ?? null,
+      againstNorm: suggestion?.againstNorm ?? false,
     })
   }
   effects.sort((a, b) => a.q - b.q)
