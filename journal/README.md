@@ -785,7 +785,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | PR #186 fusionnée → v146 |
 | 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR #187 fusionnée → v147 |
 | 16/10 20:30 — [Idées : le visage sans télémétrie, APK léger, Samsung](runs/2026-10-16-2030-idees-visage-litert.md) | 💡🙂 | 4 idées (I94–I97) — journal seul |
-| 16/10 22:30 — [Ordre temporel : seul ce qui précède la note compte](runs/2026-10-16-2230-ordre-temporel.md) | 🔁 | PR à venir |
+| 16/10 22:30 — [Ordre temporel : seul ce qui précède la note compte](runs/2026-10-16-2230-ordre-temporel.md) | 🔁 | PR #189 |
 
 ---
 

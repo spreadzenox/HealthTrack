@@ -1,6 +1,6 @@
 # 2026-10-16 22:30 Paris (20:30 UTC) — Ordre temporel : seul ce qui précède la note compte (D5)
 
-**Type** : 🔁 D5  ·  **PR** : « [Auto] Ordre temporel : seul ce qui précède la note de bien-être compte »
+**Type** : 🔁 D5  ·  **PR** : #189 « [Auto] Ordre temporel : seul ce qui précède la note de bien-être compte »
 
 ## Pourquoi
 - Démarrage : main à `92f895b` (#188, run idées, journal seul ; dernière release v147 de #187) ; « Tests » et
