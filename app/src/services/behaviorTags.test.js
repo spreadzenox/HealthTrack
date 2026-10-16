@@ -126,10 +126,10 @@ describe('computeTagEffects', () => {
   it('measures "same day" tags on the same day wellbeing', () => {
     const entries = []
     for (let i = 0; i < 14; i++) {
-      const stressed = i % 3 === 0
-      entries.push(checkin(i, stressed ? 2 : 4, stressed ? ['stress'] : []))
+      const sick = i % 3 === 0
+      entries.push(checkin(i, sick ? 2 : 4, sick ? ['sick'] : []))
     }
-    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'stress')
+    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'sick')
     expect(e.nWith).toBe(5)
     expect(e.nWithout).toBe(9)
     expect(e.diff).toBeCloseTo(-2)
@@ -137,15 +137,15 @@ describe('computeTagEffects', () => {
 
   it('only counts days from the first time any tag was used', () => {
     const entries = []
-    // 10 old days without the feature (they must not count as "without stress").
+    // 10 old days without the feature (they must not count as "without the tag").
     for (let i = 0; i < 10; i++) entries.push(checkin(i, 5))
     for (let i = 10; i < 22; i++) {
-      const stressed = i % 2 === 0
-      entries.push(checkin(i, stressed ? 2 : 3, stressed ? ['stress'] : []))
+      const sick = i % 2 === 0
+      entries.push(checkin(i, sick ? 2 : 3, sick ? ['sick'] : []))
     }
     const res = computeTagEffects(entries)
     expect(res.trackedDays).toBe(12)
-    const e = res.effects.find((x) => x.tagId === 'stress')
+    const e = res.effects.find((x) => x.tagId === 'sick')
     expect(e.nWith + e.nWithout).toBe(12)
     expect(e.meanWithout).toBeCloseTo(3)
   })
@@ -153,14 +153,14 @@ describe('computeTagEffects', () => {
   it('merges several check-ins of the same day (mean score, union of tags)', () => {
     const entries = []
     for (let i = 0; i < 12; i++) {
-      const stressed = i % 2 === 0
-      entries.push(checkin(i, stressed ? 1 : 4, stressed ? ['stress'] : []))
+      const sick = i % 2 === 0
+      entries.push(checkin(i, sick ? 1 : 4, sick ? ['sick'] : []))
       // A second check-in the same day, without tags, with a higher score.
       const d = new Date(2026, 8, 1, 10, 0)
       d.setDate(d.getDate() + i)
-      entries.push({ type: 'wellbeing', at: d.toISOString(), payload: { score: stressed ? 3 : 4 } })
+      entries.push({ type: 'wellbeing', at: d.toISOString(), payload: { score: sick ? 3 : 4 } })
     }
-    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'stress')
+    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'sick')
     expect(e.nWith).toBe(6)
     expect(e.meanWith).toBeCloseTo(2)
   })
@@ -182,7 +182,7 @@ describe('computeTagEffects', () => {
     const entries = []
     for (let i = 0; i < 30; i++) {
       const tags = []
-      if (i % 2 === 0) tags.push('stress')
+      if (i % 2 === 0) tags.push('sick')
       if (i % 3 === 0) tags.push('late_screen')
       entries.push(checkin(i, (i % 2 === 0 ? 2 : 4) + (i % 5 === 0 ? 0.5 : 0), tags))
     }
@@ -190,7 +190,7 @@ describe('computeTagEffects', () => {
     expect(res.effects.length).toBe(2)
     expect(Math.abs(res.effects[0].diff)).toBeGreaterThanOrEqual(Math.abs(res.effects[1].diff))
     for (const e of res.effects) expect(e.q).toBeGreaterThanOrEqual(e.p)
-    expect(res.effects[0].tagId).toBe('stress')
+    expect(res.effects[0].tagId).toBe('sick')
   })
 
   describe('week-end control', () => {

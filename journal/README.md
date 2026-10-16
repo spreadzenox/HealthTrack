@@ -252,7 +252,17 @@ et la tuile « Bien-être » du résumé, qui la répétait, disparaît (elle re
 journée : elle donne alors la moyenne). Même chose pour les cigarettes : le total est dans l'en-tête de leur ligne
 (« Cigarettes 3 »), plus dans une tuile à part.
 
+**Run du 16/10 16:30** (anti-circularité, votre règle D5) : le tag **« Stress »** que vous cochez fait partie de votre
+humeur, pas de ses causes ; les Analyses ne le comparent donc plus à votre bien-être (« stressé → moins bien » ne
+vous apprenait rien). En coulisses, l'app tient enfin la **liste déclarée** de ce qui sert à estimer l'humeur (votre
+note, votre stress ressenti, puis visage et voix) et un **test bloque** toute variable qui serait à la fois entrée de
+l'estimateur et facteur. L'ancien estimateur « Humeur estimée » (sommeil, pas, écran… comme entrées) est supprimé ; sa
+calibration personnelle est gardée pour le visage et la voix. Choix noté : les réseaux sociaux seront un **facteur**,
+pas une entrée de l'humeur.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Le stress ressenti n'est plus une « cause » (run 16/10 16:30)** : la carte « Stress » quitte « Vos habitudes »
+  (il fait partie de l'humeur) ; le tag reste dans la saisie et sert toujours au Radar.
 - **Accueil sans doublons (run 16/10 14:30)** : note de bien-être sur une ligne, tuiles « Bien-être » (une seule
   note) et « Cigarettes » retirées du résumé du jour, qui les répétait.
 - **Accueil et Nutrition plus courts (run 16/10 12:30)** : aliments d'un repas à la suite sur l'Accueil (4 → 3
@@ -733,7 +743,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 08:30 — [Idées : visage et voix, plan Android vérifié](runs/2026-10-16-0830-idees-visage-voix-android.md) | 💡🙂 | 6 idées (I88–I93) — journal seul |
 | 16/10 10:30 — [Nettoyage : page Repas plus compacte](runs/2026-10-16-1030-repas-plus-compact.md) | 🧹 | PR #183 fusionnée → v143 |
 | 16/10 12:30 — [Nettoyage : Accueil et Nutrition plus courts](runs/2026-10-16-1230-accueil-nutrition-courts.md) | 🧹 | PR #184 fusionnée → v144 |
-| 16/10 14:30 — [Nettoyage : Accueil sans doublons](runs/2026-10-16-1430-accueil-sans-doublons.md) | 🧹 | PR à fusionner |
+| 16/10 14:30 — [Nettoyage : Accueil sans doublons](runs/2026-10-16-1430-accueil-sans-doublons.md) | 🧹 | PR #185 fusionnée → v145 |
+| 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | PR à fusionner |
 
 ---
 
