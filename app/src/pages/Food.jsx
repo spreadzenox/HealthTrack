@@ -174,7 +174,6 @@ export default function Food() {
   return (
     <section className="food-page">
       <h2 className="page-title">Alimentation</h2>
-      <p className="page-intro">Photographiez votre assiette, décrivez-la en quelques mots ou refaites un repas habituel en un tap.</p>
 
       <div
         className="upload-zone"
@@ -206,22 +205,23 @@ export default function Food() {
 
         <div className="upload-actions">
           <label htmlFor="camera-upload" className="upload-btn">
-            📷 {preview ? 'Reprendre' : 'Prendre une photo'}
+            📷 Photo
           </label>
           <label htmlFor="gallery-upload" className="upload-btn">
-            🖼️ {preview ? 'Galerie' : 'Choisir depuis la galerie'}
+            🖼️ Galerie
           </label>
+          {!quickMeal && (
+            <button
+              type="button"
+              className="upload-btn quick-meal-btn"
+              onClick={() => startQuickMeal()}
+              aria-label="Décrire ou saisir sans photo"
+            >
+              ✍️ Décrire
+            </button>
+          )}
         </div>
-        {!preview && (
-          <p className="hint">Utilisez l&apos;appareil photo ou la galerie sur mobile</p>
-        )}
       </div>
-
-      {!quickMeal && (
-        <button type="button" className="btn btn-secondary quick-meal-btn" onClick={() => startQuickMeal()}>
-          ✍️ Décrire ou saisir sans photo
-        </button>
-      )}
 
       {!quickMeal && habits.length > 0 && (
         <div className="meal-habits">

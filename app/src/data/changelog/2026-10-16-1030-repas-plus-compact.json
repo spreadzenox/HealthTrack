@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "Page Repas plus compacte",
+  "items": [
+    "Les trois façons de noter un repas tiennent sur une ligne en haut de la page : « Photo », « Galerie » et « Décrire ». Le texte d'explication au-dessus, qui redisait ces boutons, est retiré.",
+    "Dans « Derniers repas enregistrés », les aliments d'un repas s'affichent à la suite (« Poulet : 150 g · Riz : 180 g ») au lieu d'une ligne chacun : on voit environ deux fois plus de repas par écran."
+  ]
+}
