@@ -531,6 +531,52 @@ export const PHONE_USAGE_KEYS = {
 // ─── Step 1 — build daily dataset ────────────────────────────────────────────
 
 /**
+ * Ordre temporel (D5) : une note donnée avant cette heure laisse une bonne partie de la journée après
+ * elle. Ce jour-là, les comportements du jour ne comptent que s'ils sont terminés avant la note : ce qui
+ * suit ne peut pas l'expliquer (et peut en être la conséquence). Note à partir de cette heure : la
+ * journée est jugée finie, tout compte.
+ */
+export const DAY_OVER_HOUR = 20
+
+/**
+ * Variables du jour noté soumises à cette règle : comportements qui se déroulent pendant la journée et que
+ * l'humeur peut elle-même modifier. Les autres sont déjà antérieures (nuit au réveil, écran de la veille au
+ * soir, mesures du matin), extérieures (météo) ou lissées sur plusieurs jours (alimentation).
+ */
+export const SAME_DAY_KEYS = [
+  'steps', 'activityCalories', 'dailyCaloriesHC', 'avgHR', 'cigaretteCount', 'screen_minutes', 'phone_unlocks',
+]
+
+/** Fin d'une entrée : fin déclarée, sinon début + durée, sinon son heure. */
+function entryEndMs(e) {
+  const end = Date.parse(e.payload?.endDate ?? '')
+  if (Number.isFinite(end)) return end
+  const start = Date.parse(e.at)
+  const duration = e.payload?.durationSeconds
+  return typeof duration === 'number' && duration > 0 ? start + duration * 1000 : start
+}
+
+/**
+ * Heure de la dernière note de chaque jour noté avant DAY_OVER_HOUR (les autres jours n'ont pas de limite).
+ * @returns {Map<string, number>} dateKey → ms
+ */
+function ratingCutoffs(entries) {
+  const last = new Map()
+  for (const e of entries) {
+    if (e.type !== 'wellbeing' || !e.at) continue
+    const score = e.payload?.score
+    if (typeof score !== 'number' || score < 0 || score > 5) continue
+    const t = Date.parse(e.at)
+    if (!Number.isFinite(t)) continue
+    const dk = localDateKey(e.at)
+    if (!(last.get(dk) >= t)) last.set(dk, t)
+  }
+  const cutoffs = new Map()
+  for (const [dk, t] of last) if (new Date(t).getHours() < DAY_OVER_HOUR) cutoffs.set(dk, t)
+  return cutoffs
+}
+
+/**
  * Measurements: a day without any value is unknown (watch not worn, phone not
  * synced, no weigh-in), not 0. In the daily dataset they are null; counters
  * (cigarettes, meals, workouts, nutrients) stay at 0 when nothing was logged.
@@ -620,14 +666,20 @@ export function countTotalDataDays(entries) {
  * Nutrition fields in the day row are the raw daily totals
  * (not yet time-lagged — see buildLaggedDataset).
  *
+ * beforeRating (analyses du bien-être du jour) : les SAME_DAY_KEYS d'un jour noté avant DAY_OVER_HOUR
+ * ne comptent que ce qui s'est terminé avant la note (X avant Y).
+ *
  * @param {Array} entries  raw entries from listEntries()
- * @param {{ includeDaysWithoutWellbeing?: boolean }} [options]
+ * @param {{ includeDaysWithoutWellbeing?: boolean, beforeRating?: boolean }} [options]
  * @returns {Array<DayRow>}  sorted ascending by dateKey
  */
-export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false } = {}) {
+export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false, beforeRating = false } = {}) {
   if (!entries || entries.length === 0) return []
 
   const days = new Map()
+  const cutoffs = beforeRating ? ratingCutoffs(entries) : new Map()
+  /** Comportement du jour terminé après la note de ce jour (voir DAY_OVER_HOUR). */
+  const afterRating = (dk, e) => cutoffs.has(dk) && entryEndMs(e) > cutoffs.get(dk)
 
   function getDay(dateKey) {
     if (!days.has(dateKey)) {
@@ -728,6 +780,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
         break
 
       case 'steps': {
+        if (afterRating(dk, e)) break
         const val = e.payload?.value
         if (typeof val === 'number' && val > 0) {
           // Total du jour (Health Connect agrégé, montre) et tranches couvrent les mêmes pas : le plus grand des deux
@@ -738,6 +791,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       }
 
       case 'activity': {
+        if (afterRating(dk, e)) break
         const cal = e.payload?.totalCalories
         if (typeof cal === 'number' && cal > 0) {
           day.activityCalories += cal
@@ -754,7 +808,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
             day._hrCount += 1
           }
         } else if (subtype === 'heartRate') {
-          if (typeof bpm === 'number' && bpm > 0) {
+          if (typeof bpm === 'number' && bpm > 0 && !afterRating(dk, e)) {
             day._avgHRSum += bpm
             day._avgHRCount += 1
           }
@@ -775,6 +829,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       }
 
       case 'calories': {
+        if (afterRating(dk, e)) break
         const cal = e.payload?.value
         if (typeof cal === 'number' && cal > 0) {
           if (e.payload?.period === 'day') day._kcalDay = Math.max(day._kcalDay || 0, cal)
@@ -784,6 +839,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       }
 
       case 'cigarette': {
+        if (afterRating(dk, e)) break
         const count = e.payload?.count
         if (typeof count === 'number' && count > 0) {
           day.cigaretteCount += count
@@ -860,7 +916,10 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
 
       case 'phone_usage': {
         const p = e.payload || {}
+        // Journée entière, sans heure : inconnue un jour noté tôt ; l'écran tard (veille au soir) reste.
+        const wholeDayAfter = cutoffs.has(dk)
         for (const [key, field] of Object.entries(PHONE_USAGE_KEYS)) {
+          if (wholeDayAfter && SAME_DAY_KEYS.includes(key)) continue
           if (isKnown(p[field])) day[key] = p[field]
         }
         break
@@ -1125,7 +1184,7 @@ function _fitAdvancedModel(trainRows) {
  * @returns {BasicResult}
  */
 export function computeBasicCorrelations(entries) {
-  const rawDataset = buildDailyDataset(entries)
+  const rawDataset = buildDailyDataset(entries, { beforeRating: true })
   const n = rawDataset.length
 
   if (n < MIN_DAYS_BASIC) {
@@ -1600,7 +1659,7 @@ function _selectFeatureKeys(trainRows) {
  * @returns {AdvancedResult}
  */
 export function computeAdvancedAnalysis(entries) {
-  const rawDataset = buildDailyDataset(entries)
+  const rawDataset = buildDailyDataset(entries, { beforeRating: true })
   const n = rawDataset.length
 
   // We need at least MIN_DAYS_ADVANCED training days PLUS the hold-out window

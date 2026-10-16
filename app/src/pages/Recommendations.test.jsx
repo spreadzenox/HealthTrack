@@ -30,7 +30,7 @@ function makeEntries(days = 0) {
     entries.push({
       type: 'wellbeing',
       source: 'app_wellbeing',
-      at: `${date}T12:00:00Z`,
+      at: new Date(`${date}T21:30:00`).toISOString(), // le soir : toute la journée compte
       payload: { score: 2 + (d % 4) },
       id: d,
       created_at: `${date}T12:00:00Z`,
@@ -669,6 +669,7 @@ describe('Recommendations — explanations grouped (D1)', () => {
     expect(note).toHaveTextContent(/le lendemain qui compte/)
     expect(note).toHaveTextContent(/bien-être de la veille égal/)
     expect(note).toHaveTextContent(/une corrélation ne prouve pas une cause/)
+    expect(note).toHaveTextContent(/Un jour noté avant 20 h, seuls les pas.*d’avant la note comptent|Un jour noté avant 20 h, seuls les pas.*d'avant la note comptent/)
   })
 
   it('says « a correlation is not a cause » once, not in every section', async () => {
