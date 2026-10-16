@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "Accueil et Nutrition plus courts",
+  "items": [
+    "Sur l'Accueil, dans « Vos derniers jours », les aliments d'un repas s'affichent à la suite (« Poulet : 150 g · Riz : 180 g »), comme sur la page Repas : l'Accueil tient sur un écran de moins.",
+    "Sur la page Nutrition, quand vos jours saisis comptent bien moins que vos besoins, une seule phrase le dit (« ≈ 614 kcal par jour saisi sur ~2 619 : des repas manquent sans doute ») à la place du nombre de repères atteints, qui serait trompeur dans ce cas."
+  ]
+}

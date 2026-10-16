@@ -143,15 +143,16 @@ export default function Nutrition() {
             {comparison.mealCount}{'\u00a0'}repas{'\u00a0· '}{comparison.loggedDays}{'\u00a0'}jour
             {comparison.loggedDays > 1 ? 's' : ''}
           </p>
-          <p className="nutrition-summary">
-            <strong>{comparison.reachedCount}</strong> repère{comparison.reachedCount > 1 ? 's' : ''} atteint
-            {comparison.reachedCount > 1 ? 's' : ''} sur {comparison.targetCount}
-          </p>
-          {comparison.likelyIncomplete && (
+          {/* Jours incomplets : le compte de repères atteints serait trompeur, l'avertissement le remplace */}
+          {comparison.likelyIncomplete ? (
             <p className="nutrition-warning">
-              Vos jours saisis comptent en moyenne {formatNutrientAmount(comparison.energyPerDay)} kcal,
-              moins de la moitié de vos besoins : des repas manquent sans doute, les apports
-              ci-dessous sont donc sous-estimés.
+              ≈{'\u00a0'}{formatNutrientAmount(comparison.energyPerDay)} kcal par jour saisi sur
+              ~{formatNutrientAmount(comparison.energyTarget)} : des repas manquent sans doute, apports sous-estimés.
+            </p>
+          ) : (
+            <p className="nutrition-summary">
+              <strong>{comparison.reachedCount}</strong> repère{comparison.reachedCount > 1 ? 's' : ''} atteint
+              {comparison.reachedCount > 1 ? 's' : ''} sur {comparison.targetCount}
             </p>
           )}
           <div className="nutrition-legend" aria-hidden="true">

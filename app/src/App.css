@@ -438,8 +438,17 @@
   padding: 0;
 }
 
-.entry-items li {
-  padding: 2px 0;
+/* Aliments d'un repas sur une ligne qui se replie : « Poulet : 150 g · Riz : 180 g » (Accueil et page Repas) */
+/* Un aliment ne se coupe pas en fin de ligne, sauf s'il est plus long qu'une ligne */
+.inline-list li {
+  display: inline-block;
+  max-width: 100%;
+  margin-right: 0.3em;
+}
+
+.inline-list li:not(:last-child)::after {
+  content: ' ·';
+  color: var(--text-muted);
 }
 
 .entry-more {
