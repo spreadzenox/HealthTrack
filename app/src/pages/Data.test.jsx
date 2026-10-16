@@ -71,6 +71,13 @@ describe('Data page — export (web)', () => {
     expect(screen.getByRole('button', { name: /Télécharger la sauvegarde/i })).toBeInTheDocument()
   })
 
+  it('reste court : pas de mode d’emploi navigateur ni de chemin de fichier avant l’export (D1)', () => {
+    const { container } = renderData()
+    expect(container.textContent).not.toMatch(/navigateur/i)
+    expect(container.textContent).not.toMatch(/Fichiers > Téléphone/)
+    expect(container.querySelectorAll('.data-hint')).toHaveLength(2)
+  })
+
   it('clicking export creates a blob URL and triggers download via anchor click', async () => {
     renderData()
     await act(async () => {
@@ -160,7 +167,7 @@ describe('Data page — export (Android native)', () => {
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
     })
-    expect(screen.getByText(/Documents de votre appareil/i)).toBeInTheDocument()
+    expect(screen.getByText(/healthtrack-export-.*\.json enregistré dans Documents/i)).toBeInTheDocument()
   })
 })
 

@@ -37,8 +37,16 @@ describe('Nutrition page', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /nutrition/i })).toBeInTheDocument()
     })
-    expect(screen.getByText(/^Poids :/)).toBeInTheDocument()
-    expect(screen.getByText(/^Taille :/)).toBeInTheDocument()
+    expect(screen.getByText('70 kg')).toBeInTheDocument()
+    expect(screen.getByText('170 cm')).toBeInTheDocument()
+  })
+
+  it('résume le profil en deux lignes, sans paragraphe d’introduction (D1)', async () => {
+    const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    await screen.findByText('70 kg')
+    expect(container.querySelectorAll('.nutrition-profile-line')).toHaveLength(2)
+    expect(container.textContent).not.toMatch(/Poids :|Taille :|Sexe :|Âge :/)
+    expect(container.textContent).not.toMatch(/repères officiels/)
   })
 
   it('shows per-day averages vs daily targets, sodium as a limit', async () => {
@@ -54,7 +62,7 @@ describe('Nutrition page', () => {
         <Nutrition />
       </MemoryRouter>,
     )
-    expect(await screen.findByText(/1 jour saisi/)).toBeInTheDocument()
+    expect(await screen.findByText(/1\s*jour\b/)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'À limiter' })).toBeInTheDocument()
     expect(screen.getByText(/max 2 000 mg/)).toBeInTheDocument()
     expect(screen.getByText(/obj\. 30 g/)).toBeInTheDocument()
@@ -130,8 +138,7 @@ describe('Nutrition page', () => {
 
   it('indique le niveau d\'activité utilisé (par défaut sans pas mesurés)', async () => {
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
-    expect(await screen.findByText(/^Activité :/)).toBeInTheDocument()
-    expect(screen.getByText('Modérément actif')).toBeInTheDocument()
+        expect(await screen.findByText('Modérément actif')).toBeInTheDocument()
     expect(screen.getByText(/\(par défaut\)/, { selector: '.nutrition-profile-activity *' })).toBeInTheDocument()
   })
 
@@ -145,7 +152,7 @@ describe('Nutrition page', () => {
     loadNutritionEntries.mockResolvedValue(days)
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
     expect(await screen.findByText('Très actif')).toBeInTheDocument()
-    expect(screen.getByText(/11\s000 pas\/jour en moyenne/)).toBeInTheDocument()
+    expect(screen.getByText(/11\s000 pas\/jour sur 10 jours/)).toBeInTheDocument()
     loadNutritionEntries.mockResolvedValue([])
   })
 

@@ -7,9 +7,11 @@ import { computeDailyEnergyKcal, ACTIVITY_LEVELS, activityLevel } from '../servi
 
 const formatNumber = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)
 const formatInt = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(v)
-const formatDate = (iso) => new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' }).format(new Date(iso))
 
 const SEX_LABEL = { M: 'Homme', F: 'Femme' }
+// Le point reste collé à la valeur qui le précède : une ligne repliée ne commence jamais par « · ».
+const SEP = '\u00a0· '
+const formatDayMonth = (iso) => new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit' }).format(new Date(iso))
 
 function parseDecimal(text) {
   const t = String(text ?? '').trim().replace(',', '.')
@@ -152,11 +154,13 @@ export default function BodyProfileCard({ profile, onSaved }) {
   }
 
   const weightHint = origins.weight === 'withings'
-    ? `(Withings, ${formatDate(profile.weightAt)})`
+    ? `(Withings, ${formatDayMonth(profile.weightAt)})`
     : origins.weight === 'manual'
-      ? `(saisi le ${formatDate(profile.weightAt)})`
+      ? `(saisi le ${formatDayMonth(profile.weightAt)})`
       : '(par défaut)'
+  const defaultHint = (origin) => origin === 'default' && <Hint>(par défaut)</Hint>
 
+  // Deux lignes au lieu d'une ligne par valeur (D1) : le corps, puis ce qui fixe l'énergie.
   return (
     <div className="nutrition-profile-card">
       <div className="nutrition-profile-head">
@@ -165,33 +169,26 @@ export default function BodyProfileCard({ profile, onSaved }) {
           {allDefault ? 'Compléter mon profil' : 'Modifier'}
         </button>
       </div>
-      <div>
-        <strong>Poids :</strong> {formatNumber(profile.weightKg)} kg<Hint>{weightHint}</Hint>
-      </div>
-      <div>
-        <strong>Taille :</strong> {profile.heightCm} cm
+      <p className="nutrition-profile-line">
+        <span>{formatNumber(profile.weightKg)} kg</span><Hint>{weightHint}</Hint>
+        {SEP}<span>{profile.heightCm} cm</span>
         {origins.height === 'withings' && <Hint>(Withings)</Hint>}
-        {origins.height === 'default' && <Hint>(par défaut)</Hint>}
-      </div>
-      <div>
-        <strong>Sexe :</strong>{' '}
-        {profile.sex ? <span>{SEX_LABEL[profile.sex]}</span> : <span>non renseigné</span>}
-        {origins.sex === 'default' && <Hint>(par défaut : homme)</Hint>}
-      </div>
-      <div>
-        <strong>Âge :</strong>{' '}
-        {profile.age ? `${profile.age} ans` : 'non renseigné'}
-        {origins.age === 'default' && <Hint>(30 ans par défaut)</Hint>}
-      </div>
-      <div className="nutrition-profile-activity">
-        <strong>Activité :</strong> <span>{activityLevel(profile.activity).label}</span>
-        {origins.activity === 'steps' && (
-          <Hint>(≈ {formatInt(profile.meanSteps)} pas/jour en moyenne sur {profile.stepsDays} jours)</Hint>
-        )}
-        {origins.activity === 'default' && <Hint>(par défaut)</Hint>}
-      </div>
-      {bmi != null && <div><strong>IMC :</strong> {formatNumber(bmi)}</div>}
-      <div><strong>Énergie recommandée :</strong> ~{formatNumber(dailyKcal)} kcal/jour</div>
+        {defaultHint(origins.height)}
+        {bmi != null && <>{SEP}<span>IMC{'\u00a0'}{formatNumber(bmi)}</span></>}
+      </p>
+      <p className="nutrition-profile-line">
+        <span>{SEX_LABEL[profile.sex] ?? 'Homme'}</span>{defaultHint(origins.sex)}
+        {SEP}<span>{profile.age ?? 30} ans</span>{defaultHint(origins.age)}
+        {SEP}
+        <span className="nutrition-profile-activity">
+          <span>{activityLevel(profile.activity).label}</span>
+          {origins.activity === 'steps' && (
+            <Hint>(≈ {formatInt(profile.meanSteps)} pas/jour sur {profile.stepsDays} jours)</Hint>
+          )}
+          {defaultHint(origins.activity)}
+        </span>
+        {SEP}<strong>~{formatNumber(dailyKcal)} kcal/jour</strong>
+      </p>
       {anyDefault && (
         <p className="nutrition-profile-hint">
           Les valeurs par défaut faussent vos repères (énergie, protéines, fer…) : complétez votre profil

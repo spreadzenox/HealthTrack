@@ -79,7 +79,7 @@ export default function Data() {
           data: base64,
           directory: Directory.Documents,
         })
-        setExportStatus('Fichier enregistré dans le dossier Documents de votre appareil.')
+        setExportStatus(`${filename} enregistré dans Documents (app Fichiers > Téléphone > Documents).`)
       } else {
         const blob = new Blob([json], { type: 'application/json' })
         const url = URL.createObjectURL(blob)
@@ -158,18 +158,15 @@ export default function Data() {
     <section className="food-page">
       <h2 className="page-title">Vos données</h2>
       <p className="page-intro">
-        Toutes vos données (repas, bien-être, mesures de la montre et de la balance) sont stockées <strong>uniquement sur cet appareil</strong>.
-        Elles survivent aux mises à jour de l’app. Pour les conserver après une réinstallation, exportez un fichier puis réimportez-le.
+        Vos données restent <strong>uniquement sur cet appareil</strong> et survivent aux mises à jour.
+        Avant de réinstaller ou de changer de téléphone, exportez-les.
       </p>
 
       <div className="data-actions">
         <div className="data-block">
           <h3 className="section-title">Exporter (sauvegarde)</h3>
           <p className="data-hint">
-            Téléchargez un fichier JSON contenant toutes vos entrées et votre profil (sexe, âge, taille, activité).
-            Sur Android, le fichier est enregistré dans le dossier <strong>Documents</strong> de votre appareil
-            (application Fichiers &gt; Téléphone &gt; Documents).
-            Sur navigateur, le fichier est téléchargé via votre navigateur — enregistrez-le dans un dossier persistant.
+            Un fichier avec toutes vos entrées et votre profil, rangé dans <strong>Documents</strong>.
           </p>
           <button type="button" className="btn" onClick={handleExport}>
             Télécharger la sauvegarde
@@ -180,9 +177,7 @@ export default function Data() {
         <div className="data-block">
           <h3 className="section-title">Importer (restaurer)</h3>
           <p className="data-hint">
-            Après une réinstallation ou un changement de téléphone, choisissez un fichier exporté précédemment.
-            Vous verrez son contenu avant de choisir : <strong>ajouter</strong> à vos données actuelles (sans doublons)
-            ou les <strong>remplacer</strong>.
+            Vous verrez son contenu avant de choisir : <strong>ajouter</strong> (sans doublons) ou <strong>remplacer</strong>.
           </p>
           <input
             ref={fileInputRef}
