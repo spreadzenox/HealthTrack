@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
-import { computeHeartBaselines, RECENT_DAYS, BASELINE_DAYS } from '../services/baselines'
+import { computeHeartBaselines, BASELINE_METRICS, RECENT_DAYS, BASELINE_DAYS } from '../services/baselines'
 import './BaselineCards.css'
 
 // 7 jours récents + 60 jours de norme, avec un peu de marge
@@ -90,7 +90,8 @@ export default function BaselineCards() {
   const load = useCallback(async () => {
     try {
       const since = new Date(Date.now() - HISTORY_DAYS * 86400000).toISOString()
-      const entries = await listEntries({ type: 'heart_rate', since, limit: Infinity })
+      // FC repos et VFC seulement, pas les tranches de FC / SpO₂ (perf D2)
+      const entries = await listEntries({ type: 'heart_rate', subtypes: Object.keys(BASELINE_METRICS), since, limit: Infinity })
       setBaselines(computeHeartBaselines(entries))
     } catch {
       setBaselines([])

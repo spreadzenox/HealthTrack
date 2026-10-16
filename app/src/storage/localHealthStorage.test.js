@@ -565,8 +565,97 @@ describe('lectures par index (D2 performance)', () => {
       const req = indexedDB.open('HealthTrack')
       req.onsuccess = () => resolve(req.result)
     })
-    expect(db.version).toBe(3)
+    expect(db.version).toBeGreaterThanOrEqual(3)
     expect([...db.transaction('health_entries').objectStore('health_entries').indexNames]).toContain('type_at')
+    db.close()
+  })
+})
+
+describe('lecture par sous-type (D2 performance)', () => {
+  // 10 jours : FC toutes les 10 min, SpO₂ en tranches, une FC repos et une VFC par jour, une entrée sans sous-type
+  const rows = () => {
+    const out = []
+    for (let d = 0; d < 10; d++) {
+      const day = Date.UTC(2026, 9, 1 + d)
+      for (let m = 0; m < 1440; m += 10) {
+        const at = new Date(day + m * 60000).toISOString()
+        out.push({ type: 'heart_rate', source: 'huawei_watch', at, payload: { subtype: 'heartRate', value: 70 } })
+        const at5 = new Date(day + (m + 5) * 60000).toISOString()
+        out.push({ type: 'heart_rate', source: 'huawei_watch', at: at5, payload: { subtype: 'oxygenSaturation', value: 97 } })
+      }
+      const morning = new Date(day + 7 * 3600000 + 3 * 60000).toISOString()
+      out.push({ type: 'heart_rate', source: 'huawei_watch', at: morning, payload: { subtype: 'restingHeartRate', value: 55 + d } })
+      out.push({ type: 'heart_rate', source: 'health_connect', at: morning, payload: { subtype: 'heartRateVariability', value: 40 + d } })
+      out.push({ type: 'heart_rate', source: 'old', at: morning, payload: { bpm: 60 } })
+      out.push({ type: 'sleep', source: 'huawei_watch', at: morning, payload: { subtype: 'restingHeartRate' } })
+    }
+    return out
+  }
+
+  it('ne renvoie que les sous-types demandés, du type demandé, dans la plage, du plus récent au plus ancien', async () => {
+    await upsertEntries(rows())
+    const since = '2026-10-04T00:00:00.000Z'
+    const got = await listEntries({ type: 'heart_rate', subtypes: ['restingHeartRate', 'heartRateVariability'], since, limit: Infinity })
+    expect(got).toHaveLength(14)
+    expect(got.every((e) => e.type === 'heart_rate' && e.at >= since)).toBe(true)
+    expect(new Set(got.map((e) => e.payload.subtype))).toEqual(new Set(['restingHeartRate', 'heartRateVariability']))
+    const ats = got.map((e) => e.at)
+    expect(ats).toEqual([...ats].sort().reverse())
+  })
+
+  it('lit seulement les entrées des sous-types demandés (pas toute la FC)', async () => {
+    await upsertEntries(rows())
+    const proto = globalThis.IDBIndex.prototype
+    const orig = proto.getAll
+    let records = 0
+    proto.getAll = function (...a) {
+      const req = orig.apply(this, a)
+      req.addEventListener('success', () => { records += req.result.length })
+      return req
+    }
+    try {
+      await listEntries({ type: 'heart_rate', subtypes: ['restingHeartRate', 'heartRateVariability'], since: '2026-10-01T00:00:00.000Z', limit: Infinity })
+    } finally {
+      proto.getAll = orig
+    }
+    expect(records).toBe(20)
+  })
+
+  it('sans sous-types : comportement inchangé (toutes les entrées du type)', async () => {
+    await upsertEntries(rows())
+    const got = await listEntries({ type: 'heart_rate', since: '2026-10-10T00:00:00.000Z', limit: Infinity })
+    expect(got).toHaveLength(144 * 2 + 3)
+  })
+
+  it('migration v3 → v4 : les données restent, l\'index [type, sous-type, at] est ajouté', async () => {
+    await new Promise((resolve, reject) => {
+      const req = indexedDB.open('HealthTrack', 3)
+      req.onupgradeneeded = () => {
+        const store = req.result.createObjectStore('health_entries', { keyPath: 'id', autoIncrement: true })
+        store.createIndex('at', 'at', { unique: false })
+        store.createIndex('type', 'type', { unique: false })
+        store.createIndex('source', 'source', { unique: false })
+        store.createIndex('source_at', ['source', 'at'], { unique: false })
+        store.createIndex('type_at', ['type', 'at'], { unique: false })
+        store.add({ type: 'heart_rate', source: 'old', payload: { subtype: 'restingHeartRate', value: 52 }, at: '2025-12-01T07:00:00.000Z', created_at: '2025-12-01T07:00:00.000Z' })
+        store.add({ type: 'heart_rate', source: 'old', payload: { subtype: 'heartRate', value: 80 }, at: '2025-12-01T08:00:00.000Z', created_at: '2025-12-01T08:00:00.000Z' })
+        store.add({ type: 'heart_rate', source: 'old', payload: null, at: '2025-12-01T09:00:00.000Z', created_at: '2025-12-01T09:00:00.000Z' })
+      }
+      req.onsuccess = () => {
+        req.result.close()
+        resolve()
+      }
+      req.onerror = () => reject(req.error)
+    })
+    const got = await listEntries({ type: 'heart_rate', subtypes: ['restingHeartRate'], since: '2025-11-01T00:00:00.000Z', limit: Infinity })
+    expect(got.map((e) => e.payload.value)).toEqual([52])
+    expect(await countAllEntries()).toBe(3)
+    const db = await new Promise((resolve) => {
+      const req = indexedDB.open('HealthTrack')
+      req.onsuccess = () => resolve(req.result)
+    })
+    expect(db.version).toBe(4)
+    expect([...db.transaction('health_entries').objectStore('health_entries').indexNames]).toContain('type_subtype_at')
     db.close()
   })
 })

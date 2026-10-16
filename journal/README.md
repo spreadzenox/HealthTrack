@@ -290,7 +290,17 @@ l'alimentation (lissée sur 10 jours) n'étaient pas concernés. Point d'attenti
 le lien « pas du jour » s'appuiera sur moins de jours — c'est le prix d'un résultat honnête ; les effets « la
 veille » restent calculés sur tout.
 
+**Run du 17/10 00:30** (performance, pas de nouveau journal montre) : **l'Accueil s'ouvre plus vite**. Le Radar forme
+et les cartes « FC au repos » / « VFC » n'utilisent qu'une valeur par jour, mais chacun relisait **toutes** les
+tranches de fréquence cardiaque et de SpO₂ de votre montre des deux derniers mois. Ils ne lisent plus que ce dont ils
+ont besoin (nouvel index dans la base, ajouté tout seul à la mise à jour, vos données ne bougent pas). Mesuré sur
+3 ans de démo avec montre : **4 fois moins de mesures lues** (16 210 → 3 988), Accueil utilisable en **0,4 s au lieu
+de 0,7 s** ; avec votre vraie montre (6 fois plus de tranches de cœur que la démo), le gain devrait être plus net.
+Rien ne change à l'écran. **Dites-moi si l'Accueil vous paraît encore lent.**
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Accueil plus rapide à ouvrir (run 17/10 00:30)** : Radar forme, FC au repos et VFC ne relisent plus toutes les
+  tranches de cœur et de SpO₂ de la montre (16 210 → 3 988 mesures lues, 0,7 → 0,4 s sur la démo).
 - **Analyses : seul ce qui précède votre note compte (run 16/10 22:30)** : un jour noté avant 20 h, les pas,
   séances, cigarettes et le temps d'écran d'après la note ne sont plus comparés à elle.
 - **Vos données font foi, même contre la norme (run 16/10 18:30)** : une piste contraire à l'hypothèse générale
@@ -785,7 +795,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | PR #186 fusionnée → v146 |
 | 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR #187 fusionnée → v147 |
 | 16/10 20:30 — [Idées : le visage sans télémétrie, APK léger, Samsung](runs/2026-10-16-2030-idees-visage-litert.md) | 💡🙂 | 4 idées (I94–I97) — journal seul |
-| 16/10 22:30 — [Ordre temporel : seul ce qui précède la note compte](runs/2026-10-16-2230-ordre-temporel.md) | 🔁 | PR #189 |
+| 16/10 22:30 — [Ordre temporel : seul ce qui précède la note compte](runs/2026-10-16-2230-ordre-temporel.md) | 🔁 | PR #189 fusionnée → v148 |
+| 17/10 00:30 — [Accueil : le cœur lu par sous-type](runs/2026-10-17-0030-accueil-coeur-par-sous-type.md) | ⚡ | PR #190 |
 
 ---
 
