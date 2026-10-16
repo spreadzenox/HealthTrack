@@ -1,6 +1,6 @@
 # 2026-10-16 08:30 Paris (06:30 UTC) — Run « idées » : l'humeur par le visage et la voix, ce qu'Android permet vraiment
 
-**Type** : 💡 idées (D4, D5, D6, D1)  ·  **PR** : « [Auto] Idées : visage et voix, plan Android vérifié »
+**Type** : 💡 idées (D4, D5, D6, D1)  ·  **PR** : #182 « [Auto] Idées : visage et voix, plan Android vérifié »
 
 ## Pourquoi
 - 08:30 Paris = run « idées » : pas de code produit.
@@ -41,8 +41,8 @@
 | I93 | Question du soir un jour sur deux tiré au hasard + jours incertains, une fois calibré | 12 |
 
 ## Vérifications
-- Journal seul modifié. `npm run test` et `npm run build` : voir la PR (résultats recopiés ci-dessous après exécution).
-  Pas de `visual` : aucun code de l'app touché.
+- Journal seul modifié. `npm run test` : **1290 ✅** (100 fichiers) ; `npm run build` ✅. Pas de `visual` : aucun code
+  de l'app touché. PR #182.
 
 ## Apprentissages / décisions
 - **Décision** : le « niveau 2 » se fera **sans compter sur `appops`**. Le service visage est créé depuis
