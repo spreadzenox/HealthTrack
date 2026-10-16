@@ -450,7 +450,7 @@ describe('Recommendations — behaviour tags', () => {
     expect(alcohol).toHaveTextContent(/week-end comparé au week-end.*−0,3 point/i)
     const stress = screen.getByText('Stress').closest('.reco-tag-card')
     expect(stress).not.toHaveTextContent(/week-end comparé/i)
-    expect(screen.getByText(/Vos habitudes/).closest('section')).toHaveTextContent(
+    expect(document.querySelector('.reco-method-note')).toHaveTextContent(
       /week-ends sont comparés aux week-ends/i,
     )
     expect(screen.getByText(/En cours de collecte/i)).toHaveTextContent(
@@ -614,5 +614,48 @@ describe('Recommendations — lagged effects', () => {
     renderPage()
     const section = (await screen.findByText(/Effets décalés/)).closest('section')
     expect(section).toHaveTextContent(/Aucun effet décalé net/)
+  })
+})
+
+// ─── Nettoyage D1 : une seule explication de méthode, repliée ────────────────
+
+describe('Recommendations — explanations grouped (D1)', () => {
+  it('groups method, week-end, tags and delayed-effects explanations in one collapsed note', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
+    renderPage()
+    const note = (await screen.findByText(/Comment c.est calculé/)).closest('details')
+    expect(note).not.toHaveAttribute('open')
+    expect(note).toHaveTextContent(/Benjamini-Hochberg/)
+    expect(note).toHaveTextContent(/le lendemain qui compte/)
+    expect(note).toHaveTextContent(/bien-être de la veille égal/)
+    expect(note).toHaveTextContent(/une corrélation ne prouve pas une cause/)
+  })
+
+  it('says « a correlation is not a cause » once, not in every section', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
+    renderPage()
+    await screen.findByText(/Comment c.est calculé/)
+    const text = document.querySelector('.reco-tab-content').textContent
+    expect(text.match(/corrélation ne prouve pas une cause/g)).toHaveLength(1)
+    expect(text).toMatch(/pas un avis médical/)
+    for (const hint of document.querySelectorAll('.reco-section-hint')) {
+      expect(hint.textContent.length).toBeLessThan(110)
+    }
+  })
+  it('advanced tab: one short summary line, model details folded in one note', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
+    renderPage()
+    fireEvent.click(await screen.findByRole('button', { name: /Analyse avancée/i }))
+    const meta = await screen.findByText(/Analyse sur/i)
+    expect(meta.closest('p').textContent).not.toMatch(/R²|Variables retenues|Régression/)
+    const note = screen.getByText(/Comment fonctionne ce modèle/).closest('details')
+    expect(note).toHaveTextContent(/Régression linéaire multiple|Corrélation de Pearson/)
+    expect(note).toHaveTextContent(/Variables redondantes écartées/)
+    for (const hint of document.querySelectorAll('.reco-section-hint')) {
+      expect(hint.textContent.length).toBeLessThan(110)
+    }
   })
 })
