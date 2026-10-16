@@ -240,7 +240,15 @@ mauvais »), puis le service visage avec son écran de diagnostic à exporter.
 seule ligne de trois boutons : **Photo**, **Galerie**, **Décrire** (fini le texte qui les redisait et l'aide « sur
 mobile »). Dans vos derniers repas, les aliments sont à la suite sur une ligne : la page passe de 3 à 2 écrans.
 
+**Run du 16/10 12:30** (nettoyage, pas de nouveau journal montre) : même traitement sur l'**Accueil** : dans « Vos
+derniers jours », les aliments d'un repas sont à la suite (« Poulet : 150 g · Riz : 180 g »), l'Accueil passe de 4 à
+3 écrans. **Nutrition** : quand vos jours saisis comptent bien moins que vos besoins, une seule ligne le dit
+(« ≈ 614 kcal par jour saisi sur ~2 619 : des repas manquent sans doute ») et remplace le « 1 repère atteint sur 14 »,
+trompeur dans ce cas.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Accueil et Nutrition plus courts (run 16/10 12:30)** : aliments d'un repas à la suite sur l'Accueil (4 → 3
+  écrans) ; Nutrition : avertissement « repas manquants » en une phrase, à la place du compte de repères trompeur.
 - **Page Repas plus compacte (run 16/10 10:30)** : Photo, Galerie et Décrire sur une ligne ; aliments d'un repas à
   la suite (« Poulet : 150 g · Riz : 180 g »), deux fois plus de repas par écran.
 - **Analyses plus courtes (run 16/10 06:30)** : une ligne de résumé puis vos pistes ; la méthode (week-end, tags,
@@ -715,7 +723,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 04:30 — [Nettoyage : « Repas tardif » déduit des repas](runs/2026-10-16-0430-repas-tardif-deduit.md) | 🧹 | PR #178 fusionnée → v141 |
 | 16/10 06:30 — [Nettoyage : Analyses plus courtes](runs/2026-10-16-0630-analyses-plus-courtes.md) | 🧹 | PR #180 fusionnée → v142 |
 | 16/10 08:30 — [Idées : visage et voix, plan Android vérifié](runs/2026-10-16-0830-idees-visage-voix-android.md) | 💡🙂 | 6 idées (I88–I93) — journal seul |
-| 16/10 10:30 — [Nettoyage : page Repas plus compacte](runs/2026-10-16-1030-repas-plus-compact.md) | 🧹 | PR à fusionner |
+| 16/10 10:30 — [Nettoyage : page Repas plus compacte](runs/2026-10-16-1030-repas-plus-compact.md) | 🧹 | PR #183 fusionnée → v143 |
+| 16/10 12:30 — [Nettoyage : Accueil et Nutrition plus courts](runs/2026-10-16-1230-accueil-nutrition-courts.md) | 🧹 | PR à fusionner |
 
 ---
 

@@ -69,6 +69,19 @@ describe('Nutrition page', () => {
     expect(screen.getByText(/pas un diagnostic/i)).toBeInTheDocument()
   })
 
+  it('jours incomplets : une seule ligne d’avertissement, sans compte de repères trompeur (D1)', async () => {
+    loadNutritionEntries.mockResolvedValueOnce([
+      { type: 'food', at: yesterdayNoon(), payload: { items: [{ ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 200 }] } },
+    ])
+    const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    await screen.findByText(/1\s*jour\b/)
+    const warning = container.querySelector('.nutrition-warning')
+    expect(warning.textContent).toMatch(/kcal par jour saisi sur ~\s?2\s?\d{3}/)
+    expect(warning.textContent).toMatch(/des repas manquent sans doute/)
+    expect(warning.textContent.length).toBeLessThan(110)
+    expect(container.textContent).not.toMatch(/repères? atteints? sur/)
+  })
+
   it('shows empty state when no meals this week', async () => {
     render(
       <MemoryRouter>

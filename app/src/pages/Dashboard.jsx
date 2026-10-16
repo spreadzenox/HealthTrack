@@ -98,7 +98,7 @@ function EntryBody({ e, measuredScreen = false }) {
     <div className="entry-card-body">
       {e.type === 'food' && e.payload?.dish && <p className="entry-dish">{e.payload.dish}</p>}
       {e.type === 'food' && e.payload?.items?.length > 0 && (
-        <ul className="entry-items">
+        <ul className="entry-items inline-list">
           {e.payload.items.slice(0, 5).map((item, i) => (
             <li key={i} title={item.ingredient}>{shortFoodName(item.ingredient)}{'\u00a0'}: {item.quantity}</li>
           ))}

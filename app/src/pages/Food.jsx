@@ -372,7 +372,7 @@ export default function Food() {
                         />
                       ) : (
                         <div className="entry-card-row">
-                          <ul className="meal-items">
+                          <ul className="meal-items inline-list">
                             {e.payload?.items?.slice(0, 6).map((item, i) => (
                               <li key={i} title={item.ingredient}>{shortFoodName(item.ingredient)}{'\u00a0'}: {item.quantity}</li>
                             ))}

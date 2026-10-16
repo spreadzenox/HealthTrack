@@ -117,6 +117,7 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
     reachedCount: rows.filter((r) => !r.limit && r.status === 'ok').length,
     targetCount: rows.filter((r) => !r.limit).length,
     energyPerDay,
+    energyTarget,
     likelyIncomplete: mealCount > 0 && energyTarget > 0 && energyPerDay < energyTarget * INCOMPLETE_ENERGY_RATIO,
     periodLabel: `${fmt.format(start)} – ${fmt.format(now)}`,
   }

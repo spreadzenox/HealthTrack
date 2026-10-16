@@ -476,8 +476,11 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
 1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits ; 22:30 : prédiction unique, « Sport le soir »
    déduit ; **16/10 02:30 : Données et Nutrition faites** — profil en 2 lignes, intros fusionnées ; **16/10 04:30 :
    « Repas tardif » déduit + radar sur tags mesurés** ; **16/10 06:30 : Analyses 4 → 3 écrans, méthode repliée sous
-   « Comment c'est calculé », une ligne par section** ; **16/10 10:30 : Repas 3 → 2 écrans**, Photo / Galerie / Décrire sur une ligne, aliments à la suite) : « Voyage » déduit (I85 ②b, entrée `context` par jour) ; relire l'Accueil (4 écrans) ; avertissement
-   « repas manquants » de Nutrition à resserrer. Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
+   « Comment c'est calculé », une ligne par section** ; **16/10 10:30 : Repas 3 → 2 écrans**, Photo / Galerie / Décrire sur une ligne, aliments à la suite ; **16/10 12:30 :
+   Accueil 4 → 3 écrans (aliments à la suite, classe partagée `.inline-list`), avertissement « repas manquants » de
+   Nutrition en une phrase qui remplace le compte de repères**) : « Voyage » déduit (I85 ②b, entrée `context` par jour ;
+   ne couvre que les changements de fuseau → garder le tag déclaré, `declaredAlsoCounts`) ; relire Connecteurs et
+   Analyses avancées ; Accueil : la carte bien-être « Note : 3 / 5 » redit la tuile du jour (à fusionner dans l'en-tête ?). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
    de SpO₂ minute) ; **suite : lecture `heart_rate` partagée ou par sous-type pour l'Accueil (12,5 k enregistrements lus
    pour 4,3 k tranches)** ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),

@@ -382,6 +382,16 @@ describe('Dashboard', () => {
     expect(await screen.findByText('Riz : 150 g')).toBeInTheDocument()
   })
 
+  it('met les aliments d’un repas à la suite, comme la page Repas (D1)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 6, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { items: [{ ingredient: 'Riz', quantity: '150 g' }, { ingredient: 'Saumon', quantity: '130 g' }] } },
+    ])
+    renderDashboard()
+    const item = await screen.findByText('Riz : 150 g')
+    expect(item.closest('ul')).toHaveClass('inline-list')
+  })
+
   it('raccourcit les noms d’aliments Ciqual (nom complet en infobulle)', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     const name = "Poulet, cuisse, viande bouillie/cuite à l'eau"
