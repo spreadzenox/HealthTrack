@@ -39,16 +39,16 @@ const CAPTURE_DAYS = 14
  * (« Sport le soir »), repas notés régulièrement (« Repas tardif »).
  */
 async function recentCaptures() {
-  const since = new Date(Date.now() - CAPTURE_DAYS * 86_400_000).toISOString()
-  const [workouts, meals] = await Promise.all([
-    listEntries({ type: 'activity', since, limit: 200 })
-      .then((recent) => recent.some(isWorkoutEntry))
-      .catch(() => false),
-    listEntries({ type: 'food', since, limit: 200 })
-      .then((recent) => mealsLoggedRegularly(recent))
-      .catch(() => false),
-  ])
-  return { workouts, meals }
+  try {
+    const since = new Date(Date.now() - CAPTURE_DAYS * 86_400_000).toISOString()
+    const [activity, food] = await Promise.all([
+      listEntries({ type: 'activity', since, limit: 200 }),
+      listEntries({ type: 'food', since, limit: 200 }),
+    ])
+    return { workouts: activity.some(isWorkoutEntry), meals: mealsLoggedRegularly(food) }
+  } catch {
+    return { workouts: false, meals: false }
+  }
 }
 
 function isToday(iso) {

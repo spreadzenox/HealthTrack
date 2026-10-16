@@ -34,12 +34,21 @@
 - `npm run visual` : 8 pages ok, aucune erreur JS ; relues `recommendations-2/3` et `dashboard-1` (inchangées : la
   démo n'a pas de repas après 21 h, donc pas de carte « Repas tardif ») ; `--empty` ok.
 
+- CI, 1er passage : « Frontend (Vitest) » rouge — 1287 tests verts mais **1 rejet non géré** : une autre page de test
+  mocke le stockage sans `listEntries`, l'accès lève une erreur synchrone, que l'ancien `try/catch` avalait et que mes
+  `.catch` par promesse ne voyaient pas. Corrigé (un seul `try/catch` autour des deux lectures) ; non reproduit en
+  local (dépend de l'ordre d'exécution des fichiers).
+
 ## Sécurité / vie privée
 - Rien ne sort du téléphone ; aucun schéma modifié (lecture seule d'entrées existantes) ; export / import inchangés.
 
 ## Science (D5 / D6)
 - « Repas tardif » reste un **X** (comportement), jamais une entrée de l'humeur. Aucune direction présupposée : la
   carte montre l'écart mesuré tel quel. Les jours inconnus ne sont pas lus comme « sans » (pas de biais de saisie).
+
+## Apprentissages
+- Un mock de module sans l'export lève **à l'accès**, de façon synchrone : `fn().catch()` ne l'attrape pas, seul un
+  `try` autour de l'appel le fait. Garder un `try/catch` englobant dans les lectures « best effort » des composants.
 
 ## Suite proposée
 1. 🧹 D1 : I85 ②b « Voyage » par fuseau — entrée `context` légère par jour pour qu'elle soit exportée et lue par
