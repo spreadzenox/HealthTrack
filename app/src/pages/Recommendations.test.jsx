@@ -407,18 +407,31 @@ describe('Recommendations — behaviour tags', () => {
     expect(screen.getByText(/En cours de collecte/i)).toHaveTextContent(/Malade/)
   })
 
-  it('labels an unconvincing tag « Hypothèse incertaine » (agreement with hypothèse)', async () => {
+  it('never compares felt stress with wellbeing as a cause (it is part of the mood, D5)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     const entries = taggedEntries()
-    // Stress on even days: unrelated to the score pattern (period 3) → no clear effect.
     for (const e of entries) {
-      if (e.type !== 'wellbeing') continue
-      const d = Number(e.at.slice(8, 10))
-      if (d % 2 === 0) e.payload.tags = [...(e.payload.tags ?? []), 'stress']
+      if (e.type === 'wellbeing' && Number(e.at.slice(8, 10)) % 2 === 0) e.payload.tags = [...(e.payload.tags ?? []), 'stress']
     }
     listEntriesForAnalysis.mockResolvedValue(entries)
     renderPage()
-    const card = (await screen.findByText('Stress')).closest('.reco-tag-card')
+    await screen.findByText('Alcool')
+    expect(screen.queryByText('Stress')).toBeNull()
+    expect(screen.getByText(/stress ressenti fait partie de votre/)).toBeInTheDocument()
+  })
+
+  it('labels an unconvincing tag « Hypothèse incertaine » (agreement with hypothèse)', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const entries = taggedEntries()
+    // Sick on even days: unrelated to the score pattern (period 3) → no clear effect.
+    for (const e of entries) {
+      if (e.type !== 'wellbeing') continue
+      const d = Number(e.at.slice(8, 10))
+      if (d % 2 === 0) e.payload.tags = [...(e.payload.tags ?? []), 'sick']
+    }
+    listEntriesForAnalysis.mockResolvedValue(entries)
+    renderPage()
+    const card = (await screen.findByText('Malade')).closest('.reco-tag-card')
     expect(card).toHaveTextContent(/Hypothèse incertaine/)
   })
   it('shows the week-end-controlled difference when it differs from the raw one', async () => {

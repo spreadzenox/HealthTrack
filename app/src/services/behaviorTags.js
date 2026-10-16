@@ -41,6 +41,8 @@ const PERMUTATIONS = 2000
  * radarCause: a known, harmless reason for resting HR / HRV / sleep to drift
  * for a night or two — the radar then says « probably linked to… » instead of
  * raising a worry (radar.js, explainRadar).
+ * side 'Y': the tag is part of the mood itself (felt stress is self-reported, an input of the mood
+ * estimator, see mood/estimatorInputs.js) — never compared with wellbeing as if it were a cause (D5).
  */
 export const BEHAVIOR_TAGS = [
   { id: 'alcohol', label: 'Alcool', emoji: '🍷', effectDay: 'next', radarCause: true },
@@ -48,7 +50,7 @@ export const BEHAVIOR_TAGS = [
   { id: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next', radarCause: true, auto: 'meals', declaredAlsoCounts: true },
   { id: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next', auto: 'phone_usage' },
   { id: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next', radarCause: true, auto: 'workouts', declaredAlsoCounts: true },
-  { id: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same', radarCause: true },
+  { id: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same', radarCause: true, side: 'Y' },
   { id: 'travel', label: 'Voyage', emoji: '✈️', effectDay: 'same', radarCause: true },
   { id: 'vaccine', label: 'Vaccin', emoji: '💉', effectDay: 'next', radarCause: true },
   { id: 'sick', label: 'Malade', emoji: '🤒', effectDay: 'same' },
@@ -318,6 +320,7 @@ export function computeTagEffects(entries) {
   const effects = []
   const pending = []
   for (const tag of BEHAVIOR_TAGS) {
+    if (tag.side === 'Y') continue
     const withTag = []
     const withoutTag = []
     const strata = { weekend: { a: [], b: [] }, weekday: { a: [], b: [] } }

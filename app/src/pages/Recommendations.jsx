@@ -408,7 +408,8 @@ function BasicTab({ analysis }) {
         <p>
           Tags : bien-être les jours avec chaque tag comparé aux jours sans ; pour les
           habitudes du soir, c&apos;est le lendemain qui compte. Les week-ends sont comparés aux
-          week-ends et les jours de semaine entre eux.
+          week-ends et les jours de semaine entre eux. Le stress ressenti fait partie de votre
+          humeur : il n&apos;est pas présenté comme sa cause.
         </p>
         <p>
           Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours

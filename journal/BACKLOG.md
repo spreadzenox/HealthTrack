@@ -308,10 +308,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       (`getActiveRecordingConfigurations()` vide), rejetés si `isClientSilenced()` ou hors de la plage de votre voix
 
 ### D5 — Anti-circularité (Y ≠ X)
-- [ ] **I92 (16/10, petit, avant tout code D4)** : `moodEstimate.js` débarrassé de ses entrées comportementales
+- [x] **I92 (16/10, petit, avant tout code D4)** — **livré 16/10 16:30** (`mood/estimatorInputs.js`,
+      `mood/calibration.js`, `moodEstimate.js` supprimé, `mood/antiCircularity.test.js`) : `moodEstimate.js` débarrassé de ses entrées comportementales
       (sommeil, pas, écran tard `higherIsBetter: false` = norme cachée, D6) ; calibration extraite
       (`services/mood/calibration.js`) ; `ESTIMATOR_INPUTS` + test anti-circularité livrés avec
-- [ ] Liste déclarée des entrées de l'estimateur d'humeur + test qui échoue si une variable est aussi un facteur des
+- [x] **I84 livré 16/10 16:30** : « Stress » ressenti `side: 'Y'`, retiré des effets de tags (saisie et Radar inchangés)
+- [x] Liste déclarée des entrées de l'estimateur d'humeur + test qui échoue (livré 16/10 16:30) si une variable est aussi un facteur des
       corrélations / du modèle / des tags
       (I78 : `ESTIMATOR_INPUTS = ['face', 'voice', 'selfReport']`, `socialMediaMinutes` en X ; la capacité « émotion »
       de la montre, si elle est lue un jour, est un X)
@@ -489,15 +491,15 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
    agrégats, budget en CI (enregistrements lus), Recommandations : panneau debug seul à lire toute la base (garde-fou).
 3. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
-   **plan vérifié au run idées du 16/10 08:30** : I92 d'abord (petit, D5), puis I88 (service + diagnostic, validé
+   **plan vérifié au run idées du 16/10 08:30** : I92 d'abord (petit, D5 — **fait 16/10 16:30**), puis I88 (service + diagnostic, validé
    sur l'A56 avant tout affichage), I90 (indices et tendance 14 j), I89 (test Shizuku / ADB), I91 (voix), I93 ;
    faits du 14/10 : visage = blendshapes MediaPipe par défaut (AUC visage ≈ 0,6 → tendance 7 j), voix = prosodie
    maison (I67), réseaux sociaux = temps au premier plan par app seulement ; sur Android 15+, « paramètres restreints »
    bloque aussi l'accès aux données d'utilisation des APK hors magasin → le guide doit l'expliquer.
-4. 🔁 D5 — liste déclarée des entrées de l'estimateur + test anti-circularité (à livrer avec D4 au plus tard).
-   **I84 (run idées 15/10 20:30, score 20, petit et livrable seul)** : le tag « Stress » ressenti (même instant que
-   la note) passe côté Y — retiré des facteurs des Analyses, inclus dans `selfReport` de `ESTIMATOR_INPUTS` ; le
-   stress physiologique de la montre (I76) sera le facteur. Bon premier pas concret de D5.
+4. 🔁 D5 — **16/10 16:30 : I92 + I84 livrés** (`ESTIMATOR_INPUTS`, test anti-circularité, « Stress » côté Y,
+   `moodEstimate.js` supprimé, calibration gardée dans `mood/calibration.js`). Reste : revue des pièges (ordre
+   temporel X avant Y dans les corrélations simples, taille minimale), garde-fous visibles (I46) ; le stress
+   physiologique de la montre (I76) sera un facteur.
 5. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
    Concret (16/10 06:30) : `analysisEngine` — les pistes du modèle avancé ne gardent que les effets « dans le sens
    attendu » (`direction: 'higher_better'`…) : une piste personnelle de sens contraire est cachée → à rendre neutre.
