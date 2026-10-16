@@ -11,6 +11,9 @@ import {
   AUTO_LATE_SCREEN_MIN,
   EVENING_SPORT_FROM_HOUR,
   isWorkoutEntry,
+  LATE_MEAL_FROM_HOUR,
+  mealsLoggedRegularly,
+  measuredTagsByDay,
 } from './behaviorTags'
 
 // Builds a wellbeing check-in at 21:30 local time, `daysAgo` days before a fixed date.
@@ -370,3 +373,69 @@ describe('evening sport deduced from workouts (I85)', () => {
     expect(pending).toMatchObject({ nWith: 3, nWithout: 2 })
   })
 })
+
+// Meal noted at `hour`:`minute` on day dayIndex (hour ≥ 24 → after midnight, next calendar day).
+function meal(dayIndex, hour, minute = 0) {
+  const d = new Date(2026, 8, 1, hour, minute)
+  d.setDate(d.getDate() + dayIndex)
+  return { type: 'food', source: 'app_food', at: d.toISOString(), payload: { items: [{ name: 'Pâtes' }] } }
+}
+
+describe('late meal deduced from the meals noted (I85 ②)', () => {
+  it('declares late_meal as automatic from meals, from 21:00, a declared tag still counting', () => {
+    expect(getTagMeta('late_meal').auto).toBe('meals')
+    expect(getTagMeta('late_meal').declaredAlsoCounts).toBe(true)
+    expect(LATE_MEAL_FROM_HOUR).toBe(21)
+    expect(autoDetectedTagIds({ meals: true })).toEqual(['late_meal'])
+  })
+
+  it('a meal from 21:00 (or after midnight) makes a late evening; ≥ 2 meals without one make a « without » day', () => {
+    const late = measuredTagsByDay([
+      meal(0, 12), meal(0, 21, 15), // day 0: late
+      meal(1, 8), meal(1, 19, 30), // day 1: 2 meals, none late → without
+      meal(2, 13), // day 2: a single meal → unknown (the others may not be noted)
+      meal(3, 12), meal(3, 25, 30), // 01:30 the night after day 3 → evening of day 3
+    ]).get('late_meal')
+    const key = (i) => localKey(i)
+    expect(late.get(key(0))).toBe(true)
+    expect(late.get(key(1))).toBe(false)
+    expect(late.has(key(2))).toBe(false)
+    expect(late.get(key(3))).toBe(true)
+    expect(late.has(key(4))).toBe(false)
+  })
+
+  it('analyses late meals from the meals noted, with no tag ever used', () => {
+    const entries = []
+    for (let i = 0; i < 20; i++) {
+      entries.push(checkin(i, i % 2 === 1 ? 2 : 4))
+      entries.push(meal(i, 12, 30))
+      entries.push(meal(i, i % 2 === 0 ? 21 : 19, 30))
+    }
+    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'late_meal')
+    expect(e).toMatchObject({ auto: true, nWith: 10, nWithout: 9 })
+    expect(e.diff).toBeCloseTo(-2)
+  })
+
+  it('« regularly » = ≥ 2 meals noted on at least 7 of the last 14 days', () => {
+    const now = new Date(2026, 8, 22, 10, 0)
+    const meals = (days) => days.flatMap((i) => [meal(i, 12), meal(i, 19)])
+    expect(mealsLoggedRegularly(meals([13, 14, 15, 16, 17, 18, 19]), now)).toBe(true)
+    expect(mealsLoggedRegularly(meals([14, 15, 16, 17, 18, 19]), now)).toBe(false)
+    // one meal a day is not enough to know there was no late one
+    expect(mealsLoggedRegularly([13, 14, 15, 16, 17, 18, 19].map((i) => meal(i, 12)), now)).toBe(false)
+    // too old
+    expect(mealsLoggedRegularly(meals([0, 1, 2, 3, 4, 5, 6]), now)).toBe(false)
+  })
+})
+
+describe('measuredTagsByDay', () => {
+  it('returns measured tags per evening, true and false', () => {
+    const m = measuredTagsByDay([{ type: 'phone_usage', payload: { date: '2026-09-02', lateScreenMinutes: 45 } }])
+    expect(m.get('late_screen').get('2026-09-01')).toBe(true)
+  })
+})
+
+function localKey(dayIndex) {
+  const d = new Date(2026, 8, 1 + dayIndex, 12)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}

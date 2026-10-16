@@ -202,7 +202,16 @@ ligne de période). **Vos données** : une ligne par bloc au lieu de trois longs
 dit le nom du fichier et où le retrouver. Au passage : votre profil Nutrition utilise encore **taille, sexe et âge
 par défaut** (170 cm, homme, 30 ans) ; « Modifier » en 10 secondes rend vos repères (énergie, protéines, fer) justes.
 
+**Run du 16/10 04:30** (nettoyage, pas de nouveau journal montre) : une question de moins dans la saisie du
+bien-être. Si vous notez vos repas régulièrement (au moins 2 repas par jour, 7 jours sur les 14 derniers),
+**« Repas tardif » n'est plus demandé** : un repas noté après 21 h (ou après minuit) suffit. Un jour où vous n'avez
+noté qu'un repas n'est jamais lu comme « sans repas tardif », et un tag coché reste pris en compte. Le **Radar forme**
+lit aussi désormais vos séances du soir et vos repas tardifs pour dire « probablement lié à… », sans rien cocher.
+« Voyage » (déduit d'un changement de fuseau) viendra ensuite.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **« Repas tardif » déduit de vos repas (run 16/10 04:30)** : plus demandé dans la saisie du bien-être si vous notez
+  vos repas régulièrement ; le Radar forme explique aussi un écart par une séance du soir ou un repas tardif.
 - **Nutrition et Vos données plus courtes (run 16/10 02:30)** : profil Nutrition en deux lignes au lieu de sept,
   intro fusionnée dans la ligne de période ; page Vos données : une ligne par bloc, nom et emplacement du fichier
   donnés après l'export.
@@ -663,6 +672,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 22:30 — [Nettoyage : prédiction unique, « Sport le soir » déduit](runs/2026-10-15-2230-accueil-donnee-sport-deduit.md) | 🧹 | PR #173 fusionnée → v138 |
 | 16/10 00:30 — [Perf : SpO₂ de la montre en tranches de 10 min](runs/2026-10-16-0030-spo2-tranches.md) | ⚡ | PR #175 fusionnée → v139 |
 | 16/10 02:30 — [Nettoyage : Nutrition et Vos données plus courtes](runs/2026-10-16-0230-nutrition-donnees-courtes.md) | 🧹 | PR #176 fusionnée → v140 |
+| 16/10 04:30 — [Nettoyage : « Repas tardif » déduit des repas](runs/2026-10-16-0430-repas-tardif-deduit.md) | 🧹 | PR en cours |
 
 ---
 

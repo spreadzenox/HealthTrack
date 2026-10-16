@@ -468,6 +468,7 @@ describe('Recommendations — behaviour tags', () => {
       effects: [
         { ...base, tagId: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next' },
         { ...base, tagId: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next' },
+        { ...base, tagId: 'late_meal', label: 'Repas tardif', emoji: '🍽️', effectDay: 'next' },
       ],
       pending: [],
     })
@@ -477,6 +478,7 @@ describe('Recommendations — behaviour tags', () => {
     expect(sport).toHaveTextContent(/déduit de vos séances/)
     expect(sport).not.toHaveTextContent(/téléphone/)
     expect(screen.getByText('Écran tard').closest('.reco-tag-card')).toHaveTextContent(/mesuré par le téléphone/)
+    expect(screen.getByText('Repas tardif').closest('.reco-tag-card')).toHaveTextContent(/déduit de vos repas notés \(après 21 h\)/)
     spy.mockRestore()
   })
 })

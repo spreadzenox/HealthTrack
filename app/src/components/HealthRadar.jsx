@@ -46,15 +46,18 @@ export default function HealthRadar() {
   const load = useCallback(async () => {
     try {
       const since = new Date(Date.now() - HISTORY_DAYS * 86400000).toISOString()
-      const [heart, sleep, wellbeing] = await Promise.all([
+      const [heart, sleep, wellbeing, workouts, meals] = await Promise.all([
         listEntries({ type: 'heart_rate', since, limit: Infinity }),
         listEntries({ type: 'sleep', since, limit: Infinity }),
         listEntries({ type: 'wellbeing', since, limit: Infinity }),
+        // Séances du soir et repas tardifs comptent comme causes sans être cochés
+        listEntries({ type: 'activity', since, limit: Infinity }),
+        listEntries({ type: 'food', since, limit: Infinity }),
       ])
       const entries = [...heart, ...sleep]
       const hasData = entries.some((e) => e.type === 'sleep' || ['restingHeartRate', 'heartRateVariability'].includes(e.payload?.subtype))
       const radar = computeRadar(entries)
-      setState({ hasData, radar, why: explainRadar(radar, wellbeing) })
+      setState({ hasData, radar, why: explainRadar(radar, [...wellbeing, ...workouts, ...meals]) })
     } catch {
       setState({ hasData: false })
     }

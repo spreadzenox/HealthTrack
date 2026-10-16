@@ -13,7 +13,7 @@ import {
   MIN_ADVICE_EFFECT,
   MIN_WEEKEND_DAYS,
 } from '../services/analysisEngine'
-import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR } from '../services/behaviorTags'
+import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR, LATE_MEAL_FROM_HOUR } from '../services/behaviorTags'
 import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
@@ -123,6 +123,13 @@ function frDiff(v) {
 // Show the week-end-controlled difference only when it really differs from the raw one.
 const TAG_WEEKEND_SHIFT = 0.1
 
+/** D'où vient un tag que l'app mesure elle-même (au lieu de le demander). */
+function autoSourceNote(tagId) {
+  if (tagId === 'evening_sport') return `déduit de vos séances (début après ${EVENING_SPORT_FROM_HOUR} h)`
+  if (tagId === 'late_meal') return `déduit de vos repas notés (après ${LATE_MEAL_FROM_HOUR} h)`
+  return `mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`
+}
+
 function TagEffectCard({ effect }) {
   const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
   const rawDiff = effect.diffRaw ?? effect.diff
@@ -150,8 +157,7 @@ function TagEffectCard({ effect }) {
       )}
       <p className="reco-tag-days">
         {effect.nWith} jour{effect.nWith > 1 ? 's' : ''} avec · {effect.nWithout} sans
-        {effect.auto && effect.tagId === 'evening_sport' && ` · déduit de vos séances (début après ${EVENING_SPORT_FROM_HOUR} h)`}
-        {effect.auto && effect.tagId !== 'evening_sport' && ` · mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`}
+        {effect.auto && ` · ${autoSourceNote(effect.tagId)}`}
       </p>
       <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
         {evidenceLabel(effect.evidence)}
