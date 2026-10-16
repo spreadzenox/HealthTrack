@@ -126,10 +126,6 @@ export default function Nutrition() {
   return (
     <section className="food-page nutrition-page">
       <h2 className="page-title">Nutrition</h2>
-      <p className="nutrition-intro">
-        Vos apports moyens <strong>par jour saisi</strong> sur les 7 derniers jours, comparés aux
-        repères officiels (ANSES) personnalisés selon votre profil.
-      </p>
 
       <BodyProfileCard profile={profile} onSaved={load} />
 
@@ -143,8 +139,9 @@ export default function Nutrition() {
       ) : comparison ? (
         <>
           <p className="nutrition-intro">
-            {comparison.periodLabel} · {comparison.mealCount} repas · {comparison.loggedDays} jour
-            {comparison.loggedDays > 1 ? 's' : ''} saisi{comparison.loggedDays > 1 ? 's' : ''}
+            Moyenne <strong>par jour saisi</strong>{'\u00a0· '}{comparison.periodLabel}{'\u00a0· '}
+            {comparison.mealCount}{'\u00a0'}repas{'\u00a0· '}{comparison.loggedDays}{'\u00a0'}jour
+            {comparison.loggedDays > 1 ? 's' : ''}
           </p>
           <p className="nutrition-summary">
             <strong>{comparison.reachedCount}</strong> repère{comparison.reachedCount > 1 ? 's' : ''} atteint
@@ -172,7 +169,7 @@ export default function Nutrition() {
             </div>
           ))}
           <p className="nutrition-footnote">
-            Repères indicatifs pour un adulte, calculés à partir d’estimations (photos, portions).
+            Repères ANSES pour un adulte, ajustés à votre profil ; apports estimés (photos, portions).
             Ce n’est pas un diagnostic de carence : en cas de doute, parlez-en à un médecin ou à
             un·e diététicien·ne.
           </p>

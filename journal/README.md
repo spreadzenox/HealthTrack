@@ -195,7 +195,17 @@ regroupé une seule fois, en arrière-plan, au premier lancement après la mise 
 sauvegarde). Mesuré avec 30 jours de SpO₂ minute sur un téléphone simulé : **Accueil utilisable en 0,5 s au lieu de
 2 s**, temps de blocage 912 → 31 ms. Rien ne change à l'écran. **Dites-moi si l'Accueil vous paraît encore lent.**
 
+**Run du 16/10 02:30** (nettoyage, pas de nouveau journal montre) : deux pages plus courtes. **Nutrition** : votre
+profil tient en deux lignes au lieu de sept (« 77,2 kg (Withings, 13/10) · 170 cm (par défaut) · IMC 26,7 », puis sexe,
+âge, activité et énergie du jour), le paragraphe d'introduction disparaît (« Moyenne par jour saisi » est dans la
+ligne de période). **Vos données** : une ligne par bloc au lieu de trois longs paragraphes ; après l'export, l'app
+dit le nom du fichier et où le retrouver. Au passage : votre profil Nutrition utilise encore **taille, sexe et âge
+par défaut** (170 cm, homme, 30 ans) ; « Modifier » en 10 secondes rend vos repères (énergie, protéines, fer) justes.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Nutrition et Vos données plus courtes (run 16/10 02:30)** : profil Nutrition en deux lignes au lieu de sept,
+  intro fusionnée dans la ligne de période ; page Vos données : une ligne par bloc, nom et emplacement du fichier
+  donnés après l'export.
 - **Accueil plus fluide avec la montre (run 16/10 00:30)** : SpO₂ de la montre rangée par tranches de 10 min
   (moyenne, min, max) au lieu d'une ligne par minute ; l'existant est regroupé une fois. Accueil 2 s → 0,5 s mesuré
   avec 30 jours de SpO₂.
@@ -652,6 +662,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 15/10 20:30 — [Idées : alléger sans rien perdre (SpO₂, stress ressenti, tags déduits)](runs/2026-10-15-2030-idees-alleger.md) | 💡🧹⚡ | 6 idées (I82–I87) — journal seul |
 | 15/10 22:30 — [Nettoyage : prédiction unique, « Sport le soir » déduit](runs/2026-10-15-2230-accueil-donnee-sport-deduit.md) | 🧹 | PR #173 fusionnée → v138 |
 | 16/10 00:30 — [Perf : SpO₂ de la montre en tranches de 10 min](runs/2026-10-16-0030-spo2-tranches.md) | ⚡ | PR #175 fusionnée → v139 |
+| 16/10 02:30 — [Nettoyage : Nutrition et Vos données plus courtes](runs/2026-10-16-0230-nutrition-donnees-courtes.md) | 🧹 | PR en cours |
 
 ---
 

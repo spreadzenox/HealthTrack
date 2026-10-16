@@ -452,8 +452,9 @@ Avant : réordonnées le 12/10 (22:30 Paris) : priorité absolue = D3 (montre), 
 montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage général), puis D2 (performance).
 
 1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits ; 22:30 : prédiction unique, « Sport le soir »
-   déduit) : pages Données (paragraphe « Exporter » de 7 lignes) et Nutrition à relire ; « Voyage » / « Repas tardif » déduits (I85 ②) ; relire Paramètres et Analyses (titres
-   et explications en double). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
+   déduit ; **16/10 02:30 : Données et Nutrition faites** — profil en 2 lignes, intros fusionnées) : « Voyage » /
+   « Repas tardif » déduits (I85 ②) ; relire Repas et Analyses (titres et explications en double) ; avertissement
+   « repas manquants » de Nutrition à resserrer. Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
    de SpO₂ minute) ; **suite : lecture `heart_rate` partagée ou par sous-type pour l'Accueil (12,5 k enregistrements lus
    pour 4,3 k tranches)** ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "Nutrition et Vos données plus courtes",
+  "items": [
+    "Nutrition : votre profil tient en deux lignes (poids, taille, IMC ; puis sexe, âge, activité et énergie du jour) au lieu de sept ; chaque valeur par défaut reste signalée.",
+    "Nutrition : le paragraphe d'introduction disparaît ; la ligne de la période dit « Moyenne par jour saisi », et la source des repères (ANSES) est dans la note du bas.",
+    "Vos données : une ligne par bloc au lieu de trois paragraphes ; après l'export, l'app vous dit le nom du fichier et où le retrouver."
+  ]
+}
