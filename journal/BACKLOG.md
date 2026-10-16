@@ -572,7 +572,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
-- [x] 2026-10-16 — D1 : I85 ②a « Repas tardif » déduit des repas notés (saisie, Analyses) ; Radar forme lit séances du soir et repas tardifs (run 04:30 Paris)
+- [x] 2026-10-16 — D1 : I85 ②a « Repas tardif » déduit des repas notés (saisie, Analyses) ; Radar forme lit séances du soir et repas tardifs (PR #178 → v141, run 04:30 Paris)
 - [x] 2026-10-16 — D2 / I82 : SpO₂ de la montre en tranches de 10 min + migration unique (et après import) ; Accueil 1 954 → 546 ms, 107 k → 12,5 k enregistrements lus (30 j de SpO₂ minute) ; `npm run perf -- --spo2=minute|slot` (run 00:30 Paris)
 - [x] 2026-10-15 — D1 : « Prédiction du jour » en une ligne sous la courbe, hypothèse sommeil repliée (I87) ; I85 ① « Sport le soir » déduit des séances (saisie, Analyses) (PR #173 → v138, run 22:30 Paris)
 - [x] 2026-10-15 — Run « idées » 20:30 : I82–I87 (SpO₂ en tranches, stress ressenti côté Y, check-in réduit, courbes

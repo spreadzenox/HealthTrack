@@ -39,6 +39,9 @@
   `.catch` par promesse ne voyaient pas. Corrigé (un seul `try/catch` autour des deux lectures) ; non reproduit en
   local (dépend de l'ordre d'exécution des fichiers).
 
+- PR #178 : Vitest, Build APK, Protocole montre (Java), émulateurs A56 API 35 et 36 verts → fusionnée (squash),
+  **v141 publiée avec son APK** (« Build & Release » vert).
+
 ## Sécurité / vie privée
 - Rien ne sort du téléphone ; aucun schéma modifié (lecture seule d'entrées existantes) ; export / import inchangés.
 
