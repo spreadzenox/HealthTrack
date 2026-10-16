@@ -456,7 +456,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
 
 1. 🧹 D1 — restes (15/10 18:30 : journal du jour et Paramètres faits ; 22:30 : prédiction unique, « Sport le soir »
    déduit ; **16/10 02:30 : Données et Nutrition faites** — profil en 2 lignes, intros fusionnées ; **16/10 04:30 :
-   « Repas tardif » déduit + radar sur tags mesurés**) : « Voyage » déduit (I85 ②b, entrée `context` par jour) ; relire Repas et Analyses (titres et explications en double) ; avertissement
+   « Repas tardif » déduit + radar sur tags mesurés** ; **16/10 06:30 : Analyses 4 → 3 écrans, méthode repliée sous
+   « Comment c'est calculé », une ligne par section**) : « Voyage » déduit (I85 ②b, entrée `context` par jour) ; relire Repas ; avertissement
    « repas manquants » de Nutrition à resserrer. Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
    de SpO₂ minute) ; **suite : lecture `heart_rate` partagée ou par sous-type pour l'Accueil (12,5 k enregistrements lus
@@ -473,6 +474,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    la note) passe côté Y — retiré des facteurs des Analyses, inclus dans `selfReport` de `ESTIMATOR_INPUTS` ; le
    stress physiologique de la montre (I76) sera le facteur. Bon premier pas concret de D5.
 5. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
+   Concret (16/10 06:30) : `analysisEngine` — les pistes du modèle avancé ne gardent que les effets « dans le sens
+   attendu » (`direction: 'higher_better'`…) : une piste personnelle de sens contraire est cachée → à rendre neutre.
 6. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
    ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).
    Livré le 14/10 12:30 : première synchro depuis 2000, reprise sur la dernière synchro avec données − 6 h, état v2,

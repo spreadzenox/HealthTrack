@@ -209,7 +209,17 @@ noté qu'un repas n'est jamais lu comme « sans repas tardif », et un tag coch�
 lit aussi désormais vos séances du soir et vos repas tardifs pour dire « probablement lié à… », sans rien cocher.
 « Voyage » (déduit d'un changement de fuseau) viendra ensuite.
 
+**Run du 16/10 06:30** (nettoyage, pas de nouveau journal montre) : **la page Analyses va droit aux résultats.** Elle
+faisait 4 écrans, dont près de 30 lignes d'explications répétées (« une corrélation ne prouve pas une cause » trois
+fois) ; elle en fait 3 : une ligne « Analyse sur 75 jours notés · week-end pris en compte », puis vos pistes. Toute la
+méthode est sous **« Comment c'est calculé »**, replié ; chaque section n'a plus qu'une ligne d'explication. Onglet
+avancé : R² et autres détails techniques rangés sous « Comment fonctionne ce modèle ? ». Les badges « Hypothèse … »
+restent sur chaque carte.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Analyses plus courtes (run 16/10 06:30)** : une ligne de résumé puis vos pistes ; la méthode (week-end, tags,
+  effets décalés) réunie sous « Comment c'est calculé », replié ; une ligne d'explication par section ; onglet avancé :
+  R² et détails du modèle repliés.
 - **« Repas tardif » déduit de vos repas (run 16/10 04:30)** : plus demandé dans la saisie du bien-être si vous notez
   vos repas régulièrement ; le Radar forme explique aussi un écart par une séance du soir ou un repas tardif.
 - **Nutrition et Vos données plus courtes (run 16/10 02:30)** : profil Nutrition en deux lignes au lieu de sept,
@@ -673,6 +683,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 00:30 — [Perf : SpO₂ de la montre en tranches de 10 min](runs/2026-10-16-0030-spo2-tranches.md) | ⚡ | PR #175 fusionnée → v139 |
 | 16/10 02:30 — [Nettoyage : Nutrition et Vos données plus courtes](runs/2026-10-16-0230-nutrition-donnees-courtes.md) | 🧹 | PR #176 fusionnée → v140 |
 | 16/10 04:30 — [Nettoyage : « Repas tardif » déduit des repas](runs/2026-10-16-0430-repas-tardif-deduit.md) | 🧹 | PR #178 fusionnée → v141 |
+| 16/10 06:30 — [Nettoyage : Analyses plus courtes](runs/2026-10-16-0630-analyses-plus-courtes.md) | 🧹 | PR en cours |
 
 ---
 

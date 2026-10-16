@@ -172,17 +172,13 @@ function TagsSection({ result }) {
       <h3 className="reco-section-title">🏷️ Vos habitudes</h3>
       {result.status === 'no_tags' ? (
         <p className="reco-section-hint">
-          Ajoutez des tags (alcool, café après 14 h, stress…) quand vous notez votre
-          bien-être. Après {MIN_TAG_DAYS} jours avec et {MIN_TAG_DAYS} jours sans, vous verrez
-          ici comment chacun va de pair avec votre bien-être.
+          Ajoutez des tags (alcool, café…) en notant votre bien-être : comparaison après{' '}
+          {MIN_TAG_DAYS} jours avec et {MIN_TAG_DAYS} sans.
         </p>
       ) : (
         <>
           <p className="reco-section-hint">
-            Votre bien-être les jours avec chaque tag, comparé aux jours sans. Pour les habitudes
-            du soir, c&apos;est le lendemain qui compte. Les week-ends sont comparés aux week-ends
-            et les jours de semaine entre eux. Ce sont des hypothèses : d&apos;autres choses
-            peuvent changer ces jours-là.
+            Bien-être les jours avec chaque tag, contre les jours sans (le lendemain pour le soir).
           </p>
           {result.effects.length > 0 ? (
             <ul className="reco-tag-list">
@@ -245,18 +241,13 @@ function LaggedEffectsSection({ result }) {
       <h3 className="reco-section-title">⏳ Effets décalés</h3>
       {result.status === 'not_enough_data' ? (
         <p className="reco-section-hint">
-          Ce que vous faites (sommeil, pas, activité, cigarettes) peut agir sur votre bien-être
-          {' '}{lags} plus tard. Il faut des notes de bien-être sur des jours qui se suivent :{' '}
-          {result.currentDays} sur {MIN_LAG_PAIRS} pour l&apos;instant (un jour compte quand la
-          veille est aussi notée).
+          Effet {lags} plus tard : {result.currentDays} sur {MIN_LAG_PAIRS} jours notés dont la
+          veille aussi.
         </p>
       ) : (
         <>
           <p className="reco-section-hint">
-            Votre bien-être comparé à ce que vous avez fait {lags} avant, à bien-être de la veille
-            égal (une bonne passe qui dure n&apos;est pas créditée à vos habitudes) et à journée
-            égale (sommeil, pas… du jour même), week-end compris. Seuls les liens solides sont
-            affichés. Ce sont des hypothèses : une corrélation ne prouve pas une cause.
+            Ce que vous avez fait {lags} avant · liens solides seulement.
           </p>
           {result.effects.length > 0 ? (
             <ul className="reco-tag-list">
@@ -304,14 +295,14 @@ function WeekendNote({ control }) {
   if (!control) return null
   if (!control.applied) {
     return (
-      <p className="reco-meta">
+      <p>
         📅 Pas encore assez de jours de week-end et de semaine notés ({MIN_WEEKEND_DAYS} de chaque)
         pour tenir compte du jour de la semaine.
       </p>
     )
   }
   return (
-    <p className="reco-meta">
+    <p>
       📅 Liens calculés en tenant compte du week-end (bien-être moyen :{' '}
       <strong>{frScore(control.weekendMean)} le week-end</strong>,{' '}
       <strong>{frScore(control.weekdayMean)} en semaine</strong>) : une habitude plus fréquente
@@ -391,31 +382,50 @@ function BasicTab({ analysis }) {
   return (
     <div className="reco-tab-content">
       <p className="reco-meta">
-        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} avec score bien-être</strong>
-        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
-        Méthode : corrélation de Pearson entre chaque variable et le bien-être, corrigée pour
-        les jours qui se ressemblent (autocorrélation) et pour le nombre de variables testées
-        (Benjamini-Hochberg). Un jour sans mesure (montre non portée, pas de pesée) est ignoré
-        pour cette mesure, jamais compté comme 0.
-        {result.nutritionDays != null && result.nutritionDays < datasetDays && (
-          <>
-            {' '}Alimentation connue sur {result.nutritionDays} jour{result.nutritionDays > 1 ? 's' : ''} sur {datasetDays} :
-            un jour sans repas saisi ne compte pas comme 0 kcal (un oubli n'est pas un jeûne), et sans aucun
-            repas saisi sur les 10 jours précédents, l'alimentation du jour est ignorée.
-          </>
-        )}
+        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} notés</strong>
+        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}
+        {result.weekendControl?.applied && ' · week-end pris en compte'}.
         {reliability === 'exploratory' && (
           <> <span className="reco-reliability-warn">⚠ Données exploratoires — continuez à enregistrer votre bien-être pour améliorer la fiabilité (objectif : 10 jours).</span></>
         )}
       </p>
-      <WeekendNote control={result.weekendControl} />
+      <details className="reco-method-note">
+        <summary>Comment c&apos;est calculé</summary>
+        <p>
+          Corrélation de Pearson entre chaque variable et le bien-être, corrigée pour les jours qui
+          se ressemblent (autocorrélation) et pour le nombre de variables testées
+          (Benjamini-Hochberg). Un jour sans mesure (montre non portée, pas de pesée) est ignoré
+          pour cette mesure, jamais compté comme 0.
+          {result.nutritionDays != null && result.nutritionDays < datasetDays && (
+            <>
+              {' '}Alimentation connue sur {result.nutritionDays} jour{result.nutritionDays > 1 ? 's' : ''} sur {datasetDays} :
+              un jour sans repas saisi ne compte pas comme 0 kcal (un oubli n'est pas un jeûne), et sans aucun
+              repas saisi sur les 10 jours précédents, l'alimentation du jour est ignorée.
+            </>
+          )}
+        </p>
+        <WeekendNote control={result.weekendControl} />
+        <p>
+          Tags : bien-être les jours avec chaque tag comparé aux jours sans ; pour les
+          habitudes du soir, c&apos;est le lendemain qui compte. Les week-ends sont comparés aux
+          week-ends et les jours de semaine entre eux.
+        </p>
+        <p>
+          Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
+          avant, à bien-être de la veille égal (une bonne passe qui dure n&apos;est pas créditée à
+          vos comportements) et à journée égale (sommeil, pas… du jour même).
+        </p>
+        <p>
+          Tout est calculé sur votre téléphone. Ce sont des hypothèses : une corrélation ne prouve
+          pas une cause, et d&apos;autres choses peuvent changer ces jours-là. Essayez une piste
+          deux semaines et observez.
+        </p>
+      </details>
 
       <section className="reco-section">
         <h3 className="reco-section-title">🎯 Pistes à tester</h3>
         <p className="reco-section-hint">
-          Ce sur quoi vous pouvez agir et qui va de pair avec un meilleur bien-être dans vos
-          données. Ce sont des hypothèses : une corrélation ne prouve pas une cause. Essayez
-          une piste pendant deux semaines et observez.
+          Ce qui va de pair avec un meilleur bien-être dans vos données, et sur quoi vous pouvez agir.
         </p>
         {levers.length > 0 ? (
           <ol className="reco-advice-list">
@@ -438,7 +448,7 @@ function BasicTab({ analysis }) {
       <CorrelationsSection correlations={correlations} />
 
       <p className="reco-disclaimer">
-        Ces résultats sont uniquement basés sur vos propres données et ne constituent pas un avis médical.
+        Hypothèses tirées de vos seules données : pas un avis médical.
       </p>
     </div>
   )
@@ -476,54 +486,57 @@ function AdvancedTab({ analysis }) {
   return (
     <div className="reco-tab-content">
       <p className="reco-meta">
-        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} avec score bien-être</strong>
-        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}.
-        Modèle : <em>{method}</em>.
-        {modelInfo?.r2 != null && (
-          <> R² entraînement : <strong>{r2Display}</strong>
-          {r2LooDisplay != null
-            ? <> · R² LOO (hors-échantillon) : <strong>{r2LooDisplay}</strong></>
-            : null
-          }
-          .</>
-        )}
-        {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
-          <> Variables retenues : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate} (les plus liées au bien-être, {MAX_FEATURES} au plus,
-          mesurées au moins un jour sur deux ; un jour sans mesure compte comme un jour habituel).</>
-        )}
-        {modelInfo?.overfit_risk && (
-          <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours — R² entraînement non fiable.</span></>
-        )}
+        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} notés</strong>
+        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}
+        {modelInfo?.weekendEffect != null && ' · week-end pris en compte'}.
         {isModelUnreliable && (
-          <> <span className="reco-reliability-warn">⚠ Modèle non fiable (R² LOO négatif) — recommandations à titre indicatif uniquement. Continuez à enregistrer vos données pour améliorer la précision.</span></>
+          <> <span className="reco-reliability-warn">⚠ Modèle encore peu fiable (il prédit mal les jours qu’il n’a pas vus) : pistes à titre indicatif. Continuez à enregistrer vos données.</span></>
         )}
         {isModelReliable && (
-          <> <span className="reco-reliability-ok">✓ Le modèle généralise correctement (R² LOO positif).</span></>
+          <> <span className="reco-reliability-ok">✓ Le modèle généralise correctement.</span></>
         )}
       </p>
-      {modelInfo?.weekendEffect != null && (
-        <p className="reco-meta">
-          📅 Le jour de la semaine est pris en compte : à habitudes égales,{' '}
-          {Math.abs(modelInfo.weekendEffect) < 0.05
-            ? <>votre bien-être n'est <strong>pas différent le week-end</strong>.</>
-            : <>votre bien-être est estimé à <strong>{frDiff(modelInfo.weekendEffect)}{' '}
-              point{Math.abs(modelInfo.weekendEffect) >= 2 ? 's' : ''} le week-end</strong> par
-              rapport à la semaine. Cet effet n'est attribué à aucune habitude.</>}
-        </p>
-      )}
-      {modelInfo?.droppedCollinear?.length > 0 && (
-        <p className="reco-meta reco-meta--dropped">
-          Variables redondantes écartées :{' '}
-          {modelInfo.droppedCollinear
-            .map((d) => `${d.label} (≈ ${d.keptInsteadLabel})`)
-            .join(', ')}
-          . Elles évoluent presque exactement comme une variable déjà retenue : les garder
-          fausserait l'estimation de leur effet.
-        </p>
-      )}
-      {modelInfo?.method === 'ols_linear_regression' && (
         <details className="reco-method-note">
           <summary>Comment fonctionne ce modèle ?</summary>
+          <p>
+            Modèle : <em>{method}</em>.
+            {modelInfo?.r2 != null && (
+              <> R² entraînement : <strong>{r2Display}</strong>
+              {r2LooDisplay != null
+                ? <> · R² LOO (hors-échantillon) : <strong>{r2LooDisplay}</strong></>
+                : null
+              }
+              .</>
+            )}
+            {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
+              <> Variables retenues : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate} (les plus liées au bien-être, {MAX_FEATURES} au plus,
+              mesurées au moins un jour sur deux ; un jour sans mesure compte comme un jour habituel).</>
+            )}
+            {modelInfo?.overfit_risk && (
+              <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours — R² entraînement non fiable.</span></>
+            )}
+          </p>
+          {modelInfo?.weekendEffect != null && (
+            <p>
+              📅 Le jour de la semaine est pris en compte : à habitudes égales,{' '}
+              {Math.abs(modelInfo.weekendEffect) < 0.05
+                ? <>votre bien-être n'est <strong>pas différent le week-end</strong>.</>
+                : <>votre bien-être est estimé à <strong>{frDiff(modelInfo.weekendEffect)}{' '}
+                  point{Math.abs(modelInfo.weekendEffect) >= 2 ? 's' : ''} le week-end</strong> par
+                  rapport à la semaine. Cet effet n'est attribué à aucune habitude.</>}
+            </p>
+          )}
+          {modelInfo?.droppedCollinear?.length > 0 && (
+            <p>
+              Variables redondantes écartées :{' '}
+              {modelInfo.droppedCollinear
+                .map((d) => `${d.label} (≈ ${d.keptInsteadLabel})`)
+                .join(', ')}
+              . Elles évoluent presque exactement comme une variable déjà retenue : les garder
+              fausserait l'estimation de leur effet.
+            </p>
+          )}
+          {modelInfo?.method === 'ols_linear_regression' && (<>
           <p>
             Chaque type de donnée est enregistré à une fréquence différente (ex : pas quotidiens, repas plusieurs fois/jour, bien-être manuellement). Pour harmoniser, toutes les entrées sont agrégées par <strong>jour calendaire</strong> (somme pour les pas/calories/nutriments, moyenne pour la fréquence cardiaque et le bien-être). Les nutriments sont ensuite <strong>lissés sur {modelInfo.lagDays} jours</strong> avec une pondération décroissante (un repas d'aujourd'hui influence le bien-être des ~10 prochains jours, avec un impact qui décroît linéairement).
           </p>
@@ -542,8 +555,8 @@ function AdvancedTab({ analysis }) {
           <p>
             Les barres d'importance sont <strong>relatives</strong> : la variable la plus influente vaut 100%, les autres sont exprimées en proportion.
           </p>
+          </>)}
         </details>
-      )}
 
 
       {topRecommendations?.length > 0 && (
@@ -552,9 +565,7 @@ function AdvancedTab({ analysis }) {
             🤖 Pistes suggérées par le modèle
           </h3>
           <p className="reco-section-hint">
-            Seuls les facteurs sur lesquels vous pouvez agir, et dont l'effet estimé va dans le
-            sens attendu, sont proposés. Ce sont des hypothèses issues d'une régression sur vos
-            données, pas des certitudes.
+            Facteurs sur lesquels vous pouvez agir : hypothèses tirées de vos données.
           </p>
           <ol className="reco-advice-list">
             {topRecommendations.map((advice, i) => (
@@ -570,8 +581,7 @@ function AdvancedTab({ analysis }) {
             🔬 Importance des variables (coefficients standardisés)
           </h3>
           <p className="reco-section-hint">
-            Vert = va de pair avec un meilleur bien-être · Rouge = avec un moins bon.
-            Taille de la barre = poids de la variable dans le modèle (une association, pas une preuve de cause).
+            Vert = meilleur bien-être · Rouge = moins bon · longueur = poids dans le modèle.
           </p>
           <div className="reco-corr-chart">
             {featureImportance.map((f) => (
@@ -592,8 +602,7 @@ function AdvancedTab({ analysis }) {
             📉 Bien-être prédit vs réel
           </h3>
           <p className="reco-section-hint">
-            Le modèle a été entraîné sur toutes les données <strong>sauf</strong> les {HOLD_OUT_DAYS} derniers jours.
-            Ces prédictions sont donc hors-échantillon — le modèle n'a jamais vu ces jours pendant l'entraînement.
+            Les {HOLD_OUT_DAYS} derniers jours, prédits sans que le modèle les ait vus.
           </p>
           <div className="reco-residuals">
             {residuals.map((r) => {
@@ -615,8 +624,7 @@ function AdvancedTab({ analysis }) {
       )}
 
       <p className="reco-disclaimer">
-        Le modèle est entraîné uniquement sur vos données locales et ne partage aucune information.
-        Ces résultats ne constituent pas un avis médical.
+        Hypothèses tirées de vos seules données, sur votre téléphone : pas un avis médical.
       </p>
     </div>
   )
@@ -761,8 +769,7 @@ export default function Recommendations() {
     <section className="reco-page">
       <h2 className="page-title">Analyses</h2>
       <p className="reco-intro">
-        Analyse locale de vos données de santé pour identifier les facteurs qui influencent
-        le plus votre <strong>bien-être</strong>. Tout est calculé directement sur votre appareil.
+        Ce qui va de pair avec votre <strong>bien-être</strong> dans vos données, calculé sur votre téléphone.
       </p>
 
       <nav className="reco-tabs" aria-label="Onglets recommandations">

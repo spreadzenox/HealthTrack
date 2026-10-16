@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "Analyses plus courtes",
+  "items": [
+    "La page Analyses va droit aux résultats : une ligne « Analyse sur 75 jours notés · week-end pris en compte », puis vos pistes. La méthode, le traitement du week-end, des habitudes et des effets décalés sont réunis sous « Comment c'est calculé », replié.",
+    "Chaque section n'a plus qu'une ligne d'explication, et « une corrélation ne prouve pas une cause » n'est plus répété trois fois. Onglet avancé : R², variables retenues et effet du week-end rangés sous « Comment fonctionne ce modèle ? »."
+  ]
+}
