@@ -295,6 +295,32 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
+  it('says plainly when a lever goes against the general hypothesis (D6)', async () => {
+    const lever = {
+      ...baseCorr, variable: 'screen_late_minutes', label: 'Écran tard', r: 0.42,
+      direction: 'lower_better', action: 'Ne pas chercher à lâcher le téléphone plus tôt le soir', againstNorm: true,
+    }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good', correlations: [lever], levers: [lever],
+    })
+    expect(await screen.findByText('Ne pas chercher à lâcher le téléphone plus tôt le soir')).toBeInTheDocument()
+    expect(screen.getByText(/Contraire à l’hypothèse générale : chez vous, vos données font foi/)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('does not mention the general hypothesis on a lever that follows it', async () => {
+    const lever = {
+      ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
+      direction: 'higher_better', action: 'Marcher davantage', againstNorm: false,
+    }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good', correlations: [lever], levers: [lever],
+    })
+    await screen.findByText('Marcher davantage')
+    expect(screen.queryByText(/Contraire à l’hypothèse générale/)).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
   it('explains that no lever stands out yet when the list is empty', async () => {
     const spy = await renderWithBasic({
       status: 'ok', datasetDays: 12, reliability: 'good',

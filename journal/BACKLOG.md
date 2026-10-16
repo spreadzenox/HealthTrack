@@ -500,9 +500,10 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    `moodEstimate.js` supprimé, calibration gardée dans `mood/calibration.js`). Reste : revue des pièges (ordre
    temporel X avant Y dans les corrélations simples, taille minimale), garde-fous visibles (I46) ; le stress
    physiologique de la montre (I76) sera un facteur.
-5. 🧭 D6 — pistes et messages neutres / personnels (`LEVER_ACTIONS`, `direction`).
-   Concret (16/10 06:30) : `analysisEngine` — les pistes du modèle avancé ne gardent que les effets « dans le sens
-   attendu » (`direction: 'higher_better'`…) : une piste personnelle de sens contraire est cachée → à rendre neutre.
+5. 🧭 D6 — pistes et messages neutres / personnels. **16/10 18:30 : fait pour les pistes** — `leverSuggestion`
+   suit le signe personnel (simples, décalées, avancées), piste contraire montrée « Ne pas chercher à … » +
+   « Contraire à l'hypothèse générale : chez vous, vos données font foi » ; jamais plus d'alcool / tabac.
+   Reste : relire Radar forme, prédiction, repères Nutrition ; `direction` en a priori faible chiffré (shrinkage).
 6. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
    ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).
    Livré le 14/10 12:30 : première synchro depuis 2000, reprise sur la dernière synchro avec données − 6 h, état v2,

@@ -102,6 +102,15 @@ describe('computeLaggedEffects', () => {
     expect(stepsEffect.action).toMatch(/Marcher/)
   })
 
+  it('keeps a day-before effect that goes against the general norm, flagged and phrased neutrally (D6)', () => {
+    const result = computeLaggedEffects(makeEntries({ days: 60, lag: 1, effect: -1 }))
+    const stepsEffect = result.effects.find((e) => e.variable === 'steps')
+    expect(stepsEffect).toBeDefined()
+    expect(stepsEffect.r).toBeLessThan(-0.5)
+    expect(stepsEffect.againstNorm).toBe(true)
+    expect(stepsEffect.action).toBe('Ne pas chercher à marcher davantage')
+  })
+
   it('finds a 2-day lag', () => {
     const result = computeLaggedEffects(makeEntries({ days: 70, lag: 2 }))
     const stepsEffect = result.effects.find((e) => e.variable === 'steps')

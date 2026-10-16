@@ -10,6 +10,8 @@ import {
   buildTodayRow,
   pearsonCorrelation,
   computeBasicCorrelations,
+  leverSuggestion,
+  LEVER_ACTIONS,
   computeAdvancedAnalysis,
   computeTodayPrediction,
   countTotalDataDays,
@@ -651,7 +653,7 @@ describe('computeBasicCorrelations', () => {
     }
   })
 
-  it('excludes lower_better variable from levers when r is positive', () => {
+  it('never advises more alcohol, even when data links it to better wellbeing', () => {
     // If a lower_better variable has a positive correlation (r > 0),
     // it should NOT be flagged as harmful (positive r means more of it → better wellbeing).
     const entries = []
@@ -1384,25 +1386,30 @@ describe('computeBasicCorrelations — levers', () => {
     }
   })
 
-  it('every lever has a French action, a sign coherent with the data and q < 0.2', () => {
+  it('every lever has a French action, a flag against the general norm and q < 0.2', () => {
     const result = computeBasicCorrelations(buildLeverScenario())
     expect(result.levers.length).toBeGreaterThan(0)
     for (const l of result.levers) {
       expect(typeof l.action).toBe('string')
       expect(l.action.length).toBeGreaterThan(3)
       expect(l.q).toBeLessThan(0.2)
-      if (VARIABLE_META[l.variable].direction === 'higher_better') expect(l.r).toBeGreaterThan(0)
-      if (VARIABLE_META[l.variable].direction === 'lower_better') expect(l.r).toBeLessThan(0)
+      const dir = VARIABLE_META[l.variable].direction
+      const against = (dir === 'higher_better' && l.r < 0) || (dir === 'lower_better' && l.r > 0)
+      expect(l.againstNorm).toBe(against)
     }
     const cig = result.levers.find((l) => l.variable === 'cigaretteCount')
     if (cig) expect(cig.action).toMatch(/moins/i)
   })
 
-  it('never advises more of a "good" variable when data links it to LOWER wellbeing', () => {
+  // D6 : les données personnelles font foi, une piste contraire à la norme n'est pas cachée.
+  it('shows a personal lever that goes against the general norm, phrased neutrally', () => {
     const result = computeBasicCorrelations(buildLeverScenario({ stepsSign: -1 }))
     const steps = result.correlations.find((c) => c.variable === 'steps')
     expect(steps.r).toBeLessThan(-0.5)
-    expect(result.levers.some((l) => l.variable === 'steps')).toBe(false)
+    const lever = result.levers.find((l) => l.variable === 'steps')
+    expect(lever).toBeDefined()
+    expect(lever.againstNorm).toBe(true)
+    expect(lever.action).toBe('Ne pas chercher à marcher davantage')
   })
 
   it('proposes a positively correlated "good" variable as a lever', () => {
@@ -1427,6 +1434,36 @@ describe('computeBasicCorrelations — levers', () => {
   })
 })
 
+describe('leverSuggestion — D6 (aucune norme imposée)', () => {
+  it('follows the sign of the personal link, whatever the general norm', () => {
+    expect(leverSuggestion('steps', 0.4)).toEqual({ action: 'Marcher davantage', againstNorm: false })
+    expect(leverSuggestion('steps', -0.4)).toEqual({ action: 'Ne pas chercher à marcher davantage', againstNorm: true })
+    expect(leverSuggestion('screen_late_minutes', -0.4)).toEqual({ action: 'Lâcher le téléphone plus tôt le soir', againstNorm: false })
+    expect(leverSuggestion('screen_late_minutes', 0.4)).toEqual({ action: 'Ne pas chercher à lâcher le téléphone plus tôt le soir', againstNorm: true })
+  })
+
+  it('drops the examples in parentheses from a counter-norm action', () => {
+    expect(leverSuggestion('fiber_g', -0.4).action).toBe('Ne pas chercher à manger plus de fibres')
+  })
+
+  it('never suggests more alcohol or tobacco (the link stays visible among correlations)', () => {
+    expect(leverSuggestion('alcohol_g', 0.5)).toBeNull()
+    expect(leverSuggestion('cigaretteCount', 0.5)).toBeNull()
+    expect(leverSuggestion('cigaretteCount', -0.5).action).toMatch(/moins/i)
+  })
+
+  it('returns null for non-actionable variables', () => {
+    expect(leverSuggestion('restingHR', 0.5)).toBeNull()
+    expect(leverSuggestion('steps', 0)).toBeNull()
+  })
+
+  it('every actionable variable starts with a verb so that its counter phrase reads well', () => {
+    for (const [key, action] of Object.entries(LEVER_ACTIONS)) {
+      expect(action, key).toMatch(/^(Dormir|Marcher|Bouger|Manger|Limiter|Boire|Fumer|Passer|Lâcher|Prendre|Alléger)\b/)
+    }
+  })
+})
+
 describe('computeAdvancedAnalysis — recommendations coherence', () => {
   it('never recommends increasing steps when the model links steps to lower wellbeing', () => {
     const result = computeAdvancedAnalysis(buildLeverScenario({ stepsSign: -1 }))
@@ -1434,7 +1471,11 @@ describe('computeAdvancedAnalysis — recommendations coherence', () => {
     const stepsImp = result.featureImportance.find((f) => f.variable === 'steps')
     if (stepsImp && stepsImp.coefficient < 0) {
       for (const advice of result.topRecommendations) {
-        expect(advice).not.toMatch(/march|augmenter votre pas/i)
+        expect(advice).not.toMatch(/^marcher davantage/i)
+      }
+      // D6 : la piste personnelle reste, formulée sans norme
+      if (stepsImp.advice) {
+        expect(stepsImp.advice).toMatch(/^Ne pas chercher à marcher davantage — .*vos données font foi/)
       }
     }
     for (const advice of result.topRecommendations) {

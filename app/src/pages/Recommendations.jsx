@@ -90,6 +90,13 @@ const EVIDENCE_CLASS = {
 /** Below this change, the week-end control is not worth mentioning on a lever. */
 const WEEKEND_R_SHIFT = 0.1
 
+/** D6 : une piste contraire à la norme générale est montrée telle quelle, sans culpabiliser. */
+function AgainstNormNote() {
+  return (
+    <p className="reco-advice-impact">Contraire à l’hypothèse générale : chez vous, vos données font foi.</p>
+  )
+}
+
 function LeverCard({ rank, lever }) {
   const days = Math.round(lever.nEff)
   const weekendShift = lever.rRaw != null && Math.abs(lever.rRaw - lever.r) >= WEEKEND_R_SHIFT
@@ -98,6 +105,7 @@ function LeverCard({ rank, lever }) {
       <span className="reco-advice-rank">{rank}</span>
       <div className="reco-advice-content">
         <p className="reco-advice-text">{lever.action}</p>
+        {lever.againstNorm && <AgainstNormNote />}
         <p className="reco-advice-impact">
           Lien {lever.strength} avec votre bien-être (r = {formatR(lever.r)}, ≈ {days} jours indépendants)
           {weekendShift && <> · r = {formatR(lever.rRaw)} sans tenir compte du week-end</>}
@@ -224,6 +232,7 @@ function LaggedEffectCard({ effect }) {
         </span>
       </p>
       {effect.action && <p className="reco-tag-compare">🎯 Piste : {effect.action}</p>}
+      {effect.action && effect.againstNorm && <AgainstNormNote />}
       <p className="reco-tag-days">
         Lien {effect.strength} (r = {formatR(effect.r)}, ≈ {Math.round(effect.nEff)} jours indépendants)
       </p>
@@ -419,7 +428,8 @@ function BasicTab({ analysis }) {
         <p>
           Tout est calculé sur votre téléphone. Ce sont des hypothèses : une corrélation ne prouve
           pas une cause, et d&apos;autres choses peuvent changer ces jours-là. Essayez une piste
-          deux semaines et observez.
+          deux semaines et observez. Aucun comportement n&apos;est jugé bon ou mauvais d&apos;avance :
+          quand vos données vont à l&apos;inverse de l&apos;hypothèse générale, la piste le dit.
         </p>
       </details>
 
