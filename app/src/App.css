@@ -62,11 +62,11 @@
 .upload-zone {
   position: relative;
   background: var(--surface);
-  border: 2px dashed var(--text-muted);
+  border: 2px dashed var(--border);
   border-radius: var(--radius);
-  padding: 28px 20px;
+  padding: 10px;
   text-align: center;
-  margin: 16px 0;
+  margin: 12px 0;
   transition: border-color 0.2s, background 0.2s;
 }
 
@@ -85,23 +85,19 @@
   z-index: -1;
 }
 
-.upload-zone .hint {
-  margin-top: 10px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
 .upload-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
 }
 
 .upload-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  min-height: 48px;
+  font-family: inherit;
   cursor: pointer;
   background: transparent;
   border: 2px solid var(--accent);
@@ -109,7 +105,7 @@
   color: var(--accent);
   font-weight: 600;
   font-size: 0.95rem;
-  padding: 10px 18px;
+  padding: 8px 10px;
   transition: background 0.15s, color 0.15s;
   user-select: none;
 }

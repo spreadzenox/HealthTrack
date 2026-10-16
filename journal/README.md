@@ -236,7 +236,13 @@ avez demandée (« niveau 2 »), j'ai vérifié ce qu'Android permet vraiment, j
 Premier pas de code prévu : un petit nettoyage de l'ancien estimateur d'humeur (qui jugeait encore « écran tard =
 mauvais »), puis le service visage avec son écran de diagnostic à exporter.
 
+**Run du 16/10 10:30** (nettoyage, pas de nouveau journal montre) : **la page Repas va à l'essentiel.** En haut, une
+seule ligne de trois boutons : **Photo**, **Galerie**, **Décrire** (fini le texte qui les redisait et l'aide « sur
+mobile »). Dans vos derniers repas, les aliments sont à la suite sur une ligne : la page passe de 3 à 2 écrans.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Page Repas plus compacte (run 16/10 10:30)** : Photo, Galerie et Décrire sur une ligne ; aliments d'un repas à
+  la suite (« Poulet : 150 g · Riz : 180 g »), deux fois plus de repas par écran.
 - **Analyses plus courtes (run 16/10 06:30)** : une ligne de résumé puis vos pistes ; la méthode (week-end, tags,
   effets décalés) réunie sous « Comment c'est calculé », replié ; une ligne d'explication par section ; onglet avancé :
   R² et détails du modèle repliés.
@@ -709,6 +715,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 04:30 — [Nettoyage : « Repas tardif » déduit des repas](runs/2026-10-16-0430-repas-tardif-deduit.md) | 🧹 | PR #178 fusionnée → v141 |
 | 16/10 06:30 — [Nettoyage : Analyses plus courtes](runs/2026-10-16-0630-analyses-plus-courtes.md) | 🧹 | PR #180 fusionnée → v142 |
 | 16/10 08:30 — [Idées : visage et voix, plan Android vérifié](runs/2026-10-16-0830-idees-visage-voix-android.md) | 💡🙂 | 6 idées (I88–I93) — journal seul |
+| 16/10 10:30 — [Nettoyage : page Repas plus compacte](runs/2026-10-16-1030-repas-plus-compact.md) | 🧹 | PR à fusionner |
 
 ---
 

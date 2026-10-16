@@ -62,8 +62,22 @@ describe('Food', () => {
         <Food />
       </BrowserRouter>
     )
-    expect(screen.getByText(/Prendre une photo/i)).toBeInTheDocument()
-    expect(screen.getByText(/Choisir depuis la galerie/i)).toBeInTheDocument()
+    expect(screen.getByText('📷 Photo')).toBeInTheDocument()
+    expect(screen.getByText('🖼️ Galerie')).toBeInTheDocument()
+  })
+
+  it('va droit aux trois façons de saisir, sans texte d’explication redondant', () => {
+    render(
+      <BrowserRouter>
+        <Food />
+      </BrowserRouter>
+    )
+    expect(screen.queryByText(/Photographiez votre assiette/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Utilisez l'appareil photo/i)).not.toBeInTheDocument()
+    const zone = document.querySelector('.upload-actions')
+    expect(zone).toHaveTextContent('Photo')
+    expect(zone).toHaveTextContent('Galerie')
+    expect(zone).toHaveTextContent('Décrire')
   })
 
   it('loads recent meals from local storage on mount', async () => {
