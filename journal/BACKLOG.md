@@ -326,7 +326,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       (I78 : `ESTIMATOR_INPUTS = ['face', 'voice', 'selfReport']`, `socialMediaMinutes` en X ; la capacité « émotion »
       de la montre, si elle est lue un jour, est un X)
 - [x] Estimateur comportemental retiré de l'affichage (carte « Humeur estimée », run 12/10 16:30 Paris)
-- [ ] Revue des pièges : ordre temporel (X avant Y — ex. pas **du jour** vs bien-être du jour), comparaisons multiples
+- [ ] Revue des pièges : ~~ordre temporel (X avant Y — ex. pas **du jour** vs bien-être du jour)~~ **fait le 16/10 22:30** pour les comportements du jour (`SAME_DAY_KEYS`, `DAY_OVER_HOUR` = 20 h ; reste : repas d'après la note, prédiction du jour), comparaisons multiples
       (déjà BH), taille minimale, formulations « va de pair » partout
 - [ ] Garde-fous visibles (I46) : X de la veille, ≥ 30 paires pour afficher / ≥ 90 jours pour « solide », préblanchiment
       AR(1), « k liens nets sur m testés » ; expériences ABAB randomisées pour un lien à confirmer (I45, plus tard)
@@ -507,8 +507,10 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    maison (I67), réseaux sociaux = temps au premier plan par app seulement ; sur Android 15+, « paramètres restreints »
    bloque aussi l'accès aux données d'utilisation des APK hors magasin → le guide doit l'expliquer.
 4. 🔁 D5 — **16/10 16:30 : I92 + I84 livrés** (`ESTIMATOR_INPUTS`, test anti-circularité, « Stress » côté Y,
-   `moodEstimate.js` supprimé, calibration gardée dans `mood/calibration.js`). Reste : revue des pièges (ordre
-   temporel X avant Y dans les corrélations simples, taille minimale), garde-fous visibles (I46) ; le stress
+   `moodEstimate.js` supprimé, calibration gardée dans `mood/calibration.js`). **16/10 22:30 : ordre temporel livré**
+   (un jour noté avant 20 h, seuls pas / séances / calories / FC / cigarettes / écran d'avant la note comptent, analyses
+   simple et avancée). Reste : repas d'après la note (aujourd'hui lissés sur 10 j), prédiction du jour, taille minimale,
+   garde-fous visibles (I46) ; le stress
    physiologique de la montre (I76) sera un facteur.
 5. 🧭 D6 — pistes et messages neutres / personnels. **16/10 18:30 : fait pour les pistes** — `leverSuggestion`
    suit le signe personnel (simples, décalées, avancées), piste contraire montrée « Ne pas chercher à … » +

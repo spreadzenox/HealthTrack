@@ -12,6 +12,7 @@ import {
   COLLINEARITY_MAX_R,
   MIN_ADVICE_EFFECT,
   MIN_WEEKEND_DAYS,
+  DAY_OVER_HOUR,
 } from '../services/analysisEngine'
 import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR, LATE_MEAL_FROM_HOUR } from '../services/behaviorTags'
 import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
@@ -404,7 +405,9 @@ function BasicTab({ analysis }) {
           Corrélation de Pearson entre chaque variable et le bien-être, corrigée pour les jours qui
           se ressemblent (autocorrélation) et pour le nombre de variables testées
           (Benjamini-Hochberg). Un jour sans mesure (montre non portée, pas de pesée) est ignoré
-          pour cette mesure, jamais compté comme 0.
+          pour cette mesure, jamais compté comme 0. Un jour noté avant {DAY_OVER_HOUR} h, seuls les pas,
+          séances, cigarettes et temps d&apos;écran d&apos;avant la note comptent : ce qui suit ne peut pas
+          l&apos;expliquer.
           {result.nutritionDays != null && result.nutritionDays < datasetDays && (
             <>
               {' '}Alimentation connue sur {result.nutritionDays} jour{result.nutritionDays > 1 ? 's' : ''} sur {datasetDays} :

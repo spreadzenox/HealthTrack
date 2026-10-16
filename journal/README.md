@@ -279,7 +279,20 @@ c'est la caméra qui coûtera la batterie, pas le calcul. Deux autres points pou
 - le **Radar forme** dira « inhabituel chez vous » au lieu de juger un sens « mauvais », tant que vos propres
   données n'ont pas montré ce qui va avec votre forme.
 
+**Run du 16/10 22:30** (votre règle D5, ordre temporel) : une note de bien-être ne peut être expliquée que par ce
+qui s'est passé **avant** elle. Jusqu'ici, si vous notiez votre journée à 10 h, tous les pas, séances, cigarettes et le
+temps d'écran **du reste de la journée** étaient comparés à cette note — or ils viennent après, et peuvent même en
+être la conséquence (on bouge plus parce qu'on va bien). Désormais, un jour noté **avant 20 h**, les Analyses ne
+comptent que ce qui s'est terminé avant la note ; les totaux « journée entière » sans heure (temps d'écran du jour,
+totaux de Health Connect) sont ignorés ce jour-là au lieu d'être faussés. Noté à 20 h ou après : la journée est
+considérée finie, tout compte, comme avant. Le sommeil (rattaché au réveil), l'écran tard de la veille, la météo et
+l'alimentation (lissée sur 10 jours) n'étaient pas concernés. Point d'attention : si vous notez souvent en journée,
+le lien « pas du jour » s'appuiera sur moins de jours — c'est le prix d'un résultat honnête ; les effets « la
+veille » restent calculés sur tout.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Analyses : seul ce qui précède votre note compte (run 16/10 22:30)** : un jour noté avant 20 h, les pas,
+  séances, cigarettes et le temps d'écran d'après la note ne sont plus comparés à elle.
 - **Vos données font foi, même contre la norme (run 16/10 18:30)** : une piste contraire à l'hypothèse générale
   n'est plus cachée ; elle s'affiche « Ne pas chercher à … » avec « Contraire à l'hypothèse générale » (jamais plus
   d'alcool ni de tabac).
@@ -772,6 +785,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 16:30 — [Anti-circularité : « Stress » côté humeur](runs/2026-10-16-1630-stress-cote-humeur.md) | 🧪 | PR #186 fusionnée → v146 |
 | 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR #187 fusionnée → v147 |
 | 16/10 20:30 — [Idées : le visage sans télémétrie, APK léger, Samsung](runs/2026-10-16-2030-idees-visage-litert.md) | 💡🙂 | 4 idées (I94–I97) — journal seul |
+| 16/10 22:30 — [Ordre temporel : seul ce qui précède la note compte](runs/2026-10-16-2230-ordre-temporel.md) | 🔁 | PR #189 |
 
 ---
 

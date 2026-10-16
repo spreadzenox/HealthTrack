@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-16",
+  "kind": "amélioration",
+  "title": "Analyses : seul ce qui précède votre note compte",
+  "items": [
+    "Une note de bien-être ne peut être expliquée que par ce qui s'est passé avant elle. Un jour où vous notez avant 20 h, les pas, séances, cigarettes et le temps d'écran d'après la note ne sont plus comparés à elle (ils peuvent même en être la conséquence).",
+    "Les totaux de la journée entière sans heure (temps d'écran du jour, totaux Health Connect) sont ignorés ces jours-là au lieu de fausser le lien. Noté à 20 h ou après : toute la journée compte, comme avant."
+  ]
+}

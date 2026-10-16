@@ -29,6 +29,8 @@ import {
   ridgeLooPredictions,
   olsNormalEquations,
   MIN_WEEKEND_DAYS,
+  DAY_OVER_HOUR,
+  SAME_DAY_KEYS,
 } from './analysisEngine'
 
 // ---------------------------------------------------------------------------
@@ -39,7 +41,7 @@ function makeWellbeing(dateStr, score) {
   return {
     type: 'wellbeing',
     source: 'app_wellbeing',
-    at: `${dateStr}T12:00:00Z`,
+    at: new Date(`${dateStr}T21:30:00`).toISOString(), // le soir : journée finie (DAY_OVER_HOUR)
     payload: { score },
   }
 }
@@ -387,6 +389,98 @@ describe('buildDailyDataset', () => {
     const ds = buildDailyDataset(entries)
     expect(ds[0].restingHR).toBeCloseTo(55)
     expect(ds[0].avgHR).toBeCloseTo(80)
+  })
+})
+
+// Heure locale (les règles d'ordre temporel raisonnent en heures du téléphone).
+function localIso(day, hour, minute = 0) {
+  return new Date(2026, 0, day, hour, minute).toISOString()
+}
+
+describe('buildDailyDataset — ordre temporel (D5, beforeRating)', () => {
+  const rating = (day, hour, score = 3) => ({ type: 'wellbeing', at: localIso(day, hour), payload: { score } })
+
+  it('ne compte, un jour noté tôt, que les comportements terminés avant la note', () => {
+    const entries = [
+      rating(5, 10),
+      { type: 'steps', at: localIso(5, 8), payload: { value: 1200, endDate: localIso(5, 9) } },
+      { type: 'steps', at: localIso(5, 15), payload: { value: 9000, endDate: localIso(5, 16) } },
+      { type: 'cigarette', at: localIso(5, 9), payload: { count: 1 } },
+      { type: 'cigarette', at: localIso(5, 18), payload: { count: 2 } },
+      { type: 'activity', at: localIso(5, 9, 30), payload: { totalCalories: 200, durationSeconds: 3600 } },
+      { type: 'heart_rate', at: localIso(5, 9), payload: { subtype: 'heartRate', bpm: 70 } },
+      { type: 'heart_rate', at: localIso(5, 17), payload: { subtype: 'heartRate', bpm: 120 } },
+    ]
+    const [row] = buildDailyDataset(entries, { beforeRating: true })
+    expect(row.steps).toBe(1200)
+    expect(row.cigaretteCount).toBe(1)
+    expect(row.activityCalories).toBe(0) // séance finie à 10 h 30, après la note de 10 h
+    expect(row.avgHR).toBe(70)
+  })
+
+  it('rend inconnu un total de la journée entière qui déborde après la note', () => {
+    const entries = [
+      rating(5, 11),
+      { type: 'steps', at: localIso(5, 0), payload: { value: 8000, period: 'day', endDate: localIso(6, 0) } },
+      { type: 'calories', at: localIso(5, 0), payload: { value: 2100, period: 'day', endDate: localIso(6, 0) } },
+      { type: 'phone_usage', at: localIso(5, 12), payload: { screenMinutes: 240, lateScreenMinutes: 35, unlocks: 80 } },
+    ]
+    const [row] = buildDailyDataset(entries, { beforeRating: true })
+    expect(row.steps).toBeNull()
+    expect(row.dailyCaloriesHC).toBeNull()
+    expect(row.screen_minutes).toBeNull()
+    expect(row.phone_unlocks).toBeNull()
+    expect(row.screen_late_minutes).toBe(35) // veille au soir : avant la note
+  })
+
+  it('garde un total du jour arrêté avant la note (synchro de la montre le matin)', () => {
+    const entries = [
+      rating(5, 15),
+      { type: 'steps', at: localIso(5, 0), payload: { value: 4000, period: 'day', endDate: localIso(5, 12) } },
+    ]
+    expect(buildDailyDataset(entries, { beforeRating: true })[0].steps).toBe(4000)
+  })
+
+  it(`compte toute la journée quand la dernière note tombe à ${DAY_OVER_HOUR} h ou après`, () => {
+    const entries = [
+      rating(5, 9),
+      rating(5, DAY_OVER_HOUR, 4),
+      { type: 'steps', at: localIso(5, 0), payload: { value: 8000, period: 'day', endDate: localIso(6, 0) } },
+      { type: 'phone_usage', at: localIso(5, 12), payload: { screenMinutes: 240, lateScreenMinutes: 35, unlocks: 80 } },
+    ]
+    const [row] = buildDailyDataset(entries, { beforeRating: true })
+    expect(row.steps).toBe(8000)
+    expect(row.screen_minutes).toBe(240)
+  })
+
+  it('ne touche à rien sans beforeRating (effets « la veille », affichage)', () => {
+    const entries = [
+      rating(5, 10),
+      { type: 'steps', at: localIso(5, 15), payload: { value: 9000, endDate: localIso(5, 16) } },
+    ]
+    expect(buildDailyDataset(entries)[0].steps).toBe(9000)
+  })
+
+  it('les variables limitées sont des comportements du jour connus du moteur', () => {
+    for (const k of SAME_DAY_KEYS) expect(VARIABLE_META[k]).toBeDefined()
+    expect(SAME_DAY_KEYS).not.toContain('sleepMinutes')
+    expect(SAME_DAY_KEYS).not.toContain('screen_late_minutes')
+  })
+
+  it('les corrélations simples ignorent les pas faits après une note du matin', () => {
+    // Pas après la note parfaitement liés à la note (l'humeur ferait marcher) : ce lien ne doit pas apparaître.
+    const entries = []
+    for (let d = 1; d <= 12; d += 1) {
+      const score = d % 5
+      entries.push(rating(d, 9, score))
+      entries.push({ type: 'steps', at: localIso(d, 7), payload: { value: 3000 + ((d * 7) % 4) * 500, endDate: localIso(d, 8) } })
+      entries.push({ type: 'steps', at: localIso(d, 14), payload: { value: score * 3000, endDate: localIso(d, 15) } })
+    }
+    const res = computeBasicCorrelations(entries)
+    const steps = res.correlations.find((c) => c.variable === 'steps')
+    const raw = buildDailyDataset(entries)
+    expect(raw.map((r) => r.steps)).not.toEqual(buildDailyDataset(entries, { beforeRating: true }).map((r) => r.steps))
+    expect(Math.abs(steps.r)).toBeLessThan(0.9)
   })
 })
 
