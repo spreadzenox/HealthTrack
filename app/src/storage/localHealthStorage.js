@@ -6,13 +6,15 @@
  * Schema v2: added compound index 'source_at' for efficient connector sync queries.
  * Schema v3: added compound index 'type_at' — listEntries reads a type / source / date range through
  * the indexes instead of loading the whole store (perf D2).
+ * Schema v4: added compound index 'type_subtype_at' ([type, payload.subtype, at]) — the Home cards that need
+ * one daily value (resting HR, HRV) no longer read every 10-min heart-rate / SpO₂ slot (perf D2).
  */
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
 import { bumpDataRevision } from './dataRevision'
 
 const DB_NAME = 'HealthTrack'
 const STORE_NAME = 'health_entries'
-const DB_VERSION = 3
+const DB_VERSION = 4
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -41,24 +43,34 @@ function openDB() {
       if (oldVersion < 3 && !store.indexNames.contains('type_at')) {
         store.createIndex('type_at', ['type', 'at'], { unique: false })
       }
+      // v4: by sub-type within a type and date range (entries without payload.subtype are simply not indexed)
+      if (oldVersion < 4 && !store.indexNames.contains('type_subtype_at')) {
+        store.createIndex('type_subtype_at', ['type', 'payload.subtype', 'at'], { unique: false })
+      }
     }
   })
 }
 
 /**
- * @param {{ type?: string, source?: string, since?: string, until?: string, limit?: number }} [opts]
+ * `subtypes` (avec `type`) : seules les entrées dont `payload.subtype` est dans la liste sont lues, par l'index
+ * [type, sous-type, at].
+ * @param {{ type?: string, subtypes?: string[], source?: string, since?: string, until?: string, limit?: number }} [opts]
  * @returns {Promise<Array<{ id: number, type: string, source: string, at: string, payload: object, created_at: string }>>}
  */
 export async function listEntries(opts = {}) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
-    const req = indexedRead(tx.objectStore(STORE_NAME), opts)
-    req.onerror = () => reject(req.error)
-    req.onsuccess = () => {
-      let entries = req.result || []
+    const store = tx.objectStore(STORE_NAME)
+    const reqs = opts.type && opts.subtypes
+      ? opts.subtypes.map((subtype) => subtypeRead(store, { ...opts, subtype }))
+      : [indexedRead(store, opts)]
+    tx.onerror = () => reject(tx.error)
+    tx.oncomplete = () => {
+      let entries = reqs.flatMap((r) => r.result || [])
       // Les filtres restent appliqués : l'index ne fait que réduire ce qui est lu
       if (opts.type) entries = entries.filter((e) => e.type === opts.type)
+      if (opts.subtypes) entries = entries.filter((e) => opts.subtypes.includes(e.payload?.subtype))
       if (opts.source) entries = entries.filter((e) => e.source === opts.source)
       if (opts.since) entries = entries.filter((e) => e.at >= opts.since)
       if (opts.until) entries = entries.filter((e) => e.at <= opts.until)
@@ -71,6 +83,10 @@ export async function listEntries(opts = {}) {
 
 // Borne haute d'une date ISO (aucune date réelle ne la dépasse)
 const AT_MAX = '\uffff'
+
+function subtypeRead(store, { type, subtype, since, until }) {
+  return store.index('type_subtype_at').getAll(IDBKeyRange.bound([type, subtype, since ?? ''], [type, subtype, until ?? AT_MAX]))
+}
 
 /** Plus petite lecture couvrant les filtres : index [type, at], [source, at], at ou type ; sinon tout. */
 function indexedRead(store, { type, source, since, until }) {

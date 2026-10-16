@@ -92,6 +92,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       au lieu d'une entrée `heart_rate` par minute (`devices/huawei/sync.js`), migration rétrocompatible de l'existant,
       Accueil (`HealthRadar`, `BaselineCards`) qui ne lit que les sous-types utiles ; démo `--dense` enrichie d'une
       SpO₂ minute pour reproduire le cas réel du propriétaire, chiffres avant / après
+- [x] Accueil : `HealthRadar` et `BaselineCards` lisent FC repos / VFC **par sous-type** (schéma v4, index
+      `type_subtype_at`, `listEntries({ subtypes })`) au lieu de toute la FC : 706 → 403 ms, 16 210 → 3 988
+      enregistrements lus (3 ans `--dense --spo2=slot`, run 17/10 00:30)
+- [ ] Accueil : « Vos derniers jours » (`loadJournalEntries`) relit toutes les tranches FC / SpO₂ des 7 jours → mesurer
+      sa part des 3 988 restants, puis lecture par type ou agrégat journalier
 - [ ] Cache d'agrégats journaliers / hebdo précalculés, invalidés à l'écriture (`health-entries-updated`)
 - [ ] **I83** (score 16) : courbes à résolution adaptée — MinMaxLTTB (`utils/downsample.js`) au-delà de ~2 points
       par pixel, périodes longues servies par les agrégats ci-dessus
@@ -495,8 +500,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    ne couvre que les changements de fuseau → garder le tag déclaré, `declaredAlsoCounts`) ; relire Connecteurs et
    Analyses avancées ; Accueil : tuile « Repas » quand un seul repas (redit ses kcal ; gardée pour l'instant, total utile). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
-   de SpO₂ minute) ; **suite : lecture `heart_rate` partagée ou par sous-type pour l'Accueil (12,5 k enregistrements lus
-   pour 4,3 k tranches)** ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
+   de SpO₂ minute) ; **17/10 00:30 : FC repos / VFC lues par sous-type (index v4) — Accueil 706 → 403 ms, 16,2 k → 4,0 k
+   enregistrements lus** ; suite : « Vos derniers jours » sans relire les tranches ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
    agrégats, budget en CI (enregistrements lus ; **taille de l'APK, I95 : `abiFilters` arm64 + x86_64 avant toute lib native**), Recommandations : panneau debug seul à lire toute la base (garde-fou).

@@ -27,7 +27,8 @@ function history() {
 }
 
 function mockEntries(entries) {
-  listEntries.mockImplementation(async ({ type }) => entries.filter((e) => e.type === type))
+  listEntries.mockImplementation(async ({ type, subtypes }) =>
+    entries.filter((e) => e.type === type && (!subtypes || subtypes.includes(e.payload?.subtype))))
 }
 
 describe('HealthRadar', () => {
@@ -36,6 +37,14 @@ describe('HealthRadar', () => {
     vi.setSystemTime(NOW)
   })
   afterEach(() => vi.useRealTimers())
+
+  it('ne lit que la FC repos et la VFC, pas les tranches de FC / SpO₂ (perf D2)', async () => {
+    mockEntries([])
+    render(<HealthRadar />)
+    await vi.waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'heart_rate' })))
+    const call = listEntries.mock.calls.find(([o]) => o.type === 'heart_rate')[0]
+    expect([...call.subtypes].sort()).toEqual(['heartRateVariability', 'restingHeartRate'])
+  })
 
   it('renders nothing when there is no heart or sleep data at all', async () => {
     mockEntries([])

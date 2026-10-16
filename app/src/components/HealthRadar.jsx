@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { listEntries } from '../storage/localHealthStorage'
 import { computeRadar, explainRadar, RADAR_DAYS, RADAR_BASELINE_DAYS } from '../services/radar'
+import { BASELINE_METRICS } from '../services/baselines'
 import { localDateKey } from '../services/wellbeingSeries'
 import { formatDuration } from '../utils/format'
 import './HealthRadar.css'
@@ -47,7 +48,8 @@ export default function HealthRadar() {
     try {
       const since = new Date(Date.now() - HISTORY_DAYS * 86400000).toISOString()
       const [heart, sleep, wellbeing, workouts, meals] = await Promise.all([
-        listEntries({ type: 'heart_rate', since, limit: Infinity }),
+        // FC repos et VFC seulement (une valeur par jour), pas les tranches de FC / SpO₂ (perf D2)
+        listEntries({ type: 'heart_rate', subtypes: Object.keys(BASELINE_METRICS), since, limit: Infinity }),
         listEntries({ type: 'sleep', since, limit: Infinity }),
         listEntries({ type: 'wellbeing', since, limit: Infinity }),
         // Séances du soir et repas tardifs comptent comme causes sans être cochés

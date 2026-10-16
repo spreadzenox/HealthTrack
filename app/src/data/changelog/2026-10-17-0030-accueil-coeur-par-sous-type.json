@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "Accueil plus rapide à ouvrir",
+  "items": [
+    "Le Radar forme et les cartes « FC au repos » et « VFC » n'ont besoin que d'une valeur par jour : ils ne relisent plus toutes les tranches de fréquence cardiaque et de SpO₂ de la montre (des milliers par mois), et chacun ne les relisait plus de son côté.",
+    "Mesuré sur 3 ans de données de démo avec une montre : l'Accueil lit 4 fois moins de mesures (16 210 → 3 988) et est utilisable en 0,4 s au lieu de 0,7 s. Rien ne change à l'écran ; vos données ne sont pas modifiées."
+  ]
+}
