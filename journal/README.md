@@ -683,7 +683,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 00:30 — [Perf : SpO₂ de la montre en tranches de 10 min](runs/2026-10-16-0030-spo2-tranches.md) | ⚡ | PR #175 fusionnée → v139 |
 | 16/10 02:30 — [Nettoyage : Nutrition et Vos données plus courtes](runs/2026-10-16-0230-nutrition-donnees-courtes.md) | 🧹 | PR #176 fusionnée → v140 |
 | 16/10 04:30 — [Nettoyage : « Repas tardif » déduit des repas](runs/2026-10-16-0430-repas-tardif-deduit.md) | 🧹 | PR #178 fusionnée → v141 |
-| 16/10 06:30 — [Nettoyage : Analyses plus courtes](runs/2026-10-16-0630-analyses-plus-courtes.md) | 🧹 | PR en cours |
+| 16/10 06:30 — [Nettoyage : Analyses plus courtes](runs/2026-10-16-0630-analyses-plus-courtes.md) | 🧹 | PR #180 fusionnée → v142 |
 
 ---
 
