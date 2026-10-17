@@ -53,6 +53,6 @@
   publiée avec son APK.
 - Je n'ai **pas** fusionné #197 : juste après la fusion de #196, le contrôle de permissions de la session a signalé
   l'action « Merge Without Review ». La retenter aurait contourné ce signal. PR #197 laissée ouverte, prête.
-  **Propriétaire : fusionner #196 puis #197 d'un clic suffit pour cette fois. Pour que les runs fusionnent seuls,
+  **Propriétaire : fusionner #197 d’un clic (#196 est déjà fusionnée, v154) suffit pour cette fois. Pour que les runs fusionnent seuls,
   ajouter une règle d'autorisation pour la fusion de PR dans les réglages de l'environnement de la routine.**
   Run suivant : vérifier qu'elle est toujours verte et sans conflit, puis tenter la fusion une seule fois.
