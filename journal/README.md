@@ -363,6 +363,19 @@ bien-être » reste là), elle dit l'échelle en une ligne (« 0 = très bas, 5 
 d'explication par une seule ligne **« Repéré sans vous : Sport le soir… »**. Dans Plus, la ligne Données ne promet
 plus un « historique » qui est sur l'Accueil.
 
+**Run « idées » du 17/10 20:30** (pas de nouveau journal montre ; rien ne change dans l'app) : la PR #198 a été
+**fusionnée en début de run** (v156). Question du soir : **quand l'app pourra-t-elle vous dire ce qui est vrai chez
+vous** (par exemple « votre FC repos haute va avec une journée moins bonne », ou au contraire « avec rien ») **sans se
+tromper ?** J'ai lu ce qui existe (une étude où 8 personnes portent une bague Oura 4 à 12 mois : la plupart des liens
+attendus n'apparaissent pas chez une personne donnée ; Exist, Bearable, Welltory) puis **simulé** les règles possibles.
+Résultat : une corrélation « brute » comme celles des apps grand public se tromperait de sens **une fois sur cinq**
+quand il n'y a en réalité aucun lien ; la règle retenue (tenir compte de ce que les jours se suivent, partir de « pas
+d'effet » plutôt que de la norme, exiger 97,5 % de certitude) descend **sous 4 %**, et trouve un lien moyen chez vous
+en **2 à 4 mois**. Elle sait aussi dire, vers 2 à 6 mois, « **pas de lien notable chez vous** » : c'est le cas le plus
+fréquent, et c'est une information (ce qui ne compte pas chez vous n'a pas à vous préoccuper). Ce sera le prochain
+travail D6, sans nouvel écran. En passant : un test de l'app qui appelait le vrai GitHub et rendait le contrôle
+« Tests » rouge au hasard sur main est corrigé.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Note de bien-être plus discrète (run 17/10 18:30)** : pas de fenêtre automatique moins de 3 h après une note ;
   échelle en une ligne ; « Repéré sans vous : … » au lieu de deux phrases d'aide.
@@ -725,6 +738,10 @@ plus un « historique » qui est sur l'Accueil.
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **« Chez vous », sans se tromper de sens** (run 17/10 20:30) : un seul calcul pour le Radar, les cartes du cœur et
+  les pistes, qui part de « aucun effet », tient compte des jours qui se suivent et ne parle qu'à 97,5 % de certitude
+  (simulé : < 4 % d'erreur de sens contre ≈ 20 % pour une corrélation brute) ; il sait aussi dire « pas de lien
+  notable chez vous », et parle en fréquences (« 7 de vos 10 journées comparables ») plutôt qu'en coefficients.
 - **Le visage lu aussi bien que chez Google, avec une image minuscule** (run 17/10 08:30) : calcul refait sans leur
   bibliothèque, à moins d'un pixel près ; 320 × 240 suffit ; rien quand la caméra sert déjà ; une dizaine d'indices
   sans valeur morale, interprétés seulement par vos propres données.
@@ -887,7 +904,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR #195 fusionnée → v153 |
 | 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR #196 verte, fusion refusée ce run-là ; **fusionnée au run de 16:30** → v154 |
 | 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR #197 verte, fusion refusée ce run-là ; **fusionnée au run de 18:30** → v155 |
-| 17/10 18:30 — [Saisie bien-être allégée](runs/2026-10-17-1830-saisie-bien-etre-allegee.md) | 🧹 | PR #198 verte, fusion bloquée par le contrôle des permissions : **à fusionner** |
+| 17/10 18:30 — [Saisie bien-être allégée](runs/2026-10-17-1830-saisie-bien-etre-allegee.md) | 🧹 | PR #198 verte ; **fusionnée au run de 20:30** → v156 |
+| 17/10 20:30 — [Idées : le sens « chez vous » sans se tromper](runs/2026-10-17-2030-idees-sens-personnel.md) | 💡🧭 | 5 idées (I102–I106), simulation ; test App sans réseau — journal + test |
 
 ---
 

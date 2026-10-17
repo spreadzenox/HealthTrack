@@ -9,6 +9,133 @@
 
 ---
 
+## Run du 17/10/2026 20:30 (Paris) — « chez vous » : apprendre le sens personnel d'un signal sans se tromper
+
+Question du jour, côté utilisateur : *« vous avez retiré le "bon" et le "mauvais" codés en dur (D6). Très bien. Mais
+alors, quand l'app me dira-t-elle ce qui est vrai **chez moi** — que ma FC repos haute va avec une journée moins
+bonne, ou au contraire avec rien du tout ? Et comment être sûr qu'elle ne me raconte pas n'importe quoi après
+trois semaines ? »* C'est I97 ② (sens personnel du Radar) et, plus largement, la ligne `direction` de D6. Montre en
+maintenance, aucun nouveau journal (`diagnostics/` inchangé). **Méthode : lire ce qui existe (études n-of-1, apps
+grand public), puis simuler** les règles candidates sur des séries synthétiques aussi « collantes » que les vraies
+(autocorrélation 0,4) pour chiffrer jours nécessaires et erreurs de sens. Outil : `protocoles/sens-personnel-sim.py`.
+
+### Ce qu'on apprend (faits)
+
+- **Chez une personne, la plupart des liens attendus n'apparaissent pas, même avec des mois de données** [V étude
+  JMIR 2022, PMC9823534, *multiple n-of-1*, 8 policiers, bague Oura + questionnaire quotidien, 125–386 jours chacun,
+  modèle VAR par personne] : « aucun lien entre une mesure de la bague et un ressenti n'a été observé chez tous les
+  participants ». Le plus fréquent : sommeil plus court → plus d'épuisement le lendemain chez 5 sur 8 ; VFC → stress
+  chez **1** sur 8. Variance expliquée ≤ 22 %, souvent < 10 % (soit r ≈ 0,2–0,3). Un lien de sens contraire à la
+  norme a été vu (participant 4) puis écarté par le test de Granger. → Pour D6 : le cas fréquent n'est ni « comme
+  la norme » ni « contraire », c'est **« pas de lien visible chez vous »**, et ça mérite d'être dit.
+- **L'analyse bayésienne convient aux auto-expériences** [V *A Patient-Centered Proposal for Bayesian
+  Analysis of Self-Experiments for Health*, J Healthc Inform Res 2019, PMC6398612] : 12 jours alternés suffisent **si** l'a priori est
+  explicite ; présenter des **prédictions** (« sur 20 jours comme ça, 13 ont dépassé… », graphiques en points)
+  plutôt que des intervalles ; montrer l'a priori ; préférer une **zone d'équivalence** (« écart sans importance
+  pratique ») aux facteurs de Bayes. Pas d'autocorrélation dans leur exemple : à ajouter.
+- **Ce que font les apps grand public** [V aide en ligne, 17/10/2026] : **Exist** attend 3 semaines de données par
+  attribut, recalcule chaque lundi, cherche d'abord le même jour puis le lendemain, affiche une force et une
+  « confiance » en étoiles (« un lien fort peut avoir une confiance faible ») ; **Bearable** montre une corrélation
+  dès 3 jours avec / 3 jours sans un facteur, conseille 7 + 7 puis 30 jours, et a une page entière « mes corrélations
+  sont fausses » (cause inverse, confusion, valeurs extrêmes, « caféine après 15 h → meilleur sommeil » parce que ces
+  jours-là on bouge plus) ; **Welltory** affiche un lien dès que deux courbes « vont ensemble dans plus de 20 % des
+  cas ». → Personne ne traite l'autocorrélation ni ne dit « pas de lien chez vous » ; c'est notre différence possible.
+- **Simulation (2 000 tirages par case, séries AR(1) à 0,4, `protocoles/sens-personnel-sim.py`)** [V, ce run] :
+
+  | Règle « chez vous : … » | Faux sens quand il n'y a **aucun** lien | Lien r = 0,3 trouvé (60 / 120 j) |
+  |---|---|---|
+  | Corrélation brute, probabilité du sens ≥ 90 % | **10 % à 30 j, 23 % à 120 j** | 76 % / 96 % |
+  | Préblanchiment AR(1) + même seuil | 6 % à 30 j, 15 % à 120 j | 78 % / 97 % |
+  | **Préblanchiment + rétrécissement vers 0 (τ = 0,2) + seuil 97,5 %** | **0,2 % à 30 j, 2,5 % à 120 j, 3,6 % à 180 j** | **43 % / 88 %** |
+
+  Sens **inversé** quand le lien existe (r = 0,15 ou 0,3) : ≤ 0,05 % avec la règle retenue. Et la phrase « **pas de
+  lien notable chez vous** » (borne haute à 95 % de |effet| < 0,2) devient possible vers **60 jours** (15 % des cas
+  sans lien), **120 jours** (59 %), **180 jours** (80 %) ; elle n'est presque jamais dite à tort quand r = 0,3 (≤ 1,1 %).
+  Sans correction de l'autocorrélation, l'app se tromperait de sens une fois sur cinq : **le garde-fou n'est pas
+  optionnel**.
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I102 | **Un seul estimateur « chez vous »** pour Radar, cartes du cœur et pistes : X de la veille (ou d'avant la note), Y = note, **préblanchiment AR(1)** des deux séries, pente standardisée, **a priori N(0 ; 0,2²) centré sur zéro** (jamais sur la norme), affichage d'un sens seulement si P(sens) ≥ 97,5 % ; sinon l'hypothèse générale reste en petit, marquée comme telle | Science personnelle fiable (D6), anti-faux positifs (D5) | 5 | 4 | **20** |
+| I103 | **Trois verdicts, dont « pas de lien notable chez vous »** (zone d'équivalence |effet| < 0,2, borne haute à 95 %) : dit par exemple « votre FC repos haute ne va avec rien de notable dans vos notes (142 jours) » au lieu de laisser croire qu'elle compte | Déculpabiliser (D6), simplifier : retirer de l'affichage ce qui ne compte pas chez vous (D1) | 4 | 4 | **16** |
+| I104 | **Des fréquences au lieu de r** : « après une nuit comme celle-ci, 7 de vos 10 journées comparables ont été au-dessus de votre moyenne » (jours voisins réels, pas un modèle), à la place des « r = 0,32 » et des étoiles | Comprendre sans statistique (D1, demande « mots simples ») | 4 | 4 | **16** |
+| I105 | **Jours hors norme repérés sans saisie** et écartés du calcul : voyage (déjà déduit du fuseau), maladie probable (FC repos + température cutanée + VFC hors plage plusieurs jours, Radar « alert »), changement d'heure ; listés une fois (« 4 jours mis de côté : voyage, … ») | Moins de liens absurdes (leçon Bearable), zéro saisie (directions du 11/10) | 3 | 4 | 12 |
+| I106 | **Images test du visage (I101) : portraits officiels du gouvernement fédéral américain** sur Wikimedia Commons (domaine public, « PD-USGov ») ; écarter FFHQ (licences mêlées et interdiction de servir à la reconnaissance faciale) et les jeux « académiques » | Débloquer le test d'équivalence en CI sans risque de licence (D4) | 2 | 5 | 10 |
+
+**Écartées** : *modèle hiérarchique avec d'autres utilisateurs* (il n'y a qu'un utilisateur et rien ne sort du
+téléphone ; et ce serait réimposer une norme par la porte de derrière) ; *VAR complet / test de Granger* (des
+dizaines de paramètres pour 60–120 jours : instable ; le préblanchiment + une pente donne l'essentiel) ; *a priori
+centré sur la norme générale* (contraire à D6 : il ferait parfois dire « chez vous » ce qui n'est que la norme ;
+la norme ne sert qu'à **l'ordre** d'examen et à un texte en petit) ; *recalcul hebdomadaire façon Exist* (on
+recalcule déjà en Worker avec cache ; une stabilité affichée suffit).
+
+### Détail et pistes d'implémentation
+
+**I102 — L'estimateur.** Nouveau `services/personalDirection.js`, fonction pure : `personalDirection(xByDay,
+yByDay, { lagDays = 1 })` → `{ n, nUsed, estimate, sd, pSign, verdict: 'positive' | 'negative' | 'none' |
+'unknown' }`. Étapes : paires (X de la veille, Y du jour ; ou X d'avant 20 h comme `SAME_DAY_KEYS`) en excluant les
+jours I105 ; standardisation dans la personne ; préblanchiment (coefficient AR(1) de chaque série estimé sur elle-même,
+résidus `s[t] − a·s[t−1]`) ; r des résidus, erreur type 1/√(n − 4) ; a priori N(0 ; τ²) avec τ = 0,2 (justifié par
+l'ordre de grandeur des liens publiés, ≤ 0,3) ; postérieur gaussien. `verdict` : `positive`/`negative` si
+P(sens) ≥ 0,975 et n ≥ 30 ; `none` si |moyenne| + 1,64·sd < 0,2 ; `unknown` sinon. Tests écrits d'abord : séries
+synthétiques déterministes (graine fixe) — aucun lien → jamais `positive`/`negative` sur 200 tirages au-delà de
+5 % ; r = 0,4 sur 120 jours → bon sens ; sens contraire à la norme bien rendu tel quel (D6). Brancher ensuite :
+`radar.js` (`generalFatigue` gardé comme hypothèse, `personal` ajouté), cartes FC / VFC, `leverSuggestion` (une piste
+dont le verdict personnel est `none` n'est plus proposée ; `LEVER_ACTIONS` formulées « Tester : plus / moins de … »).
+Réutiliser `lag1Autocorrelation` de `statistics.js`. Pas de migration : rien de stocké.
+
+**I103 — « Pas de lien notable ».** Dans Analyses, sous les liens, une ligne repliée « Sans lien notable chez vous :
+FC repos, écran le soir (142 j) » ; dans le Radar, si le verdict d'un signal est `none`, il ne compte plus pour
+« inhabituel » dans la phrase d'interprétation (il reste affiché comme mesure). Formulation sans jugement, et sans
+« donc vous pouvez » : « dans vos données, … ne va avec rien de notable ».
+
+**I104 — Fréquences.** Pour un verdict `positive`/`negative` : prendre les jours où X était dans le même tiers que
+aujourd'hui (≥ 10 jours), compter ceux où Y était au-dessus de la médiane personnelle → « 7 sur 10 ». Calcul trivial,
+honnête (ce sont des jours réels), et lisible ; remplace r et les étoiles dans la carte. Ne s'affiche qu'avec un
+verdict établi par I102 (sinon la fréquence brute réintroduit les faux positifs).
+
+**I105 — Jours mis de côté.** `excludedDays(entries)` : `timezoneContext` (voyage), Radar en « alert » ≥ 2 jours
+(maladie probable), jours de changement d'heure. Un ensemble de clés de jour passé à I102 et à `computeBasicCorrelations`.
+Ne rien demander ; une ligne dans « Comment c'est calculé ».
+
+**I106 — Images.** 2–3 portraits PD-USGov (Commons, catégorie des portraits officiels), visage de face, lumière
+variée ; noter dans le test l'URL Commons, l'auteur et le modèle de licence. Les valeurs MediaPipe de référence
+seront calculées dans une session (comme le 17/10 08:30) et figées en JSON ; seules les images (domaine public)
+et le JSON entrent dans le dépôt.
+
+**Notes annexes.**
+- **One UI 8** [T sammyfans, communauté Samsung ; V dontkillmyapp] : « Applis en veille » et « Applis en veille
+  profonde » sont sous Paramètres → Batterie → **Limites d'utilisation en arrière-plan** ; une app en veille profonde
+  ne tourne jamais en arrière-plan. Samsung a promis (juillet 2024) que les services de premier plan conformes à la
+  politique d'Android 14 ne sont plus tués depuis One UI 6. → I96 : la consigne doit donner **ce chemin exact** et
+  « Applis jamais en veille » ; le diagnostic D4 doit noter si des rafales manquent alors que le service est déclaré
+  actif (seule preuve qu'on peut collecter, aucune API ne lit ces listes).
+- Rien trouvé de 2025–2026 qui fasse mieux qu'un modèle simple par personne pour 2–6 mois de données.
+
+### Sources (consultées le 17/10/2026)
+- *Wearable-Measured Sleep and Resting HRV as an Outcome of and Predictor for Subjective Stress
+  Measures: A Multiple N-of-1 Observational Study*, JMIR / PMC9823534.
+- *A Patient-Centered Proposal for Bayesian Analysis of Self-Experiments for Health*, J Healthc
+  Inform Res 2019, PMC6398612.
+- Exist : kb.exist.io (articles 18 « How long does it take to find correlations? », 37 « What are correlations? »,
+  55 « across multiple days »).
+- Bearable : bearable.app/support/troubleshooting/my-correlations-are-wrong-dont-make-sense ; « get the most out of
+  your free trial » ; Welltory : help.welltory.com/articles/3878885, 3377372.
+- N-of-1 sommeil → humeur (Oura + eMood, VAR(2), 4 ans, une personne) : arXiv 2510.02511.
+- One UI 8 : sammyfans.com (?p=141856), us.community.samsung.com (Galaxy S22, applis fermées après One UI 8),
+  dontkillmyapp.com/samsung.
+- Licences d'images : FFHQ (README, Hugging Face), Wikimedia Commons (modèle PD-USGov).
+
+### À creuser au prochain run idées (18/10 08:30)
+- Ordre d'examen des X : combien de variables tester sans noyer les vrais liens (BH sur la famille « chez vous »
+  ou seuil 97,5 % par variable ? simuler 15 X dont 2 vrais).
+- Auto-expériences guidées (I45) avec l'estimateur I102 : combien de jours ABAB pour trancher un lien `unknown`.
+- Voix (I91) : état 2026 des modèles de prosodie légers et sous licence permissive.
+
+---
+
 ## Run du 17/10/2026 08:30 (Paris) — le visage, de la recherche à une spécification vérifiée
 
 Question du jour, côté utilisateur : *« vous m'avez promis une lecture du visage qui ne parle pas à Google et ne vide
