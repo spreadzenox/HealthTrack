@@ -846,7 +846,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 04:30 — [« Vos derniers jours » : 3 jours lus d'emblée](runs/2026-10-17-0430-journal-trois-jours.md) | ⚡ | PR #191 fusionnée → v150 |
 | 17/10 06:30 — [Radar forme et cartes du cœur neutres](runs/2026-10-17-0630-radar-neutre.md) | 🧭 | PR #192 fusionnée → v151 |
 | 17/10 08:30 — [Idées : spec du visage vérifiée](runs/2026-10-17-0830-idees-spec-visage.md) | 💡🙂 | 4 idées (I98–I101), `protocoles/visage.md` — journal seul |
-| 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR à suivre (voir compte rendu) |
+| 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR #194 (fusion après CI verte) |
 
 ---
 
