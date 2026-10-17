@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "Météo et analyse avancée plus courtes",
+  "items": [
+    "Météo (Connecteurs) : plus de bouton « Mettre à jour », elle se met à jour seule à chaque ouverture ; « Réessayer » n'apparaît qu'après un échec.",
+    "Analyse avancée : « Comment fonctionne ce modèle ? » dit chaque chose une seule fois (modèle, choix des variables, week-end)."
+  ]
+}

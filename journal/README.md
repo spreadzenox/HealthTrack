@@ -339,7 +339,15 @@ Dans Analyses, le bloc des corrélations répétait les chiffres déjà donnés 
 pas +0,30) : il ne montre plus que les **autres liens** (« Autres liens avec votre bien-être »), et disparaît s'il
 n'en reste aucun. Dans Connecteurs, la phrase « Envoie ses données » sous une app déjà marquée « Reçu » est retirée.
 
+**Run du 17/10 14:30** (nettoyage, pas de nouveau journal montre) : la carte **Météo** (Connecteurs) n'a plus de bouton
+« Mettre à jour » : tout arrive seul à chaque ouverture ; un bouton « Réessayer » n'apparaît qu'après un échec (pas de
+réseau) ou tant que la météo du jour manque. Dans **Analyses → Analyse avancée**, la note « Comment fonctionne ce
+modèle ? » disait trois fois quel modèle tourne, deux fois comment les variables sont choisies et deux fois le rôle du
+week-end : chaque notion est maintenant dite **une seule fois** (7 paragraphes → 6, nettement plus courts).
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Météo et analyse avancée plus courtes (run 17/10 14:30)** : plus de « Mettre à jour » sur la carte Météo
+  (« Réessayer » seulement après un échec) ; note de méthode de l'analyse avancée sans répétitions.
 - **Analyses et Connecteurs sans redites (run 17/10 12:30)** : une piste n'est plus répétée dans le bloc des
   corrélations (« Autres liens ») ; « Envoie ses données » retiré sous le badge « Reçu ».
 - **« Voyage » déduit du fuseau horaire (run 17/10 10:30)** : plus demandé le jour où le fuseau du téléphone change ;
@@ -854,7 +862,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 06:30 — [Radar forme et cartes du cœur neutres](runs/2026-10-17-0630-radar-neutre.md) | 🧭 | PR #192 fusionnée → v151 |
 | 17/10 08:30 — [Idées : spec du visage vérifiée](runs/2026-10-17-0830-idees-spec-visage.md) | 💡🙂 | 4 idées (I98–I101), `protocoles/visage.md` — journal seul |
 | 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR #194 fusionnée → v152 |
-| 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR #195 (fusion après CI verte) |
+| 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR #195 fusionnée → v153 |
+| 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR (fusion après CI verte) |
 
 ---
 

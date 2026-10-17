@@ -175,9 +175,12 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
             <p className="my-device-meta">Mis à jour {formatAgo(settings.lastSyncAt, now || new Date())} · Open-Meteo</p>
           )}
           <div className="my-device-actions">
-            <button type="button" className="btn btn-secondary connector-btn" onClick={refresh} disabled={busy}>
-              {busy ? 'Mise à jour…' : 'Mettre à jour'}
-            </button>
+            {/* Tout arrive seul à chaque ouverture : le bouton ne sert qu'après un échec ou sans météo du jour. */}
+            {(settings.lastError || parts.length === 0) && (
+              <button type="button" className="btn btn-secondary connector-btn" onClick={refresh} disabled={busy}>
+                {busy ? 'Mise à jour…' : 'Réessayer'}
+              </button>
+            )}
             <button type="button" className="btn btn-secondary connector-btn" onClick={turnOff} disabled={busy}>
               Désactiver
             </button>

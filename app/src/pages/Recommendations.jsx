@@ -521,31 +521,24 @@ function AdvancedTab({ analysis }) {
         <details className="reco-method-note">
           <summary>Comment fonctionne ce modèle ?</summary>
           <p>
-            Modèle : <em>{method}</em>.
+            Modèle : <em>{method}</em>, entraîné entièrement sur vos données locales.
             {modelInfo?.r2 != null && (
               <> R² entraînement : <strong>{r2Display}</strong>
-              {r2LooDisplay != null
-                ? <> · R² LOO (hors-échantillon) : <strong>{r2LooDisplay}</strong></>
-                : null
-              }
-              .</>
-            )}
-            {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
-              <> Variables retenues : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate} (les plus liées au bien-être, {MAX_FEATURES} au plus,
-              mesurées au moins un jour sur deux ; un jour sans mesure compte comme un jour habituel).</>
+              {r2LooDisplay != null && <> · R² LOO (hors-échantillon) : <strong>{r2LooDisplay}</strong></>}
+              . Le premier mesure l&apos;ajustement aux jours vus ; le R² LOO prédit chaque jour sans l&apos;avoir vu :
+              négatif ou bien plus bas, il signale un sur-apprentissage et le modèle est marqué peu fiable.</>
             )}
             {modelInfo?.overfit_risk && (
               <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours — R² entraînement non fiable.</span></>
             )}
           </p>
-          {modelInfo?.weekendEffect != null && (
+          {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
             <p>
-              📅 Le jour de la semaine est pris en compte : à habitudes égales,{' '}
-              {Math.abs(modelInfo.weekendEffect) < 0.05
-                ? <>votre bien-être n'est <strong>pas différent le week-end</strong>.</>
-                : <>votre bien-être est estimé à <strong>{frDiff(modelInfo.weekendEffect)}{' '}
-                  point{Math.abs(modelInfo.weekendEffect) >= 2 ? 's' : ''} le week-end</strong> par
-                  rapport à la semaine. Cet effet n'est attribué à aucune habitude.</>}
+              Variables retenues : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate}, les plus
+              liées au bien-être sur les jours d&apos;entraînement ({MAX_FEATURES} au plus, une pour{' '}
+              {Math.round(1 / MAX_FEATURES_RATIO)} jours, mesurées au moins un jour sur deux ; un jour sans mesure compte
+              comme un jour habituel). Deux variables corrélées à plus de {Math.round(COLLINEARITY_MAX_R * 100)} % (comme
+              les pas et les calories d&apos;activité) fausseraient l&apos;estimation : seule la plus liée est gardée.
             </p>
           )}
           {modelInfo?.droppedCollinear?.length > 0 && (
@@ -554,28 +547,37 @@ function AdvancedTab({ analysis }) {
               {modelInfo.droppedCollinear
                 .map((d) => `${d.label} (≈ ${d.keptInsteadLabel})`)
                 .join(', ')}
-              . Elles évoluent presque exactement comme une variable déjà retenue : les garder
-              fausserait l'estimation de leur effet.
+              .
             </p>
           )}
+          <p>
+            {modelInfo?.weekendEffect != null ? (
+              <>
+                📅 Le week-end est une variable de contrôle : à habitudes égales,{' '}
+                {Math.abs(modelInfo.weekendEffect) < 0.05
+                  ? <>votre bien-être n&apos;est <strong>pas différent le week-end</strong>.</>
+                  : <>votre bien-être est estimé à <strong>{frDiff(modelInfo.weekendEffect)}{' '}
+                    point{Math.abs(modelInfo.weekendEffect) >= 2 ? 's' : ''} le week-end</strong> par rapport à la semaine.</>}
+                {' '}Cet effet n&apos;est attribué à aucune habitude (sinon une habitude plus fréquente le samedi
+                récupérerait l&apos;humeur propre au week-end).
+              </>
+            ) : (
+              <>Le week-end sera pris en compte dès {MIN_WEEKEND_DAYS} jours notés de chaque sorte.</>
+            )}
+          </p>
           {modelInfo?.method === 'ols_linear_regression' && (<>
           <p>
-            Chaque type de donnée est enregistré à une fréquence différente (ex : pas quotidiens, repas plusieurs fois/jour, bien-être manuellement). Pour harmoniser, toutes les entrées sont agrégées par <strong>jour calendaire</strong> (somme pour les pas/calories/nutriments, moyenne pour la fréquence cardiaque et le bien-être). Les nutriments sont ensuite <strong>lissés sur {modelInfo.lagDays} jours</strong> avec une pondération décroissante (un repas d'aujourd'hui influence le bien-être des ~10 prochains jours, avec un impact qui décroît linéairement).
+            Toutes les entrées sont regroupées par <strong>jour calendaire</strong> (somme pour les pas, calories et
+            nutriments, moyenne pour le cœur et le bien-être). Les nutriments sont <strong>lissés sur{' '}
+            {String(modelInfo.lagDays).replace('.', ',')} jours</strong> : un repas compte pour les jours suivants, de moins en moins.
           </p>
           <p>
-            Le modèle est une régression linéaire multiple (OLS + Ridge) entraîné <em>entièrement sur vos données locales</em>. Pour limiter le sur-apprentissage, une <strong>pré-sélection</strong> retient les variables les plus corrélées au bien-être sur les données d'entraînement ({MAX_FEATURES} au plus, et pas plus d'une pour {Math.round(1 / MAX_FEATURES_RATIO)} jours de données), en écartant les <strong>doublons</strong> (deux variables corrélées à plus de {Math.round(COLLINEARITY_MAX_R * 100)} %, comme les pas et les calories d'activité : seule la plus liée au bien-être est gardée). La force de la régularisation Ridge{modelInfo.lambda != null && <> (λ = {String(modelInfo.lambda).replace('.', ',')})</>} est choisie automatiquement par validation croisée : plus vos données sont bruitées, plus les effets estimés sont prudemment réduits vers zéro. Seuls les effets d'au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type sont proposés comme pistes. Le <strong>R² entraînement</strong> mesure à quel point le modèle s'ajuste aux données qu'il a vues — il peut être élevé simplement parce qu'il y a plus de variables que de jours. Le <strong>R² LOO</strong> (Leave-One-Out) est une mesure honnête : pour chaque jour, le modèle est ré-entraîné sans ce jour puis prédit. Un R² LOO négatif ou très inférieur au R² entraînement signale un sur-apprentissage — dans ce cas le modèle est marqué comme non fiable et les recommandations sont indicatives.
-          </p>
-          <p>
-            Le <strong>week-end</strong> entre dans le modèle comme variable de contrôle (non
-            réduite par Ridge) dès qu'il y a au moins {MIN_WEEKEND_DAYS} jours notés de chaque
-            sorte : sinon une habitude plus fréquente le samedi récupérerait la bonne (ou mauvaise)
-            humeur propre au week-end.
-          </p>
-          <p>
-            Pour éviter le sur-apprentissage dans la section « Prédit vs réel », le modèle est entraîné sur toutes les données <strong>sauf les {HOLD_OUT_DAYS} derniers jours</strong>. Ces jours sont ensuite prédits sans que le modèle les ait vus, ce qui garantit des prédictions honnêtement hors-échantillon. La prédiction affichée sur le tableau de bord utilise également ce modèle.
-          </p>
-          <p>
-            Les barres d'importance sont <strong>relatives</strong> : la variable la plus influente vaut 100%, les autres sont exprimées en proportion.
+            La régularisation Ridge{modelInfo.lambda != null && <> (λ = {String(modelInfo.lambda).replace('.', ',')})</>} est
+            choisie par validation croisée : plus vos données sont bruitées, plus les effets sont prudemment réduits vers
+            zéro. Seuls les effets d&apos;au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type deviennent des
+            pistes. Le modèle est entraîné <strong>sans les {HOLD_OUT_DAYS} derniers jours</strong>, que « Prédit vs réel »
+            et la prédiction de l&apos;accueil prédisent donc sans les avoir vus. Les barres d&apos;importance sont{' '}
+            <strong>relatives</strong> (la plus influente vaut 100 %).
           </p>
           </>)}
         </details>

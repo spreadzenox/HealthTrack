@@ -46,6 +46,7 @@
  *                                          # (variables --safe-area-inset-* injectées par Capacitor, en px)
  *   npm run visual -- --routes=/recommendations --click="Analyse avancée"
  *                                          # clique un bouton (nom accessible) ou un volet <summary> avant la capture
+ *                                          # (« Analyse avancée > Comment fonctionne » : plusieurs clics à la suite)
  *
  * Sortie : <out>/<page>.png (page entière), <out>/tiles/<page>-<n>.png (un écran
  * par image, à regarder en priorité) + <out>/report.json. Code de sortie 1 si une page
@@ -567,10 +568,10 @@ async function main() {
           await page.evaluate(() => document.querySelector('.ble-devices')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(300)
         }
-        if (args.click) {
-          // Un bouton, ou à défaut un volet repliable (<summary>) qui contient ce texte
-          let button = page.getByRole('button', { name: String(args.click) }).first()
-          if (!(await button.count())) button = page.locator('summary', { hasText: String(args.click) }).first()
+        // Un bouton, ou à défaut un volet repliable (<summary>) qui contient ce texte ; « A > B » clique A puis B.
+        for (const target of args.click ? String(args.click).split(' > ') : []) {
+          let button = page.getByRole('button', { name: target }).first()
+          if (!(await button.count())) button = page.locator('summary', { hasText: target }).first()
           if (await button.count()) {
             await button.click()
             await page.waitForTimeout(700)
