@@ -39,4 +39,11 @@ describe('More page', () => {
     expect(link).toHaveTextContent(/Cigarettes|cigarettes/)
     expect(link).toHaveTextContent(/diagnostic/i)
   })
+
+  it('describes Données by what it holds (backup and restore, no history any more)', () => {
+    renderMore()
+    const link = screen.getByRole('link', { name: /Données/ })
+    expect(link).toHaveTextContent(/Sauvegarde et restauration/)
+    expect(link).not.toHaveTextContent(/historique/)
+  })
 })

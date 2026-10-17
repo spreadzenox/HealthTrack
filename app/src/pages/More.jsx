@@ -4,7 +4,7 @@ import { getLastSeenId, getUnseenEntries } from '../services/whatsNew'
 import './More.css'
 
 const ITEMS = [
-  { to: '/data', icon: '🗂️', title: 'Données', desc: 'Sauvegarde, import et historique de vos saisies' },
+  { to: '/data', icon: '🗂️', title: 'Données', desc: 'Sauvegarde et restauration de vos données' },
   { to: '/connectors', icon: '⌚', title: 'Connecteurs', desc: 'Montre, balance, Health Connect, Withings' },
   { to: '/settings', icon: '⚙️', title: 'Paramètres', desc: 'Analyse des repas (Gemini), cigarettes, diagnostic' },
   { to: '/nouveautes', icon: '✨', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },

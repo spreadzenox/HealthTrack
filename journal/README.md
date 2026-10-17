@@ -356,7 +356,16 @@ taisait les cigarettes et le diagnostic : elle dit ce que la page contient.
 suite). La PR #197 est verte et attend votre clic ; pour que les runs fusionnent à nouveau seuls, il faut autoriser la
 fusion de PR dans les réglages de l'environnement de la routine.
 
+**Run du 17/10 18:30** (nettoyage, pas de nouveau journal montre) : la PR #197 a été **fusionnée en début de run**
+(la fusion automatique est repassée). La fenêtre **« Comment vous sentez-vous ? »** se fait plus discrète : elle ne
+s'ouvre plus d'elle-même si vous avez noté votre bien-être **dans les 3 dernières heures** (« + Ajouter un
+bien-être » reste là), elle dit l'échelle en une ligne (« 0 = très bas, 5 = très bien ») et remplace deux phrases
+d'explication par une seule ligne **« Repéré sans vous : Sport le soir… »**. Dans Plus, la ligne Données ne promet
+plus un « historique » qui est sur l'Accueil.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Note de bien-être plus discrète (run 17/10 18:30)** : pas de fenêtre automatique moins de 3 h après une note ;
+  échelle en une ligne ; « Repéré sans vous : … » au lieu de deux phrases d'aide.
 - **Analyse avancée en mots simples (run 17/10 16:30)** : « Ce qui pèse le plus dans le modèle », « A-t-il vu
   juste ? » ; la ligne Paramètres de Plus dit ce qu'elle contient.
 - **Météo et analyse avancée plus courtes (run 17/10 14:30)** : plus de « Mettre à jour » sur la carte Météo
@@ -877,7 +886,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR #194 fusionnée → v152 |
 | 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR #195 fusionnée → v153 |
 | 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR #196 verte, fusion refusée ce run-là ; **fusionnée au run de 16:30** → v154 |
-| 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR #197 verte, **non fusionnée** (contrôle des permissions : « Merge Without Review ») : à fusionner |
+| 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR #197 verte, fusion refusée ce run-là ; **fusionnée au run de 18:30** → v155 |
+| 17/10 18:30 — [Saisie bien-être allégée](runs/2026-10-17-1830-saisie-bien-etre-allegee.md) | 🧹 | PR à fusionner en fin de run (voir le compte rendu) |
 
 ---
 
