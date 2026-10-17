@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "Radar forme et cartes du cœur : « inhabituel chez vous », sans sens imposé",
+  "items": [
+    "Le Radar forme signale maintenant un écart inhabituel dans les deux sens (FC au repos plus basse, VFC ou sommeil plus hauts que d'habitude compris), avec une flèche ↑ / ↓ pour chaque signal. Le badge dit « Inhabituel chez vous ».",
+    "Le lien avec la fatigue n'apparaît que comme « Hypothèse générale », et seulement quand les écarts vont dans ce sens ; sinon le radar dit simplement que vos notes de bien-être diront ce qui va avec votre forme.",
+    "Cartes FC au repos et VFC : hors de votre norme, la couleur est la même dans les deux sens (une FC plus basse n'est plus montrée en vert comme « bonne » par principe)."
+  ]
+}

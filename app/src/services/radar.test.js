@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeRadar, nightlySleep, explainRadar, RADAR_DAYS } from './radar'
+import { computeRadar, nightlySleep, explainRadar, RADAR_DAYS, RADAR_METRICS } from './radar'
 import { localDateKey } from './wellbeingSeries'
 
 const NOW = new Date(2026, 4, 21, 14, 0)
@@ -120,12 +120,34 @@ describe('computeRadar', () => {
     expect(r.signals.map((s) => s.metric.key)).toEqual(['restingHeartRate', 'heartRateVariability', 'sleepMinutes'])
   })
 
-  it('does not alert on favourable deviations (lower HR, higher HRV, longer sleep)', () => {
+  it('D6 : signale un écart inhabituel dans les deux sens, sans le présenter comme de la fatigue', () => {
     const r = computeRadar([...normalHistory(), ...recent([
       { n: 0, rhr: 54, hrv: 65, sleep: 560 },
       { n: 1, rhr: 54, hrv: 65, sleep: 560 },
     ])], NOW)
-    expect(r.level).toBe('calm')
+    expect(r.level).toBe('alert')
+    expect(r.signals.map((s) => s.direction)).toEqual(['below', 'above', 'above'])
+    expect(r.signals.every((s) => s.generalFatigue === false)).toBe(true)
+    expect(r.generalFatigue).toBe(false)
+  })
+
+  it('marque le sens « fatigue » seulement comme hypothèse générale (FC haute, VFC et sommeil bas)', () => {
+    const r = computeRadar([...normalHistory(), ...recent([{ n: 0, rhr: 66, hrv: 40, sleep: 450 }])], NOW)
+    expect(r.signals.map((s) => [s.direction, s.generalFatigue])).toEqual([['above', true], ['below', true]])
+    expect(r.generalFatigue).toBe(true)
+  })
+
+  it('écarts de sens mêlés : inhabituels, pas « fatigue »', () => {
+    const r = computeRadar([...normalHistory(), ...recent([{ n: 0, rhr: 66, hrv: 65, sleep: 450 }])], NOW)
+    expect(r.level).toBe('watch')
+    expect(r.generalFatigue).toBe(false)
+  })
+
+  it('aucun métrique ne porte de sens « meilleur » codé en dur', () => {
+    for (const m of RADAR_METRICS) {
+      expect(m).not.toHaveProperty('higherIsBetter')
+      expect(typeof m.generalHigherIsBetter).toBe('boolean')
+    }
   })
 
   it('judges the most recent day with at least two measured metrics (today may not be synced yet)', () => {

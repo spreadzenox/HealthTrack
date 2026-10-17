@@ -18,11 +18,7 @@
   border-left-color: rgba(255, 255, 255, 0.15);
 }
 
-.baseline-card.is-favourable {
-  border-left-color: #6fcf97;
-}
-
-.baseline-card.is-unfavourable {
+.baseline-card.is-outside {
   border-left-color: #f7b733;
 }
 
@@ -49,12 +45,7 @@
   white-space: nowrap;
 }
 
-.baseline-badge.is-favourable {
-  background: rgba(111, 207, 151, 0.15);
-  color: #6fcf97;
-}
-
-.baseline-badge.is-unfavourable {
+.baseline-badge.is-outside {
   background: rgba(247, 183, 51, 0.15);
   color: #f7b733;
 }
@@ -100,11 +91,7 @@
   background: var(--accent);
 }
 
-.baseline-range-marker.is-favourable {
-  background: #6fcf97;
-}
-
-.baseline-range-marker.is-unfavourable {
+.baseline-range-marker.is-outside {
   background: #f7b733;
 }
 

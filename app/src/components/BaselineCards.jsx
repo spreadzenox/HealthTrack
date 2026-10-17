@@ -24,9 +24,9 @@ function formatterFor(b) {
   return fmtWith(looksWithin === (b.status === 'within') ? 0 : 1)
 }
 
+// D6 : hors norme dans un sens ou dans l'autre, même style — aucun sens n'est « bon » par principe
 function statusClass(b) {
-  if (b.status === 'within') return 'is-within'
-  return b.favourable ? 'is-favourable' : 'is-unfavourable'
+  return b.status === 'within' ? 'is-within' : 'is-outside'
 }
 
 function RangeBar({ b }) {
@@ -108,7 +108,7 @@ export default function BaselineCards() {
   if (!baselines) return null
 
   const hasAnyData = baselines.some((b) => b.recentDays + b.baselineDays > 0)
-  const unfavourable = baselines.some((b) => b.favourable === false)
+  const generalFatigue = baselines.some((b) => b.generalFatigue)
 
   return (
     <div className="baselines">
@@ -122,11 +122,11 @@ export default function BaselineCards() {
           <div className="baseline-cards">
             {baselines.map((b) => <BaselineCard key={b.metric.key} b={b} />)}
           </div>
-          {unfavourable && (
+          {generalFatigue && (
             <p className="baseline-hint" role="note">
-              Un écart de quelques jours est fréquent après une nuit courte, du stress, de l’alcool, un entraînement
-              intense ou au début d’une infection. Ménagez-vous ; si cela dure ou s’accompagne de symptômes,
-              parlez-en à un professionnel de santé.
+              Hypothèse générale : une FC au repos plus haute ou une VFC plus basse suit souvent une nuit courte, du
+              stress, de l’alcool, un entraînement intense ou le début d’une infection. Si cela dure ou s’accompagne de
+              symptômes, parlez-en à un professionnel de santé.
             </p>
           )}
         </>

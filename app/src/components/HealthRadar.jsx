@@ -10,7 +10,7 @@ const HISTORY_DAYS = RADAR_DAYS + RADAR_BASELINE_DAYS + 2
 
 const BADGES = {
   calm: 'Rien d’inhabituel',
-  watch: 'À surveiller',
+  watch: 'Inhabituel chez vous',
 }
 
 const fmt = (v) => Math.round(v).toLocaleString('fr-FR')
@@ -34,6 +34,12 @@ function dayLabel(dateKey) {
 function causeList(causes) {
   const parts = causes.map((c) => `${c.tag.emoji} ${c.tag.label} (${dayLabel(c.dateKey).toLowerCase()})`)
   return parts.length > 1 ? `${parts.slice(0, -1).join(', ')} et ${parts[parts.length - 1]}` : parts[0]
+}
+
+// FC et VFC sont féminines, le sommeil masculin
+function directionLabel(s) {
+  const e = s.metric.key === 'sleepMinutes' ? '' : 'e'
+  return s.direction === 'above' ? `plus haut${e} que d’habitude` : `plus bas${e} que d’habitude`
 }
 
 function checkedList(metrics) {
@@ -76,9 +82,14 @@ export default function HealthRadar() {
   const { radar, why } = state
   const flagged = radar.level === 'watch' || radar.level === 'alert'
   const explained = flagged && why?.explained && !why.sick
+  // D6 : un écart qui ne va pas dans le sens « fatigue » de l'hypothèse générale n'est ni coloré en alerte ni commenté
+  const neutral = flagged && !radar.generalFatigue
 
   return (
-    <section className={`radar is-${radar.level}${explained ? ' is-explained' : ''}`} aria-labelledby="radar-title">
+    <section
+      className={`radar is-${radar.level}${explained ? ' is-explained' : ''}${neutral ? ' is-neutral' : ''}`}
+      aria-labelledby="radar-title"
+    >
       <div className="radar-header">
         <h3 id="radar-title" className="radar-title">Radar forme</h3>
         {(radar.level === 'calm' || flagged) && (
@@ -117,31 +128,38 @@ export default function HealthRadar() {
               <li key={s.metric.key}>
                 <span className="radar-signal-name">{s.metric.key === 'sleepMinutes' ? 'Sommeil' : s.metric.label}</span>
                 {' '}<strong>{formatValue(s.metric, s.value)}</strong>
+                {' '}<span className="radar-signal-dir" role="img" aria-label={directionLabel(s)}>
+                  {s.direction === 'above' ? '↑' : '↓'}
+                </span>
                 <span className="radar-signal-usual"> (habituellement {formatValue(s.metric, s.typical)})</span>
               </li>
             ))}
           </ul>
           {why?.sick ? (
             <p className="radar-advice" role="note">
-              Vous avez noté « Malade » : ces écarts vont dans le même sens. Reposez-vous, hydratez-vous et allégez
-              l’entraînement. Si la fièvre ou les symptômes persistent ou s’aggravent, consultez un professionnel de santé.
+              Vous avez noté « Malade » : reposez-vous, hydratez-vous et allégez l’entraînement. Si la fièvre ou les
+              symptômes persistent ou s’aggravent, consultez un professionnel de santé.
             </p>
           ) : explained ? (
             <p className="radar-advice">
               Probablement lié à {causeList(why.causes)}, noté dans vos check-ins : ce genre d’écart passe en général en
               une à deux nuits. S’il continue sans raison, le radar vous le dira.
-              {radar.level === 'alert' && ' En cas de fièvre ou de symptômes, consultez un professionnel de santé.'}
+              {radar.level === 'alert' && radar.generalFatigue && ' En cas de fièvre ou de symptômes, consultez un professionnel de santé.'}
+            </p>
+          ) : neutral ? (
+            <p className="radar-advice">
+              Ces écarts ne vont pas dans le sens généralement associé à la fatigue. Ce qui va avec votre forme, ce sont
+              vos notes de bien-être qui le diront au fil du temps.
             </p>
           ) : radar.level === 'watch' ? (
             <p className="radar-advice">
-              Un jour isolé est fréquent : nuit courte, alcool, stress, entraînement intense… Ménagez-vous et voyez
-              si cela se confirme demain.
+              Un jour isolé est fréquent : nuit courte, alcool, stress, entraînement intense… Voyez si cela se confirme
+              demain.
             </p>
           ) : (
             <p className="radar-advice" role="note">
-              Ce type d’écart prolongé accompagne souvent la fatigue, le surmenage ou le début d’une infection.
-              Priorisez le repos et le sommeil, hydratez-vous et allégez l’entraînement. En cas de fièvre ou de
-              symptômes qui persistent, consultez un professionnel de santé.
+              Hypothèse générale : ce type d’écart prolongé accompagne souvent la fatigue, le surmenage ou le début
+              d’une infection. En cas de fièvre ou de symptômes qui persistent, consultez un professionnel de santé.
             </p>
           )}
           {!explained && !why?.sick && why?.causes.length > 0 && (

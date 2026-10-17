@@ -73,6 +73,20 @@ describe('BaselineCards', () => {
     renderCards()
     expect(await screen.findByText('Plus haute que d’habitude')).toBeInTheDocument()
     expect(screen.getByText('Plus basse que d’habitude')).toBeInTheDocument()
+    expect(screen.getByText(/Hypothèse générale/)).toBeInTheDocument()
     expect(screen.getByText(/professionnel de santé/i)).toBeInTheDocument()
+    expect(document.querySelector('.is-unfavourable, .is-favourable')).toBeNull()
+  })
+
+  it('D6 : un écart dans l’autre sens (FC plus basse, VFC plus haute) est montré sans jugement ni conseil', async () => {
+    listEntries.mockResolvedValue([
+      ...history(rhr, 60), rhr(0, 54), rhr(1, 54), rhr(2, 54),
+      ...history(hrv, 50), hrv(0, 65), hrv(1, 65), hrv(2, 65),
+    ])
+    renderCards()
+    expect(await screen.findByText('Plus basse que d’habitude')).toBeInTheDocument()
+    expect(screen.getByText('Plus haute que d’habitude')).toBeInTheDocument()
+    expect(screen.queryByText(/Hypothèse générale/)).not.toBeInTheDocument()
+    expect(document.querySelectorAll('.baseline-card.is-outside')).toHaveLength(2)
   })
 })

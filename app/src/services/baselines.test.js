@@ -76,27 +76,27 @@ describe('baselines', () => {
       expect(b.latest).toEqual({ value: 60, dateKey: '2026-05-21' })
     })
 
-    it('flags a resting heart rate above the norm as unfavourable', () => {
+    it('flags a resting heart rate above the norm (general fatigue hypothesis, not a verdict)', () => {
       const entries = [...history(rhr, 60), rhr(0, 66), rhr(1, 65), rhr(2, 67)]
       const b = computeBaseline(entries, BASELINE_METRICS.restingHeartRate)
       expect(b.status).toBe('above')
-      expect(b.favourable).toBe(false)
+      expect(b.generalFatigue).toBe(true)
       expect(b.z).toBeGreaterThan(3)
     })
 
-    it('flags an HRV below the norm as unfavourable and above as favourable', () => {
+    it('flags an HRV below the norm as the general fatigue direction, above as not', () => {
       const low = computeBaseline(
         [...history(hrv, 50), hrv(0, 35), hrv(1, 36), hrv(2, 34)],
         BASELINE_METRICS.heartRateVariability,
       )
       expect(low.status).toBe('below')
-      expect(low.favourable).toBe(false)
+      expect(low.generalFatigue).toBe(true)
       const high = computeBaseline(
         [...history(hrv, 50), hrv(0, 65), hrv(1, 66), hrv(2, 64)],
         BASELINE_METRICS.heartRateVariability,
       )
       expect(high.status).toBe('above')
-      expect(high.favourable).toBe(true)
+      expect(high.generalFatigue).toBe(false)
     })
 
     it('computes the HRV norm on a log scale (asymmetric range around the geometric mean)', () => {
