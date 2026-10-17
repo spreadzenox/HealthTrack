@@ -6,7 +6,7 @@ import './More.css'
 const ITEMS = [
   { to: '/data', icon: '🗂️', title: 'Données', desc: 'Sauvegarde, import et historique de vos saisies' },
   { to: '/connectors', icon: '⌚', title: 'Connecteurs', desc: 'Montre, balance, Health Connect, Withings' },
-  { to: '/settings', icon: '⚙️', title: 'Paramètres', desc: 'Clé Gemini, modèle d’analyse photo' },
+  { to: '/settings', icon: '⚙️', title: 'Paramètres', desc: 'Analyse des repas (Gemini), cigarettes, diagnostic' },
   { to: '/nouveautes', icon: '✨', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },
 ]
 

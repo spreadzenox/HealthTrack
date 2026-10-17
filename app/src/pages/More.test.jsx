@@ -31,4 +31,12 @@ describe('More page', () => {
     renderMore({ changelog: log })
     expect(screen.getByText('2 non lues')).toBeInTheDocument()
   })
+
+  it('describes Settings by what it holds (meal analysis, cigarettes, diagnostic)', () => {
+    renderMore()
+    const link = screen.getByRole('link', { name: /Paramètres/ })
+    expect(link).toHaveTextContent(/repas/)
+    expect(link).toHaveTextContent(/Cigarettes|cigarettes/)
+    expect(link).toHaveTextContent(/diagnostic/i)
+  })
 })

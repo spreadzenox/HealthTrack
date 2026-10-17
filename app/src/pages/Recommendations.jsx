@@ -515,7 +515,7 @@ function AdvancedTab({ analysis }) {
           <> <span className="reco-reliability-warn">⚠ Modèle encore peu fiable (il prédit mal les jours qu’il n’a pas vus) : pistes à titre indicatif. Continuez à enregistrer vos données.</span></>
         )}
         {isModelReliable && (
-          <> <span className="reco-reliability-ok">✓ Le modèle généralise correctement.</span></>
+          <> <span className="reco-reliability-ok">✓ Il prédit bien les jours qu’il n’a pas vus.</span></>
         )}
       </p>
         <details className="reco-method-note">
@@ -575,9 +575,8 @@ function AdvancedTab({ analysis }) {
             La régularisation Ridge{modelInfo.lambda != null && <> (λ = {String(modelInfo.lambda).replace('.', ',')})</>} est
             choisie par validation croisée : plus vos données sont bruitées, plus les effets sont prudemment réduits vers
             zéro. Seuls les effets d&apos;au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type deviennent des
-            pistes. Le modèle est entraîné <strong>sans les {HOLD_OUT_DAYS} derniers jours</strong>, que « Prédit vs réel »
-            et la prédiction de l&apos;accueil prédisent donc sans les avoir vus. Les barres d&apos;importance sont{' '}
-            <strong>relatives</strong> (la plus influente vaut 100 %).
+            pistes. Le modèle est entraîné <strong>sans les {HOLD_OUT_DAYS} derniers jours</strong>, que « A-t-il vu
+            juste ? » et la prédiction de l&apos;accueil prédisent donc sans les avoir vus.
           </p>
           </>)}
         </details>
@@ -602,10 +601,10 @@ function AdvancedTab({ analysis }) {
       {featureImportance?.length > 0 && (
         <section className="reco-section">
           <h3 className="reco-section-title">
-            🔬 Importance des variables (coefficients standardisés)
+            🔬 Ce qui pèse le plus dans le modèle
           </h3>
           <p className="reco-section-hint">
-            Vert = meilleur bien-être · Rouge = moins bon · longueur = poids dans le modèle.
+            Vert = va avec un meilleur bien-être · rouge = moins bon · le plus influent = 100 %.
           </p>
           <div className="reco-corr-chart">
             {featureImportance.map((f) => (
@@ -623,10 +622,10 @@ function AdvancedTab({ analysis }) {
       {residuals && residuals.length > 0 && (
         <section className="reco-section">
           <h3 className="reco-section-title">
-            📉 Bien-être prédit vs réel
+            📉 A-t-il vu juste ?
           </h3>
           <p className="reco-section-hint">
-            Les {HOLD_OUT_DAYS} derniers jours, prédits sans que le modèle les ait vus.
+            Votre bien-être des {HOLD_OUT_DAYS} derniers jours, prédit sans que le modèle les ait vus.
           </p>
           <div className="reco-residuals">
             {residuals.map((r) => {

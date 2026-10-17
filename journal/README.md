@@ -344,8 +344,21 @@ n'en reste aucun. Dans Connecteurs, la phrase « Envoie ses données » sous une
 réseau) ou tant que la météo du jour manque. Dans **Analyses → Analyse avancée**, la note « Comment fonctionne ce
 modèle ? » disait trois fois quel modèle tourne, deux fois comment les variables sont choisies et deux fois le rôle du
 week-end : chaque notion est maintenant dite **une seule fois** (7 paragraphes → 6, nettement plus courts).
+Ce run n'avait pu fusionner sa PR (blocage du contrôle de permissions) : **fusionnée par le run de 16:30**.
+
+**Run du 17/10 16:30** (nettoyage, pas de nouveau journal montre) : l'**Analyse avancée** parle en mots simples.
+« Importance des variables (coefficients standardisés) » devient **« Ce qui pèse le plus dans le modèle »** (la
+légende dit maintenant que le plus influent vaut 100 %, ce que seule la note de méthode disait) et « Bien-être prédit
+vs réel » devient **« A-t-il vu juste ? »** ; « Le modèle généralise correctement » devient « Il prédit bien les jours
+qu'il n'a pas vus ». Dans **Plus**, la ligne Paramètres annonçait « modèle d'analyse photo » (replié depuis) et
+taisait les cigarettes et le diagnostic : elle dit ce que la page contient.
+**Point d'attention** : le contrôle de permissions de la session bloque les fusions automatiques (deux runs de
+suite). La PR #197 est verte et attend votre clic ; pour que les runs fusionnent à nouveau seuls, il faut autoriser la
+fusion de PR dans les réglages de l'environnement de la routine.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Analyse avancée en mots simples (run 17/10 16:30)** : « Ce qui pèse le plus dans le modèle », « A-t-il vu
+  juste ? » ; la ligne Paramètres de Plus dit ce qu'elle contient.
 - **Météo et analyse avancée plus courtes (run 17/10 14:30)** : plus de « Mettre à jour » sur la carte Météo
   (« Réessayer » seulement après un échec) ; note de méthode de l'analyse avancée sans répétitions.
 - **Analyses et Connecteurs sans redites (run 17/10 12:30)** : une piste n'est plus répétée dans le bloc des
@@ -863,7 +876,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 08:30 — [Idées : spec du visage vérifiée](runs/2026-10-17-0830-idees-spec-visage.md) | 💡🙂 | 4 idées (I98–I101), `protocoles/visage.md` — journal seul |
 | 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR #194 fusionnée → v152 |
 | 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR #195 fusionnée → v153 |
-| 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR #196 verte, **fusion refusée par le contrôle des permissions de la session** : à fusionner |
+| 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR #196 verte, fusion refusée ce run-là ; **fusionnée au run de 16:30** → v154 |
+| 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR #197 verte, **non fusionnée** (contrôle des permissions : « Merge Without Review ») : à fusionner |
 
 ---
 
