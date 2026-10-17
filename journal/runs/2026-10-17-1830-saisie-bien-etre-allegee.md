@@ -46,3 +46,10 @@
 - D1 : Accueil, tuile « Repas » quand un seul repas ; relire Repas et Nutrition une dernière fois ; puis D1 bouclé →
   D2 (`WellbeingCharts` par agrégats).
 - D4 : I100 ① (moteur LiteRT) ; D6 : I97 ② (sens personnel du radar).
+
+## Merge
+- PR #197 (run 16:30) fusionnée en début de run → v155 attendue.
+- PR #198 : checks « Frontend (Vitest) », « Build APK », « Protocole montre » et émulateur A56 **verts** sur
+  `2072152`. Fusion **bloquée par le contrôle de permissions de la session** (« Merge Without Review ») : pas de
+  contournement. PR laissée ouverte, prête (seul ce compte rendu a changé depuis). **Run suivant : vérifier qu'elle
+  est verte et sans conflit, puis tenter la fusion une fois** ; sinon le propriétaire peut la fusionner d'un clic.
