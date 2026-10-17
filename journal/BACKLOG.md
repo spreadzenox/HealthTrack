@@ -297,10 +297,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] **I99 (16)** indices nommés par unités d'action (AU12 sourire, AU6 + 12 sourire des yeux, AU4, AU1, AU15, yeux,
       mobilité ; Turrisi 2026), **aucun sens codé** : écart à la plage personnelle (28 j) puis calibration sur les notes
 - [ ] **I101 (12)** test d'équivalence en CI (JSON MediaPipe figé, test instrumenté sur l'émulateur x86_64) ; licence
-      de l'image test à vérifier
+      de l'image test : **I106** (17/10 20:30) → portraits officiels fédéraux US (domaine public, PD-USGov, Wikimedia
+      Commons), pas FFHQ (licences mêlées, interdit pour la reconnaissance faciale)
 - [ ] **I96** une seule autorisation « travailler en arrière-plan » (montre + visage) : `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`
       en une ligne dans la carte montre, consigne One UI « Applis jamais en veille » seulement sur Samsung et seulement
       si le journal natif montre des trous ; exporté dans le diagnostic (aucune demande d'exclusion aujourd'hui)
+      ; chemin One UI 8 (run 17/10 20:30) : Paramètres → Batterie → Limites d'utilisation en arrière-plan →
+      « Applis jamais en veille » (retirer des « Applis en veille profonde »)
 - [ ] **I88** service « Lecture du visage » (`FaceSenseService`, type `camera`, `START_NOT_STICKY`) : rafales de 3
       images ≈ 320×240 au déverrouillage puis ~3 min écran allumé, veille écran éteint, saut si caméra prise / appel /
       chaleur ; service tué → notification « Reprendre » (posté par le récepteur de déverrouillage ou `WatchSyncJob`) ;
@@ -353,8 +356,16 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **I97 ① (17/10 06:30)** Radar forme et cartes FC / VFC : `higherIsBetter` → `generalHigherIsBetter`, écart
       signalé « inhabituel chez vous » dans les deux sens (flèches ↑ / ↓), « fatigue » seulement en « Hypothèse
       générale », style neutre sinon ; cartes : une couleur « hors norme » dans les deux sens
-- [ ] **I97 ②** sens personnel appris sur les notes (FC repos / VFC / sommeil ↔ note du lendemain, FDR, n ≥ 30) →
-      « chez vous : … » à la place de l'hypothèse générale
+- [ ] **I97 ②** sens personnel appris sur les notes (FC repos / VFC / sommeil ↔ note du lendemain) →
+      « chez vous : … » à la place de l'hypothèse générale. **Méthode tranchée au run idées du 17/10 20:30 → I102.**
+- [ ] **I102 (score 20)** estimateur unique `services/personalDirection.js` : X de la veille, préblanchiment AR(1),
+      a priori N(0 ; 0,2²) **centré sur zéro**, sens affiché si P(sens) ≥ 97,5 % et n ≥ 30 (simulé : faux sens
+      ≤ 3,6 % sans lien, lien r = 0,3 trouvé 43 % à 60 j / 88 % à 120 j ; corrélation brute à 90 % : 10–23 % de faux
+      sens) ; branché sur Radar, cartes FC / VFC puis `leverSuggestion`. Spec dans `IDEES.md`
+- [ ] **I103 (16)** verdict « pas de lien notable chez vous » (borne haute 95 % de |effet| < 0,2 ; possible dès ~60 j)
+      → ligne repliée dans Analyses, signal sans lien ne compte plus dans la phrase du Radar
+- [ ] **I104 (16)** fréquences au lieu de r (« 7 de vos 10 journées comparables… »), seulement après un verdict I102
+- [ ] **I105 (12)** jours hors norme mis de côté sans saisie (voyage, Radar « alert » ≥ 2 j, changement d'heure)
 - [ ] `SleepRegularityCard` : « Horaires variables » encore classé `is-unfavourable` (couleur de jugement)
 - [ ] `LEVER_ACTIONS` + `VARIABLE_META.direction` (`higher_better` / `lower_better`) dans `analysisEngine.js` codent un
       sens « sain » : `leverAction` **masque** une piste quand les données contredisent la norme → montrer la réalité
@@ -542,7 +553,7 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
 5. 🧭 D6 — pistes et messages neutres / personnels. **16/10 18:30 : fait pour les pistes** — `leverSuggestion`
    suit le signe personnel (simples, décalées, avancées), piste contraire montrée « Ne pas chercher à … » +
    « Contraire à l'hypothèse générale : chez vous, vos données font foi » ; jamais plus d'alcool / tabac.
-   **17/10 06:30 : Radar forme et cartes FC / VFC neutres (I97 ①)**. Reste : sens personnel du radar (I97 ②),
+   **17/10 06:30 : Radar forme et cartes FC / VFC neutres (I97 ①)**. Reste : sens personnel du radar (I97 ② → **I102**, méthode tranchée 17/10 20:30, puis I103–I105),
    régularité du sommeil, prédiction, repères Nutrition ; `direction` en a priori faible chiffré (shrinkage).
 6. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
    ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).
@@ -602,9 +613,10 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
     7.0, 12) ; **I77** empreintes Huawei Link verrouillées par des tests + repli UUID SDP Honor (10, petit) ; **I81**
     lieux étiquetés comme X (9). Faits : poids **MediaPipe Face Landmarker sous Apache-2.0** (I73 débloquée) ; pas de
     modèle d'émotion vocale redistribuable et utile (I67 confirmée) ; ML Kit GenAI Speech encore alpha.
-14. 💡 Prochain run idées (17/10 20:30 Paris) : I97 ② — comment apprendre le sens personnel d'un signal avec peu de
-    jours (a priori faible, rétrécissement bayésien, n-of-1) ; GT 6 Pro et veille profonde One UI ; Welltory / Exist
-    (liens « évidents ») ; licence d'images test CC0 pour I101. **Fait au run 17/10 08:30** : spec `protocoles/visage.md`
+14. 💡 Prochain run idées (18/10 08:30 Paris) : combien de X tester sans noyer les vrais liens (BH ou 97,5 % par
+    variable, simuler 15 X dont 2 vrais) ; auto-expériences ABAB (I45) avec I102 ; voix (I91) en 2026. **Fait au run
+    17/10 20:30** : sens personnel avec peu de jours → I102–I105 (simulation `protocoles/sens-personnel-sim.py`),
+    images test PD-USGov (I106), chemin One UI 8 pour I96. **Fait au run 17/10 08:30** : spec `protocoles/visage.md`
     vérifiée par un prototype (I98–I101). **Fait au run 16/10 20:30** :
     taille et télémétrie (I94, I95), Samsung (I96), Bearable / Exist (→ I70 confirmé, I97). Ancien :
     (15/10 20:30 Paris) : journal v125+ s'il arrive ; la GT 6 Pro rétablit-elle seule le lien

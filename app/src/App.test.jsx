@@ -1,6 +1,13 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, within, fireEvent } from '@testing-library/react'
 import App from './App'
+
+// Pas d'appel réseau réel vers GitHub : sa réponse arrivait parfois après la fin du fichier de test
+// (« window is not defined » dans UpdateBanner, CI rouge au hasard).
+vi.mock('./services/updateCheck', async (importOriginal) => ({
+  ...(await importOriginal()),
+  fetchLatestRelease: vi.fn(async () => null),
+}))
 
 describe('App', () => {
   it('renders and shows navigation', () => {
