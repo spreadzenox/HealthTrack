@@ -62,19 +62,22 @@ describe('WeatherCard', () => {
     expect(screen.getByText(/14° \/ 7°/)).toBeInTheDocument()
     expect(screen.getByText(/1004 hPa \(−8\)/)).toBeInTheDocument()
     expect(screen.getByText(/Pression en forte baisse/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Mettre à jour' }))
-    await waitFor(() => expect(sync).toHaveBeenCalledWith({ force: true }))
-    // « Désactiver » reste inactif tant que la mise à jour tourne : attendre la fin avant de cliquer.
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Désactiver' })).toBeEnabled())
+    // Tout arrive seul à chaque ouverture : pas de bouton « Mettre à jour » quand la météo du jour est là.
+    expect(screen.queryByRole('button', { name: 'Mettre à jour' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Réessayer' })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Désactiver' }))
     expect(getWeatherSettings().enabled).toBe(false)
     expect(screen.getByRole('button', { name: 'Utiliser ma position approximative' })).toBeInTheDocument()
   })
 
-  it('affiche l’erreur de la dernière mise à jour', () => {
+  it('affiche l’erreur de la dernière mise à jour', async () => {
     enableWeather({ lat: 47.2, lon: -1.6, name: 'Nantes' })
     localStorage.setItem('healthtrack_weather', JSON.stringify({ ...getWeatherSettings(), lastError: 'Pas de connexion internet : nouvel essai à la prochaine ouverture.' }))
-    render(<WeatherCard sync={vi.fn()} />)
+    const sync = vi.fn(async () => ({ ran: true }))
+    render(<WeatherCard sync={sync} />)
     expect(screen.getByText(/Pas de connexion internet/)).toBeInTheDocument()
+    // Après un échec seulement, un geste pour réessayer sans attendre la prochaine ouverture.
+    fireEvent.click(screen.getByRole('button', { name: 'Réessayer' }))
+    await waitFor(() => expect(sync).toHaveBeenCalledWith({ force: true }))
   })
 })

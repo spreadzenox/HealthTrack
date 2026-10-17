@@ -726,6 +726,13 @@ describe('Recommendations — explanations grouped (D1)', () => {
     const note = screen.getByText(/Comment fonctionne ce modèle/).closest('details')
     expect(note).toHaveTextContent(/Régression linéaire multiple|Corrélation de Pearson/)
     expect(note).toHaveTextContent(/Variables redondantes écartées/)
+    // Chaque notion expliquée une seule fois (le modèle, la sélection des variables, le week-end, les R²).
+    const paras = [...note.querySelectorAll('p')].map((p) => p.textContent)
+    const count = (re) => paras.filter((t) => re.test(t)).length
+    expect(note.textContent.match(/Régression linéaire multiple/g)).toHaveLength(1)
+    expect(count(/week-end/i)).toBeLessThanOrEqual(1)
+    expect(count(/plus (liées|corrélées) au bien-être/)).toBe(1)
+    expect(count(/R² LOO/)).toBe(1)
     for (const hint of document.querySelectorAll('.reco-section-hint')) {
       expect(hint.textContent.length).toBeLessThan(110)
     }
