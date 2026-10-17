@@ -76,10 +76,25 @@ describe('Nutrition page', () => {
     const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
     await screen.findByText(/1\s*jour\b/)
     const warning = container.querySelector('.nutrition-warning')
-    expect(warning.textContent).toMatch(/kcal par jour saisi sur ~\s?2\s?\d{3}/)
+    // « par jour saisi » est déjà dans la ligne au-dessus : l'avertissement ne le redit pas (D1).
+    expect(warning.textContent).toMatch(/kcal\/j pour ~\s?2\s?\d{3} visées/)
+    expect(warning.textContent).not.toMatch(/par jour saisi/)
     expect(warning.textContent).toMatch(/des repas manquent sans doute/)
     expect(warning.textContent.length).toBeLessThan(110)
     expect(container.textContent).not.toMatch(/repères? atteints? sur/)
+  })
+
+  it('composition Withings dans « Votre profil », plus de section « Dernière mesure Withings » (D1)', async () => {
+    loadNutritionEntries.mockResolvedValueOnce([
+      { type: 'body_composition', source: 'withings', at: '2026-10-14T07:30:00', payload: { valueKg: 77.2, fatRatioPct: 21.2, muscleMassKg: 32.4 } },
+    ])
+    const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    await screen.findByRole('heading', { name: /Votre profil/ })
+    expect(screen.queryByRole('heading', { name: /Dernière mesure Withings/ })).not.toBeInTheDocument()
+    const lines = container.querySelectorAll('.nutrition-profile-line')
+    expect(lines).toHaveLength(3)
+    expect(lines[1]).toHaveTextContent('Masse grasse 21,2 %')
+    expect(lines[1]).toHaveTextContent('Muscles 32,4 kg')
   })
 
   it('shows empty state when no meals this week', async () => {

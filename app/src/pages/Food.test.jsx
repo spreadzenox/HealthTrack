@@ -462,7 +462,8 @@ describe('Food — derniers repas regroupés par jour', () => {
     expect(days).toHaveLength(2)
     expect(days[0]).toHaveTextContent(/5 octobre/)
     expect(days[0]).toHaveTextContent(/2 repas/)
-    expect(days[1]).toHaveTextContent(/1 repas/)
+    // Un seul repas : sa carte donne déjà l'estimation, le titre du jour ne la redit pas (D1).
+    expect(days[1]).not.toHaveTextContent(/repas|kcal/)
     expect(screen.getAllByText('20:15', { selector: '.meal-at' })).toHaveLength(1)
     const item = screen.getAllByText('Poulet, cuisse : 150 g')[0]
     expect(item).toHaveAttribute('title', "Poulet, cuisse, viande bouillie/cuite à l'eau")

@@ -346,10 +346,13 @@ export default function Food() {
               <section key={day.dateKey} className="meal-day" aria-label={`${title} ${date}`}>
                 <h4 className="meal-day-title">
                   <span>{title} <span className="meal-day-date">{date}</span></span>
-                  <span className="meal-day-total">
-                    {day.meals.length} repas
-                    {day.kcal > 0 && ` · ≈ ${day.kcal.toLocaleString('fr-FR')} kcal`}
-                  </span>
+                  {/* Un seul repas : sa carte donne déjà l'estimation, le titre ne la redit pas. */}
+                  {day.meals.length > 1 && (
+                    <span className="meal-day-total">
+                      {day.meals.length} repas
+                      {day.kcal > 0 && ` · ≈ ${day.kcal.toLocaleString('fr-FR')} kcal`}
+                    </span>
+                  )}
                 </h4>
                 <ul className="meals-list">
                   {day.meals.map((e) => (
