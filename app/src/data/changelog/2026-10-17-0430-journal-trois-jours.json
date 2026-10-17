@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "« Vos derniers jours » : moins à lire, la nuit du 3e jour retrouvée",
+  "items": [
+    "L'Accueil ne lit plus que les 3 jours qu'il affiche (au lieu de deux semaines de mesures de la montre) ; les jours plus anciens sont lus au premier « Voir les jours précédents ». Mesuré sur 3 ans de démo : 2 fois moins de mesures lues (4 016 → 2 190), temps bloquant 114 → 31 ms.",
+    "Correctif : le plus ancien jour affiché perdait sa nuit de sommeil quand elle avait commencé la veille au soir. Elle s'affiche maintenant."
+  ]
+}

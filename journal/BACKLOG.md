@@ -501,7 +501,7 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    Analyses avancées ; Accueil : tuile « Repas » quand un seul repas (redit ses kcal ; gardée pour l'instant, total utile). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
    de SpO₂ minute) ; **17/10 00:30 : FC repos / VFC lues par sous-type (index v4) — Accueil 706 → 403 ms, 16,2 k → 4,0 k
-   enregistrements lus** ; suite : « Vos derniers jours » sans relire les tranches ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
+   enregistrements lus** ; **17/10 04:30 : « Vos derniers jours » ne lit que les 3 jours affichés (14 à la demande, `countEntries`) — 4 016 → 2 190 enregistrements, TBT 114 → 31 ms ; nuit du plus ancien jour corrigée** ; suite : `WellbeingCharts` (14 j) par agrégats ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
    agrégats, budget en CI (enregistrements lus ; **taille de l'APK, I95 : `abiFilters` arm64 + x86_64 avant toute lib native**), Recommandations : panneau debug seul à lire toute la base (garde-fou).

@@ -291,6 +291,22 @@ export async function countAllEntries() {
 }
 
 /**
+ * Nombre d'entrées dont `at` est dans [since, until] (bornes incluses), par l'index `at` : rien n'est
+ * désérialisé (perf D2 : savoir s'il reste des jours plus anciens sans les lire).
+ * @param {{ since?: string, until?: string }} [opts]
+ * @returns {Promise<number>}
+ */
+export async function countEntries({ since, until } = {}) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly')
+    const req = tx.objectStore(STORE_NAME).index('at').count(IDBKeyRange.bound(since ?? '', until ?? AT_MAX))
+    req.onerror = () => reject(req.error)
+    req.onsuccess = () => resolve(req.result)
+  })
+}
+
+/**
  * Load all entries for analysis/ML, loading each type independently so that
  * high-frequency types (e.g. heart_rate) cannot crowd out lower-frequency
  * types (e.g. wellbeing, sleep, food) due to a shared entry cap.

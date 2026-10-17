@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { listEntries } from '../storage/localHealthStorage'
+import { listEntries, countEntries } from '../storage/localHealthStorage'
 import { weatherSummaryParts } from '../services/weather'
 import { formatScreenMinutes } from '../services/phoneUsage'
 import WellbeingCharts from '../components/WellbeingCharts'
@@ -14,6 +14,7 @@ import { groupCigarettes, isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
 import { formatDuration, workoutTypeLabel, shortFoodName } from '../utils/format'
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
+import { localDateKey } from '../services/analysisEngine'
 import { mealKcal } from '../services/mealEditing'
 import { useNutritionTable } from '../data/nutritionTable'
 
@@ -66,7 +67,11 @@ const ITEM_TYPES_WITH_RENDERER = ['food', 'wellbeing', 'cigarette', 'activity', 
 /** Jours affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
 const INITIAL_DAYS = 3
 const MORE_DAYS = 4
-/** Fenêtre chargée pour le journal (les mesures horaires de la montre rendent un « limit » fixe trop court). */
+/**
+ * Fenêtre du journal (les mesures de la montre rendent un « limit » fixe trop court). Seuls les jours affichés
+ * d'emblée sont lus à l'ouverture (perf D2 : les tranches de FC / SpO₂ de deux semaines), les 14 jours au
+ * premier « Voir les jours précédents ».
+ */
 const JOURNAL_WINDOW_DAYS = 14
 
 function frNumber(v) {
@@ -330,13 +335,35 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
   )
 }
 
-/** Entrées des derniers jours ; repli sur les 30 dernières si rien de récent (synchro ancienne). */
-async function loadJournalEntries() {
+function daysAgoStart(days) {
   const now = new Date()
-  const since = new Date(now.getFullYear(), now.getMonth(), now.getDate() - JOURNAL_WINDOW_DAYS + 1)
-  const recent = await listEntries({ since: since.toISOString(), limit: 5000 })
-  if (recent.length > 0) return recent
-  return listEntries({ limit: 30 })
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate() - days + 1)
+}
+
+/**
+ * Entrées des derniers jours : les `INITIAL_DAYS` premiers (et s'il en reste de plus anciens dans la fenêtre),
+ * ou toute la fenêtre (`full`, ou rien de récent) ; repli sur les 30 dernières si rien de récent (synchro ancienne).
+ * La veille du premier jour est lue aussi (une nuit commencée la veille au soir compte pour le jour du réveil),
+ * mais n'est pas affichée : `hiddenKey` = cette veille.
+ * @returns {Promise<{ entries: object[], full: boolean, hasOlder: boolean, hiddenKey: string | null }>}
+ */
+async function loadJournalEntries(full) {
+  if (!full) {
+    const shown = daysAgoStart(INITIAL_DAYS)
+    const eve = daysAgoStart(INITIAL_DAYS + 1)
+    const recent = await listEntries({ since: eve.toISOString(), limit: 5000 })
+    if (recent.length > 0) {
+      const older = await countEntries({
+        since: daysAgoStart(JOURNAL_WINDOW_DAYS + 1).toISOString(),
+        until: new Date(shown.getTime() - 1).toISOString(),
+      })
+      return { entries: recent, full: false, hasOlder: older > 0, hiddenKey: localDateKey(eve.toISOString()) }
+    }
+  }
+  const eve = daysAgoStart(JOURNAL_WINDOW_DAYS + 1)
+  const recent = await listEntries({ since: eve.toISOString(), limit: 5000 })
+  if (recent.length > 0) return { entries: recent, full: true, hasOlder: false, hiddenKey: localDateKey(eve.toISOString()) }
+  return { entries: await listEntries({ limit: 30 }), full: true, hasOlder: false, hiddenKey: null }
 }
 
 export default function Dashboard() {
@@ -351,26 +378,39 @@ export default function Dashboard() {
   const [visibleDays, setVisibleDays] = useState(INITIAL_DAYS)
   // kcal des repas : table Ciqual chargée à la demande, journal recalculé à son arrivée
   const nutritionTable = useNutritionTable()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const days = useMemo(() => buildDailyJournal(entries), [entries, nutritionTable])
+  const [hiddenKey, setHiddenKey] = useState(null)
+  const days = useMemo(
+    () => buildDailyJournal(entries).filter((d) => d.dateKey !== hiddenKey),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [entries, hiddenKey, nutritionTable],
+  )
+
+  // Fenêtre complète (14 jours) lue ? Un ref : les rechargements après écriture gardent la même fenêtre.
+  const fullWindow = useRef(false)
+  const [hasOlder, setHasOlder] = useState(false)
+  const applyJournal = useCallback((r) => {
+    fullWindow.current = r.full
+    setHasOlder(r.hasOlder)
+    setHiddenKey(r.hiddenKey)
+    setEntries(r.entries)
+  }, [])
 
   const loadEntries = useCallback(async () => {
     try {
-      const data = await loadJournalEntries()
-      setEntries(data)
+      applyJournal(await loadJournalEntries(fullWindow.current))
     } catch (e) {
       setError(e.message)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [applyJournal])
 
   useEffect(() => {
     let cancelled = false
     async function load() {
       try {
-        const data = await loadJournalEntries()
-        if (!cancelled) setEntries(data)
+        const r = await loadJournalEntries(false)
+        if (!cancelled) applyJournal(r)
       } catch (e) {
         if (!cancelled) setError(e.message)
       } finally {
@@ -379,7 +419,15 @@ export default function Dashboard() {
     }
     load()
     return () => { cancelled = true }
-  }, [])
+  }, [applyJournal])
+
+  const showOlderDays = useCallback(() => {
+    setVisibleDays((n) => n + MORE_DAYS)
+    if (!fullWindow.current) {
+      fullWindow.current = true
+      loadEntries()
+    }
+  }, [loadEntries])
 
   useEffect(() => {
     const handler = () => loadEntries()
@@ -449,11 +497,11 @@ export default function Dashboard() {
                   />
                 ))}
               </ul>
-              {days.length > visibleDays && (
+              {(days.length > visibleDays || hasOlder) && (
                 <button
                   type="button"
                   className="btn btn-secondary day-more-btn"
-                  onClick={() => setVisibleDays((n) => n + MORE_DAYS)}
+                  onClick={showOlderDays}
                 >
                   Voir les jours précédents
                 </button>

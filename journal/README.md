@@ -298,7 +298,15 @@ ont besoin (nouvel index dans la base, ajouté tout seul à la mise à jour, vos
 de 0,7 s** ; avec votre vraie montre (6 fois plus de tranches de cœur que la démo), le gain devrait être plus net.
 Rien ne change à l'écran. **Dites-moi si l'Accueil vous paraît encore lent.**
 
+**Run du 17/10 04:30** (performance, pas de nouveau journal montre) : « **Vos derniers jours** » ne lit plus que les
+**3 jours affichés** au lieu de deux semaines de mesures de la montre ; les jours plus anciens sont lus au premier
+« Voir les jours précédents » (le bouton n'apparaît que s'il y en a). Sur 3 ans de démo : **2 fois moins de mesures
+lues** (4 016 → 2 190), temps bloquant 114 → 31 ms. Et un **défaut corrigé**, vu sur la capture : le plus ancien
+jour affiché perdait sa **nuit de sommeil** quand elle avait commencé la veille au soir ; elle s'affiche maintenant.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **« Vos derniers jours » plus léger (run 17/10 04:30)** : 3 jours lus d'emblée, les autres à la demande ; la nuit
+  du plus ancien jour affiché n'est plus oubliée.
 - **Accueil plus rapide à ouvrir (run 17/10 00:30)** : Radar forme, FC au repos et VFC ne relisent plus toutes les
   tranches de cœur et de SpO₂ de la montre (16 210 → 3 988 mesures lues, 0,7 → 0,4 s sur la démo).
 - **Analyses : seul ce qui précède votre note compte (run 16/10 22:30)** : un jour noté avant 20 h, les pas,
@@ -797,6 +805,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 20:30 — [Idées : le visage sans télémétrie, APK léger, Samsung](runs/2026-10-16-2030-idees-visage-litert.md) | 💡🙂 | 4 idées (I94–I97) — journal seul |
 | 16/10 22:30 — [Ordre temporel : seul ce qui précède la note compte](runs/2026-10-16-2230-ordre-temporel.md) | 🔁 | PR #189 fusionnée → v148 |
 | 17/10 00:30 — [Accueil : le cœur lu par sous-type](runs/2026-10-17-0030-accueil-coeur-par-sous-type.md) | ⚡ | PR #190 |
+| 17/10 04:30 — [« Vos derniers jours » : 3 jours lus d'emblée](runs/2026-10-17-0430-journal-trois-jours.md) | ⚡ | PR « [Auto] » |
 
 ---
 
