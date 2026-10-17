@@ -863,7 +863,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 08:30 — [Idées : spec du visage vérifiée](runs/2026-10-17-0830-idees-spec-visage.md) | 💡🙂 | 4 idées (I98–I101), `protocoles/visage.md` — journal seul |
 | 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR #194 fusionnée → v152 |
 | 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR #195 fusionnée → v153 |
-| 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR (fusion après CI verte) |
+| 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR #196 verte, **fusion refusée par le contrôle des permissions de la session** : à fusionner |
 
 ---
 
