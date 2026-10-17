@@ -1,6 +1,6 @@
 # 2026-10-17 12:30 Paris (10:30 UTC) — Analyses et Connecteurs sans redites (D1)
 
-**Type** : 🧹 D1  ·  **PR** : « [Auto] Analyses et Connecteurs sans redites »
+**Type** : 🧹 D1  ·  **PR** : #195 « [Auto] Analyses et Connecteurs sans redites »
 
 ## Pourquoi
 - Démarrage : main à `97feb21` (#194, release v152) ; « Tests », « Build & Release » et émulateur A56 verts. Aucune
