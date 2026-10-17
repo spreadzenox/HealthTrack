@@ -285,6 +285,17 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       (télémétrie Google sans option : mediapipe #6291, `RemoteLoggingClient` dans `tasks-core 1.1.1`, conditions ML Kit ;
       14,4 Mo de `.so` arm64 contre 5,6). Spec d'abord (`protocoles/visage.md`), `.task` téléchargé + SHA-256 au build,
       test d'équivalence vs MediaPipe hors app (écart < 0,05). Mesuré : ≈ 10 ms / image (1 cœur x86) → coût = la caméra
+      **17/10 08:30 : spec écrite et vérifiée** (`protocoles/visage.md` + prototype `visage-reference.py`) : points à
+      0,78 px médian de MediaPipe, blendshapes 0,009 moyen ; pièges : coordonnées en **pixels** pour les blendshapes,
+      pas de demi-pixel au recadrage. **Prêt à coder**, en 3 PR (I100) : ① moteur + modèles au build + `abiFilters` +
+      test d'équivalence (I101) ; ② service + rafales ; ③ diagnostic
+- [ ] **I98 (17/10 08:30, score 20)** capture 320 × 240 × 3 images (mesuré : écart 0,019 vs pleine résolution),
+      contrôle qualité avant calcul (présence ≥ 0,9, visage ≥ 80 px, lacet ≤ 30°, lumière, `jawOpen` ≤ 0,5), rafale
+      sautée si la caméra est déjà prise (`AvailabilityCallback`) ; rejets comptés par raison dans le diagnostic
+- [ ] **I99 (16)** indices nommés par unités d'action (AU12 sourire, AU6 + 12 sourire des yeux, AU4, AU1, AU15, yeux,
+      mobilité ; Turrisi 2026), **aucun sens codé** : écart à la plage personnelle (28 j) puis calibration sur les notes
+- [ ] **I101 (12)** test d'équivalence en CI (JSON MediaPipe figé, test instrumenté sur l'émulateur x86_64) ; licence
+      de l'image test à vérifier
 - [ ] **I96** une seule autorisation « travailler en arrière-plan » (montre + visage) : `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`
       en une ligne dans la carte montre, consigne One UI « Applis jamais en veille » seulement sur Samsung et seulement
       si le journal natif montre des trous ; exporté dans le diagnostic (aucune demande d'exclusion aujourd'hui)
@@ -510,6 +521,7 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : `WellbeingCharts` par
    agrégats, budget en CI (enregistrements lus ; **taille de l'APK, I95 : `abiFilters` arm64 + x86_64 avant toute lib native**), Recommandations : panneau debug seul à lire toute la base (garde-fou).
 3. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
+   **spec du pipeline écrite et vérifiée le 17/10 08:30 (`protocoles/visage.md`) → premier code D4 = I100 ①** ;
    **plan vérifié au run idées du 16/10 08:30** : I92 d'abord (petit, D5 — **fait 16/10 16:30**), puis I88 (service + diagnostic, validé
    sur l'A56 avant tout affichage), I90 (indices et tendance 14 j), I89 (test Shizuku / ADB), I91 (voix), I93 ;
    faits du 14/10 : visage = blendshapes MediaPipe par défaut (AUC visage ≈ 0,6 → tendance 7 j), voix = prosodie
@@ -584,8 +596,10 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
     7.0, 12) ; **I77** empreintes Huawei Link verrouillées par des tests + repli UUID SDP Honor (10, petit) ; **I81**
     lieux étiquetés comme X (9). Faits : poids **MediaPipe Face Landmarker sous Apache-2.0** (I73 débloquée) ; pas de
     modèle d'émotion vocale redistribuable et utile (I67 confirmée) ; ML Kit GenAI Speech encore alpha.
-14. 💡 Prochain run idées (17/10 08:30 Paris) : spec `protocoles/visage.md` (ancres du détecteur, 146 points des
-    blendshapes) ; GT 6 Pro et veille profonde One UI ; Welltory / Exist (liens « évidents »). **Fait au run 16/10 20:30** :
+14. 💡 Prochain run idées (17/10 20:30 Paris) : I97 ② — comment apprendre le sens personnel d'un signal avec peu de
+    jours (a priori faible, rétrécissement bayésien, n-of-1) ; GT 6 Pro et veille profonde One UI ; Welltory / Exist
+    (liens « évidents ») ; licence d'images test CC0 pour I101. **Fait au run 17/10 08:30** : spec `protocoles/visage.md`
+    vérifiée par un prototype (I98–I101). **Fait au run 16/10 20:30** :
     taille et télémétrie (I94, I95), Samsung (I96), Bearable / Exist (→ I70 confirmé, I97). Ancien :
     (15/10 20:30 Paris) : journal v125+ s'il arrive ; la GT 6 Pro rétablit-elle seule le lien
     Bluetooth système (condition d'I75) ; entrées du fichier stress (RRI) et dictionnaire VFC 500044 pour §7.11 bis ; comptes rendus de
@@ -628,6 +642,9 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-17 — Run « idées » 08:30 : pipeline visage reproduit sur LiteRT seul et comparé à MediaPipe (0,78 px,
+      blendshapes 0,009) → spec `protocoles/visage.md` + prototype ; capture 320 × 240 suffisante ; indices par unités
+      d'action → I98–I101
 - [x] 2026-10-16 — Run « idées » 20:30 : bibliothèques du visage mesurées (MediaPipe / ML Kit / LiteRT : taille,
       télémétrie sans option chez Google) → **I94 LiteRT seul** ; modèles exécutés ≈ 10 ms / image ; I95 APK maigre,
       I96 arrière-plan en un geste (Samsung), I97 Radar neutre
