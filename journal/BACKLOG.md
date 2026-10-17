@@ -77,9 +77,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **I85 ②a** « Repas tardif » déduit des repas notés (≥ 21 h ou avant 4 h la nuit suivante ; soir connu
       seulement avec ≥ 2 repas notés ; tag déclaré compte encore) ; masqué dans la saisie si ≥ 2 repas notés sur
       7 des 14 derniers jours ; le radar lit les tags mesurés (séance du soir, repas tardif) (run 16/10 04:30)
-- [ ] **I85 ②b** « Voyage » d'un changement de fuseau. Attention : `computeTagEffects` ne lit que les entrées ; un
-      fuseau mémorisé en localStorage ne serait ni exporté ni vu des Analyses → l'enregistrer comme entrée légère
-      (`type: 'context'`, `payload: { date, tzOffset, tz }`, une par jour au plus) pour qu'il survive à l'export.
+- [x] **I85 ②b** « Voyage » d'un changement de fuseau : entrée légère `context` (`{ date, tz, tzOffset }`, une par
+      jour et par fuseau, à l'ouverture et au retour dans l'app, exportée) ; jour = voyage si le nom du fuseau diffère
+      de l'entrée précédente (≤ 3 jours avant ; l'heure d'été ne compte pas) ; tag déclaré compte encore ; masqué dans
+      la saisie le jour du changement seulement ; Analyses « déduit des changements de fuseau horaire » ; Radar forme
+      (run 17/10 10:30). Piste : lieu (géolocalisation grossière) pour les trajets dans le même fuseau.
 - [ ] **I86** (score 12, absorbe I80) : « Pas pertinent pour moi » sur chaque lien des Analyses (masqué partout,
       réversible, exporté) ; force et confiance séparées, en mots
 
@@ -511,8 +513,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    « Comment c'est calculé », une ligne par section** ; **16/10 10:30 : Repas 3 → 2 écrans**, Photo / Galerie / Décrire sur une ligne, aliments à la suite ; **16/10 12:30 :
    Accueil 4 → 3 écrans (aliments à la suite, classe partagée `.inline-list`), avertissement « repas manquants » de
    Nutrition en une phrase qui remplace le compte de repères** ; **16/10 14:30 : Accueil sans doublons** — note de
-   bien-être sur une ligne, tuiles « Bien-être » (note unique) et « Cigarettes » retirées du résumé du jour) : « Voyage » déduit (I85 ②b, entrée `context` par jour ;
-   ne couvre que les changements de fuseau → garder le tag déclaré, `declaredAlsoCounts`) ; relire Connecteurs et
+   bien-être sur une ligne, tuiles « Bien-être » (note unique) et « Cigarettes » retirées du résumé du jour ;
+   **17/10 10:30 : « Voyage » déduit du fuseau (I85 ②b)**) : relire Connecteurs et
    Analyses avancées ; Accueil : tuile « Repas » quand un seul repas (redit ses kcal ; gardée pour l'instant, total utile). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
    de SpO₂ minute) ; **17/10 00:30 : FC repos / VFC lues par sous-type (index v4) — Accueil 706 → 403 ms, 16,2 k → 4,0 k
@@ -642,6 +644,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-17 — D1 : I85 ②b « Voyage » déduit des changements de fuseau horaire (entrée `context` par jour, saisie, Analyses, Radar) (run 10:30 Paris)
 - [x] 2026-10-17 — Run « idées » 08:30 : pipeline visage reproduit sur LiteRT seul et comparé à MediaPipe (0,78 px,
       blendshapes 0,009) → spec `protocoles/visage.md` + prototype ; capture 320 × 240 suffisante ; indices par unités
       d'action → I98–I101

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "« Voyage » déduit du fuseau horaire",
+  "items": [
+    "Le jour où le fuseau horaire du téléphone change (aller comme retour), la saisie du bien-être ne propose plus « Voyage » : c'est compté tout seul.",
+    "Analyses : ces jours comptent comme des voyages, avec la mention « déduit des changements de fuseau horaire » ; le Radar forme peut aussi expliquer un écart par ce voyage.",
+    "Le passage à l'heure d'hiver ou d'été n'est pas un voyage. Un trajet sans changement de fuseau se coche toujours à la main."
+  ]
+}

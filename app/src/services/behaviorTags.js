@@ -38,6 +38,9 @@ const PERMUTATIONS = 2000
  * 'meals': « Repas tardif » from the meals noted (a meal from 21:00, or after midnight); an evening is only
  * known when ≥ 2 meals were noted that day (one noted meal says nothing about the others), and a declared
  * tag still counts on the other evenings.
+ * 'timezone': « Voyage » from a change of the phone's time zone (`context` entries, timezoneContext.js); a trip
+ * in the same zone is not seen, so a declared tag still counts, and the check-in only stops asking on a day the
+ * change was seen.
  * radarCause: a known, harmless reason for resting HR / HRV / sleep to drift
  * for a night or two — the radar then says « probably linked to… » instead of
  * raising a worry (radar.js, explainRadar).
@@ -51,7 +54,7 @@ export const BEHAVIOR_TAGS = [
   { id: 'late_screen', label: 'Écran tard', emoji: '📱', effectDay: 'next', auto: 'phone_usage' },
   { id: 'evening_sport', label: 'Sport le soir', emoji: '🏃', effectDay: 'next', radarCause: true, auto: 'workouts', declaredAlsoCounts: true },
   { id: 'stress', label: 'Stress', emoji: '😣', effectDay: 'same', radarCause: true, side: 'Y' },
-  { id: 'travel', label: 'Voyage', emoji: '✈️', effectDay: 'same', radarCause: true },
+  { id: 'travel', label: 'Voyage', emoji: '✈️', effectDay: 'same', radarCause: true, auto: 'timezone', declaredAlsoCounts: true },
   { id: 'vaccine', label: 'Vaccin', emoji: '💉', effectDay: 'next', radarCause: true },
   { id: 'sick', label: 'Malade', emoji: '🤒', effectDay: 'same' },
 ]
@@ -75,6 +78,9 @@ const MIN_MEALS_PER_DAY = 2
 const REGULAR_MEAL_DAYS = 7
 const REGULAR_MEAL_WINDOW_DAYS = 14
 
+/** Two time zones seen more than this many days apart say nothing about the day of the trip. */
+const MAX_TIMEZONE_GAP_DAYS = 3
+
 /** Shorter recorded sessions (a walk to the bus picked up by the watch…) are not a workout. */
 const MIN_WORKOUT_SECONDS = 10 * 60
 
@@ -86,10 +92,11 @@ export function isWorkoutEntry(e) {
 
 /**
  * Tags the check-in should not ask for, because the app measures them itself.
- * @param {{ phoneUsage?: boolean, workouts?: boolean, meals?: boolean }} captures  which automatic captures are on
+ * @param {{ phoneUsage?: boolean, workouts?: boolean, meals?: boolean, travelToday?: boolean }} captures  which
+ *   automatic captures are on (`travelToday`: the time zone changed today)
  */
-export function autoDetectedTagIds({ phoneUsage = false, workouts = false, meals = false } = {}) {
-  const on = { phone_usage: phoneUsage, workouts, meals }
+export function autoDetectedTagIds({ phoneUsage = false, workouts = false, meals = false, travelToday = false } = {}) {
+  const on = { phone_usage: phoneUsage, workouts, meals, timezone: travelToday }
   return BEHAVIOR_TAGS.filter((t) => t.auto && on[t.auto]).map((t) => t.id)
 }
 
@@ -112,7 +119,33 @@ export function measuredTagsByDay(entries) {
     if (typeof date !== 'string' || typeof mins !== 'number' || Number.isNaN(mins)) continue
     late.set(previousDateKey(date), mins >= AUTO_LATE_SCREEN_MIN)
   }
-  return new Map([['late_screen', late], ['evening_sport', eveningSport(entries)], ['late_meal', lateMeals(entries)]])
+  return new Map([
+    ['late_screen', late],
+    ['evening_sport', eveningSport(entries)],
+    ['late_meal', lateMeals(entries)],
+    ['travel', timezoneChanges(entries)],
+  ])
+}
+
+/**
+ * Days the phone changed time zone (true), or kept the zone seen on a recent day (false). Each `context` entry
+ * is compared with the one before it (several the same day when the zone changed during the day); a day whose
+ * previous entry is older than MAX_TIMEZONE_GAP_DAYS, or the very first one, is unknown. The zone name is
+ * compared, not the offset: summer time changes the offset, not the zone.
+ */
+function timezoneChanges(entries) {
+  const seen = entries
+    .filter((e) => e.type === 'context' && typeof e.payload?.tz === 'string' && e.payload.tz && typeof e.payload.date === 'string')
+    .sort((a, b) => (a.payload.date === b.payload.date ? (a.at < b.at ? -1 : 1) : a.payload.date < b.payload.date ? -1 : 1))
+  const out = new Map()
+  for (let i = 1; i < seen.length; i++) {
+    const prev = seen[i - 1].payload
+    const cur = seen[i].payload
+    const gap = (Date.parse(cur.date) - Date.parse(prev.date)) / 86_400_000
+    if (!(gap <= MAX_TIMEZONE_GAP_DAYS)) continue
+    out.set(cur.date, out.get(cur.date) === true || cur.tz !== prev.tz)
+  }
+  return out
 }
 
 /**

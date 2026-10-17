@@ -176,6 +176,8 @@ export function buildDailyJournal(entries) {
       }
       continue
     }
+    // Fuseau horaire du jour : sert seulement à déduire « Voyage », rien à afficher.
+    if (e.type === 'context') continue
     const day = getDay(localDateKey(e.at))
     if (e.type === 'weather') {
       day._weather = p

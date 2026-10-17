@@ -428,6 +428,64 @@ describe('late meal deduced from the meals noted (I85 ②)', () => {
   })
 })
 
+describe('travel deduced from a change of time zone (I85 ②b)', () => {
+  const ctx = (date, tz, tzOffset = 120) => ({ type: 'context', source: 'app_context', at: `${date}T10:00:00.000Z`, payload: { date, tz, tzOffset } })
+
+  it('declares travel as automatic from the time zone, a declared tag still counting', () => {
+    expect(getTagMeta('travel').auto).toBe('timezone')
+    expect(getTagMeta('travel').declaredAlsoCounts).toBe(true)
+    expect(autoDetectedTagIds({ travelToday: true })).toEqual(['travel'])
+    expect(autoDetectedTagIds({ travelToday: false })).toEqual([])
+  })
+
+  it('a day whose time zone differs from the previous one is a travel day, the same zone a day without', () => {
+    const t = measuredTagsByDay([
+      ctx('2026-09-01', 'Europe/Paris'),
+      ctx('2026-09-02', 'Europe/Paris'),
+      ctx('2026-09-03', 'America/New_York', -240),
+      ctx('2026-09-04', 'America/New_York', -240),
+      ctx('2026-09-06', 'Europe/Paris'), // 2 days later: back home
+    ]).get('travel')
+    expect(t.has('2026-09-01')).toBe(false) // nothing before: unknown
+    expect(t.get('2026-09-02')).toBe(false)
+    expect(t.get('2026-09-03')).toBe(true)
+    expect(t.get('2026-09-04')).toBe(false)
+    expect(t.has('2026-09-05')).toBe(false) // app not opened: unknown
+    expect(t.get('2026-09-06')).toBe(true)
+  })
+
+  it('a change of offset in the same zone (summer time) is not a travel', () => {
+    const t = measuredTagsByDay([ctx('2026-10-24', 'Europe/Paris', 120), ctx('2026-10-25', 'Europe/Paris', 60)]).get('travel')
+    expect(t.get('2026-10-25')).toBe(false)
+  })
+
+  it('a change within the day counts for that day; after a long gap the day is unknown', () => {
+    const t = measuredTagsByDay([
+      ctx('2026-09-01', 'Europe/Paris'),
+      { ...ctx('2026-09-02', 'Europe/Paris'), at: '2026-09-02T06:00:00.000Z' },
+      { ...ctx('2026-09-02', 'Europe/London', 60), at: '2026-09-02T18:00:00.000Z' },
+      ctx('2026-09-20', 'Asia/Tokyo', 540),
+    ]).get('travel')
+    expect(t.get('2026-09-02')).toBe(true)
+    expect(t.has('2026-09-20')).toBe(false)
+  })
+
+  it('analyses travel days from the time zone, a declared tag adding a trip in the same zone', () => {
+    const entries = []
+    const zones = ['Europe/Paris', 'Europe/London']
+    for (let i = 0; i < 20; i++) {
+      const date = localKey(i)
+      const zone = zones[Math.floor(i / 2) % 2] // zone changes every other day
+      const travel = i > 0 && i % 2 === 0
+      entries.push(ctx(date, zone))
+      entries.push(checkin(i, travel || i === 1 ? 2 : 4, i === 1 ? ['travel'] : undefined))
+    }
+    const e = computeTagEffects(entries).effects.find((x) => x.tagId === 'travel')
+    expect(e).toMatchObject({ auto: true, nWith: 10, nWithout: 9 })
+    expect(e.diff).toBeCloseTo(-2)
+  })
+})
+
 describe('measuredTagsByDay', () => {
   it('returns measured tags per evening, true and false', () => {
     const m = measuredTagsByDay([{ type: 'phone_usage', payload: { date: '2026-09-02', lateScreenMinutes: 45 } }])

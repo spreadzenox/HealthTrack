@@ -640,7 +640,7 @@ export function localDateKey(iso) {
 }
 
 /** Entrées qui arrivent toutes seules chaque jour (contexte), sans action de l'utilisateur. */
-const AUTO_CONTEXT_TYPES = new Set(['weather', 'phone_usage'])
+const AUTO_CONTEXT_TYPES = new Set(['weather', 'phone_usage', 'context'])
 
 /**
  * Returns the number of distinct calendar days (YYYY-MM-DD) that have any
