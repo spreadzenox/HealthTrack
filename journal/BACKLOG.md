@@ -516,9 +516,9 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    bien-être sur une ligne, tuiles « Bien-être » (note unique) et « Cigarettes » retirées du résumé du jour ;
    **17/10 10:30 : « Voyage » déduit du fuseau (I85 ②b)** ; **17/10 12:30 : Analyses — pistes non répétées dans les
    corrélations (« Autres liens ») ; Connecteurs — « Envoie ses données » retiré sous « Reçu »** ; **17/10 14:30 : note de méthode de l'analyse
-   avancée — chaque notion dite une fois ; Météo — « Mettre à jour » retiré, « Réessayer » après échec**) : relire
-   l'onglet Analyses avancée (titre « Importance des variables (coefficients standardisés) » jargonneux ; « Prédit vs
-   réel ») et la page Plus ; Accueil : tuile « Repas » quand un seul repas (redit ses kcal ; gardée pour l'instant, total utile). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
+   avancée — chaque notion dite une fois ; Météo — « Mettre à jour » retiré, « Réessayer » après échec** ; **17/10 16:30 :
+   Analyse avancée en mots simples (« Ce qui pèse le plus dans le modèle », « A-t-il vu juste ? »), ligne Paramètres de
+   Plus fidèle**) : reste à relire Données → historique et la saisie bien-être (WellbeingPrompt) écran par écran ; Accueil : tuile « Repas » quand un seul repas (redit ses kcal ; gardée pour l'instant, total utile). Fait le 14/10 14:30 : bloc « Votre forme », Connecteurs par statut, `--border`.
 2. ⚡ D2 — performance : **I82 livré le 16/10 00:30** (SpO₂ en tranches + migration ; Accueil 1 954 → 546 ms avec 30 j
    de SpO₂ minute) ; **17/10 00:30 : FC repos / VFC lues par sous-type (index v4) — Accueil 706 → 403 ms, 16,2 k → 4,0 k
    enregistrements lus** ; **17/10 04:30 : « Vos derniers jours » ne lit que les 3 jours affichés (14 à la demande, `countEntries`) — 4 016 → 2 190 enregistrements, TBT 114 → 31 ms ; nuit du plus ancien jour corrigée** ; suite : `WellbeingCharts` (14 j) par agrégats ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
@@ -647,6 +647,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-17 — D1 : Analyse avancée en mots simples (titres, fiabilité), légende des barres « le plus influent = 100 % » dite une fois ; Plus : ligne Paramètres fidèle ; PR #196 du run 14:30 fusionnée (run 16:30 Paris)
 - [x] 2026-10-17 — D1 : I85 ②b « Voyage » déduit des changements de fuseau horaire (entrée `context` par jour, saisie, Analyses, Radar) (run 10:30 Paris)
 - [x] 2026-10-17 — Run « idées » 08:30 : pipeline visage reproduit sur LiteRT seul et comparé à MediaPipe (0,78 px,
       blendshapes 0,009) → spec `protocoles/visage.md` + prototype ; capture 320 × 240 suffisante ; indices par unités

@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "Analyse avancée en mots simples",
+  "items": [
+    "Analyse avancée : « Importance des variables (coefficients standardisés) » devient « Ce qui pèse le plus dans le modèle », et « Bien-être prédit vs réel » devient « A-t-il vu juste ? ».",
+    "Plus : la ligne Paramètres dit ce qu'elle contient vraiment (analyse des repas, cigarettes, diagnostic)."
+  ]
+}

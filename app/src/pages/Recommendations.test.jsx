@@ -737,4 +737,21 @@ describe('Recommendations — explanations grouped (D1)', () => {
       expect(hint.textContent.length).toBeLessThan(110)
     }
   })
+
+  it('advanced tab: section titles in plain words, bar scale explained once', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
+    renderPage()
+    fireEvent.click(await screen.findByRole('button', { name: /Analyse avancée/i }))
+    await screen.findByText(/Analyse sur/i)
+    const titles = [...document.querySelectorAll('.reco-section-title')].map((h) => h.textContent)
+    expect(titles.length).toBeGreaterThan(0)
+    for (const t of titles) expect(t).not.toMatch(/coefficients|standardis|\bvs\b|variables/i)
+    const text = document.querySelector('.reco-tab-content').textContent
+    expect(text).not.toMatch(/généralise/)
+    // L'échelle relative des barres est dite sous les barres, pas une 2ᵉ fois dans la note de méthode.
+    expect(text.match(/la plus influente|le plus influent/g) ?? []).toHaveLength(
+      document.querySelector('.reco-corr-chart') ? 1 : 0,
+    )
+  })
 })
