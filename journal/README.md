@@ -357,7 +357,7 @@ suite). La PR #197 est verte et attend votre clic ; pour que les runs fusionnent
 fusion de PR dans les réglages de l'environnement de la routine.
 
 **Run du 17/10 18:30** (nettoyage, pas de nouveau journal montre) : la PR #197 a été **fusionnée en début de run**
-(la fusion automatique est repassée). La fenêtre **« Comment vous sentez-vous ? »** se fait plus discrète : elle ne
+(la fusion automatique est repassée ; celle de sa propre PR #198 a de nouveau été bloquée : un clic suffit). La fenêtre **« Comment vous sentez-vous ? »** se fait plus discrète : elle ne
 s'ouvre plus d'elle-même si vous avez noté votre bien-être **dans les 3 dernières heures** (« + Ajouter un
 bien-être » reste là), elle dit l'échelle en une ligne (« 0 = très bas, 5 = très bien ») et remplace deux phrases
 d'explication par une seule ligne **« Repéré sans vous : Sport le soir… »**. Dans Plus, la ligne Données ne promet
@@ -887,7 +887,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR #195 fusionnée → v153 |
 | 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR #196 verte, fusion refusée ce run-là ; **fusionnée au run de 16:30** → v154 |
 | 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR #197 verte, fusion refusée ce run-là ; **fusionnée au run de 18:30** → v155 |
-| 17/10 18:30 — [Saisie bien-être allégée](runs/2026-10-17-1830-saisie-bien-etre-allegee.md) | 🧹 | PR à fusionner en fin de run (voir le compte rendu) |
+| 17/10 18:30 — [Saisie bien-être allégée](runs/2026-10-17-1830-saisie-bien-etre-allegee.md) | 🧹 | PR #198 verte, fusion bloquée par le contrôle des permissions : **à fusionner** |
 
 ---
 
