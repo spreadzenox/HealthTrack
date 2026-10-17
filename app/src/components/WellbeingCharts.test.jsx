@@ -2,12 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import WellbeingCharts from './WellbeingCharts'
 import { computeTodayPrediction } from '../services/analysisEngine'
-import { listEntries } from '../storage/localHealthStorage'
+import { listEntries, countEntries } from '../storage/localHealthStorage'
 import { _resetAnalysisRunner } from '../services/analysisRunner'
 import { bumpDataRevision } from '../storage/dataRevision'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn().mockResolvedValue([]),
+  countEntries: vi.fn().mockResolvedValue(0),
   listEntriesForAnalysis: vi.fn().mockResolvedValue([]),
 }))
 
@@ -145,7 +146,9 @@ describe('WellbeingCharts — axe du calendrier (« 14 derniers jours » = 14 jo
   })
 
   it("dit qu'il n'y a pas de note récente au lieu d'afficher d'anciennes notes comme si elles dataient d'hier", async () => {
-    listEntries.mockResolvedValue([wb(1, 40, 3), wb(2, 39, 4)])
+    // Seules les notes des 14 jours sont lues ; les plus anciennes ne sont que comptées
+    listEntries.mockResolvedValue([])
+    countEntries.mockResolvedValue(2)
     const { container } = render(<WellbeingCharts />)
     expect(await screen.findByText(/Aucune note ces 14 derniers jours/)).toBeInTheDocument()
     expect(container.querySelectorAll('.wellbeing-chart-dot')).toHaveLength(0)
@@ -168,6 +171,48 @@ describe('WellbeingCharts — axe du calendrier (« 14 derniers jours » = 14 jo
     const { container } = render(<WellbeingCharts />)
     await screen.findByText(/Par jour/)
     expect(container.querySelector('.wellbeing-chart-pred-line')).not.toBeNull()
+  })
+})
+
+describe('WellbeingCharts — ne lit que les 14 jours affichés (perf D2)', () => {
+  beforeEach(() => {
+    computeTodayPrediction.mockReset()
+    computeTodayPrediction.mockReturnValue(null)
+    listEntries.mockClear()
+    countEntries.mockClear()
+  })
+
+  it('lit les notes de bien-être depuis le premier jour affiché, par plage', async () => {
+    listEntries.mockResolvedValue([])
+    render(<WellbeingCharts />)
+    await screen.findByText(/Par jour/)
+    const [opts] = listEntries.mock.calls[0]
+    expect(opts.type).toBe('wellbeing')
+    const first = new Date()
+    first.setDate(first.getDate() - 13)
+    first.setHours(0, 0, 0, 0)
+    // Au plus un jour de marge avant le premier jour affiché, jamais tout l'historique
+    expect(new Date(opts.since).getTime()).toBeLessThanOrEqual(first.getTime())
+    expect(first.getTime() - new Date(opts.since).getTime()).toBeLessThanOrEqual(24 * 3600e3)
+  })
+
+  it("ne compte les notes plus anciennes que s'il n'y en a aucune dans la fenêtre", async () => {
+    const now = new Date()
+    now.setHours(9, 0, 0, 0)
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: now.toISOString(), payload: { score: 4 } },
+    ])
+    render(<WellbeingCharts />)
+    await screen.findByText(/Par heure/)
+    expect(countEntries).not.toHaveBeenCalled()
+  })
+
+  it('sans aucune note : invite à noter son bien-être', async () => {
+    listEntries.mockResolvedValue([])
+    countEntries.mockResolvedValue(0)
+    render(<WellbeingCharts />)
+    expect(await screen.findByText(/Pas encore assez de données/)).toBeInTheDocument()
+    expect(countEntries.mock.calls[0][0]).toMatchObject({ type: 'wellbeing' })
   })
 })
 

@@ -291,16 +291,19 @@ export async function countAllEntries() {
 }
 
 /**
- * Nombre d'entrées dont `at` est dans [since, until] (bornes incluses), par l'index `at` : rien n'est
- * désérialisé (perf D2 : savoir s'il reste des jours plus anciens sans les lire).
- * @param {{ since?: string, until?: string }} [opts]
+ * Nombre d'entrées dont `at` est dans [since, until] (bornes incluses), par l'index `at` (ou [type, at]
+ * avec `type`) : rien n'est désérialisé (perf D2 : savoir s'il reste des jours plus anciens sans les lire).
+ * @param {{ type?: string, since?: string, until?: string }} [opts]
  * @returns {Promise<number>}
  */
-export async function countEntries({ since, until } = {}) {
+export async function countEntries({ type, since, until } = {}) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
-    const req = tx.objectStore(STORE_NAME).index('at').count(IDBKeyRange.bound(since ?? '', until ?? AT_MAX))
+    const store = tx.objectStore(STORE_NAME)
+    const req = type
+      ? store.index('type_at').count(IDBKeyRange.bound([type, since ?? ''], [type, until ?? AT_MAX]))
+      : store.index('at').count(IDBKeyRange.bound(since ?? '', until ?? AT_MAX))
     req.onerror = () => reject(req.error)
     req.onsuccess = () => resolve(req.result)
   })

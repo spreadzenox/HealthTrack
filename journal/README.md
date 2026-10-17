@@ -384,7 +384,16 @@ manquent » ne redit plus « par jour saisi ». Dans Repas, un jour avec **un se
 ≈ 479 kcal » au-dessus d'une carte qui dit déjà 479 kcal. **Avec ce run, le nettoyage (D1) est bouclé** : les
 prochains runs de code passent à la performance (D2), puis au « sens chez vous » (D6) et à l'humeur par le visage (D4).
 
+**Run du 18/10 00:30** (performance, pas de nouveau journal montre) : la PR #200 du run de 22:30 a été **fusionnée en
+début de run** (v158). La **courbe « Bien-être »** de l'Accueil relisait toutes vos notes depuis le début (jusqu'à
+2 000) pour n'en montrer que 14 jours ; elle ne lit plus que ces 14 jours, et ne fait que **compter** les plus
+anciennes quand la fenêtre est vide (pour choisir le bon message). Mesuré sur 3 ans de démo, téléphone simulé :
+**1 725 → 644 mesures lues** à l'ouverture de l'Accueil, prêt en **0,09 s au lieu de 0,26 s**, plus aucun blocage.
+Rien ne change à l'écran. **Dites-moi si les courbes vous paraissent encore lentes.**
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Courbe de bien-être plus rapide (run 18/10 00:30)** : seules les notes des 14 jours affichés sont lues
+  (Accueil : 1 725 → 644 mesures lues sur 3 ans de démo).
 - **Nutrition plus courte (run 17/10 22:30)** : composition Withings dans « Votre profil » ; un jour à un seul
   repas sans total redondant dans Repas.
 - **Note de bien-être plus discrète (run 17/10 18:30)** : pas de fenêtre automatique moins de 3 h après une note ;
@@ -916,7 +925,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR #197 verte, fusion refusée ce run-là ; **fusionnée au run de 18:30** → v155 |
 | 17/10 18:30 — [Saisie bien-être allégée](runs/2026-10-17-1830-saisie-bien-etre-allegee.md) | 🧹 | PR #198 verte ; **fusionnée au run de 20:30** → v156 |
 | 17/10 20:30 — [Idées : le sens « chez vous » sans se tromper](runs/2026-10-17-2030-idees-sens-personnel.md) | 💡🧭 | 5 idées (I102–I106), simulation ; test App sans réseau — journal + test ; **fusionnée au run de 22:30** → v157 |
-| 17/10 22:30 — [Repas et Nutrition, dernière relecture](runs/2026-10-17-2230-repas-nutrition.md) | 🧹 | PR « [Auto] Nutrition et Repas sans redites » ; D1 bouclé |
+| 17/10 22:30 — [Repas et Nutrition, dernière relecture](runs/2026-10-17-2230-repas-nutrition.md) | 🧹 | PR #200 ; D1 bouclé ; **fusionnée au run du 18/10 00:30** → v158 |
+| 18/10 00:30 — [Courbe de bien-être : 14 jours lus](runs/2026-10-18-0030-courbe-bien-etre-legere.md) | ⚡ | PR « [Auto] Courbe de bien-être plus rapide » |
 
 ---
 

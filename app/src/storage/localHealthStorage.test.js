@@ -685,6 +685,29 @@ describe('countEntries (D2 performance)', () => {
     }
     expect(reads).toBe(0)
   })
+
+  it("compte un seul type par l'index [type, at], sans lire les valeurs", async () => {
+    await upsertEntries([
+      { type: 'wellbeing', source: 'app', at: '2026-09-01T20:00:00.000Z', payload: { score: 3 } },
+      { type: 'wellbeing', source: 'app', at: '2026-10-03T20:00:00.000Z', payload: { score: 4 } },
+      { type: 'heart_rate', source: 'w', at: '2026-09-01T08:00:00.000Z', payload: { value: 60 } },
+    ])
+    const proto = globalThis.IDBIndex.prototype
+    const orig = proto.getAll
+    let reads = 0
+    proto.getAll = function (...a) {
+      reads++
+      return orig.apply(this, a)
+    }
+    try {
+      expect(await countEntries({ type: 'wellbeing', until: '2026-10-01T00:00:00.000Z' })).toBe(1)
+      expect(await countEntries({ type: 'wellbeing' })).toBe(2)
+      expect(await countEntries({ type: 'food' })).toBe(0)
+    } finally {
+      proto.getAll = orig
+    }
+    expect(reads).toBe(0)
+  })
 })
 
 describe('listEntriesForAnalysis par index (D2 performance)', () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { listEntries } from '../storage/localHealthStorage'
+import { listEntries, countEntries } from '../storage/localHealthStorage'
 import { seriesByCalendarDay, seriesByHourToday } from '../services/wellbeingSeries'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { pickLabelIndices } from '../utils/format'
@@ -152,8 +152,15 @@ function PredictionLegend({ prediction, onChart }) {
   )
 }
 
+// Minuit local du premier jour affiché, moins un jour de marge : seule cette plage est lue (perf D2),
+// le découpage par jour du calendrier se fait ensuite dans seriesByCalendarDay.
+function windowStart(now = new Date()) {
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate() - DAYS).toISOString()
+}
+
 export default function WellbeingCharts() {
   const [entries, setEntries] = useState([])
+  const [hasOlderNotes, setHasOlderNotes] = useState(false)
   // Prédiction en cache (données inchangées depuis le dernier calcul) : affichée dès le premier rendu
   const [todayPrediction, setTodayPrediction] = useState(() => peekAnalysis('todayPrediction').result ?? null)
   const [loading, setLoading] = useState(true)
@@ -162,8 +169,15 @@ export default function WellbeingCharts() {
     let alive = true
     const load = async () => {
       try {
-        const wellbeingData = await listEntries({ type: 'wellbeing', limit: 2000 })
-        if (alive) setEntries(wellbeingData)
+        const since = windowStart()
+        const wellbeingData = await listEntries({ type: 'wellbeing', since, limit: 2000 })
+        // Notes plus anciennes : comptées (sans les lire) seulement pour choisir le message du graphique vide
+        const older = wellbeingData.length === 0 ? await countEntries({ type: 'wellbeing', until: since }) : 0
+        if (alive) {
+          setEntries(wellbeingData)
+          // (une note du jour de marge, hors des 14 jours affichés, compte aussi comme « plus ancienne »)
+          setHasOlderNotes(older > 0 || wellbeingData.some((e) => typeof e.payload?.score === 'number'))
+        }
       } finally {
         if (alive) setLoading(false)
       }
@@ -187,7 +201,6 @@ export default function WellbeingCharts() {
   const hourSeries = useMemo(() => seriesByHourToday(entries), [entries])
 
   const dayPoints = daySeries.filter((d) => d.average != null).map((d) => ({ x: d.offset, v: d.average }))
-  const hasOlderNotes = dayPoints.length === 0 && entries.some((e) => typeof e.payload?.score === 'number')
 
   // Only show prediction dot on chart when today has no real wellbeing score yet
   const today = daySeries[DAYS - 1]
