@@ -237,7 +237,7 @@ const RECENT_MS = 3 * 24 * 3600 * 1000
 /**
  * Une ligne par app détectée ou par source réelle, avec ce qu'il reste à faire.
  * status : 'ok' (données récentes), 'stale' (plus de données depuis 3 jours), 'action' (à brancher),
- * 'bridged' (couverte par une passerelle qui envoie déjà ses données).
+ * 'bridged' (couverte par une passerelle qui envoie déjà ses données). message : null quand 'ok' (le badge suffit).
  * @param {{ installed: object[], sources: object[], now?: Date }} args
  */
 export function adviseDevices({ installed = [], sources = [], now = new Date() }) {
@@ -250,7 +250,7 @@ export function adviseDevices({ installed = [], sources = [], now = new Date() }
     const src = sourceById.get(app.id)
     const base = { id: app.id, name: app.name, package: app.package, guideId: app.guideId, source: src || null }
     if (src) {
-      rows.push({ ...base, status: isRecent(src) ? 'ok' : 'stale', message: isRecent(src) ? 'Envoie ses données' : 'Plus de données depuis quelques jours : ouvrez l’app pour synchroniser la montre.' })
+      rows.push({ ...base, status: isRecent(src) ? 'ok' : 'stale', message: isRecent(src) ? null : 'Plus de données depuis quelques jours : ouvrez l’app pour synchroniser la montre.' })
       continue
     }
     const bridges = installed.filter((b) => b.bridgeFor?.includes(app.id))
@@ -280,7 +280,7 @@ export function adviseDevices({ installed = [], sources = [], now = new Date() }
       guideId: src.app?.guideId || null,
       source: src,
       status: isRecent(src) ? 'ok' : 'stale',
-      message: isRecent(src) ? 'Envoie ses données' : 'Plus de données depuis quelques jours.',
+      message: isRecent(src) ? null : 'Plus de données depuis quelques jours.',
     })
   }
 

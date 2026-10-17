@@ -382,6 +382,38 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
+  it('does not repeat a lever in the correlation chart (D1: same r shown twice)', async () => {
+    const lever = {
+      ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
+      direction: 'higher_better', action: 'Marcher davantage',
+    }
+    const hrv = { ...baseCorr, variable: 'hrv', label: 'Variabilité cardiaque', r: 0.5, direction: 'higher_better' }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [hrv, lever], levers: [lever],
+    })
+    expect(await screen.findByText('Marcher davantage')).toBeInTheDocument()
+    expect(screen.queryByText('Pas quotidiens')).not.toBeInTheDocument()
+    expect(screen.getByText('Variabilité cardiaque')).toBeInTheDocument()
+    expect(screen.getByText(/Autres liens avec votre bien-être/)).toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('hides the correlation section when every clear link is already a lever', async () => {
+    const lever = {
+      ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
+      direction: 'higher_better', action: 'Marcher davantage',
+    }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good', correlations: [lever], levers: [lever],
+    })
+    await screen.findByText('Marcher davantage')
+    expect(screen.queryByText(/(Corrélations|liens) avec votre bien-être/i)).not.toBeInTheDocument()
+    expect(screen.queryByText('Pas quotidiens')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Aucun .*lien net/i)).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
   it('shows a near-zero correlation as 0,00 (never −0,00)', async () => {
     const tiny = { ...baseCorr, variable: 'fat_g', label: 'Lipides', r: -0.001, q: 0.99, evidence: 'incertain', direction: 'neutral' }
     const spy = await renderWithBasic({

@@ -330,13 +330,18 @@ const CHART_HIDDEN_VARIABLES = new Set(['screen_late_minutes'])
 
 /**
  * Corrélations : les liens au moins « à confirmer » visibles, les incertains (souvent ~35 sur 45,
- * possiblement dus au hasard) repliés derrière « Voir les N liens incertains ».
+ * possiblement dus au hasard) repliés derrière « Voir les N liens incertains ». Une variable déjà
+ * proposée en piste (même r) n'est pas répétée : la section devient « Autres liens ».
  */
-function CorrelationsSection({ correlations }) {
-  const shown = correlations.filter((c) => !CHART_HIDDEN_VARIABLES.has(c.variable))
+function CorrelationsSection({ correlations, levers = [] }) {
+  const leverVariables = new Set(levers.map((l) => l.variable))
+  const shown = correlations.filter(
+    (c) => !CHART_HIDDEN_VARIABLES.has(c.variable) && !leverVariables.has(c.variable),
+  )
   if (shown.length === 0) return null
   const clear = shown.filter((c) => c.evidence !== 'incertain')
   const uncertain = shown.filter((c) => c.evidence === 'incertain')
+  const others = leverVariables.size > 0
   const bars = (list) => (
     <div className="reco-corr-chart">
       {list.map((c) => (
@@ -352,12 +357,14 @@ function CorrelationsSection({ correlations }) {
   )
   return (
     <section className="reco-section">
-      <h3 className="reco-section-title">📈 Corrélations avec votre bien-être</h3>
+      <h3 className="reco-section-title">📈 {others ? 'Autres liens' : 'Corrélations'} avec votre bien-être</h3>
       <p className="reco-section-hint">
         Vert = va de pair avec un meilleur bien-être · Rouge = avec un moins bon.
       </p>
       {clear.length > 0 ? bars(clear) : (
-        <p className="reco-empty-levers">Aucun lien net pour l’instant : continuez à noter votre bien-être.</p>
+        <p className="reco-empty-levers">
+          Aucun {others ? 'autre ' : ''}lien net pour l’instant : continuez à noter votre bien-être.
+        </p>
       )}
       {uncertain.length > 0 && (
         <details className="reco-corr-more">
@@ -460,7 +467,7 @@ function BasicTab({ analysis }) {
 
       <LaggedEffectsSection result={laggedEffects} />
 
-      <CorrelationsSection correlations={correlations} />
+      <CorrelationsSection correlations={correlations} levers={levers} />
 
       <p className="reco-disclaimer">
         Hypothèses tirées de vos seules données : pas un avis médical.

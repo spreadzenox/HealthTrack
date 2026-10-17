@@ -43,6 +43,8 @@ describe('MyDevices', () => {
     expect(screen.getByText('Relayé')).toBeInTheDocument()
     expect(screen.getByText(/Vos données passent par Gadgetbridge/)).toBeInTheDocument()
     expect(screen.getByText(/Dernières mesures il y a 3 h · cœur, sommeil/)).toBeInTheDocument()
+    // Le badge « Reçu » suffit : pas de phrase qui le redit (D1).
+    expect(screen.queryByText('Envoie ses données')).not.toBeInTheDocument()
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
