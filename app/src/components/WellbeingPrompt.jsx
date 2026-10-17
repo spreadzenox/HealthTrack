@@ -34,6 +34,19 @@ function markSessionAnswered() {
 
 const SCORES = [0, 1, 2, 3, 4, 5]
 
+/** The prompt does not open by itself again within this many hours of a saved note. */
+const RECENT_NOTE_HOURS = 3
+
+async function hasRecentNote() {
+  try {
+    const since = new Date(Date.now() - RECENT_NOTE_HOURS * 3_600_000).toISOString()
+    const notes = await listEntries({ type: 'wellbeing', since, limit: 1 })
+    return notes.length > 0
+  } catch {
+    return false
+  }
+}
+
 /** Séances et repas relus sur cette période : au-delà, la source n'est sans doute plus utilisée. */
 const CAPTURE_DAYS = 14
 
@@ -58,6 +71,14 @@ async function recentCaptures() {
   } catch {
     return { workouts: false, meals: false, travelToday: false }
   }
+}
+
+/** How the app captures each tag it no longer asks for, in tag order. */
+const AUTO_HINTS = {
+  late_meal: `Repas tardif (repas noté après ${LATE_MEAL_FROM_HOUR} h)`,
+  late_screen: `Écran tard (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`,
+  evening_sport: `Sport le soir (séance après ${EVENING_SPORT_FROM_HOUR} h)`,
+  travel: 'Voyage (fuseau horaire changé aujourd’hui)',
 }
 
 function isToday(iso) {
@@ -91,8 +112,11 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   const [captures, setCaptures] = useState({ workouts: false, meals: false, travelToday: false })
 
   useEffect(() => {
-    if (!isControlled && !hasAnsweredThisSession()) {
-      setInternalOpen(true)
+    if (isControlled || hasAnsweredThisSession()) return undefined
+    let alive = true
+    hasRecentNote().then((recent) => alive && !recent && setInternalOpen(true))
+    return () => {
+      alive = false
     }
   }, [isControlled])
 
@@ -121,6 +145,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   // Never ask for what the app already measures (an old note keeps its tag visible, to remove it).
   const autoIds = open ? autoDetectedTagIds({ phoneUsage: getPhoneUsageSettings().enabled, ...captures }) : []
   const shownTags = BEHAVIOR_TAGS.filter((t) => !autoIds.includes(t.id) || tags.includes(t.id))
+  const autoHints = autoIds.map((id) => AUTO_HINTS[id]).filter(Boolean)
 
   const close = () => {
     if (isControlled) {
@@ -186,7 +211,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
         <p id="wellbeing-modal-desc" className="wellbeing-modal-desc">
           {entry
             ? 'Corrigez la note ou les tags ; l’heure de la note ne change pas.'
-            : 'Notez votre bien-être de 0 (très bas) à 5 (très bien). Les données restent sur cet appareil.'}
+            : '0 = très bas, 5 = très bien.'}
         </p>
 
         <div className="wellbeing-circles" role="group" aria-label="Note de bien-être de 0 à 5">
@@ -229,16 +254,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
             )
           })}
         </div>
-        <p className="wellbeing-tags-hint">
-          Ces tags permettent de voir, dans Analyses, ce qui va de pair avec vos bons et
-          moins bons jours.
-          {autoIds.includes('late_screen') &&
-            ` Écran tard : mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h), rien à cocher.`}
-          {autoIds.includes('evening_sport') &&
-            ` Sport le soir : déduit de vos séances (début après ${EVENING_SPORT_FROM_HOUR} h).`}
-          {autoIds.includes('late_meal') && ` Repas tardif : déduit de vos repas notés (après ${LATE_MEAL_FROM_HOUR} h).`}
-          {autoIds.includes('travel') && ' Voyage : changement de fuseau horaire repéré aujourd’hui, rien à cocher.'}
-        </p>
+        {autoHints.length > 0 && <p className="wellbeing-tags-hint">Repéré sans vous : {autoHints.join(', ')}.</p>}
 
         {error && (
           <p className="wellbeing-modal-error" role="alert">

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "Note de bien-être plus discrète",
+  "items": [
+    "La fenêtre « Comment vous sentez-vous ? » ne s'ouvre plus d'elle-même si vous avez déjà noté votre bien-être dans les 3 dernières heures.",
+    "Elle est plus courte : « 0 = très bas, 5 = très bien », et une seule ligne dit ce que l'app repère sans vous (par exemple « Sport le soir »).",
+    "Plus : la ligne Données dit ce que la page contient (sauvegarde et restauration)."
+  ]
+}

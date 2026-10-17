@@ -27,6 +27,32 @@ describe('WellbeingPrompt (uncontrolled)', () => {
     expect(container.querySelector('.wellbeing-modal')).not.toBeInTheDocument()
   })
 
+  it('does not open by itself when a note was saved less than 3 h ago', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const recent = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    listEntries.mockImplementation(async ({ type }) => (type === 'wellbeing' ? [{ id: 1, type: 'wellbeing', at: recent, payload: { score: 3 } }] : []))
+    try {
+      const { container } = render(<WellbeingPrompt />)
+      await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'wellbeing' })))
+      expect(container.querySelector('.wellbeing-modal')).not.toBeInTheDocument()
+    } finally {
+      listEntries.mockImplementation(async () => [])
+    }
+  })
+
+  it('says the scale in one line, without the privacy sentence', async () => {
+    render(<WellbeingPrompt />)
+    expect(await screen.findByText('0 = très bas, 5 = très bien.')).toBeInTheDocument()
+    expect(screen.queryByText(/restent sur cet appareil/i)).not.toBeInTheDocument()
+  })
+
+  it('has no tag explanation when nothing is captured automatically', async () => {
+    render(<WellbeingPrompt />)
+    await screen.findByRole('dialog')
+    expect(screen.queryByText(/Ces tags permettent/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Repéré sans vous/i)).not.toBeInTheDocument()
+  })
+
   it('saves score and closes when user selects and confirms', async () => {
     const { createEntry } = await import('../storage/localHealthStorage')
     render(<WellbeingPrompt />)
@@ -90,7 +116,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
       render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
       expect(screen.queryByRole('button', { name: /Écran tard/i })).not.toBeInTheDocument()
       expect(screen.getByRole('button', { name: /Alcool/i })).toBeInTheDocument()
-      expect(screen.getByText(/Écran tard : mesuré par le téléphone/i)).toBeInTheDocument()
+      expect(screen.getByText(/Repéré sans vous : Écran tard \(≥ 30 min après 22 h\)/i)).toBeInTheDocument()
     } finally {
       localStorage.removeItem('healthtrack_phone_usage')
     }
@@ -102,7 +128,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
       { id: 9, type: 'activity', source: 'huawei_watch', at: new Date().toISOString(), payload: { workoutType: 'running', durationSeconds: 2400 } },
     ])
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
-    expect(await screen.findByText(/Sport le soir : déduit de vos séances/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Sport le soir \(séance après 18 h\)/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Sport le soir/i })).not.toBeInTheDocument()
     expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'activity' }))
   })
@@ -120,7 +146,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
     }
     listEntries.mockImplementation(async ({ type }) => (type === 'food' ? meals : []))
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
-    expect(await screen.findByText(/Repas tardif : déduit de vos repas notés \(après 21 h\)/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Repas tardif \(repas noté après 21 h\)/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Repas tardif/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Sport le soir/i })).toBeInTheDocument()
   })
@@ -133,7 +159,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
     const ctx = (d, tz) => ({ id: tz, type: 'context', at: d.toISOString(), payload: { date: key(d), tz, tzOffset: 0 } })
     listEntries.mockImplementation(async ({ type }) => (type === 'context' ? [ctx(yesterday, 'Europe/Paris'), ctx(today, 'Asia/Tokyo')] : []))
     const { unmount } = render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
-    expect(await screen.findByText(/Voyage : changement de fuseau horaire repéré aujourd’hui/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Voyage \(fuseau horaire changé aujourd’hui\)/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Voyage/i })).not.toBeInTheDocument()
     unmount()
 
