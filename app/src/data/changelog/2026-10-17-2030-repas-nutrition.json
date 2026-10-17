@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "Nutrition et Repas plus courts",
+  "items": [
+    "Nutrition : votre masse grasse et vos muscles (balance Withings) sont maintenant une ligne de « Votre profil », sous le poids, au lieu d'une section à part en bas de page.",
+    "Nutrition : l'avertissement « des repas manquent » est plus court.",
+    "Repas : un jour avec un seul repas n'affiche plus son total au-dessus d'une carte qui le dit déjà."
+  ]
+}

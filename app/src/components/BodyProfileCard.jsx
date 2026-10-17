@@ -13,6 +13,27 @@ const SEX_LABEL = { M: 'Homme', F: 'Femme' }
 const SEP = '\u00a0· '
 const formatDayMonth = (iso) => new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit' }).format(new Date(iso))
 
+// Composition de la dernière pesée Withings : une ligne du profil au lieu d'une section à part (D1).
+const COMPOSITION_FIELDS = [
+  ['fatRatioPct', 'Masse grasse', '%'],
+  ['fatMassKg', 'Graisse', 'kg'],
+  ['muscleMassKg', 'Muscles', 'kg'],
+  ['boneMassKg', 'Os', 'kg'],
+  ['hydrationPct', 'Hydratation', '%'],
+  ['bmrKcal', 'Métabolisme basal', 'kcal'],
+  ['visceralFatIndex', 'Graisse viscérale', ''],
+  ['vascularAgeYears', 'Âge vasculaire', 'ans'],
+  ['standingHrBpm', 'FC debout', 'bpm'],
+  ['pwvMps', 'Vitesse d’onde de pouls', 'm/s'],
+]
+
+function compositionParts(payload) {
+  if (!payload) return []
+  return COMPOSITION_FIELDS
+    .filter(([key]) => typeof payload[key] === 'number')
+    .map(([key, label, unit]) => `${label}\u00a0${formatNumber(payload[key])}${unit ? `\u00a0${unit}` : ''}`)
+}
+
 function parseDecimal(text) {
   const t = String(text ?? '').trim().replace(',', '.')
   if (!t) return null
@@ -130,7 +151,7 @@ function ProfileForm({ profile, onCancel, onSaved }) {
  * Profil corporel utilisé pour les repères : chaque valeur indique sa provenance,
  * et une valeur par défaut est signalée (elle fausse l'énergie, les protéines, le fer…).
  */
-export default function BodyProfileCard({ profile, onSaved }) {
+export default function BodyProfileCard({ profile, composition, onSaved }) {
   const [editing, setEditing] = useState(false)
   const { origins } = profile
   // L'activité par défaut (×1,55) est une hypothèse raisonnable : elle ne déclenche pas l'avertissement.
@@ -160,7 +181,7 @@ export default function BodyProfileCard({ profile, onSaved }) {
       : '(par défaut)'
   const defaultHint = (origin) => origin === 'default' && <Hint>(par défaut)</Hint>
 
-  // Deux lignes au lieu d'une ligne par valeur (D1) : le corps, puis ce qui fixe l'énergie.
+  // Deux lignes au lieu d'une ligne par valeur (D1) : le corps (et sa composition s'il y en a une), puis ce qui fixe l'énergie.
   return (
     <div className="nutrition-profile-card">
       <div className="nutrition-profile-head">
@@ -176,6 +197,11 @@ export default function BodyProfileCard({ profile, onSaved }) {
         {defaultHint(origins.height)}
         {bmi != null && <>{SEP}<span>IMC{'\u00a0'}{formatNumber(bmi)}</span></>}
       </p>
+      {compositionParts(composition).length > 0 && (
+        <p className="nutrition-profile-line">
+          {compositionParts(composition).join(SEP)}<Hint>(Withings)</Hint>
+        </p>
+      )}
       <p className="nutrition-profile-line">
         <span>{SEX_LABEL[profile.sex] ?? 'Homme'}</span>{defaultHint(origins.sex)}
         {SEP}<span>{profile.age ?? 30} ans</span>{defaultHint(origins.age)}

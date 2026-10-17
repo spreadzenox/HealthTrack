@@ -376,7 +376,17 @@ fréquent, et c'est une information (ce qui ne compte pas chez vous n'a pas à v
 travail D6, sans nouvel écran. En passant : un test de l'app qui appelait le vrai GitHub et rendait le contrôle
 « Tests » rouge au hasard sur main est corrigé.
 
+**Run du 17/10 22:30** (nettoyage, pas de nouveau journal montre) : la PR #199 du run « idées » a été **fusionnée en
+début de run** (v157) ; la fusion de la PR de ce run reste bloquée par le contrôle de la session : un clic suffit.
+Dernière relecture de **Repas** et **Nutrition** : dans Nutrition, la section « Dernière mesure Withings » disparaît —
+masse grasse et muscles sont maintenant **une ligne de « Votre profil »**, sous le poids ; l'avertissement « des repas
+manquent » ne redit plus « par jour saisi ». Dans Repas, un jour avec **un seul repas** n'affiche plus « 1 repas ·
+≈ 479 kcal » au-dessus d'une carte qui dit déjà 479 kcal. **Avec ce run, le nettoyage (D1) est bouclé** : les
+prochains runs de code passent à la performance (D2), puis au « sens chez vous » (D6) et à l'humeur par le visage (D4).
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Nutrition plus courte (run 17/10 22:30)** : composition Withings dans « Votre profil » ; un jour à un seul
+  repas sans total redondant dans Repas.
 - **Note de bien-être plus discrète (run 17/10 18:30)** : pas de fenêtre automatique moins de 3 h après une note ;
   échelle en une ligne ; « Repéré sans vous : … » au lieu de deux phrases d'aide.
 - **Analyse avancée en mots simples (run 17/10 16:30)** : « Ce qui pèse le plus dans le modèle », « A-t-il vu
@@ -905,7 +915,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR #196 verte, fusion refusée ce run-là ; **fusionnée au run de 16:30** → v154 |
 | 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR #197 verte, fusion refusée ce run-là ; **fusionnée au run de 18:30** → v155 |
 | 17/10 18:30 — [Saisie bien-être allégée](runs/2026-10-17-1830-saisie-bien-etre-allegee.md) | 🧹 | PR #198 verte ; **fusionnée au run de 20:30** → v156 |
-| 17/10 20:30 — [Idées : le sens « chez vous » sans se tromper](runs/2026-10-17-2030-idees-sens-personnel.md) | 💡🧭 | 5 idées (I102–I106), simulation ; test App sans réseau — journal + test |
+| 17/10 20:30 — [Idées : le sens « chez vous » sans se tromper](runs/2026-10-17-2030-idees-sens-personnel.md) | 💡🧭 | 5 idées (I102–I106), simulation ; test App sans réseau — journal + test ; **fusionnée au run de 22:30** → v157 |
+| 17/10 22:30 — [Repas et Nutrition, dernière relecture](runs/2026-10-17-2230-repas-nutrition.md) | 🧹 | PR « [Auto] Nutrition et Repas sans redites » ; D1 bouclé |
 
 ---
 

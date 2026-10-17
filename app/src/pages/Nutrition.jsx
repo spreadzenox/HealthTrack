@@ -6,8 +6,6 @@ import { compareRecentIntake, formatNutrientAmount } from '../services/nutrition
 import BodyProfileCard from '../components/BodyProfileCard'
 import './Nutrition.css'
 
-const formatNumber = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)
-
 const STATUS_TEXT = {
   ok: 'atteint',
   partial: 'proche',
@@ -40,45 +38,6 @@ function NutrientBar({ row }) {
           aria-valuemax={100}
           aria-label={`${row.label} : ${row.pct} % ${row.limit ? 'de la limite' : 'de l’objectif'}, ${STATUS_TEXT[row.status]}`}
         />
-      </div>
-    </div>
-  )
-}
-
-const BODY_LABELS = {
-  fatRatioPct: 'Masse grasse',
-  fatMassKg: 'Graisse (kg)',
-  muscleMassKg: 'Masse musculaire',
-  boneMassKg: 'Masse osseuse',
-  hydrationPct: 'Hydratation',
-  bmrKcal: 'Métabolisme basal',
-  visceralFatIndex: 'Graisse viscérale',
-  vascularAgeYears: 'Âge vasculaire',
-  standingHrBpm: 'FC debout',
-  pwvMps: 'Vitesse d’onde de pouls',
-}
-
-function BodyCompositionCard({ payload }) {
-  if (!payload) return null
-  const items = Object.entries(BODY_LABELS)
-    .filter(([key]) => payload[key] != null)
-    .map(([key, label]) => ({ key, label, value: payload[key] }))
-
-  if (items.length === 0) return null
-
-  return (
-    <div>
-      <h3 className="nutrition-section-title">Dernière mesure Withings</h3>
-      <div className="nutrition-body-grid">
-        {items.map(({ key, label, value }) => (
-          <div key={key} className="nutrition-body-item">
-            <span>{label}</span>
-            <strong>
-              {typeof value === 'number' ? formatNumber(value) : value}
-              {key.includes('Pct') ? ' %' : key.includes('Kcal') ? ' kcal' : key.includes('Years') ? ' ans' : key.includes('Bpm') ? ' bpm' : key.includes('Mps') ? ' m/s' : key.includes('Kg') ? ' kg' : ''}
-            </strong>
-          </div>
-        ))}
       </div>
     </div>
   )
@@ -127,7 +86,7 @@ export default function Nutrition() {
     <section className="food-page nutrition-page">
       <h2 className="page-title">Nutrition</h2>
 
-      <BodyProfileCard profile={profile} onSaved={load} />
+      <BodyProfileCard profile={profile} composition={bodyComp} onSaved={load} />
 
       {comparison && comparison.mealCount === 0 ? (
         <div className="nutrition-empty">
@@ -146,8 +105,8 @@ export default function Nutrition() {
           {/* Jours incomplets : le compte de repères atteints serait trompeur, l'avertissement le remplace */}
           {comparison.likelyIncomplete ? (
             <p className="nutrition-warning">
-              ≈{'\u00a0'}{formatNutrientAmount(comparison.energyPerDay)} kcal par jour saisi sur
-              ~{formatNutrientAmount(comparison.energyTarget)} : des repas manquent sans doute, apports sous-estimés.
+              ≈{'\u00a0'}{formatNutrientAmount(comparison.energyPerDay)} kcal/j pour
+              ~{formatNutrientAmount(comparison.energyTarget)} visées : des repas manquent sans doute, apports sous-estimés.
             </p>
           ) : (
             <p className="nutrition-summary">
@@ -176,8 +135,6 @@ export default function Nutrition() {
           </p>
         </>
       ) : null}
-
-      <BodyCompositionCard payload={bodyComp} />
     </section>
   )
 }
