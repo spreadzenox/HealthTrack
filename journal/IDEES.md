@@ -9,6 +9,97 @@
 
 ---
 
+## Run du 17/10/2026 08:30 (Paris) — le visage, de la recherche à une spécification vérifiée
+
+Question du jour, côté utilisateur : *« vous m'avez promis une lecture du visage qui ne parle pas à Google et ne vide
+pas ma batterie. Concrètement, ça marchera aussi bien que la version de Google ? Avec une image minuscule ? Et
+qu'est-ce que l'app retiendra de mon visage ? »* Le run du 16/10 20:30 a laissé « à creuser » les ancres du détecteur
+et les 146 points des blendshapes : c'était le dernier verrou avant d'écrire le code D4 (I94). Montre en maintenance,
+aucun nouveau journal (`diagnostics/` inchangé). **Méthode : reproduire le pipeline dans la session** (LiteRT +
+numpy, sans MediaPipe) et le comparer à MediaPipe Tasks 1.1.1 sur la même image, puis écrire la spécification
+`protocoles/visage.md` avec nos mots. Courte veille web en complément.
+
+### Ce qu'on apprend (faits)
+
+- **Le pipeline se reproduit sans MediaPipe, à moins d'un pixel près** [V, `protocoles/visage-reference.py`] :
+  points du visage à **0,78 px** médian de ceux de MediaPipe (117 px entre les yeux) ; les 52 coefficients
+  d'expression à **0,009** en moyenne (max 0,054). Le modèle de blendshapes lui-même est reproduit exactement
+  (5·10⁻⁵) quand on lui donne les mêmes points. Pour situer : MediaPipe s'écarte en moyenne de 0,2 des vraies
+  déformations du visage (fiche du modèle, citée par Turrisi 2026).
+- **Deux pièges trouvés en le faisant**, désormais écrits dans la spec : (1) le modèle de blendshapes attend des
+  **coordonnées en pixels** (ou une échelle identique en x et y) ; lui donner les coordonnées normalisées d'une image
+  non carrée fausse tout (écart jusqu'à 0,37) ; (2) un demi-pixel de trop dans le recadrage décale les points de
+  ≈ 0,3 px. Ancres du détecteur : 16 × 16 × 2 + 8 × 8 × 6 = 896, taille fixe [V].
+- **Une petite image suffit** [V, image test réduite] : à 320 px de large (visage ≈ 90 px), écart moyen 0,019
+  vs pleine résolution, sourire 0,95 au lieu de 0,96 ; à 160 px, le maximum grimpe à 0,21. Capture **320 × 240**
+  retenue (moins de données à transférer depuis le capteur, moins d'énergie), 480 × 360 si le visage est petit.
+- **Lire les coefficients comme des « unités d'action »** [V Turrisi et al., *Computers in Human Behavior Reports*,
+  2026] : 10 experts ont mis en correspondance les 52 blendshapes de MediaPipe et les unités d'action du codage
+  FACS (accord κ = 0,92 après discussion). Exemple : sourire gauche + droite = AU12 ; avec « cheekSquint » (AU6) =
+  sourire « des yeux » (joie). Limite écrite par les auteurs : **pas encore validé** sur une vraie tâche de
+  reconnaissance d'émotion. Utile pour nommer nos indices, pas pour décréter une émotion.
+- **État de l'art** [V Frontiers in Neurorobotics 2026, BlendFER-Lite] : un petit LSTM sur les blendshapes atteint
+  ≈ 71 % sur FER2013 (7 émotions posées) ; aucune mesure publiée de valence / activation à partir des blendshapes.
+  MoodCapture (Dartmouth, CHI 2024, 177 patients) : 75 % pour repérer des symptômes dépressifs à partir de photos
+  prises pendant l'usage normal du téléphone — en combinant visage, regard, posture **et** décor / lumière. Pas
+  d'étude 2026 plus récente trouvée sur la caméra passive.
+- Veille « besoins » (agrégateurs d'avis, à prendre avec prudence) : les plaintes n° 1 restent des **mesures
+  fausses** (≈ 28 % des avis négatifs) et la **synchro des montres** (15–18 %) — cohérent avec le choix d'afficher
+  la qualité et l'état de synchro plutôt que d'ajouter des cartes.
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I98 | **Capture minuscule et filtrée** : 320 × 240, 3 images, contrôle qualité avant tout calcul (présence ≥ 0,9, visage ≥ 80 px, tête de face ±30°, lumière, bouche fermée) ; **jamais quand la caméra est déjà utilisée** par une autre app (appel vidéo, photo) ; le diagnostic compte les images rejetées par raison | Batterie, chaleur, résultats fiables, ne jamais gêner (D4) | 4 | 5 | **20** |
+| I99 | **Des indices nommés comme des unités d'action, sans valeur morale** : sourire (AU12), sourire des yeux (AU6 + 12), froncement (AU4), sourcils intérieurs levés (AU1), coins de la bouche abaissés (AU15), ouverture des yeux, mobilité ; aucun n'est « bon » ou « mauvais » : seul l'écart à **votre** plage (28 j) et ce que **vos** notes montrent donnent un sens | Science personnelle (D6), honnêteté (estimation, pas diagnostic) | 4 | 4 | **16** |
+| I100 | **Livrer D4 en trois PR mergeables seules** : ① moteur LiteRT + modèles téléchargés et vérifiés au build + `abiFilters` (I95) + test d'équivalence ; ② service de premier plan « Lecture du visage » + rafales + stockage des indices ; ③ écran de diagnostic exportable (temps, rejets, batterie) | Avancer sans casser (charte) | 4 | 4 | **16** |
+| I101 | **Test d'équivalence en CI** : valeurs de MediaPipe figées en JSON sur 2–3 images, test instrumenté sur l'émulateur x86_64 déjà en CI ; échec si points > 1,5 px médian ou blendshapes > 0,02 moyen | Pas de régression silencieuse du visage (D2, qualité) | 3 | 4 | 12 |
+
+**Écartées** : *un modèle d'émotions en 7 classes* (FER2013 : visages posés, 71 % ; décréterait « triste » à l'instant,
+contraire à D4 / D6) ; *garder le décor et la lumière comme MoodCapture* (nécessiterait d'analyser l'image entière ; on
+ne garde que des indices du visage + une luminance de contrôle) ; *pleine résolution* (aucun gain mesurable au-delà
+de 320 px pour un visage au bras tendu).
+
+### Détail et pistes d'implémentation
+
+**I98 — Capture.** Camera2, `ImageReader` YUV_420_888 320 × 240 (taille supportée la plus proche), AE / AWB en
+automatique, 3 images après ~300 ms de convergence de l'exposition. Avant d'ouvrir : `CameraManager.AvailabilityCallback`
+→ si la caméra frontale est indisponible (une autre app l'utilise), on saute la rafale (« caméra occupée » dans le
+diagnostic). Qualité : seuils de `protocoles/visage.md` §6, évalués sur le recadrage 256 × 256 (luminance) et sur les
+sorties (présence, taille, lacet, `jawOpen`). Image libérée (`image.close()`) dès les 146 points extraits.
+
+**I99 — Indices.** Tableau de `protocoles/visage.md` §5 ; stockage `{ at, subtype: 'face_burst', values }`. Côté JS,
+les indices entrent dans `ESTIMATOR_INPUTS` (côté Y, D5) ; le sens de chacun n'est fixé qu'à la calibration
+personnelle (`mood/calibration.js`, ≥ 14 jours de notes) ; avant, la seule sortie est « dans votre plage / inhabituel ».
+`yaw` / `pitch` : Procrustes sur le maillage canonique (fichier `geometry_pipeline_metadata_landmarks.binarypb` du
+`.task`) ou approximation nez / joues — à trancher au code (servent seulement à la qualité).
+
+**I100 — Découpage.** ① `app/android/app/build.gradle` : tâche `downloadFaceModels` (URL + SHA-256 de la spec §1),
+`ndk { abiFilters 'arm64-v8a', 'x86_64' }`, dépendance `com.google.ai.edge.litert:litert:2.3.0` ; `FaceEstimator.java`
+(détecteur → ROI → maillage → 146 points → 52 coefficients → indices) + test instrumenté I101 ; taille de l'APK notée.
+② `FaceCaptureService` (`foregroundServiceType="camera"`), récepteurs écran / déverrouillage, rafale toutes les ~3 min
+écran allumé, notification « Reprendre » si tué (I88). ③ Diagnostic exportable (temps par étape, rejets, % batterie).
+
+**I101 — Test.** Script de dev (repris de `protocoles/visage-reference.py`) qui produit `face-golden.json` avec
+MediaPipe Tasks hors app ; test `androidTest` qui charge les images, exécute `FaceEstimator` et compare. Images :
+vérifier la licence de `portrait.jpg` (bucket `mediapipe-assets`) ; à défaut, 2 portraits CC0.
+
+### Sources (consultées le 17/10/2026)
+
+- MediaPipe (Apache-2.0), lus pour les paramètres : https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/tasks/cc/vision/face_detector/face_detector_graph.cc ,
+  …/face_landmarker/face_landmarks_detector_graph.cc , …/face_landmarker/face_blendshapes_graph.cc ,
+  https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/calculators/tflite/ssd_anchors_calculator.cc ,
+  https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/calculators/tensor/landmarks_to_tensor_calculator.cc
+- Modèle et image test : https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task ;
+  https://storage.googleapis.com/mediapipe-assets/portrait.jpg (exécutés dans la session, rien gardé dans le dépôt)
+- Turrisi et al. 2026, doi 10.1016/j.chbr.2026.101125 (pré-épreuve : https://iris.cnr.it/retrieve/b57d9fa2-3eb6-403b-8190-dbe4bbda0a16/Blendshape%20features%20meet%20action%20units%20pre-proof.pdf)
+- BlendFER-Lite : https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2025.1678984/full
+- MoodCapture : https://www.newswise.com/articles/smartphone-app-uses-ai-to-detect-depression-from-facial-cues ; https://arxiv.org/html/2402.16182v1
+- Plaintes (agrégateurs, confiance modeste) : https://unstar.app/ar/blog/health-fitness-app-reviews-what-users-really-want-2026
+- Non trouvés : étude 2026 sur la caméra passive ; mesure valence / activation à partir des blendshapes.
+
+
 ## Run du 16/10/2026 20:30 (Paris) — le visage sans Google dans la boucle, un APK qui reste léger, Samsung en veille
 
 Question du jour, côté utilisateur : *« la lecture du visage va tourner sur mon téléphone toute la journée. Est-ce

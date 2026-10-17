@@ -312,6 +312,20 @@ avec la fatigue n'est donné que comme **« Hypothèse générale »**, et seule
 Sinon, le radar dit simplement que vos notes de bien-être diront ce qui va avec votre forme. Prochaine étape : que
 le radar apprenne ce sens **sur vos propres notes** (au moins 30 jours) pour dire « chez vous : … ».
 
+**Run « idées » du 17/10 08:30** (pas de nouveau journal montre ; rien ne change dans l'app) : **la lecture du visage
+est prête à être codée.** Pour être sûr qu'HealthTrack lira votre visage aussi bien que la bibliothèque de Google, mais
+sans rien lui envoyer, j'ai **refait tout le calcul moi-même** (les mêmes modèles libres, sans la bibliothèque) et
+comparé les deux sur une même photo : les 478 points du visage tombent à **moins d'un pixel** de ceux de Google, et
+les 52 mesures d'expression à 0,01 près (l'outil de Google lui-même se trompe en moyenne de 0,2). Ce que ça implique
+pour vous :
+- **une toute petite image suffit** (320 × 240) : même résultat à 0,02 près qu'en pleine résolution, donc moins de
+  batterie ; la lecture est **sautée si la caméra est déjà utilisée** (appel vidéo, photo) ;
+- l'app gardera une dizaine de nombres par lecture, nommés comme les psychologues décrivent un visage (sourire,
+  sourire « des yeux », froncement…), **aucun jugé bon ou mauvais** : c'est l'écart à vos habitudes et vos propres
+  notes qui leur donneront un sens ;
+- tout est écrit dans une spécification (`journal/protocoles/visage.md`) ; le code arrivera en trois étapes : le moteur,
+  puis le service « Lecture du visage », puis l'écran de diagnostic à m'exporter depuis votre A56.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Radar forme et cartes du cœur sans sens imposé (run 17/10 06:30)** : écart inhabituel signalé dans les deux sens
   avec ↑ / ↓ ; « fatigue » seulement en « Hypothèse générale » ; même couleur hors norme pour une FC plus basse ou plus
@@ -664,6 +678,9 @@ le radar apprenne ce sens **sur vos propres notes** (au moins 30 jours) pour dir
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Le visage lu aussi bien que chez Google, avec une image minuscule** (run 17/10 08:30) : calcul refait sans leur
+  bibliothèque, à moins d'un pixel près ; 320 × 240 suffit ; rien quand la caméra sert déjà ; une dizaine d'indices
+  sans valeur morale, interprétés seulement par vos propres données.
 - **Le visage lu sans que rien ne parte chez Google** (run 16/10 20:30) : moteur LiteRT seul + modèles libres, au
   lieu des bibliothèques de Google qui envoient des statistiques d'usage sans option ; app 4× moins alourdie ; une
   ligne pour que Samsung n'endorme ni la montre ni le visage.
@@ -815,9 +832,10 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 18:30 — [Pistes personnelles, même contre la norme](runs/2026-10-16-1830-pistes-personnelles.md) | 🧭 | PR #187 fusionnée → v147 |
 | 16/10 20:30 — [Idées : le visage sans télémétrie, APK léger, Samsung](runs/2026-10-16-2030-idees-visage-litert.md) | 💡🙂 | 4 idées (I94–I97) — journal seul |
 | 16/10 22:30 — [Ordre temporel : seul ce qui précède la note compte](runs/2026-10-16-2230-ordre-temporel.md) | 🔁 | PR #189 fusionnée → v148 |
-| 17/10 00:30 — [Accueil : le cœur lu par sous-type](runs/2026-10-17-0030-accueil-coeur-par-sous-type.md) | ⚡ | PR #190 |
+| 17/10 00:30 — [Accueil : le cœur lu par sous-type](runs/2026-10-17-0030-accueil-coeur-par-sous-type.md) | ⚡ | PR #190 fusionnée → v149 |
 | 17/10 04:30 — [« Vos derniers jours » : 3 jours lus d'emblée](runs/2026-10-17-0430-journal-trois-jours.md) | ⚡ | PR #191 fusionnée → v150 |
-| 17/10 06:30 — [Radar forme et cartes du cœur neutres](runs/2026-10-17-0630-radar-neutre.md) | 🧭 | PR « [Auto] » |
+| 17/10 06:30 — [Radar forme et cartes du cœur neutres](runs/2026-10-17-0630-radar-neutre.md) | 🧭 | PR #192 fusionnée → v151 |
+| 17/10 08:30 — [Idées : spec du visage vérifiée](runs/2026-10-17-0830-idees-spec-visage.md) | 💡🙂 | 4 idées (I98–I101), `protocoles/visage.md` — journal seul |
 
 ---
 
