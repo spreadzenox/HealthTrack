@@ -100,3 +100,18 @@
   background: rgba(143, 179, 255, 0.15);
   color: #8fb3ff;
 }
+
+/* D6 : écart inhabituel hors du sens « fatigue » de l'hypothèse générale, sans couleur d'alerte */
+.radar.is-neutral {
+  border-left-color: var(--accent);
+  background: var(--surface);
+}
+
+.radar.is-neutral .radar-badge {
+  background: rgba(78, 205, 196, 0.15);
+  color: var(--accent);
+}
+
+.radar-signal-dir {
+  font-weight: 600;
+}

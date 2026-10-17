@@ -304,7 +304,18 @@ Rien ne change à l'écran. **Dites-moi si l'Accueil vous paraît encore lent.**
 lues** (4 016 → 2 190), temps bloquant 114 → 31 ms. Et un **défaut corrigé**, vu sur la capture : le plus ancien
 jour affiché perdait sa **nuit de sommeil** quand elle avait commencé la veille au soir ; elle s'affiche maintenant.
 
+**Run du 17/10 06:30** (votre règle D6, pas de normes imposées ; pas de nouveau journal montre) : le **Radar forme**
+et les cartes **FC au repos / VFC** ne décident plus quel sens est « bon ». Avant, une FC plus basse que d'habitude
+s'affichait en vert, une plus haute en orange, et le radar ne voyait que les écarts dans le sens « fatigue ». Maintenant
+un écart inhabituel est signalé **dans les deux sens** (« Inhabituel chez vous », flèche ↑ / ↓ par signal) ; le lien
+avec la fatigue n'est donné que comme **« Hypothèse générale »**, et seulement quand les écarts vont dans ce sens.
+Sinon, le radar dit simplement que vos notes de bien-être diront ce qui va avec votre forme. Prochaine étape : que
+le radar apprenne ce sens **sur vos propres notes** (au moins 30 jours) pour dire « chez vous : … ».
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Radar forme et cartes du cœur sans sens imposé (run 17/10 06:30)** : écart inhabituel signalé dans les deux sens
+  avec ↑ / ↓ ; « fatigue » seulement en « Hypothèse générale » ; même couleur hors norme pour une FC plus basse ou plus
+  haute.
 - **« Vos derniers jours » plus léger (run 17/10 04:30)** : 3 jours lus d'emblée, les autres à la demande ; la nuit
   du plus ancien jour affiché n'est plus oubliée.
 - **Accueil plus rapide à ouvrir (run 17/10 00:30)** : Radar forme, FC au repos et VFC ne relisent plus toutes les
@@ -805,7 +816,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 16/10 20:30 — [Idées : le visage sans télémétrie, APK léger, Samsung](runs/2026-10-16-2030-idees-visage-litert.md) | 💡🙂 | 4 idées (I94–I97) — journal seul |
 | 16/10 22:30 — [Ordre temporel : seul ce qui précède la note compte](runs/2026-10-16-2230-ordre-temporel.md) | 🔁 | PR #189 fusionnée → v148 |
 | 17/10 00:30 — [Accueil : le cœur lu par sous-type](runs/2026-10-17-0030-accueil-coeur-par-sous-type.md) | ⚡ | PR #190 |
-| 17/10 04:30 — [« Vos derniers jours » : 3 jours lus d'emblée](runs/2026-10-17-0430-journal-trois-jours.md) | ⚡ | PR « [Auto] » |
+| 17/10 04:30 — [« Vos derniers jours » : 3 jours lus d'emblée](runs/2026-10-17-0430-journal-trois-jours.md) | ⚡ | PR #191 fusionnée → v150 |
+| 17/10 06:30 — [Radar forme et cartes du cœur neutres](runs/2026-10-17-0630-radar-neutre.md) | 🧭 | PR « [Auto] » |
 
 ---
 

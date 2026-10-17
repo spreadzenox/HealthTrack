@@ -337,8 +337,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       AR(1), « k liens nets sur m testés » ; expériences ABAB randomisées pour un lien à confirmer (I45, plus tard)
 
 ### D6 — Science personnelle, pas de normes imposées
-- [ ] **I97 (16/10 20:30)** Radar forme : `higherIsBetter` → `generalHypothesis` ; écart signalé « inhabituel chez
-      vous » dans les deux sens ; « va avec une moins bonne forme » seulement s'il est appris sur vos notes (FDR, n ≥ 30)
+- [x] **I97 ① (17/10 06:30)** Radar forme et cartes FC / VFC : `higherIsBetter` → `generalHigherIsBetter`, écart
+      signalé « inhabituel chez vous » dans les deux sens (flèches ↑ / ↓), « fatigue » seulement en « Hypothèse
+      générale », style neutre sinon ; cartes : une couleur « hors norme » dans les deux sens
+- [ ] **I97 ②** sens personnel appris sur les notes (FC repos / VFC / sommeil ↔ note du lendemain, FDR, n ≥ 30) →
+      « chez vous : … » à la place de l'hypothèse générale
+- [ ] `SleepRegularityCard` : « Horaires variables » encore classé `is-unfavourable` (couleur de jugement)
 - [ ] `LEVER_ACTIONS` + `VARIABLE_META.direction` (`higher_better` / `lower_better`) dans `analysisEngine.js` codent un
       sens « sain » : `leverAction` **masque** une piste quand les données contredisent la norme → montrer la réalité
       personnelle (« chez vous, plus d'écran le soir va avec une meilleure humeur ») et formuler les pistes de façon
@@ -520,7 +524,8 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
 5. 🧭 D6 — pistes et messages neutres / personnels. **16/10 18:30 : fait pour les pistes** — `leverSuggestion`
    suit le signe personnel (simples, décalées, avancées), piste contraire montrée « Ne pas chercher à … » +
    « Contraire à l'hypothèse générale : chez vous, vos données font foi » ; jamais plus d'alcool / tabac.
-   Reste : relire Radar forme, prédiction, repères Nutrition ; `direction` en a priori faible chiffré (shrinkage).
+   **17/10 06:30 : Radar forme et cartes FC / VFC neutres (I97 ①)**. Reste : sens personnel du radar (I97 ②),
+   régularité du sommeil, prédiction, repères Nutrition ; `direction` en a priori faible chiffré (shrinkage).
 6. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
    ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).
    Livré le 14/10 12:30 : première synchro depuis 2000, reprise sur la dernière synchro avec données − 6 h, état v2,

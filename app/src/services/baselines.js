@@ -11,6 +11,9 @@
  *   - HRV is right-skewed: its statistics are computed on ln(ms), the usual
  *     practice for RMSSD (Plews et al. 2013, Sports Med 43:773).
  * The result is an observation, never a diagnosis: the UI must say so.
+ * No direction is "better" (D6): `generalHigherIsBetter` only records the general
+ * hypothesis from the literature (higher RHR / lower HRV often go with fatigue),
+ * shown as such; the user's own data decide what goes with their form.
  */
 
 import { localDateKey } from './wellbeingSeries'
@@ -25,7 +28,7 @@ export const BASELINE_METRICS = {
     key: 'restingHeartRate',
     label: 'FC au repos',
     unit: 'bpm',
-    higherIsBetter: false,
+    generalHigherIsBetter: false,
     log: false,
     // Half-width floor of the normal range (in the metric's working scale)
     minSd: 1,
@@ -36,7 +39,7 @@ export const BASELINE_METRICS = {
     key: 'heartRateVariability',
     label: 'VFC (variabilité cardiaque)',
     unit: 'ms',
-    higherIsBetter: true,
+    generalHigherIsBetter: true,
     log: true,
     minSd: 0.05, // ≈ ±5 %
     plausible: [1, 500],
@@ -81,7 +84,7 @@ function meanSd(values) {
  * @returns {{
  *   metric: object,
  *   status: 'insufficient' | 'within' | 'above' | 'below',
- *   favourable: boolean | null,
+ *   generalFatigue: boolean | null, deviation in the direction the general hypothesis links to fatigue
  *   recentDays: number, baselineDays: number, missingDays: number,
  *   recentMean?: number, baselineMean?: number, low?: number, high?: number, z?: number,
  *   latest: { value: number, dateKey: string } | null,
@@ -111,7 +114,7 @@ export function computeBaseline(entries, metric, now = new Date()) {
     latest: last ? { value: last[1], dateKey: last[0] } : null,
   }
   if (baseline.length < MIN_BASELINE_DAYS || recent.length < MIN_RECENT_DAYS) {
-    return { ...base, status: 'insufficient', favourable: null }
+    return { ...base, status: 'insufficient', generalFatigue: null }
   }
 
   const fwd = metric.log ? Math.log : (v) => v
@@ -124,12 +127,12 @@ export function computeBaseline(entries, metric, now = new Date()) {
   let status = 'within'
   if (z > 1) status = 'above'
   else if (z < -1) status = 'below'
-  const favourable = status === 'within' ? null : (status === 'above') === metric.higherIsBetter
+  const generalFatigue = status === 'within' ? null : (status === 'above') !== metric.generalHigherIsBetter
 
   return {
     ...base,
     status,
-    favourable,
+    generalFatigue,
     z,
     recentMean: back(recentT),
     baselineMean: back(mean),

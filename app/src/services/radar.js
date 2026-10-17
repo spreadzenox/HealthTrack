@@ -1,7 +1,8 @@
 /**
- * « Radar » : repère les jours où plusieurs signaux s'écartent en même temps,
- * dans le mauvais sens, de *votre* norme — ce qui accompagne souvent la fatigue,
- * le surmenage, l'alcool ou le début d'une infection.
+ * « Radar » : repère les jours où plusieurs signaux s'écartent en même temps de
+ * *votre* norme, dans un sens ou dans l'autre (D6 : aucun sens n'est « mauvais »
+ * par principe). Hypothèse générale, affichée comme telle : FC repos haute, VFC
+ * ou sommeil bas accompagnent souvent la fatigue, l'alcool ou une infection.
  *
  * Inspiré d'Oura Symptom/Health Radar et des travaux de Stanford sur la FC au
  * repos (Mishra et al. 2020, Nat Biomed Eng 4:1208) : un seul indicateur hors
@@ -11,7 +12,8 @@
  *     et durée de sommeil de la nuit qui se termine ce jour-là ;
  *   - norme = moyenne ± ET des 60 jours qui précèdent les 3 jours évalués
  *     (≥ 14 jours par métrique ; VFC en log, comme dans baselines.js) ;
- *   - signal = écart défavorable : FC repos z ≥ +1,5, VFC z ≤ −1,5, sommeil z ≤ −1,5 ;
+ *   - signal = écart inhabituel : |z| ≥ 1,5, avec son sens et `generalFatigue`
+ *     (vrai si ce sens est celui que l'hypothèse générale associe à la fatigue) ;
  *   - jour « inhabituel » = au moins 2 signaux ;
  *   - niveau : « watch » si le dernier jour mesuré est inhabituel, « alert » si
  *     c'est le cas 2 jours de suite ou plus ; sinon « calm ».
@@ -33,7 +35,7 @@ export const SLEEP_METRIC = {
   key: 'sleepMinutes',
   label: 'Sommeil',
   unit: 'min',
-  higherIsBetter: true,
+  generalHigherIsBetter: true, // hypothèse générale seulement (D6)
   log: false,
   minSd: 20,
   plausible: [60, 960],
@@ -99,7 +101,9 @@ function meanSd(values) {
  *   metricsChecked: object[],
  *   streak: number,
  *   dateKey: string | null,
- *   signals: { metric: object, value: number, typical: number, z: number }[],
+ *   signals: { metric: object, value: number, typical: number, z: number,
+ *              direction: 'above' | 'below', generalFatigue: boolean }[],
+ *   generalFatigue: boolean, tous les signaux vont dans le sens « fatigue » de l'hypothèse générale
  * }}
  */
 export function computeRadar(entries, now = new Date()) {
@@ -124,10 +128,10 @@ export function computeRadar(entries, now = new Date()) {
     norms.push({ metric, fwd, mean, sd: Math.max(sd, metric.minSd), back: metric.log ? Math.exp : (v) => v })
   }
 
-  const result = { metricsChecked: norms.map((n) => n.metric), streak: 0, dateKey: null, signals: [] }
+  const result = { metricsChecked: norms.map((n) => n.metric), streak: 0, dateKey: null, signals: [], generalFatigue: false }
   if (norms.length < MIN_SIGNALS) return { ...result, level: 'insufficient' }
 
-  // Pour chaque jour évalué ayant au moins 2 métriques mesurées : ses signaux défavorables
+  // Pour chaque jour évalué ayant au moins 2 métriques mesurées : ses écarts inhabituels, dans les deux sens
   const days = []
   for (const key of evalKeys) {
     let measured = 0
@@ -137,8 +141,10 @@ export function computeRadar(entries, now = new Date()) {
       if (value == null) continue
       measured += 1
       const z = (fwd(value) - mean) / sd
-      const unfavourable = metric.higherIsBetter ? z <= -metric.threshold : z >= metric.threshold
-      if (unfavourable) signals.push({ metric, value, typical: back(mean), z })
+      if (Math.abs(z) < metric.threshold) continue
+      const direction = z > 0 ? 'above' : 'below'
+      const generalFatigue = (direction === 'above') !== metric.generalHigherIsBetter
+      signals.push({ metric, value, typical: back(mean), z, direction, generalFatigue })
     }
     if (measured >= MIN_SIGNALS) days.push({ key, signals })
   }
@@ -153,7 +159,9 @@ export function computeRadar(entries, now = new Date()) {
     streak += 1
   }
   const level = streak >= 2 ? 'alert' : streak === 1 ? 'watch' : 'calm'
-  return { ...result, level, streak, dateKey: latest.key, signals: streak > 0 ? latest.signals : [] }
+  const signals = streak > 0 ? latest.signals : []
+  const generalFatigue = signals.length > 0 && signals.every((sig) => sig.generalFatigue)
+  return { ...result, level, streak, dateKey: latest.key, signals, generalFatigue }
 }
 
 function prevDateKey(key) {

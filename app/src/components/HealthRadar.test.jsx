@@ -69,8 +69,9 @@ describe('HealthRadar', () => {
   it('lists the unusual signals of the day with the usual value', async () => {
     mockEntries([...history(), rhr(0, 66), hrv(0, 40), sleep(0, 450)])
     render(<HealthRadar />)
-    expect(await screen.findByText('À surveiller')).toBeInTheDocument()
+    expect(await screen.findByText('Inhabituel chez vous')).toBeInTheDocument()
     expect(screen.getByText(/66 bpm/)).toBeInTheDocument()
+    expect(screen.getByLabelText('plus haute que d’habitude')).toBeInTheDocument()
     expect(screen.getByText(/habituellement 60 bpm/)).toBeInTheDocument()
     expect(screen.getByText(/Aujourd’hui/)).toBeInTheDocument()
   })
@@ -80,7 +81,17 @@ describe('HealthRadar', () => {
     render(<HealthRadar />)
     expect(await screen.findByText('Depuis 2 jours')).toBeInTheDocument()
     expect(screen.getByText(/6 h 20/)).toBeInTheDocument()
+    expect(screen.getByText(/Hypothèse générale/)).toBeInTheDocument()
     expect(screen.getByText(/professionnel de santé/)).toBeInTheDocument()
+  })
+
+  it('D6 : un écart dans l’autre sens est « inhabituel chez vous », sans conseil de repos ni sens imposé', async () => {
+    mockEntries([...history(), rhr(0, 54), hrv(0, 65), sleep(0, 560), rhr(1, 54), hrv(1, 65), sleep(1, 560)])
+    render(<HealthRadar />)
+    expect(await screen.findByText('Depuis 2 jours')).toBeInTheDocument()
+    expect(screen.getByText(/pas dans le sens généralement associé à la fatigue/)).toBeInTheDocument()
+    expect(screen.queryByText(/reposez|allégez|fatigue, le surmenage/i)).not.toBeInTheDocument()
+    expect(document.querySelector('.radar.is-neutral')).not.toBeNull()
   })
 
   it('asks to sync the watch when the recent days have no measurements', async () => {
@@ -96,7 +107,7 @@ describe('HealthRadar', () => {
     render(<HealthRadar />)
     expect(await screen.findByText('Explicable')).toBeInTheDocument()
     expect(screen.getByText(/Probablement lié à 🍷 Alcool \(hier\)/)).toBeInTheDocument()
-    expect(screen.queryByText('À surveiller')).not.toBeInTheDocument()
+    expect(screen.queryByText('Inhabituel chez vous')).not.toBeInTheDocument()
     expect(document.querySelector('.radar.is-explained')).not.toBeNull()
   })
 
