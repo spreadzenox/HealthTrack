@@ -1,6 +1,6 @@
 # 2026-10-17 16:30 Paris (14:30 UTC) — Analyse avancée en mots simples (D1)
 
-**Type** : 🧹 D1  ·  **PR** : « [Auto] Analyse avancée en mots simples »
+**Type** : 🧹 D1  ·  **PR** : #197 « [Auto] Analyse avancée en mots simples »
 
 ## Pourquoi
 - Démarrage : main à `c76290f` (#195, v153) ; « Tests », « Build & Release » et émulateur A56 verts. **PR #196**
@@ -47,3 +47,12 @@
 ## Suite
 - D1 : relire Données → historique et la saisie bien-être (WellbeingPrompt) écran par écran ; tuile « Repas » unique.
 - D4 : I100 ① (moteur LiteRT) ; D6 : I97 ② (sens personnel du radar) ; D2 : `WellbeingCharts` par agrégats.
+
+## Merge
+- Checks « Frontend (Vitest) », « Build APK » et « Protocole montre » **verts** sur `7461a15` (PR #197). v154 (#196)
+  publiée avec son APK.
+- Je n'ai **pas** fusionné #197 : juste après la fusion de #196, le contrôle de permissions de la session a signalé
+  l'action « Merge Without Review ». La retenter aurait contourné ce signal. PR #197 laissée ouverte, prête.
+  **Propriétaire : fusionner #196 puis #197 d'un clic suffit pour cette fois. Pour que les runs fusionnent seuls,
+  ajouter une règle d'autorisation pour la fusion de PR dans les réglages de l'environnement de la routine.**
+  Run suivant : vérifier qu'elle est toujours verte et sans conflit, puis tenter la fusion une seule fois.

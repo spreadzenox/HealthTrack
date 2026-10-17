@@ -352,6 +352,9 @@ légende dit maintenant que le plus influent vaut 100 %, ce que seule la note de
 vs réel » devient **« A-t-il vu juste ? »** ; « Le modèle généralise correctement » devient « Il prédit bien les jours
 qu'il n'a pas vus ». Dans **Plus**, la ligne Paramètres annonçait « modèle d'analyse photo » (replié depuis) et
 taisait les cigarettes et le diagnostic : elle dit ce que la page contient.
+**Point d'attention** : le contrôle de permissions de la session bloque les fusions automatiques (deux runs de
+suite). La PR #197 est verte et attend votre clic ; pour que les runs fusionnent à nouveau seuls, il faut autoriser la
+fusion de PR dans les réglages de l'environnement de la routine.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Analyse avancée en mots simples (run 17/10 16:30)** : « Ce qui pèse le plus dans le modèle », « A-t-il vu
@@ -874,7 +877,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR #194 fusionnée → v152 |
 | 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR #195 fusionnée → v153 |
 | 17/10 14:30 — [Météo et analyse avancée sans redites](runs/2026-10-17-1430-meteo-methode.md) | 🧹 | PR #196 verte, fusion refusée ce run-là ; **fusionnée au run de 16:30** → v154 |
-| 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR « [Auto] Analyse avancée en mots simples » |
+| 17/10 16:30 — [Analyse avancée en mots simples](runs/2026-10-17-1630-analyse-avancee-mots-simples.md) | 🧹 | PR #197 verte, **non fusionnée** (contrôle des permissions : « Merge Without Review ») : à fusionner |
 
 ---
 
