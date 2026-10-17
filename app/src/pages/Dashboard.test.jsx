@@ -5,6 +5,7 @@ import Dashboard from './Dashboard'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
+  countEntries: vi.fn(),
   deleteEntry: vi.fn(),
   updateEntry: vi.fn(),
 }))
@@ -52,8 +53,9 @@ function renderDashboard() {
 
 describe('Dashboard', () => {
   beforeEach(async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
+    const { listEntries, countEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([])
+    countEntries.mockResolvedValue(0)
   })
 
   it('renders dashboard title and, without any data, the introduction', async () => {
@@ -80,16 +82,82 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/HealthTrack centralise/i)).not.toBeInTheDocument()
   })
 
-  it('loads the last two weeks of entries from local storage on mount', async () => {
+  function sinceDays(opts) {
+    return (Date.now() - new Date(opts.since).getTime()) / 86400000
+  }
+
+  it("ne lit d'emblée que les 3 jours affichés (pas les 14 jours de mesures de la montre)", async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockClear()
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
+    ])
     renderDashboard()
     await screen.findByText(/Vos derniers jours/i)
-    const { listEntries } = await import('../storage/localHealthStorage')
-    const [opts] = listEntries.mock.calls[0]
+    await waitFor(() => expect(document.querySelector('.entry-score')).toBeInTheDocument())
+    // Les autres lectures de la page (cartes de forme) visent un type ; celle du journal non
+    const journalReads = listEntries.mock.calls.filter(([o]) => !o?.type)
+    expect(journalReads).toHaveLength(1)
+    const [opts] = journalReads[0]
     expect(opts.limit).toBeGreaterThanOrEqual(1000)
-    const since = new Date(opts.since)
-    const days = (Date.now() - since.getTime()) / 86400000
-    expect(days).toBeGreaterThan(12)
-    expect(days).toBeLessThan(15)
+    expect(sinceDays(opts)).toBeGreaterThan(3)
+    expect(sinceDays(opts)).toBeLessThan(4)
+    expect(screen.queryByRole('button', { name: /Voir les jours précédents/i })).not.toBeInTheDocument()
+  })
+
+  it('lit aussi la veille du premier jour affiché : sa nuit commencée la veille au soir y figure, pas la veille elle-même', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockClear()
+    const d = new Date()
+    const at = (back, h) => new Date(d.getFullYear(), d.getMonth(), d.getDate() - back, h).toISOString()
+    const end = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 2, 7).toISOString()
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: at(0, 1), payload: { score: 3 } },
+      { id: 2, type: 'sleep', source: 'huawei_watch', at: at(3, 23), payload: { durationMinutes: 480, endDate: end } },
+      { id: 3, type: 'wellbeing', source: 'app_wellbeing', at: at(3, 12), payload: { score: 4 } },
+    ])
+    renderDashboard()
+    await screen.findByText(/Vos derniers jours/i)
+    await waitFor(() => expect(screen.getAllByRole('heading', { level: 4 })).toHaveLength(2))
+    const [opts] = listEntries.mock.calls.filter(([o]) => !o?.type)[0]
+    expect(sinceDays(opts)).toBeGreaterThan(3)
+    expect(sinceDays(opts)).toBeLessThan(4)
+    expect(screen.getByText('8 h', { exact: false })).toBeInTheDocument()
+    expect(document.querySelectorAll('.entry-score')).toHaveLength(1)
+  })
+
+  it('charge les deux semaines au premier « Voir les jours précédents » quand des jours plus anciens existent', async () => {
+    const { listEntries, countEntries } = await import('../storage/localHealthStorage')
+    const today = { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } }
+    const old = { id: 2, type: 'wellbeing', source: 'app_wellbeing', at: new Date(Date.now() - 6 * 86400000).toISOString(), payload: { score: 4 } }
+    listEntries.mockClear()
+    countEntries.mockClear()
+    listEntries.mockResolvedValueOnce([today]).mockResolvedValue([today, old])
+    countEntries.mockResolvedValue(5)
+    renderDashboard()
+    const more = await screen.findByRole('button', { name: /Voir les jours précédents/i })
+    const [countOpts] = countEntries.mock.calls[0]
+    expect(sinceDays(countOpts)).toBeGreaterThan(14)
+    expect(sinceDays(countOpts)).toBeLessThan(15)
+    // Jusqu'à la veille du premier jour affiché (incluse)
+    expect(sinceDays({ since: countOpts.until })).toBeGreaterThan(2)
+    expect(sinceDays({ since: countOpts.until })).toBeLessThan(3)
+    const journalReads = () => listEntries.mock.calls.filter(([o]) => !o?.type)
+    fireEvent.click(more)
+    await waitFor(() => expect(screen.getAllByRole('heading', { level: 4 })).toHaveLength(2))
+    const [opts] = journalReads()[1]
+    expect(sinceDays(opts)).toBeGreaterThan(14)
+    expect(sinceDays(opts)).toBeLessThan(15)
+    expect(screen.queryByRole('button', { name: /Voir les jours précédents/i })).not.toBeInTheDocument()
+  })
+
+  it('sans rien depuis 3 jours : lit les deux semaines, puis les 30 dernières entrées', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockClear()
+    renderDashboard()
+    await screen.findByText(/Vos derniers jours/i)
+    await waitFor(() => expect(listEntries).toHaveBeenCalledWith({ limit: 30 }))
+    expect(sinceDays(listEntries.mock.calls.filter(([o]) => !o?.type)[1][0])).toBeGreaterThan(13)
   })
 
   it('falls back to the 30 latest entries when nothing is recent', async () => {
@@ -290,6 +358,10 @@ describe('Dashboard', () => {
   })
 
   it('shows 3 days first, then older days on demand', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue(
+      [10, 9, 8, 7, 6].map((d, i) => ({ id: i + 1, created_at: '', type: 'cigarette', source: 'app_cigarette', at: `2026-04-${String(d).padStart(2, '0')}T10:00:00`, payload: { count: 1 } })),
+    )
     await renderEntries(
       [10, 9, 8, 7, 6].map((d) => ({ type: 'cigarette', source: 'app_cigarette', at: `2026-04-${String(d).padStart(2, '0')}T10:00:00`, payload: { count: 1 } })),
     )

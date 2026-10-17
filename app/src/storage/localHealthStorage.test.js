@@ -21,6 +21,7 @@ import {
   listEntries,
   listEntriesForAnalysis,
   countAllEntries,
+  countEntries,
   upsertEntries,
   getLatestEntryAt,
   exportToJson,
@@ -657,6 +658,32 @@ describe('lecture par sous-type (D2 performance)', () => {
     expect(db.version).toBe(4)
     expect([...db.transaction('health_entries').objectStore('health_entries').indexNames]).toContain('type_subtype_at')
     db.close()
+  })
+})
+
+describe('countEntries (D2 performance)', () => {
+  it("compte les entrées d'une plage sans lire leurs valeurs", async () => {
+    await upsertEntries([
+      { type: 'heart_rate', source: 'w', at: '2026-10-01T08:00:00.000Z', payload: { value: 60 } },
+      { type: 'food', source: 'app', at: '2026-10-02T12:00:00.000Z', payload: {} },
+      { type: 'steps', source: 'w', at: '2026-10-05T12:00:00.000Z', payload: { value: 10 } },
+    ])
+    const proto = globalThis.IDBIndex.prototype
+    const orig = proto.getAll
+    let reads = 0
+    proto.getAll = function (...a) {
+      reads++
+      return orig.apply(this, a)
+    }
+    try {
+      expect(await countEntries({ since: '2026-10-01T00:00:00.000Z', until: '2026-10-04T00:00:00.000Z' })).toBe(2)
+      expect(await countEntries({ until: '2026-10-01T08:00:00.000Z' })).toBe(1)
+      expect(await countEntries({ since: '2026-10-06T00:00:00.000Z' })).toBe(0)
+      expect(await countEntries()).toBe(3)
+    } finally {
+      proto.getAll = orig
+    }
+    expect(reads).toBe(0)
   })
 })
 
