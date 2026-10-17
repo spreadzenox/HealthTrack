@@ -334,7 +334,14 @@ un voyage (« déduit des changements de fuseau horaire ») et le Radar forme pe
 passage à l'heure d'hiver n'est pas un voyage (même fuseau). Un trajet sans changement de fuseau (Paris → Lyon) se
 coche toujours à la main. C'est le 4ᵉ tag déduit après « Écran tard », « Sport le soir » et « Repas tardif ».
 
+**Run du 17/10 12:30** (nettoyage, pas de nouveau journal montre) : relecture d'**Analyses** et de **Connecteurs**.
+Dans Analyses, le bloc des corrélations répétait les chiffres déjà donnés dans « Pistes à tester » (sommeil +0,57,
+pas +0,30) : il ne montre plus que les **autres liens** (« Autres liens avec votre bien-être »), et disparaît s'il
+n'en reste aucun. Dans Connecteurs, la phrase « Envoie ses données » sous une app déjà marquée « Reçu » est retirée.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Analyses et Connecteurs sans redites (run 17/10 12:30)** : une piste n'est plus répétée dans le bloc des
+  corrélations (« Autres liens ») ; « Envoie ses données » retiré sous le badge « Reçu ».
 - **« Voyage » déduit du fuseau horaire (run 17/10 10:30)** : plus demandé le jour où le fuseau du téléphone change ;
   Analyses et Radar forme le comptent tout seuls ; un trajet dans le même fuseau se coche toujours.
 - **Radar forme et cartes du cœur sans sens imposé (run 17/10 06:30)** : écart inhabituel signalé dans les deux sens
@@ -846,7 +853,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 04:30 — [« Vos derniers jours » : 3 jours lus d'emblée](runs/2026-10-17-0430-journal-trois-jours.md) | ⚡ | PR #191 fusionnée → v150 |
 | 17/10 06:30 — [Radar forme et cartes du cœur neutres](runs/2026-10-17-0630-radar-neutre.md) | 🧭 | PR #192 fusionnée → v151 |
 | 17/10 08:30 — [Idées : spec du visage vérifiée](runs/2026-10-17-0830-idees-spec-visage.md) | 💡🙂 | 4 idées (I98–I101), `protocoles/visage.md` — journal seul |
-| 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR #194 (fusion après CI verte) |
+| 17/10 10:30 — [« Voyage » déduit du fuseau horaire](runs/2026-10-17-1030-voyage-fuseau.md) | 🧹 | PR #194 fusionnée → v152 |
+| 17/10 12:30 — [Analyses et Connecteurs sans redites](runs/2026-10-17-1230-analyses-sans-redites.md) | 🧹 | PR (fusion après CI verte) |
 
 ---
 

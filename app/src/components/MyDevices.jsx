@@ -85,7 +85,7 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
                     <span className="my-device-name">{row.name}</span>
                     <span className={`my-device-status ${st.className}`}>{st.label}</span>
                   </div>
-                  <p className="my-device-message">{row.message}</p>
+                  {row.message && <p className="my-device-message">{row.message}</p>}
                   {row.source && (
                     <p className="my-device-meta">
                       Dernières mesures {formatAgo(row.source.lastAt, now || new Date())}

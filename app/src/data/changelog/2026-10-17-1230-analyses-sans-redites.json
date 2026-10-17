@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-17",
+  "kind": "amélioration",
+  "title": "Analyses et Connecteurs sans redites",
+  "items": [
+    "Analyses : un lien déjà proposé dans « Pistes à tester » n'est plus répété plus bas ; le bloc devient « Autres liens avec votre bien-être » et disparaît s'il n'y en a pas d'autre.",
+    "Connecteurs : la phrase « Envoie ses données » sous une app marquée « Reçu » est retirée, le badge suffit."
+  ]
+}
