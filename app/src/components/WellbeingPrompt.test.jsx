@@ -6,6 +6,7 @@ vi.mock('../storage/localHealthStorage', () => ({
   createEntry: vi.fn(() => Promise.resolve(1)),
   updateEntry: vi.fn(() => Promise.resolve()),
   listEntries: vi.fn(() => Promise.resolve([])),
+  upsertEntries: vi.fn(() => Promise.resolve({ inserted: 1, skipped: 0 })),
 }))
 
 describe('WellbeingPrompt (uncontrolled)', () => {
@@ -122,6 +123,24 @@ describe('WellbeingPrompt — behaviour tags', () => {
     expect(await screen.findByText(/Repas tardif : déduit de vos repas notés \(après 21 h\)/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Repas tardif/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Sport le soir/i })).toBeInTheDocument()
+  })
+
+  it('no longer asks for « Voyage » on a day the time zone changed, and asks again otherwise', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const key = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    const today = new Date()
+    const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1, 12)
+    const ctx = (d, tz) => ({ id: tz, type: 'context', at: d.toISOString(), payload: { date: key(d), tz, tzOffset: 0 } })
+    listEntries.mockImplementation(async ({ type }) => (type === 'context' ? [ctx(yesterday, 'Europe/Paris'), ctx(today, 'Asia/Tokyo')] : []))
+    const { unmount } = render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    expect(await screen.findByText(/Voyage : changement de fuseau horaire repéré aujourd’hui/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Voyage/i })).not.toBeInTheDocument()
+    unmount()
+
+    listEntries.mockImplementation(async ({ type }) => (type === 'context' ? [ctx(yesterday, 'Europe/Paris'), ctx(today, 'Europe/Paris')] : []))
+    render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'context' })))
+    expect(screen.getByRole('button', { name: /Voyage/i })).toBeInTheDocument()
   })
 
   it('still asks for « Repas tardif » when meals are rarely noted', async () => {

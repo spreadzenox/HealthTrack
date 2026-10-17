@@ -48,6 +48,7 @@ const TYPE_LABELS = {
   blood_glucose: 'Glycémie',
   weather: 'Météo',
   phone_usage: 'Téléphone',
+  context: 'Fuseau horaire',
 }
 
 function entryTitle(e) {

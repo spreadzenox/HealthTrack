@@ -12,6 +12,7 @@ import { syncPhoneUsage } from '../services/phoneUsageSync'
 import { syncWatchIfStale } from '../services/watchAutoSync'
 import { listenWatchPresence } from '../services/watchPresence'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
+import { recordTimezoneContext } from '../services/timezoneContext'
 
 /**
  * Call inside any component that should trigger an auto-sync on mount.
@@ -31,6 +32,8 @@ export function useAutoSync() {
       if (r?.removed) window.dispatchEvent(new CustomEvent('health-entries-updated'))
     })
     triggerAutoSync()
+    // Fuseau horaire du jour (une écriture par jour et par fuseau) : un changement fait « Voyage » sans rien cocher.
+    recordTimezoneContext()
     // Météo / air : au plus toutes les 3 h, seulement si l'utilisateur l'a activée.
     syncWeather()
     // Temps d'écran / sommeil estimé : au plus toutes les 30 min, seulement si activé et autorisé.
@@ -41,7 +44,9 @@ export function useAutoSync() {
     listenWatchPresence()
     // … et au retour dans l'app (déverrouillage, changement d'app) : la montre a de nouvelles minutes.
     const onVisible = () => {
-      if (document.visibilityState === 'visible') syncWatchIfStale()
+      if (document.visibilityState !== 'visible') return
+      recordTimezoneContext()
+      syncWatchIfStale()
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => document.removeEventListener('visibilitychange', onVisible)

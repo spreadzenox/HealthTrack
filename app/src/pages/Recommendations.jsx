@@ -136,6 +136,7 @@ const TAG_WEEKEND_SHIFT = 0.1
 function autoSourceNote(tagId) {
   if (tagId === 'evening_sport') return `déduit de vos séances (début après ${EVENING_SPORT_FROM_HOUR} h)`
   if (tagId === 'late_meal') return `déduit de vos repas notés (après ${LATE_MEAL_FROM_HOUR} h)`
+  if (tagId === 'travel') return 'déduit des changements de fuseau horaire'
   return `mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`
 }
 

@@ -259,6 +259,16 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
         },
       })
     }
+
+    // Fuseau horaire du jour (« Voyage » déduit) : quatre courts séjours à Londres.
+    const abroad = [[10, 11], [30, 32], [50, 52], [65, 66]].some(([from, to]) => i >= from && i <= to)
+    const dateKey = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`
+    entries.push({
+      type: 'context',
+      source: 'app_context',
+      at: at(day, 12),
+      payload: { date: dateKey, tz: abroad ? 'Europe/London' : 'Europe/Paris', tzOffset: abroad ? 60 : 120 },
+    })
   }
 
   return entries

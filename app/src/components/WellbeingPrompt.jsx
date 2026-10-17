@@ -8,7 +8,10 @@ import {
   LATE_MEAL_FROM_HOUR,
   isWorkoutEntry,
   mealsLoggedRegularly,
+  measuredTagsByDay,
 } from '../services/behaviorTags'
+import { localDateKey } from '../services/wellbeingSeries'
+import { recordTimezoneContext } from '../services/timezoneContext'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
 
 const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
@@ -34,20 +37,26 @@ const SCORES = [0, 1, 2, 3, 4, 5]
 /** Séances et repas relus sur cette période : au-delà, la source n'est sans doute plus utilisée. */
 const CAPTURE_DAYS = 14
 
+/** Fuseaux horaires relus pour savoir si celui d'aujourd'hui a changé. */
+const TIMEZONE_DAYS = 4
+
 /**
  * Sources récentes dont l'app déduit elle-même un tag : séances de la montre ou de Health Connect
- * (« Sport le soir »), repas notés régulièrement (« Repas tardif »).
+ * (« Sport le soir »), repas notés régulièrement (« Repas tardif »), fuseau horaire changé aujourd'hui (« Voyage »).
  */
 async function recentCaptures() {
   try {
     const since = new Date(Date.now() - CAPTURE_DAYS * 86_400_000).toISOString()
-    const [activity, food] = await Promise.all([
+    await recordTimezoneContext()
+    const [activity, food, context] = await Promise.all([
       listEntries({ type: 'activity', since, limit: 200 }),
       listEntries({ type: 'food', since, limit: 200 }),
+      listEntries({ type: 'context', since: new Date(Date.now() - TIMEZONE_DAYS * 86_400_000).toISOString(), limit: 50 }),
     ])
-    return { workouts: activity.some(isWorkoutEntry), meals: mealsLoggedRegularly(food) }
+    const travelToday = measuredTagsByDay(context).get('travel').get(localDateKey(new Date().toISOString())) === true
+    return { workouts: activity.some(isWorkoutEntry), meals: mealsLoggedRegularly(food), travelToday }
   } catch {
-    return { workouts: false, meals: false }
+    return { workouts: false, meals: false, travelToday: false }
   }
 }
 
@@ -79,7 +88,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   const [tags, setTags] = useState([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
-  const [captures, setCaptures] = useState({ workouts: false, meals: false })
+  const [captures, setCaptures] = useState({ workouts: false, meals: false, travelToday: false })
 
   useEffect(() => {
     if (!isControlled && !hasAnsweredThisSession()) {
@@ -228,6 +237,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
           {autoIds.includes('evening_sport') &&
             ` Sport le soir : déduit de vos séances (début après ${EVENING_SPORT_FROM_HOUR} h).`}
           {autoIds.includes('late_meal') && ` Repas tardif : déduit de vos repas notés (après ${LATE_MEAL_FROM_HOUR} h).`}
+          {autoIds.includes('travel') && ' Voyage : changement de fuseau horaire repéré aujourd’hui, rien à cocher.'}
         </p>
 
         {error && (

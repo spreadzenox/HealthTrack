@@ -1381,6 +1381,11 @@ describe('computeTodayPrediction — journée en cours incomplète', () => {
 // ---------------------------------------------------------------------------
 
 describe('countTotalDataDays', () => {
+  it('ignores the daily time-zone entries (they arrive on their own)', () => {
+    const ctx = { type: 'context', source: 'app_context', at: '2026-01-05T11:00:00.000Z', payload: { date: '2026-01-05', tz: 'Europe/Paris' } }
+    expect(countTotalDataDays([makeWellbeing('2026-01-01', 3), ctx])).toBe(1)
+  })
+
   it('returns 0 for empty array', () => {
     expect(countTotalDataDays([])).toBe(0)
   })
