@@ -1,6 +1,6 @@
 # 2026-10-18 14:30 Paris (12:30 UTC) — Visage : post-traitement Java testé (I100 ① a)
 
-**Type** : 🙂 D4 (consigne du propriétaire du 18/10, point B)  ·  **PR** : « [Auto] Visage : post-traitement Java
+**Type** : 🙂 D4 (consigne du propriétaire du 18/10, point B)  ·  **PR** : #208 « [Auto] Visage : post-traitement Java
 du Face Landmarker, testé sur vecteurs (I100 ① a) »
 
 ## Pourquoi
@@ -36,6 +36,10 @@ du Face Landmarker, testé sur vecteurs (I100 ① a) »
   seuil de fusion 0,3 → 0,6 → 1 échec (test de fusion ajouté pour ça).
 - Frontend (aucun fichier JS modifié) : `npm run test` **1 400 verts**, lint **6 erreurs** (inchangé), build ✅,
   `npm run visual` ✅ (8 pages, captures relues : inchangées). Pas d'entrée « Nouveautés » : rien de visible.
+
+- CI, 1er passage : « Protocole montre (Java) » rouge (13 échecs `input == null`) : les deux PNG de test étaient
+  exclus par `*.png` du `.gitignore`. Exception ajoutée pour `src/test/resources/face/*.png`, vérifié sur un clone
+  propre (63 verts). Leçon : lancer `test:java` sur un clone frais avant de pousser quand on ajoute des ressources.
 
 ## D5 / D6
 - Rien n'entre encore dans l'estimateur : ces indices seront des **candidats** (I110) tant qu'ils n'ont pas prouvé
