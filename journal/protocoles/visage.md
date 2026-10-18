@@ -53,7 +53,12 @@ vérifie le SHA-256), jamais committés.
    agrandi de 50 %).
 2. **Recadrage** (✅) : transformation affine du carré tourné vers 256 × 256, bilinéaire, extérieur noir, `v = pixel /
    255`. Point du recadrage `(u, v)` ↔ image : `centre + R(rotation) · ((u/256 − 0,5) × côté, (v/256 − 0,5) × côté)`.
-   Écueil vérifié : **ne pas ajouter de demi-pixel** au décalage (avec + 0,5, les points se décalent de ≈ 0,35 px).
+   **Convention des pixels (✅ tranchée le 18/10/2026 14:30, `visage-vecteurs.py`)** : le pixel de sortie `(i, j)` lit
+   l'image au point `centre + R · (((i + 0,5)/size − 0,5) × côté, ((j + 0,5)/size − 0,5) × côté) − (0,5 ; 0,5)`
+   (centres des pixels des deux côtés, comme OpenCV), en bilinéaire sur les indices entiers. Mesuré contre MediaPipe
+   Tasks sur deux images : points médiane **0,38–0,43 px** (contre 0,64 px sans les demi-pixels, et 0,78 px pour la
+   convention de Pillow du prototype du 17/10). L'« écueil » noté le 17/10 venait de la convention de Pillow.
+   Même convention pour l'entrée du détecteur (carré `max(L, H)` centré, rotation 0).
 3. **Maillage** : 478 points (468 du visage + 10 des iris, indices 468–477), z relatif (même échelle que x) ;
    présence = sigmoïde(`Identity_1`) ; **rejet si < 0,5** (MediaPipe) — HealthTrack exigera ≥ 0,9 (qualité, §6).
 4. **Image suivante d'une même rafale** (📖, ✅ même résultat) : le rectangle se recalcule sur les points de l'image
@@ -107,7 +112,8 @@ la calibration sur les notes de l'utilisateur (≥ 14 jours) donnent un sens, pr
 
 ## 6. Qualité d'une image (à appliquer avant tout calcul)
 
-- présence ≥ 0,9 ; visage ≥ **80 px** de côté dans l'image analysée ; |lacet| ≤ 30° ; luminance moyenne du recadrage
+- présence ≥ 0,9 ; visage ≥ **80 px** de côté dans l'image analysée (mesuré sur la boîte englobante des 468 points du
+  visage : ≈ 100 px pour une tête qui occupe un tiers de la largeur d'une capture 320 × 240) ; |lacet| ≤ 30° ; luminance moyenne du recadrage
   dans [0,15 ; 0,9] ; `jawOpen` ≤ 0,5 (sinon parole / bâillement) ; sinon l'image est comptée « rejetée » avec sa raison
   (diagnostic).
 - **Résolution de capture** (✅ mesuré sur l'image test réduite) : à 320 px de large (visage ≈ 90 px), écart moyen des
@@ -134,6 +140,18 @@ par [T26]) ; notre écart de 0,01 est donc négligeable. Résidu probable : ré�
 des boîtes. **Test à écrire** (I101) : valeurs de MediaPipe sur 2–3 images figées en JSON, test instrumenté sur
 l'émulateur x86_64 de la CI (workflow « Test — émulateur Samsung Galaxy A56 ») : points médiane < 1,5 px, blendshapes
 moyen < 0,02 et max < 0,08. ❓ Licence de `portrait.jpg` à vérifier avant de le committer ; sinon images CC0.
+
+### 7.1 Post-traitement Java (✅ 18/10/2026 14:30, I100 ① a)
+
+Paquet `com.healthtrack.app.face` (sans dépendance Android, testé sur la JVM par `npm run test:java`) :
+`FaceGeometry` (ancres, décodage, fusion pondérée, ROI, recadrage, retour dans l'image, 146 points, taille, lacet),
+`FaceIndices` (§5–§6) et `FacePipeline` (§8, modèles derrière une interface `Model`). Vecteurs :
+`app/android/app/src/test/resources/face/` — deux recadrages du portrait NASA de Neil Armstrong (domaine public,
+I106), sorties brutes des 3 modèles écrites par `visage-vecteurs.py`. Le Java reproduit le prototype à 10⁻⁵ près
+sur les tenseurs d'entrée et à 2·10⁻³ px sur les points. Ordre des sorties attendu de LiteRT : détecteur
+`[regressors, classificators]`, maillage `[Identity (points), Identity_1 (présence)]` — à vérifier par nom au
+branchement. **Lacet** (❓ remplace le Procrustes) : angle de la droite joue 234 → joue 454 dans le plan (x, z) après
+retrait de la rotation des yeux ; < 20° sur les deux images de face.
 
 ## 8. Ordre d'exécution dans le service (rappel I88)
 

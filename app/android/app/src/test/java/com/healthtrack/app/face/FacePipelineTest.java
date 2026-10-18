@@ -1,0 +1,131 @@
+package com.healthtrack.app.face;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
+/** L'enchaînement d'une image et d'une rafale, avec les modèles remplacés par leurs sorties figées. */
+public class FacePipelineTest {
+
+    /** Modèle simulé : rend toujours les mêmes sorties et garde la dernière entrée reçue. */
+    private static final class Fixed implements FacePipeline.Model {
+        final float[][] outputs;
+        float[] lastInput;
+        int calls;
+
+        Fixed(float[]... outputs) {
+            this.outputs = outputs;
+        }
+
+        @Override
+        public float[][] run(float[] input) {
+            lastInput = input;
+            calls++;
+            return outputs;
+        }
+    }
+
+    @Test
+    public void analysesOneImageEndToEnd() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-tilted");
+        Fixed det = new Fixed(f.detectorOutputs());
+        Fixed lmk = new Fixed(f.landmarkOutputs());
+        Fixed bsm = new Fixed(f.blendshapes());
+        FacePipeline.Frame frame = new FacePipeline(det, lmk, bsm).analyze(f.rgb, f.width, f.height);
+
+        assertNull(frame.rejected, frame.rejected);
+        assertEquals(128 * 128 * 3, det.lastInput.length);
+        assertEquals(256 * 256 * 3, lmk.lastInput.length);
+        double[] subset = FaceFixtures.doubles(f.json.get("subset"));
+        for (int i = 0; i < subset.length; i++) assertEquals(subset[i], bsm.lastInput[i], 2e-3);
+        float[] bs = f.blendshapes();
+        assertArrayEquals(bs, frame.blendshapes, 0f);
+        assertEquals((bs[44] + bs[45]) / 2.0, frame.indices.get("smile"), 1e-6);
+        assertEquals(Arrays.asList(FaceIndices.NAMES), new ArrayList<>(frame.indices.keySet()));
+    }
+
+    @Test
+    public void nextImageFollowsTheFaceWithoutTheDetector() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        Fixed det = new Fixed(f.detectorOutputs());
+        Fixed lmk = new Fixed(f.landmarkOutputs());
+        FacePipeline p = new FacePipeline(det, lmk, new Fixed(f.blendshapes()));
+        p.analyze(f.rgb, f.width, f.height);
+        p.analyze(f.rgb, f.width, f.height);
+        assertEquals(1, det.calls);
+        assertEquals(2, lmk.calls);
+        p.reset();
+        p.analyze(f.rgb, f.width, f.height);
+        assertEquals(2, det.calls);
+    }
+
+    @Test
+    public void noFaceMeansNoLandmarkRun() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        float[] logits = new float[896];
+        Arrays.fill(logits, -100f);
+        Fixed lmk = new Fixed(f.landmarkOutputs());
+        FacePipeline.Frame frame = new FacePipeline(new Fixed(new float[896 * 16], logits), lmk,
+            new Fixed(f.blendshapes())).analyze(f.rgb, f.width, f.height);
+        assertEquals(FaceIndices.NO_FACE, frame.rejected);
+        assertNull(frame.indices);
+        assertEquals(0, lmk.calls);
+    }
+
+    @Test
+    public void lowPresenceIsRejectedAndTheDetectorRunsAgain() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        Fixed det = new Fixed(f.detectorOutputs());
+        Fixed bsm = new Fixed(f.blendshapes());
+        FacePipeline p = new FacePipeline(det, new Fixed(f.landmarkOutputs()[0], new float[] {0f}), bsm);
+        assertEquals(FaceIndices.LOW_PRESENCE, p.analyze(f.rgb, f.width, f.height).rejected);
+        p.analyze(f.rgb, f.width, f.height);
+        assertEquals(2, det.calls);
+        assertEquals(0, bsm.calls);
+    }
+
+    @Test
+    public void openMouthIsRejectedAsTalking() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        float[] bs = f.blendshapes();
+        bs[FaceIndices.JAW_OPEN] = 0.7f;
+        FacePipeline.Frame frame = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(bs)).analyze(f.rgb, f.width, f.height);
+        assertEquals(FaceIndices.TALKING, frame.rejected);
+    }
+
+    @Test
+    public void blackImageIsTooDark() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        int[] black = new int[f.rgb.length];
+        FacePipeline.Frame frame = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes())).analyze(black, f.width, f.height);
+        assertEquals(FaceIndices.TOO_DARK, frame.rejected);
+    }
+
+    @Test
+    public void burstKeepsMediansAndCountsRejections() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        FacePipeline p = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes()));
+        List<String> rejected = new ArrayList<>();
+        FaceIndices.Burst b = p.burst(Arrays.asList(f.rgb, new int[f.rgb.length], f.rgb), f.width, f.height, rejected);
+        assertNotNull(b);
+        assertEquals(3, b.frames);
+        assertEquals(2, b.valid);
+        assertEquals(Arrays.asList(FaceIndices.TOO_DARK), rejected);
+        assertEquals(0.0, b.values.get("mobility"), 1e-9);
+        Map<String, Double> one = FaceIndices.fromBlendshapes(f.blendshapes(), b.values.get("yaw"));
+        assertEquals(one.get("smile"), b.values.get("smile"), 1e-9);
+        assertTrue(b.values.get("eyeOpen") > 0.5);
+    }
+}
