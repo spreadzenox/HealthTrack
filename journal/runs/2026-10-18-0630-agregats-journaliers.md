@@ -49,7 +49,7 @@
 Reste dans le Worker ≈ 8 k entrées quotidiennes (notes, repas, sommeil, FC repos, VFC, météo, contexte…).
 
 ## Vérifications
-- `npm run test` : **1 366 tests verts** (105 fichiers ; +8 : agrégats, équivalence, X avant Y, invalidation par
+- `npm run test` : **1 366 tests verts** (104 fichiers ; +8 : agrégats, équivalence, X avant Y, invalidation par
   écriture, import, migration v4 → v5). Lint : **6 erreurs** (inchangé). Build ✅.
 - `npm run perf -- --budget` ✅. `npm run visual` (8 pages) ✅ ; captures regardées : `recommendations-1`
   (pistes et habitudes calculées), `dashboard-1`.
