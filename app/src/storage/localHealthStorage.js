@@ -62,9 +62,10 @@ export async function listEntries(opts = {}) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
     const store = tx.objectStore(STORE_NAME)
+    const limited = (opts.limit ?? 100) <= CURSOR_MAX && !opts.subtypes && !(opts.type && opts.source)
     const reqs = opts.type && opts.subtypes
       ? opts.subtypes.map((subtype) => subtypeRead(store, { ...opts, subtype }))
-      : [indexedRead(store, opts)]
+      : [limited ? newestRead(store, opts, opts.limit ?? 100) : indexedRead(store, opts)]
     tx.onerror = () => reject(tx.error)
     tx.oncomplete = () => {
       let entries = reqs.flatMap((r) => r.result || [])
@@ -86,6 +87,34 @@ const AT_MAX = '\uffff'
 
 function subtypeRead(store, { type, subtype, since, until }) {
   return store.index('type_subtype_at').getAll(IDBKeyRange.bound([type, subtype, since ?? ''], [type, subtype, until ?? AT_MAX]))
+}
+
+// Au-delà, un getAll suivi d'un tri reste plus rapide qu'un curseur (un événement par enregistrement)
+const CURSOR_MAX = 1000
+
+/**
+ * Les `limit` plus récents par un curseur à rebours sur l'index [type, at], [source, at] ou at : rien
+ * au-delà n'est désérialisé (perf D2 : Repas lisait tous les repas pour en montrer 100). Seulement
+ * quand un index couvre tous les filtres ; même forme `{ result }` qu'une requête getAll.
+ */
+function newestRead(store, { type, source, since, until }, limit) {
+  const from = since ?? ''
+  const to = until ?? AT_MAX
+  const [index, range] = type
+    ? ['type_at', IDBKeyRange.bound([type, from], [type, to])]
+    : source
+      ? ['source_at', IDBKeyRange.bound([source, from], [source, to])]
+      : ['at', IDBKeyRange.bound(from, to)]
+  const out = { result: [] }
+  if (limit <= 0) return out
+  const req = store.index(index).openCursor(range, 'prev')
+  req.onsuccess = () => {
+    const cursor = req.result
+    if (!cursor) return
+    out.result.push(cursor.value)
+    if (out.result.length < limit) cursor.continue()
+  }
+  return out
 }
 
 /** Plus petite lecture couvrant les filtres : index [type, at], [source, at], at ou type ; sinon tout. */

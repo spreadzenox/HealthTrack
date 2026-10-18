@@ -765,3 +765,84 @@ describe('rewriteSourceEntries', () => {
     ])
   })
 })
+
+describe('listEntries avec limite : seuls les N plus récents sont lus (D2 performance)', () => {
+  /** Compte les enregistrements désérialisés (getAll + curseurs), comme `npm run perf`. */
+  async function countRead(fn) {
+    let records = 0
+    const restores = []
+    for (const P of [globalThis.IDBObjectStore.prototype, globalThis.IDBIndex.prototype]) {
+      const getAll = P.getAll
+      P.getAll = function (...a) {
+        const req = getAll.apply(this, a)
+        req.addEventListener('success', () => { records += req.result.length })
+        return req
+      }
+      restores.push(() => { P.getAll = getAll })
+    }
+    const cont = globalThis.IDBCursor.prototype.continue
+    const open = globalThis.IDBIndex.prototype.openCursor
+    globalThis.IDBIndex.prototype.openCursor = function (...a) {
+      const req = open.apply(this, a)
+      req.addEventListener('success', () => { if (req.result && !req._counted) { req._counted = true; records++ } })
+      return req
+    }
+    globalThis.IDBCursor.prototype.continue = function (...a) {
+      records++
+      return cont.apply(this, a)
+    }
+    restores.push(() => {
+      globalThis.IDBCursor.prototype.continue = cont
+      globalThis.IDBIndex.prototype.openCursor = open
+    })
+    try {
+      const result = await fn()
+      return { result, records }
+    } finally {
+      restores.forEach((r) => r())
+    }
+  }
+
+  const day = (i, h = 12) => new Date(Date.UTC(2025, 0, 1 + i, h)).toISOString()
+
+  beforeEach(async () => {
+    const rows = []
+    for (let i = 0; i < 60; i++) {
+      rows.push({ type: 'food', source: 'app', at: day(i), payload: { i } })
+      rows.push({ type: 'steps', source: 'watch', at: day(i, 8), payload: { i } })
+    }
+    await upsertEntries(rows)
+  })
+
+  it('par type : les 5 plus récents, du plus récent au plus ancien, sans lire les 55 autres', async () => {
+    const { result, records } = await countRead(() => listEntries({ type: 'food', limit: 5 }))
+    expect(result.map((e) => e.payload.i)).toEqual([59, 58, 57, 56, 55])
+    expect(records).toBeLessThanOrEqual(6)
+  })
+
+  it('par type et plage', async () => {
+    const { result, records } = await countRead(() => listEntries({ type: 'food', until: day(30, 23), limit: 3 }))
+    expect(result.map((e) => e.payload.i)).toEqual([30, 29, 28])
+    expect(records).toBeLessThanOrEqual(4)
+  })
+
+  it('par source, et sans aucun filtre', async () => {
+    const bySource = await countRead(() => listEntries({ source: 'watch', limit: 2 }))
+    expect(bySource.result.map((e) => e.type + e.payload.i)).toEqual(['steps59', 'steps58'])
+    expect(bySource.records).toBeLessThanOrEqual(3)
+    const all = await countRead(() => listEntries({ limit: 3 }))
+    expect(all.result.map((e) => e.type + e.payload.i)).toEqual(['food59', 'steps59', 'food58'])
+    expect(all.records).toBeLessThanOrEqual(4)
+  })
+
+  it('type + source (non couvert par un index) : résultat inchangé', async () => {
+    const r = await listEntries({ type: 'food', source: 'app', limit: 2 })
+    expect(r.map((e) => e.payload.i)).toEqual([59, 58])
+    expect(await listEntries({ type: 'food', source: 'watch', limit: 2 })).toEqual([])
+  })
+
+  it('limite infinie ou plus grande que les données : tout est rendu', async () => {
+    expect((await listEntries({ type: 'food', limit: Infinity })).length).toBe(60)
+    expect((await listEntries({ type: 'food', limit: 500 })).length).toBe(60)
+  })
+})

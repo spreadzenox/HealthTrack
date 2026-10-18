@@ -44,3 +44,27 @@ jobs:
         run: |
           cd app
           bash scripts/java-protocol-test.sh
+
+  perf-budget:
+    name: Budget de lectures (perf)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19"
+
+      - name: Install frontend dependencies and Chromium
+        run: |
+          cd app
+          npm ci
+          npm install -g playwright@1.56.1
+          playwright install --with-deps chromium
+
+      # 3 ans de démo ; échoue si une page désérialise plus d'enregistrements que scripts/perf/budget.json
+      - name: Check IndexedDB read budget per page
+        run: |
+          cd app
+          npm run perf -- --budget --runs=1 --cpu=1
