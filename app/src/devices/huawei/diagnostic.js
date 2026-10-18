@@ -20,6 +20,8 @@ import {
   authModeLabel,
   toHex,
 } from './protocol'
+import { withTimeout, isTimeout } from '../../utils/withTimeout'
+import { formatAgo } from '../../utils/timeAgo'
 
 /** Apps qui peuvent tenir la montre (une montre Huawei n'accepte qu'une app liée à la fois). */
 export const COMPETING_APP_IDS = ['huawei_health', 'honor_health', 'gadgetbridge', 'health_sync']
@@ -33,6 +35,28 @@ export const STEPS = [
   { id: 'subscribe', label: 'Canal Huawei ouvert' },
   { id: 'link', label: 'Paramètres du lien (1re trame)' },
 ]
+
+/**
+ * Délai maximal de chaque appel natif (ms). Un appel Bluetooth ou « apps du téléphone » qui ne répond jamais
+ * laissait le test sur « Test en cours… » indéfiniment (capture du propriétaire, 18/10/2026) : chaque attente
+ * est désormais bornée, l'étape passe en échec avec « délai dépassé » et le test va jusqu'au verdict.
+ */
+export const STEP_TIMEOUTS = {
+  ready: 30_000, // inclut la boîte d'autorisation « Appareils à proximité »
+  apps: 8_000,
+  bonded: 5_000,
+  scan: 5_000,
+  listBonded: 5_000,
+  open: 25_000,
+  services: 10_000,
+  read: 3_000,
+  subscribe: 8_000,
+  send: 5_000,
+  close: 3_000,
+}
+
+/** Refus du verrou natif partagé avec la relecture en arrière-plan (BtClassicPlugin.connect, code « busy »). */
+const isBusyError = (e) => e?.code === 'busy' || /occupée/i.test(e?.message || String(e || ''))
 
 const DIS = [
   [0x2a29, 'fabricant'],
@@ -68,6 +92,11 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms))
  */
 export function verdictFor(report) {
   const step = (id) => report.steps.find((s) => s.id === id)
+  // HealthTrack a déjà synchronisé cette montre : la connexion directe marche, quoi que dise ce test
+  const connectedAt = report.context?.connectedAt || null
+  const syncedLine = connectedAt
+    ? `HealthTrack synchronise pourtant bien la montre (dernière synchro réussie ${formatAgo(connectedAt)}) : la connexion directe marche. Ce test ouvre une connexion de plus, que la montre peut refuser juste après une synchro ; relancez-le dans une minute.`
+    : null
   const competing = report.apps?.installed || []
   const holder = competing.find((a) => a.id === 'huawei_health' || a.id === 'honor_health')
   const appsLine = competing.length
@@ -81,6 +110,25 @@ export function verdictFor(report) {
       ? "Bluetooth classique (celui des GT 3 à GT 7) : la montre n'est pas appairée à Android. Suivez « Libérer et appairer la montre » ci-dessous."
       : `Bluetooth classique (celui des GT 3 à GT 7) refusé : ${classicFail.steps[0].replace(/^connect:fail \((Bluetooth classique : )?|\)$/g, '')}.`
     : null
+  if (report.busy) {
+    return {
+      code: 'busy',
+      title: 'Montre occupée par la synchro de HealthTrack',
+      advice: ['La relecture en arrière-plan tient la montre (une seule connexion à la fois) : c’est normal. Relancez le test dans une minute.'],
+    }
+  }
+  if (report.timedOut && step(report.timedOut)?.status === 'fail') {
+    const label = step(report.timedOut).label
+    return {
+      code: 'timeout',
+      title: `Le test a calé à l’étape « ${label} »`,
+      advice: [
+        'Le téléphone ou la montre n’a pas répondu à temps : le test s’est arrêté au lieu de rester bloqué.',
+        syncedLine,
+        'Relancez le test ; si ça recommence, touchez « Copier le journal » et transmettez-le.',
+      ].filter(Boolean),
+    }
+  }
   if (step('bluetooth')?.status === 'fail') {
     return { code: 'no_bluetooth', title: 'Bluetooth indisponible', advice: ['Activez le Bluetooth et autorisez « Appareils à proximité » pour HealthTrack, puis relancez.'] }
   }
@@ -94,6 +142,9 @@ export function verdictFor(report) {
         appsLine,
       ].filter(Boolean),
     }
+  }
+  if (syncedLine && ['connect', 'services', 'subscribe', 'link'].some((id) => step(id)?.status === 'fail')) {
+    return { code: 'in_use', title: 'Test impossible pendant que HealthTrack tient la montre', advice: [syncedLine, classicLine].filter(Boolean) }
   }
   if (step('connect')?.status === 'fail') {
     return {
@@ -136,7 +187,9 @@ export function verdictFor(report) {
       title: 'La montre répond à HealthTrack',
       advice: [
         `Protocole v${lp.protocolVersion ?? '?'}, méthode attendue : ${authModeLabel(lp)} (version ${lp.authVersion ?? '?'}${lp.encryptMethod === 1 ? ', chiffrement GCM' : ''}).`,
-        "Étape suivante : « Se connecter à la montre », en haut de cette carte (authentification puis lecture des mesures). Le journal exporté dit quelle méthode la montre attend.",
+        connectedAt
+          ? `HealthTrack synchronise déjà cette montre (dernière synchro réussie ${formatAgo(connectedAt)}) : rien d’autre à faire.`
+          : "Étape suivante : « Se connecter à la montre », en haut de cette carte (authentification puis lecture des mesures). Le journal exporté dit quelle méthode la montre attend.",
         appsLine,
       ].filter(Boolean),
     }
@@ -149,8 +202,22 @@ export function verdictFor(report) {
  * `classic` : plugin natif BtClassic (RFCOMM), ou null s'il est absent.
  * `detectApps()` → apps santé installées (ou null). `onUpdate(report)` à chaque étape / ligne de journal.
  */
-export async function runHuaweiDiagnostic({ client, classic = null, ready = async () => {}, detectApps = async () => null, onUpdate, scanMs = 10_000, responseMs = 6000, now = () => Date.now(), appVersion = 'dev' } = {}) {
+export async function runHuaweiDiagnostic({
+  client,
+  classic = null,
+  ready = async () => {},
+  detectApps = async () => null,
+  onUpdate,
+  scanMs = 10_000,
+  responseMs = 6000,
+  now = () => Date.now(),
+  appVersion = 'dev',
+  timeouts: timeoutOverrides = {},
+  context = null,
+} = {}) {
   const t0 = now()
+  const timeouts = { ...STEP_TIMEOUTS, ...timeoutOverrides }
+  const bounded = (promise, key, what) => withTimeout(promise, timeouts[key], what)
   const report = {
     format: 'healthtrack-watch-diagnostic',
     version: 1,
@@ -159,6 +226,7 @@ export async function runHuaweiDiagnostic({ client, classic = null, ready = asyn
     steps: STEPS.map((s) => ({ ...s, status: 'pending', detail: null })),
     apps: null,
     watch: null,
+    context: context ? { connectedAt: context.connectedAt || null } : null,
     log: [],
     verdict: null,
   }
@@ -182,9 +250,10 @@ export async function runHuaweiDiagnostic({ client, classic = null, ready = asyn
   // 1. Bluetooth
   set('bluetooth', 'running')
   try {
-    await ready(client)
+    await bounded(ready(client), 'ready', 'Bluetooth')
     set('bluetooth', 'ok')
   } catch (e) {
+    if (isTimeout(e)) report.timedOut = 'bluetooth'
     set('bluetooth', 'fail', e?.message || String(e))
     return finish()
   }
@@ -192,7 +261,7 @@ export async function runHuaweiDiagnostic({ client, classic = null, ready = asyn
   // 2. Apps concurrentes
   set('apps', 'running')
   try {
-    const installed = await detectApps()
+    const installed = await bounded(detectApps(), 'apps', 'apps du téléphone')
     if (installed === null) {
       report.apps = { detectable: false, installed: [] }
       set('apps', 'skip', 'détection impossible ici')
@@ -225,18 +294,25 @@ export async function runHuaweiDiagnostic({ client, classic = null, ready = asyn
   }
   try {
     if (typeof client.getBondedDevices === 'function') {
-      const bonded = await client.getBondedDevices().catch(() => [])
+      const bonded = await bounded(client.getBondedDevices(), 'bonded', 'appareils appairés').catch((e) => {
+        log(`appareils appairés illisibles : ${e?.message || e}`, 'warn')
+        return []
+      })
       for (const device of bonded) consider({ device }, { bonded: true })
       log(`appareils appairés au téléphone : ${bonded.length} (dont Huawei : ${candidates.size})`)
     }
-    await client.requestLEScan({ allowDuplicates: false }, (scan) => {
-      if (scan?.device?.deviceId) consider(scan, { advertising: true })
-    })
+    await bounded(
+      client.requestLEScan({ allowDuplicates: false }, (scan) => {
+        if (scan?.device?.deviceId) consider(scan, { advertising: true })
+      }),
+      'scan',
+      'recherche BLE',
+    )
     await wait(client.scanMs ?? scanMs)
-    await client.stopLEScan?.().catch(() => {})
   } catch (e) {
     log(`recherche interrompue : ${e?.message || e}`, 'warn')
   }
+  await bounded(Promise.resolve().then(() => client.stopLEScan?.()), 'scan', 'arrêt de la recherche').catch(() => {})
   const watch = pickWatch([...candidates.values()])
   if (!watch) {
     set('find', 'fail', 'aucune montre Huawei / Honor vue ni appairée')
@@ -262,11 +338,17 @@ export async function runHuaweiDiagnostic({ client, classic = null, ready = asyn
   const kinds = classic ? ['classic', 'ble'] : ['ble']
   for (const kind of kinds) {
     for (const id of LINK_STEPS) Object.assign(report.steps.find((s) => s.id === id), { status: 'pending', detail: null })
-    const result = await attemptLink(kind, { client, classic, watch, report, set, log, now, t0, responseMs })
+    const result = await attemptLink(kind, { client, classic, watch, report, set, log, now, t0, responseMs, bounded })
+    if (result.busy) {
+      report.busy = true
+      attempts.push({ kind, steps: LINK_STEPS.map((id) => ({ ...report.steps.find((s) => s.id === id) })) })
+      break
+    }
     attempts.push({ kind, ...result, steps: LINK_STEPS.map((id) => ({ ...report.steps.find((s) => s.id === id) })) })
     if (result.linkParams) break
   }
   const progress = (a) => a.steps.filter((s) => s.status === 'ok' || s.status === 'warn').length
+  report.timedOut = report.timedOut || attempts.find((a) => a.timedOut)?.timedOut || null
   const best = attempts.find((a) => a.linkParams) || attempts.reduce((x, y) => (progress(y) > progress(x) ? y : x))
   for (const st of best.steps) Object.assign(report.steps.find((s) => s.id === st.id), st)
   report.watch.transport = best.kind
@@ -279,14 +361,14 @@ const LINK_STEPS = ['connect', 'services', 'subscribe', 'link']
 const TRANSPORT_LABEL = { classic: 'Bluetooth classique', ble: 'BLE' }
 
 /** Une tentative complète sur un transport ; met à jour les étapes 4 → 7 au fil de l'eau. */
-async function attemptLink(kind, { client, classic, watch, report, set, log, now, t0, responseMs }) {
+async function attemptLink(kind, { client, classic, watch, report, set, log, now, t0, responseMs, bounded }) {
   const label = TRANSPORT_LABEL[kind]
   let transport
   let sdpUuids = null
   if (kind === 'classic') {
     let bonded = []
     try {
-      bonded = (await classic.listBonded())?.devices || []
+      bonded = (await bounded(classic.listBonded(), 'listBonded', 'appareils appairés'))?.devices || []
     } catch (e) {
       log(`[classique] appareils appairés illisibles : ${e?.message || e}`, 'warn')
     }
@@ -322,13 +404,24 @@ async function attemptLink(kind, { client, classic, watch, report, set, log, now
     log(`[${label}] la montre a coupé la connexion`, 'warn')
   }
 
+  // Échec par délai dépassé : l'étape échoue, le test continue jusqu'au verdict (jamais bloqué)
+  const fail = (id, e, prefix = '') => {
+    set(id, 'fail', `${prefix}${e?.message || e}`)
+    return isTimeout(e) ? { timedOut: id } : {}
+  }
+
   set('connect', 'running')
   try {
-    await transport.open(onData, onClose)
+    await bounded(transport.open(onData, onClose), 'open', 'connexion')
     set('connect', 'ok', label)
   } catch (e) {
-    set('connect', 'fail', `${label} : ${e?.message || e}`)
-    return {}
+    if (isBusyError(e)) {
+      set('connect', 'warn', 'montre occupée par la relecture en arrière-plan de HealthTrack')
+      return { busy: true }
+    }
+    // une connexion à moitié ouverte ne doit pas garder la montre
+    if (isTimeout(e)) await bounded(transport.close(), 'close').catch(() => {})
+    return fail('connect', e, `${label} : `)
   }
 
   try {
@@ -339,7 +432,7 @@ async function attemptLink(kind, { client, classic, watch, report, set, log, now
     } else {
       let services = []
       try {
-        services = (await client.getServices?.(watch.deviceId)) || []
+        services = (await bounded(Promise.resolve().then(() => client.getServices?.(watch.deviceId)), 'services', 'liste des services')) || []
       } catch (e) {
         log(`liste des services impossible : ${e?.message || e}`, 'warn')
       }
@@ -347,7 +440,7 @@ async function attemptLink(kind, { client, classic, watch, report, set, log, now
       if (services.some((s) => s.uuid?.toLowerCase() === uuid16(0x180a))) {
         for (const [uuid, field] of DIS) {
           try {
-            const v = await client.read(watch.deviceId, uuid16(0x180a), uuid16(uuid))
+            const v = await bounded(client.read(watch.deviceId, uuid16(0x180a), uuid16(uuid)), 'read')
             report.watch.deviceInfo[field] = decodeText(toBytes(v))
           } catch {
             /* caractéristique absente ou protégée */
@@ -365,21 +458,19 @@ async function attemptLink(kind, { client, classic, watch, report, set, log, now
 
     set('subscribe', 'running')
     try {
-      await transport.subscribe?.(onData)
+      await bounded(Promise.resolve().then(() => transport.subscribe?.(onData)), 'subscribe', 'abonnement')
       set('subscribe', 'ok')
     } catch (e) {
-      set('subscribe', 'fail', e?.message || String(e))
-      return {}
+      return fail('subscribe', e)
     }
 
     set('link', 'running')
     const request = linkParamsRequest()
     report.watch.frames.push({ dir: 'out', via: kind, t: now() - t0, hex: toHex(request) })
     try {
-      await transport.send(request)
+      await bounded(transport.send(request), 'send', 'écriture')
     } catch (e) {
-      set('link', 'fail', `écriture impossible : ${e?.message || e}`)
-      return {}
+      return fail('link', e, 'écriture impossible : ')
     }
     const deadline = now() + responseMs
     while (!answer && !closed && now() < deadline) await wait(100)
@@ -392,7 +483,7 @@ async function attemptLink(kind, { client, classic, watch, report, set, log, now
     set('link', ok ? 'ok' : 'warn', ok ? `protocole v${lp.protocolVersion ?? '?'} · ${authModeLabel(lp)}` : `code ${lp.result}`)
     return { linkParams: lp }
   } finally {
-    await transport.close().catch(() => {})
+    await bounded(transport.close(), 'close').catch(() => {})
   }
 }
 

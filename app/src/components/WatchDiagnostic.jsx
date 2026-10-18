@@ -17,7 +17,9 @@ import WatchConnect from './WatchConnect'
 import { backgroundForJournal, loadLastConnect, watchJournal } from '../devices/huawei/journal'
 import { findBondedWatch } from '../devices/huawei/pairing'
 import { getBackgroundSync } from '../services/watchCaptures'
-import { classicPlugin, connectBondedWatch } from '../services/watchAutoSync'
+import { classicPlugin, connectBondedWatch, getWatchAutoSyncState, isWatchBusy, withWatchLock } from '../services/watchAutoSync'
+import { lastConnectedAt } from '../devices/huawei/setup'
+import { withTimeout } from '../utils/withTimeout'
 import './WatchDiagnostic.css'
 
 const LAST_KEY = 'healthtrack_watch_diagnostic_last'
@@ -51,10 +53,20 @@ function appManagerPlugin() {
   return isNative() ? NativeAppManager : null
 }
 
+/**
+ * Le test passe par le même verrou que la synchro : il ne coupe plus une synchro en cours (le plugin natif
+ * ferme la connexion ouverte avant d'en ouvrir une) et démarre dès qu'elle se termine.
+ */
 async function defaultRun(onUpdate) {
-  const client = await getClient()
-  return runHuaweiDiagnostic({ client, classic: classicPlugin(), ready, detectApps: detectPhoneApps, onUpdate, appVersion: CURRENT_VERSION })
+  return withWatchLock(async () => {
+    const client = await getClient()
+    const context = { connectedAt: lastConnectedAt(getWatchAutoSyncState()) }
+    return runHuaweiDiagnostic({ client, classic: classicPlugin(), ready, detectApps: detectPhoneApps, onUpdate, appVersion: CURRENT_VERSION, context })
+  })
 }
+
+/** Filet de sécurité : au-delà, le test est déclaré interrompu (chaque étape a déjà son propre délai). */
+export const TEST_MAX_MS = 150_000
 
 /** Connexion authentifiée (étape c) puis lecture des mesures (étape d) : services/watchAutoSync.js. */
 const defaultConnect = ({ secrets, rebind, onUpdate }) => connectBondedWatch({ secrets, rebind, onUpdate })
@@ -94,7 +106,7 @@ async function defaultBackground() {
   return watch ? getBackgroundSync({ deviceId: watch.deviceId }) : null
 }
 
-export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground }) {
+export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground, busy = isWatchBusy, maxMs = TEST_MAX_MS }) {
   const connectFn = connect === undefined ? (classicPlugin() ? defaultConnect : null) : connect
   const setupDeps = setup === undefined ? { detectApps: detectPhoneApps, classic: classicPlugin(), appManager: appManagerPlugin() } : setup
   const [report, setReport] = useState(loadLast)
@@ -104,13 +116,21 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
 
   const start = async () => {
     setRunning(true)
-    setMessage(null)
+    setMessage(busy() ? 'Synchro de la montre en cours : le test démarre dès qu’elle se termine.' : null)
     try {
-      const final = await run((r) => setReport(r))
+      const final = await withTimeout(
+        run((r) => {
+          setMessage(null)
+          setReport(r)
+        }),
+        maxMs,
+        'test',
+      )
       setReport(final)
       saveLast(final)
+      setMessage(null)
     } catch (e) {
-      setMessage(`Diagnostic interrompu : ${e?.message || e}`)
+      setMessage(`Diagnostic interrompu : ${e?.message || e}. Relancez le test ; si ça recommence, « Copier le journal ».`)
     } finally {
       setRunning(false)
     }

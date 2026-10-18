@@ -33,6 +33,7 @@ import {
   describeServices,
   syncHints,
   stalledServices,
+  stepsCheck,
 } from './sync'
 import { SLEEP_FIELD } from './files'
 import { field, sleepSequenceFile } from './testing/sampleFiles'
@@ -232,7 +233,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.outcome.code).toBe('connected')
     expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'ok' })
     expect(report.sync).toMatchObject({ minutes: 3, nights: 1, totals: { steps: 5400, kcal: 0, distanceM: 0 } })
-    expect(report.sync.label).toMatch(/^3 minutes, 1 nuit, 5\u202f400 pas aujourd'hui → \d+ mesures$/)
+    expect(report.sync.label).toMatch(/^3 minutes, 1 nuit, 5\u202f400 pas aujourd'hui → (\d+ nouvelles? mesures?|déjà à jour)$/)
     expect(report.sync.firstSync).toBe(true)
     expect(report.sync.kinds).toMatchObject({ steps: 1, steps_jour: 1, heartRate: 2 })
     // tout ce qui suit l'authentification part chiffré
@@ -284,7 +285,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     const sync = createWatchSync({ watchKey: 'X', storage: memoryStorage(), now: () => now, write: async (e) => ({ inserted: e.length }) })
     const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'X', timeoutMs: 300, bindTimeoutMs: 300, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
     expect(report.outcome.code).toBe('connected')
-    expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/^1 minute → \d+ mesures? · sans réponse : sommeil$/) })
+    expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/^1 minute → (\d+ nouvelles? mesures?|déjà à jour) · sans réponse : sommeil$/) })
     expect(report.sync.stalled).toEqual(['sommeil'])
     expect(report.sync.services.map((r) => [r.id, r.outcome, r.count])).toEqual([
       ['sleep', 'timeout', 0], ['minutes', 'ok', 1], ['totals', 'empty', 0], ['workouts', 'empty', 0], ['sleepFile', 'empty', 0],
@@ -331,7 +332,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
       expect(report.outcome.code).toBe('connected')
       expect(report.sync).toMatchObject({ nights: 1, detailedNights: 1, workouts: 1 })
       expect(report.sync.capabilities).toMatch(/séances oui.*sommeil dictionnaire oui/)
-      expect(report.sync.label).toMatch(/1 nuit, 1 séance → \d+ mesures$/)
+      expect(report.sync.label).toMatch(/1 nuit, 1 séance → (\d+ nouvelles? mesures?|déjà à jour)$/)
       expect(watch.seen).toContain('1/55*')
       expect(watch.seen.filter((x) => x.startsWith('44/4')).length).toBe(Math.ceil(file.length / 64))
       expect(watch.seen.filter((x) => x === '44/4').length).toBe(filePlain ? Math.ceil(file.length / 64) : 0)
@@ -469,3 +470,18 @@ describe('montre Huawei : capacités et séances (§7.5, 7.8)', () => {
     expect(calls.slice(1)).toEqual([4, 9])
   })
 })
+
+describe('contrôle des pas du jour (capture du 18/10/2026)', () => {
+  const now = new Date(2026, 9, 18, 11, 6).getTime()
+  const min = (h, m, steps) => ({ t: new Date(2026, 9, 18, h, m).getTime(), steps })
+  it('total de la montre ≥ minutes lues depuis minuit : cohérent', () => {
+    expect(stepsCheck({ minutes: [min(9, 0, 10), min(10, 0, 4), { t: now - 86_400_000, steps: 500 }], totals: { steps: 14 } }, now)).toEqual({ total: 14, minuteSteps: 14, consistent: true })
+  })
+  it('total plus petit que les minutes : signalé', () => {
+    expect(stepsCheck({ minutes: [min(9, 0, 800)], totals: { steps: 14 } }, now).consistent).toBe(false)
+  })
+  it('sans total : rien à comparer', () => {
+    expect(stepsCheck({ minutes: [], totals: null }, now)).toEqual({ total: null, minuteSteps: 0, consistent: true })
+  })
+})
+

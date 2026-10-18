@@ -188,6 +188,18 @@ describe('describeWatchStatus', () => {
   })
 })
 
+describe('dernière connexion réussie (assistant « Libérer et appairer », 18/10/2026)', () => {
+  it('gardée après un échec, reprise des anciens états', () => {
+    const storage = memoryStorage()
+    const ok = recordWatchConnection({ outcome: { code: 'connected' } }, { storage, now: () => T0 })
+    expect(ok.lastConnectedAt).toBe(new Date(T0).toISOString())
+    expect(recordWatchConnection({ outcome: { code: 'failed' } }, { storage, now: () => T0 + 60_000 }).lastConnectedAt).toBe(new Date(T0).toISOString())
+    const old = memoryStorage()
+    old.setItem('healthtrack_watch_autosync', JSON.stringify({ at: '2026-10-18T09:00:00.000Z', outcome: 'connected', everConnected: true }))
+    expect(recordWatchConnection({ outcome: { code: 'failed' } }, { storage: old, now: () => T0 }).lastConnectedAt).toBe('2026-10-18T09:00:00.000Z')
+  })
+})
+
 describe('syncWatchIfStale — appels simultanés', () => {
   it('deux appels en même temps ne lancent qu’une connexion', async () => {
     const storage = memoryStorage()

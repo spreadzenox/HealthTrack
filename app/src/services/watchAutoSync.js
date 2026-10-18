@@ -66,6 +66,7 @@ export function recordWatchConnection(report, { auto = false, storage = globalTh
     battery: report?.battery ?? (code === 'connected' ? null : prev.battery ?? null),
     failures: code === 'connected' ? 0 : (prev.failures || 0) + 1,
     everConnected: code === 'connected' || !!prev.everConnected,
+    lastConnectedAt: code === 'connected' ? new Date(now()).toISOString() : prev.lastConnectedAt || (prev.outcome === 'connected' ? prev.at : null) || null,
   }
   try {
     storage?.setItem(STATE_KEY, JSON.stringify(next))

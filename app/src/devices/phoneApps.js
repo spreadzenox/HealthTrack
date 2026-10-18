@@ -4,6 +4,11 @@
  * diagnostic de la montre Huawei.
  */
 import { detectInstalledApps } from './healthApps'
+import { withTimeout } from '../utils/withTimeout'
+
+/** Délais (ms) : une vérification de paquet, puis toute la détection (au-delà : « inconnu », jamais bloqué). */
+export const CHECK_TIMEOUT_MS = 2_000
+export const DETECT_TIMEOUT_MS = 6_000
 
 function isNative() {
   return typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
@@ -25,7 +30,16 @@ export async function detectPhoneApps() {
   if (!isNative()) return null
   const launcher = await getAppLauncher()
   if (!launcher) return null
-  return detectInstalledApps(async (pkg) => (await launcher.canOpenUrl({ url: pkg }))?.value === true)
+  return detectWithLauncher(launcher)
+}
+
+/**
+ * Détection via `canOpenUrl`, bornée : un paquet qui ne répond pas compte comme absent, et une détection
+ * qui dépasse `totalMs` rend null (inconnu) plutôt que de bloquer l'écran qui l'attend.
+ */
+export async function detectWithLauncher(launcher, { checkMs = CHECK_TIMEOUT_MS, totalMs = DETECT_TIMEOUT_MS } = {}) {
+  const detection = detectInstalledApps(async (pkg) => (await withTimeout(launcher.canOpenUrl({ url: pkg }), checkMs))?.value === true)
+  return withTimeout(detection, totalMs).catch(() => null)
 }
 
 export async function openPhoneApp(pkg) {

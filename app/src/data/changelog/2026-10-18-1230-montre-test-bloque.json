@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-18",
+  "kind": "correctif",
+  "title": "Montre : le test de connexion ne reste plus bloqué",
+  "items": [
+    "Chaque étape du test a maintenant un délai maximal : au lieu de rester sur « Test en cours… », le test va jusqu'au bout et dit clairement à quelle étape il a calé.",
+    "Lancé pendant une synchro, le test attend qu'elle se termine au lieu de couper sa connexion.",
+    "« Libérer et appairer la montre » coche toutes les étapes quand la montre est appairée et que HealthTrack la synchronise : plus de « Appairer » proposé pour rien.",
+    "Après une synchro, la carte dit « N nouvelles mesures » (ou « déjà à jour ») : les mesures relues et déjà enregistrées ne sont pas recomptées."
+  ]
+}

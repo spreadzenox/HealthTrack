@@ -202,3 +202,80 @@ describe('diagnostic — utilitaires', () => {
     expect(v.code).toBe('refused')
   })
 })
+
+describe('diagnostic montre Huawei — jamais bloqué (régression du 18/10/2026)', () => {
+  const never = () => new Promise(() => {})
+  const fast = { ready: 30, apps: 30, bonded: 30, scan: 30, listBonded: 30, open: 30, services: 30, read: 30, subscribe: 30, send: 30, close: 30 }
+
+  it('détection des apps qui ne répond jamais : étape sautée, le test va jusqu’au verdict', async () => {
+    const report = await run(fakeClient(), { detectApps: never, timeouts: fast })
+    expect(report.steps.find((s) => s.id === 'apps')).toMatchObject({ status: 'skip', detail: 'apps du téléphone : délai dépassé (1 s)' })
+    expect(report.steps.find((s) => s.id === 'link').status).toBe('ok')
+    expect(report.verdict.code).toBe('link_ok')
+  })
+
+  it('appareils appairés et recherche qui ne répondent jamais : la recherche continue avec ce qui est vu', async () => {
+    const client = { ...fakeClient(), getBondedDevices: never, stopLEScan: never }
+    const report = await run(client, { timeouts: fast })
+    expect(report.steps.find((s) => s.id === 'find').status).toBe('ok')
+    expect(report.finishedAt).toBeTruthy()
+  })
+
+  it('Bluetooth qui ne répond jamais : échec clair au lieu d’un blocage', async () => {
+    const report = await run(fakeClient(), { ready: never, timeouts: fast })
+    expect(report.steps[0]).toMatchObject({ status: 'fail', detail: 'Bluetooth : délai dépassé (1 s)' })
+    expect(report.verdict.code).toBe('timeout')
+    expect(report.verdict.title).toBe('Le test a calé à l’étape « Bluetooth du téléphone »')
+  })
+
+  it('connexion classique qui ne s’ouvre jamais : délai, puis essai en BLE', async () => {
+    const classic = {
+      listBonded: async () => ({ devices: [{ deviceId: MAC, name: 'HUAWEI WATCH GT 6 Pro-F2', uuids: [] }] }),
+      connect: never,
+      disconnect: vi.fn(async () => {}),
+      addListener: async () => ({ remove: async () => {} }),
+      write: async () => {},
+    }
+    const report = await run(fakeClient(), { classic, timeouts: fast })
+    expect(report.watch.attempts[0].steps[0]).toMatch(/^connect:fail \(Bluetooth classique : connexion : délai dépassé/)
+    expect(report.verdict.code).toBe('link_ok')
+  })
+
+  it('abonnement qui ne répond jamais : étape en échec et verdict « a calé »', async () => {
+    const client = { ...fakeClient(), startNotifications: never }
+    const report = await run(client, { timeouts: fast })
+    expect(report.steps.find((s) => s.id === 'subscribe')).toMatchObject({ status: 'fail' })
+    expect(report.verdict.code).toBe('timeout')
+  })
+
+  it('montre tenue par la relecture en arrière-plan (verrou natif) : « occupée », pas « autre app »', async () => {
+    const classic = {
+      listBonded: async () => ({ devices: [{ deviceId: MAC, name: 'HUAWEI WATCH GT 6 Pro-F2', uuids: [] }] }),
+      connect: async () => {
+        throw Object.assign(new Error('Montre occupée : relecture en arrière-plan en cours'), { code: 'busy' })
+      },
+      addListener: async () => ({ remove: async () => {} }),
+    }
+    const client = fakeClient()
+    const report = await run(client, { classic })
+    expect(report.verdict.code).toBe('busy')
+    expect(client.connect).not.toHaveBeenCalled()
+    expect(JSON.stringify(report.verdict)).not.toMatch(/Huawei Health/)
+  })
+
+  it('montre déjà synchronisée par HealthTrack : un refus de connexion n’accuse pas une autre app', () => {
+    const report = {
+      context: { connectedAt: new Date(Date.now() - 10 * 60_000).toISOString() },
+      apps: { installed: [{ id: 'huawei_health', name: 'Huawei Health' }] },
+      steps: [
+        { id: 'bluetooth', status: 'ok' },
+        { id: 'apps', status: 'warn' },
+        { id: 'find', status: 'ok' },
+        { id: 'connect', status: 'fail', detail: 'Connexion RFCOMM impossible' },
+      ],
+    }
+    const v = verdictFor(report)
+    expect(v.code).toBe('in_use')
+    expect(v.advice[0]).toMatch(/HealthTrack synchronise pourtant bien la montre \(dernière synchro réussie il y a moins d’une heure\)/)
+  })
+})

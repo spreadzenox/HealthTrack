@@ -21,6 +21,19 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🔴 Consigne du propriétaire du 18/10/2026 — prime sur tout (charte §0000)
+
+- [x] **A. Régression écran montre (capture 18/10 11:06)** — livré au run du 18/10 12:30 : délai maximal par étape
+  du test (`STEP_TIMEOUTS`, `utils/withTimeout.js`), verdicts `timeout` / `busy` / `in_use`, test sous le verrou de
+  la synchro (ne coupe plus une synchro en cours), filet de 150 s ; détection des apps bornée (`detectWithLauncher`) ;
+  « Libérer et appairer » : appairage lu séparément des apps, `setupPlan({ connectedAt })` → tout coché quand
+  HealthTrack synchronise (`lastConnectedAt` gardé dans l'état de la synchro auto) ; libellé « N nouvelles mesures /
+  déjà à jour » ; contrôle des pas du jour (`stepsCheck`, ligne « pas du jour » dans le journal).
+  - [ ] À confirmer sur la vraie montre : journal après « Relancer le test » (quelle étape calait : apps ? scan ?).
+  - [ ] Si « pas du jour » montre total < minutes : revoir `parseTotals` (7/0x03) sur la GT 6 Pro.
+- [ ] **B. Estimation automatique du bien-être** : D4 (visage / voix, I100 ① + I106, I110) et D5 passent devant D1
+  et D2. Livrer par étapes testables et fusionnables.
+
 ## ⌚ D3 EN MAINTENANCE (15/10/2026) — ex-priorité absolue du 12/10 au soir
 
 **15/10, propriétaire : « Ça marche côté montre, plus besoin de se concentrer là-dessus ».** D3 n'est plus traité
@@ -531,6 +544,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Réordonnées le 18/10 (12:30 Paris), consigne du propriétaire du 18/10 (charte §0000)** :
+1) 🔴 régression montre du 18/10 (✅ livrée 12:30 ; reste la confirmation sur la montre si le propriétaire renvoie
+un journal) ; 2) 🙂 **estimation automatique du bien-être : D4 (I100 ① moteur du visage + I106, I110) et D5**, dans
+le respect de D6 ; 3) 🧹 D1 (nettoyage de l'UI, restes) ; 4) ⚡ D2 (performance). La liste numérotée ci-dessous
+garde l'historique ; en cas de doute, cet ordre prime.
 
 **Réordonnées le 15/10 (18:30 Paris), consigne du propriétaire « Ça marche côté montre, plus besoin de se
 concentrer là-dessus »** : D3 en maintenance → **D1 (nettoyage de l'UI) en tête**, puis D2, D4, D5, D6 ; la montre
