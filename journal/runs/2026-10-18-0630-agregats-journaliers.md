@@ -59,4 +59,4 @@ Reste dans le Worker ≈ 8 k entrées quotidiennes (notes, repas, sommeil, FC re
   `abiFilters` (I95). Puis D6 I102 (`personalDirection.js`), D4 I100 ① (moteur LiteRT).
 
 ## Merge
-- (à compléter)
+- PR #204 : Frontend (Vitest), Build APK, Budget de lectures (perf), Protocole montre (Java), émulateur A56 API 35 / 36 verts → fusionnée (squash) → v162 attendue.

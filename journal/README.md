@@ -959,7 +959,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 00:30 — [Courbe de bien-être : 14 jours lus](runs/2026-10-18-0030-courbe-bien-etre-legere.md) | ⚡ | PR #201 ; fusionnée → v159 |
 | 18/10 02:30 — [Repas : 100 lus + budget de lectures en CI](runs/2026-10-18-0230-budget-lectures.md) | ⚡ | PR #202 ; checks verts (dont le nouveau budget) → fusionnée → v160 |
 | 18/10 04:30 — [Analyses : tout l'historique du cœur + Worker mesuré](runs/2026-10-18-0430-analyses-coeur-complet.md) | ⚡🐛 | PR #203 ; 1er passage rouge (type « correction » refusé par le test des Nouveautés → « correctif »), puis checks verts → fusionnée → v161 |
-| 18/10 06:30 — [Agrégats journaliers des séries denses](runs/2026-10-18-0630-agregats-journaliers.md) | ⚡🐛 | PR à venir |
+| 18/10 06:30 — [Agrégats journaliers des séries denses](runs/2026-10-18-0630-agregats-journaliers.md) | ⚡🐛 | PR #204 ; checks verts (budget resserré inclus) → fusionnée → v162 |
 
 ---
 
