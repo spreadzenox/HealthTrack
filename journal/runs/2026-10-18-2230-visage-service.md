@@ -40,6 +40,10 @@
 - Pas d'exécution sur émulateur de la caméra (l'émulateur de la CI n'a pas de vraie caméra frontale) : validation
   sur l'A56 par le diagnostic.
 
+- CI, 1er passage (`b4c08c1`) : **7 checks verts** — Frontend (Vitest), Build APK (le natif compile pour de vrai),
+  Protocole montre (Java), Budget de lectures, Publier l'APK, émulateurs A56 API 35 et API 36. Dernier commit = journal
+  seul ; fusion en squash une fois Vitest et Build APK verts dessus ; release à vérifier.
+
 ## D5 / D6
 - Les indices restent des **Y** (`face_*` dans `ESTIMATOR_INPUTS`) ; rien n'est affiché ni importé (porte I110 / I112).
 - `FaceSchedule` refuse tout déclencheur autre que le déverrouillage (et le test manuel) : pas de biais de

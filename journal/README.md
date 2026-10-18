@@ -1124,7 +1124,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 16:30 — [Montre : finitions A.1–A.3](runs/2026-10-18-1630-montre-finitions.md) | 🐛⌚ | Consigne du 18/10 (A.1–A.3, retour de 15:03) ; PR #209 fusionnée |
 | 18/10 18:30 — [Visage : modèles LiteRT dans l'APK](runs/2026-10-18-1830-visage-litert.md) | 🙂 | Consigne B, I100 ① b ; PR #210 ; fusionnée → v167 (APK 15 Mo) |
 | 18/10 20:30 — [Idées : l'humeur par le visage, quand y croire](runs/2026-10-18-2030-idees-humeur-visage-porte.md) | 💡🙂 | Consigne B ; 4 idées (I112–I115), simulation porte + biais de composition ; journal seul |
-| 18/10 22:30 — [Visage : service « Lecture du visage » + diagnostic](runs/2026-10-18-2230-visage-service.md) | 🔴🙂 | Consigne du 18/10 au soir (§00000) consignée, `BIEN-ETRE-AUTO.md` ; I88 ; PR en cours |
+| 18/10 22:30 — [Visage : service « Lecture du visage » + diagnostic](runs/2026-10-18-2230-visage-service.md) | 🔴🙂 | Consigne du 18/10 au soir (§00000) consignée, `BIEN-ETRE-AUTO.md` ; I88 ; PR #212 ; 7 checks verts (Build APK, 2 émulateurs A56) → fusionnée |
 
 ---
 
