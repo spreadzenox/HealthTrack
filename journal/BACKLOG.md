@@ -33,6 +33,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [ ] Si « pas du jour » montre total < minutes : revoir `parseTotals` (7/0x03) sur la GT 6 Pro.
 - [ ] **B. Estimation automatique du bien-être** : D4 (visage / voix, I100 ① + I106, I110) et D5 passent devant D1
   et D2. Livrer par étapes testables et fusionnables.
+  - [x] **I100 ① a** (run 18/10 14:30) : post-traitement Java du visage, sans Android (`com.healthtrack.app.face` :
+    `FaceGeometry`, `FaceIndices`, `FacePipeline`) + vecteurs figés sur un portrait NASA du domaine public (I106),
+    écrits par `protocoles/visage-vecteurs.py` ; convention des demi-pixels tranchée (0,4 px médian de MediaPipe) ;
+    `npm run test:java` couvre `huawei` et `face`.
+  - [ ] **I100 ① b** : LiteRT (`litert` ≥ 2.x, sans dépendance d'envoi) + tâche Gradle qui télécharge le `.task`,
+    vérifie les 3 SHA-256 et range les `.tflite` dans les assets (jamais committés) + `abiFilters` arm64 / x86_64
+    (I95) ; `FaceModels.java` (Android) qui implémente `FacePipeline.Model` ; test instrumenté sur l'émulateur de la
+    CI avec les vecteurs (I101). Vérifier la taille de l'APK avant / après.
+  - [ ] **I88** service + rafales, puis diagnostic exportable ; **I90** indices → entrées `face_burst` dans IndexedDB
+    (scores seuls), écart à la plage personnelle ; **I110** porte d'entrée avant tout affichage.
 
 ## ⌚ D3 EN MAINTENANCE (15/10/2026) — ex-priorité absolue du 12/10 au soir
 
@@ -547,7 +557,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 **Réordonnées le 18/10 (12:30 Paris), consigne du propriétaire du 18/10 (charte §0000)** :
 1) 🔴 régression montre du 18/10 (✅ livrée 12:30 ; reste la confirmation sur la montre si le propriétaire renvoie
-un journal) ; 2) 🙂 **estimation automatique du bien-être : D4 (I100 ① moteur du visage + I106, I110) et D5**, dans
+un journal) ; 2) 🙂 **estimation automatique du bien-être : D4 (I100 ① moteur du visage — ① a fait le 18/10 14:30,
+suite ① b LiteRT + modèles au build — + I106, I110) et D5**, dans
 le respect de D6 ; 3) 🧹 D1 (nettoyage de l'UI, restes) ; 4) ⚡ D2 (performance). La liste numérotée ci-dessous
 garde l'historique ; en cas de doute, cet ordre prime.
 

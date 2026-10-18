@@ -462,6 +462,18 @@ même cause : HealthTrack attendait sans limite des réponses du téléphone (li
 « Relancer le test », puis « Copier le journal » et me l'envoyer.** Il dit quelle étape a calé et pourquoi, et
 contient la ligne « pas du jour ». Suite (votre consigne) : l'**estimation automatique du bien-être**.
 
+**Run du 18/10 14:30 — consigne B, premier pas : le « moteur » de la lecture du visage** (rien de visible dans
+l'app pour l'instant). Pour estimer l'humeur sans rien vous demander, HealthTrack lira votre visage quelques
+secondes au déverrouillage, **sur le téléphone, sans jamais garder d'image**. Ce run écrit en Java, sans aucune
+bibliothèque Google qui enverrait des statistiques, tout ce qui entoure les trois petits modèles de Google (repérer
+le visage, placer 478 points, en déduire 52 « mouvements » du visage), puis le résumé gardé : une dizaine de nombres
+(sourire, sourire des yeux, sourcils, ouverture des yeux…), **sans aucune étiquette « bon » ou « mauvais »**, et un
+contrôle qualité qui écarte les images inexploitables (visage trop petit ou tourné, trop sombre, bouche ouverte
+parce que vous parlez). Testé sur un portrait public de la NASA : à moins d'un demi-pixel de la référence de Google.
+Prochaines étapes : brancher les modèles dans l'app (téléchargés au build, vérifiés), puis le service qui prend 3
+images au déverrouillage et un écran de diagnostic à me renvoyer. L'« humeur estimée » n'apparaîtra que quand elle
+aura prouvé **chez vous** qu'elle suit vos notes (règle I110).
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Montre : le test ne reste plus bloqué (run 18/10 12:30)** : délai par étape, verdict clair, attente de la synchro
   en cours ; « Libérer et appairer » coché quand la montre synchronise ; « nouvelles mesures » dans le libellé.
@@ -1018,6 +1030,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 08:30 — [Idées : faux liens sur 40 facteurs, expériences, voix](runs/2026-10-18-0830-idees-multiplicite-abab.md) | 💡🧭 | 5 idées (I107–I111), 2 simulations ; journal seul |
 | 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR #206 ; checks verts → fusionnée |
 | 18/10 12:30 — [Montre : test jamais bloqué, assistant cohérent](runs/2026-10-18-1230-montre-test-bloque.md) | 🔴🐛⌚ | Consigne du 18/10 (A) ; PR #207 ; checks verts → fusionnée |
+| 18/10 14:30 — [Visage : post-traitement Java testé](runs/2026-10-18-1430-visage-pipeline-java.md) | 🙂 | Consigne B, I100 ① a ; PR #208 ; 1er passage rouge (PNG de test ignorés par `.gitignore`), puis checks verts → fusionnée |
 
 ---
 
