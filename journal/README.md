@@ -501,8 +501,9 @@ le dépôt public de Google, vérifiés octet par octet** (empreinte SHA-256) et
 tourner sur le téléphone (LiteRT) est ajouté dans sa version **sans aucune bibliothèque Google qui communique avec
 l'extérieur** (la version la plus récente en tire une : écartée). Un test tourne désormais à chaque modification sur
 un téléphone Android simulé : les vrais modèles, sur le portrait de la NASA, doivent donner les mêmes résultats que la
-référence, sinon la mise à jour n'est pas publiée. Seules les versions 64 bits du moteur sont embarquées (votre A56),
-pour garder l'APK léger. Prochaine étape : le service « Lecture du visage » (interrupteur, 3 images au
+référence, sinon la mise à jour n'est pas publiée. Seule la version du moteur pour votre A56 est embarquée : l'APK
+passe d'environ 7 à 15 Mo (les modèles et le moteur), téléchargement toujours en 1 clic. Sur le téléphone simulé,
+lire un visage prend 15 à 50 ms par image. Prochaine étape : le service « Lecture du visage » (interrupteur, 3 images au
 déverrouillage, aucune image gardée) et son écran de diagnostic à me renvoyer.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)

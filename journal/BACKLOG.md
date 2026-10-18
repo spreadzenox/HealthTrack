@@ -39,9 +39,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     `npm run test:java` couvre `huawei` et `face`.
   - [x] **I100 ① b** (run 18/10 18:30) : LiteRT **1.4.2** (zéro dépendance transitive ; la 2.x tire `ai-delivery`
     des services Play → écartée), tâche Gradle `faceModels` (URL versionnée `float16/1`, cache Gradle, 3 essais,
-    4 SHA-256), assets non compressés projetés en mémoire, `abiFilters` arm64 / x86_64 (I95), `LiteRtModel` (sorties
+    4 SHA-256), assets non compressés projetés en mémoire, `abiFilters` arm64 (x86_64 seulement pour l'émulateur de CI) (I95), `LiteRtModel` (sorties
     par nom) + `FaceModels`, test instrumenté `FaceModelsTest` sur l'émulateur de la CI (I101), bloquant.
-    - [ ] Budget de taille d'APK en CI (I95, seconde moitié) ; taille avant / après notée dans le compte rendu.
+    - [ ] Budget de taille d'APK en CI (I95, seconde moitié) : v166 6,8 Mo → ≈ 15 Mo attendus (modèles 3,7 + `.so`
+      arm64 4,5, non compressés) ; piste `useLegacyPackaging` (≈ −2,5 Mo) si besoin.
   - [ ] **I88** service + rafales, puis diagnostic exportable ; **I90** indices → entrées `face_burst` dans IndexedDB
     (scores seuls), écart à la plage personnelle ; **I110** porte d'entrée avant tout affichage.
 

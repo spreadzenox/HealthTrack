@@ -166,8 +166,11 @@ retrait de la rotation des yeux ; < 20° sur les deux images de face.
   le cache Gradle de la machine, 3 essais ; les 3 `.tflite` extraits et vérifiés (SHA-256 complets dans le script)
   vers `build/generated/faceModels/face/`, ajoutés aux assets, **stockés sans compression** (`noCompress 'tflite'`)
   pour être projetés en mémoire (`FaceModels.open`). Rien n'est committé.
-- **ABI** : `abiFilters 'arm64-v8a', 'x86_64'` (I95) — `libtensorflowlite_jni.so` 4,5 Mo (arm64) + 6,3 Mo (x86_64,
-  émulateur), modèles 3,7 Mo.
+- **ABI** : `arm64-v8a` seul dans l'APK publié ; `x86_64` ajouté pour l'APK de l'émulateur de CI
+  (`-PextraAbis=x86_64`) — `libtensorflowlite_jni.so` 4,5 Mo (arm64) / 6,3 Mo (x86_64), modèles 3,7 Mo, tout stocké
+  non compressé. APK v166 6,8 Mo → 21 Mo avec les deux ABI.
+- **Temps mesurés** (émulateur x86_64 logiciel de la CI, pipeline complet) : 1re image 46–218 ms (à froid), suivantes
+  14–36 ms. ❓ À mesurer sur l'A56 (I88, diagnostic).
 - **Test instrumenté** `FaceModelsTest` (émulateur x86_64 de la CI, workflow « Test — émulateur Samsung Galaxy
   A56 ») : sorties brutes des 3 vrais modèles contre les vecteurs §7.1 (logits ± 0,05, régressions ± 0,1, points
   médiane < 0,05 px et max < 0,5 px du recadrage 256, blendshapes ± 0,002), puis le pipeline complet (aucun rejet,
