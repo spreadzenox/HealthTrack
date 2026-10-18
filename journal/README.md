@@ -935,7 +935,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 20:30 — [Idées : le sens « chez vous » sans se tromper](runs/2026-10-17-2030-idees-sens-personnel.md) | 💡🧭 | 5 idées (I102–I106), simulation ; test App sans réseau — journal + test ; **fusionnée au run de 22:30** → v157 |
 | 17/10 22:30 — [Repas et Nutrition, dernière relecture](runs/2026-10-17-2230-repas-nutrition.md) | 🧹 | PR #200 ; D1 bouclé ; **fusionnée au run du 18/10 00:30** → v158 |
 | 18/10 00:30 — [Courbe de bien-être : 14 jours lus](runs/2026-10-18-0030-courbe-bien-etre-legere.md) | ⚡ | PR #201 ; fusionnée → v159 |
-| 18/10 02:30 — [Repas : 100 lus + budget de lectures en CI](runs/2026-10-18-0230-budget-lectures.md) | ⚡ | PR « [Auto] Repas plus rapide + budget de lectures » |
+| 18/10 02:30 — [Repas : 100 lus + budget de lectures en CI](runs/2026-10-18-0230-budget-lectures.md) | ⚡ | PR #202 ; checks verts (dont le nouveau budget) → fusionnée → v160 |
 
 ---
 

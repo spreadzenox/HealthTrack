@@ -49,4 +49,5 @@ injectée dans la page seulement).
   D4 I100 ① (moteur LiteRT).
 
 ## Merge
-- Voir la PR ; complété après les checks.
+- PR #202 : Frontend (Vitest), Build APK, Budget de lectures (perf), Protocole montre (Java), émulateur A56 API 35 / 36
+  tous verts → fusionnée (squash) → v160 attendue.
