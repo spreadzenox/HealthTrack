@@ -12,6 +12,8 @@ import {
   computeBasicCorrelations,
   leverSuggestion,
   LEVER_ACTIONS,
+  selectLevers,
+  LEVER_PERSONAL_Q,
   computeAdvancedAnalysis,
   computeTodayPrediction,
   countTotalDataDays,
@@ -2155,5 +2157,44 @@ describe('contexte météo et air (entrées « weather »)', () => {
     const pred = computeTodayPrediction(entries)
     expect(pred).not.toBeNull()
     expect(Number.isFinite(pred.predicted)).toBe(true)
+  })
+})
+
+describe('selectLevers — pistes à deux étages (I108)', () => {
+  const corr = (variable, r, q) => ({ variable, r, q, label: variable })
+
+  it('labels q < 0.05 « personal » and 0.05 ≤ q < 0.2 « toVerify »', () => {
+    const levers = selectLevers([corr('sleepMinutes', 0.5, 0.01), corr('steps', 0.4, 0.12)])
+    expect(levers.map((l) => [l.variable, l.stage])).toEqual([
+      ['sleepMinutes', 'personal'],
+      ['steps', 'toVerify'],
+    ])
+    expect(LEVER_PERSONAL_Q).toBe(0.05)
+  })
+
+  it('shows at most one « à vérifier » lever at a time', () => {
+    const levers = selectLevers([
+      corr('steps', 0.45, 0.1), corr('sleepMinutes', 0.4, 0.15), corr('cigaretteCount', -0.35, 0.18),
+    ])
+    expect(levers).toHaveLength(1)
+    expect(levers[0]).toMatchObject({ variable: 'steps', stage: 'toVerify' })
+  })
+
+  it('lists « chez vous » levers first even when a « à vérifier » one has a larger |r|', () => {
+    const levers = selectLevers([corr('steps', 0.6, 0.08), corr('sleepMinutes', 0.4, 0.02)])
+    expect(levers.map((l) => l.stage)).toEqual(['personal', 'toVerify'])
+  })
+
+  it('keeps at most 3 levers and no « à vérifier » one when 3 hold « chez vous »', () => {
+    const levers = selectLevers([
+      corr('steps', 0.6, 0.01), corr('sleepMinutes', 0.5, 0.01), corr('cigaretteCount', -0.5, 0.02),
+      corr('alcohol_g', -0.45, 0.03), corr('caffeine_mg', -0.4, 0.1),
+    ])
+    expect(levers).toHaveLength(3)
+    expect(levers.every((l) => l.stage === 'personal')).toBe(true)
+  })
+
+  it('never proposes q ≥ 0.2 or a non-actionable variable', () => {
+    expect(selectLevers([corr('steps', 0.5, 0.25), corr('restingHR', -0.6, 0.001)])).toEqual([])
   })
 })

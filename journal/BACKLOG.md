@@ -376,7 +376,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       A priori **spike-and-slab** (π0 = 0,9 sans effet, 10 % N(0 ; 0,3²)), verdict si P(lien et sens) ≥ 0,9 :
       ≤ 1,2 % de jeux avec un faux sens, vrais liens r = 0,3 trouvés 36 % à 120 j / 70 % à 180 j. Même calcul pour
       Radar, cartes, pistes et effets décalés ; « pas de lien notable » (I103) = P(lien) < 0,2 et n ≥ 60
-- [ ] **I108 (18/10 08:30, score 20, petit, faisable tout de suite)** pistes à deux étages : q < 0,05 → « Chez
+- [x] **I108 — livré le 18/10 10:30** (`selectLevers`, `stage` personal / toVerify, badge « Chez vous : lien net » / « À vérifier : peut-être le hasard ») — **(18/10 08:30, score 20, petit, faisable tout de suite)** pistes à deux étages : q < 0,05 → « Chez
       vous : … », 0,05 ≤ q < 0,2 → « À vérifier : … » (une seule à la fois, jamais formulée comme un fait) ; les pistes
       actuelles (3 à q < 0,2) en montrent une fausse chez ≈ 1 utilisateur sur 4 après 120 j (simulé, 40 X)
 - [ ] **I109 (12)** expérience tirée au sort **chaque soir** sur une mesure **de nuit** (VFC, FC repos, sommeil) pour
@@ -575,7 +575,7 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
 5. 🧭 D6 — pistes et messages neutres / personnels. **16/10 18:30 : fait pour les pistes** — `leverSuggestion`
    suit le signe personnel (simples, décalées, avancées), piste contraire montrée « Ne pas chercher à … » +
    « Contraire à l'hypothèse générale : chez vous, vos données font foi » ; jamais plus d'alcool / tabac.
-   **17/10 06:30 : Radar forme et cartes FC / VFC neutres (I97 ①)**. **18/10 08:30 : I108 (pistes « Chez vous » / « À vérifier », petit) d'abord ; puis I102 écrit directement avec l'a priori spike-and-slab d'I107** (I102 seul : ≥ 1 faux sens sur 40 facteurs dans 58 % des jeux à 120 j). Reste : sens personnel du radar (I97 ② → **I102 + I107**, puis I103–I105, I109),
+   **17/10 06:30 : Radar forme et cartes FC / VFC neutres (I97 ①)**. **18/10 10:30 : I108 livré (pistes « Chez vous » / « À vérifier », une seule fragile) ; puis I102 écrit directement avec l'a priori spike-and-slab d'I107** (I102 seul : ≥ 1 faux sens sur 40 facteurs dans 58 % des jeux à 120 j). Reste : sens personnel du radar (I97 ② → **I102 + I107**, puis I103–I105, I109),
    régularité du sommeil, prédiction, repères Nutrition ; `direction` en a priori faible chiffré (shrinkage).
 6. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
    ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).

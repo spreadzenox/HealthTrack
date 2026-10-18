@@ -499,3 +499,15 @@
   display: flex;
   align-items: center;
 }
+
+/* I108 : piste « à vérifier » (une seule à la fois), en retrait des pistes nettes */
+.reco-advice-card--verify {
+  border-left-style: dashed;
+  border-left-color: #e6a23c;
+}
+
+.reco-advice-card--verify .reco-advice-rank {
+  background: transparent;
+  color: #e6a23c;
+  border: 1px solid #e6a23c;
+}
