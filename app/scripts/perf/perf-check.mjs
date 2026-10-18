@@ -22,6 +22,8 @@
  *   npm run perf -- --runs=5 --cpu=6
  *   npm run perf -- --no-build         # réutilise dist/
  *   npm run perf -- --keep-cache       # garde le cache des analyses entre passages (ouverture « à chaud »)
+ *   npm run perf -- --budget           # échoue si une page lit plus d'enregistrements que `budget.json`
+ *                                      # (garde-fou CI ; la démo prend alors les `days` du budget)
  *
  * Par défaut le cache des analyses (`healthtrack-analysis-cache-v1`) est vidé avant chaque passage :
  * la mesure est celle d'une ouverture après une écriture (pire cas). Les tâches lourdes tournent alors
@@ -31,10 +33,11 @@
  */
 import { spawn, execSync } from 'node:child_process'
 import { createRequire } from 'node:module'
-import { mkdirSync, readdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { generateDemoEntries } from '../visual/demoData.mjs'
+import { checkBudget } from './budget.mjs'
 
 process.env.TZ = 'Europe/Paris'
 const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -135,18 +138,14 @@ function instrument() {
     }
   }
   const many = (r) => (Array.isArray(r) ? r.length : 0)
-  const one = (r) => (r === undefined ? 0 : 1)
+  // Un curseur déclenche « success » à chaque position (ouverture, continue, advance) : un enregistrement
+  // par événement, null en fin de parcours
+  const one = (r) => (r === undefined || r === null ? 0 : 1)
   for (const P of [IDBObjectStore.prototype, IDBIndex.prototype]) {
     wrap(P, 'getAll', many)
     wrap(P, 'get', one)
     wrap(P, 'count', () => 0)
     wrap(P, 'openCursor', one)
-  }
-  // Chaque continue() d'un curseur = un enregistrement de plus
-  const cont = IDBCursor.prototype.continue
-  IDBCursor.prototype.continue = function (...a) {
-    stats.idbRecords++
-    return cont.apply(this, a)
   }
   try {
     new PerformanceObserver((list) => {
@@ -159,7 +158,8 @@ function instrument() {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2))
-  const days = Number(args.days || 1095)
+  const budget = args.budget ? JSON.parse(readFileSync(join(APP_DIR, 'scripts/perf/budget.json'), 'utf8')) : null
+  const days = Number(args.days || budget?.days || 1095)
   const runs = Number(args.runs || 3)
   const cpu = Number(args.cpu || 4)
   const port = Number(args.port || 5299)
@@ -277,6 +277,16 @@ async function main() {
     if (errors.length) {
       console.error('Erreurs JS :', errors)
       process.exitCode = 1
+    }
+    if (budget) {
+      const over = checkBudget(results, budget)
+      for (const o of over) {
+        console.error(o.max === null
+          ? `Budget : ${o.path} n'a pas de budget dans scripts/perf/budget.json (${o.idbRecords} enregistrements lus)`
+          : `Budget dépassé : ${o.path} lit ${o.idbRecords} enregistrements (max ${o.max})`)
+      }
+      if (over.length) process.exitCode = 1
+      else console.log(`Budget de lectures respecté (${results.length} pages)`)
     }
   } finally {
     cleanup()

@@ -391,7 +391,15 @@ anciennes quand la fenêtre est vide (pour choisir le bon message). Mesuré sur 
 **1 725 → 644 mesures lues** à l'ouverture de l'Accueil, prêt en **0,09 s au lieu de 0,26 s**, plus aucun blocage.
 Rien ne change à l'écran. **Dites-moi si les courbes vous paraissent encore lentes.**
 
+**Run du 18/10 02:30** (performance, pas de nouveau journal montre) : la page **Repas** relisait **tous vos repas
+depuis le début** (1 647 sur 3 ans de démo) pour n'en montrer que les 100 derniers ; elle ne lit plus que ces 100
+(≈ 16× moins). La correction est générale : toute liste « les N plus récents » de l'app s'arrête maintenant au N-ième.
+Et pour que ça ne revienne pas, un **budget de lectures par page** est vérifié à chaque PR (nouveau contrôle
+« Budget de lectures (perf) ») : si une page se met à relire trop de données, la PR est rouge. Rien ne change à l'écran.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Repas plus rapide (run 18/10 02:30)** : seuls les 100 derniers repas affichés sont lus (1 647 → 101 sur 3 ans de
+  démo) ; budget de lectures par page vérifié en CI.
 - **Courbe de bien-être plus rapide (run 18/10 00:30)** : seules les notes des 14 jours affichés sont lues
   (Accueil : 1 725 → 644 mesures lues sur 3 ans de démo).
 - **Nutrition plus courte (run 17/10 22:30)** : composition Withings dans « Votre profil » ; un jour à un seul
@@ -926,7 +934,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 18:30 — [Saisie bien-être allégée](runs/2026-10-17-1830-saisie-bien-etre-allegee.md) | 🧹 | PR #198 verte ; **fusionnée au run de 20:30** → v156 |
 | 17/10 20:30 — [Idées : le sens « chez vous » sans se tromper](runs/2026-10-17-2030-idees-sens-personnel.md) | 💡🧭 | 5 idées (I102–I106), simulation ; test App sans réseau — journal + test ; **fusionnée au run de 22:30** → v157 |
 | 17/10 22:30 — [Repas et Nutrition, dernière relecture](runs/2026-10-17-2230-repas-nutrition.md) | 🧹 | PR #200 ; D1 bouclé ; **fusionnée au run du 18/10 00:30** → v158 |
-| 18/10 00:30 — [Courbe de bien-être : 14 jours lus](runs/2026-10-18-0030-courbe-bien-etre-legere.md) | ⚡ | PR « [Auto] Courbe de bien-être plus rapide » |
+| 18/10 00:30 — [Courbe de bien-être : 14 jours lus](runs/2026-10-18-0030-courbe-bien-etre-legere.md) | ⚡ | PR #201 ; fusionnée → v159 |
+| 18/10 02:30 — [Repas : 100 lus + budget de lectures en CI](runs/2026-10-18-0230-budget-lectures.md) | ⚡ | PR #202 ; checks verts (dont le nouveau budget) → fusionnée → v160 |
 
 ---
 

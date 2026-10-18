@@ -535,9 +535,9 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
    de SpO₂ minute) ; **17/10 00:30 : FC repos / VFC lues par sous-type (index v4) — Accueil 706 → 403 ms, 16,2 k → 4,0 k
    enregistrements lus** ; **17/10 04:30 : « Vos derniers jours » ne lit que les 3 jours affichés (14 à la demande, `countEntries`) — 4 016 → 2 190 enregistrements, TBT 114 → 31 ms ; nuit du plus ancien jour corrigée** ; **18/10 00:30 : `WellbeingCharts` ne lit que 14 j + 1 de marge (`since` par index [type, at]),
    anciennes notes seulement comptées (`countEntries({ type })`) — Accueil 1 725 → 644 enregistrements, 259 → 88 ms,
-   TBT 20 → 0** ; suite : budget en CI ; mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
+   TBT 20 → 0** ; **18/10 02:30 : `listEntries` avec limite ≤ 1 000 = curseur à rebours (Repas 1 647 → 101 lus) + budget de lectures par page en CI (`scripts/perf/budget.json`, job « Budget de lectures (perf) »)** ; suite : mesure et lectures par index (14/10 00:30), calculs dans un Worker + cache (14/10 04:30),
    **découpage du bundle (14/10 06:30)**, **Nutrition (5 lectures ciblées, 1 253 → 270 ms) et `upsertEntries` par
-   index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : budget en CI (enregistrements lus ; **taille de l'APK, I95 : `abiFilters` arm64 + x86_64 avant toute lib native**), Recommandations : panneau debug seul à lire toute la base (garde-fou).
+   index [source, at] (112 → 10 ms pour 336 mesures dans 16 k) le 14/10 16:30** ; reste : budget en CI ✅ (enregistrements lus de la page ; **lectures du Worker des analyses non comptées**, à instrumenter) ; **taille de l'APK, I95 : `abiFilters` arm64 + x86_64 avant toute lib native**), Recommandations : panneau debug seul à lire toute la base (garde-fou).
 3. 🙂 D4 — humeur par visage / voix / réseaux sociaux (service caméra de premier plan « niveau 2 », guide Shizuku / ADB) ;
    **spec du pipeline écrite et vérifiée le 17/10 08:30 (`protocoles/visage.md`) → premier code D4 = I100 ①** ;
    **plan vérifié au run idées du 16/10 08:30** : I92 d'abord (petit, D5 — **fait 16/10 16:30**), puis I88 (service + diagnostic, validé
