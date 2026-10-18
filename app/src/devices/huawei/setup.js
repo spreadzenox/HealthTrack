@@ -14,6 +14,8 @@
  * chaque étape se termine par un geste de l'utilisateur. Rien ici ne parle à la montre.
  */
 
+import { withTimeout } from '../../utils/withTimeout'
+
 /** Apps qui peuvent lier la montre (Health Sync lit Huawei Santé mais ne tient pas la montre). */
 export const HOLDER_APP_IDS = ['huawei_health', 'honor_health', 'gadgetbridge']
 
@@ -73,7 +75,20 @@ export function saveSetup(state, storage = globalThis.localStorage) {
 }
 
 /**
+ * Dernière connexion réussie de HealthTrack à la montre (authentification + synchro), d'après l'état de
+ * la synchro auto (`services/watchAutoSync.js`). Les états d'avant le 18/10/2026 n'ont que la dernière issue.
+ */
+export function lastConnectedAt(autoState) {
+  if (!autoState) return null
+  if (autoState.lastConnectedAt) return autoState.lastConnectedAt
+  return autoState.outcome === 'connected' ? autoState.at || null : null
+}
+
+/**
  * Prochaines étapes de l'assistant.
+ * `connectedAt` : dernière connexion réussie de HealthTrack à la montre. Une montre appairée et
+ * synchronisée a franchi toutes les étapes (capture du 18/10/2026 : « Appairer » était proposé alors que la
+ * montre synchronisait), sauf si elle a été réinitialisée depuis.
  * @param {{
  *   installed: Array<{id:string,name:string,package?:string}>|null,  // apps santé installées (null = inconnu)
  *   bonded: boolean|null,          // montre Huawei appairée à Android (null = inconnu)
@@ -82,7 +97,7 @@ export function saveSetup(state, storage = globalThis.localStorage) {
  * }} input
  * @returns {{ path: 'free'|'keep', holders: object[], steps: Array<{id:string,status:'done'|'todo'|'current'|'skip'}>, current: string|null }}
  */
-export function setupPlan({ installed, bonded, verdict, state = {} }) {
+export function setupPlan({ installed, bonded, verdict, state = {}, connectedAt = null }) {
   const holders = (installed || []).filter((a) => HOLDER_APP_IDS.includes(a.id))
   const path = state.choice === 'keep' ? 'keep' : 'free'
   const resetAt = state.resetAt ? Date.parse(state.resetAt) : null
@@ -90,9 +105,17 @@ export function setupPlan({ installed, bonded, verdict, state = {} }) {
   // Un appairage Android antérieur à la réinitialisation ne vaut plus : la montre a oublié ses clés.
   const pairedAfterReset = bonded === true && (!resetAt || (pairedAt && pairedAt >= resetAt))
   const linked = verdict === 'link_ok'
+  const connectedMs = connectedAt ? Date.parse(connectedAt) : null
+  // Synchro réussie après la dernière réinitialisation, montre toujours appairée (ou état Android inconnu)
+  const connected = Boolean(connectedMs) && (!resetAt || connectedMs >= resetAt) && bonded !== false
 
   let steps
-  if (path === 'keep') {
+  if (connected) {
+    steps =
+      path === 'keep'
+        ? [{ id: 'account', done: true }, { id: 'pair', done: true }, { id: 'test', done: true }]
+        : [{ id: 'release', done: true }, { id: 'reset', done: Boolean(resetAt), skip: !resetAt }, { id: 'pair', done: true }, { id: 'test', done: true }]
+  } else if (path === 'keep') {
     steps = [
       { id: 'account', done: Boolean(normalizeAccountId(state.accountId)) },
       { id: 'pair', done: bonded === true },
@@ -121,7 +144,7 @@ export function setupPlan({ installed, bonded, verdict, state = {} }) {
     }
     return { id: s.id, status: 'todo' }
   })
-  return { path, holders, steps: out, current, stalePairing: path === 'free' && bonded === true && Boolean(resetAt) && !pairedAfterReset }
+  return { path, holders, steps: out, current, connected, stalePairing: !connected && path === 'free' && bonded === true && Boolean(resetAt) && !pairedAfterReset }
 }
 
 /**
@@ -145,10 +168,10 @@ export async function pairWatch(classic, { discoverMs = 12_000, onProgress } = {
 }
 
 /** Montre Huawei appairée à Android ? null si on ne peut pas le savoir (navigateur, plugin absent). */
-export async function isWatchBonded(classic) {
+export async function isWatchBonded(classic, { timeoutMs = 5_000 } = {}) {
   if (!classic?.listBonded) return null
   try {
-    const devices = (await classic.listBonded())?.devices || []
+    const devices = (await withTimeout(classic.listBonded(), timeoutMs))?.devices || []
     return devices.some((d) => isHuaweiWatchName(d.name))
   } catch {
     return null

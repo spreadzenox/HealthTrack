@@ -438,7 +438,33 @@ lien net »** quand le lien tient même en comptant tous les facteurs testés, *
 fois. Avant, jusqu'à 3 pistes fragiles pouvaient s'afficher ensemble : avec ≈ 55 facteurs examinés, l'une d'elles
 était souvent un faux lien.
 
+**🔴 Votre capture du 18/10 (11:06, « Ça ça ne marche pas ») — corrigée au run de 12:30.** Deux défauts, une
+même cause : HealthTrack attendait sans limite des réponses du téléphone (liste des apps installées, Bluetooth).
+- **Le test restait sur « Test en cours… »** : la détection des apps qui peuvent tenir la montre pouvait ne jamais
+  répondre, et rien ne bornait cette attente. Désormais **chaque étape a un délai maximal** (8 s pour les apps,
+  25 s pour la connexion…) : au-delà, l'étape est marquée « délai dépassé » et le test va jusqu'au bout avec un
+  verdict clair (« Le test a calé à l'étape … »), jamais bloqué ; filet de sécurité de 2 min 30 pour tout le test.
+  Le test passe aussi par **le même verrou que la synchro** : avant, lancé pendant une synchro, il pouvait **couper
+  sa connexion** ; maintenant il attend la fin (« Synchro de la montre en cours : le test démarre dès qu'elle se
+  termine ») et, si la relecture en arrière-plan tient la montre, il dit « Montre occupée par la synchro de
+  HealthTrack » au lieu d'accuser Huawei Santé.
+- **« Appairer la montre » proposé alors qu'elle synchronise** : l'état d'appairage attendait la même détection
+  d'apps bloquée, donc restait « inconnu ». Les deux lectures sont maintenant séparées et bornées, et surtout la
+  carte tient compte de l'état réel : **montre appairée et synchronisée par HealthTrack = toutes les étapes
+  cochées**, avec « Rien à faire ici : la montre est appairée et HealthTrack la synchronise ».
+- **« 14 pas aujourd'hui → 2 mesures »** : le « 2 » comptait seulement les mesures **nouvelles** (chaque synchro
+  relit 6 h par sécurité, et ce qui est déjà enregistré n'est pas recompté). Le libellé dit maintenant « → 2
+  nouvelles mesures » (ou « déjà à jour »). Les 360 minutes lues = ces 6 h relues, minute par minute : la synchro
+  rapatrie bien tout. Pour les **14 pas**, c'est le total que la montre annonce elle-même depuis minuit : plausible
+  un dimanche matin, mais pour en être sûr le journal compare désormais ce total à la somme des pas minute par
+  minute (« pas du jour : total de la montre X, minutes lues depuis minuit Y »).
+**Ce qu'il me faut (si quelque chose cloche encore) : après la mise à jour, Plus → montre → Diagnostic →
+« Relancer le test », puis « Copier le journal » et me l'envoyer.** Il dit quelle étape a calé et pourquoi, et
+contient la ligne « pas du jour ». Suite (votre consigne) : l'**estimation automatique du bien-être**.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre : le test ne reste plus bloqué (run 18/10 12:30)** : délai par étape, verdict clair, attente de la synchro
+  en cours ; « Libérer et appairer » coché quand la montre synchronise ; « nouvelles mesures » dans le libellé.
 - **Analyses : pistes « Chez vous » / « À vérifier » (run 18/10 10:30)** : niveau de preuve en mots simples, une
   seule piste fragile à la fois.
 - **Analyses : tout l'historique des pas et calories (run 18/10 06:30)** : résumés par jour tenus à jour à chaque
@@ -991,6 +1017,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 06:30 — [Agrégats journaliers des séries denses](runs/2026-10-18-0630-agregats-journaliers.md) | ⚡🐛 | PR #204 ; checks verts (budget resserré inclus) → fusionnée → v162 |
 | 18/10 08:30 — [Idées : faux liens sur 40 facteurs, expériences, voix](runs/2026-10-18-0830-idees-multiplicite-abab.md) | 💡🧭 | 5 idées (I107–I111), 2 simulations ; journal seul |
 | 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR #206 ; checks verts → fusionnée |
+| 18/10 12:30 — [Montre : test jamais bloqué, assistant cohérent](runs/2026-10-18-1230-montre-test-bloque.md) | 🔴🐛⌚ | Consigne du 18/10 (A) ; PR #207 ; checks verts → fusionnée |
 
 ---
 
@@ -1012,6 +1039,21 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---
+
+## 0000. Consigne du propriétaire du 18 octobre 2026 — PRIORITÉ ABSOLUE (prime sur tout, y compris l'ordre du 12/10)
+
+**A. Régression de l'écran montre** (capture du 18/10 11:06, « Ça ça ne marche pas ») : test bloqué sur « Test en
+cours… » dès « Apps qui peuvent tenir la montre » ; carte « Libérer et appairer » qui propose « Appairer » alors que
+la montre est appairée et synchronise ; « 14 pas aujourd'hui → 2 mesures » à 11 h à vérifier. Attendu : délai
+maximal par étape, erreur claire au lieu d'un blocage, test qui marche montre déjà connectée, carte cohérente avec
+l'état réel, synchro complète ; tests pour chaque cas ; ne casser ni l'appairage, ni l'authentification, ni la
+synchro. → **Corrigé au run du 18/10 12:30** (voir son compte rendu).
+**B. Ensuite : l'estimation automatique du bien-être et de l'humeur** (« une fois que c'est fixé j'aimerais que ça
+avance le côté estimation du bien-être automatique ») : D4 (humeur captée par visage / voix, approche Emobot) et D5
+(anti-circularité) passent **devant** D1 (nettoyage de l'UI) et D2 (performance), en respectant D6.
+**Ordre des « Prochaines étapes » (BACKLOG)** : 1) régression montre du 18/10 ; 2) estimation automatique du
+bien-être (D4 + D5, D6) ; 3) nettoyage de l'UI ; 4) performance. Runs « idées » : la régression d'abord tant
+qu'elle n'est pas fusionnée.
 
 ## 000. PRIORITÉ ABSOLUE (propriétaire, 12 octobre 2026 au soir) — la montre d'abord → **EN MAINTENANCE depuis le 15/10**
 

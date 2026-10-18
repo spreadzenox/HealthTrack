@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { setupPlan, observeBond, pairWatch, isWatchBonded, isHuaweiWatchName, normalizeAccountId, loadSetup, saveSetup, RESET_STEPS, RESET_WARNINGS } from './setup'
+import { setupPlan, lastConnectedAt, observeBond, pairWatch, isWatchBonded, isHuaweiWatchName, normalizeAccountId, loadSetup, saveSetup, RESET_STEPS, RESET_WARNINGS } from './setup'
 
 const HUAWEI = { id: 'huawei_health', name: 'Huawei Health', package: 'com.huawei.health' }
 const GARMIN = { id: 'garmin', name: 'Garmin Connect' }
@@ -127,5 +127,42 @@ describe('appairage Android de la montre', () => {
     expect(await isWatchBonded({ listBonded: async () => ({ devices: [] }) })).toBe(false)
     expect(await isWatchBonded({ listBonded: async () => { throw new Error('x') } })).toBeNull()
     expect(await isWatchBonded(null)).toBeNull()
+  })
+})
+
+describe('assistant : montre déjà synchronisée par HealthTrack (capture du 18/10/2026)', () => {
+  const at = '2026-10-18T09:00:00.000Z'
+  it('appairée et synchronisée : toutes les étapes faites, plus d’« Appairer » proposé', () => {
+    const plan = setupPlan({ installed: [], bonded: true, verdict: null, state: {}, connectedAt: at })
+    expect(plan.connected).toBe(true)
+    expect(plan.current).toBeNull()
+    expect(plan.steps).toEqual([
+      { id: 'release', status: 'done' },
+      { id: 'reset', status: 'skip' },
+      { id: 'pair', status: 'done' },
+      { id: 'test', status: 'done' },
+    ])
+  })
+  it('état d’appairage Android inconnu (lecture lente) : la synchro réussie suffit', () => {
+    const plan = setupPlan({ installed: null, bonded: null, verdict: 'timeout', state: {}, connectedAt: at })
+    expect(plan.current).toBeNull()
+  })
+  it('Huawei Santé encore installée mais HealthTrack synchronise : rien à libérer', () => {
+    const plan = setupPlan({ installed: [{ id: 'huawei_health', name: 'Huawei Health' }], bonded: true, verdict: null, state: {}, connectedAt: at })
+    expect(plan.current).toBeNull()
+  })
+  it('montre réinitialisée après la dernière synchro : l’assistant reprend', () => {
+    const plan = setupPlan({ installed: [], bonded: true, verdict: null, state: { resetAt: '2026-10-18T10:00:00.000Z' }, connectedAt: at })
+    expect(plan.connected).toBe(false)
+    expect(plan.current).toBe('pair')
+  })
+  it('montre désappairée d’Android : plus considérée comme prête', () => {
+    expect(setupPlan({ installed: [], bonded: false, verdict: null, state: {}, connectedAt: at }).current).toBe('pair')
+  })
+  it('dernière connexion réussie lue dans l’état de la synchro, anciens états compris', () => {
+    expect(lastConnectedAt({ lastConnectedAt: at, outcome: 'failed', at: '2026-10-18T10:00:00.000Z' })).toBe(at)
+    expect(lastConnectedAt({ outcome: 'connected', at })).toBe(at)
+    expect(lastConnectedAt({ outcome: 'failed', at })).toBeNull()
+    expect(lastConnectedAt(null)).toBeNull()
   })
 })

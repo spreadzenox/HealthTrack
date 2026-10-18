@@ -323,7 +323,7 @@ async function readWorkouts(session, since, until, log) {
 const iso = (ms) => new Date(ms).toISOString()
 const floorTo = (ms, step) => Math.floor(ms / step) * step
 /** Minuit local du jour de `ms`. */
-const localDayStart = (ms) => {
+export const localDayStart = (ms) => {
   const d = new Date(ms)
   d.setHours(0, 0, 0, 0)
   return d.getTime()
@@ -611,6 +611,18 @@ export function totalsEntries(totals, nowMs, { sourceName = 'Montre Huawei' } = 
   if (totals.steps > 0) out.push({ type: 'steps', source: WATCH_SOURCE, at, payload: { value: totals.steps, unit: 'count', ...(totals.distanceM > 0 ? { distanceM: totals.distanceM } : {}), ...base } })
   if (totals.kcal > 0) out.push({ type: 'calories', source: WATCH_SOURCE, at, payload: { value: totals.kcal, unit: 'kcal', ...base } })
   return out
+}
+
+/**
+ * Contrôle des pas du jour (capture du 18/10/2026 : « 14 pas aujourd'hui » à 11 h) : total annoncé par la
+ * montre (7/0x03) face à la somme des minutes lues depuis minuit. Un total plus petit que les minutes
+ * trahit un total mal lu ; des minutes absentes alors que le total est grand, un historique pas encore écrit.
+ */
+export function stepsCheck(data, nowMs) {
+  const day = localDayStart(nowMs)
+  const minuteSteps = (data.minutes || []).filter((m) => m.t >= day && m.t < nowMs).reduce((a, m) => a + (m.steps || 0), 0)
+  const total = data.totals?.steps ?? null
+  return { total, minuteSteps, consistent: total === null || total >= minuteSteps }
 }
 
 /** Nombre d'entrées par genre (journal de diagnostic : ce qui a vraiment été écrit). */

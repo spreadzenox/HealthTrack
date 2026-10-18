@@ -544,8 +544,8 @@ async function main() {
         }
         if (args.ble === 'watch' || args.ble === 'watch-silent') {
           // le test vit sous « Dépannage », replié une fois la montre connectée
-          await page.evaluate(() => document.querySelectorAll('details.watch-trouble').forEach((d) => (d.open = true)))
-          const testButton = page.getByRole('button', { name: 'Tester la connexion directe' })
+          await page.evaluate(() => document.querySelectorAll('details.watch-trouble, details.connectors-more').forEach((d) => (d.open = true)))
+          const testButton = page.getByRole('button', { name: /^(Tester la connexion directe|Relancer le test)$/ }).first()
           await testButton.evaluate((el) => el.scrollIntoView({ block: 'center' }))
           await testButton.click()
           await page.getByRole('button', { name: 'Relancer le test' }).waitFor({ timeout: 30000 })

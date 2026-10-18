@@ -6,8 +6,11 @@
  * à la montre ici. Logique dans src/devices/huawei/setup.js.
  */
 import { useCallback, useEffect, useState } from 'react'
+import { getWatchAutoSyncState } from '../services/watchAutoSync'
+import { formatAgo } from '../utils/timeAgo'
 import {
   setupPlan,
+  lastConnectedAt,
   loadSetup,
   saveSetup,
   observeBond,
@@ -42,7 +45,8 @@ const PAIR_MESSAGES = {
  */
 const isoNow = () => new Date().toISOString()
 
-export default function WatchSetup({ detectApps, classic, appManager, verdict, onRunTest, now = isoNow }) {
+export default function WatchSetup({ detectApps, classic, appManager, verdict, onRunTest, now = isoNow, autoState: autoStateProp }) {
+  const [autoState, setAutoState] = useState(() => autoStateProp ?? getWatchAutoSyncState())
   const [installed, setInstalled] = useState(null)
   const [bonded, setBonded] = useState(null)
   const [state, setState] = useState(loadSetup)
@@ -55,16 +59,27 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
     saveSetup(next)
   }, [])
 
+  // Apps et appairage lus séparément : une détection d'apps qui traîne ne fige plus l'état d'appairage (18/10)
   const refresh = useCallback(async () => {
-    const [apps, isBonded] = await Promise.all([detectApps().catch(() => null), isWatchBonded(classic)])
-    setInstalled(apps)
+    if (autoStateProp === undefined) setAutoState(getWatchAutoSyncState())
+    detectApps()
+      .catch(() => null)
+      .then((apps) => setInstalled(apps ?? null))
+    const isBonded = await isWatchBonded(classic)
     setBonded(isBonded)
     setState((prev) => {
       const next = observeBond(prev, isBonded, now())
       if (next !== prev) saveSetup(next)
       return next
     })
-  }, [detectApps, classic, now])
+  }, [detectApps, classic, now, autoStateProp])
+
+  useEffect(() => {
+    if (autoStateProp !== undefined) return undefined
+    const onSync = () => setAutoState(getWatchAutoSyncState())
+    window.addEventListener('watch-sync-updated', onSync)
+    return () => window.removeEventListener('watch-sync-updated', onSync)
+  }, [autoStateProp])
 
   useEffect(() => {
     refresh()
@@ -76,7 +91,8 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
     return () => document.removeEventListener('visibilitychange', onVisible)
   }, [refresh])
 
-  const plan = setupPlan({ installed, bonded, verdict, state })
+  const connectedAt = lastConnectedAt(autoStateProp ?? autoState)
+  const plan = setupPlan({ installed, bonded, verdict, state, connectedAt })
   const anyHolder = plan.holders.some((a) => a.id !== 'gadgetbridge')
 
   const act = async (fn) => {
@@ -223,7 +239,7 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
       <p id="watch-setup-title" className="watch-diag-watch">
         Libérer et appairer la montre
       </p>
-      {(anyHolder || state.choice === 'keep') && (
+      {!plan.connected && (anyHolder || state.choice === 'keep') && (
         <div className="watch-setup-choice" role="radiogroup" aria-label="Chemin choisi">
           <button type="button" role="radio" aria-checked={plan.path === 'free'} className={`watch-setup-chip ${plan.path === 'free' ? 'active' : ''}`} onClick={() => update({ ...state, choice: 'free' })}>
             HealthTrack seule (conseillé)
@@ -247,7 +263,13 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
           </li>
         ))}
       </ol>
-      {!plan.current && <p className="watch-setup-text">Montre prête : touchez « Se connecter à la montre » ci-dessous pour lire vos mesures.</p>}
+      {plan.connected ? (
+        <p className="watch-setup-text">
+          Rien à faire ici : la montre est appairée et HealthTrack la synchronise (dernière synchro réussie {formatAgo(connectedAt)}).
+        </p>
+      ) : (
+        !plan.current && <p className="watch-setup-text">Montre prête : touchez « Se connecter à la montre » ci-dessus pour lire vos mesures.</p>
+      )}
       {message && (
         <p className="my-device-message" role="status">
           {message}

@@ -68,8 +68,27 @@ describe('WatchDiagnostic', () => {
   it('erreur inattendue : message clair, bouton réactivé', async () => {
     render(<WatchDiagnostic available run={async () => { throw new Error('boom') }} setup={null} connect={null} />)
     fireEvent.click(screen.getByRole('button', { name: 'Tester la connexion directe' }))
-    expect(await screen.findByText('Diagnostic interrompu : boom')).toBeInTheDocument()
+    expect(await screen.findByText(/Diagnostic interrompu : boom/)).toBeInTheDocument()
     await waitFor(() => expect(screen.getByRole('button', { name: 'Tester la connexion directe' })).not.toBeDisabled())
+  })
+
+  it('test qui ne finit jamais : interrompu au délai maximal, bouton réactivé (régression du 18/10/2026)', async () => {
+    render(<WatchDiagnostic available run={() => new Promise(() => {})} maxMs={30} setup={null} connect={null} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Tester la connexion directe' }))
+    expect(screen.getByRole('button', { name: 'Test en cours…' })).toBeDisabled()
+    expect(await screen.findByText(/Diagnostic interrompu : test : délai dépassé/)).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Tester la connexion directe' })).not.toBeDisabled())
+  })
+
+  it('synchro en cours : le test l’attend et le dit', async () => {
+    let release
+    const run = vi.fn(() => new Promise((r) => (release = r)))
+    render(<WatchDiagnostic available run={run} busy={() => true} setup={null} connect={null} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Tester la connexion directe' }))
+    expect(await screen.findByText('Synchro de la montre en cours : le test démarre dès qu’elle se termine.')).toBeInTheDocument()
+    release(REPORT)
+    expect(await screen.findByText('La montre ne répond pas')).toBeInTheDocument()
+    expect(screen.queryByText(/Synchro de la montre en cours/)).toBeNull()
   })
 
   it('une seule carte : état + « Synchroniser » en tête, tout le reste replié sous « Diagnostic », un journal commun exporté', async () => {

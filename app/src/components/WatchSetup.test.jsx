@@ -80,3 +80,25 @@ describe('WatchSetup', () => {
     expect(JSON.parse(localStorage.getItem('healthtrack_watch_setup'))).toMatchObject({ choice: 'keep', accountId: '12345678901234567' })
   })
 })
+
+describe('WatchSetup — état réel de la montre (capture du 18/10/2026)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('montre appairée et synchronisée : étapes faites, aucun bouton « Appairer »', async () => {
+    const d = deps({ apps: [] })
+    render(<WatchSetup {...d} verdict={null} autoState={{ outcome: 'connected', at: new Date().toISOString(), lastConnectedAt: new Date().toISOString() }} />)
+    expect(await screen.findByText(/Rien à faire ici : la montre est appairée et HealthTrack la synchronise/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Appairer la montre' })).toBeNull()
+    expect(screen.queryByText(/Montre allumée sur son écran d’appairage/)).toBeNull()
+  })
+
+  it('détection des apps qui ne répond jamais : l’état d’appairage s’affiche quand même', async () => {
+    const d = deps({ apps: [] })
+    d.detectApps = vi.fn(() => new Promise(() => {}))
+    render(<WatchSetup {...d} verdict={null} autoState={{}} />)
+    // montre appairée à Android, jamais synchronisée : l'étape suivante est le test, pas l'appairage
+    expect(await screen.findByText(/Relancez le test : la montre doit répondre/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Appairer la montre' })).toBeNull()
+  })
+})
+
