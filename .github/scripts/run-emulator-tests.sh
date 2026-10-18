@@ -66,6 +66,20 @@ adb shell am instrument -w \
 echo "=== Résultat des tests ==="
 cat instrumented_test_output.txt
 
+# Pipeline visage (I100 ① b) : les vrais modèles LiteRT de l'APK contre les vecteurs de référence.
+# Contrairement au test Health Connect (ignoré si HC absent), tout résultat autre que « OK » fait échouer le job
+# (vérifié à la fin, après les captures).
+echo "=== Tests instrumentés du visage (LiteRT) ==="
+adb logcat -c || true
+adb shell am instrument -w \
+  -e class com.healthtrack.app.FaceModelsTest \
+  com.healthtrack.app.test/androidx.test.runner.AndroidJUnitRunner \
+  2>&1 | tee face_test_output.txt
+adb logcat -d -s FaceModelsTest:I || true
+cat face_test_output.txt >> instrumented_test_output.txt
+FACE_OK=0
+grep -q "^OK (" face_test_output.txt && FACE_OK=1
+
 # Les tests instrumentés ferment l'app : on la relance ensuite et on attend que la
 # WebView ait réellement affiché l'interface (5 s ne suffisent pas sur l'émulateur
 # logiciel : la première capture était un écran blanc).
@@ -130,6 +144,10 @@ adb exec-out cat /sdcard/ui.xml > ui_plus.xml 2>/dev/null || true
 ls -lh screenshot_app.png screenshot_plus.png
 
 echo "=== Vérification du succès des tests ==="
+if [ "$FACE_OK" != 1 ]; then
+  echo "::error::FaceModelsTest a échoué (modèles du visage), voir face_test_output.txt"
+  exit 1
+fi
 if grep -q "FAILURES!!!" instrumented_test_output.txt; then
   echo "ERREUR : Des tests instrumentés ont échoué !"
   exit 1

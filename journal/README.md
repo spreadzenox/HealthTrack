@@ -495,6 +495,17 @@ avez pointés sont corrigés** (petites corrections, l'humeur reprend au run sui
 **Si « il y a 4 h » revient après la mise à jour** : Diagnostic → « Copier le journal » ; il dit ce que la relecture de
 fond a décidé et pourquoi.
 
+**Run du 18/10 18:30 — consigne B, deuxième pas : les modèles du visage sont dans l'app** (toujours rien de
+visible). Les trois petits modèles de Google (3,7 Mo) sont maintenant **téléchargés à la construction de l'APK depuis
+le dépôt public de Google, vérifiés octet par octet** (empreinte SHA-256) et rangés dans l'app ; le moteur qui les fait
+tourner sur le téléphone (LiteRT) est ajouté dans sa version **sans aucune bibliothèque Google qui communique avec
+l'extérieur** (la version la plus récente en tire une : écartée). Un test tourne désormais à chaque modification sur
+un téléphone Android simulé : les vrais modèles, sur le portrait de la NASA, doivent donner les mêmes résultats que la
+référence, sinon la mise à jour n'est pas publiée. Seule la version du moteur pour votre A56 est embarquée : l'APK
+passe d'environ 7 à 15 Mo (les modèles et le moteur), téléchargement toujours en 1 clic. Sur le téléphone simulé,
+lire un visage prend 15 à 50 ms par image. Prochaine étape : le service « Lecture du visage » (interrupteur, 3 images au
+déverrouillage, aucune image gardée) et son écran de diagnostic à me renvoyer.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Montre : détection des apps instantanée, synchro de fond comptée (run 18/10 16:30)** : plus de « délai dépassé »
   pour les apps (même correctif pour « Mes appareils » et Health Connect) ; « Huawei non listé » n'est plus un
@@ -1055,7 +1066,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR #206 ; checks verts → fusionnée |
 | 18/10 12:30 — [Montre : test jamais bloqué, assistant cohérent](runs/2026-10-18-1230-montre-test-bloque.md) | 🔴🐛⌚ | Consigne du 18/10 (A) ; PR #207 ; checks verts → fusionnée |
 | 18/10 14:30 — [Visage : post-traitement Java testé](runs/2026-10-18-1430-visage-pipeline-java.md) | 🙂 | Consigne B, I100 ① a ; PR #208 ; 1er passage rouge (PNG de test ignorés par `.gitignore`), puis checks verts → fusionnée |
-| 18/10 16:30 — [Montre : finitions A.1–A.3](runs/2026-10-18-1630-montre-finitions.md) | 🐛⌚ | Consigne du 18/10 (A.1–A.3, retour de 15:03) ; PR #209 |
+| 18/10 16:30 — [Montre : finitions A.1–A.3](runs/2026-10-18-1630-montre-finitions.md) | 🐛⌚ | Consigne du 18/10 (A.1–A.3, retour de 15:03) ; PR #209 fusionnée |
+| 18/10 18:30 — [Visage : modèles LiteRT dans l'APK](runs/2026-10-18-1830-visage-litert.md) | 🙂 | Consigne B, I100 ① b ; PR #210 |
 
 ---
 

@@ -1,0 +1,81 @@
+// Modèles du Face Landmarker (spec journal/protocoles/visage.md §1) : téléchargés au build depuis le dépôt public de
+// MediaPipe (Apache-2.0), SHA-256 vérifiés, rangés dans des assets générés « face/ ». Jamais committés.
+// Le .task téléchargé est gardé dans le cache Gradle de l'utilisateur : un seul téléchargement par machine.
+import java.security.MessageDigest
+import java.util.zip.ZipFile
+
+def faceTaskUrl = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'
+def faceTaskSha256 = '64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff'
+def faceModelSha256 = [
+    'face_detector.tflite'          : 'b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f',
+    'face_landmarks_detector.tflite': 'c7d54204ce0448474c7f3fa9af494787c0965cbdd6f20fc72867e43046bd43d5',
+    'face_blendshapes.tflite'       : '4f36dded049db18d76048567439b2a7f58f1daabc00d78bfe8f3ad396a2d2082',
+]
+
+ext.faceModelsAssetsDir = new File(buildDir, 'generated/faceModels')
+
+def sha256 = { File f ->
+    MessageDigest md = MessageDigest.getInstance('SHA-256')
+    f.withInputStream { input ->
+        byte[] buf = new byte[65536]
+        for (int n; (n = input.read(buf)) > 0;) md.update(buf, 0, n)
+    }
+    md.digest().encodeHex().toString()
+}
+
+def download = { String url, File target ->
+    File tmp = new File(target.parentFile, target.name + '.part')
+    Exception last = null
+    for (int attempt = 1; attempt <= 3; attempt++) {
+        try {
+            def connection = new URL(url).openConnection()
+            connection.connectTimeout = 30000
+            connection.readTimeout = 60000
+            connection.inputStream.withStream { input -> tmp.withOutputStream { out -> out << input } }
+            if (!tmp.renameTo(target)) throw new IOException("impossible de renommer $tmp")
+            return
+        } catch (Exception e) {
+            last = e
+            logger.warn("faceModels : téléchargement $attempt/3 échoué ($e)")
+            tmp.delete()
+            if (attempt < 3) Thread.sleep(2000L * attempt)
+        }
+    }
+    throw new GradleException("faceModels : impossible de télécharger $url", last)
+}
+
+tasks.register('faceModels') {
+    description = 'Télécharge et vérifie les modèles du Face Landmarker (assets face/).'
+    def outDir = new File(faceModelsAssetsDir, 'face')
+    inputs.property('sha256', faceModelSha256)
+    outputs.dir(outDir)
+    doLast {
+        if (faceModelSha256.every { name, sum -> def f = new File(outDir, name); f.isFile() && sha256(f) == sum }) return
+        File cache = new File(gradle.gradleUserHomeDir, "caches/healthtrack/face_landmarker-${faceTaskSha256.take(16)}.task")
+        cache.parentFile.mkdirs()
+        if (!cache.isFile() || sha256(cache) != faceTaskSha256) {
+            cache.delete()
+            download(faceTaskUrl, cache)
+            String got = sha256(cache)
+            if (got != faceTaskSha256) {
+                cache.delete()
+                throw new GradleException("faceModels : SHA-256 du .task inattendu ($got)")
+            }
+        }
+        outDir.mkdirs()
+        new ZipFile(cache).withCloseable { zip ->
+            faceModelSha256.each { name, sum ->
+                def entry = zip.getEntry(name)
+                if (entry == null) throw new GradleException("faceModels : $name absent du .task")
+                File f = new File(outDir, name)
+                zip.getInputStream(entry).withStream { input -> f.withOutputStream { out -> out << input } }
+                String got = sha256(f)
+                if (got != sum) {
+                    f.delete()
+                    throw new GradleException("faceModels : SHA-256 de $name inattendu ($got)")
+                }
+            }
+        }
+        logger.lifecycle("faceModels : ${faceModelSha256.size()} modèles prêts dans $outDir")
+    }
+}

@@ -153,6 +153,30 @@ sur les tenseurs d'entrée et à 2·10⁻³ px sur les points. Ordre des sorties
 branchement. **Lacet** (❓ remplace le Procrustes) : angle de la droite joue 234 → joue 454 dans le plan (x, z) après
 retrait de la rotation des yeux ; < 20° sur les deux images de face.
 
+### 7.2 Moteur LiteRT dans l'APK (18/10/2026 18:30, I100 ① b)
+
+- **LiteRT 1.4.2** (`com.google.ai.edge.litert:litert`, Apache-2.0) : **aucune dépendance transitive** (POM vérifié).
+  La 2.x (2.2.0 / 2.3.0) tire `com.google.android.play:ai-delivery` (services Play), Guava et les coroutines : écartée
+  (I94, pas de dépendance d'envoi). L'API Java `org.tensorflow.lite.Interpreter` est la même ; XNNPACK par défaut.
+- **Noms des sorties** (✅ lus avec LiteRT Python) : détecteur `regressors` (1 × 896 × 16), `classificators`
+  (1 × 896 × 1) ; maillage `Identity` (1 434), `Identity_1` (présence), `Identity_2` (inutilisé) ; blendshapes
+  `StatefulPartitionedCall:0` (52), seule sortie. `LiteRtModel` les choisit **par nom** (repli : ordre des index).
+- **Modèles au build** : tâche Gradle `faceModels` (`app/android/app/face-models.gradle`) — URL versionnée
+  `…/face_landmarker/float16/1/face_landmarker.task` (même SHA-256 `64184e22…bc9ff` que `latest` le 18/10), gardée dans
+  le cache Gradle de la machine, 3 essais ; les 3 `.tflite` extraits et vérifiés (SHA-256 complets dans le script)
+  vers `build/generated/faceModels/face/`, ajoutés aux assets, **stockés sans compression** (`noCompress 'tflite'`)
+  pour être projetés en mémoire (`FaceModels.open`). Rien n'est committé.
+- **ABI** : `arm64-v8a` seul dans l'APK publié ; `x86_64` ajouté pour l'APK de l'émulateur de CI
+  (`-PextraAbis=x86_64`) — `libtensorflowlite_jni.so` 4,5 Mo (arm64) / 6,3 Mo (x86_64), modèles 3,7 Mo, tout stocké
+  non compressé. APK v166 6,8 Mo → 21 Mo avec les deux ABI.
+- **Temps mesurés** (émulateur x86_64 logiciel de la CI, pipeline complet) : 1re image 46–218 ms (à froid), suivantes
+  14–36 ms. ❓ À mesurer sur l'A56 (I88, diagnostic).
+- **Test instrumenté** `FaceModelsTest` (émulateur x86_64 de la CI, workflow « Test — émulateur Samsung Galaxy
+  A56 ») : sorties brutes des 3 vrais modèles contre les vecteurs §7.1 (logits ± 0,05, régressions ± 0,1, points
+  médiane < 0,05 px et max < 0,5 px du recadrage 256, blendshapes ± 0,002), puis le pipeline complet (aucun rejet,
+  écart moyen des blendshapes < 0,02, sourire ± 0,05) ; temps par image écrit dans logcat. Un échec fait échouer le
+  job (contrairement au test Health Connect).
+
 ## 8. Ordre d'exécution dans le service (rappel I88)
 
 Déverrouillage ou toutes les ~3 min écran allumé → caméra frontale ouverte en **320 × 240 YUV**, 3 images, caméra

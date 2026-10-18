@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
+apply from: 'face-models.gradle'
 
 android {
     namespace "com.healthtrack.app"
@@ -11,6 +12,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // LiteRT n'embarque que les ABI utiles (I95) : téléphones 64 bits ; l'émulateur de la CI ajoute x86_64
+        // (./gradlew -PextraAbis=x86_64), 6 Mo inutiles sur le téléphone
+        ndk {
+            abiFilters(*(['arm64-v8a'] + (project.findProperty('extraAbis') ?: '').tokenize(',')))
+        }
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
@@ -34,6 +40,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    // Modèles du visage stockés sans compression : projetés en mémoire par FaceModels
+    androidResources {
+        noCompress 'tflite'
+    }
+    sourceSets {
+        main {
+            assets.srcDir faceModelsAssetsDir
+        }
+        androidTest {
+            // Vecteurs du pipeline visage (images du domaine public + sorties attendues) pour FaceModelsTest
+            assets.srcDir 'src/test/resources'
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
         targetCompatibility JavaVersion.VERSION_21
@@ -55,6 +74,8 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
+    // Moteur d'inférence du visage, sans dépendance transitive (la 2.x tire ai-delivery des services Play)
+    implementation 'com.google.ai.edge.litert:litert:1.4.2'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
@@ -65,6 +86,9 @@ dependencies {
 }
 
 apply from: 'capacitor.build.gradle'
+
+tasks.named('preBuild') { dependsOn 'faceModels' }
+tasks.matching { it.name ==~ /merge.*Assets/ }.configureEach { dependsOn 'faceModels' }
 
 try {
     def servicesJSON = file('google-services.json')

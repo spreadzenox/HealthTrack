@@ -92,7 +92,7 @@ jobs:
 
       - name: Construire l'APK debug et l'APK de test
         working-directory: app/android
-        run: ./gradlew assembleDebug assembleDebugAndroidTest --no-daemon
+        run: ./gradlew assembleDebug assembleDebugAndroidTest -PextraAbis=x86_64 --no-daemon
 
       - name: Afficher les infos APK
         run: |
