@@ -210,4 +210,13 @@ public class WatchReaderTest {
         assertEquals(CaptureInbox.MAX, items.size());
         assertEquals("capture-1760000001005-000.json", items.get(0).name); // les plus anciennes sont parties
     }
+
+    @Test
+    public void boite_a_plafond_choisi() throws Exception {
+        CaptureInbox inbox = new CaptureInbox(Files.createTempDirectory("rafales").toFile(), 3);
+        for (int i = 0; i < 5; i++) inbox.put("{}", 1_760_000_000_000L + i);
+        List<CaptureInbox.Item> items = inbox.list();
+        assertEquals(3, items.size());
+        assertEquals("capture-1760000000002-000.json", items.get(0).name);
+    }
 }

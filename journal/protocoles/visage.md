@@ -184,3 +184,23 @@ fermée → pour chaque image : rotation capteur → détecteur (1re image) → 
 coefficients → indices → image effacée de la mémoire. Interprètes LiteRT gardés en mémoire tant que le service vit,
 1 thread, XNNPACK. Le diagnostic exporte : temps par étape, images rejetées et raison, taille du visage, mais **jamais
 une image ni des points**.
+
+### 8.1 Service livré (18/10/2026 22:30, I88 ①)
+
+- `FaceSenseService` (premier plan `camera`, démarré seulement app ouverte par `FaceSensePlugin.start`, après la
+  permission `CAMERA`) ; `START_NOT_STICKY` ; récepteur dynamique `USER_PRESENT` (rafale 1,2 s après) et
+  `SCREEN_OFF` (annule la rafale en attente). Pas encore de rafale « toutes les ~3 min écran allumé » : seules les
+  rafales du déverrouillage servent à l'humeur (I114) ; à réévaluer avec le diagnostic (nombre de déverrouillages).
+- `FaceCamera` : caméra frontale, plus petite taille YUV_420_888 ≥ 320 × 240, `TEMPLATE_PREVIEW` en `CONTROL_MODE_AUTO`,
+  images ignorées pendant 450 ms (exposition), puis 3 images espacées d'au moins 350 ms, chacune convertie en RVB
+  tourné (`FaceFrames.fromYuv420`, BT.601 plein écart, rotation = orientation du capteur + rotation de l'écran) et
+  rendue aussitôt ; délai maximal 4 s ; erreurs `camera_busy` / `camera_disabled` / `camera_denied` /
+  `camera_timeout` / `camera_error` / `no_front_camera`.
+- `FaceSchedule` : déclencheurs `unlock` et `manual` seulement ; 2 min minimum entre deux rafales du déverrouillage,
+  150 par jour, rien écran éteint, pendant un appel, ou si `getThermalHeadroom(10)` > 0,8.
+- `FaceRecord` (format v1) déposé dans `files/face-bursts/` (au plus 3 000 fichiers) :
+  `{ v, at, trigger, frames, valid, values: { smile, duchenne, browDown, browInnerUp, mouthFrown, eyeOpen, jawOpen,
+  asymmetry, yaw, mobility }, rejected: { raison: n }, ms: { camera, inference } }`.
+- Diagnostic (préférences `face_sense`, jamais un score) : `dayUnlocks` / `dayBursts` / `dayFaces`, `n_<résultat>`,
+  `r_<rejet>`, `sumCameraMs` / `sumInferenceMs` / `timed`, `modelLoadMs`, `startedAt` / `stoppedAt`, `startBattery`,
+  `lastError` ; exporté par la carte en `healthtrack-visage-*.json`.

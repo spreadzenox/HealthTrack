@@ -9,9 +9,11 @@ export function splitSourcesByStatus({
   weatherEnabled,
   phoneUsageEnabled,
   watchEverConnected,
+  faceSenseEnabled = false,
 }) {
   const sources = [
     ['watch', watchEverConnected],
+    ['face', faceSenseEnabled],
     ...connectorIds.map((id) => [id, isConnectorEnabled(id)]),
     ['weather', weatherEnabled],
     ['phone', phoneUsageEnabled],

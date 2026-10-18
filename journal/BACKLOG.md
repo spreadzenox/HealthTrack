@@ -21,7 +21,40 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
-## 🔴 Consigne du propriétaire du 18/10/2026 — prime sur tout (charte §0000)
+## 🔴🔴 Consigne du propriétaire du 18/10/2026 au soir — PRIORITÉ UNIQUE (charte §00000)
+
+« Concentration maximale sur la collecte entièrement automatique du bien-être. » Plan et décisions :
+[`BIEN-ETRE-AUTO.md`](BIEN-ETRE-AUTO.md). Tous les runs de code sur ce chantier ; runs idées : veille dessus.
+**En pause** : A.1–A.3 (livrés de toute façon), D1 nettoyage, D2 performance, C7 interconnexion (sauf panne,
+PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatique).
+- [x] **État des lieux + plan** (run 18/10 22:30) : `BIEN-ETRE-AUTO.md`. Décisions : réseaux sociaux / usage du
+  téléphone = X ; signaux physiologiques de la montre (stress / VFC, FC, sommeil) = X ; Y = visage, voix,
+  auto-déclaration.
+- [x] **Cœur Y / X + anti-circularité** : existant (`ESTIMATOR_INPUTS`, `antiCircularity.test.js`, ordre temporel).
+- [x] **I88 ① service « Lecture du visage »** (run 18/10 22:30) : `FaceSenseService` (premier plan `camera`,
+  `START_NOT_STICKY`, récepteur `USER_PRESENT` / `SCREEN_OFF`, rafale 1,2 s après le déverrouillage), `FaceCamera`
+  (Camera2, YUV ≥ 320 × 240, 3 images espacées de 350 ms après 450 ms d'exposition, caméra fermée, rien sur le
+  disque), `face/FaceFrames` (YUV → RVB tourné, testé), `face/FaceSchedule` (déverrouillage seulement + test, 2 min
+  mini, 150 / jour, appel, écran, chaleur ; testé), `face/FaceRecord` (JSON scores seuls, testé), boîte
+  `face-bursts/` (`CaptureInbox` à plafond 3 000), `FaceSensePlugin` (start avec permission, stop, test, status,
+  list / remove, sortie d'optimisation batterie), carte `FaceSenseCard` en tête de Connecteurs (comptes seulement,
+  « Relancer », « Sans restriction », diagnostic exportable `healthtrack-visage-*.json`).
+  - [ ] **Retour du propriétaire** : diagnostic de l'A56 après quelques heures (tient-il en arrière-plan sur One UI ?
+    taux de visages, rejets, temps, batterie, point vert).
+- [ ] **I90** : importer les rafales `face-bursts/` en entrées `face_burst` (`trigger`, `values`, `valid`, `rejected`)
+  à l'ouverture, sans doublon, retirées après écriture réussie ; `manual` jamais en Y ; test « composition » (I114) ;
+  export / import JSON compris.
+- [ ] I88 ② notification « Lecture du visage arrêtée · Reprendre » (`PendingIntent.getForegroundService`) postée par
+  le récepteur de déverrouillage de la montre ou la tâche des 2 h quand `enabled` et service absent ; et au
+  redémarrage.
+- [ ] I89 guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`, `RECORD_AUDIO allow`) + détection.
+- [ ] I91 voix (prosodie, aucun audio gardé) ; service `microphone`.
+- [ ] Temps au premier plan par app (réseaux sociaux regroupés) comme X.
+- [ ] I112 porte `gate.js` → I115 / estimation du jour avec fourchette.
+- [ ] I113 note du soir d'un geste depuis la notification (calibration, optionnelle).
+- [ ] Mesurer la consommation réelle (diagnostic : batterie au démarrage / maintenant, temps caméra) et la noter ici.
+
+## 🔴 Consigne du propriétaire du 18/10/2026 — remplacée le soir même par la consigne ci-dessus (charte §0000)
 
 - [x] **A. Régression écran montre (capture 18/10 11:06)** — livré au run du 18/10 12:30 : délai maximal par étape
   du test (`STEP_TIMEOUTS`, `utils/withTimeout.js`), verdicts `timeout` / `busy` / `in_use`, test sous le verrou de
@@ -572,6 +605,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Réordonnées le 18/10 (22:30 Paris), consigne du 18/10 au soir (charte §00000) — prime sur tout ce qui suit** :
+1) 🔴🙂 **bien-être entièrement automatique, seul chantier** : a) lire le diagnostic visage de l'A56 dès qu'il arrive
+(`journal/diagnostics/`) ; b) **I90** import des rafales `face_burst` + test « composition » ; c) I88 ② notification
+« Reprendre » ; d) I89 Shizuku / ADB ; e) I91 voix ; f) temps par app (X) ; g) I112 porte → estimation du jour ;
+h) I113 note du soir (option). 2) ⏸️ En pause : montre (sauf régression), D1, D2, C7.
 
 **Réordonnées le 18/10 (16:30 Paris), consigne du 18/10 complétée après la capture de 15:03 (correctif confirmé sur
 la montre)** : 1) 🔴 petites corrections montre A.1–A.3 — ✅ **livrées le 18/10 16:30** (A.1 détection des apps : un

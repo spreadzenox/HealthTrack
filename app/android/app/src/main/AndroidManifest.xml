@@ -43,6 +43,13 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <!-- Lecture du visage (FaceSenseService.java, journal/IDEES.md I88) : service caméra de premier plan, démarré
+             seulement depuis l'app ouverte (FaceSensePlugin) ; rafales au déverrouillage, scores seuls gardés. -->
+        <service
+            android:name=".FaceSenseService"
+            android:exported="false"
+            android:foregroundServiceType="camera" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -70,6 +77,16 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Seule notification : « synchro de la montre en pause » si elle refuse la clé app fermée (WatchNotifications). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Lecture du visage (FaceSenseService.java) : caméra frontale au déverrouillage, images analysées sur le
+         téléphone puis effacées ; service de premier plan de type caméra, sortie de l'optimisation de batterie
+         demandée par un bouton (boîte d'Android, l'utilisateur confirme). -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
 
     <!-- Temps d'écran et sommeil estimé par le téléphone (PhoneUsagePlugin.java, src/services/phoneUsage.js) :
          seulement les événements écran allumé / éteint / déverrouillé, rien ne quitte le téléphone.

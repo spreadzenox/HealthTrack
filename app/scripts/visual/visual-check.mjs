@@ -38,6 +38,8 @@
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion=on  # … activée, montre vue il y a 5 min, relue app fermée il y a 3 min
  *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
+ *   npm run visual -- --routes=/connectors --face       # « Lecture du visage » : faux plugin, service actif
+ *   npm run visual -- --routes=/connectors --face=off   # … pas encore activée ; --face=stopped : arrêtée par Android
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
@@ -450,6 +452,31 @@ async function main() {
           queryScreenEvents: async () => ({ events }),
         }
       }, String(args.phone))
+    }
+    if (args.face) {
+      // « Lecture du visage » : faux plugin FaceSense (lu par src/services/faceSense.js). Jamais de score.
+      await context.addInitScript((mode) => {
+        const on = mode !== 'off'
+        try {
+          localStorage.setItem('healthtrack_face_sense', JSON.stringify({ enabled: on }))
+        } catch {
+          /* ignore */
+        }
+        const status = {
+          models: true, enabled: on, permission: true, running: on && mode !== 'stopped', batteryExempt: false,
+          dayUnlocks: 14, dayBursts: 11, dayFaces: 8, timed: 11, sumCameraMs: 11 * 1350, sumInferenceMs: 11 * 120,
+          lastOutcome: 'face', lastTrigger: 'unlock', lastOutcomeAt: Date.now() - 6 * 60000,
+          outcomes: { face: 8, no_valid_frame: 3, 'skip:too_soon': 3 }, rejected: { no_face: 4, too_dark: 3, turned: 2 },
+          startBattery: 82, battery: 76, manufacturer: 'samsung', model: 'SM-A566B', release: '16', sdk: 36, pending: 11,
+        }
+        window.__healthtrackFakeFaceSense = {
+          status: async () => ({ ...status }),
+          start: async () => ({ started: true, permission: true }),
+          stop: async () => {},
+          test: async () => {},
+          requestBatteryExemption: async () => {},
+        }
+      }, String(args.face))
     }
     if (!args['wellbeing-prompt']) {
       await context.addInitScript(() => {
