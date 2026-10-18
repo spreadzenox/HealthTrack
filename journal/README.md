@@ -1055,7 +1055,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR #206 ; checks verts → fusionnée |
 | 18/10 12:30 — [Montre : test jamais bloqué, assistant cohérent](runs/2026-10-18-1230-montre-test-bloque.md) | 🔴🐛⌚ | Consigne du 18/10 (A) ; PR #207 ; checks verts → fusionnée |
 | 18/10 14:30 — [Visage : post-traitement Java testé](runs/2026-10-18-1430-visage-pipeline-java.md) | 🙂 | Consigne B, I100 ① a ; PR #208 ; 1er passage rouge (PNG de test ignorés par `.gitignore`), puis checks verts → fusionnée |
-| 18/10 16:30 — [Montre : finitions A.1–A.3](runs/2026-10-18-1630-montre-finitions.md) | 🐛⌚ | Consigne du 18/10 (A.1–A.3, retour de 15:03) ; PR à venir |
+| 18/10 16:30 — [Montre : finitions A.1–A.3](runs/2026-10-18-1630-montre-finitions.md) | 🐛⌚ | Consigne du 18/10 (A.1–A.3, retour de 15:03) ; PR #209 |
 
 ---
 

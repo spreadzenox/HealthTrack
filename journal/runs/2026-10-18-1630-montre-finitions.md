@@ -1,6 +1,6 @@
 # 2026-10-18 16:30 Paris (14:30 UTC) — Montre : finitions A.1–A.3 (retour du propriétaire de 15:03)
 
-**Type** : 🐛⌚ consigne du propriétaire du 18/10, point A (petites corrections restantes)  ·  **PR** : voir ci-dessous
+**Type** : 🐛⌚ consigne du propriétaire du 18/10, point A (petites corrections restantes)  ·  **PR** : #209
 
 ## Pourquoi
 - Démarrage : main à `f61e12b` (#208 fusionnée). Aucune PR « [Auto] » ouverte.
