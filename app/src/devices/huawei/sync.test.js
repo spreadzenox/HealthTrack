@@ -177,6 +177,21 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
     expect(w.since).toBeLessThan(w.until)
   })
 
+  it('journée entière (consigne du 18/10, A.3) : des synchros espacées de 4 h ne laissent aucun trou, la dernière heure vient du total du jour', () => {
+    // veille 22:40, puis 11:06, 15:03, 19:30 : chaque fenêtre repart avant la fin de la précédente
+    const times = ['2026-10-17T22:40:00Z', '2026-10-18T11:06:00Z', '2026-10-18T15:03:00Z', '2026-10-18T19:30:00Z'].map(Date.parse)
+    let lastUntil = Date.parse('2026-10-17T18:00:00Z')
+    for (const t of times) {
+      const w = syncWindow(lastUntil, t)
+      expect(w.since).toBeLessThan(lastUntil) // recouvrement : rien entre deux synchros n'est sauté
+      expect(t - w.until).toBeLessThan(3600_000) // seule l'heure entamée attend la synchro suivante…
+      lastUntil = w.until
+    }
+    // … et ses pas sont déjà comptés par le total du jour (depuis minuit), relu à chaque synchro
+    const out = totalsEntries({ steps: 5400, kcal: 210 }, times[2])
+    expect(out.map((e) => e.payload.value)).toEqual([5400, 210])
+  })
+
   it('totaux du jour (journal v124 : 603 pas, 20 kcal, 529 m) → entrées « total du jour » à minuit + 50 s', () => {
     const now = Date.parse('2026-10-14T10:22:00Z')
     const out = totalsEntries({ steps: 603, kcal: 20, distanceM: 529 }, now, { sourceName: 'HUAWEI WATCH GT 6 Pro-1A2' })

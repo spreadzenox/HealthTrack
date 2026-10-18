@@ -555,6 +555,18 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 ## Prochaines étapes (ordre conseillé)
 
+**Réordonnées le 18/10 (16:30 Paris), consigne du 18/10 complétée après la capture de 15:03 (correctif confirmé sur
+la montre)** : 1) 🔴 petites corrections montre A.1–A.3 — ✅ **livrées le 18/10 16:30** (A.1 détection des apps : un
+seul appel natif `AppManager.installedPackages` + piège du Proxy Capacitor corrigé ; A.2 « Huawei non listé » plus en
+avertissement quand le canal classique s'ouvre ; A.3 relectures natives comptées dans « dernière synchro réussie »,
+minuteur de 5 min app à l'écran, fenêtre du jour sans trou vérifiée) ; 2) 🙂 **estimation automatique du bien-être**
+(I100 ① b, I88, I90, I110 ; D5, D6) ; 3) 🧹 nettoyage de l'UI ; 4) ⚡ performance.
+- [ ] Montre (maintenance, à l'occasion) : l'heure entamée n'est relue qu'à la synchro suivante (fenêtre « jusqu'à
+      l'heure pleine », voulue pour ne pas écrire de tranche à moitié ; les pas sont couverts par le total du jour). Si
+      utile : écrire les tranches de 10 min de FC / SpO₂ terminées jusqu'à maintenant (clés stables, pas de doublon).
+- [ ] Montre : si le propriétaire voit encore « dernière synchro il y a 4 h », lire dans son journal `background`
+      (`lastDecision`, `lastTrigger`, `periodic`) pourquoi la relecture native n'a pas tourné (Doze, Samsung, « absent »).
+
 **Réordonnées le 18/10 (12:30 Paris), consigne du propriétaire du 18/10 (charte §0000)** :
 1) 🔴 régression montre du 18/10 (✅ livrée 12:30 ; reste la confirmation sur la montre si le propriétaire renvoie
 un journal) ; 2) 🙂 **estimation automatique du bien-être : D4 (I100 ① moteur du visage — ① a fait le 18/10 14:30,

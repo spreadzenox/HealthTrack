@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import { triggerAutoSync } from '../connectors/autoSync'
 import { syncWeather } from '../services/weatherSync'
 import { syncPhoneUsage } from '../services/phoneUsageSync'
-import { syncWatchIfStale } from '../services/watchAutoSync'
+import { syncWatchIfStale, WATCH_FOREGROUND_CHECK_MS } from '../services/watchAutoSync'
 import { listenWatchPresence } from '../services/watchPresence'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { recordTimezoneContext } from '../services/timezoneContext'
@@ -49,6 +49,14 @@ export function useAutoSync() {
       syncWatchIfStale()
     }
     document.addEventListener('visibilitychange', onVisible)
-    return () => document.removeEventListener('visibilitychange', onVisible)
+    // … et tant que l'app reste à l'écran : la relecture native s'efface alors (« l'app s'en charge »), et sans ce
+    // minuteur rien ne relisait la montre avant la prochaine ouverture (18/10/2026, « dernière synchro il y a 4 h »).
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') syncWatchIfStale()
+    }, WATCH_FOREGROUND_CHECK_MS)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      clearInterval(timer)
+    }
   }, [])
 }
