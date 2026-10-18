@@ -506,6 +506,25 @@ passe d'environ 7 à 15 Mo (les modèles et le moteur), téléchargement toujour
 lire un visage prend 15 à 50 ms par image. Prochaine étape : le service « Lecture du visage » (interrupteur, 3 images au
 déverrouillage, aucune image gardée) et son écran de diagnostic à me renvoyer.
 
+**Run « idées » du 18/10 20:30 — consigne B : quand le visage pourra-t-il dire quelque chose de juste sur votre
+humeur ?** (rien ne change dans l'app ; la v167 du run de 18:30 est publiée, 15 Mo). J'ai lu en entier l'étude la
+plus proche de ce que prépare HealthTrack (MoodCam, 2024 : photos au déverrouillage, 25 personnes, 4 semaines) et
+simulé la « porte d'entrée » qui décidera si votre visage suit vraiment vos notes. Ce qu'il faut retenir :
+- **Attendez-vous à 2 à 3 mois.** Avec un signal de la force mesurée par MoodCam, la porte s'ouvre chez environ
+  1 personne sur 2 après 2 mois, 3 sur 4 après 3 mois, et elle ne s'ouvre par erreur que 2 fois sur 100. Et peut-être
+  jamais chez vous : chez certaines personnes le visage ne suit pas l'humeur, ou dans l'autre sens (plus de sourires
+  les mauvais jours) ; HealthTrack ne présuppose rien, il vérifie.
+- **Ce qui accélère le plus, c'est vous : une note le soir, régulièrement.** Noter 1 jour sur 2 au lieu de presque
+  tous les jours double le temps d'attente. Pas besoin de questions dans la journée : la note du soir comparée à la
+  moyenne des ≈ 30 lectures du jour fait mieux que 3 questions par jour (simulé). Prochain run de code : **la note
+  du soir en un geste, directement depuis une notification**, sans ouvrir l'app (aujourd'hui l'app ne vous la
+  rappelle jamais).
+- **Un piège évité** : si l'app lisait votre visage pendant que vous regardez une vidéo drôle, elle croirait que les
+  réseaux sociaux vous rendent de meilleure humeur, sans que ce soit vrai (simulé : un faux lien suffisant pour
+  apparaître dans vos pistes). Le visage ne sera donc lu pour l'humeur **qu'au déverrouillage**, avant tout contenu.
+- Une fois la porte ouverte, le visage **complétera les jours où vous n'avez pas noté** (« plutôt bonne journée,
+  d'après votre visage »), sans jamais remplacer une note que vous avez donnée.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Montre : détection des apps instantanée, synchro de fond comptée (run 18/10 16:30)** : plus de « délai dépassé »
   pour les apps (même correctif pour « Mes appareils » et Health Connect) ; « Huawei non listé » n'est plus un
@@ -885,6 +904,11 @@ déverrouillage, aucune image gardée) et son écran de diagnostic à me renvoye
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **L'humeur par le visage, honnêtement** (run 18/10 20:30) : visage lu **au déverrouillage seulement** (sinon les
+  vidéos drôles fabriquent un faux lien « réseaux sociaux → humeur ») ; porte d'entrée testée au niveau du jour,
+  deux semaines de suite au-dessus du seuil (simulé : 2 % de faux départs) ; **note du soir d'un geste depuis la
+  notification**, le levier qui divise par deux le temps avant que le visage serve ; ensuite le visage complète les
+  jours sans note.
 - **Beaucoup de facteurs, presque aucun faux lien** (run 18/10 08:30) : partir de « la plupart des facteurs ne font
   rien » (simulé : moins de 1,5 % de jeux avec un faux « chez vous » sur 40 facteurs, contre 58 % sans) ; pistes en
   deux étages « Chez vous » / « À vérifier » ; expériences tirées au sort le soir, seulement sur les mesures de nuit ;
@@ -1067,7 +1091,8 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 12:30 — [Montre : test jamais bloqué, assistant cohérent](runs/2026-10-18-1230-montre-test-bloque.md) | 🔴🐛⌚ | Consigne du 18/10 (A) ; PR #207 ; checks verts → fusionnée |
 | 18/10 14:30 — [Visage : post-traitement Java testé](runs/2026-10-18-1430-visage-pipeline-java.md) | 🙂 | Consigne B, I100 ① a ; PR #208 ; 1er passage rouge (PNG de test ignorés par `.gitignore`), puis checks verts → fusionnée |
 | 18/10 16:30 — [Montre : finitions A.1–A.3](runs/2026-10-18-1630-montre-finitions.md) | 🐛⌚ | Consigne du 18/10 (A.1–A.3, retour de 15:03) ; PR #209 fusionnée |
-| 18/10 18:30 — [Visage : modèles LiteRT dans l'APK](runs/2026-10-18-1830-visage-litert.md) | 🙂 | Consigne B, I100 ① b ; PR #210 |
+| 18/10 18:30 — [Visage : modèles LiteRT dans l'APK](runs/2026-10-18-1830-visage-litert.md) | 🙂 | Consigne B, I100 ① b ; PR #210 ; fusionnée → v167 (APK 15 Mo) |
+| 18/10 20:30 — [Idées : l'humeur par le visage, quand y croire](runs/2026-10-18-2030-idees-humeur-visage-porte.md) | 💡🙂 | Consigne B ; 4 idées (I112–I115), simulation porte + biais de composition ; journal seul |
 
 ---
 
