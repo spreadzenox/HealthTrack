@@ -1,6 +1,6 @@
 # 2026-10-18 10:30 Paris (08:30 UTC) — Pistes « Chez vous » / « À vérifier » (I108, D6)
 
-**Type** : 🧭 D6 / D5 (comparaisons multiples)  ·  **PR** : « [Auto] Analyses : pistes « Chez vous » / « À vérifier » »
+**Type** : 🧭 D6 / D5 (comparaisons multiples)  ·  **PR** : #206
 
 ## Pourquoi
 - Démarrage : main à `0f40321` (#205) ; « Tests », « Build & Release » (v162) et émulateur A56 verts. Aucune PR

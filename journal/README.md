@@ -990,7 +990,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 04:30 — [Analyses : tout l'historique du cœur + Worker mesuré](runs/2026-10-18-0430-analyses-coeur-complet.md) | ⚡🐛 | PR #203 ; 1er passage rouge (type « correction » refusé par le test des Nouveautés → « correctif »), puis checks verts → fusionnée → v161 |
 | 18/10 06:30 — [Agrégats journaliers des séries denses](runs/2026-10-18-0630-agregats-journaliers.md) | ⚡🐛 | PR #204 ; checks verts (budget resserré inclus) → fusionnée → v162 |
 | 18/10 08:30 — [Idées : faux liens sur 40 facteurs, expériences, voix](runs/2026-10-18-0830-idees-multiplicite-abab.md) | 💡🧭 | 5 idées (I107–I111), 2 simulations ; journal seul |
-| 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR à venir |
+| 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR #206 ; checks verts → fusionnée |
 
 ---
 
