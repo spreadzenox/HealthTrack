@@ -8,6 +8,8 @@ vi.mock('../services/phoneUsageSync', () => ({ syncPhoneUsage: vi.fn() }))
 vi.mock('../services/watchPresence', () => ({ listenWatchPresence: vi.fn() }))
 vi.mock('../services/spo2Slots', () => ({ compactWatchSpo2Once: vi.fn(async () => null) }))
 vi.mock('../services/timezoneContext', () => ({ recordTimezoneContext: vi.fn() }))
+const importFaces = vi.fn(async () => ({ imported: 0 }))
+vi.mock('../services/faceBursts', () => ({ importPendingFaceBursts: (...a) => importFaces(...a) }))
 vi.mock('../services/watchAutoSync', () => ({ syncWatchIfStale: (...a) => sync(...a), WATCH_FOREGROUND_CHECK_MS: 5 * 60_000 }))
 
 import { useAutoSync } from './useAutoSync'
@@ -15,6 +17,17 @@ import { useAutoSync } from './useAutoSync'
 afterEach(() => {
   vi.useRealTimers()
   sync.mockClear()
+  importFaces.mockClear()
+})
+
+describe('useAutoSync — lecture du visage (I90)', () => {
+  it('range les rafales en attente à l’ouverture et à chaque retour dans l’app', async () => {
+    const { unmount } = renderHook(() => useAutoSync())
+    expect(importFaces).toHaveBeenCalledTimes(1)
+    document.dispatchEvent(new Event('visibilitychange'))
+    expect(importFaces).toHaveBeenCalledTimes(2)
+    unmount()
+  })
 })
 
 describe('useAutoSync — montre relue même app restée à l’écran (18/10/2026)', () => {

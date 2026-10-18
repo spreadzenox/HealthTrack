@@ -27,13 +27,14 @@ function formatDay(at) {
 
 /** « 12 repas · 30 notes de bien-être · 2 cigarettes · 1 200 mesures (montre, balance…) » */
 function describeBackupContent(byType) {
-  const { food = 0, wellbeing = 0, cigarette = 0, ...rest } = byType
+  const { food = 0, wellbeing = 0, cigarette = 0, face_burst: face = 0, ...rest } = byType
   const measures = Object.values(rest).reduce((a, b) => a + b, 0)
   const parts = []
   if (food) parts.push(plural(food, 'repas', 'repas'))
   if (wellbeing) parts.push(plural(wellbeing, 'note de bien-être', 'notes de bien-être'))
   if (cigarette) parts.push(plural(cigarette, 'cigarette'))
   if (measures) parts.push(`${plural(measures, 'mesure')} (montre, balance…)`)
+  if (face) parts.push(plural(face, 'lecture du visage', 'lectures du visage'))
   return parts.join(' · ')
 }
 

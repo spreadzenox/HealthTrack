@@ -234,6 +234,15 @@ describe('buildDailyJournal — fuseau horaire', () => {
   })
 })
 
+describe('buildDailyJournal — lecture du visage', () => {
+  it('les rafales `face_burst` ne sont jamais listées (porte de calibration) ni ne font apparaître une journée', () => {
+    const burst = e('face_burst', '2026-10-10T08:00:00.000Z', { trigger: 'unlock', frames: 3, valid: 3, values: { smile: 0.4 } }, 'face_sense')
+    const days = buildDailyJournal([burst, e('steps', '2026-10-11T20:00:00.000Z', { value: 5000, period: 'day' }), { ...burst, at: '2026-10-11T08:00:00.000Z' }])
+    expect(days.map((d) => d.dateKey)).toEqual(['2026-10-11'])
+    expect(days[0].items).toEqual([])
+  })
+})
+
 describe('dayHeading', () => {
   const now = new Date('2026-10-09T18:30:00')
 

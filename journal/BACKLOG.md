@@ -41,9 +41,15 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   « Relancer », « Sans restriction », diagnostic exportable `healthtrack-visage-*.json`).
   - [ ] **Retour du propriétaire** : diagnostic de l'A56 après quelques heures (tient-il en arrière-plan sur One UI ?
     taux de visages, rejets, temps, batterie, point vert).
-- [ ] **I90** : importer les rafales `face-bursts/` en entrées `face_burst` (`trigger`, `values`, `valid`, `rejected`)
-  à l'ouverture, sans doublon, retirées après écriture réussie ; `manual` jamais en Y ; test « composition » (I114) ;
-  export / import JSON compris.
+- [x] **I90** (run 19/10 00:30) : `services/faceBursts.js` — rafales `face-bursts/` → entrées `face_burst` (source
+  `face_sense`, `payload { v, trigger, frames, valid, values?, rejected, ms }`) à l'ouverture et au retour dans l'app
+  (`useAutoSync`) et à l'affichage de la carte, en un lot sans doublon (`upsertEntries`), retirées après écriture
+  réussie (illisibles retirées, échec d'écriture → tout gardé) ; `moodFaceBursts` = Y (déverrouillage + ≥ 1 image
+  valide) ; test « composition » et « jamais une colonne / un facteur » dans `antiCircularity.test.js` ; masquées du
+  journal de l'Accueil ; export / import JSON testés ; carte « N lectures gardées depuis le … » ; diagnostic
+  `history { stored, forMood, firstAt, lastImport }`.
+  - [ ] Si l'historique grossit (≈ 50 rafales / jour), le journal de l'Accueil lit 14 jours en `limit: 5000` : exclure
+    `face_burst` à la lecture (index `type_at`) si les mesures de la montre s'en trouvent tronquées.
 - [ ] I88 ② notification « Lecture du visage arrêtée · Reprendre » (`PendingIntent.getForegroundService`) postée par
   le récepteur de déverrouillage de la montre ou la tâche des 2 h quand `enabled` et service absent ; et au
   redémarrage.

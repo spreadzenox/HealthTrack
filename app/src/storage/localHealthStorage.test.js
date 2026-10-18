@@ -31,6 +31,7 @@ import {
   deleteEntry,
   updateEntry,
 } from './localHealthStorage'
+import { importPendingFaceBursts } from '../services/faceBursts'
 
 describe('createEntry / listEntries', () => {
   it('stores an entry and retrieves it', async () => {
@@ -248,6 +249,22 @@ describe('exportToJson / importFromJson', () => {
     const { imported } = await importFromJson(JSON.stringify(parsed))
     expect(imported).toBe(1206)
     expect(await countAllEntries()).toBe(1206)
+  })
+
+  it('lecture du visage (I90) : rafales rangées sans doublon, exportées et réimportées telles quelles', async () => {
+    const rec = (at, trigger = 'unlock') => JSON.stringify({ v: 1, at, trigger, frames: 3, valid: 3, values: { smile: 0.25, yaw: 3.1 }, rejected: {}, ms: { camera: 1200, inference: 110 } })
+    const items = [{ name: 'capture-1-000.json', json: rec(Date.UTC(2026, 9, 19, 7)) }, { name: 'capture-2-000.json', json: rec(Date.UTC(2026, 9, 19, 9), 'manual') }]
+    const plugin = { list: async () => ({ bursts: items }), remove: vi.fn(async () => ({})) }
+    expect(await importPendingFaceBursts({ plugin })).toMatchObject({ imported: 2, inserted: 2 })
+    // Retrait raté côté natif : la même boîte relue ne double rien
+    expect(await importPendingFaceBursts({ plugin })).toMatchObject({ imported: 2, inserted: 0 })
+    expect(await countEntries({ type: 'face_burst' })).toBe(2)
+
+    const json = await exportToJson()
+    globalThis.indexedDB = new IDBFactory()
+    expect((await importFromJson(json)).imported).toBe(2)
+    const [later] = await listEntries({ type: 'face_burst', limit: 1 })
+    expect(later).toMatchObject({ source: 'face_sense', at: '2026-10-19T09:00:00.000Z', payload: { trigger: 'manual', valid: 3, values: { smile: 0.25, yaw: 3.1 } } })
   })
 
   it('imports an old-style file (bare array, entries without created_at)', async () => {

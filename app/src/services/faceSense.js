@@ -156,7 +156,7 @@ export function describeFaceSense(status) {
  * Diagnostic exportable (JSON) : appareil, état du service, compteurs, temps moyens, raisons des sauts et des
  * rejets. Jamais d'image, de point ni de score d'expression.
  */
-export function faceDiagnosticReport(status, { appVersion, now = new Date() } = {}) {
+export function faceDiagnosticReport(status, { appVersion, now = new Date(), history = null, lastImport = null } = {}) {
   const s = status || {}
   const timed = s.timed || 0
   return {
@@ -191,12 +191,20 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date() } = 
     },
     battery: { atStart: s.startBattery ?? null, now: s.battery ?? null },
     pendingBursts: s.pending ?? 0,
+    // Rangées dans l'historique (I90) : des comptes seulement.
+    history: {
+      stored: history?.stored ?? null,
+      forMood: history?.forMood ?? null,
+      firstAt: history?.firstAt ?? null,
+      lastImportAt: lastImport?.at ?? null,
+      lastImport: lastImport ? { imported: lastImport.imported ?? 0, dropped: lastImport.dropped ?? 0, kept: lastImport.kept ?? 0 } : null,
+    },
   }
 }
 
 /** Lignes lisibles du diagnostic (carte). */
-export function faceDiagnosticLines(status) {
-  const r = faceDiagnosticReport(status)
+export function faceDiagnosticLines(status, { history = null, lastImport = null } = {}) {
+  const r = faceDiagnosticReport(status, { history, lastImport })
   const lines = []
   lines.push(`Service : ${r.service.running ? 'actif' : 'arrêté'} · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'} · batterie ${r.service.batteryExempt ? 'sans restriction' : 'optimisée par Android'}`)
   if (r.last.outcome) lines.push(`Dernière lecture : ${outcomeLabel(r.last.outcome)}${r.last.trigger === 'manual' ? ' (test)' : ''}`)
@@ -208,6 +216,11 @@ export function faceDiagnosticLines(status) {
   if (r.battery.atStart != null && r.battery.now != null && r.battery.atStart >= 0) {
     lines.push(`Batterie : ${r.battery.atStart} % au démarrage, ${r.battery.now} % maintenant (tout le téléphone)`)
   }
+  if (r.history.stored != null) {
+    lines.push(`Historique : ${plural(r.history.stored, 'lecture rangée', 'lectures rangées')}, dont ${r.history.forMood} au déverrouillage avec un visage (comptent pour l’humeur)`)
+  }
+  if (r.pendingBursts) lines.push(`En attente d’être rangées : ${r.pendingBursts}`)
+  if (r.history.lastImport?.dropped) lines.push(`Lectures illisibles écartées au dernier rangement : ${r.history.lastImport.dropped}`)
   if (r.service.lastError) lines.push(`Dernière erreur : ${r.service.lastError}`)
   return lines
 }

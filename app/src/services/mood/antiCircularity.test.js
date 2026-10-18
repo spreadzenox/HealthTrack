@@ -5,8 +5,9 @@
  */
 import { describe, it, expect } from 'vitest'
 import { ESTIMATOR_INPUTS, isEstimatorInput, ESTIMATOR_TAGS } from './estimatorInputs'
-import { VARIABLE_META } from '../analysisEngine'
+import { VARIABLE_META, buildDailyDataset, computeBasicCorrelations } from '../analysisEngine'
 import { BEHAVIOR_TAGS, computeTagEffects } from '../behaviorTags'
+import { FACE_BURST_TYPE, MOOD_TRIGGERS, moodFaceBursts } from '../faceBursts'
 
 describe('séparation Y (humeur) / X (comportements et contexte)', () => {
   it('déclare les seules entrées permises : visage, voix, auto-déclaration', () => {
@@ -46,5 +47,29 @@ describe('séparation Y (humeur) / X (comportements et contexte)', () => {
     const ids = [...(res.effects || []), ...(res.pending || [])].map((e) => e.tagId)
     expect(ids).toContain('alcohol')
     expect(ids.filter(isEstimatorInput)).toEqual([])
+  })
+
+  it("les rafales du visage (Y) ne deviennent jamais une colonne ni un facteur des Analyses", () => {
+    const entries = []
+    for (let i = 0; i < 20; i++) {
+      const d = new Date(2026, 8, 1 + i, 21, 0)
+      const smile = i % 2 === 0 ? 0.6 : 0.1
+      entries.push({ type: 'wellbeing', at: d.toISOString(), payload: { score: smile > 0.3 ? 4 : 2 } })
+      entries.push({ type: 'steps', at: new Date(2026, 8, 1 + i, 12).toISOString(), payload: { value: 4000 + 500 * (i % 3) } })
+      entries.push({ type: FACE_BURST_TYPE, source: 'face_sense', at: new Date(2026, 8, 1 + i, 8).toISOString(), payload: { trigger: 'unlock', frames: 3, valid: 3, values: { smile } } })
+    }
+    const columns = new Set(buildDailyDataset(entries).flatMap((row) => Object.keys(row)))
+    expect([...columns].filter((c) => c.startsWith('face'))).toEqual([])
+    const factors = (computeBasicCorrelations(entries)?.correlations || []).map((c) => c.variable)
+    expect(factors).toContain('steps')
+    expect(factors.filter(isEstimatorInput)).toEqual([])
+  })
+
+  it("composition (I114) : seules les rafales du déverrouillage comptent pour l'humeur, quel que soit l'usage du téléphone", () => {
+    // Des rafales prises pendant l'usage d'une app (ou un test) suivraient l'usage (un X) : jamais en Y.
+    expect(MOOD_TRIGGERS).toEqual(['unlock'])
+    const burst = (trigger) => ({ type: FACE_BURST_TYPE, at: '2026-09-01T08:00:00.000Z', payload: { trigger, valid: 3, values: { smile: 0.5 } } })
+    const kept = moodFaceBursts(['unlock', 'manual', 'inUse', 'appOpen', 'social'].map(burst))
+    expect(kept.map((e) => e.payload.trigger)).toEqual(['unlock'])
   })
 })

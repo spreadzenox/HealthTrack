@@ -79,4 +79,18 @@ describe('FaceSenseCard', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Activer la lecture du visage' }))
     expect(await screen.findByText('Accès à la caméra refusé : rien n’a été activé.')).toBeInTheDocument()
   })
+
+  it('range les rafales en attente à l’affichage et dit combien sont gardées, sans valeur', async () => {
+    const plugin = fake(base)
+    const importBursts = vi.fn(async () => ({ imported: 2 }))
+    const loadHistory = vi.fn(async () => ({ stored: 12, forMood: 9, firstAt: '2026-10-19T06:00:00.000Z' }))
+    const save = vi.fn(async () => 'ok')
+    render(<FaceSenseCard plugin={plugin} importBursts={importBursts} loadHistory={loadHistory} save={save} />)
+    expect(await screen.findByText(/12 lectures gardées depuis le 19 octobre/)).toBeInTheDocument()
+    expect(importBursts).toHaveBeenCalledWith({ plugin })
+    expect(screen.getByText(/Historique : 12 lectures rangées, dont 9 au déverrouillage/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le diagnostic' }))
+    await waitFor(() => expect(save).toHaveBeenCalled())
+    expect(JSON.parse(save.mock.calls[0][0]).history).toMatchObject({ stored: 12, forMood: 9 })
+  })
 })

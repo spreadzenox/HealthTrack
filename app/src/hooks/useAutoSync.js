@@ -13,6 +13,7 @@ import { syncWatchIfStale, WATCH_FOREGROUND_CHECK_MS } from '../services/watchAu
 import { listenWatchPresence } from '../services/watchPresence'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { recordTimezoneContext } from '../services/timezoneContext'
+import { importPendingFaceBursts } from '../services/faceBursts'
 
 /**
  * Call inside any component that should trigger an auto-sync on mount.
@@ -38,6 +39,8 @@ export function useAutoSync() {
     syncWeather()
     // Temps d'écran / sommeil estimé : au plus toutes les 30 min, seulement si activé et autorisé.
     syncPhoneUsage()
+    // Lecture du visage : rafales déposées par le service natif depuis la dernière ouverture (scores seuls, I90).
+    importPendingFaceBursts()
     // Montre Huawei en direct : au plus toutes les 30 min, seulement si HealthTrack a sa clé.
     compacted.finally(() => syncWatchIfStale())
     // … quand la montre associée se reconnecte au téléphone, même app en arrière-plan (une seule écoute) ;
@@ -46,6 +49,7 @@ export function useAutoSync() {
     const onVisible = () => {
       if (document.visibilityState !== 'visible') return
       recordTimezoneContext()
+      importPendingFaceBursts()
       syncWatchIfStale()
     }
     document.addEventListener('visibilitychange', onVisible)
