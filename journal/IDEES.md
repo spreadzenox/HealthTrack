@@ -9,6 +9,162 @@
 
 ---
 
+## Run du 18/10/2026 20:30 (Paris) — l'humeur par le visage : quand pourra-t-on y croire, et sans quel piège ?
+
+Question du jour, côté utilisateur (consigne du 18/10, point B : « que ça avance le côté estimation du bien-être
+automatique ») : *« le moteur du visage est dans l'app. Concrètement, au bout de combien de temps HealthTrack me
+dira-t-il quelque chose de juste sur mon humeur sans que je saisisse rien ? Qu'est-ce que je dois faire, moi, pour
+que ça marche plus vite ? Et est-ce que ce que je regarde sur mon téléphone (une vidéo drôle) ne va pas fausser
+tout ça ? »* Montre en maintenance (A.1–A.3 fusionnés, #209), aucun nouveau journal dans `diagnostics/`. Méthode :
+lire l'étude la plus proche de notre dispositif (MoodCam / FacePsy), puis simuler la porte d'entrée I110
+(`protocoles/humeur-etiquettes-sim.py`, 1 000 tirages par case).
+
+### Ce qu'on apprend (faits)
+
+- **MoodCam** (Islam, Zhang, Bae ; IEEE UIC 2024, arXiv 2412.12625) [V texte intégral] : c'est **exactement le
+  dispositif prévu par I88**. Système FacePsy en arrière-plan sur Android, rafale de 10 s **au déverrouillage ou à
+  l'ouverture d'apps « déclencheurs »** (réseaux sociaux, communication, divertissement…), 12 unités d'action,
+  sourire, ouverture des yeux, pose de la tête, points du visage ; photos effacées. 25 personnes, 4 semaines, 15 995
+  rafales (≈ 26 / jour / personne). Étiquettes : valence et éveil de −4 à 4, **3 questionnaires par jour à heure
+  fixe** (10 h, 15 h, 20 h), 2,23 réponses / jour en moyenne ; rafales des 30 min précédentes appariées à la réponse.
+  Modèles **entre personnes** (validation « une personne mise de côté ») : valence AUC **0,64** (moment), 0,64 (jour),
+  0,61 (lendemain) ; éveil 0,58–0,63. Variables les plus utiles : le **rapport d'ouverture des yeux** (surtout pour la
+  journée et le lendemain), puis les unités d'action (moment). Limite reconnue : **aucun modèle personnel** testé.
+  → Un AUC de 0,64 correspond à une corrélation rafale ↔ humeur d'environ **0,2** [calcul : d ≈ 0,5]. C'est l'ordre de
+  grandeur à attendre chez une personne, ni plus ni moins.
+- **FacePsy** (Islam & Bae, MobileHCI 2024, DOI 10.1145/3676505) [T presse + résumé] : mêmes données, épisodes
+  dépressifs repérés à AUROC 0,81 ; signes : ouverture des yeux, gestes de la tête, sourire, AU 2, 6, 7, 12, 15, 17 ;
+  surprise : **des yeux plus ouverts le matin et le soir allaient avec plus de symptômes** → aucun indice n'a de sens
+  fixe (D6).
+- **Ringwald et al. 2025** (*J Affect Disord*, 112 personnes, 90 jours de vidéo quotidienne, 8 953 vidéos) [T
+  résumé] : modèles **personne par personne** ; 80 % ont au moins un lien fiable expression ↔ symptômes, mais **le
+  sens varie** (sur-expressivité chez les uns, sous-expressivité chez les autres). → Confirme D6 et le test
+  bilatéral de la porte I110 : on ne présuppose pas que « plus de sourire = meilleure humeur ».
+- **Meegahapola et al. 2023** (IMWUT, 678 étudiants, 8 pays, 329 k auto-évaluations) [T résumé] : modèles
+  d'humeur par capteurs du téléphone, valence AUROC ≈ 0,51 entre personnes, **0,78–0,98 partiellement personnalisés**.
+  → La personnalisation est ce qui fait marcher ces signaux ; c'est notre voie (calibration chez l'utilisateur).
+- **Déverrouillage et réponses** : questions posées **juste après un déverrouillage** = plus de réponses (van Berkel
+  et al., IJHCS 2019, 20 personnes ; Reiter, …, Schoedel, AMPPS 2025, préenregistrée, N = 395) mais réponses plus
+  lentes, et les humeurs déclarées ne changent pas selon le protocole [V résumé AMPPS].
+- **Emobot** : pas d'actualité 2026 trouvée ; le dispositif (visage + voix, traitement local) alerte l'équipe
+  soignante quand l'état se dégrade **sur plusieurs jours** [T presse 2025]. → L'unité utile est la tendance de
+  quelques jours, pas l'instant.
+- **Constat dans le code** : HealthTrack n'envoie **aucun rappel** pour la note de bien-être (aucune notification
+  hors montre : `WatchNotifications.java`, `BackgroundWatchSync.java`). La fiche I109 du 18/10 08:30 supposait des
+  « rappels du soir existants » : c'est faux, corrigé ici.
+
+### Simulation (`protocoles/humeur-etiquettes-sim.py`, 1 000 tirages par case)
+
+Modèle : humeur du jour AR(1) 0,4 ; humeur du moment = humeur du jour + écart intra-jour lent (é.t. 0,8) ; ≈ 32
+rafales valides par jour ; indice du visage d'une rafale corrélé à r_b avec l'humeur du moment, plus lumière du
+jour et bruit ; sens tiré au hasard. Porte : corrélation, erreur type par jackknife sur les jours, regard chaque
+semaine à partir de J14.
+
+**A. Quelle étiquette ?** Part des tirages où la porte est ouverte (seuil |z| ≥ 2,81) :
+
+| Étiquettes | r_b = 0 (faux départ) J60 / J120 | r_b = 0,2 : J28 / J42 / J60 / J90 | r_b = 0,3 : J28 / J60 |
+|---|---|---|---|
+| **Note du soir** (85 % des jours) × moyenne des rafales du jour | 7 % / 8 % | **41 / 58 / 72 / 87 %** | 70 / 95 % |
+| 1 micro-note au déverrouillage × rafales des 30–60 min | 8 % / 10 % | 12 / 20 / 26 / 33 % | 22 / 46 % |
+| 3 micro-notes au déverrouillage (comme MoodCam) | 5 % / 7 % | 23 / 36 / 47 / 63 % | 46 / 79 % |
+| Note du soir, **2 regards consécutifs** au-dessus du seuil | **2 % / 4 %** | 25 / 43 / 59 / 81 % | 50 / 90 % |
+| Note du soir, seuil 3,29 + 2 regards consécutifs | **1 % / 2 %** | 16 / 34 / 48 / 73 % | 40 / 83 % |
+
+- **La note du soir l'emporte**, même sur 3 micro-notes par jour : la moyenne de ≈ 32 rafales lisse le bruit de
+  chaque image, alors qu'une micro-note n'a que 2–3 rafales à côté d'elle. **Pas besoin de questions au
+  déverrouillage** (moins de saisie, priorité n° 1 du 11/10).
+- Le jackknife sur 14–40 jours est **optimiste**, et regarder chaque semaine multiplie les chances : avec un seul
+  passage à 2,81, 8 % des signaux **inutiles** finiraient « activés ». Il faut **deux regards consécutifs** et un
+  seuil plus haut (3,29) : 2 % de faux départs à 4 mois.
+- Avec un signal réaliste (r_b ≈ 0,2, ordre de grandeur de MoodCam) : porte ouverte chez **≈ 1 utilisateur sur 2
+  à 2 mois, 3 sur 4 à 3 mois**. Une fois ouverte, l'indice du jour suit la vraie humeur du jour à **≈ 0,4** :
+  utile pour une tendance de quelques jours, pas pour une note précise d'un jour donné.
+
+**B. Et si la note n'est donnée qu'un jour sur deux ?** (seuil 3,29, 2 regards, réponse 40 % au lieu de 85 %) :
+r_b = 0,2 → 24 % à J60 (au lieu de 48 %), 39 % à J90 (au lieu de 73 %). **La régularité de la note du soir divise
+par deux le temps d'attente** : c'est le levier n° 1 que l'utilisateur contrôle.
+
+**C. Biais de composition** (partie B du script) : humeur **sans aucun lien** avec les réseaux sociaux ; la part
+des rafales prises pendant leur usage varie selon les jours (40 % ± 15 %), et ces rafales ont un indice décalé de δ
+(on sourit devant une vidéo drôle, quelle que soit son humeur). Corrélation fabriquée entre « humeur estimée du
+jour » et part de réseaux sociaux : **0,09 (δ = 0,25) à 0,19 (δ = 0,5)** sur 120 jours, alors que le vrai lien est
+nul. 0,19 sur 120 jours = p ≈ 0,04 : une « piste à vérifier » **entièrement fabriquée par la mesure**. C'est le
+cercle interdit par D5, par la petite porte : les réseaux sociaux ne sont pas une entrée de l'estimateur, mais ils
+changent **quelles images** l'estimateur voit. MoodCam déclenche justement ses rafales à l'ouverture des réseaux
+sociaux.
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I114 | **Rafales prises au déverrouillage seulement pour l'humeur** (avant tout contenu) ; les rafales « pendant l'usage » restent dans le diagnostic tant qu'un test ne montre pas qu'elles ne dépendent pas de l'app au premier plan ; **test anti-circularité « composition »** : jeu simulé où les réseaux sociaux décalent le sourire en cours d'usage sans changer l'humeur → corrélation entre humeur estimée et temps de réseaux sociaux < 0,05 | Ne pas fabriquer « réseaux sociaux → humeur » (D5) ; estimation honnête | 5 | 5 | **25** |
+| I112 | **Porte I110 précisée** : au niveau du jour (note du soir × moyenne des rafales du déverrouillage) ; **un seul indice combiné** par validation croisée sur les jours (Ridge de `calibration.js`, pas un test par indice) ; ouverte si \|z\| ≥ 3,29 (jackknife) **à deux regards hebdomadaires consécutifs**, ≥ 30 jours notés ; refermée si \|z\| < 2 sur les 6 dernières semaines ; sens libre | Afficher une humeur estimée seulement quand elle veut dire quelque chose chez lui (simulé : 2 % de faux départs à 4 mois) | 5 | 4 | **20** |
+| I113 | **Note du soir d'un geste depuis la notification** : 5 boutons dans la notification (aucune ouverture d'app), à l'heure habituelle de ses notes (sinon 21 h), jamais si une note existe déjà, jamais deux fois ; la note attend dans une file native et entre dans IndexedDB à l'ouverture suivante (même forme qu'une note saisie) | Moins de saisie (un geste), et la régularité de la note **divise par deux** le temps avant que le visage serve (simulé) | 5 | 3 | **15** |
+| I115 | **Le visage complète les jours sans note, jamais à la place** : une fois la porte ouverte, un jour sans note reçoit « plutôt bonne / moyenne / basse journée, d'après votre visage » avec la fourchette de la calibration ; la courbe le distingue (point creux) ; tendance sur 3 jours et plus (logique Emobot), aucune alerte ni conseil ; recalibré chaque semaine | « Humeur captée sans rien saisir » (D4) les jours où il n'a pas noté, sans prétendre à une précision qu'on n'a pas (≈ 0,4) | 4 | 3 | 12 |
+
+**Écartées** : *micro-questions au déverrouillage* (simulé : moins efficaces que la note du soir, même à 3 par jour,
+et plus de saisie) ; *rafales déclenchées à l'ouverture des réseaux sociaux* (MoodCam) — biais de composition
+ci-dessus ; *modèle d'humeur entre personnes* (AUC 0,64 au mieux, sens qui varie selon les gens) ; *énergie / fatigue
+lue dans les yeux* comme 2e dimension : prometteur (meilleure variable de MoodCam), mais **aucune étiquette**
+aujourd'hui (pas de question « énergie » dans l'app) ; à reprendre seulement si une étiquette existe sans saisie de
+plus (par exemple un mot de la dictée I111).
+
+### Détail et pistes d'implémentation
+
+**I114 — déclencheur et test.** Dans la spécification `protocoles/visage.md` §8 : « Déverrouillage ou toutes les
+~3 min écran allumé » devient « **déverrouillage** (`ACTION_USER_PRESENT`), au plus une rafale par 5 min » pour les
+entrées `face_burst` qui servent à l'humeur ; les rafales périodiques écran allumé, si on les garde pour mesurer la
+batterie, sont marquées `trigger: 'inUse'` et exclues de l'estimateur. Chaque rafale garde `trigger` (`unlock` /
+`inUse`). Test (JS, `antiCircularity.test.js` ou voisin) : 120 jours simulés, humeur indépendante d'une variable
+« réseaux sociaux » qui décale `smile` des rafales `inUse` → `estimateDailyMood()` ne doit pas corréler (|r| < 0,05
+en moyenne sur 50 tirages) avec cette variable ; le même test avec des rafales `inUse` incluses doit échouer (preuve
+que le test voit le biais). Coût : quelques lignes, à faire **dans la PR I90**.
+
+**I112 — porte.** Dans `services/mood/` : `gate.js`, fonction pure `evaluateGate(days)` → `{ state: 'candidate' |
+'active', z, r, nDays, history }` ; jour = `{ note, faceIndex }` où `faceIndex` = prédiction en validation croisée
+(un jour en moins) du Ridge de `calibrateRidge` sur les indices du jour (médianes des rafales `unlock`) ; jackknife
+par jour ; historique hebdomadaire stocké pour la règle des deux regards et la refermeture. Tests d'abord : sur
+200 jeux nuls de 120 jours, ≤ 3 % ouverts ; r_b = 0,3 → ouverte à J60 dans ≥ 75 % des jeux ; refermeture quand le
+lien disparaît. Rien à migrer (calculé).
+
+**I113 — notification.** Natif : `NotificationCompat` avec 5 actions (😞 … 😄 ou 1–5, libellés de l'échelle
+actuelle), `BroadcastReceiver` qui écrit `{ date, value, at }` dans une file `SharedPreferences`, ferme la
+notification ; `WellbeingQuickNote` plugin : `drainPending()` appelé au démarrage et au retour au premier plan →
+`saveWellbeing()` habituel (même schéma, même export). Planification : `AlarmManager.setAndAllowWhileIdle` à l'heure
+médiane des notes des 14 derniers jours (21 h par défaut), annulée si une note du jour existe. Interrupteur dans la
+saisie bien-être existante (« Me la demander le soir »), pas de nouvel écran. Permission `POST_NOTIFICATIONS` déjà
+déclarée dans le manifeste (vérifié) ; le récepteur dynamique `ACTION_USER_PRESENT` de `WatchPresenceService` montre
+le modèle à réutiliser pour le déclencheur I114.
+
+**I115 — affichage.** Seulement si `gate.state === 'active'` ; la note estimée n'est jamais enregistrée comme une
+note (champ séparé, calculé) et n'entre ni dans la calibration ni dans les Analyses comme une note déclarée
+(sinon le visage s'auto-validerait) ; les Analyses peuvent utiliser Y = note déclarée, ou Y = note déclarée sinon
+estimée, **avec la mention** et une sensibilité « notes déclarées seules ».
+
+### Sources (consultées le 18/10/2026)
+- Simulation : `journal/protocoles/humeur-etiquettes-sim.py` (ce run ; arguments : tirages, seuil, taux de réponse).
+- Islam, Zhang, Bae, *MoodCam: Mood Prediction Through Smartphone-Based Facial Affect Analysis in Real-World
+  Settings*, IEEE UIC 2024, arXiv 2412.12625 (PDF lu en entier).
+- Islam & Bae, *FacePsy: An Open-Source Affective Mobile Sensing System…*, MobileHCI 2024, arXiv 2406.17181 ;
+  stevens.edu (« When detecting depression, the eyes have it »).
+- Ringwald et al., *Day-to-day dynamics of facial emotion expressions in posttraumatic stress disorder*, J Affect
+  Disord 2025 (résumé, experts.umn.edu).
+- Meegahapola et al., *Generalization and Personalization of Mobile Sensing-Based Mood Inference Models*, IMWUT 6(4),
+  arXiv 2211.03009 (résumé).
+- Reiter, Sakel, Scharbert, ter Horst, van Zalk, Back, Bühner, Schoedel, *Side Effects of Experience-Sampling
+  Protocols*, AMPPS 8(3), 2025, doi:10.1177/25152459251347274 (résumé) ; van Berkel et al., *Effect of experience
+  sampling schedules on response rate and recall accuracy of objective self-reports*, IJHCS 2019 (résumé).
+- Emobot : allodocteurs.fr, leclaireur.fnac.com (2023–2025) ; aucune source 2026 trouvée.
+
+### À creuser au prochain run idées (19/10 08:30)
+- π0 adaptatif (reporté deux fois) : gain réel quand l'utilisateur a beaucoup de vrais liens ?
+- Taille d'effet d'un verre d'alcool / d'un café tardif sur la VFC et le sommeil chez une personne (préparer I109).
+- Dictée (I111) : un mot d'énergie dans la dictée suffit-il comme étiquette pour la fatigue lue dans les yeux ?
+- Combien de déverrouillages par jour sur l'A56 du propriétaire (le diagnostic I88 le dira) : la porte suppose ≈ 30
+  rafales valides par jour.
+
+---
+
 ## Run du 18/10/2026 08:30 (Paris) — tester beaucoup de facteurs sans se raconter d'histoires, expériences, voix
 
 Question du jour, côté utilisateur : *« l'app examine des dizaines de choses (sommeil, pas, 20 nutriments, météo,
@@ -106,7 +262,7 @@ chaque piste reçoit `stage: q < 0.05 ? 'personal' : 'toVerify'` ; l'UI des pist
 vérifier : … » et n'affiche **qu'une** piste « à vérifier » à la fois. Test : un jeu de démo où une piste a q = 0,12
 → libellé « À vérifier ». Ne remplace pas I107 (qui reprendra la décision), mais réduit tout de suite le risque.
 
-**I109 — expérience.** Réutilise les rappels du soir existants ; tirage au sort dans l'app (graine stockée,
+**I109 — expérience.** Réutilise les rappels du soir existants *(corrigé le 18/10 20:30 : il n'y en a pas ; réutilisera la notification du soir d'I113)* ; tirage au sort dans l'app (graine stockée,
 calendrier visible) ; jours où la consigne n'a pas été suivie gardés (intention de faire) ; analyse unique à la fin :
 régression préblanchie (Cochrane-Orcutt), seuil 97,5 %, a priori N(0 ; 0,5²) **centré sur 0**. Mesures éligibles :
 celles de la nuit suivante uniquement (ordre temporel garanti). Résultat formulé « chez vous, pendant ces 6 semaines,

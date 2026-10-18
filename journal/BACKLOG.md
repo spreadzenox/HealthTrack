@@ -45,6 +45,22 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       arm64 4,5, non compressés) ; piste `useLegacyPackaging` (≈ −2,5 Mo) si besoin.
   - [ ] **I88** service + rafales, puis diagnostic exportable ; **I90** indices → entrées `face_burst` dans IndexedDB
     (scores seuls), écart à la plage personnelle ; **I110** porte d'entrée avant tout affichage.
+    **Précisé au run idées du 18/10 20:30** (`IDEES.md`, simulation `protocoles/humeur-etiquettes-sim.py`) :
+    - [ ] **I114** (score 25, dans la PR I88/I90) : rafales **au déverrouillage seulement** pour l'humeur (champ
+      `trigger: 'unlock' | 'inUse'`, les rafales en cours d'usage restent en diagnostic) + test anti-circularité
+      « composition » (sinon « réseaux sociaux → humeur » fabriqué : r ≈ 0,1–0,2 sans aucun vrai lien).
+    - [ ] **I112** (20) : porte I110 au niveau du jour (note du soir × moyenne des rafales du déverrouillage), un seul
+      indice combiné en validation croisée, |z| ≥ 3,29 (jackknife) à **deux regards hebdomadaires consécutifs**,
+      ≥ 30 jours notés, refermeture ; simulé : 2 % de faux départs à 4 mois, signal réaliste ouvert chez ≈ 1 sur 2 à
+      2 mois, 3 sur 4 à 3 mois. `services/mood/gate.js`, fonction pure.
+    - [ ] **I113** (15) : note du soir **d'un geste depuis la notification** (5 boutons, file native vidée à
+      l'ouverture, même schéma qu'une note saisie) — la régularité de la note divise par deux l'attente (simulé).
+      Peut se faire **avant I88** (indépendant du visage, utile tout de suite : moins de saisie, plus de notes).
+    - [ ] **I115** (12) : une fois la porte ouverte, le visage complète les jours **sans** note (en mots + fourchette,
+      jamais enregistré comme une note, jamais réinjecté dans la calibration).
+    - Écartés : micro-questions au déverrouillage (moins efficaces que la note du soir), rafales déclenchées par
+      l'ouverture des réseaux sociaux (biais de composition), modèle entre personnes, énergie lue dans les yeux sans
+      étiquette.
 
 ## ⌚ D3 EN MAINTENANCE (15/10/2026) — ex-priorité absolue du 12/10 au soir
 
@@ -564,6 +580,10 @@ avertissement quand le canal classique s'ouvre ; A.3 relectures natives comptée
 minuteur de 5 min app à l'écran, fenêtre du jour sans trou vérifiée) ; 2) 🙂 **estimation automatique du bien-être**
 (I100 ① b — ✅ 18/10 18:30 —, puis **I88** service « Lecture du visage » + rafales + diagnostic, I90, I110 ;
 D5, D6) ; 3) 🧹 nettoyage de l'UI ; 4) ⚡ performance.
+**Précision du run idées du 18/10 20:30 (ordre interne du point 2)** : a) **I113** note du soir d'un geste depuis la
+notification (un run, indépendant du visage, sert tout de suite et accélère la calibration) ; b) **I88** service
+« Lecture du visage » **déclenché au déverrouillage** (I114) + diagnostic exportable ; c) **I90** entrées
+`face_burst` avec `trigger` + test « composition » (I114) ; d) **I112** porte `gate.js` ; e) I115 affichage.
 - [ ] Montre (maintenance, à l'occasion) : l'heure entamée n'est relue qu'à la synchro suivante (fenêtre « jusqu'à
       l'heure pleine », voulue pour ne pas écrire de tranche à moitié ; les pas sont couverts par le total du jour). Si
       utile : écrire les tranches de 10 min de FC / SpO₂ terminées jusqu'à maintenant (clés stables, pas de doublon).
