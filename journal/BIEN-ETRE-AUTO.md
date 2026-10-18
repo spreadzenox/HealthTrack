@@ -17,7 +17,7 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
 | Visage : post-traitement Java | `face/FaceGeometry`, `FaceIndices`, `FacePipeline` | ✅ 18/10 14:30, vecteurs figés |
 | Visage : modèles LiteRT dans l'APK | `FaceModels`, `LiteRtModel`, tâche Gradle `faceModels` | ✅ 18/10 18:30, testé sur émulateur |
 | Visage : service « niveau 2 » + diagnostic | `FaceSenseService`, `FaceCamera`, `FaceSensePlugin`, carte `FaceSenseCard` | ✅ **18/10 22:30** (à valider sur l'A56) |
-| Visage : import des rafales dans l'historique | entrée `face_burst` | ⬜ I90 |
+| Visage : import des rafales dans l'historique | `services/faceBursts.js`, entrée `face_burst` | ✅ **19/10 00:30** (I90) |
 | Porte de calibration (affichage seulement si le visage suit les notes) | `services/mood/gate.js` | ⬜ I112 |
 | Voix (prosodie maison, aucun audio gardé) | — | ⬜ I91 |
 | Usage du téléphone / réseaux sociaux | `PhoneUsagePlugin` (écran allumé / éteint / déverrouillé seulement) | 🟨 écran oui ; temps par app ⬜ |
@@ -36,14 +36,14 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
 - **Capture** (I114) : seules les rafales **du déverrouillage** comptent pour l'humeur. Une rafale déclenchée par
   l'ouverture d'une app ferait dépendre les images vues de l'usage du téléphone (un X) : biais de composition,
   simulé à r ≈ 0,1–0,2 sans aucun vrai lien. `FaceSchedule` refuse tout autre déclencheur que `unlock` et `manual`
-  (test seulement) ; les rafales portent leur `trigger`, et l'import (I90) écartera `manual` de Y.
+  (test seulement) ; les rafales portent leur `trigger`, et `moodFaceBursts` (I90) ne garde en Y que `unlock`.
 
 ## 3. Plan (une étape testable et fusionnable par run)
 
 1. ✅ État des lieux + plan (ce fichier).
 2. ✅ Cœur Y / X et test anti-circularité (existant, vérifié ci-dessus).
 3. 🟨 **Visage** : ✅ service caméra « niveau 2 » + diagnostic exportable (18/10 22:30) → ⬜ retour du diagnostic
-   de l'A56 → ⬜ **I90** import des rafales `face_burst` (scores seuls, `trigger`, test « composition ») →
+   de l'A56 → ✅ **I90** import des rafales `face_burst` (19/10 00:30 ; scores seuls, `trigger`, test « composition ») →
    ⬜ notification « Reprendre » si le service est tué (récepteur de déverrouillage déjà vivant de la montre / tâche
    des 2 h) → ⬜ guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`) et détection du privilège (I89).
 4. ⬜ **Voix** : prosodie (énergie, débit, hauteur, pauses) par un modèle local, aucun audio gardé ; service

@@ -78,6 +78,19 @@ describe('diagnostic exportable', () => {
     expect(faceDiagnosticLines({ ...active, lastTrigger: 'manual' })).toContain('Dernière lecture : visage lu (test)')
   })
 
+  it('historique (I90) : comptes des lectures rangées et du dernier rangement, jamais une valeur', () => {
+    const history = { stored: 42, forMood: 30, firstAt: '2026-10-19T06:00:00.000Z' }
+    const lastImport = { at: '2026-10-19T08:00:00.000Z', imported: 5, dropped: 1, kept: 0 }
+    const r = faceDiagnosticReport(active, { history, lastImport })
+    expect(r.history).toEqual({ stored: 42, forMood: 30, firstAt: '2026-10-19T06:00:00.000Z', lastImportAt: '2026-10-19T08:00:00.000Z', lastImport: { imported: 5, dropped: 1, kept: 0 } })
+    const lines = faceDiagnosticLines({ ...active, pending: 0 }, { history, lastImport })
+    expect(lines).toContain('Historique : 42 lectures rangées, dont 30 au déverrouillage avec un visage (comptent pour l’humeur)')
+    expect(lines).toContain('Lectures illisibles écartées au dernier rangement : 1')
+    expect(lines.some((l) => l.startsWith('En attente'))).toBe(false)
+    expect(faceDiagnosticLines(active)).toContain('En attente d’être rangées : 9')
+    expect(faceDiagnosticReport(active).history.stored).toBeNull()
+  })
+
   it('résultat inconnu : affiché tel quel', () => {
     expect(outcomeLabel('skip:nouveau')).toBe('skip:nouveau')
     expect(outcomeLabel(null)).toBe('—')

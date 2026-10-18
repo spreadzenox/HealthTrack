@@ -178,6 +178,8 @@ export function buildDailyJournal(entries) {
     }
     // Fuseau horaire du jour : sert seulement à déduire « Voyage », rien à afficher.
     if (e.type === 'context') continue
+    // Rafales de la lecture du visage : entrées de l'humeur estimée, rien d'affiché avant la porte (I110 / I112).
+    if (e.type === 'face_burst') continue
     const day = getDay(localDateKey(e.at))
     if (e.type === 'weather') {
       day._weather = p

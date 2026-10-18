@@ -16,6 +16,8 @@ import {
   faceDiagnosticLines,
   faceSensePlugin,
 } from '../services/faceSense'
+import { FACE_BURST_TYPE, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
+import { listEntries } from '../storage/localHealthStorage'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import './MyDevices.css'
 import './WeatherCard.css'
@@ -38,21 +40,43 @@ async function defaultSave(json, filename) {
   return 'Téléchargement du diagnostic démarré.'
 }
 
+/** Comptes des rafales rangées dans l'historique, ou null (base illisible). */
+async function defaultLoadHistory() {
+  try {
+    return faceHistorySummary(await listEntries({ type: FACE_BURST_TYPE, limit: Infinity }))
+  } catch {
+    return null
+  }
+}
+
+function frenchDate(iso) {
+  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+}
+
 /**
- * @param {{ plugin?: object|null, save?: Function }} props
+ * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function }} props
  */
-export default function FaceSenseCard({ plugin = faceSensePlugin(), save = defaultSave }) {
+export default function FaceSenseCard({
+  plugin = faceSensePlugin(),
+  save = defaultSave,
+  importBursts = importPendingFaceBursts,
+  loadHistory = defaultLoadHistory,
+}) {
   const [status, setStatus] = useState(null)
+  const [history, setHistory] = useState(null)
   const [loaded, setLoaded] = useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState(null)
 
   const refresh = useCallback(async () => {
-    const s = await getFaceSenseStatus(plugin)
+    // Rafales en attente rangées d'abord : le diagnostic dit alors ce qui reste vraiment en attente.
+    if (plugin) await importBursts({ plugin })
+    const [s, h] = await Promise.all([getFaceSenseStatus(plugin), plugin ? loadHistory() : null])
     setStatus(s)
+    setHistory(h)
     setLoaded(true)
     return s
-  }, [plugin])
+  }, [plugin, importBursts, loadHistory])
 
   useEffect(() => {
     refresh()
@@ -100,7 +124,11 @@ export default function FaceSenseCard({ plugin = faceSensePlugin(), save = defau
   }
 
   async function exportDiagnostic() {
-    const report = faceDiagnosticReport(await getFaceSenseStatus(plugin), { appVersion: CURRENT_VERSION })
+    const report = faceDiagnosticReport(await getFaceSenseStatus(plugin), {
+      appVersion: CURRENT_VERSION,
+      history: await loadHistory(),
+      lastImport: getLastFaceImport(),
+    })
     const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')
     try {
       setMessage(await save(JSON.stringify(report, null, 2), `healthtrack-visage-${stamp}.json`))
@@ -172,6 +200,9 @@ export default function FaceSenseCard({ plugin = faceSensePlugin(), save = defau
         <div className="weather-on">
           {d.lines.map((line) => <p key={line} className="weather-today">{line}</p>)}
           <p className="my-device-meta">
+            {history?.stored
+              ? `${history.stored} ${history.stored > 1 ? 'lectures gardées' : 'lecture gardée'} depuis le ${frenchDate(history.firstAt)}. `
+              : ''}
             Les mesures attendent d’être assez nombreuses et comparées à vos notes : rien n’est affiché avant.
           </p>
           {!status.batteryExempt && (
@@ -197,7 +228,7 @@ export default function FaceSenseCard({ plugin = faceSensePlugin(), save = defau
         <details className="connectors-more">
           <summary className="connectors-more-summary">Diagnostic</summary>
           <ul className="my-device-meta">
-            {faceDiagnosticLines(status).map((line) => <li key={line}>{line}</li>)}
+            {faceDiagnosticLines(status, { history, lastImport: getLastFaceImport() }).map((line) => <li key={line}>{line}</li>)}
           </ul>
           <div className="my-device-actions">
             {d.state === 'active' && (

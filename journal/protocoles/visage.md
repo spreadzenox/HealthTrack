@@ -204,3 +204,17 @@ une image ni des points**.
 - Diagnostic (préférences `face_sense`, jamais un score) : `dayUnlocks` / `dayBursts` / `dayFaces`, `n_<résultat>`,
   `r_<rejet>`, `sumCameraMs` / `sumInferenceMs` / `timed`, `modelLoadMs`, `startedAt` / `stoppedAt`, `startBattery`,
   `lastError` ; exporté par la carte en `healthtrack-visage-*.json`.
+
+### 8.2 Import dans l'historique (19/10/2026 00:30, I90)
+
+- `app/src/services/faceBursts.js` lit la boîte `face-bursts/` (`FaceSense.list`) à l'ouverture, au retour dans
+  l'app et à l'affichage de la carte ; chaque JSON de `FaceRecord` (v1) devient une entrée
+  `{ type: 'face_burst', source: 'face_sense', at: <heure de la rafale>, payload: { v, trigger, frames, valid,
+  values?, rejected, ms } }` (le format §5 `subtype: 'face_burst'` est remplacé par ce type à part entière).
+  `values` n'est gardé que si `valid > 0` ; tout champ inconnu est ignoré. Écriture en un lot par `upsertEntries`
+  (clé source / heure / type : une boîte relue ne double rien), puis `FaceSense.remove` des importées et des
+  illisibles ; si l'écriture échoue, tout reste dans la boîte.
+- Y de l'humeur : `moodFaceBursts` = `trigger === 'unlock'`, `valid > 0`, indices présents (I114). Les rafales
+  `manual` restent du diagnostic.
+- Jamais affichées (journal de l'Accueil : ignorées comme `context`), jamais une colonne de `buildDailyDataset`
+  (test anti-circularité). La carte et le diagnostic n'en donnent que des comptes.
