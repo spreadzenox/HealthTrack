@@ -1,6 +1,6 @@
 {
   "date": "2026-10-18",
-  "kind": "correction",
+  "kind": "correctif",
   "title": "Analyses : tout l'historique de votre cœur",
   "items": [
     "Analyses et Prédiction du jour : la FC au repos et la VFC de vos nuits sont maintenant prises en compte sur tout votre historique. Avant, les mesures de cœur et de SpO₂ prises toutes les 10 minutes par la montre prenaient toute la place, et les analyses ne voyaient qu'environ le dernier mois de FC au repos et de VFC.",
