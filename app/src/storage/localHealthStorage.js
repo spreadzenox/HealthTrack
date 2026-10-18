@@ -338,13 +338,33 @@ export async function countEntries({ type, since, until } = {}) {
   })
 }
 
+/** Limites de `listEntriesForAnalysis` (les N plus récentes par type, ou par sous-type). */
+export const ANALYSIS_LIMITS = {
+  types: {
+    steps: 2000,
+    wellbeing: 2000,
+    food: 2000,
+    sleep: 500,
+    activity: 500,
+    calories: 500,
+    cigarette: 2000,
+  },
+  subtypes: {
+    heart_rate: { heartRate: 3000, oxygenSaturation: 1500, '*': 1000 },
+  },
+  default: 1000,
+}
+
 /**
  * Load all entries for analysis/ML, loading each type independently so that
  * high-frequency types (e.g. heart_rate) cannot crowd out lower-frequency
  * types (e.g. wellbeing, sleep, food) due to a shared entry cap.
  *
- * Per-type limits (most-recent N entries of that type):
- *   - heart_rate: 5000  (high-frequency wearable data)
+ * Per-type limits (most-recent N entries of that type, `ANALYSIS_LIMITS`):
+ *   - heart_rate: per sub-type (index [type, sous-type, at]) — heartRate 3000, oxygenSaturation 1500,
+ *                 any other sub-type 1000 : les tranches de 10 min de la montre (≈ 144 / jour) n'évincent
+ *                 plus la FC au repos ni la VFC (une par jour) ; les entrées sans sous-type (absentes
+ *                 de l'index) ne sont pas lues : le moteur d'analyse ne s'en sert pas
  *   - steps:      2000
  *   - wellbeing:  2000
  *   - food:       2000
@@ -357,17 +377,7 @@ export async function countEntries({ type, since, until } = {}) {
  * @returns {Promise<Array<{ id: number, type: string, source: string, at: string, payload: object, created_at: string }>>}
  */
 export async function listEntriesForAnalysis() {
-  const TYPE_LIMITS = {
-    heart_rate: 5000,
-    steps: 2000,
-    wellbeing: 2000,
-    food: 2000,
-    sleep: 500,
-    activity: 500,
-    calories: 500,
-    cigarette: 2000,
-  }
-  const DEFAULT_LIMIT = 1000
+  const { types: TYPE_LIMITS, subtypes: SUBTYPE_LIMITS, default: DEFAULT_LIMIT } = ANALYSIS_LIMITS
 
   const db = await openDB()
   const store = () => db.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME)
@@ -390,33 +400,65 @@ export async function listEntriesForAnalysis() {
     }
   })
 
-  const perType = await Promise.all(types.map(async (type) => {
-    const limit = TYPE_LIMITS[type] ?? DEFAULT_LIMIT
-    const typeIndex = store().index('type')
-    const count = await request(typeIndex.count(IDBKeyRange.only(type)))
-    let entries
-    if (count <= limit) {
-      entries = await request(typeIndex.getAll(IDBKeyRange.only(type)))
-    } else {
-      // Date de la N-ième plus récente (clés seules), puis lecture de cette date à aujourd'hui
-      const nth = await new Promise((resolve, reject) => {
-        const req = store().index('type_at').openKeyCursor(IDBKeyRange.bound([type, ''], [type, AT_MAX]), 'prev')
-        let skipped = false
-        req.onerror = () => reject(req.error)
-        req.onsuccess = () => {
-          const cursor = req.result
-          if (!cursor) return resolve('')
-          if (!skipped && limit > 1) {
-            skipped = true
-            return cursor.advance(limit - 1)
-          }
-          resolve(cursor.key[1])
+  /**
+   * Les `limit` plus récentes d'une plage de l'index `indexName` (clés [..., at]) : tout si la plage est
+   * assez petite, sinon date de la N-ième (clés seules) puis lecture de cette date à la fin de la plage.
+   */
+  const newest = async (indexName, lower, upper, limit) => {
+    const range = IDBKeyRange.bound(lower, upper)
+    const count = await request(store().index(indexName).count(range))
+    if (count === 0) return []
+    if (count <= limit) return request(store().index(indexName).getAll(range))
+    const nth = await new Promise((resolve, reject) => {
+      const req = store().index(indexName).openKeyCursor(range, 'prev')
+      let skipped = false
+      req.onerror = () => reject(req.error)
+      req.onsuccess = () => {
+        const cursor = req.result
+        if (!cursor) return resolve(null)
+        if (!skipped && limit > 1) {
+          skipped = true
+          return cursor.advance(limit - 1)
         }
-      })
-      entries = await request(store().index('type_at').getAll(IDBKeyRange.bound([type, nth], [type, AT_MAX])))
-    }
+        resolve(cursor.key)
+      }
+    })
+    if (!nth) return request(store().index(indexName).getAll(range))
+    return request(store().index(indexName).getAll(IDBKeyRange.bound(nth, upper)))
+  }
+  const keepNewest = (entries, limit) => {
     entries.sort((a, b) => (b.at < a.at ? -1 : 1))
     return entries.slice(0, limit)
+  }
+
+  // Sous-types présents d'un type : un saut de curseur par sous-type (clés seules)
+  const subtypesOf = (type) =>
+    new Promise((resolve, reject) => {
+      const found = []
+      const req = store().index('type_subtype_at').openKeyCursor(IDBKeyRange.bound([type], [type, []]))
+      req.onerror = () => reject(req.error)
+      req.onsuccess = () => {
+        const cursor = req.result
+        if (!cursor) return resolve(found)
+        const sub = cursor.key[1]
+        found.push(sub)
+        cursor.continue([type, sub, []])
+      }
+    })
+
+  const bySubtype = async (type, limits) => {
+    const subs = await subtypesOf(type)
+    const parts = await Promise.all(subs.map(async (sub) => {
+      const limit = Object.hasOwn(limits, sub) ? limits[sub] : limits['*']
+      return keepNewest(await newest('type_subtype_at', [type, sub, ''], [type, sub, AT_MAX], limit), limit)
+    }))
+    return parts.flat()
+  }
+
+  const perType = await Promise.all(types.map(async (type) => {
+    if (SUBTYPE_LIMITS[type]) return bySubtype(type, SUBTYPE_LIMITS[type])
+    const limit = TYPE_LIMITS[type] ?? DEFAULT_LIMIT
+    return keepNewest(await newest('type_at', [type, ''], [type, AT_MAX], limit), limit)
   }))
   return perType.flat()
 }

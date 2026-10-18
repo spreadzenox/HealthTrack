@@ -20,6 +20,7 @@ import {
   createEntry,
   listEntries,
   listEntriesForAnalysis,
+  ANALYSIS_LIMITS,
   countAllEntries,
   countEntries,
   upsertEntries,
@@ -175,7 +176,7 @@ describe('listEntriesForAnalysis', () => {
   it('returns all entries when below per-type limits', async () => {
     await createEntry({ type: 'wellbeing', source: 'test', payload: { score: 3 }, at: '2026-01-01T12:00:00Z' })
     await createEntry({ type: 'steps', source: 'test', payload: { value: 5000 }, at: '2026-01-01T22:00:00Z' })
-    await createEntry({ type: 'heart_rate', source: 'test', payload: { value: 70 }, at: '2026-01-01T08:00:00Z' })
+    await createEntry({ type: 'heart_rate', source: 'test', payload: { value: 70, subtype: 'heartRate' }, at: '2026-01-01T08:00:00Z' })
     const entries = await listEntriesForAnalysis()
     expect(entries.length).toBe(3)
     const types = new Set(entries.map((e) => e.type))
@@ -190,7 +191,7 @@ describe('listEntriesForAnalysis', () => {
       await createEntry({
         type: 'heart_rate',
         source: 'test',
-        payload: { value: 70 + i },
+        payload: { value: 70 + i, subtype: 'heartRate' },
         at: `2026-01-01T${String(i).padStart(2, '0')}:00:00Z`,
       })
     }
@@ -743,6 +744,65 @@ describe('listEntriesForAnalysis par index (D2 performance)', () => {
     expect(sleep.map((e) => e.at)).toEqual(want)
     expect(got.filter((e) => e.type === 'wellbeing')).toHaveLength(1)
     expect(got.filter((e) => e.type === 'nouveau_type')).toHaveLength(1)
+  })
+})
+
+describe('listEntriesForAnalysis : fréquence cardiaque par sous-type', () => {
+  // Insertion directe en une transaction (upsertEntries est trop lent sous fake-indexeddb pour ~6 000 lignes)
+  const addRaw = async (rows) => {
+    await countAllEntries() // crée la base au bon schéma
+    const db = await new Promise((res, rej) => {
+      const req = indexedDB.open('HealthTrack')
+      req.onsuccess = () => res(req.result)
+      req.onerror = () => rej(req.error)
+    })
+    await new Promise((res, rej) => {
+      const tx = db.transaction('health_entries', 'readwrite')
+      for (const r of rows) tx.objectStore('health_entries').add({ ...r, created_at: r.at })
+      tx.oncomplete = res
+      tx.onerror = () => rej(tx.error)
+    })
+    db.close()
+  }
+
+  it("les tranches denses de la montre n'évincent pas la FC au repos ni la VFC", async () => {
+    // Avant : un plafond commun de 5 000 par type ; 40 jours de tranches de 10 min (5 760) gardaient
+    // 34 FC repos sur 40. Limites réduites ici (fake-indexeddb parcourt les curseurs en temps quadratique).
+    const saved = ANALYSIS_LIMITS.subtypes.heart_rate
+    ANALYSIS_LIMITS.subtypes.heart_rate = { heartRate: 300, '*': 100 }
+    try {
+      // Une tranche de FC toutes les 10 min (144 / jour) sur 4 jours, une FC repos et une VFC par jour sur 40 jours
+      const rows = []
+      const t0 = Date.UTC(2026, 8, 1)
+      const tz = Date.UTC(2026, 9, 7)
+      for (let i = 0; i < 4 * 144; i++) {
+        rows.push({ type: 'heart_rate', source: 'watch', at: new Date(tz + i * 600000).toISOString(), payload: { bpm: 70, subtype: 'heartRate' } })
+      }
+      for (let d = 0; d < 40; d++) {
+        rows.push({ type: 'heart_rate', source: 'watch', at: new Date(t0 + d * 86400000 + 45000).toISOString(), payload: { bpm: 55, subtype: 'restingHeartRate' } })
+        rows.push({ type: 'heart_rate', source: 'watch', at: new Date(t0 + d * 86400000 + 15000).toISOString(), payload: { value: 40, subtype: 'heartRateVariability' } })
+      }
+      await addRaw(rows)
+
+      const got = await listEntriesForAnalysis()
+      const count = (sub) => got.filter((e) => e.payload.subtype === sub).length
+      expect(count('restingHeartRate')).toBe(40)
+      expect(count('heartRateVariability')).toBe(40)
+      expect(count('heartRate')).toBe(300)
+      const newest = rows.filter((e) => e.payload.subtype === 'heartRate').map((e) => e.at).sort().reverse().slice(0, 300)
+      expect(got.filter((e) => e.payload.subtype === 'heartRate').map((e) => e.at)).toEqual(newest)
+    } finally {
+      ANALYSIS_LIMITS.subtypes.heart_rate = saved
+    }
+  })
+
+  it("une FC sans sous-type (ignorée par le moteur d'analyse) n'est pas relue", async () => {
+    await upsertEntries([
+      { type: 'heart_rate', source: 'old', at: '2025-01-01T08:00:00.000Z', payload: { value: 72 } },
+      { type: 'heart_rate', source: 'hc', at: '2026-01-01T08:00:00.000Z', payload: { bpm: 60, subtype: 'restingHeartRate' } },
+    ])
+    const got = await listEntriesForAnalysis()
+    expect(got.map((e) => e.source)).toEqual(['hc'])
   })
 })
 

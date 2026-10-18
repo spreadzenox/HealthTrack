@@ -8,7 +8,9 @@
  *   - `tbtMs`      : temps bloquant total (somme des tâches longues au-delà de 50 ms) ;
  *   - `longestMs`  : tâche longue la plus longue ;
  *   - `idbReads` / `idbRecords` : nombre de lectures IndexedDB (getAll, get, count, curseurs) et
- *                    d'enregistrements renvoyés.
+ *                    d'enregistrements renvoyés par la page ;
+ *   - `workerReads` / `workerRecords` : idem pour le Web Worker des analyses (instrumenté en réécrivant
+ *                    son script à la volée), attendu jusqu'à la fin de ses lectures.
  * Chaque page est mesurée `--runs` fois (médiane). Le processeur est ralenti (`--cpu`, ×4 par défaut,
  * via CDP) pour approcher un téléphone milieu de gamme.
  *
@@ -85,7 +87,7 @@ export function denseHeartRate(days, now = new Date()) {
       at.setHours(h, 17, 0, 0)
       if (at > now) continue
       const bpm = Math.round(62 + 18 * Math.sin(((h - 4) / 24) * 2 * Math.PI) + ((i * 7 + h * 13) % 9))
-      out.push({ type: 'heart_rate', source: 'perf_dense', at: at.toISOString(), payload: { bpm } })
+      out.push({ type: 'heart_rate', source: 'perf_dense', at: at.toISOString(), payload: { bpm, subtype: 'heartRate' } })
     }
   }
   return out
@@ -121,19 +123,29 @@ function latestChangelogId() {
   return files.sort().at(-1)?.replace(/\.json$/, '') ?? null
 }
 
-/** Script injecté : compte les lectures IndexedDB et suit les tâches longues. */
+/**
+ * Script injecté (page, et Worker des analyses) : compte les lectures IndexedDB et suit les tâches
+ * longues. `pending` = requêtes pas encore terminées.
+ */
 function instrument() {
-  const stats = { idbReads: 0, idbRecords: 0, longTasks: [] }
-  window.__perf = stats
+  const stats = { idbReads: 0, idbRecords: 0, pending: 0, longTasks: [] }
+  globalThis.__perf = stats
   const wrap = (proto, name, count) => {
     const orig = proto[name]
     if (!orig) return
     proto[name] = function (...a) {
       const req = orig.apply(this, a)
       stats.idbReads++
+      stats.pending++
+      // Un curseur repasse par « success » à chaque position : `pending` ne baisse qu'en fin de parcours
+      const done = () => {
+        stats.pending--
+      }
       req.addEventListener('success', () => {
         stats.idbRecords += count(req.result)
+        if (name !== 'openCursor' || !req.result) done()
       })
+      req.addEventListener('error', done)
       return req
     }
   }
@@ -200,6 +212,11 @@ async function main() {
       }
     }, latestChangelogId())
     await context.addInitScript(instrument)
+    // Le Worker n'hérite pas des scripts injectés : son fichier est servi précédé de l'instrumentation
+    await context.route('**/assets/analysis.worker*.js', async (route) => {
+      const res = await route.fetch()
+      route.fulfill({ response: res, body: `(${instrument})();\n${await res.text()}` })
+    })
 
     const page = await context.newPage()
     const errors = []
@@ -263,10 +280,28 @@ async function main() {
             idbRecords: p.idbRecords,
           }
         })
+        // Lectures du Worker des analyses : attendre qu'il ait fini (500 ms sans nouvelle lecture)
+        m.workerReads = 0
+        m.workerRecords = 0
+        for (const w of page.workers()) {
+          const t0 = Date.now()
+          let last = null
+          while (Date.now() - t0 < 60000) {
+            const s = await w.evaluate(() => ({ reads: globalThis.__perf?.idbReads ?? 0, records: globalThis.__perf?.idbRecords ?? 0, pending: globalThis.__perf?.pending ?? 0 })).catch(() => null)
+            if (!s) break
+            if (last && s.pending === 0 && s.reads === last.reads) {
+              m.workerReads += s.reads
+              m.workerRecords += s.records
+              break
+            }
+            last = s
+            await new Promise((r) => setTimeout(r, 500))
+          }
+        }
         samples.push(m)
       }
       const pick = (k) => Math.round(median(samples.map((s) => s[k])))
-      results.push({ path, settledMs: pick('settledMs'), tbtMs: pick('tbtMs'), longestMs: pick('longestMs'), idbReads: pick('idbReads'), idbRecords: pick('idbRecords') })
+      results.push({ path, settledMs: pick('settledMs'), tbtMs: pick('tbtMs'), longestMs: pick('longestMs'), idbReads: pick('idbReads'), idbRecords: pick('idbRecords'), workerReads: pick('workerReads'), workerRecords: pick('workerRecords') })
     }
 
     await browser.close()
@@ -283,7 +318,7 @@ async function main() {
       for (const o of over) {
         console.error(o.max === null
           ? `Budget : ${o.path} n'a pas de budget dans scripts/perf/budget.json (${o.idbRecords} enregistrements lus)`
-          : `Budget dépassé : ${o.path} lit ${o.idbRecords} enregistrements (max ${o.max})`)
+          : `Budget dépassé : ${o.path} lit ${o.idbRecords} enregistrements, Worker des analyses compris (max ${o.max})`)
       }
       if (over.length) process.exitCode = 1
       else console.log(`Budget de lectures respecté (${results.length} pages)`)
