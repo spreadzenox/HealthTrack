@@ -14,6 +14,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(CompanionPlugin.class);
         registerPlugin(WatchVaultPlugin.class);
         registerPlugin(WatchCapturePlugin.class);
+        registerPlugin(FaceSensePlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

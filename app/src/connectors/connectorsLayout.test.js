@@ -13,7 +13,7 @@ describe('splitSourcesByStatus', () => {
   it('premier lancement : rien de branché, tout à brancher dans l’ordre (montre en tête)', () => {
     expect(splitSourcesByStatus(base)).toEqual({
       active: [],
-      toConnect: ['watch', 'health_connect', 'withings', 'weather', 'phone', 'ble', 'guides'],
+      toConnect: ['watch', 'face', 'health_connect', 'withings', 'weather', 'phone', 'ble', 'guides'],
     })
   })
 
@@ -25,7 +25,7 @@ describe('splitSourcesByStatus', () => {
       watchEverConnected: true,
     })
     expect(r.active).toEqual(['watch', 'health_connect', 'weather'])
-    expect(r.toConnect).toEqual(['withings', 'phone', 'ble', 'guides'])
+    expect(r.toConnect).toEqual(['face', 'withings', 'phone', 'ble', 'guides'])
   })
 
   it('capteurs Bluetooth et guides par marque restent toujours dans « à brancher »', () => {
@@ -35,8 +35,9 @@ describe('splitSourcesByStatus', () => {
       weatherEnabled: true,
       phoneUsageEnabled: true,
       watchEverConnected: true,
+      faceSenseEnabled: true,
     })
-    expect(r.active).toEqual(['watch', 'health_connect', 'withings', 'weather', 'phone'])
+    expect(r.active).toEqual(['watch', 'face', 'health_connect', 'withings', 'weather', 'phone'])
     expect(r.toConnect).toEqual(['ble', 'guides'])
   })
 })

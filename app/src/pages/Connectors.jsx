@@ -12,6 +12,8 @@ import WatchDiagnostic from '../components/WatchDiagnostic'
 import WithingsSetup from '../components/WithingsSetup'
 import WeatherCard from '../components/WeatherCard'
 import PhoneUsageCard from '../components/PhoneUsageCard'
+import FaceSenseCard from '../components/FaceSenseCard'
+import { isFaceSenseEnabled } from '../services/faceSense'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
 import { splitSourcesByStatus } from '../connectors/connectorsLayout'
 import { getWeatherSettings } from '../services/weatherSync'
@@ -423,6 +425,7 @@ export default function Connectors() {
       weatherEnabled: Boolean(getWeatherSettings().enabled),
       phoneUsageEnabled: Boolean(getPhoneUsageSettings().enabled),
       watchEverConnected: Boolean(getWatchAutoSyncState()?.everConnected),
+      faceSenseEnabled: isFaceSenseEnabled(),
     })
   )
 
@@ -430,6 +433,7 @@ export default function Connectors() {
     if (id === 'watch') return <WatchDiagnostic key={id} />
     if (id === 'weather') return <WeatherCard key={id} />
     if (id === 'phone') return <PhoneUsageCard key={id} />
+    if (id === 'face') return <FaceSenseCard key={id} />
     if (id === 'ble') return <BleDevices key={id} />
     if (id === 'guides') return <WatchGuides key={id} />
     const connector = CONNECTORS.find((c) => c.id === id)

@@ -6,7 +6,9 @@
 > Le premier run d'une nouvelle semaine archive ce bloc dans `semaines/AAAA-Sww.md` et en ouvre un neuf.
 > Semaine précédente : [`semaines/2026-S41.md`](semaines/2026-S41.md) (mise en place de la routine, v59 → v97).
 
-**En bref** — Début de semaine tourné vers vos directions du 11/10 (brancher montres et apps, capter sans saisie).
+**En bref** — **Depuis le 18/10 au soir, priorité unique à votre demande : la collecte entièrement automatique du
+bien-être** (visage, voix, usage du téléphone ; voir le paragraphe « 🔴 Votre consigne du 18/10 au soir » plus bas,
+et la « Lecture du visage » livrée à 22:30, à essayer). Début de semaine tourné vers vos directions du 11/10 (brancher montres et apps, capter sans saisie).
 **Depuis vos directives du 12/10, la routine a changé de cap** : plus de nouvelles fonctionnalités avant d'avoir fait,
 dans l'ordre, le nettoyage (D1), la performance (D2), la connexion directe à la GT 6 Pro (D3), l'humeur par visage /
 voix (D4), l'anti-circularité (D5) et une science personnelle sans normes imposées (D6). Premier pas livré : le nettoyage.
@@ -525,7 +527,34 @@ simulé la « porte d'entrée » qui décidera si votre visage suit vraiment vos
 - Une fois la porte ouverte, le visage **complétera les jours où vous n'avez pas noté** (« plutôt bonne journée,
   d'après votre visage »), sans jamais remplacer une note que vous avez donnée.
 
+**🔴 Votre consigne du 18/10 au soir — « concentration maximale sur la collecte entièrement automatique du
+bien-être » : bien reçue.** À partir de maintenant, chaque run de code fait avancer ce seul chantier (visage, voix,
+usage du téléphone, restitution), et les runs « idées » y consacrent toute leur veille ; le reste (nettoyage,
+performance, autres appareils) est en pause sauf panne. L'état des lieux et le plan sont dans
+[`BIEN-ETRE-AUTO.md`](BIEN-ETRE-AUTO.md). Deux décisions de méthode : votre usage des réseaux sociaux et les signaux
+de la montre (stress, VFC, cœur, sommeil) restent des **facteurs** examinés par les Analyses, jamais des ingrédients
+de l'humeur estimée (sinon les liens qu'on vous montrerait seraient truqués) ; l'humeur estimée ne vient que du
+visage, de la voix et de ce que vous déclarez quand vous le voulez.
+
+**Run du 18/10 22:30 — la « Lecture du visage » est dans l'app** (premier pas vraiment automatique). Plus →
+Connecteurs, en tête : la carte **« Lecture du visage »** et un bouton **« Activer »**. Ensuite, à chaque
+déverrouillage, la caméra frontale prend 3 images en basse résolution, le téléphone en tire une dizaine de mesures
+d'expression puis efface les images ; rien d'autre n'est gardé, rien ne sort. Aucun chiffre n'est affiché tant que ces
+mesures n'ont pas été comparées à vos notes (plusieurs semaines) : la carte dit seulement combien de lectures ont eu
+lieu. Si Android arrête la lecture, la carte propose **« Relancer »** ; une notification discrète « Lecture du visage
+active » (avec « Arrêter ») reste dans le volet. J'ai préféré ce pas à la « note du soir depuis une notification »
+annoncée à 20:30 : votre consigne demande de ne rien avoir à saisir ; la note reste prévue plus tard, en option.
+**Ce qu'il me faut (votre Galaxy A56)** : après la mise à jour, Connecteurs → Lecture du visage → **« Activer la
+lecture du visage »** (accepter l'appareil photo) → **« Sans restriction »** (accepter) ; utilisez le téléphone
+normalement quelques heures ; puis **Diagnostic → « Enregistrer le diagnostic »** et envoyez-moi le fichier
+`Documents/healthtrack-visage-….json` (ni image ni mesure dedans). Dites-moi aussi si le **point vert** s'allume
+environ 1 s après chaque déverrouillage. Le diagnostic me dira si One UI laisse la lecture tourner en arrière-plan,
+combien de déverrouillages donnent un visage, pourquoi les autres sont écartés, et ce que ça coûte en batterie.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Lecture du visage (run 18/10 22:30)** : carte en tête de Connecteurs ; 3 images au déverrouillage, analysées
+  sur le téléphone puis effacées ; aucun chiffre affiché avant la calibration ; « Relancer », « Sans restriction »,
+  diagnostic exportable.
 - **Montre : détection des apps instantanée, synchro de fond comptée (run 18/10 16:30)** : plus de « délai dépassé »
   pour les apps (même correctif pour « Mes appareils » et Health Connect) ; « Huawei non listé » n'est plus un
   avertissement ; relectures de fond comptées dans « dernière synchro » ; montre relue app restée à l'écran.
@@ -1003,7 +1032,9 @@ simulé la « porte d'entrée » qui décidera si votre visage suit vraiment vos
 - Bon à savoir : Gadgetbridge 0.95 est sorti aujourd'hui (tension → Health Connect, export des séances). Gemini Nano
   (IA hors ligne de Google) n'est **pas** disponible sur le Galaxy A56.
 
-**Prochaines priorités (15/10 22:30)** — montre **en maintenance** à votre demande ; ordre : **nettoyage de l'UI (D1 : « Voyage » / « Repas tardif » déduits, Données, Nutrition)**, performance des courbes (D2), humeur par le visage / la voix (D4), anti-circularité (D5), science personnelle (D6). Historique : **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
+**Prochaines priorités (18/10 22:30, consigne du soir)** — uniquement le bien-être automatique : votre diagnostic
+de la Lecture du visage, puis import des lectures dans l'historique (I90), voix, temps par app (facteur), porte de
+calibration et estimation du jour ; tout le reste en pause. Ancien ordre, pour mémoire : **Prochaines priorités (15/10 22:30)** — montre **en maintenance** à votre demande ; ordre : **nettoyage de l'UI (D1 : « Voyage » / « Repas tardif » déduits, Données, Nutrition)**, performance des courbes (D2), humeur par le visage / la voix (D4), anti-circularité (D5), science personnelle (D6). Historique : **la montre d'abord** (priorité absolue du 12/10 au soir) : étapes (a) diagnostic et
 (b) libération + appairage, (c) authentification ISO, (d) lecture des mesures et synchro automatique livrées. Blocage
 réel, **compris grâce à votre journal de 17:03** : la réponse d'appairage de la GT 6 Pro est au format que l'app connaît
 déjà, suivie d'**un octet de fin** que le lecteur de l'app refusait. **Lecture tolérante livrée au run de 22:30**
@@ -1093,6 +1124,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 16:30 — [Montre : finitions A.1–A.3](runs/2026-10-18-1630-montre-finitions.md) | 🐛⌚ | Consigne du 18/10 (A.1–A.3, retour de 15:03) ; PR #209 fusionnée |
 | 18/10 18:30 — [Visage : modèles LiteRT dans l'APK](runs/2026-10-18-1830-visage-litert.md) | 🙂 | Consigne B, I100 ① b ; PR #210 ; fusionnée → v167 (APK 15 Mo) |
 | 18/10 20:30 — [Idées : l'humeur par le visage, quand y croire](runs/2026-10-18-2030-idees-humeur-visage-porte.md) | 💡🙂 | Consigne B ; 4 idées (I112–I115), simulation porte + biais de composition ; journal seul |
+| 18/10 22:30 — [Visage : service « Lecture du visage » + diagnostic](runs/2026-10-18-2230-visage-service.md) | 🔴🙂 | Consigne du 18/10 au soir (§00000) consignée, `BIEN-ETRE-AUTO.md` ; I88 ; PR #212 ; 7 checks verts (Build APK, 2 émulateurs A56) → fusionnée |
 
 ---
 
@@ -1111,11 +1143,35 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `IDEES.md` | Idées des runs « idées » (08 h / 20 h Paris), classées impact × faisabilité, avec sources et pistes |
 | `runs/AAAA-MM-JJ-HHMM-<slug>.md` | Un compte rendu par exécution (un fichier par run = pas de conflit Git) |
 | `semaines/AAAA-Sww.md` | Résumés des semaines passées |
+| `BIEN-ETRE-AUTO.md` | État des lieux et plan du chantier « bien-être entièrement automatique » (consigne §00000), décisions Y / X, ce qu'il faut valider sur le téléphone |
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---
 
-## 0000. Consigne du propriétaire du 18 octobre 2026 — PRIORITÉ ABSOLUE (prime sur tout, y compris l'ordre du 12/10)
+## 00000. Consigne du propriétaire du 18 octobre 2026 au soir — PRIORITÉ UNIQUE (prime sur tout le reste)
+
+Message du propriétaire : **« Ok à partir de maintenant concentration maximale sur la collecte entièrement automatique
+du bien-être »**. Objectif : que HealthTrack connaisse l'humeur et le bien-être du propriétaire, jour après jour et au
+fil de la journée, **sans qu'il ait rien à saisir** ; l'auto-déclaration en un geste reste possible comme calibration
+et vérité terrain, jamais obligatoire.
+- **Tous les runs de code** livrent une étape testable et fusionnable de ce chantier ; les runs « idées » (08 h / 20 h)
+  y consacrent toute leur veille (émotions faciales / vocales embarquées, phénotypage par l'usage du téléphone, Emobot
+  et concurrents, validité des mesures, retours d'utilisateurs, Android 14–16 / One UI).
+- Contenu : points 4 (visage via service caméra « niveau 2 », voix, usage du téléphone / des réseaux sociaux), 5
+  (anti-circularité) et 6 (science personnelle) des directives du 12/10 (§00).
+- Ordre conseillé : (1) état des lieux + plan (**fait : [`BIEN-ETRE-AUTO.md`](BIEN-ETRE-AUTO.md)**) ; (2) cœur Y / X
+  et test anti-circularité (existant) ; (3) visage (service niveau 2, modèle embarqué, aucune image gardée, diagnostic
+  exportable) ; (4) voix ; (5) usage du téléphone / réseaux sociaux (décidé : **X**) ; (6) restitution simple
+  (estimation du jour, incertitude, jamais un diagnostic).
+- Signaux physiologiques de la montre (stress / VFC, FC, sommeil) : **décidé le 18/10 22:30 → X**, jamais en entrée
+  de l'estimateur (voir `BIEN-ETRE-AUTO.md` §2).
+- Validation sur l'appareil réel (Galaxy A56, One UI) : dire précisément au propriétaire quoi faire et quoi renvoyer,
+  dans le compte rendu et dans le résumé de la semaine.
+- **En pause** : petites corrections montre A.1–A.3 (livrées de toute façon le 18/10 16:30), nettoyage de l'UI (D1),
+  performance (D2), interconnexion d'autres appareils. Exceptions : build / release cassés, PR « [Auto] » rouge,
+  régression bloquante signalée, travail strictement nécessaire au bien-être automatique.
+
+## 0000. Consigne du propriétaire du 18 octobre 2026 — PRIORITÉ ABSOLUE — *remplacée par §00000 le 18/10 au soir* (prime sur tout, y compris l'ordre du 12/10)
 
 **A. Régression de l'écran montre** (capture du 18/10 11:06, « Ça ça ne marche pas ») : test bloqué sur « Test en
 cours… » dès « Apps qui peuvent tenir la montre » ; carte « Libérer et appairer » qui propose « Appairer » alors que

@@ -1,0 +1,49 @@
+package com.healthtrack.app.face;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
+
+/** Quand le service prend une rafale, et pourquoi il la saute. */
+public class FaceScheduleTest {
+
+    private static final long NOW = 1_760_000_000_000L;
+    private static final String UNLOCK = FaceSchedule.TRIGGER_UNLOCK;
+
+    @Test
+    public void deverrouillageNormal() {
+        assertNull(FaceSchedule.decide(UNLOCK, NOW, 0, 0, true, false, Double.NaN));
+        assertNull(FaceSchedule.decide(UNLOCK, NOW, NOW - FaceSchedule.MIN_INTERVAL_MS, 10, true, false, 0.3));
+    }
+
+    @Test
+    public void deuxDeverrouillagesRapprochesNeFontQuUneRafale() {
+        assertEquals(FaceSchedule.SKIP_TOO_SOON, FaceSchedule.decide(UNLOCK, NOW, NOW - 30_000, 1, true, false, Double.NaN));
+        // horloge reculée (changement d'heure manuel) : on ne bloque pas
+        assertNull(FaceSchedule.decide(UNLOCK, NOW, NOW + 60_000, 1, true, false, Double.NaN));
+    }
+
+    @Test
+    public void garde_fous() {
+        assertEquals(FaceSchedule.SKIP_SCREEN_OFF, FaceSchedule.decide(UNLOCK, NOW, 0, 0, false, false, Double.NaN));
+        assertEquals(FaceSchedule.SKIP_IN_CALL, FaceSchedule.decide(UNLOCK, NOW, 0, 0, true, true, Double.NaN));
+        assertEquals(FaceSchedule.SKIP_HOT, FaceSchedule.decide(UNLOCK, NOW, 0, 0, true, false, 0.95));
+        assertEquals(FaceSchedule.SKIP_DAILY_CAP,
+            FaceSchedule.decide(UNLOCK, NOW, 0, FaceSchedule.MAX_PER_DAY, true, false, Double.NaN));
+    }
+
+    @Test
+    public void seulsLeDeverrouillageEtLeTestSontAcceptes() {
+        // I114 : une rafale déclenchée par l'ouverture d'une app ferait dépendre les images vues de l'usage (un X)
+        assertEquals(FaceSchedule.SKIP_UNKNOWN_TRIGGER, FaceSchedule.decide("app_open", NOW, 0, 0, true, false, Double.NaN));
+        assertEquals(FaceSchedule.SKIP_UNKNOWN_TRIGGER, FaceSchedule.decide(null, NOW, 0, 0, true, false, Double.NaN));
+    }
+
+    @Test
+    public void leTestIgnoreIntervalleEtPlafondMaisPasLaChaleur() {
+        String manual = FaceSchedule.TRIGGER_MANUAL;
+        assertNull(FaceSchedule.decide(manual, NOW, NOW - 1000, FaceSchedule.MAX_PER_DAY, true, false, Double.NaN));
+        assertEquals(FaceSchedule.SKIP_HOT, FaceSchedule.decide(manual, NOW, 0, 0, true, false, 0.9));
+    }
+}

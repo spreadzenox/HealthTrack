@@ -24,9 +24,16 @@ public final class CaptureInbox {
     private static final Pattern NAME = Pattern.compile("capture-\\d{13}-\\d{3}\\.json");
 
     private final File dir;
+    private final int max;
 
     public CaptureInbox(File dir) {
+        this(dir, MAX);
+    }
+
+    /** Boîte gardant au plus max fichiers (rafales du visage : bien plus nombreuses que les synchros de la montre). */
+    public CaptureInbox(File dir, int max) {
         this.dir = dir;
+        this.max = max;
     }
 
     /** Une capture en attente : nom du fichier et JSON. */
@@ -70,8 +77,13 @@ public final class CaptureInbox {
             throw new IOException("Capture non enregistrée");
         }
         String[] all = names();
-        for (int i = 0; i < all.length - MAX; i++) new File(dir, all[i]).delete();
+        for (int i = 0; i < all.length - max; i++) new File(dir, all[i]).delete();
         return name;
+    }
+
+    /** Nombre de captures en attente (sans les lire). */
+    public synchronized int count() {
+        return names().length;
     }
 
     /** Captures en attente, de la plus ancienne à la plus récente (illisibles sautées). */
