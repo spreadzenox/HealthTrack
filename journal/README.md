@@ -47,7 +47,7 @@ temps par app comme facteur, porte de calibration puis estimation du jour avec s
 
 | Run | Type | Résultat |
 |---|---|---|
-| 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR à venir |
+| 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
 
 ---
 
