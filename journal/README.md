@@ -415,6 +415,22 @@ des Analyses après la mise à jour (quelques secondes au plus, une seule fois).
 l'export est identique. Seul détail : une heure à cheval sur votre note du jour est désormais écartée en entier
 (avant, ce qui précédait la note dans cette heure comptait), pour ne jamais mêler à la note ce qui vient après.
 
+**Run « idées » du 18/10 08:30** (pas de nouveau journal montre ; rien ne change dans l'app) : **combien de ce que
+l'app vous dira sera faux ?** Elle examine des dizaines de choses (sommeil, pas, une vingtaine de nutriments, météo,
+écran…) : à force d'en tester, certaines « marchent » par hasard. J'ai simulé 40 facteurs, dont 2 vrais liens :
+- la règle « chez vous » préparée hier, appliquée facteur par facteur, aurait affiché **au moins un faux lien une fois
+  sur deux** ; je ne la coderai donc pas telle quelle. Corrigée en partant du principe que **la plupart des facteurs
+  ne font rien** (c'est ce que montrent les études sur une seule personne), elle descend **sous 1,5 %** et trouve
+  quand même un vrai lien moyen en 4 à 6 mois ;
+- vos « Pistes à tester » actuelles en proposent une fausse chez environ 1 utilisateur sur 4 après 4 mois : le
+  prochain run de code les séparera en **« Chez vous »** (preuve forte) et **« À vérifier »** (une seule à la fois) ;
+- une **petite expérience tirée au sort chaque soir** (café tardif, verre du soir, écran au lit…) tranche un lien
+  incertain en **4 à 6 semaines**, mais seulement sur une mesure de nuit de la montre (VFC, FC au repos, sommeil) ;
+  sur votre note de bien-être, il faudrait 3 à 4 mois ;
+- **la voix** : une grande étude 2026 (560 personnes) montre que le ton de la voix ne dit presque rien de l'humeur
+  d'une personne qu'on ne connaît pas. HealthTrack comparera votre voix **à vous-même**, partira de ce que vous
+  dictez, et n'affichera un signal d'humeur (voix ou visage) qu'après avoir vérifié chez vous qu'il suit vos notes.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
 - **Analyses : tout l'historique des pas et calories (run 18/10 06:30)** : résumés par jour tenus à jour à chaque
   mesure ; plus d'historique évincé par les mesures horaires de la montre, ≈ 30 % de lectures en moins.
@@ -787,6 +803,10 @@ l'export est identique. Seul détail : une heure à cheval sur votre note du jou
   jours : VFC »). Les retours d'utilisateurs ne la mentionnent jamais pour ce modèle.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Beaucoup de facteurs, presque aucun faux lien** (run 18/10 08:30) : partir de « la plupart des facteurs ne font
+  rien » (simulé : moins de 1,5 % de jeux avec un faux « chez vous » sur 40 facteurs, contre 58 % sans) ; pistes en
+  deux étages « Chez vous » / « À vérifier » ; expériences tirées au sort le soir, seulement sur les mesures de nuit ;
+  un signal d'humeur (voix, visage) n'est affiché qu'après avoir prouvé chez vous qu'il suit vos notes.
 - **« Chez vous », sans se tromper de sens** (run 17/10 20:30) : un seul calcul pour le Radar, les cartes du cœur et
   les pistes, qui part de « aucun effet », tient compte des jours qui se suivent et ne parle qu'à 97,5 % de certitude
   (simulé : < 4 % d'erreur de sens contre ≈ 20 % pour une corrélation brute) ; il sait aussi dire « pas de lien
@@ -960,6 +980,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 02:30 — [Repas : 100 lus + budget de lectures en CI](runs/2026-10-18-0230-budget-lectures.md) | ⚡ | PR #202 ; checks verts (dont le nouveau budget) → fusionnée → v160 |
 | 18/10 04:30 — [Analyses : tout l'historique du cœur + Worker mesuré](runs/2026-10-18-0430-analyses-coeur-complet.md) | ⚡🐛 | PR #203 ; 1er passage rouge (type « correction » refusé par le test des Nouveautés → « correctif »), puis checks verts → fusionnée → v161 |
 | 18/10 06:30 — [Agrégats journaliers des séries denses](runs/2026-10-18-0630-agregats-journaliers.md) | ⚡🐛 | PR #204 ; checks verts (budget resserré inclus) → fusionnée → v162 |
+| 18/10 08:30 — [Idées : faux liens sur 40 facteurs, expériences, voix](runs/2026-10-18-0830-idees-multiplicite-abab.md) | 💡🧭 | 5 idées (I107–I111), 2 simulations ; journal seul |
 
 ---
 
