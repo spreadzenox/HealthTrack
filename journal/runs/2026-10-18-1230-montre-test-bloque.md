@@ -1,6 +1,6 @@
 # 2026-10-18 12:30 Paris (10:30 UTC) — Montre : test jamais bloqué, assistant cohérent
 
-**Type** : 🔴 régression (consigne du propriétaire du 18/10, point A)  ·  **PR** : voir la PR « [Auto] Montre : test jamais bloqué… »
+**Type** : 🔴 régression (consigne du propriétaire du 18/10, point A)  ·  **PR** : #207
 
 ## Pourquoi
 - Démarrage : main à `7f9beac` (#206). Aucune PR « [Auto] » ouverte. Nouvelle consigne du propriétaire (18/10) :

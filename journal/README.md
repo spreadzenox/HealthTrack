@@ -1017,7 +1017,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 06:30 — [Agrégats journaliers des séries denses](runs/2026-10-18-0630-agregats-journaliers.md) | ⚡🐛 | PR #204 ; checks verts (budget resserré inclus) → fusionnée → v162 |
 | 18/10 08:30 — [Idées : faux liens sur 40 facteurs, expériences, voix](runs/2026-10-18-0830-idees-multiplicite-abab.md) | 💡🧭 | 5 idées (I107–I111), 2 simulations ; journal seul |
 | 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR #206 ; checks verts → fusionnée |
-| 18/10 12:30 — [Montre : test jamais bloqué, assistant cohérent](runs/2026-10-18-1230-montre-test-bloque.md) | 🔴🐛⌚ | Consigne du 18/10 (A) ; voir le compte rendu pour la PR |
+| 18/10 12:30 — [Montre : test jamais bloqué, assistant cohérent](runs/2026-10-18-1230-montre-test-bloque.md) | 🔴🐛⌚ | Consigne du 18/10 (A) ; PR #207 ; checks verts → fusionnée |
 
 ---
 
