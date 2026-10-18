@@ -335,6 +335,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       seulement s'il tient sur l'A56 (≤ 20 Mo, < 300 ms) — remplace à terme le formulaire de check-in (D1).
       **I91** (16/10) : la dictée d'abord ; échantillons de fond en option, seulement sans appel ni autre capture
       (`getActiveRecordingConfigurations()` vide), rejetés si `isClientSilenced()` ou hors de la plage de votre voix
+- [ ] **I110 (run idées 18/10 08:30, score 16)** porte d'entrée de l'estimateur : visage et voix restent `candidate`
+      dans `ESTIMATOR_INPUTS` tant qu'ils n'ont pas prouvé **chez l'utilisateur** qu'ils suivent ses notes (LOO ≥ 0,3,
+      ≥ 30 j, règle I107) ; seul `active` compte dans l'humeur affichée (Koch et al., Interspeech 2026 : prosodie lue →
+      valence ρ = 0,02, éveil 0,12 d'une personne à l'autre ; 32–69 % de la variance entre personnes)
+- [ ] **I111 (12)** voix = **dictée d'abord** (texte → note et tags *proposés*), prosodie maison en écart à sa plage
+      28 j ; **aucun modèle d'émotion vocale embarqué** : emotion2vec+ (poids FunASR Model License : « reference and
+      learning », révocable), Wav2Small / MobileNetV4 audEERING (CC-BY-NC-SA) écartés
 
 ### D5 — Anti-circularité (Y ≠ X)
 - [x] **I92 (16/10, petit, avant tout code D4)** — **livré 16/10 16:30** (`mood/estimatorInputs.js`,
@@ -350,7 +357,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] Revue des pièges : ~~ordre temporel (X avant Y — ex. pas **du jour** vs bien-être du jour)~~ **fait le 16/10 22:30** pour les comportements du jour (`SAME_DAY_KEYS`, `DAY_OVER_HOUR` = 20 h ; reste : repas d'après la note, prédiction du jour), comparaisons multiples
       (déjà BH), taille minimale, formulations « va de pair » partout
 - [ ] Garde-fous visibles (I46) : X de la veille, ≥ 30 paires pour afficher / ≥ 90 jours pour « solide », préblanchiment
-      AR(1), « k liens nets sur m testés » ; expériences ABAB randomisées pour un lien à confirmer (I45, plus tard)
+      AR(1), « k liens nets sur m testés » ; expériences ABAB randomisées pour un lien à confirmer (I45 → **I109**,
+      18/10 08:30 : tirage quotidien, mesures de nuit seulement) ; **comparaisons multiples : I107 / I108** (BH q < 0,2
+      ne suffit pas pour dire « chez vous », simulé 18–36 % de jeux avec une fausse piste)
 
 ### D6 — Science personnelle, pas de normes imposées
 - [x] **I97 ① (17/10 06:30)** Radar forme et cartes FC / VFC : `higherIsBetter` → `generalHigherIsBetter`, écart
@@ -362,6 +371,18 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       a priori N(0 ; 0,2²) **centré sur zéro**, sens affiché si P(sens) ≥ 97,5 % et n ≥ 30 (simulé : faux sens
       ≤ 3,6 % sans lien, lien r = 0,3 trouvé 43 % à 60 j / 88 % à 120 j ; corrélation brute à 90 % : 10–23 % de faux
       sens) ; branché sur Radar, cartes FC / VFC puis `leverSuggestion`. Spec dans `IDEES.md`
+- [ ] **I107 (run idées 18/10 08:30, score 20) — corrige I102 avant tout code** : I102 seul sur 40 facteurs affiche
+      ≥ 1 faux sens dans **40 / 58 / 70 %** des jeux (60 / 120 / 180 j ; simulé, `protocoles/multiplicite-abab-sim.py`).
+      A priori **spike-and-slab** (π0 = 0,9 sans effet, 10 % N(0 ; 0,3²)), verdict si P(lien et sens) ≥ 0,9 :
+      ≤ 1,2 % de jeux avec un faux sens, vrais liens r = 0,3 trouvés 36 % à 120 j / 70 % à 180 j. Même calcul pour
+      Radar, cartes, pistes et effets décalés ; « pas de lien notable » (I103) = P(lien) < 0,2 et n ≥ 60
+- [ ] **I108 (18/10 08:30, score 20, petit, faisable tout de suite)** pistes à deux étages : q < 0,05 → « Chez
+      vous : … », 0,05 ≤ q < 0,2 → « À vérifier : … » (une seule à la fois, jamais formulée comme un fait) ; les pistes
+      actuelles (3 à q < 0,2) en montrent une fausse chez ≈ 1 utilisateur sur 4 après 120 j (simulé, 40 X)
+- [ ] **I109 (12)** expérience tirée au sort **chaque soir** sur une mesure **de nuit** (VFC, FC repos, sommeil) pour
+      une piste « à vérifier » : 6 semaines, un seul test décidé d'avance (pas de multiplicité) ; simulé : effet fort
+      (d = 1,5) tranché 58 % à 28 j / 83 % à 42 j, ≤ 4 % de faux sens ; **pas** sur la note de bien-être (effet moyen
+      d = 0,5 : 26–36 % après 84–112 j). Remplace I45
 - [ ] **I103 (16)** verdict « pas de lien notable chez vous » (borne haute 95 % de |effet| < 0,2 ; possible dès ~60 j)
       → ligne repliée dans Analyses, signal sans lien ne compte plus dans la phrase du Radar
 - [ ] **I104 (16)** fréquences au lieu de r (« 7 de vos 10 journées comparables… »), seulement après un verdict I102
@@ -554,7 +575,7 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
 5. 🧭 D6 — pistes et messages neutres / personnels. **16/10 18:30 : fait pour les pistes** — `leverSuggestion`
    suit le signe personnel (simples, décalées, avancées), piste contraire montrée « Ne pas chercher à … » +
    « Contraire à l'hypothèse générale : chez vous, vos données font foi » ; jamais plus d'alcool / tabac.
-   **17/10 06:30 : Radar forme et cartes FC / VFC neutres (I97 ①)**. Reste : sens personnel du radar (I97 ② → **I102**, méthode tranchée 17/10 20:30, puis I103–I105),
+   **17/10 06:30 : Radar forme et cartes FC / VFC neutres (I97 ①)**. **18/10 08:30 : I108 (pistes « Chez vous » / « À vérifier », petit) d'abord ; puis I102 écrit directement avec l'a priori spike-and-slab d'I107** (I102 seul : ≥ 1 faux sens sur 40 facteurs dans 58 % des jeux à 120 j). Reste : sens personnel du radar (I97 ② → **I102 + I107**, puis I103–I105, I109),
    régularité du sommeil, prédiction, repères Nutrition ; `direction` en a priori faible chiffré (shrinkage).
 6. ⌚ **D3 — VÉRIFIER QUE DE VRAIES MESURES ARRIVENT (v125+)**. Journal v124 (14/10 10:22) : montre **associée**
    ✅, mais 0 mesure (fenêtre 10:00 → 10:00, totaux non stockés ; `diagnostics/2026-10-14-1022-gt6pro-v124.md`).

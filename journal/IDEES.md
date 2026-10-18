@@ -9,6 +9,140 @@
 
 ---
 
+## Run du 18/10/2026 08:30 (Paris) — tester beaucoup de facteurs sans se raconter d'histoires, expériences, voix
+
+Question du jour, côté utilisateur : *« l'app examine des dizaines de choses (sommeil, pas, 20 nutriments, météo,
+écran…). Si elle en teste 50, il y en aura bien une qui "marche" par hasard. Combien de ce qu'elle me dira sera
+faux ? Et si un lien reste incertain, est-ce que je peux le trancher en faisant une petite expérience ? »* Suite
+directe du run du 17/10 20:30 (I102 : règle « chez vous » simulée **variable par variable**). Montre en maintenance,
+aucun nouveau journal (`diagnostics/` inchangé). Méthode : relire ce que fait l'app aujourd'hui, simuler
+(`protocoles/multiplicite-abab-sim.py`, 600 tirages par case), puis veille voix 2026.
+
+### Ce qu'on apprend (faits)
+
+- **Ce que l'app teste aujourd'hui** [V code, `analysisEngine.js`] : ≈ 55 variables dans `VARIABLE_META` (dont
+  ≈ 20 nutriments très corrélés entre eux), plus les tags et les effets décalés. Corrélation contrôlée week-end,
+  p calculé sur un **n effectif** (autocorrélation), Benjamini-Hochberg sur la famille ; une **piste** est proposée
+  si q < 0,2 (`LEVER_MAX_Q`), « solide » si q < 0,05 ; effets décalés à q < 0,05.
+- **Simulation A — 40 facteurs, dont 12 nutriments corrélés à 0,6 et 2 vrais liens r = 0,3, tout en AR(1) 0,4**
+  [V, ce run] :
+
+  | Règle | ≥ 1 faux sens affiché (60 / 120 / 180 j) | Vrais liens trouvés (60 / 120 / 180 j) |
+  |---|---|---|
+  | Pistes actuelles (BH q < 0,2) | 18 % / **25 %** / 36 % | 23 % / 58 % / 84 % |
+  | « Solide » actuel (BH q < 0,05) | 3 % / 4 % / 9 % | 8 % / 34 % / 66 % |
+  | **I102 seul, variable par variable** | **40 % / 58 % / 70 %** | 45 % / 87 % / 98 % |
+  | I102 limité à 8 facteurs « primaires » | 10 % / 16 % / 19 % | 45 % / 87 % / 98 % |
+  | I102 + BH à 5 % sur la famille | 0,2 % / 2 % / 5 % | 2 % / 38 % / 79 % |
+  | **A priori « 90 % des facteurs ne font rien » (spike-and-slab), P ≥ 0,9** | **0,7 % / 1,2 % / 0,7 %** | 6 % / 36 % / 70 % |
+
+  → **I102 tel que spécifié la veille ne suffit pas** : ses 3,6 % d'erreur valent pour *un* facteur ; sur 40, l'app
+  dirait au moins un « chez vous » faux **une fois sur deux**. Et les pistes actuelles (q < 0,2) en proposent une
+  fausse chez un utilisateur sur quatre après 4 mois. L'a priori « la plupart des facteurs ne font rien »
+  (cohérent avec l'étude Oura n-of-1 du 17/10 : la plupart des liens attendus absents chez une personne donnée)
+  corrige la multiplicité tout seul, sans liste à part, et garde l'essentiel de la puissance.
+- **Simulation B — auto-expérience tirée au sort** (condition A/B, observance 85 %, demi-effet le premier jour
+  d'un changement, Y en AR(1) 0,4 ; régression préblanchie) [V, ce run] :
+  - sur la **note de bien-être** (bruitée), un effet moyen (d = 0,5 écart type) n'est tranché qu'à 26–36 % après
+    **84–112 jours** (règle stricte) ; 41–55 % avec une règle « expérience » (a priori N(0 ; 0,5²), 95 %) mais
+    7–10 % de faux sens sans effet (l'erreur type estimée sur peu de jours est un peu optimiste) ;
+  - le **tirage au sort chaque jour** (L = 1) bat les blocs de 3 ou 7 jours malgré la rémanence ;
+  - effet **grand** (d = 1,5, ordre de grandeur d'un verre d'alcool sur la VFC de la nuit [H, à vérifier sur les
+    données]) : 58 % à 28 jours, 83 % à 42 jours, ≤ 4 % de faux sens à 97,5 %.
+  → Une expérience n'est rentable que sur une **mesure nocturne de la montre** (VFC, FC repos, sommeil) et un effet
+  attendu fort ; sur l'humeur, elle demande 3–4 mois. Son atout : **un seul test décidé d'avance**, donc pas de
+  multiplicité.
+- **Littérature** : Lin et al. 2016 (*Br J Math Stat Psychol*, PMC5082548) : ABAB plus puissant qu'AB, tests à
+  autocorrélation ; `nof1kit` (CRAN) : `sim_power()`, autocorrélation typique de l'humeur quotidienne 0,2–0,5 [T doc] ;
+  préprint *Progressive Bayesian Confidence Architectures for Cold-Start Personal Health Analytics* (Chakraborty,
+  arXiv 2601.03299, janv. 2026) : première « piste » en 5,3 j, **5,9 % de fausses découvertes à 30 j** [T, résumé
+  seul, simulation non détaillée] ; l'exemple classique d'un 2016 arXiv : 100 corrélations, 10 vraies → ≈ 40 % des
+  liens trouvés sont faux sans correction [T].
+- **Voix 2026** [V] :
+  - *Collecting Prosody in the Wild* (Koch, Bemmann, Schoedel, Bühner, Stachl ; Interspeech 2026, arXiv
+    2603.17061) : 560 personnes, 9 877 enregistrements de phrases lues, openSMILE sur le téléphone, audio effacé.
+    Prédire l'humeur d'une personne **inconnue** : valence **ρ = 0,02**, éveil **ρ = 0,12** (le sexe : 92 %). Les
+    différences **entre personnes** expliquent 32–69 % de la variance des indices. → La prosodie n'a de sens que
+    **comparée à soi-même**, et rien ne garantit qu'elle suive l'humeur chez un utilisateur donné.
+  - **emotion2vec+** : code MIT, mais **poids sous « FunASR Model License »** (usage « for reference and learning »,
+    licence révocable, perte de licence en cas de « dénigrement », révisable unilatéralement) ; un élève distillé de
+    9,7 Mo en ONNX (`thomashallock/emotion2vec-web-distill`) hérite de cette licence et **rate la plupart des émotions
+    non neutres en parole spontanée** (accord 14 %). **Wav2Small / MobileNetV4 d'audEERING** : CC-BY-NC-SA, recherche
+    seulement. **FRILL** (Google, embedding 2021 pour mobile) : licence non vérifiée [H].
+  - → Décision inchangée et renforcée : **prosodie maison** (débit, pauses, énergie, F0 via pitchy 0BSD) en écart à
+    sa propre plage, et le **contenu de la dictée** (ce que l'utilisateur dit de son humeur = auto-déclaration) comme
+    signal principal. Aucun modèle d'émotion vocale embarqué tant qu'aucun n'a une licence claire **et** une validité
+    individuelle démontrée.
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I107 | **I102 corrigé pour la famille** : a priori « spike-and-slab » (90 % des facteurs sans effet, 10 % N(0 ; 0,3²)), même calcul pour tous les X (Radar, cartes, pistes, effets décalés) ; « chez vous : … » seulement si P(lien et sens) ≥ 0,9 | Ne pas raconter de faux liens (D5), base fiable de D6 | 5 | 4 | **20** |
+| I108 | **Pistes à deux étages, mots exacts** : q < 0,05 → « chez vous » ; 0,05 ≤ q < 0,2 → « à vérifier » (jamais formulé comme un fait, une seule à la fois) ; au-delà rien. Remplace l'affichage actuel de 3 pistes à q < 0,2 | Moins de fausses pistes tout de suite (1 sur 4 → < 1 sur 20 en « chez vous »), sans attendre I107 | 4 | 5 | **20** |
+| I109 | **Expérience d'un geste sur une mesure de nuit** : pour une piste « à vérifier » dont la mesure est nocturne (VFC, FC repos, durée / début du sommeil), « Tirer au sort chaque soir pendant 6 semaines ? » (café après 16 h, écran au lit, verre du soir…) ; un rappel le soir, un seul test décidé d'avance | Trancher un lien incertain en 4–6 semaines (simulé 58–83 % pour un effet fort), au lieu de 4–6 mois d'observation | 4 | 3 | 12 |
+| I110 | **Porte d'entrée de l'estimateur d'humeur** : un signal (visage, voix) n'entre dans `ESTIMATOR_INPUTS` actifs qu'après avoir prouvé **chez l'utilisateur** qu'il suit ses notes (corrélation en validation croisée ≥ 0,3 sur ≥ 30 jours, même règle I107) ; sinon il reste en diagnostic | Ne pas afficher une « humeur » qui ne veut rien dire chez lui (leçon Koch 2026 : ρ = 0,02 entre personnes) | 4 | 4 | **16** |
+| I111 | **Voix : la dictée d'abord, prosodie en écart à soi** : ce que l'utilisateur dit (« journée crevante mais contente ») → note et tags proposés ; indices maison (débit, pauses, énergie, F0) z-scorés sur sa plage 28 j ; aucun modèle d'émotion vocale embarqué (licences FunASR / CC-BY-NC-SA, validité faible) | Saisie en un geste (directions du 11/10), voix sans licence douteuse | 3 | 4 | 12 |
+
+**Écartées** : *Bonferroni* (puissance trop faible, et les nutriments corrélés le rendent encore plus sévère) ;
+*limiter l'examen à une liste fixe de facteurs « primaires »* (16–19 % de faux sens quand même, et contraire à
+l'esprit « vos données font foi » : un facteur inattendu doit pouvoir apparaître) ; *expériences ABAB sur la note de
+bien-être* (3–4 mois pour un effet moyen : trop long pour être proposé par défaut) ; *emotion2vec+ / Wav2Small*
+(licences ci-dessus).
+
+### Détail et pistes d'implémentation
+
+**I107 — spike-and-slab.** Dans `services/personalDirection.js` (I102, à écrire) : garder préblanchiment, X de la
+veille, n ≥ 30 ; remplacer l'a priori N(0 ; 0,2²) par le mélange π0·δ0 + (1 − π0)·N(0 ; 0,3²) avec π0 = 0,9 :
+`p1 = (1−π0)·φ(b ; 0, se²+τ²) / [π0·φ(b ; 0, se²) + (1−π0)·φ(b ; 0, se²+τ²)]`, puis `pSign` du postérieur gaussien
+conditionnel ; verdict `positive` / `negative` si `p1·max(pSign, 1−pSign) ≥ 0,9`. Verdict « pas de lien notable »
+(I103) : `p1 < 0,2` **et** n ≥ 60. Fonction pure, sans état, rien à migrer. Option plus tard : π0 estimé sur
+l'ensemble des facteurs de l'utilisateur (borne basse 0,7) pour s'adapter. Tests d'abord : sur 200 jeux simulés de
+40 X sans lien, au plus 5 jeux avec un verdict de sens ; 2 vrais liens r = 0,3 sur 180 j trouvés ≥ 60 % ;
+facteurs corrélés entre eux (nutriments) sans inflation.
+
+**I108 — deux étages.** Petit changement de `analysisEngine.js` : `levers` filtrés à `LEVER_MAX_Q` (0,2) mais
+chaque piste reçoit `stage: q < 0.05 ? 'personal' : 'toVerify'` ; l'UI des pistes dit « Chez vous : … » ou « À
+vérifier : … » et n'affiche **qu'une** piste « à vérifier » à la fois. Test : un jeu de démo où une piste a q = 0,12
+→ libellé « À vérifier ». Ne remplace pas I107 (qui reprendra la décision), mais réduit tout de suite le risque.
+
+**I109 — expérience.** Réutilise les rappels du soir existants ; tirage au sort dans l'app (graine stockée,
+calendrier visible) ; jours où la consigne n'a pas été suivie gardés (intention de faire) ; analyse unique à la fin :
+régression préblanchie (Cochrane-Orcutt), seuil 97,5 %, a priori N(0 ; 0,5²) **centré sur 0**. Mesures éligibles :
+celles de la nuit suivante uniquement (ordre temporel garanti). Résultat formulé « chez vous, pendant ces 6 semaines,
+… », sans jamais transformer un effet en consigne de santé.
+
+**I110 — porte d'entrée.** Dans `services/mood/estimatorInputs.js` : chaque entrée déclarée a un état `candidate` →
+`active` après calibration (LOO, `mood/calibration.js`), recalculé chaque semaine ; seul `active` compte dans
+l'estimation affichée ; le test anti-circularité reste inchangé (la liste déclarée ne bouge pas, seul l'état change).
+
+**I111 — voix.** Ordre : dictée du soir (reconnaissance sur l'appareil, `createOnDeviceSpeechRecognizer`) → texte
+analysé par règles locales (mots de ressenti, intensité, négations) pour **proposer** une note et des tags (rien
+n'est enregistré sans un tap) ; indices prosodiques calculés sur l'audio puis audio effacé ; ces indices sont
+`candidate` (I110).
+
+### Sources (consultées le 18/10/2026)
+- Simulation : `journal/protocoles/multiplicite-abab-sim.py` (ce run).
+- Lin, Lin, Lin et al., *Properties of bootstrap tests for N-of-1 studies*, Br J Math Stat Psychol 2016, PMC5082548.
+- `nof1kit`, CRAN (documentation de `sim_power()`).
+- Chakraborty, *Progressive Bayesian Confidence Architectures for Cold-Start Personal Health Analytics*, arXiv
+  2601.03299 (6 janv. 2026, résumé).
+- Koch et al., *Collecting Prosody in the Wild: A Content-Controlled, Privacy-First Smartphone Protocol and Empirical
+  Evaluation*, Interspeech 2026, arXiv 2603.17061v2 (HTML lu).
+- emotion2vec : github.com/ddlBoJack/emotion2vec (MIT pour le code) ; FunASR `MODEL_LICENSE` v1.1 ;
+  huggingface.co/thomashallock/emotion2vec-web-distill (carte du modèle).
+- audEERING Wav2Small : huggingface.co/audeering/wav2small (CC-BY-NC-SA-4.0) ; arXiv 2408.13920.
+- FRILL : research.google (blog 2021), arXiv 2011.04609 (licence non trouvée).
+- Bearable : fil r/BearableApp (« les activités fréquentes faussent mes corrélations ») [T].
+
+### À creuser au prochain run idées (18/10 20:30)
+- π0 adaptatif (estimé sur les facteurs de l'utilisateur) : gain réel quand l'utilisateur a beaucoup de vrais liens ?
+- Taille d'effet réelle d'un verre d'alcool / d'un café tardif sur la VFC et le sommeil **chez une personne**
+  (publications 2024–2026, WHOOP / Oura / Firstbeat) pour calibrer I109.
+- Sujets hors statistiques, côté vie quotidienne : ce qui manque encore aux gens dans les fils Reddit 2026.
+
+---
+
 ## Run du 17/10/2026 20:30 (Paris) — « chez vous » : apprendre le sens personnel d'un signal sans se tromper
 
 Question du jour, côté utilisateur : *« vous avez retiré le "bon" et le "mauvais" codés en dur (D6). Très bien. Mais
