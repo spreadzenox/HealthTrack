@@ -802,6 +802,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       case 'heart_rate': {
         const subtype = e.payload?.subtype
         const bpm = e.payload?.bpm ?? e.payload?.value
+        const w = e.payload?.weight ?? 1 // moyenne d'une heure d'agrégat : pèse son nombre d'entrées
         if (subtype === 'restingHeartRate') {
           if (typeof bpm === 'number' && bpm > 0) {
             day._hrSum += bpm
@@ -809,8 +810,8 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
           }
         } else if (subtype === 'heartRate') {
           if (typeof bpm === 'number' && bpm > 0 && !afterRating(dk, e)) {
-            day._avgHRSum += bpm
-            day._avgHRCount += 1
+            day._avgHRSum += bpm * w
+            day._avgHRCount += w
           }
         } else if (subtype === 'heartRateVariability') {
           const hrv = e.payload?.value ?? bpm
@@ -821,8 +822,8 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
         } else if (subtype === 'oxygenSaturation') {
           const spo2 = e.payload?.value ?? bpm
           if (typeof spo2 === 'number' && spo2 > 0) {
-            day._spo2Sum += spo2
-            day._spo2Count += 1
+            day._spo2Sum += spo2 * w
+            day._spo2Count += w
           }
         }
         break
@@ -1432,16 +1433,17 @@ export function buildTodayRow(entries, historicalRawDataset) {
       case 'heart_rate': {
         const subtype = e.payload?.subtype
         const bpm = e.payload?.bpm ?? e.payload?.value
+        const w = e.payload?.weight ?? 1
         if (subtype === 'restingHeartRate' && typeof bpm === 'number' && bpm > 0) {
           row._hrSum += bpm; row._hrCount += 1
         } else if (subtype === 'heartRate' && typeof bpm === 'number' && bpm > 0) {
-          row._avgHRSum += bpm; row._avgHRCount += 1
+          row._avgHRSum += bpm * w; row._avgHRCount += w
         } else if (subtype === 'heartRateVariability') {
           const v = e.payload?.value ?? bpm
           if (typeof v === 'number' && v > 0) { row._hrvSum += v; row._hrvCount += 1 }
         } else if (subtype === 'oxygenSaturation') {
           const v = e.payload?.value ?? bpm
-          if (typeof v === 'number' && v > 0) { row._spo2Sum += v; row._spo2Count += 1 }
+          if (typeof v === 'number' && v > 0) { row._spo2Sum += v * w; row._spo2Count += w }
         }
         break
       }

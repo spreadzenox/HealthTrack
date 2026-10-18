@@ -656,8 +656,9 @@ describe('lecture par sous-type (D2 performance)', () => {
       const req = indexedDB.open('HealthTrack')
       req.onsuccess = () => resolve(req.result)
     })
-    expect(db.version).toBe(4)
+    expect(db.version).toBe(5)
     expect([...db.transaction('health_entries').objectStore('health_entries').indexNames]).toContain('type_subtype_at')
+    expect([...db.objectStoreNames]).toContain('daily_aggregates')
     db.close()
   })
 })
@@ -727,7 +728,7 @@ describe('listEntriesForAnalysis par index (D2 performance)', () => {
     const orig = proto.getAll
     let fullReads = 0
     proto.getAll = function (...a) {
-      fullReads++
+      if (this.name === 'health_entries') fullReads++ // le petit magasin d'agrégats, lui, se lit en entier
       return orig.apply(this, a)
     }
     let got
@@ -788,9 +789,10 @@ describe('listEntriesForAnalysis : fréquence cardiaque par sous-type', () => {
       const count = (sub) => got.filter((e) => e.payload.subtype === sub).length
       expect(count('restingHeartRate')).toBe(40)
       expect(count('heartRateVariability')).toBe(40)
-      expect(count('heartRate')).toBe(300)
-      const newest = rows.filter((e) => e.payload.subtype === 'heartRate').map((e) => e.at).sort().reverse().slice(0, 300)
-      expect(got.filter((e) => e.payload.subtype === 'heartRate').map((e) => e.at)).toEqual(newest)
+      // Les tranches de FC arrivent en moyennes horaires (agrégats journaliers) : 4 jours × 24 h, aucune perdue
+      const hr = got.filter((e) => e.payload.subtype === 'heartRate')
+      expect(hr).toHaveLength(96)
+      expect(hr.every((e) => e.payload.bpm === 70 && e.payload.weight === 6)).toBe(true)
     } finally {
       ANALYSIS_LIMITS.subtypes.heart_rate = saved
     }

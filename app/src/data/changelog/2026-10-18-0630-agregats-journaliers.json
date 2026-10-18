@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-18",
+  "kind": "correctif",
+  "title": "Analyses : tout l'historique des pas et calories",
+  "items": [
+    "Analyses et Prédiction du jour : vos pas et calories comptent maintenant sur tout votre historique. La montre les écrit heure par heure, et les analyses n'en gardaient que les plus récents (environ un mois de calories, quatre mois de pas).",
+    "HealthTrack garde un résumé heure par heure de chaque jour (pas, calories, cœur, SpO₂), mis à jour à chaque nouvelle mesure : le calcul relit environ 30 % de données en moins. Il se construit tout seul à la première ouverture des Analyses.",
+    "Vos données et l'export ne changent pas ; les liens trouvés peuvent évoluer un peu."
+  ]
+}

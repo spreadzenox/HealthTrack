@@ -8,13 +8,16 @@
  * the indexes instead of loading the whole store (perf D2).
  * Schema v4: added compound index 'type_subtype_at' ([type, payload.subtype, at]) — the Home cards that need
  * one daily value (resting HR, HRV) no longer read every 10-min heart-rate / SpO₂ slot (perf D2).
+ * Schema v5: added store 'daily_aggregates' (hourly sums per day of steps, calories, HR and SpO₂ slots, see
+ * dailyAggregates.js) — built from the entries on first analysis, entries untouched (perf D2).
  */
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
 import { bumpDataRevision } from './dataRevision'
+import { AGG_STORE, DENSE_SERIES, markDirty, readAggregatedEntries } from './dailyAggregates'
 
 const DB_NAME = 'HealthTrack'
 const STORE_NAME = 'health_entries'
-const DB_VERSION = 4
+const DB_VERSION = 5
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -46,6 +49,10 @@ function openDB() {
       // v4: by sub-type within a type and date range (entries without payload.subtype are simply not indexed)
       if (oldVersion < 4 && !store.indexNames.contains('type_subtype_at')) {
         store.createIndex('type_subtype_at', ['type', 'payload.subtype', 'at'], { unique: false })
+      }
+      // v5: agrégats des séries denses (vides : construits à la première analyse)
+      if (oldVersion < 5 && !db.objectStoreNames.contains(AGG_STORE)) {
+        db.createObjectStore(AGG_STORE, { keyPath: 'key' })
       }
     }
   })
@@ -203,8 +210,9 @@ export async function upsertEntries(newEntries) {
   let skipped = 0
 
   await new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
     const store = tx.objectStore(STORE_NAME)
+    const added = []
 
     for (const entry of newEntries) {
       const at = entry.at || now
@@ -213,16 +221,19 @@ export async function upsertEntries(newEntries) {
         skipped++
         continue
       }
-      store.add({
+      const row = {
         type: entry.type,
         source: entry.source,
         payload: entry.payload || {},
         at,
         created_at: now,
-      })
+      }
+      store.add(row)
+      added.push(row)
       existingKeys.add(key)
       inserted++
     }
+    markDirty(tx.objectStore(AGG_STORE), added)
 
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)
@@ -244,7 +255,7 @@ export async function rewriteSourceEntries(source, rewrite) {
   let removed = 0
   let added = 0
   await new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
     const store = tx.objectStore(STORE_NAME)
     const req = store.index('source_at').getAll(IDBKeyRange.bound([source, ''], [source, AT_MAX]))
     req.onsuccess = () => {
@@ -260,13 +271,16 @@ export async function rewriteSourceEntries(source, rewrite) {
         from = i
       }
       removed = ids.length
+      const touched = entries.filter((e) => gone.has(e.id))
       for (const e of add) {
         const row = { type: e.type, source, payload: e.payload || {}, at: e.at || now, created_at: now }
         if (keys.has(dedupKey(row))) continue
         keys.add(dedupKey(row))
         store.add(row)
+        touched.push(row)
         added++
       }
+      markDirty(tx.objectStore(AGG_STORE), touched)
     }
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)
@@ -292,9 +306,10 @@ export async function createEntry(entry) {
     created_at: now,
   }
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
     const store = tx.objectStore(STORE_NAME)
     const req = store.add(row)
+    markDirty(tx.objectStore(AGG_STORE), [row])
     req.onerror = () => reject(req.error)
     req.onsuccess = () => {
       bumpDataRevision()
@@ -338,19 +353,20 @@ export async function countEntries({ type, since, until } = {}) {
   })
 }
 
+/** Séries lues dans les agrégats : « type » (toutes ses entrées) ou « type:sous-type ». */
+const AGGREGATED = new Set(DENSE_SERIES.map((s) => s.key))
+
 /** Limites de `listEntriesForAnalysis` (les N plus récentes par type, ou par sous-type). */
 export const ANALYSIS_LIMITS = {
   types: {
-    steps: 2000,
     wellbeing: 2000,
     food: 2000,
     sleep: 500,
     activity: 500,
-    calories: 500,
     cigarette: 2000,
   },
   subtypes: {
-    heart_rate: { heartRate: 3000, oxygenSaturation: 1500, '*': 1000 },
+    heart_rate: { '*': 1000 },
   },
   default: 1000,
 }
@@ -360,12 +376,13 @@ export const ANALYSIS_LIMITS = {
  * high-frequency types (e.g. heart_rate) cannot crowd out lower-frequency
  * types (e.g. wellbeing, sleep, food) due to a shared entry cap.
  *
- * Per-type limits (most-recent N entries of that type, `ANALYSIS_LIMITS`):
- *   - heart_rate: per sub-type (index [type, sous-type, at]) — heartRate 3000, oxygenSaturation 1500,
- *                 any other sub-type 1000 : les tranches de 10 min de la montre (≈ 144 / jour) n'évincent
- *                 plus la FC au repos ni la VFC (une par jour) ; les entrées sans sous-type (absentes
- *                 de l'index) ne sont pas lues : le moteur d'analyse ne s'en sert pas
- *   - steps:      2000
+ * Séries denses (pas, calories, FC instantanée, SpO₂ : `DENSE_SERIES`) : tout l'historique, en sommes
+ * horaires lues dans les agrégats journaliers (dailyAggregates.js), plus jamais en entrées brutes.
+ *
+ * Per-type limits for the rest (most-recent N entries of that type, `ANALYSIS_LIMITS`):
+ *   - heart_rate: per sub-type (index [type, sous-type, at]) — 1000 (FC au repos, VFC : une par jour) ;
+ *                 les entrées sans sous-type (absentes de l'index) ne sont pas lues : le moteur d'analyse
+ *                 ne s'en sert pas
  *   - wellbeing:  2000
  *   - food:       2000
  *   - sleep:      500
@@ -447,7 +464,7 @@ export async function listEntriesForAnalysis() {
     })
 
   const bySubtype = async (type, limits) => {
-    const subs = await subtypesOf(type)
+    const subs = (await subtypesOf(type)).filter((sub) => !AGGREGATED.has(`${type}:${sub}`))
     const parts = await Promise.all(subs.map(async (sub) => {
       const limit = Object.hasOwn(limits, sub) ? limits[sub] : limits['*']
       return keepNewest(await newest('type_subtype_at', [type, sub, ''], [type, sub, AT_MAX], limit), limit)
@@ -456,11 +473,12 @@ export async function listEntriesForAnalysis() {
   }
 
   const perType = await Promise.all(types.map(async (type) => {
+    if (AGGREGATED.has(type)) return []
     if (SUBTYPE_LIMITS[type]) return bySubtype(type, SUBTYPE_LIMITS[type])
     const limit = TYPE_LIMITS[type] ?? DEFAULT_LIMIT
     return keepNewest(await newest('type_at', [type, ''], [type, AT_MAX], limit), limit)
   }))
-  return perType.flat()
+  return perType.flat().concat(await readAggregatedEntries(db, STORE_NAME))
 }
 
 /**
@@ -471,8 +489,12 @@ export async function listEntriesForAnalysis() {
 export async function deleteEntry(id) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite')
-    tx.objectStore(STORE_NAME).delete(id)
+    const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
+    const store = tx.objectStore(STORE_NAME)
+    store.get(id).onsuccess = (e) => {
+      if (e.target.result) markDirty(tx.objectStore(AGG_STORE), [e.target.result])
+      store.delete(id)
+    }
     tx.oncomplete = () => {
       bumpDataRevision()
       resolve()
@@ -491,7 +513,7 @@ export async function deleteEntry(id) {
 export async function updateEntry(id, changes = {}) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
     const store = tx.objectStore(STORE_NAME)
     let missing = false
     const req = store.get(id)
@@ -501,10 +523,12 @@ export async function updateEntry(id, changes = {}) {
         missing = true
         return
       }
+      const before = { ...row }
       if (changes.payload !== undefined) row.payload = changes.payload
       if (changes.at) row.at = changes.at
       row.updated_at = new Date().toISOString()
       store.put(row)
+      markDirty(tx.objectStore(AGG_STORE), [before, row])
     }
     tx.oncomplete = () => {
       if (missing) return reject(new Error('Entrée introuvable'))
@@ -657,11 +681,15 @@ export async function importFromJson(json, opts = {}) {
     : null
 
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
     const store = tx.objectStore(STORE_NAME)
+    const agg = tx.objectStore(AGG_STORE)
+    // Tout remplacer : agrégats effacés (avec leur état), reconstruits à la prochaine analyse
     if (!opts.merge) {
       store.clear()
+      agg.clear()
     }
+    const added = []
     let imported = 0
     let skipped = 0
     for (const row of entries) {
@@ -670,8 +698,10 @@ export async function importFromJson(json, opts = {}) {
         continue
       }
       store.add(row)
+      if (opts.merge) added.push(row)
       imported++
     }
+    markDirty(agg, added)
     tx.oncomplete = () => {
       if (imported > 0 || !opts.merge) bumpDataRevision()
       resolve({ imported, skipped, invalid, profileRestored: restoreProfile(profile, opts.merge) })

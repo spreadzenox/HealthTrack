@@ -405,7 +405,19 @@ Elles voient maintenant **tout votre historique** (chaque sorte de mesure du cœ
 à l'écran ; les liens trouvés peuvent évoluer un peu. Le calcul relit encore ≈ 16 000 mesures à chaque mise à jour
 de vos données : c'est le prochain chantier performance (résumés par jour gardés d'avance).
 
+**Run du 18/10 06:30** (performance, pas de nouveau journal montre) : ce chantier est fait, et il corrige au passage
+le **même défaut pour vos pas et vos calories** : la montre les écrit **heure par heure**, et les Analyses n'en
+gardaient que les plus récents (≈ 1 mois de calories, ≈ 4 mois de pas). HealthTrack garde maintenant, pour chaque
+jour, un **résumé heure par heure** de vos pas, calories, cœur et SpO₂, tenu à jour à chaque nouvelle mesure : les
+Analyses voient **tout votre historique** et relisent ≈ 30 % de données en moins (17 500 → 11 400 sur 3 ans de démo
+avec la montre), quelle que soit la densité des mesures. Le résumé se construit tout seul à la première ouverture
+des Analyses après la mise à jour (quelques secondes au plus, une seule fois). Vos données ne changent pas et
+l'export est identique. Seul détail : une heure à cheval sur votre note du jour est désormais écartée en entier
+(avant, ce qui précédait la note dans cette heure comptait), pour ne jamais mêler à la note ce qui vient après.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Analyses : tout l'historique des pas et calories (run 18/10 06:30)** : résumés par jour tenus à jour à chaque
+  mesure ; plus d'historique évincé par les mesures horaires de la montre, ≈ 30 % de lectures en moins.
 - **Analyses : tout l'historique du cœur (run 18/10 04:30)** : FC au repos et VFC prises en compte sur tout
   l'historique, plus évincées par les mesures toutes les 10 min de la montre.
 - **Repas plus rapide (run 18/10 02:30)** : seuls les 100 derniers repas affichés sont lus (1 647 → 101 sur 3 ans de
@@ -947,6 +959,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 00:30 — [Courbe de bien-être : 14 jours lus](runs/2026-10-18-0030-courbe-bien-etre-legere.md) | ⚡ | PR #201 ; fusionnée → v159 |
 | 18/10 02:30 — [Repas : 100 lus + budget de lectures en CI](runs/2026-10-18-0230-budget-lectures.md) | ⚡ | PR #202 ; checks verts (dont le nouveau budget) → fusionnée → v160 |
 | 18/10 04:30 — [Analyses : tout l'historique du cœur + Worker mesuré](runs/2026-10-18-0430-analyses-coeur-complet.md) | ⚡🐛 | PR #203 ; 1er passage rouge (type « correction » refusé par le test des Nouveautés → « correctif »), puis checks verts → fusionnée → v161 |
+| 18/10 06:30 — [Agrégats journaliers des séries denses](runs/2026-10-18-0630-agregats-journaliers.md) | ⚡🐛 | PR #204 ; checks verts (budget resserré inclus) → fusionnée → v162 |
 
 ---
 

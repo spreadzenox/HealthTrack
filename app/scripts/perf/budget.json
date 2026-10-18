@@ -1,12 +1,12 @@
 {
   "days": 1095,
   "routes": {
-    "/": 17500,
+    "/": 12500,
     "/food": 150,
     "/nutrition": 1000,
     "/data": 50,
     "/connectors": 400,
-    "/recommendations": 17000,
+    "/recommendations": 12000,
     "/settings": 50,
     "/plus": 50
   }
