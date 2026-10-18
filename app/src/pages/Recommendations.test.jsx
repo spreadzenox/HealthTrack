@@ -295,6 +295,28 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
+  it('says « Chez vous » on a lever with q < 0.05 and « À vérifier » on the single tentative one (I108)', async () => {
+    const solid = {
+      ...baseCorr, variable: 'sleepMinutes', label: 'Sommeil', r: 0.5,
+      direction: 'higher_better', action: 'Dormir davantage', stage: 'personal',
+    }
+    const tentative = {
+      ...baseCorr, q: 0.12, evidence: 'à confirmer', variable: 'steps', label: 'Pas quotidiens', r: 0.3,
+      direction: 'higher_better', action: 'Marcher davantage', stage: 'toVerify',
+    }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [solid, tentative], levers: [solid, tentative],
+    })
+    expect(await screen.findByText('Dormir davantage')).toBeInTheDocument()
+    expect(screen.getByText('Chez vous : lien net')).toBeInTheDocument()
+    expect(screen.getByText('À vérifier : peut-être le hasard')).toBeInTheDocument()
+    expect(screen.getByText(/Lien possible avec votre bien-être/)).toBeInTheDocument()
+    expect(screen.getByText('Marcher davantage').closest('li')).toHaveClass('reco-advice-card--verify')
+    expect(screen.queryByText('Hypothèse à confirmer')).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
   it('says plainly when a lever goes against the general hypothesis (D6)', async () => {
     const lever = {
       ...baseCorr, variable: 'screen_late_minutes', label: 'Écran tard', r: 0.42,

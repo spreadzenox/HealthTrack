@@ -431,7 +431,16 @@ l'app vous dira sera faux ?** Elle examine des dizaines de choses (sommeil, pas,
   d'une personne qu'on ne connaît pas. HealthTrack comparera votre voix **à vous-même**, partira de ce que vous
   dictez, et n'affichera un signal d'humeur (voix ou visage) qu'après avoir vérifié chez vous qu'il suit vos notes.
 
+**Run du 18/10 10:30** (science personnelle D6, pas de nouveau journal montre) : premier effet de la simulation de
+08:30. Dans **Analyses → Pistes à tester**, chaque piste dit maintenant son niveau en mots simples : **« Chez vous :
+lien net »** quand le lien tient même en comptant tous les facteurs testés, **« À vérifier : peut-être le hasard »**
+(en pointillés, avec « ? » au lieu d'un numéro) quand il est plus fragile, et **une seule** piste « à vérifier » à la
+fois. Avant, jusqu'à 3 pistes fragiles pouvaient s'afficher ensemble : avec ≈ 55 facteurs examinés, l'une d'elles
+était souvent un faux lien.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Analyses : pistes « Chez vous » / « À vérifier » (run 18/10 10:30)** : niveau de preuve en mots simples, une
+  seule piste fragile à la fois.
 - **Analyses : tout l'historique des pas et calories (run 18/10 06:30)** : résumés par jour tenus à jour à chaque
   mesure ; plus d'historique évincé par les mesures horaires de la montre, ≈ 30 % de lectures en moins.
 - **Analyses : tout l'historique du cœur (run 18/10 04:30)** : FC au repos et VFC prises en compte sur tout
@@ -981,6 +990,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 04:30 — [Analyses : tout l'historique du cœur + Worker mesuré](runs/2026-10-18-0430-analyses-coeur-complet.md) | ⚡🐛 | PR #203 ; 1er passage rouge (type « correction » refusé par le test des Nouveautés → « correctif »), puis checks verts → fusionnée → v161 |
 | 18/10 06:30 — [Agrégats journaliers des séries denses](runs/2026-10-18-0630-agregats-journaliers.md) | ⚡🐛 | PR #204 ; checks verts (budget resserré inclus) → fusionnée → v162 |
 | 18/10 08:30 — [Idées : faux liens sur 40 facteurs, expériences, voix](runs/2026-10-18-0830-idees-multiplicite-abab.md) | 💡🧭 | 5 idées (I107–I111), 2 simulations ; journal seul |
+| 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR #206 ; checks verts → fusionnée |
 
 ---
 

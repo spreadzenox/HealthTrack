@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-18",
+  "kind": "amélioration",
+  "title": "Analyses : pistes « Chez vous » ou « À vérifier »",
+  "items": [
+    "Dans « Pistes à tester », chaque piste dit son niveau en mots simples : « Chez vous : lien net » quand le lien tient même en comptant tous les facteurs examinés, « À vérifier : peut-être le hasard » quand il est plus fragile.",
+    "Une seule piste « à vérifier » est montrée à la fois (en pointillés, avec « ? ») : avec des dizaines de facteurs examinés, plusieurs liens fragiles en même temps sont souvent dus au hasard."
+  ]
+}

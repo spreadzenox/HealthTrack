@@ -13,6 +13,8 @@ import {
   MIN_ADVICE_EFFECT,
   MIN_WEEKEND_DAYS,
   DAY_OVER_HOUR,
+  LEVER_MAX_Q,
+  LEVER_PERSONAL_Q,
 } from '../services/analysisEngine'
 import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR, LATE_MEAL_FROM_HOUR } from '../services/behaviorTags'
 import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
@@ -98,22 +100,34 @@ function AgainstNormNote() {
   )
 }
 
+/** I108 : une piste nette « chez vous » (q < 0,05) ou une seule « à vérifier » (q < 0,2). */
+const LEVER_STAGE = {
+  personal: { badge: 'Chez vous : lien net', className: 'reco-evidence-solid' },
+  toVerify: { badge: 'À vérifier : peut-être le hasard', className: 'reco-evidence-tentative' },
+}
+
 function LeverCard({ rank, lever }) {
   const days = Math.round(lever.nEff)
   const weekendShift = lever.rRaw != null && Math.abs(lever.rRaw - lever.r) >= WEEKEND_R_SHIFT
+  const stage = LEVER_STAGE[lever.stage]
+  const toVerify = lever.stage === 'toVerify'
   return (
-    <li className="reco-advice-card">
-      <span className="reco-advice-rank">{rank}</span>
+    <li className={'reco-advice-card' + (toVerify ? ' reco-advice-card--verify' : '')}>
+      <span className="reco-advice-rank">{toVerify ? '?' : rank}</span>
       <div className="reco-advice-content">
         <p className="reco-advice-text">{lever.action}</p>
         {lever.againstNorm && <AgainstNormNote />}
         <p className="reco-advice-impact">
-          Lien {lever.strength} avec votre bien-être (r = {formatR(lever.r)}, ≈ {days} jours indépendants)
+          {toVerify ? 'Lien possible' : `Lien ${lever.strength}`} avec votre bien-être (r = {formatR(lever.r)}, ≈ {days} jours indépendants)
           {weekendShift && <> · r = {formatR(lever.rRaw)} sans tenir compte du week-end</>}
         </p>
-        <span className={'reco-evidence ' + (EVIDENCE_CLASS[lever.evidence] ?? '')}>
-          {evidenceLabel(lever.evidence)}
-        </span>
+        {stage ? (
+          <span className={'reco-evidence ' + stage.className}>{stage.badge}</span>
+        ) : (
+          <span className={'reco-evidence ' + (EVIDENCE_CLASS[lever.evidence] ?? '')}>
+            {evidenceLabel(lever.evidence)}
+          </span>
+        )}
       </div>
     </li>
   )
@@ -435,6 +449,10 @@ function BasicTab({ analysis }) {
           Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
           avant, à bien-être de la veille égal (une bonne passe qui dure n&apos;est pas créditée à
           vos comportements) et à journée égale (sommeil, pas… du jour même).
+        </p>
+        <p>
+          Pistes : « Chez vous » quand le lien tient même en comptant tous les facteurs testés
+          (q &lt; {LEVER_PERSONAL_Q.toString().replace('.', ',')}) ; au plus une « À vérifier » quand il est plus fragile (q &lt; {LEVER_MAX_Q.toString().replace('.', ',')}).
         </p>
         <p>
           Tout est calculé sur votre téléphone. Ce sont des hypothèses : une corrélation ne prouve

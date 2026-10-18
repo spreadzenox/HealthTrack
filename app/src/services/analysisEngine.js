@@ -1266,10 +1266,7 @@ export function computeBasicCorrelations(entries) {
       weekdayMean: weekend.weekdayMean,
     },
     correlations,
-    levers: correlations
-      .filter((c) => c.q < LEVER_MAX_Q && leverSuggestion(c.variable, c.r))
-      .slice(0, 3)
-      .map((c) => ({ ...c, ...leverSuggestion(c.variable, c.r) })),
+    levers: selectLevers(correlations),
   }
 }
 
@@ -1277,6 +1274,30 @@ export function computeBasicCorrelations(entries) {
 
 /** Correlations whose FDR-adjusted p-value is above this are never proposed. */
 export const LEVER_MAX_Q = 0.2
+
+/** Below this q a lever is shown as holding « chez vous » ; above, only « à vérifier ». */
+export const LEVER_PERSONAL_Q = 0.05
+
+const MAX_LEVERS = 3
+
+/**
+ * Pistes à deux étages (I108) : jusqu'à 3 « chez vous » (q < 0,05), puis au plus
+ * une seule « à vérifier » (q < 0,2) s'il reste de la place. Avec des dizaines de
+ * facteurs testés, plusieurs pistes à q < 0,2 en même temps sont souvent fausses :
+ * une seule est montrée, jamais formulée comme un fait.
+ * @param {Array<{variable: string, r: number, q: number}>} correlations triées par |r|
+ */
+export function selectLevers(correlations) {
+  const actionable = correlations.filter((c) => c.q < LEVER_MAX_Q && leverSuggestion(c.variable, c.r))
+  const personal = actionable.filter((c) => c.q < LEVER_PERSONAL_Q).slice(0, MAX_LEVERS)
+  const toVerify = personal.length < MAX_LEVERS
+    ? actionable.filter((c) => c.q >= LEVER_PERSONAL_Q).slice(0, 1)
+    : []
+  return [
+    ...personal.map((c) => ({ ...c, ...leverSuggestion(c.variable, c.r), stage: 'personal' })),
+    ...toVerify.map((c) => ({ ...c, ...leverSuggestion(c.variable, c.r), stage: 'toVerify' })),
+  ]
+}
 
 /**
  * Variables the user can act on directly, with the action that the general
