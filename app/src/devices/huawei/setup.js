@@ -80,8 +80,11 @@ export function saveSetup(state, storage = globalThis.localStorage) {
  */
 export function lastConnectedAt(autoState) {
   if (!autoState) return null
-  if (autoState.lastConnectedAt) return autoState.lastConnectedAt
-  return autoState.outcome === 'connected' ? autoState.at || null : null
+  const byPage = autoState.lastConnectedAt || (autoState.outcome === 'connected' ? autoState.at || null : null)
+  // relecture native (app fermée / en arrière-plan) : comptée aussi (noteBackgroundSuccess, 18/10/2026 15:03)
+  const bg = autoState.lastBackgroundAt || null
+  if (!byPage || !bg) return byPage || bg
+  return Date.parse(bg) > Date.parse(byPage) ? bg : byPage
 }
 
 /**

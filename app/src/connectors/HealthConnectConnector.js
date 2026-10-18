@@ -322,17 +322,18 @@ async function collectDeviceInfo() {
 }
 
 /**
- * Lazily import AppLauncher to avoid crashing in web/test environments.
+ * Lazily import AppLauncher (wrapped: see below) to avoid crashing in web/test environments.
  * AppLauncher is required to open non-http URLs (custom schemes) on Android
  * from inside a Capacitor WebView — window.open() does not fire Android intents
  * for custom schemes on Android 11+.
  */
-async function getAppLauncher() {
+async function loadAppLauncher() {
   try {
     const mod = await import('@capacitor/app-launcher')
-    return mod.AppLauncher
+    // dans un objet : rendu tel quel par une fonction async, le Proxy du plugin (qui répond à `then`) bloque l'await
+    return { AppLauncher: mod.AppLauncher }
   } catch {
-    return null
+    return { AppLauncher: null }
   }
 }
 
@@ -594,7 +595,7 @@ export class HealthConnectConnector extends BaseConnector {
    */
   async openSamsungHealth() {
     debugInfo(TAG, 'Tentative ouverture Samsung Health')
-    const AppLauncher = await getAppLauncher()
+    const { AppLauncher } = await loadAppLauncher()
     if (!AppLauncher) {
       debugWarn(TAG, 'AppLauncher non disponible')
       return false
@@ -634,7 +635,7 @@ export class HealthConnectConnector extends BaseConnector {
    */
   async openGooglePlaySystemUpdates() {
     debugInfo(TAG, 'Tentative ouverture Google Play System Updates (Health Connect)')
-    const AppLauncher = await getAppLauncher()
+    const { AppLauncher } = await loadAppLauncher()
     if (!AppLauncher) {
       debugWarn(TAG, 'AppLauncher non disponible')
       return false

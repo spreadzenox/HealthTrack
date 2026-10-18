@@ -77,6 +77,30 @@ export function recordWatchConnection(report, { auto = false, storage = globalTh
   return next
 }
 
+/**
+ * Relecture native (app fermée ou en arrière-plan) réussie plus récemment que ce que l'app a retenu : notée dans l'état,
+ * pour que « dernière synchro réussie » et la carte la comptent (capture du 18/10/2026, 15:03 : « il y a 4 h » alors que
+ * seules les connexions faites par la page étaient comptées). Rend true si l'état a changé.
+ */
+export function noteBackgroundSuccess(bg, { storage = globalThis.localStorage } = {}) {
+  const at = Number(bg?.lastSuccessAt)
+  if (!(at > 0)) return false
+  const state = getWatchAutoSyncState(storage)
+  if (at <= (Date.parse(state.lastBackgroundAt || '') || 0)) return false
+  const next = { ...state, lastBackgroundAt: new Date(at).toISOString(), everConnected: true }
+  if (bg.battery >= 0 && at > (Date.parse(state.at || '') || 0)) next.battery = bg.battery
+  try {
+    storage?.setItem(STATE_KEY, JSON.stringify(next))
+  } catch {
+    return false
+  }
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('watch-sync-updated'))
+  return true
+}
+
+/** Vérification de la resynchro tant que l'app reste à l'écran (le natif s'efface alors : décision « app »). */
+export const WATCH_FOREGROUND_CHECK_MS = 5 * 60 * 1000
+
 /** Délai avant le prochain essai automatique : 30 min, doublé à chaque échec (4 h au plus). */
 export const autoSyncInterval = (state) => WATCH_AUTO_SYNC_MS * 2 ** Math.min(state?.failures || 0, MAX_BACKOFF_STEPS)
 
@@ -183,6 +207,7 @@ async function runIfStale({
     if (!keyStore.get(watch.deviceId)?.authToken) return { ran: false, reason: 'not_paired' }
     // Relecture app tuée (client Java) : en cours, clé refusée, ou récente → mêmes règles que les nôtres
     const bg = await background({ deviceId: watch.deviceId })
+    noteBackgroundSuccess(bg, { storage })
     if (bg?.busy) return { ran: false, reason: 'busy' }
     if (bg?.paused && bg.outcome === 'key_rejected' && (Date.parse(state.at || '') || 0) < (bg.lastAttemptAt || 0)) {
       recordWatchConnection({ outcome: { code: 'key_rejected', title: 'Clé refusée par la montre (relecture en arrière-plan)' } }, { auto: true, storage, now })
@@ -211,11 +236,15 @@ export function describeWatchStatus(state, { now = Date.now(), formatAgo } = {})
   if (isAutoSyncPaused(state)) {
     return { tone: 'warn', title: 'Synchro en pause', text: `${state.title || 'connexion refusée'} (${when}). « Synchroniser la montre » la relance.` }
   }
-  if (state.outcome === 'connected') {
+  // relue en arrière-plan depuis la dernière connexion de la page : c'est elle, la dernière synchro
+  const bgAt = Date.parse(state.lastBackgroundAt || '') || 0
+  const bgNewer = bgAt > (Date.parse(state.at) || 0)
+  if (state.outcome === 'connected' || bgNewer) {
     const parts = []
     if (state.battery != null) parts.push(`batterie ${state.battery} %`)
-    parts.push(`synchro ${when}`)
-    if (state.inserted != null) parts.push(state.inserted > 0 ? `${plural(state.inserted, 'nouvelle mesure', 'nouvelles mesures')}` : 'rien de nouveau')
+    if (bgNewer) parts.push(`synchro ${formatAgo(state.lastBackgroundAt, new Date(now))} (en arrière-plan)`)
+    else parts.push(`synchro ${when}`)
+    if (state.inserted != null && !bgNewer) parts.push(state.inserted > 0 ? `${plural(state.inserted, 'nouvelle mesure', 'nouvelles mesures')}` : 'rien de nouveau')
     if (state.stalled?.length) parts.push(`sans réponse de la montre pour : ${state.stalled.join(', ')}`)
     return { tone: state.stalled?.length ? 'warn' : 'ok', title: 'Connectée', text: parts.join(' · ') }
   }

@@ -427,8 +427,10 @@ async function attemptLink(kind, { client, classic, watch, report, set, log, now
   try {
     set('services', 'running')
     if (kind === 'classic') {
+      // Le canal vient de s'ouvrir sur l'UUID Huawei : le service existe, même absent de la liste SDP qu'Android garde
+      // en cache (souvent incomplète, capture du 18/10/2026 15:03 : « Huawei non listé » en avertissement à tort).
       const known = sdpUuids.some((u) => u === HUAWEI_RFCOMM_UUID || u === HONOR_RFCOMM_UUID)
-      set('services', known ? 'ok' : 'warn', known ? 'service Huawei présent' : `${sdpUuids.length} services connus, Huawei non listé`)
+      set('services', 'ok', known ? 'service Huawei présent' : 'service Huawei joint en direct (absent de la liste en cache du téléphone, sans conséquence)')
     } else {
       let services = []
       try {

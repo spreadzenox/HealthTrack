@@ -5,6 +5,7 @@ import {
   describeWatchStatus,
   getWatchAutoSyncState,
   isAutoSyncPaused,
+  noteBackgroundSuccess,
   recordWatchConnection,
   syncWatchIfStale,
   WATCH_AUTO_SYNC_MS,
@@ -13,6 +14,7 @@ import {
 import { connectAndAuthenticate, createKeyStore } from '../devices/huawei/pairing'
 import { createFakeWatch, TEST_SECRETS } from '../devices/huawei/testing/fakeWatch'
 import { formatAgo } from '../utils/timeAgo'
+import { lastConnectedAt } from '../devices/huawei/setup'
 
 const memoryStorage = () => {
   const m = new Map()
@@ -265,5 +267,40 @@ describe('syncWatchIfStale — relecture app fermée (client Java, §9.1 e)', ()
     connect.mockImplementation(async () => report('unreachable'))
     await connectBondedWatch({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0, vault: null, capture })
     expect(capture.shareResume).not.toHaveBeenCalled()
+  })
+})
+
+describe('relecture native comptée comme dernière synchro (capture du 18/10/2026, 15:03 : « il y a 4 h »)', () => {
+  it('une relecture app fermée plus récente devient la « dernière synchro réussie »', async () => {
+    const storage = memoryStorage()
+    recordWatchConnection(report('connected', { battery: 80 }), { storage, now: () => T0 - 4 * 3600_000 })
+    const connect = vi.fn(async () => report('connected'))
+    const background = vi.fn(async () => ({ busy: false, lastSuccessAt: T0 - 10 * 60_000, battery: 77 }))
+    expect(await syncWatchIfStale({ classic: fakeClassic(), storage, keyStore: paired(storage), connect, now: () => T0, background })).toEqual({ ran: false, reason: 'recent' })
+    const state = getWatchAutoSyncState(storage)
+    expect(lastConnectedAt(state)).toBe(new Date(T0 - 10 * 60_000).toISOString())
+    expect(state.battery).toBe(77)
+    expect(describeWatchStatus(state, { now: T0, formatAgo })).toEqual({ tone: 'ok', title: 'Connectée', text: 'batterie 77 % · synchro il y a moins d’une heure (en arrière-plan)' })
+  })
+
+  it('plus ancienne que la connexion de la page : rien ne change ; absente : rien', () => {
+    const storage = memoryStorage()
+    recordWatchConnection(report('connected', { battery: 80, sync: { inserted: 4 } }), { storage, now: () => T0 })
+    expect(noteBackgroundSuccess({ lastSuccessAt: T0 - 3600_000, battery: 70 }, { storage })).toBe(true)
+    const state = getWatchAutoSyncState(storage)
+    expect(lastConnectedAt(state)).toBe(new Date(T0).toISOString())
+    expect(state.battery).toBe(80)
+    expect(describeWatchStatus(state, { now: T0 + 60_000, formatAgo }).text).toMatch(/4 nouvelles mesures$/)
+    expect(noteBackgroundSuccess({ lastSuccessAt: T0 - 3600_000 }, { storage })).toBe(false) // déjà notée
+    expect(noteBackgroundSuccess(null, { storage })).toBe(false)
+    expect(noteBackgroundSuccess({ lastSuccessAt: 0 }, { storage })).toBe(false)
+  })
+
+  it('dernier essai de la page en échec mais relecture native réussie depuis : « Connectée »', () => {
+    const storage = memoryStorage()
+    recordWatchConnection(report('connected'), { storage, now: () => T0 - 2 * 3600_000 })
+    recordWatchConnection(report('unreachable'), { storage, now: () => T0 - 3600_000 })
+    noteBackgroundSuccess({ lastSuccessAt: T0 - 600_000 }, { storage })
+    expect(describeWatchStatus(getWatchAutoSyncState(storage), { now: T0, formatAgo })).toMatchObject({ tone: 'ok', title: 'Connectée' })
   })
 })

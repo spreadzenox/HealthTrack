@@ -474,7 +474,31 @@ Prochaines étapes : brancher les modèles dans l'app (téléchargés au build, 
 images au déverrouillage et un écran de diagnostic à me renvoyer. L'« humeur estimée » n'apparaîtra que quand elle
 aura prouvé **chez vous** qu'elle suit vos notes (règle I110).
 
+**🟢 Votre capture du 18/10 (15:03) : le correctif de 12:30 marche sur votre montre — merci !** Le test va au bout et
+dit « HealthTrack synchronise déjà cette montre : rien d'autre à faire ». **Run de 16:30 : les trois restes que vous
+avez pointés sont corrigés** (petites corrections, l'humeur reprend au run suivant) :
+- **« Apps qui peuvent tenir la montre — délai dépassé (8 s) »** : vraie cause trouvée. HealthTrack chargeait l'outil
+  Android de liste des apps d'une façon qui fait attendre une réponse qui ne vient **jamais** (un piège connu des
+  plugins Capacitor, déjà évité ailleurs dans l'app mais pas ici). Désormais la liste est lue **en un seul appel**
+  (quelques millisecondes), avec un repli borné, et si tout échoue l'étape dit pourquoi. Le même défaut bloquait
+  « Mes appareils » (apps détectées) et l'ouverture des réglages Health Connect / Samsung Health : corrigés aussi.
+- **« Services Bluetooth : 2 services connus, Huawei non listé » (!)** : le canal Huawei venait de s'ouvrir, donc le
+  service existe ; c'est la liste gardée en cache par le téléphone qui est incomplète. L'étape est maintenant cochée
+  (« service Huawei joint en direct »).
+- **« Dernière synchro réussie il y a 4 h » vers 15 h** : deux trous. (1) Ce chiffre ne comptait **que** les synchros
+  faites app ouverte : une relecture réussie en arrière-plan ou app fermée n'apparaissait pas. Elle compte maintenant,
+  et la carte dit « synchro il y a … (en arrière-plan) ». (2) **App laissée ouverte à l'écran**, rien ne relisait la
+  montre : la partie Android s'efface quand l'app est à l'écran (« l'app s'en charge »), mais l'app ne relisait qu'à
+  l'ouverture. Elle vérifie maintenant toutes les 5 min (relecture au plus toutes les 30 min). J'ai aussi vérifié
+  l'historique du jour : des synchros espacées ne laissent **aucun trou** (chacune relit 6 h en arrière) ; seule
+  l'heure entamée attend la synchro suivante, et ses pas sont déjà comptés par le total du jour.
+**Si « il y a 4 h » revient après la mise à jour** : Diagnostic → « Copier le journal » ; il dit ce que la relecture de
+fond a décidé et pourquoi.
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Montre : détection des apps instantanée, synchro de fond comptée (run 18/10 16:30)** : plus de « délai dépassé »
+  pour les apps (même correctif pour « Mes appareils » et Health Connect) ; « Huawei non listé » n'est plus un
+  avertissement ; relectures de fond comptées dans « dernière synchro » ; montre relue app restée à l'écran.
 - **Montre : le test ne reste plus bloqué (run 18/10 12:30)** : délai par étape, verdict clair, attente de la synchro
   en cours ; « Libérer et appairer » coché quand la montre synchronise ; « nouvelles mesures » dans le libellé.
 - **Analyses : pistes « Chez vous » / « À vérifier » (run 18/10 10:30)** : niveau de preuve en mots simples, une
@@ -1031,6 +1055,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 18/10 10:30 — [Pistes « Chez vous » / « À vérifier »](runs/2026-10-18-1030-pistes-deux-etages.md) | 🧭 | I108 ; PR #206 ; checks verts → fusionnée |
 | 18/10 12:30 — [Montre : test jamais bloqué, assistant cohérent](runs/2026-10-18-1230-montre-test-bloque.md) | 🔴🐛⌚ | Consigne du 18/10 (A) ; PR #207 ; checks verts → fusionnée |
 | 18/10 14:30 — [Visage : post-traitement Java testé](runs/2026-10-18-1430-visage-pipeline-java.md) | 🙂 | Consigne B, I100 ① a ; PR #208 ; 1er passage rouge (PNG de test ignorés par `.gitignore`), puis checks verts → fusionnée |
+| 18/10 16:30 — [Montre : finitions A.1–A.3](runs/2026-10-18-1630-montre-finitions.md) | 🐛⌚ | Consigne du 18/10 (A.1–A.3, retour de 15:03) ; PR à venir |
 
 ---
 
@@ -1060,11 +1085,19 @@ cours… » dès « Apps qui peuvent tenir la montre » ; carte « Libérer et a
 la montre est appairée et synchronise ; « 14 pas aujourd'hui → 2 mesures » à 11 h à vérifier. Attendu : délai
 maximal par étape, erreur claire au lieu d'un blocage, test qui marche montre déjà connectée, carte cohérente avec
 l'état réel, synchro complète ; tests pour chaque cas ; ne casser ni l'appairage, ni l'authentification, ni la
-synchro. → **Corrigé au run du 18/10 12:30** (voir son compte rendu).
+synchro. → **Corrigé au run du 18/10 12:30** (voir son compte rendu). **Confirmé sur l'appareil réel par le
+propriétaire (capture du 18/10 15:03)** : le test se termine (« Relancer le test »), titre « HUAWEI WATCH GT 6 Pro-169 »,
+verdict « La montre répond à HealthTrack — protocole v2, HiChain 3 (GCM) ; HealthTrack synchronise déjà cette montre
+(dernière synchro réussie il y a 4 h) : rien d'autre à faire ». Étapes : ✓ Bluetooth · – Apps (« délai dépassé
+(8 s) ») · ✓ Recherche (appairée, ne s'annonce pas) · ✓ Connexion directe (classique) · ! Services (« 2 services
+connus, Huawei non listé ») · ✓ Canal Huawei · ✓ Paramètres du lien. **Restes à traiter en petites corrections (un
+seul run, sans freiner B)** : **A.1** détection des apps rapide et fiable (ou échec expliqué) ; **A.2** plus
+d'avertissement « Huawei non listé » quand le canal s'ouvre en classique ; **A.3** resynchro de fond réellement à la
+fréquence prévue + historique du jour complet ; tests pour chaque cas. → **A.1–A.3 livrés au run du 18/10 16:30.**
 **B. Ensuite : l'estimation automatique du bien-être et de l'humeur** (« une fois que c'est fixé j'aimerais que ça
 avance le côté estimation du bien-être automatique ») : D4 (humeur captée par visage / voix, approche Emobot) et D5
 (anti-circularité) passent **devant** D1 (nettoyage de l'UI) et D2 (performance), en respectant D6.
-**Ordre des « Prochaines étapes » (BACKLOG)** : 1) régression montre du 18/10 ; 2) estimation automatique du
+**Ordre des « Prochaines étapes » (BACKLOG)** : 1) petites corrections montre restantes (A.1 à A.3) ; 2) estimation automatique du
 bien-être (D4 + D5, D6) ; 3) nettoyage de l'UI ; 4) performance. Runs « idées » : la régression d'abord tant
 qu'elle n'est pas fusionnée.
 

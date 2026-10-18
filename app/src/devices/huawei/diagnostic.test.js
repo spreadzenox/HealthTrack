@@ -162,6 +162,21 @@ describe('diagnostic — Bluetooth classique (GT 3 → GT 7)', () => {
     expect(report.watch.frames.filter((f) => f.via === 'classic' && f.dir === 'in')).toHaveLength(2)
   })
 
+  it('service Huawei absent de la liste SDP en cache mais canal ouvert : pas d’avertissement (capture du 18/10, 15:03)', async () => {
+    const classic = fakeClassic()
+    const listBonded = classic.listBonded
+    classic.listBonded = async () => {
+      const r = await listBonded()
+      r.devices[0].uuids = ['0000110a-0000-1000-8000-00805f9b34fb', '0000111f-0000-1000-8000-00805f9b34fb']
+      return r
+    }
+    const report = await run(fakeClient({ behaviour: 'no_fe86' }), { classic })
+    const step = report.steps.find((s) => s.id === 'services')
+    expect(step.status).toBe('ok')
+    expect(step.detail).toMatch(/joint en direct/)
+    expect(report.verdict.code).toBe('link_ok')
+  })
+
   it('RFCOMM refusé → essai en BLE, et le verdict dit pourquoi le classique a échoué', async () => {
     const report = await run(fakeClient({ behaviour: 'no_fe86' }), { classic: fakeClassic({ behaviour: 'refused' }) })
     expect(report.watch.attempts.map((a) => a.transport)).toEqual(['classic', 'ble'])

@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-18",
+  "kind": "correctif",
+  "title": "Montre : détection des apps instantanée, synchro de fond comptée",
+  "items": [
+    "« Apps qui peuvent tenir la montre » ne dépasse plus son délai : HealthTrack attendait une réponse qui ne venait jamais. Les apps installées sont maintenant lues en un seul appel, et si la détection échoue, le test dit pourquoi. « Mes appareils » et l'ouverture des réglages Health Connect profitent du même correctif.",
+    "« Services Bluetooth de la montre » n'affiche plus d'avertissement quand le canal Huawei s'ouvre : la liste gardée par le téléphone est souvent incomplète, ce n'était pas un problème.",
+    "« Dernière synchro réussie » compte aussi les relectures faites en arrière-plan ou app fermée (avant, seules les synchros faites app ouverte comptaient).",
+    "App laissée ouverte à l'écran : la montre est relue toutes les 30 min environ, comme app fermée (avant, rien jusqu'à la prochaine ouverture)."
+  ]
+}

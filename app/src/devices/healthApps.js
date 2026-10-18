@@ -63,6 +63,9 @@ export const HEALTH_APPS = [
   { id: 'strava', name: 'Strava', packages: ['com.strava'], writesHealthConnect: true, guideId: 'other', enableHint: 'Strava → Paramètres → Applications, services et appareils → Health Connect.' },
 ]
 
+/** Tous les paquets du catalogue (détection groupée en un appel natif). */
+export const allCatalogPackages = () => HEALTH_APPS.flatMap((app) => app.packages)
+
 const norm = (s) =>
   String(s ?? '')
     .normalize('NFD')
