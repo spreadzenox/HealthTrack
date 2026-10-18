@@ -37,10 +37,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     `FaceGeometry`, `FaceIndices`, `FacePipeline`) + vecteurs figés sur un portrait NASA du domaine public (I106),
     écrits par `protocoles/visage-vecteurs.py` ; convention des demi-pixels tranchée (0,4 px médian de MediaPipe) ;
     `npm run test:java` couvre `huawei` et `face`.
-  - [ ] **I100 ① b** : LiteRT (`litert` ≥ 2.x, sans dépendance d'envoi) + tâche Gradle qui télécharge le `.task`,
-    vérifie les 3 SHA-256 et range les `.tflite` dans les assets (jamais committés) + `abiFilters` arm64 / x86_64
-    (I95) ; `FaceModels.java` (Android) qui implémente `FacePipeline.Model` ; test instrumenté sur l'émulateur de la
-    CI avec les vecteurs (I101). Vérifier la taille de l'APK avant / après.
+  - [x] **I100 ① b** (run 18/10 18:30) : LiteRT **1.4.2** (zéro dépendance transitive ; la 2.x tire `ai-delivery`
+    des services Play → écartée), tâche Gradle `faceModels` (URL versionnée `float16/1`, cache Gradle, 3 essais,
+    4 SHA-256), assets non compressés projetés en mémoire, `abiFilters` arm64 / x86_64 (I95), `LiteRtModel` (sorties
+    par nom) + `FaceModels`, test instrumenté `FaceModelsTest` sur l'émulateur de la CI (I101), bloquant.
+    - [ ] Budget de taille d'APK en CI (I95, seconde moitié) ; taille avant / après notée dans le compte rendu.
   - [ ] **I88** service + rafales, puis diagnostic exportable ; **I90** indices → entrées `face_burst` dans IndexedDB
     (scores seuls), écart à la plage personnelle ; **I110** porte d'entrée avant tout affichage.
 
@@ -560,7 +561,8 @@ la montre)** : 1) 🔴 petites corrections montre A.1–A.3 — ✅ **livrées l
 seul appel natif `AppManager.installedPackages` + piège du Proxy Capacitor corrigé ; A.2 « Huawei non listé » plus en
 avertissement quand le canal classique s'ouvre ; A.3 relectures natives comptées dans « dernière synchro réussie »,
 minuteur de 5 min app à l'écran, fenêtre du jour sans trou vérifiée) ; 2) 🙂 **estimation automatique du bien-être**
-(I100 ① b, I88, I90, I110 ; D5, D6) ; 3) 🧹 nettoyage de l'UI ; 4) ⚡ performance.
+(I100 ① b — ✅ 18/10 18:30 —, puis **I88** service « Lecture du visage » + rafales + diagnostic, I90, I110 ;
+D5, D6) ; 3) 🧹 nettoyage de l'UI ; 4) ⚡ performance.
 - [ ] Montre (maintenance, à l'occasion) : l'heure entamée n'est relue qu'à la synchro suivante (fenêtre « jusqu'à
       l'heure pleine », voulue pour ne pas écrire de tranche à moitié ; les pas sont couverts par le total du jour). Si
       utile : écrire les tranches de 10 min de FC / SpO₂ terminées jusqu'à maintenant (clés stables, pas de doublon).
