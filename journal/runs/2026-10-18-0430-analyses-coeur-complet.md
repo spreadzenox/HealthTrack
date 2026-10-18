@@ -49,6 +49,7 @@ Le Worker relit ≈ 16 k enregistrements par calcul : c'est le prochain gros gis
 précalculés, invalidés à l'écriture, pour les sous-types denses).
 
 ## Vérifications
+- 1er passage CI rouge : `kind: "correction"` refusé par `WhatsNew.test.jsx` (types admis : nouveau, amélioration, correctif) — entrée créée après la passe de tests locale ; corrigé, tests relancés avant de pousser.
 - `npm run test` : **1 358 tests verts** (103 fichiers). Lint : **6 erreurs** (inchangé). Build ✅.
 - `npm run perf -- --budget` ✅. `npm run visual` (8 pages) ✅ ; captures regardées : `recommendations-1`
   (pistes inchangées sur la démo), `dashboard-1`.
@@ -56,3 +57,6 @@ précalculés, invalidés à l'écriture, pour les sous-types denses).
 ## Suite
 - D2 : agrégats journaliers des sous-types denses (FC, SpO₂) pour le Worker ; `abiFilters` (I95). Puis D6 I102
   (`personalDirection.js`), D4 I100 ① (moteur LiteRT).
+
+## Merge
+- PR #203 : Frontend (Vitest), Build APK, Budget de lectures (perf), Protocole montre (Java), émulateur A56 API 35 / 36 verts → fusionnée (squash) → v161 attendue.
