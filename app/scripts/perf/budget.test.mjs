@@ -20,6 +20,13 @@ describe('budget de lectures IndexedDB (garde-fou D2)', () => {
     ])
   })
 
+  it('les lectures du Web Worker des analyses comptent dans le budget de la page', () => {
+    expect(checkBudget([{ path: '/', idbRecords: 700, workerRecords: 101 }], budget)).toEqual([
+      { path: '/', idbRecords: 801, max: 800 },
+    ])
+    expect(checkBudget([{ path: '/', idbRecords: 700, workerRecords: 100 }], budget)).toEqual([])
+  })
+
   it("une page mesurée sans budget est signalée (pour qu'on lui en donne un)", () => {
     expect(checkBudget([{ path: '/new', idbRecords: 3 }], budget)).toEqual([{ path: '/new', idbRecords: 3, max: null }])
   })

@@ -397,7 +397,17 @@ depuis le début** (1 647 sur 3 ans de démo) pour n'en montrer que les 100 dern
 Et pour que ça ne revienne pas, un **budget de lectures par page** est vérifié à chaque PR (nouveau contrôle
 « Budget de lectures (perf) ») : si une page se met à relire trop de données, la PR est rouge. Rien ne change à l'écran.
 
+**Run du 18/10 04:30** (performance, pas de nouveau journal montre) : en mesurant enfin ce que lit le calcul des
+Analyses (il tourne à part, et n'était pas compté), j'ai trouvé un **défaut qui vous touchait** : les mesures de cœur
+et de SpO₂ que la montre prend **toutes les 10 minutes** occupaient toute la place réservée au cœur, si bien que les
+Analyses et la Prédiction du jour ne voyaient qu'**environ le dernier mois** de votre FC au repos et de votre VFC.
+Elles voient maintenant **tout votre historique** (chaque sorte de mesure du cœur a sa propre place). Rien ne change
+à l'écran ; les liens trouvés peuvent évoluer un peu. Le calcul relit encore ≈ 16 000 mesures à chaque mise à jour
+de vos données : c'est le prochain chantier performance (résumés par jour gardés d'avance).
+
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Analyses : tout l'historique du cœur (run 18/10 04:30)** : FC au repos et VFC prises en compte sur tout
+  l'historique, plus évincées par les mesures toutes les 10 min de la montre.
 - **Repas plus rapide (run 18/10 02:30)** : seuls les 100 derniers repas affichés sont lus (1 647 → 101 sur 3 ans de
   démo) ; budget de lectures par page vérifié en CI.
 - **Courbe de bien-être plus rapide (run 18/10 00:30)** : seules les notes des 14 jours affichés sont lues
@@ -936,6 +946,7 @@ VFC de journée. En attendant votre journal : performance des courbes (lectures 
 | 17/10 22:30 — [Repas et Nutrition, dernière relecture](runs/2026-10-17-2230-repas-nutrition.md) | 🧹 | PR #200 ; D1 bouclé ; **fusionnée au run du 18/10 00:30** → v158 |
 | 18/10 00:30 — [Courbe de bien-être : 14 jours lus](runs/2026-10-18-0030-courbe-bien-etre-legere.md) | ⚡ | PR #201 ; fusionnée → v159 |
 | 18/10 02:30 — [Repas : 100 lus + budget de lectures en CI](runs/2026-10-18-0230-budget-lectures.md) | ⚡ | PR #202 ; checks verts (dont le nouveau budget) → fusionnée → v160 |
+| 18/10 04:30 — [Analyses : tout l'historique du cœur + Worker mesuré](runs/2026-10-18-0430-analyses-coeur-complet.md) | ⚡🐛 | PR #203 ; 1er passage rouge (type « correction » refusé par le test des Nouveautés → « correctif »), puis checks verts → fusionnée → v161 |
 
 ---
 
