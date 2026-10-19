@@ -1,6 +1,6 @@
 # 2026-10-20 00:30 Paris (22:30 UTC le 19/10) — Humeur estimée robuste aux dérives lentes (I121 + I121 étendu)
 
-**Type** : 🔴🙂 bien-être automatique (consigne du 19/10 au soir, charte §0000000)  ·  **PR** : voir le tableau du résumé
+**Type** : 🔴🙂 bien-être automatique (consigne du 19/10 au soir, charte §0000000)  ·  **PR** : #225
 
 ## Pourquoi
 - Vérifications de début de run : main à `b277e1b` (#224, étape 1 de la consigne du soir) ; aucune PR « [Auto] »
@@ -51,7 +51,7 @@ d'information indépendante, c'est le prix de l'honnêteté.
 - `faceMood.test.js` (+1) : dérives sans lien → modèle personnel ≤ 5 %. `faceSense.test.js` : export / ligne I121.
 
 ## Vérifications
-- `npm run test` : **1 573 tests verts** (120 fichiers). `npm run lint` : 6 erreurs, identiques à main. Build ✅.
+- `npm run test` : **1 573 tests verts** (119 fichiers). `npm run lint` : 6 erreurs, identiques à main. Build ✅.
 - `npm run visual` (toutes les pages) ✅ ; `--routes=/connectors --face --click=Diagnostic` : captures lues (carte et
   diagnostic inchangés à 9 jours comparables ; la ligne « Dérives lentes » n'apparaît qu'à partir de 30 jours).
 
