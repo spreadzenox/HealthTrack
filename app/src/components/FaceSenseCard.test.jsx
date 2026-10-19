@@ -30,6 +30,16 @@ describe('FaceSenseCard', () => {
     expect(screen.getByText(/puis les efface/)).toBeInTheDocument()
   })
 
+  it('app Android mais module natif muet : la carte le dit et propose Réessayer (signalement du 19/10)', async () => {
+    const plugin = fake({ ...base, enabled: false, running: false })
+    plugin.status.mockRejectedValueOnce(new Error('"FaceSense" plugin is not implemented on android'))
+    render(<FaceSenseCard plugin={plugin} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText(/ne répond pas/)).toBeInTheDocument()
+    expect(screen.queryByText('Disponible dans l’app Android.')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Réessayer' }))
+    expect(await screen.findByRole('button', { name: 'Activer la lecture du visage' })).toBeInTheDocument()
+  })
+
   it('désactivée → Activer démarre le service', async () => {
     const plugin = fake({ ...base, enabled: false, running: false })
     render(<FaceSenseCard plugin={plugin} />)

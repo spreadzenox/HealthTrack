@@ -13,7 +13,8 @@ describe('splitSourcesByStatus', () => {
   it('premier lancement : rien de branché, tout à brancher dans l’ordre (montre en tête)', () => {
     expect(splitSourcesByStatus(base)).toEqual({
       active: [],
-      toConnect: ['watch', 'face', 'health_connect', 'withings', 'weather', 'phone', 'ble', 'guides'],
+      nothingSending: true,
+      toConnect: ['face', 'watch', 'health_connect', 'withings', 'weather', 'phone', 'ble', 'guides'],
     })
   })
 
@@ -28,6 +29,15 @@ describe('splitSourcesByStatus', () => {
     expect(r.toConnect).toEqual(['face', 'withings', 'phone', 'ble', 'guides'])
   })
 
+  it('app Android : la Lecture du visage est toujours en tête, même pas encore activée (signalement du 19/10)', () => {
+    const r = splitSourcesByStatus({ ...base, watchEverConnected: true, faceSenseAvailable: true })
+    expect(r.active).toEqual(['face', 'watch'])
+    expect(r.toConnect).not.toContain('face')
+    expect(r.nothingSending).toBe(false)
+    expect(splitSourcesByStatus({ ...base, faceSenseAvailable: true }).nothingSending).toBe(true)
+    expect(splitSourcesByStatus({ ...base, faceSenseAvailable: true, faceSenseEnabled: true }).nothingSending).toBe(false)
+  })
+
   it('capteurs Bluetooth et guides par marque restent toujours dans « à brancher »', () => {
     const r = splitSourcesByStatus({
       ...base,
@@ -37,7 +47,7 @@ describe('splitSourcesByStatus', () => {
       watchEverConnected: true,
       faceSenseEnabled: true,
     })
-    expect(r.active).toEqual(['watch', 'face', 'health_connect', 'withings', 'weather', 'phone'])
+    expect(r.active).toEqual(['face', 'watch', 'health_connect', 'withings', 'weather', 'phone'])
     expect(r.toConnect).toEqual(['ble', 'guides'])
   })
 })
