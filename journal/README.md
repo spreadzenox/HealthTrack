@@ -132,6 +132,15 @@ vous donnez des notes (facultatif), au bout de 14 jours notés il passe à un **
 prédit vraiment mieux vos notes. L'étape suivante remplacera ① par un vrai modèle valence / éveil embarqué, plus
 fiable. Toujours une estimation, jamais un diagnostic ; le diagnostic exportable ne contient aucune valeur d'humeur.
 
+**Run du 20/10 00:30 — une humeur estimée qui ne se laisse pas tromper par les saisons.** Votre humeur ressemble à
+celle de la veille, et ce que lit la caméra change lentement pour des raisons sans rapport (lumière d'automne,
+lunettes, coque). En simulation, sans aucun lien réel, l'app aurait adopté un « modèle personnel » appris sur vos notes
+**plus d'une fois sur deux**, et sa vérification « votre visage suit vos notes » se serait trompée 1 fois sur 8.
+Corrigé : chaque jour est jugé sans la semaine qui l'entoure, l'effet « humeur qui dure » est retiré, et si votre
+visage dérive nettement, chaque lecture est comparée à vos 14 jours précédents → 1 à 3 erreurs sur 100. **Rien ne
+change à l'affichage** : l'humeur estimée est toujours là dès la première lecture ; seul le passage au modèle
+personnel est plus prudent (après la vérification réussie, vers 6 semaines de notes au lieu de 14 jours).
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -159,6 +168,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Humeur estimée robuste aux dérives lentes (run 20/10 00:30)** : le « modèle personnel » ne s'installe plus sur
+  une simple coïncidence de saison ; le diagnostic dit combien votre visage dérive.
 - **Humeur estimée dès la première lecture (run 19/10 22:30, votre consigne du soir)** : carte sur l'accueil et dans
   « Lecture du visage », bien-être du jour sur 0–5 avec fourchette et confiance ; plus de verrou des 30 jours.
 - **Lecture du visage : chaque déverrouillage repéré (run 19/10 16:30, votre signalement)** : empreinte, visage,
@@ -192,7 +203,10 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (19/10 22:30)** — votre consigne du 19/10 au soir d'abord : ✅ étape 1, estimation affichée dès
+**Prochaines priorités (20/10 00:30)** — ✅ dérives lentes (I121) corrigées dans la vérification et le modèle
+personnel ; ensuite : votre diagnostic dès qu'il arrive ; le comparatif des modèles valence / éveil (run idées de
+08:30) puis leur intégration (étape 2) ; « Applis jamais en veille » sur Samsung (I123) ; la voix (étape 3).
+*Priorités précédentes (19/10 22:30)* — votre consigne du 19/10 au soir d'abord : ✅ étape 1, estimation affichée dès
 la première lecture (22:30) ; **étape 2, un vrai modèle valence / éveil embarqué** (comparatif précision / poids /
 licence par les runs idées, puis intégration, téléchargé au build avec vérification d'empreinte) ; étape 3, visage +
 voix. En parallèle : votre diagnostic de la Lecture du visage dès qu'il arrive, et la robustesse aux dérives lentes
@@ -217,6 +231,7 @@ du jour avec sa fourchette (derrière la porte).
 | 19/10 16:30 — [Visage : chaque déverrouillage repéré (signalement 15:05)](runs/2026-10-19-1630-visage-deverrouillage.md) | 🚑🙂 | Cause : récepteur `RECEIVER_NOT_EXPORTED` → `USER_PRESENT` (SystemUI) filtré ; `UnlockWatch` (diffusion / verrou interrogé / écran déjà ouvert), récepteur exporté sur le fil du service ; diagnostic v2 (allumages, sources, tentatives + erreur exacte, démarrage, app-op caméra) ; « À relancer » + guide Shizuku / ADB (I89) ; PR #221 |
 | 19/10 18:30 — [Votre journée en une phrase (I119)](runs/2026-10-19-1830-phrase-du-soir.md) | 🔴🙂 | Lexiques disjoints ressenti (Y) / contexte (X) + test d'intersection vide ; champ « En une phrase » (dictable au clavier) → note et tags proposés, phrase jamais gardée ; 1 539 tests |
 | 19/10 22:30 — [Humeur estimée dès la première lecture (consigne du 19/10 au soir, étape 1)](runs/2026-10-19-2230-humeur-des-la-1re-lecture.md) | 🔴🙂 | Consigne reportée (charte §0000000) ; `mood/faceMood.js` (a priori FACS → ligne de base personnelle → calibration facultative), fourchette + confiance ; carte « Humeur estimée » sur l'accueil + bloc dans la carte visage + « Tester maintenant » ; verrou « Rien n'est affiché » retiré ; diagnostic : modèle / confiance sans valeur ; 1 559 tests ; PR #224 |
+| 20/10 00:30 — [Humeur estimée robuste aux dérives lentes (I121 + étendu)](runs/2026-10-20-0030-humeur-derives-lentes.md) | 🔴🙂 | `mood/blockCv.js` (blocs ±7 j, n effectif) ; détrendage adaptatif du visage ; faux départs 12,5 % → 2,5 % ; modèle personnel sans lien 60 % → ≤ 5 % (porte exigée) ; diagnostic `a` / `drift` ; 1 573 tests ; PR #225 |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---

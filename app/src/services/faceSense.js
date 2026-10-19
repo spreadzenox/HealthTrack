@@ -303,6 +303,10 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
         openedAt: history.gate.openedAt,
         closedAt: history.gate.closedAt,
         looks: history.gate.looks.length,
+        // Dérives lentes (I121) : autocorrélation retenue, dérive du visage, visage comparé à ses 14 jours précédents.
+        a: history.gate.a == null ? null : Math.round(history.gate.a * 100) / 100,
+        drift: history.gate.drift == null ? null : Math.round(history.gate.drift * 100) / 100,
+        detrended: !!history.gate.detrended,
       }
       : null,
     // Humeur estimée (consigne du 19/10 au soir) : quel modèle et quelle confiance, jamais la valeur estimée.
@@ -396,6 +400,9 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
     lines.push(g.state === 'active'
       ? `Vérification visage ↔ notes (facultative) : réussie le ${g.openedAt} (z = ${g.z ?? '—'})`
       : `Vérification visage ↔ notes (facultative) : ${g.days} / ${g.needed} jours comparables${g.z == null ? '' : `, accord z = ${g.z} (réussie à 3,29 deux semaines de suite)`}`)
+    if (g.drift != null) {
+      lines.push(`Dérives lentes : visage ${g.drift} d’un jour à l’autre${g.detrended ? ' (comparé à ses 14 jours précédents)' : ''}, z corrigé pour a = ${g.a ?? 0}`)
+    }
   }
   if (r.pendingBursts) lines.push(`En attente d’être rangées : ${r.pendingBursts}`)
   if (r.history.lastImport?.dropped) lines.push(`Lectures illisibles écartées au dernier rangement : ${r.history.lastImport.dropped}`)
