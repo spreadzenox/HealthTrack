@@ -1,6 +1,6 @@
 # 2026-10-19 22:30 Paris (20:30 UTC) — Humeur estimée dès la première lecture (consigne du 19/10 au soir, étape 1)
 
-**Type** : 🏗️ bien-être automatique (consigne du 19/10 au soir, charte §0000000)  ·  **PR** : voir la PR « [Auto] Humeur estimée dès la première lecture »
+**Type** : 🏗️ bien-être automatique (consigne du 19/10 au soir, charte §0000000)  ·  **PR** : #224
 
 ## Pourquoi
 - Vérifications de début de run : main à `d181521` (#223) ; aucune PR « [Auto] » ouverte ; signalement du 19/10 15:05
