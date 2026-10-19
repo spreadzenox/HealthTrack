@@ -490,12 +490,13 @@ async function main() {
           lastOutcome: 'face', lastTrigger: 'unlock', lastOutcomeAt: Date.now() - 6 * 60000,
           outcomes: { face: 8, no_valid_frame: 3, 'skip:too_soon': 3 }, rejected: { no_face: 4, too_dark: 3, turned: 2 },
           startBattery: 82, battery: 76, manufacturer: 'samsung', model: 'SM-A566B', release: '16', sdk: 36, pending: 11,
+          retries: 3, retryFaces: 2,
           resumeNotices: 1, resumeTaps: 1, resumeCheck: 'running', resumeCheckAt: Date.now() - 40 * 60000, resumeCheckTrigger: 'periodic',
         }
-        // 11 rafales en attente (scores fictifs), rangées dans l'historique à l'affichage de la carte (I90)
+        // 11 rafales en attente (scores fictifs) sur 3 jours, rangées dans l'historique à l'affichage de la carte (I90)
         let bursts = Array.from({ length: 11 }, (_, i) => ({
           name: `capture-${i}-000.json`,
-          json: JSON.stringify({ v: 1, at: Date.now() - (i + 1) * 40 * 60000, trigger: i === 0 ? 'manual' : 'unlock', frames: 3, valid: i % 4 === 3 ? 0 : 3, values: { smile: 0.2 }, rejected: {}, ms: { camera: 1350, inference: 120 } }),
+          json: JSON.stringify({ v: 1, at: Date.now() - (i + 1) * 5 * 3600000, trigger: i === 0 ? 'manual' : 'unlock', frames: 3, valid: i % 4 === 3 ? 0 : 3, values: { smile: 0.2 }, rejected: {}, ms: { camera: 1350, inference: 120 } }),
         }))
         window.__healthtrackFakeFaceSense = {
           status: async () => ({ ...status, pending: bursts.length }),

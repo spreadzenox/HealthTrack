@@ -16,7 +16,7 @@ import {
   faceDiagnosticLines,
   faceSensePlugin,
 } from '../services/faceSense'
-import { FACE_BURST_TYPE, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
+import { FACE_BURST_TYPE, faceDailyCounts, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
 import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
 import { getEveningNoteStatus } from '../services/eveningNote'
 import { localDateKey } from '../services/analysisEngine'
@@ -46,12 +46,14 @@ async function defaultSave(json, filename) {
 /** Comptes des rafales rangées dans l'historique et état de la porte de calibration, ou null (base illisible). */
 async function defaultLoadHistory() {
   try {
-    const [bursts, notes] = await Promise.all([
+    const [bursts, notes, usage] = await Promise.all([
       listEntries({ type: FACE_BURST_TYPE, limit: Infinity }),
       listEntries({ type: 'wellbeing', limit: Infinity }),
+      listEntries({ type: 'phone_usage', limit: 14 }),
     ])
-    const gate = evaluateGate(gateDays([...bursts, ...notes]), { today: localDateKey(new Date().toISOString()) })
-    return { ...faceHistorySummary(bursts), gate }
+    const today = localDateKey(new Date().toISOString())
+    const gate = evaluateGate(gateDays([...bursts, ...notes]), { today })
+    return { ...faceHistorySummary(bursts), gate, perDay: faceDailyCounts([...bursts, ...usage], { today }) }
   } catch {
     return null
   }

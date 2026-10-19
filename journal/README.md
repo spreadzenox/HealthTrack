@@ -78,6 +78,13 @@ chez vous, ça va de pair avec une meilleure ou une moins bonne humeur. C'est un
 l'humeur estimée (vérifié par un test). Seul le nom de l'app ouverte est lu, jamais son contenu. Les 10 derniers
 jours sont repris d'un coup.
 
+**Run du 19/10 14:30 — moins de lectures du visage perdues, et le diagnostic dit si c'est assez.** Quand la caméra
+ne voit pas votre visage au déverrouillage (tête tournée, pièce sombre…), elle **réessaie une seule fois, 2 secondes
+plus tard** — toujours dans les 10 secondes qui suivent le déverrouillage, pour que la lecture reste celle du
+déverrouillage et pas celle de ce que vous regardez ensuite. Et le **Diagnostic** de la carte dit maintenant, sur vos
+7 derniers jours : combien de déverrouillages, de lectures et de lectures avec un visage vous avez par jour, et si
+vous atteignez les **12 par jour** qui permettent à la calibration d'aboutir en 2 à 3 mois.
+
 **Ce qu'il me faut (votre Galaxy A56)** — c'est l'étape qui débloque la suite : après la mise à jour (vérifiez dans
 Plus → Nouveautés que la version installée est au moins celle publiée le 19/10 vers 11 h), Plus → Connecteurs → la
 carte **Lecture du visage**, juste sous « Mes appareils » → **« Activer la lecture du visage »** (accepter l'appareil photo) →
@@ -86,13 +93,16 @@ carte **Lecture du visage**, juste sous « Mes appareils » → **« Activer la 
 dedans ; il dit maintenant aussi combien de lectures sont rangées). Dites-moi si le **point vert** s'allume environ
 1 s après chaque déverrouillage. **Nouveau (temps par app)** : un soir, une capture de la ligne « Dont réseaux
 sociaux … » (Plus → Connecteurs → Temps d'écran et sommeil) et une de Paramètres → Bien-être numérique (détail des
-apps du jour), pour vérifier que les chiffres concordent. **Nouveau (facultatif)** : allumez « 🔔 Me la demander le soir » dans la saisie bien-être, autorisez les
+apps du jour), pour vérifier que les chiffres concordent. **Nouveau (lectures par jour)** : dans le diagnostic
+exporté après une semaine, la ligne « Par jour » et la ligne « 2e essais » m'indiqueront si le visage donne assez. **Nouveau (facultatif)** : allumez « 🔔 Me la demander le soir » dans la saisie bien-être, autorisez les
 notifications, et dites-moi si la notification arrive le soir, si les 6 chiffres sont lisibles et si la note
 apparaît dans le journal à l'ouverture suivante. **Test « Reprendre »** : juste après l'installation de cette mise à jour, sans ouvrir l'app, une
 notification « Lecture du visage arrêtée » devrait apparaître (si la lecture était activée) ; touchez « Reprendre »
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Lecture du visage : 2e essai et lectures par jour (run 19/10 14:30)** : une lecture ratée est reprise une fois
+  2 s plus tard ; le diagnostic dit si vous avez assez de lectures par jour (12 visées).
 - **Temps par type d'app (run 19/10 12:30)** : réseaux sociaux, messageries, vidéo, jeux, comptés seuls et comparés à
   votre bien-être sans a priori.
 - **Carte « Lecture du visage » visible (run 19/10 10:30)** : toujours juste sous « Mes appareils », même pas encore
@@ -118,8 +128,8 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
 **Prochaines priorités (19/10 12:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
-visage (et l'adapter à One UI), ✅ temps par app comme facteur (19/10 12:30), **lectures du visage par jour dans le
-diagnostic** (prochain run), guide Shizuku / ADB, dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
+visage (et l'adapter à One UI), ✅ temps par app comme facteur (19/10 12:30), ✅ lectures du visage par jour dans le
+diagnostic + 2e essai (19/10 14:30), **guide Shizuku / ADB** (prochain run), dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -130,6 +140,7 @@ diagnostic** (prochain run), guide Shizuku / ADB, dictée du soir (voix), puis e
 | 19/10 08:30 — [Idées : temps par app, voix par la dictée, assez de rafales](runs/2026-10-19-0830-idees-apps-voix-rafales.md) | 💡 | I116–I120 ; simulation rafales / jour ; npj 2026 (texte ≫ audio) ; pas de Gemini Nano sur l’A56 ; PR #217 |
 | 19/10 10:30 — [Carte « Lecture du visage » visible (signalement 08:37)](runs/2026-10-19-1030-carte-visage-visible.md) | 🚑🙂 | Cause : carte rangée dans le volet replié tant que non activée ; épinglée en tête sur Android ; « Réessayer » si le natif est muet ; tests natifs ; PR #218 |
 | 19/10 12:30 — [Temps par app comme facteur X (I116)](runs/2026-10-19-1230-temps-par-app.md) | 🔴🙂 | `queryAppEvents` natif + `phoneApps.js` ; entrées `phone_apps` ; 4 facteurs neutres sans levier, test anti-circularité ; ligne « Dont… » + puce journal ; PR #219 |
+| 19/10 14:30 — [Visage : 2e essai et lectures par jour (I118)](runs/2026-10-19-1430-visage-rafales-par-jour.md) | 🔴🙂 | `FaceSchedule.shouldRetry` (1 fois, +2 s, ≤ 10 s après le déverrouillage) ; `faceDailyCounts` → diagnostic « Par jour » / « 2e essais » ; PR #220 |
 
 ---
 

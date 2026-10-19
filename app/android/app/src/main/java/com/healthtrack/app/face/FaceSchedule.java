@@ -19,6 +19,11 @@ public final class FaceSchedule {
     /** Marge thermique d'Android (0 = froid, 1 = bridage imminent) au-delà de laquelle on ne lance rien. */
     public static final double MAX_THERMAL_HEADROOM = 0.8;
 
+    /** 2e essai (I118) : une rafale sans aucune image exploitable est reprise une fois, 2 s plus tard. */
+    public static final long RETRY_DELAY_MS = 2000;
+    /** … mais jamais au-delà de 10 s après le déverrouillage : la rafale doit rester celle du déverrouillage. */
+    public static final long RETRY_WINDOW_MS = 10_000;
+
     public static final String SKIP_TOO_SOON = "too_soon";
     public static final String SKIP_DAILY_CAP = "daily_cap";
     public static final String SKIP_SCREEN_OFF = "screen_off";
@@ -44,5 +49,17 @@ public final class FaceSchedule {
         if (burstsToday >= MAX_PER_DAY) return SKIP_DAILY_CAP;
         if (lastBurstAt > 0 && now - lastBurstAt >= 0 && now - lastBurstAt < MIN_INTERVAL_MS) return SKIP_TOO_SOON;
         return null;
+    }
+
+    /**
+     * Faut-il reprendre la rafale du déverrouillage qui n'a lu aucun visage (I118) ? Une seule fois par
+     * déverrouillage, même déclencheur, et seulement si le 2e essai tombe encore dans les 10 s qui suivent le
+     * déverrouillage. Le test (« manual ») n'est jamais repris : c'est du diagnostic.
+     *
+     * @param sinceUnlockMs temps écoulé depuis le déverrouillage à la fin de la 1re rafale
+     */
+    public static boolean shouldRetry(String trigger, boolean faceFound, boolean alreadyRetried, long sinceUnlockMs) {
+        if (!TRIGGER_UNLOCK.equals(trigger) || faceFound || alreadyRetried) return false;
+        return sinceUnlockMs >= 0 && sinceUnlockMs + RETRY_DELAY_MS <= RETRY_WINDOW_MS;
     }
 }
