@@ -1,6 +1,6 @@
 # 2026-10-19 08:30 Paris (06:30 UTC) — Run « idées » : temps par app, voix par la dictée, assez de rafales
 
-**Type** : 💡 idées (consigne du 18/10 au soir, priorité unique ; D4, D5, D6)  ·  **PR** : « [Auto] Idées : temps par app, voix par la dictée, rafales par jour »
+**Type** : 💡 idées (consigne du 18/10 au soir, priorité unique ; D4, D5, D6)  ·  **PR** : #217
 
 ## Pourquoi
 - 08:30 Paris = run « idées » : pas de code produit, toute la veille sur le bien-être automatique.
