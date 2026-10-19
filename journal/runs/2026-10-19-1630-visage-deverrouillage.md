@@ -1,6 +1,6 @@
 # 2026-10-19 16:30 Paris (14:30 UTC) — Visage : chaque déverrouillage repéré (signalement 19/10 15:05)
 
-**Type** : 🚑🙂 régression bloquante du chantier bien-être (signalement du propriétaire, prioritaire)  ·  **PR** : voir ci-dessous
+**Type** : 🚑🙂 régression bloquante du chantier bien-être (signalement du propriétaire, prioritaire)  ·  **PR** : #221
 
 ## Signalement
 « J'ai déverrouillé plusieurs fois et toujours aucune prise de photo automatique. Le test manuel fonctionne. Je
