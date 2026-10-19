@@ -1,6 +1,6 @@
 {
   "date": "2026-10-19",
-  "kind": "correction",
+  "kind": "correctif",
   "title": "Lecture du visage : chaque déverrouillage est enfin repéré",
   "items": [
     "Correction de votre signalement : la lecture du visage ne voyait aucun déverrouillage (empreinte notamment), donc aucune photo automatique. Le signal de déverrouillage était filtré par l'app elle-même ; il est maintenant bien reçu, et en secours HealthTrack regarde, dans la minute qui suit l'allumage de l'écran, si l'écran de verrouillage a disparu (empreinte, visage, Smart Lock).",
