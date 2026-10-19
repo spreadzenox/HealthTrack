@@ -74,7 +74,7 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   prosodie passe la porte chez le propriétaire.
 - [ ] **I119** (20) lexiques **disjoints** ressenti (Y : proposition de note) / contexte (X : tags) pour la dictée et
   les notes libres, test d'intersection vide (`services/mood/lexicon.js`). À faire avec ou avant I117.
-- [ ] **I116** (25) temps au premier plan par app comme **X** : `queryEvents` garde `ACTIVITY_RESUMED / PAUSED /
+- [x] **I116** (25) ✅ **livré le 19/10 12:30** (PR « [Auto] Temps par app », `services/phoneApps.js`, `queryAppEvents`, facteurs `social_minutes` / `messaging_minutes` / `video_minutes` / `game_minutes` neutres, à valider sur l'A56 : écart avec Bien-être numérique de One UI) — temps au premier plan par app comme **X** : `queryEvents` garde `ACTIVITY_RESUMED / PAUSED /
   STOPPED` + paquet (le plugin lit déjà l'écran et `KEYGUARD_HIDDEN`, accès déjà accordé) ; catégories par
   `ApplicationInfo.category` + `<queries>` `MAIN/LAUNCHER` + petite table de repli ; entrée `phone_apps` (jour + par
   heure, `social` / `messaging` / `video` / `game` / `news`) ; facteurs sans sens présupposé, minutes **avant** la
@@ -659,7 +659,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 « Reprendre » ; d) I89 Shizuku / ADB ; e) I91 voix ; f) temps par app (X) ; g) ✅ I112 porte (19/10 02:30) → I115 estimation du jour ;
 h) ✅ I113 note du soir (19/10 06:30). 2) ⏸️ En pause : montre (sauf régression), D1, D2, C7.
 **Précision du run idées du 19/10 08:30 (ordre interne du point 1)** : a) diagnostic A56 dès qu'il arrive ;
-b) **I116** temps par app (X) — prêt, petit, indépendant de l'A56 ; c) **I118** diagnostic des rafales / jour (+ 2e
+b) ✅ **I116** temps par app (X) (19/10 12:30) ; c) **I118** (prochain run de code) diagnostic des rafales / jour (+ 2e
 essai) ; d) I89 Shizuku / ADB ; e) **I119** lexiques puis **I117** dictée (voix) ; f) I115 estimation du jour quand la
 porte peut s'ouvrir ; g) I120 plus tard.
 

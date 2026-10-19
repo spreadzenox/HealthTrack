@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-19",
+  "kind": "nouveau",
+  "title": "Temps passé sur les réseaux sociaux, la vidéo, les jeux…",
+  "items": [
+    "Si « Temps d'écran et sommeil » est activé (Plus → Connecteurs), HealthTrack compte désormais aussi le temps passé par type d'app : réseaux sociaux, messageries, vidéo, jeux. Rien à faire ni à saisir : l'accès déjà donné suffit.",
+    "La carte affiche « Dont réseaux sociaux … · vidéo … » pour aujourd'hui, et le journal de chaque journée les minutes de réseaux sociaux.",
+    "Les Analyses comparent ces minutes à votre bien-être, sans aucun a priori : chez vous, elles peuvent aller de pair avec une meilleure humeur comme avec une moins bonne. Seul le nom de l'app ouverte est lu, jamais son contenu, et rien ne quitte le téléphone."
+  ]
+}

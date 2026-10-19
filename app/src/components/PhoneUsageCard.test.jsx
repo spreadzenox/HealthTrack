@@ -66,4 +66,24 @@ describe('PhoneUsageCard', () => {
     expect(screen.getByText(/23:40 → 07:05/)).toBeInTheDocument()
     expect(screen.getByText(/7 h 25 sans écran/)).toBeInTheDocument()
   })
+
+  it('temps par app du jour (I116) : les catégories les plus utilisées, sans jugement', async () => {
+    enablePhoneUsage()
+    localStorage.setItem('healthtrack_phone_usage', JSON.stringify({
+      ...getPhoneUsageSettings(),
+      lastSyncAt: new Date().toISOString(),
+      today: { date: '2026-10-12', screenMinutes: 135, lateScreenMinutes: 0, unlocks: 31, sleepEstimate: null },
+      todayApps: { date: '2026-10-12', minutes: { social: 72, video: 40, messaging: 15, other: 90, game: 5 }, byHour: {}, topApps: [] },
+    }))
+    const p = props({ checkAccess: vi.fn(async () => ({ granted: true, supported: true })) })
+    render(<PhoneUsageCard {...p} />)
+    expect(await screen.findByText(/réseaux sociaux 1 h 12 · vidéo 40 min · messageries 15 min/)).toBeInTheDocument()
+    expect(screen.queryByText(/autres apps/)).not.toBeInTheDocument()
+  })
+
+  it('dit honnêtement ce qui est lu : quelles apps, jamais leur contenu', () => {
+    render(<PhoneUsageCard {...props()} />)
+    expect(screen.getByText(/quelles apps sont ouvertes/)).toBeInTheDocument()
+    expect(screen.queryByText(/jamais vos apps/)).not.toBeInTheDocument()
+  })
 })

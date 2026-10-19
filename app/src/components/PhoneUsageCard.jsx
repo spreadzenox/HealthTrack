@@ -1,7 +1,8 @@
 /**
  * « Temps d'écran et sommeil » (page Connecteurs) : le téléphone lui-même devient un capteur.
  * Un geste pour activer (accès aux données d'utilisation d'Android), ensuite tout arrive seul :
- * temps d'écran, écran tard le soir, déverrouillages et nuit estimée quand la montre n'en donne pas.
+ * temps d'écran, écran tard le soir, déverrouillages, temps par catégorie d'app (réseaux sociaux, vidéo…)
+ * et nuit estimée quand la montre n'en donne pas.
  * Rien ne quitte le téléphone. Logique dans services/phoneUsage*.js, natif dans PhoneUsagePlugin.java.
  */
 import { useEffect, useState } from 'react'
@@ -15,6 +16,7 @@ import {
   isPhoneUsageAvailable,
 } from '../services/phoneUsageSync'
 import { formatScreenMinutes } from '../services/phoneUsage'
+import { APP_CATEGORY_LABELS } from '../services/phoneApps'
 import { formatAgo } from '../utils/timeAgo'
 import './MyDevices.css'
 import './WeatherCard.css'
@@ -22,6 +24,16 @@ import './PhoneUsageCard.css'
 
 function hhmm(iso) {
   return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+}
+
+/** « réseaux sociaux 1 h 12 · vidéo 40 min » : les 3 catégories les plus utilisées (hors « autres »). */
+function appsLine(minutes) {
+  const parts = Object.entries(minutes || {})
+    .filter(([cat, m]) => cat !== 'other' && m > 0 && APP_CATEGORY_LABELS[cat])
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([cat, m]) => `${APP_CATEGORY_LABELS[cat]} ${formatScreenMinutes(m)}`)
+  return parts.length ? parts.join(' · ') : null
 }
 
 /**
@@ -95,6 +107,7 @@ export default function PhoneUsageCard({
   const granted = !!access?.granted
   const today = settings.today
   const night = today?.sleepEstimate
+  const apps = settings.todayApps?.date === today?.date ? appsLine(settings.todayApps?.minutes) : null
 
   return (
     <section className="weather-card" aria-labelledby="phone-usage-title">
@@ -106,10 +119,11 @@ export default function PhoneUsageCard({
 
       {(!on || !granted) && (
         <p className="my-devices-intro">
-          Votre téléphone sait quand il s’allume et s’éteint : HealthTrack en tire votre temps d’écran, l’écran tard
-          le soir et, les nuits sans montre, une estimation de votre sommeil. Les Analyses vérifient si l’écran du soir
-          pèse sur <em>votre</em> forme. Seuls les allumages / extinctions sont lus (jamais vos apps ni vos messages),
-          et rien ne quitte le téléphone.
+          Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : HealthTrack en tire votre temps
+          d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits sans
+          montre, une estimation de votre sommeil. Les Analyses regardent comment tout cela va avec <em>votre</em>{' '}
+          humeur, dans un sens ou dans l’autre. Jamais le contenu des apps ni vos messages, et rien ne quitte le
+          téléphone.
         </p>
       )}
 
@@ -155,6 +169,11 @@ export default function PhoneUsageCard({
             </p>
           ) : (
             <p className="my-device-message">{busy ? 'Lecture du téléphone…' : 'Pas encore de données aujourd’hui.'}</p>
+          )}
+          {today && apps && (
+            <p className="weather-today">
+              <span className="weather-today-label">Dont</span> {apps}
+            </p>
           )}
           {night && (
             <p className="weather-today">

@@ -177,5 +177,15 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="market" />
         </intent>
+        <!-- Temps par app (PhoneUsagePlugin.queryAppEvents, I116) : nom et catégorie des apps
+             lancées par l'utilisateur, et lanceur à ignorer. Rien ne quitte le téléphone. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.HOME" />
+        </intent>
     </queries>
 </manifest>

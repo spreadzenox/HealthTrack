@@ -12,7 +12,7 @@ import { mealKcal } from './mealEditing'
 export const JOURNAL_SUMMARY_TYPES = [
   'heart_rate', 'steps', 'calories', 'sleep',
   'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weather',
-  'phone_usage',
+  'phone_usage', 'phone_apps',
 ]
 
 /** Phases qui ne comptent pas comme du sommeil. */
@@ -90,6 +90,7 @@ function finalize(day) {
       sleepMinutes: day._sleep > 0 ? day._sleep : day._inBed > 0 ? day._inBed : phoneSleep(day),
       sleepEstimated: !(day._sleep > 0 || day._inBed > 0) && phoneSleep(day) != null,
       screenMinutes: isNum(day._phone?.screenMinutes) ? day._phone.screenMinutes : null,
+      socialMinutes: day._apps ? (isNum(day._apps.minutes?.social) ? day._apps.minutes.social : 0) : null,
       steps: dailyTotal(day, 'steps'),
       burnedKcal: isNum(dailyTotal(day, 'calories')) ? Math.round(dailyTotal(day, 'calories')) : null,
       restingHr: last(day._resting),
@@ -188,6 +189,11 @@ export function buildDailyJournal(entries) {
     if (e.type === 'phone_usage') {
       // Arrive tout seul chaque jour, comme la météo : ne fait pas apparaître une journée à lui seul.
       getDay(p.date || localDateKey(e.at))._phone = p
+      continue
+    }
+    if (e.type === 'phone_apps') {
+      // Temps par catégorie d'app (I116) : même règle que le temps d'écran.
+      getDay(p.date || localDateKey(e.at))._apps = p
       continue
     }
     day._hasOwnData = true

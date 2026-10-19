@@ -278,6 +278,35 @@ export const VARIABLE_META = {
     direction: 'lower_better',
     group: 'lifestyle',
   },
+  // ── Temps par catégorie d'app (PhoneUsage, I116) : facteurs sans sens supposé (D6) ──
+  social_minutes: {
+    label: 'Réseaux sociaux (temps du jour)',
+    unit: 'min',
+    format: (v) => formatScreenMinutes(v),
+    direction: 'neutral',
+    group: 'lifestyle',
+  },
+  messaging_minutes: {
+    label: 'Messageries (temps du jour)',
+    unit: 'min',
+    format: (v) => formatScreenMinutes(v),
+    direction: 'neutral',
+    group: 'lifestyle',
+  },
+  video_minutes: {
+    label: 'Vidéo (temps du jour)',
+    unit: 'min',
+    format: (v) => formatScreenMinutes(v),
+    direction: 'neutral',
+    group: 'lifestyle',
+  },
+  game_minutes: {
+    label: 'Jeux (temps du jour)',
+    unit: 'min',
+    format: (v) => formatScreenMinutes(v),
+    direction: 'neutral',
+    group: 'lifestyle',
+  },
   // ── FODMAPs ────────────────────────────────────────────────────────────────
   fodmap_score: {
     label: 'Score FODMAP (repas le plus élevé)',
@@ -528,6 +557,17 @@ export const PHONE_USAGE_KEYS = {
   phone_unlocks: 'unlocks',
 }
 
+/**
+ * Temps par catégorie d'app (entrées `phone_apps`, journées terminées) : inconnu (null) sans journal du
+ * jour ; une catégorie absente d'un jour journalisé vaut 0 (aucune minute). Facteurs X uniquement.
+ */
+export const PHONE_APPS_KEYS = {
+  social_minutes: 'social',
+  messaging_minutes: 'messaging',
+  video_minutes: 'video',
+  game_minutes: 'game',
+}
+
 // ─── Step 1 — build daily dataset ────────────────────────────────────────────
 
 /**
@@ -545,6 +585,7 @@ export const DAY_OVER_HOUR = 20
  */
 export const SAME_DAY_KEYS = [
   'steps', 'activityCalories', 'dailyCaloriesHC', 'avgHR', 'cigaretteCount', 'screen_minutes', 'phone_unlocks',
+  ...Object.keys(PHONE_APPS_KEYS),
 ]
 
 /** Fin d'une entrée : fin déclarée, sinon début + durée, sinon son heure. */
@@ -616,7 +657,7 @@ function knownMean(rows, key) {
  * sleep or with a resting heart rate of 0.
  */
 function fillMissing(rows, meanRows = rows) {
-  const keys = [...MEASURED_KEYS, ...NUTRITION_KEYS, ...Object.keys(WEATHER_KEYS), ...Object.keys(PHONE_USAGE_KEYS)]
+  const keys = [...MEASURED_KEYS, ...NUTRITION_KEYS, ...Object.keys(WEATHER_KEYS), ...Object.keys(PHONE_USAGE_KEYS), ...Object.keys(PHONE_APPS_KEYS)]
   const means = Object.fromEntries(keys.map((k) => [k, knownMean(meanRows, k) ?? 0]))
   return rows.map((d) => {
     const filled = { ...d }
@@ -640,7 +681,7 @@ export function localDateKey(iso) {
 }
 
 /** Entrées qui arrivent toutes seules chaque jour (contexte), sans action de l'utilisateur. */
-const AUTO_CONTEXT_TYPES = new Set(['weather', 'phone_usage', 'context'])
+const AUTO_CONTEXT_TYPES = new Set(['weather', 'phone_usage', 'phone_apps', 'context'])
 
 /**
  * Returns the number of distinct calendar days (YYYY-MM-DD) that have any
@@ -733,6 +774,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
         _heightCm: 0,
         ...Object.fromEntries(Object.keys(WEATHER_KEYS).map((k) => [k, null])),
         ...Object.fromEntries(Object.keys(PHONE_USAGE_KEYS).map((k) => [k, null])),
+        ...Object.fromEntries(Object.keys(PHONE_APPS_KEYS).map((k) => [k, null])),
       })
     }
     return days.get(dateKey)
@@ -926,6 +968,16 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
         break
       }
 
+      case 'phone_apps': {
+        // Journée entière, sans heure : inconnue un jour noté tôt (X avant Y).
+        if (cutoffs.has(dk)) break
+        const minutes = e.payload?.minutes || {}
+        for (const [key, cat] of Object.entries(PHONE_APPS_KEYS)) {
+          day[key] = isKnown(minutes[cat]) ? minutes[cat] : 0
+        }
+        break
+      }
+
       default:
         break
     }
@@ -990,6 +1042,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       pwv_mps:          day.pwv_mps,
       ...Object.fromEntries(Object.keys(WEATHER_KEYS).map((k) => [k, day[k]])),
       ...Object.fromEntries(Object.keys(PHONE_USAGE_KEYS).map((k) => [k, day[k]])),
+      ...Object.fromEntries(Object.keys(PHONE_APPS_KEYS).map((k) => [k, day[k]])),
     })
   }
 
