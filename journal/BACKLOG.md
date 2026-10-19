@@ -21,6 +21,31 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🔴🔴🔴 Consigne du propriétaire du 19/10/2026 au soir — bien-être 100 % auto, sans attendre la calibration (charte §0000000)
+
+« Je ne veux pas avoir à attendre les 30 jours de calibration, quitte à embarquer un modèle plus puissant. » Prime sur
+l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement du 15:05 (corrigé, retour attendu).
+- [x] **Étape 1 (run 19/10 22:30)** : `mood/faceMood.js` — estimation dès la première lecture du déverrouillage avec le
+  modèle actuel (valence a priori sur les blendshapes → visage habituel 28 j → calibration Ridge facultative ≥ 14 j),
+  fourchette 0–5 et confiance (lectures du jour, qualité, cadrage, dispersion, un seul signal) ; carte « Humeur
+  estimée » sur l'accueil (`MoodEstimateCard`), bloc dans « Lecture du visage », humeur du moment au « Tester
+  maintenant » ; « Rien n'est affiché avant… » retiré (`describeGate` = vérification facultative) ; diagnostic
+  `estimate` (modèle, confiance, comptes ; jamais la valeur) ; 18 tests nouveaux.
+- [ ] **Étape 2 — modèle valence / éveil embarqué** : run idées → comparatif (HSEmotion `enet_b0_8_va_mtl` /
+  `mbf_va_mtl`, EmoNet, DDAMFN, modèles AffectNet-VA récents ; précision CCC valence / éveil sur AffectNet, AFEW-VA ;
+  taille ; latence A56 LiteRT / ONNX Runtime + NNAPI / GPU ; **licence des poids** — le run du 13/10 avait noté « poids
+  HSEmotion VA sans licence affichée, appris sur AffectNet (recherche non commerciale) » : à trancher, alternatives
+  sous licence claire) → conversion, téléchargement au build (empreinte SHA-256), `FaceVa.java` sur le recadrage du
+  visage déjà calculé, `values.valence` / `values.arousal` dans `face_burst` (v2, rétrocompatible), `faceMood` les
+  préfère à l'a priori ; test d'équivalence hors app.
+- [ ] **Étape 3 — fusion visage + voix** (dictée du soir I117 puis prosodie) ; « accord entre signaux » dans la
+  confiance.
+- [ ] **I121 étendu** : la calibration personnelle (`calibrateRidge`, LOO simple) peut aussi être trompée par les
+  dérives lentes → validation croisée par blocs ±7 j avant d'adopter le « modèle personnel ».
+- [ ] Retour du propriétaire : l'estimation est-elle plausible ? (« Tester maintenant » en souriant / sans sourire.)
+- [ ] Plus tard : écrire l'estimation du jour comme colonne Y (`face_mood`) pour les Analyses (facteurs X → humeur
+  estimée), avec ordre temporel et anti-circularité (préfixe `face_` déjà déclaré).
+
 ## 🚑 Signalement du propriétaire du 19/10/2026 15:05 — aucune lecture automatique au déverrouillage
 
 - [x] **Corrigé (run 19/10 16:30)** : récepteur `USER_PRESENT` enregistré `RECEIVER_NOT_EXPORTED` → diffusion de
@@ -692,6 +717,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Réordonnées le 19/10 (22:30 Paris), consigne du 19/10 au soir (charte §0000000) — prime sur l'ordre ci-dessous** :
+1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
+lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
+4) I121 étendu à la calibration personnelle ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
 
 **Réordonnées le 18/10 (22:30 Paris), consigne du 18/10 au soir (charte §00000) — prime sur tout ce qui suit** :
 1) 🔴🙂 **bien-être entièrement automatique, seul chantier** : a) lire le diagnostic visage de l'A56 dès qu'il arrive

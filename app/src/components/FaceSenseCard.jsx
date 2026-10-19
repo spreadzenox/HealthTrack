@@ -1,7 +1,8 @@
 /**
- * « Lecture du visage » (page Connecteurs, D4 / I88) : un interrupteur pour le service caméra natif, l'état du
- * jour en comptes (jamais un score : porte I110), « Relancer » si Android l'a arrêté, la sortie de l'optimisation
- * de batterie et un diagnostic exportable pour vérifier le comportement réel sur le téléphone.
+ * « Lecture du visage » (page Connecteurs, D4 / I88) : un interrupteur pour le service caméra natif, l'humeur
+ * estimée dès la première lecture (mood/faceMood.js, consigne du 19/10 au soir) avec sa fourchette et sa confiance,
+ * « Relancer » si Android l'a arrêté, la sortie de l'optimisation de batterie et un diagnostic exportable (comptes
+ * seulement) pour vérifier le comportement réel sur le téléphone.
  * Logique dans services/faceSense.js, natif dans FaceSenseService.java / FaceSensePlugin.java.
  */
 import { useCallback, useEffect, useState } from 'react'
@@ -19,6 +20,7 @@ import {
 } from '../services/faceSense'
 import { FACE_BURST_TYPE, faceDailyCounts, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
 import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
+import { describeFaceMood, faceMoodEstimate, testReadingEstimate } from '../services/mood/faceMood'
 import { getEveningNoteStatus } from '../services/eveningNote'
 import { localDateKey } from '../services/analysisEngine'
 import { listEntries } from '../storage/localHealthStorage'
@@ -44,7 +46,10 @@ async function defaultSave(json, filename) {
   return 'Téléchargement du diagnostic démarré.'
 }
 
-/** Comptes des rafales rangées dans l'historique et état de la porte de calibration, ou null (base illisible). */
+/**
+ * Comptes des rafales rangées dans l'historique, humeur estimée (et celle d'un test récent), état de la
+ * vérification visage ↔ notes ; null si la base est illisible.
+ */
 async function defaultLoadHistory() {
   try {
     const [bursts, notes, usage] = await Promise.all([
@@ -52,9 +57,17 @@ async function defaultLoadHistory() {
       listEntries({ type: 'wellbeing', limit: Infinity }),
       listEntries({ type: 'phone_usage', limit: 14 }),
     ])
-    const today = localDateKey(new Date().toISOString())
-    const gate = evaluateGate(gateDays([...bursts, ...notes]), { today })
-    return { ...faceHistorySummary(bursts), gate, perDay: faceDailyCounts([...bursts, ...usage], { today }) }
+    const now = new Date()
+    const today = localDateKey(now.toISOString())
+    const y = [...bursts, ...notes]
+    const gate = evaluateGate(gateDays(y), { today })
+    return {
+      ...faceHistorySummary(bursts),
+      gate,
+      perDay: faceDailyCounts([...bursts, ...usage], { today }),
+      estimate: faceMoodEstimate(y, { now }),
+      testEstimate: testReadingEstimate(y, { now }),
+    }
   } catch {
     return null
   }
@@ -83,6 +96,19 @@ function PermanentCameraGuide({ access, open = false }) {
           vous réinstallez l’app (une mise à jour le garde) ou changez l’autorisation Appareil photo dans Android.</li>
       </ol>
     </details>
+  )
+}
+
+const fmt = (v) => v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+
+/** Humeur estimée (dès la première lecture) : la phrase du jour, celle du moment, la confiance et le modèle. */
+export function FaceMoodBlock({ estimate }) {
+  const [main, ...rest] = describeFaceMood(estimate)
+  return (
+    <div className="face-mood" aria-label="Humeur estimée">
+      <p className="weather-today"><strong>{main}</strong></p>
+      {rest.map((line) => <p key={line} className="my-device-meta">{line}</p>)}
+    </div>
   )
 }
 
@@ -115,7 +141,7 @@ export default function FaceSenseCard({
     setHistory(h)
     setEvening(e)
     setLoaded(true)
-    return s
+    return { status: s, history: h }
   }, [plugin, importBursts, loadHistory, loadEveningNote])
 
   useEffect(() => {
@@ -156,8 +182,11 @@ export default function FaceSenseCard({
     try {
       await testFaceSense(plugin)
       await new Promise((r) => setTimeout(r, 4000))
-      await refresh()
-      setMessage(null)
+      const { history: h } = await refresh()
+      const t = h?.testEstimate
+      setMessage(t
+        ? `Test : visage lu. Humeur de ce moment : ${t.label}, ≈ ${fmt(t.note)} / 5 (entre ${fmt(t.low)} et ${fmt(t.high)}). Un test ne compte pas dans l’estimation du jour.`
+        : null)
     } finally {
       setBusy(false)
     }
@@ -193,9 +222,9 @@ export default function FaceSenseCard({
       {(d.state === 'off' || d.state === 'unavailable') && (
         <p className="my-devices-intro">
           Pour estimer votre humeur sans rien saisir : à chaque déverrouillage, la caméra frontale prend 3 images,
-          le téléphone en tire une dizaine de mesures d’expression puis les efface. Rien ne quitte le téléphone. Il
-          faudra plusieurs semaines de vos notes pour que ces mesures veuillent dire quelque chose : une estimation,
-          jamais un diagnostic.
+          le téléphone en tire une dizaine de mesures d’expression puis les efface. Rien ne quitte le téléphone. Une
+          humeur estimée s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives, l’affinent.
+          Une estimation, jamais un diagnostic.
         </p>
       )}
 
@@ -268,6 +297,7 @@ export default function FaceSenseCard({
       {available && d.state === 'active' && (
         <div className="weather-on">
           {d.lines.map((line) => <p key={line} className="weather-today">{line}</p>)}
+          {history?.estimate && <FaceMoodBlock estimate={history.estimate} />}
           <p className="my-device-meta">
             {history?.stored
               ? `${history.stored} ${history.stored > 1 ? 'lectures gardées' : 'lecture gardée'} depuis le ${frenchDate(history.firstAt)}. `
@@ -290,6 +320,8 @@ export default function FaceSenseCard({
           </div>
         </div>
       )}
+
+      {available && history?.estimate && d.state !== 'off' && d.state !== 'active' && <FaceMoodBlock estimate={history.estimate} />}
 
       {message && <p className="my-device-meta" role="status">{message}</p>}
 

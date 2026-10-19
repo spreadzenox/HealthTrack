@@ -8,6 +8,7 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
 import FormeSection from '../components/FormeSection'
+import MoodEstimateCard from '../components/MoodEstimateCard'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import SavedMealEditor from '../components/SavedMealEditor'
 import { groupCigarettes, isDeletableEntry } from '../utils/entries'
@@ -479,6 +480,7 @@ export default function Dashboard() {
 
       {!loading && !error && (
         <>
+          <MoodEstimateCard />
           <FormeSection />
           <WellbeingCharts />
           <h3 className="section-title">Vos derniers jours</h3>

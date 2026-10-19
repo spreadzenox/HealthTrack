@@ -135,11 +135,14 @@ describe('evaluateGate', () => {
 
 describe('describeGate', () => {
   const base = { needed: 30, openedAt: null, closedAt: null }
-  it('compte les jours, dit quand rien n’est encore affiché, jamais une humeur', () => {
-    expect(describeGate({ ...base, state: 'candidate', nDays: 1 })).toMatch(/^Calibration : 1 jour sur 30 avec une note/)
-    expect(describeGate({ ...base, state: 'candidate', nDays: 45 })).toMatch(/ne suit pas encore assez vos notes/)
-    expect(describeGate({ ...base, state: 'candidate', nDays: 3, closedAt: '2026-12-01' })).toMatch(/^Le lien s’est perdu le 1 décembre : on recompte/)
+  it('compte les jours de la vérification facultative, sans jamais bloquer l’affichage', () => {
+    expect(describeGate({ ...base, state: 'candidate', nDays: 1 })).toMatch(/^Vérification facultative : 1 jour sur 30 avec une note/)
+    expect(describeGate({ ...base, state: 'candidate', nDays: 45 })).toMatch(/ne suit pas encore nettement vos notes/)
+    expect(describeGate({ ...base, state: 'candidate', nDays: 3, closedAt: '2026-12-01' })).toMatch(/^Le lien visage ↔ notes s’est perdu le 1 décembre : on recompte/)
     expect(describeGate({ ...base, state: 'active', nDays: 50, openedAt: '2026-11-20' })).toMatch(/suit vos notes depuis le 20 novembre/)
-    expect(describeGate(null)).toMatch(/rien n’est affiché avant/)
+    expect(describeGate(null)).toMatch(/facultatives/)
+    for (const g of [null, { ...base, state: 'candidate', nDays: 1 }, { ...base, state: 'candidate', nDays: 45 }]) {
+      expect(describeGate(g)).not.toMatch(/[Rr]ien n’est affiché/)
+    }
   })
 })
