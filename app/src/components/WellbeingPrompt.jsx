@@ -11,6 +11,7 @@ import {
   measuredTagsByDay,
 } from '../services/behaviorTags'
 import { localDateKey } from '../services/wellbeingSeries'
+import { readPhrase } from '../services/mood/lexicon'
 import { recordTimezoneContext } from '../services/timezoneContext'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
 import {
@@ -122,6 +123,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   const [captures, setCaptures] = useState({ workouts: false, meals: false, travelToday: false })
   const [evening, setEvening] = useState(null)
   const [eveningHint, setEveningHint] = useState(null)
+  const [phrase, setPhrase] = useState('')
 
   useEffect(() => {
     if (isControlled || hasAnsweredThisSession()) return undefined
@@ -139,6 +141,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
       const score = entry?.payload?.score
       setSelected(typeof score === 'number' ? score : null)
       setTags(Array.isArray(entry?.payload?.tags) ? entry.payload.tags : [])
+      setPhrase('')
       setError(null)
     }
   }, [isControlled ? controlledOpen : internalOpen, entry]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -160,6 +163,11 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   const autoIds = open ? autoDetectedTagIds({ phoneUsage: getPhoneUsageSettings().enabled, ...captures }) : []
   const shownTags = BEHAVIOR_TAGS.filter((t) => !autoIds.includes(t.id) || tags.includes(t.id))
   const autoHints = autoIds.map((id) => AUTO_HINTS[id]).filter(Boolean)
+
+  // I119 : la phrase ne fait que proposer (lexiques disjoints ressenti / contexte) ; elle n'est jamais enregistrée.
+  const read = phrase.trim() ? readPhrase(phrase) : null
+  const proposedScore = read?.score != null && read.score !== selected ? read.score : null
+  const proposedTags = read ? shownTags.filter((t) => read.tags.includes(t.id) && !tags.includes(t.id)) : []
 
   const close = () => {
     if (isControlled) {
@@ -281,6 +289,56 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
           })}
         </div>
         {autoHints.length > 0 && <p className="wellbeing-tags-hint">Repéré sans vous : {autoHints.join(', ')}.</p>}
+
+        <label className="wellbeing-phrase">
+          <span className="wellbeing-tags-title">
+            En une phrase <span className="wellbeing-tags-optional">(facultatif)</span>
+          </span>
+          <textarea
+            className="wellbeing-phrase-input"
+            rows={2}
+            maxLength={500}
+            value={phrase}
+            placeholder="« Journée crevante mais contente, apéro le soir »"
+            onChange={(e) => setPhrase(e.target.value)}
+          />
+        </label>
+        {proposedScore !== null || proposedTags.length > 0 ? (
+          <div className="wellbeing-proposals">
+            <p className="wellbeing-tags-hint">Proposé d’après votre phrase (touchez pour garder) :</p>
+            <div className="wellbeing-tags">
+              {proposedScore !== null && (
+                <button
+                  type="button"
+                  className="wellbeing-tag wellbeing-proposal"
+                  aria-label={`Prendre la note ${proposedScore}`}
+                  onClick={() => {
+                    setSelected(proposedScore)
+                    setError(null)
+                  }}
+                >
+                  Note {proposedScore}
+                </button>
+              )}
+              {proposedTags.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  className="wellbeing-tag wellbeing-proposal"
+                  aria-label={`Ajouter le tag ${t.label}`}
+                  onClick={() => toggleTag(t.id)}
+                >
+                  <span aria-hidden>{t.emoji}</span> {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="wellbeing-tags-hint">
+            Dictez-la avec le micro du clavier si vous préférez : elle sert seulement à vous proposer une note et des
+            tags, elle n’est pas gardée.
+          </p>
+        )}
 
         {evening && (
           <>

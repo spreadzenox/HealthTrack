@@ -617,6 +617,36 @@
   line-height: 1.4;
 }
 
+.wellbeing-phrase {
+  display: block;
+  margin: 0 0 6px;
+}
+
+.wellbeing-phrase .wellbeing-tags-title {
+  display: block;
+}
+
+.wellbeing-phrase-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 56px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.wellbeing-proposal {
+  border-style: dashed;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .wellbeing-evening {
   display: block;
   width: 100%;
