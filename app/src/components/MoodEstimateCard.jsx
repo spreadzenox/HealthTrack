@@ -5,16 +5,13 @@
  * qu'aucune lecture du déverrouillage n'a vu un visage (lecture pas activée, ou hors de l'app Android).
  */
 import { useCallback, useEffect, useState } from 'react'
-import { listEntries } from '../storage/localHealthStorage'
-import { FACE_BURST_TYPE } from '../services/faceBursts'
 import { describeFaceMood, faceMoodEstimate } from '../services/mood/faceMood'
+import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
 import './MoodEstimateCard.css'
 
 async function defaultLoad() {
-  const [bursts, notes] = await Promise.all([
-    listEntries({ type: FACE_BURST_TYPE, limit: Infinity }),
-    listEntries({ type: 'wellbeing', limit: Infinity }),
-  ])
+  const { bursts, notes } = await loadFaceMoodEntries()
+  if (!bursts.length) return null
   return faceMoodEstimate([...bursts, ...notes], { now: new Date() })
 }
 

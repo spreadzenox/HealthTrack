@@ -21,6 +21,7 @@ import {
 import { FACE_BURST_TYPE, faceDailyCounts, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
 import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
 import { describeFaceMood, faceMoodEstimate, testReadingEstimate } from '../services/mood/faceMood'
+import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
 import { getEveningNoteStatus } from '../services/eveningNote'
 import { localDateKey } from '../services/analysisEngine'
 import { listEntries } from '../storage/localHealthStorage'
@@ -52,9 +53,8 @@ async function defaultSave(json, filename) {
  */
 async function defaultLoadHistory() {
   try {
-    const [bursts, notes, usage] = await Promise.all([
-      listEntries({ type: FACE_BURST_TYPE, limit: Infinity }),
-      listEntries({ type: 'wellbeing', limit: Infinity }),
+    const [{ bursts, notes }, usage] = await Promise.all([
+      loadFaceMoodEntries(),
       listEntries({ type: 'phone_usage', limit: 14 }),
     ])
     const now = new Date()

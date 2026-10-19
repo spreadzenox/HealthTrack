@@ -38,7 +38,14 @@
   Captures lues : accueil (carte « Humeur estimée », confiance faible, fourchette 1,6–4,0), Connecteurs (bloc sous
   « Aujourd'hui… », avant les comptes et boutons), accueil vide (aucune carte, pas de message de verrou).
 
+- Check CI « Budget de lectures (perf) » rouge au 1er push : l'accueil lisait **toutes** les notes de bien-être
+  (3 ans de démo : 13 252 enregistrements > 12 500). Corrigé : `mood/faceMoodData.js` ne lit les notes que depuis le
+  jour de la première rafale (une note plus ancienne n'a aucune lecture à qui être comparée) → 12 166, budget
+  respecté en local (`npm run perf -- --budget`), 1 561 tests.
+
 ## Apprentissages / décisions
+- **Penser au budget de lectures (D2) dès qu'une carte de l'accueil lit un type d'entrée en entier** : borner par
+  `since` à la période utile.
 - **L'a priori est une hypothèse de population, affichée comme telle** (D6) : large fourchette, confiance faible tant
   que seul lui parle ; les données personnelles (visage habituel, puis notes) le supplantent.
 - La porte I112 reste utile comme vérification honnête, mais n'est plus un verrou. I121 (dérives lentes) concerne
