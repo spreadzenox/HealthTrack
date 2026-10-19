@@ -12,7 +12,12 @@
  *   choisir sur les mêmes jours rendrait la prédiction optimiste). Le sens de chaque indice est appris chez
  *   l'utilisateur (aucun « sourire = bonne humeur » présupposé) ; seul compte que la prédiction aille dans le sens
  *   des notes, d'où un z unilatéral.
- * - z = r / erreur type jackknife (un jour en moins) de la corrélation prédiction ↔ note.
+ * - Robuste aux dérives lentes (I121) : la prédiction d'un jour est apprise **sans les 7 jours avant et après**
+ *   (mood/blockCv.js), et z = r / erreur type jackknife de la corrélation prédiction ↔ note est ramené à la taille
+ *   d'échantillon effective (× √((1 − a)/(1 + a)), a = autocorrélations d'un jour à l'autre de la prédiction et des
+ *   notes) ; si le visage dérive nettement, chaque indice est comparé à sa moyenne des 14 jours précédents. Sans
+ *   cela, une humeur qui dure et un visage qui dérive (lumière de saison…) ouvraient la porte à tort dans 12,5 % des
+ *   cas simulés ; avec, 2,5 % (gate.test.js).
  * - Ouverte quand z ≥ 3,29 à **deux regards hebdomadaires consécutifs** avec ≥ 30 jours ; refermée quand, sur les
  *   8 dernières semaines (≥ 14 jours), z < 1,5 à deux regards consécutifs ; après une refermeture, seuls les jours
  *   suivants comptent pour rouvrir. Simulé dans gate.test.js : 0,5 % de faux départs en 120 jours sans lien ;
@@ -22,8 +27,9 @@
  * Les entrées restent Y (estimatorInputs.js) : la porte compare deux entrées Y entre elles, elle ne crée aucun
  * facteur des Analyses.
  */
-import { localDateKey, ridgeLooPredictions } from '../analysisEngine'
+import { localDateKey } from '../analysisEngine'
 import { moodFaceBursts } from '../faceBursts'
+import { blockedRidgePredictions, effectiveZ, lag1Autocorrelation, sharedAutocorrelation } from './blockCv'
 
 export const GATE_MIN_DAYS = 30
 export const GATE_Z_OPEN = 3.29
@@ -35,6 +41,10 @@ const LOOK_EVERY_DAYS = 7
 /** Un indice entre dans le modèle s'il est lu au moins ces jours-là (sinon remplacé par sa médiane). */
 const MIN_FEATURE_SHARE = 0.8
 const DAY_MS = 86400000
+const DETREND_DAYS = 14
+const DETREND_MIN = 3
+/** Au-delà, le visage dérive assez pour qu'on le compare à ses 14 jours précédents (I121). */
+export const FACE_DRIFT_DETREND = 0.5
 
 const dayNumber = (key) => Math.round(Date.parse(`${key}T00:00:00Z`) / DAY_MS)
 const keyOf = (n) => new Date(n * DAY_MS).toISOString().slice(0, 10)
@@ -76,11 +86,50 @@ export function gateDays(entries) {
   })
 }
 
+/** Autocorrélation médiane d'un jour à l'autre des indices du visage (0 = aucune dérive lente). */
+export function faceDrift(days) {
+  const keys = [...new Set(days.flatMap((d) => Object.keys(d.face)))]
+  const r1 = keys.map((k) => {
+    const rows = days.filter((d) => typeof d.face[k] === 'number')
+    return lag1Autocorrelation(rows.map((d) => d.face[k]), rows.map((d) => dayNumber(d.date)))
+  })
+  return r1.length ? median(r1) : 0
+}
+
 /**
- * Indice combiné en validation croisée : une prédiction de la note par jour, obtenue sans ce jour.
- * @returns {{ keys: string[], index: number[] } | null}
+ * Écart de chaque indice à sa moyenne des 14 jours **précédents** (passé seulement : aucune fuite de l'avenir).
+ * Retire du visage ce qui dérive lentement sans rapport avec l'humeur du jour (lumière de saison, lunettes, coque).
+ * Un jour sans au moins 3 jours lus dans les 14 précédents est laissé de côté.
  */
-export function faceIndexLoo(days) {
+export function detrendFace(days) {
+  const nums = days.map((d) => dayNumber(d.date))
+  const out = []
+  days.forEach((d, i) => {
+    const face = {}
+    for (const [k, v] of Object.entries(d.face)) {
+      const prev = []
+      for (let j = i - 1; j >= 0 && nums[j] >= nums[i] - DETREND_DAYS; j--) {
+        if (typeof days[j].face[k] === 'number') prev.push(days[j].face[k])
+      }
+      if (prev.length >= DETREND_MIN) face[k] = v - prev.reduce((t, x) => t + x, 0) / prev.length
+    }
+    if (Object.keys(face).length) out.push({ ...d, face })
+  })
+  return out
+}
+
+/**
+ * Indice combiné en validation croisée par blocs : une prédiction de la note par jour, obtenue sans les jours à
+ * moins de 7 jours de lui.
+ * Si le visage dérive nettement (autocorrélation médiane de ses indices d'un jour à l'autre > 0,5), chaque indice
+ * est d'abord comparé à sa moyenne des 14 jours précédents (detrendFace) ; sinon cette étape coûterait de la
+ * puissance pour rien (simulé : lien net reconnu à J90 dans 71 % des cas au lieu de 83 %).
+ * @returns {{ keys: string[], index: number[], days: object[], drift: number, detrended: boolean } | null}
+ *   days = jours retenus ; drift = autocorrélation médiane des indices du visage
+ */
+export function faceIndexLoo(rawDays) {
+  const drift = faceDrift(rawDays)
+  const days = drift > FACE_DRIFT_DETREND ? detrendFace(rawDays) : rawDays
   const n = days.length
   if (n < 3) return null
   const counts = {}
@@ -100,8 +149,8 @@ export function faceIndexLoo(days) {
   }
   if (!kept.length) return null
   const X = days.map((_, i) => [1, ...cols.map((c) => c[i])])
-  const index = ridgeLooPredictions(X, days.map((d) => d.note), GATE_LAMBDA)
-  return index ? { keys: kept, index } : null
+  const index = blockedRidgePredictions(X, days.map((d) => d.note), days.map((d) => dayNumber(d.date)), GATE_LAMBDA)
+  return index ? { keys: kept, index, days, drift, detrended: days !== rawDays } : null
 }
 
 /** Corrélation de Pearson et z = r / erreur type jackknife (un point en moins). */
@@ -123,24 +172,31 @@ export function jackknifeCorrelation(x, y) {
   return { r, z: se > 0 ? r / se : 0 }
 }
 
+/** Accord prédiction ↔ notes : r, z corrigé de l'autocorrélation, et a (autocorrélation retenue). */
 function agreement(days) {
   const fit = faceIndexLoo(days)
-  if (!fit) return { r: 0, z: 0 }
-  return jackknifeCorrelation(fit.index, days.map((d) => d.note))
+  if (!fit) return { r: 0, z: 0, a: 0, drift: 0, detrended: false }
+  const notes = fit.days.map((d) => d.note)
+  const { r, z } = jackknifeCorrelation(fit.index, notes)
+  const a = sharedAutocorrelation(fit.index, notes, fit.days.map((d) => dayNumber(d.date)))
+  return { r, z: effectiveZ(z, a), a, drift: fit.drift, detrended: fit.detrended }
 }
 
 /**
  * État de la porte.
  * @param {{ date: string, note: number, face: object }[]} days  sortie de gateDays
  * @param {{ today?: string }} [opts]  dernier jour regardé (clé AAAA-MM-JJ ; par défaut le dernier jour comparable)
- * @returns {{ state: 'candidate'|'active', nDays: number, needed: number, r: number|null, z: number|null,
+ * @returns {{ state: 'candidate'|'active', nDays: number, needed: number, r: number|null, z: number|null, a: number|null,
+ *   drift: number|null, detrended: boolean,
  *   openedAt: string|null, closedAt: string|null, periods: { from: string, to: string|null }[],
  *   looks: { date: string, nDays: number, z: number|null }[] }}
- *   periods = chaque ouverture (to = refermeture, null si toujours ouverte).
+ *   periods = chaque ouverture (to = refermeture, null si toujours ouverte) ; a = autocorrélation retenue au
+ *   dernier regard, drift = dérive du visage d'un jour à l'autre, detrended = visage comparé à ses 14 jours
+ *   précédents (diagnostic : ce que la correction des dérives lentes fait chez l'utilisateur).
  */
 export function evaluateGate(days, { today } = {}) {
   const sorted = [...(days || [])].sort((a, b) => (a.date < b.date ? -1 : 1))
-  const out = { state: 'candidate', nDays: 0, needed: GATE_MIN_DAYS, r: null, z: null, openedAt: null, closedAt: null, periods: [], looks: [] }
+  const out = { state: 'candidate', nDays: 0, needed: GATE_MIN_DAYS, r: null, z: null, a: null, drift: null, detrended: false, openedAt: null, closedAt: null, periods: [], looks: [] }
   if (!sorted.length) return out
   const first = dayNumber(sorted[0].date)
   const last = dayNumber(today || sorted[sorted.length - 1].date)
@@ -150,10 +206,10 @@ export function evaluateGate(days, { today } = {}) {
     const upTo = sorted.filter((d) => dayNumber(d.date) <= look)
     if (out.state === 'candidate') {
       const pool = upTo.filter((d) => dayNumber(d.date) > since)
-      const { r, z } = pool.length >= GATE_MIN_DAYS ? agreement(pool) : { r: null, z: null }
-      out.looks.push({ date: keyOf(look), nDays: pool.length, z })
+      const { r, z, a, drift, detrended } = pool.length >= GATE_MIN_DAYS ? agreement(pool) : {}
+      out.looks.push({ date: keyOf(look), nDays: pool.length, z: z ?? null })
       streak = z != null && z >= GATE_Z_OPEN ? streak + 1 : 0
-      Object.assign(out, { nDays: pool.length, r, z })
+      Object.assign(out, { nDays: pool.length, r: r ?? null, z: z ?? null, a: a ?? null, drift: drift ?? null, detrended: !!detrended })
       if (streak >= 2) {
         Object.assign(out, { state: 'active', openedAt: keyOf(look) })
         out.periods.push({ from: keyOf(look), to: null })
@@ -161,10 +217,10 @@ export function evaluateGate(days, { today } = {}) {
       }
     } else {
       const recent = upTo.filter((d) => dayNumber(d.date) > look - GATE_CLOSE_WINDOW_DAYS)
-      const { r, z } = recent.length >= GATE_CLOSE_MIN_DAYS ? agreement(recent) : { r: null, z: null }
-      out.looks.push({ date: keyOf(look), nDays: recent.length, z })
+      const { r, z, a, drift, detrended } = recent.length >= GATE_CLOSE_MIN_DAYS ? agreement(recent) : {}
+      out.looks.push({ date: keyOf(look), nDays: recent.length, z: z ?? null })
       streak = z != null && z < GATE_Z_CLOSE ? streak + 1 : 0
-      Object.assign(out, { nDays: upTo.length, r, z })
+      Object.assign(out, { nDays: upTo.length, r: r ?? null, z: z ?? null, a: a ?? null, drift: drift ?? null, detrended: !!detrended })
       if (streak >= 2) {
         Object.assign(out, { state: 'candidate', closedAt: keyOf(look), openedAt: null })
         out.periods[out.periods.length - 1].to = keyOf(look)

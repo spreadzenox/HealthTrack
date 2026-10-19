@@ -90,7 +90,8 @@ describe('faceMoodEstimate — dès la première lecture (consigne du 19/10 au s
     // Chez cette personne, c'est browInnerUp qui suit la note (sens appris, pas supposé).
     const r = noise(11)
     const entries = []
-    for (let d = 40; d >= 1; d--) {
+    // 50 jours : la vérification visage ↔ notes doit être réussie (≥ 30 jours, deux regards hebdomadaires).
+    for (let d = 50; d >= 1; d--) {
       const mood = 2.5 + 1.5 * r()
       const v = 0.1 + 0.08 * (mood - 2.5) + 0.01 * r()
       for (const h of [8, 12, 18]) entries.push(burst(at(d, h), { browInnerUp: v }))
@@ -99,10 +100,32 @@ describe('faceMoodEstimate — dès la première lecture (consigne du 19/10 au s
     entries.push(burst(at(0, 8), { browInnerUp: 0.1 + 0.08 * 1.5 }))
     const est = faceMoodEstimate(entries, { now: NOW })
     expect(est.model).toBe('personal')
-    expect(est.calibrationDays).toBe(40)
+    expect(est.calibrationDays).toBe(50)
     expect(est.day.note).toBeGreaterThan(3.3)
     expect(['moyenne', 'bonne']).toContain(est.confidence)
     expect(describeFaceMood(est).join(' ')).toMatch(/Modèle personnel/)
+  })
+
+  it('does not adopt a personal model from slow drifts alone (I121 : blocs ±7 jours)', () => {
+    // Humeur qui dure (AR 0,8) et visage qui dérive (AR 0,95 : lumière de saison, lunettes…), sans aucun lien.
+    let adopted = 0
+    for (let s = 1; s <= 60; s++) {
+      const r = noise(s * 31 + 7)
+      const gauss = () => (r() + r() + r()) / 1.0
+      const ar = (prev, phi) => phi * prev + Math.sqrt(1 - phi * phi) * gauss()
+      let mood = gauss()
+      const drift = Object.fromEntries(EXPRESSION_KEYS.map((k) => [k, gauss()]))
+      const entries = []
+      for (let d = 90; d >= 1; d--) {
+        mood = ar(mood, 0.8)
+        for (const k of EXPRESSION_KEYS) drift[k] = ar(drift[k], 0.95)
+        const values = Object.fromEntries(EXPRESSION_KEYS.map((k) => [k, NEUTRAL[k] + 0.05 * drift[k]]))
+        for (const h of [8, 12, 18]) entries.push(burst(at(d, h), values))
+        entries.push(note(at(d, 21), Math.min(5, Math.max(0, Math.round(2.5 + 0.9 * mood)))))
+      }
+      if (faceMoodEstimate(entries, { now: NOW }).model === 'personal') adopted++
+    }
+    expect(adopted / 60).toBeLessThanOrEqual(0.05)
   })
 
   it('keeps the general model while notes do not help (no lock, no hidden value)', () => {

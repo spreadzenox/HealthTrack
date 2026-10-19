@@ -13,7 +13,8 @@
  * 2. **Ligne de base individuelle** : le « visage neutre » de la personne (médianes des 28 derniers jours) remplace
  *    peu à peu le neutre de population (poids j / (j + 7), j = jours avec des lectures). Sans aucune note.
  * 3. **Calibration facultative** sur les notes (mood/calibration.js, ≥ 14 jours notés avec des lectures, gardée
- *    seulement si elle prédit les notes mises de côté ≥ 10 % mieux que leur moyenne) : la note du jour vient alors du
+ *    seulement une fois la vérification visage ↔ notes réussie (gate.js) et si elle prédit les notes mises de côté —
+ *    chaque jour sans la semaine qui l'entoure, I121 — ≥ 10 % mieux que leur moyenne) : la note du jour vient alors du
  *    modèle personnel, et sa fourchette de son erreur en validation croisée. Les notes affinent, elles ne
  *    conditionnent jamais l'affichage.
  *
@@ -22,7 +23,7 @@
  */
 import { localDateKey } from '../analysisEngine'
 import { FACE_BURST_TYPE, moodFaceBursts } from '../faceBursts'
-import { gateDays } from './gate'
+import { evaluateGate, gateDays } from './gate'
 import { calibrateRidge, predictCalibrated } from './calibration'
 
 /** Indices d'expression lus par l'estimateur (yaw / asymmetry / jawOpen servent à la qualité, pas à l'humeur). */
@@ -104,10 +105,18 @@ function calibrationRow(values) {
   return [priorValence(values), ...EXPRESSION_KEYS.map((k) => (isNum(values?.[k]) ? values[k] : FACE_PRIOR.neutral[k]))]
 }
 
-/** Calibration facultative sur les notes, ou null (pas assez de jours notés, ou rien de mieux que la moyenne). */
+/**
+ * Calibration facultative sur les notes, ou null : seulement quand la vérification visage ↔ notes est réussie
+ * (gate.js, robuste aux dérives lentes), puis si la Ridge, validée par blocs de ±7 jours (I121), prédit mieux que la
+ * moyenne. Sans cette double condition, une humeur qui dure et un visage qui dérive suffisaient à faire adopter un
+ * modèle sans aucun lien (simulé : 60 % des jeux en LOO simple, 25 % avec les blocs seuls, 0–5 % avec la porte).
+ */
 export function personalCalibration(entries) {
   const days = gateDays(entries)
-  const model = calibrateRidge(days.map((d) => calibrationRow(d.face)), days.map((d) => d.note))
+  // Même porte que la carte : pas de « modèle personnel » tant que la vérification visage ↔ notes n'est pas réussie.
+  if (evaluateGate(days).state !== 'active') return { model: null, days: days.length }
+  const dayNums = days.map((d) => Math.round(Date.parse(`${d.date}T00:00:00Z`) / DAY_MS))
+  const model = calibrateRidge(days.map((d) => calibrationRow(d.face)), days.map((d) => d.note), { dayNums })
   return model ? { model, days: days.length } : { model: null, days: days.length }
 }
 

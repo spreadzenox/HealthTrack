@@ -95,7 +95,7 @@ describe('diagnostic exportable', () => {
   it('porte de calibration (I112) : jours comparables et accord, jamais une humeur', () => {
     const gate = { state: 'candidate', nDays: 34, needed: 30, r: 0.21, z: 1.234, openedAt: null, closedAt: null, periods: [], looks: [{}, {}, {}] }
     const r = faceDiagnosticReport(active, { history: { stored: 1, forMood: 1, firstAt: null, gate } })
-    expect(r.gate).toEqual({ state: 'candidate', days: 34, needed: 30, z: 1.23, openedAt: null, closedAt: null, looks: 3 })
+    expect(r.gate).toEqual({ state: 'candidate', days: 34, needed: 30, z: 1.23, openedAt: null, closedAt: null, looks: 3, a: null, drift: null, detrended: false })
     expect(JSON.stringify(r.gate)).not.toMatch(/note|score|mood/)
     expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, gate } }))
       .toContain('Vérification visage ↔ notes (facultative) : 34 / 30 jours comparables, accord z = 1.23 (réussie à 3,29 deux semaines de suite)')
@@ -103,6 +103,12 @@ describe('diagnostic exportable', () => {
     expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, gate: open } }))
       .toContain('Vérification visage ↔ notes (facultative) : réussie le 2026-11-20 (z = 4.5)')
     expect(faceDiagnosticReport(active).gate).toBeNull()
+    // Dérives lentes (I121) : ce que la correction fait chez l'utilisateur.
+    const drifting = { ...gate, a: 0.4321, drift: 0.874, detrended: true }
+    expect(faceDiagnosticReport(active, { history: { stored: 1, forMood: 1, gate: drifting } }).gate)
+      .toMatchObject({ a: 0.43, drift: 0.87, detrended: true })
+    expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, gate: drifting } }))
+      .toContain('Dérives lentes : visage 0.87 d’un jour à l’autre (comparé à ses 14 jours précédents), z corrigé pour a = 0.43')
   })
 
   it('lectures par jour et 2e essais (I118) : assez pour la calibration ?', () => {

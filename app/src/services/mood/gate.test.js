@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { describeGate, evaluateGate, faceIndexLoo, gateDays, jackknifeCorrelation, GATE_MIN_DAYS } from './gate'
+import { describeGate, detrendFace, evaluateGate, faceDrift, faceIndexLoo, gateDays, jackknifeCorrelation, GATE_MIN_DAYS } from './gate'
 
 function rng(seed) {
   let a = seed >>> 0
@@ -13,19 +13,28 @@ function rng(seed) {
   return { u, normal: () => Math.sqrt(-2 * Math.log(u() || 1e-12)) * Math.cos(2 * Math.PI * u()) }
 }
 
-/** ~80 % des jours notés (1–5) ; `rho(i)` = lien humeur ↔ indice `valence`, les 5 autres indices sont du bruit. */
-function simulateDays({ seed, nDays = 120, rho = () => 0 }) {
+const FACE_KEYS = ['smile', 'brow', 'eyes', 'mouth', 'valence', 'arousal']
+
+/**
+ * ~80 % des jours notés (1–5) ; `rho(i)` = lien humeur ↔ indice `valence`, les 5 autres indices sont du bruit.
+ * `phiMood` / `phiFace` : dérives lentes (AR(1) d'un jour à l'autre) de l'humeur et de chaque indice du visage
+ * (lumière de saison, lunettes, coque…), indépendantes entre elles (IDEES.md I121).
+ */
+function simulateDays({ seed, nDays = 120, rho = () => 0, phiMood = 0, phiFace = 0 }) {
   const { u, normal } = rng(seed)
   const t0 = Date.parse('2026-01-01T00:00:00Z')
+  const ar = (prev, phi) => (prev == null ? normal() : phi * prev + Math.sqrt(1 - phi * phi) * normal())
   const days = []
+  let mood = null
+  const drift = {}
   for (let i = 0; i < nDays; i++) {
-    const mood = normal()
+    mood = ar(mood, phiMood)
+    for (const k of FACE_KEYS) drift[k] = ar(drift[k], phiFace)
     if (u() > 0.8) continue
     const note = Math.min(5, Math.max(1, Math.round(3 + 0.9 * mood + 0.5 * normal())))
-    const face = {}
-    for (const k of ['smile', 'brow', 'eyes', 'mouth', 'valence', 'arousal']) face[k] = normal()
+    const face = { ...drift }
     const r = rho(i)
-    face.valence = r * mood + Math.sqrt(1 - r * r) * normal()
+    face.valence = r * mood + Math.sqrt(1 - r * r) * drift.valence
     days.push({ date: new Date(t0 + i * 86400000).toISOString().slice(0, 10), note, face })
   }
   return days
@@ -82,6 +91,27 @@ describe('faceIndexLoo', () => {
   })
 })
 
+describe('dérives lentes du visage (I121)', () => {
+  const day = (i, smile) => ({ date: `2026-01-${String(i).padStart(2, '0')}`, note: 3, face: { smile } })
+  it('compare chaque indice à sa moyenne des 14 jours précédents, sans jamais regarder l’avenir', () => {
+    const days = [day(1, 1), day(2, 2), day(3, 3), day(4, 10), day(5, 100)]
+    const out = detrendFace(days)
+    // Les 3 premiers jours n'ont pas assez de passé ; le 4 : 10 − moyenne(1, 2, 3) ; le 100 du 5 n'y entre pas.
+    expect(out.map((d) => d.date)).toEqual(['2026-01-04', '2026-01-05'])
+    expect(out[0].face.smile).toBe(8)
+    expect(out[1].face.smile).toBe(100 - 4)
+  })
+
+  it('mesure la dérive : forte pour une série lisse, nulle pour du bruit', () => {
+    const smooth = Array.from({ length: 30 }, (_, i) => day(i + 1, Math.sin(i / 8)))
+    expect(faceDrift(smooth)).toBeGreaterThan(0.5)
+    const { normal } = rng(4)
+    const noisy = Array.from({ length: 30 }, (_, i) => day(i + 1, normal()))
+    expect(faceDrift(noisy)).toBeLessThan(0.5)
+    expect(faceIndexLoo(smooth.map((d, i) => ({ ...d, note: i % 5 })))?.detrended).toBe(true)
+  })
+})
+
 describe('evaluateGate', () => {
   it(`reste candidate tant qu'il y a moins de ${GATE_MIN_DAYS} jours comparables, et les compte`, () => {
     const days = simulateDays({ seed: 1, nDays: 30, rho: () => 0.95 })
@@ -95,6 +125,20 @@ describe('evaluateGate', () => {
   it('sans aucun lien, ne s’ouvre presque jamais en 120 jours (≤ 3 % sur 200 jeux)', () => {
     const opened = share(200, (s) => evaluateGate(simulateDays({ seed: s * 7 + 1 })).periods.length > 0)
     expect(opened).toBeLessThanOrEqual(0.03)
+  })
+
+  it('humeur et visage qui dérivent lentement sans lien : faux départs < 3 % en 120 jours (I121)', () => {
+    for (const [phiMood, phiFace] of [[0.6, 0.6], [0.8, 0.95]]) {
+      const opened = share(200, (s) => evaluateGate(simulateDays({ seed: s * 7 + 1, phiMood, phiFace })).periods.length > 0)
+      expect(opened).toBeLessThan(0.03)
+    }
+  }, 30000)
+
+  it('note l’autocorrélation retenue (a) pour le diagnostic', () => {
+    const g = evaluateGate(simulateDays({ seed: 5, phiMood: 0.8, phiFace: 0.95 }))
+    expect(g.a).toBeGreaterThan(0.3)
+    expect(g.a).toBeLessThan(1)
+    expect(evaluateGate(simulateDays({ seed: 5 })).a).toBeLessThan(0.2)
   })
 
   it('un lien net s’ouvre en 90 jours dans ≥ 80 % des jeux, quel que soit son sens', () => {
@@ -124,7 +168,7 @@ describe('evaluateGate', () => {
   })
 
   it('l’historique des regards est hebdomadaire et l’ouverture datée', () => {
-    const g = evaluateGate(simulateDays({ seed: 8, rho: () => 0.8 }))
+    const g = evaluateGate(simulateDays({ seed: 8, rho: () => 0.8 }), { today: '2026-04-30' })
     expect(g.looks.length).toBe(17)
     expect(g.looks[0].date).toBe('2026-01-07')
     expect(g.state).toBe('active')

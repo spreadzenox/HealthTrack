@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-20",
+  "kind": "amélioration",
+  "title": "Humeur estimée : pas de « modèle personnel » trompé par les saisons",
+  "items": [
+    "Votre humeur ressemble à celle de la veille, et ce que lit la caméra change aussi lentement pour des raisons sans rapport (lumière qui baisse en automne, lunettes, nouvelle coque). Deux choses qui dérivent chacune de leur côté ont l'air liées bien plus souvent qu'on ne le croit : en simulation, l'app aurait cru que votre visage suit vos notes, sans aucun lien réel, dans plus d'un cas sur deux.",
+    "Désormais, pour juger si votre visage suit vos notes, chaque jour est comparé sans la semaine qui l'entoure, l'effet « humeur qui dure » est retiré du calcul, et si votre visage dérive nettement, chaque lecture est comparée à vos 14 jours précédents. Les erreurs tombent à 1 à 3 sur 100.",
+    "L'humeur estimée s'affiche toujours dès la première lecture. Seul le passage au « modèle personnel » (appris sur vos notes facultatives) est plus prudent : il arrive après la vérification visage ↔ notes réussie, en général vers 6 semaines de notes au lieu de 14 jours.",
+    "Le diagnostic de la Lecture du visage dit aussi, une fois 30 jours comparables, à quel point votre visage dérive d'un jour à l'autre et ce qui en est corrigé (aucune valeur d'humeur dedans)."
+  ]
+}

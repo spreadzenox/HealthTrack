@@ -40,8 +40,13 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   préfère à l'a priori ; test d'équivalence hors app.
 - [ ] **Étape 3 — fusion visage + voix** (dictée du soir I117 puis prosodie) ; « accord entre signaux » dans la
   confiance.
-- [ ] **I121 étendu** : la calibration personnelle (`calibrateRidge`, LOO simple) peut aussi être trompée par les
-  dérives lentes → validation croisée par blocs ±7 j avant d'adopter le « modèle personnel ».
+- [x] **I121 étendu (run 20/10 00:30)** : la calibration personnelle était trompée par les dérives lentes (simulé :
+  modèle personnel adopté **sans aucun lien** dans 60 % des jeux à humeur AR 0,8 / visage AR 0,95 ; 25 % avec les blocs
+  seuls) → `calibrateRidge(X, y, { dayNums })` validé par blocs ±7 j **et** seulement si la vérification visage ↔
+  notes (`gate.js`) est réussie → ≤ 5 %. Prix : modèle personnel vers ~6 semaines de notes (au lieu de 14 jours).
+- [ ] Perf : `evaluateGate` est maintenant recalculé 3 fois par ouverture de la carte (carte, `faceMoodEstimate`,
+  `testReadingEstimate`) en O(regards × n² × k²) ; négligeable aujourd'hui (0 jour noté), à mémoïser si > 150 jours
+  comparables (mesurer d'abord, D2).
 - [ ] Retour du propriétaire : l'estimation est-elle plausible ? (« Tester maintenant » en souriant / sans sourire.)
 - [ ] Plus tard : écrire l'estimation du jour comme colonne Y (`face_mood`) pour les Analyses (facteurs X → humeur
   estimée), avec ordre temporel et anti-circularité (préfixe `face_` déjà déclaré).
@@ -149,7 +154,11 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   - [ ] Écart à la spec I112 : « 6 semaines, z < 2 » refermait 40 % des vrais liens (fenêtre de ≈ 32 jours notés trop
     bruitée) → 8 semaines, z < 1,5. À revoir avec de vraies données.
   - [ ] Puissance modeste pour un lien moyen (ρ 0,5 : 34 % à J90, 60 % à J120) : I113 (notes plus régulières) aide.
-- [ ] **I121** (20) **porte robuste aux dérives lentes — AVANT I115** (run idées 19/10 20:30) : la simulation avec le
+- [x] **I121** (20) **porte robuste aux dérives lentes — livrée le 20/10 00:30** (`mood/blockCv.js` : blocs ±7 j,
+  z × √((1 − a)/(1 + a)) ; `detrendFace` adaptatif si la dérive médiane du visage > 0,5 ; simulé sur 200 jeux :
+  0,6 / 0,6 → 1,5 %, 0,8 / 0,95 → 2,5 % (12,5 % avant), jours indépendants 1 %, puissance à J90 inchangée 83 % ; mais
+  0,7 de lien avec dérives → ≈ 35–38 % à J90 : le prix de l'honnêteté). Diagnostic : `gate.a`, `gate.drift`,
+  `gate.detrended`. Détail d'origine : (run idées 19/10 20:30) : la simulation avec le
   vrai `gate.js` montre 12,7 % de faux départs en 120 j quand humeur et visage sont autocorrélés 0,6 / 0,6 (22 % à
   0,8 / 0,95), contre ≈ 1 % avec des jours indépendants (seul cas testé dans `gate.test.js`). Correctif simulé :
   validation croisée **par blocs** (apprendre sans les 7 jours avant / après) + z × √((1 − a)/(1 + a)) (n effectif)
@@ -721,7 +730,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 **Réordonnées le 19/10 (22:30 Paris), consigne du 19/10 au soir (charte §0000000) — prime sur l'ordre ci-dessous** :
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
-4) I121 étendu à la calibration personnelle ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 00:30** : prochain run de code sans diagnostic ni choix de modèle → **I123** « Applis jamais en
+veille » (One UI, point (c) du signalement 15:05) ou **I124** sonde vocale ; le run idées de 08:30 fait le comparatif
+des modèles valence / éveil (étape 2).
 
 **Réordonnées le 18/10 (22:30 Paris), consigne du 18/10 au soir (charte §00000) — prime sur tout ce qui suit** :
 1) 🔴🙂 **bien-être entièrement automatique, seul chantier** : a) lire le diagnostic visage de l'A56 dès qu'il arrive
