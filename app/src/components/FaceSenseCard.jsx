@@ -18,6 +18,7 @@ import {
 } from '../services/faceSense'
 import { FACE_BURST_TYPE, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
 import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
+import { getEveningNoteStatus } from '../services/eveningNote'
 import { localDateKey } from '../services/analysisEngine'
 import { listEntries } from '../storage/localHealthStorage'
 import { CURRENT_VERSION } from '../services/updateCheck'
@@ -61,16 +62,18 @@ function frenchDate(iso) {
 }
 
 /**
- * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function }} props
+ * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function, loadEveningNote?: Function }} props
  */
 export default function FaceSenseCard({
   plugin = faceSensePlugin(),
   save = defaultSave,
   importBursts = importPendingFaceBursts,
   loadHistory = defaultLoadHistory,
+  loadEveningNote = getEveningNoteStatus,
 }) {
   const [status, setStatus] = useState(null)
   const [history, setHistory] = useState(null)
+  const [evening, setEvening] = useState(null)
   const [loaded, setLoaded] = useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState(null)
@@ -78,12 +81,13 @@ export default function FaceSenseCard({
   const refresh = useCallback(async () => {
     // Rafales en attente rangées d'abord : le diagnostic dit alors ce qui reste vraiment en attente.
     if (plugin) await importBursts({ plugin })
-    const [s, h] = await Promise.all([getFaceSenseStatus(plugin), plugin ? loadHistory() : null])
+    const [s, h, e] = await Promise.all([getFaceSenseStatus(plugin), plugin ? loadHistory() : null, plugin ? loadEveningNote() : null])
     setStatus(s)
     setHistory(h)
+    setEvening(e)
     setLoaded(true)
     return s
-  }, [plugin, importBursts, loadHistory])
+  }, [plugin, importBursts, loadHistory, loadEveningNote])
 
   useEffect(() => {
     refresh()
@@ -135,6 +139,7 @@ export default function FaceSenseCard({
       appVersion: CURRENT_VERSION,
       history: await loadHistory(),
       lastImport: getLastFaceImport(),
+      eveningNote: await loadEveningNote(),
     })
     const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')
     try {
@@ -236,7 +241,7 @@ export default function FaceSenseCard({
         <details className="connectors-more">
           <summary className="connectors-more-summary">Diagnostic</summary>
           <ul className="my-device-meta">
-            {faceDiagnosticLines(status, { history, lastImport: getLastFaceImport() }).map((line) => <li key={line}>{line}</li>)}
+            {faceDiagnosticLines(status, { history, lastImport: getLastFaceImport(), eveningNote: evening }).map((line) => <li key={line}>{line}</li>)}
           </ul>
           <div className="my-device-actions">
             {d.state === 'active' && (

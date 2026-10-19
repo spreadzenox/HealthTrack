@@ -319,3 +319,79 @@ describe('WellbeingPrompt — modifier une note enregistrée', () => {
     expect(onClose).not.toHaveBeenCalled()
   })
 })
+
+describe('WellbeingPrompt — note du soir d’un geste (I113)', () => {
+  const fakePlugin = (status) => {
+    let s = { enabled: false, minuteOfDay: 21 * 60, notifications: true, ...status }
+    return {
+      status: vi.fn(async () => s),
+      configure: vi.fn(async (o) => (s = { ...s, ...o })),
+      requestNotifications: vi.fn(async () => ({ asked: false, notifications: s.notifications })),
+      list: vi.fn(async () => ({ notes: [] })),
+      remove: vi.fn(),
+    }
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    sessionStorage.removeItem('healthtrack-wellbeing-prompt-session')
+  })
+
+  it('absent hors de l’app Android', () => {
+    delete window.__healthtrackFakeEveningNote
+    render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    expect(screen.queryByRole('button', { name: /Me la demander le soir/ })).not.toBeInTheDocument()
+  })
+
+  it('s’allume d’un geste et dit l’heure prévue', async () => {
+    const plugin = fakePlugin()
+    window.__healthtrackFakeEveningNote = plugin
+    try {
+      render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+      const toggle = await screen.findByRole('button', { name: /Me la demander le soir/ })
+      expect(toggle).toHaveAttribute('aria-pressed', 'false')
+      fireEvent.click(toggle)
+      await waitFor(() => expect(plugin.configure).toHaveBeenCalledWith(expect.objectContaining({ enabled: true })))
+      expect(plugin.requestNotifications).toHaveBeenCalled()
+      await waitFor(() => expect(screen.getByRole('button', { name: /Me la demander le soir/ })).toHaveAttribute('aria-pressed', 'true'))
+      expect(screen.getByRole('button', { name: /Me la demander le soir/ })).toHaveTextContent('vers 21 h')
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+    }
+  })
+
+  it('notifications refusées : explique où les autoriser', async () => {
+    const plugin = fakePlugin({ notifications: false })
+    window.__healthtrackFakeEveningNote = plugin
+    try {
+      render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+      fireEvent.click(await screen.findByRole('button', { name: /Me la demander le soir/ }))
+      expect(await screen.findByText(/autorisez-les pour HealthTrack dans les réglages Android/)).toBeInTheDocument()
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+    }
+  })
+
+  it('une note donnée depuis la notification est rangée avant de décider d’ouvrir la saisie', async () => {
+    const { listEntries, upsertEntries } = await import('../storage/localHealthStorage')
+    const plugin = fakePlugin({ enabled: true })
+    const at = Date.now() - 20 * 60 * 1000
+    plugin.list.mockResolvedValueOnce({ notes: [{ name: 'capture-1-001.json', json: JSON.stringify({ v: 1, score: 4, at }) }] })
+    let stored = []
+    upsertEntries.mockImplementationOnce(async (entries) => {
+      stored = entries
+      return { inserted: entries.length }
+    })
+    listEntries.mockImplementation(async ({ type }) => (type === 'wellbeing' ? stored : []))
+    window.__healthtrackFakeEveningNote = plugin
+    try {
+      const { container } = render(<WellbeingPrompt />)
+      await waitFor(() => expect(upsertEntries).toHaveBeenCalled())
+      await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'wellbeing', limit: 1 })))
+      expect(container.querySelector('.wellbeing-modal')).not.toBeInTheDocument()
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+      listEntries.mockImplementation(async () => [])
+    }
+  })
+})

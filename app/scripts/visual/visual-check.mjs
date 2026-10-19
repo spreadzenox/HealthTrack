@@ -40,6 +40,7 @@
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   npm run visual -- --routes=/connectors --face       # « Lecture du visage » : faux plugin, service actif
  *   npm run visual -- --routes=/connectors --face=off   # … pas encore activée ; --face=stopped : arrêtée par Android
+ *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
@@ -488,6 +489,19 @@ async function main() {
           requestBatteryExemption: async () => {},
         }
       }, String(args.face))
+    }
+    if (args['evening-note']) {
+      await context.addInitScript((mode) => {
+        let s = { enabled: mode === 'on', minuteOfDay: 21 * 60 + 40, notifications: true, nextAt: Date.now() + 3600000,
+          pending: 0, asked: 5, answers: 4, check: 'asked', checkAt: Date.now() - 86400000 }
+        window.__healthtrackFakeEveningNote = {
+          status: async () => s,
+          configure: async (o) => (s = { ...s, ...o }),
+          requestNotifications: async () => ({ asked: true, notifications: true }),
+          list: async () => ({ notes: [] }),
+          remove: async () => ({ removed: 0 }),
+        }
+      }, String(args['evening-note']))
     }
     if (!args['wellbeing-prompt']) {
       await context.addInitScript(() => {

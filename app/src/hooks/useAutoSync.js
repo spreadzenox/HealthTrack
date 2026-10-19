@@ -14,6 +14,7 @@ import { listenWatchPresence } from '../services/watchPresence'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { recordTimezoneContext } from '../services/timezoneContext'
 import { importPendingFaceBursts } from '../services/faceBursts'
+import { importPendingEveningNotes, syncEveningNote } from '../services/eveningNote'
 
 /**
  * Call inside any component that should trigger an auto-sync on mount.
@@ -41,6 +42,10 @@ export function useAutoSync() {
     syncPhoneUsage()
     // Lecture du visage : rafales déposées par le service natif depuis la dernière ouverture (scores seuls, I90).
     importPendingFaceBursts()
+    // Note du soir d'un geste (I113) : notes données depuis la notification rangées, puis heure et dernière note
+    // transmises au natif (pas de notification un soir déjà noté).
+    const evening = () => importPendingEveningNotes().finally(() => syncEveningNote())
+    evening()
     // Montre Huawei en direct : au plus toutes les 30 min, seulement si HealthTrack a sa clé.
     compacted.finally(() => syncWatchIfStale())
     // … quand la montre associée se reconnecte au téléphone, même app en arrière-plan (une seule écoute) ;
@@ -50,9 +55,13 @@ export function useAutoSync() {
       if (document.visibilityState !== 'visible') return
       recordTimezoneContext()
       importPendingFaceBursts()
+      evening()
       syncWatchIfStale()
     }
     document.addEventListener('visibilitychange', onVisible)
+    // … et après chaque note saisie : la notification de ce soir n'a plus lieu d'être.
+    const onEntries = () => syncEveningNote()
+    window.addEventListener('health-entries-updated', onEntries)
     // … et tant que l'app reste à l'écran : la relecture native s'efface alors (« l'app s'en charge »), et sans ce
     // minuteur rien ne relisait la montre avant la prochaine ouverture (18/10/2026, « dernière synchro il y a 4 h »).
     const timer = setInterval(() => {
@@ -60,6 +69,7 @@ export function useAutoSync() {
     }, WATCH_FOREGROUND_CHECK_MS)
     return () => {
       document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('health-entries-updated', onEntries)
       clearInterval(timer)
     }
   }, [])

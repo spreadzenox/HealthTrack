@@ -22,6 +22,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(WatchVaultPlugin.class);
         registerPlugin(WatchCapturePlugin.class);
         registerPlugin(FaceSensePlugin.class);
+        registerPlugin(EveningNotePlugin.class);
         super.onCreate(savedInstanceState);
         faceResumePending = isFaceResume(getIntent());
     }
