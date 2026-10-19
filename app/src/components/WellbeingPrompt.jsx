@@ -13,6 +13,14 @@ import {
 import { localDateKey } from '../services/wellbeingSeries'
 import { recordTimezoneContext } from '../services/timezoneContext'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
+import {
+  DEFAULT_MINUTE,
+  eveningNotePlugin,
+  formatMinute,
+  getEveningNoteStatus,
+  importPendingEveningNotes,
+  setEveningNoteEnabled,
+} from '../services/eveningNote'
 
 const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
 
@@ -39,6 +47,8 @@ const RECENT_NOTE_HOURS = 3
 
 async function hasRecentNote() {
   try {
+    // une note donnée d'un geste depuis la notification du soir compte (rangée d'abord)
+    await importPendingEveningNotes()
     const since = new Date(Date.now() - RECENT_NOTE_HOURS * 3_600_000).toISOString()
     const notes = await listEntries({ type: 'wellbeing', since, limit: 1 })
     return notes.length > 0
@@ -110,6 +120,8 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [captures, setCaptures] = useState({ workouts: false, meals: false, travelToday: false })
+  const [evening, setEvening] = useState(null)
+  const [eveningHint, setEveningHint] = useState(null)
 
   useEffect(() => {
     if (isControlled || hasAnsweredThisSession()) return undefined
@@ -137,6 +149,8 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
     if (!open) return undefined
     let alive = true
     recentCaptures().then((v) => alive && setCaptures(v))
+    setEveningHint(null)
+    if (eveningNotePlugin()) getEveningNoteStatus().then((v) => alive && setEvening(v))
     return () => {
       alive = false
     }
@@ -158,6 +172,18 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
 
   const toggleTag = (id) => {
     setTags((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]))
+  }
+
+  const toggleEvening = async () => {
+    const on = !evening?.enabled
+    setEvening((prev) => ({ ...prev, enabled: on }))
+    try {
+      const res = await setEveningNoteEnabled(on)
+      setEveningHint(res.blocked ? 'Notifications refusées : autorisez-les pour HealthTrack dans les réglages Android.' : null)
+      setEvening(await getEveningNoteStatus())
+    } catch {
+      setEvening((prev) => ({ ...prev, enabled: !on }))
+    }
   }
 
   const handleSkip = () => {
@@ -255,6 +281,21 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
           })}
         </div>
         {autoHints.length > 0 && <p className="wellbeing-tags-hint">Repéré sans vous : {autoHints.join(', ')}.</p>}
+
+        {evening && (
+          <>
+            <button
+              type="button"
+              className={'wellbeing-evening' + (evening.enabled ? ' wellbeing-evening-on' : '')}
+              aria-pressed={!!evening.enabled}
+              onClick={toggleEvening}
+            >
+              <span aria-hidden>🔔</span> Me la demander le soir, d’un geste depuis une notification
+              {evening.enabled ? ` (vers ${formatMinute(evening.minuteOfDay ?? DEFAULT_MINUTE)})` : ''}
+            </button>
+            {eveningHint && <p className="wellbeing-tags-hint">{eveningHint}</p>}
+          </>
+        )}
 
         {error && (
           <p className="wellbeing-modal-error" role="alert">

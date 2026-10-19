@@ -10,6 +10,7 @@
  * dans Connecteurs dès l'ouverture, sans attendre le plugin.
  */
 import { registerPlugin } from '@capacitor/core'
+import { eveningNoteDiagnostic } from './eveningNote'
 
 const KEY = 'healthtrack_face_sense'
 const NativeFaceSense = registerPlugin('FaceSense')
@@ -156,7 +157,7 @@ export function describeFaceSense(status) {
  * Diagnostic exportable (JSON) : appareil, état du service, compteurs, temps moyens, raisons des sauts et des
  * rejets. Jamais d'image, de point ni de score d'expression.
  */
-export function faceDiagnosticReport(status, { appVersion, now = new Date(), history = null, lastImport = null } = {}) {
+export function faceDiagnosticReport(status, { appVersion, now = new Date(), history = null, lastImport = null, eveningNote = null } = {}) {
   const s = status || {}
   const timed = s.timed || 0
   return {
@@ -220,7 +221,18 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
         looks: history.gate.looks.length,
       }
       : null,
+    // Note du soir d'un geste (I113), vérité terrain de la porte : réglages et compteurs, jamais une note.
+    eveningNote: eveningNoteDiagnostic(eveningNote),
   }
+}
+
+const EVENING_CHECKS = {
+  asked: 'note demandée',
+  disabled: 'éteinte',
+  noted_today: 'déjà notée ce jour-là',
+  asked_today: 'déjà demandée ce soir-là',
+  late: 'alarme trop retardée par Android',
+  notifications_off: 'notifications de l’app désactivées',
 }
 
 const RESUME_CHECKS = {
@@ -235,8 +247,8 @@ const RESUME_CHECKS = {
 const RESUME_TRIGGERS = { periodic: 'vérification horaire', boot: 'après un redémarrage', update: 'après une mise à jour' }
 
 /** Lignes lisibles du diagnostic (carte). */
-export function faceDiagnosticLines(status, { history = null, lastImport = null } = {}) {
-  const r = faceDiagnosticReport(status, { history, lastImport })
+export function faceDiagnosticLines(status, { history = null, lastImport = null, eveningNote = null } = {}) {
+  const r = faceDiagnosticReport(status, { history, lastImport, eveningNote })
   const lines = []
   lines.push(`Service : ${r.service.running ? 'actif' : 'arrêté'} · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'} · batterie ${r.service.batteryExempt ? 'sans restriction' : 'optimisée par Android'}`)
   if (r.last.outcome) lines.push(`Dernière lecture : ${outcomeLabel(r.last.outcome)}${r.last.trigger === 'manual' ? ' (test)' : ''}`)
@@ -263,6 +275,11 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null 
     const c = r.resume.lastCheck
     const check = c ? ` ; dernière vérification : ${RESUME_CHECKS[c] || c}${r.resume.lastCheckTrigger ? ` (${RESUME_TRIGGERS[r.resume.lastCheckTrigger] || r.resume.lastCheckTrigger})` : ''}` : ''
     lines.push(`Notifications « Reprendre » : ${r.resume.notices}, reprise d’un geste ${r.resume.taps} fois${check}`)
+  }
+  if (r.eveningNote?.enabled) {
+    const e = r.eveningNote
+    const check = e.lastCheck ? ` ; dernier soir : ${EVENING_CHECKS[e.lastCheck] || e.lastCheck}` : ''
+    lines.push(`Note du soir : vers ${e.time}, demandée ${e.asked} fois, donnée d’un geste ${e.answers} fois${check}`)
   }
   if (r.service.lastError) lines.push(`Dernière erreur : ${r.service.lastError}`)
   return lines

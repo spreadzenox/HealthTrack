@@ -37,16 +37,27 @@ de la relancer sans vous. Désormais une notification discrète, sans son, « **
 tout de suite après une mise à jour ou un redémarrage, sinon au plus tard dans l'heure : touchez **« Reprendre »**,
 l'app s'ouvre et la relance d'elle-même. Ignorée, elle ne revient pas avant 6 h ; « Arrêter » éteint la lecture.
 
+**Run du 19/10 06:30 — votre note du soir, d'un geste, sans ouvrir l'app.** Dans la fenêtre « Comment vous
+sentez-vous ? », un nouveau bouton **« 🔔 Me la demander le soir »**. Allumé, il fait apparaître chaque soir une
+notification discrète, sans son, avec **0 1 2 3 4 5** : un geste et c'est noté (« Noté : 4 sur 5 »), l'app n'a
+même pas besoin de s'ouvrir. Elle arrive à l'heure où vous notez d'habitude (21 h au début), jamais deux fois, jamais
+si vous avez déjà noté ce jour-là, et disparaît d'elle-même si vous l'ignorez. La note entre dans votre historique à
+l'ouverture suivante, exactement comme une note saisie. Toujours facultatif — mais c'est ce qui fera aboutir le plus
+vite la calibration du visage.
+
 **Ce qu'il me faut (votre Galaxy A56)** — inchangé, c'est l'étape qui débloque la suite : après la mise à jour,
 Plus → Connecteurs → **Lecture du visage → « Activer la lecture du visage »** (accepter l'appareil photo) →
 **« Sans restriction »** (accepter) ; utilisez le téléphone normalement quelques heures ; puis **Diagnostic →
 « Enregistrer le diagnostic »** et envoyez-moi le fichier `Documents/healthtrack-visage-….json` (ni image ni mesure
 dedans ; il dit maintenant aussi combien de lectures sont rangées). Dites-moi si le **point vert** s'allume environ
-1 s après chaque déverrouillage. **Nouveau test simple** : juste après l'installation de cette mise à jour, sans ouvrir l'app, une
+1 s après chaque déverrouillage. **Nouveau (facultatif)** : allumez « 🔔 Me la demander le soir » dans la saisie bien-être, autorisez les
+notifications, et dites-moi si la notification arrive le soir, si les 6 chiffres sont lisibles et si la note
+apparaît dans le journal à l'ouverture suivante. **Test « Reprendre »** : juste après l'installation de cette mise à jour, sans ouvrir l'app, une
 notification « Lecture du visage arrêtée » devrait apparaître (si la lecture était activée) ; touchez « Reprendre »
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Note du soir d'un geste (run 19/10 06:30)** : une notification 0–5 le soir, notée sans ouvrir l'app.
 - **Lecture du visage : notification « Reprendre » (run 19/10 04:30)** : quand Android l'arrête, un geste suffit
   pour la relancer.
 - **Lecture du visage : calibration (run 19/10 02:30)** : la carte dit combien de jours sur 30 ont une note et des
@@ -61,16 +72,16 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
 - *(à venir : runs « idées » de 08:30 et 20:30, toute leur veille sur l'humeur captée automatiquement)*
 
-**Prochaines priorités (19/10 04:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
-visage (et l'adapter à One UI), guide Shizuku / ADB, note du
-soir d'un geste depuis une notification, puis estimation du jour avec sa fourchette (derrière la porte), voix, temps
-par app comme facteur.
+**Prochaines priorités (19/10 06:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
+visage (et l'adapter à One UI), guide Shizuku / ADB, puis estimation du jour avec sa fourchette (derrière la porte),
+voix, temps par app comme facteur.
 
 | Run | Type | Résultat |
 |---|---|---|
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
 | 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
 | 19/10 04:30 — [Visage : notification « Reprendre » (I88 ②)](runs/2026-10-19-0430-visage-reprendre.md) | 🔴🙂 | Règle `FaceResume` + tâche horaire + redémarrage / mise à jour ; relance dans `onResume` ; diagnostic `resume` ; PR #215 |
+| 19/10 06:30 — [Note du soir d'un geste (I113)](runs/2026-10-19-0630-note-du-soir.md) | 🔴🙂 | Règle `EveningNote` (JVM), notification 6 boutons + alarme du soir, file native → note `wellbeing` ; bouton dans la saisie ; diagnostic `eveningNote` |
 
 ---
 

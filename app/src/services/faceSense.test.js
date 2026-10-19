@@ -114,6 +114,16 @@ describe('diagnostic exportable', () => {
     expect(faceDiagnosticLines(active).some((l) => l.startsWith('Notifications'))).toBe(false)
   })
 
+  it('note du soir (I113) : réglages et compteurs, jamais une note', () => {
+    const eveningNote = { enabled: true, minuteOfDay: 1290, asked: 4, answers: 3, check: 'noted_today', checkAt: 0, pending: 0 }
+    const r = faceDiagnosticReport(active, { eveningNote })
+    expect(r.eveningNote).toMatchObject({ enabled: true, time: '21 h 30', asked: 4, answers: 3, lastCheck: 'noted_today' })
+    expect(faceDiagnosticReport(active).eveningNote).toBeNull()
+    expect(faceDiagnosticLines(active, { eveningNote }))
+      .toContain('Note du soir : vers 21 h 30, demandée 4 fois, donnée d’un geste 3 fois ; dernier soir : déjà notée ce jour-là')
+    expect(faceDiagnosticLines(active, { eveningNote: { ...eveningNote, enabled: false } }).join()).not.toMatch(/Note du soir/)
+  })
+
   it('résultat inconnu : affiché tel quel', () => {
     expect(outcomeLabel('skip:nouveau')).toBe('skip:nouveau')
     expect(outcomeLabel(null)).toBe('—')

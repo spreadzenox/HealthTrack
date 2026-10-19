@@ -74,7 +74,7 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
     bruitée) → 8 semaines, z < 1,5. À revoir avec de vraies données.
   - [ ] Puissance modeste pour un lien moyen (ρ 0,5 : 34 % à J90, 60 % à J120) : I113 (notes plus régulières) aide.
 - [ ] I115 estimation du jour avec fourchette (seulement `gate.state === 'active'`, jamais enregistrée comme une note).
-- [ ] I113 note du soir d'un geste depuis la notification (calibration, optionnelle).
+- [x] I113 note du soir d'un geste depuis la notification (calibration, optionnelle). → ✅ 19/10 06:30 (6 boutons 0–5, vue personnalisée).
 - [ ] Mesurer la consommation réelle (diagnostic : batterie au démarrage / maintenant, temps caméra) et la noter ici.
 
 ## 🔴 Consigne du propriétaire du 18/10/2026 — remplacée le soir même par la consigne ci-dessus (charte §0000)
@@ -109,7 +109,7 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
       indice combiné en validation croisée, |z| ≥ 3,29 (jackknife) à **deux regards hebdomadaires consécutifs**,
       ≥ 30 jours notés, refermeture ; simulé : 2 % de faux départs à 4 mois, signal réaliste ouvert chez ≈ 1 sur 2 à
       2 mois, 3 sur 4 à 3 mois. `services/mood/gate.js`, fonction pure.
-    - [ ] **I113** (15) : note du soir **d'un geste depuis la notification** (5 boutons, file native vidée à
+    - [x] **I113** (15) : note du soir **d'un geste depuis la notification** (5 boutons, file native vidée à
       l'ouverture, même schéma qu'une note saisie) — la régularité de la note divise par deux l'attente (simulé).
       Peut se faire **avant I88** (indépendant du visage, utile tout de suite : moins de saisie, plus de notes).
     - [ ] **I115** (12) : une fois la porte ouverte, le visage complète les jours **sans** note (en mots + fourchette,
@@ -631,9 +631,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 **Réordonnées le 18/10 (22:30 Paris), consigne du 18/10 au soir (charte §00000) — prime sur tout ce qui suit** :
 1) 🔴🙂 **bien-être entièrement automatique, seul chantier** : a) lire le diagnostic visage de l'A56 dès qu'il arrive
-(`journal/diagnostics/`) ; b) **I90** import des rafales `face_burst` + test « composition » ; c) I88 ② notification
+(`journal/diagnostics/`) ; b) ✅ **I90** import des rafales `face_burst` + test « composition » ; c) ✅ I88 ② notification
 « Reprendre » ; d) I89 Shizuku / ADB ; e) I91 voix ; f) temps par app (X) ; g) ✅ I112 porte (19/10 02:30) → I115 estimation du jour ;
-h) I113 note du soir (option). 2) ⏸️ En pause : montre (sauf régression), D1, D2, C7.
+h) ✅ I113 note du soir (19/10 06:30). 2) ⏸️ En pause : montre (sauf régression), D1, D2, C7.
 
 **Réordonnées le 18/10 (16:30 Paris), consigne du 18/10 complétée après la capture de 15:03 (correctif confirmé sur
 la montre)** : 1) 🔴 petites corrections montre A.1–A.3 — ✅ **livrées le 18/10 16:30** (A.1 détection des apps : un

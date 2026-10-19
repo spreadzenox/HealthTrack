@@ -52,7 +52,8 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
    comme **X** (voir §2) ; guide « paramètres restreints » d'Android 15+.
 6. 🟨 **Porte et restitution** : ✅ `gate.js` (I112, 19/10 02:30), puis une ligne « estimation du jour » avec fourchette, jamais un
    diagnostic ; le visage complète les jours sans note (I115).
-7. ⬜ Calibration optionnelle : note du soir d'un geste depuis une notification (I113), jamais obligatoire.
+7. ✅ Calibration optionnelle : note du soir d'un geste depuis une notification (I113, 19/10 06:30), jamais
+   obligatoire ; interrupteur dans la saisie bien-être, heure = médiane des notes du soir, file native → historique.
 
 ## 4. À valider sur le Galaxy A56 (One UI) du propriétaire
 
@@ -61,7 +62,9 @@ Après la mise à jour qui contient la « Lecture du visage » :
 2. Toucher **« Sans restriction »** et accepter la boîte d'Android.
 3. Utiliser le téléphone normalement quelques heures (le point vert doit s'allumer ~1 s après chaque déverrouillage,
    une notification « Lecture du visage active » reste dans le volet).
-4. Revenir sur la carte → **Diagnostic → « Enregistrer le diagnostic »** et renvoyer le fichier
+4. (Facultatif, accélère la calibration) Dans « Comment vous sentez-vous ? », toucher **« 🔔 Me la demander le
+   soir »** et autoriser les notifications ; le soir, noter d'un geste depuis la notification.
+5. Revenir sur la carte → **Diagnostic → « Enregistrer le diagnostic »** et renvoyer le fichier
    `Documents/healthtrack-visage-….json` (ni image ni score dedans), et dire si le point vert apparaît bien.
 
 Ce que le diagnostic dira : la lecture tient-elle en arrière-plan sur One UI, combien de déverrouillages donnent un
