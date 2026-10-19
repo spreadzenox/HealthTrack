@@ -79,6 +79,18 @@ le début d'une session d'usage, comme un déverrouillage ; l'intervalle minimal
   n'est pas pilotable proprement depuis un test d'instrumentation) ; la règle est couverte en JVM, la validation se
   fait sur l'A56 avec le diagnostic.
 
+## CI de la PR
+- 1er passage : Vitest ❌ — mon entrée « Nouveautés » avait `kind: "correction"` au lieu de `"correctif"` (liste
+  fermée vérifiée par `WhatsNew.test.jsx`) → corrigé. 2e passage : 1 525 tests verts mais **erreur non gérée**
+  « window is not defined » depuis `WatchSetup.jsx:67` (setState après démontage, course pendant `Connectors.test.jsx`,
+  préexistante) → garde `mounted` dans `WatchSetup` (aucune mise à jour d'état après démontage).
+- Sur `714d301` : Vitest ✅, Build APK ✅ (**compile `UnlockWatch`, `FaceSenseService`, `FaceSensePlugin`**), Protocole
+  montre ✅, Budget de lectures ✅. Émulateur API 35 ✅ ; API 36 ❌ sur `HealthConnectTest.canWriteAndReadSleep`
+  (« Conflict found, but couldn't read the entry ») : échec intermittent connu depuis le 11/10, sans lien, check non
+  requis. Sur l'émulateur API 36, `FaceModelsTest` (5) ✅ et l'app démarre (« Accueil » trouvé).
+- Les « Publier l'APK » ❌ des commits remplacés : artefact absent car leur Build APK a été annulé par le push suivant.
+- **Leçon** : relancer `npm run test` **après** avoir écrit l'entrée « Nouveautés », pas avant.
+
 ## Pour le propriétaire (Galaxy A56)
 1. Installer la nouvelle version (bannière de mise à jour, ou Plus → Nouveautés : version ≥ celle du 19/10 ~17 h).
 2. Ouvrir Plus → Connecteurs → **Lecture du visage**. Si la carte dit « Arrêtée » ou « À relancer », toucher
