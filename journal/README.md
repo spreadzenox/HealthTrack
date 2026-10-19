@@ -59,7 +59,7 @@ par app comme facteur.
 | Run | Type | Résultat |
 |---|---|---|
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
-| 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR à fusionner une fois verte |
+| 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
 
 ---
 
