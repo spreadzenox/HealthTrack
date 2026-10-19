@@ -2,6 +2,8 @@
  * Ordre de la page Connecteurs (D1) : d'abord ce qui envoie déjà des mesures, puis ce qui reste à
  * brancher. Fonction pure : la page lui passe des états lus de façon synchrone (réglages locaux).
  * Les capteurs Bluetooth (outil de recherche) et les guides par marque restent toujours « à brancher ».
+ * La Lecture du visage (chantier prioritaire du bien-être automatique) est toujours en tête dans l'app Android,
+ * activée ou non : rangée repliée en bas de page, le propriétaire ne la trouvait pas (signalement du 19/10).
  */
 export function splitSourcesByStatus({
   connectorIds,
@@ -10,10 +12,11 @@ export function splitSourcesByStatus({
   phoneUsageEnabled,
   watchEverConnected,
   faceSenseEnabled = false,
+  faceSenseAvailable = false,
 }) {
   const sources = [
+    ['face', faceSenseEnabled || faceSenseAvailable],
     ['watch', watchEverConnected],
-    ['face', faceSenseEnabled],
     ...connectorIds.map((id) => [id, isConnectorEnabled(id)]),
     ['weather', weatherEnabled],
     ['phone', phoneUsageEnabled],
@@ -22,6 +25,8 @@ export function splitSourcesByStatus({
   ]
   return {
     active: sources.filter(([, on]) => on).map(([id]) => id),
+    // la Lecture du visage épinglée mais pas activée n'envoie rien : le volet « à brancher » reste ouvert
+    nothingSending: !sources.some(([id, on]) => on && (id !== 'face' || faceSenseEnabled)),
     toConnect: sources.filter(([, on]) => !on).map(([id]) => id),
   }
 }

@@ -58,8 +58,19 @@ note et les étiquettes, l'audio n'étant jamais écrit nulle part ; pas de micr
 jour** ; en dessous de 8, il faudrait beaucoup plus longtemps. Le diagnostic vous le dira — votre nombre de
 déverrouillages est déjà connu de l'app.
 
-**Ce qu'il me faut (votre Galaxy A56)** — inchangé, c'est l'étape qui débloque la suite : après la mise à jour,
-Plus → Connecteurs → **Lecture du visage → « Activer la lecture du visage »** (accepter l'appareil photo) →
+**Run du 19/10 10:30 — la carte « Lecture du visage » est enfin visible (votre signalement de 08:37).** Vous ne la
+trouviez pas, et pour cause : elle n'était mise en tête de Connecteurs **qu'une fois activée** ; tant qu'elle ne
+l'était pas, elle était rangée dans le volet replié « Brancher une autre source », tout en bas de la page, sous la
+montre. Désormais, dans l'app Android, elle est **toujours juste sous « Mes appareils »**, activée ou non, avec son
+bouton « Activer la lecture du visage ». Un test automatique simule l'app Android native et vérifie qu'elle est là,
+en tête, hors du volet replié. Et si le module du visage ne répondait pas (version trop ancienne…), la carte le dit
+maintenant avec un bouton « Réessayer » au lieu de rester muette. **Pour vérifier votre version** : Plus →
+Nouveautés, la première ligne dit « Version installée : … » ; la carte existe depuis la v168, la correction arrive
+dans la version publiée juste après ce run (v173 ou plus).
+
+**Ce qu'il me faut (votre Galaxy A56)** — c'est l'étape qui débloque la suite : après la mise à jour (vérifiez dans
+Plus → Nouveautés que la version installée est au moins celle publiée le 19/10 vers 11 h), Plus → Connecteurs → la
+carte **Lecture du visage**, juste sous « Mes appareils » → **« Activer la lecture du visage »** (accepter l'appareil photo) →
 **« Sans restriction »** (accepter) ; utilisez le téléphone normalement quelques heures ; puis **Diagnostic →
 « Enregistrer le diagnostic »** et envoyez-moi le fichier `Documents/healthtrack-visage-….json` (ni image ni mesure
 dedans ; il dit maintenant aussi combien de lectures sont rangées). Dites-moi si le **point vert** s'allume environ
@@ -70,6 +81,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Carte « Lecture du visage » visible (run 19/10 10:30)** : toujours juste sous « Mes appareils », même pas encore
+  activée ; « Réessayer » si le module ne répond pas.
 - **Note du soir d'un geste (run 19/10 06:30)** : une notification 0–5 le soir, notée sans ouvrir l'app.
 - **Lecture du visage : notification « Reprendre » (run 19/10 04:30)** : quand Android l'arrête, un geste suffit
   pour la relancer.
@@ -90,7 +103,7 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (19/10 08:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
+**Prochaines priorités (19/10 10:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
 visage (et l'adapter à One UI), **temps par app comme facteur** (prochain run), lectures du visage par jour dans le
 diagnostic, guide Shizuku / ADB, dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
 
@@ -101,6 +114,7 @@ diagnostic, guide Shizuku / ADB, dictée du soir (voix), puis estimation du jour
 | 19/10 04:30 — [Visage : notification « Reprendre » (I88 ②)](runs/2026-10-19-0430-visage-reprendre.md) | 🔴🙂 | Règle `FaceResume` + tâche horaire + redémarrage / mise à jour ; relance dans `onResume` ; diagnostic `resume` ; PR #215 |
 | 19/10 06:30 — [Note du soir d'un geste (I113)](runs/2026-10-19-0630-note-du-soir.md) | 🔴🙂 | Règle `EveningNote` (JVM), notification 6 boutons + alarme du soir, file native → note `wellbeing` ; bouton dans la saisie ; diagnostic `eveningNote` ; PR #216 |
 | 19/10 08:30 — [Idées : temps par app, voix par la dictée, assez de rafales](runs/2026-10-19-0830-idees-apps-voix-rafales.md) | 💡 | I116–I120 ; simulation rafales / jour ; npj 2026 (texte ≫ audio) ; pas de Gemini Nano sur l’A56 ; PR #217 |
+| 19/10 10:30 — [Carte « Lecture du visage » visible (signalement 08:37)](runs/2026-10-19-1030-carte-visage-visible.md) | 🚑🙂 | Cause : carte rangée dans le volet replié tant que non activée ; épinglée en tête sur Android ; « Réessayer » si le natif est muet ; tests natifs ; PR #218 |
 
 ---
 
@@ -123,6 +137,16 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---
+
+## 000000. Signalement du propriétaire du 19 octobre 2026 à 08:37 — corrigé au run 19/10 10:30
+
+« Je ne vois pas la carte pour la lecture du visage dans connecteur. » Cause : `connectorsLayout` ne mettait la carte
+`face` en tête que **activée** ; désactivée, elle tombait dans le volet replié « Brancher une autre source », sous la
+montre. Correctif : dans l'app Android (`isFaceSenseAvailable()`), `face` est toujours la première source active ;
+`nothingSending` garde « Sources à brancher » ouvert au premier lancement ; message + « Réessayer » si le plugin natif
+ne répond pas. Tests : `connectorsLayout.test.js`, `Connectors.test.jsx` (Android natif simulé), `FaceSenseCard.test.jsx`.
+**Leçon** : une carte « censée être en tête » se vérifie dans l'état **par défaut** du propriétaire (non activée,
+montre connectée), pas seulement avec le faux plugin actif.
 
 ## 00000. Consigne du propriétaire du 18 octobre 2026 au soir — PRIORITÉ UNIQUE (prime sur tout le reste)
 

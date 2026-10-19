@@ -13,7 +13,7 @@ import WithingsSetup from '../components/WithingsSetup'
 import WeatherCard from '../components/WeatherCard'
 import PhoneUsageCard from '../components/PhoneUsageCard'
 import FaceSenseCard from '../components/FaceSenseCard'
-import { isFaceSenseEnabled } from '../services/faceSense'
+import { isFaceSenseAvailable, isFaceSenseEnabled } from '../services/faceSense'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
 import { splitSourcesByStatus } from '../connectors/connectorsLayout'
 import { getWeatherSettings } from '../services/weatherSync'
@@ -426,6 +426,7 @@ export default function Connectors() {
       phoneUsageEnabled: Boolean(getPhoneUsageSettings().enabled),
       watchEverConnected: Boolean(getWatchAutoSyncState()?.everConnected),
       faceSenseEnabled: isFaceSenseEnabled(),
+      faceSenseAvailable: isFaceSenseAvailable(),
     })
   )
 
@@ -444,7 +445,7 @@ export default function Connectors() {
     ) : null
   }
 
-  const nothingActive = layout.active.length === 0
+  const nothingActive = layout.nothingSending
 
   return (
     <section className="food-page">

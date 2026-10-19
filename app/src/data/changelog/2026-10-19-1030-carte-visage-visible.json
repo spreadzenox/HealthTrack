@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-19",
+  "kind": "correctif",
+  "title": "La carte « Lecture du visage » est visible dans Connecteurs",
+  "items": [
+    "Tant qu'elle n'était pas activée, la carte « Lecture du visage » était rangée tout en bas de Plus → Connecteurs, dans le volet replié « Brancher une autre source ». Elle est désormais toujours affichée juste sous « Mes appareils », avec son bouton « Activer la lecture du visage ».",
+    "Si le module de lecture du visage ne répond pas, la carte le dit et propose « Réessayer » au lieu de rester vide."
+  ]
+}

@@ -21,6 +21,14 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🚑 Signalement du propriétaire du 19/10/2026 08:37 — carte « Lecture du visage » introuvable
+
+- [x] **Corrigé (run 19/10 10:30)** : la carte n'était en tête que si la lecture était déjà activée, sinon repliée
+  sous « Brancher une autre source ». Désormais épinglée juste sous « Mes appareils » dans l'app Android (activée ou
+  non), « Réessayer » si le plugin natif ne répond pas ; test Android natif dans `Connectors.test.jsx`.
+  - [ ] **Retour du propriétaire** : la carte est-elle visible après la mise à jour (version ≥ celle du 19/10 ~11 h,
+    Plus → Nouveautés) ?
+
 ## 🔴🔴 Consigne du propriétaire du 18/10/2026 au soir — PRIORITÉ UNIQUE (charte §00000)
 
 « Concentration maximale sur la collecte entièrement automatique du bien-être. » Plan et décisions :

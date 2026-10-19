@@ -296,4 +296,25 @@ describe('Connectors page', () => {
     expect(screen.getByText('Sources à brancher')).toBeInTheDocument()
     unmount()
   })
+
+  it('app Android native : la carte « Lecture du visage » est visible en tête, hors du volet replié, même désactivée', async () => {
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+    const previous = window.Capacitor
+    window.Capacitor = { ...(previous || {}), isNativePlatform: () => true, getPlatform: () => 'android' }
+    try {
+      const { container, unmount } = renderConnectors()
+      const title = screen.getByRole('heading', { name: 'Lecture du visage' })
+      const more = container.querySelector('details.connectors-more')
+      expect(more.contains(title)).toBe(false)
+      // première source de la page, avant les connecteurs actifs
+      const cardTitles = [...container.querySelectorAll('h3')].map((h) => h.textContent)
+      expect(cardTitles.indexOf('Lecture du visage')).toBeLessThan(cardTitles.indexOf('Test Connector'))
+      const card = title.closest('section')
+      expect(card.textContent).not.toContain('Disponible dans l’app Android.')
+      unmount()
+    } finally {
+      window.Capacitor = previous
+    }
+  })
 })

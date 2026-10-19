@@ -172,6 +172,17 @@ export default function FaceSenseCard({
 
       {!available && <p className="my-device-message">Disponible dans l’app Android.</p>}
       {available && !loaded && <p className="my-device-message">Lecture de l’état…</p>}
+      {available && loaded && d.state === 'unavailable' && (
+        <>
+          <p className="my-device-message">
+            Le module de lecture du visage ne répond pas. Vérifiez que l’app est à jour (Plus → Nouveautés), puis
+            réessayez.
+          </p>
+          <div className="my-device-actions">
+            <button type="button" className="btn btn-primary connector-btn" onClick={() => refresh()} disabled={busy}>Réessayer</button>
+          </div>
+        </>
+      )}
       {available && d.state === 'no_models' && (
         <p className="my-device-message">Cette version de l’app n’embarque pas le modèle du visage.</p>
       )}
