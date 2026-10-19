@@ -41,7 +41,9 @@
 - Check CI « Budget de lectures (perf) » rouge au 1er push : l'accueil lisait **toutes** les notes de bien-être
   (3 ans de démo : 13 252 enregistrements > 12 500). Corrigé : `mood/faceMoodData.js` ne lit les notes que depuis le
   jour de la première rafale (une note plus ancienne n'a aucune lecture à qui être comparée) → 12 166, budget
-  respecté en local (`npm run perf -- --budget`), 1 561 tests.
+  respecté en local (`npm run perf -- --budget`), 1 561 tests. Puis « Frontend (Vitest) » rouge au 2e push : erreur non gérée, le mock de
+  `localHealthStorage` de `Connectors.test.jsx` n'exportait pas `listEntries` (lu désormais via `faceMoodData.js`)
+  → ajouté au mock ; `npx vitest run` sans aucune ligne « Errors ».
 
 ## Apprentissages / décisions
 - **Penser au budget de lectures (D2) dès qu'une carte de l'accueil lit un type d'entrée en entier** : borner par
