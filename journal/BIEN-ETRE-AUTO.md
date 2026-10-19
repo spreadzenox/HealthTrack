@@ -84,3 +84,11 @@ visage, pourquoi les autres sont écartés (trop sombre, tête tournée…), le 
 - Android 14+ : `FOREGROUND_SERVICE_CAMERA` obligatoire, permission caméra accordée avant le démarrage.
 - One UI : « Applis en veille » / optimisation de batterie peuvent tuer le service → « Sans restriction » ; à
   confirmer par le diagnostic (`stoppedAt`, `startedAt`).
+
+## Mise à jour du 19/10/2026 22:30 — consigne « 100 % auto, sans attendre la calibration »
+
+La porte de calibration (I112) **ne conditionne plus l'affichage**. L'humeur estimée s'affiche dès la première
+lecture du déverrouillage (`app/src/services/mood/faceMood.js`) : a priori général sur les blendshapes → visage
+habituel de la personne → calibration facultative sur les notes. Restitution : carte « Humeur estimée » sur l'accueil
+et dans « Lecture du visage », fourchette 0–5 et confiance. Prochaine étape : modèle valence / éveil embarqué (voir
+`BACKLOG.md`, consigne du 19/10 au soir). Y / X inchangés.

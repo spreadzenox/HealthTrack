@@ -3,8 +3,9 @@
  * Au déverrouillage, la caméra frontale prend 3 images en basse résolution, analysées sur le téléphone (modèle
  * MediaPipe embarqué) puis effacées ; seuls une dizaine d'indices d'expression sont gardés (côté natif, en
  * attendant leur import dans l'historique, I90). Ces indices sont des entrées de l'humeur estimée (Y, voir
- * mood/estimatorInputs.js) et ne sont **jamais affichés** avant la porte de calibration (I110 / I112) : ici,
- * seulement des compteurs et des raisons.
+ * mood/estimatorInputs.js) ; l'humeur estimée qui en sort s'affiche dès la première lecture (mood/faceMood.js,
+ * consigne du 19/10/2026 au soir). Le diagnostic, lui, ne contient que des compteurs et des raisons, jamais une
+ * valeur d'humeur.
  *
  * L'état « activée » est gardé côté natif ; ce module en garde un miroir (localStorage) pour classer la carte
  * dans Connecteurs dès l'ouverture, sans attendre le plugin.
@@ -304,6 +305,16 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
         looks: history.gate.looks.length,
       }
       : null,
+    // Humeur estimée (consigne du 19/10 au soir) : quel modèle et quelle confiance, jamais la valeur estimée.
+    estimate: history?.estimate
+      ? {
+        model: history.estimate.model,
+        confidence: history.estimate.confidence,
+        readingsToday: history.estimate.day?.readings ?? 0,
+        baselineDays: history.estimate.baselineDays,
+        calibrationDays: history.estimate.calibrationDays,
+      }
+      : null,
     // Note du soir d'un geste (I113), vérité terrain de la porte : réglages et compteurs, jamais une note.
     eveningNote: eveningNoteDiagnostic(eveningNote),
   }
@@ -372,15 +383,19 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
     const unlocks = d.unlocksPerDay == null ? '' : `${plural(d.unlocksPerDay, 'déverrouillage')}, `
     const verdict = d.enough
       ? `objectif de ${d.target} atteint`
-      : `en dessous des ${d.target} visés : la calibration sera plus lente`
+      : `en dessous des ${d.target} visés : l’estimation restera plus incertaine`
     lines.push(`Par jour (médiane sur ${plural(d.days, 'jour')}) : ${unlocks}${plural(d.burstsPerDay, 'lecture')}, ${d.validBurstsPerDay} avec un visage — ${verdict}`)
   }
   if (r.retries.tried) lines.push(`2e essais (2 s après une lecture sans visage) : ${r.retries.tried}, visage lu ${r.retries.faces} fois`)
+  if (r.estimate) {
+    const e = r.estimate
+    lines.push(`Humeur estimée : modèle ${e.model === 'personal' ? 'personnel (vos notes)' : 'général'}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}`)
+  }
   if (r.gate) {
     const g = r.gate
     lines.push(g.state === 'active'
-      ? `Calibration : ouverte le ${g.openedAt} (accord visage ↔ notes z = ${g.z ?? '—'})`
-      : `Calibration : ${g.days} / ${g.needed} jours comparables${g.z == null ? '' : `, accord z = ${g.z} (ouverture à 3,29 deux semaines de suite)`}`)
+      ? `Vérification visage ↔ notes (facultative) : réussie le ${g.openedAt} (z = ${g.z ?? '—'})`
+      : `Vérification visage ↔ notes (facultative) : ${g.days} / ${g.needed} jours comparables${g.z == null ? '' : `, accord z = ${g.z} (réussie à 3,29 deux semaines de suite)`}`)
   }
   if (r.pendingBursts) lines.push(`En attente d’être rangées : ${r.pendingBursts}`)
   if (r.history.lastImport?.dropped) lines.push(`Lectures illisibles écartées au dernier rangement : ${r.history.lastImport.dropped}`)

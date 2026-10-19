@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-19",
+  "kind": "nouveau",
+  "title": "Humeur estimée dès la première lecture du visage",
+  "items": [
+    "Plus besoin d'attendre 30 jours : dès qu'une lecture du visage au déverrouillage a réussi, l'accueil affiche une carte « Humeur estimée » — votre bien-être du jour sur 0 à 5 (par exemple « moyenne, ≈ 2,8 / 5, entre 1,6 et 4,0 ») et l'humeur à la dernière lecture. La même estimation apparaît dans la carte « Lecture du visage » (Plus → Connecteurs).",
+    "La fourchette et la « Confiance faible / moyenne / bonne » disent honnêtement ce que vaut l'estimation : nombre de lectures du jour, visage bien cadré ou non, lectures concordantes ou non. Au début, elle vient d'un modèle général des expressions, donc la confiance est faible ; elle s'ajuste ensuite à votre visage habituel, sans rien vous demander.",
+    "Vos notes de bien-être restent facultatives : quand vous en donnez assez (14 jours), l'estimation passe à un modèle personnel, plus précis, seulement s'il prédit vraiment mieux vos notes.",
+    "« Tester maintenant » dit aussi l'humeur de ce moment ; un test ne compte pas dans l'estimation du jour.",
+    "C'est une estimation, jamais un diagnostic. Tout est calculé sur le téléphone, aucune image n'est gardée, et le diagnostic exportable ne contient aucune valeur d'humeur."
+  ]
+}

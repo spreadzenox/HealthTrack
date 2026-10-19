@@ -11,7 +11,9 @@
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
 montre (stress, VFC, cœur, sommeil) restent des **facteurs** que les Analyses comparent à votre humeur, jamais des
-ingrédients de l'estimation. Plan et état des lieux : [`BIEN-ETRE-AUTO.md`](BIEN-ETRE-AUTO.md). Tout le reste
+ingrédients de l'estimation. Plan et état des lieux : [`BIEN-ETRE-AUTO.md`](BIEN-ETRE-AUTO.md). **Depuis votre consigne du 19/10 au soir : une
+humeur estimée s'affiche dès la première lecture, sans attendre 30 jours** ; vos notes ne font plus que l'affiner.
+Tout le reste
 (nettoyage, performance, autres appareils, petites finitions de la montre) est en pause sauf panne.
 
 **Run du 19/10 00:30 — les lectures du visage sont rangées dans votre historique.** Jusqu'ici, ce que la caméra
@@ -116,12 +118,30 @@ longue. Ce sera codé **avant** toute estimation du jour. J'ai aussi écrit d'av
 lecture du visage, pour corriger dès qu'il arrive, et vérifié que Samsung propose un lien direct vers « Applis jamais
 en veille » (un bouton possible si One UI endort la lecture). Rien de nouveau dans l'app ce soir.
 
+**Run du 19/10 22:30 — votre consigne du soir : l'humeur estimée s'affiche dès la première lecture.** Le verrou
+« Calibration : 0 jour sur 30… Rien n'est affiché avant… » a disparu. Dès qu'une lecture au déverrouillage a vu votre
+visage, l'**accueil** affiche une carte **« Humeur estimée »** : votre bien-être du jour sur 0–5 (« moyenne, ≈ 2,8 / 5,
+entre 1,6 et 4,0 »), une barre qui montre la fourchette, l'humeur à la dernière lecture, et une **confiance**
+(faible / moyenne / bonne) qui dit pourquoi : nombre de lectures du jour, visage bien cadré ou de biais, lectures
+concordantes ou dispersées, un seul signal pour l'instant (le visage). La même chose apparaît dans la carte « Lecture
+du visage », et **« Tester maintenant » dit l'humeur de ce moment** (un test ne compte pas dans le jour). D'où vient le
+chiffre : ① au début, un **modèle général des expressions** (sourire, sourire « des yeux », coins de la bouche
+abaissés, froncement…) — une hypothèse de population, d'où la confiance faible ; ② il s'ajuste tout seul à **votre
+visage habituel** au fil des jours (quelqu'un qui fronce toujours un peu n'est pas plus triste pour autant) ; ③ si
+vous donnez des notes (facultatif), au bout de 14 jours notés il passe à un **modèle personnel**, seulement s'il
+prédit vraiment mieux vos notes. L'étape suivante remplacera ① par un vrai modèle valence / éveil embarqué, plus
+fiable. Toujours une estimation, jamais un diagnostic ; le diagnostic exportable ne contient aucune valeur d'humeur.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
 2 minutes d'écart si possible (le point vert doit s'allumer ~1 s après) ; ④ **Diagnostic → « Enregistrer le
 diagnostic »** et envoyez-moi le fichier (ou une capture des lignes « Aujourd'hui : écran allumé… », « Accès
-caméra… » et « Dernières tentatives… ») : elles suffisent à trancher.
+caméra… » et « Dernières tentatives… ») : elles suffisent à trancher. **Nouveau (22:30)** : avec la version publiée
+après le run de 22:30, revenez sur l'accueil après ces déverrouillages : la carte **« Humeur estimée »** doit être
+apparue (sinon, c'est qu'aucune lecture du déverrouillage n'a vu votre visage — le diagnostic dira pourquoi). Dites-moi
+aussi si l'estimation vous semble plausible, et touchez « Tester maintenant » en souriant puis sans sourire : la
+phrase « Humeur de ce moment » doit changer.
 
 **Ce qu'il me faut (votre Galaxy A56)** — c'est l'étape qui débloque la suite : après la mise à jour (vérifiez dans
 Plus → Nouveautés que la version installée est au moins celle publiée le 19/10 vers 11 h), Plus → Connecteurs → la
@@ -139,6 +159,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Humeur estimée dès la première lecture (run 19/10 22:30, votre consigne du soir)** : carte sur l'accueil et dans
+  « Lecture du visage », bien-être du jour sur 0–5 avec fourchette et confiance ; plus de verrou des 30 jours.
 - **Lecture du visage : chaque déverrouillage repéré (run 19/10 16:30, votre signalement)** : empreinte, visage,
   Smart Lock ; état « À relancer » si Android refuse la caméra ; guide d'accès permanent ; diagnostic détaillé.
 - **Lecture du visage : 2e essai et lectures par jour (run 19/10 14:30)** : une lecture ratée est reprise une fois
@@ -151,7 +173,7 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Lecture du visage : notification « Reprendre » (run 19/10 04:30)** : quand Android l'arrête, un geste suffit
   pour la relancer.
 - **Lecture du visage : calibration (run 19/10 02:30)** : la carte dit combien de jours sur 30 ont une note et des
-  lectures ; l'humeur estimée ne sera affichée que si votre visage suit vos notes.
+  lectures (depuis le 19/10 22:30 : vérification facultative, elle ne bloque plus l'affichage).
 - **Lecture du visage : lectures gardées (run 19/10 00:30)** : rangées dans l'historique à chaque ouverture, comprises
   dans la sauvegarde ; la carte dit combien sont gardées ; rien n'est affiché avant la calibration.
 
@@ -170,7 +192,12 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (19/10 20:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
+**Prochaines priorités (19/10 22:30)** — votre consigne du 19/10 au soir d'abord : ✅ étape 1, estimation affichée dès
+la première lecture (22:30) ; **étape 2, un vrai modèle valence / éveil embarqué** (comparatif précision / poids /
+licence par les runs idées, puis intégration, téléchargé au build avec vérification d'empreinte) ; étape 3, visage +
+voix. En parallèle : votre diagnostic de la Lecture du visage dès qu'il arrive, et la robustesse aux dérives lentes
+(I121) appliquée aussi au passage au « modèle personnel ».
+*Priorités précédentes (19/10 20:30)* — uniquement le bien-être automatique : votre diagnostic de la Lecture du
 visage (et l'adapter à One UI), ✅ temps par app comme facteur (19/10 12:30), ✅ lectures du visage par jour dans le
 diagnostic + 2e essai (19/10 14:30), 🚑 déverrouillages enfin repérés + guide Shizuku / ADB (19/10 16:30, votre
 signalement — **votre diagnostic après la mise à jour est attendu**), ✅ phrase du soir (19/10 18:30), **porte de
@@ -189,6 +216,7 @@ du jour avec sa fourchette (derrière la porte).
 | 19/10 14:30 — [Visage : 2e essai et lectures par jour (I118)](runs/2026-10-19-1430-visage-rafales-par-jour.md) | 🔴🙂 | `FaceSchedule.shouldRetry` (1 fois, +2 s, ≤ 10 s après le déverrouillage) ; `faceDailyCounts` → diagnostic « Par jour » / « 2e essais » ; PR #220 |
 | 19/10 16:30 — [Visage : chaque déverrouillage repéré (signalement 15:05)](runs/2026-10-19-1630-visage-deverrouillage.md) | 🚑🙂 | Cause : récepteur `RECEIVER_NOT_EXPORTED` → `USER_PRESENT` (SystemUI) filtré ; `UnlockWatch` (diffusion / verrou interrogé / écran déjà ouvert), récepteur exporté sur le fil du service ; diagnostic v2 (allumages, sources, tentatives + erreur exacte, démarrage, app-op caméra) ; « À relancer » + guide Shizuku / ADB (I89) ; PR #221 |
 | 19/10 18:30 — [Votre journée en une phrase (I119)](runs/2026-10-19-1830-phrase-du-soir.md) | 🔴🙂 | Lexiques disjoints ressenti (Y) / contexte (X) + test d'intersection vide ; champ « En une phrase » (dictable au clavier) → note et tags proposés, phrase jamais gardée ; 1 539 tests |
+| 19/10 22:30 — [Humeur estimée dès la première lecture (consigne du 19/10 au soir, étape 1)](runs/2026-10-19-2230-humeur-des-la-1re-lecture.md) | 🔴🙂 | Consigne reportée (charte §0000000) ; `mood/faceMood.js` (a priori FACS → ligne de base personnelle → calibration facultative), fourchette + confiance ; carte « Humeur estimée » sur l'accueil + bloc dans la carte visage + « Tester maintenant » ; verrou « Rien n'est affiché » retiré ; diagnostic : modèle / confiance sans valeur ; 1 559 tests ; PR #224 |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---
@@ -212,6 +240,40 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---
+
+## 0000000. Consigne du propriétaire du 19 octobre 2026 au soir — lecture du bien-être 100 % automatique, sans attendre la calibration (prime sur l'ordre de §00000)
+
+Message : **« Je ne veux pas avoir à attendre les 30 jours de calibration, quitte à embarquer un modèle plus puissant :
+je veux une lecture du bien-être 100 % auto. »**
+- Dès la **première lecture réussie**, l'app affiche une estimation de l'humeur et du bien-être (du moment et du jour),
+  par un modèle pré-entraîné qui marche d'emblée, sans aucune note. Préférer un modèle qui sort **valence et éveil**
+  (ex. HSEmotion `enet_b0_8_va_mtl`) plutôt que des classes d'émotions ; combiner visage et voix quand la voix sera là.
+- Choisir le modèle le plus fiable qui tourne correctement sur un Galaxy A56 (LiteRT ou ONNX, GPU / NNAPI si possible),
+  quelques dizaines de Mo acceptés ; documenter dans `journal/` le choix, les alternatives, la précision publiée, la
+  taille, la latence, la consommation et la **licence (compatible obligatoire)** ; trop gros pour le dépôt →
+  téléchargé au build ou au premier lancement depuis une source officielle, empreinte vérifiée ; aucune donnée de
+  l'utilisateur envoyée.
+- Notes manuelles et calibration personnelle **facultatives** : elles affinent (ligne de base, adaptation
+  personnelle), elles ne conditionnent **jamais** l'affichage. Retirer « Rien n'est affiché avant… » et la condition
+  des 30 jours partout où elle bloque.
+- Honnêteté : niveau de confiance (lectures du jour, qualité / cadrage du visage, accord entre signaux), toujours
+  « estimation », jamais diagnostic ; l'incertitude diminue avec les lectures et la calibration facultative.
+- D5 (anti-circularité) et D6 (science personnelle) inchangés : l'estimateur n'utilise que visage, voix et
+  auto-déclaration facultative.
+- Livraison par étapes fusionnables : **1) estimation dès la première lecture avec le modèle actuel + verrou retiré
+  (✅ run 19/10 22:30)** ; 2) modèle valence / éveil plus puissant ; 3) fusion visage + voix. Tests et captures à
+  chaque étape.
+- Runs « idées » : veille en priorité sur ce choix de modèle (comparatif précision / poids / licence des modèles
+  valence-éveil faciaux et vocaux embarquables, benchmarks AffectNet, AFEW-VA…, retours de terrain).
+
+**Décision de l'étape 1** (run 19/10 22:30, `app/src/services/mood/faceMood.js`) : en attendant le modèle valence /
+éveil, une valence **a priori** est tirée des indices de blendshapes déjà mesurés (AU12, AU6 + AU12 → +, AU15, AU4,
+AU1 → −, poids fixes documentés), note = 2,5 + 2,5 × valence ; le neutre de population est remplacé peu à peu par le
+**visage habituel** de la personne (médianes 28 j, poids j / (j + 7)) ; la calibration Ridge sur les notes (≥ 14 jours,
+gardée si ≥ 10 % mieux que la moyenne en LOO) prend le relais quand elle existe. Fourchette = √(erreur du modèle² +
+dispersion des lectures² / n) × pénalités qualité / cadrage. Cohérent avec D6 : l'a priori est présenté comme une
+hypothèse générale, supplantée par les données personnelles dès qu'elles suffisent. La porte `gate.js` reste, comme
+**vérification facultative** affichée, sans rien bloquer.
 
 ## 000000bis. Signalement du propriétaire du 19 octobre 2026 à 15:05 — corrigé au run 19/10 16:30 (à confirmer sur l'A56)
 

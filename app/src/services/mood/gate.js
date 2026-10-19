@@ -1,7 +1,8 @@
 /**
- * Porte de calibration du visage (journal/IDEES.md I110 / I112). Une humeur estimée à partir du visage ne sera
- * affichée que lorsque, **chez cet utilisateur**, les lectures du déverrouillage suivent les notes qu'il donne
- * lui-même ; sinon elle reste en diagnostic. Fonction pure, rien de stocké : l'historique des regards hebdomadaires
+ * Porte de calibration du visage (journal/IDEES.md I110 / I112) : vérifie si, **chez cet utilisateur**, les
+ * lectures du déverrouillage suivent les notes qu'il donne lui-même. Depuis la consigne du 19/10/2026 au soir, elle
+ * ne conditionne plus l'affichage (l'humeur estimée s'affiche dès la première lecture, mood/faceMood.js) : c'est une
+ * vérification facultative, montrée dans la carte et le diagnostic. Fonction pure, rien de stocké : l'historique des regards hebdomadaires
  * est recalculé à partir des entrées.
  *
  * - Un jour compte s'il a une note de bien-être et au moins une rafale qui compte pour l'humeur (`moodFaceBursts` :
@@ -181,16 +182,20 @@ export function evaluateGate(days, { today } = {}) {
 
 const frenchDay = (key) => new Date(`${key}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
 
-/** Une phrase pour la carte « Lecture du visage », sans aucune valeur d'humeur. */
+/**
+ * Une phrase pour la carte « Lecture du visage » : où en est la vérification facultative « votre visage suit vos
+ * notes ». Elle ne bloque plus rien (consigne du 19/10/2026 au soir) : l'humeur estimée s'affiche dès la première
+ * lecture (mood/faceMood.js) ; cette porte dit seulement si, chez vous, le visage suit vos propres notes.
+ */
 export function describeGate(gate) {
-  if (!gate) return 'Les mesures attendent d’être assez nombreuses et comparées à vos notes : rien n’est affiché avant.'
+  if (!gate) return 'Vos notes, facultatives, permettront aussi de vérifier si votre visage suit votre ressenti.'
   if (gate.state === 'active') {
-    return `Votre visage suit vos notes depuis le ${frenchDay(gate.openedAt)} : l’humeur estimée arrivera dans une prochaine mise à jour, avec sa fourchette.`
+    return `Vérification : votre visage suit vos notes depuis le ${frenchDay(gate.openedAt)}.`
   }
-  const lost = gate.closedAt ? `Le lien s’est perdu le ${frenchDay(gate.closedAt)} : on recompte depuis. ` : ''
+  const lost = gate.closedAt ? `Le lien visage ↔ notes s’est perdu le ${frenchDay(gate.closedAt)} : on recompte depuis. ` : ''
   if (gate.nDays < gate.needed) {
     const n = gate.nDays
-    return `${lost}Calibration : ${n} ${n > 1 ? 'jours' : 'jour'} sur ${gate.needed} avec une note et des lectures. Rien n’est affiché avant que votre visage suive vos notes.`
+    return `${lost}Vérification facultative : ${n} ${n > 1 ? 'jours' : 'jour'} sur ${gate.needed} avec une note et des lectures pour savoir si votre visage suit vos notes.`
   }
-  return `${lost}Calibration : ${gate.nDays} jours comparés ; votre visage ne suit pas encore assez vos notes pour estimer votre humeur. Rien n’est affiché.`
+  return `${lost}Vérification : sur ${gate.nDays} jours comparés, votre visage ne suit pas encore nettement vos notes ; l’estimation reste générale, avec une large fourchette.`
 }

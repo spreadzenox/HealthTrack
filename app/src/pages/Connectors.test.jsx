@@ -32,6 +32,7 @@ vi.mock('../connectors/connectorRegistry', () => ({
 vi.mock('../storage/localHealthStorage', () => ({
   upsertEntries: vi.fn().mockResolvedValue({ inserted: 0, skipped: 0 }),
   getLatestEntryAt: vi.fn().mockResolvedValue(null),
+  listEntries: vi.fn().mockResolvedValue([]),
 }))
 
 // Mock connector settings

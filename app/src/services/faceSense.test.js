@@ -98,10 +98,10 @@ describe('diagnostic exportable', () => {
     expect(r.gate).toEqual({ state: 'candidate', days: 34, needed: 30, z: 1.23, openedAt: null, closedAt: null, looks: 3 })
     expect(JSON.stringify(r.gate)).not.toMatch(/note|score|mood/)
     expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, gate } }))
-      .toContain('Calibration : 34 / 30 jours comparables, accord z = 1.23 (ouverture à 3,29 deux semaines de suite)')
+      .toContain('Vérification visage ↔ notes (facultative) : 34 / 30 jours comparables, accord z = 1.23 (réussie à 3,29 deux semaines de suite)')
     const open = { ...gate, state: 'active', z: 4.5, openedAt: '2026-11-20' }
     expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, gate: open } }))
-      .toContain('Calibration : ouverte le 2026-11-20 (accord visage ↔ notes z = 4.5)')
+      .toContain('Vérification visage ↔ notes (facultative) : réussie le 2026-11-20 (z = 4.5)')
     expect(faceDiagnosticReport(active).gate).toBeNull()
   })
 
@@ -112,7 +112,7 @@ describe('diagnostic exportable', () => {
     expect(r.perDay).toEqual(perDay)
     expect(r.retries).toEqual({ tried: 6, faces: 4 })
     const lines = faceDiagnosticLines(s, { history: { stored: 1, forMood: 1, perDay } })
-    expect(lines).toContain('Par jour (médiane sur 7 jours) : 41 déverrouillages, 20 lectures, 9 avec un visage — en dessous des 12 visés : la calibration sera plus lente')
+    expect(lines).toContain('Par jour (médiane sur 7 jours) : 41 déverrouillages, 20 lectures, 9 avec un visage — en dessous des 12 visés : l’estimation restera plus incertaine')
     expect(lines).toContain('2e essais (2 s après une lecture sans visage) : 6, visage lu 4 fois')
     const ok = { ...perDay, days: 1, unlocksPerDay: null, validBurstsPerDay: 14, enough: true }
     expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, perDay: ok } }))

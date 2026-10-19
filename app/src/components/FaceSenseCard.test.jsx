@@ -104,12 +104,49 @@ describe('FaceSenseCard', () => {
     expect(JSON.parse(save.mock.calls[0][0]).history).toMatchObject({ stored: 12, forMood: 9 })
   })
 
-  it('dit où en est la calibration du visage (I112), sans valeur d’humeur', async () => {
+  it('la vérification visage ↔ notes est facultative : elle ne bloque plus l’affichage (consigne du 19/10 au soir)', async () => {
     const gate = { state: 'candidate', nDays: 12, needed: 30, r: null, z: null, openedAt: null, closedAt: null, periods: [], looks: [] }
     const loadHistory = vi.fn(async () => ({ stored: 40, forMood: 30, firstAt: '2026-10-19T06:00:00.000Z', gate }))
     render(<FaceSenseCard plugin={fake(base)} importBursts={vi.fn(async () => ({}))} loadHistory={loadHistory} />)
-    expect(await screen.findByText(/Calibration : 12 jours sur 30 avec une note et des lectures/)).toBeInTheDocument()
-    expect(screen.getByText(/Calibration : 12 \/ 30 jours comparables/)).toBeInTheDocument()
+    expect(await screen.findByText(/Vérification facultative : 12 jours sur 30/)).toBeInTheDocument()
+    expect(screen.getByText(/Vérification visage ↔ notes \(facultative\) : 12 \/ 30 jours comparables/)).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/Rien n’est affiché/)
+  })
+
+  it('affiche l’humeur estimée dès la première lecture, avec fourchette et confiance ; le diagnostic n’en garde pas la valeur', async () => {
+    const estimate = {
+      moment: { at: new Date().toISOString(), note: 3.6, low: 2, high: 5, label: 'plutôt bonne', today: true },
+      day: { date: '2026-10-19', note: 3.6, low: 2, high: 5, label: 'plutôt bonne', readings: 1, quality: 1, framing: 4, spread: null },
+      confidence: 'faible', model: 'prior', baselineDays: 1, calibrationDays: 0, signals: ['visage'],
+    }
+    const loadHistory = vi.fn(async () => ({ stored: 1, forMood: 1, firstAt: new Date().toISOString(), estimate }))
+    const save = vi.fn(async () => 'ok')
+    render(<FaceSenseCard plugin={fake(base)} importBursts={vi.fn(async () => ({}))} loadHistory={loadHistory} save={save} loadEveningNote={async () => null} />)
+    expect(await screen.findByText(/Bien-être estimé aujourd’hui : plutôt bonne, ≈ 3,6 \/ 5 \(entre 2,0 et 5,0\)/)).toBeInTheDocument()
+    expect(screen.getByText(/Confiance faible : 1 lecture aujourd’hui/)).toBeInTheDocument()
+    expect(screen.getByText(/estimation, pas un diagnostic/)).toBeInTheDocument()
+    expect(screen.getByText(/Humeur estimée : modèle général, confiance faible/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le diagnostic' }))
+    await waitFor(() => expect(save).toHaveBeenCalled())
+    const report = JSON.parse(save.mock.calls[0][0])
+    expect(report.estimate).toEqual({ model: 'prior', confidence: 'faible', readingsToday: 1, baselineDays: 1, calibrationDays: 0 })
+    expect(save.mock.calls[0][0]).not.toMatch(/3\.6|plutôt bonne/)
+  })
+
+  it('Tester maintenant : dit l’humeur de ce moment, sans la compter dans le jour', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    try {
+      const testEstimate = { at: new Date().toISOString(), trigger: 'manual', note: 2.4, low: 0.8, high: 4, label: 'moyenne', halfWidth: 1.6 }
+      const loadHistory = vi.fn(async () => ({ stored: 1, forMood: 0, firstAt: new Date().toISOString(), testEstimate }))
+      const plugin = fake(base)
+      render(<FaceSenseCard plugin={plugin} importBursts={vi.fn(async () => ({}))} loadHistory={loadHistory} loadEveningNote={async () => null} />)
+      fireEvent.click(await screen.findByRole('button', { name: 'Tester maintenant' }))
+      await vi.advanceTimersByTimeAsync(4500)
+      expect(await screen.findByText(/Test : visage lu\. Humeur de ce moment : moyenne, ≈ 2,4 \/ 5/)).toBeInTheDocument()
+      expect(plugin.test).toHaveBeenCalled()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('caméra refusée en arrière-plan (signalement du 19/10 15:05) : Relancer redémarre app ouverte, guide Shizuku / ADB', async () => {

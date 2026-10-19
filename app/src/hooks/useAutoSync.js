@@ -40,8 +40,12 @@ export function useAutoSync() {
     syncWeather()
     // Temps d'écran / sommeil estimé : au plus toutes les 30 min, seulement si activé et autorisé.
     syncPhoneUsage()
-    // Lecture du visage : rafales déposées par le service natif depuis la dernière ouverture (scores seuls, I90).
-    importPendingFaceBursts()
+    // Lecture du visage : rafales déposées par le service natif depuis la dernière ouverture (scores seuls, I90) ;
+    // l'humeur estimée de l'accueil se met à jour dès qu'une lecture est rangée.
+    const faces = () => importPendingFaceBursts().then((r) => {
+      if (r?.inserted) window.dispatchEvent(new CustomEvent('health-entries-updated'))
+    })
+    faces()
     // Note du soir d'un geste (I113) : notes données depuis la notification rangées, puis heure et dernière note
     // transmises au natif (pas de notification un soir déjà noté).
     const evening = () => importPendingEveningNotes().finally(() => syncEveningNote())
@@ -54,7 +58,7 @@ export function useAutoSync() {
     const onVisible = () => {
       if (document.visibilityState !== 'visible') return
       recordTimezoneContext()
-      importPendingFaceBursts()
+      faces()
       evening()
       syncWatchIfStale()
     }

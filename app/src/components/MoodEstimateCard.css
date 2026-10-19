@@ -1,0 +1,85 @@
+.mood-estimate {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin: 20px 0 8px;
+  border-left: 3px solid var(--accent);
+}
+
+.mood-estimate-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+.mood-estimate-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.mood-estimate-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(152, 152, 168, 0.15);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.mood-estimate-badge.is-moyenne,
+.mood-estimate-badge.is-bonne {
+  background: rgba(78, 205, 196, 0.15);
+  color: var(--accent);
+}
+
+.mood-estimate-main {
+  margin: 8px 0 4px;
+  font-size: 0.95rem;
+}
+
+.mood-estimate-sub {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mood-range {
+  margin: 8px 0 6px;
+}
+
+.mood-range-track {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(152, 152, 168, 0.18);
+}
+
+.mood-range-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: rgba(78, 205, 196, 0.35);
+}
+
+.mood-range-mark {
+  position: absolute;
+  top: -3px;
+  width: 4px;
+  height: 16px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.mood-range-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
