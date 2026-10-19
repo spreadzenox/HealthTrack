@@ -129,7 +129,7 @@ diagnostic** (prochain run), guide Shizuku / ADB, dictée du soir (voix), puis e
 | 19/10 06:30 — [Note du soir d'un geste (I113)](runs/2026-10-19-0630-note-du-soir.md) | 🔴🙂 | Règle `EveningNote` (JVM), notification 6 boutons + alarme du soir, file native → note `wellbeing` ; bouton dans la saisie ; diagnostic `eveningNote` ; PR #216 |
 | 19/10 08:30 — [Idées : temps par app, voix par la dictée, assez de rafales](runs/2026-10-19-0830-idees-apps-voix-rafales.md) | 💡 | I116–I120 ; simulation rafales / jour ; npj 2026 (texte ≫ audio) ; pas de Gemini Nano sur l’A56 ; PR #217 |
 | 19/10 10:30 — [Carte « Lecture du visage » visible (signalement 08:37)](runs/2026-10-19-1030-carte-visage-visible.md) | 🚑🙂 | Cause : carte rangée dans le volet replié tant que non activée ; épinglée en tête sur Android ; « Réessayer » si le natif est muet ; tests natifs ; PR #218 |
-| 19/10 12:30 — [Temps par app comme facteur X (I116)](runs/2026-10-19-1230-temps-par-app.md) | 🔴🙂 | `queryAppEvents` natif + `phoneApps.js` ; entrées `phone_apps` ; 4 facteurs neutres sans levier, test anti-circularité ; ligne « Dont… » + puce journal ; PR à suivre |
+| 19/10 12:30 — [Temps par app comme facteur X (I116)](runs/2026-10-19-1230-temps-par-app.md) | 🔴🙂 | `queryAppEvents` natif + `phoneApps.js` ; entrées `phone_apps` ; 4 facteurs neutres sans levier, test anti-circularité ; ligne « Dont… » + puce journal ; PR #219 |
 
 ---
 
