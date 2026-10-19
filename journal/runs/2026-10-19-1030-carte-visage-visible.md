@@ -1,6 +1,6 @@
 # 2026-10-19 10:30 Paris (08:30 UTC) — Carte « Lecture du visage » visible (signalement du 19/10 08:37)
 
-**Type** : 🚑 régression bloquante signalée par le propriétaire, chantier bien-être (§00000)  ·  **PR** : voir ci-dessous
+**Type** : 🚑 régression bloquante signalée par le propriétaire, chantier bien-être (§00000)  ·  **PR** : #218
 
 ## Pourquoi
 - Démarrage : main à `301e847` (#217), dernière release v172 (APK présent). Aucune PR « [Auto] » ouverte.
