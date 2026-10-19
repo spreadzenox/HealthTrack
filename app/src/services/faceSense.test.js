@@ -104,6 +104,16 @@ describe('diagnostic exportable', () => {
     expect(faceDiagnosticReport(active).gate).toBeNull()
   })
 
+  it('rappels « Reprendre » (I88 ②) : combien, le dernier, ce qu’a décidé la dernière vérification', () => {
+    const at = Date.UTC(2026, 9, 19, 6)
+    const s = { ...active, running: false, resumeNotices: 2, resumeNoticeAt: at, resumeTaps: 1, resumeCheck: 'recent', resumeCheckAt: at, resumeCheckTrigger: 'periodic' }
+    const r = faceDiagnosticReport(s)
+    expect(r.resume).toEqual({ notices: 2, lastNoticeAt: new Date(at).toISOString(), taps: 1, lastCheck: 'recent', lastCheckAt: new Date(at).toISOString(), lastCheckTrigger: 'periodic' })
+    expect(faceDiagnosticLines(s)).toContain('Notifications « Reprendre » : 2, reprise d’un geste 1 fois ; dernière vérification : déjà prévenu il y a peu (vérification horaire)')
+    expect(faceDiagnosticReport(active).resume).toEqual({ notices: 0, lastNoticeAt: null, taps: 0, lastCheck: null, lastCheckAt: null, lastCheckTrigger: null })
+    expect(faceDiagnosticLines(active).some((l) => l.startsWith('Notifications'))).toBe(false)
+  })
+
   it('résultat inconnu : affiché tel quel', () => {
     expect(outcomeLabel('skip:nouveau')).toBe('skip:nouveau')
     expect(outcomeLabel(null)).toBe('—')

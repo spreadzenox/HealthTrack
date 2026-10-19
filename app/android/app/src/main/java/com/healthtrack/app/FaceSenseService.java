@@ -46,7 +46,7 @@ import java.util.Locale;
  * (FacePipeline + LiteRT), puis oubliées ; seuls les indices de la rafale sont déposés dans une boîte privée
  * (`face-bursts/`) que le JS importera. Écran éteint, il ne fait rien. START_NOT_STICKY : Android ne permet pas
  * de relancer un service caméra depuis l'arrière-plan ; si le service est tué, l'app le voit et propose de le
- * relancer. Le diagnostic (compteurs, temps, raisons des sauts et des rejets) vit dans les préférences
+ * relancer, et FaceResumeJob / FaceResumeReceiver postent une notification « Reprendre » (FaceResumeNotice). Le diagnostic (compteurs, temps, raisons des sauts et des rejets) vit dans les préférences
  * `face_sense`, sans aucun score.
  */
 public class FaceSenseService extends Service {
@@ -118,6 +118,8 @@ public class FaceSenseService extends Service {
         String action = intent == null ? null : intent.getAction();
         if (ACTION_STOP.equals(action)) {
             prefs(this).edit().putBoolean("enabled", false).apply();
+            FaceResumeNotice.cancel(this);
+            FaceResumeJob.cancel(this);
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -135,6 +137,7 @@ public class FaceSenseService extends Service {
             stopSelf();
             return START_NOT_STICKY;
         }
+        FaceResumeNotice.cancel(this);
         if (!running) {
             running = true;
             prefs(this).edit().putBoolean("enabled", true).putLong("startedAt", System.currentTimeMillis())

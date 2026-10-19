@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-19",
+  "kind": "amélioration",
+  "title": "Lecture du visage : une notification pour la reprendre",
+  "items": [
+    "Quand Android arrête la lecture du visage (mise à jour de l'app, redémarrage du téléphone, économie de batterie), une notification discrète, sans son, « Lecture du visage arrêtée » apparaît. Touchez « Reprendre » : HealthTrack s'ouvre et la relance tout seul.",
+    "Elle arrive tout de suite après un redémarrage ou une mise à jour, sinon au plus tard dans l'heure ; si vous l'ignorez, elle ne revient pas avant 6 heures. « Arrêter » éteint la lecture du visage.",
+    "Rien ne s'affiche si vous avez vous-même arrêté la lecture ou si l'app est ouverte (la carte propose alors « Relancer »). Le diagnostic dit combien de rappels ont été envoyés."
+  ]
+}

@@ -468,6 +468,7 @@ async function main() {
           lastOutcome: 'face', lastTrigger: 'unlock', lastOutcomeAt: Date.now() - 6 * 60000,
           outcomes: { face: 8, no_valid_frame: 3, 'skip:too_soon': 3 }, rejected: { no_face: 4, too_dark: 3, turned: 2 },
           startBattery: 82, battery: 76, manufacturer: 'samsung', model: 'SM-A566B', release: '16', sdk: 36, pending: 11,
+          resumeNotices: 1, resumeTaps: 1, resumeCheck: 'running', resumeCheckAt: Date.now() - 40 * 60000, resumeCheckTrigger: 'periodic',
         }
         // 11 rafales en attente (scores fictifs), rangées dans l'historique à l'affichage de la carte (I90)
         let bursts = Array.from({ length: 11 }, (_, i) => ({

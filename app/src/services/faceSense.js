@@ -191,6 +191,15 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
     },
     battery: { atStart: s.startBattery ?? null, now: s.battery ?? null },
     pendingBursts: s.pending ?? 0,
+    // Notification « Reprendre » quand Android a arrêté le service (I88 ②).
+    resume: {
+      notices: s.resumeNotices ?? 0,
+      lastNoticeAt: s.resumeNoticeAt ? new Date(s.resumeNoticeAt).toISOString() : null,
+      taps: s.resumeTaps ?? 0,
+      lastCheck: s.resumeCheck ?? null,
+      lastCheckAt: s.resumeCheckAt ? new Date(s.resumeCheckAt).toISOString() : null,
+      lastCheckTrigger: s.resumeCheckTrigger ?? null,
+    },
     // Rangées dans l'historique (I90) : des comptes seulement.
     history: {
       stored: history?.stored ?? null,
@@ -213,6 +222,17 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
       : null,
   }
 }
+
+const RESUME_CHECKS = {
+  notified: 'notification postée',
+  running: 'service actif',
+  disabled: 'lecture arrêtée par vous',
+  app_open: 'app ouverte',
+  no_permission: 'caméra non autorisée',
+  recent: 'déjà prévenu il y a peu',
+  notifications_off: 'notifications de l’app désactivées',
+}
+const RESUME_TRIGGERS = { periodic: 'vérification horaire', boot: 'après un redémarrage', update: 'après une mise à jour' }
 
 /** Lignes lisibles du diagnostic (carte). */
 export function faceDiagnosticLines(status, { history = null, lastImport = null } = {}) {
@@ -239,6 +259,11 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null 
   }
   if (r.pendingBursts) lines.push(`En attente d’être rangées : ${r.pendingBursts}`)
   if (r.history.lastImport?.dropped) lines.push(`Lectures illisibles écartées au dernier rangement : ${r.history.lastImport.dropped}`)
+  if (r.resume.notices || r.resume.taps) {
+    const c = r.resume.lastCheck
+    const check = c ? ` ; dernière vérification : ${RESUME_CHECKS[c] || c}${r.resume.lastCheckTrigger ? ` (${RESUME_TRIGGERS[r.resume.lastCheckTrigger] || r.resume.lastCheckTrigger})` : ''}` : ''
+    lines.push(`Notifications « Reprendre » : ${r.resume.notices}, reprise d’un geste ${r.resume.taps} fois${check}`)
+  }
   if (r.service.lastError) lines.push(`Dernière erreur : ${r.service.lastError}`)
   return lines
 }

@@ -50,6 +50,21 @@
             android:exported="false"
             android:foregroundServiceType="camera" />
 
+        <!-- Lecture du visage arrêtée → notification « Reprendre » (FaceResumeNotice.java, I88 ②) : vérification
+             toutes les ~heures, et tout de suite après un redémarrage ou une mise à jour de l'app. -->
+        <service
+            android:name=".FaceResumeJob"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <receiver
+            android:name=".FaceResumeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

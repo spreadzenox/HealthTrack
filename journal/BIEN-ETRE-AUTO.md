@@ -44,8 +44,8 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
 2. ✅ Cœur Y / X et test anti-circularité (existant, vérifié ci-dessus).
 3. 🟨 **Visage** : ✅ service caméra « niveau 2 » + diagnostic exportable (18/10 22:30) → ⬜ retour du diagnostic
    de l'A56 → ✅ **I90** import des rafales `face_burst` (19/10 00:30 ; scores seuls, `trigger`, test « composition ») →
-   ⬜ notification « Reprendre » si le service est tué (récepteur de déverrouillage déjà vivant de la montre / tâche
-   des 2 h) → ⬜ guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`) et détection du privilège (I89).
+   ✅ notification « Reprendre » si le service est tué (19/10 04:30 : tâche horaire + redémarrage / mise à
+   jour) → ⬜ guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`) et détection du privilège (I89).
 4. ⬜ **Voix** : prosodie (énergie, débit, hauteur, pauses) par un modèle local, aucun audio gardé ; service
    `microphone` sur le même modèle (I91).
 5. ⬜ **Usage du téléphone** : temps au premier plan par app (`UsageStatsManager`), réseaux sociaux regroupés,
