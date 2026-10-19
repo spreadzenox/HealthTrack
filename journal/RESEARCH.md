@@ -5,6 +5,24 @@
 
 ---
 
+## 2026-10-19 (soir) — Veille (run « idées ») : porte du visage et dérives lentes, One UI, lexiques, voix hors ligne
+
+> Détail, chiffres et pistes dans `IDEES.md` (section du 19/10 20:30, I121–I125).
+
+- **Dérives lentes = faux liens** : simulation avec le vrai `gate.js` (`protocoles/porte-autocorrelation-sim.test.js`) :
+  humeur et indices du visage autocorrélés d'un jour à l'autre (0,6 / 0,6) → 12,7 % de faux départs en 120 j (1,3 %
+  avec des jours indépendants) ; validation croisée par blocs ±7 j + taille d'échantillon effective → ≈ 1–2 % (I121).
+- **Samsung, applis en veille** : ≈ 3 j sans ouverture → services de premier plan, alarmes, tâches restreints ;
+  ≈ 16 j → veille profonde ; lien direct vers « Applis jamais en veille » (`com.samsung.android.lool`,
+  `ACTION_OPEN_CHECKABLE_LISTACTIVITY`, `activity_type` 2) ; aucune API d'état (developer.samsung.com) (I123).
+- **Service caméra lancé en arrière-plan** : jamais d'accès caméra / micro / position, même avec une exemption
+  (developer.android.com, Android 12+) → confirme `startOrigin` + « À relancer » + app-op `CAMERA allow`.
+- **Lexiques** : NRC EmoLex gratuit pour la recherche seulement (licence commerciale payante ; français traduit
+  automatiquement) ; FEEL (LIRMM 2017) sans licence trouvée → lexique maison conservé.
+- **Voix hors ligne fr-FR** : paquets Samsung (clavier, Bixby) réservés à ses apps ; `isOnDeviceRecognitionAvailable`
+  / `checkRecognitionSupport` à sonder sur l'A56 avant tout code natif (I124).
+- **Bien-être numérique ≠ `queryEvents`** : définition non publiée, écarts dus à l'appariement des événements.
+
 ## 2026-10-19 — Veille (run « idées ») : voix et texte, temps par app, rafales par jour
 
 > Détail, chiffres et pistes dans `IDEES.md` (section du 19/10 08:30, I116–I120). Références `[V19-n]`.

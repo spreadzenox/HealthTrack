@@ -105,6 +105,17 @@ et **la phrase n'est pas gardée**. Elle est lue sur le téléphone par deux lis
 **journée** que les tags de contexte — sinon les Analyses compareraient votre humeur à elle-même. C'est la voix « par
 le texte » qu'avait retenue la veille (ce qu'on dit en apprend plus que le son de la voix), sans permission micro.
 
+**Run « idées » du 19/10 20:30 — avant de vous montrer une humeur estimée, s'assurer qu'elle ne ment pas.** En
+rejouant la règle qui décidera si votre visage « suit vos notes », j'ai trouvé un piège : notre humeur ressemble à
+celle de la veille, et ce que lit la caméra dérive aussi lentement pour des raisons sans rapport (la lumière qui baisse
+en automne, des lunettes, une nouvelle coque). Deux choses qui dérivent chacune de leur côté ont l'air liées bien plus
+souvent qu'on ne le croit : en simulation, la règle actuelle aurait affiché une humeur **sans fondement chez 1
+personne sur 8**. Une correction (comparer chaque jour en laissant de côté la semaine qui l'entoure, et tenir compte
+de cette ressemblance d'un jour à l'autre) ramène ce risque à 1 ou 2 sur 100 ; le prix, une calibration un peu plus
+longue. Ce sera codé **avant** toute estimation du jour. J'ai aussi écrit d'avance comment lire votre diagnostic de la
+lecture du visage, pour corriger dès qu'il arrive, et vérifié que Samsung propose un lien direct vers « Applis jamais
+en veille » (un bouton possible si One UI endort la lecture). Rien de nouveau dans l'app ce soir.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -153,13 +164,18 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
   les apps elles-mêmes, minutes par heure, comparées à votre humeur **après coup** seulement.
 - **La voix par ce que vous dites, pas par le son** (I117, I119) : une seule prise de son lue deux fois, aucun
   fichier ; mots du ressenti (humeur) et mots du contexte (facteurs) dans deux listes qui ne se croisent jamais.
+- **Une humeur estimée qu'on peut croire** (I121, 19/10 20:30) : la calibration du visage doit tenir compte des
+  dérives lentes (saison, lumière, humeur qui dure) ; simulé : 1 faux « ça marche » sur 8 sans correction, 1–2 sur 100
+  avec.
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (19/10 12:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
+**Prochaines priorités (19/10 20:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
 visage (et l'adapter à One UI), ✅ temps par app comme facteur (19/10 12:30), ✅ lectures du visage par jour dans le
 diagnostic + 2e essai (19/10 14:30), 🚑 déverrouillages enfin repérés + guide Shizuku / ADB (19/10 16:30, votre
-signalement — **votre diagnostic après la mise à jour est attendu**), dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
+signalement — **votre diagnostic après la mise à jour est attendu**), ✅ phrase du soir (19/10 18:30), **porte de
+calibration robuste aux dérives lentes (I121, prochain run de code si le diagnostic n'est pas arrivé)**, puis estimation
+du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -173,6 +189,7 @@ signalement — **votre diagnostic après la mise à jour est attendu**), dicté
 | 19/10 14:30 — [Visage : 2e essai et lectures par jour (I118)](runs/2026-10-19-1430-visage-rafales-par-jour.md) | 🔴🙂 | `FaceSchedule.shouldRetry` (1 fois, +2 s, ≤ 10 s après le déverrouillage) ; `faceDailyCounts` → diagnostic « Par jour » / « 2e essais » ; PR #220 |
 | 19/10 16:30 — [Visage : chaque déverrouillage repéré (signalement 15:05)](runs/2026-10-19-1630-visage-deverrouillage.md) | 🚑🙂 | Cause : récepteur `RECEIVER_NOT_EXPORTED` → `USER_PRESENT` (SystemUI) filtré ; `UnlockWatch` (diffusion / verrou interrogé / écran déjà ouvert), récepteur exporté sur le fil du service ; diagnostic v2 (allumages, sources, tentatives + erreur exacte, démarrage, app-op caméra) ; « À relancer » + guide Shizuku / ADB (I89) ; PR #221 |
 | 19/10 18:30 — [Votre journée en une phrase (I119)](runs/2026-10-19-1830-phrase-du-soir.md) | 🔴🙂 | Lexiques disjoints ressenti (Y) / contexte (X) + test d'intersection vide ; champ « En une phrase » (dictable au clavier) → note et tags proposés, phrase jamais gardée ; 1 539 tests |
+| 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) |
 
 ---
 
