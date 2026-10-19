@@ -28,6 +28,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   secours `face/UnlockWatch` (verrou interrogé 60 s après `SCREEN_ON`, écran allumé déjà déverrouillé ; testé JVM) ;
   diagnostic v2 (allumages, déverrouillages par source, dernier, `startOrigin`, `cameraOp`, 12 tentatives + erreur
   exacte) ; état « À relancer » + `start({ restart: true })` ; guide Shizuku / ADB (I89 caméra).
+  - [ ] Run idées 19/10 20:30 : correctif vérifié fusionné (v176, puis v177) ; arbre de lecture du diagnostic prêt
+    (I122, IDEES.md).
   - [ ] **Retour du propriétaire** : diagnostic exporté après 2–3 déverrouillages à l'empreinte (lignes « Aujourd'hui :
     écran allumé… », « Accès caméra… », « Dernières tentatives… »).
   - [ ] Si `camera_disabled` / `camera_denied` au déverrouillage malgré `startOrigin = app` : relancer le service à
@@ -90,8 +92,9 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
 - [x] **I119** (20) ✅ **livré le 19/10 18:30** — `services/mood/lexicon.js` (`FEELING_WORDS` → note + tag `stress`,
   `CONTEXT_WORDS` → tags X ; mot à mot, négation, intensifs) ; test d'intersection vide ; champ « En une phrase » dans
   la saisie bien-être (dictable au micro du clavier), propositions à toucher, phrase jamais enregistrée.
-  - [ ] Retour du propriétaire : propositions justes ? mots ratés → enrichir le lexique (ou lexique libre FEEL / NRC-FR
-    si licence compatible).
+  - [ ] Retour du propriétaire : propositions justes ? mots ratés → enrichir le lexique. (FEEL : aucune licence
+    trouvée ; NRC-FR : recherche seulement / licence commerciale payante, traduction automatique → **pas d'import**,
+    run idées 19/10 20:30.)
   - [ ] I117 natif (prosodie) seulement si la prosodie a une chance de passer la porte ; la dictée du clavier couvre
     déjà le texte.
 - [x] **I116** (25) ✅ **livré le 19/10 12:30** (PR « [Auto] Temps par app », `services/phoneApps.js`, `queryAppEvents`, facteurs `social_minutes` / `messaging_minutes` / `video_minutes` / `game_minutes` neutres, à valider sur l'A56 : écart avec Bien-être numérique de One UI) — temps au premier plan par app comme **X** : `queryEvents` garde `ACTIVITY_RESUMED / PAUSED /
@@ -121,7 +124,20 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   - [ ] Écart à la spec I112 : « 6 semaines, z < 2 » refermait 40 % des vrais liens (fenêtre de ≈ 32 jours notés trop
     bruitée) → 8 semaines, z < 1,5. À revoir avec de vraies données.
   - [ ] Puissance modeste pour un lien moyen (ρ 0,5 : 34 % à J90, 60 % à J120) : I113 (notes plus régulières) aide.
-- [ ] I115 estimation du jour avec fourchette (seulement `gate.state === 'active'`, jamais enregistrée comme une note).
+- [ ] **I121** (20) **porte robuste aux dérives lentes — AVANT I115** (run idées 19/10 20:30) : la simulation avec le
+  vrai `gate.js` montre 12,7 % de faux départs en 120 j quand humeur et visage sont autocorrélés 0,6 / 0,6 (22 % à
+  0,8 / 0,95), contre ≈ 1 % avec des jours indépendants (seul cas testé dans `gate.test.js`). Correctif simulé :
+  validation croisée **par blocs** (apprendre sans les 7 jours avant / après) + z × √((1 − a)/(1 + a)) (n effectif)
+  → ≈ 1–2 % ; option écart à la moyenne des 14 j précédents si la dérive reste forte. Ajouter le cas AR(1) aux tests,
+  exposer `gate.a` dans le diagnostic. Script : `journal/protocoles/porte-autocorrelation-sim.test.js`.
+- [ ] I115 estimation du jour avec fourchette (seulement `gate.state === 'active'`, jamais enregistrée comme une note ;
+  **après I121**).
+- [ ] **I122** (20) arbre de lecture du diagnostic de l'A56 (IDEES.md, 19/10 20:30) : à appliquer dès que le fichier
+  arrive.
+- [ ] I123 (15) bouton « Applis jamais en veille » (lien direct Samsung `activity_type` 2), Samsung seulement, si le
+  service a été retrouvé arrêté sans mise à jour ni redémarrage.
+- [ ] I124 (12) sonde vocale dans le diagnostic (moteur local, fr-FR, service par défaut) avant tout I117 natif.
+- [ ] I125 (8) « Rien reconnu — me le signaler ? » sous la phrase du soir (mots tapés par la personne, rien gardé).
 - [x] I113 note du soir d'un geste depuis la notification (calibration, optionnelle). → ✅ 19/10 06:30 (6 boutons 0–5, vue personnalisée).
 - [ ] Mesurer la consommation réelle (diagnostic : batterie au démarrage / maintenant, temps caméra) et la noter ici.
 
@@ -686,6 +702,9 @@ h) ✅ I113 note du soir (19/10 06:30). 2) ⏸️ En pause : montre (sauf régre
 b) ✅ **I116** temps par app (X) (19/10 12:30) ; c) ✅ **I118** diagnostic des rafales / jour + 2e essai (19/10 14:30) ; d) ✅ 🚑 déverrouillages repérés + I89 caméra (19/10 16:30,
 signalement 15:05) — **lire le diagnostic de l'A56 qui suivra la mise à jour avant tout** ; e) **I119** lexiques puis **I117** dictée (voix) ; f) I115 estimation du jour quand la
 porte peut s'ouvrir ; g) I120 plus tard.
+**Précision du run idées du 19/10 20:30** : a) diagnostic de l'A56 dès qu'il arrive, lu avec l'arbre **I122** ;
+b) sinon **I121** porte robuste aux dérives (petit run JS, testable seul) ; c) I123 « Applis jamais en veille » (si le
+diagnostic montre un service endormi) ; d) I124 sonde vocale ; e) I115 estimation du jour, **après I121**.
 
 **Réordonnées le 18/10 (16:30 Paris), consigne du 18/10 complétée après la capture de 15:03 (correctif confirmé sur
 la montre)** : 1) 🔴 petites corrections montre A.1–A.3 — ✅ **livrées le 18/10 16:30** (A.1 détection des apps : un

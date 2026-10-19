@@ -9,6 +9,164 @@
 
 ---
 
+## Run du 19/10/2026 20:30 (Paris) — la porte du visage face aux dérives lentes, lire le diagnostic de l'A56, voix et lexiques
+
+Question du jour, côté utilisateur (consigne du 18/10 au soir, priorité unique) : *« quand HealthTrack me dira enfin
+"votre visage suit vos notes", est-ce que je pourrai le croire ? Et quand j'enverrai mon diagnostic, saurez-vous tout
+de suite quoi corriger ? »* Démarrage : signalement du 19/10 15:05 **déjà corrigé et fusionné** (PR #221, v176 ;
+v177 publiée depuis avec #222) ; aucun diagnostic de l'A56 dans `journal/diagnostics/` ; aucune PR « [Auto] » ouverte ;
+main vert. Méthode : relecture de `gate.js`, simulation avec le vrai code (`protocoles/porte-autocorrelation-sim.test.js`),
+veille sur les pistes laissées par le run de 08:30.
+
+### Ce qu'on apprend (faits)
+
+- **La porte de calibration croit à de faux liens quand tout dérive lentement** [V simulation, vrai `gate.js`] :
+  `gate.test.js` simule des jours **indépendants**. Or l'humeur d'un jour ressemble à celle de la veille (inertie
+  émotionnelle, saisons, périodes chargées) et les indices du visage dérivent aussi pour des raisons sans rapport avec
+  l'humeur (lumière qui baisse en automne, lunettes, coupe de cheveux, nouvelle coque, exposition automatique). Deux
+  séries qui dérivent chacune de leur côté se « corrèlent » par hasard bien plus souvent que ne le croit une erreur
+  type calculée comme si les jours étaient indépendants ; et la validation croisée « un jour en moins » laisse dans
+  l'apprentissage la veille et le lendemain, qui partagent la même dérive. Mesuré (300 tirages sans aucun lien,
+  120 jours, règle actuelle) :
+
+  | autocorrélation humeur / visage (jour à jour) | faux départs, règle actuelle | bloc ±7 j + n effectif | + écart à la moyenne des 14 j précédents | lien ρ 0,5 ouvert à J120 (actuelle → bloc + n eff. + écart) |
+  |---|---|---|---|---|
+  | 0 / 0 (jours indépendants) | 1,3 % | 1,0 % | 2,7 % | 55 → 53 % |
+  | 0,4 / 0,4 | 2,7 % | 1,7 % | 1,7 % | 63 → 45 % |
+  | 0,6 / 0,6 | **12,7 %** | 1,0 % | 2,7 % | 62 → 35 % |
+  | 0,6 / 0,9 (moitié dérive) | 9,3 % | 2,0 % | 2,0 % | 71 → 49 % |
+  | 0,8 / 0,95 (moitié dérive) | **22,3 %** | 2,0 % | 1,3 % | 77 → 37 % |
+  | 0,9 / 0,95 (70 % dérive) | **55,7 %** | 7,0 % | 3,0 % | 79 → 21 % |
+
+  (Écart d'échantillonnage ≈ ±1 point sur les faux départs ; le cas indépendant donne 1,3 % au lieu des 0,5 % de
+  `gate.test.js` parce que les graines diffèrent.) Avec l'autocorrélation typique de l'humeur quotidienne (0,4 à 0,6
+  dans les études de journaux), la règle actuelle afficherait une humeur estimée **sans fondement** chez 1 personne
+  sur 8 ; correctif « bloc + n effectif » : ≈ 1 à 2 %. Le prix : une porte plus lente à s'ouvrir pour un vrai lien
+  (un lien ρ 0,5 ouvert à J120 dans 35–50 % des cas au lieu de 60–75 %, une partie de l'« avantage » de la règle
+  actuelle étant justement due à la dérive commune). C'est le bon côté de l'erreur (D5 : jamais d'humeur qui ne veut
+  rien dire), et les notes du soir d'un geste (I113) et le 2e essai (I118) compensent en partie.
+- **Ce qui est déjà sain dans `gate.js`** [V code] : λ fixé d'avance (pas choisi sur les mêmes jours), sélection des
+  indices sans regarder les notes (présence ≥ 80 % des jours), un seul indice combiné (pas de comparaisons multiples).
+  C'est exactement ce que reproche à **MoodCam** une relecture automatique publiée en 2026 sur Pith (fuite par la
+  sélection des variables, modèle « moyenne du jour » circulaire) [T, relecture générée par un modèle, à prendre comme
+  un avis] : nous n'avons pas ce défaut-là, mais nous avons celui des **voisins dans le temps** (ci-dessus).
+- **Samsung documente enfin ses « applis en veille »** [V developer.samsung.com/mobile/app-management.html] : une
+  app non ouverte **≈ 3 jours** et jugée gourmande passe « en veille » (tâches, alarmes **et services de premier plan
+  restreints**) ; ≈ 16 jours → « veille profonde » (rien ne tourne hors de l'app ouverte). Exemption : Paramètres →
+  Entretien de l'appareil → Batterie → Limites d'utilisation en arrière-plan → **Applis jamais en veille**. Samsung
+  fournit un **lien direct** vers ces listes : action `com.samsung.android.sm.ACTION_OPEN_CHECKABLE_LISTACTIVITY`,
+  paquet `com.samsung.android.lool`, extra `activity_type` = 0 (en veille), 1 (veille profonde), **2 (jamais en
+  veille)**. Aucune API ne dit si une app y est : seul le diagnostic peut le déduire (service vivant, rafales qui
+  manquent). Le propriétaire ouvre l'app chaque jour, donc la veille automatique ne devrait pas le toucher, mais
+  « Optimiser automatiquement » de One UI peut la déclencher plus tôt [T forums].
+- **Service caméra et arrière-plan, rappel exact** [V developer.android.com, FGS Android 12+] : un service de premier
+  plan qui a besoin d'une autorisation « pendant l'utilisation » (caméra, micro, position) **ne peut pas être créé
+  depuis l'arrière-plan, même avec une exemption** (optimisation de batterie désactivée, appareil compagnon,
+  `SYSTEM_ALERT_WINDOW`…) ; s'il l'est quand même, Logcat écrit « Foreground service started from background can not
+  have location/camera/microphone access ». → Confirme le choix du 19/10 16:30 (`startOrigin`, état « À relancer »,
+  relance app ouverte) ; seul l'app-op `CAMERA allow` (Shizuku / ADB) lève la contrainte.
+- **Lexiques français libres : rien d'utilisable sans risque** [V NRC ; T FEEL] : NRC EmoLex est gratuit pour la
+  **recherche**, payant (licence commerciale perpétuelle) sinon, et sa version française vient d'une traduction
+  automatique « parfois fausse » selon NRC lui-même. FEEL (LIRMM, Abdaoui et al. 2017, 14 000 termes) en dérive
+  (traduction + synonymes de NRC, validée par un traducteur) : **aucune licence trouvée** (page HAL bloquée par un
+  anti-robot, NoRaRe et `sentometrics` ne disent rien). → On garde le lexique écrit à la main (I119), enrichi par les
+  retours du propriétaire ; pas d'import tant qu'une licence claire n'est pas lue.
+- **Reconnaissance vocale hors ligne en français sur un Galaxy A** [T] : Samsung distribue des paquets « En-Fr
+  Language Pack » / « Samsung on-device Resource » (dictée hors ligne du clavier Samsung, Bixby hors ligne en
+  français depuis 02/2023), réservés à ses propres apps ; côté Android, `SpeechRecognizer.isOnDeviceRecognitionAvailable`
+  / `createOnDeviceSpeechRecognizer` (API 31) et `checkRecognitionSupport` (API 33) disent si un moteur local existe et
+  s'il gère fr-FR ; sur certains téléphones l'appel lève `UnsupportedOperationException` [T]. **Personne ne publie ce
+  que fait un A56** : il faut le mesurer chez le propriétaire avant d'écrire I117 natif.
+- **Bien-être numérique ≠ `queryEvents`** [T issuetracker 118564471 / 118331259, forums] : Google ne publie pas la
+  définition ; Bien-être numérique compte le temps **à l'écran, écran allumé** ; les écarts viennent de l'appariement
+  des événements (appels en incrustation, apps superposées, `PAUSED` manquant — « Instagram 23 h » signalé). Notre
+  plafond de session (2 h) et la coupure à l'écran éteint couvrent les cas connus ; l'écart réel se mesure sur l'A56.
+- **Recherche 2026 sur le visage** : rien de neuf qui change le plan. Un article CHI 2026 sur la dynamique du sourire
+  dans la dépression (ACM DL 10.1145/3772318.3791208, titre seulement) suit MoodCapture / FacePsy ; MoodCam reste la
+  référence la plus proche (AUC 0,58–0,64). **Emobot** : toujours rien de publié en 2026 (homonymes seulement).
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I121 | **Porte robuste aux dérives lentes** : dans `gate.js`, validation croisée **par blocs** (pour prédire un jour, apprendre sans les 7 jours avant et après) et z corrigé par la **taille d'échantillon effective** (z × √((1 − a)/(1 + a)), a = produit des autocorrélations d'un jour à l'autre de l'indice prédit et des notes, borné à ≥ 0) ; option : écart à la moyenne des 14 jours précédents si la dérive reste forte. Test : jeu AR(1) (0,6 / 0,6 et 0,8 / 0,95) dans `gate.test.js`, faux départs < 3 % à J120 | Une humeur estimée qu'on peut croire (D5) : 12,7 % → ≈ 1–2 % de faux départs avec une humeur réaliste | 5 | 4 | **20** |
+| I122 | **Arbre de lecture du diagnostic de l'A56, écrit d'avance** (ci-dessous) : le run qui reçoit le fichier sait quoi coder en 5 minutes | Que votre prochain retour suffise à trancher (signalement 15:05) | 4 | 5 | **20** |
+| I123 | **« Applis jamais en veille » en un geste, sur Samsung seulement** : bouton dans le Diagnostic (et dans la carte si le service a été retrouvé arrêté sans mise à jour ni redémarrage) qui ouvre directement la liste Samsung (`ACTION_OPEN_CHECKABLE_LISTACTIVITY`, `activity_type` 2), repli sur l'écran batterie de l'app ; complète « Sans restriction » (I96) | Que One UI n'endorme pas la lecture du visage ni la montre (D4, D3 maintenance) | 3 | 5 | 15 |
+| I124 | **Sonde vocale avant la dictée native** : le diagnostic dit si un moteur de reconnaissance local existe (`isOnDeviceRecognitionAvailable`), s'il gère fr-FR (`checkRecognitionSupport`, API 33), quel service est par défaut, et si ML Kit GenAI *Basic* est disponible ; aucun micro ouvert | Décider I117 natif sur un fait, pas une supposition | 3 | 4 | 12 |
+| I125 | **Mots ratés de la phrase du soir, sans garder la phrase** : quand la phrase ne donne aucune proposition, une puce « Rien reconnu — me le signaler ? » ouvre un brouillon de retour (mots tapés par la personne elle-même, rien d'enregistré par l'app) | Enrichir le lexique à partir des vrais mots du propriétaire, sans lexique sous licence douteuse | 2 | 4 | 8 |
+
+**Écartées (pour l'instant)** : *importer FEEL ou NRC-FR* — licence absente (FEEL) ou commerciale payante / traduction
+automatique (NRC). *Ouvrir la porte plus vite en abaissant le seuil z* — la simulation montre que c'est la dérive, pas
+le seuil, qui fabrique les faux départs ; baisser le seuil les multiplierait. *Retirer la tendance de long terme par une
+régression sur le temps* — moins robuste qu'un écart à une moyenne glissante passée quand la dérive n'est pas linéaire,
+et risque de fuite si la fenêtre inclut l'avenir.
+
+### Détail et pistes d'implémentation
+
+**I121 — porte robuste.** `faceIndexLoo(days, { gapDays = 7 })` : pour chaque jour i, Ridge apprise sur les jours
+j tels que |date_j − date_i| > 7 jours (λ = 10 toujours fixé ; standardisation inchangée, sans les notes) ; si moins
+de 20 jours d'apprentissage, indice = moyenne des notes d'apprentissage. `jackknifeCorrelation` inchangé, puis
+`zEff = z × √((1 − a)/(1 + a))`, `a = max(0, r1(indice)) × max(0, r1(notes))`, r1 = autocorrélation au pas d'un jour
+comparable (jours triés, trous ignorés). Regards et seuils inchangés (z ≥ 3,29, deux regards, ≥ 30 jours ; refermeture
+z < 1,5 sur 8 semaines). Tests : garder les tests actuels (jours indépendants : faux départs ≤ 1 %, lien 0,7 ouvert à J90
+≥ 80 % — à revérifier, la puissance baisse un peu), ajouter `simulateDays({ phiMood, phiFace })` : faux départs < 3 % pour
+(0,6 ; 0,6) et (0,8 ; 0,95). Diagnostic : `gate.a` (autocorrélation retenue) pour suivre ce qu'on corrige chez lui. Si
+l'A56 montre une dérive forte du visage (a > 0,5), activer l'écart à la moyenne des 14 jours précédents (option déjà
+simulée). Coût : ≈ 30 lignes ; calcul O(n² × p²) par regard, n ≤ 200 → négligeable.
+
+**I122 — lire le diagnostic de l'A56 (fichier `healthtrack-visage-*.json`, v2).**
+1. `detection.screenOns = 0` alors que le téléphone a servi → le récepteur du service n'existe pas : service mort ou
+   recréé sans `onCreate` complet → regarder `camera.startOrigin`, `resume`, `starts` ; corriger l'enregistrement.
+2. `screenOns > 0`, `unlocks = 0` → ni la diffusion ni l'interrogation du verrou ne voient le déverrouillage
+   (One UI) → dernier secours prévu au backlog : interrogation écran allumé toutes les 2 min + `KEYGUARD_HIDDEN`
+   d'UsageStats.
+3. `unlocks > 0` mais `attempts` vide → `FaceSchedule` refuse tout : lire les motifs (intervalle, appel, chaleur,
+   plafond) ; vérifier que l'horloge de `minIntervalMs` n'est pas remise à zéro à chaque allumage.
+4. `attempts` avec `camera_disabled` / `camera_denied` / `CameraAccessException` et `startOrigin = background` →
+   relance app ouverte (« À relancer ») ; avec `startOrigin = app` → One UI coupe la caméra malgré l'exemption :
+   seule issue robuste, `appops CAMERA allow` (guide), et tester une relance du service à chaque retour dans l'app.
+5. `attempts` réussies mais 0 visage → angle / lumière / délai : regarder `valid`, `rejected` ; essayer un délai de
+   déverrouillage 1,2 → 0,8 s et le 2e essai (I118) ; la caméra frontale de l'A56 peut être lente à s'exposer.
+6. Tout va bien (`unlocks ≈ screenOns`, lectures avec visage ≥ 12 / jour) → passer à I121, puis I115.
+   `userPresents = 0` avec `bySource.keyguard > 0` est **normal** chez Samsung si la diffusion reste filtrée : le
+   secours fait le travail ; le noter dans `protocoles/` comme comportement One UI.
+
+**I123.** `FaceSensePlugin.openSamsungNeverSleep()` : `Intent("com.samsung.android.sm.ACTION_OPEN_CHECKABLE_LISTACTIVITY")`
+`.setPackage("com.samsung.android.lool").putExtra("activity_type", 2)`, `FLAG_ACTIVITY_NEW_TASK` ; si
+`resolveActivity` est nul (autre marque, One UI ancien) → `ACTION_APPLICATION_DETAILS_SETTINGS`. Affiché seulement si
+`Build.MANUFACTURER` = samsung. Manifeste : `<queries><package android:name="com.samsung.android.lool" /></queries>`.
+
+**I124.** Dans `FaceSensePlugin` ou un petit `VoiceProbePlugin` : `SpeechRecognizer.isRecognitionAvailable`,
+`isOnDeviceRecognitionAvailable` (API 31), `checkRecognitionSupport(intent fr-FR, executor, callback)` (API 33 :
+langues installées / téléchargeables), `Settings.Secure.getString(cr, "voice_recognition_service")` ; tout dans un
+`try/catch` (`UnsupportedOperationException`) ; ajouté au diagnostic exporté sous `voice`. Aucun micro ouvert.
+
+### Sources (consultées le 19/10/2026)
+- Samsung Developers, *App management* (applis en veille / veille profonde, lien direct) :
+  developer.samsung.com/mobile/app-management.html (lu).
+- Android Developers, *Foreground service launch restrictions* (Android 12+, autorisations « pendant l'utilisation ») :
+  developer.android.com/about/versions/12/foreground-services (résumé).
+- NRC, *Sentiment and Emotion Lexicons* (conditions) : nrc.canada.ca/en/research-development/products-services/
+  technical-advisory-services/sentiment-emotion-lexicons ; saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm (résumés).
+- Abdaoui, Azé, Bringay, Poncelet, *FEEL: a French Expanded Emotion Lexicon*, Lang. Resour. Eval. 51:833–855 (2017),
+  hal-lirmm.ccsd.cnrs.fr/lirmm-01348016 (notice ; page logicielle lirmm-02136090 bloquée par un anti-robot) ;
+  norare.clld.org/contributions/Abdaoui-2017-EmoLex.
+- Android `SpeechRecognizer` (`createOnDeviceSpeechRecognizer`, `checkRecognitionSupport`) : developer.android.com/
+  reference/android/speech/SpeechRecognizer ; Samsung Research, *On-Device Bixby for 4 European Languages* (02/2023) ;
+  apkmirror « En-Fr Language Pack » (mirroir tiers) [T].
+- issuetracker.google.com/issues/118564471 et /118331259 ; forums Android Central / communauté Samsung [T].
+- MoodCam, arXiv 2412.12625 ; relecture automatique sur pith.science/paper/2412.12625 [T] ; ACM DL
+  10.1145/3772318.3791208 (CHI 2026, titre) ; Emobot : recherches FR / EN sans résultat 2026.
+- Simulation : `journal/protocoles/porte-autocorrelation-sim.test.js` (vrai `faceIndexLoo` / `jackknifeCorrelation`).
+
+### À creuser au prochain run idées (20/10 08:30)
+- Autocorrélation réelle de l'humeur quotidienne auto-déclarée (méta-analyses d'inertie émotionnelle) pour fixer les
+  cas de test de I121 ; et celle des indices du visage dès que l'A56 en a 2 semaines.
+- Ce que fait One UI 8 de `ACTION_USER_PRESENT` (diffusion filtrée ou non) — à confirmer par le diagnostic.
+- Reportés : π0 adaptatif ; I109 (verre / café tardif et VFC).
+
+---
+
 ## Run du 19/10/2026 08:30 (Paris) — ce qui reste à capter : le temps par app, la voix, et assez de déverrouillages
 
 Question du jour, côté utilisateur (consigne du 18/10 au soir, priorité unique) : *« le visage est en place et ma
