@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-19",
+  "kind": "amélioration",
+  "title": "Lecture du visage : la calibration sur vos notes démarre",
+  "items": [
+    "La carte « Lecture du visage » dit où en est la calibration : combien de jours ont à la fois une note de bien-être et des lectures du déverrouillage (30 sont nécessaires).",
+    "HealthTrack vérifie chaque semaine si, chez vous, ce que lit la caméra suit vraiment vos notes, dans un sens comme dans l'autre (rien n'est supposé d'avance, par exemple « sourire = bonne humeur »). Ce n'est qu'à cette condition, deux semaines de suite, qu'une humeur estimée pourra être affichée ; si le lien se perd, elle repasse en attente.",
+    "Toujours aucune valeur d'humeur affichée pour l'instant, et ce sera une estimation, jamais un diagnostic. Vos notes restent facultatives : plus vous en donnez, plus vite la calibration aboutit."
+  ]
+}

@@ -17,6 +17,8 @@ import {
   faceSensePlugin,
 } from '../services/faceSense'
 import { FACE_BURST_TYPE, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
+import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
+import { localDateKey } from '../services/analysisEngine'
 import { listEntries } from '../storage/localHealthStorage'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import './MyDevices.css'
@@ -40,10 +42,15 @@ async function defaultSave(json, filename) {
   return 'Téléchargement du diagnostic démarré.'
 }
 
-/** Comptes des rafales rangées dans l'historique, ou null (base illisible). */
+/** Comptes des rafales rangées dans l'historique et état de la porte de calibration, ou null (base illisible). */
 async function defaultLoadHistory() {
   try {
-    return faceHistorySummary(await listEntries({ type: FACE_BURST_TYPE, limit: Infinity }))
+    const [bursts, notes] = await Promise.all([
+      listEntries({ type: FACE_BURST_TYPE, limit: Infinity }),
+      listEntries({ type: 'wellbeing', limit: Infinity }),
+    ])
+    const gate = evaluateGate(gateDays([...bursts, ...notes]), { today: localDateKey(new Date().toISOString()) })
+    return { ...faceHistorySummary(bursts), gate }
   } catch {
     return null
   }
@@ -203,7 +210,7 @@ export default function FaceSenseCard({
             {history?.stored
               ? `${history.stored} ${history.stored > 1 ? 'lectures gardées' : 'lecture gardée'} depuis le ${frenchDate(history.firstAt)}. `
               : ''}
-            Les mesures attendent d’être assez nombreuses et comparées à vos notes : rien n’est affiché avant.
+            {describeGate(history?.gate)}
           </p>
           {!status.batteryExempt && (
             <p className="my-device-meta">

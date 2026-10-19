@@ -56,7 +56,20 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
 - [ ] I89 guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`, `RECORD_AUDIO allow`) + détection.
 - [ ] I91 voix (prosodie, aucun audio gardé) ; service `microphone`.
 - [ ] Temps au premier plan par app (réseaux sociaux regroupés) comme X.
-- [ ] I112 porte `gate.js` → I115 / estimation du jour avec fourchette.
+- [x] **I112 porte** (run 19/10 02:30) : `services/mood/gate.js`, fonctions pures — `gateDays` (note moyenne du jour ×
+  médianes des rafales `moodFaceBursts`), `faceIndexLoo` (un seul indice combiné : Ridge LOO sur indices
+  standardisés, **λ = 10 fixé d'avance**, indices lus < 80 % des jours écartés), `jackknifeCorrelation`, `evaluateGate`
+  (regards hebdomadaires recalculés, rien de stocké : ouverte à z ≥ 3,29 deux regards de suite avec ≥ 30 jours ;
+  refermée si z < 1,5 deux regards de suite sur les **8** dernières semaines ; après refermeture, seuls les jours
+  suivants comptent ; `periods`, `looks`). z unilatéral : le sens de chaque indice est appris, seule compte une
+  prédiction qui suit les notes. Simulé (`gate.test.js`, graines fixes) : 0,5 % de faux départs en 120 j ; lien net
+  (ρ visage ↔ humeur 0,7, ±) ouvert à J90 dans 90 % ; vrai lien refermé ≤ 15 % (7 %) ; lien disparu → refermé en
+  ≈ 5 semaines. Carte : « Calibration : N jours sur 30 … » (`describeGate`) ; diagnostic `gate { state, days, needed,
+  z, openedAt, closedAt, looks }`.
+  - [ ] Écart à la spec I112 : « 6 semaines, z < 2 » refermait 40 % des vrais liens (fenêtre de ≈ 32 jours notés trop
+    bruitée) → 8 semaines, z < 1,5. À revoir avec de vraies données.
+  - [ ] Puissance modeste pour un lien moyen (ρ 0,5 : 34 % à J90, 60 % à J120) : I113 (notes plus régulières) aide.
+- [ ] I115 estimation du jour avec fourchette (seulement `gate.state === 'active'`, jamais enregistrée comme une note).
 - [ ] I113 note du soir d'un geste depuis la notification (calibration, optionnelle).
 - [ ] Mesurer la consommation réelle (diagnostic : batterie au démarrage / maintenant, temps caméra) et la noter ici.
 
@@ -615,7 +628,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 **Réordonnées le 18/10 (22:30 Paris), consigne du 18/10 au soir (charte §00000) — prime sur tout ce qui suit** :
 1) 🔴🙂 **bien-être entièrement automatique, seul chantier** : a) lire le diagnostic visage de l'A56 dès qu'il arrive
 (`journal/diagnostics/`) ; b) **I90** import des rafales `face_burst` + test « composition » ; c) I88 ② notification
-« Reprendre » ; d) I89 Shizuku / ADB ; e) I91 voix ; f) temps par app (X) ; g) I112 porte → estimation du jour ;
+« Reprendre » ; d) I89 Shizuku / ADB ; e) I91 voix ; f) temps par app (X) ; g) ✅ I112 porte (19/10 02:30) → I115 estimation du jour ;
 h) I113 note du soir (option). 2) ⏸️ En pause : montre (sauf régression), D1, D2, C7.
 
 **Réordonnées le 18/10 (16:30 Paris), consigne du 18/10 complétée après la capture de 15:03 (correctif confirmé sur
