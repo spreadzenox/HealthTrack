@@ -93,4 +93,12 @@ describe('FaceSenseCard', () => {
     await waitFor(() => expect(save).toHaveBeenCalled())
     expect(JSON.parse(save.mock.calls[0][0]).history).toMatchObject({ stored: 12, forMood: 9 })
   })
+
+  it('dit où en est la calibration du visage (I112), sans valeur d’humeur', async () => {
+    const gate = { state: 'candidate', nDays: 12, needed: 30, r: null, z: null, openedAt: null, closedAt: null, periods: [], looks: [] }
+    const loadHistory = vi.fn(async () => ({ stored: 40, forMood: 30, firstAt: '2026-10-19T06:00:00.000Z', gate }))
+    render(<FaceSenseCard plugin={fake(base)} importBursts={vi.fn(async () => ({}))} loadHistory={loadHistory} />)
+    expect(await screen.findByText(/Calibration : 12 jours sur 30 avec une note et des lectures/)).toBeInTheDocument()
+    expect(screen.getByText(/Calibration : 12 \/ 30 jours comparables/)).toBeInTheDocument()
+  })
 })

@@ -91,6 +91,19 @@ describe('diagnostic exportable', () => {
     expect(faceDiagnosticReport(active).history.stored).toBeNull()
   })
 
+  it('porte de calibration (I112) : jours comparables et accord, jamais une humeur', () => {
+    const gate = { state: 'candidate', nDays: 34, needed: 30, r: 0.21, z: 1.234, openedAt: null, closedAt: null, periods: [], looks: [{}, {}, {}] }
+    const r = faceDiagnosticReport(active, { history: { stored: 1, forMood: 1, firstAt: null, gate } })
+    expect(r.gate).toEqual({ state: 'candidate', days: 34, needed: 30, z: 1.23, openedAt: null, closedAt: null, looks: 3 })
+    expect(JSON.stringify(r.gate)).not.toMatch(/note|score|mood/)
+    expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, gate } }))
+      .toContain('Calibration : 34 / 30 jours comparables, accord z = 1.23 (ouverture à 3,29 deux semaines de suite)')
+    const open = { ...gate, state: 'active', z: 4.5, openedAt: '2026-11-20' }
+    expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, gate: open } }))
+      .toContain('Calibration : ouverte le 2026-11-20 (accord visage ↔ notes z = 4.5)')
+    expect(faceDiagnosticReport(active).gate).toBeNull()
+  })
+
   it('résultat inconnu : affiché tel quel', () => {
     expect(outcomeLabel('skip:nouveau')).toBe('skip:nouveau')
     expect(outcomeLabel(null)).toBe('—')

@@ -18,7 +18,7 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
 | Visage : modèles LiteRT dans l'APK | `FaceModels`, `LiteRtModel`, tâche Gradle `faceModels` | ✅ 18/10 18:30, testé sur émulateur |
 | Visage : service « niveau 2 » + diagnostic | `FaceSenseService`, `FaceCamera`, `FaceSensePlugin`, carte `FaceSenseCard` | ✅ **18/10 22:30** (à valider sur l'A56) |
 | Visage : import des rafales dans l'historique | `services/faceBursts.js`, entrée `face_burst` | ✅ **19/10 00:30** (I90) |
-| Porte de calibration (affichage seulement si le visage suit les notes) | `services/mood/gate.js` | ⬜ I112 |
+| Porte de calibration (affichage seulement si le visage suit les notes) | `services/mood/gate.js` | ✅ **19/10 02:30** (I112) ; carte « Calibration : N jours sur 30 » |
 | Voix (prosodie maison, aucun audio gardé) | — | ⬜ I91 |
 | Usage du téléphone / réseaux sociaux | `PhoneUsagePlugin` (écran allumé / éteint / déverrouillé seulement) | 🟨 écran oui ; temps par app ⬜ |
 | Restitution « estimation du jour » | — | ⬜ après la porte |
@@ -50,7 +50,7 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
    `microphone` sur le même modèle (I91).
 5. ⬜ **Usage du téléphone** : temps au premier plan par app (`UsageStatsManager`), réseaux sociaux regroupés,
    comme **X** (voir §2) ; guide « paramètres restreints » d'Android 15+.
-6. ⬜ **Porte et restitution** : `gate.js` (I112), puis une ligne « estimation du jour » avec fourchette, jamais un
+6. 🟨 **Porte et restitution** : ✅ `gate.js` (I112, 19/10 02:30), puis une ligne « estimation du jour » avec fourchette, jamais un
    diagnostic ; le visage complète les jours sans note (I115).
 7. ⬜ Calibration optionnelle : note du soir d'un geste depuis une notification (I113), jamais obligatoire.
 

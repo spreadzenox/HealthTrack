@@ -199,6 +199,18 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
       lastImportAt: lastImport?.at ?? null,
       lastImport: lastImport ? { imported: lastImport.imported ?? 0, dropped: lastImport.dropped ?? 0, kept: lastImport.kept ?? 0 } : null,
     },
+    // Porte de calibration (I112) : accord visage ↔ notes, jamais une humeur.
+    gate: history?.gate
+      ? {
+        state: history.gate.state,
+        days: history.gate.nDays,
+        needed: history.gate.needed,
+        z: history.gate.z == null ? null : Math.round(history.gate.z * 100) / 100,
+        openedAt: history.gate.openedAt,
+        closedAt: history.gate.closedAt,
+        looks: history.gate.looks.length,
+      }
+      : null,
   }
 }
 
@@ -218,6 +230,12 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null 
   }
   if (r.history.stored != null) {
     lines.push(`Historique : ${plural(r.history.stored, 'lecture rangée', 'lectures rangées')}, dont ${r.history.forMood} au déverrouillage avec un visage (comptent pour l’humeur)`)
+  }
+  if (r.gate) {
+    const g = r.gate
+    lines.push(g.state === 'active'
+      ? `Calibration : ouverte le ${g.openedAt} (accord visage ↔ notes z = ${g.z ?? '—'})`
+      : `Calibration : ${g.days} / ${g.needed} jours comparables${g.z == null ? '' : `, accord z = ${g.z} (ouverture à 3,29 deux semaines de suite)`}`)
   }
   if (r.pendingBursts) lines.push(`En attente d’être rangées : ${r.pendingBursts}`)
   if (r.history.lastImport?.dropped) lines.push(`Lectures illisibles écartées au dernier rangement : ${r.history.lastImport.dropped}`)
