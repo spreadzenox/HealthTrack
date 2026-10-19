@@ -209,6 +209,10 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
       lastImportAt: lastImport?.at ?? null,
       lastImport: lastImport ? { imported: lastImport.imported ?? 0, dropped: lastImport.dropped ?? 0, kept: lastImport.kept ?? 0 } : null,
     },
+    // Assez de lectures par jour ? (I118) : médianes sur 7 jours, des comptes seulement.
+    perDay: history?.perDay ?? null,
+    // 2e essai 2 s après une lecture du déverrouillage sans visage (I118).
+    retries: { tried: s.retries ?? 0, faces: s.retryFaces ?? 0 },
     // Porte de calibration (I112) : accord visage ↔ notes, jamais une humeur.
     gate: history?.gate
       ? {
@@ -263,6 +267,15 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
   if (r.history.stored != null) {
     lines.push(`Historique : ${plural(r.history.stored, 'lecture rangée', 'lectures rangées')}, dont ${r.history.forMood} au déverrouillage avec un visage (comptent pour l’humeur)`)
   }
+  if (r.perDay) {
+    const d = r.perDay
+    const unlocks = d.unlocksPerDay == null ? '' : `${plural(d.unlocksPerDay, 'déverrouillage')}, `
+    const verdict = d.enough
+      ? `objectif de ${d.target} atteint`
+      : `en dessous des ${d.target} visés : la calibration sera plus lente`
+    lines.push(`Par jour (médiane sur ${plural(d.days, 'jour')}) : ${unlocks}${plural(d.burstsPerDay, 'lecture')}, ${d.validBurstsPerDay} avec un visage — ${verdict}`)
+  }
+  if (r.retries.tried) lines.push(`2e essais (2 s après une lecture sans visage) : ${r.retries.tried}, visage lu ${r.retries.faces} fois`)
   if (r.gate) {
     const g = r.gate
     lines.push(g.state === 'active'

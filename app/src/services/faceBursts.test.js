@@ -7,6 +7,8 @@ import {
   moodFaceBursts,
   faceHistorySummary,
   getLastFaceImport,
+  faceDailyCounts,
+  VALID_BURSTS_TARGET,
 } from './faceBursts'
 
 const AT = Date.UTC(2026, 9, 19, 7, 12, 3, 250)
@@ -154,5 +156,44 @@ describe('faceHistorySummary', () => {
     ])
     expect(s).toEqual({ stored: 3, forMood: 1, firstAt: at(0) })
     expect(faceHistorySummary([])).toEqual({ stored: 0, forMood: 0, firstAt: null })
+  })
+})
+
+describe('faceDailyCounts (I118 : assez de lectures par jour ?)', () => {
+  const burst = (day, h, valid, trigger = 'unlock') => ({
+    type: FACE_BURST_TYPE,
+    at: new Date(`${day}T${String(h).padStart(2, '0')}:00:00`).toISOString(),
+    payload: { trigger, frames: 3, valid, ...(valid ? { values: { smile: 0.2 } } : {}) },
+  })
+  const usage = (day, unlocks) => ({ type: 'phone_usage', at: new Date(`${day}T12:00:00`).toISOString(), payload: { date: day, unlocks } })
+  const day = (d, n, valid) => Array.from({ length: n }, (_, i) => burst(d, 8 + (i % 14), i < valid ? 2 : 0))
+
+  it('médianes des 7 derniers jours terminés où la lecture a tourné, déverrouillages lus du temps d’écran', () => {
+    const entries = [
+      ...day('2026-10-15', 20, 14), usage('2026-10-15', 40),
+      ...day('2026-10-16', 10, 6), usage('2026-10-16', 30),
+      ...day('2026-10-17', 18, 12), usage('2026-10-17', 36),
+      ...day('2026-10-19', 5, 5), // aujourd'hui : pas terminé, ignoré
+      usage('2026-10-18', 50), // jour sans lecture du visage (service arrêté) : ignoré
+    ]
+    expect(faceDailyCounts(entries, { today: '2026-10-19' })).toEqual({
+      days: 3,
+      unlocksPerDay: 36,
+      burstsPerDay: 18,
+      validBurstsPerDay: 12,
+      target: VALID_BURSTS_TARGET,
+      enough: true,
+    })
+  })
+
+  it('les tests (« manual ») ne comptent pas, un jour hors des 7 derniers non plus', () => {
+    const entries = [...day('2026-10-17', 10, 4), burst('2026-10-17', 9, 2, 'manual'), ...day('2026-10-01', 30, 30)]
+    const c = faceDailyCounts(entries, { today: '2026-10-19' })
+    expect(c).toMatchObject({ days: 1, burstsPerDay: 10, validBurstsPerDay: 4, unlocksPerDay: null, enough: false })
+  })
+
+  it('rien à dire sans jour terminé', () => {
+    expect(faceDailyCounts([burst('2026-10-19', 9, 2)], { today: '2026-10-19' })).toBeNull()
+    expect(faceDailyCounts([], { today: '2026-10-19' })).toBeNull()
   })
 })

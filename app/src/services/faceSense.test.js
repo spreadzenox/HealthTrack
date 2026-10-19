@@ -104,6 +104,23 @@ describe('diagnostic exportable', () => {
     expect(faceDiagnosticReport(active).gate).toBeNull()
   })
 
+  it('lectures par jour et 2e essais (I118) : assez pour la calibration ?', () => {
+    const perDay = { days: 7, unlocksPerDay: 41, burstsPerDay: 20, validBurstsPerDay: 9, target: 12, enough: false }
+    const s = { ...active, retries: 6, retryFaces: 4 }
+    const r = faceDiagnosticReport(s, { history: { stored: 1, forMood: 1, perDay } })
+    expect(r.perDay).toEqual(perDay)
+    expect(r.retries).toEqual({ tried: 6, faces: 4 })
+    const lines = faceDiagnosticLines(s, { history: { stored: 1, forMood: 1, perDay } })
+    expect(lines).toContain('Par jour (médiane sur 7 jours) : 41 déverrouillages, 20 lectures, 9 avec un visage — en dessous des 12 visés : la calibration sera plus lente')
+    expect(lines).toContain('2e essais (2 s après une lecture sans visage) : 6, visage lu 4 fois')
+    const ok = { ...perDay, days: 1, unlocksPerDay: null, validBurstsPerDay: 14, enough: true }
+    expect(faceDiagnosticLines(active, { history: { stored: 1, forMood: 1, perDay: ok } }))
+      .toContain('Par jour (médiane sur 1 jour) : 20 lectures, 14 avec un visage — objectif de 12 atteint')
+    expect(faceDiagnosticReport(active).perDay).toBeNull()
+    expect(faceDiagnosticReport(active).retries).toEqual({ tried: 0, faces: 0 })
+    expect(faceDiagnosticLines(active).some((l) => l.startsWith('Par jour') || l.startsWith('2e essais'))).toBe(false)
+  })
+
   it('rappels « Reprendre » (I88 ②) : combien, le dernier, ce qu’a décidé la dernière vérification', () => {
     const at = Date.UTC(2026, 9, 19, 6)
     const s = { ...active, running: false, resumeNotices: 2, resumeNoticeAt: at, resumeTaps: 1, resumeCheck: 'recent', resumeCheckAt: at, resumeCheckTrigger: 'periodic' }

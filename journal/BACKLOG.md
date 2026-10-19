@@ -80,9 +80,13 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   heure, `social` / `messaging` / `video` / `game` / `news`) ; facteurs sans sens présupposé, minutes **avant** la
   note ; test anti-circularité ; une ligne dans la carte Temps d'écran. **Prochain run de code conseillé** (petit,
   sans dépendre du diagnostic de l'A56).
-- [ ] **I118** (16) assez de rafales sans biais : diagnostic `unlocksPerDay` / `validBurstsPerDay` ; si < 12 valides /
-  jour, 2e essai 2 s après une rafale écartée + intervalle 5 → 2 min ; toujours au déverrouillage (simulé :
-  16 rafales / jour ≈ 32 ; 8 → nettement plus lent ; `protocoles/rafales-par-jour-sim.py`).
+- [x] **I118** (16) ✅ **livré le 19/10 14:30** (PR « [Auto] Visage : 2e essai et lectures par jour ») — natif :
+  `FaceSchedule.shouldRetry` (une fois par déverrouillage, 2 s après une rafale sans aucune image exploitable, jamais
+  au-delà de 10 s après le déverrouillage, jamais pour le test) ; le 2e essai ne compte ni comme déverrouillage ni comme
+  rafale du jour, compteurs `retries` / `retryFaces`. Intervalle minimal : déjà 2 min (inchangé). JS :
+  `faceDailyCounts` (médianes sur les 7 derniers jours terminés où la lecture a tourné : déverrouillages lus du temps
+  d'écran, lectures, lectures avec un visage, objectif 12) → diagnostic `perDay`, `retries` + 2 lignes. **À valider sur
+  l'A56** : la ligne « Par jour » du diagnostic après une semaine ; si < 12 avec un visage, voir les motifs d'écart.
 - [ ] I120 (9) intra-journée (rafale ↔ catégories d'apps dans l'heure d'avant), seulement porte ouverte.
 - [x] **I112 porte** (run 19/10 02:30) : `services/mood/gate.js`, fonctions pures — `gateDays` (note moyenne du jour ×
   médianes des rafales `moodFaceBursts`), `faceIndexLoo` (un seul indice combiné : Ridge LOO sur indices
@@ -659,8 +663,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 « Reprendre » ; d) I89 Shizuku / ADB ; e) I91 voix ; f) temps par app (X) ; g) ✅ I112 porte (19/10 02:30) → I115 estimation du jour ;
 h) ✅ I113 note du soir (19/10 06:30). 2) ⏸️ En pause : montre (sauf régression), D1, D2, C7.
 **Précision du run idées du 19/10 08:30 (ordre interne du point 1)** : a) diagnostic A56 dès qu'il arrive ;
-b) ✅ **I116** temps par app (X) (19/10 12:30) ; c) **I118** (prochain run de code) diagnostic des rafales / jour (+ 2e
-essai) ; d) I89 Shizuku / ADB ; e) **I119** lexiques puis **I117** dictée (voix) ; f) I115 estimation du jour quand la
+b) ✅ **I116** temps par app (X) (19/10 12:30) ; c) ✅ **I118** diagnostic des rafales / jour + 2e essai (19/10 14:30) ; d) **I89 Shizuku / ADB (prochain run de
+code)** ; e) **I119** lexiques puis **I117** dictée (voix) ; f) I115 estimation du jour quand la
 porte peut s'ouvrir ; g) I120 plus tard.
 
 **Réordonnées le 18/10 (16:30 Paris), consigne du 18/10 complétée après la capture de 15:03 (correctif confirmé sur

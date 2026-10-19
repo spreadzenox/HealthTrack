@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-19",
+  "kind": "amélioration",
+  "title": "Lecture du visage : un 2e essai, et combien de lectures par jour",
+  "items": [
+    "Quand la caméra n'a pas vu votre visage au déverrouillage (tête tournée, trop sombre…), la lecture reprend une seule fois, 2 secondes plus tard, et toujours dans les 10 secondes qui suivent le déverrouillage. Moins de lectures perdues, sans en prendre plus souvent.",
+    "Le diagnostic (Plus → Connecteurs → Lecture du visage → Diagnostic) dit désormais, sur les 7 derniers jours, combien de déverrouillages, de lectures et de lectures avec un visage vous avez par jour, et si c'est assez (12 visées) pour que la calibration aboutisse en 2 à 3 mois.",
+    "Comme avant : aucune image gardée, et seulement des comptes dans le diagnostic, jamais une valeur."
+  ]
+}

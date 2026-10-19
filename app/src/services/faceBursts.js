@@ -146,3 +146,57 @@ export function faceHistorySummary(entries) {
   const firstAt = bursts.reduce((min, e) => (min == null || e.at < min ? e.at : min), null)
   return { stored: bursts.length, forMood: moodFaceBursts(bursts).length, firstAt }
 }
+
+/** Lectures du déverrouillage avec un visage visées par jour (I118 : simulé, 12–16 → porte en 2–3 mois). */
+export const VALID_BURSTS_TARGET = 12
+const COUNT_DAYS = 7
+
+const dayKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+function median(values) {
+  if (!values.length) return null
+  const v = [...values].sort((a, b) => a - b)
+  const mid = Math.floor(v.length / 2)
+  return v.length % 2 ? v[mid] : Math.round((v[mid - 1] + v[mid]) / 2)
+}
+
+/**
+ * Assez de lectures par jour ? (I118, diagnostic). Sur les 7 derniers jours terminés où la lecture a tourné
+ * (au moins une rafale du déverrouillage), médianes des rafales du déverrouillage, de celles qui ont lu un visage
+ * et des déverrouillages comptés par le temps d'écran (`phone_usage`, null s'il n'est pas activé). Des comptes
+ * seulement, jamais une valeur. null sans aucun jour terminé.
+ *
+ * @param {{ today?: string }} opts  today : clé du jour en cours (AAAA-MM-JJ, heure locale)
+ */
+export function faceDailyCounts(entries, { today = dayKey(new Date()) } = {}) {
+  const [y, m, d] = today.split('-').map(Number)
+  const from = dayKey(new Date(y, m - 1, d - COUNT_DAYS))
+  const inWindow = (k) => k >= from && k < today
+  const days = new Map()
+  const valid = new Set(moodFaceBursts(entries))
+  for (const e of entries || []) {
+    if (e?.type !== FACE_BURST_TYPE || !MOOD_TRIGGERS.includes(e.payload?.trigger)) continue
+    const k = dayKey(new Date(e.at))
+    if (!inWindow(k)) continue
+    const c = days.get(k) || { bursts: 0, valid: 0 }
+    c.bursts += 1
+    if (valid.has(e)) c.valid += 1
+    days.set(k, c)
+  }
+  if (!days.size) return null
+  const unlocks = new Map()
+  for (const e of entries || []) {
+    const k = e?.type === 'phone_usage' ? e.payload?.date : null
+    if (k && days.has(k) && Number.isFinite(e.payload.unlocks)) unlocks.set(k, e.payload.unlocks)
+  }
+  const counts = [...days.values()]
+  const validBurstsPerDay = median(counts.map((c) => c.valid))
+  return {
+    days: days.size,
+    unlocksPerDay: median([...unlocks.values()]),
+    burstsPerDay: median(counts.map((c) => c.bursts)),
+    validBurstsPerDay,
+    target: VALID_BURSTS_TARGET,
+    enough: validBurstsPerDay >= VALID_BURSTS_TARGET,
+  }
+}

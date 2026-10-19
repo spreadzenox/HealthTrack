@@ -74,7 +74,8 @@ public class FaceSenseService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (handler == null) return;
             if (Intent.ACTION_USER_PRESENT.equals(intent.getAction())) {
-                handler.postDelayed(() -> burst(FaceSchedule.TRIGGER_UNLOCK), UNLOCK_DELAY_MS);
+                long unlockAt = SystemClock.elapsedRealtime();
+                handler.postDelayed(() -> burst(FaceSchedule.TRIGGER_UNLOCK, unlockAt, false), UNLOCK_DELAY_MS);
             } else if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
                 handler.removeCallbacksAndMessages(null);
             }
@@ -143,7 +144,7 @@ public class FaceSenseService extends Service {
             prefs(this).edit().putBoolean("enabled", true).putLong("startedAt", System.currentTimeMillis())
                     .putInt("startBattery", batteryPercent(this)).remove("lastError").apply();
         }
-        if (ACTION_TEST.equals(action)) handler.post(() -> burst(FaceSchedule.TRIGGER_MANUAL));
+        if (ACTION_TEST.equals(action)) handler.post(() -> burst(FaceSchedule.TRIGGER_MANUAL, 0, false));
         return START_NOT_STICKY;
     }
 
@@ -171,8 +172,12 @@ public class FaceSenseService extends Service {
         return null;
     }
 
-    /** Une rafale, sur le fil du service (jamais deux à la fois). */
-    private void burst(String trigger) {
+    /**
+     * Une rafale, sur le fil du service (jamais deux à la fois). `retry` : 2e essai du même déverrouillage
+     * (FaceSchedule.shouldRetry, I118), qui ne compte ni comme un nouveau déverrouillage ni comme une nouvelle
+     * rafale du jour, et n'est pas soumis à l'intervalle minimal posé par le 1er essai.
+     */
+    private void burst(String trigger, long unlockAt, boolean retry) {
         SharedPreferences p = prefs(this);
         long now = System.currentTimeMillis();
         String day = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date(now));
@@ -181,9 +186,9 @@ public class FaceSenseService extends Service {
         }
         int today = p.getInt("dayBursts", 0);
         boolean unlock = FaceSchedule.TRIGGER_UNLOCK.equals(trigger);
-        if (unlock) p.edit().putInt("dayUnlocks", p.getInt("dayUnlocks", 0) + 1).apply();
+        if (unlock && !retry) p.edit().putInt("dayUnlocks", p.getInt("dayUnlocks", 0) + 1).apply();
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        String skip = FaceSchedule.decide(trigger, now, p.getLong("lastBurstAt", 0), today,
+        String skip = FaceSchedule.decide(trigger, now, retry ? 0 : p.getLong("lastBurstAt", 0), today,
                 pm == null || pm.isInteractive(), inCall(), thermal(pm));
         if (skip == null && !hasCameraPermission(this)) skip = "no_permission";
         if (skip == null && !ensurePipeline()) skip = "no_models";
@@ -216,7 +221,9 @@ public class FaceSenseService extends Service {
             return;
         }
         SharedPreferences.Editor e = p.edit();
-        if (unlock) e.putLong("lastBurstAt", now).putInt("dayBursts", today + 1);
+        if (unlock && !retry) e.putLong("lastBurstAt", now).putInt("dayBursts", today + 1);
+        if (retry) e.putInt("retries", p.getInt("retries", 0) + 1);
+        if (retry && result != null) e.putInt("retryFaces", p.getInt("retryFaces", 0) + 1);
         if (unlock && result != null) e.putInt("dayFaces", p.getInt("dayFaces", 0) + 1);
         e.putLong("sumCameraMs", p.getLong("sumCameraMs", 0) + cap.openMs)
                 .putLong("sumInferenceMs", p.getLong("sumInferenceMs", 0) + inferenceMs)
@@ -224,6 +231,11 @@ public class FaceSenseService extends Service {
         for (String r : rejections) e.putInt("r_" + r, p.getInt("r_" + r, 0) + 1);
         e.apply();
         outcome(trigger, result != null ? "face" : "no_valid_frame", now);
+        Handler h = handler;
+        if (h != null && FaceSchedule.shouldRetry(trigger, result != null, retry, SystemClock.elapsedRealtime() - unlockAt)) {
+            // Annulé avec le reste si l'écran s'éteint d'ici là (récepteur SCREEN_OFF).
+            h.postDelayed(() -> burst(trigger, unlockAt, true), FaceSchedule.RETRY_DELAY_MS);
+        }
     }
 
     private void outcome(String trigger, String what, long at) {
