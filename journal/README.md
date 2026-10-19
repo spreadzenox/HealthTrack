@@ -68,19 +68,33 @@ maintenant avec un bouton « Réessayer » au lieu de rester muette. **Pour vér
 Nouveautés, la première ligne dit « Version installée : … » ; la carte existe depuis la v168, la correction arrive
 dans la version publiée juste après ce run (v173 ou plus).
 
+**Run du 19/10 12:30 — le temps passé sur les réseaux sociaux, la vidéo, les jeux, compté tout seul.** L'accès
+« Données d'utilisation » que vous avez déjà donné suffit : HealthTrack compte maintenant, chaque jour, les minutes
+passées par type d'app (réseaux sociaux, messageries — à part —, vidéo, jeux), et heure par heure. La carte « Temps
+d'écran et sommeil » ajoute « Dont réseaux sociaux 1 h 12 · vidéo 40 min… », et le journal de chaque journée une puce
+« Réseaux sociaux ». Les Analyses comparent ces minutes à votre bien-être **sans aucun a priori** : rien n'est codé
+comme « bon » ou « mauvais », et aucun conseil « passez moins de temps sur… » n'est proposé — vos données diront si,
+chez vous, ça va de pair avec une meilleure ou une moins bonne humeur. C'est un **facteur**, jamais un ingrédient de
+l'humeur estimée (vérifié par un test). Seul le nom de l'app ouverte est lu, jamais son contenu. Les 10 derniers
+jours sont repris d'un coup.
+
 **Ce qu'il me faut (votre Galaxy A56)** — c'est l'étape qui débloque la suite : après la mise à jour (vérifiez dans
 Plus → Nouveautés que la version installée est au moins celle publiée le 19/10 vers 11 h), Plus → Connecteurs → la
 carte **Lecture du visage**, juste sous « Mes appareils » → **« Activer la lecture du visage »** (accepter l'appareil photo) →
 **« Sans restriction »** (accepter) ; utilisez le téléphone normalement quelques heures ; puis **Diagnostic →
 « Enregistrer le diagnostic »** et envoyez-moi le fichier `Documents/healthtrack-visage-….json` (ni image ni mesure
 dedans ; il dit maintenant aussi combien de lectures sont rangées). Dites-moi si le **point vert** s'allume environ
-1 s après chaque déverrouillage. **Nouveau (facultatif)** : allumez « 🔔 Me la demander le soir » dans la saisie bien-être, autorisez les
+1 s après chaque déverrouillage. **Nouveau (temps par app)** : un soir, une capture de la ligne « Dont réseaux
+sociaux … » (Plus → Connecteurs → Temps d'écran et sommeil) et une de Paramètres → Bien-être numérique (détail des
+apps du jour), pour vérifier que les chiffres concordent. **Nouveau (facultatif)** : allumez « 🔔 Me la demander le soir » dans la saisie bien-être, autorisez les
 notifications, et dites-moi si la notification arrive le soir, si les 6 chiffres sont lisibles et si la note
 apparaît dans le journal à l'ouverture suivante. **Test « Reprendre »** : juste après l'installation de cette mise à jour, sans ouvrir l'app, une
 notification « Lecture du visage arrêtée » devrait apparaître (si la lecture était activée) ; touchez « Reprendre »
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Temps par type d'app (run 19/10 12:30)** : réseaux sociaux, messageries, vidéo, jeux, comptés seuls et comparés à
+  votre bien-être sans a priori.
 - **Carte « Lecture du visage » visible (run 19/10 10:30)** : toujours juste sous « Mes appareils », même pas encore
   activée ; « Réessayer » si le module ne répond pas.
 - **Note du soir d'un geste (run 19/10 06:30)** : une notification 0–5 le soir, notée sans ouvrir l'app.
@@ -103,9 +117,9 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (19/10 10:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
-visage (et l'adapter à One UI), **temps par app comme facteur** (prochain run), lectures du visage par jour dans le
-diagnostic, guide Shizuku / ADB, dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
+**Prochaines priorités (19/10 12:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
+visage (et l'adapter à One UI), ✅ temps par app comme facteur (19/10 12:30), **lectures du visage par jour dans le
+diagnostic** (prochain run), guide Shizuku / ADB, dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -115,6 +129,7 @@ diagnostic, guide Shizuku / ADB, dictée du soir (voix), puis estimation du jour
 | 19/10 06:30 — [Note du soir d'un geste (I113)](runs/2026-10-19-0630-note-du-soir.md) | 🔴🙂 | Règle `EveningNote` (JVM), notification 6 boutons + alarme du soir, file native → note `wellbeing` ; bouton dans la saisie ; diagnostic `eveningNote` ; PR #216 |
 | 19/10 08:30 — [Idées : temps par app, voix par la dictée, assez de rafales](runs/2026-10-19-0830-idees-apps-voix-rafales.md) | 💡 | I116–I120 ; simulation rafales / jour ; npj 2026 (texte ≫ audio) ; pas de Gemini Nano sur l’A56 ; PR #217 |
 | 19/10 10:30 — [Carte « Lecture du visage » visible (signalement 08:37)](runs/2026-10-19-1030-carte-visage-visible.md) | 🚑🙂 | Cause : carte rangée dans le volet replié tant que non activée ; épinglée en tête sur Android ; « Réessayer » si le natif est muet ; tests natifs ; PR #218 |
+| 19/10 12:30 — [Temps par app comme facteur X (I116)](runs/2026-10-19-1230-temps-par-app.md) | 🔴🙂 | `queryAppEvents` natif + `phoneApps.js` ; entrées `phone_apps` ; 4 facteurs neutres sans levier, test anti-circularité ; ligne « Dont… » + puce journal ; PR #219 |
 
 ---
 

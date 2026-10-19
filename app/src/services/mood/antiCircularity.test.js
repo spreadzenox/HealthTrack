@@ -5,7 +5,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { ESTIMATOR_INPUTS, isEstimatorInput, ESTIMATOR_TAGS } from './estimatorInputs'
-import { VARIABLE_META, buildDailyDataset, computeBasicCorrelations } from '../analysisEngine'
+import { VARIABLE_META, PHONE_APPS_KEYS, buildDailyDataset, computeBasicCorrelations } from '../analysisEngine'
 import { BEHAVIOR_TAGS, computeTagEffects } from '../behaviorTags'
 import { FACE_BURST_TYPE, MOOD_TRIGGERS, moodFaceBursts } from '../faceBursts'
 
@@ -28,6 +28,24 @@ describe('séparation Y (humeur) / X (comportements et contexte)', () => {
     expect(isEstimatorInput('social_media_minutes')).toBe(false)
     expect(isEstimatorInput('screen_late_minutes')).toBe(false)
     expect(isEstimatorInput('sleepMinutes')).toBe(false)
+  })
+
+  it("le temps par app (réseaux sociaux, vidéo…) est un facteur X, jamais une entrée de l'estimateur (I116)", () => {
+    const keys = Object.keys(PHONE_APPS_KEYS)
+    expect(keys).toContain('social_minutes')
+    for (const k of keys) {
+      expect(VARIABLE_META[k]).toBeDefined()
+      expect(isEstimatorInput(k)).toBe(false)
+    }
+    expect(isEstimatorInput('phone_apps')).toBe(false)
+    const entries = []
+    for (let i = 0; i < 20; i++) {
+      entries.push({ type: 'wellbeing', at: new Date(2026, 8, 1 + i, 21).toISOString(), payload: { score: 2 + (i % 3) } })
+      entries.push({ type: 'phone_apps', source: 'phone', at: new Date(2026, 8, 1 + i, 12).toISOString(), payload: { minutes: { social: 30 + 20 * (i % 3) } } })
+    }
+    const factors = (computeBasicCorrelations(entries)?.correlations || []).map((c) => c.variable)
+    expect(factors).toContain('social_minutes')
+    expect(factors.filter(isEstimatorInput)).toEqual([])
   })
 
   it("les tags qui sont des entrées de l'estimateur sont côté Y, les autres côté X", () => {

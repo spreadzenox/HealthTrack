@@ -451,6 +451,27 @@ async function main() {
           checkAccess: async () => ({ granted, supported: true }),
           openAccessSettings: async () => {},
           queryScreenEvents: async () => ({ events }),
+          // Temps par app (I116) : chaque session d'écran répartie entre quelques apps fictives.
+          queryAppEvents: async () => {
+            const cycle = ['com.instagram.android', 'com.whatsapp', 'com.google.android.youtube', 'com.example.notes']
+            const appEvents = []
+            for (let i = 0; i < events.length; i += 3) {
+              const on = events[i].t
+              const off = events[i + 2].t
+              const step = (off - on) / cycle.length
+              cycle.forEach((p, k) => appEvents.push({ t: on + k * step, e: 'fg', p }, { t: on + (k + 1) * step, e: 'bg', p }))
+              appEvents.push({ t: off, e: 'off' })
+            }
+            return {
+              events: appEvents,
+              apps: {
+                'com.instagram.android': { label: 'Instagram', category: -1 },
+                'com.whatsapp': { label: 'WhatsApp', category: 4 },
+                'com.google.android.youtube': { label: 'YouTube', category: 2 },
+                'com.example.notes': { label: 'Notes', category: 7 },
+              },
+            }
+          },
         }
       }, String(args.phone))
     }

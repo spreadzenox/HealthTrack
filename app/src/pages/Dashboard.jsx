@@ -48,6 +48,7 @@ const TYPE_LABELS = {
   blood_glucose: 'Glycémie',
   weather: 'Météo',
   phone_usage: 'Téléphone',
+  phone_apps: 'Temps par app',
   context: 'Fuseau horaire',
 }
 
@@ -182,6 +183,7 @@ function summaryChips(s) {
     chips.push(['Repas', s.mealKcal > 0 ? `${s.meals} · ≈ ${fr(s.mealKcal)} kcal` : String(s.meals)])
   }
   if (s.screenMinutes != null) chips.push(['Écran', formatScreenMinutes(s.screenMinutes)])
+  if (s.socialMinutes > 0) chips.push(['Réseaux sociaux', formatScreenMinutes(s.socialMinutes)])
   if (s.weather) {
     const w = weatherSummaryParts(s.weather)
     if (w.length) chips.push(['Météo', w[0]])

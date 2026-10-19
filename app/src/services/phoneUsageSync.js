@@ -3,10 +3,13 @@
  * PhoneUsage et mise à jour à l'ouverture de l'app (au plus toutes les 30 min). Chaque mise à jour
  * relit les 10 derniers jours du journal d'Android : les journées terminées deviennent des entrées
  * `phone_usage` (sans doublon), la journée en cours reste dans les réglages pour l'affichage.
+ * Même chose pour le temps par catégorie d'app (entrées `phone_apps`, I116) quand le plugin natif sait
+ * le lire ; sinon (ancienne version de l'app) le temps d'écran est enregistré quand même.
  */
 import { Capacitor, registerPlugin } from '@capacitor/core'
 import { upsertEntries } from '../storage/localHealthStorage'
 import { phoneUsageEntries, summarizePhoneDay, dateKeyOf } from './phoneUsage'
+import { phoneAppsEntries, summarizeAppsDay } from './phoneApps'
 
 const KEY = 'healthtrack_phone_usage'
 export const PHONE_USAGE_STALE_MS = 30 * 60 * 1000
@@ -20,7 +23,7 @@ function defaultPlugin() {
   return NativePhoneUsage
 }
 
-const DEFAULTS = { enabled: false, lastSyncAt: null, lastError: null, today: null }
+const DEFAULTS = { enabled: false, lastSyncAt: null, lastError: null, today: null, todayApps: null }
 
 export function getPhoneUsageSettings() {
   try {
@@ -74,6 +77,20 @@ export async function openPhoneUsageAccessSettings(plugin = defaultPlugin()) {
 
 let inFlight = null
 
+/** Apps au premier plan (I116), ou null si le plugin ne sait pas les lire : jamais bloquant. */
+async function readAppEvents(plugin, end) {
+  if (typeof plugin.queryAppEvents !== 'function') return null
+  try {
+    const res = await plugin.queryAppEvents({ start: end - LOOKBACK_MS, end })
+    return {
+      events: Array.isArray(res?.events) ? res.events : [],
+      apps: res?.apps && typeof res.apps === 'object' ? res.apps : {},
+    }
+  } catch {
+    return null
+  }
+}
+
 /**
  * Lit le journal d'Android et enregistre les journées terminées. Ne lève jamais.
  * @returns {Promise<{ ran: boolean, inserted?: number, error?: string, noAccess?: boolean }>}
@@ -98,12 +115,17 @@ export async function syncPhoneUsage({ force = false, now = new Date(), plugin =
       const end = now.getTime()
       const res = await plugin.queryScreenEvents({ start: end - LOOKBACK_MS, end })
       const events = Array.isArray(res?.events) ? res.events : []
-      const entries = phoneUsageEntries(events, { now: end })
+      const apps = await readAppEvents(plugin, end)
+      const entries = [
+        ...phoneUsageEntries(events, { now: end }),
+        ...(apps ? phoneAppsEntries(apps.events, apps.apps, { now: end }) : []),
+      ]
       const result = entries.length ? await write(entries) : { inserted: 0 }
       setPhoneUsageSettings({
         lastSyncAt: now.toISOString(),
         lastError: null,
         today: events.length ? summarizePhoneDay(events, dateKeyOf(end), { now: end }) : null,
+        todayApps: apps?.events.length ? summarizeAppsDay(apps.events, apps.apps, dateKeyOf(end), { now: end }) : null,
       })
       if (result?.inserted > 0) window.dispatchEvent(new CustomEvent('health-entries-updated'))
       return { ran: true, inserted: result?.inserted ?? 0 }

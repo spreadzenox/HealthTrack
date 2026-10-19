@@ -33,6 +33,7 @@ import {
   MIN_WEEKEND_DAYS,
   DAY_OVER_HOUR,
   SAME_DAY_KEYS,
+  PHONE_APPS_KEYS,
 } from './analysisEngine'
 
 // ---------------------------------------------------------------------------
@@ -2095,6 +2096,45 @@ describe('téléphone (entrées « phone_usage »)', () => {
 
   it('une journée avec seulement le temps d’écran ne compte pas comme une journée de données', () => {
     expect(countTotalDataDays([makePhone('2026-01-10', { screenMinutes: 10 }), makeWellbeing('2026-01-11', 3)])).toBe(1)
+  })
+})
+
+describe('temps par app (entrées « phone_apps », I116)', () => {
+  function makeApps(dateStr, minutes) {
+    return { type: 'phone_apps', source: 'phone', at: `${dateStr}T10:00:00Z`, payload: { date: dateStr, minutes, byHour: {}, topApps: [] } }
+  }
+
+  it('minutes par catégorie ; 0 quand la catégorie n’a pas servi ce jour-là ; inconnues sans journal', () => {
+    const ds = buildDailyDataset([
+      makeWellbeing('2026-01-10', 3),
+      makeApps('2026-01-10', { social: 72, video: 30 }),
+      makeWellbeing('2026-01-11', 4),
+    ])
+    expect(ds[0]).toMatchObject({ social_minutes: 72, video_minutes: 30, game_minutes: 0, messaging_minutes: 0 })
+    expect(ds[1].social_minutes).toBeNull()
+  })
+
+  it('aucun sens d’effet supposé (D6) : facteurs neutres, sans conseil « en faire moins »', () => {
+    for (const k of Object.keys(PHONE_APPS_KEYS)) {
+      expect(VARIABLE_META[k].direction).toBe('neutral')
+      expect(VARIABLE_META[k].group).toBe('lifestyle')
+      expect(LEVER_ACTIONS[k]).toBeUndefined()
+    }
+    expect(VARIABLE_META.social_minutes.label).toMatch(/réseaux sociaux/i)
+  })
+
+  it('ordre temporel (X avant Y) : une journée notée tôt ne compte pas ses minutes du jour', () => {
+    const entries = [
+      { type: 'wellbeing', at: new Date(2026, 0, 10, 11).toISOString(), payload: { score: 3 } },
+      { type: 'phone_apps', source: 'phone', at: new Date(2026, 0, 10, 12).toISOString(), payload: { minutes: { social: 90 } } },
+    ]
+    const [row] = buildDailyDataset(entries, { beforeRating: true })
+    expect(row.social_minutes).toBeNull()
+    for (const k of Object.keys(PHONE_APPS_KEYS)) expect(SAME_DAY_KEYS).toContain(k)
+  })
+
+  it('ne fait pas d’une journée une journée de données', () => {
+    expect(countTotalDataDays([makeApps('2026-01-10', { social: 10 }), makeWellbeing('2026-01-11', 3)])).toBe(1)
   })
 })
 

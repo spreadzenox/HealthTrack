@@ -57,6 +57,42 @@ describe('phoneUsageSync', () => {
     expect(s.today.sleepEstimate.minutes).toBe(7 * 60 + 40)
   })
 
+  it('temps par app (I116) : journées terminées en entrées `phone_apps`, journée en cours pour l’affichage', async () => {
+    enablePhoneUsage()
+    const appEvents = [
+      { t: t('2026-10-10', 23), e: 'off' },
+      { t: t('2026-10-11', 9), e: 'fg', p: 'com.instagram.android' },
+      { t: t('2026-10-11', 9, 40), e: 'bg', p: 'com.instagram.android' },
+      { t: t('2026-10-12', 8), e: 'fg', p: 'com.google.android.youtube' },
+      { t: t('2026-10-12', 8, 25), e: 'bg', p: 'com.google.android.youtube' },
+    ]
+    const plugin = {
+      ...fakePlugin({ events: [...use(t('2026-10-10', 10), 30), ...use(t('2026-10-11', 8), 60)] }),
+      queryAppEvents: vi.fn(async () => ({ events: appEvents, apps: { 'com.google.android.youtube': { label: 'YouTube', category: 2 } } })),
+    }
+    const write = vi.fn(async (entries) => ({ inserted: entries.length }))
+    const now = new Date(t('2026-10-12', 9))
+    await syncPhoneUsage({ plugin, write, now })
+    const written = write.mock.calls.flatMap((c) => c[0])
+    const apps = written.filter((e) => e.type === 'phone_apps')
+    expect(apps.map((e) => e.payload.date)).toEqual(['2026-10-11'])
+    expect(apps[0].payload.minutes).toEqual({ social: 40 })
+    expect(getPhoneUsageSettings().todayApps).toMatchObject({ date: '2026-10-12', minutes: { video: 25 } })
+  })
+
+  it('temps par app indisponible (ancienne app, erreur) : le temps d’écran est quand même enregistré', async () => {
+    enablePhoneUsage()
+    const plugin = {
+      ...fakePlugin({ events: [...use(t('2026-10-10', 10), 30), ...use(t('2026-10-11', 8), 60)] }),
+      queryAppEvents: vi.fn(async () => { throw new Error('not implemented') }),
+    }
+    const write = vi.fn(async (entries) => ({ inserted: entries.length }))
+    const res = await syncPhoneUsage({ plugin, write, now: new Date(t('2026-10-12', 9)) })
+    expect(res).toEqual({ ran: true, inserted: 1 })
+    expect(getPhoneUsageSettings().lastError).toBeNull()
+    expect(getPhoneUsageSettings().todayApps).toBeNull()
+  })
+
   it('pas plus d’une lecture toutes les 30 min, sauf forcée', async () => {
     enablePhoneUsage()
     const plugin = fakePlugin()

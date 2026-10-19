@@ -20,7 +20,7 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
 | Visage : import des rafales dans l'historique | `services/faceBursts.js`, entrée `face_burst` | ✅ **19/10 00:30** (I90) |
 | Porte de calibration (affichage seulement si le visage suit les notes) | `services/mood/gate.js` | ✅ **19/10 02:30** (I112) ; carte « Calibration : N jours sur 30 » |
 | Voix (prosodie maison, aucun audio gardé) | — | ⬜ I91 |
-| Usage du téléphone / réseaux sociaux | `PhoneUsagePlugin` (écran allumé / éteint / déverrouillé seulement) | 🟨 écran oui ; temps par app ⬜ |
+| Usage du téléphone / réseaux sociaux | `PhoneUsagePlugin` (écran allumé / éteint / déverrouillé, apps au premier plan) | ✅ écran ; ✅ temps par catégorie d'app (I116, 19/10 12:30, entrées `phone_apps`, facteurs X) |
 | Restitution « estimation du jour » | — | ⬜ après la porte |
 
 ## 2. Décisions Y / X (règle D5 : une variable est l'un ou l'autre, jamais les deux)
@@ -51,7 +51,7 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
    seule prise de son lue deux fois (prosodie en direct + reconnaissance fr-FR sur le même flux, rien sur disque),
    texte → note et tags proposés par deux lexiques disjoints (ressenti = Y, contexte = X). Voix de fond en continu
    écartée pour l'instant (npj Digit. Med. 2026 : texte R² 0,34, audio 0,06, intra-personne ≈ hasard).
-5. ⬜ **Usage du téléphone** : temps au premier plan par app (`UsageStatsManager`), réseaux sociaux regroupés,
+5. ✅ (19/10 12:30, I116) **Usage du téléphone** : temps au premier plan par app (`UsageStatsManager`), réseaux sociaux regroupés,
    comme **X** (voir §2) ; guide « paramètres restreints » d'Android 15+ (déjà dans `PhoneUsageCard`). **Spécifié le
    19/10 08:30 (I116)** : `ACTIVITY_RESUMED / PAUSED / STOPPED` dans `queryEvents`, catégories
    `ApplicationInfo.category`, entrée `phone_apps` par jour et par heure ; prochain run de code conseillé.

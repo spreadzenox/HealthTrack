@@ -225,6 +225,27 @@ describe('buildDailyJournal — météo', () => {
   })
 })
 
+describe('buildDailyJournal — temps par app (I116)', () => {
+  const apps = (date, minutes) => e('phone_apps', `${date}T10:00:00.000Z`, { date, minutes, byHour: {}, topApps: [] }, 'phone')
+
+  it('résumé dans la journée (réseaux sociaux), jamais listé ni ne fait apparaître une journée', () => {
+    const days = buildDailyJournal([
+      apps('2026-10-10', { social: 50 }),
+      apps('2026-10-11', { social: 72, video: 30 }),
+      e('steps', '2026-10-11T20:00:00.000Z', { value: 5000, period: 'day' }),
+    ])
+    expect(days.map((d) => d.dateKey)).toEqual(['2026-10-11'])
+    expect(days[0].items).toEqual([])
+    expect(days[0].summary.socialMinutes).toBe(72)
+    expect(JOURNAL_SUMMARY_TYPES).toContain('phone_apps')
+  })
+
+  it('inconnu sans journal des apps', () => {
+    const [day] = buildDailyJournal([e('steps', '2026-10-11T20:00:00.000Z', { value: 5000, period: 'day' })])
+    expect(day.summary.socialMinutes).toBeNull()
+  })
+})
+
 describe('buildDailyJournal — fuseau horaire', () => {
   it('l’entrée « context » (fuseau du jour) n’est ni listée ni ne fait apparaître une journée', () => {
     const ctx = (date) => e('context', `${date}T10:00:00.000Z`, { date, tz: 'Europe/Paris', tzOffset: 120 }, 'app_context')
