@@ -5,6 +5,31 @@
 
 ---
 
+## 2026-10-19 — Veille (run « idées ») : voix et texte, temps par app, rafales par jour
+
+> Détail, chiffres et pistes dans `IDEES.md` (section du 19/10 08:30, I116–I120). Références `[V19-n]`.
+
+- **Le texte bat la voix** : npj Digital Medicine 9:230 (28/02/2026), 3 151 journaux vocaux, 284 adultes ; BDI prédit
+  par plongements de texte R² 0,34, meilleur audio 0,06, intra-personne ≈ hasard [V19-1]. Revue Frontiers 2026 :
+  marqueurs vocaux non validés en parole spontanée ou ambiante [V19-2]. → Voix = dictée du soir (contenu = Y
+  auto-déclaré) + prosodie candidate derrière la porte ; pas de micro permanent.
+- **Reconnaissance sur un flux fourni par l'app** : ML Kit GenAI Speech Recognition (alpha, *Basic* fr-FR bêta,
+  `AudioSource.fromPfd`, PCM 16 kHz temps réel) ; plateforme `RecognizerIntent.EXTRA_AUDIO_SOURCE` (API 33) [V19-3].
+  Pas de Gemini Nano sur les Galaxy A (liste ML Kit GenAI) [V19-3].
+- **Temps par app** : `queryEvents` plus fiable que `queryUsageStats` ; `PAUSED` parfois absent [V19-4] ; « Accès aux
+  données d'utilisation » parmi les paramètres restreints d'Android 15 pour les apps hors store [V19-5].
+- **Réseaux sociaux et affect** : effets intra-personne moyens β 0,00–0,08, forte hétérogénéité (Elmer et al. 2025) ;
+  approche N = 1 recommandée (Valkenburg, Beyens & Keijsers) [V19-6].
+- **Déverrouillages** : 30–110 / jour selon les sources [V19-7] ; simulation : ≥ 12–16 rafales valides / jour
+  nécessaires pour que la porte du visage s'ouvre en 2–3 mois (`protocoles/rafales-par-jour-sim.py`).
+
+Sources : [V19-1] pmc.ncbi.nlm.nih.gov/articles/PMC12996298 ; [V19-2] frontiersin.org (10.3389/fdgth.2026.1964389) ;
+[V19-3] developers.google.com/ml-kit/genai et /speech-recognition/android, developer.android.com RecognizerIntent ;
+[V19-4] issuetracker.google.com/issues/118564471, /118331259 ; [V19-5] 9to5google.com (12/09/2024), androidauthority.com ;
+[V19-6] research.tilburguniversity.edu, Metapsychology ; [V19-7] statista.com 1050339, businessinsider.
+
+---
+
 ## 2026-10-11 — Veille courte : effets décalés sommeil → humeur, abandon de la saisie, régularité du sommeil
 
 > Run 🔭 court (3 recherches), centré sur les prochains chantiers C3 (effets décalés, étape 2) et C4 (saisie). Références `[V3-n]`.

@@ -9,6 +9,173 @@
 
 ---
 
+## Run du 19/10/2026 08:30 (Paris) — ce qui reste à capter : le temps par app, la voix, et assez de déverrouillages
+
+Question du jour, côté utilisateur (consigne du 18/10 au soir, priorité unique) : *« le visage est en place et ma
+note du soir se fait d'un geste. Qu'est-ce qui manque pour que HealthTrack connaisse mon humeur sans rien saisir ?
+Mes réseaux sociaux, ma voix ? Et est-ce que je déverrouille assez souvent mon téléphone pour que le visage serve ? »*
+Les quatre étapes restantes du plan (`BIEN-ETRE-AUTO.md` §3) : I89 Shizuku / ADB, I91 voix, temps par app (X), I115
+estimation du jour. Aucun nouveau journal dans `journal/diagnostics/` (le diagnostic visage de l'A56 n'est pas encore
+arrivé). Méthode : relire le code concerné, veille 2026, une simulation (`protocoles/rafales-par-jour-sim.py`).
+
+### Ce qu'on apprend (faits)
+
+- **Temps par app : presque tout est déjà là** [V code] : `PhoneUsagePlugin.queryScreenEvents` lit déjà
+  `UsageStatsManager.queryEvents` (écran allumé / éteint, `KEYGUARD_HIDDEN` = déverrouillage) et l'accès « Données
+  d'utilisation » est déjà demandé, avec le guide « Autoriser les paramètres restreints » (`PhoneUsageCard`). Il
+  suffit de garder aussi `ACTIVITY_RESUMED` / `ACTIVITY_PAUSED` / `ACTIVITY_STOPPED` avec leur paquet. `queryEvents`
+  est plus juste que `queryUsageStats` (agrégats signalés incohérents, Google « won't fix ») [T issuetracker
+  118564471, 118331259] ; piège AOSP connu : un `PAUSED` peut manquer (passage direct `STOPPED`) [V commit AOSP] →
+  fermer une session au `STOPPED`, à l'écran éteint, au `RESUMED` d'une autre app, plafond de durée. Android 15 a bien
+  ajouté « Accès aux données d'utilisation » aux **paramètres restreints** des apps hors store [T 9to5Google,
+  Android Authority 09/2024] : le guide existant couvre ce cas.
+- **Catégorie d'app sans liste codée en dur** [H, API connue] : `ApplicationInfo.category` (API 26 :
+  `CATEGORY_SOCIAL`, `VIDEO`, `GAME`, `NEWS`, `AUDIO`, `PRODUCTIVITY`, `MAPS`…) est déclarée par chaque app ; il faut
+  voir le paquet (Android 11+) : le manifeste ne déclare que des `<package>` santé → ajouter `<queries><intent>`
+  `MAIN` + `LAUNCHER` (apps qui ont une icône, sans `QUERY_ALL_PACKAGES`). Repli sur une petite table de paquets
+  connus quand la catégorie est absente (WhatsApp, Snapchat… déclarent parfois `SOCIAL`, parfois rien).
+- **Réseaux sociaux et humeur : effets moyens minuscules, très différents d'une personne à l'autre** [T résumé] :
+  Elmer et al. 2025 (trois échantillons, ESM + journaux du téléphone) : usage du téléphone **dans l'heure avant** une
+  mesure lié à une humeur un peu plus basse, β standardisés **0,00 à 0,08**, avec une hétérogénéité nette entre
+  personnes ; Valkenburg, Beyens & Keijsers (Metapsychology) : coupler moyenne et séries N = 1 par personne. → Conforte
+  D6 (aucun sens présupposé, analyse « chez vous ») et donne l'ordre temporel naturel : X = minutes de réseaux sociaux
+  **avant** l'humeur, jamais pendant.
+- **Voix : le texte dit beaucoup plus que le son** [V npj Digit. Med. 9:230, 28/02/2026, Emden… Opel] : 3 151
+  journaux vocaux hebdomadaires (1–3 min, « comment vous êtes-vous senti cette semaine ? »), 284 adultes
+  germanophones, transcription locale. Prédire le BDI : **texte (plongements Qwen3-8B) R² 0,34**, TF-IDF 0,19,
+  **meilleur audio (wav2vec2 émotion d'audEERING) 0,06**, openSMILE eGeMAPS / ComParE et autres plongements audio
+  proches du hasard ; la fusion audio + texte n'ajoute presque rien. **Intra-personne (changement d'une semaine à
+  l'autre) : proche du hasard** — résultat négatif assumé par les auteurs. Revue de portée Frontiers Digit. Health
+  2026 : les marqueurs vocaux ne sont **pas validés** en parole spontanée, à plusieurs voix ou ambiante [T résumé] ;
+  parole ambiante captée par le téléphone (JMIR 2021) : seulement ≈ 16 % de l'audio contient de la parole
+  intelligible, sans séparation de la voix de l'utilisateur [T résumé]. Sci. Rep. 2026 (WavLM affiné, AUC 0,90) :
+  récits d'une minute sur téléphone d'étude, entre personnes, pas de validation externe [T résumé].
+  → Ce que l'utilisateur **dit** de sa journée est le signal vocal le plus utile (c'est de l'auto-déclaration, donc
+  Y) ; la prosodie reste candidate derrière la porte I112, sans promesse.
+- **Une seule prise de son, deux lecteurs, aucun fichier** [V doc] : ML Kit GenAI *Speech Recognition*
+  (`com.google.mlkit:genai-speech-recognition:1.0.0-alpha1`, alpha) : mode *Basic* sur la plupart des appareils
+  API 31+, **fr-FR en bêta** ; `AudioSource.fromPfd()` accepte du **PCM 16 kHz mono 16 bits fourni par l'app en
+  temps réel**. La plateforme fait pareil depuis l'API 33 : `RecognizerIntent.EXTRA_AUDIO_SOURCE` (un
+  `ParcelFileDescriptor` ouvert par l'app ; la session finit quand l'app ferme le flux) [V doc]. → L'app lit le micro
+  une fois (`AudioRecord`), calcule la prosodie en direct et pousse le même flux dans un tube vers la reconnaissance :
+  rien n'est écrit sur disque. Dépend d'AICore (ML Kit) ou du service de reconnaissance installé (plateforme) : à
+  vérifier sur l'A56 par le diagnostic.
+- **Pas de Gemini Nano sur l'A56** [V liste ML Kit GenAI, 19/10/2026] : Prompt API et API de résumé / réécriture
+  seulement sur Galaxy S25 / S26 / Z Fold7–8 / Z Flip8 / TriFold côté Samsung, aucun Galaxy A. → Lire la dictée par
+  des **règles locales** (lexique français du ressenti, négations, intensifs), pas par un LLM embarqué.
+- **Déverrouillages par jour** : 30 à 110 selon les sources, souvent anciennes et commerciales (≈ 30 en 2024, 80
+  annoncés par Apple, 79 pour la génération Z en 2018) [T]. Le nombre réel du propriétaire est **déjà dans ses
+  données** : `KEYGUARD_HIDDEN` est lu depuis des jours par le Temps d'écran.
+- **Simulation** (`protocoles/rafales-par-jour-sim.py`, 300 tirages par case, même modèle que le 18/10 20:30, note du
+  soir à 85 %, porte |z| ≥ 3,29 à deux regards) — part des tirages où la porte est ouverte :
+
+  | rafales valides / jour | r_b = 0,2 : J60 / J90 / J120 | r_b = 0,3 : J60 / J90 / J120 | qualité (r_b 0,2 / 0,3) |
+  |---|---|---|---|
+  | 4 | 11 / 20 / 30 % | 30 / 54 / 72 % | 0,24 / 0,36 |
+  | 8 | 18 / 34 / 55 % | 61 / 78 / 93 % | 0,32 / 0,45 |
+  | 16 | 35 / 61 / 78 % | 76 / 93 / 98 % | 0,38 / 0,52 |
+  | 32 | 44 / 67 / 87 % | 81 / 96 / 99 % | 0,41 / 0,56 |
+
+  Faux départs (r_b = 0) : 1 à 3 % à J120 dans tous les cas. → **≈ 16 rafales valides par jour suffisent presque
+  autant que 32 ; en dessous de 8, tout ralentit nettement.** Le seuil à surveiller dans le diagnostic est donc
+  « rafales valides par jour ≥ 12 ».
+- **Shizuku** [V manuel] : à relancer **après chaque redémarrage** (débogage sans fil) ; signalements « waiting for
+  service… » sur la bêta One UI 8.5 [T forum Samsung]. Une commande `appops set` passée une fois devrait survivre au
+  redémarrage (enregistrée par le système) [H] : c'est ce que I89 doit mesurer, sans promettre.
+- **Emobot** : toujours rien de neuf publié en 2026 (homonymes seulement).
+
+### Idées classées (impact × faisabilité) — aucune n'ajoute d'écran
+
+| # | Idée | Besoin servi | I | F | Score |
+|---|---|---|---|---|---|
+| I116 | **Temps par app → facteurs X, sans liste de « mauvaises » apps** : `queryEvents` garde aussi `ACTIVITY_RESUMED / PAUSED / STOPPED` + paquet ; minutes par jour et **par heure** pour chaque catégorie (`ApplicationInfo.category` : réseaux sociaux, vidéo, jeux, actualités, messagerie…) ; entrées `phone_apps` ; facteurs « Réseaux sociaux (min) », « Vidéo (min) »… dans les Analyses ; test anti-circularité : aucune clé `phone_apps` dans `ESTIMATOR_INPUTS` | « Est-ce que mes réseaux me font du bien ou pas ? », chez moi (D5, D6), sans rien saisir | 5 | 5 | **25** |
+| I117 | **Dictée du soir, une prise de son, deux lecteurs** : 🎤 dans la saisie bien-être ; `AudioRecord` 16 kHz → prosodie maison en direct (F0, énergie, débit, pauses) **et** même flux poussé en temps réel vers la reconnaissance (ML Kit *Basic* fr-FR, sinon plateforme `EXTRA_AUDIO_SOURCE`) ; rien d'écrit sur disque ; le texte → **note et tags proposés** par règles locales, rien d'enregistré sans un tap ; texte gardé seulement si l'utilisateur le valide comme note | La voix là où elle vaut quelque chose (npj 2026 : texte R² 0,34 contre audio 0,06), saisie en une phrase | 4 | 3 | 12 |
+| I118 | **Assez de rafales, sans biais** : le diagnostic affiche les déverrouillages / jour (déjà lus) et les rafales valides / jour ; si < 12 valides / jour : un 2e essai 2 s plus tard quand la 1re rafale est écartée (visage absent, trop sombre), et intervalle minimal ramené de 5 à 2 min ; **toujours au déverrouillage, avant tout contenu** (jamais à l'allumage d'écran par une notification : contenu = biais de composition, I114) | Que le visage serve en 2–3 mois au lieu de 4+ (simulé : 8 → 16 rafales / jour = 55 → 78 % ouvert à J120 pour r_b 0,2) | 4 | 4 | **16** |
+| I119 | **Mots du ressenti = Y, mots du contexte = X, jamais les mêmes** : la dictée et les notes libres sont lues par deux lexiques **disjoints** (ressenti : « contente, épuisé, stressé… » → proposition de note = auto-déclaration ; contexte : « mal dormi, sport, apéro… » → tags X) ; test qui échoue si un mot / une racine est dans les deux | Pas de cercle caché quand le texte sert à la fois à l'humeur et aux facteurs (D5) | 4 | 5 | **20** |
+| I120 | **Au fil de la journée, plus tard** : une fois la porte ouverte, comparer les rafales du déverrouillage à ce qui s'est passé **dans l'heure d'avant** (réseaux sociaux, pas, appels) — ordre temporel garanti, beaucoup plus d'observations qu'au niveau du jour ; correction pour l'autocorrélation et la multiplicité (règles I107 / I108) | « Au fil de la journée » (consigne du 18/10 au soir) ; détecter des effets courts que la moyenne du jour efface | 3 | 3 | 9 |
+
+**Écartées (pour l'instant)** : *voix de fond en continu* (service `microphone` permanent) — les marqueurs ne sont pas
+validés en parole spontanée ou ambiante, ≈ 16 % seulement de parole intelligible, il faudrait reconnaître la voix du
+propriétaire parmi d'autres et le micro serait coupé par Android pendant les appels (`isClientSilenced`) ; à
+reconsidérer si la prosodie de la dictée passe la porte I112 chez lui. *Modèle d'émotion vocale embarqué* — inchangé
+(licences non commerciales, audio ≈ hasard dans npj 2026). *LLM sur l'appareil pour lire la dictée* — pas de Gemini
+Nano sur l'A56 ; un petit LLM embarqué alourdirait l'APK pour un gain incertain sur des phrases courtes. *Rafale à
+l'allumage de l'écran* — l'écran s'allume aussi à l'arrivée d'une notification (contenu → biais de composition).
+
+### Détail et pistes d'implémentation
+
+**I116 — temps par app.** Natif : dans `queryScreenEvents` (ou une méthode sœur `queryAppEvents` pour garder la
+réponse actuelle intacte), ajouter `ACTIVITY_RESUMED` (`e: 'fg'`), `ACTIVITY_PAUSED` / `ACTIVITY_STOPPED`
+(`e: 'bg'`) avec `p: packageName` ; ignorer HealthTrack, le lanceur (`Intent.CATEGORY_HOME` résolu) et l'interface
+système ; joindre une fois par paquet `{ p, label, category }` (`PackageManager.getApplicationInfo`, catégorie API 26).
+Manifeste : `<queries><intent><action android:name="android.intent.action.MAIN" /><category
+android:name="android.intent.category.LAUNCHER" /></intent></queries>`. JS (`services/phoneUsage.js`, fonction pure
+testée) : sessions par paquet fermées au `bg`, au `fg` d'une autre app, à l'écran éteint, plafond 2 h ; agrégats
+`{ date, byCategory: { social: min, video: min, … }, byHour: [24 × { social, video, … }], topApps: [5 × { label,
+min }] }` → entrée `phone_apps` (même modèle que les entrées `phone_usage` actuelles ; aucune migration : nouveau
+type d'entrée, export / import génériques). Catégories : `social` = `CATEGORY_SOCIAL` + table de repli (Instagram,
+TikTok, Facebook, X, Snapchat, Reddit, LinkedIn, Threads, Bluesky) ; `messaging` séparé (WhatsApp, Messages, Signal,
+Telegram…) car ce n'est pas la même chose ; `video`, `game`, `news`. Analyses : facteurs X déclarés dans
+`VARIABLE_META` **sans sens** (pas de « moins = mieux »), et pour l'ordre temporel : minutes de la veille au soir
+(18 h–24 h) pour l'humeur du lendemain, minutes du jour pour la note du soir (la note arrive après). Test :
+`antiCircularity.test.js` vérifie que `social_min`, `video_min`… sont des facteurs et jamais dans `ESTIMATOR_INPUTS`.
+Restitution : une ligne dans la carte « Temps d'écran » existante (« dont réseaux sociaux 1 h 12 »), aucune nouvelle
+carte. À valider sur l'A56 : les minutes « réseaux sociaux » ≈ Bien-être numérique de One UI (± 10 %).
+
+**I117 — dictée.** Natif `VoiceNotePlugin` : `AudioRecord` (`VOICE_RECOGNITION`, 16 kHz mono PCM16) en premier plan
+seulement (app ouverte, aucun service), fenêtres de 20 ms → énergie RMS, F0 (autocorrélation / YIN maison), part de
+voisé, pauses > 250 ms, débit ≈ pics d'énergie syllabiques / s ; même tampon écrit dans
+`ParcelFileDescriptor.createPipe()` → `SpeechRecognizer` (plateforme, `EXTRA_AUDIO_SOURCE`, `EXTRA_PREFER_OFFLINE`)
+ou ML Kit `AudioSource.fromPfd` si `checkStatus()` = disponible ; arrêt au relâchement ou à 60 s ; tampon remis à
+zéro, rien sur disque. Retour JS : `{ text, prosody: { f0Median, f0Iqr, energyDb, voicedRatio, pauseRatio,
+rate }, ms }` ; `prosody` → entrée `voice_note` (indices `voice_*`, déjà déclarés dans `ESTIMATOR_INPUTS`, inactifs
+tant que la porte ne les a pas validés) ; `text` → propositions (I119) affichées en puces à toucher. Diagnostic :
+moteur utilisé (ML Kit / plateforme / aucun), langue, durée, erreurs. Licence : API Google (conditions GenAI) ou
+plateforme ; aucun modèle tiers embarqué.
+
+**I118 — rafales.** `FaceSchedule` (règle pure, testée JVM) : `minIntervalMs` 300 000 → paramètre ; nouveau
+`retryAfterRejectMs = 2000` (une seule fois par déverrouillage, même `trigger: 'unlock'`, toujours dans les 10 s après
+le déverrouillage). Diagnostic : `unlocksPerDay` (médiane 7 j, depuis `KEYGUARD_HIDDEN`), `validBurstsPerDay`, part
+écartée par motif. Règle : intervalle 2 min seulement si `validBurstsPerDay` < 12 sur 7 jours. Le test
+« composition » (I114) reste vert par construction (même déclencheur).
+
+**I119 — lexiques.** `services/mood/lexicon.js` : `FEELING_WORDS` (→ valence −2…+2, intensifs « très, super,
+vraiment », négation « pas, plus, jamais » dans les 3 mots précédents) et `CONTEXT_WORDS` (→ tags existants) ; test
+d'intersection vide sur les racines normalisées (minuscules, sans accents) ; documenté dans `estimatorInputs.js`.
+
+**I120 — intra-journée.** Après I112 ouvert : modèle mixte simple par jour (indice de la rafale ~ minutes de la
+catégorie dans les 60 min précédentes + effet du jour), erreur type robuste par jour, règle I107 pour décider ;
+jamais affiché avant ≥ 30 jours et ≥ 300 rafales.
+
+### Sources (consultées le 19/10/2026)
+- Emden, Richter, Chevance, …, Opel, *Scalable depression monitoring with smartphone speech using a multimodal
+  benchmark and topic analysis*, npj Digital Medicine 9:230, 28/02/2026 (PMC12996298, lu).
+- *Screening for depression risk via smartphone narratives with fully fine-tuned WavLM*, Scientific Reports 2026
+  (nature.com/articles/s41598-026-53432-4, résumé) ; revue de portée sur les marqueurs vocaux, Frontiers in Digital
+  Health 2026 (10.3389/fdgth.2026.1964389, résumé) ; *Smartphone-Detected Ambient Speech and Self-Reported Measures of
+  Anxiety and Depression*, JMIR Formative Research 2021 (PubMed 33512325, résumé).
+- ML Kit GenAI — vue d'ensemble et appareils (developers.google.com/ml-kit/genai) ; *Speech Recognition* Android
+  (developers.google.com/ml-kit/genai/speech-recognition/android) ; `RecognizerIntent.EXTRA_AUDIO_SOURCE`
+  (developer.android.com/reference/android/speech/RecognizerIntent).
+- Restricted settings Android 15 : 9to5google.com/2024/09/12/android-15-sideloaded-apps-restrictions ;
+  androidauthority.com/android-15-restricted-settings-sideloading-3481098.
+- `queryEvents` / `queryUsageStats` : issuetracker.google.com/issues/118564471 et /118331259 ; commit AOSP
+  « ACTIVITY_PAUSED must follow ACTIVITY_RESUMED » (gerrit.omnirom.org, 289f1679).
+- Elmer et al. 2025 (usage du téléphone et affect momentané, résumé via research.tilburguniversity.edu) ; Valkenburg,
+  Beyens & Keijsers, *Investigating Heterogeneity in (Social) Media Effects*, Metapsychology.
+- Déverrouillages / jour : statista.com (1050339), businessinsider (Apple, 80 / jour), WFAE / Benton (2013), rapport
+  radio 02/2024 (≈ 30 / jour) — toutes [T].
+- Shizuku : shizuku.rikka.app/guide/setup ; forum Samsung (bêta One UI 8.5) [T].
+
+### À creuser au prochain run idées (19/10 20:30)
+- Lexique français du ressenti sous licence libre (FEEL, Lexique des émotions, NRC-FR : vérifier les licences) pour I119.
+- Bien-être numérique de One UI : d'où viennent ses chiffres, écart attendu avec `queryEvents` (pour valider I116).
+- Reconnaissance vocale hors ligne fr-FR réellement disponible sur un Galaxy A (service Google ou Samsung) et
+  `EXTRA_AUDIO_SOURCE` accepté ou non.
+- Reportés : π0 adaptatif ; effet d'un verre / d'un café tardif sur la VFC chez une personne (I109).
+
+---
+
 ## Run du 18/10/2026 20:30 (Paris) — l'humeur par le visage : quand pourra-t-on y croire, et sans quel piège ?
 
 Question du jour, côté utilisateur (consigne du 18/10, point B : « que ça avance le côté estimation du bien-être

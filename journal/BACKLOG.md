@@ -58,8 +58,24 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   service caméra lancé hors de l'app visible n'a pas la caméra (Android 11+ ; type `camera` interdit au boot en 15).
   - [ ] **Retour du propriétaire** : la notification apparaît-elle juste après la mise à jour ? « Reprendre » relance-t-il ?
 - [ ] I89 guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`, `RECORD_AUDIO allow`) + détection.
-- [ ] I91 voix (prosodie, aucun audio gardé) ; service `microphone`.
-- [ ] Temps au premier plan par app (réseaux sociaux regroupés) comme X.
+- [ ] I91 voix (prosodie, aucun audio gardé) → **précisé au run idées du 19/10 08:30 : I117** (dictée du soir, une
+  prise de son `AudioRecord` lue deux fois — prosodie maison en direct + même PCM poussé en temps réel vers la
+  reconnaissance : ML Kit GenAI *Basic* fr-FR `AudioSource.fromPfd`, sinon plateforme `EXTRA_AUDIO_SOURCE` API 33 ;
+  rien sur disque ; texte → note et tags **proposés**). Voix de fond en continu (service `microphone`) **écartée pour
+  l'instant** : npj Digit. Med. 2026 → texte R² 0,34, audio 0,06, intra-personne ≈ hasard ; à reconsidérer si la
+  prosodie passe la porte chez le propriétaire.
+- [ ] **I119** (20) lexiques **disjoints** ressenti (Y : proposition de note) / contexte (X : tags) pour la dictée et
+  les notes libres, test d'intersection vide (`services/mood/lexicon.js`). À faire avec ou avant I117.
+- [ ] **I116** (25) temps au premier plan par app comme **X** : `queryEvents` garde `ACTIVITY_RESUMED / PAUSED /
+  STOPPED` + paquet (le plugin lit déjà l'écran et `KEYGUARD_HIDDEN`, accès déjà accordé) ; catégories par
+  `ApplicationInfo.category` + `<queries>` `MAIN/LAUNCHER` + petite table de repli ; entrée `phone_apps` (jour + par
+  heure, `social` / `messaging` / `video` / `game` / `news`) ; facteurs sans sens présupposé, minutes **avant** la
+  note ; test anti-circularité ; une ligne dans la carte Temps d'écran. **Prochain run de code conseillé** (petit,
+  sans dépendre du diagnostic de l'A56).
+- [ ] **I118** (16) assez de rafales sans biais : diagnostic `unlocksPerDay` / `validBurstsPerDay` ; si < 12 valides /
+  jour, 2e essai 2 s après une rafale écartée + intervalle 5 → 2 min ; toujours au déverrouillage (simulé :
+  16 rafales / jour ≈ 32 ; 8 → nettement plus lent ; `protocoles/rafales-par-jour-sim.py`).
+- [ ] I120 (9) intra-journée (rafale ↔ catégories d'apps dans l'heure d'avant), seulement porte ouverte.
 - [x] **I112 porte** (run 19/10 02:30) : `services/mood/gate.js`, fonctions pures — `gateDays` (note moyenne du jour ×
   médianes des rafales `moodFaceBursts`), `faceIndexLoo` (un seul indice combiné : Ridge LOO sur indices
   standardisés, **λ = 10 fixé d'avance**, indices lus < 80 % des jours écartés), `jackknifeCorrelation`, `evaluateGate`
@@ -634,6 +650,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 (`journal/diagnostics/`) ; b) ✅ **I90** import des rafales `face_burst` + test « composition » ; c) ✅ I88 ② notification
 « Reprendre » ; d) I89 Shizuku / ADB ; e) I91 voix ; f) temps par app (X) ; g) ✅ I112 porte (19/10 02:30) → I115 estimation du jour ;
 h) ✅ I113 note du soir (19/10 06:30). 2) ⏸️ En pause : montre (sauf régression), D1, D2, C7.
+**Précision du run idées du 19/10 08:30 (ordre interne du point 1)** : a) diagnostic A56 dès qu'il arrive ;
+b) **I116** temps par app (X) — prêt, petit, indépendant de l'A56 ; c) **I118** diagnostic des rafales / jour (+ 2e
+essai) ; d) I89 Shizuku / ADB ; e) **I119** lexiques puis **I117** dictée (voix) ; f) I115 estimation du jour quand la
+porte peut s'ouvrir ; g) I120 plus tard.
 
 **Réordonnées le 18/10 (16:30 Paris), consigne du 18/10 complétée après la capture de 15:03 (correctif confirmé sur
 la montre)** : 1) 🔴 petites corrections montre A.1–A.3 — ✅ **livrées le 18/10 16:30** (A.1 détection des apps : un
