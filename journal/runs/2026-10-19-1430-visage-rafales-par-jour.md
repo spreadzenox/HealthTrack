@@ -47,6 +47,14 @@ Le test « composition » reste vert (seul `unlock` compte pour l'humeur). Risqu
   Seul message console : « AppManager already registered » (préexistant).
 - `FaceSenseService.java` non compilé localement (pas de SDK Android) : c'est le check « Build APK » qui le valide.
 
+## CI de la PR
+- Vitest ✅, Protocole montre (Java) ✅, Budget de lectures ✅. **Build APK** ❌ au 1er passage : `OutOfMemoryError`
+  de D8 à `:m430-capacitor-app-install:mergeExtDexDebugAndroidTest` (mémoire du runner, avant toute compilation de
+  `:app`) → relancé une fois → ✅ (compile `FaceSenseService` / `FaceSchedule`).
+- Émulateur API 35 ✅ ; API 36 ❌ sur `HealthConnectTest.canWriteAndReadSleep` (« Conflict found, but couldn't read
+  the entry ») : échec intermittent connu depuis le 11/10 (runs 10/11 18:30, 13/10 04:30, 15/10 18:30), sans lien
+  avec ce diff, check non requis par les garde-fous.
+
 ## Pour le propriétaire (Galaxy A56)
 Après une semaine avec la lecture active : Plus → Connecteurs → Lecture du visage → Diagnostic → ligne « Par jour ».
 **À renvoyer** avec le diagnostic exporté : cette ligne et « 2e essais ». Si « avec un visage » < 12, les motifs
