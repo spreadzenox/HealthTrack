@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.AppOpsManager;
+import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -30,7 +32,12 @@ import com.healthtrack.app.face.FaceIndices;
 import com.healthtrack.app.face.FacePipeline;
 import com.healthtrack.app.face.FaceRecord;
 import com.healthtrack.app.face.FaceSchedule;
+import com.healthtrack.app.face.UnlockWatch;
 import com.healthtrack.app.huawei.CaptureInbox;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -44,7 +51,8 @@ import java.util.Locale;
  * caméra, démarré seulement depuis l'app ouverte (interrupteur de la carte, FaceSensePlugin). Tant qu'il vit, il
  * écoute le déverrouillage : 3 images de la caméra frontale en basse résolution, analysées sur le téléphone
  * (FacePipeline + LiteRT), puis oubliées ; seuls les indices de la rafale sont déposés dans une boîte privée
- * (`face-bursts/`) que le JS importera. Écran éteint, il ne fait rien. START_NOT_STICKY : Android ne permet pas
+ * (`face-bursts/`) que le JS importera. Déverrouillage repéré par UnlockWatch (diffusion, sinon interrogation du
+ * verrou après l'allumage). Écran éteint, il ne fait rien. START_NOT_STICKY : Android ne permet pas
  * de relancer un service caméra depuis l'arrière-plan ; si le service est tué, l'app le voit et propose de le
  * relancer, et FaceResumeJob / FaceResumeReceiver postent une notification « Reprendre » (FaceResumeNotice). Le diagnostic (compteurs, temps, raisons des sauts et des rejets) vit dans les préférences
  * `face_sense`, sans aucun score.
@@ -61,6 +69,12 @@ public class FaceSenseService extends Service {
     static final int INBOX_MAX = 3000;
     /** Le déverrouillage joue son animation : on laisse le visage se poser face à l'écran. */
     static final long UNLOCK_DELAY_MS = 1200;
+    /** Qui a demandé le démarrage : l'app à l'écran (accès caméra « pendant l'utilisation » acquis) ou non. */
+    static final String EXTRA_ORIGIN = "origin";
+    static final String ORIGIN_APP = "app";
+    static final String ORIGIN_BACKGROUND = "background";
+    /** Dernières tentatives gardées pour le diagnostic (heure, source, résultat ou erreur exacte). */
+    static final int ATTEMPTS_KEPT = 12;
 
     private static volatile boolean running;
 
@@ -68,17 +82,42 @@ public class FaceSenseService extends Service {
     private Handler handler;
     private FaceModels models;
     private FacePipeline pipeline;
+    /** Lu et modifié seulement sur le fil du service (récepteur et interrogations y sont livrés). */
+    private final UnlockWatch watch = new UnlockWatch();
 
     private final BroadcastReceiver screen = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (handler == null) return;
-            if (Intent.ACTION_USER_PRESENT.equals(intent.getAction())) {
-                long unlockAt = SystemClock.elapsedRealtime();
-                handler.postDelayed(() -> burst(FaceSchedule.TRIGGER_UNLOCK, unlockAt, false), UNLOCK_DELAY_MS);
-            } else if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
-                handler.removeCallbacksAndMessages(null);
+            Handler h = handler;
+            if (h == null) return;
+            String action = intent.getAction();
+            long now = SystemClock.elapsedRealtime();
+            if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                count("dayScreenOns", "lastScreenOnAt");
+                String source = watch.onScreenOn(now, keyguardLocked());
+                if (source != null) unlocked(source, now);
+                else h.postDelayed(poll, UnlockWatch.POLL_EVERY_MS);
+            } else if (Intent.ACTION_USER_PRESENT.equals(action)) {
+                count("dayPresents", "lastPresentAt");
+                String source = watch.onUserPresent(now);
+                if (source != null) unlocked(source, now);
+            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                watch.onScreenOff();
+                h.removeCallbacksAndMessages(null);
             }
+        }
+    };
+
+    /** Secours si ACTION_USER_PRESENT n'arrive pas : l'écran de verrouillage a-t-il disparu ? */
+    private final Runnable poll = new Runnable() {
+        @Override
+        public void run() {
+            Handler h = handler;
+            if (h == null || !watch.polling()) return;
+            long now = SystemClock.elapsedRealtime();
+            String source = watch.onPoll(now, keyguardLocked());
+            if (source != null) unlocked(source, now);
+            else if (watch.polling()) h.postDelayed(this, UnlockWatch.POLL_EVERY_MS);
         }
     };
 
@@ -109,9 +148,73 @@ public class FaceSenseService extends Service {
         thread.start();
         handler = new Handler(thread.getLooper());
         IntentFilter filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
-        // ACTION_USER_PRESENT n'est pas livré aux récepteurs du manifeste : récepteur dynamique, vivant avec le service.
-        ContextCompat.registerReceiver(this, screen, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
+        // Ces diffusions ne sont pas livrées aux récepteurs du manifeste : récepteur dynamique, recréé avec le
+        // service à chaque démarrage. EXPORTED et non NOT_EXPORTED : ACTION_USER_PRESENT est envoyée par l'écran
+        // de verrouillage (SystemUI, pas l'uid système), qu'un récepteur « non exporté » ne reçoit pas — d'où aucun
+        // déverrouillage vu sur le Galaxy A56 (signalement du 19/10 15:05). Ce sont des diffusions protégées : aucune
+        // autre app ne peut les envoyer. Livrées sur le fil du service, comme les interrogations du verrou.
+        ContextCompat.registerReceiver(this, screen, filter, null, handler, ContextCompat.RECEIVER_EXPORTED);
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (pm != null && pm.isInteractive()) {
+            // Démarré écran allumé (depuis l'app) : on part de l'état réel du verrou.
+            handler.post(() -> {
+                if (!keyguardLocked()) watch.onScreenOn(SystemClock.elapsedRealtime(), false);
+            });
+        }
+    }
+
+    private boolean keyguardLocked() {
+        KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+        return km != null && km.isKeyguardLocked();
+    }
+
+    /** Un déverrouillage repéré (UnlockWatch) : compté par source, puis une rafale une fois l'animation passée. */
+    private void unlocked(String source, long unlockAt) {
+        count("dayUnlock_" + source, null);
+        prefs(this).edit().putLong("lastUnlockAt", System.currentTimeMillis()).putString("lastUnlockSource", source).apply();
+        Handler h = handler;
+        if (h != null) h.postDelayed(() -> burst(FaceSchedule.TRIGGER_UNLOCK, source, unlockAt, false), UNLOCK_DELAY_MS);
+    }
+
+    /** +1 à un compteur du jour (remis à zéro à minuit), et l'heure de l'événement si `atKey`. */
+    private void count(String key, String atKey) {
+        SharedPreferences p = prefs(this);
+        long now = System.currentTimeMillis();
+        rollDay(p, now);
+        SharedPreferences.Editor e = p.edit().putInt(key, p.getInt(key, 0) + 1);
+        if (atKey != null) e.putLong(atKey, now);
+        e.apply();
+    }
+
+    /** Nouveau jour : les compteurs « day… » repartent de zéro. */
+    private static void rollDay(SharedPreferences p, long now) {
+        String day = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date(now));
+        if (day.equals(p.getString("day", null))) return;
+        SharedPreferences.Editor e = p.edit().putString("day", day);
+        for (String k : p.getAll().keySet()) if (k.startsWith("day") && !k.equals("day")) e.remove(k);
+        e.putInt("dayUnlocks", 0).putInt("dayBursts", 0).putInt("dayFaces", 0).apply();
+    }
+
+    /** Mode d'accès caméra accordé par Android (appops) : allow, foreground, ignore, deny, default ; null si inconnu. */
+    static String cameraOpMode(Context context) {
+        if (Build.VERSION.SDK_INT < 29) return null;
+        AppOpsManager ops = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+        if (ops == null) return null;
+        try {
+            int mode = ops.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_CAMERA, android.os.Process.myUid(), context.getPackageName());
+            switch (mode) {
+                case AppOpsManager.MODE_ALLOWED: return "allow";
+                case AppOpsManager.MODE_FOREGROUND: return "foreground";
+                case AppOpsManager.MODE_IGNORED: return "ignore";
+                case AppOpsManager.MODE_ERRORED: return "deny";
+                case AppOpsManager.MODE_DEFAULT: return "default";
+                default: return String.valueOf(mode);
+            }
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
     @Override
@@ -141,10 +244,15 @@ public class FaceSenseService extends Service {
         FaceResumeNotice.cancel(this);
         if (!running) {
             running = true;
-            prefs(this).edit().putBoolean("enabled", true).putLong("startedAt", System.currentTimeMillis())
-                    .putInt("startBattery", batteryPercent(this)).remove("lastError").apply();
+            String origin = intent == null ? null : intent.getStringExtra(EXTRA_ORIGIN);
+            SharedPreferences p = prefs(this);
+            p.edit().putBoolean("enabled", true).putLong("startedAt", System.currentTimeMillis())
+                    .putInt("startBattery", batteryPercent(this)).remove("lastError")
+                    .putString("startOrigin", ORIGIN_APP.equals(origin) ? ORIGIN_APP : ORIGIN_BACKGROUND)
+                    .putString("startAction", action == null ? "sticky" : action.substring(action.lastIndexOf('.') + 1))
+                    .putInt("starts", p.getInt("starts", 0) + 1).apply();
         }
-        if (ACTION_TEST.equals(action)) handler.post(() -> burst(FaceSchedule.TRIGGER_MANUAL, 0, false));
+        if (ACTION_TEST.equals(action)) handler.post(() -> burst(FaceSchedule.TRIGGER_MANUAL, "test", 0, false));
         return START_NOT_STICKY;
     }
 
@@ -177,13 +285,10 @@ public class FaceSenseService extends Service {
      * (FaceSchedule.shouldRetry, I118), qui ne compte ni comme un nouveau déverrouillage ni comme une nouvelle
      * rafale du jour, et n'est pas soumis à l'intervalle minimal posé par le 1er essai.
      */
-    private void burst(String trigger, long unlockAt, boolean retry) {
+    private void burst(String trigger, String source, long unlockAt, boolean retry) {
         SharedPreferences p = prefs(this);
         long now = System.currentTimeMillis();
-        String day = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date(now));
-        if (!day.equals(p.getString("day", null))) {
-            p.edit().putString("day", day).putInt("dayUnlocks", 0).putInt("dayBursts", 0).putInt("dayFaces", 0).apply();
-        }
+        rollDay(p, now);
         int today = p.getInt("dayBursts", 0);
         boolean unlock = FaceSchedule.TRIGGER_UNLOCK.equals(trigger);
         if (unlock && !retry) p.edit().putInt("dayUnlocks", p.getInt("dayUnlocks", 0) + 1).apply();
@@ -193,12 +298,12 @@ public class FaceSenseService extends Service {
         if (skip == null && !hasCameraPermission(this)) skip = "no_permission";
         if (skip == null && !ensurePipeline()) skip = "no_models";
         if (skip != null) {
-            outcome(trigger, "skip:" + skip, now);
+            outcome(trigger, source, retry, "skip:" + skip, null, now);
             return;
         }
         FaceCamera.Capture cap = FaceCamera.capture(this, FRAMES);
         if (cap.error != null) {
-            outcome(trigger, "camera:" + cap.error, now);
+            outcome(trigger, source, retry, "camera:" + cap.error, cap.detail, now);
             return;
         }
         long t0 = SystemClock.elapsedRealtime();
@@ -207,7 +312,7 @@ public class FaceSenseService extends Service {
         try {
             result = pipeline.burst(cap.images, cap.width, cap.height, rejections);
         } catch (RuntimeException e) {
-            outcome(trigger, "inference_error", now);
+            outcome(trigger, source, retry, "inference_error", e.getClass().getSimpleName(), now);
             return;
         } finally {
             cap.images.clear(); // images oubliées dès l'inférence faite
@@ -217,7 +322,7 @@ public class FaceSenseService extends Service {
         try {
             inbox(this).put(json, now);
         } catch (Exception e) {
-            outcome(trigger, "store_error", now);
+            outcome(trigger, source, retry, "store_error", e.getClass().getSimpleName(), now);
             return;
         }
         SharedPreferences.Editor e = p.edit();
@@ -230,19 +335,38 @@ public class FaceSenseService extends Service {
                 .putInt("timed", p.getInt("timed", 0) + 1);
         for (String r : rejections) e.putInt("r_" + r, p.getInt("r_" + r, 0) + 1);
         e.apply();
-        outcome(trigger, result != null ? "face" : "no_valid_frame", now);
+        outcome(trigger, source, retry, result != null ? "face" : "no_valid_frame", null, now);
         Handler h = handler;
         if (h != null && FaceSchedule.shouldRetry(trigger, result != null, retry, SystemClock.elapsedRealtime() - unlockAt)) {
             // Annulé avec le reste si l'écran s'éteint d'ici là (récepteur SCREEN_OFF).
-            h.postDelayed(() -> burst(trigger, unlockAt, true), FaceSchedule.RETRY_DELAY_MS);
+            h.postDelayed(() -> burst(trigger, source, unlockAt, true), FaceSchedule.RETRY_DELAY_MS);
         }
     }
 
-    private void outcome(String trigger, String what, long at) {
+    private void outcome(String trigger, String source, boolean retry, String what, String detail, long at) {
         SharedPreferences p = prefs(this);
         String key = "n_" + what;
         p.edit().putString("lastOutcome", what).putString("lastTrigger", trigger).putLong("lastOutcomeAt", at)
-                .putInt(key, p.getInt(key, 0) + 1).apply();
+                .putInt(key, p.getInt(key, 0) + 1)
+                .putString("attempts", appendAttempt(p.getString("attempts", null), at, trigger, source, retry, what, detail))
+                .apply();
+    }
+
+    /** Journal des dernières tentatives (JSON, ATTEMPTS_KEPT au plus) : jamais un score, seulement ce qui s'est passé. */
+    static String appendAttempt(String json, long at, String trigger, String source, boolean retry, String what, String detail) {
+        JSONArray out = new JSONArray();
+        try {
+            JSONArray old = json == null ? new JSONArray() : new JSONArray(json);
+            for (int i = Math.max(0, old.length() - (ATTEMPTS_KEPT - 1)); i < old.length(); i++) out.put(old.get(i));
+            JSONObject a = new JSONObject().put("at", at).put("trigger", trigger).put("outcome", what);
+            if (source != null) a.put("source", source);
+            if (retry) a.put("retry", true);
+            if (detail != null) a.put("detail", detail);
+            out.put(a);
+        } catch (JSONException e) {
+            return json;
+        }
+        return out.toString();
     }
 
     private boolean ensurePipeline() {

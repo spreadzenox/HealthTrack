@@ -68,14 +68,23 @@ public class FaceSensePlugin extends Plugin {
         ret.put("outcomes", counts);
         ret.put("rejected", rejected);
         ret.put("battery", FaceSenseService.batteryPercent(context));
+        // « foreground » = accès caméra seulement app à l'écran ; « allow » = accordé en permanence (Shizuku / ADB).
+        ret.put("cameraOp", FaceSenseService.cameraOpMode(context));
         // Activée avant la notification « Reprendre » (I88 ②) : la vérification horaire est programmée ici.
         if (p.getBoolean("enabled", false)) FaceResumeJob.ensureScheduled(context);
         return ret;
     }
 
-    /** Démarre le service (demande d'abord l'accès à la caméra si besoin) : { started, permission }. */
+    /**
+     * Démarre le service (demande d'abord l'accès à la caméra si besoin) : { started, permission }. `restart` :
+     * l'arrête d'abord, pour qu'il reparte app à l'écran et retrouve l'accès caméra en arrière-plan (Android 11+
+     * ne le donne qu'à un service caméra démarré pendant que l'app est visible).
+     */
     @PluginMethod
     public void start(PluginCall call) {
+        if (Boolean.TRUE.equals(call.getBoolean("restart", false)) && FaceSenseService.isRunning()) {
+            getContext().stopService(new Intent(getContext(), FaceSenseService.class));
+        }
         if (getPermissionState("camera") != PermissionState.GRANTED) {
             requestPermissionForAlias("camera", call, "cameraGranted");
             return;
@@ -109,7 +118,9 @@ public class FaceSensePlugin extends Plugin {
         JSObject ret = new JSObject();
         ret.put("permission", true);
         try {
-            Intent intent = new Intent(getContext(), FaceSenseService.class).setAction(action);
+            // Appelé depuis la WebView : l'app est à l'écran.
+            Intent intent = new Intent(getContext(), FaceSenseService.class).setAction(action)
+                    .putExtra(FaceSenseService.EXTRA_ORIGIN, FaceSenseService.ORIGIN_APP);
             ContextCompat.startForegroundService(getContext(), intent);
             FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", true).apply();
             FaceResumeJob.ensureScheduled(getContext());

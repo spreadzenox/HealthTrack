@@ -111,4 +111,22 @@ describe('FaceSenseCard', () => {
     expect(await screen.findByText(/Calibration : 12 jours sur 30 avec une note et des lectures/)).toBeInTheDocument()
     expect(screen.getByText(/Calibration : 12 \/ 30 jours comparables/)).toBeInTheDocument()
   })
+
+  it('caméra refusée en arrière-plan (signalement du 19/10 15:05) : Relancer redémarre app ouverte, guide Shizuku / ADB', async () => {
+    const attempts = JSON.stringify([{ at: Date.now(), trigger: 'unlock', source: 'keyguard', outcome: 'camera:camera_disabled' }])
+    const plugin = fake({ ...base, cameraOp: 'foreground', attempts })
+    render(<FaceSenseCard plugin={plugin} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText('À relancer')).toBeInTheDocument()
+    expect(screen.getByText(/refusé la caméra/)).toBeInTheDocument()
+    expect(screen.getAllByText(/appops set com\.healthtrack\.app CAMERA allow/).length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole('button', { name: 'Relancer' }))
+    await waitFor(() => expect(plugin.start).toHaveBeenCalledWith({ restart: true }))
+  })
+
+  it('accès permanent accordé (Shizuku / ADB) : le diagnostic le dit', async () => {
+    const plugin = fake({ ...base, cameraOp: 'allow' })
+    render(<FaceSenseCard plugin={plugin} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText('Active')).toBeInTheDocument()
+    expect(screen.getAllByText(/accordé en permanence/).length).toBeGreaterThan(0)
+  })
 })

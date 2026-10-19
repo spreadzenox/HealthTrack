@@ -8,6 +8,7 @@ import {
   stopFaceSense,
   isFaceSenseEnabled,
   outcomeLabel,
+  faceCameraAccess,
 } from './faceSense'
 
 const active = {
@@ -177,5 +178,86 @@ describe('interrupteur', () => {
     expect(res).toMatchObject({ started: false, permission: false })
     expect(isFaceSenseEnabled()).toBe(false)
     expect(await startFaceSense(null)).toMatchObject({ started: false, error: 'unavailable' })
+  })
+})
+
+describe('repérage du déverrouillage et accès caméra (signalement du 19/10 15:05)', () => {
+  const at = (h, m) => new Date(2026, 9, 19, h, m).getTime()
+  const attempts = JSON.stringify([
+    { at: at(15, 1), trigger: 'manual', source: 'test', outcome: 'face' },
+    { at: at(15, 5), trigger: 'unlock', source: 'keyguard', outcome: 'camera:camera_disabled', detail: 'onError:3' },
+  ])
+  const seen = {
+    ...active,
+    dayUnlocks: 3,
+    dayScreenOns: 5,
+    dayPresents: 1,
+    dayUnlock_user_present: 1,
+    dayUnlock_keyguard: 2,
+    lastUnlockAt: at(15, 5),
+    lastUnlockSource: 'keyguard',
+    lastScreenOnAt: at(15, 4),
+    cameraOp: 'foreground',
+    startOrigin: 'app',
+    startAction: 'START',
+    starts: 2,
+    attempts,
+  }
+
+  it('export : allumages, déverrouillages par source, mode caméra, démarrage, dernières tentatives', () => {
+    const r = faceDiagnosticReport(seen, { now: new Date(at(15, 10)) })
+    expect(r.version).toBe(2)
+    expect(r.detection).toEqual({
+      screenOns: 5,
+      userPresents: 1,
+      unlocks: 3,
+      bySource: { user_present: 1, keyguard: 2, screen_on: 0 },
+      lastUnlockAt: new Date(at(15, 5)).toISOString(),
+      lastUnlockSource: 'keyguard',
+      lastScreenOnAt: new Date(at(15, 4)).toISOString(),
+    })
+    expect(r.camera).toEqual({ op: 'foreground', startOrigin: 'app', startAction: 'START', starts: 2 })
+    expect(r.attempts).toHaveLength(2)
+    expect(r.attempts[1]).toEqual({
+      at: new Date(at(15, 5)).toISOString(), trigger: 'unlock', source: 'keyguard', outcome: 'camera:camera_disabled',
+      detail: 'onError:3', retry: false,
+    })
+  })
+
+  it('journal des tentatives illisible ou absent : liste vide, jamais d’exception', () => {
+    expect(faceDiagnosticReport({ ...active, attempts: '{oups' }).attempts).toEqual([])
+    expect(faceDiagnosticReport(active).attempts).toEqual([])
+    expect(faceDiagnosticReport(null).detection.unlocks).toBe(0)
+  })
+
+  it('lignes : allumages et déverrouillages du jour, accès caméra, dernières tentatives avec l’erreur exacte', () => {
+    const lines = faceDiagnosticLines(seen).join('\n')
+    expect(lines).toContain('Aujourd’hui : écran allumé 5 fois, 3 déverrouillages repérés (écran de verrouillage 1, verrou interrogé 2), le dernier à 15:05')
+    expect(lines).toContain('Accès caméra : seulement quand l’app est utilisée (réglage Android) · service démarré depuis l’app ouverte')
+    expect(lines).toContain('Dernières tentatives : 15:05 déverrouillage (verrou interrogé) → caméra coupée (accès caméra désactivé dans Android ?) [onError:3] ; 15:01 test → visage lu')
+  })
+
+  it('écran allumé mais aucun déverrouillage repéré : la carte le dit', () => {
+    const d = describeFaceSense({ ...active, dayUnlocks: 0, dayScreenOns: 4 })
+    expect(d.lines[0]).toBe('Écran allumé 4 fois aujourd’hui, mais aucun déverrouillage repéré : ouvrez le Diagnostic et envoyez-le.')
+  })
+
+  it('caméra refusée en arrière-plan : état « à relancer » ; accès permanent : rien à signaler', () => {
+    expect(faceCameraAccess(seen)).toMatchObject({ op: 'foreground', permanent: false, blocked: true })
+    const d = describeFaceSense(seen)
+    expect(d).toMatchObject({ state: 'blocked', badge: 'À relancer' })
+    expect(describeFaceSense({ ...seen, cameraOp: 'allow' }).state).toBe('active')
+    expect(faceCameraAccess({ ...seen, cameraOp: 'allow' })).toMatchObject({ permanent: true, blocked: false })
+    // démarré hors de l'app ouverte : Android coupera la caméra
+    expect(describeFaceSense({ ...active, startOrigin: 'background', cameraOp: 'foreground' }).state).toBe('blocked')
+    // une lecture réussie après l'erreur : plus bloqué
+    const ok = JSON.stringify([...JSON.parse(attempts), { at: at(15, 9), trigger: 'unlock', source: 'user_present', outcome: 'face' }])
+    expect(describeFaceSense({ ...seen, attempts: ok }).state).toBe('active')
+  })
+
+  it('relancer depuis l’app ouverte : redémarre le service', async () => {
+    const plugin = { start: vi.fn(async () => ({ started: true, permission: true })) }
+    await startFaceSense(plugin, { restart: true })
+    expect(plugin.start).toHaveBeenCalledWith({ restart: true })
   })
 })

@@ -21,6 +21,20 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🚑 Signalement du propriétaire du 19/10/2026 15:05 — aucune lecture automatique au déverrouillage
+
+- [x] **Corrigé (run 19/10 16:30)** : récepteur `USER_PRESENT` enregistré `RECEIVER_NOT_EXPORTED` → diffusion de
+  SystemUI filtrée, aucun déverrouillage vu. Récepteur exporté (diffusions protégées) sur le fil du service +
+  secours `face/UnlockWatch` (verrou interrogé 60 s après `SCREEN_ON`, écran allumé déjà déverrouillé ; testé JVM) ;
+  diagnostic v2 (allumages, déverrouillages par source, dernier, `startOrigin`, `cameraOp`, 12 tentatives + erreur
+  exacte) ; état « À relancer » + `start({ restart: true })` ; guide Shizuku / ADB (I89 caméra).
+  - [ ] **Retour du propriétaire** : diagnostic exporté après 2–3 déverrouillages à l'empreinte (lignes « Aujourd'hui :
+    écran allumé… », « Accès caméra… », « Dernières tentatives… »).
+  - [ ] Si `camera_disabled` / `camera_denied` au déverrouillage malgré `startOrigin = app` : relancer le service à
+    chaque retour dans l'app (`restart`) tant que `cameraOp ≠ allow`, ou insister sur l'accès permanent.
+  - [ ] Si « verrou interrogé » ne voit rien non plus : interrogation périodique écran allumé (toutes les 2 min) en
+    dernier secours, et `KEYGUARD_HIDDEN` d'UsageStats (déjà lu par `PhoneUsagePlugin`) pour compter après coup.
+
 ## 🚑 Signalement du propriétaire du 19/10/2026 08:37 — carte « Lecture du visage » introuvable
 
 - [x] **Corrigé (run 19/10 10:30)** : la carte n'était en tête que si la lecture était déjà activée, sinon repliée
@@ -65,7 +79,8 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   `MY_PACKAGE_REPLACED`) ; diagnostic `resume { notices, taps, lastCheck… }`. Pas de `getForegroundService` : un
   service caméra lancé hors de l'app visible n'a pas la caméra (Android 11+ ; type `camera` interdit au boot en 15).
   - [ ] **Retour du propriétaire** : la notification apparaît-elle juste après la mise à jour ? « Reprendre » relance-t-il ?
-- [ ] I89 guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`, `RECORD_AUDIO allow`) + détection.
+- [~] I89 guide Shizuku / ADB : **caméra livrée** (run 19/10 16:30 : guide dans le Diagnostic, `cameraOp` lu par
+  `unsafeCheckOpNoThrow`, « accordé en permanence ») ; reste `RECORD_AUDIO allow` avec la voix (I117).
 - [ ] I91 voix (prosodie, aucun audio gardé) → **précisé au run idées du 19/10 08:30 : I117** (dictée du soir, une
   prise de son `AudioRecord` lue deux fois — prosodie maison en direct + même PCM poussé en temps réel vers la
   reconnaissance : ML Kit GenAI *Basic* fr-FR `AudioSource.fromPfd`, sinon plateforme `EXTRA_AUDIO_SOURCE` API 33 ;
@@ -663,8 +678,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 « Reprendre » ; d) I89 Shizuku / ADB ; e) I91 voix ; f) temps par app (X) ; g) ✅ I112 porte (19/10 02:30) → I115 estimation du jour ;
 h) ✅ I113 note du soir (19/10 06:30). 2) ⏸️ En pause : montre (sauf régression), D1, D2, C7.
 **Précision du run idées du 19/10 08:30 (ordre interne du point 1)** : a) diagnostic A56 dès qu'il arrive ;
-b) ✅ **I116** temps par app (X) (19/10 12:30) ; c) ✅ **I118** diagnostic des rafales / jour + 2e essai (19/10 14:30) ; d) **I89 Shizuku / ADB (prochain run de
-code)** ; e) **I119** lexiques puis **I117** dictée (voix) ; f) I115 estimation du jour quand la
+b) ✅ **I116** temps par app (X) (19/10 12:30) ; c) ✅ **I118** diagnostic des rafales / jour + 2e essai (19/10 14:30) ; d) ✅ 🚑 déverrouillages repérés + I89 caméra (19/10 16:30,
+signalement 15:05) — **lire le diagnostic de l'A56 qui suivra la mise à jour avant tout** ; e) **I119** lexiques puis **I117** dictée (voix) ; f) I115 estimation du jour quand la
 porte peut s'ouvrir ; g) I120 plus tard.
 
 **Réordonnées le 18/10 (16:30 Paris), consigne du 18/10 complétée après la capture de 15:03 (correctif confirmé sur

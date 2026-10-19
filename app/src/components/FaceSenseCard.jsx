@@ -15,6 +15,7 @@ import {
   faceDiagnosticReport,
   faceDiagnosticLines,
   faceSensePlugin,
+  faceCameraAccess,
 } from '../services/faceSense'
 import { FACE_BURST_TYPE, faceDailyCounts, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
 import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
@@ -59,6 +60,32 @@ async function defaultLoadHistory() {
   }
 }
 
+const SHIZUKU_CMD = 'appops set com.healthtrack.app CAMERA allow'
+
+/**
+ * Guide « accès permanent à la caméra » (I89) : Android 11+ ne laisse la caméra au service en arrière-plan que
+ * s'il a démarré app ouverte ; l'app-op CAMERA en « allow », que le propriétaire s'accorde lui-même (Shizuku sans
+ * PC, ou ADB), lève cette condition. L'app lit le mode courant et dit s'il est accordé.
+ */
+function PermanentCameraGuide({ access, open = false }) {
+  if (access.permanent) {
+    return <p className="my-device-meta">Accès permanent à la caméra : accordé en permanence (Shizuku / ADB).</p>
+  }
+  return (
+    <details className="connectors-more" open={open}>
+      <summary className="connectors-more-summary">Accès permanent à la caméra (Shizuku ou ADB)</summary>
+      <ol className="my-device-meta">
+        <li>Sans PC : installez Shizuku (Play Store), démarrez-le par le débogage sans fil (Options pour les
+          développeurs), puis un terminal compatible Shizuku (par exemple aShell) et tapez la commande ci-dessous.</li>
+        <li>Avec un PC : débogage USB activé, puis <code>adb shell {SHIZUKU_CMD}</code>.</li>
+        <li>Commande : <code>{SHIZUKU_CMD}</code></li>
+        <li>Revenez ici : le Diagnostic doit dire « Accès caméra : accordé en permanence ». À refaire seulement si
+          vous réinstallez l’app (une mise à jour le garde) ou changez l’autorisation Appareil photo dans Android.</li>
+      </ol>
+    </details>
+  )
+}
+
 function frenchDate(iso) {
   return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
 }
@@ -98,11 +125,11 @@ export default function FaceSenseCard({
     return () => document.removeEventListener('visibilitychange', onVisible)
   }, [refresh])
 
-  async function activate() {
+  async function activate({ restart = false } = {}) {
     setBusy(true)
     setMessage(null)
     try {
-      const res = await startFaceSense(plugin)
+      const res = await startFaceSense(plugin, restart ? { restart: true } : undefined)
       if (!res.permission) setMessage('Accès à la caméra refusé : rien n’a été activé.')
       else if (!res.started) setMessage('Android a refusé de démarrer la lecture. Réessayez app ouverte.')
       // le service met un instant à démarrer
@@ -222,6 +249,22 @@ export default function FaceSenseCard({
         </>
       )}
 
+      {available && d.state === 'blocked' && (
+        <>
+          {d.lines.map((line) => <p key={line} className="weather-today">{line}</p>)}
+          <p className="my-device-message">
+            Android a refusé la caméra au dernier déverrouillage : le réglage « Autoriser seulement lorsque l’appli
+            est utilisée » ne la laisse au service que s’il a démarré app ouverte. Touchez « Relancer » maintenant,
+            app ouverte ; pour ne plus dépendre de ce détail, accordez l’accès permanent (guide ci-dessous).
+          </p>
+          <div className="my-device-actions">
+            <button type="button" className="btn btn-primary connector-btn" onClick={() => activate({ restart: true })} disabled={busy}>Relancer</button>
+            <button type="button" className="btn btn-secondary connector-btn" onClick={turnOff} disabled={busy}>Désactiver</button>
+          </div>
+          <PermanentCameraGuide access={faceCameraAccess(status)} open />
+        </>
+      )}
+
       {available && d.state === 'active' && (
         <div className="weather-on">
           {d.lines.map((line) => <p key={line} className="weather-today">{line}</p>)}
@@ -257,13 +300,14 @@ export default function FaceSenseCard({
             {faceDiagnosticLines(status, { history, lastImport: getLastFaceImport(), eveningNote: evening }).map((line) => <li key={line}>{line}</li>)}
           </ul>
           <div className="my-device-actions">
-            {d.state === 'active' && (
+            {(d.state === 'active' || d.state === 'blocked') && (
               <button type="button" className="btn btn-secondary connector-btn" onClick={test} disabled={busy}>Tester maintenant</button>
             )}
             <button type="button" className="btn btn-secondary connector-btn" onClick={exportDiagnostic} disabled={busy}>
               Enregistrer le diagnostic
             </button>
           </div>
+          {d.state !== 'blocked' && <PermanentCameraGuide access={faceCameraAccess(status)} />}
         </details>
       )}
     </section>
