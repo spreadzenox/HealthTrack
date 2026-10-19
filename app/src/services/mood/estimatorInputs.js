@@ -10,6 +10,10 @@
  * Choix documenté : l'usage des réseaux sociaux (temps, apps) est un X — il peut expliquer l'humeur,
  * il ne sert pas à l'estimer. La capacité « émotion » d'une montre, si elle est lue un jour, est un X
  * aussi (c'est une estimation physiologique, pas un signal émotionnel direct).
+ *
+ * Texte libre (phrase du soir, dictée) : lu par deux lexiques disjoints (`lexicon.js`, I119). Les mots du
+ * ressenti ne proposent que la note et le tag « Stress » (Y) ; ceux du contexte, que des tags X. Un mot
+ * présent dans les deux ferait échouer `lexicon.test.js`.
  */
 
 export const ESTIMATOR_INPUTS = [

@@ -41,6 +41,7 @@
  *   npm run visual -- --routes=/connectors --face       # « Lecture du visage » : faux plugin, service actif
  *   npm run visual -- --routes=/connectors --face=off   # … pas encore activée ; --face=stopped : arrêtée par Android ;
  *                                                                      --face=blocked : caméra refusée en arrière-plan
+ *   npm run visual -- --routes=/ --wellbeing-prompt --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
  *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
@@ -659,6 +660,14 @@ async function main() {
           if (await button.count()) {
             await button.click()
             await page.waitForTimeout(700)
+          }
+        }
+        if (args.phrase) {
+          const field = page.getByLabel(/En une phrase/).first()
+          if (await field.count()) {
+            await field.fill(String(args.phrase))
+            await field.evaluate((el) => el.scrollIntoView({ block: 'center' }))
+            await page.waitForTimeout(300)
           }
         }
         const file = join(outDir, `${name}.png`)

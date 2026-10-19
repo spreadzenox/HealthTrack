@@ -97,6 +97,14 @@ accordé. Le **Diagnostic** dit enfin combien de fois l'écran s'est allumé et 
 aujourd'hui (et par quelle voie), l'heure du dernier, comment le service a démarré, et les 5 dernières tentatives
 avec leur résultat ou l'erreur exacte d'Android.
 
+**Run du 19/10 18:30 — votre journée en une phrase.** Dans « Comment vous sentez-vous ? », un champ facultatif
+**« En une phrase »** : écrivez, ou **dictez avec le micro du clavier**, « journée crevante mais contente, apéro le
+soir », et HealthTrack vous **propose** « Note 3 » et « 🍷 Alcool » en puces à toucher — rien n'est coché sans vous,
+et **la phrase n'est pas gardée**. Elle est lue sur le téléphone par deux listes de mots qui ne se recoupent jamais
+(vérifié par un test) : les mots de votre **ressenti** ne proposent que la note (et « Stress »), ceux de votre
+**journée** que les tags de contexte — sinon les Analyses compareraient votre humeur à elle-même. C'est la voix « par
+le texte » qu'avait retenue la veille (ce qu'on dit en apprend plus que le son de la voix), sans permission micro.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -113,7 +121,7 @@ dedans ; il dit maintenant aussi combien de lectures sont rangées). Dites-moi s
 1 s après chaque déverrouillage. **Nouveau (temps par app)** : un soir, une capture de la ligne « Dont réseaux
 sociaux … » (Plus → Connecteurs → Temps d'écran et sommeil) et une de Paramètres → Bien-être numérique (détail des
 apps du jour), pour vérifier que les chiffres concordent. **Nouveau (lectures par jour)** : dans le diagnostic
-exporté après une semaine, la ligne « Par jour » et la ligne « 2e essais » m'indiqueront si le visage donne assez. **Nouveau (facultatif)** : allumez « 🔔 Me la demander le soir » dans la saisie bien-être, autorisez les
+exporté après une semaine, la ligne « Par jour » et la ligne « 2e essais » m'indiqueront si le visage donne assez. **Nouveau (phrase du soir)** : dictez une phrase dans « En une phrase » et dites-moi si la note et les tags proposés tombent juste (et les mots ratés). **Nouveau (facultatif)** : allumez « 🔔 Me la demander le soir » dans la saisie bien-être, autorisez les
 notifications, et dites-moi si la notification arrive le soir, si les 6 chiffres sont lisibles et si la note
 apparaît dans le journal à l'ouverture suivante. **Test « Reprendre »** : juste après l'installation de cette mise à jour, sans ouvrir l'app, une
 notification « Lecture du visage arrêtée » devrait apparaître (si la lecture était activée) ; touchez « Reprendre »
@@ -164,6 +172,7 @@ signalement — **votre diagnostic après la mise à jour est attendu**), dicté
 | 19/10 12:30 — [Temps par app comme facteur X (I116)](runs/2026-10-19-1230-temps-par-app.md) | 🔴🙂 | `queryAppEvents` natif + `phoneApps.js` ; entrées `phone_apps` ; 4 facteurs neutres sans levier, test anti-circularité ; ligne « Dont… » + puce journal ; PR #219 |
 | 19/10 14:30 — [Visage : 2e essai et lectures par jour (I118)](runs/2026-10-19-1430-visage-rafales-par-jour.md) | 🔴🙂 | `FaceSchedule.shouldRetry` (1 fois, +2 s, ≤ 10 s après le déverrouillage) ; `faceDailyCounts` → diagnostic « Par jour » / « 2e essais » ; PR #220 |
 | 19/10 16:30 — [Visage : chaque déverrouillage repéré (signalement 15:05)](runs/2026-10-19-1630-visage-deverrouillage.md) | 🚑🙂 | Cause : récepteur `RECEIVER_NOT_EXPORTED` → `USER_PRESENT` (SystemUI) filtré ; `UnlockWatch` (diffusion / verrou interrogé / écran déjà ouvert), récepteur exporté sur le fil du service ; diagnostic v2 (allumages, sources, tentatives + erreur exacte, démarrage, app-op caméra) ; « À relancer » + guide Shizuku / ADB (I89) ; PR #221 |
+| 19/10 18:30 — [Votre journée en une phrase (I119)](runs/2026-10-19-1830-phrase-du-soir.md) | 🔴🙂 | Lexiques disjoints ressenti (Y) / contexte (X) + test d'intersection vide ; champ « En une phrase » (dictable au clavier) → note et tags proposés, phrase jamais gardée ; 1 539 tests |
 
 ---
 

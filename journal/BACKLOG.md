@@ -87,8 +87,13 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   rien sur disque ; texte → note et tags **proposés**). Voix de fond en continu (service `microphone`) **écartée pour
   l'instant** : npj Digit. Med. 2026 → texte R² 0,34, audio 0,06, intra-personne ≈ hasard ; à reconsidérer si la
   prosodie passe la porte chez le propriétaire.
-- [ ] **I119** (20) lexiques **disjoints** ressenti (Y : proposition de note) / contexte (X : tags) pour la dictée et
-  les notes libres, test d'intersection vide (`services/mood/lexicon.js`). À faire avec ou avant I117.
+- [x] **I119** (20) ✅ **livré le 19/10 18:30** — `services/mood/lexicon.js` (`FEELING_WORDS` → note + tag `stress`,
+  `CONTEXT_WORDS` → tags X ; mot à mot, négation, intensifs) ; test d'intersection vide ; champ « En une phrase » dans
+  la saisie bien-être (dictable au micro du clavier), propositions à toucher, phrase jamais enregistrée.
+  - [ ] Retour du propriétaire : propositions justes ? mots ratés → enrichir le lexique (ou lexique libre FEEL / NRC-FR
+    si licence compatible).
+  - [ ] I117 natif (prosodie) seulement si la prosodie a une chance de passer la porte ; la dictée du clavier couvre
+    déjà le texte.
 - [x] **I116** (25) ✅ **livré le 19/10 12:30** (PR « [Auto] Temps par app », `services/phoneApps.js`, `queryAppEvents`, facteurs `social_minutes` / `messaging_minutes` / `video_minutes` / `game_minutes` neutres, à valider sur l'A56 : écart avec Bien-être numérique de One UI) — temps au premier plan par app comme **X** : `queryEvents` garde `ACTIVITY_RESUMED / PAUSED /
   STOPPED` + paquet (le plugin lit déjà l'écran et `KEYGUARD_HIDDEN`, accès déjà accordé) ; catégories par
   `ApplicationInfo.category` + `<queries>` `MAIN/LAUNCHER` + petite table de repli ; entrée `phone_apps` (jour + par

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-19",
+  "kind": "nouveau",
+  "title": "Bien-être : votre journée en une phrase",
+  "items": [
+    "Dans la fenêtre « Comment vous sentez-vous ? », un champ facultatif « En une phrase » : écrivez ou dictez avec le micro du clavier « journée crevante mais contente, apéro le soir », et HealthTrack vous propose une note et des tags (ici : note 3, Alcool). Rien n'est coché sans que vous touchiez la proposition.",
+    "La phrase n'est pas gardée : elle sert seulement à proposer. Les mots de votre ressenti (« contente », « stressé ») ne proposent que la note et le tag Stress ; ceux de votre journée (« apéro », « malade ») que les tags de contexte — jamais les deux, pour que les Analyses ne comparent pas votre humeur à elle-même.",
+    "Tout est lu sur le téléphone, sans connexion."
+  ]
+}

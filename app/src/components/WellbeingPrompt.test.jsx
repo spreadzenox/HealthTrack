@@ -395,3 +395,46 @@ describe('WellbeingPrompt — note du soir d’un geste (I113)', () => {
     }
   })
 })
+
+describe('WellbeingPrompt — votre journée en une phrase (I119)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  const type = (text) => fireEvent.change(screen.getByLabelText(/En une phrase/), { target: { value: text } })
+
+  it('propose la note et les tags lus dans la phrase, sans rien cocher d’office', async () => {
+    render(<WellbeingPrompt open onClose={() => {}} />)
+    type('Journée crevante mais contente, apéro avec les collègues')
+    expect(screen.getByText(/Proposé d’après votre phrase/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Note 3 sur 5/ })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'Alcool' })).toHaveAttribute('aria-pressed', 'false')
+    fireEvent.click(screen.getByRole('button', { name: 'Prendre la note 3' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter le tag Alcool' }))
+    expect(screen.getByRole('button', { name: /Note 3 sur 5/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Alcool' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByText(/Proposé d’après votre phrase/)).not.toBeInTheDocument()
+  })
+
+  it('n’enregistre jamais la phrase elle-même', async () => {
+    const { createEntry } = await import('../storage/localHealthStorage')
+    const onClose = vi.fn()
+    render(<WellbeingPrompt open onClose={onClose} />)
+    type('Très heureuse, sport ce soir')
+    fireEvent.click(screen.getByRole('button', { name: 'Prendre la note 5' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+    await waitFor(() => expect(onClose).toHaveBeenCalled())
+    expect(createEntry).toHaveBeenCalledWith({ type: 'wellbeing', source: 'app_wellbeing', payload: { score: 5 } })
+  })
+
+  it('ne propose pas un tag que l’app capte déjà', async () => {
+    localStorage.setItem('healthtrack_phone_usage', JSON.stringify({ enabled: true }))
+    try {
+      render(<WellbeingPrompt open onClose={() => {}} />)
+      type('écran tard hier')
+      expect(screen.queryByRole('button', { name: /Ajouter le tag Écran tard/ })).not.toBeInTheDocument()
+    } finally {
+      localStorage.removeItem('healthtrack_phone_usage')
+    }
+  })
+})
