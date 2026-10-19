@@ -47,9 +47,15 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
    ✅ notification « Reprendre » si le service est tué (19/10 04:30 : tâche horaire + redémarrage / mise à
    jour) → ⬜ guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`) et détection du privilège (I89).
 4. ⬜ **Voix** : prosodie (énergie, débit, hauteur, pauses) par un modèle local, aucun audio gardé ; service
-   `microphone` sur le même modèle (I91).
+   `microphone` sur le même modèle (I91). **Précisé le 19/10 08:30 (I117, I119)** : d'abord la dictée du soir, une
+   seule prise de son lue deux fois (prosodie en direct + reconnaissance fr-FR sur le même flux, rien sur disque),
+   texte → note et tags proposés par deux lexiques disjoints (ressenti = Y, contexte = X). Voix de fond en continu
+   écartée pour l'instant (npj Digit. Med. 2026 : texte R² 0,34, audio 0,06, intra-personne ≈ hasard).
 5. ⬜ **Usage du téléphone** : temps au premier plan par app (`UsageStatsManager`), réseaux sociaux regroupés,
-   comme **X** (voir §2) ; guide « paramètres restreints » d'Android 15+.
+   comme **X** (voir §2) ; guide « paramètres restreints » d'Android 15+ (déjà dans `PhoneUsageCard`). **Spécifié le
+   19/10 08:30 (I116)** : `ACTIVITY_RESUMED / PAUSED / STOPPED` dans `queryEvents`, catégories
+   `ApplicationInfo.category`, entrée `phone_apps` par jour et par heure ; prochain run de code conseillé.
+   Rafales : viser ≥ 12 rafales valides par jour (I118, simulé).
 6. 🟨 **Porte et restitution** : ✅ `gate.js` (I112, 19/10 02:30), puis une ligne « estimation du jour » avec fourchette, jamais un
    diagnostic ; le visage complète les jours sans note (I115).
 7. ✅ Calibration optionnelle : note du soir d'un geste depuis une notification (I113, 19/10 06:30), jamais

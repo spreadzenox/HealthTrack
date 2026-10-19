@@ -45,6 +45,19 @@ si vous avez déjà noté ce jour-là, et disparaît d'elle-même si vous l'igno
 l'ouverture suivante, exactement comme une note saisie. Toujours facultatif — mais c'est ce qui fera aboutir le plus
 vite la calibration du visage.
 
+**Run « idées » du 19/10 08:30 — ce qui reste à capter.** Trois constats pour la suite. ① **Vos réseaux sociaux**
+peuvent être comptés sans rien vous demander de plus : l'accès « Données d'utilisation » que vous avez déjà donné
+suffit pour savoir combien de minutes vous passez sur les réseaux, la vidéo, les jeux, heure par heure. Ce sera un
+**facteur** que les Analyses compareront à votre humeur, **sans aucun a priori** : les études récentes trouvent des
+effets moyens minuscules et très différents d'une personne à l'autre — seules vos données diront ce qu'il en est
+chez vous. C'est le prochain run de code. ② **Votre voix** : une étude de février 2026 (3 151 journaux vocaux) montre
+que **ce que l'on dit** de sa journée en apprend bien plus que **le son** de la voix (qui fait à peine mieux que le
+hasard). D'où le plan : une **dictée du soir** facultative (« journée crevante mais contente ») qui vous propose la
+note et les étiquettes, l'audio n'étant jamais écrit nulle part ; pas de micro qui écoute en continu pour l'instant.
+③ **Assez de déverrouillages ?** En simulation, le visage peut servir avec environ **12 à 16 lectures réussies par
+jour** ; en dessous de 8, il faudrait beaucoup plus longtemps. Le diagnostic vous le dira — votre nombre de
+déverrouillages est déjà connu de l'app.
+
 **Ce qu'il me faut (votre Galaxy A56)** — inchangé, c'est l'étape qui débloque la suite : après la mise à jour,
 Plus → Connecteurs → **Lecture du visage → « Activer la lecture du visage »** (accepter l'appareil photo) →
 **« Sans restriction »** (accepter) ; utilisez le téléphone normalement quelques heures ; puis **Diagnostic →
@@ -70,11 +83,16 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
   [`semaines/2026-S42.md`](semaines/2026-S42.md) ; aucun n'a changé.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
-- *(à venir : runs « idées » de 08:30 et 20:30, toute leur veille sur l'humeur captée automatiquement)*
+- **Temps par app comme facteur, sans liste de « mauvaises » apps** (I116, 19/10 08:30) : catégories déclarées par
+  les apps elles-mêmes, minutes par heure, comparées à votre humeur **après coup** seulement.
+- **La voix par ce que vous dites, pas par le son** (I117, I119) : une seule prise de son lue deux fois, aucun
+  fichier ; mots du ressenti (humeur) et mots du contexte (facteurs) dans deux listes qui ne se croisent jamais.
+- **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
+  déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (19/10 06:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
-visage (et l'adapter à One UI), guide Shizuku / ADB, puis estimation du jour avec sa fourchette (derrière la porte),
-voix, temps par app comme facteur.
+**Prochaines priorités (19/10 08:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
+visage (et l'adapter à One UI), **temps par app comme facteur** (prochain run), lectures du visage par jour dans le
+diagnostic, guide Shizuku / ADB, dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -82,6 +100,7 @@ voix, temps par app comme facteur.
 | 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
 | 19/10 04:30 — [Visage : notification « Reprendre » (I88 ②)](runs/2026-10-19-0430-visage-reprendre.md) | 🔴🙂 | Règle `FaceResume` + tâche horaire + redémarrage / mise à jour ; relance dans `onResume` ; diagnostic `resume` ; PR #215 |
 | 19/10 06:30 — [Note du soir d'un geste (I113)](runs/2026-10-19-0630-note-du-soir.md) | 🔴🙂 | Règle `EveningNote` (JVM), notification 6 boutons + alarme du soir, file native → note `wellbeing` ; bouton dans la saisie ; diagnostic `eveningNote` ; PR #216 |
+| 19/10 08:30 — [Idées : temps par app, voix par la dictée, assez de rafales](runs/2026-10-19-0830-idees-apps-voix-rafales.md) | 💡 | I116–I120 ; simulation rafales / jour ; npj 2026 (texte ≫ audio) ; pas de Gemini Nano sur l’A56 ; PR #217 |
 
 ---
 
