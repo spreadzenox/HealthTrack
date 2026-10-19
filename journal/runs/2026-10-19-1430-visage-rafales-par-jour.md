@@ -1,6 +1,6 @@
 # 2026-10-19 14:30 Paris (12:30 UTC) — Visage : 2e essai et lectures par jour (I118)
 
-**Type** : 🔴🙂 chantier bien-être automatique (consigne §00000)  ·  **PR** : voir le tableau du README
+**Type** : 🔴🙂 chantier bien-être automatique (consigne §00000)  ·  **PR** : #220
 
 ## Pourquoi
 - Démarrage : main à `0b946bc` (#219), release **v174** publiée (temps par app). Aucune PR « [Auto] » ouverte. Le
