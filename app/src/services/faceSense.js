@@ -56,11 +56,14 @@ export async function getFaceSenseStatus(plugin = faceSensePlugin()) {
   }
 }
 
-/** Active (demande l'accès à la caméra si besoin). Rend { started, permission, error? }. */
-export async function startFaceSense(plugin = faceSensePlugin()) {
+/**
+ * Active (demande l'accès à la caméra si besoin). Rend { started, permission, error? }. `restart` : arrête puis
+ * redémarre le service app ouverte, pour qu'Android lui rende l'accès caméra en arrière-plan.
+ */
+export async function startFaceSense(plugin = faceSensePlugin(), { restart = false } = {}) {
   if (!plugin?.start) return { started: false, permission: false, error: 'unavailable' }
   try {
-    const res = (await plugin.start()) || {}
+    const res = (await (restart ? plugin.start({ restart: true }) : plugin.start())) || {}
     if (res.started) mirror(true)
     return { started: !!res.started, permission: res.permission !== false, error: res.error }
   } catch (e) {
@@ -134,6 +137,53 @@ function plural(n, one, many = `${one}s`) {
   return `${n} ${n > 1 ? many : one}`
 }
 
+/** Journal natif des dernières tentatives (JSON), de la plus ancienne à la plus récente ; [] si illisible. */
+function parseAttempts(json) {
+  if (!json) return []
+  try {
+    const list = JSON.parse(json)
+    return Array.isArray(list) ? list.filter((a) => a && typeof a === 'object') : []
+  } catch {
+    return []
+  }
+}
+
+/** Erreurs de la caméra qu'Android renvoie quand il refuse l'accès hors de l'app à l'écran. */
+const BACKGROUND_DENIALS = new Set(['camera:camera_disabled', 'camera:camera_denied', 'camera:camera_error'])
+
+/**
+ * Accès caméra du service (signalement du 19/10 15:05). `op` : mode Android brut (`foreground` = « seulement
+ * quand l'app est utilisée », `allow` = accordé en permanence via Shizuku / ADB). `blocked` : Android refuse la
+ * caméra en arrière-plan — service démarré hors de l'app ouverte, ou dernière lecture du déverrouillage refusée —
+ * et l'accès n'est pas permanent.
+ */
+export function faceCameraAccess(status) {
+  const s = status || {}
+  const op = s.cameraOp ?? null
+  const permanent = op === 'allow'
+  const lastUnlock = parseAttempts(s.attempts).filter((a) => a.trigger === 'unlock').pop()
+  const refused = !!lastUnlock && BACKGROUND_DENIALS.has(lastUnlock.outcome)
+  const blocked = !permanent && (s.startOrigin === 'background' || refused)
+  return { op, permanent, blocked, startOrigin: s.startOrigin ?? null }
+}
+
+const SOURCES = { user_present: 'écran de verrouillage', keyguard: 'verrou interrogé', screen_on: 'écran déjà ouvert' }
+const CAMERA_OPS = {
+  allow: 'accordé en permanence (Shizuku / ADB)',
+  foreground: 'seulement quand l’app est utilisée (réglage Android)',
+  ignore: 'refusé en silence',
+  deny: 'refusé',
+  default: 'réglage par défaut',
+}
+const ORIGINS = { app: 'depuis l’app ouverte', background: 'relancé en arrière-plan (caméra refusée par Android)' }
+
+function hhmm(ms) {
+  const d = new Date(ms)
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+const iso = (ms) => (ms ? new Date(ms).toISOString() : null)
+
 /**
  * Ce que dit la carte. Rend { state, badge, lines } ; state ∈ unavailable | no_models | off | denied | stopped |
  * active. Aucune valeur d'indice : seulement des comptes (porte I110).
@@ -148,8 +198,12 @@ export function describeFaceSense(status) {
   const unlocks = status.dayUnlocks ?? 0
   const bursts = status.dayBursts ?? 0
   const faces = status.dayFaces ?? 0
-  if (unlocks === 0) lines.push('Aucun déverrouillage depuis minuit : la première lecture viendra au prochain.')
+  const screenOns = status.dayScreenOns ?? 0
+  if (unlocks === 0 && screenOns > 0) {
+    lines.push(`Écran allumé ${screenOns} fois aujourd’hui, mais aucun déverrouillage repéré : ouvrez le Diagnostic et envoyez-le.`)
+  } else if (unlocks === 0) lines.push('Aucun déverrouillage depuis minuit : la première lecture viendra au prochain.')
   else lines.push(`Aujourd’hui : ${plural(unlocks, 'déverrouillage')}, ${plural(bursts, 'lecture')}, visage lu ${faces} fois.`)
+  if (faceCameraAccess(status).blocked) return { state: 'blocked', badge: 'À relancer', lines }
   return { state: 'active', badge: 'Active', lines }
 }
 
@@ -162,7 +216,7 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
   const timed = s.timed || 0
   return {
     kind: 'healthtrack-face-diagnostic',
-    version: 1,
+    version: 2,
     at: now.toISOString(),
     appVersion: appVersion ?? null,
     device: { manufacturer: s.manufacturer ?? null, model: s.model ?? null, android: s.release ?? null, sdk: s.sdk ?? null },
@@ -177,6 +231,31 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
       lastError: s.lastError ?? null,
     },
     today: { unlocks: s.dayUnlocks ?? 0, bursts: s.dayBursts ?? 0, faces: s.dayFaces ?? 0 },
+    // Repérage du déverrouillage (signalement du 19/10 15:05) : ce qu'Android a signalé aujourd'hui, et par où.
+    detection: {
+      screenOns: s.dayScreenOns ?? 0,
+      userPresents: s.dayPresents ?? 0,
+      unlocks: s.dayUnlocks ?? 0,
+      bySource: {
+        user_present: s.dayUnlock_user_present ?? 0,
+        keyguard: s.dayUnlock_keyguard ?? 0,
+        screen_on: s.dayUnlock_screen_on ?? 0,
+      },
+      lastUnlockAt: iso(s.lastUnlockAt),
+      lastUnlockSource: s.lastUnlockSource ?? null,
+      lastScreenOnAt: iso(s.lastScreenOnAt),
+    },
+    // Accès caméra : mode Android (appops) et façon dont le service a démarré.
+    camera: { op: s.cameraOp ?? null, startOrigin: s.startOrigin ?? null, startAction: s.startAction ?? null, starts: s.starts ?? 0 },
+    // Dernières tentatives : heure, déclencheur, source, résultat ou erreur exacte d'Android.
+    attempts: parseAttempts(s.attempts).map((a) => ({
+      at: iso(a.at),
+      trigger: a.trigger ?? null,
+      source: a.source ?? null,
+      outcome: a.outcome ?? null,
+      detail: a.detail ?? null,
+      retry: a.retry === true,
+    })),
     last: {
       outcome: s.lastOutcome ?? null,
       trigger: s.lastTrigger ?? null,
@@ -250,11 +329,32 @@ const RESUME_CHECKS = {
 }
 const RESUME_TRIGGERS = { periodic: 'vérification horaire', boot: 'après un redémarrage', update: 'après une mise à jour' }
 
+const s0 = (status) => status || {}
+
 /** Lignes lisibles du diagnostic (carte). */
 export function faceDiagnosticLines(status, { history = null, lastImport = null, eveningNote = null } = {}) {
   const r = faceDiagnosticReport(status, { history, lastImport, eveningNote })
   const lines = []
   lines.push(`Service : ${r.service.running ? 'actif' : 'arrêté'} · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'} · batterie ${r.service.batteryExempt ? 'sans restriction' : 'optimisée par Android'}`)
+  const det = r.detection
+  if (det.screenOns || det.unlocks) {
+    const by = Object.entries(det.bySource).filter(([, n]) => n).map(([k, n]) => `${SOURCES[k] || k} ${n}`).join(', ')
+    const last = s0(status).lastUnlockAt ? `, le dernier à ${hhmm(s0(status).lastUnlockAt)}` : ''
+    lines.push(`Aujourd’hui : écran allumé ${det.screenOns} fois, ${plural(det.unlocks, 'déverrouillage repéré', 'déverrouillages repérés')}${by ? ` (${by})` : ''}${last}`)
+  }
+  if (r.camera.op || r.camera.startOrigin) {
+    const parts = []
+    if (r.camera.op) parts.push(`Accès caméra : ${CAMERA_OPS[r.camera.op] || r.camera.op}`)
+    if (r.camera.startOrigin) parts.push(`service démarré ${ORIGINS[r.camera.startOrigin] || r.camera.startOrigin}`)
+    lines.push(parts.join(' · '))
+  }
+  const tries = parseAttempts(s0(status).attempts).slice(-5).reverse()
+  if (tries.length) {
+    lines.push(`Dernières tentatives : ${tries.map((a) => {
+      const who = a.trigger === 'manual' ? 'test' : `déverrouillage${a.source && SOURCES[a.source] ? ` (${SOURCES[a.source]})` : ''}${a.retry ? ', 2e essai' : ''}`
+      return `${a.at ? hhmm(a.at) : '—'} ${who} → ${outcomeLabel(a.outcome)}${a.detail ? ` [${a.detail}]` : ''}`
+    }).join(' ; ')}`)
+  }
   if (r.last.outcome) lines.push(`Dernière lecture : ${outcomeLabel(r.last.outcome)}${r.last.trigger === 'manual' ? ' (test)' : ''}`)
   if (r.timing.bursts) lines.push(`Temps moyen : caméra ${r.timing.cameraMsAvg} ms, analyse ${r.timing.inferenceMsAvg} ms (${plural(r.timing.bursts, 'lecture')})`)
   const rej = Object.entries(r.rejected).sort((a, b) => b[1] - a[1])

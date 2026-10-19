@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-19",
+  "kind": "correctif",
+  "title": "Lecture du visage : chaque déverrouillage est enfin repéré",
+  "items": [
+    "Correction de votre signalement : la lecture du visage ne voyait aucun déverrouillage (empreinte notamment), donc aucune photo automatique. Le signal de déverrouillage était filtré par l'app elle-même ; il est maintenant bien reçu, et en secours HealthTrack regarde, dans la minute qui suit l'allumage de l'écran, si l'écran de verrouillage a disparu (empreinte, visage, Smart Lock).",
+    "Si Android refuse la caméra en arrière-plan, la carte passe à « À relancer » : touchez « Relancer », app ouverte. Un guide explique comment accorder l'accès permanent à la caméra (Shizuku sans PC, ou ADB), et le diagnostic dit s'il est accordé.",
+    "Le diagnostic dit maintenant combien de fois l'écran s'est allumé et combien de déverrouillages ont été repérés aujourd'hui, à quelle heure le dernier, comment le service a démarré, et les 5 dernières tentatives avec leur résultat ou l'erreur exacte d'Android."
+  ]
+}

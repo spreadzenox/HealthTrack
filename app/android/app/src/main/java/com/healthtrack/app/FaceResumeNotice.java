@@ -90,7 +90,8 @@ final class FaceResumeNotice {
                 || !FaceSenseService.hasCameraPermission(context)) return;
         try {
             ContextCompat.startForegroundService(context,
-                    new Intent(context, FaceSenseService.class).setAction(FaceSenseService.ACTION_START));
+                    new Intent(context, FaceSenseService.class).setAction(FaceSenseService.ACTION_START)
+                            .putExtra(FaceSenseService.EXTRA_ORIGIN, FaceSenseService.ORIGIN_APP));
         } catch (RuntimeException e) {
             p.edit().putString("lastError", "resume_refused:" + e.getClass().getSimpleName())
                     .putLong("lastErrorAt", System.currentTimeMillis()).apply();

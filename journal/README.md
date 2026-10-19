@@ -85,6 +85,25 @@ déverrouillage et pas celle de ce que vous regardez ensuite. Et le **Diagnostic
 7 derniers jours : combien de déverrouillages, de lectures et de lectures avec un visage vous avez par jour, et si
 vous atteignez les **12 par jour** qui permettent à la calibration d'aboutir en 2 à 3 mois.
 
+**Run du 19/10 16:30 — votre signalement de 15:05 : chaque déverrouillage est enfin repéré.** Vous aviez raison :
+la lecture ne voyait **aucun** déverrouillage, donc aucune photo automatique (le test, lui, ne passe pas par là). Le
+signal « déverrouillé » d'Android est envoyé par l'écran de verrouillage, et l'app l'écoutait d'une façon qui le
+filtrait. C'est corrigé, et il y a désormais un **secours** : dans la minute qui suit l'allumage de l'écran,
+HealthTrack regarde toutes les demi-secondes si l'écran de verrouillage a disparu — empreinte, visage ou Smart Lock,
+le déverrouillage est vu même si Android ne prévient pas. Une seule lecture par déverrouillage. Si Android refusait
+quand même la caméra en arrière-plan, la carte passe à **« À relancer »** (un geste, app ouverte) et un guide
+explique comment accorder **l'accès permanent à la caméra** (Shizuku sans PC, ou ADB) ; le diagnostic dit s'il est
+accordé. Le **Diagnostic** dit enfin combien de fois l'écran s'est allumé et combien de déverrouillages ont été vus
+aujourd'hui (et par quelle voie), l'heure du dernier, comment le service a démarré, et les 5 dernières tentatives
+avec leur résultat ou l'erreur exacte d'Android.
+
+**🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
+19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
+**Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
+2 minutes d'écart si possible (le point vert doit s'allumer ~1 s après) ; ④ **Diagnostic → « Enregistrer le
+diagnostic »** et envoyez-moi le fichier (ou une capture des lignes « Aujourd'hui : écran allumé… », « Accès
+caméra… » et « Dernières tentatives… ») : elles suffisent à trancher.
+
 **Ce qu'il me faut (votre Galaxy A56)** — c'est l'étape qui débloque la suite : après la mise à jour (vérifiez dans
 Plus → Nouveautés que la version installée est au moins celle publiée le 19/10 vers 11 h), Plus → Connecteurs → la
 carte **Lecture du visage**, juste sous « Mes appareils » → **« Activer la lecture du visage »** (accepter l'appareil photo) →
@@ -101,6 +120,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Lecture du visage : chaque déverrouillage repéré (run 19/10 16:30, votre signalement)** : empreinte, visage,
+  Smart Lock ; état « À relancer » si Android refuse la caméra ; guide d'accès permanent ; diagnostic détaillé.
 - **Lecture du visage : 2e essai et lectures par jour (run 19/10 14:30)** : une lecture ratée est reprise une fois
   2 s plus tard ; le diagnostic dit si vous avez assez de lectures par jour (12 visées).
 - **Temps par type d'app (run 19/10 12:30)** : réseaux sociaux, messageries, vidéo, jeux, comptés seuls et comparés à
@@ -129,7 +150,8 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 
 **Prochaines priorités (19/10 12:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
 visage (et l'adapter à One UI), ✅ temps par app comme facteur (19/10 12:30), ✅ lectures du visage par jour dans le
-diagnostic + 2e essai (19/10 14:30), **guide Shizuku / ADB** (prochain run), dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
+diagnostic + 2e essai (19/10 14:30), 🚑 déverrouillages enfin repérés + guide Shizuku / ADB (19/10 16:30, votre
+signalement — **votre diagnostic après la mise à jour est attendu**), dictée du soir (voix), puis estimation du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -141,6 +163,7 @@ diagnostic + 2e essai (19/10 14:30), **guide Shizuku / ADB** (prochain run), dic
 | 19/10 10:30 — [Carte « Lecture du visage » visible (signalement 08:37)](runs/2026-10-19-1030-carte-visage-visible.md) | 🚑🙂 | Cause : carte rangée dans le volet replié tant que non activée ; épinglée en tête sur Android ; « Réessayer » si le natif est muet ; tests natifs ; PR #218 |
 | 19/10 12:30 — [Temps par app comme facteur X (I116)](runs/2026-10-19-1230-temps-par-app.md) | 🔴🙂 | `queryAppEvents` natif + `phoneApps.js` ; entrées `phone_apps` ; 4 facteurs neutres sans levier, test anti-circularité ; ligne « Dont… » + puce journal ; PR #219 |
 | 19/10 14:30 — [Visage : 2e essai et lectures par jour (I118)](runs/2026-10-19-1430-visage-rafales-par-jour.md) | 🔴🙂 | `FaceSchedule.shouldRetry` (1 fois, +2 s, ≤ 10 s après le déverrouillage) ; `faceDailyCounts` → diagnostic « Par jour » / « 2e essais » ; PR #220 |
+| 19/10 16:30 — [Visage : chaque déverrouillage repéré (signalement 15:05)](runs/2026-10-19-1630-visage-deverrouillage.md) | 🚑🙂 | Cause : récepteur `RECEIVER_NOT_EXPORTED` → `USER_PRESENT` (SystemUI) filtré ; `UnlockWatch` (diffusion / verrou interrogé / écran déjà ouvert), récepteur exporté sur le fil du service ; diagnostic v2 (allumages, sources, tentatives + erreur exacte, démarrage, app-op caméra) ; « À relancer » + guide Shizuku / ADB (I89) ; PR #221 |
 
 ---
 
@@ -163,6 +186,20 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---
+
+## 000000bis. Signalement du propriétaire du 19 octobre 2026 à 15:05 — corrigé au run 19/10 16:30 (à confirmer sur l'A56)
+
+« J'ai déverrouillé plusieurs fois et toujours aucune prise de photo automatique. Le test manuel fonctionne. Je
+déverrouille avec l'empreinte. » Diagnostic : « Aucun déverrouillage depuis minuit », service actif, caméra
+autorisée (« seulement lorsque l'appli est utilisée »), batterie sans restriction. Cause : le récepteur
+`USER_PRESENT` du service était enregistré `RECEIVER_NOT_EXPORTED` ; la diffusion vient de SystemUI (pas l'uid
+système), donc filtrée. Correctif : récepteur `RECEIVER_EXPORTED` (diffusions protégées) livré sur le fil du service,
+secours `UnlockWatch` (interrogation de `isKeyguardLocked` 60 s après `SCREEN_ON`, écran allumé déjà déverrouillé),
+diagnostic v2 (allumages / déverrouillages du jour par source, dernier, démarrage du service, app-op caméra,
+12 dernières tentatives avec l'erreur exacte), état « À relancer » + `start({ restart })`, guide Shizuku / ADB.
+**Leçon** : une diffusion système reçue dynamiquement se teste avec son **émetteur réel** en tête (SystemUI ≠
+system_server) ; `RECEIVER_NOT_EXPORTED` ne convient qu'aux diffusions de l'app elle-même. Et tout déclencheur doit
+avoir un compteur « reçu » distinct du compteur « traité » pour que le diagnostic dise où ça casse.
 
 ## 000000. Signalement du propriétaire du 19 octobre 2026 à 08:37 — corrigé au run 19/10 10:30
 

@@ -57,6 +57,8 @@ final class FaceCamera {
         int width;
         int height;
         String error;
+        /** Erreur exacte d'Android (classe, code), pour le diagnostic exporté. */
+        String detail;
         long openMs;
     }
 
@@ -101,6 +103,7 @@ final class FaceCamera {
         final List<int[]> images = Collections.synchronizedList(new ArrayList<>());
         final int[] dims = new int[2];
         final String[] error = new String[1];
+        final String[] detail = new String[1];
         final CameraDevice[] device = new CameraDevice[1];
         final CameraCaptureSession[] session = new CameraCaptureSession[1];
         ImageReader reader = ImageReader.newInstance(w, h, ImageFormat.YUV_420_888, 3);
@@ -144,12 +147,14 @@ final class FaceCamera {
                 public void onDisconnected(CameraDevice camera) {
                     camera.close();
                     if (images.size() < count) error[0] = CAMERA_BUSY;
+                    detail[0] = "onDisconnected";
                     done.countDown();
                 }
 
                 @Override
                 public void onError(CameraDevice camera, int code) {
                     camera.close();
+                    detail[0] = "onError:" + code;
                     error[0] = code == ERROR_CAMERA_IN_USE || code == ERROR_MAX_CAMERAS_IN_USE ? CAMERA_BUSY
                             : code == ERROR_CAMERA_DISABLED ? CAMERA_DISABLED : CAMERA_ERROR;
                     done.countDown();
@@ -158,14 +163,17 @@ final class FaceCamera {
             if (!done.await(TIMEOUT_MS, TimeUnit.MILLISECONDS) && error[0] == null) error[0] = CAMERA_TIMEOUT;
         } catch (CameraAccessException e) {
             int reason = e.getReason();
+            detail[0] = "CameraAccessException:" + reason;
             error[0] = reason == CameraAccessException.CAMERA_IN_USE || reason == CameraAccessException.MAX_CAMERAS_IN_USE
                     ? CAMERA_BUSY : reason == CameraAccessException.CAMERA_DISABLED ? CAMERA_DISABLED : CAMERA_ERROR;
         } catch (SecurityException e) {
+            detail[0] = "SecurityException";
             error[0] = CAMERA_DENIED;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             error[0] = CAMERA_TIMEOUT;
         } catch (RuntimeException e) {
+            detail[0] = e.getClass().getSimpleName();
             error[0] = CAMERA_ERROR;
         } finally {
             // Fermeture sur le fil de la caméra, dans l'ordre session → appareil → lecteur.
@@ -193,6 +201,7 @@ final class FaceCamera {
         out.width = dims[0];
         out.height = dims[1];
         out.error = out.images.isEmpty() ? (error[0] != null ? error[0] : CAMERA_ERROR) : null;
+        out.detail = detail[0];
         out.openMs = SystemClock.elapsedRealtime() - t0;
         for (int i = 0; i < 3; i++) planes[i] = null;
         return out;

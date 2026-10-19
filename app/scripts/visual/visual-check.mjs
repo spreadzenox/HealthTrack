@@ -39,7 +39,8 @@
  *   npm run visual -- --routes=/connectors --phone      # « Temps d'écran et sommeil » : faux plugin, accès accordé
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   npm run visual -- --routes=/connectors --face       # « Lecture du visage » : faux plugin, service actif
- *   npm run visual -- --routes=/connectors --face=off   # … pas encore activée ; --face=stopped : arrêtée par Android
+ *   npm run visual -- --routes=/connectors --face=off   # … pas encore activée ; --face=stopped : arrêtée par Android ;
+ *                                                                      --face=blocked : caméra refusée en arrière-plan
  *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
@@ -492,6 +493,15 @@ async function main() {
           startBattery: 82, battery: 76, manufacturer: 'samsung', model: 'SM-A566B', release: '16', sdk: 36, pending: 11,
           retries: 3, retryFaces: 2,
           resumeNotices: 1, resumeTaps: 1, resumeCheck: 'running', resumeCheckAt: Date.now() - 40 * 60000, resumeCheckTrigger: 'periodic',
+          // Repérage du déverrouillage et accès caméra (signalement du 19/10 15:05) ; --face=blocked : caméra refusée.
+          dayScreenOns: 19, dayPresents: 12, dayUnlock_user_present: 12, dayUnlock_keyguard: 2, lastUnlockAt: Date.now() - 6 * 60000,
+          lastUnlockSource: 'user_present', lastScreenOnAt: Date.now() - 6 * 60000, cameraOp: 'foreground', startOrigin: 'app', starts: 3,
+          attempts: JSON.stringify([
+            { at: Date.now() - 30 * 60000, trigger: 'manual', source: 'test', outcome: 'face' },
+            { at: Date.now() - 12 * 60000, trigger: 'unlock', source: 'keyguard', outcome: 'no_valid_frame' },
+            { at: Date.now() - 6 * 60000, trigger: 'unlock', source: 'user_present', outcome: mode === 'blocked' ? 'camera:camera_disabled' : 'face',
+              ...(mode === 'blocked' ? { detail: 'onError:3' } : {}) },
+          ]),
         }
         // 11 rafales en attente (scores fictifs) sur 3 jours, rangées dans l'historique à l'affichage de la carte (I90)
         let bursts = Array.from({ length: 11 }, (_, i) => ({
