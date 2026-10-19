@@ -1,6 +1,6 @@
 # 2026-10-19 20:30 Paris (18:30 UTC) — Run « idées » : la porte du visage face aux dérives lentes, lire le diagnostic, voix et lexiques
 
-**Type** : 💡 idées (consigne du 18/10 au soir, priorité unique ; D4, D5, D6)  ·  **PR** : voir ci-dessous
+**Type** : 💡 idées (consigne du 18/10 au soir, priorité unique ; D4, D5, D6)  ·  **PR** : #223
 
 ## Pourquoi
 - 20:30 Paris = run « idées » : pas de code produit, sauf si le signalement du 19/10 15:05 n'était pas corrigé.
