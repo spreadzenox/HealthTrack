@@ -31,14 +31,24 @@ moins d'un faux départ sur 100 en 4 mois quand il n'y a aucun lien, et un lien 
 La carte dit « Calibration : N jours sur 30 ». Vos notes restent facultatives, mais **plus vous notez votre soirée,
 plus vite ça aboutit**.
 
+**Run du 19/10 04:30 — si Android arrête la lecture du visage, vous êtes prévenu.** Chaque mise à jour de l'app,
+chaque redémarrage (et parfois One UI pour économiser la batterie) arrête la lecture du visage, et Android interdit
+de la relancer sans vous. Désormais une notification discrète, sans son, « **Lecture du visage arrêtée** » apparaît
+tout de suite après une mise à jour ou un redémarrage, sinon au plus tard dans l'heure : touchez **« Reprendre »**,
+l'app s'ouvre et la relance d'elle-même. Ignorée, elle ne revient pas avant 6 h ; « Arrêter » éteint la lecture.
+
 **Ce qu'il me faut (votre Galaxy A56)** — inchangé, c'est l'étape qui débloque la suite : après la mise à jour,
 Plus → Connecteurs → **Lecture du visage → « Activer la lecture du visage »** (accepter l'appareil photo) →
 **« Sans restriction »** (accepter) ; utilisez le téléphone normalement quelques heures ; puis **Diagnostic →
 « Enregistrer le diagnostic »** et envoyez-moi le fichier `Documents/healthtrack-visage-….json` (ni image ni mesure
 dedans ; il dit maintenant aussi combien de lectures sont rangées). Dites-moi si le **point vert** s'allume environ
-1 s après chaque déverrouillage.
+1 s après chaque déverrouillage. **Nouveau test simple** : juste après l'installation de cette mise à jour, sans ouvrir l'app, une
+notification « Lecture du visage arrêtée » devrait apparaître (si la lecture était activée) ; touchez « Reprendre »
+et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Lecture du visage : notification « Reprendre » (run 19/10 04:30)** : quand Android l'arrête, un geste suffit
+  pour la relancer.
 - **Lecture du visage : calibration (run 19/10 02:30)** : la carte dit combien de jours sur 30 ont une note et des
   lectures ; l'humeur estimée ne sera affichée que si votre visage suit vos notes.
 - **Lecture du visage : lectures gardées (run 19/10 00:30)** : rangées dans l'historique à chaque ouverture, comprises
@@ -51,8 +61,8 @@ dedans ; il dit maintenant aussi combien de lectures sont rangées). Dites-moi s
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
 - *(à venir : runs « idées » de 08:30 et 20:30, toute leur veille sur l'humeur captée automatiquement)*
 
-**Prochaines priorités (19/10 02:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
-visage (et l'adapter à One UI), notification « Reprendre » si Android arrête la lecture, guide Shizuku / ADB, note du
+**Prochaines priorités (19/10 04:30)** — uniquement le bien-être automatique : votre diagnostic de la Lecture du
+visage (et l'adapter à One UI), guide Shizuku / ADB, note du
 soir d'un geste depuis une notification, puis estimation du jour avec sa fourchette (derrière la porte), voix, temps
 par app comme facteur.
 
@@ -60,6 +70,7 @@ par app comme facteur.
 |---|---|---|
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
 | 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
+| 19/10 04:30 — [Visage : notification « Reprendre » (I88 ②)](runs/2026-10-19-0430-visage-reprendre.md) | 🔴🙂 | Règle `FaceResume` + tâche horaire + redémarrage / mise à jour ; relance dans `onResume` ; diagnostic `resume` ; PR #215 |
 
 ---
 

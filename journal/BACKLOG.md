@@ -50,9 +50,13 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   `history { stored, forMood, firstAt, lastImport }`.
   - [ ] Si l'historique grossit (≈ 50 rafales / jour), le journal de l'Accueil lit 14 jours en `limit: 5000` : exclure
     `face_burst` à la lecture (index `type_at`) si les mesures de la montre s'en trouvent tronquées.
-- [ ] I88 ② notification « Lecture du visage arrêtée · Reprendre » (`PendingIntent.getForegroundService`) postée par
-  le récepteur de déverrouillage de la montre ou la tâche des 2 h quand `enabled` et service absent ; et au
-  redémarrage.
+- [x] **I88 ② notification « Reprendre »** (run 19/10 04:30) : règle pure `face/FaceResume` (interrupteur allumé,
+  service absent, app fermée, caméra autorisée ; ≤ 1 rappel / 6 h sauf après redémarrage / mise à jour),
+  `FaceResumeNotice` (canal bas `face_resume`, « Reprendre » → `MainActivity` relance dans `onResume`, « Arrêter »),
+  `FaceResumeJob` (~1 h, persisté, programmé à l'activation), `FaceResumeReceiver` (`BOOT_COMPLETED`,
+  `MY_PACKAGE_REPLACED`) ; diagnostic `resume { notices, taps, lastCheck… }`. Pas de `getForegroundService` : un
+  service caméra lancé hors de l'app visible n'a pas la caméra (Android 11+ ; type `camera` interdit au boot en 15).
+  - [ ] **Retour du propriétaire** : la notification apparaît-elle juste après la mise à jour ? « Reprendre » relance-t-il ?
 - [ ] I89 guide Shizuku / ADB (`appops set com.healthtrack.app CAMERA allow`, `RECORD_AUDIO allow`) + détection.
 - [ ] I91 voix (prosodie, aucun audio gardé) ; service `microphone`.
 - [ ] Temps au premier plan par app (réseaux sociaux regroupés) comme X.

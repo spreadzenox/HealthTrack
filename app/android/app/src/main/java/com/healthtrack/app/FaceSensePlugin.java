@@ -68,6 +68,8 @@ public class FaceSensePlugin extends Plugin {
         ret.put("outcomes", counts);
         ret.put("rejected", rejected);
         ret.put("battery", FaceSenseService.batteryPercent(context));
+        // Activée avant la notification « Reprendre » (I88 ②) : la vérification horaire est programmée ici.
+        if (p.getBoolean("enabled", false)) FaceResumeJob.ensureScheduled(context);
         return ret;
     }
 
@@ -110,6 +112,7 @@ public class FaceSensePlugin extends Plugin {
             Intent intent = new Intent(getContext(), FaceSenseService.class).setAction(action);
             ContextCompat.startForegroundService(getContext(), intent);
             FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", true).apply();
+            FaceResumeJob.ensureScheduled(getContext());
             ret.put("started", true);
         } catch (RuntimeException e) {
             ret.put("started", false);
@@ -122,6 +125,8 @@ public class FaceSensePlugin extends Plugin {
     public void stop(PluginCall call) {
         FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", false).apply();
         getContext().stopService(new Intent(getContext(), FaceSenseService.class));
+        FaceResumeJob.cancel(getContext());
+        FaceResumeNotice.cancel(getContext());
         call.resolve();
     }
 

@@ -193,8 +193,9 @@ export default function FaceSenseCard({
       {available && d.state === 'stopped' && (
         <>
           <p className="my-device-message">
-            Android a arrêté la lecture du visage (redémarrage du téléphone, économie d’énergie…). Elle ne peut
-            reprendre que depuis l’app ouverte.
+            Android a arrêté la lecture du visage (mise à jour, redémarrage du téléphone, économie d’énergie…).
+            Elle ne peut reprendre que depuis l’app ouverte : une notification « Reprendre » vous le propose
+            quand l’app est fermée.
           </p>
           <div className="my-device-actions">
             <button type="button" className="btn btn-primary connector-btn" onClick={activate} disabled={busy}>Relancer</button>
