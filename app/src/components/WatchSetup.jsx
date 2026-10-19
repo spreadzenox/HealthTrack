@@ -5,7 +5,7 @@
  * l'identifiant de compte Huawei. Chaque geste est confirmé par l'utilisateur ; rien n'est envoyé
  * à la montre ici. Logique dans src/devices/huawei/setup.js.
  */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { getWatchAutoSyncState } from '../services/watchAutoSync'
 import { formatAgo } from '../utils/timeAgo'
 import {
@@ -59,13 +59,21 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
     saveSetup(next)
   }, [])
 
+  // Démonté avant la fin d'une lecture lente (détection d'apps, appairage) : plus de mise à jour d'état.
+  const mounted = useRef(true)
+  useEffect(() => {
+    mounted.current = true
+    return () => { mounted.current = false }
+  }, [])
+
   // Apps et appairage lus séparément : une détection d'apps qui traîne ne fige plus l'état d'appairage (18/10)
   const refresh = useCallback(async () => {
     if (autoStateProp === undefined) setAutoState(getWatchAutoSyncState())
     detectApps()
       .catch(() => null)
-      .then((apps) => setInstalled(apps ?? null))
+      .then((apps) => mounted.current && setInstalled(apps ?? null))
     const isBonded = await isWatchBonded(classic)
+    if (!mounted.current) return
     setBonded(isBonded)
     setState((prev) => {
       const next = observeBond(prev, isBonded, now())
