@@ -1,6 +1,6 @@
 # 2026-10-19 04:30 Paris (02:30 UTC) — Visage : notification « Reprendre » (I88 ②)
 
-**Type** : 🔴🙂 consigne du 18/10 au soir (§00000), D4  ·  **PR** : voir le résumé de la semaine
+**Type** : 🔴🙂 consigne du 18/10 au soir (§00000), D4  ·  **PR** : #215
 
 ## Pourquoi
 - Démarrage : main à `d75987d` (#214), « Build & Release » vert (v170). Aucune PR « [Auto] » ouverte.

@@ -70,7 +70,7 @@ par app comme facteur.
 |---|---|---|
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
 | 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
-| 19/10 04:30 — [Visage : notification « Reprendre » (I88 ②)](runs/2026-10-19-0430-visage-reprendre.md) | 🔴🙂 | Règle `FaceResume` + tâche horaire + redémarrage / mise à jour ; relance dans `onResume` ; diagnostic `resume` |
+| 19/10 04:30 — [Visage : notification « Reprendre » (I88 ②)](runs/2026-10-19-0430-visage-reprendre.md) | 🔴🙂 | Règle `FaceResume` + tâche horaire + redémarrage / mise à jour ; relance dans `onResume` ; diagnostic `resume` ; PR #215 |
 
 ---
 
