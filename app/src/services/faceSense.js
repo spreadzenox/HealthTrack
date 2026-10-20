@@ -121,6 +121,46 @@ export async function requestFaceBatteryExemption(plugin = faceSensePlugin()) {
   }
 }
 
+/** Téléphone Samsung (One UI) : sa propre mise en veille des applis s'ajoute à celle d'Android. */
+export function isSamsungDevice(status) {
+  return /samsung/i.test(status?.manufacturer || '')
+}
+
+/**
+ * Ouvre « Applis jamais en veille » de One UI (repli : la page de l'app dans les réglages Android). Rend 'samsung',
+ * 'app_details' ou null (réglage introuvable, ancienne version native).
+ */
+export async function openFaceNeverSleep(plugin = faceSensePlugin()) {
+  if (!plugin?.openNeverSleep) return null
+  try {
+    const res = (await plugin.openNeverSleep()) || {}
+    return res.opened || null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Pourquoi le service activé ne tourne plus (point c du signalement du 19/10 15:05) : 'update' (mise à jour de l'app
+ * après son dernier démarrage), 'reboot' (téléphone redémarré depuis), 'system' (ni l'un ni l'autre : arrêté par le
+ * téléphone, typiquement la mise en veille de One UI), ou null (actif, éteint par vous, ou version native sans ces
+ * repères).
+ */
+export function faceStopCause(status) {
+  const s = status || {}
+  if (!s.enabled || s.running || !s.startedAt) return null
+  if (typeof s.lastUpdateAt !== 'number' || typeof s.bootAt !== 'number') return null
+  if (s.lastUpdateAt > s.startedAt) return 'update'
+  if (s.bootAt > s.startedAt) return 'reboot'
+  return 'system'
+}
+
+const STOP_CAUSES = {
+  update: 'mise à jour de l’app',
+  reboot: 'redémarrage du téléphone',
+  system: 'arrêtée par le téléphone sans mise à jour ni redémarrage (mise en veille des applis ?)',
+}
+
 /** Libellés des résultats d'une rafale et des sauts (diagnostic). */
 const OUTCOMES = {
   face: 'visage lu',
@@ -216,7 +256,7 @@ export function describeFaceSense(status) {
   if (status.models === false) return { state: 'no_models', badge: null, lines: [] }
   if (!status.enabled) return { state: 'off', badge: null, lines: [] }
   if (!status.permission) return { state: 'denied', badge: 'À autoriser', lines: [] }
-  if (!status.running) return { state: 'stopped', badge: 'Arrêtée', lines: [] }
+  if (!status.running) return { state: 'stopped', badge: 'Arrêtée', lines: [], cause: faceStopCause(status) }
   const lines = []
   const unlocks = status.dayUnlocks ?? 0
   const bursts = status.dayBursts ?? 0
@@ -239,7 +279,7 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
   const timed = s.timed || 0
   return {
     kind: 'healthtrack-face-diagnostic',
-    version: 3,
+    version: 4,
     at: now.toISOString(),
     appVersion: appVersion ?? null,
     device: { manufacturer: s.manufacturer ?? null, model: s.model ?? null, android: s.release ?? null, sdk: s.sdk ?? null },
@@ -251,6 +291,10 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
       models: s.models !== false,
       startedAt: s.startedAt ? new Date(s.startedAt).toISOString() : null,
       stoppedAt: s.stoppedAt ? new Date(s.stoppedAt).toISOString() : null,
+      // v4 : cause de l'arrêt (mise à jour, redémarrage ou téléphone), repères bruts pour la vérifier.
+      stopCause: faceStopCause(s),
+      lastUpdateAt: iso(s.lastUpdateAt),
+      bootAt: iso(s.bootAt),
       lastError: s.lastError ?? null,
     },
     today: { unlocks: s.dayUnlocks ?? 0, bursts: s.dayBursts ?? 0, faces: s.dayFaces ?? 0 },
@@ -387,6 +431,10 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
   const r = faceDiagnosticReport(status, { history, lastImport, eveningNote })
   const lines = []
   lines.push(`Service : ${r.service.running ? 'actif' : 'arrêté'} · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'} · batterie ${r.service.batteryExempt ? 'sans restriction' : 'optimisée par Android'}`)
+  if (r.service.stopCause) {
+    const since = s0(status).startedAt ? ` (démarré le ${new Date(s0(status).startedAt).toLocaleDateString('fr-FR')} à ${hhmm(s0(status).startedAt)})` : ''
+    lines.push(`Arrêt : ${STOP_CAUSES[r.service.stopCause]}${since}`)
+  }
   const det = r.detection
   if (det.screenOns || det.unlocks) {
     const by = Object.entries(det.bySource).filter(([, n]) => n).map(([k, n]) => `${SOURCES[k] || k} ${n}`).join(', ')

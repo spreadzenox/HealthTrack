@@ -19,6 +19,8 @@ import {
   faceCameraAccess,
   faceAffectState,
   prepareFaceAffect,
+  isSamsungDevice,
+  openFaceNeverSleep,
 } from '../services/faceSense'
 import { FACE_BURST_TYPE, faceDailyCounts, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
 import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
@@ -76,6 +78,14 @@ async function defaultLoadHistory() {
 }
 
 const SHIZUKU_CMD = 'appops set com.healthtrack.app CAMERA allow'
+
+/** Pourquoi la lecture est arrêtée (faceStopCause), dit simplement. */
+const STOPPED_TEXT = {
+  update: 'Android a arrêté la lecture du visage pendant la mise à jour de l’app, comme à chaque mise à jour.',
+  reboot: 'Le téléphone a redémarré : Android ne relance pas la lecture du visage tout seul.',
+  system: 'Le téléphone a arrêté la lecture du visage de lui-même, sans mise à jour ni redémarrage — sans doute pour économiser la batterie.',
+  default: 'Android a arrêté la lecture du visage (mise à jour, redémarrage du téléphone, économie d’énergie…).',
+}
 
 /**
  * Guide « accès permanent à la caméra » (I89) : Android 11+ ne laisse la caméra au service en arrière-plan que
@@ -216,8 +226,16 @@ export default function FaceSenseCard({
     }
   }
 
+  async function neverSleep() {
+    const opened = await openFaceNeverSleep(plugin)
+    setMessage(opened === 'app_details'
+      ? 'Liste Samsung introuvable : réglages de l’app ouverts. Cherchez Batterie → Applis jamais en veille.'
+      : opened ? null : 'Réglage introuvable : Paramètres → Batterie → Limites d’utilisation en arrière-plan → Applis jamais en veille.')
+  }
+
   const d = describeFaceSense(status)
   const available = plugin != null
+  const samsung = isSamsungDevice(status)
 
   return (
     <section className="weather-card" aria-labelledby="face-sense-title">
@@ -276,12 +294,20 @@ export default function FaceSenseCard({
       {available && d.state === 'stopped' && (
         <>
           <p className="my-device-message">
-            Android a arrêté la lecture du visage (mise à jour, redémarrage du téléphone, économie d’énergie…).
-            Elle ne peut reprendre que depuis l’app ouverte : une notification « Reprendre » vous le propose
+            {STOPPED_TEXT[d.cause] || STOPPED_TEXT.default}
+            {' '}Elle ne peut reprendre que depuis l’app ouverte : une notification « Reprendre » vous le propose
             quand l’app est fermée.
           </p>
+          {d.cause === 'system' && samsung && (
+            <p className="my-device-meta">
+              Pour que ça ne se reproduise pas : touchez « Applis jamais en veille », puis « + » et cochez HealthTrack.
+            </p>
+          )}
           <div className="my-device-actions">
             <button type="button" className="btn btn-primary connector-btn" onClick={activate} disabled={busy}>Relancer</button>
+            {d.cause === 'system' && samsung && (
+              <button type="button" className="btn btn-secondary connector-btn" onClick={neverSleep} disabled={busy}>Applis jamais en veille</button>
+            )}
             <button type="button" className="btn btn-secondary connector-btn" onClick={turnOff} disabled={busy}>Désactiver</button>
           </div>
         </>
@@ -347,7 +373,16 @@ export default function FaceSenseCard({
             <button type="button" className="btn btn-secondary connector-btn" onClick={exportDiagnostic} disabled={busy}>
               Enregistrer le diagnostic
             </button>
+            {samsung && d.cause !== 'system' && (
+              <button type="button" className="btn btn-secondary connector-btn" onClick={neverSleep} disabled={busy}>Applis jamais en veille</button>
+            )}
           </div>
+          {samsung && (
+            <p className="my-device-meta">
+              Samsung met aussi en veille les applis peu ouvertes, même « sans restriction » : ajoutez HealthTrack aux
+              « Applis jamais en veille » (Batterie → Limites d’utilisation en arrière-plan) pour que la lecture tienne.
+            </p>
+          )}
           {d.state !== 'blocked' && <PermanentCameraGuide access={faceCameraAccess(status)} />}
         </details>
       )}

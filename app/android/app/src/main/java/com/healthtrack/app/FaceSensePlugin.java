@@ -4,9 +4,11 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.provider.Settings;
 
 import androidx.core.content.ContextCompat;
@@ -73,6 +75,14 @@ public class FaceSensePlugin extends Plugin {
         ret.put("battery", FaceSenseService.batteryPercent(context));
         // « foreground » = accès caméra seulement app à l'écran ; « allow » = accordé en permanence (Shizuku / ADB).
         ret.put("cameraOp", FaceSenseService.cameraOpMode(context));
+        // Repères pour dire pourquoi le service activé ne tourne plus (faceStopCause) : mise à jour, redémarrage, ou
+        // ni l'un ni l'autre (mise en veille de One UI…).
+        ret.put("bootAt", System.currentTimeMillis() - SystemClock.elapsedRealtime());
+        try {
+            ret.put("lastUpdateAt", context.getPackageManager().getPackageInfo(context.getPackageName(), 0).lastUpdateTime);
+        } catch (PackageManager.NameNotFoundException ignored) {
+            // impossible pour notre propre paquet
+        }
         // Activée avant la notification « Reprendre » (I88 ②) : la vérification horaire est programmée ici.
         if (p.getBoolean("enabled", false)) FaceResumeJob.ensureScheduled(context);
         return ret;
@@ -166,6 +176,37 @@ public class FaceSensePlugin extends Plugin {
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(i);
             call.resolve();
+        } catch (RuntimeException e) {
+            call.reject("Réglage indisponible");
+        }
+    }
+
+    /**
+     * Ouvre « Applis jamais en veille » de One UI (Samsung Device Care, liste à cocher de type 2) : { opened: 'samsung' }.
+     * Ailleurs, ou si One UI ne l'expose pas, la page de l'app dans les réglages Android : { opened: 'app_details' }.
+     */
+    @PluginMethod
+    public void openNeverSleep(PluginCall call) {
+        Context ctx = getContext();
+        JSObject ret = new JSObject();
+        Intent samsung = new Intent("com.samsung.android.sm.ACTION_OPEN_CHECKABLE_LISTACTIVITY")
+                .setPackage("com.samsung.android.lool").putExtra("activity_type", 2)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            if ("samsung".equalsIgnoreCase(Build.MANUFACTURER) && samsung.resolveActivity(ctx.getPackageManager()) != null) {
+                ctx.startActivity(samsung);
+                ret.put("opened", "samsung");
+                call.resolve(ret);
+                return;
+            }
+        } catch (RuntimeException ignored) {
+            // liste Samsung refusée : repli ci-dessous
+        }
+        try {
+            ctx.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:" + ctx.getPackageName())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            ret.put("opened", "app_details");
+            call.resolve(ret);
         } catch (RuntimeException e) {
             call.reject("Réglage indisponible");
         }

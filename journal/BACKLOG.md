@@ -183,8 +183,15 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   **après I121**).
 - [ ] **I122** (20) arbre de lecture du diagnostic de l'A56 (IDEES.md, 19/10 20:30) : à appliquer dès que le fichier
   arrive.
-- [ ] I123 (15) bouton « Applis jamais en veille » (lien direct Samsung `activity_type` 2), Samsung seulement, si le
-  service a été retrouvé arrêté sans mise à jour ni redémarrage.
+- [x] I123 (15) bouton « Applis jamais en veille » (lien direct Samsung `activity_type` 2), Samsung seulement, si le
+  service a été retrouvé arrêté sans mise à jour ni redémarrage. → ✅ 20/10 06:30 : `faceStopCause` (`lastUpdateAt`
+  = `PackageInfo.lastUpdateTime`, `bootAt` = maintenant − `elapsedRealtime`, comparés à `startedAt`) ; bouton dans la
+  carte (arrêt « téléphone ») et dans le Diagnostic (Samsung) ; `<queries>` `com.samsung.android.lool` ; diagnostic v4.
+  - [ ] Vérifier sur l'A56 que l'intention ouvre bien la liste « Applis jamais en veille » (One UI 8) et non
+    « Applis en veille » ; sinon essayer `activity_type` 0 / 1 et noter le bon numéro ici.
+  - [ ] Si la cause « téléphone » revient malgré la liste : lire `ApplicationExitInfo` (API 30,
+    `getHistoricalProcessExitReasons`) dans le statut pour la raison exacte (REASON_USER_REQUESTED, LOW_MEMORY,
+    FREEZER…).
 - [ ] I124 (12) sonde vocale dans le diagnostic (moteur local, fr-FR, service par défaut) avant tout I117 natif.
 - [ ] I125 (8) « Rien reconnu — me le signaler ? » sous la phrase du soir (mots tapés par la personne, rien gardé).
 - [x] I113 note du soir d'un geste depuis la notification (calibration, optionnelle). → ✅ 19/10 06:30 (6 boutons 0–5, vue personnalisée).
@@ -746,6 +753,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
 4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 06:30** : ✅ I123 livré ; prochain run de code sans diagnostic → **I124** sonde vocale (puis
+étape 3) ou habitudes (tags) / effets décalés sur l'humeur estimée.
 **Mise à jour du 20/10 00:30** : prochain run de code sans diagnostic ni choix de modèle → **I123** « Applis jamais en
 veille » (One UI, point (c) du signalement 15:05) ou **I124** sonde vocale ; le run idées de 08:30 fait le comparatif
 des modèles valence / éveil (étape 2).
