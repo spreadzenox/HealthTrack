@@ -1,7 +1,7 @@
 # 2026-10-20 20:30 Paris (18:30 UTC) — Mise à jour en un clic : téléchargement visible et fiable (signalement 20/10 19:05)
 
 **Type** : 🚑 correction (signalement du propriétaire du 20/10 19:05, traité en premier même sur un créneau « idées »)
-·  **PR** : voir le tableau du résumé
+·  **PR** : #235 (fusionnée, squash `063e9f1`) + #236 (journal : release notée)
 
 ## Pourquoi
 - Main à `26dcbba` (#234). Signalement : bandeau « Une mise à jour est disponible (version 187) » bloqué sur le bouton
@@ -76,3 +76,8 @@
   ≈ 15 Mo), ou une build ONNX Runtime « minimale » limitée aux opérateurs utilisés. Télécharger la bibliothèque native
   au premier lancement n'est pas possible proprement (code exécutable hors APK) : écarté.
 - Reprendre ensuite la consigne du 19/10 au soir (I117 préparation / diagnostic de l'A56).
+
+## Après le merge
+- Checks de #235 tous verts (Frontend (Vitest), Build APK, Protocole montre (Java), Budget perf, émulateur A56 API 35
+  et 36). **Release v188 publiée** : `HealthTrack-v188.apk` = **33 565 870 octets (33,6 Mo)**.
+- La PR de journal qui suit publie une v189 : c'est elle qui servira au propriétaire à tester le bouton depuis la v188.
