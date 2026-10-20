@@ -20,10 +20,10 @@ Tout le reste
 À faire une seule fois, à la main**, car la version installée sur votre téléphone a encore l'ancien code et restera
 bloquée : ① sur le Galaxy A56, ouvrez dans Chrome ou Samsung Internet
 **https://github.com/spreadzenox/HealthTrack/releases/latest** ; ② sous « Assets », touchez **`HealthTrack-vNNN.apk`**
-(la version publiée après ce run, v188 ou plus, ≈ 33,6 Mo) ; ③ ouvrez le fichier téléchargé (notification ou
+(**v188** ou plus récente, 33,6 Mo) ; ③ ouvrez le fichier téléchargé (notification ou
 « Téléchargements ») ; si Android le demande, autorisez **ce navigateur** à installer des applis ; ④ touchez
 **« Mettre à jour »**. Vos données sont gardées (même signature, installation par-dessus). Pour vérifier : Plus →
-Nouveautés, « Version installée ». ⑤ **À la version suivante**, touchez « Mettre à jour (33,6 Mo) » dans le bandeau :
+Nouveautés, « Version installée ». ⑤ **À la version suivante (v189, déjà publiée juste après)**, touchez « Mettre à jour (33,6 Mo) » dans le bandeau :
 vous devez voir la barre, les Mo et le temps restant, puis l'installateur. Si ça bloque encore, envoyez-moi une
 capture du bandeau : il dit maintenant pourquoi. (La Lecture du visage s'arrête à chaque mise à jour : touchez
 « Reprendre » dans la notification.)
@@ -405,7 +405,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 14:30 — [Habitudes et effets décalés sur l'humeur estimée](runs/2026-10-20-1430-habitudes-humeur-estimee.md) | 🔴🙂 | `computeTagEffects(…, { outcomeByDay })`, `computeLaggedEffects` sur l'humeur estimée sans piste, bloc dans la section visage ; stress (Y) exclu ; 1 621 Vitest |
 | 20/10 16:30 — [Lectures du jour pondérées par leur qualité (I127)](runs/2026-10-20-1630-lectures-ponderees.md) | 🔴🙂 | `weightedMedian` + poids 1 / demi-largeur² (images valides, lacet, duo), n effectif de Kish dans la fourchette, « N lectures peu nettes comptées moins » ; même pondération dans `faceMoodDays` ; 1 625 Vitest |
 | 20/10 18:30 — [Lumière du visage dans le poids des lectures (I127b)](runs/2026-10-20-1830-lumiere-visage.md) | 🔴🙂 | natif : `light` (médiane de la luminance des images valides) ; JS : ×1,15 hors [0,25 ; 0,8], « souvent dans la pénombre » ; `FACE_QUALITY_KEYS` hors de la porte ; 1 631 Vitest, 114 JUnit |
-| 20/10 20:30 — [Mise à jour en un clic : progression et vérification (signalement 19:05)](runs/2026-10-20-2030-maj-telechargement.md) | 🚑 | Cause : APK 33,6 Mo chargé d'un bloc en base64 via le pont, sans délai ; `AppUpdatePlugin` (DownloadManager, notification, SHA-256 + paquet vérifiés), bandeau Mo / % / débit / reste, blocage 45 s, Réessayer, navigateur ; 1 640 Vitest, 118 JUnit |
+| 20/10 20:30 — [Mise à jour en un clic : progression et vérification (signalement 19:05)](runs/2026-10-20-2030-maj-telechargement.md) | 🚑 | Cause : APK 33,6 Mo chargé d'un bloc en base64 via le pont, sans délai ; `AppUpdatePlugin` (DownloadManager, notification, SHA-256 + paquet vérifiés), bandeau Mo / % / débit / reste, blocage 45 s, Réessayer, navigateur ; 1 640 Vitest, 118 JUnit ; PR #235 → **v188, 33,6 Mo** |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---
