@@ -1,0 +1,135 @@
+/*
+ * Tokens de design — identité « Clair et précis » validée le 20/10/2026 (journal/DESIGN.md).
+ * Seule source des couleurs, polices, rayons et marges de l'app : les autres feuilles de style
+ * n'utilisent que ces variables (vérifié par src/theme/tokens.test.js, qui contrôle aussi les
+ * contrastes ≥ 4,5:1 des couples texte / fond dans les deux thèmes).
+ *
+ * Thème clair par défaut ; sombre en option (Paramètres → Apparence), posé par src/theme/theme.js
+ * via <html data-theme="dark">, ou « Comme le téléphone » (data-theme="system" + prefers-color-scheme).
+ * Les variantes `-rgb` (triplets) servent aux teintes transparentes : rgba(var(--brand-rgb), 0.15).
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Base */
+  --color-bg: #ffffff;
+  --color-surface: #f4f6f5;
+  --color-border: #e3e8e6;
+  --color-ink: #10231d;
+  --color-ink-2: #4a5e57;
+  --color-brand: #0b7a5e;
+  --color-on-brand: #ffffff;
+  --bg-rgb: 255, 255, 255;
+  --ink-rgb: 16, 35, 29;
+  --ink-2-rgb: 74, 94, 87;
+  --brand-rgb: 11, 122, 94;
+
+  /* Un pastel par thème, constant dans toute l'app */
+  --mint-bg: #e3f5ee; /* bien-être */
+  --mint-text: #3b5249;
+  --mint-label: #0b6b53;
+  --peach-bg: #ffebdd; /* ventre */
+  --peach-text: #5a4033;
+  --peach-label: #8a3a12;
+  --lilac-bg: #ece9ff; /* pistes */
+  --lilac-text: #3e3870;
+  --lilac-bar: #4b3fc9;
+
+  /* Badges et accents graphiques (ambre et menthe vive : jamais pour du texte) */
+  --color-badge: #c2410c;
+  --color-on-badge: #ffffff;
+  --accent-amber: #ffb84d;
+  --accent-mint: #5ee0b5;
+  --chart-bar-2: #b9dccd;
+  --chart-ref: #6fa893;
+
+  /* États (texte ou trait ; lisibles sur le fond et sur la surface) */
+  --color-ok: #0b6b53;
+  --color-warn: #8a5300;
+  --color-alert: #c2410c;
+  --color-danger: #b42318;
+  --color-info: #2f5bb7;
+  --color-violet: #4b3fc9;
+  --ok-rgb: 11, 107, 83;
+  --warn-rgb: 138, 83, 0;
+  --alert-rgb: 194, 65, 12;
+  --danger-rgb: 180, 35, 24;
+  --info-rgb: 47, 91, 183;
+  --violet-rgb: 75, 63, 201;
+
+  /* Teinte neutre des voiles et séparateurs : rgba(var(--tint-rgb), 0.08) */
+  --tint-rgb: 16, 35, 29;
+  --scrim: rgba(16, 35, 29, 0.45);
+  --shadow: rgba(16, 35, 29, 0.12);
+  --toggle-thumb: #ffffff;
+
+  /* Typographie : Figtree pour les mots, IBM Plex Mono pour les chiffres et les données */
+  --font-sans: 'Figtree Variable', 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Formes */
+  --radius-card: 22px;
+  --radius-choice: 18px;
+  --radius-tag: 10px;
+  --radius-pill: 999px;
+  --button-height: 52px;
+  --tap-min: 44px;
+  --gutter: 20px;
+
+  /* Noms historiques (feuilles de style d'avant les tokens) */
+  --bg: var(--color-bg);
+  --surface: var(--color-surface);
+  --accent: var(--color-brand);
+  --accent-dim: var(--color-ok);
+  --text: var(--color-ink);
+  --text-muted: var(--color-ink-2);
+  --error: var(--color-danger);
+  --border: var(--color-border);
+  --radius: 12px;
+}
+
+/* Thème sombre : fond encre, émeraude éclaircie, pastels assombris. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #0c1915;
+  --color-surface: #16261f;
+  --color-border: #2a3d36;
+  --color-ink: #e8f0ec;
+  --color-ink-2: #a7b8b1;
+  --color-brand: #3fc79e;
+  --color-on-brand: #0c1915;
+  --bg-rgb: 12, 25, 21;
+  --ink-rgb: 232, 240, 236;
+  --ink-2-rgb: 167, 184, 177;
+  --brand-rgb: 63, 199, 158;
+  --mint-bg: #173a2f;
+  --mint-text: #cfe9df;
+  --mint-label: #6fe0b8;
+  --peach-bg: #3e2a1e;
+  --peach-text: #f3dccd;
+  --peach-label: #ffb27a;
+  --lilac-bg: #27244a;
+  --lilac-text: #dcd8ff;
+  --lilac-bar: #a99fff;
+  --color-badge: #c2410c;
+  --color-on-badge: #ffffff;
+  --chart-bar-2: #2f5a4b;
+  --chart-ref: #6fa893;
+  --color-ok: #5ee0b5;
+  --color-warn: #f7b733;
+  --color-alert: #ff8a65;
+  --color-danger: #ff7b72;
+  --color-info: #8fb3ff;
+  --color-violet: #a99fff;
+  --ok-rgb: 94, 224, 181;
+  --warn-rgb: 247, 183, 51;
+  --alert-rgb: 255, 138, 101;
+  --danger-rgb: 255, 123, 114;
+  --info-rgb: 143, 179, 255;
+  --violet-rgb: 169, 159, 255;
+  --tint-rgb: 255, 255, 255;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --shadow: rgba(0, 0, 0, 0.35);
+  --toggle-thumb: #e8f0ec;
+}

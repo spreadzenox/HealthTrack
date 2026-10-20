@@ -115,7 +115,7 @@
 
 /* Aperçu d'une sauvegarde avant import : rien n'est écrit avant un choix explicite */
 .import-preview {
-  border: 1px solid rgba(78, 205, 196, 0.35);
+  border: 1px solid rgba(var(--brand-rgb), 0.35);
   border-radius: var(--radius);
   padding: 12px;
 }
@@ -139,7 +139,7 @@
 }
 
 .import-preview-warning {
-  color: #f0b27a;
+  color: var(--color-alert);
 }
 
 .import-preview-actions {
@@ -155,11 +155,11 @@
 
 .btn-danger {
   background: var(--error);
-  color: #fff;
+  color: var(--color-bg);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #c0392b;
+  filter: brightness(0.92);
 }
 
 /* Paramètres */
@@ -177,6 +177,38 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text);
+}
+
+/* Choix en options (journal/DESIGN.md § 5) : rayon 18 px, bordure 2 px, rond radio. */
+.theme-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.theme-choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap-min);
+  padding: 10px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-choice);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.theme-choice.is-selected {
+  border-color: var(--color-brand);
+}
+
+.theme-choice input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-brand);
 }
 
 .settings-input {
@@ -248,7 +280,7 @@
   padding: 0 8px;
   background: var(--bg);
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(var(--tint-rgb), 0.15);
   border-radius: 8px;
   font: inherit;
   color-scheme: dark;
@@ -283,7 +315,7 @@
   gap: 2px;
   background: var(--surface);
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--tint-rgb), 0.1);
   border-radius: var(--radius);
   font: inherit;
   text-align: left;
@@ -334,7 +366,7 @@
   gap: 8px;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(var(--tint-rgb), 0.08);
 }
 
 .meal-describe label {
@@ -349,7 +381,7 @@
   padding: 10px 12px;
   background: var(--bg);
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(var(--tint-rgb), 0.15);
   border-radius: 8px;
   font: inherit;
   font-size: 1rem;

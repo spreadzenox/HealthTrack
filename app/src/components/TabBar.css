@@ -7,8 +7,8 @@
   z-index: 20;
   display: flex;
   justify-content: center;
-  background: rgba(20, 20, 36, 0.96);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--bg-rgb), 0.96);
+  border-top: 1px solid rgba(var(--tint-rgb), 0.08);
   padding: 0 max(8px, calc((100vw - 480px) / 2)) var(--safe-bottom);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -61,7 +61,7 @@
 }
 
 .tabbar-link.active .tabbar-icon {
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(var(--brand-rgb), 0.15);
 }
 
 .tabbar-link:focus-visible {
@@ -84,6 +84,6 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ff6b6b;
-  box-shadow: 0 0 0 2px rgba(20, 20, 36, 0.96);
+  background: var(--color-danger);
+  box-shadow: 0 0 0 2px rgba(var(--bg-rgb), 0.96);
 }

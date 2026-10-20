@@ -15,11 +15,11 @@
 }
 
 .baseline-card.is-insufficient {
-  border-left-color: rgba(255, 255, 255, 0.15);
+  border-left-color: rgba(var(--tint-rgb), 0.15);
 }
 
 .baseline-card.is-outside {
-  border-left-color: #f7b733;
+  border-left-color: var(--color-warn);
 }
 
 .baseline-card-header {
@@ -40,14 +40,14 @@
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(var(--brand-rgb), 0.15);
   color: var(--accent);
   white-space: nowrap;
 }
 
 .baseline-badge.is-outside {
-  background: rgba(247, 183, 51, 0.15);
-  color: #f7b733;
+  background: rgba(var(--warn-rgb), 0.15);
+  color: var(--color-warn);
 }
 
 .baseline-card-value {
@@ -70,7 +70,7 @@
   height: 8px;
   margin: 10px 0 8px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--tint-rgb), 0.08);
 }
 
 .baseline-range-band {
@@ -78,7 +78,7 @@
   top: 0;
   bottom: 0;
   border-radius: 4px;
-  background: rgba(78, 205, 196, 0.35);
+  background: rgba(var(--brand-rgb), 0.35);
 }
 
 .baseline-range-marker {
@@ -92,7 +92,7 @@
 }
 
 .baseline-range-marker.is-outside {
-  background: #f7b733;
+  background: var(--color-warn);
 }
 
 .baseline-card-note {
@@ -104,8 +104,8 @@
 .baseline-hint {
   margin: 10px 0 0;
   padding: 10px 12px;
-  border-left: 3px solid #f7b733;
-  background: rgba(247, 183, 51, 0.08);
+  border-left: 3px solid var(--color-warn);
+  background: rgba(var(--warn-rgb), 0.08);
   border-radius: 0 var(--radius) var(--radius) 0;
   font-size: 0.85rem;
   line-height: 1.4;
@@ -132,7 +132,7 @@
   content: '';
   width: 3px;
   height: 14px;
-  background: #f7b733;
+  background: var(--color-warn);
   border-radius: 2px;
 }
 

@@ -8,7 +8,9 @@
  *   npm run visual                         # toutes les pages, données de démo
  *   npm run visual -- --empty              # état vide (premier lancement)
  *   npm run visual -- --routes=/,/food     # pages choisies
- *   npm run visual -- --light              # schéma de couleurs clair
+ *   npm run visual -- --dark               # thème sombre de l'app (le clair est celui par défaut)
+ *   npm run visual -- --light              # schéma de couleurs clair du téléphone (avec --theme=system)
+ *   npm run visual -- --theme=system       # thème « Comme le téléphone »
  *   npm run visual -- --update-banner      # simule une release plus récente
  *   npm run visual -- --update-banner=progress  # … et un téléchargement en cours (plugin AppUpdate simulé)
  *   npm run visual -- --update-banner=stalled   # … téléchargement bloqué (aucun octet depuis 45 s)
@@ -195,6 +197,14 @@ async function main() {
       timezoneId: 'Europe/Paris',
       colorScheme: args.light ? 'light' : 'dark',
     })
+
+    // Thème de l'app (src/theme/theme.js) : clair par défaut, comme sur un premier lancement.
+    const themeChoice = args.dark ? 'dark' : args.theme
+    if (themeChoice) {
+      await context.addInitScript((choice) => {
+        localStorage.setItem('healthtrack_theme', choice)
+      }, themeChoice)
+    }
 
     // Pas d'appel réseau réel vers GitHub : release simulée (ancienne par défaut).
     await context.route('https://api.github.com/**', (route) =>

@@ -13,6 +13,9 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- Thème clair par défaut (journal/DESIGN.md) : icônes sombres dans la barre d'état dès le
+             démarrage ; SystemBarsPlugin les repasse en clair si l'utilisateur choisit le thème sombre. -->
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
 

@@ -4,6 +4,7 @@ import { GEMINI_MODELS, getGeminiModel, setGeminiModel } from '../settings/gemin
 import { isDebugModeEnabled, setDebugModeEnabled } from '../settings/debugMode'
 import { useDebug } from '../contexts/DebugContext'
 import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings/cigaretteCounter'
+import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import '../Food.css'
 
 export default function Settings() {
@@ -16,6 +17,7 @@ export default function Settings() {
   const [debugEnabled, setDebugEnabled] = useState(() => isDebugModeEnabled())
 
   const [cigarettePinned, setCigarettePinned] = useState(() => isCigaretteCounterPinned())
+  const [theme, setTheme] = useState(() => getThemeChoice())
 
   useEffect(() => {
     setApiKey(getGeminiApiKey())
@@ -34,9 +36,33 @@ export default function Settings() {
     refreshDebugMode()
   }
 
+  const handleTheme = (value) => {
+    setThemeChoice(value)
+    setTheme(value)
+    applyTheme()
+  }
+
   return (
     <section className="food-page">
       <h2 className="page-title">Paramètres</h2>
+
+      <div className="settings-block">
+        <h3 className="section-title">Apparence</h3>
+        <div className="theme-choices" role="radiogroup" aria-label="Thème">
+          {THEME_CHOICES.map((c) => (
+            <label key={c.value} className={`theme-choice${theme === c.value ? ' is-selected' : ''}`}>
+              <input
+                type="radio"
+                name="theme"
+                value={c.value}
+                checked={theme === c.value}
+                onChange={() => handleTheme(c.value)}
+              />
+              <span>{c.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
 
       <div className="settings-block">
         <h3 className="section-title">Analyse des repas (Gemini)</h3>

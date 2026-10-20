@@ -39,12 +39,12 @@
 }
 
 .reco-tab-btn:hover {
-  background: rgba(78, 205, 196, 0.08);
+  background: rgba(var(--brand-rgb), 0.08);
   color: var(--text);
 }
 
 .reco-tab-btn-active {
-  background: rgba(78, 205, 196, 0.14);
+  background: rgba(var(--brand-rgb), 0.14);
   color: var(--accent);
   border-color: var(--accent);
 }
@@ -165,17 +165,17 @@
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(var(--tint-rgb), 0.06);
 }
 
 .reco-evidence-solid {
   color: var(--accent);
-  background: rgba(78, 205, 196, 0.12);
+  background: rgba(var(--brand-rgb), 0.12);
 }
 
 .reco-evidence-tentative {
-  color: #e6a23c;
-  background: rgba(230, 162, 60, 0.12);
+  color: var(--color-warn);
+  background: rgba(var(--warn-rgb), 0.12);
 }
 
 .reco-empty-levers {
@@ -221,7 +221,7 @@
 
 .reco-corr-bar-wrap {
   height: 10px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(var(--tint-rgb), 0.06);
   border-radius: 5px;
   overflow: hidden;
 }
@@ -234,11 +234,11 @@
 }
 
 .reco-corr-pos {
-  background: #2ecc71;
+  background: var(--color-ok);
 }
 
 .reco-corr-neg {
-  background: #e74c3c;
+  background: var(--color-danger);
 }
 
 .reco-corr-value {
@@ -266,7 +266,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(var(--tint-rgb), 0.05);
   font-size: 0.82rem;
 }
 
@@ -290,8 +290,8 @@
   font-size: 0.82rem;
 }
 
-.reco-diff-pos { color: #2ecc71; }
-.reco-diff-neg { color: #e74c3c; }
+.reco-diff-pos { color: var(--color-ok); }
+.reco-diff-neg { color: var(--color-danger); }
 
 /* ─── Not enough data ─────────────────────────────────────────────────────── */
 
@@ -364,19 +364,19 @@
 /* ─── Overfit warning ─────────────────────────────────────────────────────── */
 
 .reco-overfit-warn {
-  color: #f39c12;
+  color: var(--color-warn);
   font-weight: 600;
 }
 
 /* ─── Reliability indicators ─────────────────────────────────────────────── */
 
 .reco-reliability-warn {
-  color: #e67e22;
+  color: var(--color-alert);
   font-weight: 600;
 }
 
 .reco-reliability-ok {
-  color: #2ecc71;
+  color: var(--color-ok);
   font-weight: 600;
 }
 
@@ -395,8 +395,8 @@
 /* ─── Debug panel ─────────────────────────────────────────────────────────── */
 
 .reco-debug-panel {
-  background: rgba(255, 200, 0, 0.07);
-  border: 1px solid rgba(255, 200, 0, 0.3);
+  background: rgba(var(--warn-rgb), 0.07);
+  border: 1px solid rgba(var(--warn-rgb), 0.3);
   border-radius: 8px;
   margin-bottom: 20px;
   font-size: 0.78rem;
@@ -407,7 +407,7 @@
   padding: 8px 12px;
   cursor: pointer;
   font-weight: 600;
-  color: #f5c518;
+  color: var(--color-warn);
   font-size: 0.82rem;
 }
 
@@ -465,7 +465,7 @@
 }
 
 .reco-tag-diff-neg {
-  color: #e57373;
+  color: var(--color-danger);
   white-space: nowrap;
 }
 
@@ -508,11 +508,11 @@
 /* I108 : piste « à vérifier » (une seule à la fois), en retrait des pistes nettes */
 .reco-advice-card--verify {
   border-left-style: dashed;
-  border-left-color: #e6a23c;
+  border-left-color: var(--color-warn);
 }
 
 .reco-advice-card--verify .reco-advice-rank {
   background: transparent;
-  color: #e6a23c;
-  border: 1px solid #e6a23c;
+  color: var(--color-warn);
+  border: 1px solid var(--color-warn);
 }

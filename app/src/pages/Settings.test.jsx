@@ -66,3 +66,24 @@ describe('Settings — Cigarettes', () => {
     expect(screen.getByLabelText(/Toujours afficher le bouton cigarette/i).querySelector('input')).toBeChecked()
   })
 })
+
+describe('Settings — Apparence', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    document.documentElement.removeAttribute('data-theme')
+  })
+
+  it('propose Clair (choisi par défaut), Sombre et Comme le téléphone', () => {
+    renderSettings()
+    expect(screen.getByRole('radio', { name: 'Clair' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Sombre' })).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Comme le téléphone' })).toBeInTheDocument()
+  })
+
+  it('applique le thème sombre tout de suite et le retient', () => {
+    renderSettings()
+    fireEvent.click(screen.getByRole('radio', { name: 'Sombre' }))
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(localStorage.getItem('healthtrack_theme')).toBe('dark')
+  })
+})

@@ -97,7 +97,7 @@
   min-width: 96px;
   min-height: 44px;
   padding: 0 16px;
-  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  border: 1px solid var(--border, rgba(var(--tint-rgb), 0.14));
   border-radius: 999px;
   background: var(--bg);
   color: var(--text);
@@ -162,7 +162,7 @@
 
 .nutrition-bar-wrap {
   height: 10px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(var(--tint-rgb), 0.06);
   border-radius: 5px;
   overflow: hidden;
 }
@@ -174,19 +174,19 @@
 }
 
 .nutrition-bar-ok {
-  background: linear-gradient(90deg, #4ecdc4, #44a08d);
+  background: var(--accent);
 }
 
 .nutrition-bar-partial {
-  background: linear-gradient(90deg, #f7d070, #f7b733);
+  background: var(--color-warn);
 }
 
 .nutrition-bar-low {
-  background: linear-gradient(90deg, #e8836f, #d9644f);
+  background: var(--color-danger);
 }
 
 .nutrition-bar-over {
-  background: linear-gradient(90deg, #e67e22, #d35400);
+  background: var(--color-alert);
 }
 
 .nutrition-bar-value {
@@ -214,8 +214,8 @@
 .nutrition-warning {
   font-size: 0.85rem;
   line-height: 1.5;
-  background: rgba(247, 183, 51, 0.1);
-  border-left: 3px solid #f7b733;
+  background: rgba(var(--warn-rgb), 0.1);
+  border-left: 3px solid var(--color-warn);
   border-radius: 6px;
   padding: 10px 12px;
   margin: 0 0 12px;
