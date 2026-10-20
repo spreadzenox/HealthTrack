@@ -57,7 +57,8 @@ case « Fait » de chaque étape, et les décisions. Le détail des idées est d
    `ApplicationInfo.category`, entrée `phone_apps` par jour et par heure ; prochain run de code conseillé.
    Rafales : viser ≥ 12 rafales valides par jour (I118, simulé).
 6. 🟨 **Porte et restitution** : ✅ `gate.js` (I112, 19/10 02:30), puis une ligne « estimation du jour » avec fourchette, jamais un
-   diagnostic ; le visage complète les jours sans note (I115).
+   diagnostic ; le visage complète les jours sans note (I115). ✅ Estimation du jour (19/10 22:30) ; ✅ **facteurs X
+   comparés à l'humeur estimée** dans Analyses, sans aucune note (`mood/faceMoodDays.js`, 20/10 04:30).
 7. ✅ Calibration optionnelle : note du soir d'un geste depuis une notification (I113, 19/10 06:30), jamais
    obligatoire ; interrupteur dans la saisie bien-être, heure = médiane des notes du soir, file native → historique.
 

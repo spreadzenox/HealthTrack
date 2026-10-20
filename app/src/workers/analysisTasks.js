@@ -13,6 +13,7 @@ import {
 } from '../services/analysisEngine'
 import { computeTagEffects } from '../services/behaviorTags'
 import { computeLaggedEffects } from '../services/laggedEffects'
+import { computeFaceMoodCorrelations } from '../services/mood/faceMoodDays'
 
 export const ANALYSIS_TASKS = {
   /** Accueil — « Prédiction du jour ». */
@@ -24,6 +25,8 @@ export const ANALYSIS_TASKS = {
       correlations: computeBasicCorrelations(entries),
       tagEffects: computeTagEffects(entries),
       laggedEffects: computeLaggedEffects(entries),
+      // Facteurs comparés à l'humeur estimée par le visage (Y automatique, sans note).
+      faceMood: computeFaceMoodCorrelations(entries),
       totalDays: countTotalDataDays(entries),
     }
   },

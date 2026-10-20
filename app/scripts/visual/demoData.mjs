@@ -77,7 +77,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // éviter une corrélation fortuite pollen / pollution (la graine 4000 en donnait une, artefact du hasard).
   const weatherRand = mulberry32(seed + 4003)
   const phoneRand = mulberry32(seed + 5009)
-  // Lecture du visage (consigne du 19/10 au soir) : rafales du déverrouillage des 10 derniers jours, un sourire qui
+  // Lecture du visage (consigne du 19/10 au soir) : rafales du déverrouillage des 30 derniers jours (assez pour les Analyses « humeur estimée »), un sourire qui
   // suit un peu la note du jour ; RNG séparé. Jamais d'image, seulement les indices (format de FaceRecord.java).
   const faceRand = mulberry32(seed + 6007)
   // Les 3 derniers jours portent aussi la valence / l'éveil du modèle embarqué (étape 2, téléchargé depuis peu).
@@ -240,7 +240,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       at: at(day, 21, 30),
       payload: { score: Math.max(0, Math.min(5, Math.round(score))), ...(tags.length > 0 && { tags }) },
     })
-    if (i <= 9) pushFaceBursts(day, score, i <= 2)
+    if (i <= 29) pushFaceBursts(day, score, i <= 2)
     prevTags = tags
     prevWorkout = workout
 

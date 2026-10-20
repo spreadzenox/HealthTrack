@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-20",
+  "kind": "nouveau",
+  "title": "Vos habitudes comparées à votre humeur estimée, sans aucune note",
+  "items": [
+    "Analyses → Analyse simple : nouvelle section « Avec votre humeur estimée (visage) ». Chaque jour avec au moins 3 lectures du visage au déverrouillage reçoit une humeur estimée, et HealthTrack la compare à votre sommeil, vos pas, votre écran, vos réseaux sociaux, la météo… comme il le fait déjà avec vos notes.",
+    "Elle s'affiche même si vous ne notez jamais votre bien-être. Il faut 14 jours estimés : d'ici là, la section dit où vous en êtes.",
+    "Mêmes garde-fous que pour vos notes : week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés ; ce que vous faites après la dernière lecture d'une journée (avant 20 h) ne compte pas pour elle. L'humeur estimée ne vient que de votre visage (et de vos notes si vous en donnez) : aucun des facteurs comparés ne sert à la calculer.",
+    "Aucun comportement n'est jugé bon ou mauvais d'avance : ce sont des liens à observer chez vous, pas des causes ni un diagnostic."
+  ]
+}
