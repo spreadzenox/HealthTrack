@@ -41,7 +41,8 @@
  *   npm run visual -- --routes=/connectors --face       # « Lecture du visage » : faux plugin, service actif
  *   npm run visual -- --routes=/connectors --face=off   # … pas encore activée ; --face=stopped : arrêtée par le téléphone (Samsung) ;
  *                                                                      --face=blocked : caméra refusée en arrière-plan ;
- *                                                                      --face=nomodel : modèle valence / éveil absent
+ *                                                                      --face=nomodel : modèle valence / éveil absent ;
+ *                                                                      --face-diag : Diagnostic de la carte déplié
  *   npm run visual -- --routes=/ --wellbeing-prompt --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
  *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -498,6 +499,8 @@ async function main() {
           startedAt: Date.now() - 5 * 3600000, lastUpdateAt: Date.now() - 26 * 3600000, bootAt: Date.now() - 50 * 3600000,
           // Modèle valence / éveil (étape 2) ; --face=nomodel : pas encore téléchargé.
           affectModel: mode !== 'nomodel', affectBursts: 6, affectLoadMs: 280, affectDownloadMs: 8400,
+          // Duo (I126) : second modèle (MobileFaceNet) ; --face=nomodel : absent lui aussi.
+          affectModel2: mode !== 'nomodel', affectDuoBursts: 4, affect2LoadMs: 110,
           resumeNotices: 1, resumeTaps: 1, resumeCheck: 'running', resumeCheckAt: Date.now() - 40 * 60000, resumeCheckTrigger: 'periodic',
           // Repérage du déverrouillage et accès caméra (signalement du 19/10 15:05) ; --face=blocked : caméra refusée.
           dayScreenOns: 19, dayPresents: 12, dayUnlock_user_present: 12, dayUnlock_keyguard: 2, lastUnlockAt: Date.now() - 6 * 60000,
@@ -633,6 +636,14 @@ async function main() {
           if (args.import === 'replace') await page.getByRole('button', { name: 'Remplacer mes données' }).click()
           await page.evaluate(() => document.querySelector('.import-preview')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(400)
+        }
+        if (args['face-diag']) {
+          // --face-diag : Diagnostic de la carte « Lecture du visage » déplié et centré (modèles, accord du duo…)
+          await page.evaluate(() => {
+            const d = [...document.querySelectorAll('details.connectors-more')].find((x) => x.querySelector('summary')?.textContent === 'Diagnostic')
+            if (d) { d.open = true; d.scrollIntoView({ block: 'start' }) }
+          })
+          await page.waitForTimeout(300)
         }
         if (args.ble === 'watch' || args.ble === 'watch-silent') {
           // le test vit sous « Dépannage », replié une fois la montre connectée

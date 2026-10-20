@@ -138,3 +138,15 @@ et dans « Lecture du visage », fourchette 0–5 et confiance. Prochaine étape
 - EmoNet : CC BY-NC-ND 4.0 **confirmé** sur le dépôt officiel → écarté.
 - Voix : aucun modèle valence / éveil à la fois léger et sous licence permissive (I128) → l'étape 3 commence par la
   phrase du soir et la dictée. Détail et sources : `IDEES.md` (20/10 08:30).
+
+### Duo livré (20/10/2026 10:30, I126)
+- Chaque image valide passe dans `enet_b0_8_va_mtl` (224 px, normalisation ImageNet) **et** `mbf_va_mtl`
+  (MobileFaceNet, 112 px, `(x − 0,5) / 0,5` — normalisation lue dans `emotiefflib/facial_analysis.py`, différente du
+  B0). Même recadrage aligné sur les yeux. Vecteurs Python ↔ Java : `affect-vectors-mbf.json` (64 échantillons à
+  1e-4 ; valence 0,350 / 0,289 sur les deux portraits, contre 0,327 / 0,279 pour le B0).
+- Rafale : `valence` / `arousal` = médiane des moyennes du duo ; `affectGap` = médiane de |V_B0 − V_MBF| ;
+  `affectModels` = 2. Si un seul modèle répond, il sert seul (pas d'écart).
+- `faceMood` : erreur type du duo 1,0 (→ 0,85 avec la ligne de base) au lieu de 1,1 (→ 0,9) ; le désaccord ajoute
+  2,5 × écart en quadrature à la demi-largeur (non divisé par le nombre de lectures : il tient aux modèles) ; il ne
+  déplace jamais la note. Accord ≤ 0,15, désaccord > 0,3 (à recaler sur l'A56).
+- Coût : +8 Mo téléchargés une fois ; +~20 ms / image mesurés sur x86 (A56 à mesurer via le diagnostic).

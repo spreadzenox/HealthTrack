@@ -143,6 +143,47 @@ describe('faceMoodEstimate — dès la première lecture (consigne du 19/10 au s
   })
 })
 
+describe('faceMood — duo de modèles du visage (I126)', () => {
+  const duo = (gap, extra = {}) => ({ valence: 0.3, arousal: 0.1, affectGap: gap, affectModels: 2, ...extra })
+
+  it('narrows the range when both models agree, widens it when they disagree', () => {
+    const single = faceMoodEstimate([burst(at(0, 8), { valence: 0.3, arousal: 0.1 })], { now: NOW })
+    const agree = faceMoodEstimate([burst(at(0, 8), duo(0.05))], { now: NOW })
+    const disagree = faceMoodEstimate([burst(at(0, 8), duo(0.5))], { now: NOW })
+    const width = (e) => e.day.high - e.day.low
+    expect(agree.day.note).toBe(single.day.note)
+    expect(width(agree)).toBeLessThan(width(single))
+    expect(width(disagree)).toBeGreaterThan(width(single))
+    expect(agree.duo).toEqual({ models: 2, gap: 0.05, agreement: 'accord' })
+    expect(disagree.duo.agreement).toBe('désaccord')
+    expect(single.duo).toBeNull()
+  })
+
+  it('uses the median disagreement of the day', () => {
+    const est = faceMoodEstimate([
+      burst(at(0, 8), duo(0.1)), burst(at(0, 12), duo(0.2)), burst(at(0, 18), duo(0.6)),
+    ], { now: NOW })
+    expect(est.duo.gap).toBeCloseTo(0.2, 5)
+    expect(est.duo.agreement).toBe('partiel')
+  })
+
+  it('says whether the two models agree, in the confidence line', () => {
+    const lines = describeFaceMood(faceMoodEstimate([burst(at(0, 8), duo(0.05))], { now: NOW }))
+    expect(lines.some((l) => l.startsWith('Confiance') && l.includes('deux modèles d’accord'))).toBe(true)
+    expect(lines.some((l) => l.startsWith('Deux modèles valence / éveil embarqués (HSEmotion)'))).toBe(true)
+    const off = describeFaceMood(faceMoodEstimate([burst(at(0, 8), duo(0.5))], { now: NOW }))
+    expect(off.some((l) => l.includes('deux modèles en désaccord'))).toBe(true)
+    expect(off.join(' ')).toMatch(/pas un diagnostic/)
+  })
+
+  it('disagreement never moves the estimate itself, only its uncertainty', () => {
+    const a = faceMoodEstimate([burst(at(0, 8), duo(0.0))], { now: NOW })
+    const b = faceMoodEstimate([burst(at(0, 8), duo(0.8))], { now: NOW })
+    expect(a.day.note).toBe(b.day.note)
+    expect(a.moment.note).toBe(b.moment.note)
+  })
+})
+
 describe('faceMood — garde-fous', () => {
   it('uses only direct emotional signals (D5): face indices declared as estimator inputs', () => {
     for (const k of EXPRESSION_KEYS) expect(isEstimatorInput(`face_${k}`)).toBe(true)

@@ -113,6 +113,17 @@ export function faceAffectState(status) {
   return status.affectState === 'error' ? 'error' : 'missing'
 }
 
+/**
+ * Second modèle du duo (MobileFaceNet, 8 Mo, I126) : 'ready' | 'downloading' | 'error' | 'missing', ou null si le
+ * natif ne le connaît pas encore. Même téléchargement que le premier (prepareAffect les prend tous les deux).
+ */
+export function faceAffectDuoState(status) {
+  if (!status || typeof status.affectModel2 !== 'boolean') return null
+  if (status.affectModel2) return 'ready'
+  if (status.affectDownloading) return 'downloading'
+  return status.affectState === 'error' ? 'error' : 'missing'
+}
+
 export async function requestFaceBatteryExemption(plugin = faceSensePlugin()) {
   try {
     await plugin?.requestBatteryExemption?.()
@@ -383,6 +394,8 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
         readingsToday: history.estimate.day?.readings ?? 0,
         baselineDays: history.estimate.baselineDays,
         calibrationDays: history.estimate.calibrationDays,
+        // Accord des deux modèles du visage (I126) : un mot, jamais l'écart ni la valeur.
+        agreement: history.estimate.duo?.agreement ?? null,
       }
       : null,
     // Note du soir d'un geste (I113), vérité terrain de la porte : réglages et compteurs, jamais une note.
@@ -398,6 +411,9 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
         downloadErrors: s.affectDownloadErrors ?? 0,
         error: s.affectError ?? null,
         lastError: s.lastAffectError ?? null,
+        duo: faceAffectDuoState(s)
+          ? { model: 'mbf_va_mtl', state: faceAffectDuoState(s), bursts: s.affectDuoBursts ?? 0, loadMs: s.affect2LoadMs ?? null }
+          : null,
       }
       : null,
   }
@@ -477,7 +493,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
   if (r.retries.tried) lines.push(`2e essais (2 s après une lecture sans visage) : ${r.retries.tried}, visage lu ${r.retries.faces} fois`)
   if (r.estimate) {
     const e = r.estimate
-    lines.push(`Humeur estimée : modèle ${MOOD_MODELS[e.model] || e.model}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}`)
+    lines.push(`Humeur estimée : modèle ${MOOD_MODELS[e.model] || e.model}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}${e.agreement ? `, deux modèles : ${e.agreement}` : ''}`)
   }
   if (r.affect) {
     const a = r.affect
@@ -489,6 +505,16 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
       lines.push(`Modèle valence / éveil : échec du téléchargement${a.error ? ` [${a.error}]` : ''} — nouvel essai à la prochaine ouverture`)
     } else {
       lines.push('Modèle valence / éveil : pas encore téléchargé (16 Mo, demandé à chaque ouverture de cette carte, lecture active)')
+    }
+    if (a.duo) {
+      const d = a.duo
+      lines.push(d.state === 'ready'
+        ? `Second modèle (MobileFaceNet) : prêt · ${plural(d.bursts, 'lecture')} ${d.bursts > 1 ? 'lues' : 'lue'} par les deux modèles${d.loadMs != null ? ` · chargé en ${d.loadMs} ms` : ''}`
+        : d.state === 'downloading'
+          ? 'Second modèle (MobileFaceNet) : téléchargement en cours (8 Mo, une seule fois)'
+          : d.state === 'error'
+            ? 'Second modèle (MobileFaceNet) : échec du téléchargement — nouvel essai à la prochaine ouverture'
+            : 'Second modèle (MobileFaceNet) : pas encore téléchargé (8 Mo, demandé à l’ouverture de cette carte, lecture active)')
     }
     if (a.lastError) lines.push(`Dernière erreur du modèle valence / éveil : ${a.lastError}`)
   }

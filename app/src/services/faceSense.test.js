@@ -11,6 +11,7 @@ import {
   faceCameraAccess,
   prepareFaceAffect,
   faceAffectState,
+  faceAffectDuoState,
   faceStopCause,
   isSamsungDevice,
   openFaceNeverSleep,
@@ -297,7 +298,7 @@ describe('modèle valence / éveil (consigne du 19/10 au soir, étape 2)', () =>
     expect(r.version).toBe(4)
     expect(r.affect).toEqual({
       model: 'enet_b0_8_va_mtl', state: 'ready', bursts: 5, loadMs: 310, downloadMs: 9000,
-      downloadErrors: 0, error: null, lastError: 'IllegalStateException: ort',
+      downloadErrors: 0, error: null, lastError: 'IllegalStateException: ort', duo: null,
     })
     const lines = faceDiagnosticLines(s)
     expect(lines.some((l) => l.startsWith('Modèle valence / éveil : prêt (HSEmotion, sur le téléphone) · 5 lectures avec valence'))).toBe(true)
@@ -306,6 +307,30 @@ describe('modèle valence / éveil (consigne du 19/10 au soir, étape 2)', () =>
     expect(err.some((l) => l === 'Modèle valence / éveil : échec du téléchargement [IOException: HTTP 404] — nouvel essai à la prochaine ouverture')).toBe(true)
     expect(faceDiagnosticReport({ ...active }).affect).toBe(null)
     expect(JSON.stringify(r)).not.toMatch(/"valence"\s*:/)
+  })
+})
+
+describe('duo de modèles du visage (I126)', () => {
+  it('état du second modèle : prêt, en cours, échec, absent ; inconnu d’une ancienne version native', () => {
+    expect(faceAffectDuoState({ affectModel: true, affectModel2: true })).toBe('ready')
+    expect(faceAffectDuoState({ affectModel: true, affectModel2: false, affectDownloading: true })).toBe('downloading')
+    expect(faceAffectDuoState({ affectModel: true, affectModel2: false, affectState: 'error' })).toBe('error')
+    expect(faceAffectDuoState({ affectModel: true, affectModel2: false })).toBe('missing')
+    expect(faceAffectDuoState({ affectModel: true })).toBe(null)
+    expect(faceAffectDuoState(null)).toBe(null)
+  })
+
+  it('export et lignes : second modèle, lectures lues par les deux, accord du jour ; jamais une valence', () => {
+    const s = { ...active, affectModel: true, affectModel2: true, affectBursts: 5, affectDuoBursts: 3, affect2LoadMs: 120 }
+    const r = faceDiagnosticReport(s, { history: { estimate: { model: 'va', confidence: 'moyenne', day: { readings: 3 }, baselineDays: 2, calibrationDays: 0, duo: { models: 2, gap: 0.08, agreement: 'accord' } } } })
+    expect(r.affect.duo).toEqual({ model: 'mbf_va_mtl', state: 'ready', bursts: 3, loadMs: 120 })
+    expect(r.estimate.agreement).toBe('accord')
+    const lines = faceDiagnosticLines(s)
+    expect(lines.some((l) => l === 'Second modèle (MobileFaceNet) : prêt · 3 lectures lues par les deux modèles · chargé en 120 ms')).toBe(true)
+    const missing = faceDiagnosticLines({ ...active, affectModel: true, affectModel2: false })
+    expect(missing.some((l) => l.startsWith('Second modèle (MobileFaceNet) : pas encore téléchargé (8 Mo'))).toBe(true)
+    expect(faceDiagnosticReport({ ...active, affectModel: true }).affect.duo).toBe(null)
+    expect(JSON.stringify(r)).not.toMatch(/"(valence|gap)"\s*:/)
   })
 })
 

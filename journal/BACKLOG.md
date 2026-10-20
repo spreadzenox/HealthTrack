@@ -39,10 +39,17 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   - [ ] La porte `gate.js` et la calibration lisent aussi la valence du modèle (aujourd'hui : indices blendshapes).
   - [x] Run idées 20/10 08:30 : EmoNet **écarté** (CC BY-NC-ND confirmé, PyTorch seulement) ; comparatif des 3
     modèles VA officiels HSEmotion (IDEES.md, 20/10 08:30) : hors AffectNet ils se valent, le lissage compte plus.
-  - [ ] **I126 (16) duo B0 + MobileFaceNet** : `mbf_va_mtl.onnx` (8,3 Mo, 112 px, SHA-256
+  - [x] **I126 (16) duo B0 + MobileFaceNet** (20/10 10:30) : `mbf_va_mtl.onnx` (8,3 Mo, 112 px, SHA-256
     `0323ace52ea6dbe9aa4a909d20933f7b8629c3fb41249e338f4316abf2a4828c`, même dépôt officiel, même téléchargement
     vérifié) ; valence = moyenne des deux ; désaccord |V_B0 − V_MBF| → « accord entre signaux » dans la confiance ;
-    test d'équivalence Java ↔ Python ; diagnostic : temps des deux modèles. Prochain run de code sans diagnostic.
+    test d'équivalence Java ↔ Python ; diagnostic : temps des deux modèles. ✅ Livré : `FaceAffect.Spec` (B0 224 px
+    ImageNet, MBF 112 px (x − 0,5) / 0,5, d'après EmotiEffLib), vecteurs `affect-vectors-mbf.json`, `affectGap` /
+    `affectModels` dans la rafale, `faceMood` (σ duo 1,0 → 0,85 ; écart × 2,5 en quadrature, jamais dans la note),
+    `faceAffectDuoState` + prepareAffect relancé si le second manque.
+  - [ ] **Retour A56 du duo** : « Second modèle : prêt », temps d'analyse (attendu +20 à 60 ms / image), part des
+    lectures « en désaccord » (si > 30 % : vérifier le recadrage 112 px sur de vraies images du téléphone).
+  - [ ] Seuils d'accord (0,15 / 0,3 de valence) à recaler sur les écarts réels de l'A56 (diagnostic : répartition
+    accord / partiel / désaccord sur 7 jours, sans valeur).
   - [ ] I127 (7) pondérer les lectures du jour par leur qualité (la médiane par lecture et par jour existe déjà).
   - [ ] Essai XNNPACK si la latence A56 dépasse 150 ms / image.
 - [ ] ~~Étape 2 (plan initial)~~ : run idées → comparatif (HSEmotion `enet_b0_8_va_mtl` /
@@ -762,6 +769,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
 4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 10:30** : ✅ I126 duo livré ; prochain run de code sans diagnostic → **I124** sonde vocale, puis
+habitudes (tags) / effets décalés sur l'humeur estimée ; I127 (pondération par qualité) en petit complément.
 **Mise à jour du 20/10 08:30 (run idées)** : prochain run de code sans diagnostic → **I126** duo de modèles du
 visage (désaccord = confiance), puis **I124** sonde vocale, puis habitudes (tags) / effets décalés sur l'humeur
 estimée ; I127 en petit complément.

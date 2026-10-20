@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-20",
+  "kind": "amélioration",
+  "title": "Humeur estimée : deux modèles lisent votre visage",
+  "items": [
+    "Chaque lecture du visage au déverrouillage passe maintenant par deux modèles de reconnaissance des émotions (HSEmotion) : celui déjà installé et un second, plus léger (MobileFaceNet), qui lit le visage autrement. L'humeur estimée est la moyenne des deux.",
+    "Leur accord entre dans la confiance : « deux modèles d'accord » resserre un peu la fourchette, « en désaccord » l'élargit. L'estimation elle-même ne bouge pas, seule son incertitude change. Toujours une estimation, jamais un diagnostic.",
+    "Le second modèle (8 Mo) se télécharge une seule fois, à la prochaine ouverture de la carte « Lecture du visage » (lecture active), avec vérification de son empreinte. Rien ne part de votre téléphone. Le Diagnostic indique « Second modèle (MobileFaceNet) : prêt »."
+  ]
+}

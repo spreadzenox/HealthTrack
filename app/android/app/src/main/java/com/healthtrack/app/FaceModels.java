@@ -69,6 +69,11 @@ public final class FaceModels implements AutoCloseable {
         return new FacePipeline(detector, landmarks, blendshapes, affect);
     }
 
+    /** Pipeline avec le duo valence / éveil (B0, MobileFaceNet), chacun pouvant manquer (null). */
+    public FacePipeline pipeline(FacePipeline.Model affect, FacePipeline.Model affect2) {
+        return new FacePipeline(detector, landmarks, blendshapes, affect, affect2);
+    }
+
     private static ByteBuffer map(AssetManager assets, String name) throws IOException {
         try (AssetFileDescriptor fd = assets.openFd(DIR + name);
              FileInputStream in = new FileInputStream(fd.getFileDescriptor());
