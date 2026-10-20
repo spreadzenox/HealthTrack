@@ -1,6 +1,6 @@
 # 2026-10-20 18:30 Paris (16:30 UTC) — Lumière du visage dans le poids des lectures (I127b)
 
-**Type** : 🔴🙂 code (consigne du 19/10 au soir : confiance honnête, « qualité et cadrage du visage »)  ·  **PR** : à venir
+**Type** : 🔴🙂 code (consigne du 19/10 au soir : confiance honnête, « qualité et cadrage du visage »)  ·  **PR** : #234
 
 ## Pourquoi
 - Main à `99df617` (#233) vert (Tests, Build & Release, émulateur A56), aucune PR « [Auto] » ouverte, aucun nouveau
