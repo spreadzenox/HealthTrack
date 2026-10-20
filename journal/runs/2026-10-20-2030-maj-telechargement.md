@@ -80,4 +80,6 @@
 ## Après le merge
 - Checks de #235 tous verts (Frontend (Vitest), Build APK, Protocole montre (Java), Budget perf, émulateur A56 API 35
   et 36). **Release v188 publiée** : `HealthTrack-v188.apk` = **33 565 870 octets (33,6 Mo)**.
-- La PR de journal qui suit publie une v189 : c'est elle qui servira au propriétaire à tester le bouton depuis la v188.
+- La PR de journal #236 n'a **pas** publié de v189 : « Build & Release » ignore les changements du seul `journal/`
+  (vérifié). La v189 viendra du prochain run de code ; c'est elle qui servira au propriétaire à tester le bouton
+  depuis la v188.
