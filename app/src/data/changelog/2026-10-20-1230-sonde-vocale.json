@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-20",
+  "kind": "amélioration",
+  "title": "Diagnostic : votre téléphone sait-il reconnaître la voix sur place ?",
+  "items": [
+    "Avant de proposer la dictée du soir (dire votre journée au lieu de l'écrire), HealthTrack doit savoir si votre téléphone reconnaît le français sans rien envoyer sur Internet. Le Diagnostic de la carte « Lecture du visage » le dit maintenant en une ligne « Voix » : reconnaissance sur le téléphone ou seulement en ligne, français installé ou à télécharger, et quel moteur (Google, Bixby…).",
+    "Aucun micro n'est ouvert et aucune permission n'est demandée : l'app pose seulement la question à Android, une fois, quand vous dépliez le Diagnostic. Une reconnaissance en ligne ne sera jamais utilisée, puisque le son de votre voix quitterait le téléphone.",
+    "La ligne est aussi dans le fichier « Enregistrer le diagnostic » : envoyez-le, il décidera de la suite."
+  ]
+}

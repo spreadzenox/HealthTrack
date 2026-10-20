@@ -133,6 +133,24 @@ describe('FaceSenseCard', () => {
     expect(save.mock.calls[0][0]).not.toMatch(/3\.6|plutôt bonne/)
   })
 
+  it('sonde vocale (I124) : lancée une fois à l’ouverture du Diagnostic, dite et exportée', async () => {
+    const voice = { sdk: 36, available: true, onDevice: true, services: ['com.google.android.as'], support: { installed: [], supported: ['fr-FR'] } }
+    const loadVoice = vi.fn(async () => voice)
+    const save = vi.fn(async () => 'ok')
+    const { container } = render(<FaceSenseCard plugin={fake(base)} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} loadVoice={loadVoice} save={save} />)
+    await screen.findByText('Diagnostic')
+    expect(loadVoice).not.toHaveBeenCalled()
+    const details = [...container.querySelectorAll('details')].find((d) => d.textContent.startsWith('Diagnostic'))
+    details.open = true
+    fireEvent(details, new Event('toggle'))
+    expect(await screen.findByText(/Voix \(sonde, aucun micro ouvert\) : reconnaissance sur le téléphone, français téléchargeable/)).toBeInTheDocument()
+    fireEvent(details, new Event('toggle'))
+    expect(loadVoice).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le diagnostic' }))
+    await waitFor(() => expect(save).toHaveBeenCalled())
+    expect(JSON.parse(save.mock.calls[0][0]).voice).toMatchObject({ verdict: 'on_device_fr_downloadable', downloadable: ['fr-FR'] })
+  })
+
   it('Tester maintenant : dit l’humeur de ce moment, sans la compter dans le jour', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true })
     try {

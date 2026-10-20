@@ -189,5 +189,10 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.HOME" />
         </intent>
+        <!-- Sonde vocale (VoiceProbePlugin, I124) : moteurs de reconnaissance vocale installés
+             (requis par SpeechRecognizer depuis Android 11). Aucun micro ouvert. -->
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
     </queries>
 </manifest>

@@ -12,6 +12,7 @@
  */
 import { registerPlugin } from '@capacitor/core'
 import { eveningNoteDiagnostic } from './eveningNote'
+import { voiceProbeDiagnostic, voiceProbeLine } from './voiceProbe'
 
 const KEY = 'healthtrack_face_sense'
 const NativeFaceSense = registerPlugin('FaceSense')
@@ -285,12 +286,12 @@ export function describeFaceSense(status) {
  * Diagnostic exportable (JSON) : appareil, état du service, compteurs, temps moyens, raisons des sauts et des
  * rejets. Jamais d'image, de point ni de score d'expression.
  */
-export function faceDiagnosticReport(status, { appVersion, now = new Date(), history = null, lastImport = null, eveningNote = null } = {}) {
+export function faceDiagnosticReport(status, { appVersion, now = new Date(), history = null, lastImport = null, eveningNote = null, voice = null } = {}) {
   const s = status || {}
   const timed = s.timed || 0
   return {
     kind: 'healthtrack-face-diagnostic',
-    version: 4,
+    version: 5,
     at: now.toISOString(),
     appVersion: appVersion ?? null,
     device: { manufacturer: s.manufacturer ?? null, model: s.model ?? null, android: s.release ?? null, sdk: s.sdk ?? null },
@@ -400,6 +401,8 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
       : null,
     // Note du soir d'un geste (I113), vérité terrain de la porte : réglages et compteurs, jamais une note.
     eveningNote: eveningNoteDiagnostic(eveningNote),
+    // v5 — sonde vocale (I124) : reconnaissance sur le téléphone en français ? Aucun micro ouvert, aucun son.
+    voice: voiceProbeDiagnostic(voice),
     // Modèle valence / éveil (étape 2) : état, temps, lectures qui en ont profité, erreur exacte ; jamais une valeur.
     affect: faceAffectState(s)
       ? {
@@ -443,7 +446,7 @@ const s0 = (status) => status || {}
 const MOOD_MODELS = { personal: 'personnel (vos notes)', va: 'valence / éveil (HSEmotion)', prior: 'général des expressions' }
 
 /** Lignes lisibles du diagnostic (carte). */
-export function faceDiagnosticLines(status, { history = null, lastImport = null, eveningNote = null } = {}) {
+export function faceDiagnosticLines(status, { history = null, lastImport = null, eveningNote = null, voice = null } = {}) {
   const r = faceDiagnosticReport(status, { history, lastImport, eveningNote })
   const lines = []
   lines.push(`Service : ${r.service.running ? 'actif' : 'arrêté'} · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'} · batterie ${r.service.batteryExempt ? 'sans restriction' : 'optimisée par Android'}`)
@@ -539,6 +542,8 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
     const check = e.lastCheck ? ` ; dernier soir : ${EVENING_CHECKS[e.lastCheck] || e.lastCheck}` : ''
     lines.push(`Note du soir : vers ${e.time}, demandée ${e.asked} fois, donnée d’un geste ${e.answers} fois${check}`)
   }
+  const voiceLine = voiceProbeLine(voice)
+  if (voiceLine) lines.push(voiceLine)
   if (r.service.lastError) lines.push(`Dernière erreur : ${r.service.lastError}`)
   return lines
 }
