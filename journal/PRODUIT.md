@@ -65,7 +65,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 | # | Action | État | Détail |
 |---|---|---|---|
-| P1 | Installer la v188+ à la main depuis le navigateur du téléphone (une fois), puis tester le bouton à la v189 | ⬜ | https://github.com/spreadzenox/HealthTrack/releases/latest → Assets → `HealthTrack-vNNN.apk`. Voir le résumé de la semaine. |
+| P1 | Installer la v188+ à la main depuis le navigateur du téléphone (une fois), puis tester le bouton vers la v189 (publiée le 20/10, 33,6 Mo) | ⬜ | https://github.com/spreadzenox/HealthTrack/releases/latest → Assets → `HealthTrack-vNNN.apk`. Voir le résumé de la semaine. |
 | P2 | Statut **micro-entreprise** (vendeur sur Play, factures) | ⬜ | Pas à pas à rédiger au jalon 6. |
 | P3 | **Compte développeur Google Play** (25 $ une fois) ; adresse publique du vendeur ; pour un compte personnel : **test fermé 12 testeurs × 14 jours** avant la production | ⬜ | Recruter les 12 testeurs tôt (entourage, communautés SII). |
 | P4 | **Projet Google Cloud** + facturation + **clé Gemini payante** (région UE) ; déployer le relais quand son code sera prêt | ⬜ | Étapes écrites au jalon 6. |
