@@ -18,6 +18,7 @@ import {
   faceSensePlugin,
   faceCameraAccess,
   faceAffectState,
+  faceAffectDuoState,
   prepareFaceAffect,
   isSamsungDevice,
   openFaceNeverSleep,
@@ -151,8 +152,9 @@ export default function FaceSenseCard({
     if (plugin) await importBursts({ plugin })
     const [s, h, e] = await Promise.all([getFaceSenseStatus(plugin), plugin ? loadHistory() : null, plugin ? loadEveningNote() : null])
     // Modèle valence / éveil (étape 2) : téléchargé une fois, app ouverte, dès que la lecture est active.
-    const affect = faceAffectState(s)
-    if (s?.enabled && (affect === 'missing' || affect === 'error') && !affectAsked.current) {
+    // Duo (I126) : le second modèle (8 Mo) est demandé de la même façon, y compris quand le premier est déjà là.
+    const missing = (state) => state === 'missing' || state === 'error'
+    if (s?.enabled && (missing(faceAffectState(s)) || missing(faceAffectDuoState(s))) && !affectAsked.current) {
       affectAsked.current = true
       prepareFaceAffect(plugin)
     }

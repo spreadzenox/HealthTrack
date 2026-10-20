@@ -4,7 +4,10 @@
 # dans le repère des yeux, 224 × 224, bilinéaire, normalisation ImageNet, ordre C × H × W), exécute HSEmotion
 # `enet_b0_8_va_mtl.onnx` (ONNX Runtime) et écrit face/affect-vectors.json : ROI, échantillons du tenseur d'entrée,
 # 10 sorties brutes (8 émotions + valence + éveil). Le .onnx n'est jamais committé (téléchargé sur le téléphone).
+# Second modèle (I126, duo) : HSEmotion `mbf_va_mtl.onnx` (MobileFaceNet), même recadrage mais 112 × 112 et
+# normalisation (x − 0,5) / 0,5 comme dans EmotiEffLib (facial_analysis.py) → face/affect-vectors-mbf.json.
 # Usage : python3 -I visage-va-vecteurs.py <chemin du .onnx> <dossier des ressources face/>
+# (le nom du fichier choisit le modèle : « mbf_ » → MobileFaceNet, sinon EfficientNet-B0)
 import json, math, sys
 import numpy as np
 from PIL import Image
@@ -41,6 +44,7 @@ def affect_roi(pts):
 
 
 def affect_input(arr, r):
+    SIZE, MEAN, STD = SPEC['size'], SPEC['mean'], SPEC['std']
     j, i = np.mgrid[0:SIZE, 0:SIZE].astype(np.float64)
     u = ((i + 0.5) / SIZE - 0.5) * r['side']
     v = ((j + 0.5) / SIZE - 0.5) * r['side']
@@ -49,11 +53,19 @@ def affect_input(arr, r):
     return ((rgb - MEAN) / STD).transpose(2, 0, 1).astype(np.float32)
 
 
+SPEC = dict(size=SIZE, mean=MEAN, std=STD, name='enet_b0_8_va_mtl', out='affect-vectors.json')
+MBF = dict(size=112, mean=np.array([0.5, 0.5, 0.5]), std=np.array([0.5, 0.5, 0.5]), name='mbf_va_mtl',
+           out='affect-vectors-mbf.json')
+
+
 def main(model, res):
+    if 'mbf_' in model:
+        SPEC.update(MBF)
     session = ort.InferenceSession(model, providers=['CPUExecutionProvider'])
-    out = {'model': 'enet_b0_8_va_mtl', 'size': SIZE, 'scale': SCALE, 'images': {}}
+    size = SPEC['size']
+    out = {'model': SPEC['name'], 'size': size, 'scale': SCALE, 'images': {}}
     rng = np.random.default_rng(11)
-    idx = sorted(int(k) for k in rng.choice(3 * SIZE * SIZE, 64, replace=False))
+    idx = sorted(int(k) for k in rng.choice(3 * size * size, 64, replace=False))
     for name in ('face-frontal', 'face-tilted'):
         d = json.load(open(f'{res}/{name}.json'))
         arr = np.asarray(Image.open(f"{res}/{d['image']}").convert('RGB')).astype(np.float64)
@@ -71,7 +83,7 @@ def main(model, res):
             'arousal': float(raw[9]),
         }
         print(name, 'valence %.3f éveil %.3f' % (raw[8], raw[9]))
-    with open(f'{res}/affect-vectors.json', 'w') as f:
+    with open(f"{res}/{SPEC['out']}", 'w') as f:
         json.dump(out, f, indent=1)
 
 

@@ -5,6 +5,8 @@ package com.healthtrack.app.face;
  * choix et licence : journal/BIEN-ETRE-AUTO.md). Le visage est recadré d'après les 478 points du Face Landmarker :
  * carré aligné sur la ligne des yeux, côté = 1,1 × la boîte des points dans ce repère, 224 × 224, normalisation
  * ImageNet, ordre C × H × W. Sortie : 8 scores d'émotion puis valence et éveil, chacun dans [−1, 1] environ.
+ * Second modèle du duo (I126) : HSEmotion `mbf_va_mtl` (MobileFaceNet), même recadrage et mêmes sorties, mais
+ * 112 × 112 et normalisation (x − 0,5) / 0,5, comme dans EmotiEffLib.
  * Sans dépendance Android (testé sur la JVM, vecteurs de journal/protocoles/visage-va-vecteurs.py). Rien n'est gardé.
  */
 public final class FaceAffect {
@@ -12,8 +14,24 @@ public final class FaceAffect {
     public static final int SIZE = 224;
     public static final int OUTPUTS = 10;
     static final double SCALE = 1.1;
-    private static final float[] MEAN = {0.485f, 0.456f, 0.406f};
-    private static final float[] STD = {0.229f, 0.224f, 0.225f};
+
+    /** Taille et normalisation de l'entrée d'un modèle valence / éveil. */
+    public static final class Spec {
+        public final int size;
+        final float[] mean;
+        final float[] std;
+
+        Spec(int size, float[] mean, float[] std) {
+            this.size = size;
+            this.mean = mean;
+            this.std = std;
+        }
+    }
+
+    /** EfficientNet-B0 (`enet_b0_8_va_mtl`) : 224 px, normalisation ImageNet. */
+    public static final Spec B0 = new Spec(SIZE, new float[] {0.485f, 0.456f, 0.406f}, new float[] {0.229f, 0.224f, 0.225f});
+    /** MobileFaceNet (`mbf_va_mtl`) : 112 px, (x − 0,5) / 0,5. */
+    public static final Spec MBF = new Spec(112, new float[] {0.5f, 0.5f, 0.5f}, new float[] {0.5f, 0.5f, 0.5f});
 
     private FaceAffect() {}
 
@@ -36,13 +54,18 @@ public final class FaceAffect {
         return new FaceGeometry.Roi(c * mu - s * mv, s * mu + c * mv, side, rot);
     }
 
-    /** Tenseur d'entrée 1 × 3 × 224 × 224 (aplati) du visage de l'image RVB (0xRRGGBB). */
+    /** Tenseur d'entrée 1 × 3 × 224 × 224 (aplati) du visage de l'image RVB (0xRRGGBB), pour le modèle B0. */
     public static float[] input(int[] rgb, int width, int height, FaceGeometry.Roi roi) {
-        float[] hwc = FaceGeometry.crop(rgb, width, height, roi, SIZE, 0f, 1f);
-        int plane = SIZE * SIZE;
+        return input(B0, rgb, width, height, roi);
+    }
+
+    /** Tenseur d'entrée 1 × 3 × taille × taille (aplati) du visage, selon le modèle. */
+    public static float[] input(Spec spec, int[] rgb, int width, int height, FaceGeometry.Roi roi) {
+        float[] hwc = FaceGeometry.crop(rgb, width, height, roi, spec.size, 0f, 1f);
+        int plane = spec.size * spec.size;
         float[] chw = new float[3 * plane];
         for (int p = 0; p < plane; p++) {
-            for (int k = 0; k < 3; k++) chw[k * plane + p] = (hwc[3 * p + k] - MEAN[k]) / STD[k];
+            for (int k = 0; k < 3; k++) chw[k * plane + p] = (hwc[3 * p + k] - spec.mean[k]) / spec.std[k];
         }
         return chw;
     }

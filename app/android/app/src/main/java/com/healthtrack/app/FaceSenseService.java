@@ -85,6 +85,9 @@ public class FaceSenseService extends Service {
     /** Modèle valence / éveil (FaceAffectModel) s'il est téléchargé ; un échec d'ouverture n'est retenté qu'au redémarrage. */
     private OnnxModel affect;
     private boolean affectFailed;
+    /** Second modèle du duo (MobileFaceNet, I126), même logique. */
+    private OnnxModel affect2;
+    private boolean affect2Failed;
     /** Lu et modifié seulement sur le fil du service (récepteur et interrogations y sont livrés). */
     private final UnlockWatch watch = new UnlockWatch();
 
@@ -334,6 +337,7 @@ public class FaceSenseService extends Service {
         if (retry && result != null) e.putInt("retryFaces", p.getInt("retryFaces", 0) + 1);
         if (unlock && result != null) e.putInt("dayFaces", p.getInt("dayFaces", 0) + 1);
         if (result != null && result.values.containsKey("valence")) e.putInt("affectBursts", p.getInt("affectBursts", 0) + 1);
+        if (result != null && result.values.containsKey("affectGap")) e.putInt("affectDuoBursts", p.getInt("affectDuoBursts", 0) + 1);
         String affectError = pipeline.lastAffectError();
         if (affectError != null) e.putString("lastAffectError", affectError).putLong("lastAffectErrorAt", now);
         e.putLong("sumCameraMs", p.getLong("sumCameraMs", 0) + cap.openMs)
@@ -378,7 +382,8 @@ public class FaceSenseService extends Service {
     private boolean ensurePipeline() {
         // Le modèle valence / éveil peut arriver pendant que le service tourne (téléchargé app ouverte) : on reconstruit.
         boolean affectArrived = affect == null && !affectFailed && FaceAffectModel.available(this);
-        if (pipeline != null && !affectArrived) return true;
+        boolean affect2Arrived = affect2 == null && !affect2Failed && FaceAffectModel.available(this, FaceAffectModel.MBF);
+        if (pipeline != null && !affectArrived && !affect2Arrived) return true;
         if (!FaceModels.available(getAssets())) return false;
         long t0 = SystemClock.elapsedRealtime();
         try {
@@ -390,14 +395,24 @@ public class FaceSenseService extends Service {
         if (affectArrived) {
             long a0 = SystemClock.elapsedRealtime();
             try {
-                affect = FaceAffectModel.open(this);
+                affect = FaceAffectModel.open(this, FaceAffectModel.B0);
                 prefs(this).edit().putLong("affectLoadMs", SystemClock.elapsedRealtime() - a0).apply();
             } catch (Exception | LinkageError e) {
                 affectFailed = true;
                 note("lastAffectError", "open:" + e.getClass().getSimpleName() + ": " + e.getMessage());
             }
         }
-        pipeline = models.pipeline(affect);
+        if (affect2Arrived) {
+            long a0 = SystemClock.elapsedRealtime();
+            try {
+                affect2 = FaceAffectModel.open(this, FaceAffectModel.MBF);
+                prefs(this).edit().putLong("affect2LoadMs", SystemClock.elapsedRealtime() - a0).apply();
+            } catch (Exception | LinkageError e) {
+                affect2Failed = true;
+                note("lastAffectError", "open:mbf:" + e.getClass().getSimpleName() + ": " + e.getMessage());
+            }
+        }
+        pipeline = models.pipeline(affect, affect2);
         prefs(this).edit().putLong("modelLoadMs", SystemClock.elapsedRealtime() - t0).apply();
         return true;
     }
@@ -408,6 +423,8 @@ public class FaceSenseService extends Service {
         models = null;
         if (affect != null) affect.close();
         affect = null;
+        if (affect2 != null) affect2.close();
+        affect2 = null;
     }
 
     private boolean inCall() {

@@ -50,6 +50,14 @@ const READING_SD = 0.9
  * publiée, 0,59, est mesurée entre des photos de personnes différentes, pas au fil des jours d'une même personne). */
 const VA_SD = 1.1
 const VA_BASELINE_SD = 0.9
+/** Duo B0 + MobileFaceNet (I126) : la moyenne de deux modèles un peu différents se trompe un peu moins que l'un
+ * d'eux (run idées du 20/10 08:30 : CCC Aff-Wild2 voisines, erreurs en partie indépendantes) — gain prudent. */
+const VA_DUO_SD = 1.0
+const VA_DUO_BASELINE_SD = 0.85
+/** Écart de valence entre les deux modèles ([−1, 1]) : sous 0,15 ils sont d'accord, au-delà de 0,3 en désaccord.
+ * Il s'ajoute à l'incertitude (×2,5 sur l'échelle 0–5) sans jamais déplacer l'estimation elle-même. */
+const GAP_AGREE = 0.15
+const GAP_DISAGREE = 0.3
 /** Part de la valence habituelle retirée d'une lecture du modèle (voir couche 2). */
 const VA_BASELINE_SHARE = 0.5
 const AROUSAL_BAND = 0.2
@@ -125,6 +133,15 @@ export function personalNeutral(bursts, at) {
 }
 
 const hasModelValence = (values) => isNum(values?.valence)
+const hasDuo = (values) => hasModelValence(values) && isNum(values?.affectGap)
+/** Part de l'incertitude (échelle 0–5) due au désaccord des deux modèles. */
+const gapSd = (gap) => (isNum(gap) ? 2.5 * gap : 0)
+
+function agreementOf(gap) {
+  if (!isNum(gap)) return null
+  if (gap <= GAP_AGREE) return 'accord'
+  return gap > GAP_DISAGREE ? 'désaccord' : 'partiel'
+}
 
 /** Valence générale d'une lecture : celle du modèle embarqué (à moitié ajustée au visage habituel), sinon l'a priori. */
 function generalValence(values, neutral) {
@@ -135,6 +152,7 @@ function generalValence(values, neutral) {
 /** Erreur type du modèle utilisé pour une lecture. */
 function modelSdFor(values, base, calibration) {
   if (calibration?.model) return calibration.model.rmse
+  if (hasDuo(values)) return VA_DUO_SD - (VA_DUO_SD - VA_DUO_BASELINE_SD) * base.vaWeight
   if (hasModelValence(values)) return VA_SD - (VA_SD - VA_BASELINE_SD) * base.vaWeight
   return PRIOR_SD - (PRIOR_SD - BASELINE_SD) * base.weight
 }
@@ -180,7 +198,8 @@ export function estimateBurst(burst, { bursts = [], calibration = null, base: gi
   note = clampNote(note)
   const yaw = Math.abs(values.yaw ?? 0)
   const penalty = (1 + 0.5 * (1 - burstQuality(burst))) * (yaw > MAX_YAW_GOOD ? 1.15 : 1)
-  const halfWidth = Math.sqrt(modelSd ** 2 + READING_SD ** 2) * penalty
+  const gap = hasDuo(values) ? values.affectGap : null
+  const halfWidth = Math.sqrt(modelSd ** 2 + READING_SD ** 2 + gapSd(gap) ** 2) * penalty
   return {
     at: burst.at,
     trigger: burst.payload.trigger,
@@ -189,6 +208,7 @@ export function estimateBurst(burst, { bursts = [], calibration = null, base: gi
     high: round1(clampNote(note + halfWidth)),
     label: moodLabel(note),
     arousal: isNum(values.arousal) ? values.arousal : null,
+    gap,
     halfWidth,
   }
 }
@@ -203,7 +223,9 @@ export function estimateBurst(burst, { bursts = [], calibration = null, base: gi
  *   day: null | { date, note, low, high, label, readings, quality, framing: number|null, spread: number|null,
  *     arousal: number|null, arousalLabel: string|null },
  *   confidence: 'faible'|'moyenne'|'bonne', model: 'prior'|'va'|'personal', baselineDays: number,
- *   calibrationDays: number, signals: string[] }}
+ *   calibrationDays: number, signals: string[],
+ *   duo: null | { models: 2, gap: number, agreement: 'accord'|'partiel'|'désaccord' } }}
+ *   `duo` : accord des deux modèles du visage (I126), sur les lectures du jour, sinon sur la dernière.
  *   null sans aucune lecture du déverrouillage avec un visage.
  */
 export function faceMoodEstimate(entries, { now = new Date() } = {}) {
@@ -217,6 +239,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
   const todays = bursts.filter((b) => localDateKey(b.at) === today)
   let day = null
   let halfWidth = moment.halfWidth
+  let gap = moment.gap
   if (todays.length) {
     const readings = todays.map((b) => estimateBurst(b, ctx))
     const notes = readings.map((r) => r.note)
@@ -230,7 +253,9 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     const arousal = median(todays.map((b) => b.payload.values.arousal))
     const noise = spread ?? READING_SD
     const penalty = (1 + 0.5 * (1 - quality)) * (framing != null && framing > MAX_YAW_GOOD ? 1.15 : 1)
-    halfWidth = Math.sqrt(modelSd ** 2 + noise ** 2 / n) * penalty
+    // Le désaccord du duo n'est pas divisé par n : il tient aux modèles, il ne s'efface pas en relisant.
+    gap = median(readings.map((r) => r.gap))
+    halfWidth = Math.sqrt(modelSd ** 2 + noise ** 2 / n + gapSd(gap) ** 2) * penalty
     day = {
       date: today,
       note: round1(note),
@@ -256,6 +281,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     baselineDays: personalNeutral(bursts, last.at).days,
     calibrationDays: calibration.days,
     signals: ['visage'],
+    duo: gap == null ? null : { models: 2, gap: Math.round(gap * 100) / 100, agreement: agreementOf(gap) },
   }
 }
 
@@ -272,6 +298,8 @@ export function testReadingEstimate(entries, { now = new Date() } = {}) {
 
 const fmt = (v) => v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 const hour = (iso) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+
+const DUO_WORDS = { accord: 'deux modèles d’accord', partiel: 'deux modèles à peu près d’accord', 'désaccord': 'deux modèles en désaccord' }
 
 /** Phrases pour la carte (et le tableau de bord). Toujours une estimation, jamais un diagnostic. */
 export function describeFaceMood(est) {
@@ -294,12 +322,15 @@ export function describeFaceMood(est) {
   } else {
     parts.push('aucune lecture aujourd’hui')
   }
+  if (est.duo) parts.push(DUO_WORDS[est.duo.agreement])
   parts.push('un seul signal (visage)')
   lines.push(`Confiance ${est.confidence} : ${parts.join(', ')}.`)
   const habit = est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''
   lines.push(est.model === 'personal'
     ? `Modèle personnel, appris sur vos ${est.calibrationDays} jours notés. Une estimation, pas un diagnostic.`
-    : est.model === 'va'
+    : est.model === 'va' && est.duo
+      ? `Deux modèles valence / éveil embarqués (HSEmotion), appris sur des centaines de milliers de visages, mis en commun${habit} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`
+      : est.model === 'va'
       ? `Modèle valence / éveil embarqué (HSEmotion), appris sur des centaines de milliers de visages${habit} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`
       : `Modèle général des expressions${est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`)
   return lines

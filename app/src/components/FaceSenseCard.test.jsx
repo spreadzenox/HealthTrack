@@ -129,7 +129,7 @@ describe('FaceSenseCard', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le diagnostic' }))
     await waitFor(() => expect(save).toHaveBeenCalled())
     const report = JSON.parse(save.mock.calls[0][0])
-    expect(report.estimate).toEqual({ model: 'prior', confidence: 'faible', readingsToday: 1, baselineDays: 1, calibrationDays: 0 })
+    expect(report.estimate).toEqual({ model: 'prior', confidence: 'faible', readingsToday: 1, baselineDays: 1, calibrationDays: 0, agreement: null })
     expect(save.mock.calls[0][0]).not.toMatch(/3\.6|plutôt bonne/)
   })
 
@@ -188,6 +188,17 @@ describe('FaceSenseCard', () => {
     await new Promise((r) => setTimeout(r, 20))
     expect(off.prepareAffect).not.toHaveBeenCalled()
     expect(ready.prepareAffect).not.toHaveBeenCalled()
+  })
+
+  it('premier modèle déjà là, second absent : téléchargement du second lancé une fois (I126)', async () => {
+    const plugin = { ...fake({ ...base, affectModel: true, affectModel2: false }), prepareAffect: vi.fn(async () => ({ ready: true, downloading: true })) }
+    render(<FaceSenseCard plugin={plugin} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText('Active')).toBeInTheDocument()
+    await waitFor(() => expect(plugin.prepareAffect).toHaveBeenCalledTimes(1))
+    const both = { ...fake({ ...base, affectModel: true, affectModel2: true }), prepareAffect: vi.fn(async () => ({})) }
+    render(<FaceSenseCard plugin={both} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    await new Promise((r) => setTimeout(r, 30))
+    expect(both.prepareAffect).not.toHaveBeenCalled()
   })
 
   it('arrêtée par le téléphone sur un Samsung : la cause, et « Applis jamais en veille » en un geste (I123)', async () => {

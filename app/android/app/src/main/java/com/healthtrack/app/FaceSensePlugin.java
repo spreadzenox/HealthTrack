@@ -48,6 +48,8 @@ public class FaceSensePlugin extends Plugin {
         ret.put("models", FaceModels.available(context.getAssets()));
         // Modèle valence / éveil : téléchargé une fois sur le téléphone (FaceAffectModel), jamais dans l'APK.
         ret.put("affectModel", FaceAffectModel.available(context));
+        // Second modèle du duo (MobileFaceNet, 8 Mo, I126).
+        ret.put("affectModel2", FaceAffectModel.available(context, FaceAffectModel.MBF));
         ret.put("affectDownloading", FaceAffectModel.isDownloading());
         ret.put("running", FaceSenseService.isRunning());
         ret.put("enabled", p.getBoolean("enabled", false));
@@ -126,6 +128,7 @@ public class FaceSensePlugin extends Plugin {
         boolean started = FaceAffectModel.ensure(getContext());
         JSObject ret = new JSObject();
         ret.put("ready", FaceAffectModel.available(getContext()));
+        ret.put("duo", FaceAffectModel.allAvailable(getContext()));
         ret.put("downloading", started || FaceAffectModel.isDownloading());
         call.resolve(ret);
     }

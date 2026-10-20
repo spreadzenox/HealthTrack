@@ -150,6 +150,52 @@ public class FacePipelineTest {
     }
 
     @Test
+    public void duoAveragesBothModelsAndMeasuresTheirDisagreement() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        float[] a = new float[FaceAffect.OUTPUTS];
+        a[8] = 0.5f;
+        a[9] = -0.2f;
+        float[] m = new float[FaceAffect.OUTPUTS];
+        m[8] = 0.1f;
+        m[9] = 0.2f;
+        Fixed b0 = new Fixed(a);
+        Fixed mbf = new Fixed(m);
+        FacePipeline p = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes()), b0, mbf);
+        FaceIndices.Burst b = p.burst(Arrays.asList(f.rgb, f.rgb), f.width, f.height, new ArrayList<>());
+        assertEquals(2, p.affectModels());
+        assertEquals(3 * 224 * 224, b0.lastInput.length);
+        assertEquals("MobileFaceNet lit un visage de 112 px", 3 * 112 * 112, mbf.lastInput.length);
+        assertEquals(0.3, b.values.get("valence"), 1e-6);
+        assertEquals(0.0, b.values.get("arousal"), 1e-6);
+        assertEquals(0.4, b.values.get("affectGap"), 1e-6);
+        assertEquals(2.0, b.values.get("affectModels"), 0);
+    }
+
+    @Test
+    public void duoFallsBackToTheModelThatAnswers() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        float[] m = new float[FaceAffect.OUTPUTS];
+        m[8] = 0.1f;
+        m[9] = 0.2f;
+        FacePipeline.Model broken = input -> {
+            throw new IllegalStateException("ort");
+        };
+        FacePipeline p = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes()), broken, new Fixed(m));
+        FaceIndices.Burst b = p.burst(Arrays.asList(f.rgb), f.width, f.height, new ArrayList<>());
+        assertEquals(0.1, b.values.get("valence"), 1e-6);
+        assertNull("pas d'écart sans les deux modèles", b.values.get("affectGap"));
+        assertEquals("IllegalStateException: ort", p.lastAffectError());
+
+        p = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes()), null, broken);
+        b = p.burst(Arrays.asList(f.rgb), f.width, f.height, new ArrayList<>());
+        assertNull(b.values.get("valence"));
+        assertEquals("l'erreur du second modèle est étiquetée", "mbf:IllegalStateException: ort", p.lastAffectError());
+    }
+
+    @Test
     public void failingAffectModelKeepsTheReading() throws Exception {
         FaceFixtures f = FaceFixtures.load("face-frontal");
         FacePipeline.Model broken = input -> {

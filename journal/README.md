@@ -184,6 +184,17 @@ téléphone). Pour **la voix** : aucun modèle du son de la voix n'est à la foi
 permette de l'utiliser (les meilleurs sont réservés à la recherche) ; la voix passera donc d'abord par **ce que vous
 dites** (la phrase du soir, puis la dictée). Rien de nouveau dans l'app ce matin.
 
+**Run du 20/10 10:30 — deux modèles lisent votre visage, et leur accord entre dans la confiance.** Comme proposé par
+le run « idées » de ce matin : chaque lecture du déverrouillage passe maintenant par **deux** modèles officiels des
+mêmes auteurs (HSEmotion) — celui d'hier (EfficientNet, 16 Mo) et un second, plus léger (**MobileFaceNet, 8 Mo**),
+qui lit le visage autrement (en 112 px, moins sensible à la basse résolution). L'humeur estimée est la **moyenne des
+deux** ; quand ils sont d'accord, la fourchette se resserre un peu, quand ils divergent elle s'élargit — sans jamais
+déplacer l'estimation elle-même. La confiance le dit en clair : « deux modèles d'accord », « à peu près d'accord » ou
+« en désaccord ». Le second modèle se télécharge tout seul (8 Mo, une fois, empreinte vérifiée) à la prochaine
+ouverture de la carte « Lecture du visage », **même si le premier est déjà là** ; le Diagnostic dit « Second modèle
+(MobileFaceNet) : prêt · N lectures lues par les deux modèles ». Vérifié : l'image préparée par le téléphone pour ce
+modèle est identique, à 1/10 000 près, à celle que prépare la bibliothèque officielle des auteurs.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -194,6 +205,11 @@ après le run de 22:30, revenez sur l'accueil après ces déverrouillages : la c
 apparue (sinon, c'est qu'aucune lecture du déverrouillage n'a vu votre visage — le diagnostic dira pourquoi). Dites-moi
 aussi si l'estimation vous semble plausible, et touchez « Tester maintenant » en souriant puis sans sourire : la
 phrase « Humeur de ce moment » doit changer.
+
+**Nouveau (10:30, second modèle)** : après la mise à jour, ouvrez la carte « Lecture du visage » en Wi-Fi (8 Mo),
+rouvrez-la une minute plus tard : le Diagnostic doit dire « Second modèle (MobileFaceNet) : prêt ». Après quelques
+déverrouillages, la ligne « Humeur estimée : … deux modèles : accord / partiel / désaccord » apparaît, et le temps
+d'analyse (« Temps moyen : … analyse N ms ») me dira ce que coûte le second modèle sur l'A56 (attendu : +20 à 60 ms).
 
 **Nouveau (06:30, une minute)** : Plus → Connecteurs → Lecture du visage → Diagnostic → **« Applis jamais en
 veille »** → « + » → cochez HealthTrack (préventif : One UI ne l'endormira plus). Si un jour la carte dit « Le
@@ -221,6 +237,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Deux modèles du visage qui votent (run 20/10 10:30, I126)** : humeur = moyenne d'EfficientNet et de
+  MobileFaceNet ; leur accord resserre ou élargit la fourchette ; « Second modèle » dans le diagnostic.
 - **Lecture du visage : cause de l'arrêt et « Applis jamais en veille » (run 20/10 06:30)** : mise à jour,
   redémarrage ou téléphone ; bouton One UI direct sur Samsung ; ligne « Arrêt : … » dans le diagnostic.
 - **Facteurs comparés à votre humeur estimée (run 20/10 04:30)** : Analyses → « Avec votre humeur estimée (visage) »,
@@ -308,6 +326,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 04:30 — [Facteurs comparés à l'humeur estimée (Y automatique)](runs/2026-10-20-0430-facteurs-humeur-estimee.md) | 🔴🙂 | `mood/faceMoodDays.js` : série quotidienne (≥ 3 lectures, médiane, ligne de base par jour), corrélations X ↔ humeur estimée (ordre temporel à la dernière lecture, week-end, n effectif, BH) ; section Analyses visible sans notes ; `face_burst` lu jusqu'à 10 000 ; 1 597 tests ; PR #227 |
 | 20/10 06:30 — [Visage : cause de l'arrêt + « Applis jamais en veille » (I123)](runs/2026-10-20-0630-applis-jamais-en-veille.md) | 🔴🙂 | `faceStopCause` (mise à jour / redémarrage / téléphone) via `lastUpdateAt` + `bootAt` natifs ; `openNeverSleep` (One UI `activity_type` 2, repli réglages de l'app) ; diagnostic v4 ; 1 602 tests ; PR #228 |
 | 20/10 08:30 — [Run idées : modèles valence / éveil, visage et voix](runs/2026-10-20-0830-idees-modeles-va.md) | 💡 | 3 modèles VA officiels HSEmotion mesurés (B0 20 ms, MobileFaceNet 8 Mo 22 ms, MobileViT 73 ms) : se valent hors AffectNet → duo B0 + MBF (I126) ; EmoNet écarté (CC BY-NC-ND) ; voix : aucun modèle léger sous licence permissive (I128) ; journal seulement |
+| 20/10 10:30 — [Duo de modèles du visage (I126)](runs/2026-10-20-1030-duo-modeles-visage.md) | 🔴🙂 | `mbf_va_mtl` (8 Mo, SHA-256) téléchargé après le B0, même pour qui l'a déjà ; `FaceAffect.Spec` (112 px, normalisation 0,5) + vecteurs Python ; valence = moyenne, `affectGap` → fourchette et « deux modèles d'accord » ; diagnostic « Second modèle » ; 114 JVM + 1 609 Vitest |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---

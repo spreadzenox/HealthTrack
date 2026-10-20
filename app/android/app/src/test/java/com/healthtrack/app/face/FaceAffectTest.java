@@ -12,8 +12,8 @@ import org.junit.Test;
 @SuppressWarnings("unchecked")
 public class FaceAffectTest {
 
-    private static Map<String, Object> vectors(String image) throws Exception {
-        Map<String, Object> all = FaceFixtures.resource("affect-vectors.json");
+    private static Map<String, Object> vectors(String file, String image) throws Exception {
+        Map<String, Object> all = FaceFixtures.resource(file);
         return (Map<String, Object>) ((Map<String, Object>) all.get("images")).get(image);
     }
 
@@ -22,8 +22,12 @@ public class FaceAffectTest {
     }
 
     private void checkImage(String name) throws Exception {
+        checkImage(name, FaceAffect.B0, "affect-vectors.json");
+    }
+
+    private void checkImage(String name, FaceAffect.Spec spec, String file) throws Exception {
         FaceFixtures f = FaceFixtures.load(name);
-        Map<String, Object> v = vectors(name);
+        Map<String, Object> v = vectors(file, name);
         Map<String, Object> r = (Map<String, Object>) v.get("roi");
         FaceGeometry.Roi roi = FaceAffect.roi(points(f));
         assertEquals(FaceFixtures.num(r, "cx"), roi.cx, 1e-6);
@@ -31,8 +35,10 @@ public class FaceAffectTest {
         assertEquals(FaceFixtures.num(r, "side"), roi.side, 1e-6);
         assertEquals(FaceFixtures.num(r, "rot"), roi.rot, 1e-9);
 
-        float[] input = FaceAffect.input(f.rgb, f.width, f.height, roi);
-        assertEquals(3 * 224 * 224, input.length);
+        float[] input = spec == FaceAffect.B0
+            ? FaceAffect.input(f.rgb, f.width, f.height, roi)
+            : FaceAffect.input(spec, f.rgb, f.width, f.height, roi);
+        assertEquals(3 * spec.size * spec.size, input.length);
         for (Object sample : FaceFixtures.list(v.get("input_samples"))) {
             List<Object> s = FaceFixtures.list(sample);
             int k = ((Number) s.get(0)).intValue();
@@ -55,6 +61,13 @@ public class FaceAffectTest {
     @Test
     public void alignsATiltedFaceOnTheEyes() throws Exception {
         checkImage("face-tilted");
+    }
+
+    @Test
+    public void preparesTheMobileFaceNetInputLikeTheReference() throws Exception {
+        assertEquals(112, FaceAffect.MBF.size);
+        checkImage("face-frontal", FaceAffect.MBF, "affect-vectors-mbf.json");
+        checkImage("face-tilted", FaceAffect.MBF, "affect-vectors-mbf.json");
     }
 
     @Test

@@ -7,7 +7,9 @@ import java.util.Map;
 /**
  * Enchaînement d'une image (journal/protocoles/visage.md §8) : détecteur (1re image ou visage perdu) → ROI →
  * maillage → qualité → 146 points → blendshapes → indices, puis, si le modèle valence / éveil est présent
- * ({@link FaceAffect}, étape 2 de la consigne du 19/10 au soir), valence et éveil de l'image valide. Les modèles sont
+ * ({@link FaceAffect}, étape 2 de la consigne du 19/10 au soir), valence et éveil de l'image valide. Avec le second
+ * modèle (MobileFaceNet, duo I126), l'image a la moyenne des deux et leur écart de valence, qui entre dans la
+ * confiance de l'humeur estimée (« accord entre signaux »). Les modèles sont
  * derrière {@link Model} :
  * LiteRT sur le téléphone (étape suivante), sorties figées dans les tests JVM. Le pipeline ne garde que la ROI
  * de l'image précédente ; aucune image, aucun point n'est conservé ni rendu à l'appelant.
@@ -25,14 +27,22 @@ public final class FacePipeline {
         public final float[] blendshapes;
         public final String rejected;
         public final double facePx;
-        /** { valence, éveil } de l'image, ou null (pas de modèle valence / éveil, ou son échec). */
+        /** { valence, éveil } de l'image (moyenne du duo s'il a répondu), ou null (pas de modèle, ou son échec). */
         public final double[] affect;
+        /** |valence B0 − valence MobileFaceNet| quand les deux modèles ont répondu, sinon NaN. */
+        public final double affectGap;
 
         Frame(Map<String, Double> indices, float[] blendshapes, String rejected, double facePx) {
             this(indices, blendshapes, rejected, facePx, null);
         }
 
         Frame(Map<String, Double> indices, float[] blendshapes, String rejected, double facePx, double[] affect) {
+            this(indices, blendshapes, rejected, facePx, affect, Double.NaN);
+        }
+
+        Frame(Map<String, Double> indices, float[] blendshapes, String rejected, double facePx, double[] affect,
+              double affectGap) {
+            this.affectGap = affectGap;
             this.indices = indices;
             this.blendshapes = blendshapes;
             this.rejected = rejected;
@@ -45,6 +55,7 @@ public final class FacePipeline {
     private final Model landmarks;
     private final Model blendshapes;
     private final Model affect;
+    private final Model affect2;
     private FaceGeometry.Roi previous;
     private String lastAffectError;
 
@@ -54,14 +65,28 @@ public final class FacePipeline {
 
     /** @param affect modèle valence / éveil (entrée {@link FaceAffect#input}), ou null pour s'en passer */
     public FacePipeline(Model detector, Model landmarks, Model blendshapes, Model affect) {
+        this(detector, landmarks, blendshapes, affect, null);
+    }
+
+    /**
+     * @param affect  modèle B0 ({@link FaceAffect#B0}), ou null
+     * @param affect2 modèle MobileFaceNet ({@link FaceAffect#MBF}), ou null ; seul, il sert comme le B0
+     */
+    public FacePipeline(Model detector, Model landmarks, Model blendshapes, Model affect, Model affect2) {
         this.detector = detector;
         this.landmarks = landmarks;
         this.blendshapes = blendshapes;
         this.affect = affect;
+        this.affect2 = affect2;
     }
 
     public boolean affectEnabled() {
-        return affect != null;
+        return affect != null || affect2 != null;
+    }
+
+    /** Nombre de modèles valence / éveil branchés (0, 1 ou 2). */
+    public int affectModels() {
+        return (affect != null ? 1 : 0) + (affect2 != null ? 1 : 0);
     }
 
     /** Erreur du modèle valence / éveil pendant la dernière rafale (classe : message), pour le diagnostic ; sinon null. */
@@ -97,18 +122,28 @@ public final class FacePipeline {
         float[] bs = blendshapes.run(FaceGeometry.blendshapeInput(pts))[0];
         rejected = FaceIndices.rejectAfterBlendshapes(bs);
         if (rejected != null) return new Frame(null, null, rejected, facePx);
-        return new Frame(FaceIndices.fromBlendshapes(bs, yaw), bs, null, facePx, affect(rgb, width, height, pts));
+        Map<String, Double> idx = FaceIndices.fromBlendshapes(bs, yaw);
+        if (!affectEnabled()) return new Frame(idx, bs, null, facePx);
+        FaceGeometry.Roi faceRoi = FaceAffect.roi(pts);
+        double[] a = affect(affect, FaceAffect.B0, "", rgb, width, height, faceRoi);
+        double[] b = affect(affect2, FaceAffect.MBF, "mbf:", rgb, width, height, faceRoi);
+        if (a != null && b != null) {
+            return new Frame(idx, bs, null, facePx, new double[] {(a[0] + b[0]) / 2, (a[1] + b[1]) / 2},
+                Math.abs(a[0] - b[0]));
+        }
+        return new Frame(idx, bs, null, facePx, a != null ? a : b);
     }
 
-    /** Valence et éveil d'une image valide ; un échec du modèle ne fait jamais perdre la lecture. */
-    private double[] affect(int[] rgb, int width, int height, double[] pts) {
-        if (affect == null) return null;
+    /** Valence et éveil d'une image valide par un modèle ; un échec du modèle ne fait jamais perdre la lecture. */
+    private double[] affect(Model model, FaceAffect.Spec spec, String tag, int[] rgb, int width, int height,
+                            FaceGeometry.Roi roi) {
+        if (model == null) return null;
         try {
-            double[] va = FaceAffect.decode(affect.run(FaceAffect.input(rgb, width, height, FaceAffect.roi(pts)))[0]);
-            if (va == null) lastAffectError = "bad_output";
+            double[] va = FaceAffect.decode(model.run(FaceAffect.input(spec, rgb, width, height, roi))[0]);
+            if (va == null) lastAffectError = tag + "bad_output";
             return va;
         } catch (RuntimeException e) {
-            lastAffectError = e.getClass().getSimpleName() + ": " + e.getMessage();
+            lastAffectError = tag + e.getClass().getSimpleName() + ": " + e.getMessage();
             return null;
         }
     }
@@ -120,6 +155,7 @@ public final class FacePipeline {
         List<Map<String, Double>> indices = new ArrayList<>();
         List<float[]> coefficients = new ArrayList<>();
         List<double[]> affects = new ArrayList<>();
+        List<Double> gaps = new ArrayList<>();
         for (int[] rgb : images) {
             Frame f = analyze(rgb, width, height);
             if (f.rejected != null) {
@@ -129,6 +165,7 @@ public final class FacePipeline {
             indices.add(f.indices);
             coefficients.add(f.blendshapes);
             if (f.affect != null) affects.add(f.affect);
+            if (!Double.isNaN(f.affectGap)) gaps.add(f.affectGap);
         }
         FaceIndices.Burst b = FaceIndices.burst(indices, coefficients, images.size());
         if (b != null && !affects.isEmpty()) {
@@ -140,6 +177,13 @@ public final class FacePipeline {
             b.values.put("valence", FaceIndices.median(v));
             b.values.put("arousal", FaceIndices.median(a));
             b.values.put("affectFrames", (double) v.length);
+        }
+        if (b != null && !gaps.isEmpty()) {
+            double[] g = new double[gaps.size()];
+            for (int i = 0; i < g.length; i++) g[i] = gaps.get(i);
+            // Désaccord du duo : médiane des écarts de valence image par image (I126), lu dans la confiance.
+            b.values.put("affectGap", FaceIndices.median(g));
+            b.values.put("affectModels", 2.0);
         }
         return b;
     }
