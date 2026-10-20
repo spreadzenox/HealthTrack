@@ -1,6 +1,6 @@
 # 2026-10-20 04:30 Paris (02:30 UTC) — Facteurs X comparés à l'humeur estimée (Y automatique)
 
-**Type** : 🔴🙂 bien-être automatique (charte §0000000)  ·  **PR** : à venir
+**Type** : 🔴🙂 bien-être automatique (charte §0000000)  ·  **PR** : #227
 
 ## Pourquoi
 - Vérifications de début de run : main à `def8788` (#226), « Build & Release » vert (v180), « Tests » et émulateur A56
