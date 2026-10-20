@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-20",
+  "kind": "correctif",
+  "title": "Lecture du visage : pourquoi elle s'est arrêtée, et « Applis jamais en veille » sur Samsung",
+  "items": [
+    "Quand la lecture du visage est arrêtée, la carte dit maintenant pourquoi : la mise à jour de l'app, un redémarrage du téléphone, ou le téléphone lui-même, sans l'un ni l'autre (le plus souvent la mise en veille des applis pour économiser la batterie).",
+    "Sur un Samsung, un bouton « Applis jamais en veille » ouvre directement la liste de One UI : touchez « + » et cochez HealthTrack. One UI met en veille les applis peu ouvertes même quand la batterie est « sans restriction » ; cette liste l'en empêche. Le bouton est aussi dans le Diagnostic.",
+    "Le diagnostic enregistré indique la cause du dernier arrêt, avec l'heure de la dernière mise à jour et du dernier redémarrage."
+  ]
+}

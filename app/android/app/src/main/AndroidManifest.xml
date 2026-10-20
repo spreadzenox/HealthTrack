@@ -145,6 +145,8 @@
         <package android:name="com.google.android.apps.healthdata" />
         <!-- Samsung Health app -->
         <package android:name="com.sec.android.app.shealth" />
+        <!-- Samsung Device Care : « Applis jamais en veille » (FaceSensePlugin.openNeverSleep) -->
+        <package android:name="com.samsung.android.lool" />
         <!-- « Mes appareils » (src/devices/healthApps.js) : apps santé / montres détectées.
              Toute app ajoutée au catalogue doit être déclarée ici (vérifié par healthApps.test.js). -->
         <package android:name="com.huawei.health" />

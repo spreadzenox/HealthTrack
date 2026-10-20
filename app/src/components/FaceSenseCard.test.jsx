@@ -189,4 +189,28 @@ describe('FaceSenseCard', () => {
     expect(off.prepareAffect).not.toHaveBeenCalled()
     expect(ready.prepareAffect).not.toHaveBeenCalled()
   })
+
+  it('arrêtée par le téléphone sur un Samsung : la cause, et « Applis jamais en veille » en un geste (I123)', async () => {
+    const h = (n) => Date.UTC(2026, 9, 20, n)
+    const plugin = { ...fake({ ...base, running: false, manufacturer: 'samsung', startedAt: h(8), lastUpdateAt: h(2), bootAt: h(1) }), openNeverSleep: vi.fn(async () => ({ opened: 'samsung' })) }
+    render(<FaceSenseCard plugin={plugin} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText(/de lui-même, sans mise à jour ni redémarrage/)).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Applis jamais en veille' })).toHaveLength(1)
+    fireEvent.click(screen.getByRole('button', { name: 'Applis jamais en veille' }))
+    await waitFor(() => expect(plugin.openNeverSleep).toHaveBeenCalled())
+    expect(screen.getByText(/Arrêt : arrêtée par le téléphone/)).toBeInTheDocument()
+  })
+
+  it('arrêtée par une mise à jour : pas de bouton de mise en veille dans la carte ; autre marque : jamais', async () => {
+    const h = (n) => Date.UTC(2026, 9, 20, n)
+    const plugin = fake({ ...base, running: false, manufacturer: 'samsung', startedAt: h(8), lastUpdateAt: h(9), bootAt: h(1) })
+    const { unmount } = render(<FaceSenseCard plugin={plugin} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText(/pendant la mise à jour de l’app/)).toBeInTheDocument()
+    // seul celui du Diagnostic (replié)
+    expect(screen.getAllByRole('button', { name: 'Applis jamais en veille', hidden: true })).toHaveLength(1)
+    unmount()
+    render(<FaceSenseCard plugin={fake({ ...base, manufacturer: 'Google' })} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText('Active')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Applis jamais en veille', hidden: true })).not.toBeInTheDocument()
+  })
 })

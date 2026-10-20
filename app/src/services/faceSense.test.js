@@ -11,6 +11,9 @@ import {
   faceCameraAccess,
   prepareFaceAffect,
   faceAffectState,
+  faceStopCause,
+  isSamsungDevice,
+  openFaceNeverSleep,
 } from './faceSense'
 
 const active = {
@@ -214,7 +217,7 @@ describe('repérage du déverrouillage et accès caméra (signalement du 19/10 1
 
   it('export : allumages, déverrouillages par source, mode caméra, démarrage, dernières tentatives', () => {
     const r = faceDiagnosticReport(seen, { now: new Date(at(15, 10)) })
-    expect(r.version).toBe(3)
+    expect(r.version).toBe(4)
     expect(r.detection).toEqual({
       screenOns: 5,
       userPresents: 1,
@@ -291,7 +294,7 @@ describe('modèle valence / éveil (consigne du 19/10 au soir, étape 2)', () =>
   it('export et lignes : état du modèle, lectures avec valence, erreur exacte ; jamais une valence', () => {
     const s = { ...active, affectModel: true, affectBursts: 5, affectLoadMs: 310, affectDownloadMs: 9000, lastAffectError: 'IllegalStateException: ort' }
     const r = faceDiagnosticReport(s)
-    expect(r.version).toBe(3)
+    expect(r.version).toBe(4)
     expect(r.affect).toEqual({
       model: 'enet_b0_8_va_mtl', state: 'ready', bursts: 5, loadMs: 310, downloadMs: 9000,
       downloadErrors: 0, error: null, lastError: 'IllegalStateException: ort',
@@ -303,5 +306,46 @@ describe('modèle valence / éveil (consigne du 19/10 au soir, étape 2)', () =>
     expect(err.some((l) => l === 'Modèle valence / éveil : échec du téléchargement [IOException: HTTP 404] — nouvel essai à la prochaine ouverture')).toBe(true)
     expect(faceDiagnosticReport({ ...active }).affect).toBe(null)
     expect(JSON.stringify(r)).not.toMatch(/"valence"\s*:/)
+  })
+})
+
+describe('cause de l’arrêt et « Applis jamais en veille » (signalement du 19/10 15:05, point c ; I123)', () => {
+  const h = (n) => Date.UTC(2026, 9, 20, n)
+  const stopped = { ...active, running: false, startedAt: h(8), lastUpdateAt: h(2), bootAt: h(1) }
+
+  it('mise à jour, redémarrage ou téléphone ; rien si actif, éteint ou natif ancien', () => {
+    expect(faceStopCause(stopped)).toBe('system')
+    expect(faceStopCause({ ...stopped, lastUpdateAt: h(9) })).toBe('update')
+    expect(faceStopCause({ ...stopped, bootAt: h(9) })).toBe('reboot')
+    expect(faceStopCause({ ...stopped, lastUpdateAt: h(10), bootAt: h(9) })).toBe('update')
+    expect(faceStopCause({ ...stopped, running: true })).toBeNull()
+    expect(faceStopCause({ ...stopped, enabled: false })).toBeNull()
+    expect(faceStopCause({ ...stopped, bootAt: undefined })).toBeNull()
+    expect(faceStopCause({ ...stopped, startedAt: undefined })).toBeNull()
+    expect(faceStopCause(null)).toBeNull()
+    expect(describeFaceSense(stopped)).toMatchObject({ state: 'stopped', cause: 'system' })
+  })
+
+  it('diagnostic v4 : cause et repères bruts ; ligne lisible', () => {
+    const r = faceDiagnosticReport(stopped)
+    expect(r.version).toBe(4)
+    expect(r.service).toMatchObject({
+      stopCause: 'system',
+      lastUpdateAt: new Date(h(2)).toISOString(),
+      bootAt: new Date(h(1)).toISOString(),
+    })
+    expect(faceDiagnosticReport(active).service.stopCause).toBeNull()
+    expect(faceDiagnosticLines(stopped).join('\n')).toMatch(/Arrêt : arrêtée par le téléphone sans mise à jour ni redémarrage/)
+    expect(faceDiagnosticLines({ ...stopped, lastUpdateAt: h(9) }).join('\n')).toMatch(/Arrêt : mise à jour de l’app/)
+    expect(faceDiagnosticLines(active).join('\n')).not.toMatch(/Arrêt :/)
+  })
+
+  it('Samsung seulement ; ouverture du réglage sans jamais lever', async () => {
+    expect(isSamsungDevice(active)).toBe(true)
+    expect(isSamsungDevice({ manufacturer: 'Google' })).toBe(false)
+    expect(isSamsungDevice(null)).toBe(false)
+    expect(await openFaceNeverSleep({ openNeverSleep: async () => ({ opened: 'samsung' }) })).toBe('samsung')
+    expect(await openFaceNeverSleep({ openNeverSleep: async () => { throw new Error('x') } })).toBeNull()
+    expect(await openFaceNeverSleep({})).toBeNull()
   })
 })

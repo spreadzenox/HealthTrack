@@ -165,6 +165,14 @@ sans aucune note** ; avant 14 jours estimés, elle dit « N jours sur 14 ». L'h
 faites après la dernière lecture d'un jour (avant 20 h) ne compte pas pour ce jour-là. Aucun comportement jugé bon ou
 mauvais d'avance ; ce sont des hypothèses à observer, pas des causes.
 
+**Run du 20/10 06:30 — si la lecture du visage s'arrête, la carte dit pourquoi ; « Applis jamais en veille » sur
+Samsung (point (c) de votre signalement du 15:05).** Une lecture arrêtée disait seulement « Android a arrêté… (mise à
+jour, redémarrage, économie d'énergie…) ». Elle dit maintenant **laquelle** : la mise à jour de l'app, un redémarrage,
+ou **le téléphone lui-même** sans l'un ni l'autre — sur un Samsung, c'est presque toujours la mise en veille des applis
+de One UI, qui agit **même quand la batterie est « sans restriction »**. Dans ce cas, un bouton **« Applis jamais en
+veille »** ouvre directement la liste de One UI : touchez « + » et cochez HealthTrack. Le bouton est aussi, sur un
+Samsung, dans le Diagnostic, et le diagnostic enregistré dit la cause du dernier arrêt.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -175,6 +183,10 @@ après le run de 22:30, revenez sur l'accueil après ces déverrouillages : la c
 apparue (sinon, c'est qu'aucune lecture du déverrouillage n'a vu votre visage — le diagnostic dira pourquoi). Dites-moi
 aussi si l'estimation vous semble plausible, et touchez « Tester maintenant » en souriant puis sans sourire : la
 phrase « Humeur de ce moment » doit changer.
+
+**Nouveau (06:30, une minute)** : Plus → Connecteurs → Lecture du visage → Diagnostic → **« Applis jamais en
+veille »** → « + » → cochez HealthTrack (préventif : One UI ne l'endormira plus). Si un jour la carte dit « Le
+téléphone a arrêté la lecture… de lui-même », envoyez-moi le diagnostic : la ligne « Arrêt : … » me le confirmera.
 
 **Nouveau (02:30, modèle valence / éveil)** : après la mise à jour, ouvrez la carte « Lecture du visage » une fois en
 Wi-Fi (16 Mo), rouvrez-la une minute plus tard : le Diagnostic doit dire « Modèle valence / éveil : prêt ». Après vos
@@ -198,6 +210,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Lecture du visage : cause de l'arrêt et « Applis jamais en veille » (run 20/10 06:30)** : mise à jour,
+  redémarrage ou téléphone ; bouton One UI direct sur Samsung ; ligne « Arrêt : … » dans le diagnostic.
 - **Facteurs comparés à votre humeur estimée (run 20/10 04:30)** : Analyses → « Avec votre humeur estimée (visage) »,
   sans aucune note, dès 14 jours avec ≥ 3 lectures du visage.
 - **Humeur estimée par un modèle valence / éveil (run 20/10 02:30, votre consigne du soir, étape 2)** : HSEmotion sur
@@ -237,7 +251,10 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (20/10 04:30)** — ✅ facteurs X comparés à l'humeur estimée (Y automatique) ; ensuite : votre
+**Prochaines priorités (20/10 06:30)** — ✅ « Applis jamais en veille » + cause de l'arrêt (I123) ; ensuite : votre
+diagnostic ; run idées 08:30 : licence d'EmoNet, modèles vocaux (étape 3) ; I124 sonde vocale ; habitudes (tags) et
+effets décalés sur l'humeur estimée.
+*Priorités précédentes (20/10 04:30)* — ✅ facteurs X comparés à l'humeur estimée (Y automatique) ; ensuite : votre
 diagnostic (déverrouillages + modèle) ; run idées 08:30 : licence d'EmoNet, modèles vocaux (étape 3) ; « Applis jamais
 en veille » (I123) ; habitudes (tags) et effets décalés aussi sur l'humeur estimée.
 *Priorités précédentes (20/10 02:30)* — ✅ étape 2, modèle valence / éveil embarqué ; ensuite : votre diagnostic
@@ -274,6 +291,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 00:30 — [Humeur estimée robuste aux dérives lentes (I121 + étendu)](runs/2026-10-20-0030-humeur-derives-lentes.md) | 🔴🙂 | `mood/blockCv.js` (blocs ±7 j, n effectif) ; détrendage adaptatif du visage ; faux départs 12,5 % → 2,5 % ; modèle personnel sans lien 60 % → ≤ 5 % (porte exigée) ; diagnostic `a` / `drift` ; 1 573 tests ; PR #225 |
 | 20/10 02:30 — [Modèle valence / éveil embarqué (consigne du 19/10 au soir, étape 2)](runs/2026-10-20-0230-modele-valence-eveil.md) | 🔴🙂 | HSEmotion `enet_b0_8_va_mtl` (CCC V 0,59 / A 0,55) téléchargé par le téléphone, SHA-256 ; ONNX Runtime 1.22 (sans télémétrie) ; `FaceAffect` + vecteurs ; `faceMood` modèle `va` + éveil ; diagnostic v3 ; 111 JVM + 1 584 Vitest ; PR #226 |
 | 20/10 04:30 — [Facteurs comparés à l'humeur estimée (Y automatique)](runs/2026-10-20-0430-facteurs-humeur-estimee.md) | 🔴🙂 | `mood/faceMoodDays.js` : série quotidienne (≥ 3 lectures, médiane, ligne de base par jour), corrélations X ↔ humeur estimée (ordre temporel à la dernière lecture, week-end, n effectif, BH) ; section Analyses visible sans notes ; `face_burst` lu jusqu'à 10 000 ; 1 597 tests ; PR #227 |
+| 20/10 06:30 — [Visage : cause de l'arrêt + « Applis jamais en veille » (I123)](runs/2026-10-20-0630-applis-jamais-en-veille.md) | 🔴🙂 | `faceStopCause` (mise à jour / redémarrage / téléphone) via `lastUpdateAt` + `bootAt` natifs ; `openNeverSleep` (One UI `activity_type` 2, repli réglages de l'app) ; diagnostic v4 ; 1 602 tests ; PR #228 |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---
