@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-20",
+  "kind": "amélioration",
+  "title": "Vos habitudes comparées à votre humeur estimée, sans aucune note",
+  "items": [
+    "Dans Analyses, la section « Avec votre humeur estimée (visage) » compare maintenant aussi vos habitudes (alcool, café après 14 h, écran tard, sport le soir…) à l'humeur lue sur votre visage le lendemain : jours avec contre jours sans.",
+    "Elle montre aussi les effets décalés : ce que vous avez fait la veille ou 2 à 3 jours avant (sommeil, pas, activité), à humeur de la veille égale.",
+    "Les habitudes que le téléphone mesure seul comptent même un soir sans lecture du visage. Le stress ressenti fait partie de l'humeur : il n'est jamais comparé. Aucun comportement n'est jugé d'avance et aucune piste n'est proposée : ce sont des hypothèses à observer."
+  ]
+}

@@ -155,7 +155,7 @@ function autoSourceNote(tagId) {
   return `mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`
 }
 
-function TagEffectCard({ effect }) {
+function TagEffectCard({ effect, measure = 'bien-être' }) {
   const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
   const rawDiff = effect.diffRaw ?? effect.diff
   const weekendShift = Math.abs(effect.diff - rawDiff) >= TAG_WEEKEND_SHIFT
@@ -166,7 +166,7 @@ function TagEffectCard({ effect }) {
         <span aria-hidden>{effect.emoji}</span> {effect.label}
       </p>
       <p className="reco-tag-compare">
-        {when} : bien-être <strong>{frScore(effect.meanWith, digits)} / 5</strong> contre{' '}
+        {when} : {measure} <strong>{frScore(effect.meanWith, digits)} / 5</strong> contre{' '}
         {frScore(effect.meanWithout, digits)} sans{' '}
         <span className={rawDiff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
           ({formatSigned(rawDiff, digits)} point{Math.abs(rawDiff) >= 2 ? 's' : ''})
@@ -237,13 +237,13 @@ function TagsSection({ result }) {
 
 // ─── Lagged effects (« la veille », « 2 jours avant ») ───────────────────────
 
-function LaggedEffectCard({ effect }) {
+function LaggedEffectCard({ effect, measure = 'bien-être du jour' }) {
   const points = Math.abs(effect.effectPerSd) >= 2 ? 'points' : 'point'
   return (
     <li className={'reco-tag-card reco-lag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
       <p className="reco-tag-name">{effect.label}</p>
       <p className="reco-tag-compare">
-        {effect.when}, {effect.sdText} de plus que d’habitude → bien-être du jour{' '}
+        {effect.when}, {effect.sdText} de plus que d’habitude → {measure}{' '}
         <span className={effect.effectPerSd < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
           <strong>{frDiff(effect.effectPerSd)} {points}</strong>
         </span>
@@ -395,6 +395,52 @@ function CorrelationsSection({ correlations, levers = [] }) {
 }
 
 /**
+ * Habitudes (tags) et effets décalés comparés à l'humeur estimée : seulement ce qui a déjà un résultat (rien à
+ * afficher tant qu'aucun tag n'est comparable), jamais de piste (D6).
+ */
+function FaceMoodHabits({ tagEffects, laggedEffects }) {
+  const tags = tagEffects?.status === 'ok' ? tagEffects.effects : []
+  // Effets décalés : liens solides seulement (LAG_MAX_Q), donc jamais incertains.
+  const lags = laggedEffects?.status === 'ok' ? laggedEffects.effects : []
+  const pending = tagEffects?.status === 'ok' ? tagEffects.pending.filter((t) => !t.weekendOnly) : []
+  if (!tags.length && !lags.length && !pending.length) return null
+  const clear = tags.filter((e) => e.evidence !== 'incertain')
+  const uncertain = tags.filter((e) => e.evidence === 'incertain')
+  const cards = (list) => list.map((e) => <TagEffectCard key={e.tagId} effect={e} measure="humeur estimée" />)
+  return (
+    <div className="reco-face-habits" data-testid="face-mood-habits">
+      <p className="reco-section-hint">🏷️ Vos habitudes et ⏳ effets décalés, avec votre humeur estimée :</p>
+      {clear.length > 0 || lags.length > 0 ? (
+        <ul className="reco-tag-list">
+          {cards(clear)}
+          {lags.map((e) => (
+            <LaggedEffectCard key={e.variable} effect={e} measure="humeur estimée du jour" />
+          ))}
+        </ul>
+      ) : (
+        <p className="reco-empty-levers">Aucune habitude ni aucun effet décalé net pour l’instant.</p>
+      )}
+      {uncertain.length > 0 && (
+        <details className="reco-corr-more">
+          <summary>
+            {uncertain.length === 1 ? 'Voir l’habitude incertaine' : `Voir les ${uncertain.length} habitudes incertaines`}
+          </summary>
+          <ul className="reco-tag-list">{cards(uncertain)}</ul>
+        </details>
+      )}
+      {pending.length > 0 && (
+        <p className="reco-tag-pending">
+          En cours de collecte :{' '}
+          {pending
+            .map((t) => `${t.emoji} ${t.label} (${Math.min(t.nWith, MIN_TAG_DAYS)}/${MIN_TAG_DAYS} jours avec${t.nWithout < MIN_TAG_DAYS ? `, ${t.nWithout}/${MIN_TAG_DAYS} sans` : ''})`)
+            .join(' · ')}
+        </p>
+      )}
+    </div>
+  )
+}
+
+/**
  * Facteurs comparés à l'humeur estimée par la Lecture du visage (mood/faceMoodDays.js) : la science personnelle sans
  * aucune note à saisir. Visible même sans notes ; rien tant qu'aucune lecture du visage n'existe.
  */
@@ -443,6 +489,7 @@ export function FaceMoodSection({ result }) {
           {bars(uncertain)}
         </details>
       )}
+      <FaceMoodHabits tagEffects={result.tagEffects} laggedEffects={result.laggedEffects} />
       <details className="reco-method-note">
         <summary>Comment c&apos;est calculé</summary>
         <p>
@@ -452,6 +499,12 @@ export function FaceMoodSection({ result }) {
           week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés. L&apos;humeur estimée ne
           vient que de votre visage (et de vos notes si vous en donnez) : aucun de ces facteurs ne sert à
           l&apos;estimer, sinon le lien serait circulaire.
+        </p>
+        <p>
+          Habitudes : humeur estimée les jours avec chaque tag (ceux de vos notes, ou mesurés par le téléphone)
+          contre les jours sans, le lendemain pour le soir ; le stress ressenti fait partie de l&apos;humeur, il
+          n&apos;est jamais comparé. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
+          avant, à humeur de la veille égale, liens solides seulement.
         </p>
         <p>
           C&apos;est une estimation, moins précise qu&apos;une note : un lien est une hypothèse à observer, pas une

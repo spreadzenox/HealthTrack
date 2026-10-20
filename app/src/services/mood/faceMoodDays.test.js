@@ -14,6 +14,7 @@ function burst(at, values = {}, { trigger = 'unlock', valid = 3 } = {}) {
   return { type: 'face_burst', source: 'face_sense', at: at.toISOString(), payload: { v: 1, trigger, frames: 3, valid, values: { ...NEUTRAL, ...values }, rejected: {} } }
 }
 const day = (i, h, m = 0) => new Date(2026, 8, 1 + i, h, m)
+const localKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 
 /** Générateur déterministe dans [-1, 1]. */
 function noise(seed) {
@@ -128,5 +129,55 @@ describe('computeFaceMoodCorrelations — vos facteurs comparés à l’humeur e
     }
     const res = computeFaceMoodCorrelations(entries)
     expect(res.correlations.find((c) => c.variable === 'steps')).toBeUndefined()
+  })
+
+  it('compare vos habitudes à l’humeur estimée du lendemain, avec les tags de vos notes, sans le stress (D5)', () => {
+    // Alcool déclaré un soir sur trois (note du soir) → visage plus sombre le lendemain ; le stress n'est jamais comparé.
+    const alcohol = (i) => i % 3 === 0
+    const entries = history(42, { valence: (i) => (i > 0 && alcohol(i - 1) ? -0.5 : 0.3), steps: () => 5000 })
+    for (let i = 0; i < 42; i++) {
+      entries.push({ type: 'wellbeing', at: day(i, 22).toISOString(), payload: { score: 3, tags: alcohol(i) ? ['alcohol', 'stress'] : [] } })
+    }
+    const { tagEffects } = computeFaceMoodCorrelations(entries)
+    expect(tagEffects.status).toBe('ok')
+    const a = tagEffects.effects.find((e) => e.tagId === 'alcohol')
+    expect(a.diff).toBeLessThan(-0.3)
+    expect(a.evidence).not.toBe('incertain')
+    expect([...tagEffects.effects, ...tagEffects.pending].map((e) => e.tagId)).not.toContain('stress')
+  })
+
+  it('aucun sens présupposé pour les habitudes : un lendemain meilleur est montré tel quel (D6)', () => {
+    const alcohol = (i) => i % 3 === 0
+    const entries = history(42, { valence: (i) => (i > 0 && alcohol(i - 1) ? 0.6 : -0.1), steps: () => 5000 })
+    for (let i = 0; i < 42; i++) if (alcohol(i)) entries.push({ type: 'wellbeing', at: day(i, 22).toISOString(), payload: { score: 3, tags: ['alcohol'] } })
+    const a = computeFaceMoodCorrelations(entries).tagEffects.effects.find((e) => e.tagId === 'alcohol')
+    expect(a.diff).toBeGreaterThan(0.3)
+  })
+
+  it('un soir mesuré par le téléphone compte même sans lecture du visage ce jour-là', () => {
+    // Lectures du visage un jour sur deux seulement ; l'écran tard des soirs sans lecture explique le lendemain.
+    const entries = []
+    for (let i = 0; i < 60; i++) {
+      const late = i % 4 === 0
+      if (i % 2 === 1) for (let k = 0; k < 3; k++) entries.push(burst(day(i, 8 + k), { valence: (i - 1) % 4 === 0 ? -0.5 : 0.3 }))
+      // phone_usage du jour i+1 = soirée du jour i
+      entries.push({ type: 'phone_usage', at: day(i + 1, 6).toISOString(), payload: { date: localKey(day(i + 1, 6)), lateScreenMinutes: late ? 90 : 0 } })
+      entries.push({ type: 'steps', at: day(i, 7).toISOString(), payload: { value: 5000 } })
+    }
+    const ls = computeFaceMoodCorrelations(entries).tagEffects.effects.find((e) => e.tagId === 'late_screen')
+    expect(ls.auto).toBe(true)
+    expect(ls.nWith).toBeGreaterThanOrEqual(10)
+    expect(ls.diff).toBeLessThan(-0.3)
+  })
+
+  it('trouve un effet décalé sur l’humeur estimée, sans jamais en tirer de piste (D6)', () => {
+    const rnd = noise(5)
+    const steps = (i) => 5000 + 3000 * Math.sin(i * 1.7) + 200 * rnd()
+    const res = computeFaceMoodCorrelations(history(45, { valence: (i) => (i > 0 ? (steps(i - 1) - 5000) / 5000 : 0), steps }))
+    expect(res.laggedEffects.status).toBe('ok')
+    const e = res.laggedEffects.effects.find((x) => x.variable === 'steps')
+    expect(e.lag).toBe(1)
+    expect(e.r).toBeGreaterThan(0)
+    expect(res.laggedEffects.effects.every((x) => x.action === null)).toBe(true)
   })
 })
