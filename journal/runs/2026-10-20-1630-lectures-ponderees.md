@@ -1,6 +1,6 @@
 # 2026-10-20 16:30 Paris (14:30 UTC) — Lectures du jour pondérées par leur qualité (I127)
 
-**Type** : 🔴🙂 code (consigne du 19/10 au soir : confiance honnête, « qualité et cadrage du visage »)  ·  **PR** : #PR
+**Type** : 🔴🙂 code (consigne du 19/10 au soir : confiance honnête, « qualité et cadrage du visage »)  ·  **PR** : #233
 
 ## Pourquoi
 - Main à `9eafcc6` (#232) vert (Tests, Build & Release, émulateur A56), aucune PR « [Auto] » ouverte, aucun nouveau
