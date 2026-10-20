@@ -3,7 +3,9 @@
  * « une lecture du bien-être 100 % auto », sans attendre 30 jours de calibration). Fonction pure, rien de stocké.
  *
  * Trois couches, de la plus générale à la plus personnelle :
- * 1. **A priori général** (étape 1, en attendant le modèle valence / éveil embarqué de l'étape 2) : une valence dans
+ * 1. **Modèle général.** Depuis l'étape 2, quand la lecture porte une valence et un éveil du **modèle embarqué**
+ *    (HSEmotion `enet_b0_8_va_mtl`, FaceAffect.java ; CCC publiée sur AffectNet : valence 0,59, éveil 0,55), c'est
+ *    cette valence qui sert. Sinon (modèle pas encore téléchargé, anciennes lectures), l'**a priori** : une valence dans
  *    [−1, 1] tirée des indices d'expression par des poids fixés d'après la correspondance blendshapes → unités
  *    d'action (journal/protocoles/visage.md §5) et la littérature FACS : AU12 (sourire) et AU6 + AU12 (sourire des
  *    yeux) vont avec une valence positive, AU15 (coins de la bouche abaissés), AU4 (froncement) et AU1 (sourcils
@@ -11,7 +13,9 @@
  *    faible »), affichée avec une large fourchette, jamais un diagnostic. Note = 2,5 + 2,5 × valence (échelle 0–5 des
  *    notes de bien-être).
  * 2. **Ligne de base individuelle** : le « visage neutre » de la personne (médianes des 28 derniers jours) remplace
- *    peu à peu le neutre de population (poids j / (j + 7), j = jours avec des lectures). Sans aucune note.
+ *    peu à peu le neutre de population (poids j / (j + 7), j = jours avec des lectures). Sans aucune note. Pour la
+ *    valence du modèle, déjà apprise sur des milliers de visages, on ne retire que la **moitié** de la valence
+ *    habituelle (hypothèse : la moitié d'un « air » constant tient au visage, l'autre à l'humeur qui dure).
  * 3. **Calibration facultative** sur les notes (mood/calibration.js, ≥ 14 jours notés avec des lectures, gardée
  *    seulement une fois la vérification visage ↔ notes réussie (gate.js) et si elle prédit les notes mises de côté —
  *    chaque jour sans la semaine qui l'entoure, I121 — ≥ 10 % mieux que leur moyenne) : la note du jour vient alors du
@@ -42,6 +46,13 @@ const PRIOR_SD = 1.3
 const BASELINE_SD = 1
 /** Dispersion d'une lecture isolée autour de l'humeur du moment (échelle 0–5), faute de mieux. */
 const READING_SD = 0.9
+/** Erreur type du modèle valence / éveil seul, puis avec une ligne de base complète (hypothèse prudente : la CCC
+ * publiée, 0,59, est mesurée entre des photos de personnes différentes, pas au fil des jours d'une même personne). */
+const VA_SD = 1.1
+const VA_BASELINE_SD = 0.9
+/** Part de la valence habituelle retirée d'une lecture du modèle (voir couche 2). */
+const VA_BASELINE_SHARE = 0.5
+const AROUSAL_BAND = 0.2
 const MAX_YAW_GOOD = 15
 const DAY_MS = 86400000
 
@@ -74,6 +85,14 @@ export function moodLabel(note) {
   return 'moyenne'
 }
 
+/** « plutôt calme » / « modéré » / « plutôt animé », d'après l'éveil du modèle dans [−1, 1] ; null sans valeur. */
+export function arousalLabel(arousal) {
+  if (!isNum(arousal)) return null
+  if (arousal < -AROUSAL_BAND) return 'plutôt calme'
+  if (arousal > AROUSAL_BAND) return 'plutôt animé'
+  return 'modéré'
+}
+
 export function confidenceLevel(halfWidth) {
   if (halfWidth <= 0.75) return 'bonne'
   if (halfWidth <= 1.15) return 'moyenne'
@@ -97,12 +116,33 @@ export function personalNeutral(bursts, at) {
     const m = median(recent.map((b) => b.payload.values[k]))
     neutral[k] = m == null ? FACE_PRIOR.neutral[k] : (1 - weight) * FACE_PRIOR.neutral[k] + weight * m
   }
-  return { neutral, days, weight }
+  // Valence habituelle du modèle (neutre de population : 0), sur les seules lectures qui en ont une.
+  const withVa = recent.filter((b) => isNum(b.payload.values.valence))
+  const vaDays = new Set(withVa.map((b) => localDateKey(b.at))).size
+  const vaWeight = vaDays / (vaDays + BASELINE_HALF)
+  neutral.valence = vaDays ? vaWeight * median(withVa.map((b) => b.payload.values.valence)) : 0
+  return { neutral, days, weight, vaDays, vaWeight }
+}
+
+const hasModelValence = (values) => isNum(values?.valence)
+
+/** Valence générale d'une lecture : celle du modèle embarqué (à moitié ajustée au visage habituel), sinon l'a priori. */
+function generalValence(values, neutral) {
+  if (hasModelValence(values)) return Math.max(-1, Math.min(1, values.valence - VA_BASELINE_SHARE * neutral.valence))
+  return priorValence(values, neutral)
+}
+
+/** Erreur type du modèle utilisé pour une lecture. */
+function modelSdFor(values, base, calibration) {
+  if (calibration?.model) return calibration.model.rmse
+  if (hasModelValence(values)) return VA_SD - (VA_SD - VA_BASELINE_SD) * base.vaWeight
+  return PRIOR_SD - (PRIOR_SD - BASELINE_SD) * base.weight
 }
 
 /** Ligne de la calibration personnelle pour un jeu d'indices (mêmes colonnes à l'apprentissage et à l'usage). */
 function calibrationRow(values) {
-  return [priorValence(values), ...EXPRESSION_KEYS.map((k) => (isNum(values?.[k]) ? values[k] : FACE_PRIOR.neutral[k]))]
+  // 1re colonne : valence du modèle embarqué si la lecture en a une, sinon l'a priori (même échelle [−1, 1]).
+  return [hasModelValence(values) ? values.valence : priorValence(values), ...EXPRESSION_KEYS.map((k) => (isNum(values?.[k]) ? values[k] : FACE_PRIOR.neutral[k]))]
 }
 
 /**
@@ -132,15 +172,10 @@ function burstQuality(b) {
 export function estimateBurst(burst, { bursts = [], calibration = null } = {}) {
   const values = burst.payload.values
   const base = personalNeutral(bursts, burst.at)
-  let note
-  let modelSd
-  if (calibration?.model) {
-    note = predictCalibrated(calibration.model, calibrationRow(values))
-    modelSd = calibration.model.rmse
-  } else {
-    note = valenceToNote(priorValence(values, base.neutral))
-    modelSd = PRIOR_SD - (PRIOR_SD - BASELINE_SD) * base.weight
-  }
+  const modelSd = modelSdFor(values, base, calibration)
+  let note = calibration?.model
+    ? predictCalibrated(calibration.model, calibrationRow(values))
+    : valenceToNote(generalValence(values, base.neutral))
   note = clampNote(note)
   const yaw = Math.abs(values.yaw ?? 0)
   const penalty = (1 + 0.5 * (1 - burstQuality(burst))) * (yaw > MAX_YAW_GOOD ? 1.15 : 1)
@@ -152,6 +187,7 @@ export function estimateBurst(burst, { bursts = [], calibration = null } = {}) {
     low: round1(clampNote(note - halfWidth)),
     high: round1(clampNote(note + halfWidth)),
     label: moodLabel(note),
+    arousal: isNum(values.arousal) ? values.arousal : null,
     halfWidth,
   }
 }
@@ -162,9 +198,10 @@ export function estimateBurst(burst, { bursts = [], calibration = null } = {}) {
  * @param {object[]} entries  entrées `face_burst` et `wellbeing` (les autres sont ignorées)
  * @param {{ now?: Date }} [opts]
  * @returns {null | {
- *   moment: { at, note, low, high, label, today: boolean },
- *   day: null | { date, note, low, high, label, readings, quality, framing: number|null, spread: number|null },
- *   confidence: 'faible'|'moyenne'|'bonne', model: 'prior'|'personal', baselineDays: number,
+ *   moment: { at, note, low, high, label, arousalLabel: string|null, today: boolean },
+ *   day: null | { date, note, low, high, label, readings, quality, framing: number|null, spread: number|null,
+ *     arousal: number|null, arousalLabel: string|null },
+ *   confidence: 'faible'|'moyenne'|'bonne', model: 'prior'|'va'|'personal', baselineDays: number,
  *   calibrationDays: number, signals: string[] }}
  *   null sans aucune lecture du déverrouillage avec un visage.
  */
@@ -188,7 +225,8 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     const spread = n > 1 ? Math.sqrt(notes.reduce((s, v) => s + (v - mean) ** 2, 0) / (n - 1)) : null
     const quality = todays.reduce((s, b) => s + burstQuality(b), 0) / n
     const framing = median(todays.map((b) => Math.abs(b.payload.values.yaw)))
-    const modelSd = calibration.model ? calibration.model.rmse : PRIOR_SD - (PRIOR_SD - BASELINE_SD) * personalNeutral(bursts, last.at).weight
+    const modelSd = modelSdFor(last.payload.values, personalNeutral(bursts, last.at), calibration)
+    const arousal = median(todays.map((b) => b.payload.values.arousal))
     const noise = spread ?? READING_SD
     const penalty = (1 + 0.5 * (1 - quality)) * (framing != null && framing > MAX_YAW_GOOD ? 1.15 : 1)
     halfWidth = Math.sqrt(modelSd ** 2 + noise ** 2 / n) * penalty
@@ -202,13 +240,18 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
       quality: Math.round(quality * 100) / 100,
       framing: framing == null ? null : Math.round(framing),
       spread: spread == null ? null : round1(spread),
+      arousal: arousal == null ? null : Math.round(arousal * 100) / 100,
+      arousalLabel: arousalLabel(arousal),
     }
   }
   return {
-    moment: { at: moment.at, note: moment.note, low: moment.low, high: moment.high, label: moment.label, today: localDateKey(last.at) === today },
+    moment: {
+      at: moment.at, note: moment.note, low: moment.low, high: moment.high, label: moment.label,
+      arousalLabel: arousalLabel(moment.arousal), today: localDateKey(last.at) === today,
+    },
     day,
     confidence: confidenceLevel(halfWidth),
-    model: calibration.model ? 'personal' : 'prior',
+    model: calibration.model ? 'personal' : hasModelValence(last.payload.values) ? 'va' : 'prior',
     baselineDays: personalNeutral(bursts, last.at).days,
     calibrationDays: calibration.days,
     signals: ['visage'],
@@ -238,6 +281,10 @@ export function describeFaceMood(est) {
   }
   const when = est.moment.today ? `à ${hour(est.moment.at)}` : `le ${new Date(est.moment.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${hour(est.moment.at)}`
   lines.push(`Humeur à la dernière lecture (${when}) : ${est.moment.label}.`)
+  if (est.moment.arousalLabel) {
+    const dayArousal = est.day?.arousalLabel && est.day.readings > 1 ? ` (aujourd’hui : ${est.day.arousalLabel})` : ''
+    lines.push(`Éveil à la dernière lecture : ${est.moment.arousalLabel}${dayArousal}.`)
+  }
   const parts = []
   if (est.day) {
     parts.push(`${est.day.readings} ${est.day.readings > 1 ? 'lectures' : 'lecture'} aujourd’hui`)
@@ -248,8 +295,11 @@ export function describeFaceMood(est) {
   }
   parts.push('un seul signal (visage)')
   lines.push(`Confiance ${est.confidence} : ${parts.join(', ')}.`)
+  const habit = est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''
   lines.push(est.model === 'personal'
     ? `Modèle personnel, appris sur vos ${est.calibrationDays} jours notés. Une estimation, pas un diagnostic.`
-    : `Modèle général des expressions${est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`)
+    : est.model === 'va'
+      ? `Modèle valence / éveil embarqué (HSEmotion), appris sur des centaines de milliers de visages${habit} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`
+      : `Modèle général des expressions${est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`)
   return lines
 }

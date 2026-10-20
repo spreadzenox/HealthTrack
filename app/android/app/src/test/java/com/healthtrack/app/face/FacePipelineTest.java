@@ -128,4 +128,51 @@ public class FacePipelineTest {
         assertEquals(one.get("smile"), b.values.get("smile"), 1e-9);
         assertTrue(b.values.get("eyeOpen") > 0.5);
     }
+
+    @Test
+    public void affectModelAddsValenceAndArousalToTheBurst() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        float[] out = new float[FaceAffect.OUTPUTS];
+        out[8] = 0.4f;
+        out[9] = -0.2f;
+        Fixed affect = new Fixed(out);
+        FacePipeline p = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes()), affect);
+        FaceIndices.Burst b = p.burst(Arrays.asList(f.rgb, new int[f.rgb.length], f.rgb), f.width, f.height,
+            new ArrayList<>());
+        assertEquals(2, affect.calls);
+        assertEquals(3 * 224 * 224, affect.lastInput.length);
+        assertEquals(0.4, b.values.get("valence"), 1e-6);
+        assertEquals(-0.2, b.values.get("arousal"), 1e-6);
+        assertEquals(2.0, b.values.get("affectFrames"), 0);
+        assertTrue(p.affectEnabled());
+        assertNull(p.lastAffectError());
+    }
+
+    @Test
+    public void failingAffectModelKeepsTheReading() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        FacePipeline.Model broken = input -> {
+            throw new IllegalStateException("ort");
+        };
+        FacePipeline p = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes()), broken);
+        FaceIndices.Burst b = p.burst(Arrays.asList(f.rgb, f.rgb), f.width, f.height, new ArrayList<>());
+        assertEquals(2, b.valid);
+        assertNull(b.values.get("valence"));
+        assertEquals("IllegalStateException: ort", p.lastAffectError());
+        p.burst(Arrays.asList(new int[f.rgb.length]), f.width, f.height, new ArrayList<>());
+        assertNull("l'erreur d'une rafale ne colle pas à la suivante", p.lastAffectError());
+    }
+
+    @Test
+    public void withoutAffectModelNoValenceIsWritten() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        FacePipeline p = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes()));
+        FaceIndices.Burst b = p.burst(Arrays.asList(f.rgb, f.rgb), f.width, f.height, new ArrayList<>());
+        assertNull(b.values.get("valence"));
+        assertNull(b.values.get("affectFrames"));
+        assertTrue(!p.affectEnabled());
+    }
 }

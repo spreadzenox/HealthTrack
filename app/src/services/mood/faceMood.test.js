@@ -7,6 +7,7 @@ import {
   testReadingEstimate,
   EXPRESSION_KEYS,
   FACE_PRIOR,
+  arousalLabel,
 } from './faceMood'
 import { isEstimatorInput } from './estimatorInputs'
 
@@ -175,5 +176,56 @@ describe('faceMood — garde-fous', () => {
     const t = burst(new Date(NOW - 30000), { smile: 0.6 }, { trigger: 'manual' })
     expect(testReadingEstimate([t], { now: NOW }).label).toBe('plutôt bonne')
     expect(testReadingEstimate([burst(new Date(NOW - 10 * 60000), {}, { trigger: 'manual' })], { now: NOW })).toBeNull()
+  })
+})
+
+describe('faceMood — modèle valence / éveil embarqué (étape 2)', () => {
+  it('prefers the model valence over the expression prior, with a narrower range', () => {
+    // Même visage neutre aux blendshapes : seule la valence du modèle dit « plutôt bonne ».
+    const va = faceMoodEstimate([burst(at(0, 8), { valence: 0.6, arousal: 0.1 })], { now: NOW })
+    const prior = faceMoodEstimate([burst(at(0, 8))], { now: NOW })
+    expect(va.model).toBe('va')
+    expect(prior.model).toBe('prior')
+    expect(va.day.note).toBeGreaterThan(3.7)
+    expect(va.day.label).toBe('plutôt bonne')
+    expect(prior.day.label).toBe('moyenne')
+    expect(va.day.high - va.day.low).toBeLessThan(prior.day.high - prior.day.low)
+  })
+
+  it('reads arousal for the moment and the day; absent without the model', () => {
+    const est = faceMoodEstimate([
+      burst(at(0, 8), { valence: 0.1, arousal: -0.5 }),
+      burst(at(0, 12), { valence: 0.1, arousal: -0.4 }),
+    ], { now: NOW })
+    expect(est.day.arousal).toBeCloseTo(-0.45, 2)
+    expect(est.day.arousalLabel).toBe('plutôt calme')
+    expect(est.moment.arousalLabel).toBe('plutôt calme')
+    expect(arousalLabel(0.5)).toBe('plutôt animé')
+    expect(arousalLabel(0)).toBe('modéré')
+    const none = faceMoodEstimate([burst(at(0, 8))], { now: NOW })
+    expect(none.day.arousal).toBeNull()
+    expect(none.moment.arousalLabel).toBeNull()
+  })
+
+  it('half-adjusts to the personal usual valence, without notes', () => {
+    // 20 jours à 0,4 : le « visage habituel » ramène une lecture à 0,4 vers le milieu, mais à moitié seulement.
+    const past = Array.from({ length: 20 }, (_, d) => burst(at(d + 1, 9), { valence: 0.4 }))
+    const alone = faceMoodEstimate([burst(at(0, 8), { valence: 0.4 })], { now: NOW })
+    const usual = faceMoodEstimate([...past, burst(at(0, 8), { valence: 0.4 })], { now: NOW })
+    expect(usual.day.note).toBeLessThan(alone.day.note)
+    expect(usual.day.note).toBeGreaterThan(2.9)
+  })
+
+  it('mixes old readings without valence and new ones with it', () => {
+    const est = faceMoodEstimate([burst(at(1, 9), { smile: 0.6 }), burst(at(0, 8), { valence: -0.5, arousal: 0 })], { now: NOW })
+    expect(est.model).toBe('va')
+    expect(est.day.label).toBe('plutôt basse')
+  })
+
+  it('describes the model and arousal as an estimate', () => {
+    const lines = describeFaceMood(faceMoodEstimate([burst(at(0, 8), { valence: 0.3, arousal: 0.4 })], { now: NOW }))
+    expect(lines.some((l) => l.includes('Éveil à la dernière lecture : plutôt animé'))).toBe(true)
+    expect(lines.some((l) => l.startsWith('Modèle valence / éveil embarqué (HSEmotion)'))).toBe(true)
+    expect(lines.join(' ')).toMatch(/pas un diagnostic/)
   })
 })

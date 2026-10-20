@@ -40,6 +40,11 @@ final class FaceFixtures {
         return new FaceFixtures(json, rgb, w, h);
     }
 
+    /** Un JSON des ressources face/ (par exemple affect-vectors.json). */
+    static Map<String, Object> resource(String name) throws Exception {
+        return (Map<String, Object>) new Parser(read("/face/" + name)).value();
+    }
+
     Map<String, Object> obj(String key) {
         return (Map<String, Object>) json.get(key);
     }

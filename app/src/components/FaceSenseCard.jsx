@@ -5,7 +5,7 @@
  * seulement) pour vérifier le comportement réel sur le téléphone.
  * Logique dans services/faceSense.js, natif dans FaceSenseService.java / FaceSensePlugin.java.
  */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   getFaceSenseStatus,
   startFaceSense,
@@ -17,6 +17,8 @@ import {
   faceDiagnosticLines,
   faceSensePlugin,
   faceCameraAccess,
+  faceAffectState,
+  prepareFaceAffect,
 } from '../services/faceSense'
 import { FACE_BURST_TYPE, faceDailyCounts, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
 import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
@@ -132,11 +134,18 @@ export default function FaceSenseCard({
   const [loaded, setLoaded] = useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState(null)
+  const affectAsked = useRef(false)
 
   const refresh = useCallback(async () => {
     // Rafales en attente rangées d'abord : le diagnostic dit alors ce qui reste vraiment en attente.
     if (plugin) await importBursts({ plugin })
     const [s, h, e] = await Promise.all([getFaceSenseStatus(plugin), plugin ? loadHistory() : null, plugin ? loadEveningNote() : null])
+    // Modèle valence / éveil (étape 2) : téléchargé une fois, app ouverte, dès que la lecture est active.
+    const affect = faceAffectState(s)
+    if (s?.enabled && (affect === 'missing' || affect === 'error') && !affectAsked.current) {
+      affectAsked.current = true
+      prepareFaceAffect(plugin)
+    }
     setStatus(s)
     setHistory(h)
     setEvening(e)

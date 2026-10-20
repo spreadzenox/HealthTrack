@@ -44,6 +44,9 @@ public class FaceSensePlugin extends Plugin {
         SharedPreferences p = FaceSenseService.prefs(context);
         JSObject ret = new JSObject();
         ret.put("models", FaceModels.available(context.getAssets()));
+        // Modèle valence / éveil : téléchargé une fois sur le téléphone (FaceAffectModel), jamais dans l'APK.
+        ret.put("affectModel", FaceAffectModel.available(context));
+        ret.put("affectDownloading", FaceAffectModel.isDownloading());
         ret.put("running", FaceSenseService.isRunning());
         ret.put("enabled", p.getBoolean("enabled", false));
         ret.put("permission", FaceSenseService.hasCameraPermission(context));
@@ -102,6 +105,19 @@ public class FaceSensePlugin extends Plugin {
             return;
         }
         startService(call, FaceSenseService.ACTION_START);
+    }
+
+    /**
+     * Télécharge le modèle valence / éveil s'il manque (16 Mo, une fois, vérifié par SHA-256) : { ready, downloading }.
+     * Appelé app ouverte par la carte quand la lecture du visage est activée ; le service le prend à la rafale suivante.
+     */
+    @PluginMethod
+    public void prepareAffect(PluginCall call) {
+        boolean started = FaceAffectModel.ensure(getContext());
+        JSObject ret = new JSObject();
+        ret.put("ready", FaceAffectModel.available(getContext()));
+        ret.put("downloading", started || FaceAffectModel.isDownloading());
+        call.resolve(ret);
     }
 
     /** Une rafale tout de suite, pour le diagnostic (déclencheur « manual », jamais compté pour l'humeur). */

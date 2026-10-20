@@ -76,6 +76,10 @@ dependencies {
     implementation project(':capacitor-android')
     // Moteur d'inférence du visage, sans dépendance transitive (la 2.x tire ai-delivery des services Play)
     implementation 'com.google.ai.edge.litert:litert:1.4.2'
+    // Modèle valence / éveil du visage (FaceAffectModel, publié en ONNX par ses auteurs). Rester en 1.22.x : à partir
+    // de la 1.27, l'AAR Android ajoute un TelemetryInitializer qui envoie des infos de l'appareil à Microsoft (rien ne
+    // doit sortir du téléphone) ; arm64 seul via abiFilters, ≈ 18 Mo.
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.22.0'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"

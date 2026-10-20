@@ -141,6 +141,19 @@ visage dérive nettement, chaque lecture est comparée à vos 14 jours précéde
 change à l'affichage** : l'humeur estimée est toujours là dès la première lecture ; seul le passage au modèle
 personnel est plus prudent (après la vérification réussie, vers 6 semaines de notes au lieu de 14 jours).
 
+**Run du 20/10 02:30 — l'humeur estimée par un vrai modèle valence / éveil (étape 2 de votre consigne du soir).**
+Vous vouliez « un modèle plus puissant » : chaque lecture du déverrouillage passe désormais aussi par **HSEmotion**, un
+modèle de reconnaissance des émotions appris sur des centaines de milliers de visages, qui donne directement la
+**valence** (agréable ↔ désagréable) et l'**éveil** (calme ↔ animé) — sur des photos qu'il n'a jamais vues, son accord
+avec des annotateurs humains est de 0,59 pour la valence et 0,55 pour l'éveil (CCC), le meilleur compromis précision /
+poids / licence trouvé (comparatif dans [`BIEN-ETRE-AUTO.md`](BIEN-ETRE-AUTO.md)). La carte « Humeur estimée » dit
+maintenant aussi l'éveil (« plutôt calme », « modéré », « plutôt animé ») et quel modèle a servi ; la fourchette est un
+peu plus étroite. Le modèle (16 Mo) n'est **pas dans l'APK** : le téléphone le télécharge une fois depuis le dépôt de
+ses auteurs à la première ouverture de la carte « Lecture du visage » (lecture active), et ne le garde que si son
+empreinte est exacte — ses poids ont été appris sur une base d'images réservée à la recherche, je préfère ne pas les
+redistribuer moi-même. Rien ne part de votre téléphone. En coulisses : moteur ONNX Runtime 1.22, choisi parce que les
+versions plus récentes ajoutent une télémétrie vers Microsoft ; l'APK grossit d'environ 18 Mo.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -151,6 +164,12 @@ après le run de 22:30, revenez sur l'accueil après ces déverrouillages : la c
 apparue (sinon, c'est qu'aucune lecture du déverrouillage n'a vu votre visage — le diagnostic dira pourquoi). Dites-moi
 aussi si l'estimation vous semble plausible, et touchez « Tester maintenant » en souriant puis sans sourire : la
 phrase « Humeur de ce moment » doit changer.
+
+**Nouveau (02:30, modèle valence / éveil)** : après la mise à jour, ouvrez la carte « Lecture du visage » une fois en
+Wi-Fi (16 Mo), rouvrez-la une minute plus tard : le Diagnostic doit dire « Modèle valence / éveil : prêt ». Après vos
+déverrouillages, la carte « Humeur estimée » de l'accueil doit dire « Modèle valence / éveil embarqué (HSEmotion) » et
+une ligne « Éveil ». Le diagnostic exporté contiendra le temps d'analyse et l'erreur exacte s'il y en a une. Dites-moi
+si l'humeur et l'éveil vous paraissent plausibles (« Tester maintenant » en souriant, puis sans sourire).
 
 **Ce qu'il me faut (votre Galaxy A56)** — c'est l'étape qui débloque la suite : après la mise à jour (vérifiez dans
 Plus → Nouveautés que la version installée est au moins celle publiée le 19/10 vers 11 h), Plus → Connecteurs → la
@@ -168,6 +187,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Humeur estimée par un modèle valence / éveil (run 20/10 02:30, votre consigne du soir, étape 2)** : HSEmotion sur
+  le téléphone (16 Mo téléchargés une fois), éveil affiché, diagnostic « Modèle valence / éveil ».
 - **Humeur estimée robuste aux dérives lentes (run 20/10 00:30)** : le « modèle personnel » ne s'installe plus sur
   une simple coïncidence de saison ; le diagnostic dit combien votre visage dérive.
 - **Humeur estimée dès la première lecture (run 19/10 22:30, votre consigne du soir)** : carte sur l'accueil et dans
@@ -203,7 +224,10 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (20/10 00:30)** — ✅ dérives lentes (I121) corrigées dans la vérification et le modèle
+**Prochaines priorités (20/10 02:30)** — ✅ étape 2, modèle valence / éveil embarqué ; ensuite : votre diagnostic
+(déverrouillages + modèle) ; la vérification visage ↔ notes lit aussi la valence du modèle ; run idées 08:30 : licence
+d'EmoNet et modèles à licence de poids explicite, modèles vocaux (étape 3) ; « Applis jamais en veille » (I123).
+*Priorités précédentes (20/10 00:30)* — ✅ dérives lentes (I121) corrigées dans la vérification et le modèle
 personnel ; ensuite : votre diagnostic dès qu'il arrive ; le comparatif des modèles valence / éveil (run idées de
 08:30) puis leur intégration (étape 2) ; « Applis jamais en veille » sur Samsung (I123) ; la voix (étape 3).
 *Priorités précédentes (19/10 22:30)* — votre consigne du 19/10 au soir d'abord : ✅ étape 1, estimation affichée dès
@@ -232,6 +256,7 @@ du jour avec sa fourchette (derrière la porte).
 | 19/10 18:30 — [Votre journée en une phrase (I119)](runs/2026-10-19-1830-phrase-du-soir.md) | 🔴🙂 | Lexiques disjoints ressenti (Y) / contexte (X) + test d'intersection vide ; champ « En une phrase » (dictable au clavier) → note et tags proposés, phrase jamais gardée ; 1 539 tests |
 | 19/10 22:30 — [Humeur estimée dès la première lecture (consigne du 19/10 au soir, étape 1)](runs/2026-10-19-2230-humeur-des-la-1re-lecture.md) | 🔴🙂 | Consigne reportée (charte §0000000) ; `mood/faceMood.js` (a priori FACS → ligne de base personnelle → calibration facultative), fourchette + confiance ; carte « Humeur estimée » sur l'accueil + bloc dans la carte visage + « Tester maintenant » ; verrou « Rien n'est affiché » retiré ; diagnostic : modèle / confiance sans valeur ; 1 559 tests ; PR #224 |
 | 20/10 00:30 — [Humeur estimée robuste aux dérives lentes (I121 + étendu)](runs/2026-10-20-0030-humeur-derives-lentes.md) | 🔴🙂 | `mood/blockCv.js` (blocs ±7 j, n effectif) ; détrendage adaptatif du visage ; faux départs 12,5 % → 2,5 % ; modèle personnel sans lien 60 % → ≤ 5 % (porte exigée) ; diagnostic `a` / `drift` ; 1 573 tests ; PR #225 |
+| 20/10 02:30 — [Modèle valence / éveil embarqué (consigne du 19/10 au soir, étape 2)](runs/2026-10-20-0230-modele-valence-eveil.md) | 🔴🙂 | HSEmotion `enet_b0_8_va_mtl` (CCC V 0,59 / A 0,55) téléchargé par le téléphone, SHA-256 ; ONNX Runtime 1.22 (sans télémétrie) ; `FaceAffect` + vecteurs ; `faceMood` modèle `va` + éveil ; diagnostic v3 ; 111 JVM + 1 584 Vitest ; PR #226 |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---
