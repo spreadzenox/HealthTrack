@@ -26,7 +26,7 @@ jour** depuis la v188 (voir ci-dessous). Prochain run de code : inventaire chiff
 (masquer / fusionner / déplacer, navigation simplifiée), puis tokens de design.
 
 **Run du 21/10 00:30 — la nouvelle identité visuelle arrive (étape 1 sur 3).** Ce que vous verrez dans la
-prochaine version (v190) : **l'app passe en clair** — fond blanc, texte encre, **vert émeraude** pour les actions, et
+**v190** (publiée, 33,7 Mo, installable avec le bouton du bandeau) : **l'app passe en clair** — fond blanc, texte encre, **vert émeraude** pour les actions, et
 les polices **Figtree** (les mots) et **IBM Plex Mono** (prévue pour les chiffres), embarquées dans l'app (rien n'est
 chargé depuis Internet). Le **thème sombre reste disponible** : Plus → Paramètres → **Apparence** (Clair / Sombre /
 Comme le téléphone). Les icônes de la barre d'état (heure, batterie) s'accordent au thème choisi. Rien ne change dans
@@ -416,7 +416,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
-| 21/10 00:30 — [Identité visuelle (i) : tokens, polices, thème clair](runs/2026-10-21-0030-design-tokens.md) | 🧭🎨 | `INFRA.md` + `DESIGN.md` créés, PRODUIT / BACKLOG revus (Vertex AI sans clé, actions du propriétaire pas à pas) ; `theme/tokens.css` seule source des couleurs (~240 couleurs brutes remplacées), Figtree + IBM Plex Mono embarquées, clair par défaut, Apparence dans Paramètres, `SystemBarsPlugin` ; 1 653 Vitest |
+| 21/10 00:30 — [Identité visuelle (i) : tokens, polices, thème clair](runs/2026-10-21-0030-design-tokens.md) | 🧭🎨 | `INFRA.md` + `DESIGN.md` créés, PRODUIT / BACKLOG revus (Vertex AI sans clé, actions du propriétaire pas à pas) ; `theme/tokens.css` seule source des couleurs (~240 couleurs brutes remplacées), Figtree + IBM Plex Mono embarquées, clair par défaut, Apparence dans Paramètres, `SystemBarsPlugin` ; 1 653 Vitest ; PR #240 → **v190, 33,7 Mo** |
 | 20/10 22:30 — [Chantier produit : PRODUIT.md + « bien-être » partout (jalons 1 et 2a)](runs/2026-10-20-2230-produit-cadre.md) | 🧭🙂 | Décisions du 20/10 au soir reportées (PRODUIT.md, charte §000000000, BACKLOG) ; libellés visibles « humeur » → « bien-être » ; test-garde `wording.test.js` ; 1 642 Vitest ; PR #238 → **v189, 33,6 Mo** |
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
 | 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
