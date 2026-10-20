@@ -167,11 +167,12 @@ function burstQuality(b) {
 /**
  * Estimation d'une lecture (rafale) : { at, trigger, note, low, high, label, halfWidth }.
  * @param {object} burst  entrée `face_burst` avec des indices
- * @param {{ bursts: object[], calibration?: object|null }} ctx  lectures du déverrouillage (ligne de base)
+ * @param {{ bursts: object[], calibration?: object|null, base?: object }} ctx  lectures du déverrouillage (ligne
+ *   de base) ; `base` = personalNeutral déjà calculé (série du jour, faceMoodDays.js), sinon recalculé ici
  */
-export function estimateBurst(burst, { bursts = [], calibration = null } = {}) {
+export function estimateBurst(burst, { bursts = [], calibration = null, base: given = null } = {}) {
   const values = burst.payload.values
-  const base = personalNeutral(bursts, burst.at)
+  const base = given ?? personalNeutral(bursts, burst.at)
   const modelSd = modelSdFor(values, base, calibration)
   let note = calibration?.model
     ? predictCalibrated(calibration.model, calibrationRow(values))

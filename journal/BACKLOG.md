@@ -56,8 +56,15 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   `testReadingEstimate`) en O(regards × n² × k²) ; négligeable aujourd'hui (0 jour noté), à mémoïser si > 150 jours
   comparables (mesurer d'abord, D2).
 - [ ] Retour du propriétaire : l'estimation est-elle plausible ? (« Tester maintenant » en souriant / sans sourire.)
-- [ ] Plus tard : écrire l'estimation du jour comme colonne Y (`face_mood`) pour les Analyses (facteurs X → humeur
-  estimée), avec ordre temporel et anti-circularité (préfixe `face_` déjà déclaré).
+- [x] **Facteurs X ↔ humeur estimée (run 20/10 04:30)** : `mood/faceMoodDays.js` — jour estimé si ≥ 3 lectures du
+  déverrouillage avec visage (médiane des estimations, ligne de base calculée une fois par jour), notes remplacées par
+  une « note » par jour à l'heure de la dernière lecture (ordre temporel, DAY_OVER_HOUR), puis
+  `computeBasicCorrelations` (week-end, n effectif, BH) ; ≥ 14 jours ; aucun levier proposé. Section « Avec votre
+  humeur estimée (visage) » dans Analyses, visible sans notes ; `ANALYSIS_LIMITS.face_burst = 10000` ; 9 tests.
+  - [ ] Habitudes (tags X) et effets décalés (`laggedEffects`) sur l'humeur estimée ; prédiction du jour.
+  - [ ] Si > 10 000 rafales (~6 mois à 50 / jour) : lire les rafales par plage plutôt que les N plus récentes.
+  - [ ] Plusieurs lectures par jour : comparer aussi l'humeur estimée **heure par heure** au temps par app de l'heure
+    précédente (ordre temporel fin, `phone_apps` horaire déjà là).
 
 ## 🚑 Signalement du propriétaire du 19/10/2026 15:05 — aucune lecture automatique au déverrouillage
 

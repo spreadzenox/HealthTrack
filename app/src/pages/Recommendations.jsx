@@ -18,6 +18,7 @@ import {
 } from '../services/analysisEngine'
 import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR, LATE_MEAL_FROM_HOUR } from '../services/behaviorTags'
 import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
+import { FACE_MOOD_MIN_DAYS, FACE_MOOD_MIN_READINGS } from '../services/mood/faceMoodDays'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
 import { useAutoSync } from '../hooks/useAutoSync'
@@ -393,6 +394,74 @@ function CorrelationsSection({ correlations, levers = [] }) {
   )
 }
 
+/**
+ * Facteurs comparés à l'humeur estimée par la Lecture du visage (mood/faceMoodDays.js) : la science personnelle sans
+ * aucune note à saisir. Visible même sans notes ; rien tant qu'aucune lecture du visage n'existe.
+ */
+export function FaceMoodSection({ result }) {
+  if (!result || result.status === 'no_face') return null
+  const title = <h3 className="reco-section-title">🙂 Avec votre humeur estimée (visage)</h3>
+  if (result.status !== 'ok') {
+    const n = result.currentDays
+    return (
+      <section className="reco-section" data-testid="face-mood-section">
+        {title}
+        <p className="reco-section-hint">
+          {n} jour{n > 1 ? 's' : ''} sur {FACE_MOOD_MIN_DAYS} avec au moins {FACE_MOOD_MIN_READINGS} lectures du
+          visage au déverrouillage. Ensuite, votre sommeil, vos pas, votre écran, vos réseaux… seront comparés à
+          votre humeur estimée, sans aucune note à donner.
+        </p>
+      </section>
+    )
+  }
+  const shown = result.correlations.filter((c) => !CHART_HIDDEN_VARIABLES.has(c.variable))
+  const clear = shown.filter((c) => c.evidence !== 'incertain')
+  const uncertain = shown.filter((c) => c.evidence === 'incertain')
+  const bars = (list) => (
+    <div className="reco-corr-chart">
+      {list.map((c) => (
+        <CorrelationBar key={c.variable} label={c.label} r={c.r} impact={Math.abs(c.r)} uncertain={c.evidence === 'incertain'} />
+      ))}
+    </div>
+  )
+  return (
+    <section className="reco-section" data-testid="face-mood-section">
+      {title}
+      <p className="reco-section-hint">
+        Sur {result.faceDays} jours estimés par la Lecture du visage, sans aucune note. Vert = va de pair avec une
+        meilleure humeur estimée · Rouge = avec une moins bonne.
+      </p>
+      {clear.length > 0 ? bars(clear) : (
+        <p className="reco-empty-levers">Aucun lien net pour l’instant avec votre humeur estimée.</p>
+      )}
+      {uncertain.length > 0 && (
+        <details className="reco-corr-more">
+          <summary>
+            {uncertain.length === 1 ? 'Voir le lien incertain' : `Voir les ${uncertain.length} liens incertains`}
+          </summary>
+          <p className="reco-section-hint">Barres pâles = lien incertain, possiblement dû au hasard.</p>
+          {bars(uncertain)}
+        </details>
+      )}
+      <details className="reco-method-note">
+        <summary>Comment c&apos;est calculé</summary>
+        <p>
+          Chaque jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit une humeur estimée
+          (médiane de ses lectures), comparée à chaque facteur comme une note donnée à la dernière lecture : avant{' '}
+          {DAY_OVER_HOUR} h, ce que vous faites après elle ne compte pas. Mêmes garde-fous que pour vos notes :
+          week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés. L&apos;humeur estimée ne
+          vient que de votre visage (et de vos notes si vous en donnez) : aucun de ces facteurs ne sert à
+          l&apos;estimer, sinon le lien serait circulaire.
+        </p>
+        <p>
+          C&apos;est une estimation, moins précise qu&apos;une note : un lien est une hypothèse à observer, pas une
+          cause, et aucun comportement n&apos;est jugé bon ou mauvais d&apos;avance.
+        </p>
+      </details>
+    </section>
+  )
+}
+
 // ─── Basic tab ────────────────────────────────────────────────────────────────
 
 function BasicTab({ analysis }) {
@@ -400,11 +469,14 @@ function BasicTab({ analysis }) {
 
   if (result.status === 'not_enough_data') {
     return (
-      <NotEnoughData
-        currentDays={result.currentDays}
-        minDays={result.minDays}
-        tabLabel="recommandations basiques"
-      />
+      <>
+        <NotEnoughData
+          currentDays={result.currentDays}
+          minDays={result.minDays}
+          tabLabel="recommandations basiques"
+        />
+        <FaceMoodSection result={analysis.faceMood} />
+      </>
     )
   }
 
@@ -480,6 +552,8 @@ function BasicTab({ analysis }) {
           </p>
         )}
       </section>
+
+      <FaceMoodSection result={analysis.faceMood} />
 
       <TagsSection result={tagEffects} />
 

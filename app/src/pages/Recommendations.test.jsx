@@ -777,3 +777,45 @@ describe('Recommendations — explanations grouped (D1)', () => {
     )
   })
 })
+
+describe('Analyses — humeur estimée par le visage (sans aucune note)', () => {
+  const NEUTRAL = { smile: 0.1, duchenne: 0.05, mouthFrown: 0.05, browDown: 0.15, browInnerUp: 0.1, yaw: 4 }
+  function faceHistory(days) {
+    const entries = []
+    for (let i = 0; i < days; i++) {
+      const steps = 4000 + 3000 * Math.sin(i * 1.7)
+      for (let k = 0; k < 3; k++) {
+        entries.push({ type: 'face_burst', source: 'face_sense', at: new Date(2026, 8, 1 + i, 8 + k).toISOString(), payload: { v: 1, trigger: 'unlock', frames: 3, valid: 3, values: { ...NEUTRAL, valence: (steps - 4000) / 4000, arousal: 0 } } })
+      }
+      entries.push({ type: 'steps', source: 'health_connect', at: new Date(2026, 8, 1 + i, 7).toISOString(), payload: { value: steps } })
+    }
+    return entries
+  }
+
+  it('compares the factors to the estimated mood even with no wellbeing note', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(faceHistory(20))
+    renderPage()
+    const section = await screen.findByTestId('face-mood-section')
+    expect(section).toHaveTextContent('Avec votre humeur estimée (visage)')
+    expect(section).toHaveTextContent('Sur 20 jours estimés par la Lecture du visage, sans aucune note')
+    expect(section).toHaveTextContent('Pas')
+    // Les notes manquent toujours pour l'analyse classique : les deux coexistent.
+    expect(screen.getByText(/Données insuffisantes/i)).toBeInTheDocument()
+  })
+
+  it('counts the days still needed', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(faceHistory(4))
+    renderPage()
+    expect(await screen.findByTestId('face-mood-section')).toHaveTextContent('4 jours sur 14 avec au moins 3 lectures')
+  })
+
+  it('shows nothing about the face without any face reading', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(6))
+    renderPage()
+    await screen.findByText(/Pistes à tester/i)
+    expect(screen.queryByTestId('face-mood-section')).toBeNull()
+  })
+})

@@ -154,6 +154,17 @@ empreinte est exacte — ses poids ont été appris sur une base d'images réser
 redistribuer moi-même. Rien ne part de votre téléphone. En coulisses : moteur ONNX Runtime 1.22, choisi parce que les
 versions plus récentes ajoutent une télémétrie vers Microsoft ; l'APK grossit d'environ 18 Mo.
 
+**Run du 20/10 04:30 — vos facteurs comparés à votre humeur estimée, sans aucune note.** Jusqu'ici, les Analyses ne
+comparaient votre sommeil, vos pas, votre écran ou vos réseaux sociaux qu'à vos **notes** de bien-être — et sans notes,
+elles restaient vides. Désormais, chaque jour avec au moins 3 lectures du visage au déverrouillage reçoit une **humeur
+estimée** (médiane de ses lectures), et Analyses → Analyse simple ajoute une section **« 🙂 Avec votre humeur estimée
+(visage) »** : ce qui va de pair, chez vous, avec une meilleure ou une moins bonne humeur estimée, avec les mêmes
+garde-fous que pour vos notes (week-end, jours qui se ressemblent, nombre de facteurs testés). Elle s'affiche **même
+sans aucune note** ; avant 14 jours estimés, elle dit « N jours sur 14 ». L'humeur estimée ne vient que de votre visage
+(et de vos notes si vous en donnez) : aucun facteur comparé ne sert à l'estimer (vérifié par un test), et ce que vous
+faites après la dernière lecture d'un jour (avant 20 h) ne compte pas pour ce jour-là. Aucun comportement jugé bon ou
+mauvais d'avance ; ce sont des hypothèses à observer, pas des causes.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -187,6 +198,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Facteurs comparés à votre humeur estimée (run 20/10 04:30)** : Analyses → « Avec votre humeur estimée (visage) »,
+  sans aucune note, dès 14 jours avec ≥ 3 lectures du visage.
 - **Humeur estimée par un modèle valence / éveil (run 20/10 02:30, votre consigne du soir, étape 2)** : HSEmotion sur
   le téléphone (16 Mo téléchargés une fois), éveil affiché, diagnostic « Modèle valence / éveil ».
 - **Humeur estimée robuste aux dérives lentes (run 20/10 00:30)** : le « modèle personnel » ne s'installe plus sur
@@ -224,7 +237,10 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (20/10 02:30)** — ✅ étape 2, modèle valence / éveil embarqué ; ensuite : votre diagnostic
+**Prochaines priorités (20/10 04:30)** — ✅ facteurs X comparés à l'humeur estimée (Y automatique) ; ensuite : votre
+diagnostic (déverrouillages + modèle) ; run idées 08:30 : licence d'EmoNet, modèles vocaux (étape 3) ; « Applis jamais
+en veille » (I123) ; habitudes (tags) et effets décalés aussi sur l'humeur estimée.
+*Priorités précédentes (20/10 02:30)* — ✅ étape 2, modèle valence / éveil embarqué ; ensuite : votre diagnostic
 (déverrouillages + modèle) ; la vérification visage ↔ notes lit aussi la valence du modèle ; run idées 08:30 : licence
 d'EmoNet et modèles à licence de poids explicite, modèles vocaux (étape 3) ; « Applis jamais en veille » (I123).
 *Priorités précédentes (20/10 00:30)* — ✅ dérives lentes (I121) corrigées dans la vérification et le modèle
@@ -257,6 +273,7 @@ du jour avec sa fourchette (derrière la porte).
 | 19/10 22:30 — [Humeur estimée dès la première lecture (consigne du 19/10 au soir, étape 1)](runs/2026-10-19-2230-humeur-des-la-1re-lecture.md) | 🔴🙂 | Consigne reportée (charte §0000000) ; `mood/faceMood.js` (a priori FACS → ligne de base personnelle → calibration facultative), fourchette + confiance ; carte « Humeur estimée » sur l'accueil + bloc dans la carte visage + « Tester maintenant » ; verrou « Rien n'est affiché » retiré ; diagnostic : modèle / confiance sans valeur ; 1 559 tests ; PR #224 |
 | 20/10 00:30 — [Humeur estimée robuste aux dérives lentes (I121 + étendu)](runs/2026-10-20-0030-humeur-derives-lentes.md) | 🔴🙂 | `mood/blockCv.js` (blocs ±7 j, n effectif) ; détrendage adaptatif du visage ; faux départs 12,5 % → 2,5 % ; modèle personnel sans lien 60 % → ≤ 5 % (porte exigée) ; diagnostic `a` / `drift` ; 1 573 tests ; PR #225 |
 | 20/10 02:30 — [Modèle valence / éveil embarqué (consigne du 19/10 au soir, étape 2)](runs/2026-10-20-0230-modele-valence-eveil.md) | 🔴🙂 | HSEmotion `enet_b0_8_va_mtl` (CCC V 0,59 / A 0,55) téléchargé par le téléphone, SHA-256 ; ONNX Runtime 1.22 (sans télémétrie) ; `FaceAffect` + vecteurs ; `faceMood` modèle `va` + éveil ; diagnostic v3 ; 111 JVM + 1 584 Vitest ; PR #226 |
+| 20/10 04:30 — [Facteurs comparés à l'humeur estimée (Y automatique)](runs/2026-10-20-0430-facteurs-humeur-estimee.md) | 🔴🙂 | `mood/faceMoodDays.js` : série quotidienne (≥ 3 lectures, médiane, ligne de base par jour), corrélations X ↔ humeur estimée (ordre temporel à la dernière lecture, week-end, n effectif, BH) ; section Analyses visible sans notes ; `face_burst` lu jusqu'à 10 000 ; 1 597 tests ; PR #227 |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---
