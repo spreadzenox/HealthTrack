@@ -125,7 +125,7 @@ describe('FaceSenseCard', () => {
     expect(await screen.findByText(/Bien-être estimé aujourd’hui : plutôt bonne, ≈ 3,6 \/ 5 \(entre 2,0 et 5,0\)/)).toBeInTheDocument()
     expect(screen.getByText(/Confiance faible : 1 lecture aujourd’hui/)).toBeInTheDocument()
     expect(screen.getByText(/estimation, pas un diagnostic/)).toBeInTheDocument()
-    expect(screen.getByText(/Humeur estimée : modèle général des expressions, confiance faible/)).toBeInTheDocument()
+    expect(screen.getByText(/Bien-être estimé : modèle général des expressions, confiance faible/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le diagnostic' }))
     await waitFor(() => expect(save).toHaveBeenCalled())
     const report = JSON.parse(save.mock.calls[0][0])
@@ -160,7 +160,7 @@ describe('FaceSenseCard', () => {
       render(<FaceSenseCard plugin={plugin} importBursts={vi.fn(async () => ({}))} loadHistory={loadHistory} loadEveningNote={async () => null} />)
       fireEvent.click(await screen.findByRole('button', { name: 'Tester maintenant' }))
       await vi.advanceTimersByTimeAsync(4500)
-      expect(await screen.findByText(/Test : visage lu\. Humeur de ce moment : moyenne, ≈ 2,4 \/ 5/)).toBeInTheDocument()
+      expect(await screen.findByText(/Test : visage lu\. Bien-être de ce moment : moyenne, ≈ 2,4 \/ 5/)).toBeInTheDocument()
       expect(plugin.test).toHaveBeenCalled()
     } finally {
       vi.useRealTimers()

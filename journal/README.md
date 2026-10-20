@@ -7,7 +7,25 @@
 > Semaine précédente : [`semaines/2026-S42.md`](semaines/2026-S42.md) (montre GT 6 Pro en direct, nettoyage,
 > performance, puis lancement de la Lecture du visage ; v98 → v168).
 
-**En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
+**🧭 Nouveau cadre depuis vos décisions produit du 20/10 au soir : faire de HealthTrack un produit vendable sur
+Google Play.** Tout est consigné dans [`PRODUIT.md`](PRODUIT.md) : décisions (bien-être, « local par défaut, IA
+optionnelle et clairement signalée », toutes les montres dont Huawei en direct ; porte d'entrée SII ; abonnement
+4,99 €/mois ou 29,99 €/an, « collecter est gratuit, comprendre est payant » ; variantes play / sideload ; relais
+Gemini), les **10 jalons** et leur état, un **premier inventaire des écrans**, et la liste **« Actions du
+propriétaire »** (micro-entreprise, compte développeur Play et ses 12 testeurs × 14 jours, projet Google Cloud et clé
+Gemini payante, validation juridique, budget pub, identité visuelle). Le bien-être automatique reste un pilier
+gratuit, mais n'est plus le seul chantier.
+
+**Run du 20/10 22:30 — premier pas du chantier produit.** ① `PRODUIT.md` créé (jalon 1). ② Jalon 2 commencé :
+**« humeur » devient « bien-être » dans tous les textes de l'app** — la carte de l'accueil s'appelle **« Bien-être
+estimé »**, les Analyses « Avec votre bien-être estimé (visage) », la carte « Lecture du visage » et le temps d'écran
+aussi. Rien ne change dans vos données ni dans les calculs. Un test automatique empêche désormais le retour du mot
+« humeur », de « 100 % privé » et de termes médicaux interdits (« diagnostiquer », « prédire une crise »…) dans le
+code de l'app. Ce changement publie la **v189** : c'est elle qui vous servira à **tester le nouveau bouton de mise à
+jour** depuis la v188 (voir ci-dessous). Prochain run de code : inventaire chiffré et propositions de nettoyage
+(masquer / fusionner / déplacer, navigation simplifiée), puis tokens de design.
+
+*Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
 montre (stress, VFC, cœur, sommeil) restent des **facteurs** que les Analyses comparent à votre humeur, jamais des
@@ -23,7 +41,7 @@ bloquée : ① sur le Galaxy A56, ouvrez dans Chrome ou Samsung Internet
 (**v188** ou plus récente, 33,6 Mo) ; ③ ouvrez le fichier téléchargé (notification ou
 « Téléchargements ») ; si Android le demande, autorisez **ce navigateur** à installer des applis ; ④ touchez
 **« Mettre à jour »**. Vos données sont gardées (même signature, installation par-dessus). Pour vérifier : Plus →
-Nouveautés, « Version installée ». ⑤ **À la version suivante** (v189, publiée par le prochain run de code), touchez « Mettre à jour (33,6 Mo) » dans le bandeau :
+Nouveautés, « Version installée ». ⑤ **À la version suivante** (v189, publiée par le run du 20/10 22:30), touchez « Mettre à jour (33,6 Mo) » dans le bandeau :
 vous devez voir la barre, les Mo et le temps restant, puis l'installateur. Si ça bloque encore, envoyez-moi une
 capture du bandeau : il dit maintenant pourquoi. (La Lecture du visage s'arrête à chaque mise à jour : touchez
 « Reprendre » dans la notification.)
@@ -384,6 +402,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 20/10 22:30 — [Chantier produit : PRODUIT.md + « bien-être » partout (jalons 1 et 2a)](runs/2026-10-20-2230-produit-cadre.md) | 🧭🙂 | Décisions du 20/10 au soir reportées (PRODUIT.md, charte §000000000, BACKLOG) ; libellés visibles « humeur » → « bien-être » ; test-garde `wording.test.js` ; 1 642 Vitest |
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
 | 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
 | 19/10 04:30 — [Visage : notification « Reprendre » (I88 ②)](runs/2026-10-19-0430-visage-reprendre.md) | 🔴🙂 | Règle `FaceResume` + tâche horaire + redémarrage / mise à jour ; relance dans `onResume` ; diagnostic `resume` ; PR #215 |
@@ -425,10 +444,27 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `IDEES.md` | Idées des runs « idées » (08 h / 20 h Paris), classées impact × faisabilité, avec sources et pistes |
 | `runs/AAAA-MM-JJ-HHMM-<slug>.md` | Un compte rendu par exécution (un fichier par run = pas de conflit Git) |
 | `semaines/AAAA-Sww.md` | Résumés des semaines passées |
+| `PRODUIT.md` | **Chantier produit (décisions du 20/10 au soir)** : décisions, 10 jalons et leur état, inventaire des écrans, « Actions du propriétaire » — à lire juste après ce résumé |
 | `BIEN-ETRE-AUTO.md` | État des lieux et plan du chantier « bien-être entièrement automatique » (consigne §00000), décisions Y / X, ce qu'il faut valider sur le téléphone |
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---
+
+## 000000000. Décisions produit du propriétaire du 20 octobre 2026 au soir — CADRE GÉNÉRAL (remplace §00000 / §0000000 comme cadre)
+
+Objectif : un **produit vendable sur Google Play**, compréhensible en 30 s, sans jamais casser ce qui marche.
+Détail complet, jalons, inventaire et actions du propriétaire : **[`PRODUIT.md`](PRODUIT.md)** (le prompt de la
+routine fait foi). Points clés pour chaque run :
+- **Ordre** : signalement en cours éventuel → jalons de `PRODUIT.md` dans l'ordre (2 nettoyage → 3 variantes
+  play / sideload → 4 onboarding + « aha » → 5 analyses avec délais → 6 Billing, paywalls, crédits, relais Gemini →
+  7 FODMAP + PDF → 8 Health Connect → 9 i18n → 10 fiche Play). Un run = une étape testable et mergeable.
+- **Textes** : « bien-être » (plus « humeur ») ; « local par défaut, IA optionnelle et clairement signalée » (jamais
+  « 100 % privé ») ; jamais « diagnostiquer », « prédire une crise », « traiter » → « comprendre vos tendances »,
+  « estimation, pas un diagnostic ». Garde-fou automatique : `app/src/data/wording.test.js`.
+- **Gratuit / payant** : collecter est gratuit, comprendre est payant ; **ne jamais bloquer une fonction locale**.
+- **Design** : pas de nouvelle identité tant que `journal/DESIGN.md` n'existe pas ; centraliser en tokens.
+- **Interdits** : créer des comptes, payer, déployer, publier sur le Play Store → « Actions du propriétaire ».
+- Le bien-être automatique (§0000000) et la montre (§000, maintenance A.1–A.3) restent valables, après les jalons.
 
 ## 00000000. Signalement du propriétaire du 20 octobre 2026 à 19:05 — mise à jour bloquée sur « Téléchargement… » — corrigé au run 20/10 20:30 (à confirmer sur l'A56)
 
@@ -503,7 +539,7 @@ ne répond pas. Tests : `connectorsLayout.test.js`, `Connectors.test.jsx` (Andro
 **Leçon** : une carte « censée être en tête » se vérifie dans l'état **par défaut** du propriétaire (non activée,
 montre connectée), pas seulement avec le faux plugin actif.
 
-## 00000. Consigne du propriétaire du 18 octobre 2026 au soir — PRIORITÉ UNIQUE (prime sur tout le reste)
+## 00000. Consigne du propriétaire du 18 octobre 2026 au soir — *remplacée comme cadre général par §000000000 le 20/10 au soir* (le bien-être automatique reste un pilier)
 
 Message du propriétaire : **« Ok à partir de maintenant concentration maximale sur la collecte entièrement automatique
 du bien-être »**. Objectif : que HealthTrack connaisse l'humeur et le bien-être du propriétaire, jour après jour et au

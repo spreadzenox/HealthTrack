@@ -55,7 +55,7 @@ export default function MoodEstimateCard({ load = defaultLoad }) {
   return (
     <section className="mood-estimate" aria-labelledby="mood-estimate-title">
       <div className="mood-estimate-head">
-        <h3 id="mood-estimate-title" className="mood-estimate-title">Humeur estimée</h3>
+        <h3 id="mood-estimate-title" className="mood-estimate-title">Bien-être estimé</h3>
         <span className={`mood-estimate-badge is-${est.confidence}`}>Confiance {est.confidence}</span>
       </div>
       <p className="mood-estimate-main">{lines[0]}</p>

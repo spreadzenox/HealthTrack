@@ -119,7 +119,7 @@ const fmt = (v) => v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximum
 export function FaceMoodBlock({ estimate }) {
   const [main, ...rest] = describeFaceMood(estimate)
   return (
-    <div className="face-mood" aria-label="Humeur estimée">
+    <div className="face-mood" aria-label="Bien-être estimé">
       <p className="weather-today"><strong>{main}</strong></p>
       {rest.map((line) => <p key={line} className="my-device-meta">{line}</p>)}
     </div>
@@ -210,7 +210,7 @@ export default function FaceSenseCard({
       const { history: h } = await refresh()
       const t = h?.testEstimate
       setMessage(t
-        ? `Test : visage lu. Humeur de ce moment : ${t.label}, ≈ ${fmt(t.note)} / 5 (entre ${fmt(t.low)} et ${fmt(t.high)}). Un test ne compte pas dans l’estimation du jour.`
+        ? `Test : visage lu. Bien-être de ce moment : ${t.label}, ≈ ${fmt(t.note)} / 5 (entre ${fmt(t.low)} et ${fmt(t.high)}). Un test ne compte pas dans l’estimation du jour.`
         : null)
     } finally {
       setBusy(false)
@@ -262,9 +262,9 @@ export default function FaceSenseCard({
 
       {(d.state === 'off' || d.state === 'unavailable') && (
         <p className="my-devices-intro">
-          Pour estimer votre humeur sans rien saisir : à chaque déverrouillage, la caméra frontale prend 3 images,
-          le téléphone en tire une dizaine de mesures d’expression puis les efface. Rien ne quitte le téléphone. Une
-          humeur estimée s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives, l’affinent.
+          Pour estimer votre bien-être sans rien saisir : à chaque déverrouillage, la caméra frontale prend 3 images,
+          le téléphone en tire une dizaine de mesures d’expression puis les efface. Rien ne quitte le téléphone. Un
+          bien-être estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives, l’affinent.
           Une estimation, jamais un diagnostic.
         </p>
       )}

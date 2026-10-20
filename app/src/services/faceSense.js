@@ -486,7 +486,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
     lines.push(`Batterie : ${r.battery.atStart} % au démarrage, ${r.battery.now} % maintenant (tout le téléphone)`)
   }
   if (r.history.stored != null) {
-    lines.push(`Historique : ${plural(r.history.stored, 'lecture rangée', 'lectures rangées')}, dont ${r.history.forMood} au déverrouillage avec un visage (comptent pour l’humeur)`)
+    lines.push(`Historique : ${plural(r.history.stored, 'lecture rangée', 'lectures rangées')}, dont ${r.history.forMood} au déverrouillage avec un visage (comptent pour le bien-être estimé)`)
   }
   if (r.perDay) {
     const d = r.perDay
@@ -499,7 +499,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
   if (r.retries.tried) lines.push(`2e essais (2 s après une lecture sans visage) : ${r.retries.tried}, visage lu ${r.retries.faces} fois`)
   if (r.estimate) {
     const e = r.estimate
-    lines.push(`Humeur estimée : modèle ${MOOD_MODELS[e.model] || e.model}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}${e.agreement ? `, deux modèles : ${e.agreement}` : ''}${e.lighting ? `, lumière ${LIGHTING_WORDS[e.lighting]}` : ''}`)
+    lines.push(`Bien-être estimé : modèle ${MOOD_MODELS[e.model] || e.model}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}${e.agreement ? `, deux modèles : ${e.agreement}` : ''}${e.lighting ? `, lumière ${LIGHTING_WORDS[e.lighting]}` : ''}`)
   }
   if (r.affect) {
     const a = r.affect
