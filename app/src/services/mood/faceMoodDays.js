@@ -5,7 +5,7 @@
  *
  * - Un jour compte s'il a au moins FACE_MOOD_MIN_READINGS lectures du déverrouillage avec un visage (une seule
  *   lecture est trop bruitée pour représenter une journée). Bien-être estimé du jour = médiane des estimations de ses
- *   lectures (mood/faceMood.js : modèle valence / éveil ou a priori, visage habituel, calibration facultative).
+ *   lectures, pondérée par leur précision (I127 : une lecture de biais ou floue compte moins) (mood/faceMood.js : modèle valence / éveil ou a priori, visage habituel, calibration facultative).
  * - Anti-circularité (D5) : la série n'est faite que d'entrées Y (rafales du visage, notes facultatives via la
  *   calibration) ; les facteurs restent ceux de VARIABLE_META, dont aucun n'est une entrée de l'estimateur
  *   (antiCircularity.test.js).
@@ -23,16 +23,10 @@ import { localDateKey, computeBasicCorrelations } from '../analysisEngine'
 import { computeTagEffects } from '../behaviorTags'
 import { computeLaggedEffects } from '../laggedEffects'
 import { moodFaceBursts } from '../faceBursts'
-import { estimateBurst, personalCalibration, personalNeutral } from './faceMood'
+import { estimateBurst, personalCalibration, personalNeutral, readingWeight, weightedMedian } from './faceMood'
 
 export const FACE_MOOD_MIN_READINGS = 3
 export const FACE_MOOD_MIN_DAYS = 14
-
-function median(values) {
-  const s = [...values].sort((a, b) => a - b)
-  const m = s.length >> 1
-  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2
-}
 
 /**
  * Bien-être estimé jour par jour : [{ date, note, readings, lastAt }], trié.
@@ -54,8 +48,9 @@ export function faceMoodDays(entries) {
   return days.map(([date, list]) => {
     const lastAt = list[list.length - 1].at
     const base = personalNeutral(bursts, lastAt)
-    const notes = list.map((b) => estimateBurst(b, { bursts, calibration, base }).note)
-    return { date, note: Math.round(median(notes) * 100) / 100, readings: list.length, lastAt }
+    const readings = list.map((b) => estimateBurst(b, { bursts, calibration, base }))
+    const note = weightedMedian(readings.map((r) => r.note), readings.map(readingWeight))
+    return { date, note: Math.round(note * 100) / 100, readings: list.length, lastAt }
   })
 }
 

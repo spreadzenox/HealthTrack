@@ -50,7 +50,8 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
     lectures « en désaccord » (si > 30 % : vérifier le recadrage 112 px sur de vraies images du téléphone).
   - [ ] Seuils d'accord (0,15 / 0,3 de valence) à recaler sur les écarts réels de l'A56 (diagnostic : répartition
     accord / partiel / désaccord sur 7 jours, sans valeur).
-  - [ ] I127 (7) pondérer les lectures du jour par leur qualité (la médiane par lecture et par jour existe déjà).
+  - [x] I127 (7) pondérer les lectures du jour par leur qualité — ✅ 20/10 16:30 (médiane pondérée 1 / demi-largeur², n effectif de Kish).
+  - [ ] I127b mesurer la luminance du visage dans la rafale native pour affiner le poids (lumière).
   - [ ] Essai XNNPACK si la latence A56 dépasse 150 ms / image.
 - [ ] ~~Étape 2 (plan initial)~~ : run idées → comparatif (HSEmotion `enet_b0_8_va_mtl` /
   `mbf_va_mtl`, EmoNet, DDAMFN, modèles AffectNet-VA récents ; précision CCC valence / éveil sur AffectNet, AFEW-VA ;
@@ -778,6 +779,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
 4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 16:30** : ✅ I127 lectures pondérées ; prochain run de code sans diagnostic → I117 préparation
+(dictée du soir, côté JS, dans l'attente de la ligne « Voix ») ou I127b luminance ; avec le diagnostic → I122 puis I117.
 **Mise à jour du 20/10 14:30** : ✅ habitudes / effets décalés sur l'humeur estimée ; prochain run de code sans
 diagnostic → **I127** (pondération des lectures par leur qualité) ; avec le diagnostic → I122 puis I117 selon `voice`.
 **Mise à jour du 20/10 12:30** : ✅ I124 sonde vocale livrée ; prochain run de code sans diagnostic → habitudes
