@@ -1,6 +1,6 @@
 # 2026-10-20 06:30 Paris (04:30 UTC) — Visage : cause de l'arrêt et « Applis jamais en veille » (I123)
 
-**Type** : 🔴🙂 bien-être automatique — point (c) du signalement du 19/10 15:05 (One UI)  ·  **PR** : voir ci-dessous
+**Type** : 🔴🙂 bien-être automatique — point (c) du signalement du 19/10 15:05 (One UI)  ·  **PR** : #228
 
 ## Pourquoi
 - Début de run : main à `3f40b4c` (#227) ; aucune PR « [Auto] » ouverte ; aucun diagnostic de l'A56 reçu
