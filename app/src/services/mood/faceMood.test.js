@@ -8,6 +8,7 @@ import {
   EXPRESSION_KEYS,
   FACE_PRIOR,
   arousalLabel,
+  weightedMedian,
 } from './faceMood'
 import { isEstimatorInput } from './estimatorInputs'
 
@@ -268,5 +269,38 @@ describe('faceMood — modèle valence / éveil embarqué (étape 2)', () => {
     expect(lines.some((l) => l.includes('Éveil à la dernière lecture : plutôt animé'))).toBe(true)
     expect(lines.some((l) => l.startsWith('Modèle valence / éveil embarqué (HSEmotion)'))).toBe(true)
     expect(lines.join(' ')).toMatch(/pas un diagnostic/)
+  })
+})
+
+describe('faceMood — lectures pondérées par leur qualité (I127)', () => {
+  it('weightedMedian : poids égaux = médiane ordinaire ; un gros poids l’emporte', () => {
+    expect(weightedMedian([1, 2, 3, 4], [1, 1, 1, 1])).toBe(2.5)
+    expect(weightedMedian([3, 1, 2], [0.2, 0.2, 0.2])).toBe(2)
+    expect(weightedMedian([1, 2, 3, 4], [0.1, 0.1, 1, 1])).toBe(3)
+    expect(weightedMedian([], [])).toBeNull()
+    expect(weightedMedian([1, null, 5], [1, 1, 0])).toBe(1)
+  })
+
+  it('les lectures nettes comptent plus que celles de biais ou floues', () => {
+    const good = [burst(at(0, 8), { valence: 0.6, arousal: 0 }), burst(at(0, 9), { valence: 0.6, arousal: 0 })]
+    const poorFrown = [8.5, 9.5].map((h) => burst(at(0, Math.floor(h), 30), { valence: -0.6, arousal: 0, yaw: 30 }, { valid: 1, frames: 3 }))
+    const sameFrown = [8.5, 9.5].map((h) => burst(at(0, Math.floor(h), 30), { valence: -0.6, arousal: 0 }))
+    const weighted = faceMoodEstimate([...good, ...poorFrown], { now: NOW })
+    const equal = faceMoodEstimate([...good, ...sameFrown], { now: NOW })
+    const goodOnly = faceMoodEstimate(good, { now: NOW })
+    expect(weighted.day.note).toBeGreaterThan(equal.day.note)
+    expect(weighted.day.note).toBeCloseTo(goodOnly.day.note, 1)
+    expect(weighted.day.poorReadings).toBe(2)
+    expect(equal.day.poorReadings).toBe(0)
+    expect(describeFaceMood(weighted).join(' ')).toMatch(/2 lectures peu nettes comptées moins/)
+    expect(describeFaceMood(equal).join(' ')).not.toMatch(/peu nette/)
+  })
+
+  it('des lectures peu nettes resserrent moins la fourchette que des lectures nettes', () => {
+    const r = noise(7)
+    const vals = Array.from({ length: 6 }, () => 0.3 + 0.05 * r())
+    const sharp = faceMoodEstimate(vals.map((v, i) => burst(at(0, 8, i * 5), { valence: v, arousal: 0 })), { now: NOW })
+    const mixed = faceMoodEstimate(vals.map((v, i) => burst(at(0, 8, i * 5), { valence: v, arousal: 0, yaw: i % 2 ? 30 : 4 }, { valid: i % 2 ? 1 : 3, frames: 3 })), { now: NOW })
+    expect(mixed.day.high - mixed.day.low).toBeGreaterThan(sharp.day.high - sharp.day.low)
   })
 })

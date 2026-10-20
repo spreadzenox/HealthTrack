@@ -57,6 +57,21 @@ describe('faceMoodDays — le bien-être estimé jour par jour', () => {
     expect(d.note).toBeGreaterThan(2.5)
   })
 
+  it('pondère les lectures du jour par leur qualité (I127)', () => {
+    const poor = { valid: 1 }
+    const [d] = faceMoodDays([
+      burst(day(0, 8), { valence: 0.5 }), burst(day(0, 9), { valence: 0.5 }),
+      burst(day(0, 10), { valence: -0.5, yaw: 30 }, poor), burst(day(0, 11), { valence: -0.5, yaw: 30 }, poor),
+    ])
+    // Mêmes valences, toutes nettes : médiane ordinaire, à mi-chemin.
+    const [equal] = faceMoodDays([
+      burst(day(0, 8), { valence: 0.5 }), burst(day(0, 9), { valence: 0.5 }),
+      burst(day(0, 10), { valence: -0.5 }), burst(day(0, 11), { valence: -0.5 }),
+    ])
+    expect(d.note).toBeGreaterThan(equal.note + 0.5)
+    expect(d.note).toBeGreaterThan(3)
+  })
+
   it('reste rapide sur des mois de lectures (≈ 50 par jour)', () => {
     const rnd = noise(3)
     const entries = []

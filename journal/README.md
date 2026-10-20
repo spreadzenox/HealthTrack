@@ -213,6 +213,12 @@ comptent aussi. Le **stress** ressenti fait partie de l'humeur : il n'est jamais
 comparée à elle-même). Aucun sens présupposé, aucune « piste » : un lien est une hypothèse à observer. Les liens
 incertains sont repliés. Rien à faire de votre côté : ça apparaît après 14 jours avec au moins 3 lectures du visage.
 
+**Run du 20/10 16:30 — les lectures nettes comptent plus.** Le bien-être estimé du jour ne met plus toutes les
+lectures du visage sur le même plan : une lecture prise de biais, floue, ou où les deux modèles hésitent compte
+**moins** qu'une lecture bien cadrée (aucune n'est jetée). La carte « Humeur estimée » le dit (« 2 lectures peu nettes
+comptées moins ») et sa fourchette se resserre moins vite dans ce cas : la confiance reste honnête. Même règle pour
+l'humeur estimée jour par jour des Analyses. Rien à faire de votre côté.
+
 **Nouveau (12:30, voix)** : dans le Diagnostic, lisez la ligne « Voix … » (ou envoyez-moi le fichier, qui la
 contient) : elle décide comment sera faite la dictée du soir.
 
@@ -360,6 +366,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 10:30 — [Duo de modèles du visage (I126)](runs/2026-10-20-1030-duo-modeles-visage.md) | 🔴🙂 | `mbf_va_mtl` (8 Mo, SHA-256) téléchargé après le B0, même pour qui l'a déjà ; `FaceAffect.Spec` (112 px, normalisation 0,5) + vecteurs Python ; valence = moyenne, `affectGap` → fourchette et « deux modèles d'accord » ; diagnostic « Second modèle » ; 114 JVM + 1 609 Vitest |
 | 20/10 12:30 — [Sonde vocale dans le diagnostic (I124)](runs/2026-10-20-1230-sonde-vocale.md) | 🔴🙂 | `VoiceProbePlugin` (disponibilité, sur l'appareil, moteurs, langues fr-FR API 33) sans micro ; `voiceProbe.js` (verdict) ; diagnostic v5 `voice`, sonde à l'ouverture du Diagnostic ; 1 616 Vitest |
 | 20/10 14:30 — [Habitudes et effets décalés sur l'humeur estimée](runs/2026-10-20-1430-habitudes-humeur-estimee.md) | 🔴🙂 | `computeTagEffects(…, { outcomeByDay })`, `computeLaggedEffects` sur l'humeur estimée sans piste, bloc dans la section visage ; stress (Y) exclu ; 1 621 Vitest |
+| 20/10 16:30 — [Lectures du jour pondérées par leur qualité (I127)](runs/2026-10-20-1630-lectures-ponderees.md) | 🔴🙂 | `weightedMedian` + poids 1 / demi-largeur² (images valides, lacet, duo), n effectif de Kish dans la fourchette, « N lectures peu nettes comptées moins » ; même pondération dans `faceMoodDays` ; 1 625 Vitest |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---

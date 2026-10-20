@@ -75,6 +75,34 @@ function median(values) {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2
 }
 
+/**
+ * Médiane pondérée (I127) : la valeur où le poids cumulé atteint la moitié du total ; à égalité pile, moyenne des deux
+ * voisines. Poids tous égaux → médiane ordinaire.
+ */
+export function weightedMedian(values, weights) {
+  const pairs = values.map((v, i) => [v, weights[i]]).filter(([v, w]) => isNum(v) && isNum(w) && w > 0)
+  if (!pairs.length) return null
+  pairs.sort((a, b) => a[0] - b[0])
+  const half = pairs.reduce((s, [, w]) => s + w, 0) / 2
+  const eps = half * 1e-9
+  let cum = 0
+  for (let i = 0; i < pairs.length; i++) {
+    cum += pairs[i][1]
+    if (Math.abs(cum - half) <= eps && i + 1 < pairs.length) return (pairs[i][0] + pairs[i + 1][0]) / 2
+    if (cum > half) return pairs[i][0]
+  }
+  return pairs[pairs.length - 1][0]
+}
+
+/**
+ * Poids d'une lecture dans son jour (I127) : l'inverse de sa variance (1 / demi-largeur²). Une lecture de biais, ou
+ * avec peu d'images valides, ou où les deux modèles divergent, compte moins — sans jamais être jetée.
+ */
+export const readingWeight = (r) => 1 / r.halfWidth ** 2
+
+/** Une lecture « peu nette » : des images rejetées ou un visage de biais (mêmes critères que la fourchette). */
+export const isPoorReading = (b) => burstQuality(b) < 1 || Math.abs(b.payload.values.yaw ?? 0) > MAX_YAW_GOOD
+
 /** Valence a priori dans [−1, 1] d'un jeu d'indices, autour d'un visage neutre donné. */
 export function priorValence(values, neutral = FACE_PRIOR.neutral) {
   let t = 0
@@ -220,7 +248,7 @@ export function estimateBurst(burst, { bursts = [], calibration = null, base: gi
  * @param {{ now?: Date }} [opts]
  * @returns {null | {
  *   moment: { at, note, low, high, label, arousalLabel: string|null, today: boolean },
- *   day: null | { date, note, low, high, label, readings, quality, framing: number|null, spread: number|null,
+ *   day: null | { date, note, low, high, label, readings, poorReadings, quality, framing: number|null, spread: number|null,
  *     arousal: number|null, arousalLabel: string|null },
  *   confidence: 'faible'|'moyenne'|'bonne', model: 'prior'|'va'|'personal', baselineDays: number,
  *   calibrationDays: number, signals: string[],
@@ -243,8 +271,11 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
   if (todays.length) {
     const readings = todays.map((b) => estimateBurst(b, ctx))
     const notes = readings.map((r) => r.note)
-    const note = median(notes)
+    const weights = readings.map(readingWeight)
+    const note = weightedMedian(notes, weights)
     const n = notes.length
+    // Nombre effectif de lectures (Kish) : des lectures peu nettes resserrent moins la fourchette.
+    const nEff = weights.reduce((s, w) => s + w, 0) ** 2 / weights.reduce((s, w) => s + w * w, 0)
     const mean = notes.reduce((s, v) => s + v, 0) / n
     const spread = n > 1 ? Math.sqrt(notes.reduce((s, v) => s + (v - mean) ** 2, 0) / (n - 1)) : null
     const quality = todays.reduce((s, b) => s + burstQuality(b), 0) / n
@@ -255,7 +286,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     const penalty = (1 + 0.5 * (1 - quality)) * (framing != null && framing > MAX_YAW_GOOD ? 1.15 : 1)
     // Le désaccord du duo n'est pas divisé par n : il tient aux modèles, il ne s'efface pas en relisant.
     gap = median(readings.map((r) => r.gap))
-    halfWidth = Math.sqrt(modelSd ** 2 + noise ** 2 / n + gapSd(gap) ** 2) * penalty
+    halfWidth = Math.sqrt(modelSd ** 2 + noise ** 2 / nEff + gapSd(gap) ** 2) * penalty
     day = {
       date: today,
       note: round1(note),
@@ -263,6 +294,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
       high: round1(clampNote(note + halfWidth)),
       label: moodLabel(note),
       readings: n,
+      poorReadings: todays.filter(isPoorReading).length,
       quality: Math.round(quality * 100) / 100,
       framing: framing == null ? null : Math.round(framing),
       spread: spread == null ? null : round1(spread),
@@ -317,6 +349,9 @@ export function describeFaceMood(est) {
   const parts = []
   if (est.day) {
     parts.push(`${est.day.readings} ${est.day.readings > 1 ? 'lectures' : 'lecture'} aujourd’hui`)
+    if (est.day.poorReadings && est.day.readings > 1) {
+      parts.push(`${est.day.poorReadings} ${est.day.poorReadings > 1 ? 'lectures peu nettes comptées' : 'lecture peu nette comptée'} moins`)
+    }
     if (est.day.framing != null) parts.push(est.day.framing <= MAX_YAW_GOOD ? 'visage bien cadré' : 'visage souvent de biais')
     if (est.day.spread != null) parts.push(est.day.spread <= 0.8 ? 'lectures concordantes' : 'lectures dispersées')
   } else {
