@@ -1,6 +1,6 @@
 # 2026-10-20 14:30 Paris (12:30 UTC) — Habitudes et effets décalés sur l'humeur estimée
 
-**Type** : 🔴🙂 code (consigne du 18/10 au soir, point 6 « science personnelle » sur la Y automatique)  ·  **PR** : voir ci-dessous
+**Type** : 🔴🙂 code (consigne du 18/10 au soir, point 6 « science personnelle » sur la Y automatique)  ·  **PR** : #232
 
 ## Pourquoi
 - Main à `803be26` (#231), aucune PR « [Auto] » ouverte, aucun diagnostic de l'A56 dans `journal/diagnostics/`
