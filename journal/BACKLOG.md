@@ -51,7 +51,16 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   - [ ] Seuils d'accord (0,15 / 0,3 de valence) à recaler sur les écarts réels de l'A56 (diagnostic : répartition
     accord / partiel / désaccord sur 7 jours, sans valeur).
   - [x] I127 (7) pondérer les lectures du jour par leur qualité — ✅ 20/10 16:30 (médiane pondérée 1 / demi-largeur², n effectif de Kish).
-  - [ ] I127b mesurer la luminance du visage dans la rafale native pour affiner le poids (lumière).
+  - [x] I127b mesurer la luminance du visage dans la rafale native pour affiner le poids (lumière). — ✅ 20/10 18:30 :
+    `values.light` (médiane de la luminance Rec. 601 du recadrage 256 px des images valides) ; `lightPenalty` ×1,15
+    hors [0,25 ; 0,8] (le natif rejette < 0,15 et > 0,9), « peu nette », `day.lighting`, phrase « souvent dans la
+    pénombre » / « lumière souvent trop vive », diagnostic `estimate.lighting`. `FACE_QUALITY_KEYS` (yaw, light,
+    affectGap, affectFrames, affectModels) exclus des indices de `gateDays` : la lumière est du contexte, pas de
+    l'émotion (anti-circularité).
+    - [ ] Recaler 0,25 / 0,8 sur la répartition réelle de l'A56 (luminance du recadrage, intérieur le soir) ; si la
+      plupart des lectures du soir tombent sous 0,25, abaisser le seuil plutôt que pénaliser toute la soirée.
+    - [ ] Vérifier qu'aucune estimation du soir n'est systématiquement décalée par la pénombre (valence moyenne
+      selon la lumière, à lire sur 2 semaines de vraies lectures, sans afficher de valeur).
   - [ ] Essai XNNPACK si la latence A56 dépasse 150 ms / image.
 - [ ] ~~Étape 2 (plan initial)~~ : run idées → comparatif (HSEmotion `enet_b0_8_va_mtl` /
   `mbf_va_mtl`, EmoNet, DDAMFN, modèles AffectNet-VA récents ; précision CCC valence / éveil sur AffectNet, AFEW-VA ;
@@ -779,6 +788,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
 4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 18:30** : ✅ I127b lumière du visage ; prochain run de code sans diagnostic → I117 préparation
+(dictée du soir côté JS) ou I125 « Rien reconnu — me le signaler ? » ; avec le diagnostic → I122 puis I117.
 **Mise à jour du 20/10 16:30** : ✅ I127 lectures pondérées ; prochain run de code sans diagnostic → I117 préparation
 (dictée du soir, côté JS, dans l'attente de la ligne « Voix ») ou I127b luminance ; avec le diagnostic → I122 puis I117.
 **Mise à jour du 20/10 14:30** : ✅ habitudes / effets décalés sur l'humeur estimée ; prochain run de code sans

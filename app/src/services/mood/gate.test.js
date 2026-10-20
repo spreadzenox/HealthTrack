@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { describeGate, detrendFace, evaluateGate, faceDrift, faceIndexLoo, gateDays, jackknifeCorrelation, GATE_MIN_DAYS } from './gate'
+import { describeGate, detrendFace, FACE_QUALITY_KEYS, evaluateGate, faceDrift, faceIndexLoo, gateDays, jackknifeCorrelation, GATE_MIN_DAYS } from './gate'
 
 function rng(seed) {
   let a = seed >>> 0
@@ -63,6 +63,16 @@ describe('gateDays', () => {
       { type: 'steps', at: at(5, 10), payload: { count: 9000 } },
     ])
     expect(days).toEqual([{ date: '2026-01-05', note: 3, face: { smile: 0.3, brow: 1 } }])
+  })
+
+  it('laisse de côté les mesures de qualité de la lecture (lumière, cadrage, accord du duo) : pas des expressions', () => {
+    // La lumière du visage suit l'endroit et l'heure (dehors, bureau, soir) : du contexte, pas de l'émotion (I127b).
+    const days = gateDays([
+      note(5, 21, 4),
+      burst(5, 9, { smile: 0.3, valence: 0.2, light: 0.5, yaw: 8, affectGap: 0.1, affectFrames: 3, affectModels: 2 }),
+    ])
+    expect(days[0].face).toEqual({ smile: 0.3, valence: 0.2 })
+    for (const k of FACE_QUALITY_KEYS) expect(days[0].face).not.toHaveProperty(k)
   })
 })
 

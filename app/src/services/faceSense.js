@@ -397,6 +397,8 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
         calibrationDays: history.estimate.calibrationDays,
         // Accord des deux modèles du visage (I126) : un mot, jamais l'écart ni la valeur.
         agreement: history.estimate.duo?.agreement ?? null,
+        // Lumière du visage du jour (I127b) : « correcte », « pénombre » ou « vive » ; null pour les anciennes lectures.
+        lighting: history.estimate.day?.lighting ?? null,
       }
       : null,
     // Note du soir d'un geste (I113), vérité terrain de la porte : réglages et compteurs, jamais une note.
@@ -444,6 +446,7 @@ const RESUME_TRIGGERS = { periodic: 'vérification horaire', boot: 'après un re
 
 const s0 = (status) => status || {}
 const MOOD_MODELS = { personal: 'personnel (vos notes)', va: 'valence / éveil (HSEmotion)', prior: 'général des expressions' }
+const LIGHTING_WORDS = { correcte: 'correcte', 'pénombre': 'souvent dans la pénombre', vive: 'souvent trop vive' }
 
 /** Lignes lisibles du diagnostic (carte). */
 export function faceDiagnosticLines(status, { history = null, lastImport = null, eveningNote = null, voice = null } = {}) {
@@ -496,7 +499,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
   if (r.retries.tried) lines.push(`2e essais (2 s après une lecture sans visage) : ${r.retries.tried}, visage lu ${r.retries.faces} fois`)
   if (r.estimate) {
     const e = r.estimate
-    lines.push(`Humeur estimée : modèle ${MOOD_MODELS[e.model] || e.model}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}${e.agreement ? `, deux modèles : ${e.agreement}` : ''}`)
+    lines.push(`Humeur estimée : modèle ${MOOD_MODELS[e.model] || e.model}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}${e.agreement ? `, deux modèles : ${e.agreement}` : ''}${e.lighting ? `, lumière ${LIGHTING_WORDS[e.lighting]}` : ''}`)
   }
   if (r.affect) {
     const a = r.affect

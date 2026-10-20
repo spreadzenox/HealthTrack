@@ -127,6 +127,13 @@ public class FacePipelineTest {
         Map<String, Double> one = FaceIndices.fromBlendshapes(f.blendshapes(), b.values.get("yaw"));
         assertEquals(one.get("smile"), b.values.get("smile"), 1e-9);
         assertTrue(b.values.get("eyeOpen") > 0.5);
+        // Lumière des seules images valides (l'image noire rejetée n'y entre pas), dans les limites acceptées.
+        double light = b.values.get("light");
+        assertTrue("lumière " + light, light >= FaceIndices.MIN_LUMINANCE && light <= FaceIndices.MAX_LUMINANCE);
+        // Une seule image : la lumière de la rafale est celle de l'image (même recadrage par le détecteur).
+        FaceIndices.Burst one1 = p.burst(Arrays.asList(f.rgb), f.width, f.height, null);
+        p.reset();
+        assertEquals(p.analyze(f.rgb, f.width, f.height).luminance, one1.values.get("light"), 1e-9);
     }
 
     @Test

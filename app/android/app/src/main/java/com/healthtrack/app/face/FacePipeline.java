@@ -9,7 +9,9 @@ import java.util.Map;
  * maillage → qualité → 146 points → blendshapes → indices, puis, si le modèle valence / éveil est présent
  * ({@link FaceAffect}, étape 2 de la consigne du 19/10 au soir), valence et éveil de l'image valide. Avec le second
  * modèle (MobileFaceNet, duo I126), l'image a la moyenne des deux et leur écart de valence, qui entre dans la
- * confiance de l'humeur estimée (« accord entre signaux »). Les modèles sont
+ * confiance de l'humeur estimée (« accord entre signaux »). La lumière du visage (luminance moyenne du recadrage,
+ * I127b) est gardée pour peser la lecture : une pénombre ou un contre-jour proches des limites la font compter moins,
+ * sans jamais entrer dans l'humeur elle-même. Les modèles sont
  * derrière {@link Model} :
  * LiteRT sur le téléphone (étape suivante), sorties figées dans les tests JVM. Le pipeline ne garde que la ROI
  * de l'image précédente ; aucune image, aucun point n'est conservé ni rendu à l'appelant.
@@ -31,6 +33,8 @@ public final class FacePipeline {
         public final double[] affect;
         /** |valence B0 − valence MobileFaceNet| quand les deux modèles ont répondu, sinon NaN. */
         public final double affectGap;
+        /** Luminance moyenne du recadrage du visage dans [0, 1] (I127b), NaN si aucun visage n'a été recadré. */
+        public final double luminance;
 
         Frame(Map<String, Double> indices, float[] blendshapes, String rejected, double facePx) {
             this(indices, blendshapes, rejected, facePx, null);
@@ -42,7 +46,13 @@ public final class FacePipeline {
 
         Frame(Map<String, Double> indices, float[] blendshapes, String rejected, double facePx, double[] affect,
               double affectGap) {
+            this(indices, blendshapes, rejected, facePx, affect, affectGap, Double.NaN);
+        }
+
+        Frame(Map<String, Double> indices, float[] blendshapes, String rejected, double facePx, double[] affect,
+              double affectGap, double luminance) {
             this.affectGap = affectGap;
+            this.luminance = luminance;
             this.indices = indices;
             this.blendshapes = blendshapes;
             this.rejected = rejected;
@@ -116,22 +126,23 @@ public final class FacePipeline {
         double[] pts = FaceGeometry.toImage(out[0], roi);
         double facePx = FaceGeometry.faceSize(pts);
         double yaw = FaceGeometry.yawDegrees(pts);
-        String rejected = FaceIndices.rejectBeforeBlendshapes(presence, facePx, yaw, FaceIndices.luminance(crop));
+        double light = FaceIndices.luminance(crop);
+        String rejected = FaceIndices.rejectBeforeBlendshapes(presence, facePx, yaw, light);
         previous = presence >= FaceIndices.MIN_PRESENCE ? FaceGeometry.roiFromPoints(pts) : null;
         if (rejected != null) return new Frame(null, null, rejected, facePx);
         float[] bs = blendshapes.run(FaceGeometry.blendshapeInput(pts))[0];
         rejected = FaceIndices.rejectAfterBlendshapes(bs);
         if (rejected != null) return new Frame(null, null, rejected, facePx);
         Map<String, Double> idx = FaceIndices.fromBlendshapes(bs, yaw);
-        if (!affectEnabled()) return new Frame(idx, bs, null, facePx);
+        if (!affectEnabled()) return new Frame(idx, bs, null, facePx, null, Double.NaN, light);
         FaceGeometry.Roi faceRoi = FaceAffect.roi(pts);
         double[] a = affect(affect, FaceAffect.B0, "", rgb, width, height, faceRoi);
         double[] b = affect(affect2, FaceAffect.MBF, "mbf:", rgb, width, height, faceRoi);
         if (a != null && b != null) {
             return new Frame(idx, bs, null, facePx, new double[] {(a[0] + b[0]) / 2, (a[1] + b[1]) / 2},
-                Math.abs(a[0] - b[0]));
+                Math.abs(a[0] - b[0]), light);
         }
-        return new Frame(idx, bs, null, facePx, a != null ? a : b);
+        return new Frame(idx, bs, null, facePx, a != null ? a : b, Double.NaN, light);
     }
 
     /** Valence et éveil d'une image valide par un modèle ; un échec du modèle ne fait jamais perdre la lecture. */
@@ -156,6 +167,7 @@ public final class FacePipeline {
         List<float[]> coefficients = new ArrayList<>();
         List<double[]> affects = new ArrayList<>();
         List<Double> gaps = new ArrayList<>();
+        List<Double> lights = new ArrayList<>();
         for (int[] rgb : images) {
             Frame f = analyze(rgb, width, height);
             if (f.rejected != null) {
@@ -166,6 +178,7 @@ public final class FacePipeline {
             coefficients.add(f.blendshapes);
             if (f.affect != null) affects.add(f.affect);
             if (!Double.isNaN(f.affectGap)) gaps.add(f.affectGap);
+            if (!Double.isNaN(f.luminance)) lights.add(f.luminance);
         }
         FaceIndices.Burst b = FaceIndices.burst(indices, coefficients, images.size());
         if (b != null && !affects.isEmpty()) {
@@ -184,6 +197,12 @@ public final class FacePipeline {
             // Désaccord du duo : médiane des écarts de valence image par image (I126), lu dans la confiance.
             b.values.put("affectGap", FaceIndices.median(g));
             b.values.put("affectModels", 2.0);
+        }
+        if (b != null && !lights.isEmpty()) {
+            double[] l = new double[lights.size()];
+            for (int i = 0; i < l.length; i++) l[i] = lights.get(i);
+            // Lumière des images valides (I127b) : qualité de la lecture, lue dans son poids, jamais dans l'humeur.
+            b.values.put("light", FaceIndices.median(l));
         }
         return b;
     }

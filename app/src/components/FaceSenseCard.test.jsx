@@ -129,7 +129,7 @@ describe('FaceSenseCard', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le diagnostic' }))
     await waitFor(() => expect(save).toHaveBeenCalled())
     const report = JSON.parse(save.mock.calls[0][0])
-    expect(report.estimate).toEqual({ model: 'prior', confidence: 'faible', readingsToday: 1, baselineDays: 1, calibrationDays: 0, agreement: null })
+    expect(report.estimate).toEqual({ model: 'prior', confidence: 'faible', readingsToday: 1, baselineDays: 1, calibrationDays: 0, agreement: null, lighting: null })
     expect(save.mock.calls[0][0]).not.toMatch(/3\.6|plutôt bonne/)
   })
 
