@@ -9,6 +9,94 @@
 
 ---
 
+## Run du 20/10/2026 08:30 (Paris) — quel modèle valence / éveil, pour le visage et pour la voix ?
+
+Question du jour, côté utilisateur (consignes du 18/10 et du 19/10 au soir) : *« l'humeur que l'app m'affiche dès la
+première lecture vient-elle du meilleur modèle possible sur mon téléphone, et quand la voix s'y ajoutera-t-elle ? »*
+Démarrage : signalement du 19/10 15:05 **corrigé et fusionné** (#221 pour (a) et (b), #228 pour (c)) ; main à
+`81f7ce3` (#228) ; aucune PR « [Auto] » ouverte ; aucun diagnostic de l'A56 dans `journal/diagnostics/`. Méthode :
+lecture des sources primaires (dépôts, fiches de modèles, article HSEmotion ABAW-6), **téléchargement des fichiers
+ONNX officiels et mesure** dans le conteneur (onnxruntime CPU, 1 fil).
+
+### Ce qu'on apprend (faits)
+
+- **HSEmotion publie trois modèles valence / éveil en ONNX officiel, pas un seul** [V `git ls-tree` du dépôt
+  `sb-ai-lab/EmotiEffLib`, 20/10] : `enet_b0_8_va_mtl.onnx` (16,0 Mo, 224 px — celui de l'app, empreinte `c43e056a…`
+  identique), **`mbf_va_mtl.onnx`** (MobileFaceNet, **8,3 Mo, entrée 112 px**, SHA-256 `0323ace5…a4828c`) et
+  `mobilevit_va_mtl.onnx` (39,4 Mo, 224 px, `93a2bee1…01b0c`). Même sortie (10 valeurs : 8 émotions + V + A),
+  même dépôt Apache-2.0, même origine AffectNet. Pas de MT-DDAMFN publié en ONNX dans le dépôt.
+- **Précision publiée** [V arXiv 2403.11590, tab. 1, 2 et 5] :
+
+  | Modèle | AffectNet val. CCC V / A | Aff-Wild2 (vidéo réelle, sans réentraînement) CCC V / A | + lissage temporel | Taille | Mesuré ici (x86, 1 fil) |
+  |---|---|---|---|---|---|
+  | MT-EmotiEffNet-B0 (actuel) | 0,594 / 0,549 | 0,404 / 0,248 | 0,490 / 0,604 * | 16 Mo | 20 ms |
+  | MT-EmotiMobileFaceNet | 0,577 / 0,547 | **0,413 / 0,266** | 0,483 / 0,610 * | **8 Mo** | 22 ms |
+  | MT-EmotiMobileViT | 0,599 / 0,565 | 0,403 / 0,244 | 0,493 / 0,612 * | 39 Mo | 73 ms |
+  | MT-DDAMFN (non publié en ONNX) | **0,729 / 0,643** | 0,412 / 0,230 | 0,519 / 0,616 * | — | — |
+
+  \* tableau 2 (modèle + lissage + régression entraînée sur Aff-Wild2) ; tableau 5 = modèle brut, la colonne qui
+  ressemble le plus à notre usage. **Leçon** : l'avance de DDAMFN sur AffectNet (0,73) **disparaît** sur des vidéos
+  réelles (0,41 comme les autres) — les quatre se valent hors de leur base d'apprentissage ; le **lissage temporel**
+  (moyenner plusieurs images) rapporte plus (+0,05 à +0,09) que changer de modèle.
+- **EmoNet** [V README `face-analysis/emonet`, 20/10] : CCC 0,82 / 0,75 (AffectNet « nettoyé », 8 classes — jeu de
+  test propre aux auteurs, non comparable aux chiffres ci-dessus) ; **licence CC BY-NC-ND 4.0 confirmée** ; PyTorch
+  seulement → l'exécuter sur Android exigerait une conversion (œuvre dérivée interdite). **Définitivement écarté.**
+- **Validité intra-personne** [V MoodCam, arXiv 2412.12625] : 25 personnes, 15 995 interactions avec le téléphone,
+  4 semaines → AUC 0,58–0,64 (valence), 0,60–0,63 (éveil) pour l'humeur auto-déclarée. Aucune étude 2026 plus forte
+  trouvée. Le plafond vient de la tâche (visage au repos devant un écran), pas du modèle : choisir un modèle plus
+  lourd n'y changera presque rien ; **la moyenne de nombreuses lectures et la ligne de base personnelle, si**.
+- **Voix — aucun modèle valence / éveil à la fois embarquable et sous licence claire** [V fiches HF, 20/10] :
+  - audEERING `wav2vec2-large-robust-12-ft-emotion-msp-dim` (≈ 300 M param.) : CC BY-NC-SA 4.0, « recherche
+    uniquement », licence commerciale payante ;
+  - audEERING **Wav2Small** (72 K param., ≈ 120 Ko ONNX quantifié d'après l'article arXiv 2408.13920) et son élève
+    MobileNetV4 (3,1 M) : **CC BY-NC-SA 4.0, recherche uniquement** — idéal techniquement, interdit de licence ;
+  - `3loi/SER-Odyssey-Baseline-WavLM-Multi-Attributes` : **MIT**, valence / éveil / dominance, CCC test 0,58 / 0,41
+    (valence / éveil, MSP-Podcast) mais WavLM-large ≈ 316 M param. (≈ 1,2 Go en float32, ≈ 320 Mo en int8 [H]) :
+    beaucoup trop lourd pour un téléchargement « quelques dizaines de Mo » et pour tourner plusieurs fois par jour ;
+  - emotion2vec+ (90 M–300 M) : licence non trouvée ; SenseVoice-Small : « model-license » maison, pas de français
+    annoncé, émotions en classes seulement ;
+  - l'article MSP-Podcast (arXiv 2509.09791, sept. 2025) dit que les enregistrements viennent de sources dont la
+    licence « permet la distribution » ; la licence d'accès au corpus lui-même reste à lire [H].
+  → La conclusion du 19/10 (I117 : **le texte avant le son**) est renforcée par la licence, pas seulement par la
+  précision.
+
+### Idées
+
+- **I126 (16) — Duo de modèles du visage : B0 + MobileFaceNet, et leur désaccord dans la confiance.**
+  Besoin : une humeur plus stable et une confiance honnête (« accord entre signaux » demandé par la consigne du 19/10
+  au soir). Ajouter `mbf_va_mtl.onnx` (8 Mo, même source, même téléchargement vérifié, empreinte ci-dessus) ; chaque
+  image passe dans les deux ; valence = moyenne ; **|V_B0 − V_MBF|** moyen de la lecture entre dans la confiance (fort
+  désaccord → « lectures discordantes », fourchette élargie). MobileFaceNet a la meilleure CCC sur Aff-Wild2 et lit un
+  visage de 112 px, moins sensible à la basse résolution de nos images. Coût : +20 ms par image (mesuré x86, à revoir
+  sur l'A56), +8 Mo une fois. Test : vecteur d'entrée 112 px (même recadrage aligné, redimensionné), équivalence
+  Java ↔ Python sur une image synthétique, puis `faceMood` (moyenne, désaccord → confiance). Impact 4, faisabilité 4.
+  *Pourquoi pas MobileViT* : 2,4× plus lourd, 3,6× plus lent, aucun gain hors AffectNet.
+- **I127 (7) — Lisser avant de croire : déjà en grande partie en place.** Le gain le plus net du tableau est le
+  lissage temporel. Vérifié dans le code : chaque lecture prend la **médiane** des valences de ses images valides
+  (`FacePipeline.java:140`) et le jour la médiane de ses lectures (`mood/faceMoodDays.js`). Reste : pondérer les
+  lectures du jour par leur qualité (cadrage, lumière) — petit run JS, testable seul.
+- **I128 (10) — Voix : rester sur le texte ; sonder la prosodie seulement avec un modèle sous licence claire.**
+  Pas de modèle vocal valence / éveil dans l'APK tant qu'aucun n'est léger **et** sous licence permissive. Étape 3 de
+  la consigne du 19/10 = fusion **visage + phrase du soir** (déjà là, I119) puis **dictée** (I117, I124 d'abord).
+  Veille à reprendre : licence d'accès MSP-Podcast (si elle permet d'entraîner un petit modèle à nous à partir d'un
+  modèle MIT comme professeur — recette Wav2Small, dont l'article est sous CC BY-SA), modèles 2026 « small » sous
+  Apache / MIT.
+
+### Écartées (et pourquoi)
+- EmoNet (CC BY-NC-ND, conversion interdite) ; MobileViT (lourd, sans gain réel) ; MT-DDAMFN (non publié en ONNX,
+  avance limitée à AffectNet) ; audEERING / Wav2Small (licence recherche) ; WavLM MIT (316 M paramètres).
+
+### Sources (consultées le 20/10/2026)
+- Savchenko, *HSEmotion Team at the 6th ABAW Competition*, arXiv 2403.11590 (PDF, tableaux 1, 2, 5) [V].
+- Dépôt `sb-ai-lab/EmotiEffLib` (arborescence, LICENSE Apache-2.0, fichiers ONNX téléchargés, SHA-256 calculés) [V].
+- `face-analysis/emonet` README et LICENSE.txt [V].
+- Hugging Face : `audeering/wav2small` (CC BY-NC-SA 4.0), arXiv 2408.13920 (Wav2Small) ;
+  `3loi/SER-Odyssey-Baseline-WavLM-Multi-Attributes` (MIT) ; `FunAudioLLM/SenseVoiceSmall` [V] ;
+  `audeering/mobilenetv4-emotion` (page en 401, licence d'après un résultat de recherche [T]).
+- MoodCam, arXiv 2412.12625 [V résumé] ; MSP-Podcast, arXiv 2509.09791 [V résumé].
+
+---
+
 ## Run du 19/10/2026 20:30 (Paris) — la porte du visage face aux dérives lentes, lire le diagnostic de l'A56, voix et lexiques
 
 Question du jour, côté utilisateur (consigne du 18/10 au soir, priorité unique) : *« quand HealthTrack me dira enfin

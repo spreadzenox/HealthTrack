@@ -173,6 +173,17 @@ de One UI, qui agit **même quand la batterie est « sans restriction »**. Dans
 veille »** ouvre directement la liste de One UI : touchez « + » et cochez HealthTrack. Le bouton est aussi, sur un
 Samsung, dans le Diagnostic, et le diagnostic enregistré dit la cause du dernier arrêt.
 
+**Run « idées » du 20/10 08:30 — le meilleur modèle pour votre visage, et pourquoi pas encore la voix.** J'ai
+comparé, fichiers officiels en main, les modèles qui lisent l'humeur (valence) et l'éveil sur un visage. Sur des
+photos de bases de recherche, le plus lourd paraît bien meilleur ; **sur de vraies vidéos, tous se valent** — ce qui
+améliore vraiment l'estimation, c'est de **moyenner plusieurs images et plusieurs lectures**, ce que l'app fait déjà.
+D'où la prochaine étape : ajouter au modèle actuel un **second modèle officiel des mêmes auteurs, deux fois plus
+léger (8 Mo)**, et faire voter les deux : quand ils sont d'accord, la confiance monte ; quand ils divergent, la
+fourchette s'élargit. EmoNet, souvent cité, est **définitivement écarté** (licence qui interdit de l'adapter au
+téléphone). Pour **la voix** : aucun modèle du son de la voix n'est à la fois assez léger et sous une licence qui nous
+permette de l'utiliser (les meilleurs sont réservés à la recherche) ; la voix passera donc d'abord par **ce que vous
+dites** (la phrase du soir, puis la dictée). Rien de nouveau dans l'app ce matin.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -241,6 +252,8 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
   [`semaines/2026-S42.md`](semaines/2026-S42.md) ; aucun n'a changé.
 
 **Meilleures idées des runs « idées »** (détail, sources et notes dans [`IDEES.md`](IDEES.md))
+- **Deux modèles du visage qui votent** (I126, 20/10 08:30) : hors des bases de recherche, les modèles se valent ;
+  la moyenne de deux modèles officiels et leur désaccord donnent une humeur plus stable et une confiance honnête.
 - **Temps par app comme facteur, sans liste de « mauvaises » apps** (I116, 19/10 08:30) : catégories déclarées par
   les apps elles-mêmes, minutes par heure, comparées à votre humeur **après coup** seulement.
 - **La voix par ce que vous dites, pas par le son** (I117, I119) : une seule prise de son lue deux fois, aucun
@@ -251,7 +264,9 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (20/10 06:30)** — ✅ « Applis jamais en veille » + cause de l'arrêt (I123) ; ensuite : votre
+**Prochaines priorités (20/10 08:30, run idées)** — votre diagnostic d'abord ; sinon **I126** duo de modèles du
+visage (désaccord = confiance), puis I124 sonde vocale, puis habitudes (tags) et effets décalés sur l'humeur estimée.
+*Priorités précédentes (20/10 06:30)* — ✅ « Applis jamais en veille » + cause de l'arrêt (I123) ; ensuite : votre
 diagnostic ; run idées 08:30 : licence d'EmoNet, modèles vocaux (étape 3) ; I124 sonde vocale ; habitudes (tags) et
 effets décalés sur l'humeur estimée.
 *Priorités précédentes (20/10 04:30)* — ✅ facteurs X comparés à l'humeur estimée (Y automatique) ; ensuite : votre
@@ -292,6 +307,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 02:30 — [Modèle valence / éveil embarqué (consigne du 19/10 au soir, étape 2)](runs/2026-10-20-0230-modele-valence-eveil.md) | 🔴🙂 | HSEmotion `enet_b0_8_va_mtl` (CCC V 0,59 / A 0,55) téléchargé par le téléphone, SHA-256 ; ONNX Runtime 1.22 (sans télémétrie) ; `FaceAffect` + vecteurs ; `faceMood` modèle `va` + éveil ; diagnostic v3 ; 111 JVM + 1 584 Vitest ; PR #226 |
 | 20/10 04:30 — [Facteurs comparés à l'humeur estimée (Y automatique)](runs/2026-10-20-0430-facteurs-humeur-estimee.md) | 🔴🙂 | `mood/faceMoodDays.js` : série quotidienne (≥ 3 lectures, médiane, ligne de base par jour), corrélations X ↔ humeur estimée (ordre temporel à la dernière lecture, week-end, n effectif, BH) ; section Analyses visible sans notes ; `face_burst` lu jusqu'à 10 000 ; 1 597 tests ; PR #227 |
 | 20/10 06:30 — [Visage : cause de l'arrêt + « Applis jamais en veille » (I123)](runs/2026-10-20-0630-applis-jamais-en-veille.md) | 🔴🙂 | `faceStopCause` (mise à jour / redémarrage / téléphone) via `lastUpdateAt` + `bootAt` natifs ; `openNeverSleep` (One UI `activity_type` 2, repli réglages de l'app) ; diagnostic v4 ; 1 602 tests ; PR #228 |
+| 20/10 08:30 — [Run idées : modèles valence / éveil, visage et voix](runs/2026-10-20-0830-idees-modeles-va.md) | 💡 | 3 modèles VA officiels HSEmotion mesurés (B0 20 ms, MobileFaceNet 8 Mo 22 ms, MobileViT 73 ms) : se valent hors AffectNet → duo B0 + MBF (I126) ; EmoNet écarté (CC BY-NC-ND) ; voix : aucun modèle léger sous licence permissive (I128) ; journal seulement |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---

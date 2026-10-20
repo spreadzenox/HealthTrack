@@ -127,3 +127,14 @@ et dans « Lecture du visage », fourchette 0–5 et confiance. Prochaine étape
 - **Suite** : mesurer sur l'A56 (latence, chargement, taux d'échec) ; comparer valence du modèle et notes du soir
   quand il y aura des jours notés (la porte `gate.js` lit encore les indices blendshapes : y ajouter la valence) ;
   étape 3, fusion avec la voix.
+
+### Révision du comparatif (run idées du 20/10/2026 08:30)
+
+- HSEmotion publie aussi **`mbf_va_mtl.onnx`** (MobileFaceNet, 8,3 Mo, 112 px) et `mobilevit_va_mtl.onnx` (39 Mo).
+  Sur des vidéos réelles sans réentraînement (Aff-Wild2), B0, MobileFaceNet, MobileViT et DDAMFN se valent
+  (CCC valence ≈ 0,40–0,41) ; l'avance de DDAMFN sur AffectNet ne se transfère pas ; le lissage temporel apporte plus.
+  Latence mesurée (x86, 1 fil) : 20 / 22 / 73 ms. **Décision** : garder B0, ajouter MobileFaceNet en duo (I126), leur
+  désaccord alimentant la confiance ; MobileViT écarté.
+- EmoNet : CC BY-NC-ND 4.0 **confirmé** sur le dépôt officiel → écarté.
+- Voix : aucun modèle valence / éveil à la fois léger et sous licence permissive (I128) → l'étape 3 commence par la
+  phrase du soir et la dictée. Détail et sources : `IDEES.md` (20/10 08:30).

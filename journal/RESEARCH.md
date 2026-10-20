@@ -5,6 +5,19 @@
 
 ---
 
+## 2026-10-20 — Veille (run « idées ») : modèles valence / éveil du visage et de la voix
+
+> Détail, tableau et pistes dans `IDEES.md` (section du 20/10 08:30, I126–I128).
+
+- **Visage** : HSEmotion publie 3 modèles valence / éveil en ONNX officiel (B0 16 Mo — actuel ; **MobileFaceNet 8 Mo,
+  112 px** ; MobileViT 39 Mo). Hors AffectNet (Aff-Wild2, sans réentraînement), tous ≈ CCC V 0,40–0,41, A 0,23–0,27 ;
+  DDAMFN (0,73 sur AffectNet) n'y fait pas mieux ; le lissage temporel rapporte +0,05 à +0,09 (arXiv 2403.11590).
+  Mesuré ici (x86, 1 fil) : B0 20 ms, MBF 22 ms, MobileViT 73 ms. → duo B0 + MBF, désaccord dans la confiance (I126).
+- **EmoNet** : CC BY-NC-ND 4.0 confirmé (LICENSE.txt), PyTorch seulement → écarté.
+- **Voix** : Wav2Small / audEERING = CC BY-NC-SA (recherche) ; WavLM Odyssey MIT mais 316 M param. ; emotion2vec et
+  SenseVoice sans licence claire → pas de modèle vocal pour l'instant, le texte d'abord (I128, confirme I117).
+- **Validité** : MoodCam (25 pers., 4 sem.) AUC 0,58–0,64 ; pas d'étude 2026 plus forte trouvée.
+
 ## 2026-10-19 (soir) — Veille (run « idées ») : porte du visage et dérives lentes, One UI, lexiques, voix hors ligne
 
 > Détail, chiffres et pistes dans `IDEES.md` (section du 19/10 20:30, I121–I125).
