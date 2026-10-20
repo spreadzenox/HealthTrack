@@ -1,6 +1,6 @@
 # 2026-10-20 02:30 Paris (00:30 UTC) — Modèle valence / éveil embarqué (consigne du 19/10 au soir, étape 2)
 
-**Type** : 🔴🙂 bien-être automatique (charte §0000000)  ·  **PR** : voir ci-dessous
+**Type** : 🔴🙂 bien-être automatique (charte §0000000)  ·  **PR** : #226
 
 ## Pourquoi
 - Vérifications de début de run : main à `d03c880` (#225), « Build & Release » vert (v179), aucune PR « [Auto] »
