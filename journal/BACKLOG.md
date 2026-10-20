@@ -37,8 +37,14 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   les préfère à l'a priori, éveil affiché ; diagnostic v3 `affect`. Choix et alternatives : BIEN-ETRE-AUTO.md.
   - [ ] **Retour du propriétaire** : « Modèle valence / éveil : prêt » dans le diagnostic, temps d'analyse, erreurs.
   - [ ] La porte `gate.js` et la calibration lisent aussi la valence du modèle (aujourd'hui : indices blendshapes).
-  - [ ] Run idées : EmoNet (licence exacte, CCC), autre modèle valence / éveil à **licence de poids explicite** ;
-    essai XNNPACK si la latence A56 dépasse 150 ms / image.
+  - [x] Run idées 20/10 08:30 : EmoNet **écarté** (CC BY-NC-ND confirmé, PyTorch seulement) ; comparatif des 3
+    modèles VA officiels HSEmotion (IDEES.md, 20/10 08:30) : hors AffectNet ils se valent, le lissage compte plus.
+  - [ ] **I126 (16) duo B0 + MobileFaceNet** : `mbf_va_mtl.onnx` (8,3 Mo, 112 px, SHA-256
+    `0323ace52ea6dbe9aa4a909d20933f7b8629c3fb41249e338f4316abf2a4828c`, même dépôt officiel, même téléchargement
+    vérifié) ; valence = moyenne des deux ; désaccord |V_B0 − V_MBF| → « accord entre signaux » dans la confiance ;
+    test d'équivalence Java ↔ Python ; diagnostic : temps des deux modèles. Prochain run de code sans diagnostic.
+  - [ ] I127 (7) pondérer les lectures du jour par leur qualité (la médiane par lecture et par jour existe déjà).
+  - [ ] Essai XNNPACK si la latence A56 dépasse 150 ms / image.
 - [ ] ~~Étape 2 (plan initial)~~ : run idées → comparatif (HSEmotion `enet_b0_8_va_mtl` /
   `mbf_va_mtl`, EmoNet, DDAMFN, modèles AffectNet-VA récents ; précision CCC valence / éveil sur AffectNet, AFEW-VA ;
   taille ; latence A56 LiteRT / ONNX Runtime + NNAPI / GPU ; **licence des poids** — le run du 13/10 avait noté « poids
@@ -47,7 +53,10 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   visage déjà calculé, `values.valence` / `values.arousal` dans `face_burst` (v2, rétrocompatible), `faceMood` les
   préfère à l'a priori ; test d'équivalence hors app.
 - [ ] **Étape 3 — fusion visage + voix** (dictée du soir I117 puis prosodie) ; « accord entre signaux » dans la
-  confiance.
+  confiance. **Run idées 20/10 08:30 (I128)** : aucun modèle vocal valence / éveil à la fois léger et sous licence
+  permissive (Wav2Small / audEERING : CC BY-NC-SA recherche ; WavLM Odyssey : MIT mais 316 M param.) → étape 3 =
+  visage + **phrase du soir** (I119, déjà là) puis dictée (I124 → I117) ; prosodie seulement avec un modèle sous
+  licence claire (veille : licence d'accès MSP-Podcast, petits modèles Apache / MIT).
 - [x] **I121 étendu (run 20/10 00:30)** : la calibration personnelle était trompée par les dérives lentes (simulé :
   modèle personnel adopté **sans aucun lien** dans 60 % des jeux à humeur AR 0,8 / visage AR 0,95 ; 25 % avec les blocs
   seuls) → `calibrateRidge(X, y, { dayNums })` validé par blocs ±7 j **et** seulement si la vérification visage ↔
@@ -753,6 +762,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
 4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 08:30 (run idées)** : prochain run de code sans diagnostic → **I126** duo de modèles du
+visage (désaccord = confiance), puis **I124** sonde vocale, puis habitudes (tags) / effets décalés sur l'humeur
+estimée ; I127 en petit complément.
 **Mise à jour du 20/10 06:30** : ✅ I123 livré ; prochain run de code sans diagnostic → **I124** sonde vocale (puis
 étape 3) ou habitudes (tags) / effets décalés sur l'humeur estimée.
 **Mise à jour du 20/10 00:30** : prochain run de code sans diagnostic ni choix de modèle → **I123** « Applis jamais en
