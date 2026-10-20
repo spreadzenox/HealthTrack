@@ -531,6 +531,12 @@ async function main() {
           openNeverSleep: async () => ({ opened: 'samsung' }),
           prepareAffect: async () => ({ ready: mode !== 'nomodel', downloading: mode === 'nomodel' }),
         }
+        // Sonde vocale (I124) : un A56 plausible, français téléchargeable mais pas encore installé.
+        window.__healthtrackFakeVoiceProbe = {
+          probe: async () => ({ sdk: 36, language: 'fr-FR', available: true, onDevice: true, supportFrom: 'on_device',
+            defaultService: 'com.google.android.as', services: ['com.google.android.as', 'com.samsung.android.bixby.agent'],
+            support: { installed: ['en-US'], pending: [], supported: ['fr-FR', 'de-DE'], online: [] }, errors: [] }),
+        }
       }, String(args.face))
     }
     if (args['evening-note']) {

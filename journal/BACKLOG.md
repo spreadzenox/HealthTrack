@@ -208,7 +208,12 @@ PR rouge, régression bloquante, ou nettoyage imposé par la collecte automatiqu
   - [ ] Si la cause « téléphone » revient malgré la liste : lire `ApplicationExitInfo` (API 30,
     `getHistoricalProcessExitReasons`) dans le statut pour la raison exacte (REASON_USER_REQUESTED, LOW_MEMORY,
     FREEZER…).
-- [ ] I124 (12) sonde vocale dans le diagnostic (moteur local, fr-FR, service par défaut) avant tout I117 natif.
+- [x] I124 (12) sonde vocale dans le diagnostic (moteur local, fr-FR, service par défaut) avant tout I117 natif.
+  → ✅ 20/10 12:30 : `VoiceProbePlugin.probe` + `services/voiceProbe.js` (verdict `on_device_fr` / `_pending` /
+  `_downloadable` / `on_device_no_fr` / `on_device_unknown_language` / `online_only` / `none`), diagnostic v5 `voice`,
+  sonde lancée une fois à l'ouverture du Diagnostic ; aucun micro.
+  - [ ] Lire le bloc `voice` du diagnostic de l'A56 → choisir la voie I117 (plateforme sur l'appareil, ou bouton
+    `triggerModelDownload` si français téléchargeable, sinon ML Kit / Vosk selon licence).
 - [ ] I125 (8) « Rien reconnu — me le signaler ? » sous la phrase du soir (mots tapés par la personne, rien gardé).
 - [x] I113 note du soir d'un geste depuis la notification (calibration, optionnelle). → ✅ 19/10 06:30 (6 boutons 0–5, vue personnalisée).
 - [ ] Mesurer la consommation réelle (diagnostic : batterie au démarrage / maintenant, temps caméra) et la noter ici.
@@ -769,6 +774,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
 4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 12:30** : ✅ I124 sonde vocale livrée ; prochain run de code sans diagnostic → habitudes
+(tags) / effets décalés sur l'humeur estimée, I127 en petit complément ; avec le diagnostic → I122 puis I117 selon
+le bloc `voice`.
 **Mise à jour du 20/10 10:30** : ✅ I126 duo livré ; prochain run de code sans diagnostic → **I124** sonde vocale, puis
 habitudes (tags) / effets décalés sur l'humeur estimée ; I127 (pondération par qualité) en petit complément.
 **Mise à jour du 20/10 08:30 (run idées)** : prochain run de code sans diagnostic → **I126** duo de modèles du

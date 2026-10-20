@@ -195,6 +195,17 @@ ouverture de la carte « Lecture du visage », **même si le premier est déjà 
 (MobileFaceNet) : prêt · N lectures lues par les deux modèles ». Vérifié : l'image préparée par le téléphone pour ce
 modèle est identique, à 1/10 000 près, à celle que prépare la bibliothèque officielle des auteurs.
 
+**Run du 20/10 12:30 — votre téléphone sait-il reconnaître votre voix sans Internet ?** La voix entrera dans
+l'humeur estimée par **ce que vous dites** (une dictée du soir), pas par le son — à condition que la reconnaissance
+se fasse **sur le téléphone** : sinon le son de votre voix partirait sur Internet, ce que je refuse. Avant d'écrire
+la dictée, le **Diagnostic** de la carte « Lecture du visage » le vérifie : une nouvelle dernière ligne **« Voix »**
+dit si la reconnaissance est sur le téléphone ou seulement en ligne, si le français est installé ou à télécharger,
+et quel moteur (Google, Bixby…). **Aucun micro n'est ouvert**, aucune permission demandée : l'app pose seulement la
+question à Android, une fois, quand vous dépliez le Diagnostic. C'est aussi dans le fichier enregistré.
+
+**Nouveau (12:30, voix)** : dans le Diagnostic, lisez la ligne « Voix … » (ou envoyez-moi le fichier, qui la
+contient) : elle décide comment sera faite la dictée du soir.
+
 **🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
@@ -237,6 +248,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Sonde vocale dans le Diagnostic (run 20/10 12:30, I124)** : ligne « Voix » — reconnaissance sur le téléphone ou
+  en ligne, français installé / téléchargeable, moteur ; aucun micro ouvert.
 - **Deux modèles du visage qui votent (run 20/10 10:30, I126)** : humeur = moyenne d'EfficientNet et de
   MobileFaceNet ; leur accord resserre ou élargit la fourchette ; « Second modèle » dans le diagnostic.
 - **Lecture du visage : cause de l'arrêt et « Applis jamais en veille » (run 20/10 06:30)** : mise à jour,
@@ -282,7 +295,10 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (20/10 08:30, run idées)** — votre diagnostic d'abord ; sinon **I126** duo de modèles du
+**Prochaines priorités (20/10 12:30)** — ✅ I124 sonde vocale ; ensuite : votre diagnostic (déverrouillages, duo,
+ligne « Voix ») ; habitudes (tags) et effets décalés sur l'humeur estimée ; I127 ; puis la dictée du soir (I117)
+selon la ligne « Voix ».
+*Prochaines priorités (20/10 08:30, run idées)* — votre diagnostic d'abord ; sinon **I126** duo de modèles du
 visage (désaccord = confiance), puis I124 sonde vocale, puis habitudes (tags) et effets décalés sur l'humeur estimée.
 *Priorités précédentes (20/10 06:30)* — ✅ « Applis jamais en veille » + cause de l'arrêt (I123) ; ensuite : votre
 diagnostic ; run idées 08:30 : licence d'EmoNet, modèles vocaux (étape 3) ; I124 sonde vocale ; habitudes (tags) et
@@ -327,6 +343,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 06:30 — [Visage : cause de l'arrêt + « Applis jamais en veille » (I123)](runs/2026-10-20-0630-applis-jamais-en-veille.md) | 🔴🙂 | `faceStopCause` (mise à jour / redémarrage / téléphone) via `lastUpdateAt` + `bootAt` natifs ; `openNeverSleep` (One UI `activity_type` 2, repli réglages de l'app) ; diagnostic v4 ; 1 602 tests ; PR #228 |
 | 20/10 08:30 — [Run idées : modèles valence / éveil, visage et voix](runs/2026-10-20-0830-idees-modeles-va.md) | 💡 | 3 modèles VA officiels HSEmotion mesurés (B0 20 ms, MobileFaceNet 8 Mo 22 ms, MobileViT 73 ms) : se valent hors AffectNet → duo B0 + MBF (I126) ; EmoNet écarté (CC BY-NC-ND) ; voix : aucun modèle léger sous licence permissive (I128) ; journal seulement |
 | 20/10 10:30 — [Duo de modèles du visage (I126)](runs/2026-10-20-1030-duo-modeles-visage.md) | 🔴🙂 | `mbf_va_mtl` (8 Mo, SHA-256) téléchargé après le B0, même pour qui l'a déjà ; `FaceAffect.Spec` (112 px, normalisation 0,5) + vecteurs Python ; valence = moyenne, `affectGap` → fourchette et « deux modèles d'accord » ; diagnostic « Second modèle » ; 114 JVM + 1 609 Vitest |
+| 20/10 12:30 — [Sonde vocale dans le diagnostic (I124)](runs/2026-10-20-1230-sonde-vocale.md) | 🔴🙂 | `VoiceProbePlugin` (disponibilité, sur l'appareil, moteurs, langues fr-FR API 33) sans micro ; `voiceProbe.js` (verdict) ; diagnostic v5 `voice`, sonde à l'ouverture du Diagnostic ; 1 616 Vitest |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---

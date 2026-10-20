@@ -154,6 +154,15 @@ describe('diagnostic exportable', () => {
     expect(faceDiagnosticLines(active, { eveningNote: { ...eveningNote, enabled: false } }).join()).not.toMatch(/Note du soir/)
   })
 
+  it('sonde vocale (I124) : bloc voice v5 et une ligne, jamais un son', () => {
+    const voice = { sdk: 36, available: true, onDevice: true, services: ['com.google.android.as'], support: { installed: ['fr-FR'] } }
+    expect(faceDiagnosticReport(active, { voice }).voice).toMatchObject({ verdict: 'on_device_fr', installed: ['fr-FR'] })
+    expect(faceDiagnosticReport(active).voice).toBeNull()
+    expect(faceDiagnosticLines(active, { voice }))
+      .toContain('Voix (sonde, aucun micro ouvert) : reconnaissance en français sur le téléphone, installée · moteurs : Android System Intelligence')
+    expect(faceDiagnosticLines(active).join()).not.toMatch(/Voix/)
+  })
+
   it('résultat inconnu : affiché tel quel', () => {
     expect(outcomeLabel('skip:nouveau')).toBe('skip:nouveau')
     expect(outcomeLabel(null)).toBe('—')
@@ -218,7 +227,7 @@ describe('repérage du déverrouillage et accès caméra (signalement du 19/10 1
 
   it('export : allumages, déverrouillages par source, mode caméra, démarrage, dernières tentatives', () => {
     const r = faceDiagnosticReport(seen, { now: new Date(at(15, 10)) })
-    expect(r.version).toBe(4)
+    expect(r.version).toBe(5)
     expect(r.detection).toEqual({
       screenOns: 5,
       userPresents: 1,
@@ -295,7 +304,7 @@ describe('modèle valence / éveil (consigne du 19/10 au soir, étape 2)', () =>
   it('export et lignes : état du modèle, lectures avec valence, erreur exacte ; jamais une valence', () => {
     const s = { ...active, affectModel: true, affectBursts: 5, affectLoadMs: 310, affectDownloadMs: 9000, lastAffectError: 'IllegalStateException: ort' }
     const r = faceDiagnosticReport(s)
-    expect(r.version).toBe(4)
+    expect(r.version).toBe(5)
     expect(r.affect).toEqual({
       model: 'enet_b0_8_va_mtl', state: 'ready', bursts: 5, loadMs: 310, downloadMs: 9000,
       downloadErrors: 0, error: null, lastError: 'IllegalStateException: ort', duo: null,
@@ -353,7 +362,7 @@ describe('cause de l’arrêt et « Applis jamais en veille » (signalement du 1
 
   it('diagnostic v4 : cause et repères bruts ; ligne lisible', () => {
     const r = faceDiagnosticReport(stopped)
-    expect(r.version).toBe(4)
+    expect(r.version).toBe(5)
     expect(r.service).toMatchObject({
       stopCause: 'system',
       lastUpdateAt: new Date(h(2)).toISOString(),

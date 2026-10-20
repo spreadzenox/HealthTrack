@@ -28,6 +28,7 @@ import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
 import { describeFaceMood, faceMoodEstimate, testReadingEstimate } from '../services/mood/faceMood'
 import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
 import { getEveningNoteStatus } from '../services/eveningNote'
+import { probeVoice } from '../services/voiceProbe'
 import { localDateKey } from '../services/analysisEngine'
 import { listEntries } from '../storage/localHealthStorage'
 import { CURRENT_VERSION } from '../services/updateCheck'
@@ -130,7 +131,7 @@ function frenchDate(iso) {
 }
 
 /**
- * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function, loadEveningNote?: Function }} props
+ * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function, loadEveningNote?: Function, loadVoice?: Function }} props
  */
 export default function FaceSenseCard({
   plugin = faceSensePlugin(),
@@ -138,14 +139,17 @@ export default function FaceSenseCard({
   importBursts = importPendingFaceBursts,
   loadHistory = defaultLoadHistory,
   loadEveningNote = getEveningNoteStatus,
+  loadVoice = probeVoice,
 }) {
   const [status, setStatus] = useState(null)
   const [history, setHistory] = useState(null)
   const [evening, setEvening] = useState(null)
+  const [voice, setVoice] = useState(null)
   const [loaded, setLoaded] = useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState(null)
   const affectAsked = useRef(false)
+  const voiceAsked = useRef(false)
 
   const refresh = useCallback(async () => {
     // Rafales en attente rangées d'abord : le diagnostic dit alors ce qui reste vraiment en attente.
@@ -219,6 +223,7 @@ export default function FaceSenseCard({
       history: await loadHistory(),
       lastImport: getLastFaceImport(),
       eveningNote: await loadEveningNote(),
+      voice: voice ?? (await loadVoice()),
     })
     const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')
     try {
@@ -226,6 +231,13 @@ export default function FaceSenseCard({
     } catch {
       setMessage('Enregistrement impossible.')
     }
+  }
+
+  // Sonde vocale (I124) : une fois, à la première ouverture du Diagnostic (aucun micro ouvert).
+  async function probeOnce() {
+    if (voiceAsked.current) return
+    voiceAsked.current = true
+    setVoice(await loadVoice())
   }
 
   async function neverSleep() {
@@ -363,10 +375,10 @@ export default function FaceSenseCard({
       {message && <p className="my-device-meta" role="status">{message}</p>}
 
       {available && status && d.state !== 'off' && d.state !== 'no_models' && (
-        <details className="connectors-more">
+        <details className="connectors-more" onToggle={(e) => e.currentTarget.open && probeOnce()}>
           <summary className="connectors-more-summary">Diagnostic</summary>
           <ul className="my-device-meta">
-            {faceDiagnosticLines(status, { history, lastImport: getLastFaceImport(), eveningNote: evening }).map((line) => <li key={line}>{line}</li>)}
+            {faceDiagnosticLines(status, { history, lastImport: getLastFaceImport(), eveningNote: evening, voice }).map((line) => <li key={line}>{line}</li>)}
           </ul>
           <div className="my-device-actions">
             {(d.state === 'active' || d.state === 'blocked') && (
