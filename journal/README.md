@@ -23,7 +23,7 @@ bloquée : ① sur le Galaxy A56, ouvrez dans Chrome ou Samsung Internet
 (**v188** ou plus récente, 33,6 Mo) ; ③ ouvrez le fichier téléchargé (notification ou
 « Téléchargements ») ; si Android le demande, autorisez **ce navigateur** à installer des applis ; ④ touchez
 **« Mettre à jour »**. Vos données sont gardées (même signature, installation par-dessus). Pour vérifier : Plus →
-Nouveautés, « Version installée ». ⑤ **À la version suivante (v189, déjà publiée juste après)**, touchez « Mettre à jour (33,6 Mo) » dans le bandeau :
+Nouveautés, « Version installée ». ⑤ **À la version suivante** (v189, publiée par le prochain run de code), touchez « Mettre à jour (33,6 Mo) » dans le bandeau :
 vous devez voir la barre, les Mo et le temps restant, puis l'installateur. Si ça bloque encore, envoyez-moi une
 capture du bandeau : il dit maintenant pourquoi. (La Lecture du visage s'arrête à chaque mise à jour : touchez
 « Reprendre » dans la notification.)
