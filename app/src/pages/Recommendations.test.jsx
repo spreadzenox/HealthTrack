@@ -804,6 +804,25 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     expect(screen.getByText(/Données insuffisantes/i)).toBeInTheDocument()
   })
 
+  it('shows the habits compared to the estimated mood, without the felt stress and without any lever', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const entries = faceHistory(42).filter((e) => e.type !== 'face_burst')
+    for (let i = 0; i < 42; i++) {
+      const valence = i > 0 && (i - 1) % 3 === 0 ? -0.5 : 0.3
+      for (let k = 0; k < 3; k++) {
+        entries.push({ type: 'face_burst', source: 'face_sense', at: new Date(2026, 8, 1 + i, 8 + k).toISOString(), payload: { v: 1, trigger: 'unlock', frames: 3, valid: 3, values: { ...NEUTRAL, valence, arousal: 0 } } })
+      }
+      if (i % 3 === 0) entries.push({ type: 'wellbeing', at: new Date(2026, 8, 1 + i, 22).toISOString(), payload: { score: 3, tags: ['alcohol', 'stress'] } })
+    }
+    listEntriesForAnalysis.mockResolvedValue(entries)
+    renderPage()
+    const habits = await screen.findByTestId('face-mood-habits')
+    expect(habits).toHaveTextContent('Alcool')
+    expect(habits).toHaveTextContent('Le lendemain : humeur estimée')
+    expect(habits).not.toHaveTextContent('Stress')
+    expect(habits).not.toHaveTextContent('Piste')
+  })
+
   it('counts the days still needed', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(faceHistory(4))

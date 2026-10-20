@@ -310,6 +310,9 @@ export function stratifiedPermutationPValue(strata, permutations = PERMUTATIONS)
 
 /**
  * @param {Array} entries  health entries (only wellbeing ones are used)
+ * @param {{ outcomeByDay?: Map<string, number> }} [options]  outcomeByDay: wellbeing to compare with, per day
+ *   ('YYYY-MM-DD' → score), instead of the notes — the mood estimated by the face (mood/faceMoodDays.js). Declared
+ *   tags still come from the wellbeing entries (a tag noted on an evening without a face reading still counts).
  * @returns {{ status: 'no_tags' } | {
  *   status: 'ok', trackedDays: number,
  *   effects: Array<{ tagId, label, emoji, effectDay, nWith, nWithout, meanWith, meanWithout,
@@ -320,29 +323,44 @@ export function stratifiedPermutationPValue(strata, permutations = PERMUTATIONS)
  * `diffRaw` the plain ones. `weekendOnly`: enough days, but the tag always
  * falls on the same type of day as all comparable days → not separable.
  */
-export function computeTagEffects(entries) {
+export function computeTagEffects(entries, { outcomeByDay } = {}) {
   // Per day: mean wellbeing score and union of known tags.
   const days = new Map()
-  for (const e of entries) {
-    if (e.type !== 'wellbeing') continue
-    const score = e.payload?.score
-    if (typeof score !== 'number' || Number.isNaN(score)) continue
-    const key = localDateKey(e.at)
+  const dayOf = (key) => {
     let day = days.get(key)
     if (!day) {
       day = { sum: 0, count: 0, tags: new Set() }
       days.set(key, day)
     }
-    day.sum += score
-    day.count += 1
-    for (const t of Array.isArray(e.payload.tags) ? e.payload.tags : []) {
+    return day
+  }
+  for (const e of entries) {
+    if (e.type !== 'wellbeing') continue
+    const score = e.payload?.score
+    const scored = typeof score === 'number' && !Number.isNaN(score)
+    if (!scored && !outcomeByDay) continue
+    const day = dayOf(localDateKey(e.at))
+    if (!outcomeByDay) {
+      day.sum += score
+      day.count += 1
+    }
+    for (const t of Array.isArray(e.payload?.tags) ? e.payload.tags : []) {
       if (TAGS_BY_ID[t]) day.tags.add(t)
     }
   }
+  for (const [key, score] of outcomeByDay ?? []) {
+    if (typeof score !== 'number' || Number.isNaN(score)) continue
+    const day = dayOf(key)
+    day.sum = score
+    day.count = 1
+  }
 
+  const measured = measuredTagsByDay(entries)
+  // Estimated mood: an evening measured by the phone counts even when that day itself has too few face readings
+  // to be estimated (only the day the outcome is read on needs one).
+  if (outcomeByDay) for (const m of measured.values()) for (const k of m.keys()) dayOf(k)
   const keys = [...days.keys()].sort()
   const firstTagged = keys.find((k) => days.get(k).tags.size > 0)
-  const measured = measuredTagsByDay(entries)
   const anyMeasured = [...measured.values()].some((m) => keys.some((k) => m.has(k)))
   if (!firstTagged && !anyMeasured) return { status: 'no_tags' }
   // Declared tags only count from the first tag ever used (older days are not « without »);
@@ -364,7 +382,7 @@ export function computeTagEffects(entries) {
       if (!isMeasured && k < declaredFrom) continue
       const outcomeKey = tag.effectDay === 'next' ? nextDateKey(k) : k
       const outcomeDay = days.get(outcomeKey)
-      if (!outcomeDay) continue
+      if (!outcomeDay?.count) continue
       tracked.add(k)
       const score = outcomeDay.sum / outcomeDay.count
       const declared = days.get(k).tags.has(tag.id)

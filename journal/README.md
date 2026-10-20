@@ -203,6 +203,16 @@ dit si la reconnaissance est sur le téléphone ou seulement en ligne, si le fra
 et quel moteur (Google, Bixby…). **Aucun micro n'est ouvert**, aucune permission demandée : l'app pose seulement la
 question à Android, une fois, quand vous dépliez le Diagnostic. C'est aussi dans le fichier enregistré.
 
+**Run du 20/10 14:30 — vos habitudes comparées à votre humeur estimée, sans aucune note.** Dans Analyses, la
+section « Avec votre humeur estimée (visage) » ne compare plus seulement sommeil, pas, écran… : elle dit aussi, pour
+**vos habitudes** (alcool, café après 14 h, écran tard, sport le soir…), si l'humeur lue sur votre visage **le
+lendemain** est meilleure ou moins bonne les jours avec que les jours sans, et s'il y a des **effets décalés** (ce que
+vous avez fait la veille ou 2–3 jours avant, à humeur de la veille égale). Les habitudes que le téléphone mesure seul
+(écran tard, sport le soir, voyage) comptent même un soir sans lecture du visage ; celles que vous cochez dans une note
+comptent aussi. Le **stress** ressenti fait partie de l'humeur : il n'est jamais comparé (sinon l'humeur serait
+comparée à elle-même). Aucun sens présupposé, aucune « piste » : un lien est une hypothèse à observer. Les liens
+incertains sont repliés. Rien à faire de votre côté : ça apparaît après 14 jours avec au moins 3 lectures du visage.
+
 **Nouveau (12:30, voix)** : dans le Diagnostic, lisez la ligne « Voix … » (ou envoyez-moi le fichier, qui la
 contient) : elle décide comment sera faite la dictée du soir.
 
@@ -248,6 +258,8 @@ notification « Lecture du visage arrêtée » devrait apparaître (si la lectur
 et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage suivant.
 
 **Nouveau dans l'app** (Plus → Nouveautés après la mise à jour en 1 clic)
+- **Habitudes et effets décalés avec l'humeur estimée (run 20/10 14:30)** : Analyses → section visage, « Le
+  lendemain : humeur estimée … contre … sans », stress jamais comparé, aucune piste.
 - **Sonde vocale dans le Diagnostic (run 20/10 12:30, I124)** : ligne « Voix » — reconnaissance sur le téléphone ou
   en ligne, français installé / téléchargeable, moteur ; aucun micro ouvert.
 - **Deux modèles du visage qui votent (run 20/10 10:30, I126)** : humeur = moyenne d'EfficientNet et de
@@ -295,7 +307,10 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (20/10 12:30)** — ✅ I124 sonde vocale ; ensuite : votre diagnostic (déverrouillages, duo,
+**Prochaines priorités (20/10 14:30)** — ✅ habitudes et effets décalés sur l'humeur estimée ; ensuite : votre
+diagnostic (déverrouillages, duo, ligne « Voix ») ; I127 (lectures pondérées par leur qualité) ; puis la dictée du
+soir (I117) selon la ligne « Voix ».
+*Prochaines priorités (20/10 12:30)* — ✅ I124 sonde vocale ; ensuite : votre diagnostic (déverrouillages, duo,
 ligne « Voix ») ; habitudes (tags) et effets décalés sur l'humeur estimée ; I127 ; puis la dictée du soir (I117)
 selon la ligne « Voix ».
 *Prochaines priorités (20/10 08:30, run idées)* — votre diagnostic d'abord ; sinon **I126** duo de modèles du
@@ -344,6 +359,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 08:30 — [Run idées : modèles valence / éveil, visage et voix](runs/2026-10-20-0830-idees-modeles-va.md) | 💡 | 3 modèles VA officiels HSEmotion mesurés (B0 20 ms, MobileFaceNet 8 Mo 22 ms, MobileViT 73 ms) : se valent hors AffectNet → duo B0 + MBF (I126) ; EmoNet écarté (CC BY-NC-ND) ; voix : aucun modèle léger sous licence permissive (I128) ; journal seulement |
 | 20/10 10:30 — [Duo de modèles du visage (I126)](runs/2026-10-20-1030-duo-modeles-visage.md) | 🔴🙂 | `mbf_va_mtl` (8 Mo, SHA-256) téléchargé après le B0, même pour qui l'a déjà ; `FaceAffect.Spec` (112 px, normalisation 0,5) + vecteurs Python ; valence = moyenne, `affectGap` → fourchette et « deux modèles d'accord » ; diagnostic « Second modèle » ; 114 JVM + 1 609 Vitest |
 | 20/10 12:30 — [Sonde vocale dans le diagnostic (I124)](runs/2026-10-20-1230-sonde-vocale.md) | 🔴🙂 | `VoiceProbePlugin` (disponibilité, sur l'appareil, moteurs, langues fr-FR API 33) sans micro ; `voiceProbe.js` (verdict) ; diagnostic v5 `voice`, sonde à l'ouverture du Diagnostic ; 1 616 Vitest |
+| 20/10 14:30 — [Habitudes et effets décalés sur l'humeur estimée](runs/2026-10-20-1430-habitudes-humeur-estimee.md) | 🔴🙂 | `computeTagEffects(…, { outcomeByDay })`, `computeLaggedEffects` sur l'humeur estimée sans piste, bloc dans la section visage ; stress (Y) exclu ; 1 621 Vitest |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---

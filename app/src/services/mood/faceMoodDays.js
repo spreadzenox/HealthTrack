@@ -11,12 +11,17 @@
  *   (antiCircularity.test.js).
  * - Ordre temporel : le jour est traité comme une note donnée à sa **dernière lecture** (même règle que les notes,
  *   DAY_OVER_HOUR) : avant 20 h, pas, écran, réseaux… du jour ne comptent que s'ils sont finis avant elle.
+ * - Habitudes (tags) et effets décalés : mêmes calculs que sur les notes (behaviorTags.js, laggedEffects.js), avec
+ *   l'humeur estimée du jour comme bien-être ; les tags déclarés restent ceux de vos notes, le stress ressenti (côté
+ *   Y) n'est jamais comparé. Aucune piste n'est tirée des effets décalés (D6).
  * - Mêmes garde-fous que les corrélations sur les notes (computeBasicCorrelations) : week-end pris en compte,
  *   taille d'échantillon effective, Benjamini-Hochberg sur tous les facteurs testés ; au moins
  *   FACE_MOOD_MIN_DAYS jours (l'estimation d'un jour est moins précise qu'une note). Aucune « piste » proposée :
  *   ce sont des liens à observer, pas des leviers (D6 : aucun sens d'effet présupposé).
  */
 import { localDateKey, computeBasicCorrelations } from '../analysisEngine'
+import { computeTagEffects } from '../behaviorTags'
+import { computeLaggedEffects } from '../laggedEffects'
 import { moodFaceBursts } from '../faceBursts'
 import { estimateBurst, personalCalibration, personalNeutral } from './faceMood'
 
@@ -66,7 +71,9 @@ export function faceMoodAnalysisEntries(entries, days = faceMoodDays(entries)) {
 /**
  * Corrélations facteurs X ↔ humeur estimée par le visage.
  * @returns {{ status: 'no_face' } | { status: 'not_enough_data', minDays: number, currentDays: number, readingsMin: number }
- *   | { status: 'ok', datasetDays: number, faceDays: number, correlations: object[], weekendControl: object }}
+ *   | { status: 'ok', datasetDays: number, faceDays: number, correlations: object[], weekendControl: object,
+ *       tagEffects: object, laggedEffects: object }}  tagEffects / laggedEffects : mêmes formes que
+ *   computeTagEffects / computeLaggedEffects, sans piste (`action` toujours nulle).
  */
 export function computeFaceMoodCorrelations(entries) {
   if (!moodFaceBursts(entries).length) return { status: 'no_face' }
@@ -74,13 +81,19 @@ export function computeFaceMoodCorrelations(entries) {
   if (days.length < FACE_MOOD_MIN_DAYS) {
     return { status: 'not_enough_data', minDays: FACE_MOOD_MIN_DAYS, currentDays: days.length, readingsMin: FACE_MOOD_MIN_READINGS }
   }
-  const res = computeBasicCorrelations(faceMoodAnalysisEntries(entries, days))
+  const analysisEntries = faceMoodAnalysisEntries(entries, days)
+  const res = computeBasicCorrelations(analysisEntries)
   if (res.status !== 'ok') return { status: 'not_enough_data', minDays: FACE_MOOD_MIN_DAYS, currentDays: days.length, readingsMin: FACE_MOOD_MIN_READINGS }
+  const lagged = computeLaggedEffects(analysisEntries)
   return {
     status: 'ok',
     datasetDays: res.datasetDays,
     faceDays: days.length,
     correlations: res.correlations,
     weekendControl: res.weekendControl,
+    tagEffects: computeTagEffects(entries, { outcomeByDay: new Map(days.map((d) => [d.date, d.note])) }),
+    laggedEffects: lagged.status === 'ok'
+      ? { ...lagged, effects: lagged.effects.map((e) => ({ ...e, action: null, againstNorm: false })) }
+      : lagged,
   }
 }

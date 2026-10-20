@@ -487,6 +487,11 @@
   line-height: 1.5;
 }
 
+/* Habitudes et effets décalés sous les liens avec l'humeur estimée (visage) */
+.reco-face-habits {
+  margin: 1rem 0 0.75rem;
+}
+
 /* Liens incertains repliés sous la liste des corrélations nettes */
 .reco-corr-more {
   margin-top: 0.75rem;

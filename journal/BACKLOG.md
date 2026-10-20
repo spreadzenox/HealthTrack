@@ -77,7 +77,11 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   une « note » par jour à l'heure de la dernière lecture (ordre temporel, DAY_OVER_HOUR), puis
   `computeBasicCorrelations` (week-end, n effectif, BH) ; ≥ 14 jours ; aucun levier proposé. Section « Avec votre
   humeur estimée (visage) » dans Analyses, visible sans notes ; `ANALYSIS_LIMITS.face_burst = 10000` ; 9 tests.
-  - [ ] Habitudes (tags X) et effets décalés (`laggedEffects`) sur l'humeur estimée ; prédiction du jour.
+  - [x] Habitudes (tags X) et effets décalés (`laggedEffects`) sur l'humeur estimée — ✅ 20/10 14:30 :
+    `computeTagEffects(entries, { outcomeByDay })` (tags déclarés des notes, soirs mesurés comptés même sans lecture
+    ce jour-là, stress côté Y exclu) ; `computeLaggedEffects` sur les entrées « humeur estimée », pistes retirées (D6) ;
+    bloc « Vos habitudes et effets décalés » dans la section visage, incertains repliés ; +5 tests.
+  - [ ] Prédiction du jour sur l'humeur estimée (Accueil) — à faire seulement quand ≥ 30 jours estimés.
   - [ ] Si > 10 000 rafales (~6 mois à 50 / jour) : lire les rafales par plage plutôt que les N plus récentes.
   - [ ] Plusieurs lectures par jour : comparer aussi l'humeur estimée **heure par heure** au temps par app de l'heure
     précédente (ordre temporel fin, `phone_apps` horaire déjà là).
@@ -774,6 +778,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
 4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 14:30** : ✅ habitudes / effets décalés sur l'humeur estimée ; prochain run de code sans
+diagnostic → **I127** (pondération des lectures par leur qualité) ; avec le diagnostic → I122 puis I117 selon `voice`.
 **Mise à jour du 20/10 12:30** : ✅ I124 sonde vocale livrée ; prochain run de code sans diagnostic → habitudes
 (tags) / effets décalés sur l'humeur estimée, I127 en petit complément ; avec le diagnostic → I122 puis I117 selon
 le bloc `voice`.
