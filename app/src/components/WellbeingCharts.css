@@ -44,7 +44,7 @@
 }
 
 .wellbeing-chart-grid {
-  stroke: rgba(255, 255, 255, 0.08);
+  stroke: rgba(var(--tint-rgb), 0.08);
   stroke-width: 1;
 }
 
@@ -67,7 +67,7 @@
 /* ─── ML prediction overlay ─────────────────────────────────────────────── */
 
 .wellbeing-chart-pred-line {
-  stroke: #f39c12;
+  stroke: var(--color-warn);
   stroke-width: 2;
   stroke-dasharray: 5 4;
   stroke-linejoin: round;
@@ -75,13 +75,13 @@
 }
 
 .wellbeing-chart-pred-dot {
-  fill: #f39c12;
+  fill: var(--color-warn);
   stroke: var(--bg);
   stroke-width: 1.5;
 }
 
 .wellbeing-chart-pred-label {
-  fill: #f39c12;
+  fill: var(--color-warn);
   font-weight: 600;
 }
 
@@ -99,7 +99,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #f39c12;
+  background: var(--color-warn);
   flex-shrink: 0;
 }
 
@@ -129,7 +129,7 @@
 
 .wellbeing-prediction-value {
   font-weight: 700;
-  color: #f39c12;
+  color: var(--color-warn);
 }
 
 .wellbeing-prediction-note {

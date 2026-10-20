@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-21",
+  "kind": "amélioration",
+  "title": "Une nouvelle apparence, claire par défaut",
+  "items": [
+    "L'app passe en clair : fond blanc, texte bien contrasté et vert émeraude pour les actions. C'est la première étape de la nouvelle identité visuelle.",
+    "Nouvelles polices, Figtree pour les textes et IBM Plex Mono pour les chiffres, intégrées à l'app : rien n'est téléchargé depuis Internet.",
+    "Vous préférez le sombre ? Plus → Paramètres → Apparence : Clair, Sombre ou Comme le téléphone. L'heure et la batterie en haut de l'écran suivent le thème choisi.",
+    "Rien ne change dans vos données."
+  ]
+}

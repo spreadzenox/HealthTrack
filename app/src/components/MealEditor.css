@@ -7,7 +7,7 @@
 .meal-editor .meal-editor-item {
   display: block;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(var(--tint-rgb), 0.06);
 }
 
 .meal-editor-item:last-child {
@@ -28,7 +28,7 @@
 }
 
 .meal-editor .is-unknown .mei-name {
-  color: #f0b35a;
+  color: var(--color-warn);
 }
 
 .mei-badge {
@@ -36,8 +36,8 @@
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 999px;
-  background: rgba(240, 179, 90, 0.16);
-  color: #f0b35a;
+  background: rgba(var(--warn-rgb), 0.16);
+  color: var(--color-warn);
 }
 
 .mei-warn {
@@ -53,7 +53,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--accent);
-  background: rgba(78, 205, 196, 0.1);
+  background: rgba(var(--brand-rgb), 0.1);
   border-radius: 10px;
 }
 
@@ -77,7 +77,7 @@
   border-radius: 10px;
   font-size: 1.2rem;
   color: var(--accent);
-  background: rgba(78, 205, 196, 0.1);
+  background: rgba(var(--brand-rgb), 0.1);
 }
 
 .mei-step:disabled {
@@ -88,7 +88,7 @@
   margin-left: auto;
   font-size: 1rem;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(var(--tint-rgb), 0.05);
 }
 
 .mei-grams {
@@ -97,7 +97,7 @@
   padding: 0 8px;
   font-size: 1rem;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(var(--tint-rgb), 0.12);
   border-radius: 10px;
   background: var(--bg);
   color: var(--text);
@@ -151,7 +151,7 @@
   height: 44px;
   padding: 0 12px;
   font-size: 0.95rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(var(--tint-rgb), 0.12);
   border-radius: 10px;
   background: var(--bg);
   color: var(--text);
@@ -163,7 +163,7 @@
   padding: 4px 0;
   border-radius: 10px;
   background: var(--bg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(var(--tint-rgb), 0.08);
 }
 
 .meal-editor .mei-suggestions li {
@@ -177,12 +177,12 @@
 }
 
 .meal-editor .mei-suggestions li + li {
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(var(--tint-rgb), 0.05);
 }
 
 .mei-suggestions li:active,
 .mei-suggestions li:focus {
-  background: rgba(78, 205, 196, 0.12);
+  background: rgba(var(--brand-rgb), 0.12);
   outline: none;
 }
 

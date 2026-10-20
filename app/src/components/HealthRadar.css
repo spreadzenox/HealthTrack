@@ -3,20 +3,20 @@
   padding: 12px 14px;
   background: var(--surface);
   border-radius: var(--radius);
-  border-left: 3px solid rgba(255, 255, 255, 0.15);
+  border-left: 3px solid rgba(var(--tint-rgb), 0.15);
 }
 
 .radar.is-calm {
-  border-left-color: #6fcf97;
+  border-left-color: var(--color-ok);
 }
 
 .radar.is-watch {
-  border-left-color: #f7b733;
+  border-left-color: var(--color-warn);
 }
 
 .radar.is-alert {
-  border-left-color: #ff8a5c;
-  background: linear-gradient(0deg, rgba(255, 138, 92, 0.08), rgba(255, 138, 92, 0.08)), var(--surface);
+  border-left-color: var(--color-alert);
+  background: linear-gradient(0deg, rgba(var(--alert-rgb), 0.08), rgba(var(--alert-rgb), 0.08)), var(--surface);
 }
 
 .radar-header {
@@ -39,18 +39,18 @@
   padding: 3px 8px;
   border-radius: 999px;
   white-space: nowrap;
-  background: rgba(111, 207, 151, 0.15);
-  color: #6fcf97;
+  background: rgba(var(--ok-rgb), 0.15);
+  color: var(--color-ok);
 }
 
 .radar.is-watch .radar-badge {
-  background: rgba(247, 183, 51, 0.15);
-  color: #f7b733;
+  background: rgba(var(--warn-rgb), 0.15);
+  color: var(--color-warn);
 }
 
 .radar.is-alert .radar-badge {
-  background: rgba(255, 138, 92, 0.18);
-  color: #ff8a5c;
+  background: rgba(var(--alert-rgb), 0.18);
+  color: var(--color-alert);
 }
 
 .radar-text {
@@ -92,13 +92,13 @@
 
 /* Écart expliqué par un tag (alcool, voyage…) : ton apaisé, pas d'alerte orange. */
 .radar.is-explained {
-  border-left-color: #8fb3ff;
+  border-left-color: var(--color-info);
   background: var(--surface);
 }
 
 .radar.is-explained .radar-badge {
-  background: rgba(143, 179, 255, 0.15);
-  color: #8fb3ff;
+  background: rgba(var(--info-rgb), 0.15);
+  color: var(--color-info);
 }
 
 /* D6 : écart inhabituel hors du sens « fatigue » de l'hypothèse générale, sans couleur d'alerte */
@@ -108,7 +108,7 @@
 }
 
 .radar.is-neutral .radar-badge {
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(var(--brand-rgb), 0.15);
   color: var(--accent);
 }
 

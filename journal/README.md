@@ -25,6 +25,20 @@ code de l'app. Ce changement a publié la **v189** (33,6 Mo) : c'est elle qui vo
 jour** depuis la v188 (voir ci-dessous). Prochain run de code : inventaire chiffré et propositions de nettoyage
 (masquer / fusionner / déplacer, navigation simplifiée), puis tokens de design.
 
+**Run du 21/10 00:30 — la nouvelle identité visuelle arrive (étape 1 sur 3).** Ce que vous verrez dans la
+prochaine version (v190) : **l'app passe en clair** — fond blanc, texte encre, **vert émeraude** pour les actions, et
+les polices **Figtree** (les mots) et **IBM Plex Mono** (prévue pour les chiffres), embarquées dans l'app (rien n'est
+chargé depuis Internet). Le **thème sombre reste disponible** : Plus → Paramètres → **Apparence** (Clair / Sombre /
+Comme le téléphone). Les icônes de la barre d'état (heure, batterie) s'accordent au thème choisi. Rien ne change dans
+vos données. En coulisses : toutes les couleurs de l'app viennent maintenant d'**un seul fichier de tokens**, et deux
+tests empêchent de réintroduire une couleur « en dur » ou un texte dont le contraste passerait sous 4,5:1 (clair et
+sombre). Vos décisions du 20/10 au soir sur l'**infrastructure** (Google Cloud sans clé, CI sur `main`) et l'**identité
+visuelle** sont consignées dans [`INFRA.md`](INFRA.md) et [`DESIGN.md`](DESIGN.md) ; la liste « Actions du
+propriétaire » de [`PRODUIT.md`](PRODUIT.md) a été refaite pas à pas. Prochaines étapes : **variantes play / sideload**
+(pour avoir au plus tôt un AAB à envoyer en test interne), puis l'icône « H nuit » et l'écran d'accueil de la maquette.
+**👉 Votre prochaine action la plus utile** : quand Google aura validé votre compte « jpesquet », **créer l'app** dans
+la Play Console (P8), et commencer à **recruter 12 à 15 testeurs** (P12, il faut leurs adresses Gmail).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -402,6 +416,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 21/10 00:30 — [Identité visuelle (i) : tokens, polices, thème clair](runs/2026-10-21-0030-design-tokens.md) | 🧭🎨 | `INFRA.md` + `DESIGN.md` créés, PRODUIT / BACKLOG revus (Vertex AI sans clé, actions du propriétaire pas à pas) ; `theme/tokens.css` seule source des couleurs (~240 couleurs brutes remplacées), Figtree + IBM Plex Mono embarquées, clair par défaut, Apparence dans Paramètres, `SystemBarsPlugin` ; 1 653 Vitest |
 | 20/10 22:30 — [Chantier produit : PRODUIT.md + « bien-être » partout (jalons 1 et 2a)](runs/2026-10-20-2230-produit-cadre.md) | 🧭🙂 | Décisions du 20/10 au soir reportées (PRODUIT.md, charte §000000000, BACKLOG) ; libellés visibles « humeur » → « bien-être » ; test-garde `wording.test.js` ; 1 642 Vitest ; PR #238 → **v189, 33,6 Mo** |
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
 | 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
@@ -444,6 +459,8 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `IDEES.md` | Idées des runs « idées » (08 h / 20 h Paris), classées impact × faisabilité, avec sources et pistes |
 | `runs/AAAA-MM-JJ-HHMM-<slug>.md` | Un compte rendu par exécution (un fichier par run = pas de conflit Git) |
 | `semaines/AAAA-Sww.md` | Résumés des semaines passées |
+| `INFRA.md` | Infrastructure (20/10 au soir) : Google Cloud `healthtrack-824b26`, connexion GitHub sans clé (WIF, `main` seulement), comptes de service, Vertex AI, Play, ce que la CI peut faire seule |
+| `DESIGN.md` | Identité visuelle « Clair et précis » validée le 20/10 au soir : couleurs, polices, formes, icône, maquettes, étapes de mise en œuvre |
 | `PRODUIT.md` | **Chantier produit (décisions du 20/10 au soir)** : décisions, 10 jalons et leur état, inventaire des écrans, « Actions du propriétaire » — à lire juste après ce résumé |
 | `BIEN-ETRE-AUTO.md` | État des lieux et plan du chantier « bien-être entièrement automatique » (consigne §00000), décisions Y / X, ce qu'il faut valider sur le téléphone |
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
@@ -465,6 +482,14 @@ routine fait foi). Points clés pour chaque run :
 - **Design** : pas de nouvelle identité tant que `journal/DESIGN.md` n'existe pas ; centraliser en tokens.
 - **Interdits** : créer des comptes, payer, déployer, publier sur le Play Store → « Actions du propriétaire ».
 - Le bien-être automatique (§0000000) et la montre (§000, maintenance A.1–A.3) restent valables, après les jalons.
+
+
+**Ajout du 21/10 00:30** — le prompt apporte deux sections lues pour la première fois : **INFRASTRUCTURE ET
+AUTONOMIE** (→ [`INFRA.md`](INFRA.md) : aucun identifiant dans la session ; Google Cloud et Google Play uniquement via
+GitHub Actions sur `main` avec Workload Identity Federation ; Vertex AI sans clé API ; la routine peut déployer le
+relais et publier sur les pistes de test, jamais en production) et **IDENTITÉ VISUELLE** (→ [`DESIGN.md`](DESIGN.md) :
+« Clair et précis », tokens, Figtree + IBM Plex Mono embarquées, icône « H nuit », maquettes ; appliquée par étapes,
+un run = une étape, captures claires et sombres). Couleurs : uniquement via `app/src/theme/tokens.css` (tests).
 
 ## 00000000. Signalement du propriétaire du 20 octobre 2026 à 19:05 — mise à jour bloquée sur « Téléchargement… » — corrigé au run 20/10 20:30 (à confirmer sur l'A56)
 

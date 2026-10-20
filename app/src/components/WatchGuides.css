@@ -19,7 +19,7 @@
 .watch-guide {
   background: var(--surface);
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(var(--tint-rgb), 0.06);
   margin-bottom: 8px;
   padding: 0 14px;
 }
@@ -61,7 +61,7 @@
 }
 
 .watch-guide-caveats {
-  border-left: 3px solid rgba(255, 193, 7, 0.6);
+  border-left: 3px solid rgba(var(--warn-rgb), 0.6);
   padding-left: 10px;
 }
 
@@ -87,7 +87,7 @@
 }
 
 .watch-guide-links a {
-  color: var(--accent, #4ecdc4);
+  color: var(--accent);
   min-height: 32px;
   display: inline-flex;
   align-items: center;

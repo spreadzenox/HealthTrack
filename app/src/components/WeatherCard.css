@@ -1,7 +1,7 @@
 .weather-card {
   background: var(--surface);
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(var(--tint-rgb), 0.06);
   padding: 14px 16px;
   margin-bottom: 24px;
 }
@@ -36,7 +36,7 @@
   height: 44px;
   padding: 0 12px;
   font-size: 0.95rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(var(--tint-rgb), 0.12);
   border-radius: 10px;
   background: var(--bg);
   color: var(--text);
@@ -57,7 +57,7 @@
   text-align: left;
   padding: 8px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--tint-rgb), 0.1);
   background: var(--bg);
   color: var(--text);
   font: inherit;
@@ -96,8 +96,8 @@
   margin: 8px 0 0;
   padding: 8px 10px;
   border-radius: 8px;
-  background: rgba(255, 193, 7, 0.1);
-  color: #ffd54f;
+  background: rgba(var(--warn-rgb), 0.1);
+  color: var(--color-warn);
   font-size: 0.82rem;
   line-height: 1.45;
 }
@@ -105,6 +105,6 @@
 .weather-error {
   margin: 8px 0 0;
   font-size: 0.85rem;
-  color: #ff8a65;
+  color: var(--color-alert);
   line-height: 1.45;
 }

@@ -9,7 +9,7 @@
 }
 
 .ble-error {
-  color: #ff8a65;
+  color: var(--color-alert);
 }
 
 .ble-live-title {
@@ -48,7 +48,7 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--text);
-  border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-top: 1px solid var(--border, rgba(var(--tint-rgb), 0.08));
 }
 
 .ble-received li:first-child {

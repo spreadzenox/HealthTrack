@@ -1,0 +1,88 @@
+# Infrastructure et autonomie (mise en place avec le propriétaire le 20/10/2026 au soir)
+
+> Reporté au run du 21/10/2026 00:30 (Paris) depuis la section « INFRASTRUCTURE ET AUTONOMIE » du prompt de la
+> routine. En cas de contradiction, le prompt prime. **Aucun des identifiants ci-dessous n'est un secret** : ils
+> peuvent figurer dans les workflows et le journal. Les secrets (keystore, mots de passe) ne vivent que dans
+> Secret Manager et ne passent jamais par la session de la routine, les logs ou le dépôt.
+
+## Principe
+
+La session de la routine **ne détient aucun identifiant**. Tout accès à Google Cloud et à Google Play passe par
+**GitHub Actions sur `main`**, via une connexion **sans clé** (Workload Identity Federation). La routine écrit le
+code et les workflows, merge (garde-fous du prompt), et c'est la CI qui déploie et publie.
+
+Conséquence : les workflows de PR n'ont **pas** accès à Google Cloud. Déploiements et publications = `push` sur
+`main` ou `workflow_dispatch` sur `main`. On teste donc la logique (scripts, tests du relais) dans la PR, et
+l'accès réel après le merge.
+
+## Google Cloud
+
+| Élément | Valeur |
+|---|---|
+| Projet | `healthtrack-824b26` (numéro `81378799481`) |
+| Région | `europe-west1` |
+| Budget | 20 €/mois, alertes e-mail 50 / 90 / 100 % |
+| APIs activées | Cloud Run, Artifact Registry, Secret Manager, Pub/Sub, Android Publisher, Play Integrity, Vertex AI (aiplatform), IAM, IAM Credentials, STS, Billing Budgets, Logging |
+| Fournisseur WIF | `projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main` — n'accepte que `spreadzenox/HealthTrack` et `refs/heads/main` |
+| Compte de service CI | `gh-deployer@healthtrack-824b26.iam.gserviceaccount.com` — `run.admin`, `artifactregistry.writer`, `pubsub.editor`, `logging.viewer`, `serviceAccountUser` sur relay-runtime, lecture des secrets de signature. **Pas d'admin IAM** : s'il manque un droit, ne pas contourner → « Action du propriétaire » avec la commande `gcloud` exacte. |
+| Compte de service du relais | `relay-runtime@healthtrack-824b26.iam.gserviceaccount.com` — `aiplatform.user`, `logging.logWriter` ; identité du service Cloud Run (`--service-account`) |
+| Images Docker | `europe-west1-docker.pkg.dev/healthtrack-824b26/healthtrack` |
+| Pub/Sub RTDN | `projects/healthtrack-824b26/topics/play-rtdn` (Google Play peut y publier) ; **la CI crée l'abonnement push** vers le relais |
+| Secrets de signature (play) | `android-upload-keystore` (PKCS12 en base64, alias `upload`) et `android-upload-keystore-password` (keystore et clé), région `europe-west1`. Créés par le propriétaire à l'étape 3 ; absents → le workflow **échoue proprement** avec un message clair. |
+
+Squelette d'authentification dans un workflow :
+
+```yaml
+permissions:
+  contents: read
+  id-token: write
+steps:
+  - uses: google-github-actions/auth@v2
+    with:
+      workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+      service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+```
+
+## IA : Vertex AI dans l'UE (décision du 20/10)
+
+- Gemini via **Vertex AI** en `europe-west1` (ou le point de terminaison UE le plus proche si un modèle n'y est pas),
+  appelé par un **relais Cloud Run** qui s'exécute sous l'identité `relay-runtime`. **Aucune clé API Gemini n'existe
+  ni ne doit être créée.**
+- Le relais : vérifie l'abonnement Play (Play Developer API + RTDN), décompte les crédits (Play Integrity contre la
+  réinstallation), supprime l'EXIF, ne stocke rien, utilise le modèle le moins cher adapté (Flash-Lite), applique un
+  **plafond global par jour** et un plafond par utilisateur. Service public, qui se protège lui-même. Instances à
+  zéro au repos.
+- La clé Gemini saisie par l'utilisateur (Paramètres actuels) peut rester dans la variante **sideload**.
+
+## Google Play
+
+- Une fois l'app créée par le propriétaire, son **premier envoi manuel** fait (test interne, signature d'app par
+  Google Play acceptée) et `gh-deployer` invité (pistes de test, fiche du Store, produits/abonnements — **pas la
+  production**), la CI : envoie chaque version play en **test interne puis test fermé** (Android Publisher, edits),
+  met à jour la fiche, crée les abonnements (4,99 €/mois, 29,99 €/an, essai 14 j sur l'annuel) quand le profil de
+  paiement existe.
+- `relay-runtime` sera invité avec « Voir les données financières » et « Gérer les commandes et les abonnements ».
+- **La mise en production est le seul geste du propriétaire** (« Promouvoir la version »). La routine prépare tout
+  (notes de version, fiche, déclarations) et ne publie jamais en production.
+
+## Ce que la routine peut faire seule, via la CI
+
+Déployer / redéployer le relais ; gérer ses abonnements Pub/Sub ; lire les logs (workflow_dispatch qui publie un
+résumé) ; publier sur les pistes de test Play ; mettre à jour la fiche et les produits. Coûts : sous 20 €/mois ; si
+une alerte est probable → arrêter et le signaler en tête du résumé.
+
+## Signature de la variante sideload
+
+Aujourd'hui signée avec la **clé de debug publique** d'Android (`app/android/app/debug.keystore`). À migrer vers une
+clé privée (même mécanisme Secret Manager) **avant la vérification obligatoire des développeurs Android** (France,
+2027), avec un parcours sans perte de données (export puis import JSON : changer de clé impose une réinstallation).
+Pas urgent — planifié au BACKLOG (P-SIDELOAD-KEY).
+
+## État
+
+| Élément | État |
+|---|---|
+| Projet GCP, WIF, comptes de service, Pub/Sub | ✅ créés par le propriétaire le 20/10 |
+| Keystore d'envoi play dans Secret Manager | ⬜ propriétaire, à l'étape 3 (jalon 3) |
+| Workflows de build play / publication Play | ⬜ jalon 3 |
+| Relais Cloud Run (code, tests, workflow de déploiement) | ⬜ jalon 6 |

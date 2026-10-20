@@ -28,20 +28,33 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
   (20/10 22:30) ; [ ] 2b inventaire chiffré (cartes de l'accueil, réglages, onglets) → décisions masquer / fusionner /
   déplacer (sans perte de données) ; [ ] 2c navigation simplifiée (Nutrition dans Repas ? onglet « Journal » ?) ;
-  [ ] 2d tokens de design (couleurs, typo, espacements en variables CSS) ; [ ] 2e « Prédiction du jour » du graphique
+  [x] 2d tokens de design → fait par 2 bis (i) (21/10 00:30) ; [ ] 2e « Prédiction du jour » du graphique
   bien-être : reformuler en « estimation » / « tendance » (vocabulaire conformité).
+- [ ] **2 bis Identité visuelle « Clair et précis »** (validée le 20/10 au soir, `DESIGN.md`) — [x] `journal/DESIGN.md`
+  (21/10 00:30) ; [x] (i) tokens `src/theme/tokens.css` (seule source des couleurs, test de contraste ≥ 4,5:1 dans les
+  deux thèmes, test anti-couleur brute), polices Figtree + IBM Plex Mono embarquées, **thème clair par défaut**, sombre
+  en option (Paramètres → Apparence), icônes de la barre d'état accordées (`SystemBarsPlugin`) (21/10 00:30) ;
+  [ ] (ii) icône adaptative « H nuit » + monochrome + notification + écran de démarrage (+ logo de l'en-tête) ;
+  [ ] (iii) Accueil « Aujourd'hui » selon la maquette (cartes 22 px, boutons pilule, chiffres en mono) ;
+  [ ] (iv+) chaque écran quand le chantier le touche. Petits restes : chiffres en mono dans le bandeau de mise à jour
+  et les tuiles du journal ; rayon des cartes (`--radius` 12 px → `--radius-card` 22 px) écran par écran.
 - [ ] **3 Variantes play / sideload** (productFlavors, manifeste play sans `REQUEST_INSTALL_PACKAGES`, drapeau JS qui
   masque la mise à jour en play, CI des deux ; note sur l'option caméra la plus sûre pour Play)
 - [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation)
 - [ ] **5 Analyses avec délais (2–48 h) repas → symptômes** + saisie de symptômes digestifs horodatée + honnêteté
   statistique (« pas encore assez de données »)
-- [ ] **6 Play Billing, paywalls (soft + au moment de la valeur), crédits IA** ; puis **relais Gemini** (code + IaC
-  sans secret, Flash-Lite, UE, EXIF retiré, rien stocké, Play Integrity)
+- [ ] **6 Play Billing, paywalls (soft + au moment de la valeur), crédits IA** ; puis **relais Cloud Run → Vertex AI
+  (europe-west1)** sous l'identité `relay-runtime`, **aucune clé API** ; Flash-Lite, EXIF retiré, rien stocké, Play
+  Integrity, RTDN (`play-rtdn`), plafonds par utilisateur et global ; déployé par la CI sur `main` (WIF, `INFRA.md`)
 - [ ] **7 Réintroduction FODMAP guidée + rapport PDF médecin**
 - [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026)
 - [ ] **9 i18n + anglais**
 - [ ] **10 Fiche Play** (textes FR, captures, Data safety, déclaration apps de santé) + `journal/legal/` (brouillons
   confidentialité, CGU / CGV, mentions légales « à faire valider par un juriste »)
+
+- [ ] **P-SIDELOAD-KEY** migrer la signature sideload (clé de debug publique) vers une clé privée en Secret Manager,
+  avec parcours export → réinstallation → import JSON, avant la vérification obligatoire des développeurs Android
+  (France 2027). Pas urgent (`INFRA.md`).
 
 ## 🚑 Signalement du propriétaire du 20/10/2026 19:05 — mise à jour bloquée sur « Téléchargement… »
 - [x] Cause : APK 33,6 Mo (v180+, `libonnxruntime.so` 18,2 Mo) téléchargé d'un bloc en base64 via le pont Capacitor,
@@ -817,6 +830,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Réordonnées le 21/10 (00:30 Paris), sections INFRASTRUCTURE et IDENTITÉ VISUELLE du prompt (lues pour la première
+fois)** : 1) PR « [Auto] » rouge ou workflow cassé ; 2) retour du propriétaire sur la mise à jour ; 3) prochain run de
+code → **jalon 3 variantes play / sideload** (le test fermé dure 14 jours : une première variante play installable au
+plus tôt ; AAB signé par la CI sur `main` avec le keystore Secret Manager, échec propre s'il manque), puis **2 bis (ii)
+icône**, **2b/2c nettoyage + navigation 4 onglets** (Aujourd'hui, Journal, Pistes, Sources — maquette) avec **2 bis
+(iii) Accueil**, puis jalons 4 → 10. I129 (alléger l'APK) quand un run a de la marge.
 
 **Réordonnées le 20/10 (22:30 Paris), décisions produit du 20/10 au soir (charte §000000000) — priment sur tout ce
 qui suit** : 1) PR « [Auto] » rouge ou Build & Release cassé ; 2) retour du propriétaire sur la mise à jour (v188 →

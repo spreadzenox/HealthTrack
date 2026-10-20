@@ -37,23 +37,23 @@
   justify-content: center;
   font-weight: 700;
   font-size: 0.8rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--tint-rgb), 0.08);
   color: var(--text-muted);
 }
 
 .watch-diag-ok .watch-diag-icon {
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(var(--brand-rgb), 0.15);
   color: var(--accent);
 }
 
 .watch-diag-warn .watch-diag-icon {
-  background: rgba(255, 193, 7, 0.15);
-  color: #ffc107;
+  background: rgba(var(--warn-rgb), 0.15);
+  color: var(--color-warn);
 }
 
 .watch-diag-fail .watch-diag-icon {
-  background: rgba(255, 138, 101, 0.15);
-  color: #ff8a65;
+  background: rgba(var(--alert-rgb), 0.15);
+  color: var(--color-alert);
 }
 
 .watch-diag-skip .watch-diag-label,
@@ -70,12 +70,12 @@
   margin-top: 12px;
   padding: 10px 12px;
   border-radius: var(--radius);
-  background: rgba(255, 138, 101, 0.1);
-  border-left: 3px solid #ff8a65;
+  background: rgba(var(--alert-rgb), 0.1);
+  border-left: 3px solid var(--color-alert);
 }
 
 .watch-diag-verdict-ok {
-  background: rgba(78, 205, 196, 0.1);
+  background: rgba(var(--brand-rgb), 0.1);
   border-left-color: var(--accent);
 }
 
@@ -109,7 +109,7 @@
   min-height: 36px;
   padding: 6px 12px;
   border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(var(--tint-rgb), 0.15);
   background: transparent;
   color: var(--text-muted);
   font-size: 0.85rem;
@@ -118,13 +118,13 @@
 
 .watch-setup-chip.active {
   border-color: var(--accent);
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(var(--brand-rgb), 0.15);
   color: var(--text);
   font-weight: 600;
 }
 
 .watch-setup-current .watch-diag-icon {
-  background: rgba(78, 205, 196, 0.25);
+  background: rgba(var(--brand-rgb), 0.25);
   color: var(--accent);
 }
 
@@ -159,7 +159,7 @@
 }
 
 .watch-setup-warnings {
-  color: #ffc107;
+  color: var(--color-warn);
 }
 
 .watch-setup-account {
@@ -199,7 +199,7 @@
 
 .watch-trouble {
   margin-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(var(--tint-rgb), 0.08);
   padding-top: 10px;
 }
 
@@ -218,13 +218,13 @@
   margin: 10px 0;
   padding: 10px 12px;
   border-radius: 10px;
-  border-left: 3px solid var(--warning, #f5c04a);
-  background: rgba(245, 192, 74, 0.08);
+  border-left: 3px solid var(--color-warn);
+  background: rgba(var(--warn-rgb), 0.08);
 }
 
 .watch-assoc-ok {
   border-left-color: var(--accent);
-  background: rgba(78, 205, 196, 0.08);
+  background: rgba(var(--brand-rgb), 0.08);
 }
 
 .watch-assoc-title {

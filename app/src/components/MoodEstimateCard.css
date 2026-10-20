@@ -25,14 +25,14 @@
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(152, 152, 168, 0.15);
+  background: rgba(var(--ink-2-rgb), 0.15);
   color: var(--text-muted);
   white-space: nowrap;
 }
 
 .mood-estimate-badge.is-moyenne,
 .mood-estimate-badge.is-bonne {
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(var(--brand-rgb), 0.15);
   color: var(--accent);
 }
 
@@ -55,7 +55,7 @@
   position: relative;
   height: 10px;
   border-radius: 999px;
-  background: rgba(152, 152, 168, 0.18);
+  background: rgba(var(--ink-2-rgb), 0.18);
 }
 
 .mood-range-band {
@@ -63,7 +63,7 @@
   top: 0;
   bottom: 0;
   border-radius: 999px;
-  background: rgba(78, 205, 196, 0.35);
+  background: rgba(var(--brand-rgb), 0.35);
 }
 
 .mood-range-mark {

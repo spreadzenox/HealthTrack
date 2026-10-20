@@ -28,7 +28,7 @@
 .my-device {
   background: var(--surface);
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(var(--tint-rgb), 0.06);
   padding: 12px 14px;
 }
 
@@ -55,18 +55,18 @@
 }
 
 .device-status-ok {
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(var(--brand-rgb), 0.15);
   color: var(--accent);
 }
 
 .device-status-warn {
-  background: rgba(255, 193, 7, 0.15);
-  color: #ffc107;
+  background: rgba(var(--warn-rgb), 0.15);
+  color: var(--color-warn);
 }
 
 .device-status-action {
-  background: rgba(255, 138, 101, 0.15);
-  color: #ff8a65;
+  background: rgba(var(--alert-rgb), 0.15);
+  color: var(--color-alert);
 }
 
 .my-device-message,
@@ -96,8 +96,8 @@
   margin: 8px 0 0;
   padding: 8px 10px;
   border-radius: 8px;
-  background: rgba(255, 193, 7, 0.1);
-  color: #ffc107;
+  background: rgba(var(--warn-rgb), 0.1);
+  color: var(--color-warn);
   font-size: 0.85rem;
   line-height: 1.45;
 }

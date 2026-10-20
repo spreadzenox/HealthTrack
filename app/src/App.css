@@ -14,7 +14,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .update-banner-text {
@@ -45,7 +45,7 @@
   height: 32px;
   display: block;
   border-radius: 9px;
-  box-shadow: 0 2px 10px rgba(78, 205, 196, 0.2);
+  box-shadow: 0 2px 10px rgba(var(--brand-rgb), 0.2);
 }
 
 .header h1 {
@@ -73,7 +73,7 @@
 .upload-zone:hover,
 .upload-zone.dragover {
   border-color: var(--accent);
-  background: rgba(78, 205, 196, 0.06);
+  background: rgba(var(--brand-rgb), 0.06);
 }
 
 .upload-zone .hidden-file-input {
@@ -113,7 +113,7 @@
 .upload-btn:hover,
 .upload-btn:active {
   background: var(--accent);
-  color: #000;
+  color: var(--color-on-brand);
 }
 
 .preview-wrap {
@@ -164,7 +164,7 @@
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(78, 205, 196, 0.12);
+  background: rgba(var(--brand-rgb), 0.12);
 }
 
 .loading {
@@ -189,7 +189,7 @@
 }
 
 .error-msg {
-  background: rgba(231, 76, 60, 0.15);
+  background: rgba(var(--danger-rgb), 0.15);
   color: var(--error);
   padding: 12px 16px;
   border-radius: var(--radius);
@@ -228,7 +228,7 @@
   justify-content: space-between;
   align-items: baseline;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(var(--tint-rgb), 0.06);
   gap: 12px;
 }
 
@@ -289,12 +289,12 @@
 
 .cigarette-quick-add-ok {
   font-size: 0.85rem;
-  color: var(--success, #2ecc71);
+  color: var(--color-ok);
 }
 
 .cigarette-quick-add-error {
   font-size: 0.85rem;
-  color: var(--danger, #e74c3c);
+  color: var(--color-danger);
 }
 
 /* Dashboard : journal des derniers jours (une carte par jour, résumé + saisies) */
@@ -333,7 +333,7 @@
 }
 
 .day-summary-item {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--tint-rgb), 0.04);
   border-radius: 8px;
   padding: 5px 8px;
   min-width: 0;
@@ -364,7 +364,7 @@
 }
 
 .entry-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(var(--tint-rgb), 0.03);
   border-radius: 8px;
   padding: 12px 12px;
   margin-bottom: 8px;
@@ -372,12 +372,12 @@
 }
 
 .entry-card[data-type="food"] { border-left-color: var(--accent); }
-.entry-card[data-type="activity"] { border-left-color: #3498db; }
+.entry-card[data-type="activity"] { border-left-color: var(--color-info); }
 .entry-card[data-type="weight"],
 .entry-card[data-type="body_composition"],
-.entry-card[data-type="height"] { border-left-color: #95a5a6; }
-.entry-card[data-type="cigarette"] { border-left-color: #7f8c8d; }
-.entry-card[data-type="wellbeing"] { border-left-color: #9b59b6; }
+.entry-card[data-type="height"] { border-left-color: var(--text-muted); }
+.entry-card[data-type="cigarette"] { border-left-color: var(--text-muted); }
+.entry-card[data-type="wellbeing"] { border-left-color: var(--color-violet); }
 
 .entry-card-header {
   display: flex;
@@ -411,7 +411,7 @@
 .entry-source {
   font-size: 0.75rem;
   color: var(--text-muted);
-  background: rgba(255,255,255,0.06);
+  background: rgba(var(--tint-rgb), 0.06);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -486,7 +486,7 @@
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--scrim);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -501,7 +501,7 @@
   width: 100%;
   max-height: 100%;
   overflow-y: auto;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 40px var(--shadow);
 }
 
 .wellbeing-modal-title {
@@ -544,12 +544,12 @@
 }
 
 .wellbeing-circle:hover {
-  background: rgba(78, 205, 196, 0.1);
+  background: rgba(var(--brand-rgb), 0.1);
   color: var(--text);
 }
 
 .wellbeing-circle-selected {
-  background: rgba(78, 205, 196, 0.2);
+  background: rgba(var(--brand-rgb), 0.2);
   color: var(--accent);
 }
 
@@ -596,7 +596,7 @@
   min-height: 44px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(var(--tint-rgb), 0.18);
   background: transparent;
   color: var(--text);
   font-size: 0.85rem;
@@ -605,7 +605,7 @@
 
 .wellbeing-tag-selected {
   border-color: var(--accent);
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(var(--brand-rgb), 0.15);
   color: var(--accent);
   font-weight: 600;
 }
@@ -633,7 +633,7 @@
   min-height: 56px;
   padding: 8px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(var(--tint-rgb), 0.18);
   background: transparent;
   color: var(--text);
   font: inherit;
