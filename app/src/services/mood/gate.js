@@ -45,6 +45,12 @@ const DETREND_DAYS = 14
 const DETREND_MIN = 3
 /** Au-delà, le visage dérive assez pour qu'on le compare à ses 14 jours précédents (I121). */
 export const FACE_DRIFT_DETREND = 0.5
+/**
+ * Mesures de la qualité d'une lecture, pas des expressions : cadrage (lacet), lumière du visage (I127b), accord et
+ * nombre d'images du duo de modèles. Elles pèsent la lecture (faceMood.js) mais n'entrent jamais dans l'indice
+ * combiné : la lumière suit l'endroit et l'heure (dehors, bureau, soir), c'est du contexte, pas de l'émotion.
+ */
+export const FACE_QUALITY_KEYS = ['yaw', 'light', 'affectGap', 'affectFrames', 'affectModels']
 
 const dayNumber = (key) => Math.round(Date.parse(`${key}T00:00:00Z`) / DAY_MS)
 const keyOf = (n) => new Date(n * DAY_MS).toISOString().slice(0, 10)
@@ -75,7 +81,7 @@ export function gateDays(entries) {
     const dk = localDateKey(b.at)
     if (!notes.has(dk)) continue
     const f = faces.get(dk) || {}
-    for (const [k, v] of Object.entries(b.payload.values)) (f[k] ||= []).push(v)
+    for (const [k, v] of Object.entries(b.payload.values)) if (!FACE_QUALITY_KEYS.includes(k)) (f[k] ||= []).push(v)
     faces.set(dk, f)
   }
   return [...faces.keys()].sort().map((date) => {

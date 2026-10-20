@@ -219,6 +219,14 @@ lectures du visage sur le même plan : une lecture prise de biais, floue, ou où
 comptées moins ») et sa fourchette se resserre moins vite dans ce cas : la confiance reste honnête. Même règle pour
 l'humeur estimée jour par jour des Analyses. Rien à faire de votre côté.
 
+**Run du 20/10 18:30 — la lumière compte aussi.** Chaque lecture du visage mesure maintenant la **lumière sur votre
+visage** (un seul nombre, jamais d'image). Une lecture prise dans la pénombre ou sous une lumière trop vive compte un
+peu moins dans le bien-être du jour, sans que sa note bouge ; la carte le dit (« souvent dans la pénombre ») quand
+c'est le cas de la plupart des lectures de la journée. La lumière n'entre **jamais** dans l'humeur elle-même ni dans
+la vérification visage ↔ notes : elle suit l'endroit et l'heure (dehors, bureau, soir), c'est du contexte, pas une
+émotion — vérifié par un test. Le Diagnostic ajoute « lumière correcte / souvent dans la pénombre » à la ligne
+« Humeur estimée ». Rien à faire de votre côté (la mesure commence avec la version publiée après ce run).
+
 **Nouveau (12:30, voix)** : dans le Diagnostic, lisez la ligne « Voix … » (ou envoyez-moi le fichier, qui la
 contient) : elle décide comment sera faite la dictée du soir.
 
@@ -313,7 +321,9 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (20/10 14:30)** — ✅ habitudes et effets décalés sur l'humeur estimée ; ensuite : votre
+**Prochaines priorités (20/10 18:30)** — ✅ I127 lectures pondérées, ✅ I127b lumière du visage ; ensuite : votre
+diagnostic (déverrouillages, duo, ligne « Voix ») ; puis la dictée du soir (I117) selon la ligne « Voix ».
+*Prochaines priorités (20/10 14:30)* — ✅ habitudes et effets décalés sur l'humeur estimée ; ensuite : votre
 diagnostic (déverrouillages, duo, ligne « Voix ») ; I127 (lectures pondérées par leur qualité) ; puis la dictée du
 soir (I117) selon la ligne « Voix ».
 *Prochaines priorités (20/10 12:30)* — ✅ I124 sonde vocale ; ensuite : votre diagnostic (déverrouillages, duo,
@@ -367,6 +377,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 12:30 — [Sonde vocale dans le diagnostic (I124)](runs/2026-10-20-1230-sonde-vocale.md) | 🔴🙂 | `VoiceProbePlugin` (disponibilité, sur l'appareil, moteurs, langues fr-FR API 33) sans micro ; `voiceProbe.js` (verdict) ; diagnostic v5 `voice`, sonde à l'ouverture du Diagnostic ; 1 616 Vitest |
 | 20/10 14:30 — [Habitudes et effets décalés sur l'humeur estimée](runs/2026-10-20-1430-habitudes-humeur-estimee.md) | 🔴🙂 | `computeTagEffects(…, { outcomeByDay })`, `computeLaggedEffects` sur l'humeur estimée sans piste, bloc dans la section visage ; stress (Y) exclu ; 1 621 Vitest |
 | 20/10 16:30 — [Lectures du jour pondérées par leur qualité (I127)](runs/2026-10-20-1630-lectures-ponderees.md) | 🔴🙂 | `weightedMedian` + poids 1 / demi-largeur² (images valides, lacet, duo), n effectif de Kish dans la fourchette, « N lectures peu nettes comptées moins » ; même pondération dans `faceMoodDays` ; 1 625 Vitest |
+| 20/10 18:30 — [Lumière du visage dans le poids des lectures (I127b)](runs/2026-10-20-1830-lumiere-visage.md) | 🔴🙂 | natif : `light` (médiane de la luminance des images valides) ; JS : ×1,15 hors [0,25 ; 0,8], « souvent dans la pénombre » ; `FACE_QUALITY_KEYS` hors de la porte ; 1 631 Vitest, 114 JUnit |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---

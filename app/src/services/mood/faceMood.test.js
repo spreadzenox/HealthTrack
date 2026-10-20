@@ -9,6 +9,7 @@ import {
   FACE_PRIOR,
   arousalLabel,
   weightedMedian,
+  lightPenalty,
 } from './faceMood'
 import { isEstimatorInput } from './estimatorInputs'
 
@@ -302,5 +303,53 @@ describe('faceMood — lectures pondérées par leur qualité (I127)', () => {
     const sharp = faceMoodEstimate(vals.map((v, i) => burst(at(0, 8, i * 5), { valence: v, arousal: 0 })), { now: NOW })
     const mixed = faceMoodEstimate(vals.map((v, i) => burst(at(0, 8, i * 5), { valence: v, arousal: 0, yaw: i % 2 ? 30 : 4 }, { valid: i % 2 ? 1 : 3, frames: 3 })), { now: NOW })
     expect(mixed.day.high - mixed.day.low).toBeGreaterThan(sharp.day.high - sharp.day.low)
+  })
+})
+
+describe('faceMood — lumière du visage (I127b)', () => {
+  it('lightPenalty : 1 en lumière correcte ou inconnue, plus près des limites du natif', () => {
+    expect(lightPenalty(undefined)).toBe(1)
+    expect(lightPenalty(0.5)).toBe(1)
+    expect(lightPenalty(0.25)).toBe(1)
+    expect(lightPenalty(0.8)).toBe(1)
+    expect(lightPenalty(0.18)).toBeGreaterThan(1)
+    expect(lightPenalty(0.86)).toBeGreaterThan(1)
+  })
+
+  it('une lecture dans la pénombre compte moins et élargit la fourchette, sans déplacer sa note', () => {
+    const lit = faceMoodEstimate([burst(at(0, 8), { valence: 0.4, arousal: 0, light: 0.5 })], { now: NOW })
+    const dim = faceMoodEstimate([burst(at(0, 8), { valence: 0.4, arousal: 0, light: 0.18 })], { now: NOW })
+    expect(dim.day.note).toBe(lit.day.note)
+    expect(dim.day.high - dim.day.low).toBeGreaterThan(lit.day.high - lit.day.low)
+    expect(dim.day.poorReadings).toBe(1)
+    expect(lit.day.poorReadings).toBe(0)
+  })
+
+  it('les lectures bien éclairées l’emportent sur celles prises dans la pénombre', () => {
+    const good = [8, 9].map((h) => burst(at(0, h), { valence: 0.6, arousal: 0, light: 0.5 }))
+    const dimFrown = [8, 9].map((h) => burst(at(0, h, 30), { valence: -0.6, arousal: 0, light: 0.17 }))
+    const litFrown = [8, 9].map((h) => burst(at(0, h, 30), { valence: -0.6, arousal: 0, light: 0.5 }))
+    const weighted = faceMoodEstimate([...good, ...dimFrown], { now: NOW })
+    const equal = faceMoodEstimate([...good, ...litFrown], { now: NOW })
+    expect(weighted.day.note).toBeGreaterThan(equal.day.note)
+  })
+
+  it('la carte dit quand la lumière a souvent manqué, et se tait sinon', () => {
+    const dim = faceMoodEstimate([8, 9, 10].map((h) => burst(at(0, h), { valence: 0.2, arousal: 0, light: 0.18 })), { now: NOW })
+    const bright = faceMoodEstimate([8, 9, 10].map((h) => burst(at(0, h), { valence: 0.2, arousal: 0, light: 0.87 })), { now: NOW })
+    const fine = faceMoodEstimate([8, 9, 10].map((h) => burst(at(0, h), { valence: 0.2, arousal: 0, light: 0.5 })), { now: NOW })
+    const old = faceMoodEstimate([8, 9, 10].map((h) => burst(at(0, h), { valence: 0.2, arousal: 0 })), { now: NOW })
+    expect(dim.day.lighting).toBe('pénombre')
+    expect(bright.day.lighting).toBe('vive')
+    expect(fine.day.lighting).toBe('correcte')
+    expect(old.day.lighting).toBeNull()
+    expect(describeFaceMood(dim).join(' ')).toMatch(/souvent dans la pénombre/)
+    expect(describeFaceMood(bright).join(' ')).toMatch(/lumière souvent trop vive/)
+    expect(describeFaceMood(fine).join(' ')).not.toMatch(/pénombre|trop vive/)
+  })
+
+  it('la lumière n’est jamais une entrée de l’humeur ni un facteur des Analyses', () => {
+    expect(EXPRESSION_KEYS).not.toContain('light')
+    expect(isEstimatorInput('light')).toBe(false)
   })
 })

@@ -97,6 +97,8 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
             smile: Math.max(0, 0.12 + 0.06 * (score - 2.6) + f()), duchenne: Math.max(0, 0.06 + 0.03 * (score - 2.6) + f() / 2),
             browDown: 0.2 + f(), browInnerUp: 0.1 + f(), mouthFrown: Math.max(0, 0.05 + f() / 2), eyeOpen: 0.78 + f(),
             jawOpen: 0.05, asymmetry: 0.02, yaw: Math.round(faceRand() * 12),
+            // Lumière du visage (I127b) : correcte le jour, pénombre à 19 h (lecture comptée un peu moins).
+            light: h === 19 ? 0.22 : 0.48,
             // Duo B0 + MobileFaceNet (I126) : moyenne des deux et leur écart de valence, souvent faible.
             ...(withAffect ? { valence: 0.1 + 0.15 * (score - 2.6) + f() * 2, arousal: -0.1 + f() * 3, affectFrames: valid, affectGap: 0.08 + Math.abs(f()), affectModels: 2 } : {}),
           },

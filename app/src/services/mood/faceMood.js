@@ -62,6 +62,11 @@ const GAP_DISAGREE = 0.3
 const VA_BASELINE_SHARE = 0.5
 const AROUSAL_BAND = 0.2
 const MAX_YAW_GOOD = 15
+/** Lumière du visage (luminance moyenne du recadrage, [0, 1], I127b) jugée correcte ; le natif rejette déjà les images
+ * sous 0,15 et au-dessus de 0,9. Entre les deux, une pénombre ou une lumière trop vive rendent les expressions moins
+ * sûres : la lecture compte moins (×1,15 sur sa demi-largeur, comme un visage de biais), sa note ne bouge pas. */
+const LIGHT_LOW = 0.25
+const LIGHT_HIGH = 0.8
 const DAY_MS = 86400000
 
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v)
@@ -100,8 +105,18 @@ export function weightedMedian(values, weights) {
  */
 export const readingWeight = (r) => 1 / r.halfWidth ** 2
 
-/** Une lecture « peu nette » : des images rejetées ou un visage de biais (mêmes critères que la fourchette). */
-export const isPoorReading = (b) => burstQuality(b) < 1 || Math.abs(b.payload.values.yaw ?? 0) > MAX_YAW_GOOD
+/** Facteur sur la demi-largeur selon la lumière du visage : 1 si elle est correcte ou inconnue (anciennes lectures). */
+export const lightPenalty = (light) => (isNum(light) && (light < LIGHT_LOW || light > LIGHT_HIGH) ? 1.15 : 1)
+
+function lightingOf(light) {
+  if (!isNum(light)) return null
+  if (light < LIGHT_LOW) return 'pénombre'
+  return light > LIGHT_HIGH ? 'vive' : 'correcte'
+}
+
+/** Une lecture « peu nette » : des images rejetées, un visage de biais ou une lumière limite (mêmes critères que la fourchette). */
+export const isPoorReading = (b) =>
+  burstQuality(b) < 1 || Math.abs(b.payload.values.yaw ?? 0) > MAX_YAW_GOOD || lightPenalty(b.payload.values.light) > 1
 
 /** Valence a priori dans [−1, 1] d'un jeu d'indices, autour d'un visage neutre donné. */
 export function priorValence(values, neutral = FACE_PRIOR.neutral) {
@@ -225,7 +240,7 @@ export function estimateBurst(burst, { bursts = [], calibration = null, base: gi
     : valenceToNote(generalValence(values, base.neutral))
   note = clampNote(note)
   const yaw = Math.abs(values.yaw ?? 0)
-  const penalty = (1 + 0.5 * (1 - burstQuality(burst))) * (yaw > MAX_YAW_GOOD ? 1.15 : 1)
+  const penalty = (1 + 0.5 * (1 - burstQuality(burst))) * (yaw > MAX_YAW_GOOD ? 1.15 : 1) * lightPenalty(values.light)
   const gap = hasDuo(values) ? values.affectGap : null
   const halfWidth = Math.sqrt(modelSd ** 2 + READING_SD ** 2 + gapSd(gap) ** 2) * penalty
   return {
@@ -248,7 +263,8 @@ export function estimateBurst(burst, { bursts = [], calibration = null, base: gi
  * @param {{ now?: Date }} [opts]
  * @returns {null | {
  *   moment: { at, note, low, high, label, arousalLabel: string|null, today: boolean },
- *   day: null | { date, note, low, high, label, readings, poorReadings, quality, framing: number|null, spread: number|null,
+ *   day: null | { date, note, low, high, label, readings, poorReadings, quality, framing: number|null,
+ *     lighting: 'correcte'|'pénombre'|'vive'|null, spread: number|null,
  *     arousal: number|null, arousalLabel: string|null },
  *   confidence: 'faible'|'moyenne'|'bonne', model: 'prior'|'va'|'personal', baselineDays: number,
  *   calibrationDays: number, signals: string[],
@@ -282,8 +298,9 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     const framing = median(todays.map((b) => Math.abs(b.payload.values.yaw)))
     const modelSd = modelSdFor(last.payload.values, personalNeutral(bursts, last.at), calibration)
     const arousal = median(todays.map((b) => b.payload.values.arousal))
+    const light = median(todays.map((b) => b.payload.values.light))
     const noise = spread ?? READING_SD
-    const penalty = (1 + 0.5 * (1 - quality)) * (framing != null && framing > MAX_YAW_GOOD ? 1.15 : 1)
+    const penalty = (1 + 0.5 * (1 - quality)) * (framing != null && framing > MAX_YAW_GOOD ? 1.15 : 1) * lightPenalty(light)
     // Le désaccord du duo n'est pas divisé par n : il tient aux modèles, il ne s'efface pas en relisant.
     gap = median(readings.map((r) => r.gap))
     halfWidth = Math.sqrt(modelSd ** 2 + noise ** 2 / nEff + gapSd(gap) ** 2) * penalty
@@ -297,6 +314,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
       poorReadings: todays.filter(isPoorReading).length,
       quality: Math.round(quality * 100) / 100,
       framing: framing == null ? null : Math.round(framing),
+      lighting: lightingOf(light),
       spread: spread == null ? null : round1(spread),
       arousal: arousal == null ? null : Math.round(arousal * 100) / 100,
       arousalLabel: arousalLabel(arousal),
@@ -353,6 +371,8 @@ export function describeFaceMood(est) {
       parts.push(`${est.day.poorReadings} ${est.day.poorReadings > 1 ? 'lectures peu nettes comptées' : 'lecture peu nette comptée'} moins`)
     }
     if (est.day.framing != null) parts.push(est.day.framing <= MAX_YAW_GOOD ? 'visage bien cadré' : 'visage souvent de biais')
+    if (est.day.lighting === 'pénombre') parts.push('souvent dans la pénombre')
+    if (est.day.lighting === 'vive') parts.push('lumière souvent trop vive')
     if (est.day.spread != null) parts.push(est.day.spread <= 0.8 ? 'lectures concordantes' : 'lectures dispersées')
   } else {
     parts.push('aucune lecture aujourd’hui')
