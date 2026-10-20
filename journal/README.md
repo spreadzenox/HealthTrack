@@ -21,7 +21,7 @@ gratuit, mais n'est plus le seul chantier.
 estimé »**, les Analyses « Avec votre bien-être estimé (visage) », la carte « Lecture du visage » et le temps d'écran
 aussi. Rien ne change dans vos données ni dans les calculs. Un test automatique empêche désormais le retour du mot
 « humeur », de « 100 % privé » et de termes médicaux interdits (« diagnostiquer », « prédire une crise »…) dans le
-code de l'app. Ce changement publie la **v189** : c'est elle qui vous servira à **tester le nouveau bouton de mise à
+code de l'app. Ce changement a publié la **v189** (33,6 Mo) : c'est elle qui vous servira à **tester le nouveau bouton de mise à
 jour** depuis la v188 (voir ci-dessous). Prochain run de code : inventaire chiffré et propositions de nettoyage
 (masquer / fusionner / déplacer, navigation simplifiée), puis tokens de design.
 
@@ -402,7 +402,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
-| 20/10 22:30 — [Chantier produit : PRODUIT.md + « bien-être » partout (jalons 1 et 2a)](runs/2026-10-20-2230-produit-cadre.md) | 🧭🙂 | Décisions du 20/10 au soir reportées (PRODUIT.md, charte §000000000, BACKLOG) ; libellés visibles « humeur » → « bien-être » ; test-garde `wording.test.js` ; 1 642 Vitest |
+| 20/10 22:30 — [Chantier produit : PRODUIT.md + « bien-être » partout (jalons 1 et 2a)](runs/2026-10-20-2230-produit-cadre.md) | 🧭🙂 | Décisions du 20/10 au soir reportées (PRODUIT.md, charte §000000000, BACKLOG) ; libellés visibles « humeur » → « bien-être » ; test-garde `wording.test.js` ; 1 642 Vitest ; PR #238 → **v189, 33,6 Mo** |
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
 | 19/10 02:30 — [Visage : porte de calibration (I112)](runs/2026-10-19-0230-visage-porte.md) | 🔴🙂 | `gate.js` + simulations ; carte « Calibration : N jours sur 30 » ; PR #214 |
 | 19/10 04:30 — [Visage : notification « Reprendre » (I88 ②)](runs/2026-10-19-0430-visage-reprendre.md) | 🔴🙂 | Règle `FaceResume` + tâche horaire + redémarrage / mise à jour ; relance dans `onResume` ; diagnostic `resume` ; PR #215 |
