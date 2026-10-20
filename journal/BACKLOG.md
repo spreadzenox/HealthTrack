@@ -31,7 +31,15 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   estimée » sur l'accueil (`MoodEstimateCard`), bloc dans « Lecture du visage », humeur du moment au « Tester
   maintenant » ; « Rien n'est affiché avant… » retiré (`describeGate` = vérification facultative) ; diagnostic
   `estimate` (modèle, confiance, comptes ; jamais la valeur) ; 18 tests nouveaux.
-- [ ] **Étape 2 — modèle valence / éveil embarqué** : run idées → comparatif (HSEmotion `enet_b0_8_va_mtl` /
+- [x] **Étape 2 — modèle valence / éveil embarqué (run 20/10 02:30)** : HSEmotion `enet_b0_8_va_mtl` ONNX (CCC
+  valence 0,594 / éveil 0,549 sur AffectNet), téléchargé par le téléphone (jamais dans l'APK), SHA-256 vérifié ;
+  ONNX Runtime 1.22.0 (sans télémétrie) ; `FaceAffect.java` + vecteurs ; `values.valence / arousal` ; `faceMood`
+  les préfère à l'a priori, éveil affiché ; diagnostic v3 `affect`. Choix et alternatives : BIEN-ETRE-AUTO.md.
+  - [ ] **Retour du propriétaire** : « Modèle valence / éveil : prêt » dans le diagnostic, temps d'analyse, erreurs.
+  - [ ] La porte `gate.js` et la calibration lisent aussi la valence du modèle (aujourd'hui : indices blendshapes).
+  - [ ] Run idées : EmoNet (licence exacte, CCC), autre modèle valence / éveil à **licence de poids explicite** ;
+    essai XNNPACK si la latence A56 dépasse 150 ms / image.
+- [ ] ~~Étape 2 (plan initial)~~ : run idées → comparatif (HSEmotion `enet_b0_8_va_mtl` /
   `mbf_va_mtl`, EmoNet, DDAMFN, modèles AffectNet-VA récents ; précision CCC valence / éveil sur AffectNet, AFEW-VA ;
   taille ; latence A56 LiteRT / ONNX Runtime + NNAPI / GPU ; **licence des poids** — le run du 13/10 avait noté « poids
   HSEmotion VA sans licence affichée, appris sur AffectNet (recherche non commerciale) » : à trancher, alternatives

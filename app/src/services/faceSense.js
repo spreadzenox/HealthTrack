@@ -91,6 +91,28 @@ export async function testFaceSense(plugin = faceSensePlugin()) {
   }
 }
 
+/**
+ * Télécharge le modèle valence / éveil s'il manque (FaceAffectModel : 16 Mo une fois, depuis le dépôt de ses auteurs,
+ * empreinte SHA-256 vérifiée ; rien n'est envoyé). Rend { ready, downloading } ; ne lève jamais.
+ */
+export async function prepareFaceAffect(plugin = faceSensePlugin()) {
+  if (!plugin?.prepareAffect) return { ready: false, downloading: false }
+  try {
+    const res = (await plugin.prepareAffect()) || {}
+    return { ready: !!res.ready, downloading: !!res.downloading }
+  } catch {
+    return { ready: false, downloading: false }
+  }
+}
+
+/** 'ready' | 'downloading' | 'error' | 'missing', ou null si le natif ne connaît pas encore ce modèle. */
+export function faceAffectState(status) {
+  if (!status || typeof status.affectModel !== 'boolean') return null
+  if (status.affectModel) return 'ready'
+  if (status.affectDownloading) return 'downloading'
+  return status.affectState === 'error' ? 'error' : 'missing'
+}
+
 export async function requestFaceBatteryExemption(plugin = faceSensePlugin()) {
   try {
     await plugin?.requestBatteryExemption?.()
@@ -217,7 +239,7 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
   const timed = s.timed || 0
   return {
     kind: 'healthtrack-face-diagnostic',
-    version: 2,
+    version: 3,
     at: now.toISOString(),
     appVersion: appVersion ?? null,
     device: { manufacturer: s.manufacturer ?? null, model: s.model ?? null, android: s.release ?? null, sdk: s.sdk ?? null },
@@ -321,6 +343,19 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
       : null,
     // Note du soir d'un geste (I113), vérité terrain de la porte : réglages et compteurs, jamais une note.
     eveningNote: eveningNoteDiagnostic(eveningNote),
+    // Modèle valence / éveil (étape 2) : état, temps, lectures qui en ont profité, erreur exacte ; jamais une valeur.
+    affect: faceAffectState(s)
+      ? {
+        model: 'enet_b0_8_va_mtl',
+        state: faceAffectState(s),
+        bursts: s.affectBursts ?? 0,
+        loadMs: s.affectLoadMs ?? null,
+        downloadMs: s.affectDownloadMs ?? null,
+        downloadErrors: s.affectDownloadErrors ?? 0,
+        error: s.affectError ?? null,
+        lastError: s.lastAffectError ?? null,
+      }
+      : null,
   }
 }
 
@@ -345,6 +380,7 @@ const RESUME_CHECKS = {
 const RESUME_TRIGGERS = { periodic: 'vérification horaire', boot: 'après un redémarrage', update: 'après une mise à jour' }
 
 const s0 = (status) => status || {}
+const MOOD_MODELS = { personal: 'personnel (vos notes)', va: 'valence / éveil (HSEmotion)', prior: 'général des expressions' }
 
 /** Lignes lisibles du diagnostic (carte). */
 export function faceDiagnosticLines(status, { history = null, lastImport = null, eveningNote = null } = {}) {
@@ -393,7 +429,20 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
   if (r.retries.tried) lines.push(`2e essais (2 s après une lecture sans visage) : ${r.retries.tried}, visage lu ${r.retries.faces} fois`)
   if (r.estimate) {
     const e = r.estimate
-    lines.push(`Humeur estimée : modèle ${e.model === 'personal' ? 'personnel (vos notes)' : 'général'}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}`)
+    lines.push(`Humeur estimée : modèle ${MOOD_MODELS[e.model] || e.model}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}`)
+  }
+  if (r.affect) {
+    const a = r.affect
+    if (a.state === 'ready') {
+      lines.push(`Modèle valence / éveil : prêt (HSEmotion, sur le téléphone) · ${plural(a.bursts, 'lecture')} avec valence${a.loadMs != null ? ` · chargé en ${a.loadMs} ms` : ''}`)
+    } else if (a.state === 'downloading') {
+      lines.push('Modèle valence / éveil : téléchargement en cours (16 Mo, une seule fois)')
+    } else if (a.state === 'error') {
+      lines.push(`Modèle valence / éveil : échec du téléchargement${a.error ? ` [${a.error}]` : ''} — nouvel essai à la prochaine ouverture`)
+    } else {
+      lines.push('Modèle valence / éveil : pas encore téléchargé (16 Mo, demandé à chaque ouverture de cette carte, lecture active)')
+    }
+    if (a.lastError) lines.push(`Dernière erreur du modèle valence / éveil : ${a.lastError}`)
   }
   if (r.gate) {
     const g = r.gate

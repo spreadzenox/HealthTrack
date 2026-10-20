@@ -40,7 +40,8 @@
  *   npm run visual -- --routes=/connectors --phone=ask  # … accès pas encore accordé (guide pas à pas)
  *   npm run visual -- --routes=/connectors --face       # « Lecture du visage » : faux plugin, service actif
  *   npm run visual -- --routes=/connectors --face=off   # … pas encore activée ; --face=stopped : arrêtée par Android ;
- *                                                                      --face=blocked : caméra refusée en arrière-plan
+ *                                                                      --face=blocked : caméra refusée en arrière-plan ;
+ *                                                                      --face=nomodel : modèle valence / éveil absent
  *   npm run visual -- --routes=/ --wellbeing-prompt --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
  *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -493,6 +494,8 @@ async function main() {
           outcomes: { face: 8, no_valid_frame: 3, 'skip:too_soon': 3 }, rejected: { no_face: 4, too_dark: 3, turned: 2 },
           startBattery: 82, battery: 76, manufacturer: 'samsung', model: 'SM-A566B', release: '16', sdk: 36, pending: 11,
           retries: 3, retryFaces: 2,
+          // Modèle valence / éveil (étape 2) ; --face=nomodel : pas encore téléchargé.
+          affectModel: mode !== 'nomodel', affectBursts: 6, affectLoadMs: 280, affectDownloadMs: 8400,
           resumeNotices: 1, resumeTaps: 1, resumeCheck: 'running', resumeCheckAt: Date.now() - 40 * 60000, resumeCheckTrigger: 'periodic',
           // Repérage du déverrouillage et accès caméra (signalement du 19/10 15:05) ; --face=blocked : caméra refusée.
           dayScreenOns: 19, dayPresents: 12, dayUnlock_user_present: 12, dayUnlock_keyguard: 2, lastUnlockAt: Date.now() - 6 * 60000,
@@ -520,6 +523,7 @@ async function main() {
           stop: async () => {},
           test: async () => {},
           requestBatteryExemption: async () => {},
+          prepareAffect: async () => ({ ready: mode !== 'nomodel', downloading: mode === 'nomodel' }),
         }
       }, String(args.face))
     }

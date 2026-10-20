@@ -80,7 +80,8 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // Lecture du visage (consigne du 19/10 au soir) : rafales du déverrouillage des 10 derniers jours, un sourire qui
   // suit un peu la note du jour ; RNG séparé. Jamais d'image, seulement les indices (format de FaceRecord.java).
   const faceRand = mulberry32(seed + 6007)
-  const pushFaceBursts = (day, score) => {
+  // Les 3 derniers jours portent aussi la valence / l'éveil du modèle embarqué (étape 2, téléchargé depuis peu).
+  const pushFaceBursts = (day, score, withAffect = false) => {
     for (const h of [8, 10, 13, 16, 19]) {
       const t = at(day, h, Math.floor(faceRand() * 50))
       if (Date.parse(t) > now.getTime()) continue
@@ -96,6 +97,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
             smile: Math.max(0, 0.12 + 0.06 * (score - 2.6) + f()), duchenne: Math.max(0, 0.06 + 0.03 * (score - 2.6) + f() / 2),
             browDown: 0.2 + f(), browInnerUp: 0.1 + f(), mouthFrown: Math.max(0, 0.05 + f() / 2), eyeOpen: 0.78 + f(),
             jawOpen: 0.05, asymmetry: 0.02, yaw: Math.round(faceRand() * 12),
+            ...(withAffect ? { valence: 0.1 + 0.15 * (score - 2.6) + f() * 2, arousal: -0.1 + f() * 3, affectFrames: valid } : {}),
           },
           rejected: valid < 3 ? { turned: 1 } : {},
         },
@@ -134,7 +136,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       })
     }
 
-    if (i === 0) pushFaceBursts(day, 3)
+    if (i === 0) pushFaceBursts(day, 3, true)
     if (i === 0) continue // aujourd'hui : journée en cours, seulement le sommeil de la nuit
 
     entries.push({
@@ -238,7 +240,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       at: at(day, 21, 30),
       payload: { score: Math.max(0, Math.min(5, Math.round(score))), ...(tags.length > 0 && { tags }) },
     })
-    if (i <= 9) pushFaceBursts(day, score)
+    if (i <= 9) pushFaceBursts(day, score, i <= 2)
     prevTags = tags
     prevWorkout = workout
 

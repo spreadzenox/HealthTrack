@@ -125,7 +125,7 @@ describe('FaceSenseCard', () => {
     expect(await screen.findByText(/Bien-être estimé aujourd’hui : plutôt bonne, ≈ 3,6 \/ 5 \(entre 2,0 et 5,0\)/)).toBeInTheDocument()
     expect(screen.getByText(/Confiance faible : 1 lecture aujourd’hui/)).toBeInTheDocument()
     expect(screen.getByText(/estimation, pas un diagnostic/)).toBeInTheDocument()
-    expect(screen.getByText(/Humeur estimée : modèle général, confiance faible/)).toBeInTheDocument()
+    expect(screen.getByText(/Humeur estimée : modèle général des expressions, confiance faible/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer le diagnostic' }))
     await waitFor(() => expect(save).toHaveBeenCalled())
     const report = JSON.parse(save.mock.calls[0][0])
@@ -165,5 +165,28 @@ describe('FaceSenseCard', () => {
     render(<FaceSenseCard plugin={plugin} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
     expect(await screen.findByText('Active')).toBeInTheDocument()
     expect(screen.getAllByText(/accordé en permanence/).length).toBeGreaterThan(0)
+  })
+
+  it('active et modèle valence / éveil absent : téléchargement lancé une fois à l’ouverture (étape 2)', async () => {
+    const plugin = { ...fake({ ...base, affectModel: false }), prepareAffect: vi.fn(async () => ({ ready: false, downloading: true })) }
+    render(<FaceSenseCard plugin={plugin} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText('Active')).toBeInTheDocument()
+    await waitFor(() => expect(plugin.prepareAffect).toHaveBeenCalledTimes(1))
+    document.dispatchEvent(new Event('visibilitychange'))
+    await new Promise((r) => setTimeout(r, 20))
+    expect(plugin.prepareAffect).toHaveBeenCalledTimes(1)
+  })
+
+  it('désactivée ou modèle déjà là : aucun téléchargement', async () => {
+    const off = { ...fake({ ...base, enabled: false, running: false, affectModel: false }), prepareAffect: vi.fn(async () => ({})) }
+    const { unmount } = render(<FaceSenseCard plugin={off} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByRole('button', { name: 'Activer la lecture du visage' })).toBeInTheDocument()
+    unmount()
+    const ready = { ...fake({ ...base, affectModel: true }), prepareAffect: vi.fn(async () => ({})) }
+    render(<FaceSenseCard plugin={ready} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText('Active')).toBeInTheDocument()
+    await new Promise((r) => setTimeout(r, 20))
+    expect(off.prepareAffect).not.toHaveBeenCalled()
+    expect(ready.prepareAffect).not.toHaveBeenCalled()
   })
 })

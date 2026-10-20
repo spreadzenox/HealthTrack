@@ -9,6 +9,8 @@ import {
   isFaceSenseEnabled,
   outcomeLabel,
   faceCameraAccess,
+  prepareFaceAffect,
+  faceAffectState,
 } from './faceSense'
 
 const active = {
@@ -212,7 +214,7 @@ describe('repérage du déverrouillage et accès caméra (signalement du 19/10 1
 
   it('export : allumages, déverrouillages par source, mode caméra, démarrage, dernières tentatives', () => {
     const r = faceDiagnosticReport(seen, { now: new Date(at(15, 10)) })
-    expect(r.version).toBe(2)
+    expect(r.version).toBe(3)
     expect(r.detection).toEqual({
       screenOns: 5,
       userPresents: 1,
@@ -265,5 +267,41 @@ describe('repérage du déverrouillage et accès caméra (signalement du 19/10 1
     const plugin = { start: vi.fn(async () => ({ started: true, permission: true })) }
     await startFaceSense(plugin, { restart: true })
     expect(plugin.start).toHaveBeenCalledWith({ restart: true })
+  })
+})
+
+describe('modèle valence / éveil (consigne du 19/10 au soir, étape 2)', () => {
+  it('téléchargement demandé au natif ; jamais d’exception, rien hors de l’app', async () => {
+    const plugin = { prepareAffect: vi.fn(async () => ({ ready: false, downloading: true })) }
+    expect(await prepareFaceAffect(plugin)).toEqual({ ready: false, downloading: true })
+    expect(await prepareFaceAffect({ prepareAffect: async () => { throw new Error('x') } })).toEqual({ ready: false, downloading: false })
+    expect(await prepareFaceAffect(null)).toEqual({ ready: false, downloading: false })
+    expect(await prepareFaceAffect({})).toEqual({ ready: false, downloading: false })
+  })
+
+  it('état : prêt, en cours, échec, absent ; inconnu d’une ancienne version native', () => {
+    expect(faceAffectState({ affectModel: true })).toBe('ready')
+    expect(faceAffectState({ affectModel: false, affectDownloading: true })).toBe('downloading')
+    expect(faceAffectState({ affectModel: false, affectState: 'error', affectError: 'IOException: HTTP 404' })).toBe('error')
+    expect(faceAffectState({ affectModel: false })).toBe('missing')
+    expect(faceAffectState({})).toBe(null)
+    expect(faceAffectState(null)).toBe(null)
+  })
+
+  it('export et lignes : état du modèle, lectures avec valence, erreur exacte ; jamais une valence', () => {
+    const s = { ...active, affectModel: true, affectBursts: 5, affectLoadMs: 310, affectDownloadMs: 9000, lastAffectError: 'IllegalStateException: ort' }
+    const r = faceDiagnosticReport(s)
+    expect(r.version).toBe(3)
+    expect(r.affect).toEqual({
+      model: 'enet_b0_8_va_mtl', state: 'ready', bursts: 5, loadMs: 310, downloadMs: 9000,
+      downloadErrors: 0, error: null, lastError: 'IllegalStateException: ort',
+    })
+    const lines = faceDiagnosticLines(s)
+    expect(lines.some((l) => l.startsWith('Modèle valence / éveil : prêt (HSEmotion, sur le téléphone) · 5 lectures avec valence'))).toBe(true)
+    expect(lines.some((l) => l.includes('IllegalStateException: ort'))).toBe(true)
+    const err = faceDiagnosticLines({ ...active, affectModel: false, affectState: 'error', affectError: 'IOException: HTTP 404' })
+    expect(err.some((l) => l === 'Modèle valence / éveil : échec du téléchargement [IOException: HTTP 404] — nouvel essai à la prochaine ouverture')).toBe(true)
+    expect(faceDiagnosticReport({ ...active }).affect).toBe(null)
+    expect(JSON.stringify(r)).not.toMatch(/"valence"\s*:/)
   })
 })

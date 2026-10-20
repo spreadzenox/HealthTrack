@@ -197,3 +197,12 @@ describe('faceDailyCounts (I118 : assez de lectures par jour ?)', () => {
     expect(faceDailyCounts([], { today: '2026-10-19' })).toBeNull()
   })
 })
+
+describe('valence / éveil du modèle embarqué (étape 2)', () => {
+  it('garde valence, éveil et nombre d’images lues par le modèle, comme les autres indices', () => {
+    const json = JSON.stringify({ v: 1, at: Date.UTC(2026, 9, 20, 7, 0), trigger: 'unlock', frames: 3, valid: 2,
+      values: { smile: 0.2, valence: 0.31, arousal: -0.12, affectFrames: 2 }, rejected: { no_face: 1 }, ms: { camera: 900, inference: 400 } })
+    const e = parseFaceBurst(json)
+    expect(e.payload.values).toEqual({ smile: 0.2, valence: 0.31, arousal: -0.12, affectFrames: 2 })
+  })
+})

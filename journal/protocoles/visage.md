@@ -218,3 +218,25 @@ une image ni des points**.
   `manual` restent du diagnostic.
 - Jamais affichées (journal de l'Accueil : ignorées comme `context`), jamais une colonne de `buildDailyDataset`
   (test anti-circularité). La carte et le diagnostic n'en donnent que des comptes.
+
+## 9. Valence et éveil (20/10/2026 02:30, consigne du 19/10 au soir, étape 2)
+
+- **Modèle** : HSEmotion `enet_b0_8_va_mtl.onnx` (EfficientNet-B0, 16 049 834 octets, SHA-256
+  `c43e056a…e7e812`), publié par ses auteurs dans `sb-ai-lab/EmotiEffLib` (ex-`av-savchenko/face-emotion-recognition`).
+  Entrée `input` [1, 3, 224, 224] float32 ; sortie `output` [1, 10] : 8 scores d'émotion (Anger, Contempt, Disgust,
+  Fear, Happiness, Neutral, Sadness, Surprise), puis **valence** et **éveil** (≈ [−1, 1], bornés à [−1, 1] par nous).
+- **Recadrage** (notre choix, `FaceAffect.java`) : à partir des 478 points de l'image valide, rotation de la ligne des
+  yeux (points 33 → 263), boîte des points dans ce repère, carré de côté 1,1 × max(largeur, hauteur), centré sur la
+  boîte ; recadrage bilinéaire 224 × 224 avec la convention de §3.2 ; normalisation ImageNet (moyennes 0,485 / 0,456 /
+  0,406, écarts 0,229 / 0,224 / 0,225) sur le RVB dans [0, 1] ; ordre C × H × W. Alignement sur les yeux plutôt que la
+  boîte droite d'origine (MTCNN) : sur le portrait de test penché de 18°, valence 0,327 droite / 0,279 penchée alignée,
+  contre 0,257 / 0,240 sans alignement (marges 1,0–1,3 essayées, 1,1 retenue).
+- **Dans le pipeline** : seulement sur les images valides (après tous les contrôles de §6) ; médianes de la rafale
+  `values.valence`, `values.arousal`, et `values.affectFrames` (images lues par le modèle). Un échec du modèle ne fait
+  jamais perdre la lecture (`lastAffectError` au diagnostic). Le format `face_burst` reste `v: 1` (clés en plus,
+  ignorées par les anciennes versions).
+- **Moteur** : ONNX Runtime Android **1.22.0** (pas de télémétrie ; la 1.27+ ajoute un `TelemetryInitializer` qui
+  envoie des infos de l'appareil à Microsoft), CPU 2 fils, optimisations complètes. Modèle exécuté tel que publié
+  (aucune conversion, aucun poids modifié).
+- **Vecteurs** : `visage-va-vecteurs.py` → `src/test/resources/face/affect-vectors.json` ; `FaceAffectTest` vérifie
+  ROI, 64 échantillons du tenseur (±1e-4) et décodage.
