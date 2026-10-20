@@ -7,7 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MAIN="$ROOT/android/app/src/main/java/com/healthtrack/app"
 TESTS_DIR="$ROOT/android/app/src/test/java/com/healthtrack/app"
-PACKAGES="huawei face mood"
+PACKAGES="huawei face mood update"
 RES="$ROOT/android/app/src/test/resources"
 OUT="$ROOT/.java-test"
 LIB="$OUT/lib"

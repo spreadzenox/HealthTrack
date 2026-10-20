@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-20",
+  "kind": "correctif",
+  "title": "Mise à jour en un clic : on voit enfin où elle en est",
+  "items": [
+    "Le bandeau de mise à jour indique la version installée, la nouvelle version et sa taille (par exemple 33,6 Mo).",
+    "Pendant le téléchargement : une barre de progression avec les Mo reçus sur les Mo totaux, le pourcentage, le débit et le temps restant estimé, puis les étapes Téléchargement → Vérification → Installation.",
+    "Le téléchargement est confié à Android : il continue si vous quittez l'app (notification de progression) et reprend tout seul après une coupure réseau.",
+    "Si plus rien n'arrive pendant 45 secondes, ou en cas d'échec, le bandeau dit pourquoi (pas de réseau, stockage plein, fichier abîmé…) et propose « Réessayer » ou « Télécharger depuis le navigateur ».",
+    "Avant d'ouvrir l'installateur, le fichier est vérifié (taille et empreinte publiées avec la version) : un téléchargement incomplet n'est plus jamais proposé à l'installation."
+  ]
+}

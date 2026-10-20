@@ -10,6 +10,8 @@
  *   npm run visual -- --routes=/,/food     # pages choisies
  *   npm run visual -- --light              # schéma de couleurs clair
  *   npm run visual -- --update-banner      # simule une release plus récente
+ *   npm run visual -- --update-banner=progress  # … et un téléchargement en cours (plugin AppUpdate simulé)
+ *   npm run visual -- --update-banner=stalled   # … téléchargement bloqué (aucun octet depuis 45 s)
  *   npm run visual -- --wellbeing-prompt   # laisse la modale bien-être s'ouvrir
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
@@ -202,10 +204,45 @@ async function main() {
         body: JSON.stringify({
           tag_name: args['update-banner'] ? 'v99999' : 'v0',
           html_url: 'https://github.com/spreadzenox/HealthTrack/releases',
-          assets: [{ name: 'HealthTrack-v99999.apk', browser_download_url: 'https://example.invalid/app.apk' }],
+          assets: [
+            {
+              name: 'HealthTrack-v99999.apk',
+              size: 33_562_556,
+              digest: `sha256:${'0'.repeat(64)}`,
+              browser_download_url: 'https://example.invalid/app.apk',
+            },
+          ],
         }),
       })
     )
+    const bannerMode = args['update-banner']
+    if (bannerMode === 'progress' || bannerMode === 'stalled') {
+      // Plugin natif AppUpdate simulé (lu par loadAppUpdatePlugin en dev seulement).
+      await context.addInitScript((mode) => {
+        const t0 = Date.now()
+        window.__HT_APP_UPDATE__ = {
+          canInstall: async () => ({ granted: true }),
+          openInstallSettings: async () => {},
+          start: async () => ({ id: 1 }),
+          cancel: async () => {},
+          install: async () => ({ ok: true }),
+          status: async () => {
+            const s = (Date.now() - t0) / 1000
+            const downloaded = mode === 'stalled' ? 4_200_000 : Math.min(33_000_000, 9_000_000 + s * 1_400_000)
+            return { state: 'running', version: '99999', downloaded, total: 33_562_556, reason: 0 }
+          },
+        }
+        if (mode === 'stalled') {
+          const realNow = Date.now.bind(Date)
+          let first = null
+          Date.now = () => {
+            const n = realNow()
+            if (first == null) first = n
+            return n + (n - first > 1500 ? 60_000 : 0)
+          }
+        }
+      }, bannerMode)
+    }
     // Météo : jamais d'appel réseau réel. Avec les données de démo, météo activée (Paris) et à jour.
     await context.route('https://*.open-meteo.com/**', (route) => route.abort())
     if (!args.empty) {

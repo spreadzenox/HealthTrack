@@ -21,6 +21,18 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🚑 Signalement du propriétaire du 20/10/2026 19:05 — mise à jour bloquée sur « Téléchargement… »
+- [x] Cause : APK 33,6 Mo (v180+, `libonnxruntime.so` 18,2 Mo) téléchargé d'un bloc en base64 via le pont Capacitor,
+  sans délai ni progression → ✅ 20/10 20:30 `AppUpdatePlugin` (DownloadManager, notification, reprise réseau,
+  vérification taille / SHA-256 `digest` / paquet / rétrogradation) + `appUpdate.js` + `UpdateBanner` (version
+  installée, taille, Mo / % / débit / reste, étapes, blocage 45 s, Réessayer, Annuler, navigateur).
+- [ ] **Retour du propriétaire** : installation manuelle de la v188+ depuis le navigateur faite ? À la release
+  suivante, la barre avance-t-elle et l'installateur s'ouvre-t-il ? (sinon : capture du bandeau, qui donne la cause)
+- [ ] **I129 alléger l'APK** : convertir MobileFaceNet (valence / éveil) en LiteRT et retirer ONNX Runtime (−18 Mo,
+  APK ≈ 15 Mo), ou build ONNX Runtime minimale ; vérifier l'accord des sorties avant / après sur les images de test.
+- [ ] Retirer la dépendance npm `@m430/capacitor-app-install`, plus importée.
+- [ ] Doublon `ingredientsNutrition-*.js` (2 × 1,5 Mo non compressé) dans l'APK : chunk importé de deux façons ?
+
 ## 🔴🔴🔴 Consigne du propriétaire du 19/10/2026 au soir — bien-être 100 % auto, sans attendre la calibration (charte §0000000)
 
 « Je ne veux pas avoir à attendre les 30 jours de calibration, quitte à embarquer un modèle plus puissant. » Prime sur
@@ -96,7 +108,7 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   - [ ] Plusieurs lectures par jour : comparer aussi l'humeur estimée **heure par heure** au temps par app de l'heure
     précédente (ordre temporel fin, `phone_apps` horaire déjà là).
 
-## 🚑 Signalement du propriétaire du 19/10/2026 15:05 — aucune lecture automatique au déverrouillage
+## ✅ Signalement du propriétaire du 19/10/2026 15:05 — aucune lecture automatique au déverrouillage — RÉSOLU (capture du 20/10 19:05 : 44 lectures automatiques, estimation affichée)
 
 - [x] **Corrigé (run 19/10 16:30)** : récepteur `USER_PRESENT` enregistré `RECEIVER_NOT_EXPORTED` → diffusion de
   SystemUI filtrée, aucun déverrouillage vu. Récepteur exporté (diffusions protégées) sur le fil du service +
@@ -788,6 +800,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première
 lecture (22:30) ; 3) **étape 2 modèle valence / éveil** (run idées 20/10 08:30 : comparatif et licence ; puis code) ;
 4) ✅ I121 + I121 étendu à la calibration personnelle (20/10 00:30) ; 5) étape 3 visage + voix (I117) ; 6) I123, I124.
+**Mise à jour du 20/10 20:30** : ✅ signalement 19:05 (mise à jour en un clic) ; prochain run de code → I129
+alléger l'APK si le propriétaire confirme l'installation, sinon I117 préparation ; veille « idées » reportée à 08:30.
 **Mise à jour du 20/10 18:30** : ✅ I127b lumière du visage ; prochain run de code sans diagnostic → I117 préparation
 (dictée du soir côté JS) ou I125 « Rien reconnu — me le signaler ? » ; avec le diagnostic → I122 puis I117.
 **Mise à jour du 20/10 16:30** : ✅ I127 lectures pondérées ; prochain run de code sans diagnostic → I117 préparation

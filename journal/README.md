@@ -16,6 +16,18 @@ humeur estimée s'affiche dès la première lecture, sans attendre 30 jours** ; 
 Tout le reste
 (nettoyage, performance, autres appareils, petites finitions de la montre) est en pause sauf panne.
 
+**🚑 Votre signalement du 20/10 19:05 — mise à jour bloquée sur « Téléchargement… » : corrigé (run 20/10 20:30).
+À faire une seule fois, à la main**, car la version installée sur votre téléphone a encore l'ancien code et restera
+bloquée : ① sur le Galaxy A56, ouvrez dans Chrome ou Samsung Internet
+**https://github.com/spreadzenox/HealthTrack/releases/latest** ; ② sous « Assets », touchez **`HealthTrack-vNNN.apk`**
+(la version publiée après ce run, v188 ou plus, ≈ 33,6 Mo) ; ③ ouvrez le fichier téléchargé (notification ou
+« Téléchargements ») ; si Android le demande, autorisez **ce navigateur** à installer des applis ; ④ touchez
+**« Mettre à jour »**. Vos données sont gardées (même signature, installation par-dessus). Pour vérifier : Plus →
+Nouveautés, « Version installée ». ⑤ **À la version suivante**, touchez « Mettre à jour (33,6 Mo) » dans le bandeau :
+vous devez voir la barre, les Mo et le temps restant, puis l'installateur. Si ça bloque encore, envoyez-moi une
+capture du bandeau : il dit maintenant pourquoi. (La Lecture du visage s'arrête à chaque mise à jour : touchez
+« Reprendre » dans la notification.)
+
 **Run du 19/10 00:30 — les lectures du visage sont rangées dans votre historique.** Jusqu'ici, ce que la caméra
 lisait au déverrouillage attendait dans une boîte privée du service. Désormais, à chaque ouverture de l'app (et à
 chaque retour dedans), ces lectures — une dizaine de nombres par déverrouillage, jamais d'image — sont rangées dans
@@ -227,10 +239,22 @@ la vérification visage ↔ notes : elle suit l'endroit et l'heure (dehors, bure
 émotion — vérifié par un test. Le Diagnostic ajoute « lumière correcte / souvent dans la pénombre » à la ligne
 « Humeur estimée ». Rien à faire de votre côté (la mesure commence avec la version publiée après ce run).
 
+**Run du 20/10 20:30 — la mise à jour en un clic montre enfin où elle en est (votre signalement de 19:05).** La
+cause : depuis la v180, l'app pèse 33,6 Mo (contre 6,8 Mo il y a trois jours) et l'ancien bouton chargeait tout le
+fichier en mémoire d'un bloc, sans délai ni progression — sur 4G il pouvait ne jamais finir, sans rien dire. Désormais
+c'est **Android qui télécharge** : le bandeau indique la **version installée**, la nouvelle et sa **taille**, puis une
+**barre de progression** « 12,3 Mo / 33,6 Mo · 36 % · 1,4 Mo/s · encore ≈ 14 s » et les étapes **Téléchargement →
+Vérification → Installation**. Vous pouvez quitter l'app : le téléchargement continue avec sa notification et reprend
+seul après une coupure. Si plus rien n'arrive pendant 45 s, ou en cas d'échec, le bandeau dit pourquoi (pas de réseau,
+stockage plein, fichier abîmé…) et propose **« Réessayer »** ou **« Télécharger depuis le navigateur »**. Avant
+l'installateur, le fichier est vérifié (taille et empreinte publiées avec la version). Ce qui pèse, au passage : pas
+les modèles du visage (≈ 4 Mo) mais le moteur ONNX (18 Mo) — je proposerai de s'en passer pour revenir vers 15 Mo.
+*Ce créneau de 20:30 était un run « idées » ; la veille est reportée à 08:30 pour corriger d'abord votre mise à jour.*
+
 **Nouveau (12:30, voix)** : dans le Diagnostic, lisez la ligne « Voix … » (ou envoyez-moi le fichier, qui la
 contient) : elle décide comment sera faite la dictée du soir.
 
-**🚑 À faire en premier (signalement du 19/10 15:05)** : ① installez la version publiée après ce run (≥ celle du
+**✅ Signalement du 19/10 15:05 résolu** (votre capture du 20/10 19:05 montre 44 lectures automatiques). *Ancienne consigne, pour mémoire* — : ① installez la version publiée après ce run (≥ celle du
 19/10 ~17 h) ; ② Plus → Connecteurs → Lecture du visage : si elle dit « Arrêtée » ou « À relancer », touchez
 **Relancer** ; ③ verrouillez puis **déverrouillez 2 ou 3 fois à l'empreinte** en regardant l'écran, à plus de
 2 minutes d'écart si possible (le point vert doit s'allumer ~1 s après) ; ④ **Diagnostic → « Enregistrer le
@@ -321,7 +345,10 @@ et dites-moi si l'app s'ouvre et si le point vert revient au déverrouillage sui
 - **Assez de lectures du visage, sans biais** (I118) : viser ≥ 12 lectures réussies par jour, toujours au
   déverrouillage (jamais quand une notification allume l'écran : son contenu fausserait tout).
 
-**Prochaines priorités (20/10 18:30)** — ✅ I127 lectures pondérées, ✅ I127b lumière du visage ; ensuite : votre
+**Prochaines priorités (20/10 20:30)** — ✅ mise à jour en un clic avec progression (signalement 19:05) ; votre
+installation manuelle de la v188+ puis l'essai à la version suivante ; I129 alléger l'APK (retirer ONNX Runtime) ;
+puis votre diagnostic (déverrouillages, duo, « Voix ») et la dictée du soir (I117).
+*Prochaines priorités (20/10 18:30)* — ✅ I127 lectures pondérées, ✅ I127b lumière du visage ; ensuite : votre
 diagnostic (déverrouillages, duo, ligne « Voix ») ; puis la dictée du soir (I117) selon la ligne « Voix ».
 *Prochaines priorités (20/10 14:30)* — ✅ habitudes et effets décalés sur l'humeur estimée ; ensuite : votre
 diagnostic (déverrouillages, duo, ligne « Voix ») ; I127 (lectures pondérées par leur qualité) ; puis la dictée du
@@ -378,6 +405,7 @@ du jour avec sa fourchette (derrière la porte).
 | 20/10 14:30 — [Habitudes et effets décalés sur l'humeur estimée](runs/2026-10-20-1430-habitudes-humeur-estimee.md) | 🔴🙂 | `computeTagEffects(…, { outcomeByDay })`, `computeLaggedEffects` sur l'humeur estimée sans piste, bloc dans la section visage ; stress (Y) exclu ; 1 621 Vitest |
 | 20/10 16:30 — [Lectures du jour pondérées par leur qualité (I127)](runs/2026-10-20-1630-lectures-ponderees.md) | 🔴🙂 | `weightedMedian` + poids 1 / demi-largeur² (images valides, lacet, duo), n effectif de Kish dans la fourchette, « N lectures peu nettes comptées moins » ; même pondération dans `faceMoodDays` ; 1 625 Vitest |
 | 20/10 18:30 — [Lumière du visage dans le poids des lectures (I127b)](runs/2026-10-20-1830-lumiere-visage.md) | 🔴🙂 | natif : `light` (médiane de la luminance des images valides) ; JS : ×1,15 hors [0,25 ; 0,8], « souvent dans la pénombre » ; `FACE_QUALITY_KEYS` hors de la porte ; 1 631 Vitest, 114 JUnit |
+| 20/10 20:30 — [Mise à jour en un clic : progression et vérification (signalement 19:05)](runs/2026-10-20-2030-maj-telechargement.md) | 🚑 | Cause : APK 33,6 Mo chargé d'un bloc en base64 via le pont, sans délai ; `AppUpdatePlugin` (DownloadManager, notification, SHA-256 + paquet vérifiés), bandeau Mo / % / débit / reste, blocage 45 s, Réessayer, navigateur ; 1 640 Vitest, 118 JUnit |
 | 19/10 20:30 — [Idées : porte et dérives lentes, lire le diagnostic, voix et lexiques](runs/2026-10-19-2030-idees-porte-derives.md) | 💡 | Signalement 15:05 vérifié corrigé (v176/v177) ; simulation : porte 12,7 % de faux départs si humeur / visage autocorrélés → I121 (blocs ±7 j + n effectif ≈ 1–2 %) ; I122 arbre de lecture du diagnostic ; I123 « Applis jamais en veille » ; I124 sonde vocale ; FEEL / NRC écartés (licences) ; PR #223 |
 
 ---
@@ -401,6 +429,17 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---
+
+## 00000000. Signalement du propriétaire du 20 octobre 2026 à 19:05 — mise à jour bloquée sur « Téléchargement… » — corrigé au run 20/10 20:30 (à confirmer sur l'A56)
+
+Bandeau « version 187 » figé sur « Téléchargement… » sans aucune indication (Galaxy A56, 4G). Cause : APK passé de
+6,8 à 33,6 Mo (ONNX Runtime 18 Mo) et téléchargé d'un bloc en mémoire (`CapacitorHttp` → base64 → pont → `writeFile`),
+sans délai ni progression. Correction : `AppUpdatePlugin` (DownloadManager + vérification taille / SHA-256 / paquet)
+et `services/appUpdate.js` + `UpdateBanner` (progression, étapes, blocage 45 s, Réessayer, navigateur). La version
+installée chez le propriétaire ne peut pas en profiter : **installation manuelle une fois** depuis
+`https://github.com/spreadzenox/HealthTrack/releases/latest`, puis essai du bouton à la release suivante.
+**Leçon** : tout ce qui grossit l'APK se mesure à la release (taille notée après chaque merge, déjà au protocole) ; un
+téléchargement sans progression ni délai est une panne silencieuse — toujours afficher l'avancement et une sortie.
 
 ## 0000000. Consigne du propriétaire du 19 octobre 2026 au soir — lecture du bien-être 100 % automatique, sans attendre la calibration (prime sur l'ordre de §00000)
 
@@ -436,7 +475,11 @@ dispersion des lectures² / n) × pénalités qualité / cadrage. Cohérent avec
 hypothèse générale, supplantée par les données personnelles dès qu'elles suffisent. La porte `gate.js` reste, comme
 **vérification facultative** affichée, sans rien bloquer.
 
-## 000000bis. Signalement du propriétaire du 19 octobre 2026 à 15:05 — corrigé au run 19/10 16:30 (à confirmer sur l'A56)
+## 000000bis. Signalement du propriétaire du 19 octobre 2026 à 15:05 — corrigé au run 19/10 16:30 — ✅ RÉSOLU (confirmé le 20/10 19:05)
+
+Confirmé par la capture du propriétaire du 20/10 19:05 : carte « Humeur estimée — Confiance moyenne », 44 lectures
+automatiques dans la journée, deux modèles d'accord. Chantier clos, ne pas rouvrir.
+
 
 « J'ai déverrouillé plusieurs fois et toujours aucune prise de photo automatique. Le test manuel fonctionne. Je
 déverrouille avec l'empreinte. » Diagnostic : « Aucun déverrouillage depuis minuit », service actif, caméra
