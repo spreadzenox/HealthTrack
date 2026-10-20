@@ -21,6 +21,28 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🧭 Chantier produit — décisions du propriétaire du 20/10/2026 au soir (charte §000000000, détail : `PRODUIT.md`)
+Cadre général depuis le 20/10 au soir : produit vendable sur Google Play ; porte d'entrée SII ; bien-être ; toutes
+les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état tenu dans `PRODUIT.md`) :
+- [x] **1** `journal/PRODUIT.md` (20/10 22:30)
+- [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
+  (20/10 22:30) ; [ ] 2b inventaire chiffré (cartes de l'accueil, réglages, onglets) → décisions masquer / fusionner /
+  déplacer (sans perte de données) ; [ ] 2c navigation simplifiée (Nutrition dans Repas ? onglet « Journal » ?) ;
+  [ ] 2d tokens de design (couleurs, typo, espacements en variables CSS) ; [ ] 2e « Prédiction du jour » du graphique
+  bien-être : reformuler en « estimation » / « tendance » (vocabulaire conformité).
+- [ ] **3 Variantes play / sideload** (productFlavors, manifeste play sans `REQUEST_INSTALL_PACKAGES`, drapeau JS qui
+  masque la mise à jour en play, CI des deux ; note sur l'option caméra la plus sûre pour Play)
+- [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation)
+- [ ] **5 Analyses avec délais (2–48 h) repas → symptômes** + saisie de symptômes digestifs horodatée + honnêteté
+  statistique (« pas encore assez de données »)
+- [ ] **6 Play Billing, paywalls (soft + au moment de la valeur), crédits IA** ; puis **relais Gemini** (code + IaC
+  sans secret, Flash-Lite, UE, EXIF retiré, rien stocké, Play Integrity)
+- [ ] **7 Réintroduction FODMAP guidée + rapport PDF médecin**
+- [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026)
+- [ ] **9 i18n + anglais**
+- [ ] **10 Fiche Play** (textes FR, captures, Data safety, déclaration apps de santé) + `journal/legal/` (brouillons
+  confidentialité, CGU / CGV, mentions légales « à faire valider par un juriste »)
+
 ## 🚑 Signalement du propriétaire du 20/10/2026 19:05 — mise à jour bloquée sur « Téléchargement… »
 - [x] Cause : APK 33,6 Mo (v180+, `libonnxruntime.so` 18,2 Mo) téléchargé d'un bloc en base64 via le pont Capacitor,
   sans délai ni progression → ✅ 20/10 20:30 `AppUpdatePlugin` (DownloadManager, notification, reprise réseau,
@@ -795,6 +817,15 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Réordonnées le 20/10 (22:30 Paris), décisions produit du 20/10 au soir (charte §000000000) — priment sur tout ce
+qui suit** : 1) PR « [Auto] » rouge ou Build & Release cassé ; 2) retour du propriétaire sur la mise à jour (v188 →
+v189) ; 3) **jalons de `PRODUIT.md` dans l'ordre** : prochain run de code → **2b** inventaire chiffré + premières
+décisions de nettoyage (et 2e « Prédiction du jour »), puis 2c, 2d, puis **3** variantes play / sideload. I129
+(alléger l'APK de 18 Mo) dès qu'un run a de la marge : il sert la mise à jour sideload et la taille sur Play. Le
+chantier bien-être automatique (I117 voix…) et la montre (A.1–A.3) passent après les jalons, sauf panne.
+Runs « idées » : veille produit (concurrents SII, Play, juridique, acquisition) → `IDEES.md`, `RESEARCH.md`,
+`PRODUIT.md`.
 
 **Réordonnées le 19/10 (22:30 Paris), consigne du 19/10 au soir (charte §0000000) — prime sur l'ordre ci-dessous** :
 1) diagnostic de l'A56 dès qu'il arrive (signalement 15:05, arbre I122) ; 2) ✅ étape 1 estimation dès la première

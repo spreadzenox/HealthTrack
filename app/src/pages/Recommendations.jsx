@@ -332,7 +332,7 @@ function WeekendNote({ control }) {
       📅 Liens calculés en tenant compte du week-end (bien-être moyen :{' '}
       <strong>{frScore(control.weekendMean)} le week-end</strong>,{' '}
       <strong>{frScore(control.weekdayMean)} en semaine</strong>) : une habitude plus fréquente
-      le samedi n'est pas créditée de la bonne humeur du week-end.
+      le samedi n'est pas créditée du meilleur bien-être du week-end.
     </p>
   )
 }
@@ -406,15 +406,15 @@ function FaceMoodHabits({ tagEffects, laggedEffects }) {
   if (!tags.length && !lags.length && !pending.length) return null
   const clear = tags.filter((e) => e.evidence !== 'incertain')
   const uncertain = tags.filter((e) => e.evidence === 'incertain')
-  const cards = (list) => list.map((e) => <TagEffectCard key={e.tagId} effect={e} measure="humeur estimée" />)
+  const cards = (list) => list.map((e) => <TagEffectCard key={e.tagId} effect={e} measure="bien-être estimé" />)
   return (
     <div className="reco-face-habits" data-testid="face-mood-habits">
-      <p className="reco-section-hint">🏷️ Vos habitudes et ⏳ effets décalés, avec votre humeur estimée :</p>
+      <p className="reco-section-hint">🏷️ Vos habitudes et ⏳ effets décalés, avec votre bien-être estimé :</p>
       {clear.length > 0 || lags.length > 0 ? (
         <ul className="reco-tag-list">
           {cards(clear)}
           {lags.map((e) => (
-            <LaggedEffectCard key={e.variable} effect={e} measure="humeur estimée du jour" />
+            <LaggedEffectCard key={e.variable} effect={e} measure="bien-être estimé du jour" />
           ))}
         </ul>
       ) : (
@@ -446,7 +446,7 @@ function FaceMoodHabits({ tagEffects, laggedEffects }) {
  */
 export function FaceMoodSection({ result }) {
   if (!result || result.status === 'no_face') return null
-  const title = <h3 className="reco-section-title">🙂 Avec votre humeur estimée (visage)</h3>
+  const title = <h3 className="reco-section-title">🙂 Avec votre bien-être estimé (visage)</h3>
   if (result.status !== 'ok') {
     const n = result.currentDays
     return (
@@ -455,7 +455,7 @@ export function FaceMoodSection({ result }) {
         <p className="reco-section-hint">
           {n} jour{n > 1 ? 's' : ''} sur {FACE_MOOD_MIN_DAYS} avec au moins {FACE_MOOD_MIN_READINGS} lectures du
           visage au déverrouillage. Ensuite, votre sommeil, vos pas, votre écran, vos réseaux… seront comparés à
-          votre humeur estimée, sans aucune note à donner.
+          votre bien-être estimé, sans aucune note à donner.
         </p>
       </section>
     )
@@ -474,11 +474,11 @@ export function FaceMoodSection({ result }) {
     <section className="reco-section" data-testid="face-mood-section">
       {title}
       <p className="reco-section-hint">
-        Sur {result.faceDays} jours estimés par la Lecture du visage, sans aucune note. Vert = va de pair avec une
-        meilleure humeur estimée · Rouge = avec une moins bonne.
+        Sur {result.faceDays} jours estimés par la Lecture du visage, sans aucune note. Vert = va de pair avec un
+        meilleur bien-être estimé · Rouge = avec un moins bon.
       </p>
       {clear.length > 0 ? bars(clear) : (
-        <p className="reco-empty-levers">Aucun lien net pour l’instant avec votre humeur estimée.</p>
+        <p className="reco-empty-levers">Aucun lien net pour l’instant avec votre bien-être estimé.</p>
       )}
       {uncertain.length > 0 && (
         <details className="reco-corr-more">
@@ -493,18 +493,18 @@ export function FaceMoodSection({ result }) {
       <details className="reco-method-note">
         <summary>Comment c&apos;est calculé</summary>
         <p>
-          Chaque jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit une humeur estimée
+          Chaque jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit un bien-être estimé
           (médiane de ses lectures), comparée à chaque facteur comme une note donnée à la dernière lecture : avant{' '}
           {DAY_OVER_HOUR} h, ce que vous faites après elle ne compte pas. Mêmes garde-fous que pour vos notes :
-          week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés. L&apos;humeur estimée ne
+          week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés. Le bien-être estimé ne
           vient que de votre visage (et de vos notes si vous en donnez) : aucun de ces facteurs ne sert à
           l&apos;estimer, sinon le lien serait circulaire.
         </p>
         <p>
-          Habitudes : humeur estimée les jours avec chaque tag (ceux de vos notes, ou mesurés par le téléphone)
-          contre les jours sans, le lendemain pour le soir ; le stress ressenti fait partie de l&apos;humeur, il
+          Habitudes : bien-être estimé les jours avec chaque tag (ceux de vos notes, ou mesurés par le téléphone)
+          contre les jours sans, le lendemain pour le soir ; le stress ressenti fait partie du bien-être, il
           n&apos;est jamais comparé. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
-          avant, à humeur de la veille égale, liens solides seulement.
+          avant, à bien-être de la veille égal, liens solides seulement.
         </p>
         <p>
           C&apos;est une estimation, moins précise qu&apos;une note : un lien est une hypothèse à observer, pas une
@@ -568,7 +568,7 @@ function BasicTab({ analysis }) {
           Tags : bien-être les jours avec chaque tag comparé aux jours sans ; pour les
           habitudes du soir, c&apos;est le lendemain qui compte. Les week-ends sont comparés aux
           week-ends et les jours de semaine entre eux. Le stress ressenti fait partie de votre
-          humeur : il n&apos;est pas présenté comme sa cause.
+          bien-être : il n&apos;est pas présenté comme sa cause.
         </p>
         <p>
           Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
@@ -704,7 +704,7 @@ function AdvancedTab({ analysis }) {
                   : <>votre bien-être est estimé à <strong>{frDiff(modelInfo.weekendEffect)}{' '}
                     point{Math.abs(modelInfo.weekendEffect) >= 2 ? 's' : ''} le week-end</strong> par rapport à la semaine.</>}
                 {' '}Cet effet n&apos;est attribué à aucune habitude (sinon une habitude plus fréquente le samedi
-                récupérerait l&apos;humeur propre au week-end).
+                récupérerait le bien-être propre au week-end).
               </>
             ) : (
               <>Le week-end sera pris en compte dès {MIN_WEEKEND_DAYS} jours notés de chaque sorte.</>

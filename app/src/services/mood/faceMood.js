@@ -359,7 +359,7 @@ export function describeFaceMood(est) {
     lines.push(`Bien-être estimé aujourd’hui : ${est.day.label}, ≈ ${fmt(est.day.note)} / 5 (entre ${fmt(est.day.low)} et ${fmt(est.day.high)}).`)
   }
   const when = est.moment.today ? `à ${hour(est.moment.at)}` : `le ${new Date(est.moment.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${hour(est.moment.at)}`
-  lines.push(`Humeur à la dernière lecture (${when}) : ${est.moment.label}.`)
+  lines.push(`Bien-être à la dernière lecture (${when}) : ${est.moment.label}.`)
   if (est.moment.arousalLabel) {
     const dayArousal = est.day?.arousalLabel && est.day.readings > 1 ? ` (aujourd’hui : ${est.day.arousalLabel})` : ''
     lines.push(`Éveil à la dernière lecture : ${est.moment.arousalLabel}${dayArousal}.`)

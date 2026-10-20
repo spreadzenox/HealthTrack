@@ -797,7 +797,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     listEntriesForAnalysis.mockResolvedValue(faceHistory(20))
     renderPage()
     const section = await screen.findByTestId('face-mood-section')
-    expect(section).toHaveTextContent('Avec votre humeur estimée (visage)')
+    expect(section).toHaveTextContent('Avec votre bien-être estimé (visage)')
     expect(section).toHaveTextContent('Sur 20 jours estimés par la Lecture du visage, sans aucune note')
     expect(section).toHaveTextContent('Pas')
     // Les notes manquent toujours pour l'analyse classique : les deux coexistent.
@@ -818,7 +818,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     renderPage()
     const habits = await screen.findByTestId('face-mood-habits')
     expect(habits).toHaveTextContent('Alcool')
-    expect(habits).toHaveTextContent('Le lendemain : humeur estimée')
+    expect(habits).toHaveTextContent('Le lendemain : bien-être estimé')
     expect(habits).not.toHaveTextContent('Stress')
     expect(habits).not.toHaveTextContent('Piste')
   })

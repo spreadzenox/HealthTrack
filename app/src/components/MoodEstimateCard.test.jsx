@@ -11,7 +11,7 @@ const estimate = {
 describe('MoodEstimateCard', () => {
   it('shows the estimated well-being of the day with its range and confidence, as an estimate', async () => {
     render(<MoodEstimateCard load={async () => estimate} />)
-    expect(await screen.findByText('Humeur estimée')).toBeInTheDocument()
+    expect(await screen.findByText('Bien-être estimé')).toBeInTheDocument()
     expect(screen.getByText('Confiance faible')).toBeInTheDocument()
     expect(screen.getByText(/Bien-être estimé aujourd’hui : plutôt bonne, ≈ 3,4 \/ 5 \(entre 1,8 et 5,0\)/)).toBeInTheDocument()
     expect(screen.getByText(/4 lectures aujourd’hui, visage bien cadré, lectures concordantes/)).toBeInTheDocument()
