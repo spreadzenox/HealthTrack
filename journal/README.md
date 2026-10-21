@@ -141,14 +141,15 @@ les boutons **Repas** et **Nutrition** juste à côté. L'**accueil** est plus c
 jours, dans le Journal ». Aucune donnée ne bouge. Prochain run de code : ranger le Radar forme et les graphiques qui
 restent sous l'accueil (2b). **👉 Votre prochaine action la plus utile reste P8 puis P10** (AAB `HealthTrack-play-341` ou plus récent).
 
-**Run du 21/10 18:30 — l'accueil est maintenant celui de la maquette.** Ce que vous verrez dans la prochaine version
-(bouton du bandeau) : le **Radar forme**, vos cartes **FC au repos / VFC**, vos **horaires de sommeil** et les **courbes
+**Run du 21/10 18:30 — l'accueil est maintenant celui de la maquette.** Ce que vous verrez dans la **v199** (publiée, 33,7 Mo,
+bouton du bandeau) : le **Radar forme**, vos cartes **FC au repos / VFC**, vos **horaires de sommeil** et les **courbes
 du bien-être** quittent le bas de l'accueil pour un nouveau sous-onglet **Journal → Tendances** (Jours · Repas ·
 Nutrition · Tendances). L'accueil s'arrête au résumé du jour et finit par deux boutons, « Vos derniers jours » et
 « Vos tendances » ; il lit environ **340 enregistrements au lieu de 12 500** sur 3 ans de données, donc s'ouvre plus
 vite. Sous la courbe, « Prédiction du jour » devient **« Attendu d'après vos habitudes »** (vocabulaire conformité :
 pas de « prédiction »). Aucune donnée ne bouge. Prochain run de code : « Lecture rapide » (version Play) ou le premier
-écran de l'onboarding. **👉 Votre prochaine action la plus utile reste P8 puis P10** (dernier AAB `HealthTrack-play-NNN`).
+écran de l'onboarding. **👉 Votre prochaine action la plus utile reste P8 puis P10** (AAB `HealthTrack-play-343` ou plus récent). En coulisses : le
+contrôle « budget de lectures » mesurait les analyses sur des agrégats vides (biais de l'outil, corrigé) ; budgets recalés sur les vraies valeurs.
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
@@ -527,7 +528,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
-| 21/10 18:30 — [Tendances dans le Journal](runs/2026-10-21-1830-tendances.md) | 🧭🎨 | 2b accueil : Radar forme, cœur, sommeil et courbes du bien-être → `/tendances` (Journal → Tendances) ; accueil ≈ 340 lectures au lieu de 12 500 sur 3 ans ; 2e « Attendu d'après vos habitudes » ; 1 738 Vitest ; PR et release : voir le compte rendu |
+| 21/10 18:30 — [Tendances dans le Journal](runs/2026-10-21-1830-tendances.md) | 🧭🎨 | 2b accueil : Radar forme, cœur, sommeil et courbes du bien-être → `/tendances` (Journal → Tendances) ; accueil ≈ 340 lectures au lieu de 12 500 sur 3 ans ; 2e « Attendu d'après vos habitudes » ; 1 738 Vitest ; PR #256 → **v199, 33,7 Mo** + AAB play 343 ; outil perf corrigé (agrégats vides) |
 | 21/10 16:30 — [« Vos derniers jours » dans Journal](runs/2026-10-21-1630-journal-jours.md) | 🧭🎨 | Page `/journal` (Jours \| Repas \| Nutrition), `DailyJournal` + `journalEntries` sortis de l'accueil, accueil allégé ; budget de lectures `/journal` ; 1 734 Vitest ; PR #254 → **v198, 33,7 Mo** (v197 = même commit, double push) + AAB play 341 |
 | 21/10 14:30 — [Navigation 4 onglets](runs/2026-10-21-1430-navigation-4-onglets.md) | 🧭🎨 | Aujourd'hui / Journal (Repas \| Nutrition) / Pistes / Sources, roue « Réglages » en haut à droite, titres « Vos sources » / « Vos pistes », `APP_NAME` centralisé ; aucune route ni donnée changée ; 1 730 Vitest ; PR #252 → **v196, 33,7 Mo** + AAB play 339 |
 | 21/10 12:30 — [Accueil « Aujourd'hui » + ventre en un geste](runs/2026-10-21-1230-accueil-aujourdhui.md) | 🧭🎨 | Carte menthe bien-être (chiffre, écart 14 j, courbe, « détails »), tuiles sommeil / VFC / pas avec source, carte pêche ventre → entrée `gut` (sans migration, exportée), boutons pilule, carte lilas pistes X/21 (6 semaines, budget de lectures) ; 1 718 Vitest ; PR #250 → **v195, 33,7 Mo** + AAB play 337 |
