@@ -36,7 +36,11 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   en option (Paramètres → Apparence), icônes de la barre d'état accordées (`SystemBarsPlugin`) (21/10 00:30) ;
   [x] (ii) icône adaptative « H nuit » + monochrome + notification + écran de démarrage + logo de l'en-tête + icône
   512 px de la fiche Play (`app/store/play-icon-512.png`, script `scripts/brand/render-icons.mjs`) (21/10 04:30) ;
-  [ ] (iii) Accueil « Aujourd'hui » selon la maquette (cartes 22 px, boutons pilule, chiffres en mono) ;
+  [x] (iii) Accueil « Aujourd'hui » selon la maquette (21/10 12:30) : ligne mono date + « Bonjour », titre-résumé,
+  carte menthe « Bien-être estimé » (grand chiffre, écart à la moyenne 14 j, courbe, « détails »), tuiles sommeil /
+  VFC / pas avec leur source, carte pêche « Votre ventre » (Calme / Gêne / Douleur en un geste → entrée `gut`),
+  « Photo du repas » / « Une note », carte lilas « Vos pistes arrivent dans N jours » (X/21). Restes : prénom
+  (onboarding), navigation 4 onglets (2c), « Lecture rapide » play depuis la carte ;
   [ ] (iv+) chaque écran quand le chantier le touche. Petits restes : chiffres en mono dans le bandeau de mise à jour
   et les tuiles du journal ; rayon des cartes (`--radius` 12 px → `--radius-card` 22 px) écran par écran.
 - [ ] **3 Variantes play / sideload** — [x] **3a** (21/10 02:30) flavors `sideload` (`com.healthtrack.app`) / `play`
@@ -867,6 +871,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 21/10 (12:30 Paris)** : ✅ 2 bis (iii) écran Accueil « Aujourd'hui » + saisie du ventre en un geste
+(entrée `gut`, première brique du jalon 5). Prochain run de code → **2c navigation 4 onglets** (Aujourd'hui, Journal
+— le journal des jours quitte l'accueil —, Pistes = Analyses, Sources = Connecteurs ; réglages en haut à droite ;
+Repas / Nutrition / Données / Nouveautés rangés sans perte), avec 2b (inventaire chiffré) dans le même run ; puis 3b-3
+« Lecture rapide » ; 3c dès P10/P11 ; puis jalon 4 onboarding.
 
 **Mise à jour du 21/10 (10:30 Paris)** : ✅ 3b-2 + I131 (variante play sans service caméra, lecture du visage à
 l'ouverture de l'app, 15 permissions Health Connect). Prochain run de code → **2b/2c + 2 bis (iii)** : écran Accueil

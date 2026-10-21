@@ -20,3 +20,23 @@ describe('loadFaceMoodEntries', () => {
     expect(d.getDate()).toBe(new Date('2026-10-10T15:00:00.000Z').getDate())
   })
 })
+
+describe('loadWellbeingToday', () => {
+  it('rend null sans rafale du visage', async () => {
+    const { loadWellbeingToday } = await import('./faceMoodData')
+    expect(await loadWellbeingToday({ list: async () => [] })).toBeNull()
+  })
+
+  it('rend l’estimation du jour et les jours estimés', async () => {
+    const { loadWellbeingToday } = await import('./faceMoodData')
+    const now = new Date(2026, 9, 21, 12)
+    const burst = (d, h) => ({
+      type: 'face_burst', source: 'face_sense', at: new Date(2026, 9, d, h).toISOString(),
+      payload: { trigger: 'unlock', frames: 3, valid: 3, values: { smile: 0.4, valence: 0.2, arousal: 0 } },
+    })
+    const bursts = [20, 21].flatMap((d) => [8, 9, 10].map((h) => burst(d, h)))
+    const r = await loadWellbeingToday({ list: async ({ type }) => (type === 'face_burst' ? bursts : []), now })
+    expect(r.est.day.readings).toBe(3)
+    expect(r.days.map((d) => d.date)).toEqual(['2026-10-20', '2026-10-21'])
+  })
+})

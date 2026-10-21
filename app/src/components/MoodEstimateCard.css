@@ -1,50 +1,69 @@
+/* Carte menthe « Bien-être estimé » (accueil « Aujourd'hui », DESIGN.md §7). Styles communs : TodayCards.css. */
 .mood-estimate {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  margin: 20px 0 8px;
-  border-left: 3px solid var(--accent);
+  background: var(--mint-bg);
+  color: var(--mint-text);
 }
 
-.mood-estimate-head {
+.mood-estimate .today-card-title {
+  color: var(--mint-label);
+}
+
+.mood-estimate-figure {
+  margin: 6px 0 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: baseline;
   flex-wrap: wrap;
-  gap: 6px 10px;
+  gap: 0 4px;
+  color: var(--color-ink);
 }
 
-.mood-estimate-title {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 600;
+.mood-estimate-note {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.05;
 }
 
-.mood-estimate-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(var(--ink-2-rgb), 0.15);
-  color: var(--text-muted);
-  white-space: nowrap;
+.mood-estimate-scale {
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
-.mood-estimate-badge.is-moyenne,
-.mood-estimate-badge.is-bonne {
-  background: rgba(var(--brand-rgb), 0.15);
-  color: var(--accent);
-}
-
-.mood-estimate-main {
-  margin: 8px 0 4px;
-  font-size: 0.95rem;
-}
-
-.mood-estimate-sub {
-  margin: 4px 0 0;
+.mood-estimate-delta {
+  margin-left: 10px;
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: var(--mint-label);
+}
+
+.mood-estimate-when {
+  margin: 2px 0 0;
+  font-size: 0.75rem;
+}
+
+.mood-spark {
+  display: block;
+  width: 100%;
+  height: 56px;
+  margin: 10px 0 6px;
+}
+
+.mood-spark-line {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.mood-spark-mean {
+  stroke: var(--chart-ref);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.mood-spark-dot {
+  fill: var(--accent-amber);
 }
 
 .mood-range {
@@ -54,7 +73,7 @@
 .mood-range-track {
   position: relative;
   height: 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(var(--ink-2-rgb), 0.18);
 }
 
@@ -62,7 +81,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(var(--brand-rgb), 0.35);
 }
 

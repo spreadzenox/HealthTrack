@@ -9,6 +9,7 @@ import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
 import FormeSection from '../components/FormeSection'
 import MoodEstimateCard from '../components/MoodEstimateCard'
+import { loadWellbeingToday } from '../services/mood/faceMoodData'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import SavedMealEditor from '../components/SavedMealEditor'
 import { groupCigarettes, isDeletableEntry } from '../utils/entries'
@@ -18,18 +19,10 @@ import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 import { localDateKey } from '../services/analysisEngine'
 import { mealKcal } from '../services/mealEditing'
 import { useNutritionTable } from '../data/nutritionTable'
+import { MeasureTiles, GutCard, PistesTeaser } from '../components/TodayCards'
+import { useDetailsMode } from '../hooks/useDetailsMode'
+import { SOURCE_LABELS, daySummaryTitle, gutLevelLabel, headerLine, measureTiles } from '../services/today'
 
-const SOURCE_LABELS = {
-  app_food: 'Alimentation (app)',
-  app_wellbeing: 'Bien-être (app)',
-  app_cigarette: 'Tabac (app)',
-  samsung_watch: 'Montre Samsung',
-  health_connect: 'Health Connect',
-  huawei_watch: 'Montre Huawei',
-  ble: 'Capteur Bluetooth',
-  withings: 'Withings Body Scan',
-  scale: 'Balance connectée',
-}
 
 const TYPE_LABELS = {
   food: 'Repas',
@@ -38,6 +31,7 @@ const TYPE_LABELS = {
   sleep: 'Sommeil',
   wellbeing: 'Bien-être',
   cigarette: 'Cigarette',
+  gut: 'Ventre',
   steps: 'Pas',
   heart_rate: 'Fréquence cardiaque',
   calories: 'Calories',
@@ -62,10 +56,11 @@ const DELETE_LABELS = {
   food: 'ce repas',
   wellbeing: 'cette note de bien-être',
   cigarette: 'cette cigarette',
+  gut: 'cette note du ventre',
 }
 
 /** Types qui ont un affichage dédié ; les autres montrent leurs données brutes. */
-const ITEM_TYPES_WITH_RENDERER = ['food', 'wellbeing', 'cigarette', 'activity', 'weight', 'height', 'body_composition']
+const ITEM_TYPES_WITH_RENDERER = ['food', 'wellbeing', 'cigarette', 'gut', 'activity', 'weight', 'height', 'body_composition']
 
 /** Jours affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
 const INITIAL_DAYS = 3
@@ -224,6 +219,7 @@ function CigaretteGroupRow({ group }) {
 /** Une cigarette seule, ou une note sans tag (note dans l'en-tête), n'a rien à afficher sous son titre. */
 function hasBody(e, measuredScreen) {
   if (e.type === 'wellbeing') return visibleTags(e, measuredScreen).length > 0
+  if (e.type === 'gut') return false
   return !(e.type === 'cigarette' && !(e.payload?.count > 1))
 }
 
@@ -315,6 +311,9 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
                 {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
                   <span className="entry-kcal entry-score"><strong>{e.payload.score}</strong> / 5</span>
                 )}
+                {e.type === 'gut' && gutLevelLabel(e.payload?.level) && (
+                  <span className="entry-kcal entry-score">{gutLevelLabel(e.payload.level)}</span>
+                )}
                 {!isDeletableEntry(e) && (
                   <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
                 )}
@@ -380,6 +379,9 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const redoMeal = useCallback((meal) => navigate('/food', { state: { redoMeal: meal } }), [navigate])
   const [visibleDays, setVisibleDays] = useState(INITIAL_DAYS)
+  const [details, toggleDetails] = useDetailsMode()
+  // Bien-être estimé (visage) : undefined pendant la lecture, null sans aucune lecture avec un visage
+  const [wellbeing, setWellbeing] = useState(undefined)
   // kcal des repas : table Ciqual chargée à la demande, journal recalculé à son arrivée
   const nutritionTable = useNutritionTable()
   const [hiddenKey, setHiddenKey] = useState(null)
@@ -434,6 +436,23 @@ export default function Dashboard() {
   }, [loadEntries])
 
   useEffect(() => {
+    let cancelled = false
+    const load = () => loadWellbeingToday()
+      .then((d) => { if (!cancelled) setWellbeing(d) })
+      .catch(() => { if (!cancelled) setWellbeing(null) })
+    load()
+    window.addEventListener('health-entries-updated', load)
+    return () => {
+      cancelled = true
+      window.removeEventListener('health-entries-updated', load)
+    }
+  }, [])
+
+  const todayKey = localDateKey(new Date().toISOString())
+  const todaySummary = days.find((d) => d.dateKey === todayKey)?.summary ?? null
+  const tiles = useMemo(() => measureTiles(todaySummary, entries), [todaySummary, entries])
+
+  useEffect(() => {
     const handler = () => loadEntries()
     window.addEventListener('health-entries-updated', handler)
     return () => window.removeEventListener('health-entries-updated', handler)
@@ -441,27 +460,32 @@ export default function Dashboard() {
 
   return (
     <section className="dashboard">
-      <h2 className="page-title">Tableau de bord</h2>
+      <header className="today-head">
+        <p className="today-dateline">{headerLine()}</p>
+        <h2 className="today-title">{daySummaryTitle(wellbeing?.est)}</h2>
+      </header>
       {/* Présentation utile au premier lancement seulement : avec des données, elle repoussait tout le contenu. */}
       {!loading && !error && days.length === 0 && (
         <p className="dashboard-intro">
-          HealthTrack centralise vos données santé : <strong>alimentation</strong> (photo → ingrédients),{' '}
-          <strong>montre ou bague connectée</strong> (pas, sommeil, cœur, respiration) via Health Connect,{' '}
-          et bien plus. Configurez les sources dans{' '}
-          <Link to="/connectors" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Connecteurs</Link>.
+          Notez vos repas et votre ventre en un geste, ajoutez votre montre (sommeil, cœur, pas) : HealthTrack
+          vous aide à comprendre ce qui va avec vos bons et mauvais jours. Tout reste sur le téléphone par défaut ;
+          l’IA seulement si vous le voulez. Tout se règle dans <Link to="/connectors">Sources</Link>.
         </p>
       )}
 
-      <div className="dashboard-actions">
-        <button
-          type="button"
-          className="btn btn-secondary dashboard-wellbeing-btn"
-          onClick={() => setWellbeingOpen(true)}
-        >
-          + Ajouter un bien-être
-        </button>
-        {!loading && shouldShowCigaretteCounter(entries) && <CigaretteQuickAdd />}
+      <MoodEstimateCard data={wellbeing} details={details} onToggleDetails={toggleDetails} />
+      {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
+      <GutCard details={details} onToggleDetails={toggleDetails} />
+
+      <div className="today-actions">
+        <button type="button" className="btn" onClick={() => navigate('/food')}>Photo du repas</button>
+        <button type="button" className="btn btn-secondary" onClick={() => setWellbeingOpen(true)}>Une note</button>
       </div>
+      {!loading && shouldShowCigaretteCounter(entries) && (
+        <div className="dashboard-actions"><CigaretteQuickAdd /></div>
+      )}
+
+      <PistesTeaser details={details} onToggleDetails={toggleDetails} />
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
       <WellbeingPrompt
@@ -480,7 +504,6 @@ export default function Dashboard() {
 
       {!loading && !error && (
         <>
-          <MoodEstimateCard />
           <FormeSection />
           <WellbeingCharts />
           <h3 className="section-title">Vos derniers jours</h3>

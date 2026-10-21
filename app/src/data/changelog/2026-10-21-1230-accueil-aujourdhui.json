@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-21",
+  "kind": "nouveauté",
+  "title": "Nouvel accueil « Aujourd'hui » et votre ventre en un geste",
+  "items": [
+    "L'accueil commence par un résumé de votre journée, puis la carte « Bien-être estimé » : un grand chiffre sur 5, l'écart à votre moyenne des 14 derniers jours et la courbe de ces jours. Une estimation, pas un diagnostic.",
+    "Juste en dessous : votre sommeil, votre VFC et vos pas du jour. Touchez « détails » pour voir d'où vient chaque chiffre, la fourchette de l'estimation et le modèle utilisé.",
+    "Nouvelle carte « Votre ventre » : Calme, Gêne ou Douleur en un geste, l'heure est notée. Ces notes apparaissent dans « Vos derniers jours », se suppriment comme un repas et sont incluses dans l'export de vos données.",
+    "« Photo du repas » et « Une note » sont toujours à portée de pouce, et une carte indique combien de jours de suivi il reste avant de chercher des pistes : on préfère attendre plutôt que de vous montrer de faux suspects."
+  ]
+}

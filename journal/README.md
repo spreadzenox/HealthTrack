@@ -110,6 +110,21 @@ vous) et l'AAB play **`HealthTrack-play-335`**, le premier conforme (c'est lui �
 le dernier AAB `HealthTrack-play-NNN` en test interne). Prochain run de code : l'**écran Accueil « Aujourd'hui »** de
 la maquette et la navigation en 4 onglets.
 
+**Run du 21/10 12:30 — le nouvel accueil « Aujourd'hui » (identité visuelle, étape 3 sur 3).** Ce que vous verrez
+dans la prochaine version (bouton du bandeau) : l'accueil s'ouvre sur **« mer. 21 oct. · Bonjour »** et une phrase
+qui résume la journée d'après votre bien-être estimé (« Plutôt une bonne journée »…). Puis la **carte menthe
+« Bien-être estimé »** de la maquette : grand chiffre sur 5, écart à votre moyenne des 14 jours, courbe de ces jours ;
+**« détails »** montre la fourchette, le nombre de lectures, la moyenne et le modèle (un seul réglage pour toute la
+page). Ensuite vos **tuiles sommeil / VFC / pas** (en détails : d'où vient chaque chiffre), la **carte pêche « Votre
+ventre » : Calme / Gêne / Douleur en un geste**, horodaté — c'est la première brique des pistes SII ; ces notes
+apparaissent dans « Vos derniers jours », se suppriment et partent dans l'export —, les boutons **« Photo du repas »**
+et **« Une note »**, et la **carte lilas « Vos pistes arrivent dans N jours »** (X/21 jours avec un repas ou une note du
+ventre ; une fois les 21 jours atteints, elle dit honnêtement que les pistes repas → ventre arrivent dans une
+prochaine version). Le radar forme, les graphiques et le journal des jours restent en dessous, rien n'est perdu.
+**À tester** : noter votre ventre deux fois dans la journée et regarder « Vos derniers jours ». Prochain run de code :
+**navigation en 4 onglets** (Aujourd'hui, Journal, Pistes, Sources). **👉 Votre prochaine action la plus utile reste P8
+puis P10.**
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -487,6 +502,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 21/10 12:30 — [Accueil « Aujourd'hui » + ventre en un geste](runs/2026-10-21-1230-accueil-aujourdhui.md) | 🧭🎨 | Carte menthe bien-être (chiffre, écart 14 j, courbe, « détails »), tuiles sommeil / VFC / pas avec source, carte pêche ventre → entrée `gut` (sans migration, exportée), boutons pilule, carte lilas pistes X/21 ; 1 718 Vitest |
 | 21/10 10:30 — [Jalon 3b-2 : variante play sans service caméra](runs/2026-10-21-1030-visage-ouverture-play.md) | 🧭🛡️ | Play : lecture du visage à l'ouverture de l'app (`FaceOneShot`, 1 / 30 min) + bandeau visible, sans FGS caméra / relance / exemption de batterie ; 15 permissions Health Connect (I131, −26) ; justification HC par type ; 1 693 Vitest, 119 JUnit ; sideload inchangée ; PR #248 → **v194, 33,7 Mo** + AAB play 335 |
 | 21/10 08:30 — [Idées : Health Connect jour 1, pistes SII avec délais, paywall Play](runs/2026-10-21-0830-idees-produit-hc-sii-paywall.md) | 💡 | PR #246 revérifiée et **fusionnée** (v193, 33,7 Mo ; AAB play 333), #245 fermée ; veille → I130–I138 (30 j Health Connect d'office, permissions HC réduites, 3 fenêtres de délai + seuil par simulation, réintroduction Monash, paywall conforme : « 2,50 €/mois » secondaire) ; P16 ajouté |
 | 21/10 06:30 — [Jalon 3b-1 : divulgations avant autorisation](runs/2026-10-21-0630-divulgations.md) | 🧭🛡️ | `PLAY-CONFORMITE.md` (option caméra play : à l'ouverture + lecture rapide, sans FGS ; revue des permissions) ; feuille de divulgation avant caméra / position / temps d'écran + test-garde ; 1 676 Vitest ; PR #246 (fusionnée au run suivant → v193) ; reprend aussi #245 |
