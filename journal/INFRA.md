@@ -95,5 +95,23 @@ Pas urgent — planifié au BACKLOG (P-SIDELOAD-KEY).
 | « Play — AAB » | push `main` (hors `journal/`), `workflow_dispatch` | WIF → lit `android-upload-keystore` + `android-upload-keystore-password` → build web `VITE_DISTRIBUTION=play` → `bundlePlayRelease` signé (`fr.jpesquet.sante`, `versionCode` = nombre de commits de main) → artefact `HealthTrack-play-NNN` (30 j) + empreinte SHA-256 du certificat d'envoi dans le résumé. **Rouge tant que P9 n'est pas fait** (message « Clé d'envoi Play absente » ou « Accès refusé ») : ce n'est pas une panne à réparer par la routine, c'est l'action P9. |
 | « Test — émulateur Samsung Galaxy A56 » (check « Build APK ») | PR et push | construit `assembleSideloadDebug` + tests instrumentés + `bundlePlayRelease` non signé, puis `scripts/check-play-manifest.sh` |
 
-Prochaine étape côté CI (après P10 + P11) : envoi automatique de l'AAB en **test interne** via l'API Android
-Publisher (edits) dans « Play — AAB ».
+### Envoi sur Google Play (jalon 3c, branché le 21/10 22:30)
+
+Après le build signé, « Play — AAB » demande un **jeton à portée `androidpublisher`** pour gh-deployer (deuxième appel
+à `google-github-actions/auth`, `token_format: access_token`, masqué dans les logs) puis lance
+`app/scripts/play/publish-cli.mjs` (logique dans `publish.mjs`, tests dans `publish.test.mjs`) :
+
+1. `POST edits` → 2. `GET edits/{id}/details` (langue par défaut de la fiche) → 3. import de l'AAB
+(`upload/…/bundles?uploadType=media`) → 4. `PUT edits/{id}/tracks/internal` : une version `versionCode`, statut
+`completed`, notes de version (≤ 500 car.) = titres des dernières entrées « Nouveautés » → 5. `POST edits/{id}:commit`.
+
+- **Pistes autorisées : `internal` et `alpha` (test fermé) seulement** ; `production` (et `beta`) refusées par le code,
+  testé. `workflow_dispatch` propose le choix de la piste.
+- App encore « brouillon » côté Play → version recréée en `draft` (le résumé dit quoi faire dans la Play Console).
+  Validation qui exige `changesNotSentForReview` → relancée avec ce paramètre. versionCode déjà envoyé (relance) → edit
+  abandonné, pas d'erreur. Toute autre erreur → edit abandonné et workflow rouge avec le message exact.
+- **401/403 = accès refusé** (invitation de gh-deployer pas encore propagée côté API, jusqu'à 24-48 h) →
+  **avertissement, workflow vert**, réessai à la version suivante ; si ça dure > 48 h après le 21/10 20:45 → action du
+  propriétaire (vérifier l'invitation, droits « Gérer les versions des canaux de test »).
+- Symboles de débogage natifs : `ndk { debugSymbolLevel 'SYMBOL_TABLE' }` sur la variante play ; ils voyagent dans
+  l'AAB et Play les extrait seul (pas de fichier de désobscurcissement tant que R8 n'est pas activé).
