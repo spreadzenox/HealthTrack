@@ -52,7 +52,7 @@ describe('WellbeingCharts — une seule mention de la prédiction (nettoyage D1)
     const { container } = render(<WellbeingCharts />)
     expect(await screen.findByText('1,6 / 5')).toBeInTheDocument()
     expect(container.querySelector('.wellbeing-prediction-badge')).toBeNull()
-    expect(screen.getAllByText(/Prédiction du jour/)).toHaveLength(1)
+    expect(screen.getAllByText(/Attendu d’après vos habitudes/)).toHaveLength(1)
     // La valeur suit le graphique, l'explication est repliée
     const legend = container.querySelector('.wellbeing-chart-pred-legend')
     expect(legend).toHaveTextContent('1,6 / 5')
@@ -71,7 +71,7 @@ describe('WellbeingCharts — une seule mention de la prédiction (nettoyage D1)
     expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
     expect(container.querySelector('.wellbeing-chart-pred-dot')).toBeNull()
     expect(container.querySelector('.wellbeing-chart-pred-legend')).toHaveTextContent(/réel : 3,0/)
-    expect(screen.getAllByText(/Prédiction du jour/)).toHaveLength(1)
+    expect(screen.getAllByText(/Attendu d’après vos habitudes/)).toHaveLength(1)
   })
 })
 
@@ -81,11 +81,12 @@ describe('WellbeingCharts — libellés et bloc « Par heure »', () => {
     listEntries.mockResolvedValue([])
   })
 
-  it('parle de « Prédiction du jour », sans jargon « ML »', async () => {
+  it('parle d’« Attendu d’après vos habitudes » (ni « ML » ni « prédiction », jalon 2e)', async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
     render(<WellbeingCharts />)
-    expect(await screen.findByText(/Prédiction du jour/)).toBeInTheDocument()
+    expect(await screen.findByText(/Attendu d’après vos habitudes/)).toBeInTheDocument()
     expect(screen.queryByText(/\bML\b/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/prédiction/i)).not.toBeInTheDocument()
   })
 
   it("masque le graphique « Par heure » tant qu'aucune note n'a été saisie aujourd'hui", async () => {

@@ -14,6 +14,7 @@ const Food = withNutrition(() => import('./pages/Food'))
 const Nutrition = withNutrition(() => import('./pages/Nutrition'))
 const Recommendations = withNutrition(() => import('./pages/Recommendations'))
 const Journal = lazy(() => import('./pages/Journal'))
+const Trends = lazy(() => import('./pages/Trends'))
 const Data = lazy(() => import('./pages/Data'))
 const Connectors = lazy(() => import('./pages/Connectors'))
 const Settings = lazy(() => import('./pages/Settings'))
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="journal" element={<Journal />} />
+            <Route path="tendances" element={<Trends />} />
             <Route path="food" element={<Food />} />
             <Route path="nutrition" element={<Nutrition />} />
             <Route path="data" element={<Data />} />

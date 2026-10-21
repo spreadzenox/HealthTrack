@@ -32,7 +32,7 @@ describe('TabBar', () => {
     expect(screen.getByRole('link', { name: 'Aujourd’hui' })).not.toHaveAttribute('aria-current')
   })
 
-  it.each(['/journal', '/nutrition'])('keeps « Journal » active on the sub-page %s', (path) => {
+  it.each(['/journal', '/nutrition', '/tendances'])('keeps « Journal » active on the sub-page %s', (path) => {
     renderAt(path)
     expect(screen.getByRole('link', { name: 'Journal' })).toHaveAttribute('aria-current', 'page')
   })

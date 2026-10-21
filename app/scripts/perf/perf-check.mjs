@@ -44,7 +44,7 @@ import { checkBudget } from './budget.mjs'
 process.env.TZ = 'Europe/Paris'
 const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
-const DEFAULT_ROUTES = ['/', '/journal', '/food', '/nutrition', '/data', '/connectors', '/recommendations', '/settings', '/plus']
+const DEFAULT_ROUTES = ['/', '/journal', '/tendances', '/food', '/nutrition', '/data', '/connectors', '/recommendations', '/settings', '/plus']
 
 function parseArgs(argv) {
   const args = {}

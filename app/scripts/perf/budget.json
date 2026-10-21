@@ -1,8 +1,9 @@
 {
   "days": 1095,
   "routes": {
-    "/": 12500,
+    "/": 1500,
     "/journal": 500,
+    "/tendances": 2000,
     "/food": 150,
     "/nutrition": 1000,
     "/data": 50,

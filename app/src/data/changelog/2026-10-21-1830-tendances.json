@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-21",
+  "kind": "amélioration",
+  "title": "Vos tendances ont leur place dans le Journal",
+  "items": [
+    "Le Radar forme, votre cœur (FC au repos, VFC), vos horaires de sommeil et les courbes du bien-être sont maintenant dans Journal → « Tendances ».",
+    "L'accueil s'arrête au résumé du jour : il s'ouvre plus vite et finit par deux boutons, « Vos derniers jours » et « Vos tendances ».",
+    "Sous la courbe du bien-être, « Prédiction du jour » devient « Attendu d'après vos habitudes » : le même calcul, une estimation, pas une prédiction.",
+    "Aucune donnée ne bouge."
+  ]
+}
