@@ -135,7 +135,7 @@ function PredictionLegend({ prediction, onChart }) {
   const line = (
     <span className="wellbeing-chart-pred-legend">
       {onChart && <span className="wellbeing-pred-dot-legend" aria-hidden="true" />}
-      <span>Prédiction du jour :</span>
+      <span>Attendu d’après vos habitudes :</span>
       <strong className="wellbeing-prediction-value">{fmt(prediction.predicted)} / 5</strong>
       {prediction.actual != null && <span>· réel : {fmt(prediction.actual)}</span>}
     </span>

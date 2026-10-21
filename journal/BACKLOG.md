@@ -26,11 +26,13 @@ Cadre général depuis le 20/10 au soir : produit vendable sur Google Play ; por
 les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état tenu dans `PRODUIT.md`) :
 - [x] **1** `journal/PRODUIT.md` (20/10 22:30)
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
-  (20/10 22:30) ; [ ] 2b inventaire chiffré (cartes de l'accueil, réglages, onglets) → décisions masquer / fusionner /
-  déplacer (sans perte de données) ; [x] 2c navigation 4 onglets Aujourd'hui / Journal (Repas | Nutrition) / Pistes / Sources + roue « Réglages » en haut
+  (20/10 22:30) ; [~] 2b inventaire chiffré → décisions masquer / fusionner / déplacer (sans perte de données) : [x] accueil
+  (21/10 18:30 : Radar forme, cartes cœur / régularité du sommeil et courbes du bien-être → nouveau sous-onglet
+  **Journal → Tendances** `/tendances` ; l'accueil = la maquette ; lectures de l'accueil 12 500 → ~340 enregistrements sur 3 ans) ;
+  [ ] réglages (Paramètres, Données) et Sources (diagnostics repliés, une liste « Vos sources ») ; [x] 2c navigation 4 onglets Aujourd'hui / Journal (Repas | Nutrition) / Pistes / Sources + roue « Réglages » en haut
   à droite (Données, Paramètres, Nouveautés), `config/brand.js` (21/10 14:30) ; [x] 2c-2 « Vos derniers jours » → onglet Journal (sous-onglet « Jours », `/journal`, page d'arrivée de l'onglet ; accueil allégé, lien « Vos derniers jours, dans le Journal ») (21/10 16:30) ;
-  [x] 2d tokens de design → fait par 2 bis (i) (21/10 00:30) ; [ ] 2e « Prédiction du jour » du graphique
-  bien-être : reformuler en « estimation » / « tendance » (vocabulaire conformité).
+  [x] 2d tokens de design → fait par 2 bis (i) (21/10 00:30) ; [x] 2e « Prédiction du jour » du graphique
+  bien-être → « Attendu d'après vos habitudes » (21/10 18:30 ; test : plus aucun « prédiction » visible sur la courbe).
 - [ ] **2 bis Identité visuelle « Clair et précis »** (validée le 20/10 au soir, `DESIGN.md`) — [x] `journal/DESIGN.md`
   (21/10 00:30) ; [x] (i) tokens `src/theme/tokens.css` (seule source des couleurs, test de contraste ≥ 4,5:1 dans les
   deux thèmes, test anti-couleur brute), polices Figtree + IBM Plex Mono embarquées, **thème clair par défaut**, sombre
@@ -105,6 +107,9 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   installée, taille, Mo / % / débit / reste, étapes, blocage 45 s, Réessayer, Annuler, navigateur).
 - [ ] **Retour du propriétaire** : installation manuelle de la v188+ depuis le navigateur faite ? À la release
   suivante, la barre avance-t-elle et l'installateur s'ouvre-t-il ? (sinon : capture du bandeau, qui donne la cause)
+- [ ] **I139 perf : valeur attendue du jour (Tendances)** — la tâche `todayPrediction` lit ~20 300 enregistrements
+  (3 ans de démo) contre ~14 700 pour les Pistes : regarder ce qu'elle lit en plus (6 lectures) et le réduire.
+  Budget `/tendances` 22 000 en attendant (mesure corrigée le 21/10 18:30, voir le compte rendu).
 - [ ] **I129 alléger l'APK** : convertir MobileFaceNet (valence / éveil) en LiteRT et retirer ONNX Runtime (−18 Mo,
   APK ≈ 15 Mo), ou build ONNX Runtime minimale ; vérifier l'accord des sorties avant / après sur les images de test.
 - [ ] Retirer la dépendance npm `@m430/capacitor-app-install`, plus importée.
@@ -872,6 +877,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 21/10 (18:30 Paris)** : ✅ 2b (accueil) — forme et courbes du bien-être rangées dans **Journal →
+Tendances** ; ✅ 2e « Prédiction du jour » → « Attendu d'après vos habitudes ». Prochain run de code → **3b-3 « Lecture
+rapide »** (play, déclenchée par l'utilisateur) ou, si plus utile, **jalon 4 onboarding** (premier écran de la maquette,
+objectif ventre / énergie / tout comprendre) ; 2b réglages + Sources plus tard ; 3c dès P10/P11.
 
 **Mise à jour du 21/10 (16:30 Paris)** : ✅ 2c-2 « Vos derniers jours » dans l'onglet Journal (Jours | Repas |
 Nutrition), accueil allégé. Prochain run de code → **2b** : inventaire chiffré de ce qui reste sous l'accueil (Radar

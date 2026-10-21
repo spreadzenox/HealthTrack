@@ -4,6 +4,11 @@
  * pages, et la cascade dépend de cet ordre. Le CSS ne pèse que 53 ko ; seul le JS est différé.
  * `bundleGuard.test.js` vérifie que tout fichier CSS de `src/` est atteint d'emblée.
  */
+// Avant le 21/10 18:30, arrivaient par l'accueil (forme et courbes, désormais dans Journal → Tendances) : même rang
+import './components/WellbeingCharts.css'
+import './components/HealthRadar.css'
+import './components/BaselineCards.css'
+import './components/MethodNote.css'
 // Avant le 21/10 16:30, arrivait par l'accueil (journal des jours, désormais chargé à la demande) : même rang
 import './components/MealEditor.css'
 import './Food.css'

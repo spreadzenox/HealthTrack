@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import WellbeingCharts from '../components/WellbeingCharts'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
-import FormeSection from '../components/FormeSection'
 import MoodEstimateCard from '../components/MoodEstimateCard'
 import { loadWellbeingToday } from '../services/mood/faceMoodData'
 import { loadJournalEntries } from '../services/journalEntries'
@@ -106,9 +104,11 @@ export default function Dashboard() {
 
       {!loading && !error && (
         <>
-          <FormeSection />
-          <WellbeingCharts />
-          <Link to="/journal" className="btn btn-secondary today-journal-link">Vos derniers jours, dans le Journal</Link>
+          {/* Forme et courbes : Journal → Tendances (jalon 2b), l'accueil s'arrête au résumé du jour. */}
+          <nav className="today-journal-links" aria-label="Plus de détails">
+            <Link to="/journal" className="btn btn-secondary today-journal-link">Vos derniers jours, dans le Journal</Link>
+            <Link to="/tendances" className="btn btn-secondary today-journal-link">Vos tendances, dans le Journal</Link>
+          </nav>
         </>
       )}
     </section>

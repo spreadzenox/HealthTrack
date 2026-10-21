@@ -83,6 +83,7 @@ const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const DEFAULT_ROUTES = [
   ['/', 'dashboard'],
   ['/journal', 'journal'],
+  ['/tendances', 'tendances'],
   ['/food', 'food'],
   ['/nutrition', 'nutrition'],
   ['/data', 'data'],

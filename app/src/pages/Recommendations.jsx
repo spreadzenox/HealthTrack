@@ -721,7 +721,7 @@ function AdvancedTab({ analysis }) {
             choisie par validation croisée : plus vos données sont bruitées, plus les effets sont prudemment réduits vers
             zéro. Seuls les effets d&apos;au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type deviennent des
             pistes. Le modèle est entraîné <strong>sans les {HOLD_OUT_DAYS} derniers jours</strong>, que « A-t-il vu
-            juste ? » et la prédiction de l&apos;accueil prédisent donc sans les avoir vus.
+            juste ? » et l&apos;« attendu d&apos;après vos habitudes » des Tendances les estiment donc sans les avoir vus.
           </p>
           </>)}
         </details>

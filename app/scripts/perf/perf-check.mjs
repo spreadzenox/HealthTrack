@@ -44,7 +44,7 @@ import { checkBudget } from './budget.mjs'
 process.env.TZ = 'Europe/Paris'
 const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
-const DEFAULT_ROUTES = ['/', '/journal', '/food', '/nutrition', '/data', '/connectors', '/recommendations', '/settings', '/plus']
+const DEFAULT_ROUTES = ['/', '/journal', '/tendances', '/food', '/nutrition', '/data', '/connectors', '/recommendations', '/settings', '/plus']
 
 function parseArgs(argv) {
   const args = {}
@@ -168,6 +168,27 @@ function instrument() {
   }
 }
 
+/** Lectures du Worker des analyses de la page : attendre qu'il ait fini (500 ms sans nouvelle lecture). */
+async function workerStats(page) {
+  const m = { workerReads: 0, workerRecords: 0 }
+  for (const w of page.workers()) {
+    const t0 = Date.now()
+    let last = null
+    while (Date.now() - t0 < 60000) {
+      const s = await w.evaluate(() => ({ reads: globalThis.__perf?.idbReads ?? 0, records: globalThis.__perf?.idbRecords ?? 0, pending: globalThis.__perf?.pending ?? 0 })).catch(() => null)
+      if (!s) break
+      if (last && s.pending === 0 && s.reads === last.reads) {
+        m.workerReads += s.reads
+        m.workerRecords += s.records
+        break
+      }
+      last = s
+      await new Promise((r) => setTimeout(r, 500))
+    }
+  }
+  return m
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2))
   const budget = args.budget ? JSON.parse(readFileSync(join(APP_DIR, 'scripts/perf/budget.json'), 'utf8')) : null
@@ -235,8 +256,11 @@ async function main() {
       })
       const now = new Date().toISOString()
       await new Promise((res, rej) => {
-        const tx = db.transaction('health_entries', 'readwrite')
+        // Écriture directe (sans markDirty) : les agrégats journaliers sont vidés pour être reconstruits
+        // depuis ces données, comme après une migration, au lieu de rester sur l'état d'avant le remplissage.
+        const tx = db.transaction(['health_entries', 'daily_aggregates'], 'readwrite')
         const store = tx.objectStore('health_entries')
+        tx.objectStore('daily_aggregates').clear()
         store.clear()
         for (const e of list) store.add({ type: e.type, source: e.source, payload: e.payload || {}, at: e.at || now, created_at: now })
         tx.oncomplete = res
@@ -250,6 +274,11 @@ async function main() {
 
     const cdp = await context.newCDPSession(page)
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu })
+
+    // Échauffement non mesuré : la reconstruction unique des agrégats journaliers (première analyse après
+    // le remplissage) ne doit pas compter pour la première page qui lance le Worker, quelle qu'elle soit.
+    await page.goto(baseUrl + '/recommendations', { waitUntil: 'load', timeout: 60000 })
+    await workerStats(page)
 
     const results = []
     for (const path of routes) {
@@ -281,23 +310,7 @@ async function main() {
           }
         })
         // Lectures du Worker des analyses : attendre qu'il ait fini (500 ms sans nouvelle lecture)
-        m.workerReads = 0
-        m.workerRecords = 0
-        for (const w of page.workers()) {
-          const t0 = Date.now()
-          let last = null
-          while (Date.now() - t0 < 60000) {
-            const s = await w.evaluate(() => ({ reads: globalThis.__perf?.idbReads ?? 0, records: globalThis.__perf?.idbRecords ?? 0, pending: globalThis.__perf?.pending ?? 0 })).catch(() => null)
-            if (!s) break
-            if (last && s.pending === 0 && s.reads === last.reads) {
-              m.workerReads += s.reads
-              m.workerRecords += s.records
-              break
-            }
-            last = s
-            await new Promise((r) => setTimeout(r, 500))
-          }
-        }
+        Object.assign(m, await workerStats(page))
         samples.push(m)
       }
       const pick = (k) => Math.round(median(samples.map((s) => s[k])))

@@ -107,6 +107,19 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('button', { name: /Voir les jours précédents/i })).not.toBeInTheDocument()
   })
 
+  it('renvoie la forme et les courbes vers Journal → Tendances au lieu de les afficher (jalon 2b)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
+    ])
+    renderDashboard()
+    const link = await screen.findByRole('link', { name: 'Vos tendances, dans le Journal' })
+    expect(link).toHaveAttribute('href', '/tendances')
+    expect(screen.queryByTestId('wellbeing-charts')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('baseline-cards')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Votre forme' })).not.toBeInTheDocument()
+  })
+
   it('relit les tuiles du jour quand une saisie arrive', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     renderDashboard()

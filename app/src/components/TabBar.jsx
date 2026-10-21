@@ -30,7 +30,7 @@ const ICONS = {
  */
 const TABS = [
   { to: '/', label: 'Aujourd’hui', icon: 'today', end: true },
-  { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition'] },
+  { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition', '/tendances'] },
   { to: '/recommendations', label: 'Pistes', icon: 'pistes' },
   { to: '/connectors', label: 'Sources', icon: 'sources' },
 ]
