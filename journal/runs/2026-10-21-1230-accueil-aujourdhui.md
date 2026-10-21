@@ -13,7 +13,7 @@
   estimé du jour (Y ; aucun comportement jugé, D6), écart à la moyenne des 13 jours précédents (≥ 3 jours estimés,
   sinon « Encore quelques jours… »), tuiles sommeil / VFC / pas avec la **source** de chaque chiffre
   (« Health Connect · Gadgetbridge »), bilan du ventre sur 7 jours, avancement vers les pistes (jours avec un repas ou
-  une note du ventre, sur 21).
+  une note du ventre sur les 6 dernières semaines, sur 21).
 - **`MoodEstimateCard`** devient la carte **menthe** de la maquette : grand chiffre Figtree 800, écart en mono, courbe
   SVG des 14 jours (ligne de moyenne pointillée, point ambre du jour), phrase simple + « Une estimation, pas un
   diagnostic » ; **« détails »** → fourchette, n lectures, moyenne 14 j, confiance, modèle, puis les phrases de
@@ -35,6 +35,13 @@
 - `npm run visual` complet sans erreur JS ; captures lues : accueil clair, `--dark --click=détails`, `--empty`,
   `--click=détails` (ventre 7 jours, pistes), `--play --face=reading` (bandeau au-dessus du nouvel accueil), journal
   (lignes « Ventre »). Contrastes : seuls des couples de tokens déjà vérifiés (`tokens.test.js`).
+
+## Après la première poussée
+- Check **« Budget de lectures (perf) »** rouge : l'accueil lisait 12 964 enregistrements (max 12 500) car la carte
+  pistes relisait un an de repas. Fenêtre ramenée à **6 semaines** (42 jours, dit sur la carte) → 12 471 en local
+  (`npm run perf -- --budget`). À retenir : lancer `npm run perf -- --budget` dès qu'un écran lit IndexedDB.
+- Check Vitest rouge : `kind` du changelog doit être « nouveau » (pas « nouveauté ») ; j'avais lancé une partie des
+  tests seulement. Corrigé, suite complète verte (1 718).
 
 ## Suite proposée
 - **2c** navigation 4 onglets (Aujourd'hui, Journal, Pistes, Sources ; réglages en haut à droite), avec 2b.

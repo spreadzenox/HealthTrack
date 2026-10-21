@@ -122,8 +122,11 @@ export function GutCard({ details, onToggleDetails, read = readGut }) {
   )
 }
 
+/** Fenêtre des jours suivis : bornée pour le budget de lectures de l'accueil (perf D2, scripts/perf/budget.json). */
+const TRACKED_WINDOW_DAYS = 42
+
 const readTracked = async () => {
-  const since = new Date(Date.now() - 365 * DAY_MS).toISOString()
+  const since = new Date(Date.now() - TRACKED_WINDOW_DAYS * DAY_MS).toISOString()
   const [food, gut] = await Promise.all([
     listEntries({ type: 'food', since, limit: Infinity }),
     listEntries({ type: GUT_TYPE, since, limit: Infinity }),
@@ -154,7 +157,7 @@ export function PistesTeaser({ details, onToggleDetails, read = readTracked }) {
       >
         <div className="pistes-progress-bar" style={{ width: `${(p.days / p.target) * 100}%` }} />
       </div>
-      <p className="pistes-count mono">{p.days}/{p.target} jours avec un repas ou une note du ventre</p>
+      <p className="pistes-count mono">{p.days}/{p.target} jours avec un repas ou une note du ventre (6 dernières semaines)</p>
       <p className="today-card-text">
         {p.ready
           ? <>Vos jours sont prêts ; les pistes repas → ventre arrivent dans une prochaine version. En attendant, voyez <Link to="/recommendations">Analyses</Link>.</>

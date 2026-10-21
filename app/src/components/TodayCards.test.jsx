@@ -74,7 +74,7 @@ describe('PistesTeaser', () => {
     wrap(<PistesTeaser read={async () => [day(0), day(1), day(1), day(3)]} />)
     expect(await screen.findByText('Vos pistes arrivent dans 18 jours')).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Jours suivis' })).toHaveAttribute('aria-valuenow', '3')
-    expect(screen.getByText('3/21 jours avec un repas ou une note du ventre')).toBeInTheDocument()
+    expect(screen.getByText('3/21 jours avec un repas ou une note du ventre (6 dernières semaines)')).toBeInTheDocument()
     expect(screen.getByText('On préfère attendre plutôt que de vous montrer de faux suspects.')).toBeInTheDocument()
   })
 
