@@ -47,3 +47,9 @@
 - **2c** navigation 4 onglets (Aujourd'hui, Journal, Pistes, Sources ; réglages en haut à droite), avec 2b.
 - Jalon 5 : fenêtres 0–4 h / 4–24 h / 24–48 h repas → ventre sur les entrées `gut`.
 - À tester par le propriétaire : toucher Calme / Gêne / Douleur, vérifier la ligne dans « Vos derniers jours ».
+
+## Après le merge
+- PR **#250** : 7 checks verts (Vitest, Build APK, budget de lectures, Java, émulateurs A56 API 35 et 36) → fusionnée
+  en squash (`5cb6a62`).
+- « Build & Release » ✅ → **v195** publiée (`HealthTrack-v195.apk`, 33,7 Mo). « Play — AAB » ✅ → artefact
+  **`HealthTrack-play-337`** (17,0 Mo zippé).
