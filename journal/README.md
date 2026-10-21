@@ -197,6 +197,15 @@ de service), le workflow le dit en avertissement et réessaie à la version suiv
 prend la version qu'en **brouillon**, le résumé du workflow vous dit où cliquer. Prochain run de code : le nom
 **Halcya** (M0), puis le **sommeil de la montre** (M1).
 
+**Run du 22/10 00:30 — l'app s'appelle « Halcya ».** ✅ **Le premier envoi automatique sur Google Play a marché** :
+la version 346 est arrivée en test interne le 21/10 à 22:51, sans rien faire de votre côté (votre invitation de
+gh-deployer a pris effet en moins de 2 h). Ce que vous verrez dans la prochaine version (sideload et Play) :
+**« Halcya » sous l'icône du téléphone**, en haut de l'app, dans les notifications (lecture du visage, note du soir,
+montre, téléchargement de mise à jour) et dans les textes. L'icône « H » ne change pas, **aucune donnée ne bouge**, les
+identifiants techniques non plus (vos deux apps restent distinctes ; les anciennes sauvegardes s'importent). Un test
+empêche le retour de « HealthTrack » dans un texte visible. Note : si votre lanceur garde l'ancien nom, redémarrez le
+téléphone.
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -574,6 +583,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 00:30 — [M0 « Halcya » + M1 sommeil de la montre](runs/2026-10-22-0030-halcya-sommeil.md) | 🧭⌚ | PR #260 reprise (main fusionnée, relue, visuel clair / vide, Nouveautés) : nom affiché **Halcya** partout ; 1er envoi Play automatique vérifié (versionCode 346, piste internal) ; M1 : voir le compte rendu |
 | 21/10 22:30 — [Jalon 3c : envoi automatique en test interne](runs/2026-10-21-2230-play-test-interne.md) | 🧭📦 | « Play — AAB » → API Android Publisher (edit, import, piste `internal`, notes depuis les Nouveautés, commit) ; pistes limitées à internal / alpha ; brouillon, déjà envoyé, accès refusé gérés ; `debugSymbolLevel` ; 1 747 Vitest ; PR (voir le compte rendu) |
 | 21/10 20:30 — [Idées : montre Huawei, sommeil / VFC / température](runs/2026-10-21-2030-idees-montre-huawei.md) | 💡⌚ | Décisions du 21/10 au soir reportées (nom **Halcya**, P3 / P8 / P10 faits, P11 en cours, **jalon M montre = priorité des runs de code**) ; cause du sommeil absent trouvée (0x2C demandé en capacité → « non » → sommeil détaillé jamais lu) ; spec `huawei.md` §10 (inventaire GT 6 Pro, P2P dictionnaire VFC 500044 / température 400012, plan M1–M7) ; I139–I143 ; journal seul, 1 738 Vitest |
 | 21/10 18:30 — [Tendances dans le Journal](runs/2026-10-21-1830-tendances.md) | 🧭🎨 | 2b accueil : Radar forme, cœur, sommeil et courbes du bien-être → `/tendances` (Journal → Tendances) ; accueil ≈ 340 lectures au lieu de 12 500 sur 3 ans ; 2e « Attendu d'après vos habitudes » ; 1 738 Vitest ; PR #256 → **v199, 33,7 Mo** + AAB play 343 ; outil perf corrigé (agrégats vides) |

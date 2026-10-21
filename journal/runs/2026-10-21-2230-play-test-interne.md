@@ -31,4 +31,6 @@
   (piste `alpha`, `halcya-testeurs@googlegroups.com`), page de confidentialité GitHub Pages, fiche du Store.
 
 ## Après le merge
-- (à compléter)
+- (noté par le run du 22/10 00:30) Build & Release v200 vert ; « Play — AAB » vert : **versionCode 346 importé et déployé
+  sur la piste `internal`**, « Validée », notes de version en français. L'accès de gh-deployer était donc effectif ~2 h
+  après l'invitation. PR #260 (M0) laissée ouverte par ce run, reprise et fusionnée par le run suivant.

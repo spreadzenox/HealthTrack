@@ -27,8 +27,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
 - [ ] **M Montre Huawei — couverture maximale (signalement du 21/10 ~20:00, PRIORITÉ DES RUNS DE CODE)** — spec et
   inventaire : `protocoles/huawei.md` §10 (run « idées » 21/10 20:30). Cause probable : GT 6 Pro « fichiers 0x2C non »
   → sommeil détaillé jamais demandé. Étapes (un run = une étape, tests sur trames synthétiques) :
-  [ ] **M0** nom affiché « Halcya » (`config/brand.js`, deux variantes, libellé du lanceur ; aucun identifiant technique) — à
-  glisser dans le premier run de code (petit) ; [ ] **M1** sommeil par la voie « nouvelle synchro » (§10.3) + types bruts
+  [x] **M0** nom affiché « Halcya » (`config/brand.js`, deux variantes, libellé du lanceur, notifications ; aucun identifiant
+  technique ; test-garde `brand.test.js`) — 22/10 00:30 (PR #260) ; [ ] **M1** sommeil par la voie « nouvelle synchro » (§10.3) + types bruts
   du sommeil simple (9…) consignés ; repli : sommeil simple léger / profond écrit même sans fichier ; [ ] **M2** VFC
   (nuit + journée, dictionnaire 500044) ; [ ] **M3** température cutanée ; [ ] **M4** stress, SpO₂ nuit, respiration,
   étages ; [ ] **M5** écran « Montre » (par type : dernière valeur, date, n sur 7 j) ; [ ] **M6** rattrapage de
@@ -36,7 +36,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   (0x17/0x0A, 0x0C) ; [ ] A.1, A.2 ; [ ] tuiles Accueil sommeil / VFC nuit « montre Huawei » + export vérifiés.
 - [~] **3c (dès P11)** envoi automatique de l'AAB en test interne par l'API Android Publisher (seule exception à M) —
   **branché le 21/10 22:30** (`app/scripts/play/publish.mjs`, étape « Envoyer en test interne » de « Play — AAB », symboles
-  natifs `debugSymbolLevel`) ; [ ] vérifier le premier envoi réel après le merge (accès gh-deployer : 24-48 h possibles) ;
+  natifs `debugSymbolLevel`) ; [x] premier envoi réel vérifié (22/10 00:30 : versionCode **346** déployé en test interne dès le 21/10 22:51, accès gh-deployer effectif tout de suite) ;
   [ ] ensuite test fermé (piste `alpha`, testeurs `halcya-testeurs@googlegroups.com`), page GitHub Pages de confidentialité, fiche.
 - [x] **1** `journal/PRODUIT.md` (20/10 22:30)
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
