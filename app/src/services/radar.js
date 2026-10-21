@@ -66,7 +66,7 @@ export function nightlySleep(entries, { phoneFallback = false } = {}) {
       if (e.payload?.date && Number.isFinite(est?.minutes) && est.minutes > 0) phone.set(e.payload.date, est.minutes)
       continue
     }
-    if (e?.type !== 'sleep' || !e.at) continue
+    if (e?.type !== 'sleep' || !e.at || e.payload?.nap) continue
     const mins = e.payload?.durationMinutes
     if (typeof mins !== 'number' || !Number.isFinite(mins) || mins <= 0) continue
     const state = e.payload?.sleepState

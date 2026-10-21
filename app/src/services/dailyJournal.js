@@ -169,6 +169,7 @@ export function buildDailyJournal(entries) {
   for (const e of sorted) {
     const p = e.payload || {}
     if (e.type === 'sleep') {
+      if (p.nap) continue // sieste de la montre : pas dans la nuit (gardée dans l'historique et l'export)
       const day = getDay(sleepDateKey(e))
       day._hasOwnData = true
       if (isNum(p.durationMinutes) && p.durationMinutes > 0) {

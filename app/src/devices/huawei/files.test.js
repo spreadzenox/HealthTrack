@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { decodeTlvs } from './protocol'
 import { openFileTlvs, parsePush, parseSleepSequence, parseSummary, SLEEP_FIELD } from './files'
-import { field, sleepSequenceFile } from './testing/sampleFiles'
+import { field, rawField, sleepSequenceFile } from './testing/sampleFiles'
 import { encodeTlvs } from './protocol'
 
 const T = 1760306400 // 12/10/2026 22:00 UTC
@@ -57,5 +57,76 @@ describe('montre Huawei : fichiers détaillés (§7.6)', () => {
     expect(nights[1].stages[0]).toEqual({ start: (T + 86400) * 1000, minutes: 20, stage: 'asleep' })
     expect(parseSleepSequence(file.slice(0, file.length - 4))).toHaveLength(1)
     expect(parseSleepSequence(new Uint8Array(10))).toEqual([])
+  })
+
+  it('nuit complète (§10.3) : FC mini / maxi, réveils, respiration, SpO₂, mesures brutes à part', () => {
+    const file = sleepSequenceFile([
+      {
+        startSec: T,
+        endSec: T + 8 * 3600,
+        fields: [
+          field(SLEEP_FIELD.VALID, 1), field(SLEEP_FIELD.BED, T), field(SLEEP_FIELD.SCORE, 77),
+          field(SLEEP_FIELD.MIN_HR, 47), field(SLEEP_FIELD.MAX_HR, 88), field(SLEEP_FIELD.WAKEUPS, 2),
+          field(SLEEP_FIELD.RESP_AVG, 14.25), field(SLEEP_FIELD.RESP_MIN, 11), field(SLEEP_FIELD.RESP_MAX, 19),
+          field(SLEEP_FIELD.SPO2_AVG, 95), field(SLEEP_FIELD.SPO2_MIN, 89), field(SLEEP_FIELD.SPO2_MAX, 99),
+          field(SLEEP_FIELD.LATENCY, 12), field(SLEEP_FIELD.HRV_BASE_MAX, 52.5),
+          rawField(SLEEP_FIELD.EFFICIENCY, 6, [0xbf, 0x80, 0, 0]), // absente
+        ],
+        stages: [[200, 1], [100, 3]],
+      },
+    ])
+    const [night] = parseSleepSequence(file)
+    expect(night).toMatchObject({ score: 77, minHr: 47, maxHr: 88, wakeups: 2, respAvg: 14.3, respMin: 11, respMax: 19, spo2Avg: 95, spo2Min: 89, spo2Max: 99 })
+    expect(night.extras).toEqual({ latency: 12, hrvBaselineMax: 52.5 })
+    expect(night.nap).toBeUndefined()
+  })
+
+  it('réel sur 4 octets, valeurs hors bornes ignorées', () => {
+    const f32 = (x) => {
+      const v = new DataView(new ArrayBuffer(4))
+      v.setFloat32(0, x)
+      return Array.from(new Uint8Array(v.buffer))
+    }
+    const file = sleepSequenceFile([
+      { startSec: T, endSec: T + 3600, fields: [rawField(SLEEP_FIELD.RESP_AVG, 6, f32(15.5)), field(SLEEP_FIELD.SPO2_AVG, 140), field(SLEEP_FIELD.MIN_HR, 3)], stages: [[60, 1]] },
+    ])
+    const [night] = parseSleepSequence(file)
+    expect(night.respAvg).toBe(15.5)
+    expect(night.spo2Avg).toBeUndefined()
+    expect(night.minHr).toBeUndefined()
+  })
+
+  it('« données valides » = −1 (sieste ou nuit invalide) : phases gardées, aucune mesure du résumé', () => {
+    const file = sleepSequenceFile([
+      { startSec: T, endSec: T + 3600, fields: [field(SLEEP_FIELD.VALID, -1), field(SLEEP_FIELD.BED, T - 600), field(SLEEP_FIELD.SCORE, 60), field(SLEEP_FIELD.HRV, 40)], stages: [[25, 5]] },
+    ])
+    const [nap] = parseSleepSequence(file)
+    expect(nap).toEqual({ start: T * 1000, end: (T + 25 * 60) * 1000, nap: true, stages: [{ start: T * 1000, minutes: 25, stage: 'asleep' }] })
+  })
+
+  it('capacité 199 absente : départ à l’endormissement même si la nuit est valide', () => {
+    const file = sleepSequenceFile([
+      { startSec: T, endSec: T + 3600, fields: [field(SLEEP_FIELD.VALID, 1), field(SLEEP_FIELD.BED, T), field(SLEEP_FIELD.FALL_ASLEEP, T + 1200)], stages: [[30, 1]] },
+    ])
+    expect(parseSleepSequence(file)[0].start).toBe(T * 1000)
+    expect(parseSleepSequence(file, { bedTime: false })[0].start).toBe((T + 1200) * 1000)
+  })
+
+  it('bloc de durée abîmée (pas une minute entière, ou plus de 24 h) : ignoré sans décaler la suite', () => {
+    const file = sleepSequenceFile([
+      { startSec: T, endSec: T + 3600, fields: [], stages: [[10, 1], [0, 3, 95], [0, 3, 1441 * 60], [20, 3]] },
+    ])
+    expect(parseSleepSequence(file)[0].stages).toEqual([
+      { start: T * 1000, minutes: 10, stage: 'light' },
+      { start: (T + 600) * 1000, minutes: 20, stage: 'deep' },
+    ])
+  })
+
+  it('résumé d’un autre type que 2 : phases lues, résumé ignoré', () => {
+    const file = sleepSequenceFile([{ startSec: T, endSec: T + 3600, fields: [field(SLEEP_FIELD.SCORE, 80)], stages: [[30, 1]] }])
+    file[32 + 9] = 3 // type de résumé du premier enregistrement
+    const [night] = parseSleepSequence(file)
+    expect(night.score).toBeUndefined()
+    expect(night.stages).toHaveLength(1)
   })
 })

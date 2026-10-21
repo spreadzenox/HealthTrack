@@ -47,7 +47,7 @@ function bounds(e) {
 function segmentsOf(entries) {
   const segs = []
   for (const e of entries || []) {
-    if (e?.type !== 'sleep' || !e.at) continue
+    if (e?.type !== 'sleep' || !e.at || e.payload?.nap) continue
     const state = e.payload?.sleepState
     if (state === 'outOfBed') continue
     const b = bounds(e)
