@@ -20,6 +20,7 @@ describe('WeatherCard', () => {
     const getPosition = vi.fn(async () => ({ lat: 45.76412, lon: 4.83566 }))
     render(<WeatherCard sync={sync} getPosition={getPosition} />)
     fireEvent.click(screen.getByRole('button', { name: 'Utiliser ma position approximative' }))
+    fireEvent.click(screen.getByRole('button', { name: 'J’accepte, utiliser ma position' }))
     await waitFor(() => expect(sync).toHaveBeenCalledWith({ force: true }))
     expect(getWeatherSettings()).toMatchObject({ enabled: true, location: { lat: 45.8, lon: 4.8, name: null } })
     expect(await screen.findByText(/Votre position \(à ≈ 10 km près\)/)).toBeInTheDocument()
@@ -31,8 +32,20 @@ describe('WeatherCard', () => {
     })
     render(<WeatherCard sync={vi.fn()} getPosition={getPosition} />)
     fireEvent.click(screen.getByRole('button', { name: 'Utiliser ma position approximative' }))
+    fireEvent.click(screen.getByRole('button', { name: 'J’accepte, utiliser ma position' }))
     expect(await screen.findByText(/Position indisponible/)).toBeInTheDocument()
     expect(screen.getByLabelText('Ou choisissez une ville')).toBeInTheDocument()
+  })
+
+  it('divulgation avant la position : « Pas maintenant » ne lit pas la position', async () => {
+    const getPosition = vi.fn()
+    render(<WeatherCard sync={vi.fn()} getPosition={getPosition} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Utiliser ma position approximative' }))
+    expect(screen.getByRole('dialog', { name: 'Avant d’utiliser votre position' }).textContent).toMatch(/Open-Meteo/)
+    fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(getPosition).not.toHaveBeenCalled()
+    expect(getWeatherSettings().enabled).toBe(false)
   })
 
   it('recherche de ville puis choix', async () => {

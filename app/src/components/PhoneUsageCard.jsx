@@ -18,6 +18,7 @@ import {
 import { formatScreenMinutes } from '../services/phoneUsage'
 import { APP_CATEGORY_LABELS } from '../services/phoneApps'
 import { formatAgo } from '../utils/timeAgo'
+import useDisclosure from '../hooks/useDisclosure'
 import './MyDevices.css'
 import './WeatherCard.css'
 import './PhoneUsageCard.css'
@@ -48,6 +49,7 @@ export default function PhoneUsageCard({
 }) {
   const [settings, setSettings] = useState(getPhoneUsageSettings)
   const [access, setAccess] = useState(null)
+  const [disclosure, askConsent] = useDisclosure()
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
@@ -80,6 +82,7 @@ export default function PhoneUsageCard({
   }, [available, checkAccess, sync])
 
   async function activate() {
+    if (!access?.granted && !(await askConsent('usage'))) return
     enablePhoneUsage()
     setSettings(getPhoneUsageSettings())
     if (access?.granted) {
@@ -196,6 +199,7 @@ export default function PhoneUsageCard({
           </div>
         </div>
       )}
+      {disclosure}
     </section>
   )
 }

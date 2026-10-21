@@ -32,6 +32,7 @@ import { probeVoice } from '../services/voiceProbe'
 import { localDateKey } from '../services/analysisEngine'
 import { listEntries } from '../storage/localHealthStorage'
 import { CURRENT_VERSION } from '../services/updateCheck'
+import useDisclosure from '../hooks/useDisclosure'
 import './MyDevices.css'
 import './WeatherCard.css'
 
@@ -148,6 +149,7 @@ export default function FaceSenseCard({
   const [loaded, setLoaded] = useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState(null)
+  const [disclosure, askConsent] = useDisclosure()
   const affectAsked = useRef(false)
   const voiceAsked = useRef(false)
 
@@ -189,6 +191,12 @@ export default function FaceSenseCard({
     } finally {
       setBusy(false)
     }
+  }
+
+  /** Première activation ou accès retiré : divulgation (ce que lit la caméra) avant la demande d'Android. */
+  async function activateWithConsent() {
+    if (!(await askConsent('camera'))) return
+    await activate()
   }
 
   async function turnOff() {
@@ -287,7 +295,7 @@ export default function FaceSenseCard({
       )}
 
       {available && d.state === 'off' && (
-        <button type="button" className="btn btn-primary connector-btn" onClick={activate} disabled={busy}>
+        <button type="button" className="btn btn-primary connector-btn" onClick={activateWithConsent} disabled={busy}>
           Activer la lecture du visage
         </button>
       )}
@@ -299,7 +307,7 @@ export default function FaceSenseCard({
             HealthTrack → Autorisations → Appareil photo.
           </p>
           <div className="my-device-actions">
-            <button type="button" className="btn btn-primary connector-btn" onClick={activate} disabled={busy}>Autoriser</button>
+            <button type="button" className="btn btn-primary connector-btn" onClick={activateWithConsent} disabled={busy}>Autoriser</button>
             <button type="button" className="btn btn-secondary connector-btn" onClick={turnOff} disabled={busy}>Désactiver</button>
           </div>
         </>
@@ -400,6 +408,7 @@ export default function FaceSenseCard({
           {d.state !== 'blocked' && <PermanentCameraGuide access={faceCameraAccess(status)} />}
         </details>
       )}
+      {disclosure}
     </section>
   )
 }

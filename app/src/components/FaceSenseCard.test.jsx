@@ -44,6 +44,7 @@ describe('FaceSenseCard', () => {
     const plugin = fake({ ...base, enabled: false, running: false })
     render(<FaceSenseCard plugin={plugin} />)
     fireEvent.click(await screen.findByRole('button', { name: 'Activer la lecture du visage' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'J’accepte, autoriser la caméra' }))
     await waitFor(() => expect(plugin.start).toHaveBeenCalled())
     expect(await screen.findByText('Active')).toBeInTheDocument()
     expect(screen.getByText('Aujourd’hui : 3 déverrouillages, 3 lectures, visage lu 2 fois.')).toBeInTheDocument()
@@ -87,7 +88,21 @@ describe('FaceSenseCard', () => {
     plugin.start = vi.fn(async () => ({ started: false, permission: false }))
     render(<FaceSenseCard plugin={plugin} />)
     fireEvent.click(await screen.findByRole('button', { name: 'Activer la lecture du visage' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'J’accepte, autoriser la caméra' }))
     expect(await screen.findByText('Accès à la caméra refusé : rien n’a été activé.')).toBeInTheDocument()
+  })
+
+  it('divulgation avant la caméra : ce qui est lu et gardé ; « Pas maintenant » ne demande rien à Android', async () => {
+    const plugin = fake({ ...base, enabled: false, running: false })
+    render(<FaceSenseCard plugin={plugin} />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Activer la lecture du visage' }))
+    const dialog = await screen.findByRole('dialog', { name: 'Avant d’autoriser la caméra' })
+    expect(dialog.textContent).toMatch(/reconnaissance des émotions/)
+    expect(dialog.textContent).toMatch(/Aucune image n’est conservée/)
+    expect(dialog.textContent).toMatch(/pas un diagnostic/)
+    fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(plugin.start).not.toHaveBeenCalled()
   })
 
   it('range les rafales en attente à l’affichage et dit combien sont gardées, sans valeur', async () => {
