@@ -92,7 +92,20 @@ jobs:
 
       - name: Construire l'APK debug et l'APK de test
         working-directory: app/android
-        run: ./gradlew assembleDebug assembleDebugAndroidTest -PextraAbis=x86_64 --no-daemon
+        # Variante sideload (testée sur l'émulateur) + AAB de la variante play, non signé ici : il vérifie seulement
+        # qu'elle se construit (la signature n'existe que sur main, workflow « Play — AAB »)
+        run: ./gradlew assembleSideloadDebug assembleSideloadDebugAndroidTest bundlePlayRelease -PextraAbis=x86_64 --no-daemon
+
+      - name: Ramener les APK sideload aux chemins habituels
+        working-directory: app/android/app/build/outputs/apk
+        run: |
+          mkdir -p debug androidTest/debug
+          cp sideload/debug/app-sideload-debug.apk debug/app-debug.apk
+          cp androidTest/sideload/debug/app-sideload-debug-androidTest.apk androidTest/debug/app-debug-androidTest.apk
+
+      - name: Vérifier les manifestes des variantes (play sans REQUEST_INSTALL_PACKAGES)
+        working-directory: app
+        run: bash scripts/check-play-manifest.sh
 
       - name: Afficher les infos APK
         run: |
