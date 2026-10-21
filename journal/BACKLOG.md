@@ -107,6 +107,9 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   installée, taille, Mo / % / débit / reste, étapes, blocage 45 s, Réessayer, Annuler, navigateur).
 - [ ] **Retour du propriétaire** : installation manuelle de la v188+ depuis le navigateur faite ? À la release
   suivante, la barre avance-t-elle et l'installateur s'ouvre-t-il ? (sinon : capture du bandeau, qui donne la cause)
+- [ ] **I139 perf : valeur attendue du jour (Tendances)** — la tâche `todayPrediction` lit ~20 300 enregistrements
+  (3 ans de démo) contre ~14 700 pour les Pistes : regarder ce qu'elle lit en plus (6 lectures) et le réduire.
+  Budget `/tendances` 22 000 en attendant (mesure corrigée le 21/10 18:30, voir le compte rendu).
 - [ ] **I129 alléger l'APK** : convertir MobileFaceNet (valence / éveil) en LiteRT et retirer ONNX Runtime (−18 Mo,
   APK ≈ 15 Mo), ou build ONNX Runtime minimale ; vérifier l'accord des sorties avant / après sur les images de test.
 - [ ] Retirer la dépendance npm `@m430/capacitor-app-install`, plus importée.
