@@ -16,7 +16,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: /HealthTrack/i })).toBeInTheDocument()
     const nav = screen.getByRole('navigation', { name: 'Principal' })
     expect(within(nav).getByRole('link', { name: /Aujourd’hui/ })).toHaveAttribute('href', '/')
-    expect(within(nav).getByRole('link', { name: /Journal/ })).toHaveAttribute('href', '/food')
+    expect(within(nav).getByRole('link', { name: /Journal/ })).toHaveAttribute('href', '/journal')
     expect(within(nav).getByRole('link', { name: /Pistes/ })).toHaveAttribute('href', '/recommendations')
     expect(within(nav).getByRole('link', { name: /Sources/ })).toHaveAttribute('href', '/connectors')
   })
@@ -32,7 +32,7 @@ describe('App', () => {
     render(<App />)
     document.documentElement.scrollTop = 1200
     fireEvent.click(within(screen.getByRole('navigation', { name: 'Principal' })).getByRole('link', { name: /Journal/ }))
-    await screen.findByRole('heading', { name: 'Alimentation' })
+    await screen.findByRole('heading', { name: 'Vos derniers jours' })
     expect(document.documentElement.scrollTop).toBe(0)
   })
 })

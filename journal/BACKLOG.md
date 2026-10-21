@@ -28,7 +28,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
   (20/10 22:30) ; [ ] 2b inventaire chiffré (cartes de l'accueil, réglages, onglets) → décisions masquer / fusionner /
   déplacer (sans perte de données) ; [x] 2c navigation 4 onglets Aujourd'hui / Journal (Repas | Nutrition) / Pistes / Sources + roue « Réglages » en haut
-  à droite (Données, Paramètres, Nouveautés), `config/brand.js` (21/10 14:30) ; [ ] 2c-2 « Vos derniers jours » → onglet Journal ;
+  à droite (Données, Paramètres, Nouveautés), `config/brand.js` (21/10 14:30) ; [x] 2c-2 « Vos derniers jours » → onglet Journal (sous-onglet « Jours », `/journal`, page d'arrivée de l'onglet ; accueil allégé, lien « Vos derniers jours, dans le Journal ») (21/10 16:30) ;
   [x] 2d tokens de design → fait par 2 bis (i) (21/10 00:30) ; [ ] 2e « Prédiction du jour » du graphique
   bien-être : reformuler en « estimation » / « tendance » (vocabulaire conformité).
 - [ ] **2 bis Identité visuelle « Clair et précis »** (validée le 20/10 au soir, `DESIGN.md`) — [x] `journal/DESIGN.md`
@@ -872,6 +872,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 21/10 (16:30 Paris)** : ✅ 2c-2 « Vos derniers jours » dans l'onglet Journal (Jours | Repas |
+Nutrition), accueil allégé. Prochain run de code → **2b** : inventaire chiffré de ce qui reste sous l'accueil (Radar
+forme, cartes cœur / régularité du sommeil, graphiques du bien-être) → les ranger derrière « détails » ou dans Pistes ;
+2e « Prédiction du jour » → « estimation » ; puis 3b-3 « Lecture rapide » ; 3c dès P10/P11 ; puis jalon 4 onboarding.
 
 **Mise à jour du 21/10 (14:30 Paris)** : ✅ 2c navigation 4 onglets (Aujourd'hui, Journal = Repas | Nutrition, Pistes,
 Sources ; roue « Réglages » en haut à droite ; aucune route changée). Prochain run de code → **2b + 2c-2** : inventaire

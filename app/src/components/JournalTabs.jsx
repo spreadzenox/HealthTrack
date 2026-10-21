@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
 
 const ITEMS = [
+  { to: '/journal', label: 'Jours' },
   { to: '/food', label: 'Repas' },
   { to: '/nutrition', label: 'Nutrition' },
 ]
 
-/** Sous-onglets de « Journal » (jalon 2c) : Nutrition n'a plus son propre onglet. */
+/** Sous-onglets de « Journal » (jalons 2c et 2c-2) : vos jours, vos repas, la nutrition. */
 export default function JournalTabs() {
   const { pathname } = useLocation()
   return (

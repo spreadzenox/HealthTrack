@@ -26,11 +26,11 @@ const ICONS = {
 /**
  * Navigation en 4 onglets de la maquette validée (jalon 2c). Les réglages (Données, Paramètres,
  * Nouveautés) passent par le bouton en haut à droite (SettingsButton) : aucun onglet n'y est actif.
- * `paths` : préfixes de pages rangées sous l'onglet (Nutrition sous Journal, retour Withings sous Sources).
+ * `paths` : préfixes de pages rangées sous l'onglet (Repas et Nutrition sous Journal, retour Withings sous Sources).
  */
 const TABS = [
   { to: '/', label: 'Aujourd’hui', icon: 'today', end: true },
-  { to: '/food', label: 'Journal', icon: 'journal', paths: ['/food', '/nutrition'] },
+  { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition'] },
   { to: '/recommendations', label: 'Pistes', icon: 'pistes' },
   { to: '/connectors', label: 'Sources', icon: 'sources' },
 ]
