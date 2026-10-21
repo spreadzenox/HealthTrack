@@ -39,6 +39,18 @@ propriétaire » de [`PRODUIT.md`](PRODUIT.md) a été refaite pas à pas. Proch
 **👉 Votre prochaine action la plus utile** : quand Google aura validé votre compte « jpesquet », **créer l'app** dans
 la Play Console (P8), et commencer à **recruter 12 à 15 testeurs** (P12, il faut leurs adresses Gmail).
 
+**Run du 21/10 02:30 — la version Google Play existe (jalon 3a).** Dans l'app que vous utilisez, rien ne change :
+c'est la variante **« sideload »** (GitHub, mise à jour en un clic), même identifiant, vos données restent. À côté
+naît la variante **« play »** : identifiant **`fr.jpesquet.sante`** (neutre et définitif — Google ne permet jamais de
+le changer ; le nom affiché, lui, restera modifiable), sans la permission « installer des applis » ni le bandeau de mise
+à jour (sur Play, c'est le Store qui met à jour). Les deux peuvent cohabiter sur un téléphone. Un nouveau workflow
+**« Play — AAB »** fabrique à chaque version le fichier `.aab` signé à envoyer sur Play. **Il sera rouge tant que vous
+n'aurez pas créé la clé d'envoi** (message « Clé d'envoi Play absente ») : c'est normal.
+**👉 Votre prochaine action la plus utile : P9, 5 minutes dans Cloud Shell** — les 6 commandes à copier-coller sont
+dans [`PRODUIT.md`](PRODUIT.md) (§4, ligne P9). Ensuite, dès que Google a validé votre compte : P8 (créer l'app), puis
+P10 (télécharger l'`.aab` depuis GitHub → Actions → « Play — AAB », et l'importer en test interne). Prochain run de
+code : l'icône « H nuit » et l'écran de démarrage.
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -416,6 +428,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 21/10 02:30 — [Jalon 3a : variantes play / sideload](runs/2026-10-21-0230-variantes-play-sideload.md) | 🧭📦 | Flavors `sideload` (`com.healthtrack.app`) / `play` (`fr.jpesquet.sante`, sans `REQUEST_INSTALL_PACKAGES` ni mise à jour), `VITE_DISTRIBUTION`, versionCode croissant, workflow « Play — AAB » (WIF → Secret Manager → AAB signé ; attend P9) ; correctif de date dans `loadNutritionEntries` ; 1 660 Vitest ; PR voir compte rendu |
 | 21/10 00:30 — [Identité visuelle (i) : tokens, polices, thème clair](runs/2026-10-21-0030-design-tokens.md) | 🧭🎨 | `INFRA.md` + `DESIGN.md` créés, PRODUIT / BACKLOG revus (Vertex AI sans clé, actions du propriétaire pas à pas) ; `theme/tokens.css` seule source des couleurs (~240 couleurs brutes remplacées), Figtree + IBM Plex Mono embarquées, clair par défaut, Apparence dans Paramètres, `SystemBarsPlugin` ; 1 653 Vitest ; PR #240 → **v190, 33,7 Mo** |
 | 20/10 22:30 — [Chantier produit : PRODUIT.md + « bien-être » partout (jalons 1 et 2a)](runs/2026-10-20-2230-produit-cadre.md) | 🧭🙂 | Décisions du 20/10 au soir reportées (PRODUIT.md, charte §000000000, BACKLOG) ; libellés visibles « humeur » → « bien-être » ; test-garde `wording.test.js` ; 1 642 Vitest ; PR #238 → **v189, 33,6 Mo** |
 | 19/10 00:30 — [Visage : lectures rangées dans l'historique (I90)](runs/2026-10-19-0030-visage-import.md) | 🔴🙂 | S42 archivée ; I90 + test « composition » (I114) ; PR #213, checks verts → fusionnée |
@@ -472,6 +485,9 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 Objectif : un **produit vendable sur Google Play**, compréhensible en 30 s, sans jamais casser ce qui marche.
 Détail complet, jalons, inventaire et actions du propriétaire : **[`PRODUIT.md`](PRODUIT.md)** (le prompt de la
 routine fait foi). Points clés pour chaque run :
+- **Workflow « Play — AAB »** (21/10) : tant que le propriétaire n'a pas fait P9, il est rouge sur `main` avec le
+  message « Clé d'envoi Play absente » (ou « Accès refusé ») — c'est attendu, **pas** la « priorité absolue » de
+  réparation ; tout autre échec de ce workflow, si.
 - **Ordre** : signalement en cours éventuel → jalons de `PRODUIT.md` dans l'ordre (2 nettoyage → 3 variantes
   play / sideload → 4 onboarding + « aha » → 5 analyses avec délais → 6 Billing, paywalls, crédits, relais Gemini →
   7 FODMAP + PDF → 8 Health Connect → 9 i18n → 10 fiche Play). Un run = une étape testable et mergeable.

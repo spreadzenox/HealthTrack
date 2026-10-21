@@ -38,8 +38,16 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   [ ] (iii) Accueil « Aujourd'hui » selon la maquette (cartes 22 px, boutons pilule, chiffres en mono) ;
   [ ] (iv+) chaque écran quand le chantier le touche. Petits restes : chiffres en mono dans le bandeau de mise à jour
   et les tuiles du journal ; rayon des cartes (`--radius` 12 px → `--radius-card` 22 px) écran par écran.
-- [ ] **3 Variantes play / sideload** (productFlavors, manifeste play sans `REQUEST_INSTALL_PACKAGES`, drapeau JS qui
-  masque la mise à jour en play, CI des deux ; note sur l'option caméra la plus sûre pour Play)
+- [ ] **3 Variantes play / sideload** — [x] **3a** (21/10 02:30) flavors `sideload` (`com.healthtrack.app`) / `play`
+  (`fr.jpesquet.sante`), `REQUEST_INSTALL_PACKAGES` dans `src/sideload/` seulement, `BuildConfig.SELF_UPDATE`,
+  `VITE_DISTRIBUTION` + `src/config/distribution.js` (bandeau masqué en play), versionCode croissant, check « Build APK »
+  qui construit aussi l'AAB play + `scripts/check-play-manifest.sh`, workflow **« Play — AAB »** (WIF → Secret Manager
+  → AAB signé en artefact ; rouge « Clé d'envoi Play absente » tant que P9 n'est pas fait) ;
+  [ ] **3b** option caméra la plus sûre pour play (FGS `camera` en arrière-plan vs déclenchement par l'utilisateur :
+  notification / tuile / ouverture de l'app) + revue des permissions sensibles du manifeste play (`REQUEST_DELETE_PACKAGES`,
+  usage, Bluetooth, compagnon…) + divulgations juste avant chaque permission ; [ ] **3c** envoi automatique en test
+  interne (Android Publisher, edits) dans « Play — AAB », après P10 + P11 ; [ ] **3d** nom affiché de l'app depuis une
+  seule source (`appName` Capacitor, `strings.xml`, titres) pour le changer en un commit
 - [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation)
 - [ ] **5 Analyses avec délais (2–48 h) repas → symptômes** + saisie de symptômes digestifs horodatée + honnêteté
   statistique (« pas encore assez de données »)
@@ -830,6 +838,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 21/10 (02:30 Paris)** : ✅ jalon 3a. « Play — AAB » sera **rouge sur main jusqu'à P9** : ce n'est pas
+une panne à réparer (charte), sauf si le message n'est plus « Clé d'envoi Play absente » / « Accès refusé ». Prochain
+run de code → **2 bis (ii) icône « H nuit »** + écran de démarrage (sert aussi la fiche Play), puis **3b** (option
+caméra play, permissions sensibles), puis 2b/2c + 2 bis (iii) Accueil et navigation 4 onglets ; 3c dès que P10/P11 sont
+faits. Run « idées » de 08:30 : règles Play (FGS caméra, Health Connect, Data safety) → alimente 3b.
 
 **Réordonnées le 21/10 (00:30 Paris), sections INFRASTRUCTURE et IDENTITÉ VISUELLE du prompt (lues pour la première
 fois)** : 1) PR « [Auto] » rouge ou workflow cassé ; 2) retour du propriétaire sur la mise à jour ; 3) prochain run de

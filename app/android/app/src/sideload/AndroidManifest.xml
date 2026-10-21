@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Variante sideload seulement : la mise à jour en un clic (AppUpdatePlugin) ouvre l'installateur Android.
+     Interdit sur Google Play, d'où son absence du manifeste principal (vérifié par scripts/check-play-manifest.sh). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+</manifest>

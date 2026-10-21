@@ -211,7 +211,7 @@ public class AppUpdatePlugin extends Plugin {
             long curCode = Build.VERSION.SDK_INT >= 28 ? current.getLongVersionCode() : current.versionCode;
             ret.put("versionCode", newCode);
             ret.put("installedVersionCode", curCode);
-            // Les builds CI gardent versionCode 1 : seule une rétrogradation est refusée par Android.
+            // versionCode = numéro du run depuis la v191 (1 avant) : seule une rétrogradation est refusée par Android.
             if (newCode < curCode) {
                 ret.put("error", "older");
                 call.resolve(ret);

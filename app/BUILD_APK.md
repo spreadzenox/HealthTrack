@@ -43,28 +43,28 @@ Dans Android Studio :
 1. Attendre la fin de la synchronisation Gradle.
 2. **Build** → **Build Bundle(s) / APK(s)** → **Build APK(s)**.
 3. L’APK sera dans :  
-   `app/android/app/build/outputs/apk/debug/app-debug.apk`  
+   `app/android/app/build/outputs/apk/sideload/debug/app-sideload-debug.apk`  
    (ou **release** si vous avez configuré une signature).
 
 **Option B – Ligne de commande (Gradle)**
 
 ```bash
 cd android
-./gradlew assembleDebug
+./gradlew assembleSideloadDebug
 ```
 
 Sur Windows :
 
 ```bash
 cd android
-gradlew.bat assembleDebug
+gradlew.bat assembleSideloadDebug
 ```
 
-APK généré : `android/app/build/outputs/apk/debug/app-debug.apk`.
+APK généré : `android/app/build/outputs/apk/sideload/debug/app-sideload-debug.apk`.
 
 ### 4. Installer sur un appareil
 
-- Transférez `app-debug.apk` sur le téléphone et ouvrez-le (autorisez l’installation depuis des sources inconnues si demandé), ou
+- Transférez `app-sideload-debug.apk` sur le téléphone et ouvrez-le (autorisez l’installation depuis des sources inconnues si demandé), ou
 - Branchez le téléphone en USB, puis dans Android Studio : **Run** (▶).
 
 ## Résumé des commandes
@@ -114,7 +114,7 @@ Il peut aussi être déclenché **manuellement** depuis **Actions → Test — �
 ### Ce que fait le workflow
 
 1. Build de l'app web + synchronisation Capacitor
-2. Construction de l'APK debug **et** de l'APK de tests instrumentés (`assembleDebugAndroidTest`)
+2. Construction de l'APK debug **et** de l'APK de tests instrumentés (`assembleSideloadDebugAndroidTest`)
 3. Création d'un AVD `samsung_a56` avec les specs ci-dessus
 4. Démarrage de l'émulateur (KVM, sans fenêtre)
 5. Installation des deux APK
@@ -147,3 +147,14 @@ Ils utilisent directement le SDK `androidx.health.connect:connect-client` pour i
 ## Version release (signée)
 
 Pour publier sur le Play Store, il faut configurer une clé de signature et un build release. Voir la [doc Capacitor Android](https://capacitorjs.com/docs/android) et la doc Android sur [signing your app](https://developer.android.com/studio/publish/app-signing).
+
+## Deux variantes : sideload et play (depuis la v191)
+
+| Variante | Identifiant | Mise à jour | Commande |
+|---|---|---|---|
+| **sideload** (GitHub Releases, la version complète) | `com.healthtrack.app` | en un clic, depuis l'app | `./gradlew assembleSideloadDebug` |
+| **play** (Google Play) | `fr.jpesquet.sante` | par le Play Store ; pas de `REQUEST_INSTALL_PACKAGES` | `VITE_DISTRIBUTION=play npm run build && npx cap sync android && ./gradlew bundlePlayRelease` |
+
+Les deux peuvent être installées en même temps sur un téléphone (données séparées). L'AAB play **signé** n'est
+construit que par la CI sur `main` (workflow « Play — AAB », clé d'envoi lue dans Secret Manager) ; en local ou
+sur une PR, il sort non signé. `bash scripts/check-play-manifest.sh` vérifie les manifestes fusionnés après le build.

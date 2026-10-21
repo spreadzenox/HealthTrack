@@ -1,0 +1,163 @@
+# AAB signé de la variante « play » (Google Play), à chaque push sur main (journal/PRODUIT.md, jalon 3 ; INFRA.md).
+#
+# - Connexion à Google Cloud sans clé (Workload Identity Federation) : le fournisseur n'accepte que refs/heads/main,
+#   d'où l'absence de ce workflow sur les PR (le check « Build APK » des PR construit l'AAB non signé).
+# - Clé d'envoi lue dans Secret Manager (android-upload-keystore, PKCS12 en base64, alias « upload » ;
+#   android-upload-keystore-password). Absente → échec dès le début, avec l'action du propriétaire à faire (P9).
+#   Ni la clé ni le mot de passe ne passent par les logs ou le dépôt.
+# - versionCode = nombre de commits de main : toujours croissant (pas de force-push sur main) et indépendant du
+#   numéro de run de ce workflow.
+# - Pour l'instant, l'AAB est un artefact du workflow : le propriétaire fait le premier envoi à la main (P10, Google
+#   l'impose pour une nouvelle app) ; l'envoi automatique en test interne viendra une fois gh-deployer invité (P11).
+name: Play — AAB
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "journal/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: play-bundle
+  cancel-in-progress: false
+
+env:
+  GCP_PROJECT: healthtrack-824b26
+
+jobs:
+  bundle:
+    name: AAB play signé
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Connexion à Google Cloud (sans clé)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+
+      - name: Installer gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Lire la clé d'envoi (Secret Manager)
+        run: |
+          set -euo pipefail
+          umask 077
+          fetch() {
+            local name="$1" out="$2" err="$RUNNER_TEMP/$1.err"
+            if gcloud secrets versions access latest --secret="$name" --project="$GCP_PROJECT" --out-file="$out" 2>"$err"; then
+              return 0
+            fi
+            if grep -q "NOT_FOUND" "$err"; then
+              echo "::error title=Clé d'envoi Play absente::Le secret $name n'existe pas encore dans le projet $GCP_PROJECT (région europe-west1). C'est l'action du propriétaire P9 de journal/PRODUIT.md : créer le keystore PKCS12 (alias upload) et ses deux secrets. Rien d'autre n'est cassé : la variante sideload est publiée par « Build & Release »."
+            elif grep -q "PERMISSION_DENIED" "$err"; then
+              echo "::error title=Accès refusé au secret $name::gh-deployer ne peut pas lire $name. Action du propriétaire : gcloud secrets add-iam-policy-binding $name --project=$GCP_PROJECT --member=serviceAccount:gh-deployer@healthtrack-824b26.iam.gserviceaccount.com --role=roles/secretmanager.secretAccessor"
+            else
+              echo "::error title=Lecture du secret $name impossible::$(head -c 300 "$err" | tr '\n' ' ')"
+            fi
+            exit 1
+          }
+          fetch android-upload-keystore "$RUNNER_TEMP/upload.b64"
+          fetch android-upload-keystore-password "$RUNNER_TEMP/upload.pass"
+          echo "::add-mask::$(cat "$RUNNER_TEMP/upload.pass")"
+          base64 -d "$RUNNER_TEMP/upload.b64" > "$RUNNER_TEMP/upload.p12"
+          rm -f "$RUNNER_TEMP/upload.b64"
+          # Alias et mot de passe vérifiés avant le build ; l'empreinte du certificat d'envoi n'est pas secrète
+          if ! keytool -list -v -alias upload -storetype PKCS12 -keystore "$RUNNER_TEMP/upload.p12" \
+               -storepass:file "$RUNNER_TEMP/upload.pass" > "$RUNNER_TEMP/cert.txt" 2>&1; then
+            echo "::error title=Keystore d'envoi invalide::Le keystore ne s'ouvre pas avec ce mot de passe ou n'a pas d'alias « upload » (voir P9 dans journal/PRODUIT.md)."
+            exit 1
+          fi
+          grep -E "SHA256:" "$RUNNER_TEMP/cert.txt" | head -1 | sed 's/^[[:space:]]*/UPLOAD_CERT_/;s/: /=/' >> "$GITHUB_ENV"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+
+      - name: Numéro de version
+        run: echo "VERSION_CODE=$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
+
+      - name: Install app dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Build app (variante play)
+        working-directory: app
+        env:
+          VITE_APP_VERSION: ${{ env.VERSION_CODE }}
+          VITE_DISTRIBUTION: play
+        run: npm run build
+
+      - name: Sync Capacitor
+        working-directory: app
+        run: npx cap sync android
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Install Android platform and build-tools
+        run: sdkmanager "platforms;android-35" "platforms;android-36" "build-tools;35.0.0"
+
+      - name: Create local.properties
+        working-directory: app/android
+        run: echo "sdk.dir=$ANDROID_HOME" >> local.properties
+
+      - name: Build AAB play signé
+        working-directory: app/android
+        run: |
+          chmod +x gradlew
+          HT_UPLOAD_KEYSTORE="$RUNNER_TEMP/upload.p12" HT_UPLOAD_PASSWORD="$(cat "$RUNNER_TEMP/upload.pass")" \
+            ./gradlew bundlePlayRelease -PhtVersionCode="$VERSION_CODE" --no-daemon
+
+      - name: Effacer la clé du runner
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.p12" "$RUNNER_TEMP/upload.pass" "$RUNNER_TEMP/upload.b64"
+
+      - name: Vérifier la signature et le manifeste
+        run: |
+          set -euo pipefail
+          AAB=app/android/app/build/outputs/bundle/playRelease/app-play-release.aab
+          jarsigner -verify "$AAB" | tail -1
+          jarsigner -verify "$AAB" | grep -q "jar verified" || { echo "::error::AAB non signé"; exit 1; }
+          cd app && bash scripts/check-play-manifest.sh --play-only
+          cp "../$AAB" "../HealthTrack-play-$VERSION_CODE.aab"
+          echo "AAB_SIZE=$(stat -c %s "../$AAB")" >> "$GITHUB_ENV"
+
+      - name: Publier l'AAB (artefact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: HealthTrack-play-${{ env.VERSION_CODE }}
+          path: HealthTrack-play-${{ env.VERSION_CODE }}.aab
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Résumé
+        run: |
+          {
+            echo "## AAB play signé — versionCode $VERSION_CODE"
+            echo ""
+            echo "- Identifiant : \`fr.jpesquet.sante\` · taille : $((AAB_SIZE / 1024 / 1024)) Mo ($AAB_SIZE octets)"
+            echo "- Certificat d'envoi (SHA-256) : \`${UPLOAD_CERT_SHA256:-?}\`"
+            echo "- Téléchargement : artefact **HealthTrack-play-$VERSION_CODE** ci-dessous (30 jours)."
+            echo "- Premier envoi (P10) : Play Console → Tester → Test interne → Créer une version → accepter la signature d'app par Google Play → importer ce fichier."
+          } >> "$GITHUB_STEP_SUMMARY"

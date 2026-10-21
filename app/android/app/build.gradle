@@ -9,8 +9,9 @@ android {
         applicationId "com.healthtrack.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        // Numéro du run « Build & Release » (-PhtVersionCode=…) : Google Play exige un versionCode croissant
+        versionCode((project.findProperty('htVersionCode') ?: '1') as int)
+        versionName((project.findProperty('htVersionCode') ?: '1.0') as String)
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // LiteRT n'embarque que les ABI utiles (I95) : téléphones 64 bits ; l'émulateur de la CI ajoute x86_64
         // (./gradlew -PextraAbis=x86_64), 6 Mo inutiles sur le téléphone
@@ -23,12 +24,45 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    buildFeatures {
+        buildConfig true
+    }
+    // Deux variantes depuis le même code (journal/PRODUIT.md, jalon 3) :
+    // - sideload : la version complète publiée sur GitHub Releases, mise à jour en un clic ; garde l'identifiant
+    //   historique pour que les mises à jour s'installent par-dessus sans perte de données.
+    // - play : la version Google Play, sans REQUEST_INSTALL_PACKAGES ni auto-mise à jour. Identifiant neutre et
+    //   définitif (Google Play ne permet jamais de le changer), sans nom commercial, distinct de la sideload pour que
+    //   les deux coexistent sur un téléphone.
+    flavorDimensions 'distribution'
+    productFlavors {
+        sideload {
+            dimension 'distribution'
+            applicationId 'com.healthtrack.app'
+            buildConfigField 'boolean', 'SELF_UPDATE', 'true'
+        }
+        play {
+            dimension 'distribution'
+            applicationId 'fr.jpesquet.sante'
+            buildConfigField 'boolean', 'SELF_UPDATE', 'false'
+        }
+    }
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        // Clé d'envoi de la variante play (PKCS12, alias « upload ») : fournie par la CI depuis Secret Manager
+        // (workflow « Play — AAB »), jamais dans le dépôt. Sans elle, l'AAB release sort non signé.
+        if (System.getenv('HT_UPLOAD_KEYSTORE')) {
+            upload {
+                storeFile file(System.getenv('HT_UPLOAD_KEYSTORE'))
+                storeType 'pkcs12'
+                storePassword System.getenv('HT_UPLOAD_PASSWORD')
+                keyAlias 'upload'
+                keyPassword System.getenv('HT_UPLOAD_PASSWORD')
+            }
         }
     }
     buildTypes {
@@ -38,6 +72,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (System.getenv('HT_UPLOAD_KEYSTORE')) {
+                signingConfig signingConfigs.upload
+            }
         }
     }
     // Modèles du visage stockés sans compression : projetés en mémoire par FaceModels

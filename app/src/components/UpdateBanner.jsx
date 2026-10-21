@@ -9,6 +9,7 @@ import {
   openInBrowser,
   STALL_MS,
 } from '../services/appUpdate'
+import { FEATURES } from '../config/distribution'
 import './UpdateBanner.css'
 
 const STEPS = [
@@ -35,7 +36,15 @@ function Steps({ step }) {
   )
 }
 
-export default function UpdateBanner() {
+/**
+ * Bandeau de mise à jour, seulement dans la variante sideload : sur Google Play, c'est le Store qui met à jour
+ * (et les règles Play interdisent qu'une app se télécharge elle-même). Rien n'est demandé à GitHub sinon.
+ */
+export default function UpdateBanner({ enabled = FEATURES.selfUpdate }) {
+  return enabled ? <SelfUpdateBanner /> : null
+}
+
+function SelfUpdateBanner() {
   const [release, setRelease] = useState(null)
   const [dismissed, setDismissed] = useState(false)
   const [plugin, setPlugin] = useState(undefined)

@@ -24,7 +24,8 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(FaceSensePlugin.class);
         registerPlugin(EveningNotePlugin.class);
         registerPlugin(VoiceProbePlugin.class);
-        registerPlugin(AppUpdatePlugin.class);
+        // Mise à jour en un clic : variante sideload seulement (Google Play met l'app à jour lui-même)
+        if (BuildConfig.SELF_UPDATE) registerPlugin(AppUpdatePlugin.class);
         registerPlugin(SystemBarsPlugin.class);
         super.onCreate(savedInstanceState);
         faceResumePending = isFaceResume(getIntent());

@@ -31,8 +31,7 @@ const INCOMPLETE_ENERGY_RATIO = 0.5
 /**
  * Minuit (heure locale) du premier jour de la fenêtre de `days` jours incluant aujourd'hui.
  */
-export function getRecentWindowStart(days = RECENT_WINDOW_DAYS) {
-  const now = new Date()
+export function getRecentWindowStart(days = RECENT_WINDOW_DAYS, now = new Date()) {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1))
 }
 

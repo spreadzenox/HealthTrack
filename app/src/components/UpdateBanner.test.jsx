@@ -22,6 +22,7 @@ const openUrl = vi.fn()
 vi.mock('@capacitor/app-launcher', () => ({ AppLauncher: { openUrl } }))
 
 import UpdateBanner from './UpdateBanner'
+import { fetchLatestRelease } from '../services/updateCheck'
 
 function fakePlugin(statuses) {
   const queue = [...statuses]
@@ -41,6 +42,15 @@ describe('UpdateBanner', () => {
   })
   afterEach(() => {
     delete window.__HT_APP_UPDATE__
+  })
+
+  it('variante play : aucun bandeau et aucune requête vers GitHub', async () => {
+    fetchLatestRelease.mockClear()
+    window.__HT_APP_UPDATE__ = fakePlugin([{ state: 'none' }])
+    const { container } = render(<UpdateBanner enabled={false} />)
+    await act(async () => {})
+    expect(container).toBeEmptyDOMElement()
+    expect(fetchLatestRelease).not.toHaveBeenCalled()
   })
 
   it('affiche la version installée, la nouvelle et sa taille', async () => {

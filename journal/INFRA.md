@@ -86,3 +86,14 @@ Pas urgent — planifié au BACKLOG (P-SIDELOAD-KEY).
 | Keystore d'envoi play dans Secret Manager | ⬜ propriétaire, à l'étape 3 (jalon 3) |
 | Workflows de build play / publication Play | ⬜ jalon 3 |
 | Relais Cloud Run (code, tests, workflow de déploiement) | ⬜ jalon 6 |
+
+## Variantes et workflows (jalon 3a, 21/10 02:30)
+
+| Workflow | Déclencheur | Ce qu'il fait |
+|---|---|---|
+| « Build & Release » | push `main` (hors `journal/`) | variante **sideload** (`com.healthtrack.app`, clé de debug), `versionCode` = numéro du run, release GitHub `vNNN` |
+| « Play — AAB » | push `main` (hors `journal/`), `workflow_dispatch` | WIF → lit `android-upload-keystore` + `android-upload-keystore-password` → build web `VITE_DISTRIBUTION=play` → `bundlePlayRelease` signé (`fr.jpesquet.sante`, `versionCode` = nombre de commits de main) → artefact `HealthTrack-play-NNN` (30 j) + empreinte SHA-256 du certificat d'envoi dans le résumé. **Rouge tant que P9 n'est pas fait** (message « Clé d'envoi Play absente » ou « Accès refusé ») : ce n'est pas une panne à réparer par la routine, c'est l'action P9. |
+| « Test — émulateur Samsung Galaxy A56 » (check « Build APK ») | PR et push | construit `assembleSideloadDebug` + tests instrumentés + `bundlePlayRelease` non signé, puis `scripts/check-play-manifest.sh` |
+
+Prochaine étape côté CI (après P10 + P11) : envoi automatique de l'AAB en **test interne** via l'API Android
+Publisher (edits) dans « Play — AAB ».

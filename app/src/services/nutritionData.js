@@ -13,7 +13,7 @@ export async function loadNutritionEntries(now = new Date()) {
   stepsSince.setHours(0, 0, 0, 0)
   // un jour de marge : fuseaux et totaux journaliers datés de minuit
   stepsSince.setDate(stepsSince.getDate() - STEPS_WINDOW_DAYS - 1)
-  const foodSince = getRecentWindowStart(RECENT_WINDOW_DAYS)
+  const foodSince = getRecentWindowStart(RECENT_WINDOW_DAYS, now)
   foodSince.setDate(foodSince.getDate() - 1)
   const parts = await Promise.all([
     listEntries({ type: 'food', since: foodSince.toISOString(), limit: ALL }),
