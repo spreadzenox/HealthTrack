@@ -53,7 +53,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   `FEATURES.faceUnlock`, carte « Lecture du visage » en play = lecture à l'ouverture, `check-play-manifest.sh` étendu ;
   [ ] **3b-3** « Lecture rapide » (tuile / notification → activité visible) ; [ ] divulgations restantes : photo du
   repas → IA (avant le premier envoi), Health Connect (jalon 8), Bluetooth « Appareils à proximité » ;
-  [ ] enregistrer la date de chaque accord (preuve de consentement, RGPD art. 9) ; [ ] **3c** envoi automatique en test
+  [ ] enregistrer la date de chaque accord (preuve de consentement, RGPD art. 9) ;
+  [ ] fiabiliser le test `UpdateBanner` « montre la progression en Mo et en %… » (délai de 3 s dépassé sous charge en CI, PR #246 sur `a6dfd56`) ; [ ] **3c** envoi automatique en test
   interne (Android Publisher, edits) dans « Play — AAB », après P10 + P11 ; [ ] **3d** nom affiché de l'app depuis une
   seule source (`appName` Capacitor, `strings.xml`, titres) pour le changer en un commit
 - [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation)
