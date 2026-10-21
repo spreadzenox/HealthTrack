@@ -431,7 +431,7 @@ describe('Food — décrire un repas en quelques mots', () => {
     render(<BrowserRouter><Food /></BrowserRouter>)
     fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
     expect(screen.queryByLabelText(/Décrivez votre repas/i)).not.toBeInTheDocument()
-    expect(screen.getByText(/clé Gemini dans Plus → Paramètres/i)).toBeInTheDocument()
+    expect(screen.getByText(/clé Gemini dans Réglages \(roue en haut à droite\) → Paramètres/i)).toBeInTheDocument()
   })
 
   it('« Refaire » ne propose pas de description (le repas est déjà rempli)', async () => {

@@ -61,7 +61,7 @@ describe('Connectors page', () => {
 
   it('renders the page title', () => {
     renderConnectors()
-    expect(screen.getByRole('heading', { name: /Connecteurs/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Vos sources' })).toBeInTheDocument()
   })
 
   it('renders the connector name', async () => {

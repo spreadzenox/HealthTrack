@@ -124,7 +124,7 @@ export default function PhoneUsageCard({
         <p className="my-devices-intro">
           Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : HealthTrack en tire votre temps
           d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits sans
-          montre, une estimation de votre sommeil. Les Analyses regardent comment tout cela va avec <em>votre</em>{' '}
+          montre, une estimation de votre sommeil. Vos Pistes regardent comment tout cela va avec <em>votre</em>{' '}
           bien-être, dans un sens ou dans l’autre. Jamais le contenu des apps ni vos messages, et rien ne quitte le
           téléphone.
         </p>

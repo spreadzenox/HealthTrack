@@ -15,16 +15,15 @@ describe('App', () => {
     expect(container.querySelector('img.header-logo')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /HealthTrack/i })).toBeInTheDocument()
     const nav = screen.getByRole('navigation', { name: 'Principal' })
-    expect(within(nav).getByRole('link', { name: /Accueil/ })).toHaveAttribute('href', '/')
-    expect(within(nav).getByRole('link', { name: /Repas/ })).toHaveAttribute('href', '/food')
-    expect(within(nav).getByRole('link', { name: /Nutrition/ })).toHaveAttribute('href', '/nutrition')
-    expect(within(nav).getByRole('link', { name: /Analyses/ })).toHaveAttribute('href', '/recommendations')
-    expect(within(nav).getByRole('link', { name: /Plus/ })).toHaveAttribute('href', '/plus')
+    expect(within(nav).getByRole('link', { name: /Aujourd’hui/ })).toHaveAttribute('href', '/')
+    expect(within(nav).getByRole('link', { name: /Journal/ })).toHaveAttribute('href', '/food')
+    expect(within(nav).getByRole('link', { name: /Pistes/ })).toHaveAttribute('href', '/recommendations')
+    expect(within(nav).getByRole('link', { name: /Sources/ })).toHaveAttribute('href', '/connectors')
   })
 
-  it('reaches secondary pages through « Plus »', async () => {
+  it('reaches secondary pages through the « Réglages » button at the top right', async () => {
     render(<App />)
-    fireEvent.click(within(screen.getByRole('navigation', { name: 'Principal' })).getByRole('link', { name: /Plus/ }))
+    fireEvent.click(screen.getByRole('link', { name: /^Réglages/ }))
     expect(await screen.findByRole('link', { name: /Données/ })).toHaveAttribute('href', '/data')
     expect(screen.getByRole('link', { name: /Paramètres/ })).toHaveAttribute('href', '/settings')
   })
@@ -32,7 +31,7 @@ describe('App', () => {
   it('changer de page remonte en haut (on ne reste pas au milieu de la page précédente)', async () => {
     render(<App />)
     document.documentElement.scrollTop = 1200
-    fireEvent.click(within(screen.getByRole('navigation', { name: 'Principal' })).getByRole('link', { name: /Repas/ }))
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Principal' })).getByRole('link', { name: /Journal/ }))
     await screen.findByRole('heading', { name: 'Alimentation' })
     expect(document.documentElement.scrollTop).toBe(0)
   })

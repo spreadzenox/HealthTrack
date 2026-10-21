@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Recommendations from './Recommendations'
 import { _resetAnalysisRunner } from '../services/analysisRunner'
@@ -71,20 +71,20 @@ describe('Recommendations page', () => {
 
   it('renders the page title', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /^Analyses$/i })
-    expect(screen.getByRole('heading', { name: /^Analyses$/i })).toBeInTheDocument()
+    await screen.findByRole('heading', { name: /^Vos pistes$/i })
+    expect(screen.getByRole('heading', { name: /^Vos pistes$/i })).toBeInTheDocument()
   })
 
   it('renders both tab buttons', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /^Analyses$/i })
+    await screen.findByRole('heading', { name: /^Vos pistes$/i })
     expect(screen.getByRole('button', { name: /Analyse simple/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Analyse avancée/i })).toBeInTheDocument()
   })
 
   it('shows basic tab by default', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /^Analyses$/i })
+    await screen.findByRole('heading', { name: /^Vos pistes$/i })
     const basicBtn = screen.getByRole('button', { name: /Analyse simple/i })
     expect(basicBtn).toHaveAttribute('aria-selected', 'true')
   })
@@ -97,7 +97,7 @@ describe('Recommendations page', () => {
 
   it('switches to advanced tab on click', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /^Analyses$/i })
+    await screen.findByRole('heading', { name: /^Vos pistes$/i })
     const advancedBtn = screen.getByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(advancedBtn)
     expect(advancedBtn).toHaveAttribute('aria-selected', 'true')
@@ -244,7 +244,7 @@ describe('Recommendations auto-sync', () => {
       </BrowserRouter>
     )
 
-    await screen.findByRole('heading', { name: /^Analyses$/i })
+    await screen.findByRole('heading', { name: /^Vos pistes$/i })
     expect(useAutoSync).toHaveBeenCalled()
   })
 })
@@ -255,7 +255,8 @@ describe('Recommendations navigation link', () => {
   it('is present in the App navigation', async () => {
     const App = (await import('../App')).default
     render(<App />)
-    const link = await screen.findByRole('link', { name: /Analyses/ })
+    const nav = await screen.findByRole('navigation', { name: 'Principal' })
+    const link = within(nav).getByRole('link', { name: /Pistes/ })
     expect(link).toHaveAttribute('href', '/recommendations')
   })
 })

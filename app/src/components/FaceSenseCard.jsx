@@ -300,7 +300,7 @@ export default function FaceSenseCard({
       {available && loaded && d.state === 'unavailable' && (
         <>
           <p className="my-device-message">
-            Le module de lecture du visage ne répond pas. Vérifiez que l’app est à jour (Plus → Nouveautés), puis
+            Le module de lecture du visage ne répond pas. Vérifiez que l’app est à jour (Réglages → Nouveautés), puis
             réessayez.
           </p>
           <div className="my-device-actions">

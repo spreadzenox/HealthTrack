@@ -125,6 +125,15 @@ prochaine version). Le radar forme, les graphiques et le journal des jours reste
 **navigation en 4 onglets** (Aujourd'hui, Journal, Pistes, Sources). **👉 Votre prochaine action la plus utile reste P8
 puis P10** (envoyer le dernier AAB, `HealthTrack-play-337` ou plus récent).
 
+**Run du 21/10 14:30 — navigation en 4 onglets (maquette).** Ce que vous verrez dans la prochaine version (bouton
+du bandeau) : en bas, **Aujourd'hui · Journal · Pistes · Sources**. **Journal** regroupe vos repas et la nutrition
+(boutons « Repas » / « Nutrition » en haut de la page) ; **Pistes** est l'ancienne page Analyses ; **Sources** les
+anciens Connecteurs (montre, Health Connect, météo, lecture du visage). **Données, Paramètres et Nouveautés** sont
+derrière la **roue en haut à droite** (avec la pastille quand il y a des nouveautés). Rien n'est supprimé, aucune
+donnée ne bouge. En coulisses : le nom affiché « HealthTrack » vient maintenant d'un seul fichier
+(`app/src/config/brand.js`), pour changer de nom en un commit. Prochain run de code : déplacer « Vos derniers jours »
+dans l'onglet Journal et alléger l'accueil (2b). **👉 Votre prochaine action la plus utile reste P8 puis P10.**
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -502,6 +511,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 21/10 14:30 — [Navigation 4 onglets](runs/2026-10-21-1430-navigation-4-onglets.md) | 🧭🎨 | Aujourd'hui / Journal (Repas \| Nutrition) / Pistes / Sources, roue « Réglages » en haut à droite, titres « Vos sources » / « Vos pistes », `APP_NAME` centralisé ; aucune route ni donnée changée ; 1 730 Vitest |
 | 21/10 12:30 — [Accueil « Aujourd'hui » + ventre en un geste](runs/2026-10-21-1230-accueil-aujourdhui.md) | 🧭🎨 | Carte menthe bien-être (chiffre, écart 14 j, courbe, « détails »), tuiles sommeil / VFC / pas avec source, carte pêche ventre → entrée `gut` (sans migration, exportée), boutons pilule, carte lilas pistes X/21 (6 semaines, budget de lectures) ; 1 718 Vitest ; PR #250 → **v195, 33,7 Mo** + AAB play 337 |
 | 21/10 10:30 — [Jalon 3b-2 : variante play sans service caméra](runs/2026-10-21-1030-visage-ouverture-play.md) | 🧭🛡️ | Play : lecture du visage à l'ouverture de l'app (`FaceOneShot`, 1 / 30 min) + bandeau visible, sans FGS caméra / relance / exemption de batterie ; 15 permissions Health Connect (I131, −26) ; justification HC par type ; 1 693 Vitest, 119 JUnit ; sideload inchangée ; PR #248 → **v194, 33,7 Mo** + AAB play 335 |
 | 21/10 08:30 — [Idées : Health Connect jour 1, pistes SII avec délais, paywall Play](runs/2026-10-21-0830-idees-produit-hc-sii-paywall.md) | 💡 | PR #246 revérifiée et **fusionnée** (v193, 33,7 Mo ; AAB play 333), #245 fermée ; veille → I130–I138 (30 j Health Connect d'office, permissions HC réduites, 3 fenêtres de délai + seuil par simulation, réintroduction Monash, paywall conforme : « 2,50 €/mois » secondaire) ; P16 ajouté |

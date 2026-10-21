@@ -935,7 +935,7 @@ export default function Recommendations() {
 
   return (
     <section className="reco-page">
-      <h2 className="page-title">Analyses</h2>
+      <h2 className="page-title">Vos pistes</h2>
       <p className="reco-intro">
         Ce qui va de pair avec votre <strong>bien-être</strong> dans vos données, calculé sur votre téléphone.
       </p>

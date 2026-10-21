@@ -5,7 +5,6 @@ import './More.css'
 
 const ITEMS = [
   { to: '/data', icon: '🗂️', title: 'Données', desc: 'Sauvegarde et restauration de vos données' },
-  { to: '/connectors', icon: '⌚', title: 'Connecteurs', desc: 'Montre, balance, Health Connect, Withings' },
   { to: '/settings', icon: '⚙️', title: 'Paramètres', desc: 'Apparence, analyse des repas (Gemini), cigarettes, diagnostic' },
   { to: '/nouveautes', icon: '✨', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },
 ]
@@ -15,7 +14,7 @@ export default function More({ changelog = CHANGELOG }) {
 
   return (
     <section className="food-page">
-      <h2 className="page-title">Plus</h2>
+      <h2 className="page-title">Réglages</h2>
       <ul className="more-list">
         {ITEMS.map((item) => (
           <li key={item.to}>

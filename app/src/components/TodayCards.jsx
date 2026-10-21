@@ -160,7 +160,7 @@ export function PistesTeaser({ details, onToggleDetails, read = readTracked }) {
       <p className="pistes-count mono">{p.days}/{p.target} jours avec un repas ou une note du ventre (6 dernières semaines)</p>
       <p className="today-card-text">
         {p.ready
-          ? <>Vos jours sont prêts ; les pistes repas → ventre arrivent dans une prochaine version. En attendant, voyez <Link to="/recommendations">Analyses</Link>.</>
+          ? <>Vos jours sont prêts ; les pistes repas → ventre arrivent dans une prochaine version. En attendant, voyez <Link to="/recommendations">l’onglet Pistes</Link>.</>
           : 'On préfère attendre plutôt que de vous montrer de faux suspects.'}
       </p>
       {details && (
