@@ -39,11 +39,15 @@ android {
             dimension 'distribution'
             applicationId 'com.healthtrack.app'
             buildConfigField 'boolean', 'SELF_UPDATE', 'true'
+            // Lecture du visage au déverrouillage, app fermée (service caméra) : sideload seulement.
+            buildConfigField 'boolean', 'FACE_UNLOCK', 'true'
         }
         play {
             dimension 'distribution'
             applicationId 'fr.jpesquet.sante'
             buildConfigField 'boolean', 'SELF_UPDATE', 'false'
+            // Play : lecture du visage à l'ouverture de l'app seulement (journal/PLAY-CONFORMITE.md, option B).
+            buildConfigField 'boolean', 'FACE_UNLOCK', 'false'
         }
     }
     signingConfigs {

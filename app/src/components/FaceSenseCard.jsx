@@ -4,6 +4,8 @@
  * « Relancer » si Android l'a arrêté, la sortie de l'optimisation de batterie et un diagnostic exportable (comptes
  * seulement) pour vérifier le comportement réel sur le téléphone.
  * Logique dans services/faceSense.js, natif dans FaceSenseService.java / FaceSensePlugin.java.
+ * Variante play (`appOpen`, journal/PLAY-CONFORMITE.md option B) : pas de service ; la lecture a lieu à l'ouverture
+ * de l'app (services/faceAppOpen.js), donc ni « Relancer », ni batterie, ni accès permanent à la caméra.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -33,6 +35,8 @@ import { localDateKey } from '../services/analysisEngine'
 import { listEntries } from '../storage/localHealthStorage'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import useDisclosure from '../hooks/useDisclosure'
+import { FEATURES } from '../config/distribution'
+import { readFaceOnOpen } from '../services/faceAppOpen'
 import './MyDevices.css'
 import './WeatherCard.css'
 
@@ -132,7 +136,7 @@ function frenchDate(iso) {
 }
 
 /**
- * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function, loadEveningNote?: Function, loadVoice?: Function }} props
+ * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function, loadEveningNote?: Function, loadVoice?: Function, appOpen?: boolean, readOnOpen?: Function }} props
  */
 export default function FaceSenseCard({
   plugin = faceSensePlugin(),
@@ -141,6 +145,8 @@ export default function FaceSenseCard({
   loadHistory = defaultLoadHistory,
   loadEveningNote = getEveningNoteStatus,
   loadVoice = probeVoice,
+  appOpen = FEATURES.faceAppOpen,
+  readOnOpen = readFaceOnOpen,
 }) {
   const [status, setStatus] = useState(null)
   const [history, setHistory] = useState(null)
@@ -185,6 +191,8 @@ export default function FaceSenseCard({
       const res = await startFaceSense(plugin, restart ? { restart: true } : undefined)
       if (!res.permission) setMessage('Accès à la caméra refusé : rien n’a été activé.')
       else if (!res.started) setMessage('Android a refusé de démarrer la lecture. Réessayez app ouverte.')
+      // Variante play : première lecture tout de suite (vous regardez l'écran), signalée par le bandeau.
+      else if (appOpen) await readOnOpen({ enabled: true, plugin })
       // le service met un instant à démarrer
       await new Promise((r) => setTimeout(r, 400))
       await refresh()
@@ -195,7 +203,7 @@ export default function FaceSenseCard({
 
   /** Première activation ou accès retiré : divulgation (ce que lit la caméra) avant la demande d'Android. */
   async function activateWithConsent() {
-    if (!(await askConsent('camera'))) return
+    if (!(await askConsent(appOpen ? 'camera_app_open' : 'camera'))) return
     await activate()
   }
 
@@ -257,7 +265,8 @@ export default function FaceSenseCard({
 
   const d = describeFaceSense(status)
   const available = plugin != null
-  const samsung = isSamsungDevice(status)
+  // Réglages propres au service en arrière-plan (One UI, batterie, accès permanent) : sans objet en play.
+  const samsung = !appOpen && isSamsungDevice(status)
 
   return (
     <section className="weather-card" aria-labelledby="face-sense-title">
@@ -268,7 +277,16 @@ export default function FaceSenseCard({
         )}
       </div>
 
-      {(d.state === 'off' || d.state === 'unavailable') && (
+      {(d.state === 'off' || d.state === 'unavailable') && appOpen && (
+        <p className="my-devices-intro">
+          Pour estimer votre bien-être sans rien saisir : quand vous ouvrez HealthTrack, la caméra frontale prend
+          quelques images (un bandeau l’indique), le téléphone en tire une dizaine de mesures d’expression puis les
+          efface. Au plus une lecture par demi-heure, jamais app fermée. Rien ne quitte le téléphone. Un bien-être
+          estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives, l’affinent. Une
+          estimation, jamais un diagnostic.
+        </p>
+      )}
+      {(d.state === 'off' || d.state === 'unavailable') && !appOpen && (
         <p className="my-devices-intro">
           Pour estimer votre bien-être sans rien saisir : à chaque déverrouillage, la caméra frontale prend 3 images,
           le téléphone en tire une dizaine de mesures d’expression puis les efface. Rien ne quitte le téléphone. Un
@@ -361,14 +379,14 @@ export default function FaceSenseCard({
               : ''}
             {describeGate(history?.gate)}
           </p>
-          {!status.batteryExempt && (
+          {!appOpen && !status.batteryExempt && (
             <p className="my-device-meta">
               Pour qu’Android ne coupe pas la lecture en arrière-plan, autorisez HealthTrack sans restriction de
               batterie.
             </p>
           )}
           <div className="my-device-actions">
-            {!status.batteryExempt && (
+            {!appOpen && !status.batteryExempt && (
               <button type="button" className="btn btn-primary connector-btn" onClick={() => requestFaceBatteryExemption(plugin)} disabled={busy}>
                 Sans restriction
               </button>
@@ -405,7 +423,7 @@ export default function FaceSenseCard({
               « Applis jamais en veille » (Batterie → Limites d’utilisation en arrière-plan) pour que la lecture tienne.
             </p>
           )}
-          {d.state !== 'blocked' && <PermanentCameraGuide access={faceCameraAccess(status)} />}
+          {!appOpen && d.state !== 'blocked' && <PermanentCameraGuide access={faceCameraAccess(status)} />}
         </details>
       )}
       {disclosure}

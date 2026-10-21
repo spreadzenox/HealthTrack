@@ -22,6 +22,19 @@ export const DISCLOSURES = {
     accept: 'J’accepte, autoriser la caméra',
     decline: 'Pas maintenant',
   },
+  // Variante play (journal/PLAY-CONFORMITE.md, option B) : lecture à l'ouverture de l'app, sans service caméra.
+  camera_app_open: {
+    title: 'Avant d’autoriser la caméra',
+    points: [
+      'Quand vous ouvrez HealthTrack, la caméra frontale prend quelques images de votre visage, pendant une à deux secondes, au plus une fois par demi-heure. Un bandeau l’indique à l’écran pendant toute la lecture.',
+      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être. Une estimation, pas un diagnostic.',
+      'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
+      'Rien ne se passe quand l’app est fermée. « Désactiver » l’arrête à tout moment, et vous pouvez retirer l’accès dans les réglages d’Android.',
+    ],
+    leaves: 'Rien ne quitte le téléphone : ni image, ni mesure.',
+    accept: 'J’accepte, autoriser la caméra',
+    decline: 'Pas maintenant',
+  },
   location: {
     title: 'Avant d’utiliser votre position',
     points: [

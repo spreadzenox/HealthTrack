@@ -16,8 +16,13 @@ import { upsertEntries } from '../storage/localHealthStorage'
 
 export const FACE_BURST_TYPE = 'face_burst'
 export const FACE_SOURCE = 'face_sense'
-/** Déclencheurs dont les rafales servent à estimer l'humeur ; `manual` (test) reste du diagnostic. */
-export const MOOD_TRIGGERS = ['unlock']
+/**
+ * Déclencheurs dont les rafales servent à estimer le bien-être ; `manual` (test) reste du diagnostic. `unlock` :
+ * déverrouillage (sideload) ; `app_open` : ouverture de HealthTrack (play, sans service caméra), jamais celle d'une
+ * autre app (D5 : les images vues ne doivent pas dépendre de l'usage du téléphone, un X). Une variante n'a que l'un
+ * des deux. Le moment de la lecture reste noté dans chaque rafale (`trigger`) pour que les analyses les distinguent.
+ */
+export const MOOD_TRIGGERS = ['unlock', 'app_open']
 
 const RECORD_VERSION = 1
 const MAX_FRAMES = 10
@@ -131,7 +136,7 @@ async function run({ plugin, write, storage, now }) {
   return out
 }
 
-/** Les rafales qui comptent pour l'humeur (Y) : déverrouillage, au moins une image valide, des indices. */
+/** Les rafales qui comptent pour le bien-être (Y) : déverrouillage ou ouverture de l'app, au moins une image valide, des indices. */
 export function moodFaceBursts(entries) {
   return (entries || []).filter((e) =>
     e?.type === FACE_BURST_TYPE &&

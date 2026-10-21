@@ -49,24 +49,42 @@ regarde l'écran.
 | Permission | Usage | Sideload | Play | Commentaire |
 |---|---|---|---|---|
 | `INTERNET` | Gemini, Open-Meteo, Withings, mises à jour | ✅ | ✅ | Normale. |
-| `READ_EXTERNAL_STORAGE` | Ancien import de fichiers | ✅ | ⚠️ à retirer ou `maxSdkVersion="32"` | Sans effet depuis Android 13 ; Play la signale. |
+| `READ_EXTERNAL_STORAGE` | Ancien import de fichiers | ✅ (≤ Android 12) | ✅ (≤ Android 12) | **Fait (21/10 10:30)** : `maxSdkVersion="32"` dans le manifeste principal (sans effet depuis Android 13). |
 | `REQUEST_INSTALL_PACKAGES` | Mise à jour en un clic | ✅ (manifeste `sideload`) | ❌ | Fait en 3a, vérifié par `scripts/check-play-manifest.sh`. |
 | `REQUEST_DELETE_PACKAGES` | Ouvrir la désinstallation de l'app qui tient la montre Huawei | ✅ | ⚠️ à garder seulement si le parcours montre reste en play | Pas une permission restreinte, mais à justifier ; l'utilisateur confirme toujours. |
 | `REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE`, `RECEIVE_BOOT_COMPLETED`, `POST_NOTIFICATIONS` | Montre, rappels | ✅ | ✅ | `POST_NOTIFICATIONS` est demandée au moment d'activer un rappel. |
 | `CAMERA` | Lecture du visage | ✅ | ✅ (option B / C) | **Divulgation** `camera` avant la demande (fait). |
-| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_CAMERA` | Lecture au déverrouillage | ✅ | ❌ à retirer (option A refusée) | Prochaine étape (3b-2). |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Lecture au déverrouillage | ✅ | ❌ à retirer | Idem. |
+| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_CAMERA` | Lecture au déverrouillage | ✅ | ❌ **retirées (21/10 10:30)** | `src/play/AndroidManifest.xml` (`tools:node="remove"`), avec `FaceSenseService`, `FaceResumeJob`, `FaceResumeReceiver`. Aucun autre service de premier plan dans l'app. |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Lecture au déverrouillage | ✅ | ❌ **retirée (21/10 10:30)** | Idem ; le plugin refuse aussi `requestBatteryExemption` en play. |
 | `PACKAGE_USAGE_STATS` | Temps d'écran, sommeil estimé, temps par app | ✅ | ✅ | Accès spécial accordé dans Android ; **divulgation** `usage` avant d'ouvrir le réglage (fait). À décrire dans Data safety (« Activité dans les applis »). |
 | `ACCESS_COARSE_LOCATION` (+ `FINE` ≤ Android 11 pour le BLE) | Météo (position arrondie ≈ 10 km) ; scan BLE ancien Android | ✅ | ✅ | **Divulgation** `location` (fait). Data safety : « Position approximative », partagée avec Open-Meteo. |
 | `BLUETOOTH_SCAN` (`neverForLocation`) | Montre, capteurs BLE | ✅ | ✅ | Pas de localisation déduite. |
-| Health Connect (`health.READ_*`) | Imports des montres | ✅ | ✅ | Déclaration des types de données dans la Play Console + écran de justification (fourni par `@capgo/capacitor-health` : `SHOW_PERMISSIONS_RATIONALE` / `VIEW_PERMISSION_USAGE`), à relier à la politique de confidentialité (jalon 8 / 10). |
+| Health Connect (`health.READ_*`) | Imports des montres | ✅ (41 déclarées par le plugin) | ✅ **15 lectures seulement (21/10 10:30, I131)** | Play retire les 20 `WRITE_*` et 6 lectures jamais demandées (température basale, métabolisme de base, étages, taille, pleine conscience, calories totales). Liste = `READ_TYPES` du connecteur, vérifiée par `distribution.android.test.js` et `check-play-manifest.sh`. Déclaration des types de données dans la Play Console + écran de justification (fourni par `@capgo/capacitor-health` : `SHOW_PERMISSIONS_RATIONALE` / `VIEW_PERMISSION_USAGE`), à relier à la politique de confidentialité (jalon 8 / 10). |
 | `<queries>` (apps santé, lanceur, reconnaissance vocale) | « Mes appareils », temps par app | ✅ | ⚠️ | La requête `MAIN/LAUNCHER` donne la liste des apps installées : acceptable car liée au temps par app, à justifier si Play la signale (pas de `QUERY_ALL_PACKAGES`). |
+
+### Justification par type Health Connect (brouillon pour le formulaire Play, P16)
+
+Chaque type est **lu** (jamais écrit), sur le téléphone, pour l'afficher et le comparer à votre bien-être et à votre
+ventre (« ce qui va avec vos bons et mauvais jours ») ; rien n'est envoyé à un serveur.
+
+| Type | Pourquoi |
+|---|---|
+| Pas, distance, calories actives, séances d'exercice | Activité du jour, facteur comparé au bien-être et aux symptômes digestifs. |
+| Sommeil | Durée et régularité des nuits, facteur principal du bien-être. |
+| Fréquence cardiaque, FC au repos, VFC | Récupération et stress physiologique ; « Radar forme » (écart à votre norme personnelle). |
+| Saturation en oxygène, fréquence respiratoire, température corporelle | Nuits et récupération ; signaux d'un début de maladie (Radar forme). |
+| Tension artérielle, glycémie | Affichées si votre appareil les mesure, et comparées aux repas (glycémie après repas). |
+| Poids, masse grasse | Suivi de la composition corporelle, profil nutritionnel. |
+
+À revoir au jalon 8 (imports 100 % Health Connect) : si un type n'est plus affiché, le retirer aussi de `READ_TYPES`.
 
 ## 3. Divulgations dans l'app (fait le 21/10 06:30)
 
 - Textes : `app/src/config/permissionDisclosures.js` (`camera`, `location`, `usage`) ; feuille
   `PermissionDisclosure` + crochet `useDisclosure()`. Bouton d'accord explicite « J'accepte, … » ; « Pas
   maintenant » ne demande rien à Android et n'active rien.
+- Variante play : texte propre `camera_app_open` (« quand vous ouvrez HealthTrack… un bandeau l'indique…
+  rien ne se passe quand l'app est fermée »), ajouté le 21/10 10:30.
 - Branchées sur : Lecture du visage (« Activer » / « Autoriser »), Météo (« Utiliser ma position approximative »),
   Temps d'écran (« Activer » quand l'accès n'est pas encore accordé).
 - Test-garde `permissionDisclosures.test.js` : tout écran qui lit la position, démarre la caméra ou ouvre l'accès
@@ -77,10 +95,13 @@ regarde l'écran.
 
 ## 4. Suite (dans `BACKLOG.md`)
 
-1. **3b-2** : manifeste `play` qui retire (`tools:node="remove"`) `FaceSenseService`, `FaceResumeJob`,
-   `FaceResumeReceiver`, `FOREGROUND_SERVICE_CAMERA`, `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` ; drapeau
-   `FEATURES.faceUnlock` (sideload) ; carte « Lecture du visage » en play = option B (lecture à l'ouverture) ;
-   `check-play-manifest.sh` étendu.
+1. ✅ **3b-2 (21/10 10:30)** : manifeste `play` qui retire `FaceSenseService`, `FaceResumeJob`,
+   `FaceResumeReceiver`, `FOREGROUND_SERVICE(_CAMERA)`, `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` et 26 permissions
+   Health Connect inutilisées ; `BuildConfig.FACE_UNLOCK` / `FEATURES.faceUnlock|faceAppOpen` ; **option B en
+   place** : `FaceOneShot` (natif, app à l'écran, déclencheur `app_open`, 1 lecture / 30 min, 12 / jour, jamais
+   pendant un appel) + bandeau `FaceReadIndicator` pendant toute la capture ; carte et diagnostic adaptés ;
+   `check-play-manifest.sh` étendu. Les lectures `app_open` comptent pour le bien-être (HealthTrack est exclu des
+   facteurs « temps par app », donc pas un X ; test D5 mis à jour).
 2. **3b-3** : option C (tuile / notification → activité « Lecture rapide »).
 3. Brouillons Data safety + déclaration des apps de santé (`journal/legal/`, jalon 10).
 

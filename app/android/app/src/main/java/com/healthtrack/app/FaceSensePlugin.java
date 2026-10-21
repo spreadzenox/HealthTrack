@@ -22,20 +22,35 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.annotation.PermissionCallback;
+import com.healthtrack.app.face.FaceSchedule;
 import com.healthtrack.app.huawei.CaptureInbox;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Interrupteur et diagnostic de la « Lecture du visage » (src/services/faceSense.js, FaceSenseService) : le service
  * caméra ne peut être démarré que d'ici, app ouverte. `list` / `remove` vident la boîte des rafales (scores seuls)
  * comme WatchCapturePlugin le fait pour la montre. `status` ne rend jamais un score : seulement des compteurs, des
  * temps et des raisons, pour le diagnostic exportable.
+ *
+ * Variante play (BuildConfig.FACE_UNLOCK faux, journal/PLAY-CONFORMITE.md option B) : pas de service caméra (retiré
+ * du manifeste play), ni relance, ni exemption de batterie. « Activer » ne fait que noter l'accord ; la lecture a lieu
+ * à l'ouverture de l'app (`readNow`, app à l'écran) et au bouton « Tester », par FaceOneShot.
  */
 @CapacitorPlugin(name = "FaceSense", permissions = {@Permission(alias = "camera", strings = {Manifest.permission.CAMERA})})
 public class FaceSensePlugin extends Plugin {
+
+    /** Lectures de la variante play, une à la fois, hors du fil de la WebView. */
+    private final ExecutorService oneShot = Executors.newSingleThreadExecutor();
+
+    @Override
+    protected void handleOnDestroy() {
+        oneShot.shutdown();
+    }
 
     @PluginMethod
     public void status(PluginCall call) {
@@ -52,6 +67,8 @@ public class FaceSensePlugin extends Plugin {
         ret.put("affectModel2", FaceAffectModel.available(context, FaceAffectModel.MBF));
         ret.put("affectDownloading", FaceAffectModel.isDownloading());
         ret.put("running", FaceSenseService.isRunning());
+        // « unlock » : service au déverrouillage (sideload) ; « app_open » : lecture à l'ouverture de l'app (play).
+        ret.put("mode", BuildConfig.FACE_UNLOCK ? "unlock" : "app_open");
         ret.put("enabled", p.getBoolean("enabled", false));
         ret.put("permission", FaceSenseService.hasCameraPermission(context));
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -86,7 +103,7 @@ public class FaceSensePlugin extends Plugin {
             // impossible pour notre propre paquet
         }
         // Activée avant la notification « Reprendre » (I88 ②) : la vérification horaire est programmée ici.
-        if (p.getBoolean("enabled", false)) FaceResumeJob.ensureScheduled(context);
+        if (BuildConfig.FACE_UNLOCK && p.getBoolean("enabled", false)) FaceResumeJob.ensureScheduled(context);
         return ret;
     }
 
@@ -97,7 +114,7 @@ public class FaceSensePlugin extends Plugin {
      */
     @PluginMethod
     public void start(PluginCall call) {
-        if (Boolean.TRUE.equals(call.getBoolean("restart", false)) && FaceSenseService.isRunning()) {
+        if (BuildConfig.FACE_UNLOCK && Boolean.TRUE.equals(call.getBoolean("restart", false)) && FaceSenseService.isRunning()) {
             getContext().stopService(new Intent(getContext(), FaceSenseService.class));
         }
         if (getPermissionState("camera") != PermissionState.GRANTED) {
@@ -136,6 +153,10 @@ public class FaceSensePlugin extends Plugin {
     /** Une rafale tout de suite, pour le diagnostic (déclencheur « manual », jamais compté pour l'humeur). */
     @PluginMethod
     public void test(PluginCall call) {
+        if (!BuildConfig.FACE_UNLOCK) {
+            readOnce(call, FaceSchedule.TRIGGER_MANUAL);
+            return;
+        }
         if (!FaceSenseService.isRunning()) {
             call.reject("Lecture du visage arrêtée");
             return;
@@ -143,9 +164,50 @@ public class FaceSensePlugin extends Plugin {
         startService(call, FaceSenseService.ACTION_TEST);
     }
 
+    /**
+     * Variante play : une lecture maintenant, app à l'écran (déclencheur « app_open », une par demi-heure au plus,
+     * FaceSchedule) : { outcome }. Sans effet si la lecture n'est pas activée ; refusé en sideload (le service s'en
+     * charge au déverrouillage).
+     */
+    @PluginMethod
+    public void readNow(PluginCall call) {
+        if (BuildConfig.FACE_UNLOCK) {
+            call.reject("Lecture au déverrouillage dans cette version");
+            return;
+        }
+        if (!FaceSenseService.prefs(getContext()).getBoolean("enabled", false)) {
+            JSObject ret = new JSObject();
+            ret.put("outcome", "skip:off");
+            call.resolve(ret);
+            return;
+        }
+        readOnce(call, FaceSchedule.TRIGGER_APP_OPEN);
+    }
+
+    private void readOnce(PluginCall call, String trigger) {
+        Context context = getContext();
+        oneShot.execute(() -> {
+            JSObject ret = new JSObject();
+            try {
+                ret.put("outcome", FaceOneShot.run(context, trigger));
+            } catch (RuntimeException e) {
+                ret.put("outcome", "error");
+                ret.put("error", e.getClass().getSimpleName());
+            }
+            call.resolve(ret);
+        });
+    }
+
     private void startService(PluginCall call, String action) {
         JSObject ret = new JSObject();
         ret.put("permission", true);
+        if (!BuildConfig.FACE_UNLOCK) {
+            // Variante play : pas de service, l'accord est noté et la lecture se fera à l'ouverture de l'app.
+            FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", true).apply();
+            ret.put("started", true);
+            call.resolve(ret);
+            return;
+        }
         try {
             // Appelé depuis la WebView : l'app est à l'écran.
             Intent intent = new Intent(getContext(), FaceSenseService.class).setAction(action)
@@ -164,15 +226,22 @@ public class FaceSensePlugin extends Plugin {
     @PluginMethod
     public void stop(PluginCall call) {
         FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", false).apply();
-        getContext().stopService(new Intent(getContext(), FaceSenseService.class));
-        FaceResumeJob.cancel(getContext());
-        FaceResumeNotice.cancel(getContext());
+        if (BuildConfig.FACE_UNLOCK) {
+            getContext().stopService(new Intent(getContext(), FaceSenseService.class));
+            FaceResumeJob.cancel(getContext());
+            FaceResumeNotice.cancel(getContext());
+        }
         call.resolve();
     }
 
     /** Ouvre la boîte d'Android « Autoriser l'activité en arrière-plan » (sortie de l'optimisation de batterie). */
     @PluginMethod
     public void requestBatteryExemption(PluginCall call) {
+        if (!BuildConfig.FACE_UNLOCK) {
+            // Variante play : REQUEST_IGNORE_BATTERY_OPTIMIZATIONS retirée du manifeste (règles Play).
+            call.reject("Indisponible dans cette version");
+            return;
+        }
         try {
             Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
                     Uri.parse("package:" + getContext().getPackageName()));

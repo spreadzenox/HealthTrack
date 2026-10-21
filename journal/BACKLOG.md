@@ -48,9 +48,13 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   l'ouverture de l'app** puis « Lecture rapide » par tuile / notification → activité, **sans FGS caméra ni exemption
   de batterie**) + revue des permissions + **divulgations avant autorisation** (`config/permissionDisclosures.js`,
   `PermissionDisclosure`, `hooks/useDisclosure.jsx` : caméra, position, temps d'écran ; test-garde) ;
-  [ ] **3b-2** manifeste `play` sans `FaceSenseService` / `FaceResume*` / `FOREGROUND_SERVICE_CAMERA` /
-  `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` (`tools:node="remove"`), `READ_EXTERNAL_STORAGE` borné, drapeau
-  `FEATURES.faceUnlock`, carte « Lecture du visage » en play = lecture à l'ouverture, `check-play-manifest.sh` étendu ;
+  [x] **3b-2** (21/10 10:30) manifeste `play` sans `FaceSenseService` / `FaceResume*` / `FOREGROUND_SERVICE(_CAMERA)` /
+  `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` (`tools:node="remove"`), `READ_EXTERNAL_STORAGE` borné (≤ 32), drapeaux
+  `BuildConfig.FACE_UNLOCK` / `FEATURES.faceUnlock|faceAppOpen`, **lecture à l'ouverture de l'app** (`FaceOneShot`,
+  déclencheur `app_open`, 1 / 30 min, 12 / jour) avec bandeau visible `FaceReadIndicator`, carte + diagnostic +
+  divulgation `camera_app_open` adaptés, `check-play-manifest.sh` étendu ; **I131** fait dans la foulée (play : 15
+  lectures Health Connect, aucune écriture ; test-garde) ; [ ] vérifier sur un vrai téléphone la 1re lecture à
+  l'ouverture (dès que la variante play est installable, P10) ;
   [ ] **3b-3** « Lecture rapide » (tuile / notification → activité visible) ; [ ] divulgations restantes : photo du
   repas → IA (avant le premier envoi), Health Connect (jalon 8), Bluetooth « Appareils à proximité » ;
   [ ] enregistrer la date de chaque accord (preuve de consentement, RGPD art. 9) ;
@@ -76,9 +80,9 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
 - [ ] **7 Réintroduction FODMAP guidée + rapport PDF médecin** — [ ] **I135** machine à états format Monash (3 jours
   croissants, pause ≥ 3 j ou jusqu'au calme, arrêt si gêne J1/J2, verdict à 3 niveaux, aucun verdict sans ventre
   calme au départ, retest + mention de l'effet d'attente)
-- [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026) — [ ] **I131**
-  manifeste play limité aux permissions HC réellement lues (liste `HC_READ_TYPES` unique + test sur le manifeste de
-  l'AAB ; le plugin en déclare 21) ; historique > 30 j en option derrière `FEATURE_READ_HEALTH_DATA_HISTORY`
+- [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026) — [x] **I131**
+  (21/10 10:30, avec 3b-2) manifeste play limité aux 15 lectures HC du connecteur (`READ_TYPES` exporté = seule
+  source, test-garde + `check-play-manifest.sh` ; le plugin en déclarait 41 dont 20 écritures) ; historique > 30 j en option derrière `FEATURE_READ_HEALTH_DATA_HISTORY`
 - [ ] **9 i18n + anglais**
 - [ ] **10 Fiche Play** (textes FR, captures, Data safety, déclaration apps de santé) + `journal/legal/` (brouillons
   confidentialité, CGU / CGV, mentions légales « à faire valider par un juriste ») — [ ] **I138** phrase « n'est pas un
@@ -863,6 +867,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 21/10 (10:30 Paris)** : ✅ 3b-2 + I131 (variante play sans service caméra, lecture du visage à
+l'ouverture de l'app, 15 permissions Health Connect). Prochain run de code → **2b/2c + 2 bis (iii)** : écran Accueil
+« Aujourd'hui » de la maquette et navigation 4 onglets (Aujourd'hui, Journal, Pistes, Sources), sans perte de
+fonction ; puis 3b-3 (« Lecture rapide ») ; 3c dès P10/P11.
 
 **Mise à jour du 21/10 (08:30 Paris, run « idées »)** : PR #246 (3b-1) fusionnée → v193. Ordre inchangé : prochain
 run de code → **3b-2** (manifeste play sans service caméra + lecture à l'ouverture ; y joindre **I131**, permissions

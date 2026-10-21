@@ -19,4 +19,9 @@ describe('variante de distribution', () => {
     expect(featuresFor('play').selfUpdate).toBe(false)
     expect(FEATURES.selfUpdate).toBe(true)
   })
+
+  it('lecture du visage : au déverrouillage en sideload, à l’ouverture de l’app en play', () => {
+    expect(featuresFor('sideload')).toMatchObject({ faceUnlock: true, faceAppOpen: false })
+    expect(featuresFor('play')).toMatchObject({ faceUnlock: false, faceAppOpen: true })
+  })
 })

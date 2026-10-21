@@ -93,7 +93,8 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Ancien import de fichiers : sans effet depuis Android 13, bornée pour ne pas être signalée par Google Play. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <!-- Montre Huawei en direct (AppManagerPlugin.java) : ouvrir la boîte de désinstallation de l'app qui tient
          la montre (Huawei Santé, Gadgetbridge…). L'utilisateur confirme toujours ; rien n'est désinstallé en silence. -->
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />

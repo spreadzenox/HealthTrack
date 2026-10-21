@@ -14,6 +14,7 @@ import { listenWatchPresence } from '../services/watchPresence'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { recordTimezoneContext } from '../services/timezoneContext'
 import { importPendingFaceBursts } from '../services/faceBursts'
+import { readFaceOnOpen } from '../services/faceAppOpen'
 import { importPendingEveningNotes, syncEveningNote } from '../services/eveningNote'
 
 /**
@@ -46,6 +47,9 @@ export function useAutoSync() {
       if (r?.inserted) window.dispatchEvent(new CustomEvent('health-entries-updated'))
     })
     faces()
+    // Variante play (sans service caméra) : une lecture du visage à l'ouverture, signalée à l'écran, puis rangée.
+    const readOnOpen = () => readFaceOnOpen().then((outcome) => outcome && faces())
+    readOnOpen()
     // Note du soir d'un geste (I113) : notes données depuis la notification rangées, puis heure et dernière note
     // transmises au natif (pas de notification un soir déjà noté).
     const evening = () => importPendingEveningNotes().finally(() => syncEveningNote())
@@ -59,6 +63,7 @@ export function useAutoSync() {
       if (document.visibilityState !== 'visible') return
       recordTimezoneContext()
       faces()
+      readOnOpen()
       evening()
       syncWatchIfStale()
     }
