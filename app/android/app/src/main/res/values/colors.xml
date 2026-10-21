@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- AppTheme (styles.xml) -->
-    <color name="colorPrimary">#26A69A</color>
-    <color name="colorPrimaryDark">#1E8A80</color>
-    <color name="colorAccent">#26A69A</color>
+    <!-- AppTheme (styles.xml) — émeraude de la marque (journal/DESIGN.md, src/styles/tokens.css) -->
+    <color name="colorPrimary">#0B7A5E</color>
+    <color name="colorPrimaryDark">#10231D</color>
+    <color name="colorAccent">#0B7A5E</color>
 </resources>

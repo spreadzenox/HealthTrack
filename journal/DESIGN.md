@@ -139,6 +139,6 @@ fera adapter l'icône : ne pas l'anticiper.
 | Étape | Contenu | État |
 |---|---|---|
 | (i) | Tokens (variables CSS) + polices embarquées + thème clair par défaut ; thème sombre en option recalé | 🟡 21/10 00:30 — voir le compte rendu du run |
-| (ii) | Icône adaptative Android + monochrome + icône de notification + écran de démarrage | ⬜ |
+| (ii) | Icône adaptative Android + monochrome + icône de notification + écran de démarrage | ✅ 21/10 04:30 — glyphe réduit à 90 % (coin le plus éloigné à 31,8 dp du centre, zone sûre 33) ; logo de l'en-tête et icône Play 512 px générés par `app/scripts/brand/render-icons.mjs` |
 | (iii) | Écran Accueil « Aujourd'hui » selon la maquette | ⬜ |
 | (iv+) | Chaque écran quand le chantier produit le touche (onboarding, pistes, paywall, Journal, Sources) | ⬜ |

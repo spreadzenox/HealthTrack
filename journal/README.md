@@ -53,6 +53,17 @@ GitHub → Actions → « Play — AAB » → dernier run vert → artefact en b
 interne → importer l'`.aab` (pas à pas dans [`PRODUIT.md`](PRODUIT.md), §4). Prochain run de
 code : l'icône « H nuit » et l'écran de démarrage.
 
+**Run du 21/10 04:30 — la nouvelle icône « H nuit » (identité visuelle, étape 2 sur 3).** Ce que vous verrez dans la
+**v192** : sur l'écran d'accueil du téléphone, l'icône HealthTrack devient le **H blanc sur fond encre**, avec sa barre
+centrale en courbe menthe et le point ambre ; elle suit les **icônes à thème** d'Android 13+ si vous les avez activées
+(Fond d'écran et style → Icônes à thème). L'**écran de démarrage** passe au même fond encre avec le glyphe, et **toutes
+les notifications** de l'app (Lecture du visage, note du soir, montre) portent ce H au lieu d'icônes Android génériques.
+Le petit logo en haut de l'app change aussi. Rien ne change dans vos données. En coulisses : un test vérifie que le
+glyphe reste dans la zone sûre des icônes rondes et carrées, et l'**icône 512 × 512 de la fiche Play** est déjà prête
+(`app/store/play-icon-512.png`). Note : un lanceur garde parfois l'ancienne icône en cache après la mise à jour ; un
+redémarrage du téléphone suffit. Prochain run de code : **3b** (lecture du visage conforme aux règles Play,
+explications avant chaque autorisation sensible), puis l'écran Accueil de la maquette.
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -430,6 +441,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 21/10 04:30 — [Identité visuelle (ii) : icône « H nuit »](runs/2026-10-21-0430-icone-h-nuit.md) | 🧭🎨 | Icône adaptative + monochrome + notification (5 notifications) + écran de démarrage (API SplashScreen) + logo de l'en-tête ; PNG et icône Play 512 px générés par `scripts/brand/render-icons.mjs` ; test-garde (zone sûre, couleurs) ; 1 666 Vitest ; PR à venir |
 | 21/10 02:30 — [Jalon 3a : variantes play / sideload](runs/2026-10-21-0230-variantes-play-sideload.md) | 🧭📦 | Flavors `sideload` (`com.healthtrack.app`) / `play` (`fr.jpesquet.sante`, sans `REQUEST_INSTALL_PACKAGES` ni mise à jour), `VITE_DISTRIBUTION`, versionCode croissant, workflow « Play — AAB » (WIF → Secret Manager → AAB signé ; attend P9) ; correctif de date dans `loadNutritionEntries` ; 1 660 Vitest ; PR #242 → **v191, 33,7 Mo** + AAB play 330 signé |
 | 21/10 00:30 — [Identité visuelle (i) : tokens, polices, thème clair](runs/2026-10-21-0030-design-tokens.md) | 🧭🎨 | `INFRA.md` + `DESIGN.md` créés, PRODUIT / BACKLOG revus (Vertex AI sans clé, actions du propriétaire pas à pas) ; `theme/tokens.css` seule source des couleurs (~240 couleurs brutes remplacées), Figtree + IBM Plex Mono embarquées, clair par défaut, Apparence dans Paramètres, `SystemBarsPlugin` ; 1 653 Vitest ; PR #240 → **v190, 33,7 Mo** |
 | 20/10 22:30 — [Chantier produit : PRODUIT.md + « bien-être » partout (jalons 1 et 2a)](runs/2026-10-20-2230-produit-cadre.md) | 🧭🙂 | Décisions du 20/10 au soir reportées (PRODUIT.md, charte §000000000, BACKLOG) ; libellés visibles « humeur » → « bien-être » ; test-garde `wording.test.js` ; 1 642 Vitest ; PR #238 → **v189, 33,6 Mo** |

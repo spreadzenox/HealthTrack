@@ -461,7 +461,7 @@ public class FaceSenseService extends Service {
         PendingIntent stop = PendingIntent.getService(this, 1,
                 new Intent(this, FaceSenseService.class).setAction(ACTION_STOP), immutable);
         return new NotificationCompat.Builder(this, CHANNEL)
-                .setSmallIcon(android.R.drawable.ic_menu_camera)
+                .setSmallIcon(R.drawable.ic_stat_healthtrack)
                 .setContentTitle("Lecture du visage active")
                 .setContentText("Quelques images au déverrouillage, analysées sur le téléphone puis effacées.")
                 .setPriority(NotificationCompat.PRIORITY_MIN)

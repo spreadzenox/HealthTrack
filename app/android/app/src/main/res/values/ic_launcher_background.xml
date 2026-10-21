@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#1a1a2e</color>
+    <!-- Encre #10231D : fond de l'icône « H nuit » et de l'écran de démarrage (journal/DESIGN.md). -->
+    <color name="ic_launcher_background">#10231D</color>
 </resources>
