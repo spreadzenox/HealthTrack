@@ -294,7 +294,7 @@ export default function BleDevices({
                 ))}
               </ul>
               <p className="my-device-meta">
-                Retrouvez-les dans « Vos derniers jours » et les Analyses. Une mesure isolée compte peu : c’est la tendance qui parle.
+                Retrouvez-les dans « Vos derniers jours » et vos Pistes. Une mesure isolée compte peu : c’est la tendance qui parle.
                 Une estimation, pas un diagnostic — en cas de valeur inhabituelle, parlez-en à un professionnel de santé.
               </p>
             </>

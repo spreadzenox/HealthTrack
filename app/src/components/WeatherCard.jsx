@@ -119,7 +119,7 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
         <>
           <p className="my-devices-intro">
             Température, soleil, pression atmosphérique, qualité de l’air et pollens arrivent tout seuls chaque jour
-            (et les 3 derniers mois d’un coup). Les Analyses vérifient s’ils pèsent sur <em>votre</em> bien-être.
+            (et les 3 derniers mois d’un coup). Vos Pistes vérifient s’ils pèsent sur <em>votre</em> bien-être.
             Seule une position arrondie (≈ 10 km) est envoyée au service gratuit Open-Meteo : aucune donnée de santé.
           </p>
           <button type="button" className="btn btn-primary connector-btn" onClick={usePosition} disabled={busy}>
@@ -170,7 +170,7 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
           {drop && (
             <p className="weather-note">
               Pression en forte baisse : souvent citée comme déclencheur de maux de tête chez les personnes sensibles.
-              Les Analyses vérifient si c’est votre cas.
+              Vos Pistes vérifient si c’est votre cas.
             </p>
           )}
           {settings.lastError && <p className="weather-error">{settings.lastError}</p>}

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import JournalTabs from '../components/JournalTabs'
 import { useLocation, useNavigate } from 'react-router-dom'
 import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
@@ -115,7 +116,7 @@ export default function Food() {
   const analyze = async () => {
     if (!file) return
     if (!hasGeminiApiKey()) {
-      setError('Ajoutez votre clé API Gemini dans Plus → Paramètres pour analyser une photo.')
+      setError('Ajoutez votre clé API Gemini dans Réglages (roue en haut à droite) → Paramètres pour analyser une photo.')
       return
     }
     setLoading(true)
@@ -173,6 +174,7 @@ export default function Food() {
 
   return (
     <section className="food-page">
+      <JournalTabs />
       <h2 className="page-title">Alimentation</h2>
 
       <div

@@ -1,4 +1,4 @@
-/* Barre d'onglets fixée en bas, à portée de pouce (5 entrées, cibles ≥ 56 px). */
+/* Barre d'onglets fixée en bas, à portée de pouce (4 onglets de la maquette, cibles ≥ 56 px). */
 .tabbar {
   position: fixed;
   left: 0;
@@ -50,9 +50,8 @@
   stroke-linejoin: round;
 }
 
-.tabbar-icon circle {
-  fill: currentColor;
-  stroke: none;
+.tabbar-icon .tabbar-dot {
+  fill: none;
 }
 
 .tabbar-link.active {
@@ -77,13 +76,77 @@
   white-space: nowrap;
 }
 
-.tabbar-badge {
+/* Bouton « Réglages » en haut à droite (Données, Paramètres, Nouveautés). */
+.settings-button {
+  position: relative;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.settings-button.active {
+  color: var(--accent);
+  background: rgba(var(--brand-rgb), 0.15);
+}
+
+.settings-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.settings-button-badge {
   position: absolute;
-  top: 3px;
-  right: 14px;
+  top: 8px;
+  right: 8px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--color-danger);
-  box-shadow: 0 0 0 2px rgba(var(--bg-rgb), 0.96);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+/* Sous-onglets du Journal : Repas | Nutrition (pilules, cibles ≥ 44 px). */
+.journal-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 12px;
+}
+
+.journal-tab {
+  flex: 1 1 0;
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border);
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.journal-tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--color-on-brand);
+}
+
+.journal-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

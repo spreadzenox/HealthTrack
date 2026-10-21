@@ -16,11 +16,15 @@ describe('More page', () => {
 
   it('links to every secondary page', () => {
     renderMore()
-    expect(screen.getByRole('heading', { name: 'Plus' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Réglages' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Données/ })).toHaveAttribute('href', '/data')
-    expect(screen.getByRole('link', { name: /Connecteurs/ })).toHaveAttribute('href', '/connectors')
     expect(screen.getByRole('link', { name: /Paramètres/ })).toHaveAttribute('href', '/settings')
     expect(screen.getByRole('link', { name: /Nouveautés/ })).toHaveAttribute('href', '/nouveautes')
+  })
+
+  it('no longer lists the sources, which have their own tab', () => {
+    renderMore()
+    expect(screen.queryByRole('link', { name: /Connecteurs|Sources/ })).not.toBeInTheDocument()
   })
 
   it('tells how many news are unread', () => {

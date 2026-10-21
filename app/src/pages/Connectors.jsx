@@ -449,7 +449,7 @@ export default function Connectors() {
 
   return (
     <section className="food-page">
-      <h2 className="page-title">Connecteurs</h2>
+      <h2 className="page-title">Vos sources</h2>
       <p className="page-intro">
         Ce qui envoie déjà vos mesures, puis ce qui reste à brancher. Tout reste <strong>sur cet appareil</strong>.
       </p>

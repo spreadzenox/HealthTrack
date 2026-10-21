@@ -131,7 +131,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
         <p className="results-hint">
           {describable && canDescribe ? 'Ou cherchez' : 'Cherchez'} chaque aliment ci-dessous, puis
           ajustez les grammes.{!canDescribe && ' Rien n’est envoyé en ligne.'}
-          {describable && !canDescribe && ' Pour décrire le repas en quelques mots, ajoutez une clé Gemini dans Plus → Paramètres.'}
+          {describable && !canDescribe && ' Pour décrire le repas en quelques mots, ajoutez une clé Gemini dans Réglages (roue en haut à droite) → Paramètres.'}
         </p>
       )}
       <div className="sme-time">

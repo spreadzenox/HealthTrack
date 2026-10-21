@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import JournalTabs from '../components/JournalTabs'
 import { Link } from 'react-router-dom'
 import { loadNutritionEntries } from '../services/nutritionData'
 import { getBodyProfile, getLatestBodyComposition } from '../services/bodyProfile'
@@ -76,7 +77,8 @@ export default function Nutrition() {
   if (loading) {
     return (
       <section className="food-page nutrition-page">
-        <h2 className="page-title">Nutrition</h2>
+        <JournalTabs />
+      <h2 className="page-title">Nutrition</h2>
         <p>Chargement…</p>
       </section>
     )
@@ -84,6 +86,7 @@ export default function Nutrition() {
 
   return (
     <section className="food-page nutrition-page">
+      <JournalTabs />
       <h2 className="page-title">Nutrition</h2>
 
       <BodyProfileCard profile={profile} composition={bodyComp} onSaved={load} />

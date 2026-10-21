@@ -5,6 +5,8 @@ import WellbeingPrompt from './components/WellbeingPrompt'
 import WhatsNewBanner from './components/WhatsNewBanner'
 import FaceReadIndicator from './components/FaceReadIndicator'
 import TabBar from './components/TabBar'
+import SettingsButton from './components/SettingsButton'
+import { APP_NAME } from './config/brand'
 import { useAutoSync } from './hooks/useAutoSync'
 import './App.css'
 
@@ -33,7 +35,8 @@ export default function Layout() {
       <FaceReadIndicator />
       <header className="header">
         <img className="header-logo" src="/favicon.svg" alt="" width={32} height={32} decoding="async" />
-        <h1>HealthTrack</h1>
+        <h1>{APP_NAME}</h1>
+        <SettingsButton />
       </header>
       <main className="main">
         <WhatsNewBanner />
