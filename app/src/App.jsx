@@ -13,6 +13,7 @@ const withNutrition = (load) => lazy(() => Promise.all([load(), loadNutritionTab
 const Food = withNutrition(() => import('./pages/Food'))
 const Nutrition = withNutrition(() => import('./pages/Nutrition'))
 const Recommendations = withNutrition(() => import('./pages/Recommendations'))
+const Journal = lazy(() => import('./pages/Journal'))
 const Data = lazy(() => import('./pages/Data'))
 const Connectors = lazy(() => import('./pages/Connectors'))
 const Settings = lazy(() => import('./pages/Settings'))
@@ -27,6 +28,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
+            <Route path="journal" element={<Journal />} />
             <Route path="food" element={<Food />} />
             <Route path="nutrition" element={<Nutrition />} />
             <Route path="data" element={<Data />} />

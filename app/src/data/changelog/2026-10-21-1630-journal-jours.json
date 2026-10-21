@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-21",
+  "kind": "amélioration",
+  "title": "« Vos derniers jours » passe dans l'onglet Journal",
+  "items": [
+    "L'onglet Journal s'ouvre maintenant sur « Jours » : chaque journée avec ce que vos sources ont mesuré (sommeil, pas, cœur, écran, météo…) et ce que vous avez noté (repas, ventre, bien-être, cigarettes). Les boutons « Repas » et « Nutrition » restent juste à côté.",
+    "L'accueil est plus court : il garde le résumé du jour, vos mesures, votre ventre et vos pistes ; un bouton « Vos derniers jours, dans le Journal » y mène.",
+    "Modifier, Refaire et Supprimer fonctionnent comme avant. Aucune donnée ne bouge."
+  ]
+}

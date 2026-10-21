@@ -1,4 +1,5 @@
 .food-page .page-title,
+.journal-page .page-title,
 .dashboard .page-title {
   margin: 0 0 8px;
   font-size: 1.25rem;
@@ -6,6 +7,7 @@
 }
 
 .food-page .page-intro,
+.journal-page .page-intro,
 .dashboard-intro {
   margin: 0 0 20px;
   font-size: 0.9rem;
