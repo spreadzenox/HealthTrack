@@ -144,6 +144,11 @@ describe('moodFaceBursts (entrées Y de l’humeur, I114)', () => {
     expect(kept).toHaveLength(1)
     expect(kept[0].payload.trigger).toBe('unlock')
   })
+
+  it('variante play : les lectures à l’ouverture de HealthTrack comptent, jamais celles d’une autre app', () => {
+    const kept = moodFaceBursts([entry('app_open'), entry('other_app'), entry('app_open', 0, undefined)])
+    expect(kept.map((e) => e.payload.trigger)).toEqual(['app_open'])
+  })
 })
 
 describe('faceHistorySummary', () => {

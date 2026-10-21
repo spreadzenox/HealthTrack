@@ -10,6 +10,8 @@ vi.mock('../services/spo2Slots', () => ({ compactWatchSpo2Once: vi.fn(async () =
 vi.mock('../services/timezoneContext', () => ({ recordTimezoneContext: vi.fn() }))
 const importFaces = vi.fn(async () => ({ imported: 0 }))
 vi.mock('../services/faceBursts', () => ({ importPendingFaceBursts: (...a) => importFaces(...a) }))
+const readOnOpen = vi.fn(async () => null)
+vi.mock('../services/faceAppOpen', () => ({ readFaceOnOpen: (...a) => readOnOpen(...a) }))
 vi.mock('../services/watchAutoSync', () => ({ syncWatchIfStale: (...a) => sync(...a), WATCH_FOREGROUND_CHECK_MS: 5 * 60_000 }))
 
 import { useAutoSync } from './useAutoSync'
@@ -18,6 +20,7 @@ afterEach(() => {
   vi.useRealTimers()
   sync.mockClear()
   importFaces.mockClear()
+  readOnOpen.mockClear()
 })
 
 describe('useAutoSync — lecture du visage (I90)', () => {
@@ -26,6 +29,18 @@ describe('useAutoSync — lecture du visage (I90)', () => {
     expect(importFaces).toHaveBeenCalledTimes(1)
     document.dispatchEvent(new Event('visibilitychange'))
     expect(importFaces).toHaveBeenCalledTimes(2)
+    unmount()
+  })
+
+  it('variante play : tente une lecture à l’ouverture et à chaque retour, et range la lecture faite', async () => {
+    readOnOpen.mockImplementationOnce(async () => 'face')
+    const { unmount } = renderHook(() => useAutoSync())
+    expect(readOnOpen).toHaveBeenCalledTimes(1)
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(importFaces).toHaveBeenCalledTimes(2) // ouverture + lecture faite
+    document.dispatchEvent(new Event('visibilitychange'))
+    expect(readOnOpen).toHaveBeenCalledTimes(2)
     unmount()
   })
 })

@@ -14,11 +14,19 @@ describe('divulgations avant les autorisations sensibles', () => {
     }
   })
 
-  it('caméra : transparence de l’AI Act (reconnaissance des émotions), estimation, aucune image gardée', () => {
-    const text = DISCLOSURES.camera.points.join(' ')
+  it.each(['camera', 'camera_app_open'])('%s : transparence de l’AI Act (reconnaissance des émotions), estimation, aucune image gardée', (key) => {
+    const text = DISCLOSURES[key].points.join(' ')
     expect(text).toMatch(/reconnaissance des émotions/)
     expect(text).toMatch(/pas un diagnostic/)
     expect(text).toMatch(/Aucune image/)
+  })
+
+  it('variante play : dit quand la caméra lit (à l’ouverture de l’app, signalée à l’écran, jamais app fermée)', () => {
+    const text = DISCLOSURES.camera_app_open.points.join(' ')
+    expect(text).toMatch(/ouvrez HealthTrack/)
+    expect(text).toMatch(/bandeau/)
+    expect(text).toMatch(/app est fermée/)
+    expect(text).not.toMatch(/déverrouill|notification reste/)
   })
 
   it('un accès non décrit est une erreur (on ne demande jamais sans prévenir)', () => {
@@ -27,14 +35,15 @@ describe('divulgations avant les autorisations sensibles', () => {
 
   // Chaque écran qui déclenche une demande sensible passe par la divulgation.
   const GUARDED = [
-    ['src/components/FaceSenseCard.jsx', /startFaceSense\(/, "askConsent('camera')"],
+    ['src/components/FaceSenseCard.jsx', /startFaceSense\(/, /askConsent\(appOpen \? 'camera_app_open' : 'camera'\)/],
     ['src/components/WeatherCard.jsx', /getCurrentPosition\(/, "askConsent('location')"],
     ['src/components/PhoneUsageCard.jsx', /openSettings\(\)/, "askConsent('usage')"],
   ]
   it.each(GUARDED)('%s demande l’accord avant la demande à Android', (file, request, consent) => {
     const code = fs.readFileSync(path.resolve(file), 'utf8')
     expect(code).toMatch(request)
-    expect(code).toContain(consent)
+    if (consent instanceof RegExp) expect(code).toMatch(consent)
+    else expect(code).toContain(consent)
   })
 
   it('aucun autre écran ne lit la position ni ne démarre la caméra sans divulgation', () => {

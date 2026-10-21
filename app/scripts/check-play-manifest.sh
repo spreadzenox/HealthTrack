@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Vérifie les manifestes fusionnés des deux variantes (journal/PRODUIT.md, jalon 3), après un build Gradle :
 #   - play     : identifiant fr.jpesquet.sante, AUCUNE permission REQUEST_INSTALL_PACKAGES (refusée par Google Play
-#                pour une app qui n'est pas un magasin d'applications) ;
-#   - sideload : identifiant historique com.healthtrack.app, avec REQUEST_INSTALL_PACKAGES (mise à jour en un clic).
+#                pour une app qui n'est pas un magasin d'applications), ni service caméra de premier plan, ni
+#                exemption de batterie (journal/PLAY-CONFORMITE.md), ni écriture Health Connect (I131) ;
+#   - sideload : identifiant historique com.healthtrack.app, avec REQUEST_INSTALL_PACKAGES (mise à jour en un clic)
+#                et la lecture du visage au déverrouillage (FaceSenseService).
 # Usage : bash scripts/check-play-manifest.sh [--play-only]
 #         (depuis app/, après ./gradlew bundlePlayRelease assembleSideloadDebug ; --play-only après bundlePlayRelease seul)
 set -euo pipefail
@@ -30,6 +32,20 @@ check() {
     [ "$install" = "yes" ] || { echo "::error::$variant : REQUEST_INSTALL_PACKAGES ne doit pas y être ($m)"; fail=1; }
   else
     [ "$install" = "no" ] || { echo "::error::$variant : REQUEST_INSTALL_PACKAGES manquante ($m)"; fail=1; }
+  fi
+  # Lecture du visage au déverrouillage : sideload seulement
+  local face=no
+  [ "$install" = "yes" ] && face=yes
+  for needle in '.FaceSenseService"' 'android.permission.FOREGROUND_SERVICE_CAMERA' 'android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'; do
+    if grep -qF "$needle" "$m"; then
+      [ "$face" = "yes" ] || { echo "::error::$variant : $needle ne doit pas y être ($m)"; fail=1; }
+    else
+      [ "$face" = "no" ] || { echo "::error::$variant : $needle manquant ($m)"; fail=1; }
+    fi
+  done
+  if [ "$face" = "no" ] && grep -q 'android.permission.health.WRITE_' "$m"; then
+    echo "::error::$variant : permissions d'écriture Health Connect présentes ($m)"
+    fail=1
   fi
   echo "$variant : $m vérifié"
 }

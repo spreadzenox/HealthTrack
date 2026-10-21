@@ -51,7 +51,7 @@ const EXTRA_READ_TYPES = [
   'bodyFat',
 ]
 
-const READ_TYPES = [...CORE_READ_TYPES, ...EXTRA_READ_TYPES]
+export const READ_TYPES = [...CORE_READ_TYPES, ...EXTRA_READ_TYPES]
 
 /** Libellés français des types Health Connect (écran Connecteurs). */
 export const READ_TYPE_LABELS = {

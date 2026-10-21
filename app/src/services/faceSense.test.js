@@ -15,6 +15,8 @@ import {
   faceStopCause,
   isSamsungDevice,
   openFaceNeverSleep,
+  readFaceNow,
+  isAppOpenMode,
 } from './faceSense'
 
 const active = {
@@ -42,6 +44,40 @@ const active = {
   sdk: 36,
   pending: 9,
 }
+
+describe('variante play : lecture à l’ouverture de l’app', () => {
+  const appOpen = { models: true, enabled: true, permission: true, running: false, mode: 'app_open', dayAppOpens: 3, dayAppOpenFaces: 2 }
+
+  it('active sans service : jamais « Arrêtée », des comptes de lectures à l’ouverture', () => {
+    expect(isAppOpenMode(appOpen)).toBe(true)
+    expect(isAppOpenMode(active)).toBe(false)
+    const d = describeFaceSense(appOpen)
+    expect(d).toMatchObject({ state: 'active', badge: 'Active' })
+    expect(d.lines[0]).toBe('Aujourd’hui : 3 lectures à l’ouverture de l’app, visage lu 2 fois.')
+    expect(describeFaceSense({ ...appOpen, dayAppOpens: 0 }).lines[0]).toMatch(/prochaine ouverture/)
+    expect(describeFaceSense({ ...appOpen, permission: false }).state).toBe('denied')
+    expect(describeFaceSense({ ...appOpen, enabled: false }).state).toBe('off')
+  })
+
+  it('diagnostic : le mode remplace le service et la batterie', () => {
+    const lines = faceDiagnosticLines({ ...appOpen, attempts: JSON.stringify([{ at: Date.UTC(2026, 9, 21, 8, 5), trigger: 'app_open', outcome: 'face' }]) })
+    expect(lines[0]).toMatch(/^Mode : à l’ouverture de l’app/)
+    expect(lines.join('\n')).not.toMatch(/batterie/i)
+    expect(lines.join('\n')).toMatch(/ouverture de l’app → visage lu/)
+    // reliquats éventuels du service (sideload) jamais montrés en play
+    const leftovers = faceDiagnosticLines({ ...appOpen, startedAt: 1, lastUpdateAt: 2, bootAt: 0, enabled: true, dayUnlocks: 4, cameraOp: 'foreground', retries: 2, resumeNotices: 1 })
+    expect(leftovers.join('\n')).not.toMatch(/Arrêt|déverrouillage|Accès caméra|2e essais|Reprendre/)
+    expect(faceDiagnosticReport(appOpen, { appVersion: 'test' }).service.mode).toBe('app_open')
+    expect(faceDiagnosticReport(active, { appVersion: 'test' }).service.mode).toBe('unlock')
+  })
+
+  it('readFaceNow rend le résultat du natif, null sans plugin ni méthode, sans jamais lever', async () => {
+    expect(await readFaceNow({ readNow: async () => ({ outcome: 'face' }) })).toBe('face')
+    expect(await readFaceNow({ readNow: async () => { throw new Error('x') } })).toBe(null)
+    expect(await readFaceNow({})).toBe(null)
+    expect(await readFaceNow(null)).toBe(null)
+  })
+})
 
 describe('describeFaceSense', () => {
   it('suit l’état du service', () => {

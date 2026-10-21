@@ -195,7 +195,7 @@ public class FaceSenseService extends Service {
     }
 
     /** Nouveau jour : les compteurs « day… » repartent de zéro. */
-    private static void rollDay(SharedPreferences p, long now) {
+    static void rollDay(SharedPreferences p, long now) {
         String day = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date(now));
         if (day.equals(p.getString("day", null))) return;
         SharedPreferences.Editor e = p.edit().putString("day", day);
@@ -434,7 +434,7 @@ public class FaceSenseService extends Service {
         return mode == AudioManager.MODE_IN_CALL || mode == AudioManager.MODE_IN_COMMUNICATION;
     }
 
-    private static double thermal(PowerManager pm) {
+    static double thermal(PowerManager pm) {
         if (pm == null || Build.VERSION.SDK_INT < 30) return Double.NaN;
         return pm.getThermalHeadroom(10);
     }

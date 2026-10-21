@@ -47,6 +47,8 @@
  *                                                                      --face=blocked : caméra refusée en arrière-plan ;
  *                                                                      --face=nomodel : modèle valence / éveil absent ;
  *                                                                      --face-diag : Diagnostic de la carte déplié
+ *   npm run visual -- --play --routes=/connectors --face   # variante play (VITE_DISTRIBUTION=play) : lecture à l'ouverture ;
+ *                                                        --face=reading : bandeau « Lecture du visage » en cours (jalon 3b-2)
  *   npm run visual -- --routes=/connectors --face=off --disclosure=camera  # divulgation avant la caméra (jalon 3b) ;
  *                                                     --phone=ask --disclosure=usage, --disclosure=location (sans données de démo : --empty)
  *   npm run visual -- --routes=/ --wellbeing-prompt --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
@@ -178,7 +180,7 @@ async function main() {
     server = spawn(join(APP_DIR, 'node_modules/.bin/vite'), ['--port', String(port), '--strictPort', '--host', '127.0.0.1'], {
       cwd: APP_DIR,
       stdio: ['ignore', 'pipe', 'pipe'],
-      env: { ...process.env, BROWSER: 'none' },
+      env: { ...process.env, BROWSER: 'none', ...(args.play ? { VITE_DISTRIBUTION: 'play' } : {}) },
     })
     server.stderr.on('data', (d) => process.stderr.write(`[vite] ${d}`))
   }
@@ -530,7 +532,7 @@ async function main() {
     }
     if (args.face) {
       // « Lecture du visage » : faux plugin FaceSense (lu par src/services/faceSense.js). Jamais de score.
-      await context.addInitScript((mode) => {
+      await context.addInitScript(([mode, play]) => {
         const on = mode !== 'off'
         try {
           localStorage.setItem('healthtrack_face_sense', JSON.stringify({ enabled: on }))
@@ -561,6 +563,10 @@ async function main() {
               ...(mode === 'blocked' ? { detail: 'onError:3' } : {}) },
           ]),
         }
+        // Variante play (--play) : pas de service, lectures à l'ouverture de l'app ; --face=reading : lecture en cours.
+        // (intervalle de 30 min côté JS remis à zéro : la page est rechargée après le remplissage des données)
+        if (play) localStorage.removeItem('healthtrack_face_app_open')
+        if (play) Object.assign(status, { mode: 'app_open', running: false, dayAppOpens: 3, dayAppOpenFaces: 2, lastTrigger: 'app_open' })
         // 11 rafales en attente (scores fictifs) sur 3 jours, rangées dans l'historique à l'affichage de la carte (I90)
         let bursts = Array.from({ length: 11 }, (_, i) => ({
           name: `capture-${i}-000.json`,
@@ -579,6 +585,7 @@ async function main() {
           requestBatteryExemption: async () => {},
           openNeverSleep: async () => ({ opened: 'samsung' }),
           prepareAffect: async () => ({ ready: mode !== 'nomodel', downloading: mode === 'nomodel' }),
+          ...(play ? { readNow: () => new Promise((r) => setTimeout(() => r({ outcome: 'face' }), mode === 'reading' ? 600000 : 50)) } : {}),
         }
         // Sonde vocale (I124) : un A56 plausible, français téléchargeable mais pas encore installé.
         window.__healthtrackFakeVoiceProbe = {
@@ -586,7 +593,7 @@ async function main() {
             defaultService: 'com.google.android.as', services: ['com.google.android.as', 'com.samsung.android.bixby.agent'],
             support: { installed: ['en-US'], pending: [], supported: ['fr-FR', 'de-DE'], online: [] }, errors: [] }),
         }
-      }, String(args.face))
+      }, [String(args.face), !!args.play])
     }
     if (args['evening-note']) {
       await context.addInitScript((mode) => {

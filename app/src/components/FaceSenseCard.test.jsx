@@ -50,6 +50,23 @@ describe('FaceSenseCard', () => {
     expect(screen.getByText('Aujourd’hui : 3 déverrouillages, 3 lectures, visage lu 2 fois.')).toBeInTheDocument()
   })
 
+  it('variante play : divulgation « à l’ouverture », première lecture tout de suite, ni batterie ni Samsung', async () => {
+    const plugin = fake({ ...base, enabled: false, running: false, batteryExempt: false, manufacturer: 'samsung', mode: 'app_open', dayAppOpens: 1, dayAppOpenFaces: 1 })
+    const readOnOpen = vi.fn(async () => 'face')
+    render(<FaceSenseCard plugin={plugin} appOpen readOnOpen={readOnOpen} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText(/quand vous ouvrez HealthTrack/)).toBeInTheDocument()
+    expect(screen.queryByText(/à chaque déverrouillage/)).not.toBeInTheDocument()
+    fireEvent.click(await screen.findByRole('button', { name: 'Activer la lecture du visage' }))
+    expect(await screen.findByText(/Un bandeau l’indique/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'J’accepte, autoriser la caméra' }))
+    await waitFor(() => expect(readOnOpen).toHaveBeenCalledWith({ enabled: true, plugin }))
+    expect(await screen.findByText('Active')).toBeInTheDocument()
+    expect(screen.getByText('Aujourd’hui : 1 lecture à l’ouverture de l’app, visage lu 1 fois.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Sans restriction' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/Applis jamais en veille/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Shizuku/)).not.toBeInTheDocument()
+  })
+
   it('active : comptes, jamais de score ; diagnostic et désactivation', async () => {
     const plugin = fake({ ...base, values: { smile: 0.42 }, lastOutcome: 'face' })
     const save = vi.fn(async () => 'ok enregistré')

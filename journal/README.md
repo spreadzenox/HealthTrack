@@ -97,6 +97,19 @@ bien qu'un essai de 7 et bien mieux qu'un de 3 ; plus de 80 % des essais démarr
 groupe *Santé et remise en forme*, pas « Gestion des maladies » (classé Médical). Détail : [`IDEES.md`](IDEES.md)
 I130–I138. **👉 Votre prochaine action la plus utile reste P8 puis P10** dès que Google a validé votre compte.
 
+**Run du 21/10 10:30 — la version Google Play lit le visage à l'ouverture de l'app (jalon 3b, étape 2).** Dans
+**votre** app (sideload, GitHub), rien ne change : la lecture au déverrouillage continue. La future version **Play**,
+elle, n'a plus de service caméra en arrière-plan (Google le refuserait) : quand on ouvre l'app — au plus une fois par
+demi-heure —, un **bandeau menthe « Lecture du visage · regardez l'écran une seconde »** apparaît pendant la lecture,
+puis « Bien-être lu · quelques nombres gardés, aucune image ». L'explication avant d'autoriser la caméra le dit, la
+carte et le diagnostic s'adaptent (plus de « Sans restriction », ni d'« Applis jamais en veille »). En coulisses :
+la version Play ne demande plus que les **15 types Health Connect qu'on lit vraiment** (le module en déclarait 41,
+dont 20 en écriture) — Google refuse les autres ; la justification par type pour le formulaire Health Connect (P16)
+est prête dans [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md). Ce qui sera publié : la version sideload suivante (même
+contenu pour vous) et un nouvel AAB play. **👉 Votre prochaine action la plus utile reste P8 puis P10** (envoyer
+le dernier AAB `HealthTrack-play-NNN` en test interne). Prochain run de code : l'**écran Accueil « Aujourd'hui »** de
+la maquette et la navigation en 4 onglets.
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -474,6 +487,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 21/10 10:30 — [Jalon 3b-2 : variante play sans service caméra](runs/2026-10-21-1030-visage-ouverture-play.md) | 🧭🛡️ | Play : lecture du visage à l'ouverture de l'app (`FaceOneShot`, 1 / 30 min) + bandeau visible, sans FGS caméra / relance / exemption de batterie ; 15 permissions Health Connect (I131, −26) ; justification HC par type ; 1 693 Vitest, 119 JUnit ; sideload inchangée |
 | 21/10 08:30 — [Idées : Health Connect jour 1, pistes SII avec délais, paywall Play](runs/2026-10-21-0830-idees-produit-hc-sii-paywall.md) | 💡 | PR #246 revérifiée et **fusionnée** (v193, 33,7 Mo ; AAB play 333), #245 fermée ; veille → I130–I138 (30 j Health Connect d'office, permissions HC réduites, 3 fenêtres de délai + seuil par simulation, réintroduction Monash, paywall conforme : « 2,50 €/mois » secondaire) ; P16 ajouté |
 | 21/10 06:30 — [Jalon 3b-1 : divulgations avant autorisation](runs/2026-10-21-0630-divulgations.md) | 🧭🛡️ | `PLAY-CONFORMITE.md` (option caméra play : à l'ouverture + lecture rapide, sans FGS ; revue des permissions) ; feuille de divulgation avant caméra / position / temps d'écran + test-garde ; 1 676 Vitest ; PR #246 (fusionnée au run suivant → v193) ; reprend aussi #245 |
 | 21/10 04:30 — [Identité visuelle (ii) : icône « H nuit »](runs/2026-10-21-0430-icone-h-nuit.md) | 🧭🎨 | Icône adaptative + monochrome + notification (5 notifications) + écran de démarrage (API SplashScreen) + logo de l'en-tête ; PNG et icône Play 512 px générés par `scripts/brand/render-icons.mjs` ; test-garde (zone sûre, couleurs) ; 1 666 Vitest ; PR #244 → **v192, 33,7 Mo** + AAB play 332 |

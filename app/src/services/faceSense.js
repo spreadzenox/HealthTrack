@@ -93,6 +93,25 @@ export async function testFaceSense(plugin = faceSensePlugin()) {
 }
 
 /**
+ * Variante play (lecture à l'ouverture de l'app, journal/PLAY-CONFORMITE.md option B) : une lecture maintenant, app
+ * à l'écran. Le natif décide s'il la prend (activée, caméra autorisée, une par demi-heure au plus) : rend le résultat
+ * (« face », « skip:too_soon »…), ou null si le plugin ne sait pas lire à l'ouverture. Ne lève jamais.
+ */
+export async function readFaceNow(plugin = faceSensePlugin()) {
+  if (!plugin?.readNow) return null
+  try {
+    return (await plugin.readNow())?.outcome ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Le natif lit-il à l'ouverture de l'app (play) plutôt qu'au déverrouillage (sideload, ou ancienne version) ? */
+export function isAppOpenMode(status) {
+  return status?.mode === 'app_open'
+}
+
+/**
  * Télécharge le modèle valence / éveil s'il manque (FaceAffectModel : 16 Mo une fois, depuis le dépôt de ses auteurs,
  * empreinte SHA-256 vérifiée ; rien n'est envoyé). Rend { ready, downloading } ; ne lève jamais.
  */
@@ -184,6 +203,9 @@ const OUTCOMES = {
   'skip:hot': 'sautée (téléphone chaud)',
   'skip:no_permission': 'sautée (caméra non autorisée)',
   'skip:no_models': 'sautée (modèle absent)',
+  'skip:not_visible': 'sautée (app plus à l’écran)',
+  'skip:off': 'sautée (lecture désactivée)',
+  error: 'erreur inattendue',
   'camera:camera_busy': 'caméra occupée par une autre app',
   'camera:camera_disabled': 'caméra coupée (accès caméra désactivé dans Android ?)',
   'camera:camera_denied': 'caméra refusée par Android en arrière-plan',
@@ -268,6 +290,15 @@ export function describeFaceSense(status) {
   if (status.models === false) return { state: 'no_models', badge: null, lines: [] }
   if (!status.enabled) return { state: 'off', badge: null, lines: [] }
   if (!status.permission) return { state: 'denied', badge: 'À autoriser', lines: [] }
+  if (isAppOpenMode(status)) {
+    // Variante play : pas de service, une lecture à l'ouverture de l'app (une par demi-heure au plus).
+    const reads = status.dayAppOpens ?? 0
+    const faces = status.dayAppOpenFaces ?? 0
+    const lines = [reads
+      ? `Aujourd’hui : ${plural(reads, 'lecture')} à l’ouverture de l’app, visage lu ${faces} fois.`
+      : 'Aucune lecture aujourd’hui : la prochaine aura lieu à la prochaine ouverture de l’app.']
+    return { state: 'active', badge: 'Active', lines }
+  }
   if (!status.running) return { state: 'stopped', badge: 'Arrêtée', lines: [], cause: faceStopCause(status) }
   const lines = []
   const unlocks = status.dayUnlocks ?? 0
@@ -296,6 +327,7 @@ export function faceDiagnosticReport(status, { appVersion, now = new Date(), his
     appVersion: appVersion ?? null,
     device: { manufacturer: s.manufacturer ?? null, model: s.model ?? null, android: s.release ?? null, sdk: s.sdk ?? null },
     service: {
+      mode: s.mode === 'app_open' ? 'app_open' : 'unlock',
       enabled: !!s.enabled,
       running: !!s.running,
       cameraPermission: !!s.permission,
@@ -452,18 +484,22 @@ const LIGHTING_WORDS = { correcte: 'correcte', 'pénombre': 'souvent dans la pé
 export function faceDiagnosticLines(status, { history = null, lastImport = null, eveningNote = null, voice = null } = {}) {
   const r = faceDiagnosticReport(status, { history, lastImport, eveningNote })
   const lines = []
-  lines.push(`Service : ${r.service.running ? 'actif' : 'arrêté'} · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'} · batterie ${r.service.batteryExempt ? 'sans restriction' : 'optimisée par Android'}`)
-  if (r.service.stopCause) {
+  const appOpen = isAppOpenMode(status)
+  lines.push(appOpen
+    ? `Mode : à l’ouverture de l’app (sans service en arrière-plan) · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'}`
+    : `Service : ${r.service.running ? 'actif' : 'arrêté'} · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'} · batterie ${r.service.batteryExempt ? 'sans restriction' : 'optimisée par Android'}`)
+  // Variante play : ni service, ni déverrouillage, ni relance ; ces lignes ne concernent que la sideload.
+  if (!appOpen && r.service.stopCause) {
     const since = s0(status).startedAt ? ` (démarré le ${new Date(s0(status).startedAt).toLocaleDateString('fr-FR')} à ${hhmm(s0(status).startedAt)})` : ''
     lines.push(`Arrêt : ${STOP_CAUSES[r.service.stopCause]}${since}`)
   }
   const det = r.detection
-  if (det.screenOns || det.unlocks) {
+  if (!appOpen && (det.screenOns || det.unlocks)) {
     const by = Object.entries(det.bySource).filter(([, n]) => n).map(([k, n]) => `${SOURCES[k] || k} ${n}`).join(', ')
     const last = s0(status).lastUnlockAt ? `, le dernier à ${hhmm(s0(status).lastUnlockAt)}` : ''
     lines.push(`Aujourd’hui : écran allumé ${det.screenOns} fois, ${plural(det.unlocks, 'déverrouillage repéré', 'déverrouillages repérés')}${by ? ` (${by})` : ''}${last}`)
   }
-  if (r.camera.op || r.camera.startOrigin) {
+  if (!appOpen && (r.camera.op || r.camera.startOrigin)) {
     const parts = []
     if (r.camera.op) parts.push(`Accès caméra : ${CAMERA_OPS[r.camera.op] || r.camera.op}`)
     if (r.camera.startOrigin) parts.push(`service démarré ${ORIGINS[r.camera.startOrigin] || r.camera.startOrigin}`)
@@ -472,7 +508,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
   const tries = parseAttempts(s0(status).attempts).slice(-5).reverse()
   if (tries.length) {
     lines.push(`Dernières tentatives : ${tries.map((a) => {
-      const who = a.trigger === 'manual' ? 'test' : `déverrouillage${a.source && SOURCES[a.source] ? ` (${SOURCES[a.source]})` : ''}${a.retry ? ', 2e essai' : ''}`
+      const who = a.trigger === 'manual' ? 'test' : a.trigger === 'app_open' ? 'ouverture de l’app' : `déverrouillage${a.source && SOURCES[a.source] ? ` (${SOURCES[a.source]})` : ''}${a.retry ? ', 2e essai' : ''}`
       return `${a.at ? hhmm(a.at) : '—'} ${who} → ${outcomeLabel(a.outcome)}${a.detail ? ` [${a.detail}]` : ''}`
     }).join(' ; ')}`)
   }
@@ -486,7 +522,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
     lines.push(`Batterie : ${r.battery.atStart} % au démarrage, ${r.battery.now} % maintenant (tout le téléphone)`)
   }
   if (r.history.stored != null) {
-    lines.push(`Historique : ${plural(r.history.stored, 'lecture rangée', 'lectures rangées')}, dont ${r.history.forMood} au déverrouillage avec un visage (comptent pour le bien-être estimé)`)
+    lines.push(`Historique : ${plural(r.history.stored, 'lecture rangée', 'lectures rangées')}, dont ${r.history.forMood} ${appOpen ? 'à l’ouverture de l’app' : 'au déverrouillage'} avec un visage (comptent pour le bien-être estimé)`)
   }
   if (r.perDay) {
     const d = r.perDay
@@ -496,7 +532,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
       : `en dessous des ${d.target} visés : l’estimation restera plus incertaine`
     lines.push(`Par jour (médiane sur ${plural(d.days, 'jour')}) : ${unlocks}${plural(d.burstsPerDay, 'lecture')}, ${d.validBurstsPerDay} avec un visage — ${verdict}`)
   }
-  if (r.retries.tried) lines.push(`2e essais (2 s après une lecture sans visage) : ${r.retries.tried}, visage lu ${r.retries.faces} fois`)
+  if (!appOpen && r.retries.tried) lines.push(`2e essais (2 s après une lecture sans visage) : ${r.retries.tried}, visage lu ${r.retries.faces} fois`)
   if (r.estimate) {
     const e = r.estimate
     lines.push(`Bien-être estimé : modèle ${MOOD_MODELS[e.model] || e.model}, confiance ${e.confidence}, ${plural(e.readingsToday, 'lecture')} aujourd’hui, visage habituel sur ${plural(e.baselineDays, 'jour')}${e.agreement ? `, deux modèles : ${e.agreement}` : ''}${e.lighting ? `, lumière ${LIGHTING_WORDS[e.lighting]}` : ''}`)
@@ -535,7 +571,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
   }
   if (r.pendingBursts) lines.push(`En attente d’être rangées : ${r.pendingBursts}`)
   if (r.history.lastImport?.dropped) lines.push(`Lectures illisibles écartées au dernier rangement : ${r.history.lastImport.dropped}`)
-  if (r.resume.notices || r.resume.taps) {
+  if (!appOpen && (r.resume.notices || r.resume.taps)) {
     const c = r.resume.lastCheck
     const check = c ? ` ; dernière vérification : ${RESUME_CHECKS[c] || c}${r.resume.lastCheckTrigger ? ` (${RESUME_TRIGGERS[r.resume.lastCheckTrigger] || r.resume.lastCheckTrigger})` : ''}` : ''
     lines.push(`Notifications « Reprendre » : ${r.resume.notices}, reprise d’un geste ${r.resume.taps} fois${check}`)

@@ -3,6 +3,8 @@
  * ne doit jamais être présentée comme un facteur (X) corrélé à l'humeur. Ce test échoue si une entrée
  * déclarée de l'estimateur apparaît parmi les facteurs des Analyses, des liens décalés ou des tags.
  */
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { ESTIMATOR_INPUTS, isEstimatorInput, ESTIMATOR_TAGS } from './estimatorInputs'
 import { VARIABLE_META, PHONE_APPS_KEYS, buildDailyDataset, computeBasicCorrelations } from '../analysisEngine'
@@ -83,11 +85,15 @@ describe('séparation Y (humeur) / X (comportements et contexte)', () => {
     expect(factors.filter(isEstimatorInput)).toEqual([])
   })
 
-  it("composition (I114) : seules les rafales du déverrouillage comptent pour l'humeur, quel que soit l'usage du téléphone", () => {
-    // Des rafales prises pendant l'usage d'une app (ou un test) suivraient l'usage (un X) : jamais en Y.
-    expect(MOOD_TRIGGERS).toEqual(['unlock'])
+  it("composition (I114) : seules les rafales du déverrouillage ou de l'ouverture de HealthTrack comptent pour le bien-être", () => {
+    // Des rafales prises pendant l'usage d'une autre app (ou un test) suivraient l'usage (un X) : jamais en Y.
+    // `app_open` = ouverture de HealthTrack seulement (variante play, sans service caméra) : HealthTrack est exclu
+    // des facteurs « temps par app » (PhoneUsagePlugin.ignoredPackages), ce n'est donc pas un X.
+    expect(MOOD_TRIGGERS).toEqual(['unlock', 'app_open'])
     const burst = (trigger) => ({ type: FACE_BURST_TYPE, at: '2026-09-01T08:00:00.000Z', payload: { trigger, valid: 3, values: { smile: 0.5 } } })
-    const kept = moodFaceBursts(['unlock', 'manual', 'inUse', 'appOpen', 'social'].map(burst))
-    expect(kept.map((e) => e.payload.trigger)).toEqual(['unlock'])
+    const kept = moodFaceBursts(['unlock', 'manual', 'inUse', 'appOpen', 'social', 'app_open'].map(burst))
+    expect(kept.map((e) => e.payload.trigger)).toEqual(['unlock', 'app_open'])
+    const usage = readFileSync(resolve(import.meta.dirname, '../../../android/app/src/main/java/com/healthtrack/app/PhoneUsagePlugin.java'), 'utf-8')
+    expect(usage).toMatch(/ignoredPackages[\s\S]*out\.add\(ctx\.getPackageName\(\)\)/)
   })
 })
