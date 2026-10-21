@@ -43,4 +43,8 @@
 - À vérifier sur téléphone dès que la variante play est installable (P10) : 1re lecture à l'ouverture, bandeau.
 
 ## Après le merge
-- (à compléter)
+- PR **#248** : 9 checks verts (Vitest, Build APK avec `bundlePlayRelease` + `check-play-manifest.sh` étendu, Java,
+  émulateurs A56 API 35 et 36…) → fusionnée en squash (`522d63a`).
+- « Build & Release » ✅ → **v194** publiée (`HealthTrack-v194.apk`, 33,7 Mo). « Play — AAB » ✅ → artefact
+  **`HealthTrack-play-335`** (17,0 Mo zippé) : c'est lui à envoyer pour P10 (manifeste conforme : sans service caméra,
+  15 permissions Health Connect).
