@@ -90,4 +90,4 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **21/10 00:30** — sections INFRASTRUCTURE et IDENTITÉ VISUELLE du prompt reportées (`INFRA.md`, `DESIGN.md`) ; décisions mises à jour (Vertex AI sans clé, Play Billing, essai 14 j, applicationId play, nom provisoire) ; actions du propriétaire refaites ; jalon 2 bis (i) livré.
 - **21/10 02:30** — jalon 3a livré : variantes `sideload` / `play` (`fr.jpesquet.sante`), workflow « Play — AAB » sur `main` (attend P9) ; P9 et P10 détaillés pas à pas.
 - **21/10 02:30 (après merge)** — « Play — AAB » vert du premier coup : P9 était déjà fait ; artefact `HealthTrack-play-330` (17,0 Mo zippé) prêt pour P10.
-- **21/10 04:30** — jalon 2 bis (ii) : icône « H nuit » partout (lanceur, icônes à thème, notifications, démarrage, en-tête) + `app/store/play-icon-512.png` prêt pour la fiche (jalon 10).
+- **21/10 04:30** — jalon 2 bis (ii) : icône « H nuit » partout (lanceur, icônes à thème, notifications, démarrage, en-tête) + `app/store/play-icon-512.png` prêt pour la fiche (jalon 10). Après merge : v192 (33,7 Mo) et AAB play `HealthTrack-play-332` (à utiliser pour P10).
