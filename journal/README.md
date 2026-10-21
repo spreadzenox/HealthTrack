@@ -134,12 +134,12 @@ donnée ne bouge. En coulisses : le nom affiché « HealthTrack » vient mainten
 (`app/src/config/brand.js`), pour changer de nom en un commit. Prochain run de code : déplacer « Vos derniers jours »
 dans l'onglet Journal et alléger l'accueil (2b). **👉 Votre prochaine action la plus utile reste P8 puis P10** (AAB `HealthTrack-play-339` ou plus récent).
 
-**Run du 21/10 16:30 — « Vos derniers jours » rejoint l'onglet Journal.** Ce que vous verrez dans la prochaine version
-(bouton du bandeau) : l'onglet **Journal** s'ouvre sur **« Jours »** — chaque journée avec ce que vos sources ont mesuré
+**Run du 21/10 16:30 — « Vos derniers jours » rejoint l'onglet Journal.** Ce que vous verrez dans la **v198** (publiée, 33,7 Mo,
+bouton du bandeau ; la v197 est identique) : l'onglet **Journal** s'ouvre sur **« Jours »** — chaque journée avec ce que vos sources ont mesuré
 et ce que vous avez noté (repas, ventre, bien-être, cigarettes), avec Modifier / Refaire / Supprimer comme avant — et
 les boutons **Repas** et **Nutrition** juste à côté. L'**accueil** est plus court : il finit par un bouton « Vos derniers
 jours, dans le Journal ». Aucune donnée ne bouge. Prochain run de code : ranger le Radar forme et les graphiques qui
-restent sous l'accueil (2b). **👉 Votre prochaine action la plus utile reste P8 puis P10** (dernier AAB `HealthTrack-play-NNN`).
+restent sous l'accueil (2b). **👉 Votre prochaine action la plus utile reste P8 puis P10** (AAB `HealthTrack-play-341` ou plus récent).
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
@@ -518,7 +518,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
-| 21/10 16:30 — [« Vos derniers jours » dans Journal](runs/2026-10-21-1630-journal-jours.md) | 🧭🎨 | Page `/journal` (Jours \| Repas \| Nutrition), `DailyJournal` + `journalEntries` sortis de l'accueil, accueil allégé ; budget de lectures `/journal` ; 1 734 Vitest ; PR à fusionner |
+| 21/10 16:30 — [« Vos derniers jours » dans Journal](runs/2026-10-21-1630-journal-jours.md) | 🧭🎨 | Page `/journal` (Jours \| Repas \| Nutrition), `DailyJournal` + `journalEntries` sortis de l'accueil, accueil allégé ; budget de lectures `/journal` ; 1 734 Vitest ; PR #254 → **v198, 33,7 Mo** (v197 = même commit, double push) + AAB play 341 |
 | 21/10 14:30 — [Navigation 4 onglets](runs/2026-10-21-1430-navigation-4-onglets.md) | 🧭🎨 | Aujourd'hui / Journal (Repas \| Nutrition) / Pistes / Sources, roue « Réglages » en haut à droite, titres « Vos sources » / « Vos pistes », `APP_NAME` centralisé ; aucune route ni donnée changée ; 1 730 Vitest ; PR #252 → **v196, 33,7 Mo** + AAB play 339 |
 | 21/10 12:30 — [Accueil « Aujourd'hui » + ventre en un geste](runs/2026-10-21-1230-accueil-aujourdhui.md) | 🧭🎨 | Carte menthe bien-être (chiffre, écart 14 j, courbe, « détails »), tuiles sommeil / VFC / pas avec source, carte pêche ventre → entrée `gut` (sans migration, exportée), boutons pilule, carte lilas pistes X/21 (6 semaines, budget de lectures) ; 1 718 Vitest ; PR #250 → **v195, 33,7 Mo** + AAB play 337 |
 | 21/10 10:30 — [Jalon 3b-2 : variante play sans service caméra](runs/2026-10-21-1030-visage-ouverture-play.md) | 🧭🛡️ | Play : lecture du visage à l'ouverture de l'app (`FaceOneShot`, 1 / 30 min) + bandeau visible, sans FGS caméra / relance / exemption de batterie ; 15 permissions Health Connect (I131, −26) ; justification HC par type ; 1 693 Vitest, 119 JUnit ; sideload inchangée ; PR #248 → **v194, 33,7 Mo** + AAB play 335 |
