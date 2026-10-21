@@ -107,6 +107,9 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       })
     }
   }
+  // Ventre (accueil « Aujourd'hui ») : une ou deux notes par jour sur les 10 derniers jours ; RNG séparé.
+  const gutRand = mulberry32(seed + 7001)
+  const GUT = ['calm', 'calm', 'calm', 'discomfort', 'discomfort', 'pain']
   let pressure = 1016
 
   for (let i = days; i >= 0; i--) {
@@ -205,6 +208,12 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
     for (let m = 0; m < mealCount; m++) {
       const meal = MEALS[Math.floor(rand() * MEALS.length)]
       if (!mealsForgotten) entries.push({ type: 'food', source: 'app_food', at: at(day, m === 0 ? 12 : 20, 15), payload: { items: toItems(meal), provider: 'gemini' } })
+    }
+    if (i <= 9) {
+      for (const h of gutRand() < 0.5 ? [10] : [10, 17]) {
+        const t = at(day, h, Math.floor(gutRand() * 50))
+        if (Date.parse(t) <= now.getTime()) entries.push({ type: 'gut', source: 'app_gut', at: t, payload: { level: GUT[Math.floor(gutRand() * GUT.length)] } })
+      }
     }
     if (i % 3 === 0) {
       weight += noise(0.4) - 0.05

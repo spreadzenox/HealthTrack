@@ -20,6 +20,13 @@ vi.mock('../components/BaselineCards', () => ({
   default: () => <div data-testid="baseline-cards" />,
 }))
 
+// Cartes ventre et pistes : testées dans TodayCards.test.jsx (elles lisent IndexedDB de leur côté)
+vi.mock('../components/TodayCards', async (importOriginal) => ({
+  ...(await importOriginal()),
+  GutCard: () => <section data-testid="gut-card" />,
+  PistesTeaser: () => <section data-testid="pistes-card" />,
+}))
+
 vi.mock('../components/WellbeingCharts', () => ({
   default: () => <div data-testid="wellbeing-charts" />,
 }))
@@ -58,12 +65,24 @@ describe('Dashboard', () => {
     countEntries.mockResolvedValue(0)
   })
 
-  it('renders dashboard title and, without any data, the introduction', async () => {
+  it('renders the « Aujourd’hui » header and, without any data, the introduction', async () => {
     renderDashboard()
-    expect(screen.getByRole('heading', { name: /Tableau de bord/i })).toBeInTheDocument()
-    expect(await screen.findByText(/HealthTrack centralise/i)).toBeInTheDocument()
-    expect(screen.getByText(/montre ou bague connectée/i)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Connecteurs/i })).toHaveAttribute('href', '/connectors')
+    expect(screen.getByText(/· Bonjour$/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Votre journée' })).toBeInTheDocument()
+    expect(await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)).toBeInTheDocument()
+    expect(screen.getByText(/l’IA seulement si vous le voulez/i)).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'Sources' })[0]).toHaveAttribute('href', '/connectors')
+  })
+
+  it('montre les tuiles du jour, la carte ventre, la carte pistes et « Photo du repas » mène aux repas', async () => {
+    renderDashboard()
+    expect(await screen.findByRole('region', { name: 'Mesures du jour' })).toBeInTheDocument()
+    expect(screen.getByText('Sommeil')).toBeInTheDocument()
+    expect(screen.getByText('VFC')).toBeInTheDocument()
+    expect(screen.getByTestId('gut-card')).toBeInTheDocument()
+    expect(screen.getByTestId('pistes-card')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Photo du repas' }))
+    expect(navigateMock).toHaveBeenCalledWith('/food')
   })
 
   it("masque l'introduction dès que des données existent (le contenu commence plus haut)", async () => {
@@ -74,12 +93,12 @@ describe('Dashboard', () => {
     renderDashboard()
     await screen.findByText(/Vos derniers jours/i)
     await waitFor(() => expect(document.querySelector('.entry-score')).toHaveTextContent('3 / 5'))
-    expect(screen.queryByText(/HealthTrack centralise/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).not.toBeInTheDocument()
   })
 
   it("n'affiche pas l'introduction pendant le chargement (pas de saut de mise en page)", () => {
     renderDashboard()
-    expect(screen.queryByText(/HealthTrack centralise/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).not.toBeInTheDocument()
   })
 
   function sinceDays(opts) {
@@ -195,6 +214,13 @@ describe('Dashboard', () => {
     expect(titles[0]).toMatch(/11 avril/)
     expect(titles[1]).toMatch(/10 avril/)
     expect(titles[0]).toMatch(/^Samedi/)
+  })
+
+  it('liste une note du ventre avec son niveau, supprimable', async () => {
+    await renderEntries([{ type: 'gut', source: 'app_gut', at: '2026-04-11T10:00:00', payload: { level: 'discomfort' } }])
+    expect(screen.getByText('Ventre')).toBeInTheDocument()
+    expect(screen.getByText('Gêne')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Supprimer cette note du ventre/i })).toBeInTheDocument()
   })
 
   it('shows food entries when returned', async () => {
@@ -371,16 +397,16 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('button', { name: /Voir les jours précédents/i })).not.toBeInTheDocument()
   })
 
-  it('renders the "Ajouter un bien-être" button', async () => {
+  it('renders the « Une note » button', async () => {
     renderDashboard()
-    const btn = screen.getByRole('button', { name: /Ajouter un bien-être/i })
+    const btn = screen.getByRole('button', { name: 'Une note' })
     expect(btn).toBeInTheDocument()
   })
 
   it('hides the cigarette quick-add button for a non-smoker (no recent cigarette)', async () => {
     localStorage.clear()
     renderDashboard()
-    await screen.findByRole('button', { name: /Ajouter un bien-être/i })
+    await screen.findByRole('button', { name: 'Une note' })
     await waitFor(() => expect(screen.queryByText(/Chargement des données/i)).not.toBeInTheDocument())
     expect(screen.queryByRole('button', { name: /Ajouter une cigarette/i })).not.toBeInTheDocument()
   })
@@ -403,7 +429,7 @@ describe('Dashboard', () => {
 
   it('opens the wellbeing modal when the button is clicked', async () => {
     renderDashboard()
-    const btn = screen.getByRole('button', { name: /Ajouter un bien-être/i })
+    const btn = screen.getByRole('button', { name: 'Une note' })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     fireEvent.click(btn)
     expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -411,7 +437,7 @@ describe('Dashboard', () => {
 
   it('closes the wellbeing modal when onClose is called', async () => {
     renderDashboard()
-    fireEvent.click(screen.getByRole('button', { name: /Ajouter un bien-être/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Une note' }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -516,9 +542,9 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('le bouton « Ajouter un bien-être » ouvre une note vierge', async () => {
+  it('le bouton « Une note » ouvre une note vierge', async () => {
     renderDashboard()
-    fireEvent.click(screen.getByRole('button', { name: /Ajouter un bien-être/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Une note' }))
     expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
   })
 

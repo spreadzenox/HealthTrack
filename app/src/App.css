@@ -378,6 +378,7 @@
 .entry-card[data-type="height"] { border-left-color: var(--text-muted); }
 .entry-card[data-type="cigarette"] { border-left-color: var(--text-muted); }
 .entry-card[data-type="wellbeing"] { border-left-color: var(--color-violet); }
+.entry-card[data-type="gut"] { border-left-color: var(--peach-label); }
 
 .entry-card-header {
   display: flex;
