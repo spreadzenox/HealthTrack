@@ -10,6 +10,8 @@ samples/
 *.jpg
 *.png
 !app/android/app/src/main/res/mipmap-*/*.png
+# Icône de la fiche Google Play (app/scripts/brand/render-icons.mjs)
+!app/store/*.png
 # Images de test du pipeline visage (domaine public, voir leur README)
 !app/android/app/src/test/resources/face/*.png
 

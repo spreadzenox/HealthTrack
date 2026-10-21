@@ -34,7 +34,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   (21/10 00:30) ; [x] (i) tokens `src/theme/tokens.css` (seule source des couleurs, test de contraste ≥ 4,5:1 dans les
   deux thèmes, test anti-couleur brute), polices Figtree + IBM Plex Mono embarquées, **thème clair par défaut**, sombre
   en option (Paramètres → Apparence), icônes de la barre d'état accordées (`SystemBarsPlugin`) (21/10 00:30) ;
-  [ ] (ii) icône adaptative « H nuit » + monochrome + notification + écran de démarrage (+ logo de l'en-tête) ;
+  [x] (ii) icône adaptative « H nuit » + monochrome + notification + écran de démarrage + logo de l'en-tête + icône
+  512 px de la fiche Play (`app/store/play-icon-512.png`, script `scripts/brand/render-icons.mjs`) (21/10 04:30) ;
   [ ] (iii) Accueil « Aujourd'hui » selon la maquette (cartes 22 px, boutons pilule, chiffres en mono) ;
   [ ] (iv+) chaque écran quand le chantier le touche. Petits restes : chiffres en mono dans le bandeau de mise à jour
   et les tuiles du journal ; rayon des cartes (`--radius` 12 px → `--radius-card` 22 px) écran par écran.
@@ -838,6 +839,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 21/10 (04:30 Paris)** : ✅ 2 bis (ii) icône « H nuit ». Prochain run de code → **3b** (option caméra
+la plus sûre pour play, divulgations avant permissions sensibles, revue des permissions du manifeste play), puis 2b/2c
++ 2 bis (iii) Accueil « Aujourd'hui » et navigation 4 onglets ; 3c (envoi automatique en test interne) dès que P10/P11
+sont faits. Run « idées » de 08:30 : règles Play (FGS caméra, Health Connect, Data safety) → alimente 3b.
 
 **Mise à jour du 21/10 (02:30 Paris)** : ✅ jalon 3a. « Play — AAB » sera **rouge sur main jusqu'à P9** : ce n'est pas
 une panne à réparer (charte), sauf si le message n'est plus « Clé d'envoi Play absente » / « Accès refusé ». Prochain

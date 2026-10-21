@@ -31,7 +31,7 @@ final class WatchNotifications {
                     PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             String who = watchName == null || watchName.isEmpty() ? "La montre" : watchName;
             nm.notify(KEY_REJECTED_ID, new Notification.Builder(context, CHANNEL)
-                    .setSmallIcon(android.R.drawable.stat_notify_sync_noanim)
+                    .setSmallIcon(R.drawable.ic_stat_healthtrack)
                     .setContentTitle("Synchro de la montre en pause")
                     .setContentText(who + " n'accepte plus la connexion. Ouvrez HealthTrack → « Synchroniser la montre ».")
                     .setStyle(new Notification.BigTextStyle().bigText(who

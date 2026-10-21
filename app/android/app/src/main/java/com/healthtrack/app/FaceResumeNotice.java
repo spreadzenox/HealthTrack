@@ -57,7 +57,7 @@ final class FaceResumeNotice {
             PendingIntent stop = PendingIntent.getService(context, 3,
                     new Intent(context, FaceSenseService.class).setAction(FaceSenseService.ACTION_STOP), flags);
             nm.notify(NOTIFICATION_ID, new NotificationCompat.Builder(context, CHANNEL)
-                    .setSmallIcon(android.R.drawable.ic_menu_camera)
+                    .setSmallIcon(R.drawable.ic_stat_healthtrack)
                     .setContentTitle("Lecture du visage arrêtée")
                     .setContentText("Android l'a mise en pause. Touchez « Reprendre » pour la relancer.")
                     .setStyle(new NotificationCompat.BigTextStyle().bigText("Android a mis la lecture du visage en"

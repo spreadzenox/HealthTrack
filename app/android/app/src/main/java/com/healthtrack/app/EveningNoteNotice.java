@@ -126,7 +126,7 @@ final class EveningNoteNotice {
             PendingIntent tap = PendingIntent.getActivity(context, 4, open,
                     PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             nm.notify(NOTIFICATION_ID, new NotificationCompat.Builder(context, CHANNEL)
-                    .setSmallIcon(android.R.drawable.ic_menu_edit)
+                    .setSmallIcon(R.drawable.ic_stat_healthtrack)
                     .setContentTitle("Votre soirée ?")
                     .setContentText("0 = très bas, 5 = très bien")
                     .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
@@ -161,7 +161,7 @@ final class EveningNoteNotice {
             NotificationManager nm = channel(context);
             if (nm != null) {
                 nm.notify(NOTIFICATION_ID, new NotificationCompat.Builder(context, CHANNEL)
-                        .setSmallIcon(android.R.drawable.ic_menu_edit)
+                        .setSmallIcon(R.drawable.ic_stat_healthtrack)
                         .setContentTitle("Noté : " + score + " sur 5")
                         .setContentText("Rangé dans HealthTrack à la prochaine ouverture.")
                         .setPriority(NotificationCompat.PRIORITY_LOW)

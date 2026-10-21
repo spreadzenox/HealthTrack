@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-21",
+  "kind": "amélioration",
+  "title": "Une nouvelle icône",
+  "items": [
+    "L'icône de l'app devient un H blanc sur fond vert nuit, avec une courbe menthe et un point ambre : une mesure qui monte.",
+    "Elle suit les icônes à thème d'Android 13 et plus, si vous les avez activées.",
+    "L'écran de démarrage et toutes les notifications de l'app portent maintenant la même icône.",
+    "Si l'ancienne icône reste affichée, redémarrez le téléphone. Rien ne change dans vos données."
+  ]
+}
