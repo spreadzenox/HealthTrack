@@ -218,7 +218,7 @@ de la nuit (sinon, étape M1 bis : un second canal Bluetooth).
 Publié : **v201** (nom Halcya) puis **v202** (sommeil de la montre), 33,7 Mo chacune, bouton du bandeau ; côté Play,
 les versions **347** et **348** sont arrivées toutes seules en test interne. **👉 Votre prochaine action la plus
 utile** : synchroniser la montre avec la v202 et me dire si vos nuits apparaissent ; puis créer le groupe
-**halcya-testeurs@googlegroups.com** et activer **GitHub Pages** (P16, ouvre le test fermé de 14 jours).
+**halcya-testeurs@googlegroups.com** et activer **GitHub Pages** (P18 et P19 de `PRODUIT.md` : ils ouvrent le test fermé de 14 jours).
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
