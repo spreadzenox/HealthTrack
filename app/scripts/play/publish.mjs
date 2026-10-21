@@ -1,0 +1,135 @@
+/**
+ * Envoi de l'AAB de la variante play sur une piste de test Google Play (jalon 3c, journal/INFRA.md).
+ *
+ * API Android Publisher v3, par « edit » : ouvrir un edit → lire la langue par défaut de la fiche → importer
+ * l'AAB → placer la version sur la piste (test interne par défaut) avec ses notes de version → valider l'edit.
+ * Jamais la piste de production : seul le propriétaire promeut une version (« Promouvoir la version »).
+ *
+ * Le jeton d'accès (portée androidpublisher) vient de la connexion sans clé de la CI ; il n'est jamais écrit.
+ * Les symboles de débogage natifs sont dans l'AAB (debugSymbolLevel) : Play les extrait seul.
+ */
+
+export const API = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications'
+export const UPLOAD_API = 'https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications'
+/** Pistes autorisées : jamais « production ». */
+export const ALLOWED_TRACKS = ['internal', 'alpha']
+export const NOTES_MAX = 500
+
+export class PlayApiError extends Error {
+  constructor(step, status, message) {
+    super(`${step} : HTTP ${status} — ${message}`)
+    this.step = step
+    this.status = status
+    this.apiMessage = message
+  }
+}
+
+/** Accès refusé (compte de service pas encore invité ou invitation pas encore propagée côté API). */
+export function isAccessDenied(err) {
+  return err instanceof PlayApiError && (err.status === 401 || err.status === 403)
+}
+
+/**
+ * Notes de version (≤ 500 caractères, limite de Play) depuis les entrées « Nouveautés » les plus récentes :
+ * un titre par ligne, de la plus récente à la plus ancienne, sans couper une ligne en deux.
+ */
+export function buildReleaseNotes(entries, max = NOTES_MAX) {
+  const sorted = [...entries].sort((a, b) => (b.id ?? '').localeCompare(a.id ?? ''))
+  const lines = []
+  let len = 0
+  for (const e of sorted) {
+    if (!e.title) continue
+    const line = `• ${e.title}`
+    const add = (lines.length ? 1 : 0) + line.length
+    if (len + add > max) break
+    lines.push(line)
+    len += add
+  }
+  return lines.join('\n')
+}
+
+async function call(fetchImpl, step, url, { method = 'GET', token, body, contentType = 'application/json' } = {}) {
+  const res = await fetchImpl(url, {
+    method,
+    headers: { Authorization: `Bearer ${token}`, ...(body !== undefined ? { 'Content-Type': contentType } : {}) },
+    body: body === undefined ? undefined : contentType === 'application/json' ? JSON.stringify(body) : body,
+  })
+  const text = await res.text()
+  let json = null
+  try {
+    json = text ? JSON.parse(text) : null
+  } catch {
+    json = null
+  }
+  if (!res.ok) throw new PlayApiError(step, res.status, json?.error?.message ?? text.slice(0, 300))
+  return json
+}
+
+/**
+ * Publie `aab` (octets) en `versionCode` sur `track`. Renvoie un objet décrivant ce qui s'est passé
+ * (`outcome` : 'published' | 'already-uploaded'), ou lève une PlayApiError.
+ * Cas gérés : app encore « brouillon » côté Play (version créée en brouillon), validation qui demande
+ * changesNotSentForReview, versionCode déjà envoyé (relance d'un run).
+ */
+export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, fetchImpl = fetch, log = () => {} }) {
+  if (!ALLOWED_TRACKS.includes(track)) throw new Error(`Piste « ${track} » refusée : seules ${ALLOWED_TRACKS.join(', ')} sont autorisées.`)
+  const base = `${API}/${packageName}/edits`
+  const edit = await call(fetchImpl, 'Ouverture de l’edit', base, { method: 'POST', token, body: {} })
+  const editUrl = `${base}/${edit.id}`
+  const abandon = () => call(fetchImpl, 'Abandon de l’edit', editUrl, { method: 'DELETE', token }).catch(() => {})
+  try {
+    const details = await call(fetchImpl, 'Lecture de la fiche', `${editUrl}/details`, { token })
+    const language = details?.defaultLanguage || 'fr-FR'
+    log(`Edit ${edit.id} ouvert, langue de la fiche : ${language}`)
+
+    try {
+      const bundle = await call(fetchImpl, 'Import de l’AAB', `${UPLOAD_API}/${packageName}/edits/${edit.id}/bundles?uploadType=media`, {
+        method: 'POST',
+        token,
+        body: aab,
+        contentType: 'application/octet-stream',
+      })
+      log(`AAB importé : versionCode ${bundle?.versionCode}, sha256 ${bundle?.sha256 ?? '?'}`)
+    } catch (err) {
+      if (err instanceof PlayApiError && /version code .*already been used|already been used/i.test(err.apiMessage)) {
+        await abandon()
+        return { outcome: 'already-uploaded', versionCode, track }
+      }
+      throw err
+    }
+
+    const release = (status) => ({
+      track,
+      releases: [
+        {
+          name: String(versionCode),
+          versionCodes: [String(versionCode)],
+          status,
+          ...(notes ? { releaseNotes: [{ language, text: notes }] } : {}),
+        },
+      ],
+    })
+    let status = 'completed'
+    try {
+      await call(fetchImpl, `Piste ${track}`, `${editUrl}/tracks/${track}`, { method: 'PUT', token, body: release(status) })
+    } catch (err) {
+      if (!(err instanceof PlayApiError && /draft/i.test(err.apiMessage))) throw err
+      status = 'draft'
+      log('Play n’accepte que des versions brouillon pour l’instant : version créée en brouillon.')
+      await call(fetchImpl, `Piste ${track} (brouillon)`, `${editUrl}/tracks/${track}`, { method: 'PUT', token, body: release(status) })
+    }
+
+    let notSentForReview = false
+    try {
+      await call(fetchImpl, 'Validation de l’edit', `${editUrl}:commit`, { method: 'POST', token })
+    } catch (err) {
+      if (!(err instanceof PlayApiError && /changesNotSentForReview/.test(err.apiMessage))) throw err
+      notSentForReview = true
+      await call(fetchImpl, 'Validation de l’edit (sans examen)', `${editUrl}:commit?changesNotSentForReview=true`, { method: 'POST', token })
+    }
+    return { outcome: 'published', versionCode, track, status, language, notSentForReview }
+  } catch (err) {
+    await abandon()
+    throw err
+  }
+}

@@ -48,6 +48,8 @@ android {
             buildConfigField 'boolean', 'SELF_UPDATE', 'false'
             // Play : lecture du visage à l'ouverture de l'app seulement (journal/PLAY-CONFORMITE.md, option B).
             buildConfigField 'boolean', 'FACE_UNLOCK', 'false'
+            // Symboles de débogage natifs dans l'AAB : Play les extrait seul pour lisibiliser les plantages natifs.
+            ndk { debugSymbolLevel 'SYMBOL_TABLE' }
         }
     }
     signingConfigs {

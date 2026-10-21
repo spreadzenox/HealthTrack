@@ -34,7 +34,10 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   étages ; [ ] **M5** écran « Montre » (par type : dernière valeur, date, n sur 7 j) ; [ ] **M6** rattrapage de
   l'historique + resynchro arrière-plan avec les nouvelles lectures (A.3) ; [ ] **M7** séances : FC et allure
   (0x17/0x0A, 0x0C) ; [ ] A.1, A.2 ; [ ] tuiles Accueil sommeil / VFC nuit « montre Huawei » + export vérifiés.
-- [ ] **3c (dès P11)** envoi automatique de l'AAB en test interne par l'API Android Publisher (seule exception à M).
+- [~] **3c (dès P11)** envoi automatique de l'AAB en test interne par l'API Android Publisher (seule exception à M) —
+  **branché le 21/10 22:30** (`app/scripts/play/publish.mjs`, étape « Envoyer en test interne » de « Play — AAB », symboles
+  natifs `debugSymbolLevel`) ; [ ] vérifier le premier envoi réel après le merge (accès gh-deployer : 24-48 h possibles) ;
+  [ ] ensuite test fermé (piste `alpha`, testeurs `halcya-testeurs@googlegroups.com`), page GitHub Pages de confidentialité, fiche.
 - [x] **1** `journal/PRODUIT.md` (20/10 22:30)
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
   (20/10 22:30) ; [~] 2b inventaire chiffré → décisions masquer / fusionner / déplacer (sans perte de données) : [x] accueil

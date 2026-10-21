@@ -7,8 +7,10 @@
 #   Ni la clé ni le mot de passe ne passent par les logs ou le dépôt.
 # - versionCode = nombre de commits de main : toujours croissant (pas de force-push sur main) et indépendant du
 #   numéro de run de ce workflow.
-# - Pour l'instant, l'AAB est un artefact du workflow : le propriétaire fait le premier envoi à la main (P10, Google
-#   l'impose pour une nouvelle app) ; l'envoi automatique en test interne viendra une fois gh-deployer invité (P11).
+# - L'AAB est un artefact du workflow, puis il est envoyé en test interne (jalon 3c) par l'API Android Publisher
+#   (app/scripts/play/publish.mjs, jamais la production). Jeton à portée androidpublisher émis pour gh-deployer, invité
+#   dans la Play Console (P11). Accès refusé (invitation pas encore propagée) → avertissement, pas d'échec : nouvel
+#   essai à la version suivante. workflow_dispatch : choisir la piste (internal par défaut).
 name: Play — AAB
 
 on:
@@ -17,6 +19,12 @@ on:
     paths-ignore:
       - "journal/**"
   workflow_dispatch:
+    inputs:
+      track:
+        description: "Piste Google Play (jamais la production)"
+        type: choice
+        options: [internal, alpha]
+        default: internal
 
 permissions:
   contents: read
@@ -159,5 +167,28 @@ jobs:
             echo "- Identifiant : \`fr.jpesquet.sante\` · taille : $((AAB_SIZE / 1024 / 1024)) Mo ($AAB_SIZE octets)"
             echo "- Certificat d'envoi (SHA-256) : \`${UPLOAD_CERT_SHA256:-?}\`"
             echo "- Téléchargement : artefact **HealthTrack-play-$VERSION_CODE** ci-dessous (30 jours)."
-            echo "- Premier envoi (P10) : Play Console → Tester → Test interne → Créer une version → accepter la signature d'app par Google Play → importer ce fichier."
+            echo "- Envoi sur Google Play : voir la section « Google Play » ci-dessous (test interne automatique)."
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Jeton Google Play (portée androidpublisher)
+        id: play-token
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+
+      - name: Envoyer en test interne (Google Play)
+        working-directory: app
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
+          PLAY_TRACK: ${{ inputs.track || 'internal' }}
+        run: |
+          set +e
+          node scripts/play/publish-cli.mjs "../HealthTrack-play-$VERSION_CODE.aab"
+          code=$?
+          # 2 = accès refusé : avertissement (invitation pas encore propagée), réessai à la version suivante
+          if [ "$code" = 2 ]; then exit 0; fi
+          exit "$code"
