@@ -30,11 +30,24 @@ describe('PhoneUsageCard', () => {
     render(<PhoneUsageCard {...p} />)
     await waitFor(() => expect(p.checkAccess).toHaveBeenCalled())
     fireEvent.click(screen.getByRole('button', { name: 'Activer' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'J’accepte, ouvrir le réglage' }))
     await waitFor(() => expect(p.openSettings).toHaveBeenCalled())
     expect(getPhoneUsageSettings().enabled).toBe(true)
     expect(screen.getByText('À autoriser')).toBeInTheDocument()
     expect(screen.getByText(/Autoriser les paramètres restreints/)).toBeInTheDocument()
     expect(p.sync).not.toHaveBeenCalled()
+  })
+
+  it('divulgation avant le réglage d’Android : « Pas maintenant » n’active rien', async () => {
+    const p = props()
+    render(<PhoneUsageCard {...p} />)
+    await waitFor(() => expect(p.checkAccess).toHaveBeenCalled())
+    fireEvent.click(screen.getByRole('button', { name: 'Activer' }))
+    expect((await screen.findByRole('dialog')).textContent).toMatch(/Rien ne quitte le téléphone/)
+    fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(p.openSettings).not.toHaveBeenCalled()
+    expect(getPhoneUsageSettings().enabled).toBe(false)
   })
 
   it('accès déjà accordé : « Activer » lance directement la lecture', async () => {

@@ -770,3 +770,69 @@
   padding-right: 8px;
   text-align: right;
 }
+
+/* Divulgation avant une autorisation sensible (components/PermissionDisclosure.jsx, jalon 3b) */
+.disclosure-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--scrim);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: calc(20px + var(--safe-top)) 0 0;
+}
+
+.disclosure-sheet {
+  background: var(--bg);
+  color: var(--text);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  padding: 22px 20px calc(16px + var(--safe-bottom));
+  max-width: 480px;
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.disclosure-title {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.disclosure-points {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.disclosure-points li + li {
+  margin-top: 8px;
+}
+
+.disclosure-leaves {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-radius: var(--radius-choice);
+  background: var(--mint-bg);
+  color: var(--mint-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.disclosure-actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+  background: var(--bg);
+}
+
+.disclosure-btn {
+  min-height: 52px;
+  width: 100%;
+  border-radius: var(--radius-pill);
+}

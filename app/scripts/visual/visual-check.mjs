@@ -47,6 +47,8 @@
  *                                                                      --face=blocked : caméra refusée en arrière-plan ;
  *                                                                      --face=nomodel : modèle valence / éveil absent ;
  *                                                                      --face-diag : Diagnostic de la carte déplié
+ *   npm run visual -- --routes=/connectors --face=off --disclosure=camera  # divulgation avant la caméra (jalon 3b) ;
+ *                                                     --phone=ask --disclosure=usage, --disclosure=location (sans données de démo : --empty)
  *   npm run visual -- --routes=/ --wellbeing-prompt --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
  *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
@@ -689,6 +691,17 @@ async function main() {
           if (args.import === 'replace') await page.getByRole('button', { name: 'Remplacer mes données' }).click()
           await page.evaluate(() => document.querySelector('.import-preview')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(400)
+        }
+        if (args.disclosure) {
+          // --disclosure=camera|usage|location : divulgation affichée avant la demande d'Android (jalon 3b)
+          const trigger = { camera: 'Activer la lecture du visage', location: 'Utiliser ma position approximative' }[args.disclosure]
+          const button = trigger
+            ? page.getByRole('button', { name: trigger })
+            : page.locator('section', { hasText: 'Temps d’écran' }).getByRole('button', { name: 'Activer' })
+          await button.first().evaluate((el) => el.scrollIntoView({ block: 'center' }))
+          await button.first().click()
+          await page.getByRole('dialog').waitFor({ timeout: 10000 })
+          await page.waitForTimeout(300)
         }
         if (args['face-diag']) {
           // --face-diag : Diagnostic de la carte « Lecture du visage » déplié et centré (modèles, accord du duo…)

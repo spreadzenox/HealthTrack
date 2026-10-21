@@ -44,9 +44,17 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   `VITE_DISTRIBUTION` + `src/config/distribution.js` (bandeau masqué en play), versionCode croissant, check « Build APK »
   qui construit aussi l'AAB play + `scripts/check-play-manifest.sh`, workflow **« Play — AAB »** (WIF → Secret Manager
   → AAB signé en artefact ; rouge « Clé d'envoi Play absente » tant que P9 n'est pas fait) ;
-  [ ] **3b** option caméra la plus sûre pour play (FGS `camera` en arrière-plan vs déclenchement par l'utilisateur :
-  notification / tuile / ouverture de l'app) + revue des permissions sensibles du manifeste play (`REQUEST_DELETE_PACKAGES`,
-  usage, Bluetooth, compagnon…) + divulgations juste avant chaque permission ; [ ] **3c** envoi automatique en test
+  [ ] **3b** — [x] **3b-1** (21/10 06:30) étude `PLAY-CONFORMITE.md` (option retenue pour play : **lecture à
+  l'ouverture de l'app** puis « Lecture rapide » par tuile / notification → activité, **sans FGS caméra ni exemption
+  de batterie**) + revue des permissions + **divulgations avant autorisation** (`config/permissionDisclosures.js`,
+  `PermissionDisclosure`, `hooks/useDisclosure.jsx` : caméra, position, temps d'écran ; test-garde) ;
+  [ ] **3b-2** manifeste `play` sans `FaceSenseService` / `FaceResume*` / `FOREGROUND_SERVICE_CAMERA` /
+  `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` (`tools:node="remove"`), `READ_EXTERNAL_STORAGE` borné, drapeau
+  `FEATURES.faceUnlock`, carte « Lecture du visage » en play = lecture à l'ouverture, `check-play-manifest.sh` étendu ;
+  [ ] **3b-3** « Lecture rapide » (tuile / notification → activité visible) ; [ ] divulgations restantes : photo du
+  repas → IA (avant le premier envoi), Health Connect (jalon 8), Bluetooth « Appareils à proximité » ;
+  [ ] enregistrer la date de chaque accord (preuve de consentement, RGPD art. 9) ;
+  [ ] fiabiliser le test `UpdateBanner` « montre la progression en Mo et en %… » (délai de 3 s dépassé sous charge en CI, PR #246 sur `a6dfd56`) ; [ ] **3c** envoi automatique en test
   interne (Android Publisher, edits) dans « Play — AAB », après P10 + P11 ; [ ] **3d** nom affiché de l'app depuis une
   seule source (`appName` Capacitor, `strings.xml`, titres) pour le changer en un commit
 - [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation)
@@ -839,6 +847,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 21/10 (06:30 Paris)** : ✅ 3b-1 (étude Play + divulgations avant autorisation). Prochain run de code →
+**3b-2** (manifeste play sans service caméra, lecture du visage à l'ouverture de l'app), puis 2b/2c + 2 bis (iii)
+Accueil ; 3c dès P10/P11. ⚠️ Ce run n'a pas pu merger (voir `runs/2026-10-21-0630-divulgations.md`) : le run suivant
+reprend d'abord les PR « [Auto] » ouvertes.
 
 **Mise à jour du 21/10 (04:30 Paris)** : ✅ 2 bis (ii) icône « H nuit ». Prochain run de code → **3b** (option caméra
 la plus sûre pour play, divulgations avant permissions sensibles, revue des permissions du manifeste play), puis 2b/2c

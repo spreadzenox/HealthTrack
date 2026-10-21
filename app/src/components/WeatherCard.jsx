@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { getWeatherSettings, enableWeather, disableWeather, syncWeather, searchPlaces } from '../services/weatherSync'
 import { weatherSummaryParts } from '../services/weather'
 import { formatAgo } from '../utils/timeAgo'
+import useDisclosure from '../hooks/useDisclosure'
 import './MyDevices.css'
 import './WeatherCard.css'
 
@@ -36,6 +37,7 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
   const [message, setMessage] = useState(null)
   const [query, setQuery] = useState('')
   const [places, setPlaces] = useState(null)
+  const [disclosure, askConsent] = useDisclosure()
 
   useEffect(() => {
     const reload = () => setSettings(getWeatherSettings())
@@ -60,6 +62,7 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
 
   async function usePosition() {
     setMessage(null)
+    if (!(await askConsent('location'))) return
     setBusy(true)
     let pos
     try {
@@ -189,6 +192,7 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
       )}
 
       {message && <p className="weather-error">{message}</p>}
+      {disclosure}
     </section>
   )
 }

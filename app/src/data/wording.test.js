@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 
-const ROOTS = ['src/components', 'src/pages', 'src/services', 'src/hooks']
+const ROOTS = ['src/components', 'src/pages', 'src/services', 'src/hooks', 'src/config']
 
 function sourceFiles(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
