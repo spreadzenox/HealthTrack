@@ -3,8 +3,10 @@
  * Sources : gadgetbridge.org/basics/pairing/huawei-honor-pairing/,
  * gadgetbridge.org/basics/integrations/health-connect/ (consultées le 11/10/2026) ; journal/IDEES.md (I1).
  */
+import { APP_NAME } from '../config/brand'
+
 const HC_IN_HEALTHTRACK =
-  'Dans HealthTrack, carte Health Connect ci-dessus : activez-la, « Demander les autorisations », puis « Mettre à jour ».'
+  'Dans ' + APP_NAME + ', carte Health Connect ci-dessus : activez-la, « Demander les autorisations », puis « Mettre à jour ».'
 
 export const WATCH_GUIDES = [
   {
@@ -80,7 +82,7 @@ export const WATCH_GUIDES = [
     steps: [
       <>Dans l’app de l’appareil, cherchez « Health Connect » dans les réglages ou les partenaires → activez.</>,
       HC_IN_HEALTHTRACK,
-      <>Withings : HealthTrack peut aussi se connecter directement à votre compte (carte ci-dessus) pour tous les biomarqueurs de la balance.</>,
+      <>Withings : {APP_NAME} peut aussi se connecter directement à votre compte (carte ci-dessus) pour tous les biomarqueurs de la balance.</>,
     ],
   },
 ]

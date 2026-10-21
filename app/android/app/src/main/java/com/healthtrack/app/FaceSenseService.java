@@ -452,7 +452,7 @@ public class FaceSenseService extends Service {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (nm != null && Build.VERSION.SDK_INT >= 26) {
             NotificationChannel ch = new NotificationChannel(CHANNEL, "Lecture du visage", NotificationManager.IMPORTANCE_MIN);
-            ch.setDescription("Service actif tant que la lecture du visage est activée dans HealthTrack.");
+            ch.setDescription("Service actif tant que la lecture du visage est activée dans " + getString(R.string.app_name) + ".");
             nm.createNotificationChannel(ch);
         }
         int immutable = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;

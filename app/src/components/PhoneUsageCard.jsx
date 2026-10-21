@@ -19,6 +19,7 @@ import { formatScreenMinutes } from '../services/phoneUsage'
 import { APP_CATEGORY_LABELS } from '../services/phoneApps'
 import { formatAgo } from '../utils/timeAgo'
 import useDisclosure from '../hooks/useDisclosure'
+import { APP_NAME } from '../config/brand'
 import './MyDevices.css'
 import './WeatherCard.css'
 import './PhoneUsageCard.css'
@@ -122,7 +123,7 @@ export default function PhoneUsageCard({
 
       {(!on || !granted) && (
         <p className="my-devices-intro">
-          Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : HealthTrack en tire votre temps
+          Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : {APP_NAME} en tire votre temps
           d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits sans
           montre, une estimation de votre sommeil. Vos Pistes regardent comment tout cela va avec <em>votre</em>{' '}
           bien-être, dans un sens ou dans l’autre. Jamais le contenu des apps ni vos messages, et rien ne quitte le
@@ -144,11 +145,11 @@ export default function PhoneUsageCard({
         <div className="phone-usage-guide">
           <ol className="phone-usage-steps">
             <li>Touchez « Ouvrir le réglage » : Android affiche « Accès aux données d’utilisation ».</li>
-            <li>Choisissez <strong>HealthTrack</strong> et activez « Autoriser l’accès ».</li>
+            <li>Choisissez <strong>{APP_NAME}</strong> et activez « Autoriser l’accès ».</li>
             <li>Revenez ici : tout se met à jour seul.</li>
           </ol>
           <p className="my-device-meta">
-            Réglage grisé (« Paramètre restreint ») ? Paramètres Android → Applications → HealthTrack → menu ⋮ →
+            Réglage grisé (« Paramètre restreint ») ? Paramètres Android → Applications → {APP_NAME} → menu ⋮ →
             « Autoriser les paramètres restreints », puis recommencez.
           </p>
           <div className="my-device-actions">

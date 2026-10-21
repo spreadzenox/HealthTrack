@@ -37,6 +37,7 @@ import { CURRENT_VERSION } from '../services/updateCheck'
 import useDisclosure from '../hooks/useDisclosure'
 import { FEATURES } from '../config/distribution'
 import { readFaceOnOpen } from '../services/faceAppOpen'
+import { APP_NAME } from '../config/brand'
 import './MyDevices.css'
 import './WeatherCard.css'
 
@@ -279,7 +280,7 @@ export default function FaceSenseCard({
 
       {(d.state === 'off' || d.state === 'unavailable') && appOpen && (
         <p className="my-devices-intro">
-          Pour estimer votre bien-être sans rien saisir : quand vous ouvrez HealthTrack, la caméra frontale prend
+          Pour estimer votre bien-être sans rien saisir : quand vous ouvrez {APP_NAME}, la caméra frontale prend
           quelques images (un bandeau l’indique), le téléphone en tire une dizaine de mesures d’expression puis les
           efface. Au plus une lecture par demi-heure, jamais app fermée. Rien ne quitte le téléphone. Un bien-être
           estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives, l’affinent. Une
@@ -322,7 +323,7 @@ export default function FaceSenseCard({
         <>
           <p className="my-device-message">
             L’accès à la caméra a été retiré. Touchez « Autoriser », ou Paramètres Android → Applications →
-            HealthTrack → Autorisations → Appareil photo.
+            {APP_NAME} → Autorisations → Appareil photo.
           </p>
           <div className="my-device-actions">
             <button type="button" className="btn btn-primary connector-btn" onClick={activateWithConsent} disabled={busy}>Autoriser</button>
@@ -340,7 +341,7 @@ export default function FaceSenseCard({
           </p>
           {d.cause === 'system' && samsung && (
             <p className="my-device-meta">
-              Pour que ça ne se reproduise pas : touchez « Applis jamais en veille », puis « + » et cochez HealthTrack.
+              Pour que ça ne se reproduise pas : touchez « Applis jamais en veille », puis « + » et cochez {APP_NAME}.
             </p>
           )}
           <div className="my-device-actions">
@@ -381,7 +382,7 @@ export default function FaceSenseCard({
           </p>
           {!appOpen && !status.batteryExempt && (
             <p className="my-device-meta">
-              Pour qu’Android ne coupe pas la lecture en arrière-plan, autorisez HealthTrack sans restriction de
+              Pour qu’Android ne coupe pas la lecture en arrière-plan, autorisez {APP_NAME} sans restriction de
               batterie.
             </p>
           )}
@@ -419,7 +420,7 @@ export default function FaceSenseCard({
           </div>
           {samsung && (
             <p className="my-device-meta">
-              Samsung met aussi en veille les applis peu ouvertes, même « sans restriction » : ajoutez HealthTrack aux
+              Samsung met aussi en veille les applis peu ouvertes, même « sans restriction » : ajoutez {APP_NAME} aux
               « Applis jamais en veille » (Batterie → Limites d’utilisation en arrière-plan) pour que la lecture tienne.
             </p>
           )}

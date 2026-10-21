@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import WatchConnect from './WatchConnect'
+import { APP_NAME } from '../config/brand'
 
 const hex16 = (n) => Array.from({ length: 16 }, (_, i) => ((i + n) & 0xff).toString(16).padStart(2, '0')).join(' ')
 const FILE = `DIGEST_SECRETS = {\n  AuthVersion.V1: "${hex16(1)}",\n  AuthVersion.V2: "${hex16(2)}",\n  AuthVersion.V3: "${hex16(3)}",\n}`
@@ -9,7 +10,7 @@ const connected = {
   startedAt: '2026-10-13T00:30:00.000Z',
   finishedAt: '2026-10-13T00:30:05.000Z',
   steps: [{ id: 'auth', label: 'Authentification', status: 'ok', detail: 'trames chiffrées (AES-GCM)' }],
-  outcome: { code: 'connected', title: 'Montre appairée à HealthTrack' },
+  outcome: { code: 'connected', title: `Montre appairée à ${APP_NAME}` },
 }
 
 describe('WatchConnect', () => {
@@ -44,7 +45,7 @@ describe('WatchConnect', () => {
 
   it('clé refusée → conseils sans « dissocier » et bouton « Refaire l’appairage » (rebind)', async () => {
     localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: 'a', v2: 'b', v3: 'c' }))
-    const rejected = { ...connected, outcome: { code: 'key_rejected', title: 'La montre ne reconnaît plus la clé de HealthTrack' } }
+    const rejected = { ...connected, outcome: { code: 'key_rejected', title: `La montre ne reconnaît plus la clé de ${APP_NAME}` } }
     const connect = vi.fn(async () => rejected)
     render(<WatchConnect connect={connect} />)
     fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
@@ -91,7 +92,7 @@ describe('WatchConnect', () => {
     localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify({ ...connected, association: { freshData: true, userSaw: null } }))
     render(<WatchConnect connect={vi.fn()} />)
     // plus de bandeau redondant une fois l'association confirmée
-    expect(screen.queryByText('La montre se considère associée à HealthTrack')).toBeNull()
+    expect(screen.queryByText(`La montre se considère associée à ${APP_NAME}`)).toBeNull()
     expect(screen.queryByRole('button', { name: 'Son cadran' })).toBeNull()
   })
 

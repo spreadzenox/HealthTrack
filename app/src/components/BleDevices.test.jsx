@@ -3,6 +3,7 @@ import { render, screen, fireEvent, act } from '@testing-library/react'
 import BleDevices from './BleDevices'
 import WatchGuides from './WatchGuides'
 import { identifyDevice } from '../devices/ble/drivers'
+import { APP_NAME } from '../config/brand'
 
 const fp = (name, services = [], companyIds = []) => ({ name, services, companyIds, serviceData: [] })
 const dev = (deviceId, f, extra = {}) => ({ deviceId, name: f.name, rssi: -60, bonded: false, fingerprint: f, ...identifyDevice(f), ...extra })
@@ -37,7 +38,7 @@ describe('BleDevices', () => {
     expect(screen.getAllByText('Compatible')).toHaveLength(2)
     // montre Huawei : connexion directe, sans son app
     expect(screen.getByText('Connexion directe')).toBeInTheDocument()
-    expect(screen.getByText(/HealthTrack se connecte directement à elle/)).toBeInTheDocument()
+    expect(screen.getByText(new RegExp(`${APP_NAME} se connecte directement à elle`))).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Mesurer ma VFC/ })).toBeInTheDocument()
     // appareil de mesure standard : réception directe
     expect(screen.getByRole('button', { name: 'Recevoir la mesure' })).toBeInTheDocument()

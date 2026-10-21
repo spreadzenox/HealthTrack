@@ -100,7 +100,7 @@ public class AppUpdatePlugin extends Plugin {
             if (olds != null) for (File f : olds) if (f.getName().endsWith(".apk")) f.delete();
 
             DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
-                    .setTitle("Mise à jour HealthTrack " + version)
+                    .setTitle("Mise à jour " + getContext().getString(R.string.app_name) + " " + version)
                     .setDescription("Téléchargement de la nouvelle version")
                     .setMimeType("application/vnd.android.package-archive")
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)

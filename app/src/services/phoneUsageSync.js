@@ -10,6 +10,7 @@ import { Capacitor, registerPlugin } from '@capacitor/core'
 import { upsertEntries } from '../storage/localHealthStorage'
 import { phoneUsageEntries, summarizePhoneDay, dateKeyOf } from './phoneUsage'
 import { phoneAppsEntries, summarizeAppsDay } from './phoneApps'
+import { APP_NAME } from '../config/brand'
 
 const KEY = 'healthtrack_phone_usage'
 export const PHONE_USAGE_STALE_MS = 30 * 60 * 1000
@@ -108,7 +109,7 @@ export async function syncPhoneUsage({ force = false, now = new Date(), plugin =
       if (!access.granted) {
         const error = access.supported
           ? 'Accès aux données d’utilisation pas encore accordé.'
-          : 'Mettez à jour HealthTrack (ou Android 9+) pour cette fonction.'
+          : `Mettez à jour ${APP_NAME} (ou Android 9+) pour cette fonction.`
         setPhoneUsageSettings({ lastError: error })
         return { ran: false, noAccess: true, error }
       }

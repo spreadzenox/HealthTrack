@@ -32,6 +32,7 @@ import {
   updateEntry,
 } from './localHealthStorage'
 import { importPendingFaceBursts } from '../services/faceBursts'
+import { APP_NAME } from '../config/brand'
 
 describe('createEntry / listEntries', () => {
   it('stores an entry and retrieves it', async () => {
@@ -302,8 +303,8 @@ describe('parseBackup', () => {
   })
 
   it('rejects a JSON file that is not a HealthTrack backup', () => {
-    expect(() => parseBackup(JSON.stringify({ name: 'autre appli' }))).toThrow(/pas une sauvegarde HealthTrack/)
-    expect(() => parseBackup(JSON.stringify([{ foo: 1 }, { bar: 2 }]))).toThrow(/pas une sauvegarde HealthTrack/)
+    expect(() => parseBackup(JSON.stringify({ name: 'autre appli' }))).toThrow(new RegExp(`pas une sauvegarde ${APP_NAME}`))
+    expect(() => parseBackup(JSON.stringify([{ foo: 1 }, { bar: 2 }]))).toThrow(new RegExp(`pas une sauvegarde ${APP_NAME}`))
   })
 
   it('accepts an empty backup', () => {

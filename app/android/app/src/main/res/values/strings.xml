@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">HealthTrack</string>
-    <string name="title_activity_main">HealthTrack</string>
+    <string name="app_name">Halcya</string>
+    <string name="title_activity_main">Halcya</string>
     <string name="package_name">com.healthtrack.app</string>
     <string name="custom_url_scheme">com.healthtrack.app</string>
     <!-- Required by Health Connect: URL shown in the permissions rationale screen.

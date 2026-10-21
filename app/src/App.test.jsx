@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, within, fireEvent } from '@testing-library/react'
 import App from './App'
+import { APP_NAME } from './config/brand'
 
 // Pas d'appel réseau réel vers GitHub : sa réponse arrivait parfois après la fin du fichier de test
 // (« window is not defined » dans UpdateBanner, CI rouge au hasard).
@@ -13,7 +14,7 @@ describe('App', () => {
   it('renders and shows navigation', () => {
     const { container } = render(<App />)
     expect(container.querySelector('img.header-logo')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /HealthTrack/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: new RegExp(APP_NAME, 'i') })).toBeInTheDocument()
     const nav = screen.getByRole('navigation', { name: 'Principal' })
     expect(within(nav).getByRole('link', { name: /Aujourd’hui/ })).toHaveAttribute('href', '/')
     expect(within(nav).getByRole('link', { name: /Journal/ })).toHaveAttribute('href', '/journal')

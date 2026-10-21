@@ -14,6 +14,7 @@ import { loadLastConnect, saveLastConnect } from '../devices/huawei/journal'
 import { formatAgo } from '../utils/timeAgo'
 import { describeWatchStatus, getWatchAutoSyncState } from '../services/watchAutoSync'
 import WatchPresence from './WatchPresence'
+import { APP_NAME } from '../config/brand'
 
 const ICONS = { ok: '✓', warn: '!', fail: '✕', skip: '–', running: '…', pending: '·' }
 
@@ -109,7 +110,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
         </p>
       ) : (
         <p className="my-devices-intro">
-          HealthTrack parle directement à votre montre, sans Huawei Santé ni Gadgetbridge, et relit ses mesures à chaque ouverture de
+          {APP_NAME} parle directement à votre montre, sans Huawei Santé ni Gadgetbridge, et relit ses mesures à chaque ouverture de
           l’app. La clé de la montre reste <strong>sur ce téléphone</strong>.
         </p>
       )}

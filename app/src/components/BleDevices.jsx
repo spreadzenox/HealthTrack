@@ -10,6 +10,7 @@ import { describeMeasurement, measurementsToEntries } from '../devices/ble/measu
 import { summarizeHeartRateSession, sessionToEntries } from '../devices/ble/heartRate'
 import { upsertEntries } from '../storage/localHealthStorage'
 import { openGuide } from '../utils/openGuide'
+import { APP_NAME } from '../config/brand'
 import './MyDevices.css'
 import './BleDevices.css'
 
@@ -32,7 +33,7 @@ function deviceView(d) {
   if (driver.mode === 'direct') {
     return {
       status: { label: 'Connexion directe', className: 'device-status-ok' },
-      message: `${driver.label} : HealthTrack se connecte directement à elle (${driver.measures}), sans l’app du fabricant.`,
+      message: `${driver.label} : ${APP_NAME} se connecte directement à elle (${driver.measures}), sans l’app du fabricant.`,
     }
   }
   if (driver.supported) {
@@ -119,7 +120,7 @@ export default function BleDevices({
       setDevices(list)
       setPhase('done')
     } catch {
-      setError('Bluetooth indisponible : vérifiez qu’il est activé et que HealthTrack a l’autorisation « Appareils à proximité ».')
+      setError(`Bluetooth indisponible : vérifiez qu’il est activé et que ${APP_NAME} a l’autorisation « Appareils à proximité ».`)
       setPhase('idle')
     }
   }
@@ -236,7 +237,7 @@ export default function BleDevices({
     <section className="my-devices ble-devices" aria-labelledby="ble-devices-title">
       <h3 id="ble-devices-title" className="my-devices-title">Capteurs Bluetooth</h3>
       <p className="my-devices-intro">
-        Ceinture cardio, montre qui diffuse sa fréquence cardiaque, tensiomètre, balance… HealthTrack reconnaît tout seul les
+        Ceinture cardio, montre qui diffuse sa fréquence cardiaque, tensiomètre, balance… {APP_NAME} reconnaît tout seul les
         appareils au profil Bluetooth standard, quelle que soit la marque.
       </p>
 

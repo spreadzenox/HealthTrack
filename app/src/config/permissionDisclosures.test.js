@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { DISCLOSURES, disclosureFor } from './permissionDisclosures'
+import { APP_NAME } from './brand'
 
 describe('divulgations avant les autorisations sensibles', () => {
   it('chaque divulgation dit ce qui est lu, ce qui sort du téléphone, et demande un accord explicite', () => {
@@ -23,7 +24,7 @@ describe('divulgations avant les autorisations sensibles', () => {
 
   it('variante play : dit quand la caméra lit (à l’ouverture de l’app, signalée à l’écran, jamais app fermée)', () => {
     const text = DISCLOSURES.camera_app_open.points.join(' ')
-    expect(text).toMatch(/ouvrez HealthTrack/)
+    expect(text).toMatch(new RegExp(`ouvrez ${APP_NAME}`))
     expect(text).toMatch(/bandeau/)
     expect(text).toMatch(/app est fermée/)
     expect(text).not.toMatch(/déverrouill|notification reste/)

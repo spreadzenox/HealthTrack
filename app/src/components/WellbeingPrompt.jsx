@@ -22,6 +22,7 @@ import {
   importPendingEveningNotes,
   setEveningNoteEnabled,
 } from '../services/eveningNote'
+import { APP_NAME } from '../config/brand'
 
 const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
 
@@ -187,7 +188,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
     setEvening((prev) => ({ ...prev, enabled: on }))
     try {
       const res = await setEveningNoteEnabled(on)
-      setEveningHint(res.blocked ? 'Notifications refusées : autorisez-les pour HealthTrack dans les réglages Android.' : null)
+      setEveningHint(res.blocked ? `Notifications refusées : autorisez-les pour ${APP_NAME} dans les réglages Android.` : null)
       setEvening(await getEveningNoteStatus())
     } catch {
       setEvening((prev) => ({ ...prev, enabled: !on }))

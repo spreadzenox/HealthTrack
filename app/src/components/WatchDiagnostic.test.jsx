@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import WatchDiagnostic from './WatchDiagnostic'
 import { watchJournal } from '../devices/huawei/journal'
+import { APP_NAME } from '../config/brand'
 
 const REPORT = {
   startedAt: '2026-10-12T20:00:00.000Z',
@@ -96,7 +97,7 @@ describe('WatchDiagnostic', () => {
       startedAt: '2026-10-14T07:30:00.000Z',
       finishedAt: '2026-10-14T07:30:09.000Z',
       steps: [{ id: 'auth', label: 'Authentification', status: 'ok' }],
-      outcome: { code: 'connected', title: 'Montre connectée à HealthTrack' },
+      outcome: { code: 'connected', title: `Montre connectée à ${APP_NAME}` },
     }
     localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify(connected))
     localStorage.setItem('healthtrack_watch_diagnostic_last', JSON.stringify(REPORT))
@@ -107,7 +108,7 @@ describe('WatchDiagnostic', () => {
     expect(screen.getByText(/batterie 84 % · synchro .* · 7 nouvelles mesures/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Synchroniser la montre' })).toBeInTheDocument()
     // plus de bandeau « Montre connectée » : le titre du résultat n'est montré qu'en cas d'échec
-    expect(screen.queryByText('Montre connectée à HealthTrack')).toBeNull()
+    expect(screen.queryByText(`Montre connectée à ${APP_NAME}`)).toBeNull()
     const diag = container.querySelector('details.watch-trouble')
     expect(diag.open).toBe(false)
     expect(diag.querySelector('summary').textContent).toBe('Diagnostic')
