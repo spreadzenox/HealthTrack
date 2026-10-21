@@ -28,8 +28,9 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   inventaire : `protocoles/huawei.md` §10 (run « idées » 21/10 20:30). Cause probable : GT 6 Pro « fichiers 0x2C non »
   → sommeil détaillé jamais demandé. Étapes (un run = une étape, tests sur trames synthétiques) :
   [x] **M0** nom affiché « Halcya » (`config/brand.js`, deux variantes, libellé du lanceur, notifications ; aucun identifiant
-  technique ; test-garde `brand.test.js`) — 22/10 00:30 (PR #260) ; [ ] **M1** sommeil par la voie « nouvelle synchro » (§10.3) + types bruts
-  du sommeil simple (9…) consignés ; repli : sommeil simple léger / profond écrit même sans fichier ; [ ] **M2** VFC
+  technique ; test-garde `brand.test.js`) — 22/10 00:30 (PR #260) ; [~] **M1** sommeil par la voie « nouvelle synchro » (§10.3) — **livré le 22/10 00:30** (0x2C plus jamais
+  interrogé, décision TruSleep + 143, départ coucher si 199, résumé complet, siestes, rattrapage 60 j) ; [ ] à confirmer sur la
+  vraie montre (journal de synchro) ; [ ] types bruts du sommeil simple (9…) ; [ ] **M2** VFC
   (nuit + journée, dictionnaire 500044) ; [ ] **M3** température cutanée ; [ ] **M4** stress, SpO₂ nuit, respiration,
   étages ; [ ] **M5** écran « Montre » (par type : dernière valeur, date, n sur 7 j) ; [ ] **M6** rattrapage de
   l'historique + resynchro arrière-plan avec les nouvelles lectures (A.3) ; [ ] **M7** séances : FC et allure
@@ -79,6 +80,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   [ ] **3b-3** « Lecture rapide » (tuile / notification → activité visible) ; [ ] divulgations restantes : photo du
   repas → IA (avant le premier envoi), Health Connect (jalon 8), Bluetooth « Appareils à proximité » ;
   [ ] enregistrer la date de chaque accord (preuve de consentement, RGPD art. 9) ;
+  [ ] fiabiliser le test `FaceSenseCard` « affiche l’humeur estimée dès la première lecture… » (échec isolé sous charge le 22/10 00:30, vert en relance) ;
   [ ] fiabiliser le test `UpdateBanner` « montre la progression en Mo et en %… » (délai de 3 s dépassé sous charge en CI, PR #246 sur `a6dfd56`) ; [ ] **3c** envoi automatique en test
   interne (Android Publisher, edits) dans « Play — AAB », après P10 + P11 ; [ ] **3d** nom affiché de l'app depuis une
   seule source (`appName` Capacitor, `strings.xml`, titres) pour le changer en un commit
