@@ -151,6 +151,42 @@ pas de « prédiction »). Aucune donnée ne bouge. Prochain run de code : « Le
 écran de l'onboarding. **👉 Votre prochaine action la plus utile reste P8 puis P10** (AAB `HealthTrack-play-343` ou plus récent). En coulisses : le
 contrôle « budget de lectures » mesurait les analyses sur des agrégats vides (biais de l'outil, corrigé) ; budgets recalés sur les vraies valeurs.
 
+**Run « idées » du 21/10 20:30 — votre montre : pourquoi le sommeil, la VFC et la température ne remontent pas
+(rien de nouveau dans l'app ce soir).** ① **Cause trouvée pour le sommeil** : HealthTrack demandait à la montre si
+elle « sait » envoyer des fichiers ; votre GT 6 Pro répond **non** (journal du 14/10)… alors qu'elle le fait très bien
+— ce n'est pas une question qu'il faut lui poser. HealthTrack sautait donc à chaque synchro le fichier qui contient
+**toute la nuit** : phases (léger, profond, paradoxal, éveil), coucher et lever, score, réveils, siestes, et aussi la
+**VFC de la nuit, la respiration, la SpO₂ et la FC de la nuit**. La correction tient en quelques lignes : c'est le
+**premier run de code** (M1, prochain run). ② **VFC de journée et température de la peau** passent par un autre
+canal de la montre (messages « entre applis », dictionnaire de données) que HealthTrack ne parle pas encore : spécifié
+ce soir, ce sera M2 puis M3. ③ Plan complet du chantier montre (M1 → M7, avec l'écran « Montre » de diagnostic en M5)
+et inventaire de tout ce que mesure la GT 6 Pro : [`protocoles/huawei.md`](protocoles/huawei.md) §10. ④ Vos
+décisions de ce soir sont reportées : l'app s'appellera **« Halcya »** (appliqué au prochain run de code, aucun
+identifiant technique ne change), et la **montre passe en priorité principale des runs de code** jusqu'à couverture
+maximale — sauf un run court dès que **gh-deployer** est invité dans la Play Console, pour l'envoi automatique en test
+interne.
+
+**⌚ Montre Huawei — état par type de donnée (21/10 20:30)** :
+
+| Donnée | État | Prochaine étape |
+|---|---|---|
+| Sommeil détaillé (phases, score, réveils, siestes) | ❌ jamais demandé (cause trouvée) | M1 (prochain run de code) |
+| VFC de la nuit · respiration · SpO₂ et FC de la nuit | ❌ (viennent avec le sommeil) | M1 |
+| VFC de journée | ❌ canal « dictionnaire » à écrire | M2 |
+| Température de la peau | ❌ même canal | M3 |
+| Stress | ❌ même cause que le sommeil | M4 |
+| Étages | ❌ personne ne sait encore les lire | M4 (avec votre aide) |
+| FC continue, FC au repos, SpO₂ de journée, pas, distance, calories | ✅ | — |
+| Séances (type, durée, distance, FC mini / maxi) | ✅ ; courbe FC et allure ❌ | M7 |
+| Synchro en arrière-plan | 🟡 pas, FC, sommeil simple seulement | M6 |
+
+**À faire sur votre montre dès maintenant** (ça prépare M1–M4) : vérifier que **TruSleep**, la **surveillance du
+stress** et, si la montre la propose, la **mesure de la température de la peau** sont activés (Réglages de la montre →
+Santé). Après la prochaine version : « Synchroniser la montre », puis regarder si votre nuit apparaît dans Journal →
+Jours. **👉 Votre prochaine action la plus utile : finir P11** (inviter `gh-deployer@healthtrack-824b26.iam.gserviceaccount.com`
+dans Play Console → Utilisateurs et autorisations, droits sur les pistes de test, testeurs, fiche et produits, **pas la
+production** ; pas à pas dans [`PRODUIT.md`](PRODUIT.md) §4).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -528,6 +564,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 21/10 20:30 — [Idées : montre Huawei, sommeil / VFC / température](runs/2026-10-21-2030-idees-montre-huawei.md) | 💡⌚ | Décisions du 21/10 au soir reportées (nom **Halcya**, P3 / P8 / P10 faits, P11 en cours, **jalon M montre = priorité des runs de code**) ; cause du sommeil absent trouvée (0x2C demandé en capacité → « non » → sommeil détaillé jamais lu) ; spec `huawei.md` §10 (inventaire GT 6 Pro, P2P dictionnaire VFC 500044 / température 400012, plan M1–M7) ; I139–I143 ; journal seul, 1 738 Vitest |
 | 21/10 18:30 — [Tendances dans le Journal](runs/2026-10-21-1830-tendances.md) | 🧭🎨 | 2b accueil : Radar forme, cœur, sommeil et courbes du bien-être → `/tendances` (Journal → Tendances) ; accueil ≈ 340 lectures au lieu de 12 500 sur 3 ans ; 2e « Attendu d'après vos habitudes » ; 1 738 Vitest ; PR #256 → **v199, 33,7 Mo** + AAB play 343 ; outil perf corrigé (agrégats vides) |
 | 21/10 16:30 — [« Vos derniers jours » dans Journal](runs/2026-10-21-1630-journal-jours.md) | 🧭🎨 | Page `/journal` (Jours \| Repas \| Nutrition), `DailyJournal` + `journalEntries` sortis de l'accueil, accueil allégé ; budget de lectures `/journal` ; 1 734 Vitest ; PR #254 → **v198, 33,7 Mo** (v197 = même commit, double push) + AAB play 341 |
 | 21/10 14:30 — [Navigation 4 onglets](runs/2026-10-21-1430-navigation-4-onglets.md) | 🧭🎨 | Aujourd'hui / Journal (Repas \| Nutrition) / Pistes / Sources, roue « Réglages » en haut à droite, titres « Vos sources » / « Vos pistes », `APP_NAME` centralisé ; aucune route ni donnée changée ; 1 730 Vitest ; PR #252 → **v196, 33,7 Mo** + AAB play 339 |

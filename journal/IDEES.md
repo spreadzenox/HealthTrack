@@ -9,6 +9,38 @@
 
 ---
 
+## Run du 21/10/2026 20:30 (Paris) — montre Huawei : pourquoi le sommeil, la VFC et la température ne remontent pas
+
+Signalement du propriétaire du 21/10 ~20:00. Spécification complète : `protocoles/huawei.md` §10 (inventaire GT 6 Pro,
+cause, voie P2P, plan M1–M7). Source : Gadgetbridge master `0735529275` du 21/10, lu par l'API Codeberg, faits seulement.
+
+- **I139 (25) — Corriger la question des capacités : le sommeil détaillé revient [V].** Besoin : le sommeil et la VFC
+  de nuit sont des facteurs X clés des pistes. HealthTrack demande à la montre si elle prend en charge le service de
+  fichiers 0x2C ; la GT 6 Pro répond « non » (journal du 14/10) et HealthTrack saute donc le sommeil détaillé à chaque
+  synchro. Or ce service n'est pas une « capacité » : Gadgetbridge ne pose jamais la question et l'utilise directement
+  (GT 6 Pro : sommeil confirmé par un testeur, #5428). Décider par TruSleep (7/0x16) + capacité étendue 143. Impact 5,
+  faisabilité 5 (quelques lignes + tests). Un seul fichier rapporte d'un coup : phases, score, réveils, siestes, **VFC,
+  respiration, SpO₂ et FC de la nuit**. → **M1, premier run de code.**
+- **I140 (20) — Service P2P « dictionnaire » : VFC de journée et température cutanée [V].** Messages 0x34/0x01 entre
+  `hw.unitedevice.datadictionarysync` et `hw.watch.health.filesync` (identifiants publics) ; classes 500044 (RMSSD,
+  capacité 235) et 400012 (température de la peau, capacité 29). Impact 4, faisabilité 3 (ping, séquences, accusés,
+  pagination). → M2, M3.
+- **I141 (12) — Stress de la montre comme facteur X.** Même correctif de capacité, fichier `rrisqi` v3. Jamais une
+  entrée du bien-être estimé (D5). → M4.
+- **I142 (10) — Identifier les étages sans données réelles.** Consigner, en nombres seulement, les bits inconnus des
+  minutes et comparer au chiffre que la montre affiche (le propriétaire le dit) : ce qu'aucun projet n'a encore décodé
+  (#5724). → M4.
+- **I143 (15) — Écran « Montre » orienté propriétaire.** Une ligne par type de donnée : dernière valeur, date, n sur
+  7 j, issue de la dernière lecture. Rend chaque correctif vérifiable en un coup d'œil. → M5.
+- **Garde-fou D5** : la GT 6 Pro calcule elle-même des « émotions » (classe 500031, valence / éveil). Elles ne doivent
+  jamais nourrir l'estimation du bien-être (Y) ; à ignorer, ou à montrer comme une mesure de la montre à part.
+- **Différenciateur produit [H]** : Huawei Santé n'écrit pas dans Health Connect ; les utilisateurs passent par des
+  passerelles tierces (applis de synchro via le cloud Huawei) ou par Gadgetbridge (qui remplace Huawei Santé). Lire la
+  montre en direct, sur le téléphone, sommeil détaillé, VFC et température compris, reste rare : argument pour la fiche
+  Play (« compatible avec les montres Huawei »), à n'écrire qu'une fois M1–M3 validés sur la vraie montre.
+
+---
+
 ## Run du 21/10/2026 08:30 (Paris) — premier run « idées » du chantier produit : Health Connect, pistes SII, paywall
 
 Question du jour, côté utilisateur SII : *« au premier lancement, est-ce que l'app me montre déjà quelque chose

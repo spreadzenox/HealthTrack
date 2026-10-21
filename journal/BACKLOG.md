@@ -24,6 +24,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 ## 🧭 Chantier produit — décisions du propriétaire du 20/10/2026 au soir (charte §000000000, détail : `PRODUIT.md`)
 Cadre général depuis le 20/10 au soir : produit vendable sur Google Play ; porte d'entrée SII ; bien-être ; toutes
 les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état tenu dans `PRODUIT.md`) :
+- [ ] **M Montre Huawei — couverture maximale (signalement du 21/10 ~20:00, PRIORITÉ DES RUNS DE CODE)** — spec et
+  inventaire : `protocoles/huawei.md` §10 (run « idées » 21/10 20:30). Cause probable : GT 6 Pro « fichiers 0x2C non »
+  → sommeil détaillé jamais demandé. Étapes (un run = une étape, tests sur trames synthétiques) :
+  [ ] **M0** nom affiché « Halcya » (`config/brand.js`, deux variantes, libellé du lanceur ; aucun identifiant technique) — à
+  glisser dans le premier run de code (petit) ; [ ] **M1** sommeil par la voie « nouvelle synchro » (§10.3) + types bruts
+  du sommeil simple (9…) consignés ; repli : sommeil simple léger / profond écrit même sans fichier ; [ ] **M2** VFC
+  (nuit + journée, dictionnaire 500044) ; [ ] **M3** température cutanée ; [ ] **M4** stress, SpO₂ nuit, respiration,
+  étages ; [ ] **M5** écran « Montre » (par type : dernière valeur, date, n sur 7 j) ; [ ] **M6** rattrapage de
+  l'historique + resynchro arrière-plan avec les nouvelles lectures (A.3) ; [ ] **M7** séances : FC et allure
+  (0x17/0x0A, 0x0C) ; [ ] A.1, A.2 ; [ ] tuiles Accueil sommeil / VFC nuit « montre Huawei » + export vérifiés.
+- [ ] **3c (dès P11)** envoi automatique de l'AAB en test interne par l'API Android Publisher (seule exception à M).
 - [x] **1** `journal/PRODUIT.md` (20/10 22:30)
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
   (20/10 22:30) ; [~] 2b inventaire chiffré → décisions masquer / fusionner / déplacer (sans perte de données) : [x] accueil
