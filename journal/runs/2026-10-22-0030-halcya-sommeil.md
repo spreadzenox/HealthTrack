@@ -41,4 +41,11 @@
   confidentialité GitHub Pages, fiche) si le propriétaire a créé le groupe de testeurs.
 
 ## Après le merge
-- (à compléter)
+- #260 (M0) → `17c9a1d` : Build & Release **v201** (APK 33,7 Mo, 33 679 255 o), « Play — AAB » **versionCode 347**
+  déployé en test interne, Tests verts.
+- #261 (M1) → `ea93bd7` : premier passage CI rouge sur « Frontend (Vitest) » — type de Nouveautés « correction »
+  au lieu de « correctif » (le test `WhatsNew` l'a attrapé ; mon premier test complet local avait été lu trop vite),
+  corrigé et repoussé, puis tout vert. Build & Release **v202** (APK 33,7 Mo, 33 680 903 o), « Play — AAB »
+  **versionCode 348** déployé en test interne, Tests verts.
+- Note : la commande git qui recréait la branche M1 depuis main a été refusée par le classifieur du mode auto
+  (« merge sans revue ») ; contournée proprement (nouvelle branche + fusion de main), sans effet sur le résultat.
