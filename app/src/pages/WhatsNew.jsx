@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId, getUnseenEntries, markAllSeen } from '../services/whatsNew'
 import { CURRENT_VERSION } from '../services/updateCheck'
+import { APP_NAME } from '../config/brand'
 import '../Food.css'
 import '../components/WhatsNew.css'
 
@@ -27,7 +28,7 @@ export default function WhatsNew({ changelog = CHANGELOG }) {
   return (
     <section className="food-page whats-new-page">
       <h2 className="page-title">Nouveautés</h2>
-      <p className="page-intro">Ce qui a changé dans HealthTrack, de la plus récente à la plus ancienne. Version installée : {CURRENT_VERSION}.</p>
+      <p className="page-intro">Ce qui a changé dans {APP_NAME}, de la plus récente à la plus ancienne. Version installée : {CURRENT_VERSION}.</p>
       {changelog.length === 0 ? (
         <p className="hint">Aucune nouveauté pour le moment.</p>
       ) : (

@@ -30,6 +30,7 @@ import { redactDeviceId } from './diagnostic'
 import { ASSOCIATION_QUERY, runAssociation, servePhoneInfo } from './association'
 import { CAPABILITY_QUERY, describeCapabilities, mergeCapabilityQueries, readCapabilities, setWatchTime } from './sync'
 import { isHuaweiWatchName } from './setup'
+import { APP_NAME } from '../../config/brand'
 
 /** Demande des paramètres du lien : étiquettes 1 à 4 vides (comme linkParamsRequest). */
 const LINK_PARAMS_TLVS = [{ tag: 1 }, { tag: 2 }, { tag: 3 }, { tag: 4 }]
@@ -313,7 +314,7 @@ export async function connectAndAuthenticate({
       if ((e?.code === 'token_mismatch' || e?.code === 'watch_error') && !report.firstPairing) {
         if (e.tokenCheck) report.tokenCheck = e.tokenCheck
         set('auth', 'fail', e.message)
-        return finish('key_rejected', 'La montre ne reconnaît plus la clé de HealthTrack')
+        return finish('key_rejected', `La montre ne reconnaît plus la clé de ${APP_NAME}`)
       }
       throw e
     }
@@ -391,7 +392,7 @@ export async function connectAndAuthenticate({
     }
     if (report.association) report.association.phoneInfoRequests = { ...phoneInfo.stats }
     phoneInfo.stop()
-    return finish('connected', report.firstPairing ? 'Montre appairée à HealthTrack' : 'Montre connectée à HealthTrack')
+    return finish('connected', report.firstPairing ? `Montre appairée à ${APP_NAME}` : `Montre connectée à ${APP_NAME}`)
   } catch (e) {
     const msg = e?.message || String(e)
     if (e?.tokenCheck) report.tokenCheck = e.tokenCheck
@@ -417,8 +418,8 @@ export function connectAdvice(report) {
   switch (report?.outcome?.code) {
     case 'connected':
       return report.sync
-        ? ['La montre parle à HealthTrack, avec une clé gardée sur ce téléphone. Les mesures lues sont dans votre historique (source « Montre Huawei »).']
-        : ['La montre parle maintenant à HealthTrack, avec une clé gardée sur ce téléphone.']
+        ? [`La montre parle à ${APP_NAME}, avec une clé gardée sur ce téléphone. Les mesures lues sont dans votre historique (source « Montre Huawei »).`]
+        : [`La montre parle maintenant à ${APP_NAME}, avec une clé gardée sur ce téléphone.`]
     case 'need_secrets':
       return ['Le premier appairage a besoin de 3 constantes publiques (projet huawei-lpv2, licence MIT). Touchez « Télécharger les paramètres » : elles restent sur ce téléphone.']
     case 'key_rejected':

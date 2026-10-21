@@ -10,6 +10,7 @@
 import { encodeTlvs, resultCode, RESULT_SUCCESS } from './protocol'
 import { hasExpand } from './sync'
 import { utf8 } from './crypto'
+import { APP_NAME } from '../../config/brand'
 
 export const DEVICE_CONFIG = 1
 export const FITNESS = 7
@@ -256,7 +257,7 @@ export async function runAssociation(
 export function associationState(report) {
   const a = report?.association
   if (!a) return { code: 'pending', title: 'Association côté montre : pas encore vérifiée' }
-  if (a.userSaw === 'watchface' || a.freshData) return { code: 'confirmed', title: 'La montre se considère associée à HealthTrack' }
+  if (a.userSaw === 'watchface' || a.freshData) return { code: 'confirmed', title: `La montre se considère associée à ${APP_NAME}` }
   if (a.userSaw === 'pairing_screen') return { code: 'not_associated', title: 'La montre affiche encore son écran d’association' }
   if (a.sentSetupStatus || a.accepted > 0) return { code: 'likely', title: 'Fin d’association envoyée à la montre' }
   return { code: 'pending', title: 'La montre n’a accepté aucun message d’association' }

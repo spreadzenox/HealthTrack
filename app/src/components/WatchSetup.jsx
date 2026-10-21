@@ -21,6 +21,7 @@ import {
   RESET_WARNINGS,
   KEEP_STEPS,
 } from '../devices/huawei/setup'
+import { APP_NAME } from '../config/brand'
 
 const STEP_LABELS = {
   release: 'Libérer la montre de l’app qui la tient',
@@ -182,7 +183,7 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
             </p>
           ) : (
             <p className="watch-setup-text">
-              Montre allumée sur son écran d’appairage, près du téléphone : HealthTrack la cherche puis Android vous demande de confirmer
+              Montre allumée sur son écran d’appairage, près du téléphone : {APP_NAME} la cherche puis Android vous demande de confirmer
               l’appairage.
             </p>
           )}
@@ -230,7 +231,7 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
     if (id === 'test') {
       return (
         <>
-          <p className="watch-setup-text">Relancez le test : la montre doit répondre à HealthTrack. Exportez ensuite le journal pour la suite (authentification).</p>
+          <p className="watch-setup-text">Relancez le test : la montre doit répondre à {APP_NAME}. Exportez ensuite le journal pour la suite (authentification).</p>
           {onRunTest && (
             <button type="button" className="btn btn-primary connector-btn" disabled={busy} onClick={onRunTest}>
               Relancer le test
@@ -250,7 +251,7 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
       {!plan.connected && (anyHolder || state.choice === 'keep') && (
         <div className="watch-setup-choice" role="radiogroup" aria-label="Chemin choisi">
           <button type="button" role="radio" aria-checked={plan.path === 'free'} className={`watch-setup-chip ${plan.path === 'free' ? 'active' : ''}`} onClick={() => update({ ...state, choice: 'free' })}>
-            HealthTrack seule (conseillé)
+            {APP_NAME} seule (conseillé)
           </button>
           <button type="button" role="radio" aria-checked={plan.path === 'keep'} className={`watch-setup-chip ${plan.path === 'keep' ? 'active' : ''}`} onClick={() => update({ ...state, choice: 'keep' })}>
             Garder Huawei Santé
@@ -273,7 +274,7 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
       </ol>
       {plan.connected ? (
         <p className="watch-setup-text">
-          Rien à faire ici : la montre est appairée et HealthTrack la synchronise (dernière synchro réussie {formatAgo(connectedAt)}).
+          Rien à faire ici : la montre est appairée et {APP_NAME} la synchronise (dernière synchro réussie {formatAgo(connectedAt)}).
         </p>
       ) : (
         !plan.current && <p className="watch-setup-text">Montre prête : touchez « Se connecter à la montre » ci-dessus pour lire vos mesures.</p>

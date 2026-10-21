@@ -353,7 +353,7 @@ async function main() {
             ],
             sync: { label: '1 248 minutes, 2 nuits → 214 mesures', inserted: 214 },
             association: { deviceStatus: 1, sentSetupStatus: true, accepted: 11, refused: 0, steps: [], freshData: false, userSaw: 'watchface' },
-            outcome: { code: 'connected', title: 'Montre appairée à HealthTrack' },
+            outcome: { code: 'connected', title: 'Montre appairée à Halcya' },
             log: [],
           }),
         )

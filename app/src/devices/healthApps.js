@@ -12,6 +12,7 @@
  * Aucune liste de modèles de montres : on raisonne par app compagnon (une app = une famille
  * d'appareils), ce qui couvre toute une gamme d'un coup. journal/IDEES.md (I3).
  */
+import { APP_NAME } from '../config/brand'
 
 /**
  * `writesHealthConnect` : l'app sait écrire dans Health Connect (il suffit de l'activer chez elle).
@@ -54,7 +55,7 @@ export const HEALTH_APPS = [
   { id: 'fitbit', name: 'Fitbit', packages: ['com.fitbit.FitbitMobile'], writesHealthConnect: true, guideId: 'other', enableHint: 'Fitbit → Profil → Health Connect.' },
   { id: 'google_fit', name: 'Google Fit', packages: ['com.google.android.apps.fitness'], writesHealthConnect: true, guideId: 'other', enableHint: 'Google Fit → Profil → Paramètres → Health Connect.' },
   { id: 'pixel_watch', name: 'Pixel Watch', packages: ['com.google.android.apps.wear.companion'], writesHealthConnect: true, guideId: 'other', enableHint: 'Les données passent par Fitbit : activez Health Connect dans l’app Fitbit.' },
-  { id: 'withings', name: 'Withings', packages: ['com.withings.wiscale2'], writesHealthConnect: true, guideId: 'other', enableHint: 'Connecteur Withings de HealthTrack (ci-dessus), ou Withings → Profil → Health Connect.' },
+  { id: 'withings', name: 'Withings', packages: ['com.withings.wiscale2'], writesHealthConnect: true, guideId: 'other', enableHint: `Connecteur Withings de ${APP_NAME} (ci-dessus), ou Withings → Profil → Health Connect.` },
   { id: 'oura', name: 'Oura', packages: ['com.ouraring.oura'], writesHealthConnect: true, guideId: 'other', enableHint: 'Oura → ☰ → Paramètres → Health Connect.' },
   { id: 'polar', name: 'Polar Flow', packages: ['fi.polar.polarflow'], writesHealthConnect: true, guideId: 'other', enableHint: 'Polar Flow → Paramètres → Partage → Health Connect.' },
   { id: 'suunto', name: 'Suunto', packages: ['com.stt.android.suunto'], writesHealthConnect: true, guideId: 'other', enableHint: 'Suunto → Profil → Partenaires → Health Connect.' },

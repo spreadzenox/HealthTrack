@@ -10,6 +10,7 @@ import { summarizeHealthConnectSources, adviseDevices, missingWatchMetrics } fro
 import { detectPhoneApps, openPhoneApp } from '../devices/phoneApps'
 import { formatAgo } from '../utils/timeAgo'
 import { openGuide } from '../utils/openGuide'
+import { APP_NAME } from '../config/brand'
 import './MyDevices.css'
 
 const SOURCE_WINDOW_DAYS = 30
@@ -62,7 +63,7 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
         <p className="my-devices-intro">
           {canDetect
             ? 'Aucune app de montre ou de santé connue sur ce téléphone. Si vous en utilisez une, choisissez sa marque ci-dessous.'
-            : 'Dans l’app Android, HealthTrack repère tout seul vos apps de montre et de santé (Huawei Health, Samsung Health, Garmin…) et vous dit comment les brancher.'}
+            : `Dans l’app Android, ${APP_NAME} repère tout seul vos apps de montre et de santé (Huawei Health, Samsung Health, Garmin…) et vous dit comment les brancher.`}
         </p>
       ) : (
         <>

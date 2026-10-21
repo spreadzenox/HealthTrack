@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import { computeHeartBaselines, BASELINE_METRICS, RECENT_DAYS, BASELINE_DAYS } from '../services/baselines'
+import { APP_NAME } from '../config/brand'
 import './BaselineCards.css'
 
 // 7 jours récents + 60 jours de norme, avec un peu de marge
@@ -115,7 +116,7 @@ export default function BaselineCards() {
       {!hasAnyData ? (
         <p className="empty-hint">
           Connectez une montre via <Link to="/connectors">Health Connect</Link> : après 3 semaines de mesures,
-          HealthTrack compare votre FC au repos et votre VFC à <em>vos</em> valeurs habituelles.
+          {APP_NAME} compare votre FC au repos et votre VFC à <em>vos</em> valeurs habituelles.
         </p>
       ) : (
         <>

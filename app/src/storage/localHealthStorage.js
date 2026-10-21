@@ -14,6 +14,7 @@
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
 import { bumpDataRevision } from './dataRevision'
 import { AGG_STORE, DENSE_SERIES, markDirty, readAggregatedEntries } from './dailyAggregates'
+import { APP_NAME } from '../config/brand'
 
 const DB_NAME = 'HealthTrack'
 const STORE_NAME = 'health_entries'
@@ -562,7 +563,7 @@ export async function exportToJson() {
   return JSON.stringify(backup, null, 2)
 }
 
-const NOT_A_BACKUP = "Ce fichier n'est pas une sauvegarde HealthTrack (aucune entrée reconnue)."
+const NOT_A_BACKUP = `Ce fichier n'est pas une sauvegarde ${APP_NAME} (aucune entrée reconnue).`
 
 function isNonEmptyString(v) {
   return typeof v === 'string' && v.trim() !== ''

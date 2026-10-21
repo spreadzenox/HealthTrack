@@ -1,6 +1,6 @@
 {
   "appId": "com.healthtrack.app",
-  "appName": "HealthTrack",
+  "appName": "Halcya",
   "webDir": "dist",
   "plugins": {
     "SystemBars": {

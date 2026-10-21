@@ -6,6 +6,7 @@
  * détection d'un téléchargement qui ne progresse plus, messages d'échec exacts, et les étapes
  * téléchargement → vérification → ouverture de l'installateur.
  */
+import { APP_NAME } from '../config/brand'
 
 export const REPO_RELEASES_URL = 'https://github.com/spreadzenox/HealthTrack/releases/latest'
 
@@ -94,9 +95,9 @@ const INSTALL_ERRORS = {
   size_mismatch: "Le fichier téléchargé est incomplet (taille différente de celle annoncée).",
   sha_mismatch: "Le fichier téléchargé est abîmé (empreinte différente de celle de la release).",
   not_apk: "Le fichier téléchargé n'est pas une application Android lisible.",
-  wrong_package: "Le fichier téléchargé n'est pas HealthTrack.",
+  wrong_package: `Le fichier téléchargé n'est pas ${APP_NAME}.`,
   older: 'Cette version est plus ancienne que celle installée.',
-  no_permission: "HealthTrack n'a pas encore le droit d'installer des applications.",
+  no_permission: `${APP_NAME} n'a pas encore le droit d'installer des applications.`,
 }
 
 export function describeInstallError(result) {
@@ -200,7 +201,7 @@ export function createUpdateRunner({
       return emit({
         step: 'permission',
         error: null,
-        notice: "Autorisez « Installer des applis inconnues » pour HealthTrack, revenez ici puis touchez « Installer ».",
+        notice: `Autorisez « Installer des applis inconnues » pour ${APP_NAME}, revenez ici puis touchez « Installer ».`,
       })
     }
     return fail(describeInstallError(res))
@@ -268,7 +269,7 @@ export function createUpdateRunner({
           await plugin.openInstallSettings().catch(() => {})
           return emit({
             notice:
-              "Autorisez « Installer des applis inconnues » pour HealthTrack dans l'écran qui vient de s'ouvrir, puis revenez et touchez « Continuer ».",
+              `Autorisez « Installer des applis inconnues » pour ${APP_NAME} dans l'écran qui vient de s'ouvrir, puis revenez et touchez « Continuer ».`,
           })
         }
         await plugin.start({ url: asset.url, version: String(version), size: asset.size || -1, digest: asset.digest })

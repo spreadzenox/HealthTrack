@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import FaceSenseCard from './FaceSenseCard'
+import { APP_NAME } from '../config/brand'
 
 const base = { models: true, enabled: true, permission: true, running: true, batteryExempt: true, dayUnlocks: 3, dayBursts: 3, dayFaces: 2 }
 
@@ -54,7 +55,7 @@ describe('FaceSenseCard', () => {
     const plugin = fake({ ...base, enabled: false, running: false, batteryExempt: false, manufacturer: 'samsung', mode: 'app_open', dayAppOpens: 1, dayAppOpenFaces: 1 })
     const readOnOpen = vi.fn(async () => 'face')
     render(<FaceSenseCard plugin={plugin} appOpen readOnOpen={readOnOpen} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
-    expect(await screen.findByText(/quand vous ouvrez HealthTrack/)).toBeInTheDocument()
+    expect(await screen.findByText(new RegExp(`quand vous ouvrez ${APP_NAME}`))).toBeInTheDocument()
     expect(screen.queryByText(/à chaque déverrouillage/)).not.toBeInTheDocument()
     fireEvent.click(await screen.findByRole('button', { name: 'Activer la lecture du visage' }))
     expect(await screen.findByText(/Un bandeau l’indique/)).toBeInTheDocument()

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import WellbeingPrompt from './WellbeingPrompt'
+import { APP_NAME } from '../config/brand'
 
 vi.mock('../storage/localHealthStorage', () => ({
   createEntry: vi.fn(() => Promise.resolve(1)),
@@ -366,7 +367,7 @@ describe('WellbeingPrompt — note du soir d’un geste (I113)', () => {
     try {
       render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
       fireEvent.click(await screen.findByRole('button', { name: /Me la demander le soir/ }))
-      expect(await screen.findByText(/autorisez-les pour HealthTrack dans les réglages Android/)).toBeInTheDocument()
+      expect(await screen.findByText(new RegExp(`autorisez-les pour ${APP_NAME} dans les réglages Android`))).toBeInTheDocument()
     } finally {
       delete window.__healthtrackFakeEveningNote
     }

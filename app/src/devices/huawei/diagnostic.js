@@ -22,6 +22,7 @@ import {
 } from './protocol'
 import { withTimeout, isTimeout } from '../../utils/withTimeout'
 import { formatAgo } from '../../utils/timeAgo'
+import { APP_NAME } from '../../config/brand'
 
 /** Apps qui peuvent tenir la montre (une montre Huawei n'accepte qu'une app liée à la fois). */
 export const COMPETING_APP_IDS = ['huawei_health', 'honor_health', 'gadgetbridge', 'health_sync']
@@ -95,7 +96,7 @@ export function verdictFor(report) {
   // HealthTrack a déjà synchronisé cette montre : la connexion directe marche, quoi que dise ce test
   const connectedAt = report.context?.connectedAt || null
   const syncedLine = connectedAt
-    ? `HealthTrack synchronise pourtant bien la montre (dernière synchro réussie ${formatAgo(connectedAt)}) : la connexion directe marche. Ce test ouvre une connexion de plus, que la montre peut refuser juste après une synchro ; relancez-le dans une minute.`
+    ? `${APP_NAME} synchronise pourtant bien la montre (dernière synchro réussie ${formatAgo(connectedAt)}) : la connexion directe marche. Ce test ouvre une connexion de plus, que la montre peut refuser juste après une synchro ; relancez-le dans une minute.`
     : null
   const competing = report.apps?.installed || []
   const holder = competing.find((a) => a.id === 'huawei_health' || a.id === 'honor_health')
@@ -113,7 +114,7 @@ export function verdictFor(report) {
   if (report.busy) {
     return {
       code: 'busy',
-      title: 'Montre occupée par la synchro de HealthTrack',
+      title: `Montre occupée par la synchro de ${APP_NAME}`,
       advice: ['La relecture en arrière-plan tient la montre (une seule connexion à la fois) : c’est normal. Relancez le test dans une minute.'],
     }
   }
@@ -130,7 +131,7 @@ export function verdictFor(report) {
     }
   }
   if (step('bluetooth')?.status === 'fail') {
-    return { code: 'no_bluetooth', title: 'Bluetooth indisponible', advice: ['Activez le Bluetooth et autorisez « Appareils à proximité » pour HealthTrack, puis relancez.'] }
+    return { code: 'no_bluetooth', title: 'Bluetooth indisponible', advice: [`Activez le Bluetooth et autorisez « Appareils à proximité » pour ${APP_NAME}, puis relancez.`] }
   }
   if (step('find')?.status === 'fail') {
     return {
@@ -144,7 +145,7 @@ export function verdictFor(report) {
     }
   }
   if (syncedLine && ['connect', 'services', 'subscribe', 'link'].some((id) => step(id)?.status === 'fail')) {
-    return { code: 'in_use', title: 'Test impossible pendant que HealthTrack tient la montre', advice: [syncedLine, classicLine].filter(Boolean) }
+    return { code: 'in_use', title: `Test impossible pendant que ${APP_NAME} tient la montre`, advice: [syncedLine, classicLine].filter(Boolean) }
   }
   if (step('connect')?.status === 'fail') {
     return {
@@ -184,11 +185,11 @@ export function verdictFor(report) {
   if (lp) {
     return {
       code: 'link_ok',
-      title: 'La montre répond à HealthTrack',
+      title: `La montre répond à ${APP_NAME}`,
       advice: [
         `Protocole v${lp.protocolVersion ?? '?'}, méthode attendue : ${authModeLabel(lp)} (version ${lp.authVersion ?? '?'}${lp.encryptMethod === 1 ? ', chiffrement GCM' : ''}).`,
         connectedAt
-          ? `HealthTrack synchronise déjà cette montre (dernière synchro réussie ${formatAgo(connectedAt)}) : rien d’autre à faire.`
+          ? `${APP_NAME} synchronise déjà cette montre (dernière synchro réussie ${formatAgo(connectedAt)}) : rien d’autre à faire.`
           : "Étape suivante : « Se connecter à la montre », en haut de cette carte (authentification puis lecture des mesures). Le journal exporté dit quelle méthode la montre attend.",
         appsLine,
       ].filter(Boolean),
@@ -416,7 +417,7 @@ async function attemptLink(kind, { client, classic, watch, report, set, log, now
     set('connect', 'ok', label)
   } catch (e) {
     if (isBusyError(e)) {
-      set('connect', 'warn', 'montre occupée par la relecture en arrière-plan de HealthTrack')
+      set('connect', 'warn', `montre occupée par la relecture en arrière-plan de ${APP_NAME}`)
       return { busy: true }
     }
     // une connexion à moitié ouverte ne doit pas garder la montre

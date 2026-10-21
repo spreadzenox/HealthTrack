@@ -15,6 +15,7 @@
  */
 
 import { withTimeout } from '../../utils/withTimeout'
+import { APP_NAME } from '../../config/brand'
 
 /** Apps qui peuvent lier la montre (Health Sync lit Huawei Santé mais ne tient pas la montre). */
 export const HOLDER_APP_IDS = ['huawei_health', 'honor_health', 'gadgetbridge']
@@ -46,9 +47,9 @@ export const RESET_WARNINGS = [
 /** Plan B : garder Huawei Santé et donner à HealthTrack l'identifiant de compte Huawei (gadgetbridge.org, « Huawei Account »). */
 export const KEEP_STEPS = [
   'Gardez Huawei Santé et la montre liée comme aujourd’hui : rien à réinitialiser.',
-  'HealthTrack se présentera à la montre avec votre identifiant de compte Huawei (15 à 20 chiffres), gardé seulement sur ce téléphone.',
+  `${APP_NAME} se présentera à la montre avec votre identifiant de compte Huawei (15 à 20 chiffres), gardé seulement sur ce téléphone.`,
   'Pour le trouver : connectez-vous sur cloud.huawei.com depuis un ordinateur, ouvrez les outils de développement (F12) → Stockage → Cookies : valeur de « userId ».',
-  'Limite : Huawei Santé et HealthTrack ne peuvent pas être connectées à la montre en même temps ; retirez à Huawei Santé « Appareils à proximité » pendant que HealthTrack synchronise.',
+  `Limite : Huawei Santé et ${APP_NAME} ne peuvent pas être connectées à la montre en même temps ; retirez à Huawei Santé « Appareils à proximité » pendant que ${APP_NAME} synchronise.`,
 ]
 
 /** Identifiant de compte Huawei : uniquement des chiffres (on tolère espaces et tirets à la saisie). */

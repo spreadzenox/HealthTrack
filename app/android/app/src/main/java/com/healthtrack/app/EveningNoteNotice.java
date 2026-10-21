@@ -163,7 +163,7 @@ final class EveningNoteNotice {
                 nm.notify(NOTIFICATION_ID, new NotificationCompat.Builder(context, CHANNEL)
                         .setSmallIcon(R.drawable.ic_stat_healthtrack)
                         .setContentTitle("Noté : " + score + " sur 5")
-                        .setContentText("Rangé dans HealthTrack à la prochaine ouverture.")
+                        .setContentText("Rangé dans " + context.getString(R.string.app_name) + " à la prochaine ouverture.")
                         .setPriority(NotificationCompat.PRIORITY_LOW)
                         .setOnlyAlertOnce(true)
                         .setTimeoutAfter(5_000)

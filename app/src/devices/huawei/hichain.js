@@ -19,6 +19,7 @@ import {
   utf8,
 } from './crypto'
 import { decodeTlvs, encodeTlvs, resultCode, RESULT_SUCCESS, toHex, tryDecodeTlvs, TAG_RESULT } from './protocol'
+import { APP_NAME } from '../../config/brand'
 
 export const CMD = { DEVICE_STATUS: 0x16, SECURITY_NEGOTIATION: 0x33, PIN_CODE: 0x2c, HICHAIN: 0x28 }
 export const OP_BIND = 1
@@ -483,7 +484,7 @@ async function tokenMismatch({ bind, candidates, seed, ids, theirs }) {
     }
   }
   const tried = candidates.length * Object.keys(WATCH_TOKEN_ORDERS).length
-  const what = bind ? 'Jeton de la montre différent du calcul de HealthTrack' : 'Clé refusée par la montre (jeton différent)'
+  const what = bind ? `Jeton de la montre différent du calcul de ${APP_NAME}` : 'Clé refusée par la montre (jeton différent)'
   const e = new Error(
     `${what} · ${matched ? `il correspond à la variante « ${matched} », pas encore prise en charge` : `aucune des ${tried} variantes essayées ne le reproduit`} (§6.10)`,
   )

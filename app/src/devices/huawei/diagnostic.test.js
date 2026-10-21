@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { runHuaweiDiagnostic, redactDeviceId, isHuaweiWearable, pickWatch, verdictFor } from './diagnostic'
 import { encodeFrame, decodeFrame, toHex } from './protocol'
+import { APP_NAME } from '../../config/brand'
 
 const MAC = 'AA:BB:CC:DD:E1:F2'
 const HUAWEI_SERVICE = '0000fe86-0000-1000-8000-00805f9b34fb'
@@ -291,6 +292,6 @@ describe('diagnostic montre Huawei — jamais bloqué (régression du 18/10/2026
     }
     const v = verdictFor(report)
     expect(v.code).toBe('in_use')
-    expect(v.advice[0]).toMatch(/HealthTrack synchronise pourtant bien la montre \(dernière synchro réussie il y a moins d’une heure\)/)
+    expect(v.advice[0]).toMatch(new RegExp(`${APP_NAME} synchronise pourtant bien la montre \\(dernière synchro réussie il y a moins d’une heure\\)`))
   })
 })

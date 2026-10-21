@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Data from './Data'
+import { APP_NAME } from '../config/brand'
 
 vi.mock('../storage/localHealthStorage', () => ({
   exportToJson: vi.fn(),
@@ -248,10 +249,10 @@ describe('Data page — import (aperçu puis choix)', () => {
   it('shows an error and imports nothing when the file is not a backup', async () => {
     const { importFromJson, parseBackup } = await import('../storage/localHealthStorage')
     parseBackup.mockImplementation(() => {
-      throw new Error("Ce fichier n'est pas une sauvegarde HealthTrack (aucune entrée reconnue).")
+      throw new Error(`Ce fichier n'est pas une sauvegarde ${APP_NAME} (aucune entrée reconnue).`)
     })
     await chooseFile()
-    expect(screen.getByText(/pas une sauvegarde HealthTrack/)).toBeInTheDocument()
+    expect(screen.getByText(new RegExp(`pas une sauvegarde ${APP_NAME}`))).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Ajouter à mes données/i })).not.toBeInTheDocument()
     expect(importFromJson).not.toHaveBeenCalled()
   })

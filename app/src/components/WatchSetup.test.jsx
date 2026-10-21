@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import WatchSetup from './WatchSetup'
+import { APP_NAME } from '../config/brand'
 
 const HUAWEI = { id: 'huawei_health', name: 'Huawei Health', package: 'com.huawei.health' }
 const WATCH = { deviceId: 'w1', name: 'HUAWEI WATCH GT 6 Pro-A1B' }
@@ -87,7 +88,7 @@ describe('WatchSetup — état réel de la montre (capture du 18/10/2026)', () =
   it('montre appairée et synchronisée : étapes faites, aucun bouton « Appairer »', async () => {
     const d = deps({ apps: [] })
     render(<WatchSetup {...d} verdict={null} autoState={{ outcome: 'connected', at: new Date().toISOString(), lastConnectedAt: new Date().toISOString() }} />)
-    expect(await screen.findByText(/Rien à faire ici : la montre est appairée et HealthTrack la synchronise/)).toBeInTheDocument()
+    expect(await screen.findByText(new RegExp(`Rien à faire ici : la montre est appairée et ${APP_NAME} la synchronise`))).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Appairer la montre' })).toBeNull()
     expect(screen.queryByText(/Montre allumée sur son écran d’appairage/)).toBeNull()
   })
