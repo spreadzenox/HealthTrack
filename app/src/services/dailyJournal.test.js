@@ -81,6 +81,14 @@ describe('buildDailyJournal', () => {
     expect(day.summary.sleepMinutes).toBe(430)
   })
 
+  it('une sieste de la montre ne s’ajoute pas à la nuit', () => {
+    const days = buildDailyJournal([
+      e('sleep', '2026-10-07T23:05:00', { durationMinutes: 461, sleepState: 'light', endDate: '2026-10-08T06:46:00' }),
+      e('sleep', '2026-10-08T13:00:00', { durationMinutes: 30, sleepState: 'asleep', endDate: '2026-10-08T13:30:00', nap: true }),
+    ])
+    expect(days.find((d) => d.summary.sleepMinutes != null).summary.sleepMinutes).toBe(461)
+  })
+
   it('ne double pas une nuit qui a à la fois « au lit » et des phases', () => {
     const [day] = buildDailyJournal([
       e('sleep', '2026-10-07T23:00:00', { durationMinutes: 480, sleepState: 'inBed', endDate: '2026-10-08T07:00:00' }),

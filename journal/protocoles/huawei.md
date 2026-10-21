@@ -961,7 +961,7 @@ température »). Lecture de [G] master `0735529275` (21/10/2026) via l'API REST
 
 | Donnée | Voie | État HealthTrack | Pourquoi / suite |
 |---|---|---|---|
-| **Sommeil : phases (léger / profond / paradoxal / éveil), coucher, lever, durée** | fichier `sequence_data` 0x2C (§7.6, §10.3) | ❌ | **jamais demandé** : bug de capacité (§10.2) → M1 |
+| **Sommeil : phases (léger / profond / paradoxal / éveil), coucher, lever, durée** | fichier `sequence_data` 0x2C (§7.6, §10.3) | 🟡 M1 livré le 22/10, à confirmer sur la montre | **jamais demandé** : bug de capacité (§10.2) → M1 |
 | Sommeil simple (léger / profond) | 7/0x0C–0x0D (§7.3) | 🟡 | lu, mais la GT 6 Pro a rendu « types 6×3, 9×1 » le 14/10 : type 9 inconnu, écarté ; peu de valeur sans phases |
 | Score de sommeil, réveils, latence, efficacité, siestes | résumé `sequence_data` (§10.3) | ❌ (décodeur prêt) | M1 ; sieste = phase 5 ou nuit « données valides = −1 » |
 | **VFC de la nuit** (moyenne, ligne de base) | résumé `sequence_data` 700013878 / 355 / 305 / 824 | ❌ (décodeur prêt pour 878) | M1 (vient avec le sommeil) |
@@ -1134,3 +1134,20 @@ Aucune classe connue pour SpO₂, stress, respiration ou étages.
 
 Règles rappelées : réimplémentation depuis **cette** spécification, jamais depuis le code de [G] ; aucune trame réelle
 du propriétaire dans le dépôt ; « compatible avec les montres Huawei » dans les textes visibles.
+
+### 10.9 M1 livré (run du 22/10/2026 00:30)
+- `CAPABILITY_QUERY` ne contient plus 0x2C ; le journal écrit « fichiers 0x2C non interrogé » et les capacités
+  étendues 29 / 56 / 143 / 199 / 235.
+- Sommeil détaillé lu si TruSleep (7/0x16) n'est pas « non » et si la capacité 143 est levée (ou inconnue)
+  (`canReadSleepFile`). Départ des phases à l'heure de coucher seulement si 199 est levée et la nuit valide.
+- Résumé : réels de 4 octets, entiers signés sur 4 / 8 octets (« données valides » = −1), `BF 80 00 00` = absent ;
+  type de résumé ≠ 2 ignoré ; nuit invalide = phases seules ; phase 5 → `nap: true`. Blocs de durée non entière en
+  minutes ou > 24 h ignorés sans décaler la suite.
+- Écrit : phases (`sleep`, avec `nap`, `wakeups`, FC moyenne / mini / maxi et `watchSummary` brut dans le payload),
+  VFC de la nuit (`heart_rate` / `heartRateVariability`, réveil + 15 s), respiration (`respiratory_rate`, `rpm`,
+  réveil + 15 s), SpO₂ de la nuit (`heart_rate` / `oxygenSaturation`, `during: 'sleep'`, réveil + 25 s).
+- Rattrapage : tant que `sleepFileUntil` n'est pas dans l'état de synchro, le fichier est demandé sur 60 jours ;
+  ensuite depuis la dernière lecture moins un jour. Les siestes sont exclues des totaux de nuit (journal des jours,
+  Radar, régularité).
+- Reste : confirmer sur la GT 6 Pro (si 0x2C/0x01 reste sans réponse → M1 bis, §10.2) ; lecteur Java en
+  arrière-plan (M6).

@@ -28,6 +28,19 @@ function readAll(storage) {
 /** État de la dernière synchro d'une montre : { v, until, at, inserted, minutes, nights, workouts, kinds } ou null. */
 export const getWatchSyncState = (watchKey, storage = globalThis.localStorage) => readAll(storage)[watchKey] || null
 
+/**
+ * Rattrapage du sommeil détaillé (M1) : tant qu'il n'a jamais été lu (avant la v201, la question sur le
+ * service 0x2C le faisait sauter), on le demande sur 60 jours ; ensuite, depuis la dernière lecture.
+ */
+export const SLEEP_CATCHUP_DAYS = 60
+const DAY_MS = 24 * 3600_000
+
+/** Début de la lecture du sommeil détaillé (ms). */
+export function sleepFileSince(state, since, until) {
+  if (state?.sleepFileUntil) return Math.min(since, state.sleepFileUntil) - DAY_MS
+  return Math.min(since - DAY_MS, until - SLEEP_CATCHUP_DAYS * DAY_MS)
+}
+
 /** Date de reprise : seulement si l'état est de la version courante (sinon : première synchro). */
 const resumeFrom = (state) => (state?.v === SYNC_STATE_VERSION ? state.until : null)
 
@@ -92,7 +105,8 @@ export function createWatchSync({
     const lastUntil = resumeFrom(prev)
     const { since, until } = syncWindow(lastUntil, t)
     log(`lecture du ${new Date(since).toISOString().slice(0, 16)} au ${new Date(until).toISOString().slice(0, 16)} (UTC)${lastUntil ? '' : ' — première synchro'}`)
-    const data = await readWatchData(session, { since, until, now: t, log, caps })
+    const sleepSince = sleepFileSince(prev, since, until)
+    const data = await readWatchData(session, { since, until, now: t, log, caps, sleepSince })
     return writeWatchData(data, { t, since, until, lastUntil, watchKey, watchName, write, clear, clearTotals, storage, log })
   }
 }
@@ -128,7 +142,11 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   const gotData = data.minutes.length > 0 || data.sleep.length > 0 || workouts > 0 || (data.nights || []).length > 0
   const resume = gotData ? Math.max(until, lastUntil || 0) : lastUntil
   const at = keepAt && Date.parse(keepAt) > t ? keepAt : new Date(t).toISOString()
-  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds }, storage)
+  // Sommeil détaillé lu (même vide) : la prochaine synchro ne relit que depuis là ; sinon, on garde l'ancienne date
+  const sleepRead = (data.services || []).find((r) => r.id === 'sleepFile')
+  const prevSleep = getWatchSyncState(watchKey, storage)?.sleepFileUntil
+  const sleepFileUntil = sleepRead && ['ok', 'empty'].includes(sleepRead.outcome) ? Math.max(until, prevSleep || 0) : prevSleep
+  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds, ...(sleepFileUntil ? { sleepFileUntil } : {}) }, storage)
   if (inserted > 0 && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('health-entries-updated'))
   const parts = [plural(data.minutes.length, 'minute', 'minutes')]
   if (nights) parts.push(plural(nights, 'nuit', 'nuits'))

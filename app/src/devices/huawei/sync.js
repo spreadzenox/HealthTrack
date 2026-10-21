@@ -12,12 +12,12 @@
  * (phases, score, VFC de la nuit) par fichier. Chacune est facultative : un échec n'arrête rien.
  */
 import { decodeTlvs, encodeTlvs, resultCode, RESULT_SUCCESS } from './protocol'
-import { downloadFile, FILE_TYPE, FILES, parseSleepSequence, SLEEP_DICTIONARY } from './files'
+import { downloadFile, FILE_TYPE, parseSleepSequence, SLEEP_DICTIONARY } from './files'
 
 export const DEVICE_CONFIG = 1
 export const SET_TIME = 0x05
 export const FITNESS = 7
-export const FIT = { TOTALS: 0x03, MINUTE_COUNT: 0x0a, MINUTE_DATA: 0x0b, SLEEP_COUNT: 0x0c, SLEEP_DATA: 0x0d }
+export const FIT = { TOTALS: 0x03, MINUTE_COUNT: 0x0a, MINUTE_DATA: 0x0b, SLEEP_COUNT: 0x0c, SLEEP_DATA: 0x0d, TRUSLEEP: 0x16 }
 export const CONFIG = { SERVICES: 0x02, COMMANDS: 0x03, SETTINGS: 0x31, EXPAND: 0x37 }
 export const WORKOUT = 0x17
 export const WORKOUT_CMD = { LIST: 0x07, TOTALS: 0x08 }
@@ -154,13 +154,15 @@ export function parseTotals(tlvs) {
 
 // ── Capacités (§7.8) ───────────────────────────────────────────────────────────
 
-/** Services et commandes demandés (petite demande : une seule trame). */
+/**
+ * Services et commandes demandés (petite demande : une seule trame). Jamais 0x2C (fichiers) : ce n'est pas
+ * une capacité de l'appareil, la GT 6 Pro répond « non » et le sert quand même (§10.2, cause du sommeil absent).
+ */
 export const CAPABILITY_QUERY = [
   [DEVICE_CONFIG, [CONFIG.SETTINGS, CONFIG.EXPAND]],
-  [FITNESS, [FIT.MINUTE_COUNT, FIT.SLEEP_COUNT, 0x16]],
+  [FITNESS, [FIT.MINUTE_COUNT, FIT.SLEEP_COUNT, FIT.TRUSLEEP]],
   [WORKOUT, [0x01, WORKOUT_CMD.LIST]],
   [STRESS, [0x09]],
-  [FILES, [0x01, 0x04]],
 ]
 /** Fusionne des demandes de capacités : une entrée par service, commandes sans doublon, ordre gardé. */
 export function mergeCapabilityQueries(...queries) {
@@ -168,7 +170,9 @@ export function mergeCapabilityQueries(...queries) {
   for (const q of queries) for (const [service, cmds] of q) by.set(service, [...new Set([...(by.get(service) || []), ...cmds])])
   return [...by.entries()]
 }
-export const EXPAND = { SLEEP_DICTIONARY: 143, HRV: 235, APNEA: 107, EMOTION: 206 }
+export const EXPAND = { SLEEP_DICTIONARY: 143, SLEEP_BED_TIME: 199, HRV: 235, APNEA: 107, EMOTION: 206 }
+/** Capacités étendues consignées dans le journal (§10.8) : aide à choisir les voies des prochaines étapes. */
+export const LOGGED_EXPAND = [29, 56, 143, 199, 235]
 
 export const servicesTlvs = (ids) => [{ tag: 1, value: ids }]
 /** Réponse 1/0x02 → Map service → bool (un octet par service demandé, même ordre). */
@@ -241,14 +245,29 @@ export function describeCapabilities(caps) {
   const yes = (v) => (v == null ? '?' : v ? 'oui' : 'non')
   const parts = [
     `séances ${yes(caps.services?.get(WORKOUT))}`,
-    `fichiers 0x2C ${yes(caps.services?.get(FILES))}`,
-    `TruSleep ${yes(caps.commands?.get(`${FITNESS}/22`))}`,
+    'fichiers 0x2C non interrogé',
+    `TruSleep ${yes(caps.commands?.get(`${FITNESS}/${FIT.TRUSLEEP}`))}`,
     `stress auto ${yes(caps.commands?.get(`${STRESS}/9`))}`,
   ]
   if (caps.settings != null) parts.push(`réglages 0x${caps.settings.toString(16)}`)
-  if (caps.expand) parts.push(`sommeil dictionnaire ${yes(hasExpand(caps.expand, EXPAND.SLEEP_DICTIONARY))}`, `VFC ${yes(hasExpand(caps.expand, EXPAND.HRV))}`)
+  if (caps.expand) {
+    parts.push(`sommeil dictionnaire ${yes(hasExpand(caps.expand, EXPAND.SLEEP_DICTIONARY))}`, `VFC ${yes(hasExpand(caps.expand, EXPAND.HRV))}`)
+    parts.push(`étendues ${LOGGED_EXPAND.map((n) => `${n} ${yes(hasExpand(caps.expand, n))}`).join(' / ')}`)
+  }
   return parts.join(', ')
 }
+
+/**
+ * Sommeil détaillé (`sequence_data`, dictionnaire 700013) : décidé par TruSleep (7/0x16) et la capacité
+ * étendue 143, jamais par une question sur le service 0x2C (§10.2). Inconnu → on essaie.
+ */
+export function canReadSleepFile(caps) {
+  if (caps?.commands?.get(`${FITNESS}/${FIT.TRUSLEEP}`) === false) return false
+  return !caps?.expand || hasExpand(caps.expand, EXPAND.SLEEP_DICTIONARY)
+}
+
+/** Point de départ des phases : l'heure de coucher seulement si la montre annonce la capacité 199 (§10.3). */
+export const sleepFromBedTime = (caps) => !caps?.expand || hasExpand(caps.expand, EXPAND.SLEEP_BED_TIME)
 
 // ── Séances (§7.5) ─────────────────────────────────────────────────────────────
 
@@ -384,12 +403,30 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
   const detailed = (p) => nights.some((n) => p.start < n.end && p.start + p.minutes * 60_000 > n.start)
   for (const n of nights) {
     if (!(n.end <= until)) continue
-    const night = { nightStart: iso(n.start), nightEnd: iso(n.end), ...(n.score ? { sleepScore: n.score } : {}) }
+    const night = {
+      nightStart: iso(n.start),
+      nightEnd: iso(n.end),
+      ...(n.nap ? { nap: true } : {}),
+      ...(n.score ? { sleepScore: n.score } : {}),
+      ...(n.wakeups != null ? { wakeups: n.wakeups } : {}),
+      ...(n.avgHr ? { avgHeartRate: n.avgHr } : {}),
+      ...(n.minHr ? { minHeartRate: n.minHr } : {}),
+      ...(n.maxHr ? { maxHeartRate: n.maxHr } : {}),
+      ...(n.extras ? { watchSummary: n.extras } : {}),
+    }
     for (const p of n.stages) {
       out.push({ type: 'sleep', source: WATCH_SOURCE, at: iso(p.start), payload: { durationMinutes: p.minutes, sleepState: p.stage, endDate: iso(p.start + p.minutes * 60_000), detail: true, ...night, ...base } })
     }
-    // VFC moyenne de la nuit, au réveil + 15 s (aucune autre entrée de FC n'y tombe)
-    if (n.hrvMs) out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(floorTo(n.end, 60_000) + 15_000), payload: { value: n.hrvMs, unit: 'ms', subtype: 'heartRateVariability', during: 'sleep', ...base } })
+    // Mesures de la nuit, au réveil + quelques secondes : jamais la clé d'une autre entrée de la montre
+    // (FC par tranche : + 0, SpO₂ par tranche : + 20 s, FC de repos : minuit + 45 s)
+    const wake = floorTo(n.end, 60_000)
+    if (n.hrvMs) out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(wake + 15_000), payload: { value: n.hrvMs, unit: 'ms', subtype: 'heartRateVariability', during: 'sleep', ...base } })
+    if (n.respAvg) {
+      out.push({ type: 'respiratory_rate', source: WATCH_SOURCE, at: iso(wake + 15_000), payload: { value: n.respAvg, unit: 'rpm', during: 'sleep', ...(n.respMin ? { min: n.respMin } : {}), ...(n.respMax ? { max: n.respMax } : {}), ...base } })
+    }
+    if (n.spo2Avg) {
+      out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(wake + 25_000), payload: { value: n.spo2Avg, unit: '%', subtype: 'oxygenSaturation', during: 'sleep', samples: 1, ...(n.spo2Min ? { min: n.spo2Min } : {}), ...(n.spo2Max ? { max: n.spo2Max } : {}), ...base } })
+    }
   }
   for (const w of workouts) {
     if (!(w.end <= until)) continue
@@ -496,8 +533,8 @@ export const stalledServices = (services = []) => services.filter((s) => ['timeo
 export function syncHints(services = [], { caps = null, totals = null } = {}) {
   const get = (id) => services.find((s) => s.id === id)
   const hints = []
-  if (get('sleepFile')?.outcome === 'timeout' && caps?.services?.get(FILES) === true) {
-    hints.push('fichiers 0x2C déclarés mais sans réponse : piste du canal RFCOMM auxiliaire (§7.10, PR 6448)')
+  if (get('sleepFile')?.outcome === 'timeout' && canReadSleepFile(caps)) {
+    hints.push('fichiers 0x2C sans réponse : piste du canal RFCOMM auxiliaire (§7.10, PR 6448)')
   }
   const minutes = get('minutes')
   if (minutes?.outcome === 'empty' && totals?.steps > 0) {
@@ -516,6 +553,16 @@ export const describeTypes = (periods) =>
     .map(([t, n]) => `${t}×${n}`)
     .join(', ')
 
+/** « score 3, VFC 3, respiration 2 » : nombre de nuits portant chaque mesure du résumé (jamais les valeurs). */
+export function describeNightFields(nights) {
+  const labels = { score: 'score', hrvMs: 'VFC', avgHr: 'FC', wakeups: 'réveils', respAvg: 'respiration', spo2Avg: 'SpO₂', extras: 'autres' }
+  return Object.entries(labels)
+    .map(([k, label]) => [label, nights.filter((n) => n[k] != null).length])
+    .filter(([, n]) => n)
+    .map(([label, n]) => `${label} ${n}`)
+    .join(', ') || 'phases seules'
+}
+
 /** « pas 120, FC 45, SpO₂ 3 » : nombre de minutes portant chaque mesure. */
 export function describeMinutes(minutes) {
   const labels = { steps: 'pas', kcal: 'kcal', distanceM: 'distance', hr: 'FC', spo2: 'SpO₂', restingHr: 'FC repos' }
@@ -529,7 +576,7 @@ export function describeMinutes(minutes) {
  * Chaque lecture est indépendante : un service qui cale n'empêche pas de lire les suivants (`services`).
  * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], services: object[], hints: string[], capabilities: string }>}
  */
-export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset(), caps: knownCaps = null }) {
+export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset(), caps: knownCaps = null, sleepSince = since - DAY }) {
   // heure et capacités déjà envoyées / lues par la fin d'association (pairing.js) : pas de seconde fois
   if (!knownCaps) await setWatchTime(session, now, tzOffsetMinutes, log)
   const caps = knownCaps || (await readCapabilities(session, log))
@@ -564,15 +611,16 @@ export async function readWatchData(session, { since, until, now = until, log = 
   if (canDo(caps, WORKOUT, WORKOUT_CMD.LIST)) workouts = await attempt('workouts', () => readWorkouts(session, since, until, log), [])
   else skip('workouts')
   let nights = []
-  if (canDo(caps, FILES, 0x01) && (!caps?.expand || hasExpand(caps.expand, EXPAND.SLEEP_DICTIONARY))) {
+  if (canReadSleepFile(caps)) {
     nights = await attempt('sleepFile', async () => {
       const file = await downloadFile(
         session,
-        { name: 'sequence_data', type: FILE_TYPE.SEQUENCE, startMs: since - DAY, endMs: until, dictionary: SLEEP_DICTIONARY },
+        { name: 'sequence_data', type: FILE_TYPE.SEQUENCE, startMs: sleepSince, endMs: until, dictionary: SLEEP_DICTIONARY },
         { log },
       )
-      const items = file ? parseSleepSequence(file).filter((n) => n.end > since && n.end <= until) : []
-      log(`sommeil détaillé : ${items.length} nuit${items.length > 1 ? 's' : ''}`)
+      const items = file ? parseSleepSequence(file, { bedTime: sleepFromBedTime(caps) }).filter((n) => n.end > sleepSince && n.end <= until) : []
+      const naps = items.filter((n) => n.nap).length
+      log(`sommeil détaillé : ${items.length - naps} nuit${items.length - naps > 1 ? 's' : ''}${naps ? `, ${naps} sieste${naps > 1 ? 's' : ''}` : ''} depuis le ${new Date(sleepSince).toISOString().slice(0, 10)}${items.length ? ` (mesures : ${describeNightFields(items)})` : ''}`)
       return { items, outcome: items.length ? 'ok' : 'empty' }
     }, [])
   } else skip('sleepFile')
