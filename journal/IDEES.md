@@ -9,6 +9,156 @@
 
 ---
 
+## Run du 21/10/2026 08:30 (Paris) — premier run « idées » du chantier produit : Health Connect, pistes SII, paywall
+
+Question du jour, côté utilisateur SII : *« au premier lancement, est-ce que l'app me montre déjà quelque chose
+d'utile ; quand elle me parlera de mes déclencheurs, puis-je lui faire confiance ; et quand elle me demandera de
+payer, est-ce clair et honnête ? »* Démarrage : PR #246 (jalon 3b-1) verte mais laissée ouverte par le run de 06:30
+→ revérifiée en local (1 676 Vitest, build, lint 6 = main, visuel + divulgation caméra lue) puis **fusionnée** (v193) ;
+#245 fermée (contenu repris). Méthode : trois recherches en parallèle sur sources primaires (developer.android.com,
+support.google.com/googleplay, monashfodmap.com, RevenueCat / Adapty), [V] = lu sur la source, [T] = tierce.
+
+### Ce qu'on apprend (faits)
+
+**Health Connect et Play (jalons 4, 8, 10)**
+- **« Aha » du jour 1 sans permission spéciale** [V developer.android.com/…/read-data, 21/10] : dès le premier
+  octroi, une app lit les **30 jours précédant l'octroi**, de toutes les sources (Android 14+ : ses propres données
+  sans limite). Au-delà : `READ_HEALTH_DATA_HISTORY`, à ne demander que si `getFeatureStatus(
+  FEATURE_READ_HEALTH_DATA_HISTORY)` = disponible (connect-client ≥ 1.1.0-alpha08). Désinstaller révoque tout ; la
+  fenêtre de 30 j repart du nouvel octroi. `READ_HEALTH_DATA_IN_BACKGROUND` : même principe (feature flag),
+  l'app doit marcher sans.
+- **Notre plugin** `@capgo/capacitor-health` 8.4.5 déclare **21 permissions READ** (glycémie, tension, SpO₂…) et ni
+  HISTORY ni BACKGROUND [V `node_modules/…/AndroidManifest.xml`]. Or Play **refuse les types demandés mais non
+  utilisés** et les écarts manifeste ↔ formulaire [V support.google.com/…/12991134] ; justification **par type**
+  (« needed for app functionality » refusé) ; les « self-reported symptoms » sont examinés de plus près ; nouveau
+  formulaire si les types changent.
+- **Aucun type Health Connect pour les symptômes digestifs, les selles ou la douleur** [V page data-types,
+  23/09/2026] → les symptômes SII restent locaux (et on évite la revue renforcée). Utiles : Nutrition, Hydration,
+  Sleep, Exercise, Steps, HRV, MenstruationFlow/Period (extension SII + cycle).
+- **Déclaration « Health apps »** obligatoire (même en test fermé) [V answer/14738291] : catégories Health & fitness
+  (Nutrition & Weight Management, Sleep, Stress…) ; « Diseases and Conditions Management » est dans le groupe
+  **Medical** — à éviter pour rester en Health & Fitness (décision du 20/10) ; la case « Medical Device Apps » reste
+  décochée. **Politique « Health Content and Services »** [V answer/16679511] : une app non dispositif médical doit dire
+  dans sa description qu'elle « n'est pas un dispositif médical et ne diagnostique, ne traite, ne guérit ni ne prévient
+  aucune maladie », et renvoyer vers un professionnel.
+- **Test fermé : toujours 12 testeurs × 14 jours** pour les comptes personnels [V answer/14151465]. **Vérification des
+  développeurs** : France concernée « en 2027 et au-delà » [V developer.android.com/developer-verification].
+  **Google Fit** : « supported until the end of 2026 » [V migration/fit, 10/09/2026].
+
+**Pistes SII (jalons 5 et 7)**
+- **Délais** [V monashfodmap.com/blog/timing-of-symptoms, 2016] : transit bouche-anus 12–48 h ; un symptôme
+  quelques minutes après un repas vient du **réflexe gastro-colique**, pas de la fermentation ; un repas « pousse »
+  les précédents → on accuse le mauvais aliment ; regarder les 48 h précédentes. IRM Nottingham 2017 [T] : fructose
+  → eau dans l'intestin grêle, pic ≈ 75 min ; inuline (fructanes) → gaz côlon, pic 3–5 h. **Pas de source primaire
+  chiffrant le délai de chaque groupe** (lactose, GOS, polyols).
+- **Réintroduction Monash** [V practical-tips 2020 + diary function 2020] : un sous-groupe à la fois, **3 jours de
+  doses croissantes** à la même heure, **pause de 2–3 jours** (ou jusqu'au calme) en restant pauvre en FODMAP,
+  arrêt si gêne à J1/J2, combinaisons en dernier, 6–8 semaines au total ; « un peu de gaz est normal ».
+- **Statistique N-of-1** [T] : l'autocorrélation entre jours réduit fortement la puissance ; tests par bootstrap /
+  permutation par blocs mieux calibrés que Wald ; **aucune source ne donne de nombre minimal de jours** → à fixer
+  par simulation (comme pour la porte du visage).
+- **Fiabilité des journaux** [T] : 9 710 journaux mySymptoms (Dig Dis Sci 2024, auteurs liés à l'éditeur) — café →
+  diarrhée en 1–2 h, alcool 4–72 h, édulcorants 24–72 h, **aucun signal FODMAP** ; pilote 2016 : 73 % des
+  participants avec une association « forte » en 2 semaines (faux positifs probables) ; essai 2025 : gluten, blé et
+  placebo donnent les mêmes réponses chez des SII « sensibles au gluten » (**effet d'attente**) ; 3 patients sur 19
+  seulement trouvent le bon aliment. → Notre promesse « on préfère attendre » est un vrai différenciateur.
+- **Concurrence** : Monash FODMAP 8,99 € (achat unique, FR, 4,2/5) avec journal de réintroduction ; Bearable
+  34,99 $/an, corrélations payantes **sans méthode publiée** ; mySymptoms analyse payante, algorithme opaque ; Cara Care
+  = DiGA allemande (Bayer), absente en France ; nouveaux venus IA (BellyCue…) sans validation publiée. **Aucune app
+  française dédiée au SII trouvée.** APSSII : 52 % des patients connaissaient le FODMAP en 2017 (7 % en 2013).
+
+**Paywall et abonnement (jalon 6)**
+- **Benchmarks Health & Fitness** [V RevenueCat State of Subscription Apps 2026 ; Adapty 27/03/2026] : 37,7 % des
+  essais deviennent payants (médiane) ; essais de 10–16 j ≈ 35 % contre 25 % pour ≤ 4 j ; **82–86 % des essais
+  démarrent à J0** ; médiane ≈ 39,94 $/an et 9,99 $/mois (nos 29,99 € / 4,99 € sont sous la médiane) ; l'annuel
+  ≈ 61 % du revenu H&F ; Android convertit nettement moins qu'iOS ; **31 % des annulations Play sont involontaires**
+  (paiement) ; remboursements H&F 4,7 %.
+- **Play Billing** [V developer.android.com/google/play/billing, 20/10/2026] : un seul essai par utilisateur et par
+  app par défaut ; `queryProductDetailsAsync` ne renvoie que les offres auxquelles la personne a droit → afficher
+  « Essayer 14 jours » **seulement si l'offre revient** ; prix via `formattedPrice` (jamais en cache) ; **PBL ≥ 8
+  obligatoire** (9.1.0 actuelle) ; grâce + suspension activées par défaut (60 j cumulés) — accès gardé en grâce,
+  coupé en suspension.
+- **Politique « Subscriptions »** [V answer/9900533] — **point d'attention pour la maquette validée** : est une
+  violation explicite « un plan annuel qui **met en avant** son prix mensuel ». Notre « soit 2,50 € par mois » doit
+  rester **secondaire** (plus petit que « 29,99 €/an », jamais en titre ni dans le bouton). Aussi : prix, fréquence,
+  renouvellement automatique et « l'app reste utilisable sans abonnement » visibles sans étape ; pour l'essai, durée,
+  date et prix de la conversion, comment annuler ; fermeture bien visible ; ne pas nommer un produit « Free Trial » ;
+  lien d'annulation dans l'app (centre d'abonnements Play). Google envoie lui-même un e-mail avant la fin de l'essai ;
+  notre rappel J-2 est un plus.
+
+### Idées
+
+- **I130 (20) — « Vos 30 derniers jours » au jour 1, sans permission d'historique.** Besoin : l'« aha » du jour 1
+  (jalon 4). Après l'octroi Health Connect dans l'onboarding, importer J-30 (sommeil, pas, FC/VFC, séances, cycle) et
+  afficher un résumé simple (« 30 nuits, 7 h 05 en moyenne · 6 800 pas par jour · 3 sources »), chaque chiffre avec
+  sa source. Pas de `READ_HEALTH_DATA_HISTORY` en v1 : plus tard, en option « Importer plus d'historique », derrière
+  le feature flag (patch natif du plugin). Test : faux Health Connect avec 45 j → 30 j importés, résumé correct,
+  sources citées. Impact 5, faisabilité 4.
+- **I131 (16) — Manifeste play : seulement les permissions Health Connect utilisées.** Besoin : passer la revue Play
+  du premier coup (jalons 3b-2 / 8). Retirer en play (`tools:node="remove"`) les READ du plugin non lues par
+  `healthConnect` ; une liste déclarée `HC_READ_TYPES` comme seule source, et un test qui compare le manifeste fusionné
+  de l'AAB (`check-play-manifest.sh`) à cette liste ; texte de justification **par type** préparé dans
+  `PLAY-CONFORMITE.md`. Impact 4, faisabilité 4.
+- **I132 (20) — Fenêtres de délai par hypothèse, pas un balayage.** Besoin : des pistes justes (jalon 5). Le moteur ne
+  teste que **3 fenêtres** fixées d'avance : 0–4 h (présentée comme « réflexe après le repas, pas les FODMAP »),
+  4–24 h, 24–48 h ; les normes par groupe (fructose/lactose plutôt tôt, fructanes/GOS 3–24 h, polyols/édulcorants
+  24–48 h) ne servent que d'**hypothèses de départ affichées comme telles** (D6). Moins de fenêtres = moins de
+  comparaisons = plus de puissance. Test : effet simulé à 6 h → piste dans 4–24 h, rien ailleurs. Impact 5,
+  faisabilité 3.
+- **I133 (20) — Seuil minimal et taux de fausses pistes mesurés par simulation.** Besoin : « on préfère attendre ».
+  Avant toute piste : ≥ N jours exposés **et** ≥ N non exposés sur ≥ 21 jours ; N choisi par simulation (départ
+  N = 8) pour que, sur 200 jeux **sans effet**, **moins d'un sur dix** affiche au moins une piste ; permutation par
+  blocs de jours (autocorrélation) puis BH sur toutes les combinaisons facteur × symptôme × fenêtre ; le nombre de
+  combinaisons examinées est affiché en mode détails. Même démarche que la porte du visage (I112). Impact 5,
+  faisabilité 3.
+- **I134 (16) — Repas du même jour démêlés, et facteurs non alimentaires en covariables.** Besoin : ne pas accuser
+  le café quand c'est la mauvaise nuit (et le « repas qui pousse le précédent »). Sommeil, stress (Y ≠ X : seulement
+  les X), écran entrent comme covariables ; les aliments d'un même jour sont estimés ensemble (régression pénalisée)
+  et non un par un. Test : symptôme simulé dû à la nuit seule → aucune piste alimentaire. Impact 4, faisabilité 2.
+- **I135 (20) — Réintroduction guidée au format Monash, machine à états testée.** Besoin : le premium SII (jalon 7).
+  Groupe choisi → 3 jours de doses croissantes (rappel à heure fixe) → pause ≥ 3 j **ou jusqu'au calme** → verdict à
+  trois niveaux (« bien toléré à cette dose », « à retester », « gêne observée »), **aucun verdict si le ventre de
+  départ n'était pas calme** ; arrêt anticipé si gêne à J1/J2 ; groupe suivant bloqué pendant la pause ; combinaisons
+  en dernier. Chaque verdict propose un retest et mentionne l'effet d'attente. Test : la machine refuse un 2e groupe
+  pendant la pause. Impact 5, faisabilité 4.
+- **I136 (16) — Paywall conforme à la politique Play (à intégrer à la maquette).** Besoin : ne pas se faire refuser
+  et inspirer confiance. « 29,99 €/an » en grand, « soit 2,50 €/mois » en petit ; sous le bouton : « 14 jours gratuits,
+  puis 29,99 € par an, renouvelé automatiquement. Annulable dans Google Play avant le JJ/MM. » (date calculée) ;
+  bouton fermer bien visible + « Continuer gratuitement » ; « Essayer 14 jours » seulement si l'offre d'essai est
+  renvoyée par Play, sinon « S'abonner » ; « Gérer mon abonnement » dans les réglages. Test : un test de rendu
+  vérifie la taille relative des deux prix et la présence des mentions obligatoires. Impact 4, faisabilité 4.
+- **I137 (12) — Suspension de compte : bandeau « Mettre à jour le paiement ».** 31 % des annulations Play sont
+  involontaires : en période de grâce, accès gardé + bandeau ; en suspension, premium coupé (jamais les fonctions
+  locales) + lien vers le centre d'abonnements. Impact 3, faisabilité 4.
+- **I138 (12) — Phrase obligatoire « pas un dispositif médical » à un seul endroit.** Description Play, écran « À
+  propos », bas des Pistes et du rapport PDF ; texte unique dans `src/config`, testé par `wording.test.js`. Impact 3,
+  faisabilité 5.
+
+### Sources (consultées le 21/10/2026)
+- Health Connect : developer.android.com/health-and-fitness/guides/health-connect/develop/read-data ;
+  …/plan/data-types (maj 23/09/2026) ; …/health-connect/features/availability ; …/health-connect/publish ;
+  …/health-connect/migration/fit (maj 10/09/2026).
+- Play : support.google.com/googleplay/android-developer/answer/12991134 (Health Connect), 14738291 (Health apps),
+  16679511 (Health Content and Services), 14151465 (test fermé), 9900533 (Subscriptions), 112622 (frais) ;
+  developer.android.com/developer-verification ; developer.android.com/google/play/billing/subscriptions,
+  …/integrate (20/10/2026), …/lifecycle/subscriptions (15/10/2026).
+- SII : monashfodmap.com/blog/timing-of-symptoms (2016), /practical-tips-fodmap-reintroduction (2020),
+  /reintroduction-using-diary-function (2020) ; PMC10078221 (Algera 2023) ; nottingham-repository output/838398
+  (IRM 2017), output/36013201 (mySymptoms 2024) ; PMC4822101, PMC5432136 ; pubmed 40706614 (gluten 2025) ;
+  arXiv 2112.13991 ; PMC10817775 ; apps.apple.com/fr/app/id586149216 ; bearable.app/pricing.
+- Abonnements : revenuecat.com/state-of-subscription-apps (2026) et -2025 ; adapty.io/blog/health-fitness-app-
+  subscription-benchmarks (27/03/2026).
+- Non trouvés / inaccessibles : avis Play Store en texte (Bearable, mySymptoms), Fody, ModifyHealth ; délai propre
+  à chaque groupe FODMAP ; volumes de recherche des mots-clés français (Google Trends à faire).
+
+### À creuser au prochain run idées (21/10 20:30)
+- Plugin Capacitor de Play Billing compatible **PBL ≥ 8** (licence commerciale ? RevenueCat, cordova-plugin-purchase,
+  ou petit plugin maison) — bloquant pour le jalon 6.
+- Lecture de Whelan et al. 2018 (King's College) et des délais par groupe ; mots-clés FR (Trends) pour la fiche.
+- AI Act art. 50 et RGPD art. 9 : formulation exacte du consentement à garder (preuve datée).
+
+---
+
 ## Run du 20/10/2026 08:30 (Paris) — quel modèle valence / éveil, pour le visage et pour la voix ?
 
 Question du jour, côté utilisateur (consignes du 18/10 et du 19/10 au soir) : *« l'humeur que l'app m'affiche dès la
