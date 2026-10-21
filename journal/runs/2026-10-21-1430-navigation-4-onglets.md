@@ -37,3 +37,9 @@
 - 2b + 2c-2 : inventaire de l'accueil, « Vos derniers jours » → onglet Journal (Repas | Ventre | Nutrition ?), radar
   et graphiques plus bas ou dans Pistes.
 - 3b-3 « Lecture rapide » play ; 3c dès P10/P11 ; jalon 4 onboarding.
+
+## Après le merge
+- PR **#252** : 7 checks verts (Vitest, Build APK, budget de lectures, Java, émulateurs A56 API 35 et 36) → fusionnée
+  en squash (`ff66617`).
+- « Build & Release » ✅ → **v196** publiée (`HealthTrack-v196.apk`, 33,7 Mo). « Play — AAB » ✅ → artefact
+  **`HealthTrack-play-339`** (17,0 Mo zippé).
