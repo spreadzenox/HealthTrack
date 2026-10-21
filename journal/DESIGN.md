@@ -127,6 +127,9 @@ fera adapter l'icône : ne pas l'anticiper.
 - Encart « Toujours gratuit : journal, imports des montres, bien-être auto, graphiques et export de vos données. »
 - Formules (radio) : **Annuel 29,99 €/an** « soit 2,50 € par mois », badge orange « −50 % », présélectionné ;
   Mensuel 4,99 €/mois.
+  ⚠️ *Note du 21/10 08:30 (politique Play « Subscriptions »)* : mettre en avant le prix mensuel d'un annuel est une
+  violation → « soit 2,50 € par mois » reste plus petit et secondaire que « 29,99 €/an », jamais dans le bouton
+  (`IDEES.md` I136).
 - Frise de l'essai : aujourd'hui tout est débloqué · jour 12 on vous prévient · jour 14 1er paiement, sauf si vous
   annulez.
 - Bouton « Essayer 14 jours gratuitement » (mensuel choisi → sans essai, bouton et mention adaptés) ; « Puis 29,99 €

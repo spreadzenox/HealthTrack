@@ -5,6 +5,25 @@
 
 ---
 
+## 2026-10-21 — Veille (run « idées ») : Health Connect et déclarations Play, pistes SII avec délais, paywall Play
+
+> Détail, sources et idées dans `IDEES.md` (section du 21/10 08:30, I130–I138).
+
+- **Health Connect** : 30 jours lisibles dès le premier octroi (« aha » du jour 1 sans permission d'historique) ;
+  `READ_HEALTH_DATA_HISTORY` derrière un feature flag ; aucun type pour les symptômes digestifs (ils restent locaux) ;
+  le plugin déclare 21 permissions READ alors que Play refuse les types non utilisés.
+- **Play** : déclaration « Health apps » obligatoire ; « Diseases and Conditions Management » est dans le groupe
+  Medical (à éviter) ; phrase « n'est pas un dispositif médical… » exigée dans la description ; test fermé 12 × 14 j
+  confirmé ; vérification des développeurs en France « 2027 et au-delà » ; Google Fit jusqu'à fin 2026.
+- **SII** : symptômes en minutes = réflexe gastro-colique, pas FODMAP ; transit 12–48 h ; réintroduction Monash
+  3 jours croissants + 2–3 j de pause ; aucune norme publiée de jours minimaux → simulation ; journaux grand public
+  riches en faux positifs et effet d'attente (essai gluten 2025) ; pas d'app SII française.
+- **Abonnement** : H&F 37,7 % essai → payant, 82–86 % des essais à J0, 14 j ≈ 7 j ≫ 3 j ; politique Play :
+  **interdit de mettre en avant le prix mensuel d'un annuel** ; afficher l'essai seulement si Play le propose ;
+  PBL ≥ 8 obligatoire.
+
+---
+
 ## 2026-10-20 — Veille (run « idées ») : modèles valence / éveil du visage et de la voix
 
 > Détail, tableau et pistes dans `IDEES.md` (section du 20/10 08:30, I126–I128).

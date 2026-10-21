@@ -65,7 +65,7 @@ redémarrage du téléphone suffit. Prochain run de code : **3b** (lecture du vi
 explications avant chaque autorisation sensible), puis l'écran Accueil de la maquette.
 
 **Run du 21/10 06:30 — l'app explique avant de demander un accès (jalon 3b, étape 1).** Ce que vous verrez dans la
-prochaine version (**pas encore publiée**, voir ⚠️ ci-dessous) : quand vous touchez « Activer la lecture du visage »,
+**v193** (publiée le 21/10 à 08:43, 33,7 Mo, bouton du bandeau) : quand vous touchez « Activer la lecture du visage »,
 « Utiliser ma position approximative » (météo) ou « Activer » le temps d'écran, une feuille dit d'abord **ce qui est
 lu, pourquoi et ce qui quitte le téléphone**, avec « J'accepte, … » ou « Pas maintenant » (qui ne demande rien à
 Android). Pour la caméra, elle dit qu'un **système d'IA de reconnaissance des émotions** travaille sur le téléphone,
@@ -74,9 +74,28 @@ coulisses : l'étude [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) tranche la quest
 lecture **au déverrouillage, app fermée, reste réservée à votre version sideload** ; la version Play lira le visage
 **à l'ouverture de l'app** puis par un geste (« Lecture rapide »), sans service caméra en arrière-plan ni exemption de
 batterie, ce qui évite le formulaire de justification et un refus probable. Revue de toutes les permissions du
-manifeste dans le même fichier. **⚠️ Ce run n'a pas pu fusionner sa PR** (ni la PR #245 du run précédent, journal
-seul) : la session a refusé l'action de merge. Le travail est complet et testé sur sa branche ; le run suivant ou
-vous (un clic « Squash and merge » sur GitHub, une fois les checks verts) pouvez la fusionner.
+manifeste dans le même fichier. Ce run n'avait pas pu fusionner sa PR ; **le run de
+08:30 l'a revérifiée et fusionnée** (v193 ; AAB play `HealthTrack-play-333`, c'est lui à envoyer pour P10).
+
+**Run « idées » du 21/10 08:30 — ce que la recherche change pour la suite (rien de nouveau dans l'app).**
+① **Le « waouh » du premier jour est gratuit** : dès que la personne autorise Health Connect, Android laisse lire
+**les 30 jours précédents** sans permission spéciale. L'onboarding pourra donc afficher tout de suite « vos 30 derniers
+jours » (sommeil, pas, cœur), chaque chiffre avec sa source. ② **Pour passer la revue Google du premier coup** : notre
+module Health Connect demande 21 types de données (glycémie, tension…) alors que Google refuse ceux qu'on n'utilise
+pas → la version Play ne gardera que ceux qu'on lit vraiment. Health Connect n'a **aucun type pour les symptômes
+digestifs** : ils restent sur le téléphone. ③ **Pistes SII** : un inconfort quelques minutes après un repas vient du
+réflexe de l'intestin, pas des FODMAP (transit 12 à 48 h) ; les journaux du marché produisent beaucoup de faux suspects
+(et l'effet d'attente joue fort : dans un essai de 2025, gluten et placebo donnaient les mêmes symptômes). Notre
+moteur testera donc **trois fenêtres choisies d'avance** (0–4 h, 4–24 h, 24–48 h), avec un **seuil de jours fixé par
+simulation** pour qu'au plus 1 jeu de données sans aucun effet sur 10 montre une piste. Réintroduction guidée au
+format Monash (3 jours de doses croissantes, puis 2 à 3 jours de pause). **Aucune app française dédiée au SII** n'est
+ressortie. ④ **Paywall — une correction à votre maquette** : la politique Google Play interdit de **mettre en avant
+le prix mensuel d'un abonnement annuel** ; « soit 2,50 € par mois » restera donc en petit sous « 29,99 €/an » (jamais
+dans le bouton). Vos prix sont **sous la médiane** du marché santé (≈ 40 $/an) ; un essai de 14 jours convertit aussi
+bien qu'un essai de 7 et bien mieux qu'un de 3 ; plus de 80 % des essais démarrent le premier jour. ⑤ Nouvelle
+**action P16** (après P8) : les formulaires « Contenu de l'app » — en « Applications de santé », ne cochez **que** le
+groupe *Santé et remise en forme*, pas « Gestion des maladies » (classé Médical). Détail : [`IDEES.md`](IDEES.md)
+I130–I138. **👉 Votre prochaine action la plus utile reste P8 puis P10** dès que Google a validé votre compte.
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
@@ -455,7 +474,8 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
-| 21/10 06:30 — [Jalon 3b-1 : divulgations avant autorisation](runs/2026-10-21-0630-divulgations.md) | 🧭🛡️ | `PLAY-CONFORMITE.md` (option caméra play : à l'ouverture + lecture rapide, sans FGS ; revue des permissions) ; feuille de divulgation avant caméra / position / temps d'écran + test-garde ; 1 676 Vitest ; PR #246 ouverte, **non fusionnée** (merge refusé par la session) ; reprend aussi #245 |
+| 21/10 08:30 — [Idées : Health Connect jour 1, pistes SII avec délais, paywall Play](runs/2026-10-21-0830-idees-produit-hc-sii-paywall.md) | 💡 | PR #246 revérifiée et **fusionnée** (v193, 33,7 Mo ; AAB play 333), #245 fermée ; veille → I130–I138 (30 j Health Connect d'office, permissions HC réduites, 3 fenêtres de délai + seuil par simulation, réintroduction Monash, paywall conforme : « 2,50 €/mois » secondaire) ; P16 ajouté |
+| 21/10 06:30 — [Jalon 3b-1 : divulgations avant autorisation](runs/2026-10-21-0630-divulgations.md) | 🧭🛡️ | `PLAY-CONFORMITE.md` (option caméra play : à l'ouverture + lecture rapide, sans FGS ; revue des permissions) ; feuille de divulgation avant caméra / position / temps d'écran + test-garde ; 1 676 Vitest ; PR #246 (fusionnée au run suivant → v193) ; reprend aussi #245 |
 | 21/10 04:30 — [Identité visuelle (ii) : icône « H nuit »](runs/2026-10-21-0430-icone-h-nuit.md) | 🧭🎨 | Icône adaptative + monochrome + notification (5 notifications) + écran de démarrage (API SplashScreen) + logo de l'en-tête ; PNG et icône Play 512 px générés par `scripts/brand/render-icons.mjs` ; test-garde (zone sûre, couleurs) ; 1 666 Vitest ; PR #244 → **v192, 33,7 Mo** + AAB play 332 |
 | 21/10 02:30 — [Jalon 3a : variantes play / sideload](runs/2026-10-21-0230-variantes-play-sideload.md) | 🧭📦 | Flavors `sideload` (`com.healthtrack.app`) / `play` (`fr.jpesquet.sante`, sans `REQUEST_INSTALL_PACKAGES` ni mise à jour), `VITE_DISTRIBUTION`, versionCode croissant, workflow « Play — AAB » (WIF → Secret Manager → AAB signé ; attend P9) ; correctif de date dans `loadNutritionEntries` ; 1 660 Vitest ; PR #242 → **v191, 33,7 Mo** + AAB play 330 signé |
 | 21/10 00:30 — [Identité visuelle (i) : tokens, polices, thème clair](runs/2026-10-21-0030-design-tokens.md) | 🧭🎨 | `INFRA.md` + `DESIGN.md` créés, PRODUIT / BACKLOG revus (Vertex AI sans clé, actions du propriétaire pas à pas) ; `theme/tokens.css` seule source des couleurs (~240 couleurs brutes remplacées), Figtree + IBM Plex Mono embarquées, clair par défaut, Apparence dans Paramètres, `SystemBarsPlugin` ; 1 653 Vitest ; PR #240 → **v190, 33,7 Mo** |

@@ -57,17 +57,33 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   [ ] fiabiliser le test `UpdateBanner` « montre la progression en Mo et en %… » (délai de 3 s dépassé sous charge en CI, PR #246 sur `a6dfd56`) ; [ ] **3c** envoi automatique en test
   interne (Android Publisher, edits) dans « Play — AAB », après P10 + P11 ; [ ] **3d** nom affiché de l'app depuis une
   seule source (`appName` Capacitor, `strings.xml`, titres) pour le changer en un commit
-- [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation)
+- [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation) —
+  [ ] **I130** « Vos 30 derniers jours » dès l'octroi Health Connect, **sans** permission d'historique (30 j lisibles
+  d'office), chaque chiffre avec sa source ; permission de notifications demandée après un geste, pas d'emblée
 - [ ] **5 Analyses avec délais (2–48 h) repas → symptômes** + saisie de symptômes digestifs horodatée + honnêteté
-  statistique (« pas encore assez de données »)
+  statistique (« pas encore assez de données ») — [ ] **I132** 3 fenêtres fixées d'avance (0–4 h « réflexe après le
+  repas », 4–24 h, 24–48 h), normes par groupe = hypothèses affichées ; [ ] **I133** seuil N jours exposés / non
+  exposés choisi par simulation (< 1 jeu sans effet sur 10 avec une piste), permutation par blocs + BH, nombre de
+  combinaisons en détails ; [ ] **I134** covariables sommeil / stress / écran, repas du même jour estimés ensemble ;
+  symptômes digestifs stockés **localement** (aucun type Health Connect)
 - [ ] **6 Play Billing, paywalls (soft + au moment de la valeur), crédits IA** ; puis **relais Cloud Run → Vertex AI
   (europe-west1)** sous l'identité `relay-runtime`, **aucune clé API** ; Flash-Lite, EXIF retiré, rien stocké, Play
-  Integrity, RTDN (`play-rtdn`), plafonds par utilisateur et global ; déployé par la CI sur `main` (WIF, `INFRA.md`)
-- [ ] **7 Réintroduction FODMAP guidée + rapport PDF médecin**
-- [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026)
+  Integrity, RTDN (`play-rtdn`), plafonds par utilisateur et global ; déployé par la CI sur `main` (WIF, `INFRA.md`) —
+  [ ] choisir un plugin Capacitor **PBL ≥ 8** (licence compatible) ; [ ] **I136** paywall conforme à la politique Play
+  (« 29,99 €/an » en grand, « soit 2,50 €/mois » **secondaire** — l'inverse est une violation —, mentions sous le
+  bouton avec date calculée, « Continuer gratuitement », essai affiché seulement si Play le propose, « Gérer mon
+  abonnement ») ; [ ] **I137** grâce / suspension (bandeau « Mettre à jour le paiement », jamais les fonctions locales)
+- [ ] **7 Réintroduction FODMAP guidée + rapport PDF médecin** — [ ] **I135** machine à états format Monash (3 jours
+  croissants, pause ≥ 3 j ou jusqu'au calme, arrêt si gêne J1/J2, verdict à 3 niveaux, aucun verdict sans ventre
+  calme au départ, retest + mention de l'effet d'attente)
+- [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026) — [ ] **I131**
+  manifeste play limité aux permissions HC réellement lues (liste `HC_READ_TYPES` unique + test sur le manifeste de
+  l'AAB ; le plugin en déclare 21) ; historique > 30 j en option derrière `FEATURE_READ_HEALTH_DATA_HISTORY`
 - [ ] **9 i18n + anglais**
 - [ ] **10 Fiche Play** (textes FR, captures, Data safety, déclaration apps de santé) + `journal/legal/` (brouillons
-  confidentialité, CGU / CGV, mentions légales « à faire valider par un juriste »)
+  confidentialité, CGU / CGV, mentions légales « à faire valider par un juriste ») — [ ] **I138** phrase « n'est pas un
+  dispositif médical… » (exigée par Play) en une seule source ; déclaration Health apps en catégories **Health &
+  fitness** seulement (« Diseases and Conditions Management » est du groupe Medical)
 
 - [ ] **P-SIDELOAD-KEY** migrer la signature sideload (clé de debug publique) vers une clé privée en Secret Manager,
   avec parcours export → réinstallation → import JSON, avant la vérification obligatoire des développeurs Android
@@ -847,6 +863,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 21/10 (08:30 Paris, run « idées »)** : PR #246 (3b-1) fusionnée → v193. Ordre inchangé : prochain
+run de code → **3b-2** (manifeste play sans service caméra + lecture à l'ouverture ; y joindre **I131**, permissions
+Health Connect réduites, puisque le manifeste play est déjà ouvert), puis 2b/2c + 2 bis (iii) Accueil ; 3c dès
+P10/P11. Nouvelles idées I130–I138 rangées dans les jalons 4, 5, 6, 7, 8, 10 ci-dessus.
 
 **Mise à jour du 21/10 (06:30 Paris)** : ✅ 3b-1 (étude Play + divulgations avant autorisation). Prochain run de code →
 **3b-2** (manifeste play sans service caméra, lecture du visage à l'ouverture de l'app), puis 2b/2c + 2 bis (iii)
