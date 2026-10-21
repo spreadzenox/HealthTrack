@@ -50,3 +50,11 @@
 - Propriétaire : **P9** (5 minutes dans Cloud Shell, commandes dans `PRODUIT.md`), puis P8 → P10.
 - Prochain run de code : **2 bis (ii) icône « H nuit »** + écran de démarrage, puis **3b** (option caméra play,
   permissions sensibles, divulgations), puis Accueil / navigation 4 onglets.
+
+## Après le merge
+- PR **#242** : les 7 checks au vert (Frontend (Vitest), Build APK — qui construit maintenant aussi l'AAB play et vérifie
+  les manifestes fusionnés —, Publier l'APK, Protocole montre (Java), Budget de lectures (perf), émulateur A56 API 35 et
+  API 36) → fusionnée en squash (`3c8fefe`).
+- « Build & Release » réussi : **release v191**, `HealthTrack-v191.apk` = **33 685 409 octets (33,7 Mo)** (versionCode 191).
+- **« Play — AAB » vert du premier coup** : les secrets existaient déjà (P9 fait par le propriétaire) → artefact
+  **`HealthTrack-play-330`** (17 029 708 octets zippé), versionCode 330. P9 passé à ✅ ; prochaine action : P8 puis P10.
