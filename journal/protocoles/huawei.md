@@ -675,6 +675,7 @@ des intervalles RR. Pas encore lu par HealthTrack (aucun type « stress » dans 
 RMSSD, réel double), réservé aux montres qui annoncent la capacité 235. ❓ Imbrication exacte incertaine → plus tard.
 
 ### 7.8 Ce que la montre sait faire — service 1 (après l'authentification)
+- ⚠️ **Correction du 21/10 (§10.2)** : ne **jamais** demander 0x2C en 1/0x02 ni s'y fier — ce n'est pas une capacité de l'appareil ; la GT 6 Pro répond « non » et le sert quand même. C'est ce qui privait HealthTrack du sommeil détaillé.
 - **1/0x02 services** : demande `1 = liste des numéros de service` (octets). Réponse `2 = un octet par service
   demandé`, dans le même ordre, 1 = pris en charge. (Le service 1 est toujours pris en charge.)
 - **1/0x03 commandes** : demande `81 T{ 2 = service, 3 = liste de commandes, 2 = service, 3 = …}`. Réponse
@@ -946,3 +947,190 @@ de pilote JS). Écrit depuis cette spécification (§2, §3, §4, §6.1–§6.5)
   compte la relecture native dans les 30 min. Limite : une connexion de la page laissée ouverte par une page gelée
   bloque le natif jusqu'à sa coupure (la montre ferme un lien inactif).
 
+
+## 10. Couverture maximale de la GT 6 Pro — inventaire, cause du sommeil absent, voie P2P (run « idées » du 21/10/2026 20:30)
+
+Déclencheur : signalement du propriétaire du 21/10 ~20:00 (« le sommeil ne remonte pas, la VFC non plus, ni la
+température »). Lecture de [G] master `0735529275` (21/10/2026) via l'API REST de Codeberg par un agent de recherche,
+**faits seulement, rédigés par nous, aucun code repris ni traduit**. Issues / PR lues : #5428, #5176, #5597, #6448,
+#3814, #6579, #5724, #6816, #7127, #6978. ❓ = incertain.
+
+### 10.1 Inventaire : ce que mesure la GT 6 Pro et son état dans HealthTrack (21/10)
+
+État : ✅ remonte · 🟡 partiel · ❌ absent. « Voie » = où la donnée se lit (§ de ce fichier).
+
+| Donnée | Voie | État HealthTrack | Pourquoi / suite |
+|---|---|---|---|
+| **Sommeil : phases (léger / profond / paradoxal / éveil), coucher, lever, durée** | fichier `sequence_data` 0x2C (§7.6, §10.3) | ❌ | **jamais demandé** : bug de capacité (§10.2) → M1 |
+| Sommeil simple (léger / profond) | 7/0x0C–0x0D (§7.3) | 🟡 | lu, mais la GT 6 Pro a rendu « types 6×3, 9×1 » le 14/10 : type 9 inconnu, écarté ; peu de valeur sans phases |
+| Score de sommeil, réveils, latence, efficacité, siestes | résumé `sequence_data` (§10.3) | ❌ (décodeur prêt) | M1 ; sieste = phase 5 ou nuit « données valides = −1 » |
+| **VFC de la nuit** (moyenne, ligne de base) | résumé `sequence_data` 700013878 / 355 / 305 / 824 | ❌ (décodeur prêt pour 878) | M1 (vient avec le sommeil) |
+| **VFC de journée** (RMSSD ponctuels) | P2P dictionnaire, classe 500044 (§10.4) | ❌ | M2 : nouveau service P2P |
+| **Température cutanée** | P2P dictionnaire, classe 400012 (§10.5) | ❌ | M3 (même service P2P que M2) ; mesure continue activable par 7/0x2A |
+| Fréquence respiratoire de la nuit (mini, maxi, moyenne) | résumé `sequence_data` 700013646 / 492 / 886 | ❌ | M1 (aucune autre source chez [G]) |
+| SpO₂ de la nuit (mini, maxi, moyenne) | résumé `sequence_data` 700013340 / 026 / 468 | ❌ | M1 |
+| SpO₂ de journée | minutes 7/0x0B, masque 2 bit 0x01 | ✅ (à confirmer sur la montre) | — |
+| FC continue | minutes 7/0x0B, masque 1 bit 0x40 | ✅ | — |
+| FC au repos | minutes 7/0x0B, masque 2 bit 0x02 | ✅ | — |
+| FC de la nuit (mini, maxi, moyenne) | résumé `sequence_data` | ❌ | M1 |
+| **Stress** (score 1–99, niveau) | fichier `rrisqi_data.bin` 0x2C type 0x10 (§7.6) | ❌ | M4 : même correctif de capacité + décodeur des enregistrements de 66 octets |
+| Pas, distance, calories | minutes + totaux 7/0x03 | ✅ | — |
+| Étages / dénivelé | ❓ bits inconnus des minutes ; altitude du jour = classe P2P 200003 (codage incertain, PR #6579 ouverte) | ❌ | M4 bis, après M2 (garder les bits inconnus des minutes dans le journal pour les identifier) |
+| Séances (type, durée, distance, calories, FC mini / maxi) | 0x17/0x07–0x08 (§7.5) | ✅ | — |
+| Séances : courbe FC, allure | 0x17/0x0A, 0x17/0x0C | ❌ | M7 |
+| Émotions estimées par la montre (valence, éveil) | P2P classe 500031 (capacité 206) | ❌ | ⚠️ ne **jamais** en faire une entrée de l'estimateur de bien-être (D5 : Y vient du visage / de la voix / de l'auto-déclaration) ; au mieux, un X « montre » affiché à part, ou ignoré. À décider avant M2 |
+| Apnée (niveau 1–4), RDI | P2P 500002 (capacité 107) ; résumé 700013759 | ❌ | faible priorité ; vocabulaire : jamais « diagnostic d'apnée » |
+| Cycle menstruel | ❓ aucune voie connue chez [G] | ❌ | hors périmètre pour l'instant (extension future du produit) |
+| ECG, tension, rigidité artérielle | GT 6 Pro sans ECG ❓ ; classes désactivées chez [G] | — | hors périmètre (médical) |
+
+### 10.2 Cause du sommeil (et de la VFC de nuit, du stress) absents : la question des capacités
+
+- HealthTrack demande à la montre, en 1/0x02, si elle prend en charge le service **0x2C** (`CAPABILITY_QUERY`,
+  `sync.js`) et ne lit le sommeil détaillé que si la réponse n'est pas « non » (`canDo(caps, FILES, 0x01)`).
+- Journal du 14/10 (app v124) : « **fichiers 0x2C non**, TruSleep oui, sommeil dictionnaire oui, VFC oui ».
+  → la lecture `sleepFile` est notée « non prise en charge » et **sautée à chaque synchro**.
+- 📖 [G] **ne pose jamais cette question pour 0x2C** : 0x2C (comme 0x1C, 0x1E, 0x1F, 0x28, 0x29, 0x2F, 0x31, 0x37)
+  ne fait pas partie des services interrogés par 1/0x02 — ce ne sont pas des « capacités de l'appareil ». Une montre
+  qui répond « non » pour 0x2C peut parfaitement le servir. [G] l'utilise directement, et la GT 6 Pro synchronise
+  ainsi son sommeil chez un testeur (#5428, 29/09/2025).
+- **Règle corrigée** (à appliquer en M1) : le sommeil détaillé se décide **uniquement** par
+  ① TruSleep (commande 7/0x16 annoncée par 1/0x03) et ② capacité étendue **143** → `sequence_data` / 700013 ;
+  sans 143 : ancien TruSleep (`sleep_state.bin` 0x0E puis `sleep_data.bin` 0x0F en 0x2C si le bit 0x02 de 1/0x31 est
+  levé, sinon ancien service 0x0A — non géré). Retirer 0x2C de la question 1/0x02 (et de `describeCapabilities` :
+  afficher « fichiers 0x2C : non interrogé »). Même règle pour le stress : commande 0x20/0x09 + bit 0x04 de 1/0x31.
+- La relecture **en arrière-plan** (Java, §9.1 ③ d) ne lit que 7/0x0C, 7/0x0A, 7/0x03 : même corrigé, le sommeil
+  détaillé n'arrive que par une synchro « app ouverte ». M6 ajoutera 0x2C (et le P2P) au lecteur Java, réponses
+  gardées brutes comme aujourd'hui.
+- Second canal RFCOMM (§7.10) : concerne les séries Watch 3 / 4 / 5 ; ❓ pour la GT 6 Pro. Si, une fois la question
+  retirée, 0x2C/0x01 reste **sans réponse**, le journal le dira (piste déjà prévue dans `syncHints`) → M1 bis : lire
+  la capacité 56 et 1/0x3C.
+- Fichier vide : taille 0 ou 0xFFFFFFFF (avec un TLV d'erreur) = rien à lire, pas une panne.
+
+### 10.3 Sommeil par `sequence_data` — compléments au §7.6
+
+- Fenêtre demandée : du dernier sommeil connu à maintenant (secondes). Première fois : historique complet (la
+  montre rend ce qu'elle garde ; plusieurs semaines ❓).
+- Résumé : ne décoder que si version de données = 1, type de résumé = 2 (TLV). Valeur `BF 80 00 00` (−1,0 en réel de
+  4 octets) = invalide. **Données valides = −1** → nuit invalide ou **sieste** : coucher, lever, score… remis à zéro.
+- Détail : sauter un bloc de durée 0, de phase 0, de durée non multiple de 60 ou > 1 440 min. Point de départ =
+  heure de **coucher** seulement si la capacité **199** est levée et les données valides, sinon l'endormissement ;
+  arrondi à la minute inférieure. (Correction du §7.6 qui ne parlait pas de la capacité 199.)
+- Champs du résumé (classe 700013 ; bornes acceptées par [G] entre parenthèses) — en plus de ceux du §7.6 :
+
+| Champ | Sens | | Champ | Sens |
+|---|---|---|---|---|
+| 700013254 | qualité des données | | 700013679 | part de sommeil profond |
+| 700013721 | ronflement (fréquence) | | 700013670 | retournements |
+| 700013340 / 026 | SpO₂ mini / maxi (réel) | | 700013468 | SpO₂ moyenne (0–100) |
+| 700013646 / 492 | respiration mini / maxi | | 700013886 | **respiration moyenne** (0–80 /min) |
+| 700013225 / 839 | ligne de base respiration maxi / mini | | 700013236 | écart du jour (respiration) |
+| 700013355 / 305 | ligne de base VFC maxi / mini (0–200) | | 700013824 | écart du jour (VFC, 0–30) |
+| 700013227 / 633 | ligne de base SpO₂ maxi / mini | | 700013718 | écart du jour (SpO₂) |
+| 700013841 / 722 | ligne de base FC maxi / mini | | 700013810 | écart du jour (FC) |
+| 700013759 | indice de perturbation respiratoire (0–100) | | 700013821 | temps de préparation au sommeil |
+| 700013925 | ressenti au réveil | | 700013697 | version de l'algorithme (0–100) |
+
+- Entrées HealthTrack proposées : phases → `sleep` (détail, comme aujourd'hui) ; résumé → payload de la nuit
+  (score, réveils, latence, efficacité) ; VFC moyenne → `heart_rate` `heartRateVariability` `during: 'sleep'`
+  (existant) ; respiration moyenne → `respiratory_rate` (type déjà connu par Health Connect et le journal) ;
+  SpO₂ moyenne / mini → `heart_rate` `oxygenSaturation` `during: 'sleep'` ; FC moyenne / mini → idem
+  `heartRate`. Les lignes de base et écarts restent dans le payload (affichés en « détails » seulement).
+
+### 10.4 Service P2P (0x34) et synchro « dictionnaire » — pour la VFC de journée et la température
+
+**Enveloppe P2P** — commande 0x34/0x01, TLV :
+
+| Étiquette | Contenu |
+|---|---|
+| 1 | commande : 1 ping, 2 données, 3 accusé / réponse, 4 version d'appli (si capacité 14) |
+| 2 | numéro de séquence (2 octets ; commence à 1, +1 à chaque message, modulo 32 766) |
+| 3 / 4 | paquet source / destination (texte) |
+| 5 / 6 | empreinte source / destination (texte) — **commande 2 seulement** |
+| 7 | charge utile (octets), si non vide |
+| 8 | code — **commande 3 seulement** : 4 octets du téléphone vers la montre, 1 octet dans l'autre sens |
+
+- Codes : **0xCA** = « service disponible » (réponse au ping) ; **0xCF** = accusé « reçu » ; 0xCC / 0xCD / 0xD1 / 0xD2
+  = cas de réveil d'appli (ignorés).
+- Une réponse se rattache à sa demande par le **numéro de séquence**. À tout message spontané de la montre (commande 1
+  ou 2), le téléphone répond par une commande 3 : **même numéro**, paquets **inversés**, code 0xCF (sur 4 octets).
+- **Ouverture** : ping (commande 1) de `com.huawei.health` vers `hw.watch.health.filesync`, sans empreinte ni charge
+  utile ; continuer seulement si la réponse porte **0xCA**.
+- **Données** : commande 2 de `hw.unitedevice.datadictionarysync` vers `hw.watch.health.filesync`, empreinte source
+  `UniteDeviceManagement`, empreinte destination `SystemApp` (identifiants publics, aucun secret).
+- Condition : la commande 0x34/0x01 est annoncée par 1/0x03 (0x34 fait partie des services qu'on peut interroger
+  en 1/0x02). À ajouter à `CAPABILITY_QUERY`.
+- Le service **0x37** (« DataSync ») n'est **pas** la lecture des mesures : réglages et événements seulement (déjà
+  ignoré, §7.9).
+
+**Demande de dictionnaire** (charge utile, étiquette 7) : un octet **0x01** (« contenu TLV ») puis :
+`1 = 0x01` (opération) · `2 = classe` en gros-boutiste sur le **minimum d'octets** (500044 → `07 A1 4C` ;
+400012 → `06 1A 8C`) · `5 = début` en **millisecondes** sur 8 octets (0 la première fois, sinon dernière date
+connue + 1 000) · `6 = maintenant` en ms sur 8 octets · `0x0D = 0x01` (sens inconnu ❓).
+
+**Réponse** : la montre envoie d'abord un accusé (commande 3, à ignorer), puis une **commande 2** venant de
+`hw.watch.health.filesync` (à acquitter par 0xCF). Charge utile : octet 0x01 puis TLV `1 = opération`,
+`2 = classe`, conteneur **0x83** → un **0x84** par enregistrement : `5 = début` (ms, 8 o), `6 = fin` (ms,
+facultatif), `0x0C = date de modification` (ms, facultatif), conteneur **0x87** → un **0x88** par valeur :
+`9 = numéro de champ`, `0x0A = valeur` (**réel double gros-boutiste, 8 octets** ; ❓ certaines montres envoient un
+réel de **4 octets** : décider selon la longueur), `0x0B = valeur texte`.
+
+**Pagination** : tant qu'une réponse contient des enregistrements, redemander la même classe à partir de
+max(fin, modification) + 1 000 ms ; réponse vide → classe suivante. Garder la reprise **par classe** (état de synchro).
+
+**Classes utiles** (capacité étendue requise entre parenthèses) :
+
+| Classe | Donnée | Champ | Unité, bornes acceptées |
+|---|---|---|---|
+| 500044 (235) | **VFC (RMSSD)** | 500044831 | ms, 0–200 |
+| 400012 (29) | **température cutanée** (poignet) | 400012430 | °C, 20–42 |
+| 500031 (206) | émotions estimées par la montre | 195 statut, 347 valence, 160 statut d'origine, 842 éveil (préfixe 500031) | 0–100 ; ⚠️ voir D5 (§10.1) |
+| 500002 (107) | apnée | 500002847 niveau | 1–4 |
+| 200003 (72) | altitude du jour | 200003586 | m ; ❓ codage (entier ou réel 4 o) |
+
+Aucune classe connue pour SpO₂, stress, respiration ou étages.
+
+### 10.5 Température cutanée
+
+- Lecture : classe **400012**, champ **400012430**, °C (réel), si capacité **29**. C'est une température **cutanée au
+  poignet**, pas une température corporelle : le dire ainsi dans l'app (« température de la peau, montre »).
+- Activation de la mesure continue : **7/0x2A** `1 = 0x01`, `2 = booléen`. Ne l'envoyer qu'avec l'accord explicite de
+  l'utilisateur (réglage visible, comme FC / SpO₂ auto au §6.12) : ça consomme de la batterie.
+- Confirmée sur une GT 6 Pro chez [G] (#5428).
+- Entrée HealthTrack proposée : `body_temperature` (type existant, Health Connect) avec `subtype: 'skin'`,
+  `source: montre Huawei` ; dans les analyses, comparer à **votre** médiane (écart en °C), jamais à une norme (D6).
+
+### 10.6 Stress, respiration, étages
+
+- **Stress** : commande 0x20/0x09 annoncée → fichier `rrisqi_data.bin` en 0x2C type **0x10** si le bit 0x04 de
+  1/0x31 est levé (sinon ancien service 0x0A : non géré). Format au §7.6 (version 3 seulement, enregistrements de
+  66 octets à partir de l'octet 48 ; score 1 octet, niveau 1 octet). Entrée proposée : `stress` (nouveau type,
+  `value` = score de la montre, `level`), X seulement (jamais une entrée du bien-être estimé, D5).
+- **Respiration** : seulement dans le résumé de sommeil (§10.3). 0x2D/0x01 n'est qu'un réglage.
+- **Étages / dénivelé** : non décodés chez [G] (#5724 ouverte, GT 6). Piste : bits inconnus des minutes (masque 1
+  0x01 / 0x10 / 0x20, masque 2 0x04–0x80). Pour les identifier sans données réelles dans le dépôt : consigner dans le
+  journal, **en nombres seulement**, combien de minutes portent chaque bit inconnu et la somme du jour, à comparer
+  avec les étages affichés par la montre (le propriétaire dit le chiffre). Altitude du jour : classe 200003.
+
+### 10.7 Capacités étendues utiles (1/0x37, bit n = octet ⌊n / 8⌋, bit (n mod 8) depuis le poids faible)
+
+14 version P2P · **29 température** · 54 P2P « track » · **56 second canal** (1/0x3C) · 59 tension · 72 altitude ·
+75 rigidité artérielle · 83 / 84 / 85 service 0x37 · 106 ECG · 107 apnée · 109 multi-appareil · 142 second canal
+étendu · **143 sommeil par dictionnaire** · 173 0x37 dictionnaire · **199 heure de coucher** · 206 émotions ·
+**235 VFC**. → `describeCapabilities` doit afficher 29, 56, 143, 199, 235 (oui / non) dans le journal.
+
+### 10.8 Plan d'implémentation (runs de code, un run = une étape testable)
+
+| Étape | Contenu | Tests (trames synthétiques, construites par nous) |
+|---|---|---|
+| **M1** | Retirer 0x2C de 1/0x02 ; sommeil détaillé décidé par 7/0x16 + capacité 143 ; capacité 199 pour le point de départ ; décoder tout le résumé §10.3 (respiration, SpO₂, FC de la nuit, siestes, nuits invalides) ; écrire les entrées ; journal : capacités 29 / 56 / 143 / 199 / 235 | réponse 1/0x02 « 0x2C non » + 143 levé → `sequence_data` demandé ; fichier d'exemple 2 nuits + 1 sieste ; `BF800000` invalide ; bloc de phase 0 sauté |
+| M1 bis (si besoin) | 0x2C sans réponse sur la GT 6 Pro → capacité 56, 1/0x3C, second socket RFCOMM | fausse montre qui ne répond à 0x2C que sur le canal 2 |
+| **M2** | Service P2P (ping 0xCA, séquence, accusés 0xCF, messages spontanés acquittés) + dictionnaire 500044 (VFC de journée), reprise par classe, pagination | ping refusé → rien ; 2 pages puis page vide ; réel 8 o et 4 o |
+| **M3** | Classe 400012 (température cutanée) + réglage « mesure continue » (7/0x2A) avec accord explicite | valeurs hors bornes écartées |
+| **M4** | Stress `rrisqi` (0x2C type 0x10 si bit 0x04 de 1/0x31) ; compteur des bits inconnus des minutes (étages) | fichier v3 de 2 enregistrements ; version ≠ 3 ignorée |
+| **M5** | Écran « Montre » (diagnostic) : pour chaque type (sommeil, VFC nuit, VFC jour, température, SpO₂, respiration, stress, FC, FC repos, pas, séances), dernière valeur, date, nombre d'échantillons sur 7 jours, et l'issue de la dernière lecture (reçu / vide / non pris en charge / sans réponse) | rendu avec données factices ; `npm run visual` |
+| **M6** | Lecteur Java en arrière-plan : 0x2C `sequence_data` + P2P (réponses brutes dans la capture, décodées par le JS) ; rattrapage de l'historique (fenêtre élargie la première fois par classe) | vecteurs JS → Java comme §9.1 |
+| **M7** | Séances : courbe FC et allure (0x17/0x0A, 0x0C) | blocs de longueur annoncée ≠ attendue (§7.10) |
+| Ensuite | A.1 (délai de 8 s « Apps qui peuvent tenir la montre »), A.2 (avertissement « Services Bluetooth »), tuiles Accueil « VFC nuit · montre Huawei », export vérifié | — |
+
+Règles rappelées : réimplémentation depuis **cette** spécification, jamais depuis le code de [G] ; aucune trame réelle
+du propriétaire dans le dépôt ; « compatible avec les montres Huawei » dans les textes visibles.
