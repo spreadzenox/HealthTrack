@@ -21,6 +21,37 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🎯 Version candidate avant les testeurs (décision du 22/10 19:15 ; critères dans `PRODUIT.md` §2 bis)
+Ordre des runs de code : **6b → 6c → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
+M6, M7, jalon 5. Défauts trouvés par l'audit sans code du 22/10 20:30 (`npm run visual -- --play --empty`, clair et
+sombre) — à corriger dans la passe de finition, chacun avec son test :
+- [ ] **VC-1** espace perdue après le nom : `src/pages/Dashboard.jsx:76` (« Halcyavous ») et
+  `src/components/BaselineCards.jsx:118` (« mesures,Halcya »). Correction : `{APP_NAME}{' '}` / `{' '}{APP_NAME}` ;
+  test-garde : aucune ligne JSX ne finit ni ne commence par `{APP_NAME}` sans `{' '}` (ou rendu → pas de `/Halcya\S/`
+  ni `/\S,Halcya/`).
+- [ ] **VC-2** page Pistes vide alignée sur la carte lilas de l'Accueil (même compteur X/21 jours avec repas ou note du
+  ventre, même phrase « On préfère attendre… ») ; supprimer « recommandations basiques », « ≥ 5j / ≥ 9j » et le 📊 de
+  l'état vide ; les onglets simple / avancée seulement quand il y a des résultats.
+- [ ] **VC-3** Nutrition : ne rien chiffrer tant que le profil n'est pas rempli (ni kcal, ni IMC, ni « Homme, 30 ans »
+  par défaut) → carte « Complétez votre profil pour voir vos repères » ; en play, objectif calorique et IMC repliés
+  derrière « détails » (I152).
+- [ ] **VC-4** « Mode diagnostic » masqué en play (`featuresFor('play')`), accessible par 7 touches sur le numéro de
+  version (À propos) pour le support.
+- [ ] **VC-5** Nouveautés en play : champ facultatif `variants` dans les JSON du changelog + date de départ play ;
+  n'afficher que les entrées play postérieures à la première version publique (aucun « HealthTrack », ni clé, ni
+  bouton de mise à jour) ; test sur les fichiers existants.
+- [ ] **VC-6** Sources : la carte montre propose d'abord « Connecter une montre compatible Huawei » ; le lien vers
+  `/montre` n'apparaît qu'après un appairage ; `/montre` sans montre → état vide d'une phrase + bouton.
+- [ ] **VC-7** Sources en play : carte Withings Body Scan masquée (identifiant / secret de développeur à saisir ;
+  Withings écrit dans Health Connect, déjà lu), données Withings existantes conservées et exportées ; textes des
+  cartes raccourcis à 2 lignes + « détails » (Lecture du visage, Temps d'écran, Météo).
+- [ ] **VC-8** carte montre : bloc « Diagnostic » fermé par défaut, sans HiChain / AES-GCM / compteurs bruts dans le
+  résumé (retour du propriétaire, P17) ; termes techniques seulement une fois déplié.
+- [ ] **VC-9** (à vérifier sur émulateur) temps du premier lancement play à froid et absence d'erreur JS (critère C4) ;
+  `npm run visual` n'exerce pas les plugins natifs.
+- [ ] **VC-10** « Supprimer toutes mes données » dans Réglages → Données (avec export proposé avant), aujourd'hui
+  seulement « désinstaller / effacer les données Android » d'après la politique de confidentialité.
+
 ## 🧭 Chantier produit — décisions du propriétaire du 20/10/2026 au soir (charte §000000000, détail : `PRODUIT.md`)
 Cadre général depuis le 20/10 au soir : produit vendable sur Google Play ; porte d'entrée SII ; bien-être ; toutes
 les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état tenu dans `PRODUIT.md`) :
