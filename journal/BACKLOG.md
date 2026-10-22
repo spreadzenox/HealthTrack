@@ -39,7 +39,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   **branché le 21/10 22:30** (`app/scripts/play/publish.mjs`, étape « Envoyer en test interne » de « Play — AAB », symboles
   natifs `debugSymbolLevel`) ; [x] premier envoi réel vérifié (22/10 00:30 : versionCode **346** déployé en test interne dès le 21/10 22:51, accès gh-deployer effectif tout de suite) ;
   [x] page de confidentialité (22/10 02:30 : `app/public/privacypolicy.html` réécrite pour la variante play, source unique embarquée + **GitHub Pages** `.github/workflows/pages.yml` → https://spreadzenox.github.io/HealthTrack/confidentialite/ , lien Réglages → Confidentialité, `privacyPolicy.test.js` ; attend P19) ;
-  [ ] fiche du Store FR par l'API (edits.listings / images / details, captures synthétiques) ; [ ] Sécurité des données (CSV ou réponses exactes) ; [ ] test fermé (piste `alpha`, testeurs `halcya-testeurs@googlegroups.com`, edits.testers ; attend P18).
+  [x] fiche du Store FR par l'API (22/10 04:30 : `app/store/listing/fr-FR/` textes + 5 captures 1080×1920 de la variante play (données de démo) + image de présentation 1024×500, `scripts/store/build-store-assets.mjs`, envoi `scripts/play/listing.mjs` par le workflow « Play — fiche du Store », images réenvoyées seulement si leur SHA-256 change, site web dans details) ;
+  [ ] refaire les captures quand l'onboarding et les vraies pistes SII existeront (ajouter « Sources » sans marque tierce visible) ; [ ] Sécurité des données (CSV ou réponses exactes) ; [ ] test fermé (piste `alpha`, testeurs `halcya-testeurs@googlegroups.com`, edits.testers ; attend P18).
 - [x] **1** `journal/PRODUIT.md` (20/10 22:30)
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
   (20/10 22:30) ; [~] 2b inventaire chiffré → décisions masquer / fusionner / déplacer (sans perte de données) : [x] accueil
@@ -81,7 +82,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   [ ] **3b-3** « Lecture rapide » (tuile / notification → activité visible) ; [ ] divulgations restantes : photo du
   repas → IA (avant le premier envoi), Health Connect (jalon 8), Bluetooth « Appareils à proximité » ;
   [ ] enregistrer la date de chaque accord (preuve de consentement, RGPD art. 9) ;
-  [ ] fiabiliser le test `FaceSenseCard` « affiche l’humeur estimée dès la première lecture… » (échec isolé sous charge le 22/10 00:30, vert en relance) ;
+  [ ] fiabiliser le test `FaceSenseCard` « affiche l’humeur estimée dès la première lecture… » (échec isolé sous charge le 22/10 00:30, vert en relance ; le 22/10 04:30, un échec isolé non identifié au premier passage complet, vert en relance) ;
   [ ] fiabiliser le test `UpdateBanner` « montre la progression en Mo et en %… » (délai de 3 s dépassé sous charge en CI, PR #246 sur `a6dfd56`) ; [ ] **3c** envoi automatique en test
   interne (Android Publisher, edits) dans « Play — AAB », après P10 + P11 ; [ ] **3d** nom affiché de l'app depuis une
   seule source (`appName` Capacitor, `strings.xml`, titres) pour le changer en un commit

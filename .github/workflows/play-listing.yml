@@ -1,0 +1,62 @@
+# Fiche du Store Google Play en français (jalon 10, journal/PRODUIT.md) : titre, descriptions, icône 512,
+# image de présentation 1024×500, captures de téléphone et site web, envoyés par l'API Android Publisher
+# (app/scripts/play/listing.mjs). Source : app/store/ (images régénérées par scripts/store/build-store-assets.mjs).
+# Connexion sans clé (Workload Identity Federation, main uniquement). Ne touche à aucune piste ni version :
+# la mise en production reste le geste du propriétaire. Accès refusé → avertissement (droit « fiche du Store »
+# manquant pour gh-deployer), pas d'échec.
+name: Play — fiche du Store
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/store/**"
+      - "app/scripts/play/listing*.mjs"
+      - ".github/workflows/play-listing.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: play-edits
+  cancel-in-progress: false
+
+jobs:
+  listing:
+    name: Fiche du Store (fr-FR)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Vérifier la fiche (limites de Play, tailles d'images)
+        working-directory: app
+        run: node scripts/play/listing-cli.mjs > /dev/null
+
+      - name: Jeton Google Play (portée androidpublisher)
+        id: play-token
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+
+      - name: Envoyer la fiche (Google Play)
+        working-directory: app
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
+        run: |
+          set +e
+          node scripts/play/listing-cli.mjs
+          code=$?
+          if [ "$code" = 2 ]; then exit 0; fi
+          exit "$code"
