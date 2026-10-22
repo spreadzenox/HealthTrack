@@ -22,7 +22,7 @@ données », local-first :
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
 ## 🎯 Version candidate avant les testeurs (décision du 22/10 19:15 ; critères dans `PRODUIT.md` §2 bis)
-Ordre des runs de code : **6b → 6c → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
+Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
 M6, M7, jalon 5. Défauts trouvés par l'audit sans code du 22/10 20:30 (`npm run visual -- --play --empty`, clair et
 sombre) — à corriger dans la passe de finition, chacun avec son test :
 - [ ] **VC-1** espace perdue après le nom : `src/pages/Dashboard.jsx:76` (« Halcyavous ») et
@@ -78,6 +78,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   [ ] refaire les captures quand l'onboarding et les vraies pistes SII existeront (ajouter « Sources » sans marque tierce visible) ; [x] Sécurité des données (22/10 06:30 : réponses justifiées `app/store/data-safety/answers.mjs` → CSV complet `data-safety.csv` rempli sur le modèle de la Play Console, règles du formulaire vérifiées, envoi `applications.dataSafety` par le workflow manuel « Play — sécurité des données » (P21) ; repli : import manuel du CSV ; réponses exactes dans PLAY-CONFORMITE.md §Sécurité des données) ; [ ] test fermé (piste `alpha`, testeurs `halcya-testeurs@googlegroups.com`, edits.testers ; attend P18).
 - [x] **6a-1 relais Cloud Run** (22/10 16:30) : `relay/` + « Relais — déploiement » + job « Relais (Node) » ; plafonds en mémoire (une instance), à durcir par Play Integrity (6b) ; P22 facultatif (quota Vertex).
 - [x] **6a-2** (22/10 18:30, livré) : variante play → relais (`featuresFor('play').aiRelay`, identifiant d'installation aléatoire, analyse photo et texte, message des quotas 429, plus de champ clé Gemini en play), confidentialité et sécurité des données mises à jour (photos/texte de repas envoyés au relais puis à Vertex AI UE, rien conservé), test sur le vrai relais. Vérifier dans le résumé du dernier « Relais — déploiement » le modèle qui a répondu.
+- [x] **6b-1** (22/10 21:30) : relais `billing.js` — `subscriptionsv2.get`, droits (actif / grâce / annulé non échu ; pas en pause, on_hold, expiré, en attente), accusé côté serveur, `linkedPurchaseToken`, `/v1/subscription/verify` au format validateur cdv-purchase, `/pubsub/rtdn` (OIDC relay-runtime vérifié), `LAUNCH_PREMIUM_UNTIL` (P23 ②, coupée) ; CI : abonnement push `play-rtdn-relay` + test d'accès Play (faux jeton → 404 attendu).
+- [ ] **6b-2** Play Integrity (jeton standard demandé par l'app avec `requestHash` = empreinte de la requête, décodé par le relais via `playintegrity.decodeIntegrityToken`) sur `/v1/meal/analyze` et `/v1/subscription/verify` ; à faire avec 6c.
 - [ ] **6 (préparé le 22/10 08:30, I146–I148)** Play Billing : plugin `capacitor-plugin-cdv-purchase` (MIT, PBL 9) avec
   validateur = relais ; relais : `subscriptionsv2.get` + accusé côté serveur + `linkedPurchaseToken` + RTDN ; prix et
   essai lus dans `pricingPhases`, jamais en dur ; lien d'annulation Play dans Réglages. Maintenance : aligner

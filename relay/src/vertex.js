@@ -12,11 +12,13 @@ export const endpointUrl = ({ project, location, model }) =>
   `https://${location}-aiplatform.googleapis.com/v1/projects/${project}/locations/${location}/publishers/google/models/${model}:generateContent`
 
 /** Jeton d'accès du compte de service, mis en cache jusqu'à une minute avant son expiration. */
-export function metadataTokenProvider({ fetchImpl = fetch, now = Date.now } = {}) {
+export function metadataTokenProvider({ scopes = [], fetchImpl = fetch, now = Date.now } = {}) {
   let cached = null
+  // Portée par défaut (cloud-platform) pour Vertex AI ; l'API Android Publisher demande la sienne
+  const url = scopes.length ? `${METADATA_TOKEN_URL}?scopes=${scopes.map(encodeURIComponent).join(',')}` : METADATA_TOKEN_URL
   return async () => {
     if (cached && now() < cached.expiresAt) return cached.token
-    const res = await fetchImpl(METADATA_TOKEN_URL, { headers: { 'Metadata-Flavor': 'Google' } })
+    const res = await fetchImpl(url, { headers: { 'Metadata-Flavor': 'Google' } })
     if (!res.ok) throw new Error(`Jeton du compte de service indisponible (${res.status})`)
     const { access_token: token, expires_in: expiresIn } = await res.json()
     cached = { token, expiresAt: now() + Math.max(0, (Number(expiresIn) || 0) - 60) * 1000 }

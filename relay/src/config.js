@@ -27,6 +27,15 @@ export function loadConfig(env = process.env) {
     globalPerDay: int(env.GLOBAL_DAILY_CAP, 200),
     installPerDay: int(env.INSTALL_DAILY_CAP, 20),
     globalPerMinute: int(env.GLOBAL_PER_MINUTE_CAP, 10),
+    // Abonnements Google Play (jalon 6b)
+    packageName: env.PLAY_PACKAGE || 'fr.jpesquet.sante',
+    publicUrl: env.PUBLIC_URL || 'https://halcya-relay-81378799481.europe-west1.run.app',
+    rtdnServiceAccount: env.RTDN_SERVICE_ACCOUNT || 'relay-runtime@healthtrack-824b26.iam.gserviceaccount.com',
+    // « Période de lancement » (P23) : date ISO jusqu'à laquelle toute installation play est premium ; vide = aucune
+    launchPremiumUntil: env.LAUNCH_PREMIUM_UNTIL || '',
+    verifyPerDay: int(env.VERIFY_DAILY_CAP, 50),
+    verifyGlobalPerDay: int(env.VERIFY_GLOBAL_DAILY_CAP, 5000),
+    verifyPerMinute: int(env.VERIFY_PER_MINUTE_CAP, 60),
     ingredientsPath: env.INGREDIENTS_PATH || DEFAULT_INGREDIENTS,
     // WebView Capacitor (https://localhost sur Android) et serveur de développement Vite
     allowedOrigins: list(env.ALLOWED_ORIGINS, ['https://localhost', 'http://localhost', 'capacitor://localhost', 'http://localhost:5173']),

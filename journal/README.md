@@ -379,6 +379,18 @@ Google (P13), envoyer pour examen la modification « sécurité des données » 
 Prochain run de code : **6b** (vérification des achats par le relais), puis 6c et l'onboarding. Détail :
 [`IDEES.md`](IDEES.md) I149–I152.
 
+**Run du 22/10 21:30 — le serveur sait vérifier un abonnement Google Play (jalon 6b, première moitié ; rien de
+nouveau dans l'app).** Quand la version Play vendra l'abonnement (6c), c'est **notre relais**, pas l'app, qui dira si
+quelqu'un est premium : il relit l'achat directement chez Google (actif, essai, période de grâce, annulé mais payé
+jusqu'au…, en pause, suspendu, expiré) et en **accuse réception lui-même** — sans cela, Google rembourse l'achat au
+bout de 3 jours. Il écoute aussi les **notifications en temps réel** que vous avez activées (sujet `play-rtdn`) : le
+déploiement crée l'abonnement `play-rtdn-relay` qui les lui transmet, protégé par un jeton Google. Rien n'est stocké,
+ni compte ni jeton. La **« période de lancement »** que je vous ai proposée (P23 ②) est prête côté serveur : elle reste
+**coupée** tant que vous n'avez pas répondu. Le résumé du workflow « Relais — déploiement » dit si Google Play donne
+déjà accès à `relay-runtime` (« ✅ relay-runtime lit les achats ») ou s'il faut encore attendre l'effet de votre
+invitation (24 à 48 h). Prochain run de code : **6c** (achat dans l'app, droits premium, crédits IA, paywall).
+**👉 Toujours en attente de vous : P23** (« ① + ② » ou autre).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -756,6 +768,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 21:30 — [6b-1 : le relais vérifie les abonnements Play](runs/2026-10-22-2130-6b-achats-relais.md) | 🧭 | `billing.js` : `subscriptionsv2.get` (droits : actif, grâce, annulé non échu ; pas en pause / suspendu / expiré), accusé côté serveur, `linkedPurchaseToken`, `/v1/subscription/verify` (format validateur cdv-purchase), `/pubsub/rtdn` (OIDC vérifié), période de lancement `LAUNCH_PREMIUM_UNTIL` (coupée) ; CI : abonnement push `play-rtdn-relay` + test d'accès Play ; 40 tests relais |
 | 22/10 18:30 — [6a-2 : la version Play analyse les repas par le relais](runs/2026-10-22-1830-relais-app-play.md) | 🧭 | `aiRelay.js` + façade `mealAi.js` (play : relais, identifiant aléatoire, accord `ai_meal` une fois, analyses restantes ; sideload : clé Gemini inchangée) ; confidentialité et sécurité des données (+ identifiant) à jour ; CORS et analyse réelle vérifiés ; P19, P20, P21 faits par le propriétaire ; P21 à relancer |
 | 22/10 20:30 — [Idées : audit de la version candidate, testeurs sans paiement](runs/2026-10-22-2030-idees-version-candidate.md) | 💡 | `PRODUIT.md` §2 bis (5 critères) ; audit play vierge → VC-1…VC-10 au BACKLOG ; I149–I152 ; P12–P18, P21 à jour ; P23 proposé (testeurs de licence + période de lancement) |
 | 22/10 16:30 — [6a : relais Cloud Run + Vertex AI](runs/2026-10-22-1630-relais-vertex.md) | 🧭 | `relay/` (Node sans dépendance : `/v1/meal/analyze` photo / texte, consignes côté relais, EXIF retiré, rien stocké, plafonds 20/inst./j, 200/j, 10/min, Vertex europe-west1 sans clé ; 24 tests) + workflow « Relais — déploiement » (Cloud Run `halcya-relay`, vérification par une vraie analyse) + job « Relais (Node) » ; app inchangée ; PR #273 fusionnée, relais déployé, analyse réelle OK (gemini-2.5-flash-lite, UE) ; `/healthz` réservé par Cloud Run → `/health` |
