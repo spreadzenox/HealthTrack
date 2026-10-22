@@ -122,10 +122,12 @@ données → Importer depuis un fichier CSV. Réponses, dans l'ordre de la Play 
    hors de l'app : **Non**. Les utilisateurs peuvent-ils demander la suppression de leurs données ? **Oui** — URL :
    `https://spreadzenox.github.io/HealthTrack/confidentialite/#vos-droits`.
 2. **Types de données** — cocher seulement : **Position → Position approximative** ; **Photos et vidéos → Photos** ;
-   **Activité dans les applis → Autres contenus générés par l'utilisateur**.
-3. **Pour chacun des trois** : **Collectée** (pas partagée : Open-Meteo et Gemini traitent pour le compte de l'app) ;
-   traitée de façon éphémère : **Non** (prudence) ; **Facultative** (l'utilisateur choisit) ; raison : **Fonctionnement
-   de l'application**.
+   **Activité dans les applis → Autres contenus générés par l'utilisateur** ; et depuis le 22/10 18:30 (6a-2)
+   **Identifiants → Identifiants de l'appareil ou autres** (identifiant aléatoire d'installation envoyé au relais avec
+   chaque analyse IA, pour compter les analyses du jour).
+3. **Pour chacun** : **Collectée** (pas partagée : Open-Meteo, notre relais et Vertex AI traitent pour le compte de
+   l'app) ; traitée de façon éphémère : **Non** (prudence) ; **Facultative** (l'utilisateur choisit) ; raison :
+   **Fonctionnement de l'application** (+ **Prévention des fraudes, sécurité et conformité** pour l'identifiant).
 
 Pourquoi rien d'autre : Google appelle « collecte » ce qui quitte le téléphone. Health Connect, la montre, le ventre,
 le sommeil, le temps d'écran et la lecture du visage restent sur le téléphone (rien envoyé, aucune image gardée) ;

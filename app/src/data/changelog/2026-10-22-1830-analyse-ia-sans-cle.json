@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-22",
+  "kind": "nouveau",
+  "title": "Version Google Play : l'analyse IA des repas sans clé à saisir",
+  "items": [
+    "Dans la version Google Play, « Analyser les ingrédients » et « Remplir avec l'IA » marchent tout de suite : plus besoin de créer une clé Gemini.",
+    "Avant la première analyse, l'app dit ce qui part (la photo réduite ou la description du repas, rien d'autre) et vous demande votre accord.",
+    "La photo ou le texte passe par notre serveur en Europe, analysé par Gemini (Google Cloud), et rien n'y est gardé. Réglages → Paramètres montre les analyses qui vous restent aujourd'hui.",
+    "Dans la version installée depuis GitHub, rien ne change : l'analyse utilise toujours votre clé Gemini."
+  ]
+}

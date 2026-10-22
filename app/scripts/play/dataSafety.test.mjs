@@ -126,6 +126,8 @@ describe('déclaration de Halcya (variante play)', () => {
   it('reste d’accord avec la politique de confidentialité', () => {
     expect(POLICY).toMatch(/Open-Meteo/)
     expect(POLICY).toMatch(/Gemini/)
+    expect(POLICY).toMatch(/Vertex AI/)
+    expect(POLICY).toMatch(/identifiant aléatoire/)
     expect(POLICY).toMatch(/id="vos-droits"/)
     const url = DATA_SAFETY_ANSWERS.find((a) => a.question === 'PSL_DATA_DELETION_URL').value
     expect(url).toBe('https://spreadzenox.github.io/HealthTrack/confidentialite/#vos-droits')

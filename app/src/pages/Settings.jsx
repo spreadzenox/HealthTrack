@@ -5,7 +5,38 @@ import { isDebugModeEnabled, setDebugModeEnabled } from '../settings/debugMode'
 import { useDebug } from '../contexts/DebugContext'
 import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings/cigaretteCounter'
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
+import { FEATURES } from '../config/distribution'
+import { getLastQuota } from '../services/aiRelay'
 import '../Food.css'
+
+/** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
+function RelayAiBlock() {
+  const quota = getLastQuota()
+  return (
+    <div className="settings-block">
+      <h3 className="section-title">Analyse des repas (IA)</h3>
+      <p className="page-intro">
+        Pour remplir un repas depuis une photo ou une description, l’app la fait analyser par Gemini (Google Cloud,
+        en Europe) via notre serveur, seulement quand vous touchez « Analyser ». Aucune clé à saisir. Sans IA, la
+        saisie manuelle reste possible.
+      </p>
+      {quota && (
+        <p className="hint">
+          {quota.remaining > 1 ? `${quota.remaining} analyses restantes aujourd’hui.` : `${quota.remaining} analyse restante aujourd’hui.`}
+        </p>
+      )}
+      <div className="gemini-privacy">
+        <p className="hint">
+          <strong>🔒 Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans métadonnées
+          (position GPS, date, modèle de téléphone), ou le texte d’un repas décrit, avec un identifiant aléatoire
+          qui sert à compter les analyses du jour. Notre serveur ne garde rien et Google ne s’en sert pas pour
+          entraîner ses modèles. Les calories sont calculées sur le téléphone ; aucune autre donnée de santé ne
+          quitte l’appareil.
+        </p>
+      </div>
+    </div>
+  )
+}
 
 export default function Settings() {
   const [apiKey, setApiKey] = useState('')
@@ -64,6 +95,7 @@ export default function Settings() {
         </div>
       </div>
 
+      {FEATURES.aiRelay ? <RelayAiBlock /> : (
       <div className="settings-block">
         <h3 className="section-title">Analyse des repas (Gemini)</h3>
         <p className="page-intro">
@@ -135,6 +167,7 @@ export default function Settings() {
           </p>
         </div>
       </div>
+      )}
 
       <div className="settings-block">
         <h3 className="section-title">Cigarettes</h3>

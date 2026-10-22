@@ -342,6 +342,23 @@ la version Play appelle le relais au lieu de vous demander une clé Gemini, et l
 urgent), puis P21, P20, P19, P18 ; et, facultatif (3 min), **P22** : un plafond dur côté Google sur Vertex AI, en plus
 de ceux du relais (pas à pas dans [`PRODUIT.md`](PRODUIT.md) §4).
 
+**Run du 22/10 18:30 — la version Google Play analyse vos repas sans clé (jalon 6a, seconde moitié).** ✅ **Merci
+pour P19, P20 et P21** : la page de confidentialité est en ligne, la fiche du Store est enregistrée (titre, icône,
+présentation, 5 captures) et la sécurité des données est envoyée. Ce que verront les testeurs de la **version Play**
+à la prochaine version : « Analyser les ingrédients » (photo) et « ✨ Remplir avec l’IA » (description) **marchent
+tout de suite, sans clé Gemini**. La toute première fois, une feuille **« Avant d’analyser un repas avec l’IA »** dit ce
+qui part (la photo réduite sans position, ou la description, rien d'autre), où (notre serveur en Europe, Gemini sur
+Google Cloud) et que rien n'y est gardé, puis demande l'accord. **Réglages → Paramètres** montre les **analyses qui
+restent aujourd'hui** (20 par jour). Dans **votre** version (sideload, GitHub), rien ne change : votre clé Gemini sert
+toujours. En coulisses : un identifiant **aléatoire** d'installation accompagne chaque analyse (il sert seulement à
+compter), la politique de confidentialité et la sécurité des données le disent ; vérifié en vrai depuis la session
+(le relais accepte l'app et a reconnu « riz et œuf »). **👉 Vos actions les plus utiles** : ① **P21 bis (1 min)** :
+GitHub → Actions → **« Play — sécurité des données » → Run workflow** une fois de plus (la déclaration gagne un 4ᵉ
+type, « Identifiants de l'appareil ou autres ») ; ② **P13** (profil de paiement, urgent pour les abonnements) ;
+③ **P18** (groupe des testeurs, qui ouvre le test fermé de 14 jours). À tester sur la version Play (test interne) :
+photographier un repas → accepter → vérifier les aliments. Prochain run de code : **6b** (vérification des achats par
+le relais, Play Integrity).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -719,6 +736,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 18:30 — [6a-2 : la version Play analyse les repas par le relais](runs/2026-10-22-1830-relais-app-play.md) | 🧭 | `aiRelay.js` + façade `mealAi.js` (play : relais, identifiant aléatoire, accord `ai_meal` une fois, analyses restantes ; sideload : clé Gemini inchangée) ; confidentialité et sécurité des données (+ identifiant) à jour ; CORS et analyse réelle vérifiés ; P19, P20, P21 faits par le propriétaire ; P21 à relancer |
 | 22/10 16:30 — [6a : relais Cloud Run + Vertex AI](runs/2026-10-22-1630-relais-vertex.md) | 🧭 | `relay/` (Node sans dépendance : `/v1/meal/analyze` photo / texte, consignes côté relais, EXIF retiré, rien stocké, plafonds 20/inst./j, 200/j, 10/min, Vertex europe-west1 sans clé ; 24 tests) + workflow « Relais — déploiement » (Cloud Run `halcya-relay`, vérification par une vraie analyse) + job « Relais (Node) » ; app inchangée ; PR #273 fusionnée, relais déployé, analyse réelle OK (gemini-2.5-flash-lite, UE) ; `/healthz` réservé par Cloud Run → `/health` |
 | 22/10 14:30 — [M5 : écran « Données de la montre »](runs/2026-10-22-1430-m5-ecran-montre.md) | ⌚ | Page `/montre` (lien dans la carte montre) : 12 types + stress « à venir », dernière valeur et date, n sur 7 j, issue de la dernière lecture (`reads` gardé dans l'état de synchro, nombres seulement) ; décision du 22/10 13:30 notée (jalon 6 ensuite) ; 1 857 Vitest ; PR #271 fusionnée → v209 |
 | 22/10 12:30 — [M3 : température de la peau de la montre](runs/2026-10-22-1230-m3-temperature-peau.md) | ⌚ | Classe 400012 après la VFC (même ping, capacité 29), `body_temperature` `subtype: 'skin'` à part de la température corporelle, « Temp. peau » dans Journal → Jours, interrupteur « mesure continue » (7/0x2A, désactivé par défaut, envoyé une fois) ; 1 847 Vitest ; PR (voir le compte rendu) |

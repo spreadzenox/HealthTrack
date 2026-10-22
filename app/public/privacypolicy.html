@@ -118,12 +118,20 @@
 
   <h2>Analyse IA des repas (seulement si vous la lancez)</h2>
   <p>
-    Quand vous demandez l'analyse d'un repas, et seulement à ce moment, la photo (réduite, et débarrassée de
-    ses métadonnées : position, date, appareil) ou la description du repas est envoyée au service Gemini de Google pour estimer les aliments et
-    les nutriments. Rien d'autre n'est envoyé : ni votre ventre, ni votre sommeil, ni vos autres mesures.
-    Aujourd'hui, cette analyse utilise la clé Gemini que vous saisissez vous-même dans les paramètres ; Google
-    traite alors la demande selon ses propres conditions. Sans clé, aucune analyse n'est envoyée. Si ce
-    fonctionnement change (par exemple un service d'analyse fourni par Halcya), cette page sera mise à jour avant.
+    Quand vous demandez l'analyse d'un repas, et seulement à ce moment (l'app vous le demande une première fois
+    avant tout envoi), la photo (réduite, et débarrassée de ses métadonnées : position, date, appareil) ou la
+    description du repas est envoyée au serveur d'analyse de Halcya, hébergé par Google Cloud en Europe
+    (Belgique). Ce serveur retire de nouveau les métadonnées de la photo, la fait analyser par le modèle Gemini
+    de Google sur Vertex AI, dans l'Union européenne, et renvoie seulement la liste des aliments et leurs
+    grammes ; les nutriments sont calculés sur le téléphone. Il ne garde ni la photo, ni le texte, ni le
+    résultat, et ses journaux techniques n'en contiennent rien. Google agit comme sous-traitant, selon les
+    conditions de Google Cloud : il ne se sert pas de ces données pour entraîner ses modèles.
+    Avec chaque analyse part aussi un identifiant aléatoire créé par l'app à son installation (sans lien avec
+    vous, votre compte Google ou votre téléphone) : il sert seulement à limiter le nombre d'analyses par jour,
+    et le serveur n'en garde qu'une empreinte en mémoire jusqu'au lendemain.
+    Rien d'autre n'est envoyé : ni votre ventre, ni votre sommeil, ni vos autres mesures. Sans analyse lancée,
+    rien ne part. (Dans la version installée hors Google Play, l'analyse utilise à la place la clé Gemini que
+    vous saisissez dans les paramètres, et Google traite la demande selon ses propres conditions.)
   </p>
 
   <h2>Notifications</h2>
@@ -154,7 +162,7 @@
   <h2>Sécurité</h2>
   <p>
     Vos données sont protégées par le verrouillage et le chiffrement de votre téléphone (actifs par défaut sur
-    Android récent). Les échanges avec Open-Meteo, Gemini et Withings sont chiffrés (HTTPS). Un fichier exporté
+    Android récent). Les échanges avec Open-Meteo, le serveur d'analyse de Halcya et Withings sont chiffrés (HTTPS). Un fichier exporté
     n'est pas chiffré : gardez-le en lieu sûr.
   </p>
 

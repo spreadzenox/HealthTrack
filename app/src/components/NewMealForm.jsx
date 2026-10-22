@@ -2,13 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import { createEntry } from '../storage/localHealthStorage'
 import { atToLocalInput, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
 import { mealTimeError } from '../services/quickMeals'
-import { analyzeMealText, MEAL_TEXT_MAX_LENGTH } from '../services/geminiStandalone'
-import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
+import { MEAL_TEXT_MAX_LENGTH } from '../services/geminiStandalone'
+import {
+  aiPrivacyHint, analyzeMealDescription, canAnalyzeMeals, describeButtonLabel, needsAiConsent, rememberAiConsent,
+} from '../services/mealAi'
+import useDisclosure from '../hooks/useDisclosure'
 import MealEditor from './MealEditor'
 import NutritionTableGate from './NutritionTableGate'
 
 /**
- * Saisie d'un repas sans photo : vide (ingrédients ajoutés par recherche, ou déduits par Gemini
+ * Saisie d'un repas sans photo : vide (ingrédients ajoutés par recherche, ou déduits par l'IA
  * d'une description en quelques mots) ou pré-rempli à partir d'un repas déjà enregistré
  * (« Refaire »). Heure par défaut : maintenant.
  */
@@ -22,9 +25,10 @@ export default function NewMealForm(props) {
 
 function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
   const [items, setItems] = useState(() => itemsForEditing(initialItems))
-  // Description libre → Gemini, seulement pour un repas vide (pas pour « Refaire »)
+  // Description libre → IA (relais en play, clé Gemini en sideload), seulement pour un repas vide (pas pour « Refaire »)
   const [describable] = useState(() => items.length === 0)
-  const [canDescribe] = useState(hasGeminiApiKey)
+  const [canDescribe] = useState(() => canAnalyzeMeals())
+  const [disclosure, askConsent] = useDisclosure()
   const [description, setDescription] = useState('')
   const [describing, setDescribing] = useState(false)
   const [described, setDescribed] = useState(null)
@@ -39,16 +43,20 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
   }, [])
 
   const describe = async () => {
+    if (needsAiConsent()) {
+      if (!(await askConsent('ai_meal'))) return
+      rememberAiConsent()
+    }
     setDescribing(true)
     setError(null)
     try {
-      const result = await analyzeMealText(description, getGeminiApiKey())
+      const result = await analyzeMealDescription(description)
       if (!result.items.length) {
         setError('Aucun aliment reconnu : précisez la description ou ajoutez-les ci-dessous.')
         return
       }
       setItems(itemsForEditing(result.items))
-      setDescribed({ model: result.model, dish: result.dish })
+      setDescribed({ provider: result.provider, model: result.model, dish: result.dish })
     } catch (err) {
       setError(err.message || 'Analyse impossible, réessayez ou ajoutez les aliments ci-dessous.')
     } finally {
@@ -80,7 +88,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
         at,
         payload: {
           items: toSave.map(itemForStorage),
-          provider: described ? 'gemini_text' : 'manual',
+          provider: described ? `${described.provider}_text` : 'manual',
           ...(described?.model ? { model: described.model } : {}),
           ...(mealDish ? { dish: mealDish } : {}),
         },
@@ -95,6 +103,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
 
   return (
     <section className="new-meal" ref={ref} aria-labelledby="new-meal-title">
+      {disclosure}
       <h3 id="new-meal-title" className="new-meal-title">{described?.dish || title}</h3>
       {describable && !described && canDescribe && (
         <div className="meal-describe">
@@ -114,12 +123,9 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
             onClick={describe}
             disabled={describing || saving || !description.trim()}
           >
-            {describing ? 'Analyse…' : '✨ Remplir avec Gemini'}
+            {describing ? 'Analyse…' : describeButtonLabel()}
           </button>
-          <p className="hint gemini-privacy">
-            🎙️ Le micro du clavier permet de dicter. 🔒 Seul ce texte est envoyé à Google Gemini
-            avec votre clé ; les nutriments sont calculés sur le téléphone.
-          </p>
+          <p className="hint gemini-privacy">{aiPrivacyHint('text')}</p>
         </div>
       )}
       {described && (

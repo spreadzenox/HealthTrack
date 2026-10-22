@@ -39,6 +39,8 @@ describe('divulgations avant les autorisations sensibles', () => {
     ['src/components/FaceSenseCard.jsx', /startFaceSense\(/, /askConsent\(appOpen \? 'camera_app_open' : 'camera'\)/],
     ['src/components/WeatherCard.jsx', /getCurrentPosition\(/, "askConsent('location')"],
     ['src/components/PhoneUsageCard.jsx', /openSettings\(\)/, "askConsent('usage')"],
+    ['src/pages/Food.jsx', /analyzeMealPhoto\(/, "askConsent('ai_meal')"],
+    ['src/components/NewMealForm.jsx', /analyzeMealDescription\(/, "askConsent('ai_meal')"],
   ]
   it.each(GUARDED)('%s demande l’accord avant la demande à Android', (file, request, consent) => {
     const code = fs.readFileSync(path.resolve(file), 'utf8')
