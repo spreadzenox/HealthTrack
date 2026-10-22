@@ -9,8 +9,12 @@
 const METADATA_TOKEN_URL =
   'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token'
 
+// Multi-régions (« eu ») : hôte dédié ; c'est le seul accès UE aux Flash-Lite 3.x (absents d'europe-west1/4)
+const host = (location) =>
+  /^(eu|us)$/.test(location) ? `aiplatform.${location}.rep.googleapis.com` : `${location}-aiplatform.googleapis.com`
+
 export const endpointUrl = ({ project, location, model }) =>
-  `https://${location}-aiplatform.googleapis.com/v1/projects/${project}/locations/${location}/publishers/google/models/${model}:generateContent`
+  `https://${host(location)}/v1/projects/${project}/locations/${location}/publishers/google/models/${model}:generateContent`
 
 /** Jeton d'accès du compte de service, mis en cache jusqu'à une minute avant son expiration. */
 export function metadataTokenProvider({ scopes = [], fetchImpl = fetch, now = Date.now } = {}) {

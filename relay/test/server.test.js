@@ -147,8 +147,11 @@ test('buildRequest : photo sans consigne de l’utilisateur, uniquement l’imag
 
 test('configuration par défaut : UE, Flash-Lite d’abord, petits plafonds, base d’ingrédients de l’app', () => {
   const config = loadConfig({})
-  assert.deepEqual(config.locations, ['europe-west1', 'europe-west4'])
+  assert.deepEqual(config.locations, ['eu', 'europe-west1'])
+  for (const location of config.locations) assert.match(location, /^(eu|europe-)/, 'jamais hors de l’UE (ni « global »)')
   assert.match(config.models[0], /flash-lite/)
+  // Retiré par Google le 20/10/2026 (réponses 404) : ne plus le proposer
+  assert.equal(config.models.includes('gemini-2.5-flash-lite'), false)
   assert.ok(config.globalPerDay <= 500)
   assert.ok(config.installPerDay <= 30)
   const names = loadIngredientNames(config.ingredientsPath)

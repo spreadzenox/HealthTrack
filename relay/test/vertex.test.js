@@ -26,6 +26,13 @@ test('adresse Vertex AI régionale (UE), jamais l’API Gemini à clé', () => {
   )
 })
 
+test('multi-région UE « eu » : point de terminaison aiplatform.eu.rep (seul accès UE aux Flash-Lite 3.x)', () => {
+  assert.equal(
+    endpointUrl({ project: 'p', location: 'eu', model: 'm' }),
+    'https://aiplatform.eu.rep.googleapis.com/v1/projects/p/locations/eu/publishers/google/models/m:generateContent',
+  )
+})
+
 test('envoie consignes, contenu et schéma avec le jeton du compte de service, et décode le JSON', async () => {
   const f = fakeFetch([answer('{"not_food":false,"ingredients":[]}')])
   const client = createVertexClient({ ...base, fetchImpl: f.fetchImpl })

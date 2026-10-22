@@ -406,6 +406,15 @@ le modèle suivant que si un modèle était introuvable ; il passe désormais au
 demande, tombe en panne ou répond sans JSON lisible (sauf plafond 429), et le workflow recopie dans son résumé le
 message exact de Vertex AI en cas d'échec. Vérification au merge (voir le compte rendu du run).
 
+**Run du 23/10 00:30 — cause trouvée : Google a retiré le modèle que le relais utilisait.** `gemini-2.5-flash-lite`
+est **retiré de Vertex AI depuis le 20/10/2026** (page « Model versions and lifecycle » de Google), et ses successeurs
+`gemini-3.5-flash-lite` / `gemini-3.1-flash-lite` ne sont servis en Europe que par le **point de terminaison
+multi-région « eu »** (`aiplatform.eu.rep.googleapis.com`), pas par europe-west1/4 où le relais les cherchait : les
+quatre essais répondaient « introuvable », d'où l'erreur de la version Play. Le relais interroge maintenant d'abord la
+multi-région UE avec 3.5 puis 3.1 Flash-Lite (toujours dans l'UE, jamais « global »), et le workflow attend jusqu'à
+2 minutes que Cloud Logging indexe l'erreur avant de la recopier. Rien à faire de votre côté ; P22 (facultatif) vise
+désormais la ligne de quota **eu** (voir `PRODUIT.md`).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -784,6 +793,7 @@ du jour avec sa fourchette (derrière la porte).
 | Run | Type | Résultat |
 |---|---|---|
 | 22/10 23:30 — [Relais : analyse des repas en panne (502)](runs/2026-10-22-2330-relais-analyse-502.md) | 🚑 | Révision 6b-1 en ligne mais analyse de test en 502 (relance et appel direct identiques) ; repli sur le modèle suivant aussi pour 400 / 5xx / réponse vide ou illisible (pas 429) ; message exact de Vertex AI dans le résumé du workflow ; 44 tests relais |
+| 23/10 00:30 — [Relais : modèle retiré, multi-région UE](runs/2026-10-23-0030-relais-modele-retire.md) | 🚑 | Cause du 502 : `gemini-2.5-flash-lite` retiré le 20/10 ; 3.5 / 3.1 Flash-Lite seulement sur la multi-région `eu` → relais sur `aiplatform.eu.rep.googleapis.com`, modèles 3.5 puis 3.1 Flash-Lite ; lecture des journaux réessayée 2 min ; 45 tests relais |
 | 22/10 22:30 — [Réparation du déploiement du relais](runs/2026-10-22-2230-relais-deploiement-repare.md) | 🐛 | « Relais — déploiement » rouge (séparateur `^@^` de `--set-env-vars` qui coupait l'adresse de relay-runtime) → `^;^` ; test `relay/test/workflow.test.js` (rouge sur l'ancien workflow) ; 42 tests relais |
 | 22/10 21:30 — [6b-1 : le relais vérifie les abonnements Play](runs/2026-10-22-2130-6b-achats-relais.md) | 🧭 | `billing.js` : `subscriptionsv2.get` (droits : actif, grâce, annulé non échu ; pas en pause / suspendu / expiré), accusé côté serveur, `linkedPurchaseToken`, `/v1/subscription/verify` (format validateur cdv-purchase), `/pubsub/rtdn` (OIDC vérifié), période de lancement `LAUNCH_PREMIUM_UNTIL` (coupée) ; CI : abonnement push `play-rtdn-relay` + test d'accès Play ; 40 tests relais |
 | 22/10 18:30 — [6a-2 : la version Play analyse les repas par le relais](runs/2026-10-22-1830-relais-app-play.md) | 🧭 | `aiRelay.js` + façade `mealAi.js` (play : relais, identifiant aléatoire, accord `ai_meal` une fois, analyses restantes ; sideload : clé Gemini inchangée) ; confidentialité et sécurité des données (+ identifiant) à jour ; CORS et analyse réelle vérifiés ; P19, P20, P21 faits par le propriétaire ; P21 à relancer |
