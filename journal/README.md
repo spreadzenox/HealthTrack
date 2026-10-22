@@ -359,6 +359,26 @@ type, « Identifiants de l'appareil ou autres ») ; ② **P13** (profil de paiem
 photographier un repas → accepter → vérifier les aliments. Publié : **v212** (33,7 Mo, identique pour vous) et la version Play **362** en test interne. Prochain run de code : **6b** (vérification des achats par
 le relais, Play Integrity).
 
+**Run « idées » du 22/10 20:30 — votre « version candidate » a sa liste de contrôle (rien de nouveau dans
+l'app).** ✅ **Merci** pour la soirée : déclarations envoyées pour examen, piste Alpha créée (v362, France, groupe
+`halcya-testeurs`), RTDN, Play Integrity, profil marchand, testeur de licence, relance de la sécurité des données, et
+le test de la montre (« tout remonte ») — tout est reporté dans [`PRODUIT.md`](PRODUIT.md). Votre décision de 19:15
+est en place : nouvelle section **§2 bis « Version candidate »** avec vos 5 critères, chacun avec son état et sa
+preuve ; on n'invitera les testeurs que quand tout sera vert. J'ai déjà **passé la version Play au crible, comme un
+nouvel utilisateur sans données** (clair et sombre) : aucun plantage, mais **8 défauts** à corriger dans la passe de
+finition (VC-1 à VC-8) — par exemple « **Halcyavous** aide » collé sur l'accueil, la page **Pistes** qui parle encore
+de « recommandations basiques » et contredit l'accueil, un **profil nutritionnel inventé** (« Homme, 30 ans, ~2 507
+kcal/jour ») affiché comme s'il était le vôtre, le **mode diagnostic** visible, des **Nouveautés** pleines de
+« HealthTrack », l'écran montre proposé sans montre, et une carte **Withings** qui demande un secret de développeur.
+Votre remarque sur le bloc « Diagnostic » de la carte montre y est (VC-8). **👉 Une décision pour vous (P23, critère
+5) : comment les testeurs ne paient jamais.** Je recommande ① d'ajouter le groupe `halcya-testeurs` en **testeurs de
+licence** (Play Console → Paramètres → Test de licence : leurs achats ne sont jamais débités) **et** ② une **« période
+de lancement »** réglée sur notre serveur : tout est débloqué pour la version Play jusqu'à la fin du test, sans achat.
+Répondez « ① + ② » (ou autre) dans une prochaine consigne. Autres gestes en attente : confirmer le virement de test de
+Google (P13), envoyer pour examen la modification « sécurité des données » si elle apparaît dans la Play Console (P21).
+Prochain run de code : **6b** (vérification des achats par le relais), puis 6c et l'onboarding. Détail :
+[`IDEES.md`](IDEES.md) I149–I152.
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -737,6 +757,7 @@ du jour avec sa fourchette (derrière la porte).
 | Run | Type | Résultat |
 |---|---|---|
 | 22/10 18:30 — [6a-2 : la version Play analyse les repas par le relais](runs/2026-10-22-1830-relais-app-play.md) | 🧭 | `aiRelay.js` + façade `mealAi.js` (play : relais, identifiant aléatoire, accord `ai_meal` une fois, analyses restantes ; sideload : clé Gemini inchangée) ; confidentialité et sécurité des données (+ identifiant) à jour ; CORS et analyse réelle vérifiés ; P19, P20, P21 faits par le propriétaire ; P21 à relancer |
+| 22/10 20:30 — [Idées : audit de la version candidate, testeurs sans paiement](runs/2026-10-22-2030-idees-version-candidate.md) | 💡 | `PRODUIT.md` §2 bis (5 critères) ; audit play vierge → VC-1…VC-10 au BACKLOG ; I149–I152 ; P12–P18, P21 à jour ; P23 proposé (testeurs de licence + période de lancement) |
 | 22/10 16:30 — [6a : relais Cloud Run + Vertex AI](runs/2026-10-22-1630-relais-vertex.md) | 🧭 | `relay/` (Node sans dépendance : `/v1/meal/analyze` photo / texte, consignes côté relais, EXIF retiré, rien stocké, plafonds 20/inst./j, 200/j, 10/min, Vertex europe-west1 sans clé ; 24 tests) + workflow « Relais — déploiement » (Cloud Run `halcya-relay`, vérification par une vraie analyse) + job « Relais (Node) » ; app inchangée ; PR #273 fusionnée, relais déployé, analyse réelle OK (gemini-2.5-flash-lite, UE) ; `/healthz` réservé par Cloud Run → `/health` |
 | 22/10 14:30 — [M5 : écran « Données de la montre »](runs/2026-10-22-1430-m5-ecran-montre.md) | ⌚ | Page `/montre` (lien dans la carte montre) : 12 types + stress « à venir », dernière valeur et date, n sur 7 j, issue de la dernière lecture (`reads` gardé dans l'état de synchro, nombres seulement) ; décision du 22/10 13:30 notée (jalon 6 ensuite) ; 1 857 Vitest ; PR #271 fusionnée → v209 |
 | 22/10 12:30 — [M3 : température de la peau de la montre](runs/2026-10-22-1230-m3-temperature-peau.md) | ⌚ | Classe 400012 après la VFC (même ping, capacité 29), `body_temperature` `subtype: 'skin'` à part de la température corporelle, « Temp. peau » dans Journal → Jours, interrupteur « mesure continue » (7/0x2A, désactivé par défaut, envoyé une fois) ; 1 847 Vitest ; PR (voir le compte rendu) |

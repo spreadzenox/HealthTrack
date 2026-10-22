@@ -9,6 +9,40 @@
 
 ---
 
+## Run du 22/10/2026 20:30 (Paris) — audit de la version candidate et testeurs sans paiement
+
+- **I149 (20) — Audit sans code de la variante play sur données vierges [V].** `npm run visual -- --play --empty`
+  (clair, puis sombre pour l'Accueil et les Pistes) : 11 pages sans erreur JS ni débordement, mais 8 défauts qui
+  feraient mauvaise impression à un testeur (VC-1 à VC-8 dans `BACKLOG.md` et `PRODUIT.md` §2 bis) : mots collés au
+  nom (« Halcyavous »), page Pistes vide qui contredit l'Accueil et parle de « recommandations », profil nutritionnel
+  inventé affiché comme vrai, mode diagnostic visible, historique des Nouveautés rempli de « HealthTrack », écran montre
+  proposé sans montre, carte Withings qui demande un secret de développeur. Le thème sombre de l'Accueil est propre.
+  Impact 4, faisabilité 5 (chaque défaut tient en quelques lignes + un test). → **passe de finition VC.**
+- **I150 (16) — Test-garde « premier lancement play » [H].** Un test Vitest qui monte chaque page en variante play sans
+  données et échoue sur : « HealthTrack », `/Halcya\S/`, « recommandation », « bientôt », « diagnostic » hors des
+  écrans prévus, un chiffre affiché suivi de « (par défaut) ». Il rend le critère C2 vérifiable à chaque PR au lieu
+  d'un audit manuel. Impact 4, faisabilité 4.
+- **I151 (18) — Testeurs du test fermé : ne jamais payer [V].** Faits (aide Play Console « Test des achats intégrés »,
+  guides RevenueCat et Qonversion, lus le 22/10) : ① dans **Paramètres → Test de licence**, on peut ajouter une liste
+  d'e-mails **ou un groupe Google** (pas de limite de membres ; le compte du développeur est toujours testeur) ; leurs
+  achats passent par des cartes de test, jamais débitées ; mais les renouvellements sont **accélérés** (un mois ≈ 5 min,
+  au plus 6 renouvellements, cf. I148) : le premium d'un testeur s'éteindrait en moins d'une heure — bien pour tester le parcours
+  d'achat, pas pour 14 jours d'usage. ② Hors testeurs de licence, en test fermé, **les achats sont réels**. Options :
+  (A) groupe `halcya-testeurs` en testeurs de licence seul ; (B) **« période de lancement » côté relais** : premium
+  accordé à toutes les installations play jusqu'à une date réglée sur le serveur (fin du test fermé), sans achat ni mise
+  à jour ; (C) codes promo Play (offres d'abonnement, saisies dans le Play Store) — un geste de plus par testeur et un
+  moyen de paiement demandé ; (D) essai gratuit de 14 jours puis annulation — risque réel de débit si un testeur
+  oublie. **Recommandation : A + B** (personne ne paie, l'achat reste testable, B se coupe sans nouvelle version). →
+  **P23** (choix du propriétaire), puis 6c/6e.
+- **I152 (12) — Pas de calories ni d'IMC imposés à un public SII [V/H].** Une étude de 955 adultes SII trouve 13,2 %
+  d'évitement / restriction alimentaire sévère, associé à plus de symptômes et une moins bonne qualité de vie
+  (étude de 2022 rapportée par gutsandgrowth.com et Michigan Medicine, lus le 22/10) ; le lien avec les applis de comptage
+  de calories n'est pas démontré chez les SII [H]. Cohérent avec la règle 6 (pas de normes imposées) : en play,
+  objectif calorique et IMC repliés derrière « détails », jamais de jugement d'un repas. Impact 3, faisabilité 5. →
+  VC-3.
+
+---
+
 ## Run du 22/10/2026 08:30 (Paris) — M2 prêt à coder, et le choix de Google Play Billing
 
 - **I144 (22) — M2 directement codable : aiguilleur P2P par numéro et par classe [V].** Spec complétée dans
