@@ -310,7 +310,7 @@ répondu. Toujours attendus : vos retours sur le **sommeil** (M1) et la **VFC de
 **M4** (stress, étages). **👉 Vos actions les plus utiles** : P21, P20, P19, P18 (inchangées).
 
 **Run du 22/10 14:30 — un écran pour voir d'un coup d'œil ce qui remonte de votre montre (M5).** Ce que vous verrez
-dans la prochaine version (sideload et Play) : dans **Sources → montre**, sous l'interrupteur de la température, un
+dans la **v209** (publiée, 33,7 Mo, bouton du bandeau ; et la version Play envoyée en test interne) : dans **Sources → montre**, sous l'interrupteur de la température, un
 bouton **« Voir ce qui remonte de la montre »**. Il ouvre **« Données de la montre »** : une ligne par donnée —
 sommeil (nuits), siestes, VFC de la nuit, VFC de journée, température de la peau, SpO₂, respiration, fréquence
 cardiaque, FC au repos, pas, calories, séances (et le stress, marqué « à venir ») —, chacune avec **la dernière
@@ -702,7 +702,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
-| 22/10 14:30 — [M5 : écran « Données de la montre »](runs/2026-10-22-1430-m5-ecran-montre.md) | ⌚ | Page `/montre` (lien dans la carte montre) : 12 types + stress « à venir », dernière valeur et date, n sur 7 j, issue de la dernière lecture (`reads` gardé dans l'état de synchro, nombres seulement) ; décision du 22/10 13:30 notée (jalon 6 ensuite) ; 1 857 Vitest ; PR (voir le compte rendu) |
+| 22/10 14:30 — [M5 : écran « Données de la montre »](runs/2026-10-22-1430-m5-ecran-montre.md) | ⌚ | Page `/montre` (lien dans la carte montre) : 12 types + stress « à venir », dernière valeur et date, n sur 7 j, issue de la dernière lecture (`reads` gardé dans l'état de synchro, nombres seulement) ; décision du 22/10 13:30 notée (jalon 6 ensuite) ; 1 857 Vitest ; PR #271 fusionnée → v209 |
 | 22/10 12:30 — [M3 : température de la peau de la montre](runs/2026-10-22-1230-m3-temperature-peau.md) | ⌚ | Classe 400012 après la VFC (même ping, capacité 29), `body_temperature` `subtype: 'skin'` à part de la température corporelle, « Temp. peau » dans Journal → Jours, interrupteur « mesure continue » (7/0x2A, désactivé par défaut, envoyé une fois) ; 1 847 Vitest ; PR (voir le compte rendu) |
 | 22/10 10:30 — [M2 : VFC de journée de la montre](runs/2026-10-22-1030-m2-vfc-journee.md) | ⌚ | `p2p.js` (ping 0xCA, pages par classe, accusés 0xCF, 10 s / page, 50 pages), classe 500044 → VFC `during: 'day'` tenue hors de la VFC de nuit (tuile, Radar, normes, pistes), « VFC jour » dans Journal → Jours, reprise `dictUntil` ; 1 840 Vitest ; PR (voir le compte rendu) |
 | 22/10 08:30 — [Idées : M2 P2P prêt, Play Billing](runs/2026-10-22-0830-idees-p2p-billing.md) | 💡⌚ | Spec M2 complétée (`huawei.md` §10.10 : numéro 2 au départ, ping par numéro, données par classe, accusés au numéro de la montre, réels 4 / 8 o, conception `p2p.js` sur `session.listen` car `request` prendrait l'accusé) ; émotions de la montre non lues (I145) ; Play Billing : cdv-purchase (MIT, PBL 9) + relais, pas RevenueCat (I146–I148) ; journal seul, 1 814 Vitest |
