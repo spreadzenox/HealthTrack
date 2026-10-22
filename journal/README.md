@@ -220,6 +220,20 @@ les versions **347** et **348** sont arrivées toutes seules en test interne. **
 utile** : synchroniser la montre avec la v202 et me dire si vos nuits apparaissent ; puis créer le groupe
 **halcya-testeurs@googlegroups.com** et activer **GitHub Pages** (P18 et P19 de `PRODUIT.md` : ils ouvrent le test fermé de 14 jours).
 
+**Run du 22/10 02:30 — la page de confidentialité pour Google Play (préparation du test fermé).** Ce que vous verrez
+dans la prochaine version : **Réglages (roue) → Confidentialité**, une page claire qui dit ce qui reste sur le
+téléphone (tout, par défaut), ce qui en sort et quand (la position arrondie à ~10 km pour la météo, la photo ou la
+description d'un repas quand vous lancez l'analyse IA), la lecture du visage sur le téléphone sans aucune image
+gardée, la montre en Bluetooth, et comment tout exporter ou tout effacer. C'est aussi la page que montre Health
+Connect quand on demande pourquoi Halcya lit ses données. En coulisses : la même page sera publiée sur Internet
+par un nouveau workflow **« Site — GitHub Pages »**, à l'adresse **https://spreadzenox.github.io/HealthTrack/confidentialite/**
+— celle à donner à la Play Console. C'est un brouillon fidèle au code, à faire relire par un juriste plus tard (P5),
+sans bloquer le test fermé. **👉 Votre prochaine action la plus utile (2 min) : P19** — GitHub → dépôt → Settings →
+Pages → Source : **« GitHub Actions »**, puis Actions → « Site — GitHub Pages » → **Run workflow** (tant que ce n'est
+pas fait, ce workflow est rouge avec ce message : c'est normal). Puis **P18** (groupe Google des testeurs). Toujours
+attendu : votre retour sur le **sommeil de la montre** avec la v202. Prochain run de code : la **fiche du Store en
+français** envoyée par l'API (titre, descriptions, icône, captures de démonstration), puis retour à la montre (M2, VFC).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -597,6 +611,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 02:30 — [Page de confidentialité + GitHub Pages](runs/2026-10-22-0230-confidentialite-pages.md) | 🧭📄 | Politique réécrite pour la variante play (source unique, embarquée + Pages `/confidentialite/`), workflow « Site — GitHub Pages » (attend P19), Réglages → Confidentialité ; 1 778 Vitest ; PR (voir le compte rendu) |
 | 22/10 00:30 — [M0 « Halcya » + M1 sommeil de la montre](runs/2026-10-22-0030-halcya-sommeil.md) | 🧭⌚ | PR #260 reprise et fusionnée (nom affiché **Halcya**) ; 1er envoi Play automatique vérifié (versionCode 346, internal) ; **M1** : 0x2C plus interrogé, sommeil détaillé + résumé complet (VFC, respiration, SpO₂ de la nuit), siestes à part, rattrapage 60 j ; 1 759 Vitest ; PR (voir le compte rendu) |
 | 21/10 22:30 — [Jalon 3c : envoi automatique en test interne](runs/2026-10-21-2230-play-test-interne.md) | 🧭📦 | « Play — AAB » → API Android Publisher (edit, import, piste `internal`, notes depuis les Nouveautés, commit) ; pistes limitées à internal / alpha ; brouillon, déjà envoyé, accès refusé gérés ; `debugSymbolLevel` ; 1 747 Vitest ; PR (voir le compte rendu) |
 | 21/10 20:30 — [Idées : montre Huawei, sommeil / VFC / température](runs/2026-10-21-2030-idees-montre-huawei.md) | 💡⌚ | Décisions du 21/10 au soir reportées (nom **Halcya**, P3 / P8 / P10 faits, P11 en cours, **jalon M montre = priorité des runs de code**) ; cause du sommeil absent trouvée (0x2C demandé en capacité → « non » → sommeil détaillé jamais lu) ; spec `huawei.md` §10 (inventaire GT 6 Pro, P2P dictionnaire VFC 500044 / température 400012, plan M1–M7) ; I139–I143 ; journal seul, 1 738 Vitest |

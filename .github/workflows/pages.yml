@@ -1,0 +1,76 @@
+name: Site — GitHub Pages
+
+# Publie la politique de confidentialité (exigée par Google Play et Health Connect) et une courte page d'accueil :
+#   https://spreadzenox.github.io/HealthTrack/confidentialite/
+# Source unique : app/public/privacypolicy.html (aussi embarquée dans l'app). Voir journal/PRODUIT.md (P19).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/public/privacypolicy.html"
+      - "app/scripts/site/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publier le site
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}confidentialite/
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier que GitHub Pages est activé
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh api "repos/${{ github.repository }}/pages" --jq '.build_type' > pages.txt 2>/dev/null; then
+            {
+              echo "### GitHub Pages n'est pas encore activé"
+              echo ""
+              echo "Action du propriétaire (P19 dans journal/PRODUIT.md) : GitHub → Settings → Pages →"
+              echo "Build and deployment → Source : **GitHub Actions**, puis relancer ce workflow"
+              echo "(Actions → « Site — GitHub Pages » → Run workflow)."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::GitHub Pages n'est pas activé (Settings → Pages → Source : GitHub Actions)."
+            exit 1
+          fi
+          if [ "$(cat pages.txt)" != "workflow" ]; then
+            echo "### GitHub Pages est activé, mais pas avec la source « GitHub Actions » ($(cat pages.txt))" >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::Settings → Pages → Source : choisir « GitHub Actions » (actuellement : $(cat pages.txt))."
+            exit 1
+          fi
+          echo "Pages activé (source : GitHub Actions)."
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19"
+
+      - name: Construire le site
+        run: node app/scripts/site/build-site.mjs _site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Déployer
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Résumé
+        run: |
+          echo "Politique de confidentialité publiée : ${{ steps.deployment.outputs.page_url }}confidentialite/" >> "$GITHUB_STEP_SUMMARY"

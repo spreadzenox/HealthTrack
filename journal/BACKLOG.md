@@ -38,7 +38,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
 - [~] **3c (dès P11)** envoi automatique de l'AAB en test interne par l'API Android Publisher (seule exception à M) —
   **branché le 21/10 22:30** (`app/scripts/play/publish.mjs`, étape « Envoyer en test interne » de « Play — AAB », symboles
   natifs `debugSymbolLevel`) ; [x] premier envoi réel vérifié (22/10 00:30 : versionCode **346** déployé en test interne dès le 21/10 22:51, accès gh-deployer effectif tout de suite) ;
-  [ ] ensuite test fermé (piste `alpha`, testeurs `halcya-testeurs@googlegroups.com`), page GitHub Pages de confidentialité, fiche.
+  [x] page de confidentialité (22/10 02:30 : `app/public/privacypolicy.html` réécrite pour la variante play, source unique embarquée + **GitHub Pages** `.github/workflows/pages.yml` → https://spreadzenox.github.io/HealthTrack/confidentialite/ , lien Réglages → Confidentialité, `privacyPolicy.test.js` ; attend P19) ;
+  [ ] fiche du Store FR par l'API (edits.listings / images / details, captures synthétiques) ; [ ] Sécurité des données (CSV ou réponses exactes) ; [ ] test fermé (piste `alpha`, testeurs `halcya-testeurs@googlegroups.com`, edits.testers ; attend P18).
 - [x] **1** `journal/PRODUIT.md` (20/10 22:30)
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
   (20/10 22:30) ; [~] 2b inventaire chiffré → décisions masquer / fusionner / déplacer (sans perte de données) : [x] accueil

@@ -1,101 +1,175 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Politique de confidentialité — Halcya</title>
+  <!-- Source unique : app/public/privacypolicy.html. Embarquée dans l'app (écran de justification Health Connect,
+       Réglages → Confidentialité) et publiée telle quelle par GitHub Pages (.github/workflows/pages.yml) à
+       https://spreadzenox.github.io/HealthTrack/confidentialite/ . Brouillon à faire relire par un juriste (P5). -->
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 24px 16px 48px;
-      color: #1a1a2e;
-      line-height: 1.6;
-      background: #ffffff;
+    :root {
+      --bg: #FFFFFF; --surface: #F4F6F5; --border: #E3E8E6; --ink: #10231D; --ink-2: #4A5E57;
+      --brand: #0B7A5E; --mint: #E3F5EE; --mint-ink: #3B5249;
     }
-    h1 { font-size: 1.5rem; margin-bottom: 4px; }
-    h2 { font-size: 1.1rem; margin-top: 28px; margin-bottom: 8px; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #10231D; --surface: #17302A; --border: #2A443C; --ink: #F1F5F3; --ink-2: #B8C9C2;
+              --brand: #5EE0B5; --mint: #1C3A31; --mint-ink: #D5EEE4; }
+    }
+    body {
+      font-family: Figtree, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      max-width: 680px; margin: 0 auto; padding: 24px 20px 48px;
+      color: var(--ink); background: var(--bg); line-height: 1.6;
+    }
+    h1 { font-size: 1.6rem; font-weight: 800; margin: 0 0 4px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin: 28px 0 8px; }
     p  { margin: 0 0 14px; }
     ul { margin: 0 0 14px; padding-left: 20px; }
     li { margin-bottom: 6px; }
-    .updated { color: #666; font-size: 0.88rem; margin-bottom: 28px; }
-    a  { color: #4ecdc4; }
+    .updated { color: var(--ink-2); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.85rem; margin-bottom: 24px; }
+    .summary { background: var(--mint); color: var(--mint-ink); border-radius: 22px; padding: 16px 18px; margin-bottom: 8px; }
+    .summary ul { margin: 0; }
+    a  { color: var(--brand); }
+    code { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.9em; }
   </style>
 </head>
 <body>
+  <h1>Politique de confidentialité</h1>
+  <p class="updated">Halcya · mise à jour du 22 octobre 2026</p>
 
-<h1>Politique de confidentialité</h1>
-<p class="updated">Dernière mise à jour : avril 2026</p>
+  <div class="summary">
+    <p><strong>En bref</strong></p>
+    <ul>
+      <li>Vos données restent sur votre téléphone, par défaut. Halcya n'a ni compte, ni serveur qui les garde, ni publicité, ni outil de mesure d'audience.</li>
+      <li>Rien ne quitte le téléphone sans une action de votre part : l'analyse IA d'un repas, la météo, l'export d'une sauvegarde.</li>
+      <li>La lecture du visage se fait sur le téléphone : aucune image n'est gardée ni envoyée.</li>
+      <li>Vous pouvez tout exporter, et tout effacer, à tout moment.</li>
+    </ul>
+  </div>
 
-<p>
-  <strong>Halcya</strong> est une application mobile de suivi santé qui fonctionne
-  entièrement <strong>hors ligne</strong>. Aucune donnée personnelle n'est envoyée vers
-  des serveurs tiers.
-</p>
+  <h2>Qui sommes-nous</h2>
+  <p>
+    Halcya est une application Android de suivi du ventre et du bien-être, éditée par un développeur indépendant
+    établi en France (compte développeur Google Play « jpesquet »). Elle aide à repérer des tendances dans vos
+    propres données. Elle ne pose pas de diagnostic et ne remplace pas l'avis d'un professionnel de santé.
+    Elle est réservée aux personnes de <strong>18 ans et plus</strong>.
+  </p>
 
-<h2>Données collectées et stockage</h2>
-<p>
-  Toutes les données (repas, sommeil, fréquence cardiaque, activités sportives,
-  pas, etc.) sont stockées <strong>uniquement sur votre appareil</strong>, dans la base
-  de données locale de l'application (IndexedDB). Elles ne quittent jamais votre
-  téléphone, sauf si vous exportez vous-même un fichier de sauvegarde.
-</p>
+  <h2>Ce qui est enregistré, et où</h2>
+  <p>
+    Tout ce que vous saisissez ou importez est enregistré <strong>uniquement sur votre téléphone</strong>, dans la
+    base de données locale de l'application : repas (description, photo si vous en prenez une, nutriments estimés),
+    notes du ventre (calme, gêne, douleur) et de bien-être, cigarettes, sommeil, activité, fréquence cardiaque et
+    autres mesures importées, scores de la lecture du visage, temps d'écran, météo du jour. Ces données ne sont
+    envoyées à aucun serveur de l'éditeur : il n'en existe pas.
+  </p>
 
-<h2>Accès à Android Health Connect</h2>
-<p>
-  Avec votre autorisation explicite, Halcya peut lire les données de santé
-  provenant d'<strong>Android Health Connect</strong> (et indirectement de la
-  Samsung Galaxy Fit 3 via Samsung Health). Ces données incluent :
-</p>
-<ul>
-  <li>Nombre de pas</li>
-  <li>Données de sommeil (durée, phases)</li>
-  <li>Fréquence cardiaque (FC, FC de repos, HRV)</li>
-  <li>Saturation en oxygène (SpO₂)</li>
-  <li>Calories actives</li>
-  <li>Séances d'activité sportive</li>
-</ul>
-<p>
-  Ces données sont lues depuis Health Connect <strong>uniquement à votre demande</strong>
-  (bouton de synchronisation) et sont stockées localement sur votre appareil.
-  Elles ne sont <strong>jamais</strong> partagées avec des tiers.
-</p>
-<p>
-  Vous pouvez révoquer ces autorisations à tout moment dans
-  <em>Paramètres Android → Confidentialité → Health Connect → Halcya</em>.
-</p>
+  <h2>Health Connect</h2>
+  <p>
+    Avec votre autorisation, Halcya <strong>lit</strong> (sans jamais y écrire) dans Health Connect les données
+    déposées par vos montres et applications : pas, distance, calories actives, séances d'exercice, sommeil,
+    fréquence cardiaque, fréquence cardiaque au repos, variabilité de la fréquence cardiaque (VFC), saturation en
+    oxygène, fréquence respiratoire, température corporelle, tension artérielle, glycémie, poids et masse grasse.
+  </p>
+  <p>
+    Ces données servent seulement à vous les montrer et à les comparer, sur le téléphone, à votre ventre et à votre
+    bien-être. Elles ne sont ni vendues, ni partagées, ni utilisées pour de la publicité, ni envoyées à un service
+    d'IA. Vous pouvez retirer l'accès à tout moment : Paramètres Android → Health Connect → Autorisations des
+    applis → Halcya. L'usage des données issues de Health Connect respecte le
+    <a href="https://support.google.com/googleplay/android-developer/answer/12991134">règlement de Google Play sur les autorisations Health Connect</a>,
+    y compris ses exigences d'utilisation limitée.
+  </p>
 
-<h2>Clé API Gemini (optionnel)</h2>
-<p>
-  Si vous configurez une clé API Google Gemini pour l'analyse photo des repas,
-  cette clé est stockée uniquement sur votre appareil. Les photos que vous soumettez
-  à l'analyse sont envoyées à l'API Gemini de Google conformément à leurs
-  <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">conditions de confidentialité</a>.
-</p>
+  <h2>Montre connectée en Bluetooth</h2>
+  <p>
+    Si vous connectez une montre compatible (par exemple les montres Huawei), Halcya échange avec elle directement
+    en Bluetooth pour lire vos mesures (sommeil, cœur, activité…). Les clés d'appairage sont créées et gardées sur
+    le téléphone. L'autorisation Bluetooth ne sert pas à vous localiser. Pour l'appairage, l'app peut télécharger
+    des paramètres techniques publics ; aucune donnée vous concernant n'est envoyée à cette occasion.
+  </p>
+  <p>
+    Si vous reliez un compte Withings, Halcya lit vos mesures sur les serveurs de Withings avec l'autorisation que
+    vous lui donnez sur leur site ; elle n'y envoie pas vos autres données.
+  </p>
 
-<h2>Partage des données</h2>
-<p>
-  Halcya <strong>ne partage, ne vend et ne transmet aucune donnée</strong>
-  personnelle ou de santé à des tiers. Aucun compte utilisateur n'est requis.
-  Aucune analytique n'est collectée.
-</p>
+  <h2>Lecture du visage (facultative)</h2>
+  <p>
+    Si vous l'activez, Halcya utilise la caméra frontale quand l'application est ouverte, pendant environ une
+    seconde, pour estimer votre bien-être à partir de votre expression. C'est un <strong>système d'intelligence
+    artificielle de reconnaissance des émotions</strong> qui fonctionne entièrement sur le téléphone. Aucune image
+    n'est gardée, affichée ni envoyée : seuls quelques nombres (des scores) sont enregistrés. Le résultat est une
+    estimation, pas un diagnostic. Un bandeau visible signale chaque lecture. Vous pouvez l'arrêter à tout moment
+    dans l'application, et retirer l'accès à la caméra dans les paramètres Android.
+  </p>
 
-<h2>Sécurité</h2>
-<p>
-  Les données restant sur votre appareil, leur sécurité dépend de la protection
-  de votre téléphone (code PIN, empreinte digitale, etc.). Nous vous recommandons
-  d'activer le chiffrement de l'appareil (activé par défaut sur Android 7+).
-</p>
+  <h2>Temps d'écran (facultatif)</h2>
+  <p>
+    Si vous accordez l'accès « Données d'utilisation », Halcya lit le temps passé sur le téléphone et par
+    application, pour le comparer à votre bien-être. Ces informations restent sur le téléphone.
+  </p>
 
-<h2>Contact</h2>
-<p>
-  Pour toute question relative à la confidentialité, ouvrez une issue sur le
-  dépôt GitHub de l'application :
-  <a href="https://github.com/spreadzenox/HealthTrack" target="_blank" rel="noopener">
-    github.com/spreadzenox/HealthTrack
-  </a>.
-</p>
+  <h2>Météo et position approximative (facultatif)</h2>
+  <p>
+    Pour relier la météo et la qualité de l'air à vos journées, Halcya envoie au service
+    <a href="https://open-meteo.com/">Open-Meteo</a> une position <strong>arrondie à environ 10 km</strong>
+    (ou la ville que vous choisissez). Aucune autre donnée n'accompagne cette demande. Vous pouvez désactiver la
+    météo à tout moment.
+  </p>
 
+  <h2>Analyse IA des repas (seulement si vous la lancez)</h2>
+  <p>
+    Quand vous demandez l'analyse d'un repas, et seulement à ce moment, la photo (réduite, et débarrassée de
+    ses métadonnées : position, date, appareil) ou la description du repas est envoyée au service Gemini de Google pour estimer les aliments et
+    les nutriments. Rien d'autre n'est envoyé : ni votre ventre, ni votre sommeil, ni vos autres mesures.
+    Aujourd'hui, cette analyse utilise la clé Gemini que vous saisissez vous-même dans les paramètres ; Google
+    traite alors la demande selon ses propres conditions. Sans clé, aucune analyse n'est envoyée. Si ce
+    fonctionnement change (par exemple un service d'analyse fourni par Halcya), cette page sera mise à jour avant.
+  </p>
+
+  <h2>Notifications</h2>
+  <p>
+    Les rappels (par exemple la note du soir) et les notifications de l'app sont programmés sur le téléphone. Vous pouvez les
+    désactiver dans l'application ou dans les paramètres Android.
+  </p>
+
+  <h2>Ce que nous ne faisons pas</h2>
+  <ul>
+    <li>Aucun compte à créer, aucune publicité, aucun outil de mesure d'audience ni de suivi.</li>
+    <li>Aucune vente ni location de données, aucun partage avec des courtiers en données ou des assureurs.</li>
+    <li>Aucune décision automatique qui vous concerne ; les liens montrés par l'app sont des pistes à discuter avec un professionnel, pas des causes.</li>
+  </ul>
+
+  <h2>Vos droits et le contrôle de vos données</h2>
+  <ul>
+    <li><strong>Exporter</strong> : Réglages → Données → Exporter crée un fichier de sauvegarde que vous gardez où vous voulez.</li>
+    <li><strong>Supprimer</strong> : chaque saisie se supprime dans le Journal ; pour tout effacer, désinstallez l'application ou utilisez Paramètres Android → Applications → Halcya → Stockage → Effacer les données. Rien ne reste chez nous, puisque rien n'y est envoyé.</li>
+    <li><strong>Retirer un accès</strong> : Health Connect, caméra, position, données d'utilisation et Bluetooth se retirent dans les paramètres Android.</li>
+  </ul>
+  <p>
+    Vous disposez des droits prévus par le RGPD (accès, rectification, effacement, opposition, portabilité). Comme
+    l'éditeur ne détient aucune de vos données, ces droits s'exercent directement dans l'application. Vous pouvez
+    aussi introduire une réclamation auprès de la <a href="https://www.cnil.fr/">CNIL</a>.
+  </p>
+
+  <h2>Sécurité</h2>
+  <p>
+    Vos données sont protégées par le verrouillage et le chiffrement de votre téléphone (actifs par défaut sur
+    Android récent). Les échanges avec Open-Meteo, Gemini et Withings sont chiffrés (HTTPS). Un fichier exporté
+    n'est pas chiffré : gardez-le en lieu sûr.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Pour toute question sur vos données : l'adresse e-mail de contact indiquée sur la fiche Google Play de Halcya,
+    ou une demande sur <a href="https://github.com/spreadzenox/HealthTrack/issues">github.com/spreadzenox/HealthTrack</a>
+    (n'y mettez jamais de données de santé).
+  </p>
+
+  <h2>Modifications</h2>
+  <p>
+    Si cette politique change, la date en haut de page change aussi, et les changements importants sont annoncés
+    dans l'application (Réglages → Nouveautés). Version en ligne :
+    <a href="https://spreadzenox.github.io/HealthTrack/confidentialite/">spreadzenox.github.io/HealthTrack/confidentialite</a>.
+  </p>
 </body>
 </html>
