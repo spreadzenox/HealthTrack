@@ -40,6 +40,8 @@ import { field, sleepSequenceFile } from './testing/sampleFiles'
 import { clearWatchNights } from '../../services/watchSync'
 import { connectAndAuthenticate, createKeyStore } from './pairing'
 import { createFakeWatch, TEST_SECRETS } from './testing/fakeWatch'
+import { dictionaryPage, real4, real8 } from './testing/sampleDictionary'
+import { DICT_CLASS, DICT_FIELD } from './p2p'
 import { clearWatchDayTotals, createWatchSync, getWatchSyncState, sleepFileSince, SYNC_STATE_VERSION } from '../../services/watchSync'
 
 const hex = (s) => Uint8Array.from(s.trim().split(/\s+/), (h) => parseInt(h, 16))
@@ -303,7 +305,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/^1 minute → (\d+ nouvelles? mesures?|déjà à jour) · sans réponse : sommeil$/) })
     expect(report.sync.stalled).toEqual(['sommeil'])
     expect(report.sync.services.map((r) => [r.id, r.outcome, r.count])).toEqual([
-      ['sleep', 'timeout', 0], ['minutes', 'ok', 1], ['totals', 'empty', 0], ['workouts', 'empty', 0], ['sleepFile', 'empty', 0],
+      ['sleep', 'timeout', 0], ['minutes', 'ok', 1], ['totals', 'empty', 0], ['workouts', 'empty', 0], ['sleepFile', 'empty', 0], ['hrvDay', 'unsupported', 0],
     ])
     expect(report.sync.services[1]).toMatchObject({ command: '7/0x0A', units: 1 })
     expect(report.log.some((l) => /lectures : sommeil : sans réponse, minutes : reçu \(1\)/.test(l.msg))).toBe(true)
@@ -369,6 +371,63 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(watch.seen.some((x) => x.startsWith('44/1'))).toBe(true)
     expect(report.sync.capabilities).toMatch(/séances non, fichiers 0x2C non interrogé/)
     expect(report.sync.services.find((r) => r.id === 'sleepFile')).toMatchObject({ outcome: 'empty' })
+  })
+
+  it('M2 — VFC de journée par le P2P : ping 0xCA, 2 pages puis page vide, écrite « journée », reprise par classe', async () => {
+    const now = Date.UTC(2026, 9, 22, 10, 10)
+    const t0 = Date.UTC(2026, 9, 22, 7, 3, 12)
+    const rec = (ms, bytes) => ({ start: ms, end: ms + 60_000, values: [[DICT_FIELD.HRV, bytes]] })
+    const expand = new Array(30).fill(0)
+    expand[29] = 0x08 // 235
+    const storage = memoryStorage()
+    const run = async (classes, at = now) => {
+      const watch = createFakeWatch({ expand, p2p: { classes } })
+      const written = []
+      const logs = []
+      const sync = createWatchSync({ watchKey: 'H', storage, now: () => at, write: async (e) => (written.push(...e), { inserted: e.length }), clear: async () => 0 })
+      const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'H', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync, log: (m) => logs.push(m) })
+      return { report, written, watch, logs }
+    }
+    const { report, written, watch } = await run({
+      [DICT_CLASS.HRV]: [
+        dictionaryPage(DICT_CLASS.HRV, [rec(t0, real8(38.4)), rec(t0 + 3600_000, real4(250))]),
+        dictionaryPage(DICT_CLASS.HRV, [rec(t0 + 7200_000, real4(52))]),
+      ],
+    })
+    expect(report.sync.capabilities).toMatch(/P2P oui/)
+    expect(report.sync.services.find((r) => r.id === 'hrvDay')).toMatchObject({ outcome: 'ok', count: 2 })
+    expect(watch.p2pRequests).toEqual([
+      { cls: 500044, start: 0 },
+      { cls: 500044, start: t0 + 3600_000 + 60_000 + 1000 },
+      { cls: 500044, start: t0 + 7200_000 + 60_000 + 1000 },
+    ])
+    const hrv = written.filter((e) => e.payload?.subtype === 'heartRateVariability')
+    expect(hrv.map((e) => [e.at, e.payload.value, e.payload.during])).toEqual([
+      [new Date(Date.UTC(2026, 9, 22, 7, 3, 35)).toISOString(), 38, 'day'],
+      [new Date(Date.UTC(2026, 9, 22, 9, 3, 35)).toISOString(), 52, 'day'],
+    ])
+    expect(report.sync.label).toMatch(/2 VFC de journée/)
+    expect(getWatchSyncState('H', storage).dictUntil).toEqual({ 500044: t0 + 7200_000 + 60_000 })
+    // synchro suivante : repart 1 s après la dernière lue
+    const second = await run({}, now + 3600_000)
+    expect(second.watch.p2pRequests).toEqual([{ cls: 500044, start: t0 + 7200_000 + 61_000 }])
+    expect(second.report.sync.services.find((r) => r.id === 'hrvDay')).toMatchObject({ outcome: 'empty' })
+    expect(getWatchSyncState('H', storage).dictUntil).toEqual({ 500044: t0 + 7200_000 + 60_000 })
+  })
+
+  it('M2 — ping refusé : aucune demande de dictionnaire, « non pris en charge » ; sans capacité 235 : pas de ping', async () => {
+    const expand = new Array(30).fill(0)
+    expand[29] = 0x08
+    const watch = createFakeWatch({ expand, p2p: { code: 0xcc, classes: { [DICT_CLASS.HRV]: [dictionaryPage(DICT_CLASS.HRV, [])] } } })
+    const sync = createWatchSync({ watchKey: 'P', storage: memoryStorage(), write: async () => ({ inserted: 0 }) })
+    const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'P', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+    expect(report.sync.services.find((r) => r.id === 'hrvDay')).toMatchObject({ outcome: 'unsupported' })
+    expect(watch.p2pRequests).toEqual([])
+    const noCap = createFakeWatch({ expand: new Array(30).fill(0), p2p: { classes: {} } })
+    const sync2 = createWatchSync({ watchKey: 'Q', storage: memoryStorage(), write: async () => ({ inserted: 0 }) })
+    const r2 = await connectAndAuthenticate({ transport: noCap.transport, watchKey: 'Q', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync: sync2 })
+    expect(r2.sync.services.find((r) => r.id === 'hrvDay')).toMatchObject({ outcome: 'unsupported' })
+    expect(noCap.seen.some((x) => x.startsWith('52/'))).toBe(false)
   })
 
   it('M1 — GT 6 Pro (« fichiers 0x2C non », 143 oui) : nuits rattrapées sur 60 jours, respiration et SpO₂ de la nuit écrites, puis reprise', async () => {
@@ -451,7 +510,7 @@ describe('montre Huawei : issue de chaque lecture (I69, §7.10)', () => {
     expect(data.workouts.map((w) => w.number)).toEqual([8])
     expect(data.services.find((r) => r.id === 'workouts')).toMatchObject({ outcome: 'ok', count: 1, units: 2, failed: 1 })
     expect(data.services.find((r) => r.id === 'sleepFile')).toMatchObject({ outcome: 'unsupported' })
-    expect(describeServices(data.services)).toBe('sommeil : vide, minutes : vide, totaux du jour : vide, séances : reçu (1), 1 bloc perdu, sommeil détaillé : non pris en charge')
+    expect(describeServices(data.services)).toBe('sommeil : vide, minutes : vide, totaux du jour : vide, séances : reçu (1), 1 bloc perdu, sommeil détaillé : non pris en charge, VFC de journée : non pris en charge')
   })
 
   it('pistes : fichiers déclarés mais muets → canal auxiliaire ; pas du jour sans historique ; rien n’aboutit', () => {

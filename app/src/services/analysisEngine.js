@@ -26,6 +26,7 @@
 
 import { computeTotalsFromItems, NUTRITION_FIELDS } from './nutritionKPIs'
 import { nightlySleep } from './radar'
+import { isDaytimeHrv } from './hrv'
 import { formatScreenMinutes } from './phoneUsage'
 import { formatDuration } from '../utils/format'
 import {
@@ -855,7 +856,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
             day._avgHRSum += bpm * w
             day._avgHRCount += w
           }
-        } else if (subtype === 'heartRateVariability') {
+        } else if (subtype === 'heartRateVariability' && !isDaytimeHrv(e.payload)) {
           const hrv = e.payload?.value ?? bpm
           if (typeof hrv === 'number' && hrv > 0) {
             day._hrvSum += hrv
@@ -1512,7 +1513,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
           row._hrSum += bpm; row._hrCount += 1
         } else if (subtype === 'heartRate' && typeof bpm === 'number' && bpm > 0) {
           row._avgHRSum += bpm * w; row._avgHRCount += w
-        } else if (subtype === 'heartRateVariability') {
+        } else if (subtype === 'heartRateVariability' && !isDaytimeHrv(e.payload)) {
           const v = e.payload?.value ?? bpm
           if (typeof v === 'number' && v > 0) { row._hrvSum += v; row._hrvCount += 1 }
         } else if (subtype === 'oxygenSaturation') {

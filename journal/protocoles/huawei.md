@@ -1232,3 +1232,26 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
   numéro et paquets inversés ; 2 pages puis page vide (deuxième demande à max + 1 000) ; réels de 4 et 8 octets, longueur
   6 ignorée ; VFC 250 écartée mais prise en compte pour la page suivante ; délai sans réponse → `timeout` sans bloquer la
   synchro ; garde-fou de 50 pages.
+
+### 10.11 M2 livré (run du 22/10/2026 10:30)
+- `src/devices/huawei/p2p.js` : enveloppe 0x34/0x01 (`encodeP2P` / `decodeP2P`), compteur unique (premier envoi = 2,
+  bouclage à 32 766), ping (`com.huawei.health` → `hw.watch.health.filesync`, 5 s au plus, disponible si code 0xCA),
+  demande de dictionnaire (`hw.unitedevice.datadictionarysync`, empreintes publiques), `parseDictionaryPage` (réels 4 / 8 o,
+  autre longueur comptée, `maxTime` sur tous les enregistrements), aiguilleur branché par `session.listen` : réponse
+  au ping par numéro, pages par classe (une seule en vol), accusé 0xCF (4 o, numéro de la montre, paquets inversés,
+  sans empreinte) envoyé **avant** la lecture de chaque message de commande 1 ou 2, accusés de la montre ignorés.
+- Pagination : page suivante à `maxTime + 1 000 ms` ; page sans 0x83 → fin ; 10 s par page (première page sans
+  réponse → issue « sans réponse », suivante → ce qui est lu est gardé) ; 50 pages au plus ; arrêt si la reprise
+  n'avance pas.
+- `sync.js` : 0x34/0x01 ajoutée à la question des commandes ; lecture `hrvDay` si la commande n'est pas dite absente en
+  1/0x03 (la réponse 1/0x02 ne compte pas) et si la capacité 235 est levée (ou inconnue) ; issue « non pris en charge »
+  si le ping ne rend pas 0xCA, « sans réponse » s'il se tait. Journal : nombre de mesures, pages, écartées, longueurs
+  inconnues (jamais les valeurs).
+- Entrées : `heart_rate` / `heartRateVariability`, `during: 'day'`, `watchClass: 500044`, à la minute du début + 35 s
+  (aucune autre entrée de la montre n'y tombe). La VFC de journée est **tenue à l'écart** de la VFC de nuit (tuile
+  Accueil, Radar, normes, jeu de données des pistes) par `services/hrv.js` ; Journal → Jours en montre la moyenne
+  (« VFC jour »).
+- Reprise : `dictUntil[classe]` dans l'état de synchro ; absent → début 0 (tout l'historique de la montre).
+- Fausse montre de test : option `p2p` (code du ping, pages par classe) ; sans elle, 0x34/0x01 est annoncée absente.
+- Reste : confirmer sur la GT 6 Pro (ligne « VFC de journée » du journal de synchro) ; M3 (classe 400012) réutilise
+  `readClass` ; P2P dans le lecteur Java (M6).

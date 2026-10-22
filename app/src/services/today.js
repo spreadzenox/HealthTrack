@@ -8,6 +8,7 @@
  * - Pistes : jours suivis (un repas ou une note du ventre) sur 21, le seuil avant de chercher des pistes.
  */
 import { localDateKey } from './analysisEngine'
+import { isDaytimeHrv } from './hrv'
 
 export const GUT_TYPE = 'gut'
 export const GUT_SOURCE = 'app_gut'
@@ -120,7 +121,7 @@ function sleepDay(e) {
 
 const TILE_MATCHERS = {
   sleep: (e, day) => e.type === 'sleep' && sleepDay(e) === day,
-  hrv: (e, day) => e.type === 'heart_rate' && e.payload?.subtype === 'heartRateVariability' && localDateKey(e.at) === day,
+  hrv: (e, day) => e.type === 'heart_rate' && e.payload?.subtype === 'heartRateVariability' && !isDaytimeHrv(e.payload) && localDateKey(e.at) === day,
   steps: (e, day) => e.type === 'steps' && localDateKey(e.at) === day,
 }
 

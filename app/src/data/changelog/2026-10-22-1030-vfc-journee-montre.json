@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-22",
+  "kind": "nouveau",
+  "title": "Votre VFC de journée arrive depuis votre montre Huawei",
+  "items": [
+    "À chaque synchronisation, Halcya demande aussi à la montre les mesures de VFC qu'elle prend pendant la journée (compatible avec les montres Huawei qui les proposent, comme la Watch GT 6 Pro).",
+    "La première fois, elle récupère tout l'historique que la montre garde encore ; ensuite, seulement les nouvelles mesures.",
+    "Journal → Jours affiche « VFC jour » (la moyenne de la journée), à côté de la VFC de la nuit. La tuile VFC de l'accueil, le Radar et les pistes restent sur la VFC de la nuit, pour comparer ce qui est comparable.",
+    "Une mesure de la montre, pas un diagnostic."
+  ]
+}

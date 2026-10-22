@@ -146,6 +146,7 @@ function summaryChips(s) {
   if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
   if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
   if (s.hrv != null) chips.push(['VFC', `${Math.round(s.hrv)} ms`])
+  if (s.hrvDay != null) chips.push(['VFC jour', `${s.hrvDay} ms`])
   if (s.spo2 != null) chips.push(['SpO₂', `${frNumber(s.spo2)} %`])
   if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
   if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])

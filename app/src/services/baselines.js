@@ -17,6 +17,7 @@
  */
 
 import { localDateKey } from './wellbeingSeries'
+import { isDaytimeHrv } from './hrv'
 
 export const RECENT_DAYS = 7
 export const BASELINE_DAYS = 60
@@ -54,7 +55,7 @@ export function dailyValues(entries, metric) {
   const sums = new Map()
   const [min, max] = metric.plausible
   for (const e of entries || []) {
-    if (e?.type !== 'heart_rate' || e.payload?.subtype !== metric.key || !e.at) continue
+    if (e?.type !== 'heart_rate' || e.payload?.subtype !== metric.key || !e.at || isDaytimeHrv(e.payload)) continue
     const v = metric.read(e.payload)
     if (typeof v !== 'number' || !Number.isFinite(v) || v < min || v > max) continue
     const key = localDateKey(e.at)
