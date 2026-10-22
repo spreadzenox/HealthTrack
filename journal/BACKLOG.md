@@ -31,7 +31,9 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   technique ; test-garde `brand.test.js`) — 22/10 00:30 (PR #260) ; [~] **M1** sommeil par la voie « nouvelle synchro » (§10.3) — **livré le 22/10 00:30** (0x2C plus jamais
   interrogé, décision TruSleep + 143, départ coucher si 199, résumé complet, siestes, rattrapage 60 j) ; [ ] à confirmer sur la
   vraie montre (journal de synchro) ; [ ] types bruts du sommeil simple (9…) ; [ ] **M2** VFC
-  (nuit + journée, dictionnaire 500044) ; [ ] **M3** température cutanée ; [ ] **M4** stress, SpO₂ nuit, respiration,
+  de journée (dictionnaire 500044 ; **spec prête à coder** : `huawei.md` §10.10 — aiguilleur P2P `p2p.js` sur
+  `session.listen`, ping par numéro, données par classe, accusés 0xCF au numéro de la montre, réels 4 / 8 o, délai
+  10 s / page, 50 pages max ; classe 500031 « émotions » non lue, I145) ; [ ] **M3** température cutanée ; [ ] **M4** stress, SpO₂ nuit, respiration,
   étages ; [ ] **M5** écran « Montre » (par type : dernière valeur, date, n sur 7 j) ; [ ] **M6** rattrapage de
   l'historique + resynchro arrière-plan avec les nouvelles lectures (A.3) ; [ ] **M7** séances : FC et allure
   (0x17/0x0A, 0x0C) ; [ ] A.1, A.2 ; [ ] tuiles Accueil sommeil / VFC nuit « montre Huawei » + export vérifiés.
@@ -41,6 +43,10 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   [x] page de confidentialité (22/10 02:30 : `app/public/privacypolicy.html` réécrite pour la variante play, source unique embarquée + **GitHub Pages** `.github/workflows/pages.yml` → https://spreadzenox.github.io/HealthTrack/confidentialite/ , lien Réglages → Confidentialité, `privacyPolicy.test.js` ; attend P19) ;
   [x] fiche du Store FR par l'API (22/10 04:30 : `app/store/listing/fr-FR/` textes + 5 captures 1080×1920 de la variante play (données de démo) + image de présentation 1024×500, `scripts/store/build-store-assets.mjs`, envoi `scripts/play/listing.mjs` par le workflow « Play — fiche du Store », images réenvoyées seulement si leur SHA-256 change, site web dans details) ;
   [ ] refaire les captures quand l'onboarding et les vraies pistes SII existeront (ajouter « Sources » sans marque tierce visible) ; [x] Sécurité des données (22/10 06:30 : réponses justifiées `app/store/data-safety/answers.mjs` → CSV complet `data-safety.csv` rempli sur le modèle de la Play Console, règles du formulaire vérifiées, envoi `applications.dataSafety` par le workflow manuel « Play — sécurité des données » (P21) ; repli : import manuel du CSV ; réponses exactes dans PLAY-CONFORMITE.md §Sécurité des données) ; [ ] test fermé (piste `alpha`, testeurs `halcya-testeurs@googlegroups.com`, edits.testers ; attend P18).
+- [ ] **6 (préparé le 22/10 08:30, I146–I148)** Play Billing : plugin `capacitor-plugin-cdv-purchase` (MIT, PBL 9) avec
+  validateur = relais ; relais : `subscriptionsv2.get` + accusé côté serveur + `linkedPurchaseToken` + RTDN ; prix et
+  essai lus dans `pricingPhases`, jamais en dur ; lien d'annulation Play dans Réglages. Maintenance : aligner
+  `@capacitor/cli` (7) sur `@capacitor/core` (8).
 - [x] **1** `journal/PRODUIT.md` (20/10 22:30)
 - [ ] **2 Nettoyage du « sac à features »** — [x] 2a vocabulaire « humeur » → « bien-être » + `wording.test.js`
   (20/10 22:30) ; [~] 2b inventaire chiffré → décisions masquer / fusionner / déplacer (sans perte de données) : [x] accueil

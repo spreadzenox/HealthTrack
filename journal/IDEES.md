@@ -9,6 +9,45 @@
 
 ---
 
+## Run du 22/10/2026 08:30 (Paris) — M2 prêt à coder, et le choix de Google Play Billing
+
+- **I144 (22) — M2 directement codable : aiguilleur P2P par numéro et par classe [V].** Spec complétée dans
+  `protocoles/huawei.md` §10.10 (Gadgetbridge master `32a3de0b2c`, faits seulement). Deux pièges qu'on aurait payés en
+  essais sur la vraie montre : ① le premier numéro envoyé est **2** (compteur incrémenté avant l'envoi) ; ② notre
+  `session.request()` prendrait l'accusé de la montre pour la réponse (rattachement par service / commande) → il faut un
+  aiguilleur sur `session.listen(0x34, 0x01)` qui rattache le ping par **numéro** et les données par **classe**, et
+  acquitte chaque message de la montre avec **son** numéro. Réels de 4 o (simple) ou 8 o (double), délai par page (10 s)
+  et garde-fou de 50 pages, absents chez Gadgetbridge. Impact 4, faisabilité 4. → **M2, prochain run de code montre.**
+- **I145 (8) — Ne pas lire les « émotions » calculées par la montre (classe 500031) [H].** Décision proposée pour le
+  point laissé ouvert au §10.1 : les lire n'apporte rien au parcours (Y vient du visage / de la voix / de
+  l'auto-déclaration, D5) et ajouterait un **second système de reconnaissance des émotions** à déclarer (AI Act,
+  fiche Play). On ne demande pas la classe ; on pourra la reconsidérer comme X affiché à part si un utilisateur la
+  réclame. Impact 2, faisabilité 5.
+- **I146 (20) — Google Play Billing : plugin `capacitor-plugin-cdv-purchase` (MIT) + notre relais comme validateur
+  [V].** Comparatif du 22/10 : cdv-purchase 13.19 (MIT, **PBL 9.0**, Capacitor 6 / 7 / 8, validateur configurable vers
+  notre URL, sans le service Iaptic) ; `@capgo/native-purchases` (MPL-2.0, PBL 9.1, Capacitor ≥ 7) ; RevenueCat (SDK MIT
+  mais **tous les achats passent par leurs serveurs**, clé de compte de service Play à leur confier, sous-traitant RGPD,
+  gratuit jusqu'à 2 500 $ / mois puis 1 %) → écarté (« local par défaut », doublon du relais) ; plugin Kotlin maison
+  (~400 lignes, 2–4 jours) gardé en secours. **PBL 8 minimum** obligatoire depuis le 1/11/2026 pour toute app qui
+  facture (PBL 9 valable jusqu'au 31/08/2028). Côté relais : `purchases.subscriptionsv2.get` (seule source de vérité),
+  **accusé de réception par le serveur** (`purchases.subscriptions.acknowledge`, sinon remboursement automatique au bout
+  de 3 jours), `linkedPurchaseToken` (changement de formule, réabonnement), RTDN = simple signal pour relire
+  `subscriptionsv2`, `obfuscatedAccountId` = identifiant aléatoire par installation (aucune donnée personnelle).
+  Impact 5, faisabilité 4. → jalon 6.
+- **I147 (15) — Prix et essai jamais codés en dur, conformes à la règle « abonnements » [V].** Lire
+  `subscriptionOfferDetails` → `pricingPhases` (`formattedPrice` déjà localisé, `billingPeriod` P1M / P1Y) ; l'essai
+  n'est montré **que si l'offre gratuite revient dans la réponse** (Google ne renvoie que les offres auxquelles la
+  personne a droit : pas d'essai « promis » à quelqu'un qui l'a déjà eu). Ne pas mettre en cache `ProductDetails`.
+  Règle Play confirmée : prix facturé (29,99 €/an) en principal, équivalent mensuel en petit ; avant l'essai, dire quand
+  et comment il devient payant ; lien d'annulation `play.google.com/store/account/subscriptions?sku=…&package=…` dans
+  les Réglages. Impact 4, faisabilité 5.
+- **I148 (10) — Tests d'abonnement rapides avec les testeurs de licence [V].** Renouvellements accélérés (mois = 5 min,
+  an = 30 min, essai = 3 min, 6 renouvellements au plus) et cartes de test (toujours acceptée / refusée / lente /
+  rétrofacturée) → un scénario de bout en bout (essai → paiement → annulation → période de grâce) en moins d'une heure.
+  Ordre imposé : profil de paiement (propriétaire) → AAB contenant la permission BILLING en test interne → création des
+  abonnements par l'API (`monetization.subscriptions`, ❓ non confirmé sans profil de paiement). Note annexe : le dépôt
+  a `@capacitor/core` 8 mais `@capacitor/cli` 7 → à aligner (petit run de maintenance). Impact 3, faisabilité 5.
+
 ## Run du 21/10/2026 20:30 (Paris) — montre Huawei : pourquoi le sommeil, la VFC et la température ne remontent pas
 
 Signalement du propriétaire du 21/10 ~20:00. Spécification complète : `protocoles/huawei.md` §10 (inventaire GT 6 Pro,

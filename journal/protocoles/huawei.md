@@ -1151,3 +1151,84 @@ du propriétaire dans le dépôt ; « compatible avec les montres Huawei » dans
   Radar, régularité).
 - Reste : confirmer sur la GT 6 Pro (si 0x2C/0x01 reste sans réponse → M1 bis, §10.2) ; lecteur Java en
   arrière-plan (M6).
+
+### 10.10 Compléments P2P pour M2 / M3 (run « idées » du 22/10/2026 08:30)
+
+Relecture de [G] master `32a3de0b2c` (22/10/2026) par un agent de recherche, **faits seulement, rédigés par nous, aucun
+code repris ni traduit**. PR / issues : #4291, #4368, #5493, #5561, #6579, #6275, #6461, #5428, #4072, #3744.
+Corrige et complète le §10.4.
+
+**Numéro de séquence (correction du §10.4)** : un **seul compteur** pour tout le P2P, initialisé à 1 et **incrémenté
+avant chaque envoi** → le premier message porte **2**. Suivant = (précédent + 1) mod 32 766 (valeurs 0 … 32 765).
+
+**Déroulé exact d'une classe** :
+1. **Ping** une fois par connexion, juste après la fin d'association / la lecture des capacités : commande 1,
+   `com.huawei.health` → `hw.watch.health.filesync`, sans empreinte ni charge utile. La réponse de la montre
+   **reprend notre numéro** ; service disponible **seulement si le code (étiquette 8) vaut 0xCA**. Sinon : toutes les
+   classes sont « non prises en charge » pour cette connexion (aucune demande envoyée).
+2. **Demande** (commande 2, §10.4) : [G] n'attend **aucun accusé** ; un accusé de la montre (commande 3) dont le numéro
+   ne correspond à rien est simplement ignoré. [G] n'a ni délai d'expiration ni nouvel essai (une classe sans réponse
+   reste bloquée jusqu'à la déconnexion) → **nous mettrons un délai** (proposé : 10 s par page) et passerons à la
+   classe suivante en notant « sans réponse ».
+3. **Réponse** : commande 2 venant de `hw.watch.health.filesync`, avec **le numéro de la montre** (pas le nôtre).
+   Le téléphone répond **d'abord** par l'accusé (commande 3, **même numéro que la montre**, paquets source /
+   destination inversés, **sans empreinte**, code 0xCF sur 4 octets), **puis** décode la charge utile.
+4. **Rattachement** d'une réponse de données à sa demande : par la **classe** (étiquette 2), pas par le numéro. Une
+   seule demande en cours par classe → nous ferons les classes **l'une après l'autre** (ordre fixe : 500044 puis
+   400012), une seule en vol.
+5. **Pagination** : page non vide → redemander la même classe depuis max(fin, modification) + 1 000 ms, maximum pris
+   sur **tous** les enregistrements de la page, y compris ceux écartés par nos bornes ; page sans conteneur 0x83 →
+   classe terminée. Garde-fou à ajouter (absent chez [G]) : 50 pages au plus par classe et par synchro, et arrêt si
+   le début ne progresse pas.
+
+**Transport** : trame 0x34/0x01 ordinaire, **chiffrée comme les autres** après l'authentification ; découpée et
+réassemblée par la couche lien (§2, tranches 1 / 2 / 3), taille des tranches donnée par 1/0x01. Pas de découpage
+propre au P2P ni de taille maximale connue : une page = un message (❓). Le second canal RFCOMM ne concerne que le
+Bluetooth classique (#6275), pas notre BLE.
+
+**Valeurs (étiquette 0x0A)** : longueur **8 octets = réel double gros-boutiste**, **4 octets = réel simple
+gros-boutiste** (confirmé sur des captures GT 4 et GT 6 Pro, #6579) ; autre longueur → valeur ignorée et comptée dans
+le journal. Étiquette 0x0B (texte) : ignorée. Bornes : VFC gardée si 0–200 ms (arrondie à l'entier), température
+gardée si 20–42 °C.
+
+**Demande** : seules les étiquettes 1, 2, 5, 6 et 0x0D existent (1 = 0x01 et 0x0D = 0x01, sens inconnus ❓) ; aucune
+taille de page. Classe sur le minimum d'octets.
+
+**Conditions** : 0x34/0x01 annoncée par 1/0x03 (à ajouter à notre question des commandes) **et**, pour chaque classe,
+sa capacité étendue (235 VFC, 29 température). Aucun échange préalable (la commande 4 « version d'appli », capacité
+14, n'est pas utilisée par le dictionnaire).
+
+**Erreurs** : opération ≠ 1 dans une réponse → ignorée (jamais vue) ; étiquette obligatoire manquante → classe en
+échec ; aucune trame d'erreur connue pour une classe non prise en charge (❓ : notre délai la couvrira).
+
+**Reprise (état de synchro)** : [G] repart, par classe, du plus grand max(fin, modification) déjà enregistré + 1 000 ms ;
+**rien d'enregistré → début = 0** (tout l'historique de la montre, sans les 1 000 ms). Durée de conservation dans la
+montre inconnue (❓). Nous garderons `p2pUntil[classe]` dans l'état de synchro (comme `sleepFileUntil`, M1).
+
+**Température cutanée** : seul le champ 400012430 est connu (pas de mini / maxi). Mesure continue : **7/0x2A**,
+`1 = 0x01` (1 octet), `2 = 0x01` activer / `0x00` désactiver (1 octet), envoyée seulement quand l'utilisateur change
+le réglage, jamais pendant la synchro. Capacités voisines citées : 0xBA (classement), 0x43 (étude) — sans usage pour nous.
+
+**Autres classes** (pour mémoire) : 400017 rigidité artérielle (cap. 75), 10002 tension (cap. 0x3B), 500006 mal aigu des
+montagnes — toutes désactivées chez [G], hors périmètre (médical). Le sommeil (700013) ne passe **pas** par le P2P mais
+par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de classe dictionnaire.
+
+**Conception côté HealthTrack (M2), d'après le code actuel** :
+- `session.request()` rattache une réponse par **service / commande seulement** : pour 0x34/0x01, le premier message
+  reçu (souvent l'accusé de la montre) serait pris pour la réponse. → **ne pas utiliser `request` pour le P2P.** Nouveau
+  module `src/devices/huawei/p2p.js` : un aiguilleur branché par `session.listen(0x34, 0x01, …)` pendant la synchro,
+  qui ① résout le ping par **numéro**, ② acquitte **tout** message spontané de commande 1 ou 2 venant de la montre
+  (0xCF), ③ remet les commandes 2 de `hw.watch.health.filesync` à la classe en attente (par l'étiquette 2), ④ ignore
+  les commandes 3 inconnues. Fonctions pures testables : `encodeP2P`, `decodeP2P`, `dictionaryRequest(classe, début,
+  maintenant)`, `parseDictionaryPage(octets)` → `{ classe, records: [{ start, end, modified, values: {champ: nombre} }],
+  maxTime, ignored }`.
+- `readWatchData` : après le sommeil détaillé, `attempt('hrvDay', …)` puis (M3) `attempt('skinTemp', …)` ; issue
+  `unsupported` si 0x34/0x01 non annoncée, capacité absente ou ping ≠ 0xCA ; `timeout` si une page ne vient pas.
+- Entrées : VFC → `heart_rate` / `heartRateVariability` (ms, `during` absent = journée), horodatée au début de
+  l'enregistrement, `connector` montre Huawei, `watchClass: 500044` dans le payload ; température → `body_temperature`
+  `subtype: 'skin'`. Doublons écartés par l'horodatage comme aujourd'hui.
+- Tests (trames construites par nous) : numéro 2 au premier envoi puis bouclage à 32 766 ; ping 0xCA → demande envoyée,
+  ping 0xCC → `unsupported` et aucune demande ; accusé de la montre ignoré puis page de données acquittée avec **son**
+  numéro et paquets inversés ; 2 pages puis page vide (deuxième demande à max + 1 000) ; réels de 4 et 8 octets, longueur
+  6 ignorée ; VFC 250 écartée mais prise en compte pour la page suivante ; délai sans réponse → `timeout` sans bloquer la
+  synchro ; garde-fou de 50 pages.
