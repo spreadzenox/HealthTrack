@@ -35,7 +35,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   la montre, réels 4 / 8 o, 10 s / page, 50 pages max, reprise `dictUntil` par classe ; entrées `during: 'day'` tenues
   à l'écart de la VFC de nuit — tuile, Radar, normes, analyses — et « VFC jour » dans Journal → Jours ; classe 500031
   « émotions » non lue, I145) ; [ ] M2 à confirmer sur la GT 6 Pro ; [ ] VFC de journée comme facteur X des pistes
-  (variable à part, après M5, si les données arrivent) ; [ ] P2P dans le lecteur Java en arrière-plan (M6) ; [ ] **M3** température cutanée ; [ ] **M4** stress, SpO₂ nuit, respiration,
+  (variable à part, après M5, si les données arrivent) ; [ ] P2P dans le lecteur Java en arrière-plan (M6) ; [~] **M3** température de la peau — **livré le 22/10 12:30** (classe 400012 après la VFC, capacité 29, `body_temperature` `subtype: 'skin'`, « Temp. peau » dans Journal → Jours, réglage « mesure continue » 7/0x2A choisi par l'utilisateur, envoyé une fois) ; [ ] M3 à confirmer sur la GT 6 Pro ; [ ] **M4** stress, SpO₂ nuit, respiration,
   étages ; [ ] **M5** écran « Montre » (par type : dernière valeur, date, n sur 7 j) ; [ ] **M6** rattrapage de
   l'historique + resynchro arrière-plan avec les nouvelles lectures (A.3) ; [ ] **M7** séances : FC et allure
   (0x17/0x0A, 0x0C) ; [ ] A.1, A.2 ; [ ] tuiles Accueil sommeil / VFC nuit « montre Huawei » + export vérifiés.

@@ -49,6 +49,7 @@ function emptyDay(dateKey) {
     _spo2: [],
     _resp: [],
     _temp: [],
+    _skinTemp: [],
     _bp: [],
     _glucose: [],
     _wellbeing: [],
@@ -105,6 +106,9 @@ function finalize(day) {
         ? Math.round((day._resp.reduce((a, v) => a + v, 0) / day._resp.length) * 10) / 10
         : null,
       temperatureC: last(day._temp),
+      // Température de la peau au poignet (montre) : moyenne du jour, jamais mêlée à une température corporelle
+      skinTempC: day._skinTemp.length ? Math.round((day._skinTemp.reduce((a, v) => a + v, 0) / day._skinTemp.length) * 10) / 10 : null,
+      skinTempCount: day._skinTemp.length,
       bloodPressure: last(day._bp),
       weather: day._weather,
       glucoseMgDl: last(day._glucose),
@@ -229,7 +233,7 @@ export function buildDailyJournal(entries) {
         if (isNum(p.value) && p.value > 0) day._resp.push(p.value)
         break
       case 'body_temperature':
-        if (isNum(p.valueC)) day._temp.push(p.valueC)
+        if (isNum(p.valueC)) (p.subtype === 'skin' ? day._skinTemp : day._temp).push(p.valueC)
         break
       case 'blood_pressure':
         if (isNum(p.systolic) && isNum(p.diastolic)) day._bp.push({ systolic: p.systolic, diastolic: p.diastolic })

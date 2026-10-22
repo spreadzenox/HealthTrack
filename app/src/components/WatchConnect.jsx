@@ -14,6 +14,7 @@ import { loadLastConnect, saveLastConnect } from '../devices/huawei/journal'
 import { formatAgo } from '../utils/timeAgo'
 import { describeWatchStatus, getWatchAutoSyncState } from '../services/watchAutoSync'
 import WatchPresence from './WatchPresence'
+import WatchSkinTemp from './WatchSkinTemp'
 import { APP_NAME } from '../config/brand'
 
 const ICONS = { ok: '✓', warn: '!', fail: '✕', skip: '–', running: '…', pending: '·' }
@@ -148,6 +149,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
       </div>
       {message && <p className="my-device-message">{message}</p>}
       {everConnected && <WatchPresence />}
+      {everConnected && <WatchSkinTemp />}
 
       <details className="watch-trouble" open={!everConnected || (code && code !== 'connected') || undefined}>
         <summary>Diagnostic</summary>

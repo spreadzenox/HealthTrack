@@ -290,3 +290,18 @@ export function hrvDayValues(records) {
   }
   return out
 }
+
+/** Température de la peau gardée (poignet, °C) : 20 à 42 °C, arrondie au centième (§10.10). */
+export const SKIN_TEMP_RANGE = [20, 42]
+
+/** Enregistrements de la classe 400012 → [{ start, value }] en °C (valeurs hors bornes écartées). */
+export function skinTempValues(records) {
+  const [min, max] = SKIN_TEMP_RANGE
+  const out = []
+  for (const r of records) {
+    const v = r.values?.[DICT_FIELD.SKIN_TEMP]
+    if (typeof v !== 'number' || !(v >= min) || v > max || !r.start) continue
+    out.push({ start: r.start, value: Math.round(v * 100) / 100 })
+  }
+  return out
+}

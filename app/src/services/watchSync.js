@@ -28,6 +28,47 @@ function readAll(storage) {
 /** État de la dernière synchro d'une montre : { v, until, at, inserted, minutes, nights, workouts, kinds, sleepFileUntil?, dictUntil? } ou null. */
 export const getWatchSyncState = (watchKey, storage = globalThis.localStorage) => readAll(storage)[watchKey] || null
 
+const SKIN_TEMP_KEY = 'healthtrack_watch_skin_temp'
+
+/**
+ * Réglage « mesure continue de la température de la peau » de la montre (M3, 7/0x2A) : choisi par l'utilisateur
+ * (jamais par défaut, ça use la batterie), envoyé à la prochaine synchro puis plus rien tant qu'il ne change pas.
+ * { wanted: bool|null, applied: bool|null, appliedTo?, outcome?, at? }
+ */
+export function getSkinTempContinuous(storage = globalThis.localStorage) {
+  try {
+    const v = JSON.parse(storage?.getItem(SKIN_TEMP_KEY) || 'null')
+    if (v && typeof v === 'object') return { wanted: v.wanted ?? null, applied: v.applied ?? null, ...v }
+  } catch {
+    /* état illisible : rien de choisi */
+  }
+  return { wanted: null, applied: null }
+}
+export function setSkinTempContinuous(wanted, storage = globalThis.localStorage) {
+  const prev = getSkinTempContinuous(storage)
+  const next = { ...prev, wanted: Boolean(wanted), outcome: null }
+  try {
+    storage?.setItem(SKIN_TEMP_KEY, JSON.stringify(next))
+  } catch {
+    /* stockage plein ou bloqué : le choix ne survivra pas au redémarrage */
+  }
+  return next
+}
+/** Valeur à envoyer à cette montre, ou null si rien n'a été choisi ou si elle l'a déjà. */
+export function pendingSkinTemp(state, watchKey) {
+  if (state?.wanted == null) return null
+  return state.applied === state.wanted && state.appliedTo === watchKey ? null : state.wanted
+}
+function noteSkinTemp(outcome, wanted, watchKey, storage, t) {
+  const prev = getSkinTempContinuous(storage)
+  const next = { ...prev, outcome, at: new Date(t).toISOString(), ...(outcome === 'applied' ? { applied: wanted, appliedTo: watchKey } : {}) }
+  try {
+    storage?.setItem(SKIN_TEMP_KEY, JSON.stringify(next))
+  } catch {
+    /* idem */
+  }
+}
+
 /**
  * Rattrapage du sommeil détaillé (M1) : tant qu'il n'a jamais été lu (avant la v201, la question sur le
  * service 0x2C le faisait sauter), on le demande sur 60 jours ; ensuite, depuis la dernière lecture.
@@ -106,7 +147,9 @@ export function createWatchSync({
     const { since, until } = syncWindow(lastUntil, t)
     log(`lecture du ${new Date(since).toISOString().slice(0, 16)} au ${new Date(until).toISOString().slice(0, 16)} (UTC)${lastUntil ? '' : ' — première synchro'}`)
     const sleepSince = sleepFileSince(prev, since, until)
-    const data = await readWatchData(session, { since, until, now: t, log, caps, sleepSince, dictionarySince: prev?.dictUntil || {} })
+    const skinTempContinuous = pendingSkinTemp(getSkinTempContinuous(storage), watchKey)
+    const data = await readWatchData(session, { since, until, now: t, log, caps, sleepSince, dictionarySince: prev?.dictUntil || {}, skinTempContinuous })
+    if (data.settings?.skinTemp) noteSkinTemp(data.settings.skinTemp, skinTempContinuous, watchKey, storage, t)
     return writeWatchData(data, { t, since, until, lastUntil, watchKey, watchName, write, clear, clearTotals, storage, log })
   }
 }
@@ -156,6 +199,7 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   if (workouts) parts.push(plural(workouts, 'séance', 'séances'))
   if (data.totals?.steps) parts.push(`${plural(data.totals.steps, 'pas', 'pas')} aujourd'hui`)
   if (data.hrvDay?.length) parts.push(plural(data.hrvDay.length, 'VFC de journée', 'VFC de journée'))
+  if (data.skinTemp?.length) parts.push(plural(data.skinTemp.length, 'température de la peau', 'températures de la peau'))
   // Où la montre a calé (I69) : dit à l'écran, détaillé dans le journal (`services`, `hints`)
   const stalled = stalledServices(data.services).map((r) => r.label)
   // « nouvelles » : les mesures relues (6 h de recouvrement) déjà enregistrées ne sont pas recomptées

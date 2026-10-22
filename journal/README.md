@@ -166,15 +166,15 @@ identifiant technique ne change), et la **montre passe en priorité principale d
 maximale — sauf un run court dès que **gh-deployer** est invité dans la Play Console, pour l'envoi automatique en test
 interne.
 
-**⌚ Montre Huawei — état par type de donnée (mis à jour le 22/10 10:30)** :
+**⌚ Montre Huawei — état par type de donnée (mis à jour le 22/10 12:30)** :
 
 | Donnée | État | Prochaine étape |
 |---|---|---|
 | Sommeil détaillé (phases, score, réveils, siestes) | 🟡 corrigé le 22/10 (M1), **à confirmer sur votre montre** | M1 bis si la montre ne répond pas |
 | VFC de la nuit · respiration · SpO₂ et FC de la nuit | 🟡 lues avec la nuit (M1), à confirmer | — |
 | VFC de journée | 🟡 livrée le 22/10 10:30 (M2), **à confirmer sur votre montre** (Journal → Jours, « VFC jour ») | — |
-| Température de la peau | ❌ même canal, désormais écrit (M2) | M3 (prochain run de code) |
-| Stress | ❌ même cause que le sommeil | M4 |
+| Température de la peau | 🟡 livrée le 22/10 12:30 (M3), **à confirmer sur votre montre** (Journal → Jours, « Temp. peau ») | — |
+| Stress | ❌ même cause que le sommeil | M4 (prochain run de code) |
 | Étages | ❌ personne ne sait encore les lire | M4 (avec votre aide) |
 | FC continue, FC au repos, SpO₂ de journée, pas, distance, calories | ✅ | — |
 | Séances (type, durée, distance, FC mini / maxi) | ✅ ; courbe FC et allure ❌ | M7 |
@@ -295,6 +295,18 @@ température de la peau (M3). **👉 À tester (2 min)** : après la mise à jou
 montre », puis Journal → Jours. Si « VFC jour » n'apparaît pas, exportez le journal de la synchro : la ligne « VFC de
 journée » dit si la montre a répondu (sans réponse, indisponible, ou 0 mesure). Toujours attendu : votre retour sur
 le **sommeil** (M1). **👉 Vos actions les plus utiles** : P21, P20, P19, P18 (inchangées).
+
+**Run du 22/10 12:30 — la température de votre peau arrive depuis la montre (M3).** Ce que vous verrez dans la
+prochaine version (sideload et Play) : à chaque « Synchroniser la montre », Halcya demande aussi à la GT 6 Pro la
+**température de la peau au poignet** qu'elle mesure (la première fois, tout l'historique qu'elle garde encore). Dans
+**Journal → Jours**, une case **« Temp. peau »** (moyenne de la journée) apparaît ; elle reste **à part** de la
+« Température » d'un thermomètre (une peau au poignet est vers 33 °C, rien d'anormal). Dans **Sources → montre**, un
+nouvel interrupteur **« Mesure continue de la température de la peau »**, **désactivé par défaut** car il use un peu
+la batterie : si vous l'activez, il part vers la montre à la synchro suivante, une seule fois. **👉 À tester (2 min)** :
+activer l'interrupteur si vous le souhaitez, « Synchroniser la montre », puis Journal → Jours. Si « Temp. peau »
+n'apparaît pas, exportez le journal de la synchro : la ligne « température de la peau » dit ce que la montre a
+répondu. Toujours attendus : vos retours sur le **sommeil** (M1) et la **VFC de journée** (M2). Prochain run de code :
+**M4** (stress, étages). **👉 Vos actions les plus utiles** : P21, P20, P19, P18 (inchangées).
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
@@ -673,6 +685,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 12:30 — [M3 : température de la peau de la montre](runs/2026-10-22-1230-m3-temperature-peau.md) | ⌚ | Classe 400012 après la VFC (même ping, capacité 29), `body_temperature` `subtype: 'skin'` à part de la température corporelle, « Temp. peau » dans Journal → Jours, interrupteur « mesure continue » (7/0x2A, désactivé par défaut, envoyé une fois) ; 1 847 Vitest ; PR (voir le compte rendu) |
 | 22/10 10:30 — [M2 : VFC de journée de la montre](runs/2026-10-22-1030-m2-vfc-journee.md) | ⌚ | `p2p.js` (ping 0xCA, pages par classe, accusés 0xCF, 10 s / page, 50 pages), classe 500044 → VFC `during: 'day'` tenue hors de la VFC de nuit (tuile, Radar, normes, pistes), « VFC jour » dans Journal → Jours, reprise `dictUntil` ; 1 840 Vitest ; PR (voir le compte rendu) |
 | 22/10 08:30 — [Idées : M2 P2P prêt, Play Billing](runs/2026-10-22-0830-idees-p2p-billing.md) | 💡⌚ | Spec M2 complétée (`huawei.md` §10.10 : numéro 2 au départ, ping par numéro, données par classe, accusés au numéro de la montre, réels 4 / 8 o, conception `p2p.js` sur `session.listen` car `request` prendrait l'accusé) ; émotions de la montre non lues (I145) ; Play Billing : cdv-purchase (MIT, PBL 9) + relais, pas RevenueCat (I146–I148) ; journal seul, 1 814 Vitest |
 | 22/10 06:30 — [Sécurité des données par l'API](runs/2026-10-22-0630-securite-donnees.md) | 🧭📄 | Modèle CSV de la Play Console rempli depuis des réponses justifiées (3 types collectés, facultatifs, non partagés ; aucune donnée de santé), règles du formulaire vérifiées, workflow « Play — sécurité des données » (`applications.dataSafety`), lancement manuel (P21), repli import manuel ; 1 814 Vitest ; PR (voir le compte rendu) |

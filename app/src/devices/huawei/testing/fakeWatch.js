@@ -199,6 +199,10 @@ export function createFakeWatch({
       const w = workouts.find((x) => x.number === v[0] * 256 + v[1])
       return w ? sealed(w.body) : sealed([{ tag: 0x7f, value: [0, 1, 0x86, 0xa1] }])
     }
+    if (m.serviceId === 7 && m.commandId === 0x2a) {
+      state.skinTempSetting = Array.from(tlvs.find((t) => t.tag === 2)?.value || [])
+      return sealed([{ tag: ok[0], value: ok[1] }])
+    }
     if (m.serviceId === 0x2c) return fileService(m.commandId, tlvs, sealed)
     if (m.serviceId === 0x34 && p2p) return p2pService(decodeP2P(tlvs), sealed)
     if (m.serviceId === 7) {
@@ -275,6 +279,10 @@ export function createFakeWatch({
     p2pRequests,
     tokens,
     state,
+    /** Dernier réglage 7/0x2A reçu (étiquette 2), ou undefined. */
+    get skinTempSetting() {
+      return state.skinTempSetting
+    },
     /** La montre « oublie » ses clés (réinitialisation, ou liaison par une autre app). */
     reset: () => tokens.clear(),
     transport: {
