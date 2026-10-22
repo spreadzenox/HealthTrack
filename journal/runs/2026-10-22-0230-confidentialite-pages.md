@@ -42,3 +42,9 @@
   de la montre (v202).
 - Prochain run de code : fiche du Store FR par l'API (edits.listings, images : icône 512, présentation 1024×500,
   ≥ 4 captures synthétiques ; details : site web), puis Sécurité des données ; ensuite retour à **M2** (VFC).
+
+## Après le merge
+- #263 → `a50248c` : Build & Release **v203** (APK 33,7 Mo, 33 684 019 o), « Play — AAB » **versionCode 350**
+  déployé en test interne, Tests et émulateur A56 verts.
+- « Site — GitHub Pages » : **rouge comme prévu** à l'étape « Vérifier que GitHub Pages est activé » (« GitHub Pages
+  n'est pas activé ») → attend **P19**. Ce n'est pas une panne : dès que Pages est activé, relancer le workflow.
