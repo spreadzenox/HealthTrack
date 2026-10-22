@@ -9,11 +9,19 @@ ni ici. Décisions et infrastructure : `journal/INFRA.md`, jalon 6 de `journal/P
   `{ "kind": "text", "description": "2 œufs au plat et une tartine" }` →
   `{ "parsed": { "not_food": false, "dish": "…", "ingredients": [ … ] }, "model": "…", "quota": { "remaining": 19, "resetAt": "…" } }`.
   429 quand un plafond est atteint (`scope` : `install`, `global` ou `minute`), 502 si le modèle n'a pas répondu.
+- `POST /v1/subscription/verify` (en-tête `X-Install-Id`) : `{ "purchaseToken": "…" }` (ou au format du validateur
+  cdv-purchase, `{ "transaction": { "purchaseToken": "…" } }`) → droits premium relus chez Google Play
+  (`subscriptionsv2.get`) : `{ "ok": true, "premium": true, "source": "play", "state": "active", "expiresAt": "…",
+  "trial": false, "acknowledged": true, "replaces": null, "accountMatch": true, "data": { "collection": [ … ] } }`.
+  Le relais accuse réception de l'achat (sinon Google le rembourse au bout de 3 jours). Sans jeton : seulement la
+  « période de lancement » (`LAUNCH_PREMIUM_UNTIL`, vide par défaut). 404 si Google ne connaît pas le jeton.
+- `POST /pubsub/rtdn` : notifications d'abonnement Google Play (abonnement push `play-rtdn-relay` du sujet
+  `play-rtdn`, créé par la CI, jeton OIDC de relay-runtime vérifié) → relecture de l'abonnement et accusé.
 - `GET /health` → `{ "ok": true }`.
 
 Garde-fous : les consignes sont construites par le relais (pas de prompt libre), métadonnées des photos retirées,
 rien n'est stocké ni journalisé du contenu, plafonds par installation, par jour et par minute (`src/quota.js`),
-une seule instance au plus. Prochaine étape (6b) : jetons Play Integrity et vérification de l'abonnement.
+une seule instance au plus. Prochaine étape (6b-2) : jetons Play Integrity.
 
 Tests : `npm test` (node:test, sans réseau). Déploiement : à chaque push sur `main` qui touche `relay/` (workflow
 « Relais — déploiement »), qui vérifie ensuite `/health` et une vraie analyse de texte.

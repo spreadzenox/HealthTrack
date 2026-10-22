@@ -6,6 +6,10 @@
 #   instance au plus, zéro instance au repos (rien à payer quand personne ne s'en sert).
 # - Vérification après déploiement : /health puis une vraie analyse de texte (« une pomme ») ; le modèle et la région
 #   qui ont répondu sont écrits dans le résumé du workflow.
+# - Abonnements Google Play (jalon 6b) : abonnement push « play-rtdn-relay » du sujet play-rtdn vers /pubsub/rtdn,
+#   authentifié par un jeton OIDC de relay-runtime (créé ou mis à jour ici), puis un essai de vérification d'achat
+#   avec un faux jeton qui dit si relay-runtime a déjà accès à l'API Android Publisher (non bloquant : l'invitation
+#   dans la Play Console peut mettre 24 à 48 h à prendre effet).
 name: Relais — déploiement
 
 on:
@@ -31,6 +35,8 @@ env:
   REGION: europe-west1
   SERVICE: halcya-relay
   IMAGE: europe-west1-docker.pkg.dev/healthtrack-824b26/healthtrack/halcya-relay
+  RELAY_URL: https://halcya-relay-81378799481.europe-west1.run.app
+  RUNTIME_SA: relay-runtime@healthtrack-824b26.iam.gserviceaccount.com
 
 jobs:
   deploy:
@@ -80,13 +86,13 @@ jobs:
             --allow-unauthenticated \
             --min-instances=0 --max-instances=1 --concurrency=8 \
             --cpu=1 --memory=512Mi --timeout=60 \
-            --set-env-vars="^@^VERTEX_PROJECT=${GCP_PROJECT}@VERTEX_LOCATIONS=europe-west1,europe-west4@VERTEX_MODELS=gemini-3.5-flash-lite,gemini-2.5-flash-lite@GLOBAL_DAILY_CAP=200@INSTALL_DAILY_CAP=20@GLOBAL_PER_MINUTE_CAP=10" \
+            --set-env-vars="^@^VERTEX_PROJECT=${GCP_PROJECT}@VERTEX_LOCATIONS=europe-west1,europe-west4@VERTEX_MODELS=gemini-3.5-flash-lite,gemini-2.5-flash-lite@GLOBAL_DAILY_CAP=200@INSTALL_DAILY_CAP=20@GLOBAL_PER_MINUTE_CAP=10@PLAY_PACKAGE=fr.jpesquet.sante@PUBLIC_URL=${RELAY_URL}@RTDN_SERVICE_ACCOUNT=${RUNTIME_SA}" \
             --quiet
 
       - name: Vérifier le service (santé + une analyse de texte)
         run: |
           set -euo pipefail
-          URL="https://${SERVICE}-${GCP_PROJECT_NUMBER}.${REGION}.run.app"
+          URL="$RELAY_URL"
           {
             echo "## Relais Halcya déployé"
             echo
@@ -108,3 +114,50 @@ jobs:
             echo "::error title=Analyse de test échouée::Le relais répond mais l'analyse Vertex AI n'a pas abouti (HTTP $status). Lire les journaux du service $SERVICE (Cloud Logging, événement « error ») : modèle absent de la région, ou rôle aiplatform.user manquant pour relay-runtime."
             exit 1
           fi
+
+      - name: Notifications Google Play (abonnement push play-rtdn → relais)
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          SUB=play-rtdn-relay
+          ENDPOINT="$RELAY_URL/pubsub/rtdn"
+          common=(--project="$GCP_PROJECT" --push-endpoint="$ENDPOINT" \
+            --push-auth-service-account="$RUNTIME_SA" --push-auth-token-audience="$ENDPOINT" \
+            --ack-deadline=30 --message-retention-duration=1d \
+            --min-retry-delay=10s --max-retry-delay=600s)
+          if gcloud pubsub subscriptions describe "$SUB" --project="$GCP_PROJECT" --format='value(name)' >/dev/null 2>&1; then
+            gcloud pubsub subscriptions update "$SUB" "${common[@]}" --quiet 2> "$RUNNER_TEMP/sub.err"
+          else
+            gcloud pubsub subscriptions create "$SUB" --topic=play-rtdn --expiration-period=never "${common[@]}" --quiet 2> "$RUNNER_TEMP/sub.err"
+          fi
+          rc=$?
+          if [ "$rc" = "0" ]; then
+            echo "- Notifications Play : abonnement push \`$SUB\` → \`$ENDPOINT\` (jeton OIDC de relay-runtime)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            cat "$RUNNER_TEMP/sub.err" >&2
+            echo "- ⚠️ Notifications Play : abonnement \`$SUB\` non créé (voir le journal de l'étape)" >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning title=Abonnement play-rtdn non créé::$(tail -1 "$RUNNER_TEMP/sub.err")"
+            exit 1
+          fi
+
+      - name: Accès à Google Play (faux jeton d'achat, non bloquant)
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          status=$(curl -sS -o "$RUNNER_TEMP/verify.json" -w '%{http_code}' --max-time 30 \
+            -X POST "$RELAY_URL/v1/subscription/verify" \
+            -H 'Content-Type: application/json' -H "X-Install-Id: ci-smoke-${GITHUB_RUN_ID}" \
+            -d '{"purchaseToken":"ci-faux-jeton-sans-achat-0000000000"}')
+          case "$status" in
+            404) verdict="✅ relay-runtime lit les achats Google Play (faux jeton reconnu comme inconnu)" ;;
+            502) verdict="⏳ Google Play refuse encore relay-runtime (invitation pas encore active, ou droits manquants) : voir l'événement « error » route /v1/subscription/verify dans Cloud Logging" ;;
+            *) verdict="❓ réponse inattendue HTTP $status" ;;
+          esac
+          echo "- Vérification d'achat : HTTP $status — $verdict" >> "$GITHUB_STEP_SUMMARY"
+          echo "HTTP $status — $verdict"
+          sleep 3
+          gcloud logging read \
+            "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.route=\"/v1/subscription/verify\"" \
+            --project="$GCP_PROJECT" --limit=1 --freshness=10m --format='value(jsonPayload.status,jsonPayload.message)' 2>/dev/null \
+            | sed 's/^/Journal : /' | tee -a "$GITHUB_STEP_SUMMARY" || true
+          [ "$status" = "404" ]

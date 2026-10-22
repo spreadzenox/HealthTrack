@@ -7,10 +7,15 @@
  *   l'installation). Réponse : `{ parsed, model, quota: { remaining, resetAt } }`, `parsed` étant le JSON du modèle,
  *   décodé par l'app comme dans l'appel direct.
  *
+ * - POST /v1/subscription/verify → droits premium de la variante play (`{ purchaseToken? }`, en-tête `X-Install-Id`),
+ *   relus chez Google Play (src/billing.js) ;
+ * - POST /pubsub/rtdn          → notifications d'abonnement Google Play (push Pub/Sub authentifié).
+ *
  * Rien n'est stocké : la photo ou le texte ne vivent que le temps de la requête, et les journaux ne contiennent que
  * le type d'analyse, le modèle, la durée et le statut (jamais le contenu, ni l'identifiant d'installation en clair).
  */
 import { createHash } from 'node:crypto'
+import { HttpError, readJson } from './http.js'
 import { stripJpegMetadata } from './jpeg.js'
 import { MEAL_TEXT_MAX_LENGTH, RESPONSE_SCHEMA, photoInstruction, textInstruction, textUserPart } from './prompts.js'
 
@@ -27,34 +32,11 @@ const QUOTA_MESSAGES = {
   minute: "Beaucoup de demandes en ce moment : réessayez dans une minute.",
 }
 
-class HttpError extends Error {
-  constructor(status, code, message) {
-    super(message)
-    this.status = status
-    this.code = code
-  }
-}
-
 /** Empreinte courte de l'identifiant d'installation, pour compter sans l'écrire en clair dans les journaux. */
 export const hashInstallId = (id) => createHash('sha256').update(id).digest('hex').slice(0, 12)
 
-function readBody(req, limit) {
-  return new Promise((resolve, reject) => {
-    const chunks = []
-    let size = 0
-    req.on('data', (chunk) => {
-      size += chunk.length
-      if (size > limit) {
-        reject(new HttpError(413, 'too_large', 'Requête trop volumineuse.'))
-        req.destroy()
-        return
-      }
-      chunks.push(chunk)
-    })
-    req.on('end', () => resolve(Buffer.concat(chunks)))
-    req.on('error', reject)
-  })
-}
+/** Taille maximale des corps des routes d'abonnement (jeton d'achat, message Pub/Sub). */
+const SMALL_BODY_BYTES = 64 * 1024
 
 /** Valide la demande et prépare les parties envoyées au modèle. */
 export function buildRequest(body, ingredientNames) {
@@ -90,9 +72,11 @@ export function buildRequest(body, ingredientNames) {
 
 /**
  * @param {{ quota: ReturnType<import('./quota.js').createQuota>, vertex: ReturnType<import('./vertex.js').createVertexClient>,
- *   ingredientNames: string[], allowedOrigins?: string[], log?: (entry: object) => void, now?: () => number }} deps
+ *   ingredientNames: string[], billing?: ReturnType<import('./billing.js').createBillingRoutes>,
+ *   billingQuota?: ReturnType<import('./quota.js').createQuota>, allowedOrigins?: string[],
+ *   log?: (entry: object) => void, now?: () => number }} deps
  */
-export function createHandler({ quota, vertex, ingredientNames, allowedOrigins = [], log = () => {}, now = Date.now }) {
+export function createHandler({ quota, vertex, ingredientNames, billing = null, billingQuota = null, allowedOrigins = [], log = () => {}, now = Date.now }) {
   const origins = new Set(allowedOrigins)
 
   function send(res, status, payload, origin) {
@@ -126,6 +110,44 @@ export function createHandler({ quota, vertex, ingredientNames, allowedOrigins =
       return
     }
 
+    if (billing && (path === '/v1/subscription/verify' || path === '/pubsub/rtdn')) {
+      if (req.method !== 'POST') {
+        send(res, 405, { error: 'method', message: 'POST attendu.' }, origin)
+        return
+      }
+      try {
+        let result
+        if (path === '/pubsub/rtdn') {
+          result = await billing.rtdn(await readJson(req, SMALL_BODY_BYTES), req.headers.authorization)
+        } else {
+          const installId = String(req.headers['x-install-id'] ?? '')
+          if (!INSTALL_ID.test(installId)) throw new HttpError(400, 'install_id', 'Identifiant d\'installation manquant.')
+          const body = await readJson(req, SMALL_BODY_BYTES)
+          const slot = billingQuota ? billingQuota.take(installId) : { ok: true }
+          if (!slot.ok) {
+            send(res, 429, { error: 'quota', scope: slot.scope, message: QUOTA_MESSAGES.minute, resetAt: slot.resetAt }, origin)
+            return
+          }
+          result = await billing.verify(body, installId)
+        }
+        if (result.status === 204) {
+          res.writeHead(204, { 'Cache-Control': 'no-store' })
+          res.end()
+        } else {
+          send(res, result.status, result.payload, origin)
+        }
+      } catch (err) {
+        if (err instanceof HttpError) {
+          log({ event: 'rejected', route: path, code: err.code, status: err.status })
+          send(res, err.status, { error: err.code, message: err.message }, origin)
+          return
+        }
+        log({ event: 'error', route: path, status: err?.status ?? null, message: String(err?.message ?? err).slice(0, 300) })
+        send(res, 502, { error: 'upstream', message: 'Google Play ne répond pas. Réessayez dans un instant.' }, origin)
+      }
+      return
+    }
+
     if (path !== '/v1/meal/analyze') {
       send(res, 404, { error: 'not_found', message: 'Adresse inconnue.' }, origin)
       return
@@ -143,13 +165,7 @@ export function createHandler({ quota, vertex, ingredientNames, allowedOrigins =
       installId = String(req.headers['x-install-id'] ?? '')
       if (!INSTALL_ID.test(installId)) throw new HttpError(400, 'install_id', 'Identifiant d\'installation manquant.')
 
-      const raw = await readBody(req, MAX_BODY_BYTES)
-      let body
-      try {
-        body = JSON.parse(raw.toString('utf8'))
-      } catch {
-        throw new HttpError(400, 'bad_json', 'JSON attendu.')
-      }
+      const body = await readJson(req, MAX_BODY_BYTES)
       const request = buildRequest(body, ingredientNames)
       kind = request.kind
 
