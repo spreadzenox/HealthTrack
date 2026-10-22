@@ -177,6 +177,15 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       at: at(day, 6, 30),
       payload: { value: hrv, unit: 'ms', subtype: 'heartRateVariability', connector: 'health_connect', sourceName: 'Gadgetbridge' },
     })
+    // VFC de journée de la montre Huawei en direct (M2, `during: 'day'`) ; valeurs déterministes (pas de tirage)
+    for (const [h, delta] of [[10, -14], [16, -9]]) {
+      watchEntries.push({
+        type: 'heart_rate',
+        source: 'huawei_watch',
+        at: at(day, h, 3),
+        payload: { value: Math.max(15, hrv + delta), unit: 'ms', subtype: 'heartRateVariability', during: 'day', watchClass: 500044, connector: 'huawei_watch', sourceName: 'Montre Huawei' },
+      })
+    }
     // Respiration et température de nuit (montre via Gadgetbridge → Health Connect) ; valeurs
     // déterministes pour ne pas décaler le tirage aléatoire des autres données de démo.
     watchEntries.push({

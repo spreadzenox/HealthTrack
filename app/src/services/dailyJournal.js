@@ -6,6 +6,7 @@
  * cigarettes, activités, pesées) restent listés un par un, pour pouvoir les relire ou les supprimer.
  */
 import { localDateKey } from './analysisEngine'
+import { isDaytimeHrv } from './hrv'
 import { mealKcal } from './mealEditing'
 
 /** Types uniquement résumés (jamais listés individuellement). */
@@ -44,6 +45,7 @@ function emptyDay(dateKey) {
     _hr: [],
     _resting: [],
     _hrv: [],
+    _hrvDay: [],
     _spo2: [],
     _resp: [],
     _temp: [],
@@ -95,6 +97,9 @@ function finalize(day) {
       burnedKcal: isNum(dailyTotal(day, 'calories')) ? Math.round(dailyTotal(day, 'calories')) : null,
       restingHr: last(day._resting),
       hrv: last(day._hrv),
+      // VFC de journée (montre) : moyenne des mesures du jour, à part de la VFC de la nuit
+      hrvDay: day._hrvDay.length ? Math.round(day._hrvDay.reduce((a, v) => a + v, 0) / day._hrvDay.length) : null,
+      hrvDayCount: day._hrvDay.length,
       spo2: last(day._spo2),
       respiratoryRate: day._resp.length
         ? Math.round((day._resp.reduce((a, v) => a + v, 0) / day._resp.length) * 10) / 10
@@ -214,6 +219,7 @@ export function buildDailyJournal(entries) {
         const v = p.bpm ?? p.value
         if (!isNum(v) || v <= 0) break
         if (p.subtype === 'restingHeartRate') day._resting.push(v)
+        else if (isDaytimeHrv(p)) day._hrvDay.push(v)
         else if (p.subtype === 'heartRateVariability') day._hrv.push(v)
         else if (p.subtype === 'oxygenSaturation') day._spo2.push(v)
         else day._hr.push(v)

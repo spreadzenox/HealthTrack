@@ -5,6 +5,8 @@
  */
 import { crc16, createReassembler, decodeTlvs, encodeFrames, encodeTlvs } from '../protocol'
 import { aesCbcEncrypt, aesGcmDecrypt, aesGcmEncrypt, bytesEqual, bytesOfHex, concatBytes, hexOf, hmacSha256, randomBytes, utf8 } from '../crypto'
+import { decodeP2P, encodeP2P, P2P, P2P_CODE } from '../p2p'
+import { dictionaryPage } from './sampleDictionary'
 import { createCipher, digestSecretFor, frameKey, phoneToken, pinBaseKeyVariants, psk, returnCodeMac, sessionKey, WATCH_TOKEN_ORDERS } from '../hichain'
 
 export const TEST_SECRETS = { v1: hexOf(randomBytes(16)), v2: hexOf(randomBytes(16)), v3: hexOf(randomBytes(16)) }
@@ -48,6 +50,10 @@ export function createFakeWatch({
   filePlain = false,
   silentAssociation = false, // n'accepte aucun message de fin d'association (§6.12) : tout reste sans réponse
   askPhoneInfo = null, // [étiquettes] : après l'authentification, la montre demande les infos du téléphone (1/0x10)
+  // Synchro « dictionnaire » (P2P 0x34, §10.10) : null = commande 0x34/0x01 absente (1/0x03) ;
+  // { code, classes: { classe: [charges utiles des pages, dans l'ordre] }, silent } : répond au ping par `code`
+  // (0xCA par défaut), acquitte chaque demande puis envoie la page suivante de la classe (`silent` : rien)
+  p2p = null,
 } = {}) {
   const r = createReassembler()
   const tokens = new Map() // authId (texte) → clé longue durée
@@ -160,7 +166,7 @@ export function createFakeWatch({
         if (t.tag === 2) out.push({ tag: 2, value: t.value })
         if (t.tag === 3) {
           const service = out[out.length - 1].value[0]
-          const yes = (c) => !unsupported.includes(service) && !(service === 1 && c === 0x37 && !expand)
+          const yes = (c) => !unsupported.includes(service) && !(service === 1 && c === 0x37 && !expand) && !(service === 0x34 && !p2p)
           out.push({ tag: 4, value: Array.from(t.value, (c) => (yes(c) ? 1 : 0)) })
         }
       }
@@ -194,6 +200,7 @@ export function createFakeWatch({
       return w ? sealed(w.body) : sealed([{ tag: 0x7f, value: [0, 1, 0x86, 0xa1] }])
     }
     if (m.serviceId === 0x2c) return fileService(m.commandId, tlvs, sealed)
+    if (m.serviceId === 0x34 && p2p) return p2pService(decodeP2P(tlvs), sealed)
     if (m.serviceId === 7) {
       const index = () => {
         const inner = decodeTlvs(tlvs.find((t) => t.tag === 0x81).value)
@@ -209,6 +216,22 @@ export function createFakeWatch({
       if (m.commandId === 0x0d) return sealed(sleepBlocks[index()])
       if (m.commandId === 0x03 && !silentTotals) return sealed(totals || [{ tag: 0x81, value: [] }])
     }
+  }
+
+  let watchSeq = 1000
+  const p2pRequests = []
+  async function p2pService(msg, sealed) {
+    const answer = (fields) => sealed(encodeP2P(fields))
+    if (msg.cmd === P2P.PING) return answer({ cmd: P2P.REPLY, seq: msg.seq, src: msg.dst, dst: msg.src, code: [p2p.code ?? P2P_CODE.AVAILABLE] })
+    if (msg.cmd !== P2P.DATA || p2p.silent) return
+    const body = decodeTlvs(msg.payload.slice(1))
+    const cls = Array.from(body.find((t) => t.tag === 2).value).reduce((v, b) => v * 256 + b, 0)
+    const start = Array.from(body.find((t) => t.tag === 5).value).reduce((v, b) => v * 256 + b, 0)
+    p2pRequests.push({ cls, start })
+    await answer({ cmd: P2P.REPLY, seq: msg.seq, src: msg.dst, dst: msg.src, code: [P2P_CODE.RECEIVED] }) // accusé, à ignorer
+    const pages = p2p.classes?.[cls] || []
+    const payload = pages.shift() || dictionaryPage(cls, null)
+    return answer({ cmd: P2P.DATA, seq: ++watchSeq, src: msg.dst, dst: msg.src, payload })
   }
 
   const opened = new Map() // identifiant → octets
@@ -249,6 +272,7 @@ export function createFakeWatch({
   let queue = Promise.resolve()
   return {
     seen,
+    p2pRequests,
     tokens,
     state,
     /** La montre « oublie » ses clés (réinitialisation, ou liaison par une autre app). */
