@@ -132,6 +132,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **22/10 22:30** — Déploiement du relais réparé (séparateur `^@^` de `--set-env-vars` incompatible avec l'adresse de relay-runtime → `^;^`, test de non-régression) ; 6b-1 part en ligne au merge.
 - **22/10 21:30** — 6b-1 : vérification des achats Play par le relais (`relay/src/billing.js`, `/v1/subscription/verify`, `/pubsub/rtdn`), abonnement push `play-rtdn-relay` créé par la CI ; P23 ② prête côté serveur.
 - **22/10 20:30 (run « idées »)** — section **2 bis « Version candidate »** créée (5 critères, décision du 22/10 19:15) ; audit sans code de la variante play sur données vierges → 8 défauts VC-1…VC-8 au BACKLOG ; P12–P18, P21 mis à jour d'après le prompt ; P23 (testeurs sans paiement) proposé.
 - **22/10 16:30** — **Jalon 6a, première moitié** : relais Cloud Run `relay/` (analyse des repas photo / texte par Gemini sur **Vertex AI europe-west1**, jeton du compte de service `relay-runtime`, aucune clé ; consignes construites par le relais, EXIF retiré, rien stocké ni journalisé du contenu ; plafonds par installation, par jour et par minute ; 24 tests `node:test`) + workflow « Relais — déploiement » (build, Artifact Registry, `gcloud run deploy`, vérification par une vraie analyse de texte) + job « Relais (Node) » dans Tests. **Déployé et vérifié** : analyse réelle « pomme et yaourt » OK avec `gemini-2.5-flash-lite` sur Vertex AI UE. L'app n'appelle pas encore le relais (6a-2, prochain run de code).
