@@ -1,0 +1,56 @@
+# Formulaire « Sécurité des données » de Google Play (jalon 10, journal/PRODUIT.md P16) : le CSV rempli à partir
+# du modèle de la Play Console (app/store/data-safety/) est vérifié puis envoyé par l'API Android Publisher
+# (applications.dataSafety, app/scripts/play/dataSafety.mjs). Connexion sans clé (Workload Identity Federation,
+# main uniquement). Ne touche à aucune piste ni version. Refus de Play (droit manquant, formulaire préalable) →
+# avertissement avec le repli (import manuel du CSV), pas d'échec.
+# Lancement MANUEL seulement : c'est une déclaration faite au nom du propriétaire, il la relit avant (P16).
+name: Play — sécurité des données
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: play-data-safety
+  cancel-in-progress: false
+
+jobs:
+  data-safety:
+    name: Sécurité des données
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Vérifier le formulaire
+        working-directory: app
+        run: node scripts/play/data-safety-cli.mjs > /dev/null
+
+      - name: Jeton Google Play (portée androidpublisher)
+        id: play-token
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+
+      - name: Envoyer la déclaration (Google Play)
+        working-directory: app
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
+        run: |
+          set +e
+          node scripts/play/data-safety-cli.mjs
+          code=$?
+          if [ "$code" = 2 ]; then exit 0; fi
+          exit "$code"

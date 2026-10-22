@@ -109,3 +109,28 @@ Sources à revérifier : Play Console Help « Foreground service types / declare
 « User Data — Prominent Disclosure and Consent », « Permissions and APIs that Access Sensitive Information »,
 « Health apps » ; Android docs « Foreground service types » (camera) et « Restrictions on starting a foreground
 service from the background » ; Règlement (UE) 2024/1689 art. 50.
+
+## 5. Sécurité des données (formulaire Play, préparé le 22/10 06:30)
+
+Source : `app/store/data-safety/answers.mjs` (une justification par réponse) → `data-safety.csv` (modèle exporté de la
+Play Console, format « Question ID, Response ID, Response value, Answer requirement, label ») → envoyé par le workflow
+« Play — sécurité des données » (`applications.dataSafety`), **lancé à la main par le propriétaire après relecture** (P21). Repli si Play refuse : Contenu de l'app → Sécurité des
+données → Importer depuis un fichier CSV. Réponses, dans l'ordre de la Play Console :
+
+1. **Collecte et sécurité** — L'app collecte-t-elle ou partage-t-elle des données ? **Oui**. Chiffrées en transit ?
+   **Oui** (HTTPS). Création de compte : **« Mon app ne permet pas de créer de compte »**. Connexion avec un compte créé
+   hors de l'app : **Non**. Les utilisateurs peuvent-ils demander la suppression de leurs données ? **Oui** — URL :
+   `https://spreadzenox.github.io/HealthTrack/confidentialite/#vos-droits`.
+2. **Types de données** — cocher seulement : **Position → Position approximative** ; **Photos et vidéos → Photos** ;
+   **Activité dans les applis → Autres contenus générés par l'utilisateur**.
+3. **Pour chacun des trois** : **Collectée** (pas partagée : Open-Meteo et Gemini traitent pour le compte de l'app) ;
+   traitée de façon éphémère : **Non** (prudence) ; **Facultative** (l'utilisateur choisit) ; raison : **Fonctionnement
+   de l'application**.
+
+Pourquoi rien d'autre : Google appelle « collecte » ce qui quitte le téléphone. Health Connect, la montre, le ventre,
+le sommeil, le temps d'écran et la lecture du visage restent sur le téléphone (rien envoyé, aucune image gardée) ;
+l'IA ne reçoit que la photo réduite sans métadonnées ou la description du repas. Aucun outil de plantage ou d'audience,
+aucun identifiant, aucune publicité. **À revoir dès que** le relais Vertex AI (jalon 6), Play Billing ou Play Integrity
+arrivent (achats, identifiants d'appareil), et à faire relire par un juriste (P5). Point discutable noté : avec la
+clé Gemini saisie par l'utilisateur (sideload seulement à terme), Google traite selon ses propres conditions ; on
+déclare quand même, par prudence.
