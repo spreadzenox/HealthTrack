@@ -172,7 +172,7 @@ interne.
 |---|---|---|
 | Sommeil détaillé (phases, score, réveils, siestes) | 🟡 corrigé le 22/10 (M1), **à confirmer sur votre montre** | M1 bis si la montre ne répond pas |
 | VFC de la nuit · respiration · SpO₂ et FC de la nuit | 🟡 lues avec la nuit (M1), à confirmer | — |
-| VFC de journée | ❌ canal « dictionnaire » à écrire | M2 |
+| VFC de journée | ❌ canal « dictionnaire » à écrire (spec prête à coder depuis le 22/10 08:30) | M2 |
 | Température de la peau | ❌ même canal | M3 |
 | Stress | ❌ même cause que le sommeil | M4 |
 | Étages | ❌ personne ne sait encore les lire | M4 (avec votre aide) |
@@ -267,6 +267,22 @@ l'app → Sécurité des données (réponses détaillées dans [`PLAY-CONFORMITE
 P20** (e-mail de contact, puis relancer « Play — fiche du Store »), **P19**
 (GitHub Pages) et **P18** (groupe des testeurs). Prochain run de code : la piste de **test fermé** si P18 est fait,
 sinon retour à la montre (**M2**, VFC de journée).
+
+**Run « idées » du 22/10 08:30 — la VFC de journée est prête à coder, et on sait comment encaisser les abonnements
+(rien de nouveau dans l'app).** ① **Montre** : la façon exacte de demander la VFC de journée et la température de la
+peau à la GT 6 Pro est maintenant écrite pas à pas ([`protocoles/huawei.md`](protocoles/huawei.md) §10.10). Deux
+pièges évités d'avance, qui auraient coûté plusieurs allers-retours avec votre montre : le premier message doit
+porter le numéro 2 (pas 1), et notre code actuel aurait pris l'accusé de réception de la montre pour sa réponse. Le
+prochain run de code montre (**M2**) peut donc s'y mettre directement. Proposition : **ne pas lire les « émotions »
+que calcule la montre** (ça ferait un second système de reconnaissance des émotions à déclarer, pour rien : votre
+bien-être vient du visage et de vos notes). ② **Abonnements Google Play** (jalon 6) : on utilisera un module libre
+(licence MIT) qui parle directement à Google Play, avec **notre** serveur relais pour vérifier les achats — pas
+RevenueCat, qui verrait passer chaque achat de vos utilisateurs. Les prix et l'essai seront lus chez Google (jamais
+écrits en dur), l'essai ne sera proposé qu'aux personnes qui y ont droit, et les tests d'abonnement se font en
+accéléré (un an = 30 min). Il faudra d'abord votre **profil de paiement** dans la Play Console. Détail :
+[`IDEES.md`](IDEES.md) I144–I148. **👉 Vos actions les plus utiles ne changent pas : P21** (relire puis lancer « Play —
+sécurité des données »), **P20** (e-mail de contact), **P19** (GitHub Pages), **P18** (groupe des testeurs). Prochain
+run de code : test fermé si P18 est fait, sinon **M2**.
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
@@ -645,6 +661,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 08:30 — [Idées : M2 P2P prêt, Play Billing](runs/2026-10-22-0830-idees-p2p-billing.md) | 💡⌚ | Spec M2 complétée (`huawei.md` §10.10 : numéro 2 au départ, ping par numéro, données par classe, accusés au numéro de la montre, réels 4 / 8 o, conception `p2p.js` sur `session.listen` car `request` prendrait l'accusé) ; émotions de la montre non lues (I145) ; Play Billing : cdv-purchase (MIT, PBL 9) + relais, pas RevenueCat (I146–I148) ; journal seul, 1 814 Vitest |
 | 22/10 06:30 — [Sécurité des données par l'API](runs/2026-10-22-0630-securite-donnees.md) | 🧭📄 | Modèle CSV de la Play Console rempli depuis des réponses justifiées (3 types collectés, facultatifs, non partagés ; aucune donnée de santé), règles du formulaire vérifiées, workflow « Play — sécurité des données » (`applications.dataSafety`), lancement manuel (P21), repli import manuel ; 1 814 Vitest ; PR (voir le compte rendu) |
 | 22/10 04:30 — [Fiche du Store FR par l'API](runs/2026-10-22-0430-fiche-store.md) | 🧭📄 | Textes FR vérifiés contre le code, 5 captures 1080×1920 (variante play, démo) + présentation 1024×500, `listing.mjs` (SHA-256, site web, commit) et workflow « Play — fiche du Store » (concurrence `play-edits`) ; 1 790 Vitest ; PR #265 fusionnée → v204, Play 352 ; fiche refusée par Play faute d'e-mail de contact → P20 |
 | 22/10 02:30 — [Page de confidentialité + GitHub Pages](runs/2026-10-22-0230-confidentialite-pages.md) | 🧭📄 | Politique réécrite pour la variante play (source unique, embarquée + Pages `/confidentialite/`), workflow « Site — GitHub Pages » (attend P19), Réglages → Confidentialité ; 1 778 Vitest ; PR #263 fusionnée → v203, Play 350 ; Pages rouge en attente de P19 |

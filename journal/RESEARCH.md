@@ -488,3 +488,9 @@ Logique : d'abord enrichir les données (tags, baselines), puis l'analyse (stati
 [99] Gemini API, modèles (mis à jour le 2026-10-06) — https://ai.google.dev/gemini-api/docs/models
 [100] Gemini API, sorties structurées — https://ai.google.dev/gemini-api/docs/structured-output
 [101] Open Wearables, connecter Samsung Health — https://openwearables.io/blog/how-to-connect-samsung-health-to-your-app
+[102] Play Billing Library, notes de version (PBL 9.1.0 du 2026-06-18) — https://developer.android.com/google/play/billing/release-notes (lu le 2026-10-22)
+[103] Play Billing, FAQ des dépréciations (PBL ≥ 8 obligatoire au 2026-11-01) — https://developer.android.com/google/play/billing/deprecation-faq (lu le 2026-10-22)
+[104] Play Billing, cycle de vie des abonnements (subscriptionsv2, accusé 3 j, linkedPurchaseToken) — https://developer.android.com/google/play/billing/lifecycle/subscriptions (lu le 2026-10-22)
+[105] Play Billing, tests (renouvellements accélérés, cartes de test) — https://developer.android.com/google/play/billing/test (lu le 2026-10-22)
+[106] Règles Google Play, abonnements — https://support.google.com/googleplay/android-developer/answer/9900533 (lu le 2026-10-22)
+[107] cordova-plugin-purchase (MIT, PBL 9.0.0) — https://github.com/j3k0/cordova-plugin-purchase ; @capgo/native-purchases (MPL-2.0) — https://github.com/Cap-go/capacitor-native-purchases ; RevenueCat, tarifs — https://www.revenuecat.com/pricing/ (lus le 2026-10-22)
