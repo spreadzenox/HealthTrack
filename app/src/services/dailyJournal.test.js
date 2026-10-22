@@ -207,6 +207,20 @@ describe('buildDailyJournal', () => {
     expect(day.summary.heartRate).toBeNull()
   })
 
+  it('M3 : la température de la peau (montre) a sa propre moyenne, à part de la température corporelle', () => {
+    const [day] = buildDailyJournal([
+      e('body_temperature', '2026-10-08T02:00:00', { valueC: 33.2, subtype: 'skin', site: 'wrist' }),
+      e('body_temperature', '2026-10-08T03:00:00', { valueC: 33.6, subtype: 'skin', site: 'wrist' }),
+      e('body_temperature', '2026-10-08T07:00:00', { valueC: 36.7 }),
+    ])
+    expect(day.items).toEqual([])
+    expect(day.summary.temperatureC).toBe(36.7)
+    expect(day.summary.skinTempC).toBe(33.4)
+    expect(day.summary.skinTempCount).toBe(2)
+    const [only] = buildDailyJournal([e('body_temperature', '2026-10-09T02:00:00', { valueC: 33.2, subtype: 'skin' })])
+    expect(only.summary.temperatureC).toBeNull()
+  })
+
   it('renvoie une liste vide sans entrées', () => {
     expect(buildDailyJournal([])).toEqual([])
     expect(buildDailyJournal(undefined)).toEqual([])

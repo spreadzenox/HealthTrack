@@ -186,6 +186,15 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
         payload: { value: Math.max(15, hrv + delta), unit: 'ms', subtype: 'heartRateVariability', during: 'day', watchClass: 500044, connector: 'huawei_watch', sourceName: 'Montre Huawei' },
       })
     }
+    // Température de la peau au poignet (montre Huawei en direct, M3, `subtype: 'skin'`) ; valeurs déterministes
+    for (const [h, t] of [[2, 33.4], [5, 33.9]]) {
+      watchEntries.push({
+        type: 'body_temperature',
+        source: 'huawei_watch',
+        at: at(day, h, 10),
+        payload: { valueC: t, subtype: 'skin', site: 'wrist', watchClass: 400012, connector: 'huawei_watch', sourceName: 'Montre Huawei' },
+      })
+    }
     // Respiration et température de nuit (montre via Gadgetbridge → Health Connect) ; valeurs
     // déterministes pour ne pas décaler le tirage aléatoire des autres données de démo.
     watchEntries.push({

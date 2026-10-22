@@ -13,12 +13,12 @@
  */
 import { decodeTlvs, encodeTlvs, resultCode, RESULT_SUCCESS } from './protocol'
 import { downloadFile, FILE_TYPE, parseSleepSequence, SLEEP_DICTIONARY } from './files'
-import { classSince, createP2P, DICT_CLASS, hrvDayValues, P2P_CODE, P2P_COMMAND, P2P_SERVICE } from './p2p'
+import { classSince, createP2P, DICT_CLASS, hrvDayValues, P2P_CODE, P2P_COMMAND, P2P_SERVICE, skinTempValues } from './p2p'
 
 export const DEVICE_CONFIG = 1
 export const SET_TIME = 0x05
 export const FITNESS = 7
-export const FIT = { TOTALS: 0x03, MINUTE_COUNT: 0x0a, MINUTE_DATA: 0x0b, SLEEP_COUNT: 0x0c, SLEEP_DATA: 0x0d, TRUSLEEP: 0x16 }
+export const FIT = { TOTALS: 0x03, MINUTE_COUNT: 0x0a, MINUTE_DATA: 0x0b, SLEEP_COUNT: 0x0c, SLEEP_DATA: 0x0d, TRUSLEEP: 0x16, SKIN_TEMP_SETTING: 0x2a }
 export const CONFIG = { SERVICES: 0x02, COMMANDS: 0x03, SETTINGS: 0x31, EXPAND: 0x37 }
 export const WORKOUT = 0x17
 export const WORKOUT_CMD = { LIST: 0x07, TOTALS: 0x08 }
@@ -161,7 +161,7 @@ export function parseTotals(tlvs) {
  */
 export const CAPABILITY_QUERY = [
   [DEVICE_CONFIG, [CONFIG.SETTINGS, CONFIG.EXPAND]],
-  [FITNESS, [FIT.MINUTE_COUNT, FIT.SLEEP_COUNT, FIT.TRUSLEEP]],
+  [FITNESS, [FIT.MINUTE_COUNT, FIT.SLEEP_COUNT, FIT.TRUSLEEP, FIT.SKIN_TEMP_SETTING]],
   [WORKOUT, [0x01, WORKOUT_CMD.LIST]],
   [STRESS, [0x09]],
   [P2P_SERVICE, [P2P_COMMAND]],
@@ -172,18 +172,18 @@ export function mergeCapabilityQueries(...queries) {
   for (const q of queries) for (const [service, cmds] of q) by.set(service, [...new Set([...(by.get(service) || []), ...cmds])])
   return [...by.entries()]
 }
-export const EXPAND = { SLEEP_DICTIONARY: 143, SLEEP_BED_TIME: 199, HRV: 235, APNEA: 107, EMOTION: 206 }
+export const EXPAND = { SKIN_TEMP: 29, SLEEP_DICTIONARY: 143, SLEEP_BED_TIME: 199, HRV: 235, APNEA: 107, EMOTION: 206 }
 /** Capacités étendues consignées dans le journal (§10.8) : aide à choisir les voies des prochaines étapes. */
 export const LOGGED_EXPAND = [29, 56, 143, 199, 235]
 
 /**
  * Synchro « dictionnaire » (P2P, §10.10) : la commande 0x34/0x01 n'est écartée que si la montre l'a dite
  * absente en 1/0x03 (la réponse de 1/0x02 ne compte pas : la GT 6 Pro dit « non » au service 0x2C qu'elle sert).
- * Chaque classe demande en plus sa capacité étendue (235 pour la VFC), si la montre les annonce.
+ * Chaque classe demande en plus sa capacité étendue (235 pour la VFC, 29 pour la température), si la montre les annonce.
  */
 export function canReadDictionary(caps, expandBit) {
   if (caps?.commands?.get(`${P2P_SERVICE}/${P2P_COMMAND}`) === false) return false
-  return !caps?.expand || hasExpand(caps.expand, expandBit)
+  return expandBit == null || !caps?.expand || hasExpand(caps.expand, expandBit)
 }
 
 export const servicesTlvs = (ids) => [{ tag: 1, value: ids }]
@@ -376,7 +376,7 @@ export function spo2SlotEntry(s, values, base = { connector: WATCH_SOURCE }) {
  * Minutes et périodes de sommeil → entrées HealthTrack (source « huawei_watch »).
  * `until` : seules les tranches terminées avant cet instant (ms) sont rendues.
  */
-export function watchEntries({ minutes = [], sleep = [], nights = [], workouts = [], hrvDay = [] }, { until, sourceName = 'Montre Huawei' }) {
+export function watchEntries({ minutes = [], sleep = [], nights = [], workouts = [], hrvDay = [], skinTemp = [] }, { until, sourceName = 'Montre Huawei' }) {
   const base = { connector: WATCH_SOURCE, sourceName }
   const out = []
   const hourly = new Map()
@@ -447,6 +447,11 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
   // Radar, normes, analyses). À la minute + 35 s : jamais la clé d'une FC, SpO₂, FC de repos ou mesure de nuit.
   for (const h of hrvDay) {
     out.push({ type: 'heart_rate', source: WATCH_SOURCE, at: iso(floorTo(h.start, 60_000) + HRV_DAY_OFFSET), payload: { value: h.value, unit: 'ms', subtype: 'heartRateVariability', during: 'day', watchClass: DICT_CLASS.HRV, ...base } })
+  }
+  // Température de la peau au poignet (dictionnaire 400012, M3) : `subtype: 'skin'` la tient à l'écart d'une
+  // température corporelle (thermomètre, Health Connect). Seule entrée de ce type venant de la montre.
+  for (const h of skinTemp) {
+    out.push({ type: 'body_temperature', source: WATCH_SOURCE, at: iso(floorTo(h.start, 60_000)), payload: { valueC: h.value, subtype: 'skin', site: 'wrist', watchClass: DICT_CLASS.SKIN_TEMP, ...base } })
   }
   for (const w of workouts) {
     if (!(w.end <= until)) continue
@@ -524,6 +529,7 @@ export const SYNC_READS = [
   { id: 'workouts', label: 'séances', command: '0x17/0x07' },
   { id: 'sleepFile', label: 'sommeil détaillé', command: '0x2C' },
   { id: 'hrvDay', label: 'VFC de journée', command: '0x34 · 500044' },
+  { id: 'skinTemp', label: 'température de la peau', command: '0x34 · 400012' },
 ]
 /** Issue d'une lecture : ok · empty (rien) · timeout · refused · unsupported (la montre a dit non) · error. */
 export function outcomeOf(e) {
@@ -592,12 +598,48 @@ export function describeMinutes(minutes) {
   return Object.entries(n).map(([k, c]) => `${labels[k]} ${c}`).join(', ') || 'aucune mesure'
 }
 
+/** Classes du dictionnaire lues à chaque synchro, dans cet ordre (une seule en vol, §10.10). */
+const DICT_READS = [
+  { id: 'hrvDay', cls: DICT_CLASS.HRV, expand: EXPAND.HRV, values: hrvDayValues, bounds: 'hors 0–200 ms' },
+  { id: 'skinTemp', cls: DICT_CLASS.SKIN_TEMP, expand: EXPAND.SKIN_TEMP, values: skinTempValues, bounds: 'hors 20–42 °C' },
+]
+
+/** Réglage 7/0x2A (§10.10) : 1 = 0x01, 2 = activer (1) ou désactiver (0). */
+export const skinTempSettingTlvs = (on) => [
+  { tag: 1, value: [1] },
+  { tag: 2, value: [on ? 1 : 0] },
+]
+
+/**
+ * Envoie le réglage « mesure continue de la température de la peau » choisi par l'utilisateur.
+ * → 'applied' · 'refused' · 'unsupported' (commande ou capacité 29 absente) · 'timeout' · 'error'.
+ */
+export async function applySkinTempSetting(session, caps, on, log = () => {}, { timeout = 3000 } = {}) {
+  const what = on ? 'activée' : 'désactivée'
+  if (caps?.commands?.get(`${FITNESS}/${FIT.SKIN_TEMP_SETTING}`) === false || (caps?.expand && !hasExpand(caps.expand, EXPAND.SKIN_TEMP))) {
+    log(`température de la peau : mesure continue non prise en charge par la montre`)
+    return 'unsupported'
+  }
+  try {
+    const code = resultCode((await session.request(FITNESS, FIT.SKIN_TEMP_SETTING, skinTempSettingTlvs(on), { timeout })).tlvs)
+    const ok = code === null || code === RESULT_SUCCESS
+    log(`température de la peau : mesure continue ${what} → ${ok ? 'acceptée' : `refusée (${code})`}`, ok ? 'info' : 'warn')
+    return ok ? 'applied' : 'refused'
+  } catch (e) {
+    const outcome = outcomeOf(e)
+    log(`température de la peau : réglage non envoyé (${e?.message || e})`, 'warn')
+    return outcome
+  }
+}
+
 /**
  * Déroule la synchro sur une session authentifiée. Ne garde que [since, until).
  * Chaque lecture est indépendante : un service qui cale n'empêche pas de lire les suivants (`services`).
- * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], hrvDay: object[], dictionary: object, services: object[], hints: string[], capabilities: string }>}
+ * `skinTempContinuous` (true / false) : réglage « mesure continue de la température » à envoyer une fois, choisi par
+ * l'utilisateur ; null = rien à envoyer.
+ * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], hrvDay: object[], skinTemp: object[], dictionary: object, settings: object, services: object[], hints: string[], capabilities: string }>}
  */
-export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset(), caps: knownCaps = null, sleepSince = since - DAY, dictionarySince = {}, p2pTimeout }) {
+export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset(), caps: knownCaps = null, sleepSince = since - DAY, dictionarySince = {}, p2pTimeout, skinTempContinuous = null }) {
   // heure et capacités déjà envoyées / lues par la fin d'association (pairing.js) : pas de seconde fois
   if (!knownCaps) await setWatchTime(session, now, tzOffsetMinutes, log)
   const caps = knownCaps || (await readCapabilities(session, log))
@@ -645,34 +687,44 @@ export async function readWatchData(session, { since, until, now = until, log = 
       return { items, outcome: items.length ? 'ok' : 'empty' }
     }, [])
   } else skip('sleepFile')
-  // VFC de journée par la synchro « dictionnaire » (P2P, M2) : `dictionary` = classe → dernier instant lu (reprise)
-  let hrvDay = []
+  // VFC de journée et température de la peau par la synchro « dictionnaire » (P2P, M2 / M3), une classe après
+  // l'autre (§10.10) ; `dictionary` = classe → dernier instant lu (reprise)
+  const dict = { hrvDay: [], skinTemp: [] }
   const dictionary = {}
-  if (canReadDictionary(caps, EXPAND.HRV) && typeof session.listen === 'function') {
+  const p2pOk = canReadDictionary(caps, null) && typeof session.listen === 'function'
+  const wanted = DICT_READS.filter((d) => p2pOk && canReadDictionary(caps, d.expand))
+  for (const d of DICT_READS) if (!wanted.includes(d)) skip(d.id)
+  if (wanted.length) {
     const p2p = createP2P(session, { log, now: () => now, ...(p2pTimeout ? { timeout: p2pTimeout } : {}) })
     try {
       const code = await p2p.ping()
       if (code !== P2P_CODE.AVAILABLE) {
-        log(`VFC de journée : ${code == null ? 'pas de réponse au ping P2P' : `synchro dictionnaire indisponible (code 0x${code.toString(16)})`}`, code == null ? 'warn' : 'info')
-        services.push(serviceRead('hrvDay', code == null ? 'timeout' : 'unsupported', { count: 0 }))
+        log(`synchro dictionnaire : ${code == null ? 'pas de réponse au ping P2P' : `indisponible (code 0x${code.toString(16)})`}`, code == null ? 'warn' : 'info')
+        for (const d of wanted) services.push(serviceRead(d.id, code == null ? 'timeout' : 'unsupported', { count: 0 }))
       } else {
-        hrvDay = await attempt('hrvDay', async () => {
-          const r = await p2p.readClass(DICT_CLASS.HRV, { since: classSince(dictionarySince[DICT_CLASS.HRV]) })
-          if (r.maxTime) dictionary[DICT_CLASS.HRV] = r.maxTime
-          const items = hrvDayValues(r.records)
-          const dropped = r.records.length - items.length
-          log(`VFC de journée : ${items.length} mesure${items.length > 1 ? 's' : ''} en ${r.pages} page${r.pages > 1 ? 's' : ''}${dropped ? `, ${dropped} écartée${dropped > 1 ? 's' : ''} (hors 0–200 ms ou vide)` : ''}${r.ignored ? `, ${r.ignored} valeur${r.ignored > 1 ? 's' : ''} de longueur inconnue` : ''}`)
-          return { items, outcome: items.length ? 'ok' : 'empty', units: r.pages }
-        }, [])
+        for (const d of wanted) {
+          const label = SYNC_READS.find((r) => r.id === d.id).label
+          dict[d.id] = await attempt(d.id, async () => {
+            const r = await p2p.readClass(d.cls, { since: classSince(dictionarySince[d.cls]) })
+            if (r.maxTime) dictionary[d.cls] = r.maxTime
+            const items = d.values(r.records)
+            const dropped = r.records.length - items.length
+            log(`${label} : ${items.length} mesure${items.length > 1 ? 's' : ''} en ${r.pages} page${r.pages > 1 ? 's' : ''}${dropped ? `, ${dropped} écartée${dropped > 1 ? 's' : ''} (${d.bounds} ou vide)` : ''}${r.ignored ? `, ${r.ignored} valeur${r.ignored > 1 ? 's' : ''} de longueur inconnue` : ''}`)
+            return { items, outcome: items.length ? 'ok' : 'empty', units: r.pages }
+          }, [])
+        }
       }
     } finally {
       p2p.close()
     }
-  } else skip('hrvDay')
+  }
+  const { hrvDay, skinTemp } = dict
+  const settings = {}
+  if (skinTempContinuous != null) settings.skinTemp = await applySkinTempSetting(session, caps, skinTempContinuous, log)
   log(`lectures : ${describeServices(services, { all: true })}`)
   const hints = syncHints(services, { caps, totals })
   for (const h of hints) log(`piste : ${h}`, 'warn')
-  return { minutes, sleep, totals, workouts, nights, hrvDay, dictionary, services, hints, capabilities: describeCapabilities(caps) }
+  return { minutes, sleep, totals, workouts, nights, hrvDay, skinTemp, dictionary, settings, services, hints, capabilities: describeCapabilities(caps) }
 }
 
 /** Reprise après une longue absence : jamais plus de 30 jours relus. */

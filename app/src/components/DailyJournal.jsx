@@ -150,6 +150,7 @@ function summaryChips(s) {
   if (s.spo2 != null) chips.push(['SpO₂', `${frNumber(s.spo2)} %`])
   if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
   if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])
+  if (s.skinTempC != null) chips.push(['Temp. peau', `${frNumber(s.skinTempC)} °C`])
   if (s.bloodPressure) chips.push(['Tension', `${s.bloodPressure.systolic}/${s.bloodPressure.diastolic} mmHg`])
   if (s.glucoseMgDl != null) {
     chips.push(['Glycémie', `${(s.glucoseMgDl / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g/L`])

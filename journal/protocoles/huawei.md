@@ -1255,3 +1255,15 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
 - Fausse montre de test : option `p2p` (code du ping, pages par classe) ; sans elle, 0x34/0x01 est annoncée absente.
 - Reste : confirmer sur la GT 6 Pro (ligne « VFC de journée » du journal de synchro) ; M3 (classe 400012) réutilise
   `readClass` ; P2P dans le lecteur Java (M6).
+
+### 10.12 M3 livré (run du 22/10/2026 12:30)
+- Lecture : après la VFC de journée, sur le **même** ping, classe **400012** si la capacité étendue 29 est levée (ou
+  inconnue) ; champ 400012430 gardé de 20 à 42 °C (arrondi au centième) ; reprise `dictUntil[400012]` comme la VFC.
+- Entrée : `body_temperature`, `payload { valueC, subtype: 'skin', site: 'wrist', watchClass: 400012 }`, à la minute du
+  début de l'enregistrement. Journal → Jours : « Temp. peau » (moyenne du jour), à part de la température corporelle.
+- Réglage « mesure continue » (7/0x2A, 1 = 0x01, 2 = 0x01 / 0x00) : choisi par l'utilisateur dans la carte montre
+  (aucune valeur par défaut) ; envoyé **une fois**, au début de la synchro qui suit le changement (seul moment où la
+  session existe), puis plus jamais tant que le choix ne change pas ; sauté si 7/0x2A est dite absente en 1/0x03 ou
+  si la capacité 29 n'est pas levée. Réponse lue comme les messages d'association (code 0x7F, succès ou absent = accepté).
+- Reste : confirmer sur la GT 6 Pro ; P2P dans le lecteur Java (M6).
+

@@ -42,7 +42,7 @@ import { connectAndAuthenticate, createKeyStore } from './pairing'
 import { createFakeWatch, TEST_SECRETS } from './testing/fakeWatch'
 import { dictionaryPage, real4, real8 } from './testing/sampleDictionary'
 import { DICT_CLASS, DICT_FIELD } from './p2p'
-import { clearWatchDayTotals, createWatchSync, getWatchSyncState, sleepFileSince, SYNC_STATE_VERSION } from '../../services/watchSync'
+import { clearWatchDayTotals, createWatchSync, getSkinTempContinuous, getWatchSyncState, setSkinTempContinuous, sleepFileSince, SYNC_STATE_VERSION } from '../../services/watchSync'
 
 const hex = (s) => Uint8Array.from(s.trim().split(/\s+/), (h) => parseInt(h, 16))
 const be = (n, size) => Array.from({ length: size }, (_, i) => Math.floor(n / 2 ** (8 * (size - 1 - i))) & 0xff)
@@ -305,7 +305,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/^1 minute → (\d+ nouvelles? mesures?|déjà à jour) · sans réponse : sommeil$/) })
     expect(report.sync.stalled).toEqual(['sommeil'])
     expect(report.sync.services.map((r) => [r.id, r.outcome, r.count])).toEqual([
-      ['sleep', 'timeout', 0], ['minutes', 'ok', 1], ['totals', 'empty', 0], ['workouts', 'empty', 0], ['sleepFile', 'empty', 0], ['hrvDay', 'unsupported', 0],
+      ['sleep', 'timeout', 0], ['minutes', 'ok', 1], ['totals', 'empty', 0], ['workouts', 'empty', 0], ['sleepFile', 'empty', 0], ['hrvDay', 'unsupported', 0], ['skinTemp', 'unsupported', 0],
     ])
     expect(report.sync.services[1]).toMatchObject({ command: '7/0x0A', units: 1 })
     expect(report.log.some((l) => /lectures : sommeil : sans réponse, minutes : reçu \(1\)/.test(l.msg))).toBe(true)
@@ -430,6 +430,88 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(noCap.seen.some((x) => x.startsWith('52/'))).toBe(false)
   })
 
+  it('M3 — température de la peau après la VFC : même ping, classe 400012, hors bornes écartée, entrée « peau » et reprise', async () => {
+    const now = Date.UTC(2026, 9, 22, 12, 10)
+    const t0 = Date.UTC(2026, 9, 22, 1, 20, 40)
+    const expand = new Array(30).fill(0)
+    expand[29] = 0x08 // 235
+    expand[3] = 0x20 // 29
+    const storage = memoryStorage()
+    const watch = createFakeWatch({
+      expand,
+      p2p: {
+        classes: {
+          [DICT_CLASS.HRV]: [dictionaryPage(DICT_CLASS.HRV, [{ start: t0, values: [[DICT_FIELD.HRV, real4(41)]] }])],
+          [DICT_CLASS.SKIN_TEMP]: [
+            dictionaryPage(DICT_CLASS.SKIN_TEMP, [
+              { start: t0, end: t0 + 600_000, values: [[DICT_FIELD.SKIN_TEMP, real8(33.456)]] },
+              { start: t0 + 600_000, end: t0 + 1200_000, values: [[DICT_FIELD.SKIN_TEMP, real4(12)]] },
+              { start: t0 + 1200_000, end: t0 + 1800_000, values: [[DICT_FIELD.SKIN_TEMP, real4(34.5)]] },
+            ]),
+          ],
+        },
+      },
+    })
+    const written = []
+    const sync = createWatchSync({ watchKey: 'T', storage, now: () => now, write: async (e) => (written.push(...e), { inserted: e.length }), clear: async () => 0 })
+    const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'T', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+    expect(watch.p2pRequests.map((r) => r.cls)).toEqual([500044, 500044, 400012, 400012])
+    expect(report.sync.services.find((r) => r.id === 'skinTemp')).toMatchObject({ outcome: 'ok', count: 2, command: '0x34 · 400012' })
+    const temps = written.filter((e) => e.type === 'body_temperature')
+    expect(temps.map((e) => [e.at, e.payload.valueC, e.payload.subtype, e.payload.site])).toEqual([
+      [new Date(Date.UTC(2026, 9, 22, 1, 20)).toISOString(), 33.46, 'skin', 'wrist'],
+      [new Date(Date.UTC(2026, 9, 22, 1, 40)).toISOString(), 34.5, 'skin', 'wrist'],
+    ])
+    expect(temps[0].payload).toMatchObject({ connector: 'huawei_watch', watchClass: 400012 })
+    expect(report.log.some((l) => /température de la peau : 2 mesures en 2 pages, 1 écartée \(hors 20–42 °C ou vide\)/.test(l.msg))).toBe(true)
+    expect(report.sync.label).toMatch(/2 températures de la peau/)
+    expect(getWatchSyncState('T', storage).dictUntil).toEqual({ 500044: t0, 400012: t0 + 1800_000 })
+  })
+
+  it('M3 — sans capacité 29 : la température n’est pas demandée, la VFC l’est toujours', async () => {
+    const expand = new Array(30).fill(0)
+    expand[29] = 0x08
+    const watch = createFakeWatch({ expand, p2p: { classes: {} } })
+    const sync = createWatchSync({ watchKey: 'U', storage: memoryStorage(), write: async () => ({ inserted: 0 }) })
+    const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'U', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+    expect(watch.p2pRequests.map((r) => r.cls)).toEqual([500044])
+    expect(report.sync.services.find((r) => r.id === 'skinTemp')).toMatchObject({ outcome: 'unsupported' })
+  })
+
+  it('M3 — réglage « mesure continue » choisi : envoyé une fois (7/0x2A), puis plus rien tant qu’il ne change pas', async () => {
+    const expand = new Array(30).fill(0)
+    expand[3] = 0x20
+    const storage = memoryStorage()
+    setSkinTempContinuous(true, storage)
+    expect(getSkinTempContinuous(storage)).toMatchObject({ wanted: true, applied: null })
+    const run = async () => {
+      const watch = createFakeWatch({ expand })
+      const sync = createWatchSync({ watchKey: 'S', storage, write: async () => ({ inserted: 0 }) })
+      await connectAndAuthenticate({ transport: watch.transport, watchKey: 'S', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+      return watch
+    }
+    const first = await run()
+    expect(first.seen.filter((x) => x.startsWith('7/42'))).toHaveLength(1)
+    expect(first.skinTempSetting).toEqual([1])
+    expect(getSkinTempContinuous(storage)).toMatchObject({ wanted: true, applied: true })
+    const second = await run()
+    expect(second.seen.some((x) => x.startsWith('7/42'))).toBe(false)
+    setSkinTempContinuous(false, storage)
+    const third = await run()
+    expect(third.skinTempSetting).toEqual([0])
+    expect(getSkinTempContinuous(storage)).toMatchObject({ wanted: false, applied: false })
+  })
+
+  it('M3 — réglage sur une montre sans capacité 29 : rien n’est envoyé, l’état le dit', async () => {
+    const storage = memoryStorage()
+    setSkinTempContinuous(true, storage)
+    const watch = createFakeWatch({ expand: new Array(30).fill(0) })
+    const sync = createWatchSync({ watchKey: 'N', storage, write: async () => ({ inserted: 0 }) })
+    await connectAndAuthenticate({ transport: watch.transport, watchKey: 'N', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+    expect(watch.seen.some((x) => x.startsWith('7/42'))).toBe(false)
+    expect(getSkinTempContinuous(storage)).toMatchObject({ wanted: true, applied: null, outcome: 'unsupported' })
+  })
+
   it('M1 — GT 6 Pro (« fichiers 0x2C non », 143 oui) : nuits rattrapées sur 60 jours, respiration et SpO₂ de la nuit écrites, puis reprise', async () => {
     const now = Date.UTC(2026, 9, 22, 8, 10)
     const night = (daysAgo, extra = []) => {
@@ -510,7 +592,7 @@ describe('montre Huawei : issue de chaque lecture (I69, §7.10)', () => {
     expect(data.workouts.map((w) => w.number)).toEqual([8])
     expect(data.services.find((r) => r.id === 'workouts')).toMatchObject({ outcome: 'ok', count: 1, units: 2, failed: 1 })
     expect(data.services.find((r) => r.id === 'sleepFile')).toMatchObject({ outcome: 'unsupported' })
-    expect(describeServices(data.services)).toBe('sommeil : vide, minutes : vide, totaux du jour : vide, séances : reçu (1), 1 bloc perdu, sommeil détaillé : non pris en charge, VFC de journée : non pris en charge')
+    expect(describeServices(data.services)).toBe('sommeil : vide, minutes : vide, totaux du jour : vide, séances : reçu (1), 1 bloc perdu, sommeil détaillé : non pris en charge, VFC de journée : non pris en charge, température de la peau : non pris en charge')
   })
 
   it('pistes : fichiers déclarés mais muets → canal auxiliaire ; pas du jour sans historique ; rien n’aboutit', () => {
