@@ -55,22 +55,48 @@ test('modèle ou région indisponible → candidat suivant, puis retenu pour les
   assert.equal(f.calls.length, 4)
 })
 
-test('schéma refusé → même requête sans schéma ; autre 400 → erreur sans essayer d’autre modèle', async () => {
+test('schéma refusé → même requête sans schéma', async () => {
   const f = fakeFetch([json(400, { error: { message: 'responseSchema unsupported' } }), answer('{"not_food":true}')])
   const client = createVertexClient({ ...base, fetchImpl: f.fetchImpl })
   await client.generateJson({ systemInstruction: 'S', parts: [], schema: {} })
   assert.equal(f.calls[1].body.generationConfig.responseSchema, undefined)
-
-  const g = fakeFetch([json(400, { error: { message: 'bad image' } })])
-  const other = createVertexClient({ ...base, models: ['a', 'b'], fetchImpl: g.fetchImpl })
-  await assert.rejects(other.generateJson({ systemInstruction: 'S', parts: [], schema: {} }), { status: 400, billed: false })
-  assert.equal(g.calls.length, 1)
 })
 
-test('réponse illisible : erreur marquée « facturée » (non rendue au quota)', async () => {
-  const f = fakeFetch([answer('pas du json')])
-  const client = createVertexClient({ ...base, fetchImpl: f.fetchImpl })
-  await assert.rejects(client.generateJson({ systemInstruction: 'S', parts: [] }), { status: 502, billed: true })
+test('requête refusée ou panne d’un modèle → modèle suivant (non facturé)', async () => {
+  const f = fakeFetch([
+    json(400, { error: { message: 'thinking_config not supported' } }),
+    json(500, { error: { message: 'internal' } }),
+    answer('{"not_food":true}'),
+  ])
+  const client = createVertexClient({ ...base, models: ['a', 'b', 'c'], fetchImpl: f.fetchImpl })
+  const out = await client.generateJson({ systemInstruction: 'S', parts: [], schema: {} })
+  assert.equal(out.model, 'c')
+  assert.equal(f.calls.length, 3)
+
+  const g = fakeFetch([json(400, { error: { message: 'bad image' } }), json(400, { error: { message: 'bad image' } })])
+  const other = createVertexClient({ ...base, models: ['a', 'b'], fetchImpl: g.fetchImpl })
+  await assert.rejects(other.generateJson({ systemInstruction: 'S', parts: [], schema: {} }), { status: 400, billed: false, message: /b@europe-west1 : bad image/ })
+})
+
+test('plafond 429 de Google → erreur tout de suite, sans essayer d’autre modèle', async () => {
+  const f = fakeFetch([json(429, { error: { message: 'Resource exhausted' } })])
+  const client = createVertexClient({ ...base, models: ['a', 'b'], fetchImpl: f.fetchImpl })
+  await assert.rejects(client.generateJson({ systemInstruction: 'S', parts: [] }), { status: 429 })
+  assert.equal(f.calls.length, 1)
+})
+
+test('réponse vide ou illisible → modèle suivant ; si tous échouent, erreur marquée « facturée »', async () => {
+  const f = fakeFetch([answer(''), answer('{"not_food":true}')])
+  const client = createVertexClient({ ...base, models: ['new', 'old'], fetchImpl: f.fetchImpl })
+  assert.equal((await client.generateJson({ systemInstruction: 'S', parts: [] })).model, 'old')
+
+  const g = fakeFetch([answer('pas du json')])
+  const single = createVertexClient({ ...base, fetchImpl: g.fetchImpl })
+  await assert.rejects(single.generateJson({ systemInstruction: 'S', parts: [] }), { status: 502, billed: true })
+
+  const h = fakeFetch([answer('pas du json'), json(404, { error: { message: 'absent' } })])
+  const mixed = createVertexClient({ ...base, models: ['a', 'b'], fetchImpl: h.fetchImpl })
+  await assert.rejects(mixed.generateJson({ systemInstruction: 'S', parts: [] }), { status: 404, billed: true })
 })
 
 test('jeton des métadonnées mis en cache jusqu’à une minute avant expiration', async () => {

@@ -398,6 +398,14 @@ Cloud. Pendant ce temps, l'ancienne version du relais a continué de répondre :
 Ce merge redéploie le relais avec la vérification des abonnements et les notifications Google Play. Prochain run de
 code : **6c**. **👉 Toujours en attente de vous : P23.**
 
+**Run du 22/10 23:30 — ⚠️ l'analyse des repas de la version Play était en panne depuis 22:47, réparation en cours.**
+Le redéploiement de 22:30 a bien mis le nouveau relais en ligne, mais son analyse de test répond « L'analyse IA n'a pas
+abouti » (confirmé par une relance et un appel direct) : depuis 22:47, **le bouton « Photo du repas » de la version
+Play affiche une erreur** (la version sideload, qui utilise votre clé Gemini, n'est pas touchée). Le relais n'essayait
+le modèle suivant que si un modèle était introuvable ; il passe désormais au suivant aussi quand un modèle refuse la
+demande, tombe en panne ou répond sans JSON lisible (sauf plafond 429), et le workflow recopie dans son résumé le
+message exact de Vertex AI en cas d'échec. Vérification au merge (voir le compte rendu du run).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -775,6 +783,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 23:30 — [Relais : analyse des repas en panne (502)](runs/2026-10-22-2330-relais-analyse-502.md) | 🚑 | Révision 6b-1 en ligne mais analyse de test en 502 (relance et appel direct identiques) ; repli sur le modèle suivant aussi pour 400 / 5xx / réponse vide ou illisible (pas 429) ; message exact de Vertex AI dans le résumé du workflow ; 44 tests relais |
 | 22/10 22:30 — [Réparation du déploiement du relais](runs/2026-10-22-2230-relais-deploiement-repare.md) | 🐛 | « Relais — déploiement » rouge (séparateur `^@^` de `--set-env-vars` qui coupait l'adresse de relay-runtime) → `^;^` ; test `relay/test/workflow.test.js` (rouge sur l'ancien workflow) ; 42 tests relais |
 | 22/10 21:30 — [6b-1 : le relais vérifie les abonnements Play](runs/2026-10-22-2130-6b-achats-relais.md) | 🧭 | `billing.js` : `subscriptionsv2.get` (droits : actif, grâce, annulé non échu ; pas en pause / suspendu / expiré), accusé côté serveur, `linkedPurchaseToken`, `/v1/subscription/verify` (format validateur cdv-purchase), `/pubsub/rtdn` (OIDC vérifié), période de lancement `LAUNCH_PREMIUM_UNTIL` (coupée) ; CI : abonnement push `play-rtdn-relay` + test d'accès Play ; 40 tests relais |
 | 22/10 18:30 — [6a-2 : la version Play analyse les repas par le relais](runs/2026-10-22-1830-relais-app-play.md) | 🧭 | `aiRelay.js` + façade `mealAi.js` (play : relais, identifiant aléatoire, accord `ai_meal` une fois, analyses restantes ; sideload : clé Gemini inchangée) ; confidentialité et sécurité des données (+ identifiant) à jour ; CORS et analyse réelle vérifiés ; P19, P20, P21 faits par le propriétaire ; P21 à relancer |
