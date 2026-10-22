@@ -128,7 +128,7 @@ test('échec de Vertex : 502 générique ; appel rendu au quota s’il n’a rie
 
 test('santé, pré-vol CORS limité aux origines de l’app, adresses inconnues', async () => {
   await withServer({ vertex: okVertex() }, async (url) => {
-    assert.deepEqual(await (await fetch(`${url}/healthz`)).json(), { ok: true })
+    assert.deepEqual(await (await fetch(`${url}/health`)).json(), { ok: true })
     const pre = await fetch(`${url}/v1/meal/analyze`, { method: 'OPTIONS', headers: { Origin: 'https://localhost' } })
     assert.equal(pre.status, 204)
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Install-Id/)

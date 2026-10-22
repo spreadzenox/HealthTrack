@@ -4,7 +4,7 @@
 #   l'image, la pousse dans Artifact Registry et déploie le service sous l'identité relay-runtime (Vertex AI).
 # - Service public (l'app l'appelle) qui se protège lui-même : plafonds par installation / jour / minute, une seule
 #   instance au plus, zéro instance au repos (rien à payer quand personne ne s'en sert).
-# - Vérification après déploiement : /healthz puis une vraie analyse de texte (« une pomme ») ; le modèle et la région
+# - Vérification après déploiement : /health puis une vraie analyse de texte (« une pomme ») ; le modèle et la région
 #   qui ont répondu sont écrits dans le résumé du workflow.
 name: Relais — déploiement
 
@@ -93,7 +93,7 @@ jobs:
             echo "- Adresse : $URL"
             echo "- Image : \`$IMAGE:$GITHUB_SHA\`"
           } >> "$GITHUB_STEP_SUMMARY"
-          curl -fsS --retry 5 --retry-delay 5 --retry-all-errors "$URL/healthz"
+          curl -fsS --retry 5 --retry-delay 5 --retry-all-errors "$URL/health"
           echo
           status=$(curl -sS -o "$RUNNER_TEMP/smoke.json" -w '%{http_code}' --max-time 90 \
             -X POST "$URL/v1/meal/analyze" \

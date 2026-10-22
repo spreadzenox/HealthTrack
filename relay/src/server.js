@@ -1,6 +1,7 @@
 /**
  * Routes du relais :
- * - GET  /healthz            → { ok: true } (vérification du déploiement) ;
+ * - GET  /health            → { ok: true } (vérification du déploiement ; pas /healthz : Cloud Run réserve les chemins
+ *   qui finissent par « z ») ;
  * - POST /v1/meal/analyze    → analyse d'un repas, photo (`{ kind: 'photo', image: { mimeType, data } }`) ou
  *   description (`{ kind: 'text', description }`), en-tête `X-Install-Id` obligatoire (identifiant aléatoire de
  *   l'installation). Réponse : `{ parsed, model, quota: { remaining, resetAt } }`, `parsed` étant le JSON du modèle,
@@ -120,7 +121,7 @@ export function createHandler({ quota, vertex, ingredientNames, allowedOrigins =
       return
     }
 
-    if (req.method === 'GET' && path === '/healthz') {
+    if (req.method === 'GET' && path === '/health') {
       send(res, 200, { ok: true }, origin)
       return
     }
