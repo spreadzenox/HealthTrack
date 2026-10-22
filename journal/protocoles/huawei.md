@@ -1267,3 +1267,14 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
   si la capacité 29 n'est pas levée. Réponse lue comme les messages d'association (code 0x7F, succès ou absent = accepté).
 - Reste : confirmer sur la GT 6 Pro ; P2P dans le lecteur Java (M6).
 
+
+### 10.13 M5 livré (run du 22/10/2026 14:30)
+- `src/devices/huawei/coverage.js` : `WATCH_DATA_KINDS` (12 types lus + stress « à venir »), chacun relié aux lectures
+  de la synchro qui le rendent (`SYNC_READS`) ; `watchCoverage(entries, { now, reads })` ne garde que la source
+  `huawei_watch` et rend, par type, la dernière valeur (nuits et jours regroupés : durée endormie + score, total du jour
+  de la montre sinon somme des heures), sa date, le nombre sur 7 jours et l'issue de la dernière lecture (« reçu » dès
+  qu'une des lectures du type a rendu quelque chose).
+- `recordWatchConnection` garde `reads` = `{ id, outcome, count }` de chaque lecture (des nombres seulement) et
+  `readsAt` ; une connexion sans lecture garde les précédents. Les captures du lecteur Java en arrière-plan ne les
+  mettent pas encore à jour (M6).
+- Page `/montre` « Données de la montre » (lecture des 30 derniers jours de la source), lien dans la carte montre.
