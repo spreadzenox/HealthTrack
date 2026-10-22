@@ -25,6 +25,9 @@ export function featuresFor(distribution) {
     faceUnlock: d === 'sideload',
     // … ou, en play, à l'ouverture de l'app (app à l'écran, indicateur visible) : l'une ou l'autre, jamais les deux
     faceAppOpen: d === 'play',
+    // Analyse IA des repas par le relais Halcya (Vertex AI, UE, sans clé dans l'app) ; en sideload, la clé
+    // Gemini saisie dans les Paramètres
+    aiRelay: d === 'play',
   }
 }
 

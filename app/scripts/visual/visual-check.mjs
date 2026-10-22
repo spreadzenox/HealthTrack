@@ -24,6 +24,8 @@
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
+ *   npm run visual -- --play --routes=/food --food-analysis  # variante play : relais Halcya factice, accord accepté ;
+ *                                                  --ai-consent=ask : s'arrête sur la divulgation avant l'envoi (6a-2)
  *   npm run visual -- --routes=/data --import          # aperçu d'une sauvegarde choisie (avant import)
  *   npm run visual -- --routes=/data --import=replace  # … puis confirmation « Remplacer mes données »
  *   npm run visual -- --routes=/connectors --devices   # « Mes appareils » : simule Huawei Health + Garmin installés
@@ -303,6 +305,19 @@ async function main() {
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(args['meal-text'] ? FAKE_MEAL_TEXT_ANALYSIS : FAKE_MEAL_ANALYSIS) }] } }] }),
+        })
+      )
+      // Variante play : même réponse, par le relais Halcya
+      await context.route('**/v1/meal/analyze', (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          headers: { 'Access-Control-Allow-Origin': '*' },
+          body: JSON.stringify({
+            parsed: args['meal-text'] ? FAKE_MEAL_TEXT_ANALYSIS : FAKE_MEAL_ANALYSIS,
+            model: 'gemini-2.5-flash-lite',
+            quota: { remaining: 18, resetAt: new Date(Date.now() + 6 * 3600_000).toISOString() },
+          }),
         })
       )
     }
@@ -687,13 +702,21 @@ async function main() {
         if (args['food-analysis'] && path === '/food') {
           await page.locator('#gallery-upload').setInputFiles({ name: 'repas.png', mimeType: 'image/png', buffer: DEMO_PHOTO })
           await page.getByRole('button', { name: 'Analyser les ingrédients' }).click()
-          await page.getByRole('heading', { name: FAKE_MEAL_ANALYSIS.dish }).waitFor({ timeout: 10000 })
+          if (args.play) {
+            const accept = page.getByRole('button', { name: /J’accepte, analyser ce repas/ })
+            await accept.waitFor({ timeout: 10000 })
+            if (args['ai-consent'] !== 'ask') await accept.click()
+          }
+          if (!(args.play && args['ai-consent'] === 'ask')) {
+            await page.getByRole('heading', { name: FAKE_MEAL_ANALYSIS.dish }).waitFor({ timeout: 10000 })
+          }
         }
         if (args['meal-text'] && path === '/food') {
           await page.getByRole('button', { name: /Décrire ou saisir sans photo/ }).click()
           await page.getByLabel('Décrivez votre repas').fill(MEAL_TEXT)
           if (args['meal-text'] !== 'form') {
-            await page.getByRole('button', { name: /Remplir avec Gemini/ }).click()
+            await page.getByRole('button', { name: /Remplir avec (Gemini|l’IA)/ }).click()
+            if (args.play) await page.getByRole('button', { name: /J’accepte, analyser ce repas/ }).click()
             await page.getByRole('heading', { name: FAKE_MEAL_TEXT_ANALYSIS.dish }).waitFor({ timeout: 10000 })
           }
           await page.evaluate(() => document.querySelector('.new-meal')?.scrollIntoView({ block: 'start' }))

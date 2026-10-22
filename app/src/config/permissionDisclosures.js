@@ -59,6 +59,18 @@ export const DISCLOSURES = {
     accept: 'J’accepte, ouvrir le réglage',
     decline: 'Pas maintenant',
   },
+  // Variante play : première analyse IA d'un repas par le relais (journal/PRODUIT.md, jalon 6a)
+  ai_meal: {
+    title: 'Avant d’analyser un repas avec l’IA',
+    points: [
+      'Pour remplir le repas, la photo (réduite, sans position ni modèle de téléphone) ou votre description part vers notre serveur, qui la fait analyser par Gemini (Google Cloud, en Europe).',
+      'Notre serveur ne garde rien, et Google ne s’en sert pas pour entraîner ses modèles. Seuls les aliments et les grammes reviennent sur le téléphone, et les calories sont calculées ici.',
+      'Aucune autre donnée de santé ne part. Sans IA, vous pouvez toujours ajouter les aliments à la main.',
+    ],
+    leaves: 'Envoyé : la photo ou la description du repas, à chaque analyse que vous lancez. Rien d’autre.',
+    accept: 'J’accepte, analyser ce repas',
+    decline: 'Pas maintenant',
+  },
 }
 
 /** La divulgation d'un accès ; erreur si l'accès n'est pas décrit (pour ne jamais demander sans prévenir). */

@@ -3,8 +3,8 @@ import JournalTabs from '../components/JournalTabs'
 import { useLocation, useNavigate } from 'react-router-dom'
 import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
-import { getGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
-import { analyzeWithGemini } from '../services/geminiStandalone'
+import { aiPrivacyHint, analyzeMealPhoto, canAnalyzeMeals, MISSING_KEY_MESSAGE, needsAiConsent, rememberAiConsent } from '../services/mealAi'
+import useDisclosure from '../hooks/useDisclosure'
 import { shortFoodName } from '../utils/format'
 import { groupMealsByDay, dayHeading } from '../services/dailyJournal'
 import MealEditor from '../components/MealEditor'
@@ -24,6 +24,7 @@ function timeOf(at) {
 }
 
 export default function Food() {
+  const [disclosure, askConsent] = useDisclosure()
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -115,17 +116,20 @@ export default function Food() {
 
   const analyze = async () => {
     if (!file) return
-    if (!hasGeminiApiKey()) {
-      setError('Ajoutez votre clé API Gemini dans Réglages (roue en haut à droite) → Paramètres pour analyser une photo.')
+    if (!canAnalyzeMeals()) {
+      setError(MISSING_KEY_MESSAGE)
       return
+    }
+    if (needsAiConsent()) {
+      if (!(await askConsent('ai_meal'))) return
+      rememberAiConsent()
     }
     setLoading(true)
     setError(null)
     setResult(null)
     setSavedId(null)
     try {
-      const apiKey = getGeminiApiKey()
-      const data = await analyzeWithGemini(file, apiKey)
+      const data = await analyzeMealPhoto(file)
       setResult(data)
       setItems(data.items || [])
     } catch (err) {
@@ -174,6 +178,7 @@ export default function Food() {
 
   return (
     <section className="food-page">
+      {disclosure}
       <JournalTabs />
       <h2 className="page-title">Alimentation</h2>
 
@@ -284,11 +289,7 @@ export default function Food() {
       )}
 
       {preview && !result && (
-        <p className="hint gemini-privacy">
-          🔒 Seule la photo, réduite et sans position GPS ni infos de l&apos;appareil, est envoyée à
-          Google Gemini avec votre clé. Avec une clé gratuite, Google peut l&apos;utiliser pour
-          améliorer ses produits.
-        </p>
+        <p className="hint gemini-privacy">{aiPrivacyHint('photo')}</p>
       )}
 
       {loading && (

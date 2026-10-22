@@ -5,7 +5,7 @@ import './More.css'
 
 const ITEMS = [
   { to: '/data', icon: '🗂️', title: 'Données', desc: 'Sauvegarde et restauration de vos données' },
-  { to: '/settings', icon: '⚙️', title: 'Paramètres', desc: 'Apparence, analyse des repas (Gemini), cigarettes, diagnostic' },
+  { to: '/settings', icon: '⚙️', title: 'Paramètres', desc: 'Apparence, analyse des repas (IA), cigarettes, diagnostic' },
   { to: '/nouveautes', icon: '✨', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },
   // Page statique (app/public), hors du routeur : aussi publiée par GitHub Pages et montrée par Health Connect
   { href: '/privacypolicy.html', icon: '🔒', title: 'Confidentialité', desc: 'Ce qui reste sur le téléphone, ce qui en sort et quand' },

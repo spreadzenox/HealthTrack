@@ -142,7 +142,7 @@ async function requestMealJson(parts, apiKey) {
 }
 
 /** Réponse décodée → repas éditable ; `not_food` → erreur avec la raison donnée par le modèle. */
-function toMealResult({ parsed, model }, notFoodFallback) {
+export function toMealResult({ parsed, model }, notFoodFallback, provider = 'gemini') {
   if (parsed?.not_food === true) {
     throw new Error((parsed.reason || '').trim() || notFoodFallback)
   }
@@ -151,7 +151,7 @@ function toMealResult({ parsed, model }, notFoodFallback) {
     .filter((it) => String(it?.ingredient ?? '').trim())
     .map(normalizeMealItem)
   const dish = typeof parsed?.dish === 'string' && parsed.dish.trim() ? parsed.dish.trim() : undefined
-  return { provider: 'gemini', model, items, ...(dish ? { dish } : {}) }
+  return { provider, model, items, ...(dish ? { dish } : {}) }
 }
 
 /**
