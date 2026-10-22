@@ -325,7 +325,7 @@ fermé ; M4 (stress, étages), M6 et M7 viennent ensuite. **👉 Vos actions les
 paiement, désormais urgent : il débloque la création des abonnements et la vérification bancaire prend plusieurs
 jours), puis P21, P20, P19, P18.
 
-**Run du 22/10 16:30 — le serveur relais de l'IA est prêt à être déployé (jalon 6a, première moitié).** Rien ne
+**Run du 22/10 16:30 — le serveur relais de l'IA est en ligne (jalon 6a, première moitié).** Rien ne
 change dans l'app ce soir. En coulisses : un petit serveur, **le relais Halcya**, vit maintenant dans le dépôt
 (`relay/`). C'est lui qui fera l'analyse des repas (photo ou description) pour la version Google Play, avec Gemini
 sur **Vertex AI, en Europe (Belgique)**, sous l'identité du compte `relay-runtime` : **aucune clé Gemini n'existe**,
@@ -334,7 +334,9 @@ jamais le contenu dans ses journaux, construit lui-même les consignes (impossib
 gratuit » pour autre chose qu'un repas) et se bride : **20 analyses par installation et par jour, 200 par jour au
 total, 10 par minute**, une seule instance, **zéro instance au repos** (rien à payer quand personne ne s'en sert). À
 chaque modification, la CI le teste, le déploie sur Cloud Run et **fait une vraie analyse de test** (« une pomme et un
-yaourt ») dont le résultat s'affiche dans le résumé du workflow « Relais — déploiement ». Prochain run de code (6a-2) :
+yaourt ») dont le résultat s'affiche dans le résumé du workflow « Relais — déploiement ». **Premier déploiement réussi** :
+le relais a reconnu « pomme et yaourt nature » (150 g de pomme, 125 g de yaourt) avec Gemini 2.5 Flash-Lite sur
+Vertex AI en Europe ; seul le petit test de santé avait une adresse que Cloud Run réserve, corrigée dans la foulée. Prochain run de code (6a-2) :
 la version Play appelle le relais au lieu de vous demander une clé Gemini, et la page de confidentialité le dit. Puis
 6b (vérification des achats, Play Integrity). **👉 Vos actions les plus utiles** : **P13** (profil de paiement,
 urgent), puis P21, P20, P19, P18 ; et, facultatif (3 min), **P22** : un plafond dur côté Google sur Vertex AI, en plus
@@ -717,7 +719,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
-| 22/10 16:30 — [6a : relais Cloud Run + Vertex AI](runs/2026-10-22-1630-relais-vertex.md) | 🧭 | `relay/` (Node sans dépendance : `/v1/meal/analyze` photo / texte, consignes côté relais, EXIF retiré, rien stocké, plafonds 20/inst./j, 200/j, 10/min, Vertex europe-west1 sans clé ; 24 tests) + workflow « Relais — déploiement » (Cloud Run `halcya-relay`, vérification par une vraie analyse) + job « Relais (Node) » ; app inchangée ; PR (voir le compte rendu) |
+| 22/10 16:30 — [6a : relais Cloud Run + Vertex AI](runs/2026-10-22-1630-relais-vertex.md) | 🧭 | `relay/` (Node sans dépendance : `/v1/meal/analyze` photo / texte, consignes côté relais, EXIF retiré, rien stocké, plafonds 20/inst./j, 200/j, 10/min, Vertex europe-west1 sans clé ; 24 tests) + workflow « Relais — déploiement » (Cloud Run `halcya-relay`, vérification par une vraie analyse) + job « Relais (Node) » ; app inchangée ; PR #273 fusionnée, relais déployé, analyse réelle OK (gemini-2.5-flash-lite, UE) ; `/healthz` réservé par Cloud Run → `/health` |
 | 22/10 14:30 — [M5 : écran « Données de la montre »](runs/2026-10-22-1430-m5-ecran-montre.md) | ⌚ | Page `/montre` (lien dans la carte montre) : 12 types + stress « à venir », dernière valeur et date, n sur 7 j, issue de la dernière lecture (`reads` gardé dans l'état de synchro, nombres seulement) ; décision du 22/10 13:30 notée (jalon 6 ensuite) ; 1 857 Vitest ; PR #271 fusionnée → v209 |
 | 22/10 12:30 — [M3 : température de la peau de la montre](runs/2026-10-22-1230-m3-temperature-peau.md) | ⌚ | Classe 400012 après la VFC (même ping, capacité 29), `body_temperature` `subtype: 'skin'` à part de la température corporelle, « Temp. peau » dans Journal → Jours, interrupteur « mesure continue » (7/0x2A, désactivé par défaut, envoyé une fois) ; 1 847 Vitest ; PR (voir le compte rendu) |
 | 22/10 10:30 — [M2 : VFC de journée de la montre](runs/2026-10-22-1030-m2-vfc-journee.md) | ⌚ | `p2p.js` (ping 0xCA, pages par classe, accusés 0xCF, 10 s / page, 50 pages), classe 500044 → VFC `during: 'day'` tenue hors de la VFC de nuit (tuile, Radar, normes, pistes), « VFC jour » dans Journal → Jours, reprise `dictUntil` ; 1 840 Vitest ; PR (voir le compte rendu) |
