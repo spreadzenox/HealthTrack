@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { publishListing, readListing, validateListing, pngSize, sha256, LIMITS } from './listing.mjs'
+import { publishListing, readListing, validateListing, pngSize, sha256, isMissingContactEmail, LIMITS } from './listing.mjs'
 import { API, UPLOAD_API, PlayApiError, isAccessDenied } from './publish.mjs'
 import { FORBIDDEN_WORDING } from '../../src/data/wordingRules.js'
 import { APP_NAME } from '../../src/config/brand.js'
@@ -107,6 +107,16 @@ describe('fiche du Store par l’API (jalon 10)', () => {
     expect(isAccessDenied(err)).toBe(true)
     expect(calls.at(-1).key).toBe(`DELETE ${EDITS}/E1`)
   })
+})
+
+it('e-mail de contact absent (réponse réelle de Play le 22/10) : reconnu, edit abandonné', async () => {
+  const routes = happy()
+  routes[`POST ${EDITS}/E1:commit`] = { status: 403, body: { error: { message: 'This app does not have a contact email address set.' } } }
+  const { fetchImpl, calls } = fakePlay(routes)
+  const err = await publishListing(args(fetchImpl)).catch((e) => e)
+  expect(isMissingContactEmail(err)).toBe(true)
+  expect(isMissingContactEmail(new PlayApiError('x', 403, 'The caller does not have permission'))).toBe(false)
+  expect(calls.at(-1).key).toBe(`DELETE ${EDITS}/E1`)
 })
 
 describe('validation de la fiche', () => {

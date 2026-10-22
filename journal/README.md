@@ -244,10 +244,13 @@ local par défaut, IA facultative, « pas un dispositif médical », « une esti
 « compatible avec les montres Huawei »), l'icône, une **image de présentation** (le H sur fond encre avec « Comprenez
 ce qui va avec vos bons et mauvais jours ») et **5 captures** de la version Play sur des données de démonstration
 (Aujourd'hui, Repas, Jours, Tendances, Pistes). Pour changer un texte, c'est dans `app/store/listing/fr-FR/` (si vous
-le modifiez dans la Play Console, la CI le réécrasera à la prochaine modification de la fiche). **👉 Votre prochaine
-action la plus utile reste P19** (activer GitHub Pages, 2 min), puis **P18** (groupe des testeurs) et **P20** (nouveau,
-5 min) : Play Console → Fiche principale du Store, relire ce que la CI a envoyé, et saisir l'**e-mail de contact
-public** dans Paramètres du Store (la CI ne le connaît pas). Prochain run de code : le formulaire **Sécurité des
+le modifiez dans la Play Console, la CI le réécrasera à la prochaine modification de la fiche). **⚠️ Google Play a
+tout reçu mais refuse d'enregistrer la fiche tant qu'aucune adresse e-mail de contact n'est saisie** (« This app does
+not have a contact email address set ») : rien n'est publié pour l'instant. **👉 Vos deux actions les plus utiles
+(2 min chacune)** : **P20** — Play Console → Halcya → Présence sur le Store → **Paramètres du Store → Coordonnées** →
+e-mail public → Enregistrer, puis GitHub → Actions → **« Play — fiche du Store » → Run workflow** ; et **P19** (activer
+GitHub Pages). Puis **P18** (groupe des testeurs). Publié aussi : **v204** (33,7 Mo, identique pour vous) et la
+version Play **352** en test interne. Prochain run de code : le formulaire **Sécurité des
 données**, puis la piste de test fermé, puis retour à la montre (M2, VFC).
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
@@ -627,7 +630,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
-| 22/10 04:30 — [Fiche du Store FR par l'API](runs/2026-10-22-0430-fiche-store.md) | 🧭📄 | Textes FR vérifiés contre le code, 5 captures 1080×1920 (variante play, démo) + présentation 1024×500, `listing.mjs` (SHA-256, site web, commit) et workflow « Play — fiche du Store » (concurrence `play-edits`) ; 1 790 Vitest ; PR (voir le compte rendu) |
+| 22/10 04:30 — [Fiche du Store FR par l'API](runs/2026-10-22-0430-fiche-store.md) | 🧭📄 | Textes FR vérifiés contre le code, 5 captures 1080×1920 (variante play, démo) + présentation 1024×500, `listing.mjs` (SHA-256, site web, commit) et workflow « Play — fiche du Store » (concurrence `play-edits`) ; 1 790 Vitest ; PR #265 fusionnée → v204, Play 352 ; fiche refusée par Play faute d'e-mail de contact → P20 |
 | 22/10 02:30 — [Page de confidentialité + GitHub Pages](runs/2026-10-22-0230-confidentialite-pages.md) | 🧭📄 | Politique réécrite pour la variante play (source unique, embarquée + Pages `/confidentialite/`), workflow « Site — GitHub Pages » (attend P19), Réglages → Confidentialité ; 1 778 Vitest ; PR #263 fusionnée → v203, Play 350 ; Pages rouge en attente de P19 |
 | 22/10 00:30 — [M0 « Halcya » + M1 sommeil de la montre](runs/2026-10-22-0030-halcya-sommeil.md) | 🧭⌚ | PR #260 reprise et fusionnée (nom affiché **Halcya**) ; 1er envoi Play automatique vérifié (versionCode 346, internal) ; **M1** : 0x2C plus interrogé, sommeil détaillé + résumé complet (VFC, respiration, SpO₂ de la nuit), siestes à part, rattrapage 60 j ; 1 759 Vitest ; PR (voir le compte rendu) |
 | 21/10 22:30 — [Jalon 3c : envoi automatique en test interne](runs/2026-10-21-2230-play-test-interne.md) | 🧭📦 | « Play — AAB » → API Android Publisher (edit, import, piste `internal`, notes depuis les Nouveautés, commit) ; pistes limitées à internal / alpha ; brouillon, déjà envoyé, accès refusé gérés ; `debugSymbolLevel` ; 1 747 Vitest ; PR (voir le compte rendu) |
