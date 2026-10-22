@@ -16,6 +16,11 @@ import { API, UPLOAD_API, PlayApiError } from './publish.mjs'
 export const LIMITS = { title: 30, shortDescription: 80, fullDescription: 4000, screenshotsMin: 2, screenshotsMax: 8 }
 export const IMAGE_TYPES = ['icon', 'featureGraphic', 'phoneScreenshots']
 
+/** Play refuse de valider tant que l'e-mail de contact public n'est pas saisi dans la Play Console (P20). */
+export function isMissingContactEmail(err) {
+  return err instanceof PlayApiError && /contact email/i.test(err.apiMessage ?? '')
+}
+
 const text = (file) => readFileSync(file, 'utf8').trim()
 
 /** Lit la fiche d'une langue dans `storeDir` (app/store). */

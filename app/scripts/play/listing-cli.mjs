@@ -7,7 +7,7 @@
  */
 import { readFileSync, appendFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { readListing, validateListing, publishListing, IMAGE_TYPES } from './listing.mjs'
+import { readListing, validateListing, publishListing, isMissingContactEmail, IMAGE_TYPES } from './listing.mjs'
 import { isAccessDenied } from './publish.mjs'
 
 const { PLAY_ACCESS_TOKEN: token, GITHUB_STEP_SUMMARY: summaryFile } = process.env
@@ -44,6 +44,12 @@ try {
     r.notSentForReview ? '- Validée sans envoi automatique pour examen : Play Console → Vue d’ensemble de la publication → « Envoyer pour examen ».' : '- Validée.',
   ])
 } catch (err) {
+  // Vérifié avant l'accès refusé : Play répond 403 quand l'e-mail de contact manque.
+  if (isMissingContactEmail(err)) {
+    console.log(`::warning title=Fiche du Store en attente de l’e-mail de contact::${err.message}. Action du propriétaire P20 (journal/PRODUIT.md) : Play Console → Présence sur le Store → Paramètres du Store → Coordonnées → e-mail, puis relancer ce workflow (Actions → « Play — fiche du Store » → Run workflow).`)
+    summary(['### Fiche du Store : en attente de l’e-mail de contact (P20)', '', `- ${err.message}`, '- Rien n’a été modifié sur Play (edit abandonné). Après P20 : Actions → « Play — fiche du Store » → Run workflow.'])
+    process.exit(2)
+  }
   if (isAccessDenied(err)) {
     console.log(`::warning title=Google Play : accès refusé à la fiche::${err.message}. gh-deployer n’a peut-être pas le droit « Gérer la présence sur le Store » (action du propriétaire, journal/PRODUIT.md).`)
     summary(['### Fiche du Store : accès refusé', '', `- ${err.message}`])
