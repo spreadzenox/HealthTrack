@@ -391,6 +391,13 @@ déjà accès à `relay-runtime` (« ✅ relay-runtime lit les achats ») ou s'i
 invitation (24 à 48 h). Prochain run de code : **6c** (achat dans l'app, droits premium, crédits IA, paywall).
 **👉 Toujours en attente de vous : P23** (« ① + ② » ou autre).
 
+**Run du 22/10 22:30 — réparation du déploiement du relais (rien ne change dans l'app).** Le déploiement de 21:30
+avait échoué pour une faute de syntaxe dans le workflow (le caractère `@` servait à séparer les réglages du serveur, et
+l'adresse de `relay-runtime` en contient un). Corrigé, avec un test qui relit désormais ces réglages comme Google
+Cloud. Pendant ce temps, l'ancienne version du relais a continué de répondre : l'analyse des repas n'a pas été coupée.
+Ce merge redéploie le relais avec la vérification des abonnements et les notifications Google Play. Prochain run de
+code : **6c**. **👉 Toujours en attente de vous : P23.**
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -768,6 +775,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 22:30 — [Réparation du déploiement du relais](runs/2026-10-22-2230-relais-deploiement-repare.md) | 🐛 | « Relais — déploiement » rouge (séparateur `^@^` de `--set-env-vars` qui coupait l'adresse de relay-runtime) → `^;^` ; test `relay/test/workflow.test.js` (rouge sur l'ancien workflow) ; 42 tests relais |
 | 22/10 21:30 — [6b-1 : le relais vérifie les abonnements Play](runs/2026-10-22-2130-6b-achats-relais.md) | 🧭 | `billing.js` : `subscriptionsv2.get` (droits : actif, grâce, annulé non échu ; pas en pause / suspendu / expiré), accusé côté serveur, `linkedPurchaseToken`, `/v1/subscription/verify` (format validateur cdv-purchase), `/pubsub/rtdn` (OIDC vérifié), période de lancement `LAUNCH_PREMIUM_UNTIL` (coupée) ; CI : abonnement push `play-rtdn-relay` + test d'accès Play ; 40 tests relais |
 | 22/10 18:30 — [6a-2 : la version Play analyse les repas par le relais](runs/2026-10-22-1830-relais-app-play.md) | 🧭 | `aiRelay.js` + façade `mealAi.js` (play : relais, identifiant aléatoire, accord `ai_meal` une fois, analyses restantes ; sideload : clé Gemini inchangée) ; confidentialité et sécurité des données (+ identifiant) à jour ; CORS et analyse réelle vérifiés ; P19, P20, P21 faits par le propriétaire ; P21 à relancer |
 | 22/10 20:30 — [Idées : audit de la version candidate, testeurs sans paiement](runs/2026-10-22-2030-idees-version-candidate.md) | 💡 | `PRODUIT.md` §2 bis (5 critères) ; audit play vierge → VC-1…VC-10 au BACKLOG ; I149–I152 ; P12–P18, P21 à jour ; P23 proposé (testeurs de licence + période de lancement) |
