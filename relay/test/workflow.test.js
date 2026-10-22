@@ -30,6 +30,7 @@ test('workflow relais : chaque variable de --set-env-vars est un couple CLÉ=val
 test('workflow relais : les valeurs avec virgule ou @ restent entières', () => {
   const vars = Object.fromEntries(envVars().map((item) => item.split(/=(.*)/s).slice(0, 2)))
   assert.equal(vars.RTDN_SERVICE_ACCOUNT, RUNTIME_SA)
-  assert.equal(vars.VERTEX_LOCATIONS, 'europe-west1,europe-west4')
+  assert.equal(vars.VERTEX_LOCATIONS, 'eu,europe-west1')
+  assert.equal(vars.VERTEX_MODELS, 'gemini-3.5-flash-lite,gemini-3.1-flash-lite')
   assert.equal(vars.PLAY_PACKAGE, 'fr.jpesquet.sante')
 })

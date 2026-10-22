@@ -22,8 +22,8 @@ export function loadConfig(env = process.env) {
   return {
     port: int(env.PORT, 8080),
     project: env.VERTEX_PROJECT || 'healthtrack-824b26',
-    locations: list(env.VERTEX_LOCATIONS, ['europe-west1', 'europe-west4']),
-    models: list(env.VERTEX_MODELS, ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite']),
+    locations: list(env.VERTEX_LOCATIONS, ['eu', 'europe-west1']),
+    models: list(env.VERTEX_MODELS, ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite']),
     globalPerDay: int(env.GLOBAL_DAILY_CAP, 200),
     installPerDay: int(env.INSTALL_DAILY_CAP, 20),
     globalPerMinute: int(env.GLOBAL_PER_MINUTE_CAP, 10),
