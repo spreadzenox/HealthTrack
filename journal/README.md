@@ -415,6 +415,17 @@ multi-région UE avec 3.5 puis 3.1 Flash-Lite (toujours dans l'UE, jamais « glo
 2 minutes que Cloud Logging indexe l'erreur avant de la recopier. Rien à faire de votre côté ; P22 (facultatif) vise
 désormais la ligne de quota **eu** (voir `PRODUIT.md`).
 
+**Run du 23/10 01:30 — ✅ l'analyse des repas de la version Play remarche, et l'app connaît votre abonnement (jalon
+6c, étape 1).** Vérifié dans le dernier « Relais — déploiement » : l'analyse de test répond (HTTP 200, modèle
+`gemini-3.5-flash-lite` dans l'UE), et **Google Play accepte déjà `relay-runtime`** (« ✅ relay-runtime lit les
+achats ») : votre invitation a pris effet. Nouveau dans la **version Play** : **Réglages → Paramètres → Abonnement**
+dit en une phrase où vous en êtes (« Version gratuite… », « Essai gratuit en cours · premier paiement le … », « Premium
+actif · renouvellement le … », « Abonnement en pause… ») et, dès qu'un abonnement existe, un bouton **« Gérer mon
+abonnement dans Google Play »** (obligatoire pour Google). C'est le relais qui le dit, pas l'app : hors connexion,
+l'app garde le dernier état sans jamais le prolonger au-delà de son échéance. Rien ne change dans la version
+sideload. Prochain run de code : **6c-2**, le bouton d'achat lui-même (bibliothèque Google Play Billing, variante Play
+seulement). **👉 Toujours en attente de vous : P23** (« ① + ② » ou autre : comment les testeurs ne paient jamais).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -793,6 +804,7 @@ du jour avec sa fourchette (derrière la porte).
 | Run | Type | Résultat |
 |---|---|---|
 | 22/10 23:30 — [Relais : analyse des repas en panne (502)](runs/2026-10-22-2330-relais-analyse-502.md) | 🚑 | Révision 6b-1 en ligne mais analyse de test en 502 (relance et appel direct identiques) ; repli sur le modèle suivant aussi pour 400 / 5xx / réponse vide ou illisible (pas 429) ; message exact de Vertex AI dans le résumé du workflow ; 44 tests relais |
+| 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 00:30 — [Relais : modèle retiré, multi-région UE](runs/2026-10-23-0030-relais-modele-retire.md) | 🚑 | Cause du 502 : `gemini-2.5-flash-lite` retiré le 20/10 ; 3.5 / 3.1 Flash-Lite seulement sur la multi-région `eu` → relais sur `aiplatform.eu.rep.googleapis.com`, modèles 3.5 puis 3.1 Flash-Lite ; lecture des journaux réessayée 2 min ; 45 tests relais |
 | 22/10 22:30 — [Réparation du déploiement du relais](runs/2026-10-22-2230-relais-deploiement-repare.md) | 🐛 | « Relais — déploiement » rouge (séparateur `^@^` de `--set-env-vars` qui coupait l'adresse de relay-runtime) → `^;^` ; test `relay/test/workflow.test.js` (rouge sur l'ancien workflow) ; 42 tests relais |
 | 22/10 21:30 — [6b-1 : le relais vérifie les abonnements Play](runs/2026-10-22-2130-6b-achats-relais.md) | 🧭 | `billing.js` : `subscriptionsv2.get` (droits : actif, grâce, annulé non échu ; pas en pause / suspendu / expiré), accusé côté serveur, `linkedPurchaseToken`, `/v1/subscription/verify` (format validateur cdv-purchase), `/pubsub/rtdn` (OIDC vérifié), période de lancement `LAUNCH_PREMIUM_UNTIL` (coupée) ; CI : abonnement push `play-rtdn-relay` + test d'accès Play ; 40 tests relais |

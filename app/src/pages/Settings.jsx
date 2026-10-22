@@ -7,6 +7,7 @@ import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import { FEATURES } from '../config/distribution'
 import { getLastQuota } from '../services/aiRelay'
+import { getEntitlement, refreshEntitlement, describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
 import '../Food.css'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
@@ -34,6 +35,31 @@ function RelayAiBlock() {
           quitte l’appareil.
         </p>
       </div>
+    </div>
+  )
+}
+
+/** Variante play : état de l'abonnement, établi par le relais (jalon 6c), et lien de gestion Google Play. */
+function SubscriptionBlock() {
+  const [ent, setEnt] = useState(() => getEntitlement())
+
+  useEffect(() => {
+    let alive = true
+    refreshEntitlement().then((next) => alive && setEnt(next))
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  return (
+    <div className="settings-block">
+      <h3 className="section-title">Abonnement</h3>
+      <p className="page-intro">{describeEntitlement(ent)}</p>
+      {ent.source === 'play' && (
+        <a className="btn btn-secondary settings-link-btn" href={manageSubscriptionUrl(ent.productId)} target="_blank" rel="noopener noreferrer">
+          Gérer mon abonnement dans Google Play
+        </a>
+      )}
     </div>
   )
 }
@@ -94,6 +120,8 @@ export default function Settings() {
           ))}
         </div>
       </div>
+
+      {FEATURES.billing && <SubscriptionBlock />}
 
       {FEATURES.aiRelay ? <RelayAiBlock /> : (
       <div className="settings-block">
