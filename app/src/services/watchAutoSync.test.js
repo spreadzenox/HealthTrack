@@ -190,6 +190,20 @@ describe('describeWatchStatus', () => {
   })
 })
 
+describe('issue de chaque lecture (écran « Montre », M5)', () => {
+  it('gardée en nombres seulement, puis conservée quand une connexion ne lit rien', () => {
+    const storage = memoryStorage()
+    const services = [{ id: 'sleepFile', label: 'sommeil détaillé', command: '0x2C', outcome: 'timeout' }, { id: 'hrvDay', label: 'VFC de journée', command: '0x34', outcome: 'ok', count: 4 }]
+    const first = recordWatchConnection({ outcome: { code: 'connected' }, sync: { inserted: 4, services } }, { storage, now: () => T0 })
+    expect(first.reads).toEqual([{ id: 'sleepFile', outcome: 'timeout', count: 0 }, { id: 'hrvDay', outcome: 'ok', count: 4 }])
+    expect(first.readsAt).toBe(new Date(T0).toISOString())
+    const failed = recordWatchConnection({ outcome: { code: 'connect_failed' } }, { storage, now: () => T0 + 60_000 })
+    expect(failed.reads).toEqual(first.reads)
+    expect(failed.readsAt).toBe(first.readsAt)
+    expect(recordWatchConnection({ outcome: { code: 'failed' } }, { storage: memoryStorage(), now: () => T0 }).reads).toBeUndefined()
+  })
+})
+
 describe('dernière connexion réussie (assistant « Libérer et appairer », 18/10/2026)', () => {
   it('gardée après un échec, reprise des anciens états', () => {
     const storage = memoryStorage()

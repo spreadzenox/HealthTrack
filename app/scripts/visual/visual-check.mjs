@@ -37,6 +37,7 @@
  *   npm run visual -- --routes=/connectors --ble=watch-silent --devices --setup  # … assistant « Libérer et appairer »
  *   npm run visual -- --routes=/connectors --ble=watch --connect       # … « Connexion à la montre » (avant import des paramètres)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done  # … montre appairée et authentifiée (rapport factice)
+ *   npm run visual -- --routes=/montre --connect=done   # écran « Données de la montre » (M5) avec l'issue de chaque lecture
  *   npm run visual -- --routes=/connectors --ble=watch --connect=stalled  # … la montre n'a pas répondu pour le sommeil
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion  # … « Synchro dès que la montre se reconnecte » (à activer)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion=on  # … activée, montre vue il y a 5 min, relue app fermée il y a 3 min
@@ -92,6 +93,7 @@ const DEFAULT_ROUTES = [
   ['/recommendations', 'recommendations'],
   ['/settings', 'settings'],
   ['/plus', 'plus'],
+  ['/montre', 'montre'],
 ]
 
 const FAKE_MEAL_ANALYSIS = {
@@ -342,7 +344,12 @@ async function main() {
         localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: '00', v2: '00', v3: '00' }))
         localStorage.setItem(
           'healthtrack_watch_autosync',
-          JSON.stringify({ at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: stalled ? 0 : 9, stalled: stalled ? ['sommeil'] : null, battery: 84, failures: 0, everConnected: true }),
+          JSON.stringify({
+            at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: stalled ? 0 : 9, stalled: stalled ? ['sommeil'] : null, battery: 84, failures: 0, everConnected: true,
+            // Issue de chaque lecture (écran « Montre », M5)
+            readsAt: t,
+            reads: [['sleep', 'ok'], ['minutes', 'ok'], ['totals', 'ok'], ['workouts', 'empty'], ['sleepFile', stalled ? 'timeout' : 'ok'], ['hrvDay', 'ok'], ['skinTemp', 'ok']].map(([id, outcome]) => ({ id, outcome, count: outcome === 'ok' ? 3 : 0 })),
+          }),
         )
         localStorage.setItem(
           'healthtrack_watch_connect_last',

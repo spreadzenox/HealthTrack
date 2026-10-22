@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import WatchDiagnostic from './WatchDiagnostic'
 import { watchJournal } from '../devices/huawei/journal'
 import { APP_NAME } from '../config/brand'
@@ -121,6 +122,18 @@ describe('WatchDiagnostic', () => {
     expect(JSON.parse(json).connect.outcome.code).toBe('connected')
     expect(JSON.parse(json).diagnostic.verdict.code).toBe('no_answer')
     expect(filename).toBe('healthtrack-journal-montre-2026-10-14-07-30.json')
+  })
+
+  it('montre déjà connectée : lien visible vers l’écran « Montre » (M5), pas sous « Diagnostic »', () => {
+    localStorage.setItem('healthtrack_watch_autosync', JSON.stringify({ at: new Date().toISOString(), outcome: 'connected', everConnected: true }))
+    const { container } = render(
+      <MemoryRouter>
+        <WatchDiagnostic available run={vi.fn()} setup={null} connect={vi.fn()} />
+      </MemoryRouter>,
+    )
+    const link = screen.getByRole('link', { name: 'Voir ce qui remonte de la montre' })
+    expect(link.getAttribute('href')).toBe('/montre')
+    expect(container.querySelector('details.watch-trouble').contains(link)).toBe(false)
   })
 
   it('jamais connectée : dépannage déplié', () => {

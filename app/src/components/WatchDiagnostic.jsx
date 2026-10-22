@@ -7,6 +7,7 @@
  */
 import { useState } from 'react'
 import { registerPlugin } from '@capacitor/core'
+import { Link, useInRouterContext } from 'react-router-dom'
 import { getClient, isBleAvailable, ready } from '../devices/ble/bleService'
 import { runHuaweiDiagnostic, STEPS } from '../devices/huawei/diagnostic'
 import { detectPhoneApps } from '../devices/phoneApps'
@@ -149,6 +150,15 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
   }
 
   const steps = report?.steps || STEPS.map((s) => ({ ...s, status: 'pending' }))
+  const inRouter = useInRouterContext()
+  // Écran « Montre » (M5) : ce qui remonte, type par type
+  const dataLink = inRouter && (
+    <p className="watch-data-link">
+      <Link to="/montre" className="btn btn-secondary connector-btn">
+        Voir ce qui remonte de la montre
+      </Link>
+    </p>
+  )
   const showConnect = available && Boolean(connectFn)
 
   const exportBlock = (journal.connect || journal.diagnostic) && (
@@ -214,13 +224,14 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
     <section className="my-devices watch-diag" aria-labelledby="watch-diag-title">
       <h3 id="watch-diag-title" className="my-devices-title">Montre Huawei</h3>
       {showConnect ? (
-        <WatchConnect connect={connectFn} onReport={setConnectReport}>
+        <WatchConnect connect={connectFn} onReport={setConnectReport} dataLink={dataLink}>
           {exportBlock}
           {message && <p className="my-device-message">{message}</p>}
           {test}
         </WatchConnect>
       ) : (
         <>
+          {dataLink}
           {test}
           {exportBlock}
           {message && <p className="my-device-message">{message}</p>}

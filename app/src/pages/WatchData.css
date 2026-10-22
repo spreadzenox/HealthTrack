@@ -1,0 +1,107 @@
+.watch-data-back {
+  margin: 0 0 8px;
+}
+
+.watch-data-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.watch-data-sync,
+.watch-data-summary {
+  margin: 0 0 8px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.watch-data-summary {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.watch-data-list {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.watch-data-row {
+  padding: 12px 14px;
+  border-radius: var(--radius-choice);
+  background: var(--surface);
+  border: 2px solid transparent;
+}
+
+.watch-data-none {
+  border-color: var(--color-border);
+  background: var(--bg);
+}
+
+.watch-data-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.watch-data-label {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.watch-data-tag {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: var(--radius-tag);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(var(--tint-rgb), 0.06);
+}
+
+.watch-data-ok .watch-data-tag {
+  color: var(--color-ok);
+  background: var(--bg);
+}
+
+.watch-data-value,
+.watch-data-empty,
+.watch-data-meta {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.watch-data-value strong {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.watch-data-date,
+.watch-data-meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.watch-data-empty {
+  color: var(--text-muted);
+}
+
+/* Lien depuis la carte montre (page Sources) */
+.watch-data-link {
+  margin: 12px 0 0;
+}
+
+.watch-data-link a {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
