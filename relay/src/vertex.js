@@ -3,7 +3,8 @@
  * le serveur de métadonnées, aucune clé API.
  *
  * Modèles et régions essayés dans l'ordre (le moins cher adapté d'abord) ; on passe au suivant seulement si le
- * modèle est introuvable ou indisponible dans la région, et l'on retient ensuite le couple qui a marché.
+ * modèle est introuvable, indisponible dans la région, refuse la requête ou répond sans JSON exploitable (sauf
+ * plafond 429), et l'on retient ensuite le couple qui a marché.
  */
 const METADATA_TOKEN_URL =
   'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token'
@@ -87,6 +88,7 @@ export function createVertexClient({ project, locations, models, getToken, fetch
     async generateJson({ systemInstruction, parts, schema }) {
       const order = [...candidates.slice(preferred), ...candidates.slice(0, preferred)]
       let lastError = null
+      let billed = false
       for (const candidate of order) {
         let withSchema = Boolean(schema)
         const build = () => ({
@@ -102,29 +104,40 @@ export function createVertexClient({ project, locations, models, getToken, fetch
         if (res.status === 400 && withSchema) {
           const message = await readError(res)
           // Modèle qui refuse le schéma de réponse : même requête sans schéma
-          if (!/schema/i.test(message)) throw new VertexError(message, 400)
-          withSchema = false
-          res = await post(candidate, build())
-        }
-        if (res.ok) {
-          preferred = candidates.indexOf(candidate)
-          const data = await res.json()
-          const text = extractResponseText(data)
-          if (!text) throw new VertexError('Réponse du modèle vide.', 502, true)
-          try {
-            return { parsed: parseModelJson(text), model: candidate.model, location: candidate.location }
-          } catch {
-            throw new VertexError('Réponse du modèle illisible (JSON attendu).', 502, true)
+          if (/schema/i.test(message)) {
+            withSchema = false
+            res = await post(candidate, build())
+          } else {
+            lastError = new VertexError(`${candidate.model}@${candidate.location} : ${message}`, 400)
+            continue
           }
         }
-        const message = await readError(res)
-        // Modèle absent de cette région ou pas ouvert au projet : on essaie le suivant
-        if (res.status === 404 || res.status === 403) {
-          lastError = new VertexError(`${candidate.model}@${candidate.location} : ${message}`, res.status)
-          continue
+        if (res.ok) {
+          const data = await res.json()
+          const text = extractResponseText(data)
+          let parsed
+          try {
+            parsed = text ? parseModelJson(text) : undefined
+          } catch {
+            parsed = undefined
+          }
+          if (parsed === undefined) {
+            // Le modèle a répondu (appel facturé) mais sans JSON exploitable : on essaie le suivant
+            const why = text ? 'Réponse du modèle illisible (JSON attendu).' : 'Réponse du modèle vide.'
+            lastError = new VertexError(`${candidate.model}@${candidate.location} : ${why}`, 502, true)
+            billed = true
+            continue
+          }
+          preferred = candidates.indexOf(candidate)
+          return { parsed, model: candidate.model, location: candidate.location }
         }
-        throw new VertexError(message, res.status)
+        const message = await readError(res)
+        // Plafond atteint chez Google : inutile d'insister sur d'autres modèles
+        if (res.status === 429) throw new VertexError(message, 429, billed)
+        // Modèle absent de cette région, pas ouvert au projet, requête qu'il refuse ou panne : on essaie le suivant
+        lastError = new VertexError(`${candidate.model}@${candidate.location} : ${message}`, res.status, billed)
       }
+      if (lastError) lastError.billed = billed
       throw lastError ?? new VertexError('Aucun modèle configuré.', 500)
     },
   }
