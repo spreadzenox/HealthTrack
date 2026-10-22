@@ -49,3 +49,9 @@
 ## Suite proposée
 - 6b : vérification des achats par le relais (`subscriptionsv2.get`, accusé, RTDN via `play-rtdn`, Play Integrity).
 - Propriétaire : relancer « Play — sécurité des données » (P21 bis), P13 (profil de paiement), P18 (groupe des testeurs).
+
+## Après le merge
+- PR #275 : Frontend (Vitest), Build APK, Relais (Node), Protocole montre, Budget de lectures, émulateur A56 (API 35 et
+  36) verts ; fusionnée en squash (`179f423`).
+- Sur main : **v212** publiée (`HealthTrack-v212.apk`, 33,7 Mo) ; « Play — AAB » : **versionCode 362 en test interne**
+  (validée, déployée aux testeurs internes) ; Tests, émulateur, Site, fiche du Store verts.

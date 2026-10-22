@@ -356,7 +356,7 @@ compter), la politique de confidentialité et la sécurité des données le dise
 GitHub → Actions → **« Play — sécurité des données » → Run workflow** une fois de plus (la déclaration gagne un 4ᵉ
 type, « Identifiants de l'appareil ou autres ») ; ② **P13** (profil de paiement, urgent pour les abonnements) ;
 ③ **P18** (groupe des testeurs, qui ouvre le test fermé de 14 jours). À tester sur la version Play (test interne) :
-photographier un repas → accepter → vérifier les aliments. Prochain run de code : **6b** (vérification des achats par
+photographier un repas → accepter → vérifier les aliments. Publié : **v212** (33,7 Mo, identique pour vous) et la version Play **362** en test interne. Prochain run de code : **6b** (vérification des achats par
 le relais, Play Integrity).
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
