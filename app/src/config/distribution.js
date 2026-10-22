@@ -28,6 +28,9 @@ export function featuresFor(distribution) {
     // Analyse IA des repas par le relais Halcya (Vertex AI, UE, sans clé dans l'app) ; en sideload, la clé
     // Gemini saisie dans les Paramètres
     aiRelay: d === 'play',
+    // Abonnement Google Play (droits établis par le relais, jalon 6c) ; la sideload n'a pas Play Billing et ne perd
+    // aucune fonction
+    billing: d === 'play',
   }
 }
 

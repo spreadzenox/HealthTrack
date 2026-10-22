@@ -23,5 +23,8 @@ describe('variante de distribution', () => {
   it('lecture du visage : au déverrouillage en sideload, à l’ouverture de l’app en play', () => {
     expect(featuresFor('sideload')).toMatchObject({ faceUnlock: true, faceAppOpen: false, aiRelay: false })
     expect(featuresFor('play')).toMatchObject({ faceUnlock: false, faceAppOpen: true, aiRelay: true })
+    // Abonnement Google Play : seulement dans la variante play ; la sideload ne perd aucune fonction
+    expect(featuresFor('play').billing).toBe(true)
+    expect(featuresFor('sideload').billing).toBe(false)
   })
 })

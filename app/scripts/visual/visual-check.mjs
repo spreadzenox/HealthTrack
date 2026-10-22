@@ -26,6 +26,8 @@
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
  *   npm run visual -- --play --routes=/food --food-analysis  # variante play : relais Halcya factice, accord accepté ;
  *                                                  --ai-consent=ask : s'arrête sur la divulgation avant l'envoi (6a-2)
+ *   npm run visual -- --play --routes=/settings --subscription=active  # état d'abonnement factice renvoyé par le
+ *                                                  relais (free par défaut, launch, active, trial, paused) (6c)
  *   npm run visual -- --routes=/data --import          # aperçu d'une sauvegarde choisie (avant import)
  *   npm run visual -- --routes=/data --import=replace  # … puis confirmation « Remplacer mes données »
  *   npm run visual -- --routes=/connectors --devices   # « Mes appareils » : simule Huawei Health + Garmin installés
@@ -271,6 +273,24 @@ async function main() {
         }
       }, bannerMode)
     }
+    // Abonnement (variante play) : jamais d'appel au vrai relais ; état factice choisi par --subscription
+    await context.route('**/v1/subscription/verify', (route) => {
+      const inDays = (n) => new Date(Date.now() + n * 86_400_000).toISOString()
+      const states = {
+        free: { premium: false, source: null },
+        launch: { premium: true, source: 'launch', launchUntil: inDays(20) },
+        active: { premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: inDays(300), autoRenewing: true },
+        trial: { premium: true, source: 'play', state: 'active', trial: true, productId: 'halcya_premium', expiresAt: inDays(12), autoRenewing: true },
+        paused: { premium: false, source: null, state: 'paused', productId: 'halcya_premium', expiresAt: inDays(25) },
+      }
+      const sub = typeof args.subscription === 'string' && states[args.subscription] ? args.subscription : 'free'
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ ok: true, ...states[sub] }),
+      })
+    })
     // Météo : jamais d'appel réseau réel. Avec les données de démo, météo activée (Paris) et à jour.
     await context.route('https://*.open-meteo.com/**', (route) => route.abort())
     if (!args.empty) {

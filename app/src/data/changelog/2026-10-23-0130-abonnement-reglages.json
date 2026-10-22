@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-23",
+  "kind": "nouveau",
+  "title": "Version Google Play : votre abonnement dans les Paramètres",
+  "items": [
+    "Réglages → Paramètres → Abonnement dit en une phrase où vous en êtes : version gratuite, essai en cours, premium actif, en pause…",
+    "Dès qu'un abonnement existe, le bouton « Gérer mon abonnement dans Google Play » permet de le modifier ou de l'annuler.",
+    "Le journal, les imports des montres, le bien-être estimé, les graphiques et l'export restent gratuits.",
+    "Dans la version installée depuis GitHub, rien ne change."
+  ]
+}

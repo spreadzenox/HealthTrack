@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 
 vi.mock('../config/distribution', async (importOriginal) => {
@@ -12,8 +12,13 @@ import { DebugProvider } from '../contexts/DebugContext'
 
 const renderSettings = () => render(<DebugProvider><BrowserRouter><Settings /></BrowserRouter></DebugProvider>)
 
+const relayAnswer = (body) => vi.fn().mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve(body) })
+
 describe('Settings — variante play (relais Halcya)', () => {
-  beforeEach(() => localStorage.clear())
+  beforeEach(() => {
+    localStorage.clear()
+    globalThis.fetch = relayAnswer({ ok: true, premium: false, source: null })
+  })
 
   it('aucun champ de clé Gemini : l’analyse passe par notre serveur', () => {
     renderSettings()
@@ -29,5 +34,22 @@ describe('Settings — variante play (relais Halcya)', () => {
     localStorage.setItem('halcya_ai_quota', JSON.stringify({ remaining: 7, resetAt: new Date(Date.now() + 3600_000).toISOString() }))
     renderSettings()
     expect(screen.getByText('7 analyses restantes aujourd’hui.')).toBeInTheDocument()
+  })
+
+  it('bloc Abonnement : version gratuite par défaut, sans lien de gestion', async () => {
+    renderSettings()
+    expect(screen.getByText('Abonnement')).toBeInTheDocument()
+    expect(screen.getByText(/Version gratuite/)).toBeInTheDocument()
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled())
+    expect(globalThis.fetch.mock.calls[0][0]).toMatch(/\/v1\/subscription\/verify$/)
+    expect(screen.queryByRole('link', { name: /Gérer mon abonnement/ })).toBeNull()
+  })
+
+  it('bloc Abonnement : l’état renvoyé par le relais s’affiche, avec le lien Google Play', async () => {
+    globalThis.fetch = relayAnswer({ ok: true, premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: new Date(Date.now() + 20 * 86_400_000).toISOString(), autoRenewing: true })
+    renderSettings()
+    expect(await screen.findByText(/Premium actif · renouvellement le/)).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: /Gérer mon abonnement dans Google Play/ })
+    expect(link).toHaveAttribute('href', 'https://play.google.com/store/account/subscriptions?sku=halcya_premium&package=fr.jpesquet.sante')
   })
 })
