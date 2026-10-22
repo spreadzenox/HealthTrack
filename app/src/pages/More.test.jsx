@@ -51,4 +51,11 @@ describe('More page', () => {
     expect(link).toHaveTextContent(/Sauvegarde et restauration/)
     expect(link).not.toHaveTextContent(/historique/)
   })
+
+  it('opens the privacy policy bundled with the app (required by Google Play and Health Connect)', () => {
+    renderMore()
+    const link = screen.getByRole('link', { name: /Confidentialité/ })
+    expect(link).toHaveAttribute('href', '/privacypolicy.html')
+    expect(link).toHaveTextContent(/Ce qui reste sur le téléphone/)
+  })
 })
