@@ -537,7 +537,7 @@ export function outcomeOf(e) {
   if (/^Pas de réponse|incomplet/.test(msg)) return 'timeout'
   return /refusé/.test(msg) ? 'refused' : 'error'
 }
-const OUTCOME_LABELS = { ok: 'reçu', empty: 'vide', timeout: 'sans réponse', refused: 'refusé', unsupported: 'non pris en charge', error: 'erreur' }
+export const OUTCOME_LABELS = { ok: 'reçu', empty: 'vide', timeout: 'sans réponse', refused: 'refusé', unsupported: 'non pris en charge', error: 'erreur' }
 
 /** Une lecture du journal : { id, label, command, outcome, count, units?, failed? } — des nombres, jamais de valeur. */
 const serviceRead = (id, outcome, extra = {}) => ({ ...SYNC_READS.find((r) => r.id === id), outcome, ...extra })

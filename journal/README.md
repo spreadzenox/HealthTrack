@@ -166,7 +166,7 @@ identifiant technique ne change), et la **montre passe en priorité principale d
 maximale — sauf un run court dès que **gh-deployer** est invité dans la Play Console, pour l'envoi automatique en test
 interne.
 
-**⌚ Montre Huawei — état par type de donnée (mis à jour le 22/10 12:30)** :
+**⌚ Montre Huawei — état par type de donnée (mis à jour le 22/10 14:30 ; à vérifier d'un coup d'œil dans Sources → montre → « Voir ce qui remonte de la montre »)** :
 
 | Donnée | État | Prochaine étape |
 |---|---|---|
@@ -174,11 +174,12 @@ interne.
 | VFC de la nuit · respiration · SpO₂ et FC de la nuit | 🟡 lues avec la nuit (M1), à confirmer | — |
 | VFC de journée | 🟡 livrée le 22/10 10:30 (M2), **à confirmer sur votre montre** (Journal → Jours, « VFC jour ») | — |
 | Température de la peau | 🟡 livrée le 22/10 12:30 (M3), **à confirmer sur votre montre** (Journal → Jours, « Temp. peau ») | — |
-| Stress | ❌ même cause que le sommeil | M4 (prochain run de code) |
+| Stress | ❌ même cause que le sommeil | M4 (après le jalon 6, décision du 22/10 13:30) |
 | Étages | ❌ personne ne sait encore les lire | M4 (avec votre aide) |
 | FC continue, FC au repos, SpO₂ de journée, pas, distance, calories | ✅ | — |
 | Séances (type, durée, distance, FC mini / maxi) | ✅ ; courbe FC et allure ❌ | M7 |
 | Synchro en arrière-plan | 🟡 pas, FC, sommeil simple seulement | M6 |
+| Écran « Données de la montre » (dernière valeur, date, n sur 7 j, réponse de la montre) | 🟡 livré le 22/10 14:30 (M5) | — |
 
 **À faire sur votre montre dès maintenant** (ça prépare M1–M4) : vérifier que **TruSleep**, la **surveillance du
 stress** et, si la montre la propose, la **mesure de la température de la peau** sont activés (Réglages de la montre →
@@ -307,6 +308,22 @@ activer l'interrupteur si vous le souhaitez, « Synchroniser la montre », puis 
 n'apparaît pas, exportez le journal de la synchro : la ligne « température de la peau » dit ce que la montre a
 répondu. Toujours attendus : vos retours sur le **sommeil** (M1) et la **VFC de journée** (M2). Prochain run de code :
 **M4** (stress, étages). **👉 Vos actions les plus utiles** : P21, P20, P19, P18 (inchangées).
+
+**Run du 22/10 14:30 — un écran pour voir d'un coup d'œil ce qui remonte de votre montre (M5).** Ce que vous verrez
+dans la prochaine version (sideload et Play) : dans **Sources → montre**, sous l'interrupteur de la température, un
+bouton **« Voir ce qui remonte de la montre »**. Il ouvre **« Données de la montre »** : une ligne par donnée —
+sommeil (nuits), siestes, VFC de la nuit, VFC de journée, température de la peau, SpO₂, respiration, fréquence
+cardiaque, FC au repos, pas, calories, séances (et le stress, marqué « à venir ») —, chacune avec **la dernière
+valeur reçue et sa date**, le **nombre de mesures des 7 derniers jours**, et **ce que la montre a répondu à la
+dernière synchro** (« reçu (3) », « vide », « sans réponse », « non pris en charge »). En haut : « N types sur 12
+reçus ces 7 derniers jours ». Rien ne change dans vos données. **👉 À tester (2 min), c'est P17** : « Synchroniser la
+montre », puis « Voir ce qui remonte de la montre », et m'envoyer **une capture de la liste** (deux écrans) : elle
+me dira en une fois si le sommeil (M1), la VFC de journée (M2) et la température (M3) arrivent. **Votre décision de
+13:30 est appliquée** : le **prochain run de code attaque le jalon 6** (abonnement Google Play et relais Vertex AI,
+en commençant par le relais Cloud Run et l'analyse des repas), pour qu'il soit prêt pendant les 14 jours du test
+fermé ; M4 (stress, étages), M6 et M7 viennent ensuite. **👉 Vos actions les plus utiles** : **P13** (profil de
+paiement, désormais urgent : il débloque la création des abonnements et la vérification bancaire prend plusieurs
+jours), puis P21, P20, P19, P18.
 
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
@@ -685,6 +702,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 14:30 — [M5 : écran « Données de la montre »](runs/2026-10-22-1430-m5-ecran-montre.md) | ⌚ | Page `/montre` (lien dans la carte montre) : 12 types + stress « à venir », dernière valeur et date, n sur 7 j, issue de la dernière lecture (`reads` gardé dans l'état de synchro, nombres seulement) ; décision du 22/10 13:30 notée (jalon 6 ensuite) ; 1 857 Vitest ; PR (voir le compte rendu) |
 | 22/10 12:30 — [M3 : température de la peau de la montre](runs/2026-10-22-1230-m3-temperature-peau.md) | ⌚ | Classe 400012 après la VFC (même ping, capacité 29), `body_temperature` `subtype: 'skin'` à part de la température corporelle, « Temp. peau » dans Journal → Jours, interrupteur « mesure continue » (7/0x2A, désactivé par défaut, envoyé une fois) ; 1 847 Vitest ; PR (voir le compte rendu) |
 | 22/10 10:30 — [M2 : VFC de journée de la montre](runs/2026-10-22-1030-m2-vfc-journee.md) | ⌚ | `p2p.js` (ping 0xCA, pages par classe, accusés 0xCF, 10 s / page, 50 pages), classe 500044 → VFC `during: 'day'` tenue hors de la VFC de nuit (tuile, Radar, normes, pistes), « VFC jour » dans Journal → Jours, reprise `dictUntil` ; 1 840 Vitest ; PR (voir le compte rendu) |
 | 22/10 08:30 — [Idées : M2 P2P prêt, Play Billing](runs/2026-10-22-0830-idees-p2p-billing.md) | 💡⌚ | Spec M2 complétée (`huawei.md` §10.10 : numéro 2 au départ, ping par numéro, données par classe, accusés au numéro de la montre, réels 4 / 8 o, conception `p2p.js` sur `session.listen` car `request` prendrait l'accusé) ; émotions de la montre non lues (I145) ; Play Billing : cdv-purchase (MIT, PBL 9) + relais, pas RevenueCat (I146–I148) ; journal seul, 1 814 Vitest |

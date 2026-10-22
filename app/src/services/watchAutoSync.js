@@ -51,6 +51,12 @@ export function getWatchAutoSyncState(storage = globalThis.localStorage) {
   }
 }
 
+/** { reads, readsAt } : issue (et nombre) de chaque lecture, des nombres seulement ; sinon ceux d'avant. */
+function readsOf(services, prev, now) {
+  if (!Array.isArray(services) || !services.length) return prev.reads ? { reads: prev.reads, readsAt: prev.readsAt || null } : {}
+  return { reads: services.map((s) => ({ id: s.id, outcome: s.outcome, count: s.count ?? 0 })), readsAt: new Date(now()).toISOString() }
+}
+
 /** Retient l'issue d'une connexion (manuelle ou automatique) pour régler les essais suivants. */
 export function recordWatchConnection(report, { auto = false, storage = globalThis.localStorage, now = () => Date.now() } = {}) {
   const prev = getWatchAutoSyncState(storage)
@@ -63,6 +69,8 @@ export function recordWatchConnection(report, { auto = false, storage = globalTh
     label: report?.sync?.label || null,
     inserted: report?.sync?.inserted ?? null,
     stalled: report?.sync?.stalled?.length ? report.sync.stalled : null,
+    // Issue de chaque lecture (écran « Montre », M5) : gardée de la dernière synchro qui en a rendu
+    ...readsOf(report?.sync?.services, prev, now),
     battery: report?.battery ?? (code === 'connected' ? null : prev.battery ?? null),
     failures: code === 'connected' ? 0 : (prev.failures || 0) + 1,
     everConnected: code === 'connected' || !!prev.everConnected,

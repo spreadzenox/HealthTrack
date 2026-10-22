@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-22",
+  "kind": "nouveau",
+  "title": "Un écran pour voir ce qui remonte de votre montre",
+  "items": [
+    "Sources → montre → « Voir ce qui remonte de la montre » : une ligne par donnée (sommeil, siestes, VFC de la nuit et de la journée, température de la peau, SpO₂, respiration, fréquence cardiaque, FC au repos, pas, calories, séances).",
+    "Pour chacune : la dernière valeur reçue et sa date, le nombre de mesures des 7 derniers jours, et ce que la montre a répondu à la dernière synchronisation (reçu, vide, sans réponse, non pris en charge).",
+    "En un coup d'œil, vous voyez ce qui arrive bien et ce qui manque encore. Compatible avec les montres Huawei."
+  ]
+}

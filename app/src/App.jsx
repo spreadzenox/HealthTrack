@@ -21,6 +21,7 @@ const Settings = lazy(() => import('./pages/Settings'))
 const WithingsCallback = lazy(() => import('./pages/WithingsCallback'))
 const WhatsNew = lazy(() => import('./pages/WhatsNew'))
 const More = lazy(() => import('./pages/More'))
+const WatchData = lazy(() => import('./pages/WatchData'))
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="recommendations" element={<Recommendations />} />
             <Route path="plus" element={<More />} />
             <Route path="nouveautes" element={<WhatsNew />} />
+            <Route path="montre" element={<WatchData />} />
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
           </Route>
         </Routes>

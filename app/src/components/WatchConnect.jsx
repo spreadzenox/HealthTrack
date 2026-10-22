@@ -27,12 +27,13 @@ async function defaultFetchSecrets() {
 }
 
 /**
- * @param {{ connect: Function, fetchSecrets?: Function, onReport?: Function, children?: any }} props
+ * @param {{ connect: Function, fetchSecrets?: Function, onReport?: Function, dataLink?: any, children?: any }} props
  * `connect({ secrets, rebind, onUpdate })` → rapport (pairing.connectAndAuthenticate).
  * `onReport(rapport)` : rapport final, pour l'export du journal commun de la carte (WatchDiagnostic).
  * `children` : outils de dépannage ajoutés en bas de « Diagnostic ».
+ * `dataLink` : lien vers l'écran « Montre » (M5), visible dès qu'une montre a été connectée.
  */
-export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, onReport = () => {}, children = null }) {
+export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, onReport = () => {}, dataLink = null, children = null }) {
   const [report, setReport] = useState(loadLastConnect)
   const [secrets, setSecrets] = useState(() => loadSecrets())
   const [running, setRunning] = useState(false)
@@ -150,6 +151,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
       {message && <p className="my-device-message">{message}</p>}
       {everConnected && <WatchPresence />}
       {everConnected && <WatchSkinTemp />}
+      {everConnected && dataLink}
 
       <details className="watch-trouble" open={!everConnected || (code && code !== 'connected') || undefined}>
         <summary>Diagnostic</summary>
