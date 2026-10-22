@@ -1,0 +1,12 @@
+{
+  "name": "halcya-relay",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Relais Cloud Run de Halcya : analyse IA des repas via Vertex AI (UE), sans clé API ni stockage.",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test test/*.test.js"
+  }
+}
