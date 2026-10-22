@@ -85,7 +85,7 @@ Pas urgent — planifié au BACKLOG (P-SIDELOAD-KEY).
 | Projet GCP, WIF, comptes de service, Pub/Sub | ✅ créés par le propriétaire le 20/10 |
 | Keystore d'envoi play dans Secret Manager | ⬜ propriétaire, à l'étape 3 (jalon 3) |
 | Workflows de build play / publication Play | ⬜ jalon 3 |
-| Relais Cloud Run (code, tests, workflow de déploiement) | ⬜ jalon 6 |
+| Relais Cloud Run (code, tests, workflow de déploiement) | 🟡 22/10 16:30 : `relay/` + « Relais — déploiement » (6a-1) ; l'app ne l'appelle pas encore (6a-2) |
 
 ## Variantes et workflows (jalon 3a, 21/10 02:30)
 
@@ -116,3 +116,17 @@ Après le build signé, « Play — AAB » demande un **jeton à portée `androi
   propriétaire (vérifier l'invitation, droits « Gérer les versions des canaux de test »).
 - Symboles de débogage natifs : `ndk { debugSymbolLevel 'SYMBOL_TABLE' }` sur la variante play ; ils voyagent dans
   l'AAB et Play les extrait seul (pas de fichier de désobscurcissement tant que R8 n'est pas activé).
+
+## Relais Cloud Run (jalon 6a, 22/10 16:30)
+
+| Élément | Valeur |
+|---|---|
+| Code | `relay/` — Node 22 sans dépendance ; tests `cd relay && npm test` (node:test, sans réseau), job « Relais (Node) » du workflow Tests |
+| Service | `halcya-relay`, europe-west1, adresse `https://halcya-relay-81378799481.europe-west1.run.app` ; identité `relay-runtime` ; public (`--allow-unauthenticated`) ; `--min-instances=0 --max-instances=1 --concurrency=8`, 1 vCPU, 512 Mio, délai 60 s |
+| Image | `europe-west1-docker.pkg.dev/healthtrack-824b26/healthtrack/halcya-relay:<sha>` ; la CI copie `app/src/data/ingredientsNutrition.json` dans l'image (liste des ingrédients des consignes) |
+| Workflow | « Relais — déploiement » (`relay-deploy.yml`) : push `main` sur `relay/**`, la base d'ingrédients ou le workflow ; `workflow_dispatch`. Tests → build → push → `gcloud run deploy` → `/healthz` + une vraie analyse de texte (modèle et plat dans le résumé ; rouge si l'analyse échoue) |
+| IA | Vertex AI, `europe-west1` puis `europe-west4` ; modèles `gemini-3.5-flash-lite` puis `gemini-2.5-flash-lite` (404/403 → suivant, le couple qui marche est retenu) ; jeton OAuth du serveur de métadonnées, **aucune clé** |
+| Routes | `POST /v1/meal/analyze` (`X-Install-Id` aléatoire par installation ; `kind: photo` JPEG ou `kind: text` ≤ 500 car.) ; `GET /healthz` |
+| Garde-fous | consignes construites par le relais (pas de prompt libre) ; EXIF / commentaires retirés ; corps ≤ 6 Mo, photo ≤ 4 Mo ; rien stocké ; journaux sans contenu ni identifiant en clair (empreinte de 12 caractères) ; CORS limité à la WebView (https://localhost, capacitor://localhost) |
+| Plafonds | 20 analyses / installation / jour, 200 / jour au total, 10 / minute (variables `INSTALL_DAILY_CAP`, `GLOBAL_DAILY_CAP`, `GLOBAL_PER_MINUTE_CAP`) ; compteurs en mémoire (une seule instance) remis à zéro quand l'instance s'arrête au repos → le plafond par minute borne le pire cas ; Play Integrity (6b) fermera la porte aux appels qui ne viennent pas de l'app ; P22 (facultatif) ajoute un plafond dur côté Google |
+| Coût | consignes = longue liste d'ingrédients en tête, identique d'un appel à l'autre → cache implicite de Vertex AI ; Flash-Lite ; zéro instance au repos |

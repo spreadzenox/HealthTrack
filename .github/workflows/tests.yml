@@ -28,6 +28,22 @@ jobs:
           cd app
           npm run test
 
+  relay:
+    name: Relais (Node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run relay tests (node:test, sans réseau)
+        run: |
+          cd relay
+          npm test
+
   watch-java:
     name: Protocole montre (Java)
     runs-on: ubuntu-latest

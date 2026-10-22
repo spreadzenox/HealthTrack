@@ -1,0 +1,110 @@
+# Déploiement du relais Halcya sur Cloud Run (journal/INFRA.md, jalon 6a de journal/PRODUIT.md).
+#
+# - Connexion à Google Cloud sans clé (Workload Identity Federation, main seulement) sous gh-deployer, qui construit
+#   l'image, la pousse dans Artifact Registry et déploie le service sous l'identité relay-runtime (Vertex AI).
+# - Service public (l'app l'appelle) qui se protège lui-même : plafonds par installation / jour / minute, une seule
+#   instance au plus, zéro instance au repos (rien à payer quand personne ne s'en sert).
+# - Vérification après déploiement : /healthz puis une vraie analyse de texte (« une pomme ») ; le modèle et la région
+#   qui ont répondu sont écrits dans le résumé du workflow.
+name: Relais — déploiement
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "relay/**"
+      - "app/src/data/ingredientsNutrition.json"
+      - ".github/workflows/relay-deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: relay-deploy
+  cancel-in-progress: false
+
+env:
+  GCP_PROJECT: healthtrack-824b26
+  GCP_PROJECT_NUMBER: "81378799481"
+  REGION: europe-west1
+  SERVICE: halcya-relay
+  IMAGE: europe-west1-docker.pkg.dev/healthtrack-824b26/healthtrack/halcya-relay
+
+jobs:
+  deploy:
+    name: Construire et déployer le relais
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Tests du relais
+        run: cd relay && npm test
+
+      - name: Connexion à Google Cloud (sans clé)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+
+      - name: Installer gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Construire et pousser l'image
+        run: |
+          set -euo pipefail
+          mkdir -p relay/data
+          cp app/src/data/ingredientsNutrition.json relay/data/ingredients.json
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          docker build -t "$IMAGE:$GITHUB_SHA" relay
+          if ! docker push "$IMAGE:$GITHUB_SHA" 2> "$RUNNER_TEMP/push.err"; then
+            cat "$RUNNER_TEMP/push.err" >&2
+            echo "::error title=Envoi de l'image refusé::Artifact Registry n'accepte pas l'image (dépôt healthtrack absent en $REGION, ou droit artifactregistry.writer manquant pour gh-deployer). Voir journal/INFRA.md ; ne rien contourner, ajouter l'action du propriétaire correspondante."
+            exit 1
+          fi
+
+      - name: Déployer sur Cloud Run
+        run: |
+          set -euo pipefail
+          gcloud run deploy "$SERVICE" \
+            --project="$GCP_PROJECT" --region="$REGION" \
+            --image="$IMAGE:$GITHUB_SHA" \
+            --service-account="relay-runtime@${GCP_PROJECT}.iam.gserviceaccount.com" \
+            --allow-unauthenticated \
+            --min-instances=0 --max-instances=1 --concurrency=8 \
+            --cpu=1 --memory=512Mi --timeout=60 \
+            --set-env-vars="^@^VERTEX_PROJECT=${GCP_PROJECT}@VERTEX_LOCATIONS=europe-west1,europe-west4@VERTEX_MODELS=gemini-3.5-flash-lite,gemini-2.5-flash-lite@GLOBAL_DAILY_CAP=200@INSTALL_DAILY_CAP=20@GLOBAL_PER_MINUTE_CAP=10" \
+            --quiet
+
+      - name: Vérifier le service (santé + une analyse de texte)
+        run: |
+          set -euo pipefail
+          URL="https://${SERVICE}-${GCP_PROJECT_NUMBER}.${REGION}.run.app"
+          {
+            echo "## Relais Halcya déployé"
+            echo
+            echo "- Adresse : $URL"
+            echo "- Image : \`$IMAGE:$GITHUB_SHA\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          curl -fsS --retry 5 --retry-delay 5 --retry-all-errors "$URL/healthz"
+          echo
+          status=$(curl -sS -o "$RUNNER_TEMP/smoke.json" -w '%{http_code}' --max-time 90 \
+            -X POST "$URL/v1/meal/analyze" \
+            -H 'Content-Type: application/json' -H "X-Install-Id: ci-smoke-${GITHUB_RUN_ID}" \
+            -d '{"kind":"text","description":"une pomme et un yaourt nature"}')
+          model=$(jq -r '.model // "—"' "$RUNNER_TEMP/smoke.json")
+          dish=$(jq -r '.parsed.dish // .message // "—"' "$RUNNER_TEMP/smoke.json")
+          count=$(jq -r '(.parsed.ingredients // []) | length' "$RUNNER_TEMP/smoke.json")
+          echo "- Analyse de test : HTTP $status, modèle \`$model\`, « $dish », $count ingrédient(s)" >> "$GITHUB_STEP_SUMMARY"
+          echo "HTTP $status, modèle $model, plat « $dish », $count ingrédient(s)"
+          if [ "$status" != "200" ] || [ "$count" = "0" ]; then
+            echo "::error title=Analyse de test échouée::Le relais répond mais l'analyse Vertex AI n'a pas abouti (HTTP $status). Lire les journaux du service $SERVICE (Cloud Logging, événement « error ») : modèle absent de la région, ou rôle aiplatform.user manquant pour relay-runtime."
+            exit 1
+          fi
