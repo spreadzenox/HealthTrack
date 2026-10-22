@@ -9,6 +9,7 @@ build/
 samples/
 *.jpg
 *.png
+!app/store/**/*.png
 !app/android/app/src/main/res/mipmap-*/*.png
 # Icône de la fiche Google Play (app/scripts/brand/render-icons.mjs)
 !app/store/*.png

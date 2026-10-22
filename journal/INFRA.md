@@ -93,6 +93,7 @@ Pas urgent — planifié au BACKLOG (P-SIDELOAD-KEY).
 |---|---|---|
 | « Build & Release » | push `main` (hors `journal/`) | variante **sideload** (`com.healthtrack.app`, clé de debug), `versionCode` = numéro du run, release GitHub `vNNN` |
 | « Play — AAB » | push `main` (hors `journal/`), `workflow_dispatch` | WIF → lit `android-upload-keystore` + `android-upload-keystore-password` → build web `VITE_DISTRIBUTION=play` → `bundlePlayRelease` signé (`fr.jpesquet.sante`, `versionCode` = nombre de commits de main) → artefact `HealthTrack-play-NNN` (30 j) + empreinte SHA-256 du certificat d'envoi dans le résumé. **Rouge tant que P9 n'est pas fait** (message « Clé d'envoi Play absente » ou « Accès refusé ») : ce n'est pas une panne à réparer par la routine, c'est l'action P9. |
+| « Play — fiche du Store » | push `main` sur `app/store/**`, `app/scripts/play/listing*.mjs` ou ce workflow ; `workflow_dispatch` | Valide la fiche (`app/store/listing/fr-FR/` + `app/store/play-icon-512.png`) → jeton `androidpublisher` de gh-deployer → edit : textes fr-FR, images remplacées seulement si leur SHA-256 change, site web dans details → commit. Aucune piste touchée. Concurrence `play-edits` partagée avec « Play — AAB » (un seul edit à la fois). Accès refusé → avertissement. (22/10 04:30) |
 | « Test — émulateur Samsung Galaxy A56 » (check « Build APK ») | PR et push | construit `assembleSideloadDebug` + tests instrumentés + `bundlePlayRelease` non signé, puis `scripts/check-play-manifest.sh` |
 
 ### Envoi sur Google Play (jalon 3c, branché le 21/10 22:30)

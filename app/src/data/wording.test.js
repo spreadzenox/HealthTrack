@@ -6,6 +6,7 @@
 import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
+import { FORBIDDEN_WORDING } from './wordingRules.js'
 
 const ROOTS = ['src/components', 'src/pages', 'src/services', 'src/hooks', 'src/config']
 
@@ -25,11 +26,7 @@ export function stripComments(code) {
     .map((l) => l.replace(/(^|\s)\/\/.*$/, '$1'))
 }
 
-const FORBIDDEN = [
-  { re: /humeur/i, why: 'dire « bien-être »' },
-  { re: /100\s*%\s*(privé|priv[ée]e|confidentiel|local)/i, why: '« local par défaut, IA optionnelle »' },
-  { re: /diagnostiqu|prédi(re|t|sons) (une|vos|la) crise|trait(er|ement) (votre|vos|le) (SII|syndrome|maladie)/i, why: 'jamais d’affirmation médicale' },
-]
+const FORBIDDEN = FORBIDDEN_WORDING
 
 function offences() {
   const found = []

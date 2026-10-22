@@ -55,6 +55,7 @@
  *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
+ *   npm run visual -- --size=360x640 --dpr=3   # autre viewport (captures 1080×1920 de la fiche Play)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -123,6 +124,13 @@ const DEMO_PHOTO = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
   'base64'
 )
+
+/** « 360x640 » → { width: 360, height: 640 } (captures de la fiche Play : ratio ≤ 2, voir scripts/store). */
+function parseSize(text) {
+  const m = String(text).match(/^(\d+)x(\d+)$/)
+  if (!m) throw new Error(`--size attendu sous la forme LARGEURxHAUTEUR, reçu « ${text} »`)
+  return { width: Number(m[1]), height: Number(m[2]) }
+}
 
 function parseArgs(argv) {
   const args = {}
@@ -195,7 +203,7 @@ async function main() {
     const { chromium } = await loadPlaywright()
     const browser = await chromium.launch()
     const context = await browser.newContext({
-      viewport: { width: 412, height: 915 },
+      viewport: args.size ? parseSize(args.size) : { width: 412, height: 915 },
       deviceScaleFactor: Number(args.dpr || 2),
       isMobile: true,
       hasTouch: true,
