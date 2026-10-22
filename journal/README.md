@@ -253,6 +253,21 @@ GitHub Pages). Puis **P18** (groupe des testeurs). Publié aussi : **v204** (33,
 version Play **352** en test interne. Prochain run de code : le formulaire **Sécurité des
 données**, puis la piste de test fermé, puis retour à la montre (M2, VFC).
 
+**Run du 22/10 06:30 — le formulaire « Sécurité des données » de Google Play est prêt, à vous de le relire et de l'envoyer.** Rien ne change
+dans l'app (sauf une ancre invisible dans la page de confidentialité). En coulisses : les réponses au formulaire
+**Sécurité des données** sont dans le dépôt, chacune justifiée par le code, et un nouveau workflow **« Play — sécurité
+des données »** les envoie à Google Play **quand vous le lancez** (c'est une déclaration faite en votre nom : elle ne
+part jamais toute seule). Ce que la fiche Play dira : Halcya **collecte seulement 3 types de données,
+tous facultatifs et jamais partagés** — la position approximative (météo, Open-Meteo), la photo et la description d'un
+repas (seulement quand vous lancez l'analyse IA) ; **aucune donnée de santé ne quitte le téléphone**, pas de compte,
+pas de publicité, données chiffrées en transit, suppression possible. Si Google refuse l'envoi par l'API, le workflow le
+dit et il vous suffira d'**importer le fichier `app/store/data-safety/data-safety.csv`** dans Play Console → Contenu de
+l'app → Sécurité des données (réponses détaillées dans [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §5). **👉 Nouvelle action P21 (5 min)** : relire les réponses
+(`PLAY-CONFORMITE.md` §5), puis GitHub → Actions → **« Play — sécurité des données » → Run workflow**. **Puis
+P20** (e-mail de contact, puis relancer « Play — fiche du Store »), **P19**
+(GitHub Pages) et **P18** (groupe des testeurs). Prochain run de code : la piste de **test fermé** si P18 est fait,
+sinon retour à la montre (**M2**, VFC de journée).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -630,6 +645,7 @@ du jour avec sa fourchette (derrière la porte).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 22/10 06:30 — [Sécurité des données par l'API](runs/2026-10-22-0630-securite-donnees.md) | 🧭📄 | Modèle CSV de la Play Console rempli depuis des réponses justifiées (3 types collectés, facultatifs, non partagés ; aucune donnée de santé), règles du formulaire vérifiées, workflow « Play — sécurité des données » (`applications.dataSafety`), lancement manuel (P21), repli import manuel ; 1 814 Vitest ; PR (voir le compte rendu) |
 | 22/10 04:30 — [Fiche du Store FR par l'API](runs/2026-10-22-0430-fiche-store.md) | 🧭📄 | Textes FR vérifiés contre le code, 5 captures 1080×1920 (variante play, démo) + présentation 1024×500, `listing.mjs` (SHA-256, site web, commit) et workflow « Play — fiche du Store » (concurrence `play-edits`) ; 1 790 Vitest ; PR #265 fusionnée → v204, Play 352 ; fiche refusée par Play faute d'e-mail de contact → P20 |
 | 22/10 02:30 — [Page de confidentialité + GitHub Pages](runs/2026-10-22-0230-confidentialite-pages.md) | 🧭📄 | Politique réécrite pour la variante play (source unique, embarquée + Pages `/confidentialite/`), workflow « Site — GitHub Pages » (attend P19), Réglages → Confidentialité ; 1 778 Vitest ; PR #263 fusionnée → v203, Play 350 ; Pages rouge en attente de P19 |
 | 22/10 00:30 — [M0 « Halcya » + M1 sommeil de la montre](runs/2026-10-22-0030-halcya-sommeil.md) | 🧭⌚ | PR #260 reprise et fusionnée (nom affiché **Halcya**) ; 1er envoi Play automatique vérifié (versionCode 346, internal) ; **M1** : 0x2C plus interrogé, sommeil détaillé + résumé complet (VFC, respiration, SpO₂ de la nuit), siestes à part, rattrapage 60 j ; 1 759 Vitest ; PR (voir le compte rendu) |
