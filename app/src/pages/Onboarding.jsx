@@ -8,6 +8,8 @@ import { FEATURES } from '../config/distribution'
 import Premium from './Premium'
 import { AHA_DAYS, runFirstImport, summarizeImport } from '../services/firstImport'
 import useDisclosure from '../hooks/useDisclosure'
+import { isFaceSenseAvailable, isFaceSenseEnabled } from '../services/faceSense'
+import { runFaceTrial } from '../services/faceTrial'
 import './Onboarding.css'
 
 const WATCHES = [
@@ -23,7 +25,7 @@ const WATCHES = [
 /**
  * Écrans dans l'ordre (jalon 4a : 1 à 3 ; 4b : Health Connect puis import et « aha », seulement avec une montre
  * Health Connect, le « aha » seulement si l'accès est donné ; 4c : premier geste, puis le paywall soft dans la seule
- * variante play ; la lecture du visage facultative viendra avant le premier geste).
+ * variante play ; 4c-2 : la lecture du visage facultative avant le premier geste, seulement si le téléphone sait la faire).
  */
 function stepsFor(state) {
   const steps = ['goal', 'tracks', 'watch']
@@ -31,6 +33,7 @@ function stepsFor(state) {
     steps.push('health')
     if (state.health === 'granted') steps.push('aha')
   }
+  if (isFaceSenseAvailable()) steps.push('face')
   steps.push('gesture')
   if (FEATURES.billing) steps.push('premium')
   return steps
@@ -337,6 +340,100 @@ function AhaStep({ imported, onImported, onReady }) {
   )
 }
 
+const fmt1 = (v) => v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+
+/**
+ * Bien-être estimé, facultatif (écran 7 d'I154) : trois lignes d'explication, la divulgation caméra de la variante
+ * avant la demande d'Android, puis une lecture d'essai (qui ne compte pas dans l'estimation du jour) ; « Plus tard »
+ * ne demande rien.
+ */
+function FaceStep({ face, onFace }) {
+  const [disclosure, askConsent] = useDisclosure()
+  const [busy, setBusy] = useState(false)
+  const [estimate, setEstimate] = useState(null)
+  const appOpen = FEATURES.faceAppOpen
+  const when = appOpen
+    ? 'quand vous ouvrez l’app, au plus une fois par demi-heure'
+    : 'quand vous déverrouillez le téléphone'
+  const already = face == null && isFaceSenseEnabled()
+
+  const tryNow = async () => {
+    if (!(await askConsent(appOpen ? 'camera_app_open' : 'camera'))) {
+      onFace('later')
+      return
+    }
+    setBusy(true)
+    try {
+      const r = await runFaceTrial()
+      setEstimate(r.estimate)
+      onFace({ read: 'on', no_face: 'on', denied: 'denied', failed: 'failed' }[r.outcome] || 'failed')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <>
+      {disclosure}
+      <h1 className="onb-title">Votre bien-être, estimé tout seul</h1>
+      <ul className="onb-face-lines">
+        <li>Facultatif : la caméra frontale regarde votre expression une à deux secondes, {when}.</li>
+        <li>Une IA l’analyse sur le téléphone. Seuls quelques nombres sont gardés, aucune image.</li>
+        <li>Vous obtenez une estimation de votre bien-être, pas un diagnostic.</li>
+      </ul>
+      {busy && (
+        <p className="onb-note" role="status">
+          Regardez l’écran quelques secondes…
+        </p>
+      )}
+      {!busy && face === 'on' && estimate && (
+        <p className="onb-note onb-note-ok" role="status">
+          Lecture faite : {estimate.label}, ≈ <span className="mono">{fmt1(estimate.note)} / 5</span> (entre{' '}
+          <span className="mono">{fmt1(estimate.low)}</span> et <span className="mono">{fmt1(estimate.high)}</span>). Une
+          estimation, pas un diagnostic. Cet essai ne compte pas ; les lectures suivantes se feront {when}.
+        </p>
+      )}
+      {!busy && face === 'on' && !estimate && (
+        <p className="onb-note onb-note-ok" role="status">
+          C’est activé. Aucun visage n’a été lu cette fois ; les prochaines lectures se feront {when}.
+        </p>
+      )}
+      {already && (
+        <p className="onb-note onb-note-ok" role="status">
+          La lecture du visage est déjà activée.
+        </p>
+      )}
+      {face === 'denied' && (
+        <p className="onb-note" role="status">
+          Accès à la caméra refusé : rien n’est activé. Vous pourrez le faire plus tard depuis l’onglet Sources.
+        </p>
+      )}
+      {face === 'failed' && (
+        <p className="onb-note" role="status">
+          Android n’a pas démarré la lecture. Vous pourrez réessayer depuis l’onglet Sources.
+        </p>
+      )}
+      {face === 'later' && (
+        <p className="onb-note" role="status">
+          Pas de souci : vous pourrez l’activer quand vous voulez depuis l’onglet Sources.
+        </p>
+      )}
+      {face !== 'on' && !already && (
+        <div className="onb-face-actions">
+          <button type="button" className="btn btn-secondary onb-action" onClick={tryNow} disabled={busy}>
+            {busy ? 'Lecture en cours…' : 'Essayer maintenant'}
+          </button>
+          {face == null && !busy && (
+            <button type="button" className="onb-later" onClick={() => onFace('later')}>
+              Plus tard
+            </button>
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
 const WELLBEING_SCORES = [0, 1, 2, 3, 4, 5]
 
 /**
@@ -504,6 +601,7 @@ export default function Onboarding() {
         {step === 'aha' && (
           <AhaStep imported={!!state.imported} onImported={() => update({ imported: true })} onReady={() => setAhaReady(true)} />
         )}
+        {step === 'face' && <FaceStep face={state.face} onFace={(face) => update({ face })} />}
         {step === 'gesture' && (
           <GestureStep goal={state.goal} gesture={state.gesture} onGesture={(gesture) => update({ gesture })} />
         )}
