@@ -32,7 +32,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
 - [x] **VC-2 — FAIT le 23/10 17:30** (`PistesTeaser onPistesPage` dans `Recommendations.jsx`, onglets masqués sans résultat) page Pistes vide alignée sur la carte lilas de l'Accueil (même compteur X/21 jours avec repas ou note du
   ventre, même phrase « On préfère attendre… ») ; supprimer « recommandations basiques », « ≥ 5j / ≥ 9j » et le 📊 de
   l'état vide ; les onglets simple / avancée seulement quand il y a des résultats.
-- [ ] **VC-3** Nutrition : ne rien chiffrer tant que le profil n'est pas rempli (ni kcal, ni IMC, ni « Homme, 30 ans »
+- [x] **VC-3** (23/10 18:30, `BodyProfileCard` ; IMC/kcal derrière « détails » dans les deux variantes) Nutrition : ne rien chiffrer tant que le profil n'est pas rempli (ni kcal, ni IMC, ni « Homme, 30 ans »
   par défaut) → carte « Complétez votre profil pour voir vos repères » ; en play, objectif calorique et IMC repliés
   derrière « détails » (I152).
 - [x] **VC-4** (23/10 16:30) « Mode diagnostic » masqué en play (`featuresFor('play').debugMenu`), révélé une fois

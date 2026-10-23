@@ -4,6 +4,8 @@ import { createEntry } from '../storage/localHealthStorage'
 import { getBodySettings, setBodySettings } from '../settings/bodySettings'
 import { computeBmi } from '../services/bodyProfile'
 import { computeDailyEnergyKcal, ACTIVITY_LEVELS, activityLevel } from '../services/nutrientReferenceIntakes'
+import { useDetailsMode } from '../hooks/useDetailsMode'
+import DetailsToggle from './DetailsToggle'
 
 const formatNumber = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)
 const formatInt = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(v)
@@ -147,19 +149,26 @@ function ProfileForm({ profile, onCancel, onSaved }) {
   )
 }
 
+// Ce qui manque encore, dans l'ordre du formulaire.
+const MISSING_LABELS = [['weight', 'poids'], ['height', 'taille'], ['sex', 'sexe'], ['age', 'âge']]
+
 /**
- * Profil corporel utilisé pour les repères : chaque valeur indique sa provenance,
- * et une valeur par défaut est signalée (elle fausse l'énergie, les protéines, le fer…).
+ * Profil corporel utilisé pour les repères : chaque valeur indique sa provenance.
+ * Une valeur par défaut n'est jamais affichée comme si elle était vraie (VC-3) : tant que le profil est vide,
+ * la carte invite à le compléter ; ensuite, seules les valeurs connues apparaissent. IMC et besoin en énergie
+ * (seulement si leurs entrées sont connues) restent derrière « détails » : pas de chiffre imposé par défaut (I152).
  */
 export default function BodyProfileCard({ profile, composition, onSaved }) {
   const [editing, setEditing] = useState(false)
+  const [details, toggleDetails] = useDetailsMode()
   const { origins } = profile
-  // L'activité par défaut (×1,55) est une hypothèse raisonnable : elle ne déclenche pas l'avertissement.
-  const bodyOrigins = [origins.weight, origins.height, origins.sex, origins.age]
-  const anyDefault = bodyOrigins.some((o) => o === 'default')
-  const allDefault = bodyOrigins.every((o) => o === 'default')
-  const bmi = computeBmi(profile.weightKg, profile.heightCm)
-  const dailyKcal = computeDailyEnergyKcal(profile)
+  const known = (key) => origins[key] !== 'default'
+  const missing = MISSING_LABELS.filter(([key]) => !known(key)).map(([, label]) => label)
+  const allDefault = missing.length === MISSING_LABELS.length
+  const bmi = known('weight') && known('height') ? computeBmi(profile.weightKg, profile.heightCm) : null
+  const dailyKcal = missing.length === 0 ? computeDailyEnergyKcal(profile) : null
+  const hasDetails = bmi != null || dailyKcal != null
+  const compositionLine = compositionParts(composition)
 
   if (editing) {
     return (
@@ -174,52 +183,69 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
     )
   }
 
-  const weightHint = origins.weight === 'withings'
+  const head = (
+    <div className="nutrition-profile-head">
+      <h3 className="nutrition-profile-title">Votre profil</h3>
+      <span className="nutrition-profile-head-actions">
+        {hasDetails && <DetailsToggle on={details} onToggle={toggleDetails} />}
+        <button type="button" className="nutrition-profile-edit" onClick={() => setEditing(true)}>
+          {allDefault ? 'Compléter mon profil' : 'Modifier'}
+        </button>
+      </span>
+    </div>
+  )
+
+  if (allDefault) {
+    return (
+      <div className="nutrition-profile-card">
+        {head}
+        <p className="nutrition-profile-hint">
+          Complétez votre profil pour voir vos repères (protéines, fer, vitamines…) ajustés à vous.
+          Tout reste sur cet appareil.
+        </p>
+        {compositionLine.length > 0 && (
+          <p className="nutrition-profile-line">{compositionLine.join(SEP)}<Hint>(Withings)</Hint></p>
+        )}
+      </div>
+    )
+  }
+
+  const weightHint = () => (origins.weight === 'withings'
     ? `(Withings, ${formatDayMonth(profile.weightAt)})`
-    : origins.weight === 'manual'
-      ? `(saisi le ${formatDayMonth(profile.weightAt)})`
-      : '(par défaut)'
-  const defaultHint = (origin) => origin === 'default' && <Hint>(par défaut)</Hint>
+    : `(saisi le ${formatDayMonth(profile.weightAt)})`)
+  const join = (parts) => parts.filter(Boolean).map((p, i) => <span key={i}>{i > 0 && SEP}{p}</span>)
+  const bodyParts = join([
+    known('weight') && <><span>{formatNumber(profile.weightKg)} kg</span><Hint>{weightHint()}</Hint></>,
+    known('height') && <><span>{profile.heightCm} cm</span>{origins.height === 'withings' && <Hint>(Withings)</Hint>}</>,
+    details && bmi != null && <span>IMC{'\u00a0'}{formatNumber(bmi)}</span>,
+  ])
+  const energyParts = join([
+    known('sex') && <span>{SEX_LABEL[profile.sex]}</span>,
+    known('age') && <span>{profile.age} ans</span>,
+    <span className="nutrition-profile-activity">
+      <span>{activityLevel(profile.activity).label}</span>
+      {origins.activity === 'steps' && (
+        <Hint>(≈ {formatInt(profile.meanSteps)} pas/jour sur {profile.stepsDays} jours)</Hint>
+      )}
+      {origins.activity === 'default' && <Hint>(par défaut)</Hint>}
+    </span>,
+    details && dailyKcal != null && <strong>~{formatNumber(dailyKcal)} kcal/jour</strong>,
+  ])
 
   // Deux lignes au lieu d'une ligne par valeur (D1) : le corps (et sa composition s'il y en a une), puis ce qui fixe l'énergie.
   return (
     <div className="nutrition-profile-card">
-      <div className="nutrition-profile-head">
-        <h3 className="nutrition-profile-title">Votre profil</h3>
-        <button type="button" className="nutrition-profile-edit" onClick={() => setEditing(true)}>
-          {allDefault ? 'Compléter mon profil' : 'Modifier'}
-        </button>
-      </div>
-      <p className="nutrition-profile-line">
-        <span>{formatNumber(profile.weightKg)} kg</span><Hint>{weightHint}</Hint>
-        {SEP}<span>{profile.heightCm} cm</span>
-        {origins.height === 'withings' && <Hint>(Withings)</Hint>}
-        {defaultHint(origins.height)}
-        {bmi != null && <>{SEP}<span>IMC{'\u00a0'}{formatNumber(bmi)}</span></>}
-      </p>
-      {compositionParts(composition).length > 0 && (
-        <p className="nutrition-profile-line">
-          {compositionParts(composition).join(SEP)}<Hint>(Withings)</Hint>
-        </p>
+      {head}
+      {bodyParts.length > 0 && <p className="nutrition-profile-line">{bodyParts}</p>}
+      {compositionLine.length > 0 && (
+        <p className="nutrition-profile-line">{compositionLine.join(SEP)}<Hint>(Withings)</Hint></p>
       )}
-      <p className="nutrition-profile-line">
-        <span>{SEX_LABEL[profile.sex] ?? 'Homme'}</span>{defaultHint(origins.sex)}
-        {SEP}<span>{profile.age ?? 30} ans</span>{defaultHint(origins.age)}
-        {SEP}
-        <span className="nutrition-profile-activity">
-          <span>{activityLevel(profile.activity).label}</span>
-          {origins.activity === 'steps' && (
-            <Hint>(≈ {formatInt(profile.meanSteps)} pas/jour sur {profile.stepsDays} jours)</Hint>
-          )}
-          {defaultHint(origins.activity)}
-        </span>
-        {SEP}<strong>~{formatNumber(dailyKcal)} kcal/jour</strong>
-      </p>
-      {anyDefault && (
+      <p className="nutrition-profile-line">{energyParts}</p>
+      {missing.length > 0 && (
         <p className="nutrition-profile-hint">
-          Les valeurs par défaut faussent vos repères (énergie, protéines, fer…) : complétez votre profil
-          {origins.weight === 'default' && origins.height === 'default' && (
-            <> ou connectez une balance <Link to="/connectors">Withings</Link></>
+          À compléter pour ajuster vos repères : {missing.join(', ')}
+          {!known('weight') && !known('height') && (
+            <> (ou connectez une balance <Link to="/connectors">Withings</Link>)</>
           )}.
         </p>
       )}

@@ -1,0 +1,13 @@
+.details-toggle {
+  min-height: var(--tap-min);
+  min-width: var(--tap-min);
+  padding: 0 10px;
+  border-radius: var(--radius-tag);
+  font-size: 0.75rem;
+  color: inherit;
+  background: rgba(var(--tint-rgb), 0.06);
+}
+
+.details-toggle[aria-pressed='true'] {
+  background: rgba(var(--tint-rgb), 0.12);
+}
