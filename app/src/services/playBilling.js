@@ -7,14 +7,14 @@
  * Ce qui part vers Google Play : l'identifiant de compte masqué (empreinte de l'identifiant d'installation aléatoire,
  * aucune donnée personnelle). Vers le relais : ce même identifiant d'installation et le jeton d'achat.
  */
-import { getInstallId } from './aiRelay'
+import { PURCHASE_TOKEN_KEY, getInstallId } from './aiRelay'
 import { refreshEntitlement } from './entitlement'
 import { FEATURES } from '../config/distribution'
 
 /** Abonnement unique, deux formules (« base plans ») ; créés dans la Play Console par l'API (étape 6d). */
 export const PRODUCT_ID = 'halcya_premium'
 const PLAN_ORDER = ['annuel', 'mensuel']
-const TOKEN_KEY = 'halcya_purchase_token'
+const TOKEN_KEY = PURCHASE_TOKEN_KEY
 
 /** Même empreinte que `accountIdFor` du relais (relay/src/billing.js) : sha256 hex de « halcya:<installation> ». */
 export async function obfuscatedAccountId() {

@@ -3,6 +3,7 @@ import JournalTabs from '../components/JournalTabs'
 import { useLocation, useNavigate } from 'react-router-dom'
 import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
+import AiCreditsHint from '../components/AiCreditsHint'
 import { aiPrivacyHint, analyzeMealPhoto, canAnalyzeMeals, MISSING_KEY_MESSAGE, needsAiConsent, rememberAiConsent } from '../services/mealAi'
 import useDisclosure from '../hooks/useDisclosure'
 import { shortFoodName } from '../utils/format'
@@ -289,7 +290,10 @@ export default function Food() {
       )}
 
       {preview && !result && (
-        <p className="hint gemini-privacy">{aiPrivacyHint('photo')}</p>
+        <>
+          <AiCreditsHint />
+          <p className="hint gemini-privacy">{aiPrivacyHint('photo')}</p>
+        </>
       )}
 
       {loading && (

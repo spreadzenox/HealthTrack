@@ -8,7 +8,14 @@ ni ici. Décisions et infrastructure : `journal/INFRA.md`, jalon 6 de `journal/P
   `{ "kind": "photo", "image": { "mimeType": "image/jpeg", "data": "<base64>" } }` ou
   `{ "kind": "text", "description": "2 œufs au plat et une tartine" }` →
   `{ "parsed": { "not_food": false, "dish": "…", "ingredients": [ … ] }, "model": "…", "quota": { "remaining": 19, "resetAt": "…" } }`.
-  429 quand un plafond est atteint (`scope` : `install`, `global` ou `minute`), 502 si le modèle n'a pas répondu.
+  En-têtes facultatifs `X-Credits` (dernier état des crédits donné par le relais) et `X-Purchase-Token` (premium).
+  La réponse porte aussi `credits` : `{ "plan": "free", "remaining": 24, "monthly": 14, "welcome": 10,
+  "resetAt": "2026-11-01T00:00:00.000Z", "state": "2026-10:1:0" }` (premium : `daily`, renouvellement à minuit UTC).
+  429 quand un plafond est atteint (`scope` : `install`, `global`, `minute`, `credits` ou `premium_day`), 502 si le
+  modèle n'a pas répondu.
+- `GET /v1/credits` (mêmes en-têtes) → `{ "credits": { … } }` sans rien consommer. Règle (`src/credits.js`) :
+  10 analyses offertes une fois + 15 par mois civil non cumulables en gratuit, 10 par jour en premium. Registre en
+  mémoire (empreintes seulement) ; l'app renvoie son dernier état et le relais garde le plus restrictif.
 - `POST /v1/subscription/verify` (en-tête `X-Install-Id`) : `{ "purchaseToken": "…" }` (ou au format du validateur
   cdv-purchase, `{ "transaction": { "purchaseToken": "…" } }`) → droits premium relus chez Google Play
   (`subscriptionsv2.get`) : `{ "ok": true, "premium": true, "source": "play", "state": "active", "expiresAt": "…",
