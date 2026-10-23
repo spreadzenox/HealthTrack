@@ -30,7 +30,7 @@ describe('Onboarding (jalon 4a)', () => {
     expect(screen.getByRole('radio', { name: /Tout comprendre de mes données/ })).toBeInTheDocument()
     expect(screen.getByText(/18 ans ou plus/)).toBeInTheDocument()
     expect(screen.getByText(/Local par défaut/)).toBeInTheDocument()
-    expect(screen.getByText('01/03')).toBeInTheDocument()
+    expect(screen.getByText('01/04')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Passer' })).not.toBeInTheDocument()
     expect(cont()).toBeDisabled()
   })
@@ -56,6 +56,8 @@ describe('Onboarding (jalon 4a)', () => {
     expect(cont()).toBeDisabled()
     fireEvent.click(screen.getByRole('radio', { name: /Pas de montre/ }))
     fireEvent.click(cont())
+    expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
+    fireEvent.click(cont())
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
     expect(loadOnboarding()).toMatchObject({
       done: true,
@@ -63,7 +65,7 @@ describe('Onboarding (jalon 4a)', () => {
       goal: 'gut',
       watch: 'none',
       tracks: ['gut', 'meals', 'sleep', 'wellbeing'],
-      maxStep: 2,
+      maxStep: 3,
     })
   })
 
@@ -72,6 +74,7 @@ describe('Onboarding (jalon 4a)', () => {
     renderAt()
     fireEvent.click(screen.getByRole('radio', { name: /compatible Huawei/ }))
     fireEvent.click(cont())
+    fireEvent.click(cont())
     expect(await screen.findByText('Page Sources')).toBeInTheDocument()
   })
 
@@ -79,7 +82,7 @@ describe('Onboarding (jalon 4a)', () => {
     saveOnboarding({ goal: 'gut', step: 1 })
     renderAt()
     expect(screen.getByRole('heading', { name: 'Que voulez-vous suivre ?' })).toBeInTheDocument()
-    expect(screen.getByText('02/03')).toBeInTheDocument()
+    expect(screen.getByText('02/04')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Retour' }))
     expect(screen.getByRole('radio', { name: /Mon ventre/ })).toBeChecked()
   })

@@ -287,3 +287,43 @@
   font-size: 0.75rem;
   color: var(--mint-label);
 }
+
+/* Jalon 4c : premier geste (pêche pour le ventre, menthe pour le bien-être, comme sur Aujourd'hui) */
+.onb-gesture {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.onb-gesture-scores {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.onb-gesture-btn {
+  min-height: var(--button-height);
+  border-radius: var(--radius-choice);
+  border: 2px solid rgba(var(--ink-rgb), 0.18);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.onb-gesture-btn.mono {
+  font-family: var(--font-mono);
+}
+
+.onb-gesture-btn.is-selected {
+  border-color: var(--peach-label);
+  background: var(--peach-bg);
+}
+
+.onb-gesture-scores .onb-gesture-btn.is-selected {
+  border-color: var(--mint-label);
+  background: var(--mint-bg);
+}
+
+/* Le paywall s'affiche dans le corps de l'onboarding (variante play) */
+.onb-body > .paywall {
+  padding: 0;
+}

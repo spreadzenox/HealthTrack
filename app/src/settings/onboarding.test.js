@@ -66,6 +66,14 @@ describe('settings/onboarding', () => {
       expect(count).not.toHaveBeenCalled()
     })
 
+    it('commencé puis interrompu après l’import ou le premier geste → on reprend, sans lire la base', async () => {
+      saveOnboarding({ goal: 'gut', step: 4 })
+      const count = vi.fn(async () => 120)
+      expect(await needsOnboarding({ countEntries: count })).toBe(true)
+      expect(count).not.toHaveBeenCalled()
+      expect(loadOnboarding().done).toBe(false)
+    })
+
     it('déjà fait → non, sans lire la base', async () => {
       finishOnboarding('completed')
       const count = vi.fn(async () => 0)

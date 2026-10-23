@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GOALS, TRACKS, defaultTracks, loadOnboarding, saveOnboarding, finishOnboarding } from '../settings/onboarding'
 import { getConnector } from '../connectors/connectorRegistry'
-import { listEntries } from '../storage/localHealthStorage'
+import { createEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
+import { GUT_LEVELS, GUT_SOURCE, GUT_TYPE } from '../services/today'
+import { FEATURES } from '../config/distribution'
+import Premium from './Premium'
 import { AHA_DAYS, runFirstImport, summarizeImport } from '../services/firstImport'
 import useDisclosure from '../hooks/useDisclosure'
 import './Onboarding.css'
@@ -19,7 +22,8 @@ const WATCHES = [
 
 /**
  * Écrans dans l'ordre (jalon 4a : 1 à 3 ; 4b : Health Connect puis import et « aha », seulement avec une montre
- * Health Connect, le « aha » seulement si l'accès est donné ; visage, premier geste et paywall viendront en 4c).
+ * Health Connect, le « aha » seulement si l'accès est donné ; 4c : premier geste, puis le paywall soft dans la seule
+ * variante play ; la lecture du visage facultative viendra avant le premier geste).
  */
 function stepsFor(state) {
   const steps = ['goal', 'tracks', 'watch']
@@ -27,6 +31,8 @@ function stepsFor(state) {
     steps.push('health')
     if (state.health === 'granted') steps.push('aha')
   }
+  steps.push('gesture')
+  if (FEATURES.billing) steps.push('premium')
   return steps
 }
 
@@ -331,6 +337,93 @@ function AhaStep({ imported, onImported, onReady }) {
   )
 }
 
+const WELLBEING_SCORES = [0, 1, 2, 3, 4, 5]
+
+/**
+ * Premier geste (écran 8 d'I154), facultatif : selon l'objectif, une note du ventre (entrée `gut`, le premier jour
+ * du compteur X/21 des pistes) ou une note de bien-être de 0 à 5 (entrée `wellbeing`, auto-déclaration). Une seule
+ * entrée : changer d'avis la modifie.
+ */
+function GestureStep({ goal, gesture, onGesture }) {
+  const [error, setError] = useState(false)
+  const gut = goal === 'gut'
+  const type = gut ? GUT_TYPE : 'wellbeing'
+  const current = gesture?.type === type ? gesture : null
+
+  const record = async (value) => {
+    setError(false)
+    const payload = gut ? { level: value } : { score: value }
+    try {
+      let id = current?.id
+      if (id != null) await updateEntry(id, { payload })
+      else id = await createEntry({ type, source: gut ? GUT_SOURCE : 'app_wellbeing', payload })
+      onGesture({ type, id, value, at: current?.at ?? new Date().toISOString() })
+      window.dispatchEvent(new CustomEvent('health-entries-updated'))
+    } catch {
+      setError(true)
+    }
+  }
+
+  const time = current ? new Date(current.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : null
+
+  return (
+    <>
+      <h1 className="onb-title">{gut ? 'Comment va votre ventre ?' : 'Comment vous sentez-vous ?'}</h1>
+      <p className="onb-lead">
+        {gut
+          ? 'Un geste suffit, quand vous voulez. C’est en croisant ces notes avec vos repas que les pistes apparaîtront.'
+          : 'Une note de 0 à 5, pour vous. Elle complète le bien-être estimé, sans jamais le remplacer.'}
+      </p>
+      {gut ? (
+        <div className="onb-gesture" role="group" aria-label="Comment va votre ventre ?">
+          {GUT_LEVELS.map((l) => (
+            <button
+              key={l.id}
+              type="button"
+              className={`onb-gesture-btn${current?.value === l.id ? ' is-selected' : ''}`}
+              aria-pressed={current?.value === l.id}
+              onClick={() => record(l.id)}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="onb-gesture onb-gesture-scores" role="group" aria-label="Comment vous sentez-vous ?">
+            {WELLBEING_SCORES.map((n) => (
+              <button
+                key={n}
+                type="button"
+                className={`onb-gesture-btn mono${current?.value === n ? ' is-selected' : ''}`}
+                aria-pressed={current?.value === n}
+                aria-label={`${n} sur 5`}
+                onClick={() => record(n)}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+          <p className="onb-fine mono">0 = très mal · 5 = très bien</p>
+        </>
+      )}
+      {current && (
+        <p className="onb-note onb-note-ok" role="status">
+          {gut
+            ? `C’est noté, à ${time} : c’est votre premier jour de suivi. Les pistes arrivent vers le 21ᵉ.`
+            : `C’est noté, à ${time}. Vous la retrouverez dans le Journal.`}
+        </p>
+      )}
+      {error && (
+        <p className="onb-note" role="alert">
+          L’enregistrement n’a pas abouti. Réessayez, ou continuez : vous pourrez le faire depuis Aujourd’hui.
+        </p>
+      )}
+      {!current && !error && <p className="onb-fine">Facultatif : vous pouvez aussi continuer sans répondre.</p>}
+    </>
+  )
+}
+
 /**
  * Onboarding du premier lancement (jalon 4, journal/IDEES.md I154) : plein écran, sans barre d'onglets, reprend à
  * l'écran où la personne s'était arrêtée. Aucune autorisation ni notification demandée dans ces écrans.
@@ -394,7 +487,7 @@ export default function Onboarding() {
         <span className="onb-count">
           {pad(state.step + 1)}/{pad(STEPS.length)}
         </span>
-        {state.step > 0 && (
+        {state.step > 0 && step !== 'premium' && (
           <button type="button" className="onb-skip" onClick={() => end('skipped')}>
             Passer
           </button>
@@ -411,13 +504,19 @@ export default function Onboarding() {
         {step === 'aha' && (
           <AhaStep imported={!!state.imported} onImported={() => update({ imported: true })} onReady={() => setAhaReady(true)} />
         )}
+        {step === 'gesture' && (
+          <GestureStep goal={state.goal} gesture={state.gesture} onGesture={(gesture) => update({ gesture })} />
+        )}
+        {step === 'premium' && <Premium context="onboarding" onClose={() => end('completed')} />}
       </main>
 
-      <div className="onb-footer">
-        <button type="button" className="btn onb-continue" onClick={next} disabled={!canContinue}>
-          Continuer
-        </button>
-      </div>
+      {step !== 'premium' && (
+        <div className="onb-footer">
+          <button type="button" className="btn onb-continue" onClick={next} disabled={!canContinue}>
+            Continuer
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -66,6 +66,8 @@
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer"  # écrans suivants de l'onboarding
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
  *   npm run visual -- --routes=/bienvenue --onboarding=aha   # « Vos 30 derniers jours » (jalon 4b), données de démo
+ *   npm run visual -- --routes=/bienvenue --onboarding=gesture   # premier geste (jalon 4c ; gesture-energy : 0 à 5)
+ *   npm run visual -- --play --routes=/bienvenue --onboarding=premium   # paywall soft en fin d'onboarding (play)
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer > Continuer > Health Connect > Continuer"
  *                                          # écran Health Connect (dans le navigateur : « pas disponible »)
  *   npm run visual -- --size=360x640 --dpr=3   # autre viewport (captures 1080×1920 de la fiche Play)
@@ -329,17 +331,22 @@ async function main() {
     })
     // Onboarding (jalon 4) : noté « fait » pour que chaque page s'affiche même --empty, sauf sur /bienvenue
     // (ou avec --onboarding, pour vérifier la redirection d'une installation vierge).
-    if (args.onboarding === 'aha') {
-      // Écran « Vos 30 derniers jours » (jalon 4b) résumé depuis les données de démo, sans relire Health Connect.
-      await context.addInitScript(() => {
+    // Écrans de l'onboarding ouverts directement : « aha » (jalon 4b, résumé depuis les données de démo, sans relire
+    // Health Connect), premier geste et paywall soft (jalon 4c ; ce dernier avec --play).
+    const ONBOARDING_AT = {
+      aha: { goal: 'energy', watch: 'health_connect', health: 'granted', imported: true, step: 4 },
+      gesture: { goal: 'gut', watch: 'none', step: 3, maxStep: 3 },
+      'gesture-energy': { goal: 'energy', watch: 'none', step: 3, maxStep: 3 },
+      premium: { goal: 'gut', watch: 'none', step: 4, maxStep: 4 },
+    }
+    if (ONBOARDING_AT[args.onboarding]) {
+      await context.addInitScript((state) => {
         try {
-          localStorage.setItem('healthtrack_onboarding', JSON.stringify({
-            goal: 'energy', watch: 'health_connect', health: 'granted', imported: true, step: 4,
-          }))
+          localStorage.setItem('healthtrack_onboarding', JSON.stringify(state))
         } catch {
           /* ignore */
         }
-      })
+      }, ONBOARDING_AT[args.onboarding])
     } else if (!args.onboarding) {
       await context.addInitScript(() => {
         try {
