@@ -1,4 +1,4 @@
-import { lazy } from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
 import Dashboard from './pages/Dashboard'
@@ -23,12 +23,21 @@ const WhatsNew = lazy(() => import('./pages/WhatsNew'))
 const More = lazy(() => import('./pages/More'))
 const WatchData = lazy(() => import('./pages/WatchData'))
 const Premium = lazy(() => import('./pages/Premium'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
 
 export default function App() {
   return (
     <DebugProvider>
       <BrowserRouter>
         <Routes>
+          <Route
+            path="bienvenue"
+            element={
+              <Suspense fallback={null}>
+                <Onboarding />
+              </Suspense>
+            }
+          />
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="journal" element={<Journal />} />
