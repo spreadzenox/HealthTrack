@@ -81,6 +81,9 @@ const round1 = (v) => Math.round(v * 10) / 10
  * aberrantes écartées. Chacune a son propre type d'entrée : ranger la respiration dans
  * « heart_rate » fausserait la plage de FC du jour.
  */
+/** Ordre des lectures de `sync` (avant les lectures ponctuelles), pour la progression. */
+const SYNC_ORDER = ['steps', 'sleep', 'heartRate', 'restingHeartRate', 'oxygenSaturation', 'heartRateVariability', 'calories', 'workouts']
+
 const POINT_READERS = [
   {
     dataType: 'respiratoryRate',
@@ -737,9 +740,12 @@ export class HealthConnectConnector extends BaseConnector {
    * storing tens of thousands of individual samples; heart rate and sleep are
    * stored as individual samples.
    *
-   * @param {{ since: Date, until?: Date, writer: function }} opts
+   * `onProgress({ done, total, label })` : appelé avant chaque type lu, puis une dernière fois à la fin
+   * (done === total) ; sert à la barre d'import de l'onboarding (types lus / total, rien d'inventé).
+   *
+   * @param {{ since: Date, until?: Date, writer: function, onProgress?: function }} opts
    */
-  async sync({ since, until, writer }) {
+  async sync({ since, until, writer, onProgress }) {
     debugInfo(TAG, 'Début synchronisation', {
       since: since?.toISOString(),
       until: (until || new Date()).toISOString(),
@@ -771,6 +777,20 @@ export class HealthConnectConnector extends BaseConnector {
     }
     const canRead = (dataType) => !authorizedTypes || authorizedTypes.has(dataType)
 
+    const order = [...SYNC_ORDER, ...POINT_READERS.map((r) => r.dataType)]
+    let done = 0
+    const report = (label) => {
+      try {
+        onProgress?.({ done, total: order.length, label })
+      } catch {
+        // la progression ne doit jamais interrompre l'import
+      }
+    }
+    const step = (dataType) => {
+      report(READ_TYPE_LABELS[dataType] || dataType)
+      done += 1
+    }
+
     // Determine if this is a large historical fetch (> 30 days)
     const rangeMs = (until || new Date()).getTime() - since.getTime()
     const isHistorical = rangeMs > 30 * 24 * 60 * 60 * 1000
@@ -781,6 +801,7 @@ export class HealthConnectConnector extends BaseConnector {
     })
 
     // ── Steps ──────────────────────────────────────────────────────────────
+    step('steps')
     if (canRead('steps')) try {
       debugDebug(TAG, 'Lecture des pas…')
       if (isHistorical) {
@@ -837,6 +858,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Sleep ──────────────────────────────────────────────────────────────
+    step('sleep')
     if (canRead('sleep')) try {
       debugDebug(TAG, 'Lecture du sommeil…')
       const { samples } = await Health.readSamples({
@@ -869,6 +891,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Heart rate ─────────────────────────────────────────────────────────
+    step('heartRate')
     if (canRead('heartRate')) try {
       debugDebug(TAG, 'Lecture fréquence cardiaque…')
       const { samples } = await Health.readSamples({
@@ -900,6 +923,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Resting heart rate ─────────────────────────────────────────────────
+    step('restingHeartRate')
     if (canRead('restingHeartRate')) try {
       debugDebug(TAG, 'Lecture FC repos…')
       const { samples } = await Health.readSamples({
@@ -931,6 +955,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Oxygen saturation (SpO₂) ───────────────────────────────────────────
+    step('oxygenSaturation')
     if (canRead('oxygenSaturation')) try {
       debugDebug(TAG, 'Lecture SpO₂…')
       const { samples } = await Health.readSamples({
@@ -962,6 +987,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── HRV ───────────────────────────────────────────────────────────────
+    step('heartRateVariability')
     if (canRead('heartRateVariability')) try {
       debugDebug(TAG, 'Lecture HRV…')
       const { samples } = await Health.readSamples({
@@ -993,6 +1019,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Calories ───────────────────────────────────────────────────────────
+    step('calories')
     if (canRead('calories')) try {
       debugDebug(TAG, 'Lecture calories…')
       if (isHistorical) {
@@ -1049,6 +1076,7 @@ export class HealthConnectConnector extends BaseConnector {
     }
 
     // ── Workouts / Activities ──────────────────────────────────────────────
+    step('workouts')
     if (canRead('workouts')) try {
       debugDebug(TAG, 'Lecture activités/entraînements…')
       const { workouts } = await Health.queryWorkouts({
@@ -1082,6 +1110,7 @@ export class HealthConnectConnector extends BaseConnector {
 
     // ── Mesures vitales et pesées (respiration, température, tension, glycémie, poids, masse grasse)
     for (const reader of POINT_READERS) {
+      step(reader.dataType)
       if (!canRead(reader.dataType)) continue
       try {
         const { samples } = await Health.readSamples({
@@ -1113,6 +1142,7 @@ export class HealthConnectConnector extends BaseConnector {
       }
     }
 
+    report(null)
     debugInfo(TAG, 'Synchronisation terminée', { synced, skipped, errors })
     return { synced, skipped, errors }
   }

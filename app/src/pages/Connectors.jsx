@@ -20,6 +20,7 @@ import { noteFirstGrant, readsAllFailed, syncSince, historyOptions } from '../co
 import { getWeatherSettings } from '../services/weatherSync'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
 import { getWatchAutoSyncState } from '../services/watchAutoSync'
+import useDisclosure from '../hooks/useDisclosure'
 import './Connectors.css'
 
 /**
@@ -131,6 +132,7 @@ function ConnectorCard({ connector }) {
   const [historyDays, setHistoryDays] = useState(() => Math.min(DEFAULT_HISTORY_DAYS, readWindowDays ?? Infinity))
   const [checkCount, setCheckCount] = useState(0)
   const [settingsActionStatus, setSettingsActionStatus] = useState(null) // 'ok' | 'err' | null
+  const [disclosure, askConsent] = useDisclosure()
 
   // Reload settings from localStorage when component mounts
   const reloadSettings = useCallback(() => {
@@ -192,6 +194,7 @@ function ConnectorCard({ connector }) {
   }
 
   const handleRequestPermissions = async () => {
+    if (connector.id === 'health_connect' && !(await askConsent('health_connect'))) return
     setPermissions('checking')
     try {
       const result = await withTimeout(connector.requestPermissions(), 15000, 'denied')
@@ -257,6 +260,7 @@ function ConnectorCard({ connector }) {
 
   return (
     <div className={`connector-card ${settings.enabled ? 'connector-card-enabled' : ''}`}>
+      {disclosure}
       <div className="connector-card-header">
         <div className="connector-card-title-row">
           <h3 className="connector-name">{connector.name}</h3>

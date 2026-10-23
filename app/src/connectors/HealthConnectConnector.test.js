@@ -375,6 +375,44 @@ describe('HealthConnectConnector', () => {
       expect(result.synced).toBeGreaterThan(0)
     })
 
+    it('onProgress : types lus / total, dans l’ordre, puis done === total à la fin', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockResolvedValue({ samples: [] })
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+      const calls = []
+      const { writer } = makeWriter()
+      await connector.sync({
+        since: new Date('2026-01-01T00:00:00Z'),
+        until: new Date('2026-01-02T00:00:00Z'),
+        writer,
+        onProgress: (p) => calls.push(p),
+      })
+      const total = calls[0].total
+      expect(total).toBe(14)
+      expect(calls.map((c) => c.done)).toEqual([...Array(total + 1).keys()])
+      expect(calls[0].label).toBe('pas')
+      expect(calls[1].label).toBe('sommeil')
+      expect(calls.at(-1)).toEqual({ done: total, total, label: null })
+    })
+
+    it('une erreur dans onProgress n’interrompt pas l’import', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(({ dataType }) =>
+        Promise.resolve({ samples: dataType === 'sleep' ? [{ startDate: '2026-01-01T22:00:00Z', endDate: '2026-01-02T06:00:00Z', value: 480 }] : [] }))
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+      const { written, writer } = makeWriter()
+      const result = await connector.sync({
+        since: new Date('2026-01-01T00:00:00Z'),
+        until: new Date('2026-01-02T12:00:00Z'),
+        writer,
+        onProgress: () => { throw new Error('boom') },
+      })
+      expect(written.filter((e) => e.type === 'sleep')).toHaveLength(1)
+      expect(result.errors).toEqual([])
+    })
+
     it('syncs sleep samples with sleepState in payload', async () => {
       const { Health } = await import('@capgo/capacitor-health')
       Health.readSamples.mockImplementation(({ dataType }) => {

@@ -65,6 +65,9 @@
  *   npm run visual -- --empty --routes=/ --onboarding   # premier lancement : l'Accueil redirige vers /bienvenue (jalon 4)
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer"  # écrans suivants de l'onboarding
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
+ *   npm run visual -- --routes=/bienvenue --onboarding=aha   # « Vos 30 derniers jours » (jalon 4b), données de démo
+ *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer > Continuer > Health Connect > Continuer"
+ *                                          # écran Health Connect (dans le navigateur : « pas disponible »)
  *   npm run visual -- --size=360x640 --dpr=3   # autre viewport (captures 1080×1920 de la fiche Play)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
@@ -326,7 +329,18 @@ async function main() {
     })
     // Onboarding (jalon 4) : noté « fait » pour que chaque page s'affiche même --empty, sauf sur /bienvenue
     // (ou avec --onboarding, pour vérifier la redirection d'une installation vierge).
-    if (!args.onboarding) {
+    if (args.onboarding === 'aha') {
+      // Écran « Vos 30 derniers jours » (jalon 4b) résumé depuis les données de démo, sans relire Health Connect.
+      await context.addInitScript(() => {
+        try {
+          localStorage.setItem('healthtrack_onboarding', JSON.stringify({
+            goal: 'energy', watch: 'health_connect', health: 'granted', imported: true, step: 4,
+          }))
+        } catch {
+          /* ignore */
+        }
+      })
+    } else if (!args.onboarding) {
       await context.addInitScript(() => {
         try {
           if (!location.pathname.startsWith('/bienvenue') && !localStorage.getItem('healthtrack_onboarding')) {
@@ -765,6 +779,9 @@ async function main() {
       try {
         await page.goto(baseUrl + path, { waitUntil: 'networkidle', timeout: 20000 })
         await page.waitForTimeout(700)
+        if (args.onboarding === 'aha' && path === '/bienvenue') {
+          await page.locator('.onb-facts, .onb-note').first().waitFor({ timeout: 10000 })
+        }
         if (args['food-analysis'] && path === '/food') {
           await page.locator('#gallery-upload').setInputFiles({ name: 'repas.png', mimeType: 'image/png', buffer: DEMO_PHOTO })
           await page.getByRole('button', { name: 'Analyser les ingrédients' }).click()
