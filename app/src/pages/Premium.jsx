@@ -35,8 +35,11 @@ function TrialTimeline({ days }) {
 /**
  * Paywall « soft » de la variante play (jalon 6c-3, maquette de journal/DESIGN.md) : toujours passable, prix et essai
  * lus dans Google Play (jamais codés en dur), achat revérifié par le relais. Les fonctions locales restent gratuites.
+ *
+ * `context="onboarding"` (jalon 4c, dernier écran de l'onboarding) : phrase sur l'arrivée des pistes et
+ * « Continuer gratuitement » à la place de « Plus tard » ; `onClose` remplace le retour en arrière.
  */
-export default function Premium() {
+export default function Premium({ context = null, onClose = null }) {
   const navigate = useNavigate()
   const [ent, setEnt] = useEntitlement()
   const [plans, setPlans] = useState(null)
@@ -62,7 +65,8 @@ export default function Premium() {
     if (ent.premium) setMessage('')
   }, [ent.premium])
 
-  const close = () => (window.history.length > 1 ? navigate(-1) : navigate('/'))
+  const onboarding = context === 'onboarding'
+  const close = onClose ?? (() => (window.history.length > 1 ? navigate(-1) : navigate('/')))
   const plan = plans?.find((p) => p.basePlanId === selected) ?? null
   const saving = plans ? annualSavingPercent(plans) : null
 
@@ -109,7 +113,9 @@ export default function Premium() {
 
       <h2 className="paywall-title">Passez de « je note » à « je comprends »</h2>
       <p className="paywall-lead">
-        Vos données restent sur votre téléphone. Le premium vous aide à voir ce qui va avec vos bons et mauvais jours.
+        {onboarding
+          ? 'Vos pistes arriveront vers le 21ᵉ jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.'
+          : 'Vos données restent sur votre téléphone. Le premium vous aide à voir ce qui va avec vos bons et mauvais jours.'}
       </p>
 
       <ul className="paywall-benefits">
@@ -207,7 +213,7 @@ export default function Premium() {
       </p>
 
       <button type="button" className="btn btn-secondary paywall-later" onClick={close}>
-        Plus tard
+        {onboarding ? 'Continuer gratuitement' : 'Plus tard'}
       </button>
     </section>
   )

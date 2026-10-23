@@ -66,9 +66,13 @@ export function finishOnboarding(endedBy = 'completed') {
 /**
  * Faut-il ouvrir l'onboarding ? Oui seulement s'il n'a jamais été fait ET que la base est vide. Si la base ne
  * peut pas être lue, non : mieux vaut ne pas le montrer que le montrer à quelqu'un qui a déjà des données.
+ * Un onboarding déjà commencé (au moins un écran passé) reprend même si la base s'est remplie entre-temps : ce
+ * sont l'import Health Connect et le premier geste de l'onboarding lui-même.
  */
 export async function needsOnboarding({ countEntries = countAllEntries } = {}) {
-  if (loadOnboarding().done) return false
+  const s = loadOnboarding()
+  if (s.done) return false
+  if (s.maxStep > 0) return true
   let count
   try {
     count = await countEntries()
