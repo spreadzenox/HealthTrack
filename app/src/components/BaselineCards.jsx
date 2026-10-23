@@ -115,7 +115,7 @@ export default function BaselineCards() {
     <div className="baselines">
       {!hasAnyData ? (
         <p className="empty-hint">
-          Connectez une montre via <Link to="/connectors">Health Connect</Link> : après 3 semaines de mesures,{' '}
+          Ajoutez une montre dans <Link to="/connectors">Sources</Link> : après 3 semaines de mesures,{' '}
           {APP_NAME} compare votre FC au repos et votre VFC à <em>vos</em> valeurs habituelles.
         </p>
       ) : (

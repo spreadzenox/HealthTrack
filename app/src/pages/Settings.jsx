@@ -271,6 +271,7 @@ export default function Settings() {
       </div>
       )}
 
+      {(FEATURES.cigaretteSetting || cigarettePinned) && (
       <div className="settings-block">
         <h3 className="section-title">Cigarettes</h3>
         <div className="debug-toggle-row">
@@ -292,6 +293,7 @@ export default function Settings() {
         </div>
         <p className="hint">Sinon, le bouton n&apos;apparaît que si une cigarette a été notée ces 14 derniers jours.</p>
       </div>
+      )}
 
       {/* ── Mode diagnostic ─────────────────────────────────────────────────────── */}
       {debugMenuShown && (

@@ -40,6 +40,9 @@ export function featuresFor(distribution) {
     // Guide « Huawei / Honor » par Gadgetbridge (F-Droid, ID de compte lu dans les cookies) ; en play, le guide
     // renvoie à la connexion directe de la montre, Gadgetbridge seulement en dernier recours (VC-13)
     gadgetbridgeGuide: d === 'sideload',
+    // Réglage « Cigarettes » (épingler « + 1 cigarette » sur l'Accueil) : hors parcours ventre + bien-être, masqué
+    // en play sauf s'il est déjà activé ; le compteur reste là dès qu'une cigarette a été notée (VC-14)
+    cigaretteSetting: d === 'sideload',
   }
 }
 

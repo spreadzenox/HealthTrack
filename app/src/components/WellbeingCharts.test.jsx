@@ -212,7 +212,7 @@ describe('WellbeingCharts — ne lit que les 14 jours affichés (perf D2)', () =
     listEntries.mockResolvedValue([])
     countEntries.mockResolvedValue(0)
     render(<WellbeingCharts />)
-    expect(await screen.findByText(/Pas encore assez de données/)).toBeInTheDocument()
+    expect(await screen.findByText(/Pas encore de bien-être noté/)).toBeInTheDocument()
     expect(countEntries.mock.calls[0][0]).toMatchObject({ type: 'wellbeing' })
   })
 })

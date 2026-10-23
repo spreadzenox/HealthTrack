@@ -99,7 +99,9 @@ describe('Recommendations page', () => {
     expect(await screen.findByText(/Vos pistes arrivent dans 21 jours/i)).toBeInTheDocument()
     expect(screen.getByText(/0\/21 jours avec un repas ou une note du ventre/)).toBeInTheDocument()
     expect(screen.getByText(/On préfère attendre plutôt que de vous montrer de faux suspects/)).toBeInTheDocument()
-    expect(screen.getByText(/Pas encore assez de jours mesurés/i)).toBeInTheDocument()
+    // VC-12 : un seul seuil visible sous la carte lilas
+    expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/au moins 5 jours/i)).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Analyse simple/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Analyse avancée/i })).not.toBeInTheDocument()
     const text = container.textContent
@@ -111,11 +113,14 @@ describe('Recommendations page', () => {
     expect(screen.queryByRole('link', { name: /onglet Pistes/i })).not.toBeInTheDocument()
   })
 
-  it('says how many wellbeing days are still missing, in plain words', async () => {
+  it('keeps the wellbeing threshold in the lilac card details, not in a second card (VC-12)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(2))
     renderPage()
-    expect(await screen.findByText(/Encore 3 jours avec une note de bien-être \(vous en avez 2\)/)).toBeInTheDocument()
+    await screen.findByText(/Vos pistes arrivent dans/i)
+    expect(screen.queryByText(/Encore 3 jours avec une note de bien-être/)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /détails/i }))
+    expect(await screen.findByText(/liens avec le bien-être : 2\/5 jours avec une note de bien-être/)).toBeInTheDocument()
   })
 
   it('switches to advanced tab on click', async () => {
@@ -182,7 +187,7 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue([])
     renderPage()
-    await screen.findByText(/Pas encore assez de jours mesurés/i)
+    await screen.findByText(/Vos pistes arrivent dans/i)
 
     const callsBefore = listEntriesForAnalysis.mock.calls.length
 
@@ -197,13 +202,13 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue([])
     const first = renderPage()
-    await screen.findByText(/Pas encore assez de jours mesurés/i)
+    await screen.findByTestId('reco-basic-waiting')
     first.unmount()
     _resetAnalysisRunner() // app restarted: only the persisted cache remains
     const calls = listEntriesForAnalysis.mock.calls.length
 
     renderPage()
-    expect(screen.getByText(/Pas encore assez de jours mesurés/i)).toBeInTheDocument()
+    expect(screen.getByTestId('reco-basic-waiting')).toBeInTheDocument()
     expect(listEntriesForAnalysis.mock.calls.length).toBe(calls)
   })
 })
@@ -826,8 +831,8 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     expect(section).toHaveTextContent('Avec votre bien-être estimé (visage)')
     expect(section).toHaveTextContent('Sur 20 jours estimés par la Lecture du visage, sans aucune note')
     expect(section).toHaveTextContent('Pas')
-    // Les notes manquent toujours pour l'analyse classique : les deux coexistent.
-    expect(screen.getByText(/Pas encore assez de jours mesurés/i)).toBeInTheDocument()
+    // Les notes manquent toujours pour l'analyse classique : la carte lilas le dit, sans second seuil (VC-12).
+    expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
   })
 
   it('shows the habits compared to the estimated mood, without the felt stress and without any lever', async () => {

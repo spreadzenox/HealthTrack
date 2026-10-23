@@ -612,6 +612,16 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 23/10 22:30 — Pistes, Tendances et Paramètres plus cohérents au début (VC-12, VC-14, VC-16).** Ce que vous
+verrez : sur **Pistes**, tant que vos jours ne suffisent pas, il n'y a plus qu'**un seul compteur** (la carte lilas
+« Vos pistes arrivent dans N jours ») ; l'autre seuil (5 jours de note de bien-être) est rangé sous **« détails »**.
+Dans **Journal → Tendances** vide : « Activez la lecture du visage ou notez-le avec « Une note » » et « Ajoutez une
+montre dans **Sources** » (au lieu de « via Health Connect », faux pour la Huawei). Dans la **version Play** : le
+réglage **« Cigarettes »** disparaît des Paramètres sur une installation neuve (il reste chez qui l'a activé ; le
+bouton « + 1 cigarette » de l'Accueil revient toujours si une cigarette a été notée). Votre version sideload ne perd
+rien. **Prochain run de code : VC-17** selon votre réponse à **P25** (sans réponse : ①, ne cocher que ce qui est
+livré), puis VC-15 et VC-5. **👉 En attente de vous : P25 (①, ② ou ③) et P23** (testeurs sans paiement).
+
 **Run du 23/10 21:30 — page Sources plus claire en version Play (VC-7 + VC-13).** Ce que vous verrez : les cartes
 **Lecture du visage**, **Temps d'écran** et **Météo** tiennent en deux lignes (ce que ça fait, ce qui sort ou non du
 téléphone) ; le reste est sous **« Détails »**. Dans la **version Play** seulement : la carte **Withings** (qui
@@ -1042,6 +1052,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 17:30 — [VC-2 : Pistes vide aligné sur l'Accueil](runs/2026-10-23-1730-vc2-pistes-vide.md) | 🧭 | État vide de `/recommendations` = `PistesTeaser` (même compteur que l'Accueil, objectif suivi, `onPistesPage` sans lien vers soi-même) + « Pas encore assez de jours mesurés » ; onglets masqués tant que l'analyse simple n'a rien ; « recommandations basiques », « ≥ 5j » et 📊 retirés de l'état vide ; 3 tests ; v232 (33,7 Mo) ; test `FaceSenseCard` fragile (horodatage) corrigé |
 | 23/10 19:30 — [VC-6 + VC-8 : carte montre simple avant appairage](runs/2026-10-23-1930-vc6-vc8-carte-montre.md) | 🧭⌚ | `WatchConnect` : « Diagnostic » toujours replié, constantes téléchargées au premier « Connecter ma montre » (téléchargement/collage sous « Diagnostic »), conseil d'échec hors du repli ; lien `/montre` seulement après appairage ; `/montre` sans montre → phrase + bouton ; 4 tests |
 | 23/10 20:30 — [Idées : audit play vierge après les correctifs VC](runs/2026-10-23-2030-idees-audit-vc.md) | 💡 | 18 captures `--play --empty` relues (0 erreur JS) ; **paywall : 3 avantages sur 4 non livrés → P25** ; VC-12 (Pistes : 2 seuils contradictoires), VC-13 (guide Huawei → Gadgetbridge + cookie F12 en play), VC-14 (cigarettes), VC-15 (émojis, apostrophes), VC-16 (Tendances) ; journal seul |
+| 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |
 | 23/10 18:30 — [VC-3 : profil Nutrition sans valeurs inventées](runs/2026-10-23-1830-vc3-profil-nutrition.md) | 🧭 | `BodyProfileCard` : profil vide → invitation sans chiffre ; partiel → valeurs connues + « À compléter : … » ; IMC / kcal derrière « détails » (I152) ; avertissement « repas manquants » sans objectif calorique ; `DetailsToggle.css` ; 3 tests |
 | 23/10 13:30 — [Jalon 4c-2 : lecture du visage dans l'onboarding](runs/2026-10-23-1330-jalon4c2-visage.md) | 🧭 | Écran 7 d'I154 avant le premier geste (seulement si le plugin caméra existe) : 3 lignes, divulgation `camera`/`camera_app_open`, lecture d'essai (`services/faceTrial.js`, ne compte pas), « Plus tard » sans demande ; `--onboarding=face` ; 13 tests |
