@@ -151,10 +151,10 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
 - [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation) —
   spécification écran par écran : `IDEES.md` **I154** (9 écrans, route `/bienvenue`, `settings/onboarding.js`, jamais
   montré à un utilisateur existant, notifications jamais pendant l'onboarding) ; découpage **[x] 4a** écrans 1-3 +
-  mécanique + redirection (FAIT le 23/10 10:30), **[ ] 4b** Health Connect + import + « aha » (après VC-11), **[ ] 4c** visage, premier geste,
+  mécanique + redirection (FAIT le 23/10 10:30), **[x] 4b** Health Connect + import + « aha » (FAIT le 23/10 11:30 ; import et « aha » dans un même écran), **[ ] 4c** visage, premier geste,
   paywall soft (`/premium` contexte `onboarding`, « Continuer gratuitement ») ; [ ] I155 l'objectif règle l'Accueil ;
   [ ] I156 compteur local d'étapes dans le diagnostic —
-  [ ] **I130** « Vos 30 derniers jours » dès l'octroi Health Connect, **sans** permission d'historique (30 j lisibles
+  [x] **I130** (FAIT avec le 4b, 23/10 11:30) « Vos 30 derniers jours » dès l'octroi Health Connect, **sans** permission d'historique (30 j lisibles
   d'office), chaque chiffre avec sa source ; permission de notifications demandée après un geste, pas d'emblée
 - [ ] **5 Analyses avec délais (2–48 h) repas → symptômes** + saisie de symptômes digestifs horodatée + honnêteté
   statistique (« pas encore assez de données ») — [ ] **I132** 3 fenêtres fixées d'avance (0–4 h « réflexe après le

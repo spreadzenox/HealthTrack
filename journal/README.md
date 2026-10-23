@@ -527,6 +527,21 @@ geste et le paywall passable. Pour le voir vous-même : Paramètres de l'app And
 Stockage → Effacer les données (⚠️ efface tout sur cette version-là). **👉 Toujours en attente de vous : P23**
 (testeurs sans paiement).
 
+**Run du 23/10 11:30 — vos 30 derniers jours dès la première ouverture (jalon 4b).** Ce que vous verrez : **rien
+chez vous** (l'onboarding ne s'affiche jamais quand il y a des données) ; **une seule chose change aussi pour vous** :
+dans Sources, « Autoriser » Health Connect passe désormais par une **explication avant la boîte d'Android** (ce qui est
+lu, rien n'est envoyé, « Pas maintenant » ne demande rien), comme la caméra ou la position. Sur un téléphone neuf, le
+choix « Une montre qui écrit dans Health Connect » mène à **deux nouveaux écrans** : ① « Vos données Health Connect »
+(divulgation puis autorisation ; refus ou téléphone sans Health Connect → on continue sans reproche) ; ② l'**import
+des 30 derniers jours** avec une barre réelle (« 5/14 · VFC », types lus sur total, rien d'inventé ; au-delà de 20 s,
+« vous pouvez continuer, l'import se poursuit en arrière-plan »), puis **« Vos 30 derniers jours »** : sommeil moyen et
+nombre de nuits, pas par jour, VFC de nuit, cœur au repos, chacun avec l'app d'origine (« Garmin Connect via Health
+Connect ») ; **aucun zéro** : s'il n'y a rien, « Rien à importer pour l'instant : vos données arriveront au fil des
+jours ». La synchro est notée comme une synchro normale : la synchro automatique reprend de là. En coulisses :
+progression ajoutée à la synchro Health Connect, module `firstImport`, 17 nouveaux tests. Prochain run de code :
+**4c** (lecture du visage facultative, premier geste « Comment va votre ventre ? », paywall passable dans la variante
+play). **👉 Toujours en attente de vous : P23** (testeurs sans paiement).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -908,6 +923,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 08:30 — [Idées : onboarding spécifié, import Health Connect du jour 1](runs/2026-10-23-0830-idees-onboarding.md) | 💡 | Jalon 4 écran par écran (I154 : 9 écrans, 4a / 4b / 4c, paywall soft, notifications hors onboarding) ; **VC-11** (I153 : 1re synchro HC sur 180 j alors que 30 j autorisés → rien importé sur installation neuve, `lastSyncAt` avance quand même) ; I155–I156 ; journal seul |
 | 23/10 09:30 — [VC-11 : import Health Connect borné à 30 jours](runs/2026-10-23-0930-vc11-fenetre-hc.md) | 🧭 | `syncWindow.js` : 1re synchro HC bornée à 1re autorisation − 29 j (`firstGrantAt` noté sur installation neuve seulement) ; `lastSyncAt` n'avance plus si tout échoue (`lastAttemptAt`, réessai après 1 h) ; choix 7 / 30 jours + phrase ; 23 tests |
 | 23/10 10:30 — [Jalon 4a : onboarding, écrans 1 à 3](runs/2026-10-23-1030-jalon4a-onboarding.md) | 🧭 | `/bienvenue` plein écran : maquette écran 1 (objectif, 18+), suivis, montre ; `settings/onboarding.js` (reprise, `maxStep`) ; redirection seulement si jamais fait **et** base vide (utilisateur existant → jamais) ; captures `--onboarding` ; 18 tests |
+| 23/10 11:30 — [Jalon 4b : Health Connect, import et « aha »](runs/2026-10-23-1130-jalon4b-health-connect.md) | 🧭 | Écran Health Connect (divulgation `health_connect`, aussi dans Sources) ; import des 30 j avec progression réelle (`onProgress` de la synchro, types lus / total, 20 s puis arrière-plan) ; « Vos 30 derniers jours » (≤ 4 chiffres avec source, jamais de zéro) ; `services/firstImport.js` ; `--onboarding=aha` ; 17 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |
 | 23/10 03:30 — [6c-3 : paywall (variante play)](runs/2026-10-23-0330-6c3-paywall.md) | 🧭💳 | Page `/premium` de la maquette, prix / essai / économie calculés sur Play Billing ; état « aucune formule » ; « Découvrir le premium » dans les Paramètres ; faux plugin Play Billing pour les captures ; 1 913 Vitest |
