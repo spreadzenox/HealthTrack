@@ -515,6 +515,18 @@ Sources, 23 nouveaux tests. À confirmer sur l'émulateur ou chez un premier tes
 de code : **jalon 4a** (onboarding, mécanique des écrans). **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement).
 
+**Run du 23/10 10:30 — un accueil pour les nouveaux venus (jalon 4a).** Ce que vous verrez : **rien chez vous**
+(vous avez des données : ces écrans ne s'affichent jamais, c'est testé). Sur un téléphone neuf, la première ouverture
+mène à **trois écrans plein écran** : celui de la maquette (« Comprenez ce qui va avec vos bons et mauvais jours », les
+trois tuiles, « Qu'est-ce qui vous amène ? » 01 / 02 / 03, la ligne cadenas et « En continuant, vous confirmez avoir
+18 ans ou plus »), puis « Que voulez-vous suivre ? » (cases cochées d'avance selon l'objectif) et « Avez-vous une
+montre ? » (Health Connect / compatible Huawei / pas de montre). Aucune autorisation demandée, « Passer » dès le 2ᵉ
+écran, reprise là où l'on s'était arrêté. Pour l'instant, une montre mène ensuite à l'onglet Sources ; le **4b**
+ajoutera l'écran Health Connect et le « aha » de vos 30 derniers jours, le **4c** la lecture du visage, le premier
+geste et le paywall passable. Pour le voir vous-même : Paramètres de l'app Android → Halcya (version play) →
+Stockage → Effacer les données (⚠️ efface tout sur cette version-là). **👉 Toujours en attente de vous : P23**
+(testeurs sans paiement).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -895,6 +907,7 @@ du jour avec sa fourchette (derrière la porte).
 | 22/10 23:30 — [Relais : analyse des repas en panne (502)](runs/2026-10-22-2330-relais-analyse-502.md) | 🚑 | Révision 6b-1 en ligne mais analyse de test en 502 (relance et appel direct identiques) ; repli sur le modèle suivant aussi pour 400 / 5xx / réponse vide ou illisible (pas 429) ; message exact de Vertex AI dans le résumé du workflow ; 44 tests relais |
 | 23/10 08:30 — [Idées : onboarding spécifié, import Health Connect du jour 1](runs/2026-10-23-0830-idees-onboarding.md) | 💡 | Jalon 4 écran par écran (I154 : 9 écrans, 4a / 4b / 4c, paywall soft, notifications hors onboarding) ; **VC-11** (I153 : 1re synchro HC sur 180 j alors que 30 j autorisés → rien importé sur installation neuve, `lastSyncAt` avance quand même) ; I155–I156 ; journal seul |
 | 23/10 09:30 — [VC-11 : import Health Connect borné à 30 jours](runs/2026-10-23-0930-vc11-fenetre-hc.md) | 🧭 | `syncWindow.js` : 1re synchro HC bornée à 1re autorisation − 29 j (`firstGrantAt` noté sur installation neuve seulement) ; `lastSyncAt` n'avance plus si tout échoue (`lastAttemptAt`, réessai après 1 h) ; choix 7 / 30 jours + phrase ; 23 tests |
+| 23/10 10:30 — [Jalon 4a : onboarding, écrans 1 à 3](runs/2026-10-23-1030-jalon4a-onboarding.md) | 🧭 | `/bienvenue` plein écran : maquette écran 1 (objectif, 18+), suivis, montre ; `settings/onboarding.js` (reprise, `maxStep`) ; redirection seulement si jamais fait **et** base vide (utilisateur existant → jamais) ; captures `--onboarding` ; 18 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |
 | 23/10 03:30 — [6c-3 : paywall (variante play)](runs/2026-10-23-0330-6c3-paywall.md) | 🧭💳 | Page `/premium` de la maquette, prix / essai / économie calculés sur Play Billing ; état « aucune formule » ; « Découvrir le premium » dans les Paramètres ; faux plugin Play Billing pour les captures ; 1 913 Vitest |

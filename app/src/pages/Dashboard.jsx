@@ -73,7 +73,7 @@ export default function Dashboard() {
       {/* Présentation utile au premier lancement seulement : avec des données, elle repoussait tout le contenu. */}
       {!loading && !error && days.length === 0 && (
         <p className="dashboard-intro">
-          Notez vos repas et votre ventre en un geste, ajoutez votre montre (sommeil, cœur, pas) : {APP_NAME}
+          Notez vos repas et votre ventre en un geste, ajoutez votre montre (sommeil, cœur, pas) : {APP_NAME}{' '}
           vous aide à comprendre ce qui va avec vos bons et mauvais jours. Tout reste sur le téléphone par défaut ;
           l’IA seulement si vous le voulez. Tout se règle dans <Link to="/connectors">Sources</Link>.
         </p>

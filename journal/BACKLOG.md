@@ -150,8 +150,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   seule source (`appName` Capacitor, `strings.xml`, titres) pour le changer en un commit
 - [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation) —
   spécification écran par écran : `IDEES.md` **I154** (9 écrans, route `/bienvenue`, `settings/onboarding.js`, jamais
-  montré à un utilisateur existant, notifications jamais pendant l'onboarding) ; découpage **[ ] 4a** écrans 1-3 +
-  mécanique + redirection, **[ ] 4b** Health Connect + import + « aha » (après VC-11), **[ ] 4c** visage, premier geste,
+  montré à un utilisateur existant, notifications jamais pendant l'onboarding) ; découpage **[x] 4a** écrans 1-3 +
+  mécanique + redirection (FAIT le 23/10 10:30), **[ ] 4b** Health Connect + import + « aha » (après VC-11), **[ ] 4c** visage, premier geste,
   paywall soft (`/premium` contexte `onboarding`, « Continuer gratuitement ») ; [ ] I155 l'objectif règle l'Accueil ;
   [ ] I156 compteur local d'étapes dans le diagnostic —
   [ ] **I130** « Vos 30 derniers jours » dès l'octroi Health Connect, **sans** permission d'historique (30 j lisibles

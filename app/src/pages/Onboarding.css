@@ -1,0 +1,215 @@
+/* Onboarding (jalon 4) : maquette « Onboarding, premier écran » de journal/DESIGN.md, plein écran sans onglets */
+.onboarding {
+  min-height: calc(100vh - var(--safe-top) - var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  padding: 0 4px;
+}
+
+.onb-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+}
+
+.onb-back,
+.onb-skip {
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  background: none;
+  color: var(--text-muted);
+}
+
+.onb-back {
+  font-size: 1.3rem;
+}
+
+.onb-back-spacer {
+  width: 0;
+}
+
+.onb-skip {
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+
+.onb-progress {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.onb-progress span {
+  display: block;
+  height: 100%;
+  background: var(--color-brand);
+  border-radius: inherit;
+}
+
+.onb-count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.onb-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 24px;
+}
+
+.onb-illustration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  border-radius: var(--radius-card);
+  background: var(--mint-bg);
+}
+
+.onb-ill-line {
+  fill: none;
+  stroke: var(--mint-label);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.onb-ill-dot {
+  fill: var(--accent-amber);
+}
+
+.onb-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.onb-lead,
+.onb-fine {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.onb-fine {
+  font-size: 0.85rem;
+}
+
+.onb-tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.onb-tiles li {
+  padding: 12px 10px;
+  border-radius: var(--radius-choice);
+  background: var(--surface);
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: var(--text-muted);
+}
+
+.onb-tile-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.onb-choices {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.onb-question {
+  padding: 0;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.onb-choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  min-height: var(--tap-min);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-choice);
+  cursor: pointer;
+}
+
+.onb-choice.is-selected {
+  border-color: var(--color-brand);
+}
+
+.onb-choice input {
+  accent-color: var(--color-brand);
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.onb-choice-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.onb-choice-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.onb-choice-label {
+  font-weight: 700;
+}
+
+.onb-choice-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.onb-lock {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.onb-footer {
+  position: sticky;
+  bottom: 0;
+  padding: 12px 0 16px;
+  background: var(--bg);
+}
+
+.onb-continue {
+  width: 100%;
+  min-height: var(--button-height);
+  border-radius: var(--radius-pill);
+}
+
+.onb-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

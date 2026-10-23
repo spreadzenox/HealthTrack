@@ -62,6 +62,9 @@
  *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
+ *   npm run visual -- --empty --routes=/ --onboarding   # premier lancement : l'Accueil redirige vers /bienvenue (jalon 4)
+ *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer"  # écrans suivants de l'onboarding
+ *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
  *   npm run visual -- --size=360x640 --dpr=3   # autre viewport (captures 1080×1920 de la fiche Play)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
@@ -101,6 +104,7 @@ const DEFAULT_ROUTES = [
   ['/plus', 'plus'],
   ['/montre', 'montre'],
   ['/premium', 'premium'],
+  ['/bienvenue', 'bienvenue'],
 ]
 
 const FAKE_MEAL_ANALYSIS = {
@@ -320,6 +324,19 @@ async function main() {
         : { plan: 'free', remaining: 22, monthly: 12, welcome: 10, resetAt: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1)).toISOString(), state: 'x' }
       return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ credits }) })
     })
+    // Onboarding (jalon 4) : noté « fait » pour que chaque page s'affiche même --empty, sauf sur /bienvenue
+    // (ou avec --onboarding, pour vérifier la redirection d'une installation vierge).
+    if (!args.onboarding) {
+      await context.addInitScript(() => {
+        try {
+          if (!location.pathname.startsWith('/bienvenue') && !localStorage.getItem('healthtrack_onboarding')) {
+            localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'visual' }))
+          }
+        } catch {
+          /* ignore */
+        }
+      })
+    }
     // Météo : jamais d'appel réseau réel. Avec les données de démo, météo activée (Paris) et à jour.
     await context.route('https://*.open-meteo.com/**', (route) => route.abort())
     if (!args.empty) {
@@ -833,10 +850,12 @@ async function main() {
           await page.evaluate(() => document.querySelector('.ble-devices')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(300)
         }
-        // Un bouton, ou à défaut un volet repliable (<summary>) qui contient ce texte ; « A > B » clique A puis B.
+        // Un bouton, ou à défaut un volet repliable (<summary>), un choix radio ou une case qui contient ce texte ; « A > B » clique A puis B.
         for (const target of args.click ? String(args.click).split(' > ') : []) {
           let button = page.getByRole('button', { name: target }).first()
           if (!(await button.count())) button = page.locator('summary', { hasText: target }).first()
+          if (!(await button.count())) button = page.getByRole('radio', { name: target }).first()
+          if (!(await button.count())) button = page.getByRole('checkbox', { name: target }).first()
           if (await button.count()) {
             await button.click()
             await page.waitForTimeout(700)
