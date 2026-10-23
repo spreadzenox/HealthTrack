@@ -33,3 +33,9 @@
 
 ## Suite
 - VC-18, VC-15, VC-5, VC-10, VC-9 ; VC-19 (stabiliser le test UpdateBanner).
+
+## Merge
+- PR #305 : les 8 checks sont verts (Vitest, Build APK, relais, protocole montre, perf, émulateur A56 API 35 et 36),
+  et main n'a pas bougé (`72561bf`). **Pas mergée** : dans cette session, le classificateur de permissions a refusé
+  le merge (« Merge Without Review »). Le run suivant (ou le propriétaire) n'a qu'à faire le merge en squash une fois
+  la branche remise à jour.
