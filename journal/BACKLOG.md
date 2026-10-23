@@ -75,13 +75,19 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   bien-être à l'ouverture de l'app » → aligner sur le reste (« Activez la lecture du visage ou notez votre
   bien-être avec « Une note » ») ; « Connectez une montre via Health Connect » → « Ajoutez une montre dans Sources »
   (la Huawei ne passe pas par Health Connect).
-- [ ] **VC-17 → P25** (audit du 23/10 20:30, **bloquant pour C3**) le paywall liste 4 avantages dont **3 non livrés**
+- [x] **VC-17 → P25** (23/10 23:30 : option ① par défaut, `config/premiumBenefits.js`, test qui relie chaque avantage coché à une fonction ; rappel et Conditions → VC-18) (audit du 23/10 20:30, **bloquant pour C3**) le paywall liste 4 avantages dont **3 non livrés**
   (pistes avec délais de 2 à 48 h = jalon 5 ; réintroduction FODMAP guidée et rapport PDF = jalon 7) ; aucune page
   de l'app ne lit `useEntitlement` hormis Paramètres et Premium : le premium ne change aujourd'hui que le quota IA du
   relais. Correctif proposé (I157, à valider par P25) : `PREMIUM_BENEFITS` avec un drapeau `delivered`, seuls les
   livrés en liste cochée, les autres dans « détails » sous « En préparation, inclus sans supplément » ; test qui
   échoue si un avantage affiché n'est relié à aucune fonction. Ajouter au passage le rappel « 2 jours avant la fin de
   l'essai », l'étape « jour 12 : on vous prévient » de la frise et le lien « Conditions » (C3).
+- [ ] **VC-18** (C3, reste de VC-17) rappel de fin d'essai : notification locale programmée à l'achat de l'essai
+  (J−2), puis seulement afficher « jour 12 : on vous prévient » et « Rappel 2 jours avant la fin de l'essai » ; page
+  « Conditions » (CGU/CGV, brouillon de `journal/legal/` « à faire valider par un juriste ») publiée par GitHub Pages
+  et liée depuis le paywall.
+- [ ] **VC-19** (mineur) `UpdateBanner.test.jsx` « progression en Mo et en % » échoue parfois sous la charge de la
+  suite complète (vert isolé) : rendre le test indépendant du minutage.
 - [x] **VC-11 (avant le jalon 4, I153) — FAIT le 23/10 09:30** (`connectors/syncWindow.js` ; reste : message exact d'Android à relever sur l'émulateur) première synchro Health Connect : `DEFAULT_HISTORY_DAYS = 180`
   (`connectors/autoSync.js:28`, `pages/Connectors.jsx:28`) alors que, sans `READ_HEALTH_DATA_HISTORY` (déclarée nulle
   part), Android refuse toute lecture antérieure à « première autorisation − 30 j » ; et `lastSyncAt` avance même si

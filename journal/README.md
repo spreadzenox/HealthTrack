@@ -612,6 +612,15 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 23/10 23:30 — la page Premium ne promet plus que ce qui marche (VC-17).** Sans réponse de votre part à
+**P25**, j'ai appliqué l'option ① (réversible) : le paywall — et le dernier écran de l'onboarding — ne coche plus que
+**l'analyse IA des repas sans compter les crédits, jusqu'à 10 par jour**. Les pistes avec délais, la réintroduction
+FODMAP et le rapport PDF sont sous **« détails »**, dans « En préparation, inclus sans supplément ». Un test empêche
+désormais de cocher un avantage qui n'est relié à aucune fonction. Reste pour le critère C3 (**VC-18**) : le rappel 2
+jours avant la fin de l'essai (rien ne l'envoie encore, donc je ne l'affiche pas) et une page « Conditions ».
+**Prochain run de code : VC-18**, puis VC-15 et VC-5. **👉 En attente de vous : P23** (testeurs sans paiement) ; P25
+seulement si vous préférez ② ou ③.
+
 **Run du 23/10 22:30 — Pistes, Tendances et Paramètres plus cohérents au début (VC-12, VC-14, VC-16).** Ce que vous
 verrez : sur **Pistes**, tant que vos jours ne suffisent pas, il n'y a plus qu'**un seul compteur** (la carte lilas
 « Vos pistes arrivent dans N jours ») ; l'autre seuil (5 jours de note de bien-être) est rangé sous **« détails »**.
@@ -1052,6 +1061,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 17:30 — [VC-2 : Pistes vide aligné sur l'Accueil](runs/2026-10-23-1730-vc2-pistes-vide.md) | 🧭 | État vide de `/recommendations` = `PistesTeaser` (même compteur que l'Accueil, objectif suivi, `onPistesPage` sans lien vers soi-même) + « Pas encore assez de jours mesurés » ; onglets masqués tant que l'analyse simple n'a rien ; « recommandations basiques », « ≥ 5j » et 📊 retirés de l'état vide ; 3 tests ; v232 (33,7 Mo) ; test `FaceSenseCard` fragile (horodatage) corrigé |
 | 23/10 19:30 — [VC-6 + VC-8 : carte montre simple avant appairage](runs/2026-10-23-1930-vc6-vc8-carte-montre.md) | 🧭⌚ | `WatchConnect` : « Diagnostic » toujours replié, constantes téléchargées au premier « Connecter ma montre » (téléchargement/collage sous « Diagnostic »), conseil d'échec hors du repli ; lien `/montre` seulement après appairage ; `/montre` sans montre → phrase + bouton ; 4 tests |
 | 23/10 20:30 — [Idées : audit play vierge après les correctifs VC](runs/2026-10-23-2030-idees-audit-vc.md) | 💡 | 18 captures `--play --empty` relues (0 erreur JS) ; **paywall : 3 avantages sur 4 non livrés → P25** ; VC-12 (Pistes : 2 seuils contradictoires), VC-13 (guide Huawei → Gadgetbridge + cookie F12 en play), VC-14 (cigarettes), VC-15 (émojis, apostrophes), VC-16 (Tendances) ; journal seul |
+| 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |
 | 23/10 18:30 — [VC-3 : profil Nutrition sans valeurs inventées](runs/2026-10-23-1830-vc3-profil-nutrition.md) | 🧭 | `BodyProfileCard` : profil vide → invitation sans chiffre ; partiel → valeurs connues + « À compléter : … » ; IMC / kcal derrière « détails » (I152) ; avertissement « repas manquants » sans objectif calorique ; `DetailsToggle.css` ; 3 tests |

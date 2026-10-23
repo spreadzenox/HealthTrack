@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-23",
+  "kind": "amélioration",
+  "title": "Premium : seulement ce qui marche déjà",
+  "items": [
+    "La page Premium ne coche plus que ce qui fonctionne aujourd'hui : l'analyse IA des repas sans compter les crédits, jusqu'à 10 par jour.",
+    "Les pistes avec délais, la réintroduction FODMAP guidée et le rapport PDF sont rangés sous « détails », dans « En préparation, inclus sans supplément »."
+  ]
+}
