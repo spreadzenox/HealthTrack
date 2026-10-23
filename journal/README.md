@@ -566,6 +566,16 @@ d'activé. L'écran n'apparaît pas si le téléphone ne sait pas lire le visage
 presque fini** : restent I155 (l'objectif choisi règle l'Accueil) et I156. **👉 Toujours en attente de vous : P23**
 (testeurs sans paiement).
 
+**Run du 23/10 14:30 — l'objectif choisi règle l'Accueil (jalon 4, I155).** Ce que vous verrez : dans **Plus →
+Paramètres**, un nouveau bloc **« Ce qui vous amène »** (Mon ventre / Mon énergie et mon sommeil / Tout comprendre de
+mes données), prérempli par l'onboarding. Avec **« Mon énergie et mon sommeil »**, l'Accueil met la carte **« Votre
+ventre » tout en bas** et la carte lilas des pistes compte les **nuits suivies d'une mesure du bien-être** (note ou
+lecture du visage le jour du réveil), les seuls jours utiles à une future piste sommeil → bien-être. Avec « Mon
+ventre » ou « Tout comprendre » (et chez vous, qui n'avez jamais fait l'onboarding), rien ne change : l'ordre de la
+maquette. Rien n'est masqué ni effacé. 7 nouveaux tests. **Il reste I156** (compteur local d'étapes de l'onboarding
+dans le diagnostic) avant la passe « version candidate ». **👉 Toujours en attente de vous : P23** (testeurs sans
+paiement).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -949,6 +959,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 10:30 — [Jalon 4a : onboarding, écrans 1 à 3](runs/2026-10-23-1030-jalon4a-onboarding.md) | 🧭 | `/bienvenue` plein écran : maquette écran 1 (objectif, 18+), suivis, montre ; `settings/onboarding.js` (reprise, `maxStep`) ; redirection seulement si jamais fait **et** base vide (utilisateur existant → jamais) ; captures `--onboarding` ; 18 tests |
 | 23/10 11:30 — [Jalon 4b : Health Connect, import et « aha »](runs/2026-10-23-1130-jalon4b-health-connect.md) | 🧭 | Écran Health Connect (divulgation `health_connect`, aussi dans Sources) ; import des 30 j avec progression réelle (`onProgress` de la synchro, types lus / total, 20 s puis arrière-plan) ; « Vos 30 derniers jours » (≤ 4 chiffres avec source, jamais de zéro) ; `services/firstImport.js` ; `--onboarding=aha` ; 17 tests |
 | 23/10 12:30 — [Jalon 4c-1 : premier geste et paywall soft](runs/2026-10-23-1230-jalon4c-geste-paywall.md) | 🧭 | Écran « premier geste » selon l'objectif (`gut` ou `wellbeing` 0–5, une seule entrée modifiable) ; `/premium` intégré en dernier écran (play seulement, contexte `onboarding`, « Continuer gratuitement ») ; reprise d'un onboarding commencé même si la base s'est remplie ; `--onboarding=gesture|gesture-energy|premium` ; 6 tests |
+| 23/10 14:30 — [I155 : l'objectif règle l'Accueil](runs/2026-10-23-1430-i155-objectif-accueil.md) | 🧭 | `homeFocus(goal)` ; objectif énergie → carte ventre en bas, pistes = nuits suivies d'une mesure du bien-être (`pistesProgress(entries, 'energy')`) ; bloc « Ce qui vous amène » dans Paramètres ; `--goal=energy` ; 7 tests |
 | 23/10 13:30 — [Jalon 4c-2 : lecture du visage dans l'onboarding](runs/2026-10-23-1330-jalon4c2-visage.md) | 🧭 | Écran 7 d'I154 avant le premier geste (seulement si le plugin caméra existe) : 3 lignes, divulgation `camera`/`camera_app_open`, lecture d'essai (`services/faceTrial.js`, ne compte pas), « Plus tard » sans demande ; `--onboarding=face` ; 13 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |

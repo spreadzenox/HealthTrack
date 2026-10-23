@@ -5,7 +5,8 @@
  * - Ligne du haut et titre-résumé : le titre ne parle que du bien-être estimé du jour (Y), jamais d'un comportement.
  * - Écart à la moyenne : le jour estimé comparé aux jours estimés des 13 jours précédents (au moins 3).
  * - Ventre : Calme / Gêne / Douleur en un geste, horodaté (entrée `gut`, source `app_gut`, supprimable).
- * - Pistes : jours suivis (un repas ou une note du ventre) sur 21, le seuil avant de chercher des pistes.
+ * - Pistes : jours suivis (un repas ou une note du ventre ; une nuit et une mesure du bien-être si l'objectif est
+ *   « Mon énergie et mon sommeil ») sur 21, le seuil avant de chercher des pistes.
  */
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
@@ -188,12 +189,26 @@ export function gutWeekLine({ week, daysNoted }) {
   return `7 jours${notes ? ` · ${notes} note${notes > 1 ? 's' : ''}` : ''} : ${parts.join(' · ')}`
 }
 
+/** Entrées qui mesurent le bien-être (Y) : notes et lectures du visage. */
+const WELLBEING_TYPES = new Set(['wellbeing', 'face_burst'])
+
 /**
- * Avancement vers les pistes : jours distincts avec un repas ou une note du ventre.
- * @param {object[]} entries  entrées `food` et `gut`
+ * Avancement vers les pistes, selon l'objectif choisi (I155) :
+ * - `gut` (par défaut) : jours distincts avec un repas ou une note du ventre ;
+ * - `energy` : jours où il y a à la fois une nuit (X, jour du réveil) et une mesure du bien-être (Y), seuls jours
+ *   utiles à une piste sommeil → bien-être.
+ * @param {object[]} entries  entrées `food` et `gut`, ou `sleep`, `wellbeing` et `face_burst`
+ * @param {'gut'|'energy'} focus
  */
-export function pistesProgress(entries) {
-  const days = new Set((entries || []).filter((e) => e?.at && (e.type === 'food' || e.type === GUT_TYPE)).map((e) => localDateKey(e.at)))
+export function pistesProgress(entries, focus = 'gut') {
+  const list = (entries || []).filter((e) => e?.at)
+  let days
+  if (focus === 'energy') {
+    const nights = new Set(list.filter((e) => e.type === 'sleep').map(sleepDay))
+    days = new Set(list.filter((e) => WELLBEING_TYPES.has(e.type)).map((e) => localDateKey(e.at)).filter((d) => nights.has(d)))
+  } else {
+    days = new Set(list.filter((e) => e.type === 'food' || e.type === GUT_TYPE).map((e) => localDateKey(e.at)))
+  }
   const n = Math.min(days.size, PISTES_MIN_DAYS)
   return { days: n, target: PISTES_MIN_DAYS, remaining: PISTES_MIN_DAYS - n, ready: n >= PISTES_MIN_DAYS }
 }

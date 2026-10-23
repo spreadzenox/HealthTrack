@@ -7,6 +7,7 @@ import { useDebug } from '../contexts/DebugContext'
 import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings/cigaretteCounter'
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import { FEATURES } from '../config/distribution'
+import { GOALS, loadOnboarding, saveOnboarding } from '../settings/onboarding'
 import AiCreditsHint from '../components/AiCreditsHint'
 import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
 import { syncEntitlement, restorePurchases } from '../services/playBilling'
@@ -107,6 +108,7 @@ export default function Settings() {
 
   const [cigarettePinned, setCigarettePinned] = useState(() => isCigaretteCounterPinned())
   const [theme, setTheme] = useState(() => getThemeChoice())
+  const [goal, setGoal] = useState(() => loadOnboarding().goal)
 
   useEffect(() => {
     setApiKey(getGeminiApiKey())
@@ -123,6 +125,11 @@ export default function Settings() {
     setDebugModeEnabled(next)
     setDebugEnabled(next)
     refreshDebugMode()
+  }
+
+  const handleGoal = (value) => {
+    saveOnboarding({ goal: value })
+    setGoal(value)
   }
 
   const handleTheme = (value) => {
@@ -151,6 +158,26 @@ export default function Settings() {
             </label>
           ))}
         </div>
+      </div>
+
+      {/* L'objectif de l'onboarding règle l'ordre de l'Accueil (I155) ; il ne masque ni n'efface rien. */}
+      <div className="settings-block">
+        <h3 className="section-title">Ce qui vous amène</h3>
+        <div className="theme-choices" role="radiogroup" aria-label="Ce qui vous amène">
+          {GOALS.map((g) => (
+            <label key={g.id} className={`theme-choice${goal === g.id ? ' is-selected' : ''}`}>
+              <input
+                type="radio"
+                name="goal"
+                value={g.id}
+                checked={goal === g.id}
+                onChange={() => handleGoal(g.id)}
+              />
+              <span>{g.label}</span>
+            </label>
+          ))}
+        </div>
+        <p className="hint">Change l’ordre des cartes de l’Accueil. Rien n’est masqué ni effacé.</p>
       </div>
 
       {FEATURES.billing && <SubscriptionBlock />}

@@ -84,4 +84,21 @@ describe('PistesTeaser', () => {
     expect(screen.getByText(/arrivent dans une prochaine version/)).toBeInTheDocument()
     expect(screen.getByText(/Délais qui seront testés : 0–4 h, 4–24 h, 24–48 h/)).toBeInTheDocument()
   })
+
+  it('objectif énergie : compte les nuits avec une mesure du bien-être et parle sommeil → bien-être', async () => {
+    const ago = (back, h) => {
+      const d = new Date()
+      d.setDate(d.getDate() - back)
+      d.setHours(h, 0, 0, 0)
+      return d.toISOString()
+    }
+    const entries = [
+      { type: 'sleep', at: ago(1, 1), payload: { endDate: ago(1, 7) } }, { type: 'wellbeing', at: ago(1, 20) },
+      { type: 'face_burst', at: ago(2, 9) },
+    ]
+    wrap(<PistesTeaser focus="energy" read={async () => entries} details onToggleDetails={() => {}} />)
+    expect(await screen.findByText('Vos pistes arrivent dans 20 jours')).toBeInTheDocument()
+    expect(screen.getByText('1/21 nuits suivies d’une mesure du bien-être (6 dernières semaines)')).toBeInTheDocument()
+    expect(screen.getByText(/pistes sommeil → bien-être/)).toBeInTheDocument()
+  })
 })

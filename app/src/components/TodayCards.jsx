@@ -134,11 +134,37 @@ const readTracked = async () => {
   return [...food, ...gut]
 }
 
+// Objectif « énergie et sommeil » : les nuits (une de plus pour celle qui finit le premier jour) et le bien-être
+const readTrackedEnergy = async () => {
+  const since = new Date(Date.now() - TRACKED_WINDOW_DAYS * DAY_MS).toISOString()
+  const sleepSince = new Date(Date.now() - (TRACKED_WINDOW_DAYS + 1) * DAY_MS).toISOString()
+  const [sleep, notes, faces] = await Promise.all([
+    listEntries({ type: 'sleep', since: sleepSince, limit: Infinity }),
+    listEntries({ type: 'wellbeing', since, limit: Infinity }),
+    listEntries({ type: 'face_burst', since, limit: Infinity }),
+  ])
+  return [...sleep, ...notes, ...faces]
+}
+
+const PISTES_TEXT = {
+  gut: {
+    count: 'jours avec un repas ou une note du ventre',
+    ready: 'les pistes repas → ventre arrivent dans une prochaine version',
+    details: 'Délais qui seront testés : 0–4 h, 4–24 h, 24–48 h après le repas',
+  },
+  energy: {
+    count: 'nuits suivies d’une mesure du bien-être',
+    ready: 'les pistes sommeil → bien-être arrivent dans une prochaine version',
+    details: 'Vos pistes sommeil → bien-être compareront chaque nuit au bien-être du jour qui suit',
+  },
+}
+
 /** Carte lilas : jours suivis avant les pistes ; on préfère attendre que montrer de faux suspects. */
-export function PistesTeaser({ details, onToggleDetails, read = readTracked }) {
-  const entries = useEntries(read)
+export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read }) {
+  const entries = useEntries(read || (focus === 'energy' ? readTrackedEnergy : readTracked))
   if (entries === null) return null
-  const p = pistesProgress(entries)
+  const p = pistesProgress(entries, focus)
+  const text = PISTES_TEXT[focus] || PISTES_TEXT.gut
   return (
     <section className="today-card pistes-card" aria-labelledby="pistes-card-title">
       <div className="today-card-head">
@@ -157,15 +183,15 @@ export function PistesTeaser({ details, onToggleDetails, read = readTracked }) {
       >
         <div className="pistes-progress-bar" style={{ width: `${(p.days / p.target) * 100}%` }} />
       </div>
-      <p className="pistes-count mono">{p.days}/{p.target} jours avec un repas ou une note du ventre (6 dernières semaines)</p>
+      <p className="pistes-count mono">{p.days}/{p.target} {text.count} (6 dernières semaines)</p>
       <p className="today-card-text">
         {p.ready
-          ? <>Vos jours sont prêts ; les pistes repas → ventre arrivent dans une prochaine version. En attendant, voyez <Link to="/recommendations">l’onglet Pistes</Link>.</>
+          ? <>Vos jours sont prêts ; {text.ready}. En attendant, voyez <Link to="/recommendations">l’onglet Pistes</Link>.</>
           : 'On préfère attendre plutôt que de vous montrer de faux suspects.'}
       </p>
       {details && (
         <p className="today-details-line mono">
-          Délais qui seront testés : 0–4 h, 4–24 h, 24–48 h après le repas · comparaisons multiples corrigées (Benjamini-Hochberg) · minimum 21 jours
+          {text.details} · comparaisons multiples corrigées (Benjamini-Hochberg) · minimum 21 jours
         </p>
       )}
     </section>

@@ -32,6 +32,16 @@ const DEFAULT_TRACKS = {
 
 const EMPTY = { done: false, goal: null, tracks: null, watch: null, step: 0, maxStep: 0 }
 
+/**
+ * Ce que l'objectif change sur l'Accueil (I155) : avec « Mon énergie et mon sommeil », la carte ventre descend en
+ * bas et la carte des pistes parle sommeil → bien-être ; sinon, l'ordre de la maquette (ventre d'abord). Rien n'est
+ * masqué. Réglable ensuite dans Paramètres (« Ce qui vous amène »).
+ * @returns {'gut'|'energy'}
+ */
+export function homeFocus(goal = loadOnboarding().goal) {
+  return goal === 'energy' ? 'energy' : 'gut'
+}
+
 /** Suivis cochés d'avance pour un objectif (tous si l'objectif est inconnu). */
 export function defaultTracks(goal) {
   return [...(DEFAULT_TRACKS[goal] || DEFAULT_TRACKS.all)]

@@ -69,6 +69,7 @@
  *   npm run visual -- --routes=/bienvenue --onboarding=gesture   # premier geste (jalon 4c ; gesture-energy : 0 à 5)
  *   npm run visual -- --face=on --routes=/bienvenue --onboarding=face   # lecture du visage facultative (jalon 4c-2)
  *   npm run visual -- --play --routes=/bienvenue --onboarding=premium   # paywall soft en fin d'onboarding (play)
+ *   npm run visual -- --routes=/ --goal=energy   # Accueil réglé par l'objectif « énergie et sommeil » (I155)
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer > Continuer > Health Connect > Continuer"
  *                                          # écran Health Connect (dans le navigateur : « pas disponible »)
  *   npm run visual -- --size=360x640 --dpr=3   # autre viewport (captures 1080×1920 de la fiche Play)
@@ -351,15 +352,15 @@ async function main() {
         }
       }, ONBOARDING_AT[args.onboarding])
     } else if (!args.onboarding) {
-      await context.addInitScript(() => {
+      await context.addInitScript((goal) => {
         try {
           if (!location.pathname.startsWith('/bienvenue') && !localStorage.getItem('healthtrack_onboarding')) {
-            localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'visual' }))
+            localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'visual', goal }))
           }
         } catch {
           /* ignore */
         }
-      })
+      }, typeof args.goal === 'string' ? args.goal : null)
     }
     // Météo : jamais d'appel réseau réel. Avec les données de démo, météo activée (Paris) et à jour.
     await context.route('https://*.open-meteo.com/**', (route) => route.abort())
