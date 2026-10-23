@@ -28,7 +28,10 @@ ni ici. Décisions et infrastructure : `journal/INFRA.md`, jalon 6 de `journal/P
 
 Garde-fous : les consignes sont construites par le relais (pas de prompt libre), métadonnées des photos retirées,
 rien n'est stocké ni journalisé du contenu, plafonds par installation, par jour et par minute (`src/quota.js`),
-une seule instance au plus. Prochaine étape (6b-2) : jetons Play Integrity.
+une seule instance au plus. Play Integrity (`src/integrity.js`, jalon 6b-2) : l'app joint `X-Integrity-Token`
+(jeton standard, `requestHash` = sha256(`halcya-integrity:<installation>`)) ; le relais le fait décoder par Google et
+lit le verdict (app reconnue par Play, appareil certifié, jeton récent). `INTEGRITY_MODE` : `off`, `observe` (déployé :
+journalise `event=integrity`, ne bloque rien) ou `enforce` (403 `integrity` sans verdict accepté).
 
 Tests : `npm test` (node:test, sans réseau). Déploiement : à chaque push sur `main` qui touche `relay/` (workflow
 « Relais — déploiement »), qui vérifie ensuite `/health` et une vraie analyse de texte.

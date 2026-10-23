@@ -37,6 +37,8 @@ export function loadConfig(env = process.env) {
     rtdnServiceAccount: env.RTDN_SERVICE_ACCOUNT || 'relay-runtime@healthtrack-824b26.iam.gserviceaccount.com',
     // « Période de lancement » (P23) : date ISO jusqu'à laquelle toute installation play est premium ; vide = aucune
     launchPremiumUntil: env.LAUNCH_PREMIUM_UNTIL || '',
+    // Play Integrity (jalon 6b-2) : off | observe (vérifie et journalise) | enforce (bloque l'analyse sans verdict)
+    integrityMode: env.INTEGRITY_MODE || 'observe',
     verifyPerDay: int(env.VERIFY_DAILY_CAP, 50),
     verifyGlobalPerDay: int(env.VERIFY_GLOBAL_DAILY_CAP, 5000),
     verifyPerMinute: int(env.VERIFY_PER_MINUTE_CAP, 60),

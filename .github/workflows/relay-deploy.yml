@@ -86,7 +86,7 @@ jobs:
             --allow-unauthenticated \
             --min-instances=0 --max-instances=1 --concurrency=8 \
             --cpu=1 --memory=512Mi --timeout=60 \
-            --set-env-vars="^;^VERTEX_PROJECT=${GCP_PROJECT};VERTEX_LOCATIONS=eu,europe-west1;VERTEX_MODELS=gemini-3.5-flash-lite,gemini-3.1-flash-lite;GLOBAL_DAILY_CAP=200;INSTALL_DAILY_CAP=20;GLOBAL_PER_MINUTE_CAP=10;PLAY_PACKAGE=fr.jpesquet.sante;PUBLIC_URL=${RELAY_URL};RTDN_SERVICE_ACCOUNT=${RUNTIME_SA}" \
+            --set-env-vars="^;^VERTEX_PROJECT=${GCP_PROJECT};VERTEX_LOCATIONS=eu,europe-west1;VERTEX_MODELS=gemini-3.5-flash-lite,gemini-3.1-flash-lite;GLOBAL_DAILY_CAP=200;INSTALL_DAILY_CAP=20;GLOBAL_PER_MINUTE_CAP=10;PLAY_PACKAGE=fr.jpesquet.sante;PUBLIC_URL=${RELAY_URL};RTDN_SERVICE_ACCOUNT=${RUNTIME_SA};INTEGRITY_MODE=observe" \
             --quiet
 
       - name: Vérifier le service (santé + une analyse de texte)

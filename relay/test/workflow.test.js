@@ -34,3 +34,8 @@ test('workflow relais : les valeurs avec virgule ou @ restent entières', () => 
   assert.equal(vars.VERTEX_MODELS, 'gemini-3.5-flash-lite,gemini-3.1-flash-lite')
   assert.equal(vars.PLAY_PACKAGE, 'fr.jpesquet.sante')
 })
+
+test('workflow relais : Play Integrity déployé en mode observe (jalon 6b-2)', () => {
+  const vars = Object.fromEntries(envVars().map((item) => item.split(/=(.*)/s).slice(0, 2)))
+  assert.equal(vars.INTEGRITY_MODE, 'observe')
+})
