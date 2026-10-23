@@ -50,7 +50,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   résumé (retour du propriétaire, P17) ; termes techniques seulement une fois déplié.
 - [ ] **VC-9** (à vérifier sur émulateur) temps du premier lancement play à froid et absence d'erreur JS (critère C4) ;
   `npm run visual` n'exerce pas les plugins natifs.
-- [ ] **VC-10** « Supprimer toutes mes données » dans Réglages → Données (avec export proposé avant), aujourd'hui
+- [x] **VC-10** (24/10 01:30, `services/deleteAllData.js` ; réglages, connexions, appairage et abonnement gardés) « Supprimer toutes mes données » dans Réglages → Données (avec export proposé avant), aujourd'hui
   seulement « désinstaller / effacer les données Android » d'après la politique de confidentialité.
 - [x] **VC-12** (23/10 22:30 : 2ᵉ carte retirée sous la carte lilas, seuil bien-être dans ses « détails ») (audit du 23/10 20:30) Pistes vide : sous la carte lilas (« 0/21 jours avec un repas ou une note du
   ventre »), la carte « Pas encore assez de jours mesurés » dit « au moins 5 jours avec une note de bien-être (bouton

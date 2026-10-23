@@ -29,6 +29,7 @@ import {
   importFromJson,
   parseBackup,
   deleteEntry,
+  deleteAllEntries,
   updateEntry,
 } from './localHealthStorage'
 import { importPendingFaceBursts } from '../services/faceBursts'
@@ -924,5 +925,20 @@ describe('listEntries avec limite : seuls les N plus récents sont lus (D2 perfo
   it('limite infinie ou plus grande que les données : tout est rendu', async () => {
     expect((await listEntries({ type: 'food', limit: Infinity })).length).toBe(60)
     expect((await listEntries({ type: 'food', limit: 500 })).length).toBe(60)
+  })
+})
+
+describe('deleteAllEntries (VC-10)', () => {
+  it('efface toutes les entrées et renvoie leur nombre ; la base reste utilisable', async () => {
+    await createEntry({ type: 'steps', source: 'test', payload: { value: 1 }, at: '2026-01-01T10:00:00Z' })
+    await createEntry({ type: 'food', source: 'app', payload: { name: 'x' }, at: '2026-01-02T10:00:00Z' })
+    expect(await deleteAllEntries()).toBe(2)
+    expect(await countAllEntries()).toBe(0)
+    await createEntry({ type: 'steps', source: 'test', payload: { value: 2 }, at: '2026-01-03T10:00:00Z' })
+    expect(await countAllEntries()).toBe(1)
+  })
+
+  it('sur une base vide, renvoie 0', async () => {
+    expect(await deleteAllEntries()).toBe(0)
   })
 })
