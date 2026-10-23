@@ -585,6 +585,15 @@ le geste à donner à un testeur pour exporter son journal technique (avec la li
 code : VC-2, VC-3, VC-6** (Pistes vide, profil Nutrition inventé, carte montre avant appairage). **👉 Toujours en
 attente de vous : P23** (testeurs sans paiement).
 
+**Run du 23/10 17:30 — la page Pistes vide parle comme l'Accueil (VC-2).** Ce que vous verrez sur une installation
+neuve (ou tant qu'il n'y a pas assez de jours) : l'onglet **Pistes** montre **la même carte lilas que l'Accueil**
+(« Vos pistes arrivent dans N jours », compteur X/21, « On préfère attendre plutôt que de vous montrer de faux
+suspects »), puis une phrase simple : « Pas encore assez de jours mesurés — les liens avec votre bien-être demandent au
+moins 5 jours avec une note de bien-être ». Disparus de cet état : « Données insuffisantes pour les recommandations
+basiques », les onglets « ≥ 5j / ≥ 9j » et le 📊. Dès que l'analyse a des résultats (votre cas, avec vos données),
+rien ne change : les onglets Analyse simple / avancée reviennent. **Prochain run de code : VC-3** (profil Nutrition
+inventé), puis VC-6. **👉 Toujours en attente de vous : P23** (testeurs sans paiement).
+
 **Run du 23/10 15:30 — le jalon 4 est livré, la passe « version candidate » commence (I156, VC-1).** Ce que vous
 verrez : dans **Journal → Tendances** (sans montre), « après 3 semaines de mesures, Halcya compare… » n'est plus collé
 (« mesures,Halcya ») ; même correction dans le message « accès à la caméra retiré » de la lecture du visage. Un test
@@ -980,6 +989,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 14:30 — [I155 : l'objectif règle l'Accueil](runs/2026-10-23-1430-i155-objectif-accueil.md) | 🧭 | `homeFocus(goal)` ; objectif énergie → carte ventre en bas, pistes = nuits suivies d'une mesure du bien-être (`pistesProgress(entries, 'energy')`) ; bloc « Ce qui vous amène » dans Paramètres ; `--goal=energy` ; 7 tests |
 | 23/10 15:30 — [I156 + VC-1 : onboarding mesuré, nom décollé](runs/2026-10-23-1530-i156-vc1.md) | 🧭 | `markScreenSeen` / `onboardingDiagnostic` ; ligne `[onboarding]` en tête de l'export du journal technique ; test-garde `gluedNames` (2 cas corrigés, dont `FaceSenseCard`) ; jalon 4 livré ; 6 tests |
 | 23/10 16:30 — [VC-4 : mode diagnostic caché en Play](runs/2026-10-23-1630-vc4-diagnostic.md) | 🧭 | `featuresFor().debugMenu` (sideload seulement) ; 7 touches sur « Version N » en bas des Paramètres → `unlockDebugMenu` (n'active pas les journaux) ; visible si déjà actif ; 6 tests |
+| 23/10 17:30 — [VC-2 : Pistes vide aligné sur l'Accueil](runs/2026-10-23-1730-vc2-pistes-vide.md) | 🧭 | État vide de `/recommendations` = `PistesTeaser` (même compteur que l'Accueil, objectif suivi, `onPistesPage` sans lien vers soi-même) + « Pas encore assez de jours mesurés » ; onglets masqués tant que l'analyse simple n'a rien ; « recommandations basiques », « ≥ 5j » et 📊 retirés de l'état vide ; 3 tests |
 | 23/10 13:30 — [Jalon 4c-2 : lecture du visage dans l'onboarding](runs/2026-10-23-1330-jalon4c2-visage.md) | 🧭 | Écran 7 d'I154 avant le premier geste (seulement si le plugin caméra existe) : 3 lignes, divulgation `camera`/`camera_app_open`, lecture d'essai (`services/faceTrial.js`, ne compte pas), « Plus tard » sans demande ; `--onboarding=face` ; 13 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |

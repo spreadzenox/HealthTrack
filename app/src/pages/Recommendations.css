@@ -303,11 +303,6 @@
   margin-top: 8px;
 }
 
-.reco-not-enough-icon {
-  font-size: 2.4rem;
-  margin-bottom: 12px;
-}
-
 .reco-not-enough-title {
   font-size: 1rem;
   font-weight: 700;
@@ -320,12 +315,6 @@
   color: var(--text-muted);
   margin: 0 0 8px;
   line-height: 1.5;
-}
-
-.reco-not-enough-min {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin: 0;
 }
 
 /* ─── Method note (collapsible explanation) ──────────────────────────────── */

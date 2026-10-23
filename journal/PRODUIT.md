@@ -57,7 +57,7 @@ publiée sur la piste **alpha**, et en tête du résumé « 👉 Version candida
 
 | # | Critère | État | Preuve attendue |
 |---|---|---|---|
-| C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🔴 audit du 22/10 20:30 : pas d’onboarding ; VC-2, VC-3, VC-6, VC-7 (VC-11 corrigé le 23/10) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
+| C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🟡 onboarding livré (jalon 4, 23/10) ; restent VC-3, VC-6, VC-7 (VC-11 corrigé le 23/10 09:30, VC-2 le 23/10 17:30) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
 | C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-5, VC-7, VC-8 (VC-1 corrigé le 23/10 15:30, VC-4 le 23/10 16:30) | captures + test-garde de vocabulaire étendu à la variante play |
 | C3 | Abonnement de bout en bout (achat, essai, restauration, annulation, pause, période de grâce) et crédits IA visibles | ⬜ crédits IA visibles ✅ (6c-3b, 23/10) ; attend 6d (P13), 6e ; paywall prêt (23/10) mais à compléter : rappel de fin d'essai, lien CGV, bénéfices alignés sur ce qui est livré | scénario testeur de licence (I148) |
 | C4 | Aucun plantage connu, premier lancement rapide | ⬜ à mesurer | émulateur A56 (workflow) : temps jusqu'au premier écran, 0 erreur JS |
@@ -68,7 +68,7 @@ sombre ; 11 pages, 0 erreur JS, pas de débordement horizontal). Défauts, du pl
 correction proposée dans `BACKLOG.md`, section « Version candidate ») :
 - ✅ **VC-1** (corrigé le 23/10 15:30, test-garde) mots collés au nom : « Halcyavous aide » (Accueil, premier lancement) et « mesures,Halcya » (Journal →
   Tendances) — espace perdue après `{APP_NAME}` en fin de ligne JSX.
-- **VC-2** Pistes vide incohérent avec l'Accueil : « Données insuffisantes pour les **recommandations** basiques »,
+- ✅ **VC-2** (corrigé le 23/10 17:30 : même carte lilas que l'Accueil, onglets masqués sans résultat) Pistes vide incohérent avec l'Accueil : « Données insuffisantes pour les **recommandations** basiques »,
   « Analyse simple ≥ 5j / avancée ≥ 9j », pictogramme 📊, « Enregistrez votre bien-être chaque jour » alors que la
   carte lilas de l'Accueil dit « 21 jours avec un repas ou une note du ventre ».
 - **VC-3** Nutrition affiche un profil inventé comme s'il était vrai : « 70 kg · 170 cm · IMC 24,2 · Homme · 30 ans ·
@@ -144,6 +144,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **23/10 13:30** — **Jalon 4c-2** : écran « Votre bien-être, estimé tout seul » dans l'onboarding (seulement si le téléphone sait lire le visage) : trois lignes, divulgation caméra de la variante, lecture d'essai avec son estimation (ne compte pas), « Plus tard » sans demande, refus dit simplement. Prochain : I155.
 - **23/10 14:30** — **I155** : l'objectif choisi règle l'Accueil (énergie et sommeil : carte ventre en bas, pistes comptées en nuits suivies d'une mesure du bien-être) ; réglable dans Paramètres → « Ce qui vous amène ». Prochain : I156.
 - **23/10 15:30** — **I156 + VC-1** : écrans d'onboarding vus notés en local (ligne `[onboarding]` du journal technique) ; mots collés au nom corrigés avec test-garde. Jalon 4 livré.
+- **23/10 17:30** — **VC-2** : la page Pistes vide montre la même carte lilas que l'Accueil (compteur X/21, « On préfère attendre… ») et une phrase simple ; plus de « recommandations basiques », ni « ≥ 5j », ni 📊. Prochain : VC-3, VC-6.
 - **23/10 16:30** — **VC-4** : « Mode diagnostic » caché dans la version Play ; 7 touches sur « Version N » (bas des Paramètres) le font apparaître pour le support et les testeurs. Prochain : VC-2, VC-3, VC-6.
 - **23/10 12:30** — **Jalon 4c-1** : écran « premier geste » (ventre Calme / Gêne / Douleur ou bien-être 0–5, facultatif, une seule entrée modifiable), paywall `/premium` intégré en dernier écran de la variante play (« Continuer gratuitement », croix), défaut du 4b corrigé (un onboarding commencé reprend même après l'import). Prochain : 4c-2 (lecture du visage).
 - **23/10 09:30** — **VC-11 corrigé** : première synchro Health Connect bornée à première autorisation − 29 j, `lastSyncAt` inchangé si toutes les lectures échouent, choix d'import 7 / 30 jours. 6b-2c reporté (attend des analyses IA depuis la version Play). Prochain : jalon 4a.

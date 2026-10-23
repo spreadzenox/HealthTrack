@@ -8,6 +8,8 @@ import { bumpDataRevision } from '../storage/dataRevision'
 vi.mock('../storage/localHealthStorage', () => ({
   listEntriesForAnalysis: vi.fn(),
   countAllEntries: vi.fn().mockResolvedValue(0),
+  // Carte lilas des pistes (état vide, VC-2) : mêmes lectures que l'Accueil
+  listEntries: vi.fn().mockResolvedValue([]),
 }))
 
 // Prevent auto-sync from calling Health Connect during unit tests
@@ -75,33 +77,55 @@ describe('Recommendations page', () => {
     expect(screen.getByRole('heading', { name: /^Vos pistes$/i })).toBeInTheDocument()
   })
 
-  it('renders both tab buttons', async () => {
+  it('renders both tab buttons once there is something to show', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage()
-    await screen.findByRole('heading', { name: /^Vos pistes$/i })
-    expect(screen.getByRole('button', { name: /Analyse simple/i })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Analyse simple/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Analyse avancée/i })).toBeInTheDocument()
   })
 
   it('shows basic tab by default', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage()
-    await screen.findByRole('heading', { name: /^Vos pistes$/i })
-    const basicBtn = screen.getByRole('button', { name: /Analyse simple/i })
+    const basicBtn = await screen.findByRole('button', { name: /Analyse simple/i })
     expect(basicBtn).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('shows not-enough-data message with 0 days for basic tab', async () => {
+  // VC-2 : sans données, la page dit la même chose que la carte lilas de l'Accueil
+  it('shows the same lilac card as the home page when there is no data, without tabs nor jargon', async () => {
+    const { container } = renderPage()
+    expect(await screen.findByText(/Vos pistes arrivent dans 21 jours/i)).toBeInTheDocument()
+    expect(screen.getByText(/0\/21 jours avec un repas ou une note du ventre/)).toBeInTheDocument()
+    expect(screen.getByText(/On préfère attendre plutôt que de vous montrer de faux suspects/)).toBeInTheDocument()
+    expect(screen.getByText(/Pas encore assez de jours mesurés/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Analyse simple/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Analyse avancée/i })).not.toBeInTheDocument()
+    const text = container.textContent
+    expect(text).not.toMatch(/recommandations/i)
+    expect(text).not.toMatch(/≥ \d+j/)
+    expect(text).not.toMatch(/Données insuffisantes/)
+    expect(text).not.toContain('📊')
+    // Déjà sur la page Pistes : pas de lien vers elle-même
+    expect(screen.queryByRole('link', { name: /onglet Pistes/i })).not.toBeInTheDocument()
+  })
+
+  it('says how many wellbeing days are still missing, in plain words', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(2))
     renderPage()
-    await screen.findByText(/Données insuffisantes/i)
-    expect(screen.getByText(/Enregistrez votre bien-être/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Encore 3 jours avec une note de bien-être \(vous en avez 2\)/)).toBeInTheDocument()
   })
 
   it('switches to advanced tab on click', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage()
-    await screen.findByRole('heading', { name: /^Vos pistes$/i })
-    const advancedBtn = screen.getByRole('button', { name: /Analyse avancée/i })
+    const advancedBtn = await screen.findByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(advancedBtn)
     expect(advancedBtn).toHaveAttribute('aria-selected', 'true')
-    await screen.findByText(/Données insuffisantes/i)
+    await screen.findByText(/Pas encore assez de jours mesurés/i)
   })
 
   it('shows analysis when basic has enough data (5+ days)', async () => {
@@ -118,7 +142,7 @@ describe('Recommendations page', () => {
       ).toBeTruthy()
     })
     // Not-enough-data placeholder for basic should NOT appear
-    expect(screen.queryByText(/Données insuffisantes pour les recommandations basiques/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
   })
 
   it('shows advanced analysis after 9+ days (MIN_DAYS_ADVANCED + HOLD_OUT_DAYS)', async () => {
@@ -144,20 +168,21 @@ describe('Recommendations page', () => {
 
   it('shows remaining-days message when some but not enough data for advanced', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
-    listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage()
     // Click advanced tab after initial render (button should be there immediately)
     const advBtn = await screen.findByRole('button', { name: /Analyse avancée/i })
     fireEvent.click(advBtn)
-    // 3 days < 7 required for advanced — should show not-enough-data (computed asynchronously)
-    expect(await screen.findByText(/Données insuffisantes pour les recommandations avancées/i)).toBeInTheDocument()
+    // 5 days < 9 required for advanced — should show not-enough-data (computed asynchronously)
+    expect(await screen.findByText(/Pas encore assez de jours mesurés/i)).toBeInTheDocument()
+    expect(screen.getByText(/Encore 4 jours avec une note de bien-être \(vous en avez 5\)/)).toBeInTheDocument()
   })
 
   it('reloads when health-entries-updated event fires', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue([])
     renderPage()
-    await screen.findByText(/Enregistrez votre bien-être/i)
+    await screen.findByText(/Pas encore assez de jours mesurés/i)
 
     const callsBefore = listEntriesForAnalysis.mock.calls.length
 
@@ -172,13 +197,13 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue([])
     const first = renderPage()
-    await screen.findByText(/Enregistrez votre bien-être/i)
+    await screen.findByText(/Pas encore assez de jours mesurés/i)
     first.unmount()
     _resetAnalysisRunner() // app restarted: only the persisted cache remains
     const calls = listEntriesForAnalysis.mock.calls.length
 
     renderPage()
-    expect(screen.getByText(/Enregistrez votre bien-être/i)).toBeInTheDocument()
+    expect(screen.getByText(/Pas encore assez de jours mesurés/i)).toBeInTheDocument()
     expect(listEntriesForAnalysis.mock.calls.length).toBe(calls)
   })
 })
@@ -802,7 +827,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     expect(section).toHaveTextContent('Sur 20 jours estimés par la Lecture du visage, sans aucune note')
     expect(section).toHaveTextContent('Pas')
     // Les notes manquent toujours pour l'analyse classique : les deux coexistent.
-    expect(screen.getByText(/Données insuffisantes/i)).toBeInTheDocument()
+    expect(screen.getByText(/Pas encore assez de jours mesurés/i)).toBeInTheDocument()
   })
 
   it('shows the habits compared to the estimated mood, without the felt stress and without any lever', async () => {
