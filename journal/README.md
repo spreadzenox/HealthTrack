@@ -484,6 +484,24 @@ version sideload. **À tester quand la prochaine version Play vous arrive** : la
 le run suivant lira les journaux du relais et passera en mode bloquant si votre téléphone passe. Prochain run de code :
 cette lecture, puis le **jalon 4** (onboarding court, « aha » du jour 1, paywall passable).
 
+**Run « idées » du 23/10 08:30 — l'onboarding est prêt à coder, et un défaut qui l'aurait gâché (rien de nouveau
+dans l'app).** ① **Défaut trouvé (VC-11)** : sans permission spéciale, Android ne laisse lire dans Health Connect que
+les **30 jours précédant la première autorisation**, et refuse en bloc toute demande plus ancienne. Or notre première
+synchronisation en demande **180** : sur un téléphone neuf (chaque testeur), rien ne serait importé, et l'app
+noterait quand même « synchronisé », si bien que ces 30 jours ne viendraient jamais. Chez vous ça marche, parce que
+votre autorisation est ancienne. Correctif court prévu **avant l'onboarding**, puisque son « waouh » du premier jour
+(« vos 30 derniers jours ») en dépend. ② **L'onboarding (jalon 4) est décrit écran par écran** : 9 écrans (votre
+maquette « 01/09 ») — objectif, ce que vous voulez suivre, vos montres, Health Connect avec son explication, import,
+**vos 30 derniers jours résumés avec leur source**, lecture du visage facultative, premier geste (votre ventre), puis
+la page Premium **passable** (« Continuer gratuitement » aussi visible que la croix). Jamais montré à quelqu'un qui a
+déjà des données (vous ne le verrez pas après une mise à jour). Les notifications ne sont jamais demandées pendant
+l'onboarding mais au premier rappel allumé : c'est le reproche principal fait à l'app SII Nerva. Les chiffres du
+marché vont dans ce sens : la moitié des abonnements payants démarrent le jour de l'installation (RevenueCat 2026), et
+un paywall montré après un premier résultat fait démarrer deux fois plus d'essais qu'un paywall d'entrée (Adapty).
+Une ligne « En continuant, vous confirmez avoir 18 ans ou plus » suffit pour l'âge minimum. Prochains runs de code :
+6b-2c (lecture des journaux Integrity), puis **VC-11**, puis 4a / 4b / 4c. Détail : [`IDEES.md`](IDEES.md)
+I153–I156. **👉 Toujours en attente de vous : P23** (testeurs sans paiement : « ① + ② » ou autre).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -862,6 +880,7 @@ du jour avec sa fourchette (derrière la porte).
 | Run | Type | Résultat |
 |---|---|---|
 | 22/10 23:30 — [Relais : analyse des repas en panne (502)](runs/2026-10-22-2330-relais-analyse-502.md) | 🚑 | Révision 6b-1 en ligne mais analyse de test en 502 (relance et appel direct identiques) ; repli sur le modèle suivant aussi pour 400 / 5xx / réponse vide ou illisible (pas 429) ; message exact de Vertex AI dans le résumé du workflow ; 44 tests relais |
+| 23/10 08:30 — [Idées : onboarding spécifié, import Health Connect du jour 1](runs/2026-10-23-0830-idees-onboarding.md) | 💡 | Jalon 4 écran par écran (I154 : 9 écrans, 4a / 4b / 4c, paywall soft, notifications hors onboarding) ; **VC-11** (I153 : 1re synchro HC sur 180 j alors que 30 j autorisés → rien importé sur installation neuve, `lastSyncAt` avance quand même) ; I155–I156 ; journal seul |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |
 | 23/10 03:30 — [6c-3 : paywall (variante play)](runs/2026-10-23-0330-6c3-paywall.md) | 🧭💳 | Page `/premium` de la maquette, prix / essai / économie calculés sur Play Billing ; état « aucune formule » ; « Découvrir le premium » dans les Paramètres ; faux plugin Play Billing pour les captures ; 1 913 Vitest |
