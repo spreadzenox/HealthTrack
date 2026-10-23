@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { splitSourcesByStatus } from './connectorsLayout'
+import { splitSourcesByStatus, visibleConnectorIds } from './connectorsLayout'
 
 const base = {
   connectorIds: ['health_connect', 'withings'],
@@ -49,5 +49,18 @@ describe('splitSourcesByStatus', () => {
     })
     expect(r.active).toEqual(['face', 'watch', 'health_connect', 'withings', 'weather', 'phone'])
     expect(r.toConnect).toEqual(['ble', 'guides'])
+  })
+})
+
+describe('visibleConnectorIds (VC-7)', () => {
+  const ids = ['health_connect', 'withings']
+  it('sideload : Withings toujours proposé', () => {
+    expect(visibleConnectorIds(ids, { withingsApi: true, withingsInUse: false })).toEqual(ids)
+  })
+  it('play : Withings masqué (Health Connect le lit déjà)…', () => {
+    expect(visibleConnectorIds(ids, { withingsApi: false, withingsInUse: false })).toEqual(['health_connect'])
+  })
+  it('… sauf s’il sert déjà : on ne retire jamais une source branchée', () => {
+    expect(visibleConnectorIds(ids, { withingsApi: false, withingsInUse: true })).toEqual(ids)
   })
 })

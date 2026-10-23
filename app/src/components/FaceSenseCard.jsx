@@ -8,6 +8,7 @@
  * de l'app (services/faceAppOpen.js), donc ni « Relancer », ni batterie, ni accès permanent à la caméra.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
+import MethodNote from './MethodNote'
 import {
   getFaceSenseStatus,
   startFaceSense,
@@ -278,22 +279,23 @@ export default function FaceSenseCard({
         )}
       </div>
 
-      {(d.state === 'off' || d.state === 'unavailable') && appOpen && (
-        <p className="my-devices-intro">
-          Pour estimer votre bien-être sans rien saisir : quand vous ouvrez {APP_NAME}, la caméra frontale prend
-          quelques images (un bandeau l’indique), le téléphone en tire une dizaine de mesures d’expression puis les
-          efface. Au plus une lecture par demi-heure, jamais app fermée. Rien ne quitte le téléphone. Un bien-être
-          estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives, l’affinent. Une
-          estimation, jamais un diagnostic.
-        </p>
-      )}
-      {(d.state === 'off' || d.state === 'unavailable') && !appOpen && (
-        <p className="my-devices-intro">
-          Pour estimer votre bien-être sans rien saisir : à chaque déverrouillage, la caméra frontale prend 3 images,
-          le téléphone en tire une dizaine de mesures d’expression puis les efface. Rien ne quitte le téléphone. Un
-          bien-être estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives, l’affinent.
-          Une estimation, jamais un diagnostic.
-        </p>
+      {(d.state === 'off' || d.state === 'unavailable') && (
+        <>
+          <p className="my-devices-intro">
+            Votre bien-être estimé sans rien saisir, d’après quelques images de la caméra frontale{' '}
+            {appOpen ? `quand vous ouvrez ${APP_NAME}` : 'au déverrouillage'}. Rien ne quitte le téléphone.
+          </p>
+          <MethodNote summary="Détails">
+            {appOpen
+              ? <>À chaque ouverture de l’app, la caméra frontale prend quelques images (un bandeau l’indique), le
+                téléphone en tire une dizaine de mesures d’expression puis les efface. Au plus une lecture par
+                demi-heure, jamais app fermée. </>
+              : <>À chaque déverrouillage, la caméra frontale prend 3 images, le téléphone en tire une dizaine de
+                mesures d’expression puis les efface. </>}
+            Un bien-être estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives,
+            l’affinent. Une estimation, jamais un diagnostic.
+          </MethodNote>
+        </>
       )}
 
       {!available && <p className="my-device-message">Disponible dans l’app Android.</p>}

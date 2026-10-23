@@ -13,6 +13,7 @@
  * d'appareils), ce qui couvre toute une gamme d'un coup. journal/IDEES.md (I3).
  */
 import { APP_NAME } from '../config/brand'
+import { FEATURES } from '../config/distribution'
 
 /**
  * `writesHealthConnect` : l'app sait écrire dans Health Connect (il suffit de l'activer chez elle).
@@ -20,8 +21,8 @@ import { APP_NAME } from '../config/brand'
  * `guideId` : guide de « Votre montre n'apparaît pas ? » (src/data/watchGuides.jsx).
  */
 export const HEALTH_APPS = [
-  { id: 'huawei_health', name: 'Huawei Health', packages: ['com.huawei.health'], writesHealthConnect: false, guideId: 'huawei' },
-  { id: 'honor_health', name: 'Honor Santé', packages: ['com.hihonor.health'], writesHealthConnect: false, guideId: 'huawei' },
+  { id: 'huawei_health', name: 'Huawei Health', packages: ['com.huawei.health'], writesHealthConnect: false, directWatch: true, guideId: 'huawei' },
+  { id: 'honor_health', name: 'Honor Santé', packages: ['com.hihonor.health'], writesHealthConnect: false, directWatch: true, guideId: 'huawei' },
   {
     id: 'gadgetbridge',
     name: 'Gadgetbridge',
@@ -55,7 +56,7 @@ export const HEALTH_APPS = [
   { id: 'fitbit', name: 'Fitbit', packages: ['com.fitbit.FitbitMobile'], writesHealthConnect: true, guideId: 'other', enableHint: 'Fitbit → Profil → Health Connect.' },
   { id: 'google_fit', name: 'Google Fit', packages: ['com.google.android.apps.fitness'], writesHealthConnect: true, guideId: 'other', enableHint: 'Google Fit → Profil → Paramètres → Health Connect.' },
   { id: 'pixel_watch', name: 'Pixel Watch', packages: ['com.google.android.apps.wear.companion'], writesHealthConnect: true, guideId: 'other', enableHint: 'Les données passent par Fitbit : activez Health Connect dans l’app Fitbit.' },
-  { id: 'withings', name: 'Withings', packages: ['com.withings.wiscale2'], writesHealthConnect: true, guideId: 'other', enableHint: `Connecteur Withings de ${APP_NAME} (ci-dessus), ou Withings → Profil → Health Connect.` },
+  { id: 'withings', name: 'Withings', packages: ['com.withings.wiscale2'], writesHealthConnect: true, guideId: 'other', enableHint: FEATURES.withingsApi ? `Connecteur Withings de ${APP_NAME} (ci-dessus), ou Withings → Profil → Health Connect.` : 'Withings → Profil → Health Connect.' },
   { id: 'oura', name: 'Oura', packages: ['com.ouraring.oura'], writesHealthConnect: true, guideId: 'other', enableHint: 'Oura → ☰ → Paramètres → Health Connect.' },
   { id: 'polar', name: 'Polar Flow', packages: ['fi.polar.polarflow'], writesHealthConnect: true, guideId: 'other', enableHint: 'Polar Flow → Paramètres → Partage → Health Connect.' },
   { id: 'suunto', name: 'Suunto', packages: ['com.stt.android.suunto'], writesHealthConnect: true, guideId: 'other', enableHint: 'Suunto → Profil → Partenaires → Health Connect.' },
@@ -268,7 +269,9 @@ export function adviseDevices({ installed = [], sources = [], now = new Date() }
         status: 'action',
         message: bridges.length
           ? `N’écrit pas dans Health Connect. ${bridges[0].name} est installé : activez son envoi vers Health Connect.`
-          : 'N’écrit pas dans Health Connect : passez par Gadgetbridge (gratuit) pour récupérer vos données.',
+          : app.directWatch
+            ? 'N’écrit pas dans Health Connect : connectez la montre directement avec « Connecter ma montre » (carte Montre Huawei).'
+            : 'N’écrit pas dans Health Connect : passez par Gadgetbridge (gratuit) pour récupérer vos données.',
       })
     } else {
       rows.push({ ...base, status: 'action', message: `Rien reçu pour l’instant. ${app.enableHint || 'Activez son partage vers Health Connect.'}` })

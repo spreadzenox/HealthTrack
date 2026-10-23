@@ -34,6 +34,12 @@ export function featuresFor(distribution) {
     // Réglage « Mode diagnostic » affiché d'emblée ; en play, caché derrière 7 touches sur le numéro de version
     // (Paramètres), pour le support et les testeurs (VC-4)
     debugMenu: d === 'sideload',
+    // Carte « Withings » (API Withings avec identifiant et secret de développeur à saisir) ; en play, masquée sauf
+    // si elle sert déjà : Withings écrit dans Health Connect, déjà lu (VC-7). Les données importées restent.
+    withingsApi: d === 'sideload',
+    // Guide « Huawei / Honor » par Gadgetbridge (F-Droid, ID de compte lu dans les cookies) ; en play, le guide
+    // renvoie à la connexion directe de la montre, Gadgetbridge seulement en dernier recours (VC-13)
+    gadgetbridgeGuide: d === 'sideload',
   }
 }
 

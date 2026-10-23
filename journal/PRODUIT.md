@@ -57,8 +57,8 @@ publiée sur la piste **alpha**, et en tête du résumé « 👉 Version candida
 
 | # | Critère | État | Preuve attendue |
 |---|---|---|---|
-| C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🟡 onboarding livré (jalon 4, 23/10) ; reste VC-7, VC-12, VC-16 (VC-11 corrigé le 23/10 09:30, VC-2 le 23/10 17:30, VC-3 le 23/10 18:30, VC-6 le 23/10 19:30) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
-| C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-5, VC-7, VC-13, VC-14, VC-15 ( corrigé le 23/10 15:30, VC-4 le 23/10 16:30, VC-8 le 23/10 19:30) | captures + test-garde de vocabulaire étendu à la variante play |
+| C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🟡 onboarding livré (jalon 4, 23/10) ; reste VC-12, VC-16 (VC-7 corrigé le 23/10 21:30, VC-11 corrigé le 23/10 09:30, VC-2 le 23/10 17:30, VC-3 le 23/10 18:30, VC-6 le 23/10 19:30) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
+| C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-5, VC-14, VC-15 (VC-1 corrigé le 23/10 15:30, VC-7 et VC-13 le 23/10 21:30, VC-4 le 23/10 16:30, VC-8 le 23/10 19:30) | captures + test-garde de vocabulaire étendu à la variante play |
 | C3 | Abonnement de bout en bout (achat, essai, restauration, annulation, pause, période de grâce) et crédits IA visibles | ⬜ crédits IA visibles ✅ (6c-3b, 23/10) ; attend 6d (P13), 6e ; paywall prêt (23/10) mais à compléter : rappel de fin d'essai, lien CGV, bénéfices alignés sur ce qui est livré — **3 avantages sur 4 non livrés : VC-17 / P25** (audit du 23/10 20:30) | scénario testeur de licence (I148) |
 | C4 | Aucun plantage connu, premier lancement rapide | ⬜ à mesurer | émulateur A56 (workflow) : temps jusqu'au premier écran, 0 erreur JS |
 | C5 | Proposition écrite au propriétaire pour que les testeurs ne paient jamais | 🟡 proposition rédigée le 22/10 20:30 (I151) → **P23** à trancher | ce fichier, P23 |
@@ -149,6 +149,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **23/10 21:30** — **VC-7 + VC-13** : Sources en play sans carte Withings (sauf si elle sert), cartes visage / écran / météo en 2 lignes + « Détails », guide Huawei → connexion directe (sans F12 ni cookie). Prochain : VC-12, VC-17 (P25), VC-14.
 - **23/10 20:30** — Run « idées » : audit play vierge après les correctifs VC ; paywall qui promet 3 avantages non livrés → P25 (I157, VC-17) ; VC-12 à VC-16.
 - **23/10 00:30** — Relais : cause du 502 = `gemini-2.5-flash-lite` retiré par Google le 20/10 ; passage à la multi-région UE `eu` (seul accès UE aux Flash-Lite 3.x), modèles 3.5 puis 3.1 Flash-Lite.
 - **22/10 23:30** — Analyse des repas du relais en 502 après le redéploiement (variante play touchée depuis 22:47) : repli sur le modèle suivant élargi, message exact de Vertex AI dans le résumé du workflow.

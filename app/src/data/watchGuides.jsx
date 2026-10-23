@@ -4,9 +4,15 @@
  * gadgetbridge.org/basics/integrations/health-connect/ (consultées le 11/10/2026) ; journal/IDEES.md (I1).
  */
 import { APP_NAME } from '../config/brand'
+import { FEATURES } from '../config/distribution'
 
 const HC_IN_HEALTHTRACK =
   'Dans ' + APP_NAME + ', carte Health Connect ci-dessus : activez-la, « Demander les autorisations », puis « Mettre à jour ».'
+
+// Connecteur Withings par l'API : seulement là où sa carte est proposée (sideload, VC-7)
+const WITHINGS_DIRECT_STEP = (
+  <>Withings : {APP_NAME} peut aussi se connecter directement à votre compte (carte ci-dessus) pour tous les biomarqueurs de la balance.</>
+)
 
 export const WATCH_GUIDES = [
   {
@@ -82,7 +88,46 @@ export const WATCH_GUIDES = [
     steps: [
       <>Dans l’app de l’appareil, cherchez « Health Connect » dans les réglages ou les partenaires → activez.</>,
       HC_IN_HEALTHTRACK,
-      <>Withings : {APP_NAME} peut aussi se connecter directement à votre compte (carte ci-dessus) pour tous les biomarqueurs de la balance.</>,
+      WITHINGS_DIRECT_STEP,
     ],
   },
 ]
+
+/**
+ * Guide Huawei de la variante play (VC-13) : la connexion directe d'abord, Gadgetbridge seulement en dernier recours
+ * et sans la manipulation des cookies du guide sideload.
+ */
+export const HUAWEI_DIRECT_GUIDE = {
+  id: 'huawei',
+  title: 'Huawei / Honor (Watch GT, Watch Fit, Band…)',
+  intro:
+    'L’app Huawei Santé n’envoie pas vos données à Health Connect, mais ' + APP_NAME + ' sait se connecter ' +
+    'directement à une montre compatible Huawei, en Bluetooth. Rien ne part sur Internet.',
+  steps: [
+    <>Plus haut sur cette page, carte <strong>Montre Huawei</strong> : appuyez sur « Connecter ma montre ».</>,
+    <>Gardez la montre près du téléphone, Bluetooth activé, et acceptez les demandes d’association.</>,
+    <>
+      La montre ne parle qu’à une app à la fois : si elle est déjà liée à Huawei Santé, l’assistant de la carte vous
+      guide pour la libérer. <strong>Ne la dissociez jamais dans Huawei Santé</strong> : cela invalide sa clé sans la
+      libérer.
+    </>,
+  ],
+  caveats:
+    'Votre modèle n’est pas reconnu ? En dernier recours, l’app libre Gadgetbridge peut relayer la montre vers ' +
+    'Health Connect : suivez son guide officiel.',
+  links: [
+    { href: 'https://gadgetbridge.org/basics/pairing/huawei-honor-pairing/', label: 'Guide Gadgetbridge (anglais)' },
+  ],
+}
+
+/** Guides à afficher selon la variante. */
+export function watchGuidesFor(features = FEATURES) {
+  if (features.gadgetbridgeGuide && features.withingsApi) return WATCH_GUIDES
+  return WATCH_GUIDES.map((g) => {
+    if (g.id === 'huawei' && !features.gadgetbridgeGuide) return HUAWEI_DIRECT_GUIDE
+    if (!features.withingsApi && g.steps.includes(WITHINGS_DIRECT_STEP)) {
+      return { ...g, steps: g.steps.filter((step) => step !== WITHINGS_DIRECT_STEP) }
+    }
+    return g
+  })
+}
