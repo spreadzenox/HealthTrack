@@ -9,6 +9,79 @@
 
 ---
 
+## Run du 23/10/2026 08:30 (Paris) — jalon 4 prêt à coder, et l'import du jour 1 qui ne marcherait pas
+
+- **I153 (24) — Première synchro Health Connect : 180 jours demandés, 30 autorisés → rien d'importé [V/H].** La doc
+  Health Connect (« Read data », lue le 23/10) : sans `READ_HEALTH_DATA_HISTORY`, une app ne lit que **30 jours avant
+  la date de sa toute première autorisation** (date réinitialisée à chaque réinstallation) et **lire plus ancien
+  « results in an error »**. Or `autoSync.js:28` et `Connectors.jsx:28` partent de `DEFAULT_HISTORY_DAYS = 180` à la
+  première synchro, et aucun manifeste (play, sideload, plugin `@capgo/capacitor-health` 8.4.5) ne déclare la
+  permission d'historique. Sur une installation neuve, chaque type tomberait donc en erreur (attrapée type par type
+  dans `HealthConnectConnector.sync`), **puis `lastSyncAt = now` serait enregistré quand même** (`autoSync.js` ~l. 121)
+  : les synchros suivantes repartent de « maintenant − 2 h » et **les 30 jours ne sont jamais importés**. Le
+  propriétaire ne le voit pas (son autorisation date de plusieurs mois [H]). C'est exactement l'« aha » du jour 1
+  (I130) qui casserait chez chaque testeur. [H] à confirmer sur l'émulateur : le message exact de l'erreur, et si le
+  plugin borne lui-même. Correctif (≈ 1 run court, TDD) : ① `firstGrantAt` enregistré dans `connectorSettings` au
+  premier `granted` (sinon : maintenant) ; ② `since = max(demandé, firstGrantAt − 29 j)` tant que la permission
+  d'historique n'est pas accordée, dans les deux variantes ; ③ ne pas avancer `lastSyncAt` quand **tous** les types
+  lus ont échoué ; ④ « Importer depuis N jours » de `Connectors.jsx` borné de même, avec la phrase « Android
+  laisse lire 30 jours avant votre première autorisation ». Tests : faux plugin qui lève au-delà de J−30 → 30 j importés ;
+  tout en erreur → `lastSyncAt` inchangé. Impact 5, faisabilité 5. → **VC-11, avant le jalon 4.**
+- **I154 (24) — Spécification du jalon 4, écran par écran [V/H].** Repères lus le 23/10 : RevenueCat 2026 (via SaaStr)
+  — **50 % des conversions payantes ont lieu le jour 0**, les essais de 17 à 32 jours convertissent mieux (42,5 %) que
+  ceux de ≤ 4 jours (25,5 %) ; Adapty 2026 (via thesocialoutline) — paywall **après un moment de valeur : 65 %
+  d'essais démarrés, contre 31 %** pour un paywall dur d'entrée ; un onboarding compte ~13 étapes en moyenne ; la revue
+  de l'onboarding de Nerva (SII) loue les questions de santé d'abord, puis la méthode expliquée, puis le paywall, et
+  reproche la **demande de notifications avant toute valeur** et des écrans trop bavards. Donc : questions courtes →
+  autorisations au moment où elles servent → résultat réel → paywall passable. **9 écrans** (le « 01/09 » de la
+  maquette), une route `/bienvenue`, plein écran sans barre d'onglets :
+  1. **Accueil + objectif** (maquette validée) : « Comprenez ce qui va avec vos bons et mauvais jours », 3 tuiles,
+     choix 01 Mon ventre / 02 Mon énergie et mon sommeil / 03 Tout comprendre de mes données, ligne cadenas, ligne
+     « En continuant, vous confirmez avoir 18 ans ou plus. » (public 18+ déclaré, pas de date de naissance demandée).
+  2. **Ce que vous voulez suivre** (cases cochées d'avance selon l'objectif) : ventre, repas, sommeil, énergie /
+     bien-être, activité, cycle (plus tard) ; ne fait que régler l'ordre et la visibilité des cartes, ne cache aucune
+     donnée.
+  3. **Vos montres** : « Montre ou bague qui écrit dans Health Connect (Garmin, Oura, Samsung, Withings, Fitbit…) » /
+     « Montre compatible Huawei » / « Pas de montre » ; aucune autorisation ici.
+  4. **Health Connect** (si choisi) : divulgation `health_connect` (nouvelle entrée de `permissionDisclosures.js` :
+     lu, sur le téléphone, rien envoyé ; « 30 derniers jours importés ») puis `requestPermissions()` ; refus → on
+     continue sans reproche. Huawei → renvoi vers Sources après l'onboarding (l'appairage est long, pas au milieu).
+  5. **Import** : barre de progression réelle (types lus / total), sans pourcentage inventé ; ≤ 20 s, sinon « on
+     continue en arrière-plan ».
+  6. **« Aha » — vos 30 derniers jours** : 3 à 4 chiffres seulement, chacun avec sa source (« 27 nuits · 7 h 05 en
+     moyenne · montre Garmin via Health Connect »), et une phrase honnête si rien n'est venu (« Rien à importer pour
+     l'instant : vos données arriveront au fil des jours »). Jamais de zéro trompeur (C1).
+  7. **Bien-être estimé (facultatif)** : lecture du visage expliquée en 3 lignes, divulgation `camera_app_open`
+     existante, « Essayer maintenant » (une lecture, résultat « estimation, pas un diagnostic ») ou « Plus tard ».
+  8. **Votre premier geste** : selon l'objectif, « Comment va votre ventre ? » Calme / Gêne / Douleur (entrée `gut`
+     existante) ou « Comment vous sentez-vous ? » ; c'est le point de départ du compteur X/21 de la carte lilas.
+  9. **Paywall soft** : la page `/premium` existante avec un contexte `onboarding` (« Vos pistes arriveront vers le
+     21ᵉ jour ; l'essai les débloque dès qu'elles sont prêtes ») et un **« Continuer gratuitement » aussi visible que
+     la croix** ; en sideload, l'écran 9 n'existe pas (8/8).
+  Puis Accueil. Notifications : **jamais pendant l'onboarding** ; la permission est demandée la première fois que la
+  personne allume un rappel (note du soir). Mécanique : `settings/onboarding.js` (`done`, `goal`, `tracks`, `step`
+  pour reprendre là où on s'est arrêté), redirection vers `/bienvenue` seulement si `!done` **et** aucune entrée en
+  base (une mise à jour ne montre jamais l'onboarding à un utilisateur existant ; testé), « Passer » discret sur
+  chaque écran sauf le 1. Captures : `npm run visual -- --play --empty` doit ouvrir `/bienvenue` ; ajouter une page
+  par écran. Découpage conseillé : **4a** écrans 1-3 + mécanique + redirection ; **4b** Health Connect, import et
+  « aha » (après VC-11) ; **4c** visage, premier geste et paywall soft. Impact 5, faisabilité 4.
+- **I155 (14) — L'objectif choisi règle l'Accueil, pas l'inverse [H].** Avec « Mon énergie et mon sommeil », la carte
+  pêche « Votre ventre » descend sous les tuiles et la carte lilas parle de « vos pistes sommeil → bien-être » ; avec
+  « Mon ventre », l'ordre de la maquette. Réglable ensuite dans Paramètres (« Ce qui vous amène »). Aucune donnée
+  masquée. Impact 3, faisabilité 4. → après 4c.
+- **I156 (12) — Mesurer l'onboarding sans rien envoyer [H].** Pas d'analytique tierce : un compteur local
+  (`onboarding.step` atteint, écrans passés) inclus dans le diagnostic exporté, que les testeurs peuvent joindre à leur
+  retour. Suffit pour repérer l'écran où l'on décroche avec 12 à 15 testeurs. Impact 2, faisabilité 5.
+
+Sources (lues le 23/10/2026) : https://developer.android.com/health-and-fitness/health-connect/read-data ;
+https://developer.android.com/reference/androidx/health/connect/client/permission/HealthPermission ;
+https://saastr.com/the-top-10-learnings-from-revenuecats-state-of-subscription-apps-how-115000-mobile-apps-deliver-16b-in-revenue-whats-working-whats-quietly-killing-growth
+(rapport RevenueCat 2026 lui-même non ouvert) ; https://thesocialoutline.com/blog/install-to-trial-conversion-rate-benchmarks
+(chiffres Adapty, source tierce [T]) ; https://screensdesign.com/showcase/nerva-ibs-gut-hypnotherapy [T] ;
+https://apps.apple.com/us/app/cara-care-ibs-fodmap-tracker/id1133687886.
+
+---
+
 ## Run du 22/10/2026 20:30 (Paris) — audit de la version candidate et testeurs sans paiement
 
 - **I149 (20) — Audit sans code de la variante play sur données vierges [V].** `npm run visual -- --play --empty`

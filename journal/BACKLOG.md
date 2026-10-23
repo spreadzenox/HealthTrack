@@ -51,6 +51,13 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   `npm run visual` n'exerce pas les plugins natifs.
 - [ ] **VC-10** « Supprimer toutes mes données » dans Réglages → Données (avec export proposé avant), aujourd'hui
   seulement « désinstaller / effacer les données Android » d'après la politique de confidentialité.
+- [ ] **VC-11 (avant le jalon 4, I153)** première synchro Health Connect : `DEFAULT_HISTORY_DAYS = 180`
+  (`connectors/autoSync.js:28`, `pages/Connectors.jsx:28`) alors que, sans `READ_HEALTH_DATA_HISTORY` (déclarée nulle
+  part), Android refuse toute lecture antérieure à « première autorisation − 30 j » ; et `lastSyncAt` avance même si
+  tous les types ont échoué → les 30 jours ne seraient jamais importés sur une installation neuve. Correctif : noter
+  `firstGrantAt`, borner `since` à `firstGrantAt − 29 j` sans la permission d'historique, ne pas avancer `lastSyncAt`
+  quand tout a échoué, borner « Importer depuis N jours » ; tests avec un faux plugin qui lève au-delà de J−30 ; puis
+  vérification sur l'émulateur (message d'erreur exact).
 
 ## 🧭 Chantier produit — décisions du propriétaire du 20/10/2026 au soir (charte §000000000, détail : `PRODUIT.md`)
 Cadre général depuis le 20/10 au soir : produit vendable sur Google Play ; porte d'entrée SII ; bien-être ; toutes
@@ -142,6 +149,11 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   interne (Android Publisher, edits) dans « Play — AAB », après P10 + P11 ; [ ] **3d** nom affiché de l'app depuis une
   seule source (`appName` Capacitor, `strings.xml`, titres) pour le changer en un commit
 - [ ] **4 Onboarding (8–12 écrans) + « aha » du jour 1** (30 jours importés résumés, 1re estimation) —
+  spécification écran par écran : `IDEES.md` **I154** (9 écrans, route `/bienvenue`, `settings/onboarding.js`, jamais
+  montré à un utilisateur existant, notifications jamais pendant l'onboarding) ; découpage **[ ] 4a** écrans 1-3 +
+  mécanique + redirection, **[ ] 4b** Health Connect + import + « aha » (après VC-11), **[ ] 4c** visage, premier geste,
+  paywall soft (`/premium` contexte `onboarding`, « Continuer gratuitement ») ; [ ] I155 l'objectif règle l'Accueil ;
+  [ ] I156 compteur local d'étapes dans le diagnostic —
   [ ] **I130** « Vos 30 derniers jours » dès l'octroi Health Connect, **sans** permission d'historique (30 j lisibles
   d'office), chaque chiffre avec sa source ; permission de notifications demandée après un geste, pas d'emblée
 - [ ] **5 Analyses avec délais (2–48 h) repas → symptômes** + saisie de symptômes digestifs horodatée + honnêteté
