@@ -289,6 +289,7 @@ async function main() {
           getProducts: async () => ({ products: offers.length ? [{ productId: 'halcya_premium', offers }] : [] }),
           purchase: async () => ({ status: 'cancelled' }),
           queryPurchases: async () => ({ purchases: [] }),
+          addListener: async () => ({ remove() {} }),
         }
       }, String(args.billing ?? ''))
     }

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 import { RELAY_URL, getInstallId } from './aiRelay'
-import { refreshEntitlement, getEntitlement, describeEntitlement, manageSubscriptionUrl } from './entitlement'
+import { ENTITLEMENT_EVENT, refreshEntitlement, getEntitlement, describeEntitlement, manageSubscriptionUrl } from './entitlement'
 
 const response = (body, status = 200) => ({ ok: status < 400, status, json: () => Promise.resolve(body) })
 const inDays = (n) => new Date(Date.now() + n * 86_400_000).toISOString()
@@ -53,6 +53,20 @@ describe('droits premium lus auprès du relais (jalon 6c)', () => {
     const ent = await refreshEntitlement({ fetchImpl })
     expect(ent).toMatchObject({ premium: false, offline: true })
     expect(localStorage.getItem('halcya_entitlement')).toBeNull()
+  })
+
+  it('prévient toute l’app quand les droits changent (achat confirmé en arrière-plan, jalon 6c-3c)', async () => {
+    const seen = vi.fn()
+    window.addEventListener(ENTITLEMENT_EVENT, seen)
+    try {
+      await refreshEntitlement({ fetchImpl: vi.fn().mockResolvedValue(response({ ok: true, premium: true, source: 'play', state: 'active', expiresAt: '2099-01-01T00:00:00Z' })) })
+      expect(seen).toHaveBeenCalledTimes(1)
+      expect(seen.mock.calls[0][0].detail).toMatchObject({ premium: true, source: 'play' })
+      await refreshEntitlement({ fetchImpl: vi.fn().mockRejectedValue(new Error('hors ligne')) })
+      expect(seen).toHaveBeenCalledTimes(1)
+    } finally {
+      window.removeEventListener(ENTITLEMENT_EVENT, seen)
+    }
   })
 
   it('aucun état connu : version gratuite', () => {

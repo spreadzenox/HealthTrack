@@ -9,6 +9,8 @@
 import { RELAY_URL, getInstallId } from './aiRelay'
 
 const ENTITLEMENT_KEY = 'halcya_entitlement'
+/** Événement `window` émis à chaque nouvel état donné par le relais (`detail` : les droits à jour). */
+export const ENTITLEMENT_EVENT = 'halcya:entitlement'
 const PLAY_PACKAGE = 'fr.jpesquet.sante'
 export const ENTITLEMENT_TIMEOUT_MS = 15_000
 const GRACE_OFFLINE_MS = 3 * 86_400_000
@@ -81,7 +83,9 @@ export async function refreshEntitlement({ purchaseToken = null, fetchImpl = glo
     } catch {
       // stockage indisponible : l'état sera redemandé
     }
-    return getEntitlement()
+    const current = getEntitlement()
+    if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(ENTITLEMENT_EVENT, { detail: current }))
+    return current
   } catch {
     return { ...getEntitlement(), offline: true }
   } finally {

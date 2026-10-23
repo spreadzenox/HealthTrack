@@ -459,6 +459,14 @@ qu'une empreinte et des compteurs en mémoire ; politique de confidentialité mi
 fermé : quand le relais redémarre, il s'appuie sur le dernier état renvoyé par l'app ; pour la vente, je propose de
 rendre ces compteurs durables (**P24**, 3 commandes à copier, pas urgent). Rien ne change dans la version sideload.
 
+**Run du 23/10 05:30 — un achat confirmé plus tard s'active tout seul (jalon 6c, étape 6c-3c).** Dans la **version
+Play** : si Google Play met un paiement « en attente » (carte à valider, paiement en espèces), ou si vous utilisez un
+code promo directement dans le Play Store, le premium **s'active dès que Google confirme**, sans rouvrir l'app ni
+toucher « Restaurer un achat » ; la page premium et le bloc « Abonnement » se mettent à jour d'eux-mêmes. L'app relit
+aussi vos achats au démarrage et à chaque retour dedans (au plus tous les quarts d'heure), comme Google le recommande.
+Chaque achat reste revérifié par notre relais, une seule fois. Rien ne change dans la version sideload. Prochain run de
+code : **6b-2** (Play Integrity contre l'abus des crédits), puis le jalon 4 (onboarding court et paywall passable).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -840,6 +848,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |
 | 23/10 03:30 — [6c-3 : paywall (variante play)](runs/2026-10-23-0330-6c3-paywall.md) | 🧭💳 | Page `/premium` de la maquette, prix / essai / économie calculés sur Play Billing ; état « aucune formule » ; « Découvrir le premium » dans les Paramètres ; faux plugin Play Billing pour les captures ; 1 913 Vitest |
+| 23/10 05:30 — [6c-3c : achats confirmés plus tard](runs/2026-10-23-0530-6c3c-achats-differes.md) | 🧭💳 | `handlePurchasesUpdated` + `startPurchaseWatch` (écoute `purchasesUpdated`, relecture au démarrage et au retour ≤ 1 / 15 min, jeton vérifié une fois) ; événement `halcya:entitlement` + `useEntitlement` (paywall et Paramètres à jour en direct) ; 1 925 Vitest |
 | 23/10 04:30 — [6c-3b : crédits IA](runs/2026-10-23-0430-6c3b-credits-ia.md) | 🧭💳 | Relais `credits.js` (10 offerts + 15 / mois, premium 10 / jour, `GET /v1/credits`, état `X-Credits`, premium par `X-Purchase-Token`) ; app `AiCreditsHint` (Paramètres, photo, description) ; confidentialité ; 55 tests relais, 1 917 Vitest |
 | 23/10 00:30 — [Relais : modèle retiré, multi-région UE](runs/2026-10-23-0030-relais-modele-retire.md) | 🚑 | Cause du 502 : `gemini-2.5-flash-lite` retiré le 20/10 ; 3.5 / 3.1 Flash-Lite seulement sur la multi-région `eu` → relais sur `aiplatform.eu.rep.googleapis.com`, modèles 3.5 puis 3.1 Flash-Lite ; lecture des journaux réessayée 2 min ; 45 tests relais |
 | 22/10 22:30 — [Réparation du déploiement du relais](runs/2026-10-22-2230-relais-deploiement-repare.md) | 🐛 | « Relais — déploiement » rouge (séparateur `^@^` de `--set-env-vars` qui coupait l'adresse de relay-runtime) → `^;^` ; test `relay/test/workflow.test.js` (rouge sur l'ancien workflow) ; 42 tests relais |

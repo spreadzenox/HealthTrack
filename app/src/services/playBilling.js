@@ -135,6 +135,18 @@ export async function loadPlans({ native } = {}) {
 const ownPurchase = (purchases, state = 'purchased') =>
   (Array.isArray(purchases) ? purchases : []).find((p) => p?.state === state && p.products?.includes(PRODUCT_ID) && p.purchaseToken)
 
+/** Un même jeton n'est vérifié qu'une fois à la fois (l'événement natif et la fin de l'achat arrivent ensemble). */
+const verifying = new Map()
+function verifyToken(token, refresh) {
+  if (!verifying.has(token)) {
+    const run = Promise.resolve()
+      .then(() => refresh({ purchaseToken: token }))
+      .finally(() => verifying.delete(token))
+    verifying.set(token, run)
+  }
+  return verifying.get(token)
+}
+
 const ERROR_MESSAGE = 'Google Play n’a pas pu finaliser l’achat. Vérifiez votre connexion et réessayez ; rien n’a été débité.'
 
 /**
@@ -153,7 +165,7 @@ export async function purchasePlan(plan, { native, refresh = refreshEntitlement 
   const done = ownPurchase(result?.purchases)
   if (done) {
     storeToken(done.purchaseToken)
-    return { status: 'purchased', entitlement: await refresh({ purchaseToken: done.purchaseToken }) }
+    return { status: 'purchased', entitlement: await verifyToken(done.purchaseToken, refresh) }
   }
   if (result?.status === 'pending' || ownPurchase(result?.purchases, 'pending')) {
     return { status: 'pending', message: 'Paiement en attente chez Google Play : le premium s’activera dès qu’il sera confirmé.' }
@@ -182,4 +194,58 @@ export async function syncEntitlement({ native, refresh = refreshEntitlement } =
     }
   }
   return refresh({ purchaseToken: getStoredPurchaseToken() })
+}
+
+const BILLING_OK = 0
+
+/**
+ * Événement `purchasesUpdated` du plugin natif : un achat qui se termine hors du parcours d'achat (paiement en attente
+ * confirmé plus tard, code promo utilisé dans le Play Store, achat fait pendant que la page était fermée). Le jeton
+ * est retenu et revérifié par le relais ; rend les droits à jour, ou null s'il n'y a rien à vérifier.
+ */
+export async function handlePurchasesUpdated(event, { refresh = refreshEntitlement } = {}) {
+  if (event?.code !== BILLING_OK) return null
+  const done = ownPurchase(event.purchases)
+  if (!done) return null
+  storeToken(done.purchaseToken)
+  return verifyToken(done.purchaseToken, refresh)
+}
+
+export const RESUME_SYNC_MS = 15 * 60_000
+
+/**
+ * Suivi des achats pendant toute la vie de l'app (variante play) : écoute Google Play, et relit les achats au
+ * démarrage puis à chaque retour dans l'app (au plus toutes les 15 min), comme le recommande Google — un achat
+ * confirmé app fermée n'est livré qu'ainsi. Rend la fonction qui arrête le suivi.
+ */
+export async function startPurchaseWatch({ native, refresh = refreshEntitlement, doc = globalThis.document, now = Date.now } = {}) {
+  const plugin = await resolveNative(native)
+  if (!plugin) return () => {}
+  let stopped = false
+  let handle = null
+  if (typeof plugin.addListener === 'function') {
+    try {
+      handle = await plugin.addListener('purchasesUpdated', (event) => {
+        handlePurchasesUpdated(event, { refresh }).catch(() => {})
+      })
+    } catch {
+      handle = null
+    }
+  }
+  let last = -Infinity
+  const sync = () => {
+    if (stopped || now() - last < RESUME_SYNC_MS) return
+    last = now()
+    syncEntitlement({ native: plugin, refresh }).catch(() => {})
+  }
+  const onVisible = () => {
+    if (doc?.visibilityState === 'visible') sync()
+  }
+  sync()
+  doc?.addEventListener?.('visibilitychange', onVisible)
+  return () => {
+    stopped = true
+    doc?.removeEventListener?.('visibilitychange', onVisible)
+    handle?.remove?.()
+  }
 }

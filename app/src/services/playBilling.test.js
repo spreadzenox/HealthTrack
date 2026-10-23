@@ -10,6 +10,8 @@ import {
   purchasePlan,
   restorePurchases,
   syncEntitlement,
+  handlePurchasesUpdated,
+  startPurchaseWatch,
   getStoredPurchaseToken,
   formatMicros,
   monthlyEquivalent,
@@ -185,5 +187,83 @@ describe('Paywall : montants calculés sur les prix de Google Play (jalon 6c-3)'
   it('formatMicros refuse une devise absente ou inconnue', () => {
     expect(formatMicros(1_000_000, null)).toBeNull()
     expect(formatMicros(1_000_000, 'XXXX')).toBeNull()
+  })
+})
+
+describe('Achats terminés hors du parcours d’achat (jalon 6c-3c)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('un paiement en attente confirmé plus tard est revérifié par le relais et retenu', async () => {
+    const refresh = vi.fn().mockResolvedValue({ premium: true, source: 'play' })
+    const ent = await handlePurchasesUpdated({ code: 0, purchases: [purchased('tok.confirme-0123456789ab')] }, { refresh })
+    expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'tok.confirme-0123456789ab' })
+    expect(ent).toMatchObject({ premium: true })
+    expect(getStoredPurchaseToken()).toBe('tok.confirme-0123456789ab')
+  })
+
+  it('annulation, erreur ou achat encore en attente : rien n’est envoyé au relais', async () => {
+    const refresh = vi.fn()
+    expect(await handlePurchasesUpdated({ code: 1, purchases: [] }, { refresh })).toBeNull()
+    expect(await handlePurchasesUpdated({ code: 6, purchases: [purchased('tok.x-0123456789abcdef')] }, { refresh })).toBeNull()
+    expect(await handlePurchasesUpdated({ code: 0, purchases: [{ ...purchased('tok.y-0123456789abcdef'), state: 'pending' }] }, { refresh })).toBeNull()
+    expect(await handlePurchasesUpdated(null, { refresh })).toBeNull()
+    expect(refresh).not.toHaveBeenCalled()
+  })
+
+  it('l’événement et la fin de l’achat ne vérifient le même jeton qu’une fois', async () => {
+    let release
+    const refresh = vi.fn(() => new Promise((r) => (release = () => r({ premium: true }))))
+    const event = { code: 0, purchases: [purchased('tok.unique-0123456789abc')] }
+    const native = { purchase: vi.fn().mockResolvedValue({ status: 'purchased', purchases: event.purchases }) }
+    const fromEvent = handlePurchasesUpdated(event, { refresh })
+    const fromFlow = purchasePlan(describePlans(PRODUCTS)[1], { native, refresh })
+    await vi.waitFor(() => expect(release).toBeTypeOf('function'))
+    release()
+    await Promise.all([fromEvent, fromFlow])
+    expect(refresh).toHaveBeenCalledTimes(1)
+  })
+
+  it('suivi : écoute Google Play, resynchronise au démarrage puis au retour dans l’app (au plus toutes les 15 min)', async () => {
+    let listener
+    const remove = vi.fn()
+    const native = {
+      addListener: vi.fn(async (name, fn) => {
+        listener = fn
+        return { remove }
+      }),
+      queryPurchases: vi.fn().mockResolvedValue({ purchases: [] }),
+    }
+    const refresh = vi.fn().mockResolvedValue({ premium: false })
+    let t = 1_000_000
+    const doc = Object.assign(new EventTarget(), { visibilityState: 'visible' })
+    const stop = await startPurchaseWatch({ native, refresh, doc, now: () => t })
+    expect(native.addListener).toHaveBeenCalledWith('purchasesUpdated', expect.any(Function))
+    await vi.waitFor(() => expect(native.queryPurchases).toHaveBeenCalledTimes(1))
+
+    doc.dispatchEvent(new Event('visibilitychange'))
+    t += 5 * 60_000
+    doc.dispatchEvent(new Event('visibilitychange'))
+    expect(native.queryPurchases).toHaveBeenCalledTimes(1)
+    t += 15 * 60_000
+    doc.dispatchEvent(new Event('visibilitychange'))
+    await vi.waitFor(() => expect(native.queryPurchases).toHaveBeenCalledTimes(2))
+
+    listener({ code: 0, purchases: [purchased('tok.ecoute-0123456789abc')] })
+    await vi.waitFor(() => expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'tok.ecoute-0123456789abc' }))
+
+    stop()
+    expect(remove).toHaveBeenCalled()
+    t += 60 * 60_000
+    doc.dispatchEvent(new Event('visibilitychange'))
+    await Promise.resolve()
+    expect(native.queryPurchases).toHaveBeenCalledTimes(2)
+  })
+
+  it('suivi hors variante play (pas de plugin) : ne fait rien', async () => {
+    const refresh = vi.fn()
+    const stop = await startPurchaseWatch({ native: null, refresh })
+    expect(typeof stop).toBe('function')
+    stop()
+    expect(refresh).not.toHaveBeenCalled()
   })
 })

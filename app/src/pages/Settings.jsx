@@ -8,9 +8,10 @@ import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import { FEATURES } from '../config/distribution'
 import AiCreditsHint from '../components/AiCreditsHint'
-import { getEntitlement, describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
+import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
 import { syncEntitlement, restorePurchases } from '../services/playBilling'
 import '../Food.css'
+import { useEntitlement } from '../hooks/useEntitlement'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
@@ -44,7 +45,7 @@ function RelayAiBlock() {
  * gestion Google Play et « Restaurer un achat » (nouveau téléphone, réinstallation).
  */
 function SubscriptionBlock() {
-  const [ent, setEnt] = useState(() => getEntitlement())
+  const [ent, setEnt] = useEntitlement()
   const [restoring, setRestoring] = useState(false)
   const [restoreMsg, setRestoreMsg] = useState('')
 
@@ -54,7 +55,7 @@ function SubscriptionBlock() {
     return () => {
       alive = false
     }
-  }, [])
+  }, [setEnt])
 
   const restore = async () => {
     setRestoring(true)
