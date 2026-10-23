@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-23",
+  "kind": "nouveau",
+  "title": "Version Google Play : vos analyses IA restantes",
+  "items": [
+    "Sans abonnement, l'analyse IA des repas est offerte : 10 analyses pour commencer, puis 15 chaque mois (celles du mois ne se cumulent pas).",
+    "Avec le premium : jusqu'à 10 analyses IA par jour.",
+    "Le compteur « X analyses IA restantes · renouvellement le … » s'affiche sous le bouton d'analyse d'une photo ou d'une description, et dans Réglages → Paramètres.",
+    "Tout le reste (journal, montres, bien-être estimé, graphiques, export) reste gratuit et sans limite. Dans la version installée depuis GitHub, rien ne change."
+  ]
+}

@@ -8,6 +8,7 @@ import {
 } from '../services/mealAi'
 import useDisclosure from '../hooks/useDisclosure'
 import MealEditor from './MealEditor'
+import AiCreditsHint from './AiCreditsHint'
 import NutritionTableGate from './NutritionTableGate'
 
 /**
@@ -125,6 +126,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
           >
             {describing ? 'Analyse…' : describeButtonLabel()}
           </button>
+          <AiCreditsHint />
           <p className="hint gemini-privacy">{aiPrivacyHint('text')}</p>
         </div>
       )}

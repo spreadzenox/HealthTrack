@@ -7,14 +7,13 @@ import { useDebug } from '../contexts/DebugContext'
 import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings/cigaretteCounter'
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import { FEATURES } from '../config/distribution'
-import { getLastQuota } from '../services/aiRelay'
+import AiCreditsHint from '../components/AiCreditsHint'
 import { getEntitlement, describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
 import { syncEntitlement, restorePurchases } from '../services/playBilling'
 import '../Food.css'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
-  const quota = getLastQuota()
   return (
     <div className="settings-block">
       <h3 className="section-title">Analyse des repas (IA)</h3>
@@ -23,16 +22,15 @@ function RelayAiBlock() {
         en Europe) via notre serveur, seulement quand vous touchez « Analyser ». Aucune clé à saisir. Sans IA, la
         saisie manuelle reste possible.
       </p>
-      {quota && (
-        <p className="hint">
-          {quota.remaining > 1 ? `${quota.remaining} analyses restantes aujourd’hui.` : `${quota.remaining} analyse restante aujourd’hui.`}
-        </p>
-      )}
+      <AiCreditsHint />
+      <p className="hint">
+        Sans abonnement : 10 analyses offertes, puis 15 par mois. Avec le premium : jusqu’à 10 par jour.
+      </p>
       <div className="gemini-privacy">
         <p className="hint">
           <strong>🔒 Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans métadonnées
           (position GPS, date, modèle de téléphone), ou le texte d’un repas décrit, avec un identifiant aléatoire
-          qui sert à compter les analyses du jour. Notre serveur ne garde rien et Google ne s’en sert pas pour
+          qui sert à compter vos analyses. Notre serveur ne garde rien et Google ne s’en sert pas pour
           entraîner ses modèles. Les calories sont calculées sur le téléphone ; aucune autre donnée de santé ne
           quitte l’appareil.
         </p>

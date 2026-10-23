@@ -27,6 +27,10 @@ export function loadConfig(env = process.env) {
     globalPerDay: int(env.GLOBAL_DAILY_CAP, 200),
     installPerDay: int(env.INSTALL_DAILY_CAP, 20),
     globalPerMinute: int(env.GLOBAL_PER_MINUTE_CAP, 10),
+    // Crédits d'analyse IA (jalon 6c-3b) : offerts une fois, par mois (gratuit), par jour (premium)
+    creditsWelcome: int(env.CREDITS_WELCOME, 10),
+    creditsMonthly: int(env.CREDITS_MONTHLY, 15),
+    premiumDaily: int(env.PREMIUM_DAILY_CAP, 10),
     // Abonnements Google Play (jalon 6b)
     packageName: env.PLAY_PACKAGE || 'fr.jpesquet.sante',
     publicUrl: env.PUBLIC_URL || 'https://halcya-relay-81378799481.europe-west1.run.app',

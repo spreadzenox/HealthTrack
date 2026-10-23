@@ -159,3 +159,54 @@ test('configuration par défaut : UE, Flash-Lite d’abord, petits plafonds, bas
   assert.equal(loadConfig({ GLOBAL_DAILY_CAP: '50', VERTEX_MODELS: 'x, y' }).globalPerDay, 50)
   assert.deepEqual(loadConfig({ VERTEX_MODELS: 'x, y' }).models, ['x', 'y'])
 })
+
+test('crédits : analyse décomptée, état renvoyé, refus 429 « credits » une fois épuisés', async () => {
+  const { createCredits } = await import('../src/credits.js')
+  const credits = createCredits({ welcome: 1, freeMonthly: 1, premiumDaily: 5 })
+  await withServer({ vertex: okVertex(), credits, quota: createQuota({ globalPerDay: 100, installPerDay: 10, globalPerMinute: 100 }) }, async (url) => {
+    const first = await (await post(url, { kind: 'text', description: 'une pomme' })).json()
+    assert.equal(first.credits.plan, 'free')
+    assert.equal(first.credits.remaining, 1)
+    assert.match(first.credits.state, /^\d{4}-\d{2}:1:0$/)
+    assert.equal((await post(url, { kind: 'text', description: 'une pomme' })).status, 200)
+    const denied = await post(url, { kind: 'text', description: 'une pomme' })
+    assert.equal(denied.status, 429)
+    const body = await denied.json()
+    assert.equal(body.scope, 'credits')
+    assert.equal(body.credits.remaining, 0)
+    const peek = await (await fetch(`${url}/v1/credits`, { headers: { 'X-Install-Id': INSTALL } })).json()
+    assert.equal(peek.credits.remaining, 0)
+  })
+})
+
+test('crédits : premium relu chez Google Play (jeton en en-tête), mis en cache', async () => {
+  const { createCredits } = await import('../src/credits.js')
+  let verifies = 0
+  const billing = {
+    verify: async (body) => {
+      verifies += 1
+      return { status: 200, payload: { premium: body.purchaseToken === 'tok_abcdefghijklmnopqrstuvwxyz', expiresAt: '2099-01-01T00:00:00Z' } }
+    },
+  }
+  const credits = createCredits({ welcome: 10, freeMonthly: 15, premiumDaily: 10 })
+  await withServer({ vertex: okVertex(), credits, billing }, async (url) => {
+    const headers = { 'X-Install-Id': INSTALL, 'X-Purchase-Token': 'tok_abcdefghijklmnopqrstuvwxyz' }
+    const a = await (await fetch(`${url}/v1/credits`, { headers })).json()
+    assert.deepEqual([a.credits.plan, a.credits.remaining], ['premium', 10])
+    const b = await (await post(url, { kind: 'text', description: 'une pomme' }, headers)).json()
+    assert.deepEqual([b.credits.plan, b.credits.remaining], ['premium', 9])
+    assert.equal(verifies, 1)
+  })
+})
+
+test('crédits : un état rapporté par l\'app plus restrictif est gardé ; Vertex en échec rend le crédit', async () => {
+  const { createCredits, monthKey } = await import('../src/credits.js')
+  const credits = createCredits({ welcome: 10, freeMonthly: 15, premiumDaily: 10 })
+  const failing = { generateJson: async () => { throw new VertexError('down', 503) } }
+  await withServer({ vertex: failing, credits }, async (url) => {
+    const headers = { 'X-Install-Id': INSTALL, 'X-Credits': `${monthKey(Date.now())}:15:3` }
+    assert.equal((await post(url, { kind: 'text', description: 'une pomme' }, headers)).status, 502)
+    const peek = await (await fetch(`${url}/v1/credits`, { headers })).json()
+    assert.equal(peek.credits.remaining, 7)
+  })
+})

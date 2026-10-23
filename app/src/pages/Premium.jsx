@@ -10,7 +10,7 @@ const BENEFITS = [
   'Vos pistes personnelles, avec des délais de 2 à 48 h entre repas et ventre',
   'La réintroduction FODMAP guidée, groupe par groupe',
   'Un rapport PDF pour votre médecin ou votre diététicienne',
-  'L’analyse IA des repas sans compter',
+  'L’analyse IA des repas, jusqu’à 10 par jour',
 ]
 
 const PER = { year: 'an', month: 'mois' }

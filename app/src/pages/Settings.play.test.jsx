@@ -12,7 +12,11 @@ import { DebugProvider } from '../contexts/DebugContext'
 
 const renderSettings = () => render(<DebugProvider><BrowserRouter><Settings /></BrowserRouter></DebugProvider>)
 
-const relayAnswer = (body) => vi.fn().mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve(body) })
+const relayAnswer = (body, credits = null) => vi.fn((url) => Promise.resolve({
+  ok: true, status: 200, json: () => Promise.resolve(String(url).endsWith('/v1/credits') ? { credits } : body),
+}))
+/** Appels de vérification des droits seulement (le compteur de crédits a sa propre route). */
+const verifyCalls = () => globalThis.fetch.mock.calls.filter(([url]) => String(url).endsWith('/v1/subscription/verify'))
 
 describe('Settings — variante play (relais Halcya)', () => {
   beforeEach(() => {
@@ -30,18 +34,18 @@ describe('Settings — variante play (relais Halcya)', () => {
     expect(sent).toHaveTextContent(/ne garde rien/)
   })
 
-  it('montre les analyses restantes du jour quand le relais les a données', () => {
-    localStorage.setItem('halcya_ai_quota', JSON.stringify({ remaining: 7, resetAt: new Date(Date.now() + 3600_000).toISOString() }))
+  it('montre les crédits d’analyse IA relus auprès du relais', async () => {
+    globalThis.fetch = relayAnswer({ ok: true, premium: false, source: null }, { plan: 'free', remaining: 7, monthly: 7, welcome: 0, resetAt: '2099-11-01T00:00:00.000Z', state: '2099-10:8:10' })
     renderSettings()
-    expect(screen.getByText('7 analyses restantes aujourd’hui.')).toBeInTheDocument()
+    expect(await screen.findByText('7 analyses IA restantes · renouvellement le 1er novembre')).toBeInTheDocument()
+    expect(screen.getByText(/10 analyses offertes, puis 15 par mois/)).toBeInTheDocument()
   })
 
   it('bloc Abonnement : version gratuite par défaut, sans lien de gestion', async () => {
     renderSettings()
     expect(screen.getByText('Abonnement')).toBeInTheDocument()
     expect(screen.getByText(/Version gratuite/)).toBeInTheDocument()
-    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled())
-    expect(globalThis.fetch.mock.calls[0][0]).toMatch(/\/v1\/subscription\/verify$/)
+    await waitFor(() => expect(verifyCalls().length).toBeGreaterThan(0))
     expect(screen.queryByRole('link', { name: /Gérer mon abonnement/ })).toBeNull()
   })
 
@@ -57,10 +61,11 @@ describe('Settings — variante play (relais Halcya)', () => {
     localStorage.setItem('halcya_purchase_token', 'tok.retenu-0123456789abc')
     renderSettings()
     const button = screen.getByRole('button', { name: 'Restaurer un achat' })
-    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(verifyCalls().length).toBeGreaterThan(0))
+    const before = verifyCalls().length
     fireEvent.click(button)
-    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(2))
-    expect(JSON.parse(globalThis.fetch.mock.calls[1][1].body)).toEqual({ purchaseToken: 'tok.retenu-0123456789abc' })
+    await waitFor(() => expect(verifyCalls().length).toBeGreaterThan(before))
+    expect(JSON.parse(verifyCalls().at(-1)[1].body)).toEqual({ purchaseToken: 'tok.retenu-0123456789abc' })
     expect(await screen.findByRole('status')).toHaveTextContent(/Aucun abonnement trouvé/)
   })
 

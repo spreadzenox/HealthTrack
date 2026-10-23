@@ -23,13 +23,13 @@ const collectedForFunctionality = (type, why) => [
   { question: `PSL_DATA_USAGE_RESPONSES:${type}:DATA_USAGE_COLLECTION_PURPOSE`, response: 'PSL_APP_FUNCTIONALITY', value: true, why: 'Seul usage : rendre le service demandé (météo, analyse du repas).' },
 ]
 
-/** Identifiant aléatoire d'installation : envoyé au relais avec chaque analyse IA, pour compter les analyses du jour. */
+/** Identifiant aléatoire d'installation : envoyé au relais avec chaque analyse IA, pour compter ses analyses IA (crédits). */
 const installIdAnswers = [
   { question: 'PSL_DATA_TYPES_IDENTIFIERS', response: 'PSL_DEVICE_ID', value: true, why: 'Identifiant aléatoire créé par l’app (src/services/aiRelay.js), envoyé au relais avec chaque analyse IA d’un repas et chaque vérification d’abonnement.' },
   { question: 'PSL_DATA_USAGE_RESPONSES:PSL_DEVICE_ID:PSL_DATA_USAGE_COLLECTION_AND_SHARING', response: 'PSL_DATA_USAGE_ONLY_COLLECTED', value: true, why: 'Reçu par notre relais seulement : collecté, pas partagé.' },
   { question: 'PSL_DATA_USAGE_RESPONSES:PSL_DEVICE_ID:PSL_DATA_USAGE_EPHEMERAL', value: false, why: 'Prudence : le relais garde en mémoire un compteur par empreinte jusqu’au lendemain.' },
   { question: 'PSL_DATA_USAGE_RESPONSES:PSL_DEVICE_ID:DATA_USAGE_USER_CONTROL', response: 'PSL_DATA_USAGE_USER_CONTROL_OPTIONAL', value: true, why: 'Envoyé seulement quand la personne lance une analyse IA.' },
-  { question: 'PSL_DATA_USAGE_RESPONSES:PSL_DEVICE_ID:DATA_USAGE_COLLECTION_PURPOSE', response: 'PSL_APP_FUNCTIONALITY', value: true, why: 'Compter les analyses du jour de cette installation.' },
+  { question: 'PSL_DATA_USAGE_RESPONSES:PSL_DEVICE_ID:DATA_USAGE_COLLECTION_PURPOSE', response: 'PSL_APP_FUNCTIONALITY', value: true, why: 'Compter les analyses IA (crédits) de cette installation.' },
   { question: 'PSL_DATA_USAGE_RESPONSES:PSL_DEVICE_ID:DATA_USAGE_COLLECTION_PURPOSE', response: 'PSL_FRAUD_PREVENTION_SECURITY', value: true, why: 'Plafond d’analyses par installation contre les abus.' },
 ]
 

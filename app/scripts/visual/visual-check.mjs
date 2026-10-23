@@ -310,6 +310,15 @@ async function main() {
         body: JSON.stringify({ ok: true, ...states[sub] }),
       })
     })
+    // Crédits d'analyse IA (variante play) : compteur factice, premium si l'abonnement factice l'est
+    await context.route('**/v1/credits', (route) => {
+      const premium = ['launch', 'active', 'trial'].includes(String(args.subscription ?? ''))
+      const d = new Date()
+      const credits = premium
+        ? { plan: 'premium', remaining: 9, daily: 10, resetAt: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)).toISOString(), state: 'x' }
+        : { plan: 'free', remaining: 22, monthly: 12, welcome: 10, resetAt: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1)).toISOString(), state: 'x' }
+      return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ credits }) })
+    })
     // Météo : jamais d'appel réseau réel. Avec les données de démo, météo activée (Paris) et à jour.
     await context.route('https://*.open-meteo.com/**', (route) => route.abort())
     if (!args.empty) {

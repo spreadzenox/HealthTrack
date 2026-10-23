@@ -2,6 +2,7 @@
 import { createServer } from 'node:http'
 import { loadConfig, loadIngredientNames } from './config.js'
 import { createQuota } from './quota.js'
+import { createCredits } from './credits.js'
 import { createHandler } from './server.js'
 import { ANDROIDPUBLISHER_SCOPE, createBillingRoutes, createPlayClient, createPushVerifier } from './billing.js'
 import { createVertexClient, metadataTokenProvider } from './vertex.js'
@@ -16,6 +17,7 @@ const handler = createHandler({
   quota: createQuota(config),
   vertex: createVertexClient({ ...config, getToken: metadataTokenProvider() }),
   ingredientNames,
+  credits: createCredits({ welcome: config.creditsWelcome, freeMonthly: config.creditsMonthly, premiumDaily: config.premiumDaily }),
   billing: createBillingRoutes({
     play: createPlayClient({ packageName: config.packageName, getToken: metadataTokenProvider({ scopes: [ANDROIDPUBLISHER_SCOPE] }) }),
     packageName: config.packageName,

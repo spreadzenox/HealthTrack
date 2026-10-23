@@ -4,7 +4,7 @@
  *
  * Ce qui part : la photo réduite et ré-encodée (sans métadonnées, voir imagePrep.js) ou la description du repas,
  * et un identifiant d'installation aléatoire (créé ici, sans lien avec la personne ni le téléphone) qui sert
- * seulement à compter les analyses du jour. Le relais ne garde rien (relay/README.md).
+ * seulement à compter les analyses IA (crédits, quotas). Le relais ne garde rien (relay/README.md).
  */
 import { loadNutritionTable } from '../data/nutritionTable'
 import { prepareImageForGemini } from './imagePrep.js'
@@ -15,6 +15,9 @@ export const RELAY_URL = (import.meta.env?.VITE_RELAY_URL || 'https://halcya-rel
 
 const INSTALL_ID_KEY = 'halcya_install_id'
 const QUOTA_KEY = 'halcya_ai_quota'
+const CREDITS_KEY = 'halcya_ai_credits'
+/** Jeton d'achat Google Play gardé par playBilling.js, renvoyé au relais pour qu'il retrouve le premium. */
+export const PURCHASE_TOKEN_KEY = 'halcya_purchase_token'
 /** Délai maximal d'une analyse (le relais coupe lui-même le modèle à 45 s). */
 export const RELAY_TIMEOUT_MS = 60_000
 
@@ -58,6 +61,86 @@ function rememberQuota(quota) {
   }
 }
 
+function readJson(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || 'null')
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Derniers crédits d'analyse IA donnés par le relais : `{ plan: 'free'|'premium', remaining, resetAt, state, … }`,
+ * ou null s'ils sont inconnus ou périmés (renouvellement passé : on ne sait plus combien il en reste).
+ */
+export function getLastCredits({ now = Date.now() } = {}) {
+  const c = readJson(CREDITS_KEY)
+  if (!c || !Number.isFinite(c.remaining) || !c.resetAt) return null
+  return Date.parse(c.resetAt) > now ? c : null
+}
+
+function rememberCredits(credits) {
+  if (!credits || !Number.isFinite(credits.remaining) || !credits.resetAt) return
+  try {
+    localStorage.setItem(CREDITS_KEY, JSON.stringify(credits))
+  } catch {
+    // stockage indisponible : le compteur ne s'affichera pas
+  }
+}
+
+/**
+ * En-têtes de chaque appel : l'identifiant d'installation, le dernier état des crédits (le relais garde le plus
+ * restrictif, pour que le compteur ne remonte pas quand il redémarre) et le jeton d'achat s'il y en a un.
+ */
+function relayHeaders() {
+  const headers = { 'X-Install-Id': getInstallId() }
+  const state = readJson(CREDITS_KEY)?.state
+  if (typeof state === 'string' && state) headers['X-Credits'] = state
+  try {
+    const token = localStorage.getItem(PURCHASE_TOKEN_KEY)
+    if (token) headers['X-Purchase-Token'] = token
+  } catch {
+    // stockage indisponible : le relais relira le premium autrement
+  }
+  return headers
+}
+
+const MONTHS_LONG = { day: 'numeric', month: 'long' }
+
+/** « 12 analyses IA restantes · renouvellement le 1 novembre » (ou « demain » en premium). */
+export function describeCredits(credits) {
+  if (!credits) return null
+  const n = credits.remaining
+  const count = n > 1 ? `${n} analyses IA restantes` : `${n} analyse IA restante`
+  if (credits.plan === 'premium') return `${count} aujourd’hui · renouvellement demain`
+  const reset = new Date(credits.resetAt)
+  // « 1er novembre » plutôt que « 1 novembre »
+  const date = reset.getDate() === 1
+    ? `1er ${reset.toLocaleDateString('fr-FR', { month: 'long' })}`
+    : reset.toLocaleDateString('fr-FR', MONTHS_LONG)
+  return `${count} · renouvellement le ${date}`
+}
+
+/** Demande au relais les crédits de cette installation, sans rien consommer ; null hors connexion. */
+export async function refreshCredits({ fetchImpl = globalThis.fetch, timeoutMs = 15_000 } = {}) {
+  const controller = typeof AbortController === 'function' ? new AbortController() : null
+  const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
+  try {
+    const res = await fetchImpl(`${RELAY_URL}/v1/credits`, {
+      headers: relayHeaders(),
+      ...(controller ? { signal: controller.signal } : {}),
+    })
+    const data = await res.json().catch(() => null)
+    if (!res.ok || !data?.credits) return getLastCredits()
+    rememberCredits(data.credits)
+    return getLastCredits()
+  } catch {
+    return getLastCredits()
+  } finally {
+    if (timer) clearTimeout(timer)
+  }
+}
+
 const NETWORK_MESSAGE = "Pas de connexion au service d'analyse IA. Vérifiez votre connexion et réessayez."
 
 async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS } = {}) {
@@ -67,7 +150,7 @@ async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY
   try {
     res = await fetchImpl(`${RELAY_URL}/v1/meal/analyze`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Install-Id': getInstallId() },
+      headers: { 'Content-Type': 'application/json', ...relayHeaders() },
       body: JSON.stringify(body),
       ...(controller ? { signal: controller.signal } : {}),
     })
@@ -85,12 +168,14 @@ async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY
   }
   if (!res.ok) {
     if (res.status === 429 && data?.scope === 'install') rememberQuota({ remaining: 0, resetAt: data.resetAt })
+    rememberCredits(data?.credits)
     throw new Error(data?.message || "L'analyse IA n'a pas abouti. Réessayez dans un instant.")
   }
   if (!data || typeof data.parsed !== 'object') {
     throw new Error("Réponse inattendue du service d'analyse IA.")
   }
   rememberQuota(data.quota)
+  rememberCredits(data.credits)
   return data
 }
 
