@@ -24,6 +24,8 @@ test('requestHashFor : empreinte stable, propre à chaque installation, sans l\'
   assert.notEqual(requestHashFor(INSTALL), requestHashFor('autre-installation-1234'))
   assert.match(requestHashFor(INSTALL), /^[0-9a-f]{64}$/)
   assert.ok(!requestHashFor(INSTALL).includes(INSTALL))
+  // Même vecteur que app/src/services/playIntegrity.test.js : l'app et le relais doivent calculer la même empreinte
+  assert.equal(requestHashFor('abc123'), '5540733c35182f8d31cc8b5f5da1f438d47dd58b691989c0f4036be0ef67c790')
 })
 
 test('isIntegrityToken : refuse les valeurs vides, courtes ou exotiques', () => {
