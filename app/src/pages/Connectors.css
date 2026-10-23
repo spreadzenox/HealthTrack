@@ -220,6 +220,12 @@
   gap: 4px;
 }
 
+.connector-history-note {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 .connector-select {
   max-width: 200px;
   padding: 8px 10px;

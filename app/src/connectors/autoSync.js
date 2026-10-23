@@ -14,6 +14,7 @@
 import { CONNECTORS } from './connectorRegistry'
 import { getConnectorSettings, setConnectorSettings } from '../settings/connectorSettings'
 import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
+import { noteFirstGrant, readsAllFailed, syncSince } from './syncWindow'
 import { debugInfo, debugWarn } from '../utils/debugLog'
 
 const TAG = 'AutoSync'
@@ -21,10 +22,7 @@ const TAG = 'AutoSync'
 /** Syncs triggered within this window are considered fresh enough. */
 export const STALE_THRESHOLD_MS = 60 * 60 * 1000 // 1 hour
 
-/** Overlap window to avoid missing entries delayed from the watch. */
-const SYNC_OVERLAP_MS = 2 * 60 * 60 * 1000
-
-/** Default first-import window when no prior sync exists. */
+/** Default first-import window when no prior sync exists (bounded by the source's read window). */
 const DEFAULT_HISTORY_DAYS = 180
 
 /** Tracks connector IDs that are currently syncing to avoid duplicates. */
@@ -60,7 +58,9 @@ async function syncConnector(connector) {
     return false
   }
 
-  if (!isSyncStale(settings.lastSyncAt)) {
+  // lastAttemptAt : dernier essai où tout a échoué (lastSyncAt n'avance pas) ; on attend aussi une heure.
+  const lastTry = [settings.lastSyncAt, settings.lastAttemptAt].filter(Boolean).sort().pop() || null
+  if (!isSyncStale(lastTry)) {
     debugInfo(TAG, `${connector.id}: last sync is recent, skipping`)
     return false
   }
@@ -92,6 +92,7 @@ async function syncConnector(connector) {
     return false
   }
 
+  noteFirstGrant(connector.id)
   inFlight.add(connector.id)
   debugInfo(TAG, `${connector.id}: starting background sync`)
 
@@ -99,17 +100,14 @@ async function syncConnector(connector) {
     const now = new Date()
     const freshSettings = getConnectorSettings(connector.id)
 
-    let since
-    if (freshSettings.lastSyncAt) {
-      since = new Date(new Date(freshSettings.lastSyncAt).getTime() - SYNC_OVERLAP_MS)
-    } else {
-      const latestAt = await getLatestEntryAt(connector.id)
-      if (latestAt) {
-        since = new Date(new Date(latestAt).getTime() - SYNC_OVERLAP_MS)
-      } else {
-        since = new Date(now.getTime() - DEFAULT_HISTORY_DAYS * 24 * 60 * 60 * 1000)
-      }
-    }
+    const latestAt = freshSettings.lastSyncAt ? null : await getLatestEntryAt(connector.id)
+    const since = syncSince({
+      now,
+      settings: freshSettings,
+      latestAt,
+      historyDays: DEFAULT_HISTORY_DAYS,
+      readWindowDays: connector.readWindowDays ?? null,
+    })
 
     const result = await connector.sync({
       since,
@@ -118,6 +116,13 @@ async function syncConnector(connector) {
         await upsertEntries(entries)
       },
     })
+
+    if (readsAllFailed(result)) {
+      // Rien d'importé : on réessaiera depuis le même point (sinon l'historique serait perdu).
+      setConnectorSettings(connector.id, { lastAttemptAt: now.toISOString(), lastSyncResult: result })
+      debugWarn(TAG, `${connector.id}: every read failed`, result.errors)
+      return false
+    }
 
     setConnectorSettings(connector.id, {
       lastSyncAt: now.toISOString(),

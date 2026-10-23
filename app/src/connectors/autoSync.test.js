@@ -168,7 +168,7 @@ describe('triggerAutoSync', () => {
     await triggerAutoSync()
 
     expect(dispatchSpy).not.toHaveBeenCalled()
-    expect(setConnectorSettings).not.toHaveBeenCalled()
+    expect(setConnectorSettings).not.toHaveBeenCalledWith('test_connector', expect.objectContaining({ lastSyncAt: expect.anything() }))
   })
 
   it('handles isAvailable() throwing gracefully', async () => {
@@ -199,5 +199,65 @@ describe('triggerAutoSync', () => {
 
     expect(c1.sync).toHaveBeenCalledOnce()
     expect(c2.sync).not.toHaveBeenCalled()
+  })
+
+  // ─── VC-11 : fenêtre de 30 jours de Health Connect ──────────────────────────
+
+  it('note la première autorisation sur un connecteur jamais synchronisé', async () => {
+    const c = makeConnector()
+    CONNECTORS.push(c)
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null })
+
+    await triggerAutoSync()
+
+    expect(setConnectorSettings).toHaveBeenCalledWith('test_connector', { firstGrantAt: expect.any(String) })
+  })
+
+  it('borne la première synchro à première autorisation − 29 j quand la source a une fenêtre de lecture', async () => {
+    const c = makeConnector({ readWindowDays: 29 })
+    CONNECTORS.push(c)
+    const firstGrantAt = new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString()
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, firstGrantAt })
+
+    await triggerAutoSync()
+
+    const { since } = c.sync.mock.calls[0][0]
+    expect(since.getTime()).toBe(new Date(firstGrantAt).getTime() - 29 * 24 * 3600 * 1000)
+  })
+
+  it('remonte 180 jours pour une source sans fenêtre de lecture', async () => {
+    const c = makeConnector()
+    CONNECTORS.push(c)
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null })
+
+    await triggerAutoSync()
+
+    const { since, until } = c.sync.mock.calls[0][0]
+    expect(Math.round((until - since) / (24 * 3600 * 1000))).toBe(180)
+  })
+
+  it("n'avance pas lastSyncAt quand toutes les lectures ont échoué", async () => {
+    const c = makeConnector({ sync: vi.fn().mockResolvedValue({ synced: 0, skipped: 0, errors: ['steps: refusé'] }) })
+    CONNECTORS.push(c)
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null })
+
+    await triggerAutoSync()
+
+    expect(setConnectorSettings).not.toHaveBeenCalledWith('test_connector', expect.objectContaining({ lastSyncAt: expect.anything() }))
+    expect(setConnectorSettings).toHaveBeenCalledWith(
+      'test_connector',
+      expect.objectContaining({ lastAttemptAt: expect.any(String), lastSyncResult: expect.any(Object) }),
+    )
+    expect(dispatchSpy).not.toHaveBeenCalled()
+  })
+
+  it("n'insiste pas avant une heure après un échec complet", async () => {
+    const c = makeConnector()
+    CONNECTORS.push(c)
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastAttemptAt: new Date().toISOString() })
+
+    await triggerAutoSync()
+
+    expect(c.sync).not.toHaveBeenCalled()
   })
 })

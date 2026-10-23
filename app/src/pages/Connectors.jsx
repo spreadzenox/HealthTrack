@@ -16,6 +16,7 @@ import FaceSenseCard from '../components/FaceSenseCard'
 import { isFaceSenseAvailable, isFaceSenseEnabled } from '../services/faceSense'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
 import { splitSourcesByStatus } from '../connectors/connectorsLayout'
+import { noteFirstGrant, readsAllFailed, syncSince, historyOptions } from '../connectors/syncWindow'
 import { getWeatherSettings } from '../services/weatherSync'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
 import { getWatchAutoSyncState } from '../services/watchAutoSync'
@@ -23,15 +24,9 @@ import './Connectors.css'
 
 /**
  * How far back to look when doing the first historical import.
- * Default: 6 months.
+ * Default: 6 months, bounded by the source's read window (30 days for Health Connect).
  */
 const DEFAULT_HISTORY_DAYS = 180
-
-/**
- * How far back to look on a regular incremental sync (when lastSyncAt is set).
- * Add a 2-hour overlap to catch delayed sync from the watch.
- */
-const SYNC_OVERLAP_MS = 2 * 60 * 60 * 1000
 
 /**
  * Races a promise against a timeout. If the timeout fires first the provided
@@ -132,7 +127,8 @@ function ConnectorCard({ connector }) {
   const [missingTypes, setMissingTypes] = useState([])
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState(null)
-  const [historyDays, setHistoryDays] = useState(DEFAULT_HISTORY_DAYS)
+  const readWindowDays = connector.readWindowDays ?? null
+  const [historyDays, setHistoryDays] = useState(() => Math.min(DEFAULT_HISTORY_DAYS, readWindowDays ?? Infinity))
   const [checkCount, setCheckCount] = useState(0)
   const [settingsActionStatus, setSettingsActionStatus] = useState(null) // 'ok' | 'err' | null
 
@@ -171,6 +167,7 @@ function ConnectorCard({ connector }) {
       })
       .then((p) => {
         // p is undefined if the availability check threw (caught below)
+        if (p === 'granted') noteFirstGrant(connector.id)
         if (p !== undefined) setPermissions(p === 'not_asked' ? 'not_asked' : p)
         setMissingTypes(connector.missingReadTypes || [])
       })
@@ -198,6 +195,7 @@ function ConnectorCard({ connector }) {
     setPermissions('checking')
     try {
       const result = await withTimeout(connector.requestPermissions(), 15000, 'denied')
+      if (result === 'granted') noteFirstGrant(connector.id)
       setPermissions(result)
       setMissingTypes(connector.missingReadTypes || [])
     } catch {
@@ -212,21 +210,10 @@ function ConnectorCard({ connector }) {
       // Determine the time range for this sync
       const now = new Date()
 
-      let since
       const currentSettings = getConnectorSettings(connector.id)
-
-      if (currentSettings.lastSyncAt) {
-        // Incremental sync: from lastSyncAt minus overlap
-        since = new Date(new Date(currentSettings.lastSyncAt).getTime() - SYNC_OVERLAP_MS)
-      } else {
-        // First sync: historical import
-        const latestAt = await getLatestEntryAt(connector.id)
-        if (latestAt) {
-          since = new Date(new Date(latestAt).getTime() - SYNC_OVERLAP_MS)
-        } else {
-          since = new Date(now.getTime() - historyDays * 24 * 60 * 60 * 1000)
-        }
-      }
+      // Incrémentale (dernière synchro − 2 h) ou premier import, borné à ce que la source laisse lire.
+      const latestAt = currentSettings.lastSyncAt ? null : await getLatestEntryAt(connector.id)
+      const since = syncSince({ now, settings: currentSettings, latestAt, historyDays, readWindowDays })
 
       const result = await connector.sync({
         since,
@@ -235,6 +222,14 @@ function ConnectorCard({ connector }) {
           await upsertEntries(entries)
         },
       })
+
+      if (readsAllFailed(result)) {
+        // Rien d'importé : lastSyncAt n'avance pas, le prochain essai repartira du même point.
+        setConnectorSettings(connector.id, { lastAttemptAt: now.toISOString(), lastSyncResult: result })
+        reloadSettings()
+        setSyncMsg(`Rien n'a pu être importé. Erreurs : ${result.errors.join('; ')}`)
+        return
+      }
 
       const newSettings = {
         lastSyncAt: now.toISOString(),
@@ -368,13 +363,15 @@ function ConnectorCard({ connector }) {
                     value={historyDays}
                     onChange={(e) => setHistoryDays(Number(e.target.value))}
                   >
-                    <option value={7}>7 jours</option>
-                    <option value={30}>30 jours</option>
-                    <option value={90}>3 mois</option>
-                    <option value={180}>6 mois</option>
-                    <option value={365}>1 an</option>
-                    <option value={730}>2 ans</option>
+                    {historyOptions(readWindowDays).map((o) => (
+                      <option key={o.days} value={o.days}>{o.label}</option>
+                    ))}
                   </select>
+                  {readWindowDays && (
+                    <p className="connector-history-note">
+                      Android laisse lire les 30 jours qui précèdent votre première autorisation.
+                    </p>
+                  )}
                 </div>
               )}
 

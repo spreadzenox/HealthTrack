@@ -22,6 +22,7 @@
  */
 import { BaseConnector } from './BaseConnector'
 import { debugInfo, debugWarn, debugError, debugDebug } from '../utils/debugLog'
+import { HEALTH_CONNECT_READ_WINDOW_DAYS } from './syncWindow'
 
 const TAG = 'HealthConnect'
 
@@ -350,6 +351,8 @@ export class HealthConnectConnector extends BaseConnector {
     })
     /** Types demandés mais non autorisés (dernière vérification). */
     this.missingReadTypes = []
+    /** Sans READ_HEALTH_DATA_HISTORY, seuls les 30 jours avant la première autorisation sont lisibles. */
+    this.readWindowDays = HEALTH_CONNECT_READ_WINDOW_DAYS
   }
 
   async isAvailable() {
