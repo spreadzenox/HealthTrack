@@ -15,7 +15,8 @@ import PhoneUsageCard from '../components/PhoneUsageCard'
 import FaceSenseCard from '../components/FaceSenseCard'
 import { isFaceSenseAvailable, isFaceSenseEnabled } from '../services/faceSense'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
-import { splitSourcesByStatus } from '../connectors/connectorsLayout'
+import { splitSourcesByStatus, visibleConnectorIds } from '../connectors/connectorsLayout'
+import { FEATURES } from '../config/distribution'
 import { noteFirstGrant, readsAllFailed, syncSince, historyOptions } from '../connectors/syncWindow'
 import { getWeatherSettings } from '../services/weatherSync'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
@@ -421,7 +422,10 @@ export default function Connectors() {
   // Classement figé à l'ouverture : une carte qu'on active ne saute pas d'un groupe à l'autre sous le doigt.
   const [layout] = useState(() =>
     splitSourcesByStatus({
-      connectorIds: CONNECTORS.map((c) => c.id),
+      connectorIds: visibleConnectorIds(CONNECTORS.map((c) => c.id), {
+        withingsApi: FEATURES.withingsApi,
+        withingsInUse: Boolean(getConnectorSettings('withings')?.enabled) || hasWithingsCredentials(),
+      }),
       isConnectorEnabled: (id) => Boolean(getConnectorSettings(id)?.enabled),
       weatherEnabled: Boolean(getWeatherSettings().enabled),
       phoneUsageEnabled: Boolean(getPhoneUsageSettings().enabled),

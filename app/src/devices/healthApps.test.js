@@ -98,10 +98,10 @@ describe('adviseDevices', () => {
   const app = (id, pkg) => ({ ...HEALTH_APPS.find((a) => a.id === id), package: pkg ?? HEALTH_APPS.find((a) => a.id === id).packages[0] })
   const src = (name, lastAt) => summarizeHealthConnectSources([hc(name, lastAt)])[0]
 
-  it('Huawei Health seul : à brancher via Gadgetbridge, guide Huawei', () => {
+  it('Huawei Health seul : à brancher en direct, guide Huawei', () => {
     const [row] = adviseDevices({ installed: [app('huawei_health')], sources: [], now: NOW })
     expect(row).toMatchObject({ id: 'huawei_health', status: 'action', guideId: 'huawei' })
-    expect(row.message).toMatch(/Gadgetbridge/)
+    expect(row.message).toMatch(/Connecter ma montre/)
   })
 
   it('Huawei Health + Gadgetbridge sans données : activer Health Connect dans Gadgetbridge', () => {

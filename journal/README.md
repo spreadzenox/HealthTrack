@@ -612,6 +612,17 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 23/10 21:30 — page Sources plus claire en version Play (VC-7 + VC-13).** Ce que vous verrez : les cartes
+**Lecture du visage**, **Temps d'écran** et **Météo** tiennent en deux lignes (ce que ça fait, ce qui sort ou non du
+téléphone) ; le reste est sous **« Détails »**. Dans la **version Play** seulement : la carte **Withings** (qui
+demandait un identifiant et un secret de développeur) n'est plus proposée — Withings passe déjà par Health Connect —
+sauf chez quelqu'un qui l'utilise déjà ; et le guide **« Votre montre n'apparaît pas ? → Huawei / Honor »** renvoie
+maintenant à **« Connecter ma montre »** (connexion directe), Gadgetbridge seulement en dernier recours, sans plus
+demander d'aller lire un cookie avec F12. Dans les deux versions : si Huawei Santé est détecté sur le téléphone, la
+ligne « Mes appareils » propose la connexion directe au lieu de Gadgetbridge. Pour vous (sideload, Withings branché) :
+rien ne disparaît. **Prochain run de code : VC-12**, puis VC-17 selon votre réponse à **P25** (sans réponse : ①, ne
+cocher que ce qui est livré). **👉 En attente de vous : P25 (①, ② ou ③) et P23** (testeurs sans paiement).
+
 **Run du 23/10 19:30 — carte montre simple pour un nouvel utilisateur (VC-6 + VC-8, votre retour P17).** Ce que
 vous verrez : dans **Sources → Montre Huawei**, le bloc **« Diagnostic » est toujours fermé** à l'ouverture, même
 avant le premier appairage ; les termes techniques (HiChain, AES-GCM, « Fin d'association — 11 acceptés ») n'y
@@ -1031,6 +1042,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 17:30 — [VC-2 : Pistes vide aligné sur l'Accueil](runs/2026-10-23-1730-vc2-pistes-vide.md) | 🧭 | État vide de `/recommendations` = `PistesTeaser` (même compteur que l'Accueil, objectif suivi, `onPistesPage` sans lien vers soi-même) + « Pas encore assez de jours mesurés » ; onglets masqués tant que l'analyse simple n'a rien ; « recommandations basiques », « ≥ 5j » et 📊 retirés de l'état vide ; 3 tests ; v232 (33,7 Mo) ; test `FaceSenseCard` fragile (horodatage) corrigé |
 | 23/10 19:30 — [VC-6 + VC-8 : carte montre simple avant appairage](runs/2026-10-23-1930-vc6-vc8-carte-montre.md) | 🧭⌚ | `WatchConnect` : « Diagnostic » toujours replié, constantes téléchargées au premier « Connecter ma montre » (téléchargement/collage sous « Diagnostic »), conseil d'échec hors du repli ; lien `/montre` seulement après appairage ; `/montre` sans montre → phrase + bouton ; 4 tests |
 | 23/10 20:30 — [Idées : audit play vierge après les correctifs VC](runs/2026-10-23-2030-idees-audit-vc.md) | 💡 | 18 captures `--play --empty` relues (0 erreur JS) ; **paywall : 3 avantages sur 4 non livrés → P25** ; VC-12 (Pistes : 2 seuils contradictoires), VC-13 (guide Huawei → Gadgetbridge + cookie F12 en play), VC-14 (cigarettes), VC-15 (émojis, apostrophes), VC-16 (Tendances) ; journal seul |
+| 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |
 | 23/10 18:30 — [VC-3 : profil Nutrition sans valeurs inventées](runs/2026-10-23-1830-vc3-profil-nutrition.md) | 🧭 | `BodyProfileCard` : profil vide → invitation sans chiffre ; partiel → valeurs connues + « À compléter : … » ; IMC / kcal derrière « détails » (I152) ; avertissement « repas manquants » sans objectif calorique ; `DetailsToggle.css` ; 3 tests |
 | 23/10 13:30 — [Jalon 4c-2 : lecture du visage dans l'onboarding](runs/2026-10-23-1330-jalon4c2-visage.md) | 🧭 | Écran 7 d'I154 avant le premier geste (seulement si le plugin caméra existe) : 3 lignes, divulgation `camera`/`camera_app_open`, lecture d'essai (`services/faceTrial.js`, ne compte pas), « Plus tard » sans demande ; `--onboarding=face` ; 13 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |

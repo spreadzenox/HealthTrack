@@ -20,7 +20,7 @@ describe('MyDevices', () => {
     )
     expect(await screen.findByText('Huawei Health')).toBeInTheDocument()
     expect(screen.getByText('À brancher')).toBeInTheDocument()
-    expect(screen.getByText(/passez par Gadgetbridge/)).toBeInTheDocument()
+    expect(screen.getByText(/Connecter ma montre/)).toBeInTheDocument()
 
     const guide = document.getElementById('guide-huawei')
     expect(guide.open).toBe(false)

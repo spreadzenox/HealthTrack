@@ -6,7 +6,7 @@
  * Sources : gadgetbridge.org/basics/pairing/huawei-honor-pairing/,
  * gadgetbridge.org/basics/integrations/health-connect/ (consultées le 11/10/2026).
  */
-import { WATCH_GUIDES } from '../data/watchGuides'
+import { watchGuidesFor } from '../data/watchGuides'
 import { APP_NAME } from '../config/brand'
 import './WatchGuides.css'
 
@@ -18,7 +18,7 @@ export default function WatchGuides() {
         {APP_NAME} lit tout ce qui passe par <strong>Health Connect</strong>. Choisissez votre marque pour la brancher en
         quelques minutes.
       </p>
-      {WATCH_GUIDES.map((g) => (
+      {watchGuidesFor().map((g) => (
         <details key={g.id} id={`guide-${g.id}`} className="watch-guide">
           <summary>{g.title}</summary>
           <p className="watch-guide-intro">{g.intro}</p>

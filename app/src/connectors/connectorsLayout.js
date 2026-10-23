@@ -30,3 +30,12 @@ export function splitSourcesByStatus({
     toConnect: sources.filter(([, on]) => !on).map(([id]) => id),
   }
 }
+
+/**
+ * Connecteurs montrés sur la page Sources. Le connecteur Withings (API avec identifiants de développeur) est masqué
+ * dans la variante play, sauf s'il est déjà activé ou configuré : on ne retire jamais une source qui sert, et les
+ * données déjà importées restent dans le journal et l'export (VC-7).
+ */
+export function visibleConnectorIds(connectorIds, { withingsApi, withingsInUse }) {
+  return connectorIds.filter((id) => id !== 'withings' || withingsApi || withingsInUse)
+}

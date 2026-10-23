@@ -4,6 +4,7 @@
  * Seule une position arrondie (≈ 10 km) est envoyée à Open-Meteo. Logique dans services/weather*.js.
  */
 import { useEffect, useState } from 'react'
+import MethodNote from './MethodNote'
 import { getWeatherSettings, enableWeather, disableWeather, syncWeather, searchPlaces } from '../services/weatherSync'
 import { weatherSummaryParts } from '../services/weather'
 import { formatAgo } from '../utils/timeAgo'
@@ -118,10 +119,13 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
       {!on && (
         <>
           <p className="my-devices-intro">
+            Météo, air et pollens chaque jour, sans rien saisir. Seule une position arrondie (≈ 10 km) est envoyée
+            au service gratuit Open-Meteo : aucune donnée de santé.
+          </p>
+          <MethodNote summary="Détails">
             Température, soleil, pression atmosphérique, qualité de l’air et pollens arrivent tout seuls chaque jour
             (et les 3 derniers mois d’un coup). Vos Pistes vérifient s’ils pèsent sur <em>votre</em> bien-être.
-            Seule une position arrondie (≈ 10 km) est envoyée au service gratuit Open-Meteo : aucune donnée de santé.
-          </p>
+          </MethodNote>
           <button type="button" className="btn btn-primary connector-btn" onClick={usePosition} disabled={busy}>
             Utiliser ma position approximative
           </button>

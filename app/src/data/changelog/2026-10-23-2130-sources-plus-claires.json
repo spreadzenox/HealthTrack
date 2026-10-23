@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-23",
+  "kind": "amélioration",
+  "title": "Une page Sources plus claire",
+  "items": [
+    "Lecture du visage, Temps d'écran et Météo : deux lignes pour comprendre, le reste sous « Détails ».",
+    "Montre Huawei ou Honor qui n'apparaît pas : le guide renvoie maintenant d'abord à « Connecter ma montre », la connexion directe en Bluetooth.",
+    "Huawei Santé détecté sur le téléphone : on vous propose de connecter la montre directement."
+  ]
+}

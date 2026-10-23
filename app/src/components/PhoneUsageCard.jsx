@@ -6,6 +6,7 @@
  * Rien ne quitte le téléphone. Logique dans services/phoneUsage*.js, natif dans PhoneUsagePlugin.java.
  */
 import { useEffect, useState } from 'react'
+import MethodNote from './MethodNote'
 import {
   getPhoneUsageSettings,
   enablePhoneUsage,
@@ -122,13 +123,18 @@ export default function PhoneUsageCard({
       </div>
 
       {(!on || !granted) && (
-        <p className="my-devices-intro">
-          Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : {APP_NAME} en tire votre temps
-          d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits sans
-          montre, une estimation de votre sommeil. Vos Pistes regardent comment tout cela va avec <em>votre</em>{' '}
-          bien-être, dans un sens ou dans l’autre. Jamais le contenu des apps ni vos messages, et rien ne quitte le
-          téléphone.
-        </p>
+        <>
+          <p className="my-devices-intro">
+            Votre temps d’écran, l’écran tard le soir et vos nuits sans montre, lus sur le téléphone. Jamais le contenu
+            des apps ni vos messages, et rien ne quitte le téléphone.
+          </p>
+          <MethodNote summary="Détails">
+            Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : {APP_NAME} en tire votre temps
+            d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits
+            sans montre, une estimation de votre sommeil. Vos Pistes regardent comment tout cela va avec{' '}
+            <em>votre</em> bien-être, dans un sens ou dans l’autre.
+          </MethodNote>
+        </>
       )}
 
       {!available && (

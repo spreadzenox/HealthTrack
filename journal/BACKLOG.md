@@ -43,7 +43,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   bouton de mise à jour) ; test sur les fichiers existants.
 - [x] **VC-6** (23/10 19:30) Sources : la carte montre propose d'abord « Connecter une montre compatible Huawei » ; le lien vers
   `/montre` n'apparaît qu'après un appairage ; `/montre` sans montre → état vide d'une phrase + bouton.
-- [ ] **VC-7** Sources en play : carte Withings Body Scan masquée (identifiant / secret de développeur à saisir ;
+- [x] **VC-7** (23/10 21:30, `visibleConnectorIds`, `MethodNote summary`) Sources en play : carte Withings Body Scan masquée (identifiant / secret de développeur à saisir ;
   Withings écrit dans Health Connect, déjà lu), données Withings existantes conservées et exportées ; textes des
   cartes raccourcis à 2 lignes + « détails » (Lecture du visage, Temps d'écran, Météo).
 - [x] **VC-8** (23/10 19:30) carte montre : bloc « Diagnostic » fermé par défaut, sans HiChain / AES-GCM / compteurs bruts dans le
@@ -57,7 +57,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   « Une note ») » (`pages/Recommendations.jsx:305-309`) → deux seuils et deux gestes différents sur le même écran.
   Correctif : ne pas afficher cette 2ᵉ carte tant que la carte lilas est là (ou la fondre en une ligne « détails » :
   « analyse bien-être : 5 jours avec une estimation ou une note ») ; test sur base vide.
-- [ ] **VC-13** (audit du 23/10 20:30) Sources → « Votre montre n'apparaît pas ? » → **Huawei / Honor**
+- [x] **VC-13** (23/10 21:30, `watchGuidesFor` / `HUAWEI_DIRECT_GUIDE` ; Huawei Santé détecté → connexion directe dans les deux variantes) (audit du 23/10 20:30) Sources → « Votre montre n'apparaît pas ? » → **Huawei / Honor**
   (`data/watchGuides.jsx:14-30`) conseille Gadgetbridge depuis F-Droid et la récupération de l'`userId` dans les
   cookies de cloud.huawei.com avec F12, alors que la variante play connecte la montre en direct. En play : le guide
   renvoie d'abord à « Connecter ma montre » (carte au-dessus), Gadgetbridge seulement en dernier recours, sans la
