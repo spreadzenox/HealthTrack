@@ -439,6 +439,16 @@ d'achats ». **👉 Votre action (2 min), P21 :** après ce merge, GitHub → Ac
 Run workflow (branche main), puis Play Console → Vue d'ensemble de la publication → envoyer la modification pour
 examen. **Toujours en attente de vous : P23** (comment les testeurs ne paient jamais).
 
+**Run du 23/10 03:30 — la page Premium (jalon 6c, étape 3).** Dans la **version Play** : **Réglages → Paramètres →
+Abonnement → « Découvrir le premium »** ouvre le paywall de la maquette (ce que le premium apporte, l'encart « Toujours
+gratuit », formules annuelle présélectionnée et mensuelle, badge d'économie, frise de l'essai, « Essayer 14 jours
+gratuitement », « Plus tard »). Tous les montants (prix, « soit 2,50 € par mois », « −50 % », durée de l'essai) sont
+**calculés à partir de ce que renvoie Google Play**, jamais écrits dans l'app. Aujourd'hui, comme l'abonnement
+`halcya_premium` n'existe pas encore (6d, après votre vérification bancaire), la page dit simplement « Google Play ne
+propose pas encore de formule ». Deux écarts volontaires à la maquette : pas encore de « jour 12 : on vous prévient »
+(le rappel n'existe pas encore, on ne promet pas) ni de lien « Conditions » (pas de CGV publiées) — tous deux au
+backlog avant la version candidate. Rien ne change dans la version sideload.
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -819,6 +829,7 @@ du jour avec sa fourchette (derrière la porte).
 | 22/10 23:30 — [Relais : analyse des repas en panne (502)](runs/2026-10-22-2330-relais-analyse-502.md) | 🚑 | Révision 6b-1 en ligne mais analyse de test en 502 (relance et appel direct identiques) ; repli sur le modèle suivant aussi pour 400 / 5xx / réponse vide ou illisible (pas 429) ; message exact de Vertex AI dans le résumé du workflow ; 44 tests relais |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |
+| 23/10 03:30 — [6c-3 : paywall (variante play)](runs/2026-10-23-0330-6c3-paywall.md) | 🧭💳 | Page `/premium` de la maquette, prix / essai / économie calculés sur Play Billing ; état « aucune formule » ; « Découvrir le premium » dans les Paramètres ; faux plugin Play Billing pour les captures ; 1 913 Vitest |
 | 23/10 00:30 — [Relais : modèle retiré, multi-région UE](runs/2026-10-23-0030-relais-modele-retire.md) | 🚑 | Cause du 502 : `gemini-2.5-flash-lite` retiré le 20/10 ; 3.5 / 3.1 Flash-Lite seulement sur la multi-région `eu` → relais sur `aiplatform.eu.rep.googleapis.com`, modèles 3.5 puis 3.1 Flash-Lite ; lecture des journaux réessayée 2 min ; 45 tests relais |
 | 22/10 22:30 — [Réparation du déploiement du relais](runs/2026-10-22-2230-relais-deploiement-repare.md) | 🐛 | « Relais — déploiement » rouge (séparateur `^@^` de `--set-env-vars` qui coupait l'adresse de relay-runtime) → `^;^` ; test `relay/test/workflow.test.js` (rouge sur l'ancien workflow) ; 42 tests relais |
 | 22/10 21:30 — [6b-1 : le relais vérifie les abonnements Play](runs/2026-10-22-2130-6b-achats-relais.md) | 🧭 | `billing.js` : `subscriptionsv2.get` (droits : actif, grâce, annulé non échu ; pas en pause / suspendu / expiré), accusé côté serveur, `linkedPurchaseToken`, `/v1/subscription/verify` (format validateur cdv-purchase), `/pubsub/rtdn` (OIDC vérifié), période de lancement `LAUNCH_PREMIUM_UNTIL` (coupée) ; CI : abonnement push `play-rtdn-relay` + test d'accès Play ; 40 tests relais |

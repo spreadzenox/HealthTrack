@@ -462,6 +462,9 @@
 /* Lien présenté comme un bouton (ex. « Gérer mon abonnement dans Google Play ») */
 .settings-link-btn {
   display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
   text-align: center;
   text-decoration: none;
 }

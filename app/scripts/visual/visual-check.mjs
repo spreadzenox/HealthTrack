@@ -26,6 +26,8 @@
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
  *   npm run visual -- --play --routes=/food --food-analysis  # variante play : relais Halcya factice, accord accepté ;
  *                                                  --ai-consent=ask : s'arrête sur la divulgation avant l'envoi (6a-2)
+ *   npm run visual -- --play --routes=/premium [--billing=none]  # paywall : faux plugin Play Billing (formules
+ *                                                     synthétiques, essai 14 j) ; --billing=none : aucune formule
  *   npm run visual -- --play --routes=/settings --subscription=active  # état d'abonnement factice renvoyé par le
  *                                                  relais (free par défaut, launch, active, trial, paused) (6c)
  *   npm run visual -- --routes=/data --import          # aperçu d'une sauvegarde choisie (avant import)
@@ -98,6 +100,7 @@ const DEFAULT_ROUTES = [
   ['/settings', 'settings'],
   ['/plus', 'plus'],
   ['/montre', 'montre'],
+  ['/premium', 'premium'],
 ]
 
 const FAKE_MEAL_ANALYSIS = {
@@ -272,6 +275,22 @@ async function main() {
           }
         }
       }, bannerMode)
+    }
+    if (args.play) {
+      // Paywall (variante play) : faux plugin PlayBilling (lu par src/services/playBilling.js en dev) avec des
+      // formules synthétiques ; --billing=none : Google Play ne propose encore aucune formule
+      await context.addInitScript((mode) => {
+        const phase = (formattedPrice, priceMicros, billingPeriod) => ({ formattedPrice, priceMicros, currency: 'EUR', billingPeriod })
+        const offers = mode === 'none' ? [] : [
+          { basePlanId: 'annuel', offerId: 'essai', offerToken: 'fake-a', phases: [phase('Gratuit', 0, 'P14D'), phase('29,99 €', 29990000, 'P1Y')] },
+          { basePlanId: 'mensuel', offerId: null, offerToken: 'fake-m', phases: [phase('4,99 €', 4990000, 'P1M')] },
+        ]
+        window.__HT_PLAY_BILLING__ = {
+          getProducts: async () => ({ products: offers.length ? [{ productId: 'halcya_premium', offers }] : [] }),
+          purchase: async () => ({ status: 'cancelled' }),
+          queryPurchases: async () => ({ purchases: [] }),
+        }
+      }, String(args.billing ?? ''))
     }
     // Abonnement (variante play) : jamais d'appel au vrai relais ; état factice choisi par --subscription
     await context.route('**/v1/subscription/verify', (route) => {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { GEMINI_MODELS, getGeminiModel, setGeminiModel } from '../settings/geminiModel'
 import { isDebugModeEnabled, setDebugModeEnabled } from '../settings/debugMode'
@@ -80,6 +81,11 @@ function SubscriptionBlock() {
         <a className="btn btn-secondary settings-link-btn" href={manageSubscriptionUrl(ent.productId)} target="_blank" rel="noopener noreferrer">
           Gérer mon abonnement dans Google Play
         </a>
+      )}
+      {!ent.premium && (
+        <Link className="btn settings-link-btn" to="/premium">
+          Découvrir le premium
+        </Link>
       )}
       {!ent.premium && (
         <button type="button" className="btn btn-secondary settings-link-btn" onClick={restore} disabled={restoring}>

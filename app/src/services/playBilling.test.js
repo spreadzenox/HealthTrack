@@ -11,6 +11,9 @@ import {
   restorePurchases,
   syncEntitlement,
   getStoredPurchaseToken,
+  formatMicros,
+  monthlyEquivalent,
+  annualSavingPercent,
 } from './playBilling'
 
 const phase = (formattedPrice, priceMicros, billingPeriod, extra = {}) => ({
@@ -156,5 +159,31 @@ describe('Google Play Billing côté app (jalon 6c-2)', () => {
     const refresh = vi.fn().mockResolvedValue({ premium: true })
     await syncEntitlement({ native, refresh })
     expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'tok.retenu-0123456789abc' })
+  })
+})
+
+describe('Paywall : montants calculés sur les prix de Google Play (jalon 6c-3)', () => {
+  const nbsp = (v) => String(v).replace(/[\u00a0\u202f]/g, ' ')
+  const plans = describePlans(PRODUCTS)
+
+  it('équivalent mensuel de l’annuel (2,50 €), rien pour le mensuel', () => {
+    const year = plans.find((p) => p.period === 'year')
+    expect(nbsp(monthlyEquivalent(year))).toBe('2,50 €')
+    expect(monthlyEquivalent(plans.find((p) => p.period === 'month'))).toBeNull()
+  })
+
+  it('économie de l’annuel sur 12 mois de mensuel : 50 %', () => {
+    expect(annualSavingPercent(plans)).toBe(50)
+  })
+
+  it('aucune économie affichée sans les deux formules, avec deux devises, ou si elle est négligeable', () => {
+    expect(annualSavingPercent([plans[0]])).toBeNull()
+    expect(annualSavingPercent([{ ...plans[0], currency: 'USD' }, plans[1]])).toBeNull()
+    expect(annualSavingPercent([{ period: 'year', priceMicros: 58_000_000, currency: 'EUR' }, { period: 'month', priceMicros: 4_990_000, currency: 'EUR' }])).toBeNull()
+  })
+
+  it('formatMicros refuse une devise absente ou inconnue', () => {
+    expect(formatMicros(1_000_000, null)).toBeNull()
+    expect(formatMicros(1_000_000, 'XXXX')).toBeNull()
   })
 })

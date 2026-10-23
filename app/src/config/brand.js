@@ -5,3 +5,6 @@
  * dépôt GitHub, noms de fichiers).
  */
 export const APP_NAME = 'Halcya'
+
+/** Politique de confidentialité publiée par GitHub Pages (app/scripts/site/build-site.mjs). */
+export const PRIVACY_URL = 'https://spreadzenox.github.io/HealthTrack/confidentialite/'
