@@ -136,9 +136,24 @@ describe('WatchDiagnostic', () => {
     expect(container.querySelector('details.watch-trouble').contains(link)).toBe(false)
   })
 
-  it('jamais connectée : dépannage déplié', () => {
-    const { container } = render(<WatchDiagnostic available run={vi.fn()} setup={null} connect={vi.fn()} />)
-    expect(container.querySelector('details.watch-trouble').open).toBe(true)
+  it('jamais connectée : « Diagnostic » replié et pas de lien vers l’écran « Montre » (VC-6, VC-8)', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <WatchDiagnostic available run={vi.fn()} setup={null} connect={vi.fn()} />
+      </MemoryRouter>,
+    )
+    expect(container.querySelector('details.watch-trouble').open).toBe(false)
+    expect(screen.getByRole('button', { name: 'Connecter ma montre' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Voir ce qui remonte de la montre' })).toBeNull()
+  })
+
+  it('hors app Android et jamais connectée : pas de lien vers l’écran « Montre » (VC-6)', () => {
+    render(
+      <MemoryRouter>
+        <WatchDiagnostic available={false} />
+      </MemoryRouter>,
+    )
+    expect(screen.queryByRole('link', { name: 'Voir ce qui remonte de la montre' })).toBeNull()
   })
 
   it('watchJournal : rien à exporter → objets nuls, nom daté du jour', () => {

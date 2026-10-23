@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-23",
+  "kind": "amélioration",
+  "title": "Une carte montre plus simple",
+  "items": [
+    "Dans Sources, le bloc « Diagnostic » de la montre est maintenant toujours replié : les détails techniques n'apparaissent que si vous l'ouvrez.",
+    "Avant de connecter une montre, un seul bouton, « Connecter ma montre », qui prépare tout seul l'appairage.",
+    "« Voir ce qui remonte de la montre » n'apparaît qu'une fois une montre connectée."
+  ]
+}

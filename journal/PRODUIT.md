@@ -57,8 +57,8 @@ publiée sur la piste **alpha**, et en tête du résumé « 👉 Version candida
 
 | # | Critère | État | Preuve attendue |
 |---|---|---|---|
-| C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🟡 onboarding livré (jalon 4, 23/10) ; restent VC-6, VC-7 (VC-11 corrigé le 23/10 09:30, VC-2 le 23/10 17:30, VC-3 le 23/10 18:30) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
-| C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-5, VC-7, VC-8 (VC-1 corrigé le 23/10 15:30, VC-4 le 23/10 16:30) | captures + test-garde de vocabulaire étendu à la variante play |
+| C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🟡 onboarding livré (jalon 4, 23/10) ; reste VC-7 (VC-11 corrigé le 23/10 09:30, VC-2 le 23/10 17:30, VC-3 le 23/10 18:30, VC-6 le 23/10 19:30) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
+| C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-5, VC-7 (VC-1 corrigé le 23/10 15:30, VC-4 le 23/10 16:30, VC-8 le 23/10 19:30) | captures + test-garde de vocabulaire étendu à la variante play |
 | C3 | Abonnement de bout en bout (achat, essai, restauration, annulation, pause, période de grâce) et crédits IA visibles | ⬜ crédits IA visibles ✅ (6c-3b, 23/10) ; attend 6d (P13), 6e ; paywall prêt (23/10) mais à compléter : rappel de fin d'essai, lien CGV, bénéfices alignés sur ce qui est livré | scénario testeur de licence (I148) |
 | C4 | Aucun plantage connu, premier lancement rapide | ⬜ à mesurer | émulateur A56 (workflow) : temps jusqu'au premier écran, 0 erreur JS |
 | C5 | Proposition écrite au propriétaire pour que les testeurs ne paient jamais | 🟡 proposition rédigée le 22/10 20:30 (I151) → **P23** à trancher | ce fichier, P23 |
@@ -76,11 +76,11 @@ correction proposée dans `BACKLOG.md`, section « Version candidate ») :
 - ✅ **VC-4** (corrigé le 23/10 16:30 : caché en play, 7 touches sur « Version N » en bas des Paramètres) Paramètres → « Mode diagnostic — Afficher les journaux techniques » visible en play.
 - **VC-5** Nouveautés : 136 entrées d'historique, dont 36 avec « HealthTrack » et 4 sur la clé Gemini ou le bouton
   de mise à jour (fonctions absentes de la variante play).
-- **VC-6** Sources → « Montre Huawei — Voir ce qui remonte de la montre » proposé avant toute montre connectée ; la
+- ✅ **VC-6** (corrigé le 23/10 19:30 : « Connecter ma montre », lien `/montre` après appairage seulement, page vide = phrase + bouton) Sources → « Montre Huawei — Voir ce qui remonte de la montre » proposé avant toute montre connectée ; la
   page affiche « 0 type sur 12 reçu… Rien reçu depuis 30 jours » ×12.
 - **VC-7** Sources : carte « Withings Body Scan » (API Withings : l'utilisateur doit saisir un identifiant et un secret
   de développeur Withings) — réglage de développeur ; textes très longs (Lecture du visage : 9 lignes).
-- **VC-8** (retour du propriétaire, P17) bloc « Diagnostic » de la carte montre ouvert par défaut avec des termes
+- ✅ **VC-8** (corrigé le 23/10 19:30 : « Diagnostic » toujours replié, constantes téléchargées au premier geste, conseil d'échec visible sans déplier) (retour du propriétaire, P17) bloc « Diagnostic » de la carte montre ouvert par défaut avec des termes
   techniques (HiChain, AES-GCM, « Fin d'association côté montre — 10 acceptés »).
 - ✅ **VC-11** (corrigé le 23/10 09:30, `connectors/syncWindow.js`) (run « idées » du 23/10 08:30, I153) première synchro Health Connect : 180 jours demandés, Android n'en autorise que 30 sans permission d'historique → rien d'importé sur une installation neuve, et `lastSyncAt` avance quand même. À corriger avant le jalon 4 (son « aha » en dépend).
 
@@ -144,6 +144,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **23/10 13:30** — **Jalon 4c-2** : écran « Votre bien-être, estimé tout seul » dans l'onboarding (seulement si le téléphone sait lire le visage) : trois lignes, divulgation caméra de la variante, lecture d'essai avec son estimation (ne compte pas), « Plus tard » sans demande, refus dit simplement. Prochain : I155.
 - **23/10 14:30** — **I155** : l'objectif choisi règle l'Accueil (énergie et sommeil : carte ventre en bas, pistes comptées en nuits suivies d'une mesure du bien-être) ; réglable dans Paramètres → « Ce qui vous amène ». Prochain : I156.
 - **23/10 15:30** — **I156 + VC-1** : écrans d'onboarding vus notés en local (ligne `[onboarding]` du journal technique) ; mots collés au nom corrigés avec test-garde. Jalon 4 livré.
+- **23/10 19:30** — **VC-6 + VC-8** : carte montre d'un nouvel utilisateur sans jargon (« Diagnostic » replié, « Connecter ma montre » télécharge les paramètres), lien et page « Données de la montre » seulement après appairage. Prochain : VC-7, VC-5, VC-10, VC-9.
 - **23/10 18:30** — **VC-3** : Nutrition n'affiche plus de profil par défaut (ni 70 kg, ni « Homme, 30 ans », ni kcal) ; invitation à compléter, valeurs connues seulement, IMC et calories derrière « détails ». Prochain : VC-6, VC-7, VC-8.
 - **23/10 17:30** — **VC-2** : la page Pistes vide montre la même carte lilas que l'Accueil (compteur X/21, « On préfère attendre… ») et une phrase simple ; plus de « recommandations basiques », ni « ≥ 5j », ni 📊. Prochain : VC-3, VC-6.
 - **23/10 16:30** — **VC-4** : « Mode diagnostic » caché dans la version Play ; 7 touches sur « Version N » (bas des Paramètres) le font apparaître pour le support et les testeurs. Prochain : VC-2, VC-3, VC-6.

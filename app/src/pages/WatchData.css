@@ -105,3 +105,21 @@
   align-items: center;
   text-decoration: none;
 }
+
+.watch-data-none {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.watch-data-none p {
+  margin: 0;
+}
+
+.watch-data-none .btn {
+  text-decoration: none;
+}
