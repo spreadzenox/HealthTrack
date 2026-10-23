@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-23",
+  "kind": "nouveau",
+  "title": "Version Google Play : la page Premium",
+  "items": [
+    "Réglages → Paramètres → Abonnement → « Découvrir le premium » ouvre la page Premium : ce que le premium apporte, ce qui reste toujours gratuit, et les formules annuelle et mensuelle.",
+    "Les prix, l'économie de l'annuel et l'essai gratuit viennent directement de Google Play ; si l'essai vous est proposé, la page montre quand tombe le premier paiement.",
+    "La page se ferme à tout moment (« Plus tard » ou la croix) : rien n'est bloqué dans l'app sans abonnement.",
+    "Dans la version installée depuis GitHub, rien ne change."
+  ]
+}

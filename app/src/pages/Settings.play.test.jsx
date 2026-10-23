@@ -64,6 +64,11 @@ describe('Settings — variante play (relais Halcya)', () => {
     expect(await screen.findByRole('status')).toHaveTextContent(/Aucun abonnement trouvé/)
   })
 
+  it('version gratuite : lien « Découvrir le premium » vers le paywall', () => {
+    renderSettings()
+    expect(screen.getByRole('link', { name: 'Découvrir le premium' })).toHaveAttribute('href', '/premium')
+  })
+
   it('premium actif : pas de bouton « Restaurer un achat »', async () => {
     globalThis.fetch = relayAnswer({ ok: true, premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: new Date(Date.now() + 20 * 86_400_000).toISOString(), autoRenewing: true })
     renderSettings()

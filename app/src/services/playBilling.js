@@ -79,9 +79,36 @@ export function describePlans(products) {
   return plans
 }
 
+/** Montant lisible (« 2,50 € ») à partir de micro-unités et d'un code ISO 4217 ; null si la devise est inconnue. */
+export function formatMicros(micros, currency) {
+  if (!Number.isFinite(micros) || !currency) return null
+  try {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(micros / 1_000_000)
+  } catch {
+    return null
+  }
+}
+
+/** Équivalent mensuel d'une formule annuelle (mention secondaire du paywall, règle Play I136), sinon null. */
+export function monthlyEquivalent(plan) {
+  if (plan?.period !== 'year') return null
+  return formatMicros(Math.round(plan.priceMicros / 12), plan.currency)
+}
+
+/** Économie de l'annuel par rapport à 12 mois du mensuel, en %, calculée sur les prix de Google Play ; sinon null. */
+export function annualSavingPercent(plans) {
+  const year = plans?.find((p) => p.period === 'year')
+  const month = plans?.find((p) => p.period === 'month')
+  if (!year || !month || year.currency !== month.currency || !(month.priceMicros > 0)) return null
+  const pct = Math.round((1 - year.priceMicros / (12 * month.priceMicros)) * 100)
+  return pct >= 5 ? pct : null
+}
+
 /** Le plugin natif, dans la seule variante play sur Android ; sinon null (sideload, navigateur, tests). */
 export async function loadBillingPlugin() {
   if (!FEATURES.billing) return null
+  // Captures (npm run visual -- --play --billing) : faux plugin, jamais en production
+  if (import.meta.env?.DEV && typeof window !== 'undefined' && window.__HT_PLAY_BILLING__) return window.__HT_PLAY_BILLING__
   try {
     const { Capacitor, registerPlugin } = await import('@capacitor/core')
     if (!Capacitor?.isNativePlatform?.() || Capacitor.getPlatform?.() !== 'android') return null
