@@ -27,6 +27,18 @@ describe('variantes Android play / sideload', () => {
     )
   })
 
+  it('Google Play Billing (6c-2) : bibliothèque et plugin dans la seule variante play', () => {
+    const gradle = read('build.gradle')
+    expect(gradle).toMatch(/playImplementation 'com\.android\.billingclient:billing:(\d+)\./)
+    expect(Number(gradle.match(/billingclient:billing:(\d+)\./)[1])).toBeGreaterThanOrEqual(8)
+    expect(gradle).not.toMatch(/^\s*implementation 'com\.android\.billingclient/m)
+    expect(read('src/play/java/com/healthtrack/app/FlavorPlugins.java')).toMatch(/PlayBillingPlugin\.class/)
+    expect(read('src/sideload/java/com/healthtrack/app/FlavorPlugins.java')).not.toMatch(/BillingPlugin/)
+    expect(read('src/main/java/com/healthtrack/app/MainActivity.java')).toMatch(/registerPlugins\(FlavorPlugins\.list\(\)\)/)
+    // Le plugin n'accuse jamais réception lui-même : c'est le relais, après vérification chez Google
+    expect(read('src/play/java/com/healthtrack/app/PlayBillingPlugin.java')).not.toMatch(/acknowledgePurchase\(/)
+  })
+
   it('play : pas de lecture du visage au déverrouillage (service caméra, relance, exemption de batterie)', () => {
     const play = read('src/play/AndroidManifest.xml')
     for (const name of ['.FaceSenseService', '.FaceResumeJob', '.FaceResumeReceiver']) {
