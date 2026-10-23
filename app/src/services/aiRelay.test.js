@@ -34,6 +34,16 @@ describe('relais Halcya (variante play)', () => {
     expect(getLastQuota()).toMatchObject({ remaining: 19 })
   })
 
+  it('joint le jeton Play Integrity lié à l’installation quand il y en a un, et rien sinon', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(okResponse({ parsed: { not_food: false, ingredients: [] }, model: 'm', quota: null }))
+    const integrity = vi.fn().mockResolvedValue('jeton-integrity')
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity })
+    expect(integrity).toHaveBeenCalledWith(getInstallId())
+    expect(fetchImpl.mock.calls[0][1].headers['X-Integrity-Token']).toBe('jeton-integrity')
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve(null) })
+    expect(fetchImpl.mock.calls[1][1].headers).not.toHaveProperty('X-Integrity-Token')
+  })
+
   it('texte : description tronquée à 500 caractères, vide refusée sans appel', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(okResponse({ parsed: { not_food: false, ingredients: [] }, model: 'm', quota: null }))
     await analyzeTextViaRelay('a'.repeat(600), { fetchImpl })

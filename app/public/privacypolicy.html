@@ -131,6 +131,12 @@
     15 par mois en version gratuite, 10 par jour au plus en premium) et à limiter le nombre d'analyses par jour.
     Le serveur n'en garde qu'une empreinte et ces compteurs, en mémoire, jusqu'à leur renouvellement ; l'app lui
     renvoie le dernier état de ses compteurs pour qu'ils restent justes.
+    Dans la version Google Play, chaque analyse emporte aussi un jeton Google Play Integrity, fourni par Google Play
+    sur le téléphone : le serveur le fait lire par Google pour vérifier que l'app a bien été installée depuis Google
+    Play, sur un appareil certifié (c'est ce qui protège les analyses offertes contre les abus). Ce jeton ne contient
+    aucune de vos données de santé ; le serveur n'en garde que le résultat (accepté ou non), en mémoire, au plus une
+    journée. Pour fabriquer ce jeton, Google Play utilise des informations sur l'appareil, selon ses propres
+    conditions.
     Rien d'autre n'est envoyé : ni votre ventre, ni votre sommeil, ni vos autres mesures. Sans analyse lancée,
     rien ne part. (Dans la version installée hors Google Play, l'analyse utilise à la place la clé Gemini que
     vous saisissez dans les paramètres, et Google traite la demande selon ses propres conditions.)

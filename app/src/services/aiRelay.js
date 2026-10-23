@@ -9,6 +9,7 @@
 import { loadNutritionTable } from '../data/nutritionTable'
 import { prepareImageForGemini } from './imagePrep.js'
 import { MEAL_TEXT_MAX_LENGTH, toMealResult } from './geminiStandalone.js'
+import { getIntegrityToken } from './playIntegrity.js'
 
 export const RELAY_URL = (import.meta.env?.VITE_RELAY_URL || 'https://halcya-relay-81378799481.europe-west1.run.app')
   .replace(/\/+$/, '')
@@ -143,14 +144,18 @@ export async function refreshCredits({ fetchImpl = globalThis.fetch, timeoutMs =
 
 const NETWORK_MESSAGE = "Pas de connexion au service d'analyse IA. Vérifiez votre connexion et réessayez."
 
-async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS } = {}) {
+async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = getIntegrityToken } = {}) {
+  const headers = { 'Content-Type': 'application/json', ...relayHeaders() }
+  // Jeton Play Integrity (variante play) : le relais vérifie que la demande vient de l'app Google Play (6b-2b)
+  const integrityToken = await integrity(headers['X-Install-Id'])
+  if (integrityToken) headers['X-Integrity-Token'] = integrityToken
   const controller = typeof AbortController === 'function' ? new AbortController() : null
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
   let res
   try {
     res = await fetchImpl(`${RELAY_URL}/v1/meal/analyze`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...relayHeaders() },
+      headers,
       body: JSON.stringify(body),
       ...(controller ? { signal: controller.signal } : {}),
     })
