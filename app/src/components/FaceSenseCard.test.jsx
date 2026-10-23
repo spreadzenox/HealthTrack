@@ -163,7 +163,8 @@ describe('FaceSenseCard', () => {
     await waitFor(() => expect(save).toHaveBeenCalled())
     const report = JSON.parse(save.mock.calls[0][0])
     expect(report.estimate).toEqual({ model: 'prior', confidence: 'faible', readingsToday: 1, baselineDays: 1, calibrationDays: 0, agreement: null, lighting: null })
-    expect(save.mock.calls[0][0]).not.toMatch(/3\.6|plutôt bonne/)
+    // (?<!\d) : un horodatage ISO comme « …:03.612Z » ne doit pas faire échouer le test (main, 23/10 17:52)
+    expect(save.mock.calls[0][0]).not.toMatch(/(?<!\d)3\.6|plutôt bonne/)
   })
 
   it('sonde vocale (I124) : lancée une fois à l’ouverture du Diagnostic, dite et exportée', async () => {
