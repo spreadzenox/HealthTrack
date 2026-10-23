@@ -594,6 +594,24 @@ pour ajuster vos repères : taille, sexe, âge ». L'**IMC** et le **besoin en c
 manquent » ne cite plus d'objectif calorique. **Prochain run de code : VC-6** (carte montre avant appairage), puis VC-7,
 VC-8. **👉 Toujours en attente de vous : P23** (testeurs sans paiement).
 
+**Run « idées » du 23/10 20:30 — nouvel audit de la version Play « comme un nouvel utilisateur » (rien de nouveau
+dans l'app).** Après les six correctifs du jour (VC-1 à VC-4, VC-6, VC-8), j'ai refait les 18 captures de la variante
+play sur un téléphone vierge (13 pages, 0 erreur JS). L'Accueil, l'onboarding, le Journal, Nutrition et la page
+« Données de la montre » sont propres. **Le point le plus important pour vous : le paywall promet 3 avantages qui
+n'existent pas encore** (pistes avec délais de 2 à 48 h — jalon 5 —, réintroduction FODMAP guidée et rapport PDF —
+jalon 7) ; aujourd'hui, le premium ne débloque que davantage d'analyses IA. Faire payer (ou faire essayer) des
+testeurs pour des fonctions absentes serait trompeur, et les règles Play sur les abonnements exigent de dire
+clairement ce qui est inclus. **👉 Décision à prendre : P25** (dans [`PRODUIT.md`](PRODUIT.md) §4) — ma recommandation :
+pour la version candidate, le paywall ne liste que ce qui est livré et dit « Et bientôt : … » seulement dans les
+détails, sans prix différent. Cinq autres défauts rangés pour la passe de finition : **VC-12** (Pistes affiche deux
+seuils contradictoires : « 21 jours avec un repas ou une note du ventre » puis « au moins 5 jours avec une note de
+bien-être »), **VC-13** (le guide « Huawei / Honor » de Sources conseille encore Gadgetbridge et la récupération d'un
+cookie avec F12, alors que la version Play connecte la montre directement), **VC-14** (réglage « Cigarettes » dans les
+Paramètres play), **VC-15** (émojis 📷🖼️✍️🗂️⚙️✨🔒 hors identité visuelle, apostrophes droites mêlées aux
+typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouverture de l'app »). **Prochain run de
+code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
+paiement) et **P25** (paywall honnête).
+
 **Run du 23/10 19:30 — carte montre simple pour un nouvel utilisateur (VC-6 + VC-8, votre retour P17).** Ce que
 vous verrez : dans **Sources → Montre Huawei**, le bloc **« Diagnostic » est toujours fermé** à l'ouverture, même
 avant le premier appairage ; les termes techniques (HiChain, AES-GCM, « Fin d'association — 11 acceptés ») n'y
@@ -1012,6 +1030,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 16:30 — [VC-4 : mode diagnostic caché en Play](runs/2026-10-23-1630-vc4-diagnostic.md) | 🧭 | `featuresFor().debugMenu` (sideload seulement) ; 7 touches sur « Version N » en bas des Paramètres → `unlockDebugMenu` (n'active pas les journaux) ; visible si déjà actif ; 6 tests |
 | 23/10 17:30 — [VC-2 : Pistes vide aligné sur l'Accueil](runs/2026-10-23-1730-vc2-pistes-vide.md) | 🧭 | État vide de `/recommendations` = `PistesTeaser` (même compteur que l'Accueil, objectif suivi, `onPistesPage` sans lien vers soi-même) + « Pas encore assez de jours mesurés » ; onglets masqués tant que l'analyse simple n'a rien ; « recommandations basiques », « ≥ 5j » et 📊 retirés de l'état vide ; 3 tests ; v232 (33,7 Mo) ; test `FaceSenseCard` fragile (horodatage) corrigé |
 | 23/10 19:30 — [VC-6 + VC-8 : carte montre simple avant appairage](runs/2026-10-23-1930-vc6-vc8-carte-montre.md) | 🧭⌚ | `WatchConnect` : « Diagnostic » toujours replié, constantes téléchargées au premier « Connecter ma montre » (téléchargement/collage sous « Diagnostic »), conseil d'échec hors du repli ; lien `/montre` seulement après appairage ; `/montre` sans montre → phrase + bouton ; 4 tests |
+| 23/10 20:30 — [Idées : audit play vierge après les correctifs VC](runs/2026-10-23-2030-idees-audit-vc.md) | 💡 | 18 captures `--play --empty` relues (0 erreur JS) ; **paywall : 3 avantages sur 4 non livrés → P25** ; VC-12 (Pistes : 2 seuils contradictoires), VC-13 (guide Huawei → Gadgetbridge + cookie F12 en play), VC-14 (cigarettes), VC-15 (émojis, apostrophes), VC-16 (Tendances) ; journal seul |
 | 23/10 18:30 — [VC-3 : profil Nutrition sans valeurs inventées](runs/2026-10-23-1830-vc3-profil-nutrition.md) | 🧭 | `BodyProfileCard` : profil vide → invitation sans chiffre ; partiel → valeurs connues + « À compléter : … » ; IMC / kcal derrière « détails » (I152) ; avertissement « repas manquants » sans objectif calorique ; `DetailsToggle.css` ; 3 tests |
 | 23/10 13:30 — [Jalon 4c-2 : lecture du visage dans l'onboarding](runs/2026-10-23-1330-jalon4c2-visage.md) | 🧭 | Écran 7 d'I154 avant le premier geste (seulement si le plugin caméra existe) : 3 lignes, divulgation `camera`/`camera_app_open`, lecture d'essai (`services/faceTrial.js`, ne compte pas), « Plus tard » sans demande ; `--onboarding=face` ; 13 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |

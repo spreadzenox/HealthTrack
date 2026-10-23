@@ -69,6 +69,22 @@
   pêche « Votre ventre » descend sous les tuiles et la carte lilas parle de « vos pistes sommeil → bien-être » ; avec
   « Mon ventre », l'ordre de la maquette. Réglable ensuite dans Paramètres (« Ce qui vous amène »). Aucune donnée
   masquée. Impact 3, faisabilité 4. → après 4c.
+- **I157 (15) — Un paywall qui ne vend que ce qui existe [H] (run « idées » du 23/10 20:30, → P25 / VC-17).**
+  Constat : le paywall coche 4 avantages ; seul « l'analyse IA des repas, jusqu'à 10 par jour » est réellement servi
+  (relais) ; pistes avec délais (jalon 5), réintroduction FODMAP et rapport PDF (jalon 7) n'existent pas, et aucune
+  page ne lit les droits premium. Risques : règles Play sur les abonnements (dire clairement ce qui est gratuit et ce
+  qui est payant, aucune formulation trompeuse — l'application de cette règle depuis 2020 vise justement les paywalls
+  qui promettent plus qu'ils ne donnent), droit de la consommation (pratique commerciale trompeuse), et surtout
+  confiance des 12 à 15 premiers testeurs, qui sont aussi nos premiers avis. Options pour la version candidate :
+  ① **(recommandée)** liste cochée = avantages livrés seulement ; « En préparation, inclus sans supplément : pistes
+  avec délais, réintroduction FODMAP, rapport PDF » derrière « détails » ; paywall soft de l'onboarding conservé
+  (il fait connaître l'offre et teste Play Billing) ; ② masquer le paywall soft de l'onboarding jusqu'au jalon 5
+  (premier avantage « comprendre » réel) et garder `/premium` accessible seulement depuis les Paramètres ;
+  ③ avancer une version minimale du jalon 5 (fenêtres 0–4 h / 4–24 h / 24–48 h repas → ventre sur le moteur N-of-1
+  existant, réservée au premium) avant d'inviter les testeurs — la plus vendeuse, mais 3 à 5 runs de plus. Dans tous
+  les cas : drapeau `delivered` par avantage et test-garde. Impact 5, faisabilité 5 (① ou ②). Source : couverture de
+  la politique « Subscriptions » de Google Play (TechRadar, Slashdot/Engadget, 16/04/2020 ; Sophos sur les
+  « fleeceware »), à relire sur le centre d'aide des règles Play avant la mise en vente.
 - **I156 (12) — ✅ livré le 23/10 15:30 — Mesurer l'onboarding sans rien envoyer [H].** Pas d'analytique tierce : un compteur local
   (`onboarding.step` atteint, écrans passés) inclus dans le diagnostic exporté, que les testeurs peuvent joindre à leur
   retour. Suffit pour repérer l'écran où l'on décroche avec 12 à 15 testeurs. Impact 2, faisabilité 5.

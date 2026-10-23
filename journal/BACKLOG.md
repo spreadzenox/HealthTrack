@@ -52,6 +52,36 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   `npm run visual` n'exerce pas les plugins natifs.
 - [ ] **VC-10** « Supprimer toutes mes données » dans Réglages → Données (avec export proposé avant), aujourd'hui
   seulement « désinstaller / effacer les données Android » d'après la politique de confidentialité.
+- [ ] **VC-12** (audit du 23/10 20:30) Pistes vide : sous la carte lilas (« 0/21 jours avec un repas ou une note du
+  ventre »), la carte « Pas encore assez de jours mesurés » dit « au moins 5 jours avec une note de bien-être (bouton
+  « Une note ») » (`pages/Recommendations.jsx:305-309`) → deux seuils et deux gestes différents sur le même écran.
+  Correctif : ne pas afficher cette 2ᵉ carte tant que la carte lilas est là (ou la fondre en une ligne « détails » :
+  « analyse bien-être : 5 jours avec une estimation ou une note ») ; test sur base vide.
+- [ ] **VC-13** (audit du 23/10 20:30) Sources → « Votre montre n'apparaît pas ? » → **Huawei / Honor**
+  (`data/watchGuides.jsx:14-30`) conseille Gadgetbridge depuis F-Droid et la récupération de l'`userId` dans les
+  cookies de cloud.huawei.com avec F12, alors que la variante play connecte la montre en direct. En play : le guide
+  renvoie d'abord à « Connecter ma montre » (carte au-dessus), Gadgetbridge seulement en dernier recours, sans la
+  manipulation des cookies (instruction risquée pour un utilisateur grand public, mauvaise image en revue Play) ;
+  sideload inchangée. Test : variante play, texte sans « F12 » ni « cookie ».
+- [ ] **VC-14** (audit du 23/10 20:30) Paramètres play : bloc « Cigarettes » (« Toujours afficher + 1 cigarette sur
+  l'accueil ») et « cigarettes » dans le sous-titre de Réglages → Paramètres. Hors parcours SII + bien-être : le
+  replier sous « Autres suivis » ou le masquer en play (le compteur reste disponible si une cigarette a déjà été
+  notée ; aucune donnée touchée).
+- [ ] **VC-15** (audit du 23/10 20:30, mineur) émojis hors identité visuelle : Repas (📷 Photo, 🖼️ Galerie,
+  ✍️ Décrire), Réglages (🗂️ ⚙️ ✨ 🔒), Paramètres (🔒 Ce qui est envoyé) → icônes trait de la barre de navigation ;
+  apostrophes droites mêlées aux typographiques (« l'instant », « l'ouverture de l'app », « n'apparaît », « l'accueil »)
+  → test-garde sur les textes JSX visibles. Repas : titre « Alimentation » alors que l'onglet dit « Repas ».
+- [ ] **VC-16** (audit du 23/10 20:30, mineur) Journal → Tendances, carte bien-être vide : « Enregistrez votre
+  bien-être à l'ouverture de l'app » → aligner sur le reste (« Activez la lecture du visage ou notez votre
+  bien-être avec « Une note » ») ; « Connectez une montre via Health Connect » → « Ajoutez une montre dans Sources »
+  (la Huawei ne passe pas par Health Connect).
+- [ ] **VC-17 → P25** (audit du 23/10 20:30, **bloquant pour C3**) le paywall liste 4 avantages dont **3 non livrés**
+  (pistes avec délais de 2 à 48 h = jalon 5 ; réintroduction FODMAP guidée et rapport PDF = jalon 7) ; aucune page
+  de l'app ne lit `useEntitlement` hormis Paramètres et Premium : le premium ne change aujourd'hui que le quota IA du
+  relais. Correctif proposé (I157, à valider par P25) : `PREMIUM_BENEFITS` avec un drapeau `delivered`, seuls les
+  livrés en liste cochée, les autres dans « détails » sous « En préparation, inclus sans supplément » ; test qui
+  échoue si un avantage affiché n'est relié à aucune fonction. Ajouter au passage le rappel « 2 jours avant la fin de
+  l'essai », l'étape « jour 12 : on vous prévient » de la frise et le lien « Conditions » (C3).
 - [x] **VC-11 (avant le jalon 4, I153) — FAIT le 23/10 09:30** (`connectors/syncWindow.js` ; reste : message exact d'Android à relever sur l'émulateur) première synchro Health Connect : `DEFAULT_HISTORY_DAYS = 180`
   (`connectors/autoSync.js:28`, `pages/Connectors.jsx:28`) alors que, sans `READ_HEALTH_DATA_HISTORY` (déclarée nulle
   part), Android refuse toute lecture antérieure à « première autorisation − 30 j » ; et `lastSyncAt` avance même si

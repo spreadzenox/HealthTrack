@@ -57,9 +57,9 @@ publiée sur la piste **alpha**, et en tête du résumé « 👉 Version candida
 
 | # | Critère | État | Preuve attendue |
 |---|---|---|---|
-| C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🟡 onboarding livré (jalon 4, 23/10) ; reste VC-7 (VC-11 corrigé le 23/10 09:30, VC-2 le 23/10 17:30, VC-3 le 23/10 18:30, VC-6 le 23/10 19:30) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
-| C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-5, VC-7 (VC-1 corrigé le 23/10 15:30, VC-4 le 23/10 16:30, VC-8 le 23/10 19:30) | captures + test-garde de vocabulaire étendu à la variante play |
-| C3 | Abonnement de bout en bout (achat, essai, restauration, annulation, pause, période de grâce) et crédits IA visibles | ⬜ crédits IA visibles ✅ (6c-3b, 23/10) ; attend 6d (P13), 6e ; paywall prêt (23/10) mais à compléter : rappel de fin d'essai, lien CGV, bénéfices alignés sur ce qui est livré | scénario testeur de licence (I148) |
+| C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🟡 onboarding livré (jalon 4, 23/10) ; reste VC-7, VC-12, VC-16 (VC-11 corrigé le 23/10 09:30, VC-2 le 23/10 17:30, VC-3 le 23/10 18:30, VC-6 le 23/10 19:30) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
+| C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-5, VC-7, VC-13, VC-14, VC-15 ( corrigé le 23/10 15:30, VC-4 le 23/10 16:30, VC-8 le 23/10 19:30) | captures + test-garde de vocabulaire étendu à la variante play |
+| C3 | Abonnement de bout en bout (achat, essai, restauration, annulation, pause, période de grâce) et crédits IA visibles | ⬜ crédits IA visibles ✅ (6c-3b, 23/10) ; attend 6d (P13), 6e ; paywall prêt (23/10) mais à compléter : rappel de fin d'essai, lien CGV, bénéfices alignés sur ce qui est livré — **3 avantages sur 4 non livrés : VC-17 / P25** (audit du 23/10 20:30) | scénario testeur de licence (I148) |
 | C4 | Aucun plantage connu, premier lancement rapide | ⬜ à mesurer | émulateur A56 (workflow) : temps jusqu'au premier écran, 0 erreur JS |
 | C5 | Proposition écrite au propriétaire pour que les testeurs ne paient jamais | 🟡 proposition rédigée le 22/10 20:30 (I151) → **P23** à trancher | ce fichier, P23 |
 
@@ -84,6 +84,20 @@ correction proposée dans `BACKLOG.md`, section « Version candidate ») :
   techniques (HiChain, AES-GCM, « Fin d'association côté montre — 10 acceptés »).
 - ✅ **VC-11** (corrigé le 23/10 09:30, `connectors/syncWindow.js`) (run « idées » du 23/10 08:30, I153) première synchro Health Connect : 180 jours demandés, Android n'en autorise que 30 sans permission d'historique → rien d'importé sur une installation neuve, et `lastSyncAt` avance quand même. À corriger avant le jalon 4 (son « aha » en dépend).
 
+**Audit sans code du 23/10 20:30** (après VC-1 à VC-4, VC-6, VC-8 ; `npm run visual -- --play --empty`, clair ;
+13 pages, 18 captures, 0 erreur JS). Propres : onboarding écran 1, Accueil, Journal (Jours, Repas, Nutrition),
+Données, « Données de la montre ». Nouveaux défauts (détail dans `BACKLOG.md`) :
+- **VC-17 → P25** (bloquant C3) paywall : 3 avantages cochés sur 4 pas encore livrés ; le premium ne change que le
+  quota IA du relais.
+- **VC-12** Pistes : deux seuils contradictoires sur le même écran (21 jours repas / ventre, puis 5 jours de note de
+  bien-être).
+- **VC-13** Sources → guide Huawei / Honor : Gadgetbridge + cookie `userId` récupéré avec F12, en play, alors que la
+  montre se connecte en direct.
+- **VC-14** réglage « Cigarettes » en play ; **VC-15** émojis hors identité visuelle et apostrophes mêlées ; **VC-16**
+  Tendances vide (« à l'ouverture de l'app », « via Health Connect »).
+- Toujours ouverts : VC-5 (Nouveautés), VC-7 (Withings Body Scan + textes longs : la carte Lecture du visage fait
+  encore 9 lignes), VC-9 (premier lancement à froid), VC-10 (suppression des données).
+
 ## 3. Inventaire de l'existant (premier jet, 20/10 22:30) — base du jalon 2
 
 Onglets (depuis le 21/10 14:30) : **Aujourd'hui** · **Journal** (Jours | Repas | Nutrition, depuis le 21/10 16:30 ; | Tendances depuis le 21/10 18:30) · **Pistes** · **Sources** ;
@@ -107,6 +121,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 | # | Action | État | Pas à pas |
 |---|---|---|---|
+| P25 | **Choisir ce que le paywall promet** pendant le test fermé (critère C3 ; run « idées » du 23/10 20:30, I157) | ⬜ à trancher | Constat : le paywall coche 4 avantages, 3 ne sont pas encore livrés (pistes avec délais = jalon 5 ; FODMAP et PDF = jalon 7). Répondez simplement ①, ② ou ③ : **① (recommandé)** liste cochée = ce qui est livré (analyse IA jusqu'à 10 / jour), le reste dans « détails » sous « En préparation, inclus sans supplément » ; **②** pas de paywall à la fin de l'onboarding avant le jalon 5, `/premium` seulement depuis les Paramètres ; **③** avancer une version minimale du jalon 5 (délais repas → ventre en premium) avant d'inviter les testeurs (3 à 5 runs de plus). Sans réponse, la routine applique ① à la passe de finition (réversible). |
 | P1 | Installer la v188+ à la main une fois, puis tester le bouton de mise à jour | ⬜ | Sur le téléphone, ouvrir dans Chrome **https://github.com/spreadzenox/HealthTrack/releases/latest** → « Assets » → `HealthTrack-vNNN.apk` → ouvrir → autoriser ce navigateur si demandé → « Mettre à jour ». À la version suivante : bouton du bandeau. |
 | P11 | **Inviter les comptes de service** dans « Utilisateurs et autorisations » | ✅ **fait le 21/10 vers 20:45** (prise d'effet côté API : jusqu'à 24-48 h ; la CI réessaie à chaque version) | Play Console → **Utilisateurs et autorisations** → Inviter un utilisateur → adresse `gh-deployer@healthtrack-824b26.iam.gserviceaccount.com` → onglet **Autorisations de l'application** → ajouter *Halcya* → cocher : **Gérer les versions des canaux de test**, **Gérer les testeurs**, **Gérer la présence sur le Play Store**, **Gérer les produits et abonnements** ; **ne pas** cocher « Publier en production… » ni les droits administrateur → Inviter (un compte de service n'a pas à accepter d'e-mail). Dès que c'est fait, un run court branche l'envoi automatique de chaque AAB en test interne et le vérifie par l'API. Plus tard : `relay-runtime@healthtrack-824b26.iam.gserviceaccount.com` avec « Voir les données financières » + « Gérer les commandes et les abonnements ». |
 | ~~P3~~ | ~~Compte développeur Google Play « jpesquet »~~ | ✅ validé par Google le 21/10 | — |
@@ -134,6 +149,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **23/10 20:30** — Run « idées » : audit play vierge après les correctifs VC ; paywall qui promet 3 avantages non livrés → P25 (I157, VC-17) ; VC-12 à VC-16.
 - **23/10 00:30** — Relais : cause du 502 = `gemini-2.5-flash-lite` retiré par Google le 20/10 ; passage à la multi-région UE `eu` (seul accès UE aux Flash-Lite 3.x), modèles 3.5 puis 3.1 Flash-Lite.
 - **22/10 23:30** — Analyse des repas du relais en 502 après le redéploiement (variante play touchée depuis 22:47) : repli sur le modèle suivant élargi, message exact de Vertex AI dans le résumé du workflow.
 - **22/10 22:30** — Déploiement du relais réparé (séparateur `^@^` de `--set-env-vars` incompatible avec l'adresse de relay-runtime → `^;^`, test de non-régression) ; 6b-1 part en ligne au merge.
