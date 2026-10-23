@@ -1,4 +1,5 @@
 import { useDebug } from '../contexts/DebugContext'
+import { onboardingDiagnostic } from '../settings/onboarding'
 import './DebugPanel.css'
 
 const LEVEL_EMOJI = {
@@ -33,12 +34,14 @@ export default function DebugPanel({ filter }) {
     : entries
 
   const exportLog = () => {
-    const text = filtered
+    const lines = filtered
       .map((e) => {
         const data = e.data !== undefined ? '\n  ' + JSON.stringify(e.data, null, 2).replace(/\n/g, '\n  ') : ''
         return `[${e.ts}] [${e.level.toUpperCase()}] [${e.tag}] ${e.message}${data}`
       })
       .join('\n')
+    // I156 : où en est l'onboarding (écrans vus, choix), en tête du fichier joint par les testeurs.
+    const text = `[onboarding] ${JSON.stringify(onboardingDiagnostic())}\n${lines}`
     const blob = new Blob([text], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -53,7 +56,7 @@ export default function DebugPanel({ filter }) {
       <div className="debug-panel-header">
         <span className="debug-panel-title">🐛 Journal de debug ({filtered.length} entrées)</span>
         <div className="debug-panel-actions">
-          <button type="button" className="debug-btn" onClick={exportLog} disabled={filtered.length === 0}>
+          <button type="button" className="debug-btn" onClick={exportLog}>
             Exporter
           </button>
           <button type="button" className="debug-btn debug-btn-danger" onClick={clearLog}>

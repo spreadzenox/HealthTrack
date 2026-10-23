@@ -6,6 +6,8 @@ import {
   defaultTracks,
   needsOnboarding,
   homeFocus,
+  markScreenSeen,
+  onboardingDiagnostic,
   GOALS,
   TRACKS,
 } from './onboarding'
@@ -99,6 +101,32 @@ describe('settings/onboarding', () => {
         }),
       ).toBe(false)
       expect(loadOnboarding().done).toBe(false)
+    })
+  })
+
+  describe('diagnostic local (I156)', () => {
+    it('vide par défaut', () => {
+      expect(onboardingDiagnostic()).toMatchObject({ done: false, step: 0, maxStep: 0, seen: [], lastScreen: null, screens: null })
+    })
+
+    it('note chaque écran une seule fois, dans l’ordre, et le dernier montré', () => {
+      markScreenSeen('goal', 6)
+      markScreenSeen('tracks', 6)
+      markScreenSeen('goal', 6)
+      const d = onboardingDiagnostic()
+      expect(d.seen).toEqual(['goal', 'tracks'])
+      expect(d.lastScreen).toBe('goal')
+      expect(d.screens).toBe(6)
+    })
+
+    it('reprend les choix et la fin, sans rien d’autre que des identifiants', () => {
+      saveOnboarding({ goal: 'gut', watch: 'none', tracks: ['gut'], step: 2 })
+      finishOnboarding('skipped')
+      const d = onboardingDiagnostic()
+      expect(d).toMatchObject({ done: true, endedBy: 'skipped', goal: 'gut', watch: 'none', step: 2, maxStep: 2 })
+      expect(Object.keys(d).sort()).toEqual(
+        ['done', 'doneAt', 'endedBy', 'face', 'goal', 'health', 'lastScreen', 'maxStep', 'screens', 'seen', 'step', 'watch'],
+      )
     })
   })
 })

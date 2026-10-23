@@ -576,6 +576,15 @@ maquette. Rien n'est masqué ni effacé. 7 nouveaux tests. **Il reste I156** (co
 dans le diagnostic) avant la passe « version candidate ». **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement).
 
+**Run du 23/10 15:30 — le jalon 4 est livré, la passe « version candidate » commence (I156, VC-1).** Ce que vous
+verrez : dans **Journal → Tendances** (sans montre), « après 3 semaines de mesures, Halcya compare… » n'est plus collé
+(« mesures,Halcya ») ; même correction dans le message « accès à la caméra retiré » de la lecture du visage. Un test
+empêche désormais tout mot collé au nom de l'app. En coulisses (I156) : l'onboarding note **sur le téléphone** les
+écrans vus et celui où l'on s'est arrêté, et le **journal technique exporté** (Paramètres → Mode diagnostic →
+Exporter) commence par cette ligne : avec 12 à 15 testeurs, on saura à quel écran on décroche, sans aucune
+analytique ni envoi. **Prochain run de code : VC-4** (mode diagnostic masqué en version Play mais accessible aux
+testeurs), puis les autres défauts VC. **👉 Toujours en attente de vous : P23** (testeurs sans paiement).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -960,6 +969,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 11:30 — [Jalon 4b : Health Connect, import et « aha »](runs/2026-10-23-1130-jalon4b-health-connect.md) | 🧭 | Écran Health Connect (divulgation `health_connect`, aussi dans Sources) ; import des 30 j avec progression réelle (`onProgress` de la synchro, types lus / total, 20 s puis arrière-plan) ; « Vos 30 derniers jours » (≤ 4 chiffres avec source, jamais de zéro) ; `services/firstImport.js` ; `--onboarding=aha` ; 17 tests |
 | 23/10 12:30 — [Jalon 4c-1 : premier geste et paywall soft](runs/2026-10-23-1230-jalon4c-geste-paywall.md) | 🧭 | Écran « premier geste » selon l'objectif (`gut` ou `wellbeing` 0–5, une seule entrée modifiable) ; `/premium` intégré en dernier écran (play seulement, contexte `onboarding`, « Continuer gratuitement ») ; reprise d'un onboarding commencé même si la base s'est remplie ; `--onboarding=gesture|gesture-energy|premium` ; 6 tests |
 | 23/10 14:30 — [I155 : l'objectif règle l'Accueil](runs/2026-10-23-1430-i155-objectif-accueil.md) | 🧭 | `homeFocus(goal)` ; objectif énergie → carte ventre en bas, pistes = nuits suivies d'une mesure du bien-être (`pistesProgress(entries, 'energy')`) ; bloc « Ce qui vous amène » dans Paramètres ; `--goal=energy` ; 7 tests |
+| 23/10 15:30 — [I156 + VC-1 : onboarding mesuré, nom décollé](runs/2026-10-23-1530-i156-vc1.md) | 🧭 | `markScreenSeen` / `onboardingDiagnostic` ; ligne `[onboarding]` en tête de l'export du journal technique ; test-garde `gluedNames` (2 cas corrigés, dont `FaceSenseCard`) ; jalon 4 livré ; 6 tests |
 | 23/10 13:30 — [Jalon 4c-2 : lecture du visage dans l'onboarding](runs/2026-10-23-1330-jalon4c2-visage.md) | 🧭 | Écran 7 d'I154 avant le premier geste (seulement si le plugin caméra existe) : 3 lignes, divulgation `camera`/`camera_app_open`, lecture d'essai (`services/faceTrial.js`, ne compte pas), « Plus tard » sans demande ; `--onboarding=face` ; 13 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |

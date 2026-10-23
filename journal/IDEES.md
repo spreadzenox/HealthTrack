@@ -69,7 +69,7 @@
   pêche « Votre ventre » descend sous les tuiles et la carte lilas parle de « vos pistes sommeil → bien-être » ; avec
   « Mon ventre », l'ordre de la maquette. Réglable ensuite dans Paramètres (« Ce qui vous amène »). Aucune donnée
   masquée. Impact 3, faisabilité 4. → après 4c.
-- **I156 (12) — Mesurer l'onboarding sans rien envoyer [H].** Pas d'analytique tierce : un compteur local
+- **I156 (12) — ✅ livré le 23/10 15:30 — Mesurer l'onboarding sans rien envoyer [H].** Pas d'analytique tierce : un compteur local
   (`onboarding.step` atteint, écrans passés) inclus dans le diagnostic exporté, que les testeurs peuvent joindre à leur
   retour. Suffit pour repérer l'écran où l'on décroche avec 12 à 15 testeurs. Impact 2, faisabilité 5.
 

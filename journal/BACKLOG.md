@@ -25,7 +25,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
 M6, M7, jalon 5. Défauts trouvés par l'audit sans code du 22/10 20:30 (`npm run visual -- --play --empty`, clair et
 sombre) — à corriger dans la passe de finition, chacun avec son test :
-- [ ] **VC-1** espace perdue après le nom : `src/pages/Dashboard.jsx:76` (« Halcyavous ») et
+- [x] **VC-1 — FAIT le 23/10 15:30** (test-garde `gluedNames`, + `FaceSenseCard.jsx:326`) espace perdue après le nom : `src/pages/Dashboard.jsx:76` (« Halcyavous ») et
   `src/components/BaselineCards.jsx:118` (« mesures,Halcya »). Correction : `{APP_NAME}{' '}` / `{' '}{APP_NAME}` ;
   test-garde : aucune ligne JSX ne finit ni ne commence par `{APP_NAME}` sans `{' '}` (ou rendu → pas de `/Halcya\S/`
   ni `/\S,Halcya/`).

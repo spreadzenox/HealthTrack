@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GOALS, TRACKS, defaultTracks, loadOnboarding, saveOnboarding, finishOnboarding } from '../settings/onboarding'
+import { GOALS, TRACKS, defaultTracks, loadOnboarding, saveOnboarding, finishOnboarding, markScreenSeen } from '../settings/onboarding'
 import { getConnector } from '../connectors/connectorRegistry'
 import { createEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
 import { GUT_LEVELS, GUT_SOURCE, GUT_TYPE } from '../services/today'
@@ -537,6 +537,11 @@ export default function Onboarding() {
   const tracks = state.tracks || defaultTracks(state.goal)
 
   const update = (patch) => setState(saveOnboarding(patch))
+
+  // I156 : les écrans vus restent sur le téléphone, pour le diagnostic que les testeurs peuvent joindre.
+  useEffect(() => {
+    if (step) markScreenSeen(step, STEPS.length)
+  }, [step, STEPS.length])
 
   const end = (endedBy) => {
     const s = finishOnboarding(endedBy)
