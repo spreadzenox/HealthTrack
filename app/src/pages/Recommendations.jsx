@@ -312,6 +312,11 @@ function NotEnoughData({ currentDays, minDays }) {
   )
 }
 
+/** Seuil des liens avec le bien-être, en une ligne pour les « détails » de la carte lilas (VC-12). */
+function wellbeingWaitLine({ currentDays = 0, minDays }) {
+  return `liens avec le bien-être : ${Math.min(currentDays, minDays)}/${minDays} jours avec une note de bien-être («\u00a0Une note\u00a0»)`
+}
+
 // ─── Week-end control note ───────────────────────────────────────────────────
 
 function WeekendNote({ control }) {
@@ -451,7 +456,7 @@ export function FaceMoodSection({ result }) {
         {title}
         <p className="reco-section-hint">
           {n} jour{n > 1 ? 's' : ''} sur {FACE_MOOD_MIN_DAYS} avec au moins {FACE_MOOD_MIN_READINGS} lectures du
-          visage au déverrouillage. Ensuite, votre sommeil, vos pas, votre écran, vos réseaux… seront comparés à
+          visage. Ensuite, votre sommeil, vos pas, votre écran, vos réseaux… seront comparés à
           votre bien-être estimé, sans aucune note à donner.
         </p>
       </section>
@@ -514,15 +519,16 @@ export function FaceMoodSection({ result }) {
 
 // ─── Basic tab ────────────────────────────────────────────────────────────────
 
-function BasicTab({ analysis }) {
+function BasicTab({ analysis, teaserShown = false }) {
   const { correlations: result, tagEffects, laggedEffects, totalDays } = analysis
 
   if (result.status === 'not_enough_data') {
     return (
-      <>
-        <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />
+      <div data-testid="reco-basic-waiting">
+        {/* VC-12 : sous la carte lilas, un seul seuil visible ; celui du bien-être passe dans ses « détails » */}
+        {!teaserShown && <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />}
         <FaceMoodSection result={analysis.faceMood} />
-      </>
+      </div>
     )
   }
 
@@ -933,7 +939,15 @@ export default function Recommendations() {
         Ce qui va de pair avec votre <strong>bien-être</strong> dans vos données, calculé sur votre téléphone.
       </p>
 
-      {waiting && <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} onPistesPage />}
+      {waiting && (
+        <PistesTeaser
+          focus={focus}
+          details={details}
+          onToggleDetails={toggleDetails}
+          onPistesPage
+          extraDetail={wellbeingWaitLine(analyses.basic.correlations)}
+        />
+      )}
 
       {!waiting && <nav className="reco-tabs" aria-label="Onglets des analyses">
         {TABS.map((t) => (
@@ -962,7 +976,7 @@ export default function Recommendations() {
       {!loading && !error && (
         <>
           {debugMode && <RecoDebugPanel entries={debugEntries} totalDbCount={totalDbCount} />}
-          {tab === 'basic' && <BasicTab analysis={current} />}
+          {tab === 'basic' && <BasicTab analysis={current} teaserShown={waiting} />}
           {tab === 'advanced' && <AdvancedTab analysis={current} />}
         </>
       )}

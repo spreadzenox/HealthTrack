@@ -98,3 +98,22 @@ describe('Settings — variante play (relais Halcya)', () => {
     expect(screen.getByText('Mode diagnostic')).toBeInTheDocument()
   })
 })
+
+describe('Settings — variante play : réglage Cigarettes (VC-14)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    globalThis.fetch = relayAnswer({ ok: true, premium: false, source: null })
+  })
+
+  it('masqué sur une installation neuve', () => {
+    renderSettings()
+    expect(screen.queryByText('Cigarettes')).toBeNull()
+    expect(screen.queryByLabelText(/Toujours afficher le bouton cigarette/i)).toBeNull()
+  })
+
+  it('reste visible s’il a déjà été activé, pour pouvoir le désactiver', () => {
+    localStorage.setItem('healthtrack_cigarette_counter', 'on')
+    renderSettings()
+    expect(screen.getByLabelText(/Toujours afficher le bouton cigarette/i).querySelector('input')).toBeChecked()
+  })
+})

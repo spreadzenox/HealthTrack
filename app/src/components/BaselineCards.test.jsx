@@ -33,14 +33,14 @@ describe('BaselineCards', () => {
   it('ne lit que la FC repos et la VFC, pas les tranches de FC / SpO₂ (perf D2)', async () => {
     listEntries.mockResolvedValue([])
     renderCards()
-    await screen.findByText(/Connectez une montre/i)
+    await screen.findByText(/Ajoutez une montre/i)
     expect([...listEntries.mock.calls[0][0].subtypes].sort()).toEqual(['heartRateVariability', 'restingHeartRate'])
   })
 
   it('invites to connect a watch when there is no heart data at all', async () => {
     listEntries.mockResolvedValue([])
     renderCards()
-    expect(await screen.findByText(/Connectez une montre/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Ajoutez une montre/i)).toBeInTheDocument()
   })
 
   it('shows how many days are still needed to build the norm', async () => {

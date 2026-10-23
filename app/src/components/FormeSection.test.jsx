@@ -12,7 +12,7 @@ describe('FormeSection', () => {
     render(<BrowserRouter><FormeSection /></BrowserRouter>)
     expect(screen.getByRole('heading', { name: 'Votre forme' })).toBeInTheDocument()
     // Le bloc cœur s'affiche (état vide) une fois chargé.
-    expect(await screen.findByText(/Connectez une montre/)).toBeInTheDocument()
+    expect(await screen.findByText(/Ajoutez une montre/)).toBeInTheDocument()
     expect(screen.getAllByText('Comment c’est calculé')).toHaveLength(1)
     expect(screen.getByText(/pas un diagnostic/i)).toBeInTheDocument()
     expect(screen.queryByText('Votre cœur vs votre norme')).not.toBeInTheDocument()

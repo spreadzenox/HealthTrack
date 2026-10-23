@@ -245,7 +245,7 @@ export default function WellbeingCharts() {
           maxGap={1}
           emptyMessage={hasOlderNotes
             ? `Aucune note ces ${DAYS} derniers jours. Notez votre bien-être pour suivre son évolution.`
-            : "Pas encore assez de données. Enregistrez votre bien-être à l'ouverture de l'app."}
+            : 'Pas encore de bien-être noté. Activez la lecture du visage ou notez-le avec «\u00a0Une note\u00a0».'}
           predictionPoint={showPredictionOnChart ? { x: DAYS - 1, v: todayPrediction.predicted } : null}
         />
         {todayPrediction != null && (

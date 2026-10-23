@@ -160,7 +160,7 @@ const PISTES_TEXT = {
 }
 
 /** Carte lilas : jours suivis avant les pistes ; on préfère attendre que montrer de faux suspects. */
-export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, onPistesPage = false }) {
+export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, onPistesPage = false, extraDetail = null }) {
   const entries = useEntries(read || (focus === 'energy' ? readTrackedEnergy : readTracked))
   if (entries === null) return null
   const p = pistesProgress(entries, focus)
@@ -196,6 +196,7 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
           {text.details} · comparaisons multiples corrigées (Benjamini-Hochberg) · minimum 21 jours
         </p>
       )}
+      {details && extraDetail && <p className="today-details-line mono">{extraDetail}</p>}
     </section>
   )
 }

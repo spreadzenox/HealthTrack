@@ -52,7 +52,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   `npm run visual` n'exerce pas les plugins natifs.
 - [ ] **VC-10** « Supprimer toutes mes données » dans Réglages → Données (avec export proposé avant), aujourd'hui
   seulement « désinstaller / effacer les données Android » d'après la politique de confidentialité.
-- [ ] **VC-12** (audit du 23/10 20:30) Pistes vide : sous la carte lilas (« 0/21 jours avec un repas ou une note du
+- [x] **VC-12** (23/10 22:30 : 2ᵉ carte retirée sous la carte lilas, seuil bien-être dans ses « détails ») (audit du 23/10 20:30) Pistes vide : sous la carte lilas (« 0/21 jours avec un repas ou une note du
   ventre »), la carte « Pas encore assez de jours mesurés » dit « au moins 5 jours avec une note de bien-être (bouton
   « Une note ») » (`pages/Recommendations.jsx:305-309`) → deux seuils et deux gestes différents sur le même écran.
   Correctif : ne pas afficher cette 2ᵉ carte tant que la carte lilas est là (ou la fondre en une ligne « détails » :
@@ -63,7 +63,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   renvoie d'abord à « Connecter ma montre » (carte au-dessus), Gadgetbridge seulement en dernier recours, sans la
   manipulation des cookies (instruction risquée pour un utilisateur grand public, mauvaise image en revue Play) ;
   sideload inchangée. Test : variante play, texte sans « F12 » ni « cookie ».
-- [ ] **VC-14** (audit du 23/10 20:30) Paramètres play : bloc « Cigarettes » (« Toujours afficher + 1 cigarette sur
+- [x] **VC-14** (23/10 22:30 : `cigaretteSetting`, masqué en play sauf s'il est déjà activé) (audit du 23/10 20:30) Paramètres play : bloc « Cigarettes » (« Toujours afficher + 1 cigarette sur
   l'accueil ») et « cigarettes » dans le sous-titre de Réglages → Paramètres. Hors parcours SII + bien-être : le
   replier sous « Autres suivis » ou le masquer en play (le compteur reste disponible si une cigarette a déjà été
   notée ; aucune donnée touchée).
@@ -71,7 +71,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   ✍️ Décrire), Réglages (🗂️ ⚙️ ✨ 🔒), Paramètres (🔒 Ce qui est envoyé) → icônes trait de la barre de navigation ;
   apostrophes droites mêlées aux typographiques (« l'instant », « l'ouverture de l'app », « n'apparaît », « l'accueil »)
   → test-garde sur les textes JSX visibles. Repas : titre « Alimentation » alors que l'onglet dit « Repas ».
-- [ ] **VC-16** (audit du 23/10 20:30, mineur) Journal → Tendances, carte bien-être vide : « Enregistrez votre
+- [x] **VC-16** (23/10 22:30 : textes alignés) (audit du 23/10 20:30, mineur) Journal → Tendances, carte bien-être vide : « Enregistrez votre
   bien-être à l'ouverture de l'app » → aligner sur le reste (« Activez la lecture du visage ou notez votre
   bien-être avec « Une note » ») ; « Connectez une montre via Health Connect » → « Ajoutez une montre dans Sources »
   (la Huawei ne passe pas par Health Connect).
