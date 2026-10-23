@@ -24,7 +24,7 @@ vi.mock('../components/BaselineCards', () => ({
 vi.mock('../components/TodayCards', async (importOriginal) => ({
   ...(await importOriginal()),
   GutCard: () => <section data-testid="gut-card" />,
-  PistesTeaser: () => <section data-testid="pistes-card" />,
+  PistesTeaser: ({ focus }) => <section data-testid="pistes-card" data-focus={focus} />,
 }))
 
 vi.mock('../components/WellbeingCharts', () => ({
@@ -83,6 +83,23 @@ describe('Dashboard', () => {
     expect(screen.getByTestId('pistes-card')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Photo du repas' }))
     expect(navigateMock).toHaveBeenCalledWith('/food')
+  })
+
+  it('objectif « énergie et sommeil » : la carte ventre passe sous les pistes, qui parlent sommeil (I155)', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'energy' }))
+    renderDashboard()
+    const pistes = await screen.findByTestId('pistes-card')
+    const gut = screen.getByTestId('gut-card')
+    expect(pistes).toHaveAttribute('data-focus', 'energy')
+    expect(pistes.compareDocumentPosition(gut) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    localStorage.removeItem('healthtrack_onboarding')
+  })
+
+  it('objectif ventre ou aucun : l’ordre de la maquette (ventre avant les pistes)', async () => {
+    renderDashboard()
+    const pistes = await screen.findByTestId('pistes-card')
+    expect(pistes).toHaveAttribute('data-focus', 'gut')
+    expect(pistes.compareDocumentPosition(screen.getByTestId('gut-card')) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
   })
 
   it("masque l'introduction dès que des données existent (le contenu commence plus haut)", async () => {

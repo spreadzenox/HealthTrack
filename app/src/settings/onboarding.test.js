@@ -5,6 +5,7 @@ import {
   finishOnboarding,
   defaultTracks,
   needsOnboarding,
+  homeFocus,
   GOALS,
   TRACKS,
 } from './onboarding'
@@ -20,6 +21,14 @@ describe('settings/onboarding', () => {
     saveOnboarding({ goal: 'gut', step: 1 })
     saveOnboarding({ tracks: ['gut', 'meals'] })
     expect(loadOnboarding()).toMatchObject({ goal: 'gut', tracks: ['gut', 'meals'], step: 1, maxStep: 1 })
+  })
+
+  it('homeFocus : « énergie » seulement pour l’objectif énergie, sinon l’ordre ventre de la maquette', () => {
+    expect(homeFocus()).toBe('gut')
+    saveOnboarding({ goal: 'energy' })
+    expect(homeFocus()).toBe('energy')
+    expect(homeFocus('all')).toBe('gut')
+    expect(homeFocus('gut')).toBe('gut')
   })
 
   it('maxStep ne recule jamais (écran le plus loin atteint, pour le diagnostic)', () => {

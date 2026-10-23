@@ -12,6 +12,7 @@ import { MeasureTiles, GutCard, PistesTeaser } from '../components/TodayCards'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { daySummaryTitle, headerLine, measureTiles } from '../services/today'
 import { APP_NAME } from '../config/brand'
+import { homeFocus } from '../settings/onboarding'
 
 export default function Dashboard() {
   // Entrées des derniers jours : tuiles du jour et compteur de cigarettes (le journal des jours est dans l'onglet Journal)
@@ -21,6 +22,8 @@ export default function Dashboard() {
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
   const navigate = useNavigate()
   const [details, toggleDetails] = useDetailsMode()
+  // L'objectif choisi règle l'ordre (I155) : avec « énergie et sommeil », le ventre passe en bas ; rien n'est masqué
+  const [focus] = useState(() => homeFocus())
   // Bien-être estimé (visage) : undefined pendant la lecture, null sans aucune lecture avec un visage
   const [wellbeing, setWellbeing] = useState(undefined)
   const days = useMemo(() => buildDailyJournal(entries), [entries])
@@ -81,7 +84,7 @@ export default function Dashboard() {
 
       <MoodEstimateCard data={wellbeing} details={details} onToggleDetails={toggleDetails} />
       {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
-      <GutCard details={details} onToggleDetails={toggleDetails} />
+      {focus !== 'energy' && <GutCard details={details} onToggleDetails={toggleDetails} />}
 
       <div className="today-actions">
         <button type="button" className="btn" onClick={() => navigate('/food')}>Photo du repas</button>
@@ -91,7 +94,8 @@ export default function Dashboard() {
         <div className="dashboard-actions"><CigaretteQuickAdd /></div>
       )}
 
-      <PistesTeaser details={details} onToggleDetails={toggleDetails} />
+      <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} />
+      {focus === 'energy' && <GutCard details={details} onToggleDetails={toggleDetails} />}
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
 

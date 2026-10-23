@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, within, fireEvent } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Settings from './Settings'
 import { DebugProvider } from '../contexts/DebugContext'
@@ -64,6 +64,19 @@ describe('Settings — Cigarettes', () => {
     fireEvent.click(screen.getByLabelText(/Toujours afficher le bouton cigarette/i))
     expect(localStorage.getItem('healthtrack_cigarette_counter')).toBe('on')
     expect(screen.getByLabelText(/Toujours afficher le bouton cigarette/i).querySelector('input')).toBeChecked()
+  })
+})
+
+describe('Settings — Ce qui vous amène (I155)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('reprend l’objectif de l’onboarding et retient le nouveau choix', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
+    renderSettings()
+    const group = screen.getByRole('radiogroup', { name: 'Ce qui vous amène' })
+    expect(within(group).getByRole('radio', { name: 'Mon ventre' })).toBeChecked()
+    fireEvent.click(within(group).getByRole('radio', { name: 'Mon énergie et mon sommeil' }))
+    expect(JSON.parse(localStorage.getItem('healthtrack_onboarding'))).toMatchObject({ done: true, goal: 'energy' })
   })
 })
 

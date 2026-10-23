@@ -153,7 +153,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   montré à un utilisateur existant, notifications jamais pendant l'onboarding) ; découpage **[x] 4a** écrans 1-3 +
   mécanique + redirection (FAIT le 23/10 10:30), **[x] 4b** Health Connect + import + « aha » (FAIT le 23/10 11:30 ; import et « aha » dans un même écran), **[x] 4c** [x] premier geste et
   paywall soft (`/premium` contexte `onboarding`, « Continuer gratuitement ») FAITS le 23/10 12:30 ; [x] **4c-2** lecture
-  du visage facultative (écran 7, divulgation `camera_app_open`, une lecture, avant le premier geste) FAIT le 23/10 13:30 ; [ ] I155 l'objectif règle l'Accueil ;
+  du visage facultative (écran 7, divulgation `camera_app_open`, une lecture, avant le premier geste) FAIT le 23/10 13:30 ; [x] I155 l'objectif règle l'Accueil FAIT le 23/10 14:30 ;
   [ ] I156 compteur local d'étapes dans le diagnostic —
   [x] **I130** (FAIT avec le 4b, 23/10 11:30) « Vos 30 derniers jours » dès l'octroi Health Connect, **sans** permission d'historique (30 j lisibles
   d'office), chaque chiffre avec sa source ; permission de notifications demandée après un geste, pas d'emblée
