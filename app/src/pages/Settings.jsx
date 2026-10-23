@@ -7,7 +7,8 @@ import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import { FEATURES } from '../config/distribution'
 import { getLastQuota } from '../services/aiRelay'
-import { getEntitlement, refreshEntitlement, describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
+import { getEntitlement, describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
+import { syncEntitlement, restorePurchases } from '../services/playBilling'
 import '../Food.css'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
@@ -39,17 +40,37 @@ function RelayAiBlock() {
   )
 }
 
-/** Variante play : état de l'abonnement, établi par le relais (jalon 6c), et lien de gestion Google Play. */
+/**
+ * Variante play : état de l'abonnement, établi par le relais à partir des achats Google Play (jalon 6c), lien de
+ * gestion Google Play et « Restaurer un achat » (nouveau téléphone, réinstallation).
+ */
 function SubscriptionBlock() {
   const [ent, setEnt] = useState(() => getEntitlement())
+  const [restoring, setRestoring] = useState(false)
+  const [restoreMsg, setRestoreMsg] = useState('')
 
   useEffect(() => {
     let alive = true
-    refreshEntitlement().then((next) => alive && setEnt(next))
+    syncEntitlement().then((next) => alive && setEnt(next))
     return () => {
       alive = false
     }
   }, [])
+
+  const restore = async () => {
+    setRestoring(true)
+    setRestoreMsg('')
+    try {
+      const { found, entitlement } = await restorePurchases()
+      setEnt(entitlement)
+      if (entitlement.offline) setRestoreMsg('Pas de connexion : réessayez dans un instant.')
+      else setRestoreMsg(found ? 'Abonnement retrouvé.' : 'Aucun abonnement trouvé sur ce compte Google Play.')
+    } catch {
+      setRestoreMsg('Google Play ne répond pas : réessayez dans un instant.')
+    } finally {
+      setRestoring(false)
+    }
+  }
 
   return (
     <div className="settings-block">
@@ -60,6 +81,12 @@ function SubscriptionBlock() {
           Gérer mon abonnement dans Google Play
         </a>
       )}
+      {!ent.premium && (
+        <button type="button" className="btn btn-secondary settings-link-btn" onClick={restore} disabled={restoring}>
+          {restoring ? 'Recherche…' : 'Restaurer un achat'}
+        </button>
+      )}
+      {restoreMsg && <p className="hint" role="status">{restoreMsg}</p>}
     </div>
   )
 }

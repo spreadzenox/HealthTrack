@@ -2,9 +2,10 @@
 # Vérifie les manifestes fusionnés des deux variantes (journal/PRODUIT.md, jalon 3), après un build Gradle :
 #   - play     : identifiant fr.jpesquet.sante, AUCUNE permission REQUEST_INSTALL_PACKAGES (refusée par Google Play
 #                pour une app qui n'est pas un magasin d'applications), ni service caméra de premier plan, ni
-#                exemption de batterie (journal/PLAY-CONFORMITE.md), ni écriture Health Connect (I131) ;
+#                exemption de batterie (journal/PLAY-CONFORMITE.md), ni écriture Health Connect (I131) ; avec la
+#                permission com.android.vending.BILLING (Google Play Billing, jalon 6c-2) ;
 #   - sideload : identifiant historique com.healthtrack.app, avec REQUEST_INSTALL_PACKAGES (mise à jour en un clic)
-#                et la lecture du visage au déverrouillage (FaceSenseService).
+#                et la lecture du visage au déverrouillage (FaceSenseService), sans Play Billing.
 # Usage : bash scripts/check-play-manifest.sh [--play-only]
 #         (depuis app/, après ./gradlew bundlePlayRelease assembleSideloadDebug ; --play-only après bundlePlayRelease seul)
 set -euo pipefail
@@ -46,6 +47,12 @@ check() {
   if [ "$face" = "no" ] && grep -q 'android.permission.health.WRITE_' "$m"; then
     echo "::error::$variant : permissions d'écriture Health Connect présentes ($m)"
     fail=1
+  fi
+  # Google Play Billing (jalon 6c-2) : permission BILLING en play seulement, la sideload n'a pas Play Billing
+  if grep -q 'com.android.vending.BILLING' "$m"; then
+    [ "$face" = "no" ] || { echo "::error::$variant : com.android.vending.BILLING ne doit pas y être ($m)"; fail=1; }
+  else
+    [ "$face" = "yes" ] || { echo "::error::$variant : com.android.vending.BILLING manquante ($m)"; fail=1; }
   fi
   echo "$variant : $m vérifié"
 }

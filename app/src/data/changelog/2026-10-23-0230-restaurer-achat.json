@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-23",
+  "kind": "nouveau",
+  "title": "Version Google Play : l'abonnement se prépare",
+  "items": [
+    "L'app sait maintenant parler à Google Play pour l'abonnement : les prix et l'essai gratuit viendront directement de Google Play.",
+    "Réglages → Paramètres → Abonnement : un bouton « Restaurer un achat » retrouve votre abonnement après un changement de téléphone ou une réinstallation.",
+    "Le paiement reste entièrement géré par Google Play : l'app ne voit jamais votre moyen de paiement.",
+    "Dans la version installée depuis GitHub, rien ne change."
+  ]
+}

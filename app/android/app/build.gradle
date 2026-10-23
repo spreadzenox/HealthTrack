@@ -123,6 +123,9 @@ dependencies {
     // de la 1.27, l'AAR Android ajoute un TelemetryInitializer qui envoie des infos de l'appareil à Microsoft (rien ne
     // doit sortir du téléphone) ; arm64 seul via abiFilters, ≈ 18 Mo.
     implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.22.0'
+    // Google Play Billing (abonnement, jalon 6c-2) : variante play seulement, la sideload n'a ni la bibliothèque ni la
+    // permission BILLING. PBL 8 minimum exigée par Google Play depuis le 1/11/2026.
+    playImplementation 'com.android.billingclient:billing:8.3.0'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"

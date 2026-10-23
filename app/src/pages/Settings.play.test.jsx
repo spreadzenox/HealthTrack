@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 
 vi.mock('../config/distribution', async (importOriginal) => {
@@ -51,5 +51,23 @@ describe('Settings — variante play (relais Halcya)', () => {
     expect(await screen.findByText(/Premium actif · renouvellement le/)).toBeInTheDocument()
     const link = screen.getByRole('link', { name: /Gérer mon abonnement dans Google Play/ })
     expect(link).toHaveAttribute('href', 'https://play.google.com/store/account/subscriptions?sku=halcya_premium&package=fr.jpesquet.sante')
+  })
+
+  it('« Restaurer un achat » : redemande les droits au relais avec le dernier jeton retenu', async () => {
+    localStorage.setItem('halcya_purchase_token', 'tok.retenu-0123456789abc')
+    renderSettings()
+    const button = screen.getByRole('button', { name: 'Restaurer un achat' })
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(1))
+    fireEvent.click(button)
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(2))
+    expect(JSON.parse(globalThis.fetch.mock.calls[1][1].body)).toEqual({ purchaseToken: 'tok.retenu-0123456789abc' })
+    expect(await screen.findByRole('status')).toHaveTextContent(/Aucun abonnement trouvé/)
+  })
+
+  it('premium actif : pas de bouton « Restaurer un achat »', async () => {
+    globalThis.fetch = relayAnswer({ ok: true, premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: new Date(Date.now() + 20 * 86_400_000).toISOString(), autoRenewing: true })
+    renderSettings()
+    await screen.findByText(/Premium actif/)
+    expect(screen.queryByRole('button', { name: 'Restaurer un achat' })).toBeNull()
   })
 })

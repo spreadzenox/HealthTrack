@@ -27,6 +27,8 @@ public class MainActivity extends BridgeActivity {
         // Mise à jour en un clic : variante sideload seulement (Google Play met l'app à jour lui-même)
         if (BuildConfig.SELF_UPDATE) registerPlugin(AppUpdatePlugin.class);
         registerPlugin(SystemBarsPlugin.class);
+        // Plugins d'une seule variante (play : Google Play Billing ; sideload : aucun), voir FlavorPlugins
+        registerPlugins(FlavorPlugins.list());
         super.onCreate(savedInstanceState);
         faceResumePending = isFaceResume(getIntent());
     }
