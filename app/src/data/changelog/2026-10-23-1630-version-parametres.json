@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-23",
+  "kind": "amélioration",
+  "title": "Numéro de version dans les Paramètres",
+  "items": [
+    "En bas des Paramètres, le numéro de la version installée est affiché : utile pour nous signaler un problème."
+  ]
+}

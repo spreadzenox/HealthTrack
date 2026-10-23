@@ -80,4 +80,21 @@ describe('Settings — variante play (relais Halcya)', () => {
     await screen.findByText(/Premium actif/)
     expect(screen.queryByRole('button', { name: 'Restaurer un achat' })).toBeNull()
   })
+
+  it('VC-4 : « Mode diagnostic » caché, révélé par 7 touches sur le numéro de version', () => {
+    renderSettings()
+    expect(screen.queryByText('Mode diagnostic')).toBeNull()
+    const version = screen.getByRole('button', { name: /^Version / })
+    for (let i = 0; i < 6; i++) fireEvent.click(version)
+    expect(screen.queryByText('Mode diagnostic')).toBeNull()
+    fireEvent.click(version)
+    expect(screen.getByText('Mode diagnostic')).toBeInTheDocument()
+    expect(screen.getByTestId('debug-mode-toggle')).not.toBeChecked()
+  })
+
+  it('VC-4 : le réglage reste visible une fois déverrouillé, ou si le mode est déjà actif', () => {
+    localStorage.setItem('healthtrack_debug_mode_enabled', 'true')
+    renderSettings()
+    expect(screen.getByText('Mode diagnostic')).toBeInTheDocument()
+  })
 })

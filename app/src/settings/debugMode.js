@@ -5,7 +5,13 @@
  * Health Connect, analyses…) directement dans l'app, pour pouvoir les montrer ou les exporter.
  * L'ancien déverrouillage par adresse MAC saisie à la main a été retiré (12/10/2026) : Android ne
  * donne de toute façon pas l'adresse MAC à une app, et rien de sensible n'est affiché.
+ *
+ * Variante play (VC-4) : le réglage lui-même est caché ; 7 touches sur le numéro de version (bas des Paramètres)
+ * le font apparaître une fois pour toutes, sans activer les journaux.
  */
+
+export const DEBUG_UNLOCK_TAPS = 7
+const DEBUG_UNLOCKED_KEY = 'healthtrack_debug_menu_unlocked'
 
 const DEBUG_ENABLED_KEY = 'healthtrack_debug_mode_enabled'
 
@@ -24,6 +30,22 @@ export function setDebugModeEnabled(enabled) {
     } else {
       localStorage.removeItem(DEBUG_ENABLED_KEY)
     }
+  } catch {
+    // ignore
+  }
+}
+
+export function isDebugMenuUnlocked() {
+  try {
+    return localStorage.getItem(DEBUG_UNLOCKED_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+export function unlockDebugMenu() {
+  try {
+    localStorage.setItem(DEBUG_UNLOCKED_KEY, 'true')
   } catch {
     // ignore
   }
