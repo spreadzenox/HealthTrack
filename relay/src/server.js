@@ -12,6 +12,9 @@
  * - POST /pubsub/rtdn          → notifications d'abonnement Google Play (push Pub/Sub authentifié) ;
  * - GET  /v1/credits            → crédits d'analyse IA de l'installation (src/credits.js), sans rien consommer.
  *
+ * Play Integrity (src/integrity.js) : en-tête facultatif `X-Integrity-Token` sur l'analyse ; selon INTEGRITY_MODE, un
+ * verdict refusé est seulement journalisé (observe) ou bloque l'analyse avec une 403 `integrity` (enforce).
+ *
  * Crédits : en-têtes facultatifs `X-Credits` (dernier état donné par le relais) et `X-Purchase-Token` (jeton
  * Google Play, pour retrouver le premium après un redémarrage du relais). Les réponses d'analyse et de crédits
  * portent `credits: { plan, remaining, resetAt, state, … }`.
@@ -39,6 +42,10 @@ const QUOTA_MESSAGES = {
   credits: "Vous avez utilisé toutes vos analyses IA gratuites. De nouvelles arrivent au début du mois prochain.",
   premium_day: "Vous avez utilisé vos analyses IA du jour. Elles reviennent demain.",
 }
+
+/** Refus Play Integrity (mode enforce) : app modifiée, appareil non certifié, ou app installée hors de Google Play. */
+export const INTEGRITY_MESSAGE =
+  "L'analyse IA n'est disponible que dans l'app installée depuis Google Play, sur un téléphone certifié. Mettez l'app à jour depuis le Play Store, puis réessayez."
 
 /** Durée pendant laquelle le relais se fie à un droit premium (ou à son absence) déjà relu chez Google Play. */
 export const PREMIUM_CACHE_MS = 60 * 60_000
@@ -87,7 +94,7 @@ export function buildRequest(body, ingredientNames) {
  *   billingQuota?: ReturnType<import('./quota.js').createQuota>, allowedOrigins?: string[],
  *   log?: (entry: object) => void, now?: () => number }} deps
  */
-export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, billingQuota = null, allowedOrigins = [], log = () => {}, now = Date.now }) {
+export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, billingQuota = null, allowedOrigins = [], log = () => {}, now = Date.now }) {
   const origins = new Set(allowedOrigins)
   /** installId → { premium, until } : droits relus récemment (mémoire seulement). */
   const premiumCache = new Map()
@@ -142,7 +149,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       if (origin && origins.has(origin)) {
         headers['Access-Control-Allow-Origin'] = origin
         headers['Access-Control-Allow-Methods'] = 'POST, GET'
-        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token'
+        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token'
       }
       res.writeHead(204, headers)
       res.end()
@@ -230,6 +237,11 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       const body = await readJson(req, MAX_BODY_BYTES)
       const request = buildRequest(body, ingredientNames)
       kind = request.kind
+
+      if (integrity) {
+        const check = await integrity.check(installId, req.headers['x-integrity-token'])
+        if (!check.ok) throw new HttpError(403, 'integrity', INTEGRITY_MESSAGE)
+      }
 
       const slot = quota.take(installId)
       if (!slot.ok) {

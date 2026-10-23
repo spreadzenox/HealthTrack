@@ -154,6 +154,7 @@ test('configuration par défaut : UE, Flash-Lite d’abord, petits plafonds, bas
   assert.equal(config.models.includes('gemini-2.5-flash-lite'), false)
   assert.ok(config.globalPerDay <= 500)
   assert.ok(config.installPerDay <= 30)
+  assert.equal(config.integrityMode, 'observe')
   const names = loadIngredientNames(config.ingredientsPath)
   assert.ok(names.length > 1000)
   assert.equal(loadConfig({ GLOBAL_DAILY_CAP: '50', VERTEX_MODELS: 'x, y' }).globalPerDay, 50)
@@ -208,5 +209,31 @@ test('crédits : un état rapporté par l\'app plus restrictif est gardé ; Vert
     assert.equal((await post(url, { kind: 'text', description: 'une pomme' }, headers)).status, 502)
     const peek = await (await fetch(`${url}/v1/credits`, { headers })).json()
     assert.equal(peek.credits.remaining, 7)
+  })
+})
+
+test('Play Integrity : jeton transmis à la garde ; refus en enforce → 403 sans appeler le modèle ni consommer de quota', async () => {
+  const calls = []
+  const seen = []
+  const integrity = { check: async (id, token) => (seen.push({ id, token }), { ok: false, mode: 'enforce', status: 'rejected' }) }
+  await withServer({ vertex: okVertex(calls), integrity }, async (url) => {
+    const res = await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': INSTALL, 'X-Integrity-Token': 'jeton-integrite' })
+    assert.equal(res.status, 403)
+    const body = await res.json()
+    assert.equal(body.error, 'integrity')
+    assert.match(body.message, /Google Play/)
+    assert.deepEqual(seen, [{ id: INSTALL, token: 'jeton-integrite' }])
+    assert.equal(calls.length, 0)
+    const pre = await fetch(`${url}/v1/meal/analyze`, { method: 'OPTIONS', headers: { Origin: 'https://localhost' } })
+    assert.match(pre.headers.get('access-control-allow-headers'), /X-Integrity-Token/)
+  })
+})
+
+test('Play Integrity : verdict accepté (ou mode observe) → analyse normale', async () => {
+  const integrity = { check: async () => ({ ok: true, mode: 'observe', status: 'missing' }) }
+  await withServer({ vertex: okVertex(), integrity }, async (url) => {
+    const res = await post(url, { kind: 'text', description: 'une pomme' })
+    assert.equal(res.status, 200)
+    assert.equal((await res.json()).quota.remaining, 1)
   })
 })

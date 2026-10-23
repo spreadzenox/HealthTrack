@@ -3,8 +3,9 @@ import { createServer } from 'node:http'
 import { loadConfig, loadIngredientNames } from './config.js'
 import { createQuota } from './quota.js'
 import { createCredits } from './credits.js'
-import { createHandler } from './server.js'
+import { createHandler, hashInstallId } from './server.js'
 import { ANDROIDPUBLISHER_SCOPE, createBillingRoutes, createPlayClient, createPushVerifier } from './billing.js'
+import { PLAYINTEGRITY_SCOPE, createIntegrityClient, createIntegrityGuard } from './integrity.js'
 import { createVertexClient, metadataTokenProvider } from './vertex.js'
 
 const config = loadConfig()
@@ -25,6 +26,13 @@ const handler = createHandler({
     verifyPush: createPushVerifier({ audience: `${config.publicUrl}/pubsub/rtdn`, serviceAccount: config.rtdnServiceAccount }),
     log,
   }),
+  integrity: createIntegrityGuard({
+    client: createIntegrityClient({ packageName: config.packageName, getToken: metadataTokenProvider({ scopes: [PLAYINTEGRITY_SCOPE] }) }),
+    packageName: config.packageName,
+    mode: config.integrityMode,
+    hash: hashInstallId,
+    log,
+  }),
   billingQuota: createQuota({ installPerDay: config.verifyPerDay, globalPerDay: config.verifyGlobalPerDay, globalPerMinute: config.verifyPerMinute }),
   allowedOrigins: config.allowedOrigins,
   log,
@@ -37,5 +45,5 @@ createServer((req, res) => {
     res.end()
   })
 }).listen(config.port, () => {
-  log({ event: 'start', port: config.port, models: config.models, locations: config.locations, ingredients: ingredientNames.length, launchPremiumUntil: config.launchPremiumUntil || null })
+  log({ event: 'start', port: config.port, models: config.models, locations: config.locations, ingredients: ingredientNames.length, launchPremiumUntil: config.launchPremiumUntil || null, integrity: config.integrityMode })
 })
