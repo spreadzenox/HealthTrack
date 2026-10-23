@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-23",
+  "kind": "amélioration",
+  "title": "Un profil Nutrition qui n'invente rien",
+  "items": [
+    "Tant que votre profil est vide, Nutrition vous invite à le compléter au lieu d'afficher un poids, un âge ou des calories par défaut.",
+    "Seules les valeurs que vous avez saisies (ou venues de votre balance) apparaissent, avec la liste de ce qui manque.",
+    "L'IMC et le besoin en énergie sont rangés derrière « détails »."
+  ]
+}

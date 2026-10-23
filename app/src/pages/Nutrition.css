@@ -45,6 +45,12 @@
   margin-bottom: 12px;
 }
 
+.nutrition-profile-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .nutrition-profile-edit {
   min-height: 44px;
   padding: 0 4px;

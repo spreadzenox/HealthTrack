@@ -20,6 +20,12 @@ const yesterdayNoon = () => {
   return d.toISOString()
 }
 
+// Profil complet : Homme 30 ans, 170 cm (saisis), 70 kg (pesée d'hier).
+const completeProfile = () => {
+  localStorage.setItem('healthtrack_body_profile', JSON.stringify({ sex: 'M', birthYear: new Date().getFullYear() - 30, heightCm: 170 }))
+  return [{ type: 'weight', source: 'app_weight', at: yesterdayNoon(), payload: { valueKg: 70 } }]
+}
+
 describe('Nutrition page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -37,11 +43,15 @@ describe('Nutrition page', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /nutrition/i })).toBeInTheDocument()
     })
-    expect(screen.getByText('70 kg')).toBeInTheDocument()
-    expect(screen.getByText('170 cm')).toBeInTheDocument()
+    // VC-3 : aucune valeur par défaut affichée comme si elle était vraie.
+    expect(screen.getByText(/Complétez votre profil pour voir vos repères/)).toBeInTheDocument()
+    const card = document.querySelector('.nutrition-profile-card')
+    expect(card.textContent).not.toMatch(/70 kg|170 cm|Homme|30 ans|kcal|IMC|par défaut/)
+    expect(card.querySelector('.details-toggle')).toBeNull()
   })
 
   it('résume le profil en deux lignes, sans paragraphe d’introduction (D1)', async () => {
+    loadNutritionEntries.mockResolvedValueOnce(completeProfile())
     const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
     await screen.findByText('70 kg')
     expect(container.querySelectorAll('.nutrition-profile-line')).toHaveLength(2)
@@ -77,7 +87,9 @@ describe('Nutrition page', () => {
     await screen.findByText(/1\s*jour\b/)
     const warning = container.querySelector('.nutrition-warning')
     // « par jour saisi » est déjà dans la ligne au-dessus : l'avertissement ne le redit pas (D1).
-    expect(warning.textContent).toMatch(/kcal\/j pour ~\s?2\s?\d{3} visées/)
+    // Pas d'objectif calorique affiché (I152) : seulement l'apport moyen.
+    expect(warning.textContent).toMatch(/kcal\/j en moyenne/)
+    expect(warning.textContent).not.toMatch(/visées/)
     expect(warning.textContent).not.toMatch(/par jour saisi/)
     expect(warning.textContent).toMatch(/des repas manquent sans doute/)
     expect(warning.textContent.length).toBeLessThan(110)
@@ -86,6 +98,7 @@ describe('Nutrition page', () => {
 
   it('composition Withings dans « Votre profil », plus de section « Dernière mesure Withings » (D1)', async () => {
     loadNutritionEntries.mockResolvedValueOnce([
+      ...completeProfile(),
       { type: 'body_composition', source: 'withings', at: '2026-10-14T07:30:00', payload: { valueKg: 77.2, fatRatioPct: 21.2, muscleMassKg: 32.4 } },
     ])
     const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
@@ -108,11 +121,36 @@ describe('Nutrition page', () => {
     })
   })
 
-  it('signale les valeurs par défaut et invite à compléter le profil', async () => {
+  it('profil vide : invite à le compléter, repères annoncés comme non ajustés', async () => {
+    loadNutritionEntries.mockResolvedValueOnce([
+      { type: 'food', at: yesterdayNoon(), payload: { items: [{ ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 200 }] } },
+    ])
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
-    expect(await screen.findByText(/70 kg/)).toBeInTheDocument()
-    expect(screen.getAllByText(/par défaut/).length).toBeGreaterThanOrEqual(4)
-    expect(screen.getByRole('button', { name: /compléter mon profil/i })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /compléter mon profil/i })).toBeInTheDocument()
+    expect(screen.queryByText(/70 kg/)).not.toBeInTheDocument()
+    expect(screen.getByText(/complétez votre profil pour les ajuster/)).toBeInTheDocument()
+  })
+
+  it('profil partiel : seules les valeurs connues, la liste de ce qui manque, ni IMC ni kcal', async () => {
+    localStorage.setItem('healthtrack_body_profile', JSON.stringify({ heightCm: 165 }))
+    const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    expect(await screen.findByText('165 cm')).toBeInTheDocument()
+    const card = container.querySelector('.nutrition-profile-card')
+    expect(card.textContent).toMatch(/À compléter pour ajuster vos repères : poids, sexe, âge/)
+    expect(card.textContent).not.toMatch(/70 kg|Homme|30 ans|kcal|IMC/)
+    expect(card.querySelector('.details-toggle')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Modifier' })).toBeInTheDocument()
+  })
+
+  it('profil complet : IMC et besoin en énergie seulement en mode détails (I152)', async () => {
+    loadNutritionEntries.mockResolvedValueOnce(completeProfile())
+    const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    expect(await screen.findByText('70 kg')).toBeInTheDocument()
+    const card = container.querySelector('.nutrition-profile-card')
+    expect(card.textContent).not.toMatch(/kcal|IMC|À compléter/)
+    fireEvent.click(screen.getByRole('button', { name: 'détails' }))
+    expect(card.textContent).toMatch(/IMC\s24,2/)
+    expect(card.textContent).toMatch(/~2\s507 kcal\/jour/)
   })
 
   it('enregistre le profil saisi et une pesée, puis recalcule les repères', async () => {
@@ -165,6 +203,7 @@ describe('Nutrition page', () => {
   })
 
   it('indique le niveau d\'activité utilisé (par défaut sans pas mesurés)', async () => {
+    localStorage.setItem('healthtrack_body_profile', JSON.stringify({ heightCm: 165 }))
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
         expect(await screen.findByText('Modérément actif')).toBeInTheDocument()
     expect(screen.getByText(/\(par défaut\)/, { selector: '.nutrition-profile-activity *' })).toBeInTheDocument()
@@ -178,6 +217,7 @@ describe('Nutrition page', () => {
       return { type: 'steps', source: 'health_connect', at: d.toISOString(), payload: { value: 11000, period: 'day' } }
     })
     loadNutritionEntries.mockResolvedValue(days)
+    localStorage.setItem('healthtrack_body_profile', JSON.stringify({ heightCm: 165 }))
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
     expect(await screen.findByText('Très actif')).toBeInTheDocument()
     expect(screen.getByText(/11\s000 pas\/jour sur 10 jours/)).toBeInTheDocument()
@@ -185,14 +225,17 @@ describe('Nutrition page', () => {
   })
 
   it('enregistre le niveau d\'activité choisi et recalcule l\'énergie', async () => {
+    loadNutritionEntries.mockResolvedValue(completeProfile())
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    fireEvent.click(await screen.findByRole('button', { name: 'détails' }))
     // Homme 30 ans, 70 kg, 170 cm : 1 617,5 kcal × 1,55 ≈ 2 507
     expect(await screen.findByText(/~2\s507 kcal\/jour/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /compléter mon profil/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Modifier' }))
     fireEvent.click(screen.getByRole('radio', { name: 'Sédentaire' }))
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     expect(await screen.findByText(/~2\s265 kcal\/jour/)).toBeInTheDocument()
-    expect(JSON.parse(localStorage.getItem('healthtrack_body_profile'))).toEqual({ activity: 'sedentary' })
+    expect(JSON.parse(localStorage.getItem('healthtrack_body_profile'))).toMatchObject({ activity: 'sedentary' })
     expect(screen.getByText('Sédentaire')).toBeInTheDocument()
+    loadNutritionEntries.mockResolvedValue([])
   })
 })

@@ -72,6 +72,8 @@ export default function Nutrition() {
     return compareRecentIntake(entries, profile)
   }, [entries, profile])
 
+  const profileComplete = profile != null
+    && ['weight', 'height', 'sex', 'age'].every((k) => profile.origins[k] !== 'default')
   const bodyComp = useMemo(() => getLatestBodyComposition(entries), [entries])
 
   if (loading) {
@@ -108,8 +110,8 @@ export default function Nutrition() {
           {/* Jours incomplets : le compte de repères atteints serait trompeur, l'avertissement le remplace */}
           {comparison.likelyIncomplete ? (
             <p className="nutrition-warning">
-              ≈{'\u00a0'}{formatNutrientAmount(comparison.energyPerDay)} kcal/j pour
-              ~{formatNutrientAmount(comparison.energyTarget)} visées : des repas manquent sans doute, apports sous-estimés.
+              ≈{'\u00a0'}{formatNutrientAmount(comparison.energyPerDay)} kcal/j en moyenne : des repas manquent sans doute,
+              apports sous-estimés.
             </p>
           ) : (
             <p className="nutrition-summary">
@@ -132,7 +134,8 @@ export default function Nutrition() {
             </div>
           ))}
           <p className="nutrition-footnote">
-            Repères ANSES pour un adulte, ajustés à votre profil ; apports estimés (photos, portions).
+            Repères ANSES pour un adulte{profileComplete ? ', ajustés à votre profil' : ' (complétez votre profil pour les ajuster)'} ;
+            apports estimés (photos, portions).
             Ce n’est pas un diagnostic de carence : en cas de doute, parlez-en à un médecin ou à
             un·e diététicien·ne.
           </p>
