@@ -327,3 +327,31 @@
 .onb-body > .paywall {
   padding: 0;
 }
+
+/* Jalon 4c-2 : lecture du visage facultative */
+.onb-face-lines {
+  margin: 0;
+  padding: 16px 18px 16px 34px;
+  border-radius: var(--radius-card);
+  background: var(--mint-bg);
+  color: var(--mint-text);
+  line-height: 1.45;
+  display: grid;
+  gap: 8px;
+}
+
+.onb-face-actions {
+  display: grid;
+  gap: 4px;
+}
+
+.onb-later {
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: var(--color-ink-2);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}

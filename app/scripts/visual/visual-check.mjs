@@ -67,6 +67,7 @@
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
  *   npm run visual -- --routes=/bienvenue --onboarding=aha   # « Vos 30 derniers jours » (jalon 4b), données de démo
  *   npm run visual -- --routes=/bienvenue --onboarding=gesture   # premier geste (jalon 4c ; gesture-energy : 0 à 5)
+ *   npm run visual -- --face=on --routes=/bienvenue --onboarding=face   # lecture du visage facultative (jalon 4c-2)
  *   npm run visual -- --play --routes=/bienvenue --onboarding=premium   # paywall soft en fin d'onboarding (play)
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer > Continuer > Health Connect > Continuer"
  *                                          # écran Health Connect (dans le navigateur : « pas disponible »)
@@ -337,6 +338,8 @@ async function main() {
       aha: { goal: 'energy', watch: 'health_connect', health: 'granted', imported: true, step: 4 },
       gesture: { goal: 'gut', watch: 'none', step: 3, maxStep: 3 },
       'gesture-energy': { goal: 'energy', watch: 'none', step: 3, maxStep: 3 },
+      // Lecture du visage facultative (jalon 4c-2) : seulement avec --face (sinon le téléphone « ne sait pas lire »)
+      face: { goal: 'gut', watch: 'none', step: 3, maxStep: 3 },
       premium: { goal: 'gut', watch: 'none', step: 4, maxStep: 4 },
     }
     if (ONBOARDING_AT[args.onboarding]) {
