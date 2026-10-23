@@ -151,8 +151,9 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
 
   const steps = report?.steps || STEPS.map((s) => ({ ...s, status: 'pending' }))
   const inRouter = useInRouterContext()
-  // Écran « Montre » (M5) : ce qui remonte, type par type
-  const dataLink = inRouter && (
+  // Écran « Montre » (M5) : ce qui remonte, type par type — seulement après un premier appairage (VC-6)
+  const everConnected = Boolean(getWatchAutoSyncState()?.everConnected) || connectReport?.outcome?.code === 'connected'
+  const dataLink = inRouter && everConnected && (
     <p className="watch-data-link">
       <Link to="/montre" className="btn btn-secondary connector-btn">
         Voir ce qui remonte de la montre
@@ -178,7 +179,9 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
   const test = (
     <>
       {!available ? (
-        <p className="my-devices-intro">Dans l’app Android, un bouton teste la connexion directe, montre allumée près du téléphone.</p>
+        <p className="my-devices-intro">
+          Connectez une montre compatible Huawei depuis l’app Android : elle lit ses mesures directement, montre allumée près du téléphone.
+        </p>
       ) : (
         <>
           <p className="my-device-meta">Le test vérifie chaque étape sans rien modifier sur la montre.</p>

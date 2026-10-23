@@ -54,4 +54,13 @@ describe('WatchData (écran « Montre », M5)', () => {
     })
     expect(await screen.findByText('Lecture impossible : base fermée')).toBeInTheDocument()
   })
+
+  it('aucune montre connectée ni mesure : une phrase et un bouton, pas 12 lignes « rien » (VC-6)', async () => {
+    renderPage(async () => [])
+    expect(await screen.findByText(/Aucune montre connectée pour l’instant/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Connecter une montre' }).getAttribute('href')).toBe('/connectors')
+    expect(screen.queryByRole('list', { name: 'Données de la montre' })).toBeNull()
+    expect(screen.queryByText(/Rien reçu/)).toBeNull()
+    expect(screen.queryByText(/Pas encore de lecture détaillée/)).toBeNull()
+  })
 })

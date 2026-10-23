@@ -277,7 +277,7 @@ export default function WatchSetup({ detectApps, classic, appManager, verdict, o
           Rien à faire ici : la montre est appairée et {APP_NAME} la synchronise (dernière synchro réussie {formatAgo(connectedAt)}).
         </p>
       ) : (
-        !plan.current && <p className="watch-setup-text">Montre prête : touchez « Se connecter à la montre » ci-dessus pour lire vos mesures.</p>
+        !plan.current && <p className="watch-setup-text">Montre prête : touchez « Connecter ma montre » ci-dessus pour lire vos mesures.</p>
       )}
       {message && (
         <p className="my-device-message" role="status">

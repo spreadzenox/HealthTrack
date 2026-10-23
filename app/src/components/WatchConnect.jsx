@@ -2,8 +2,8 @@
  * Cœur de la carte « Montre Huawei » (chantier D3 étapes c et d) : par défaut, une ligne d'état (connectée,
  * batterie, dernière synchro, mesures) et « Synchroniser la montre ». Les étapes techniques, « Refaire
  * l'appairage » et ce que la carte passe en `children` (test, libération, export du journal) sont repliés sous
- * « Diagnostic ». HealthTrack s'authentifie auprès de la montre (HiChain), garde la clé sur le téléphone, puis lit les mesures. Au premier appairage,
- * 3 constantes publiques (huawei-lpv2, MIT) sont nécessaires : téléchargées ou collées d'un geste,
+ * « Diagnostic », fermé par défaut (VC-8). HealthTrack s'authentifie auprès de la montre (HiChain), garde la clé sur le téléphone, puis lit les mesures. Au premier appairage,
+ * 3 constantes publiques (huawei-lpv2, MIT) sont nécessaires : téléchargées au premier « Connecter ma montre » (ou collées sous « Diagnostic »),
  * gardées en local, jamais dans le code de l'app. Logique dans src/devices/huawei/pairing.js.
  */
 import { useEffect, useState } from 'react'
@@ -73,11 +73,27 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
     setMessage('Paramètres Huawei enregistrés sur ce téléphone.')
   }
 
+  /** Premier appairage : les constantes sont téléchargées au premier geste, sans écran technique (VC-8). */
+  const ensureSecrets = async () => {
+    if (secrets) return secrets
+    try {
+      const parsed = parseDigestSecrets(await fetchSecrets())
+      if (!parsed) throw new Error('constantes introuvables dans le fichier')
+      keep(parsed)
+      return parsed
+    } catch (e) {
+      setMessage(`Connexion impossible pour l’instant : ${e?.message || e}. Vérifiez la connexion Internet du téléphone, puis réessayez.`)
+      return null
+    }
+  }
+
   const start = async (rebind = false) => {
     setRunning(true)
     setMessage(null)
     try {
-      const final = await connect({ secrets, rebind, onUpdate: (r) => setReport(r) })
+      const useSecrets = await ensureSecrets()
+      if (!useSecrets) return
+      const final = await connect({ secrets: useSecrets, rebind, onUpdate: (r) => setReport(r) })
       keepReport(final)
     } catch (e) {
       setMessage(e?.message || String(e))
@@ -112,40 +128,14 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
         </p>
       ) : (
         <p className="my-devices-intro">
-          {APP_NAME} parle directement à votre montre, sans Huawei Santé ni Gadgetbridge, et relit ses mesures à chaque ouverture de
-          l’app. La clé de la montre reste <strong>sur ce téléphone</strong>.
+          Connectez une montre compatible Huawei : {APP_NAME} lit ses mesures (sommeil, fréquence cardiaque, pas…) directement, à chaque
+          ouverture de l’app. La clé de la montre reste <strong>sur ce téléphone</strong>.
         </p>
-      )}
-
-      {!secrets && (
-        <div className="watch-connect-secrets">
-          <p className="my-device-meta">
-            Le premier appairage a besoin de 3 constantes publiques (projet libre huawei-lpv2, licence MIT). Elles sont téléchargées sur ce
-            téléphone, pas incluses dans l’app.
-          </p>
-          <button type="button" className="btn btn-secondary connector-btn" onClick={download}>
-            Télécharger les paramètres
-          </button>
-          <details className="watch-connect-paste">
-            <summary>Ou les coller</summary>
-            <textarea
-              className="settings-input"
-              rows={3}
-              value={paste}
-              onChange={(e) => setPaste(e.target.value)}
-              placeholder={'v1: 00 11 … (16 octets)\nv2: …\nv3: …'}
-              aria-label="Constantes Huawei v1, v2, v3"
-            />
-            <button type="button" className="btn btn-secondary connector-btn" onClick={usePasted} disabled={!paste.trim()}>
-              Utiliser ce texte
-            </button>
-          </details>
-        </div>
       )}
 
       <div className="my-device-actions">
         <button type="button" className="btn btn-primary connector-btn" onClick={() => start(false)} disabled={running}>
-          {running ? 'Connexion…' : everConnected ? 'Synchroniser la montre' : 'Se connecter à la montre'}
+          {running ? 'Connexion…' : everConnected ? 'Synchroniser la montre' : 'Connecter ma montre'}
         </button>
       </div>
       {message && <p className="my-device-message">{message}</p>}
@@ -153,8 +143,46 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
       {everConnected && <WatchSkinTemp />}
       {everConnected && dataLink}
 
-      <details className="watch-trouble" open={!everConnected || (code && code !== 'connected') || undefined}>
+      {report?.outcome && code !== 'connected' && !running && (
+        <div className="watch-diag-verdict">
+          <p className="watch-diag-verdict-title">{report.outcome.title}</p>
+          <ul>
+            {connectAdvice(report).map((a) => (
+              <li key={a}>{a}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* fermé par défaut, même avant le premier appairage : les termes techniques n'apparaissent qu'une fois déplié (VC-8) */}
+      <details className="watch-trouble">
         <summary>Diagnostic</summary>
+        {!secrets && (
+          <div className="watch-connect-secrets">
+            <p className="my-device-meta">
+              Le premier appairage a besoin de 3 constantes publiques (projet libre huawei-lpv2, licence MIT). Elles sont téléchargées sur ce
+              téléphone, pas incluses dans l’app.
+            </p>
+            <button type="button" className="btn btn-secondary connector-btn" onClick={download}>
+              Télécharger les paramètres
+            </button>
+            <details className="watch-connect-paste">
+              <summary>Ou les coller</summary>
+              <textarea
+                className="settings-input"
+                rows={3}
+                value={paste}
+                onChange={(e) => setPaste(e.target.value)}
+                placeholder={'v1: 00 11 … (16 octets)\nv2: …\nv3: …'}
+                aria-label="Constantes Huawei v1, v2, v3"
+              />
+              <button type="button" className="btn btn-secondary connector-btn" onClick={usePasted} disabled={!paste.trim()}>
+                Utiliser ce texte
+              </button>
+            </details>
+          </div>
+        )}
+
         {report && (
           <div className="watch-diag-report" aria-live="polite">
             <ol className="watch-diag-steps">
@@ -170,16 +198,6 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
                 </li>
               ))}
             </ol>
-            {report.outcome && code !== 'connected' && (
-              <div className="watch-diag-verdict">
-                <p className="watch-diag-verdict-title">{report.outcome.title}</p>
-                <ul>
-                  {connectAdvice(report).map((a) => (
-                    <li key={a}>{a}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
             {assoc && assoc.code !== 'confirmed' && (
               <div className="watch-assoc" aria-live="polite">
                 <p className="watch-assoc-title">{assoc.title}</p>

@@ -16,18 +16,42 @@ const connected = {
 describe('WatchConnect', () => {
   beforeEach(() => localStorage.clear())
 
-  it('télécharge les constantes d’un geste, les garde en local, puis se connecte avec', async () => {
+  it('premier geste « Connecter ma montre » : télécharge les constantes, les garde en local, puis se connecte avec', async () => {
     const connect = vi.fn(async () => connected)
-    render(<WatchConnect connect={connect} fetchSecrets={async () => FILE} />)
-    fireEvent.click(screen.getByRole('button', { name: 'Télécharger les paramètres' }))
-    expect(await screen.findByText(/enregistrés sur ce téléphone/)).toBeTruthy()
+    const { container } = render(<WatchConnect connect={connect} fetchSecrets={async () => FILE} />)
+    // carte d'un nouvel utilisateur : rien de technique hors « Diagnostic », replié (VC-8)
+    expect(container.querySelector('details.watch-trouble').open).toBe(false)
+    expect(container.querySelector('details.watch-trouble').contains(screen.getByRole('button', { name: 'Télécharger les paramètres' }))).toBe(true)
+    expect(screen.getByText(/montre compatible Huawei/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Connecter ma montre' }))
+    await waitFor(() => expect(connect).toHaveBeenCalled())
     expect(JSON.parse(localStorage.getItem('healthtrack_huawei_secrets')).v2).toBe(hex16(2).replace(/ /g, ''))
-    expect(screen.queryByRole('button', { name: 'Télécharger les paramètres' })).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
-    expect(await screen.findByText(/trames chiffrées/)).toBeTruthy()
     expect(connect.mock.calls[0][0].secrets.v1).toBe(hex16(1).replace(/ /g, ''))
     expect(connect.mock.calls[0][0].rebind).toBe(false)
-    expect(screen.getByRole('button', { name: 'Synchroniser la montre' })).toBeTruthy()
+    expect(await screen.findByRole('button', { name: 'Synchroniser la montre' })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Télécharger les paramètres' })).toBeNull()
+    expect(container.querySelector('details.watch-trouble').open).toBe(false)
+  })
+
+  it('constantes non téléchargées au premier geste : message clair, pas de connexion', async () => {
+    const connect = vi.fn()
+    render(<WatchConnect connect={connect} fetchSecrets={async () => { throw new Error('hors ligne') }} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Connecter ma montre' }))
+    expect(await screen.findByText(/hors ligne.*connexion Internet/)).toBeTruthy()
+    expect(connect).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Connecter ma montre' }).disabled).toBe(false)
+  })
+
+  it('échec de connexion : le conseil est visible sans déplier « Diagnostic », les étapes restent repliées', async () => {
+    localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: 'a', v2: 'b', v3: 'c' }))
+    const failed = { ...connected, outcome: { code: 'connect_failed', title: 'Montre introuvable' } }
+    const { container } = render(<WatchConnect connect={vi.fn(async () => failed)} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Connecter ma montre' }))
+    const title = await screen.findByText('Montre introuvable')
+    const diag = container.querySelector('details.watch-trouble')
+    expect(diag.contains(title)).toBe(false)
+    expect(diag.open).toBe(false)
+    expect(diag.contains(screen.getByText(/AES-GCM/))).toBe(true)
   })
 
   it('téléchargement impossible → texte collé accepté ; texte invalide refusé', async () => {
@@ -48,7 +72,7 @@ describe('WatchConnect', () => {
     const rejected = { ...connected, outcome: { code: 'key_rejected', title: `La montre ne reconnaît plus la clé de ${APP_NAME}` } }
     const connect = vi.fn(async () => rejected)
     render(<WatchConnect connect={connect} />)
-    fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Connecter ma montre' }))
     expect(await screen.findByText(/ne reconnaît plus/)).toBeTruthy()
     expect(screen.queryByText(/dissocier/i)).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Refaire l’appairage' }))
@@ -70,7 +94,7 @@ describe('WatchConnect', () => {
     localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: 'a', v2: 'b', v3: 'c' }))
     const onReport = vi.fn()
     render(<WatchConnect connect={async () => connected} onReport={onReport} />)
-    fireEvent.click(screen.getByRole('button', { name: 'Se connecter à la montre' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Connecter ma montre' }))
     await waitFor(() => expect(onReport).toHaveBeenCalledWith(connected))
     expect(screen.queryByRole('button', { name: 'Enregistrer le journal' })).toBeNull()
   })

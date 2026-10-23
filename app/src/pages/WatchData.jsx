@@ -39,6 +39,9 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
     }
   }, [load, now, state])
 
+  // sans montre ni mesure : une phrase et un bouton plutôt que 12 lignes « rien » (VC-6)
+  const hasWatch = Boolean(state.everConnected || state.readsAt) || Boolean(rows?.some((r) => r.last))
+
   return (
     <section className="food-page watch-data-page">
       <p className="watch-data-back">
@@ -49,12 +52,22 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
         Ce qui remonte de votre montre (compatible avec les montres Huawei), type par type : la dernière valeur, sa date et le nombre
         de mesures des {COVERAGE_DAYS} derniers jours.
       </p>
-      <p className="watch-data-sync">
-        {state.readsAt ? `Dernière lecture par l’app : ${formatAgo(state.readsAt)}.` : 'Pas encore de lecture détaillée : synchronisez la montre depuis Sources.'}
-      </p>
+      {hasWatch && (
+        <p className="watch-data-sync">
+          {state.readsAt ? `Dernière lecture par l’app : ${formatAgo(state.readsAt)}.` : 'Pas encore de lecture détaillée : synchronisez la montre depuis Sources.'}
+        </p>
+      )}
       {error && <p className="hint">Lecture impossible : {error}</p>}
       {!rows && !error && <p className="hint">Chargement…</p>}
-      {rows && (
+      {rows && !hasWatch && (
+        <div className="watch-data-none">
+          <p>Aucune montre connectée pour l’instant. Une fois votre montre connectée, vous verrez ici ce qu’elle envoie, type par type.</p>
+          <Link to="/connectors" className="btn btn-primary">
+            Connecter une montre
+          </Link>
+        </div>
+      )}
+      {rows && hasWatch && (
         <>
           <p className="watch-data-summary">{coverageSummary(rows)}</p>
           <ul className="watch-data-list" aria-label="Données de la montre">

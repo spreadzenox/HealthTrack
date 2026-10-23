@@ -41,12 +41,12 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
 - [ ] **VC-5** Nouveautés en play : champ facultatif `variants` dans les JSON du changelog + date de départ play ;
   n'afficher que les entrées play postérieures à la première version publique (aucun « HealthTrack », ni clé, ni
   bouton de mise à jour) ; test sur les fichiers existants.
-- [ ] **VC-6** Sources : la carte montre propose d'abord « Connecter une montre compatible Huawei » ; le lien vers
+- [x] **VC-6** (23/10 19:30) Sources : la carte montre propose d'abord « Connecter une montre compatible Huawei » ; le lien vers
   `/montre` n'apparaît qu'après un appairage ; `/montre` sans montre → état vide d'une phrase + bouton.
 - [ ] **VC-7** Sources en play : carte Withings Body Scan masquée (identifiant / secret de développeur à saisir ;
   Withings écrit dans Health Connect, déjà lu), données Withings existantes conservées et exportées ; textes des
   cartes raccourcis à 2 lignes + « détails » (Lecture du visage, Temps d'écran, Météo).
-- [ ] **VC-8** carte montre : bloc « Diagnostic » fermé par défaut, sans HiChain / AES-GCM / compteurs bruts dans le
+- [x] **VC-8** (23/10 19:30) carte montre : bloc « Diagnostic » fermé par défaut, sans HiChain / AES-GCM / compteurs bruts dans le
   résumé (retour du propriétaire, P17) ; termes techniques seulement une fois déplié.
 - [ ] **VC-9** (à vérifier sur émulateur) temps du premier lancement play à froid et absence d'erreur JS (critère C4) ;
   `npm run visual` n'exerce pas les plugins natifs.

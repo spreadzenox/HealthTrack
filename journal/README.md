@@ -594,6 +594,18 @@ pour ajuster vos repères : taille, sexe, âge ». L'**IMC** et le **besoin en c
 manquent » ne cite plus d'objectif calorique. **Prochain run de code : VC-6** (carte montre avant appairage), puis VC-7,
 VC-8. **👉 Toujours en attente de vous : P23** (testeurs sans paiement).
 
+**Run du 23/10 19:30 — carte montre simple pour un nouvel utilisateur (VC-6 + VC-8, votre retour P17).** Ce que
+vous verrez : dans **Sources → Montre Huawei**, le bloc **« Diagnostic » est toujours fermé** à l'ouverture, même
+avant le premier appairage ; les termes techniques (HiChain, AES-GCM, « Fin d'association — 11 acceptés ») n'y
+apparaissent qu'une fois déplié. Avant toute montre, la carte dit simplement « Connectez une montre compatible
+Huawei… » avec le bouton **« Connecter ma montre »**, qui télécharge lui-même les 3 paramètres publics au premier geste
+(plus de bouton « Télécharger les paramètres » ni de mention de licence en tête ; le collage reste sous
+« Diagnostic »). En cas d'échec, le conseil reste visible sans rien déplier. Le lien **« Voir ce qui remonte de la
+montre »** n'apparaît qu'après un premier appairage ; ouverte sans montre, la page **Données de la montre** affiche une
+phrase et « Connecter une montre » au lieu de 12 lignes « Rien reçu ». Pour vous (montre déjà connectée) : rien ne
+change, à part le Diagnostic replié. **Prochain run de code : VC-7** (Withings Body Scan masqué en play, textes des
+cartes raccourcis), puis VC-5, VC-10, VC-9. **👉 Toujours en attente de vous : P23** (testeurs sans paiement).
+
 **Run du 23/10 17:30 — la page Pistes vide parle comme l'Accueil (VC-2).** Ce que vous verrez sur une installation
 neuve (ou tant qu'il n'y a pas assez de jours) : l'onglet **Pistes** montre **la même carte lilas que l'Accueil**
 (« Vos pistes arrivent dans N jours », compteur X/21, « On préfère attendre plutôt que de vous montrer de faux
@@ -999,6 +1011,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 15:30 — [I156 + VC-1 : onboarding mesuré, nom décollé](runs/2026-10-23-1530-i156-vc1.md) | 🧭 | `markScreenSeen` / `onboardingDiagnostic` ; ligne `[onboarding]` en tête de l'export du journal technique ; test-garde `gluedNames` (2 cas corrigés, dont `FaceSenseCard`) ; jalon 4 livré ; 6 tests |
 | 23/10 16:30 — [VC-4 : mode diagnostic caché en Play](runs/2026-10-23-1630-vc4-diagnostic.md) | 🧭 | `featuresFor().debugMenu` (sideload seulement) ; 7 touches sur « Version N » en bas des Paramètres → `unlockDebugMenu` (n'active pas les journaux) ; visible si déjà actif ; 6 tests |
 | 23/10 17:30 — [VC-2 : Pistes vide aligné sur l'Accueil](runs/2026-10-23-1730-vc2-pistes-vide.md) | 🧭 | État vide de `/recommendations` = `PistesTeaser` (même compteur que l'Accueil, objectif suivi, `onPistesPage` sans lien vers soi-même) + « Pas encore assez de jours mesurés » ; onglets masqués tant que l'analyse simple n'a rien ; « recommandations basiques », « ≥ 5j » et 📊 retirés de l'état vide ; 3 tests ; v232 (33,7 Mo) ; test `FaceSenseCard` fragile (horodatage) corrigé |
+| 23/10 19:30 — [VC-6 + VC-8 : carte montre simple avant appairage](runs/2026-10-23-1930-vc6-vc8-carte-montre.md) | 🧭⌚ | `WatchConnect` : « Diagnostic » toujours replié, constantes téléchargées au premier « Connecter ma montre » (téléchargement/collage sous « Diagnostic »), conseil d'échec hors du repli ; lien `/montre` seulement après appairage ; `/montre` sans montre → phrase + bouton ; 4 tests |
 | 23/10 18:30 — [VC-3 : profil Nutrition sans valeurs inventées](runs/2026-10-23-1830-vc3-profil-nutrition.md) | 🧭 | `BodyProfileCard` : profil vide → invitation sans chiffre ; partiel → valeurs connues + « À compléter : … » ; IMC / kcal derrière « détails » (I152) ; avertissement « repas manquants » sans objectif calorique ; `DetailsToggle.css` ; 3 tests |
 | 23/10 13:30 — [Jalon 4c-2 : lecture du visage dans l'onboarding](runs/2026-10-23-1330-jalon4c2-visage.md) | 🧭 | Écran 7 d'I154 avant le premier geste (seulement si le plugin caméra existe) : 3 lignes, divulgation `camera`/`camera_app_open`, lecture d'essai (`services/faceTrial.js`, ne compte pas), « Plus tard » sans demande ; `--onboarding=face` ; 13 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |

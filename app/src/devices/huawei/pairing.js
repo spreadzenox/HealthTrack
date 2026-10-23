@@ -421,7 +421,7 @@ export function connectAdvice(report) {
         ? [`La montre parle à ${APP_NAME}, avec une clé gardée sur ce téléphone. Les mesures lues sont dans votre historique (source « Montre Huawei »).`]
         : [`La montre parle maintenant à ${APP_NAME}, avec une clé gardée sur ce téléphone.`]
     case 'need_secrets':
-      return ['Le premier appairage a besoin de 3 constantes publiques (projet huawei-lpv2, licence MIT). Touchez « Télécharger les paramètres » : elles restent sur ce téléphone.']
+      return ['Le premier appairage a besoin de 3 constantes publiques (projet huawei-lpv2, licence MIT). Touchez « Connecter ma montre » avec Internet actif (ou « Diagnostic » → « Télécharger les paramètres ») : elles restent sur ce téléphone.']
     case 'key_rejected':
       return [
         'Si la montre vient de s’éloigner ou de redémarrer, réessayez dans quelques secondes.',
