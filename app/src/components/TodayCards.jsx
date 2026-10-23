@@ -160,7 +160,7 @@ const PISTES_TEXT = {
 }
 
 /** Carte lilas : jours suivis avant les pistes ; on préfère attendre que montrer de faux suspects. */
-export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read }) {
+export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, onPistesPage = false }) {
   const entries = useEntries(read || (focus === 'energy' ? readTrackedEnergy : readTracked))
   if (entries === null) return null
   const p = pistesProgress(entries, focus)
@@ -186,7 +186,9 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read }) 
       <p className="pistes-count mono">{p.days}/{p.target} {text.count} (6 dernières semaines)</p>
       <p className="today-card-text">
         {p.ready
-          ? <>Vos jours sont prêts ; {text.ready}. En attendant, voyez <Link to="/recommendations">l’onglet Pistes</Link>.</>
+          ? (onPistesPage
+            ? `Vos jours sont prêts ; ${text.ready}.`
+            : <>Vos jours sont prêts ; {text.ready}. En attendant, voyez <Link to="/recommendations">l’onglet Pistes</Link>.</>)
           : 'On préfère attendre plutôt que de vous montrer de faux suspects.'}
       </p>
       {details && (

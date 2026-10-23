@@ -29,7 +29,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   `src/components/BaselineCards.jsx:118` (« mesures,Halcya »). Correction : `{APP_NAME}{' '}` / `{' '}{APP_NAME}` ;
   test-garde : aucune ligne JSX ne finit ni ne commence par `{APP_NAME}` sans `{' '}` (ou rendu → pas de `/Halcya\S/`
   ni `/\S,Halcya/`).
-- [ ] **VC-2** page Pistes vide alignée sur la carte lilas de l'Accueil (même compteur X/21 jours avec repas ou note du
+- [x] **VC-2 — FAIT le 23/10 17:30** (`PistesTeaser onPistesPage` dans `Recommendations.jsx`, onglets masqués sans résultat) page Pistes vide alignée sur la carte lilas de l'Accueil (même compteur X/21 jours avec repas ou note du
   ventre, même phrase « On préfère attendre… ») ; supprimer « recommandations basiques », « ≥ 5j / ≥ 9j » et le 📊 de
   l'état vide ; les onglets simple / avancée seulement quand il y a des résultats.
 - [ ] **VC-3** Nutrition : ne rien chiffrer tant que le profil n'est pas rempli (ni kcal, ni IMC, ni « Homme, 30 ans »

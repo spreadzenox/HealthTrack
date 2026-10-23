@@ -22,6 +22,9 @@ import { FACE_MOOD_MIN_DAYS, FACE_MOOD_MIN_READINGS } from '../services/mood/fac
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
 import { useAutoSync } from '../hooks/useAutoSync'
+import { useDetailsMode } from '../hooks/useDetailsMode'
+import { PistesTeaser } from '../components/TodayCards'
+import { homeFocus } from '../settings/onboarding'
 import './Recommendations.css'
 
 // ─── Correlation bar chart (SVG) ─────────────────────────────────────────────
@@ -295,21 +298,15 @@ function LaggedEffectsSection({ result }) {
 
 // ─── Not enough data placeholder ─────────────────────────────────────────────
 
-function NotEnoughData({ currentDays, minDays, tabLabel }) {
+function NotEnoughData({ currentDays, minDays }) {
   const remaining = minDays - currentDays
   return (
     <div className="reco-not-enough">
-      <div className="reco-not-enough-icon" aria-hidden>📊</div>
-      <p className="reco-not-enough-title">
-        Données insuffisantes pour les {tabLabel}
-      </p>
+      <p className="reco-not-enough-title">Pas encore assez de jours mesurés</p>
       <p className="reco-not-enough-hint">
         {currentDays === 0
-          ? `Enregistrez votre bien-être chaque jour pour activer cette fonctionnalité (les données alimentaires ou de sommeil seules ne suffisent pas).`
-          : `Il manque encore ${remaining} jour${remaining > 1 ? 's' : ''} avec un score bien-être (vous en avez ${currentDays}). Pensez à enregistrer votre bien-être quotidiennement.`}
-      </p>
-      <p className="reco-not-enough-min">
-        Seuil minimum : <strong>{minDays} jours</strong> avec score bien-être
+          ? `Les liens avec votre bien-être demandent au moins ${minDays} jours avec une note de bien-être (bouton «\u00a0Une note\u00a0» de l’Accueil).`
+          : `Encore ${remaining} jour${remaining > 1 ? 's' : ''} avec une note de bien-être (vous en avez ${currentDays}).`}
       </p>
     </div>
   )
@@ -523,11 +520,7 @@ function BasicTab({ analysis }) {
   if (result.status === 'not_enough_data') {
     return (
       <>
-        <NotEnoughData
-          currentDays={result.currentDays}
-          minDays={result.minDays}
-          tabLabel="recommandations basiques"
-        />
+        <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />
         <FaceMoodSection result={analysis.faceMood} />
       </>
     )
@@ -628,11 +621,7 @@ function AdvancedTab({ analysis }) {
 
   if (result.status === 'not_enough_data') {
     return (
-      <NotEnoughData
-        currentDays={result.currentDays}
-        minDays={result.minDays}
-        tabLabel="recommandations avancées"
-      />
+      <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />
     )
   }
 
@@ -893,6 +882,8 @@ export default function Recommendations() {
   const [error, setError] = useState(null)
   const [revision, setRevision] = useState(0)
   const debugMode = isDebugModeEnabled()
+  const [details, toggleDetails] = useDetailsMode()
+  const [focus] = useState(() => homeFocus())
 
   useEffect(() => {
     const onUpdate = () => setRevision((r) => r + 1)
@@ -932,6 +923,8 @@ export default function Recommendations() {
 
   const current = analyses[tab]
   const loading = current == null && !error
+  // Rien à montrer encore (VC-2) : la même carte lilas que l'Accueil, sans onglets ni seuils techniques
+  const waiting = analyses.basic?.correlations?.status === 'not_enough_data'
 
   return (
     <section className="reco-page">
@@ -940,7 +933,9 @@ export default function Recommendations() {
         Ce qui va de pair avec votre <strong>bien-être</strong> dans vos données, calculé sur votre téléphone.
       </p>
 
-      <nav className="reco-tabs" aria-label="Onglets recommandations">
+      {waiting && <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} onPistesPage />}
+
+      {!waiting && <nav className="reco-tabs" aria-label="Onglets des analyses">
         {TABS.map((t) => (
           <button
             key={t.id}
@@ -953,7 +948,7 @@ export default function Recommendations() {
             <span className="reco-tab-min">≥ {t.minDays}j</span>
           </button>
         ))}
-      </nav>
+      </nav>}
 
       {loading && (
         <div className="loading">
