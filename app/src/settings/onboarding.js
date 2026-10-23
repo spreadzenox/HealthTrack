@@ -68,6 +68,38 @@ export function saveOnboarding(patch) {
   return next
 }
 
+/**
+ * Note qu'un écran a été affiché (I156) : `seen` (identifiants des écrans, dans l'ordre de première visite),
+ * `lastScreen` (le dernier montré : celui où l'on s'est arrêté si l'onboarding n'est pas fini) et `screens`
+ * (nombre d'écrans du parcours, qui dépend des choix). Aucune réponse libre, rien n'est envoyé.
+ */
+export function markScreenSeen(screen, screens) {
+  const prev = loadOnboarding()
+  const seen = Array.isArray(prev.seen) ? prev.seen : []
+  return saveOnboarding({ seen: seen.includes(screen) ? seen : [...seen, screen], lastScreen: screen, screens })
+}
+
+/**
+ * Bloc « onboarding » du diagnostic exportable (I156) : où la personne en est, sans donnée de santé. Permet de
+ * repérer, avec 12 à 15 testeurs, l'écran où l'on décroche.
+ */
+export function onboardingDiagnostic(s = loadOnboarding()) {
+  return {
+    done: !!s.done,
+    endedBy: s.endedBy ?? null,
+    doneAt: s.doneAt ?? null,
+    goal: s.goal ?? null,
+    watch: s.watch ?? null,
+    health: s.health ?? null,
+    face: s.face ?? null,
+    step: s.step || 0,
+    maxStep: s.maxStep || 0,
+    screens: s.screens ?? null,
+    lastScreen: s.lastScreen ?? null,
+    seen: Array.isArray(s.seen) ? s.seen : [],
+  }
+}
+
 /** @param {'completed'|'skipped'|'existing'} endedBy */
 export function finishOnboarding(endedBy = 'completed') {
   return saveOnboarding({ done: true, endedBy, doneAt: new Date().toISOString() })

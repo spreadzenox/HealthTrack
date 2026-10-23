@@ -35,6 +35,16 @@ describe('Onboarding (jalon 4a)', () => {
     expect(cont()).toBeDisabled()
   })
 
+  it('note les écrans vus pour le diagnostic local (I156)', () => {
+    renderAt()
+    expect(loadOnboarding()).toMatchObject({ seen: ['goal'], lastScreen: 'goal', screens: 4 })
+    fireEvent.click(screen.getByRole('radio', { name: /Mon ventre/ }))
+    fireEvent.click(cont())
+    expect(loadOnboarding()).toMatchObject({ seen: ['goal', 'tracks'], lastScreen: 'tracks' })
+    fireEvent.click(screen.getByRole('button', { name: 'Retour' }))
+    expect(loadOnboarding()).toMatchObject({ seen: ['goal', 'tracks'], lastScreen: 'goal' })
+  })
+
   it('l’objectif coche d’avance les suivis, que l’on peut changer', () => {
     renderAt()
     fireEvent.click(screen.getByRole('radio', { name: /Mon énergie et mon sommeil/ }))

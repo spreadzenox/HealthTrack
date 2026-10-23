@@ -322,7 +322,7 @@ export default function FaceSenseCard({
       {available && d.state === 'denied' && (
         <>
           <p className="my-device-message">
-            L’accès à la caméra a été retiré. Touchez « Autoriser », ou Paramètres Android → Applications →
+            L’accès à la caméra a été retiré. Touchez « Autoriser », ou Paramètres Android → Applications →{' '}
             {APP_NAME} → Autorisations → Appareil photo.
           </p>
           <div className="my-device-actions">
