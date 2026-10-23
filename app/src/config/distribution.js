@@ -31,6 +31,9 @@ export function featuresFor(distribution) {
     // Abonnement Google Play (droits établis par le relais, jalon 6c) ; la sideload n'a pas Play Billing et ne perd
     // aucune fonction
     billing: d === 'play',
+    // Réglage « Mode diagnostic » affiché d'emblée ; en play, caché derrière 7 touches sur le numéro de version
+    // (Paramètres), pour le support et les testeurs (VC-4)
+    debugMenu: d === 'sideload',
   }
 }
 

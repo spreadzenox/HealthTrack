@@ -27,4 +27,9 @@ describe('variante de distribution', () => {
     expect(featuresFor('play').billing).toBe(true)
     expect(featuresFor('sideload').billing).toBe(false)
   })
+
+  it('réglage « Mode diagnostic » visible d’emblée en sideload seulement (VC-4)', () => {
+    expect(featuresFor('sideload').debugMenu).toBe(true)
+    expect(featuresFor('play').debugMenu).toBe(false)
+  })
 })

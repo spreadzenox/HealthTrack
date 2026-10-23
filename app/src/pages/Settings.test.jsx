@@ -100,3 +100,13 @@ describe('Settings — Apparence', () => {
     expect(localStorage.getItem('healthtrack_theme')).toBe('dark')
   })
 })
+
+describe('Settings — Mode diagnostic (sideload)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('visible d’emblée, avec le numéro de version en bas', () => {
+    renderSettings()
+    expect(screen.getByText('Mode diagnostic')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Version / })).toBeInTheDocument()
+  })
+})

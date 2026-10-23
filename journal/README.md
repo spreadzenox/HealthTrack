@@ -576,6 +576,15 @@ maquette. Rien n'est masqué ni effacé. 7 nouveaux tests. **Il reste I156** (co
 dans le diagnostic) avant la passe « version candidate ». **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement).
 
+**Run du 23/10 16:30 — plus de réglage technique visible dans la version Play (VC-4).** Ce que vous verrez : dans
+votre version **sideload**, rien ne change, sauf une petite ligne **« Version N »** en bas des Paramètres. Dans la
+version **Play**, le bloc « Mode diagnostic — Afficher les journaux techniques » **n'apparaît plus** : un nouvel
+utilisateur ne voit aucun réglage de développeur. Pour le support et les testeurs, **7 touches sur « Version N »** (bas
+des Paramètres) le font apparaître une fois pour toutes ; il reste aussi visible si le mode était déjà actif. C'est
+le geste à donner à un testeur pour exporter son journal technique (avec la ligne `[onboarding]`). **Prochain run de
+code : VC-2, VC-3, VC-6** (Pistes vide, profil Nutrition inventé, carte montre avant appairage). **👉 Toujours en
+attente de vous : P23** (testeurs sans paiement).
+
 **Run du 23/10 15:30 — le jalon 4 est livré, la passe « version candidate » commence (I156, VC-1).** Ce que vous
 verrez : dans **Journal → Tendances** (sans montre), « après 3 semaines de mesures, Halcya compare… » n'est plus collé
 (« mesures,Halcya ») ; même correction dans le message « accès à la caméra retiré » de la lecture du visage. Un test
@@ -970,6 +979,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 12:30 — [Jalon 4c-1 : premier geste et paywall soft](runs/2026-10-23-1230-jalon4c-geste-paywall.md) | 🧭 | Écran « premier geste » selon l'objectif (`gut` ou `wellbeing` 0–5, une seule entrée modifiable) ; `/premium` intégré en dernier écran (play seulement, contexte `onboarding`, « Continuer gratuitement ») ; reprise d'un onboarding commencé même si la base s'est remplie ; `--onboarding=gesture|gesture-energy|premium` ; 6 tests |
 | 23/10 14:30 — [I155 : l'objectif règle l'Accueil](runs/2026-10-23-1430-i155-objectif-accueil.md) | 🧭 | `homeFocus(goal)` ; objectif énergie → carte ventre en bas, pistes = nuits suivies d'une mesure du bien-être (`pistesProgress(entries, 'energy')`) ; bloc « Ce qui vous amène » dans Paramètres ; `--goal=energy` ; 7 tests |
 | 23/10 15:30 — [I156 + VC-1 : onboarding mesuré, nom décollé](runs/2026-10-23-1530-i156-vc1.md) | 🧭 | `markScreenSeen` / `onboardingDiagnostic` ; ligne `[onboarding]` en tête de l'export du journal technique ; test-garde `gluedNames` (2 cas corrigés, dont `FaceSenseCard`) ; jalon 4 livré ; 6 tests |
+| 23/10 16:30 — [VC-4 : mode diagnostic caché en Play](runs/2026-10-23-1630-vc4-diagnostic.md) | 🧭 | `featuresFor().debugMenu` (sideload seulement) ; 7 touches sur « Version N » en bas des Paramètres → `unlockDebugMenu` (n'active pas les journaux) ; visible si déjà actif ; 6 tests |
 | 23/10 13:30 — [Jalon 4c-2 : lecture du visage dans l'onboarding](runs/2026-10-23-1330-jalon4c2-visage.md) | 🧭 | Écran 7 d'I154 avant le premier geste (seulement si le plugin caméra existe) : 3 lignes, divulgation `camera`/`camera_app_open`, lecture d'essai (`services/faceTrial.js`, ne compte pas), « Plus tard » sans demande ; `--onboarding=face` ; 13 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |

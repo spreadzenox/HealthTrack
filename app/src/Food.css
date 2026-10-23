@@ -173,6 +173,19 @@
   margin-top: 0;
 }
 
+/* Numéro de version, bas des Paramètres (7 touches : mode diagnostic en play, VC-4) */
+.settings-version {
+  display: block;
+  min-height: 44px;
+  margin: 0 auto;
+  padding: 0 16px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
 .input-label {
   display: block;
   margin: 12px 0 6px;

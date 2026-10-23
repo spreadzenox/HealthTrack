@@ -35,8 +35,9 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
 - [ ] **VC-3** Nutrition : ne rien chiffrer tant que le profil n'est pas rempli (ni kcal, ni IMC, ni « Homme, 30 ans »
   par défaut) → carte « Complétez votre profil pour voir vos repères » ; en play, objectif calorique et IMC repliés
   derrière « détails » (I152).
-- [ ] **VC-4** « Mode diagnostic » masqué en play (`featuresFor('play')`), accessible par 7 touches sur le numéro de
-  version (À propos) pour le support.
+- [x] **VC-4** (23/10 16:30) « Mode diagnostic » masqué en play (`featuresFor('play').debugMenu`), révélé une fois
+  pour toutes par 7 touches sur « Version N » en bas des Paramètres (`unlockDebugMenu`) ; reste visible si le mode
+  était déjà actif.
 - [ ] **VC-5** Nouveautés en play : champ facultatif `variants` dans les JSON du changelog + date de départ play ;
   n'afficher que les entrées play postérieures à la première version publique (aucun « HealthTrack », ni clé, ni
   bouton de mise à jour) ; test sur les fichiers existants.

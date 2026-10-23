@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { GEMINI_MODELS, getGeminiModel, setGeminiModel } from '../settings/geminiModel'
-import { isDebugModeEnabled, setDebugModeEnabled } from '../settings/debugMode'
+import { isDebugModeEnabled, setDebugModeEnabled, isDebugMenuUnlocked, unlockDebugMenu, DEBUG_UNLOCK_TAPS } from '../settings/debugMode'
+import { CURRENT_VERSION } from '../services/updateCheck'
 import { useDebug } from '../contexts/DebugContext'
 import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings/cigaretteCounter'
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
@@ -105,6 +106,10 @@ export default function Settings() {
   // Debug mode state
   const { refreshDebugMode } = useDebug()
   const [debugEnabled, setDebugEnabled] = useState(() => isDebugModeEnabled())
+  const [debugMenuShown, setDebugMenuShown] = useState(
+    () => FEATURES.debugMenu || isDebugModeEnabled() || isDebugMenuUnlocked(),
+  )
+  const [versionTaps, setVersionTaps] = useState(0)
 
   const [cigarettePinned, setCigarettePinned] = useState(() => isCigaretteCounterPinned())
   const [theme, setTheme] = useState(() => getThemeChoice())
@@ -125,6 +130,16 @@ export default function Settings() {
     setDebugModeEnabled(next)
     setDebugEnabled(next)
     refreshDebugMode()
+  }
+
+  const handleVersionTap = () => {
+    if (debugMenuShown) return
+    const taps = versionTaps + 1
+    setVersionTaps(taps)
+    if (taps >= DEBUG_UNLOCK_TAPS) {
+      unlockDebugMenu()
+      setDebugMenuShown(true)
+    }
   }
 
   const handleGoal = (value) => {
@@ -279,25 +294,31 @@ export default function Settings() {
       </div>
 
       {/* ── Mode diagnostic ─────────────────────────────────────────────────────── */}
-      <div className="settings-block">
-        <h3 className="section-title">Mode diagnostic</h3>
-        <div className="debug-toggle-row">
-          <label className="connector-toggle" aria-label="Activer le mode diagnostic">
-            <input
-              type="checkbox"
-              checked={debugEnabled}
-              onChange={handleDebugToggle}
-              aria-checked={debugEnabled}
-              data-testid="debug-mode-toggle"
-            />
-            <span className="toggle-track">
-              <span className="toggle-thumb" />
-            </span>
-          </label>
-          <span className="debug-toggle-label">Afficher les journaux techniques</span>
+      {debugMenuShown && (
+        <div className="settings-block">
+          <h3 className="section-title">Mode diagnostic</h3>
+          <div className="debug-toggle-row">
+            <label className="connector-toggle" aria-label="Activer le mode diagnostic">
+              <input
+                type="checkbox"
+                checked={debugEnabled}
+                onChange={handleDebugToggle}
+                aria-checked={debugEnabled}
+                data-testid="debug-mode-toggle"
+              />
+              <span className="toggle-track">
+                <span className="toggle-thumb" />
+              </span>
+            </label>
+            <span className="debug-toggle-label">Afficher les journaux techniques</span>
+          </div>
+          <p className="hint">Connexions et analyses, pour comprendre un problème ou les transmettre.</p>
         </div>
-        <p className="hint">Connexions et analyses, pour comprendre un problème ou les transmettre.</p>
-      </div>
+      )}
+
+      <button type="button" className="settings-version" onClick={handleVersionTap}>
+        Version {CURRENT_VERSION}
+      </button>
     </section>
   )
 }
