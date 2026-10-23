@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-23",
+  "kind": "amélioration",
+  "title": "Version Google Play : un achat confirmé plus tard s'active tout seul",
+  "items": [
+    "Si Google Play met votre paiement en attente, ou si vous utilisez un code promo dans le Play Store, le premium s'active dès que Google confirme, sans avoir à toucher « Restaurer un achat ».",
+    "La page premium, le bloc « Abonnement » et le compteur d'analyses IA se mettent à jour d'eux-mêmes.",
+    "Dans la version installée depuis GitHub, rien ne change."
+  ]
+}

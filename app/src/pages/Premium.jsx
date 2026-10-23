@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FEATURES } from '../config/distribution'
-import { getEntitlement, describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
+import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
 import { loadPlans, purchasePlan, restorePurchases, monthlyEquivalent, annualSavingPercent } from '../services/playBilling'
 import { PRIVACY_URL } from '../config/brand'
 import './Premium.css'
+import { useEntitlement } from '../hooks/useEntitlement'
 
 const BENEFITS = [
   'Vos pistes personnelles, avec des délais de 2 à 48 h entre repas et ventre',
@@ -37,7 +38,7 @@ function TrialTimeline({ days }) {
  */
 export default function Premium() {
   const navigate = useNavigate()
-  const [ent, setEnt] = useState(() => getEntitlement())
+  const [ent, setEnt] = useEntitlement()
   const [plans, setPlans] = useState(null)
   const [selected, setSelected] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -56,6 +57,11 @@ export default function Premium() {
     }
   }, [])
 
+  // Achat confirmé plus tard (paiement en attente, retour dans l'app) : le message d'attente n'a plus lieu d'être
+  useEffect(() => {
+    if (ent.premium) setMessage('')
+  }, [ent.premium])
+
   const close = () => (window.history.length > 1 ? navigate(-1) : navigate('/'))
   const plan = plans?.find((p) => p.basePlanId === selected) ?? null
   const saving = plans ? annualSavingPercent(plans) : null
@@ -68,7 +74,7 @@ export default function Premium() {
       const result = await purchasePlan(plan)
       if (result.status === 'purchased') {
         setEnt(result.entitlement)
-        if (!result.entitlement?.premium) setMessage('Achat reçu : la vérification prend un instant. Revenez dans les Paramètres → Abonnement.')
+        if (!result.entitlement?.premium) setMessage('Achat reçu : la vérification prend un instant, cette page se mettra à jour toute seule.')
       } else if (result.status !== 'cancelled') {
         setMessage(result.message)
       }

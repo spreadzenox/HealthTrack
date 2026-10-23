@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 vi.mock('../config/distribution', async (importOriginal) => {
@@ -11,6 +11,7 @@ const billing = vi.hoisted(() => ({ loadPlans: vi.fn(), purchasePlan: vi.fn(), r
 vi.mock('../services/playBilling', async (importOriginal) => ({ ...(await importOriginal()), ...billing }))
 
 import Premium from './Premium'
+import { ENTITLEMENT_EVENT } from '../services/entitlement'
 
 const YEAR = { basePlanId: 'annuel', offerToken: 't-a', period: 'year', price: '29,99 €', priceMicros: 29_990_000, currency: 'EUR', trialDays: 14 }
 const MONTH = { basePlanId: 'mensuel', offerToken: 't-m', period: 'month', price: '4,99 €', priceMicros: 4_990_000, currency: 'EUR', trialDays: null }
@@ -64,6 +65,20 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     await waitFor(() => expect(billing.purchasePlan).toHaveBeenCalledWith(YEAR))
     expect(await screen.findByText(/Essai gratuit en cours/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Gérer mon abonnement dans Google Play/ })).toBeInTheDocument()
+  })
+
+  it('paiement en attente confirmé plus tard : la page passe au premium d’elle-même (jalon 6c-3c)', async () => {
+    billing.loadPlans.mockResolvedValue([YEAR])
+    billing.purchasePlan.mockResolvedValue({ status: 'pending', message: 'Paiement en attente chez Google Play' })
+    renderPremium()
+    fireEvent.click(await screen.findByRole('button', { name: /Essayer/ }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Paiement en attente')
+    const detail = { premium: true, source: 'play', state: 'active', productId: 'halcya_premium', autoRenewing: true, expiresAt: new Date(Date.now() + 300 * 86_400_000).toISOString() }
+    act(() => {
+      window.dispatchEvent(new CustomEvent(ENTITLEMENT_EVENT, { detail }))
+    })
+    expect(await screen.findByText(/Premium actif · renouvellement le/)).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 
   it('achat annulé : aucun message ; erreur : le message de Google Play s’affiche', async () => {
