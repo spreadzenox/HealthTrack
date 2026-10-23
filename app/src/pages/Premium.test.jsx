@@ -37,6 +37,21 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     expect(screen.getByLabelText('Déroulé de l’essai')).toHaveTextContent('jour 14')
   })
 
+  it('VC-17 : seuls les avantages livrés sont cochés, le reste est « en préparation » derrière « détails »', async () => {
+    billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+    renderPremium()
+    await screen.findByRole('radio', { name: /Annuel/ })
+    expect(screen.getByText(/analyse IA des repas/)).toBeInTheDocument()
+    expect(screen.getByText('En préparation, inclus sans supplément')).toBeInTheDocument()
+    expect(screen.queryByText(/FODMAP/)).toBeNull()
+    expect(screen.queryByText(/rapport PDF/)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'détails' }))
+    const upcoming = screen.getByRole('list', { name: 'En préparation' })
+    expect(upcoming).toHaveTextContent(/FODMAP/)
+    expect(upcoming).toHaveTextContent(/rapport PDF/)
+    expect(upcoming).toHaveTextContent(/délais de 2 à 48 h/)
+  })
+
   it('mensuel choisi : pas d’essai, le bouton et la mention s’adaptent', async () => {
     billing.loadPlans.mockResolvedValue([YEAR, MONTH])
     renderPremium()

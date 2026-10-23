@@ -4,15 +4,11 @@ import { FEATURES } from '../config/distribution'
 import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
 import { loadPlans, purchasePlan, restorePurchases, monthlyEquivalent, annualSavingPercent } from '../services/playBilling'
 import { PRIVACY_URL } from '../config/brand'
+import { deliveredBenefits, upcomingBenefits } from '../config/premiumBenefits'
+import DetailsToggle from '../components/DetailsToggle'
 import './Premium.css'
 import { useEntitlement } from '../hooks/useEntitlement'
 
-const BENEFITS = [
-  'Vos pistes personnelles, avec des délais de 2 à 48 h entre repas et ventre',
-  'La réintroduction FODMAP guidée, groupe par groupe',
-  'Un rapport PDF pour votre médecin ou votre diététicienne',
-  'L’analyse IA des repas, jusqu’à 10 par jour',
-]
 
 const PER = { year: 'an', month: 'mois' }
 
@@ -46,6 +42,7 @@ export default function Premium({ context = null, onClose = null }) {
   const [selected, setSelected] = useState(null)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
+  const [details, setDetails] = useState(false)
 
   useEffect(() => {
     if (!FEATURES.billing) return undefined
@@ -118,11 +115,29 @@ export default function Premium({ context = null, onClose = null }) {
           : 'Vos données restent sur votre téléphone. Le premium vous aide à voir ce qui va avec vos bons et mauvais jours.'}
       </p>
 
-      <ul className="paywall-benefits">
-        {BENEFITS.map((b) => (
-          <li key={b}>{b}</li>
-        ))}
-      </ul>
+      {/* Seulement ce qui marche aujourd'hui (VC-17) ; le reste dans « détails » */}
+      <div className="paywall-benefits-box">
+        <ul className="paywall-benefits">
+          {deliveredBenefits().map((b) => (
+            <li key={b.id}>{b.label}</li>
+          ))}
+        </ul>
+        {upcomingBenefits().length > 0 && (
+          <div className="paywall-upcoming">
+            <div className="paywall-upcoming-head">
+              <span>En préparation, inclus sans supplément</span>
+              <DetailsToggle on={details} onToggle={() => setDetails((v) => !v)} />
+            </div>
+            {details && (
+              <ul className="paywall-upcoming-list" aria-label="En préparation">
+                {upcomingBenefits().map((b) => (
+                  <li key={b.id}>{b.label}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+      </div>
 
       <p className="paywall-free">
         <strong>Toujours gratuit :</strong> journal, imports des montres, bien-être estimé, graphiques et export de vos
