@@ -51,7 +51,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   `npm run visual` n'exerce pas les plugins natifs.
 - [ ] **VC-10** « Supprimer toutes mes données » dans Réglages → Données (avec export proposé avant), aujourd'hui
   seulement « désinstaller / effacer les données Android » d'après la politique de confidentialité.
-- [ ] **VC-11 (avant le jalon 4, I153)** première synchro Health Connect : `DEFAULT_HISTORY_DAYS = 180`
+- [x] **VC-11 (avant le jalon 4, I153) — FAIT le 23/10 09:30** (`connectors/syncWindow.js` ; reste : message exact d'Android à relever sur l'émulateur) première synchro Health Connect : `DEFAULT_HISTORY_DAYS = 180`
   (`connectors/autoSync.js:28`, `pages/Connectors.jsx:28`) alors que, sans `READ_HEALTH_DATA_HISTORY` (déclarée nulle
   part), Android refuse toute lecture antérieure à « première autorisation − 30 j » ; et `lastSyncAt` avance même si
   tous les types ont échoué → les 30 jours ne seraient jamais importés sur une installation neuve. Correctif : noter

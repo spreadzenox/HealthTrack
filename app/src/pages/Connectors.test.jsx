@@ -318,4 +318,45 @@ describe('Connectors page', () => {
       window.Capacitor = previous
     }
   })
+
+  describe('VC-11 : fenêtre de 30 jours de Health Connect', () => {
+    async function setupGranted(syncResult) {
+      const { CONNECTORS } = await import('../connectors/connectorRegistry')
+      const c = CONNECTORS[0]
+      c.readWindowDays = 29
+      c.availabilityDetails.mockResolvedValue({ available: true })
+      c.checkPermissions.mockResolvedValue('granted')
+      c.sync.mockResolvedValue(syncResult)
+      const { getConnectorSettings, setConnectorSettings } = await import('../settings/connectorSettings')
+      const firstGrantAt = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
+      getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null, firstGrantAt })
+      return { c, setConnectorSettings, firstGrantAt }
+    }
+
+    it('limite le premier import à 30 jours et explique pourquoi', async () => {
+      const { c, firstGrantAt } = await setupGranted({ synced: 12, skipped: 0, errors: [] })
+      const { unmount } = renderConnectors()
+      const select = await screen.findByLabelText(/Importer l'historique des derniers/)
+      expect([...select.options].map((o) => o.textContent)).toEqual(['7 jours', '30 jours'])
+      expect(screen.getByText(/30 jours qui précèdent votre première autorisation/)).toBeInTheDocument()
+      fireEvent.click(await screen.findByRole('button', { name: /Importer l'historique/ }))
+      await waitFor(() => expect(c.sync).toHaveBeenCalled())
+      // 30 jours par défaut (29 j lisibles), jamais avant première autorisation − 29 j.
+      const { since, until } = c.sync.mock.calls[0][0]
+      expect(until - since).toBe(29 * 24 * 3600 * 1000)
+      expect(since.getTime()).toBeGreaterThanOrEqual(new Date(firstGrantAt).getTime() - 29 * 24 * 3600 * 1000)
+      delete c.readWindowDays
+      unmount()
+    })
+
+    it("n'avance pas la date de synchro quand rien n'a pu être importé", async () => {
+      const { c, setConnectorSettings } = await setupGranted({ synced: 0, skipped: 0, errors: ['steps: refusé'] })
+      const { unmount } = renderConnectors()
+      fireEvent.click(await screen.findByRole('button', { name: /Importer l'historique/ }))
+      expect(await screen.findByText(/Rien n'a pu être importé/)).toBeInTheDocument()
+      expect(setConnectorSettings).not.toHaveBeenCalledWith('test_connector', expect.objectContaining({ lastSyncAt: expect.anything() }))
+      delete c.readWindowDays
+      unmount()
+    })
+  })
 })

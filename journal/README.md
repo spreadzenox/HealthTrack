@@ -502,6 +502,19 @@ Une ligne « En continuant, vous confirmez avoir 18 ans ou plus » suffit pour l
 6b-2c (lecture des journaux Integrity), puis **VC-11**, puis 4a / 4b / 4c. Détail : [`IDEES.md`](IDEES.md)
 I153–I156. **👉 Toujours en attente de vous : P23** (testeurs sans paiement : « ① + ② » ou autre).
 
+**Run du 23/10 09:30 — l'import « 30 derniers jours » marchera chez les testeurs (VC-11 corrigé).** Ce que vous
+verrez : **rien chez vous** (votre autorisation Health Connect est ancienne, la synchro continue comme avant). Sur un
+téléphone neuf, en revanche, la première synchronisation Health Connect ne demande plus 6 mois — Android les aurait
+refusés en bloc — mais **les 30 jours qui précèdent la première autorisation**, ce qu'Android laisse lire sans
+permission spéciale ; le choix « Importer l'historique des derniers » n'offre plus que **7 jours / 30 jours**, avec
+la phrase « Android laisse lire les 30 jours qui précèdent votre première autorisation ». Et si **toutes** les
+lectures échouent, l'app ne note plus « synchronisé » : elle réessaie une heure plus tard depuis le même point, au
+lieu de perdre l'historique. En coulisses : un petit module `syncWindow` partagé par la synchro automatique et l'écran
+Sources, 23 nouveaux tests. À confirmer sur l'émulateur ou chez un premier testeur : le message exact d'Android. Le
+6b-2c (passer Play Integrity en mode bloquant) attend vos premières analyses IA depuis la version Play. Prochain run
+de code : **jalon 4a** (onboarding, mécanique des écrans). **👉 Toujours en attente de vous : P23** (testeurs sans
+paiement).
+
 *Avant le 20/10 au soir :* **En bref** — **Une seule priorité, à votre demande du 18/10 au soir : que HealthTrack connaisse votre humeur et
 votre bien-être sans que vous ayez rien à saisir.** L'humeur estimée ne viendra que de signaux émotionnels directs
 (visage, voix, et vos notes quand vous le voulez) ; votre usage du téléphone / des réseaux sociaux et les signaux de la
@@ -881,6 +894,7 @@ du jour avec sa fourchette (derrière la porte).
 |---|---|---|
 | 22/10 23:30 — [Relais : analyse des repas en panne (502)](runs/2026-10-22-2330-relais-analyse-502.md) | 🚑 | Révision 6b-1 en ligne mais analyse de test en 502 (relance et appel direct identiques) ; repli sur le modèle suivant aussi pour 400 / 5xx / réponse vide ou illisible (pas 429) ; message exact de Vertex AI dans le résumé du workflow ; 44 tests relais |
 | 23/10 08:30 — [Idées : onboarding spécifié, import Health Connect du jour 1](runs/2026-10-23-0830-idees-onboarding.md) | 💡 | Jalon 4 écran par écran (I154 : 9 écrans, 4a / 4b / 4c, paywall soft, notifications hors onboarding) ; **VC-11** (I153 : 1re synchro HC sur 180 j alors que 30 j autorisés → rien importé sur installation neuve, `lastSyncAt` avance quand même) ; I155–I156 ; journal seul |
+| 23/10 09:30 — [VC-11 : import Health Connect borné à 30 jours](runs/2026-10-23-0930-vc11-fenetre-hc.md) | 🧭 | `syncWindow.js` : 1re synchro HC bornée à 1re autorisation − 29 j (`firstGrantAt` noté sur installation neuve seulement) ; `lastSyncAt` n'avance plus si tout échoue (`lastAttemptAt`, réessai après 1 h) ; choix 7 / 30 jours + phrase ; 23 tests |
 | 23/10 01:30 — [6c-1 : droits premium lus auprès du relais](runs/2026-10-23-0130-6c1-abonnement.md) | 🧭💳 | Relais vérifié vert (HTTP 200 `gemini-3.5-flash-lite`, relay-runtime lit les achats) ; `services/entitlement.js` + bloc « Abonnement » (play) + lien de gestion Play ; `--subscription` dans le visuel ; 1 885 Vitest ; PR (voir le compte rendu) |
 | 23/10 02:30 — [6c-2 : Google Play Billing (variante play)](runs/2026-10-23-0230-6c2-play-billing.md) | 🧭💳 | Plugin maison `PlayBillingPlugin` (PBL 8.3.0, `src/play/java`, sideload sans BILLING) au lieu de cdv-purchase ; `playBilling.js` (formules lues chez Google, achat revérifié par le relais, restauration) ; « Restaurer un achat » ; sécurité des données + confidentialité (achats) ; 1 902 Vitest |
 | 23/10 03:30 — [6c-3 : paywall (variante play)](runs/2026-10-23-0330-6c3-paywall.md) | 🧭💳 | Page `/premium` de la maquette, prix / essai / économie calculés sur Play Billing ; état « aucune formule » ; « Découvrir le premium » dans les Paramètres ; faux plugin Play Billing pour les captures ; 1 913 Vitest |

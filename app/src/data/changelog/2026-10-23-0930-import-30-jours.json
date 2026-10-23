@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-23",
+  "kind": "correctif",
+  "title": "Health Connect : le premier import récupère bien vos 30 derniers jours",
+  "items": [
+    "Sur un téléphone où l'app vient d'être autorisée, Android ne laisse lire que les 30 jours qui précèdent cette autorisation : le premier import s'y limite désormais, au lieu de demander 6 mois et de tout se voir refuser.",
+    "Si rien n'a pu être importé, l'app ne se croit plus « à jour » : elle réessaie une heure plus tard sans perdre l'historique.",
+    "Si votre autorisation est ancienne, rien ne change pour vous."
+  ]
+}
