@@ -31,3 +31,12 @@ export function sleepSequenceFile(nights) {
   })
   return Uint8Array.from([...be(records.length, 4), ...be(700013, 4), ...be(0x16, 2), ...be(1, 2), ...new Array(20).fill(0), ...records])
 }
+
+/**
+ * Fichier de stress « rrisqi_data.bin » (§7.6) : en-tête de 48 octets puis un enregistrement de 66 octets par mesure.
+ * @param records [{ startSec, endSec, score, level }]
+ */
+export function stressFile(records, { version = 3 } = {}) {
+  const body = records.flatMap((r) => [...be(r.startSec, 4), ...be(r.endSec, 4), 0, 0, 0, 1, r.score, r.level ?? 0, 0, 0, 0, 0, ...new Array(48).fill(0)])
+  return Uint8Array.from([...be(body.length, 8), 0, 1, ...be(version, 2), ...new Array(36).fill(0), ...body])
+}

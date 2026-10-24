@@ -147,8 +147,10 @@ export function createWatchSync({
     const { since, until } = syncWindow(lastUntil, t)
     log(`lecture du ${new Date(since).toISOString().slice(0, 16)} au ${new Date(until).toISOString().slice(0, 16)} (UTC)${lastUntil ? '' : ' — première synchro'}`)
     const sleepSince = sleepFileSince(prev, since, until)
+    // Stress (M4) : même rattrapage que le sommeil détaillé, avec sa propre date de reprise
+    const stressSince = sleepFileSince(prev?.stressFileUntil ? { sleepFileUntil: prev.stressFileUntil } : null, since, until)
     const skinTempContinuous = pendingSkinTemp(getSkinTempContinuous(storage), watchKey)
-    const data = await readWatchData(session, { since, until, now: t, log, caps, sleepSince, dictionarySince: prev?.dictUntil || {}, skinTempContinuous })
+    const data = await readWatchData(session, { since, until, now: t, log, caps, sleepSince, stressSince, dictionarySince: prev?.dictUntil || {}, skinTempContinuous })
     if (data.settings?.skinTemp) noteSkinTemp(data.settings.skinTemp, skinTempContinuous, watchKey, storage, t)
     return writeWatchData(data, { t, since, until, lastUntil, watchKey, watchName, write, clear, clearTotals, storage, log })
   }
@@ -189,10 +191,13 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   const sleepRead = (data.services || []).find((r) => r.id === 'sleepFile')
   const prevSleep = getWatchSyncState(watchKey, storage)?.sleepFileUntil
   const sleepFileUntil = sleepRead && ['ok', 'empty'].includes(sleepRead.outcome) ? Math.max(until, prevSleep || 0) : prevSleep
+  const stressRead = (data.services || []).find((r) => r.id === 'stress')
+  const prevStress = getWatchSyncState(watchKey, storage)?.stressFileUntil
+  const stressFileUntil = stressRead && ['ok', 'empty'].includes(stressRead.outcome) ? Math.max(until, prevStress || 0) : prevStress
   // Dictionnaire (P2P) : par classe, le dernier instant lu ; la prochaine synchro repart juste après (§10.10)
   const dictUntil = { ...(getWatchSyncState(watchKey, storage)?.dictUntil || {}) }
   for (const [cls, ms] of Object.entries(data.dictionary || {})) dictUntil[cls] = Math.max(ms, dictUntil[cls] || 0)
-  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds, ...(sleepFileUntil ? { sleepFileUntil } : {}), ...(Object.keys(dictUntil).length ? { dictUntil } : {}) }, storage)
+  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds, ...(sleepFileUntil ? { sleepFileUntil } : {}), ...(stressFileUntil ? { stressFileUntil } : {}), ...(Object.keys(dictUntil).length ? { dictUntil } : {}) }, storage)
   if (inserted > 0 && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('health-entries-updated'))
   const parts = [plural(data.minutes.length, 'minute', 'minutes')]
   if (nights) parts.push(plural(nights, 'nuit', 'nuits'))
@@ -200,6 +205,7 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   if (data.totals?.steps) parts.push(`${plural(data.totals.steps, 'pas', 'pas')} aujourd’hui`)
   if (data.hrvDay?.length) parts.push(plural(data.hrvDay.length, 'VFC de journée', 'VFC de journée'))
   if (data.skinTemp?.length) parts.push(plural(data.skinTemp.length, 'température de la peau', 'températures de la peau'))
+  if (data.stress?.length) parts.push(plural(data.stress.length, 'mesure de stress', 'mesures de stress'))
   // Où la montre a calé (I69) : dit à l'écran, détaillé dans le journal (`services`, `hints`)
   const stalled = stalledServices(data.services).map((r) => r.label)
   // « nouvelles » : les mesures relues (6 h de recouvrement) déjà enregistrées ne sont pas recomptées

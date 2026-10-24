@@ -195,6 +195,15 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
         payload: { valueC: t, subtype: 'skin', site: 'wrist', watchClass: 400012, connector: 'huawei_watch', sourceName: 'Montre Huawei' },
       })
     }
+    // Stress calculé par la montre Huawei en direct (M4, `watch_stress`) ; valeurs déterministes
+    for (const [h, v] of [[11, 28], [17, 46]]) {
+      watchEntries.push({
+        type: 'watch_stress',
+        source: 'huawei_watch',
+        at: at(day, h, 20),
+        payload: { value: v, unit: 'score', level: v < 30 ? 1 : 2, connector: 'huawei_watch', sourceName: 'Montre Huawei' },
+      })
+    }
     // Respiration et température de nuit (montre via Gadgetbridge → Health Connect) ; valeurs
     // déterministes pour ne pas décaler le tirage aléatoire des autres données de démo.
     watchEntries.push({

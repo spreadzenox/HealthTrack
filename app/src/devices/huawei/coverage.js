@@ -66,7 +66,7 @@ export const WATCH_DATA_KINDS = [
   { id: 'skinTemp', label: 'Température de la peau', reads: ['skinTemp'], match: (e) => e.type === 'body_temperature' && p(e).subtype === 'skin', value: (e) => `${num(p(e).valueC, 1)} °C` },
   { id: 'spo2', label: 'SpO₂', reads: ['minutes', 'sleepFile'], match: isHr('oxygenSaturation'), value: (e) => `${num(p(e).value)} %` },
   { id: 'resp', label: 'Respiration (nuit)', reads: ['sleepFile'], match: (e) => e.type === 'respiratory_rate', value: (e) => `${num(p(e).value, 1)} /min` },
-  { id: 'stress', label: 'Stress', reads: [], planned: true },
+  { id: 'stress', label: 'Stress (montre)', reads: ['stress'], match: (e) => e.type === 'watch_stress', value: (e) => `${num(p(e).value)} / 99` },
   { id: 'hr', label: 'Fréquence cardiaque', reads: ['minutes'], match: isHr('heartRate'), value: (e) => `${num(p(e).bpm)} bpm` },
   { id: 'restingHr', label: 'FC au repos', reads: ['minutes'], match: isHr('restingHeartRate'), value: (e) => `${num(p(e).bpm)} bpm` },
   { id: 'steps', label: 'Pas', reads: ['minutes', 'totals'], match: (e) => e.type === 'steps', group: dayKey, value: (list) => `${num(dayTotal(list))} pas`, unit: ['jour', 'jours'] },
@@ -121,7 +121,7 @@ export function watchCoverage(entries, { now = Date.now(), reads = null } = {}) 
   })
 }
 
-/** « 6 types sur 12 reçus ces 7 derniers jours » (le stress, pas encore lu, n'est pas compté). */
+/** « 6 types sur 13 reçus ces 7 derniers jours » (un type pas encore lu par l'app n'est pas compté). */
 export function coverageSummary(rows) {
   const counted = rows.filter((r) => r.status !== 'planned')
   const ok = counted.filter((r) => r.status === 'ok').length

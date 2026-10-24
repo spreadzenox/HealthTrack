@@ -12,7 +12,7 @@
  * (phases, score, VFC de la nuit) par fichier. Chacune est facultative : un échec n'arrête rien.
  */
 import { decodeTlvs, encodeTlvs, resultCode, RESULT_SUCCESS } from './protocol'
-import { downloadFile, FILE_TYPE, parseSleepSequence, SLEEP_DICTIONARY } from './files'
+import { downloadFile, FILE_TYPE, parseSleepSequence, parseStressFile, SLEEP_DICTIONARY, STRESS_FILE } from './files'
 import { classSince, createP2P, DICT_CLASS, hrvDayValues, P2P_CODE, P2P_COMMAND, P2P_SERVICE, skinTempValues } from './p2p'
 
 export const DEVICE_CONFIG = 1
@@ -23,6 +23,8 @@ export const CONFIG = { SERVICES: 0x02, COMMANDS: 0x03, SETTINGS: 0x31, EXPAND: 
 export const WORKOUT = 0x17
 export const WORKOUT_CMD = { LIST: 0x07, TOTALS: 0x08 }
 export const STRESS = 0x20
+/** Bit de 1/0x31 « RR / stress par la nouvelle synchro » (fichier 0x2C type 0x10, §7.8). */
+export const SETTING_STRESS_FILE = 0x04
 
 export const WATCH_SOURCE = 'huawei_watch'
 /** Début minimal accepté par certaines montres (1/1/2000) : jamais 0. */
@@ -279,6 +281,15 @@ export function canReadSleepFile(caps) {
   return !caps?.expand || hasExpand(caps.expand, EXPAND.SLEEP_DICTIONARY)
 }
 
+/**
+ * Stress (fichier `rrisqi_data.bin`, M4, §10.6) : stress automatique (0x20/0x09) non refusé et bit 0x04 de 1/0x31
+ * levé. Réglages illisibles → on essaie (un échec ne bloque rien).
+ */
+export function canReadStressFile(caps) {
+  if (caps?.commands?.get(`${STRESS}/9`) === false) return false
+  return caps?.settings == null || (caps.settings & SETTING_STRESS_FILE) !== 0
+}
+
 /** Point de départ des phases : l'heure de coucher seulement si la montre annonce la capacité 199 (§10.3). */
 export const sleepFromBedTime = (caps) => !caps?.expand || hasExpand(caps.expand, EXPAND.SLEEP_BED_TIME)
 
@@ -376,7 +387,7 @@ export function spo2SlotEntry(s, values, base = { connector: WATCH_SOURCE }) {
  * Minutes et périodes de sommeil → entrées HealthTrack (source « huawei_watch »).
  * `until` : seules les tranches terminées avant cet instant (ms) sont rendues.
  */
-export function watchEntries({ minutes = [], sleep = [], nights = [], workouts = [], hrvDay = [], skinTemp = [] }, { until, sourceName = 'Montre Huawei' }) {
+export function watchEntries({ minutes = [], sleep = [], nights = [], workouts = [], stress = [], hrvDay = [], skinTemp = [] }, { until, sourceName = 'Montre Huawei' }) {
   const base = { connector: WATCH_SOURCE, sourceName }
   const out = []
   const hourly = new Map()
@@ -453,6 +464,12 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
   for (const h of skinTemp) {
     out.push({ type: 'body_temperature', source: WATCH_SOURCE, at: iso(floorTo(h.start, 60_000)), payload: { valueC: h.value, subtype: 'skin', site: 'wrist', watchClass: DICT_CLASS.SKIN_TEMP, ...base } })
   }
+  // Stress calculé par la montre (fichier rrisqi, M4) : type à part, `watch_stress`, pour ne jamais le confondre avec
+  // le « Stress » que la personne déclare (entrée de l'estimateur du bien-être, D5) : c'est un X, pas un Y.
+  for (const r of stress) {
+    if (!(r.start < until)) continue
+    out.push({ type: 'watch_stress', source: WATCH_SOURCE, at: iso(floorTo(r.start, 60_000)), payload: { value: r.score, unit: 'score', ...(r.level ? { level: r.level } : {}), endDate: iso(r.end), ...base } })
+  }
   for (const w of workouts) {
     if (!(w.end <= until)) continue
     out.push({
@@ -528,6 +545,7 @@ export const SYNC_READS = [
   { id: 'totals', label: 'totaux du jour', command: '7/0x03' },
   { id: 'workouts', label: 'séances', command: '0x17/0x07' },
   { id: 'sleepFile', label: 'sommeil détaillé', command: '0x2C' },
+  { id: 'stress', label: 'stress', command: '0x2C · 0x10' },
   { id: 'hrvDay', label: 'VFC de journée', command: '0x34 · 500044' },
   { id: 'skinTemp', label: 'température de la peau', command: '0x34 · 400012' },
 ]
@@ -637,9 +655,9 @@ export async function applySkinTempSetting(session, caps, on, log = () => {}, { 
  * Chaque lecture est indépendante : un service qui cale n'empêche pas de lire les suivants (`services`).
  * `skinTempContinuous` (true / false) : réglage « mesure continue de la température » à envoyer une fois, choisi par
  * l'utilisateur ; null = rien à envoyer.
- * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], hrvDay: object[], skinTemp: object[], dictionary: object, settings: object, services: object[], hints: string[], capabilities: string }>}
+ * @returns {Promise<{ minutes: object[], sleep: object[], totals: object|null, workouts: object[], nights: object[], stress: object[], hrvDay: object[], skinTemp: object[], dictionary: object, settings: object, services: object[], hints: string[], capabilities: string }>}
  */
-export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset(), caps: knownCaps = null, sleepSince = since - DAY, dictionarySince = {}, p2pTimeout, skinTempContinuous = null }) {
+export async function readWatchData(session, { since, until, now = until, log = () => {}, tzOffsetMinutes = -new Date(now).getTimezoneOffset(), caps: knownCaps = null, sleepSince = since - DAY, stressSince = sleepSince, dictionarySince = {}, p2pTimeout, skinTempContinuous = null }) {
   // heure et capacités déjà envoyées / lues par la fin d'association (pairing.js) : pas de seconde fois
   if (!knownCaps) await setWatchTime(session, now, tzOffsetMinutes, log)
   const caps = knownCaps || (await readCapabilities(session, log))
@@ -687,6 +705,15 @@ export async function readWatchData(session, { since, until, now = until, log = 
       return { items, outcome: items.length ? 'ok' : 'empty' }
     }, [])
   } else skip('sleepFile')
+  let stress = []
+  if (canReadStressFile(caps)) {
+    stress = await attempt('stress', async () => {
+      const file = await downloadFile(session, { name: STRESS_FILE, type: FILE_TYPE.STRESS, startMs: stressSince, endMs: until }, { log })
+      const items = file ? parseStressFile(file).filter((r) => r.start >= stressSince && r.start < until) : []
+      log(`stress : ${items.length} mesure${items.length > 1 ? 's' : ''} depuis le ${new Date(stressSince).toISOString().slice(0, 10)}`)
+      return { items, outcome: items.length ? 'ok' : 'empty' }
+    }, [])
+  } else skip('stress')
   // VFC de journée et température de la peau par la synchro « dictionnaire » (P2P, M2 / M3), une classe après
   // l'autre (§10.10) ; `dictionary` = classe → dernier instant lu (reprise)
   const dict = { hrvDay: [], skinTemp: [] }
@@ -724,7 +751,7 @@ export async function readWatchData(session, { since, until, now = until, log = 
   log(`lectures : ${describeServices(services, { all: true })}`)
   const hints = syncHints(services, { caps, totals })
   for (const h of hints) log(`piste : ${h}`, 'warn')
-  return { minutes, sleep, totals, workouts, nights, hrvDay, skinTemp, dictionary, settings, services, hints, capabilities: describeCapabilities(caps) }
+  return { minutes, sleep, totals, workouts, nights, stress, hrvDay, skinTemp, dictionary, settings, services, hints, capabilities: describeCapabilities(caps) }
 }
 
 /** Reprise après une longue absence : jamais plus de 30 jours relus. */

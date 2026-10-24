@@ -25,6 +25,7 @@ function sample() {
     nights: [night(-1, { hrvMs: 41, respAvg: 14.2, score: 78 }), night(0, { hrvMs: 48, score: 82 }), { start: t(-1, 14), end: t(-1, 14, 40), nap: true, stages: [{ start: t(-1, 14), minutes: 40, stage: 'light' }] }],
     hrvDay: [{ start: t(0, 10), value: 35 }],
     skinTemp: [{ start: t(0, 4), value: 33.74 }],
+    stress: [{ start: t(0, 11), end: t(0, 11, 5), score: 31, level: 2 }, { start: t(-1, 16), end: t(-1, 16, 5), score: 58, level: 2 }],
     workouts: [{ start: t(-2, 18), end: t(-2, 18, 45), sport: 'running', durationSec: 2700 }],
   }
   return [...watchEntries(data, { until: NOW }), ...totalsEntries({ steps: 4321, kcal: 210 }, NOW)].map((e) => ({ ...e }))
@@ -37,8 +38,8 @@ describe('watchCoverage (écran « Montre », M5)', () => {
     const rows = watchCoverage([], { now: NOW })
     expect(rows.map((r) => r.id)).toEqual(WATCH_DATA_KINDS.map((k) => k.id))
     expect(rows.slice(0, 3).map((r) => r.id)).toEqual(['sleep', 'nap', 'hrvNight'])
-    expect(rows.every((r) => r.status === 'none' || r.status === 'planned')).toBe(true)
-    expect(row(rows, 'stress').status).toBe('planned')
+    expect(rows.every((r) => r.status === 'none')).toBe(true)
+    expect(row(rows, 'stress').status).toBe('none')
   })
 
   it('dernière valeur, date et nombre sur 7 jours pour chaque type reçu', () => {
@@ -50,6 +51,7 @@ describe('watchCoverage (écran « Montre », M5)', () => {
     expect(row(rows, 'skinTemp').last.value).toBe('33,7 °C')
     expect(row(rows, 'resp').last.value).toBe('14,2 /min')
     expect(row(rows, 'spo2').last.value).toBe('97 %')
+    expect(row(rows, 'stress')).toMatchObject({ status: 'ok', count: 2, last: { value: '31 / 99' } })
     expect(row(rows, 'hr')).toMatchObject({ status: 'ok', last: { value: '70 bpm' } })
     expect(row(rows, 'restingHr').last.value).toBe('55 bpm')
     // Le total du jour rendu par la montre l'emporte sur la somme des heures
@@ -80,10 +82,11 @@ describe('watchCoverage (écran « Montre », M5)', () => {
     expect(row(rows, 'skinTemp').read.label).toBe('vide')
     expect(row(rows, 'workouts').read).toBeNull()
     expect(readOutcome(WATCH_DATA_KINDS.find((k) => k.id === 'stress'), reads)).toBeNull()
+    expect(row(watchCoverage([], { now: NOW, reads: [{ id: 'stress', outcome: 'ok', count: 4 }] }), 'stress').read.label).toBe('reçu (4)')
   })
 
   it('résumé : types reçus ces 7 jours, sans compter ceux pas encore lus', () => {
-    expect(coverageSummary(watchCoverage(sample(), { now: NOW }))).toBe('12 types sur 12 reçus ces 7 derniers jours')
-    expect(coverageSummary(watchCoverage([], { now: NOW }))).toBe('0 type sur 12 reçu ces 7 derniers jours')
+    expect(coverageSummary(watchCoverage(sample(), { now: NOW }))).toBe('13 types sur 13 reçus ces 7 derniers jours')
+    expect(coverageSummary(watchCoverage([], { now: NOW }))).toBe('0 type sur 13 reçu ces 7 derniers jours')
   })
 })

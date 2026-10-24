@@ -459,7 +459,7 @@ async function main() {
             at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: stalled ? 0 : 9, stalled: stalled ? ['sommeil'] : null, battery: 84, failures: 0, everConnected: true,
             // Issue de chaque lecture (écran « Montre », M5)
             readsAt: t,
-            reads: [['sleep', 'ok'], ['minutes', 'ok'], ['totals', 'ok'], ['workouts', 'empty'], ['sleepFile', stalled ? 'timeout' : 'ok'], ['hrvDay', 'ok'], ['skinTemp', 'ok']].map(([id, outcome]) => ({ id, outcome, count: outcome === 'ok' ? 3 : 0 })),
+            reads: [['sleep', 'ok'], ['minutes', 'ok'], ['totals', 'ok'], ['workouts', 'empty'], ['sleepFile', stalled ? 'timeout' : 'ok'], ['stress', 'ok'], ['hrvDay', 'ok'], ['skinTemp', 'ok']].map(([id, outcome]) => ({ id, outcome, count: outcome === 'ok' ? 3 : 0 })),
           }),
         )
         localStorage.setItem(

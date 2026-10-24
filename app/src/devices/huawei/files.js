@@ -9,6 +9,8 @@ export const FILES = 0x2c
 export const FILE_CMD = { OPEN: 0x01, INFO: 0x03, BLOCK: 0x04, PUSH: 0x05, DONE: 0x06 }
 export const FILE_TYPE = { SLEEP_STATE: 0x0e, STRESS: 0x10, SEQUENCE: 0x16 }
 export const SLEEP_DICTIONARY = 700013
+/** Nom du fichier de stress (type 0x10, §7.6, §10.6). */
+export const STRESS_FILE = 'rrisqi_data.bin'
 /** Taille maxi acceptée pour un fichier (garde-fou : une semaine de sommeil fait quelques Ko). */
 export const MAX_FILE_BYTES = 2 * 1024 * 1024
 
@@ -274,4 +276,32 @@ export function parseSleepSequence(bytes, { bedTime = true } = {}) {
     nights.push(night)
   }
   return nights
+}
+
+// ── Stress (fichier rrisqi_data.bin, type 0x10, M4) ────────────────────────────
+
+/** Version du format de stress connue (§7.6) : les autres sont ignorées plutôt que mal lues. */
+export const STRESS_VERSION = 3
+const STRESS_HEADER = 48
+const STRESS_RECORD = 66
+
+/**
+ * Fichier de stress (gros-boutiste, §7.6) → [{ start, end (ms), score (1–99), level? }]. Le score est calculé par
+ * la montre elle-même ; on ne garde que lui et son niveau (les 12 réels qui suivent ne sont pas documentés).
+ * En-tête : taille (8 octets), masque (2), version (2) ; enregistrements de 66 octets à partir de l'octet 48 :
+ * début (4), fin (4), algorithme (4), score (1), niveau (1), 4 drapeaux, 12 réels de 4 octets.
+ */
+export function parseStressFile(bytes) {
+  const b = bytes instanceof Uint8Array ? bytes : Uint8Array.from(bytes || [])
+  if (b.length < STRESS_HEADER || uint(b.slice(10, 12)) !== STRESS_VERSION) return []
+  const out = []
+  for (let i = STRESS_HEADER; i + STRESS_RECORD <= b.length; i += STRESS_RECORD) {
+    const start = uint(b.slice(i, i + 4)) * 1000
+    const end = uint(b.slice(i + 4, i + 8)) * 1000
+    const score = b[i + 12]
+    const level = b[i + 13]
+    if (!start || end < start || score < 1 || score > 99) continue
+    out.push({ start, end, score, ...(level >= 1 && level <= 4 ? { level } : {}) })
+  }
+  return out
 }

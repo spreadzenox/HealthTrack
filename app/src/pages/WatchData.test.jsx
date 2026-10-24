@@ -24,13 +24,14 @@ describe('WatchData (écran « Montre », M5)', () => {
   it('liste chaque type : dernière valeur, nombre sur 7 jours, ou « rien »', async () => {
     const load = vi.fn(async () => ENTRIES)
     renderPage(load)
-    expect(await screen.findByText('2 types sur 12 reçus ces 7 derniers jours')).toBeInTheDocument()
+    expect(await screen.findByText('2 types sur 13 reçus ces 7 derniers jours')).toBeInTheDocument()
     const list = screen.getByRole('list', { name: 'Données de la montre' })
     expect(within(list).getAllByRole('listitem')).toHaveLength(13)
     expect(within(list).getByText('35 ms')).toBeInTheDocument()
     expect(within(list).getByText('33,6 °C')).toBeInTheDocument()
-    expect(within(list).getAllByText('Rien reçu depuis 30 jours.').length).toBe(10)
-    expect(within(list).getByText(/prévu dans une prochaine version/)).toBeInTheDocument()
+    expect(within(list).getAllByText('Rien reçu depuis 30 jours.').length).toBe(11)
+    // M4 : le stress est lu, plus aucun type « à venir »
+    expect(within(list).queryByText(/prévu dans une prochaine version/)).toBeNull()
     // Une seule lecture de la base, sur 30 jours
     expect(load).toHaveBeenCalledTimes(1)
     expect(load).toHaveBeenCalledWith(NOW)
@@ -42,7 +43,7 @@ describe('WatchData (écran « Montre », M5)', () => {
       JSON.stringify({ readsAt: new Date(NOW - 2 * 3600_000).toISOString(), reads: [{ id: 'sleepFile', outcome: 'timeout', count: 0 }, { id: 'sleep', outcome: 'empty', count: 0 }] }),
     )
     renderPage(async () => [])
-    expect(await screen.findByText('0 type sur 12 reçu ces 7 derniers jours')).toBeInTheDocument()
+    expect(await screen.findByText('0 type sur 13 reçu ces 7 derniers jours')).toBeInTheDocument()
     expect(screen.getByText(/Dernière lecture par l’app/)).toBeInTheDocument()
     expect(screen.getAllByText(/dernière lecture : sans réponse/).length).toBeGreaterThan(0)
     expect(screen.getByText(/dernière lecture : vide/)).toBeInTheDocument()

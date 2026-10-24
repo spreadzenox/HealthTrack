@@ -40,6 +40,7 @@ const TYPE_LABELS = {
   phone_usage: 'Téléphone',
   phone_apps: 'Temps par app',
   context: 'Fuseau horaire',
+  watch_stress: 'Stress (montre)',
 }
 
 function entryTitle(e) {
@@ -151,6 +152,7 @@ function summaryChips(s) {
   if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
   if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])
   if (s.skinTempC != null) chips.push(['Temp. peau', `${frNumber(s.skinTempC)} °C`])
+  if (s.watchStress != null) chips.push(['Stress montre', `${s.watchStress} / 99`])
   if (s.bloodPressure) chips.push(['Tension', `${s.bloodPressure.systolic}/${s.bloodPressure.diastolic} mmHg`])
   if (s.glucoseMgDl != null) {
     chips.push(['Glycémie', `${(s.glucoseMgDl / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g/L`])
