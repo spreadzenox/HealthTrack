@@ -1277,6 +1277,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 
 ## Livré
 
+- [x] 2026-10-24 — CI : envoi Google Play (AAB et fiche) réessayé automatiquement sur 429/5xx (`withRetry`), après l'échec de la v394 sur un 503 passager de Google (run 03:30 Paris)
 - [x] 2026-10-17 — D1 : saisie bien-être allégée (pas de modale auto < 3 h après une note, échelle en une ligne, « Repéré sans vous : … »), ligne Données de Plus fidèle ; PR #197 fusionnée en début de run (run 18:30 Paris)
 - [x] 2026-10-17 — D1 : Analyse avancée en mots simples (titres, fiabilité), légende des barres « le plus influent = 100 % » dite une fois ; Plus : ligne Paramètres fidèle ; PR #196 du run 14:30 fusionnée (run 16:30 Paris)
 - [x] 2026-10-17 — D1 : I85 ②b « Voyage » déduit des changements de fuseau horaire (entrée `context` par jour, saisie, Analyses, Radar) (run 10:30 Paris)

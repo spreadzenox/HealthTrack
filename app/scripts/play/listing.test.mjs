@@ -48,7 +48,7 @@ const happy = (remote = {}) => ({
   [`DELETE ${EDITS}/E1`]: { body: {} },
 })
 
-const args = (fetchImpl, extra = {}) => ({ packageName: PKG, listing, images, website: 'https://site.example/', token: 'tok', fetchImpl, ...extra })
+const args = (fetchImpl, extra = {}) => ({ packageName: PKG, listing, images, website: 'https://site.example/', token: 'tok', fetchImpl, sleep: async () => {}, ...extra })
 
 describe('fiche du Store par l’API (jalon 10)', () => {
   it('envoie textes, images et site web dans un edit, puis valide', async () => {

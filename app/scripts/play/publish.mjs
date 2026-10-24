@@ -48,6 +48,28 @@ export function buildReleaseNotes(entries, max = NOTES_MAX) {
   return lines.join('\n')
 }
 
+/** Délais (ms) entre les réessais d'une panne passagère de Play ; quatre essais en tout, ~35 s au pire. */
+export const RETRY_DELAYS_MS = [5000, 10000, 20000]
+const TRANSIENT = new Set([429, 500, 502, 503, 504])
+const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+
+/**
+ * Enveloppe `fetchImpl` pour réessayer les pannes passagères (5xx, 429) — par ex. le 503 « service
+ * unavailable » du 24/10 qui a fait échouer l'envoi de la version 394. Les refus (4xx) ne sont jamais
+ * réessayés ; après le dernier délai, la dernière réponse est rendue telle quelle.
+ */
+export function withRetry(fetchImpl, { delays = RETRY_DELAYS_MS, sleep = wait } = {}) {
+  return async (url, init) => {
+    let res = await fetchImpl(url, init)
+    for (const ms of delays) {
+      if (!TRANSIENT.has(res.status)) break
+      await sleep(ms)
+      res = await fetchImpl(url, init)
+    }
+    return res
+  }
+}
+
 async function call(fetchImpl, step, url, { method = 'GET', token, body, contentType = 'application/json' } = {}) {
   const res = await fetchImpl(url, {
     method,
@@ -71,8 +93,9 @@ async function call(fetchImpl, step, url, { method = 'GET', token, body, content
  * Cas gérés : app encore « brouillon » côté Play (version créée en brouillon), validation qui demande
  * changesNotSentForReview, versionCode déjà envoyé (relance d'un run).
  */
-export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, fetchImpl = fetch, log = () => {} }) {
+export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, fetchImpl = fetch, sleep, log = () => {} }) {
   if (!ALLOWED_TRACKS.includes(track)) throw new Error(`Piste « ${track} » refusée : seules ${ALLOWED_TRACKS.join(', ')} sont autorisées.`)
+  fetchImpl = withRetry(fetchImpl, { sleep })
   const base = `${API}/${packageName}/edits`
   const edit = await call(fetchImpl, 'Ouverture de l’edit', base, { method: 'POST', token, body: {} })
   const editUrl = `${base}/${edit.id}`

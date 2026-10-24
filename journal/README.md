@@ -612,6 +612,14 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 24/10 03:30 — l'envoi automatique sur Google Play résiste aux pannes passagères de Google.** Rien ne
+change dans l'app. En coulisses : l'envoi de la **version play 394** (conditions d'utilisation) avait échoué cette
+nuit sur un **« 503 — service momentanément indisponible »** des serveurs de Google, à la toute première lecture. Le
+job a été relancé, et surtout le script d'envoi (AAB et fiche du Store) **réessaie désormais tout seul** jusqu'à trois
+fois (après 5, 10 puis 20 s) quand Google répond 429 ou 5xx ; les vrais refus (accès, version déjà envoyée…) ne sont
+jamais réessayés. Rien à faire de votre côté. **Prochain run de code : VC-18, 2ᵉ moitié** (rappel local J−2 de fin
+d'essai), puis VC-15 et VC-5.
+
 **Run du 24/10 02:30 — les conditions d'utilisation et de vente existent (VC-18, 1ʳᵉ moitié).** Ce que vous
 verrez : Réglages → **Conditions**, et un lien **« Conditions »** à côté de « Confidentialité » en bas de l'écran
 premium. La page dit, en mots simples : ce que fait l'app (des pistes, « une estimation, pas un diagnostic », pas un
@@ -1085,6 +1093,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 20:30 — [Idées : audit play vierge après les correctifs VC](runs/2026-10-23-2030-idees-audit-vc.md) | 💡 | 18 captures `--play --empty` relues (0 erreur JS) ; **paywall : 3 avantages sur 4 non livrés → P25** ; VC-12 (Pistes : 2 seuils contradictoires), VC-13 (guide Huawei → Gadgetbridge + cookie F12 en play), VC-14 (cigarettes), VC-15 (émojis, apostrophes), VC-16 (Tendances) ; journal seul |
 | 24/10 01:30 — [VC-10 : supprimer toutes mes données](runs/2026-10-24-0130-vc10-supprimer-donnees.md) | 🧭 | `deleteAllEntries` + `services/deleteAllData.js` (`DELETED_KEYS` / `KEPT_KEYS`) ; bloc « Supprimer » de Données (compte, export d'abord, confirmation) ; politique de confidentialité ; 2 054 Vitest |
 | 24/10 02:30 — [VC-18a : conditions d'utilisation et de vente](runs/2026-10-24-0230-vc18a-conditions.md) | 🧭 | `public/conditions.html` (brouillon P5, crédits vérifiés contre `relay/src/config.js`, aucun prix en dur) ; GitHub Pages `/conditions/` ; lien « Conditions » du paywall et de Réglages ; P26 (médiateur) |
+| 24/10 03:30 — [CI : réessais Play sur 5xx](runs/2026-10-24-0330-ci-play-reessais.md) | 🔧 | « Play — AAB » rouge sur un 503 de Google (v394) : job relancé ; `withRetry` (429/5xx, 5-10-20 s) dans `scripts/play/publish.mjs`, utilisé aussi par la fiche ; 4 tests |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |

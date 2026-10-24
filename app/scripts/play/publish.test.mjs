@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { publishBundle, buildReleaseNotes, isAccessDenied, PlayApiError, API, UPLOAD_API } from './publish.mjs'
+import { publishBundle, buildReleaseNotes, isAccessDenied, withRetry, PlayApiError, API, UPLOAD_API } from './publish.mjs'
 
 const PKG = 'fr.jpesquet.sante'
 const EDITS = `${API}/${PKG}/edits`
@@ -29,7 +29,7 @@ const happy = () => ({
   [`DELETE ${EDITS}/E1`]: { body: {} },
 })
 
-const args = (fetchImpl, extra = {}) => ({ packageName: PKG, aab: new Uint8Array([1, 2, 3]), versionCode: 350, notes: '• Nouveau', token: 'tok', fetchImpl, ...extra })
+const args = (fetchImpl, extra = {}) => ({ packageName: PKG, aab: new Uint8Array([1, 2, 3]), versionCode: 350, notes: '• Nouveau', token: 'tok', fetchImpl, sleep: async () => {}, ...extra })
 
 describe('envoi Google Play (jalon 3c)', () => {
   it('ouvre un edit, importe l’AAB, crée la version de test interne avec ses notes, puis valide', async () => {
@@ -118,5 +118,38 @@ describe('notes de version', () => {
     const notes = buildReleaseNotes(many)
     expect(notes.length).toBeLessThanOrEqual(500)
     expect(notes.split('\n').every((l) => /^• Titre numéro \d+ assez long pour remplir$/.test(l))).toBe(true)
+  })
+})
+
+describe('réessais sur les pannes passagères de Play (5xx, 429)', () => {
+  const res = (status) => ({ ok: status < 300, status, text: async () => '{}' })
+  const noWait = vi.fn(async () => {})
+
+  it('réessaie un 503 puis réussit, sans réessayer ce qui a réussi', async () => {
+    const f = vi.fn().mockResolvedValueOnce(res(503)).mockResolvedValueOnce(res(200))
+    const r = await withRetry(f, { delays: [1, 2, 3], sleep: noWait })('u', {})
+    expect(r.status).toBe(200)
+    expect(f).toHaveBeenCalledTimes(2)
+  })
+
+  it('abandonne après le dernier délai et rend la dernière réponse', async () => {
+    const f = vi.fn().mockResolvedValue(res(500))
+    const r = await withRetry(f, { delays: [1, 2], sleep: noWait })('u', {})
+    expect(r.status).toBe(500)
+    expect(f).toHaveBeenCalledTimes(3)
+  })
+
+  it('ne réessaie pas les refus (4xx hors 429)', async () => {
+    const f = vi.fn().mockResolvedValue(res(403))
+    await withRetry(f, { delays: [1], sleep: noWait })('u', {})
+    expect(f).toHaveBeenCalledTimes(1)
+  })
+
+  it('l’envoi survit à un 503 passager sur la lecture de la fiche', async () => {
+    const routes = happy()
+    routes[`GET ${EDITS}/E1/details`] = [{ status: 503, body: { error: { message: 'The service is currently unavailable.' } } }, { body: { defaultLanguage: 'fr-FR' } }]
+    const { fetchImpl } = fakePlay(routes)
+    const r = await publishBundle(args(fetchImpl, { sleep: noWait }))
+    expect(r.outcome).toBe('published')
   })
 })

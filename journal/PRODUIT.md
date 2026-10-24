@@ -150,6 +150,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **24/10 03:30** — CI : « Play — AAB » rouge sur un 503 passager de Google (version 394) ; job relancé et réessais automatiques (429/5xx) dans l'envoi de l'AAB et de la fiche. Prochain : VC-18b, VC-15, VC-5.
 - **24/10 02:30** — **VC-18a** : conditions d'utilisation et de vente (`public/conditions.html`, brouillon P5), publiées à `/conditions/` par GitHub Pages, liées depuis le paywall et Réglages ; P26 (médiateur de la consommation). Prochain : VC-18b (rappel J−2), VC-15, VC-5.
 - **24/10 01:30** — **VC-10** : Réglages → Données → « Supprimer toutes mes données » (nombre d'entrées, export proposé avant ; réglages, connexions, appairage de la montre et abonnement gardés) ; politique de confidentialité à jour. Prochain : VC-18, VC-15, VC-5.
 - **23/10 23:30** — **VC-17** : paywall honnête (P25 ① par défaut) — seule l'analyse IA (10 / jour) cochée, pistes / FODMAP / PDF sous « En préparation, inclus sans supplément ». Prochain : VC-18 (rappel d'essai, Conditions), VC-15, VC-5.
