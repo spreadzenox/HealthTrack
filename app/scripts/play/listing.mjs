@@ -10,7 +10,7 @@
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { API, UPLOAD_API, PlayApiError } from './publish.mjs'
+import { API, UPLOAD_API, PlayApiError, withRetry } from './publish.mjs'
 
 /** Limites de Play (caractères) et des images. */
 export const LIMITS = { title: 30, shortDescription: 80, fullDescription: 4000, screenshotsMin: 2, screenshotsMax: 8 }
@@ -105,7 +105,8 @@ async function call(fetchImpl, step, url, { method = 'GET', token, body, content
  * Renvoie { language, defaultLanguage, images: { type: 'inchangées' | nombre envoyé }, website, notSentForReview }.
  * Le site web est facultatif : un refus de Play (coordonnées incomplètes) est rapporté sans faire échouer la fiche.
  */
-export async function publishListing({ packageName, listing, images, website, token, fetchImpl = fetch, log = () => {} }) {
+export async function publishListing({ packageName, listing, images, website, token, fetchImpl = fetch, sleep, log = () => {} }) {
+  fetchImpl = withRetry(fetchImpl, { sleep })
   const base = `${API}/${packageName}/edits`
   const edit = await call(fetchImpl, 'Ouverture de l’edit', base, { method: 'POST', token, body: {} })
   const editUrl = `${base}/${edit.id}`
