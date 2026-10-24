@@ -658,6 +658,26 @@ une ou deux fois avec la montre au poignet ; ouvrez ensuite Sources → montre �
 détaillé » doit dater de la nuit. **Prochain run de code** : M6 suite (VFC de journée et température de la peau en
 arrière-plan, P2P), puis M7 (courbe FC et allure des séances). **👉 Votre prochaine action la plus utile reste P27**.
 
+**Run « idées » du 24/10 20:30 — P28 est prêt pour vous, et les deux derniers écrans chargés sont dessinés (rien
+de nouveau dans l'app).** ① **P28 (lecture au déverrouillage dans la version Play)** : j'ai relu les règles Google sur
+les services de premier plan. Google demande, pour la caméra, une description, l'impact si Android retarde ou coupe la
+tâche, et **une vidéo** du chemin de l'utilisateur ; la fonction doit être allumée par vous, visible en permanence
+(notification « Lecture du visage active » avec « Arrêter ») et arrêtable d'un geste. Android 15 interdit aussi de la
+relancer au démarrage du téléphone : dans la version Play, elle reprendra à la prochaine ouverture de l'app. Le
+**texte exact à coller** (en anglais, avec sa traduction), le **script de la vidéo de 60 à 90 s sur votre Galaxy A56**
+(8 plans) et l'**ordre des gestes** sont dans [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis. **Rien à faire tout
+de suite** : la vidéo doit montrer la fonction, donc un run de code livrera d'abord un **APK d'aperçu** de la version
+Play (qui s'installe à côté de celle du Play Store), que vous filmerez. ② **Onglet « Analyses » (POL-7)** : d'après les
+captures, l'écran fait 4 hauteurs d'écran, affiche « Alcool » deux fois avec deux verdicts, deux « Comment c'est
+calculé » et des chiffres techniques dès la première lecture. Maquette proposée : au plus 3 « pistes à tester » en
+cartes dépliables, puis une seule liste « autres liens repérés » (un verdict par facteur), une ligne discrète
+« bientôt » par bloc qui manque de données, et la méthode en tout petit en bas ; aucun calcul ne change.
+③ **Onglet « Sources » (POL-8)** : ne montrer que ce qui envoie déjà, puis ce qui est **trouvé sur le téléphone**
+(la carte montre Huawei seulement si Huawei Health est installée ou une montre déjà appairée) ; météo, temps d'écran
+et visage toujours ; un bouton « Ajouter une source » pour le reste ; le technique seulement en mode diagnostic.
+Détail : [`IDEES.md`](IDEES.md) I162–I164. **Prochain run de code : POL-7.** **👉 Votre prochaine action** : rien de
+bloquant ; P13 (virement de test) dès qu'il arrive.
+
 **Run du 24/10 19:30 — l'historique de votre bien-être (POL-2).** Ce que vous verrez : en bas de la carte « Bien-être
 estimé », **« Historique › »** ouvre une page avec **Jour / Semaine / Mois** : la courbe de votre bien-être estimé (en
 Jour, chaque lecture avec sa fourchette ; en Semaine et Mois, un point par jour, creux s'il y a eu peu de lectures), vos
@@ -1315,6 +1335,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 17:30 — [POL-5 + POL-4 : Accueil](runs/2026-10-24-1730-pol5-pol4-accueil.md) | 🧭 | « Photo du repas » pleine largeur + icône `camera`, « Ajouter une note » (`pen`) ; `gutCardMode` (ventre → carte, énergie / tout → aucune, sans objectif : `existing` → `GutCard onlyIfUsed`, sinon carte) ; texte « Ce qui vous amène » ; captures clair / sombre / vierge play |
 | 24/10 18:30 — [POL-3 : carte bien-être](runs/2026-10-24-1830-pol3-carte-bien-etre.md) | 🧭 | `DetailsToggle` → chevron (`aria-expanded`, partout) ; détails visuels (`MoodRange`, `ConfidenceBadge`, pastilles, modèle en petit) ; « Noter moi-même » dans la carte, « Ajouter une note » retiré ; `WellbeingPrompt` seulement contrôlée (plus d'ouverture auto) |
 | 24/10 19:30 — [POL-2 : historique du bien-être](runs/2026-10-24-1930-pol2-historique-bien-etre.md) | 🧭 | `FaceAffect.expressions` (softmax des 8 scores) gardées par rafale (`exAnger`…`exSurprise`, JUnit) ; `wellbeingHistory.js` (jour / semaine / mois, notes à part) ; page `/bien-etre` (courbe SVG, valence / éveil, barres d'expressions) ; lien « Historique › » dans la carte ; démo avec expressions |
+| 24/10 20:30 — [Idées : P28 prêt, POL-7 et POL-8 maquettés](runs/2026-10-24-2030-idees-p28-pol7-pol8.md) | 💡 | Règles FGS caméra relues (formulaire : description, impact, vidéo, cas d'usage ; Android 15 : pas de relance au démarrage) → `PLAY-CONFORMITE.md` §1 bis (texte à coller, script vidéo en 8 plans, ordre des gestes, APK d'aperçu) ; I163 maquette Analyses ; I164 maquette Sources ; journal seul |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

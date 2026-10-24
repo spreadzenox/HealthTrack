@@ -44,6 +44,102 @@ Shizuku. Les scores produits sont les mêmes (mêmes modèles HSEmotion, mêmes 
 tout (option A). Le **plus sûr** est B : aucune déclaration FGS à remplir, rien ne se passe sans que la personne ne
 regarde l'écran.
 
+## 1 bis. Décision du 24/10 : lecture au déverrouillage tentée aussi dans la version Play (POL-1, P28)
+
+Le propriétaire a décidé le 24/10 vers 15:00, en connaissance du risque (option A jugée « risque fort de refus »
+ci-dessus), de **tenter** la lecture au déverrouillage dans la version Play : c'est pour lui une des grandes valeurs
+de l'app (bien plus de lectures par jour). L'option B (lecture à l'ouverture) reste en place et sert de secours.
+
+**Règles relues le 24/10 (20:30)** — aide Play Console answer/13392821 et answer/16965181, Policy Center
+« Device and Network Abuse » (answer/16559646), Android « Changes to foreground service types for Android 15 » :
+- Pour chaque type de service de premier plan, la Play Console demande : description, **impact si le système
+  diffère ou interrompt la tâche**, **lien vers une vidéo** du chemin de l'utilisateur, et un cas d'usage (liste ;
+  pour `camera`, seulement « Background Camera Streaming », sinon saisie libre).
+- Usage autorisé seulement s'il est **lancé par l'utilisateur ou perceptible** (une notification permanente claire
+  et exacte le rend perceptible), **arrêtable par l'utilisateur**, non différable sans nuire, et limité au temps
+  nécessaire.
+- Android 15+ : **pas de service caméra démarré depuis `BOOT_COMPLETED`**. Android 11+ : la caméra n'est accessible
+  depuis l'arrière-plan que si le service de type `camera` a été démarré **app à l'écran** (c'est déjà le cas en
+  sideload).
+
+**Comment POL-1 doit être construit pour être défendable** (cahier des charges du run de code) :
+1. Interrupteur de build propre à play (`FACE_UNLOCK_PLAY`, désactivé par défaut) : s'il est coupé, le manifeste play
+   continue de retirer `FaceSenseService` et `FOREGROUND_SERVICE(_CAMERA)` comme aujourd'hui (les versions suivantes
+   partent même si Google refuse).
+2. Activation **seulement** par un geste : Sources → Lecture du visage → interrupteur « Aussi à chaque déverrouillage »
+   → feuille de divulgation (ce qui est lu : 3 images de la caméra frontale à chaque déverrouillage ; quand : seulement
+   tant que la notification est là ; ce qui est gardé : quelques nombres, aucune image ; un système d'IA de
+   reconnaissance des émotions, art. 50 AI Act ; une estimation, pas un diagnostic) → bouton « J'active la lecture au
+   déverrouillage » / « Pas maintenant ».
+3. **Notification permanente** « Lecture du visage active » avec le bouton **« Arrêter »** ; l'indicateur caméra vert
+   d'Android s'allume à chaque lecture.
+4. Réglage pour couper à tout moment (même carte, et Paramètres). Service démarré **seulement app ouverte** ;
+   **aucune relance au démarrage du téléphone** (la notification de reprise invite à ouvrir l'app) ; ni
+   `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`, ni guide Shizuku / ADB.
+5. Sideload inchangée.
+
+### P28 — texte exact à coller dans la Play Console
+
+Où : Play Console → Halcya → **Surveiller et améliorer → Règles et programmes → Contenu de l'app** → « Autorisations
+des services de premier plan » (si la ligne n'existe pas encore, voir « Ordre des gestes » ci-dessous) → cocher
+**Caméra** → remplir. Le texte est en anglais (lu par l'équipe d'examen) ; la version française sert de référence.
+
+- **Cas d'usage** : « Autre » (saisie libre) → `User-enabled wellbeing check-in at phone unlock`
+- **Description de la fonction** (anglais, à coller) :
+  > Optional feature that the user turns on explicitly in the app (Sources > Face reading > "Also at each unlock"),
+  > after an in-app disclosure. While it is on, a persistent notification "Face reading active" with a "Stop" button
+  > is shown. Each time the user unlocks the phone, the service takes 3 frames from the front camera, runs two
+  > on-device emotion-estimation models, keeps only a few numbers (wellbeing score, valence, arousal) and discards the
+  > images immediately. Nothing leaves the device. The service is started only while the app is in the foreground and
+  > is never restarted at boot.
+
+  (FR : fonction facultative, activée par un geste explicite après une divulgation ; tant qu'elle est active, une
+  notification permanente « Lecture du visage active » avec « Arrêter » est affichée ; à chaque déverrouillage,
+  3 images de la caméra frontale, deux modèles embarqués d'estimation du bien-être, seuls quelques nombres gardés,
+  images effacées aussitôt ; rien ne quitte le téléphone ; service démarré app ouverte seulement, jamais au
+  démarrage.)
+- **Impact si la tâche est différée ou interrompue** (anglais, à coller) :
+  > The reading must happen within a second of the unlock, while the user is looking at the screen. If it is
+  > deferred, the user is no longer in front of the camera and the reading is lost. If the service is interrupted,
+  > no reading is taken until the user opens the app again; the user then gets fewer wellbeing estimates, which are
+  > the core data of the app.
+
+  (FR : la lecture doit avoir lieu dans la seconde qui suit le déverrouillage, pendant que la personne regarde
+  l'écran ; différée, elle est perdue ; interrompue, plus aucune lecture jusqu'à la prochaine ouverture de l'app.)
+- **Lien vidéo** : la vidéo YouTube en « Non répertoriée » (script ci-dessous).
+
+### Script de la vidéo (Galaxy A56, 60 à 90 s, sans son)
+
+Enregistreur d'écran du Samsung (volet rapide → « Enregistreur d'écran », son : aucun). Données de démonstration ou
+votre vraie app, peu importe ; **ne montrez aucune notification personnelle** (mode Ne pas déranger). Si
+l'enregistreur s'arrête quand l'écran se verrouille, filmez les étapes 6 et 7 avec un autre téléphone.
+1. Écran d'accueil → ouvrir **Halcya** (2 s sur l'Accueil).
+2. Onglet **Sources** → carte **Lecture du visage** → interrupteur **« Aussi à chaque déverrouillage »**.
+3. La **feuille d'explication** s'ouvre : la faire défiler lentement jusqu'en bas (3 à 4 s), toucher
+   **« J'active la lecture au déverrouillage »**.
+4. Si Android le demande : autoriser la **caméra** (« Pendant l'utilisation de l'app ») et les **notifications**.
+5. Tirer le volet des notifications : montrer **« Lecture du visage active »** et son bouton **« Arrêter »** (2 s).
+6. Verrouiller le téléphone (bouton latéral), attendre 2 s, **déverrouiller** en regardant l'écran : le **point vert
+   de la caméra** s'allume en haut à droite (1 s).
+7. Rouvrir Halcya → Accueil : la carte « Bien-être estimé » montre la **nouvelle lecture** (« il y a 1 min »).
+8. Tirer le volet → toucher **« Arrêter »** : la notification disparaît ; revenir dans Sources : l'interrupteur est
+   **coupé**.
+Puis YouTube (app ou studio.youtube.com) → Créer → Importer → titre « Halcya – face reading at unlock (Play review) »
+→ visibilité **Non répertoriée** → copier le lien.
+
+### Ordre des gestes (propriétaire puis runs)
+
+1. Un run de code livre POL-1 avec l'interrupteur play **coupé** (rien ne change pour Google), et la CI produit en
+   plus un APK d'aperçu play avec l'interrupteur **allumé** (identifiant `fr.jpesquet.sante.apercu`, pour cohabiter
+   avec l'app du Play Store sans rien désinstaller) : c'est lui que vous filmez.
+2. Vous filmez la vidéo et la mettez en ligne (non répertoriée).
+3. Un run allume l'interrupteur play : la CI envoie l'AAB en test interne. ❓ Il est possible que la Play Console
+   refuse l'envoi (« déclaration des services de premier plan requise ») ou que la ligne n'apparaisse dans « Contenu de
+   l'app » qu'après cet envoi : le run note l'erreur exacte et vous demande de remplir la déclaration (texte ci-dessus)
+   puis de l'envoyer pour examen ; le run suivant renvoie la version.
+4. Si Google refuse : le run coupe l'interrupteur (les versions suivantes repartent sans la fonction), note le motif
+   exact et vous présente vos options (recours avec la vidéo, ou rester sur la lecture à l'ouverture de l'app).
+
 ## 2. Revue des permissions du manifeste (main + flavors)
 
 | Permission | Usage | Sideload | Play | Commentaire |
