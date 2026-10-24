@@ -36,3 +36,7 @@
 - **POL-7b** (I163 points 3–4) : pistes dépliables (phrase simple d'abord, statistiques au chevron), « Alcool » une
   seule fois (visage + notes fusionnés), barres neutres lilas « ↑ / ↓ » au lieu de vert / rouge, « Voir N autres liens ».
 - Puis POL-6 → POL-8 → POL-1.
+
+## Après le merge (#333, `cf2d1e6`)
+- Checks de la PR tous verts (Vitest, Build APK, Relais, montre Java, budget de lectures, émulateur API 35 et 36).
+- « Build & Release » vert : **v257** publiée (APK 33 746 332 octets, 33,7 Mo) ; « Play — AAB » vert (envoi en test interne).
