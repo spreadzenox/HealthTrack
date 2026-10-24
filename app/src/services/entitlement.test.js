@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 import { RELAY_URL, getInstallId } from './aiRelay'
-import { ENTITLEMENT_EVENT, refreshEntitlement, getEntitlement, describeEntitlement, manageSubscriptionUrl } from './entitlement'
+import { ENTITLEMENT_EVENT, refreshEntitlement, getEntitlement, describeEntitlement, manageSubscriptionUrl, paymentIssue } from './entitlement'
 
 const response = (body, status = 200) => ({ ok: status < 400, status, json: () => Promise.resolve(body) })
 const inDays = (n) => new Date(Date.now() + n * 86_400_000).toISOString()
@@ -100,5 +100,29 @@ describe('lien de gestion de l’abonnement', () => {
   it('pointe vers la page Abonnements de Google Play, sur le bon produit quand on le connaît', () => {
     expect(manageSubscriptionUrl('halcya_premium')).toBe('https://play.google.com/store/account/subscriptions?sku=halcya_premium&package=fr.jpesquet.sante')
     expect(manageSubscriptionUrl(null)).toBe('https://play.google.com/store/account/subscriptions')
+  })
+})
+
+describe('paiement à régulariser (jalon 6e)', () => {
+  it('rien à signaler hors période de grâce et de suspension', () => {
+    expect(paymentIssue(null)).toBeNull()
+    expect(paymentIssue({ premium: false, state: null })).toBeNull()
+    expect(paymentIssue({ premium: true, source: 'play', state: 'active' })).toBeNull()
+    expect(paymentIssue({ premium: false, source: 'play', state: 'paused' })).toBeNull()
+    expect(paymentIssue({ premium: false, source: 'play', state: 'expired' })).toBeNull()
+  })
+
+  it('période de grâce : premium gardé, invitation à mettre à jour le paiement', () => {
+    const issue = paymentIssue({ premium: true, source: 'play', state: 'grace', productId: 'halcya_premium' })
+    expect(issue.title).toBe('Votre paiement n’est pas passé')
+    expect(issue.text).toMatch(/premium reste actif pour l’instant/)
+    expect(issue.url).toBe(manageSubscriptionUrl('halcya_premium'))
+  })
+
+  it('suspension : premium en pause tant que le paiement n’est pas régularisé', () => {
+    const issue = paymentIssue({ premium: false, source: 'play', state: 'on_hold', productId: 'halcya_premium' })
+    expect(issue.title).toBe('Abonnement suspendu')
+    expect(issue.text).toMatch(/reviendra dès que le paiement/)
+    expect(issue.url).toBe(manageSubscriptionUrl('halcya_premium'))
   })
 })

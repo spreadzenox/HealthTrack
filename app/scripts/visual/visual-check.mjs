@@ -29,7 +29,8 @@
  *   npm run visual -- --play --routes=/premium [--billing=none]  # paywall : faux plugin Play Billing (formules
  *                                                     synthétiques, essai 14 j) ; --billing=none : aucune formule
  *   npm run visual -- --play --routes=/settings --subscription=active  # état d'abonnement factice renvoyé par le
- *                                                  relais (free par défaut, launch, active, trial, paused) (6c)
+ *                                                  relais (free par défaut, launch, active, trial, paused, grace,
+ *                                                  on_hold ; grace / on_hold : carte de l'Accueil, 6e) (6c)
  *   npm run visual -- --routes=/data --import          # aperçu d'une sauvegarde choisie (avant import)
  *   npm run visual -- --routes=/data --import=replace  # … puis confirmation « Remplacer mes données »
  *   npm run visual -- --routes=/connectors --devices   # « Mes appareils » : simule Huawei Health + Garmin installés
@@ -315,6 +316,8 @@ async function main() {
         active: { premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: inDays(300), autoRenewing: true },
         trial: { premium: true, source: 'play', state: 'active', trial: true, productId: 'halcya_premium', expiresAt: inDays(12), autoRenewing: true },
         paused: { premium: false, source: null, state: 'paused', productId: 'halcya_premium', expiresAt: inDays(25) },
+        grace: { premium: true, source: 'play', state: 'grace', productId: 'halcya_premium', expiresAt: inDays(5), autoRenewing: true },
+        on_hold: { premium: false, source: 'play', state: 'on_hold', productId: 'halcya_premium', expiresAt: inDays(-1) },
       }
       const sub = typeof args.subscription === 'string' && states[args.subscription] ? args.subscription : 'free'
       return route.fulfill({
@@ -326,7 +329,7 @@ async function main() {
     })
     // Crédits d'analyse IA (variante play) : compteur factice, premium si l'abonnement factice l'est
     await context.route('**/v1/credits', (route) => {
-      const premium = ['launch', 'active', 'trial'].includes(String(args.subscription ?? ''))
+      const premium = ['launch', 'active', 'trial', 'grace'].includes(String(args.subscription ?? ''))
       const d = new Date()
       const credits = premium
         ? { plan: 'premium', remaining: 9, daily: 10, resetAt: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)).toISOString(), state: 'x' }
