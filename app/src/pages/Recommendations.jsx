@@ -115,7 +115,7 @@ const LEVER_STAGE = {
 }
 
 /** POL-7b : la piste en mots d'abord ; r, jours indépendants et week-end derrière le chevron. */
-function LeverCard({ rank, lever }) {
+function LeverCard({ rank, lever, lag }) {
   const [open, setOpen] = useState(false)
   const days = Math.round(lever.nEff)
   const weekendShift = lever.rRaw != null && Math.abs(lever.rRaw - lever.r) >= WEEKEND_R_SHIFT
@@ -141,6 +141,13 @@ function LeverCard({ rank, lever }) {
           <p className="reco-advice-stats">
             r = {formatR(lever.r)} · ≈ {days} jours indépendants
             {weekendShift && <> · r = {formatR(lever.rRaw)} sans tenir compte du week-end</>}
+          </p>
+        )}
+        {/* POL-7c : un facteur = un verdict ; son effet décalé est rappelé ici plutôt que listé à part */}
+        {open && lag && (
+          <p className="reco-advice-stats">
+            {lag.when}, {lag.sdText} de plus que d’habitude → bien-être {frDiff(lag.effectPerSd)}{' '}
+            point{Math.abs(lag.effectPerSd) >= 2 ? 's' : ''} ({evidenceLabel(lag.evidence).toLowerCase()})
           </p>
         )}
       </div>
@@ -170,16 +177,14 @@ function autoSourceNote(tagId) {
   return `mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`
 }
 
-function TagEffectCard({ effect, measure = 'bien-être' }) {
+function TagEffectCard({ effect, measure = 'bien-être', children }) {
   const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
   const rawDiff = effect.diffRaw ?? effect.diff
   const weekendShift = Math.abs(effect.diff - rawDiff) >= TAG_WEEKEND_SHIFT
   const digits = scoreDecimals(effect.meanWith, effect.meanWithout, rawDiff)
   return (
     <li className={'reco-tag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
-      <p className="reco-tag-name">
-        <span aria-hidden>{effect.emoji}</span> {effect.label}
-      </p>
+      <p className="reco-tag-name">{effect.label}</p>
       <p className="reco-tag-compare">
         {when} : {measure} <strong>{frScore(effect.meanWith, digits)} / 5</strong> contre{' '}
         {frScore(effect.meanWithout, digits)} sans{' '}
@@ -202,57 +207,14 @@ function TagEffectCard({ effect, measure = 'bien-être' }) {
       <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
         {evidenceLabel(effect.evidence)}
       </span>
+      {children}
     </li>
-  )
-}
-
-function TagsSection({ result }) {
-  return (
-    <section className="reco-section">
-      <h3 className="reco-section-title">Vos habitudes</h3>
-      {result.status === 'no_tags' ? (
-        <p className="reco-section-hint">
-          Ajoutez des tags (alcool, café…) en notant votre bien-être : comparaison après{' '}
-          {MIN_TAG_DAYS} jours avec et {MIN_TAG_DAYS} sans.
-        </p>
-      ) : (
-        <>
-          <p className="reco-section-hint">
-            Bien-être les jours avec chaque tag, contre les jours sans (le lendemain pour le soir).
-          </p>
-          {result.effects.length > 0 ? (
-            <ul className="reco-tag-list">
-              {result.effects.map((e) => (
-                <TagEffectCard key={e.tagId} effect={e} />
-              ))}
-            </ul>
-          ) : (
-            <p className="reco-empty-levers">
-              Pas encore assez de jours pour comparer : il faut {MIN_TAG_DAYS} jours avec un tag
-              et {MIN_TAG_DAYS} sans.
-            </p>
-          )}
-          {result.pending.length > 0 && (
-            <p className="reco-tag-pending">
-              En cours de collecte :{' '}
-              {result.pending
-                .map((t) =>
-                  t.weekendOnly
-                    ? `${t.emoji} ${t.label} (pas encore comparable : jours avec et sans jamais du même type, semaine ou week-end)`
-                    : `${t.emoji} ${t.label} (${Math.min(t.nWith, MIN_TAG_DAYS)}/${MIN_TAG_DAYS} jours avec${t.nWithout < MIN_TAG_DAYS ? `, ${t.nWithout}/${MIN_TAG_DAYS} sans` : ''})`,
-                )
-                .join(' · ')}
-            </p>
-          )}
-        </>
-      )}
-    </section>
   )
 }
 
 // ─── Lagged effects (« la veille », « 2 jours avant ») ───────────────────────
 
-function LaggedEffectCard({ effect, measure = 'bien-être du jour' }) {
+function LaggedEffectCard({ effect, measure = 'bien-être du jour', children }) {
   const points = Math.abs(effect.effectPerSd) >= 2 ? 'points' : 'point'
   return (
     <li className={'reco-tag-card reco-lag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
@@ -271,40 +233,8 @@ function LaggedEffectCard({ effect, measure = 'bien-être du jour' }) {
       <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
         {evidenceLabel(effect.evidence)}
       </span>
+      {children}
     </li>
-  )
-}
-
-function LaggedEffectsSection({ result }) {
-  const lags = `${LAGS[0]} à ${LAGS[LAGS.length - 1]} jours`
-  return (
-    <section className="reco-section">
-      <h3 className="reco-section-title">Effets décalés</h3>
-      {result.status === 'not_enough_data' ? (
-        <p className="reco-section-hint">
-          Effet {lags} plus tard : {result.currentDays} sur {MIN_LAG_PAIRS} jours notés dont la
-          veille aussi.
-        </p>
-      ) : (
-        <>
-          <p className="reco-section-hint">
-            Ce que vous avez fait {lags} avant · liens solides seulement.
-          </p>
-          {result.effects.length > 0 ? (
-            <ul className="reco-tag-list">
-              {result.effects.map((e) => (
-                <LaggedEffectCard key={e.variable} effect={e} />
-              ))}
-            </ul>
-          ) : (
-            <p className="reco-empty-levers">
-              Aucun effet décalé net dans vos données pour l’instant (sommeil, pas, activité et
-              cigarettes testés {lags} avant, quand ils sont mesurés).
-            </p>
-          )}
-        </>
-      )}
-    </section>
   )
 }
 
@@ -352,142 +282,171 @@ function WeekendNote({ control }) {
 }
 
 /**
- * Variables déjà présentées ailleurs dans l'onglet : « Écran tard » est comparé dans « Vos habitudes »
- * (soirées mesurées par le téléphone), ne pas le répéter en variable continue.
+ * Variables déjà présentées ailleurs dans l'onglet : « Écran tard » est comparé en habitude (soirées mesurées par
+ * le téléphone), ne pas le répéter en variable continue.
  */
 const CHART_HIDDEN_VARIABLES = new Set(['screen_late_minutes'])
 
+/** Un même facteur sous deux noms (variable continue et tag) : un seul verdict (POL-7c). */
+const FACTOR_ALIAS = { alcohol_g: 'alcohol', screen_late_minutes: 'late_screen' }
+
+const EVIDENCE_RANK = { solide: 0, 'à confirmer': 1, incertain: 2 }
+
+/** Au-delà, les liens nets se replient derrière « Voir N autres liens ». */
+const LINKS_SHOWN = 5
+
 /**
- * Corrélations : les liens au moins « à confirmer » visibles, les incertains (souvent ~35 sur 45,
- * possiblement dus au hasard) repliés derrière « Voir les N liens incertains ». Une variable déjà
- * proposée en piste (même r) n'est pas répétée : la section devient « Autres liens ».
+ * POL-7c : corrélations, habitudes et effets décalés, avec vos notes et avec le bien-être estimé (visage), réunis
+ * en une seule liste où chaque facteur n'a qu'un verdict : le plus solide (q le plus bas, vos notes d'abord à
+ * égalité) ; les autres mesures du même facteur sont rappelées en une ligne. Rien n'est recalculé ici.
  */
-function CorrelationsSection({ correlations, levers = [] }) {
-  const leverVariables = new Set(levers.map((l) => l.variable))
-  const shown = correlations.filter(
-    (c) => !CHART_HIDDEN_VARIABLES.has(c.variable) && !leverVariables.has(c.variable),
+function mergeLinks({ correlations: basic, tagEffects, laggedEffects, faceMood }, leverVariables = new Set()) {
+  const items = []
+  const add = (source, list, kind, keyOf) => {
+    for (const x of list ?? []) items.push({ key: keyOf(x), source, kind, item: x })
+  }
+  const corrKey = (c) => FACTOR_ALIAS[c.variable] ?? c.variable
+  const okCorr = (list) => (list ?? []).filter((c) => !CHART_HIDDEN_VARIABLES.has(c.variable))
+  const tags = (t) => (t?.status === 'ok' ? t.effects : [])
+  const lags = (l) => (l?.status === 'ok' ? l.effects : [])
+  add('notes', okCorr(basic?.status === 'ok' ? basic.correlations : []), 'corr', corrKey)
+  add('notes', tags(tagEffects), 'tag', (e) => e.tagId)
+  add('notes', lags(laggedEffects), 'lag', (e) => e.variable)
+  if (faceMood?.status === 'ok') {
+    add('visage', okCorr(faceMood.correlations), 'corr', corrKey)
+    add('visage', tags(faceMood.tagEffects), 'tag', (e) => e.tagId)
+    add('visage', lags(faceMood.laggedEffects), 'lag', (e) => e.variable)
+  }
+  const leverKeys = new Set([...leverVariables].map((v) => FACTOR_ALIAS[v] ?? v))
+  const rank = (a) => [EVIDENCE_RANK[a.item.evidence] ?? 2, a.item.q ?? 1, a.source === 'notes' ? 0 : 1]
+  const better = (a, b) => {
+    const ra = rank(a)
+    const rb = rank(b)
+    for (let i = 0; i < ra.length; i++) if (ra[i] !== rb[i]) return ra[i] < rb[i]
+    return false
+  }
+  const byKey = new Map()
+  for (const it of items) {
+    if (leverKeys.has(it.key)) continue
+    const group = byKey.get(it.key)
+    if (!group) byKey.set(it.key, { best: it, others: [] })
+    else if (better(it, group.best)) {
+      group.others.push(group.best)
+      group.best = it
+    } else group.others.push(it)
+  }
+  return [...byKey.values()]
+    .map(({ best, others }) => ({ ...best, others }))
+    .sort((a, b) => (better(a, b) ? -1 : better(b, a) ? 1 : 0))
+}
+
+const KIND_LABEL = { corr: 'le jour même', tag: 'jours avec / sans', lag: 'avec délai' }
+
+/** Les autres mesures nettes d'un même facteur, en une ligne sous son verdict (les incertaines n'apprennent rien). */
+function AlsoLine({ others }) {
+  const clear = others.filter((o) => o.item.evidence !== 'incertain')
+  if (!clear.length) return null
+  const parts = [...new Set(clear.map((o) => `${KIND_LABEL[o.kind]} (${o.source}) ${o.item.evidence}`))]
+  return <p className="reco-link-also">Autres mesures : {parts.join(' · ')}</p>
+}
+
+function SourceChip({ source }) {
+  return source === 'visage' ? <span className="reco-link-src">visage</span> : null
+}
+
+function LinkItem({ link }) {
+  const { kind, source, item, others } = link
+  const face = source === 'visage'
+  const extra = (
+    <>
+      <SourceChip source={source} />
+      <AlsoLine others={others} />
+    </>
   )
-  if (shown.length === 0) return null
-  const clear = shown.filter((c) => c.evidence !== 'incertain')
-  const uncertain = shown.filter((c) => c.evidence === 'incertain')
-  const others = leverVariables.size > 0
-  const bars = (list) => (
-    <div className="reco-corr-chart">
-      {list.map((c) => (
-        <CorrelationBar
-          key={c.variable}
-          label={c.label}
-          r={c.r}
-          impact={Math.abs(c.r)}
-          uncertain={c.evidence === 'incertain'}
-        />
-      ))}
-    </div>
-  )
+  if (kind === 'tag') {
+    return (
+      <TagEffectCard effect={item} measure={face ? 'bien-être estimé' : 'bien-être'}>
+        {extra}
+      </TagEffectCard>
+    )
+  }
+  if (kind === 'lag') {
+    // D6 : le bien-être estimé ne propose jamais de piste
+    const effect = face ? { ...item, action: null } : item
+    return (
+      <LaggedEffectCard effect={effect} measure={face ? 'bien-être estimé du jour' : 'bien-être du jour'}>
+        {extra}
+      </LaggedEffectCard>
+    )
+  }
   return (
-    <section className="reco-section">
-      <h3 className="reco-section-title">{others ? 'Autres liens' : 'Corrélations'} avec votre bien-être</h3>
+    <li className={'reco-link-bar' + (item.evidence === 'incertain' ? ' reco-link-bar-uncertain' : '')}>
+      <CorrelationBar label={item.label} r={item.r} impact={Math.abs(item.r)} uncertain={item.evidence === 'incertain'} />
+      {extra}
+    </li>
+  )
+}
+
+function pendingText(t) {
+  if (t.weekendOnly) return `${t.label} (pas encore comparable : jours avec et sans jamais du même type, semaine ou week-end)`
+  return `${t.label} (${Math.min(t.nWith, MIN_TAG_DAYS)}/${MIN_TAG_DAYS} jours avec${t.nWithout < MIN_TAG_DAYS ? `, ${t.nWithout}/${MIN_TAG_DAYS} sans` : ''})`
+}
+
+/**
+ * « Autres liens repérés » (POL-7c, maquette I163 §4) : une seule liste, un verdict par facteur, les liens nets
+ * d'abord (5 visibles, puis « Voir N autres liens »), les incertains repliés.
+ */
+function LinksSection({ analysis, levers = [] }) {
+  const leverVariables = new Set(levers.map((l) => l.variable))
+  const links = mergeLinks(analysis, leverVariables)
+  const pending = [
+    ...(analysis.tagEffects?.status === 'ok' ? analysis.tagEffects.pending : []),
+    ...(analysis.faceMood?.status === 'ok' && analysis.faceMood.tagEffects?.status === 'ok'
+      ? analysis.faceMood.tagEffects.pending.filter((t) => !t.weekendOnly)
+      : []),
+  ].filter((t, i, all) => all.findIndex((u) => u.tagId === t.tagId) === i)
+  if (!links.length && !pending.length) return null
+  const clear = links.filter((l) => l.item.evidence !== 'incertain')
+  const uncertain = links.filter((l) => l.item.evidence === 'incertain')
+  const list = (ls) => (
+    <ul className="reco-link-list">
+      {ls.map((l) => (
+        <LinkItem key={`${l.kind}:${l.source}:${l.key}`} link={l} />
+      ))}
+    </ul>
+  )
+  const more = clear.length - LINKS_SHOWN
+  const faceDays = analysis.faceMood?.status === 'ok' ? analysis.faceMood.faceDays : null
+  return (
+    <section className="reco-section" data-testid="reco-links">
+      <h3 className="reco-section-title">{leverVariables.size > 0 ? 'Autres liens repérés' : 'Liens repérés'}</h3>
       <p className="reco-section-hint">{DIRECTION_HINT}</p>
-      {clear.length > 0 ? bars(clear) : (
+      {faceDays != null && (
+        <p className="reco-section-hint">« visage » : avec votre bien-être estimé, sur {faceDays} jours, sans aucune note.</p>
+      )}
+      {clear.length > 0 ? list(clear.slice(0, LINKS_SHOWN)) : (
         <p className="reco-empty-levers">
-          Aucun {others ? 'autre ' : ''}lien net pour l’instant : continuez à noter votre bien-être.
+          Aucun {leverVariables.size > 0 ? 'autre ' : ''}lien net pour l’instant : continuez à noter votre bien-être.
         </p>
+      )}
+      {more > 0 && (
+        <details className="reco-corr-more">
+          <summary>{more === 1 ? 'Voir 1 autre lien' : `Voir ${more} autres liens`}</summary>
+          {list(clear.slice(LINKS_SHOWN))}
+        </details>
       )}
       {uncertain.length > 0 && (
         <details className="reco-corr-more">
           <summary>
             {uncertain.length === 1 ? 'Voir le lien incertain' : `Voir les ${uncertain.length} liens incertains`}
           </summary>
-          <p className="reco-section-hint">Barres pâles = lien incertain, possiblement dû au hasard.</p>
-          {bars(uncertain)}
-        </details>
-      )}
-    </section>
-  )
-}
-
-/**
- * Habitudes (tags) et effets décalés comparés à l'humeur estimée : seulement ce qui a déjà un résultat (rien à
- * afficher tant qu'aucun tag n'est comparable), jamais de piste (D6).
- */
-function FaceMoodHabits({ tagEffects, laggedEffects }) {
-  const tags = tagEffects?.status === 'ok' ? tagEffects.effects : []
-  // Effets décalés : liens solides seulement (LAG_MAX_Q), donc jamais incertains.
-  const lags = laggedEffects?.status === 'ok' ? laggedEffects.effects : []
-  const pending = tagEffects?.status === 'ok' ? tagEffects.pending.filter((t) => !t.weekendOnly) : []
-  if (!tags.length && !lags.length && !pending.length) return null
-  const clear = tags.filter((e) => e.evidence !== 'incertain')
-  const uncertain = tags.filter((e) => e.evidence === 'incertain')
-  const cards = (list) => list.map((e) => <TagEffectCard key={e.tagId} effect={e} measure="bien-être estimé" />)
-  return (
-    <div className="reco-face-habits" data-testid="face-mood-habits">
-      <p className="reco-section-hint">Vos habitudes et effets décalés, avec votre bien-être estimé :</p>
-      {clear.length > 0 || lags.length > 0 ? (
-        <ul className="reco-tag-list">
-          {cards(clear)}
-          {lags.map((e) => (
-            <LaggedEffectCard key={e.variable} effect={e} measure="bien-être estimé du jour" />
-          ))}
-        </ul>
-      ) : (
-        <p className="reco-empty-levers">Aucune habitude ni aucun effet décalé net pour l’instant.</p>
-      )}
-      {uncertain.length > 0 && (
-        <details className="reco-corr-more">
-          <summary>
-            {uncertain.length === 1 ? 'Voir l’habitude incertaine' : `Voir les ${uncertain.length} habitudes incertaines`}
-          </summary>
-          <ul className="reco-tag-list">{cards(uncertain)}</ul>
+          <p className="reco-section-hint">Pâles = lien incertain, possiblement dû au hasard.</p>
+          {list(uncertain)}
         </details>
       )}
       {pending.length > 0 && (
-        <p className="reco-tag-pending">
-          En cours de collecte :{' '}
-          {pending
-            .map((t) => `${t.emoji} ${t.label} (${Math.min(t.nWith, MIN_TAG_DAYS)}/${MIN_TAG_DAYS} jours avec${t.nWithout < MIN_TAG_DAYS ? `, ${t.nWithout}/${MIN_TAG_DAYS} sans` : ''})`)
-            .join(' · ')}
-        </p>
+        <p className="reco-tag-pending">En cours de collecte : {pending.map(pendingText).join(' · ')}</p>
       )}
-    </div>
-  )
-}
-
-/**
- * Facteurs comparés à l'humeur estimée par la Lecture du visage (mood/faceMoodDays.js) : la science personnelle sans
- * aucune note à saisir. Visible même sans notes ; rien tant qu'aucune lecture du visage n'existe.
- */
-export function FaceMoodSection({ result }) {
-  // Pas encore assez de lectures : une ligne dans « Bientôt » (SoonSection), jamais une carte presque vide
-  if (result?.status !== 'ok') return null
-  const shown = result.correlations.filter((c) => !CHART_HIDDEN_VARIABLES.has(c.variable))
-  const clear = shown.filter((c) => c.evidence !== 'incertain')
-  const uncertain = shown.filter((c) => c.evidence === 'incertain')
-  const bars = (list) => (
-    <div className="reco-corr-chart">
-      {list.map((c) => (
-        <CorrelationBar key={c.variable} label={c.label} r={c.r} impact={Math.abs(c.r)} uncertain={c.evidence === 'incertain'} />
-      ))}
-    </div>
-  )
-  return (
-    <section className="reco-section" data-testid="face-mood-section">
-      <h3 className="reco-section-title">Avec votre bien-être estimé (visage)</h3>
-      <p className="reco-section-hint">
-        Sur {result.faceDays} jours estimés par la Lecture du visage, sans aucune note. {DIRECTION_HINT}
-      </p>
-      {clear.length > 0 ? bars(clear) : (
-        <p className="reco-empty-levers">Aucun lien net pour l’instant avec votre bien-être estimé.</p>
-      )}
-      {uncertain.length > 0 && (
-        <details className="reco-corr-more">
-          <summary>
-            {uncertain.length === 1 ? 'Voir le lien incertain' : `Voir les ${uncertain.length} liens incertains`}
-          </summary>
-          <p className="reco-section-hint">Barres pâles = lien incertain, possiblement dû au hasard.</p>
-          {bars(uncertain)}
-        </details>
-      )}
-      <FaceMoodHabits tagEffects={result.tagEffects} laggedEffects={result.laggedEffects} />
     </section>
   )
 }
@@ -648,7 +607,7 @@ function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
 // ─── Vue unique des analyses ────────────────────────────────────────────────
 
 function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced }) {
-  const { correlations: result, tagEffects, laggedEffects } = analysis
+  const { correlations: result } = analysis
   const soon = soonLines(analysis)
 
   if (result.status === 'not_enough_data') {
@@ -656,7 +615,9 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
       <div data-testid="reco-basic-waiting">
         {/* VC-12 : sous la carte lilas, un seul seuil visible ; celui du bien-être passe dans ses « détails » */}
         {!teaserShown && <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />}
-        <FaceMoodSection result={analysis.faceMood} />
+        {analysis.faceMood?.status === 'ok' && (
+          <LinksSection analysis={{ faceMood: analysis.faceMood }} />
+        )}
         {/* Habitudes et effets décalés attendent les mêmes notes que la carte lilas : seul le visage a son compteur */}
         <SoonSection lines={soon.filter((l) => l.id === 'face')} />
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
@@ -664,10 +625,10 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
     )
   }
 
-  const { correlations } = result
   const levers = result.levers ?? []
-  const tagsShown = tagEffects.status === 'ok' && tagEffects.effects.length > 0
-  const laggedShown = laggedEffects.status !== 'not_enough_data'
+  const lagByVariable = new Map(
+    (analysis.laggedEffects?.status === 'ok' ? analysis.laggedEffects.effects : []).map((e) => [e.variable, e]),
+  )
 
   return (
     <div className="reco-tab-content">
@@ -685,7 +646,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
         {levers.length > 0 ? (
           <ol className="reco-advice-list">
             {levers.map((l, i) => (
-              <LeverCard key={l.variable} rank={i + 1} lever={l} />
+              <LeverCard key={l.variable} rank={i + 1} lever={l} lag={lagByVariable.get(l.variable)} />
             ))}
           </ol>
         ) : (
@@ -696,13 +657,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
         )}
       </section>
 
-      <FaceMoodSection result={analysis.faceMood} />
-
-      {tagsShown && <TagsSection result={tagEffects} />}
-
-      {laggedShown && <LaggedEffectsSection result={laggedEffects} />}
-
-      <CorrelationsSection correlations={correlations} levers={levers} />
+      <LinksSection analysis={analysis} levers={levers} />
 
       <SoonSection lines={soon} />
 
