@@ -1294,3 +1294,25 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
   Journal → Jours : puce « Stress montre » (moyenne du jour) ; écran « Données de la montre » : ligne « Stress (montre) ».
 - Reste de M4 : compteur des bits inconnus des minutes (étages, M4 bis) ; lecture en arrière-plan (Java) du fichier de
   stress avec M6. À confirmer sur la GT 6 Pro (stress automatique activé et calibré).
+
+### 10.15 M6a (fichiers 0x2C en arrière-plan) livré (run du 24/10/2026 13:30)
+- `WatchReader.java` : après les totaux, `FileRequest` (sommeil détaillé `sequence_data` type 0x16 dictionnaire 700013 ;
+  stress `rrisqi_data.bin` type 0x10) téléchargés comme `downloadFile` (files.js) : ouverture 0x2C/0x01 (nom, type,
+  début, fin, dictionnaire), infos 0x2C/0x03 (taille de bloc, envoi en clair), demandes 0x2C/0x04, blocs poussés
+  0x2C/0x05 (identifiant, décalage sur 4 octets, 1 octet, données ; un bloc d'un autre fichier est ignoré), fin
+  0x2C/0x06 toujours envoyée. Taille 0 ou 0xFFFFFFFF = vide ; plus de 2 Mo = refusé ; bloc inattendu = erreur.
+- Capture (format v1, champ additionnel) : `files: [{ id, since, hex }]` (octets **bruts**, aucun décodage en Java),
+  `bedTime: false` si la montre n'annonce pas le départ au coucher (capacité 199), lectures `sleepFile` / `stress` dans
+  `reads`. Une capture sans fichier est identique à avant (vecteurs JS → Java inchangés).
+- `BackgroundSync.State` : `sleepFileUntil`, `stressFileUntil`, `bedTime`, recopiés par le JS (`shareResume`) ; un
+  fichier n'est demandé en arrière-plan **que si l'app l'a déjà lu une fois** (prise en charge prouvée, rattrapage de
+  60 jours fait app ouverte), depuis la veille de sa dernière lecture ; la reprise avance si la lecture est `ok` ou
+  `empty` (comme `writeWatchData`).
+- JS : `dataFromCapture` décode `files` avec `parseSleepSequence` / `parseStressFile` (mêmes filtres que
+  `readWatchData`) ; `readWatchData` rend `sleepBedTime`, gardé dans l'état de synchro et recopié au natif.
+- Tests : `WatchFilesTest` (fausse montre en clair : blocs de 5 octets en deux morceaux, fichier vide, refus, silence,
+  reprise par fichier) ; `capture.test.js` (nuits, VFC de nuit et stress identiques à la synchro en direct, `bedTime`
+  faux, fichier illisible) ; `watchCaptures.test.js` (reprise `stressFileUntil` après import, partage au natif).
+- Reste de M6 : P2P (VFC de journée 500044, température 400012) dans le lecteur Java ; issue des lectures des
+  captures dans l'écran Montre (`reads`) ; à confirmer sur la GT 6 Pro (journal Android « relecture en arrière-plan »).
+

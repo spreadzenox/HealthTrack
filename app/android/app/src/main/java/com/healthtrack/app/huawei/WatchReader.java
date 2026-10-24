@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Lectures santé du client Java « synchro seule » (journal/protocoles/huawei.md §7.2–§7.4, §9.1 d), sur une
- * session déjà authentifiée : sommeil (7/0x0C puis 7/0x0D), minutes (7/0x0A puis 7/0x0B) et totaux du jour
- * (7/0x03), dans l'ordre et avec les mêmes demandes que readWatchData (src/devices/huawei/sync.js).
- * Rien n'est décodé ici : chaque réponse est gardée **brute** (TLV déchiffrés) dans une capture que le JS
+ * Lectures santé du client Java « synchro seule » (journal/protocoles/huawei.md §7.2–§7.4, §7.6, §9.1 d), sur une
+ * session déjà authentifiée : sommeil (7/0x0C puis 7/0x0D), minutes (7/0x0A puis 7/0x0B), totaux du jour
+ * (7/0x03), puis les fichiers 0x2C demandés (sommeil détaillé `sequence_data`, stress `rrisqi_data.bin` : M6),
+ * dans l'ordre et avec les mêmes demandes que readWatchData (src/devices/huawei/sync.js).
+ * Rien n'est décodé ici : chaque réponse est gardée **brute** (TLV déchiffrés ; octets du fichier rassemblés) dans une capture que le JS
  * importe à l'ouverture avec son propre analyseur — une seule implémentation du décodage santé.
  * Mêmes règles de tolérance que le JS (§7.10) : bloc refusé sauté, bloc sans réponse = fin de ce service
  * (ce qui est lu est gardé), une lecture qui cale n'empêche pas les suivantes.
@@ -22,6 +23,15 @@ public final class WatchReader {
     static final int MINUTE_DATA = 0x0B;
     static final int SLEEP_COUNT = 0x0C;
     static final int SLEEP_DATA = 0x0D;
+    /** Service des fichiers (§7.6) et ses commandes : ouverture, infos, demande de bloc, bloc poussé, fin. */
+    public static final int FILES = 0x2C;
+    static final int FILE_OPEN = 0x01;
+    static final int FILE_INFO = 0x03;
+    static final int FILE_BLOCK = 0x04;
+    static final int FILE_PUSH = 0x05;
+    static final int FILE_DONE = 0x06;
+    /** Taille maxi acceptée pour un fichier (comme MAX_FILE_BYTES, files.js). */
+    static final int MAX_FILE_BYTES = 2 * 1024 * 1024;
     /** Début minimal accepté par certaines montres (1/1/2000, en s) : jamais 0. */
     static final long MIN_START_SEC = 946684800L;
     /** Format de la capture lu par src/devices/huawei/capture.js. */
@@ -56,6 +66,46 @@ public final class WatchReader {
         }
     }
 
+    /** Fichier 0x2C à télécharger : id de lecture (sleepFile, stress), nom, type, début (ms), dictionnaire ou -1. */
+    public static final class FileRequest {
+        public final String id;
+        public final String name;
+        public final int type;
+        public final long startMs;
+        public final long dictionary;
+
+        public FileRequest(String id, String name, int type, long startMs, long dictionary) {
+            this.id = id;
+            this.name = name;
+            this.type = type;
+            this.startMs = startMs;
+            this.dictionary = dictionary;
+        }
+
+        /** Sommeil détaillé (type 0x16, dictionnaire 700013). */
+        public static FileRequest sleep(long startMs) {
+            return new FileRequest("sleepFile", "sequence_data", 0x16, startMs, 700013);
+        }
+
+        /** Stress automatique (type 0x10). */
+        public static FileRequest stress(long startMs) {
+            return new FileRequest("stress", "rrisqi_data.bin", 0x10, startMs, -1);
+        }
+    }
+
+    /** Fichier reçu : id de lecture, début demandé (ms), octets bruts. */
+    public static final class FileData {
+        public final String id;
+        public final long sinceMs;
+        public final byte[] bytes;
+
+        FileData(String id, long sinceMs, byte[] bytes) {
+            this.id = id;
+            this.sinceMs = sinceMs;
+            this.bytes = bytes;
+        }
+    }
+
     /** Ce que la montre a rendu pendant une synchro en arrière-plan. */
     public static final class Capture {
         public final long sinceMs;
@@ -66,7 +116,10 @@ public final class WatchReader {
         public String address;
         /** Nom de la montre (source affichée des mesures), facultatif. */
         public String name;
+        /** Sommeil détaillé lu depuis le coucher (capacité 199) : recopié du JS, sert au décodage. */
+        public boolean bedTime = true;
         public final List<Reply> replies = new ArrayList<>();
+        public final List<FileData> files = new ArrayList<>();
         public final List<Read> reads = new ArrayList<>();
 
         Capture(long sinceMs, long untilMs, long atMs) {
@@ -75,9 +128,16 @@ public final class WatchReader {
             this.atMs = atMs;
         }
 
-        /** Vrai si au moins un bloc de minutes ou de sommeil est arrivé (la reprise peut avancer). */
+        /** Issue d'une lecture par son id, ou null. */
+        public Read read(String id) {
+            for (Read r : reads) if (r.id.equals(id)) return r;
+            return null;
+        }
+
+        /** Vrai si au moins un bloc de minutes ou de sommeil (ou un fichier) est arrivé (la reprise peut avancer). */
         public boolean gotBlocks() {
             for (Reply r : replies) if (r.index >= 0) return true;
+            for (FileData f : files) if (f.bytes.length > 0) return true;
             return false;
         }
 
@@ -90,6 +150,18 @@ public final class WatchReader {
                     .append(",\"battery\":").append(battery);
             if (address != null) b.append(",\"address\":").append(MiniJson.quote(address));
             if (name != null) b.append(",\"name\":").append(MiniJson.quote(name));
+            if (!files.isEmpty()) {
+                if (!bedTime) b.append(",\"bedTime\":false");
+                b.append(",\"files\":[");
+                for (int i = 0; i < files.size(); i++) {
+                    FileData f = files.get(i);
+                    if (i > 0) b.append(',');
+                    b.append("{\"id\":").append(MiniJson.quote(f.id))
+                            .append(",\"since\":").append(f.sinceMs)
+                            .append(",\"hex\":\"").append(IsoAuth.hex(f.bytes)).append("\"}");
+                }
+                b.append(']');
+            }
             b.append(",\"reads\":[");
             for (int i = 0; i < reads.size(); i++) {
                 Read r = reads.get(i);
@@ -187,6 +259,11 @@ public final class WatchReader {
      * `nowMs` : heure de la capture (sert au JS pour dater les totaux du jour).
      */
     public static Capture read(WatchLink link, long sinceMs, long untilMs, long nowMs, long timeoutMs) {
+        return read(link, sinceMs, untilMs, nowMs, timeoutMs, new ArrayList<FileRequest>());
+    }
+
+    /** Idem, puis télécharge chaque fichier demandé jusqu'à `untilMs` (un fichier qui cale n'empêche pas le suivant). */
+    public static Capture read(WatchLink link, long sinceMs, long untilMs, long nowMs, long timeoutMs, List<FileRequest> files) {
         Capture cap = new Capture(sinceMs, untilMs, nowMs);
         blocks(link, cap, "sleep", SLEEP_COUNT, SLEEP_DATA, timeoutMs);
         blocks(link, cap, "minutes", MINUTE_COUNT, MINUTE_DATA, timeoutMs);
@@ -202,6 +279,100 @@ public final class WatchReader {
         } catch (IOException | GeneralSecurityException e) {
             totals.outcome = outcomeOf(e);
         }
+        for (FileRequest f : files) {
+            Read read = new Read(f.id);
+            cap.reads.add(read);
+            try {
+                byte[] bytes = downloadFile(link, f, untilMs, timeoutMs);
+                if (bytes != null && bytes.length > 0) {
+                    cap.files.add(new FileData(f.id, f.startMs, bytes));
+                    read.outcome = "ok";
+                    read.units = bytes.length;
+                }
+            } catch (IOException | GeneralSecurityException e) {
+                read.outcome = outcomeOf(e);
+            }
+        }
         return cap;
+    }
+
+    /** Demande d'ouverture 0x2C/0x01 : nom, type, début et fin (s), dictionnaire éventuel. */
+    static List<LinkCodec.Tlv> openFileTlvs(FileRequest f, long untilMs) {
+        List<LinkCodec.Tlv> tlvs = new ArrayList<>();
+        tlvs.add(new LinkCodec.Tlv(1, f.name.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        tlvs.add(new LinkCodec.Tlv(2, new byte[] {(byte) f.type}));
+        tlvs.add(new LinkCodec.Tlv(5, be(Math.floorDiv(f.startMs, 1000), 4)));
+        tlvs.add(new LinkCodec.Tlv(6, be(Math.floorDiv(untilMs, 1000), 4)));
+        if (f.dictionary >= 0) tlvs.add(new LinkCodec.Tlv(0x0C, be(f.dictionary, 4)));
+        return tlvs;
+    }
+
+    /**
+     * Télécharge un fichier comme downloadFile (files.js) : ouverture, infos (taille de bloc, envoi en clair),
+     * demandes de blocs, blocs poussés en 0x2C/0x05 (identifiant, décalage sur 4 octets, 1 octet, données), fin.
+     * Rend null si le fichier est vide ; lève si la montre refuse, se tait ou pousse un bloc inattendu.
+     */
+    static byte[] downloadFile(WatchLink link, FileRequest f, long untilMs, long timeoutMs) throws IOException, GeneralSecurityException {
+        LinkCodec.Message opened = link.request(FILES, FILE_OPEN, openFileTlvs(f, untilMs), false, timeoutMs);
+        long code = LinkCodec.resultCode(opened.tlvs);
+        if (code >= 0 && code != LinkCodec.RESULT_SUCCESS) throw new IOException("fichier " + f.name + " refusé (code " + code + ")");
+        byte[] id = LinkCodec.find(opened.tlvs, 3);
+        if (id == null || id.length == 0) throw new IOException("fichier " + f.name + " : pas d'identifiant");
+        int fileId = id[0] & 0xFF;
+        long size = LinkCodec.uint(LinkCodec.find(opened.tlvs, 4));
+        try {
+            if (size == 0 || size == 0xFFFFFFFFL) return null;
+            if (size > MAX_FILE_BYTES) throw new IOException("fichier " + f.name + " trop gros (" + size + " octets)");
+            List<LinkCodec.Tlv> ask = new ArrayList<>();
+            ask.add(new LinkCodec.Tlv(1, new byte[] {(byte) fileId}));
+            for (int t = 2; t <= 5; t++) ask.add(LinkCodec.Tlv.empty(t));
+            LinkCodec.Message info = link.request(FILES, FILE_INFO, ask, false, timeoutMs);
+            long maxBlock = LinkCodec.uint(LinkCodec.find(info.tlvs, 4));
+            if (maxBlock <= 0) maxBlock = 4096;
+            byte[] plainFlag = LinkCodec.find(info.tlvs, 5);
+            boolean plain = plainFlag != null && plainFlag.length > 0 && plainFlag[0] == 1;
+            byte[] file = new byte[(int) size];
+            int received = 0;
+            while (received < size) {
+                int offset = received;
+                int want = (int) Math.min(size - offset, maxBlock);
+                List<LinkCodec.Tlv> block = new ArrayList<>();
+                block.add(new LinkCodec.Tlv(1, new byte[] {(byte) fileId}));
+                block.add(new LinkCodec.Tlv(2, be(offset, 4)));
+                block.add(new LinkCodec.Tlv(3, be(want, 4)));
+                if (f.dictionary >= 0) block.add(new LinkCodec.Tlv(4, be(f.dictionary, 4)));
+                link.send(FILES, FILE_BLOCK, block, plain);
+                int got = 0;
+                while (got < want) {
+                    LinkCodec.Message m;
+                    try {
+                        m = link.await(FILES, FILE_PUSH, timeoutMs);
+                    } catch (IOException e) {
+                        if (e.getMessage() != null && e.getMessage().startsWith("Pas de réponse")) {
+                            throw new IOException("fichier " + f.name + " : bloc " + offset + " incomplet");
+                        }
+                        throw e;
+                    }
+                    byte[] raw = m.raw;
+                    if (raw == null || raw.length < 6 || (raw[0] & 0xFF) != fileId) continue;
+                    long at = LinkCodec.uint(java.util.Arrays.copyOfRange(raw, 1, 5)) - offset;
+                    int len = raw.length - 6;
+                    if (at < 0 || at + len > want) throw new IOException("fichier " + f.name + " : bloc inattendu");
+                    System.arraycopy(raw, 6, file, offset + (int) at, len);
+                    got = (int) Math.max(got, at + len);
+                }
+                received += want;
+            }
+            return file;
+        } finally {
+            List<LinkCodec.Tlv> done = new ArrayList<>();
+            done.add(new LinkCodec.Tlv(1, new byte[] {(byte) fileId}));
+            done.add(new LinkCodec.Tlv(2, new byte[] {1}));
+            try {
+                link.send(FILES, FILE_DONE, done, false);
+            } catch (IOException | GeneralSecurityException ignored) {
+                // la fin de transfert est une politesse : la montre referme d'elle-même
+            }
+        }
     }
 }

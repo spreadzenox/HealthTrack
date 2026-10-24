@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "amélioration",
+  "title": "Votre nuit détaillée arrive même app fermée",
+  "items": [
+    "Quand votre montre Huawei se resynchronise en arrière-plan (au déverrouillage du téléphone par exemple), l’app récupère maintenant aussi le sommeil détaillé (phases, score, VFC de la nuit) et le stress de la montre.",
+    "Le matin, votre nuit peut donc déjà être là à l’ouverture de l’app, sans toucher « Synchroniser ».",
+    "Il faut une première synchronisation depuis l’app : c’est elle qui récupère l’historique des dernières semaines."
+  ]
+}

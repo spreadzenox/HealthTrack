@@ -5,6 +5,10 @@ import { fileURLToPath } from 'node:url'
 import { dataFromCapture, isValidCapture } from './capture'
 import { readWatchData, totalsEntries, watchEntries } from './sync'
 import { READ_WINDOW, readWatchOptions } from './testing/sampleBlocks'
+import { field, sleepSequenceFile, stressFile } from './testing/sampleFiles'
+import { parseSleepSequence, parseStressFile, SLEEP_FIELD } from './files'
+
+const hex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
 
 const VECTORS = resolve(dirname(fileURLToPath(import.meta.url)), '../../../android/app/src/test/resources/huawei/link-vectors.json')
 /** La capture que WatchReader.java produit face à la fausse GT 6 Pro (vérifié par WatchReaderTest). */
@@ -74,5 +78,56 @@ describe('captures du client Java « synchro seule »', () => {
       expect(isValidCapture(bad)).toBe(false)
     }
     expect(() => dataFromCapture({ v: 1 })).toThrow(/illisible/)
+  })
+
+  describe('fichiers 0x2C lus en arrière-plan (M6)', () => {
+    const { until } = READ_WINDOW
+    const T = Math.floor(until / 1000) - 20 * 3600
+    const sleepBytes = sleepSequenceFile([
+      { startSec: T, endSec: T + 8 * 3600, fields: [field(SLEEP_FIELD.BED, T + 30), field(SLEEP_FIELD.VALID, 1), field(SLEEP_FIELD.SCORE, 80), field(SLEEP_FIELD.HRV, 44)], stages: [[20, 4], [200, 1], [60, 3], [80, 2]] },
+    ])
+    const stressBytes = stressFile([{ startSec: T + 9 * 3600, endSec: T + 9 * 3600 + 300, score: 31, level: 1 }])
+    const withFiles = (extra = {}) => ({
+      ...javaCapture(),
+      files: [
+        { id: 'sleepFile', since: (T - 3600) * 1000, hex: hex(sleepBytes) },
+        { id: 'stress', since: (T - 3600) * 1000, hex: hex(stressBytes) },
+      ],
+      reads: [...javaCapture().reads, { id: 'sleepFile', outcome: 'ok', units: sleepBytes.length, failed: 0 }, { id: 'stress', outcome: 'ok', units: stressBytes.length, failed: 0 }],
+      ...extra,
+    })
+
+    it('nuits détaillées et stress décodés comme la synchro en direct', () => {
+      const data = dataFromCapture(withFiles())
+      expect(data.nights).toEqual(parseSleepSequence(sleepBytes))
+      expect(data.nights[0]).toMatchObject({ score: 80, hrvMs: 44 })
+      expect(data.stress).toEqual(parseStressFile(stressBytes))
+      expect(data.services.find((s) => s.id === 'sleepFile')).toMatchObject({ outcome: 'ok', count: 1 })
+      expect(data.services.find((s) => s.id === 'stress')).toMatchObject({ outcome: 'ok', count: 1 })
+      expect(data.capabilities).toMatch(/fichiers/)
+      const entries = watchEntries(data, { until })
+      expect(entries.some((e) => e.type === 'watch_stress' && e.payload.value === 31)).toBe(true)
+      expect(entries.some((e) => e.type === 'sleep' && e.payload.sleepScore === 80)).toBe(true)
+      expect(entries.some((e) => e.payload.subtype === 'heartRateVariability' && e.payload.during === 'sleep' && e.payload.value === 44)).toBe(true)
+    })
+
+    it('coucher non annoncé (bedTime faux) : départ à l’endormissement, comme readWatchData', () => {
+      expect(dataFromCapture(withFiles({ bedTime: false })).nights).toEqual(parseSleepSequence(sleepBytes, { bedTime: false }))
+    })
+
+    it('fichier vide, sans réponse ou illisible : consigné, sans bloquer le reste', () => {
+      const c = withFiles({
+        files: [{ id: 'sleepFile', since: (T - 3600) * 1000, hex: 'ff' }],
+        reads: [...javaCapture().reads, { id: 'sleepFile', outcome: 'ok' }, { id: 'stress', outcome: 'timeout' }],
+      })
+      const data = dataFromCapture(c)
+      expect(data.nights).toEqual([])
+      expect(data.services.find((s) => s.id === 'sleepFile').outcome).toMatch(/^(empty|error)$/)
+      expect(data.services.find((s) => s.id === 'stress')).toMatchObject({ outcome: 'timeout', count: 0 })
+      expect(data.minutes.length).toBe(4)
+      // sans lecture de fichier demandée : aucune ligne en plus
+      expect(dataFromCapture(javaCapture()).services.map((s) => s.id)).toEqual(['sleep', 'minutes', 'totals'])
+      expect(isValidCapture({ ...javaCapture(), files: [{ id: 'stress', since: 1, hex: 'zz' }] })).toBe(false)
+    })
   })
 })
