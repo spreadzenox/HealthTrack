@@ -151,6 +151,10 @@ describe('Food — correction avant enregistrement', () => {
     })
     fireEvent.click(await screen.findByRole('button', { name: /Analyser les ingrédients/i }))
     expect(await screen.findByRole('heading', { name: 'Plateau de fromages' })).toBeInTheDocument()
+    // Libellé simple pour tout le monde ; le nom technique du modèle seulement dans les détails
+    expect(screen.getByText(/Analyse IA · une estimation/)).toBeInTheDocument()
+    expect(screen.queryByText(/Source : gemini/)).not.toBeInTheDocument()
+    expect(screen.getByText('Modèle : gemini-3.8-flash').closest('details')).not.toHaveAttribute('open')
     fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '80' } })
     fireEvent.click(screen.getByRole('button', { name: /Supprimer Fromage lunaire/i }))
     fireEvent.click(screen.getByRole('button', { name: /Enregistrer ce repas/i }))

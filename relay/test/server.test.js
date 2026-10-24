@@ -237,3 +237,23 @@ test('Play Integrity : verdict accepté (ou mode observe) → analyse normale', 
     assert.equal((await res.json()).quota.remaining, 1)
   })
 })
+
+test('crédits durables : relus et réécrits à chaque analyse ; Firestore en panne ne bloque rien', async () => {
+  const { createCredits } = await import('../src/credits.js')
+  const docs = new Map()
+  const store = { get: async (k) => docs.get(k) ?? null, set: async (k, v) => { docs.set(k, v) } }
+  await withServer({ vertex: okVertex(), credits: createCredits({ store }) }, async (url) => {
+    assert.equal((await post(url, { kind: 'text', description: 'une pomme' })).status, 200)
+  })
+  assert.equal([...docs.values()][0].used, 1)
+  // Nouvelle instance : le compteur repart de l'état durable
+  await withServer({ vertex: okVertex(), credits: createCredits({ store }) }, async (url) => {
+    const peek = await (await fetch(`${url}/v1/credits`, { headers: { 'X-Install-Id': INSTALL } })).json()
+    assert.equal(peek.credits.remaining, 24)
+  })
+  const down = { get: async () => { throw Object.assign(new Error('x'), { status: 503 }) }, set: async () => { throw new Error('x') } }
+  await withServer({ vertex: okVertex(), credits: createCredits({ store: down }) }, async (url, logs) => {
+    assert.equal((await post(url, { kind: 'text', description: 'une pomme' })).status, 200)
+    assert.deepEqual(logs.filter((l) => l.event === 'credits_store_failed').map((l) => l.op), ['get', 'set'])
+  })
+})

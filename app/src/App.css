@@ -217,6 +217,13 @@
   margin-bottom: 12px;
 }
 
+.results .provider-details summary {
+  cursor: pointer;
+  display: inline-block;
+  min-height: 44px;
+  line-height: 44px;
+}
+
 .results ul {
   list-style: none;
   margin: 0;

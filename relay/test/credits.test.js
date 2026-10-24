@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createCredits, monthKey, nextMonth, parseClientState, formatState } from '../src/credits.js'
+import { createCredits, createFirestoreStore, monthKey, nextMonth, parseClientState, formatState } from '../src/credits.js'
 
 const clock = (start) => {
   let t = start
@@ -82,4 +82,80 @@ test('état illisible ou hors bornes → ignoré', () => {
     assert.equal(parseClientState(raw), null, String(raw))
   }
   assert.equal(formatState({ month: '2026-10', used: 2, welcomeUsed: 1 }), '2026-10:2:1')
+})
+
+/** Registre durable factice (Map), qui compte ses lectures. */
+const memoryStore = () => {
+  const docs = new Map()
+  let reads = 0
+  return { docs, get reads() { return reads }, async get(k) { reads += 1; return docs.get(k) ?? null }, async set(k, v) { docs.set(k, { ...v }) } }
+}
+
+test('registre durable : le plafond premium du jour survit à un redémarrage de l\'instance', async () => {
+  const c = clock(T0)
+  const store = memoryStore()
+  const first = createCredits({ ...opts(c), store })
+  await first.hydrate('a')
+  assert.equal(first.take('a', { premium: true }).ok, true)
+  await first.persist('a')
+  // Nouvelle instance Cloud Run : la mémoire repart à zéro, Firestore non
+  const second = createCredits({ ...opts(c), store })
+  await second.hydrate('a')
+  assert.equal(second.peek('a', { premium: true }).remaining, 9)
+  // Le lendemain, le plafond du jour se renouvelle
+  c.set('2026-10-24T08:00:00Z')
+  const third = createCredits({ ...opts(c), store })
+  await third.hydrate('a')
+  assert.equal(third.peek('a', { premium: true }).remaining, 10)
+})
+
+test('registre durable : crédits gratuits et offerts gardés, relus une seule fois par instance', async () => {
+  const c = clock(T0)
+  const store = memoryStore()
+  const first = createCredits({ ...opts(c), store })
+  for (let i = 0; i < 17; i += 1) first.take('a', { premium: false })
+  await first.persist('a')
+  const second = createCredits({ ...opts(c), store })
+  await second.hydrate('a')
+  await second.hydrate('a')
+  assert.equal(store.reads, 1)
+  assert.deepEqual(second.peek('a', { premium: false }), { plan: 'free', remaining: 8, monthly: 0, welcome: 8, resetAt: '2026-11-01T00:00:00.000Z', state: '2026-10:15:2' })
+  // Mois suivant : les offerts consommés restent consommés
+  c.set('2026-11-03T08:00:00Z')
+  const third = createCredits({ ...opts(c), store })
+  await third.hydrate('a')
+  assert.equal(third.peek('a', { premium: false }).remaining, 23)
+})
+
+test('registre durable : une lecture en échec est retentée à la requête suivante', async () => {
+  const c = clock(T0)
+  const store = memoryStore()
+  let fail = true
+  const flaky = { get: async (k) => { if (fail) throw new Error('down'); return store.get(k) }, set: store.set }
+  const cr = createCredits({ ...opts(c), store: flaky })
+  await assert.rejects(cr.hydrate('a'))
+  fail = false
+  await cr.hydrate('a')
+  assert.equal(store.reads, 1)
+})
+
+test('Firestore : lecture, document absent, écriture des seuls compteurs', async () => {
+  const calls = []
+  const fetchImpl = async (url, init = {}) => {
+    calls.push({ url, init })
+    if (init.method === 'PATCH') return { ok: true, status: 200, json: async () => ({}) }
+    if (url.endsWith('/absent')) return { ok: false, status: 404 }
+    return { ok: true, status: 200, json: async () => ({ fields: { month: { stringValue: '2026-10' }, used: { integerValue: '3' }, welcomeUsed: { integerValue: '1' }, day: { stringValue: '2026-10-23' }, dayUsed: { integerValue: '2' } } }) }
+  }
+  const store = createFirestoreStore({ project: 'p', getToken: async () => 'jeton', fetchImpl })
+  assert.deepEqual(await store.get('abc'), { month: '2026-10', used: 3, welcomeUsed: 1, day: '2026-10-23', dayUsed: 2 })
+  assert.equal(calls[0].url, 'https://firestore.googleapis.com/v1/projects/p/databases/(default)/documents/credits/abc')
+  assert.equal(calls[0].init.headers.Authorization, 'Bearer jeton')
+  assert.equal(await store.get('absent'), null)
+  await store.set('abc', { month: '2026-10', used: 4, welcomeUsed: 1, day: '2026-10-23', dayUsed: 0 })
+  const body = JSON.parse(calls[2].init.body)
+  assert.deepEqual(Object.keys(body.fields).sort(), ['day', 'dayUsed', 'month', 'used', 'welcomeUsed'])
+  assert.equal(body.fields.used.integerValue, '4')
+  const failing = createFirestoreStore({ project: 'p', getToken: async () => 'j', fetchImpl: async () => ({ ok: false, status: 403 }) })
+  await assert.rejects(failing.get('abc'), /403/)
 })

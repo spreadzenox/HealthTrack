@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-24",
+  "kind": "correctif",
+  "title": "Analyses IA : un compteur fiable et un libellé plus simple",
+  "items": [
+    "Le nombre d’analyses IA restantes ne revient plus à son maximum quand le service d’analyse redémarre : il est désormais gardé d’une fois sur l’autre.",
+    "La carte de résultat d’une analyse indique simplement « Analyse IA · une estimation ». Le nom technique du modèle reste disponible sous « détails »."
+  ]
+}

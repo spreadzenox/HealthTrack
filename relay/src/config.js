@@ -31,6 +31,8 @@ export function loadConfig(env = process.env) {
     creditsWelcome: int(env.CREDITS_WELCOME, 10),
     creditsMonthly: int(env.CREDITS_MONTHLY, 15),
     premiumDaily: int(env.PREMIUM_DAILY_CAP, 10),
+    // Registre durable des crédits (P24) : firestore | memory (tests, développement)
+    creditsStore: env.CREDITS_STORE || 'firestore',
     // Abonnements Google Play (jalon 6b)
     packageName: env.PLAY_PACKAGE || 'fr.jpesquet.sante',
     publicUrl: env.PUBLIC_URL || 'https://halcya-relay-81378799481.europe-west1.run.app',

@@ -22,6 +22,37 @@ données », local-first :
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
 ## 🎯 Version candidate avant les testeurs (décision du 22/10 19:15 ; critères dans `PRODUIT.md` §2 bis)
+**Retours et décisions du propriétaire du 24/10 13:30–14:30 (session guidée sur la version play) — avant M6b et M7, dans cet ordre :**
+- [x] **CRÉDITS — FAIT le 24/10 14:30** : compteur premium revenu à 10 après une analyse (13:38 → 14:11). Cause : le
+  registre des crédits ne vivait qu'en mémoire et le plafond premium du jour n'était pas dans l'état `X-Credits`
+  renvoyé par l'app ; Cloud Run a arrêté l'instance (zéro instance au repos) → compteur du jour perdu. La
+  réinstallation n'y est pour rien (identifiant d'installation restauré par la sauvegarde Android). Corrigé : registre
+  durable Firestore (P24), relu une fois par instance, réécrit à chaque crédit pris ou rendu, panne non bloquante.
+  **Reste ouvert** : réinstallation *sans* sauvegarde → nouvel identifiant → 10 crédits offerts de nouveau (abus borné
+  par `INSTALL_DAILY_CAP` et le plafond global) ; piste : `deviceRecall` de Play Integrity ou empreinte d'appareil
+  du verdict, à étudier par un run « idées ».
+- [x] **SOURCE-IA — FAIT le 24/10 14:30** : carte de résultat « Analyse IA · une estimation », nom du modèle sous « détails ».
+- [ ] **6f — Période de lancement (P23 ② seule)** : (a) `LAUNCH_PREMIUM_FROM` + `LAUNCH_PREMIUM_UNTIL` réglés par la CI
+  (début = publication de la version candidate en alpha, fin = invitation + 14 j + marge) et `LAUNCH_PREMIUM_OFF=1`
+  pour la couper (retest de l'abonnement par le propriétaire) ; `source: 'launch'` déjà renvoyé par `/v1/subscription/verify` ;
+  (b) app : « Premium offert pendant le test » sur le paywall de l'onboarding et `/premium`, sans bouton d'achat
+  mis en avant pendant la période, parcours d'achat intact à l'échéance (tests) ; (c) texte d'invitation des testeurs
+  (« le premium est offert pendant le test, vous n'avez rien à payer ») + chemin d'installation qui marche
+  (Play Store → photo de profil → Gérer les applications et l'appareil → Gérer → « Non installées », ou
+  https://play.google.com/store/apps/details?id=fr.jpesquet.sante) ; (d) C5 vert une fois testé.
+- [ ] **SAUV — Sauvegarde Android conservée (décision du 24/10)** : (a) textes honnêtes (confidentialité, onboarding
+  « 0 Mo envoyé sans votre accord », Paramètres → Données, conditions : données incluses dans la sauvegarde Google du
+  téléphone si activée, chiffrée, gérée par Android, jamais lue par Halcya) ; (b) règles Play / Sécurité des données
+  (la sauvegarde Android chiffrée de bout en bout n'est en principe pas une « collecte » — à vérifier sur la page
+  d'aide), puis P21 à relancer ; (c) `data_extraction_rules` (Android 12+) et `full_backup_content` qui excluent
+  clés de session et d'appairage de la montre, clé Gemini (sideload) et jetons, avec test ; (d) restauration sur un
+  nouveau téléphone : montre à réappairer proprement, identifiant d'installation (à garder : il porte les crédits).
+- [ ] **INTEGRITY-BILAN** : lire le bilan Play Integrity du workflow relais après l'analyse du propriétaire du 24/10
+  13:38 (6b-2c) ; passer en `enforce` seulement si son téléphone passe.
+- [ ] **PLAY-COMPLETED** : vérifier par l'API que chaque version play arrive en test interne avec le statut
+  `completed` (l'app a passé son premier examen le 23/10) et retirer du résumé les gestes « version restée en brouillon ».
+- [ ] **IAM** : P28 proposé (retirer `roles/editor` du compte Compute par défaut, inutilisé par le relais et la CI).
+
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
 M6, M7, jalon 5. Défauts trouvés par l'audit sans code du 22/10 20:30 (`npm run visual -- --play --empty`, clair et
 sombre) — à corriger dans la passe de finition, chacun avec son test :

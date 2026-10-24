@@ -658,6 +658,21 @@ une ou deux fois avec la montre au poignet ; ouvrez ensuite Sources → montre �
 détaillé » doit dater de la nuit. **Prochain run de code** : M6 suite (VFC de journée et température de la peau en
 arrière-plan, P2P), puis M7 (courbe FC et allure des séances). **👉 Votre prochaine action la plus utile reste P27**.
 
+**Run du 24/10 14:30 — merci pour la session guidée : vos retours sont consignés, et le compteur d'analyses IA est fiable.**
+**P27 est terminée** (critère C3 de la version candidate ✅ : achat, annulation, paiement refusé, pause et
+réinstallation fonctionnent tous) ; **P23 tranchée** : seulement la « période de lancement » (aucun testeur de licence en
+plus) ; P21 relancée, P22 abandonnée, P24 faite. **Le « 10 analyses IA restantes » de 14:11 est expliqué** : le relais
+gardait ses compteurs en mémoire, et le plafond premium du jour n'était sauvegardé nulle part ; quand Google a mis le
+relais en veille (personne ne l'appelait), le compteur est reparti à zéro. La réinstallation n'y était pour rien. C'est
+corrigé : les compteurs sont maintenant gardés dans **Firestore** (la base que vous avez créée à 14:03, offre gratuite),
+avec seulement des chiffres et une empreinte de l'installation, rien de personnel. Ce que vous verrez : la carte de
+résultat d'une analyse IA dit simplement **« Analyse IA · une estimation »** (le nom du modèle reste sous « détails »).
+**À tester** : faites une analyse IA, attendez 30 minutes, puis Réglages → le compteur doit afficher 9 (et non 10).
+**Prochain run de code : 6f**, la période de lancement (« Premium offert pendant le test », date réglée côté relais,
+interrupteur pour vous laisser retester l'abonnement), puis la sauvegarde Android (règles qui excluent les clés de la
+montre, textes honnêtes). **Nouvelle action facultative : P28** (retirer un droit trop large au compte Compute par
+défaut, une commande, détail dans [`PRODUIT.md`](PRODUIT.md) §4).
+
 **Run du 24/10 12:30 — la montre envoie maintenant son stress (M4).** Le bilan Play Integrity du run précédent ne
 montre que 6 envois **sans jeton** en 7 jours (essais de la CI et vieilles versions), aucun de votre téléphone : la
 protection des crédits IA reste donc en mode « observation » (rien n'est bloqué) jusqu'à ce que vous ayez fait une
@@ -1231,6 +1246,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 09:30 — [6d : abonnements créés par l'API](runs/2026-10-24-0930-6d-abonnements.md) | 🧭💳 | `scripts/play/subscriptions.mjs` (`buildCatalog` pur, `ensureCatalog` idempotent : lecture → création / ajout des formules manquantes → offre `essai-14j` → activation → relecture ; prix existants jamais modifiés) ; workflow « Play — abonnements » : **créé et actif du 1er coup** ; `playLabel` ≤ 40 car. ; 12 tests ; v246 |
 | 24/10 10:30 — [6e : paiement à régulariser + scénario P27](runs/2026-10-24-1030-6e-paiement-scenario.md) | 🧭💳 | `paymentIssue()` (grâce / suspension) + `PaymentIssueCard` en haut de l'Accueil (play), lien vers les abonnements Google Play ; `--subscription=grace|on_hold` ; P27 : 7 cases pour le propriétaire (testeur de licence) ; 2 122 Vitest |
 | 24/10 11:30 — [CI : faux plantage du test émulateur](runs/2026-10-24-1130-ci-plantage-emulateur.md) | 🔧 | `play-cold-start.sh` : seuls les plantages de `fr.jpesquet.sante` comptent, tampon `crash` vidé et publié ; « Relais — déploiement » : bilan Play Integrity 7 j (6b-2c-1) ; 2 122 Vitest |
+| 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
