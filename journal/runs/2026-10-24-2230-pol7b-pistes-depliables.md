@@ -30,3 +30,7 @@
 - **POL-7c** : « Alcool » une seule fois (visage + notes fusionnés, le plus solide gagne), « autres liens » en une
   liste, « Voir N autres liens », émojis retirés des titres d'habitudes.
 - Puis POL-6 → POL-8 → POL-1.
+
+## Après le merge (#335, `105af7d`)
+- Checks de la PR tous verts (Vitest, Build APK, Relais, montre Java, budget de lectures, émulateur API 35 et 36).
+- « Build & Release » vert : **v258** publiée (APK 33 746 672 octets, 33,7 Mo) ; « Play — AAB » vert (envoi en test interne).

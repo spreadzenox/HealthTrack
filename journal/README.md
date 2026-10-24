@@ -696,7 +696,7 @@ lilas** : une flèche **↑** dit « va avec un meilleur bien-être », **↓** 
 rouge, qui jugeaient implicitement un comportement « bon » ou « mauvais ». Les écarts des habitudes (« −0,4 point »)
 ne sont plus en rouge non plus. Aucun calcul ne change. **👉 À tester** : onglet « Analyses », touchez le chevron
 d'une piste. Reste pour la 3e partie (POL-7c) : un seul verdict par facteur (« Alcool » est encore montré côté visage
-et côté notes) et la liste « autres liens » fusionnée.
+et côté notes) et la liste « autres liens » fusionnée. Publié : **v258** (33,7 Mo) et la version play en test interne.
 
 **Run du 24/10 19:30 — l'historique de votre bien-être (POL-2).** Ce que vous verrez : en bas de la carte « Bien-être
 estimé », **« Historique › »** ouvre une page avec **Jour / Semaine / Mois** : la courbe de votre bien-être estimé (en
