@@ -157,11 +157,11 @@ function SelfUpdateBanner() {
           {run.stalled ? (
             <p className="update-banner-error">
               Aucune donnée reçue depuis plus de {Math.round(STALL_MS / 1000)} s : le réseau semble bloqué. Le
-              téléchargement continue d'essayer ; vous pouvez aussi le relancer ou passer par le navigateur.
+              téléchargement continue d’essayer ; vous pouvez aussi le relancer ou passer par le navigateur.
             </p>
           ) : (
             <p className="update-banner-note">
-              Vous pouvez quitter l'app : le téléchargement continue (notification Android).
+              Vous pouvez quitter l’app : le téléchargement continue (notification Android).
             </p>
           )}
         </div>
@@ -172,7 +172,7 @@ function SelfUpdateBanner() {
       )}
       {step === 'installer' && (
         <p className="update-banner-note">
-          L'installateur Android est ouvert : touchez « Mettre à jour ». L'app se fermera puis rouvrira dans sa
+          L’installateur Android est ouvert : touchez « Mettre à jour ». L’app se fermera puis rouvrira dans sa
           nouvelle version.
         </p>
       )}
@@ -197,7 +197,7 @@ function SelfUpdateBanner() {
         )}
         {step === 'installer' && (
           <button type="button" className="btn update-banner-btn" onClick={() => runnerRef.current?.install()}>
-            Rouvrir l'installateur
+            Rouvrir l’installateur
           </button>
         )}
         {step === 'download' && (

@@ -250,7 +250,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.outcome.code).toBe('connected')
     expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'ok' })
     expect(report.sync).toMatchObject({ minutes: 3, nights: 1, totals: { steps: 5400, kcal: 0, distanceM: 0 } })
-    expect(report.sync.label).toMatch(/^3 minutes, 1 nuit, 5\u202f400 pas aujourd'hui → (\d+ nouvelles? mesures?|déjà à jour)$/)
+    expect(report.sync.label).toMatch(/^3 minutes, 1 nuit, 5\u202f400 pas aujourd’hui → (\d+ nouvelles? mesures?|déjà à jour)$/)
     expect(report.sync.firstSync).toBe(true)
     expect(report.sync.kinds).toMatchObject({ steps: 1, steps_jour: 1, heartRate: 2 })
     // tout ce qui suit l'authentification part chiffré

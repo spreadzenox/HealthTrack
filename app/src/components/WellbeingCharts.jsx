@@ -145,7 +145,7 @@ function PredictionLegend({ prediction, onChart }) {
     <details className="wellbeing-pred-row wellbeing-pred-details">
       <summary>{line}</summary>
       <p className="wellbeing-prediction-note">
-        Journée en cours : ce qui n'est pas encore connu (pas, repas, mesures…) compte comme une journée
+        Journée en cours : ce qui n’est pas encore connu (pas, repas, mesures…) compte comme une journée
         habituelle. Une estimation, pas une mesure.
       </p>
     </details>
@@ -256,12 +256,12 @@ export default function WellbeingCharts() {
       {/* Sans note aujourd'hui, ce bloc n'était qu'un grand cadre vide : il apparaît à la première note. */}
       {hourSeries.length > 0 && (
         <div className="wellbeing-chart-block">
-          <h3 className="wellbeing-chart-subtitle">Par heure (aujourd'hui)</h3>
+          <h3 className="wellbeing-chart-subtitle">Par heure (aujourd’hui)</h3>
           <WellbeingLineChart
             points={hourPoints}
             xDomain={hourDomain}
             labels={hourLabels}
-            emptyMessage="Aucune note aujourd'hui pour l'instant."
+            emptyMessage="Aucune note aujourd’hui pour l’instant."
           />
         </div>
       )}

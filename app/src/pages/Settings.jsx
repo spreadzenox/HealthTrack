@@ -14,6 +14,7 @@ import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlem
 import { syncEntitlement, restorePurchases } from '../services/playBilling'
 import '../Food.css'
 import { useEntitlement } from '../hooks/useEntitlement'
+import LineIcon from '../components/LineIcon'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
@@ -31,7 +32,7 @@ function RelayAiBlock() {
       </p>
       <div className="gemini-privacy">
         <p className="hint">
-          <strong>🔒 Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans métadonnées
+          <strong><LineIcon name="lock" size={16} /> Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans métadonnées
           (position GPS, date, modèle de téléphone), ou le texte d’un repas décrit, avec un identifiant aléatoire
           qui sert à compter vos analyses. Notre serveur ne garde rien et Google ne s’en sert pas pour
           entraîner ses modèles. Les calories sont calculées sur le téléphone ; aucune autre donnée de santé ne
@@ -248,20 +249,20 @@ export default function Settings() {
             ))}
           </select>
           <p className="hint">
-            S&apos;il n&apos;est pas disponible pour votre clé (ou son quota est épuisé), l&apos;app essaie
+            S’il n’est pas disponible pour votre clé (ou son quota est épuisé), l’app essaie
             automatiquement les autres.
           </p>
         </details>
 
         <div className="gemini-privacy">
           <p className="hint">
-            <strong>🔒 Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans
-            métadonnées (position GPS, date, modèle de téléphone), ou le texte d&apos;un repas décrit. Les
-            calories sont calculées sur le téléphone ; aucune autre donnée de santé ne quitte l&apos;appareil.
+            <strong><LineIcon name="lock" size={16} /> Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans
+            métadonnées (position GPS, date, modèle de téléphone), ou le texte d’un repas décrit. Les
+            calories sont calculées sur le téléphone ; aucune autre donnée de santé ne quitte l’appareil.
           </p>
           <p className="hint">
-            <strong>⚠️ Avec une clé gratuite</strong>, Google peut utiliser les photos et textes envoyés pour
-            améliorer ses produits, et ils peuvent être relus par des personnes. Pour l&apos;éviter,
+            <strong>Avec une clé gratuite</strong>, Google peut utiliser les photos et textes envoyés pour
+            améliorer ses produits, et ils peuvent être relus par des personnes. Pour l’éviter,
             activez la facturation sur votre projet Google AI Studio (offre payante).{' '}
             <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener noreferrer">
               Conditions Gemini
@@ -289,9 +290,9 @@ export default function Settings() {
               <span className="toggle-thumb" />
             </span>
           </label>
-          <span className="debug-toggle-label">Toujours afficher « + 1 cigarette » sur l&apos;accueil</span>
+          <span className="debug-toggle-label">Toujours afficher « + 1 cigarette » sur l’accueil</span>
         </div>
-        <p className="hint">Sinon, le bouton n&apos;apparaît que si une cigarette a été notée ces 14 derniers jours.</p>
+        <p className="hint">Sinon, le bouton n’apparaît que si une cigarette a été notée ces 14 derniers jours.</p>
       </div>
       )}
 

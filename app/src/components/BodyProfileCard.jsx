@@ -124,7 +124,7 @@ function ProfileForm({ profile, onCancel, onSaved }) {
           value={weight} onChange={(e) => setWeight(e.target.value)} />
       </div>
       <fieldset className="nutrition-profile-activity-choice">
-        <legend className="input-label">Niveau d'activité</legend>
+        <legend className="input-label">Niveau d’activité</legend>
         {[{ id: '', label: 'Automatique' }, ...ACTIVITY_LEVELS].map((l) => (
           <label key={l.id || 'auto'} className={`nutrition-sex-option${activity === l.id ? ' selected' : ''}`}>
             <input type="radio" name="activity" value={l.id} checked={activity === l.id} onChange={() => setActivity(l.id)} />
@@ -134,7 +134,7 @@ function ProfileForm({ profile, onCancel, onSaved }) {
         <p className="nutrition-profile-hint">
           {activity
             ? `${activityLevel(activity).label} : ${activityLevel(activity).hint}.`
-            : 'Automatique : estimé d\'après vos pas des 14 derniers jours (modérément actif sans montre).'}
+            : 'Automatique : estimé d’après vos pas des 14 derniers jours (modérément actif sans montre).'}
         </p>
       </fieldset>
       <p className="nutrition-profile-hint">

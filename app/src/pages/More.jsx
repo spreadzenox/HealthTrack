@@ -2,17 +2,18 @@ import { Link } from 'react-router-dom'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId, getUnseenEntries } from '../services/whatsNew'
 import { FEATURES } from '../config/distribution'
+import LineIcon from '../components/LineIcon'
 import './More.css'
 
 const ITEMS = [
-  { to: '/data', icon: '🗂️', title: 'Données', desc: 'Sauvegarde et restauration de vos données' },
-  { to: '/settings', icon: '⚙️', title: 'Paramètres', desc: FEATURES.cigaretteSetting
+  { to: '/data', icon: 'folder', title: 'Données', desc: 'Sauvegarde et restauration de vos données' },
+  { to: '/settings', icon: 'gear', title: 'Paramètres', desc: FEATURES.cigaretteSetting
     ? 'Apparence, analyse des repas (IA), cigarettes, diagnostic'
     : 'Apparence, analyse des repas (IA), abonnement' },
-  { to: '/nouveautes', icon: '✨', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },
+  { to: '/nouveautes', icon: 'sparkle', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },
   // Page statique (app/public), hors du routeur : aussi publiée par GitHub Pages et montrée par Health Connect
-  { href: '/privacypolicy.html', icon: '🔒', title: 'Confidentialité', desc: 'Ce qui reste sur le téléphone, ce qui en sort et quand' },
-  { href: '/conditions.html', icon: '📄', title: 'Conditions', desc: 'Utilisation, abonnement et remboursements' },
+  { href: '/privacypolicy.html', icon: 'lock', title: 'Confidentialité', desc: 'Ce qui reste sur le téléphone, ce qui en sort et quand' },
+  { href: '/conditions.html', icon: 'document', title: 'Conditions', desc: 'Utilisation, abonnement et remboursements' },
 ]
 
 export default function More({ changelog = CHANGELOG }) {
@@ -28,7 +29,7 @@ export default function More({ changelog = CHANGELOG }) {
           return (
             <li key={item.to ?? item.href}>
               <Item {...target} className="more-item">
-                <span className="more-icon" aria-hidden="true">{item.icon}</span>
+                <span className="more-icon" aria-hidden="true"><LineIcon name={item.icon} size={24} /></span>
                 <span className="more-text">
                   <span className="more-title">{item.title}</span>
                   <span className="more-desc">{item.desc}</span>

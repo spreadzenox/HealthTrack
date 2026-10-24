@@ -411,7 +411,7 @@ export default function DailyJournal() {
       {error && <div className="error-msg" role="alert">{error}</div>}
       {!loading && !error && (days.length === 0 ? (
         <p className="empty-hint">
-          Aucune donnée pour l'instant. Notez votre ventre depuis <Link to="/">Aujourd’hui</Link> ou{' '}
+          Aucune donnée pour l’instant. Notez votre ventre depuis <Link to="/">Aujourd’hui</Link> ou{' '}
           <Link to="/food">enregistrez un repas</Link> pour commencer.
         </p>
       ) : (

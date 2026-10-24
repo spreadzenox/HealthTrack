@@ -78,7 +78,7 @@ const UNAVAILABLE_MESSAGES = {
     body: (
       <>
         Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un <strong>module système</strong>{' '}
-        intégré — il n&apos;est pas dans le Play Store. Pour le mettre à jour, allez dans {SYSTEM_UPDATE} et installez la
+        intégré — il n’est pas dans le Play Store. Pour le mettre à jour, allez dans {SYSTEM_UPDATE} et installez la
         dernière version.
       </>
     ),
@@ -98,9 +98,9 @@ const UNAVAILABLE_MESSAGES = {
     title: 'Health Connect ne répond pas.',
     body: (
       <>
-        Le module natif Health Connect n&apos;a pas répondu dans les délais (10 s). Cela peut indiquer que le module
+        Le module natif Health Connect n’a pas répondu dans les délais (10 s). Cela peut indiquer que le module
         système est bloqué ou nécessite une mise à jour. Essayez de mettre à jour via {SYSTEM_UPDATE}, puis relancez
-        l&apos;application.
+        l’application.
       </>
     ),
     settings: false,
@@ -231,7 +231,7 @@ function ConnectorCard({ connector }) {
         // Rien d'importé : lastSyncAt n'avance pas, le prochain essai repartira du même point.
         setConnectorSettings(connector.id, { lastAttemptAt: now.toISOString(), lastSyncResult: result })
         reloadSettings()
-        setSyncMsg(`Rien n'a pu être importé. Erreurs : ${result.errors.join('; ')}`)
+        setSyncMsg(`Rien n’a pu être importé. Erreurs : ${result.errors.join('; ')}`)
         return
       }
 
@@ -300,7 +300,7 @@ function ConnectorCard({ connector }) {
                 )}
                 {settingsActionStatus === 'err' && (
                   <p className="connector-native-reason connector-native-reason-err">
-                    Impossible d&apos;ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
+                    Impossible d’ouvrir automatiquement. Sur Android 16 / One UI 8 : <strong>Paramètres → Sécurité et confidentialité → Health Connect</strong>. Sur Android 13 et inférieur : Paramètres → Applis → Health Connect.
                   </p>
                 )}
                 {settingsActionStatus === 'ok' && (
@@ -327,7 +327,7 @@ function ConnectorCard({ connector }) {
               <p>
                 {isWithings
                   ? 'Connectez votre compte Withings pour importer poids, taille et composition corporelle.'
-                  : 'Autorisez l\'accès à vos données de santé pour démarrer la synchronisation.'}
+                  : 'Autorisez l’accès à vos données de santé pour démarrer la synchronisation.'}
               </p>
               <button
                 type="button"
@@ -360,7 +360,7 @@ function ConnectorCard({ connector }) {
               {!settings.lastSyncAt && (
                 <div className="connector-history-picker">
                   <label htmlFor={`history-${connector.id}`} className="input-label">
-                    Importer l'historique des derniers :
+                    Importer l’historique des derniers :
                   </label>
                   <select
                     id={`history-${connector.id}`}
@@ -399,7 +399,7 @@ function ConnectorCard({ connector }) {
                   onClick={handleSync}
                   disabled={syncing}
                 >
-                  {syncing ? 'Synchronisation…' : settings.lastSyncAt ? 'Mettre à jour' : "Importer l'historique"}
+                  {syncing ? 'Synchronisation…' : settings.lastSyncAt ? 'Mettre à jour' : "Importer l’historique"}
                 </button>
               </div>
 

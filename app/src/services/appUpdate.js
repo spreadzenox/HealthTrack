@@ -70,7 +70,7 @@ const PAUSED_REASONS = {
 }
 const FAILED_REASONS = {
   1000: 'Erreur inconnue du gestionnaire de téléchargements.',
-  1001: "Impossible d'écrire le fichier sur le téléphone.",
+  1001: "Impossible d’écrire le fichier sur le téléphone.",
   1002: 'Réponse inattendue du serveur GitHub.',
   1004: 'La connexion a été coupée pendant le transfert.',
   1005: 'Trop de redirections depuis GitHub.',
@@ -94,14 +94,14 @@ const INSTALL_ERRORS = {
   empty: 'Le fichier téléchargé est vide.',
   size_mismatch: "Le fichier téléchargé est incomplet (taille différente de celle annoncée).",
   sha_mismatch: "Le fichier téléchargé est abîmé (empreinte différente de celle de la release).",
-  not_apk: "Le fichier téléchargé n'est pas une application Android lisible.",
-  wrong_package: `Le fichier téléchargé n'est pas ${APP_NAME}.`,
+  not_apk: "Le fichier téléchargé n’est pas une application Android lisible.",
+  wrong_package: `Le fichier téléchargé n’est pas ${APP_NAME}.`,
   older: 'Cette version est plus ancienne que celle installée.',
-  no_permission: `${APP_NAME} n'a pas encore le droit d'installer des applications.`,
+  no_permission: `${APP_NAME} n’a pas encore le droit d’installer des applications.`,
 }
 
 export function describeInstallError(result) {
-  const base = INSTALL_ERRORS[result?.error] || "L'installateur n'a pas pu être ouvert."
+  const base = INSTALL_ERRORS[result?.error] || "L’installateur n’a pas pu être ouvert."
   return result?.error === 'exception' && result?.detail ? `${base} (${result.detail})` : base
 }
 
@@ -193,7 +193,7 @@ export function createUpdateRunner({
     try {
       res = await plugin.install()
     } catch (e) {
-      return fail(`L'installateur n'a pas pu être ouvert : ${e?.message || e}`)
+      return fail(`L’installateur n’a pas pu être ouvert : ${e?.message || e}`)
     }
     if (res?.ok) return emit({ step: 'installer' })
     if (res?.error === 'no_permission') {
@@ -269,12 +269,12 @@ export function createUpdateRunner({
           await plugin.openInstallSettings().catch(() => {})
           return emit({
             notice:
-              `Autorisez « Installer des applis inconnues » pour ${APP_NAME} dans l'écran qui vient de s'ouvrir, puis revenez et touchez « Continuer ».`,
+              `Autorisez « Installer des applis inconnues » pour ${APP_NAME} dans l’écran qui vient de s’ouvrir, puis revenez et touchez « Continuer ».`,
           })
         }
         await plugin.start({ url: asset.url, version: String(version), size: asset.size || -1, digest: asset.digest })
       } catch (e) {
-        return fail(`Le téléchargement n'a pas pu démarrer : ${e?.message || e}`)
+        return fail(`Le téléchargement n’a pas pu démarrer : ${e?.message || e}`)
       }
       track()
     },

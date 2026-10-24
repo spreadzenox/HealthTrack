@@ -33,9 +33,9 @@ const geminiUrl = (model) => `https://generativelanguage.googleapis.com/v1beta/m
 function buildPrompt() {
   // Liste exhaustive : un nom par ligne pour limiter la taille du prompt tout en restant lisible
   const namesList = ingredientNames().join('\n')
-  return `Tu analyses une photo de plat/repas. Tu ne dois répondre QUE par du JSON valide, rien d'autre (pas de texte, pas de markdown).
+  return `Tu analyses une photo de plat/repas. Tu ne dois répondre QUE par du JSON valide, rien d’autre (pas de texte, pas de markdown).
 
-LISTE EXHAUSTIVE DES INGRÉDIENTS AUTORISÉS (tu DOIS utiliser exactement un de ces noms, copié à l'identique, pour chaque ingrédient détecté) :
+LISTE EXHAUSTIVE DES INGRÉDIENTS AUTORISÉS (tu DOIS utiliser exactement un de ces noms, copié à l’identique, pour chaque ingrédient détecté) :
 ---
 ${namesList}
 ---
@@ -122,7 +122,7 @@ async function requestMealJson(parts, apiKey) {
     firstError ??= message
   }
   if (!data) {
-    throw new Error(firstError || "Aucun modèle Gemini n'est disponible pour cette clé.")
+    throw new Error(firstError || "Aucun modèle Gemini n’est disponible pour cette clé.")
   }
 
   const textPart = extractResponseText(data)

@@ -197,7 +197,7 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   const parts = [plural(data.minutes.length, 'minute', 'minutes')]
   if (nights) parts.push(plural(nights, 'nuit', 'nuits'))
   if (workouts) parts.push(plural(workouts, 'séance', 'séances'))
-  if (data.totals?.steps) parts.push(`${plural(data.totals.steps, 'pas', 'pas')} aujourd'hui`)
+  if (data.totals?.steps) parts.push(`${plural(data.totals.steps, 'pas', 'pas')} aujourd’hui`)
   if (data.hrvDay?.length) parts.push(plural(data.hrvDay.length, 'VFC de journée', 'VFC de journée'))
   if (data.skinTemp?.length) parts.push(plural(data.skinTemp.length, 'température de la peau', 'températures de la peau'))
   // Où la montre a calé (I69) : dit à l'écran, détaillé dans le journal (`services`, `hints`)

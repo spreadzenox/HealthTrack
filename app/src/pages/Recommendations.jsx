@@ -177,7 +177,7 @@ function TagEffectCard({ effect, measure = 'bien-être' }) {
       </p>
       {weekendShift && (
         <p className="reco-tag-compare">
-          📅 Week-end comparé au week-end, semaine à la semaine :{' '}
+          Week-end comparé au week-end, semaine à la semaine :{' '}
           <span className={effect.diff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
             {frDiff(effect.diff)} point{Math.abs(effect.diff) >= 2 ? 's' : ''}
           </span>
@@ -197,7 +197,7 @@ function TagEffectCard({ effect, measure = 'bien-être' }) {
 function TagsSection({ result }) {
   return (
     <section className="reco-section">
-      <h3 className="reco-section-title">🏷️ Vos habitudes</h3>
+      <h3 className="reco-section-title">Vos habitudes</h3>
       {result.status === 'no_tags' ? (
         <p className="reco-section-hint">
           Ajoutez des tags (alcool, café…) en notant votre bien-être : comparaison après{' '}
@@ -251,7 +251,7 @@ function LaggedEffectCard({ effect, measure = 'bien-être du jour' }) {
           <strong>{frDiff(effect.effectPerSd)} {points}</strong>
         </span>
       </p>
-      {effect.action && <p className="reco-tag-compare">🎯 Piste : {effect.action}</p>}
+      {effect.action && <p className="reco-tag-compare">Piste : {effect.action}</p>}
       {effect.action && effect.againstNorm && <AgainstNormNote />}
       <p className="reco-tag-days">
         Lien {effect.strength} (r = {formatR(effect.r)}, ≈ {Math.round(effect.nEff)} jours indépendants)
@@ -267,7 +267,7 @@ function LaggedEffectsSection({ result }) {
   const lags = `${LAGS[0]} à ${LAGS[LAGS.length - 1]} jours`
   return (
     <section className="reco-section">
-      <h3 className="reco-section-title">⏳ Effets décalés</h3>
+      <h3 className="reco-section-title">Effets décalés</h3>
       {result.status === 'not_enough_data' ? (
         <p className="reco-section-hint">
           Effet {lags} plus tard : {result.currentDays} sur {MIN_LAG_PAIRS} jours notés dont la
@@ -286,7 +286,7 @@ function LaggedEffectsSection({ result }) {
             </ul>
           ) : (
             <p className="reco-empty-levers">
-              Aucun effet décalé net dans vos données pour l&apos;instant (sommeil, pas, activité et
+              Aucun effet décalé net dans vos données pour l’instant (sommeil, pas, activité et
               cigarettes testés {lags} avant, quand ils sont mesurés).
             </p>
           )}
@@ -324,17 +324,17 @@ function WeekendNote({ control }) {
   if (!control.applied) {
     return (
       <p>
-        📅 Pas encore assez de jours de week-end et de semaine notés ({MIN_WEEKEND_DAYS} de chaque)
+        Pas encore assez de jours de week-end et de semaine notés ({MIN_WEEKEND_DAYS} de chaque)
         pour tenir compte du jour de la semaine.
       </p>
     )
   }
   return (
     <p>
-      📅 Liens calculés en tenant compte du week-end (bien-être moyen :{' '}
+      Liens calculés en tenant compte du week-end (bien-être moyen :{' '}
       <strong>{frScore(control.weekendMean)} le week-end</strong>,{' '}
       <strong>{frScore(control.weekdayMean)} en semaine</strong>) : une habitude plus fréquente
-      le samedi n'est pas créditée du meilleur bien-être du week-end.
+      le samedi n’est pas créditée du meilleur bien-être du week-end.
     </p>
   )
 }
@@ -374,7 +374,7 @@ function CorrelationsSection({ correlations, levers = [] }) {
   )
   return (
     <section className="reco-section">
-      <h3 className="reco-section-title">📈 {others ? 'Autres liens' : 'Corrélations'} avec votre bien-être</h3>
+      <h3 className="reco-section-title">{others ? 'Autres liens' : 'Corrélations'} avec votre bien-être</h3>
       <p className="reco-section-hint">
         Vert = va de pair avec un meilleur bien-être · Rouge = avec un moins bon.
       </p>
@@ -411,7 +411,7 @@ function FaceMoodHabits({ tagEffects, laggedEffects }) {
   const cards = (list) => list.map((e) => <TagEffectCard key={e.tagId} effect={e} measure="bien-être estimé" />)
   return (
     <div className="reco-face-habits" data-testid="face-mood-habits">
-      <p className="reco-section-hint">🏷️ Vos habitudes et ⏳ effets décalés, avec votre bien-être estimé :</p>
+      <p className="reco-section-hint">Vos habitudes et effets décalés, avec votre bien-être estimé :</p>
       {clear.length > 0 || lags.length > 0 ? (
         <ul className="reco-tag-list">
           {cards(clear)}
@@ -448,7 +448,7 @@ function FaceMoodHabits({ tagEffects, laggedEffects }) {
  */
 export function FaceMoodSection({ result }) {
   if (!result || result.status === 'no_face') return null
-  const title = <h3 className="reco-section-title">🙂 Avec votre bien-être estimé (visage)</h3>
+  const title = <h3 className="reco-section-title">Avec votre bien-être estimé (visage)</h3>
   if (result.status !== 'ok') {
     const n = result.currentDays
     return (
@@ -493,24 +493,24 @@ export function FaceMoodSection({ result }) {
       )}
       <FaceMoodHabits tagEffects={result.tagEffects} laggedEffects={result.laggedEffects} />
       <details className="reco-method-note">
-        <summary>Comment c&apos;est calculé</summary>
+        <summary>Comment c’est calculé</summary>
         <p>
           Chaque jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit un bien-être estimé
           (médiane de ses lectures), comparée à chaque facteur comme une note donnée à la dernière lecture : avant{' '}
           {DAY_OVER_HOUR} h, ce que vous faites après elle ne compte pas. Mêmes garde-fous que pour vos notes :
           week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés. Le bien-être estimé ne
           vient que de votre visage (et de vos notes si vous en donnez) : aucun de ces facteurs ne sert à
-          l&apos;estimer, sinon le lien serait circulaire.
+          l’estimer, sinon le lien serait circulaire.
         </p>
         <p>
           Habitudes : bien-être estimé les jours avec chaque tag (ceux de vos notes, ou mesurés par le téléphone)
           contre les jours sans, le lendemain pour le soir ; le stress ressenti fait partie du bien-être, il
-          n&apos;est jamais comparé. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
+          n’est jamais comparé. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
           avant, à bien-être de la veille égal, liens solides seulement.
         </p>
         <p>
-          C&apos;est une estimation, moins précise qu&apos;une note : un lien est une hypothèse à observer, pas une
-          cause, et aucun comportement n&apos;est jugé bon ou mauvais d&apos;avance.
+          C’est une estimation, moins précise qu’une note : un lien est une hypothèse à observer, pas une
+          cause, et aucun comportement n’est jugé bon ou mauvais d’avance.
         </p>
       </details>
     </section>
@@ -546,32 +546,32 @@ function BasicTab({ analysis, teaserShown = false }) {
         )}
       </p>
       <details className="reco-method-note">
-        <summary>Comment c&apos;est calculé</summary>
+        <summary>Comment c’est calculé</summary>
         <p>
           Corrélation de Pearson entre chaque variable et le bien-être, corrigée pour les jours qui
           se ressemblent (autocorrélation) et pour le nombre de variables testées
           (Benjamini-Hochberg). Un jour sans mesure (montre non portée, pas de pesée) est ignoré
           pour cette mesure, jamais compté comme 0. Un jour noté avant {DAY_OVER_HOUR} h, seuls les pas,
-          séances, cigarettes et temps d&apos;écran d&apos;avant la note comptent : ce qui suit ne peut pas
-          l&apos;expliquer.
+          séances, cigarettes et temps d’écran d’avant la note comptent : ce qui suit ne peut pas
+          l’expliquer.
           {result.nutritionDays != null && result.nutritionDays < datasetDays && (
             <>
               {' '}Alimentation connue sur {result.nutritionDays} jour{result.nutritionDays > 1 ? 's' : ''} sur {datasetDays} :
-              un jour sans repas saisi ne compte pas comme 0 kcal (un oubli n'est pas un jeûne), et sans aucun
-              repas saisi sur les 10 jours précédents, l'alimentation du jour est ignorée.
+              un jour sans repas saisi ne compte pas comme 0 kcal (un oubli n’est pas un jeûne), et sans aucun
+              repas saisi sur les 10 jours précédents, l’alimentation du jour est ignorée.
             </>
           )}
         </p>
         <WeekendNote control={result.weekendControl} />
         <p>
           Tags : bien-être les jours avec chaque tag comparé aux jours sans ; pour les
-          habitudes du soir, c&apos;est le lendemain qui compte. Les week-ends sont comparés aux
+          habitudes du soir, c’est le lendemain qui compte. Les week-ends sont comparés aux
           week-ends et les jours de semaine entre eux. Le stress ressenti fait partie de votre
-          bien-être : il n&apos;est pas présenté comme sa cause.
+          bien-être : il n’est pas présenté comme sa cause.
         </p>
         <p>
           Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
-          avant, à bien-être de la veille égal (une bonne passe qui dure n&apos;est pas créditée à
+          avant, à bien-être de la veille égal (une bonne passe qui dure n’est pas créditée à
           vos comportements) et à journée égale (sommeil, pas… du jour même).
         </p>
         <p>
@@ -580,14 +580,14 @@ function BasicTab({ analysis, teaserShown = false }) {
         </p>
         <p>
           Tout est calculé sur votre téléphone. Ce sont des hypothèses : une corrélation ne prouve
-          pas une cause, et d&apos;autres choses peuvent changer ces jours-là. Essayez une piste
-          deux semaines et observez. Aucun comportement n&apos;est jugé bon ou mauvais d&apos;avance :
-          quand vos données vont à l&apos;inverse de l&apos;hypothèse générale, la piste le dit.
+          pas une cause, et d’autres choses peuvent changer ces jours-là. Essayez une piste
+          deux semaines et observez. Aucun comportement n’est jugé bon ou mauvais d’avance :
+          quand vos données vont à l’inverse de l’hypothèse générale, la piste le dit.
         </p>
       </details>
 
       <section className="reco-section">
-        <h3 className="reco-section-title">🎯 Pistes à tester</h3>
+        <h3 className="reco-section-title">Pistes à tester</h3>
         <p className="reco-section-hint">
           Ce qui va de pair avec un meilleur bien-être dans vos données, et sur quoi vous pouvez agir.
         </p>
@@ -665,7 +665,7 @@ function AdvancedTab({ analysis }) {
             {modelInfo?.r2 != null && (
               <> R² entraînement : <strong>{r2Display}</strong>
               {r2LooDisplay != null && <> · R² LOO (hors-échantillon) : <strong>{r2LooDisplay}</strong></>}
-              . Le premier mesure l&apos;ajustement aux jours vus ; le R² LOO prédit chaque jour sans l&apos;avoir vu :
+              . Le premier mesure l’ajustement aux jours vus ; le R² LOO prédit chaque jour sans l’avoir vu :
               négatif ou bien plus bas, il signale un sur-apprentissage et le modèle est marqué peu fiable.</>
             )}
             {modelInfo?.overfit_risk && (
@@ -675,10 +675,10 @@ function AdvancedTab({ analysis }) {
           {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
             <p>
               Variables retenues : <strong>{modelInfo.nFeaturesFinal}</strong> sur {modelInfo.nFeaturesCandidate}, les plus
-              liées au bien-être sur les jours d&apos;entraînement ({MAX_FEATURES} au plus, une pour{' '}
+              liées au bien-être sur les jours d’entraînement ({MAX_FEATURES} au plus, une pour{' '}
               {Math.round(1 / MAX_FEATURES_RATIO)} jours, mesurées au moins un jour sur deux ; un jour sans mesure compte
               comme un jour habituel). Deux variables corrélées à plus de {Math.round(COLLINEARITY_MAX_R * 100)} % (comme
-              les pas et les calories d&apos;activité) fausseraient l&apos;estimation : seule la plus liée est gardée.
+              les pas et les calories d’activité) fausseraient l’estimation : seule la plus liée est gardée.
             </p>
           )}
           {modelInfo?.droppedCollinear?.length > 0 && (
@@ -693,12 +693,12 @@ function AdvancedTab({ analysis }) {
           <p>
             {modelInfo?.weekendEffect != null ? (
               <>
-                📅 Le week-end est une variable de contrôle : à habitudes égales,{' '}
+                Le week-end est une variable de contrôle : à habitudes égales,{' '}
                 {Math.abs(modelInfo.weekendEffect) < 0.05
-                  ? <>votre bien-être n&apos;est <strong>pas différent le week-end</strong>.</>
+                  ? <>votre bien-être n’est <strong>pas différent le week-end</strong>.</>
                   : <>votre bien-être est estimé à <strong>{frDiff(modelInfo.weekendEffect)}{' '}
                     point{Math.abs(modelInfo.weekendEffect) >= 2 ? 's' : ''} le week-end</strong> par rapport à la semaine.</>}
-                {' '}Cet effet n&apos;est attribué à aucune habitude (sinon une habitude plus fréquente le samedi
+                {' '}Cet effet n’est attribué à aucune habitude (sinon une habitude plus fréquente le samedi
                 récupérerait le bien-être propre au week-end).
               </>
             ) : (
@@ -714,9 +714,9 @@ function AdvancedTab({ analysis }) {
           <p>
             La régularisation Ridge{modelInfo.lambda != null && <> (λ = {String(modelInfo.lambda).replace('.', ',')})</>} est
             choisie par validation croisée : plus vos données sont bruitées, plus les effets sont prudemment réduits vers
-            zéro. Seuls les effets d&apos;au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type deviennent des
+            zéro. Seuls les effets d’au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type deviennent des
             pistes. Le modèle est entraîné <strong>sans les {HOLD_OUT_DAYS} derniers jours</strong>, que « A-t-il vu
-            juste ? » et l&apos;« attendu d&apos;après vos habitudes » des Tendances les estiment donc sans les avoir vus.
+            juste ? » et l’« attendu d’après vos habitudes » des Tendances les estiment donc sans les avoir vus.
           </p>
           </>)}
         </details>
@@ -725,7 +725,7 @@ function AdvancedTab({ analysis }) {
       {topRecommendations?.length > 0 && (
         <section className="reco-section">
           <h3 className="reco-section-title">
-            🤖 Pistes suggérées par le modèle
+            Pistes suggérées par le modèle
           </h3>
           <p className="reco-section-hint">
             Facteurs sur lesquels vous pouvez agir : hypothèses tirées de vos données.
@@ -741,7 +741,7 @@ function AdvancedTab({ analysis }) {
       {featureImportance?.length > 0 && (
         <section className="reco-section">
           <h3 className="reco-section-title">
-            🔬 Ce qui pèse le plus dans le modèle
+            Ce qui pèse le plus dans le modèle
           </h3>
           <p className="reco-section-hint">
             Vert = va avec un meilleur bien-être · rouge = moins bon · le plus influent = 100 %.
@@ -762,7 +762,7 @@ function AdvancedTab({ analysis }) {
       {residuals && residuals.length > 0 && (
         <section className="reco-section">
           <h3 className="reco-section-title">
-            📉 A-t-il vu juste ?
+            A-t-il vu juste ?
           </h3>
           <p className="reco-section-hint">
             Votre bien-être des {HOLD_OUT_DAYS} derniers jours, prédit sans que le modèle les ait vus.

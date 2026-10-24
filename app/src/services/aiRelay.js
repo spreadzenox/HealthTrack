@@ -142,7 +142,7 @@ export async function refreshCredits({ fetchImpl = globalThis.fetch, timeoutMs =
   }
 }
 
-const NETWORK_MESSAGE = "Pas de connexion au service d'analyse IA. Vérifiez votre connexion et réessayez."
+const NETWORK_MESSAGE = "Pas de connexion au service d’analyse IA. Vérifiez votre connexion et réessayez."
 
 async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = getIntegrityToken } = {}) {
   const headers = { 'Content-Type': 'application/json', ...relayHeaders() }
@@ -160,7 +160,7 @@ async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY
       ...(controller ? { signal: controller.signal } : {}),
     })
   } catch (err) {
-    if (err?.name === 'AbortError') throw new Error("L'analyse IA a pris trop de temps. Réessayez dans un instant.")
+    if (err?.name === 'AbortError') throw new Error("L’analyse IA a pris trop de temps. Réessayez dans un instant.")
     throw new Error(NETWORK_MESSAGE)
   } finally {
     if (timer) clearTimeout(timer)
@@ -174,10 +174,10 @@ async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY
   if (!res.ok) {
     if (res.status === 429 && data?.scope === 'install') rememberQuota({ remaining: 0, resetAt: data.resetAt })
     rememberCredits(data?.credits)
-    throw new Error(data?.message || "L'analyse IA n'a pas abouti. Réessayez dans un instant.")
+    throw new Error(data?.message || "L’analyse IA n’a pas abouti. Réessayez dans un instant.")
   }
   if (!data || typeof data.parsed !== 'object') {
-    throw new Error("Réponse inattendue du service d'analyse IA.")
+    throw new Error("Réponse inattendue du service d’analyse IA.")
   }
   rememberQuota(data.quota)
   rememberCredits(data.credits)

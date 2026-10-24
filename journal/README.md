@@ -612,6 +612,17 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 24/10 06:30 — des icônes fines à la place des émojis, et des apostrophes soignées (VC-15).** Ce que vous
+verrez : dans **Réglages**, les lignes Données, Paramètres, Nouveautés, Confidentialité et Conditions ont les mêmes
+**icônes fines** que la barre du bas (fini 🗂️ ⚙️ ✨ 🔒) ; la page **Repas** s'appelle enfin « Repas » (et non
+« Alimentation ») et ses boutons Photo / Galerie / Décrire ont aussi des icônes fines ; l'onboarding, les Paramètres
+et la note du soir suivent. Les titres de Pistes perdent leurs émojis décoratifs. Partout, **l'apostrophe devient
+typographique** (« l’instant » au lieu de « l'instant », 59 textes). En coulisses : deux tests empêchent désormais le
+retour d'un émoji ou d'une apostrophe droite dans les textes de l'app. Seul reste : les étiquettes d'habitudes (✈️
+Voyage, ☕ Café…) gardent leur émoji, car ce sont vos données (VC-20, avec la refonte de Pistes). **Le critère C2
+(textes relus) n'a plus de défaut connu ouvert.** **Prochain run de code : VC-9** (premier lancement à froid sur
+l'émulateur, critère C4).
+
 **Run du 24/10 05:30 — la page « Nouveautés » de la version Play ne raconte plus notre historique (VC-5).** Ce que
 verront les testeurs de la version Play : Réglages → **Nouveautés** ne montre plus que les changements qui les
 concernent, à partir du 24/10 (rappel de fin d'essai, conditions, suppression des données…), au lieu de nos 160
@@ -1119,6 +1130,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 03:30 — [CI : réessais Play sur 5xx](runs/2026-10-24-0330-ci-play-reessais.md) | 🔧 | « Play — AAB » rouge sur un 503 de Google (v394) : job relancé ; `withRetry` (429/5xx, 5-10-20 s) dans `scripts/play/publish.mjs`, utilisé aussi par la fiche ; 4 tests |
 | 24/10 04:30 — [VC-18b : rappel de fin d'essai](runs/2026-10-24-0430-vc18b-rappel-essai.md) | 🧭💳 | `services/trialReminder.js` (J−2, déplacé/annulé selon les droits du relais) ; plugin play `TrialReminderPlugin` + `TrialReminderReceiver` (alarme inexacte, redémarrage) ; paywall « jour 12 · On vous prévient » seulement si le rappel est possible ; Conditions ; 10 tests |
 | 24/10 05:30 — [VC-5 : Nouveautés par variante](runs/2026-10-24-0530-vc5-nouveautes-play.md) | 🧭 | `changelogFor` + `PLAY_CHANGELOG_SINCE` (play : entrées depuis le 24/10, champ `variants`) ; installation neuve → historique déjà « lu » (onboarding) ; test-garde de vocabulaire sur les entrées play ; 2 097 Vitest |
+| 24/10 06:30 — [VC-15 : icônes trait et apostrophes](runs/2026-10-24-0630-vc15-icones-apostrophes.md) | 🧭 | `components/LineIcon` (Réglages, Repas, Paramètres, onboarding, note du soir) ; émojis des titres de Pistes retirés ; 59 apostrophes typographiques (réécriture sur l'AST) ; titre « Repas » ; tests-gardes apostrophes + émojis ; 2 102 Vitest |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |
