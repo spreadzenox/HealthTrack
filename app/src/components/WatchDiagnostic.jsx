@@ -99,6 +99,8 @@ async function defaultCopy(text) {
  * @param {{ run?: Function, available?: boolean, save?: Function, copy?: Function, setup?: object|null }} props
  * `connect` : connexion authentifiée (pairing.js), null pour masquer « Connexion à la montre ».
  * `setup` : dépendances de l'assistant « Libérer et appairer » ({ detectApps, classic, appManager }), null pour le masquer.
+ * `troubleshooting` : false sur la page Sources hors mode diagnostic (7 touches sur la version, POL-8) : ni test de
+ * connexion, ni journal à enregistrer pour un utilisateur final.
  */
 /** État de la relecture app fermée de la montre appairée (journal exporté), null hors de l'app. */
 async function defaultBackground() {
@@ -107,7 +109,7 @@ async function defaultBackground() {
   return watch ? getBackgroundSync({ deviceId: watch.deviceId }) : null
 }
 
-export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground, busy = isWatchBusy, maxMs = TEST_MAX_MS }) {
+export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground, busy = isWatchBusy, maxMs = TEST_MAX_MS, troubleshooting = true }) {
   const connectFn = connect === undefined ? (classicPlugin() ? defaultConnect : null) : connect
   const setupDeps = setup === undefined ? { detectApps: detectPhoneApps, classic: classicPlugin(), appManager: appManagerPlugin() } : setup
   const [report, setReport] = useState(loadLast)
@@ -227,7 +229,7 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
     <section className="my-devices watch-diag" aria-labelledby="watch-diag-title">
       <h3 id="watch-diag-title" className="my-devices-title">Montre Huawei</h3>
       {showConnect ? (
-        <WatchConnect connect={connectFn} onReport={setConnectReport} dataLink={dataLink}>
+        <WatchConnect connect={connectFn} onReport={setConnectReport} dataLink={dataLink} troubleshooting={troubleshooting}>
           {exportBlock}
           {message && <p className="my-device-message">{message}</p>}
           {test}
@@ -235,8 +237,14 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
       ) : (
         <>
           {dataLink}
-          {test}
-          {exportBlock}
+          {troubleshooting || !available ? (
+            test
+          ) : (
+            <p className="my-devices-intro">
+              Montre allumée près du téléphone, son état et « Synchroniser la montre » s’affichent ici dès qu’elle est appairée.
+            </p>
+          )}
+          {troubleshooting && exportBlock}
           {message && <p className="my-device-message">{message}</p>}
         </>
       )}

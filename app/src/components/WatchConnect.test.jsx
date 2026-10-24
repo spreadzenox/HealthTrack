@@ -54,6 +54,23 @@ describe('WatchConnect', () => {
     expect(diag.contains(screen.getByText(/AES-GCM/))).toBe(true)
   })
 
+  it('page Sources hors mode diagnostic (POL-8) : pas de « Diagnostic » tant qu’aucune connexion n’a échoué', async () => {
+    localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: 'a', v2: 'b', v3: 'c' }))
+    const failed = { ...connected, outcome: { code: 'connect_failed', title: 'Montre introuvable' } }
+    const { container } = render(<WatchConnect connect={vi.fn(async () => failed)} troubleshooting={false} />)
+    expect(container.querySelector('details.watch-trouble')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Connecter ma montre' }))
+    await screen.findByText('Montre introuvable')
+    // après un échec, le dépannage (« Libérer et appairer », « Refaire l'appairage ») redevient utile
+    expect(container.querySelector('details.watch-trouble')).not.toBeNull()
+  })
+
+  it('page Sources hors mode diagnostic : montre appairée, aucun outil technique', () => {
+    localStorage.setItem('healthtrack_watch_connect_last', JSON.stringify(connected))
+    const { container } = render(<WatchConnect connect={vi.fn()} troubleshooting={false} />)
+    expect(container.querySelector('details.watch-trouble')).toBeNull()
+  })
+
   it('téléchargement impossible → texte collé accepté ; texte invalide refusé', async () => {
     render(<WatchConnect connect={vi.fn()} fetchSecrets={async () => { throw new Error('hors ligne') }} />)
     fireEvent.click(screen.getByRole('button', { name: 'Télécharger les paramètres' }))

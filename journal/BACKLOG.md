@@ -90,7 +90,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   calculé » en tout petit en bas, blocs sans assez de données en une ligne « arrive dans N jours », hiérarchie claire.
   **Maquette prête : `IDEES.md` I163** (un facteur = un verdict, ≤ 3 pistes dépliables, « autres liens » fusionnés,
   ligne « bientôt », méthode unique en pied de page ; aucun calcul ni seuil ne change).
-- [ ] **POL-8 Sources** : détection automatique (Health Connect et ses écrivains, montre Huawei appairée / à proximité),
+- [x] **POL-8 Sources** — **FAIT le 25/10 01:30** (carte Huawei seulement si appairée ou app Huawei / Honor Santé installée ; « Ajouter une source » ; « Mes appareils » masqué si vide ; outils techniques de la montre seulement après un échec ou en mode diagnostic ; chevron de `MethodNote`) : détection automatique (Health Connect et ses écrivains, montre Huawei appairée / à proximité),
   carte Huawei seulement si détectée, bouton « Ajouter une source », météo / écran / sommeil / visage par défaut ;
   diagnostic technique seulement en mode diagnostic caché ; aucune carte à identifiant de développeur en play.
   **Maquette prête : `IDEES.md` I164** (Huawei = paquet Huawei Health installé ou montre appairée, pas de scan
@@ -101,7 +101,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
   **P28 préparé le 24/10 20:30** (`PLAY-CONFORMITE.md` §1 bis : cahier des charges, texte, script vidéo) ; POL-1 doit
   aussi produire un APK d'aperçu play interrupteur allumé (`applicationIdSuffix ".apercu"`) pour la vidéo.
-Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → POL-8 → POL-1 (après P28 préparé).
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → ~~POL-8~~ (fait 25/10 01:30) → POL-1 (après P28 préparé).
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,

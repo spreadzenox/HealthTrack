@@ -31,9 +31,11 @@ async function defaultFetchSecrets() {
  * `connect({ secrets, rebind, onUpdate })` → rapport (pairing.connectAndAuthenticate).
  * `onReport(rapport)` : rapport final, pour l'export du journal commun de la carte (WatchDiagnostic).
  * `children` : outils de dépannage ajoutés en bas de « Diagnostic ».
+ * `troubleshooting` : false sur la page Sources hors mode diagnostic (POL-8) : « Diagnostic » n'apparaît alors qu'après
+ * une connexion qui a échoué, là où « Libérer et appairer » et « Refaire l'appairage » servent vraiment.
  * `dataLink` : lien vers l'écran « Montre » (M5), visible dès qu'une montre a été connectée.
  */
-export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, onReport = () => {}, dataLink = null, children = null }) {
+export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecrets, onReport = () => {}, dataLink = null, children = null, troubleshooting = true }) {
   const [report, setReport] = useState(loadLastConnect)
   const [secrets, setSecrets] = useState(() => loadSecrets())
   const [running, setRunning] = useState(false)
@@ -155,6 +157,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
       )}
 
       {/* fermé par défaut, même avant le premier appairage : les termes techniques n'apparaissent qu'une fois déplié (VC-8) */}
+      {(troubleshooting || (report?.outcome && code !== 'connected')) && (
       <details className="watch-trouble">
         <summary>Diagnostic</summary>
         {!secrets && (
@@ -235,6 +238,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
         )}
         {children}
       </details>
+      )}
     </div>
   )
 }

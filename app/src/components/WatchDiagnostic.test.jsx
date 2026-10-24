@@ -161,4 +161,11 @@ describe('WatchDiagnostic', () => {
     expect(JSON.parse(json)).toMatchObject({ connect: null, diagnostic: null, version: 1 })
     expect(filename).toBe('healthtrack-journal-montre-2026-10-14-08-00.json')
   })
+
+  it('page Sources hors mode diagnostic (POL-8) : ni test de connexion ni journal à enregistrer', () => {
+    render(<WatchDiagnostic available run={vi.fn()} setup={null} connect={null} troubleshooting={false} />)
+    expect(screen.getByRole('heading', { name: 'Montre Huawei' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Tester la connexion directe' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Enregistrer le journal' })).toBeNull()
+  })
 })

@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-25",
+  "kind": "amélioration",
+  "title": "Sources plus simples",
+  "items": [
+    "L'onglet Sources ne montre plus que ce qui existe chez vous : la carte « Montre Huawei » n'apparaît que si votre montre est déjà appairée ou si l'app Huawei Santé est installée sur le téléphone.",
+    "Un bouton « Ajouter une source » en bas de page rassemble le reste : montre Huawei, capteurs Bluetooth (ceinture cardio, tensiomètre, balance) et les guides par marque.",
+    "Les outils techniques de la montre (test de connexion, journal à enregistrer) ne s'affichent plus ; ils restent disponibles si une connexion échoue.",
+    "Les « Détails » des cartes Lecture du visage, Météo et Temps d'écran ont maintenant un petit chevron."
+  ]
+}

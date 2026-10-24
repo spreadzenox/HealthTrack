@@ -53,6 +53,8 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
   }, [detect, loadEntries, now])
 
   const { loading, rows, canDetect } = state
+  // Sur le téléphone, aucune app de santé connue : rien à dire ici, « Ajouter une source » reste en bas de page (POL-8).
+  if (!loading && rows.length === 0 && canDetect) return null
 
   return (
     <section className="my-devices" aria-labelledby="my-devices-title">
@@ -61,9 +63,7 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
         <p className="my-devices-intro">Recherche de vos apps santé…</p>
       ) : rows.length === 0 ? (
         <p className="my-devices-intro">
-          {canDetect
-            ? 'Aucune app de montre ou de santé connue sur ce téléphone. Si vous en utilisez une, choisissez sa marque ci-dessous.'
-            : `Dans l’app Android, ${APP_NAME} repère tout seul vos apps de montre et de santé (Huawei Health, Samsung Health, Garmin…) et vous dit comment les brancher.`}
+          {`Dans l’app Android, ${APP_NAME} repère tout seul vos apps de montre et de santé (Huawei Health, Samsung Health, Garmin…) et vous dit comment les brancher.`}
         </p>
       ) : (
         <>
