@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "correctif",
+  "title": "Les formules premium se chargent bien",
+  "variants": ["play"],
+  "items": [
+    "Sur certains téléphones, la page Premium pouvait rester sans formule : la liaison avec Google Play ne répondait jamais. C’est corrigé.",
+    "La vérification de l’app auprès de Google Play, jointe aux analyses IA, part de nouveau normalement."
+  ]
+}

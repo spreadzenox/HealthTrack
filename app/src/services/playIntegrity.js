@@ -9,6 +9,7 @@
  * Google trop lent), l'analyse part quand même : c'est le relais qui décide selon son mode.
  */
 import { FEATURES } from '../config/distribution'
+import { notThenable } from './nativePlugin'
 
 /** Au-delà, l'analyse part sans jeton (le relais coupe lui-même ses appels à Google à 10 s). */
 export const INTEGRITY_TIMEOUT_MS = 8_000
@@ -35,7 +36,7 @@ export async function loadIntegrityPlugin() {
     const { Capacitor, registerPlugin } = await import('@capacitor/core')
     if (!Capacitor?.isNativePlatform?.() || Capacitor.getPlatform?.() !== 'android') return null
     if (Capacitor.isPluginAvailable && !Capacitor.isPluginAvailable('PlayIntegrity')) return null
-    return registerPlugin('PlayIntegrity')
+    return notThenable(registerPlugin('PlayIntegrity'))
   } catch {
     return null
   }
