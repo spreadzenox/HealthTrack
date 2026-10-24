@@ -705,7 +705,7 @@ VFC, respiration, température, stress), **pêche** pour les repas, **lilas** po
 bien-être sur fond menthe, vos séances sur fond lilas. Dans **Tendances**, un graphique qui n'a pas encore assez de
 mesures (radar, FC au repos, VFC, horaires de sommeil) ne prend plus une carte : une ligne discrète **« Bientôt »** dit
 ce qui lui manque (« encore 10 j », « encore 4 nuits »). Rien n'est effacé, aucun calcul ne change. **👉 À tester** :
-Journal → Jours, puis Tendances. Prochain run de code : **POL-8** (Sources simplifiées).
+Journal → Jours, puis Tendances. Prochain run de code : **POL-8** (Sources simplifiées). Publié : **v260** (33,7 Mo) et la version play en test interne.
 
 **Run du 24/10 23:30 — un seul verdict par facteur (POL-7, 3e et dernière partie).** Ce que vous verrez dans l'onglet
 « Analyses » : sous les pistes à tester, **une seule liste « Autres liens repérés »** réunit ce qui était éparpillé en

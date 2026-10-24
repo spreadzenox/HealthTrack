@@ -35,3 +35,8 @@
 ## Suite
 - POL-6 fait. Ensuite : **POL-8** (Sources : détection automatique, carte Huawei seulement si détectée, diagnostic
   derrière le mode caché ; maquette I164) → POL-1 (après P28).
+
+## Après le merge (#339, `4e4d295`)
+- Checks de la PR tous verts du premier coup (Vitest, Build APK, Relais, montre Java, budget de lectures, émulateurs API 35
+  et 36).
+- « Build & Release » vert : **v260** publiée (APK 33 748 044 octets, 33,7 Mo) ; « Play — AAB » vert (envoi en test interne).
