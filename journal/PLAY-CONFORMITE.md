@@ -136,3 +136,20 @@ aucun identifiant, aucune publicité. **À revoir dès que** le relais Vertex AI
 arrivent (achats, identifiants d'appareil), et à faire relire par un juriste (P5). Point discutable noté : avec la
 clé Gemini saisie par l'utilisateur (sideload seulement à terme), Google traite selon ses propres conditions ; on
 déclare quand même, par prudence.
+
+**Sauvegarde Android (décision du propriétaire du 24/10 : conservée ; analysée le 24/10 16:30)** — Rien à ajouter au
+formulaire, donc **pas de nouvelle relance de P21**. Raisons : ① la sauvegarde est faite par le système Android
+(service de sauvegarde Google), pas par l'app : l'éditeur ne reçoit rien et n'a aucun serveur qui la garde ; ② depuis
+Android 9, la sauvegarde dans le cloud est chiffrée côté client avec le code de verrouillage du téléphone : ni Google
+ni l'éditeur ne peuvent la lire, ce qui correspond à l'exception « chiffrement de bout en bout » de la page d'aide
+Sécurité des données (support.google.com/googleplay/android-developer/answer/10787469 : une donnée illisible par
+tout intermédiaire, développeur compris, n'est pas une « collecte »). La page d'aide ne cite pas nommément la
+sauvegarde Android (recherche du 24/10) : point à faire confirmer par le juriste (P5) ; si Google le demandait, on
+déclarerait les types concernés en « chiffrés, facultatifs (l'utilisateur active ou non la sauvegarde) ». Côté textes :
+politique de confidentialité (§ « Sauvegarde Android » + résumé), conditions §6, Paramètres → Données et onboarding
+(« 0 Mo envoyé à Halcya sans votre accord ») disent désormais que les données sont incluses dans la sauvegarde Google
+du téléphone si elle est activée. Règles explicites : `res/xml/data_extraction_rules.xml` (Android 12+, cloud et
+transfert entre téléphones) et `backup_rules.xml` (Android 11 et avant) excluent les préférences natives propres au
+téléphone (coffre de la clé de la montre, association compagnon, adresse de la montre, téléchargement de mise à
+jour) ; les secrets du localStorage (clé Gemini, clés de la montre, jetons Withings, jeton d'achat) sont retirés au
+premier lancement après une restauration (`restoreGuard.js` + repère hors sauvegarde `BackupMarkerPlugin.java`).

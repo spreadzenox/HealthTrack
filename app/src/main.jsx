@@ -9,11 +9,15 @@ import './theme/tokens.css'
 import './index.css'
 import { initTheme } from './theme/theme'
 import App from './App.jsx'
+import { checkRestore } from './services/restoreGuard'
 
 initTheme()
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+// Avant tout le reste : après une restauration de la sauvegarde Android, retire les secrets de l'ancien téléphone.
+checkRestore().finally(() => {
+  createRoot(document.getElementById('root')).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  )
+})

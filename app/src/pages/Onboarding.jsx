@@ -13,6 +13,7 @@ import { runFaceTrial } from '../services/faceTrial'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId, markAllSeen } from '../services/whatsNew'
 import LineIcon from '../components/LineIcon'
+import { APP_NAME } from '../config/brand'
 import './Onboarding.css'
 
 const WATCHES = [
@@ -81,7 +82,7 @@ function GoalStep({ goal, onGoal }) {
       <p className="onb-lead">Repas, sommeil, montres et bien-être, analysés sur votre téléphone.</p>
       <ul className="onb-tiles">
         <li>
-          <span className="onb-tile-num">0 Mo</span> envoyé sans votre accord
+          <span className="onb-tile-num">0 Mo</span> envoyé à {APP_NAME} sans votre accord
         </li>
         <li>
           <span className="onb-tile-num">2–48 h</span> de délai entre repas et ventre

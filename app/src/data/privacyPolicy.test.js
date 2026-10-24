@@ -34,6 +34,7 @@ describe('politique de confidentialité', () => {
     ['la montre en Bluetooth', /Bluetooth/],
     ['l’analyse IA seulement à la demande', /seulement si vous la lancez/],
     ['l’export', /Exporter/],
+    ['la sauvegarde Android chiffrée, jamais lue', /sauvegarde Google[\s\S]*chiffrées[\s\S]*ne peut pas les lire/],
     ['la suppression', /Supprimer toutes mes données/],
     ['le contact', /Contact/],
     ['l’âge minimum', /18 ans et plus/],

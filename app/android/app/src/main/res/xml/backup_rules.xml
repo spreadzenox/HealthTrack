@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sauvegarde Android (11 et avant) : mêmes exclusions que data_extraction_rules.xml. -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="healthtrack_watch_vault.xml" />
+    <exclude domain="sharedpref" path="healthtrack_companion.xml" />
+    <exclude domain="sharedpref" path="healthtrack_watch_background.xml" />
+    <exclude domain="sharedpref" path="app_update.xml" />
+</full-backup-content>

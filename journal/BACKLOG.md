@@ -42,7 +42,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   candidate part en alpha (fichier vide aujourd'hui → aucune période), puis C5 ✅ après vérification sur la version play.
   Idée : exclusion d'une seule installation (le propriétaire) au lieu de `off` global, pour retester l'abonnement
   sans retirer le premium aux testeurs.
-- [ ] **SAUV — Sauvegarde Android conservée (décision du 24/10)** : (a) textes honnêtes (confidentialité, onboarding
+- [x] **SAUV — LIVRÉ le 24/10 16:30** (règles `data_extraction_rules` / `backup_rules`, repère hors sauvegarde +
+  `restoreGuard.js` qui retire les secrets du localStorage après une restauration, textes honnêtes, Sécurité des
+  données inchangée — raisonnement dans PLAY-CONFORMITE §5). **À tester par le propriétaire** à la prochaine
+  réinstallation : données revenues, montre à réappairer (PIN), clé Gemini (sideload) à ressaisir, premium revenu seul.
+  Reste ouvert : si l'auto-synchro de la montre tente un réappairage sans geste après restauration, le rendre explicite.
+  Texte d'origine : (a) textes honnêtes (confidentialité, onboarding (a) textes honnêtes (confidentialité, onboarding
   « 0 Mo envoyé sans votre accord », Paramètres → Données, conditions : données incluses dans la sauvegarde Google du
   téléphone si activée, chiffrée, gérée par Android, jamais lue par Halcya) ; (b) règles Play / Sécurité des données
   (la sauvegarde Android chiffrée de bout en bout n'est en principe pas une « collecte » — à vérifier sur la page
@@ -81,7 +86,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   explicite, notification permanente avec « Arrêter », réglage, service démarré app ouverte, ni exemption batterie ni
   Shizuku/ADB en play, interrupteur de build propre à play ; P28 (déclaration FGS + script vidéo) AVANT la première
   version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
-Ordre proposé : SAUV → POL-5 + POL-4 (petits) → POL-3 → POL-2 → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → POL-5 + POL-4 (petits) → POL-3 → POL-2 → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
