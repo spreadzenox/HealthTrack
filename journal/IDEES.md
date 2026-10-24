@@ -9,6 +9,103 @@
 
 ---
 
+## Run du 24/10/2026 08:30 (Paris) — 6d et 6e prêts à coder : créer l'abonnement par l'API, puis le tester en accéléré
+
+Contexte : le prochain run de code est **6d** (créer l'abonnement `halcya_premium` par la CI). L'app attend déjà
+`PRODUCT_ID = 'halcya_premium'`, les formules `annuel` puis `mensuel` (`src/services/playBilling.js:16-17`) et
+reconnaît l'essai à une phase gratuite (`priceMicros === 0`, durée lue dans `billingPeriod`). Il ne manque que le
+catalogue côté Google. Lu ce matin dans la référence de l'API Android Publisher v3 (pages `monetization.*`,
+consultées le 24/10) et l'aide « Test des achats intégrés » (developer.android.com/google/play/billing/test).
+
+- **I158 (25) — Spécification de 6d : le catalogue en 5 appels idempotents [V/T/H].**
+  1. **Lire d'abord** : `GET …/applications/fr.jpesquet.sante/subscriptions/halcya_premium`. 404 → étape 2 ; trouvé →
+     comparer et ne rien recréer (un `productId` et un `basePlanId` sont **immuables** et ne se suppriment pas une
+     fois actifs : une faute de frappe serait définitive, d'où un test qui fige les identifiants).
+  2. **Créer** : `POST …/subscriptions?productId=halcya_premium&regionsVersion.version=2022/02` [V : paramètres
+     obligatoires ; T : `2022/02` est la dernière version citée par les bibliothèques clientes officielles —
+     ❓ à confirmer par la réponse, qui renvoie la version utilisée]. Corps :
+     - `listings: [{ languageCode: 'fr-FR', title: 'Halcya Premium', description (≤ 200 car.), benefits (≤ 4) }]`
+       [V : une fiche dans la langue par défaut de l'app est **obligatoire**]. Les `benefits` doivent dire **ce qui est
+       livré** (VC-17 / `config/premiumBenefits.js` : aujourd'hui seule l'analyse IA des repas « sans compter », plafond
+       10 / jour) — les générer depuis ce fichier, avec un test, pour ne jamais promettre plus que le paywall.
+     - `basePlans` : `annuel` (`autoRenewingBasePlanType.billingPeriodDuration: 'P1Y'`) et `mensuel` (`'P1M'`), chacun
+       avec `regionalConfigs: [{ regionCode: 'FR', price: { currencyCode: 'EUR', units: '29', nanos: 990000000 },
+       newSubscriberAvailability: true }]` (resp. `units: '4'`). [H] Prix **TTC** en France (Play affiche des prix
+       taxes comprises dans l'UE ; indice [V] : `convertRegionPrices` renvoie des prix régionaux « tax inclusive ») —
+       vérifier dans la réponse ou la Play Console que 29,99 € est bien le prix vu par l'acheteur.
+     - Période de grâce et suspension (décision du 20/10) : `gracePeriodDuration` (≤ min(30 j, période)) et
+       `accountHoldDuration` (≤ 60 j), **somme entre P30D et P60D** [V]. Proposé : mensuel `P7D` + `P53D`, annuel
+       `P14D` + `P46D` (le maximum de récupération, que recommande Google). `resubscribeState: RESUBSCRIBE_STATE_ACTIVE`.
+     - Pas de `otherRegionsConfig` au début (seule la France est ouverte en test fermé) ; plus tard,
+       `POST …/pricing:convertRegionPrices` avec le prix **hors taxes** donne les prix de toutes les régions [V].
+  3. **Offre d'essai** : `POST …/subscriptions/halcya_premium/basePlans/annuel/offers?offerId=essai-14j&regionsVersion.version=2022/02`
+     avec `phases: [{ recurrenceCount: 1, duration: 'P14D', regionalConfigs: [{ regionCode: 'FR', free: {} }] }]`,
+     `regionalConfigs: [{ regionCode: 'FR', newSubscriberAvailability: true }]` et `targeting.acquisitionRule.scope.thisSubscription: {}`
+     (« jamais eu cet abonnement » : Google ne montre l'offre qu'aux personnes éligibles, l'app n'a rien à vérifier)
+     [V]. Seules les formules auto-renouvelables acceptent des offres [V]. `offerTags: ['essai']` facultatif.
+  4. **Activer** : formules et offre naissent **en brouillon** [V] → `POST …/basePlans/annuel:activate`,
+     `…/basePlans/mensuel:activate`, puis `…/basePlans/annuel/offers/essai-14j:activate`. L'état de la formule prime
+     sur celui de l'offre [V].
+  5. **Relire** et écrire un résumé dans la page du job (identifiants, état, prix, essai) — la même lecture sert de
+     « sonde » aux runs suivants tant que Google refuse.
+  Mise en œuvre conseillée (≈ 1 run) : `app/scripts/play/subscriptions.mjs` (fonction pure `buildCatalog()` +
+  `ensureCatalog({ token, fetchImpl })` réutilisant `call`/`withRetry`/`PlayApiError` de `publish.mjs`), tests sur un
+  faux `fetch` (404 → création → activation ; déjà actif → aucun POST ; 403 → message clair), et un workflow
+  `workflow_dispatch` « Play — abonnements » sur `main` (WIF, `gh-deployer`). **Droits** [T] : guides tiers (aso.dev,
+  Glassfy, Adapty) rangent les produits intégrés et abonnements sous « Gérer la présence sur le Store », que
+  gh-deployer a (fiche du Store) ; en cas de 403, noter l'erreur exacte et l'action du propriétaire. **Profil de
+  paiement** : aucune source officielle ne décrit l'erreur renvoyée tant que la vérification bancaire n'est pas finie
+  [❓] → recopier le corps de l'erreur dans le compte rendu, réessayer aux runs suivants, ne rien contourner.
+  Impact 5 (débloque C3 et 6e), faisabilité 4. → **BACKLOG 6d précisé.**
+- **I159 (22) — Spécification de 6e : le scénario « testeur de licence » en 30 minutes [V].** Pour un testeur de
+  licence (l'adresse Gmail du propriétaire l'est depuis le 22/10), Google accélère tout : **mensuel renouvelé toutes
+  les 5 min, annuel toutes les 30 min, essai 3 min, période de grâce 5 min, suspension 10 min, pause d'1 mois = 5 min,
+  accusé de réception attendu sous 5 min** (sinon remboursement au bout de 3 min pour un testeur de licence) ;
+  **6 renouvellements au plus**, essai non compté [V]. Moyens de paiement de test : « toujours accepté », « toujours
+  refusé », « carte lente, accepte / refuse après quelques minutes » (paiements en attente : 6c-3c), « accepte puis
+  rétrofacturation » [V]. Attention [V] : chez un testeur de licence, **la pause et le réabonnement sont toujours
+  activés**, même désactivés dans la Play Console. Liste de vérifications pour le propriétaire (≈ 30 min, une ligne =
+  une case dans `PRODUIT.md`, preuve = capture + ligne du journal du relais) :
+  ① Premium → Annuel → « Essayer 14 jours » avec « toujours accepté » → l'app passe premium en < 10 s, le relais
+  journalise l'accusé ; ② 3 min plus tard (fin d'essai) → toujours premium (renouvelé) ; ③ Google Play → Abonnements
+  → Annuler → l'app reste premium jusqu'à l'échéance puis repasse en gratuit, compteur 10 + 15 revenu ; ④ mensuel
+  avec « toujours refusé » au renouvellement (changer le moyen de paiement après l'achat) → période de grâce : premium
+  gardé + « Premium actif · Paiement à régulariser dans Google Play. » dans Paramètres → Abonnement (déjà dans `entitlement.js`) ; 5 min plus tard →
+  suspension : plus de premium ; ⑤ pause d'1 mois → plus de premium pendant 5 min, reprise automatique ;
+  ⑥ désinstaller / réinstaller → « Restaurer un achat » → premium revenu ; ⑦ « carte lente, accepte » → « paiement en
+  attente » puis premium sans rouvrir le paywall. Les cas ③ à ⑤ se vérifient aussi par les RTDN reçues
+  (`play-rtdn-relay`). Ce qui manque peut-être côté app : pendant la période de grâce et la suspension, le message n'apparaît
+  que dans Paramètres → Abonnement ; Google recommande d'inviter à corriger le paiement là où la personne le voit
+  [H] → petite carte sur l'Accueil (état `grace` / `on_hold` du relais, lien `manageSubscriptionUrl`), à décider en 6e. Impact 4, faisabilité 4. → **BACKLOG 6e précisé.**
+- **I161 (20) — Conséquence pour P23 : un testeur de licence perd son premium au bout de ~3 h [V/H].** Si le groupe
+  `halcya-testeurs@googlegroups.com` devient testeur de licence (option ① de P23), ses achats sont gratuits **mais
+  accélérés** : essai de 3 min puis 6 renouvellements de 30 min au plus pour l'annuel [V] → l'abonnement s'arrête au
+  bout d'environ **3 h** [H : déduit des durées officielles], et le testeur repasse en gratuit au milieu de ses 14 jours.
+  L'option ① seule ne suffit donc pas à « ne jamais payer **et** garder le premium » : elle sert à vérifier le parcours
+  d'achat, c'est l'option ② (période de lancement côté relais, `LAUNCH_PREMIUM_UNTIL`, déjà prête) qui garde le premium
+  pendant tout le test. Recommandation de P23 inchangée (① + ②), argument ajouté dans `PRODUIT.md`. Impact 4,
+  faisabilité 5 (aucun code).
+- **I160 (12) — Prix affichés ailleurs que dans le paywall [H].** La fiche Play (`app/store/listing/fr-FR/`) et
+  `public/conditions.html` ne doivent jamais citer un prix en dur (VC-18a l'a respecté) : si la description longue
+  annonce « 29,99 €/an », un changement de prix rendrait la fiche trompeuse. Test-garde simple : aucun motif
+  `\d+,\d\d ?€` dans `store/listing/**` ni `public/*.html`. Impact 2, faisabilité 5.
+
+### Sources (consultées le 24/10/2026)
+- developers.google.com/android-publisher/api-ref/rest/v3/monetization.subscriptions (ressource, `basePlans`,
+  `AutoRenewingBasePlanType`, contraintes grâce + suspension), …/monetization.subscriptions/create,
+  …/monetization.subscriptions.basePlans/activate, …/monetization.subscriptions.basePlans.offers (et `/create`),
+  …/monetization/convertRegionPrices, …/RegionsVersion [V].
+- Version de régions `2022/02` : documentation des bibliothèques clientes Ruby (googleapis.dev) et Dart (pub.dev) [T].
+- developer.android.com/google/play/billing/test — durées accélérées, moyens de paiement de test [V].
+- aso.dev/google-play/permissions, glassfy.io, adapty.io — droits Play Console d'un compte de service [T].
+
+### À creuser au prochain run idées (24/10 20:30)
+- Le corps exact de l'erreur de 6d (si Google refuse) et sa signification.
+- Audit `--play --empty` après VC-15 / VC-5 / VC-9 (les captures ont changé depuis le 23/10 20:30).
+- Veille concurrents SII : prix et essais en 2026 (Nerva, mySymptoms, Bearable, Cara Care) pour situer 29,99 €/an.
+
+---
+
 ## Run du 23/10/2026 08:30 (Paris) — jalon 4 prêt à coder, et l'import du jour 1 qui ne marcherait pas
 
 - **I153 (24) — Première synchro Health Connect : 180 jours demandés, 30 autorisés → rien d'importé [V/H].** La doc
