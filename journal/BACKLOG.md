@@ -38,7 +38,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
 - [x] **VC-4** (23/10 16:30) « Mode diagnostic » masqué en play (`featuresFor('play').debugMenu`), révélé une fois
   pour toutes par 7 touches sur « Version N » en bas des Paramètres (`unlockDebugMenu`) ; reste visible si le mode
   était déjà actif.
-- [ ] **VC-5** Nouveautés en play : champ facultatif `variants` dans les JSON du changelog + date de départ play ;
+- [x] **VC-5** (24/10 05:30, `changelogFor`, `PLAY_CHANGELOG_SINCE = 2026-10-24-0000`, historique « lu » à l'onboarding) Nouveautés en play : champ facultatif `variants` dans les JSON du changelog + date de départ play ;
   n'afficher que les entrées play postérieures à la première version publique (aucun « HealthTrack », ni clé, ni
   bouton de mise à jour) ; test sur les fichiers existants.
 - [x] **VC-6** (23/10 19:30) Sources : la carte montre propose d'abord « Connecter une montre compatible Huawei » ; le lien vers

@@ -58,7 +58,7 @@ publiée sur la piste **alpha**, et en tête du résumé « 👉 Version candida
 | # | Critère | État | Preuve attendue |
 |---|---|---|---|
 | C1 | Installation neuve de la variante play sur données vierges : onboarding court, écrans utiles sans données (états vides explicites, aucun zéro trompeur, aucune carte vide ou cassée), autorisations au bon moment avec leur divulgation | 🟡 onboarding livré (jalon 4, 23/10) ; VC-12 et VC-16 corrigés le 23/10 22:30 ; reste VC-9 (VC-10 corrigé le 24/10 01:30, VC-7 corrigé le 23/10 21:30, VC-11 corrigé le 23/10 09:30, VC-2 le 23/10 17:30, VC-3 le 23/10 18:30, VC-6 le 23/10 19:30) | `npm run visual -- --play --empty` (clair + `--dark`) + émulateur |
-| C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-5, VC-15 (VC-14 corrigé le 23/10 22:30, VC-1 corrigé le 23/10 15:30, VC-7 et VC-13 le 23/10 21:30, VC-4 le 23/10 16:30, VC-8 le 23/10 19:30) | captures + test-garde de vocabulaire étendu à la variante play |
+| C2 | Parcours complet écran par écran (clair et sombre), textes relus (vouvoiement, mots simples, aucun « HealthTrack » visible, « estimation, pas un diagnostic »), aucun écran de débogage, réglage de développeur ou fonction « bientôt » en play | 🔴 VC-15 (VC-5 corrigé le 24/10 05:30, VC-14 corrigé le 23/10 22:30, VC-1 corrigé le 23/10 15:30, VC-7 et VC-13 le 23/10 21:30, VC-4 le 23/10 16:30, VC-8 le 23/10 19:30) | captures + test-garde de vocabulaire étendu à la variante play |
 | C3 | Abonnement de bout en bout (achat, essai, restauration, annulation, pause, période de grâce) et crédits IA visibles | ⬜ crédits IA visibles ✅ (6c-3b, 23/10) ; attend 6d (P13), 6e ; paywall prêt (23/10) mais à compléter : rappel de fin d'essai, lien CGV, bénéfices alignés sur ce qui est livré — paywall honnête ✅ (VC-17, 23/10 23:30 : seul l'avantage livré est coché) ; lien Conditions ✅ (VC-18a, 24/10 02:30) ; rappel de fin d'essai ✅ (VC-18b, 24/10 04:30 : notification locale J−2, paywall « jour 12 ») | scénario testeur de licence (I148) |
 | C4 | Aucun plantage connu, premier lancement rapide | ⬜ à mesurer | émulateur A56 (workflow) : temps jusqu'au premier écran, 0 erreur JS |
 | C5 | Proposition écrite au propriétaire pour que les testeurs ne paient jamais | 🟡 proposition rédigée le 22/10 20:30 (I151) → **P23** à trancher | ce fichier, P23 |
@@ -74,7 +74,7 @@ correction proposée dans `BACKLOG.md`, section « Version candidate ») :
 - ✅ **VC-3** (corrigé le 23/10 18:30 : invitation sans chiffre, valeurs connues seulement, IMC/kcal derrière « détails ») Nutrition affichait un profil inventé comme s'il était vrai : « 70 kg · 170 cm · IMC 24,2 · Homme · 30 ans ·
   ~2 507 kcal/jour » (par défaut) — zéro trompeur, et objectif calorique / IMC délicats pour un public SII (I152).
 - ✅ **VC-4** (corrigé le 23/10 16:30 : caché en play, 7 touches sur « Version N » en bas des Paramètres) Paramètres → « Mode diagnostic — Afficher les journaux techniques » visible en play.
-- **VC-5** Nouveautés : 136 entrées d'historique, dont 36 avec « HealthTrack » et 4 sur la clé Gemini ou le bouton
+- ✅ **VC-5** (corrigé le 24/10 05:30 : play = entrées depuis le 24/10, champ `variants`, aucun bandeau au premier lancement) Nouveautés : 136 entrées d'historique, dont 36 avec « HealthTrack » et 4 sur la clé Gemini ou le bouton
   de mise à jour (fonctions absentes de la variante play).
 - ✅ **VC-6** (corrigé le 23/10 19:30 : « Connecter ma montre », lien `/montre` après appairage seulement, page vide = phrase + bouton) Sources → « Montre Huawei — Voir ce qui remonte de la montre » proposé avant toute montre connectée ; la
   page affiche « 0 type sur 12 reçu… Rien reçu depuis 30 jours » ×12.
@@ -150,6 +150,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **24/10 05:30** — **VC-5** : Nouveautés par variante (`changelogFor`, champ `variants`, play à partir du 24/10 sans « HealthTrack », clé Gemini ni mise à jour) ; installation neuve sans bandeau d'historique. C2 n'attend plus que VC-15. Prochain : VC-15, VC-9.
 - **24/10 04:30** — **VC-18b** : rappel local 2 jours avant la fin de l'essai (`services/trialReminder.js`, plugin play `TrialReminder`, alarme reprogrammée au redémarrage, lien direct vers les abonnements Google Play) ; paywall « jour 12 · On vous prévient » et « Rappel 2 jours avant la fin de l'essai » seulement là où le rappel est possible ; Conditions à jour. C3 n'attend plus que 6d / 6e. Prochain : VC-15, VC-5, VC-9.
 - **24/10 03:30** — CI : « Play — AAB » rouge sur un 503 passager de Google (version 394) ; job relancé et réessais automatiques (429/5xx) dans l'envoi de l'AAB et de la fiche. Prochain : VC-18b, VC-15, VC-5.
 - **24/10 02:30** — **VC-18a** : conditions d'utilisation et de vente (`public/conditions.html`, brouillon P5), publiées à `/conditions/` par GitHub Pages, liées depuis le paywall et Réglages ; P26 (médiateur de la consommation). Prochain : VC-18b (rappel J−2), VC-15, VC-5.

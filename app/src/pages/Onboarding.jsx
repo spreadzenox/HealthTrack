@@ -10,6 +10,8 @@ import { AHA_DAYS, runFirstImport, summarizeImport } from '../services/firstImpo
 import useDisclosure from '../hooks/useDisclosure'
 import { isFaceSenseAvailable, isFaceSenseEnabled } from '../services/faceSense'
 import { runFaceTrial } from '../services/faceTrial'
+import { CHANGELOG } from '../data/changelog'
+import { getLastSeenId, markAllSeen } from '../services/whatsNew'
 import './Onboarding.css'
 
 const WATCHES = [
@@ -537,6 +539,11 @@ export default function Onboarding() {
   const tracks = state.tracks || defaultTracks(state.goal)
 
   const update = (patch) => setState(saveOnboarding(patch))
+
+  // VC-5 : une installation neuve n'a rien « de nouveau » à lire ; le bandeau Nouveautés attend la prochaine version.
+  useEffect(() => {
+    if (getLastSeenId() === null) markAllSeen(CHANGELOG)
+  }, [])
 
   // I156 : les écrans vus restent sur le téléphone, pour le diagnostic que les testeurs peuvent joindre.
   useEffect(() => {

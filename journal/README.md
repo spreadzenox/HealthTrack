@@ -612,6 +612,16 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 24/10 05:30 — la page « Nouveautés » de la version Play ne raconte plus notre historique (VC-5).** Ce que
+verront les testeurs de la version Play : Réglages → **Nouveautés** ne montre plus que les changements qui les
+concernent, à partir du 24/10 (rappel de fin d'essai, conditions, suppression des données…), au lieu de nos 160
+entrées d'historique, dont 36 parlaient de « HealthTrack », de la clé Gemini ou du bouton de mise à jour. Et à la
+toute première ouverture, plus de bandeau « Nouveau : … et 150 autres changements » : il reviendra à la prochaine
+mise à jour. **Votre version sideload ne change pas** : elle garde tout l'historique. En coulisses : une entrée peut
+désormais être réservée à une variante (`"variants": ["play"]`), et un test refuse toute entrée visible en play qui
+mentionnerait HealthTrack, Gemini, l'APK ou GitHub. **Prochain run de code : VC-15** (émojis et apostrophes), puis
+VC-9 (premier lancement à froid sur l'émulateur).
+
 **Run du 24/10 04:30 — l'app vous prévient 2 jours avant la fin de l'essai (VC-18, 2ᵉ moitié).** Ce que verront
 les utilisateurs de la version Play : sur l'écran premium, la frise de l'essai a une étape de plus, **« jour 12 · On
 vous prévient par une notification »**, et la petite ligne dit **« Rappel 2 jours avant la fin de l'essai »**. Ce
@@ -1108,6 +1118,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 02:30 — [VC-18a : conditions d'utilisation et de vente](runs/2026-10-24-0230-vc18a-conditions.md) | 🧭 | `public/conditions.html` (brouillon P5, crédits vérifiés contre `relay/src/config.js`, aucun prix en dur) ; GitHub Pages `/conditions/` ; lien « Conditions » du paywall et de Réglages ; P26 (médiateur) |
 | 24/10 03:30 — [CI : réessais Play sur 5xx](runs/2026-10-24-0330-ci-play-reessais.md) | 🔧 | « Play — AAB » rouge sur un 503 de Google (v394) : job relancé ; `withRetry` (429/5xx, 5-10-20 s) dans `scripts/play/publish.mjs`, utilisé aussi par la fiche ; 4 tests |
 | 24/10 04:30 — [VC-18b : rappel de fin d'essai](runs/2026-10-24-0430-vc18b-rappel-essai.md) | 🧭💳 | `services/trialReminder.js` (J−2, déplacé/annulé selon les droits du relais) ; plugin play `TrialReminderPlugin` + `TrialReminderReceiver` (alarme inexacte, redémarrage) ; paywall « jour 12 · On vous prévient » seulement si le rappel est possible ; Conditions ; 10 tests |
+| 24/10 05:30 — [VC-5 : Nouveautés par variante](runs/2026-10-24-0530-vc5-nouveautes-play.md) | 🧭 | `changelogFor` + `PLAY_CHANGELOG_SINCE` (play : entrées depuis le 24/10, champ `variants`) ; installation neuve → historique déjà « lu » (onboarding) ; test-garde de vocabulaire sur les entrées play ; 2 097 Vitest |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |

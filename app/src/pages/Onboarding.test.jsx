@@ -3,6 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import Onboarding from './Onboarding'
 import { loadOnboarding, saveOnboarding } from '../settings/onboarding'
+import { CHANGELOG } from '../data/changelog'
+import { getLastSeenId } from '../services/whatsNew'
 
 function renderAt() {
   return render(
@@ -33,6 +35,17 @@ describe('Onboarding (jalon 4a)', () => {
     expect(screen.getByText('01/04')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Passer' })).not.toBeInTheDocument()
     expect(cont()).toBeDisabled()
+  })
+
+  it('installation neuve : l’historique des nouveautés est déjà « lu » (VC-5)', () => {
+    renderAt()
+    expect(getLastSeenId()).toBe(CHANGELOG[0].id)
+  })
+
+  it('ne touche pas aux nouveautés déjà suivies', () => {
+    localStorage.setItem('healthtrack-whats-new-last-seen', 'une-ancienne-entree')
+    renderAt()
+    expect(getLastSeenId()).toBe('une-ancienne-entree')
   })
 
   it('note les écrans vus pour le diagnostic local (I156)', () => {
