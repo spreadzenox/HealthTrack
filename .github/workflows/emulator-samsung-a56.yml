@@ -252,6 +252,7 @@ jobs:
             ui_play_first.xml
             play_coldstart.md
             play_logcat.txt
+            play_crash.txt
             ui_app.xml
             ui_plus.xml
           if-no-files-found: warn
@@ -396,6 +397,7 @@ jobs:
             ui_play_first.xml
             play_coldstart.md
             play_logcat.txt
+            play_crash.txt
             ui_app.xml
             ui_plus.xml
           if-no-files-found: warn

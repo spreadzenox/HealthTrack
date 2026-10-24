@@ -172,3 +172,24 @@ jobs:
             --project="$GCP_PROJECT" --limit=1 --freshness=10m --format='value(jsonPayload.status,jsonPayload.message)' 2>/dev/null \
             | sed 's/^/Journal : /' | tee -a "$GITHUB_STEP_SUMMARY" || true
           [ "$status" = "404" ]
+
+      - name: Bilan Play Integrity des 7 derniers jours (6b-2c, non bloquant)
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          # Avant de passer le relais en mode « enforce », on regarde ce que les vrais téléphones envoient.
+          # Les essais de la CI (identifiant ci-smoke-…) n'ont jamais de jeton : ils comptent dans « missing ».
+          gcloud logging read \
+            "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.event=\"integrity\"" \
+            --project="$GCP_PROJECT" --freshness=7d --limit=500 --format=json > "$RUNNER_TEMP/integrity.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/integrity.json"
+          total=$(jq 'length' "$RUNNER_TEMP/integrity.json")
+          {
+            echo
+            echo "### Play Integrity — 7 derniers jours ($total événement(s))"
+            echo
+            echo "| Statut | Mode | Raisons | Installations | Événements |"
+            echo "|---|---|---|---|---|"
+            jq -r 'group_by([.jsonPayload.status, .jsonPayload.mode, ((.jsonPayload.reasons // []) | join(", "))])[]
+              | "| \(.[0].jsonPayload.status) | \(.[0].jsonPayload.mode // "—") | \((.[0].jsonPayload.reasons // []) | join(", ") | if . == "" then "—" else . end) | \(map(.jsonPayload.install // "—") | unique | length) | \(length) |"' \
+              "$RUNNER_TEMP/integrity.json"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
