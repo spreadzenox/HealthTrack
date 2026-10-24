@@ -633,6 +633,19 @@ tout : essai de 3 min, renouvellements de 5 à 30 min) — les 7 cases à cocher
 P23 (« ① + ② » ou autre). **Prochain run de code : 6b-2c** (Play Integrity bloquant, si des analyses IA ont été
 journalisées), sinon M4 (stress, étages de la montre).
 
+**Run du 24/10 11:30 — un faux « plantage » dans le test automatique, corrigé (rien ne change dans l'app).** Le test
+qui installe la version Play sur un émulateur de Galaxy A56 était rouge après le run de 10:30 : il comptait **1
+plantage** au premier lancement, alors que sa capture montre l'écran d'accueil de l'onboarding parfaitement affiché.
+Cause : il comptait les plantages de **tous** les programmes de l'émulateur, pas seulement ceux de l'app. Il ne compte
+plus que ceux de Halcya, repart d'un journal vide et publie désormais la trace exacte, pour qu'un vrai plantage soit
+compris tout de suite. En coulisses aussi : le workflow du relais écrit maintenant un **bilan Play Integrity des 7
+derniers jours** (combien de téléphones ont envoyé un jeton valide, refusé ou absent) ; c'est ce qu'il faut lire avant
+de rendre la protection des crédits IA bloquante. **👉 Votre prochaine action la plus utile reste P27** (≈ 30 min, test
+de l'abonnement avec votre compte de testeur de licence, [`PRODUIT.md`](PRODUIT.md) §4) : si vous faites aussi
+**une analyse IA d'un repas** depuis la version Play, le bilan pourra confirmer que votre téléphone passe la
+vérification. **Prochain run de code** : protection bloquante si le bilan le permet, sinon M4 (stress, SpO₂,
+respiration de la montre).
+
 **Run « idées » du 24/10 08:30 — l'abonnement est prêt à être créé, et une précision importante pour P23 (rien de
 nouveau dans l'app).** ① **6d est spécifié appel par appel** ([`IDEES.md`](IDEES.md) I158) : le prochain run de code
 crée chez Google l'abonnement `halcya_premium` (identifiant que l'app attend déjà), ses formules **annuel 29,99 €** et
@@ -1188,6 +1201,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 08:30 — [Idées : 6d et 6e prêts à coder](runs/2026-10-24-0830-idees-abonnement-api.md) | 💡 | I158 (création de `halcya_premium` par `monetization.subscriptions` : 5 appels idempotents, grâce + suspension 30–60 j, offre `essai-14j`, activation) ; I159 (scénario testeur de licence ~30 min) ; I161 (testeur de licence : premium perdu après ~3 h → P23 ① + ②) ; I160 ; journal seul |
 | 24/10 09:30 — [6d : abonnements créés par l'API](runs/2026-10-24-0930-6d-abonnements.md) | 🧭💳 | `scripts/play/subscriptions.mjs` (`buildCatalog` pur, `ensureCatalog` idempotent : lecture → création / ajout des formules manquantes → offre `essai-14j` → activation → relecture ; prix existants jamais modifiés) ; workflow « Play — abonnements » : **créé et actif du 1er coup** ; `playLabel` ≤ 40 car. ; 12 tests ; v246 |
 | 24/10 10:30 — [6e : paiement à régulariser + scénario P27](runs/2026-10-24-1030-6e-paiement-scenario.md) | 🧭💳 | `paymentIssue()` (grâce / suspension) + `PaymentIssueCard` en haut de l'Accueil (play), lien vers les abonnements Google Play ; `--subscription=grace|on_hold` ; P27 : 7 cases pour le propriétaire (testeur de licence) ; 2 122 Vitest |
+| 24/10 11:30 — [CI : faux plantage du test émulateur](runs/2026-10-24-1130-ci-plantage-emulateur.md) | 🔧 | `play-cold-start.sh` : seuls les plantages de `fr.jpesquet.sante` comptent, tampon `crash` vidé et publié ; « Relais — déploiement » : bilan Play Integrity 7 j (6b-2c-1) ; 2 122 Vitest |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |

@@ -4,7 +4,7 @@
 #   - le temps de démarrage de l'activité rapporté par Android (`am start -W`, TotalTime) ;
 #   - le temps jusqu'au premier écran utile (titre de l'onboarding visible dans l'arbre d'accessibilité) ;
 #   - les erreurs JavaScript de la WebView (journal Capacitor/Console de la build debug).
-# Écrit play_coldstart.md (résumé du job), play_logcat.txt et screenshot_play_first.png.
+# Écrit play_coldstart.md (résumé du job), play_logcat.txt, play_crash.txt et screenshot_play_first.png.
 # Code de sortie non nul : premier écran jamais affiché, ou erreur JS non interceptée (« Uncaught »).
 set -uo pipefail
 
@@ -28,7 +28,8 @@ adb install "$APK"
 COMPONENT=$(adb shell cmd package resolve-activity --brief "$PKG" | tr -d '\r' | tail -1)
 echo "Activité de lancement : $COMPONENT"
 
-adb logcat -c || true
+# Tous les tampons, y compris « crash » : un plantage antérieur (tests instrumentés, sideload) ne compte pas ici
+adb logcat -b all -c || true
 T0=$(date +%s%N)
 adb shell am start -W -n "$COMPONENT" | tr -d '\r' | tee play_am_start.txt
 TOTAL_MS=$(grep -m1 "TotalTime" play_am_start.txt | awk '{print $2}')
@@ -56,7 +57,10 @@ adb logcat -d -b crash > play_crash.txt 2>/dev/null || true
 grep -E " E Capacitor/Console|Uncaught|Unhandled" play_logcat.txt > play_js_errors.txt || true
 UNCAUGHT=$(grep -c "Uncaught" play_js_errors.txt || true)
 JS_ERRORS=$(wc -l < play_js_errors.txt | tr -d ' ')
-CRASH=$(grep -c "FATAL EXCEPTION" play_crash.txt || true)
+# Le tampon « crash » couvre tout l'appareil : on ne compte que les plantages du processus de l'app
+# (« Process: fr.jpesquet.sante, PID: … », y compris ses sous-processus « fr.jpesquet.sante:xxx »)
+CRASH=$(grep -c "Process: ${PKG}[,:]" play_crash.txt || true)
+OTHER_CRASH=$(( $(grep -c "FATAL EXCEPTION" play_crash.txt || true) - CRASH ))
 
 {
   echo "## Premier lancement à froid — variante play, données vierges"
@@ -67,6 +71,7 @@ CRASH=$(grep -c "FATAL EXCEPTION" play_crash.txt || true)
   echo "| Premier écran utile (« ${FIRST_SCREEN}… » visible) | ${FIRST_MS:-non affiché après ${TIMEOUT_S} s} ${FIRST_MS:+ms} |"
   echo "| Erreurs JavaScript (console.error + non interceptées) | ${JS_ERRORS} (dont ${UNCAUGHT} « Uncaught ») |"
   echo "| Plantages natifs (FATAL EXCEPTION) | ${CRASH} |"
+  echo "| Plantages d'autres processus de l'émulateur (ignorés) | ${OTHER_CRASH} |"
   echo
   echo "Build debug, émulateur logiciel sans GPU : les temps sont des majorants (un vrai téléphone est plus rapide)."
   echo "La détection du premier écran interroge l'arbre d'accessibilité toutes les ~1 à 2 s."
@@ -74,6 +79,14 @@ CRASH=$(grep -c "FATAL EXCEPTION" play_crash.txt || true)
     echo
     echo '```'
     head -20 play_js_errors.txt
+    echo '```'
+  fi
+  if [ -s play_crash.txt ]; then
+    echo
+    echo "Tampon « crash » de l'émulateur (40 premières lignes) :"
+    echo
+    echo '```'
+    head -40 play_crash.txt
     echo '```'
   fi
 } > "$OUT"
