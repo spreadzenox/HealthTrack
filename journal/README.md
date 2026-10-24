@@ -668,7 +668,7 @@ coulisses : j'ai vérifié ce que sortent les deux modèles embarqués — 8 sco
 l'éveil, jusqu'ici jetés ; ils sont maintenant gardés (des nombres seulement, aucune image, rien qui quitte le
 téléphone, pas de changement de base de données). **👉 À tester** : après quelques lectures du visage sur la nouvelle
 version, Accueil → « Historique » → « Jour » ; la carte « Expressions » se remplit avec ces nouvelles lectures (les
-anciennes n'en ont pas). Prochain run de code : POL-7 (onglet « Analyses »).
+anciennes n'en ont pas). Prochain run de code : POL-7 (onglet « Analyses »). Publié : **v256** (33,7 Mo) et la version play en test interne.
 
 **Run du 24/10 18:30 — la carte « Bien-être estimé » se lit d'un coup d'œil (POL-3).** Ce que vous verrez : le
 bouton texte « détails » devient une **petite flèche** en haut à droite des cartes (bien-être, ventre, pistes, et aussi

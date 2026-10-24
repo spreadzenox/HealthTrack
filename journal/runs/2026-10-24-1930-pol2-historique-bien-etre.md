@@ -36,3 +36,9 @@
 
 ## Suite
 - Prochain run de code : **POL-7** (onglet « Analyses »).
+
+## Après le merge (#330, `4f02396`)
+- Premier passage CI : « Frontend (Vitest) » rouge — type de nouveauté `nouveauté` inconnu (`nouveau` attendu) ; corrigé,
+  et les fourchettes de la vue Jour ne se dessinent plus que si elles sont définies (avertissement NaN d'un test).
+- Checks de la PR ensuite tous verts (Vitest, Build APK, Relais, montre Java, budget de lectures, émulateur API 35 et 36).
+- « Build & Release » vert : **v256** publiée (APK 33 745 620 octets, 33,7 Mo) ; « Play — AAB » vert (envoi en test interne).
