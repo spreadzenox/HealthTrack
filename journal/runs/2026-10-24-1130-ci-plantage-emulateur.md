@@ -18,6 +18,8 @@
   l'émulateur) faisait donc échouer le critère C4.
 - Le job API 35 a été relancé une fois (règle : une seule relance) pour voir si l'échec se reproduit : résultat
   ci-dessous.
+- **Relance : verte** (job 120838661046, 0 plantage) : l'échec ne se reproduit pas sur le même commit, ce qui confirme
+  un plantage intermittent hors de l'app ; main est vert.
 
 ## Ce qui a été fait
 - `.github/scripts/play-cold-start.sh` : `adb logcat -b all -c` avant le lancement ; ne compte que les plantages dont
