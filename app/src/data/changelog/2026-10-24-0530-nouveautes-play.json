@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "amélioration",
+  "title": "Des nouveautés qui parlent de votre version",
+  "variants": ["play"],
+  "items": [
+    "La page Nouveautés ne montre plus que les changements de la version Google Play.",
+    "À la première ouverture, rien ne s’affiche : le bandeau reviendra à la prochaine mise à jour."
+  ]
+}

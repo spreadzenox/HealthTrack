@@ -4,7 +4,7 @@ import { MemoryRouter, Routes, Route, Outlet, Link } from 'react-router-dom'
 import WhatsNew from './WhatsNew'
 import WhatsNewBanner from '../components/WhatsNewBanner'
 import { getLastSeenId } from '../services/whatsNew'
-import { CHANGELOG } from '../data/changelog'
+import { ALL_CHANGELOG as CHANGELOG } from '../data/changelog'
 
 const LOG = [
   { id: 'b', date: '2026-10-10', kind: 'correctif', title: 'Graphique corrigé', items: ['Les dates ne se chevauchent plus.'] },
@@ -49,6 +49,7 @@ describe('WhatsNew page', () => {
       expect(['nouveau', 'amélioration', 'correctif']).toContain(e.kind)
       expect(e.title).toBeTruthy()
       expect(Array.isArray(e.items)).toBe(true)
+      if (e.variants !== undefined) expect(e.variants.length > 0 && e.variants.every((v) => ['play', 'sideload'].includes(v))).toBe(true)
     }
   })
 })
