@@ -666,8 +666,10 @@ gardait ses compteurs en mémoire, et le plafond premium du jour n'était sauveg
 relais en veille (personne ne l'appelait), le compteur est reparti à zéro. La réinstallation n'y était pour rien. C'est
 corrigé : les compteurs sont maintenant gardés dans **Firestore** (la base que vous avez créée à 14:03, offre gratuite),
 avec seulement des chiffres et une empreinte de l'installation, rien de personnel. Ce que vous verrez : la carte de
-résultat d'une analyse IA dit simplement **« Analyse IA · une estimation »** (le nom du modèle reste sous « détails »).
+résultat d'une analyse IA (**v251**, 33,7 Mo) dit simplement **« Analyse IA · une estimation »** (le nom du modèle reste sous « détails »).
 **À tester** : faites une analyse IA, attendez 30 minutes, puis Réglages → le compteur doit afficher 9 (et non 10).
+**Bonne nouvelle Play Integrity** : votre analyse de 13:38 a envoyé le seul vrai jeton reçu en 7 jours, et il est
+**valide** : votre téléphone passe la vérification anti-abus.
 **Prochain run de code : 6f**, la période de lancement (« Premium offert pendant le test », date réglée côté relais,
 interrupteur pour vous laisser retester l'abonnement), puis la sauvegarde Android (règles qui excluent les clés de la
 montre, textes honnêtes). **Nouvelle action facultative : P28** (retirer un droit trop large au compte Compute par
