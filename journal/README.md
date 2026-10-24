@@ -707,7 +707,7 @@ plus nets sont visibles, le reste derrière « Voir N autres liens », les incer
 dans les titres. Quand un facteur est déjà une piste (« Marcher davantage »), son effet du lendemain s'ouvre avec le
 chevron de la piste. En démo, l'onglet passe de 3 écrans à 2. Aucun calcul ne change. **👉 À tester** : onglet
 « Analyses », vérifiez qu'aucun facteur n'est répété. Prochain run de code : **POL-6** (Journal plus coloré, graphiques
-pas encore actifs regroupés).
+pas encore actifs regroupés). Publié : **v259** (33,7 Mo) et la version play en test interne.
 
 **Run du 24/10 19:30 — l'historique de votre bien-être (POL-2).** Ce que vous verrez : en bas de la carte « Bien-être
 estimé », **« Historique › »** ouvre une page avec **Jour / Semaine / Mois** : la courbe de votre bien-être estimé (en
