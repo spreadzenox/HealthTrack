@@ -669,7 +669,7 @@ Gemini saisie, les clés de la montre et les jetons sont retirés ; l'identifian
 crédits IA) et l'abonnement est relu dans Google Play. **Sécurité des données : rien à ajouter** (la sauvegarde est
 faite par Android et chiffrée de bout en bout), donc **pas besoin de relancer P21**. **👉 À tester à votre prochaine
 réinstallation** : vos données reviennent, la montre demande un nouvel appairage (PIN sur la montre), le premium revient
-seul. Prochain run de code : POL-5 + POL-4 (boutons de l'Accueil, carte ventre seulement si « Mon ventre »).
+seul. Publié : **v253** (33,7 Mo) et la version play en test interne. Prochain run de code : POL-5 + POL-4 (boutons de l’Accueil, carte ventre seulement si « Mon ventre »).
 
 **Run du 24/10 15:30 — « Premium offert pendant le test » est prêt (6f, P23 ②).** Vos retours de 15:00 sur le
 parcours (Accueil, Journal, « Analyses », Sources, lecture au déverrouillage aussi sur Play) sont consignés dans

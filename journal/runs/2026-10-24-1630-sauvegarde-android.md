@@ -37,3 +37,7 @@
 - Prochain run de code : POL-5 + POL-4.
 - À vérifier un jour sur téléphone : après restauration, l'auto-synchro de la montre ne doit pas lancer un
   réappairage sans geste (sinon rendre le réappairage explicite).
+
+## Après le merge (#324, `1a10188`)
+- Checks de la PR tous verts (Vitest, Build APK, Relais, montre Java, budget de lectures, émulateur API 35 et 36).
+- « Build & Release » vert : **v253** publiée (APK 33 738 877 octets, 33,7 Mo) ; « Play — AAB » vert (envoi en test interne).
