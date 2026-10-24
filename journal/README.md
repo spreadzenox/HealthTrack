@@ -658,6 +658,24 @@ une ou deux fois avec la montre au poignet ; ouvrez ensuite Sources → montre �
 détaillé » doit dater de la nuit. **Prochain run de code** : M6 suite (VFC de journée et température de la peau en
 arrière-plan, P2P), puis M7 (courbe FC et allure des séances). **👉 Votre prochaine action la plus utile reste P27**.
 
+**Run du 24/10 15:30 — « Premium offert pendant le test » est prêt (6f, P23 ②).** Vos retours de 15:00 sur le
+parcours (Accueil, Journal, « Analyses », Sources, lecture au déverrouillage aussi sur Play) sont consignés dans
+[`BACKLOG.md`](BACKLOG.md) en étapes **POL-1 à POL-8** : ce sera la priorité des prochains runs de code, juste après la
+sauvegarde Android. Ce run livre la **période de lancement** : entre deux dates réglées dans un petit fichier du
+relais (`relay/src/launch-period.json`), toute installation de la version Play a le premium, **sans achat ni mise à
+jour de l'app**. Pendant cette période, la page Premium et le dernier écran de l'onboarding disent **« Premium offert
+pendant le test · jusqu'au …, vous n'avez rien à payer »**, sans aucune formule ni bouton d'achat (impossible de payer
+par erreur) ; à l'échéance, le paywall habituel revient tout seul. **Aujourd'hui le fichier est vide : rien ne change
+pour vous** ; les dates seront posées le jour où la version candidate part en alpha (début = cette publication, fin =
+invitation + 14 jours + 10 jours de marge). **Pour prolonger ou couper**, une ligne à changer dans ce fichier sur
+GitHub, le relais se redéploie seul en 3 à 5 minutes : pas à pas dans
+[`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md), qui contient aussi **le texte d'invitation des testeurs** (avec le
+chemin d'installation qui marche malgré l'absence de l'app dans la recherche du Play Store). Le résumé du workflow
+« Relais — déploiement » affiche désormais l'état de la période. **Petite renumérotation** : l'action IAM devient
+**P29** ; **P28** est la déclaration « services de premier plan » de la lecture au déverrouillage (je vous préparerai
+le texte et le script de la vidéo). **Prochain run de code : SAUV** (règles de sauvegarde Android qui excluent les clés
+de la montre, textes honnêtes), puis POL-5 et POL-4.
+
 **Run du 24/10 14:30 — merci pour la session guidée : vos retours sont consignés, et le compteur d'analyses IA est fiable.**
 **P27 est terminée** (critère C3 de la version candidate ✅ : achat, annulation, paiement refusé, pause et
 réinstallation fonctionnent tous) ; **P23 tranchée** : seulement la « période de lancement » (aucun testeur de licence en
@@ -1248,6 +1266,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 09:30 — [6d : abonnements créés par l'API](runs/2026-10-24-0930-6d-abonnements.md) | 🧭💳 | `scripts/play/subscriptions.mjs` (`buildCatalog` pur, `ensureCatalog` idempotent : lecture → création / ajout des formules manquantes → offre `essai-14j` → activation → relecture ; prix existants jamais modifiés) ; workflow « Play — abonnements » : **créé et actif du 1er coup** ; `playLabel` ≤ 40 car. ; 12 tests ; v246 |
 | 24/10 10:30 — [6e : paiement à régulariser + scénario P27](runs/2026-10-24-1030-6e-paiement-scenario.md) | 🧭💳 | `paymentIssue()` (grâce / suspension) + `PaymentIssueCard` en haut de l'Accueil (play), lien vers les abonnements Google Play ; `--subscription=grace|on_hold` ; P27 : 7 cases pour le propriétaire (testeur de licence) ; 2 122 Vitest |
 | 24/10 11:30 — [CI : faux plantage du test émulateur](runs/2026-10-24-1130-ci-plantage-emulateur.md) | 🔧 | `play-cold-start.sh` : seuls les plantages de `fr.jpesquet.sante` comptent, tampon `crash` vidé et publié ; « Relais — déploiement » : bilan Play Integrity 7 j (6b-2c-1) ; 2 122 Vitest |
+| 24/10 15:30 — [6f : période de lancement](runs/2026-10-24-1530-6f-periode-lancement.md) | 🧭💳 | `relay/src/launch-period.json` (`from` / `until` / `off`, `LAUNCH_PREMIUM_*` prioritaires), `isLaunchPeriod` avec début et interrupteur, état dans le résumé du workflow relais ; Premium / onboarding « Premium offert pendant le test » sans achat ; `INVITATION-TESTEURS.md` ; retours de 15:00 → POL-1…8 ; P28 = FGS, IAM → P29 ; 78 tests relais |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

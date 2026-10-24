@@ -98,6 +98,11 @@ jobs:
             echo
             echo "- Adresse : $URL"
             echo "- Image : \`$IMAGE:$GITHUB_SHA\`"
+            # Période de lancement (P23 ②) : relay/src/launch-period.json, embarqué dans l'image
+            jq -r 'if .off then "- Période de lancement : coupée (off)"
+                   elif (.until // "") == "" then "- Période de lancement : aucune"
+                   else "- Période de lancement : premium offert du \(if (.from // "") == "" then "déploiement" else .from end) au \(.until) (UTC)" end' \
+              relay/src/launch-period.json
           } >> "$GITHUB_STEP_SUMMARY"
           curl -fsS --retry 5 --retry-delay 5 --retry-all-errors "$URL/health"
           echo
@@ -166,6 +171,11 @@ jobs:
           esac
           echo "- Vérification d'achat : HTTP $status — $verdict" >> "$GITHUB_STEP_SUMMARY"
           echo "HTTP $status — $verdict"
+          # Période de lancement vue par l'app (sans jeton d'achat) : premium et échéance renvoyés par le relais
+          launch=$(curl -sS --max-time 30 -X POST "$RELAY_URL/v1/subscription/verify" \
+            -H 'Content-Type: application/json' -H "X-Install-Id: ci-smoke-${GITHUB_RUN_ID}" -d '{}' \
+            | jq -r '"premium=\(.premium) source=\(.source // "—") jusqu’au \(.launchUntil // "—")"' 2>/dev/null || echo "illisible")
+          echo "- Installation sans achat : $launch" >> "$GITHUB_STEP_SUMMARY"
           sleep 3
           gcloud logging read \
             "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.route=\"/v1/subscription/verify\"" \

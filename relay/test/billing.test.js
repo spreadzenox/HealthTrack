@@ -3,8 +3,9 @@ import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
 import {
   accountIdFor, createBillingRoutes, createPlayClient, createPushVerifier, entitlementFrom, hashToken, PlayApiError,
-  purchaseTokenFrom, verifyResponse,
+  isLaunchPeriod, purchaseTokenFrom, verifyResponse,
 } from '../src/billing.js'
+import { loadConfig, readLaunchPeriod } from '../src/config.js'
 import { createHandler } from '../src/server.js'
 import { createQuota } from '../src/quota.js'
 import { metadataTokenProvider } from '../src/vertex.js'
@@ -89,13 +90,13 @@ function fakePlay(state = {}) {
   }
 }
 
-async function withRelay({ play, launchPremiumUntil = '', verifyPush = async () => true, billingQuota }, fn) {
+async function withRelay({ play, launchPremium = {}, verifyPush = async () => true, billingQuota }, fn) {
   const logs = []
   const handler = createHandler({
     quota: createQuota({ globalPerDay: 10, installPerDay: 2, globalPerMinute: 10 }),
     vertex: { generateJson: async () => { throw new Error('pas ici') } },
     ingredientNames: ['Pomme'],
-    billing: createBillingRoutes({ play, packageName: PKG, launchPremiumUntil, verifyPush, log: (e) => logs.push(e), now: () => NOW }),
+    billing: createBillingRoutes({ play, packageName: PKG, launchPremium, verifyPush, log: (e) => logs.push(e), now: () => NOW }),
     billingQuota,
     allowedOrigins: ['https://localhost'],
     log: (e) => logs.push(e),
@@ -185,11 +186,11 @@ test('verify : jeton inconnu → 404 ; Google injoignable ou droits manquants �
 
 test('verify : sans jeton → période de lancement seule ; demandes invalides et quota', async () => {
   const play = fakePlay()
-  await withRelay({ play, launchPremiumUntil: '2026-12-01T00:00:00Z' }, async (url) => {
+  await withRelay({ play, launchPremium: { until: '2026-12-01T00:00:00Z' } }, async (url) => {
     const body = await (await verify(url, {})).json()
     assert.deepEqual([body.premium, body.source, body.launchUntil], [true, 'launch', '2026-12-01T00:00:00.000Z'])
   })
-  await withRelay({ play, launchPremiumUntil: '2026-11-01T00:00:00Z' }, async (url) => {
+  await withRelay({ play, launchPremium: { until: '2026-11-01T00:00:00Z' } }, async (url) => {
     const body = await (await verify(url, {})).json()
     assert.deepEqual([body.premium, body.source], [false, null])
   })
@@ -284,4 +285,32 @@ test('metadataTokenProvider : portée Android Publisher demandée au serveur de 
   })
   assert.equal(await get(), 't')
   assert.match(asked, /\/token\?scopes=https%3A%2F%2Fwww\.googleapis\.com%2Fauth%2Fandroidpublisher$/)
+})
+
+test('période de lancement (P23 ②) : début, fin, interrupteur', () => {
+  const until = '2026-12-01T00:00:00Z'
+  assert.equal(isLaunchPeriod({ until }, NOW), '2026-12-01T00:00:00.000Z')
+  // Pas avant la publication de la version candidate
+  assert.equal(isLaunchPeriod({ from: '2026-11-11T00:00:00Z', until }, NOW), null)
+  assert.equal(isLaunchPeriod({ from: '2026-11-10T12:00:00Z', until }, NOW), '2026-12-01T00:00:00.000Z')
+  // Échéance exclue, interrupteur, réglages vides ou illisibles
+  assert.equal(isLaunchPeriod({ until: '2026-11-10T12:00:00Z' }, NOW), null)
+  assert.equal(isLaunchPeriod({ until, off: true }, NOW), null)
+  assert.equal(isLaunchPeriod({}, NOW), null)
+  assert.equal(isLaunchPeriod({ from: 'bientôt', until }, NOW), null)
+})
+
+test('période de lancement : fichier du dépôt lisible, dates cohérentes ; variables LAUNCH_PREMIUM_* prioritaires', () => {
+  const file = readLaunchPeriod()
+  assert.equal(typeof file.off, 'boolean')
+  for (const key of ['from', 'until']) {
+    if (file[key]) assert.ok(Number.isFinite(Date.parse(file[key])), `${key} illisible : ${file[key]}`)
+  }
+  if (file.from && file.until) assert.ok(Date.parse(file.from) < Date.parse(file.until), 'from doit précéder until')
+  assert.deepEqual(loadConfig({}).launchPremium, file)
+  assert.deepEqual(
+    loadConfig({ LAUNCH_PREMIUM_FROM: '', LAUNCH_PREMIUM_UNTIL: '2026-12-01T00:00:00Z', LAUNCH_PREMIUM_OFF: '1' }).launchPremium,
+    { from: '', until: '2026-12-01T00:00:00Z', off: true },
+  )
+  assert.deepEqual(readLaunchPeriod('/nulle/part.json'), { from: '', until: '', off: false })
 })

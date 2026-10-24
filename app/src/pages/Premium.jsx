@@ -71,6 +71,8 @@ export default function Premium({ context = null, onClose = null }) {
   }, [ent.premium])
 
   const onboarding = context === 'onboarding'
+  // Période de lancement (P23 ②) : premium offert par le relais ; aucun achat proposé tant qu'elle court
+  const launch = ent.premium && ent.source === 'launch'
   const close = onClose ?? (() => (window.history.length > 1 ? navigate(-1) : navigate('/')))
   const plan = plans?.find((p) => p.basePlanId === selected) ?? null
   const saving = plans ? annualSavingPercent(plans) : null
@@ -116,9 +118,11 @@ export default function Premium({ context = null, onClose = null }) {
         </button>
       </div>
 
-      <h2 className="paywall-title">Passez de « je note » à « je comprends »</h2>
+      <h2 className="paywall-title">{launch ? 'Premium offert pendant le test' : 'Passez de « je note » à « je comprends »'}</h2>
       <p className="paywall-lead">
-        {onboarding
+        {launch
+          ? 'Merci de tester l’app ! Tout ce qui suit est débloqué, sans achat ni carte bancaire.'
+          : onboarding
           ? 'Vos pistes arriveront vers le 21ᵉ jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.'
           : 'Vos données restent sur votre téléphone. Le premium vous aide à voir ce qui va avec vos bons et mauvais jours.'}
       </p>
@@ -241,7 +245,7 @@ export default function Premium({ context = null, onClose = null }) {
       </p>
 
       <button type="button" className="btn btn-secondary paywall-later" onClick={close}>
-        {onboarding ? 'Continuer gratuitement' : 'Plus tard'}
+        {launch ? 'Continuer' : onboarding ? 'Continuer gratuitement' : 'Plus tard'}
       </button>
     </section>
   )

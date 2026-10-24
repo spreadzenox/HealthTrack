@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "amélioration",
+  "title": "Premium offert pendant le test",
+  "variants": ["play"],
+  "items": [
+    "Pendant le test de l’app, le premium est offert : la page Premium l’indique avec sa date de fin, sans formule ni bouton d’achat. Vous n’avez rien à payer.",
+    "À la fin du test, la page Premium habituelle revient d’elle-même."
+  ]
+}
