@@ -620,7 +620,7 @@ neuve, sans données**, chronomètre l'arrivée du premier écran, relève les e
 d'une particularité de Capacitor), et le même défaut empêchait le jeton Play Integrity de partir avec les analyses IA.
 Aucun test ne pouvait le voir, puisqu'ils utilisent de faux plugins. C'est corrigé, avec un test qui reproduit le
 blocage ; la version Play l'annonce dans ses Nouveautés. Mesures : Android affiche l'app en 1,1 à 1,5 s, l'onboarding
-est lisible au bout de 9 à 12 s **sur un émulateur lent en build de débogage** (un vrai téléphone sera nettement plus
+est lisible au bout de 6,5 s après correctif (9 à 12 s avant) **sur un émulateur lent en build de débogage** (un vrai téléphone sera nettement plus
 rapide : à confirmer par un testeur), aucun plantage. Détail dans le
 [compte rendu](runs/2026-10-24-0730-vc9-premier-lancement.md). Un test instable (VC-19) a aussi été réparé.
 **Prochain run de code : 6d** — créer l'abonnement `halcya_premium` (4,99 €/mois, 29,99 €/an avec 14 jours d'essai)

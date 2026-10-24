@@ -48,7 +48,9 @@ comparer d'une PR à l'autre et à confirmer sur téléphone.
 
 ## Après correctif
 - `npm run test` : 172 fichiers, 2 104 tests verts ; build OK ; lint 6 erreurs (inchangé) ; visual 0 erreur JS.
-- Mesures émulateur : voir le résumé du workflow sur la PR #312.
+- Émulateur (commit `f3a4a1c`, tous les checks verts) : API 35 — TotalTime 1 816 ms, premier écran 6,7 s ; API 36 —
+  1 833 ms, 6,5 s ; **0 erreur non interceptée**, 0 plantage ; reste le seul `console.error` « [object Object] »
+  (VC-21). Le premier écran arrive ~3 à 5 s plus tôt qu'avant le correctif (le chargeur bloqué retardait le rendu).
 
 ## Reste / suite
 - Entrée « Nouveautés » (play) : « Les formules premium se chargent bien ».
