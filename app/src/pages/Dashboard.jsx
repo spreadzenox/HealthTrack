@@ -4,6 +4,7 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
 import MoodEstimateCard from '../components/MoodEstimateCard'
+import PaymentIssueCard from '../components/PaymentIssueCard'
 import { loadWellbeingToday } from '../services/mood/faceMoodData'
 import { loadJournalEntries } from '../services/journalEntries'
 import { buildDailyJournal } from '../services/dailyJournal'
@@ -73,6 +74,7 @@ export default function Dashboard() {
         <p className="today-dateline">{headerLine()}</p>
         <h2 className="today-title">{daySummaryTitle(wellbeing?.est)}</h2>
       </header>
+      <PaymentIssueCard />
       {/* Présentation utile au premier lancement seulement : avec des données, elle repoussait tout le contenu. */}
       {!loading && !error && days.length === 0 && (
         <p className="dashboard-intro">

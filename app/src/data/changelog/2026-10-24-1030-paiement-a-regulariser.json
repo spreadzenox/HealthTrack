@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "nouveauté",
+  "title": "Un paiement à régulariser se voit sur l’Accueil",
+  "variants": ["play"],
+  "items": [
+    "Si le paiement de votre abonnement ne passe pas, une carte sur l’Accueil vous le dit, avec un bouton « Mettre à jour mon paiement » qui ouvre directement vos abonnements Google Play.",
+    "Pendant ce temps votre premium reste actif quelques jours ; s’il est suspendu, il revient dès que le paiement est régularisé. Vos données ne changent jamais."
+  ]
+}

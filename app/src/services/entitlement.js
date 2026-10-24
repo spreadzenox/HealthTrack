@@ -130,3 +130,25 @@ export function manageSubscriptionUrl(productId) {
   const base = 'https://play.google.com/store/account/subscriptions'
   return productId ? `${base}?sku=${encodeURIComponent(productId)}&package=${PLAY_PACKAGE}` : base
 }
+
+/**
+ * Paiement à régulariser (jalon 6e) : en période de grâce ou en suspension, Google recommande de le dire là où la
+ * personne le voit, avec un lien direct vers ses abonnements — pas seulement dans les Paramètres.
+ */
+export function paymentIssue(ent) {
+  if (ent?.state === 'grace') {
+    return {
+      title: 'Votre paiement n’est pas passé',
+      text: 'Votre premium reste actif pour l’instant. Mettez à jour votre moyen de paiement dans Google Play pour le garder.',
+      url: manageSubscriptionUrl(ent.productId),
+    }
+  }
+  if (ent?.state === 'on_hold') {
+    return {
+      title: 'Abonnement suspendu',
+      text: 'Le paiement n’a pas pu être fait. Votre premium reviendra dès que le paiement sera régularisé dans Google Play. Vos données ne changent pas.',
+      url: manageSubscriptionUrl(ent.productId),
+    }
+  }
+  return null
+}
