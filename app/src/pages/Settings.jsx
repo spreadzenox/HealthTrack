@@ -176,7 +176,7 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* L'objectif de l'onboarding règle l'ordre de l'Accueil (I155) ; il ne masque ni n'efface rien. */}
+      {/* L'objectif de l'onboarding règle l'Accueil (I155, POL-4) : carte ventre seulement avec « Mon ventre ». */}
       <div className="settings-block">
         <h3 className="section-title">Ce qui vous amène</h3>
         <div className="theme-choices" role="radiogroup" aria-label="Ce qui vous amène">
@@ -193,7 +193,10 @@ export default function Settings() {
             </label>
           ))}
         </div>
-        <p className="hint">Change l’ordre des cartes de l’Accueil. Rien n’est masqué ni effacé.</p>
+        <p className="hint">
+          La carte «&nbsp;Votre ventre&nbsp;» de l’Accueil n’apparaît qu’avec «&nbsp;Mon ventre&nbsp;». Vos notes ne
+          sont jamais effacées : changez d’avis quand vous voulez.
+        </p>
       </div>
 
       {FEATURES.billing && <SubscriptionBlock />}

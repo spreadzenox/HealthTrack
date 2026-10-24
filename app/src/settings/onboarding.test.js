@@ -6,6 +6,7 @@ import {
   defaultTracks,
   needsOnboarding,
   homeFocus,
+  gutCardMode,
   markScreenSeen,
   onboardingDiagnostic,
   GOALS,
@@ -31,6 +32,16 @@ describe('settings/onboarding', () => {
     expect(homeFocus()).toBe('energy')
     expect(homeFocus('all')).toBe('gut')
     expect(homeFocus('gut')).toBe('gut')
+  })
+
+  it('gutCardMode : carte ventre seulement avec « Mon ventre » ; sans objectif, selon l’installation (POL-4)', () => {
+    expect(gutCardMode()).toBe('show')
+    saveOnboarding({ goal: 'gut' })
+    expect(gutCardMode()).toBe('show')
+    expect(gutCardMode({ goal: 'energy' })).toBe('hide')
+    expect(gutCardMode({ goal: 'all' })).toBe('hide')
+    expect(gutCardMode({ goal: null, endedBy: 'existing' })).toBe('used')
+    expect(gutCardMode({ goal: null, endedBy: 'skipped' })).toBe('show')
   })
 
   it('maxStep ne recule jamais (écran le plus loin atteint, pour le diagnostic)', () => {

@@ -23,7 +23,7 @@ vi.mock('../components/BaselineCards', () => ({
 // Cartes ventre et pistes : testées dans TodayCards.test.jsx (elles lisent IndexedDB de leur côté)
 vi.mock('../components/TodayCards', async (importOriginal) => ({
   ...(await importOriginal()),
-  GutCard: () => <section data-testid="gut-card" />,
+  GutCard: ({ onlyIfUsed }) => <section data-testid="gut-card" data-only-if-used={String(onlyIfUsed)} />,
   PistesTeaser: ({ focus }) => <section data-testid="pistes-card" data-focus={focus} />,
 }))
 
@@ -85,21 +85,40 @@ describe('Dashboard', () => {
     expect(navigateMock).toHaveBeenCalledWith('/food')
   })
 
-  it('objectif « énergie et sommeil » : la carte ventre passe sous les pistes, qui parlent sommeil (I155)', async () => {
+  it('objectif « énergie et sommeil » : pas de carte ventre (POL-4), la carte des pistes parle sommeil (I155)', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'energy' }))
     renderDashboard()
     const pistes = await screen.findByTestId('pistes-card')
-    const gut = screen.getByTestId('gut-card')
     expect(pistes).toHaveAttribute('data-focus', 'energy')
-    expect(pistes.compareDocumentPosition(gut) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.queryByTestId('gut-card')).not.toBeInTheDocument()
     localStorage.removeItem('healthtrack_onboarding')
   })
 
-  it('objectif ventre ou aucun : l’ordre de la maquette (ventre avant les pistes)', async () => {
+  it('objectif « tout comprendre » : pas de carte ventre (POL-4)', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'all' }))
+    renderDashboard()
+    await screen.findByTestId('pistes-card')
+    expect(screen.queryByTestId('gut-card')).not.toBeInTheDocument()
+    localStorage.removeItem('healthtrack_onboarding')
+  })
+
+  it('objectif « Mon ventre » : la carte ventre, toujours, avant les pistes', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
     renderDashboard()
     const pistes = await screen.findByTestId('pistes-card')
+    const gut = screen.getByTestId('gut-card')
     expect(pistes).toHaveAttribute('data-focus', 'gut')
-    expect(pistes.compareDocumentPosition(screen.getByTestId('gut-card')) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
+    expect(gut).toHaveAttribute('data-only-if-used', 'false')
+    expect(pistes.compareDocumentPosition(gut) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
+    localStorage.removeItem('healthtrack_onboarding')
+  })
+
+  it('aucun objectif (installation d’avant l’onboarding) : la carte ventre seulement si le ventre est noté', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'existing', goal: null }))
+    renderDashboard()
+    await screen.findByTestId('pistes-card')
+    expect(screen.getByTestId('gut-card')).toHaveAttribute('data-only-if-used', 'true')
+    localStorage.removeItem('healthtrack_onboarding')
   })
 
   it("masque l'introduction dès que des données existent (le contenu commence plus haut)", async () => {
@@ -152,16 +171,16 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).not.toBeInTheDocument()
   })
 
-  it('renders the « Une note » button', async () => {
+  it('renders the « Ajouter une note » button', async () => {
     renderDashboard()
-    const btn = screen.getByRole('button', { name: 'Une note' })
+    const btn = screen.getByRole('button', { name: 'Ajouter une note' })
     expect(btn).toBeInTheDocument()
   })
 
   it('hides the cigarette quick-add button for a non-smoker (no recent cigarette)', async () => {
     localStorage.clear()
     renderDashboard()
-    await screen.findByRole('button', { name: 'Une note' })
+    await screen.findByRole('button', { name: 'Ajouter une note' })
     await waitFor(() => expect(screen.queryByText(/Chargement des données/i)).not.toBeInTheDocument())
     expect(screen.queryByRole('button', { name: /Ajouter une cigarette/i })).not.toBeInTheDocument()
   })
@@ -184,7 +203,7 @@ describe('Dashboard', () => {
 
   it('opens the wellbeing modal when the button is clicked', async () => {
     renderDashboard()
-    const btn = screen.getByRole('button', { name: 'Une note' })
+    const btn = screen.getByRole('button', { name: 'Ajouter une note' })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     fireEvent.click(btn)
     expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -192,15 +211,15 @@ describe('Dashboard', () => {
 
   it('closes the wellbeing modal when onClose is called', async () => {
     renderDashboard()
-    fireEvent.click(screen.getByRole('button', { name: 'Une note' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une note' }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('le bouton « Une note » ouvre une note vierge', async () => {
+  it('le bouton « Ajouter une note » ouvre une note vierge', async () => {
     renderDashboard()
-    fireEvent.click(screen.getByRole('button', { name: 'Une note' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une note' }))
     expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
   })
 })

@@ -69,8 +69,11 @@ export function MeasureTiles({ tiles, details }) {
 
 const readGut = () => listEntries({ type: GUT_TYPE, since: new Date(Date.now() - 7 * DAY_MS).toISOString(), limit: 500 })
 
-/** Carte pêche « Votre ventre » : Calme / Gêne / Douleur en un geste, horodaté. */
-export function GutCard({ details, onToggleDetails, read = readGut }) {
+/**
+ * Carte pêche « Votre ventre » : Calme / Gêne / Douleur en un geste, horodaté.
+ * `onlyIfUsed` : rien n'est affiché tant qu'aucune note des 7 derniers jours n'existe (voir gutCardMode).
+ */
+export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed = false }) {
   const entries = useEntries(read)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -90,6 +93,7 @@ export function GutCard({ details, onToggleDetails, read = readGut }) {
   }
 
   const current = summary.lastToday ? summary.last.payload.level : null
+  if (onlyIfUsed && !entries?.length) return null
   return (
     <section className="today-card gut-card" aria-labelledby="gut-card-title">
       <div className="today-card-head">

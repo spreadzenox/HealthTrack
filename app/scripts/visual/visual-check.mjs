@@ -70,7 +70,7 @@
  *   npm run visual -- --routes=/bienvenue --onboarding=gesture   # premier geste (jalon 4c ; gesture-energy : 0 à 5)
  *   npm run visual -- --face=on --routes=/bienvenue --onboarding=face   # lecture du visage facultative (jalon 4c-2)
  *   npm run visual -- --play --routes=/bienvenue --onboarding=premium   # paywall soft en fin d'onboarding (play)
- *   npm run visual -- --routes=/ --goal=energy   # Accueil réglé par l'objectif « énergie et sommeil » (I155)
+ *   npm run visual -- --routes=/ --goal=energy   # Accueil réglé par l'objectif « énergie et sommeil » (I155 ; sans carte ventre, POL-4)
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer > Continuer > Health Connect > Continuer"
  *                                          # écran Health Connect (dans le navigateur : « pas disponible »)
  *   npm run visual -- --size=360x640 --dpr=3   # autre viewport (captures 1080×1920 de la fiche Play)
