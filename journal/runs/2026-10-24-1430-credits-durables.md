@@ -32,7 +32,7 @@ toujours sous `INSTALL_DAILY_CAP` (20) et le plafond global (200 / jour).
 
 ## Vérifications
 - Relais : `npm test` 76 verts (+5 : redémarrage, mois suivant, lecture retentée, REST Firestore, serveur avec panne).
-- App : voir la PR (Vitest, build, lint, visual).
+- App : Vitest 2 131 verts (1er passage CI rouge : type « correction » au lieu de « correctif » dans la Nouveauté, corrigé), build OK, lint inchangé (6 erreurs préexistantes), `npm run visual` vert (page Repas relue ; la carte de résultat IA n'a pas de capture, elle est couverte par `Food.test.jsx`).
 
 ## Suite
 - **6f** (période de lancement : début/fin/interrupteur par la CI, « Premium offert pendant le test » dans l'app,
