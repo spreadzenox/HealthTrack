@@ -84,13 +84,19 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   regroupés en une ligne discrète.
 - [ ] **POL-7 Onglet « Analyses »** (ex-Pistes) : une seule analyse (fin de simple / avancée), « Comment c'est
   calculé » en tout petit en bas, blocs sans assez de données en une ligne « arrive dans N jours », hiérarchie claire.
+  **Maquette prête : `IDEES.md` I163** (un facteur = un verdict, ≤ 3 pistes dépliables, « autres liens » fusionnés,
+  ligne « bientôt », méthode unique en pied de page ; aucun calcul ni seuil ne change).
 - [ ] **POL-8 Sources** : détection automatique (Health Connect et ses écrivains, montre Huawei appairée / à proximité),
   carte Huawei seulement si détectée, bouton « Ajouter une source », météo / écran / sommeil / visage par défaut ;
   diagnostic technique seulement en mode diagnostic caché ; aucune carte à identifiant de développeur en play.
+  **Maquette prête : `IDEES.md` I164** (Huawei = paquet Huawei Health installé ou montre appairée, pas de scan
+  Bluetooth ; « Ajouter une source » ; corriger au passage le « Détails » orphelin des cartes Visage / Météo / Écran).
 - [ ] **POL-1 Lecture au déverrouillage aussi en play** (décision du propriétaire, risque connu) : divulgation, geste
   explicite, notification permanente avec « Arrêter », réglage, service démarré app ouverte, ni exemption batterie ni
   Shizuku/ADB en play, interrupteur de build propre à play ; P28 (déclaration FGS + script vidéo) AVANT la première
   version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
+  **P28 préparé le 24/10 20:30** (`PLAY-CONFORMITE.md` §1 bis : cahier des charges, texte, script vidéo) ; POL-1 doit
+  aussi produire un APK d'aperçu play interrupteur allumé (`applicationIdSuffix ".apercu"`) pour la vidéo.
 Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 

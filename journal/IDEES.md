@@ -9,6 +9,81 @@
 
 ---
 
+## Run du 24/10/2026 20:30 (Paris) — P28 prêt pour le propriétaire, POL-7 et POL-8 maquettés
+
+Contexte : il reste trois étapes de polissage (POL-7 Analyses, POL-6 Journal, POL-8 Sources) puis POL-1 (lecture au
+déverrouillage aussi dans la version Play), qui exige d'abord la déclaration P28. Ce run prépare P28 mot pour mot et
+décrit les deux écrans les plus chargés, à partir des captures `npm run visual -- --play` (démo et `--empty`) de ce soir.
+Sources Play lues le 24/10 : aide Play Console « Understanding foreground service and full-screen intent
+requirements » (answer/13392821) et sa version d'avril 2026 (answer/16965181), Developer Policy Center « Device and
+Network Abuse » (section Foreground Service Permissions, answer/16559646) ; Android « Changes to foreground service
+types for Android 15 ».
+
+- **I162 (25) — P28 : déclaration « Autorisations des services de premier plan », prête à coller [V/H].**
+  Ce que Google demande pour chaque type déclaré (cible Android 14+) [V] : (1) description de la fonction, (2) impact
+  pour l'utilisateur si le système **diffère** ou **interrompt** la tâche, (3) **lien vers une vidéo** montrant le chemin
+  de l'utilisateur jusqu'à la fonction, (4) un cas d'usage pris dans une liste (pour `camera`, la seule entrée est
+  « Background Camera Streaming » = continuer à accéder à la caméra depuis l'arrière-plan ; sinon saisie libre). Critères
+  de la règle [V] : usage **lancé par l'utilisateur ou perceptible** (une notification permanente claire suffit à le
+  rendre perceptible), **arrêtable par l'utilisateur**, qui ne peut pas être différé sans nuire, et qui ne dure que le
+  temps nécessaire. Android 15 [V] : interdit de démarrer un service caméra depuis `BOOT_COMPLETED` (la version Play
+  n'aura donc **aucune relance au démarrage** : la lecture reprend à la prochaine ouverture de l'app). Le texte exact,
+  le script de la vidéo et l'ordre des gestes sont dans `PLAY-CONFORMITE.md` §1 bis. Risque principal : notre service
+  attend des déverrouillages pendant des heures, ce qui s'éloigne de « ne dure que le temps nécessaire » [H] ; la
+  défense est « l'utilisateur l'a allumée et la voit en permanence, un geste l'arrête ». **Point non confirmé (❓)** : le
+  formulaire peut n'apparaître dans « Contenu de l'app » qu'après l'envoi d'un AAB qui déclare le type `camera` ;
+  la marche à suivre couvre les deux cas.
+- **I163 (24) — POL-7 : maquette de l'onglet « Analyses » [H, d'après les captures].** Constat (démo, play) :
+  4 écrans de défilement ; deux onglets « Analyse simple ≥ 5j / Analyse avancée ≥ 9j » ; deux « Comment c'est calculé »
+  (un en haut, un au milieu) ; « Alcool » affiché **deux fois** (bien-être estimé, puis habitudes) avec deux verdicts
+  différents ; « Voir les 34 liens incertains » puis « Voir les 37 liens incertains » ; chiffres techniques à la
+  première lecture (r = +0,57, ≈ 59 jours indépendants) ; émojis dans les titres d'habitudes ; vert / rouge pour
+  « meilleur / moins bon » (jugement implicite, et rouge = « mauvais » est proche d'une norme). Proposition, de haut
+  en bas :
+  1. Ligne mono « 75 jours notés · 61 repas · délais 1–3 j » puis titre **« Vos analyses »** (onglet renommé
+     « Analyses », icône inchangée ; dans les cartes, on dit toujours « piste »).
+  2. Encart lilas court : « Des liens repérés dans vos données, pas des causes ni un diagnostic. »
+  3. **« Pistes à tester »** : au plus 3 cartes, triées par solidité. Fermée : étiquette (« piste solide » menthe,
+     « à confirmer » pêche), titre « facteur → effet » en une ligne (« Dormir plus longtemps → meilleur bien-être »),
+     une phrase avec des mots (« Les nuits de plus de 7 h, bien-être 3,1 contre 2,6 »). Chevron → statistiques en mono
+     (r, jours indépendants, q ajusté), délai, source (notes ou visage), « Comment c'est calculé » de **cette** piste.
+  4. **« Autres liens repérés »** : une seule liste fusionnée (visage, habitudes, effets décalés, corrélations) avec
+     **un** verdict par facteur (le plus solide gagne ; l'autre source en détail), en barres neutres lilas
+     plus ou moins longues avec « ↑ va avec un meilleur bien-être / ↓ avec un moins bon » au lieu de vert / rouge.
+     Repliée au-delà de 5 lignes : « Voir 4 autres liens ».
+  5. **« Bientôt »** : une ligne discrète par bloc qui n'a pas assez de données (« Avec votre bien-être estimé ·
+     dans 6 jours », « Effets décalés · dans 3 jours », « Repas → ventre · 12/21 jours »), jamais une carte vide.
+  6. Pied de page en 12 px : « Hypothèses tirées de vos seules données, calculées sur votre téléphone : pas un avis
+     médical. » + lien « Comment c'est calculé » (une seule note de méthode, qui réunit les 3 actuelles) + liens
+     incertains.
+  L'analyse « avancée » (régression Ridge, « A-t-il vu juste ? ») : ses pistes rejoignent la liste 3 quand elles
+  passent le même seuil, « Ce qui pèse le plus » disparaît (doublon des corrélations), « A-t-il vu juste ? » passe
+  dans la note de méthode. Aucun calcul ne change, aucun seuil ne baisse : c'est de la présentation. Tests à prévoir :
+  un facteur n'apparaît qu'une fois ; aucun onglet « avancée » ; état vierge = carte lilas seule ; vocabulaire
+  (« cause », « diagnostic » seulement en négation).
+- **I164 (24) — POL-8 : maquette de l'onglet « Sources » [H/V].** Ce qui existe déjà et qu'on réutilise : la
+  détection des apps de santé installées (`src/devices/healthApps.js`, liste `<queries>` du manifeste :
+  Huawei Health, Samsung Health, Garmin Connect, Withings, Oura, Zepp, Fitbit, Polar…), « Mes appareils » (apps qui
+  ont écrit dans Health Connect ces 30 jours, nécessite l'accord Health Connect) et la montre appairée. Proposition :
+  1. **« Vos sources »** : uniquement ce qui envoie déjà quelque chose, une ligne par source avec pastille d'état
+     (« reçu il y a 2 h ») et chevron vers le détail ; en vierge, rien.
+  2. **« Trouvées sur votre téléphone »** : cartes seulement pour ce qui est détecté — Health Connect présent →
+     « Brancher Health Connect » avec les apps détectées qui y écrivent (« Samsung Health et Withings sont installés ») ;
+     **Huawei Health installé, ou montre déjà appairée → carte « Montre Huawei »** (sinon jamais affichée) ; Lecture
+     du visage, Météo, Temps d'écran et sommeil **toujours** (présents sur tous les téléphones).
+  3. Bouton secondaire **« Ajouter une source »** → feuille avec la liste par marque actuelle (« Votre montre
+     n'apparaît pas ? »), la montre Huawei (même non détectée) et les capteurs Bluetooth.
+  4. Tout le technique (journal de connexion de la montre, « enregistrer le journal », compteurs, diagnostic
+     Health Connect) seulement en **mode diagnostic** (7 touches sur la version) ; aucune carte à identifiant de
+     développeur (Withings API) dans la version Play — déjà le cas (`FEATURES.withingsApi`, absente de la capture vierge play).
+  Détection Bluetooth d'une montre Huawei « à proximité » : demander `BLUETOOTH_SCAN` pour seulement afficher une carte
+  serait une autorisation de plus au premier écran, sans divulgation possible au bon moment → **non** ; on se contente
+  du paquet Huawei Health installé, de l'appairage existant et du bouton « Ajouter ». Défaut vu au passage (vierge,
+  play) : le mot « Détails » des cartes Visage, Météo et Temps d'écran (`MethodNote`) apparaît en gris sans chevron,
+  comme un texte orphelin → à aligner sur le chevron de POL-3.
+
+---
+
 ## Run du 24/10/2026 08:30 (Paris) — 6d et 6e prêts à coder : créer l'abonnement par l'API, puis le tester en accéléré
 
 Contexte : le prochain run de code est **6d** (créer l'abonnement `halcya_premium` par la CI). L'app attend déjà
