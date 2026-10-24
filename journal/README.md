@@ -612,6 +612,19 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 24/10 02:30 — les conditions d'utilisation et de vente existent (VC-18, 1ʳᵉ moitié).** Ce que vous
+verrez : Réglages → **Conditions**, et un lien **« Conditions »** à côté de « Confidentialité » en bas de l'écran
+premium. La page dit, en mots simples : ce que fait l'app (des pistes, « une estimation, pas un diagnostic », pas un
+dispositif médical), ce qui est **toujours gratuit**, les crédits IA (10 offerts puis 15 par mois ; 10 par jour en
+premium — chiffres vérifiés par un test contre ceux du relais), et l'abonnement Google Play : prix et essai **lus
+dans Google Play** (aucun prix écrit dans le texte), renouvellement automatique, annulation, période de grâce, pause,
+remboursements par Google Play, restauration. Elle est embarquée dans l'app et publiée par GitHub Pages à
+https://spreadzenox.github.io/HealthTrack/conditions/ (lien à coller plus tard dans la fiche Play si besoin). C'est
+un **brouillon à faire valider par un juriste (P5)**. **👉 Nouvelle action pour vous, avant la mise en vente (pas
+pour le test fermé) : P26** — adhérer à un médiateur de la consommation (obligatoire pour vendre à des particuliers
+en France), dont le nom sera ajouté aux conditions. **Prochain run de code : VC-18, 2ᵉ moitié** (rappel local
+« votre essai se termine dans 2 jours », puis seulement la frise « jour 12 : on vous prévient »), puis VC-15 et VC-5.
+
 **Run du 24/10 01:30 — vous pouvez tout effacer depuis l'app (VC-10).** Ce que vous verrez : Réglages → **Données**
 a un 3ᵉ bloc **« Supprimer »**. « Supprimer toutes mes données » affiche d'abord combien d'entrées seront effacées,
 propose **« Exporter d'abord »**, puis « Supprimer définitivement » ou « Garder mes données ». Sont effacés : repas,
@@ -1071,6 +1084,7 @@ du jour avec sa fourchette (derrière la porte).
 | 23/10 19:30 — [VC-6 + VC-8 : carte montre simple avant appairage](runs/2026-10-23-1930-vc6-vc8-carte-montre.md) | 🧭⌚ | `WatchConnect` : « Diagnostic » toujours replié, constantes téléchargées au premier « Connecter ma montre » (téléchargement/collage sous « Diagnostic »), conseil d'échec hors du repli ; lien `/montre` seulement après appairage ; `/montre` sans montre → phrase + bouton ; 4 tests |
 | 23/10 20:30 — [Idées : audit play vierge après les correctifs VC](runs/2026-10-23-2030-idees-audit-vc.md) | 💡 | 18 captures `--play --empty` relues (0 erreur JS) ; **paywall : 3 avantages sur 4 non livrés → P25** ; VC-12 (Pistes : 2 seuils contradictoires), VC-13 (guide Huawei → Gadgetbridge + cookie F12 en play), VC-14 (cigarettes), VC-15 (émojis, apostrophes), VC-16 (Tendances) ; journal seul |
 | 24/10 01:30 — [VC-10 : supprimer toutes mes données](runs/2026-10-24-0130-vc10-supprimer-donnees.md) | 🧭 | `deleteAllEntries` + `services/deleteAllData.js` (`DELETED_KEYS` / `KEPT_KEYS`) ; bloc « Supprimer » de Données (compte, export d'abord, confirmation) ; politique de confidentialité ; 2 054 Vitest |
+| 24/10 02:30 — [VC-18a : conditions d'utilisation et de vente](runs/2026-10-24-0230-vc18a-conditions.md) | 🧭 | `public/conditions.html` (brouillon P5, crédits vérifiés contre `relay/src/config.js`, aucun prix en dur) ; GitHub Pages `/conditions/` ; lien « Conditions » du paywall et de Réglages ; P26 (médiateur) |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |

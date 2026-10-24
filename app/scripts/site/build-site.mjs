@@ -3,7 +3,9 @@
  *   /                    courte présentation + lien vers la politique
  *   /confidentialite/    politique de confidentialité (adresse à donner à la Play Console)
  *   /privacypolicy.html  même page (copie de l'asset embarqué dans l'app)
- * Source unique de la politique : app/public/privacypolicy.html (aussi embarquée dans l'APK pour Health Connect).
+ *   /conditions/         conditions d'utilisation et de vente (lien du paywall, VC-18)
+ * Sources uniques : app/public/privacypolicy.html (aussi embarquée dans l'APK pour Health Connect) et
+ * app/public/conditions.html (aussi embarquée dans l'APK, Réglages → Conditions).
  *
  * Usage : node scripts/site/build-site.mjs [dossier de sortie, défaut ../_site]
  */
@@ -15,6 +17,7 @@ const here = dirname(fileURLToPath(import.meta.url))
 const appDir = resolve(here, '../..')
 
 export const PRIVACY_PATH = 'confidentialite/'
+export const TERMS_PATH = 'conditions/'
 
 export function landingHtml() {
   return `<!DOCTYPE html>
@@ -37,7 +40,7 @@ export function landingHtml() {
   <p>Comprenez ce qui va avec vos bons et mauvais jours : repas, sommeil, montres et bien-être, analysés sur votre
   téléphone. Local par défaut, l'IA seulement si vous le voulez. Une aide pour repérer des tendances, pas un
   diagnostic.</p>
-  <p><a href="${PRIVACY_PATH}">Politique de confidentialité</a></p>
+  <p><a href="${PRIVACY_PATH}">Politique de confidentialité</a> · <a href="${TERMS_PATH}">Conditions d'utilisation et de vente</a></p>
 </body>
 </html>
 `
@@ -48,9 +51,11 @@ export function buildSite(outDir) {
   mkdirSync(join(outDir, PRIVACY_PATH), { recursive: true })
   writeFileSync(join(outDir, PRIVACY_PATH, 'index.html'), policy)
   writeFileSync(join(outDir, 'privacypolicy.html'), policy)
+  mkdirSync(join(outDir, TERMS_PATH), { recursive: true })
+  writeFileSync(join(outDir, TERMS_PATH, 'index.html'), readFileSync(join(appDir, 'public/conditions.html'), 'utf8'))
   writeFileSync(join(outDir, 'index.html'), landingHtml())
   writeFileSync(join(outDir, '.nojekyll'), '')
-  return ['index.html', `${PRIVACY_PATH}index.html`, 'privacypolicy.html']
+  return ['index.html', `${PRIVACY_PATH}index.html`, 'privacypolicy.html', `${TERMS_PATH}index.html`]
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
