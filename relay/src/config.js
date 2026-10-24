@@ -18,6 +18,27 @@ const int = (value, fallback) => {
 /** Le dépôt garde la base d'ingrédients dans l'app ; l'image Docker en embarque une copie (INGREDIENTS_PATH). */
 const DEFAULT_INGREDIENTS = fileURLToPath(new URL('../../app/src/data/ingredientsNutrition.json', import.meta.url))
 
+/** Période de lancement (P23) : relay/src/launch-period.json, embarqué dans l'image ; LAUNCH_PREMIUM_* l'emportent. */
+const DEFAULT_LAUNCH_PERIOD = fileURLToPath(new URL('./launch-period.json', import.meta.url))
+
+export function readLaunchPeriod(path = DEFAULT_LAUNCH_PERIOD) {
+  try {
+    const raw = JSON.parse(readFileSync(path, 'utf8'))
+    return { from: String(raw.from ?? ''), until: String(raw.until ?? ''), off: raw.off === true }
+  } catch {
+    return { from: '', until: '', off: false }
+  }
+}
+
+function launchFrom(env) {
+  const file = readLaunchPeriod(env.LAUNCH_PERIOD_PATH || DEFAULT_LAUNCH_PERIOD)
+  return {
+    from: env.LAUNCH_PREMIUM_FROM ?? file.from,
+    until: env.LAUNCH_PREMIUM_UNTIL ?? file.until,
+    off: env.LAUNCH_PREMIUM_OFF !== undefined ? env.LAUNCH_PREMIUM_OFF === '1' : file.off,
+  }
+}
+
 export function loadConfig(env = process.env) {
   return {
     port: int(env.PORT, 8080),
@@ -37,8 +58,8 @@ export function loadConfig(env = process.env) {
     packageName: env.PLAY_PACKAGE || 'fr.jpesquet.sante',
     publicUrl: env.PUBLIC_URL || 'https://halcya-relay-81378799481.europe-west1.run.app',
     rtdnServiceAccount: env.RTDN_SERVICE_ACCOUNT || 'relay-runtime@healthtrack-824b26.iam.gserviceaccount.com',
-    // « Période de lancement » (P23) : date ISO jusqu'à laquelle toute installation play est premium ; vide = aucune
-    launchPremiumUntil: env.LAUNCH_PREMIUM_UNTIL || '',
+    // « Période de lancement » (P23) : toute installation play est premium de `from` à `until` ; vide = aucune
+    launchPremium: launchFrom(env),
     // Play Integrity (jalon 6b-2) : off | observe (vérifie et journalise) | enforce (bloque l'analyse sans verdict)
     integrityMode: env.INTEGRITY_MODE || 'observe',
     verifyPerDay: int(env.VERIFY_DAILY_CAP, 50),

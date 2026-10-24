@@ -1,0 +1,6 @@
+{
+  "_lisez-moi": "Période de lancement (P23 ②) : premium offert à toute installation de la variante play, sans achat, du « from » (inclus) au « until » (exclu), heure UTC au format ISO. « until » vide = aucune période. « off »: true coupe tout de suite la période (pour retester l'abonnement). Modifier ce fichier sur main redéploie le relais en quelques minutes, sans mise à jour de l'app. Voir journal/PRODUIT.md (P23).",
+  "from": "",
+  "until": "",
+  "off": false
+}

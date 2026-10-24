@@ -101,8 +101,8 @@ export function describeEntitlement(ent) {
   const until = ent?.expiresAt ? shortDate(ent.expiresAt) : null
   if (ent?.premium && ent.source === 'launch') {
     return ent.launchUntil
-      ? `Premium offert pendant la période de lancement, jusqu’au ${shortDate(ent.launchUntil)}.`
-      : 'Premium offert pendant la période de lancement.'
+      ? `Premium offert pendant le test, jusqu’au ${shortDate(ent.launchUntil)} : vous n’avez rien à payer.`
+      : 'Premium offert pendant le test : vous n’avez rien à payer.'
   }
   switch (ent?.state) {
     case 'active':

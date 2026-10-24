@@ -145,4 +145,41 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     expect(screen.getByRole('button', { name: 'Plus tard' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Restaurer un achat' })).toBeInTheDocument()
   })
+
+  describe('période de lancement (P23 ②) : premium offert pendant le test', () => {
+    const launchEnt = (until) => localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'launch', launchUntil: until }))
+
+    it('pendant la période : « Premium offert pendant le test », aucune formule ni bouton d’achat', async () => {
+      billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+      launchEnt('2099-12-01T00:00:00.000Z')
+      renderPremium()
+      expect(screen.getByRole('heading', { name: 'Premium offert pendant le test' })).toBeInTheDocument()
+      expect(screen.getByRole('status')).toHaveTextContent(/jusqu’au 1 déc\. 2099 : vous n’avez rien à payer/)
+      await waitFor(() => expect(billing.loadPlans).toHaveBeenCalled())
+      expect(screen.queryByRole('radio')).toBeNull()
+      expect(screen.queryByRole('button', { name: /Essayer|S’abonner/ })).toBeNull()
+      expect(screen.queryByRole('button', { name: 'Restaurer un achat' })).toBeNull()
+      expect(screen.queryByText(/Gérer mon abonnement/)).toBeNull()
+      expect(screen.getByRole('button', { name: 'Continuer' })).toBeInTheDocument()
+    })
+
+    it('dans l’onboarding aussi : « Continuer », pas d’incitation à payer', () => {
+      billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+      launchEnt('2099-12-01T00:00:00.000Z')
+      render(<MemoryRouter><Premium context="onboarding" onClose={() => {}} /></MemoryRouter>)
+      expect(screen.getByRole('heading', { name: 'Premium offert pendant le test' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Continuer' })).toBeInTheDocument()
+      expect(screen.queryByText('Continuer gratuitement')).toBeNull()
+    })
+
+    it('à l’échéance : le parcours d’achat revient tel quel', async () => {
+      billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+      launchEnt('2020-01-01T00:00:00.000Z')
+      renderPremium()
+      expect(screen.getByRole('heading', { name: 'Passez de « je note » à « je comprends »' })).toBeInTheDocument()
+      expect(await screen.findByRole('radio', { name: /Annuel/ })).toBeChecked()
+      expect(screen.getByRole('button', { name: 'Essayer 14 jours gratuitement' })).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'Restaurer un achat' })).toBeInTheDocument()
+    })
+  })
 })

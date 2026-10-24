@@ -29,7 +29,7 @@ const handler = createHandler({
   billing: createBillingRoutes({
     play: createPlayClient({ packageName: config.packageName, getToken: metadataTokenProvider({ scopes: [ANDROIDPUBLISHER_SCOPE] }) }),
     packageName: config.packageName,
-    launchPremiumUntil: config.launchPremiumUntil,
+    launchPremium: config.launchPremium,
     verifyPush: createPushVerifier({ audience: `${config.publicUrl}/pubsub/rtdn`, serviceAccount: config.rtdnServiceAccount }),
     log,
   }),
@@ -52,5 +52,5 @@ createServer((req, res) => {
     res.end()
   })
 }).listen(config.port, () => {
-  log({ event: 'start', port: config.port, models: config.models, locations: config.locations, ingredients: ingredientNames.length, launchPremiumUntil: config.launchPremiumUntil || null, integrity: config.integrityMode, creditsStore: config.creditsStore })
+  log({ event: 'start', port: config.port, models: config.models, locations: config.locations, ingredients: ingredientNames.length, launchPremium: config.launchPremium, integrity: config.integrityMode, creditsStore: config.creditsStore })
 })

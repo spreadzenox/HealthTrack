@@ -8,8 +8,9 @@
  *   signal : le relais relit l'abonnement et accuse réception, même si l'app n'est jamais rouverte.
  * - Rien n'est stocké : ni jeton, ni compte. Les journaux ne contiennent que le type de notification, l'état et une
  *   empreinte courte du jeton.
- * - « Période de lancement » (P23, option B) : tant que LAUNCH_PREMIUM_UNTIL est dans le futur, toute installation de
- *   la variante play a les droits premium, sans achat (pour les testeurs du test fermé). Vide par défaut.
+ * - « Période de lancement » (P23, option ②) : entre `from` (inclus, facultatif) et `until` (exclu), toute installation
+ *   de la variante play a les droits premium, sans achat (pour les testeurs du test fermé). Réglée dans
+ *   src/launch-period.json ; `off` la coupe sans toucher aux dates. Vide par défaut.
  */
 import { createHash } from 'node:crypto'
 import { HttpError } from './http.js'
@@ -127,9 +128,14 @@ async function acknowledgeIfNeeded(play, ent, purchaseToken) {
   return true
 }
 
-export const isLaunchPeriod = (launchPremiumUntil, now) => {
-  const until = Date.parse(launchPremiumUntil ?? '')
-  return Number.isFinite(until) && now < until ? new Date(until).toISOString() : null
+/** Date de fin (ISO) si la période de lancement court à l'instant `now`, sinon null. */
+export const isLaunchPeriod = ({ from = '', until = '', off = false } = {}, now) => {
+  if (off) return null
+  const end = Date.parse(until ?? '')
+  if (!Number.isFinite(end) || now >= end) return null
+  const start = from ? Date.parse(from) : -Infinity
+  if (Number.isNaN(start) || now < start) return null
+  return new Date(end).toISOString()
 }
 
 /**
@@ -206,14 +212,14 @@ export function createPushVerifier({ audience, serviceAccount, fetchImpl = fetch
 
 /**
  * Routes d'abonnement, branchées par server.js.
- * @param {{ play: ReturnType<typeof createPlayClient>, packageName: string, launchPremiumUntil?: string,
+ * @param {{ play: ReturnType<typeof createPlayClient>, packageName: string, launchPremium?: { from?: string, until?: string, off?: boolean },
  *   verifyPush: (authorization: string) => Promise<boolean>, log?: (e: object) => void, now?: () => number }} deps
  */
-export function createBillingRoutes({ play, packageName, launchPremiumUntil = '', verifyPush, log = () => {}, now = Date.now }) {
+export function createBillingRoutes({ play, packageName, launchPremium = {}, verifyPush, log = () => {}, now = Date.now }) {
   return {
     /** POST /v1/subscription/verify — droits premium d'une installation (avec ou sans jeton d'achat). */
     async verify(body, installId) {
-      const launchUntil = isLaunchPeriod(launchPremiumUntil, now())
+      const launchUntil = isLaunchPeriod(launchPremium, now())
       const purchaseToken = purchaseTokenFrom(body)
       if (!purchaseToken) return { status: 200, payload: verifyResponse({ ent: null, launchUntil }) }
 

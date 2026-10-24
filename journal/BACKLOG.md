@@ -32,14 +32,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   par `INSTALL_DAILY_CAP` et le plafond global) ; piste : `deviceRecall` de Play Integrity ou empreinte d'appareil
   du verdict, à étudier par un run « idées ».
 - [x] **SOURCE-IA — FAIT le 24/10 14:30** : carte de résultat « Analyse IA · une estimation », nom du modèle sous « détails ».
-- [ ] **6f — Période de lancement (P23 ② seule)** : (a) `LAUNCH_PREMIUM_FROM` + `LAUNCH_PREMIUM_UNTIL` réglés par la CI
-  (début = publication de la version candidate en alpha, fin = invitation + 14 j + marge) et `LAUNCH_PREMIUM_OFF=1`
-  pour la couper (retest de l'abonnement par le propriétaire) ; `source: 'launch'` déjà renvoyé par `/v1/subscription/verify` ;
-  (b) app : « Premium offert pendant le test » sur le paywall de l'onboarding et `/premium`, sans bouton d'achat
-  mis en avant pendant la période, parcours d'achat intact à l'échéance (tests) ; (c) texte d'invitation des testeurs
-  (« le premium est offert pendant le test, vous n'avez rien à payer ») + chemin d'installation qui marche
-  (Play Store → photo de profil → Gérer les applications et l'appareil → Gérer → « Non installées », ou
-  https://play.google.com/store/apps/details?id=fr.jpesquet.sante) ; (d) C5 vert une fois testé.
+- [x] **6f — Période de lancement (P23 ② seule) — LIVRÉ le 24/10 15:30** : `relay/src/launch-period.json` (`from`,
+  `until`, `off`) embarqué dans l'image du relais, variables `LAUNCH_PREMIUM_FROM/UNTIL/OFF` prioritaires ;
+  `isLaunchPeriod` respecte le début (pas avant la version candidate), la fin exclue et l'interrupteur (tests) ; le
+  résumé du workflow relais affiche l'état et la réponse du relais à une installation sans achat. App : page Premium
+  et dernier écran de l'onboarding « Premium offert pendant le test » (« jusqu'au …, vous n'avez rien à payer »),
+  sans formule, achat ni restauration ; paywall intact à l'échéance (tests). Texte d'invitation et gestes de
+  prolongation / coupure : `journal/INVITATION-TESTEURS.md`. **Reste** : écrire `from` / `until` le jour où la version
+  candidate part en alpha (fichier vide aujourd'hui → aucune période), puis C5 ✅ après vérification sur la version play.
+  Idée : exclusion d'une seule installation (le propriétaire) au lieu de `off` global, pour retester l'abonnement
+  sans retirer le premium aux testeurs.
 - [ ] **SAUV — Sauvegarde Android conservée (décision du 24/10)** : (a) textes honnêtes (confidentialité, onboarding
   « 0 Mo envoyé sans votre accord », Paramètres → Données, conditions : données incluses dans la sauvegarde Google du
   téléphone si activée, chiffrée, gérée par Android, jamais lue par Halcya) ; (b) règles Play / Sécurité des données
@@ -53,7 +55,34 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   relay-runtime écrit bien dans Firestore) et l'écrit dans son résumé.
 - [ ] **PLAY-COMPLETED** : vérifier par l'API que chaque version play arrive en test interne avec le statut
   `completed` (l'app a passé son premier examen le 23/10) et retirer du résumé les gestes « version restée en brouillon ».
-- [ ] **IAM** : P28 proposé (retirer `roles/editor` du compte Compute par défaut, inutilisé par le relais et la CI).
+- [ ] **IAM** : P29 proposé (ex-P28, renuméroté le 24/10 15:30 ; P28 = déclaration FGS) (retirer `roles/editor` du compte Compute par défaut, inutilisé par le relais et la CI).
+
+**Polissage du parcours — retours du propriétaire du 24/10 vers 15:00 (PRIORITÉ des runs de code, avec SAUV, avant
+M6b, M7 et le jalon 5).** Principe : simple à première vue, détails pour qui creuse ; moins de texte, plus visuel, pastels
+par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clair/sombre, vierge/démo ; masquer n'efface rien.
+- [ ] **POL-3 Accueil bien-être** : remplacer le bouton « simple / détails » par un geste propre (toucher la carte →
+  historique, ou chevron discret), partout où il existe (ventre, pistes, paywall…) ; détails visuels (mini-graphique,
+  badge de confiance) ; ajout manuel du bien-être discret dans la carte ; supprimer la demande automatique de bien-être
+  à l'ouverture.
+- [ ] **POL-2 Historique du bien-être** : vérifier ce que sortent les deux modèles (valence, éveil, expressions ?),
+  garder les scores utiles (migration IndexedDB si besoin), page « Historique du bien-être » (jour / semaine / mois +
+  détail valence / éveil…), estimations jamais diagnostic, anti-circularité inchangée.
+- [ ] **POL-4 Carte ventre** seulement si « Mon ventre » choisi (onboarding ou Paramètres → « Ce qui vous amène »),
+  texte du réglage adapté ; aucune donnée effacée.
+- [ ] **POL-5 Boutons de l'Accueil** : « Photo du repas » avec icône appareil photo, « Ajouter une note ».
+- [ ] **POL-6 Journal** : « Vos derniers jours » en pastels par thème ; Tendances : graphiques pas encore actifs
+  regroupés en une ligne discrète.
+- [ ] **POL-7 Onglet « Analyses »** (ex-Pistes) : une seule analyse (fin de simple / avancée), « Comment c'est
+  calculé » en tout petit en bas, blocs sans assez de données en une ligne « arrive dans N jours », hiérarchie claire.
+- [ ] **POL-8 Sources** : détection automatique (Health Connect et ses écrivains, montre Huawei appairée / à proximité),
+  carte Huawei seulement si détectée, bouton « Ajouter une source », météo / écran / sommeil / visage par défaut ;
+  diagnostic technique seulement en mode diagnostic caché ; aucune carte à identifiant de développeur en play.
+- [ ] **POL-1 Lecture au déverrouillage aussi en play** (décision du propriétaire, risque connu) : divulgation, geste
+  explicite, notification permanente avec « Arrêter », réglage, service démarré app ouverte, ni exemption batterie ni
+  Shizuku/ADB en play, interrupteur de build propre à play ; P28 (déclaration FGS + script vidéo) AVANT la première
+  version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
+Ordre proposé : SAUV → POL-5 + POL-4 (petits) → POL-3 → POL-2 → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
+Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
 M6, M7, jalon 5. Défauts trouvés par l'audit sans code du 22/10 20:30 (`npm run visual -- --play --empty`, clair et
