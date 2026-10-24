@@ -34,3 +34,7 @@
 ## Suite
 - Prochain run de code : **POL-2** (historique du bien-être : ce que sortent les modèles, page jour / semaine / mois,
   ouverte depuis la carte — par exemple en touchant le chiffre ou la courbe).
+
+## Après le merge (#328, `fd5f407`)
+- Checks de la PR tous verts (Vitest, Build APK, Relais, montre Java, budget de lectures, émulateur API 35 et 36).
+- « Build & Release » vert : **v255** publiée (APK 33 740 193 octets, 33,7 Mo) ; « Play — AAB » vert (envoi en test interne).
