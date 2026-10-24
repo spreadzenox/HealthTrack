@@ -10,6 +10,7 @@
 import { PURCHASE_TOKEN_KEY, getInstallId } from './aiRelay'
 import { refreshEntitlement } from './entitlement'
 import { FEATURES } from '../config/distribution'
+import { notThenable } from './nativePlugin'
 
 /** Abonnement unique, deux formules (« base plans ») ; créés dans la Play Console par l'API (étape 6d). */
 export const PRODUCT_ID = 'halcya_premium'
@@ -113,7 +114,7 @@ export async function loadBillingPlugin() {
     const { Capacitor, registerPlugin } = await import('@capacitor/core')
     if (!Capacitor?.isNativePlatform?.() || Capacitor.getPlatform?.() !== 'android') return null
     if (Capacitor.isPluginAvailable && !Capacitor.isPluginAvailable('PlayBilling')) return null
-    return registerPlugin('PlayBilling')
+    return notThenable(registerPlugin('PlayBilling'))
   } catch {
     return null
   }

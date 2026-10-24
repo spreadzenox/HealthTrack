@@ -7,6 +7,7 @@
  * téléchargement → vérification → ouverture de l'installateur.
  */
 import { APP_NAME } from '../config/brand'
+import { notThenable } from './nativePlugin'
 
 export const REPO_RELEASES_URL = 'https://github.com/spreadzenox/HealthTrack/releases/latest'
 
@@ -126,7 +127,7 @@ export async function loadAppUpdatePlugin() {
     const { Capacitor, registerPlugin } = await import('@capacitor/core')
     if (!Capacitor?.isNativePlatform?.() || Capacitor.getPlatform?.() !== 'android') return null
     if (Capacitor.isPluginAvailable && !Capacitor.isPluginAvailable('AppUpdate')) return null
-    return registerPlugin('AppUpdate')
+    return notThenable(registerPlugin('AppUpdate'))
   } catch {
     return null
   }

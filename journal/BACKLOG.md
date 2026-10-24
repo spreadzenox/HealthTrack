@@ -48,7 +48,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   cartes raccourcis à 2 lignes + « détails » (Lecture du visage, Temps d'écran, Météo).
 - [x] **VC-8** (23/10 19:30) carte montre : bloc « Diagnostic » fermé par défaut, sans HiChain / AES-GCM / compteurs bruts dans le
   résumé (retour du propriétaire, P17) ; termes techniques seulement une fois déplié.
-- [ ] **VC-9** (à vérifier sur émulateur) temps du premier lancement play à froid et absence d'erreur JS (critère C4) ;
+- [x] **VC-9** (24/10 07:30, `.github/scripts/play-cold-start.sh` dans le workflow émulateur, API 35 et 36 : installation neuve play, TotalTime + premier écran + erreurs JS, échec si écran absent en 90 s, erreur JS non interceptée ou plantage ; chiffres dans le compte rendu du run ; **a trouvé dès son premier passage un vrai bug** : chargeurs de plugins async bloqués par le `then` du proxy Capacitor → PlayBilling / PlayIntegrity / AppUpdate jamais résolus, corrigé par `services/nativePlugin.js`) temps du premier lancement play à froid et absence d'erreur JS (critère C4) ;
   `npm run visual` n'exerce pas les plugins natifs.
 - [x] **VC-10** (24/10 01:30, `services/deleteAllData.js` ; réglages, connexions, appairage et abonnement gardés) « Supprimer toutes mes données » dans Réglages → Données (avec export proposé avant), aujourd'hui
   seulement « désinstaller / effacer les données Android » d'après la politique de confidentialité.
@@ -89,7 +89,8 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
 - [ ] **VC-20** (mineur, avec la passe Pistes du jalon 5) les étiquettes d'habitudes portent un émoji (✈️ Voyage,
   ☕ Café après 14 h, 📱 Écran tard, 🤒 Malade) affiché dans Pistes et le journal : remplacer par des icônes trait ou
   une pastille de couleur, sans toucher aux données (l'émoji reste dans l'étiquette enregistrée).
-- [ ] **VC-19** (mineur) `UpdateBanner.test.jsx` « progression en Mo et en % » échoue parfois sous la charge de la
+- [ ] **VC-21** (mineur) premier lancement play : un `console.error` « Line 330 - Msg: [object Object] » (fichier vide, donc venu du natif) à identifier et à rendre lisible (résumé « Premier lancement à froid » du workflow émulateur).
+- [x] **VC-19** (24/10 07:30 : le faux plugin reste « en cours » tant que le test n'a pas vu la progression) (mineur) `UpdateBanner.test.jsx` « progression en Mo et en % » échoue parfois sous la charge de la
   suite complète (vert isolé) : rendre le test indépendant du minutage.
 - [x] **VC-11 (avant le jalon 4, I153) — FAIT le 23/10 09:30** (`connectors/syncWindow.js` ; reste : message exact d'Android à relever sur l'émulateur) première synchro Health Connect : `DEFAULT_HISTORY_DAYS = 180`
   (`connectors/autoSync.js:28`, `pages/Connectors.jsx:28`) alors que, sans `READ_HEALTH_DATA_HISTORY` (déclarée nulle

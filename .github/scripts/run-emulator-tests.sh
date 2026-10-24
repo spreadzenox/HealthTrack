@@ -143,7 +143,15 @@ adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
 adb exec-out cat /sdcard/ui.xml > ui_plus.xml 2>/dev/null || true
 ls -lh screenshot_app.png screenshot_plus.png
 
+# Variante play : premier lancement à froid sur données vierges (critère C4, VC-9).
+PLAY_OK=1
+bash .github/scripts/play-cold-start.sh || PLAY_OK=0
+
 echo "=== Vérification du succès des tests ==="
+if [ "$PLAY_OK" != 1 ]; then
+  echo "::error::Premier lancement de la variante play en échec, voir play_coldstart.md"
+  exit 1
+fi
 if [ "$FACE_OK" != 1 ]; then
   echo "::error::FaceModelsTest a échoué (modèles du visage), voir face_test_output.txt"
   exit 1

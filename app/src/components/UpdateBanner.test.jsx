@@ -63,18 +63,23 @@ describe('UpdateBanner', () => {
   })
 
   it('montre la progression en Mo et en %, puis ouvre l’installateur', async () => {
-    const plugin = fakePlugin([
-      { state: 'none' },
-      { state: 'running', downloaded: 12_300_000, total: 33_562_556, version: '188' },
-      { state: 'successful', downloaded: 33_562_556, total: 33_562_556, version: '188' },
-    ])
+    const plugin = fakePlugin([{ state: 'none' }])
+    // Le téléchargement reste « en cours » tant que le test n'a pas vu la progression (indépendant du minutage)
+    let finished = false
+    const running = { state: 'running', downloaded: 12_300_000, total: 33_562_556, version: '188' }
+    const done = { state: 'successful', downloaded: 33_562_556, total: 33_562_556, version: '188' }
+    plugin.start.mockImplementation(async () => {
+      plugin.status.mockImplementation(async () => (finished ? done : running))
+      return { id: 1 }
+    })
     window.__HT_APP_UPDATE__ = plugin
     render(<UpdateBanner />)
     fireEvent.click(await screen.findByRole('button', { name: /Mettre à jour \(33,6\sMo\)/ }))
-    const bar = await screen.findByRole('progressbar')
-    await waitFor(() => expect(bar).toHaveAttribute('aria-valuenow', '36'))
+    const bar = await screen.findByRole('progressbar', {}, { timeout: 3000 })
+    await waitFor(() => expect(bar).toHaveAttribute('aria-valuenow', '36'), { timeout: 3000 })
     expect(screen.getByText(/12,3\sMo \/ 33,6\sMo · 36 %/)).toBeInTheDocument()
     expect(screen.getByText(/le téléchargement continue/)).toBeInTheDocument()
+    finished = true
     await waitFor(() => expect(plugin.install).toHaveBeenCalled(), { timeout: 3000 })
     expect(await screen.findByText(/L’installateur Android est ouvert/)).toBeInTheDocument()
   })
