@@ -96,6 +96,15 @@ jobs:
         # qu'elle se construit (la signature n'existe que sur main, workflow « Play — AAB »)
         run: ./gradlew assembleSideloadDebug assembleSideloadDebugAndroidTest bundlePlayRelease -PextraAbis=x86_64 --no-daemon
 
+      - name: Construire l'APK debug de la variante play (premier lancement mesuré sur l'émulateur, VC-9)
+        working-directory: app
+        env:
+          VITE_DISTRIBUTION: play
+        run: |
+          npm run build
+          npx cap copy android
+          cd android && ./gradlew assemblePlayDebug -PextraAbis=x86_64 --no-daemon
+
       - name: Ramener les APK sideload aux chemins habituels
         working-directory: app/android/app/build/outputs/apk
         run: |
@@ -121,6 +130,7 @@ jobs:
           path: |
             app/android/app/build/outputs/apk/debug/app-debug.apk
             app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+            app/android/app/build/outputs/apk/play/debug/app-play-debug.apk
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Job émulateur API 35 (Android 15 / référence stable)
@@ -148,6 +158,8 @@ jobs:
             find . -name "app-debug.apk" ! -path "*/androidTest/*" -exec cp {} app/android/app/build/outputs/apk/debug/app-debug.apk \;
           mv app-debug-androidTest.apk app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk 2>/dev/null || \
             find . -name "app-debug-androidTest.apk" -exec cp {} app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk \;
+          find . -maxdepth 4 -name "app-play-debug.apk" | head -1 | \
+            xargs -I{} sh -c 'mkdir -p app/android/app/build/outputs/apk/play/debug && cp {} app/android/app/build/outputs/apk/play/debug/app-play-debug.apk'
 
       - name: Activer KVM
         run: |
@@ -236,9 +248,17 @@ jobs:
           path: |
             screenshot_app.png
             screenshot_plus.png
+            screenshot_play_first.png
+            ui_play_first.xml
+            play_coldstart.md
+            play_logcat.txt
             ui_app.xml
             ui_plus.xml
           if-no-files-found: warn
+
+      - name: Premier lancement play dans le résumé (API 35)
+        if: always()
+        run: cat play_coldstart.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
 
       - name: Publier le rapport de tests instrumentés (API 35)
         if: always()
@@ -276,6 +296,8 @@ jobs:
             xargs -I{} cp {} app/android/app/build/outputs/apk/debug/app-debug.apk
           find . -maxdepth 3 -name "app-debug-androidTest.apk" | head -1 | \
             xargs -I{} cp {} app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+          find . -maxdepth 4 -name "app-play-debug.apk" | head -1 | \
+            xargs -I{} sh -c 'mkdir -p app/android/app/build/outputs/apk/play/debug && cp {} app/android/app/build/outputs/apk/play/debug/app-play-debug.apk'
 
       - name: Activer KVM
         run: |
@@ -370,9 +392,17 @@ jobs:
           path: |
             screenshot_app.png
             screenshot_plus.png
+            screenshot_play_first.png
+            ui_play_first.xml
+            play_coldstart.md
+            play_logcat.txt
             ui_app.xml
             ui_plus.xml
           if-no-files-found: warn
+
+      - name: Premier lancement play dans le résumé (API 36)
+        if: always()
+        run: cat play_coldstart.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
 
       - name: Publier le rapport de tests instrumentés (API 36)
         if: always()
