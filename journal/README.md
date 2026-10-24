@@ -673,7 +673,7 @@ GitHub, le relais se redéploie seul en 3 à 5 minutes : pas à pas dans
 chemin d'installation qui marche malgré l'absence de l'app dans la recherche du Play Store). Le résumé du workflow
 « Relais — déploiement » affiche désormais l'état de la période. **Petite renumérotation** : l'action IAM devient
 **P29** ; **P28** est la déclaration « services de premier plan » de la lecture au déverrouillage (je vous préparerai
-le texte et le script de la vidéo). **Prochain run de code : SAUV** (règles de sauvegarde Android qui excluent les clés
+le texte et le script de la vidéo). Publié : **v252** (33,7 Mo ; rien de visible tant que la période n'est pas posée). **Prochain run de code : SAUV** (règles de sauvegarde Android qui excluent les clés
 de la montre, textes honnêtes), puis POL-5 et POL-4.
 
 **Run du 24/10 14:30 — merci pour la session guidée : vos retours sont consignés, et le compteur d'analyses IA est fiable.**

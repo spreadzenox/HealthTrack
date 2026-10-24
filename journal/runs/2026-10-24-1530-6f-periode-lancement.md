@@ -35,3 +35,9 @@
   workflow relais (« premium=true source=launch »), puis C5 ✅ après un coup d'œil sur la version play.
 - Prochain run de code : **SAUV** (règles de sauvegarde Android), puis POL-5 + POL-4.
 - Idée : exclure une seule installation (le propriétaire) au lieu du `off` global.
+
+## Après le merge (#322, `7f5108a`)
+- « Build & Release » vert : **v252** publiée (APK 33,7 Mo, 33 736 632 octets). Checks de la PR tous verts (Vitest,
+  Build APK, Relais, montre Java, émulateur API 35 et 36).
+- « Relais — déploiement » vert (run 40099848457) : analyse de test HTTP 200 (`gemini-3.5-flash-lite`), achats
+  lisibles (404 sur faux jeton) ; période de lancement « aucune » (fichier vide, comme prévu).
