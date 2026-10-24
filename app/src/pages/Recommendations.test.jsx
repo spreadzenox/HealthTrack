@@ -231,16 +231,10 @@ describe('Recommendations page', () => {
 
 // ─── Correlation bar color semantics ─────────────────────────────────────────
 
-describe('CorrelationBar color logic', () => {
-  it('renders bar color based on the sign of r, not the variable direction', async () => {
-    // Bar color is always determined by the raw Pearson r sign:
-    //   r >= 0 → green (reco-corr-pos)
-    //   r < 0  → red   (reco-corr-neg)
-    // This keeps bar color and the displayed numeric sign coherent.
+describe('CorrelationBar direction', () => {
+  it('uses neutral lilac bars with ↑ / ↓ from the sign of r, never green / red (POL-7b, D6)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
-
     const analysisModule = await import('../services/analysisEngine')
-
     const spy = vi.spyOn(analysisModule, 'computeBasicCorrelations').mockReturnValue({
       status: 'ok',
       datasetDays: 3,
@@ -250,28 +244,21 @@ describe('CorrelationBar color logic', () => {
       ],
       levers: [],
     })
-
     listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
     renderPage()
 
-    await waitFor(() => {
-      expect(screen.queryByText(/Chargement/i)).not.toBeInTheDocument()
-    })
-
-    // Protéines (r<0) must have the red class regardless of direction
-    const proteinLabel = await screen.findByText('Protéines')
-    const proteinRow = proteinLabel.closest('.reco-corr-row')
+    const proteinRow = (await screen.findByText('Protéines')).closest('.reco-corr-row')
     const proteinBar = proteinRow.querySelector('.reco-corr-bar')
-    expect(proteinBar).toHaveClass('reco-corr-neg')
-    expect(proteinBar).not.toHaveClass('reco-corr-pos')
+    expect(proteinBar).toHaveClass('reco-corr-down')
+    expect(proteinRow).toHaveTextContent('↓ 0,97')
 
-    // Lipides (r>0) must have the green class
-    const lipidLabel = screen.getByText('Lipides')
-    const lipidRow = lipidLabel.closest('.reco-corr-row')
-    const lipidBar = lipidRow.querySelector('.reco-corr-bar')
-    expect(lipidBar).toHaveClass('reco-corr-pos')
-    expect(lipidBar).not.toHaveClass('reco-corr-neg')
+    const lipidRow = screen.getByText('Lipides').closest('.reco-corr-row')
+    expect(lipidRow.querySelector('.reco-corr-bar')).toHaveClass('reco-corr-up')
+    expect(lipidRow).toHaveTextContent('↑ 0,65')
 
+    expect(document.querySelector('.reco-corr-pos, .reco-corr-neg')).toBeNull()
+    expect(screen.getByText(/↑ va avec un meilleur bien-être/)).toBeInTheDocument()
+    expect(screen.queryByText(/Vert =|Rouge =/)).not.toBeInTheDocument()
     spy.mockRestore()
   })
 })
@@ -322,7 +309,7 @@ describe('Recommendations levers', () => {
     return spy
   }
 
-  it('shows each lever as an action with its strength, r, effective days and evidence level', async () => {
+  it('shows each lever simply, with its statistics behind the chevron (POL-7b)', async () => {
     const lever = {
       ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
       direction: 'higher_better', action: 'Marcher davantage',
@@ -334,9 +321,15 @@ describe('Recommendations levers', () => {
     expect(await screen.findByText(/Pistes à tester/i)).toBeInTheDocument()
     expect(screen.getByText('Marcher davantage')).toBeInTheDocument()
     expect(screen.getByText(/lien modéré/i)).toBeInTheDocument()
-    expect(screen.getByText(/r = \+0,42/)).toBeInTheDocument()
-    expect(screen.getByText(/32 jours/)).toBeInTheDocument()
     expect(screen.getByText(/solide/i)).toBeInTheDocument()
+    // Simple d'abord : pas de r ni de jours indépendants avant le chevron
+    expect(screen.queryByText(/r = \+0,42/)).not.toBeInTheDocument()
+    const card = screen.getByText('Marcher davantage').closest('li')
+    const chevron = within(card).getByRole('button', { name: 'Afficher les détails' })
+    fireEvent.click(chevron)
+    expect(chevron).toHaveAttribute('aria-expanded', 'true')
+    expect(within(card).getByText(/r = \+0,42/)).toBeInTheDocument()
+    expect(within(card).getByText(/32 jours/)).toBeInTheDocument()
     expect(screen.getByText(/ne prouve pas une cause/i)).toBeInTheDocument()
     expect(screen.queryByText(/% de corrélation/i)).not.toBeInTheDocument()
     spy.mockRestore()
@@ -688,7 +681,8 @@ describe('Recommendations — week-end control', () => {
       status: 'ok', datasetDays: 40, reliability: 'good', correlations: [lever], levers: [lever],
       weekendControl: { applied: true, weekendDays: 11, weekdayDays: 29, weekendMean: 3.6, weekdayMean: 3.2 },
     })
-    expect(await screen.findByText(/\+0,52 sans tenir compte du week-end/)).toBeInTheDocument()
+    fireEvent.click(await screen.findByRole('button', { name: 'Afficher les détails' }))
+    expect(screen.getByText(/\+0,52 sans tenir compte du week-end/)).toBeInTheDocument()
     spy.mockRestore()
   })
 })

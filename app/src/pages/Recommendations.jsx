@@ -23,6 +23,7 @@ import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
 import { useAutoSync } from '../hooks/useAutoSync'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { PistesTeaser } from '../components/TodayCards'
+import DetailsToggle from '../components/DetailsToggle'
 import { homeFocus } from '../settings/onboarding'
 import './Recommendations.css'
 
@@ -32,21 +33,25 @@ function formatR(r) {
   return formatSigned(r, 2)
 }
 
+/** POL-7b (D6) : barres neutres lilas, le sens dit par ↑ / ↓ et non par vert / rouge (« bon » / « mauvais »). */
+const DIRECTION_HINT = '↑ va avec un meilleur bien-être · ↓ avec un moins bon. Plus la barre est longue, plus le lien est marqué.'
+
 function CorrelationBar({ label, r, impact, uncertain }) {
   const pct = Math.round(Math.abs(impact) * 100)
-  // Green = positive correlation with wellbeing, red = negative correlation.
-  const isPositive = r >= 0
+  const up = r >= 0
   return (
     <div className={'reco-corr-row' + (uncertain ? ' reco-corr-row-uncertain' : '')}>
       <span className="reco-corr-label">{label}</span>
       <div className="reco-corr-bar-wrap">
         <div
-          className={'reco-corr-bar ' + (isPositive ? 'reco-corr-pos' : 'reco-corr-neg')}
+          className={'reco-corr-bar ' + (up ? 'reco-corr-up' : 'reco-corr-down')}
           style={{ width: `${pct}%` }}
           aria-label={`${pct}%`}
         />
       </div>
-      <span className="reco-corr-value">{formatR(r)}</span>
+      <span className="reco-corr-value" title={`r = ${formatR(r)}`}>
+        {up ? '↑' : '↓'} {Math.abs(r).toFixed(2).replace('.', ',')}
+      </span>
     </div>
   )
 }
@@ -61,7 +66,7 @@ function ImportanceBar({ label, importance, direction }) {
       <span className="reco-corr-label">{label}</span>
       <div className="reco-corr-bar-wrap">
         <div
-          className={'reco-corr-bar ' + (direction === 'positive' ? 'reco-corr-pos' : 'reco-corr-neg')}
+          className={'reco-corr-bar ' + (direction === 'positive' ? 'reco-corr-up' : 'reco-corr-down')}
           style={{ width: `${pct}%` }}
           aria-label={`${pct}%`}
         />
@@ -109,7 +114,9 @@ const LEVER_STAGE = {
   toVerify: { badge: 'À vérifier : peut-être le hasard', className: 'reco-evidence-tentative' },
 }
 
+/** POL-7b : la piste en mots d'abord ; r, jours indépendants et week-end derrière le chevron. */
 function LeverCard({ rank, lever }) {
+  const [open, setOpen] = useState(false)
   const days = Math.round(lever.nEff)
   const weekendShift = lever.rRaw != null && Math.abs(lever.rRaw - lever.r) >= WEEKEND_R_SHIFT
   const stage = LEVER_STAGE[lever.stage]
@@ -121,8 +128,7 @@ function LeverCard({ rank, lever }) {
         <p className="reco-advice-text">{lever.action}</p>
         {lever.againstNorm && <AgainstNormNote />}
         <p className="reco-advice-impact">
-          {toVerify ? 'Lien possible' : `Lien ${lever.strength}`} avec votre bien-être (r = {formatR(lever.r)}, ≈ {days} jours indépendants)
-          {weekendShift && <> · r = {formatR(lever.rRaw)} sans tenir compte du week-end</>}
+          {toVerify ? 'Lien possible' : `Lien ${lever.strength}`} avec votre bien-être
         </p>
         {stage ? (
           <span className={'reco-evidence ' + stage.className}>{stage.badge}</span>
@@ -131,7 +137,14 @@ function LeverCard({ rank, lever }) {
             {evidenceLabel(lever.evidence)}
           </span>
         )}
+        {open && (
+          <p className="reco-advice-stats">
+            r = {formatR(lever.r)} · ≈ {days} jours indépendants
+            {weekendShift && <> · r = {formatR(lever.rRaw)} sans tenir compte du week-end</>}
+          </p>
+        )}
       </div>
+      <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />
     </li>
   )
 }
@@ -374,9 +387,7 @@ function CorrelationsSection({ correlations, levers = [] }) {
   return (
     <section className="reco-section">
       <h3 className="reco-section-title">{others ? 'Autres liens' : 'Corrélations'} avec votre bien-être</h3>
-      <p className="reco-section-hint">
-        Vert = va de pair avec un meilleur bien-être · Rouge = avec un moins bon.
-      </p>
+      <p className="reco-section-hint">{DIRECTION_HINT}</p>
       {clear.length > 0 ? bars(clear) : (
         <p className="reco-empty-levers">
           Aucun {others ? 'autre ' : ''}lien net pour l’instant : continuez à noter votre bien-être.
@@ -462,8 +473,7 @@ export function FaceMoodSection({ result }) {
     <section className="reco-section" data-testid="face-mood-section">
       <h3 className="reco-section-title">Avec votre bien-être estimé (visage)</h3>
       <p className="reco-section-hint">
-        Sur {result.faceDays} jours estimés par la Lecture du visage, sans aucune note. Vert = va de pair avec un
-        meilleur bien-être estimé · Rouge = avec un moins bon.
+        Sur {result.faceDays} jours estimés par la Lecture du visage, sans aucune note. {DIRECTION_HINT}
       </p>
       {clear.length > 0 ? bars(clear) : (
         <p className="reco-empty-levers">Aucun lien net pour l’instant avec votre bien-être estimé.</p>
@@ -825,7 +835,7 @@ function AdvancedTab({ analysis }) {
             Ce qui pèse le plus dans le modèle
           </h3>
           <p className="reco-section-hint">
-            Vert = va avec un meilleur bien-être · rouge = moins bon · le plus influent = 100 %.
+            ▲ va avec un meilleur bien-être · ▼ avec un moins bon · le plus influent = 100 %.
           </p>
           <div className="reco-corr-chart">
             {featureImportance.map((f) => (
