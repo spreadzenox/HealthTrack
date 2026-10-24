@@ -81,6 +81,15 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // suit un peu la note du jour ; RNG séparé. Jamais d'image, seulement les indices (format de FaceRecord.java).
   const faceRand = mulberry32(seed + 6007)
   // Les 3 derniers jours portent aussi la valence / l'éveil du modèle embarqué (étape 2, téléchargé depuis peu).
+  const expressions = (score, f) => {
+    const raw = {
+      exHappiness: Math.max(0.02, 0.25 + 0.12 * (score - 2.6) + f() * 2), exNeutral: 0.5 + f() * 2,
+      exSurprise: 0.06, exSadness: Math.max(0.01, 0.07 - 0.03 * (score - 2.6)), exAnger: 0.03, exFear: 0.02,
+      exDisgust: 0.02, exContempt: 0.03,
+    }
+    const sum = Object.values(raw).reduce((s, v) => s + v, 0)
+    return Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, v / sum]))
+  }
   const pushFaceBursts = (day, score, withAffect = false) => {
     for (const h of [8, 10, 13, 16, 19]) {
       const t = at(day, h, Math.floor(faceRand() * 50))
@@ -101,6 +110,8 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
             light: h === 19 ? 0.22 : 0.48,
             // Duo B0 + MobileFaceNet (I126) : moyenne des deux et leur écart de valence, souvent faible.
             ...(withAffect ? { valence: 0.1 + 0.15 * (score - 2.6) + f() * 2, arousal: -0.1 + f() * 3, affectFrames: valid, affectGap: 0.08 + Math.abs(f()), affectModels: 2 } : {}),
+            // Probabilités des 8 expressions (POL-2, FaceAffect.EXPRESSIONS) : surtout neutre et joie, qui suit la note.
+            ...(withAffect ? expressions(score, f) : {}),
           },
           rejected: valid < 3 ? { turned: 1 } : {},
         },

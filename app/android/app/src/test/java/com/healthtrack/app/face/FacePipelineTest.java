@@ -177,6 +177,24 @@ public class FacePipelineTest {
         assertEquals(0.0, b.values.get("arousal"), 1e-6);
         assertEquals(0.4, b.values.get("affectGap"), 1e-6);
         assertEquals(2.0, b.values.get("affectModels"), 0);
+        // Scores d'expression tous nuls pour les deux modèles : probabilités égales (1/8), moyennes du duo.
+        assertEquals(0.125, b.values.get("exHappiness"), 1e-6);
+    }
+
+    @Test
+    public void burstKeepsTheMeanExpressionProbabilities() throws Exception {
+        FaceFixtures f = FaceFixtures.load("face-frontal");
+        float[] out = new float[FaceAffect.OUTPUTS];
+        out[4] = 3f;
+        FacePipeline p = new FacePipeline(new Fixed(f.detectorOutputs()), new Fixed(f.landmarkOutputs()),
+            new Fixed(f.blendshapes()), new Fixed(out));
+        FaceIndices.Burst b = p.burst(Arrays.asList(f.rgb, f.rgb), f.width, f.height, new ArrayList<>());
+        double e3 = Math.exp(3);
+        assertEquals(e3 / (e3 + 7), b.values.get("exHappiness"), 1e-6);
+        assertEquals(1 / (e3 + 7), b.values.get("exSadness"), 1e-6);
+        double sum = 0;
+        for (String k : FaceAffect.EXPRESSIONS) sum += b.values.get(k);
+        assertEquals(1, sum, 1e-6);
     }
 
     @Test

@@ -1,0 +1,260 @@
+/* « Historique du bien-être » (POL-2) : carte menthe de la courbe, puis carte neutre du détail des modèles. */
+.wbh-page {
+  padding-bottom: 24px;
+}
+
+.wbh-back {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+}
+
+.wbh-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.wbh-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 8px 0 14px;
+  background: var(--color-surface);
+  border-radius: var(--radius-pill);
+}
+
+.wbh-tab {
+  flex: 1;
+  min-height: var(--tap-min);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink-2);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.wbh-tab.is-on {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.wbh-card {
+  background: var(--mint-bg);
+  color: var(--mint-text);
+}
+
+.wbh-figure {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.wbh-figure-note {
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.wbh-figure-scale {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.wbh-figure-sub {
+  margin: 2px 0 8px;
+  font-size: 0.75rem;
+  color: var(--mint-label);
+}
+
+.wbh-chart {
+  display: block;
+  height: auto;
+  margin: 4px 0;
+}
+
+.wbh-grid {
+  stroke: var(--chart-bar-2);
+  stroke-width: 1;
+}
+
+.wbh-mean {
+  stroke: var(--chart-ref);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.wbh-axis {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--mint-text);
+}
+
+.wbh-range {
+  stroke: var(--chart-bar-2);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.wbh-line {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.wbh-dot {
+  fill: var(--color-brand);
+}
+
+.wbh-dot.is-few {
+  fill: var(--mint-bg);
+  stroke: var(--color-brand);
+  stroke-width: 2;
+}
+
+.wbh-note {
+  fill: var(--accent-amber);
+  stroke: var(--color-ink);
+  stroke-width: 1;
+}
+
+.wbh-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+}
+
+.wbh-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wbh-key {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-brand);
+}
+
+.wbh-key.is-note {
+  border-radius: 2px;
+  transform: rotate(45deg);
+  background: var(--accent-amber);
+  border: 1px solid var(--color-ink);
+}
+
+.wbh-key.is-few {
+  background: transparent;
+  border: 2px solid var(--color-brand);
+}
+
+.wbh-models {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.wbh-models-intro {
+  margin: 4px 0 12px;
+  font-size: 0.85rem;
+  color: var(--color-ink-2);
+}
+
+.wbh-bipolar {
+  margin: 0 0 14px;
+}
+
+.wbh-bipolar-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.wbh-bipolar-label {
+  font-weight: 700;
+}
+
+.wbh-bipolar-track {
+  position: relative;
+  height: 10px;
+  margin: 6px 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border);
+}
+
+.wbh-bipolar-zero {
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--color-ink-2);
+}
+
+.wbh-bipolar-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand);
+}
+
+.wbh-bipolar-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--color-ink-2);
+}
+
+.wbh-subtitle {
+  margin: 4px 0 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.wbh-expressions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wbh-expressions li {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr 3rem;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+}
+
+.wbh-ex-track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.wbh-ex-track span {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--lilac-bar);
+}
+
+.wbh-ex-value {
+  text-align: right;
+  font-size: 0.8rem;
+}
+
+.wbh-foot {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--color-ink-2);
+}

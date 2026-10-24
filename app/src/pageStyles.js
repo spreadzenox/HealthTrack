@@ -26,3 +26,5 @@ import './pages/More.css'
 import './pages/WatchData.css'
 import './pages/Premium.css'
 import './pages/Onboarding.css'
+// Historique du bien-être (POL-2, 24/10)
+import './pages/WellbeingHistory.css'

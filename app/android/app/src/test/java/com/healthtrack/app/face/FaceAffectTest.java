@@ -83,4 +83,24 @@ public class FaceAffectTest {
         out[8] = Float.NaN;
         assertNull(FaceAffect.decode(out));
     }
+
+    @Test
+    public void expressionsAreTheSoftmaxOfTheEightScores() {
+        float[] out = new float[10];
+        out[4] = 2f; // joie
+        out[5] = 1f; // neutre
+        double[] p = FaceAffect.expressions(out);
+        assertEquals(8, p.length);
+        double sum = 0;
+        for (double x : p) sum += x;
+        assertEquals(1, sum, 1e-9);
+        double e = Math.E * Math.E + Math.E + 6;
+        assertEquals(Math.E * Math.E / e, p[4], 1e-9);
+        assertEquals(1 / e, p[0], 1e-9);
+        assertEquals(8, FaceAffect.EXPRESSIONS.length);
+        assertEquals("exHappiness", FaceAffect.EXPRESSIONS[4]);
+        assertNull(FaceAffect.expressions(new float[8]));
+        out[2] = Float.NaN;
+        assertNull(FaceAffect.expressions(out));
+    }
 }
