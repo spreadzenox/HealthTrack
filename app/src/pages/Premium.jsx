@@ -8,18 +8,25 @@ import { deliveredBenefits, upcomingBenefits } from '../config/premiumBenefits'
 import DetailsToggle from '../components/DetailsToggle'
 import './Premium.css'
 import { useEntitlement } from '../hooks/useEntitlement'
+import { REMINDER_DAYS_BEFORE, trialReminderAvailable } from '../services/trialReminder'
 
 
 const PER = { year: 'an', month: 'mois' }
 
 /** Frise de l'essai, seulement quand Google Play propose un essai à cette personne. */
-function TrialTimeline({ days }) {
+function TrialTimeline({ days, reminder }) {
   return (
     <ol className="paywall-timeline" aria-label="Déroulé de l’essai">
       <li>
         <span className="paywall-timeline-day">aujourd’hui</span>
         <span>Tout est débloqué</span>
       </li>
+      {reminder && days > REMINDER_DAYS_BEFORE && (
+        <li>
+          <span className="paywall-timeline-day">jour {days - REMINDER_DAYS_BEFORE}</span>
+          <span>On vous prévient par une notification</span>
+        </li>
+      )}
       <li>
         <span className="paywall-timeline-day">jour {days}</span>
         <span>1er paiement, sauf si vous annulez avant</span>
@@ -43,6 +50,7 @@ export default function Premium({ context = null, onClose = null }) {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
   const [details, setDetails] = useState(false)
+  const [reminder] = useState(() => trialReminderAvailable())
 
   useEffect(() => {
     if (!FEATURES.billing) return undefined
@@ -189,7 +197,7 @@ export default function Premium({ context = null, onClose = null }) {
             })}
           </div>
 
-          {plan?.trialDays && <TrialTimeline days={plan.trialDays} />}
+          {plan?.trialDays && <TrialTimeline days={plan.trialDays} reminder={reminder} />}
 
           <button type="button" className="btn paywall-cta" onClick={buy} disabled={!plan || busy}>
             {busy
@@ -201,6 +209,7 @@ export default function Premium({ context = null, onClose = null }) {
           {plan && (
             <p className="paywall-fine">
               {plan.trialDays ? `Puis ${plan.price} par ${PER[plan.period]}. ` : `${plan.price} par ${PER[plan.period]}. `}
+              {plan.trialDays && reminder && plan.trialDays > REMINDER_DAYS_BEFORE && `Rappel ${REMINDER_DAYS_BEFORE} jours avant la fin de l’essai. `}
               Annulable à tout moment dans Google Play.
             </p>
           )}

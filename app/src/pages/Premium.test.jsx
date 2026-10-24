@@ -38,6 +38,27 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     expect(screen.getByLabelText('Déroulé de l’essai')).toHaveTextContent('jour 14')
   })
 
+  it('VC-18b : sans rappel possible (navigateur), le paywall ne le promet pas', async () => {
+    billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+    renderPremium()
+    await screen.findByRole('radio', { name: /Annuel/ })
+    expect(screen.getByLabelText('Déroulé de l’essai')).not.toHaveTextContent('On vous prévient')
+    expect(screen.queryByText(/Rappel 2 jours avant/)).toBeNull()
+  })
+
+  it('VC-18b : avec le rappel local, « jour 12 : on vous prévient » et la mention du rappel', async () => {
+    window.__HT_TRIAL_REMINDER__ = { schedule: vi.fn(), cancel: vi.fn() }
+    try {
+      billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+      renderPremium()
+      await screen.findByRole('radio', { name: /Annuel/ })
+      expect(screen.getByLabelText('Déroulé de l’essai')).toHaveTextContent(/jour 12\s*On vous prévient par une notification/)
+      expect(screen.getByText(/Puis 29,99 € par an\. Rappel 2 jours avant la fin de l’essai\. Annulable/)).toBeInTheDocument()
+    } finally {
+      delete window.__HT_TRIAL_REMINDER__
+    }
+  })
+
   it('VC-17 : seuls les avantages livrés sont cochés, le reste est « en préparation » derrière « détails »', async () => {
     billing.loadPlans.mockResolvedValue([YEAR, MONTH])
     renderPremium()

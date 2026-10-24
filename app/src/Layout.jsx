@@ -21,15 +21,19 @@ function PageLoading() {
   )
 }
 
-/** Variante play : suit les achats Google Play pendant toute la vie de l'app (jalon 6c-3c). */
+/** Variante play : suit les achats Google Play (jalon 6c-3c) et le rappel de fin d'essai pendant toute la vie de l'app. */
 function usePurchaseWatch() {
   useEffect(() => {
     if (!FEATURES.billing) return undefined
     let stop = null
     let alive = true
-    import('./services/playBilling')
-      .then(({ startPurchaseWatch }) => startPurchaseWatch())
-      .then((fn) => {
+    Promise.all([
+      import('./services/playBilling').then(({ startPurchaseWatch }) => startPurchaseWatch()),
+      // rappel local 2 jours avant la fin de l'essai (VC-18b)
+      import('./services/trialReminder').then(({ startTrialReminderWatch }) => startTrialReminderWatch()),
+    ])
+      .then((fns) => {
+        const fn = () => fns.forEach((f) => f())
         if (alive) stop = fn
         else fn()
       })
