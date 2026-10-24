@@ -686,7 +686,7 @@ assez de données (bien-être estimé par le visage, habitudes, effets décalés
 avec le compteur de jours. **« Comment c'est calculé »** n'apparaît plus qu'une fois, tout en bas, en petit ; le modèle
 de l'ex-« analyse avancée » y est rangé (« Le modèle qui prédit votre bien-être »), rien n'est perdu. Aucun calcul ne
 change. **👉 À tester** : onglet « Analyses », défilez jusqu'en bas. Prochain run de code : POL-7 2e partie (un seul
-verdict par facteur — « Alcool » n'apparaîtra plus deux fois —, pistes dépliables, barres sans vert / rouge).
+verdict par facteur — « Alcool » n'apparaîtra plus deux fois —, pistes dépliables, barres sans vert / rouge).  Publié : **v257** (33,7 Mo) et la version play en test interne.
 
 **Run du 24/10 19:30 — l'historique de votre bien-être (POL-2).** Ce que vous verrez : en bas de la carte « Bien-être
 estimé », **« Historique › »** ouvre une page avec **Jour / Semaine / Mois** : la courbe de votre bien-être estimé (en
