@@ -76,7 +76,7 @@ describe('UpdateBanner', () => {
     expect(screen.getByText(/12,3\sMo \/ 33,6\sMo · 36 %/)).toBeInTheDocument()
     expect(screen.getByText(/le téléchargement continue/)).toBeInTheDocument()
     await waitFor(() => expect(plugin.install).toHaveBeenCalled(), { timeout: 3000 })
-    expect(await screen.findByText(/L'installateur Android est ouvert/)).toBeInTheDocument()
+    expect(await screen.findByText(/L’installateur Android est ouvert/)).toBeInTheDocument()
   })
 
   it('échec : message exact, « Réessayer » et le navigateur en secours', async () => {

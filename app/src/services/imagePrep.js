@@ -92,5 +92,5 @@ export async function prepareImageForGemini(file) {
   const stripped = stripJpegMetadata(bytes)
   if (stripped) return { base64: bytesToBase64(stripped), mimeType: 'image/jpeg' }
   // Impossible de garantir l'absence de métadonnées : on préfère ne rien envoyer
-  throw new Error("Format d'image non pris en charge. Reprenez la photo ou choisissez une image JPEG.")
+  throw new Error("Format d’image non pris en charge. Reprenez la photo ou choisissez une image JPEG.")
 }

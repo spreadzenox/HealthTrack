@@ -23,7 +23,7 @@ describe('Food', () => {
         <Food />
       </BrowserRouter>
     )
-    expect(screen.getByRole('heading', { name: /Alimentation/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /^Repas$/i })).toBeInTheDocument()
   })
 
   it('renders two separate file inputs: camera and gallery', () => {
@@ -62,8 +62,8 @@ describe('Food', () => {
         <Food />
       </BrowserRouter>
     )
-    expect(screen.getByText('📷 Photo')).toBeInTheDocument()
-    expect(screen.getByText('🖼️ Galerie')).toBeInTheDocument()
+    expect(screen.getByText('Photo')).toBeInTheDocument()
+    expect(screen.getByText('Galerie')).toBeInTheDocument()
   })
 
   it('va droit aux trois façons de saisir, sans texte d’explication redondant', () => {

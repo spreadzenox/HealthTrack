@@ -77,7 +77,7 @@ describe('relais Halcya (variante play)', () => {
 
   it('erreur du serveur sans JSON : message générique', async () => {
     const fetchImpl = vi.fn().mockResolvedValue({ ok: false, status: 502, json: () => Promise.reject(new Error('html')) })
-    await expect(analyzeTextViaRelay('pomme', { fetchImpl })).rejects.toThrow(/n'a pas abouti/)
+    await expect(analyzeTextViaRelay('pomme', { fetchImpl })).rejects.toThrow(/n’a pas abouti/)
   })
 
   it('compteur périmé (jour suivant) : rien n’est affiché', () => {

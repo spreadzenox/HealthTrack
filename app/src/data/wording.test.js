@@ -6,6 +6,7 @@
 import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
+import { parse } from '@babel/parser'
 import { FORBIDDEN_WORDING } from './wordingRules.js'
 
 const ROOTS = ['src/components', 'src/pages', 'src/services', 'src/hooks', 'src/config']
@@ -82,6 +83,80 @@ describe('nom de l’app dans les textes JSX (VC-1)', () => {
       for (const file of sourceFiles(path.resolve(root)).filter((f) => f.endsWith('.jsx'))) {
         const lines = stripComments(fs.readFileSync(file, 'utf8'))
         for (const n of gluedNames(lines)) found.push(`${path.relative(path.resolve(), file)}:${n}`)
+      }
+    }
+    expect(found).toEqual([])
+  })
+})
+
+/**
+ * VC-15 : apostrophe typographique (’) partout dans les textes visibles, comme dans le reste de l’app. On lit les
+ * textes JSX et les chaînes avec une espace (phrases) ; au-delà de 300 caractères, ce sont des consignes envoyées
+ * au modèle d’IA, jamais affichées.
+ */
+const STRAIGHT_APOSTROPHE = /[A-Za-zÀ-ÿ]'[A-Za-zÀ-ÿ]/
+
+export function straightApostrophes(code) {
+  const found = []
+  const visit = (n) => {
+    if (!n || typeof n.type !== 'string') return
+    const text = n.type === 'JSXText' || n.type === 'StringLiteral' ? n.value
+      : n.type === 'TemplateElement' ? n.value.cooked || '' : null
+    if (text != null && STRAIGHT_APOSTROPHE.test(text) && text.length <= 300 && (n.type === 'JSXText' || /\s/.test(text))) {
+      found.push(n.loc.start.line)
+    }
+    for (const k in n) {
+      if (k === 'loc' || k.endsWith('Comments')) continue
+      const c = n[k]
+      if (Array.isArray(c)) c.forEach(visit)
+      else if (c && typeof c.type === 'string') visit(c)
+    }
+  }
+  visit(parse(code, { sourceType: 'module', plugins: ['jsx'] }).program)
+  return found
+}
+
+describe('apostrophes des textes visibles (VC-15)', () => {
+  it('repère une apostrophe droite dans un texte JSX ou une phrase, pas dans le code', () => {
+    expect(straightApostrophes("const a = <p>Pour l'instant</p>")).toEqual([1])
+    expect(straightApostrophes('const m = "Rien n\'a pu être importé."')).toEqual([1])
+    expect(straightApostrophes("const a = <p>Pour l’instant</p>\nconst k = \"d'x\"\n// l'app")).toEqual([])
+  })
+
+  it('aucune apostrophe droite dans les textes de l’app', () => {
+    const found = []
+    for (const root of ROOTS) {
+      for (const file of sourceFiles(path.resolve(root))) {
+        for (const n of straightApostrophes(fs.readFileSync(file, 'utf8'))) found.push(`${path.relative(path.resolve(), file)}:${n}`)
+      }
+    }
+    expect(found).toEqual([])
+  })
+})
+
+/**
+ * VC-15 : pas d’émojis dans les textes visibles (identité visuelle : icônes trait, voir components/LineIcon).
+ * Les symboles typographiques (✓ ✕ ⚠ → ·) restent permis ; les panneaux de débogage (mode développeur) aussi.
+ */
+const EMOJI = /\p{Emoji_Presentation}|️/u
+const DEBUG_ONLY = ['src/components/DebugPanel.jsx']
+
+describe('émojis des textes visibles (VC-15)', () => {
+  it('distingue un émoji d’un symbole typographique', () => {
+    expect(EMOJI.test('📷 Photo')).toBe(true)
+    expect(EMOJI.test('⚠️ Attention')).toBe(true)
+    expect(EMOJI.test('✓ Enregistré · ⚠ peu fiable ✕')).toBe(false)
+  })
+
+  it('aucun émoji dans les pages et les composants', () => {
+    const found = []
+    for (const root of ['src/components', 'src/pages']) {
+      for (const file of sourceFiles(path.resolve(root))) {
+        const rel = path.relative(path.resolve(), file)
+        if (DEBUG_ONLY.includes(rel)) continue
+        stripComments(fs.readFileSync(file, 'utf8')).forEach((line, i) => {
+          if (EMOJI.test(line)) found.push(`${rel}:${i + 1} ${line.trim()}`)
+        })
       }
     }
     expect(found).toEqual([])

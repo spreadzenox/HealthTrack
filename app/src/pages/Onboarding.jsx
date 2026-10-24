@@ -12,6 +12,7 @@ import { isFaceSenseAvailable, isFaceSenseEnabled } from '../services/faceSense'
 import { runFaceTrial } from '../services/faceTrial'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId, markAllSeen } from '../services/whatsNew'
+import LineIcon from '../components/LineIcon'
 import './Onboarding.css'
 
 const WATCHES = [
@@ -105,7 +106,7 @@ function GoalStep({ goal, onGoal }) {
         ))}
       </fieldset>
       <p className="onb-lock">
-        <span aria-hidden>🔒</span> Local par défaut · l’IA seulement si vous le voulez
+        <LineIcon name="lock" size={16} /> Local par défaut · l’IA seulement si vous le voulez
       </p>
       <p className="onb-fine">En continuant, vous confirmez avoir 18 ans ou plus.</p>
     </>

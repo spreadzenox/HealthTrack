@@ -23,6 +23,7 @@ import {
   setEveningNoteEnabled,
 } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
+import LineIcon from './LineIcon'
 
 const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
 
@@ -349,7 +350,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
               aria-pressed={!!evening.enabled}
               onClick={toggleEvening}
             >
-              <span aria-hidden>🔔</span> Me la demander le soir, d’un geste depuis une notification
+              <LineIcon name="bell" size={18} /> Me la demander le soir, d’un geste depuis une notification
               {evening.enabled ? ` (vers ${formatMinute(evening.minuteOfDay ?? DEFAULT_MINUTE)})` : ''}
             </button>
             {eveningHint && <p className="wellbeing-tags-hint">{eveningHint}</p>}

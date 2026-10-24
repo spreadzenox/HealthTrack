@@ -67,7 +67,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   l'accueil ») et « cigarettes » dans le sous-titre de Réglages → Paramètres. Hors parcours SII + bien-être : le
   replier sous « Autres suivis » ou le masquer en play (le compteur reste disponible si une cigarette a déjà été
   notée ; aucune donnée touchée).
-- [ ] **VC-15** (audit du 23/10 20:30, mineur) émojis hors identité visuelle : Repas (📷 Photo, 🖼️ Galerie,
+- [x] **VC-15** (24/10 06:30, `components/LineIcon`, tests-gardes apostrophes + émojis dans `data/wording.test.js`) (audit du 23/10 20:30, mineur) émojis hors identité visuelle : Repas (📷 Photo, 🖼️ Galerie,
   ✍️ Décrire), Réglages (🗂️ ⚙️ ✨ 🔒), Paramètres (🔒 Ce qui est envoyé) → icônes trait de la barre de navigation ;
   apostrophes droites mêlées aux typographiques (« l'instant », « l'ouverture de l'app », « n'apparaît », « l'accueil »)
   → test-garde sur les textes JSX visibles. Repas : titre « Alimentation » alors que l'onglet dit « Repas ».
@@ -86,6 +86,9 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   (J−2), puis seulement afficher « jour 12 : on vous prévient » et « Rappel 2 jours avant la fin de l'essai » ; page
   « Conditions » (CGU/CGV, brouillon de `journal/legal/` « à faire valider par un juriste ») publiée par GitHub Pages
   et liée depuis le paywall.
+- [ ] **VC-20** (mineur, avec la passe Pistes du jalon 5) les étiquettes d'habitudes portent un émoji (✈️ Voyage,
+  ☕ Café après 14 h, 📱 Écran tard, 🤒 Malade) affiché dans Pistes et le journal : remplacer par des icônes trait ou
+  une pastille de couleur, sans toucher aux données (l'émoji reste dans l'étiquette enregistrée).
 - [ ] **VC-19** (mineur) `UpdateBanner.test.jsx` « progression en Mo et en % » échoue parfois sous la charge de la
   suite complète (vert isolé) : rendre le test indépendant du minutage.
 - [x] **VC-11 (avant le jalon 4, I153) — FAIT le 23/10 09:30** (`connectors/syncWindow.js` ; reste : message exact d'Android à relever sur l'émulateur) première synchro Health Connect : `DEFAULT_HISTORY_DAYS = 180`

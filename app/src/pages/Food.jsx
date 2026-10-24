@@ -15,6 +15,7 @@ import { itemForStorage, mealKcal } from '../services/mealEditing'
 import SavedMealEditor from '../components/SavedMealEditor'
 import NewMealForm from '../components/NewMealForm'
 import { frequentMeals, mealLabel } from '../services/quickMeals'
+import LineIcon from '../components/LineIcon'
 
 /** Jours de repas affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
 const INITIAL_DAYS = 5
@@ -134,7 +135,7 @@ export default function Food() {
       setResult(data)
       setItems(data.items || [])
     } catch (err) {
-      setError(err.message || "Erreur lors de l'analyse.")
+      setError(err.message || "Erreur lors de l’analyse.")
     } finally {
       setLoading(false)
     }
@@ -160,7 +161,7 @@ export default function Food() {
       loadRecent()
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
     } catch (err) {
-      setError(err.message || "Erreur lors de l'enregistrement.")
+      setError(err.message || "Erreur lors de l’enregistrement.")
     } finally {
       setSaving(false)
     }
@@ -181,7 +182,7 @@ export default function Food() {
     <section className="food-page">
       {disclosure}
       <JournalTabs />
-      <h2 className="page-title">Alimentation</h2>
+      <h2 className="page-title">Repas</h2>
 
       <div
         className="upload-zone"
@@ -213,10 +214,10 @@ export default function Food() {
 
         <div className="upload-actions">
           <label htmlFor="camera-upload" className="upload-btn">
-            📷 Photo
+            <LineIcon name="camera" /> Photo
           </label>
           <label htmlFor="gallery-upload" className="upload-btn">
-            🖼️ Galerie
+            <LineIcon name="image" /> Galerie
           </label>
           {!quickMeal && (
             <button
@@ -225,7 +226,7 @@ export default function Food() {
               onClick={() => startQuickMeal()}
               aria-label="Décrire ou saisir sans photo"
             >
-              ✍️ Décrire
+              <LineIcon name="pen" /> Décrire
             </button>
           )}
         </div>
@@ -312,7 +313,7 @@ export default function Food() {
           {result.items?.length > 0 ? (
             !savedId && (
               <p className="results-hint">
-                Vérifiez les quantités avant d&apos;enregistrer : l&apos;estimation sur photo peut se
+                Vérifiez les quantités avant d’enregistrer : l’estimation sur photo peut se
                 tromper de plusieurs dizaines de grammes.
               </p>
             )
@@ -344,7 +345,7 @@ export default function Food() {
 
       <h3 className="section-title">Derniers repas enregistrés</h3>
       {recentMeals.length === 0 ? (
-        <p className="empty-hint">Aucun repas enregistré pour l&apos;instant.</p>
+        <p className="empty-hint">Aucun repas enregistré pour l’instant.</p>
       ) : (
         <>
           {mealDays.slice(0, visibleDays).map((day) => {
