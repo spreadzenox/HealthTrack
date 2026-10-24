@@ -9,7 +9,7 @@
 - Aucune PR « [Auto] » ouverte (seule #51 `cursor/*`, non touchée).
 
 ## Ce qui a été fait
-- Job en échec relancé une fois (rerun_failed_jobs) pour envoyer la 394.
+- Job en échec relancé une fois (rerun_failed_jobs) : **vert**, la 394 est envoyée en test interne.
 - `app/scripts/play/publish.mjs` : `withRetry(fetchImpl, { delays, sleep })` réessaie les réponses 429/500/502/503/504
   (délais 5, 10, 20 s ; 4 essais au plus), jamais les 4xx ; utilisé par `publishBundle` et `publishListing`
   (`listing.mjs`). Un « 503 » ne fait donc plus perdre une version.

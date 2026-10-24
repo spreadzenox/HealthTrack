@@ -615,7 +615,7 @@ paiement) et **P25** (paywall honnête).
 **Run du 24/10 03:30 — l'envoi automatique sur Google Play résiste aux pannes passagères de Google.** Rien ne
 change dans l'app. En coulisses : l'envoi de la **version play 394** (conditions d'utilisation) avait échoué cette
 nuit sur un **« 503 — service momentanément indisponible »** des serveurs de Google, à la toute première lecture. Le
-job a été relancé, et surtout le script d'envoi (AAB et fiche du Store) **réessaie désormais tout seul** jusqu'à trois
+job a été relancé (vert : la 394 est bien partie en test interne), et surtout le script d'envoi (AAB et fiche du Store) **réessaie désormais tout seul** jusqu'à trois
 fois (après 5, 10 puis 20 s) quand Google répond 429 ou 5xx ; les vrais refus (accès, version déjà envoyée…) ne sont
 jamais réessayés. Rien à faire de votre côté. **Prochain run de code : VC-18, 2ᵉ moitié** (rappel local J−2 de fin
 d'essai), puis VC-15 et VC-5.
