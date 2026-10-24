@@ -658,6 +658,15 @@ une ou deux fois avec la montre au poignet ; ouvrez ensuite Sources → montre �
 détaillé » doit dater de la nuit. **Prochain run de code** : M6 suite (VFC de journée et température de la peau en
 arrière-plan, P2P), puis M7 (courbe FC et allure des séances). **👉 Votre prochaine action la plus utile reste P27**.
 
+**Run du 24/10 18:30 — la carte « Bien-être estimé » se lit d'un coup d'œil (POL-3).** Ce que vous verrez : le
+bouton texte « détails » devient une **petite flèche** en haut à droite des cartes (bien-être, ventre, pistes, et aussi
+sur la page Premium et le profil Nutrition) ; touchée, elle pivote et ouvre les détails. Dans la carte bien-être, les
+détails sont **visuels** : la fourchette sur une barre de 0 à 5, un **badge de confiance** à trois points, le nombre de
+lectures et votre moyenne en pastilles, le modèle en petit. **« + Noter moi-même »**, en bas de la carte, sert à noter
+votre bien-être à la main ; le bouton « Ajouter une note » disparaît, et **l'app ne vous demande plus votre bien-être à
+chaque ouverture**. Rien n'est effacé. **👉 À tester** : ouvrez l'app (plus de question), touchez la flèche de la carte
+bien-être, puis « Noter moi-même ». Prochain run de code : POL-2 (historique du bien-être, ouvert depuis la carte).
+
 **Run du 24/10 17:30 — l'Accueil se simplifie (POL-5 et POL-4).** Ce que vous verrez : **« Photo du repas »** prend
 toute la largeur avec une **icône appareil photo** ; « Une note » devient **« Ajouter une note »** (icône crayon), juste
 en dessous. La **carte « Votre ventre »** n'apparaît plus qu'avec l'objectif **« Mon ventre »** (Paramètres → « Ce qui
@@ -1292,6 +1301,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 15:30 — [6f : période de lancement](runs/2026-10-24-1530-6f-periode-lancement.md) | 🧭💳 | `relay/src/launch-period.json` (`from` / `until` / `off`, `LAUNCH_PREMIUM_*` prioritaires), `isLaunchPeriod` avec début et interrupteur, état dans le résumé du workflow relais ; Premium / onboarding « Premium offert pendant le test » sans achat ; `INVITATION-TESTEURS.md` ; retours de 15:00 → POL-1…8 ; P28 = FGS, IAM → P29 ; 78 tests relais |
 | 24/10 16:30 — [SAUV : sauvegarde Android](runs/2026-10-24-1630-sauvegarde-android.md) | 🧭🔒 | `data_extraction_rules.xml` + `backup_rules.xml` (préférences natives propres au téléphone exclues), `BackupMarkerPlugin` (repère hors sauvegarde) + `restoreGuard.js` (secrets du localStorage retirés après restauration), textes confidentialité / conditions / Données / onboarding ; Sécurité des données inchangée ; +10 tests |
 | 24/10 17:30 — [POL-5 + POL-4 : Accueil](runs/2026-10-24-1730-pol5-pol4-accueil.md) | 🧭 | « Photo du repas » pleine largeur + icône `camera`, « Ajouter une note » (`pen`) ; `gutCardMode` (ventre → carte, énergie / tout → aucune, sans objectif : `existing` → `GutCard onlyIfUsed`, sinon carte) ; texte « Ce qui vous amène » ; captures clair / sombre / vierge play |
+| 24/10 18:30 — [POL-3 : carte bien-être](runs/2026-10-24-1830-pol3-carte-bien-etre.md) | 🧭 | `DetailsToggle` → chevron (`aria-expanded`, partout) ; détails visuels (`MoodRange`, `ConfidenceBadge`, pastilles, modèle en petit) ; « Noter moi-même » dans la carte, « Ajouter une note » retiré ; `WellbeingPrompt` seulement contrôlée (plus d'ouverture auto) |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

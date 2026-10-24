@@ -14,7 +14,7 @@
  *   npm run visual -- --update-banner      # simule une release plus récente
  *   npm run visual -- --update-banner=progress  # … et un téléchargement en cours (plugin AppUpdate simulé)
  *   npm run visual -- --update-banner=stalled   # … téléchargement bloqué (aucun octet depuis 45 s)
- *   npm run visual -- --wellbeing-prompt   # laisse la modale bien-être s'ouvrir
+ *   npm run visual -- --routes=/ --click="Noter moi-même"   # la note de bien-être manuelle (carte bien-être, POL-3)
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
  *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
@@ -59,8 +59,8 @@
  *                                                        --face=reading : bandeau « Lecture du visage » en cours (jalon 3b-2)
  *   npm run visual -- --routes=/connectors --face=off --disclosure=camera  # divulgation avant la caméra (jalon 3b) ;
  *                                                     --phone=ask --disclosure=usage, --disclosure=location (sans données de démo : --empty)
- *   npm run visual -- --routes=/ --wellbeing-prompt --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
- *   npm run visual -- --wellbeing-prompt --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
+ *   npm run visual -- --routes=/ --click="Noter moi-même" --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
+ *   npm run visual -- --routes=/ --click="Noter moi-même" --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
  *   npm run visual -- --empty --routes=/ --onboarding   # premier lancement : l'Accueil redirige vers /bienvenue (jalon 4)
@@ -735,15 +735,6 @@ async function main() {
           remove: async () => ({ removed: 0 }),
         }
       }, String(args['evening-note']))
-    }
-    if (!args['wellbeing-prompt']) {
-      await context.addInitScript(() => {
-        try {
-          sessionStorage.setItem('healthtrack-wellbeing-prompt-session', '1')
-        } catch {
-          /* ignore */
-        }
-      })
     }
 
     const page = await context.newPage()

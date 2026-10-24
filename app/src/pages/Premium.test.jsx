@@ -67,7 +67,7 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     expect(screen.getByText('En préparation, inclus sans supplément')).toBeInTheDocument()
     expect(screen.queryByText(/FODMAP/)).toBeNull()
     expect(screen.queryByText(/rapport PDF/)).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: 'détails' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
     const upcoming = screen.getByRole('list', { name: 'En préparation' })
     expect(upcoming).toHaveTextContent(/FODMAP/)
     expect(upcoming).toHaveTextContent(/rapport PDF/)

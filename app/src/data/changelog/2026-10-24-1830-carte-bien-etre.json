@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-24",
+  "kind": "amélioration",
+  "title": "Bien-être : des détails plus visuels, la note à la main dans la carte",
+  "items": [
+    "Le petit bouton « détails » devient une flèche discrète en haut à droite des cartes : touchez-la pour en voir plus, touchez-la encore pour revenir au simple.",
+    "Dans la carte « Bien-être estimé », les détails se lisent d'un coup d'œil : la fourchette sur une barre de 0 à 5, un badge de confiance à trois points, le nombre de lectures et votre moyenne.",
+    "« Noter moi-même » : votre bien-être à la main se note maintenant depuis la carte « Bien-être estimé ». Le bouton « Ajouter une note » disparaît.",
+    "L'app ne vous demande plus votre bien-être à chaque ouverture : la lecture du visage l'estime déjà."
+  ]
+}

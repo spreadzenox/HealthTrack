@@ -87,20 +87,18 @@ export default function Dashboard() {
         </p>
       )}
 
-      <MoodEstimateCard data={wellbeing} details={details} onToggleDetails={toggleDetails} />
+      <MoodEstimateCard data={wellbeing} details={details} onToggleDetails={toggleDetails}
+        onAddManual={() => setWellbeingOpen(true)} />
       {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
       {gutMode !== 'hide' && (
         <GutCard details={details} onToggleDetails={toggleDetails} onlyIfUsed={gutMode === 'used'} />
       )}
 
+      {/* La note de bien-être manuelle est dans la carte « Bien-être estimé » (POL-3) : un seul geste ici. */}
       <div className="today-actions">
         <button type="button" className="btn today-action-photo" onClick={() => navigate('/food')}>
           <LineIcon name="camera" size={22} />
           Photo du repas
-        </button>
-        <button type="button" className="btn btn-secondary" onClick={() => setWellbeingOpen(true)}>
-          <LineIcon name="pen" size={18} />
-          Ajouter une note
         </button>
       </div>
       {!loading && shouldShowCigaretteCounter(entries) && (

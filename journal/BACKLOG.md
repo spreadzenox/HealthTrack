@@ -65,7 +65,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 **Polissage du parcours — retours du propriétaire du 24/10 vers 15:00 (PRIORITÉ des runs de code, avec SAUV, avant
 M6b, M7 et le jalon 5).** Principe : simple à première vue, détails pour qui creuse ; moins de texte, plus visuel, pastels
 par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clair/sombre, vierge/démo ; masquer n'efface rien.
-- [ ] **POL-3 Accueil bien-être** : remplacer le bouton « simple / détails » par un geste propre (toucher la carte →
+- [x] **POL-3 — FAIT le 24/10 18:30** (chevron partout, détails visuels, « Noter moi-même », plus de demande à
+  l'ouverture). Énoncé d'origine : remplacer le bouton « simple / détails » par un geste propre (toucher la carte →
   historique, ou chevron discret), partout où il existe (ventre, pistes, paywall…) ; détails visuels (mini-graphique,
   badge de confiance) ; ajout manuel du bien-être discret dans la carte ; supprimer la demande automatique de bien-être
   à l'ouverture.
@@ -87,7 +88,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   explicite, notification permanente avec « Arrêter », réglage, service démarré app ouverte, ni exemption batterie ni
   Shizuku/ADB en play, interrupteur de build propre à play ; P28 (déclaration FGS + script vidéo) AVANT la première
   version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
-Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → POL-3 → POL-2 → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → POL-2 → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,

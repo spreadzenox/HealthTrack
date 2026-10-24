@@ -29,17 +29,34 @@ describe('MoodEstimateCard', () => {
     expect(screen.getByText('Un peu mieux que votre moyenne des 14 derniers jours. Une estimation, pas un diagnostic.')).toBeInTheDocument()
   })
 
-  it('« détails » remplace la phrase par la fourchette, n, la moyenne et le modèle', () => {
+  it('le chevron ouvre des détails visuels : fourchette, badge de confiance, lectures, moyenne, modèle', () => {
     const toggle = vi.fn()
-    const { rerender } = renderCard({ data: { est: estimate, days }, onToggleDetails: toggle })
-    fireEvent.click(screen.getByRole('button', { name: 'détails' }))
+    const { rerender, container } = renderCard({ data: { est: estimate, days }, onToggleDetails: toggle })
+    const chevron = screen.getByRole('button', { name: 'Afficher les détails' })
+    expect(chevron).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(chevron)
     expect(toggle).toHaveBeenCalled()
     rerender(<BrowserRouter><MoodEstimateCard now={NOW} data={{ est: estimate, days }} details onToggleDetails={toggle} /></BrowserRouter>)
-    expect(screen.getByText('2,9 – 3,9')).toBeInTheDocument()
-    expect(screen.getByText('n = 4 aujourd’hui')).toBeInTheDocument()
-    expect(screen.getByText('3,0 (3 j)')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Masquer les détails' })).toHaveAttribute('aria-expanded', 'true')
+    expect(container.querySelector('.mood-range-band')).not.toBeNull()
+    expect(screen.getByText('entre 2,9 et 3,9')).toBeInTheDocument()
+    expect(screen.getByText('confiance moyenne')).toBeInTheDocument()
+    expect(container.querySelectorAll('.mood-confidence-dots .is-on')).toHaveLength(2)
+    expect(screen.getByText('4 lectures auj.')).toBeInTheDocument()
+    expect(screen.getByText('moy. 3,0 · 3 j')).toBeInTheDocument()
     expect(screen.getByText('deux modèles valence / éveil (HSEmotion)')).toBeInTheDocument()
-    expect(screen.queryByText(/Un peu mieux/)).not.toBeInTheDocument()
+    // la phrase simple reste : les détails s'ajoutent, ils ne remplacent plus
+    expect(screen.getByText(/Un peu mieux/)).toBeInTheDocument()
+  })
+
+  it('« Noter moi-même » ouvre la note manuelle, aussi sans lecture du visage', () => {
+    const add = vi.fn()
+    const { rerender } = renderCard({ data: { est: estimate, days }, onAddManual: add })
+    fireEvent.click(screen.getByRole('button', { name: 'Noter moi-même' }))
+    expect(add).toHaveBeenCalledTimes(1)
+    rerender(<BrowserRouter><MoodEstimateCard now={NOW} data={null} onAddManual={add} /></BrowserRouter>)
+    fireEvent.click(screen.getByRole('button', { name: 'Noter moi-même' }))
+    expect(add).toHaveBeenCalledTimes(2)
   })
 
   it('sans lecture aujourd’hui, montre la dernière lecture sans la comparer', () => {

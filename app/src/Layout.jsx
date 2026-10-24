@@ -1,7 +1,6 @@
 import { Suspense, useEffect, useLayoutEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import UpdateBanner from './components/UpdateBanner'
-import WellbeingPrompt from './components/WellbeingPrompt'
 import WhatsNewBanner from './components/WhatsNewBanner'
 import FaceReadIndicator from './components/FaceReadIndicator'
 import TabBar from './components/TabBar'
@@ -79,7 +78,6 @@ export default function Layout() {
   }, [pathname])
   return (
     <div className="app">
-      <WellbeingPrompt />
       <UpdateBanner />
       <FaceReadIndicator />
       <header className="header">

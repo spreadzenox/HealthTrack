@@ -102,3 +102,69 @@
   color: var(--text-muted);
   margin-top: 2px;
 }
+
+/* Détails visuels (POL-3) : fourchette, badges, modèle en petit. */
+.mood-details {
+  margin: 4px 0 2px;
+}
+
+.mood-details-range {
+  margin: 0;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.mood-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 0;
+}
+
+.mood-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: var(--radius-tag);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--mint-label);
+  background: rgba(var(--tint-rgb), 0.06);
+}
+
+.mood-confidence-dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.mood-confidence-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+}
+
+.mood-confidence-dots span.is-on {
+  background: currentColor;
+}
+
+.mood-details-model {
+  margin: 8px 0 0;
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+/* Note manuelle, discrète : un lien-bouton en bas de la carte (cible de 44 px). */
+.mood-manual {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap-min);
+  margin: 4px 0 -10px -4px;
+  padding: 0 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mint-label);
+  background: transparent;
+}

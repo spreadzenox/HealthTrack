@@ -10,53 +10,36 @@ vi.mock('../storage/localHealthStorage', () => ({
   upsertEntries: vi.fn(() => Promise.resolve({ inserted: 1, skipped: 0 })),
 }))
 
-describe('WellbeingPrompt (uncontrolled)', () => {
+describe('WellbeingPrompt (ouverte par l’appelant)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    sessionStorage.removeItem('healthtrack-wellbeing-prompt-session')
   })
 
-  it('shows dialog on first load in session', async () => {
-    render(<WellbeingPrompt />)
-    expect(await screen.findByRole('dialog')).toBeInTheDocument()
-    expect(screen.getByText(/Comment vous sentez-vous/i)).toBeInTheDocument()
-  })
-
-  it('does not show dialog if already answered this session', () => {
-    sessionStorage.setItem('healthtrack-wellbeing-prompt-session', '1')
-    const { container } = render(<WellbeingPrompt />)
-    expect(container.querySelector('.wellbeing-modal')).not.toBeInTheDocument()
-  })
-
-  it('does not open by itself when a note was saved less than 3 h ago', async () => {
+  it('ne s’ouvre plus d’elle-même au lancement (POL-3)', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
-    const recent = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-    listEntries.mockImplementation(async ({ type }) => (type === 'wellbeing' ? [{ id: 1, type: 'wellbeing', at: recent, payload: { score: 3 } }] : []))
-    try {
-      const { container } = render(<WellbeingPrompt />)
-      await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'wellbeing' })))
-      expect(container.querySelector('.wellbeing-modal')).not.toBeInTheDocument()
-    } finally {
-      listEntries.mockImplementation(async () => [])
-    }
+    const { container } = render(<WellbeingPrompt />)
+    await new Promise((r) => setTimeout(r, 0))
+    expect(container.querySelector('.wellbeing-modal')).not.toBeInTheDocument()
+    expect(listEntries).not.toHaveBeenCalled()
   })
 
   it('says the scale in one line, without the privacy sentence', async () => {
-    render(<WellbeingPrompt />)
+    render(<WellbeingPrompt open onClose={vi.fn()} />)
     expect(await screen.findByText('0 = très bas, 5 = très bien.')).toBeInTheDocument()
     expect(screen.queryByText(/restent sur cet appareil/i)).not.toBeInTheDocument()
   })
 
   it('has no tag explanation when nothing is captured automatically', async () => {
-    render(<WellbeingPrompt />)
+    render(<WellbeingPrompt open onClose={vi.fn()} />)
     await screen.findByRole('dialog')
     expect(screen.queryByText(/Ces tags permettent/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/Repéré sans vous/i)).not.toBeInTheDocument()
   })
 
-  it('saves score and closes when user selects and confirms', async () => {
+  it('saves score and calls onClose when user selects and confirms', async () => {
     const { createEntry } = await import('../storage/localHealthStorage')
-    render(<WellbeingPrompt />)
+    const onClose = vi.fn()
+    render(<WellbeingPrompt open onClose={onClose} />)
     await screen.findByRole('dialog')
     fireEvent.click(screen.getByRole('button', { name: /Note 3 sur 5/i }))
     fireEvent.click(screen.getByRole('button', { name: /Enregistrer/i }))
@@ -65,18 +48,7 @@ describe('WellbeingPrompt (uncontrolled)', () => {
       source: 'app_wellbeing',
       payload: { score: 3 },
     })
-    await waitFor(() => {
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    })
-  })
-
-  it('Plus tard closes without saving', async () => {
-    const { createEntry } = await import('../storage/localHealthStorage')
-    render(<WellbeingPrompt />)
-    await screen.findByRole('dialog')
-    fireEvent.click(screen.getByRole('button', { name: /Plus tard/i }))
-    expect(createEntry).not.toHaveBeenCalled()
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await waitFor(() => expect(onClose).toHaveBeenCalled())
   })
 })
 
@@ -373,28 +345,6 @@ describe('WellbeingPrompt — note du soir d’un geste (I113)', () => {
     }
   })
 
-  it('une note donnée depuis la notification est rangée avant de décider d’ouvrir la saisie', async () => {
-    const { listEntries, upsertEntries } = await import('../storage/localHealthStorage')
-    const plugin = fakePlugin({ enabled: true })
-    const at = Date.now() - 20 * 60 * 1000
-    plugin.list.mockResolvedValueOnce({ notes: [{ name: 'capture-1-001.json', json: JSON.stringify({ v: 1, score: 4, at }) }] })
-    let stored = []
-    upsertEntries.mockImplementationOnce(async (entries) => {
-      stored = entries
-      return { inserted: entries.length }
-    })
-    listEntries.mockImplementation(async ({ type }) => (type === 'wellbeing' ? stored : []))
-    window.__healthtrackFakeEveningNote = plugin
-    try {
-      const { container } = render(<WellbeingPrompt />)
-      await waitFor(() => expect(upsertEntries).toHaveBeenCalled())
-      await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'wellbeing', limit: 1 })))
-      expect(container.querySelector('.wellbeing-modal')).not.toBeInTheDocument()
-    } finally {
-      delete window.__healthtrackFakeEveningNote
-      listEntries.mockImplementation(async () => [])
-    }
-  })
 })
 
 describe('WellbeingPrompt — votre journée en une phrase (I119)', () => {

@@ -40,6 +40,8 @@ const PATHS = {
   ),
   bell: <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0" />,
   pen: <path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5zM13.5 7l3 3" />,
+  chevron: <path d="M6 9.5l6 6 6-6" />,
+  plus: <path d="M12 5v14M5 12h14" />,
 }
 
 export default function LineIcon({ name, size = 20, className = '' }) {

@@ -305,7 +305,7 @@ function NotEnoughData({ currentDays, minDays }) {
       <p className="reco-not-enough-title">Pas encore assez de jours mesurés</p>
       <p className="reco-not-enough-hint">
         {currentDays === 0
-          ? `Les liens avec votre bien-être demandent au moins ${minDays} jours avec une note de bien-être (bouton «\u00a0Ajouter une note\u00a0» de l’Accueil).`
+          ? `Les liens avec votre bien-être demandent au moins ${minDays} jours avec une note de bien-être («\u00a0Noter moi-même\u00a0», dans la carte Bien-être estimé de l’Accueil).`
           : `Encore ${remaining} jour${remaining > 1 ? 's' : ''} avec une note de bien-être (vous en avez ${currentDays}).`}
       </p>
     </div>
@@ -314,7 +314,7 @@ function NotEnoughData({ currentDays, minDays }) {
 
 /** Seuil des liens avec le bien-être, en une ligne pour les « détails » de la carte lilas (VC-12). */
 function wellbeingWaitLine({ currentDays = 0, minDays }) {
-  return `liens avec le bien-être : ${Math.min(currentDays, minDays)}/${minDays} jours avec une note de bien-être («\u00a0Ajouter une note\u00a0»)`
+  return `liens avec le bien-être : ${Math.min(currentDays, minDays)}/${minDays} jours avec une note de bien-être («\u00a0Noter moi-même\u00a0»)`
 }
 
 // ─── Week-end control note ───────────────────────────────────────────────────
