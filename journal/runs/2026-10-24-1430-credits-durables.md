@@ -35,6 +35,7 @@ toujours sous `INSTALL_DAILY_CAP` (20) et le plafond global (200 / jour).
 - App : Vitest 2 131 verts (1er passage CI rouge : type « correction » au lieu de « correctif » dans la Nouveauté, corrigé), build OK, lint inchangé (6 erreurs préexistantes), `npm run visual` vert (page Repas relue ; la carte de résultat IA n'a pas de capture, elle est couverte par `Food.test.jsx`).
 
 ## Après le merge (#320, `762663e`)
+- « Build & Release » vert : **v251** publiée (APK 33,7 Mo, 33 736 396 octets) ; « Tests » vert.
 - « Relais — déploiement » vert (run 40096191836) : test d'analyse HTTP 200 (`gemini-3.5-flash-lite`), relay-runtime
   lit toujours les achats (HTTP 404 sur un faux jeton, attendu).
 - **Bilan Play Integrity 7 j : 1 `passed` (1 installation, 1 événement) + 12 `missing` (10 installations : CI et vieilles
