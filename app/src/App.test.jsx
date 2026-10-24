@@ -18,7 +18,7 @@ describe('App', () => {
     const nav = screen.getByRole('navigation', { name: 'Principal' })
     expect(within(nav).getByRole('link', { name: /Aujourd’hui/ })).toHaveAttribute('href', '/')
     expect(within(nav).getByRole('link', { name: /Journal/ })).toHaveAttribute('href', '/journal')
-    expect(within(nav).getByRole('link', { name: /Pistes/ })).toHaveAttribute('href', '/recommendations')
+    expect(within(nav).getByRole('link', { name: /Analyses/ })).toHaveAttribute('href', '/recommendations')
     expect(within(nav).getByRole('link', { name: /Sources/ })).toHaveAttribute('href', '/connectors')
   })
 

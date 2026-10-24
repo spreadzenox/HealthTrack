@@ -57,6 +57,13 @@ function makeEntries(days = 0) {
   return entries
 }
 
+/** Ouvre la note « Le modèle qui prédit votre bien-être » (ex-onglet « Analyse avancée »), en bas de page. */
+async function openModel() {
+  const summary = await screen.findByText('Le modèle qui prédit votre bien-être')
+  summary.closest('details').open = true
+  fireEvent(summary.closest('details'), new Event('toggle'))
+}
+
 function renderPage() {
   return render(
     <BrowserRouter>
@@ -73,24 +80,33 @@ describe('Recommendations page', () => {
 
   it('renders the page title', async () => {
     renderPage()
-    await screen.findByRole('heading', { name: /^Vos pistes$/i })
-    expect(screen.getByRole('heading', { name: /^Vos pistes$/i })).toBeInTheDocument()
+    await screen.findByRole('heading', { name: /^Vos analyses$/i })
+    expect(screen.getByRole('heading', { name: /^Vos analyses$/i })).toBeInTheDocument()
   })
 
-  it('renders both tab buttons once there is something to show', async () => {
+  // POL-7 : une seule analyse, plus d'onglets « simple / avancée »
+  it('shows one analysis, without « simple / avancée » tabs, and says on how many days it is based', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
-    renderPage()
-    expect(await screen.findByRole('button', { name: /Analyse simple/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Analyse avancée/i })).toBeInTheDocument()
+    const { container } = renderPage()
+    expect(await screen.findByText(/Pistes à tester/)).toBeInTheDocument()
+    expect(screen.getByText(/analyse sur 5 jours notés/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Analyse simple|Analyse avancée/i })).toBeNull()
+    expect(container.textContent).not.toMatch(/Analyse (simple|avancée)/)
+    expect(screen.getByText('Des liens repérés dans vos données, pas des causes ni un diagnostic.')).toBeInTheDocument()
   })
 
-  it('shows basic tab by default', async () => {
+  it('keeps a single « Comment c’est calculé » note, at the bottom of the page', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
-    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
     renderPage()
-    const basicBtn = await screen.findByRole('button', { name: /Analyse simple/i })
-    expect(basicBtn).toHaveAttribute('aria-selected', 'true')
+    await screen.findByText(/Pistes à tester/)
+    const notes = screen.getAllByText(/Comment c.est calculé/)
+    expect(notes).toHaveLength(1)
+    const footer = notes[0].closest('footer')
+    expect(footer).not.toBeNull()
+    // Rien après le pied de page
+    expect(footer.nextElementSibling).toBeNull()
   })
 
   // VC-2 : sans données, la page dit la même chose que la carte lilas de l'Accueil
@@ -109,8 +125,11 @@ describe('Recommendations page', () => {
     expect(text).not.toMatch(/≥ \d+j/)
     expect(text).not.toMatch(/Données insuffisantes/)
     expect(text).not.toContain('📊')
+    // Données vierges : la carte lilas seule, ni « Bientôt » ni note de méthode
+    expect(screen.queryByTestId('reco-soon')).toBeNull()
+    expect(screen.queryByText(/Comment c.est calculé/)).toBeNull()
     // Déjà sur la page Pistes : pas de lien vers elle-même
-    expect(screen.queryByRole('link', { name: /onglet Pistes/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /onglet (Pistes|Analyses)/i })).not.toBeInTheDocument()
   })
 
   it('keeps the wellbeing threshold in the lilac card details, not in a second card (VC-12)', async () => {
@@ -123,13 +142,13 @@ describe('Recommendations page', () => {
     expect(await screen.findByText(/liens avec le bien-être : 2\/5 jours avec une note de bien-être/)).toBeInTheDocument()
   })
 
-  it('switches to advanced tab on click', async () => {
+  it('computes the prediction model only when its note is opened', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage()
-    const advancedBtn = await screen.findByRole('button', { name: /Analyse avancée/i })
-    fireEvent.click(advancedBtn)
-    expect(advancedBtn).toHaveAttribute('aria-selected', 'true')
+    await screen.findByText(/Pistes à tester/)
+    expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).toBeNull()
+    await openModel()
     await screen.findByText(/Pas encore assez de jours mesurés/i)
   })
 
@@ -154,9 +173,7 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(9))
     renderPage()
-    // Switch to advanced tab
-    await screen.findByRole('button', { name: /Analyse avancée/i })
-    fireEvent.click(screen.getAllByRole('button', { name: /Analyse avancée/i })[0])
+    await openModel()
     // Should show advanced analysis, not not-enough-data (computed asynchronously)
     expect(await screen.findByText(/Analyse sur/i)).toBeInTheDocument()
   })
@@ -166,7 +183,7 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
     renderPage()
-    fireEvent.click(await screen.findByRole('button', { name: /Analyse avancée/i }))
+    await openModel()
     expect(await screen.findByText(/Variables redondantes écartées/i)).toBeInTheDocument()
     expect(screen.getByText(/redondantes écartées/i).closest('p').textContent).toMatch(/Pas quotidiens \(≈ Durée de sommeil\)/)
   })
@@ -176,8 +193,7 @@ describe('Recommendations page', () => {
     listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage()
     // Click advanced tab after initial render (button should be there immediately)
-    const advBtn = await screen.findByRole('button', { name: /Analyse avancée/i })
-    fireEvent.click(advBtn)
+    await openModel()
     // 5 days < 9 required for advanced — should show not-enough-data (computed asynchronously)
     expect(await screen.findByText(/Pas encore assez de jours mesurés/i)).toBeInTheDocument()
     expect(screen.getByText(/Encore 4 jours avec une note de bien-être \(vous en avez 5\)/)).toBeInTheDocument()
@@ -274,7 +290,7 @@ describe('Recommendations auto-sync', () => {
       </BrowserRouter>
     )
 
-    await screen.findByRole('heading', { name: /^Vos pistes$/i })
+    await screen.findByRole('heading', { name: /^Vos analyses$/i })
     expect(useAutoSync).toHaveBeenCalled()
   })
 })
@@ -286,7 +302,7 @@ describe('Recommendations navigation link', () => {
     const App = (await import('../App')).default
     render(<App />)
     const nav = await screen.findByRole('navigation', { name: 'Principal' })
-    const link = within(nav).getByRole('link', { name: /Pistes/ })
+    const link = within(nav).getByRole('link', { name: /Analyses/ })
     expect(link).toHaveAttribute('href', '/recommendations')
   })
 })
@@ -688,7 +704,7 @@ describe('Recommendations — week-end in the advanced model', () => {
     })
     listEntriesForAnalysis.mockResolvedValue(makeEntries(12))
     renderPage()
-    fireEvent.click(await screen.findByRole('button', { name: /Analyse avancée/i }))
+    await openModel()
     expect(await screen.findByText(/\+0,4 point le week-end/)).toBeInTheDocument()
     spy.mockRestore()
   })
@@ -728,8 +744,10 @@ describe('Recommendations — lagged effects', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(8))
     renderPage()
-    const section = (await screen.findByText(/Effets décalés/)).closest('section')
-    expect(section).toHaveTextContent(/7 sur 14/)
+    // POL-7 : une ligne discrète dans « Bientôt », pas une section presque vide
+    const soon = await screen.findByTestId('reco-soon')
+    expect(soon).toHaveTextContent(/Effets décalés\s*7\/14 jours/)
+    expect(screen.queryByRole('heading', { name: 'Effets décalés' })).toBeNull()
   })
 
   it('says when no delayed effect stands out', async () => {
@@ -773,7 +791,7 @@ describe('Recommendations — explanations grouped (D1)', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
     renderPage()
-    fireEvent.click(await screen.findByRole('button', { name: /Analyse avancée/i }))
+    await openModel()
     const meta = await screen.findByText(/Analyse sur/i)
     expect(meta.closest('p').textContent).not.toMatch(/R²|Variables retenues|Régression/)
     const note = screen.getByText(/Comment fonctionne ce modèle/).closest('details')
@@ -795,7 +813,7 @@ describe('Recommendations — explanations grouped (D1)', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
     renderPage()
-    fireEvent.click(await screen.findByRole('button', { name: /Analyse avancée/i }))
+    await openModel()
     await screen.findByText(/Analyse sur/i)
     const titles = [...document.querySelectorAll('.reco-section-title')].map((h) => h.textContent)
     expect(titles.length).toBeGreaterThan(0)
@@ -858,7 +876,8 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(faceHistory(4))
     renderPage()
-    expect(await screen.findByTestId('face-mood-section')).toHaveTextContent('4 jours sur 14 avec au moins 3 lectures')
+    expect(await screen.findByTestId('reco-soon')).toHaveTextContent(/Avec votre bien-être estimé\s*4\/14 jours/)
+    expect(screen.queryByTestId('face-mood-section')).toBeNull()
   })
 
   it('shows nothing about the face without any face reading', async () => {

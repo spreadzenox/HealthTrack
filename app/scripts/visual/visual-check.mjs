@@ -78,7 +78,7 @@
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
  *                                          # (variables --safe-area-inset-* injectées par Capacitor, en px)
- *   npm run visual -- --routes=/recommendations --click="Analyse avancée"
+ *   npm run visual -- --routes=/recommendations --click="Comment c’est calculé > Le modèle qui prédit votre bien-être"
  *                                          # clique un bouton (nom accessible) ou un volet <summary> avant la capture
  *                                          # (« Analyse avancée > Comment fonctionne » : plusieurs clics à la suite)
  *

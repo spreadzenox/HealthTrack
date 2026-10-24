@@ -3,62 +3,91 @@
 }
 
 .reco-intro {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.55;
+  font-size: 0.88rem;
+  background: var(--lilac-bg);
+  color: var(--lilac-text);
+  border-radius: 18px;
+  padding: 10px 14px;
+  line-height: 1.5;
   margin: 0 0 20px;
 }
 
-/* ─── Tab navigation ─────────────────────────────────────────────────────── */
+/* ─── En-tête : ligne mono (POL-7) ──────────────────────────────────────── */
 
-.reco-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+.reco-meta-line {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin: 0 0 4px;
 }
 
-.reco-tab-btn {
-  flex: 1;
-  min-width: 140px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 14px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  background: var(--surface);
+.reco-explore {
+  font-size: 0.82rem;
+  margin: 0 0 16px;
+}
+
+/* ─── Bientôt : une ligne par bloc qui attend des données ─────────────────── */
+
+.reco-soon {
+  margin: 8px 0 18px;
+}
+
+.reco-soon-title {
+  font-size: 0.82rem;
+  font-weight: 700;
   color: var(--text-muted);
-  border-radius: var(--radius);
-  border: 1.5px solid transparent;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-  cursor: pointer;
+  margin: 0 0 6px;
+}
+
+.reco-soon-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reco-soon-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.reco-soon-progress {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+/* ─── Pied de page : mise en garde + une seule note de méthode ─────────────── */
+
+.reco-footer {
+  margin-top: 24px;
+  font-size: 0.75rem;
+}
+
+.reco-footer .reco-method-note {
+  margin: 0;
+  font-size: 0.75rem;
+  background: none;
+  padding: 4px 0;
   text-align: center;
-  line-height: 1.3;
 }
 
-.reco-tab-btn:hover {
-  background: rgba(var(--brand-rgb), 0.08);
+.reco-footer .reco-method-note[open] {
+  text-align: left;
+}
+
+.reco-footer .reco-model-note {
+  margin-top: 10px;
+  text-align: left;
+}
+
+.reco-method-sub {
+  font-weight: 700;
   color: var(--text);
-}
-
-.reco-tab-btn-active {
-  background: rgba(var(--brand-rgb), 0.14);
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.reco-tab-min {
-  font-size: 0.72rem;
-  font-weight: 400;
-  color: var(--text-muted);
-  opacity: 0.8;
-}
-
-.reco-tab-btn-active .reco-tab-min {
-  color: var(--accent);
-  opacity: 0.7;
 }
 
 /* ─── Tab content ────────────────────────────────────────────────────────── */
@@ -329,7 +358,7 @@
   line-height: 1.5;
 }
 
-.reco-method-note summary {
+.reco-method-note > summary {
   cursor: pointer;
   font-weight: 600;
   color: var(--accent);
@@ -337,12 +366,12 @@
   outline: none;
 }
 
-.reco-method-note summary::before {
+.reco-method-note > summary::before {
   content: '▶ ';
   font-size: 0.7rem;
 }
 
-.reco-method-note[open] summary::before {
+.reco-method-note[open] > summary::before {
   content: '▼ ';
 }
 

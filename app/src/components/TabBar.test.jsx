@@ -21,7 +21,7 @@ describe('TabBar', () => {
     expect(links.map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
       ['Aujourd’hui', '/'],
       ['Journal', '/journal'],
-      ['Pistes', '/recommendations'],
+      ['Analyses', '/recommendations'],
       ['Sources', '/connectors'],
     ])
   })

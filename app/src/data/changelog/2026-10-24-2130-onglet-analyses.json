@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "amélioration",
+  "title": "L'onglet « Pistes » devient « Analyses »",
+  "items": [
+    "Une seule analyse, sans onglets « simple » et « avancée » : les pistes à tester d'abord, puis les liens repérés.",
+    "Ce qui attend encore des données (bien-être estimé, habitudes, effets décalés) tient en une ligne discrète « Bientôt », avec le nombre de jours qui manquent.",
+    "« Comment c'est calculé » est rangé tout en bas, en petit, avec le modèle qui prédit votre bien-être. Rien ne change dans les calculs."
+  ]
+}
