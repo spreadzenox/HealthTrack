@@ -47,8 +47,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   d'aide), puis P21 à relancer ; (c) `data_extraction_rules` (Android 12+) et `full_backup_content` qui excluent
   clés de session et d'appairage de la montre, clé Gemini (sideload) et jetons, avec test ; (d) restauration sur un
   nouveau téléphone : montre à réappairer proprement, identifiant d'installation (à garder : il porte les crédits).
-- [ ] **INTEGRITY-BILAN** : lire le bilan Play Integrity du workflow relais après l'analyse du propriétaire du 24/10
-  13:38 (6b-2c) ; passer en `enforce` seulement si son téléphone passe.
+- [x] **INTEGRITY-BILAN — LU le 24/10 15:00** : 1 jeton réel, `passed` (l'analyse du propriétaire de 13:38) ; 12
+  `missing` (CI, vieilles versions). `enforce` plus tard, quand quelques testeurs auront envoyé des jetons.
+- [ ] **CREDITS-LOG** : le workflow relais compte les `credits_store_failed` après le test d'analyse (preuve que
+  relay-runtime écrit bien dans Firestore) et l'écrit dans son résumé.
 - [ ] **PLAY-COMPLETED** : vérifier par l'API que chaque version play arrive en test interne avec le statut
   `completed` (l'app a passé son premier examen le 23/10) et retirer du résumé les gestes « version restée en brouillon ».
 - [ ] **IAM** : P28 proposé (retirer `roles/editor` du compte Compute par défaut, inutilisé par le relais et la CI).

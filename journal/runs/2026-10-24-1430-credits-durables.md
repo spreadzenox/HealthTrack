@@ -34,6 +34,17 @@ toujours sous `INSTALL_DAILY_CAP` (20) et le plafond global (200 / jour).
 - Relais : `npm test` 76 verts (+5 : redémarrage, mois suivant, lecture retentée, REST Firestore, serveur avec panne).
 - App : Vitest 2 131 verts (1er passage CI rouge : type « correction » au lieu de « correctif » dans la Nouveauté, corrigé), build OK, lint inchangé (6 erreurs préexistantes), `npm run visual` vert (page Repas relue ; la carte de résultat IA n'a pas de capture, elle est couverte par `Food.test.jsx`).
 
+## Après le merge (#320, `762663e`)
+- « Relais — déploiement » vert (run 40096191836) : test d'analyse HTTP 200 (`gemini-3.5-flash-lite`), relay-runtime
+  lit toujours les achats (HTTP 404 sur un faux jeton, attendu).
+- **Bilan Play Integrity 7 j : 1 `passed` (1 installation, 1 événement) + 12 `missing` (10 installations : CI et vieilles
+  versions)**. Le seul jeton réel reçu est valide ; c'est très probablement l'analyse du propriétaire du 24/10 13:38
+  depuis la version play → son téléphone passe la vérification. Pas encore `enforce` : attendre quelques jetons de
+  plus (testeurs) pour ne bloquer personne à tort.
+- Non vérifiable depuis la session : l'absence de `credits_store_failed` dans les journaux (droit Firestore effectif).
+  À ajouter au workflow relais au prochain run (compte des `credits_store_failed` après le test d'analyse, comme le
+  bilan Integrity).
+
 ## Suite
 - **6f** (période de lancement : début/fin/interrupteur par la CI, « Premium offert pendant le test » dans l'app,
   texte d'invitation), puis **SAUV** (règles de sauvegarde, textes honnêtes, P21), INTEGRITY-BILAN, puis M6b.
