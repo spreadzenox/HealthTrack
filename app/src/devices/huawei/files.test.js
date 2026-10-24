@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { decodeTlvs } from './protocol'
-import { openFileTlvs, parsePush, parseSleepSequence, parseSummary, SLEEP_FIELD } from './files'
-import { field, rawField, sleepSequenceFile } from './testing/sampleFiles'
+import { openFileTlvs, parsePush, parseSleepSequence, parseStressFile, parseSummary, SLEEP_FIELD } from './files'
+import { field, rawField, sleepSequenceFile, stressFile } from './testing/sampleFiles'
 import { encodeTlvs } from './protocol'
 
 const T = 1760306400 // 12/10/2026 22:00 UTC
@@ -128,5 +128,33 @@ describe('montre Huawei : fichiers détaillés (§7.6)', () => {
     const [night] = parseSleepSequence(file)
     expect(night.score).toBeUndefined()
     expect(night.stages).toHaveLength(1)
+  })
+})
+
+describe('montre Huawei : fichier de stress rrisqi_data.bin (M4, §7.6)', () => {
+  it('version 3 : deux enregistrements → score et niveau de la montre', () => {
+    const file = stressFile([
+      { startSec: T, endSec: T + 300, score: 27, level: 1 },
+      { startSec: T + 3600, endSec: T + 3900, score: 64, level: 3 },
+    ])
+    expect(file.length).toBe(48 + 2 * 66)
+    expect(parseStressFile(file)).toEqual([
+      { start: T * 1000, end: (T + 300) * 1000, score: 27, level: 1 },
+      { start: (T + 3600) * 1000, end: (T + 3900) * 1000, score: 64, level: 3 },
+    ])
+  })
+
+  it('autre version ignorée, score hors 1–99 ou dates incohérentes écartés, niveau inconnu omis', () => {
+    expect(parseStressFile(stressFile([{ startSec: T, endSec: T + 60, score: 40, level: 2 }], { version: 2 }))).toEqual([])
+    const file = stressFile([
+      { startSec: T, endSec: T + 60, score: 0 },
+      { startSec: T, endSec: T + 60, score: 100 },
+      { startSec: T, endSec: T - 60, score: 50 },
+      { startSec: T, endSec: T + 60, score: 50, level: 9 },
+    ])
+    expect(parseStressFile(file)).toEqual([{ start: T * 1000, end: (T + 60) * 1000, score: 50 }])
+    expect(parseStressFile(new Uint8Array(10))).toEqual([])
+    // enregistrement tronqué en fin de fichier : ignoré
+    expect(parseStressFile(file.slice(0, 48 + 66 + 20))).toEqual([])
   })
 })

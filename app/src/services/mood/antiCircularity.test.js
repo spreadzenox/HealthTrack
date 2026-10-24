@@ -28,6 +28,8 @@ describe('séparation Y (humeur) / X (comportements et contexte)', () => {
     expect(isEstimatorInput('voice_pitch_sd')).toBe(true)
     // Choix documenté : l'usage des réseaux sociaux est un X, pas une entrée de l'estimateur.
     expect(isEstimatorInput('social_media_minutes')).toBe(false)
+    // Le stress calculé par la montre (M4) est une estimation physiologique : un X, jamais le « Stress » déclaré.
+    expect(isEstimatorInput('watch_stress')).toBe(false)
     expect(isEstimatorInput('screen_late_minutes')).toBe(false)
     expect(isEstimatorInput('sleepMinutes')).toBe(false)
   })

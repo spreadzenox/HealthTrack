@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "nouveau",
+  "title": "Le stress mesuré par votre montre Huawei",
+  "items": [
+    "À chaque synchronisation, l’app récupère le score de stress que calcule votre montre (de 1 à 99), y compris celui des dernières semaines.",
+    "Vous le retrouvez dans Journal → Jours (« Stress montre », moyenne de la journée) et sur la page « Données de la montre ».",
+    "Il reste à part du stress que vous notez vous-même : c’est une mesure de la montre, une estimation, pas un diagnostic. Pensez à activer le stress automatique sur la montre."
+  ]
+}

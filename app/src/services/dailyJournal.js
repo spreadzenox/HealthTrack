@@ -13,7 +13,7 @@ import { mealKcal } from './mealEditing'
 export const JOURNAL_SUMMARY_TYPES = [
   'heart_rate', 'steps', 'calories', 'sleep',
   'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weather',
-  'phone_usage', 'phone_apps',
+  'phone_usage', 'phone_apps', 'watch_stress',
 ]
 
 /** Phases qui ne comptent pas comme du sommeil. */
@@ -50,6 +50,7 @@ function emptyDay(dateKey) {
     _resp: [],
     _temp: [],
     _skinTemp: [],
+    _stress: [],
     _bp: [],
     _glucose: [],
     _wellbeing: [],
@@ -109,6 +110,9 @@ function finalize(day) {
       // Température de la peau au poignet (montre) : moyenne du jour, jamais mêlée à une température corporelle
       skinTempC: day._skinTemp.length ? Math.round((day._skinTemp.reduce((a, v) => a + v, 0) / day._skinTemp.length) * 10) / 10 : null,
       skinTempCount: day._skinTemp.length,
+      // Stress calculé par la montre (score 1–99) : moyenne du jour, jamais mêlé au « Stress » que vous déclarez
+      watchStress: day._stress.length ? Math.round(day._stress.reduce((a, v) => a + v, 0) / day._stress.length) : null,
+      watchStressCount: day._stress.length,
       bloodPressure: last(day._bp),
       weather: day._weather,
       glucoseMgDl: last(day._glucose),
@@ -234,6 +238,9 @@ export function buildDailyJournal(entries) {
         break
       case 'body_temperature':
         if (isNum(p.valueC)) (p.subtype === 'skin' ? day._skinTemp : day._temp).push(p.valueC)
+        break
+      case 'watch_stress':
+        if (isNum(p.value) && p.value > 0) day._stress.push(p.value)
         break
       case 'blood_pressure':
         if (isNum(p.systolic) && isNum(p.diastolic)) day._bp.push({ systolic: p.systolic, diastolic: p.diastolic })

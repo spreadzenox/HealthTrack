@@ -221,6 +221,17 @@ describe('buildDailyJournal', () => {
     expect(only.summary.temperatureC).toBeNull()
   })
 
+  it('M4 : le stress de la montre est résumé (moyenne du jour), jamais listé ni mêlé aux notes', () => {
+    const [day] = buildDailyJournal([
+      e('watch_stress', '2026-10-08T10:00:00', { value: 30, unit: 'score', level: 2 }),
+      e('watch_stress', '2026-10-08T15:00:00', { value: 45, unit: 'score' }),
+    ])
+    expect(day.items).toEqual([])
+    expect(day.summary.watchStress).toBe(38)
+    expect(day.summary.watchStressCount).toBe(2)
+    expect(day.summary.wellbeing).toBeNull()
+  })
+
   it('renvoie une liste vide sans entrées', () => {
     expect(buildDailyJournal([])).toEqual([])
     expect(buildDailyJournal(undefined)).toEqual([])

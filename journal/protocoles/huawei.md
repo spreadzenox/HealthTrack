@@ -973,7 +973,7 @@ température »). Lecture de [G] master `0735529275` (21/10/2026) via l'API REST
 | FC continue | minutes 7/0x0B, masque 1 bit 0x40 | ✅ | — |
 | FC au repos | minutes 7/0x0B, masque 2 bit 0x02 | ✅ | — |
 | FC de la nuit (mini, maxi, moyenne) | résumé `sequence_data` | ❌ | M1 |
-| **Stress** (score 1–99, niveau) | fichier `rrisqi_data.bin` 0x2C type 0x10 (§7.6) | ❌ | M4 : même correctif de capacité + décodeur des enregistrements de 66 octets |
+| **Stress** (score 1–99, niveau) | fichier `rrisqi_data.bin` 0x2C type 0x10 (§7.6) | ✅ M4 le 24/10 (à confirmer sur la montre) | §10.14 ; arrière-plan avec M6 |
 | Pas, distance, calories | minutes + totaux 7/0x03 | ✅ | — |
 | Étages / dénivelé | ❓ bits inconnus des minutes ; altitude du jour = classe P2P 200003 (codage incertain, PR #6579 ouverte) | ❌ | M4 bis, après M2 (garder les bits inconnus des minutes dans le journal pour les identifier) |
 | Séances (type, durée, distance, calories, FC mini / maxi) | 0x17/0x07–0x08 (§7.5) | ✅ | — |
@@ -1278,3 +1278,19 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
   `readsAt` ; une connexion sans lecture garde les précédents. Les captures du lecteur Java en arrière-plan ne les
   mettent pas encore à jour (M6).
 - Page `/montre` « Données de la montre » (lecture des 30 derniers jours de la source), lien dans la carte montre.
+
+### 10.14 M4 (stress) livré (run du 24/10/2026 12:30)
+- `files.js` : `STRESS_FILE` (`rrisqi_data.bin`), `parseStressFile(bytes)` : version lue aux octets 10–11 (seule la
+  version 3 est acceptée, les autres rendent `[]`), enregistrements de 66 octets à partir de l'octet 48 ; on ne garde que
+  début, fin, score (1–99, sinon écarté) et niveau (1–4, sinon omis). Fichier d'exemple synthétique : `stressFile()`
+  dans `testing/sampleFiles.js`.
+- `sync.js` : `canReadStressFile(caps)` = stress automatique (0x20/0x09) pas refusé **et** bit 0x04 de 1/0x31 levé
+  (réglages illisibles → on essaie) ; lecture `stress` (journal : « stress », commande « 0x2C · 0x10 ») juste après le
+  sommeil détaillé, période `[stressSince, until)`.
+- `services/watchSync.js` : reprise propre `stressFileUntil` (même règle que `sleepFileUntil` : 60 jours la première
+  fois, puis depuis la dernière lecture moins un jour).
+- Entrée **`watch_stress`** (`value` = score, `unit: 'score'`, `level`, `endDate`), à la minute du début. Type distinct du
+  tag « stress » déclaré (entrée de l'estimateur, D5) : `isEstimatorInput('watch_stress') === false` est testé.
+  Journal → Jours : puce « Stress montre » (moyenne du jour) ; écran « Données de la montre » : ligne « Stress (montre) ».
+- Reste de M4 : compteur des bits inconnus des minutes (étages, M4 bis) ; lecture en arrière-plan (Java) du fichier de
+  stress avec M6. À confirmer sur la GT 6 Pro (stress automatique activé et calibré).

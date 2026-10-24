@@ -646,6 +646,23 @@ de l'abonnement avec votre compte de testeur de licence, [`PRODUIT.md`](PRODUIT.
 vérification. **Prochain run de code** : protection bloquante si le bilan le permet, sinon M4 (stress, SpO₂,
 respiration de la montre).
 
+**Run du 24/10 12:30 — la montre envoie maintenant son stress (M4).** Le bilan Play Integrity du run précédent ne
+montre que 6 envois **sans jeton** en 7 jours (essais de la CI et vieilles versions), aucun de votre téléphone : la
+protection des crédits IA reste donc en mode « observation » (rien n'est bloqué) jusqu'à ce que vous ayez fait une
+analyse IA d'un repas depuis la version Play. Ce run a donc repris le **chantier montre** : à chaque synchro,
+Halcya télécharge le **fichier de stress** de la montre (le score 1–99 que la montre calcule elle-même, et son
+niveau), avec rattrapage des 60 derniers jours la première fois. Ce que vous verrez (les deux versions) :
+**Réglages → Sources → « Données de la montre »** a une ligne **« Stress (montre) »** (dernière valeur, date, nombre
+sur 7 jours) au lieu de « à venir », et **Journal → Jours** montre une puce **« Stress montre 37 / 99 »** (moyenne du
+jour). Ce stress est rangé **à part** du « Stress » que vous notez vous-même : c'est un facteur possible du bien-être,
+jamais une entrée de son estimation (règle anti-circularité, test à l'appui). **👉 À tester sur votre GT 6 Pro** :
+vérifiez que « Stress automatique » est activé sur la montre (Huawei Santé → Stress, test de calibration fait une
+fois), portez-la une demi-journée, synchronisez depuis la carte montre puis envoyez une capture de « Données de la
+montre » : la ligne « Stress (montre) » doit dire « reçu ». Si elle dit « non pris en charge » ou « vide », le journal
+technique saura dire pourquoi. **👉 Votre prochaine action la plus utile reste P27** (test de l'abonnement, ≈ 30 min,
+[`PRODUIT.md`](PRODUIT.md) §4), avec une analyse IA de repas au passage. **Prochain run de code** : M6 (relecture en
+arrière-plan du sommeil détaillé et du stress, rattrapage complet), puis M7 (courbe FC et allure des séances).
+
 **Run « idées » du 24/10 08:30 — l'abonnement est prêt à être créé, et une précision importante pour P23 (rien de
 nouveau dans l'app).** ① **6d est spécifié appel par appel** ([`IDEES.md`](IDEES.md) I158) : le prochain run de code
 crée chez Google l'abonnement `halcya_premium` (identifiant que l'app attend déjà), ses formules **annuel 29,99 €** et
@@ -1202,6 +1219,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 09:30 — [6d : abonnements créés par l'API](runs/2026-10-24-0930-6d-abonnements.md) | 🧭💳 | `scripts/play/subscriptions.mjs` (`buildCatalog` pur, `ensureCatalog` idempotent : lecture → création / ajout des formules manquantes → offre `essai-14j` → activation → relecture ; prix existants jamais modifiés) ; workflow « Play — abonnements » : **créé et actif du 1er coup** ; `playLabel` ≤ 40 car. ; 12 tests ; v246 |
 | 24/10 10:30 — [6e : paiement à régulariser + scénario P27](runs/2026-10-24-1030-6e-paiement-scenario.md) | 🧭💳 | `paymentIssue()` (grâce / suspension) + `PaymentIssueCard` en haut de l'Accueil (play), lien vers les abonnements Google Play ; `--subscription=grace|on_hold` ; P27 : 7 cases pour le propriétaire (testeur de licence) ; 2 122 Vitest |
 | 24/10 11:30 — [CI : faux plantage du test émulateur](runs/2026-10-24-1130-ci-plantage-emulateur.md) | 🔧 | `play-cold-start.sh` : seuls les plantages de `fr.jpesquet.sante` comptent, tampon `crash` vidé et publié ; « Relais — déploiement » : bilan Play Integrity 7 j (6b-2c-1) ; 2 122 Vitest |
+| 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |

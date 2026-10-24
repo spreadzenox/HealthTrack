@@ -36,7 +36,7 @@ import {
   stepsCheck,
 } from './sync'
 import { SLEEP_FIELD } from './files'
-import { field, sleepSequenceFile } from './testing/sampleFiles'
+import { field, sleepSequenceFile, stressFile } from './testing/sampleFiles'
 import { clearWatchNights } from '../../services/watchSync'
 import { connectAndAuthenticate, createKeyStore } from './pairing'
 import { createFakeWatch, TEST_SECRETS } from './testing/fakeWatch'
@@ -258,7 +258,9 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
       '1/8*', '1/5*', '1/2*', '1/3*', '1/49*',
       // fin d'association (§6.12)
       '1/7*', '26/5*', '1/48*', '1/62*', '1/61*', '1/53*', '7/2*', '7/14*', '1/50*', '12/1*', '1/4*', '7/23*', '7/36*',
-      '7/12*', '7/13*', '7/10*', '7/11*', '7/11*', '7/3*', '23/7*', '44/1*', '44/6*'])
+      '7/12*', '7/13*', '7/10*', '7/11*', '7/11*', '7/3*', '23/7*', '44/1*', '44/6*',
+      // stress (M4) : fichier rrisqi vide → ouvert puis refermé
+      '44/1*', '44/6*'])
     expect(written.filter((e) => e.type === 'steps' && !e.payload.period).map((e) => e.payload.value)).toEqual([200])
     expect(written.filter((e) => e.type === 'sleep').map((e) => e.payload.sleepState)).toEqual(['light', 'deep'])
     expect(written.find((e) => e.payload.period === 'day')).toMatchObject({ type: 'steps', payload: { value: 5400 } })
@@ -305,7 +307,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     expect(report.steps.find((s) => s.id === 'sync')).toMatchObject({ status: 'warn', detail: expect.stringMatching(/^1 minute → (\d+ nouvelles? mesures?|déjà à jour) · sans réponse : sommeil$/) })
     expect(report.sync.stalled).toEqual(['sommeil'])
     expect(report.sync.services.map((r) => [r.id, r.outcome, r.count])).toEqual([
-      ['sleep', 'timeout', 0], ['minutes', 'ok', 1], ['totals', 'empty', 0], ['workouts', 'empty', 0], ['sleepFile', 'empty', 0], ['hrvDay', 'unsupported', 0], ['skinTemp', 'unsupported', 0],
+      ['sleep', 'timeout', 0], ['minutes', 'ok', 1], ['totals', 'empty', 0], ['workouts', 'empty', 0], ['sleepFile', 'empty', 0], ['stress', 'empty', 0], ['hrvDay', 'unsupported', 0], ['skinTemp', 'unsupported', 0],
     ])
     expect(report.sync.services[1]).toMatchObject({ command: '7/0x0A', units: 1 })
     expect(report.log.some((l) => /lectures : sommeil : sans réponse, minutes : reçu \(1\)/.test(l.msg))).toBe(true)
@@ -554,6 +556,50 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
   })
 })
 
+describe('montre Huawei : stress (M4, fichier rrisqi_data.bin)', () => {
+  const memoryStorage = () => {
+    const m = new Map()
+    return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }
+  }
+
+  it('fichier lu par 0x2C type 0x10, écrit en « watch_stress » (pas le stress déclaré), reprise par sa propre date', async () => {
+    const now = Date.UTC(2026, 9, 24, 10, 10)
+    const s0 = Math.floor(Date.UTC(2026, 9, 24, 8, 2, 30) / 1000)
+    const file = stressFile([
+      { startSec: s0, endSec: s0 + 300, score: 33, level: 2 },
+      { startSec: s0 + 3600, endSec: s0 + 3900, score: 71, level: 3 },
+    ])
+    const storage = memoryStorage()
+    const watch = createFakeWatch({ files: { 'rrisqi_data.bin': file } })
+    const written = []
+    const sync = createWatchSync({ watchKey: 'S', storage, now: () => now, write: async (e) => (written.push(...e), { inserted: e.length }), clear: async () => 0 })
+    const report = await connectAndAuthenticate({ transport: watch.transport, watchKey: 'S', timeoutMs: 500, bindTimeoutMs: 500, keyStore: createKeyStore(memoryStorage()), secrets: TEST_SECRETS, sync })
+    expect(report.outcome.code).toBe('connected')
+    expect(report.sync.services.find((r) => r.id === 'stress')).toMatchObject({ outcome: 'ok', count: 2, command: '0x2C · 0x10' })
+    expect(report.sync.label).toMatch(/2 mesures de stress/)
+    const stress = written.filter((e) => e.type === 'watch_stress')
+    expect(stress.map((e) => [e.at, e.payload.value, e.payload.level])).toEqual([
+      ['2026-10-24T08:02:00.000Z', 33, 2],
+      ['2026-10-24T09:02:00.000Z', 71, 3],
+    ])
+    expect(stress[0].payload).toMatchObject({ unit: 'score', connector: WATCH_SOURCE, endDate: '2026-10-24T08:07:30.000Z' })
+    expect(written.some((e) => e.type === 'wellbeing')).toBe(false)
+    expect(getWatchSyncState('S', storage).stressFileUntil).toBe(Date.UTC(2026, 9, 24, 10))
+  })
+
+  it('stress sauté si la montre n’annonce pas le stress automatique ou si le bit 0x04 de 1/0x31 est baissé', async () => {
+    const session = { request: async () => ({ tlvs: [] }), send: async () => {} }
+    const until = Date.UTC(2026, 9, 24, 10)
+    const off = { services: new Map(), commands: new Map([['32/9', false]]), settings: 0x06 }
+    const noBit = { services: new Map(), commands: new Map(), settings: 0x02 }
+    for (const caps of [off, noBit]) {
+      const data = await readWatchData(session, { since: until - 3600_000, until, caps })
+      expect(data.services.find((r) => r.id === 'stress')).toMatchObject({ outcome: 'unsupported' })
+      expect(data.stress).toEqual([])
+    }
+  })
+})
+
 describe('montre Huawei : issue de chaque lecture (I69, §7.10)', () => {
   it('une minute plus courte que son masque est sautée, pas tout le bloc', () => {
     const tlvs = minuteBlock(0, 1727040000, [
@@ -587,12 +633,12 @@ describe('montre Huawei : issue de chaque lecture (I69, §7.10)', () => {
         throw new Error('non pris en charge')
       },
     }
-    const caps = { services: null, commands: new Map([['7/22', false]]) } // pas de TruSleep : pas de sommeil détaillé
+    const caps = { services: null, commands: new Map([['7/22', false], ['32/9', false]]) } // pas de TruSleep ni de stress auto : aucun fichier
     const data = await readWatchData(session, { since: Date.UTC(2026, 9, 12), until: Date.UTC(2026, 9, 13), caps })
     expect(data.workouts.map((w) => w.number)).toEqual([8])
     expect(data.services.find((r) => r.id === 'workouts')).toMatchObject({ outcome: 'ok', count: 1, units: 2, failed: 1 })
     expect(data.services.find((r) => r.id === 'sleepFile')).toMatchObject({ outcome: 'unsupported' })
-    expect(describeServices(data.services)).toBe('sommeil : vide, minutes : vide, totaux du jour : vide, séances : reçu (1), 1 bloc perdu, sommeil détaillé : non pris en charge, VFC de journée : non pris en charge, température de la peau : non pris en charge')
+    expect(describeServices(data.services)).toBe('sommeil : vide, minutes : vide, totaux du jour : vide, séances : reçu (1), 1 bloc perdu, sommeil détaillé : non pris en charge, stress : non pris en charge, VFC de journée : non pris en charge, température de la peau : non pris en charge')
   })
 
   it('pistes : fichiers déclarés mais muets → canal auxiliaire ; pas du jour sans historique ; rien n’aboutit', () => {
