@@ -77,7 +77,7 @@ export function HistoryChart({ history, now }) {
       {mean != null && points.length > 1 && (
         <line className="wbh-mean" x1={PAD.left} x2={W - PAD.right} y1={y(mean)} y2={y(mean)} />
       )}
-      {period === 'day' && points.map((p) => (
+      {period === 'day' && points.filter((p) => Number.isFinite(p.low) && Number.isFinite(p.high)).map((p) => (
         <line key={`r${p.at}`} className="wbh-range" x1={x(p.at)} x2={x(p.at)} y1={y(p.high)} y2={y(p.low)} />
       ))}
       {points.length > 1 && <path className="wbh-line" d={line} />}
