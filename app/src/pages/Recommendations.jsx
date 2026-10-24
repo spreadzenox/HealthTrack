@@ -5,7 +5,6 @@ import {
   buildDailyDataset,
   localDateKey,
   MIN_DAYS_BASIC,
-  MIN_DAYS_ADVANCED,
   HOLD_OUT_DAYS,
   MAX_FEATURES_RATIO,
   MAX_FEATURES,
@@ -447,21 +446,8 @@ function FaceMoodHabits({ tagEffects, laggedEffects }) {
  * aucune note à saisir. Visible même sans notes ; rien tant qu'aucune lecture du visage n'existe.
  */
 export function FaceMoodSection({ result }) {
-  if (!result || result.status === 'no_face') return null
-  const title = <h3 className="reco-section-title">Avec votre bien-être estimé (visage)</h3>
-  if (result.status !== 'ok') {
-    const n = result.currentDays
-    return (
-      <section className="reco-section" data-testid="face-mood-section">
-        {title}
-        <p className="reco-section-hint">
-          {n} jour{n > 1 ? 's' : ''} sur {FACE_MOOD_MIN_DAYS} avec au moins {FACE_MOOD_MIN_READINGS} lectures du
-          visage. Ensuite, votre sommeil, vos pas, votre écran, vos réseaux… seront comparés à
-          votre bien-être estimé, sans aucune note à donner.
-        </p>
-      </section>
-    )
-  }
+  // Pas encore assez de lectures : une ligne dans « Bientôt » (SoonSection), jamais une carte presque vide
+  if (result?.status !== 'ok') return null
   const shown = result.correlations.filter((c) => !CHART_HIDDEN_VARIABLES.has(c.variable))
   const clear = shown.filter((c) => c.evidence !== 'incertain')
   const uncertain = shown.filter((c) => c.evidence === 'incertain')
@@ -474,7 +460,7 @@ export function FaceMoodSection({ result }) {
   )
   return (
     <section className="reco-section" data-testid="face-mood-section">
-      {title}
+      <h3 className="reco-section-title">Avec votre bien-être estimé (visage)</h3>
       <p className="reco-section-hint">
         Sur {result.faceDays} jours estimés par la Lecture du visage, sans aucune note. Vert = va de pair avec un
         meilleur bien-être estimé · Rouge = avec un moins bon.
@@ -492,35 +478,168 @@ export function FaceMoodSection({ result }) {
         </details>
       )}
       <FaceMoodHabits tagEffects={result.tagEffects} laggedEffects={result.laggedEffects} />
-      <details className="reco-method-note">
-        <summary>Comment c’est calculé</summary>
-        <p>
-          Chaque jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit un bien-être estimé
-          (médiane de ses lectures), comparée à chaque facteur comme une note donnée à la dernière lecture : avant{' '}
-          {DAY_OVER_HOUR} h, ce que vous faites après elle ne compte pas. Mêmes garde-fous que pour vos notes :
-          week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés. Le bien-être estimé ne
-          vient que de votre visage (et de vos notes si vous en donnez) : aucun de ces facteurs ne sert à
-          l’estimer, sinon le lien serait circulaire.
-        </p>
-        <p>
-          Habitudes : bien-être estimé les jours avec chaque tag (ceux de vos notes, ou mesurés par le téléphone)
-          contre les jours sans, le lendemain pour le soir ; le stress ressenti fait partie du bien-être, il
-          n’est jamais comparé. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
-          avant, à bien-être de la veille égal, liens solides seulement.
-        </p>
-        <p>
-          C’est une estimation, moins précise qu’une note : un lien est une hypothèse à observer, pas une
-          cause, et aucun comportement n’est jugé bon ou mauvais d’avance.
-        </p>
-      </details>
     </section>
   )
 }
 
-// ─── Basic tab ────────────────────────────────────────────────────────────────
+/** Méthode des liens avec le bien-être estimé (visage), dans la note « Comment c’est calculé » du bas de page. */
+function FaceMoodMethod() {
+  return (
+    <>
+      <p className="reco-method-sub">Avec votre bien-être estimé (visage)</p>
+      <p>
+        Chaque jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit un bien-être estimé
+        (médiane de ses lectures), comparée à chaque facteur comme une note donnée à la dernière lecture : avant{' '}
+        {DAY_OVER_HOUR} h, ce que vous faites après elle ne compte pas. Mêmes garde-fous que pour vos notes :
+        week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés. Le bien-être estimé ne
+        vient que de votre visage (et de vos notes si vous en donnez) : aucun de ces facteurs ne sert à
+        l’estimer, sinon le lien serait circulaire.
+      </p>
+      <p>
+        Habitudes : bien-être estimé les jours avec chaque tag (ceux de vos notes, ou mesurés par le téléphone)
+        contre les jours sans, le lendemain pour le soir ; le stress ressenti fait partie du bien-être, il
+        n’est jamais comparé. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
+        avant, à bien-être de la veille égal, liens solides seulement.
+      </p>
+      <p>
+        C’est une estimation, moins précise qu’une note : un lien est une hypothèse à observer, pas une
+        cause, et aucun comportement n’est jugé bon ou mauvais d’avance.
+      </p>
+    </>
+  )
+}
 
-function BasicTab({ analysis, teaserShown = false }) {
-  const { correlations: result, tagEffects, laggedEffects, totalDays } = analysis
+// ─── Bientôt : ce qui attend encore des données ──────────────────────────────
+
+/**
+ * Une ligne discrète par bloc qui n'a pas encore assez de données (POL-7) : jamais une carte presque vide.
+ * Rien n'est calculé ici, seuls les compteurs déjà rendus par les analyses sont repris.
+ */
+function soonLines({ faceMood, tagEffects, laggedEffects } = {}) {
+  const lines = []
+  if (faceMood && faceMood.status !== 'ok' && faceMood.status !== 'no_face') {
+    lines.push({
+      id: 'face',
+      label: 'Avec votre bien-être estimé',
+      progress: `${Math.min(faceMood.currentDays ?? 0, FACE_MOOD_MIN_DAYS)}/${FACE_MOOD_MIN_DAYS} jours`,
+    })
+  }
+  if (tagEffects?.status === 'no_tags') {
+    lines.push({ id: 'tags', label: 'Vos habitudes', progress: 'ajoutez des tags à vos notes' })
+  } else if (tagEffects?.status === 'ok' && tagEffects.effects.length === 0) {
+    const counts = tagEffects.pending.filter((t) => !t.weekendOnly).map((t) => Math.min(t.nWith, t.nWithout, MIN_TAG_DAYS))
+    const best = counts.length ? Math.max(...counts) : 0
+    lines.push({ id: 'tags', label: 'Vos habitudes', progress: `${best}/${MIN_TAG_DAYS} jours` })
+  }
+  if (laggedEffects?.status === 'not_enough_data') {
+    lines.push({
+      id: 'lagged',
+      label: 'Effets décalés',
+      progress: `${Math.min(laggedEffects.currentDays ?? 0, MIN_LAG_PAIRS)}/${MIN_LAG_PAIRS} jours`,
+    })
+  }
+  return lines
+}
+
+function SoonSection({ lines }) {
+  if (!lines.length) return null
+  return (
+    <section className="reco-soon" data-testid="reco-soon">
+      <h3 className="reco-soon-title">Bientôt</h3>
+      <ul className="reco-soon-list">
+        {lines.map((l) => (
+          <li key={l.id} className="reco-soon-row">
+            <span>{l.label}</span>
+            <span className="reco-soon-progress">{l.progress}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+// ─── Comment c'est calculé (une seule note, en bas de page) ──────────────────
+
+function CorrelationMethod({ result }) {
+  const { datasetDays } = result
+  return (
+    <>
+      <p>
+        Corrélation de Pearson entre chaque variable et le bien-être, corrigée pour les jours qui
+        se ressemblent (autocorrélation) et pour le nombre de variables testées
+        (Benjamini-Hochberg). Un jour sans mesure (montre non portée, pas de pesée) est ignoré
+        pour cette mesure, jamais compté comme 0. Un jour noté avant {DAY_OVER_HOUR} h, seuls les pas,
+        séances, cigarettes et temps d’écran d’avant la note comptent : ce qui suit ne peut pas
+        l’expliquer.
+        {result.nutritionDays != null && result.nutritionDays < datasetDays && (
+          <>
+            {' '}Alimentation connue sur {result.nutritionDays} jour{result.nutritionDays > 1 ? 's' : ''} sur {datasetDays} :
+            un jour sans repas saisi ne compte pas comme 0 kcal (un oubli n’est pas un jeûne), et sans aucun
+            repas saisi sur les 10 jours précédents, l’alimentation du jour est ignorée.
+          </>
+        )}
+      </p>
+      <WeekendNote control={result.weekendControl} />
+      <p>
+        Tags : bien-être les jours avec chaque tag comparé aux jours sans ; pour les
+        habitudes du soir, c’est le lendemain qui compte. Les week-ends sont comparés aux
+        week-ends et les jours de semaine entre eux. Le stress ressenti fait partie de votre
+        bien-être : il n’est pas présenté comme sa cause.
+      </p>
+      <p>
+        Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
+        avant, à bien-être de la veille égal (une bonne passe qui dure n’est pas créditée à
+        vos comportements) et à journée égale (sommeil, pas… du jour même).
+      </p>
+      <p>
+        Pistes : « Chez vous » quand le lien tient même en comptant tous les facteurs testés
+        (q &lt; {LEVER_PERSONAL_Q.toString().replace('.', ',')}) ; au plus une « À vérifier » quand il est plus fragile (q &lt; {LEVER_MAX_Q.toString().replace('.', ',')}).
+      </p>
+      <p>
+        Tout est calculé sur votre téléphone. Ce sont des hypothèses : une corrélation ne prouve
+        pas une cause, et d’autres choses peuvent changer ces jours-là. Essayez une piste
+        deux semaines et observez. Aucun comportement n’est jugé bon ou mauvais d’avance :
+        quand vos données vont à l’inverse de l’hypothèse générale, la piste le dit.
+      </p>
+    </>
+  )
+}
+
+/**
+ * Pied de page (POL-7) : la mise en garde en petit, puis une seule note « Comment c’est calculé » qui réunit
+ * la méthode des liens, celle du bien-être estimé et le modèle de prédiction (calculé seulement à l’ouverture).
+ */
+function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
+  const correlationsOk = analysis.correlations.status !== 'not_enough_data'
+  const faceOk = analysis.faceMood && analysis.faceMood.status !== 'no_face'
+  // Données vierges : la carte lilas suffit, pas de note de méthode sur rien
+  if (!correlationsOk && !faceOk) return null
+  return (
+    <footer className="reco-footer">
+      <p className="reco-disclaimer">
+        Hypothèses tirées de vos seules données, calculées sur votre téléphone : pas un avis médical.
+      </p>
+      <details className="reco-method-note">
+        <summary>Comment c’est calculé</summary>
+        {correlationsOk && <CorrelationMethod result={analysis.correlations} />}
+        {faceOk && <FaceMoodMethod />}
+        <details
+          className="reco-method-note reco-model-note"
+          onToggle={(e) => { if (e.currentTarget.open) onOpenAdvanced() }}
+        >
+          <summary>Le modèle qui prédit votre bien-être</summary>
+          {advanced ? <AdvancedTab analysis={advanced} /> : <p>Calcul…</p>}
+        </details>
+      </details>
+    </footer>
+  )
+}
+
+// ─── Vue unique des analyses ────────────────────────────────────────────────
+
+function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced }) {
+  const { correlations: result, tagEffects, laggedEffects } = analysis
+  const soon = soonLines(analysis)
 
   if (result.status === 'not_enough_data') {
     return (
@@ -528,63 +647,25 @@ function BasicTab({ analysis, teaserShown = false }) {
         {/* VC-12 : sous la carte lilas, un seul seuil visible ; celui du bien-être passe dans ses « détails » */}
         {!teaserShown && <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />}
         <FaceMoodSection result={analysis.faceMood} />
+        {/* Habitudes et effets décalés attendent les mêmes notes que la carte lilas : seul le visage a son compteur */}
+        <SoonSection lines={soon.filter((l) => l.id === 'face')} />
+        <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
       </div>
     )
   }
 
-  const { datasetDays, reliability, correlations } = result
+  const { correlations } = result
   const levers = result.levers ?? []
+  const tagsShown = tagEffects.status === 'ok' && tagEffects.effects.length > 0
+  const laggedShown = laggedEffects.status !== 'not_enough_data'
 
   return (
     <div className="reco-tab-content">
-      <p className="reco-meta">
-        Analyse sur <strong>{datasetDays} jour{datasetDays > 1 ? 's' : ''} notés</strong>
-        {totalDays > datasetDays && ` (${totalDays} jours de données au total)`}
-        {result.weekendControl?.applied && ' · week-end pris en compte'}.
-        {reliability === 'exploratory' && (
-          <> <span className="reco-reliability-warn">⚠ Données exploratoires — continuez à enregistrer votre bien-être pour améliorer la fiabilité (objectif : 10 jours).</span></>
-        )}
-      </p>
-      <details className="reco-method-note">
-        <summary>Comment c’est calculé</summary>
-        <p>
-          Corrélation de Pearson entre chaque variable et le bien-être, corrigée pour les jours qui
-          se ressemblent (autocorrélation) et pour le nombre de variables testées
-          (Benjamini-Hochberg). Un jour sans mesure (montre non portée, pas de pesée) est ignoré
-          pour cette mesure, jamais compté comme 0. Un jour noté avant {DAY_OVER_HOUR} h, seuls les pas,
-          séances, cigarettes et temps d’écran d’avant la note comptent : ce qui suit ne peut pas
-          l’expliquer.
-          {result.nutritionDays != null && result.nutritionDays < datasetDays && (
-            <>
-              {' '}Alimentation connue sur {result.nutritionDays} jour{result.nutritionDays > 1 ? 's' : ''} sur {datasetDays} :
-              un jour sans repas saisi ne compte pas comme 0 kcal (un oubli n’est pas un jeûne), et sans aucun
-              repas saisi sur les 10 jours précédents, l’alimentation du jour est ignorée.
-            </>
-          )}
+      {result.reliability === 'exploratory' && (
+        <p className="reco-reliability-warn reco-explore">
+          Données exploratoires : continuez à noter votre bien-être (objectif : 10 jours).
         </p>
-        <WeekendNote control={result.weekendControl} />
-        <p>
-          Tags : bien-être les jours avec chaque tag comparé aux jours sans ; pour les
-          habitudes du soir, c’est le lendemain qui compte. Les week-ends sont comparés aux
-          week-ends et les jours de semaine entre eux. Le stress ressenti fait partie de votre
-          bien-être : il n’est pas présenté comme sa cause.
-        </p>
-        <p>
-          Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
-          avant, à bien-être de la veille égal (une bonne passe qui dure n’est pas créditée à
-          vos comportements) et à journée égale (sommeil, pas… du jour même).
-        </p>
-        <p>
-          Pistes : « Chez vous » quand le lien tient même en comptant tous les facteurs testés
-          (q &lt; {LEVER_PERSONAL_Q.toString().replace('.', ',')}) ; au plus une « À vérifier » quand il est plus fragile (q &lt; {LEVER_MAX_Q.toString().replace('.', ',')}).
-        </p>
-        <p>
-          Tout est calculé sur votre téléphone. Ce sont des hypothèses : une corrélation ne prouve
-          pas une cause, et d’autres choses peuvent changer ces jours-là. Essayez une piste
-          deux semaines et observez. Aucun comportement n’est jugé bon ou mauvais d’avance :
-          quand vos données vont à l’inverse de l’hypothèse générale, la piste le dit.
-        </p>
-      </details>
+      )}
 
       <section className="reco-section">
         <h3 className="reco-section-title">Pistes à tester</h3>
@@ -607,15 +688,15 @@ function BasicTab({ analysis, teaserShown = false }) {
 
       <FaceMoodSection result={analysis.faceMood} />
 
-      <TagsSection result={tagEffects} />
+      {tagsShown && <TagsSection result={tagEffects} />}
 
-      <LaggedEffectsSection result={laggedEffects} />
+      {laggedShown && <LaggedEffectsSection result={laggedEffects} />}
 
       <CorrelationsSection correlations={correlations} levers={levers} />
 
-      <p className="reco-disclaimer">
-        Hypothèses tirées de vos seules données : pas un avis médical.
-      </p>
+      <SoonSection lines={soon} />
+
+      <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
     </div>
   )
 }
@@ -786,9 +867,6 @@ function AdvancedTab({ analysis }) {
         </section>
       )}
 
-      <p className="reco-disclaimer">
-        Hypothèses tirées de vos seules données, sur votre téléphone : pas un avis médical.
-      </p>
     </div>
   )
 }
@@ -869,20 +947,25 @@ function RecoDebugPanel({ entries, totalDbCount }) {
 
 // ─── Page root ────────────────────────────────────────────────────────────────
 
-const TABS = [
-  { id: 'basic', label: 'Analyse simple', minDays: MIN_DAYS_BASIC },
-  { id: 'advanced', label: 'Analyse avancée', minDays: MIN_DAYS_ADVANCED + HOLD_OUT_DAYS },
-]
-
 const TAB_TASKS = { basic: 'basicAnalysis', advanced: 'advancedAnalysis' }
+
+/** Ligne mono d'en-tête : sur combien de jours porte l'analyse (« à garder en tête », retour du 24/10). */
+function analysisMetaLine(analysis) {
+  const r = analysis?.correlations
+  if (!r || r.status === 'not_enough_data') return null
+  const parts = [`analyse sur ${r.datasetDays} jour${r.datasetDays > 1 ? 's' : ''} notés`]
+  if (analysis.totalDays > r.datasetDays) parts.push(`${analysis.totalDays} jours de données`)
+  if (r.weekendControl?.applied) parts.push('week-end pris en compte')
+  return parts.join(' · ')
+}
 
 export default function Recommendations() {
   useAutoSync()
 
-  const [tab, setTab] = useState('basic')
-  // Résultats par onglet, calculés dans un Web Worker et gardés en cache tant que les données ne
-  // changent pas (perf D2) : un onglet déjà calculé s'affiche tout de suite.
+  // Une seule analyse à l'écran (POL-7). Le modèle de prédiction (ex-« analyse avancée ») n'est calculé, dans un
+  // Web Worker et avec le même cache (perf D2), que si l'on ouvre sa note en bas de page.
   const [analyses, setAnalyses] = useState(() => ({ basic: peekAnalysis('basicAnalysis').result ?? null }))
+  const [wantAdvanced, setWantAdvanced] = useState(false)
   const [debugEntries, setDebugEntries] = useState([])
   const [totalDbCount, setTotalDbCount] = useState(null)
   const [error, setError] = useState(null)
@@ -899,18 +982,21 @@ export default function Recommendations() {
 
   useEffect(() => {
     let alive = true
-    // Onglet déjà calculé et données inchangées : servi par le cache, sans recalcul
-    getAnalysis(TAB_TASKS[tab])
-      .then((result) => {
-        if (alive) setAnalyses((a) => ({ ...a, [tab]: result }))
-      })
-      .catch((e) => {
-        if (alive) setError(e.message)
-      })
+    const tabs = wantAdvanced ? ['basic', 'advanced'] : ['basic']
+    for (const tab of tabs) {
+      // Déjà calculé et données inchangées : servi par le cache, sans recalcul
+      getAnalysis(TAB_TASKS[tab])
+        .then((result) => {
+          if (alive) setAnalyses((a) => ({ ...a, [tab]: result }))
+        })
+        .catch((e) => {
+          if (alive) setError(e.message)
+        })
+    }
     return () => {
       alive = false
     }
-  }, [tab, revision])
+  }, [wantAdvanced, revision])
 
   useEffect(() => {
     if (!debugMode) return
@@ -927,17 +1013,22 @@ export default function Recommendations() {
     }
   }, [debugMode, revision])
 
-  const current = analyses[tab]
+  const current = analyses.basic
   const loading = current == null && !error
-  // Rien à montrer encore (VC-2) : la même carte lilas que l'Accueil, sans onglets ni seuils techniques
-  const waiting = analyses.basic?.correlations?.status === 'not_enough_data'
+  // Rien à montrer encore (VC-2) : la même carte lilas que l'Accueil, sans seuils techniques
+  const waiting = current?.correlations?.status === 'not_enough_data'
+  const meta = analysisMetaLine(current)
 
   return (
     <section className="reco-page">
-      <h2 className="page-title">Vos pistes</h2>
-      <p className="reco-intro">
-        Ce qui va de pair avec votre <strong>bien-être</strong> dans vos données, calculé sur votre téléphone.
-      </p>
+      {meta && <p className="reco-meta-line">{meta}</p>}
+      <h2 className="page-title">Vos analyses</h2>
+      {/* Données vierges : la carte lilas seule (rien à nuancer encore) */}
+      {current && !waiting && (
+        <p className="reco-intro">
+          Des liens repérés dans vos données, pas des causes ni un diagnostic.
+        </p>
+      )}
 
       {waiting && (
         <PistesTeaser
@@ -945,24 +1036,9 @@ export default function Recommendations() {
           details={details}
           onToggleDetails={toggleDetails}
           onPistesPage
-          extraDetail={wellbeingWaitLine(analyses.basic.correlations)}
+          extraDetail={wellbeingWaitLine(current.correlations)}
         />
       )}
-
-      {!waiting && <nav className="reco-tabs" aria-label="Onglets des analyses">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            className={'reco-tab-btn' + (tab === t.id ? ' reco-tab-btn-active' : '')}
-            onClick={() => setTab(t.id)}
-            aria-selected={tab === t.id}
-          >
-            {t.label}
-            <span className="reco-tab-min">≥ {t.minDays}j</span>
-          </button>
-        ))}
-      </nav>}
 
       {loading && (
         <div className="loading">
@@ -976,8 +1052,12 @@ export default function Recommendations() {
       {!loading && !error && (
         <>
           {debugMode && <RecoDebugPanel entries={debugEntries} totalDbCount={totalDbCount} />}
-          {tab === 'basic' && <BasicTab analysis={current} teaserShown={waiting} />}
-          {tab === 'advanced' && <AdvancedTab analysis={current} />}
+          <AnalysisView
+            analysis={current}
+            teaserShown={waiting}
+            advanced={analyses.advanced}
+            onOpenAdvanced={() => setWantAdvanced(true)}
+          />
         </>
       )}
     </section>

@@ -678,6 +678,16 @@ et visage toujours ; un bouton « Ajouter une source » pour le reste ; le techn
 Détail : [`IDEES.md`](IDEES.md) I162–I164. **Prochain run de code : POL-7.** **👉 Votre prochaine action** : rien de
 bloquant ; P13 (virement de test) dès qu'il arrive.
 
+**Run du 24/10 21:30 — l'onglet « Pistes » devient « Analyses » (POL-7, 1re partie).** Ce que vous verrez : dans la
+barre du bas, **« Analyses »** ; la page s'appelle **« Vos analyses »** et il n'y a **plus d'onglets « Analyse simple
+/ avancée »** : une seule page, avec en haut « analyse sur N jours notés » (que vous aimiez) et un court encart lilas
+« des liens, pas des causes ni un diagnostic », puis les **pistes à tester** et les liens repérés. Ce qui n'a pas encore
+assez de données (bien-être estimé par le visage, habitudes, effets décalés) tient en **une ligne discrète « Bientôt »**
+avec le compteur de jours. **« Comment c'est calculé »** n'apparaît plus qu'une fois, tout en bas, en petit ; le modèle
+de l'ex-« analyse avancée » y est rangé (« Le modèle qui prédit votre bien-être »), rien n'est perdu. Aucun calcul ne
+change. **👉 À tester** : onglet « Analyses », défilez jusqu'en bas. Prochain run de code : POL-7 2e partie (un seul
+verdict par facteur — « Alcool » n'apparaîtra plus deux fois —, pistes dépliables, barres sans vert / rouge).
+
 **Run du 24/10 19:30 — l'historique de votre bien-être (POL-2).** Ce que vous verrez : en bas de la carte « Bien-être
 estimé », **« Historique › »** ouvre une page avec **Jour / Semaine / Mois** : la courbe de votre bien-être estimé (en
 Jour, chaque lecture avec sa fourchette ; en Semaine et Mois, un point par jour, creux s'il y a eu peu de lectures), vos
@@ -1336,6 +1346,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 18:30 — [POL-3 : carte bien-être](runs/2026-10-24-1830-pol3-carte-bien-etre.md) | 🧭 | `DetailsToggle` → chevron (`aria-expanded`, partout) ; détails visuels (`MoodRange`, `ConfidenceBadge`, pastilles, modèle en petit) ; « Noter moi-même » dans la carte, « Ajouter une note » retiré ; `WellbeingPrompt` seulement contrôlée (plus d'ouverture auto) |
 | 24/10 19:30 — [POL-2 : historique du bien-être](runs/2026-10-24-1930-pol2-historique-bien-etre.md) | 🧭 | `FaceAffect.expressions` (softmax des 8 scores) gardées par rafale (`exAnger`…`exSurprise`, JUnit) ; `wellbeingHistory.js` (jour / semaine / mois, notes à part) ; page `/bien-etre` (courbe SVG, valence / éveil, barres d'expressions) ; lien « Historique › » dans la carte ; démo avec expressions |
 | 24/10 20:30 — [Idées : P28 prêt, POL-7 et POL-8 maquettés](runs/2026-10-24-2030-idees-p28-pol7-pol8.md) | 💡 | Règles FGS caméra relues (formulaire : description, impact, vidéo, cas d'usage ; Android 15 : pas de relance au démarrage) → `PLAY-CONFORMITE.md` §1 bis (texte à coller, script vidéo en 8 plans, ordre des gestes, APK d'aperçu) ; I163 maquette Analyses ; I164 maquette Sources ; journal seul |
+| 24/10 21:30 — [POL-7a : onglet « Analyses »](runs/2026-10-24-2130-pol7a-onglet-analyses.md) | 🧭 | Onglet et titre « Analyses » ; plus d'onglets simple / avancée (`AnalysisView`) ; ligne mono d'en-tête + encart lilas ; « Bientôt » (`soonLines`) ; une seule note de méthode en pied de page avec le modèle de prédiction calculé à l'ouverture ; 2 156 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

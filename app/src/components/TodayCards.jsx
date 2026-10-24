@@ -192,7 +192,7 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
         {p.ready
           ? (onPistesPage
             ? `Vos jours sont prêts ; ${text.ready}.`
-            : <>Vos jours sont prêts ; {text.ready}. En attendant, voyez <Link to="/recommendations">l’onglet Pistes</Link>.</>)
+            : <>Vos jours sont prêts ; {text.ready}. En attendant, voyez <Link to="/recommendations">l’onglet Analyses</Link>.</>)
           : 'On préfère attendre plutôt que de vous montrer de faux suspects.'}
       </p>
       {details && (
