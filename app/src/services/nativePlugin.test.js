@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from 'vitest'
 import { notThenable } from './nativePlugin'
 
-// Le proxy de registerPlugin (@capacitor/core 8) fabrique une méthode pour tout nom, y compris `then`
+// Le proxy de registerPlugin (@capacitor/core 8) fabrique une méthode pour tout nom, y compris `then` ; la vraie
+// renvoie une promesse rejetée sans jamais appeler resolve/reject : ici, une promesse qui ne se règle jamais suffit
+// à reproduire le blocage (sans rejet orphelin dans la suite de tests)
 function capacitorLikeProxy(impl) {
-  return new Proxy({}, {
-    get: (_, prop) => impl[prop] ?? (() => Promise.reject(new Error(`"X.${String(prop)}()" is not implemented`))),
-  })
+  return new Proxy({}, { get: (_, prop) => impl[prop] ?? (() => new Promise(() => {})) })
 }
 
 describe('notThenable', () => {
