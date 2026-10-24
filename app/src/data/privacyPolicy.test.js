@@ -34,7 +34,7 @@ describe('politique de confidentialité', () => {
     ['la montre en Bluetooth', /Bluetooth/],
     ['l’analyse IA seulement à la demande', /seulement si vous la lancez/],
     ['l’export', /Exporter/],
-    ['la suppression', /Effacer les données/],
+    ['la suppression', /Supprimer toutes mes données/],
     ['le contact', /Contact/],
     ['l’âge minimum', /18 ans et plus/],
     ['l’adresse publique', /spreadzenox\.github\.io\/HealthTrack\/confidentialite/],

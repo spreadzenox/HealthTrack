@@ -507,6 +507,30 @@ export async function deleteEntry(id) {
 }
 
 /**
+ * Efface toutes les entrées et les agrégats (« Supprimer toutes mes données », VC-10). La base et ses index
+ * restent en place : l'app continue de fonctionner, vide.
+ * @returns {Promise<number>} nombre d'entrées effacées
+ */
+export async function deleteAllEntries() {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
+    const store = tx.objectStore(STORE_NAME)
+    let count = 0
+    store.count().onsuccess = (e) => {
+      count = e.target.result
+      store.clear()
+      tx.objectStore(AGG_STORE).clear()
+    }
+    tx.oncomplete = () => {
+      bumpDataRevision()
+      resolve(count)
+    }
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+/**
  * Modify an app entry in place: only `payload` and `at` can change (type, source, id and
  * created_at are kept). Stamps `updated_at`. Rejects if the entry does not exist.
  * @param {number} id

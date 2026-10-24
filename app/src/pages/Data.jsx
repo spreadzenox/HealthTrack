@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { exportToJson, importFromJson, parseBackup, countAllEntries } from '../storage/localHealthStorage'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
+import { deleteAllMyData } from '../services/deleteAllData'
 import { activityLevel } from '../services/nutrientReferenceIntakes'
 import '../Food.css'
 
@@ -155,6 +156,33 @@ export default function Data() {
     resetFileInput()
   }
 
+  // Supprimer toutes mes données : confirmation avec le nombre d'entrées, export proposé juste avant (VC-10).
+  const [wipe, setWipe] = useState(null)
+  const [wipeStatus, setWipeStatus] = useState(null)
+
+  const askWipe = async () => {
+    setWipeStatus(null)
+    setWipe({ count: null, running: false })
+    const count = await countAllEntries().catch(() => null)
+    setWipe((w) => (w ? { ...w, count } : w))
+  }
+
+  const runWipe = async () => {
+    setWipe((w) => ({ ...w, running: true }))
+    try {
+      const { entries } = await deleteAllMyData()
+      setWipe(null)
+      setExportStatus(null)
+      setWipeStatus(
+        `${entries ? plural(entries, 'entrée supprimée', 'entrées supprimées') : 'Aucune entrée à supprimer'}, profil effacé. ` +
+          'Vos réglages et connexions restent : seules les nouvelles mesures arriveront.'
+      )
+    } catch (err) {
+      setWipe((w) => ({ ...w, running: false }))
+      setWipeStatus('Erreur : ' + (err.message || 'suppression impossible') + '. Rien n’a été supprimé.')
+    }
+  }
+
   return (
     <section className="food-page">
       <h2 className="page-title">Vos données</h2>
@@ -269,6 +297,44 @@ export default function Data() {
             </div>
           )}
           {importStatus && <p className="data-status">{importStatus}</p>}
+        </div>
+
+        <div className="data-block">
+          <h3 className="section-title">Supprimer</h3>
+          <p className="data-hint">
+            Efface de ce téléphone vos repas, notes, mesures, lectures du visage et votre profil. Nos serveurs
+            ne gardent rien : il n’y a rien d’autre à effacer.
+          </p>
+          {!wipe ? (
+            <button type="button" className="btn btn-secondary" onClick={askWipe}>
+              Supprimer toutes mes données
+            </button>
+          ) : (
+            <div className="import-preview-confirm" role="alert">
+              <p className="import-preview-warning">
+                {wipe.count
+                  ? `Vos ${plural(wipe.count, 'entrée sera supprimée', 'entrées seront supprimées')}, avec votre profil.`
+                  : 'Toutes vos données seront supprimées, avec votre profil.'}{' '}
+                C’est définitif : exportez-les d’abord si vous voulez les garder.
+              </p>
+              <p className="data-hint">
+                Restent : vos réglages, vos connexions (montre, Health Connect), votre abonnement et vos crédits IA.
+              </p>
+              <div className="import-preview-actions">
+                <button type="button" className="btn btn-secondary" onClick={handleExport} disabled={wipe.running}>
+                  Exporter d’abord
+                </button>
+                <button type="button" className="btn btn-danger" onClick={runWipe} disabled={wipe.running}>
+                  {wipe.running ? 'Suppression…' : 'Supprimer définitivement'}
+                </button>
+                <button type="button" className="btn btn-secondary" onClick={() => setWipe(null)} disabled={wipe.running}>
+                  Garder mes données
+                </button>
+              </div>
+              {exportStatus && <p className="data-status">{exportStatus}</p>}
+            </div>
+          )}
+          {wipeStatus && <p className="data-status">{wipeStatus}</p>}
         </div>
       </div>
     </section>

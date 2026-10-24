@@ -11,6 +11,10 @@ vi.mock('../storage/localHealthStorage', () => ({
   countAllEntries: vi.fn(),
 }))
 
+vi.mock('../services/deleteAllData', () => ({
+  deleteAllMyData: vi.fn(),
+}))
+
 vi.mock('@capacitor/core', () => ({
   Capacitor: {
     isNativePlatform: vi.fn(() => false),
@@ -76,7 +80,8 @@ describe('Data page — export (web)', () => {
     const { container } = renderData()
     expect(container.textContent).not.toMatch(/navigateur/i)
     expect(container.textContent).not.toMatch(/Fichiers > Téléphone/)
-    expect(container.querySelectorAll('.data-hint')).toHaveLength(2)
+    // une ligne d'aide par bloc : exporter, importer, supprimer (VC-10)
+    expect(container.querySelectorAll('.data-hint')).toHaveLength(3)
   })
 
   it('clicking export creates a blob URL and triggers download via anchor click', async () => {
@@ -294,5 +299,51 @@ describe('Data page — import (aperçu puis choix)', () => {
       fireEvent.click(screen.getByRole('button', { name: /Ajouter à mes données/i }))
     })
     expect(screen.getByText(/Profil \(sexe, âge, taille, activité\) restauré/)).toBeInTheDocument()
+  })
+})
+
+describe('Data page — supprimer toutes mes données (VC-10)', () => {
+  beforeEach(async () => {
+    const { countAllEntries } = await import('../storage/localHealthStorage')
+    countAllEntries.mockResolvedValue(42)
+    const { deleteAllMyData } = await import('../services/deleteAllData')
+    deleteAllMyData.mockReset()
+    deleteAllMyData.mockResolvedValue({ entries: 42 })
+  })
+
+  it('demande une confirmation, propose l’export d’abord, puis efface', async () => {
+    const { deleteAllMyData } = await import('../services/deleteAllData')
+    renderData()
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer toutes mes données' }))
+    expect(deleteAllMyData).not.toHaveBeenCalled()
+    expect(await screen.findByText(/42 entrées/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Exporter d’abord' })).toBeInTheDocument()
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Supprimer définitivement' }))
+    })
+    expect(deleteAllMyData).toHaveBeenCalledTimes(1)
+    expect(screen.getByText(/42 entrées supprimées/)).toBeInTheDocument()
+  })
+
+  it('« Annuler » ne supprime rien', async () => {
+    const { deleteAllMyData } = await import('../services/deleteAllData')
+    renderData()
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer toutes mes données' }))
+    await screen.findByText(/42 entrées/)
+    fireEvent.click(screen.getByRole('button', { name: 'Garder mes données' }))
+    expect(deleteAllMyData).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Supprimer toutes mes données' })).toBeInTheDocument()
+  })
+
+  it('une erreur est affichée telle quelle', async () => {
+    const { deleteAllMyData } = await import('../services/deleteAllData')
+    deleteAllMyData.mockRejectedValue(new Error('base verrouillée'))
+    renderData()
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer toutes mes données' }))
+    await screen.findByText(/42 entrées/)
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Supprimer définitivement' }))
+    })
+    expect(screen.getByText(/base verrouillée/)).toBeInTheDocument()
   })
 })
