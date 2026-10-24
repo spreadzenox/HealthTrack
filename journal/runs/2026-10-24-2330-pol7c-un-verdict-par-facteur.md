@@ -37,3 +37,10 @@
 
 ## Suite
 - POL-7 terminé. Ensuite : **POL-6** (Journal en pastels, Tendances inactives en une ligne) → POL-8 (Sources) → POL-1.
+
+## Après le merge (#337, `d2a2fba`)
+- Checks de la PR verts (Vitest, Build APK, Relais, montre Java, budget de lectures, émulateur API 36). L'émulateur
+  **API 35** a d'abord échoué sur le premier lancement à froid de la variante play (« premier écran non affiché après
+  90 s », aucun plantage natif ; écran d'onboarding non touché par ce run, API 36 vert sur le même contrôle) : relancé
+  une fois, **vert**. À surveiller si cela se répète.
+- « Build & Release » vert : **v259** publiée (APK 33 747 384 octets, 33,7 Mo) ; « Play — AAB » vert (envoi en test interne).
