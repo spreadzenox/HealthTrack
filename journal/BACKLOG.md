@@ -70,9 +70,12 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   historique, ou chevron discret), partout où il existe (ventre, pistes, paywall…) ; détails visuels (mini-graphique,
   badge de confiance) ; ajout manuel du bien-être discret dans la carte ; supprimer la demande automatique de bien-être
   à l'ouverture.
-- [ ] **POL-2 Historique du bien-être** : vérifier ce que sortent les deux modèles (valence, éveil, expressions ?),
-  garder les scores utiles (migration IndexedDB si besoin), page « Historique du bien-être » (jour / semaine / mois +
-  détail valence / éveil…), estimations jamais diagnostic, anti-circularité inchangée.
+- [x] **POL-2 — FAIT le 24/10 19:30** : les deux modèles sortent 8 scores d'expression + valence + éveil ; les 8
+  probabilités sont désormais gardées par rafale (`exAnger`…`exSurprise`, Java testé) ; page **« Historique du
+  bien-être »** (`/bien-etre`, lien « Historique › » de la carte) : Jour / Semaine / Mois, courbe (fourchettes par
+  lecture en Jour, jours « peu de lectures » creux), notes à la main en losanges, puis « Ce que lisent les modèles »
+  (valence, éveil, expressions). Suites possibles : phrases de qualité du jour (cadrage, lumière) dans la vue Jour ;
+  utiliser les expressions dans l'estimateur seulement si une validation le justifie.
 - [x] **POL-4 — FAIT le 24/10 17:30** Carte ventre seulement si « Mon ventre » choisi (`gutCardMode` ; sans objectif :
   ancienne installation → si le ventre est noté, onboarding passé → affichée), texte du réglage adapté ; rien d'effacé.
 - [x] **POL-5 — FAIT le 24/10 17:30** Boutons de l'Accueil : « Photo du repas » pleine largeur avec icône appareil
@@ -88,7 +91,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   explicite, notification permanente avec « Arrêter », réglage, service démarré app ouverte, ni exemption batterie ni
   Shizuku/ADB en play, interrupteur de build propre à play ; P28 (déclaration FGS + script vidéo) AVANT la première
   version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
-Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → POL-2 → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,

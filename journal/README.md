@@ -658,6 +658,18 @@ une ou deux fois avec la montre au poignet ; ouvrez ensuite Sources → montre �
 détaillé » doit dater de la nuit. **Prochain run de code** : M6 suite (VFC de journée et température de la peau en
 arrière-plan, P2P), puis M7 (courbe FC et allure des séances). **👉 Votre prochaine action la plus utile reste P27**.
 
+**Run du 24/10 19:30 — l'historique de votre bien-être (POL-2).** Ce que vous verrez : en bas de la carte « Bien-être
+estimé », **« Historique › »** ouvre une page avec **Jour / Semaine / Mois** : la courbe de votre bien-être estimé (en
+Jour, chaque lecture avec sa fourchette ; en Semaine et Mois, un point par jour, creux s'il y a eu peu de lectures), vos
+**notes à la main en losanges ambre**, et « Noter moi-même ». Dessous, pour qui veut creuser, **« Ce que lisent les
+modèles »** : valence (désagréable ↔ agréable), éveil (calme ↔ animé) et **les 8 expressions du visage** (joie, neutre,
+surprise, tristesse…), toujours présentées comme des estimations de l'expression, pas de ce que vous ressentez. En
+coulisses : j'ai vérifié ce que sortent les deux modèles embarqués — 8 scores d'expression en plus de la valence et de
+l'éveil, jusqu'ici jetés ; ils sont maintenant gardés (des nombres seulement, aucune image, rien qui quitte le
+téléphone, pas de changement de base de données). **👉 À tester** : après quelques lectures du visage sur la nouvelle
+version, Accueil → « Historique » → « Jour » ; la carte « Expressions » se remplit avec ces nouvelles lectures (les
+anciennes n'en ont pas). Prochain run de code : POL-7 (onglet « Analyses »).
+
 **Run du 24/10 18:30 — la carte « Bien-être estimé » se lit d'un coup d'œil (POL-3).** Ce que vous verrez : le
 bouton texte « détails » devient une **petite flèche** en haut à droite des cartes (bien-être, ventre, pistes, et aussi
 sur la page Premium et le profil Nutrition) ; touchée, elle pivote et ouvre les détails. Dans la carte bien-être, les
@@ -1302,6 +1314,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 16:30 — [SAUV : sauvegarde Android](runs/2026-10-24-1630-sauvegarde-android.md) | 🧭🔒 | `data_extraction_rules.xml` + `backup_rules.xml` (préférences natives propres au téléphone exclues), `BackupMarkerPlugin` (repère hors sauvegarde) + `restoreGuard.js` (secrets du localStorage retirés après restauration), textes confidentialité / conditions / Données / onboarding ; Sécurité des données inchangée ; +10 tests |
 | 24/10 17:30 — [POL-5 + POL-4 : Accueil](runs/2026-10-24-1730-pol5-pol4-accueil.md) | 🧭 | « Photo du repas » pleine largeur + icône `camera`, « Ajouter une note » (`pen`) ; `gutCardMode` (ventre → carte, énergie / tout → aucune, sans objectif : `existing` → `GutCard onlyIfUsed`, sinon carte) ; texte « Ce qui vous amène » ; captures clair / sombre / vierge play |
 | 24/10 18:30 — [POL-3 : carte bien-être](runs/2026-10-24-1830-pol3-carte-bien-etre.md) | 🧭 | `DetailsToggle` → chevron (`aria-expanded`, partout) ; détails visuels (`MoodRange`, `ConfidenceBadge`, pastilles, modèle en petit) ; « Noter moi-même » dans la carte, « Ajouter une note » retiré ; `WellbeingPrompt` seulement contrôlée (plus d'ouverture auto) |
+| 24/10 19:30 — [POL-2 : historique du bien-être](runs/2026-10-24-1930-pol2-historique-bien-etre.md) | 🧭 | `FaceAffect.expressions` (softmax des 8 scores) gardées par rafale (`exAnger`…`exSurprise`, JUnit) ; `wellbeingHistory.js` (jour / semaine / mois, notes à part) ; page `/bien-etre` (courbe SVG, valence / éveil, barres d'expressions) ; lien « Historique › » dans la carte ; démo avec expressions |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

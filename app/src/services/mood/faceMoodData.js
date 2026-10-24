@@ -7,6 +7,7 @@ import { listEntries } from '../../storage/localHealthStorage'
 import { FACE_BURST_TYPE } from '../faceBursts'
 import { faceMoodEstimate } from './faceMood'
 import { faceMoodDays } from './faceMoodDays'
+import { wellbeingHistory } from './wellbeingHistory'
 
 export async function loadFaceMoodEntries({ list = listEntries } = {}) {
   const bursts = await list({ type: FACE_BURST_TYPE, limit: Infinity })
@@ -27,4 +28,16 @@ export async function loadWellbeingToday({ list = listEntries, now = new Date() 
   if (!bursts.length) return null
   const entries = [...bursts, ...notes]
   return { est: faceMoodEstimate(entries, { now }), days: faceMoodDays(entries) }
+}
+
+/**
+ * « Historique du bien-être » (POL-2) : la période demandée, même avec des notes seules (sans aucune rafale).
+ * @param {{ period?: 'day'|'week'|'month', now?: Date }} [opts]
+ */
+export async function loadWellbeingHistory({ list = listEntries, period = 'week', now = new Date() } = {}) {
+  const { bursts, notes } = await loadFaceMoodEntries({ list })
+  const since = new Date(now.getTime() - 31 * 86400000).toISOString()
+  // Sans rafale, les notes du mois sont lues quand même : elles ont leur place sur la courbe.
+  const manual = bursts.length ? notes : await list({ type: 'wellbeing', since, limit: Infinity })
+  return wellbeingHistory([...bursts, ...manual], { period, now })
 }

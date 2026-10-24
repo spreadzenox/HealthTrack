@@ -3,7 +3,8 @@
  * le bien-être du jour estimé par la Lecture du visage dès la première lecture (mood/faceMood.js), en grand chiffre
  * sur 5, l'écart à la moyenne des 14 derniers jours, la courbe de ces jours et une phrase simple. Le chevron ouvre des
  * détails visuels (POL-3) : la fourchette sur l'échelle, un badge de confiance, le nombre de lectures et la moyenne,
- * puis le modèle en petit. Toujours « une estimation, pas un diagnostic ». « Noter moi-même » ouvre la note manuelle,
+ * puis le modèle en petit. « Historique » ouvre la courbe jour / semaine / mois et le détail des modèles (POL-2).
+ * Toujours « une estimation, pas un diagnostic ». « Noter moi-même » ouvre la note manuelle,
  * discrètement, dans la carte. Sans aucune lecture avec un visage : une invitation à activer la lecture.
  */
 import { Link } from 'react-router-dom'
@@ -73,6 +74,16 @@ function ManualNoteButton({ onClick }) {
   )
 }
 
+/** Lien vers l'« Historique du bien-être » (POL-2) : courbe jour / semaine / mois et détail des modèles. */
+function HistoryLink() {
+  return (
+    <Link to="/bien-etre" className="mood-history-link">
+      Historique
+      <LineIcon name="chevron" size={16} />
+    </Link>
+  )
+}
+
 function hourOf(iso) {
   return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 }
@@ -131,7 +142,10 @@ export default function MoodEstimateCard({ data, details = false, onToggleDetail
       <p className="today-card-text">
         {est.day ? trend.phrase : 'Pas encore de lecture aujourd’hui.'} Une estimation, pas un diagnostic.
       </p>
-      <ManualNoteButton onClick={onAddManual} />
+      <div className="mood-actions">
+        <ManualNoteButton onClick={onAddManual} />
+        <HistoryLink />
+      </div>
     </section>
   )
 }

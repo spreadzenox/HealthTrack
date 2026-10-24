@@ -168,3 +168,32 @@
   color: var(--mint-label);
   background: transparent;
 }
+
+/* « Noter moi-même » à gauche, « Historique › » à droite (POL-2). */
+.mood-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 4px 0 -10px;
+}
+
+.mood-actions .mood-manual {
+  margin: 0 0 0 -4px;
+}
+
+.mood-history-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: var(--tap-min);
+  padding: 0 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mint-label);
+  text-decoration: none;
+}
+
+.mood-history-link svg {
+  transform: rotate(-90deg);
+}

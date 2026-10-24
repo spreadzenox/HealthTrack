@@ -40,3 +40,15 @@ describe('loadWellbeingToday', () => {
     expect(r.days.map((d) => d.date)).toEqual(['2026-10-20', '2026-10-21'])
   })
 })
+
+describe('loadWellbeingHistory', () => {
+  it('lit les notes du mois même sans aucune rafale du visage', async () => {
+    const { loadWellbeingHistory } = await import('./faceMoodData')
+    const now = new Date(2026, 9, 24, 20)
+    const note = { type: 'wellbeing', at: new Date(2026, 9, 24, 9).toISOString(), payload: { score: 4 } }
+    const list = vi.fn(async ({ type }) => (type === 'wellbeing' ? [note] : []))
+    const h = await loadWellbeingHistory({ list, period: 'day', now })
+    expect(h.notes).toEqual([{ at: note.at, score: 4 }])
+    expect(h.points).toEqual([])
+  })
+})

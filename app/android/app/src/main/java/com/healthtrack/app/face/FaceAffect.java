@@ -13,6 +13,13 @@ public final class FaceAffect {
 
     public static final int SIZE = 224;
     public static final int OUTPUTS = 10;
+    /**
+     * Les 8 premiers scores, dans l'ordre d'AffectNet (colère, mépris, dégoût, peur, joie, neutre, tristesse,
+     * surprise), clés des probabilités gardées dans la rafale (POL-2). Des estimations d'expression, jamais un état.
+     */
+    public static final String[] EXPRESSIONS = {
+        "exAnger", "exContempt", "exDisgust", "exFear", "exHappiness", "exNeutral", "exSadness", "exSurprise",
+    };
     static final double SCALE = 1.1;
 
     /** Taille et normalisation de l'entrée d'un modèle valence / éveil. */
@@ -76,6 +83,22 @@ public final class FaceAffect {
         double v = out[OUTPUTS - 2], a = out[OUTPUTS - 1];
         if (Double.isNaN(v) || Double.isNaN(a) || Double.isInfinite(v) || Double.isInfinite(a)) return null;
         return new double[] {clamp(v), clamp(a)};
+    }
+
+    /** Probabilités des 8 expressions (softmax des scores), ou null si la sortie n'a pas la forme attendue. */
+    public static double[] expressions(float[] out) {
+        if (out == null || out.length < OUTPUTS) return null;
+        int n = EXPRESSIONS.length;
+        double max = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < n; i++) {
+            if (Float.isNaN(out[i]) || Float.isInfinite(out[i])) return null;
+            max = Math.max(max, out[i]);
+        }
+        double[] p = new double[n];
+        double sum = 0;
+        for (int i = 0; i < n; i++) sum += p[i] = Math.exp(out[i] - max);
+        for (int i = 0; i < n; i++) p[i] /= sum;
+        return p;
     }
 
     private static double clamp(double x) {

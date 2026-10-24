@@ -96,6 +96,16 @@ et dans « Lecture du visage », fourchette 0–5 et confiance. Prochaine étape
 
 ## Modèle valence / éveil (20/10/2026 02:30, consigne du 19/10 au soir, étape 2)
 
+> **POL-2 (24/10/2026 19:30) — ce que sortent réellement les deux modèles.** `enet_b0_8_va_mtl` et `mbf_va_mtl` rendent
+> chacun **10 nombres** : 8 scores d'expression (logits, ordre AffectNet : colère, mépris, dégoût, peur, joie, neutre,
+> tristesse, surprise) puis valence et éveil. Jusqu'ici seuls valence et éveil étaient gardés. Depuis POL-2, la rafale
+> garde aussi les **probabilités des 8 expressions** (softmax par image, moyenne du duo, puis moyenne sur les images de
+> la rafale ; clés `exAnger` … `exSurprise`, FaceAffect.EXPRESSIONS). Ce sont des entrées Y (préfixe `face_` du type),
+> affichées seulement dans l'« Historique du bien-être » comme estimations de l'expression, jamais comme un état ;
+> elles ne servent pas (encore) à l'estimateur. Pas de migration : les valeurs d'une rafale sont libres
+> (`payload.values`), l'export et l'import les portent déjà.
+
+
 **Choix : HSEmotion `enet_b0_8_va_mtl` (ONNX), téléchargé par le téléphone, exécuté par ONNX Runtime 1.22.**
 
 | Modèle | Sorties | Précision publiée | Taille | Latence publiée | Licence | Verdict |

@@ -59,6 +59,11 @@ describe('MoodEstimateCard', () => {
     expect(add).toHaveBeenCalledTimes(2)
   })
 
+  it('« Historique » ouvre l’historique du bien-être (POL-2)', () => {
+    renderCard({ data: { est: estimate, days } })
+    expect(screen.getByRole('link', { name: 'Historique' })).toHaveAttribute('href', '/bien-etre')
+  })
+
   it('sans lecture aujourd’hui, montre la dernière lecture sans la comparer', () => {
     renderCard({ data: { est: { ...estimate, day: null, moment: { ...estimate.moment, today: false } }, days } })
     expect(screen.getByText(/dernière lecture ·/)).toBeInTheDocument()

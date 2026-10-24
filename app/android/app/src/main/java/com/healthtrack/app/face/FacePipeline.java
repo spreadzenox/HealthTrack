@@ -29,7 +29,10 @@ public final class FacePipeline {
         public final float[] blendshapes;
         public final String rejected;
         public final double facePx;
-        /** { valence, éveil } de l'image (moyenne du duo s'il a répondu), ou null (pas de modèle, ou son échec). */
+        /**
+         * { valence, éveil } de l'image (moyenne du duo s'il a répondu), ou null (pas de modèle, ou son échec), suivis
+         * des 8 probabilités d'expression (FaceAffect.EXPRESSIONS) quand le modèle les a rendues.
+         */
         public final double[] affect;
         /** |valence B0 − valence MobileFaceNet| quand les deux modèles ont répondu, sinon NaN. */
         public final double affectGap;
@@ -139,8 +142,9 @@ public final class FacePipeline {
         double[] a = affect(affect, FaceAffect.B0, "", rgb, width, height, faceRoi);
         double[] b = affect(affect2, FaceAffect.MBF, "mbf:", rgb, width, height, faceRoi);
         if (a != null && b != null) {
-            return new Frame(idx, bs, null, facePx, new double[] {(a[0] + b[0]) / 2, (a[1] + b[1]) / 2},
-                Math.abs(a[0] - b[0]), light);
+            double[] mean = new double[Math.min(a.length, b.length)];
+            for (int i = 0; i < mean.length; i++) mean[i] = (a[i] + b[i]) / 2;
+            return new Frame(idx, bs, null, facePx, mean, Math.abs(a[0] - b[0]), light);
         }
         return new Frame(idx, bs, null, facePx, a != null ? a : b, Double.NaN, light);
     }
@@ -150,9 +154,19 @@ public final class FacePipeline {
                             FaceGeometry.Roi roi) {
         if (model == null) return null;
         try {
-            double[] va = FaceAffect.decode(model.run(FaceAffect.input(spec, rgb, width, height, roi))[0]);
-            if (va == null) lastAffectError = tag + "bad_output";
-            return va;
+            float[] out = model.run(FaceAffect.input(spec, rgb, width, height, roi))[0];
+            double[] va = FaceAffect.decode(out);
+            if (va == null) {
+                lastAffectError = tag + "bad_output";
+                return null;
+            }
+            double[] ex = FaceAffect.expressions(out);
+            if (ex == null) return va;
+            double[] all = new double[2 + ex.length];
+            all[0] = va[0];
+            all[1] = va[1];
+            System.arraycopy(ex, 0, all, 2, ex.length);
+            return all;
         } catch (RuntimeException e) {
             lastAffectError = tag + e.getClass().getSimpleName() + ": " + e.getMessage();
             return null;
@@ -190,6 +204,15 @@ public final class FacePipeline {
             b.values.put("valence", FaceIndices.median(v));
             b.values.put("arousal", FaceIndices.median(a));
             b.values.put("affectFrames", (double) v.length);
+            // Probabilités d'expression (POL-2) : moyenne sur les images qui en ont, pour qu'elles somment à 1.
+            int n = FaceAffect.EXPRESSIONS.length, frames = 0;
+            double[] ex = new double[n];
+            for (double[] f : affects) {
+                if (f.length < 2 + n) continue;
+                frames++;
+                for (int i = 0; i < n; i++) ex[i] += f[2 + i];
+            }
+            for (int i = 0; frames > 0 && i < n; i++) b.values.put(FaceAffect.EXPRESSIONS[i], ex[i] / frames);
         }
         if (b != null && !gaps.isEmpty()) {
             double[] g = new double[gaps.size()];

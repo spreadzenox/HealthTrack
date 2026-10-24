@@ -112,6 +112,7 @@ const DEFAULT_ROUTES = [
   ['/plus', 'plus'],
   ['/montre', 'montre'],
   ['/premium', 'premium'],
+  ['/bien-etre', 'bien-etre'],
   ['/bienvenue', 'bienvenue'],
 ]
 
