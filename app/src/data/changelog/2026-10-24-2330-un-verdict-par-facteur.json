@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-24",
+  "kind": "amélioration",
+  "title": "Analyses : un seul verdict par facteur",
+  "items": [
+    "Les liens repérés avec vos notes et avec votre bien-être estimé (visage), les habitudes et les effets décalés tiennent maintenant dans une seule liste, « Autres liens repérés ».",
+    "Chaque facteur n'apparaît qu'une fois, avec son lien le plus solide ; une petite étiquette « visage » dit quand il vient du bien-être estimé. « Alcool » n'est plus montré deux fois.",
+    "Les 5 liens les plus nets sont visibles, les autres s'ouvrent avec « Voir N autres liens » ; les titres des habitudes n'ont plus d'émojis.",
+    "Quand un facteur est déjà une piste à tester, son effet du lendemain s'ouvre avec la petite flèche de la piste. Rien ne change dans les calculs."
+  ]
+}

@@ -160,7 +160,7 @@ describe('Recommendations page', () => {
     // be observed before loading has even started — flaky on CI, run 309).
     await waitFor(() => {
       expect(
-        screen.queryByText(/Corrélations avec votre bien-être/i) ||
+        screen.queryByTestId('reco-links') ||
         screen.queryByText(/facteurs à améliorer/i) ||
         screen.queryByText(/Analyse sur/i)
       ).toBeTruthy()
@@ -457,7 +457,7 @@ describe('Recommendations levers', () => {
     expect(await screen.findByText('Marcher davantage')).toBeInTheDocument()
     expect(screen.queryByText('Pas quotidiens')).not.toBeInTheDocument()
     expect(screen.getByText('Variabilité cardiaque')).toBeInTheDocument()
-    expect(screen.getByText(/Autres liens avec votre bien-être/)).toBeInTheDocument()
+    expect(screen.getByText('Autres liens repérés')).toBeInTheDocument()
     spy.mockRestore()
   })
 
@@ -470,10 +470,40 @@ describe('Recommendations levers', () => {
       status: 'ok', datasetDays: 40, reliability: 'good', correlations: [lever], levers: [lever],
     })
     await screen.findByText('Marcher davantage')
-    expect(screen.queryByText(/(Corrélations|liens) avec votre bien-être/i)).not.toBeInTheDocument()
+    expect(screen.queryByTestId('reco-links')).not.toBeInTheDocument()
     expect(screen.queryByText('Pas quotidiens')).not.toBeInTheDocument()
     expect(screen.queryByText(/Aucun .*lien net/i)).not.toBeInTheDocument()
     spy.mockRestore()
+  })
+
+  it('folds clear links beyond the first 5 behind « Voir N autres liens » (POL-7c)', async () => {
+    const labels = ['Sommeil', 'Pas', 'Fibres', 'Eau', 'Café', 'Sucres', 'Sel']
+    const corrs = labels.map((label, i) => ({ ...baseCorr, variable: `v${i}`, label, r: 0.6 - i * 0.05, q: 0.001 * (i + 1) }))
+    const spy = await renderWithBasic({ status: 'ok', datasetDays: 40, reliability: 'good', correlations: corrs, levers: [] })
+    const summary = await screen.findByText('Voir 2 autres liens')
+    expect(summary.closest('details')).toContainElement(screen.getByText('Sel'))
+    expect(summary.closest('details')).not.toContainElement(screen.getByText('Sommeil'))
+    spy.mockRestore()
+  })
+
+  it('gives one verdict per factor: alcohol as a variable and as a tag shown once (POL-7c)', async () => {
+    const tagsModule = await import('../services/behaviorTags')
+    const tagSpy = vi.spyOn(tagsModule, 'computeTagEffects').mockReturnValue({
+      status: 'ok', trackedDays: 40, pending: [],
+      effects: [{
+        tagId: 'alcohol', label: 'Alcool', emoji: '🍷', effectDay: 'next', nWith: 10, nWithout: 30,
+        meanWith: 3, meanWithout: 3.4, diff: -0.4, diffRaw: -0.4, p: 0.05, q: 0.08, evidence: 'à confirmer',
+      }],
+    })
+    const alcohol = { ...baseCorr, variable: 'alcohol_g', label: 'Alcool', r: -0.45, q: 0.004, evidence: 'solide' }
+    const spy = await renderWithBasic({ status: 'ok', datasetDays: 40, reliability: 'good', correlations: [alcohol], levers: [] })
+    const section = await screen.findByTestId('reco-links')
+    expect(within(section).getAllByText('Alcool')).toHaveLength(1)
+    expect(section.querySelector('.reco-tag-card')).toBeNull()
+    expect(section).toHaveTextContent('Autres mesures : jours avec / sans (notes) à confirmer')
+    expect(section).not.toHaveTextContent('🍷')
+    spy.mockRestore()
+    tagSpy.mockRestore()
   })
 
   it('shows a near-zero correlation as 0,00 (never −0,00)', async () => {
@@ -724,14 +754,12 @@ describe('Recommendations — lagged effects', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(laggedEntries())
     renderPage()
-    const section = (await screen.findByText(/Effets décalés/)).closest('section')
-    const card = section.querySelector('.reco-lag-card')
-    expect(card).toHaveTextContent(/Pas quotidiens/)
-    expect(card).toHaveTextContent(/La veille/)
-    expect(card).toHaveTextContent(/pas de plus que d’habitude/)
-    expect(card).toHaveTextContent(/\+\d,\d point/)
-    expect(card).toHaveTextContent(/Marcher davantage/)
-    expect(card).toHaveTextContent(/Hypothèse solide/)
+    // POL-7c : un facteur = un verdict. Les pas sont déjà une piste : leur effet de la veille est rappelé au chevron
+    const lever = (await screen.findByText('Marcher davantage')).closest('li')
+    expect(screen.queryByTestId('reco-links')?.querySelector('.reco-lag-card') ?? null).toBeNull()
+    fireEvent.click(within(lever).getByRole('button', { name: 'Afficher les détails' }))
+    expect(lever).toHaveTextContent(/La veille, .*pas de plus que d’habitude → bien-être \+\d,\d point/)
+    expect(lever).toHaveTextContent(/hypothèse solide/)
   })
 
   it('says how many consecutive days are still needed', async () => {
@@ -744,12 +772,13 @@ describe('Recommendations — lagged effects', () => {
     expect(screen.queryByRole('heading', { name: 'Effets décalés' })).toBeNull()
   })
 
-  it('says when no delayed effect stands out', async () => {
+  it('shows no empty « Effets décalés » block when no delayed effect stands out (POL-7c)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
     renderPage()
-    const section = (await screen.findByText(/Effets décalés/)).closest('section')
-    expect(section).toHaveTextContent(/Aucun effet décalé net/)
+    await screen.findByText(/Comment c.est calculé/)
+    expect(screen.queryByRole('heading', { name: 'Effets décalés' })).toBeNull()
+    expect(screen.queryByText(/Aucun effet décalé net/)).toBeNull()
   })
 })
 
@@ -839,10 +868,11 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(faceHistory(20))
     renderPage()
-    const section = await screen.findByTestId('face-mood-section')
-    expect(section).toHaveTextContent('Avec votre bien-être estimé (visage)')
-    expect(section).toHaveTextContent('Sur 20 jours estimés par la Lecture du visage, sans aucune note')
+    const section = await screen.findByTestId('reco-links')
+    expect(section).toHaveTextContent('Liens repérés')
+    expect(section).toHaveTextContent('« visage » : avec votre bien-être estimé, sur 20 jours, sans aucune note')
     expect(section).toHaveTextContent('Pas')
+    expect(section.querySelector('.reco-link-src')).toHaveTextContent('visage')
     // Les notes manquent toujours pour l'analyse classique : la carte lilas le dit, sans second seuil (VC-12).
     expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
   })
@@ -859,7 +889,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     }
     listEntriesForAnalysis.mockResolvedValue(entries)
     renderPage()
-    const habits = await screen.findByTestId('face-mood-habits')
+    const habits = await screen.findByTestId('reco-links')
     expect(habits).toHaveTextContent('Alcool')
     expect(habits).toHaveTextContent('Le lendemain : bien-être estimé')
     expect(habits).not.toHaveTextContent('Stress')
@@ -871,7 +901,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     listEntriesForAnalysis.mockResolvedValue(faceHistory(4))
     renderPage()
     expect(await screen.findByTestId('reco-soon')).toHaveTextContent(/Avec votre bien-être estimé\s*4\/14 jours/)
-    expect(screen.queryByTestId('face-mood-section')).toBeNull()
+    expect(screen.queryByTestId('reco-links')).toBeNull()
   })
 
   it('shows nothing about the face without any face reading', async () => {
@@ -879,6 +909,6 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     listEntriesForAnalysis.mockResolvedValue(makeEntries(6))
     renderPage()
     await screen.findByText(/Pistes à tester/i)
-    expect(screen.queryByTestId('face-mood-section')).toBeNull()
+    expect(document.querySelector('.reco-link-src')).toBeNull()
   })
 })

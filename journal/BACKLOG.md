@@ -82,7 +82,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   photo, « Ajouter une note » (crayon) en secondaire.
 - [ ] **POL-6 Journal** : « Vos derniers jours » en pastels par thème ; Tendances : graphiques pas encore actifs
   regroupés en une ligne discrète.
-- [ ] **POL-7 Onglet « Analyses »** (ex-Pistes) — **7a FAIT le 24/10 21:30** (onglet renommé, une seule vue, « Bientôt »,
+- [x] **POL-7 Onglet « Analyses »** (ex-Pistes) — **FAIT le 24/10 23:30 (7c : un verdict par facteur, « Autres liens repérés » fusionnés, « Voir N autres liens », émojis retirés)** — **7a FAIT le 24/10 21:30** (onglet renommé, une seule vue, « Bientôt »,
   méthode unique en pied de page avec le modèle de prédiction) ; **7b FAIT le 24/10 22:30** (pistes dépliables :
   phrase d'abord, statistiques au chevron ; barres neutres lilas ↑ / ↓ ; écarts des habitudes sans rouge) ; **reste 7c** :
   un facteur = un verdict (visage + notes + habitudes fusionnés, le plus solide gagne), « Voir N autres liens », émojis
