@@ -26,7 +26,7 @@ describe('Onboarding (jalon 4a)', () => {
   it('premier écran de la maquette : titre, tuiles, trois objectifs, 18 ans, pas de « Passer »', () => {
     renderAt()
     expect(screen.getByRole('heading', { name: /Comprenez ce qui va avec vos bons et mauvais jours/ })).toBeInTheDocument()
-    expect(screen.getByText(/envoyé sans votre accord/)).toBeInTheDocument()
+    expect(screen.getByText(/envoyé à .* sans votre accord/)).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /Mon ventre/ })).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /Mon énergie et mon sommeil/ })).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /Tout comprendre de mes données/ })).toBeInTheDocument()

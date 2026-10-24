@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sauvegarde Android (12+) conservée : données de l'app incluses, secrets propres au téléphone exclus.
+     Clés du localStorage (clé Gemini, clés de la montre, jetons) : src/services/restoreGuard.js.
+     Le dossier getNoBackupFilesDir (repère BackupMarkerPlugin, modèles du visage) n'est jamais sauvegardé. -->
+<data-extraction-rules>
+  <cloud-backup>
+    <exclude domain="sharedpref" path="healthtrack_watch_vault.xml" />
+    <exclude domain="sharedpref" path="healthtrack_companion.xml" />
+    <exclude domain="sharedpref" path="healthtrack_watch_background.xml" />
+    <exclude domain="sharedpref" path="app_update.xml" />
+  </cloud-backup>
+  <device-transfer>
+    <exclude domain="sharedpref" path="healthtrack_watch_vault.xml" />
+    <exclude domain="sharedpref" path="healthtrack_companion.xml" />
+    <exclude domain="sharedpref" path="healthtrack_watch_background.xml" />
+    <exclude domain="sharedpref" path="app_update.xml" />
+  </device-transfer>
+</data-extraction-rules>

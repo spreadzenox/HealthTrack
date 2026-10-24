@@ -658,6 +658,19 @@ une ou deux fois avec la montre au poignet ; ouvrez ensuite Sources → montre �
 détaillé » doit dater de la nuit. **Prochain run de code** : M6 suite (VFC de journée et température de la peau en
 arrière-plan, P2P), puis M7 (courbe FC et allure des séances). **👉 Votre prochaine action la plus utile reste P27**.
 
+**Run du 24/10 16:30 — la sauvegarde Android reste, en plus sûr et dit honnêtement (SAUV).** Ce que vous verrez :
+Réglages → **Données** dit maintenant que vos données sont incluses dans la sauvegarde Google du téléphone si elle est
+activée (chiffrées, gérées par Android, jamais lues par Halcya) ; l'onboarding affiche « **0 Mo envoyé à Halcya sans
+votre accord** » ; la politique de confidentialité a un paragraphe « Sauvegarde Android » (et les conditions §6). En
+coulisses : des **règles de sauvegarde explicites** (Android 12+ et avant) gardent tout sauf ce qui est propre au
+téléphone (coffre de la clé de la montre, association compagnon, téléchargement de mise à jour), et un **repère hors
+sauvegarde** détecte une restauration : au premier lancement sur le nouveau téléphone (ou après réinstallation), la clé
+Gemini saisie, les clés de la montre et les jetons sont retirés ; l'identifiant d'installation reste (il porte vos
+crédits IA) et l'abonnement est relu dans Google Play. **Sécurité des données : rien à ajouter** (la sauvegarde est
+faite par Android et chiffrée de bout en bout), donc **pas besoin de relancer P21**. **👉 À tester à votre prochaine
+réinstallation** : vos données reviennent, la montre demande un nouvel appairage (PIN sur la montre), le premium revient
+seul. Prochain run de code : POL-5 + POL-4 (boutons de l'Accueil, carte ventre seulement si « Mon ventre »).
+
 **Run du 24/10 15:30 — « Premium offert pendant le test » est prêt (6f, P23 ②).** Vos retours de 15:00 sur le
 parcours (Accueil, Journal, « Analyses », Sources, lecture au déverrouillage aussi sur Play) sont consignés dans
 [`BACKLOG.md`](BACKLOG.md) en étapes **POL-1 à POL-8** : ce sera la priorité des prochains runs de code, juste après la
@@ -1267,6 +1280,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 10:30 — [6e : paiement à régulariser + scénario P27](runs/2026-10-24-1030-6e-paiement-scenario.md) | 🧭💳 | `paymentIssue()` (grâce / suspension) + `PaymentIssueCard` en haut de l'Accueil (play), lien vers les abonnements Google Play ; `--subscription=grace|on_hold` ; P27 : 7 cases pour le propriétaire (testeur de licence) ; 2 122 Vitest |
 | 24/10 11:30 — [CI : faux plantage du test émulateur](runs/2026-10-24-1130-ci-plantage-emulateur.md) | 🔧 | `play-cold-start.sh` : seuls les plantages de `fr.jpesquet.sante` comptent, tampon `crash` vidé et publié ; « Relais — déploiement » : bilan Play Integrity 7 j (6b-2c-1) ; 2 122 Vitest |
 | 24/10 15:30 — [6f : période de lancement](runs/2026-10-24-1530-6f-periode-lancement.md) | 🧭💳 | `relay/src/launch-period.json` (`from` / `until` / `off`, `LAUNCH_PREMIUM_*` prioritaires), `isLaunchPeriod` avec début et interrupteur, état dans le résumé du workflow relais ; Premium / onboarding « Premium offert pendant le test » sans achat ; `INVITATION-TESTEURS.md` ; retours de 15:00 → POL-1…8 ; P28 = FGS, IAM → P29 ; 78 tests relais |
+| 24/10 16:30 — [SAUV : sauvegarde Android](runs/2026-10-24-1630-sauvegarde-android.md) | 🧭🔒 | `data_extraction_rules.xml` + `backup_rules.xml` (préférences natives propres au téléphone exclues), `BackupMarkerPlugin` (repère hors sauvegarde) + `restoreGuard.js` (secrets du localStorage retirés après restauration), textes confidentialité / conditions / Données / onboarding ; Sécurité des données inchangée ; +10 tests |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

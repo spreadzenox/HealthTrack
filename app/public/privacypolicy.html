@@ -43,6 +43,7 @@
       <li>Vos données restent sur votre téléphone, par défaut. Halcya n'a ni compte, ni serveur qui les garde, ni publicité, ni outil de mesure d'audience.</li>
       <li>Rien ne quitte le téléphone sans une action de votre part : l'analyse IA d'un repas, la météo, l'export d'une sauvegarde.</li>
       <li>La lecture du visage se fait sur le téléphone : aucune image n'est gardée ni envoyée.</li>
+      <li>Si la sauvegarde Google de votre téléphone est activée, Android y inclut les données de l'app (chiffrées, gérées par Android, jamais lues par Halcya).</li>
       <li>Vous pouvez tout exporter, et tout effacer, à tout moment.</li>
     </ul>
   </div>
@@ -62,6 +63,17 @@
     notes du ventre (calme, gêne, douleur) et de bien-être, cigarettes, sommeil, activité, fréquence cardiaque et
     autres mesures importées, scores de la lecture du visage, temps d'écran, météo du jour. Ces données ne sont
     envoyées à aucun serveur de l'éditeur : il n'en existe pas.
+  </p>
+
+  <h2 id="sauvegarde">Sauvegarde Android</h2>
+  <p>
+    Si vous avez activé la <strong>sauvegarde Google</strong> de votre téléphone (Paramètres Android → Google →
+    Sauvegarde), Android y inclut les données de Halcya, comme pour les autres applications : elles sont chiffrées,
+    gardées par Google dans votre compte et gérées par Android, et Halcya ne peut pas les lire. Elles reviennent
+    toutes seules sur un nouveau téléphone, ou après une réinstallation. Les clés propres au téléphone n'en font pas
+    partie : la montre est à réappairer, une clé d'IA saisie est à ressaisir, et l'abonnement est relu dans Google
+    Play. Pour ne pas sauvegarder Halcya, désactivez la sauvegarde Google du téléphone ; la copie déjà sauvegardée
+    se gère dans Google Drive → Sauvegardes.
   </p>
 
   <h2>Health Connect</h2>
@@ -170,7 +182,7 @@
   <h2 id="vos-droits">Vos droits et le contrôle de vos données</h2>
   <ul>
     <li><strong>Exporter</strong> : Réglages → Données → Exporter crée un fichier de sauvegarde que vous gardez où vous voulez.</li>
-    <li><strong>Supprimer</strong> : chaque saisie se supprime dans le Journal ; pour tout effacer, utilisez Réglages → Données → « Supprimer toutes mes données » dans l'application (un export vous est proposé juste avant), ou désinstallez-la. Rien ne reste chez nous, puisque rien n'y est envoyé.</li>
+    <li><strong>Supprimer</strong> : chaque saisie se supprime dans le Journal ; pour tout effacer, utilisez Réglages → Données → « Supprimer toutes mes données » dans l'application (un export vous est proposé juste avant), ou désinstallez-la. Rien ne reste chez nous, puisque rien n'y est envoyé. Une copie peut rester dans la sauvegarde Google de votre téléphone (voir « Sauvegarde Android »).</li>
     <li><strong>Retirer un accès</strong> : Health Connect, caméra, position, données d'utilisation et Bluetooth se retirent dans les paramètres Android.</li>
   </ul>
   <p>

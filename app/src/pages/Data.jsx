@@ -3,6 +3,7 @@ import { exportToJson, importFromJson, parseBackup, countAllEntries } from '../s
 import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { deleteAllMyData } from '../services/deleteAllData'
 import { activityLevel } from '../services/nutrientReferenceIntakes'
+import { APP_NAME } from '../config/brand'
 import '../Food.css'
 
 async function isAndroidNative() {
@@ -187,8 +188,9 @@ export default function Data() {
     <section className="food-page">
       <h2 className="page-title">Vos données</h2>
       <p className="page-intro">
-        Vos données restent <strong>uniquement sur cet appareil</strong> et survivent aux mises à jour.
-        Avant de réinstaller ou de changer de téléphone, exportez-les.
+        Vos données restent <strong>sur cet appareil</strong> et survivent aux mises à jour. Si la sauvegarde
+        Google du téléphone est activée, elles y sont incluses (chiffrées, gérées par Android,
+        jamais lues par {APP_NAME}). Avant de réinstaller ou de changer de téléphone, exportez-les aussi.
       </p>
 
       <div className="data-actions">

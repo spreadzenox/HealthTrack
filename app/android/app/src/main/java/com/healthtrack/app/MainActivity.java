@@ -20,6 +20,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(AppManagerPlugin.class);
         registerPlugin(CompanionPlugin.class);
         registerPlugin(WatchVaultPlugin.class);
+        registerPlugin(BackupMarkerPlugin.class);
         registerPlugin(WatchCapturePlugin.class);
         registerPlugin(FaceSensePlugin.class);
         registerPlugin(EveningNotePlugin.class);
