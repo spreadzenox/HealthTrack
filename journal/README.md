@@ -612,6 +612,18 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 24/10 09:30 — l'abonnement se crée tout seul chez Google (6d).** Rien ne change dans l'app. En coulisses,
+un nouveau workflow **« Play — abonnements »** crée chez Google l'abonnement **`halcya_premium`** (« Halcya Premium »),
+ses formules **annuel 29,99 €** et **mensuel 4,99 €** pour la France, la **période de grâce et la suspension de
+compte** (14 + 46 jours sur l'annuel, 7 + 53 jours sur le mensuel : le maximum que Google autorise, pour laisser le
+temps de corriger une carte refusée) et l'**essai gratuit de 14 jours** sur l'annuel, réservé aux personnes qui n'ont
+jamais eu l'abonnement ; puis il les active. Il relit d'abord ce qui existe : relancé, il ne recrée rien et **ne
+change jamais un prix déjà en place** (il le signale seulement). La fiche de l'abonnement sur Play ne cite que ce qui
+est livré (« Analyse IA des repas, 10 par jour »), comme le paywall. Il est parti tout seul avec ce merge ; s'il est
+refusé tant que votre banque n'est pas vérifiée, l'erreur exacte est dans le résumé du workflow et je réessaierai aux
+runs suivants (voir le compte rendu). **Prochain run de code : M4** (stress et étages de la montre) — ou 6e dès que
+l'abonnement est actif. **👉 En attente de vous : confirmer le virement de test de Google (P13)**, puis P23.
+
 **Run « idées » du 24/10 08:30 — l'abonnement est prêt à être créé, et une précision importante pour P23 (rien de
 nouveau dans l'app).** ① **6d est spécifié appel par appel** ([`IDEES.md`](IDEES.md) I158) : le prochain run de code
 crée chez Google l'abonnement `halcya_premium` (identifiant que l'app attend déjà), ses formules **annuel 29,99 €** et
@@ -1165,6 +1177,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 06:30 — [VC-15 : icônes trait et apostrophes](runs/2026-10-24-0630-vc15-icones-apostrophes.md) | 🧭 | `components/LineIcon` (Réglages, Repas, Paramètres, onboarding, note du soir) ; émojis des titres de Pistes retirés ; 59 apostrophes typographiques (réécriture sur l'AST) ; titre « Repas » ; tests-gardes apostrophes + émojis ; 2 102 Vitest |
 | 24/10 07:30 — [VC-9 : premier lancement play sur l'émulateur](runs/2026-10-24-0730-vc9-premier-lancement.md) | 🧭🐛 | `.github/scripts/play-cold-start.sh` (APK debug play, installation neuve, TotalTime + premier écran + erreurs JS + plantages, API 35 et 36, résumé du job) ; bug trouvé : chargeurs PlayBilling / PlayIntegrity / AppUpdate bloqués par le `then` du proxy Capacitor → `services/nativePlugin.js` ; VC-19 (`UpdateBanner.test.jsx` sans minutage) ; 2 104 Vitest |
 | 24/10 08:30 — [Idées : 6d et 6e prêts à coder](runs/2026-10-24-0830-idees-abonnement-api.md) | 💡 | I158 (création de `halcya_premium` par `monetization.subscriptions` : 5 appels idempotents, grâce + suspension 30–60 j, offre `essai-14j`, activation) ; I159 (scénario testeur de licence ~30 min) ; I161 (testeur de licence : premium perdu après ~3 h → P23 ① + ②) ; I160 ; journal seul |
+| 24/10 09:30 — [6d : abonnements créés par l'API](runs/2026-10-24-0930-6d-abonnements.md) | 🧭💳 | `scripts/play/subscriptions.mjs` (`buildCatalog` pur, `ensureCatalog` idempotent : lecture → création / ajout des formules manquantes → offre `essai-14j` → activation → relecture ; prix existants jamais modifiés) ; workflow « Play — abonnements » (push sur ses fichiers + manuel) ; `playLabel` ≤ 40 car. dans `premiumBenefits.js` ; 12 tests |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |
