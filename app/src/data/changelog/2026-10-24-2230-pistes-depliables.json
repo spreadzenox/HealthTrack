@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "amélioration",
+  "title": "Analyses : des pistes plus simples à lire",
+  "items": [
+    "Chaque piste dit d'abord l'essentiel en mots ; les chiffres (r, jours pris en compte, week-end) s'ouvrent avec la petite flèche, pour qui veut creuser.",
+    "Les barres des liens sont toutes lilas : ↑ va avec un meilleur bien-être, ↓ avec un moins bon. Plus de vert ni de rouge, car aucun comportement n'est jugé bon ou mauvais d'avance.",
+    "Rien ne change dans les calculs."
+  ]
+}

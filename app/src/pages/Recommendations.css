@@ -185,6 +185,20 @@
   color: var(--text-muted);
 }
 
+/* POL-7b : statistiques d'une piste, ouvertes par le chevron */
+.reco-advice-stats {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.reco-advice-card .details-toggle {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
 /* Evidence badge under a lever ("Hypothèse solide / à confirmer") */
 .reco-evidence {
   display: inline-block;
@@ -262,12 +276,10 @@
   min-width: 2px;
 }
 
-.reco-corr-pos {
-  background: var(--color-ok);
-}
-
-.reco-corr-neg {
-  background: var(--color-danger);
+/* POL-7b (D6) : même lilas dans les deux sens ; ↑ / ↓ dans la valeur dit le sens, jamais vert / rouge */
+.reco-corr-up,
+.reco-corr-down {
+  background: var(--lilac-bar);
 }
 
 .reco-corr-value {
@@ -482,13 +494,10 @@
   line-height: 1.4;
 }
 
-.reco-tag-diff-neg {
-  color: var(--color-danger);
-  white-space: nowrap;
-}
-
+.reco-tag-diff-neg,
 .reco-tag-diff-pos {
-  color: var(--accent);
+  color: var(--text);
+  font-weight: 600;
   white-space: nowrap;
 }
 

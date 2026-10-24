@@ -83,9 +83,10 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
 - [ ] **POL-6 Journal** : « Vos derniers jours » en pastels par thème ; Tendances : graphiques pas encore actifs
   regroupés en une ligne discrète.
 - [ ] **POL-7 Onglet « Analyses »** (ex-Pistes) — **7a FAIT le 24/10 21:30** (onglet renommé, une seule vue, « Bientôt »,
-  méthode unique en pied de page avec le modèle de prédiction) ; **reste 7b** : pistes dépliables (phrase d'abord,
-  statistiques au chevron), un facteur = un verdict (visage + notes + habitudes fusionnés), barres neutres lilas ↑ / ↓
-  au lieu de vert / rouge, « Voir N autres liens ». Spécification d'origine : une seule analyse (fin de simple / avancée), « Comment c'est
+  méthode unique en pied de page avec le modèle de prédiction) ; **7b FAIT le 24/10 22:30** (pistes dépliables :
+  phrase d'abord, statistiques au chevron ; barres neutres lilas ↑ / ↓ ; écarts des habitudes sans rouge) ; **reste 7c** :
+  un facteur = un verdict (visage + notes + habitudes fusionnés, le plus solide gagne), « Voir N autres liens », émojis
+  retirés des titres d'habitudes. Spécification d'origine : une seule analyse (fin de simple / avancée), « Comment c'est
   calculé » en tout petit en bas, blocs sans assez de données en une ligne « arrive dans N jours », hiérarchie claire.
   **Maquette prête : `IDEES.md` I163** (un facteur = un verdict, ≤ 3 pistes dépliables, « autres liens » fusionnés,
   ligne « bientôt », méthode unique en pied de page ; aucun calcul ni seuil ne change).
@@ -100,7 +101,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
   **P28 préparé le 24/10 20:30** (`PLAY-CONFORMITE.md` §1 bis : cahier des charges, texte, script vidéo) ; POL-1 doit
   aussi produire un APK d'aperçu play interrupteur allumé (`applicationIdSuffix ".apercu"`) pour la vidéo.
-Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → POL-7 (7a fait 24/10 21:30, reste 7b) → POL-6 → POL-8 → POL-1 (après P28 préparé).
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → POL-7 (7a fait 24/10 21:30, 7b fait 24/10 22:30, reste 7c) → POL-6 → POL-8 → POL-1 (après P28 préparé).
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
