@@ -665,7 +665,7 @@ détails sont **visuels** : la fourchette sur une barre de 0 à 5, un **badge de
 lectures et votre moyenne en pastilles, le modèle en petit. **« + Noter moi-même »**, en bas de la carte, sert à noter
 votre bien-être à la main ; le bouton « Ajouter une note » disparaît, et **l'app ne vous demande plus votre bien-être à
 chaque ouverture**. Rien n'est effacé. **👉 À tester** : ouvrez l'app (plus de question), touchez la flèche de la carte
-bien-être, puis « Noter moi-même ». Prochain run de code : POL-2 (historique du bien-être, ouvert depuis la carte).
+bien-être, puis « Noter moi-même ». Prochain run de code : POL-2 (historique du bien-être, ouvert depuis la carte). Publié : **v255** (33,7 Mo) et la version play en test interne.
 
 **Run du 24/10 17:30 — l'Accueil se simplifie (POL-5 et POL-4).** Ce que vous verrez : **« Photo du repas »** prend
 toute la largeur avec une **icône appareil photo** ; « Une note » devient **« Ajouter une note »** (icône crayon), juste
