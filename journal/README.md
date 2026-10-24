@@ -646,6 +646,18 @@ de l'abonnement avec votre compte de testeur de licence, [`PRODUIT.md`](PRODUIT.
 vérification. **Prochain run de code** : protection bloquante si le bilan le permet, sinon M4 (stress, SpO₂,
 respiration de la montre).
 
+**Run du 24/10 13:30 — la montre envoie son sommeil détaillé et son stress même app fermée (M6, 1re partie).**
+Jusqu'ici, la relecture de la montre en arrière-plan (app fermée, au déverrouillage ou toutes les 30 min au mieux) ne
+rapportait que les minutes, le sommeil simple et les totaux du jour : le **sommeil détaillé** (phases, score, VFC de la
+nuit, SpO₂, respiration) et le **stress** n'arrivaient qu'en ouvrant l'app et en synchronisant. Désormais, le lecteur en
+arrière-plan télécharge aussi ces deux fichiers de la montre (dès que l'app les a lus une fois : c'est elle qui fait le
+rattrapage des 60 jours), et l'app les range à son ouverture, comme une synchro normale. Ce que vous verrez (version
+sideload comme Play) : le matin, la nuit détaillée et la VFC de nuit peuvent déjà être là **sans avoir touché « Synchroniser »**.
+Rien ne change dans vos données. **👉 À tester demain matin** : n'ouvrez pas l'app avant d'avoir déverrouillé le téléphone
+une ou deux fois avec la montre au poignet ; ouvrez ensuite Sources → montre → « Données de la montre » : « Sommeil
+détaillé » doit dater de la nuit. **Prochain run de code** : M6 suite (VFC de journée et température de la peau en
+arrière-plan, P2P), puis M7 (courbe FC et allure des séances). **👉 Votre prochaine action la plus utile reste P27**.
+
 **Run du 24/10 12:30 — la montre envoie maintenant son stress (M4).** Le bilan Play Integrity du run précédent ne
 montre que 6 envois **sans jeton** en 7 jours (essais de la CI et vieilles versions), aucun de votre téléphone : la
 protection des crédits IA reste donc en mode « observation » (rien n'est bloqué) jusqu'à ce que vous ayez fait une
@@ -1219,6 +1231,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 09:30 — [6d : abonnements créés par l'API](runs/2026-10-24-0930-6d-abonnements.md) | 🧭💳 | `scripts/play/subscriptions.mjs` (`buildCatalog` pur, `ensureCatalog` idempotent : lecture → création / ajout des formules manquantes → offre `essai-14j` → activation → relecture ; prix existants jamais modifiés) ; workflow « Play — abonnements » : **créé et actif du 1er coup** ; `playLabel` ≤ 40 car. ; 12 tests ; v246 |
 | 24/10 10:30 — [6e : paiement à régulariser + scénario P27](runs/2026-10-24-1030-6e-paiement-scenario.md) | 🧭💳 | `paymentIssue()` (grâce / suspension) + `PaymentIssueCard` en haut de l'Accueil (play), lien vers les abonnements Google Play ; `--subscription=grace|on_hold` ; P27 : 7 cases pour le propriétaire (testeur de licence) ; 2 122 Vitest |
 | 24/10 11:30 — [CI : faux plantage du test émulateur](runs/2026-10-24-1130-ci-plantage-emulateur.md) | 🔧 | `play-cold-start.sh` : seuls les plantages de `fr.jpesquet.sante` comptent, tampon `crash` vidé et publié ; « Relais — déploiement » : bilan Play Integrity 7 j (6b-2c-1) ; 2 122 Vitest |
+| 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |

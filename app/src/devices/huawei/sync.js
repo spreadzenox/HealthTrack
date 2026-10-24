@@ -751,7 +751,7 @@ export async function readWatchData(session, { since, until, now = until, log = 
   log(`lectures : ${describeServices(services, { all: true })}`)
   const hints = syncHints(services, { caps, totals })
   for (const h of hints) log(`piste : ${h}`, 'warn')
-  return { minutes, sleep, totals, workouts, nights, stress, hrvDay, skinTemp, dictionary, settings, services, hints, capabilities: describeCapabilities(caps) }
+  return { minutes, sleep, totals, workouts, nights, stress, hrvDay, skinTemp, dictionary, settings, services, hints, capabilities: describeCapabilities(caps), sleepBedTime: sleepFromBedTime(caps) }
 }
 
 /** Reprise après une longue absence : jamais plus de 30 jours relus. */

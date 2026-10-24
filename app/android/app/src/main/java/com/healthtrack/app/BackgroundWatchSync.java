@@ -48,6 +48,9 @@ final class BackgroundWatchSync {
         s.paused = p.getBoolean("paused", false);
         s.outcome = p.getString("outcome", null);
         s.battery = p.getInt("battery", -1);
+        s.sleepFileUntil = p.getLong("sleepFileUntil", 0);
+        s.stressFileUntil = p.getLong("stressFileUntil", 0);
+        s.bedTime = p.getBoolean("bedTime", true);
         return s;
     }
 
@@ -55,6 +58,9 @@ final class BackgroundWatchSync {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
                 .putString("address", address.toUpperCase())
                 .putLong("lastUntil", s.lastUntil)
+                .putLong("sleepFileUntil", s.sleepFileUntil)
+                .putLong("stressFileUntil", s.stressFileUntil)
+                .putBoolean("bedTime", s.bedTime)
                 .putLong("lastAttemptAt", s.lastAttemptAt)
                 .putLong("lastSuccessAt", s.lastSuccessAt)
                 .putInt("failures", s.failures)
@@ -133,11 +139,11 @@ final class BackgroundWatchSync {
     }
 
     /** Reprise recopiée par le JS après une synchro (en direct ou importée). */
-    static void shareFromApp(Context context, String address, long until, long atMs) {
+    static void shareFromApp(Context context, String address, long until, long atMs, long sleepFileUntil, long stressFileUntil, Boolean bedTime) {
         String addr = WatchVault.normalizeAddress(address);
         if (addr == null) return;
         BackgroundSync.State s = load(context, addr);
-        BackgroundSync.shareFromApp(s, until, atMs);
+        BackgroundSync.shareFromApp(s, until, atMs, sleepFileUntil, stressFileUntil, bedTime != null ? bedTime : s.bedTime);
         save(context, addr, s);
         WatchSyncJob.ensureScheduled(context);
     }

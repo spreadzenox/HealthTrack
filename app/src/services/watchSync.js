@@ -197,7 +197,9 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   // Dictionnaire (P2P) : par classe, le dernier instant lu ; la prochaine synchro repart juste après (§10.10)
   const dictUntil = { ...(getWatchSyncState(watchKey, storage)?.dictUntil || {}) }
   for (const [cls, ms] of Object.entries(data.dictionary || {})) dictUntil[cls] = Math.max(ms, dictUntil[cls] || 0)
-  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds, ...(sleepFileUntil ? { sleepFileUntil } : {}), ...(stressFileUntil ? { stressFileUntil } : {}), ...(Object.keys(dictUntil).length ? { dictUntil } : {}) }, storage)
+  // Lecture du sommeil détaillé depuis le coucher (capacité 199) : recopiée au lecteur en arrière-plan (M6)
+  const sleepBedTime = typeof data.sleepBedTime === 'boolean' ? data.sleepBedTime : getWatchSyncState(watchKey, storage)?.sleepBedTime
+  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds, ...(sleepFileUntil ? { sleepFileUntil } : {}), ...(stressFileUntil ? { stressFileUntil } : {}), ...(typeof sleepBedTime === 'boolean' ? { sleepBedTime } : {}), ...(Object.keys(dictUntil).length ? { dictUntil } : {}) }, storage)
   if (inserted > 0 && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('health-entries-updated'))
   const parts = [plural(data.minutes.length, 'minute', 'minutes')]
   if (nights) parts.push(plural(nights, 'nuit', 'nuits'))

@@ -40,6 +40,15 @@ describe('importWatchCapture', () => {
     expect(getWatchSyncState(ADDRESS, storage)).toMatchObject({ until: READ_WINDOW.until + 3600_000, at: later })
   })
 
+  it('fichier de stress lu en arrière-plan : écrit, et sa reprise avance (M6)', async () => {
+    const storage = memoryStorage()
+    const d = deps()
+    const capture = javaCapture({ reads: [...javaCapture().reads, { id: 'stress', outcome: 'empty', units: 0, failed: 0 }] })
+    await importWatchCapture(capture, { watchKey: ADDRESS, storage, ...d })
+    expect(getWatchSyncState(ADDRESS, storage).stressFileUntil).toBe(capture.until)
+    expect(getWatchSyncState(ADDRESS, storage).sleepFileUntil).toBeUndefined()
+  })
+
   it('rien reçu : la reprise reste où elle était', async () => {
     const storage = memoryStorage()
     await importWatchCapture(javaCapture({ replies: [] }), { watchKey: ADDRESS, storage, ...deps() })
@@ -103,6 +112,9 @@ describe('relecture app fermée : état et reprise partagés avec le natif', () 
     expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 1000, at: Date.parse(at) })
     await shareResumeWithNative({ deviceId: 'X', state: { v: 1, until: 1000, at }, plugin })
     expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 0, at: Date.parse(at) })
+    // fichiers 0x2C déjà lus : leur reprise et le mode de lecture du sommeil partent aussi (M6)
+    await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1000, at, sleepFileUntil: 900, stressFileUntil: 800, sleepBedTime: false }, plugin })
+    expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 1000, at: Date.parse(at), sleepFileUntil: 900, stressFileUntil: 800, sleepBedTime: false })
     expect(await shareResumeWithNative({ deviceId: 'X', state: null, plugin })).toBe(false)
     expect(await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1, at }, plugin: { shareResume: async () => Promise.reject(new Error('x')) } })).toBe(false)
   })

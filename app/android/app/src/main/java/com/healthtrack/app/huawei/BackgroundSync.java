@@ -2,6 +2,8 @@ package com.healthtrack.app.huawei;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -52,6 +54,11 @@ public final class BackgroundSync {
         /** Issue du dernier essai natif : connected, key_rejected, unreachable, no_key, failed. */
         public String outcome;
         public int battery = -1;
+        /** Dernière lecture des fichiers 0x2C (ms, recopiée du JS ; 0 = jamais lu : le fichier n'est pas demandé). */
+        public long sleepFileUntil;
+        public long stressFileUntil;
+        /** Sommeil détaillé lu depuis le coucher (capacité 199, recopié du JS). */
+        public boolean bedTime = true;
     }
 
     private BackgroundSync() {
@@ -62,6 +69,17 @@ public final class BackgroundSync {
         long until = Math.floorDiv(nowMs, HOUR) * HOUR;
         if (lastUntil <= 0) return new long[] {WatchReader.MIN_START_SEC * 1000L, until};
         return new long[] {Math.max(until - MAX_DAYS * 24 * HOUR, Math.min(lastUntil, until) - OVERLAP_MS), until};
+    }
+
+    /**
+     * Fichiers 0x2C à relire (M6) : seulement ceux que le JS a déjà lus une fois (la montre les prend en charge et le
+     * rattrapage de 60 jours est fait app ouverte), depuis la veille de leur dernière lecture, comme sleepFileSince.
+     */
+    public static List<WatchReader.FileRequest> fileRequests(State s, long sinceMs) {
+        List<WatchReader.FileRequest> files = new ArrayList<>();
+        if (s.sleepFileUntil > 0) files.add(WatchReader.FileRequest.sleep(Math.min(sinceMs, s.sleepFileUntil) - 24 * HOUR));
+        if (s.stressFileUntil > 0) files.add(WatchReader.FileRequest.stress(Math.min(sinceMs, s.stressFileUntil) - 24 * HOUR));
+        return files;
     }
 
     /** Délai minimum après le dernier essai : 30 min × 2^échecs (3 doublements au plus). */
@@ -104,6 +122,14 @@ public final class BackgroundSync {
 
     /** Reprise partagée par le JS après une synchro qu'il a faite (ou importée) : elle vaut essai réussi. */
     public static void shareFromApp(State s, long until, long atMs) {
+        shareFromApp(s, until, atMs, 0, 0, s.bedTime);
+    }
+
+    /** Idem, avec la dernière lecture des fichiers 0x2C et le mode de lecture du sommeil détaillé. */
+    public static void shareFromApp(State s, long until, long atMs, long sleepFileUntil, long stressFileUntil, boolean bedTime) {
+        if (sleepFileUntil > s.sleepFileUntil) s.sleepFileUntil = sleepFileUntil;
+        if (stressFileUntil > s.stressFileUntil) s.stressFileUntil = stressFileUntil;
+        s.bedTime = bedTime;
         if (until > s.lastUntil) s.lastUntil = until;
         if (atMs > s.lastAttemptAt) s.lastAttemptAt = atMs;
         s.failures = 0;
@@ -124,6 +150,17 @@ public final class BackgroundSync {
     static String outcomeOf(Exception e) {
         if (e instanceof IsoAuth.AuthException) return "key_rejected".equals(((IsoAuth.AuthException) e).code) ? "key_rejected" : "failed";
         return "failed";
+    }
+
+    /** Fichier lu (même vide) : la prochaine relecture repart de là, comme writeWatchData. */
+    static void recordFiles(State s, WatchReader.Capture cap, long until) {
+        if (fileRead(cap, "sleepFile")) s.sleepFileUntil = Math.max(s.sleepFileUntil, until);
+        if (fileRead(cap, "stress")) s.stressFileUntil = Math.max(s.stressFileUntil, until);
+    }
+
+    private static boolean fileRead(WatchReader.Capture cap, String id) {
+        WatchReader.Read r = cap.read(id);
+        return r != null && ("ok".equals(r.outcome) || "empty".equals(r.outcome));
     }
 
     /** Met l'état à jour après une relecture native. */
@@ -168,8 +205,9 @@ public final class BackgroundSync {
         try (WatchLink link = new WatchLink(transport)) {
             WatchHandshake.authenticate(link, authToken, authId, requestId, random, timeoutMs);
             battery = WatchHandshake.battery(link, timeoutMs);
-            cap = WatchReader.read(link, w[0], w[1], nowMs, timeoutMs);
+            cap = WatchReader.read(link, w[0], w[1], nowMs, timeoutMs, fileRequests(state, w[0]));
             cap.battery = battery;
+            cap.bedTime = state.bedTime;
             cap.address = address;
             cap.name = name;
             captureName = sink.put(cap.toJson(), nowMs);
@@ -178,6 +216,7 @@ public final class BackgroundSync {
             outcome = outcomeOf(e);
         }
         record(state, outcome, nowMs, w[1], cap != null && captureName != null && cap.gotBlocks(), battery);
+        if (cap != null && captureName != null) recordFiles(state, cap, w[1]);
         return new Result(outcome, captureName);
     }
 }

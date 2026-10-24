@@ -6,6 +6,7 @@
  */
 import { bytesOfHex } from './crypto'
 import { decodeTlvs } from './protocol'
+import { parseSleepSequence, parseStressFile } from './files'
 import { FIT, FITNESS, parseMinuteBlock, parseSleepBlock, parseTotals, SYNC_READS, syncHints } from './sync'
 
 export const CAPTURE_VERSION = 1
@@ -25,12 +26,19 @@ export function isValidCapture(c) {
     isMs(c.at) &&
     Array.isArray(c.replies) &&
     c.replies.every((r) => Number.isInteger(r?.s) && Number.isInteger(r?.c) && Number.isInteger(r?.i) && typeof r.hex === 'string' && /^([0-9a-f]{2})*$/i.test(r.hex)) &&
-    (c.reads == null || Array.isArray(c.reads))
+    (c.reads == null || Array.isArray(c.reads)) &&
+    (c.files == null || (Array.isArray(c.files) && c.files.every((f) => typeof f?.id === 'string' && isMs(f.since) && typeof f.hex === 'string' && /^([0-9a-f]{2})*$/i.test(f.hex))))
   )
 }
 
+/** Fichiers 0x2C de la capture (M6) : sommeil détaillé et stress, décodés comme dans readWatchData. */
+const FILE_READS = {
+  sleepFile: (bytes, f, c) => parseSleepSequence(bytes, { bedTime: c.bedTime !== false }).filter((n) => n.end > f.since && n.end <= c.until),
+  stress: (bytes, f, c) => parseStressFile(bytes).filter((r) => r.start >= f.since && r.start < c.until),
+}
+
 /**
- * Capture → { minutes, sleep, totals, workouts, nights, services, hints, capabilities, battery } comme readWatchData.
+ * Capture → { minutes, sleep, totals, workouts, nights, stress, services, hints, capabilities, battery } comme readWatchData.
  * Une réponse illisible est comptée perdue (`failed`), jamais bloquante. Lève si la capture n'est pas lisible.
  */
 export function dataFromCapture(capture) {
@@ -51,6 +59,16 @@ export function dataFromCapture(capture) {
       if (id) lost[id]++
     }
   }
+  const fromFiles = { sleepFile: [], stress: [] }
+  const lostFiles = { sleepFile: 0, stress: 0 }
+  for (const f of capture.files || []) {
+    if (!FILE_READS[f.id]) continue
+    try {
+      fromFiles[f.id].push(...FILE_READS[f.id](bytesOfHex(f.hex), f, capture))
+    } catch {
+      lostFiles[f.id]++
+    }
+  }
   const sleep = decoded.sleep.filter((p) => p.start >= since - DAY && p.start < until)
   const minutes = decoded.minutes.filter((m) => m.t >= since && m.t < until)
   const services = ['sleep', 'minutes', 'totals'].map((id) => {
@@ -69,16 +87,28 @@ export function dataFromCapture(capture) {
       ...(failed ? { failed } : {}),
     }
   })
+  // fichiers lus seulement si le Java les a demandés (sa lecture est consignée) : sinon, rien à dire
+  for (const id of Object.keys(FILE_READS)) {
+    const native = reads.get(id)
+    if (!native) continue
+    const items = fromFiles[id]
+    let outcome = OUTCOMES.includes(native.outcome) ? native.outcome : 'error'
+    if (items.length) outcome = 'ok'
+    else if (outcome === 'ok') outcome = lostFiles[id] ? 'error' : 'empty'
+    services.push({ ...SYNC_READS.find((s) => s.id === id), outcome, count: items.length, ...(lostFiles[id] ? { failed: lostFiles[id] } : {}) })
+  }
   const totals = decoded.totals
+  const withFiles = services.some((r) => r.id === 'sleepFile' || r.id === 'stress')
   return {
     minutes,
     sleep,
     totals,
     workouts: [],
-    nights: [],
+    nights: fromFiles.sleepFile,
+    stress: fromFiles.stress,
     services,
     hints: syncHints(services, { totals }),
-    capabilities: 'synchro en arrière-plan (sommeil, minutes, totaux)',
+    capabilities: `synchro en arrière-plan (sommeil, minutes, totaux${withFiles ? ', fichiers' : ''})`,
     battery: Number.isInteger(capture.battery) && capture.battery >= 0 ? capture.battery : null,
   }
 }

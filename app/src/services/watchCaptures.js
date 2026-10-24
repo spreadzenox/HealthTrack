@@ -97,7 +97,13 @@ export async function shareResumeWithNative({ deviceId, state, plugin = captureP
   const at = Date.parse(state?.at || '')
   if (!deviceId || !plugin?.shareResume || !Number.isFinite(at)) return false
   try {
-    await plugin.shareResume({ deviceId, until: state.v === SYNC_STATE_VERSION && state.until > 0 ? state.until : 0, at })
+    // fichiers 0x2C déjà lus une fois par l'app : le lecteur en arrière-plan les relit depuis là (M6)
+    const files = {
+      ...(state.sleepFileUntil > 0 ? { sleepFileUntil: state.sleepFileUntil } : {}),
+      ...(state.stressFileUntil > 0 ? { stressFileUntil: state.stressFileUntil } : {}),
+      ...(typeof state.sleepBedTime === 'boolean' ? { sleepBedTime: state.sleepBedTime } : {}),
+    }
+    await plugin.shareResume({ deviceId, until: state.v === SYNC_STATE_VERSION && state.until > 0 ? state.until : 0, at, ...files })
     return true
   } catch {
     return false
