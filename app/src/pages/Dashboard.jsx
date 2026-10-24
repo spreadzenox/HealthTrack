@@ -13,7 +13,8 @@ import { MeasureTiles, GutCard, PistesTeaser } from '../components/TodayCards'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { daySummaryTitle, headerLine, measureTiles } from '../services/today'
 import { APP_NAME } from '../config/brand'
-import { homeFocus } from '../settings/onboarding'
+import { homeFocus, gutCardMode } from '../settings/onboarding'
+import LineIcon from '../components/LineIcon'
 
 export default function Dashboard() {
   // Entrées des derniers jours : tuiles du jour et compteur de cigarettes (le journal des jours est dans l'onglet Journal)
@@ -23,8 +24,10 @@ export default function Dashboard() {
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
   const navigate = useNavigate()
   const [details, toggleDetails] = useDetailsMode()
-  // L'objectif choisi règle l'ordre (I155) : avec « énergie et sommeil », le ventre passe en bas ; rien n'est masqué
+  // L'objectif choisi règle l'Accueil : la carte des pistes parle sommeil avec « énergie et sommeil » (I155), la
+  // carte ventre n'apparaît qu'avec « Mon ventre » (POL-4 ; aucune note effacée)
   const [focus] = useState(() => homeFocus())
+  const [gutMode] = useState(() => gutCardMode())
   // Bien-être estimé (visage) : undefined pendant la lecture, null sans aucune lecture avec un visage
   const [wellbeing, setWellbeing] = useState(undefined)
   const days = useMemo(() => buildDailyJournal(entries), [entries])
@@ -86,18 +89,25 @@ export default function Dashboard() {
 
       <MoodEstimateCard data={wellbeing} details={details} onToggleDetails={toggleDetails} />
       {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
-      {focus !== 'energy' && <GutCard details={details} onToggleDetails={toggleDetails} />}
+      {gutMode !== 'hide' && (
+        <GutCard details={details} onToggleDetails={toggleDetails} onlyIfUsed={gutMode === 'used'} />
+      )}
 
       <div className="today-actions">
-        <button type="button" className="btn" onClick={() => navigate('/food')}>Photo du repas</button>
-        <button type="button" className="btn btn-secondary" onClick={() => setWellbeingOpen(true)}>Une note</button>
+        <button type="button" className="btn today-action-photo" onClick={() => navigate('/food')}>
+          <LineIcon name="camera" size={22} />
+          Photo du repas
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={() => setWellbeingOpen(true)}>
+          <LineIcon name="pen" size={18} />
+          Ajouter une note
+        </button>
       </div>
       {!loading && shouldShowCigaretteCounter(entries) && (
         <div className="dashboard-actions"><CigaretteQuickAdd /></div>
       )}
 
       <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} />
-      {focus === 'energy' && <GutCard details={details} onToggleDetails={toggleDetails} />}
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
 

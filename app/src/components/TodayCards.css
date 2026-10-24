@@ -184,16 +184,30 @@
 }
 
 /* Actions */
+/* « Photo du repas » sur toute la largeur, icône appareil photo : le geste principal se voit d'un coup d'œil
+   (POL-5) ; « Ajouter une note » en dessous, en secondaire. */
 .today-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin: 0 0 12px;
 }
 
 .today-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1 1 100%;
   min-height: var(--button-height);
   border-radius: var(--radius-pill);
   padding: 0 16px;
+}
+
+.today-actions .today-action-photo {
+  min-height: 60px;
+  font-size: 1.0625rem;
+  font-weight: 700;
 }
 
 .today-actions .btn-secondary {

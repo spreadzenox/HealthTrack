@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-24",
+  "kind": "amélioration",
+  "title": "Accueil : un bouton photo bien visible, la carte ventre si elle vous sert",
+  "items": [
+    "« Photo du repas » prend toute la largeur, avec une icône appareil photo : on voit tout de suite où photographier son repas.",
+    "« Une note » devient « Ajouter une note », avec une icône crayon.",
+    "La carte « Votre ventre » ne s'affiche plus que si vous avez choisi « Mon ventre » (Paramètres → « Ce qui vous amène »). Vos notes ne sont jamais effacées : changez d'avis quand vous voulez."
+  ]
+}

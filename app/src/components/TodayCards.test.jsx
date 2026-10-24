@@ -63,6 +63,22 @@ describe('GutCard', () => {
   })
 })
 
+describe('GutCard onlyIfUsed (aucun objectif choisi, POL-4)', () => {
+  it('ne montre rien sans note des 7 derniers jours', async () => {
+    const read = vi.fn(async () => [])
+    const { container } = wrap(<GutCard read={read} onlyIfUsed />)
+    await waitFor(() => expect(read).toHaveBeenCalled())
+    await new Promise((r) => setTimeout(r, 0))
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it('reste affichée pour qui note son ventre', async () => {
+    const read = async () => [{ type: 'gut', source: 'app_gut', at: new Date().toISOString(), payload: { level: 'calm' } }]
+    wrap(<GutCard read={read} onlyIfUsed />)
+    expect(await screen.findByRole('heading', { name: 'Votre ventre' })).toBeInTheDocument()
+  })
+})
+
 describe('PistesTeaser', () => {
   const day = (back) => {
     const d = new Date()

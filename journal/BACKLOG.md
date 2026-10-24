@@ -72,9 +72,10 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
 - [ ] **POL-2 Historique du bien-être** : vérifier ce que sortent les deux modèles (valence, éveil, expressions ?),
   garder les scores utiles (migration IndexedDB si besoin), page « Historique du bien-être » (jour / semaine / mois +
   détail valence / éveil…), estimations jamais diagnostic, anti-circularité inchangée.
-- [ ] **POL-4 Carte ventre** seulement si « Mon ventre » choisi (onboarding ou Paramètres → « Ce qui vous amène »),
-  texte du réglage adapté ; aucune donnée effacée.
-- [ ] **POL-5 Boutons de l'Accueil** : « Photo du repas » avec icône appareil photo, « Ajouter une note ».
+- [x] **POL-4 — FAIT le 24/10 17:30** Carte ventre seulement si « Mon ventre » choisi (`gutCardMode` ; sans objectif :
+  ancienne installation → si le ventre est noté, onboarding passé → affichée), texte du réglage adapté ; rien d'effacé.
+- [x] **POL-5 — FAIT le 24/10 17:30** Boutons de l'Accueil : « Photo du repas » pleine largeur avec icône appareil
+  photo, « Ajouter une note » (crayon) en secondaire.
 - [ ] **POL-6 Journal** : « Vos derniers jours » en pastels par thème ; Tendances : graphiques pas encore actifs
   regroupés en une ligne discrète.
 - [ ] **POL-7 Onglet « Analyses »** (ex-Pistes) : une seule analyse (fin de simple / avancée), « Comment c'est
@@ -86,7 +87,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   explicite, notification permanente avec « Arrêter », réglage, service démarré app ouverte, ni exemption batterie ni
   Shizuku/ADB en play, interrupteur de build propre à play ; P28 (déclaration FGS + script vidéo) AVANT la première
   version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
-Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → POL-5 + POL-4 (petits) → POL-3 → POL-2 → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → POL-3 → POL-2 → POL-7 → POL-6 → POL-8 → POL-1 (après P28 préparé).
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
