@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { FEATURES } from '../config/distribution'
 import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
 import { loadPlans, purchasePlan, restorePurchases, monthlyEquivalent, annualSavingPercent } from '../services/playBilling'
-import { PRIVACY_URL } from '../config/brand'
+import { PRIVACY_URL, TERMS_URL } from '../config/brand'
 import { deliveredBenefits, upcomingBenefits } from '../config/premiumBenefits'
 import DetailsToggle from '../components/DetailsToggle'
 import './Premium.css'
@@ -222,6 +222,10 @@ export default function Premium({ context = null, onClose = null }) {
             {' · '}
           </>
         )}
+        <a className="paywall-link" href={TERMS_URL} target="_blank" rel="noopener noreferrer">
+          Conditions
+        </a>
+        {' · '}
         <a className="paywall-link" href={PRIVACY_URL} target="_blank" rel="noopener noreferrer">
           Confidentialité
         </a>

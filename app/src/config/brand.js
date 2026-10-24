@@ -8,3 +8,6 @@ export const APP_NAME = 'Halcya'
 
 /** Politique de confidentialité publiée par GitHub Pages (app/scripts/site/build-site.mjs). */
 export const PRIVACY_URL = 'https://spreadzenox.github.io/HealthTrack/confidentialite/'
+
+/** Conditions d'utilisation et de vente publiées par GitHub Pages (VC-18 ; source app/public/conditions.html). */
+export const TERMS_URL = 'https://spreadzenox.github.io/HealthTrack/conditions/'

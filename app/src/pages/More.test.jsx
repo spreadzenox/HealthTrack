@@ -58,4 +58,11 @@ describe('More page', () => {
     expect(link).toHaveAttribute('href', '/privacypolicy.html')
     expect(link).toHaveTextContent(/Ce qui reste sur le téléphone/)
   })
+
+  it('VC-18 : ouvre les conditions d’utilisation et de vente embarquées dans l’app', () => {
+    renderMore()
+    const link = screen.getByRole('link', { name: /Conditions/ })
+    expect(link).toHaveAttribute('href', '/conditions.html')
+    expect(link).toHaveTextContent(/abonnement/)
+  })
 })

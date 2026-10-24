@@ -1,6 +1,7 @@
 name: Site — GitHub Pages
 
-# Publie la politique de confidentialité (exigée par Google Play et Health Connect) et une courte page d'accueil :
+# Publie la politique de confidentialité (exigée par Google Play et Health Connect), les conditions d'utilisation
+# et de vente (VC-18, /conditions/) et une courte page d'accueil :
 #   https://spreadzenox.github.io/HealthTrack/confidentialite/
 # Source unique : app/public/privacypolicy.html (aussi embarquée dans l'app). Voir journal/PRODUIT.md (P19).
 on:
@@ -8,6 +9,7 @@ on:
     branches: [main]
     paths:
       - "app/public/privacypolicy.html"
+      - "app/public/conditions.html"
       - "app/scripts/site/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:

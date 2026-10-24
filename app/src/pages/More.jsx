@@ -12,6 +12,7 @@ const ITEMS = [
   { to: '/nouveautes', icon: '✨', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },
   // Page statique (app/public), hors du routeur : aussi publiée par GitHub Pages et montrée par Health Connect
   { href: '/privacypolicy.html', icon: '🔒', title: 'Confidentialité', desc: 'Ce qui reste sur le téléphone, ce qui en sort et quand' },
+  { href: '/conditions.html', icon: '📄', title: 'Conditions', desc: 'Utilisation, abonnement et remboursements' },
 ]
 
 export default function More({ changelog = CHANGELOG }) {

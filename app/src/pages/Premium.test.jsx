@@ -12,6 +12,7 @@ vi.mock('../services/playBilling', async (importOriginal) => ({ ...(await import
 
 import Premium from './Premium'
 import { ENTITLEMENT_EVENT } from '../services/entitlement'
+import { PRIVACY_URL, TERMS_URL } from '../config/brand'
 
 const YEAR = { basePlanId: 'annuel', offerToken: 't-a', period: 'year', price: '29,99 €', priceMicros: 29_990_000, currency: 'EUR', trialDays: 14 }
 const MONTH = { basePlanId: 'mensuel', offerToken: 't-m', period: 'month', price: '4,99 €', priceMicros: 4_990_000, currency: 'EUR', trialDays: null }
@@ -50,6 +51,14 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     expect(upcoming).toHaveTextContent(/FODMAP/)
     expect(upcoming).toHaveTextContent(/rapport PDF/)
     expect(upcoming).toHaveTextContent(/délais de 2 à 48 h/)
+  })
+
+  it('VC-18 : liens « Conditions » et « Confidentialité » vers les pages publiées', async () => {
+    billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+    renderPremium()
+    await screen.findByRole('radio', { name: /Annuel/ })
+    expect(screen.getByRole('link', { name: 'Conditions' })).toHaveAttribute('href', TERMS_URL)
+    expect(screen.getByRole('link', { name: 'Confidentialité' })).toHaveAttribute('href', PRIVACY_URL)
   })
 
   it('mensuel choisi : pas d’essai, le bouton et la mention s’adaptent', async () => {
