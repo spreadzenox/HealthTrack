@@ -1,0 +1,61 @@
+# Abonnement Google Play (étape 6d, journal/IDEES.md I158) : `halcya_premium`, formules `annuel` (29,99 €/an) et
+# `mensuel` (4,99 €/mois), grâce + suspension de compte, essai gratuit de 14 jours sur l'annuel
+# (app/scripts/play/subscriptions.mjs). Idempotent : ne crée que ce qui manque, n'active que les brouillons, ne
+# modifie jamais un prix existant. Connexion sans clé (Workload Identity Federation, main uniquement).
+# Refus de Google (accès, profil de paiement pas encore vérifié) → avertissement avec l'erreur exacte, pas d'échec.
+name: Play — abonnements
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/scripts/play/subscriptions*.mjs"
+      - "app/src/config/premiumBenefits.js"
+      - ".github/workflows/play-subscriptions.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: play-subscriptions
+  cancel-in-progress: false
+
+jobs:
+  subscriptions:
+    name: Abonnement halcya_premium
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Catalogue prévu
+        working-directory: app
+        run: GITHUB_STEP_SUMMARY= node scripts/play/subscriptions-cli.mjs
+
+      - name: Jeton Google Play (portée androidpublisher)
+        id: play-token
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+
+      - name: Créer et activer l'abonnement (Google Play)
+        working-directory: app
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
+        run: |
+          set +e
+          node scripts/play/subscriptions-cli.mjs
+          code=$?
+          if [ "$code" = 2 ]; then exit 0; fi
+          exit "$code"

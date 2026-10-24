@@ -70,7 +70,7 @@ export function withRetry(fetchImpl, { delays = RETRY_DELAYS_MS, sleep = wait } 
   }
 }
 
-async function call(fetchImpl, step, url, { method = 'GET', token, body, contentType = 'application/json' } = {}) {
+export async function call(fetchImpl, step, url, { method = 'GET', token, body, contentType = 'application/json' } = {}) {
   const res = await fetchImpl(url, {
     method,
     headers: { Authorization: `Bearer ${token}`, ...(body !== undefined ? { 'Content-Type': contentType } : {}) },
