@@ -1,14 +1,15 @@
 /**
  * Carte menthe « Bien-être estimé » de l'accueil « Aujourd'hui » (maquette du 20/10/2026, journal/DESIGN.md §7) :
  * le bien-être du jour estimé par la Lecture du visage dès la première lecture (mood/faceMood.js), en grand chiffre
- * sur 5, l'écart à la moyenne des 14 derniers jours, la courbe de ces jours et une phrase simple. « détails »
- * remplace la phrase par la fourchette, le nombre de lectures, la moyenne et le modèle. Toujours « une estimation,
- * pas un diagnostic ». Sans aucune lecture avec un visage : une invitation discrète à activer la lecture.
+ * sur 5, l'écart à la moyenne des 14 derniers jours, la courbe de ces jours et une phrase simple. Le chevron ouvre des
+ * détails visuels (POL-3) : la fourchette sur l'échelle, un badge de confiance, le nombre de lectures et la moyenne,
+ * puis le modèle en petit. Toujours « une estimation, pas un diagnostic ». « Noter moi-même » ouvre la note manuelle,
+ * discrètement, dans la carte. Sans aucune lecture avec un visage : une invitation à activer la lecture.
  */
 import { Link } from 'react-router-dom'
-import { describeFaceMood } from '../services/mood/faceMood'
 import { MODEL_LABELS, formatDelta, frDecimal, wellbeingTrend } from '../services/today'
 import DetailsToggle from './DetailsToggle'
+import LineIcon from './LineIcon'
 import './MoodEstimateCard.css'
 
 const pct = (v) => `${(v / 5) * 100}%`
@@ -47,15 +48,41 @@ export function Sparkline({ series, mean }) {
   )
 }
 
+const CONFIDENCE_DOTS = { faible: 1, moyenne: 2, bonne: 3 }
+
+/** Badge de confiance : trois points, autant de pleins que le niveau (faible 1, moyenne 2, bonne 3). */
+export function ConfidenceBadge({ level }) {
+  const filled = CONFIDENCE_DOTS[level] ?? 1
+  return (
+    <span className={`mood-chip mood-confidence is-${level}`}>
+      <span className="mood-confidence-dots" aria-hidden="true">
+        {[1, 2, 3].map((i) => <span key={i} className={i <= filled ? 'is-on' : ''} />)}
+      </span>
+      confiance {level}
+    </span>
+  )
+}
+
+function ManualNoteButton({ onClick }) {
+  if (!onClick) return null
+  return (
+    <button type="button" className="mood-manual" onClick={onClick}>
+      <LineIcon name="plus" size={16} />
+      Noter moi-même
+    </button>
+  )
+}
+
 function hourOf(iso) {
   return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 }
 
 /**
  * @param {{ data: undefined | null | { est: object | null, days: object[] }, details?: boolean,
- *   onToggleDetails?: () => void, now?: Date }} props  `data` : undefined pendant la lecture, null sans lecture.
+ *   onToggleDetails?: () => void, onAddManual?: () => void, now?: Date }} props
+ *   `data` : undefined pendant la lecture, null sans lecture.
  */
-export default function MoodEstimateCard({ data, details = false, onToggleDetails, now }) {
+export default function MoodEstimateCard({ data, details = false, onToggleDetails, onAddManual, now }) {
   if (data === undefined) return null
   if (!data?.est) {
     return (
@@ -65,13 +92,13 @@ export default function MoodEstimateCard({ data, details = false, onToggleDetail
           Votre bien-être peut s’estimer tout seul, sur le téléphone, avec la lecture du visage.{' '}
           <Link to="/connectors">L’activer dans Sources</Link>
         </p>
+        <ManualNoteButton onClick={onAddManual} />
       </section>
     )
   }
   const { est, days } = data
   const shown = est.day || est.moment
   const trend = wellbeingTrend(days, est.day?.note ?? null, now ?? new Date())
-  const lines = describeFaceMood(est)
   return (
     <section className="today-card mood-estimate" aria-labelledby="mood-estimate-title">
       <div className="today-card-head">
@@ -89,22 +116,22 @@ export default function MoodEstimateCard({ data, details = false, onToggleDetail
       </p>
       {!est.day && <p className="mood-estimate-when mono">dernière lecture · {new Date(est.moment.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} {hourOf(est.moment.at)}</p>}
       <Sparkline series={trend.series} mean={trend.mean} />
-      {details ? (
-        <>
-          <dl className="today-details mono">
-            <div><dt>Fourchette</dt><dd>{frDecimal(shown.low)} – {frDecimal(shown.high)}</dd></div>
-            <div><dt>Lectures</dt><dd>n = {est.day ? est.day.readings : 1}{est.day ? ' aujourd’hui' : ''}</dd></div>
-            <div><dt>Moyenne 14 j</dt><dd>{trend.mean != null ? `${frDecimal(trend.mean)} (${trend.pastDays} j)` : '—'}</dd></div>
-            <div><dt>Confiance</dt><dd>{est.confidence}</dd></div>
-            <div><dt>Modèle</dt><dd>{MODEL_LABELS[est.model] || est.model}</dd></div>
-          </dl>
-          {lines.slice(1).map((line) => <p key={line} className="today-card-text today-card-small">{line}</p>)}
-        </>
-      ) : (
-        <p className="today-card-text">
-          {est.day ? trend.phrase : 'Pas encore de lecture aujourd’hui.'} Une estimation, pas un diagnostic.
-        </p>
+      {details && (
+        <div className="mood-details">
+          <MoodRange low={shown.low} high={shown.high} note={shown.note} />
+          <p className="mood-details-range mono">entre {frDecimal(shown.low)} et {frDecimal(shown.high)}</p>
+          <div className="mood-chips">
+            <ConfidenceBadge level={est.confidence} />
+            <span className="mood-chip mono">{est.day ? `${est.day.readings} ${est.day.readings > 1 ? 'lectures' : 'lecture'} auj.` : '1 lecture'}</span>
+            {trend.mean != null && <span className="mood-chip mono">moy. {frDecimal(trend.mean)} · {trend.pastDays} j</span>}
+          </div>
+          <p className="mood-details-model mono">{MODEL_LABELS[est.model] || est.model}</p>
+        </div>
       )}
+      <p className="today-card-text">
+        {est.day ? trend.phrase : 'Pas encore de lecture aujourd’hui.'} Une estimation, pas un diagnostic.
+      </p>
+      <ManualNoteButton onClick={onAddManual} />
     </section>
   )
 }

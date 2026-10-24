@@ -148,7 +148,7 @@ describe('Nutrition page', () => {
     expect(await screen.findByText('70 kg')).toBeInTheDocument()
     const card = container.querySelector('.nutrition-profile-card')
     expect(card.textContent).not.toMatch(/kcal|IMC|À compléter/)
-    fireEvent.click(screen.getByRole('button', { name: 'détails' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
     expect(card.textContent).toMatch(/IMC\s24,2/)
     expect(card.textContent).toMatch(/~2\s507 kcal\/jour/)
   })
@@ -227,7 +227,7 @@ describe('Nutrition page', () => {
   it('enregistre le niveau d\'activité choisi et recalcule l\'énergie', async () => {
     loadNutritionEntries.mockResolvedValue(completeProfile())
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
-    fireEvent.click(await screen.findByRole('button', { name: 'détails' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Afficher les détails' }))
     // Homme 30 ans, 70 kg, 170 cm : 1 617,5 kcal × 1,55 ≈ 2 507
     expect(await screen.findByText(/~2\s507 kcal\/jour/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Modifier' }))

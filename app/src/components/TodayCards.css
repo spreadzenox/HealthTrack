@@ -185,7 +185,7 @@
 
 /* Actions */
 /* « Photo du repas » sur toute la largeur, icône appareil photo : le geste principal se voit d'un coup d'œil
-   (POL-5) ; « Ajouter une note » en dessous, en secondaire. */
+   (POL-5) ; la note manuelle est dans la carte bien-être (POL-3). */
 .today-actions {
   display: flex;
   flex-wrap: wrap;

@@ -171,16 +171,21 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).not.toBeInTheDocument()
   })
 
-  it('renders the « Ajouter une note » button', async () => {
+  it('un seul geste sous les cartes : « Photo du repas » (la note manuelle est dans la carte bien-être, POL-3)', async () => {
     renderDashboard()
-    const btn = screen.getByRole('button', { name: 'Ajouter une note' })
-    expect(btn).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Photo du repas' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Ajouter une note' })).not.toBeInTheDocument()
+  })
+
+  it('« Noter moi-même » de la carte bien-être ouvre la note manuelle', async () => {
+    renderDashboard()
+    fireEvent.click(await screen.findByRole('button', { name: 'Noter moi-même' }))
+    expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
   })
 
   it('hides the cigarette quick-add button for a non-smoker (no recent cigarette)', async () => {
     localStorage.clear()
     renderDashboard()
-    await screen.findByRole('button', { name: 'Ajouter une note' })
     await waitFor(() => expect(screen.queryByText(/Chargement des données/i)).not.toBeInTheDocument())
     expect(screen.queryByRole('button', { name: /Ajouter une cigarette/i })).not.toBeInTheDocument()
   })
@@ -201,25 +206,11 @@ describe('Dashboard', () => {
     localStorage.clear()
   })
 
-  it('opens the wellbeing modal when the button is clicked', async () => {
+  it('la note manuelle s’ouvre vierge et se ferme', async () => {
     renderDashboard()
-    const btn = screen.getByRole('button', { name: 'Ajouter une note' })
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    fireEvent.click(btn)
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
-  })
-
-  it('closes the wellbeing modal when onClose is called', async () => {
-    renderDashboard()
-    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une note' }))
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    fireEvent.click(await screen.findByRole('button', { name: 'Noter moi-même' }))
+    expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
     fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  })
-
-  it('le bouton « Ajouter une note » ouvre une note vierge', async () => {
-    renderDashboard()
-    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une note' }))
-    expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
   })
 })

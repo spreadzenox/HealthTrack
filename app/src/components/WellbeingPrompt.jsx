@@ -19,46 +19,12 @@ import {
   eveningNotePlugin,
   formatMinute,
   getEveningNoteStatus,
-  importPendingEveningNotes,
   setEveningNoteEnabled,
 } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
 import LineIcon from './LineIcon'
 
-const SESSION_KEY = 'healthtrack-wellbeing-prompt-session'
-
-function hasAnsweredThisSession() {
-  try {
-    return sessionStorage.getItem(SESSION_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-function markSessionAnswered() {
-  try {
-    sessionStorage.setItem(SESSION_KEY, '1')
-  } catch {
-    /* ignore quota / private mode */
-  }
-}
-
 const SCORES = [0, 1, 2, 3, 4, 5]
-
-/** The prompt does not open by itself again within this many hours of a saved note. */
-const RECENT_NOTE_HOURS = 3
-
-async function hasRecentNote() {
-  try {
-    // une note donnée d'un geste depuis la notification du soir compte (rangée d'abord)
-    await importPendingEveningNotes()
-    const since = new Date(Date.now() - RECENT_NOTE_HOURS * 3_600_000).toISOString()
-    const notes = await listEntries({ type: 'wellbeing', since, limit: 1 })
-    return notes.length > 0
-  } catch {
-    return false
-  }
-}
 
 /** Séances et repas relus sur cette période : au-delà, la source n'est sans doute plus utilisée. */
 const CAPTURE_DAYS = 14
@@ -108,16 +74,12 @@ function withTags(payload, tags) {
 }
 
 /**
- * WellbeingPrompt can work in two modes:
- * - Uncontrolled (no props): shows automatically once per session.
- * - Controlled (open + onClose props): caller manages visibility.
- * With `entry` (controlled mode), it edits that saved note in place: score and tags change,
- * the time and the other payload fields are kept.
+ * Note de bien-être donnée à la main, ouverte par l'appelant (open + onClose) : depuis la carte « Bien-être estimé »
+ * de l'Accueil, et le Journal. Elle ne s'ouvre plus d'elle-même au lancement (POL-3, retour
+ * du propriétaire du 24/10 : la lecture du visage estime déjà le bien-être). Avec `entry`, elle modifie cette note :
+ * la note et les tags changent, l'heure et les autres champs restent.
  */
-export default function WellbeingPrompt({ open: controlledOpen, onClose: controlledOnClose, entry } = {}) {
-  const isControlled = controlledOpen !== undefined
-
-  const [internalOpen, setInternalOpen] = useState(false)
+export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
   const [selected, setSelected] = useState(null)
   const [tags, setTags] = useState([])
   const [saving, setSaving] = useState(false)
@@ -127,28 +89,16 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   const [eveningHint, setEveningHint] = useState(null)
   const [phrase, setPhrase] = useState('')
 
-  useEffect(() => {
-    if (isControlled || hasAnsweredThisSession()) return undefined
-    let alive = true
-    hasRecentNote().then((recent) => alive && !recent && setInternalOpen(true))
-    return () => {
-      alive = false
-    }
-  }, [isControlled])
-
   // Reset (or prefill with the edited note) whenever the dialog opens
   useEffect(() => {
-    const visible = isControlled ? controlledOpen : internalOpen
-    if (visible) {
+    if (open) {
       const score = entry?.payload?.score
       setSelected(typeof score === 'number' ? score : null)
       setTags(Array.isArray(entry?.payload?.tags) ? entry.payload.tags : [])
       setPhrase('')
       setError(null)
     }
-  }, [isControlled ? controlledOpen : internalOpen, entry]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const open = isControlled ? controlledOpen : internalOpen
+  }, [open, entry])
 
   useEffect(() => {
     if (!open) return undefined
@@ -171,14 +121,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
   const proposedScore = read?.score != null && read.score !== selected ? read.score : null
   const proposedTags = read ? shownTags.filter((t) => read.tags.includes(t.id) && !tags.includes(t.id)) : []
 
-  const close = () => {
-    if (isControlled) {
-      controlledOnClose?.()
-    } else {
-      setInternalOpen(false)
-      markSessionAnswered()
-    }
-  }
+  const close = () => onClose?.()
 
   const toggleTag = (id) => {
     setTags((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]))
@@ -219,9 +162,6 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
         })
       }
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
-      if (!isControlled) {
-        markSessionAnswered()
-      }
       close()
     } catch (e) {
       setError(e.message || 'Enregistrement impossible')
@@ -365,7 +305,7 @@ export default function WellbeingPrompt({ open: controlledOpen, onClose: control
 
         <div className="wellbeing-modal-actions">
           <button type="button" className="btn btn-secondary" onClick={handleSkip} disabled={saving}>
-            {isControlled ? 'Annuler' : 'Plus tard'}
+            Annuler
           </button>
           <button type="button" className="btn" onClick={handleSave} disabled={saving}>
             {saving ? 'Enregistrement…' : 'Enregistrer'}
