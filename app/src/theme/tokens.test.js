@@ -32,9 +32,9 @@ const TEXT_ON = {
   'color-surface': ['color-ink', 'color-ink-2', 'color-brand', 'color-ok', 'color-warn', 'color-alert', 'color-danger', 'color-info', 'color-violet'],
   'color-brand': ['color-on-brand'],
   'color-badge': ['color-on-badge'],
-  'mint-bg': ['mint-text', 'mint-label', 'color-ink'],
-  'peach-bg': ['peach-text', 'peach-label', 'color-ink'],
-  'lilac-bg': ['lilac-text', 'lilac-bar', 'color-ink'],
+  'mint-bg': ['mint-text', 'mint-label', 'color-ink', 'color-ink-2'],
+  'peach-bg': ['peach-text', 'peach-label', 'color-ink', 'color-ink-2'],
+  'lilac-bg': ['lilac-text', 'lilac-bar', 'color-ink', 'color-ink-2'],
 }
 
 describe('tokens de design', () => {

@@ -48,22 +48,17 @@ function RangeBar({ b }) {
   )
 }
 
+/** POL-6 : une norme pas encore établie tient dans la ligne « Bientôt » du bloc Forme, pas dans une carte. */
+function soonLine(b) {
+  return {
+    id: b.metric.key,
+    label: b.metric.label,
+    progress: b.missingDays > 0 ? `encore ${b.missingDays} j` : `pas de mesure ces ${RECENT_DAYS} j`,
+  }
+}
+
 function BaselineCard({ b }) {
   const { metric } = b
-  if (b.status === 'insufficient') {
-    return (
-      <div className="baseline-card is-insufficient">
-        <div className="baseline-card-header">
-          <span className="baseline-card-title">{metric.label}</span>
-        </div>
-        <p className="baseline-card-note">
-          {b.missingDays > 0
-            ? `Encore ${b.missingDays} jour${b.missingDays > 1 ? 's' : ''} de mesures pour établir votre norme.`
-            : `Pas assez de mesures ces ${RECENT_DAYS} derniers jours (au moins 3 nécessaires).`}
-        </p>
-      </div>
-    )
-  }
   const fmt = formatterFor(b)
   const label = `${metric.label} : ${fmt(b.recentMean)} ${metric.unit} en moyenne sur ${RECENT_DAYS} jours, ` +
     `${STATUS_LABELS[b.status].toLowerCase()} (norme ${fmt(b.low)}–${fmt(b.high)} ${metric.unit})`
@@ -85,7 +80,7 @@ function BaselineCard({ b }) {
   )
 }
 
-export default function BaselineCards() {
+export default function BaselineCards({ onStatus }) {
   const [baselines, setBaselines] = useState(null)
 
   const load = useCallback(async () => {
@@ -106,9 +101,20 @@ export default function BaselineCards() {
     return () => window.removeEventListener('health-entries-updated', load)
   }, [load])
 
+  const measured = (baselines || []).filter((b) => b.recentDays + b.baselineDays > 0)
+  const ready = measured.filter((b) => b.status !== 'insufficient')
+  useEffect(() => {
+    if (!onStatus || !baselines) return
+    const shown = baselines.filter((b) => b.recentDays + b.baselineDays > 0)
+    onStatus('heart', {
+      active: shown.some((b) => b.status !== 'insufficient'),
+      soon: shown.filter((b) => b.status === 'insufficient').map(soonLine),
+    })
+  }, [onStatus, baselines])
+
   if (!baselines) return null
 
-  const hasAnyData = baselines.some((b) => b.recentDays + b.baselineDays > 0)
+  const hasAnyData = measured.length > 0
   const generalFatigue = baselines.some((b) => b.generalFatigue)
 
   return (
@@ -120,9 +126,11 @@ export default function BaselineCards() {
         </p>
       ) : (
         <>
-          <div className="baseline-cards">
-            {baselines.map((b) => <BaselineCard key={b.metric.key} b={b} />)}
-          </div>
+          {ready.length > 0 && (
+            <div className="baseline-cards">
+              {ready.map((b) => <BaselineCard key={b.metric.key} b={b} />)}
+            </div>
+          )}
           {generalFatigue && (
             <p className="baseline-hint" role="note">
               Hypothèse générale : une FC au repos plus haute ou une VFC plus basse suit souvent une nuit courte, du

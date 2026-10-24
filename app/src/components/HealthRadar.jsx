@@ -47,7 +47,7 @@ function checkedList(metrics) {
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} et ${names[names.length - 1]}` : names[0]
 }
 
-export default function HealthRadar() {
+export default function HealthRadar({ onStatus }) {
   const [state, setState] = useState(null)
 
   const load = useCallback(async () => {
@@ -80,7 +80,16 @@ export default function HealthRadar() {
     return () => window.removeEventListener('health-entries-updated', load)
   }, [load])
 
-  if (!state?.hasData) return null
+  const level = state?.hasData ? state.radar.level : null
+  useEffect(() => {
+    if (!onStatus || !state) return
+    // POL-6 : pas encore actif → une ligne « Bientôt » à la place de la carte
+    onStatus('radar', level === 'insufficient'
+      ? { soon: [{ id: 'radar', label: 'Radar forme', progress: 'après 2 semaines' }] }
+      : { active: level != null })
+  }, [onStatus, state, level])
+
+  if (!state?.hasData || level === 'insufficient') return null
   const { radar, why } = state
   const flagged = radar.level === 'watch' || radar.level === 'alert'
   const explained = flagged && why?.explained && !why.sick
@@ -100,13 +109,6 @@ export default function HealthRadar() {
           </span>
         )}
       </div>
-
-      {radar.level === 'insufficient' && (
-        <p className="radar-text">
-          Le radar s’active après 2 semaines de mesures d’au moins deux signaux parmi FC au repos, VFC et sommeil :
-          il signalera les jours où plusieurs s’écartent en même temps de votre norme.
-        </p>
-      )}
 
       {radar.level === 'stale' && (
         <p className="radar-text">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import {
@@ -511,20 +512,7 @@ function soonLines({ faceMood, tagEffects, laggedEffects } = {}) {
 }
 
 function SoonSection({ lines }) {
-  if (!lines.length) return null
-  return (
-    <section className="reco-soon" data-testid="reco-soon">
-      <h3 className="reco-soon-title">Bientôt</h3>
-      <ul className="reco-soon-list">
-        {lines.map((l) => (
-          <li key={l.id} className="reco-soon-row">
-            <span>{l.label}</span>
-            <span className="reco-soon-progress">{l.progress}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
+  return <SoonList lines={lines} testId="reco-soon" />
 }
 
 // ─── Comment c'est calculé (une seule note, en bas de page) ──────────────────

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-25",
+  "kind": "amélioration",
+  "title": "Journal plus coloré, tendances plus légères",
+  "items": [
+    "« Vos derniers jours » prend des couleurs : menthe pour le corps et le bien-être (sommeil, cœur, VFC…), pêche pour les repas et le ventre, lilas pour ce que vous faites (pas, dépense, écran). Les chiffres sont en police « données ».",
+    "Vos repas, notes du ventre, notes de bien-être et séances ont aussi leur couleur dans la liste du jour.",
+    "Tendances : les graphiques qui n'ont pas encore assez de mesures (radar, FC au repos, VFC, horaires de sommeil) ne prennent plus une carte chacun ; ils tiennent dans une ligne discrète « Bientôt », avec ce qu'il leur manque. Rien n'est effacé."
+  ]
+}

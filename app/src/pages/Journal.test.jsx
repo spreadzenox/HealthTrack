@@ -280,6 +280,20 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(document.body).not.toHaveTextContent('percent')
   })
 
+  it('colore chaque mesure du jour selon son thème (POL-6) : corps en menthe, repas en pêche, activité en lilas', async () => {
+    await renderEntries([
+      { type: 'steps', source: 'health_connect', at: '2026-04-10T00:00:00', payload: { value: 8200, period: 'day' } },
+      { type: 'sleep', source: 'health_connect', at: '2026-04-09T23:00:00', payload: { durationMinutes: 420, sleepState: 'asleep' } },
+      { type: 'food', source: 'app_food', at: '2026-04-10T12:00:00', payload: { dish: 'Salade', items: [] } },
+      { type: 'phone_usage', source: 'phone', at: '2026-04-10T23:00:00', payload: { screenMinutes: 120 } },
+    ])
+    const themeOf = (label) => screen.getByText(label, { selector: 'dt' }).parentElement.dataset.theme
+    expect(themeOf('Sommeil')).toBe('mint')
+    expect(themeOf('Pas')).toBe('lilac')
+    expect(themeOf('Repas')).toBe('peach')
+    expect(document.querySelector('.entry-card[data-type="food"]')).toBeInTheDocument()
+  })
+
   it('shows a Withings weight in kg instead of raw data', async () => {
     await renderEntries([{ type: 'weight', source: 'withings', at: '2026-04-10T07:30:00', payload: { valueKg: 77.2, deviceid: 'abc123', model: 'Body Scan' } }])
     const row = document.querySelector('.entry-card')

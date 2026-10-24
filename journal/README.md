@@ -698,6 +698,15 @@ ne sont plus en rouge non plus. Aucun calcul ne change. **👉 À tester** : ong
 d'une piste. Reste pour la 3e partie (POL-7c) : un seul verdict par facteur (« Alcool » est encore montré côté visage
 et côté notes) et la liste « autres liens » fusionnée. Publié : **v258** (33,7 Mo) et la version play en test interne.
 
+**Run du 25/10 00:30 — le Journal en couleurs (POL-6).** Ce que vous verrez dans Journal → **Jours** : « Vos derniers
+jours » n'est plus gris. Chaque mesure du jour a son pastel : **menthe** pour le corps et le bien-être (sommeil, FC,
+VFC, respiration, température, stress), **pêche** pour les repas, **lilas** pour ce que vous faites (pas, dépense,
+écran) ; les chiffres passent en police « données ». Vos repas et notes du ventre sont sur fond pêche, vos notes de
+bien-être sur fond menthe, vos séances sur fond lilas. Dans **Tendances**, un graphique qui n'a pas encore assez de
+mesures (radar, FC au repos, VFC, horaires de sommeil) ne prend plus une carte : une ligne discrète **« Bientôt »** dit
+ce qui lui manque (« encore 10 j », « encore 4 nuits »). Rien n'est effacé, aucun calcul ne change. **👉 À tester** :
+Journal → Jours, puis Tendances. Prochain run de code : **POL-8** (Sources simplifiées).
+
 **Run du 24/10 23:30 — un seul verdict par facteur (POL-7, 3e et dernière partie).** Ce que vous verrez dans l'onglet
 « Analyses » : sous les pistes à tester, **une seule liste « Autres liens repérés »** réunit ce qui était éparpillé en
 quatre blocs (liens avec le visage, habitudes, effets décalés, autres liens). **Chaque facteur n'apparaît qu'une fois**,
@@ -1370,6 +1379,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 21:30 — [POL-7a : onglet « Analyses »](runs/2026-10-24-2130-pol7a-onglet-analyses.md) | 🧭 | Onglet et titre « Analyses » ; plus d'onglets simple / avancée (`AnalysisView`) ; ligne mono d'en-tête + encart lilas ; « Bientôt » (`soonLines`) ; une seule note de méthode en pied de page avec le modèle de prédiction calculé à l'ouverture ; 2 156 Vitest |
 | 24/10 22:30 — [POL-7b : pistes dépliables, barres neutres](runs/2026-10-24-2230-pol7b-pistes-depliables.md) | 🧭 | `LeverCard` : phrase + étiquette, statistiques (r, jours indépendants, week-end) derrière `DetailsToggle` ; `CorrelationBar` / `ImportanceBar` : `reco-corr-up` / `-down` en lilas, valeur « ↑ 0,59 », `DIRECTION_HINT` ; écarts des habitudes sans rouge ; captures play clair / sombre |
 | 24/10 23:30 — [POL-7c : un verdict par facteur](runs/2026-10-24-2330-pol7c-un-verdict-par-facteur.md) | 🧭 | `LinksSection` + `mergeLinks` (corrélations, tags, effets décalés, notes et visage ; `FACTOR_ALIAS` ; plus solide gagne) ; « Voir N autres liens » au-delà de 5 ; étiquette « visage » ; effet décalé d'une piste au chevron ; émojis retirés ; captures play clair / sombre / vierge |
+| 25/10 00:30 — [POL-6 : Journal en couleurs](runs/2026-10-25-0030-pol6-journal-en-couleurs.md) | 🧭 | `chipTheme` → tuiles du résumé en pastels (menthe / pêche / lilas), valeurs en mono ; saisies en pastel ; `onStatus` sur radar, norme cardiaque et régularité du sommeil → `SoonList` « Bientôt » (partagé avec Analyses) ; méthode seulement si un bloc est actif ; captures play clair / sombre / vierge |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

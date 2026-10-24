@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { listEntries } from '../storage/localHealthStorage'
-import { computeSleepRegularity, REGULARITY_DAYS, MIN_NIGHTS } from '../services/sleepRegularity'
+import { computeSleepRegularity, REGULARITY_DAYS } from '../services/sleepRegularity'
 import { formatDuration, formatClock } from '../utils/format'
 import './BaselineCards.css'
 
@@ -19,7 +19,7 @@ function Spread({ sd }) {
   return <span className="baseline-card-sub"> ± {formatDuration(rounded)}</span>
 }
 
-export default function SleepRegularityCard() {
+export default function SleepRegularityCard({ onStatus }) {
   const [result, setResult] = useState(undefined)
 
   const load = useCallback(async () => {
@@ -39,21 +39,16 @@ export default function SleepRegularityCard() {
     return () => window.removeEventListener('health-entries-updated', load)
   }, [load])
 
-  if (!result) return null
+  const missing = result?.status === 'insufficient' ? result.missingNights : null
+  useEffect(() => {
+    if (!onStatus || result === undefined) return
+    // POL-6 : pas encore assez de nuits → une ligne « Bientôt » du bloc Forme, pas une carte
+    onStatus('sleep', missing != null
+      ? { soon: [{ id: 'sleep', label: 'Horaires de sommeil', progress: `encore ${missing} nuit${missing > 1 ? 's' : ''}` }] }
+      : { active: !!result })
+  }, [onStatus, result, missing])
 
-  if (result.status === 'insufficient') {
-    return (
-      <div className="baselines">
-        <div className="baseline-card is-insufficient">
-          <p className="baseline-card-note">
-            Encore {result.missingNights} nuit{result.missingNights > 1 ? 's' : ''} enregistrée
-            {result.missingNights > 1 ? 's' : ''} pour mesurer la régularité de vos horaires
-            ({MIN_NIGHTS} nuits sur les {REGULARITY_DAYS} derniers jours).
-          </p>
-        </div>
-      </div>
-    )
-  }
+  if (!result || missing != null) return null
 
   const level = LEVELS[result.level]
   const shift = result.weekendShift

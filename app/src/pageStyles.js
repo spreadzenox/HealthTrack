@@ -28,3 +28,5 @@ import './pages/Premium.css'
 import './pages/Onboarding.css'
 // Historique du bien-être (POL-2, 24/10)
 import './pages/WellbeingHistory.css'
+// Ligne « Bientôt » partagée par Analyses et Tendances (POL-6, 25/10)
+import './components/SoonList.css'

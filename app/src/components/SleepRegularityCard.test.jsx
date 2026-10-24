@@ -36,10 +36,14 @@ describe('SleepRegularityCard', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('says how many nights are still needed', async () => {
+  it('signale au bloc Forme combien de nuits manquent, sans carte (POL-6)', async () => {
     listEntries.mockResolvedValue([0, 1, 2].map((n) => night(n, [23, 0], [7, 0])))
-    render(<SleepRegularityCard />)
-    expect(await screen.findByText(/Encore 4 nuits/)).toBeInTheDocument()
+    const onStatus = vi.fn()
+    const { container } = render(<SleepRegularityCard onStatus={onStatus} />)
+    await vi.waitFor(() => expect(onStatus).toHaveBeenCalledWith('sleep', {
+      soon: [{ id: 'sleep', label: 'Horaires de sommeil', progress: 'encore 4 nuits' }],
+    }))
+    expect(container).toBeEmptyDOMElement()
   })
 
   it('shows typical hours, their spread, the index and a "regular" badge', async () => {

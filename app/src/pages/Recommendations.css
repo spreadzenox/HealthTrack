@@ -26,41 +26,6 @@
   margin: 0 0 16px;
 }
 
-/* ─── Bientôt : une ligne par bloc qui attend des données ─────────────────── */
-
-.reco-soon {
-  margin: 8px 0 18px;
-}
-
-.reco-soon-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  margin: 0 0 6px;
-}
-
-.reco-soon-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.reco-soon-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  padding: 8px 0;
-  border-top: 1px solid var(--border);
-}
-
-.reco-soon-progress {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  white-space: nowrap;
-}
-
 /* ─── Pied de page : mise en garde + une seule note de méthode ─────────────── */
 
 .reco-footer {

@@ -313,7 +313,7 @@
 
 .day-card {
   background: var(--surface);
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   padding: 14px 16px 6px;
   margin-bottom: 14px;
 }
@@ -340,24 +340,35 @@
 }
 
 .day-summary-item {
-  background: rgba(var(--tint-rgb), 0.04);
-  border-radius: 8px;
-  padding: 5px 8px;
+  background: var(--bg);
+  border-radius: var(--radius-tag);
+  padding: 6px 9px;
   min-width: 0;
 }
 
 .day-summary-item dt {
   font-size: 0.72rem;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
 .day-summary-item dd {
   margin: 0;
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
   color: var(--text);
   overflow-wrap: anywhere;
 }
+
+/* POL-6 : un pastel par thème (menthe = corps et bien-être, pêche = repas, lilas = ce qu'on fait). */
+.day-summary-item[data-theme="mint"] { background: var(--mint-bg); }
+.day-summary-item[data-theme="mint"] dt { color: var(--mint-label); }
+.day-summary-item[data-theme="peach"] { background: var(--peach-bg); }
+.day-summary-item[data-theme="peach"] dt { color: var(--peach-label); }
+.day-summary-item[data-theme="lilac"] { background: var(--lilac-bg); }
+.day-summary-item[data-theme="lilac"] dt { color: var(--lilac-bar); }
 
 .day-more-btn {
   width: 100%;
@@ -394,14 +405,18 @@
   border-left: 3px solid var(--accent);
 }
 
-.entry-card[data-type="food"] { border-left-color: var(--accent); }
-.entry-card[data-type="activity"] { border-left-color: var(--color-info); }
+.entry-card[data-type="food"] { border-left-color: var(--peach-label); background: var(--peach-bg); }
+.entry-card[data-type="activity"] { border-left-color: var(--lilac-bar); background: var(--lilac-bg); }
 .entry-card[data-type="weight"],
 .entry-card[data-type="body_composition"],
 .entry-card[data-type="height"] { border-left-color: var(--text-muted); }
 .entry-card[data-type="cigarette"] { border-left-color: var(--text-muted); }
-.entry-card[data-type="wellbeing"] { border-left-color: var(--color-violet); }
-.entry-card[data-type="gut"] { border-left-color: var(--peach-label); }
+.entry-card[data-type="wellbeing"] { border-left-color: var(--mint-label); background: var(--mint-bg); }
+.entry-card[data-type="gut"] { border-left-color: var(--peach-label); background: var(--peach-bg); }
+/* Sur un pastel, les chiffres de l'en-tête prennent la couleur d'étiquette du thème (contraste ≥ 4,5:1). */
+.entry-card[data-type="food"] .entry-kcal,
+.entry-card[data-type="gut"] .entry-kcal { color: var(--peach-label); }
+.entry-card[data-type="wellbeing"] .entry-kcal { color: var(--mint-label); }
 
 .entry-card-header {
   display: flex;
