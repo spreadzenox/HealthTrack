@@ -19,8 +19,8 @@ function history(make, base) {
   return out
 }
 
-function renderCards() {
-  return render(<BrowserRouter><BaselineCards /></BrowserRouter>)
+function renderCards(props = {}) {
+  return render(<BrowserRouter><BaselineCards {...props} /></BrowserRouter>)
 }
 
 describe('BaselineCards', () => {
@@ -43,10 +43,15 @@ describe('BaselineCards', () => {
     expect(await screen.findByText(/Ajoutez une montre/i)).toBeInTheDocument()
   })
 
-  it('shows how many days are still needed to build the norm', async () => {
+  it('signale au bloc Forme combien de jours manquent pour établir la norme, sans carte (POL-6)', async () => {
     listEntries.mockResolvedValue([rhr(0, 60), rhr(1, 61), rhr(8, 60)])
-    renderCards()
-    expect(await screen.findByText(/Encore 13 jours de mesures/i)).toBeInTheDocument()
+    const onStatus = vi.fn()
+    renderCards({ onStatus })
+    await vi.waitFor(() => expect(onStatus).toHaveBeenCalledWith('heart', {
+      active: false,
+      soon: [{ id: 'restingHeartRate', label: 'FC au repos', progress: 'encore 13 j' }],
+    }))
+    expect(document.querySelector('.baseline-card')).toBeNull()
   })
 
   it('shows the 7-day mean, the personal range and an "within the norm" status', async () => {

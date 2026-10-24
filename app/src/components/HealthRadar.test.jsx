@@ -53,10 +53,14 @@ describe('HealthRadar', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('explains how much data is needed before the radar works', async () => {
+  it('pas encore actif : aucune carte, une ligne « Bientôt » signalée au bloc Forme (POL-6)', async () => {
     mockEntries([rhr(0, 60), sleep(0, 420)])
-    render(<HealthRadar />)
-    expect(await screen.findByText(/s’active après 2 semaines/i)).toBeInTheDocument()
+    const onStatus = vi.fn()
+    const { container } = render(<HealthRadar onStatus={onStatus} />)
+    await vi.waitFor(() => expect(onStatus).toHaveBeenCalledWith('radar', {
+      soon: [{ id: 'radar', label: 'Radar forme', progress: 'après 2 semaines' }],
+    }))
+    expect(container).toBeEmptyDOMElement()
   })
 
   it('says nothing unusual when the last days are within the norm', async () => {

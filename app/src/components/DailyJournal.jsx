@@ -139,6 +139,23 @@ function EntryBody({ e, measuredScreen = false }) {
   )
 }
 
+/**
+ * Pastel de chaque mesure du résumé (POL-6, palette de journal/DESIGN.md) : menthe = corps et bien-être, pêche = repas
+ * (le ventre), lilas = ce qu'on fait (pas, dépense, écran), neutre pour la météo.
+ */
+const CHIP_THEMES = {
+  Pas: 'lilac',
+  Dépense: 'lilac',
+  Écran: 'lilac',
+  'Réseaux sociaux': 'lilac',
+  Repas: 'peach',
+  Météo: 'neutral',
+}
+
+function chipTheme(label) {
+  return CHIP_THEMES[label] || 'mint'
+}
+
 /** Résumé chiffré d'une journée : seules les valeurs disponibles sont affichées. */
 function summaryChips(s) {
   const chips = []
@@ -278,7 +295,7 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
       {chips.length > 0 && (
         <dl className="day-summary">
           {chips.map(([label, value]) => (
-            <div key={label} className="day-summary-item">
+            <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
               <dt>{label}</dt>
               <dd>{value}</dd>
             </div>
