@@ -612,6 +612,18 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 24/10 07:30 — on mesure enfin le premier lancement de la version Play (VC-9).** Rien ne change dans
+l'app. En coulisses : à chaque PR et sur `main`, l'émulateur « Galaxy A56 » (Android 15 et 16) installe maintenant
+aussi la **version Play neuve, sans données**, chronomètre le temps jusqu'au premier écran de l'onboarding, relève les
+erreurs JavaScript et les plantages, et **échoue** si l'écran n'arrive pas ou si l'app plante. Les chiffres sont dans
+la page du workflow (« Premier lancement à froid — variante play ») ; ceux de ce run sont dans le
+[compte rendu](runs/2026-10-24-0730-vc9-premier-lancement.md). Un test automatique instable (VC-19) a aussi été
+réparé. **La passe « version candidate » n'a plus de défaut connu ouvert** (sauf VC-20, rangé avec le jalon 5) ; il
+reste les abonnements eux-mêmes (C3) et vos décisions. **Prochain run de code : 6d** — créer l'abonnement
+`halcya_premium` (4,99 €/mois, 29,99 €/an avec 14 jours d'essai) par l'API ; si Google le refuse tant que votre
+banque n'est pas vérifiée, j'écrirai l'erreur exacte et réessaierai. **👉 En attente de vous : confirmer le virement
+de test de Google (P13)**, puis P23 (testeurs sans paiement : « ① + ② » ou autre).
+
 **Run du 24/10 06:30 — des icônes fines à la place des émojis, et des apostrophes soignées (VC-15).** Ce que vous
 verrez : dans **Réglages**, les lignes Données, Paramètres, Nouveautés, Confidentialité et Conditions ont les mêmes
 **icônes fines** que la barre du bas (fini 🗂️ ⚙️ ✨ 🔒) ; la page **Repas** s'appelle enfin « Repas » (et non
@@ -1131,6 +1143,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 04:30 — [VC-18b : rappel de fin d'essai](runs/2026-10-24-0430-vc18b-rappel-essai.md) | 🧭💳 | `services/trialReminder.js` (J−2, déplacé/annulé selon les droits du relais) ; plugin play `TrialReminderPlugin` + `TrialReminderReceiver` (alarme inexacte, redémarrage) ; paywall « jour 12 · On vous prévient » seulement si le rappel est possible ; Conditions ; 10 tests |
 | 24/10 05:30 — [VC-5 : Nouveautés par variante](runs/2026-10-24-0530-vc5-nouveautes-play.md) | 🧭 | `changelogFor` + `PLAY_CHANGELOG_SINCE` (play : entrées depuis le 24/10, champ `variants`) ; installation neuve → historique déjà « lu » (onboarding) ; test-garde de vocabulaire sur les entrées play ; 2 097 Vitest |
 | 24/10 06:30 — [VC-15 : icônes trait et apostrophes](runs/2026-10-24-0630-vc15-icones-apostrophes.md) | 🧭 | `components/LineIcon` (Réglages, Repas, Paramètres, onboarding, note du soir) ; émojis des titres de Pistes retirés ; 59 apostrophes typographiques (réécriture sur l'AST) ; titre « Repas » ; tests-gardes apostrophes + émojis ; 2 102 Vitest |
+| 24/10 07:30 — [VC-9 : premier lancement play sur l'émulateur](runs/2026-10-24-0730-vc9-premier-lancement.md) | 🧭 | `.github/scripts/play-cold-start.sh` (APK debug play, installation neuve, TotalTime + premier écran + erreurs JS + plantages, API 35 et 36, résumé du job) ; VC-19 (`UpdateBanner.test.jsx` sans minutage) ; 2 102 Vitest |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |
