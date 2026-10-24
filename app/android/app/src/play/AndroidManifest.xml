@@ -10,6 +10,17 @@
         <service android:name="com.healthtrack.app.FaceSenseService" tools:node="remove" />
         <service android:name="com.healthtrack.app.FaceResumeJob" tools:node="remove" />
         <receiver android:name="com.healthtrack.app.FaceResumeReceiver" tools:node="remove" />
+
+        <!-- Rappel de fin d'essai (TrialReminder.java, VC-18b) : l'alarme n'atteint le récepteur que par notre intention
+             explicite ; seuls le redémarrage et la mise à jour de l'app viennent du système. -->
+        <receiver
+            android:name="com.healthtrack.app.TrialReminderReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove" />

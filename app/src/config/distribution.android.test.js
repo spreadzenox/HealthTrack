@@ -39,6 +39,14 @@ describe('variantes Android play / sideload', () => {
     expect(read('src/play/java/com/healthtrack/app/PlayBillingPlugin.java')).not.toMatch(/acknowledgePurchase\(/)
   })
 
+  it('rappel de fin d’essai (VC-18b) : plugin et récepteur dans la seule variante play, sans alarme exacte', () => {
+    expect(read('src/play/java/com/healthtrack/app/FlavorPlugins.java')).toMatch(/TrialReminderPlugin\.class/)
+    expect(read('src/sideload/java/com/healthtrack/app/FlavorPlugins.java')).not.toMatch(/TrialReminder/)
+    expect(read('src/play/AndroidManifest.xml')).toContain('android:name="com.healthtrack.app.TrialReminderReceiver"')
+    expect(read('src/main/AndroidManifest.xml')).not.toMatch(/SCHEDULE_EXACT_ALARM|USE_EXACT_ALARM/)
+    expect(read('src/play/java/com/healthtrack/app/TrialReminder.java')).toMatch(/setAndAllowWhileIdle/)
+  })
+
   it('play : pas de lecture du visage au déverrouillage (service caméra, relance, exemption de batterie)', () => {
     const play = read('src/play/AndroidManifest.xml')
     for (const name of ['.FaceSenseService', '.FaceResumeJob', '.FaceResumeReceiver']) {

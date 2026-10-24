@@ -612,6 +612,19 @@ typographiques), **VC-16** (Tendances : « Enregistrez votre bien-être à l'ouv
 code : VC-7**, puis VC-12, VC-13 et P25 dès votre réponse. **👉 Toujours en attente de vous : P23** (testeurs sans
 paiement) et **P25** (paywall honnête).
 
+**Run du 24/10 04:30 — l'app vous prévient 2 jours avant la fin de l'essai (VC-18, 2ᵉ moitié).** Ce que verront
+les utilisateurs de la version Play : sur l'écran premium, la frise de l'essai a une étape de plus, **« jour 12 · On
+vous prévient par une notification »**, et la petite ligne dit **« Rappel 2 jours avant la fin de l'essai »**. Ce
+n'est plus une promesse en l'air : dès que l'essai commence, le téléphone programme une **notification locale**
+(« Votre essai gratuit se termine dans 2 jours · Premier paiement samedi 7 novembre, sauf si vous annulez ») qui
+ouvre directement la page « Abonnements » de Google Play. Elle se déplace si la date change, disparaît si l'essai
+est annulé ou payé, survit à un redémarrage du téléphone, et l'app demande l'autorisation des notifications juste
+après le début de l'essai si elle ne l'a pas. Rien ne quitte le téléphone ; votre version sideload n'est pas
+concernée. Les conditions d'utilisation le disent aussi. **Le critère C3 n'attend plus que les abonnements eux-mêmes
+(6d, après la validation de votre banque) et le scénario de bout en bout (6e).** À tester quand les abonnements
+existeront : avec votre compte testeur de licence, l'essai est raccourci par Google (quelques minutes) — le rappel
+tombera donc aussitôt. **Prochain run de code : VC-15** (émojis et apostrophes), puis VC-5 et VC-9.
+
 **Run du 24/10 03:30 — l'envoi automatique sur Google Play résiste aux pannes passagères de Google.** Rien ne
 change dans l'app. En coulisses : l'envoi de la **version play 394** (conditions d'utilisation) avait échoué cette
 nuit sur un **« 503 — service momentanément indisponible »** des serveurs de Google, à la toute première lecture. Le
@@ -1094,6 +1107,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 01:30 — [VC-10 : supprimer toutes mes données](runs/2026-10-24-0130-vc10-supprimer-donnees.md) | 🧭 | `deleteAllEntries` + `services/deleteAllData.js` (`DELETED_KEYS` / `KEPT_KEYS`) ; bloc « Supprimer » de Données (compte, export d'abord, confirmation) ; politique de confidentialité ; 2 054 Vitest |
 | 24/10 02:30 — [VC-18a : conditions d'utilisation et de vente](runs/2026-10-24-0230-vc18a-conditions.md) | 🧭 | `public/conditions.html` (brouillon P5, crédits vérifiés contre `relay/src/config.js`, aucun prix en dur) ; GitHub Pages `/conditions/` ; lien « Conditions » du paywall et de Réglages ; P26 (médiateur) |
 | 24/10 03:30 — [CI : réessais Play sur 5xx](runs/2026-10-24-0330-ci-play-reessais.md) | 🔧 | « Play — AAB » rouge sur un 503 de Google (v394) : job relancé ; `withRetry` (429/5xx, 5-10-20 s) dans `scripts/play/publish.mjs`, utilisé aussi par la fiche ; 4 tests |
+| 24/10 04:30 — [VC-18b : rappel de fin d'essai](runs/2026-10-24-0430-vc18b-rappel-essai.md) | 🧭💳 | `services/trialReminder.js` (J−2, déplacé/annulé selon les droits du relais) ; plugin play `TrialReminderPlugin` + `TrialReminderReceiver` (alarme inexacte, redémarrage) ; paywall « jour 12 · On vous prévient » seulement si le rappel est possible ; Conditions ; 10 tests |
 | 23/10 23:30 — [VC-17 : paywall honnête](runs/2026-10-23-2330-vc17-paywall-honnete.md) | 🧭💳 | `config/premiumBenefits.js` (`delivered`, `deliveredBy`) ; paywall : 1 avantage coché, 3 « en préparation » sous « détails » ; test relié au plafond du relais ; 2 045 Vitest (1 instable hors sujet : UpdateBanner, VC-19) |
 | 23/10 22:30 — [VC-12 + VC-14 + VC-16 : Pistes, Tendances, Cigarettes](runs/2026-10-23-2230-vc12-vc14-vc16.md) | 🧭 | Pistes vide : `NotEnoughData` retiré sous la carte lilas, seuil bien-être dans ses détails (`extraDetail`) ; Tendances vide : visage / « Une note », « Ajoutez une montre dans Sources » ; `cigaretteSetting` (play : masqué sauf s'il est activé) ; 2 041 Vitest |
 | 23/10 21:30 — [VC-7 + VC-13 : Sources plus claires en play](runs/2026-10-23-2130-vc7-vc13-sources.md) | 🧭 | `visibleConnectorIds` (Withings masqué en play sauf s'il sert) ; visage / écran / météo en 2 lignes + « Détails » ; guide Huawei play → « Connecter ma montre », sans F12 ni cookie ; Huawei Santé détecté → connexion directe ; 2 042 Vitest |

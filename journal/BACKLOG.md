@@ -82,7 +82,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   livrés en liste cochée, les autres dans « détails » sous « En préparation, inclus sans supplément » ; test qui
   échoue si un avantage affiché n'est relié à aucune fonction. Ajouter au passage le rappel « 2 jours avant la fin de
   l'essai », l'étape « jour 12 : on vous prévient » de la frise et le lien « Conditions » (C3).
-- [ ] **VC-18** (24/10 02:30 : **page Conditions faite**, `public/conditions.html`, GitHub Pages `/conditions/`, liens paywall + Réglages ; reste le rappel) (C3, reste de VC-17) rappel de fin d'essai : notification locale programmée à l'achat de l'essai
+- [x] **VC-18** (24/10 02:30 : **page Conditions faite**, `public/conditions.html`, GitHub Pages `/conditions/`, liens paywall + Réglages ; 24/10 04:30 : **rappel J−2 fait**, `services/trialReminder.js` + `TrialReminderPlugin` play) (C3, reste de VC-17) rappel de fin d'essai : notification locale programmée à l'achat de l'essai
   (J−2), puis seulement afficher « jour 12 : on vous prévient » et « Rappel 2 jours avant la fin de l'essai » ; page
   « Conditions » (CGU/CGV, brouillon de `journal/legal/` « à faire valider par un juriste ») publiée par GitHub Pages
   et liée depuis le paywall.

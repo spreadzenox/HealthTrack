@@ -302,6 +302,8 @@ async function main() {
           queryPurchases: async () => ({ purchases: [] }),
           addListener: async () => ({ remove() {} }),
         }
+        // rappel local de fin d'essai (VC-18b) : le paywall le promet là où le téléphone sait le programmer
+        window.__HT_TRIAL_REMINDER__ = { schedule: async () => ({ notifications: true }), cancel: async () => ({}) }
       }, String(args.billing ?? ''))
     }
     // Abonnement (variante play) : jamais d'appel au vrai relais ; état factice choisi par --subscription
