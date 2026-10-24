@@ -309,7 +309,15 @@ export default function Food() {
       {result && !loading && (
         <section className="results" aria-labelledby="results-title">
           <h2 id="results-title">{result.dish || 'Ingrédients détectés'}</h2>
-          <p className="provider-tag">Source : {result.model || result.provider}</p>
+          <div className="provider-tag">
+            Analyse IA · une estimation
+            {(result.model || result.provider) && (
+              <details className="provider-details">
+                <summary>détails</summary>
+                <span>Modèle : {result.model || result.provider}</span>
+              </details>
+            )}
+          </div>
           {result.items?.length > 0 ? (
             !savedId && (
               <p className="results-hint">

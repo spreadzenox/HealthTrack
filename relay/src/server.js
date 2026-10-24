@@ -130,6 +130,22 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
   }
   const reportedCredits = (req) => parseClientState(req.headers['x-credits'])
 
+  // Registre durable des crédits (Firestore) : une panne ne bloque jamais l'analyse, on continue en mémoire
+  async function hydrateCredits(installId) {
+    try {
+      await credits.hydrate?.(installId)
+    } catch (err) {
+      log({ event: 'credits_store_failed', op: 'get', status: err?.status ?? null })
+    }
+  }
+  async function persistCredits(installId) {
+    try {
+      await credits.persist?.(installId)
+    } catch (err) {
+      log({ event: 'credits_store_failed', op: 'set', status: err?.status ?? null })
+    }
+  }
+
   function send(res, status, payload, origin) {
     const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
     if (origin && origins.has(origin)) {
@@ -211,6 +227,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         return
       }
       const premium = await isPremium(installId, purchaseTokenHeader(req))
+      await hydrateCredits(installId)
       send(res, 200, { credits: credits.peek(installId, { premium, reported: reportedCredits(req) }) }, origin)
       return
     }
@@ -253,7 +270,9 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
 
       if (credits) {
         premium = await isPremium(installId, purchaseTokenHeader(req))
+        await hydrateCredits(installId)
         credit = credits.take(installId, { premium, reported: reportedCredits(req) })
+        if (credit.ok) await persistCredits(installId)
         if (!credit.ok) {
           quota.refund(installId)
           reserved = false
@@ -285,7 +304,10 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       // Échec côté Vertex : l'appel n'est rendu au quota que s'il n'a rien coûté
       if (reserved && !err?.billed) {
         quota.refund(installId)
-        if (credit?.ok) credits.refund(installId, { premium })
+        if (credit?.ok) {
+          credits.refund(installId, { premium })
+          await persistCredits(installId)
+        }
       }
       log({ event: 'error', kind, status: err?.status ?? null, ms: now() - started, message: String(err?.message ?? err).slice(0, 300) })
       const status = err?.status === 429 ? 503 : 502
