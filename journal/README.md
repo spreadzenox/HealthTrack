@@ -666,7 +666,7 @@ Aucune note n'est effacée : revenez à « Mon ventre » et elle réapparaît. C
 l'onboarding, sans objectif, garde la carte tant que vous notez votre ventre. **👉 À tester** : Paramètres → « Ce qui vous
 amène » → « Mon énergie et mon sommeil », puis l'Accueil (pas de carte ventre), puis retour à « Mon ventre ». Prochain
 run de code : POL-3 (carte bien-être : un geste plus joli que « détails », ajout manuel discret, fin de la question
-automatique à l'ouverture).
+automatique à l'ouverture). Publié : **v254** (33,7 Mo) et la version play en test interne.
 
 **Run du 24/10 16:30 — la sauvegarde Android reste, en plus sûr et dit honnêtement (SAUV).** Ce que vous verrez :
 Réglages → **Données** dit maintenant que vos données sont incluses dans la sauvegarde Google du téléphone si elle est
