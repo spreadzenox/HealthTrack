@@ -7,5 +7,7 @@
 export const FORBIDDEN_WORDING = [
   { re: /humeur/i, why: 'dire « bien-être »' },
   { re: /100\s*%\s*(privé|priv[ée]e|confidentiel|local)/i, why: '« local par défaut, IA optionnelle »' },
+  // VC-22 : l'onglet s'appelle « Analyses » depuis POL-7 (un lien repéré reste une « piste » dans l'écran)
+  { re: /\b[Vv]os Pistes\b|onglet « ?Pistes/, why: 'l’onglet s’appelle « Analyses »' },
   { re: /diagnostiqu|prédi(re|t|sons) (une|vos|la) crise|trait(er|ement) (votre|vos|le) (SII|syndrome|maladie)/i, why: 'jamais d’affirmation médicale' },
 ]

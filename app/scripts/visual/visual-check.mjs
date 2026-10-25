@@ -873,8 +873,9 @@ async function main() {
           await page.evaluate((sel) => document.querySelector(sel)?.scrollIntoView({ block: 'start' }), args.connect ? '.watch-connect' : args.setup ? '.watch-setup' : '.watch-diag')
           await page.waitForTimeout(300)
         } else if (args.ble) {
-          // « Capteurs Bluetooth » vit sous « Brancher une autre source », replié quand une source envoie déjà
-          await page.evaluate(() => document.querySelectorAll('details.connectors-more').forEach((d) => (d.open = true)))
+          // « Capteurs Bluetooth » vit derrière « Ajouter une source » (POL-8, VC-25)
+          const add = page.getByRole('button', { name: 'Ajouter une source' })
+          if ((await add.count()) && (await add.getAttribute('aria-expanded')) === 'false') await add.click()
           await page.getByRole('button', { name: 'Rechercher autour de moi' }).click()
           await page.waitForTimeout(700)
           if (args.ble === 'measure') {

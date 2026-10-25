@@ -124,7 +124,7 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
           </p>
           <MethodNote summary="Détails">
             Température, soleil, pression atmosphérique, qualité de l’air et pollens arrivent tout seuls chaque jour
-            (et les 3 derniers mois d’un coup). Vos Pistes vérifient s’ils pèsent sur <em>votre</em> bien-être.
+            (et les 3 derniers mois d’un coup). Vos Analyses vérifient s’ils pèsent sur <em>votre</em> bien-être.
           </MethodNote>
           <button type="button" className="btn btn-primary connector-btn" onClick={usePosition} disabled={busy}>
             Utiliser ma position approximative
@@ -174,7 +174,7 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
           {drop && (
             <p className="weather-note">
               Pression en forte baisse : souvent citée comme déclencheur de maux de tête chez les personnes sensibles.
-              Vos Pistes vérifient si c’est votre cas.
+              Vos Analyses vérifient si c’est votre cas.
             </p>
           )}
           {settings.lastError && <p className="weather-error">{settings.lastError}</p>}

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act, within } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Connectors from './Connectors'
 
@@ -299,23 +299,29 @@ describe('Connectors page', () => {
     detectPhoneApps.mockResolvedValue(null)
   })
 
-  it('ordre par statut : une source active passe en tête, le reste est replié sous « Brancher une autre source »', async () => {
+  it('ordre par statut : une source active passe en tête, le reste rejoint « Ajouter une source » (VC-25, sans doublon)', async () => {
     const { getConnectorSettings } = await import('../settings/connectorSettings')
     getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
-    const { container, unmount } = renderConnectors()
-    const more = container.querySelector('details.connectors-more')
-    expect(more.open).toBe(false)
-    expect(screen.getByText('Brancher une autre source')).toBeInTheDocument()
-    expect(more.contains(screen.getByText('Test Connector'))).toBe(false)
+    const { unmount } = renderConnectors()
+    expect(screen.getByText('Test Connector')).toBeInTheDocument()
+    expect(screen.queryByText('Brancher une autre source')).not.toBeInTheDocument()
+    expect(screen.queryByText('Sources à brancher')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Météo, pression et air' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une source' }))
+    const panel = document.getElementById('connectors-add-panel')
+    expect(within(panel).getByRole('heading', { name: 'Météo, pression et air' })).toBeInTheDocument()
+    expect(panel.contains(screen.getByText('Test Connector'))).toBe(false)
     unmount()
   })
 
-  it('premier lancement : rien de branché, « Sources à brancher » ouvert', async () => {
+  it('premier lancement : rien de branché, « Sources à brancher » en vue, sans volet replié', async () => {
     const { getConnectorSettings } = await import('../settings/connectorSettings')
     getConnectorSettings.mockReturnValue({ enabled: false, lastSyncAt: null, lastSyncResult: null })
     const { container, unmount } = renderConnectors()
-    expect(container.querySelector('details.connectors-more').open).toBe(true)
-    expect(screen.getByText('Sources à brancher')).toBeInTheDocument()
+    const block = container.querySelector('.connectors-toconnect')
+    expect(within(block).getByRole('heading', { name: 'Sources à brancher' })).toBeInTheDocument()
+    expect(within(block).getByText('Test Connector')).toBeInTheDocument()
+    expect(screen.queryByText('Brancher une autre source')).not.toBeInTheDocument()
     unmount()
   })
 
@@ -327,8 +333,8 @@ describe('Connectors page', () => {
     try {
       const { container, unmount } = renderConnectors()
       const title = screen.getByRole('heading', { name: 'Lecture du visage' })
-      const more = container.querySelector('details.connectors-more')
-      expect(more.contains(title)).toBe(false)
+      expect(document.getElementById('connectors-add-panel')).toBeNull()
+      expect(title).toBeVisible()
       // première source de la page, avant les connecteurs actifs
       const cardTitles = [...container.querySelectorAll('h3')].map((h) => h.textContent)
       expect(cardTitles.indexOf('Lecture du visage')).toBeLessThan(cardTitles.indexOf('Test Connector'))

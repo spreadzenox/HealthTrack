@@ -5,7 +5,7 @@
  * Capacitor bridge. We test the connector's logic/data-mapping in isolation.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { HealthConnectConnector, toEntryType, _resetHealthPluginCache } from './HealthConnectConnector'
+import { HealthConnectConnector, toEntryType, _resetHealthPluginCache, READ_TYPE_LABELS } from './HealthConnectConnector'
 
 // Mock the capacitor health plugin
 vi.mock('@capgo/capacitor-health', () => ({
@@ -622,5 +622,16 @@ describe('HealthConnectConnector — mesures vitales et corps', () => {
     const result = await connector.sync({ ...RANGE, writer })
     expect(written.some((e) => e.type === 'steps')).toBe(true)
     expect(result.errors.join(' ')).toContain('bloodGlucose')
+  })
+})
+
+describe('carte Health Connect (VC-27)', () => {
+  it('une phrase avec des marques connues, sans Gadgetbridge ; la liste complète des types est à part', () => {
+    const c = new HealthConnectConnector()
+    expect(c.description).not.toMatch(/Gadgetbridge/)
+    expect(c.description).toMatch(/Samsung Health, Garmin, Withings/)
+    expect(c.description.length).toBeLessThan(140)
+    expect(c.importedList).toEqual(Object.values(READ_TYPE_LABELS))
+    expect(c.importedList).toContain('VFC')
   })
 })

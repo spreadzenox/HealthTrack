@@ -185,19 +185,19 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
 - **Audit du 25/10 08:33** (run « idées », `IDEES.md` I165–I167 ; captures play vierge clair + démo sombre) — ordre
   proposé : **VC-22 + VC-25 + VC-27** (un run) → **VC-23 + VC-24** (un run) → **VC-26** (un run) → **AVIS** →
   **VC-PUBLIER**. POL-1d (déverrouillage en play) **après** la version candidate, dans une version séparée.
-- [ ] **VC-22** « vos Pistes » dans 4 textes alors que l'onglet s'appelle « Analyses » : `WeatherCard.jsx:127`,
+- [x] **VC-22** (25/10 09:33) « vos Pistes » dans 4 textes alors que l'onglet s'appelle « Analyses » : `WeatherCard.jsx:127`,
   `:177`, `PhoneUsageCard.jsx:134`, `BleDevices.jsx:298` → « vos Analyses » ; étendre `wording.test.js`.
 - [ ] **VC-23** Analyses : trois échelles de solidité (« Chez vous : lien net » / « À vérifier : peut-être le
   hasard », « Hypothèse solide » / « à confirmer », et `DESIGN.md` « piste solide » / « à confirmer » / « trop tôt
   pour dire ») → une seule échelle et les mêmes couleurs partout ; phrase longue au chevron. Aucun calcul ne change.
 - [ ] **VC-24** Analyses, « Autres liens repérés » : deux gabarits mêlés (lignes à barre et cartes de texte en gras),
   libellé tronqué « Calories brûlées totales (H… », « 2,43 / 5 » à deux décimales → un seul gabarit, une décimale.
-- [ ] **VC-25** Sources : « ▶ Brancher une autre source » fait doublon avec le bouton « Ajouter une source » → garder
+- [x] **VC-25** (25/10 09:33) Sources : « ▶ Brancher une autre source » fait doublon avec le bouton « Ajouter une source » → garder
   le bouton ; triangles ▶ restants (Sources, « Comment c'est calculé ») → chevron discret (POL-3).
 - [ ] **VC-26** Accueil vierge : intro de 5 lignes → une phrase ; 3 tuiles vides « – » → une ligne « Sommeil, cœur
   et pas arrivent de votre montre · Ajouter une source » tant qu'aucune tuile n'a de valeur ; boutons « … dans le
   Journal » masqués sans aucune donnée. Captures vierge + démo, clair + sombre.
-- [ ] **VC-27** carte Health Connect (play) : sans « Gadgetbridge », marques connues (Samsung Health, Garmin,
+- [x] **VC-27** (25/10 09:33) carte Health Connect (play) : sans « Gadgetbridge », marques connues (Samsung Health, Garmin,
   Withings, Oura…), liste des 13 types au chevron.
 - [ ] **AVIS** (I166 ③) aucun moyen d'envoyer un retour depuis l'app : Paramètres → « Envoyer un avis » (`mailto:`
   vers l'e-mail de contact de la fiche, objet « Halcya <version> », sans aucune donnée de santé ni journal joint).

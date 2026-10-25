@@ -29,13 +29,27 @@
   display: none;
 }
 
-.connectors-more > summary::before {
-  content: '▸';
-  color: var(--accent);
+.connectors-more > summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  color: var(--text-muted, var(--muted));
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.15s;
 }
 
-.connectors-more[open] > summary::before {
-  content: '▾';
+.connectors-more[open] > summary::after {
+  transform: translateY(1px) rotate(-135deg);
+}
+
+/* Sources à brancher, en vue tant que rien n'envoie (VC-25). */
+.connectors-toconnect-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 8px 0 12px;
 }
 
 /* « Ajouter une source » (POL-8) : montre Huawei non détectée, capteurs Bluetooth et guides par marque. */

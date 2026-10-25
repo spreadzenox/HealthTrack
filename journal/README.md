@@ -766,6 +766,16 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
+**Run du 25/10 09:33 — Sources plus simple, premiers défauts de l'audit corrigés (VC-22, VC-25, VC-27).** Ce que
+vous verrez dans la prochaine version : sur **Sources**, un seul bouton **« Ajouter une source »** regroupe tout ce
+qui n'est pas encore branché (le volet « Brancher une autre source », qui faisait doublon, a disparu ; sur un
+téléphone neuf, les sources à brancher restent en vue, et une montre Huawei détectée aussi). La carte **Health
+Connect** tient en une phrase avec des apps connues (Samsung Health, Garmin, Withings, Oura…), la liste complète des
+données se déplie sous « Ce qui est importé » ; plus de « Gadgetbridge ». Les triangles ▸ des volets deviennent le
+chevron discret du reste de l'app, et les textes disent « vos Analyses ». Rien ne change dans vos données. Reste
+avant la version candidate : VC-23 + VC-24 (Analyses), VC-26 (Accueil vierge), « Envoyer un avis », puis la
+publication en alpha.
+
 **Run « idées » du 25/10 08:33 — la version candidate est presque prête : ce qu'il reste avant d'inviter vos
 testeurs (rien de nouveau dans l'app).** J'ai relu toute la version Play en captures, sur un téléphone neuf (clair) puis
 avec des données (sombre) : 14 écrans, aucune erreur. Votre polissage du 24/10 est bien là. Restent **6 petits défauts**,
@@ -1503,6 +1513,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 06:33 CET — [M4 bis : bits inconnus des minutes (étages ?)](runs/2026-10-25-0633-m4bis-bits-inconnus.md) | ⌚ | `parseMinuteBytes` garde les bits non identifiés à part (`unknown`, jamais écrits) ; `describeUnknownBits` : une ligne par jour local (minutes, somme) dans le journal de la synchro, app ouverte et capture d'arrière-plan ; spécification §10.18 |
 | 25/10 07:33 CET — [M7b : séances relues app fermée](runs/2026-10-25-0733-m7b-seances-arriere-plan.md) | ⌚ | `WatchReader.workouts` (liste, totaux, échantillons, allures ; brut, index = numéro de séance ; octets vérifiés contre `sync.js`) ; `State.workouts` recopié du JS (`workoutsRead`) ; `dataFromCapture` assemble avec `withWorkoutDetail` ; 136 JUnit, 2 194 Vitest |
 | 25/10 08:33 CET — [Idées : audit de la version candidate](runs/2026-10-25-0833-idees-audit-version-candidate.md) | 💡 | Captures play vierge clair + démo sombre (14 pages, 0 erreur) → VC-22 à VC-27 + AVIS + VC-PUBLIER au BACKLOG ; I166 fin de test fermé (12 inscrits continus, engagement, mise à jour pendant le test) → invitation durcie + rappel J7 ; I167 device recall réservé ; POL-1d après la version candidate ; journal seul, 2 194 Vitest |
+| 25/10 09:33 CET — [VC-22 + VC-25 + VC-27 : textes « Analyses », Sources sans doublon](runs/2026-10-25-0933-vc22-vc25-vc27-sources.md) | 🧭 | « Vos Analyses » + règle `wordingRules` ; volet « Brancher une autre source » fusionné dans « Ajouter une source » (montre détectée en vue) ; chevrons à la place des ▸ / ▶ ; Health Connect en une phrase, 15 types au chevron ; 2 195 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

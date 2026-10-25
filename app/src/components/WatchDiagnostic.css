@@ -240,11 +240,18 @@
   display: none;
 }
 
-.watch-trouble > summary::before {
-  content: '▸';
-  color: var(--accent);
+.watch-trouble > summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  color: var(--text-muted, var(--muted));
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.15s;
 }
 
-.watch-trouble[open] > summary::before {
-  content: '▾';
+.watch-trouble[open] > summary::after {
+  transform: translateY(1px) rotate(-135deg);
 }

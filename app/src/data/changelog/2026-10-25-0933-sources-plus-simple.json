@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-25",
+  "kind": "amélioration",
+  "title": "Sources : un seul bouton pour ajouter",
+  "items": [
+    "Page Sources : « Ajouter une source » regroupe maintenant tout ce qui n'est pas encore branché (météo, temps d'écran, Health Connect, montre, capteurs). Le volet « Brancher une autre source », qui faisait doublon, disparaît.",
+    "La carte Health Connect tient en une phrase avec des apps connues (Samsung Health, Garmin, Withings, Oura…) ; la liste complète se déplie sous « Ce qui est importé ».",
+    "Les petits triangles des volets dépliables laissent place au même chevron discret que dans le reste de l'app, et les textes parlent de vos « Analyses », du nom de l'onglet."
+  ]
+}
