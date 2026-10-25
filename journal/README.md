@@ -721,6 +721,18 @@ app.** **👉 Votre prochaine action : P28** (vidéo + déclaration, pas à pas 
 qu'elle est faite, un run allume la fonction dans la version play. Prochain run de code : M6b. Publié : **v264**
 (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
+**Run du 25/10 04:33 — la VFC de journée et la température de la peau relues aussi app fermée (M6b).** Jusqu'ici,
+la relecture de la montre en arrière-plan (app fermée) rapportait le sommeil, les minutes, les totaux, le sommeil
+détaillé et le stress, mais **la VFC de journée et la température de la peau n'arrivaient qu'en ouvrant l'app**. Le
+lecteur Java parle maintenant aussi le canal « P2P » de la montre (mêmes messages que la synchro app ouverte, vérifiés
+octet par octet contre elle) ; les pages reçues sont gardées telles quelles et décodées à l'ouverture par le même code
+que d'habitude. Comme pour les fichiers, une donnée n'est demandée en arrière-plan **qu'après avoir été reçue une fois
+app ouverte** (preuve que votre montre la fournit). Rien ne change à l'écran. **👉 À tester** (sur la v265) : ouvrez
+l'app une fois avec la montre, puis laissez-la fermée quelques heures ; à la réouverture, Sources → montre → « Données
+de la montre » doit montrer une **VFC de journée** et une **température** plus récentes que votre dernière ouverture.
+Prochain run de code : M7 (séances : FC et allure), sauf si P28 est faite (on allume alors la lecture au déverrouillage
+dans la version play).
+
 **Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
 prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK
 d'aperçu** (`fr.jpesquet.sante.apercu`), la carte **Sources → Lecture du visage** a maintenant une ligne **« Aussi à
@@ -1431,6 +1443,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 02:30 — [POL-1a : interrupteur play de la lecture au déverrouillage](runs/2026-10-25-0230-pol1a-interrupteur-play.md) | 🧭 | `-PfaceUnlockPlay` (coupé) + `FACE_KEEPALIVE` ; manifeste `src/playFaceUnlock` (test de parité) ; plugin : `unlock` distinct de `enabled`, `stopUnlock`, `skip:unlock` ; notification basse en play ; CI : APK d'aperçu `.apercu` vérifié et envoyé en artefact ; 2 167 Vitest |
 | 25/10 02:33 CET — [POL-1b : écran d'activation du déverrouillage (play)](runs/2026-10-25-0233-pol1b-activation-deverrouillage.md) | 🧭 | `describeFaceUnlock` / `startFaceUnlock` / `stopFaceUnlock` ; interrupteur `role=switch` si `unlockAvailable` ; divulgation `camera_unlock` ; « Reprendre » sans reprise auto ; `--face-unlock` et `--disclosure=camera_unlock` dans `npm run visual` ; test HC API 36 robuste ; 2 178 Vitest |
 | 25/10 03:33 CET — [POL-1c : couper depuis Paramètres](runs/2026-10-25-0333-pol1c-reglage-deverrouillage.md) | 🧭 | `FaceUnlockSetting` (play + `unlockAvailable`) : interrupteur qui coupe (actif / en pause), lien vers Sources quand coupée, pas d'allumage sans divulgation ; captures clair / sombre / coupée ; 2 182 Vitest |
+| 25/10 04:33 CET — [M6b : VFC de journée et température en arrière-plan](runs/2026-10-25-0433-m6b-p2p-arriere-plan.md) | ⌚ | `WatchP2P.java` (ping 0xCA, pages du dictionnaire 500044 / 400012, accusés 0xCF, 10 pages au plus, octets vérifiés contre `p2p.js`) ; capture `dict` décodée par `dataFromCapture` ; reprise `hrvDayUntil` / `skinTempUntil` recopiée du JS ; 132 JUnit, 2 185 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

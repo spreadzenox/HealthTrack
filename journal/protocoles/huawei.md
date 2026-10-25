@@ -1316,3 +1316,22 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
 - Reste de M6 : P2P (VFC de journée 500044, température 400012) dans le lecteur Java ; issue des lectures des
   captures dans l'écran Montre (`reads`) ; à confirmer sur la GT 6 Pro (journal Android « relecture en arrière-plan »).
 
+### 10.16 M6b (dictionnaire P2P en arrière-plan) livré (run du 25/10/2026 04:33 CET)
+- `WatchP2P.java` : mêmes messages que `createP2P` (p2p.js) — ping `com.huawei.health` → `hw.watch.health.filesync`
+  (5 s au plus, disponible si code 0xCA), demandes `hw.unitedevice.datadictionarysync` avec les empreintes publiques,
+  compteur unique (premier envoi = 2, bouclage à 32 766), accusé 0xCF (numéro de la montre, paquets inversés, sans
+  empreinte) envoyé avant de lire chaque commande 1 ou 2 de la montre, accusés de la montre et pages non demandées
+  ignorés. Vecteurs : `WatchP2PTest.memes_octets_que_le_js` compare ping, demande et accusé aux octets produits par
+  p2p.js.
+- Pagination : page suivante à max(fin, modification) + 1 000 ms (calculé en Java sur tous les enregistrements, rien
+  d'autre n'est décodé) ; page sans enregistrement → fin ; **10 pages au plus** par classe en arrière-plan (50 app
+  ouverte) ; page perdue après la première → ce qui est lu est gardé.
+- Capture (format v1, champ additionnel) : `dict: [{ id, cls, since, max, pages: [hex] }]` (charges utiles brutes) ;
+  lectures `hrvDay` / `skinTemp` dans `reads` (`unsupported` si ping ≠ 0xCA, `timeout` si silence). JS :
+  `dataFromCapture` rend `hrvDay`, `skinTemp`, `dictionary` (mêmes bornes que `readWatchData`), et `writeWatchData`
+  fait avancer `dictUntil`.
+- Reprise : `BackgroundSync.State.hrvDayUntil` / `skinTempUntil`, recopiés du JS (`shareResume` : `dictUntil[500044]`,
+  `dictUntil[400012]`) ; une classe n'est demandée en arrière-plan **qu'après avoir été reçue app ouverte** ; la
+  relecture native avance au dernier instant lu.
+- Reste : à confirmer sur la GT 6 Pro ; M7 (séances : FC et allure).
+

@@ -8,6 +8,7 @@
 import { registerPlugin } from '@capacitor/core'
 import { importWatchCapture, SYNC_STATE_VERSION } from './watchSync'
 import { isValidCapture } from '../devices/huawei/capture'
+import { DICT_CLASS } from '../devices/huawei/p2p'
 
 const NativeCapture = registerPlugin('WatchCapture')
 
@@ -102,6 +103,9 @@ export async function shareResumeWithNative({ deviceId, state, plugin = captureP
       ...(state.sleepFileUntil > 0 ? { sleepFileUntil: state.sleepFileUntil } : {}),
       ...(state.stressFileUntil > 0 ? { stressFileUntil: state.stressFileUntil } : {}),
       ...(typeof state.sleepBedTime === 'boolean' ? { sleepBedTime: state.sleepBedTime } : {}),
+      // classes du dictionnaire (P2P) déjà reçues par l'app : relues en arrière-plan après leur dernier instant (M6b)
+      ...(state.dictUntil?.[DICT_CLASS.HRV] > 0 ? { hrvDayUntil: state.dictUntil[DICT_CLASS.HRV] } : {}),
+      ...(state.dictUntil?.[DICT_CLASS.SKIN_TEMP] > 0 ? { skinTempUntil: state.dictUntil[DICT_CLASS.SKIN_TEMP] } : {}),
     }
     await plugin.shareResume({ deviceId, until: state.v === SYNC_STATE_VERSION && state.until > 0 ? state.until : 0, at, ...files })
     return true
