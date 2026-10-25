@@ -26,3 +26,7 @@
 ## Suite
 - À confirmer sur la GT 6 Pro (course ou marche enregistrée, puis synchro app ouverte).
 - M7b : séances relues app fermée (Java) ; M4 bis (étages) ; POL-1d dès P28.
+
+## Après le merge (#351, `3eaca8a`)
+- Checks de la PR tous verts du premier coup (Vitest, Build APK, relais, protocole montre Java, perf, émulateurs API 35 et 36).
+- Sur main : « Tests », « Build & Release » (**v266**, APK 33 768 936 octets, 33,8 Mo) et « Play — AAB » (test interne) verts.
