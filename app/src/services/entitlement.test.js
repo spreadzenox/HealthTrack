@@ -79,6 +79,10 @@ describe('droits premium lus auprès du relais (jalon 6c)', () => {
 describe('texte de l’état d’abonnement', () => {
   const date = '2026-12-01T10:00:00.000Z'
 
+  it('lancement : la fin (exclue, minuit à Paris) s’affiche comme le dernier jour offert', () => {
+    expect(describeEntitlement({ premium: true, source: 'launch', launchUntil: '2026-11-15T23:00:00Z' })).toMatch(/jusqu’au 15 nov\. 2026 :/)
+  })
+
   it('gratuit, lancement, actif, essai, annulé, période de grâce, pause, suspendu', () => {
     expect(describeEntitlement({ premium: false, source: null })).toMatch(/Version gratuite/)
     expect(describeEntitlement({ premium: true, source: 'launch', launchUntil: date })).toMatch(/Premium offert pendant le test, jusqu’au 1 déc\. 2026 : vous n’avez rien à payer\./)

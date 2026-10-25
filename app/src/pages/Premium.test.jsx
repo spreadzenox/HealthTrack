@@ -151,7 +151,7 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
 
     it('pendant la période : « Premium offert pendant le test », aucune formule ni bouton d’achat', async () => {
       billing.loadPlans.mockResolvedValue([YEAR, MONTH])
-      launchEnt('2099-12-01T00:00:00.000Z')
+      launchEnt('2099-12-01T12:00:00.000Z')
       renderPremium()
       expect(screen.getByRole('heading', { name: 'Premium offert pendant le test' })).toBeInTheDocument()
       expect(screen.getByRole('status')).toHaveTextContent(/jusqu’au 1 déc\. 2099 : vous n’avez rien à payer/)
