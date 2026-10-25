@@ -709,7 +709,7 @@ l'appairage) ne s'affichent plus : ils reviennent **si une connexion échoue** (
 scan Bluetooth pour « détecter » une montre (ce serait une autorisation de plus dès l'ouverture) : on se fie à l'app
 compagnon installée et à l'appairage. **👉 À tester** : onglet Sources (votre montre doit toujours être là, avec
 « Synchroniser la montre ») ; touchez « Ajouter une source ». Prochain run de code : **POL-1** (lecture au déverrouillage
-dans la version play, après votre déclaration P28).
+dans la version play, après votre déclaration P28). Publié : **v261** (33,7 Mo) et la version play en test interne.
 
 **Run du 25/10 00:30 — le Journal en couleurs (POL-6).** Ce que vous verrez dans Journal → **Jours** : « Vos derniers
 jours » n'est plus gris. Chaque mesure du jour a son pastel : **menthe** pour le corps et le bien-être (sommeil, FC,

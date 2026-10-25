@@ -39,3 +39,9 @@
 - POL-8 fait ; le polissage du 24/10 15:00 est terminé sauf **POL-1** (lecture au déverrouillage en play), qui attend la
   déclaration P28 du propriétaire avant toute version qui la contient (préparation possible derrière l'interrupteur
   de build éteint).
+
+## Après le merge (#341, `146d7b1`)
+- Checks de la PR tous verts du premier coup (Vitest, Build APK, Relais, montre Java, budget de lectures, émulateurs API 35
+  et 36).
+- « Build & Release » vert : **v261** publiée (APK 33 748 872 octets, 33,7 Mo) ; « Play — AAB » vert (envoi en test
+  interne) ; « Test — émulateur Samsung Galaxy A56 » vert.
