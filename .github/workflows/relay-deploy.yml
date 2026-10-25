@@ -155,6 +155,21 @@ jobs:
           echo "Firestore : $recent échec(s) récents, $week sur 7 jours ${detail}"
           [ "$recent" = "0" ]
 
+      - name: Nouvelles installations (crédits IA, non bloquant)
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          # CREDITS-INSTALLS : le relais écrit « first_credit » (sans identifiant) quand une installation inconnue du
+          # registre prend son premier crédit IA ; l'analyse de test du workflow n'est pas comptée. Si ce nombre
+          # s'envole (réinstallations pour récupérer les crédits offerts), passer à 5 crédits offerts.
+          gcloud logging read \
+            "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.event=\"first_credit\"" \
+            --project="$GCP_PROJECT" --freshness=7d --limit=1000 --format=json > "$RUNNER_TEMP/installs.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/installs.json"
+          total=$(jq 'length' "$RUNNER_TEMP/installs.json")
+          perday=$(jq -r 'group_by(.timestamp[0:10])[] | "\(.[0].timestamp[0:10]) : \(length)"' "$RUNNER_TEMP/installs.json" | paste -sd ',' - | sed 's/,/, /g')
+          echo "- Nouvelles installations qui prennent leur 1er crédit IA (7 derniers jours) : $total${perday:+ ($perday)}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Nouvelles installations : $total sur 7 jours ${perday}"
+
       - name: Notifications Google Play (abonnement push play-rtdn → relais)
         continue-on-error: true
         run: |

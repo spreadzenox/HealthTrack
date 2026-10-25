@@ -207,7 +207,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   d'invitation (`INVITATION-TESTEURS.md`, mis à jour le 25/10 : ouvrir l'app tous les 2-3 jours, rappel du jour 7).
   Pendant les 14 jours : au moins 2 versions en alpha, et une liste « changements faits pendant le test » dans
   `PRODUIT.md` pour le formulaire d’accès à la production (P30, à préparer au jour 10).
-- [ ] **CREDITS-INSTALLS** (I167) résumé du workflow relais : nombre de nouvelles installations par jour qui prennent
+- [x] **CREDITS-INSTALLS — FAIT le 25/10 17:33** (événement `first_credit` sans identifiant, seulement pour une installation inconnue du registre Firestore et sans crédit rapporté par l'app ; analyse de test `ci-smoke-*` exclue ; résumé du workflow relais : total et par jour sur 7 j) (I167) résumé du workflow relais : nombre de nouvelles installations par jour qui prennent
   leurs crédits offerts (le « device recall » de Play Integrity est réservé à des partenaires) ; passer à 5 crédits
   offerts seulement si ce nombre s'envole.
 - [x] **VC-19** (24/10 07:30 : le faux plugin reste « en cours » tant que le test n'a pas vu la progression) (mineur) `UpdateBanner.test.jsx` « progression en Mo et en % » échoue parfois sous la charge de la

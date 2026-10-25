@@ -257,3 +257,22 @@ test('crédits durables : relus et réécrits à chaque analyse ; Firestore en p
     assert.deepEqual(logs.filter((l) => l.event === 'credits_store_failed').map((l) => l.op), ['get', 'set'])
   })
 })
+
+test('crédits : la première analyse d\'une installation inconnue du registre est journalisée (sans identifiant)', async () => {
+  const { createCredits } = await import('../src/credits.js')
+  const docs = new Map()
+  const store = { get: async (k) => docs.get(k) ?? null, set: async (k, v) => { docs.set(k, v) } }
+  await withServer({ vertex: okVertex(), credits: createCredits({ store }) }, async (url, logs) => {
+    assert.equal((await post(url, { kind: 'text', description: 'une pomme' })).status, 200)
+    assert.equal((await post(url, { kind: 'text', description: 'une poire' })).status, 200)
+    const first = logs.filter((l) => l.event === 'first_credit')
+    assert.equal(first.length, 1)
+    assert.deepEqual(Object.keys(first[0]).sort(), ['event', 'plan'])
+  })
+  // L'analyse de test du workflow de déploiement n'est pas une vraie installation
+  await withServer({ vertex: okVertex(), credits: createCredits({ store }) }, async (url, logs) => {
+    const res = await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'ci-smoke-123456789' })
+    assert.equal(res.status, 200)
+    assert.equal(logs.filter((l) => l.event === 'first_credit').length, 0)
+  })
+})
