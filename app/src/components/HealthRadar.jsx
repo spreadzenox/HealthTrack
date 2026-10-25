@@ -30,9 +30,9 @@ function dayLabel(dateKey) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-/** « l’alcool (hier), le voyage (aujourd’hui) » */
+/** « « Alcool » (hier) et « Voyage » (aujourd’hui) » */
 function causeList(causes) {
-  const parts = causes.map((c) => `${c.tag.emoji} ${c.tag.label} (${dayLabel(c.dateKey).toLowerCase()})`)
+  const parts = causes.map((c) => `« ${c.tag.label} » (${dayLabel(c.dateKey).toLowerCase()})`)
   return parts.length > 1 ? `${parts.slice(0, -1).join(', ')} et ${parts[parts.length - 1]}` : parts[0]
 }
 

@@ -225,7 +225,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
                 aria-pressed={on}
                 onClick={() => toggleTag(t.id)}
               >
-                <span aria-hidden>{t.emoji}</span> {t.label}
+                {t.label}
               </button>
             )
           })}
@@ -270,7 +270,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
                   aria-label={`Ajouter le tag ${t.label}`}
                   onClick={() => toggleTag(t.id)}
                 >
-                  <span aria-hidden>{t.emoji}</span> {t.label}
+                  {t.label}
                 </button>
               ))}
             </div>
