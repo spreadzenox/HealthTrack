@@ -998,7 +998,7 @@ température »). Lecture de [G] master `0735529275` (21/10/2026) via l'API REST
 | FC de la nuit (mini, maxi, moyenne) | résumé `sequence_data` | ❌ | M1 |
 | **Stress** (score 1–99, niveau) | fichier `rrisqi_data.bin` 0x2C type 0x10 (§7.6) | ✅ M4 le 24/10 (à confirmer sur la montre) | §10.14 ; arrière-plan avec M6 |
 | Pas, distance, calories | minutes + totaux 7/0x03 | ✅ | — |
-| Étages / dénivelé | ❓ bits inconnus des minutes ; altitude du jour = classe P2P 200003 (codage incertain, PR #6579 ouverte) | ❌ | M4 bis, après M2 (garder les bits inconnus des minutes dans le journal pour les identifier) |
+| Étages / dénivelé | ❓ bits inconnus des minutes ; altitude du jour = classe P2P 200003 (codage incertain, PR #6579 ouverte) | 🟡 comptés dans le journal (M4 bis, 25/10), pas encore décodés | comparaison d'une journée avec les étages de la montre (§10.18) |
 | Séances (type, durée, distance, calories, FC mini / maxi) | 0x17/0x07–0x08 (§7.5) | ✅ | — |
 | Séances : courbe FC, allure | 0x17/0x0A, 0x17/0x0C | 🟡 M7 (25/10), à confirmer sur la montre | — |
 | Émotions estimées par la montre (valence, éveil) | P2P classe 500031 (capacité 206) | ❌ | ⚠️ ne **jamais** en faire une entrée de l'estimateur de bien-être (D5 : Y vient du visage / de la voix / de l'auto-déclaration) ; au mieux, un X « montre » affiché à part, ou ignoré. À décider avant M2 |
@@ -1366,3 +1366,17 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
 - Affichage : Journal → Jours (« FC moy. 143 bpm · 5:37 /km » + courbe), écran « Données de la montre » (ligne
   Séances). Tests sur trames synthétiques (`sync.test.js`, faux montre `fakeWatch.js`).
 - À confirmer sur la GT 6 Pro : une séance de course enregistrée après la v266 doit montrer FC moyenne et allure.
+
+
+### 10.18 M4 bis (bits inconnus des minutes) livré (run du 25/10/2026 06:33 CET)
+- `parseMinuteBytes` garde la valeur de chaque bit non identifié (masque 1 : 0x01, 0x10, 0x20 ; masque 2 : 0x04–0x80)
+  dans `unknown`, par clé « masque/bit » (`1/0x10`), mêmes règles de vide (0, et 0xFF sur un octet). `watchEntries`
+  ne les lit pas : rien n'est écrit dans IndexedDB ni exporté.
+- `describeUnknownBits(minutes)` : une ligne par jour local, « JJ/MM : 1/0x10 42 min Σ 318, … » (nombre de minutes
+  portant le bit, somme des valeurs). `writeWatchData` (services/watchSync.js) l'écrit dans le journal de la synchro,
+  donc pour la synchro app ouverte **et** les captures du lecteur Java.
+- Méthode d'identification (sans aucune donnée réelle dans le dépôt) : le propriétaire relève les étages d'une journée
+  sur la montre, puis envoie la ligne du jour ; si un nombre de minutes ou une somme colle (ou un multiple : 3 m par
+  étage pour un dénivelé en mètres, décimètres…), le bit est nommé dans ce tableau et une entrée `floors` (Health
+  Connect `FloorsClimbed`) est ajoutée. Hypothèse de départ : 1/0x10 (2 octets) = dénivelé ou étages, 1/0x20 (1 octet)
+  = type / intensité de la minute.

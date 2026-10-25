@@ -6,7 +6,7 @@
  * Protocole : src/devices/huawei/sync.js.
  */
 import { deleteEntry, listEntries, upsertEntries } from '../storage/localHealthStorage'
-import { countEntryKinds, describeServices, readWatchData, stalledServices, stepsCheck, syncWindow, totalsEntries, WATCH_SOURCE, watchEntries } from '../devices/huawei/sync'
+import { countEntryKinds, describeServices, describeUnknownBits, readWatchData, stalledServices, stepsCheck, syncWindow, totalsEntries, WATCH_SOURCE, watchEntries } from '../devices/huawei/sync'
 import { dataFromCapture } from '../devices/huawei/capture'
 
 const KEY = 'healthtrack_watch_sync'
@@ -182,6 +182,7 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   if (withTotals && steps.total !== null) {
     log(`pas du jour : total de la montre ${steps.total}, minutes lues depuis minuit ${steps.minuteSteps}`, steps.consistent ? 'info' : 'warn')
   }
+  for (const line of describeUnknownBits(data.minutes)) log(`bits inconnus des minutes (étages ?) ${line}`)
   log(`à écrire : ${Object.entries(kinds).map(([k, n]) => `${k} ${n}`).join(', ') || 'rien'} → ${inserted} nouvelle${inserted > 1 ? 's' : ''}`)
   // La reprise n'avance que si la montre a rendu quelque chose : sinon la prochaine relit la même période
   const gotData = data.minutes.length > 0 || data.sleep.length > 0 || workouts > 0 || (data.nights || []).length > 0

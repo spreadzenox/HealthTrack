@@ -16,6 +16,7 @@ import {
   countEntryKinds,
   RESUME_MAX_DAYS,
   describeMinutes,
+  describeUnknownBits,
   describeTypes,
   watchEntries,
   CAPABILITY_QUERY,
@@ -107,10 +108,16 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
     ])
   })
 
-  it('octets d’une minute : bits inconnus sautés, valeurs nulles ignorées, minute tronquée refusée', () => {
+  it('octets d’une minute : bits inconnus gardés à part (M4 bis), valeurs nulles ignorées, minute tronquée refusée', () => {
     // masque 1 = 0x01 (inconnu, 2) + 0x02 (pas) + 0x10 (inconnu, 2) + 0x20 (inconnu, 1) + 0x40 (FC) + 0x80
     // masque 2 = 0x04 (inconnu) + 0x01 (SpO₂ = 0 → ignorée)
-    expect(parseMinuteBytes([0xf3, 0x05, 0xaa, 0xbb, 0x00, 0x0c, 0x11, 0x22, 0x33, 0x41, 0x00, 0x99])).toEqual({ steps: 12, hr: 0x41 })
+    expect(parseMinuteBytes([0xf3, 0x05, 0xaa, 0xbb, 0x00, 0x0c, 0x11, 0x22, 0x33, 0x41, 0x00, 0x99])).toEqual({
+      steps: 12,
+      hr: 0x41,
+      unknown: { '1/0x01': 0xaabb, '1/0x10': 0x1122, '1/0x20': 0x33, '2/0x04': 0x99 },
+    })
+    // bit inconnu à 0 ou 0xFF : pas de mesure, rien de gardé
+    expect(parseMinuteBytes([0x30, 0x00, 0x00, 0xff])).toEqual({})
     expect(parseMinuteBytes([0x40, 0xff])).toEqual({})
     expect(() => parseMinuteBytes([0x02, 0x00])).toThrow(/tronquée/)
   })
@@ -129,6 +136,19 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
     ])
     expect(describeTypes(parseSleepBlock(tlvs))).toBe('6×1, 7×1, 9×1')
     expect(describeMinutes([{ steps: 5, hr: 70 }, { hr: 71, spo2: 97 }, {}])).toBe('pas 1, FC 2, SpO₂ 1')
+  })
+
+  it('bits inconnus des minutes (M4 bis, étages ?) : par jour local, minutes et somme, en nombres seulement', () => {
+    const day1 = new Date(2026, 9, 24, 9, 0).getTime()
+    const day2 = new Date(2026, 9, 25, 14, 0).getTime()
+    const minutes = [
+      { t: day1, steps: 40, unknown: { '1/0x10': 3, '1/0x20': 1 } },
+      { t: day1 + 60_000, unknown: { '1/0x10': 2 } },
+      { t: day1 + 120_000, steps: 10 },
+      { t: day2, unknown: { '2/0x04': 7 } },
+    ]
+    expect(describeUnknownBits(minutes)).toEqual(['24/10 : 1/0x10 2 min Σ 5, 1/0x20 1 min Σ 1', '25/10 : 2/0x04 1 min Σ 7'])
+    expect(describeUnknownBits([{ t: day1, steps: 3 }])).toEqual([])
   })
 
   it('demandes : heure + fuseau, nombre de blocs (jamais avant 2000), numéro de bloc', () => {
@@ -318,6 +338,28 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     // rien d'autre reçu : la reprise reste « première synchro »
     expect(getWatchSyncState('W', storage)).toMatchObject({ v: SYNC_STATE_VERSION, until: null })
     expect(logs.some((m) => /première synchro/.test(m))).toBe(true)
+  })
+
+  it('M4 bis : les bits inconnus des minutes sont comptés par jour dans le journal, jamais écrits', async () => {
+    const now = Date.UTC(2026, 9, 13, 14, 0)
+    const start = Math.floor(Date.UTC(2026, 9, 13, 10) / 1000)
+    const session = {
+      request: async (service, command) => {
+        if (command === 0x0a) return { tlvs: [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, 1] }]) }] }
+        if (command === 0x0c) return { tlvs: [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, 0] }]) }] }
+        // masque 0x12 = pas + inconnu 0x10 (2 octets)
+        if (command === 0x0b) return { tlvs: minuteBlock(0, start, [{ offset: 0, bytes: [0x12, 0x00, 0x0a, 0x00, 0x03] }, { offset: 1, bytes: [0x12, 0x00, 0x05, 0x00, 0x04] }]) }
+        throw new Error('non pris en charge')
+      },
+    }
+    const logs = []
+    const written = []
+    const sync = createWatchSync({ watchKey: 'U', storage: memoryStorage(), now: () => now, write: async (e) => (written.push(...e), { inserted: e.length }), clearTotals: async () => 0 })
+    await sync(session, { log: (m) => logs.push(m), caps: { services: new Map([[0x17, false], [0x2c, false]]), commands: null } })
+    const day = new Date(start * 1000)
+    const label = `${String(day.getDate()).padStart(2, '0')}/${String(day.getMonth() + 1).padStart(2, '0')}`
+    expect(logs).toContain(`bits inconnus des minutes (étages ?) ${label} : 1/0x10 2 min Σ 7`)
+    expect(JSON.stringify(written)).not.toMatch(/unknown/)
   })
 
   it('I69 : sommeil sans réponse → les minutes sont quand même lues, l’étape dit où la montre a calé', async () => {
