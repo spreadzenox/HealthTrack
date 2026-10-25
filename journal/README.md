@@ -766,7 +766,7 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
-**Run du 25/10 12:33 — « Votre avis » dans les Paramètres (AVIS).** Ce que vous verrez (**v272** ; version play en
+**Run du 25/10 12:33 — « Votre avis » dans les Paramètres (AVIS).** Ce que vous verrez (**v272**, publiée, 33,8 Mo ; version play envoyée en
 test interne) : en bas de **Paramètres**, un bloc **« Votre avis »**. Dans la version Play, le bouton **« Donner mon avis
 sur le Play Store »** ouvre la page Halcya, où vos testeurs trouvent « Envoyer des commentaires privés au développeur »
 (ils vous arrivent dans la Play Console, rubrique *Notes et avis → Commentaires des testeurs*) ; après le lancement, ce
