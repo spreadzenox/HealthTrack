@@ -147,3 +147,27 @@ export function residualize(values, covariates) {
   }
   return { residuals, used: basis.length }
 }
+
+/**
+ * Two-sided Fisher exact test on a 2×2 table [[a, b], [c, d]] (sum of the
+ * probabilities of every table with the same margins that is no more likely
+ * than the observed one). Exact, so fine for the small counts of a symptom diary.
+ */
+export function fisherExactTwoSided(a, b, c, d) {
+  const n = a + b + c + d
+  if (n === 0) return 1
+  const row1 = a + b
+  const col1 = a + c
+  const logFact = [0]
+  for (let i = 1; i <= n; i++) logFact[i] = logFact[i - 1] + Math.log(i)
+  const logP = (x) =>
+    logFact[row1] + logFact[n - row1] + logFact[col1] + logFact[n - col1]
+    - logFact[n] - logFact[x] - logFact[row1 - x] - logFact[col1 - x] - logFact[n - row1 - col1 + x]
+  const observed = logP(a)
+  let p = 0
+  for (let x = Math.max(0, row1 + col1 - n); x <= Math.min(row1, col1); x++) {
+    const lp = logP(x)
+    if (lp <= observed + 1e-7) p += Math.exp(lp)
+  }
+  return Math.min(1, p)
+}

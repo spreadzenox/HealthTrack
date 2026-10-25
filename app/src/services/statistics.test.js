@@ -9,6 +9,7 @@ import {
   evidenceLevel,
   isWeekendKey,
   residualizeByGroup,
+  fisherExactTwoSided,
 } from './statistics'
 
 describe('normalCdf', () => {
@@ -130,5 +131,24 @@ describe('residualizeByGroup', () => {
   it('removes a pure group effect entirely', () => {
     const res = residualizeByGroup([5, 5, 2, 2], [1, 1, 0, 0])
     expect(res.every((v) => v === 0)).toBe(true)
+  })
+})
+
+describe('fisherExactTwoSided', () => {
+  it('donne 1 pour une table sans aucun écart', () => {
+    expect(fisherExactTwoSided(5, 5, 5, 5)).toBeCloseTo(1, 6)
+  })
+
+  it('reproduit la table du thé de Fisher (3/1, 1/3 → p = 0,486)', () => {
+    expect(fisherExactTwoSided(3, 1, 1, 3)).toBeCloseTo(0.4857, 3)
+  })
+
+  it('détecte un écart net (10/0 contre 0/10)', () => {
+    expect(fisherExactTwoSided(10, 0, 0, 10)).toBeLessThan(1e-4)
+  })
+
+  it('est symétrique et renvoie 1 pour une table vide', () => {
+    expect(fisherExactTwoSided(2, 7, 6, 1)).toBeCloseTo(fisherExactTwoSided(6, 1, 2, 7), 10)
+    expect(fisherExactTwoSided(0, 0, 0, 0)).toBe(1)
   })
 })
