@@ -741,7 +741,8 @@ fréquence cardiaque** pendant l'effort ; la ligne « Séances » de « Données
 l'export. Une séance dont la montre n'envoie pas ce détail garde ses totaux, comme avant. **👉 À tester** (sur la
 v266) : enregistrez une course ou une marche avec la montre, puis « Synchroniser la montre » et Journal → Jours. Si la
 ligne « FC moy. » n'apparaît pas, exportez le journal de la synchro (mode diagnostic) et envoyez-le-moi. Prochain run
-de code : POL-1d si P28 est faite, sinon M4 bis (étages) ou les séances relues app fermée.
+de code : POL-1d si P28 est faite, sinon M4 bis (étages) ou les séances relues app fermée. Publié : **v266**
+(33,8 Mo) et la version play en test interne ; tous les tests verts.
 
 **Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
 prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK
