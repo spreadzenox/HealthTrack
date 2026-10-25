@@ -5,6 +5,7 @@ import { hasWithingsCredentials } from '../settings/withingsSettings'
 import { upsertEntries, getLatestEntryAt } from '../storage/localHealthStorage'
 import { useDebug } from '../contexts/DebugContext'
 import DebugPanel from '../components/DebugPanel'
+import MethodNote from '../components/MethodNote'
 import WatchGuides from '../components/WatchGuides'
 import MyDevices from '../components/MyDevices'
 import BleDevices from '../components/BleDevices'
@@ -279,6 +280,11 @@ function ConnectorCard({ connector }) {
           </label>
         </div>
         <p className="connector-description">{connector.description}</p>
+        {connector.importedList?.length > 0 && (
+          <MethodNote summary="Ce qui est importé">
+            {connector.importedList.join(', ').replace(/^./, (c) => c.toUpperCase())}.
+          </MethodNote>
+        )}
         {settings.enabled && (
           <div className="connector-badges">
             <span className="connector-badge-label">Plateforme :</span>
@@ -482,6 +488,9 @@ export default function Connectors() {
   }
 
   const nothingActive = layout.nothingSending
+  // une montre détectée (app Huawei Santé installée) mais pas encore appairée reste en vue (POL-8)
+  const toConnectInView = nothingActive ? layout.toConnect : layout.toConnect.filter((id) => id === 'watch')
+  const toConnectInPanel = layout.toConnect.filter((id) => !toConnectInView.includes(id))
 
   return (
     <section className="food-page">
@@ -494,13 +503,14 @@ export default function Connectors() {
 
       {layout.active.map(renderSource)}
 
-      {layout.toConnect.length > 0 && (
-        <details className="connectors-more" open={nothingActive}>
-          <summary className="connectors-more-summary">
-            {nothingActive ? 'Sources à brancher' : 'Brancher une autre source'}
-          </summary>
-          {layout.toConnect.map(renderSource)}
-        </details>
+      {/* VC-25 : un seul geste pour brancher quelque chose. Au premier lancement, les sources à brancher restent en
+          vue ; dès qu'une source envoie, elles rejoignent « Ajouter une source » (l'ancien volet « Brancher une autre
+          source » faisait doublon avec ce bouton). */}
+      {toConnectInView.length > 0 && (
+        <div className="connectors-toconnect">
+          <h3 className="connectors-toconnect-title">Sources à brancher</h3>
+          {toConnectInView.map(renderSource)}
+        </div>
       )}
 
       <div className="connectors-add">
@@ -515,7 +525,12 @@ export default function Connectors() {
         </button>
         {adding && (
           <div id="connectors-add-panel" className="connectors-add-panel">
-            <p className="page-intro">Une montre, une bague, une balance ou un capteur qui n’apparaît pas plus haut.</p>
+            <p className="page-intro">
+              {nothingActive
+                ? 'Une montre, une bague, une balance ou un capteur qui n’apparaît pas plus haut.'
+                : 'Une autre source du téléphone, une montre, une bague, une balance ou un capteur.'}
+            </p>
+            {toConnectInPanel.map(renderSource)}
             {layout.addable.map(renderSource)}
           </div>
         )}

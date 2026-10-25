@@ -346,12 +346,15 @@ export class HealthConnectConnector extends BaseConnector {
     super({
       id: 'health_connect',
       name: 'Health Connect (montre, bague, balance…)',
+      // VC-27 : une phrase avec des marques connues du public ; la liste complète des types vit au chevron
+      // « Ce qui est importé » de la carte (`importedList`, ci-dessous)
       description:
-        'Importe tout ce que vos apps santé écrivent dans Android Health Connect (Samsung Health, ' +
-        'Gadgetbridge, Zepp, Garmin, Withings…) : pas, sommeil, fréquence cardiaque, VFC, SpO₂, ' +
-        'respiration, température, tension, glycémie, poids, séances de sport.',
+        'Importe ce que vos apps santé écrivent dans Health Connect (Samsung Health, Garmin, Withings, ' +
+        'Oura…) : sommeil, cœur, pas, poids…',
       dataTypes: ['steps', 'sleep', 'heart_rate', 'activity', 'calories', 'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weight', 'body_composition'],
     })
+    /** Tout ce que la carte peut importer, replié sous « Ce qui est importé ». */
+    this.importedList = Object.values(READ_TYPE_LABELS)
     /** Types demandés mais non autorisés (dernière vérification). */
     this.missingReadTypes = []
     /** Sans READ_HEALTH_DATA_HISTORY, seuls les 30 jours avant la première autorisation sont lisibles. */

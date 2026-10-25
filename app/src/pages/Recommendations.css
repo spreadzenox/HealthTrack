@@ -341,15 +341,29 @@
   color: var(--accent);
   list-style: none;
   outline: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
 }
 
-.reco-method-note > summary::before {
-  content: '▶ ';
-  font-size: 0.7rem;
+.reco-method-note > summary::-webkit-details-marker {
+  display: none;
 }
 
-.reco-method-note[open] > summary::before {
-  content: '▼ ';
+/* chevron discret, comme les autres « détails » de l'app (VC-25, POL-3) */
+.reco-method-note > summary::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.15s;
+}
+
+.reco-method-note[open] > summary::after {
+  transform: translateY(1px) rotate(-135deg);
 }
 
 .reco-method-note p {
