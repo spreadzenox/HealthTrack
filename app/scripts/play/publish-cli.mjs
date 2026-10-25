@@ -41,7 +41,11 @@ try {
       '',
       r.status === 'draft'
         ? '- ⚠️ Version créée **en brouillon** (Play n’accepte que des brouillons tant que l’app n’est pas prête) : Play Console → Tester → Test interne → « Modifier la version » → « Déployer ».'
-        : '- Déployée auprès des testeurs internes (installation depuis le Play Store, quelques minutes après).',
+        : track === 'alpha'
+          ? '- Déployée sur le test fermé (alpha) : Google l’examine d’abord (quelques heures à quelques jours), puis les membres du groupe des testeurs peuvent l’installer.'
+          : '- Déployée auprès des testeurs internes (installation depuis le Play Store, quelques minutes après).',
+      ...(r.reusedBundle ? ['- Même AAB que la version déjà envoyée en test interne (promotion de la version candidate).'] : []),
+      ...(r.testersAdded ? ['- Groupe halcya-testeurs@googlegroups.com ajouté aux testeurs de la piste alpha.'] : []),
       r.notSentForReview ? '- Validée sans envoi automatique pour examen (des modifications attendent un envoi manuel dans la Play Console).' : '- Validée.',
       `- Notes de version (${r.language}) :`,
       '',

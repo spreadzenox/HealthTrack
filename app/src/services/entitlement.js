@@ -96,12 +96,15 @@ export async function refreshEntitlement({ purchaseToken = null, fetchImpl = glo
 const shortDate = (iso) =>
   new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
 
+/** La fin de la période de lancement est exclue : on affiche le dernier jour offert (minuit → la veille). */
+export const lastLaunchDay = (iso) => shortDate(Date.parse(iso) - 1)
+
 /** Une phrase simple pour les Réglages, sans vocabulaire technique. */
 export function describeEntitlement(ent) {
   const until = ent?.expiresAt ? shortDate(ent.expiresAt) : null
   if (ent?.premium && ent.source === 'launch') {
     return ent.launchUntil
-      ? `Premium offert pendant le test, jusqu’au ${shortDate(ent.launchUntil)} : vous n’avez rien à payer.`
+      ? `Premium offert pendant le test, jusqu’au ${lastLaunchDay(ent.launchUntil)} : vous n’avez rien à payer.`
       : 'Premium offert pendant le test : vous n’avez rien à payer.'
   }
   switch (ent?.state) {

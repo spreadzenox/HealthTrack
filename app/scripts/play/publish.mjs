@@ -14,6 +14,8 @@ export const UPLOAD_API = 'https://androidpublisher.googleapis.com/upload/androi
 /** Pistes autorisées : jamais « production ». */
 export const ALLOWED_TRACKS = ['internal', 'alpha']
 export const NOTES_MAX = 500
+/** Groupe Google des testeurs du test fermé (piste alpha), ajouté à la piste s'il manque. */
+export const ALPHA_TESTERS_GROUP = 'halcya-testeurs@googlegroups.com'
 
 export class PlayApiError extends Error {
   constructor(step, status, message) {
@@ -91,9 +93,11 @@ export async function call(fetchImpl, step, url, { method = 'GET', token, body, 
  * Publie `aab` (octets) en `versionCode` sur `track`. Renvoie un objet décrivant ce qui s'est passé
  * (`outcome` : 'published' | 'already-uploaded'), ou lève une PlayApiError.
  * Cas gérés : app encore « brouillon » côté Play (version créée en brouillon), validation qui demande
- * changesNotSentForReview, versionCode déjà envoyé (relance d'un run).
+ * changesNotSentForReview, versionCode déjà envoyé (relance d'un run). Sur la piste alpha, un versionCode déjà
+ * envoyé en test interne est réutilisé (c'est la promotion de la version candidate) et le groupe des testeurs est
+ * ajouté à la piste s'il n'y est pas.
  */
-export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, fetchImpl = fetch, sleep, log = () => {} }) {
+export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, testersGroup = ALPHA_TESTERS_GROUP, fetchImpl = fetch, sleep, log = () => {} }) {
   if (!ALLOWED_TRACKS.includes(track)) throw new Error(`Piste « ${track} » refusée : seules ${ALLOWED_TRACKS.join(', ')} sont autorisées.`)
   fetchImpl = withRetry(fetchImpl, { sleep })
   const base = `${API}/${packageName}/edits`
@@ -105,6 +109,7 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
     const language = details?.defaultLanguage || 'fr-FR'
     log(`Edit ${edit.id} ouvert, langue de la fiche : ${language}`)
 
+    let reusedBundle = false
     try {
       const bundle = await call(fetchImpl, 'Import de l’AAB', `${UPLOAD_API}/${packageName}/edits/${edit.id}/bundles?uploadType=media`, {
         method: 'POST',
@@ -115,10 +120,15 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
       log(`AAB importé : versionCode ${bundle?.versionCode}, sha256 ${bundle?.sha256 ?? '?'}`)
     } catch (err) {
       if (err instanceof PlayApiError && /version code .*already been used|already been used/i.test(err.apiMessage)) {
-        await abandon()
-        return { outcome: 'already-uploaded', versionCode, track }
+        if (track === 'internal') {
+          await abandon()
+          return { outcome: 'already-uploaded', versionCode, track }
+        }
+        reusedBundle = true
+        log(`versionCode ${versionCode} déjà envoyé : la même version est placée sur la piste ${track}.`)
+      } else {
+        throw err
       }
-      throw err
     }
 
     const release = (status) => ({
@@ -142,6 +152,17 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
       await call(fetchImpl, `Piste ${track} (brouillon)`, `${editUrl}/tracks/${track}`, { method: 'PUT', token, body: release(status) })
     }
 
+    let testersAdded = false
+    if (track === 'alpha' && testersGroup) {
+      const testers = await call(fetchImpl, 'Lecture des testeurs alpha', `${editUrl}/testers/${track}`, { token })
+      const groups = testers?.googleGroups ?? []
+      if (!groups.includes(testersGroup)) {
+        await call(fetchImpl, 'Ajout du groupe des testeurs', `${editUrl}/testers/${track}`, { method: 'PUT', token, body: { ...testers, googleGroups: [...groups, testersGroup] } })
+        testersAdded = true
+        log(`Groupe ${testersGroup} ajouté aux testeurs de la piste ${track}.`)
+      }
+    }
+
     let notSentForReview = false
     try {
       await call(fetchImpl, 'Validation de l’edit', `${editUrl}:commit`, { method: 'POST', token })
@@ -150,7 +171,7 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
       notSentForReview = true
       await call(fetchImpl, 'Validation de l’edit (sans examen)', `${editUrl}:commit?changesNotSentForReview=true`, { method: 'POST', token })
     }
-    return { outcome: 'published', versionCode, track, status, language, notSentForReview }
+    return { outcome: 'published', versionCode, track, status, language, notSentForReview, ...(track === 'alpha' ? { reusedBundle, testersAdded } : {}) }
   } catch (err) {
     await abandon()
     throw err

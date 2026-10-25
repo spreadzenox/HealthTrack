@@ -5,6 +5,13 @@
 
 ## 1. Le jour où la version candidate part en alpha (fait par Claude, via la CI)
 
+**✅ Fait le 25/10 13:33 (Paris)** : `from` = `2026-10-25T12:00:00Z` (publication de la version candidate) et
+`until` = `2026-11-20T23:00:00Z` (fin exclue : premium offert **jusqu'au 20 novembre 2026 inclus**, heure de Paris ;
+l'app affiche « jusqu'au 20 nov. 2026 »). Calcul : invitation vers le 27/10 (après l'examen de la piste alpha par
+Google) + 14 jours de test + 10 jours de marge. La version est envoyée sur la piste alpha par « Play — AAB »
+(lancement manuel, piste `alpha`), qui ajoute aussi le groupe `halcya-testeurs@googlegroups.com` aux testeurs s'il
+manque.
+
 1. Claude choisit les dates de la **période de lancement** (premium offert à toutes les installations de la version
    Google Play, sans achat) et les écrit dans `relay/src/launch-period.json` :
    - `from` = date et heure de publication de la version candidate sur la piste alpha (UTC) ;
@@ -44,7 +51,8 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 > sommeil, énergie, bien-être), en gardant vos données sur votre téléphone. Avant sa sortie publique, Google
 > m'impose un test fermé de **14 jours avec au moins 12 personnes** : pouvez-vous m'aider ?
 >
-> **Le premium est offert pendant le test : vous n'avez rien à payer**, aucune carte bancaire n'est demandée.
+> **Le premium est offert pendant le test (jusqu'au 20 novembre) : vous n'avez rien à payer**, aucune carte
+> bancaire n'est demandée.
 >
 > Ce qu'il faut faire (5 minutes, avec le compte Gmail de votre téléphone Android) :
 > 1. Rejoindre le groupe des testeurs : https://groups.google.com/g/halcya-testeurs
@@ -68,6 +76,6 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 ## Rappel du jour 7 (à envoyer au groupe par le propriétaire ; ajouté le 25/10, I166)
 
 > Bonjour à tous, on est à la moitié du test de Halcya, merci ! Deux petites choses : **restez bien inscrits au test
-> jusqu'au <date de fin>** (si on passe sous 12 personnes, Google remet le compteur à zéro), et **ouvrez l'app de
+> jusqu'au <date de fin : 14 jours après l'inscription du 12ᵉ testeur>** (si on passe sous 12 personnes, Google remet le compteur à zéro), et **ouvrez l'app de
 > temps en temps** d'ici là. Si quelque chose vous a gêné ou plu, même en une phrase, répondez-moi : vos retours
 > servent directement aux prochaines versions.

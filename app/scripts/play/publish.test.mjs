@@ -87,6 +87,49 @@ describe('envoi Google Play (jalon 3c)', () => {
     expect(calls.at(-1).key).toBe(`DELETE ${EDITS}/E1`)
   })
 
+  const alphaRoutes = (testers = { googleGroups: ['halcya-testeurs@googlegroups.com'] }) => {
+    const routes = happy()
+    delete routes[`PUT ${EDITS}/E1/tracks/internal`]
+    routes[`PUT ${EDITS}/E1/tracks/alpha`] = { body: {} }
+    routes[`GET ${EDITS}/E1/testers/alpha`] = { body: testers }
+    routes[`PUT ${EDITS}/E1/testers/alpha`] = { body: {} }
+    return routes
+  }
+
+  it('alpha, versionCode déjà envoyé en test interne : la même version est placée sur la piste alpha', async () => {
+    const routes = alphaRoutes()
+    routes[`POST ${UPLOAD_API}/${PKG}/edits/E1/bundles?uploadType=media`] = {
+      status: 403,
+      body: { error: { message: 'APK specifies a version code that has already been used.' } },
+    }
+    const { fetchImpl, calls } = fakePlay(routes)
+    const r = await publishBundle(args(fetchImpl, { track: 'alpha' }))
+    expect(r).toMatchObject({ outcome: 'published', track: 'alpha', status: 'completed', reusedBundle: true, testersAdded: false })
+    const put = calls.find((c) => c.key === `PUT ${EDITS}/E1/tracks/alpha`)
+    expect(JSON.parse(put.init.body).releases[0].versionCodes).toEqual(['350'])
+    expect(calls.at(-1).key).toBe(`POST ${EDITS}/E1:commit`)
+  })
+
+  it('alpha : ajoute le groupe des testeurs s’il manque, sans retirer les autres', async () => {
+    const { fetchImpl, calls } = fakePlay(alphaRoutes({ googleGroups: ['autre@googlegroups.com'] }))
+    const r = await publishBundle(args(fetchImpl, { track: 'alpha' }))
+    expect(r.testersAdded).toBe(true)
+    const put = calls.find((c) => c.key === `PUT ${EDITS}/E1/testers/alpha`)
+    expect(JSON.parse(put.init.body)).toEqual({ googleGroups: ['autre@googlegroups.com', 'halcya-testeurs@googlegroups.com'] })
+  })
+
+  it('alpha : groupe déjà présent, la liste des testeurs n’est pas réécrite', async () => {
+    const { fetchImpl, calls } = fakePlay(alphaRoutes())
+    expect((await publishBundle(args(fetchImpl, { track: 'alpha' }))).testersAdded).toBe(false)
+    expect(calls.some((c) => c.key === `PUT ${EDITS}/E1/testers/alpha`)).toBe(false)
+  })
+
+  it('test interne : la liste des testeurs n’est jamais touchée', async () => {
+    const { fetchImpl, calls } = fakePlay(happy())
+    await publishBundle(args(fetchImpl))
+    expect(calls.some((c) => c.key.includes('/testers/'))).toBe(false)
+  })
+
   it('accès refusé : erreur reconnaissable, rien n’est laissé ouvert', async () => {
     const { fetchImpl } = fakePlay({ [`POST ${EDITS}`]: { status: 403, body: { error: { message: 'The caller does not have permission' } } } })
     const err = await publishBundle(args(fetchImpl)).catch((e) => e)
