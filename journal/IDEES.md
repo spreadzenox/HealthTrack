@@ -9,6 +9,91 @@
 
 ---
 
+## Run du 25/10/2026 20:33 (Paris) — préparer I133 / I134 : des pistes ventre qui résistent aux vraies données
+
+Contexte : le moteur repas → ventre (I132, `services/gutWindows.js`) est mergé depuis 19:33 mais pas encore affiché.
+Il traite chaque note du ventre comme indépendante (Fisher + BH). Les vraies données d'un journal ne le sont pas :
+on mange les mêmes choses plusieurs jours de suite, le ventre a ses semaines, et on note surtout quand ça va mal.
+Ce run cherche comment s'en protéger avant que les pistes ne s'affichent, et relit la fiche Play.
+
+- **I168 (25) — Garde-fou « décalage temporel tronqué » (TTS) contre les fausses pistes dues aux séries [V].**
+  Le risque : 2 semaines de lentilles pendant une mauvaise passe du ventre → Fisher voit 20 notes « exposées » et
+  conclut, alors que ce sont deux tendances lentes qui se superposent. Une simulation publiée (paquet R `nof1kit`) le
+  chiffre : sans effet réel, avec une exposition en blocs et une dérive lente (φ = 0,7), un test qui ignore la
+  dépendance conclut **4 fois sur 10** au seuil de 5 %. La méthode retenue : le test TTS de Yuan et Shou (PLoS Biology
+  2024) — on retire r jours à chaque bout de la série du ventre, on décale la série d'exposition de −r à +r jours
+  **sans l'enrouler** (l'enroulement colle la fin au début et fausse le test), on recalcule la même statistique à
+  chaque décalage ; u = B / (r + 1), où B = nombre de décalages (dont 0) au moins aussi forts que l'alignement réel.
+  Valide dès qu'une des deux séries est stationnaire, quelle que soit la statistique ; le décalage « naïf »
+  B / (2r + 1) peut doubler les fausses alertes. Contraintes : u ne descend pas sous 1/(r + 1), donc **ce n'est pas
+  le test principal** (BH sur 30 aliments exige des p bien plus petits) mais une **porte en plus** : une piste doit
+  passer BH (Fisher, notes) **et** TTS (séries journalières) à u ≤ 0,1. Avec α = 0,1, r = 9 (j = 1) exige plus de
+  18 jours, r = 19 (j = 2, plus puissant) plus de 38 ; la fenêtre (0–4, 4–24, 24–48 h) est fixée d'avance, ce que la
+  méthode exige (délai choisi sans regarder les données). Séries : x(j) = 1 si l'aliment est dans la fenêtre avant au
+  moins une note du jour j ; y(j) = pire niveau du ventre du jour (ou bilan du soir, I170) ; statistique = écart de
+  part de jours « gêne/douleur » entre jours exposés et non exposés. Tests à écrire : nulle avec dérive AR(1) φ = 0,7 +
+  aliment en séries (rester mangé 85 %) → Fisher seul > 10 % de jeux avec une piste, avec la porte < 10 % ; effet à
+  6 h avec un aliment qui alterne → toujours repéré. Impact 5, faisabilité 4 (≈ 60 lignes, pur JS).
+- **I169 (22) — Quatre nulles réalistes pour fixer N (précise I133) [H, d'après I168 et les études de journaux].**
+  La calibration de N (aujourd'hui 8/8) doit se faire sur des données sans effet mais **réalistes**, sinon elle
+  rassure à tort : (a) dérive lente du ventre (AR(1)) ; (b) aliments en séries (chaîne de Markov) ; (c) **saisie
+  informative** : une note a plus de chances d'être prise quand ça va mal (ex. 30 % des moments calmes, 80 % des
+  moments de gêne) ; (d) notes prises surtout dans les 2 h qui suivent un repas. Critère inchangé : sur 200 jeux par
+  scénario, en 6 et 9 semaines, moins d'un sur dix avec au moins une piste ; puissance mesurée sur l'effet à 6 h.
+  Littérature : rien ne mesure directement « on note plus les mauvais jours » dans les applis (un journal
+  d'endométriose n'a pas trouvé de lien entre douleur et jours manqués, mais un effet du jour de la semaine : 18,5 %
+  de jours manqués le vendredi, 22,9 % le samedi) → le scénario (c) reste une hypothèse à simuler, pas un fait.
+  Les seuils trouvés vont dans `gutWindows.js` avec un commentaire qui cite le scénario le plus exigeant. Impact 5,
+  faisabilité 3 (le banc de simulation reste hors du dépôt ou en test lent marqué).
+- **I170 (20) — « Et votre ventre aujourd'hui ? » : un bilan du soir en un geste [H].** Les notes prises au fil de
+  l'eau oublient les journées calmes (limite notée par I132). Un bilan quotidien déclenché par l'app (le
+  « signal-contingent » des études EMA, par opposition au « event-contingent ») donne une série sans trou des bons
+  jours, dont I168 a besoin. Forme : même mécanisme que la note du soir du bien-être (`eveningNote.js`, natif
+  `EveningNoteNotice.java`), trois boutons Calme / Gêne / Douleur, **seulement si l'objectif « Mon ventre » est
+  choisi** (POL-4), jamais deux fois par soir, coupable dans Paramètres ; l'entrée `gut` porte `scope: 'day'` pour ne
+  pas se mélanger aux notes horodatées (le moteur I132 les ignore, TTS les utilise). Le ventre n'entre jamais dans
+  l'estimateur du bien-être (règle 5 inchangée). Impact 4, faisabilité 4.
+- **I171 (18) — L'effet d'attente rendu visible, sans culpabiliser [V].** Dans l'essai en aveugle publié en 2025
+  (Lancet Gastroenterology & Hepatology, personnes SII convaincues que le blé ou le gluten leur fait mal), les
+  symptômes revenaient presque autant avec la barre factice : 11/28 blé, 10/28 gluten, 8/28 placebo, et la plupart
+  n'ont pas changé d'avis après la levée de l'aveugle. Pistes : (a) dans les détails d'une piste, « x % de vos notes
+  ont été prises dans les 2 h après ce repas » quand c'est le cas, pour que la personne voie si elle surveille cet
+  aliment de près ; (b) une phrase sous chaque piste : « L'attente joue aussi : une réintroduction guidée aide à
+  trancher. » ; (c) dans la réintroduction guidée (I135), une option **« à l'aveugle avec un proche »** (un proche
+  prépare le plat avec ou sans le groupe testé et le note dans l'app ; la personne ne le voit qu'à la fin) —
+  différenciateur fort, aucune appli concurrente vue ne le propose. Toujours « piste », jamais « cause » ni
+  « intolérance ». Impact 4, faisabilité 3 (a, b) / 2 (c).
+- **I172 (16) — Fiche Play : deux phrases fausses et des mots que les gens tapent [V, fichiers du dépôt].**
+  `app/store/listing/fr-FR/full-description.txt` dit encore « tout s'efface en désinstallant l'app » — faux depuis la
+  décision du 24/10 de garder la sauvegarde Android (la page de confidentialité, elle, le dit justement : « Une copie
+  peut rester dans la sauvegarde Google de votre téléphone ») — et appelle encore l'onglet « Pistes » (devenu
+  « Analyses », VC-22). Mots-clés : la fiche contient « intestin irritable » (1 fois) et « ballonnements », mais ni
+  « côlon irritable », ni « SII », ni « FODMAP », ni « journal alimentaire », les mots qu'on tape en France.
+  Concurrents vus sur Android : MyIBS (fondation canadienne, gratuite, en anglais), Gut Health IBS Symptom Tracker
+  (10 langues, Pro, export PDF), FODMAPLAB (locale, hors ligne), Monash FODMAP (rapport PDF) ; **toujours aucune app
+  SII conçue en français**. À faire (run de code court, la CI pousse la fiche) : corriger les deux phrases, ajouter
+  naturellement « côlon irritable (SII) », « journal alimentaire » et « hypothèses FODMAP » — sans liste de mots-clés
+  (interdite par Google Play) ; un test-garde vérifie que la fiche ne dit plus « s'efface en désinstallant » sans
+  mentionner la sauvegarde. Impact 3, faisabilité 5.
+
+- **Ordre proposé pour les runs de code** : LISTING-1 (I172, court) → I168 (porte TTS, testée sur nulle AR(1)) →
+  I169 (calibration N sur les 4 nulles) → I170 (bilan du soir du ventre) → affichage des pistes ventre dans
+  Analyses (cartes « facteur → effet », barres par délai, avec I171 a/b) → I134. POL-1d reste suspendu à P28.
+
+Sources (25/10/2026) : https://archive.linux.duke.edu/cran/web/packages/nof1kit/vignettes/nof1kit.html (simulation
+OLS / AR(1)) ; https://pmc.ncbi.nlm.nih.gov/articles/PMC11398661/ (Yuan & Shou, PLoS Biol 2024, test TTS) ;
+https://arxiv.org/pdf/2012.06862 (test de décalage de Harris, conservateur) ;
+https://research-information.bris.ac.uk/en/publications/properties-of-bootstrap-tests-for-n-of-1-studies/ ;
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5994094/ (jours manqués d'un journal d'endométriose) ;
+https://m-path.io/learn/what-is-esm/ (échantillonnage signal / événement) ;
+https://news.mcmaster.ca/analysis-the-nocebo-effect-in-ibs-why-gluten-might-not-be-the-real-problem/ ;
+https://www.psypost.org/the-nocebo-effect-not-gluten-may-trigger-symptoms-for-many-with-ibs/ ;
+https://similarweb.com/app/google/ca.cdhf.myibs ; https://www.coddykit.com/fr/apps/ibs-and-gut-health-tracker ;
+https://en.androidayuda.com/applications/general/FODMAP-diet%3A-Android-apps-that-make-a-difference-in-IBS/ ;
+https://monashfodmap.com/blog/app-how-to
+
+---
+
 ## Run du 25/10/2026 08:33 (Paris) — audit de la version candidate après le polissage, et ce qu'il reste avant d'inviter les testeurs
 
 Contexte : le polissage du parcours demandé le 24/10 vers 15:00 est livré (POL-2 à POL-8, POL-1 a/b/c côté app ; POL-1d
