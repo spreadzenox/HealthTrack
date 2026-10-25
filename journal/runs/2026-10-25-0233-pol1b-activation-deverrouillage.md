@@ -40,3 +40,9 @@
 - **P28 (propriétaire)** : l'APK d'aperçu est prêt à filmer.
 - POL-1c : raccourci « Lecture au déverrouillage » dans Paramètres pour couper ; puis, après P28, allumer
   `-PfaceUnlockPlay=true` dans « Play — AAB ». Ensuite M6b.
+
+## Après le merge (#345, `e9d43cf`)
+- Checks de la PR tous verts du premier coup, **y compris l'émulateur API 36** (test Health Connect robuste).
+- Sur main : « Tests », « Build & Release » (**v263**, APK 33 749 908 octets, 33,7 Mo), « Play — AAB » (test interne)
+  et « Test — émulateur Samsung Galaxy A56 » verts ; l'artefact `halcya-apercu-deverrouillage` de ce run contient
+  l'écran d'activation (à installer pour P28).
