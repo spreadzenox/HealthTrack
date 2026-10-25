@@ -766,6 +766,28 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
+**Run « idées » du 25/10 08:33 — la version candidate est presque prête : ce qu'il reste avant d'inviter vos
+testeurs (rien de nouveau dans l'app).** J'ai relu toute la version Play en captures, sur un téléphone neuf (clair) puis
+avec des données (sombre) : 14 écrans, aucune erreur. Votre polissage du 24/10 est bien là. Restent **6 petits défauts**,
+corrigés aux prochains runs de code : ① 4 textes disent encore « vos Pistes » (Météo, Temps d'écran, capteurs) alors
+que l'onglet s'appelle « Analyses » ; ② dans Analyses, trois façons de dire si un lien est solide (« lien net »,
+« hypothèse solide », « piste solide ») → une seule ; ③ les « autres liens » mêlent deux présentations → une seule ;
+④ dans Sources, « Brancher une autre source » fait doublon avec « Ajouter une source » ; ⑤ l'Accueil d'un nouvel
+utilisateur commence par 5 lignes de texte et trois tuiles vides → une phrase et une ligne ; ⑥ la carte Health
+Connect cite Gadgetbridge (inconnu du grand public). Et il manque un **« Envoyer un avis »** dans les Paramètres pour
+que vos testeurs vous répondent facilement. **Ensuite, la version candidate part en test fermé** (avec le premium
+offert jusqu'à la fin du test), et je vous écrirai « 👉 Version candidate prête » ici. Je propose de **garder la
+lecture au déverrouillage hors de cette version** : elle demande un examen Google à part (P28), et un refus ne doit
+pas bloquer le test fermé ; elle viendra dans une version suivante. **Ce que Google regarde au bout des 14 jours**
+(sources tierces concordantes) : au moins 12 testeurs **inscrits sans interruption** (sinon le compteur repart à
+zéro : invitez-en 15), qui **ouvrent vraiment l'app**, et au moins une mise à jour pendant le test ; le formulaire
+d'accès à la production demande ce qui a changé grâce aux retours. J'ai donc durci le texte d'invitation (« ouvrez
+l'app tous les 2 ou 3 jours, ne quittez pas le test ») et ajouté un **rappel du jour 7** prêt à envoyer
+([`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md)). Crédits IA après réinstallation sans sauvegarde : l'outil
+Google prévu pour ça est réservé à des partenaires ; le risque reste plafonné par le relais, je le surveille.
+Détail : [`IDEES.md`](IDEES.md) I165–I167. **👉 Votre prochaine action** : rien de bloquant ; P28 quand vous voulez
+(elle ne retarde plus la version candidate).
+
 **Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
 prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK
 d'aperçu** (`fr.jpesquet.sante.apercu`), la carte **Sources → Lecture du visage** a maintenant une ligne **« Aussi à
@@ -1480,6 +1502,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 05:33 CET — [M7 : séances, FC et allure](runs/2026-10-25-0533-m7-seances-fc-allure.md) | ⌚ | `parseWorkoutIndex` (blocs annoncés), `parseWorkoutSamples` (en-tête 14 octets, FC + vitesse, reste sauté d'après la longueur annoncée), `parseWorkoutPace` (km complets), `heartRateCurve` ; Journal : « FC moy. · allure » + courbe SVG ; spécification §7.5 bis |
 | 25/10 06:33 CET — [M4 bis : bits inconnus des minutes (étages ?)](runs/2026-10-25-0633-m4bis-bits-inconnus.md) | ⌚ | `parseMinuteBytes` garde les bits non identifiés à part (`unknown`, jamais écrits) ; `describeUnknownBits` : une ligne par jour local (minutes, somme) dans le journal de la synchro, app ouverte et capture d'arrière-plan ; spécification §10.18 |
 | 25/10 07:33 CET — [M7b : séances relues app fermée](runs/2026-10-25-0733-m7b-seances-arriere-plan.md) | ⌚ | `WatchReader.workouts` (liste, totaux, échantillons, allures ; brut, index = numéro de séance ; octets vérifiés contre `sync.js`) ; `State.workouts` recopié du JS (`workoutsRead`) ; `dataFromCapture` assemble avec `withWorkoutDetail` ; 136 JUnit, 2 194 Vitest |
+| 25/10 08:33 CET — [Idées : audit de la version candidate](runs/2026-10-25-0833-idees-audit-version-candidate.md) | 💡 | Captures play vierge clair + démo sombre (14 pages, 0 erreur) → VC-22 à VC-27 + AVIS + VC-PUBLIER au BACKLOG ; I166 fin de test fermé (12 inscrits continus, engagement, mise à jour pendant le test) → invitation durcie + rappel J7 ; I167 device recall réservé ; POL-1d après la version candidate ; journal seul, 2 194 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |
