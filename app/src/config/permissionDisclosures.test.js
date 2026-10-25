@@ -15,7 +15,7 @@ describe('divulgations avant les autorisations sensibles', () => {
     }
   })
 
-  it.each(['camera', 'camera_app_open'])('%s : transparence de l’AI Act (reconnaissance des émotions), estimation, aucune image gardée', (key) => {
+  it.each(['camera', 'camera_app_open', 'camera_unlock'])('%s : transparence de l’AI Act (reconnaissance des émotions), estimation, aucune image gardée', (key) => {
     const text = DISCLOSURES[key].points.join(' ')
     expect(text).toMatch(/reconnaissance des émotions/)
     expect(text).toMatch(/pas un diagnostic/)
@@ -30,6 +30,14 @@ describe('divulgations avant les autorisations sensibles', () => {
     expect(text).not.toMatch(/déverrouill|notification reste/)
   })
 
+  it('variante play, lecture au déverrouillage : quand, notification « Arrêter », pas de reprise toute seule', () => {
+    const text = DISCLOSURES.camera_unlock.points.join(' ')
+    expect(text).toMatch(/chaque déverrouillage/)
+    expect(text).toMatch(/notification « Lecture du visage active »/)
+    expect(text).toMatch(/« Arrêter »/)
+    expect(text).toMatch(/redémarrage/)
+  })
+
   it('un accès non décrit est une erreur (on ne demande jamais sans prévenir)', () => {
     expect(() => disclosureFor('micro')).toThrow(/inconnue/)
   })
@@ -37,6 +45,7 @@ describe('divulgations avant les autorisations sensibles', () => {
   // Chaque écran qui déclenche une demande sensible passe par la divulgation.
   const GUARDED = [
     ['src/components/FaceSenseCard.jsx', /startFaceSense\(/, /askConsent\(appOpen \? 'camera_app_open' : 'camera'\)/],
+    ['src/components/FaceSenseCard.jsx', /startFaceUnlock\(/, "askConsent('camera_unlock')"],
     ['src/components/WeatherCard.jsx', /getCurrentPosition\(/, "askConsent('location')"],
     ['src/components/PhoneUsageCard.jsx', /openSettings\(\)/, "askConsent('usage')"],
     ['src/pages/Food.jsx', /analyzeMealPhoto\(/, "askConsent('ai_meal')"],

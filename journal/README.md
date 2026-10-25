@@ -711,6 +711,20 @@ compagnon installée et à l'appairage. **👉 À tester** : onglet Sources (vot
 « Synchroniser la montre ») ; touchez « Ajouter une source ». Prochain run de code : **POL-1** (lecture au déverrouillage
 dans la version play, après votre déclaration P28). Publié : **v261** (33,7 Mo) et la version play en test interne.
 
+**Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
+prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK
+d'aperçu** (`fr.jpesquet.sante.apercu`), la carte **Sources → Lecture du visage** a maintenant une ligne **« Aussi à
+chaque déverrouillage »** avec un interrupteur. L'allumer ouvre une feuille d'explication (3 images à chaque
+déverrouillage, témoin vert de la caméra, IA de reconnaissance des émotions, seuls des nombres gardés, notification
+« Lecture du visage active » avec « Arrêter », rien ne reprend seul après un redémarrage) ; « J'accepte, lire au
+déverrouillage » démarre la lecture app ouverte puis demande l'autorisation des notifications. L'éteindre ne coupe
+que le déverrouillage (la lecture à l'ouverture continue). Si Android l'arrête (redémarrage, mise à jour), la carte
+dit « en pause » avec **« Reprendre »**. En coulisses : le test émulateur Android 16 qui rougissait par intermittence
+(« Conflict found » de Health Connect, encore sur main cette nuit, sans lien avec l'app) est rendu robuste.
+**👉 Votre prochaine action : P28** — installer l'APK d'aperçu (artefact `halcya-apercu-deverrouillage` du workflow
+« Test — émulateur Samsung Galaxy A56 »), filmer 60–90 s selon le script, puis coller la déclaration (pas à pas dans
+[`PRODUIT.md`](PRODUIT.md) §4, P28). Prochain run de code : raccourci pour couper dans Paramètres (POL-1c), puis M6b.
+
 **Run du 25/10 02:30 — préparation de la lecture au déverrouillage dans la version play (POL-1a, rien de visible).**
 Rien ne change dans vos deux apps : la fonction est construite **derrière un interrupteur coupé**, pour que les
 versions play continuent de partir quoi que décide Google. En coulisses : l'app sait maintenant, dans sa variante play,
@@ -1405,6 +1419,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 00:30 — [POL-6 : Journal en couleurs](runs/2026-10-25-0030-pol6-journal-en-couleurs.md) | 🧭 | `chipTheme` → tuiles du résumé en pastels (menthe / pêche / lilas), valeurs en mono ; saisies en pastel ; `onStatus` sur radar, norme cardiaque et régularité du sommeil → `SoonList` « Bientôt » (partagé avec Analyses) ; méthode seulement si un bloc est actif ; captures play clair / sombre / vierge |
 | 25/10 01:30 — [POL-8 : Sources plus simples](runs/2026-10-25-0130-pol8-sources-simples.md) | 🧭 | `splitSourcesByStatus` : `watchDetected` (app Huawei / Honor Santé installée, ou mode diagnostic) et `addable` (montre non détectée, Bluetooth, guides) derrière « Ajouter une source » ; détection partagée avec « Mes appareils » (masqué si rien) ; `troubleshooting` de `WatchDiagnostic` / `WatchConnect` (Diagnostic seulement après un échec ou en mode diagnostic) ; chevron de `MethodNote` ; 2 165 Vitest |
 | 25/10 02:30 — [POL-1a : interrupteur play de la lecture au déverrouillage](runs/2026-10-25-0230-pol1a-interrupteur-play.md) | 🧭 | `-PfaceUnlockPlay` (coupé) + `FACE_KEEPALIVE` ; manifeste `src/playFaceUnlock` (test de parité) ; plugin : `unlock` distinct de `enabled`, `stopUnlock`, `skip:unlock` ; notification basse en play ; CI : APK d'aperçu `.apercu` vérifié et envoyé en artefact ; 2 167 Vitest |
+| 25/10 02:33 CET — [POL-1b : écran d'activation du déverrouillage (play)](runs/2026-10-25-0233-pol1b-activation-deverrouillage.md) | 🧭 | `describeFaceUnlock` / `startFaceUnlock` / `stopFaceUnlock` ; interrupteur `role=switch` si `unlockAvailable` ; divulgation `camera_unlock` ; « Reprendre » sans reprise auto ; `--face-unlock` et `--disclosure=camera_unlock` dans `npm run visual` ; test HC API 36 robuste ; 2 178 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

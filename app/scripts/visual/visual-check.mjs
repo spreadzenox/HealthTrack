@@ -57,6 +57,8 @@
  *                                                                      --face-diag : Diagnostic de la carte déplié
  *   npm run visual -- --play --routes=/connectors --face   # variante play (VITE_DISTRIBUTION=play) : lecture à l'ouverture ;
  *                                                        --face=reading : bandeau « Lecture du visage » en cours (jalon 3b-2)
+ *                                                        --face-unlock=off|on|paused : interrupteur « Aussi à chaque
+ *                                                        déverrouillage » (aperçu faceUnlockPlay, POL-1b)
  *   npm run visual -- --routes=/connectors --face=off --disclosure=camera  # divulgation avant la caméra (jalon 3b) ;
  *                                                     --phone=ask --disclosure=usage, --disclosure=location (sans données de démo : --empty)
  *   npm run visual -- --routes=/ --click="Noter moi-même" --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
@@ -661,7 +663,7 @@ async function main() {
     }
     if (args.face) {
       // « Lecture du visage » : faux plugin FaceSense (lu par src/services/faceSense.js). Jamais de score.
-      await context.addInitScript(([mode, play]) => {
+      await context.addInitScript(([mode, play, unlockMode]) => {
         const on = mode !== 'off'
         try {
           localStorage.setItem('healthtrack_face_sense', JSON.stringify({ enabled: on }))
@@ -696,6 +698,8 @@ async function main() {
         // (intervalle de 30 min côté JS remis à zéro : la page est rechargée après le remplissage des données)
         if (play) localStorage.removeItem('healthtrack_face_app_open')
         if (play) Object.assign(status, { mode: 'app_open', running: false, dayAppOpens: 3, dayAppOpenFaces: 2, lastTrigger: 'app_open' })
+        // Interrupteur de build faceUnlockPlay (POL-1b) : --face-unlock=off|on|paused → ligne « Aussi à chaque déverrouillage ».
+        if (play && unlockMode) Object.assign(status, { unlockAvailable: true, unlock: unlockMode !== 'off', running: unlockMode === 'on' })
         // 11 rafales en attente (scores fictifs) sur 3 jours, rangées dans l'historique à l'affichage de la carte (I90)
         let bursts = Array.from({ length: 11 }, (_, i) => ({
           name: `capture-${i}-000.json`,
@@ -708,8 +712,12 @@ async function main() {
             bursts = bursts.filter((b) => !names.includes(b.name))
             return { removed: names.length }
           },
-          start: async () => ({ started: true, permission: true }),
+          start: async (o) => {
+            if (o?.unlock) Object.assign(status, { unlock: true, running: true })
+            return { started: true, permission: true }
+          },
           stop: async () => {},
+          stopUnlock: async () => Object.assign(status, { unlock: false, running: false }),
           test: async () => {},
           requestBatteryExemption: async () => {},
           openNeverSleep: async () => ({ opened: 'samsung' }),
@@ -722,7 +730,7 @@ async function main() {
             defaultService: 'com.google.android.as', services: ['com.google.android.as', 'com.samsung.android.bixby.agent'],
             support: { installed: ['en-US'], pending: [], supported: ['fr-FR', 'de-DE'], online: [] }, errors: [] }),
         }
-      }, [String(args.face), !!args.play])
+      }, [String(args.face), !!args.play, args['face-unlock'] ? String(args['face-unlock']) : null])
     }
     if (args['evening-note']) {
       await context.addInitScript((mode) => {
@@ -833,11 +841,16 @@ async function main() {
         if (args.disclosure) {
           // --disclosure=camera|usage|location : divulgation affichée avant la demande d'Android (jalon 3b)
           const trigger = { camera: 'Activer la lecture du visage', location: 'Utiliser ma position approximative' }[args.disclosure]
-          const button = trigger
+          // --disclosure=camera_unlock (avec --play --face --face-unlock=off) : l'interrupteur « Aussi à chaque déverrouillage »
+          const button = args.disclosure === 'camera_unlock'
+            ? page.getByRole('switch', { name: /Aussi à chaque déverrouillage/ })
+            : trigger
             ? page.getByRole('button', { name: trigger })
             : page.locator('section', { hasText: 'Temps d’écran' }).getByRole('button', { name: 'Activer' })
           await button.first().evaluate((el) => el.scrollIntoView({ block: 'center' }))
-          await button.first().click()
+          // (case à cocher masquée sous son interrupteur dessiné : clic direct sur l'élément)
+          if (args.disclosure === 'camera_unlock') await button.first().evaluate((el) => el.click())
+          else await button.first().click()
           await page.getByRole('dialog').waitFor({ timeout: 10000 })
           await page.waitForTimeout(300)
         }
