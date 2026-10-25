@@ -15,6 +15,8 @@
  *   npm run visual -- --update-banner=progress  # … et un téléchargement en cours (plugin AppUpdate simulé)
  *   npm run visual -- --update-banner=stalled   # … téléchargement bloqué (aucun octet depuis 45 s)
  *   npm run visual -- --routes=/ --click="Noter moi-même"   # la note de bien-être manuelle (carte bien-être, POL-3)
+ *   npm run visual -- --routes=/ --tz=America/New_York  # autre fuseau, pour voir l'Accueil à une autre heure
+ *                                          (ex. le bilan du soir du ventre, proposé à partir de 18 h)
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
  *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
@@ -232,7 +234,7 @@ async function main() {
       isMobile: true,
       hasTouch: true,
       locale: 'fr-FR',
-      timezoneId: 'Europe/Paris',
+      timezoneId: args.tz || 'Europe/Paris',
       colorScheme: args.light ? 'light' : 'dark',
     })
 

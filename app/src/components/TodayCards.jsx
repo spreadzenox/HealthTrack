@@ -10,6 +10,8 @@ import {
   GUT_SOURCE,
   GUT_TYPE,
   gutLevelLabel,
+  gutEveningCheck,
+  GUT_DAY_SCOPE,
   gutSummary,
   gutWeekLine,
   pistesProgress,
@@ -77,17 +79,18 @@ const readGut = () => listEntries({ type: GUT_TYPE, since: new Date(Date.now() -
  * Carte pêche « Votre ventre » : Calme / Gêne / Douleur en un geste, horodaté.
  * `onlyIfUsed` : rien n'est affiché tant qu'aucune note des 7 derniers jours n'existe (voir gutCardMode).
  */
-export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed = false }) {
+export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed = false, now = null }) {
   const entries = useEntries(read)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const summary = gutSummary(entries || [])
+  const evening = gutEveningCheck(entries || [], now || new Date())
 
-  async function note(level) {
+  async function note(level, scope = null) {
     setSaving(true)
     setError(null)
     try {
-      await createEntry({ type: GUT_TYPE, source: GUT_SOURCE, payload: { level } })
+      await createEntry({ type: GUT_TYPE, source: GUT_SOURCE, payload: scope ? { level, scope } : { level } })
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
     } catch (e) {
       setError(e?.message || 'Enregistrement impossible')
@@ -125,6 +128,28 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
           ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${summary.lastToday ? `à ${timeOf(summary.last.at)}` : `le ${new Date(summary.last.at).toLocaleDateString('fr-FR', { weekday: 'long' })} à ${timeOf(summary.last.at)}`}.`
           : 'Un geste suffit, l’heure est notée. Vous pouvez noter plusieurs fois par jour.'}
       </p>
+      {entries && evening.ask && (
+        <div className="gut-evening" role="group" aria-labelledby="gut-evening-title">
+          <p id="gut-evening-title" className="gut-evening-title">Et votre ventre aujourd’hui, dans l’ensemble ?</p>
+          <div className="gut-evening-choices">
+            {GUT_LEVELS.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className="gut-evening-choice"
+                disabled={saving}
+                onClick={() => note(l.id, GUT_DAY_SCOPE)}
+                aria-label={`Journée : ${l.label}`}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {entries && evening.done && (
+        <p className="gut-evening-done">Bilan du jour : {gutLevelLabel(evening.done.payload.level)}. Merci !</p>
+      )}
       {details && entries && <p className="today-details-line mono">{gutWeekLine(summary)}</p>}
     </section>
   )

@@ -11,7 +11,7 @@ import { formatDuration, workoutTypeLabel, workoutDetailParts, shortFoodName } f
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 import { mealKcal } from '../services/mealEditing'
 import { useNutritionTable } from '../data/nutritionTable'
-import { SOURCE_LABELS, gutLevelLabel } from '../services/today'
+import { SOURCE_LABELS, gutLevelLabel, isGutDayNote } from '../services/today'
 import { INITIAL_DAYS, MORE_DAYS, loadJournalEntries } from '../services/journalEntries'
 
 /**
@@ -44,6 +44,7 @@ const TYPE_LABELS = {
 }
 
 function entryTitle(e) {
+  if (isGutDayNote(e)) return 'Ventre · bilan du jour'
   return TYPE_LABELS[e.type] || e.type
 }
 

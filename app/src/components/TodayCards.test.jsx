@@ -66,6 +66,42 @@ describe('GutCard', () => {
   })
 })
 
+describe('GutCard — bilan du soir (I170)', () => {
+  beforeEach(async () => {
+    const { createEntry } = await import('../storage/localHealthStorage')
+    createEntry.mockReset()
+    createEntry.mockResolvedValue(1)
+  })
+
+  it('le soir, demande la journée en un geste et l’enregistre comme un bilan (scope « day »)', async () => {
+    const { createEntry } = await import('../storage/localHealthStorage')
+    const now = new Date()
+    now.setHours(20, 30, 0, 0)
+    wrap(<GutCard read={async () => []} now={now} />)
+    expect(await screen.findByText('Et votre ventre aujourd’hui, dans l’ensemble ?')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Journée : Calme' }))
+    await waitFor(() => expect(createEntry).toHaveBeenCalledWith({ type: 'gut', source: 'app_gut', payload: { level: 'calm', scope: 'day' } }))
+  })
+
+  it('pas de question le matin ; une fois répondu, une ligne de remerciement', async () => {
+    const morning = new Date()
+    morning.setHours(9, 0, 0, 0)
+    const { unmount } = wrap(<GutCard read={async () => []} now={morning} />)
+    await screen.findByText(/Un geste suffit/)
+    expect(screen.queryByText(/dans l’ensemble/)).not.toBeInTheDocument()
+    unmount()
+    const evening = new Date()
+    evening.setHours(21, 0, 0, 0)
+    const at = new Date(evening)
+    at.setHours(20, 0, 0, 0)
+    const read = async () => [{ type: 'gut', source: 'app_gut', at: at.toISOString(), payload: { level: 'discomfort', scope: 'day' } }]
+    wrap(<GutCard read={read} now={evening} />)
+    expect(await screen.findByText('Bilan du jour : Gêne. Merci !')).toBeInTheDocument()
+    expect(screen.queryByText(/dans l’ensemble/)).not.toBeInTheDocument()
+    expect(screen.getByText(/Un geste suffit/)).toBeInTheDocument()
+  })
+})
+
 describe('GutCard onlyIfUsed (aucun objectif choisi, POL-4)', () => {
   it('ne montre rien sans note des 7 derniers jours', async () => {
     const read = vi.fn(async () => [])

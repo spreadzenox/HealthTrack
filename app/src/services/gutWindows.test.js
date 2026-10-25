@@ -153,6 +153,13 @@ describe('analyzeGutWindows', () => {
     expect(found).toBeGreaterThanOrEqual(7)
   })
 
+  it('ignore les bilans du soir (I170) : seules les notes horodatées ont une fenêtre repas → ventre', () => {
+    const entries = simulate({ seed: 7, days: 63, effect: (t, meals) => (onionBetween(t, meals, 4, 8) ? 0.75 : 0.15) })
+    const withDay = [...entries]
+    for (let d = 0; d < 63; d++) withDay.push({ type: 'gut', at: at(d, 21), payload: { level: d % 2 ? 'pain' : 'calm', scope: 'day' } })
+    expect(analyzeGutWindows(withDay)).toEqual(analyzeGutWindows(entries))
+  })
+
   it('sans aucun effet, aucune piste (sur plusieurs jeux simulés)', () => {
     for (const seed of [1, 2, 3, 4, 5]) {
       const res = analyzeGutWindows(simulate({ seed, effect: () => 0.3 }))
