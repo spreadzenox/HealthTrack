@@ -107,9 +107,11 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   [x] **POL-1b FAIT le 25/10 02:33 CET** (app) : interrupteur « Aussi à chaque déverrouillage » si `unlockAvailable`,
   divulgation `camera_unlock`, notifications demandées après le démarrage, « en pause » + « Reprendre » (aucune reprise
   automatique), pas de Shizuku / batterie en play ; `--face-unlock=off|on|paused` dans `npm run visual`.
-  [ ] POL-1c : raccourci « Lecture au déverrouillage » dans Paramètres pour couper ; [ ] P28 par le propriétaire
+  [x] **POL-1c FAIT le 25/10 03:33 CET** : bloc « Lecture au déverrouillage » de Paramètres (play + `unlockAvailable`
+  seulement) : interrupteur qui coupe (actif ou en pause) ; coupée → lien vers Sources (allumage seulement derrière
+  la divulgation) ; [ ] P28 par le propriétaire
   (APK d'aperçu prêt) ; [ ] allumer l'interrupteur dans « Play — AAB ».
-Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → ~~POL-8~~ (fait 25/10 01:30) → POL-1a (fait 25/10 02:30) → ~~POL-1b~~ (fait 25/10 02:33 CET) → P28 → POL-1c (Paramètres) → interrupteur allumé.
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → ~~POL-8~~ (fait 25/10 01:30) → POL-1a (fait 25/10 02:30) → ~~POL-1b~~ (fait 25/10 02:33 CET) → ~~POL-1c~~ (fait 25/10 03:33 CET) → P28 (propriétaire) → interrupteur allumé (POL-1d) → M6b.
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,

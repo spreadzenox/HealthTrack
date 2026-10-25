@@ -15,6 +15,7 @@ import { syncEntitlement, restorePurchases } from '../services/playBilling'
 import '../Food.css'
 import { useEntitlement } from '../hooks/useEntitlement'
 import LineIcon from '../components/LineIcon'
+import FaceUnlockSetting from '../components/FaceUnlockSetting'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
@@ -200,6 +201,8 @@ export default function Settings() {
       </div>
 
       {FEATURES.billing && <SubscriptionBlock />}
+
+      <FaceUnlockSetting />
 
       {FEATURES.aiRelay ? <RelayAiBlock /> : (
       <div className="settings-block">
