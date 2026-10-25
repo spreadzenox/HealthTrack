@@ -22,3 +22,7 @@
 ## Suite
 - Le propriétaire compare une journée (étages de la montre ↔ ligne du journal) ; on décode alors `floors`.
 - M7b : séances relues app fermée (Java) ; POL-1d dès P28.
+
+## Après le merge (#353, `ec0c966`)
+- Checks de la PR tous verts du premier coup (Vitest, Build APK, relais, protocole montre Java, perf, émulateurs API 35 et 36).
+- Sur main : « Tests », « Build & Release » (**v267**, APK 33 769 292 octets, 33,8 Mo), « Play — AAB » (test interne) et émulateur verts.
