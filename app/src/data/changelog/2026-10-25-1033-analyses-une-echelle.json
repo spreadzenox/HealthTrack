@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-25",
+  "kind": "amélioration",
+  "title": "Analyses : une seule échelle, des liens plus lisibles",
+  "items": [
+    "Chaque lien porte la même étiquette partout dans l'onglet Analyses : « Piste solide » (menthe), « À confirmer » (pêche) ou « Trop tôt pour dire » (gris). L'explication longue se déplie au chevron.",
+    "« Autres liens repérés » : toutes les cartes suivent le même modèle (le facteur en entier, une phrase, les chiffres en petit) et les moyennes sur 5 s'affichent avec une seule décimale."
+  ]
+}
