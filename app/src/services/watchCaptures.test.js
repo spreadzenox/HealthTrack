@@ -8,6 +8,8 @@ import { syncWatchIfStale } from './watchAutoSync'
 import { READ_WINDOW } from '../devices/huawei/testing/sampleBlocks'
 import { dictionaryPage, real8 } from '../devices/huawei/testing/sampleDictionary'
 import { DICT_CLASS, DICT_FIELD } from '../devices/huawei/p2p'
+import { encodeTlvs } from '../devices/huawei/protocol'
+import { runTotals } from '../devices/huawei/testing/sampleWorkouts'
 
 const VECTORS = resolve(dirname(fileURLToPath(import.meta.url)), '../../android/app/src/test/resources/huawei/link-vectors.json')
 const ADDRESS = 'AA:BB:CC:DD:EE:FF'
@@ -61,6 +63,17 @@ describe('importWatchCapture', () => {
     await importWatchCapture(capture, { watchKey: ADDRESS, storage, ...d })
     expect(d.write.mock.calls[0][0].some((e) => e.payload.during === 'day' && e.payload.value === 38)).toBe(true)
     expect(getWatchSyncState(ADDRESS, storage).dictUntil).toEqual({ 400012: 5, 500044: t0 + 60_000 })
+  })
+
+  it('séances relues en arrière-plan : écrites, et « séances lues » reste dans l’état (M7b)', async () => {
+    const storage = memoryStorage()
+    const d = deps()
+    const run = Math.floor((READ_WINDOW.since + 3600_000) / 1000)
+    const body = Array.from(encodeTlvs(runTotals(7, run)), (b) => b.toString(16).padStart(2, '0')).join('')
+    const capture = javaCapture({ replies: [...javaCapture().replies, { s: 0x17, c: 0x08, i: 7, hex: body }], reads: [...javaCapture().reads, { id: 'workouts', outcome: 'ok', units: 1 }] })
+    await importWatchCapture(capture, { watchKey: ADDRESS, storage, ...d })
+    expect(d.write.mock.calls[0][0].some((e) => e.type === 'activity' && e.payload.totalCalories === 310)).toBe(true)
+    expect(getWatchSyncState(ADDRESS, storage)).toMatchObject({ workouts: 1, workoutsRead: true })
   })
 
   it('rien reçu : la reprise reste où elle était', async () => {
@@ -132,6 +145,9 @@ describe('relecture app fermée : état et reprise partagés avec le natif', () 
     // classes du dictionnaire déjà reçues : leur dernier instant part aussi (M6b)
     await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1000, at, dictUntil: { 500044: 700, 400012: 600 } }, plugin })
     expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 1000, at: Date.parse(at), hrvDayUntil: 700, skinTempUntil: 600 })
+    // séances déjà lues par l'app : le lecteur en arrière-plan les relit aussi (M7b)
+    await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1000, at, workoutsRead: true }, plugin })
+    expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 1000, at: Date.parse(at), workouts: true })
     expect(await shareResumeWithNative({ deviceId: 'X', state: null, plugin })).toBe(false)
     expect(await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1, at }, plugin: { shareResume: async () => Promise.reject(new Error('x')) } })).toBe(false)
   })

@@ -9,7 +9,8 @@ import java.util.List;
  * Lectures santé du client Java « synchro seule » (journal/protocoles/huawei.md §7.2–§7.4, §7.6, §9.1 d), sur une
  * session déjà authentifiée : sommeil (7/0x0C puis 7/0x0D), minutes (7/0x0A puis 7/0x0B), totaux du jour
  * (7/0x03), puis les fichiers 0x2C demandés (sommeil détaillé `sequence_data`, stress `rrisqi_data.bin` : M6) et
- * les classes du dictionnaire P2P (VFC de journée, température de la peau : M6b, WatchP2P),
+ * les classes du dictionnaire P2P (VFC de journée, température de la peau : M6b, WatchP2P), et les séances avec
+ * leurs blocs de FC et d'allures (M7b) si l'app les a déjà lues une fois,
  * dans l'ordre et avec les mêmes demandes que readWatchData (src/devices/huawei/sync.js).
  * Rien n'est décodé ici : chaque réponse est gardée **brute** (TLV déchiffrés ; octets du fichier rassemblés) dans une capture que le JS
  * importe à l'ouverture avec son propre analyseur — une seule implémentation du décodage santé.
@@ -24,6 +25,15 @@ public final class WatchReader {
     static final int MINUTE_DATA = 0x0B;
     static final int SLEEP_COUNT = 0x0C;
     static final int SLEEP_DATA = 0x0D;
+    /** Service des séances (§7.5, §7.5 bis) : liste, totaux, échantillons (FC, vitesse), allures au km. */
+    public static final int WORKOUT = 0x17;
+    static final int WORKOUT_LIST = 0x07;
+    static final int WORKOUT_TOTALS = 0x08;
+    static final int WORKOUT_SAMPLES = 0x0A;
+    static final int WORKOUT_PACE = 0x0C;
+    /** Blocs lus au plus par séance et par commande (comme MAX_WORKOUT_BLOCKS, sync.js). */
+    static final int MAX_WORKOUT_BLOCKS = 40;
+    static final long DAY_MS = 24 * 3_600_000L;
     /** Service des fichiers (§7.6) et ses commandes : ouverture, infos, demande de bloc, bloc poussé, fin. */
     public static final int FILES = 0x2C;
     static final int FILE_OPEN = 0x01;
@@ -291,6 +301,12 @@ public final class WatchReader {
     /** Idem, puis relit les classes du dictionnaire demandées par le P2P (VFC de journée, température : M6b). */
     public static Capture read(WatchLink link, long sinceMs, long untilMs, long nowMs, long timeoutMs, List<FileRequest> files,
                                List<WatchP2P.Request> dictionary) {
+        return read(link, sinceMs, untilMs, nowMs, timeoutMs, files, dictionary, false);
+    }
+
+    /** Idem, avec les séances après les totaux (M7b) quand `workouts` est vrai (l'app les a déjà lues : service pris en charge). */
+    public static Capture read(WatchLink link, long sinceMs, long untilMs, long nowMs, long timeoutMs, List<FileRequest> files,
+                               List<WatchP2P.Request> dictionary, boolean workouts) {
         Capture cap = new Capture(sinceMs, untilMs, nowMs);
         blocks(link, cap, "sleep", SLEEP_COUNT, SLEEP_DATA, timeoutMs);
         blocks(link, cap, "minutes", MINUTE_COUNT, MINUTE_DATA, timeoutMs);
@@ -306,6 +322,7 @@ public final class WatchReader {
         } catch (IOException | GeneralSecurityException e) {
             totals.outcome = outcomeOf(e);
         }
+        if (workouts) workouts(link, cap, timeoutMs);
         for (FileRequest f : files) {
             Read read = new Read(f.id);
             cap.reads.add(read);
@@ -322,6 +339,129 @@ public final class WatchReader {
         }
         WatchP2P.read(link, cap, dictionary, nowMs, timeoutMs);
         return cap;
+    }
+
+    /** 0x17/0x07 : séances sur [since, until), début et fin (s) dans `81` (comme workoutListTlvs). */
+    static List<LinkCodec.Tlv> workoutListTlvs(long sinceMs, long untilMs) {
+        List<LinkCodec.Tlv> inner = new ArrayList<>();
+        inner.add(new LinkCodec.Tlv(3, be(Math.max(MIN_START_SEC, Math.floorDiv(sinceMs, 1000)), 4)));
+        inner.add(new LinkCodec.Tlv(4, be(Math.floorDiv(untilMs, 1000), 4)));
+        return wrap(inner);
+    }
+
+    /** 0x17/0x08 : totaux de la séance `number`. */
+    static List<LinkCodec.Tlv> workoutTotalsTlvs(int number) {
+        List<LinkCodec.Tlv> tlvs = new ArrayList<>();
+        tlvs.add(new LinkCodec.Tlv(0x81, new byte[] {0x02, 0x02, (byte) (number >> 8), (byte) number}));
+        return tlvs;
+    }
+
+    /** 0x17/0x0A : bloc d'échantillons `block` de la séance `number` (étiquette 7 vide). */
+    static List<LinkCodec.Tlv> workoutSamplesTlvs(int number, int block) {
+        List<LinkCodec.Tlv> inner = new ArrayList<>();
+        inner.add(new LinkCodec.Tlv(2, be(number, 2)));
+        inner.add(new LinkCodec.Tlv(3, be(block, 2)));
+        inner.add(LinkCodec.Tlv.empty(7));
+        return wrap(inner);
+    }
+
+    /** 0x17/0x0C : bloc d'allures `block` de la séance `number`. */
+    static List<LinkCodec.Tlv> workoutPaceTlvs(int number, int block) {
+        List<LinkCodec.Tlv> inner = new ArrayList<>();
+        inner.add(new LinkCodec.Tlv(2, be(number, 2)));
+        inner.add(new LinkCodec.Tlv(8, be(block, 2)));
+        return wrap(inner);
+    }
+
+    private static List<LinkCodec.Tlv> wrap(List<LinkCodec.Tlv> inner) {
+        List<LinkCodec.Tlv> tlvs = new ArrayList<>();
+        tlvs.add(new LinkCodec.Tlv(0x81, LinkCodec.encodeTlvs(inner)));
+        return tlvs;
+    }
+
+    /** Entrées de la liste 0x17/0x07 : { numéro, blocs d'échantillons, blocs d'allures } (comme parseWorkoutIndex). */
+    static List<int[]> parseWorkoutIndex(List<LinkCodec.Tlv> tlvs) {
+        List<int[]> out = new ArrayList<>();
+        byte[] inner = LinkCodec.find(tlvs, 0x81);
+        if (inner == null) return out;
+        for (LinkCodec.Tlv t : LinkCodec.tryDecodeTlvs(inner)) {
+            if (t.tag != 0x85) continue;
+            List<LinkCodec.Tlv> b = LinkCodec.tryDecodeTlvs(t.value);
+            byte[] number = LinkCodec.find(b, 6);
+            if (number == null) continue;
+            out.add(new int[] {(int) LinkCodec.uint(number), (int) LinkCodec.uint(LinkCodec.find(b, 7)), (int) LinkCodec.uint(LinkCodec.find(b, 8))});
+        }
+        return out;
+    }
+
+    /** Début (ms) annoncé par les totaux d'une séance (étiquette 4 dans `81`), 0 si absent. */
+    static long workoutStart(List<LinkCodec.Tlv> tlvs) {
+        byte[] inner = LinkCodec.find(tlvs, 0x81);
+        if (inner == null) return 0;
+        return LinkCodec.uint(LinkCodec.find(LinkCodec.tryDecodeTlvs(inner), 4)) * 1000L;
+    }
+
+    /**
+     * Séances comme readWorkouts (sync.js) : liste, puis totaux de chacune ; FC et allures seulement pour les séances
+     * de la période (début ≥ veille de `since`). Réponses gardées brutes : liste (index -1), totaux, échantillons et
+     * allures (index = numéro de la séance, blocs dans l'ordre). Une séance qui échoue n'empêche pas les autres ;
+     * un bloc de détail qui échoue arrête seulement sa série.
+     */
+    static void workouts(WatchLink link, Capture cap, long timeoutMs) {
+        Read read = new Read("workouts");
+        cap.reads.add(read);
+        List<int[]> list;
+        try {
+            LinkCodec.Message reply = link.request(WORKOUT, WORKOUT_LIST, workoutListTlvs(cap.sinceMs, cap.untilMs), false, timeoutMs);
+            long code = LinkCodec.resultCode(reply.tlvs);
+            if (code >= 0 && code != LinkCodec.RESULT_SUCCESS) {
+                read.outcome = "refused";
+                return;
+            }
+            cap.replies.add(new Reply(WORKOUT, WORKOUT_LIST, -1, LinkCodec.encodeTlvs(reply.tlvs)));
+            list = parseWorkoutIndex(reply.tlvs);
+        } catch (IOException | GeneralSecurityException e) {
+            read.outcome = outcomeOf(e);
+            return;
+        }
+        read.units = list.size();
+        int got = 0;
+        String failure = null;
+        for (int[] w : list) {
+            int number = w[0];
+            List<LinkCodec.Tlv> totals;
+            try {
+                LinkCodec.Message reply = link.request(WORKOUT, WORKOUT_TOTALS, workoutTotalsTlvs(number), false, timeoutMs);
+                long code = LinkCodec.resultCode(reply.tlvs);
+                if (code >= 0 && code != LinkCodec.RESULT_SUCCESS) throw new IOException("séance refusée");
+                totals = reply.tlvs;
+            } catch (IOException | GeneralSecurityException e) {
+                read.failed++;
+                if (failure == null) failure = outcomeOf(e);
+                continue;
+            }
+            cap.replies.add(new Reply(WORKOUT, WORKOUT_TOTALS, number, LinkCodec.encodeTlvs(totals)));
+            long start = workoutStart(totals);
+            if (start <= 0 || start < cap.sinceMs - DAY_MS || start >= cap.untilMs) continue;
+            got++;
+            for (int i = 0; i < Math.min(w[1], MAX_WORKOUT_BLOCKS); i++) {
+                if (!workoutBlock(link, cap, WORKOUT_SAMPLES, workoutSamplesTlvs(number, i), number, timeoutMs)) break;
+            }
+            for (int i = 0; i < Math.min(w[2], MAX_WORKOUT_BLOCKS); i++) {
+                if (!workoutBlock(link, cap, WORKOUT_PACE, workoutPaceTlvs(number, i), number, timeoutMs)) break;
+            }
+        }
+        read.outcome = got > 0 ? "ok" : failure != null ? failure : list.isEmpty() ? "empty" : "ok";
+    }
+
+    private static boolean workoutBlock(WatchLink link, Capture cap, int command, List<LinkCodec.Tlv> ask, int number, long timeoutMs) {
+        try {
+            LinkCodec.Message reply = link.request(WORKOUT, command, ask, false, timeoutMs);
+            cap.replies.add(new Reply(WORKOUT, command, number, LinkCodec.encodeTlvs(reply.tlvs)));
+            return true;
+        } catch (IOException | GeneralSecurityException e) {
+            return false;
+        }
     }
 
     /** Demande d'ouverture 0x2C/0x01 : nom, type, début et fin (s), dictionnaire éventuel. */

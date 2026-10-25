@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-25",
+  "kind": "amélioration",
+  "title": "Montre : séances aussi app fermée",
+  "items": [
+    "Les séances enregistrées sur la montre (course, marche, vélo…) arrivent maintenant aussi quand l'app est fermée, avec leur fréquence cardiaque moyenne, leur courbe et leurs allures au kilomètre.",
+    "Comme pour les autres données, la relecture en arrière-plan ne commence qu'après une première synchronisation app ouverte."
+  ]
+}

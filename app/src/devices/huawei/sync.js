@@ -435,18 +435,19 @@ async function readWorkoutBlocks(session, command, tlvsOf, parse, count, log, la
   return out
 }
 
+/** Points d'échantillons et allures décodés → FC moyenne, courbe et allures ajoutées à la séance (synchro et capture). */
+export function withWorkoutDetail(w, points = [], splits = []) {
+  const hr = heartRateCurve(points, w.start)
+  if (hr) Object.assign(w, { hrAvg: hr.avg, hrCurve: hr.curve })
+  if (splits.length) w.paceSplits = [...splits].sort((a, b) => a.km - b.km).map((p) => p.seconds)
+  return w
+}
+
 /** FC et allures d'une séance (M7) ajoutées à ses totaux ; facultatives : la séance reste si elles manquent. */
 async function readWorkoutDetail(session, w, { samples, paces }, log) {
-  if (samples) {
-    const points = await readWorkoutBlocks(session, WORKOUT_CMD.SAMPLES, (i) => workoutSamplesTlvs(w.number, i), parseWorkoutSamples, samples, log, `séance ${w.number} : échantillons`)
-    const hr = heartRateCurve(points, w.start)
-    if (hr) Object.assign(w, { hrAvg: hr.avg, hrCurve: hr.curve })
-  }
-  if (paces) {
-    const splits = await readWorkoutBlocks(session, WORKOUT_CMD.PACE, (i) => workoutPaceTlvs(w.number, i), parseWorkoutPace, paces, log, `séance ${w.number} : allures`)
-    if (splits.length) w.paceSplits = splits.sort((a, b) => a.km - b.km).map((p) => p.seconds)
-  }
-  return w
+  const points = samples ? await readWorkoutBlocks(session, WORKOUT_CMD.SAMPLES, (i) => workoutSamplesTlvs(w.number, i), parseWorkoutSamples, samples, log, `séance ${w.number} : échantillons`) : []
+  const splits = paces ? await readWorkoutBlocks(session, WORKOUT_CMD.PACE, (i) => workoutPaceTlvs(w.number, i), parseWorkoutPace, paces, log, `séance ${w.number} : allures`) : []
+  return withWorkoutDetail(w, points, splits)
 }
 
 /** Séances : une séance illisible (bloc vide ou plus court qu'annoncé, §7.10) n'empêche pas de lire les autres. */

@@ -8,7 +8,7 @@ import { bytesOfHex } from './crypto'
 import { decodeTlvs } from './protocol'
 import { parseSleepSequence, parseStressFile } from './files'
 import { hrvDayValues, parseDictionaryPage, skinTempValues } from './p2p'
-import { FIT, FITNESS, parseMinuteBlock, parseSleepBlock, parseTotals, SYNC_READS, syncHints } from './sync'
+import { FIT, FITNESS, parseMinuteBlock, parseSleepBlock, parseTotals, parseWorkoutPace, parseWorkoutSamples, parseWorkoutTotals, SYNC_READS, syncHints, withWorkoutDetail, WORKOUT, WORKOUT_CMD } from './sync'
 
 export const CAPTURE_VERSION = 1
 const DAY = 24 * 3600_000
@@ -42,6 +42,32 @@ const FILE_READS = {
 
 /** Classes du dictionnaire P2P de la capture (M6b) : VFC de journée et température, mêmes bornes que readWatchData. */
 const DICT_READS = { hrvDay: hrvDayValues, skinTemp: skinTempValues }
+
+/**
+ * Séances de la capture (M7b) : totaux (index = numéro de la séance), puis blocs d'échantillons et d'allures de
+ * cette séance, dans l'ordre ; mêmes bornes et même assemblage que readWorkouts. Une réponse illisible compte perdue.
+ */
+function workoutsOf(capture) {
+  const totals = []
+  const points = new Map()
+  const splits = new Map()
+  let lost = 0
+  const add = (map, i, items) => map.set(i, [...(map.get(i) || []), ...items])
+  for (const r of capture.replies) {
+    if (r.s !== WORKOUT) continue
+    try {
+      const tlvs = decodeTlvs(bytesOfHex(r.hex))
+      if (r.c === WORKOUT_CMD.TOTALS) {
+        const w = parseWorkoutTotals(tlvs)
+        if (w && w.start >= capture.since - DAY && w.start < capture.until) totals.push(w)
+      } else if (r.c === WORKOUT_CMD.SAMPLES) add(points, r.i, parseWorkoutSamples(tlvs))
+      else if (r.c === WORKOUT_CMD.PACE) add(splits, r.i, parseWorkoutPace(tlvs))
+    } catch {
+      lost++
+    }
+  }
+  return { items: totals.map((w) => withWorkoutDetail(w, points.get(w.number), splits.get(w.number))), lost }
+}
 
 /**
  * Capture → { minutes, sleep, totals, workouts, nights, stress, hrvDay, skinTemp, dictionary, services, hints, capabilities, battery } comme readWatchData.
@@ -91,6 +117,7 @@ export function dataFromCapture(capture) {
       }
     }
   }
+  const workouts = workoutsOf(capture)
   const sleep = decoded.sleep.filter((p) => p.start >= since - DAY && p.start < until)
   const minutes = decoded.minutes.filter((m) => m.t >= since && m.t < until)
   const services = ['sleep', 'minutes', 'totals'].map((id) => {
@@ -109,6 +136,21 @@ export function dataFromCapture(capture) {
       ...(failed ? { failed } : {}),
     }
   })
+  // séances lues seulement si l'app les avait déjà lues une fois (le Java consigne alors sa lecture)
+  const workoutsRead = reads.get('workouts')
+  if (workoutsRead) {
+    let outcome = OUTCOMES.includes(workoutsRead.outcome) ? workoutsRead.outcome : 'error'
+    if (workouts.items.length) outcome = 'ok'
+    else if (outcome === 'ok' && workouts.lost) outcome = 'error'
+    const failed = (Number.isInteger(workoutsRead.failed) ? workoutsRead.failed : 0) + workouts.lost
+    services.push({
+      ...SYNC_READS.find((s) => s.id === 'workouts'),
+      outcome,
+      count: workouts.items.length,
+      ...(Number.isInteger(workoutsRead.units) ? { units: workoutsRead.units } : {}),
+      ...(failed ? { failed } : {}),
+    })
+  }
   // fichiers lus seulement si le Java les a demandés (sa lecture est consignée) : sinon, rien à dire
   for (const id of Object.keys(FILE_READS)) {
     const native = reads.get(id)
@@ -134,7 +176,7 @@ export function dataFromCapture(capture) {
     minutes,
     sleep,
     totals,
-    workouts: [],
+    workouts: workouts.items,
     nights: fromFiles.sleepFile,
     stress: fromFiles.stress,
     hrvDay: fromDict.hrvDay,
@@ -142,7 +184,7 @@ export function dataFromCapture(capture) {
     dictionary,
     services,
     hints: syncHints(services, { totals }),
-    capabilities: `synchro en arrière-plan (sommeil, minutes, totaux${withFiles ? ', fichiers' : ''}${services.some((r) => DICT_READS[r.id]) ? ', dictionnaire' : ''})`,
+    capabilities: `synchro en arrière-plan (sommeil, minutes, totaux${workoutsRead ? ', séances' : ''}${withFiles ? ', fichiers' : ''}${services.some((r) => DICT_READS[r.id]) ? ', dictionnaire' : ''})`,
     battery: Number.isInteger(capture.battery) && capture.battery >= 0 ? capture.battery : null,
   }
 }

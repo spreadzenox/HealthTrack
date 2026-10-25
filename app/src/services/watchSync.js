@@ -25,7 +25,7 @@ function readAll(storage) {
   }
 }
 
-/** État de la dernière synchro d'une montre : { v, until, at, inserted, minutes, nights, workouts, kinds, sleepFileUntil?, dictUntil? } ou null. */
+/** État de la dernière synchro d'une montre : { v, until, at, inserted, minutes, nights, workouts, kinds, sleepFileUntil?, dictUntil?, workoutsRead? } ou null. */
 export const getWatchSyncState = (watchKey, storage = globalThis.localStorage) => readAll(storage)[watchKey] || null
 
 const SKIN_TEMP_KEY = 'healthtrack_watch_skin_temp'
@@ -200,7 +200,9 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   for (const [cls, ms] of Object.entries(data.dictionary || {})) dictUntil[cls] = Math.max(ms, dictUntil[cls] || 0)
   // Lecture du sommeil détaillé depuis le coucher (capacité 199) : recopiée au lecteur en arrière-plan (M6)
   const sleepBedTime = typeof data.sleepBedTime === 'boolean' ? data.sleepBedTime : getWatchSyncState(watchKey, storage)?.sleepBedTime
-  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds, ...(sleepFileUntil ? { sleepFileUntil } : {}), ...(stressFileUntil ? { stressFileUntil } : {}), ...(typeof sleepBedTime === 'boolean' ? { sleepBedTime } : {}), ...(Object.keys(dictUntil).length ? { dictUntil } : {}) }, storage)
+  // Séances lues une fois (la montre a le service 0x17) : le lecteur en arrière-plan les relit aussi (M7b)
+  const workoutsRead = ['ok', 'empty'].includes((data.services || []).find((r) => r.id === 'workouts')?.outcome) || getWatchSyncState(watchKey, storage)?.workoutsRead === true
+  setState(watchKey, { v: SYNC_STATE_VERSION, until: resume, at, inserted, minutes: data.minutes.length, nights, workouts, kinds, ...(sleepFileUntil ? { sleepFileUntil } : {}), ...(stressFileUntil ? { stressFileUntil } : {}), ...(typeof sleepBedTime === 'boolean' ? { sleepBedTime } : {}), ...(Object.keys(dictUntil).length ? { dictUntil } : {}), ...(workoutsRead ? { workoutsRead } : {}) }, storage)
   if (inserted > 0 && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('health-entries-updated'))
   const parts = [plural(data.minutes.length, 'minute', 'minutes')]
   if (nights) parts.push(plural(nights, 'nuit', 'nuits'))

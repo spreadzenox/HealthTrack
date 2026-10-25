@@ -45,6 +45,7 @@ import {
 } from './sync'
 import { SLEEP_FIELD } from './files'
 import { field, sleepSequenceFile, stressFile } from './testing/sampleFiles'
+import { paceBlock, samplesBlock } from './testing/sampleWorkouts'
 import { clearWatchNights } from '../../services/watchSync'
 import { connectAndAuthenticate, createKeyStore } from './pairing'
 import { createFakeWatch, TEST_SECRETS } from './testing/fakeWatch'
@@ -54,23 +55,6 @@ import { clearWatchDayTotals, createWatchSync, getSkinTempContinuous, getWatchSy
 
 const hex = (s) => Uint8Array.from(s.trim().split(/\s+/), (h) => parseInt(h, 16))
 const be = (n, size) => Array.from({ length: size }, (_, i) => Math.floor(n / 2 ** (8 * (size - 1 - i))) & 0xff)
-/** Bloc 0x17/0x0A synthétique : points [FC, vitesse en dm/s] avec un champ de 2 octets en plus (bit 7, calories) pour vérifier le saut. */
-const samplesBlock = (number, block, startSec, stepSec, points, { mask = 0b10000011, size = 5 } = {}) => [
-  {
-    tag: 0x81,
-    value: encodeTlvs([
-      { tag: 2, value: be(number, 2) },
-      { tag: 3, value: be(block, 2) },
-      { tag: 4, value: [...be(number, 2), ...be(block, 2), ...be(startSec, 4), stepSec, ...be(points.length, 2), size, ...be(mask, 2)] },
-      { tag: 5, value: points.flatMap(([hr, speed]) => [hr, ...be(speed, 2), 0, 9].slice(0, size)) },
-    ]),
-  },
-]
-/** Bloc 0x17/0x0C synthétique : [km, unité, secondes, correction?]. */
-const paceBlock = (number, block, rows) => [
-  { tag: 0x81, value: encodeTlvs([{ tag: 2, value: be(number, 2) }, { tag: 8, value: be(block, 2) }, ...rows.map(([km, unit, sec, corr]) => ({ tag: 0x83, value: encodeTlvs([{ tag: 4, value: be(km, 2) }, { tag: 5, value: [unit] }, { tag: 6, value: be(sec, 4) }, ...(corr ? [{ tag: 9, value: be(corr, 2) }] : [])]) }))]) },
-]
-
 /** Corps TLV d'une réponse 7/0x0B : début (s) et minutes [{ offset, bytes }]. */
 const minuteBlock = (index, startSec, minutes) => [
   {
