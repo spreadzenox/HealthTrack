@@ -3,6 +3,7 @@ import {
   daySummaryTitle,
   entrySourceLabel,
   formatDelta,
+  gutEveningCheck,
   gutSummary,
   gutWeekLine,
   headerLine,
@@ -120,6 +121,15 @@ describe('gutSummary', () => {
     expect(gutWeekLine(s)).toBe('7 jours · 4 notes : 2 calmes · 1 gêne · 1 douleur · 4 jours sans note')
   })
 
+  it('le bilan du soir compte dans les 7 jours mais n’est jamais « la dernière note » (I170)', () => {
+    const day = { ...gut(21, 'calm', 20), payload: { level: 'calm', scope: 'day' } }
+    const s = gutSummary([gut(20, 'pain', 10), day], NOW)
+    expect(s.last.payload.level).toBe('pain')
+    expect(s.lastToday).toBe(false)
+    expect(s.week).toEqual({ calm: 1, discomfort: 0, pain: 1 })
+    expect(s.daysNoted).toBe(2)
+  })
+
   it('ne trouve rien sans note', () => {
     const s = gutSummary([], NOW)
     expect(s.last).toBeNull()
@@ -150,5 +160,28 @@ describe('pistesProgress', () => {
     ]
     expect(pistesProgress(entries, 'energy')).toEqual({ days: 2, target: 21, remaining: 19, ready: false })
     expect(pistesProgress(entries, 'gut').days).toBe(1)
+  })
+})
+
+describe('gutEveningCheck (bilan du soir, I170)', () => {
+  const evening = new Date(2026, 9, 21, 20, 30)
+  const day = (d, level, h = 21) => ({ type: 'gut', at: at(d, h), payload: { level, scope: 'day' } })
+
+  it('ne demande rien avant 18 h', () => {
+    expect(gutEveningCheck([], NOW)).toEqual({ ask: false, done: null })
+    expect(gutEveningCheck([], new Date(2026, 9, 21, 17, 59)).ask).toBe(false)
+    expect(gutEveningCheck([], new Date(2026, 9, 21, 18, 0)).ask).toBe(true)
+  })
+
+  it('demande le soir même si des notes horodatées existent, jamais deux fois', () => {
+    const timed = { type: 'gut', at: at(21, 13), payload: { level: 'pain' } }
+    expect(gutEveningCheck([timed], evening).ask).toBe(true)
+    const r = gutEveningCheck([timed, day(21, 'discomfort', 19)], evening)
+    expect(r.ask).toBe(false)
+    expect(r.done.payload.level).toBe('discomfort')
+  })
+
+  it('le bilan de la veille ne compte pas pour ce soir', () => {
+    expect(gutEveningCheck([day(20, 'calm')], evening)).toEqual({ ask: true, done: null })
   })
 })

@@ -21,6 +21,29 @@ export const GUT_LEVELS = [
   { id: 'pain', label: 'Douleur', plural: 'douleurs' },
 ]
 
+/**
+ * Bilan du soir (I170) : « Et votre ventre aujourd'hui ? », une note par jour, y compris les jours calmes que les
+ * notes prises au fil de l'eau oublient. Elle porte `payload.scope = 'day'` : elle parle de la journée, pas d'un
+ * instant, et l'analyse repas → ventre par fenêtres horaires (gutWindows.js) l'ignore.
+ */
+export const GUT_DAY_SCOPE = 'day'
+/** Heure locale à partir de laquelle le bilan du jour est proposé. */
+export const GUT_EVENING_FROM_HOUR = 18
+
+export const isGutDayNote = (e) => e?.payload?.scope === GUT_DAY_SCOPE
+
+/**
+ * Bilan du soir : `ask` à partir de 18 h tant qu'aucun bilan n'existe ce jour-là ; `done` = le bilan du jour.
+ * @returns {{ ask: boolean, done: object | null }}
+ */
+export function gutEveningCheck(gutEntries, now = new Date()) {
+  const today = localDateKey(now.toISOString())
+  const done = (gutEntries || [])
+    .filter((e) => e?.type === GUT_TYPE && isGutDayNote(e) && GUT_LEVELS.some((l) => l.id === e.payload.level) && localDateKey(e.at) === today)
+    .sort((a, b) => (a.at < b.at ? 1 : -1))[0] ?? null
+  return { ask: !done && now.getHours() >= GUT_EVENING_FROM_HOUR, done }
+}
+
 export function gutLevelLabel(id) {
   return GUT_LEVELS.find((l) => l.id === id)?.label ?? null
 }
@@ -165,13 +188,14 @@ export function measureTiles(summary, entries, now = new Date()) {
 }
 
 /**
- * Ventre : dernière note et bilan des 7 derniers jours (aujourd'hui compris).
+ * Ventre : dernière note et bilan des 7 derniers jours (aujourd'hui compris). Le bilan du soir compte dans les 7
+ * jours, mais pas comme « dernière note » (il n'a pas d'heure qui compte).
  * @param {object[]} gutEntries  entrées `gut`
  * @returns {{ last: object | null, lastToday: boolean, week: Record<string, number>, daysNoted: number }}
  */
 export function gutSummary(gutEntries, now = new Date()) {
   const list = (gutEntries || []).filter((e) => e?.type === GUT_TYPE && GUT_LEVELS.some((l) => l.id === e.payload?.level))
-  const sorted = [...list].sort((a, b) => (a.at < b.at ? 1 : -1))
+  const sorted = list.filter((e) => !isGutDayNote(e)).sort((a, b) => (a.at < b.at ? 1 : -1))
   const last = sorted[0] ?? null
   const today = localDateKey(now.toISOString())
   const from = localDateKey(new Date(now.getTime() - 6 * DAY_MS).toISOString())

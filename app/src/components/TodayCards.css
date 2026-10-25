@@ -192,6 +192,45 @@
   opacity: 0.7;
 }
 
+/* Bilan du soir (I170) : une ligne plus discrète que les trois notes horodatées, sous elles. */
+.gut-evening {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(var(--ink-rgb), 0.12);
+}
+
+.gut-evening-title {
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: var(--peach-label);
+}
+
+.gut-evening-choices {
+  display: flex;
+  gap: 8px;
+}
+
+.gut-evening-choice {
+  flex: 1;
+  min-height: 44px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--peach-label);
+  background: transparent;
+  color: var(--peach-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gut-evening-choice:disabled {
+  opacity: 0.7;
+}
+
+.gut-evening-done {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+}
+
 /* Actions */
 /* « Photo du repas » sur toute la largeur, icône appareil photo : le geste principal se voit d'un coup d'œil
    (POL-5) ; la note manuelle est dans la carte bien-être (POL-3). */

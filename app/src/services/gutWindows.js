@@ -28,7 +28,7 @@
 import { localDateKey } from './analysisEngine'
 import { computeTotalsFromItems } from './nutritionKPIs'
 import { benjaminiHochberg, normalCdf } from './statistics'
-import { GUT_TYPE } from './today'
+import { GUT_TYPE, isGutDayNote } from './today'
 
 export const GUT_WINDOWS = [
   {
@@ -168,7 +168,7 @@ function shiftedStat(kept, mealTimes, w, s) {
 }
 
 /**
- * @param {object[]} entries  entrées `food` et `gut` (les autres sont ignorées)
+ * @param {object[]} entries  entrées `food` et `gut` horodatées (les autres, et les bilans du soir, sont ignorées)
  * @returns {{ notes: number, tested: number, results: {
  *   factor: string, window: string, status: 'link'|'no_link'|'too_early',
  *   exposed: { notes: number, symptoms: number }, unexposed: { notes: number, symptoms: number },
@@ -182,7 +182,8 @@ export function analyzeGutWindows(entries) {
     if (e.type === 'food') {
       const factors = mealFactors(e)
       if (factors.length) meals.push({ at: e.at, factors })
-    } else if (e.type === GUT_TYPE && KNOWN_LEVELS.has(e.payload?.level)) {
+    } else if (e.type === GUT_TYPE && KNOWN_LEVELS.has(e.payload?.level) && !isGutDayNote(e)) {
+      // Le bilan du soir (I170) parle de la journée, pas d'un instant : pas de fenêtre horaire qui ait un sens.
       notes.push(e)
     }
   }
