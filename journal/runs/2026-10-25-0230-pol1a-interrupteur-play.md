@@ -37,3 +37,9 @@
   visage (variante play, seulement si `unlockAvailable`), feuille de divulgation (`permissionDisclosures`, AI Act
   art. 50), demande des notifications, réglage pour couper, état « Lecture au déverrouillage active » ; aucun guide
   Shizuku / ADB ni bouton batterie en play. Ensuite l'APK d'aperçu est prêt à filmer (P28).
+
+## Après le merge (#343, `673e6f8`)
+- Checks de la PR tous verts du premier coup (Vitest, Build APK avec l'aperçu, Relais, montre Java, budget de lectures,
+  émulateurs API 35 et 36) ; artefact `halcya-apercu-deverrouillage` produit (19,7 Mo).
+- Sur main : « Tests », « Build & Release » (**v262**, APK 33 748 940 octets, 33,7 Mo), « Play — AAB » (test interne)
+  et « Test — émulateur Samsung Galaxy A56 » verts.

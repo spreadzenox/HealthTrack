@@ -719,7 +719,7 @@ notification permanente « Lecture du visage active » et son bouton **« Arrêt
 déverrouillage), **sans** relance au démarrage du téléphone ni exemption de batterie. La CI fabrique désormais à
 chaque PR un **APK d'aperçu** (`fr.jpesquet.sante.apercu`, s'installe à côté de l'app du Play Store) avec
 l'interrupteur allumé : c'est lui que vous filmerez pour P28, **dès que le prochain run aura ajouté l'écran
-d'activation** (POL-1b). Pas encore de geste pour vous.
+d'activation** (POL-1b). Pas encore de geste pour vous. Publié : **v262** (33,7 Mo) et la version play en test interne.
 
 **Run du 25/10 00:30 — le Journal en couleurs (POL-6).** Ce que vous verrez dans Journal → **Jours** : « Vos derniers
 jours » n'est plus gris. Chaque mesure du jour a son pastel : **menthe** pour le corps et le bien-être (sommeil, FC,
