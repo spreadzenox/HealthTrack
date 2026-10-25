@@ -628,8 +628,31 @@ Relecture du 13/10/2026 (run 10:30 Paris), [G] master, faits seulement rapporté
   table, 129 badminton, 130 tennis, 131 football, 132 basket, 133 volley, 134 elliptique, 135 rameur, 136 stepper,
   137 yoga, 138 pilates, 139 aérobic, 140 renforcement, 141 spinning, 143 HIIT, 145 CrossFit, 146 entraînement
   fonctionnel, 177 escaliers, 200 aviron, 224 padel, 255 autre. Inconnu → « autre ».
-- Échantillons (0x17/0x0A, FC par seconde, vitesse…) et allures (0x17/**0x0C**) : décrits dans [G], **pas encore lus**
-  par HealthTrack (étape suivante possible : FC moyenne et courbe de la séance).
+- Échantillons (0x17/0x0A) et allures (0x17/**0x0C**) : lus depuis M7 (25/10), voir §7.5 bis.
+
+### 7.5 bis Échantillons et allures d'une séance (relecture de [G] master du 25/10/2026, run 05:33 CET ; faits seulement)
+- **Liste 0x17/0x07** : chaque 0x85 annonce aussi `7 = nombre de blocs d'échantillons` et `8 = nombre de blocs
+  d'allure` (2 octets chacun) ; d'autres compteurs facultatifs (9 segments de nage, 0x0C SpO₂, 0x0D sections) ne
+  sont pas lus.
+- **0x17/0x0A échantillons** : demande `81 T{ 2 = numéro de séance, 3 = numéro du bloc (0 à n − 1), [6 = 1 si la
+  montre annonce les « nouveaux pas »], 7 = vide }`. Réponse `81 T{ 2, 3, 4 = en-tête (14 octets), 5 = points,
+  8 = longueur du sous-bloc « course », 9 = masque du sous-bloc }` ; 0x7F = erreur.
+  En-tête, gros-boutiste : numéro (2), bloc (2), début (4, secondes Unix), écart entre deux points (1, s), nombre de
+  points (2), longueur d'un point (1), masque des champs (2). Les champs d'un point se suivent dans l'ordre des bits
+  du masque : bit 0 FC (1 octet, 0 et 0xFF = pas de mesure), bit 1 vitesse (2 octets, décimètres par seconde,
+  0xFFFF = rien), bit 2 cadence (1), bit 3 SWOLF (2), bit 4 fréquence de nage (2), bit 5 altitude (4), bit 6 sous-bloc
+  « course » (longueur donnée par l'étiquette 8), bit 7 calories (2), bit 8 fréquence (2), bit 9 puissance vélo (2).
+  Point n : instant = début + n × écart.
+- **0x17/0x0C allures** : demande `81 T{ 2 = numéro de séance, 8 = numéro du bloc }`. Réponse : `81 T{ 2, 8, puis un
+  0x83 par tronçon : T{ 4 = rang du tronçon (2 octets : 1er km, 2e km…), 5 = unité (0 km, 1 mile), 6 = allure
+  (secondes par unité), [7 = indice du point], [9 = correction : tronçon partiel, longueur en dix-millièmes] } }`.
+- **Choix de HealthTrack (M7)** : on lit la FC et la vitesse (deux premiers champs, toujours en tête) et on saute le
+  reste du point d'après **sa longueur annoncée** (pas d'après une table de longueurs : robustesse §7.10) ; un point
+  incomplet arrête le bloc ; un bloc en échec arrête la série de la séance mais garde ses totaux ; 40 blocs au plus
+  par séance. Gardé dans l'entrée `activity` : `avgHeartRate`, `heartRateCurve` (`{ stepSeconds: 60, bpm: [...] }`,
+  une moyenne par minute, `null` sans mesure) et `paceSplitsSecPerKm` (kilomètres complets seulement). Non fait :
+  drapeau « nouveaux pas », sous-bloc course (cadence, foulée, contact au sol), altitude, séances en arrière-plan
+  (Java), unité mile.
 
 ### 7.6 Fichiers détaillés — service 0x2C
 **Déroulé** (tous les messages sont chiffrés sauf mention) :
@@ -977,7 +1000,7 @@ température »). Lecture de [G] master `0735529275` (21/10/2026) via l'API REST
 | Pas, distance, calories | minutes + totaux 7/0x03 | ✅ | — |
 | Étages / dénivelé | ❓ bits inconnus des minutes ; altitude du jour = classe P2P 200003 (codage incertain, PR #6579 ouverte) | ❌ | M4 bis, après M2 (garder les bits inconnus des minutes dans le journal pour les identifier) |
 | Séances (type, durée, distance, calories, FC mini / maxi) | 0x17/0x07–0x08 (§7.5) | ✅ | — |
-| Séances : courbe FC, allure | 0x17/0x0A, 0x17/0x0C | ❌ | M7 |
+| Séances : courbe FC, allure | 0x17/0x0A, 0x17/0x0C | 🟡 M7 (25/10), à confirmer sur la montre | — |
 | Émotions estimées par la montre (valence, éveil) | P2P classe 500031 (capacité 206) | ❌ | ⚠️ ne **jamais** en faire une entrée de l'estimateur de bien-être (D5 : Y vient du visage / de la voix / de l'auto-déclaration) ; au mieux, un X « montre » affiché à part, ou ignoré. À décider avant M2 |
 | Apnée (niveau 1–4), RDI | P2P 500002 (capacité 107) ; résumé 700013759 | ❌ | faible priorité ; vocabulaire : jamais « diagnostic d'apnée » |
 | Cycle menstruel | ❓ aucune voie connue chez [G] | ❌ | hors périmètre pour l'instant (extension future du produit) |
@@ -1335,3 +1358,11 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
   relecture native avance au dernier instant lu.
 - Reste : à confirmer sur la GT 6 Pro ; M7 (séances : FC et allure).
 
+
+### 10.17 M7 (séances : FC et allure) livré (run du 25/10/2026 05:33 CET)
+- `sync.js` : `parseWorkoutIndex` (compteurs 7 / 8 de la liste), `workoutSamplesTlvs` / `parseWorkoutSamples`,
+  `workoutPaceTlvs` / `parseWorkoutPace`, `heartRateCurve` ; `readWorkouts` lit totaux puis échantillons puis allures
+  de chaque séance (§7.5 bis). Synchro app ouverte seulement ; le lecteur Java ne lit toujours pas les séances.
+- Affichage : Journal → Jours (« FC moy. 143 bpm · 5:37 /km » + courbe), écran « Données de la montre » (ligne
+  Séances). Tests sur trames synthétiques (`sync.test.js`, faux montre `fakeWatch.js`).
+- À confirmer sur la GT 6 Pro : une séance de course enregistrée après la v266 doit montrer FC moyenne et allure.

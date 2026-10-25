@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel, shortFoodName, formatClock, scoreDecimals } from './format'
+import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel, shortFoodName, formatClock, scoreDecimals, formatPace, workoutDetailParts } from './format'
 
 describe('formatDuration', () => {
   it('affiche heures et minutes', () => {
@@ -143,5 +143,15 @@ describe('scoreDecimals', () => {
 
   it('passe à deux décimales quand les arrondis grossissent l’écart (2,4 contre 2,2 pour +0,1)', () => {
     expect(scoreDecimals(2.36, 2.24, 0.12)).toBe(2)
+  })
+})
+
+describe('séances de la montre (M7)', () => {
+  it('allure en min:s par km, FC moyenne, rien si la montre n’a rien envoyé', () => {
+    expect(formatPace(324)).toBe('5:24 /km')
+    expect(formatPace(299.6)).toBe('5:00 /km')
+    expect(workoutDetailParts({ avgHeartRate: 135, paceSplitsSecPerKm: [330, 318] })).toEqual(['FC moy. 135 bpm', '5:24 /km'])
+    expect(workoutDetailParts({ workoutType: 'yoga' })).toEqual([])
+    expect(workoutDetailParts(null)).toEqual([])
   })
 })

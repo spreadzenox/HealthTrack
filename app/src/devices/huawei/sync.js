@@ -21,7 +21,7 @@ export const FITNESS = 7
 export const FIT = { TOTALS: 0x03, MINUTE_COUNT: 0x0a, MINUTE_DATA: 0x0b, SLEEP_COUNT: 0x0c, SLEEP_DATA: 0x0d, TRUSLEEP: 0x16, SKIN_TEMP_SETTING: 0x2a }
 export const CONFIG = { SERVICES: 0x02, COMMANDS: 0x03, SETTINGS: 0x31, EXPAND: 0x37 }
 export const WORKOUT = 0x17
-export const WORKOUT_CMD = { LIST: 0x07, TOTALS: 0x08 }
+export const WORKOUT_CMD = { LIST: 0x07, TOTALS: 0x08, SAMPLES: 0x0a, PACE: 0x0c }
 export const STRESS = 0x20
 /** Bit de 1/0x31 « RR / stress par la nouvelle synchro » (fichier 0x2C type 0x10, §7.8). */
 export const SETTING_STRESS_FILE = 0x04
@@ -309,12 +309,14 @@ export const workoutListTlvs = (startMs, endMs) => [
   { tag: 0x81, value: encodeTlvs([{ tag: 3, value: int(Math.max(MIN_START_SEC, Math.floor(startMs / 1000)), 4) }, { tag: 4, value: int(Math.floor(endMs / 1000), 4) }]) },
 ]
 /** Réponse 0x17/0x07 → numéros de séance (identifiants de la montre). */
-export const parseWorkoutList = (tlvs) =>
+export const parseWorkoutList = (tlvs) => parseWorkoutIndex(tlvs).map((w) => w.number)
+/** Réponse 0x17/0x07 → [{ number, samples, paces }] : nombres de blocs d'échantillons (FC, vitesse) et d'allures annoncés. */
+export const parseWorkoutIndex = (tlvs) =>
   inner(tlvs)
     .filter((t) => t.tag === 0x85)
-    .map((t) => find(decodeTlvs(t.value), 6))
-    .filter(Boolean)
-    .map(uint)
+    .map((t) => decodeTlvs(t.value))
+    .filter((b) => find(b, 6))
+    .map((b) => ({ number: uint(find(b, 6)), samples: uint(find(b, 7)), paces: uint(find(b, 8)) }))
 export const workoutTotalsTlvs = (number) => [{ tag: 0x81, value: [0x02, 0x02, ...int(number, 2)] }]
 
 /** Réponse 0x17/0x08 → { number, start, end (ms), kcal, distanceM, steps, durationSec, sport, hrMin?, hrMax? } ou null. */
@@ -342,17 +344,116 @@ export function parseWorkoutTotals(tlvs) {
   return w
 }
 
+/** Blocs lus au plus par séance (une séance de 2 h tient en quelques blocs ; borne contre une montre bavarde). */
+export const MAX_WORKOUT_BLOCKS = 40
+
+/** 0x17/0x0A : bloc d'échantillons `block` de la séance `number` (étiquette 7 vide, §7.5 bis). */
+export const workoutSamplesTlvs = (number, block) => [
+  { tag: 0x81, value: encodeTlvs([{ tag: 2, value: int(number, 2) }, { tag: 3, value: int(block, 2) }, { tag: 7, value: [] }]) },
+]
+/** 0x17/0x0C : bloc d'allures `block` de la séance `number`. */
+export const workoutPaceTlvs = (number, block) => [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: int(number, 2) }, { tag: 8, value: int(block, 2) }]) }]
+
+/**
+ * Réponse 0x17/0x0A → [{ t (ms), hr?, speed? (m/s) }]. En-tête de 14 octets (étiquette 4) : numéro (2), bloc (2),
+ * début (4, s), pas entre deux points (1, s), nombre de points (2), longueur d'un point (1), masque des champs (2).
+ * Seuls les deux premiers champs sont lus (bit 0 : FC, 1 octet ; bit 1 : vitesse, 2 octets, en dm/s) ; le reste du
+ * point est sauté d'après sa longueur annoncée, et un point incomplet arrête la lecture du bloc (§7.10).
+ */
+export function parseWorkoutSamples(tlvs) {
+  if (find(tlvs, 0x7f)) return []
+  const b = inner(tlvs)
+  const head = find(b, 4)
+  const data = find(b, 5) || []
+  if (!head || head.length < 14) return []
+  const start = uint(head.slice(4, 8)) * 1000
+  const step = head[8] * 1000
+  const count = uint(head.slice(9, 11))
+  const size = head[11]
+  const mask = uint(head.slice(12, 14))
+  if (!start || !size) return []
+  const out = []
+  for (let i = 0; i < count && (i + 1) * size <= data.length; i++) {
+    const rec = data.slice(i * size, (i + 1) * size)
+    const point = { t: start + i * step }
+    let at = 0
+    if (mask & 1) {
+      const hr = rec[at++]
+      if (hr > 0 && hr < 255) point.hr = hr
+    }
+    if (mask & 2 && at + 2 <= size) {
+      const raw = uint(rec.slice(at, at + 2))
+      if (raw < 0x8000) point.speed = raw / 10
+    }
+    out.push(point)
+  }
+  return out
+}
+
+/** Réponse 0x17/0x0C → allures au kilomètre complet : [{ km, seconds }] (unité 0 = km ; un tronçon partiel est écarté). */
+export function parseWorkoutPace(tlvs) {
+  if (find(tlvs, 0x7f)) return []
+  return inner(tlvs)
+    .filter((t) => t.tag === 0x83)
+    .map((t) => decodeTlvs(t.value))
+    .filter((b) => (find(b, 5)?.[0] ?? 0) === 0 && !find(b, 9))
+    .map((b) => ({ km: uint(find(b, 4)), seconds: uint(find(b, 6)) }))
+    .filter((p) => p.km > 0 && p.seconds > 0)
+}
+
+/** Courbe de FC d'une séance : une moyenne par minute (null si aucune mesure), FC moyenne de tous les points. */
+export function heartRateCurve(points, start) {
+  const hr = points.filter((p) => p.hr && p.t >= start)
+  if (!hr.length) return null
+  const minutes = []
+  for (const p of hr) {
+    const m = Math.floor((p.t - start) / 60_000)
+    ;(minutes[m] ||= []).push(p.hr)
+  }
+  const bpm = Array.from(minutes, (v) => (v ? Math.round(v.reduce((a, x) => a + x, 0) / v.length) : null))
+  return { avg: Math.round(hr.reduce((a, p) => a + p.hr, 0) / hr.length), curve: { stepSeconds: 60, bpm } }
+}
+
+/** Blocs `count` d'une commande de séance, lus un par un ; un bloc qui échoue arrête la série sans rien perdre d'autre. */
+async function readWorkoutBlocks(session, command, tlvsOf, parse, count, log, label) {
+  const out = []
+  for (let i = 0; i < Math.min(count, MAX_WORKOUT_BLOCKS); i++) {
+    try {
+      out.push(...parse((await session.request(WORKOUT, command, tlvsOf(i))).tlvs))
+    } catch (e) {
+      log(`${label} ${i} non lu : ${e?.message || e}`, 'warn')
+      break
+    }
+  }
+  return out
+}
+
+/** FC et allures d'une séance (M7) ajoutées à ses totaux ; facultatives : la séance reste si elles manquent. */
+async function readWorkoutDetail(session, w, { samples, paces }, log) {
+  if (samples) {
+    const points = await readWorkoutBlocks(session, WORKOUT_CMD.SAMPLES, (i) => workoutSamplesTlvs(w.number, i), parseWorkoutSamples, samples, log, `séance ${w.number} : échantillons`)
+    const hr = heartRateCurve(points, w.start)
+    if (hr) Object.assign(w, { hrAvg: hr.avg, hrCurve: hr.curve })
+  }
+  if (paces) {
+    const splits = await readWorkoutBlocks(session, WORKOUT_CMD.PACE, (i) => workoutPaceTlvs(w.number, i), parseWorkoutPace, paces, log, `séance ${w.number} : allures`)
+    if (splits.length) w.paceSplits = splits.sort((a, b) => a.km - b.km).map((p) => p.seconds)
+  }
+  return w
+}
+
 /** Séances : une séance illisible (bloc vide ou plus court qu'annoncé, §7.10) n'empêche pas de lire les autres. */
 async function readWorkouts(session, since, until, log) {
-  const list = parseWorkoutList((await session.request(WORKOUT, WORKOUT_CMD.LIST, workoutListTlvs(since, until))).tlvs)
+  const list = parseWorkoutIndex((await session.request(WORKOUT, WORKOUT_CMD.LIST, workoutListTlvs(since, until))).tlvs)
   log(`séances : ${list.length}`)
   const items = []
   let failed = 0
   let failure = null
-  for (const n of list) {
+  for (const entry of list) {
+    const n = entry.number
     try {
       const w = parseWorkoutTotals((await session.request(WORKOUT, WORKOUT_CMD.TOTALS, workoutTotalsTlvs(n))).tlvs)
-      if (w && w.start >= since - DAY && w.start < until) items.push(w)
+      if (w && w.start >= since - DAY && w.start < until) items.push(await readWorkoutDetail(session, w, entry, log))
       else log(`séance ${n} hors période ou incomplète`)
     } catch (e) {
       failed++
@@ -484,6 +585,8 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
         ...(w.steps ? { steps: w.steps } : {}),
         ...(w.hrMin ? { minHeartRate: w.hrMin } : {}),
         ...(w.hrMax ? { maxHeartRate: w.hrMax } : {}),
+        ...(w.hrAvg ? { avgHeartRate: w.hrAvg, heartRateCurve: w.hrCurve } : {}),
+        ...(w.paceSplits ? { paceSplitsSecPerKm: w.paceSplits } : {}),
         endDate: iso(w.end),
         ...base,
       },

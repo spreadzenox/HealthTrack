@@ -238,6 +238,16 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
         payload: { workoutType: rand() < 0.5 ? 'running' : 'cycling', durationSeconds: 1800 + Math.round(rand() * 1800), totalCalories: Math.round(250 + rand() * 250), totalDistanceMeters: Math.round(4000 + rand() * 6000), endDate: at(day, 19), connector: 'health_connect', sourceName: 'Gadgetbridge' },
       })
     }
+    if (i === 1) {
+      // Séance synthétique de la montre (M7) : courbe de FC minute par minute et allures au km, sans tirage aléatoire.
+      const bpm = Array.from({ length: 32 }, (_, m) => Math.round(118 + 30 * Math.min(1, m / 8) + 6 * Math.sin(m / 3)))
+      entries.push({
+        type: 'activity',
+        source: 'huawei_watch',
+        at: at(day, 7, 30),
+        payload: { workoutType: 'running', durationSeconds: 1920, totalCalories: 330, totalDistanceMeters: 5600, steps: 5100, minHeartRate: 104, maxHeartRate: 162, avgHeartRate: 143, heartRateCurve: { stepSeconds: 60, bpm }, paceSplitsSecPerKm: [352, 340, 334, 329, 331], endDate: at(day, 8, 2), connector: 'huawei_watch', sourceName: 'Montre Huawei' },
+      })
+    }
     for (let c = 0; c < cigarettes; c++) {
       entries.push({ type: 'cigarette', source: 'app_cigarette', at: at(day, 9 + c * 2, 10 + c), payload: { count: 1 } })
     }

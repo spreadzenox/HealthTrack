@@ -506,6 +506,23 @@
   color: var(--text-muted);
 }
 
+.entry-workout-detail {
+  margin: 4px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.entry-workout-spark {
+  flex: 1;
+  max-width: 120px;
+  height: 24px;
+  color: var(--color-brand);
+}
+
 .entry-wellbeing-tags {
   margin: 4px 0 0;
   font-size: 0.82rem;

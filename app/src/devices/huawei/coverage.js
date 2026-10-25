@@ -4,7 +4,7 @@
  * entrées de la montre en direct (source « huawei_watch ») : Health Connect a ses propres cartes.
  */
 import { OUTCOME_LABELS, WATCH_SOURCE } from './sync'
-import { formatDuration, workoutTypeLabel } from '../../utils/format'
+import { formatDuration, workoutDetailParts, workoutTypeLabel } from '../../utils/format'
 
 const DAY = 86_400_000
 export const COVERAGE_DAYS = 7
@@ -76,7 +76,7 @@ export const WATCH_DATA_KINDS = [
     label: 'Séances',
     reads: ['workouts'],
     match: (e) => e.type === 'activity',
-    value: (e) => [workoutTypeLabel(p(e).workoutType), p(e).durationSeconds ? formatDuration(p(e).durationSeconds / 60) : null].filter(Boolean).join(' · '),
+    value: (e) => [workoutTypeLabel(p(e).workoutType), p(e).durationSeconds ? formatDuration(p(e).durationSeconds / 60) : null, ...workoutDetailParts(p(e))].filter(Boolean).join(' · '),
   },
 ]
 

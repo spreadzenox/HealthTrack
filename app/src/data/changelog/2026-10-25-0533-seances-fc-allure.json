@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-25",
+  "kind": "amélioration",
+  "title": "Montre : la fréquence cardiaque et l'allure de vos séances",
+  "items": [
+    "Pour les séances enregistrées par une montre compatible avec les montres Huawei, le Journal affiche maintenant la fréquence cardiaque moyenne, l'allure moyenne au kilomètre et une petite courbe de la fréquence cardiaque pendant l'effort.",
+    "Ces détails partent aussi dans l'export. Une séance dont la montre n'envoie pas le détail garde ses totaux, comme avant."
+  ]
+}

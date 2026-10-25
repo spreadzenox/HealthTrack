@@ -338,6 +338,13 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(row).not.toHaveTextContent('cycling')
   })
 
+  it('séance de la montre : FC moyenne, allure et courbe de FC (M7)', async () => {
+    await renderEntries([{ type: 'activity', source: 'huawei_watch', at: '2026-04-10T18:00:00', payload: { workoutType: 'running', durationSeconds: 1800, avgHeartRate: 142, heartRateCurve: { stepSeconds: 60, bpm: [120, null, 150, 148] }, paceSplitsSecPerKm: [330, 318] } }])
+    const row = document.querySelector('.entry-card')
+    expect(row).toHaveTextContent('FC moy. 142 bpm · 5:24 /km')
+    expect(row.querySelector('svg[aria-label="Fréquence cardiaque de 120 à 150 bpm"]')).not.toBeNull()
+  })
+
   it('shows 3 days first, then older days on demand', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue(
