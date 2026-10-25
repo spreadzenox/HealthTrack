@@ -20,7 +20,8 @@ import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR, LATE_MEAL_
 import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { FACE_MOOD_MIN_DAYS, FACE_MOOD_MIN_READINGS } from '../services/mood/faceMoodDays'
 import { isDebugModeEnabled } from '../settings/debugMode'
-import { formatSigned, evidenceLabel, scoreDecimals } from '../utils/format'
+import { formatSigned, evidenceLabel } from '../utils/format'
+import { correlationStrength } from '../services/statistics'
 import { useAutoSync } from '../hooks/useAutoSync'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { PistesTeaser } from '../components/TodayCards'
@@ -35,28 +36,6 @@ function formatR(r) {
 }
 
 /** POL-7b (D6) : barres neutres lilas, le sens dit par ↑ / ↓ et non par vert / rouge (« bon » / « mauvais »). */
-const DIRECTION_HINT = '↑ va avec un meilleur bien-être · ↓ avec un moins bon. Plus la barre est longue, plus le lien est marqué.'
-
-function CorrelationBar({ label, r, impact, uncertain }) {
-  const pct = Math.round(Math.abs(impact) * 100)
-  const up = r >= 0
-  return (
-    <div className={'reco-corr-row' + (uncertain ? ' reco-corr-row-uncertain' : '')}>
-      <span className="reco-corr-label">{label}</span>
-      <div className="reco-corr-bar-wrap">
-        <div
-          className={'reco-corr-bar ' + (up ? 'reco-corr-up' : 'reco-corr-down')}
-          style={{ width: `${pct}%` }}
-          aria-label={`${pct}%`}
-        />
-      </div>
-      <span className="reco-corr-value" title={`r = ${formatR(r)}`}>
-        {up ? '↑' : '↓'} {Math.abs(r).toFixed(2).replace('.', ',')}
-      </span>
-    </div>
-  )
-}
-
 // ─── Importance bar (ML tab) ──────────────────────────────────────────────────
 
 function ImportanceBar({ label, importance, direction }) {
@@ -94,9 +73,15 @@ function AdviceCard({ rank, advice }) {
 
 // ─── Lever card ("piste à tester") ───────────────────────────────────────────
 
+/** VC-23 : une seule échelle de solidité dans tout l'onglet, mêmes mots et mêmes pastels (DESIGN.md). */
 const EVIDENCE_CLASS = {
   solide: 'reco-evidence-solid',
   'à confirmer': 'reco-evidence-tentative',
+  incertain: 'reco-evidence-early',
+}
+
+function EvidenceBadge({ evidence }) {
+  return <span className={'reco-evidence ' + (EVIDENCE_CLASS[evidence] ?? '')}>{evidenceLabel(evidence)}</span>
 }
 
 /** Below this change, the week-end control is not worth mentioning on a lever. */
@@ -111,8 +96,8 @@ function AgainstNormNote() {
 
 /** I108 : une piste nette « chez vous » (q < 0,05) ou une seule « à vérifier » (q < 0,2). */
 const LEVER_STAGE = {
-  personal: { badge: 'Chez vous : lien net', className: 'reco-evidence-solid' },
-  toVerify: { badge: 'À vérifier : peut-être le hasard', className: 'reco-evidence-tentative' },
+  personal: { evidence: 'solide', note: 'Lien net chez vous : il tient même en comptant tous les facteurs examinés.' },
+  toVerify: { evidence: 'à confirmer', note: 'Peut-être encore le hasard : quelques jours de plus le diront.' },
 }
 
 /** POL-7b : la piste en mots d'abord ; r, jours indépendants et week-end derrière le chevron. */
@@ -131,13 +116,8 @@ function LeverCard({ rank, lever, lag }) {
         <p className="reco-advice-impact">
           {toVerify ? 'Lien possible' : `Lien ${lever.strength}`} avec votre bien-être
         </p>
-        {stage ? (
-          <span className={'reco-evidence ' + stage.className}>{stage.badge}</span>
-        ) : (
-          <span className={'reco-evidence ' + (EVIDENCE_CLASS[lever.evidence] ?? '')}>
-            {evidenceLabel(lever.evidence)}
-          </span>
-        )}
+        <EvidenceBadge evidence={stage?.evidence ?? lever.evidence} />
+        {open && stage && <p className="reco-advice-stats">{stage.note}</p>}
         {open && (
           <p className="reco-advice-stats">
             r = {formatR(lever.r)} · ≈ {days} jours indépendants
@@ -178,64 +158,86 @@ function autoSourceNote(tagId) {
   return `mesuré par le téléphone (≥ ${AUTO_LATE_SCREEN_MIN} min après 22 h)`
 }
 
-function TagEffectCard({ effect, measure = 'bien-être', children }) {
-  const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
-  const rawDiff = effect.diffRaw ?? effect.diff
-  const weekendShift = Math.abs(effect.diff - rawDiff) >= TAG_WEEKEND_SHIFT
-  const digits = scoreDecimals(effect.meanWith, effect.meanWithout, rawDiff)
+/** VC-24 : une moyenne sur 5 à une décimale. */
+function round1(v) {
+  return Math.round(v * 10) / 10
+}
+
+function Delta({ value }) {
   return (
-    <li className={'reco-tag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
-      <p className="reco-tag-name">{effect.label}</p>
-      <p className="reco-tag-compare">
-        {when} : {measure} <strong>{frScore(effect.meanWith, digits)} / 5</strong> contre{' '}
-        {frScore(effect.meanWithout, digits)} sans{' '}
-        <span className={rawDiff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
-          ({formatSigned(rawDiff, digits)} point{Math.abs(rawDiff) >= 2 ? 's' : ''})
-        </span>
-      </p>
-      {weekendShift && (
-        <p className="reco-tag-compare">
-          Week-end comparé au week-end, semaine à la semaine :{' '}
-          <span className={effect.diff < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
-            {frDiff(effect.diff)} point{Math.abs(effect.diff) >= 2 ? 's' : ''}
-          </span>
-        </p>
-      )}
-      <p className="reco-tag-days">
-        {effect.nWith} jour{effect.nWith > 1 ? 's' : ''} avec · {effect.nWithout} sans
-        {effect.auto && ` · ${autoSourceNote(effect.tagId)}`}
-      </p>
-      <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
-        {evidenceLabel(effect.evidence)}
-      </span>
+    <strong className={value < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
+      {formatSigned(value, 1)} point{Math.abs(value) >= 2 ? 's' : ''}
+    </strong>
+  )
+}
+
+/**
+ * VC-24 : un seul gabarit pour tous les liens (le jour même, jours avec / sans, avec délai) : le facteur en
+ * entier, une phrase, une ligne de chiffres en mono, la solidité.
+ */
+function LinkCard({ kind, name, children, meta, evidence, extra }) {
+  return (
+    <li className={`reco-link-card reco-link-card--${kind}` + (evidence === 'incertain' ? ' reco-link-card-uncertain' : '')}>
+      <p className="reco-link-name">{name}</p>
       {children}
+      {meta && <p className="reco-link-meta">{meta}</p>}
+      <EvidenceBadge evidence={evidence} />
+      {extra}
     </li>
+  )
+}
+
+function TagEffectCard({ effect, measure = 'bien-être', extra }) {
+  const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
+  // Écart des moyennes affichées : les chiffres collent toujours à une décimale.
+  const shown = round1(round1(effect.meanWith) - round1(effect.meanWithout))
+  const weekendShift = Math.abs(effect.diff - (effect.diffRaw ?? effect.diff)) >= TAG_WEEKEND_SHIFT
+  const meta = [
+    `${effect.nWith} jour${effect.nWith > 1 ? 's' : ''} avec · ${effect.nWithout} sans`,
+    effect.auto && autoSourceNote(effect.tagId),
+    weekendShift && `week-end à part : ${frDiff(effect.diff)}`,
+  ].filter(Boolean).join(' · ')
+  return (
+    <LinkCard kind="tag" name={effect.label} meta={meta} evidence={effect.evidence} extra={extra}>
+      <p className="reco-link-text">
+        {when} : {measure} {frScore(effect.meanWith)} / 5 contre {frScore(effect.meanWithout)} sans{' '}
+        <Delta value={shown} />
+      </p>
+    </LinkCard>
   )
 }
 
 // ─── Lagged effects (« la veille », « 2 jours avant ») ───────────────────────
 
-function LaggedEffectCard({ effect, measure = 'bien-être du jour', children }) {
-  const points = Math.abs(effect.effectPerSd) >= 2 ? 'points' : 'point'
+function LaggedEffectCard({ effect, measure = 'bien-être du jour', extra }) {
   return (
-    <li className={'reco-tag-card reco-lag-card' + (effect.evidence === 'incertain' ? ' reco-tag-card-uncertain' : '')}>
-      <p className="reco-tag-name">{effect.label}</p>
-      <p className="reco-tag-compare">
-        {effect.when}, {effect.sdText} de plus que d’habitude → {measure}{' '}
-        <span className={effect.effectPerSd < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
-          <strong>{frDiff(effect.effectPerSd)} {points}</strong>
-        </span>
+    <LinkCard
+      kind="lag"
+      name={effect.label}
+      meta={`Lien ${effect.strength} · r = ${formatR(effect.r)} · ≈ ${Math.round(effect.nEff)} jours indépendants`}
+      evidence={effect.evidence}
+      extra={extra}
+    >
+      <p className="reco-link-text">
+        {effect.when}, {effect.sdText} de plus que d’habitude → {measure} <Delta value={effect.effectPerSd} />
       </p>
-      {effect.action && <p className="reco-tag-compare">Piste : {effect.action}</p>}
+      {effect.action && <p className="reco-link-text">Piste : {effect.action}</p>}
       {effect.action && effect.againstNorm && <AgainstNormNote />}
-      <p className="reco-tag-days">
-        Lien {effect.strength} (r = {formatR(effect.r)}, ≈ {Math.round(effect.nEff)} jours indépendants)
+    </LinkCard>
+  )
+}
+
+// ─── Same-day correlations ───────────────────────────────────────────────────
+
+function CorrelationCard({ item, measure = 'bien-être', extra }) {
+  const meta = [`Lien ${item.strength ?? correlationStrength(item.r)}`, `r = ${formatR(item.r)}`]
+  if (item.nEff != null) meta.push(`≈ ${Math.round(item.nEff)} jours indépendants`)
+  return (
+    <LinkCard kind="corr" name={item.label} meta={meta.join(' · ')} evidence={item.evidence} extra={extra}>
+      <p className="reco-link-text">
+        Le jour même : plus c’est élevé, {item.r >= 0 ? 'meilleur' : 'moins bon'} est votre {measure}
       </p>
-      <span className={'reco-evidence ' + (EVIDENCE_CLASS[effect.evidence] ?? '')}>
-        {evidenceLabel(effect.evidence)}
-      </span>
-      {children}
-    </li>
+    </LinkCard>
   )
 }
 
@@ -347,7 +349,7 @@ const KIND_LABEL = { corr: 'le jour même', tag: 'jours avec / sans', lag: 'avec
 function AlsoLine({ others }) {
   const clear = others.filter((o) => o.item.evidence !== 'incertain')
   if (!clear.length) return null
-  const parts = [...new Set(clear.map((o) => `${KIND_LABEL[o.kind]} (${o.source}) ${o.item.evidence}`))]
+  const parts = [...new Set(clear.map((o) => `${KIND_LABEL[o.kind]} (${o.source}) ${evidenceLabel(o.item.evidence).toLowerCase()}`))]
   return <p className="reco-link-also">Autres mesures : {parts.join(' · ')}</p>
 }
 
@@ -364,28 +366,13 @@ function LinkItem({ link }) {
       <AlsoLine others={others} />
     </>
   )
-  if (kind === 'tag') {
-    return (
-      <TagEffectCard effect={item} measure={face ? 'bien-être estimé' : 'bien-être'}>
-        {extra}
-      </TagEffectCard>
-    )
-  }
+  if (kind === 'tag') return <TagEffectCard effect={item} measure={face ? 'bien-être estimé' : 'bien-être'} extra={extra} />
   if (kind === 'lag') {
     // D6 : le bien-être estimé ne propose jamais de piste
     const effect = face ? { ...item, action: null } : item
-    return (
-      <LaggedEffectCard effect={effect} measure={face ? 'bien-être estimé du jour' : 'bien-être du jour'}>
-        {extra}
-      </LaggedEffectCard>
-    )
+    return <LaggedEffectCard effect={effect} measure={face ? 'bien-être estimé du jour' : 'bien-être du jour'} extra={extra} />
   }
-  return (
-    <li className={'reco-link-bar' + (item.evidence === 'incertain' ? ' reco-link-bar-uncertain' : '')}>
-      <CorrelationBar label={item.label} r={item.r} impact={Math.abs(item.r)} uncertain={item.evidence === 'incertain'} />
-      {extra}
-    </li>
-  )
+  return <CorrelationCard item={item} measure={face ? 'bien-être estimé' : 'bien-être'} extra={extra} />
 }
 
 function pendingText(t) {
@@ -421,7 +408,6 @@ function LinksSection({ analysis, levers = [] }) {
   return (
     <section className="reco-section" data-testid="reco-links">
       <h3 className="reco-section-title">{leverVariables.size > 0 ? 'Autres liens repérés' : 'Liens repérés'}</h3>
-      <p className="reco-section-hint">{DIRECTION_HINT}</p>
       {faceDays != null && (
         <p className="reco-section-hint">« visage » : avec votre bien-être estimé, sur {faceDays} jours, sans aucune note.</p>
       )}
@@ -441,7 +427,7 @@ function LinksSection({ analysis, levers = [] }) {
           <summary>
             {uncertain.length === 1 ? 'Voir le lien incertain' : `Voir les ${uncertain.length} liens incertains`}
           </summary>
-          <p className="reco-section-hint">Pâles = lien incertain, possiblement dû au hasard.</p>
+          <p className="reco-section-hint">Trop tôt pour dire : peut-être le hasard.</p>
           {list(uncertain)}
         </details>
       )}

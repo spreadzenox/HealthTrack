@@ -231,33 +231,31 @@ describe('Recommendations page', () => {
 
 // ─── Correlation bar color semantics ─────────────────────────────────────────
 
-describe('CorrelationBar direction', () => {
-  it('uses neutral lilac bars with ↑ / ↓ from the sign of r, never green / red (POL-7b, D6)', async () => {
+describe('Correlation link direction', () => {
+  it('says the direction in words, in the same card as every other link, never green / red (VC-24, D6)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     const analysisModule = await import('../services/analysisEngine')
     const spy = vi.spyOn(analysisModule, 'computeBasicCorrelations').mockReturnValue({
       status: 'ok',
       datasetDays: 3,
       correlations: [
-        { variable: 'protein_g', label: 'Protéines', r: -0.97, direction: 'higher_better' },
-        { variable: 'fat_g',     label: 'Lipides',   r:  0.65, direction: 'neutral' },
+        { variable: 'protein_g', label: 'Protéines', r: -0.97, direction: 'higher_better', evidence: 'solide' },
+        { variable: 'fat_g',     label: 'Lipides',   r:  0.65, direction: 'neutral', evidence: 'solide' },
       ],
       levers: [],
     })
     listEntriesForAnalysis.mockResolvedValue(makeEntries(3))
     renderPage()
 
-    const proteinRow = (await screen.findByText('Protéines')).closest('.reco-corr-row')
-    const proteinBar = proteinRow.querySelector('.reco-corr-bar')
-    expect(proteinBar).toHaveClass('reco-corr-down')
-    expect(proteinRow).toHaveTextContent('↓ 0,97')
+    const protein = (await screen.findByText('Protéines')).closest('.reco-link-card')
+    expect(protein).toHaveTextContent('plus c’est élevé, moins bon est votre bien-être')
+    expect(protein).toHaveTextContent('r = −0,97')
 
-    const lipidRow = screen.getByText('Lipides').closest('.reco-corr-row')
-    expect(lipidRow.querySelector('.reco-corr-bar')).toHaveClass('reco-corr-up')
-    expect(lipidRow).toHaveTextContent('↑ 0,65')
+    const lipid = screen.getByText('Lipides').closest('.reco-link-card')
+    expect(lipid).toHaveTextContent('plus c’est élevé, meilleur est votre bien-être')
+    expect(lipid).toHaveClass('reco-link-card--corr')
 
     expect(document.querySelector('.reco-corr-pos, .reco-corr-neg')).toBeNull()
-    expect(screen.getByText(/↑ va avec un meilleur bien-être/)).toBeInTheDocument()
     expect(screen.queryByText(/Vert =|Rouge =/)).not.toBeInTheDocument()
     spy.mockRestore()
   })
@@ -349,11 +347,16 @@ describe('Recommendations levers', () => {
       correlations: [solid, tentative], levers: [solid, tentative],
     })
     expect(await screen.findByText('Dormir davantage')).toBeInTheDocument()
-    expect(screen.getByText('Chez vous : lien net')).toBeInTheDocument()
-    expect(screen.getByText('À vérifier : peut-être le hasard')).toBeInTheDocument()
+    // VC-23 : l'échelle unique, la phrase longue derrière le chevron
+    const solidCard = screen.getByText('Dormir davantage').closest('li')
+    const verifyCard = screen.getByText('Marcher davantage').closest('li')
+    expect(within(solidCard).getByText('Piste solide')).toBeInTheDocument()
+    expect(within(verifyCard).getByText('À confirmer')).toBeInTheDocument()
     expect(screen.getByText(/Lien possible avec votre bien-être/)).toBeInTheDocument()
-    expect(screen.getByText('Marcher davantage').closest('li')).toHaveClass('reco-advice-card--verify')
-    expect(screen.queryByText('Hypothèse à confirmer')).not.toBeInTheDocument()
+    expect(verifyCard).toHaveClass('reco-advice-card--verify')
+    expect(screen.queryByText(/Chez vous : lien net|À vérifier : peut-être|Hypothèse (solide|à confirmer|incertaine)/)).not.toBeInTheDocument()
+    fireEvent.click(within(verifyCard).getByRole('button'))
+    expect(verifyCard).toHaveTextContent('Peut-être encore le hasard')
     spy.mockRestore()
   })
 
@@ -400,10 +403,11 @@ describe('Recommendations levers', () => {
       status: 'ok', datasetDays: 40, reliability: 'good',
       correlations: [solid, weak], levers: [],
     })
-    const weakRow = (await screen.findByText('Lipides')).closest('.reco-corr-row')
-    const solidRow = screen.getByText('Durée de sommeil').closest('.reco-corr-row')
-    expect(weakRow).toHaveClass('reco-corr-row-uncertain')
-    expect(solidRow).not.toHaveClass('reco-corr-row-uncertain')
+    const weakRow = (await screen.findByText('Lipides')).closest('.reco-link-card')
+    const solidRow = screen.getByText('Durée de sommeil').closest('.reco-link-card')
+    expect(weakRow).toHaveClass('reco-link-card-uncertain')
+    expect(weakRow).toHaveTextContent('Trop tôt pour dire')
+    expect(solidRow).not.toHaveClass('reco-link-card-uncertain')
     spy.mockRestore()
   })
   it('folds uncertain correlations behind « Voir les N liens incertains »', async () => {
@@ -499,7 +503,7 @@ describe('Recommendations levers', () => {
     const spy = await renderWithBasic({ status: 'ok', datasetDays: 40, reliability: 'good', correlations: [alcohol], levers: [] })
     const section = await screen.findByTestId('reco-links')
     expect(within(section).getAllByText('Alcool')).toHaveLength(1)
-    expect(section.querySelector('.reco-tag-card')).toBeNull()
+    expect(section.querySelector('.reco-link-card--tag')).toBeNull()
     expect(section).toHaveTextContent('Autres mesures : jours avec / sans (notes) à confirmer')
     expect(section).not.toHaveTextContent('🍷')
     spy.mockRestore()
@@ -512,7 +516,7 @@ describe('Recommendations levers', () => {
       status: 'ok', datasetDays: 40, reliability: 'good',
       correlations: [tiny], levers: [],
     })
-    const row = (await screen.findByText('Lipides')).closest('.reco-corr-row')
+    const row = (await screen.findByText('Lipides')).closest('.reco-link-card')
     expect(row).toHaveTextContent('0,00')
     expect(row).not.toHaveTextContent('−0,00')
     spy.mockRestore()
@@ -547,12 +551,12 @@ describe('Recommendations — behaviour tags', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(taggedEntries())
     renderPage()
-    const card = (await screen.findByText('Alcool')).closest('.reco-tag-card')
+    const card = (await screen.findByText('Alcool')).closest('.reco-link-card')
     expect(card).toHaveTextContent(/Le lendemain/i)
     expect(card).toHaveTextContent(/2,0 \/ 5/)
     expect(card).toHaveTextContent(/4,0 sans/)
     expect(card).toHaveTextContent(/−2,0 point/)
-    expect(card).toHaveTextContent(/Hypothèse solide/i)
+    expect(card).toHaveTextContent(/Piste solide/)
     // A tag used on fewer than 5 days is listed as still being collected.
     expect(screen.getByText(/En cours de collecte/i)).toHaveTextContent(/Malade/)
   })
@@ -570,7 +574,7 @@ describe('Recommendations — behaviour tags', () => {
     expect(screen.getByText(/stress ressenti fait partie de votre/)).toBeInTheDocument()
   })
 
-  it('labels an unconvincing tag « Hypothèse incertaine » (agreement with hypothèse)', async () => {
+  it('labels an unconvincing tag « Trop tôt pour dire » (VC-23)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     const entries = taggedEntries()
     // Sick on even days: unrelated to the score pattern (period 3) → no clear effect.
@@ -581,8 +585,8 @@ describe('Recommendations — behaviour tags', () => {
     }
     listEntriesForAnalysis.mockResolvedValue(entries)
     renderPage()
-    const card = (await screen.findByText('Malade')).closest('.reco-tag-card')
-    expect(card).toHaveTextContent(/Hypothèse incertaine/)
+    const card = (await screen.findByText('Malade')).closest('.reco-link-card')
+    expect(card).toHaveTextContent(/Trop tôt pour dire/)
   })
   it('shows the week-end-controlled difference when it differs from the raw one', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
@@ -608,11 +612,11 @@ describe('Recommendations — behaviour tags', () => {
     })
     listEntriesForAnalysis.mockResolvedValue(makeEntries(10))
     renderPage()
-    const alcohol = (await screen.findByText('Alcool')).closest('.reco-tag-card')
+    const alcohol = (await screen.findByText('Alcool')).closest('.reco-link-card')
     expect(alcohol).toHaveTextContent(/\+0,6 point/)
-    expect(alcohol).toHaveTextContent(/week-end comparé au week-end.*−0,3 point/i)
-    const stress = screen.getByText('Stress').closest('.reco-tag-card')
-    expect(stress).not.toHaveTextContent(/week-end comparé/i)
+    expect(alcohol).toHaveTextContent(/week-end à part : −0,3/)
+    const stress = screen.getByText('Stress').closest('.reco-link-card')
+    expect(stress).not.toHaveTextContent(/week-end à part/)
     expect(document.querySelector('.reco-method-note')).toHaveTextContent(
       /week-ends sont comparés aux week-ends/i,
     )
@@ -637,11 +641,11 @@ describe('Recommendations — behaviour tags', () => {
     })
     listEntriesForAnalysis.mockResolvedValue(makeEntries(10))
     renderPage()
-    const sport = (await screen.findByText('Sport le soir')).closest('.reco-tag-card')
+    const sport = (await screen.findByText('Sport le soir')).closest('.reco-link-card')
     expect(sport).toHaveTextContent(/déduit de vos séances/)
     expect(sport).not.toHaveTextContent(/téléphone/)
-    expect(screen.getByText('Écran tard').closest('.reco-tag-card')).toHaveTextContent(/mesuré par le téléphone/)
-    expect(screen.getByText('Repas tardif').closest('.reco-tag-card')).toHaveTextContent(/déduit de vos repas notés \(après 21 h\)/)
+    expect(screen.getByText('Écran tard').closest('.reco-link-card')).toHaveTextContent(/mesuré par le téléphone/)
+    expect(screen.getByText('Repas tardif').closest('.reco-link-card')).toHaveTextContent(/déduit de vos repas notés \(après 21 h\)/)
     spy.mockRestore()
   })
 })
@@ -759,7 +763,7 @@ describe('Recommendations — lagged effects', () => {
     expect(screen.queryByTestId('reco-links')?.querySelector('.reco-lag-card') ?? null).toBeNull()
     fireEvent.click(within(lever).getByRole('button', { name: 'Afficher les détails' }))
     expect(lever).toHaveTextContent(/La veille, .*pas de plus que d’habitude → bien-être \+\d,\d point/)
-    expect(lever).toHaveTextContent(/hypothèse solide/)
+    expect(lever).toHaveTextContent(/(piste solide)/)
   })
 
   it('says how many consecutive days are still needed', async () => {
@@ -893,7 +897,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     expect(habits).toHaveTextContent('Alcool')
     expect(habits).toHaveTextContent('Le lendemain : bien-être estimé')
     expect(habits).not.toHaveTextContent('Stress')
-    expect(habits).not.toHaveTextContent('Piste')
+    expect(habits).not.toHaveTextContent('Piste :')
   })
 
   it('counts the days still needed', async () => {

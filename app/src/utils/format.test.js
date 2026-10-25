@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel, shortFoodName, formatClock, scoreDecimals, formatPace, workoutDetailParts } from './format'
+import { formatDuration, sleepStateLabel, periodLabel, pickLabelIndices, formatSigned, workoutTypeLabel, evidenceLabel, shortFoodName, formatClock, formatPace, workoutDetailParts } from './format'
 
 describe('formatDuration', () => {
   it('affiche heures et minutes', () => {
@@ -94,10 +94,10 @@ describe('workoutTypeLabel', () => {
 })
 
 describe('evidenceLabel', () => {
-  it('accorde le niveau de confiance avec « hypothèse »', () => {
-    expect(evidenceLabel('solide')).toBe('Hypothèse solide')
-    expect(evidenceLabel('à confirmer')).toBe('Hypothèse à confirmer')
-    expect(evidenceLabel('incertain')).toBe('Hypothèse incertaine')
+  it('suit l’échelle unique de DESIGN.md (VC-23)', () => {
+    expect(evidenceLabel('solide')).toBe('Piste solide')
+    expect(evidenceLabel('à confirmer')).toBe('À confirmer')
+    expect(evidenceLabel('incertain')).toBe('Trop tôt pour dire')
   })
 })
 
@@ -128,21 +128,6 @@ describe('formatClock', () => {
     expect(formatClock(23 * 60 + 27)).toBe('23 h 25')
     expect(formatClock(7 * 60)).toBe('7 h')
     expect(formatClock(1439)).toBe('0 h')
-  })
-})
-
-describe('scoreDecimals', () => {
-  it('garde une décimale quand l’écart affiché colle aux moyennes arrondies', () => {
-    expect(scoreDecimals(1.4, 2.6, -1.2)).toBe(1)
-    expect(scoreDecimals(2.04, 2.02, 0.02)).toBe(1)
-  })
-
-  it('passe à deux décimales quand « 2,3 contre 2,3 » afficherait un écart de −0,1', () => {
-    expect(scoreDecimals(2.26, 2.34, -0.08)).toBe(2)
-  })
-
-  it('passe à deux décimales quand les arrondis grossissent l’écart (2,4 contre 2,2 pour +0,1)', () => {
-    expect(scoreDecimals(2.36, 2.24, 0.12)).toBe(2)
   })
 })
 

@@ -187,10 +187,10 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   **VC-PUBLIER**. POL-1d (déverrouillage en play) **après** la version candidate, dans une version séparée.
 - [x] **VC-22** (25/10 09:33) « vos Pistes » dans 4 textes alors que l'onglet s'appelle « Analyses » : `WeatherCard.jsx:127`,
   `:177`, `PhoneUsageCard.jsx:134`, `BleDevices.jsx:298` → « vos Analyses » ; étendre `wording.test.js`.
-- [ ] **VC-23** Analyses : trois échelles de solidité (« Chez vous : lien net » / « À vérifier : peut-être le
+- [x] **VC-23** (25/10 10:33 : « Piste solide » / « À confirmer » / « Trop tôt pour dire », pastels, phrase au chevron) Analyses : trois échelles de solidité (« Chez vous : lien net » / « À vérifier : peut-être le
   hasard », « Hypothèse solide » / « à confirmer », et `DESIGN.md` « piste solide » / « à confirmer » / « trop tôt
   pour dire ») → une seule échelle et les mêmes couleurs partout ; phrase longue au chevron. Aucun calcul ne change.
-- [ ] **VC-24** Analyses, « Autres liens repérés » : deux gabarits mêlés (lignes à barre et cartes de texte en gras),
+- [x] **VC-24** (25/10 10:33 : gabarit unique `LinkCard`, une décimale) Analyses, « Autres liens repérés » : deux gabarits mêlés (lignes à barre et cartes de texte en gras),
   libellé tronqué « Calories brûlées totales (H… », « 2,43 / 5 » à deux décimales → un seul gabarit, une décimale.
 - [x] **VC-25** (25/10 09:33) Sources : « ▶ Brancher une autre source » fait doublon avec le bouton « Ajouter une source » → garder
   le bouton ; triangles ▶ restants (Sources, « Comment c'est calculé ») → chevron discret (POL-3).

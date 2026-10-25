@@ -164,12 +164,14 @@
   align-self: flex-start;
 }
 
-/* Evidence badge under a lever ("Hypothèse solide / à confirmer") */
+/* VC-23 : badge de solidité, une seule échelle (piste solide menthe · à confirmer pêche · trop tôt pour dire gris) */
 .reco-evidence {
   display: inline-block;
   margin-top: 6px;
   padding: 2px 8px;
-  border-radius: 999px;
+  margin-right: 8px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--text-muted);
@@ -177,13 +179,18 @@
 }
 
 .reco-evidence-solid {
-  color: var(--accent);
-  background: rgba(var(--brand-rgb), 0.12);
+  color: var(--mint-label);
+  background: var(--mint-bg);
 }
 
 .reco-evidence-tentative {
-  color: var(--color-warn);
-  background: rgba(var(--warn-rgb), 0.12);
+  color: var(--peach-label);
+  background: var(--peach-bg);
+}
+
+.reco-evidence-early {
+  color: var(--text-muted);
+  background: var(--color-bg);
 }
 
 .reco-empty-levers {
@@ -450,28 +457,9 @@
   gap: 10px;
 }
 
-.reco-tag-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-}
 
-.reco-tag-card-uncertain {
-  opacity: 0.6;
-}
 
-.reco-tag-name {
-  margin: 0 0 4px;
-  font-weight: 700;
-  color: var(--text);
-}
 
-.reco-tag-compare {
-  margin: 0 0 2px;
-  font-size: 0.88rem;
-  color: var(--text);
-  line-height: 1.4;
-}
 
 .reco-tag-diff-neg,
 .reco-tag-diff-pos {
@@ -480,11 +468,6 @@
   white-space: nowrap;
 }
 
-.reco-tag-days {
-  margin: 0;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
 
 .reco-tag-pending {
   margin: 10px 0 0;
@@ -534,10 +517,35 @@
   gap: 10px;
 }
 
-.reco-link-bar {
+.reco-link-card {
   background: var(--surface);
   border-radius: var(--radius);
   padding: 12px 14px;
+}
+
+.reco-link-card-uncertain {
+  opacity: 0.6;
+}
+
+.reco-link-name {
+  margin: 0 0 4px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.reco-link-text {
+  margin: 0 0 2px;
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.reco-link-meta {
+  margin: 2px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  color: var(--text-muted);
 }
 
 .reco-link-src {

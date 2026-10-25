@@ -97,15 +97,6 @@ export function formatSigned(value, digits) {
   return (value > 0 ? '+' : '−') + abs
 }
 
-/**
- * Décimales pour afficher deux moyennes et leur écart (« 2,3 contre 2,3 sans (−0,1 point) ») :
- * 1 si l'écart des moyennes arrondies est bien l'écart affiché, sinon 2 pour que les chiffres collent.
- */
-export function scoreDecimals(a, b, diff) {
-  const shown = Math.round(a * 10) - Math.round(b * 10)
-  return shown === Math.round(diff * 10) ? 1 : 2
-}
-
 const WORKOUT_TYPE_LABELS = {
   walking: 'Marche',
   running: 'Course à pied',
@@ -179,15 +170,16 @@ export function workoutDetailParts(payload) {
   return out
 }
 
+/** VC-23 : l'échelle unique de DESIGN.md (« piste solide » menthe, « à confirmer » pêche, « trop tôt pour dire » gris). */
 const EVIDENCE_LABELS = {
-  solide: 'Hypothèse solide',
-  'à confirmer': 'Hypothèse à confirmer',
-  incertain: 'Hypothèse incertaine',
+  solide: 'Piste solide',
+  'à confirmer': 'À confirmer',
+  incertain: 'Trop tôt pour dire',
 }
 
-/** Niveau de confiance statistique → libellé accordé (« Hypothèse incertaine »). */
+/** Niveau de confiance statistique (q) → libellé de l'échelle unique. */
 export function evidenceLabel(evidence) {
-  return EVIDENCE_LABELS[evidence] ?? `Hypothèse ${evidence}`
+  return EVIDENCE_LABELS[evidence] ?? evidence
 }
 
 /** Mots qui décrivent la préparation plutôt que l'aliment (« cuit à la vapeur », « aliment moyen »). */
