@@ -767,7 +767,7 @@ la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
 **Run du 25/10 09:33 — Sources plus simple, premiers défauts de l'audit corrigés (VC-22, VC-25, VC-27).** Ce que
-vous verrez dans la prochaine version : sur **Sources**, un seul bouton **« Ajouter une source »** regroupe tout ce
+vous verrez dans la **v269** (publiée, 33,8 Mo ; version play envoyée en test interne) : sur **Sources**, un seul bouton **« Ajouter une source »** regroupe tout ce
 qui n'est pas encore branché (le volet « Brancher une autre source », qui faisait doublon, a disparu ; sur un
 téléphone neuf, les sources à brancher restent en vue, et une montre Huawei détectée aussi). La carte **Health
 Connect** tient en une phrase avec des apps connues (Samsung Health, Garmin, Withings, Oura…), la liste complète des
