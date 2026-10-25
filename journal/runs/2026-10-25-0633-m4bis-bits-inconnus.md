@@ -15,7 +15,9 @@
 - Pas d'entrée « Nouveautés » : rien de visible hors du journal de diagnostic.
 
 ## Vérifications
-- Voir « Après les vérifications » ci-dessous.
+- Vitest **2 191** verts (+2 : bits inconnus gardés / comptés par jour ; ligne du journal de synchro, rien écrit) ;
+  build OK ; lint inchangé (6 erreurs préexistantes) ; `npm run visual` OK ; capture `/montre` relue (inchangée, aucun
+  écran touché).
 
 ## Suite
 - Le propriétaire compare une journée (étages de la montre ↔ ligne du journal) ; on décode alors `floors`.
