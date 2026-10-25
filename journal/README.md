@@ -7,6 +7,16 @@
 > Semaine précédente : [`semaines/2026-S42.md`](semaines/2026-S42.md) (montre GT 6 Pro en direct, nettoyage,
 > performance, puis lancement de la Lecture du visage ; v98 → v168).
 
+> **👉 Version candidate prête : vous pouvez inviter les testeurs** (25/10 14:03). La version Play **453** (même
+> contenu que la v273) est sur la piste **Test fermé — Alpha**, avec le groupe `halcya-testeurs@googlegroups.com` ;
+> Google l'examine d'abord (quelques heures à quelques jours : la Play Console → Vue d'ensemble de la publication
+> l'indique). Le premium est offert à tous jusqu'au **20 novembre inclus**. Gestes, dans l'ordre : ① envoyez le lien
+> du groupe https://groups.google.com/g/halcya-testeurs ; ② puis le lien « Rejoindre sur le Web » (Play Console →
+> Halcya → Tester → Test fermé → Alpha → onglet Testeurs → en bas, « Copier le lien ») ; ③ puis l'installation :
+> https://play.google.com/store/apps/details?id=fr.jpesquet.sante. Texte d'invitation prêt à copier (avec l'astuce
+> « forcer l'arrêt du Play Store et vider son cache » si l'app n'apparaît pas) et rappel du jour 7 :
+> [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md) §3. Invitez-en **15** pour garder 12 inscrits sans interruption.
+
 **🧭 Nouveau cadre depuis vos décisions produit du 20/10 au soir : faire de HealthTrack un produit vendable sur
 Google Play.** Tout est consigné dans [`PRODUIT.md`](PRODUIT.md) : décisions (bien-être, « local par défaut, IA
 optionnelle et clairement signalée », toutes les montres dont Huawei en direct ; porte d'entrée SII ; abonnement
@@ -765,6 +775,19 @@ synchro app ouverte n'a pas lu ses séances. **👉 À tester** (sur la v268) : 
 fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app plus tard sans toucher « Synchroniser » :
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
+
+**Run du 25/10 13:33 — la version candidate part en test fermé (VC-PUBLIER).** Ce qui change pour vos testeurs, sans
+mise à jour de l'app : la **période de lancement** est programmée côté serveur, **le premium est offert à toutes les
+installations de la version Play jusqu'au 20 novembre inclus** (invitation vers le 27/10 + 14 jours de test + 10 jours
+de marge) ; la page Premium affiche « Premium offert pendant le test, jusqu'au 20 nov. 2026 : vous n'avez rien à
+payer », sans formule ni bouton d'achat, et le paywall habituel revient tout seul le 21. Pour prolonger ou couper :
+[`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md) §2 (un fichier à modifier sur GitHub, ou demandez-le dans une
+consigne). En coulisses : j'ai trouvé et corrigé un défaut qui aurait bloqué l'envoi en alpha (le workflow
+s'arrêtait sur « numéro de version déjà utilisé » sans rien placer sur la piste) ; il vérifie aussi que votre groupe
+de testeurs est bien rattaché à la piste alpha. La version Play **453** est sur la piste alpha (examen Google en cours) ;
+**v273** publiée (33,8 Mo) pour votre version sideload, sans changement visible pour vous. **👉 Votre prochaine
+action** : inviter vos testeurs (encadré en tête de ce résumé). Pendant le test, je publierai au moins deux versions en
+alpha et je tiendrai la liste « changements faits pendant le test » pour le formulaire d'accès à la production (P30).
 
 **Run du 25/10 12:33 — « Votre avis » dans les Paramètres (AVIS).** Ce que vous verrez (**v272**, publiée, 33,8 Mo ; version play envoyée en
 test interne) : en bas de **Paramètres**, un bloc **« Votre avis »**. Dans la version Play, le bouton **« Donner mon avis
@@ -1542,6 +1565,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 10:33 CET — [VC-23 + VC-24 : Analyses, une échelle et un gabarit](runs/2026-10-25-1033-vc23-vc24-analyses.md) | 🧭 | « Piste solide / À confirmer / Trop tôt pour dire » partout (pastels, phrase au chevron) ; `LinkCard` unique pour les liens (facteur entier, une phrase, chiffres mono, une décimale) ; 2 192 Vitest |
 | 25/10 11:33 CET — [VC-26 : Accueil vierge plus léger](runs/2026-10-25-1133-vc26-accueil-vierge.md) | 🧭 | Intro en une phrase ; une ligne « … · Ajouter une source » au lieu de 3 tuiles « — » ; liens Journal masqués à vide ; relance unique de l'émulateur API 35 (rouge sur un commit journal seul) ; 2 193 Vitest |
 | 25/10 12:33 CET — [AVIS : « Votre avis » dans les Paramètres](runs/2026-10-25-1233-avis.md) | 🧭 | Paramètres → « Votre avis » : page Play Store (commentaires privés des testeurs) en play, ticket GitHub prérempli en sideload ; rien n'est joint ; texte d'invitation à jour ; 2 198 Vitest |
+| 25/10 13:33 CET — [VC-PUBLIER : période de lancement et alpha](runs/2026-10-25-1333-vc-publier.md) | 🧭 | `launch-period.json` 25/10 12:00 UTC → 20/11 inclus (relais vérifié : premium=true source=launch) ; « Play — AAB » en alpha réutilise l'AAB du test interne + groupe des testeurs ; versionCode 453 en alpha (validée, examen Google) ; v273 ; 2 207 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |
