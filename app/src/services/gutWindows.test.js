@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { GUT_WINDOWS, analyzeGutWindows, mealExposures } from './gutWindows'
+import { GUT_WINDOWS, TTS_SHIFT_DAYS, analyzeGutWindows, mealExposures, truncatedTimeShift } from './gutWindows'
 
 /** Générateur pseudo-aléatoire reproductible (mulberry32) : trames synthétiques, jamais de vraies données. */
 function rng(seed) {
@@ -40,6 +40,29 @@ function simulate({ seed, effect, days = 42 }) {
   return entries
 }
 
+/**
+ * Nulle réaliste (I168) : aucun effet de l'oignon, mais un ventre qui dérive lentement (AR(1), φ = 0,9) et un
+ * oignon mangé par séries (midi et soir, on garde l'habitude d'un jour à l'autre 85 % du temps).
+ */
+function simulateDriftNull({ seed, days = 63 }) {
+  const rand = rng(seed)
+  const entries = []
+  let onionDays = rand() < 0.5
+  let latent = 0
+  const phi = 0.9
+  for (let d = 0; d < days; d++) {
+    if (rand() > 0.85) onionDays = !onionDays
+    latent = phi * latent + Math.sqrt(1 - phi * phi) * (rand() + rand() + rand() - 1.5) * 2
+    for (const h of [8, 12.5, 19.5]) {
+      const onion = onionDays && h > 10
+      entries.push({ type: 'food', at: at(d, h), payload: { items: [{ ingredient: onion ? 'Oignon' : 'Riz', quantity_g: 100 }] } })
+    }
+    const p = 1 / (1 + Math.exp(-(latent * 1.5 - 0.8)))
+    for (const h of [13, 18, 23]) entries.push({ type: 'gut', at: at(d, h), payload: { level: rand() < p ? 'discomfort' : 'calm' } })
+  }
+  return entries
+}
+
 const onionBetween = (t, meals, fromH, toH) =>
   meals.some((m) => m.payload.items[0].ingredient === 'Oignon' && t - Date.parse(m.at) >= fromH * H && t - Date.parse(m.at) < toH * H)
 
@@ -72,6 +95,20 @@ describe('mealExposures', () => {
   })
 })
 
+describe('truncatedTimeShift (TTS, I168)', () => {
+  const r = 9
+  it('u = 1 / (r + 1) quand l’alignement réel bat tous les décalages', () => {
+    expect(truncatedTimeShift((s) => (s === 0 ? 0.5 : 0.1), r)).toBeCloseTo(1 / 10)
+  })
+  it('u plafonné à 1 quand aucun décalage ne fait moins bien, null si l’alignement réel n’est pas calculable', () => {
+    expect(truncatedTimeShift(() => 0.3, r)).toBe(1)
+    expect(truncatedTimeShift((s) => (s === 0 ? null : 0.3), r)).toBeNull()
+  })
+  it('un décalage incalculable compte comme aussi fort (prudent)', () => {
+    expect(truncatedTimeShift((s) => (s === 0 ? 0.5 : s === 3 ? null : 0.1), r)).toBeCloseTo(2 / 10)
+  })
+})
+
 describe('analyzeGutWindows', () => {
   it('un effet simulé à environ 6 h donne une piste dans 4–24 h, et rien ailleurs', () => {
     const entries = simulate({ seed: 7, effect: (t, meals) => (onionBetween(t, meals, 4, 8) ? 0.75 : 0.15) })
@@ -99,6 +136,27 @@ describe('analyzeGutWindows', () => {
       const res = analyzeGutWindows(simulate({ seed, effect: () => 0.3 }))
       expect(res.results.filter((r) => r.status === 'link')).toEqual([])
     }
+  })
+
+  it('ventre qui dérive et oignon par séries, sans effet : Fisher seul se trompe souvent, la porte TTS presque jamais', () => {
+    let fisherOnly = 0
+    let kept = 0
+    const n = 100
+    for (let seed = 1001; seed <= 1000 + n; seed++) {
+      const res = analyzeGutWindows(simulateDriftNull({ seed }))
+      if (res.results.some((r) => r.q != null && r.q < 0.1)) fisherOnly += 1
+      if (res.results.some((r) => r.status === 'link')) kept += 1
+    }
+    expect(fisherOnly / n).toBeGreaterThan(0.1)
+    expect(kept / n).toBeLessThan(0.1)
+  })
+
+  it('moins de 2 × r + 10 jours : même un effet net reste « trop tôt pour dire »', () => {
+    const res = analyzeGutWindows(simulate({ seed: 3, days: 2 * TTS_SHIFT_DAYS + 8, effect: (t, meals) => (onionBetween(t, meals, 4, 8) ? 0.9 : 0.05) }))
+    const onion = byWindow(res, 'oignon')
+    expect(onion['4-24'].q).toBeLessThan(0.1)
+    expect(onion['4-24'].status).toBe('too_early')
+    expect(res.results.filter((r) => r.status === 'link')).toEqual([])
   })
 
   it('avec peu de notes, « trop tôt pour dire » plutôt qu’une fausse piste', () => {

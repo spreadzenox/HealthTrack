@@ -179,6 +179,21 @@ describe('fiche française du dépôt (app/store/listing/fr-FR)', () => {
     expect(fr.fullDescription).toMatch(/Compatible avec les montres Huawei/)
   })
 
+  it('reste fidèle à l’app : sauvegarde Android gardée, onglet « Analyses » (LISTING-1)', () => {
+    expect(fr.fullDescription).not.toMatch(/tout s['’]efface en désinstallant/i)
+    expect(fr.fullDescription).toMatch(/sauvegarde Google du téléphone/)
+    expect(fr.fullDescription).not.toMatch(/^• Pistes :/m)
+    expect(fr.fullDescription).toMatch(/^• Analyses :/m)
+  })
+
+  it('parle des mots que cherchent les personnes concernées, sans liste de mots-clés (LISTING-1)', () => {
+    expect(fr.fullDescription).toMatch(/côlon irritable \(SII\)/)
+    expect(fr.fullDescription).toMatch(/journal alimentaire/)
+    expect(fr.fullDescription).toMatch(/FODMAP/)
+    // Google Play refuse les listes de mots-clés : aucune ligne faite seulement de mots séparés par des virgules.
+    expect(fr.fullDescription.split('\n').some((l) => /^([\wÀ-ÿ' -]+,\s*){4,}[\wÀ-ÿ' -]+$/.test(l.trim()))).toBe(false)
+  })
+
   it('n’emploie pas d’arguments interdits par Google Play (classements, superlatifs, appels aux avis)', () => {
     expect(all).not.toMatch(/n°\s*1|#1|meilleure? app|gratuit pour toujours|téléchargez maintenant|5 étoiles|top \d/i)
   })

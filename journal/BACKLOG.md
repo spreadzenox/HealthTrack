@@ -326,7 +326,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   statistique (« pas encore assez de données ») — [x] **I132** (FAIT le 25/10 19:33 CET, `services/gutWindows.js`, pas encore affiché) 3 fenêtres fixées d'avance (0–4 h « réflexe après le
   repas », 4–24 h, 24–48 h), normes par groupe = hypothèses affichées ; [ ] **I133** seuil N jours exposés / non
   exposés choisi par simulation (< 1 jeu sans effet sur 10 avec une piste), permutation par blocs + BH, nombre de
-  combinaisons en détails — **précisé le 25/10 20:33** (`IDEES.md` I168–I169) : [ ] **I168** porte « décalage temporel
+  combinaisons en détails — **précisé le 25/10 20:33** (`IDEES.md` I168–I169) : [x] **I168** (FAIT le 25/10 21:33 : r = 9 seul, plus puissant que 19 ; repas décalés de s jours, statistique sur les notes ; < 28 jours → « trop tôt ») porte « décalage temporel
   tronqué » (TTS, Yuan & Shou 2024) sur les séries journalières, u ≤ 0,1 en plus de BH, sans enroulement, r = 9 (> 18 j)
   ou 19 (> 38 j) ; [ ] **I169** N calibré sur 4 nulles réalistes (dérive AR(1), aliments en séries, saisie informative,
   notes après les repas) ; [ ] **I170** bilan du ventre du soir en un geste (objectif « Mon ventre », `scope: 'day'`) ;
@@ -1134,7 +1134,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 ## Prochaines étapes (ordre conseillé)
 
-**Mise à jour du 25/10 (20:33 Paris, run « idées »)** : [ ] **LISTING-1** (I172, court, à faire en premier) — la fiche
+**Mise à jour du 25/10 (21:33 Paris)** : ✅ LISTING-1 et ✅ I168 livrés (#380). Suite : **I169 → I170 → affichage des
+pistes ventre dans Analyses (avec I171 a/b) → I134**.
+
+**Mise à jour du 25/10 (20:33 Paris, run « idées »)** : [x] **LISTING-1** (FAIT le 25/10 21:33) (I172, court, à faire en premier) — la fiche
 Play `app/store/listing/fr-FR/full-description.txt` dit encore « tout s'efface en désinstallant l'app » (faux depuis la
 sauvegarde Android conservée le 24/10 : écrire qu'une copie peut rester dans la sauvegarde Google du téléphone, comme la
 page de confidentialité) et parle de l'onglet « Pistes » (→ « Analyses ») ; ajouter naturellement « côlon irritable

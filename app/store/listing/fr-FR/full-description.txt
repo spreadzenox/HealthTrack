@@ -1,10 +1,10 @@
 Halcya vous aide à comprendre ce qui va avec vos bons et vos mauvais jours : repas, ventre, sommeil, activité et bien-être, réunis dans un seul journal, sur votre téléphone.
 
-Pensée d'abord pour les personnes qui ont le ventre sensible (ballonnements, inconforts digestifs, syndrome de l'intestin irritable), Halcya convient aussi à toute personne qui veut mieux connaître son énergie, ses nuits et sa forme.
+Pensée d'abord pour les personnes qui ont le ventre sensible — ballonnements, inconforts digestifs, syndrome de l'intestin irritable ou côlon irritable (SII) —, Halcya convient aussi à toute personne qui veut mieux connaître son énergie, ses nuits et sa forme.
 
 ★ Notez en un geste
 • Votre ventre : Calme, Gêne ou Douleur, horodaté en une touche.
-• Vos repas : une photo, une image de la galerie ou quelques mots. L'analyse par IA des ingrédients est facultative et ne part que si vous la lancez.
+• Vos repas : un journal alimentaire horodaté, avec une photo, une image de la galerie ou quelques mots. L'analyse par IA des ingrédients est facultative et ne part que si vous la lancez.
 • Une note libre quand vous le voulez.
 
 ★ Vos montres et capteurs, sans ressaisie
@@ -20,12 +20,13 @@ Si vous l'activez, une lecture du visage de quelques secondes à l'ouverture de 
 • Aujourd'hui : votre journée en une phrase, votre bien-être estimé, votre sommeil, votre VFC et vos pas.
 • Journal : chaque jour, ce que vos sources ont mesuré et ce que vous avez noté.
 • Tendances : votre forme comparée à votre propre norme, pas à une moyenne imposée.
-• Pistes : ce qui va de pair avec votre bien-être dans vos données, calculé sur le téléphone. On parle de pistes, jamais de causes, et on préfère attendre d'avoir assez de jours plutôt que de vous montrer de faux suspects.
+• Analyses : ce qui va de pair avec votre bien-être dans vos données, calculé sur le téléphone. On parle de pistes, jamais de causes, et on préfère attendre d'avoir assez de jours plutôt que de vous montrer de faux suspects. Les repères FODMAP généraux ne servent que d'hypothèses de départ : ce sont vos propres données qui comptent.
 
 ★ Local par défaut, l'IA seulement si vous le voulez
 • Vos données restent sur votre téléphone, sans compte à créer.
 • Rien ne sort sans votre accord : seule l'analyse IA d'un repas, quand vous la lancez, envoie la photo réduite (sans métadonnées) ou votre description.
-• Export complet de vos données en un geste (fichier JSON), et tout s'efface en désinstallant l'app.
+• Export complet de vos données en un geste (fichier JSON).
+• Si la sauvegarde Google du téléphone est activée, Android y inclut les données de l'app (chiffrées, gérées par Android, jamais lues par Halcya) : elles reviennent sur un nouveau téléphone. Sinon, tout s'efface quand vous désinstallez l'app.
 
 Halcya n'est pas un dispositif médical : elle ne pose aucun diagnostic et ne remplace pas l'avis d'un professionnel de santé. Parlez de vos pistes à votre médecin ou à votre diététicienne.
 
