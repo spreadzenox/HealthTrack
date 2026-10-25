@@ -50,8 +50,9 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 > 1. Rejoindre le groupe des testeurs : https://groups.google.com/g/halcya-testeurs
 > 2. Accepter le test : <lien « Rejoindre sur le Web »>
 > 3. Installer l'app depuis le Play Store : https://play.google.com/store/apps/details?id=fr.jpesquet.sante
-> 4. **Garder l'app installée pendant 14 jours** et l'ouvrir de temps en temps (une photo de repas, une note du
->    ventre, ce que vous voulez). Vos retours, même courts, me sont précieux.
+> 4. **Garder l'app installée pendant 14 jours, sans quitter le groupe ni le test**, et **l'ouvrir au moins tous les
+>    2 ou 3 jours** (une photo de repas, une note du ventre, ce que vous voulez) : Google vérifie que l'app est
+>    vraiment utilisée. Vos retours, même courts, me sont précieux.
 >
 > Astuces :
 > - L'app ne sort pas dans la recherche du Play Store tant qu'elle est en test : passez par le lien ci-dessus, ou
@@ -61,3 +62,11 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 > - Si vous désinstallez puis réinstallez, passez aussi par le lien ou par « Non installées ».
 >
 > Merci beaucoup !
+
+
+## Rappel du jour 7 (à envoyer au groupe par le propriétaire ; ajouté le 25/10, I166)
+
+> Bonjour à tous, on est à la moitié du test de Halcya, merci ! Deux petites choses : **restez bien inscrits au test
+> jusqu'au <date de fin>** (si on passe sous 12 personnes, Google remet le compteur à zéro), et **ouvrez l'app de
+> temps en temps** d'ici là. Si quelque chose vous a gêné ou plu, même en une phrase, répondez-moi : vos retours
+> servent directement aux prochaines versions.

@@ -9,6 +9,90 @@
 
 ---
 
+## Run du 25/10/2026 08:33 (Paris) — audit de la version candidate après le polissage, et ce qu'il reste avant d'inviter les testeurs
+
+Contexte : le polissage du parcours demandé le 24/10 vers 15:00 est livré (POL-2 à POL-8, POL-1 a/b/c côté app ; POL-1d
+attend P28), les critères C1 à C5 sont presque tous verts. Ce run relit toute la variante play en captures
+(`npm run visual -- --play --empty`, clair, 14 pages ; puis `--play --dark` sur données de démo : Accueil, Analyses,
+Sources, Journal) pour dire ce qui empêche encore de publier la version candidate en alpha. Aucune erreur JS, aucun
+débordement horizontal sur les 14 pages.
+
+- **I165 (25) — audit « version candidate » du 25/10 : 6 défauts restants, tous petits [V, captures du jour].**
+  ① **VC-22** — 4 textes disent encore « vos Pistes » alors que l'onglet s'appelle « Analyses » depuis le 24/10 :
+  carte Météo (`WeatherCard.jsx:127` et `:177`, « Vos Pistes vérifient si c'est votre cas »), Temps d'écran
+  (`PhoneUsageCard.jsx:134`), Capteurs Bluetooth (`BleDevices.jsx:298`). Correctif : « vos Analyses », et étendre le
+  test-garde de vocabulaire (`wording.test.js`) à « vos Pistes » / « Vos Pistes ».
+  ② **VC-23** — trois vocabulaires de solidité sur le même écran Analyses : « Chez vous : lien net » / « À vérifier :
+  peut-être le hasard » (pistes à tester), « Hypothèse solide » / « Hypothèse à confirmer » (autres liens), et
+  `DESIGN.md` prévoit « piste solide » / « à confirmer » / « trop tôt pour dire ». Un nouvel utilisateur ne peut pas
+  comparer. Correctif : une seule échelle (`solide` · `à confirmer` · `trop tôt pour dire`), mêmes couleurs (menthe /
+  pêche / gris), la phrase longue seulement dans le détail déplié. Aucun calcul ne change.
+  ③ **VC-24** — « Autres liens repérés » mélange deux gabarits : des lignes compactes à barre (« Variabilité cardiaque
+  ↑ 0,56 ») et des cartes de texte en gras (« Calories brûlées (activité) · La veille, 192 kcal de plus… · Piste :
+  Bouger davantage ») ; un libellé tronqué (« Calories brûlées totales (H… ») ; « 2,43 / 5 » à deux décimales quand
+  le reste de l'app en montre une. Correctif : un seul gabarit (ligne compacte + phrase au chevron), une décimale.
+  ④ **VC-25** — Sources : « ▶ Brancher une autre source » (volet repliable) **et** le bouton « Ajouter une source »
+  juste en dessous font la même chose ; le volet utilise encore le triangle ▶ (comme « Comment c'est calculé » dans
+  Analyses) au lieu du chevron discret adopté partout le 24/10 (POL-3). Correctif : garder le seul bouton, chevron
+  partout.
+  ⑤ **VC-26** — Accueil sur installation neuve : l'intro fait 5 lignes de texte au-dessus de la première carte, et
+  les trois tuiles Sommeil / VFC / Pas sont vides (« – ») avec une phrase dessous ; puis deux boutons « … dans le
+  Journal » qui mènent à des pages vides. Principe du propriétaire : moins de texte, rien de vide. Correctif : intro
+  en une phrase (« Notez vos repas et votre ventre, ajoutez votre montre : on regarde ce qui va avec vos bons jours. »),
+  une seule ligne « Sommeil, cœur et pas arrivent de votre montre · Ajouter une source » à la place des 3 tuiles tant
+  qu'aucune n'a de valeur, et les deux boutons Journal masqués tant qu'il n'y a aucune donnée.
+  ⑥ **VC-27** — carte Health Connect (Sources) : la description cite « Gadgetbridge » (app de bidouilleurs, inconnue
+  du public visé) et énumère 13 types de données sur 5 lignes. Correctif play : « Importe ce que vos apps santé
+  écrivent dans Health Connect (Samsung Health, Garmin, Withings, Oura…) : sommeil, cœur, pas, poids… » ; la liste
+  complète au chevron.
+  Vu et **conforme** : onboarding 01/05 (= maquette, 18 ans), paywall (prix lus dans Play Billing, « soit 2,50 € par
+  mois » secondaire, frise d'essai, « Plus tard »), Paramètres (« Ce qui vous amène » à jour), Historique du bien-être
+  vide, Journal en couleurs, Tendances (« bientôt » en une ligne), Repas, thème sombre. Impact : C1 et C2 restent
+  verts après correction ; chaque défaut tient dans un run court (②+③ ensemble, ⑤ seul, ①+④+⑥ ensemble).
+
+- **I166 (24) — ce que Google regarde vraiment au bout des 14 jours (accès à la production) [T, à vérifier sur
+  l'aide Play Console].** Sources tierces concordantes (indiehackers, testerscommunity, extendsclass, choicely,
+  hackernoon, consultées le 25/10) : (a) le compteur de 14 jours ne court que si **12 testeurs au moins restent
+  inscrits sans interruption** (un désinscrit qui fait passer sous 12 remet le compteur à zéro) → **inviter 15** comme
+  prévu ; (b) Google refuse de plus en plus pour **« engagement insuffisant »** : des inscrits qui n'ouvrent jamais
+  l'app ne comptent pas, ni des comptes de la même personne ou des émulateurs ; (c) le formulaire de demande d'accès
+  pose des questions courtes (~300 caractères) sur le recrutement des testeurs, les retours reçus et **les changements
+  faits** pendant le test ; (d) **publier au moins une mise à jour en alpha pendant les 14 jours** est un signal
+  attendu. Conséquences pour nous : ① le texte d'invitation (`INVITATION-TESTEURS.md`) demande d'**ouvrir l'app au
+  moins tous les 2-3 jours** et de **ne pas se désinscrire** avant la fin ; ② prévoir un **rappel au jour 7** (message
+  du propriétaire au groupe, texte prêt) ; ③ le bouton « Envoyer un avis » doit exister dans la version play (à
+  vérifier : sinon un lien `mailto:` dans Paramètres, sans donnée de santé) pour récolter des retours citables ; ④ la
+  routine publie **au moins 2 versions en alpha** pendant le test (la piste alpha reste limitée à une par jour) et
+  tient dans `PRODUIT.md` une liste « changements faits pendant le test » qui servira mot pour mot aux réponses du
+  formulaire (P30 à préparer : réponses du formulaire d’accès à la production, dès le jour 10).
+
+- **I167 (15) — réinstallation sans sauvegarde = 10 crédits IA offerts de nouveau : rien de simple à faire [V].**
+  Piste du 24/10 : le « device recall » de Play Integrity (3 bits par appareil, lus dans le verdict) est fait pour ça,
+  mais il est en **bêta réservée à des partenaires choisis** (programme d'accès anticipé, page Android « Detect repeat
+  abuse using device recall (beta) », consultée le 25/10) : inaccessible pour un compte individuel. Le risque reste
+  borné par `INSTALL_DAILY_CAP` et le plafond global du relais (facture plafonnée). Décision proposée : ne rien coder
+  maintenant ; ajouter au résumé du workflow relais le **nombre de nouvelles installations par jour** qui prennent leurs
+  crédits offerts, et ne passer à 5 crédits offerts (au lieu de 10) que si ce nombre s'envole sans hausse des
+  téléchargements Play.
+
+- **Recommandation d'ordre (pour les runs de code)** : POL-1d attend P28, et la lecture au déverrouillage dans la
+  version Play ajoute un examen Google à risque (§1 de `PLAY-CONFORMITE.md`) : **ne pas la mettre dans la version
+  candidate**. Ordre proposé : VC-22 + VC-25 + VC-27 (textes, un run) → VC-23 + VC-24 (Analyses, un run) → VC-26
+  (Accueil vierge, un run) → I166 ③ (« Envoyer un avis ») → **publication de la version candidate en alpha** avec
+  les dates de la période de lancement (début = jour de la publication, fin = +14 j + 7 j de marge), C5 vert, et
+  « 👉 Version candidate prête » en tête du résumé. POL-1d (interrupteur play allumé) ensuite, dans une version
+  séparée, une fois P28 acceptée.
+
+Sources (25/10/2026) : captures `app/.visual/` du jour (non commitées) ;
+https://www.indiehackers.com/post/google-play-production-access-rejected-why-fixes-1efcef20e8 ;
+https://www.testerscommunity.com/blog/why-apps-fail-google-play-production-access ;
+https://extendsclass.com/blog/google-plays-closed-testing-requirement-what-developers-need-to-know-in-2026 ;
+https://www.choicely.com/blog/google-play-12-tester-rule ;
+https://hackernoon.com/from-rejection-to-release-how-the-pinoy-made-app-todochi-got-on-google-play ;
+https://developer.android.com/google/play/integrity/device-recall
+
+---
+
 ## Run du 24/10/2026 20:30 (Paris) — P28 prêt pour le propriétaire, POL-7 et POL-8 maquettés
 
 Contexte : il reste trois étapes de polissage (POL-7 Analyses, POL-6 Journal, POL-8 Sources) puis POL-1 (lecture au

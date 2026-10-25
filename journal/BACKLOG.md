@@ -182,6 +182,34 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   ☕ Café après 14 h, 📱 Écran tard, 🤒 Malade) affiché dans Pistes et le journal : remplacer par des icônes trait ou
   une pastille de couleur, sans toucher aux données (l'émoji reste dans l'étiquette enregistrée).
 - [ ] **VC-21** (mineur) premier lancement play : un `console.error` « Line 330 - Msg: [object Object] » (fichier vide, donc venu du natif) à identifier et à rendre lisible (résumé « Premier lancement à froid » du workflow émulateur).
+- **Audit du 25/10 08:33** (run « idées », `IDEES.md` I165–I167 ; captures play vierge clair + démo sombre) — ordre
+  proposé : **VC-22 + VC-25 + VC-27** (un run) → **VC-23 + VC-24** (un run) → **VC-26** (un run) → **AVIS** →
+  **VC-PUBLIER**. POL-1d (déverrouillage en play) **après** la version candidate, dans une version séparée.
+- [ ] **VC-22** « vos Pistes » dans 4 textes alors que l'onglet s'appelle « Analyses » : `WeatherCard.jsx:127`,
+  `:177`, `PhoneUsageCard.jsx:134`, `BleDevices.jsx:298` → « vos Analyses » ; étendre `wording.test.js`.
+- [ ] **VC-23** Analyses : trois échelles de solidité (« Chez vous : lien net » / « À vérifier : peut-être le
+  hasard », « Hypothèse solide » / « à confirmer », et `DESIGN.md` « piste solide » / « à confirmer » / « trop tôt
+  pour dire ») → une seule échelle et les mêmes couleurs partout ; phrase longue au chevron. Aucun calcul ne change.
+- [ ] **VC-24** Analyses, « Autres liens repérés » : deux gabarits mêlés (lignes à barre et cartes de texte en gras),
+  libellé tronqué « Calories brûlées totales (H… », « 2,43 / 5 » à deux décimales → un seul gabarit, une décimale.
+- [ ] **VC-25** Sources : « ▶ Brancher une autre source » fait doublon avec le bouton « Ajouter une source » → garder
+  le bouton ; triangles ▶ restants (Sources, « Comment c'est calculé ») → chevron discret (POL-3).
+- [ ] **VC-26** Accueil vierge : intro de 5 lignes → une phrase ; 3 tuiles vides « – » → une ligne « Sommeil, cœur
+  et pas arrivent de votre montre · Ajouter une source » tant qu'aucune tuile n'a de valeur ; boutons « … dans le
+  Journal » masqués sans aucune donnée. Captures vierge + démo, clair + sombre.
+- [ ] **VC-27** carte Health Connect (play) : sans « Gadgetbridge », marques connues (Samsung Health, Garmin,
+  Withings, Oura…), liste des 13 types au chevron.
+- [ ] **AVIS** (I166 ③) aucun moyen d'envoyer un retour depuis l'app : Paramètres → « Envoyer un avis » (`mailto:`
+  vers l'e-mail de contact de la fiche, objet « Halcya <version> », sans aucune donnée de santé ni journal joint).
+- [ ] **VC-PUBLIER** dès VC-22 → AVIS mergés : poser `from` (jour de la publication) / `until` (+14 j + 7 j de marge)
+  dans `relay/src/launch-period.json`, vérifier « Premium offert pendant le test » sur la version play, publier la
+  version en **alpha**, C5 ✅, « 👉 Version candidate prête » en tête du résumé avec les gestes et le texte
+  d'invitation (`INVITATION-TESTEURS.md`, mis à jour le 25/10 : ouvrir l'app tous les 2-3 jours, rappel du jour 7).
+  Pendant les 14 jours : au moins 2 versions en alpha, et une liste « changements faits pendant le test » dans
+  `PRODUIT.md` pour le formulaire d’accès à la production (P30, à préparer au jour 10).
+- [ ] **CREDITS-INSTALLS** (I167) résumé du workflow relais : nombre de nouvelles installations par jour qui prennent
+  leurs crédits offerts (le « device recall » de Play Integrity est réservé à des partenaires) ; passer à 5 crédits
+  offerts seulement si ce nombre s'envole.
 - [x] **VC-19** (24/10 07:30 : le faux plugin reste « en cours » tant que le test n'a pas vu la progression) (mineur) `UpdateBanner.test.jsx` « progression en Mo et en % » échoue parfois sous la charge de la
   suite complète (vert isolé) : rendre le test indépendant du minutage.
 - [x] **VC-11 (avant le jalon 4, I153) — FAIT le 23/10 09:30** (`connectors/syncWindow.js` ; reste : message exact d'Android à relever sur l'émulateur) première synchro Health Connect : `DEFAULT_HISTORY_DAYS = 180`
@@ -1100,6 +1128,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 25/10 (08:33 Paris, run « idées »)** : polissage du 24/10 livré (POL-1d attend P28). Audit de la
+version candidate → 6 petits défauts (VC-22 à VC-27) + AVIS, puis **VC-PUBLIER** (alpha + période de lancement).
+POL-1d après la version candidate, dans une version séparée. Détail : section « 🎯 Version candidate » ci-dessus.
 
 **Mise à jour du 21/10 (18:30 Paris)** : ✅ 2b (accueil) — forme et courbes du bien-être rangées dans **Journal →
 Tendances** ; ✅ 2e « Prédiction du jour » → « Attendu d'après vos habitudes ». Prochain run de code → **3b-3 « Lecture
