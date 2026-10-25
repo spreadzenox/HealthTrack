@@ -194,7 +194,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   libellé tronqué « Calories brûlées totales (H… », « 2,43 / 5 » à deux décimales → un seul gabarit, une décimale.
 - [x] **VC-25** (25/10 09:33) Sources : « ▶ Brancher une autre source » fait doublon avec le bouton « Ajouter une source » → garder
   le bouton ; triangles ▶ restants (Sources, « Comment c'est calculé ») → chevron discret (POL-3).
-- [ ] **VC-26** Accueil vierge : intro de 5 lignes → une phrase ; 3 tuiles vides « – » → une ligne « Sommeil, cœur
+- [x] **VC-26** (25/10 11:33 : intro en une phrase, ligne unique des mesures, liens Journal masqués à vide) Accueil vierge : intro de 5 lignes → une phrase ; 3 tuiles vides « – » → une ligne « Sommeil, cœur
   et pas arrivent de votre montre · Ajouter une source » tant qu'aucune tuile n'a de valeur ; boutons « … dans le
   Journal » masqués sans aucune donnée. Captures vierge + démo, clair + sombre.
 - [x] **VC-27** (25/10 09:33) carte Health Connect (play) : sans « Gadgetbridge », marques connues (Samsung Health, Garmin,

@@ -69,12 +69,23 @@ describe('Dashboard', () => {
     renderDashboard()
     expect(screen.getByText(/· Bonjour$/)).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2, name: 'Votre journée' })).toBeInTheDocument()
-    expect(await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)).toBeInTheDocument()
-    expect(screen.getByText(/l’IA seulement si vous le voulez/i)).toBeInTheDocument()
-    expect(screen.getAllByRole('link', { name: 'Sources' })[0]).toHaveAttribute('href', '/connectors')
+    const intro = await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
+    // Une seule phrase (VC-26) : la ligne des mesures propose déjà « Ajouter une source »
+    expect(intro.textContent.match(/[.!?](\s|$)/g)).toHaveLength(1)
+    expect(screen.getByRole('link', { name: 'Ajouter une source' })).toHaveAttribute('href', '/connectors')
+  })
+
+  it('sans aucune donnée : pas de liens « … dans le Journal » (VC-26)', async () => {
+    renderDashboard()
+    await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
+    expect(screen.queryByRole('link', { name: /dans le Journal/ })).not.toBeInTheDocument()
   })
 
   it('montre les tuiles du jour, la carte ventre, la carte pistes et « Photo du repas » mène aux repas', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'steps', source: 'health_connect', at: new Date().toISOString(), payload: { value: 4321, period: 'day' } },
+    ])
     renderDashboard()
     expect(await screen.findByRole('region', { name: 'Mesures du jour' })).toBeInTheDocument()
     expect(screen.getByText('Sommeil')).toBeInTheDocument()
