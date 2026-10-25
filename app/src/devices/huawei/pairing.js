@@ -72,6 +72,8 @@ const writeJson = (storage, key, value) => {
 export function createKeyStore(storage = globalThis.localStorage) {
   return {
     get: (watchKey) => readJson(storage, KEYS_STORAGE)?.[watchKey] || null,
+    /** Au moins une montre a une clé longue durée (appairée un jour dans l'app). */
+    hasAnyKey: () => Object.values(readJson(storage, KEYS_STORAGE) || {}).some((k) => k?.authToken),
     set(watchKey, value) {
       const all = readJson(storage, KEYS_STORAGE) || {}
       all[watchKey] = value

@@ -210,6 +210,8 @@ async function runIfStale({
     if (isWatchBusy()) return { ran: false, reason: 'busy' }
     const state = getWatchAutoSyncState(storage)
     if (isAutoSyncPaused(state)) return { ran: false, reason: 'paused' }
+    // Aucune montre appairée dans l'app (la plupart des gens) : pas d'appel Bluetooth à chaque ouverture (VC-21)
+    if (keyStore.hasAnyKey && !keyStore.hasAnyKey()) return { ran: false, reason: 'not_paired' }
     const watch = await findBondedWatch(classic)
     if (!watch) return { ran: false, reason: 'no_watch' }
     if (!keyStore.get(watch.deviceId)?.authToken) return { ran: false, reason: 'not_paired' }

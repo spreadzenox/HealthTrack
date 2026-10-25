@@ -181,7 +181,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
 - [x] **VC-20 — FAIT le 25/10 15:33** (Journal, radar, note manuelle ; test-garde « aucun `.emoji` affiché » dans `wording.test.js`) (mineur, avec la passe Pistes du jalon 5) les étiquettes d'habitudes portent un émoji (✈️ Voyage,
   ☕ Café après 14 h, 📱 Écran tard, 🤒 Malade) affiché dans Pistes et le journal : remplacer par des icônes trait ou
   une pastille de couleur, sans toucher aux données (l'émoji reste dans l'étiquette enregistrée).
-- [ ] **VC-21** (mineur) premier lancement play : un `console.error` « Line 330 - Msg: [object Object] » (fichier vide, donc venu du natif) à identifier et à rendre lisible (résumé « Premier lancement à froid » du workflow émulateur).
+- [x] **VC-21 — FAIT le 25/10 16:33** (identifiés : `BtClassic.listBonded` sans autorisation « Appareils à proximité », lancé par la synchro auto montre à chaque ouverture → plus d'appel Bluetooth tant qu'aucune montre n'a de clé dans l'app ; `PlayBilling.queryPurchases` refusé car l'émulateur n'a pas le Play Store → attendu ; le script nomme désormais plugin, méthode et message) (mineur) premier lancement play : un `console.error` « Line 330 - Msg: [object Object] » (fichier vide, donc venu du natif) à identifier et à rendre lisible (résumé « Premier lancement à froid » du workflow émulateur).
 - **Audit du 25/10 08:33** (run « idées », `IDEES.md` I165–I167 ; captures play vierge clair + démo sombre) — ordre
   proposé : **VC-22 + VC-25 + VC-27** (un run) → **VC-23 + VC-24** (un run) → **VC-26** (un run) → **AVIS** →
   **VC-PUBLIER**. POL-1d (déverrouillage en play) **après** la version candidate, dans une version séparée.
