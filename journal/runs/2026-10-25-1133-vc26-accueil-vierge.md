@@ -7,7 +7,7 @@
 - « Test — émulateur Samsung Galaxy A56 » **rouge sur `d2718a8`** (job API 35 seul : « Variante play : premier écran
   non affiché après 90 s ») alors que ce commit ne touche que le journal et que le même code (`3fab5a6`) était vert
   sur les deux émulateurs ; API 36 vert sur `d2718a8`. Jugé instabilité de l'émulateur (démarrage lent : « Unable to
-  connect to adb daemon », snapshot non chargé) → **une seule relance** des jobs en échec (résultat plus bas).
+  connect to adb daemon », snapshot non chargé) → **une seule relance** des jobs en échec : **verte** (instabilité confirmée, rien à corriger).
 
 ## Ce qui a été fait (VC-26)
 - `MeasureTiles` : si aucune des trois mesures n'a de valeur, **une seule ligne** sur surface neutre « Sommeil, cœur
