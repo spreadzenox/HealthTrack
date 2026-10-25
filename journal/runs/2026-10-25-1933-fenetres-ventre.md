@@ -23,7 +23,7 @@
   5 jeux nuls sans lien, « trop tôt » sur 3 jours, comptage des combinaisons, entrées invalides ignorées.
 - Mesure hors dépôt (40 graines, 6 semaines) : puissance 24/40, autre fenêtre 2/40, jeux nuls avec un lien 3/40
   (< 1/10 visé par I133). En 9 semaines : 8/10.
-- Vitest, lint, build, `npm run visual` : voir l'annexe.
+- Vitest 2 222 verts, build OK, lint 6 erreurs (inchangé), `npm run visual` sans erreur JS (aucun écran touché).
 
 ## Suite
 - I133 : seuil N et q choisis par simulation (permutation par blocs de jours, autocorrélation), puis I134 (repas du
