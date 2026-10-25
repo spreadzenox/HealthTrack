@@ -749,11 +749,12 @@ par minute de la montre contiennent des champs que personne n'a encore identifi�
 l'un d'eux est probablement le nombre d'**étages** (ou le dénivelé). Halcya les met maintenant de côté (jamais dans
 vos données) et écrit, à chaque synchro, **une ligne par jour** dans le journal de la synchro, en nombres seulement :
 « bits inconnus des minutes (étages ?) 24/10 : 1/0x10 42 min Σ 318, 1/0x20 12 min Σ 96 ». **👉 À tester** (sur la
-v267, quand elle sera publiée) : un jour où vous montez des escaliers, notez le nombre d'**étages** affiché par la
+v267) : un jour où vous montez des escaliers, notez le nombre d'**étages** affiché par la
 montre (ou Huawei Santé) ; le soir, ouvrez le mode diagnostic (7 touches sur la version), « Synchroniser la montre »,
 « Enregistrer le journal », et envoyez-moi la ligne « bits inconnus » du jour avec votre chiffre d'étages : si une
 somme colle (Σ ou nombre de minutes), on saura lequel décoder et l'afficher. Prochain run de code : POL-1d si P28 est
-faite, sinon les séances relues app fermée (M7b).
+faite, sinon les séances relues app fermée (M7b). Publié : **v267** (33,8 Mo) et la version play en test interne ; tous
+les tests verts.
 
 **Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
 prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK
