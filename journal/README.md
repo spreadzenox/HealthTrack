@@ -794,6 +794,23 @@ en dessous de 8 notes avec et 8 sans l'aliment, la réponse est « trop tôt pou
 3 jeux sur 40 montrent un lien (sous l'objectif d'1 sur 10). Prochain run de code : **I133** (seuil fixé par
 simulation, permutation par blocs de jours) puis le branchement dans l'onglet Analyses.
 
+**Run « idées » du 25/10 20:33 — rendre les futures pistes du ventre solides face aux vraies données (rien de
+nouveau dans l'app).** ① **Un piège repéré avant l'affichage** : on mange souvent la même chose plusieurs jours de
+suite et le ventre a ses « mauvaises semaines » ; un test qui l'ignore peut accuser un aliment à tort (une simulation
+publiée : 4 fois sur 10 sans aucun effet réel). Parade retenue : une piste devra aussi passer un **test de décalage
+dans le temps** (publié en 2024, valable sans hypothèse de loi) — si l'aliment « explique » aussi bien votre ventre
+quelques jours plus tôt ou plus tard, ce n'est pas une piste. ② Le seuil « trop tôt pour dire » sera réglé sur
+**4 types de fausses données réalistes** (mauvaises passes, aliments en série, notes surtout les mauvais moments,
+notes juste après les repas). ③ Idée : **« Et votre ventre aujourd'hui ? »** en un geste le soir (si vous avez choisi
+« Mon ventre »), pour que les journées calmes comptent aussi. ④ **L'effet d'attente** est fort dans le SII (essai
+2025 : symptômes presque aussi fréquents avec une barre factice qu'avec du gluten) → l'app le dira simplement, et la
+réintroduction guidée pourra se faire **« à l'aveugle avec un proche »** (aucun concurrent ne le propose). ⑤ **Fiche
+Play à corriger au prochain run de code** : elle dit encore « tout s'efface en désinstallant l'app » alors que vous
+avez choisi de garder la sauvegarde Android, et parle de l'onglet « Pistes » (devenu « Analyses ») ; on y ajoutera
+aussi « côlon irritable (SII) » et « journal alimentaire », les mots que les gens tapent. Détail : [`IDEES.md`](IDEES.md)
+I168–I172. **👉 Votre prochaine action la plus utile** : inviter les testeurs (voir en tête) dès que Google a fini
+d'examiner la version alpha ; puis P28 quand vous voudrez la lecture au déverrouillage dans la version Play.
+
 **Run du 25/10 15:33 — petites finitions et preuve du registre des crédits (VC-20, CREDITS-LOG, PLAY-COMPLETED).**
 Ce que vous verrez (prochaine version) : les étiquettes d'habitudes (Alcool, Voyage, Café après 14 h…) **n'affichent plus
 d'émoji** dans le Journal, le radar forme (« Probablement lié à « Alcool » (hier)… ») et la note de bien-être à la main ;
@@ -1608,6 +1625,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 17:33 CET — [CREDITS-INSTALLS : nouvelles installations comptées](runs/2026-10-25-1733-credits-installs.md) | 🧭 | le relais journalise sans identifiant le 1er crédit IA d'une installation jamais vue (CI exclue) ; le résumé du workflow relais les compte par jour ; relais 81 tests, 2 207 Vitest |
 | 25/10 18:33 CET — [I160 : aucun prix en dur](runs/2026-10-25-1833-prix-en-dur.md) | 🧭 | test-garde : aucun prix écrit à la main dans la fiche Play, `public/*.html`, les textes de l'app ni les Nouveautés ; `stripComments` rangé dans `wordingRules.js` ; suivi #374 (v277) intégré, #375 fermée ; 2 210 Vitest |
 | 25/10 19:33 CET — [I132 : fenêtres repas → ventre](runs/2026-10-25-1933-fenetres-ventre.md) | 🧭 | `gutWindows.js` : 3 fenêtres fixées d'avance (0–4, 4–24, 24–48 h) et leurs hypothèses de départ, Fisher exact + BH, « trop tôt » sous 8/8 notes ; simulation : effet à 6 h repéré 8/10 en 9 semaines, jamais ailleurs ; nul : 3/40 ; aucun écran touché ; 2 222 Vitest |
+| 25/10 20:33 CET — [Idées : pistes ventre robustes](runs/2026-10-25-2033-idees-pistes-ventre-robustes.md) | 💡 | I168 porte TTS (décalage tronqué, u ≤ 0,1 en plus de BH) ; I169 N calibré sur 4 nulles réalistes ; I170 bilan du ventre du soir ; I171 effet d'attente visible, réintroduction « à l'aveugle avec un proche » ; I172 fiche Play (« s'efface en désinstallant », « Pistes ») → LISTING-1 ; journal seul |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

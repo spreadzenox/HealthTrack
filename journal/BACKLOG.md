@@ -326,7 +326,12 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   statistique (« pas encore assez de données ») — [x] **I132** (FAIT le 25/10 19:33 CET, `services/gutWindows.js`, pas encore affiché) 3 fenêtres fixées d'avance (0–4 h « réflexe après le
   repas », 4–24 h, 24–48 h), normes par groupe = hypothèses affichées ; [ ] **I133** seuil N jours exposés / non
   exposés choisi par simulation (< 1 jeu sans effet sur 10 avec une piste), permutation par blocs + BH, nombre de
-  combinaisons en détails ; [ ] **I134** covariables sommeil / stress / écran, repas du même jour estimés ensemble ;
+  combinaisons en détails — **précisé le 25/10 20:33** (`IDEES.md` I168–I169) : [ ] **I168** porte « décalage temporel
+  tronqué » (TTS, Yuan & Shou 2024) sur les séries journalières, u ≤ 0,1 en plus de BH, sans enroulement, r = 9 (> 18 j)
+  ou 19 (> 38 j) ; [ ] **I169** N calibré sur 4 nulles réalistes (dérive AR(1), aliments en séries, saisie informative,
+  notes après les repas) ; [ ] **I170** bilan du ventre du soir en un geste (objectif « Mon ventre », `scope: 'day'`) ;
+  [ ] **I171** effet d'attente visible (part des notes prises dans les 2 h après le repas, option « à l'aveugle avec un
+  proche » de la réintroduction) ; [ ] **I134** covariables sommeil / stress / écran, repas du même jour estimés ensemble ;
   symptômes digestifs stockés **localement** (aucun type Health Connect)
 - [ ] **6 Play Billing, paywalls (soft + au moment de la valeur), crédits IA** ; puis **relais Cloud Run → Vertex AI
   (europe-west1)** sous l'identité `relay-runtime`, **aucune clé API** ; Flash-Lite, EXIF retiré, rien stocké, Play
@@ -1128,6 +1133,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 25/10 (20:33 Paris, run « idées »)** : [ ] **LISTING-1** (I172, court, à faire en premier) — la fiche
+Play `app/store/listing/fr-FR/full-description.txt` dit encore « tout s'efface en désinstallant l'app » (faux depuis la
+sauvegarde Android conservée le 24/10 : écrire qu'une copie peut rester dans la sauvegarde Google du téléphone, comme la
+page de confidentialité) et parle de l'onglet « Pistes » (→ « Analyses ») ; ajouter naturellement « côlon irritable
+(SII) », « journal alimentaire », « hypothèses FODMAP » (sans liste de mots-clés) ; test-garde. Puis jalon 5 dans
+l'ordre **I168 → I169 → I170 → affichage des pistes ventre dans Analyses (avec I171 a/b) → I134**. POL-1d attend P28.
 
 **Mise à jour du 25/10 (08:33 Paris, run « idées »)** : polissage du 24/10 livré (POL-1d attend P28). Audit de la
 version candidate → 6 petits défauts (VC-22 à VC-27) + AVIS, puis **VC-PUBLIER** (alpha + période de lancement).
