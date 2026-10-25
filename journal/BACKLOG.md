@@ -323,7 +323,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   [x] **I130** (FAIT avec le 4b, 23/10 11:30) « Vos 30 derniers jours » dès l'octroi Health Connect, **sans** permission d'historique (30 j lisibles
   d'office), chaque chiffre avec sa source ; permission de notifications demandée après un geste, pas d'emblée
 - [ ] **5 Analyses avec délais (2–48 h) repas → symptômes** + saisie de symptômes digestifs horodatée + honnêteté
-  statistique (« pas encore assez de données ») — [ ] **I132** 3 fenêtres fixées d'avance (0–4 h « réflexe après le
+  statistique (« pas encore assez de données ») — [x] **I132** (FAIT le 25/10 19:33 CET, `services/gutWindows.js`, pas encore affiché) 3 fenêtres fixées d'avance (0–4 h « réflexe après le
   repas », 4–24 h, 24–48 h), normes par groupe = hypothèses affichées ; [ ] **I133** seuil N jours exposés / non
   exposés choisi par simulation (< 1 jeu sans effet sur 10 avec une piste), permutation par blocs + BH, nombre de
   combinaisons en détails ; [ ] **I134** covariables sommeil / stress / écran, repas du même jour estimés ensemble ;

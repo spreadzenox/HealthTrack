@@ -784,6 +784,16 @@ aujourd'hui. Le suivi du run de 17:33 est aussi rangé : relais redéployé, **v
 0 sur 7 jours » (le compteur démarre). **👉 Votre prochaine action la plus utile** reste d'inviter les testeurs (encadré en
 tête), puis P28 quand vous voudrez la lecture au déverrouillage en play.
 
+**Run du 25/10 19:33 — premières briques des analyses repas → ventre (jalon 5, I132).** Rien de nouveau à l'écran.
+En coulisses : un nouveau moteur relie chaque **note du ventre** (Calme / Gêne / Douleur) aux aliments des repas pris
+**avant** elle, dans **trois fenêtres fixées d'avance** : 0–4 h (souvent le réflexe de l'intestin après le repas),
+4–24 h et 24–48 h. Les repères FODMAP par groupe (fructanes 4–24 h, polyols 24–48 h…) ne sont que des **hypothèses de
+départ** affichées comme telles ; seules vos données décident. Test exact + correction pour toutes les comparaisons ;
+en dessous de 8 notes avec et 8 sans l'aliment, la réponse est « trop tôt pour dire ». Sur des données simulées
+(jamais réelles) : un effet à 6 h est repéré 8 fois sur 10 en 9 semaines, toujours dans la bonne fenêtre ; sans effet,
+3 jeux sur 40 montrent un lien (sous l'objectif d'1 sur 10). Prochain run de code : **I133** (seuil fixé par
+simulation, permutation par blocs de jours) puis le branchement dans l'onglet Analyses.
+
 **Run du 25/10 15:33 — petites finitions et preuve du registre des crédits (VC-20, CREDITS-LOG, PLAY-COMPLETED).**
 Ce que vous verrez (prochaine version) : les étiquettes d'habitudes (Alcool, Voyage, Café après 14 h…) **n'affichent plus
 d'émoji** dans le Journal, le radar forme (« Probablement lié à « Alcool » (hier)… ») et la note de bien-être à la main ;
@@ -1597,6 +1607,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 16:33 CET — [VC-21 : erreurs du premier lancement play](runs/2026-10-25-1633-vc21-premier-lancement.md) | 🧭 | les 2 « [object Object] » = refus natifs gérés : plus d'appel Bluetooth à l'ouverture sans montre appairée dans l'app ; refus Play Billing propre à l'émulateur ; résumé émulateur lisible ; v276 ; 2 207 Vitest |
 | 25/10 17:33 CET — [CREDITS-INSTALLS : nouvelles installations comptées](runs/2026-10-25-1733-credits-installs.md) | 🧭 | le relais journalise sans identifiant le 1er crédit IA d'une installation jamais vue (CI exclue) ; le résumé du workflow relais les compte par jour ; relais 81 tests, 2 207 Vitest |
 | 25/10 18:33 CET — [I160 : aucun prix en dur](runs/2026-10-25-1833-prix-en-dur.md) | 🧭 | test-garde : aucun prix écrit à la main dans la fiche Play, `public/*.html`, les textes de l'app ni les Nouveautés ; `stripComments` rangé dans `wordingRules.js` ; suivi #374 (v277) intégré, #375 fermée ; 2 210 Vitest |
+| 25/10 19:33 CET — [I132 : fenêtres repas → ventre](runs/2026-10-25-1933-fenetres-ventre.md) | 🧭 | `gutWindows.js` : 3 fenêtres fixées d'avance (0–4, 4–24, 24–48 h) et leurs hypothèses de départ, Fisher exact + BH, « trop tôt » sous 8/8 notes ; simulation : effet à 6 h repéré 8/10 en 9 semaines, jamais ailleurs ; nul : 3/40 ; aucun écran touché |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |
