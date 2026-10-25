@@ -764,7 +764,7 @@ Journal → Jours à l'ouverture suivante. Comme pour le reste, rien n'est deman
 synchro app ouverte n'a pas lu ses séances. **👉 À tester** (sur la v268) : ouvrez l'app une fois et synchronisez,
 fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app plus tard sans toucher « Synchroniser » :
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
-A.1 / A.2 du chantier montre. Tous les tests verts.
+A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
 **Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
 prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK

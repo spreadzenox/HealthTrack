@@ -26,3 +26,7 @@
 - À confirmer sur la GT 6 Pro : une séance faite app fermée doit apparaître avec FC moyenne et allure à
   l'ouverture suivante (après au moins une synchro app ouverte sur la v268).
 - Étages (M4 bis) dès que le propriétaire a comparé une journée ; POL-1d dès P28 ; puis A.1 / A.2 du chantier montre.
+
+## Après le merge (#355, `c6bc7e1`)
+- Checks de la PR tous verts du premier coup (Vitest, Build APK, relais, protocole montre Java, perf, émulateurs API 35 et 36).
+- Sur main : « Tests », « Build & Release » (**v268**, APK 33 769 796 octets, 33,8 Mo), « Play — AAB » (test interne) et émulateur verts.
