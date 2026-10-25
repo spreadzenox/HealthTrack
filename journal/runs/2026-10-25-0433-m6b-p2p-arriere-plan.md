@@ -27,3 +27,7 @@
 ## Suite
 - À confirmer sur la GT 6 Pro (VFC de journée / température plus récentes que la dernière ouverture).
 - POL-1d dès que P28 est faite ; sinon M7 (séances : FC et allure).
+
+## Après le merge (#349, `1ac39a3`)
+- Checks de la PR tous verts du premier coup (Vitest, Build APK, relais, protocole montre Java, perf, émulateurs API 35 et 36).
+- Sur main : « Tests », « Build & Release » (**v265**, APK 33 767 304 octets, 33,8 Mo) et « Play — AAB » (test interne) verts.

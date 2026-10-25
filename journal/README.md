@@ -731,7 +731,7 @@ app ouverte** (preuve que votre montre la fournit). Rien ne change à l'écran. 
 l'app une fois avec la montre, puis laissez-la fermée quelques heures ; à la réouverture, Sources → montre → « Données
 de la montre » doit montrer une **VFC de journée** et une **température** plus récentes que votre dernière ouverture.
 Prochain run de code : M7 (séances : FC et allure), sauf si P28 est faite (on allume alors la lecture au déverrouillage
-dans la version play).
+dans la version play). Publié : **v265** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
 **Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
 prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK
