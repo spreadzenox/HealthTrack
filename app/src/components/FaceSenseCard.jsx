@@ -6,6 +6,9 @@
  * Logique dans services/faceSense.js, natif dans FaceSenseService.java / FaceSensePlugin.java.
  * Variante play (`appOpen`, journal/PLAY-CONFORMITE.md option B) : pas de service ; la lecture a lieu à l'ouverture
  * de l'app (services/faceAppOpen.js), donc ni « Relancer », ni batterie, ni accès permanent à la caméra.
+ * Variante play avec l'interrupteur de build faceUnlockPlay (POL-1b, journal/PLAY-CONFORMITE.md §1 bis) : en plus, un
+ * interrupteur « Aussi à chaque déverrouillage », derrière sa divulgation, qui démarre le service app ouverte ; il ne
+ * reprend jamais tout seul (« Reprendre » après un redémarrage), et « Désactiver » coupe tout.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import MethodNote from './MethodNote'
@@ -25,7 +28,11 @@ import {
   prepareFaceAffect,
   isSamsungDevice,
   openFaceNeverSleep,
+  describeFaceUnlock,
+  startFaceUnlock,
+  stopFaceUnlock,
 } from '../services/faceSense'
+import { eveningNotePlugin } from '../services/eveningNote'
 import { FACE_BURST_TYPE, faceDailyCounts, faceHistorySummary, getLastFaceImport, importPendingFaceBursts } from '../services/faceBursts'
 import { describeGate, evaluateGate, gateDays } from '../services/mood/gate'
 import { describeFaceMood, faceMoodEstimate, testReadingEstimate } from '../services/mood/faceMood'
@@ -40,6 +47,7 @@ import { FEATURES } from '../config/distribution'
 import { readFaceOnOpen } from '../services/faceAppOpen'
 import { APP_NAME } from '../config/brand'
 import './MyDevices.css'
+import '../pages/Connectors.css'
 import './WeatherCard.css'
 
 async function defaultSave(json, filename) {
@@ -138,7 +146,7 @@ function frenchDate(iso) {
 }
 
 /**
- * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function, loadEveningNote?: Function, loadVoice?: Function, appOpen?: boolean, readOnOpen?: Function }} props
+ * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function, loadEveningNote?: Function, loadVoice?: Function, appOpen?: boolean, readOnOpen?: Function, notifyPlugin?: object|null }} props
  */
 export default function FaceSenseCard({
   plugin = faceSensePlugin(),
@@ -149,6 +157,7 @@ export default function FaceSenseCard({
   loadVoice = probeVoice,
   appOpen = FEATURES.faceAppOpen,
   readOnOpen = readFaceOnOpen,
+  notifyPlugin = eveningNotePlugin(),
 }) {
   const [status, setStatus] = useState(null)
   const [history, setHistory] = useState(null)
@@ -209,6 +218,48 @@ export default function FaceSenseCard({
     await activate()
   }
 
+  /** Variante play : lecture au déverrouillage, toujours derrière sa divulgation (et seulement app ouverte). */
+  async function unlockOn() {
+    if (!(await askConsent('camera_unlock'))) return
+    setBusy(true)
+    setMessage(null)
+    try {
+      const res = await startFaceUnlock(plugin, { notify: notifyPlugin })
+      if (!res.permission) setMessage('Accès à la caméra refusé : rien n’a été activé.')
+      else if (!res.started) setMessage('Android a refusé de démarrer la lecture. Réessayez app ouverte.')
+      else if (res.notifications === false) {
+        setMessage('Notifications refusées : la lecture marche, mais sa notification ne s’affiche que dans le gestionnaire de tâches d’Android.')
+      }
+      await new Promise((r) => setTimeout(r, 400))
+      await refresh()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function resumeUnlock() {
+    setBusy(true)
+    setMessage(null)
+    try {
+      const res = await startFaceUnlock(plugin, { notify: notifyPlugin })
+      if (!res.started) setMessage('Android a refusé de reprendre la lecture. Réessayez app ouverte.')
+      await new Promise((r) => setTimeout(r, 400))
+      await refresh()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function unlockOff() {
+    setBusy(true)
+    try {
+      await stopFaceUnlock(plugin)
+      await refresh()
+    } finally {
+      setBusy(false)
+    }
+  }
+
   async function turnOff() {
     setBusy(true)
     try {
@@ -266,6 +317,7 @@ export default function FaceSenseCard({
   }
 
   const d = describeFaceSense(status)
+  const unlock = appOpen ? describeFaceUnlock(status) : null
   const available = plugin != null
   // Réglages propres au service en arrière-plan (One UI, batterie, accès permanent) : sans objet en play.
   const samsung = !appOpen && isSamsungDevice(status)
@@ -382,6 +434,35 @@ export default function FaceSenseCard({
               : ''}
             {describeGate(history?.gate)}
           </p>
+          {unlock && (
+            <div className="face-unlock">
+              <div className="face-unlock-row">
+                <span id="face-unlock-label" className="face-unlock-label">Aussi à chaque déverrouillage</span>
+                <label className="connector-toggle">
+                  <input
+                    type="checkbox"
+                    role="switch"
+                    aria-labelledby="face-unlock-label"
+                    aria-checked={unlock.state !== 'off'}
+                    checked={unlock.state !== 'off'}
+                    onChange={() => (unlock.state === 'off' ? unlockOn() : unlockOff())}
+                    disabled={busy}
+                  />
+                  <span className="toggle-track"><span className="toggle-thumb" /></span>
+                </label>
+              </div>
+              <p className="my-device-meta">
+                {unlock.state === 'on' && 'Lecture au déverrouillage active : une notification l’indique, avec « Arrêter ».'}
+                {unlock.state === 'off' && 'Bien plus de lectures par jour, sans ouvrir l’app. Une notification reste affichée tant que c’est en marche.'}
+                {unlock.state === 'paused' && 'Lecture au déverrouillage en pause : Android l’a arrêtée (redémarrage, mise à jour…). Elle ne reprend que par votre geste.'}
+              </p>
+              {unlock.state === 'paused' && (
+                <div className="my-device-actions">
+                  <button type="button" className="btn btn-primary connector-btn" onClick={resumeUnlock} disabled={busy}>Reprendre</button>
+                </div>
+              )}
+            </div>
+          )}
           {!appOpen && !status.batteryExempt && (
             <p className="my-device-meta">
               Pour qu’Android ne coupe pas la lecture en arrière-plan, autorisez {APP_NAME} sans restriction de

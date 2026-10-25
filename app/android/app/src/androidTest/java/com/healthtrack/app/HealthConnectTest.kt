@@ -164,7 +164,7 @@ class HealthConnectTest {
             ),
             metadata = HealthMetadata.unknownRecordingMethod(),
         )
-        client.insertRecords(listOf(sleepRecord))
+        insertTolerantOfConflict(listOf(sleepRecord))
 
         val response = client.readRecords(
             ReadRecordsRequest(
@@ -181,6 +181,23 @@ class HealthConnectTest {
         )
         val inserted = response.records.first()
         assertNotEquals("La durée de sommeil ne doit pas être nulle", sleepStart, inserted.endTime)
+    }
+
+    /**
+     * Health Connect d'Android 16 (émulateur API 36) répond parfois « Conflict found, but couldn't read the entry » à
+     * une insertion de sommeil pourtant neuve (vu par intermittence depuis le 11/10, journal/BACKLOG.md). Ce n'est pas
+     * le comportement de l'app (elle ne fait que lire) : on réessaie deux fois, puis on laisse la relecture juger.
+     */
+    private suspend fun insertTolerantOfConflict(records: List<androidx.health.connect.client.records.Record>) {
+        repeat(3) { attempt ->
+            try {
+                client.insertRecords(records)
+                return
+            } catch (e: IllegalStateException) {
+                if (e.message?.contains("Conflict found") != true) throw e
+                if (attempt < 2) kotlinx.coroutines.delay(500L * (attempt + 1))
+            }
+        }
     }
 
     // ── Full connector smoke test ─────────────────────────────────────────────

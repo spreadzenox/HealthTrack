@@ -101,3 +101,22 @@
   font-size: 0.85rem;
   line-height: 1.45;
 }
+
+/* Lecture au déverrouillage de la variante play (POL-1b) : une ligne « libellé · interrupteur ». */
+.face-unlock {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.face-unlock-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+}
+
+.face-unlock-label {
+  font-weight: 600;
+}

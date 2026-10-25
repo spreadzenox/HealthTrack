@@ -37,6 +37,21 @@ export const DISCLOSURES = {
     accept: 'J’accepte, autoriser la caméra',
     decline: 'Pas maintenant',
   },
+  // Variante play avec l'interrupteur faceUnlockPlay (POL-1, journal/PLAY-CONFORMITE.md §1 bis) : la lecture au
+  // déverrouillage s'ajoute à celle de l'ouverture ; elle ne démarre que par ce geste, app ouverte.
+  camera_unlock: {
+    title: 'Avant la lecture à chaque déverrouillage',
+    points: [
+      'À chaque déverrouillage du téléphone, la caméra frontale prend 3 images de votre visage, en une à deux secondes. Le témoin vert de la caméra d’Android s’allume.',
+      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être. Une estimation, pas un diagnostic.',
+      'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
+      'Une notification « Lecture du visage active » reste affichée tant que c’est en marche, avec un bouton « Arrêter ». Vous pouvez aussi couper ici à tout moment.',
+      `Après un redémarrage du téléphone, rien ne reprend tout seul : il faudra rouvrir ${APP_NAME}.`,
+    ],
+    leaves: 'Rien ne quitte le téléphone : ni image, ni mesure.',
+    accept: 'J’accepte, lire au déverrouillage',
+    decline: 'Pas maintenant',
+  },
   // Onboarding (jalon 4b) et Sources : lecture seule de Health Connect.
   health_connect: {
     title: 'Avant d’autoriser Health Connect',

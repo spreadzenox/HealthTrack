@@ -68,6 +68,59 @@ describe('FaceSenseCard', () => {
     expect(screen.queryByText(/Shizuku/)).not.toBeInTheDocument()
   })
 
+  it('variante play avec l’interrupteur (POL-1b) : « Aussi à chaque déverrouillage » après divulgation, notifications demandées', async () => {
+    const plugin = fake({ ...base, running: false, mode: 'app_open', unlockAvailable: true, unlock: false, dayAppOpens: 1, dayAppOpenFaces: 1 })
+    plugin.start.mockImplementation(async (opts) => {
+      if (opts?.unlock) plugin.status.mockImplementation(async () => ({ ...base, mode: 'app_open', unlockAvailable: true, unlock: true, running: true }))
+      return { started: true, permission: true }
+    })
+    plugin.stopUnlock = vi.fn(async () => {
+      plugin.status.mockImplementation(async () => ({ ...base, mode: 'app_open', unlockAvailable: true, unlock: false, running: false }))
+    })
+    const notify = { requestNotifications: vi.fn(async () => ({ asked: true, notifications: true })) }
+    render(<FaceSenseCard plugin={plugin} appOpen notifyPlugin={notify} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    const toggle = await screen.findByRole('switch', { name: /Aussi à chaque déverrouillage/ })
+    expect(toggle).toHaveAttribute('aria-checked', 'false')
+    fireEvent.click(toggle)
+    expect(await screen.findByText(/Une notification « Lecture du visage active »/)).toBeInTheDocument()
+    expect(screen.getByText(/reconnaissance des émotions/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'J’accepte, lire au déverrouillage' }))
+    await waitFor(() => expect(plugin.start).toHaveBeenCalledWith({ unlock: true }))
+    expect(notify.requestNotifications).toHaveBeenCalled()
+    await waitFor(() => expect(screen.getByRole('switch', { name: /Aussi à chaque déverrouillage/ })).toHaveAttribute('aria-checked', 'true'))
+    expect(screen.queryByText(/Shizuku/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Sans restriction' })).not.toBeInTheDocument()
+    // Couper : seule la lecture au déverrouillage s'arrête, la lecture à l'ouverture reste active.
+    fireEvent.click(screen.getByRole('switch', { name: /Aussi à chaque déverrouillage/ }))
+    await waitFor(() => expect(plugin.stopUnlock).toHaveBeenCalled())
+    expect(plugin.stop).not.toHaveBeenCalled()
+    await waitFor(() => expect(screen.getByRole('switch', { name: /Aussi à chaque déverrouillage/ })).toHaveAttribute('aria-checked', 'false'))
+  })
+
+  it('variante play : « Pas maintenant » ne démarre rien ; arrêtée par Android → « Reprendre »', async () => {
+    const plugin = fake({ ...base, running: false, mode: 'app_open', unlockAvailable: true, unlock: false })
+    render(<FaceSenseCard plugin={plugin} appOpen notifyPlugin={null} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    fireEvent.click(await screen.findByRole('switch', { name: /Aussi à chaque déverrouillage/ }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Pas maintenant' }))
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Pas maintenant' })).not.toBeInTheDocument())
+    expect(plugin.start).not.toHaveBeenCalled()
+  })
+
+  it('variante play : préférence gardée mais service arrêté (redémarrage) → « Reprendre » app ouverte', async () => {
+    const plugin = fake({ ...base, running: false, mode: 'app_open', unlockAvailable: true, unlock: true })
+    render(<FaceSenseCard plugin={plugin} appOpen notifyPlugin={null} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText(/Lecture au déverrouillage en pause/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Reprendre' }))
+    await waitFor(() => expect(plugin.start).toHaveBeenCalledWith({ unlock: true }))
+  })
+
+  it('variante play sans l’interrupteur de build : pas de ligne « déverrouillage »', async () => {
+    const plugin = fake({ ...base, running: false, mode: 'app_open', dayAppOpens: 1, dayAppOpenFaces: 1 })
+    render(<FaceSenseCard plugin={plugin} appOpen importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText('Active')).toBeInTheDocument()
+    expect(screen.queryByRole('switch')).not.toBeInTheDocument()
+  })
+
   it('active : comptes, jamais de score ; diagnostic et désactivation', async () => {
     const plugin = fake({ ...base, values: { smile: 0.42 }, lastOutcome: 'face' })
     const save = vi.fn(async () => 'ok enregistré')

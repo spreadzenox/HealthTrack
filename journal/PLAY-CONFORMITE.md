@@ -69,7 +69,7 @@ de l'app (bien plus de lectures par jour). L'option B (lecture à l'ouverture) r
 2. Activation **seulement** par un geste : Sources → Lecture du visage → interrupteur « Aussi à chaque déverrouillage »
    → feuille de divulgation (ce qui est lu : 3 images de la caméra frontale à chaque déverrouillage ; quand : seulement
    tant que la notification est là ; ce qui est gardé : quelques nombres, aucune image ; un système d'IA de
-   reconnaissance des émotions, art. 50 AI Act ; une estimation, pas un diagnostic) → bouton « J'active la lecture au
+   reconnaissance des émotions, art. 50 AI Act ; une estimation, pas un diagnostic) → bouton « J’accepte, lire au
    déverrouillage » / « Pas maintenant ».
 3. **Notification permanente** « Lecture du visage active » avec le bouton **« Arrêter »** ; l'indicateur caméra vert
    d'Android s'allume à chaque lecture.
@@ -83,6 +83,17 @@ allumé, il choisit `src/playFaceUnlock/AndroidManifest.xml` (service caméra ga
 `BuildConfig.FACE_UNLOCK` ; `FACE_KEEPALIVE` reste faux en play. L'APK d'aperçu (`-PplayPreview=true`,
 `fr.jpesquet.sante.apercu`) est l'artefact `halcya-apercu-deverrouillage` du workflow « Test — émulateur Samsung
 Galaxy A56 ». Reste POL-1b (écran d'activation et divulgation) avant de filmer.
+
+**État au 25/10 02:33 CET (POL-1b)** : côté app, la carte Lecture du visage de la variante play montre, seulement si
+le natif annonce `unlockAvailable` (APK d'aperçu ou interrupteur allumé), une ligne « Aussi à chaque déverrouillage »
+avec un interrupteur. L'allumer ouvre la divulgation `camera_unlock` (3 images à chaque déverrouillage, témoin vert,
+IA de reconnaissance des émotions, nombres seulement, notification « Lecture du visage active » avec « Arrêter »,
+aucune reprise après un redémarrage) ; « J’accepte, lire au déverrouillage » démarre le service app à l'écran
+(`start({ unlock: true })`) puis demande l'autorisation des notifications (Android 13+). L'éteindre ne coupe que le
+déverrouillage (`stopUnlock`) ; « Désactiver » coupe tout. Service arrêté par Android (redémarrage, mise à jour) →
+« en pause » + bouton « Reprendre », jamais de reprise automatique. Ni Shizuku / ADB ni batterie en play. **L'APK
+d'aperçu est prêt à filmer pour P28.** Reste au code : un raccourci « couper » dans Paramètres (le point 4 le
+prévoit ; la carte et la notification suffisent pour la vidéo).
 
 ### P28 — texte exact à coller dans la Play Console
 
@@ -122,7 +133,7 @@ l'enregistreur s'arrête quand l'écran se verrouille, filmez les étapes 6 et 7
 1. Écran d'accueil → ouvrir **Halcya** (2 s sur l'Accueil).
 2. Onglet **Sources** → carte **Lecture du visage** → interrupteur **« Aussi à chaque déverrouillage »**.
 3. La **feuille d'explication** s'ouvre : la faire défiler lentement jusqu'en bas (3 à 4 s), toucher
-   **« J'active la lecture au déverrouillage »**.
+   **« J’accepte, lire au déverrouillage »**.
 4. Si Android le demande : autoriser la **caméra** (« Pendant l'utilisation de l'app ») et les **notifications**.
 5. Tirer le volet des notifications : montrer **« Lecture du visage active »** et son bouton **« Arrêter »** (2 s).
 6. Verrouiller le téléphone (bouton latéral), attendre 2 s, **déverrouiller** en regardant l'écran : le **point vert

@@ -11,7 +11,7 @@
  * dans Connecteurs dès l'ouverture, sans attendre le plugin.
  */
 import { registerPlugin } from '@capacitor/core'
-import { eveningNoteDiagnostic } from './eveningNote'
+import { eveningNoteDiagnostic, eveningNotePlugin } from './eveningNote'
 import { voiceProbeDiagnostic, voiceProbeLine } from './voiceProbe'
 
 const KEY = 'healthtrack_face_sense'
@@ -109,6 +109,50 @@ export async function readFaceNow(plugin = faceSensePlugin()) {
 /** Le natif lit-il à l'ouverture de l'app (play) plutôt qu'au déverrouillage (sideload, ou ancienne version) ? */
 export function isAppOpenMode(status) {
   return status?.mode === 'app_open'
+}
+
+/**
+ * Variante play avec l'interrupteur de build faceUnlockPlay (POL-1, journal/PLAY-CONFORMITE.md §1 bis) : la lecture
+ * au déverrouillage s'ajoute à la lecture à l'ouverture, qui reste le secours. null si elle n'existe pas dans cette
+ * version ; sinon 'off', 'on' (service en marche, notification visible) ou 'paused' (activée, mais Android a arrêté
+ * le service : redémarrage, mise à jour… ; il ne repart qu'app ouverte, par un geste).
+ */
+export function describeFaceUnlock(status) {
+  if (!isAppOpenMode(status) || status.unlockAvailable !== true) return null
+  if (status.unlock !== true) return { state: 'off' }
+  return { state: status.running ? 'on' : 'paused' }
+}
+
+/**
+ * Démarre la lecture au déverrouillage (app à l'écran) puis demande l'autorisation des notifications (Android 13+) :
+ * la notification permanente « Lecture du visage active » doit se voir. Rend { started, permission, notifications? }.
+ */
+export async function startFaceUnlock(plugin = faceSensePlugin(), { notify = eveningNotePlugin() } = {}) {
+  if (!plugin?.start) return { started: false, permission: false, error: 'unavailable' }
+  let res
+  try {
+    res = (await plugin.start({ unlock: true })) || {}
+  } catch (e) {
+    return { started: false, permission: true, error: String(e?.message || e) }
+  }
+  const out = { started: !!res.started, permission: res.permission !== false }
+  if (!out.started) return res.error ? { ...out, error: res.error } : out
+  try {
+    const ask = await notify?.requestNotifications?.()
+    if (ask && typeof ask.notifications === 'boolean') out.notifications = ask.notifications
+  } catch {
+    /* sans autorisation, Android garde la notification dans le gestionnaire de tâches */
+  }
+  return out
+}
+
+/** Coupe la seule lecture au déverrouillage ; la lecture à l'ouverture de l'app continue. */
+export async function stopFaceUnlock(plugin = faceSensePlugin()) {
+  try {
+    await plugin?.stopUnlock?.()
+  } catch {
+    /* service déjà arrêté */
+  }
 }
 
 /**

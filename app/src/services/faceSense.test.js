@@ -17,6 +17,9 @@ import {
   openFaceNeverSleep,
   readFaceNow,
   isAppOpenMode,
+  describeFaceUnlock,
+  startFaceUnlock,
+  stopFaceUnlock,
 } from './faceSense'
 
 const active = {
@@ -422,5 +425,40 @@ describe('cause de l’arrêt et « Applis jamais en veille » (signalement du 1
     expect(await openFaceNeverSleep({ openNeverSleep: async () => ({ opened: 'samsung' }) })).toBe('samsung')
     expect(await openFaceNeverSleep({ openNeverSleep: async () => { throw new Error('x') } })).toBeNull()
     expect(await openFaceNeverSleep({})).toBeNull()
+  })
+})
+
+describe('lecture au déverrouillage de la variante play (POL-1b)', () => {
+  const play = { ...active, mode: 'app_open', running: false }
+
+  it('absente sans l’interrupteur de build ou hors play', () => {
+    expect(describeFaceUnlock(null)).toBeNull()
+    expect(describeFaceUnlock(play)).toBeNull()
+    expect(describeFaceUnlock({ ...active, unlockAvailable: true })).toBeNull()
+  })
+
+  it('off, on, ou en pause (préférence gardée, service arrêté)', () => {
+    expect(describeFaceUnlock({ ...play, unlockAvailable: true, unlock: false }).state).toBe('off')
+    expect(describeFaceUnlock({ ...play, unlockAvailable: true, unlock: true, running: true }).state).toBe('on')
+    expect(describeFaceUnlock({ ...play, unlockAvailable: true, unlock: true, running: false }).state).toBe('paused')
+  })
+
+  it('démarre avec { unlock: true } et demande les notifications (la notification permanente doit se voir)', async () => {
+    const plugin = { start: vi.fn(async () => ({ started: true, permission: true })) }
+    const notify = { requestNotifications: vi.fn(async () => ({ asked: true, notifications: true })) }
+    expect(await startFaceUnlock(plugin, { notify })).toEqual({ started: true, permission: true, notifications: true })
+    expect(plugin.start).toHaveBeenCalledWith({ unlock: true })
+    expect(notify.requestNotifications).toHaveBeenCalledTimes(1)
+  })
+
+  it('ne lève jamais, ne demande pas les notifications si le service ne démarre pas', async () => {
+    const notify = { requestNotifications: vi.fn() }
+    expect((await startFaceUnlock({ start: async () => { throw new Error('x') } }, { notify })).started).toBe(false)
+    expect((await startFaceUnlock({ start: async () => ({ started: false, permission: false }) }, { notify })).permission).toBe(false)
+    expect(notify.requestNotifications).not.toHaveBeenCalled()
+    expect((await startFaceUnlock(null)).started).toBe(false)
+    const stopUnlock = vi.fn(async () => { throw new Error('déjà arrêté') })
+    await expect(stopFaceUnlock({ stopUnlock })).resolves.toBeUndefined()
+    expect(stopUnlock).toHaveBeenCalled()
   })
 })

@@ -104,9 +104,12 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   **POL-1a FAIT le 25/10 02:30** (natif + CI, interrupteur coupé) : `-PfaceUnlockPlay` / `-PplayPreview`,
   `FACE_KEEPALIVE`, manifeste `src/playFaceUnlock` (parité testée), préférence `unlock` distincte de `enabled`,
   `stopUnlock`, notification d'importance basse en play, APK d'aperçu en artefact `halcya-apercu-deverrouillage`.
-  [ ] **POL-1b** (app) : interrupteur « Aussi à chaque déverrouillage » si `unlockAvailable`, divulgation, notifications,
-  réglage, pas de Shizuku / batterie en play ; [ ] P28 par le propriétaire ; [ ] allumer l'interrupteur dans « Play — AAB ».
-Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → ~~POL-8~~ (fait 25/10 01:30) → POL-1a (fait 25/10 02:30) → POL-1b (écran d'activation) → P28 → interrupteur allumé.
+  [x] **POL-1b FAIT le 25/10 02:33 CET** (app) : interrupteur « Aussi à chaque déverrouillage » si `unlockAvailable`,
+  divulgation `camera_unlock`, notifications demandées après le démarrage, « en pause » + « Reprendre » (aucune reprise
+  automatique), pas de Shizuku / batterie en play ; `--face-unlock=off|on|paused` dans `npm run visual`.
+  [ ] POL-1c : raccourci « Lecture au déverrouillage » dans Paramètres pour couper ; [ ] P28 par le propriétaire
+  (APK d'aperçu prêt) ; [ ] allumer l'interrupteur dans « Play — AAB ».
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → ~~POL-8~~ (fait 25/10 01:30) → POL-1a (fait 25/10 02:30) → ~~POL-1b~~ (fait 25/10 02:33 CET) → P28 → POL-1c (Paramètres) → interrupteur allumé.
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
@@ -1354,7 +1357,7 @@ _(les idées « R#n » renvoient au classement de `RESEARCH.md` §4 ; ajouter ic
 - Radar / journal : chaque enregistrement de sommeil est rattaché au jour de *sa* fin ; si une source fournit des phases séparées, une phase finie avant minuit tomberait la veille → réutiliser `mainSleepPeriods` (sleepRegularity.js).
 - Mode clair : `npm run visual -- --light` rend la même chose que le sombre — l'app n'a pas de thème clair (C1), ce n'est pas un bug du script.
 - Démo : le dernier jour de données est « hier » quand le run tourne après minuit (heure de Paris) → la prédiction du jour et « Par heure (aujourd'hui) » ne sont jamais visibles dans les captures ; faire finir la démo « aujourd'hui ».
-- CI : test émulateur API 36 `HealthConnectTest.healthConnect_canWriteAndReadSleep` instable (rouge sur la PR #105, journal seul, vert sur main juste avant) → rendre le test robuste (attente / relecture) si cela se répète.
+- [x] CI : test émulateur API 36 `HealthConnectTest.healthConnect_canWriteAndReadSleep` instable (« Conflict found, but couldn't read the entry », encore rouge sur main #344 le 25/10) → **rendu robuste le 25/10** : insertion réessayée deux fois sur ce seul message, la relecture juge.
 - CI : le job émulateur **API 36** échoue à « Créer l'AVD » (vu le 08/10 sur main, API 35 OK) — à diagnostiquer (image système / avdmanager), non bloquant pour les releases.
 - Visuel : la modale de check-in s'ouvre par-dessus la page Alimentation au premier lancement (même quand on vient choisir une photo) — envisager de ne pas l'ouvrir sur /food, ou après une action.
 - Démo : ajouter une SpO₂ et une pesée récente pour que les captures montrent ces cartes (aujourd'hui hors des 30 dernières entrées).
