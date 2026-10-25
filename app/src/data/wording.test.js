@@ -7,7 +7,9 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { parse } from '@babel/parser'
-import { FORBIDDEN_WORDING } from './wordingRules.js'
+import { FORBIDDEN_WORDING, stripComments } from './wordingRules.js'
+
+export { stripComments }
 
 const ROOTS = ['src/components', 'src/pages', 'src/services', 'src/hooks', 'src/config']
 
@@ -17,14 +19,6 @@ function sourceFiles(dir) {
     if (d.isDirectory()) return sourceFiles(p)
     return /\.(jsx?|tsx?)$/.test(d.name) && !/\.test\./.test(d.name) ? [p] : []
   })
-}
-
-/** Retire les commentaires (blocs, JSX et lignes) en gardant les numéros de ligne. */
-export function stripComments(code) {
-  return code
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .split('\n')
-    .map((l) => l.replace(/(^|\s)\/\/.*$/, '$1'))
 }
 
 const FORBIDDEN = FORBIDDEN_WORDING

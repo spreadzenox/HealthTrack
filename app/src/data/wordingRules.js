@@ -11,3 +11,11 @@ export const FORBIDDEN_WORDING = [
   { re: /\b[Vv]os Pistes\b|onglet « ?Pistes/, why: 'l’onglet s’appelle « Analyses »' },
   { re: /diagnostiqu|prédi(re|t|sons) (une|vos|la) crise|trait(er|ement) (votre|vos|le) (SII|syndrome|maladie)/i, why: 'jamais d’affirmation médicale' },
 ]
+
+/** Retire les commentaires (blocs, JSX et lignes) en gardant les numéros de ligne. */
+export function stripComments(code) {
+  return code
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
+    .split('\n')
+    .map((l) => l.replace(/(^|\s)\/\/.*$/, '$1'))
+}

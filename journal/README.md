@@ -776,6 +776,14 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
+**Run du 25/10 18:33 — garde-fou « aucun prix en dur » (I160).** Rien de nouveau à l'écran. En coulisses : un test
+automatique échoue désormais si un prix écrit à la main (« 29,99 €/an », « 4,99 € »…) apparaît dans la **fiche Play**,
+les **pages publiques** (confidentialité, conditions), les textes de l'app ou les Nouveautés : les prix affichés viennent
+toujours de Google Play, donc un changement de prix ne rendra jamais la fiche trompeuse. Aucun prix en dur trouvé
+aujourd'hui. Le suivi du run de 17:33 est aussi rangé : relais redéployé, **v277** publiée, « Nouvelles installations :
+0 sur 7 jours » (le compteur démarre). **👉 Votre prochaine action la plus utile** reste d'inviter les testeurs (encadré en
+tête), puis P28 quand vous voudrez la lecture au déverrouillage en play.
+
 **Run du 25/10 15:33 — petites finitions et preuve du registre des crédits (VC-20, CREDITS-LOG, PLAY-COMPLETED).**
 Ce que vous verrez (prochaine version) : les étiquettes d'habitudes (Alcool, Voyage, Café après 14 h…) **n'affichent plus
 d'émoji** dans le Journal, le radar forme (« Probablement lié à « Alcool » (hier)… ») et la note de bien-être à la main ;
@@ -1588,6 +1596,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 15:33 CET — [VC-20, CREDITS-LOG, PLAY-COMPLETED](runs/2026-10-25-1533-finitions-credits.md) | 🧭 | émojis des habitudes retirés de l’affichage (test-garde `.emoji`) ; ligne « Registre des crédits (Firestore) » dans le résumé du workflow relais ; statut completed des envois play vérifié (455) ; relais redéployé : Firestore 0 échec ; v275 ; 2 206 Vitest |
 | 25/10 16:33 CET — [VC-21 : erreurs du premier lancement play](runs/2026-10-25-1633-vc21-premier-lancement.md) | 🧭 | les 2 « [object Object] » = refus natifs gérés : plus d'appel Bluetooth à l'ouverture sans montre appairée dans l'app ; refus Play Billing propre à l'émulateur ; résumé émulateur lisible ; v276 ; 2 207 Vitest |
 | 25/10 17:33 CET — [CREDITS-INSTALLS : nouvelles installations comptées](runs/2026-10-25-1733-credits-installs.md) | 🧭 | le relais journalise sans identifiant le 1er crédit IA d'une installation jamais vue (CI exclue) ; le résumé du workflow relais les compte par jour ; relais 81 tests, 2 207 Vitest |
+| 25/10 18:33 CET — [I160 : aucun prix en dur](runs/2026-10-25-1833-prix-en-dur.md) | 🧭 | test-garde : aucun prix écrit à la main dans la fiche Play, `public/*.html`, les textes de l'app ni les Nouveautés ; `stripComments` rangé dans `wordingRules.js` ; suivi #374 (v277) intégré, #375 fermée ; 2 210 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |
