@@ -13,7 +13,7 @@ const wrap = (ui) => render(<BrowserRouter>{ui}</BrowserRouter>)
 describe('MeasureTiles', () => {
   const tiles = [
     { key: 'sleep', label: 'Sommeil', value: '7 h 32', sources: ['Health Connect · Garmin'] },
-    { key: 'hrv', label: 'VFC', value: null, sources: [] },
+    { key: 'hrv', label: 'VFC nuit', value: null, sources: [] },
     { key: 'steps', label: 'Pas', value: '3 456', sources: ['Montre Huawei'] },
   ]
 

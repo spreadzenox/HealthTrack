@@ -120,6 +120,12 @@ function sleepDay(e) {
   return localDateKey(e.at)
 }
 
+/**
+ * Source d'une tuile : courte. La montre se nomme « Montre Huawei » sans le nom Bluetooth de l'appareil (suffixe
+ * technique) ; Health Connect garde l'app d'origine (« Health Connect · Garmin »).
+ */
+const tileSourceLabel = (e) => (e?.source === 'huawei_watch' ? SOURCE_LABELS.huawei_watch : entrySourceLabel(e))
+
 const TILE_MATCHERS = {
   sleep: (e, day) => e.type === 'sleep' && sleepDay(e) === day,
   hrv: (e, day) => e.type === 'heart_rate' && e.payload?.subtype === 'heartRateVariability' && !isDaytimeHrv(e.payload) && localDateKey(e.at) === day,
@@ -133,14 +139,14 @@ function formatSleep(minutes) {
 }
 
 /**
- * Les trois tuiles de mesures du jour (sommeil, VFC, pas), avec la source de chaque chiffre.
+ * Les trois tuiles de mesures du jour (sommeil, VFC de la nuit, pas), avec la source de chaque chiffre.
  * @param {object | null} summary  résumé du jour (buildDailyJournal) ou null
  * @param {object[]} entries       entrées lues par l'accueil (pour les sources)
  */
 export function measureTiles(summary, entries, now = new Date()) {
   const day = localDateKey(now.toISOString())
   const s = summary || {}
-  const sourcesOf = (key) => [...new Set((entries || []).filter((e) => e && TILE_MATCHERS[key](e, day)).map(entrySourceLabel))]
+  const sourcesOf = (key) => [...new Set((entries || []).filter((e) => e && TILE_MATCHERS[key](e, day)).map(tileSourceLabel))]
   return [
     {
       key: 'sleep',
@@ -148,7 +154,7 @@ export function measureTiles(summary, entries, now = new Date()) {
       value: s.sleepMinutes != null ? formatSleep(s.sleepMinutes) : null,
       sources: sourcesOf('sleep'),
     },
-    { key: 'hrv', label: 'VFC', value: s.hrv != null ? `${Math.round(s.hrv)} ms` : null, sources: sourcesOf('hrv') },
+    { key: 'hrv', label: 'VFC nuit', value: s.hrv != null ? `${Math.round(s.hrv)} ms` : null, sources: sourcesOf('hrv') },
     {
       key: 'steps',
       label: 'Pas',
