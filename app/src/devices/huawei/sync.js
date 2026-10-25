@@ -87,24 +87,31 @@ const MASK1 = [
 ]
 const MASK2 = [['spo2', 1], ['restingHr', 1], [null, 1], [null, 1], [null, 1], [null, 1], [null, 1], [null, 1]]
 
-/** Octets d'une minute → { steps?, kcal?, distanceM?, hr?, spo2?, restingHr? } (valeurs nulles ignorées). */
+/**
+ * Octets d'une minute → { steps?, kcal?, distanceM?, hr?, spo2?, restingHr?, unknown? } (valeurs nulles ignorées).
+ * `unknown` : valeurs des bits pas encore identifiés, par « masque/bit » (« 1/0x10 »), pour les compter dans le
+ * journal (M4 bis, étages ?, §10.6) ; jamais écrites dans les entrées.
+ */
 export function parseMinuteBytes(bytes) {
   const m1 = bytes[0] ?? 0
   let i = 1
   const m2 = m1 & 0x80 ? bytes[i++] ?? 0 : 0
   const out = {}
-  const read = (mask, fields) => {
+  const unknown = {}
+  const read = (mask, fields, n) => {
     fields.forEach(([name, size], bit) => {
       if (!(mask & (1 << bit))) return
       if (i + size > bytes.length) throw new Error('Minute tronquée')
       const v = uint(bytes.slice(i, i + size))
       i += size
-      const empty = v === 0 || (size === 1 && v === 0xff)
-      if (name && !empty) out[name] = v
+      if (v === 0 || (size === 1 && v === 0xff)) return
+      if (name) out[name] = v
+      else unknown[`${n}/0x${(1 << bit).toString(16).padStart(2, '0')}`] = v
     })
   }
-  read(m1, MASK1)
-  read(m2, MASK2)
+  read(m1, MASK1, 1)
+  read(m2, MASK2, 2)
+  if (Object.keys(unknown).length) out.unknown = unknown
   return out
 }
 
@@ -717,6 +724,33 @@ export function describeMinutes(minutes) {
   const n = {}
   for (const m of minutes) for (const k of Object.keys(labels)) if (m[k]) n[k] = (n[k] || 0) + 1
   return Object.entries(n).map(([k, c]) => `${labels[k]} ${c}`).join(', ') || 'aucune mesure'
+}
+
+/**
+ * Bits inconnus des minutes par jour local (M4 bis) : « 24/10 : 1/0x10 42 min Σ 318, 1/0x20 12 min Σ 96 ».
+ * Nombres seulement, à comparer aux étages affichés par la montre ce jour-là (§10.6).
+ */
+export function describeUnknownBits(minutes) {
+  const days = new Map()
+  for (const m of minutes) {
+    if (!m.unknown) continue
+    const day = localDayStart(m.t)
+    const bits = days.get(day) || {}
+    for (const [k, v] of Object.entries(m.unknown)) {
+      const b = (bits[k] ||= { n: 0, sum: 0 })
+      b.n += 1
+      b.sum += v
+    }
+    days.set(day, bits)
+  }
+  return [...days.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([day, bits]) => {
+      const d = new Date(day)
+      const label = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`
+      const parts = Object.keys(bits).sort().map((k) => `${k} ${bits[k].n} min Σ ${bits[k].sum}`)
+      return `${label} : ${parts.join(', ')}`
+    })
 }
 
 /** Classes du dictionnaire lues à chaque synchro, dans cet ordre (une seule en vol, §10.10). */

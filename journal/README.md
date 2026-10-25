@@ -744,6 +744,17 @@ ligne « FC moy. » n'apparaît pas, exportez le journal de la synchro (mode dia
 de code : POL-1d si P28 est faite, sinon M4 bis (étages) ou les séances relues app fermée. Publié : **v266**
 (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
+**Run du 25/10 06:33 — premier pas vers les étages montés (M4 bis).** Rien ne change à l'écran. Les mesures minute
+par minute de la montre contiennent des champs que personne n'a encore identifiés (ni nous, ni les projets libres) ;
+l'un d'eux est probablement le nombre d'**étages** (ou le dénivelé). Halcya les met maintenant de côté (jamais dans
+vos données) et écrit, à chaque synchro, **une ligne par jour** dans le journal de la synchro, en nombres seulement :
+« bits inconnus des minutes (étages ?) 24/10 : 1/0x10 42 min Σ 318, 1/0x20 12 min Σ 96 ». **👉 À tester** (sur la
+v267, quand elle sera publiée) : un jour où vous montez des escaliers, notez le nombre d'**étages** affiché par la
+montre (ou Huawei Santé) ; le soir, ouvrez le mode diagnostic (7 touches sur la version), « Synchroniser la montre »,
+« Enregistrer le journal », et envoyez-moi la ligne « bits inconnus » du jour avec votre chiffre d'étages : si une
+somme colle (Σ ou nombre de minutes), on saura lequel décoder et l'afficher. Prochain run de code : POL-1d si P28 est
+faite, sinon les séances relues app fermée (M7b).
+
 **Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
 prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK
 d'aperçu** (`fr.jpesquet.sante.apercu`), la carte **Sources → Lecture du visage** a maintenant une ligne **« Aussi à
@@ -1456,6 +1467,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 03:33 CET — [POL-1c : couper depuis Paramètres](runs/2026-10-25-0333-pol1c-reglage-deverrouillage.md) | 🧭 | `FaceUnlockSetting` (play + `unlockAvailable`) : interrupteur qui coupe (actif / en pause), lien vers Sources quand coupée, pas d'allumage sans divulgation ; captures clair / sombre / coupée ; 2 182 Vitest |
 | 25/10 04:33 CET — [M6b : VFC de journée et température en arrière-plan](runs/2026-10-25-0433-m6b-p2p-arriere-plan.md) | ⌚ | `WatchP2P.java` (ping 0xCA, pages du dictionnaire 500044 / 400012, accusés 0xCF, 10 pages au plus, octets vérifiés contre `p2p.js`) ; capture `dict` décodée par `dataFromCapture` ; reprise `hrvDayUntil` / `skinTempUntil` recopiée du JS ; 132 JUnit, 2 185 Vitest |
 | 25/10 05:33 CET — [M7 : séances, FC et allure](runs/2026-10-25-0533-m7-seances-fc-allure.md) | ⌚ | `parseWorkoutIndex` (blocs annoncés), `parseWorkoutSamples` (en-tête 14 octets, FC + vitesse, reste sauté d'après la longueur annoncée), `parseWorkoutPace` (km complets), `heartRateCurve` ; Journal : « FC moy. · allure » + courbe SVG ; spécification §7.5 bis |
+| 25/10 06:33 CET — [M4 bis : bits inconnus des minutes (étages ?)](runs/2026-10-25-0633-m4bis-bits-inconnus.md) | ⌚ | `parseMinuteBytes` garde les bits non identifiés à part (`unknown`, jamais écrits) ; `describeUnknownBits` : une ligne par jour local (minutes, somme) dans le journal de la synchro, app ouverte et capture d'arrière-plan ; spécification §10.18 |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

@@ -1,0 +1,22 @@
+# 2026-10-25 06:33 CET (05:33 UTC) — M4 bis : bits inconnus des minutes (étages ?)
+
+**Type** : ⌚ chantier montre (signalement du 21/10 : couverture maximale ; « pas / distance / calories / étages »)
+
+## Constat au démarrage
+- Main à `9a63d5f` (#352, journal v266), aucune PR « [Auto] » ouverte (seule #51 `cursor/*`, non touchée).
+- Polissage du 24/10 terminé ; POL-1d attend P28 (propriétaire) → étape suivante du backlog : M4 bis (plus petite que M7b).
+
+## Ce qui a été fait
+- `sync.js` : `parseMinuteBytes` garde les valeurs des bits non identifiés dans `unknown` (« 1/0x10 »…), jamais
+  écrites dans les entrées ; `describeUnknownBits` (une ligne par jour local : minutes, somme).
+- `watchSync.js` : la ligne « bits inconnus des minutes (étages ?) JJ/MM : … » part dans le journal de chaque synchro
+  (app ouverte et capture d'arrière-plan).
+- Spécification `protocoles/huawei.md` §10.18 et ligne « Étages » de l'inventaire §10.
+- Pas d'entrée « Nouveautés » : rien de visible hors du journal de diagnostic.
+
+## Vérifications
+- Voir « Après les vérifications » ci-dessous.
+
+## Suite
+- Le propriétaire compare une journée (étages de la montre ↔ ligne du journal) ; on décode alors `floors`.
+- M7b : séances relues app fermée (Java) ; POL-1d dès P28.
