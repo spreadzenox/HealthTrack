@@ -59,6 +59,9 @@ public final class BackgroundSync {
         public long stressFileUntil;
         /** Sommeil détaillé lu depuis le coucher (capacité 199, recopié du JS). */
         public boolean bedTime = true;
+        /** Dernier instant lu par classe du dictionnaire (ms, recopié du JS ; 0 = jamais lu : la classe n'est pas demandée). */
+        public long hrvDayUntil;
+        public long skinTempUntil;
     }
 
     private BackgroundSync() {
@@ -80,6 +83,17 @@ public final class BackgroundSync {
         if (s.sleepFileUntil > 0) files.add(WatchReader.FileRequest.sleep(Math.min(sinceMs, s.sleepFileUntil) - 24 * HOUR));
         if (s.stressFileUntil > 0) files.add(WatchReader.FileRequest.stress(Math.min(sinceMs, s.stressFileUntil) - 24 * HOUR));
         return files;
+    }
+
+    /**
+     * Classes du dictionnaire à relire (M6b) : seulement celles dont le JS a déjà reçu des mesures (la montre les prend
+     * en charge, l'historique est rattrapé app ouverte), 1 s après le dernier instant lu, comme classSince (p2p.js).
+     */
+    public static List<WatchP2P.Request> dictionaryRequests(State s) {
+        List<WatchP2P.Request> classes = new ArrayList<>();
+        if (s.hrvDayUntil > 0) classes.add(WatchP2P.Request.hrvDay(s.hrvDayUntil + WatchP2P.NEXT_PAGE_GAP_MS));
+        if (s.skinTempUntil > 0) classes.add(WatchP2P.Request.skinTemp(s.skinTempUntil + WatchP2P.NEXT_PAGE_GAP_MS));
+        return classes;
     }
 
     /** Délai minimum après le dernier essai : 30 min × 2^échecs (3 doublements au plus). */
@@ -127,6 +141,14 @@ public final class BackgroundSync {
 
     /** Idem, avec la dernière lecture des fichiers 0x2C et le mode de lecture du sommeil détaillé. */
     public static void shareFromApp(State s, long until, long atMs, long sleepFileUntil, long stressFileUntil, boolean bedTime) {
+        shareFromApp(s, until, atMs, sleepFileUntil, stressFileUntil, bedTime, 0, 0);
+    }
+
+    /** Idem, avec le dernier instant lu des classes du dictionnaire (VFC de journée, température). */
+    public static void shareFromApp(State s, long until, long atMs, long sleepFileUntil, long stressFileUntil, boolean bedTime,
+                                    long hrvDayUntil, long skinTempUntil) {
+        if (hrvDayUntil > s.hrvDayUntil) s.hrvDayUntil = hrvDayUntil;
+        if (skinTempUntil > s.skinTempUntil) s.skinTempUntil = skinTempUntil;
         if (sleepFileUntil > s.sleepFileUntil) s.sleepFileUntil = sleepFileUntil;
         if (stressFileUntil > s.stressFileUntil) s.stressFileUntil = stressFileUntil;
         s.bedTime = bedTime;
@@ -156,6 +178,14 @@ public final class BackgroundSync {
     static void recordFiles(State s, WatchReader.Capture cap, long until) {
         if (fileRead(cap, "sleepFile")) s.sleepFileUntil = Math.max(s.sleepFileUntil, until);
         if (fileRead(cap, "stress")) s.stressFileUntil = Math.max(s.stressFileUntil, until);
+    }
+
+    /** Classe du dictionnaire lue : la prochaine relecture repart après son dernier instant. */
+    static void recordDictionary(State s, WatchReader.Capture cap) {
+        for (WatchP2P.Pages d : cap.dictionary) {
+            if (d.cls == WatchP2P.HRV_DAY) s.hrvDayUntil = Math.max(s.hrvDayUntil, d.maxTime);
+            else if (d.cls == WatchP2P.SKIN_TEMP) s.skinTempUntil = Math.max(s.skinTempUntil, d.maxTime);
+        }
     }
 
     private static boolean fileRead(WatchReader.Capture cap, String id) {
@@ -205,7 +235,7 @@ public final class BackgroundSync {
         try (WatchLink link = new WatchLink(transport)) {
             WatchHandshake.authenticate(link, authToken, authId, requestId, random, timeoutMs);
             battery = WatchHandshake.battery(link, timeoutMs);
-            cap = WatchReader.read(link, w[0], w[1], nowMs, timeoutMs, fileRequests(state, w[0]));
+            cap = WatchReader.read(link, w[0], w[1], nowMs, timeoutMs, fileRequests(state, w[0]), dictionaryRequests(state));
             cap.battery = battery;
             cap.bedTime = state.bedTime;
             cap.address = address;
@@ -216,7 +246,10 @@ public final class BackgroundSync {
             outcome = outcomeOf(e);
         }
         record(state, outcome, nowMs, w[1], cap != null && captureName != null && cap.gotBlocks(), battery);
-        if (cap != null && captureName != null) recordFiles(state, cap, w[1]);
+        if (cap != null && captureName != null) {
+            recordFiles(state, cap, w[1]);
+            recordDictionary(state, cap);
+        }
         return new Result(outcome, captureName);
     }
 }

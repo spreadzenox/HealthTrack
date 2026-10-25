@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-25",
+  "kind": "amélioration",
+  "title": "Montre : VFC de journée et température aussi app fermée",
+  "items": [
+    "La relecture de la montre en arrière-plan rapporte maintenant aussi la VFC de journée et la température de la peau, comme une synchronisation app ouverte.",
+    "Une donnée n'est relue en arrière-plan qu'une fois reçue app ouverte : rien n'est demandé à une montre qui ne la mesure pas."
+  ]
+}

@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * Lectures santé du client Java « synchro seule » (journal/protocoles/huawei.md §7.2–§7.4, §7.6, §9.1 d), sur une
  * session déjà authentifiée : sommeil (7/0x0C puis 7/0x0D), minutes (7/0x0A puis 7/0x0B), totaux du jour
- * (7/0x03), puis les fichiers 0x2C demandés (sommeil détaillé `sequence_data`, stress `rrisqi_data.bin` : M6),
+ * (7/0x03), puis les fichiers 0x2C demandés (sommeil détaillé `sequence_data`, stress `rrisqi_data.bin` : M6) et
+ * les classes du dictionnaire P2P (VFC de journée, température de la peau : M6b, WatchP2P),
  * dans l'ordre et avec les mêmes demandes que readWatchData (src/devices/huawei/sync.js).
  * Rien n'est décodé ici : chaque réponse est gardée **brute** (TLV déchiffrés ; octets du fichier rassemblés) dans une capture que le JS
  * importe à l'ouverture avec son propre analyseur — une seule implémentation du décodage santé.
@@ -120,6 +121,8 @@ public final class WatchReader {
         public boolean bedTime = true;
         public final List<Reply> replies = new ArrayList<>();
         public final List<FileData> files = new ArrayList<>();
+        /** Pages du dictionnaire P2P (VFC de journée, température : M6b), charges utiles brutes. */
+        public final List<WatchP2P.Pages> dictionary = new ArrayList<>();
         public final List<Read> reads = new ArrayList<>();
 
         Capture(long sinceMs, long untilMs, long atMs) {
@@ -159,6 +162,24 @@ public final class WatchReader {
                     b.append("{\"id\":").append(MiniJson.quote(f.id))
                             .append(",\"since\":").append(f.sinceMs)
                             .append(",\"hex\":\"").append(IsoAuth.hex(f.bytes)).append("\"}");
+                }
+                b.append(']');
+            }
+            if (!dictionary.isEmpty()) {
+                b.append(",\"dict\":[");
+                for (int i = 0; i < dictionary.size(); i++) {
+                    WatchP2P.Pages d = dictionary.get(i);
+                    if (i > 0) b.append(',');
+                    b.append("{\"id\":").append(MiniJson.quote(d.id))
+                            .append(",\"cls\":").append(d.cls)
+                            .append(",\"since\":").append(d.sinceMs)
+                            .append(",\"max\":").append(d.maxTime)
+                            .append(",\"pages\":[");
+                    for (int j = 0; j < d.pages.size(); j++) {
+                        if (j > 0) b.append(',');
+                        b.append('"').append(IsoAuth.hex(d.pages.get(j))).append('"');
+                    }
+                    b.append("]}");
                 }
                 b.append(']');
             }
@@ -264,6 +285,12 @@ public final class WatchReader {
 
     /** Idem, puis télécharge chaque fichier demandé jusqu'à `untilMs` (un fichier qui cale n'empêche pas le suivant). */
     public static Capture read(WatchLink link, long sinceMs, long untilMs, long nowMs, long timeoutMs, List<FileRequest> files) {
+        return read(link, sinceMs, untilMs, nowMs, timeoutMs, files, new ArrayList<WatchP2P.Request>());
+    }
+
+    /** Idem, puis relit les classes du dictionnaire demandées par le P2P (VFC de journée, température : M6b). */
+    public static Capture read(WatchLink link, long sinceMs, long untilMs, long nowMs, long timeoutMs, List<FileRequest> files,
+                               List<WatchP2P.Request> dictionary) {
         Capture cap = new Capture(sinceMs, untilMs, nowMs);
         blocks(link, cap, "sleep", SLEEP_COUNT, SLEEP_DATA, timeoutMs);
         blocks(link, cap, "minutes", MINUTE_COUNT, MINUTE_DATA, timeoutMs);
@@ -293,6 +320,7 @@ public final class WatchReader {
                 read.outcome = outcomeOf(e);
             }
         }
+        WatchP2P.read(link, cap, dictionary, nowMs, timeoutMs);
         return cap;
     }
 

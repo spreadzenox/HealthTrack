@@ -6,6 +6,8 @@ import { getBackgroundSync, importPendingCaptures, requestWatchNotifications, sh
 import { getWatchSyncState, importWatchCapture, SYNC_STATE_VERSION } from './watchSync'
 import { syncWatchIfStale } from './watchAutoSync'
 import { READ_WINDOW } from '../devices/huawei/testing/sampleBlocks'
+import { dictionaryPage, real8 } from '../devices/huawei/testing/sampleDictionary'
+import { DICT_CLASS, DICT_FIELD } from '../devices/huawei/p2p'
 
 const VECTORS = resolve(dirname(fileURLToPath(import.meta.url)), '../../android/app/src/test/resources/huawei/link-vectors.json')
 const ADDRESS = 'AA:BB:CC:DD:EE:FF'
@@ -47,6 +49,18 @@ describe('importWatchCapture', () => {
     await importWatchCapture(capture, { watchKey: ADDRESS, storage, ...d })
     expect(getWatchSyncState(ADDRESS, storage).stressFileUntil).toBe(capture.until)
     expect(getWatchSyncState(ADDRESS, storage).sleepFileUntil).toBeUndefined()
+  })
+
+  it('VFC de journée lue en arrière-plan : écrite, et la reprise de sa classe avance (M6b)', async () => {
+    const storage = memoryStorage({ healthtrack_watch_sync: JSON.stringify({ [ADDRESS]: { v: SYNC_STATE_VERSION, until: 1, at: new Date(1).toISOString(), dictUntil: { 400012: 5 } } }) })
+    const d = deps()
+    const t0 = READ_WINDOW.since + 3600_000
+    const page = dictionaryPage(DICT_CLASS.HRV, [{ start: t0, end: t0 + 60_000, values: [[DICT_FIELD.HRV, real8(38)]] }])
+    const hex = Array.from(page, (b) => b.toString(16).padStart(2, '0')).join('')
+    const capture = javaCapture({ dict: [{ id: 'hrvDay', cls: DICT_CLASS.HRV, since: 1000, max: t0 + 60_000, pages: [hex] }], reads: [...javaCapture().reads, { id: 'hrvDay', outcome: 'ok', units: 1 }] })
+    await importWatchCapture(capture, { watchKey: ADDRESS, storage, ...d })
+    expect(d.write.mock.calls[0][0].some((e) => e.payload.during === 'day' && e.payload.value === 38)).toBe(true)
+    expect(getWatchSyncState(ADDRESS, storage).dictUntil).toEqual({ 400012: 5, 500044: t0 + 60_000 })
   })
 
   it('rien reçu : la reprise reste où elle était', async () => {
@@ -115,6 +129,9 @@ describe('relecture app fermée : état et reprise partagés avec le natif', () 
     // fichiers 0x2C déjà lus : leur reprise et le mode de lecture du sommeil partent aussi (M6)
     await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1000, at, sleepFileUntil: 900, stressFileUntil: 800, sleepBedTime: false }, plugin })
     expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 1000, at: Date.parse(at), sleepFileUntil: 900, stressFileUntil: 800, sleepBedTime: false })
+    // classes du dictionnaire déjà reçues : leur dernier instant part aussi (M6b)
+    await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1000, at, dictUntil: { 500044: 700, 400012: 600 } }, plugin })
+    expect(plugin.shareResume).toHaveBeenLastCalledWith({ deviceId: 'X', until: 1000, at: Date.parse(at), hrvDayUntil: 700, skinTempUntil: 600 })
     expect(await shareResumeWithNative({ deviceId: 'X', state: null, plugin })).toBe(false)
     expect(await shareResumeWithNative({ deviceId: 'X', state: { v: 2, until: 1, at }, plugin: { shareResume: async () => Promise.reject(new Error('x')) } })).toBe(false)
   })

@@ -7,6 +7,8 @@ import { readWatchData, totalsEntries, watchEntries } from './sync'
 import { READ_WINDOW, readWatchOptions } from './testing/sampleBlocks'
 import { field, sleepSequenceFile, stressFile } from './testing/sampleFiles'
 import { parseSleepSequence, parseStressFile, SLEEP_FIELD } from './files'
+import { dictionaryPage, real4, real8 } from './testing/sampleDictionary'
+import { DICT_CLASS, DICT_FIELD } from './p2p'
 
 const hex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
 
@@ -128,6 +130,55 @@ describe('captures du client Java « synchro seule »', () => {
       // sans lecture de fichier demandée : aucune ligne en plus
       expect(dataFromCapture(javaCapture()).services.map((s) => s.id)).toEqual(['sleep', 'minutes', 'totals'])
       expect(isValidCapture({ ...javaCapture(), files: [{ id: 'stress', since: 1, hex: 'zz' }] })).toBe(false)
+    })
+  })
+
+  describe('dictionnaire P2P lu en arrière-plan (M6b)', () => {
+    const t0 = READ_WINDOW.since + 3600_000
+    const hrvPage = dictionaryPage(DICT_CLASS.HRV, [
+      { start: t0, end: t0 + 60_000, values: [[DICT_FIELD.HRV, real8(41.6)]] },
+      { start: t0 + 3600_000, end: t0 + 3660_000, values: [[DICT_FIELD.HRV, real8(250)]] }, // hors bornes
+    ])
+    const tempPage = dictionaryPage(DICT_CLASS.SKIN_TEMP, [{ start: t0, end: t0 + 60_000, values: [[DICT_FIELD.SKIN_TEMP, real4(33.25)]] }])
+    const withDict = (extra = {}) => ({
+      ...javaCapture(),
+      dict: [
+        { id: 'hrvDay', cls: DICT_CLASS.HRV, since: 1000, max: t0 + 3660_000, pages: [hex(hrvPage)] },
+        { id: 'skinTemp', cls: DICT_CLASS.SKIN_TEMP, since: 1000, max: t0 + 60_000, pages: [hex(tempPage)] },
+      ],
+      reads: [...javaCapture().reads, { id: 'hrvDay', outcome: 'ok', units: 1, failed: 0 }, { id: 'skinTemp', outcome: 'ok', units: 1, failed: 0 }],
+      ...extra,
+    })
+
+    it('VFC de journée et température décodées comme la synchro en direct, reprise par classe', () => {
+      const data = dataFromCapture(withDict())
+      expect(data.hrvDay).toEqual([{ start: t0, value: 42 }])
+      expect(data.skinTemp).toEqual([{ start: t0, value: 33.25 }])
+      // reprise : la page entière compte, y compris la valeur écartée (comme readClass)
+      expect(data.dictionary).toEqual({ [DICT_CLASS.HRV]: t0 + 3660_000, [DICT_CLASS.SKIN_TEMP]: t0 + 60_000 })
+      expect(data.services.find((s) => s.id === 'hrvDay')).toMatchObject({ outcome: 'ok', count: 1, units: 1 })
+      expect(data.capabilities).toMatch(/dictionnaire/)
+      const entries = watchEntries(data, { until: READ_WINDOW.until })
+      expect(entries.some((e) => e.payload.subtype === 'heartRateVariability' && e.payload.during === 'day' && e.payload.value === 42)).toBe(true)
+      expect(entries.some((e) => e.type === 'body_temperature' && e.payload.subtype === 'skin')).toBe(true)
+    })
+
+    it('ping refusé, silence ou page illisible : consigné sans bloquer ; capture sans dictionnaire inchangée', () => {
+      const data = dataFromCapture(
+        withDict({
+          dict: [{ id: 'hrvDay', cls: DICT_CLASS.HRV, since: 1000, max: 0, pages: ['01ff'] }],
+          reads: [...javaCapture().reads, { id: 'hrvDay', outcome: 'ok', units: 1 }, { id: 'skinTemp', outcome: 'unsupported' }],
+        }),
+      )
+      expect(data.hrvDay).toEqual([])
+      expect(data.services.find((s) => s.id === 'hrvDay')).toMatchObject({ outcome: 'error', failed: 1 })
+      expect(data.services.find((s) => s.id === 'skinTemp')).toMatchObject({ outcome: 'unsupported', count: 0 })
+      expect(data.minutes.length).toBe(4)
+      const plain = dataFromCapture(javaCapture())
+      expect(plain.hrvDay).toEqual([])
+      expect(plain.dictionary).toEqual({})
+      expect(plain.services.map((s) => s.id)).toEqual(['sleep', 'minutes', 'totals'])
+      expect(isValidCapture({ ...javaCapture(), dict: [{ id: 'hrvDay', cls: DICT_CLASS.HRV, pages: ['zz'] }] })).toBe(false)
     })
   })
 })

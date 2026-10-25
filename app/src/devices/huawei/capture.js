@@ -7,6 +7,7 @@
 import { bytesOfHex } from './crypto'
 import { decodeTlvs } from './protocol'
 import { parseSleepSequence, parseStressFile } from './files'
+import { hrvDayValues, parseDictionaryPage, skinTempValues } from './p2p'
 import { FIT, FITNESS, parseMinuteBlock, parseSleepBlock, parseTotals, SYNC_READS, syncHints } from './sync'
 
 export const CAPTURE_VERSION = 1
@@ -14,6 +15,7 @@ const DAY = 24 * 3600_000
 const OUTCOMES = ['ok', 'empty', 'timeout', 'refused', 'error']
 
 const isMs = (v) => Number.isFinite(v) && v > 0
+const isHex = (h) => typeof h === 'string' && /^([0-9a-f]{2})*$/i.test(h)
 
 /** Capture lisible (format v1, dates cohérentes, réponses en hexadécimal) ? */
 export function isValidCapture(c) {
@@ -27,7 +29,8 @@ export function isValidCapture(c) {
     Array.isArray(c.replies) &&
     c.replies.every((r) => Number.isInteger(r?.s) && Number.isInteger(r?.c) && Number.isInteger(r?.i) && typeof r.hex === 'string' && /^([0-9a-f]{2})*$/i.test(r.hex)) &&
     (c.reads == null || Array.isArray(c.reads)) &&
-    (c.files == null || (Array.isArray(c.files) && c.files.every((f) => typeof f?.id === 'string' && isMs(f.since) && typeof f.hex === 'string' && /^([0-9a-f]{2})*$/i.test(f.hex))))
+    (c.files == null || (Array.isArray(c.files) && c.files.every((f) => typeof f?.id === 'string' && isMs(f.since) && isHex(f.hex)))) &&
+    (c.dict == null || (Array.isArray(c.dict) && c.dict.every((d) => typeof d?.id === 'string' && Number.isInteger(d.cls) && Array.isArray(d.pages) && d.pages.every(isHex))))
   )
 }
 
@@ -37,8 +40,11 @@ const FILE_READS = {
   stress: (bytes, f, c) => parseStressFile(bytes).filter((r) => r.start >= f.since && r.start < c.until),
 }
 
+/** Classes du dictionnaire P2P de la capture (M6b) : VFC de journée et température, mêmes bornes que readWatchData. */
+const DICT_READS = { hrvDay: hrvDayValues, skinTemp: skinTempValues }
+
 /**
- * Capture → { minutes, sleep, totals, workouts, nights, stress, services, hints, capabilities, battery } comme readWatchData.
+ * Capture → { minutes, sleep, totals, workouts, nights, stress, hrvDay, skinTemp, dictionary, services, hints, capabilities, battery } comme readWatchData.
  * Une réponse illisible est comptée perdue (`failed`), jamais bloquante. Lève si la capture n'est pas lisible.
  */
 export function dataFromCapture(capture) {
@@ -69,6 +75,22 @@ export function dataFromCapture(capture) {
       lostFiles[f.id]++
     }
   }
+  const fromDict = { hrvDay: [], skinTemp: [] }
+  const lostDict = { hrvDay: 0, skinTemp: 0 }
+  const dictionary = {}
+  for (const d of capture.dict || []) {
+    if (!DICT_READS[d.id]) continue
+    for (const hex of d.pages) {
+      try {
+        const page = parseDictionaryPage(bytesOfHex(hex))
+        if (page.cls !== d.cls) continue
+        fromDict[d.id].push(...DICT_READS[d.id](page.records))
+        if (page.maxTime) dictionary[d.cls] = Math.max(page.maxTime, dictionary[d.cls] || 0)
+      } catch {
+        lostDict[d.id]++
+      }
+    }
+  }
   const sleep = decoded.sleep.filter((p) => p.start >= since - DAY && p.start < until)
   const minutes = decoded.minutes.filter((m) => m.t >= since && m.t < until)
   const services = ['sleep', 'minutes', 'totals'].map((id) => {
@@ -97,6 +119,15 @@ export function dataFromCapture(capture) {
     else if (outcome === 'ok') outcome = lostFiles[id] ? 'error' : 'empty'
     services.push({ ...SYNC_READS.find((s) => s.id === id), outcome, count: items.length, ...(lostFiles[id] ? { failed: lostFiles[id] } : {}) })
   }
+  for (const id of Object.keys(DICT_READS)) {
+    const native = reads.get(id)
+    if (!native) continue
+    const items = fromDict[id]
+    let outcome = OUTCOMES.includes(native.outcome) || native.outcome === 'unsupported' ? native.outcome : 'error'
+    if (items.length) outcome = 'ok'
+    else if (outcome === 'ok') outcome = lostDict[id] ? 'error' : 'empty'
+    services.push({ ...SYNC_READS.find((s) => s.id === id), outcome, count: items.length, ...(Number.isInteger(native.units) ? { units: native.units } : {}), ...(lostDict[id] ? { failed: lostDict[id] } : {}) })
+  }
   const totals = decoded.totals
   const withFiles = services.some((r) => r.id === 'sleepFile' || r.id === 'stress')
   return {
@@ -106,9 +137,12 @@ export function dataFromCapture(capture) {
     workouts: [],
     nights: fromFiles.sleepFile,
     stress: fromFiles.stress,
+    hrvDay: fromDict.hrvDay,
+    skinTemp: fromDict.skinTemp,
+    dictionary,
     services,
     hints: syncHints(services, { totals }),
-    capabilities: `synchro en arrière-plan (sommeil, minutes, totaux${withFiles ? ', fichiers' : ''})`,
+    capabilities: `synchro en arrière-plan (sommeil, minutes, totaux${withFiles ? ', fichiers' : ''}${services.some((r) => DICT_READS[r.id]) ? ', dictionnaire' : ''})`,
     battery: Number.isInteger(capture.battery) && capture.battery >= 0 ? capture.battery : null,
   }
 }

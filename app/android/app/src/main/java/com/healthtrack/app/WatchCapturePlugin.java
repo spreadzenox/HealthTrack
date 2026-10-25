@@ -97,7 +97,8 @@ public class WatchCapturePlugin extends Plugin {
             return;
         }
         BackgroundWatchSync.shareFromApp(getContext(), address, until, at,
-                call.getLong("sleepFileUntil", 0L), call.getLong("stressFileUntil", 0L), call.getBoolean("sleepBedTime", null));
+                call.getLong("sleepFileUntil", 0L), call.getLong("stressFileUntil", 0L), call.getBoolean("sleepBedTime", null),
+                call.getLong("hrvDayUntil", 0L), call.getLong("skinTempUntil", 0L));
         call.resolve();
     }
 
