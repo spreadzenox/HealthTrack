@@ -132,6 +132,24 @@ jobs:
             app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
             app/android/app/build/outputs/apk/play/debug/app-play-debug.apk
 
+      # POL-1 (journal/PLAY-CONFORMITE.md §1 bis) : APK d'aperçu play, interrupteur de la lecture au déverrouillage
+      # ALLUMÉ, identifiant fr.jpesquet.sante.apercu (s'installe à côté de l'app du Play Store) : c'est lui que le
+      # propriétaire filme pour la déclaration P28. Construit après l'envoi de apk-build (même chemin de sortie).
+      - name: Construire l'APK d'aperçu play avec la lecture au déverrouillage (P28)
+        working-directory: app/android
+        run: ./gradlew assemblePlayDebug -PfaceUnlockPlay=true -PplayPreview=true --no-daemon
+
+      - name: Vérifier le manifeste de l'aperçu (service caméra présent, sans relance ni exemption de batterie)
+        working-directory: app
+        run: bash scripts/check-play-manifest.sh --face-unlock-preview
+
+      - name: Envoyer l'APK d'aperçu
+        uses: actions/upload-artifact@v4
+        with:
+          name: halcya-apercu-deverrouillage
+          path: app/android/app/build/outputs/apk/play/debug/app-play-debug.apk
+          retention-days: 14
+
   # ─────────────────────────────────────────────────────────────────────────────
   # Job émulateur API 35 (Android 15 / référence stable)
   # ─────────────────────────────────────────────────────────────────────────────

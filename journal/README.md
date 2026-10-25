@@ -711,6 +711,16 @@ compagnon installée et à l'appairage. **👉 À tester** : onglet Sources (vot
 « Synchroniser la montre ») ; touchez « Ajouter une source ». Prochain run de code : **POL-1** (lecture au déverrouillage
 dans la version play, après votre déclaration P28). Publié : **v261** (33,7 Mo) et la version play en test interne.
 
+**Run du 25/10 02:30 — préparation de la lecture au déverrouillage dans la version play (POL-1a, rien de visible).**
+Rien ne change dans vos deux apps : la fonction est construite **derrière un interrupteur coupé**, pour que les
+versions play continuent de partir quoi que décide Google. En coulisses : l'app sait maintenant, dans sa variante play,
+lancer la lecture au déverrouillage **en plus** de la lecture à l'ouverture (qui reste le secours), avec la
+notification permanente « Lecture du visage active » et son bouton **« Arrêter »** (qui ne coupe que le
+déverrouillage), **sans** relance au démarrage du téléphone ni exemption de batterie. La CI fabrique désormais à
+chaque PR un **APK d'aperçu** (`fr.jpesquet.sante.apercu`, s'installe à côté de l'app du Play Store) avec
+l'interrupteur allumé : c'est lui que vous filmerez pour P28, **dès que le prochain run aura ajouté l'écran
+d'activation** (POL-1b). Pas encore de geste pour vous.
+
 **Run du 25/10 00:30 — le Journal en couleurs (POL-6).** Ce que vous verrez dans Journal → **Jours** : « Vos derniers
 jours » n'est plus gris. Chaque mesure du jour a son pastel : **menthe** pour le corps et le bien-être (sommeil, FC,
 VFC, respiration, température, stress), **pêche** pour les repas, **lilas** pour ce que vous faites (pas, dépense,
@@ -1394,6 +1404,7 @@ du jour avec sa fourchette (derrière la porte).
 | 24/10 23:30 — [POL-7c : un verdict par facteur](runs/2026-10-24-2330-pol7c-un-verdict-par-facteur.md) | 🧭 | `LinksSection` + `mergeLinks` (corrélations, tags, effets décalés, notes et visage ; `FACTOR_ALIAS` ; plus solide gagne) ; « Voir N autres liens » au-delà de 5 ; étiquette « visage » ; effet décalé d'une piste au chevron ; émojis retirés ; captures play clair / sombre / vierge |
 | 25/10 00:30 — [POL-6 : Journal en couleurs](runs/2026-10-25-0030-pol6-journal-en-couleurs.md) | 🧭 | `chipTheme` → tuiles du résumé en pastels (menthe / pêche / lilas), valeurs en mono ; saisies en pastel ; `onStatus` sur radar, norme cardiaque et régularité du sommeil → `SoonList` « Bientôt » (partagé avec Analyses) ; méthode seulement si un bloc est actif ; captures play clair / sombre / vierge |
 | 25/10 01:30 — [POL-8 : Sources plus simples](runs/2026-10-25-0130-pol8-sources-simples.md) | 🧭 | `splitSourcesByStatus` : `watchDetected` (app Huawei / Honor Santé installée, ou mode diagnostic) et `addable` (montre non détectée, Bluetooth, guides) derrière « Ajouter une source » ; détection partagée avec « Mes appareils » (masqué si rien) ; `troubleshooting` de `WatchDiagnostic` / `WatchConnect` (Diagnostic seulement après un échec ou en mode diagnostic) ; chevron de `MethodNote` ; 2 165 Vitest |
+| 25/10 02:30 — [POL-1a : interrupteur play de la lecture au déverrouillage](runs/2026-10-25-0230-pol1a-interrupteur-play.md) | 🧭 | `-PfaceUnlockPlay` (coupé) + `FACE_KEEPALIVE` ; manifeste `src/playFaceUnlock` (test de parité) ; plugin : `unlock` distinct de `enabled`, `stopUnlock`, `skip:unlock` ; notification basse en play ; CI : APK d'aperçu `.apercu` vérifié et envoyé en artefact ; 2 167 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

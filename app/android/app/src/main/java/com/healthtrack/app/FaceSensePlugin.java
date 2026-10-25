@@ -40,6 +40,11 @@ import java.util.concurrent.Executors;
  * Variante play (BuildConfig.FACE_UNLOCK faux, journal/PLAY-CONFORMITE.md option B) : pas de service caméra (retiré
  * du manifeste play), ni relance, ni exemption de batterie. « Activer » ne fait que noter l'accord ; la lecture a lieu
  * à l'ouverture de l'app (`readNow`, app à l'écran) et au bouton « Tester », par FaceOneShot.
+ *
+ * Variante play avec l'interrupteur de build faceUnlockPlay (FACE_UNLOCK vrai, FACE_KEEPALIVE faux, POL-1) : en plus,
+ * `start({ unlock: true })` démarre le service au déverrouillage (préférence « unlock », distincte de l'accord
+ * « enabled » de la lecture à l'ouverture, qui reste le secours) ; `stopUnlock` ou « Arrêter » de la notification
+ * ne coupent que lui. Jamais de relance horaire ni au démarrage, ni d'exemption de batterie.
  */
 @CapacitorPlugin(name = "FaceSense", permissions = {@Permission(alias = "camera", strings = {Manifest.permission.CAMERA})})
 public class FaceSensePlugin extends Plugin {
@@ -68,8 +73,11 @@ public class FaceSensePlugin extends Plugin {
         ret.put("affectDownloading", FaceAffectModel.isDownloading());
         ret.put("running", FaceSenseService.isRunning());
         // « unlock » : service au déverrouillage (sideload) ; « app_open » : lecture à l'ouverture de l'app (play).
-        ret.put("mode", BuildConfig.FACE_UNLOCK ? "unlock" : "app_open");
+        ret.put("mode", BuildConfig.FACE_KEEPALIVE ? "unlock" : "app_open");
         ret.put("enabled", p.getBoolean("enabled", false));
+        // Variante play : lecture au déverrouillage proposée en plus (interrupteur de build) et son état.
+        ret.put("unlockAvailable", BuildConfig.FACE_UNLOCK && !BuildConfig.FACE_KEEPALIVE);
+        ret.put("unlock", p.getBoolean(FaceSenseService.UNLOCK_PREF, false));
         ret.put("permission", FaceSenseService.hasCameraPermission(context));
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         ret.put("batteryExempt", pm != null && pm.isIgnoringBatteryOptimizations(context.getPackageName()));
@@ -86,7 +94,7 @@ public class FaceSensePlugin extends Plugin {
             if (k.startsWith("n_") && v instanceof Integer) counts.put(k.substring(2), v);
             else if (k.startsWith("r_") && v instanceof Integer) rejected.put(k.substring(2), v);
             else if (v instanceof String || v instanceof Integer || v instanceof Long || v instanceof Boolean) {
-                if (!k.equals("enabled")) ret.put(k, v);
+                if (!k.equals("enabled") && !k.equals(FaceSenseService.UNLOCK_PREF)) ret.put(k, v);
             }
         }
         ret.put("outcomes", counts);
@@ -103,14 +111,15 @@ public class FaceSensePlugin extends Plugin {
             // impossible pour notre propre paquet
         }
         // Activée avant la notification « Reprendre » (I88 ②) : la vérification horaire est programmée ici.
-        if (BuildConfig.FACE_UNLOCK && p.getBoolean("enabled", false)) FaceResumeJob.ensureScheduled(context);
+        if (BuildConfig.FACE_KEEPALIVE && p.getBoolean("enabled", false)) FaceResumeJob.ensureScheduled(context);
         return ret;
     }
 
     /**
      * Démarre le service (demande d'abord l'accès à la caméra si besoin) : { started, permission }. `restart` :
      * l'arrête d'abord, pour qu'il reparte app à l'écran et retrouve l'accès caméra en arrière-plan (Android 11+
-     * ne le donne qu'à un service caméra démarré pendant que l'app est visible).
+     * ne le donne qu'à un service caméra démarré pendant que l'app est visible). `unlock` (variante play avec
+     * l'interrupteur) : démarre aussi le service au déverrouillage ; sans lui, seul l'accord est noté.
      */
     @PluginMethod
     public void start(PluginCall call) {
@@ -153,7 +162,7 @@ public class FaceSensePlugin extends Plugin {
     /** Une rafale tout de suite, pour le diagnostic (déclencheur « manual », jamais compté pour l'humeur). */
     @PluginMethod
     public void test(PluginCall call) {
-        if (!BuildConfig.FACE_UNLOCK) {
+        if (!BuildConfig.FACE_UNLOCK || (!BuildConfig.FACE_KEEPALIVE && !FaceSenseService.isRunning())) {
             readOnce(call, FaceSchedule.TRIGGER_MANUAL);
             return;
         }
@@ -171,13 +180,16 @@ public class FaceSensePlugin extends Plugin {
      */
     @PluginMethod
     public void readNow(PluginCall call) {
-        if (BuildConfig.FACE_UNLOCK) {
+        if (BuildConfig.FACE_KEEPALIVE) {
             call.reject("Lecture au déverrouillage dans cette version");
             return;
         }
-        if (!FaceSenseService.prefs(getContext()).getBoolean("enabled", false)) {
+        String skip = !FaceSenseService.prefs(getContext()).getBoolean("enabled", false) ? "skip:off"
+                // Le service lit déjà au déverrouillage : pas de seconde lecture à l'ouverture.
+                : FaceSenseService.isRunning() ? "skip:unlock" : null;
+        if (skip != null) {
             JSObject ret = new JSObject();
-            ret.put("outcome", "skip:off");
+            ret.put("outcome", skip);
             call.resolve(ret);
             return;
         }
@@ -201,7 +213,9 @@ public class FaceSensePlugin extends Plugin {
     private void startService(PluginCall call, String action) {
         JSObject ret = new JSObject();
         ret.put("permission", true);
-        if (!BuildConfig.FACE_UNLOCK) {
+        boolean service = BuildConfig.FACE_KEEPALIVE
+                || (BuildConfig.FACE_UNLOCK && Boolean.TRUE.equals(call.getBoolean("unlock", false)));
+        if (!service) {
             // Variante play : pas de service, l'accord est noté et la lecture se fera à l'ouverture de l'app.
             FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", true).apply();
             ret.put("started", true);
@@ -214,7 +228,7 @@ public class FaceSensePlugin extends Plugin {
                     .putExtra(FaceSenseService.EXTRA_ORIGIN, FaceSenseService.ORIGIN_APP);
             ContextCompat.startForegroundService(getContext(), intent);
             FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", true).apply();
-            FaceResumeJob.ensureScheduled(getContext());
+            if (BuildConfig.FACE_KEEPALIVE) FaceResumeJob.ensureScheduled(getContext());
             ret.put("started", true);
         } catch (RuntimeException e) {
             ret.put("started", false);
@@ -225,11 +239,22 @@ public class FaceSensePlugin extends Plugin {
 
     @PluginMethod
     public void stop(PluginCall call) {
-        FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", false).apply();
-        if (BuildConfig.FACE_UNLOCK) {
-            getContext().stopService(new Intent(getContext(), FaceSenseService.class));
+        FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", false)
+                .putBoolean(FaceSenseService.UNLOCK_PREF, false).apply();
+        if (BuildConfig.FACE_UNLOCK) getContext().stopService(new Intent(getContext(), FaceSenseService.class));
+        if (BuildConfig.FACE_KEEPALIVE) {
             FaceResumeJob.cancel(getContext());
             FaceResumeNotice.cancel(getContext());
+        }
+        call.resolve();
+    }
+
+    /** Variante play : coupe la seule lecture au déverrouillage ; la lecture à l'ouverture de l'app reste. */
+    @PluginMethod
+    public void stopUnlock(PluginCall call) {
+        FaceSenseService.prefs(getContext()).edit().putBoolean(FaceSenseService.UNLOCK_PREF, false).apply();
+        if (BuildConfig.FACE_UNLOCK && !BuildConfig.FACE_KEEPALIVE) {
+            getContext().stopService(new Intent(getContext(), FaceSenseService.class));
         }
         call.resolve();
     }
@@ -237,7 +262,7 @@ public class FaceSensePlugin extends Plugin {
     /** Ouvre la boîte d'Android « Autoriser l'activité en arrière-plan » (sortie de l'optimisation de batterie). */
     @PluginMethod
     public void requestBatteryExemption(PluginCall call) {
-        if (!BuildConfig.FACE_UNLOCK) {
+        if (!BuildConfig.FACE_KEEPALIVE) {
             // Variante play : REQUEST_IGNORE_BATTERY_OPTIMIZATIONS retirée du manifeste (règles Play).
             call.reject("Indisponible dans cette version");
             return;

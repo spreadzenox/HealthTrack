@@ -2,6 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply from: 'face-models.gradle'
 
+// Lecture du visage au déverrouillage dans la variante play (POL-1, journal/PLAY-CONFORMITE.md §1 bis) : COUPÉE par
+// défaut, pour que les versions play partent même si Google refuse la déclaration des services de premier plan (P28).
+// -PfaceUnlockPlay=true l'allume : manifeste src/playFaceUnlock (service caméra gardé, sans relance ni exemption de
+// batterie). -PplayPreview=true ajoute le suffixe « .apercu » (APK à filmer pour P28, à côté de l'app du Play Store).
+def faceUnlockPlay = (project.findProperty('faceUnlockPlay') ?: 'false').toBoolean()
+def playPreview = (project.findProperty('playPreview') ?: 'false').toBoolean()
+
 android {
     namespace "com.healthtrack.app"
     compileSdk rootProject.ext.compileSdkVersion
@@ -39,15 +46,20 @@ android {
             dimension 'distribution'
             applicationId 'com.healthtrack.app'
             buildConfigField 'boolean', 'SELF_UPDATE', 'true'
-            // Lecture du visage au déverrouillage, app fermée (service caméra) : sideload seulement.
+            // Lecture du visage au déverrouillage, app fermée (service caméra), avec relance horaire / au démarrage,
+            // exemption de batterie et guides Shizuku / ADB (FACE_KEEPALIVE) : sideload.
             buildConfigField 'boolean', 'FACE_UNLOCK', 'true'
+            buildConfigField 'boolean', 'FACE_KEEPALIVE', 'true'
         }
         play {
             dimension 'distribution'
             applicationId 'fr.jpesquet.sante'
             buildConfigField 'boolean', 'SELF_UPDATE', 'false'
-            // Play : lecture du visage à l'ouverture de l'app seulement (journal/PLAY-CONFORMITE.md, option B).
-            buildConfigField 'boolean', 'FACE_UNLOCK', 'false'
+            if (playPreview) applicationIdSuffix '.apercu'
+            // Play : lecture du visage à l'ouverture de l'app (journal/PLAY-CONFORMITE.md, option B) ; au déverrouillage
+            // en plus seulement si l'interrupteur faceUnlockPlay est allumé (POL-1), jamais de relance en arrière-plan.
+            buildConfigField 'boolean', 'FACE_UNLOCK', faceUnlockPlay ? 'true' : 'false'
+            buildConfigField 'boolean', 'FACE_KEEPALIVE', 'false'
             // Symboles de débogage natifs dans l'AAB : Play les extrait seul pour lisibiliser les plantages natifs.
             ndk { debugSymbolLevel 'SYMBOL_TABLE' }
         }
@@ -95,6 +107,9 @@ android {
             // Vecteurs du pipeline visage (images du domaine public + sorties attendues) pour FaceModelsTest
             assets.srcDir 'src/test/resources'
         }
+        // Interrupteur POL-1 allumé : même manifeste play, sans le retrait du service caméra (test de parité dans
+        // src/config/distribution.android.test.js).
+        if (faceUnlockPlay) play { manifest.srcFile 'src/playFaceUnlock/AndroidManifest.xml' }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
