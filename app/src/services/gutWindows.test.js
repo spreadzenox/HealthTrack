@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { GUT_WINDOWS, TTS_SHIFT_DAYS, analyzeGutWindows, mealExposures, truncatedTimeShift } from './gutWindows'
+import { NULL_SCENARIOS, simulateRealistic } from './gutWindows.sim'
+import { GUT_WINDOWS, TTS_SHIFT_DAYS, analyzeGutWindows, mantelHaenszel, mealExposures, truncatedTimeShift } from './gutWindows'
 
 /** Générateur pseudo-aléatoire reproductible (mulberry32) : trames synthétiques, jamais de vraies données. */
 function rng(seed) {
@@ -95,6 +96,27 @@ describe('mealExposures', () => {
   })
 })
 
+describe('mantelHaenszel (I169)', () => {
+  const rows = (k, list) => list.map(([x, y]) => ({ k, x, y }))
+  it('ignore les blocs sans contraste (toujours avec l’aliment, ou toujours calme)', () => {
+    const contrast = rows(2, [[1, 1], [1, 1], [1, 1], [0, 0], [0, 0], [0, 0]])
+    const res = mantelHaenszel([...rows(0, [[1, 1], [1, 0]]), ...rows(1, [[0, 0], [1, 0]]), ...contrast])
+    expect(res.informative).toBe(1)
+    expect(res.z).toBeGreaterThan(0)
+    expect(res.z).toBeCloseTo(mantelHaenszel(contrast).z, 10)
+  })
+  it('une mauvaise semaine qui coïncide avec l’aliment ne fait pas un lien : seul compte l’écart dans chaque bloc', () => {
+    // Bloc 0 : mauvaise passe, aliment souvent mangé ; bloc 1 : bonne passe, aliment rare. Dans chaque bloc,
+    // gêne aussi fréquente avec et sans : z = 0, alors que la comparaison globale voit un fort écart.
+    const bad = rows(0, [[1, 1], [1, 1], [1, 1], [1, 0], [0, 1], [0, 1], [0, 1], [0, 0], [1, 1], [1, 1], [1, 1], [1, 0]])
+    const good = rows(1, [[1, 1], [1, 0], [1, 0], [1, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0]])
+    expect(mantelHaenszel([...bad, ...good]).z).toBeCloseTo(0, 6)
+  })
+  it('aucun bloc informatif : z null', () => {
+    expect(mantelHaenszel(rows(0, [[1, 1], [1, 1]])).z).toBeNull()
+  })
+})
+
 describe('truncatedTimeShift (TTS, I168)', () => {
   const r = 9
   it('u = 1 / (r + 1) quand l’alignement réel bat tous les décalages', () => {
@@ -110,8 +132,8 @@ describe('truncatedTimeShift (TTS, I168)', () => {
 })
 
 describe('analyzeGutWindows', () => {
-  it('un effet simulé à environ 6 h donne une piste dans 4–24 h, et rien ailleurs', () => {
-    const entries = simulate({ seed: 7, effect: (t, meals) => (onionBetween(t, meals, 4, 8) ? 0.75 : 0.15) })
+  it('un effet simulé à environ 6 h donne une piste dans 4–24 h en 9 semaines, et rien ailleurs', () => {
+    const entries = simulate({ seed: 7, days: 63, effect: (t, meals) => (onionBetween(t, meals, 4, 8) ? 0.75 : 0.15) })
     const res = analyzeGutWindows(entries)
     const onion = byWindow(res, 'oignon')
     expect(onion['4-24'].status).toBe('link')
@@ -138,16 +160,23 @@ describe('analyzeGutWindows', () => {
     }
   })
 
-  it('ventre qui dérive et oignon par séries, sans effet : Fisher seul se trompe souvent, la porte TTS presque jamais', () => {
-    let fisherOnly = 0
+  it('ventre qui dérive et oignon par séries, sans effet : presque jamais de piste (blocs de 3 jours + porte TTS)', () => {
     let kept = 0
     const n = 100
     for (let seed = 1001; seed <= 1000 + n; seed++) {
       const res = analyzeGutWindows(simulateDriftNull({ seed }))
-      if (res.results.some((r) => r.q != null && r.q < 0.1)) fisherOnly += 1
       if (res.results.some((r) => r.status === 'link')) kept += 1
     }
-    expect(fisherOnly / n).toBeGreaterThan(0.1)
+    expect(kept / n).toBeLessThan(0.1)
+  })
+
+  it('les quatre difficultés réalistes ensemble (I169), sans effet : moins d’un jeu sur dix avec une piste', () => {
+    let kept = 0
+    const n = 40
+    for (let seed = 1; seed <= n; seed++) {
+      const res = analyzeGutWindows(simulateRealistic({ seed: seed * 7919 + 63, days: 63, ...NULL_SCENARIOS.tous }))
+      if (res.results.some((r) => r.status === 'link')) kept += 1
+    }
     expect(kept / n).toBeLessThan(0.1)
   })
 

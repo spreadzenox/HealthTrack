@@ -329,7 +329,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   combinaisons en détails — **précisé le 25/10 20:33** (`IDEES.md` I168–I169) : [x] **I168** (FAIT le 25/10 21:33 : r = 9 seul, plus puissant que 19 ; repas décalés de s jours, statistique sur les notes ; < 28 jours → « trop tôt ») porte « décalage temporel
   tronqué » (TTS, Yuan & Shou 2024) sur les séries journalières, u ≤ 0,1 en plus de BH, sans enroulement, r = 9 (> 18 j)
   ou 19 (> 38 j) ; [ ] **I169** N calibré sur 4 nulles réalistes (dérive AR(1), aliments en séries, saisie informative,
-  notes après les repas) — **banc livré le 25/10 22:33** (`gutWindows.sim.js` + `gutWindows.calibration.test.js`, sauté par défaut) : le moteur actuel **échoue** (derive 29/200, tous 54/200 en 9 sem. ; puissance 8/200) ; max-T testé : fausses pistes ≤ 4 % mais puissance nulle → à reprendre avec moins d'hypothèses (groupes FODMAP) + max-T robuste ; [ ] **I170** bilan du ventre du soir en un geste (objectif « Mon ventre », `scope: 'day'`) ;
+  notes après les repas) — **banc livré le 25/10 22:33** (`gutWindows.sim.js` + `gutWindows.calibration.test.js`, sauté par défaut) : le moteur actuel **échoue** (derive 29/200, tous 54/200 en 9 sem. ; puissance 8/200) ; max-T testé : fausses pistes ≤ 4 % mais puissance nulle → à reprendre avec moins d'hypothèses (groupes FODMAP) + max-T robuste ; **étape 2 FAITE le 25/10 23:33** : Mantel-Haenszel par blocs de 3 jours (unilatéral, continuité, ≥ 8 blocs informatifs) + BH + TTS → banc PASSÉ (≤ 13/200 dans les 5 scénarios ; tous 54 → 5) ; puissance faible sur un effet ×4 noyé (0/200) → I170 et, si besoin, groupes FODMAP / aliments fréquents seulement ; [ ] **I170** bilan du ventre du soir en un geste (objectif « Mon ventre », `scope: 'day'`) ;
   [ ] **I171** effet d'attente visible (part des notes prises dans les 2 h après le repas, option « à l'aveugle avec un
   proche » de la réintroduction) ; [ ] **I134** covariables sommeil / stress / écran, repas du même jour estimés ensemble ;
   symptômes digestifs stockés **localement** (aucun type Health Connect)
@@ -1133,6 +1133,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 25/10 (23:33 Paris)** : ✅ I169 étape 2 — le moteur ventre passe le banc des nulles (blocs de 3 jours,
+Mantel-Haenszel). Suite : **I170** (bilan du soir du ventre) → affichage des pistes ventre dans Analyses (avec I171 a/b)
+→ I134 ; groupes FODMAP seulement si la puissance manque sur les journaux réels.
 
 **Mise à jour du 25/10 (22:33 Paris)** : I169 étape 1 — banc des 4 nulles réalistes livré ; constat : le moteur ventre
 (Fisher + BH + porte TTS) laisse passer 15 à 27 % de fausses pistes avec 10 aliments et manque de puissance. Suite :
