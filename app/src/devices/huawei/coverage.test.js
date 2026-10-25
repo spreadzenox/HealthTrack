@@ -26,7 +26,7 @@ function sample() {
     hrvDay: [{ start: t(0, 10), value: 35 }],
     skinTemp: [{ start: t(0, 4), value: 33.74 }],
     stress: [{ start: t(0, 11), end: t(0, 11, 5), score: 31, level: 2 }, { start: t(-1, 16), end: t(-1, 16, 5), score: 58, level: 2 }],
-    workouts: [{ start: t(-2, 18), end: t(-2, 18, 45), sport: 'running', durationSec: 2700 }],
+    workouts: [{ start: t(-2, 18), end: t(-2, 18, 45), sport: 'running', durationSec: 2700, hrAvg: 142, hrCurve: { stepSeconds: 60, bpm: [130, 150] }, paceSplits: [324] }],
   }
   return [...watchEntries(data, { until: NOW }), ...totalsEntries({ steps: 4321, kcal: 210 }, NOW)].map((e) => ({ ...e }))
 }
@@ -57,7 +57,7 @@ describe('watchCoverage (écran « Montre », M5)', () => {
     // Le total du jour rendu par la montre l'emporte sur la somme des heures
     expect(row(rows, 'steps')).toMatchObject({ count: 1, unit: 'jour', last: { value: '4 321 pas' } })
     expect(row(rows, 'calories').last.value).toBe('210 kcal')
-    expect(row(rows, 'workouts').last.value).toBe('Course à pied · 45 min')
+    expect(row(rows, 'workouts').last.value).toBe('Course à pied · 45 min · FC moy. 142 bpm · 5:24 /km')
   })
 
   it('ne compte que la montre en direct, et dit « plus ancien » au-delà de 7 jours', () => {

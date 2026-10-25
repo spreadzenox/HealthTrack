@@ -25,7 +25,14 @@ import {
   hasExpand,
   parseCommands,
   parseServices,
+  heartRateCurve,
+  MAX_WORKOUT_BLOCKS,
+  parseWorkoutIndex,
   parseWorkoutList,
+  parseWorkoutPace,
+  parseWorkoutSamples,
+  workoutPaceTlvs,
+  workoutSamplesTlvs,
   parseWorkoutTotals,
   workoutListTlvs,
   outcomeOf,
@@ -46,6 +53,22 @@ import { clearWatchDayTotals, createWatchSync, getSkinTempContinuous, getWatchSy
 
 const hex = (s) => Uint8Array.from(s.trim().split(/\s+/), (h) => parseInt(h, 16))
 const be = (n, size) => Array.from({ length: size }, (_, i) => Math.floor(n / 2 ** (8 * (size - 1 - i))) & 0xff)
+/** Bloc 0x17/0x0A synthétique : points [FC, vitesse en dm/s] avec un champ de 2 octets en plus (bit 7, calories) pour vérifier le saut. */
+const samplesBlock = (number, block, startSec, stepSec, points, { mask = 0b10000011, size = 5 } = {}) => [
+  {
+    tag: 0x81,
+    value: encodeTlvs([
+      { tag: 2, value: be(number, 2) },
+      { tag: 3, value: be(block, 2) },
+      { tag: 4, value: [...be(number, 2), ...be(block, 2), ...be(startSec, 4), stepSec, ...be(points.length, 2), size, ...be(mask, 2)] },
+      { tag: 5, value: points.flatMap(([hr, speed]) => [hr, ...be(speed, 2), 0, 9].slice(0, size)) },
+    ]),
+  },
+]
+/** Bloc 0x17/0x0C synthétique : [km, unité, secondes, correction?]. */
+const paceBlock = (number, block, rows) => [
+  { tag: 0x81, value: encodeTlvs([{ tag: 2, value: be(number, 2) }, { tag: 8, value: be(block, 2) }, ...rows.map(([km, unit, sec, corr]) => ({ tag: 0x83, value: encodeTlvs([{ tag: 4, value: be(km, 2) }, { tag: 5, value: [unit] }, { tag: 6, value: be(sec, 4) }, ...(corr ? [{ tag: 9, value: be(corr, 2) }] : [])]) }))]) },
+]
 
 /** Corps TLV d'une réponse 7/0x0B : début (s) et minutes [{ offset, bytes }]. */
 const minuteBlock = (index, startSec, minutes) => [
@@ -339,7 +362,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
     for (const filePlain of [false, true]) {
       const watch = createFakeWatch({
         sleepBlocks: [sleepBlock(0, [{ type: 6, startSec: bed + 600, minutes: 200 }])],
-        workouts: [{ number: 7, body: [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: be(7, 2) }, { tag: 4, value: be(run, 4) }, { tag: 5, value: be(run + 1800, 4) }, { tag: 6, value: be(310, 4) }, { tag: 7, value: be(5200, 4) }, { tag: 8, value: be(4800, 4) }, { tag: 0x0c, value: [96, 171] }, { tag: 0x12, value: be(1750, 4) }, { tag: 0x14, value: [1] }]) }] }],
+        workouts: [{ number: 7, body: [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: be(7, 2) }, { tag: 4, value: be(run, 4) }, { tag: 5, value: be(run + 1800, 4) }, { tag: 6, value: be(310, 4) }, { tag: 7, value: be(5200, 4) }, { tag: 8, value: be(4800, 4) }, { tag: 0x0c, value: [96, 171] }, { tag: 0x12, value: be(1750, 4) }, { tag: 0x14, value: [1] }]) }], samples: [samplesBlock(7, 0, run, 30, [[120, 30], [130, 31], [140, 32]]), samplesBlock(7, 1, run + 90, 30, [[150, 33]])], paces: [paceBlock(7, 0, [[1, 0, 330], [2, 0, 318], [3, 0, 300, 5000]])] }],
         files: { sequence_data: file },
         expand: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80], // capacité 143
         filePlain,
@@ -359,7 +382,8 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
       expect(sleep.map((e) => [e.payload.sleepState, e.payload.durationMinutes])).toEqual([['awake', 10], ['light', 200], ['deep', 90], ['rem', 80], ['awake', 20]])
       expect(sleep.every((e) => e.payload.detail && e.payload.sleepScore === 78)).toBe(true)
       expect(written.find((e) => e.payload.subtype === 'heartRateVariability')).toMatchObject({ at: '2026-10-13T04:40:15.000Z', payload: { value: 38.2, unit: 'ms', during: 'sleep' } })
-      expect(written.find((e) => e.type === 'activity').payload).toMatchObject({ workoutType: 'running', durationSeconds: 1750, totalCalories: 310, totalDistanceMeters: 5200, steps: 4800, minHeartRate: 96, maxHeartRate: 171, endDate: '2026-10-12T17:30:00.000Z' })
+      expect(written.find((e) => e.type === 'activity').payload).toMatchObject({ workoutType: 'running', durationSeconds: 1750, totalCalories: 310, totalDistanceMeters: 5200, steps: 4800, minHeartRate: 96, maxHeartRate: 171, avgHeartRate: 135, heartRateCurve: { stepSeconds: 60, bpm: [125, 145] }, paceSplitsSecPerKm: [330, 318], endDate: '2026-10-12T17:30:00.000Z' })
+      expect(watch.seen.filter((x) => x === '23/10*' || x === '23/12*')).toEqual(['23/10*', '23/10*', '23/12*'])
       expect(cleared).toHaveLength(1)
     }
   })
@@ -691,6 +715,43 @@ describe('montre Huawei : capacités et séances (§7.5, 7.8)', () => {
     expect(parseWorkoutTotals(totals([{ tag: 0x14, value: [137] }, { tag: 0x0c, value: [0, 255] }])).sport).toBe('yoga')
     expect(parseWorkoutTotals(totals([{ tag: 0x0c, value: [0, 255] }]))).not.toHaveProperty('hrMax')
     expect(parseWorkoutTotals([{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, 1] }]) }])).toBeNull()
+  })
+
+  it('séances (M7) : index, demandes, échantillons de FC et vitesse, allures au km', () => {
+    const list = [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, 1] }, { tag: 0x85, value: encodeTlvs([{ tag: 6, value: [0, 12] }, { tag: 7, value: [0, 3] }, { tag: 8, value: [0, 1] }]) }]) }]
+    expect(parseWorkoutIndex(list)).toEqual([{ number: 12, samples: 3, paces: 1 }])
+    expect(decodeTlvs(Uint8Array.from(workoutSamplesTlvs(12, 2)[0].value)).map((t) => [t.tag, Array.from(t.value)])).toEqual([[2, [0, 12]], [3, [0, 2]], [7, []]])
+    expect(decodeTlvs(Uint8Array.from(workoutPaceTlvs(12, 1)[0].value)).map((t) => [t.tag, Array.from(t.value)])).toEqual([[2, [0, 12]], [8, [0, 1]]])
+    const pts = parseWorkoutSamples(samplesBlock(12, 0, 1000, 5, [[120, 28], [0, 30], [255, 0xffff]]))
+    expect(pts).toEqual([{ t: 1_000_000, hr: 120, speed: 2.8 }, { t: 1_005_000, speed: 3 }, { t: 1_010_000 }])
+    // FC seule (masque 1, 1 octet par point) ; dernier point incomplet ignoré
+    const short = samplesBlock(12, 0, 1000, 5, [[100], [101]], { mask: 1, size: 1 })
+    const c = decodeTlvs(Uint8Array.from(short[0].value)).map((t) => (t.tag === 4 ? { ...t, value: Uint8Array.from([...t.value.slice(0, 9), 0, 3, ...t.value.slice(11)]) } : t))
+    expect(parseWorkoutSamples([{ tag: 0x81, value: encodeTlvs(c) }]).map((p) => p.hr)).toEqual([100, 101])
+    expect(parseWorkoutSamples([{ tag: 0x7f, value: [0, 1, 0x86, 0xa1] }])).toEqual([])
+    expect(parseWorkoutPace(paceBlock(12, 0, [[1, 0, 330], [1, 1, 530], [2, 0, 318], [3, 0, 300, 4200]]))).toEqual([{ km: 1, seconds: 330 }, { km: 2, seconds: 318 }])
+    expect(heartRateCurve([{ t: 0, hr: 100 }, { t: 30_000, hr: 110 }, { t: 130_000, hr: 130 }], 0)).toEqual({ avg: 113, curve: { stepSeconds: 60, bpm: [105, null, 130] } })
+    expect(heartRateCurve([{ t: 0, speed: 3 }], 0)).toBeNull()
+    expect(MAX_WORKOUT_BLOCKS).toBeGreaterThan(10)
+  })
+
+  it('séances (M7) : un bloc d’échantillons refusé garde la séance et ses totaux', async () => {
+    const run = Math.floor(Date.UTC(2026, 9, 12, 17) / 1000)
+    const body = [{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: be(8, 2) }, { tag: 4, value: be(run, 4) }, { tag: 5, value: be(run + 1800, 4) }, { tag: 0x14, value: [1] }]) }]
+    const session = {
+      request: async (service, command) => {
+        if (service === 0x17 && command === 0x07) return { tlvs: [{ tag: 0x81, value: encodeTlvs([{ tag: 0x85, value: encodeTlvs([{ tag: 6, value: be(8, 2) }, { tag: 7, value: be(2, 2) }, { tag: 8, value: be(0, 2) }]) }]) }] }
+        if (service === 0x17 && command === 0x08) return { tlvs: body }
+        if (service === 0x17 && command === 0x0a) throw new Error('Pas de réponse de la montre (23/10) en 8 s')
+        if (service === 7) return { tlvs: [{ tag: 0x81, value: [] }] }
+        throw new Error('non pris en charge')
+      },
+    }
+    const caps = { services: null, commands: new Map([['7/22', false], ['32/9', false]]) }
+    const data = await readWatchData(session, { since: Date.UTC(2026, 9, 12), until: Date.UTC(2026, 9, 13), caps })
+    expect(data.workouts).toHaveLength(1)
+    expect(data.workouts[0]).not.toHaveProperty('hrAvg')
+    expect(data.services.find((r) => r.id === 'workouts')).toMatchObject({ outcome: 'ok', count: 1 })
   })
 
   it('entrées : une nuit détaillée remplace les périodes simples qui la recoupent ; nuit non terminée attendue', () => {

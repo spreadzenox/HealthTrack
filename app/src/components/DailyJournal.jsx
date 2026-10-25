@@ -7,7 +7,7 @@ import DeleteEntryButton from './DeleteEntryButton'
 import SavedMealEditor from './SavedMealEditor'
 import { groupCigarettes, isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
-import { formatDuration, workoutTypeLabel, shortFoodName } from '../utils/format'
+import { formatDuration, workoutTypeLabel, workoutDetailParts, shortFoodName } from '../utils/format'
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 import { mealKcal } from '../services/mealEditing'
 import { useNutritionTable } from '../data/nutritionTable'
@@ -132,10 +132,31 @@ function EntryBody({ e, measuredScreen = false }) {
           {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
         </p>
       )}
+      {e.type === 'activity' && workoutDetailParts(e.payload).length > 0 && (
+        <p className="entry-workout-detail">
+          <span>{workoutDetailParts(e.payload).join(' · ')}</span>
+          <HeartRateSpark curve={e.payload.heartRateCurve} />
+        </p>
+      )}
       {!ITEM_TYPES_WITH_RENDERER.includes(e.type) && (
         <pre className="entry-payload">{JSON.stringify(e.payload, null, 0)}</pre>
       )}
     </div>
+  )
+}
+
+/** Courbe de FC d'une séance (une moyenne par minute), sans axes : la forme de l'effort d'un coup d'œil. */
+export function HeartRateSpark({ curve }) {
+  const values = (curve?.bpm || []).map((v, i) => [i, v]).filter(([, v]) => typeof v === 'number')
+  if (values.length < 2) return null
+  const min = Math.min(...values.map(([, v]) => v))
+  const max = Math.max(...values.map(([, v]) => v))
+  const last = curve.bpm.length - 1 || 1
+  const points = values.map(([i, v]) => `${((i / last) * 100).toFixed(1)},${(22 - ((v - min) / (max - min || 1)) * 20).toFixed(1)}`).join(' ')
+  return (
+    <svg className="entry-workout-spark" viewBox="0 0 100 24" preserveAspectRatio="none" role="img" aria-label={`Fréquence cardiaque de ${min} à ${max} bpm`}>
+      <polyline points={points} fill="none" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+    </svg>
   )
 }
 

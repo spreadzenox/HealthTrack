@@ -43,7 +43,7 @@ export function createFakeWatch({
   silentBlock = null, // n° du premier bloc minute (7/0x0B) resté sans réponse
   unsupported = [], // services absents (« 0x17 », etc.) annoncés par 1/0x02
   expand = null, // octets des capacités étendues (1/0x37) ; null = commande absente
-  workouts = [], // [{ number, body }] : body = corps TLV de la réponse 0x17/0x08
+  workouts = [], // [{ number, body, samples?, paces? }] : body = corps TLV de la réponse 0x17/0x08 ; samples / paces = corps des blocs 0x17/0x0A / 0x0C
   files = {}, // nom → octets (0x2C)
   maxBlock = 64,
   pushSize = 40,
@@ -191,13 +191,20 @@ export function createFakeWatch({
     if (m.serviceId === 1 && m.commandId === 0x31) return sealed([{ tag: 2, value: [0x06] }])
     if (m.serviceId === 1 && m.commandId === 0x37 && expand) return sealed([{ tag: 1, value: expand }])
     if (m.serviceId === 0x17 && m.commandId === 7) {
-      const items = workouts.map((w) => ({ tag: 0x85, value: encodeTlvs([{ tag: 6, value: [w.number >> 8, w.number & 0xff] }, { tag: 7, value: [0, 1] }]) }))
+      const items = workouts.map((w) => ({ tag: 0x85, value: encodeTlvs([{ tag: 6, value: [w.number >> 8, w.number & 0xff] }, { tag: 7, value: [0, (w.samples || []).length] }, { tag: 8, value: [0, (w.paces || []).length] }]) }))
       return sealed([{ tag: 0x81, value: encodeTlvs([{ tag: 2, value: [0, workouts.length] }, ...items]) }])
     }
     if (m.serviceId === 0x17 && m.commandId === 8) {
       const v = decodeTlvs(tlvs.find((t) => t.tag === 0x81).value).find((t) => t.tag === 2).value
       const w = workouts.find((x) => x.number === v[0] * 256 + v[1])
       return w ? sealed(w.body) : sealed([{ tag: 0x7f, value: [0, 1, 0x86, 0xa1] }])
+    }
+    if (m.serviceId === 0x17 && (m.commandId === 0x0a || m.commandId === 0x0c)) {
+      const c = decodeTlvs(tlvs.find((t) => t.tag === 0x81).value)
+      const num = (tag) => { const v = c.find((t) => t.tag === tag).value; return v[0] * 256 + v[1] }
+      const w = workouts.find((x) => x.number === num(2))
+      const body = w?.[m.commandId === 0x0a ? 'samples' : 'paces']?.[num(m.commandId === 0x0a ? 3 : 8)]
+      return body ? sealed(body) : sealed([{ tag: 0x7f, value: [0, 1, 0x86, 0xa1] }])
     }
     if (m.serviceId === 7 && m.commandId === 0x2a) {
       state.skinTempSetting = Array.from(tlvs.find((t) => t.tag === 2)?.value || [])
