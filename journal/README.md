@@ -766,7 +766,7 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
-**Run du 25/10 10:33 — Analyses plus lisibles (VC-23, VC-24).** Ce que vous verrez dans la prochaine version : dans
+**Run du 25/10 10:33 — Analyses plus lisibles (VC-23, VC-24).** Ce que vous verrez dans la **v270** (publiée, 33,8 Mo ; version play envoyée en test interne) : dans
 l'onglet **Analyses**, chaque lien porte la même étiquette partout — **« Piste solide »** (menthe), **« À confirmer »**
 (pêche) ou **« Trop tôt pour dire »** (gris) — au lieu de trois façons de dire la même chose ; l'explication longue se
 déplie au chevron. Sous « Autres liens repérés », toutes les cartes ont le même modèle (le nom du facteur en entier, une
