@@ -766,6 +766,17 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
+**Run du 25/10 12:33 — « Votre avis » dans les Paramètres (AVIS).** Ce que vous verrez (**v272** ; version play en
+test interne) : en bas de **Paramètres**, un bloc **« Votre avis »**. Dans la version Play, le bouton **« Donner mon avis
+sur le Play Store »** ouvre la page Halcya, où vos testeurs trouvent « Envoyer des commentaires privés au développeur »
+(ils vous arrivent dans la Play Console, rubrique *Notes et avis → Commentaires des testeurs*) ; après le lancement, ce
+sera « Noter cette application ». Dans votre version sideload, le bouton ouvre un ticket GitHub prérempli avec le
+numéro de version. Rien n'est joint, ni journal ni donnée de santé. Choix fait : pas de bouton e-mail, car l'adresse
+de contact de la fiche n'est pas dans le dépôt ; si vous voulez aussi un bouton e-mail, donnez-moi l'adresse publique
+(action facultative P31). Le texte d'invitation des testeurs le mentionne. **Tous les défauts de l'audit sont
+corrigés : le prochain run de code publie la version candidate en alpha** (dates de la période de lancement, puis
+« 👉 Version candidate prête » ici même).
+
 **Run du 25/10 11:33 — un Accueil plus léger au premier jour (VC-26).** Ce que verra un nouvel utilisateur (**v271**,
 publiée, 33,8 Mo ; version play envoyée en test interne ; vous ne verrez rien changer avec vos données) : sur un téléphone neuf, la présentation de l'Accueil
 tient en **une phrase** ; tant qu'aucune mesure n'arrive, **une seule ligne** « Sommeil, cœur et pas arrivent de votre
@@ -1530,6 +1541,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 09:33 CET — [VC-22 + VC-25 + VC-27 : textes « Analyses », Sources sans doublon](runs/2026-10-25-0933-vc22-vc25-vc27-sources.md) | 🧭 | « Vos Analyses » + règle `wordingRules` ; volet « Brancher une autre source » fusionné dans « Ajouter une source » (montre détectée en vue) ; chevrons à la place des ▸ / ▶ ; Health Connect en une phrase, 15 types au chevron ; 2 195 Vitest |
 | 25/10 10:33 CET — [VC-23 + VC-24 : Analyses, une échelle et un gabarit](runs/2026-10-25-1033-vc23-vc24-analyses.md) | 🧭 | « Piste solide / À confirmer / Trop tôt pour dire » partout (pastels, phrase au chevron) ; `LinkCard` unique pour les liens (facteur entier, une phrase, chiffres mono, une décimale) ; 2 192 Vitest |
 | 25/10 11:33 CET — [VC-26 : Accueil vierge plus léger](runs/2026-10-25-1133-vc26-accueil-vierge.md) | 🧭 | Intro en une phrase ; une ligne « … · Ajouter une source » au lieu de 3 tuiles « — » ; liens Journal masqués à vide ; relance unique de l'émulateur API 35 (rouge sur un commit journal seul) ; 2 193 Vitest |
+| 25/10 12:33 CET — [AVIS : « Votre avis » dans les Paramètres](runs/2026-10-25-1233-avis.md) | 🧭 | Paramètres → « Votre avis » : page Play Store (commentaires privés des testeurs) en play, ticket GitHub prérempli en sideload ; rien n'est joint ; texte d'invitation à jour ; 2 198 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

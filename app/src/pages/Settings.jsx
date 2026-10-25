@@ -7,7 +7,8 @@ import { CURRENT_VERSION } from '../services/updateCheck'
 import { useDebug } from '../contexts/DebugContext'
 import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings/cigaretteCounter'
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
-import { FEATURES } from '../config/distribution'
+import { DISTRIBUTION, FEATURES } from '../config/distribution'
+import { feedbackLink } from '../config/feedback'
 import { GOALS, loadOnboarding, saveOnboarding } from '../settings/onboarding'
 import AiCreditsHint from '../components/AiCreditsHint'
 import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
@@ -325,9 +326,27 @@ export default function Settings() {
         </div>
       )}
 
+      <FeedbackBlock />
+
       <button type="button" className="settings-version" onClick={handleVersionTap}>
         Version {CURRENT_VERSION}
       </button>
     </section>
+  )
+}
+
+/** « Votre avis » (AVIS) : un lien sortant, rien n'est joint. */
+function FeedbackBlock() {
+  const link = feedbackLink(DISTRIBUTION, CURRENT_VERSION)
+  return (
+    <div className="settings-block">
+      <h3 className="section-title">Votre avis</h3>
+      <p className="hint">{link.hint} Vous écrivez ce que vous voulez : aucune donnée n’est jointe.</p>
+      <div className="actions">
+        <a className="btn btn-secondary settings-link-btn" href={link.url} target="_blank" rel="noopener noreferrer">
+          {link.label}
+        </a>
+      </div>
+    </div>
   )
 }
