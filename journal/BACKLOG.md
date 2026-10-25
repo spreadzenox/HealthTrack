@@ -329,7 +329,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   combinaisons en détails — **précisé le 25/10 20:33** (`IDEES.md` I168–I169) : [x] **I168** (FAIT le 25/10 21:33 : r = 9 seul, plus puissant que 19 ; repas décalés de s jours, statistique sur les notes ; < 28 jours → « trop tôt ») porte « décalage temporel
   tronqué » (TTS, Yuan & Shou 2024) sur les séries journalières, u ≤ 0,1 en plus de BH, sans enroulement, r = 9 (> 18 j)
   ou 19 (> 38 j) ; [ ] **I169** N calibré sur 4 nulles réalistes (dérive AR(1), aliments en séries, saisie informative,
-  notes après les repas) ; [ ] **I170** bilan du ventre du soir en un geste (objectif « Mon ventre », `scope: 'day'`) ;
+  notes après les repas) — **banc livré le 25/10 22:33** (`gutWindows.sim.js` + `gutWindows.calibration.test.js`, sauté par défaut) : le moteur actuel **échoue** (derive 29/200, tous 54/200 en 9 sem. ; puissance 8/200) ; max-T testé : fausses pistes ≤ 4 % mais puissance nulle → à reprendre avec moins d'hypothèses (groupes FODMAP) + max-T robuste ; [ ] **I170** bilan du ventre du soir en un geste (objectif « Mon ventre », `scope: 'day'`) ;
   [ ] **I171** effet d'attente visible (part des notes prises dans les 2 h après le repas, option « à l'aveugle avec un
   proche » de la réintroduction) ; [ ] **I134** covariables sommeil / stress / écran, repas du même jour estimés ensemble ;
   symptômes digestifs stockés **localement** (aucun type Health Connect)
@@ -1133,6 +1133,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 25/10 (22:33 Paris)** : I169 étape 1 — banc des 4 nulles réalistes livré ; constat : le moteur ventre
+(Fisher + BH + porte TTS) laisse passer 15 à 27 % de fausses pistes avec 10 aliments et manque de puissance. Suite :
+**I169 étape 2** (groupes FODMAP au lieu d'aliments + max-T sur z robuste, critère < 20/200 et puissance ≥ 50 %) →
+I170 → affichage des pistes ventre. Rien n'est affiché dans l'app d'ici là.
 
 **Mise à jour du 25/10 (21:33 Paris)** : ✅ LISTING-1 et ✅ I168 livrés (#380). Suite : **I169 → I170 → affichage des
 pistes ventre dans Analyses (avec I171 a/b) → I134**.
