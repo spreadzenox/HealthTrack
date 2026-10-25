@@ -54,7 +54,22 @@ else
 fi
 # Un plantage natif tue le processus : on le cherche dans tout le journal
 adb logcat -d -b crash > play_crash.txt 2>/dev/null || true
-grep -E " E Capacitor/Console|Uncaught|Unhandled" play_logcat.txt > play_js_errors.txt || true
+# Un refus de plugin natif apparaît en « Msg: [object Object] » (journal Capacitor des builds debug) : on le remplace
+# par le plugin, la méthode et le message de la ligne « Sending plugin error » qui le précède (VC-21)
+awk '
+  /Sending plugin error:/ {
+    plug = ""; meth = ""; msg = ""
+    if (match($0, /"pluginId":"[^"]*"/)) plug = substr($0, RSTART + 12, RLENGTH - 13)
+    if (match($0, /"methodName":"[^"]*"/)) meth = substr($0, RSTART + 14, RLENGTH - 15)
+    if (match($0, /"message":"[^"]*"/)) msg = substr($0, RSTART + 11, RLENGTH - 12)
+    last = plug "." meth " refusé : " msg
+    next
+  }
+  / E Capacitor\/Console|Uncaught|Unhandled/ {
+    if (index($0, "Msg: [object Object]") && last != "") { sub(/Msg: \[object Object\]/, "Msg: (plugin natif) " last) }
+    print
+  }
+' play_logcat.txt > play_js_errors.txt || true
 UNCAUGHT=$(grep -c "Uncaught" play_js_errors.txt || true)
 JS_ERRORS=$(wc -l < play_js_errors.txt | tr -d ' ')
 # Le tampon « crash » couvre tout l'appareil : on ne compte que les plantages du processus de l'app
@@ -75,6 +90,7 @@ OTHER_CRASH=$(( $(grep -c "FATAL EXCEPTION" play_crash.txt || true) - CRASH ))
   echo
   echo "Build debug, émulateur logiciel sans GPU : les temps sont des majorants (un vrai téléphone est plus rapide)."
   echo "La détection du premier écran interroge l'arbre d'accessibilité toutes les ~1 à 2 s."
+  echo "« PlayBilling… refusé » est attendu ici : l'image de l'émulateur n'a pas le Play Store (l'app le gère sans erreur)."
   if [ "$JS_ERRORS" != 0 ]; then
     echo
     echo '```'

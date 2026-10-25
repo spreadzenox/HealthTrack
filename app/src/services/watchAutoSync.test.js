@@ -37,14 +37,23 @@ describe('syncWatchIfStale', () => {
     const storage = memoryStorage()
     const connect = vi.fn()
     expect(await syncWatchIfStale({ classic: null, storage, connect })).toEqual({ ran: false, reason: 'unavailable' })
-    expect(await syncWatchIfStale({ classic: fakeClassic([{ name: 'Galaxy Buds', deviceId: '1' }]), storage, connect })).toEqual({ ran: false, reason: 'no_watch' })
     expect(await syncWatchIfStale({ classic: fakeClassic(), storage, connect })).toEqual({ ran: false, reason: 'not_paired' })
+    paired(storage)
+    expect(await syncWatchIfStale({ classic: fakeClassic([{ name: 'Galaxy Buds', deviceId: '1' }]), storage, connect })).toEqual({ ran: false, reason: 'no_watch' })
     expect(connect).not.toHaveBeenCalled()
   })
 
+  it('aucune montre jamais appairée dans l’app : le Bluetooth n’est pas interrogé (VC-21)', async () => {
+    const classic = fakeClassic()
+    expect(await syncWatchIfStale({ classic, storage: memoryStorage() })).toEqual({ ran: false, reason: 'not_paired' })
+    expect(classic.listBonded).not.toHaveBeenCalled()
+  })
+
   it('Bluetooth coupé (listBonded lève) : aucune exception, nouvel essai plus tard', async () => {
+    const storage = memoryStorage()
+    paired(storage)
     const classic = { listBonded: async () => Promise.reject(new Error('Bluetooth désactivé')) }
-    expect(await syncWatchIfStale({ classic, storage: memoryStorage() })).toEqual({ ran: false, reason: 'error' })
+    expect(await syncWatchIfStale({ classic, storage })).toEqual({ ran: false, reason: 'error' })
   })
 
   it('se connecte sans constantes ni réappairage, puis attend 30 min avant de recommencer', async () => {
