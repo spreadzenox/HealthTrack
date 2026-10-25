@@ -723,7 +723,7 @@ dit « en pause » avec **« Reprendre »**. En coulisses : le test émulateur A
 (« Conflict found » de Health Connect, encore sur main cette nuit, sans lien avec l'app) est rendu robuste.
 **👉 Votre prochaine action : P28** — installer l'APK d'aperçu (artefact `halcya-apercu-deverrouillage` du workflow
 « Test — émulateur Samsung Galaxy A56 »), filmer 60–90 s selon le script, puis coller la déclaration (pas à pas dans
-[`PRODUIT.md`](PRODUIT.md) §4, P28). Prochain run de code : raccourci pour couper dans Paramètres (POL-1c), puis M6b.
+[`PRODUIT.md`](PRODUIT.md) §4, P28). Prochain run de code : raccourci pour couper dans Paramètres (POL-1c), puis M6b. Publié : **v263** (33,7 Mo) et la version play en test interne ; tous les tests verts, émulateur Android 16 compris.
 
 **Run du 25/10 02:30 — préparation de la lecture au déverrouillage dans la version play (POL-1a, rien de visible).**
 Rien ne change dans vos deux apps : la fonction est construite **derrière un interrupteur coupé**, pour que les
