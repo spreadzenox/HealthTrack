@@ -89,7 +89,7 @@ describe('Dashboard', () => {
     renderDashboard()
     expect(await screen.findByRole('region', { name: 'Mesures du jour' })).toBeInTheDocument()
     expect(screen.getByText('Sommeil')).toBeInTheDocument()
-    expect(screen.getByText('VFC')).toBeInTheDocument()
+    expect(screen.getByText('VFC nuit')).toBeInTheDocument()
     expect(screen.getByTestId('gut-card')).toBeInTheDocument()
     expect(screen.getByTestId('pistes-card')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Photo du repas' }))

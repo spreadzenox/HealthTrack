@@ -89,7 +89,7 @@ describe('measureTiles', () => {
 
   it('donne sommeil, VFC et pas du jour avec la source de chaque chiffre', () => {
     const tiles = measureTiles({ sleepMinutes: 452, hrv: 41.2, steps: 3456 }, entries, NOW)
-    expect(tiles.map((t) => [t.label, t.value])).toEqual([['Sommeil', '7 h 32'], ['VFC', '41 ms'], ['Pas', '3 456']])
+    expect(tiles.map((t) => [t.label, t.value])).toEqual([['Sommeil', '7 h 32'], ['VFC nuit', '41 ms'], ['Pas', '3 456']])
     expect(tiles[0].sources).toEqual(['Health Connect · Garmin'])
     expect(tiles[1].sources).toEqual(['Montre Huawei'])
     expect(tiles[2].sources).toEqual([])
