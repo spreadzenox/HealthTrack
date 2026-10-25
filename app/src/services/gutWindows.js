@@ -10,6 +10,10 @@
  * Les fenêtres et leurs repères (FODMAP par groupe) ne sont que des hypothèses de départ affichées comme telles
  * (règle D6) : seules les données de la personne décident. Le ventre n'est jamais une entrée de l'estimateur du
  * bien-être (règle anti-circularité). Le seuil minimal de notes est provisoire : I133 le fixera par simulation.
+ *
+ * Porte en plus (I168) : Fisher suppose des notes indépendantes. Deux tendances lentes qui se superposent (une
+ * semaine de lentilles pendant une mauvaise passe) lui suffisent pour conclure. Une piste doit donc aussi passer le
+ * test du décalage temporel tronqué (TTS, Yuan et Shou, PLoS Biology 2024) sur les séries journalières.
  */
 import { localDateKey } from './analysisEngine'
 import { computeTotalsFromItems } from './nutritionKPIs'
@@ -39,6 +43,17 @@ export const MIN_EXPOSED_NOTES = 8
 export const MIN_UNEXPOSED_NOTES = 8
 /** Seuil de q (après correction) pour parler de « lien repéré ». */
 export const GUT_LINK_MAX_Q = 0.1
+
+/**
+ * TTS : r = 9 jours de décalage de chaque côté, donc u ≥ 1 / 10 et une piste n'est gardée que si l'alignement réel
+ * bat strictement les 18 autres. Mesuré hors dépôt (25/10, effet à 6 h, 40 jeux ; nulle à dérive lente φ = 0,9 et
+ * aliment en séries, 100 jeux) : r = 9 repère l'effet 32 fois sur 40 en 9 semaines (r = 19 : 27), avec 5 jeux nuls
+ * sur 100 qui gardent une piste (Fisher seul : 31).
+ */
+export const TTS_SHIFT_DAYS = 9
+export const GUT_TTS_MAX_U = 0.1
+/** Jours gardés au minimum une fois r jours retirés à chaque bout (soit 28 jours de notes au moins). */
+export const TTS_MIN_KEPT_DAYS = 10
 
 const H = 3_600_000
 const SYMPTOM_LEVELS = new Set(['discomfort', 'pain'])
@@ -79,11 +94,45 @@ export function mealExposures(note, meals) {
 }
 
 /**
+ * Test du décalage temporel tronqué (TTS). `stat(s)` recalcule la même statistique quand les repas sont décalés de
+ * s jours, de −r à +r, SANS enroulement (on ne garde que les notes des jours r à n − r − 1, pour que chaque
+ * décalage reste dans la période observée). B = nombre de décalages (0 compris) au moins aussi forts que
+ * l'alignement réel ; u = B / (r + 1), plafonné à 1. Valide dès qu'une des deux séries est stationnaire. Un
+ * décalage où la statistique n'est pas calculable compte comme « aussi fort » (prudent).
+ * @param {(s: number) => number|null} stat
+ * @param {number} r
+ * @returns {number|null}  u, ou null si l'alignement réel n'est pas calculable
+ */
+export function truncatedTimeShift(stat, r) {
+  const real = stat(0)
+  if (real == null) return null
+  let b = 0
+  for (let s = -r; s <= r; s++) {
+    const v = s === 0 ? real : stat(s)
+    if (v == null || v >= real - 1e-12) b += 1
+  }
+  return Math.min(1, b / (r + 1))
+}
+
+/** Écart absolu de part de notes gêne/douleur, avec et sans l'aliment, repas décalés de `s` jours. */
+function shiftedStat(kept, mealTimes, w, s) {
+  const sum = [0, 0]
+  const cnt = [0, 0]
+  for (const n of kept) {
+    const t = n.t - s * 24 * H
+    const x = mealTimes.some((m) => t - m >= w.fromH * H && t - m < w.toH * H) ? 1 : 0
+    cnt[x] += 1
+    sum[x] += n.y
+  }
+  return cnt[0] && cnt[1] ? Math.abs(sum[1] / cnt[1] - sum[0] / cnt[0]) : null
+}
+
+/**
  * @param {object[]} entries  entrées `food` et `gut` (les autres sont ignorées)
  * @returns {{ notes: number, tested: number, results: {
  *   factor: string, window: string, status: 'link'|'no_link'|'too_early',
  *   exposed: { notes: number, symptoms: number }, unexposed: { notes: number, symptoms: number },
- *   rr: number|null, p: number|null, q: number|null, days: number }[] }}
+ *   rr: number|null, p: number|null, q: number|null, u: number|null, days: number }[] }}
  */
 export function analyzeGutWindows(entries) {
   const meals = []
@@ -122,15 +171,36 @@ export function analyzeGutWindows(entries) {
       const p = enough
         ? fisherExactTwoSided(exposed.symptoms, exposed.notes - exposed.symptoms, unexposed.symptoms, unexposed.notes - unexposed.symptoms)
         : null
-      results.push({ factor, window: w.id, status: enough ? 'no_link' : 'too_early', exposed, unexposed, rr, p, q: null, days })
+      results.push({ factor, window: w.id, status: enough ? 'no_link' : 'too_early', exposed, unexposed, rr, p, q: null, u: null, days })
     }
   }
 
   const tested = results.filter((r) => r.p != null)
   const qs = benjaminiHochberg(tested.map((r) => r.p))
-  tested.forEach((r, i) => {
-    r.q = qs[i]
-    if (r.q < GUT_LINK_MAX_Q) r.status = 'link'
-  })
+  tested.forEach((r, i) => { r.q = qs[i] })
+
+  // Porte TTS, seulement pour les candidates de Fisher. Trop peu de jours pour décaler : on préfère attendre.
+  const candidates = tested.filter((r) => r.q < GUT_LINK_MAX_Q)
+  if (candidates.length) {
+    const noteDays = new Set(notes.map((n) => localDateKey(n.at))).size
+    const times = notes.map((n) => Date.parse(n.at))
+    const first = Math.min(...times)
+    const last = Math.max(...times)
+    const span = Math.round((last - first) / (24 * H)) + 1
+    const r = TTS_SHIFT_DAYS
+    const enoughDays = span - 2 * r >= TTS_MIN_KEPT_DAYS && noteDays >= TTS_MIN_KEPT_DAYS
+    for (const c of candidates) {
+      if (!enoughDays) { c.status = 'too_early'; continue }
+      const w = GUT_WINDOWS.find((win) => win.id === c.window)
+      const kept = notes
+        .map((n) => ({ t: Date.parse(n.at), y: SYMPTOM_LEVELS.has(n.payload.level) ? 1 : 0 }))
+        .filter((n) => n.t - first >= r * 24 * H && last - n.t >= r * 24 * H)
+      const mealTimes = meals.filter((m) => m.factors.includes(c.factor)).map((m) => Date.parse(m.at))
+      c.u = truncatedTimeShift((s) => shiftedStat(kept, mealTimes, w, s), r)
+      if (c.u == null) c.status = 'too_early'
+      else if (c.u <= GUT_TTS_MAX_U) c.status = 'link'
+    }
+  }
+
   return { notes: notes.length, tested: tested.length, results }
 }
