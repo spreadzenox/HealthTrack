@@ -289,9 +289,12 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         schema: RESPONSE_SCHEMA,
       })
       log({ event: 'analyze', kind, model, location, status: 200, ms: now() - started, install: hashInstallId(installId) })
+      // Nouvelle installation qui prend son premier crédit (CREDITS-INSTALLS) : compté par jour, sans identifiant ;
+      // l'analyse de test du workflow (« ci-smoke-<run> », une installation neuve à chaque fois) n'est pas comptée
+      if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan })
       const payload = { parsed, model, quota: { remaining: slot.remaining, resetAt: slot.resetAt } }
       if (credit) {
-        const { ok: _ok, ...state } = credit
+        const { ok: _ok, firstUse: _first, ...state } = credit
         payload.credits = state
       }
       send(res, 200, payload, origin)

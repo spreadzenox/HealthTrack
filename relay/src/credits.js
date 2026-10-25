@@ -48,6 +48,8 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
   const ledger = new Map()
   /** empreintes déjà relues dans le registre durable par cette instance */
   const loaded = new Set()
+  /** empreintes absentes du registre durable à leur première relecture : installations jamais vues */
+  const fresh = new Set()
 
   function entry(installId, reported, t) {
     const key = keyOf(installId)
@@ -97,7 +99,10 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
       if (!store || loaded.has(key)) return
       const saved = await store.get(key)
       loaded.add(key)
-      if (!saved) return
+      if (!saved) {
+        fresh.add(key)
+        return
+      }
       mergeInto(entry(installId, null, now()), saved)
     },
 
@@ -117,12 +122,15 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
     },
 
     /**
-     * Consomme un crédit si possible.
-     * @returns {({ ok: true } & ReturnType<typeof view>) | { ok: false, scope: 'credits'|'premium_day', resetAt: string, plan: string, state: string }}
+     * Consomme un crédit si possible. `firstUse` : premier crédit d'une installation que le registre durable ne
+     * connaissait pas (sans registre, on ne sait pas : toujours faux) ; sert à compter les nouvelles installations.
+     * @returns {({ ok: true, firstUse: boolean } & ReturnType<typeof view>) | { ok: false, scope: 'credits'|'premium_day', resetAt: string, plan: string, state: string }}
      */
     take(installId, { premium = false, reported = null } = {}) {
       const t = now()
+      const key = keyOf(installId)
       const e = entry(installId, reported, t)
+      const blank = e.used === 0 && e.welcomeUsed === 0 && e.dayUsed === 0
       if (premium) {
         if (e.dayUsed >= premiumDaily) return { ok: false, scope: 'premium_day', ...view(e, true, t) }
         e.dayUsed += 1
@@ -135,13 +143,20 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
       } else {
         return { ok: false, scope: 'credits', ...view(e, false, t) }
       }
-      return { ok: true, ...view(e, premium, t) }
+      const firstUse = fresh.delete(key) && blank
+      e.lastWasFirst = firstUse
+      return { ok: true, firstUse, ...view(e, premium, t) }
     },
 
     /** Rend le dernier crédit pris (analyse qui n'a rien coûté). */
     refund(installId, { premium = false } = {}) {
-      const e = ledger.get(keyOf(installId))
+      const key = keyOf(installId)
+      const e = ledger.get(key)
       if (!e) return
+      if (e.lastWasFirst) {
+        fresh.add(key)
+        e.lastWasFirst = false
+      }
       if (premium) e.dayUsed = Math.max(0, e.dayUsed - 1)
       else if (e.lastWasWelcome) e.welcomeUsed = Math.max(0, e.welcomeUsed - 1)
       else e.used = Math.max(0, e.used - 1)

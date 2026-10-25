@@ -159,3 +159,32 @@ test('Firestore : lecture, document absent, écriture des seuls compteurs', asyn
   const failing = createFirestoreStore({ project: 'p', getToken: async () => 'j', fetchImpl: async () => ({ ok: false, status: 403 }) })
   await assert.rejects(failing.get('abc'), /403/)
 })
+
+test('nouvelle installation : seul le premier crédit d\'une installation inconnue du registre est marqué', async () => {
+  const c = clock(T0)
+  const store = memoryStore()
+  const cr = createCredits({ ...opts(c), store })
+  await cr.hydrate('a')
+  assert.equal(cr.take('a', { premium: false }).firstUse, true)
+  assert.equal(cr.take('a', { premium: false }).firstUse, false)
+  await cr.persist('a')
+  // Installation déjà connue du registre (autre instance) : jamais « nouvelle »
+  const other = createCredits({ ...opts(c), store })
+  await other.hydrate('a')
+  assert.equal(other.take('a', { premium: true }).firstUse, false)
+  // Sans registre durable, on ne sait pas : jamais « nouvelle »
+  assert.equal(createCredits(opts(c)).take('b', { premium: false }).firstUse, false)
+  // L'app rapporte déjà des crédits pris : pas une nouvelle installation
+  const third = createCredits({ ...opts(c), store })
+  await third.hydrate('c')
+  assert.equal(third.take('c', { premium: false, reported: { month: '2026-10', used: 3, welcomeUsed: 0 } }).firstUse, false)
+})
+
+test('nouvelle installation : un premier crédit rendu (analyse sans coût) reste à compter', async () => {
+  const c = clock(T0)
+  const cr = createCredits({ ...opts(c), store: memoryStore() })
+  await cr.hydrate('a')
+  assert.equal(cr.take('a', { premium: false }).firstUse, true)
+  cr.refund('a', { premium: false })
+  assert.equal(cr.take('a', { premium: false }).firstUse, true)
+})
