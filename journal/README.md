@@ -824,6 +824,15 @@ mais réalistes (mauvaises passes + aliments en série), le test seul se trompai
 dira « trop tôt pour dire ». **👉 Votre prochaine action la plus utile** : inviter les testeurs (voir en tête) dès que
 Google a fini d'examiner la version alpha.
 
+**Run du 25/10 22:33 — les futures pistes du ventre passées au banc d'essai (rien ne change dans l'app).** Avant
+d'afficher les pistes repas → ventre, j'ai simulé 2 000 journaux réalistes **sans aucun effet** (10 aliments, ventre
+qui a ses bonnes et mauvaises passes, aliments mangés par séries, notes prises plus souvent quand ça va mal ou juste
+après un repas). Verdict : le moteur actuel montrerait **une fausse piste dans 15 à 27 % des cas** et repère mal un
+vrai effet. Une version plus stricte supprime les fausses pistes mais ne voit alors plus rien. Rien de tout ça n'est
+visible dans l'app (les pistes du ventre ne sont pas encore affichées) ; le prochain run de code testera des **groupes
+FODMAP** (fructanes, lactose, polyols…) au lieu de chaque aliment, ce qui réduit fortement le nombre de comparaisons.
+C'est exactement le « on préfère attendre plutôt que de vous montrer de faux suspects ».
+
 **Run du 25/10 15:33 — petites finitions et preuve du registre des crédits (VC-20, CREDITS-LOG, PLAY-COMPLETED).**
 Ce que vous verrez (prochaine version) : les étiquettes d'habitudes (Alcool, Voyage, Café après 14 h…) **n'affichent plus
 d'émoji** dans le Journal, le radar forme (« Probablement lié à « Alcool » (hier)… ») et la note de bien-être à la main ;
@@ -1640,6 +1649,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 19:33 CET — [I132 : fenêtres repas → ventre](runs/2026-10-25-1933-fenetres-ventre.md) | 🧭 | `gutWindows.js` : 3 fenêtres fixées d'avance (0–4, 4–24, 24–48 h) et leurs hypothèses de départ, Fisher exact + BH, « trop tôt » sous 8/8 notes ; simulation : effet à 6 h repéré 8/10 en 9 semaines, jamais ailleurs ; nul : 3/40 ; aucun écran touché ; 2 222 Vitest |
 | 25/10 20:33 CET — [Idées : pistes ventre robustes](runs/2026-10-25-2033-idees-pistes-ventre-robustes.md) | 💡 | I168 porte TTS (décalage tronqué, u ≤ 0,1 en plus de BH) ; I169 N calibré sur 4 nulles réalistes ; I170 bilan du ventre du soir ; I171 effet d'attente visible, réintroduction « à l'aveugle avec un proche » ; I172 fiche Play (« s'efface en désinstallant », « Pistes ») → LISTING-1 ; journal seul |
 | 25/10 21:33 CET — [Fiche Play + porte TTS](runs/2026-10-25-2133-fiche-play-porte-tts.md) | 🧭 | LISTING-1 : fiche fr-FR fidèle (sauvegarde Android, « Analyses », SII, journal alimentaire, FODMAP = hypothèses) + test-garde ; I168 : porte TTS r = 9 dans `gutWindows.js` (nulle réaliste : 31 → 5 % de fausses pistes ; puissance 32/40 en 9 semaines) ; 2 229 Vitest |
+| 25/10 22:33 CET — [I169 : banc des nulles](runs/2026-10-25-2233-i169-banc-nulles.md) | 🏗️ | Banc lent de 4 nulles réalistes (10 aliments) : le moteur ventre actuel laisse passer jusqu'à 54/200 fausses pistes et manque de puissance ; max-T essayé (≤ 4 % mais puissance nulle) ; moteur inchangé, rien d'affiché ; suite : groupes FODMAP + max-T robuste |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |
