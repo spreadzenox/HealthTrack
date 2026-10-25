@@ -61,6 +61,17 @@ public class FaceSenseService extends Service {
 
     static final String ACTION_START = "com.healthtrack.app.face.START";
     static final String ACTION_STOP = "com.healthtrack.app.face.STOP";
+    /**
+     * Variante play avec l'interrupteur faceUnlockPlay (POL-1) : préférence propre à la lecture au déverrouillage.
+     * « Arrêter » ne coupe qu'elle ; l'accord « enabled » de la lecture à l'ouverture de l'app reste. En sideload, le
+     * service porte « enabled » comme avant.
+     */
+    static final String UNLOCK_PREF = "unlock";
+
+    /** Préférence que le service allume au démarrage et éteint sur « Arrêter ». */
+    static String runPref() {
+        return BuildConfig.FACE_KEEPALIVE ? "enabled" : UNLOCK_PREF;
+    }
     static final String ACTION_TEST = "com.healthtrack.app.face.TEST";
     static final String PREFS = "face_sense";
     static final String CHANNEL = "face_sense";
@@ -227,9 +238,11 @@ public class FaceSenseService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent == null ? null : intent.getAction();
         if (ACTION_STOP.equals(action)) {
-            prefs(this).edit().putBoolean("enabled", false).apply();
-            FaceResumeNotice.cancel(this);
-            FaceResumeJob.cancel(this);
+            prefs(this).edit().putBoolean(runPref(), false).apply();
+            if (BuildConfig.FACE_KEEPALIVE) {
+                FaceResumeNotice.cancel(this);
+                FaceResumeJob.cancel(this);
+            }
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -252,7 +265,7 @@ public class FaceSenseService extends Service {
             running = true;
             String origin = intent == null ? null : intent.getStringExtra(EXTRA_ORIGIN);
             SharedPreferences p = prefs(this);
-            p.edit().putBoolean("enabled", true).putLong("startedAt", System.currentTimeMillis())
+            p.edit().putBoolean(runPref(), true).putLong("startedAt", System.currentTimeMillis())
                     .putInt("startBattery", batteryPercent(this)).remove("lastError")
                     .putString("startOrigin", ORIGIN_APP.equals(origin) ? ORIGIN_APP : ORIGIN_BACKGROUND)
                     .putString("startAction", action == null ? "sticky" : action.substring(action.lastIndexOf('.') + 1))
@@ -451,7 +464,10 @@ public class FaceSenseService extends Service {
     private Notification notification() {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (nm != null && Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel ch = new NotificationChannel(CHANNEL, "Lecture du visage", NotificationManager.IMPORTANCE_MIN);
+            // Variante play : importance basse (icône visible dans la barre d'état) pour que la lecture au
+            // déverrouillage reste perceptible (règles Play des services de premier plan) ; sideload : minimale.
+            NotificationChannel ch = new NotificationChannel(CHANNEL, "Lecture du visage",
+                    BuildConfig.FACE_KEEPALIVE ? NotificationManager.IMPORTANCE_MIN : NotificationManager.IMPORTANCE_LOW);
             ch.setDescription("Service actif tant que la lecture du visage est activée dans " + getString(R.string.app_name) + ".");
             nm.createNotificationChannel(ch);
         }
@@ -464,7 +480,7 @@ public class FaceSenseService extends Service {
                 .setSmallIcon(R.drawable.ic_stat_healthtrack)
                 .setContentTitle("Lecture du visage active")
                 .setContentText("Quelques images au déverrouillage, analysées sur le téléphone puis effacées.")
-                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setPriority(BuildConfig.FACE_KEEPALIVE ? NotificationCompat.PRIORITY_MIN : NotificationCompat.PRIORITY_LOW)
                 .setOngoing(true)
                 .setContentIntent(content)
                 .addAction(0, "Arrêter", stop)

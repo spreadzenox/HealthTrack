@@ -78,6 +78,12 @@ de l'app (bien plus de lectures par jour). L'option B (lecture à l'ouverture) r
    `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`, ni guide Shizuku / ADB.
 5. Sideload inchangée.
 
+**État au 25/10 02:30 (POL-1a)** : interrupteur `-PfaceUnlockPlay=true` (défaut coupé) dans `build.gradle` ;
+allumé, il choisit `src/playFaceUnlock/AndroidManifest.xml` (service caméra gardé, relance et exemption retirées) et
+`BuildConfig.FACE_UNLOCK` ; `FACE_KEEPALIVE` reste faux en play. L'APK d'aperçu (`-PplayPreview=true`,
+`fr.jpesquet.sante.apercu`) est l'artefact `halcya-apercu-deverrouillage` du workflow « Test — émulateur Samsung
+Galaxy A56 ». Reste POL-1b (écran d'activation et divulgation) avant de filmer.
+
 ### P28 — texte exact à coller dans la Play Console
 
 Où : Play Console → Halcya → **Surveiller et améliorer → Règles et programmes → Contenu de l'app** → « Autorisations

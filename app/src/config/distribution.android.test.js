@@ -57,7 +57,11 @@ describe('variantes Android play / sideload', () => {
     }
     const gradle = read('build.gradle')
     expect(gradle).toMatch(/sideload \{[^}]*FACE_UNLOCK', 'true'/)
-    expect(gradle).toMatch(/play \{[^}]*FACE_UNLOCK', 'false'/)
+    expect(gradle).toMatch(/sideload \{[^}]*FACE_KEEPALIVE', 'true'/)
+    // Interrupteur POL-1 : coupé sauf -PfaceUnlockPlay=true ; jamais de relance ni d'exemption de batterie en play
+    expect(gradle).toMatch(/play \{[^}]*FACE_UNLOCK', faceUnlockPlay \? 'true' : 'false'/)
+    expect(gradle).toMatch(/play \{[^}]*FACE_KEEPALIVE', 'false'/)
+    expect(gradle).toMatch(/def faceUnlockPlay = \(project\.findProperty\('faceUnlockPlay'\) \?: 'false'\)\.toBoolean\(\)/)
     // ancienne permission de stockage bornée (sans effet depuis Android 13, signalée par Play sinon)
     expect(read('src/main/AndroidManifest.xml')).toMatch(/READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/)
   })
@@ -85,5 +89,37 @@ describe('variantes Android play / sideload', () => {
       if (kept.has(perm)) expect(removed.has(perm), `${perm} est lue par le connecteur`).toBe(false)
       else expect(removed.has(perm), `${perm} n'est pas utilisée : à retirer en play`).toBe(true)
     }
+  })
+
+  it('POL-1 : le manifeste play « lecture au déverrouillage » ne diffère que par le service caméra', () => {
+    const strip = (xml) => xml.replace(/<!--[\s\S]*?-->/g, '').split('\n').map((l) => l.trim()).filter(Boolean)
+    const off = strip(read('src/play/AndroidManifest.xml'))
+    const on = strip(read('src/playFaceUnlock/AndroidManifest.xml'))
+    const kept = [
+      '<service android:name="com.healthtrack.app.FaceSenseService" tools:node="remove" />',
+      '<uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove" />',
+      '<uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" tools:node="remove" />',
+    ]
+    expect(off.filter((l) => !kept.includes(l))).toEqual(on)
+    for (const l of kept) expect(off).toContain(l)
+    // relance et exemption de batterie restent retirées
+    expect(on).toContain('<service android:name="com.healthtrack.app.FaceResumeJob" tools:node="remove" />')
+    expect(on).toContain('<receiver android:name="com.healthtrack.app.FaceResumeReceiver" tools:node="remove" />')
+    expect(on).toContain('<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" tools:node="remove" />')
+    expect(read('build.gradle')).toMatch(/if \(faceUnlockPlay\) play \{ manifest\.srcFile 'src\/playFaceUnlock\/AndroidManifest\.xml' \}/)
+  })
+
+  it('POL-1 : en play, ni relance, ni exemption de batterie, et « Arrêter » ne coupe que le déverrouillage', () => {
+    const plugin = read('src/main/java/com/healthtrack/app/FaceSensePlugin.java')
+    const service = read('src/main/java/com/healthtrack/app/FaceSenseService.java')
+    // toute programmation de la vérification horaire est sous FACE_KEEPALIVE (sideload)
+    for (const line of plugin.split('\n').filter((l) => l.includes('FaceResumeJob.ensureScheduled'))) {
+      expect(line).toMatch(/FACE_KEEPALIVE/)
+    }
+    expect(plugin).toMatch(/requestBatteryExemption[\s\S]{0,120}if \(!BuildConfig\.FACE_KEEPALIVE\)/)
+    expect(service).toMatch(/return BuildConfig\.FACE_KEEPALIVE \? "enabled" : UNLOCK_PREF/)
+    expect(service).toMatch(/ACTION_STOP\.equals\(action\)\) \{\s*prefs\(this\)\.edit\(\)\.putBoolean\(runPref\(\), false\)/)
+    expect(service).toMatch(/\.addAction\(0, "Arrêter", stop\)/)
+    expect(service).toMatch(/BuildConfig\.FACE_KEEPALIVE \? NotificationManager\.IMPORTANCE_MIN : NotificationManager\.IMPORTANCE_LOW/)
   })
 })

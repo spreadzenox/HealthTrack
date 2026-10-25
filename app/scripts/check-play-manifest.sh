@@ -6,7 +6,7 @@
 #                permission com.android.vending.BILLING (Google Play Billing, jalon 6c-2) ;
 #   - sideload : identifiant historique com.healthtrack.app, avec REQUEST_INSTALL_PACKAGES (mise à jour en un clic)
 #                et la lecture du visage au déverrouillage (FaceSenseService), sans Play Billing.
-# Usage : bash scripts/check-play-manifest.sh [--play-only]
+# Usage : bash scripts/check-play-manifest.sh [--play-only | --face-unlock-preview]
 #         (depuis app/, après ./gradlew bundlePlayRelease assembleSideloadDebug ; --play-only après bundlePlayRelease seul)
 set -euo pipefail
 BUILD="android/app/build/intermediates"
@@ -57,6 +57,28 @@ check() {
   echo "$variant : $m vérifié"
 }
 
+# Aperçu play avec l'interrupteur POL-1 allumé (-PfaceUnlockPlay=true -PplayPreview=true, après assemblePlayDebug) :
+# service caméra et FOREGROUND_SERVICE_CAMERA présents ; ni relance (FaceResumeJob / Receiver), ni exemption de
+# batterie, ni REQUEST_INSTALL_PACKAGES, ni écriture Health Connect ; Play Billing gardé.
+check_face_unlock_preview() {
+  local m
+  m="$(manifest_for playDebug)"
+  if [ -z "$m" ]; then echo "::error::Manifeste fusionné introuvable pour playDebug"; exit 1; fi
+  grep -q 'package="fr.jpesquet.sante.apercu"' "$m" || { echo "::error::aperçu : identifiant fr.jpesquet.sante.apercu attendu"; fail=1; }
+  for needle in '.FaceSenseService"' 'android.permission.FOREGROUND_SERVICE_CAMERA' 'com.android.vending.BILLING'; do
+    grep -qF "$needle" "$m" || { echo "::error::aperçu : $needle manquant ($m)"; fail=1; }
+  done
+  for needle in '.FaceResumeJob"' '.FaceResumeReceiver"' 'android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS' \
+      'android.permission.REQUEST_INSTALL_PACKAGES' 'android.permission.health.WRITE_'; do
+    if grep -qF "$needle" "$m"; then echo "::error::aperçu : $needle ne doit pas y être ($m)"; fail=1; fi
+  done
+  echo "playDebug (aperçu lecture au déverrouillage) : $m vérifié"
+}
+
+if [ "${1:-}" = "--face-unlock-preview" ]; then
+  check_face_unlock_preview
+  exit $fail
+fi
 check playRelease fr.jpesquet.sante no
 [ "${1:-}" = "--play-only" ] || check sideloadDebug com.healthtrack.app yes
 exit $fail

@@ -101,7 +101,12 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   version qui la contient ; `PLAY-CONFORMITE.md` à mettre à jour ; sideload inchangé.
   **P28 préparé le 24/10 20:30** (`PLAY-CONFORMITE.md` §1 bis : cahier des charges, texte, script vidéo) ; POL-1 doit
   aussi produire un APK d'aperçu play interrupteur allumé (`applicationIdSuffix ".apercu"`) pour la vidéo.
-Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → ~~POL-8~~ (fait 25/10 01:30) → POL-1 (après P28 préparé).
+  **POL-1a FAIT le 25/10 02:30** (natif + CI, interrupteur coupé) : `-PfaceUnlockPlay` / `-PplayPreview`,
+  `FACE_KEEPALIVE`, manifeste `src/playFaceUnlock` (parité testée), préférence `unlock` distincte de `enabled`,
+  `stopUnlock`, notification d'importance basse en play, APK d'aperçu en artefact `halcya-apercu-deverrouillage`.
+  [ ] **POL-1b** (app) : interrupteur « Aussi à chaque déverrouillage » si `unlockAvailable`, divulgation, notifications,
+  réglage, pas de Shizuku / batterie en play ; [ ] P28 par le propriétaire ; [ ] allumer l'interrupteur dans « Play — AAB ».
+Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → ~~POL-8~~ (fait 25/10 01:30) → POL-1a (fait 25/10 02:30) → POL-1b (écran d'activation) → P28 → interrupteur allumé.
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
 Ordre des runs de code : ~~6b~~ (6b-1 livré le 22/10 21:30) **→ 6c (+ 6b-2 Play Integrity) → jalon 4 → passe de finition VC** (6d dès P13, 6e dès les abonnements), puis M4,
