@@ -9,6 +9,8 @@ import { field, sleepSequenceFile, stressFile } from './testing/sampleFiles'
 import { parseSleepSequence, parseStressFile, SLEEP_FIELD } from './files'
 import { dictionaryPage, real4, real8 } from './testing/sampleDictionary'
 import { DICT_CLASS, DICT_FIELD } from './p2p'
+import { encodeTlvs } from './protocol'
+import { paceBlock, runTotals, samplesBlock } from './testing/sampleWorkouts'
 
 const hex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
 
@@ -179,6 +181,47 @@ describe('captures du client Java « synchro seule »', () => {
       expect(plain.dictionary).toEqual({})
       expect(plain.services.map((s) => s.id)).toEqual(['sleep', 'minutes', 'totals'])
       expect(isValidCapture({ ...javaCapture(), dict: [{ id: 'hrvDay', cls: DICT_CLASS.HRV, pages: ['zz'] }] })).toBe(false)
+    })
+  })
+
+  describe('séances lues en arrière-plan (M7b)', () => {
+    const run = Math.floor((READ_WINDOW.since + 3600_000) / 1000)
+    const old = Math.floor((READ_WINDOW.since - 3 * 24 * 3600_000) / 1000)
+    const reply = (c, i, tlvs) => ({ s: 0x17, c, i, hex: hex(encodeTlvs(tlvs)) })
+    // même ordre que WatchReader.workouts : liste, totaux, échantillons et allures de la séance (index = son numéro)
+    const withWorkouts = (replies, read = { id: 'workouts', outcome: 'ok', units: 2, failed: 0 }) => ({
+      ...javaCapture(),
+      replies: [...javaCapture().replies, ...replies],
+      reads: [...javaCapture().reads, read],
+    })
+
+    it('FC moyenne, courbe et allures assemblées comme la synchro en direct ; séance hors période écartée', () => {
+      const data = dataFromCapture(
+        withWorkouts([
+          reply(0x07, -1, [{ tag: 0x81, value: [] }]),
+          reply(0x08, 7, runTotals(7, run)),
+          reply(0x0a, 7, samplesBlock(7, 0, run, 30, [[120, 30], [130, 31], [140, 32]])),
+          reply(0x0a, 7, samplesBlock(7, 1, run + 90, 30, [[150, 33]])),
+          reply(0x0c, 7, paceBlock(7, 0, [[2, 0, 318], [1, 0, 330], [3, 0, 300, 5000]])),
+          reply(0x08, 9, runTotals(9, old)),
+        ]),
+      )
+      expect(data.workouts).toHaveLength(1)
+      expect(data.workouts[0]).toMatchObject({ number: 7, sport: 'running', kcal: 310, hrMin: 96, hrMax: 171, hrAvg: 135, hrCurve: { stepSeconds: 60, bpm: [125, 145] }, paceSplits: [330, 318] })
+      expect(data.services.find((s) => s.id === 'workouts')).toMatchObject({ outcome: 'ok', count: 1, units: 2 })
+      expect(data.capabilities).toMatch(/séances/)
+      const activity = watchEntries(data, { until: READ_WINDOW.until }).find((e) => e.type === 'activity')
+      expect(activity.payload).toMatchObject({ avgHeartRate: 135, paceSplitsSecPerKm: [330, 318], totalDistanceMeters: 5200 })
+    })
+
+    it('bloc illisible compté perdu, séance gardée ; capture sans séances inchangée', () => {
+      const data = dataFromCapture(withWorkouts([reply(0x08, 7, runTotals(7, run)), { s: 0x17, c: 0x0a, i: 7, hex: '81ff' }]))
+      expect(data.workouts).toHaveLength(1)
+      expect(data.workouts[0].hrAvg).toBeUndefined()
+      expect(data.services.find((s) => s.id === 'workouts')).toMatchObject({ outcome: 'ok', count: 1, failed: 1 })
+      const none = dataFromCapture(withWorkouts([], { id: 'workouts', outcome: 'timeout', units: 0, failed: 0 }))
+      expect(none.services.find((s) => s.id === 'workouts')).toMatchObject({ outcome: 'timeout', count: 0 })
+      expect(dataFromCapture(javaCapture()).workouts).toEqual([])
     })
   })
 })

@@ -53,6 +53,7 @@ final class BackgroundWatchSync {
         s.bedTime = p.getBoolean("bedTime", true);
         s.hrvDayUntil = p.getLong("hrvDayUntil", 0);
         s.skinTempUntil = p.getLong("skinTempUntil", 0);
+        s.workouts = p.getBoolean("workouts", false);
         return s;
     }
 
@@ -65,6 +66,7 @@ final class BackgroundWatchSync {
                 .putBoolean("bedTime", s.bedTime)
                 .putLong("hrvDayUntil", s.hrvDayUntil)
                 .putLong("skinTempUntil", s.skinTempUntil)
+                .putBoolean("workouts", s.workouts)
                 .putLong("lastAttemptAt", s.lastAttemptAt)
                 .putLong("lastSuccessAt", s.lastSuccessAt)
                 .putInt("failures", s.failures)
@@ -144,12 +146,12 @@ final class BackgroundWatchSync {
 
     /** Reprise recopiée par le JS après une synchro (en direct ou importée). */
     static void shareFromApp(Context context, String address, long until, long atMs, long sleepFileUntil, long stressFileUntil, Boolean bedTime,
-                             long hrvDayUntil, long skinTempUntil) {
+                             long hrvDayUntil, long skinTempUntil, boolean workouts) {
         String addr = WatchVault.normalizeAddress(address);
         if (addr == null) return;
         BackgroundSync.State s = load(context, addr);
         BackgroundSync.shareFromApp(s, until, atMs, sleepFileUntil, stressFileUntil, bedTime != null ? bedTime : s.bedTime,
-                hrvDayUntil, skinTempUntil);
+                hrvDayUntil, skinTempUntil, workouts);
         save(context, addr, s);
         WatchSyncJob.ensureScheduled(context);
     }

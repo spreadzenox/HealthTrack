@@ -106,6 +106,8 @@ export async function shareResumeWithNative({ deviceId, state, plugin = captureP
       // classes du dictionnaire (P2P) déjà reçues par l'app : relues en arrière-plan après leur dernier instant (M6b)
       ...(state.dictUntil?.[DICT_CLASS.HRV] > 0 ? { hrvDayUntil: state.dictUntil[DICT_CLASS.HRV] } : {}),
       ...(state.dictUntil?.[DICT_CLASS.SKIN_TEMP] > 0 ? { skinTempUntil: state.dictUntil[DICT_CLASS.SKIN_TEMP] } : {}),
+      // séances déjà lues par l'app : relues aussi en arrière-plan, avec leur FC et leurs allures (M7b)
+      ...(state.workoutsRead === true ? { workouts: true } : {}),
     }
     await plugin.shareResume({ deviceId, until: state.v === SYNC_STATE_VERSION && state.until > 0 ? state.until : 0, at, ...files })
     return true

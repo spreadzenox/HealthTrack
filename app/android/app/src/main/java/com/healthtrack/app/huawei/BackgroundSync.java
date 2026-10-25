@@ -62,6 +62,8 @@ public final class BackgroundSync {
         /** Dernier instant lu par classe du dictionnaire (ms, recopié du JS ; 0 = jamais lu : la classe n'est pas demandée). */
         public long hrvDayUntil;
         public long skinTempUntil;
+        /** Séances déjà lues une fois par l'app (service 0x17 pris en charge, recopié du JS) : relues aussi (M7b). */
+        public boolean workouts;
     }
 
     private BackgroundSync() {
@@ -147,6 +149,13 @@ public final class BackgroundSync {
     /** Idem, avec le dernier instant lu des classes du dictionnaire (VFC de journée, température). */
     public static void shareFromApp(State s, long until, long atMs, long sleepFileUntil, long stressFileUntil, boolean bedTime,
                                     long hrvDayUntil, long skinTempUntil) {
+        shareFromApp(s, until, atMs, sleepFileUntil, stressFileUntil, bedTime, hrvDayUntil, skinTempUntil, false);
+    }
+
+    /** Idem, avec les séances : une fois lues par l'app, elles le restent en arrière-plan. */
+    public static void shareFromApp(State s, long until, long atMs, long sleepFileUntil, long stressFileUntil, boolean bedTime,
+                                    long hrvDayUntil, long skinTempUntil, boolean workouts) {
+        if (workouts) s.workouts = true;
         if (hrvDayUntil > s.hrvDayUntil) s.hrvDayUntil = hrvDayUntil;
         if (skinTempUntil > s.skinTempUntil) s.skinTempUntil = skinTempUntil;
         if (sleepFileUntil > s.sleepFileUntil) s.sleepFileUntil = sleepFileUntil;
@@ -235,7 +244,8 @@ public final class BackgroundSync {
         try (WatchLink link = new WatchLink(transport)) {
             WatchHandshake.authenticate(link, authToken, authId, requestId, random, timeoutMs);
             battery = WatchHandshake.battery(link, timeoutMs);
-            cap = WatchReader.read(link, w[0], w[1], nowMs, timeoutMs, fileRequests(state, w[0]), dictionaryRequests(state));
+            cap = WatchReader.read(link, w[0], w[1], nowMs, timeoutMs, fileRequests(state, w[0]), dictionaryRequests(state),
+                    state.workouts);
             cap.battery = battery;
             cap.bedTime = state.bedTime;
             cap.address = address;

@@ -86,7 +86,7 @@ public class WatchCapturePlugin extends Plugin {
         call.resolve(ret);
     }
 
-    /** Reprise de la synchro faite par le JS : { deviceId, until, at, sleepFileUntil?, stressFileUntil?, sleepBedTime? } (ms). */
+    /** Reprise de la synchro faite par le JS : { deviceId, until, at, sleepFileUntil?, stressFileUntil?, sleepBedTime?, hrvDayUntil?, skinTempUntil?, workouts? } (ms). */
     @PluginMethod
     public void shareResume(PluginCall call) {
         String address = call.getString("deviceId");
@@ -98,7 +98,7 @@ public class WatchCapturePlugin extends Plugin {
         }
         BackgroundWatchSync.shareFromApp(getContext(), address, until, at,
                 call.getLong("sleepFileUntil", 0L), call.getLong("stressFileUntil", 0L), call.getBoolean("sleepBedTime", null),
-                call.getLong("hrvDayUntil", 0L), call.getLong("skinTempUntil", 0L));
+                call.getLong("hrvDayUntil", 0L), call.getLong("skinTempUntil", 0L), Boolean.TRUE.equals(call.getBoolean("workouts", false)));
         call.resolve();
     }
 

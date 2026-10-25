@@ -1000,7 +1000,7 @@ température »). Lecture de [G] master `0735529275` (21/10/2026) via l'API REST
 | Pas, distance, calories | minutes + totaux 7/0x03 | ✅ | — |
 | Étages / dénivelé | ❓ bits inconnus des minutes ; altitude du jour = classe P2P 200003 (codage incertain, PR #6579 ouverte) | 🟡 comptés dans le journal (M4 bis, 25/10), pas encore décodés | comparaison d'une journée avec les étages de la montre (§10.18) |
 | Séances (type, durée, distance, calories, FC mini / maxi) | 0x17/0x07–0x08 (§7.5) | ✅ | — |
-| Séances : courbe FC, allure | 0x17/0x0A, 0x17/0x0C | 🟡 M7 (25/10), à confirmer sur la montre | — |
+| Séances : courbe FC, allure | 0x17/0x0A, 0x17/0x0C | 🟡 M7 (25/10), aussi app fermée depuis M7b ; à confirmer sur la montre | — |
 | Émotions estimées par la montre (valence, éveil) | P2P classe 500031 (capacité 206) | ❌ | ⚠️ ne **jamais** en faire une entrée de l'estimateur de bien-être (D5 : Y vient du visage / de la voix / de l'auto-déclaration) ; au mieux, un X « montre » affiché à part, ou ignoré. À décider avant M2 |
 | Apnée (niveau 1–4), RDI | P2P 500002 (capacité 107) ; résumé 700013759 | ❌ | faible priorité ; vocabulaire : jamais « diagnostic d'apnée » |
 | Cycle menstruel | ❓ aucune voie connue chez [G] | ❌ | hors périmètre pour l'instant (extension future du produit) |
@@ -1362,7 +1362,7 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
 ### 10.17 M7 (séances : FC et allure) livré (run du 25/10/2026 05:33 CET)
 - `sync.js` : `parseWorkoutIndex` (compteurs 7 / 8 de la liste), `workoutSamplesTlvs` / `parseWorkoutSamples`,
   `workoutPaceTlvs` / `parseWorkoutPace`, `heartRateCurve` ; `readWorkouts` lit totaux puis échantillons puis allures
-  de chaque séance (§7.5 bis). Synchro app ouverte seulement ; le lecteur Java ne lit toujours pas les séances.
+  de chaque séance (§7.5 bis). Synchro app ouverte seulement (le lecteur Java les lit depuis M7b, §10.19).
 - Affichage : Journal → Jours (« FC moy. 143 bpm · 5:37 /km » + courbe), écran « Données de la montre » (ligne
   Séances). Tests sur trames synthétiques (`sync.test.js`, faux montre `fakeWatch.js`).
 - À confirmer sur la GT 6 Pro : une séance de course enregistrée après la v266 doit montrer FC moyenne et allure.
@@ -1380,3 +1380,18 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
   étage pour un dénivelé en mètres, décimètres…), le bit est nommé dans ce tableau et une entrée `floors` (Health
   Connect `FloorsClimbed`) est ajoutée. Hypothèse de départ : 1/0x10 (2 octets) = dénivelé ou étages, 1/0x20 (1 octet)
   = type / intensité de la minute.
+
+### 10.19 M7b (séances relues app fermée) livré (run du 25/10/2026 07:33 CET)
+- `WatchReader.workouts` (Java), après les totaux du jour et avant les fichiers, comme `readWatchData` : liste
+  0x17/0x07 (`81` { 3 = début, 4 = fin, en s }), puis pour chaque séance ses totaux 0x17/0x08 ; pour une séance
+  qui commence dans la période (début ≥ veille de `since`, < `until`), les blocs d'échantillons 0x17/0x0A puis
+  d'allures 0x17/0x0C annoncés par la liste (40 au plus chacun). Octets des demandes vérifiés contre `sync.js`
+  (`WatchWorkoutsTest`).
+- Le Java ne lit que ce qu'il faut pour décider des demandes (numéros et nombres de blocs de la liste, début de la
+  séance) ; tout le reste part **brut** dans la capture : liste (index -1), totaux, échantillons et allures avec
+  **index = numéro de la séance**, blocs dans l'ordre. `dataFromCapture` (capture.js) les assemble avec
+  `withWorkoutDetail` (sync.js), la même fonction que la synchro app ouverte.
+- Tolérance : séance refusée ou muette → comptée perdue (`failed`), les autres continuent ; bloc de détail muet →
+  fin de sa série seulement, la séance garde ses totaux.
+- Garde : le service n'est demandé en arrière-plan que si l'app l'a déjà lu (issue « ok » ou « vide » de `workouts`
+  → `workoutsRead` dans l'état de la synchro, recopié au natif par `shareResume` → `State.workouts`, définitif).
