@@ -35,3 +35,9 @@
 
 ## Suite
 - POL-1d dès P28 ; sinon jalon 5 / M suivants.
+
+## Après le merge (#372, `f859371`)
+- Checks de la PR tous verts ; résumé émulateur API 35 : **1 seule ligne** « (plugin natif) PlayBilling.queryPurchases
+  refusé : … » (attendue, émulateur sans Play Store) ; plus de refus `BtClassic.listBonded`.
+- Main : Tests, Build & Release, Play — AAB et émulateur verts ; release **v276** publiée (`HealthTrack-v276.apk`,
+  33 771 604 octets ≈ 33,8 Mo).
