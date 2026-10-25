@@ -3,6 +3,8 @@
 }
 .method-note summary {
   cursor: pointer;
+  list-style: none;
+  gap: 4px;
   font-size: 0.8rem;
   color: var(--text-muted, var(--muted));
   min-height: 32px;
@@ -12,4 +14,21 @@
 .method-note .baseline-footnote,
 .method-note p {
   margin-top: 0.25rem;
+}
+.method-note summary::-webkit-details-marker {
+  display: none;
+}
+/* chevron discret, comme les autres « détails » de l'app (POL-3) : le mot seul passait pour un texte orphelin */
+.method-note summary::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-left: 4px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.15s;
+}
+.method-note[open] summary::after {
+  transform: translateY(1px) rotate(-135deg);
 }

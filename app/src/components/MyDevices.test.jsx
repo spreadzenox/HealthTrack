@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import MyDevices from './MyDevices'
 import { formatAgo } from '../utils/timeAgo'
 import WatchGuides from './WatchGuides'
@@ -74,9 +74,9 @@ describe('MyDevices', () => {
     expect(await screen.findByText(/repère tout seul vos apps de montre/)).toBeInTheDocument()
   })
 
-  it('détection possible mais aucune app connue : renvoie vers les guides', async () => {
-    render(<MyDevices detect={async () => []} loadEntries={async () => []} now={NOW} />)
-    expect(await screen.findByText(/Aucune app de montre ou de santé connue/)).toBeInTheDocument()
+  it('détection possible mais aucune app connue : la carte disparaît (POL-8, « Ajouter une source » en bas de page)', async () => {
+    const { container } = render(<MyDevices detect={async () => []} loadEntries={async () => []} now={NOW} />)
+    await waitFor(() => expect(container).toBeEmptyDOMElement())
   })
 
   it('une erreur de chargement ne casse pas la carte', async () => {

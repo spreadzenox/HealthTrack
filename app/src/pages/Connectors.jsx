@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { CONNECTORS } from '../connectors/connectorRegistry'
 import { getConnectorSettings, setConnectorSettings } from '../settings/connectorSettings'
 import { hasWithingsCredentials } from '../settings/withingsSettings'
@@ -21,6 +21,7 @@ import { noteFirstGrant, readsAllFailed, syncSince, historyOptions } from '../co
 import { getWeatherSettings } from '../services/weatherSync'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
 import { getWatchAutoSyncState } from '../services/watchAutoSync'
+import { detectPhoneApps } from '../devices/phoneApps'
 import useDisclosure from '../hooks/useDisclosure'
 import './Connectors.css'
 
@@ -417,26 +418,56 @@ function ConnectorCard({ connector }) {
   )
 }
 
+/** Une montre Huawei / Honor est probable : l'app compagnon (Huawei Santé, Honor Santé) est installée. */
+const hasHuaweiCompanion = (installed) => (installed || []).some((app) => app.directWatch)
+
 export default function Connectors() {
   const { debugMode } = useDebug()
-  // Classement figé à l'ouverture : une carte qu'on active ne saute pas d'un groupe à l'autre sous le doigt.
-  const [layout] = useState(() =>
-    splitSourcesByStatus({
-      connectorIds: visibleConnectorIds(CONNECTORS.map((c) => c.id), {
-        withingsApi: FEATURES.withingsApi,
-        withingsInUse: Boolean(getConnectorSettings('withings')?.enabled) || hasWithingsCredentials(),
-      }),
-      isConnectorEnabled: (id) => Boolean(getConnectorSettings(id)?.enabled),
-      weatherEnabled: Boolean(getWeatherSettings().enabled),
-      phoneUsageEnabled: Boolean(getPhoneUsageSettings().enabled),
-      watchEverConnected: Boolean(getWatchAutoSyncState()?.everConnected),
-      faceSenseEnabled: isFaceSenseEnabled(),
-      faceSenseAvailable: isFaceSenseAvailable(),
+  // Une seule détection des apps du téléphone, partagée avec « Mes appareils » (même promesse, donc un seul appel natif).
+  const [detectApps] = useState(() => {
+    const detection = detectPhoneApps().catch(() => null)
+    return () => detection
+  })
+  const [watchDetected, setWatchDetected] = useState(false)
+  const [adding, setAdding] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    detectApps().then((installed) => {
+      if (!cancelled && hasHuaweiCompanion(installed)) setWatchDetected(true)
     })
+    return () => {
+      cancelled = true
+    }
+  }, [detectApps])
+
+  // États figés à l'ouverture : une carte qu'on active ne saute pas d'un groupe à l'autre sous le doigt.
+  // Seule la détection (asynchrone) de l'app Huawei Santé peut faire apparaître la carte de la montre.
+  const [initial] = useState(() => ({
+    connectorIds: visibleConnectorIds(CONNECTORS.map((c) => c.id), {
+      withingsApi: FEATURES.withingsApi,
+      withingsInUse: Boolean(getConnectorSettings('withings')?.enabled) || hasWithingsCredentials(),
+    }),
+    enabled: new Set(CONNECTORS.filter((c) => getConnectorSettings(c.id)?.enabled).map((c) => c.id)),
+    weatherEnabled: Boolean(getWeatherSettings().enabled),
+    phoneUsageEnabled: Boolean(getPhoneUsageSettings().enabled),
+    watchEverConnected: Boolean(getWatchAutoSyncState()?.everConnected),
+    faceSenseEnabled: isFaceSenseEnabled(),
+    faceSenseAvailable: isFaceSenseAvailable(),
+  }))
+  const layout = useMemo(
+    () =>
+      splitSourcesByStatus({
+        ...initial,
+        isConnectorEnabled: (id) => initial.enabled.has(id),
+        // le mode diagnostic caché montre toujours la carte de la montre (dépannage)
+        watchDetected: watchDetected || debugMode,
+      }),
+    [initial, watchDetected, debugMode],
   )
 
   const renderSource = (id) => {
-    if (id === 'watch') return <WatchDiagnostic key={id} />
+    if (id === 'watch') return <WatchDiagnostic key={id} troubleshooting={debugMode} />
     if (id === 'weather') return <WeatherCard key={id} />
     if (id === 'phone') return <PhoneUsageCard key={id} />
     if (id === 'face') return <FaceSenseCard key={id} />
@@ -459,16 +490,36 @@ export default function Connectors() {
         Ce qui envoie déjà vos mesures, puis ce qui reste à brancher. Tout reste <strong>sur cet appareil</strong>.
       </p>
 
-      <MyDevices />
+      <MyDevices detect={detectApps} />
 
       {layout.active.map(renderSource)}
 
-      <details className="connectors-more" open={nothingActive}>
-        <summary className="connectors-more-summary">
-          {nothingActive ? 'Sources à brancher' : 'Brancher une autre source'}
-        </summary>
-        {layout.toConnect.map(renderSource)}
-      </details>
+      {layout.toConnect.length > 0 && (
+        <details className="connectors-more" open={nothingActive}>
+          <summary className="connectors-more-summary">
+            {nothingActive ? 'Sources à brancher' : 'Brancher une autre source'}
+          </summary>
+          {layout.toConnect.map(renderSource)}
+        </details>
+      )}
+
+      <div className="connectors-add">
+        <button
+          type="button"
+          className="btn btn-secondary connectors-add-btn"
+          aria-expanded={adding}
+          aria-controls="connectors-add-panel"
+          onClick={() => setAdding((v) => !v)}
+        >
+          Ajouter une source
+        </button>
+        {adding && (
+          <div id="connectors-add-panel" className="connectors-add-panel">
+            <p className="page-intro">Une montre, une bague, une balance ou un capteur qui n’apparaît pas plus haut.</p>
+            {layout.addable.map(renderSource)}
+          </div>
+        )}
+      </div>
 
       {debugMode && <DebugPanel filter="HealthConnect" />}
     </section>

@@ -38,6 +38,20 @@
   content: '▾';
 }
 
+/* « Ajouter une source » (POL-8) : montre Huawei non détectée, capteurs Bluetooth et guides par marque. */
+.connectors-add {
+  margin-top: 16px;
+}
+
+.connectors-add-btn {
+  width: 100%;
+  min-height: 52px;
+}
+
+.connectors-add-panel {
+  margin-top: 16px;
+}
+
 /* ── Connector card ────────────────────────────────────────────────────── */
 .connector-card {
   background: var(--surface);

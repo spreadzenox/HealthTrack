@@ -46,6 +46,12 @@ vi.mock('../settings/connectorSettings', () => ({
   setConnectorSettings: vi.fn(),
 }))
 
+// Apps santé du téléphone : aucune détection par défaut (navigateur)
+vi.mock('../devices/phoneApps', () => ({
+  detectPhoneApps: vi.fn().mockResolvedValue(null),
+  openPhoneApp: vi.fn().mockResolvedValue(undefined),
+}))
+
 function renderConnectors() {
   return render(
     <BrowserRouter>
@@ -270,13 +276,29 @@ describe('Connectors page', () => {
     unmount()
   })
 
-  it('affiche les guides par marque (montre Huawei absente de Health Connect)', async () => {
-    const { CONNECTORS } = await import('../connectors/connectorRegistry')
-    CONNECTORS[0].availabilityDetails.mockResolvedValue({ available: false, reason: 'unavailable' })
-    CONNECTORS[0].checkPermissions.mockResolvedValue('not_asked')
+  it('« Ajouter une source » révèle la montre Huawei, les capteurs Bluetooth et les guides par marque (POL-8)', async () => {
     renderConnectors()
+    expect(screen.queryByText(/Huawei \/ Honor/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Montre Huawei' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Capteurs Bluetooth' })).not.toBeInTheDocument()
+    const add = screen.getByRole('button', { name: 'Ajouter une source' })
+    expect(add).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(add)
+    expect(add).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText(/Huawei \/ Honor/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Montre Huawei' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Capteurs Bluetooth' })).toBeInTheDocument()
   })
+
+  it('app Huawei Santé installée : la carte « Montre Huawei » s’affiche sans rien toucher', async () => {
+    const { detectPhoneApps } = await import('../devices/phoneApps')
+    detectPhoneApps.mockResolvedValue([{ id: 'huawei_health', name: 'Huawei Health', package: 'com.huawei.health', directWatch: true }])
+    const { unmount } = renderConnectors()
+    expect(await screen.findByRole('heading', { name: 'Montre Huawei' })).toBeInTheDocument()
+    unmount()
+    detectPhoneApps.mockResolvedValue(null)
+  })
+
   it('ordre par statut : une source active passe en tête, le reste est replié sous « Brancher une autre source »', async () => {
     const { getConnectorSettings } = await import('../settings/connectorSettings')
     getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
@@ -285,7 +307,6 @@ describe('Connectors page', () => {
     expect(more.open).toBe(false)
     expect(screen.getByText('Brancher une autre source')).toBeInTheDocument()
     expect(more.contains(screen.getByText('Test Connector'))).toBe(false)
-    expect(more.contains(screen.getByText(/Huawei \/ Honor/))).toBe(true)
     unmount()
   })
 

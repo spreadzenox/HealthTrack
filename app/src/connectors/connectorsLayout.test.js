@@ -10,12 +10,19 @@ const base = {
 }
 
 describe('splitSourcesByStatus', () => {
-  it('premier lancement : rien de branché, tout à brancher dans l’ordre (montre en tête)', () => {
+  it('premier lancement sans montre Huawei : la montre, le Bluetooth et les guides passent derrière « Ajouter une source »', () => {
     expect(splitSourcesByStatus(base)).toEqual({
       active: [],
       nothingSending: true,
-      toConnect: ['face', 'watch', 'health_connect', 'withings', 'weather', 'phone', 'ble', 'guides'],
+      toConnect: ['face', 'health_connect', 'withings', 'weather', 'phone'],
+      addable: ['watch', 'ble', 'guides'],
     })
+  })
+
+  it('app Huawei Santé installée : la carte de la montre est proposée en tête (POL-8)', () => {
+    const r = splitSourcesByStatus({ ...base, watchDetected: true })
+    expect(r.toConnect).toEqual(['face', 'watch', 'health_connect', 'withings', 'weather', 'phone'])
+    expect(r.addable).toEqual(['ble', 'guides'])
   })
 
   it('ce qui envoie passe en tête, le reste est à brancher', () => {
@@ -26,7 +33,8 @@ describe('splitSourcesByStatus', () => {
       watchEverConnected: true,
     })
     expect(r.active).toEqual(['watch', 'health_connect', 'weather'])
-    expect(r.toConnect).toEqual(['face', 'withings', 'phone', 'ble', 'guides'])
+    expect(r.toConnect).toEqual(['face', 'withings', 'phone'])
+    expect(r.addable).toEqual(['ble', 'guides'])
   })
 
   it('app Android : la Lecture du visage est toujours en tête, même pas encore activée (signalement du 19/10)', () => {
@@ -38,7 +46,7 @@ describe('splitSourcesByStatus', () => {
     expect(splitSourcesByStatus({ ...base, faceSenseAvailable: true, faceSenseEnabled: true }).nothingSending).toBe(false)
   })
 
-  it('capteurs Bluetooth et guides par marque restent toujours dans « à brancher »', () => {
+  it('capteurs Bluetooth et guides par marque restent toujours derrière « Ajouter une source »', () => {
     const r = splitSourcesByStatus({
       ...base,
       isConnectorEnabled: () => true,
@@ -48,7 +56,8 @@ describe('splitSourcesByStatus', () => {
       faceSenseEnabled: true,
     })
     expect(r.active).toEqual(['face', 'watch', 'health_connect', 'withings', 'weather', 'phone'])
-    expect(r.toConnect).toEqual(['ble', 'guides'])
+    expect(r.toConnect).toEqual([])
+    expect(r.addable).toEqual(['ble', 'guides'])
   })
 })
 
