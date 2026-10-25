@@ -718,7 +718,8 @@ lecture à l'ouverture continue, rien n'est effacé) ; quand elle est coupée, u
 visage, seul endroit où on peut l'allumer, derrière sa feuille d'explication. Avec la notification « Arrêter » et la
 carte de Sources, cela fait trois façons de la couper, comme le demandent les règles Play. **POL-1 est terminé côté
 app.** **👉 Votre prochaine action : P28** (vidéo + déclaration, pas à pas dans [`PRODUIT.md`](PRODUIT.md) §4) ; dès
-qu'elle est faite, un run allume la fonction dans la version play. Prochain run de code : M6b.
+qu'elle est faite, un run allume la fonction dans la version play. Prochain run de code : M6b. Publié : **v264**
+(33,8 Mo) et la version play en test interne ; tous les tests verts.
 
 **Run du 25/10 02:33 (heure d'hiver) — l'écran d'activation de la lecture au déverrouillage (POL-1b) : 👉 P28 est
 prêt à filmer.** Rien ne change encore dans vos deux apps publiées (l'interrupteur de build reste coupé). Dans l'**APK

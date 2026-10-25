@@ -26,3 +26,8 @@
 ## Suite
 - **P28 (propriétaire)** : déclaration FGS + vidéo (APK d'aperçu prêt).
 - Après P28 : allumer `-PfaceUnlockPlay=true` dans « Play — AAB » (POL-1d). Ensuite M6b.
+
+## Après le merge (#347, `05e9603`)
+- Checks de la PR tous verts du premier coup (Vitest, Build APK, relais, protocole montre, émulateurs API 35 et 36).
+- Sur main : « Tests », « Build & Release » (**v264**, APK 33 750 380 octets, 33,8 Mo) et « Play — AAB » (test
+  interne) verts.
