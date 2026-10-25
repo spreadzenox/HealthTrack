@@ -110,3 +110,14 @@ describe('Settings — Mode diagnostic (sideload)', () => {
     expect(screen.getByRole('button', { name: /^Version / })).toBeInTheDocument()
   })
 })
+
+describe('Settings — Votre avis (sideload)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('ouvre un ticket GitHub prérempli avec la version', () => {
+    renderSettings()
+    const link = screen.getByRole('link', { name: 'Envoyer un avis' })
+    expect(link.getAttribute('href')).toMatch(/^https:\/\/github\.com\/spreadzenox\/HealthTrack\/issues\/new\?title=/)
+    expect(link).toHaveAttribute('target', '_blank')
+  })
+})

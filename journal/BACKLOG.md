@@ -199,9 +199,9 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   Journal » masqués sans aucune donnée. Captures vierge + démo, clair + sombre.
 - [x] **VC-27** (25/10 09:33) carte Health Connect (play) : sans « Gadgetbridge », marques connues (Samsung Health, Garmin,
   Withings, Oura…), liste des 13 types au chevron.
-- [ ] **AVIS** (I166 ③) aucun moyen d'envoyer un retour depuis l'app : Paramètres → « Envoyer un avis » (`mailto:`
+- [x] **AVIS** (25/10 12:33 : Paramètres → « Votre avis » ; play → page Play Store, où les testeurs ont « Envoyer des commentaires privés » ; sideload → ticket GitHub prérempli ; pas de `mailto:` faute d'adresse de contact dans le dépôt, P31 facultative) (I166 ③) aucun moyen d'envoyer un retour depuis l'app : Paramètres → « Envoyer un avis » (`mailto:`
   vers l'e-mail de contact de la fiche, objet « Halcya <version> », sans aucune donnée de santé ni journal joint).
-- [ ] **VC-PUBLIER** dès VC-22 → AVIS mergés : poser `from` (jour de la publication) / `until` (+14 j + 7 j de marge)
+- [ ] **VC-PUBLIER** (PROCHAIN RUN DE CODE) dès VC-22 → AVIS mergés : poser `from` (jour de la publication) / `until` (+14 j + 7 j de marge)
   dans `relay/src/launch-period.json`, vérifier « Premium offert pendant le test » sur la version play, publier la
   version en **alpha**, C5 ✅, « 👉 Version candidate prête » en tête du résumé avec les gestes et le texte
   d'invitation (`INVITATION-TESTEURS.md`, mis à jour le 25/10 : ouvrir l'app tous les 2-3 jours, rappel du jour 7).

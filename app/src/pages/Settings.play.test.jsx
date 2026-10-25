@@ -117,3 +117,18 @@ describe('Settings — variante play : réglage Cigarettes (VC-14)', () => {
     expect(screen.getByLabelText(/Toujours afficher le bouton cigarette/i).querySelector('input')).toBeChecked()
   })
 })
+
+describe('Settings — Votre avis (play)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    globalThis.fetch = relayAnswer({ ok: true, premium: false, source: null })
+  })
+
+  it('renvoie vers la page Halcya du Play Store, rien n’est joint', () => {
+    renderSettings()
+    expect(screen.getByText('Votre avis')).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: 'Donner mon avis sur le Play Store' })
+    expect(link).toHaveAttribute('href', 'https://play.google.com/store/apps/details?id=fr.jpesquet.sante')
+    expect(screen.getByText(/aucune donnée n’est jointe/)).toBeInTheDocument()
+  })
+})

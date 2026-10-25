@@ -52,7 +52,8 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 > 3. Installer l'app depuis le Play Store : https://play.google.com/store/apps/details?id=fr.jpesquet.sante
 > 4. **Garder l'app installée pendant 14 jours, sans quitter le groupe ni le test**, et **l'ouvrir au moins tous les
 >    2 ou 3 jours** (une photo de repas, une note du ventre, ce que vous voulez) : Google vérifie que l'app est
->    vraiment utilisée. Vos retours, même courts, me sont précieux.
+>    vraiment utilisée. Vos retours, même courts, me sont précieux : dans l'app, Paramètres → « Votre avis »
+>    (ou, sur la page Halcya du Play Store, « Envoyer des commentaires privés au développeur »).
 >
 > Astuces :
 > - L'app ne sort pas dans la recherche du Play Store tant qu'elle est en test : passez par le lien ci-dessus, ou
