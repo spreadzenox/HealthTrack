@@ -110,7 +110,7 @@ describe('HealthRadar', () => {
     mockEntries([...history(), rhr(0, 66), hrv(0, 40), sleep(0, 450), checkin(1, ['alcohol'])])
     render(<HealthRadar />)
     expect(await screen.findByText('Explicable')).toBeInTheDocument()
-    expect(screen.getByText(/Probablement lié à 🍷 Alcool \(hier\)/)).toBeInTheDocument()
+    expect(screen.getByText(/Probablement lié à « Alcool » \(hier\)/)).toBeInTheDocument()
     expect(screen.queryByText('Inhabituel chez vous')).not.toBeInTheDocument()
     expect(document.querySelector('.radar.is-explained')).not.toBeNull()
   })

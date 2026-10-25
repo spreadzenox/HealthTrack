@@ -56,9 +56,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   nouveau téléphone : montre à réappairer proprement, identifiant d'installation (à garder : il porte les crédits).
 - [x] **INTEGRITY-BILAN — LU le 24/10 15:00** : 1 jeton réel, `passed` (l'analyse du propriétaire de 13:38) ; 12
   `missing` (CI, vieilles versions). `enforce` plus tard, quand quelques testeurs auront envoyé des jetons.
-- [ ] **CREDITS-LOG** : le workflow relais compte les `credits_store_failed` après le test d'analyse (preuve que
+- [x] **CREDITS-LOG — FAIT le 25/10 15:33** (étape « Registre des crédits (Firestore, non bloquant) » de `relay-deploy.yml`, échecs des 10 dernières minutes et des 7 derniers jours) : le workflow relais compte les `credits_store_failed` après le test d'analyse (preuve que
   relay-runtime écrit bien dans Firestore) et l'écrit dans son résumé.
-- [ ] **PLAY-COMPLETED** : vérifier par l'API que chaque version play arrive en test interne avec le statut
+- [x] **PLAY-COMPLETED — VÉRIFIÉ le 25/10 15:33** (run « Play — AAB » 85 : versionCode 455 « Déployée auprès des testeurs internes », statut completed ; plus aucun geste « brouillon » dans le résumé) : vérifier par l'API que chaque version play arrive en test interne avec le statut
   `completed` (l'app a passé son premier examen le 23/10) et retirer du résumé les gestes « version restée en brouillon ».
 - [ ] **IAM** : P29 proposé (ex-P28, renuméroté le 24/10 15:30 ; P28 = déclaration FGS) (retirer `roles/editor` du compte Compute par défaut, inutilisé par le relais et la CI).
 
@@ -178,7 +178,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   (J−2), puis seulement afficher « jour 12 : on vous prévient » et « Rappel 2 jours avant la fin de l'essai » ; page
   « Conditions » (CGU/CGV, brouillon de `journal/legal/` « à faire valider par un juriste ») publiée par GitHub Pages
   et liée depuis le paywall.
-- [ ] **VC-20** (mineur, avec la passe Pistes du jalon 5) les étiquettes d'habitudes portent un émoji (✈️ Voyage,
+- [x] **VC-20 — FAIT le 25/10 15:33** (Journal, radar, note manuelle ; test-garde « aucun `.emoji` affiché » dans `wording.test.js`) (mineur, avec la passe Pistes du jalon 5) les étiquettes d'habitudes portent un émoji (✈️ Voyage,
   ☕ Café après 14 h, 📱 Écran tard, 🤒 Malade) affiché dans Pistes et le journal : remplacer par des icônes trait ou
   une pastille de couleur, sans toucher aux données (l'émoji reste dans l'étiquette enregistrée).
 - [ ] **VC-21** (mineur) premier lancement play : un `console.error` « Line 330 - Msg: [object Object] » (fichier vide, donc venu du natif) à identifier et à rendre lisible (résumé « Premier lancement à froid » du workflow émulateur).

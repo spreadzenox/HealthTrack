@@ -162,3 +162,20 @@ describe('émojis des textes visibles (VC-15)', () => {
     expect(found).toEqual([])
   })
 })
+
+/** VC-20 : l’émoji d’une étiquette d’habitude reste dans les données (behaviorTags.js) mais n’est jamais affiché. */
+describe('émojis des étiquettes d’habitudes (VC-20)', () => {
+  it('aucune page ni aucun composant n’affiche `.emoji`', () => {
+    const found = []
+    for (const root of ['src/components', 'src/pages']) {
+      for (const file of sourceFiles(path.resolve(root))) {
+        const rel = path.relative(path.resolve(), file)
+        if (DEBUG_ONLY.includes(rel)) continue
+        stripComments(fs.readFileSync(file, 'utf8')).forEach((line, i) => {
+          if (/\.emoji\b/.test(line)) found.push(`${rel}:${i + 1} ${line.trim()}`)
+        })
+      }
+    }
+    expect(found).toEqual([])
+  })
+})

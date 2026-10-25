@@ -776,6 +776,17 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
+**Run du 25/10 15:33 — petites finitions et preuve du registre des crédits (VC-20, CREDITS-LOG, PLAY-COMPLETED).**
+Ce que vous verrez (prochaine version) : les étiquettes d'habitudes (Alcool, Voyage, Café après 14 h…) **n'affichent plus
+d'émoji** dans le Journal, le radar forme (« Probablement lié à « Alcool » (hier)… ») et la note de bien-être à la main ;
+vos étiquettes enregistrées ne changent pas. En coulisses : ① le workflow **« Relais — déploiement »** écrit maintenant
+dans son résumé une ligne **« Registre des crédits (Firestore) »** — après l'analyse de test, aucune erreur de lecture ou
+d'écriture du registre = relay-runtime écrit bien dans Firestore (sinon ⚠️ avec le code HTTP) ; il tournera au prochain
+changement du relais. ② **Vérifié par l'API** : chaque version play arrive en test interne **déployée** (statut
+`completed`, dernière : versionCode 455), plus jamais en brouillon : aucun geste à faire de votre côté. La version
+candidate 453 reste seule sur la piste alpha. **👉 Votre prochaine action la plus utile** : inviter les testeurs (encadré
+en tête), puis P28 (déclaration des services de premier plan) quand vous voudrez la lecture au déverrouillage en play.
+
 **Run du 25/10 14:33 — montre : tuiles de l'Accueil vérifiées (cahier montre, point e).** Ce que vous verrez (**v274**,
 publiée, 33,8 Mo) : la tuile de variabilité cardiaque de l'Accueil s'appelle **« VFC nuit »** (c'est bien celle de la
 nuit, la VFC de journée de la montre n'y entre jamais) ; en ouvrant le chevron d'une carte, la source des tuiles Sommeil
@@ -1575,6 +1586,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 12:33 CET — [AVIS : « Votre avis » dans les Paramètres](runs/2026-10-25-1233-avis.md) | 🧭 | Paramètres → « Votre avis » : page Play Store (commentaires privés des testeurs) en play, ticket GitHub prérempli en sideload ; rien n'est joint ; texte d'invitation à jour ; 2 198 Vitest |
 | 25/10 13:33 CET — [VC-PUBLIER : période de lancement et alpha](runs/2026-10-25-1333-vc-publier.md) | 🧭 | `launch-period.json` 25/10 12:00 UTC → 20/11 inclus (relais vérifié : premium=true source=launch) ; « Play — AAB » en alpha réutilise l'AAB du test interne + groupe des testeurs ; versionCode 453 en alpha (validée, examen Google) ; v273 ; 2 207 Vitest |
 | 25/10 14:33 CET — [M (e) : tuiles montre et export](runs/2026-10-25-1433-tuiles-montre.md) | ⌚ | tuile « VFC nuit », source courte « Montre Huawei », test d'intégration nuit synthétique → tuiles → export / réimport ; v274 ; 2 205 Vitest |
+| 25/10 15:33 CET — [VC-20, CREDITS-LOG, PLAY-COMPLETED](runs/2026-10-25-1533-finitions-credits.md) | 🧭 | émojis des habitudes retirés de l’affichage (test-garde `.emoji`) ; ligne « Registre des crédits (Firestore) » dans le résumé du workflow relais ; statut completed des envois play vérifié (455) ; 2 207 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

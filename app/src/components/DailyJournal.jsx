@@ -103,7 +103,7 @@ function EntryBody({ e, measuredScreen = false }) {
       {e.type === 'wellbeing' && shownTags.length > 0 && (
         <p className="entry-wellbeing-tags">
           {shownTags
-            .map((t) => `${t.emoji} ${t.label}`)
+            .map((t) => t.label)
             .join(' · ')}
         </p>
       )}

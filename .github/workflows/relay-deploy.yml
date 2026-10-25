@@ -10,6 +10,7 @@
 #   authentifié par un jeton OIDC de relay-runtime (créé ou mis à jour ici), puis un essai de vérification d'achat
 #   avec un faux jeton qui dit si relay-runtime a déjà accès à l'API Android Publisher (non bloquant : l'invitation
 #   dans la Play Console peut mettre 24 à 48 h à prendre effet).
+#   Registre des crédits (P24) : après l'analyse de test, le résumé dit si relay-runtime a lu et écrit Firestore sans échec.
 name: Relais — déploiement
 
 on:
@@ -130,6 +131,29 @@ jobs:
             echo "::error title=Analyse de test échouée::Le relais répond mais l'analyse Vertex AI n'a pas abouti (HTTP $status). Lire les journaux du service $SERVICE (Cloud Logging, événement « error ») : modèle absent de la région, ou rôle aiplatform.user manquant pour relay-runtime."
             exit 1
           fi
+
+      - name: Registre des crédits (Firestore, non bloquant)
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          # L'analyse de test ci-dessus a lu puis réécrit le registre des crédits (P24) : sans échec
+          # « credits_store_failed » dans les minutes qui suivent, relay-runtime lit et écrit bien dans Firestore.
+          # Cloud Logging indexe avec un peu de retard : on attend 45 s avant de lire.
+          sleep 45
+          gcloud logging read \
+            "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.event=\"credits_store_failed\"" \
+            --project="$GCP_PROJECT" --freshness=7d --limit=500 --format=json > "$RUNNER_TEMP/credits.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/credits.json"
+          recent=$(jq --arg since "$(date -u -d '-10 min' +%Y-%m-%dT%H:%M:%SZ)" '[.[] | select(.timestamp >= $since)] | length' "$RUNNER_TEMP/credits.json")
+          week=$(jq 'length' "$RUNNER_TEMP/credits.json")
+          detail=$(jq -r 'group_by([.jsonPayload.op, .jsonPayload.status])[] | "\(.[0].jsonPayload.op) HTTP \(.[0].jsonPayload.status // "—") × \(length)"' "$RUNNER_TEMP/credits.json" | paste -sd ',' - | sed 's/,/, /g')
+          if [ "$recent" = "0" ]; then
+            verdict="✅ lu et écrit sans échec pendant l'analyse de test"
+          else
+            verdict="⚠️ $recent échec(s) pendant l'analyse de test (rôle roles/datastore.user de relay-runtime ? base « (default) » ?)"
+          fi
+          echo "- Registre des crédits (Firestore) : $verdict ; 7 derniers jours : $week échec(s)${detail:+ ($detail)}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Firestore : $recent échec(s) récents, $week sur 7 jours ${detail}"
+          [ "$recent" = "0" ]
 
       - name: Notifications Google Play (abonnement push play-rtdn → relais)
         continue-on-error: true
