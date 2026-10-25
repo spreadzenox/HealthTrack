@@ -126,6 +126,15 @@
   color: var(--text-muted);
 }
 
+.today-tiles-empty {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
 .today-tiles-hint a {
   color: var(--accent);
   font-weight: 600;

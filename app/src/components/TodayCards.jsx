@@ -44,7 +44,16 @@ function useEntries(read) {
 
 /** Sommeil, VFC et pas du jour ; chiffres en mono, source en mode détails. */
 export function MeasureTiles({ tiles, details }) {
-  const empty = tiles.every((t) => t.value == null)
+  // Rien de mesuré : une ligne plutôt que trois tuiles « — » (VC-26), les tuiles reviennent avec le premier chiffre
+  if (tiles.every((t) => t.value == null)) {
+    return (
+      <section className="today-tiles-wrap" aria-label="Mesures du jour">
+        <p className="today-tiles-hint today-tiles-empty">
+          Sommeil, cœur et pas arrivent de votre montre · <Link to="/connectors">Ajouter une source</Link>
+        </p>
+      </section>
+    )
+  }
   return (
     <section className="today-tiles-wrap" aria-label="Mesures du jour">
       <ul className="today-tiles">
@@ -58,11 +67,6 @@ export function MeasureTiles({ tiles, details }) {
           </li>
         ))}
       </ul>
-      {empty && (
-        <p className="today-tiles-hint">
-          Sommeil, cœur et pas arrivent de votre montre. <Link to="/connectors">Ajouter une source</Link>
-        </p>
-      )}
     </section>
   )
 }

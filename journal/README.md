@@ -766,6 +766,13 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
+**Run du 25/10 11:33 — un Accueil plus léger au premier jour (VC-26).** Ce que verra un nouvel utilisateur (version
+publiée après ce run ; vous ne verrez rien changer avec vos données) : sur un téléphone neuf, la présentation de l'Accueil
+tient en **une phrase** ; tant qu'aucune mesure n'arrive, **une seule ligne** « Sommeil, cœur et pas arrivent de votre
+montre · Ajouter une source » remplace les trois tuiles vides « — » ; les boutons « … dans le Journal » n'apparaissent
+qu'une fois qu'il y a quelque chose à y voir. Tous les défauts d'écran de l'audit sont corrigés ; reste « Envoyer un
+avis », puis la publication en alpha pour inviter vos testeurs.
+
 **Run du 25/10 10:33 — Analyses plus lisibles (VC-23, VC-24).** Ce que vous verrez dans la **v270** (publiée, 33,8 Mo ; version play envoyée en test interne) : dans
 l'onglet **Analyses**, chaque lien porte la même étiquette partout — **« Piste solide »** (menthe), **« À confirmer »**
 (pêche) ou **« Trop tôt pour dire »** (gris) — au lieu de trois façons de dire la même chose ; l'explication longue se
@@ -1522,6 +1529,7 @@ du jour avec sa fourchette (derrière la porte).
 | 25/10 08:33 CET — [Idées : audit de la version candidate](runs/2026-10-25-0833-idees-audit-version-candidate.md) | 💡 | Captures play vierge clair + démo sombre (14 pages, 0 erreur) → VC-22 à VC-27 + AVIS + VC-PUBLIER au BACKLOG ; I166 fin de test fermé (12 inscrits continus, engagement, mise à jour pendant le test) → invitation durcie + rappel J7 ; I167 device recall réservé ; POL-1d après la version candidate ; journal seul, 2 194 Vitest |
 | 25/10 09:33 CET — [VC-22 + VC-25 + VC-27 : textes « Analyses », Sources sans doublon](runs/2026-10-25-0933-vc22-vc25-vc27-sources.md) | 🧭 | « Vos Analyses » + règle `wordingRules` ; volet « Brancher une autre source » fusionné dans « Ajouter une source » (montre détectée en vue) ; chevrons à la place des ▸ / ▶ ; Health Connect en une phrase, 15 types au chevron ; 2 195 Vitest |
 | 25/10 10:33 CET — [VC-23 + VC-24 : Analyses, une échelle et un gabarit](runs/2026-10-25-1033-vc23-vc24-analyses.md) | 🧭 | « Piste solide / À confirmer / Trop tôt pour dire » partout (pastels, phrase au chevron) ; `LinkCard` unique pour les liens (facteur entier, une phrase, chiffres mono, une décimale) ; 2 192 Vitest |
+| 25/10 11:33 CET — [VC-26 : Accueil vierge plus léger](runs/2026-10-25-1133-vc26-accueil-vierge.md) | 🧭 | Intro en une phrase ; une ligne « … · Ajouter une source » au lieu de 3 tuiles « — » ; liens Journal masqués à vide ; relance unique de l'émulateur API 35 (rouge sur un commit journal seul) ; 2 193 Vitest |
 | 24/10 14:30 — [Retours du 24/10, crédits IA durables](runs/2026-10-24-1430-credits-durables.md) | 🧭💳 | Cause du « 10 restantes » : registre en mémoire, plafond premium du jour absent de `X-Credits`, instance arrêtée → `createFirestoreStore` (collection `credits`, empreinte, 5 compteurs), `hydrate` / `persist`, panne non bloquante ; « Analyse IA · une estimation » ; P23 ②, P27 ✅ (C3), P28 ; 76 tests relais |
 | 24/10 13:30 — [M6a : fichiers de la montre en arrière-plan](runs/2026-10-24-1330-m6a-fichiers-arriere-plan.md) | ⌚ | `WatchReader` télécharge `sequence_data` et `rrisqi_data.bin` (0x2C, blocs poussés, octets bruts dans la capture `files`) ; `BackgroundSync` : reprise par fichier recopiée du JS (`sleepFileUntil`, `stressFileUntil`, `sleepBedTime`) ; `dataFromCapture` décode nuits et stress ; 124 JUnit, Vitest verts |
 | 24/10 12:30 — [M4 : stress de la montre Huawei](runs/2026-10-24-1230-m4-stress-montre.md) | ⌚ | Bilan Play Integrity : 6 « missing », 0 jeton réel → reste `observe` ; `parseStressFile` (rrisqi v3, 66 o, score 1–99, niveau) ; lecture 0x2C type 0x10 si stress auto + bit 0x04 de 1/0x31, reprise `stressFileUntil` ; entrée `watch_stress` (X, jamais estimateur) ; écran Montre + puce Journal ; 2 127 Vitest |

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-25",
+  "kind": "amélioration",
+  "title": "Un Accueil plus léger au premier jour",
+  "items": [
+    "Au premier lancement, la présentation tient en une phrase.",
+    "Tant qu'aucune mesure n'est arrivée, une seule ligne « Sommeil, cœur et pas arrivent de votre montre · Ajouter une source » remplace les trois tuiles vides ; elles apparaissent avec le premier chiffre.",
+    "Les liens vers le Journal et les Tendances n'apparaissent qu'une fois qu'il y a quelque chose à y voir."
+  ]
+}

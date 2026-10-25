@@ -31,6 +31,8 @@ export default function Dashboard() {
   // Bien-être estimé (visage) : undefined pendant la lecture, null sans aucune lecture avec un visage
   const [wellbeing, setWellbeing] = useState(undefined)
   const days = useMemo(() => buildDailyJournal(entries), [entries])
+  // Aucune donnée : pas de renvoi vers un Journal et des Tendances vides (VC-26)
+  const empty = days.length === 0
 
   const loadEntries = useCallback(async (isCancelled = () => false) => {
     try {
@@ -78,12 +80,12 @@ export default function Dashboard() {
         <h2 className="today-title">{daySummaryTitle(wellbeing?.est)}</h2>
       </header>
       <PaymentIssueCard />
-      {/* Présentation utile au premier lancement seulement : avec des données, elle repoussait tout le contenu. */}
-      {!loading && !error && days.length === 0 && (
+      {/* Présentation utile au premier lancement seulement, en une phrase (VC-26) : la ligne des mesures propose
+          déjà d'ajouter une source. */}
+      {!loading && !error && empty && (
         <p className="dashboard-intro">
-          Notez vos repas et votre ventre en un geste, ajoutez votre montre (sommeil, cœur, pas) : {APP_NAME}{' '}
-          vous aide à comprendre ce qui va avec vos bons et mauvais jours. Tout reste sur le téléphone par défaut ;
-          l’IA seulement si vous le voulez. Tout se règle dans <Link to="/connectors">Sources</Link>.
+          Notez {focus === 'gut' ? 'vos repas et votre ventre' : 'vos repas'} en un geste : {APP_NAME} vous aide à
+          comprendre ce qui va avec vos bons et mauvais jours.
         </p>
       )}
 
@@ -117,7 +119,7 @@ export default function Dashboard() {
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
 
-      {!loading && !error && (
+      {!loading && !error && !empty && (
         <>
           {/* Forme et courbes : Journal → Tendances (jalon 2b), l'accueil s'arrête au résumé du jour. */}
           <nav className="today-journal-links" aria-label="Plus de détails">
