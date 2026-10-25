@@ -25,3 +25,9 @@
 
 ## Suite
 - **AVIS** (Paramètres → « Envoyer un avis »), puis **VC-PUBLIER**. POL-1d après, à part (P28).
+
+## Après le merge (#362, `f785365`)
+- Checks de la PR tous verts (8, dont Vitest, Build APK, relais, protocole Java, perf, émulateurs API 35 et 36 ; un
+  premier lot annulé par le push du compte rendu).
+- Sur main : « Tests », « Build & Release » (**v271**, APK 33 770 612 octets, 33,8 Mo) et « Play — AAB » (test interne)
+  verts ; émulateur en cours à la fin du run.

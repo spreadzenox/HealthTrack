@@ -766,8 +766,8 @@ fermez-la, faites une course ou une marche avec la montre, puis rouvrez l'app pl
 la séance doit être là avec « FC moy. ». Prochain run de code : POL-1d si P28 est faite, sinon les petites corrections
 A.1 / A.2 du chantier montre. Publié : **v268** (33,8 Mo) et la version play en test interne ; tous les tests verts.
 
-**Run du 25/10 11:33 — un Accueil plus léger au premier jour (VC-26).** Ce que verra un nouvel utilisateur (version
-publiée après ce run ; vous ne verrez rien changer avec vos données) : sur un téléphone neuf, la présentation de l'Accueil
+**Run du 25/10 11:33 — un Accueil plus léger au premier jour (VC-26).** Ce que verra un nouvel utilisateur (**v271**,
+publiée, 33,8 Mo ; version play envoyée en test interne ; vous ne verrez rien changer avec vos données) : sur un téléphone neuf, la présentation de l'Accueil
 tient en **une phrase** ; tant qu'aucune mesure n'arrive, **une seule ligne** « Sommeil, cœur et pas arrivent de votre
 montre · Ajouter une source » remplace les trois tuiles vides « — » ; les boutons « … dans le Journal » n'apparaissent
 qu'une fois qu'il y a quelque chose à y voir. Tous les défauts d'écran de l'audit sont corrigés ; reste « Envoyer un
