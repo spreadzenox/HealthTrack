@@ -29,3 +29,12 @@
 ## Suite
 - POL-1d dès P28 ; VC-21 (`console.error` « Line 330 » du premier lancement play) ; puis jalon 5 / M suivants.
 - Lire la ligne « Registre des crédits » au prochain déploiement du relais.
+
+## Après le merge (#370, `b150797`)
+- Checks de la PR verts (Vitest, Build APK, relais, protocole Java, perf, émulateur API 36) ; émulateur API 35 rouge au
+  premier passage (aucun écran exposé à l'accessibilité, ni sideload ni play, 0 plantage) puis **vert à la relance
+  unique** : émulateur bloqué, pas le code (commentaire sur la PR).
+- Sur main : « Tests », « Build & Release » (**v275**, APK 33 771 552 octets), « Play — AAB » (test interne),
+  émulateur et **« Relais — déploiement »** verts. Nouvelle ligne du relais : analyse de test HTTP 200
+  (gemini-3.5-flash-lite) et **« Firestore : 0 échec récent, 0 sur 7 jours »** → relay-runtime lit et écrit bien le
+  registre des crédits (CREDITS-LOG prouvé).
