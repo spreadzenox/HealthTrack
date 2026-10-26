@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 
 const dist = vi.hoisted(() => ({ play: false }))
 vi.mock('../config/distribution', async (importOriginal) => {
@@ -63,6 +63,27 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     const payload = store.create.mock.calls[0][0]
     expect(payload).toMatchObject({ group: 'fructans', food: 'wheat', doses: [] })
     expect(payload.plan.amounts).toEqual([1, 2, 2.5])
+  })
+
+  it('7c : ouvert depuis une piste ventre, l’aliment est présélectionné', async () => {
+    render(
+      <MemoryRouter initialEntries={['/reintroduction?groupe=fructans&aliment=onion']}>
+        <Reintroduction now={NOW} store={makeStore({ gutEntries: calm(3, 2, 1) })} />
+      </MemoryRouter>,
+    )
+    expect(await screen.findByLabelText('Portion du jour 1')).toBeInTheDocument()
+    expect(document.body.textContent).toMatch(/Oignon/)
+    fireEvent.click(screen.getByRole('button', { name: /Retour|autre groupe/i }))
+    expect(await screen.findByRole('button', { name: /Lactose/ })).toBeInTheDocument()
+  })
+
+  it('7c : un lien inconnu ouvre simplement le choix du groupe', async () => {
+    render(
+      <MemoryRouter initialEntries={['/reintroduction?groupe=fructans&aliment=pomme']}>
+        <Reintroduction now={NOW} store={makeStore()} />
+      </MemoryRouter>,
+    )
+    expect(await screen.findByRole('button', { name: /Lactose/ })).toBeInTheDocument()
   })
 
   it('③ note la portion du jour en un geste', async () => {

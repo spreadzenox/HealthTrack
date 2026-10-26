@@ -59,6 +59,11 @@
   carte du test dit où vous en êtes (« Lait · jour 2 · portion à prendre »). **À tester** : commencer un test (après
   3 jours de ventre calme), cocher le rappel avec une heure proche, vérifier la notification et qu'elle ouvre le test.
 
+- **Vérifier une piste du ventre** (26/10 12:33) — chaque piste « aliment → ventre » d'Analyses propose « Vérifier
+  avec une réintroduction guidée » : le test s'ouvre directement sur l'aliment (oignon, ail, pain, lentilles, lait ou
+  yaourt, miel, avocat, champignons…), portions prêtes ; sinon vous choisissez le groupe. **À tester** : dès qu'une
+  piste ventre apparaît, toucher le lien et vérifier l'aliment proposé.
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -101,6 +106,7 @@ le rapport PDF.
 | Run | Type | Résultat |
 |---|---|---|
 | 26/10 11:33 — [7b-2 : rappel de la portion du jour](runs/2026-10-26-1133-7b2-rappel-portion.md) | 🏗️ | Notification « Votre portion du jour » à l'heure choisie (natif, deux variantes, au plus 3 rappels, toucher ouvre le test) ; état du test dans la carte d'entrée d'Analyses ; 2 356 Vitest, 4 JUnit de plus |
+| 26/10 12:33 — [7c : vérifier une piste ventre](runs/2026-10-26-1233-7c-verifier-piste.md) | 🏗️ | Lien « Vérifier avec une réintroduction guidée » sur chaque piste ventre, aliment présélectionné (correspondance aliment → groupe, exclusions lait végétal / sans gluten) ; 2 384 Vitest |
 | 26/10 10:33 — [7b-1 : écrans de la réintroduction](runs/2026-10-26-1033-7b-ecrans-reintroduction.md) | 🏗️ | `/reintroduction` : choix du groupe (étiquettes d'état), préparation (portions modifiables, 3 jours calmes avant), jour en cours (frise, portion en un geste, « supportable ? », reprise), résultat ; carte « Tester un groupe FODMAP » dans Analyses ; premium coché ; 2 339 Vitest |
 | 26/10 09:33 — [7a : machine de réintroduction](runs/2026-10-26-0933-7a-machine-reintroduction.md) | 🏗️ | `fodmapChallenge.js` : 6 groupes, 3 jours calmes avant, ×1 / ×2 / ×3 sur 24 h, « supportable ? », verdict, pause de fin, un test à la fois, 2 jours sautés → pause ; « intolérance » / « allergie » interdits ; rien d'affiché ; 2 329 Vitest |
 | 26/10 08:33 — [Idées : jalon 7 prêt à coder](runs/2026-10-26-0833-idees-jalon7-reintroduction-pdf.md) | 💡 | Réintroduction FODMAP guidée (I174 : ×1 / ×2 / ×3 sur 24 h, 3 jours calmes avant, machine + 4 écrans, découpage 7a–7d), rapport PDF 2 pages (I175, `pdf-lib` MIT), selles facultatives (I176) ; journal seul |

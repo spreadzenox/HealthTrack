@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import DetailsToggle from './DetailsToggle'
 import { comparableLabel } from '../services/gutLinks'
+import { challengePath } from '../services/fodmapChallenge'
 import './GutLinks.css'
 
 const fr = (v, digits = 1) => v.toLocaleString('fr-FR', { maximumFractionDigits: digits, minimumFractionDigits: digits })
@@ -29,6 +31,7 @@ function GutLinkCard({ link }) {
           <p className="gut-link-text">Toujours mangés ensemble dans vos repas : vos données ne les départagent pas.</p>
         )}
         <span className="reco-evidence reco-evidence-tentative">À confirmer</span>
+        <Link to={challengePath(link.together.length > 1 ? link.together : link.factor)} className="gut-link-check">Vérifier avec une réintroduction guidée ›</Link>
         {open && (
           <>
             <p className="gut-link-stats">
