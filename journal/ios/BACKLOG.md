@@ -17,7 +17,7 @@
   - [ ] Variante `appstore` dans `app/src/config/distribution.js` (+ tests : play et sideload inchangés).
   - [ ] Workflow `ios-build.yml` (PR qui touchent `app/**` ou `ios-*`, push `main`, `workflow_dispatch`) : clone complet,
     `VITE_DISTRIBUTION=appstore`, `VITE_APP_VERSION` = numéro du commit, build web, `cap sync ios`, `xcodebuild` pour
-    le simulateur sans signature, lancement sur un simulateur iPhone récent, captures de chaque page (clair / sombre,
+    le simulateur sans signature, lancement sur deux simulateurs (un iPhone de 390 × 844 points comme l'iPhone 12 de test, et un récent), captures de chaque page (clair / sombre,
     données vierges / démo) en artefact, échec sur erreur JS. `concurrency` qui annule les runs dépassés d'une PR.
 - [ ] **I2 — Audit de parité et replis propres** : compléter `PARITE.md` fonction par fonction (changelog depuis le
   lancement play, `journal/PRODUIT.md`, écrans) ; sur iOS, chaque service qui appelle un plugin Android absent

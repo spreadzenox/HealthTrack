@@ -20,10 +20,12 @@
   workflows Android ne publient plus de version quand un changement ne touche que la partie iOS.
 
 **👉 Prochaine action du propriétaire** (rien d'urgent : tout avance d'abord sur simulateur)
-- **A0** — dire à la routine (dans la session « orchestrateur » iOS) s'il a un iPhone, ou quelqu'un qui en a un,
-  pour tester via TestFlight, et quel modèle / quelle version d'iOS.
 - **A1** — quand il le décide : adhérer à l'Apple Developer Program (payant, à l'année ; voir §8). C'est ce qui
   débloque l'installation sur un vrai iPhone, TestFlight et l'App Store.
+- (facultatif) Donner la version d'iOS de l'iPhone 12 de test (Réglages → Général → Informations → Version d'iOS).
+
+**Téléphone de test** (A0, réponse du propriétaire le 26/10 vers 21:20) : l'**iPhone 12** de sa compagne, qui sera
+la première testeuse via TestFlight.
 
 **Runs de la semaine**
 
@@ -90,6 +92,11 @@ routine iOS (« Halcya iOS — parité avec Android », PR `[iOS]`) suit.
 
 ### 4. Contraintes techniques
 
+- **Téléphone de test réel : iPhone 12** (écran 6,1" de 390 × 844 points, encoche et non Dynamic Island, puce A14,
+  4 Go de mémoire). La cible de déploiement doit couvrir sa version d'iOS ; les captures du simulateur incluent un
+  iPhone de cette taille (iPhone 12, ou à défaut un modèle de 390 × 844 points) en plus d'un iPhone récent ; la
+  lecture du visage et les analyses doivent rester fluides sur ce matériel plus ancien.
+
 - **Pas de Mac** : la session est un conteneur Linux. Tout ce qui compile, teste ou capture iOS passe par GitHub
   Actions sur des runners macOS (dépôt public : minutes gratuites). La routine écrit les workflows `ios-*.yml`, les
   lance (sur sa PR ou par `workflow_dispatch` sur sa branche), lit leurs logs, télécharge leurs artefacts et
@@ -154,13 +161,13 @@ chaque étape pas à pas, avec les valeurs exactes à saisir, au moment où elle
 
 | | Action | Débloque | État |
 |---|---|---|---|
-| A0 | Dire s'il a un iPhone (ou un testeur avec un iPhone) et lequel | tests sur un vrai téléphone | à faire |
+| A0 | Dire s'il a un iPhone (ou un testeur avec un iPhone) et lequel | tests sur un vrai téléphone | ✅ 26/10 : iPhone 12 de sa compagne (version d'iOS à préciser) |
 | A1 | Adhérer à l'Apple Developer Program (individuel, payant à l'année ; tarif et statut de professionnel UE à vérifier par la routine) | signature, TestFlight, App Store | à décider |
 | A2 | Créer une clé API App Store Connect (rôle exact précisé par la routine) et la déposer dans Secret Manager (`apple-asc-key`, `apple-asc-key-id`, `apple-asc-issuer-id`, europe-west1), lisible par `gh-deployer` — même principe que la clé d'envoi Android : la CI la lit sur `main` sans clé (Workload Identity), jamais dans le dépôt ni les logs | builds signées et envoi TestFlight automatiques | après A1 |
 | A3 | Créer la fiche de l'app dans App Store Connect (nom, langue principale français, bundle id, SKU) | envoi TestFlight, fiche | après A1 |
 | A4 | Contrat « Paid Applications », coordonnées bancaires et fiscales | abonnement App Store | après A1 |
 | A5 | Remplir « Confidentialité de l'app » (pas d'API) avec les réponses préparées dans `app/store-ios/` | examen Apple | avant la 1re soumission |
-| A6 | Inviter des testeurs externes, soumettre à l'examen, publier | testeurs, production | lui seul |
+| A6 | Inviter les testeurs (d'abord sa compagne et son iPhone 12 : la routine dira s'il vaut mieux l'ajouter en testeuse interne via « Utilisateurs et accès » ou en externe avec l'examen bêta d'Apple), soumettre à l'examen, publier | testeurs, production | lui seul |
 
 ### 9. Outillage
 
