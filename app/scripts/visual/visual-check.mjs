@@ -65,6 +65,7 @@
  *                                                     --phone=ask --disclosure=usage, --disclosure=location (sans données de démo : --empty)
  *   npm run visual -- --routes=/ --click="Noter moi-même" --phrase="Crevée mais contente, apéro"  # phrase → propositions (I119)
  *   npm run visual -- --routes=/ --click="Noter moi-même" --evening-note  # « Note du soir d'un geste » (faux plugin, éteinte ; =on : allumée)
+ *   npm run visual -- --routes=/ --tz=America/New_York --gut-evening  # bilan du ventre du soir : proposition du rappel (=on : choisi)
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
  *   npm run visual -- --empty --routes=/ --onboarding   # premier lancement : l'Accueil redirige vers /bienvenue (jalon 4)
@@ -746,6 +747,20 @@ async function main() {
           remove: async () => ({ removed: 0 }),
         }
       }, String(args['evening-note']))
+    }
+    // Bilan du ventre du soir par notification (I170) : --gut-evening=off (proposition dans la carte) | on.
+    if (args['gut-evening']) {
+      await context.addInitScript((mode) => {
+        let s = { enabled: mode === 'on', minuteOfDay: 20 * 60, notifications: true, nextAt: Date.now() + 3600000, pending: 0 }
+        if (mode === 'on') localStorage.setItem('healthtrack_gut_evening', JSON.stringify({ enabled: true }))
+        window.__healthtrackFakeGutEvening = {
+          status: async () => s,
+          configure: async (o) => (s = { ...s, ...o }),
+          requestNotifications: async () => ({ asked: true, notifications: true }),
+          list: async () => ({ notes: [] }),
+          remove: async () => ({ removed: 0 }),
+        }
+      }, String(args['gut-evening']))
     }
 
     const page = await context.newPage()

@@ -37,18 +37,26 @@ const minuteOf = (iso) => {
   return d.getHours() * 60 + d.getMinutes()
 }
 
-/** Heure de la notification (minute du jour) : médiane des notes du soir des 14 derniers jours, sinon 21 h. */
-export function eveningNoteMinute(notes, now = new Date()) {
+/**
+ * Heure habituelle du soir (minute du jour) : médiane des heures données (ISO) à partir de 17 h sur les 14 derniers
+ * jours, ramenée entre 18 h et 23 h ; `fallback` avec moins de 3 heures du soir. Sert aussi au bilan du ventre.
+ */
+export function learnEveningMinute(ats, now = new Date(), fallback = DEFAULT_MINUTE) {
   const since = now.getTime() - LEARN_DAYS * 86_400_000
-  const minutes = (notes || [])
-    .filter((n) => n?.type === 'wellbeing' && new Date(n.at).getTime() >= since)
-    .map((n) => minuteOf(n.at))
+  const minutes = (ats || [])
+    .filter((at) => at && new Date(at).getTime() >= since)
+    .map(minuteOf)
     .filter((m) => m >= EVENING_FROM_MINUTE)
     .sort((a, b) => a - b)
-  if (minutes.length < MIN_EVENING_NOTES) return DEFAULT_MINUTE
+  if (minutes.length < MIN_EVENING_NOTES) return fallback
   const mid = minutes.length >> 1
   const median = minutes.length % 2 ? minutes[mid] : Math.round((minutes[mid - 1] + minutes[mid]) / 2)
   return Math.max(EARLIEST_MINUTE, Math.min(LATEST_MINUTE, median))
+}
+
+/** Heure de la notification (minute du jour) : médiane des notes du soir des 14 derniers jours, sinon 21 h. */
+export function eveningNoteMinute(notes, now = new Date()) {
+  return learnEveningMinute((notes || []).filter((n) => n?.type === 'wellbeing').map((n) => n.at), now)
 }
 
 /** Jour local (AAAA-MM-JJ) de la note la plus récente, ou null. */
@@ -105,13 +113,18 @@ let inFlight = null
  */
 export function importPendingEveningNotes({ plugin = eveningNotePlugin(), write = upsertEntries, onInserted = notifyEntriesUpdated } = {}) {
   if (inFlight) return inFlight
-  inFlight = runImport({ plugin, write, onInserted }).finally(() => {
+  inFlight = drainNativeInbox({ plugin, parse: parseEveningNote, write, onInserted }).finally(() => {
     inFlight = null
   })
   return inFlight
 }
 
-async function runImport({ plugin, write, onInserted }) {
+/**
+ * Vide une boîte native (`list` → { notes: [{ name, json }] }, `remove`) : chaque JSON lisible devient une entrée
+ * écrite sans doublon, les illisibles sont retirées, celles qu'on n'a pas pu écrire restent pour la prochaine fois.
+ * Sert aussi au bilan du ventre (gutEvening.js). Ne lève jamais.
+ */
+export async function drainNativeInbox({ plugin, parse, write = upsertEntries, onInserted = notifyEntriesUpdated }) {
   const out = { imported: 0, inserted: 0, dropped: 0, kept: 0 }
   if (!plugin?.list) return out
   let items = []
@@ -124,7 +137,7 @@ async function runImport({ plugin, write, onInserted }) {
   const read = []
   const dropped = []
   for (const it of items) {
-    const entry = parseEveningNote(it?.json)
+    const entry = parse(it?.json)
     if (entry) {
       entries.push(entry)
       read.push(it.name)

@@ -105,13 +105,17 @@ public class EveningNotePlugin extends Plugin {
     /** Android 13+ : demande l'autorisation des notifications ; rend { asked, notifications }. */
     @PluginMethod
     public void requestNotifications(PluginCall call) {
+        call.resolve(requestNotifications(getActivity(), getContext()));
+    }
+
+    /** Partagé avec le bilan du ventre du soir (GutEveningPlugin). */
+    static JSObject requestNotifications(Activity activity, Context context) {
         JSObject ret = new JSObject();
-        Activity activity = getActivity();
         boolean needed = Build.VERSION.SDK_INT >= 33
-                && getContext().checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
+                && context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
         if (needed && activity != null) activity.requestPermissions(new String[] {Manifest.permission.POST_NOTIFICATIONS}, 7313);
         ret.put("asked", needed && activity != null);
-        ret.put("notifications", EveningNoteNotice.notificationsOn(getContext()));
-        call.resolve(ret);
+        ret.put("notifications", EveningNoteNotice.notificationsOn(context));
+        return ret;
     }
 }

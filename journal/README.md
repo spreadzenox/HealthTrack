@@ -22,12 +22,17 @@
   « Et votre ventre aujourd'hui, dans l'ensemble ? » (Calme / Gêne / Douleur, un geste, une fois par jour). Les
   journées calmes comptent autant que les autres : c'est ce qui manquait aux analyses repas → ventre. Visible
   seulement avec l'objectif « Mon ventre » ; dans le Journal : « Ventre · bilan du jour ».
+- **Ventre : le bilan du soir depuis une notification** (26/10 01:33) — le soir, sous la question, une ligne « Me le
+  demander chaque soir par notification » : vers 20 h (puis à votre heure habituelle), Calme / Gêne / Douleur
+  directement dans la notification, sans ouvrir l'app ; rangé à l'ouverture suivante. Jamais si le bilan est déjà
+  fait. Interrupteur dans Paramètres → Ce qui vous amène. **À tester** : l'activer un soir, répondre le lendemain
+  depuis la notification, vérifier « Bilan du jour : … » dans la carte.
 
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
-temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. Suite : la
-notification du soir pour le bilan du ventre, l'analyse jour par jour qui l'utilise, puis l'affichage des pistes
-ventre dans Analyses (« trop tôt pour dire » tant que rien de solide).
+temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
+notification du soir pour le bilan du ventre est livrée (26/10 01:33). Suite : l'analyse jour par jour qui utilise les
+bilans, puis l'affichage des pistes ventre dans Analyses (« trop tôt pour dire » tant que rien de solide).
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -43,6 +48,7 @@ ventre dans Analyses (« trop tôt pour dire » tant que rien de solide).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 01:33 — [I170 étape 2 : bilan du ventre par notification](runs/2026-10-26-0133-i170-notification-soir.md) | 🏗️ | Notification native Calme / Gêne / Douleur (20 h ou heure apprise, avant minuit, choix × carte ventre) ; proposée dans la carte, interrupteur dans Paramètres ; 2 256 Vitest, 15 JUnit |
 | 26/10 00:33 — [I170 étape 1 : bilan du soir du ventre](runs/2026-10-26-0033-i170-bilan-du-soir.md) | 🏗️ | Archive S43 ; carte « Votre ventre » : question du soir à partir de 18 h (`scope: 'day'`, une fois par jour), ignorée par le moteur par fenêtres, comptée dans les 7 jours ; option `--tz` des captures ; 2 240 Vitest |
 
 ---

@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, within, fireEvent } from '@testing-library/react'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { render, screen, within, fireEvent, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Settings from './Settings'
 import { DebugProvider } from '../contexts/DebugContext'
@@ -77,6 +77,24 @@ describe('Settings — Ce qui vous amène (I155)', () => {
     expect(within(group).getByRole('radio', { name: 'Mon ventre' })).toBeChecked()
     fireEvent.click(within(group).getByRole('radio', { name: 'Mon énergie et mon sommeil' }))
     expect(JSON.parse(localStorage.getItem('healthtrack_onboarding'))).toMatchObject({ done: true, goal: 'energy' })
+  })
+
+  it('rappel du bilan du ventre : seulement avec la carte ventre, et retiré du natif quand l’objectif change (I170)', async () => {
+    const configure = vi.fn(async (o) => ({ enabled: !!o.enabled }))
+    window.__healthtrackFakeGutEvening = { status: async () => ({ enabled: true, minuteOfDay: 20 * 60 + 30 }), configure }
+    try {
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
+      localStorage.setItem('healthtrack_gut_evening', JSON.stringify({ enabled: true }))
+      renderSettings()
+      expect(screen.getByRole('checkbox', { name: 'Rappel du bilan du ventre, le soir' })).toBeChecked()
+      expect(await screen.findByText(/Vers 20 h 30/)).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('radio', { name: 'Mon énergie et mon sommeil' }))
+      expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan du ventre, le soir' })).not.toBeInTheDocument()
+      await waitFor(() => expect(configure).toHaveBeenLastCalledWith({ enabled: false }))
+      expect(JSON.parse(localStorage.getItem('healthtrack_gut_evening'))).toEqual({ enabled: true })
+    } finally {
+      delete window.__healthtrackFakeGutEvening
+    }
   })
 })
 
