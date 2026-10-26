@@ -17,7 +17,8 @@ const STATUS_TEXT = {
 
 function NutrientBar({ row }) {
   const barClass = `nutrition-bar-${row.status}`
-  const amount = `${formatNutrientAmount(row.perDay)} ${row.unit}/j`
+  // Teneur non mesurée pour une partie des aliments : la valeur est un minimum (N2b).
+  const amount = `${row.partial ? '≥\u00a0' : ''}${formatNutrientAmount(row.perDay)} ${row.unit}/j`
   const reference = row.limit
     ? `max ${formatNutrientAmount(row.target)} ${row.unit}`
     : `obj. ${formatNutrientAmount(row.target)} ${row.unit}`
@@ -25,7 +26,10 @@ function NutrientBar({ row }) {
   return (
     <div className="nutrition-bar-row">
       <div className="nutrition-bar-head">
-        <span className="nutrition-bar-label">{row.label}</span>
+        <span className="nutrition-bar-label">
+          {row.label}
+          {row.partial && <span className="nutrition-partial-tag">partiel</span>}
+        </span>
         <span className="nutrition-bar-value">
           <strong>{amount}</strong> · {reference}
         </span>
@@ -38,7 +42,7 @@ function NutrientBar({ row }) {
           aria-valuenow={row.barPct}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`${row.label} : ${row.pct} % ${row.limit ? 'de la limite' : 'de l’objectif'}, ${STATUS_TEXT[row.status]}`}
+          aria-label={`${row.label} : ${row.partial ? 'au moins ' : ''}${row.pct} % ${row.limit ? 'de la limite' : 'de l’objectif'}, ${STATUS_TEXT[row.status]}`}
         />
       </div>
     </div>
@@ -141,8 +145,10 @@ export default function Nutrition() {
             un·e diététicien·ne.
           </p>
           <p className="nutrition-footnote nutrition-source">
-            Composition des aliments : {ciqualMeta.attribution} Une teneur que Ciqual n’a pas mesurée
-            n’est pas comptée : certains apports peuvent être sous-estimés.
+            Composition des aliments : {ciqualMeta.attribution}
+            {comparison.partialCount > 0
+              ? ' «\u00a0partiel\u00a0» : Ciqual n’a pas mesuré cette teneur pour une partie de vos aliments ; l’apport réel est sans doute plus élevé.'
+              : ' Une teneur que Ciqual n’a pas mesurée n’est pas comptée.'}
           </p>
         </>
       ) : null}

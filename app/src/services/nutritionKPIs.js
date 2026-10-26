@@ -36,16 +36,20 @@ export const NUTRITION_FIELDS = [
 
 /**
  * @param {{ ingredient: string, quantity_g?: number }[]} items
- * @returns {object} totals for all NUTRITION_FIELDS plus fodmap_score (max of items)
+ * @returns {object} totals for all NUTRITION_FIELDS plus fodmap_score (max of items) and unknown_share :
+ *   pour chaque champ dont Ciqual n'a pas mesuré la teneur d'au moins un aliment, la part (0–1) du poids
+ *   mangé concernée. Le total ne compte que les teneurs mesurées : il est alors un minimum, pas un zéro caché.
  */
 export function computeTotalsFromItems(items) {
   const nutritionMap = getNutritionTable()
   // Erreur franche plutôt que des totaux à zéro (qui seraient ensuite mis en cache)
   if (!nutritionMap) throw new Error('Table nutritionnelle non chargée (loadNutritionTable)')
   const totals = Object.fromEntries(NUTRITION_FIELDS.map((f) => [f, 0]))
+  const unknownG = Object.fromEntries(NUTRITION_FIELDS.map((f) => [f, 0]))
+  let weightG = 0
   let maxFodmap = 0
 
-  if (!Array.isArray(items)) return { ...totals, fodmap_score: maxFodmap }
+  if (!Array.isArray(items)) return { ...totals, fodmap_score: maxFodmap, unknown_share: {} }
 
   for (const it of items) {
     const name = (it.ingredient || '').trim()
@@ -54,9 +58,11 @@ export function computeTotalsFromItems(items) {
     const p100 = nutritionMap[name]
     if (!p100) continue
     const factor = qtyG / 100
+    weightG += qtyG
 
     for (const field of NUTRITION_FIELDS) {
-      totals[field] += (p100[field] || 0) * factor
+      if (p100[field] == null) unknownG[field] += qtyG
+      else totals[field] += p100[field] * factor
     }
     // FODMAP: take the maximum score among all items in the meal
     if (typeof p100.fodmap_score === 'number' && p100.fodmap_score > maxFodmap) {
@@ -70,6 +76,10 @@ export function computeTotalsFromItems(items) {
     rounded[field] = Math.round(totals[field] * 10) / 10
   }
   rounded.fodmap_score = maxFodmap
+  rounded.unknown_share = {}
+  for (const field of NUTRITION_FIELDS) {
+    if (unknownG[field] > 0) rounded.unknown_share[field] = Math.round((unknownG[field] / weightG) * 100) / 100
+  }
 
   return rounded
 }

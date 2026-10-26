@@ -96,6 +96,23 @@ describe('nutritionIntakeCompare', () => {
     expect(tiny.likelyIncomplete).toBe(true)
   })
 
+  it('marks a nutrient « partiel » when Ciqual did not measure it for ≥ 10 % of the eaten weight (N2b)', () => {
+    const at = new Date(2026, 4, 20, 12).toISOString()
+    const result = compareRecentIntake([{
+      type: 'food',
+      at,
+      payload: { items: [
+        { ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 100 },
+        { ingredient: 'Agneau, collier braisé ou bouilli', quantity_g: 100 },
+      ] },
+    }], profile)
+    const sodium = result.rows.find((r) => r.key === 'sodium_mg')
+    expect(sodium.partial).toBe(true)
+    expect(sodium.unknownShare).toBe(0.5)
+    expect(result.rows.find((r) => r.key === 'protein_g').partial).toBe(false)
+    expect(result.partialCount).toBeGreaterThanOrEqual(1)
+  })
+
   it('returns an empty comparison when no meal is logged', () => {
     const result = compareRecentIntake([], profile)
     expect(result.mealCount).toBe(0)
