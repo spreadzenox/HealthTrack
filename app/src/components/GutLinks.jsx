@@ -32,6 +32,7 @@ function GutLinkCard({ link }) {
           <>
             <p className="gut-link-stats">
               RR = {fr(link.rr)} · q = {fr(link.q, 3)} · comparé dans des blocs de jours voisins
+              {link.sameNight && <> · à nuit comparable</>}
               {link.also.length > 0 && <> · aussi : {link.also.join(', ')}</>}
             </p>
             {link.nearMeal != null && link.nearMeal > 0 && (

@@ -35,6 +35,10 @@
   toujours mangés ensemble forment une seule piste (impossible de les départager). **À tester** : rien de visible tant
   que vous n'avez pas 28 jours de notes du ventre ; vérifiez la ligne « Bientôt · N/28 jours » en bas d'Analyses.
 
+- **Pistes du ventre à nuit comparable** (26/10 05:33) — quand vos nuits sont connues, chaque aliment est comparé
+  à nuit comparable : une mauvaise nuit qui gêne le ventre et pousse vers le café n'accuse plus le café. Dans les
+  détails d'une piste « le jour même » / « la veille » : « à nuit comparable ».
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -44,7 +48,10 @@ aucun effet, au plus 7 sur 200 gardent une fausse piste). Honnêteté : avec un 
 3 mois à ressortir. Les deux analyses sont affichées dans Analyses depuis le 26/10 03:33. Plus de puissance depuis le 26/10 04:33 : on ne teste plus que les 12 aliments
 les mieux répartis dans vos jours (choisis sans regarder le ventre) et des aliments toujours mangés ensemble ne
 comptent qu'une fois ; sur des journaux simulés avec beaucoup d'aliments rares, un vrai effet ressort 20 à 28 % plus
-souvent, sans plus de fausses pistes. Suite : I134 (sommeil, stress, écran).
+souvent, sans plus de fausses pistes. Depuis le 26/10 05:33, la nuit d'avant est prise en compte (I134 étape 1) : sur des
+journaux simulés où seule la nuit gêne le ventre, le café des nuits courtes était accusé 7 fois sur 10, plus qu'une
+fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit joue (22 → 31 sur 60). Suite : stress et
+temps d'écran.
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -60,6 +67,7 @@ souvent, sans plus de fausses pistes. Suite : I134 (sommeil, stress, écran).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 05:33 — [I134 étape 1 : nuit comparable](runs/2026-10-26-0533-i134-nuit-comparable.md) | 🏗️ | `gutDays` : blocs × nuit courte / longue (si nuits connues pour 2 bilans sur 3) ; piège café 7/10 → ≤ 1/10 ; puissance 22 → 31/60 quand la nuit joue ; « à nuit comparable » dans les détails ; 2 285 Vitest |
 | 26/10 04:33 — [I173 : moins de comparaisons](runs/2026-10-26-0433-i173-moins-de-comparaisons.md) | 🏗️ | 12 aliments testés au plus (les mieux répartis) + FODMAP, jumeaux comptés une fois ; longue traîne : 42 → 51 et 50 → 64/200 ; nulles ≤ 5/100 ; 2 280 Vitest |
 | 26/10 03:33 — [Pistes ventre dans Analyses](runs/2026-10-26-0333-pistes-ventre-analyses.md) | 🏗️ | `gutLinks.js` + `GutLinks.jsx` : « Votre ventre et vos repas » (une piste par aliment, mangés ensemble regroupés, I171 a/b, « Bientôt N/28 ») ; option `--gut-links` des captures ; 2 276 Vitest |
 | 26/10 02:33 — [I170 étape 3 : analyse jour par jour](runs/2026-10-26-0233-i170-analyse-jour.md) | 🏗️ | `gutDays.js` (jour même / veille, blocs de 7 j + BH + TTS) ; banc des nulles ≤ 7/200 ; rien d'affiché ; 2 266 Vitest |
