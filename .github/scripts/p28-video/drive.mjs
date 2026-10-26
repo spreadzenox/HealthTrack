@@ -100,7 +100,7 @@ let cdp = null
 let msgId = 0
 const pending = new Map()
 
-async function connectWebView(timeoutMs = 60000) {
+async function connectWebView(timeoutMs = 180000) {
   const t0 = Date.now()
   while (Date.now() - t0 < timeoutMs) {
     const pid = shell(`pidof ${PKG}`).trim()
@@ -239,7 +239,10 @@ async function prepare() {
   shell('settings put global heads_up_notifications_enabled 1')
   shell(`pm grant ${PKG} android.permission.CAMERA`)
   shell(`monkey -p ${PKG} -c android.intent.category.LAUNCHER 1`)
-  if (!(await connectWebView())) throw new Error('WebView introuvable (débogage inactif ?)')
+  if (!(await connectWebView())) {
+    await shot('echec-webview')
+    throw new Error('WebView introuvable (débogage inactif ?)')
+  }
   await sleep(4000)
 
   // Données de démonstration (30 jours synthétiques) et onboarding noté fait, comme `npm run visual`.

@@ -11,10 +11,11 @@ adb shell settings put global animator_duration_scale 0.5
 # Écran de verrouillage par balayage (sans code), qui envoie ACTION_USER_PRESENT au déverrouillage
 adb shell locksettings set-disabled false >/dev/null 2>&1 || true
 adb shell settings put system screen_off_timeout 600000
-# Galaxy A56 : 1080 × 2340 à 385 ppi (le skin de l'émulateur fixe la taille, pas la densité : sans elle, mise en page
-# de tablette). Puis on laisse le lanceur finir de démarrer et on ferme une éventuelle boîte « ne répond pas ».
-adb shell wm size 1080x2340
-adb shell wm density 385
+# Galaxy A56 (1080 × 2340 à 385 ppi, 449 dp de large) à l'échelle 2/3 : 720 × 1560 à 257 ppi, même mise en page,
+# moins de pixels pour swiftshader. Puis on laisse le lanceur finir de démarrer et on ferme une éventuelle boîte
+# « ne répond pas ».
+adb shell wm size 720x1560
+adb shell wm density 257
 sleep 20
 adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 # -g accorde caméra et notifications à l'installation : le plan 4 (« si Android le demande ») est sauté. Essai du
