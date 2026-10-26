@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-26",
+  "kind": "nouveau",
+  "title": "Réintroduction guidée : un rappel pour la portion du jour",
+  "items": [
+    "Pendant un test de réintroduction, cochez « Me rappeler ma portion chaque jour à… » et choisissez l’heure (midi par défaut) : une notification « Votre portion du jour » vous dit quoi manger ce jour-là, et la toucher ouvre le test.",
+    "Pas de rappel pour une portion déjà notée, pendant une pause ou après la dernière portion.",
+    "Dans l’onglet Analyses, la carte du test montre où vous en êtes, par exemple « Lait · jour 2 · portion à prendre »."
+  ]
+}

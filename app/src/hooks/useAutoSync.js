@@ -17,6 +17,7 @@ import { importPendingFaceBursts } from '../services/faceBursts'
 import { readFaceOnOpen } from '../services/faceAppOpen'
 import { importPendingEveningNotes, syncEveningNote } from '../services/eveningNote'
 import { importPendingGutEvenings, syncGutEvening } from '../services/gutEvening'
+import { syncPortionReminder } from '../services/fodmapReminder'
 
 /**
  * Call inside any component that should trigger an auto-sync on mount.
@@ -57,6 +58,8 @@ export function useAutoSync() {
     const evening = () => {
       importPendingEveningNotes().finally(() => syncEveningNote())
       importPendingGutEvenings().finally(() => syncGutEvening())
+      // Réintroduction guidée (7b-2) : rappels des portions restantes recalculés (aucun pour une portion déjà notée).
+      syncPortionReminder()
     }
     evening()
     // Montre Huawei en direct : au plus toutes les 30 min, seulement si HealthTrack a sa clé.
@@ -77,6 +80,7 @@ export function useAutoSync() {
     const onEntries = () => {
       syncEveningNote()
       syncGutEvening()
+      syncPortionReminder()
     }
     window.addEventListener('health-entries-updated', onEntries)
     // … et tant que l'app reste à l'écran : la relecture native s'efface alors (« l'app s'en charge »), et sans ce

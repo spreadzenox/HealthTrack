@@ -298,3 +298,36 @@ button.fodmap-group:focus-visible,
   margin: 4px 0 0;
   font-size: 0.92rem;
 }
+
+.fodmap-reminder {
+  margin: 10px 0;
+}
+
+.fodmap-reminder-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 0.95rem;
+}
+
+.fodmap-reminder-row input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+}
+
+.fodmap-reminder-row input[type='time'] {
+  min-height: 40px;
+  padding: 4px 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.fodmap-entry-state {
+  display: inline-block;
+  margin-top: 8px;
+}

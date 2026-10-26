@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-/** Un redémarrage ou une mise à jour efface les alarmes : on reprogramme la note du soir et le bilan du ventre (s'ils sont demandés). */
+/** Un redémarrage ou une mise à jour efface les alarmes : on reprogramme la note du soir et le bilan du ventre (s'ils sont demandés)
+ * et le rappel de la portion du jour d'une réintroduction (s'il en reste un). */
 public class EveningNoteBootReceiver extends BroadcastReceiver {
 
     @Override
@@ -14,5 +15,6 @@ public class EveningNoteBootReceiver extends BroadcastReceiver {
         Context app = context.getApplicationContext();
         if (EveningNoteNotice.prefs(app).getBoolean("enabled", false)) EveningNoteNotice.arm(app);
         if (GutEveningNotice.prefs(app).getBoolean("enabled", false)) GutEveningNotice.arm(app);
+        PortionReminder.arm(app);
     }
 }

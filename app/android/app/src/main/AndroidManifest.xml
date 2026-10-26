@@ -72,6 +72,11 @@
         <receiver
             android:name=".EveningNoteReceiver"
             android:exported="false" />
+        <!-- Rappel de la portion du jour d'une réintroduction (PortionReminder.java, jalon 7b-2) : alarme non exportée ;
+             la reprogrammation après un redémarrage passe par EveningNoteBootReceiver. -->
+        <receiver
+            android:name=".PortionReminderReceiver"
+            android:exported="false" />
         <receiver
             android:name=".EveningNoteBootReceiver"
             android:exported="true">

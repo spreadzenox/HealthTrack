@@ -9,6 +9,7 @@ import { APP_NAME } from './config/brand'
 import { useAutoSync } from './hooks/useAutoSync'
 import { FEATURES } from './config/distribution'
 import { needsOnboarding } from './settings/onboarding'
+import { takePortionOpen } from './services/fodmapReminder'
 import './App.css'
 
 /** Pendant le chargement d'une page (fichier séparé, quelques ms). */
@@ -65,8 +66,23 @@ function useOnboardingRedirect() {
   }, [])
 }
 
+/** Rappel « Votre portion du jour » touché (réintroduction guidée, 7b-2) : on ouvre la réintroduction. */
+function usePortionOpen() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const check = () => {
+      if (document.visibilityState !== 'visible') return
+      takePortionOpen().then((open) => open && navigate('/reintroduction'))
+    }
+    check()
+    document.addEventListener('visibilitychange', check)
+    return () => document.removeEventListener('visibilitychange', check)
+  }, [navigate])
+}
+
 export default function Layout() {
   useOnboardingRedirect()
+  usePortionOpen()
   useAutoSync()
   usePurchaseWatch()
   // Nouvelle page = en haut de la page (sinon on arrive au milieu, à la hauteur de la page précédente).

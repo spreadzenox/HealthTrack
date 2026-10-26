@@ -289,7 +289,8 @@ export function combinationsAvailable(results) {
   return Object.values(results).filter((r) => r.verdict?.id === VERDICTS.tolerated.id).length >= 2
 }
 
-function formatAmount(amount, plan) {
+/** Portion lisible (« 2,5 tranches », « 250 ml »). */
+export function formatAmount(amount, plan) {
   const n = String(amount).replace('.', ',')
   return `${n} ${amount > 1 ? plan.units : plan.unit}`
 }
@@ -311,4 +312,16 @@ export function verdictSentence(challenge, verdict) {
     default:
       return null
   }
+}
+
+/**
+ * Test vivant (le plus récent non abandonné et pas encore terminé, pause comprise), avec son état, ou null.
+ * @returns {{ entry: object, status: object }|null}
+ */
+export function currentChallenge(challengeEntries, gutEntries, now = new Date()) {
+  return (challengeEntries || [])
+    .filter((e) => e?.payload?.group && !e.payload.abandonedAt)
+    .sort((a, b) => toMs(b.payload.startedAt) - toMs(a.payload.startedAt))
+    .map((entry) => ({ entry, status: challengeStatus(entry.payload, gutEntries, now) }))
+    .find((c) => c.status.state !== 'done') ?? null
 }
