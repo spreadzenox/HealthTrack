@@ -1213,7 +1213,10 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   portion : lactose / fructose / glucose / polyols depuis Ciqual, fructanes / GOS / sorbitol / mannitol depuis des
   mesures publiées citées par aliment (jamais Monash ni FODMAP Friendly), sinon « inconnu » ou analogie à confiance
   basse ; `fodmap_score` reste lisible dans les anciens exports.
-- [ ] **N4** carte d'un repas (« riche en fructanes : oignon », simple d'abord).
+- [x] **N4** carte d'un repas — **FAIT le 26/10 23:33** : `MealFodmapLine` sous chaque repas de Journal → Repas (objectif
+  ventre seulement, `gutCardMode`) : « Riche en fructanes : oignon », « Probablement riche » si le repère n'est dépassé
+  qu'avec des valeurs à confiance basse (`mealFodmapHighlights`), grammes / repère / origine au chevron. Reste possible :
+  la même ligne sur le résultat d'une analyse photo avant enregistrement, et dans « Vos derniers jours ».
 - [ ] **N5** pistes repas → ventre par sous-groupe (banc des nulles et de puissance), lien vers la réintroduction du
   même groupe ; **N6** rapport PDF par sous-groupe (avec I175 étape 2).
 

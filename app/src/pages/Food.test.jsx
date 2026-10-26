@@ -274,6 +274,23 @@ describe('Food — modifier un repas enregistré', () => {
     expect(updateEntry).not.toHaveBeenCalled()
   })
 
+  it('carte d’un repas : FODMAP par sous-groupe avec l’objectif « Mon ventre », rien avec « énergie » (N4)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const { saveOnboarding } = await import('../settings/onboarding')
+    const onion = { id: 2, at: '2026-10-07T12:00:00Z', type: 'food', source: 'manual',
+      payload: { dish: 'Soupe', items: [{ ingredient: 'Oignon, cru', quantity: '70 g', quantity_g: 70 }] } }
+    listEntries.mockResolvedValue([onion])
+    saveOnboarding({ goal: 'gut' })
+    const { unmount } = render(<BrowserRouter><Food /></BrowserRouter>)
+    expect(await screen.findByText('Riche en fructanes')).toBeInTheDocument()
+    unmount()
+    saveOnboarding({ goal: 'energy' })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Soupe', { selector: '.meal-dish' })
+    expect(screen.queryByTestId('meal-fodmap')).not.toBeInTheDocument()
+    saveOnboarding({ goal: null })
+  })
+
   it('refuse une heure dans le futur', async () => {
     const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
     updateEntry.mockClear()

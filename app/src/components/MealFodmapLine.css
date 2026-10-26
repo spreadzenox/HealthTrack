@@ -1,0 +1,46 @@
+/* Ligne FODMAP d'un repas : pêche (thème ventre), étiquette en tête, chevron à droite. */
+.meal-fodmap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px 8px;
+  margin: 8px 0 2px;
+  padding: 8px 12px;
+  border-radius: var(--radius-tag);
+  background: var(--peach-bg);
+  color: var(--peach-text);
+  font-size: 0.88rem;
+}
+
+.meal-fodmap-list {
+  flex: 1;
+  min-width: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.meal-fodmap-list li + li {
+  margin-top: 4px;
+}
+
+.meal-fodmap-tag {
+  color: var(--peach-label);
+  font-weight: 700;
+}
+
+.meal-fodmap-tag::after {
+  content: ' :';
+}
+
+.meal-fodmap-detail {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.meal-fodmap-note {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+}
