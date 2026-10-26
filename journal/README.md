@@ -142,7 +142,8 @@ bouton arrivent au prochain run.
    l'app : Google ne la demande qu'après avoir reçu une version qui contient la fonction. **Depuis le 26/10 21:33, la
    CI envoie cette version en brouillon** sur le test interne (« Play — brouillon P28 », nom `p28-1xxxxx`) : un
    brouillon n'est installé par personne, et vos versions de test restent en place. **Ne déployez pas ce brouillon.**
-   Geste : environ 1 h après (le compte rendu du run donne l'heure de l'envoi), Play Console → Halcya → Surveiller et
+   **Envoyé le 26/10 vers 22:05 : brouillon `p28-100487`, accepté par Google sans erreur** (votre version de test
+   487 reste en place). Geste : à partir de 23:00 environ, Play Console → Halcya → Surveiller et
    améliorer → Règles et programmes → **Contenu de l'app** → « Actions requises » → « Autorisations des services de
    premier plan » → cocher **Caméra**, coller les 3 textes de [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et
    le lien de la vidéo, envoyer. Si la ligne n'apparaît toujours pas le lendemain, dites-le : un run enverra la
@@ -153,7 +154,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
-| 26/10 21:33 — [P28 : brouillon pour faire apparaître la déclaration](runs/2026-10-26-2133-p28-brouillon.md) | 🏗️ | Workflow « Play — brouillon P28 » : AAB play signé avec la lecture au déverrouillage, versionCode à part, envoyé en brouillon sur le test interne (jamais déployé) ; les envois normaux gardent ce brouillon ; tests de l'envoi Play (4 nouveaux) |
+| 26/10 21:33 — [P28 : brouillon pour faire apparaître la déclaration](runs/2026-10-26-2133-p28-brouillon.md) | 🏗️ | Workflow « Play — brouillon P28 » : AAB play signé avec la lecture au déverrouillage, versionCode à part, envoyé en brouillon sur le test interne (jamais déployé ; **`p28-100487` accepté sans erreur**, v300) ; les envois normaux gardent ce brouillon ; tests de l'envoi Play (4 nouveaux) |
 | 26/10 20:33 — [Idées : N3b prêt à coder](runs/2026-10-26-2033-idees-n3b-sources.md) | 💡 | Sources ouvertes des FODMAP non mesurés par Ciqual (`IDEES.md` I177–I179) : sorbitol / mannitol de la table officielle japonaise MEXT 2020, fructanes Ferjančič 2024, GOS Siva 2019 et Natale 2025, pertes à la cuisson Njoumi 2019 ; défaut trouvé dans N3a (« < 0,5 » compté 0) → N3a-bis ; page P28 en ligne vérifiée |
 | 26/10 19:33 — [P28 : film vert, PR #398 mergée](runs/2026-10-26-1933-p28-video-vert.md) | 🏗️ | Deux causes trouvées : l'appui « déplier » tombait sur toute la ligne de la notification (ouvrait l'app) ; connexion DevTools gardée sur une ancienne redirection (port neuf à chaque essai, sans keep-alive). **Film complet de 1 min 48 s** : divulgation → accord → notification avec « Arrêter » → caméra au déverrouillage → « Arrêter » → interrupteur coupé ; publication lancée sur main |
 | 26/10 18:33 — [N3a : FODMAP par sous-groupe (calcul)](runs/2026-10-26-1833-n3a-fodmap-sous-groupes.md) | 🏗️ | `fodmapGroups.js` : lactose / fructose en excès / polyols depuis Ciqual (« < x » = traces = 0), repères Varney 2017, niveau élevé / bas / inconnu par repas, aliments contributeurs ; `fodmapMeasurements.json` vide prêt pour N3b ; rien d'affiché ; 2 448 Vitest |
