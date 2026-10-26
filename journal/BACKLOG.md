@@ -111,6 +111,9 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   seulement) : interrupteur qui coupe (actif ou en pause) ; coupée → lien vers Sources (allumage seulement derrière
   la divulgation) ; [ ] P28 par le propriétaire
   (APK d'aperçu prêt) ; [ ] allumer l'interrupteur dans « Play — AAB ».
+  [ ] **FLAKY-UPDATEBANNER** (26/10 21:33) : `UpdateBanner.test.jsx` « montre la progression en Mo et en %, puis ouvre
+  l'installateur » a échoué une fois en CI (progressbar introuvable, 3 s) sur une PR de journal seul : le rendre
+  indépendant du temps (faux minuteurs ou attente explicite).
   [x] **P28-BROUILLON (demande du 26/10 20:40 : la ligne « Autorisations des services de premier plan » n'apparaît
   pas dans Contenu de l'app)** — 26/10 21:33 : workflow « Play — brouillon P28 » (`play-p28-draft.yml`, workflow_dispatch
   sur main) : AAB play signé avec `-PfaceUnlockPlay=true`, versionCode 100000 + n, brouillon `p28-<n>` sur la piste
