@@ -40,7 +40,7 @@
 
 ## Vérifications
 - `npm run test` : **2 457** verts (+ 33 sautés) ; `npm run build` OK ; lint 6 erreurs (inchangé) ; `npm run visual` :
-  voir plus bas.
+  0 erreur JS, toutes les pages « ok » ; Accueil et Nutrition relus (inchangés : rien d'affiché).
 
 ## Suite
 - **N3b-2** : GOS des lentilles, pois chiches et haricots cuits (Siva 2019 sec × eau Ciqual × pertes Njoumi 2019) —
