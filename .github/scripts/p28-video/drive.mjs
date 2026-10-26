@@ -358,7 +358,7 @@ async function film() {
   await tapWeb(byText('Aujourd'), { label: 'onglet Aujourd’hui', timeoutMs: 5000 })
   await sleep(3500)
   const after = await storedFaceReadings()
-  record('7. Nouvelle lecture gardée (facultatif : la mire de l'émulateur n'a pas de visage)', after > before, `lectures avant : ${before}, après : ${after}`, false)
+  record('7. Nouvelle lecture gardée (facultatif : la mire de l’émulateur n’a pas de visage)', after > before, `lectures avant : ${before}, après : ${after}`, false)
   await shot('accueil-apres')
 
   // 8. Volet → « Arrêter » : la notification disparaît ; dans Sources, l'interrupteur est coupé
