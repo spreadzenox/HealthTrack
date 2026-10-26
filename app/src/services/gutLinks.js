@@ -51,7 +51,7 @@ function nearMealShare(notes, meals, factor, w) {
  * @returns {{ status: 'no_notes'|'too_early'|'none'|'links', noteDays: number, minDays: number, tested: number,
  *   links: { factor: string, label: string, when: string, kind: 'window'|'day', whenLabel: string,
  *     exposed: { n: number, symptoms: number }, unexposed: { n: number, symptoms: number },
- *     rr: number, q: number, nearMeal: number|null, also: string[], together: string[] }[] }}
+ *     rr: number, q: number, nearMeal: number|null, sameNight: boolean, also: string[], together: string[] }[] }}
  */
 export function summarizeGutLinks(entries) {
   const list = entries || []
@@ -94,6 +94,8 @@ export function summarizeGutLinks(entries) {
       q: r.q,
       nearMeal: w ? nearMealShare(timedNotes, meals, r.factor, w) : null,
       also: r.also,
+      // I134 : les pistes « jour » sont comparées à nuit comparable quand vos nuits sont connues.
+      sameNight: WHEN[r.window].kind === 'day' && byDay.adjustedFor.includes('sleep'),
     }
   })
 

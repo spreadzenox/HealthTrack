@@ -16,6 +16,11 @@
  * puissant. Puissance pour un effet ×4 (cote de gêne) en 9 semaines : 25/200 le jour même, 36/200 la veille ; ×8 en
  * 13 semaines : environ 3 fois sur 4. Ce qui coûte le plus, c'est la correction des 20 comparaisons (10 aliments ×
  * 2 jours), pas la porte TTS : on préfère attendre plutôt que montrer de faux suspects.
+ * La nuit d'avant en covariable (I134 étape 1) : une mauvaise nuit peut gêner le ventre ET pousser vers le café ; sans
+ * précaution, le café passerait pour une piste. Quand la durée de la nuit est connue pour assez de bilans, chaque bloc
+ * est coupé en deux (nuit plus courte / plus longue que votre médiane) et l'aliment n'est comparé qu'à nuit
+ * comparable. Le sommeil n'est ici qu'un X d'ajustement : il ne devient pas une piste et n'entre jamais dans
+ * l'estimateur du bien-être.
  * Le ventre n'est jamais une entrée de l'estimateur du bien-être (règle anti-circularité).
  */
 import { localDateKey } from './analysisEngine'
@@ -23,6 +28,7 @@ import {
   GUT_LINK_MAX_Q, GUT_TTS_MAX_U, TTS_SHIFT_DAYS, correctUnique, mantelHaenszel, mealFactors, selectTestedFactors,
   settleTwins, truncatedTimeShift,
 } from './gutWindows'
+import { nightlySleep } from './radar'
 import { normalCdf } from './statistics'
 import { GUT_TYPE, isGutDayNote } from './today'
 
@@ -36,6 +42,10 @@ export const MIN_EXPOSED_DAYS = 8
 export const MIN_UNEXPOSED_DAYS = 8
 export const DAY_BLOCK_DAYS = 7
 export const MIN_INFORMATIVE_DAY_BLOCKS = 5
+/** Nuit d'avant en covariable : seulement si sa durée est connue pour au moins 2 bilans sur 3 et 21 bilans. */
+export const SLEEP_COVARIATE_MIN_SHARE = 2 / 3
+export const SLEEP_COVARIATE_MIN_NIGHTS = 21
+
 /** Bilans gardés au minimum une fois r jours retirés à chaque bout pour le TTS. */
 export const DAY_TTS_MIN_KEPT = 10
 
@@ -45,6 +55,22 @@ const KNOWN_LEVELS = new Set(['calm', ...SYMPTOM_LEVELS])
 
 /** Jour local → numéro de jour (stable même au changement d'heure). */
 const dayIndex = (iso) => Math.round(Date.parse(`${localDateKey(iso)}T00:00:00Z`) / (24 * H))
+
+/**
+ * Strate de sommeil de chaque bilan : 's' nuit plus courte que la médiane des nuits connues, 'l' sinon, '?' inconnue.
+ * `null` quand trop peu de nuits sont connues (pas d'ajustement).
+ */
+function sleepStrata(entries, bilans) {
+  const nights = nightlySleep(entries)
+  const minutes = bilans.map((b) => nights.get(b.key))
+  const known = minutes.filter((m) => m != null).sort((a, b) => a - b)
+  if (known.length < SLEEP_COVARIATE_MIN_NIGHTS || known.length < SLEEP_COVARIATE_MIN_SHARE * bilans.length) return null
+  const median = known[Math.floor(known.length / 2)]
+  return minutes.map((m) => (m == null ? '?' : m < median ? 's' : 'l'))
+}
+
+/** Blocs distincts parmi les strates informatives (une strate = un bloc, ou un bloc × une strate de sommeil). */
+const blocksOf = (keys) => new Set(keys.map((k) => String(k).split('|')[0])).size
 
 /** L'aliment a-t-il été mangé dans la fenêtre du bilan, repas décalés de `s` jours ? */
 function exposed(bilan, meals, w, s = 0) {
@@ -58,7 +84,7 @@ function exposed(bilan, meals, w, s = 0) {
 /**
  * @param {object[]} entries  entrées `food` et bilans du soir `gut` (les notes horodatées sont ignorées)
  * @param {{ blockDays?: number, minBlocks?: number }} [options]  pour le banc seulement
- * @returns {{ days: number, tested: number, results: {
+ * @returns {{ days: number, tested: number, adjustedFor: ('sleep')[], results: {
  *   factor: string, window: 'jour'|'veille', status: 'link'|'no_link'|'too_early',
  *   exposed: { days: number, symptoms: number }, unexposed: { days: number, symptoms: number },
  *   rr: number|null, p: number|null, q: number|null, u: number|null }[] }}
@@ -75,16 +101,17 @@ export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks 
       const day = dayIndex(e.at)
       const prev = byDay.get(day)
       if (!prev || prev.t < Date.parse(e.at)) {
-        byDay.set(day, { day, t: Date.parse(e.at), y: SYMPTOM_LEVELS.has(e.payload.level) ? 1 : 0 })
+        byDay.set(day, { day, key: localDateKey(e.at), t: Date.parse(e.at), y: SYMPTOM_LEVELS.has(e.payload.level) ? 1 : 0 })
       }
     }
   }
   const bilans = [...byDay.values()].sort((a, b) => a.day - b.day)
-  if (bilans.length === 0 || meals.length === 0) return { days: bilans.length, tested: 0, results: [] }
+  if (bilans.length === 0 || meals.length === 0) return { days: bilans.length, tested: 0, adjustedFor: [], results: [] }
 
   const first = bilans[0].day
   const last = bilans[bilans.length - 1].day
-  const block = (d) => Math.floor((d - first) / blockDays)
+  const sleep = sleepStrata(entries, bilans)
+  bilans.forEach((b, i) => { b.k = Math.floor((b.day - first) / blockDays) + (sleep ? `|${sleep[i]}` : '') })
   const factors = selectTestedFactors(meals)
 
   const results = []
@@ -99,12 +126,12 @@ export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks 
         const bucket = x ? ex : un
         bucket.days += 1
         bucket.symptoms += b.y
-        return { y: b.y, x, k: block(b.day) }
+        return { y: b.y, x, k: b.k }
       })
       if (ex.days === 0) continue
-      const { z, informative } = mantelHaenszel(rows)
+      const { z, informativeKeys } = mantelHaenszel(rows)
       const enough = ex.days >= MIN_EXPOSED_DAYS && un.days >= MIN_UNEXPOSED_DAYS &&
-        informative >= minBlocks && z != null
+        blocksOf(informativeKeys) >= minBlocks && z != null
       const rr = enough ? ((ex.symptoms + 0.5) / (ex.days + 1)) / ((un.symptoms + 0.5) / (un.days + 1)) : null
       const p = enough ? 1 - normalCdf(z) : null
       const res = { factor, window: w.id, status: enough ? 'no_link' : 'too_early', exposed: ex, unexposed: un, rr, p, q: null, u: null }
@@ -123,11 +150,11 @@ export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks 
     if (kept.length < DAY_TTS_MIN_KEPT) { c.status = 'too_early'; continue }
     const w = GUT_DAY_WINDOWS.find((win) => win.id === c.window)
     const own = meals.filter((m) => m.factors.includes(c.factor))
-    c.u = truncatedTimeShift((s) => mantelHaenszel(kept.map((b) => ({ y: b.y, k: block(b.day), x: exposed(b, own, w, s) }))).z, r)
+    c.u = truncatedTimeShift((s) => mantelHaenszel(kept.map((b) => ({ y: b.y, k: b.k, x: exposed(b, own, w, s) }))).z, r)
     if (c.u == null) c.status = 'too_early'
     else if (c.u <= GUT_TTS_MAX_U) c.status = 'link'
   }
   settleTwins(results)
 
-  return { days: bilans.length, tested: tested.length, results }
+  return { days: bilans.length, tested: tested.length, adjustedFor: sleep ? ['sleep'] : [], results }
 }

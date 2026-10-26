@@ -36,8 +36,25 @@ describe('summarizeGutLinks', () => {
       expect(link.q).toBeLessThan(0.1)
       // I171 (a) : seulement pour les notes horodatées
       expect(link.nearMeal).toBeNull()
+      expect(link.sameNight).toBe(false)
     }
     expect(hits).toBeGreaterThanOrEqual(3)
+  })
+
+  it('avec les nuits connues, une piste « jour » dit qu’elle est comparée à nuit comparable (I134)', () => {
+    let seen = 0
+    for (let seed = 1; seed <= 6 && !seen; seed++) {
+      const entries = simulateRealistic({ seed: seed * 31, days: 90, ...DAY_ONLY, dayEffect: { food: 'oignon', day: 0, odds: 8 } })
+      const days = [...new Set(entries.filter((e) => e.type === 'gut').map((e) => e.at.slice(0, 10)))]
+      const nights = days.map((day, i) => ({
+        type: 'sleep', at: `${day}T00:30:00`, payload: { durationMinutes: 360 + ((i * 37) % 150), endDate: `${day}T07:00:00` },
+      }))
+      const link = summarizeGutLinks([...entries, ...nights]).links.find((l) => l.factor === 'oignon' && l.kind === 'day')
+      if (!link) continue
+      seen += 1
+      expect(link.sameNight).toBe(true)
+    }
+    expect(seen).toBe(1)
   })
 
   it('un effet dans une fenêtre horaire donne la part des notes prises juste après le repas (I171 a)', () => {

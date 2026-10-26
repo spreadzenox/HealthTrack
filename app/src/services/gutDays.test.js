@@ -91,9 +91,9 @@ describe('analyzeGutDays (I170 étape 3)', () => {
   })
 
   it('rien à analyser : réponse vide', () => {
-    expect(analyzeGutDays([])).toEqual({ days: 0, tested: 0, results: [] })
+    expect(analyzeGutDays([])).toEqual({ days: 0, tested: 0, adjustedFor: [], results: [] })
     expect(analyzeGutDays([bilan('2026-09-02T21:00:00', 'bizarre'), { type: 'food', at: '2026-09-02T10:00:00', payload: {} }]))
-      .toEqual({ days: 0, tested: 0, results: [] })
+      .toEqual({ days: 0, tested: 0, adjustedFor: [], results: [] })
   })
 })
 
@@ -131,5 +131,70 @@ describe('moins de comparaisons (I173)', () => {
       expect(b).toMatchObject({ q: a.q, u: a.u, status: a.status, p: a.p })
       expect(b).not.toHaveProperty('twinOf')
     }
+  })
+})
+
+describe('analyzeGutDays — la nuit d’avant en covariable (I134 étape 1)', () => {
+  /** Journal où seule la nuit joue sur le ventre ; le café suit les nuits courtes (on en boit plus quand on a mal dormi). */
+  function confounded(seed, { withSleep = true, coffeeFollowsNight = true, onionOdds = 1 } = {}) {
+    let s = seed >>> 0
+    const rnd = () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 2 ** 32)
+    const entries = []
+    for (let d = 0; d < 91; d++) {
+      const day = new Date(Date.UTC(2026, 6, 1 + d)).toISOString().slice(0, 10)
+      const prev = new Date(Date.UTC(2026, 6, d)).toISOString().slice(0, 10)
+      const short = rnd() < 0.4
+      if (withSleep) {
+        entries.push({ type: 'sleep', at: `${prev}T23:00:00`, payload: { durationMinutes: short ? 300 : 480, endDate: `${day}T${short ? '04' : '07'}:00:00` } })
+      }
+      const coffee = rnd() < (coffeeFollowsNight ? (short ? 0.85 : 0.15) : 0.4)
+      if (coffee) entries.push(meal(`${day}T08:00:00`, 'Café'))
+      const onion = rnd() < 0.4
+      if (onion) entries.push(meal(`${day}T12:30:00`, 'Oignon'))
+      if (rnd() < 0.5) entries.push(meal(`${day}T19:00:00`, 'Riz'))
+      const base = short ? 0.75 : 0.1
+      const odds = (base / (1 - base)) * (onion ? onionOdds : 1)
+      entries.push(bilan(`${day}T21:00:00`, rnd() < odds / (1 + odds) ? 'discomfort' : 'calm'))
+    }
+    return entries
+  }
+  const linked = (res, factor) => res.results.some((r) => r.factor === factor && r.status === 'link')
+
+  it('sans données de sommeil, le café des nuits courtes passe pour une piste (le piège à éviter)', () => {
+    let found = 0
+    for (let seed = 1; seed <= 10; seed++) if (linked(analyzeGutDays(confounded(seed * 97, { withSleep: false })), 'café')) found += 1
+    expect(found).toBeGreaterThanOrEqual(7)
+  })
+
+  it('avec la nuit d’avant en covariable, le café n’est plus accusé', () => {
+    let found = 0
+    for (let seed = 1; seed <= 10; seed++) {
+      const res = analyzeGutDays(confounded(seed * 97))
+      expect(res.adjustedFor).toEqual(['sleep'])
+      if (linked(res, 'café')) found += 1
+    }
+    expect(found).toBeLessThanOrEqual(1)
+  })
+
+  it('quand la nuit joue aussi, un vrai effet d’un aliment ressort plus souvent à nuit comparable', () => {
+    // Mesure du 26/10 (60 jeux, effet ×6) : 22/60 sans les nuits, 31/60 avec ; si la nuit ne joue pas : 51 → 45/60.
+    let adjusted = 0
+    let plain = 0
+    for (let seed = 1; seed <= 20; seed++) {
+      const opts = { coffeeFollowsNight: false, onionOdds: 6 }
+      if (linked(analyzeGutDays(confounded(seed * 131, opts)), 'oignon')) adjusted += 1
+      if (linked(analyzeGutDays(confounded(seed * 131, { ...opts, withSleep: false })), 'oignon')) plain += 1
+    }
+    expect(adjusted).toBeGreaterThanOrEqual(plain)
+    expect(adjusted).toBeGreaterThanOrEqual(6)
+  })
+
+  it('trop peu de nuits connues : pas de covariable, analyse inchangée', () => {
+    const entries = confounded(5)
+    const sparse = entries.filter((e, i) => e.type !== 'sleep' || i % 5 === 0)
+    const noSleep = entries.filter((e) => e.type !== 'sleep')
+    const res = analyzeGutDays(sparse)
+    expect(res.adjustedFor).toEqual([])
+    expect(res.results).toEqual(analyzeGutDays(noSleep).results)
   })
 })

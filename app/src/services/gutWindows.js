@@ -207,9 +207,11 @@ export function mantelHaenszel(rows) {
   let expected = 0
   let variance = 0
   let informative = 0
-  for (const { n1, a, n, m } of strata.values()) {
+  const informativeKeys = []
+  for (const [k, { n1, a, n, m }] of strata) {
     if (n1 === 0 || n1 === n || m === 0 || m === n) continue
     informative += 1
+    informativeKeys.push(k)
     observed += a
     expected += (n1 * m) / n
     variance += (n1 * (n - n1) * m * (n - m)) / (n * n * (n - 1))
@@ -217,7 +219,7 @@ export function mantelHaenszel(rows) {
   // Correction de continuité de 0,5 (vers zéro) : l’approximation normale est trop optimiste sur de petits blocs.
   const diff = observed - expected
   const corrected = Math.sign(diff) * Math.max(0, Math.abs(diff) - 0.5)
-  return { z: variance > 0 ? corrected / Math.sqrt(variance) : null, informative }
+  return { z: variance > 0 ? corrected / Math.sqrt(variance) : null, informative, informativeKeys }
 }
 
 const exposedAt = (t, mealTimes, w) => mealTimes.some((m) => t - m >= w.fromH * H && t - m < w.toH * H) ? 1 : 0
