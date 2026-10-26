@@ -198,3 +198,101 @@ describe('analyzeGutDays — la nuit d’avant en covariable (I134 étape 1)', (
     expect(res.results).toEqual(analyzeGutDays(noSleep).results)
   })
 })
+
+describe('analyzeGutDays — stress et temps d’écran de la veille (I134 étape 2)', () => {
+  /**
+   * Journal synthétique de 13 semaines : nuit, stress de la montre (3 relevés par jour) et temps d'écran (journée
+   * terminée). `driver` dit ce qui gêne vraiment le ventre ; le café suit ce même facteur (piège) sauf si
+   * `coffeeFollows` est faux.
+   */
+  function journal(seed, { driver = 'none', coffeeFollows = true, onionOdds = 1 } = {}) {
+    let s = seed >>> 0
+    const rnd = () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 2 ** 32)
+    const entries = []
+    let prevStress = false
+    let prevScreen = false
+    for (let d = 0; d < 91; d++) {
+      const day = new Date(Date.UTC(2026, 6, 1 + d)).toISOString().slice(0, 10)
+      const prev = new Date(Date.UTC(2026, 6, d)).toISOString().slice(0, 10)
+      const short = rnd() < 0.4
+      const stress = rnd() < 0.4
+      const screen = rnd() < 0.4
+      entries.push({ type: 'sleep', at: `${prev}T23:00:00`, payload: { durationMinutes: short ? 300 : 480, endDate: `${day}T${short ? '04' : '07'}:00:00` } })
+      for (const h of ['10', '15', '18']) {
+        entries.push({ type: 'watch_stress', at: `${day}T${h}:00:00`, payload: { value: (stress ? 60 : 20) + rnd() * 20 } })
+      }
+      // Minutes ex aequo exprès : 60 % des jours à 120 min (la coupure à la médiane doit rester équilibrée).
+      entries.push({ type: 'phone_usage', at: `${day}T23:59:00`, payload: { date: day, screenMinutes: screen ? 300 : 120 } })
+      const bad = { none: false, sleep: short, stress: prevStress, screen: prevScreen, both: short || prevStress }[driver]
+      if (rnd() < (coffeeFollows ? (bad ? 0.85 : 0.15) : 0.4)) entries.push(meal(`${day}T08:00:00`, 'Café'))
+      const onion = rnd() < 0.4
+      if (onion) entries.push(meal(`${day}T12:30:00`, 'Oignon'))
+      if (rnd() < 0.5) entries.push(meal(`${day}T19:00:00`, 'Riz'))
+      const base = bad ? 0.75 : 0.1
+      const odds = (base / (1 - base)) * (onion ? onionOdds : 1)
+      entries.push(bilan(`${day}T21:00:00`, rnd() < odds / (1 + odds) ? 'discomfort' : 'calm'))
+      prevStress = stress
+      prevScreen = screen
+    }
+    return entries
+  }
+  const linked = (res, factor) => res.results.some((r) => r.factor === factor && r.status === 'link')
+  const count = (n, fn) => { let k = 0; for (let seed = 1; seed <= n; seed++) if (fn(seed)) k += 1; return k }
+
+  // Mesure du 26/10 (30 jeux par piège, 60 par puissance) : piège café 26–29/30 sans ajustement → 0 à 3/30 ;
+  // puissance (effet ×6) : rien ne joue 45/60 (inchangé), la nuit 27 → 34, le stress 28 → 27, nuit + stress 14/60.
+  for (const driver of ['stress', 'screen']) {
+    it(`le café qui suit le ${driver === 'stress' ? 'stress' : 'temps d’écran'} de la veille n’est plus accusé`, () => {
+      expect(count(10, (seed) => linked(analyzeGutDays(journal(seed * 97, { driver }), { maxCovariates: 0 }), 'café'))).toBeGreaterThanOrEqual(7)
+      expect(count(10, (seed) => {
+        const res = analyzeGutDays(journal(seed * 97, { driver }))
+        expect(res.adjustedFor).toContain(driver)
+        return linked(res, 'café')
+      })).toBeLessThanOrEqual(1)
+    })
+  }
+
+  it('nuit ET stress en cause : le café n’est presque plus accusé', () => {
+    expect(count(10, (seed) => linked(analyzeGutDays(journal(seed * 97, { driver: 'both' }), { maxCovariates: 1 }), 'café'))).toBeGreaterThanOrEqual(3)
+    const runs = Array.from({ length: 10 }, (_, i) => analyzeGutDays(journal((i + 1) * 97, { driver: 'both' })))
+    // Le lien de la nuit avec le ventre n'atteint pas toujours |z| ≥ 2 sur 13 semaines (hasard) : 9 fois sur 10 ici.
+    expect(runs.filter((res) => res.adjustedFor.includes('sleep')).length).toBeGreaterThanOrEqual(8)
+    expect(runs.filter((res) => linked(res, 'café')).length).toBeLessThanOrEqual(2)
+  })
+
+  it('une covariable sans lien avec le ventre n’est pas retenue (elle coûterait de la puissance pour rien)', () => {
+    for (let seed = 1; seed <= 5; seed++) expect(analyzeGutDays(journal(seed * 131, { driver: 'none' })).adjustedFor).toEqual([])
+    const res = analyzeGutDays(journal(97, { driver: 'screen' }))
+    expect(res.adjustedFor).toEqual(['screen'])
+  })
+
+  it('le choix des covariables ne regarde pas les aliments : un vrai effet garde sa puissance', () => {
+    const opts = (driver) => ({ driver, coffeeFollows: false, onionOdds: 6 })
+    const free = count(20, (seed) => linked(analyzeGutDays(journal(seed * 131, opts('none')), { maxCovariates: 0 }), 'oignon'))
+    const adjusted = count(20, (seed) => linked(analyzeGutDays(journal(seed * 131, opts('none'))), 'oignon'))
+    expect(adjusted).toBe(free)
+    const night = count(20, (seed) => linked(analyzeGutDays(journal(seed * 131, opts('sleep'))), 'oignon'))
+    const nightPlain = count(20, (seed) => linked(analyzeGutDays(journal(seed * 131, opts('sleep')), { maxCovariates: 0 }), 'oignon'))
+    expect(night).toBeGreaterThanOrEqual(nightPlain)
+  })
+
+  it('sans aucun effet, avec nuit, stress et écran : pas plus de fausses pistes', () => {
+    // Mesure du 26/10 (150 jeux) : 5/150 (rien ne joue), 4/150 (la nuit joue), 3/150 (nuit + stress).
+    for (const driver of ['none', 'both']) {
+      expect(count(40, (seed) => analyzeGutDays(journal(seed * 7919 + 3, { driver, coffeeFollows: false })).results.some((r) => r.status === 'link')))
+        .toBeLessThanOrEqual(4)
+    }
+  })
+
+  it('le stress et l’écran du jour même ne servent pas (ils peuvent être une conséquence du ventre)', () => {
+    // Le ventre gêné fait monter le stress et l'écran DU JOUR : rien ne doit être retenu.
+    const entries = journal(7, { driver: 'none' }).filter((e) => e.type !== 'watch_stress' && e.type !== 'phone_usage' && e.type !== 'sleep')
+    for (const b of entries.filter((e) => e.type === 'gut')) {
+      const day = b.at.slice(0, 10)
+      const bad = b.payload.level !== 'calm'
+      entries.push({ type: 'watch_stress', at: `${day}T18:00:00`, payload: { value: bad ? 80 : 20 } })
+      entries.push({ type: 'phone_usage', at: `${day}T23:59:00`, payload: { date: day, screenMinutes: bad ? 400 : 100 } })
+    }
+    expect(analyzeGutDays(entries).adjustedFor).toEqual([])
+  })
+})

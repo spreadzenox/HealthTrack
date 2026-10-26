@@ -46,12 +46,22 @@ function nearMealShare(notes, meals, factor, w) {
   return exposed ? near / exposed : null
 }
 
+const COMPARABLE = { sleep: 'nuit', stress: 'stress de la veille', screen: 'temps d’écran de la veille' }
+
+/** « à nuit comparable », « à nuit et stress de la veille comparables »… (I134). */
+export function comparableLabel(ids) {
+  const words = ids.map((id) => COMPARABLE[id]).filter(Boolean)
+  if (!words.length) return ''
+  return `à ${words.join(' et ')} comparable${words.length > 1 ? 's' : ''}`
+}
+
 /**
  * @param {object[]} entries
  * @returns {{ status: 'no_notes'|'too_early'|'none'|'links', noteDays: number, minDays: number, tested: number,
  *   links: { factor: string, label: string, when: string, kind: 'window'|'day', whenLabel: string,
  *     exposed: { n: number, symptoms: number }, unexposed: { n: number, symptoms: number },
- *     rr: number, q: number, nearMeal: number|null, sameNight: boolean, also: string[], together: string[] }[] }}
+ *     rr: number, q: number, nearMeal: number|null, sameNight: boolean, comparable: ('sleep'|'stress'|'screen')[],
+ *     also: string[], together: string[] }[] }}
  */
 export function summarizeGutLinks(entries) {
   const list = entries || []
@@ -94,7 +104,8 @@ export function summarizeGutLinks(entries) {
       q: r.q,
       nearMeal: w ? nearMealShare(timedNotes, meals, r.factor, w) : null,
       also: r.also,
-      // I134 : les pistes « jour » sont comparées à nuit comparable quand vos nuits sont connues.
+      // I134 : les pistes « jour » sont comparées à nuit, stress ou écran de la veille comparables quand ils comptent.
+      comparable: WHEN[r.window].kind === 'day' ? byDay.adjustedFor : [],
       sameNight: WHEN[r.window].kind === 'day' && byDay.adjustedFor.includes('sleep'),
     }
   })

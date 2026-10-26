@@ -38,6 +38,9 @@
 - **Pistes du ventre à nuit comparable** (26/10 05:33) — quand vos nuits sont connues, chaque aliment est comparé
   à nuit comparable : une mauvaise nuit qui gêne le ventre et pousse vers le café n'accuse plus le café. Dans les
   détails d'une piste « le jour même » / « la veille » : « à nuit comparable ».
+- **… et à stress et écran de la veille comparables** (26/10 06:33) — même idée pour le stress de la montre et le
+  temps d'écran de la veille, mais seulement quand ils vont vraiment avec votre ventre (deux au plus, pour ne pas
+  retarder vos pistes). Mention dans les détails, par exemple « à nuit et stress de la veille comparables ».
 
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
@@ -50,8 +53,10 @@ les mieux répartis dans vos jours (choisis sans regarder le ventre) et des alim
 comptent qu'une fois ; sur des journaux simulés avec beaucoup d'aliments rares, un vrai effet ressort 20 à 28 % plus
 souvent, sans plus de fausses pistes. Depuis le 26/10 05:33, la nuit d'avant est prise en compte (I134 étape 1) : sur des
 journaux simulés où seule la nuit gêne le ventre, le café des nuits courtes était accusé 7 fois sur 10, plus qu'une
-fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit joue (22 → 31 sur 60). Suite : stress et
-temps d'écran.
+fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit joue (22 → 31 sur 60). Depuis le 26/10
+06:33, stress et temps d'écran de la veille aussi (I134 étape 2), mais seulement s'ils vont avec le ventre : ajoutés
+à l'aveugle, les trois ensemble faisaient tomber la puissance de 45 à 9 sur 60 ; triés, les pièges « café » passent de
+26–29 sur 30 à 3 au plus, sans perte de puissance. Suite : repas du même jour estimés ensemble.
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -67,6 +72,7 @@ temps d'écran.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 06:33 — [I134 étape 2 : stress et écran](runs/2026-10-26-0633-i134-stress-ecran.md) | 🏗️ | `gutDays` : nuit / stress / écran de la veille candidats, retenus si liés au ventre (z ≥ 2 en valeur absolue, 2 au plus), coupure médiane équilibrée ; pièges café ≤ 3/30 ; « à … comparables » ; 2 293 Vitest |
 | 26/10 05:33 — [I134 étape 1 : nuit comparable](runs/2026-10-26-0533-i134-nuit-comparable.md) | 🏗️ | `gutDays` : blocs × nuit courte / longue (si nuits connues pour 2 bilans sur 3) ; piège café 7/10 → ≤ 1/10 ; puissance 22 → 31/60 quand la nuit joue ; « à nuit comparable » dans les détails ; 2 285 Vitest |
 | 26/10 04:33 — [I173 : moins de comparaisons](runs/2026-10-26-0433-i173-moins-de-comparaisons.md) | 🏗️ | 12 aliments testés au plus (les mieux répartis) + FODMAP, jumeaux comptés une fois ; longue traîne : 42 → 51 et 50 → 64/200 ; nulles ≤ 5/100 ; 2 280 Vitest |
 | 26/10 03:33 — [Pistes ventre dans Analyses](runs/2026-10-26-0333-pistes-ventre-analyses.md) | 🏗️ | `gutLinks.js` + `GutLinks.jsx` : « Votre ventre et vos repas » (une piste par aliment, mangés ensemble regroupés, I171 a/b, « Bientôt N/28 ») ; option `--gut-links` des captures ; 2 276 Vitest |

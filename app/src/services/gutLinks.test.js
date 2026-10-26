@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { simulateRealistic } from './gutWindows.sim'
-import { GUT_LINKS_MIN_DAYS, gutFactorLabel, summarizeGutLinks } from './gutLinks'
+import { GUT_LINKS_MIN_DAYS, comparableLabel, gutFactorLabel, summarizeGutLinks } from './gutLinks'
 import { FODMAP_FACTOR } from './gutWindows'
 
 const DAY_ONLY = { timedNotes: false, dayNotes: true }
@@ -43,18 +43,27 @@ describe('summarizeGutLinks', () => {
 
   it('avec les nuits connues, une piste « jour » dit qu’elle est comparée à nuit comparable (I134)', () => {
     let seen = 0
-    for (let seed = 1; seed <= 6 && !seen; seed++) {
+    for (let seed = 1; seed <= 12 && !seen; seed++) {
       const entries = simulateRealistic({ seed: seed * 31, days: 90, ...DAY_ONLY, dayEffect: { food: 'oignon', day: 0, odds: 8 } })
-      const days = [...new Set(entries.filter((e) => e.type === 'gut').map((e) => e.at.slice(0, 10)))]
-      const nights = days.map((day, i) => ({
-        type: 'sleep', at: `${day}T00:30:00`, payload: { durationMinutes: 360 + ((i * 37) % 150), endDate: `${day}T07:00:00` },
-      }))
+      // Nuits plus souvent courtes avant les jours gênés : la nuit va avec le ventre, elle est donc retenue (I134 étape 2).
+      const nights = entries.filter((e) => e.type === 'gut').map((e, i) => {
+        const short = e.payload.level === 'calm' ? i % 4 === 0 : i % 4 !== 0
+        return { type: 'sleep', at: `${e.at.slice(0, 10)}T00:30:00`, payload: { durationMinutes: (short ? 330 : 450) + ((i * 37) % 40), endDate: `${e.at.slice(0, 10)}T07:00:00` } }
+      })
       const link = summarizeGutLinks([...entries, ...nights]).links.find((l) => l.factor === 'oignon' && l.kind === 'day')
       if (!link) continue
       seen += 1
       expect(link.sameNight).toBe(true)
+      expect(link.comparable).toEqual(['sleep'])
     }
     expect(seen).toBe(1)
+  })
+
+  it('comparableLabel : une phrase courte, accordée', () => {
+    expect(comparableLabel([])).toBe('')
+    expect(comparableLabel(['sleep'])).toBe('à nuit comparable')
+    expect(comparableLabel(['sleep', 'stress'])).toBe('à nuit et stress de la veille comparables')
+    expect(comparableLabel(['screen'])).toBe('à temps d’écran de la veille comparable')
   })
 
   it('un effet dans une fenêtre horaire donne la part des notes prises juste après le repas (I171 a)', () => {
