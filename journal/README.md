@@ -80,6 +80,16 @@ fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit jou
 à l'aveugle, les trois ensemble faisaient tomber la puissance de 45 à 9 sur 60 ; triés, les pièges « café » passent de
 26–29 sur 30 à 3 au plus, sans perte de puissance. Depuis le 26/10 07:33, les aliments d'un même jour sont estimés ensemble (I134 étape 3) : sur des journaux simulés où seul l'oignon joue et où l'ail l'accompagne 8 fois sur 10, l'ail était accusé 23 fois sur 60, plus qu'une fois ; l'oignon garde sa puissance (50 → 49 sur 60). Si deux aliments jouent tous les deux et se mangent presque toujours ensemble, une seule piste reste et l'autre est citée dans ses détails. Suite : même chose pour les notes horodatées (facultatif), puis le reste du jalon 5.
 
+**Votre demande du 26/10 14:45 (FODMAP par sous-groupe, table fiable) — premier constat** : vous aviez raison,
+la table nutritionnelle n'est pas fiable. Sur 3 553 aliments, **3 506 ont exactement les mêmes micronutriments
+qu'un autre aliment** (59 gabarits par catégorie : ail = oignon n'était qu'un cas parmi des milliers), 201 ont plus
+de graisses saturées que de graisses, 145 ont une énergie incohérente avec leurs macros (abricot cru à 0 kcal, baba
+au rhum sous-estimé de moitié). Les micronutriments affichés dans Nutrition sont donc à prendre avec des pincettes
+jusqu'à la reconstruction. L'outil qui reconstruit la table depuis Ciqual (ANSES, Licence Ouverte : usage commercial
+permis avec attribution) est prêt et testé, avec « inconnu » plutôt qu'une valeur inventée ; le site Ciqual était en
+maintenance ce 26/10 vers 15:00, la reconstruction se fera dès qu'il répond. Ensuite : les FODMAP isolés par
+sous-groupe (fructanes, GOS, lactose, fructose, sorbitol, mannitol). Rien ne change encore dans l'app.
+
 **Prochain chantier (préparé par le run « idées » du 26/10 08:33)** : la **réintroduction FODMAP guidée** et le
 **rapport PDF pour votre médecin** (jalon 7) sont spécifiés : test d'un groupe sur 3 jours (portion de départ, puis
 double, puis triple, en regardant les 24 h qui suivent), seulement après 3 jours de ventre calme, un groupe à la fois,
@@ -107,6 +117,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 14:53 — [N1 : audit de la table nutritionnelle](runs/2026-10-26-1453-n1-audit-ciqual.md) | 🏗️ | Audit chiffré (3 506/3 553 aliments aux micronutriments recopiés, 201 AGS > lipides, 145 énergies fausses) + importeur Ciqual testé ; ciqual.anses.fr en maintenance, reconstruction au run suivant ; 20 tests de plus |
 | 26/10 13:48 — [I175-1 : contenu du rapport médecin](runs/2026-10-26-1348-i175-1-build-report.md) | 🏗️ | Modèle pur du rapport PDF (`buildReport.js`, 2 pages : en bref + détail), rien d'affiché ; 2 396 Vitest |
 | 26/10 11:33 — [7b-2 : rappel de la portion du jour](runs/2026-10-26-1133-7b2-rappel-portion.md) | 🏗️ | Notification « Votre portion du jour » à l'heure choisie (natif, deux variantes, au plus 3 rappels, toucher ouvre le test) ; état du test dans la carte d'entrée d'Analyses ; 2 356 Vitest, 4 JUnit de plus |
 | 26/10 12:33 — [7c : vérifier une piste ventre](runs/2026-10-26-1233-7c-verifier-piste.md) | 🏗️ | Lien « Vérifier avec une réintroduction guidée » sur chaque piste ventre, aliment présélectionné (correspondance aliment → groupe, exclusions lait végétal / sans gluten) ; 2 384 Vitest |

@@ -1142,6 +1142,23 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 ## Prochaines étapes (ordre conseillé)
 
+**Mise à jour du 26/10 (14:53 Paris)** : 🆕 **priorité du propriétaire du 26/10 14:45 — FODMAP par sous-groupe et
+fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le reste). Découpage :
+- [x] **N1** audit chiffré + importeur Ciqual testé (`app/scripts/nutrition/` : `audit.mjs`, `ciqual.mjs`,
+  `build-ciqual-table.mjs`) — **FAIT le 26/10 14:53**. Constat : 3 506 / 3 553 aliments partagent leur vecteur de
+  micronutriments (59 gabarits inventés), 201 AGS > lipides, 145 énergies incohérentes, 98 sec / cuit implausibles.
+- [ ] **N2** reconstruction depuis Ciqual (dernière version) : site ciqual.anses.fr en maintenance le 26/10 15:00
+  (HTTP 503) ; réessayer, sinon workflow `workflow_dispatch` qui télécharge le zip en artefact. Renommage des anciens
+  noms pour les repas déjà saisis (aucune perte), `null` = inconnu partout (totaux, Nutrition, KPIs), attribution
+  Licence Ouverte affichée, repas recalculés, bilan chiffré.
+- [ ] **N3** FODMAP par sous-groupe (fructanes, GOS, lactose, fructose en excès du glucose, sorbitol, mannitol) par
+  portion : lactose / fructose / glucose / polyols depuis Ciqual, fructanes / GOS / sorbitol / mannitol depuis des
+  mesures publiées citées par aliment (jamais Monash ni FODMAP Friendly), sinon « inconnu » ou analogie à confiance
+  basse ; `fodmap_score` reste lisible dans les anciens exports.
+- [ ] **N4** carte d'un repas (« riche en fructanes : oignon », simple d'abord).
+- [ ] **N5** pistes repas → ventre par sous-groupe (banc des nulles et de puissance), lien vers la réintroduction du
+  même groupe ; **N6** rapport PDF par sous-groupe (avec I175 étape 2).
+
 **Mise à jour du 26/10 (13:48 Paris)** : ✅ **I175 étape 1** — modèle pur du rapport (`services/report/buildReport.js` : période 2 / 4 / 12 semaines, ventre jour par jour à la note la plus forte, semaine par semaine, calendrier avec jours riches en FODMAP, tests de réintroduction, pistes « à confirmer » avec le nombre de comparaisons, sommeil mesuré et régularité, aliments fréquents, sources lisibles, bien-être estimé seulement sur demande) ; rien d'affiché. Suite : **I175 étape 2** (`renderPdf.js`, `pdf-lib` + `fontkit` chargés à la demande, polices embarquées, écriture dans Documents, accès depuis Analyses et Données) → I176 → 7d.
 
 **Mise à jour du 26/10 (09:33 Paris)** : ✅ **7a** — machine de réintroduction pure (`services/fodmapChallenge.js` :
