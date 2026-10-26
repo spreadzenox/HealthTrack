@@ -6,6 +6,10 @@
  * - informative : une note est plus souvent prise quand ça va mal (30 % des moments calmes, 80 % des moments de gêne) ;
  * - postMeal : les notes sont prises surtout dans les 2 h qui suivent un repas (plus une le soir).
  * `effect` (facultatif) multiplie la cote de gêne quand l'aliment a été mangé entre fromH et toH avant la note.
+ * Bilan du soir (I170) : `dayNotes` ajoute un bilan de la journée vers 21 h (oublié 15 % des soirs, et aussi soumis
+ * à la saisie informative) ; `timedNotes: false` retire les notes au fil de l'eau. `dayEffect` = { food, day, odds } :
+ * la cote de gêne du bilan est multipliée si l'aliment a été mangé le jour même (day 0, avant le bilan) ou la veille
+ * (day 1).
  */
 
 export const SIM_FOODS = ['Oignon', 'Ail', 'Blé', 'Lentilles', 'Pomme', 'Lait', 'Riz', 'Poulet', 'Carotte', 'Yaourt']
@@ -33,7 +37,7 @@ const H = 3_600_000
 const START = Date.parse('2026-09-01T00:00:00Z')
 const MEAL_HOURS = [8, 12.5, 19.5]
 
-export function simulateRealistic({ seed, days = 63, drift = false, series = false, informative = false, postMeal = false, effect = null }) {
+export function simulateRealistic({ seed, days = 63, drift = false, series = false, informative = false, postMeal = false, effect = null, timedNotes = true, dayNotes = false, dayEffect = null }) {
   const rand = rng(seed)
   const entries = []
   const meals = []
@@ -58,7 +62,7 @@ export function simulateRealistic({ seed, days = 63, drift = false, series = fal
     if (postMeal) moments.push(START + (d * 24 + 23) * H)
     else for (const h of [13, 18, 23]) moments.push(START + (d * 24 + h) * H)
 
-    for (const t of moments) {
+    for (const t of timedNotes ? moments : []) {
       let logit = latent * 1.5 - 0.8
       if (effect && meals.some((m) => m.foods.has(effect.food) && t - m.t >= effect.fromH * H && t - m.t < effect.toH * H)) {
         logit += Math.log(effect.odds)
@@ -66,6 +70,20 @@ export function simulateRealistic({ seed, days = 63, drift = false, series = fal
       const bad = rand() < 1 / (1 + Math.exp(-logit))
       if (informative && rand() >= (bad ? 0.8 : 0.3)) continue
       entries.push({ type: 'gut', at: new Date(t).toISOString(), payload: { level: bad ? 'discomfort' : 'calm' } })
+    }
+
+    if (dayNotes && rand() >= 0.15) {
+      const t = START + (d * 24 + 21) * H
+      let logit = latent * 1.5 - 0.8
+      if (dayEffect) {
+        const from = START + (d - dayEffect.day) * 24 * H
+        const to = dayEffect.day === 0 ? t : from + 24 * H
+        if (meals.some((m) => m.foods.has(dayEffect.food) && m.t >= from && m.t < to)) logit += Math.log(dayEffect.odds)
+      }
+      const bad = rand() < 1 / (1 + Math.exp(-logit))
+      if (!informative || rand() < (bad ? 0.8 : 0.3)) {
+        entries.push({ type: 'gut', at: new Date(t).toISOString(), payload: { level: bad ? 'discomfort' : 'calm', scope: 'day' } })
+      }
     }
   }
   return entries

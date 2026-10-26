@@ -31,8 +31,11 @@
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
-notification du soir pour le bilan du ventre est livrée (26/10 01:33). Suite : l'analyse jour par jour qui utilise les
-bilans, puis l'affichage des pistes ventre dans Analyses (« trop tôt pour dire » tant que rien de solide).
+notification du soir pour le bilan du ventre est livrée (26/10 01:33), et l'analyse jour par jour qui utilise ces
+bilans aussi (26/10 02:33 : « mangé le jour même » ou « la veille », mêmes protections ; sur des journaux simulés sans
+aucun effet, au plus 7 sur 200 gardent une fausse piste). Honnêteté : avec un bilan par jour, un effet net met 2 à
+3 mois à ressortir. Suite : l'affichage des pistes ventre dans Analyses (« trop tôt pour dire » tant que rien de
+solide).
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -48,6 +51,7 @@ bilans, puis l'affichage des pistes ventre dans Analyses (« trop tôt pour dire
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 02:33 — [I170 étape 3 : analyse jour par jour](runs/2026-10-26-0233-i170-analyse-jour.md) | 🏗️ | `gutDays.js` (jour même / veille, blocs de 7 j + BH + TTS) ; banc des nulles ≤ 7/200 ; rien d'affiché ; 2 266 Vitest |
 | 26/10 01:33 — [I170 étape 2 : bilan du ventre par notification](runs/2026-10-26-0133-i170-notification-soir.md) | 🏗️ | Notification native Calme / Gêne / Douleur (20 h ou heure apprise, avant minuit, choix × carte ventre) ; proposée dans la carte, interrupteur dans Paramètres ; 2 256 Vitest, 15 JUnit |
 | 26/10 00:33 — [I170 étape 1 : bilan du soir du ventre](runs/2026-10-26-0033-i170-bilan-du-soir.md) | 🏗️ | Archive S43 ; carte « Votre ventre » : question du soir à partir de 18 h (`scope: 'day'`, une fois par jour), ignorée par le moteur par fenêtres, comptée dans les 7 jours ; option `--tz` des captures ; 2 240 Vitest |
 
