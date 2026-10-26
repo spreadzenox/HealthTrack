@@ -77,6 +77,8 @@ describe('Nutrition page', () => {
     expect(screen.getByText(/max 2 000 mg/)).toBeInTheDocument()
     expect(screen.getByText(/obj\. 30 g/)).toBeInTheDocument()
     expect(screen.getByText(/pas un diagnostic/i)).toBeInTheDocument()
+    // Attribution exigée par la licence de Ciqual (CC BY 4.0)
+    expect(screen.getByText(/Anses\. Ciqual 2025.*CC BY 4\.0/)).toBeInTheDocument()
   })
 
   it('jours incomplets : une seule ligne d’avertissement, sans compte de repères trompeur (D1)', async () => {

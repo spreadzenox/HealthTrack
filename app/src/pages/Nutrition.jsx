@@ -5,6 +5,7 @@ import { loadNutritionEntries } from '../services/nutritionData'
 import { getBodyProfile, getLatestBodyComposition } from '../services/bodyProfile'
 import { compareRecentIntake, formatNutrientAmount } from '../services/nutritionIntakeCompare'
 import BodyProfileCard from '../components/BodyProfileCard'
+import ciqualMeta from '../data/ciqualMeta.json'
 import './Nutrition.css'
 
 const STATUS_TEXT = {
@@ -138,6 +139,10 @@ export default function Nutrition() {
             apports estimés (photos, portions).
             Ce n’est pas un diagnostic de carence : en cas de doute, parlez-en à un médecin ou à
             un·e diététicien·ne.
+          </p>
+          <p className="nutrition-footnote nutrition-source">
+            Composition des aliments : {ciqualMeta.attribution} Une teneur que Ciqual n’a pas mesurée
+            n’est pas comptée : certains apports peuvent être sous-estimés.
           </p>
         </>
       ) : null}

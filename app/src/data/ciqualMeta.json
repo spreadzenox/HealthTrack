@@ -1,0 +1,11 @@
+{
+  "version": "Ciqual 2025",
+  "attribution": "Anses. Ciqual 2025. Table de composition nutritionnelle des aliments Ciqual (CC BY 4.0).",
+  "source": "doi:10.5281/zenodo.17550133",
+  "foods": 3553,
+  "missingConstituents": [],
+  "duplicates": [],
+  "missingFromCiqual": [],
+  "missingAliasTargets": [],
+  "aliases": 69
+}
