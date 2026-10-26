@@ -109,11 +109,12 @@ bouton arrivent au prochain run.
 
 **👉 Vos prochaines actions, la plus utile d'abord**
 1. **Inviter les testeurs** (ci-dessus) — c'est ce qui lance les 14 jours obligatoires avant la production.
-2. **P28** : déclaration « Autorisations des services de premier plan » (texte et script vidéo prêts dans
-   [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis) — débloque la lecture du bien-être au déverrouillage dans la
-   version Play.
-3. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut) ; **P13** : confirmer le virement de test
-   de Google quand il arrive.
+2. **P28** : plus rien à filmer, **la CI fait la vidéo** (workflow « Play — vidéo P28 », 26/10 15:46). Il vous
+   reste la déclaration (voir [`PRODUIT.md`](PRODUIT.md) §4, P28 : cocher Caméra, coller les 3 textes de
+   [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien de la vidéo, envoyer). Débloque la lecture du
+   bien-être au déverrouillage dans la version Play.
+3. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
+   quand Google le demande).
 
 | Run | Type | Résultat |
 |---|---|---|
