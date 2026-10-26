@@ -32,9 +32,10 @@ if [ -f p28-video.mp4 ]; then
   ffmpeg -loglevel error -i p28-video.mp4 -vf "fps=1/3" frames/f_%03d.png || true
   # Planche de contrôle : une image toutes les 4 s, 6 par ligne
   ffmpeg -loglevel error -i p28-video.mp4 -vf "fps=1/4,scale=240:-1,tile=6x4" -frames:v 1 p28-planche.png || true
-  DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 p28-video.mp4 2>/dev/null || echo "?")
-  echo "Durée de la vidéo : ${DUR} s ($(du -h p28-video.mp4 | cut -f1))" | tee -a p28-video.md
-  [ -n "${GITHUB_STEP_SUMMARY:-}" ] && echo "Durée de la vidéo : ${DUR} s" >> "$GITHUB_STEP_SUMMARY"
+  DUR=$(ffmpeg -i p28-video.mp4 2>&1 | sed -n 's/.*Duration: \([0-9:.]*\).*/\1/p' | head -1)
+  DUR=${DUR:-?}
+  echo "Durée de la vidéo : ${DUR} ($(du -h p28-video.mp4 | cut -f1))" | tee -a p28-video.md
+  [ -n "${GITHUB_STEP_SUMMARY:-}" ] && echo "Durée de la vidéo : ${DUR}" >> "$GITHUB_STEP_SUMMARY"
 else
   echo "::error::Aucune vidéo produite"
   STATUS=1

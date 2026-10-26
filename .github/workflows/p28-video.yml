@@ -72,9 +72,16 @@ jobs:
           ./gradlew assemblePlayDebug -PfaceUnlockPlay=true -PplayPreview=true -PextraAbis=x86_64 --no-daemon
           cp app/build/outputs/apk/play/debug/app-play-debug.apk "$GITHUB_WORKSPACE/apercu.apk"
 
-      # ffmpeg (images extraites et planche de contrôle) n'est plus fourni par les runners ubuntu-latest
-      - name: Installer ffmpeg
-        run: sudo apt-get install -y --no-install-recommends ffmpeg || { sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg; }
+      # ffmpeg (images extraites et planche de contrôle) n'est plus fourni par les runners ubuntu-latest, et apt y a
+      # pris plus de 16 min le 26/10 : binaire statique (paquet npm ffmpeg-static, outil de CI seulement, jamais dans
+      # l'app).
+      - name: Installer ffmpeg (binaire statique)
+        run: |
+          npm install --no-save --no-audit --no-fund --prefix "$RUNNER_TEMP/ff" ffmpeg-static@5.3.0
+          mkdir -p "$RUNNER_TEMP/bin"
+          ln -sf "$RUNNER_TEMP/ff/node_modules/ffmpeg-static/ffmpeg" "$RUNNER_TEMP/bin/ffmpeg"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ffmpeg" -version | head -1
 
       - name: Activer KVM
         run: |
