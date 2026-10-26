@@ -22,6 +22,7 @@
  *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
  *   npm run visual -- --routes=/connectors --hrv-gap  # plus de VFC depuis 4 jours (« qui envoie quoi »)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
+ *   npm run visual -- --routes=/recommendations --gut-links  # bilans du soir du ventre : une piste repas → ventre
  *   npm run visual -- --routes=/food --food-analysis
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
@@ -788,6 +789,20 @@ async function main() {
       // Check-in du matin avec « Voyage » chacun des jours simulés « malades » : radar expliqué.
       for (const n of [0, 1, 2]) {
         entries.push({ type: 'wellbeing', source: 'app_wellbeing', at: daysAgo(n, 8).toISOString(), payload: { score: 3, tags: ['travel'] } })
+      }
+    }
+    if (args['gut-links']) {
+      // Bilans du soir du ventre (I170) chaque jour, gêne plus fréquente les jours avec de la banane : une piste
+      // repas → ventre visible dans Analyses (données synthétiques, tirage déterministe).
+      let seed = 4242
+      const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648)
+      for (let n = 74; n >= 1; n--) {
+        const bilan = daysAgo(n, 21)
+        const start = daysAgo(n, 0)
+        const banana = entries.some((e) => e.type === 'food' && new Date(e.at) >= start && new Date(e.at) < bilan &&
+          e.payload?.items?.some((it) => /^banane/i.test(it.ingredient)))
+        const level = rnd() < (banana ? 0.75 : 0.15) ? (rnd() < 0.5 ? 'pain' : 'discomfort') : 'calm'
+        entries.push({ type: 'gut', source: 'app_gut', at: bilan.toISOString(), payload: { level, scope: 'day' } })
       }
     }
     if (args['hrv-gap']) {

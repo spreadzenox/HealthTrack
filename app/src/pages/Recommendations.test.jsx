@@ -916,3 +916,60 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     expect(document.querySelector('.reco-link-src')).toBeNull()
   })
 })
+
+// Jalon 5 : pistes repas → ventre (notes par fenêtre et bilans du soir), seulement pour qui suit son ventre
+describe('Recommendations — votre ventre et vos repas', () => {
+  const gutEntries = async () => {
+    const { simulateRealistic } = await import('../services/gutWindows.sim')
+    // Effet net « le jour même » (seed vérifiée dans gutLinks.test.js) + quelques jours de bien-être
+    return [
+      ...makeEntries(5),
+      ...simulateRealistic({ seed: 31, days: 90, timedNotes: false, dayNotes: true, dayEffect: { food: 'oignon', day: 0, odds: 8 } })
+        .map((e, i) => ({ id: 1000 + i, source: 'app_gut', created_at: e.at, ...e })),
+    ]
+  }
+
+  it('shows each kept link as « aliment → ventre », with the counts and an expectation note in details', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(await gutEntries())
+    renderPage()
+    const section = await screen.findByTestId('gut-links')
+    expect(within(section).getByText('Votre ventre et vos repas')).toBeInTheDocument()
+    expect(within(section).getByText(/Oignon → ventre/)).toBeInTheDocument()
+    expect(within(section).getByText(/Les jours où vous en avez mangé, gêne ou douleur \d+ fois sur \d+/)).toBeInTheDocument()
+    expect(within(section).getByText('À confirmer')).toBeInTheDocument()
+    expect(section.textContent).not.toMatch(/cause|intolérance|diagnostic/i)
+    expect(within(section).queryByText(/L’attente joue aussi/)).toBeNull()
+    fireEvent.click(within(section).getAllByRole('button', { name: /détails/i })[0])
+    expect(within(section).getByText(/L’attente joue aussi : une réintroduction guidée aide à trancher/)).toBeInTheDocument()
+    expect(within(section).getByText(/RR = .* · q = /)).toBeInTheDocument()
+  })
+
+  it('says « trop tôt » in one discreet line while there are only a few days of gut notes', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue([
+      ...makeEntries(5),
+      { id: 900, type: 'gut', source: 'app_gut', at: '2026-01-03T10:00:00', created_at: '2026-01-03T10:00:00', payload: { level: 'calm' } },
+    ])
+    renderPage()
+    const soon = await screen.findByTestId('reco-soon')
+    expect(within(soon).getByText('Votre ventre et vos repas')).toBeInTheDocument()
+    expect(within(soon).getByText('1/28 jours')).toBeInTheDocument()
+    expect(screen.queryByTestId('gut-links')).toBeNull()
+  })
+
+  it('shows nothing about the gut with another goal (POL-4), without deleting anything', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'energy' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(await gutEntries())
+    renderPage()
+    await screen.findByText(/Pistes à tester/)
+    expect(screen.queryByTestId('gut-links')).toBeNull()
+    expect(screen.queryByText('Votre ventre et vos repas')).toBeNull()
+  })
+})

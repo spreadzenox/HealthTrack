@@ -26,7 +26,8 @@ import { useAutoSync } from '../hooks/useAutoSync'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { PistesTeaser } from '../components/TodayCards'
 import DetailsToggle from '../components/DetailsToggle'
-import { homeFocus } from '../settings/onboarding'
+import GutLinks from '../components/GutLinks'
+import { gutCardMode, homeFocus } from '../settings/onboarding'
 import './Recommendations.css'
 
 // ─── Correlation bar chart (SVG) ─────────────────────────────────────────────
@@ -471,8 +472,12 @@ function FaceMoodMethod() {
  * Une ligne discrète par bloc qui n'a pas encore assez de données (POL-7) : jamais une carte presque vide.
  * Rien n'est calculé ici, seuls les compteurs déjà rendus par les analyses sont repris.
  */
-function soonLines({ faceMood, tagEffects, laggedEffects } = {}) {
+function soonLines({ faceMood, tagEffects, laggedEffects, gut } = {}, showGut = false) {
   const lines = []
+  // Aucune note du ventre : la carte lilas suffit (un seul seuil visible, VC-12)
+  if (showGut && gut?.status === 'too_early') {
+    lines.push({ id: 'gut', label: 'Votre ventre et vos repas', progress: `${Math.min(gut.noteDays, gut.minDays)}/${gut.minDays} jours` })
+  }
   if (faceMood && faceMood.status !== 'ok' && faceMood.status !== 'no_face') {
     lines.push({
       id: 'face',
@@ -580,20 +585,22 @@ function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
 
 // ─── Vue unique des analyses ────────────────────────────────────────────────
 
-function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced }) {
+function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced, showGut = false }) {
   const { correlations: result } = analysis
-  const soon = soonLines(analysis)
+  const soon = soonLines(analysis, showGut)
+  const gut = showGut ? <GutLinks gut={analysis.gut} /> : null
 
   if (result.status === 'not_enough_data') {
     return (
       <div data-testid="reco-basic-waiting">
         {/* VC-12 : sous la carte lilas, un seul seuil visible ; celui du bien-être passe dans ses « détails » */}
         {!teaserShown && <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />}
+        {gut}
         {analysis.faceMood?.status === 'ok' && (
           <LinksSection analysis={{ faceMood: analysis.faceMood }} />
         )}
         {/* Habitudes et effets décalés attendent les mêmes notes que la carte lilas : seul le visage a son compteur */}
-        <SoonSection lines={soon.filter((l) => l.id === 'face')} />
+        <SoonSection lines={soon.filter((l) => l.id === 'face' || l.id === 'gut')} />
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
       </div>
     )
@@ -611,6 +618,8 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
           Données exploratoires : continuez à noter votre bien-être (objectif : 10 jours).
         </p>
       )}
+
+      {gut}
 
       <section className="reco-section">
         <h3 className="reco-section-title">Pistes à tester</h3>
@@ -912,6 +921,8 @@ export default function Recommendations() {
   const debugMode = isDebugModeEnabled()
   const [details, toggleDetails] = useDetailsMode()
   const [focus] = useState(() => homeFocus())
+  // Comme la carte « Votre ventre » de l'Accueil (POL-4) : seulement pour qui suit son ventre
+  const [showGut] = useState(() => gutCardMode() !== 'hide')
 
   useEffect(() => {
     const onUpdate = () => setRevision((r) => r + 1)
@@ -996,6 +1007,7 @@ export default function Recommendations() {
             teaserShown={waiting}
             advanced={analyses.advanced}
             onOpenAdvanced={() => setWantAdvanced(true)}
+            showGut={showGut}
           />
         </>
       )}
