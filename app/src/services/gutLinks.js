@@ -61,7 +61,7 @@ export function comparableLabel(ids) {
  *   links: { factor: string, label: string, when: string, kind: 'window'|'day', whenLabel: string,
  *     exposed: { n: number, symptoms: number }, unexposed: { n: number, symptoms: number },
  *     rr: number, q: number, nearMeal: number|null, sameNight: boolean, comparable: ('sleep'|'stress'|'screen')[],
- *     also: string[], together: string[] }[] }}
+ *     also: string[], together: string[], oftenWith: string[] }[] }}
  */
 export function summarizeGutLinks(entries) {
   const list = entries || []
@@ -107,6 +107,10 @@ export function summarizeGutLinks(entries) {
       // I134 : les pistes « jour » sont comparées à nuit, stress ou écran de la veille comparables quand ils comptent.
       comparable: WHEN[r.window].kind === 'day' ? byDay.adjustedFor : [],
       sameNight: WHEN[r.window].kind === 'day' && byDay.adjustedFor.includes('sleep'),
+      // I134 étape 3 : aliments souvent mangés avec celui-ci qui, comparés à part, ne ressortent pas à eux seuls.
+      oftenWith: [...new Set(byDay.results
+        .filter((o) => o.explainedBy?.factor === r.factor && o.explainedBy.window === r.window && o.factor !== r.factor)
+        .map((o) => gutFactorLabel(o.factor).toLocaleLowerCase('fr-FR')))],
     }
   })
 

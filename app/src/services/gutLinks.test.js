@@ -107,3 +107,28 @@ describe('summarizeGutLinks — aliments toujours mangés ensemble', () => {
     expect(s.links.filter((l) => l.when === link.when && (l.factor === 'échalote' || l.together.includes('échalote')))).toHaveLength(1)
   })
 })
+
+describe('summarizeGutLinks — aliments souvent mangés ensemble (I134 étape 3)', () => {
+  it('la piste rappelle l’aliment qui l’accompagne et qui, comparé à part, ne ressort pas', () => {
+    const meal = (iso, ingredient) => ({ type: 'food', at: iso, payload: { items: [{ ingredient, quantity_g: 100 }] } })
+    let hits = 0
+    for (let seed = 1; seed <= 12 && hits < 1; seed++) {
+      let s = seed * 211
+      const rnd = () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 2 ** 32)
+      const entries = []
+      for (let d = 0; d < 91; d++) {
+        const day = new Date(Date.UTC(2026, 6, 1 + d)).toISOString().slice(0, 10)
+        const onion = rnd() < 0.4
+        const garlic = rnd() < (onion ? 0.8 : 0.15)
+        if (onion) entries.push(meal(`${day}T12:30:00`, 'Oignon'))
+        if (garlic) entries.push(meal(`${day}T19:00:00`, 'Ail'))
+        if (rnd() < 0.5) entries.push(meal(`${day}T13:00:00`, 'Riz'))
+        const odds = 0.25 * (onion ? 6 : 1)
+        entries.push({ type: 'gut', at: `${day}T21:00:00`, payload: { level: rnd() < odds / (1 + odds) ? 'discomfort' : 'calm', scope: 'day' } })
+      }
+      const link = summarizeGutLinks(entries).links.find((l) => l.factor === 'oignon')
+      if (link?.oftenWith.includes('ail')) hits += 1
+    }
+    expect(hits).toBe(1)
+  })
+})

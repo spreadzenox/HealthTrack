@@ -36,6 +36,12 @@ function GutLinkCard({ link }) {
               {link.comparable?.length > 0 && <> · {comparableLabel(link.comparable)}</>}
               {link.also.length > 0 && <> · aussi : {link.also.join(', ')}</>}
             </p>
+            {link.oftenWith?.length > 0 && (
+              <p className="gut-link-text">
+                Souvent mangé avec : {link.oftenWith.join(', ')}.{' '}
+                {link.oftenWith.length > 1 ? 'Comparés à part, ils ne ressortent pas à eux seuls.' : 'Comparé à part, il ne ressort pas à lui seul.'}
+              </p>
+            )}
             {link.nearMeal != null && link.nearMeal > 0 && (
               <p className="gut-link-stats">
                 {Math.round(link.nearMeal * 100)} % de ces notes ont été prises dans les 2 h après ce repas.
