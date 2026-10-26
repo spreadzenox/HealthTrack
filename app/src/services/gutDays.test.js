@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { NULL_SCENARIOS, simulateRealistic } from './gutWindows.sim'
 import { GUT_DAY_WINDOWS, TTS_SHIFT_DAYS, analyzeGutDays } from './gutDays'
-import { analyzeGutWindows } from './gutWindows'
+import { MAX_TESTED_FOODS, analyzeGutWindows, selectTestedFactors } from './gutWindows'
 
 const DAY_ONLY = { timedNotes: false, dayNotes: true }
 const find = (res, factor, window) => res.results.find((r) => r.factor === factor && r.window === window)
@@ -94,5 +94,42 @@ describe('analyzeGutDays (I170 étape 3)', () => {
     expect(analyzeGutDays([])).toEqual({ days: 0, tested: 0, results: [] })
     expect(analyzeGutDays([bilan('2026-09-02T21:00:00', 'bizarre'), { type: 'food', at: '2026-09-02T10:00:00', payload: {} }]))
       .toEqual({ days: 0, tested: 0, results: [] })
+  })
+})
+
+describe('moins de comparaisons (I173)', () => {
+  const days = (n, from = 1) => Array.from({ length: n }, (_, i) => `2026-09-${String(from + i).padStart(2, '0')}`)
+
+  it('selectTestedFactors : FODMAP toujours, puis les aliments les mieux répartis', () => {
+    const meals = [
+      ...days(20).map((day) => ({ day, factors: ['pain'] })), // tous les jours : peu informatif
+      ...days(10).map((day) => ({ day, factors: ['riz'] })), // un jour sur deux : le mieux réparti
+      ...days(4).map((day) => ({ day, factors: ['pomme', 'fodmap_eleve'] })),
+      { day: '2026-09-05', factors: ['kiwi'] },
+    ]
+    expect(selectTestedFactors(meals, 2)).toEqual(['fodmap_eleve', 'pomme', 'riz'])
+    expect(selectTestedFactors(meals, 3)).toEqual(['fodmap_eleve', 'kiwi', 'pomme', 'riz'])
+    expect(selectTestedFactors(meals, 10)).toEqual(['fodmap_eleve', 'kiwi', 'pain', 'pomme', 'riz'])
+  })
+
+  it(`au plus ${MAX_TESTED_FOODS} aliments testés par fenêtre, quelle que soit la longueur de la liste`, () => {
+    const entries = simulateRealistic({ seed: 5, days: 63, ...DAY_ONLY, extraFoods: 30 })
+    const factors = new Set(analyzeGutDays(entries).results.map((r) => r.factor))
+    expect(factors.size).toBeLessThanOrEqual(MAX_TESTED_FOODS + 1)
+  })
+
+  it('deux aliments toujours mangés ensemble ne comptent qu’une comparaison et reçoivent le même verdict', () => {
+    const entries = simulateRealistic({ seed: 11, days: 63, ...DAY_ONLY }).map((e) => (e.type !== 'food' ? e : {
+      ...e,
+      payload: { items: e.payload.items.flatMap((it) => (it.ingredient === 'Oignon' ? [it, { ingredient: 'Échalote', quantity_g: 10 }] : [it])) },
+    }))
+    const res = analyzeGutDays(entries)
+    const solo = analyzeGutDays(simulateRealistic({ seed: 11, days: 63, ...DAY_ONLY }))
+    expect(res.tested).toBe(solo.tested)
+    for (const w of ['jour', 'veille']) {
+      const [a, b] = [find(res, 'oignon', w), find(res, 'échalote', w)]
+      expect(b).toMatchObject({ q: a.q, u: a.u, status: a.status, p: a.p })
+      expect(b).not.toHaveProperty('twinOf')
+    }
   })
 })

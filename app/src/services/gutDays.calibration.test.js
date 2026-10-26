@@ -4,6 +4,7 @@
  *
  * 26/10/2026, Mantel-Haenszel par blocs de 7 jours (≥ 5 blocs informatifs) + BH + porte TTS : PASSE (au plus 7/200,
  * « derive » en 9 semaines). Puissance ×4 en 9 semaines : 25/200 (jour même), 36/200 (veille).
+ * I173 (12 aliments testés au plus) : +20 / +40 aliments rares, 13 semaines, ×4 le jour même : 51 et 64/200.
  */
 import { describe, it, expect } from 'vitest'
 import { analyzeGutDays } from './gutDays'
@@ -41,4 +42,14 @@ describe.skipIf(!env.GUT_CALIBRATION)('banc du bilan du soir (I170)', () => {
       }
     }
   }
+  it('puissance avec une longue traîne d’aliments rares (I173, mesurée)', () => {
+    for (const extraFoods of [20, 40]) {
+      let found = 0
+      for (let seed = 1; seed <= RUNS; seed++) {
+        const res = analyzeGutDays(simulateRealistic({ seed: seed * 104729 + 90, days: 90, ...DAY_ONLY, extraFoods, dayEffect: { food: 'oignon', day: 0, odds: 4 } }))
+        if (res.results.some((r) => r.factor === 'oignon' && r.window === 'jour' && r.status === 'link')) found += 1
+      }
+      globalThis.process?.stderr.write(`[I173] puissance jour, +${extraFoods} aliments rares, 90 j : ${found}/${RUNS}\n`)
+    }
+  })
 })

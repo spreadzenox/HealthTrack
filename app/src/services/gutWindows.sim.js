@@ -10,6 +10,9 @@
  * à la saisie informative) ; `timedNotes: false` retire les notes au fil de l'eau. `dayEffect` = { food, day, odds } :
  * la cote de gêne du bilan est multipliée si l'aliment a été mangé le jour même (day 0, avant le bilan) ou la veille
  * (day 1).
+ * `extraFoods` (I173) : n aliments de plus, de plus en plus rares (de 1 repas sur 6 à 1 sur 60 environ), comme dans un
+ * vrai journal où une longue traîne d'ingrédients ne revient que de temps en temps. Tirés après les dix aliments de
+ * base : sans cette option, les journaux simulés ne changent pas.
  */
 
 export const SIM_FOODS = ['Oignon', 'Ail', 'Blé', 'Lentilles', 'Pomme', 'Lait', 'Riz', 'Poulet', 'Carotte', 'Yaourt']
@@ -37,7 +40,7 @@ const H = 3_600_000
 const START = Date.parse('2026-09-01T00:00:00Z')
 const MEAL_HOURS = [8, 12.5, 19.5]
 
-export function simulateRealistic({ seed, days = 63, drift = false, series = false, informative = false, postMeal = false, effect = null, timedNotes = true, dayNotes = false, dayEffect = null }) {
+export function simulateRealistic({ seed, days = 63, drift = false, series = false, informative = false, postMeal = false, effect = null, timedNotes = true, dayNotes = false, dayEffect = null, extraFoods = 0 }) {
   const rand = rng(seed)
   const entries = []
   const meals = []
@@ -52,6 +55,9 @@ export function simulateRealistic({ seed, days = 63, drift = false, series = fal
       const items = SIM_FOODS
         .filter((_, i) => (series ? on[i] && h > 10 && rand() < 0.8 : rand() < 0.3))
         .map((ingredient) => ({ ingredient, quantity_g: 100 }))
+      for (let k = 0; k < extraFoods; k++) {
+        if (rand() < 1 / (6 + k * (54 / Math.max(1, extraFoods - 1)))) items.push({ ingredient: `Extra ${k + 1}`, quantity_g: 50 })
+      }
       if (!items.length) items.push({ ingredient: 'Pâtes', quantity_g: 100 })
       const t = START + (d * 24 + h) * H
       const meal = { type: 'food', at: new Date(t).toISOString(), payload: { items } }
