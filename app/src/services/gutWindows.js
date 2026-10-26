@@ -74,7 +74,7 @@ const KNOWN_LEVELS = new Set(['calm', ...SYMPTOM_LEVELS])
 
 const normalize = (name) => String(name || '').trim().toLocaleLowerCase('fr-FR')
 
-function mealFactors(meal) {
+export function mealFactors(meal) {
   const items = meal.payload?.items
   if (!Array.isArray(items)) return []
   const factors = new Set(items.map((it) => normalize(it.ingredient)).filter(Boolean))
