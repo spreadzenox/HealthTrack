@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { FODMAP_SUBGROUPS, SERVING_CUTOFFS_G, fodmapPer100g, estimateMealFodmap, highFodmapGroups } from './fodmapGroups'
+import { FODMAP_SUBGROUPS, SERVING_CUTOFFS_G, fodmapPer100g, estimateMealFodmap, highFodmapGroups, mealFodmapHighlights } from './fodmapGroups'
 import { FODMAP_GROUPS } from './fodmapChallenge'
 import table from '../data/ingredientsNutrition.json'
 import measurements from '../data/fodmapMeasurements.json'
@@ -117,6 +117,37 @@ describe('estimateMealFodmap', () => {
     const r = estimateMealFodmap([{ ingredient: 'Lait', quantity_g: 30 }, { ingredient: 'Miel', quantity_g: 20 }], T)
     // lactose 1,44 g (1,4 × repère) ; fructose 1 g (6,7 × repère)
     expect(highFodmapGroups(r)).toEqual(['fructose', 'lactose'])
+  })
+})
+
+describe('mealFodmapHighlights', () => {
+  it('groupes élevés, du plus chargé au moins chargé, avec les aliments qui en apportent le plus', () => {
+    const r = estimateMealFodmap([{ ingredient: 'Lait', quantity_g: 30 }, { ingredient: 'Miel', quantity_g: 20 }], T)
+    const h = mealFodmapHighlights(r)
+    expect(h.map((x) => x.group)).toEqual(['fructose', 'lactose'])
+    expect(h[0]).toMatchObject({ foods: ['Miel'], probable: false, g: 1, cutoff: 0.15 })
+  })
+  it('« probable » quand le repère n’est dépassé qu’avec des valeurs à confiance basse', () => {
+    const m = { foods: {
+      Riz: { fructans: { g: 0.5, source: 's', confidence: 'analogie' } },
+      Oignon: { fructans: { g: 0.2, source: 's', confidence: 'mesure' } },
+    } }
+    const items = [{ ingredient: 'Riz', quantity_g: 100 }, { ingredient: 'Oignon', quantity_g: 100 }]
+    const [fructans] = mealFodmapHighlights(estimateMealFodmap(items, T, m))
+    expect(fructans).toMatchObject({ group: 'fructans', foods: ['Riz', 'Oignon'], probable: true })
+    const sure = { foods: { ...m.foods, Oignon: { fructans: { g: 0.4, source: 's', confidence: 'mesure' } } } }
+    expect(mealFodmapHighlights(estimateMealFodmap(items, T, sure))[0].probable).toBe(false)
+  })
+  it('trois aliments au plus ; rien d’élevé : liste vide', () => {
+    const m = { foods: Object.fromEntries(['Lait', 'Miel', 'Oignon', 'Poire'].map((n) => [n, { fructans: { g: 1, source: 's' } }])) }
+    const items = ['Lait', 'Miel', 'Oignon', 'Poire'].map((ingredient) => ({ ingredient, quantity_g: 50 }))
+    expect(mealFodmapHighlights(estimateMealFodmap(items, T, m)).find((x) => x.group === 'fructans').foods).toHaveLength(3)
+    expect(mealFodmapHighlights(estimateMealFodmap([{ ingredient: 'Riz', quantity_g: 100 }], T))).toEqual([])
+  })
+  it('table livrée : l’ail (valeur citée par une revue) seul ne donne qu’un « probablement »', () => {
+    const est = (ingredient, quantity_g) => mealFodmapHighlights(estimateMealFodmap([{ ingredient, quantity_g }], table, measurements))
+    expect(est('Ail, cru', 3)[0]).toMatchObject({ group: 'fructans', probable: true })
+    expect(est('Oignon, cru', 70)[0]).toMatchObject({ group: 'fructans', probable: false, foods: ['Oignon, cru'] })
   })
 })
 

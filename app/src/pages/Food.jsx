@@ -16,6 +16,8 @@ import SavedMealEditor from '../components/SavedMealEditor'
 import NewMealForm from '../components/NewMealForm'
 import { frequentMeals, mealLabel } from '../services/quickMeals'
 import LineIcon from '../components/LineIcon'
+import MealFodmapLine from '../components/MealFodmapLine'
+import { gutCardMode } from '../settings/onboarding'
 
 /** Jours de repas affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
 const INITIAL_DAYS = 5
@@ -27,6 +29,8 @@ function timeOf(at) {
 
 export default function Food() {
   const [disclosure, askConsent] = useDisclosure()
+  // FODMAP par sous-groupe sur les cartes repas : seulement quand le ventre fait partie de l'objectif (POL-4)
+  const [showFodmap] = useState(() => gutCardMode() !== 'hide')
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -432,6 +436,7 @@ export default function Food() {
                           )}
                         </div>
                       )}
+                      {showFodmap && editingId !== e.id && <MealFodmapLine items={e.payload?.items} />}
                     </li>
                   ))}
                 </ul>

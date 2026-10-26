@@ -34,3 +34,5 @@ import './pages/Reintroduction.css'
 import './components/SoonList.css'
 // Pistes repas → ventre dans Analyses (jalon 5, 26/10)
 import './components/GutLinks.css'
+// FODMAP par sous-groupe sur la carte d'un repas (N4, 26/10)
+import './components/MealFodmapLine.css'

@@ -187,3 +187,17 @@ export function highFodmapGroups(estimate) {
     .filter((g) => estimate?.[g]?.level === 'élevé')
     .sort((a, b) => estimate[b].g / estimate[b].cutoff - estimate[a].g / estimate[a].cutoff)
 }
+
+/**
+ * Ce que la carte d'un repas dit des FODMAP (N4) : pour chaque groupe au-dessus du repère, les aliments qui en
+ * apportent le plus (3 au plus) et `probable` quand le repère n'est dépassé qu'en comptant des valeurs à confiance
+ * basse (analogie, valeur citée, glucose sous la limite de détection).
+ * @returns {{ group: string, foods: string[], probable: boolean, g: number, cutoff: number }[]}
+ */
+export function mealFodmapHighlights(estimate) {
+  return highFodmapGroups(estimate).map((group) => {
+    const { g, cutoff, contributors } = estimate[group]
+    const sure = contributors.filter((c) => c.status === 'mesuré').reduce((s, c) => s + c.g, 0)
+    return { group, foods: contributors.slice(0, 3).map((c) => c.ingredient), probable: sure < cutoff, g, cutoff }
+  })
+}
