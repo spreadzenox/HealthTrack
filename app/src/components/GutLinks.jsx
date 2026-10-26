@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import DetailsToggle from './DetailsToggle'
+import { comparableLabel } from '../services/gutLinks'
 import './GutLinks.css'
 
 const fr = (v, digits = 1) => v.toLocaleString('fr-FR', { maximumFractionDigits: digits, minimumFractionDigits: digits })
@@ -32,7 +33,7 @@ function GutLinkCard({ link }) {
           <>
             <p className="gut-link-stats">
               RR = {fr(link.rr)} · q = {fr(link.q, 3)} · comparé dans des blocs de jours voisins
-              {link.sameNight && <> · à nuit comparable</>}
+              {link.comparable?.length > 0 && <> · {comparableLabel(link.comparable)}</>}
               {link.also.length > 0 && <> · aussi : {link.also.join(', ')}</>}
             </p>
             {link.nearMeal != null && link.nearMeal > 0 && (

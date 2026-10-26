@@ -21,6 +21,11 @@
  * est coupé en deux (nuit plus courte / plus longue que votre médiane) et l'aliment n'est comparé qu'à nuit
  * comparable. Le sommeil n'est ici qu'un X d'ajustement : il ne devient pas une piste et n'entre jamais dans
  * l'estimateur du bien-être.
+ * Stress et temps d'écran de la veille (I134 étape 2) : même mécanisme, mais une covariable n'est retenue que si elle
+ * va avec le ventre (|z| ≥ 2 dans les blocs, sans regarder les aliments), au plus deux. Mesure du 26/10 : les trois
+ * en même temps faisaient tomber la puissance de 45 à 9/60 ; ajoutées à l'aveugle par deux, de 35 à 15/60 quand
+ * seule la nuit joue. Avec le tri : pièges « café » 26–30/30 → 0 à 3/30, puissance gardée (45/60 si rien ne joue,
+ * 27 → 34 si la nuit joue), fausses pistes sans effet ≤ 5/150.
  * Le ventre n'est jamais une entrée de l'estimateur du bien-être (règle anti-circularité).
  */
 import { localDateKey } from './analysisEngine'
@@ -42,9 +47,19 @@ export const MIN_EXPOSED_DAYS = 8
 export const MIN_UNEXPOSED_DAYS = 8
 export const DAY_BLOCK_DAYS = 7
 export const MIN_INFORMATIVE_DAY_BLOCKS = 5
-/** Nuit d'avant en covariable : seulement si sa durée est connue pour au moins 2 bilans sur 3 et 21 bilans. */
-export const SLEEP_COVARIATE_MIN_SHARE = 2 / 3
-export const SLEEP_COVARIATE_MIN_NIGHTS = 21
+/** Covariables (nuit, stress, écran) : seulement si connues pour au moins 2 bilans sur 3 et 21 bilans. */
+export const COVARIATE_MIN_SHARE = 2 / 3
+export const COVARIATE_MIN_DAYS = 21
+/** Au plus deux covariables à la fois (4 strates par bloc) : au-delà, la puissance s'effondre (mesure du 26/10). */
+export const MAX_COVARIATES = 2
+/**
+ * Une covariable n'est retenue que si elle va avec le ventre (|z| de Mantel-Haenszel dans les blocs, sans regarder
+ * les aliments) : une covariable sans lien avec le ventre ne peut pas fausser une piste, mais coûte de la puissance.
+ */
+export const COVARIATE_MIN_Z = 2
+/** Compatibilité : anciens noms de la nuit d'avant (I134 étape 1). */
+export const SLEEP_COVARIATE_MIN_SHARE = COVARIATE_MIN_SHARE
+export const SLEEP_COVARIATE_MIN_NIGHTS = COVARIATE_MIN_DAYS
 
 /** Bilans gardés au minimum une fois r jours retirés à chaque bout pour le TTS. */
 export const DAY_TTS_MIN_KEPT = 10
@@ -56,17 +71,77 @@ const KNOWN_LEVELS = new Set(['calm', ...SYMPTOM_LEVELS])
 /** Jour local → numéro de jour (stable même au changement d'heure). */
 const dayIndex = (iso) => Math.round(Date.parse(`${localDateKey(iso)}T00:00:00Z`) / (24 * H))
 
+const prevDayKey = (key) => {
+  const d = new Date(`${key}T12:00:00Z`)
+  d.setUTCDate(d.getUTCDate() - 1)
+  return d.toISOString().slice(0, 10)
+}
+
+/** Stress moyen de la montre par jour local (échantillons `watch_stress`). */
+function dailyStress(entries) {
+  const sums = new Map()
+  for (const e of entries || []) {
+    const v = e?.payload?.value
+    if (e?.type !== 'watch_stress' || !e.at || typeof v !== 'number' || !(v > 0)) continue
+    const key = localDateKey(e.at)
+    const [sum, n] = sums.get(key) || [0, 0]
+    sums.set(key, [sum + v, n + 1])
+  }
+  return new Map([...sums].map(([key, [sum, n]]) => [key, sum / n]))
+}
+
+/** Temps d'écran par journée terminée (entrées `phone_usage`). */
+function dailyScreen(entries) {
+  const out = new Map()
+  for (const e of entries || []) {
+    const v = e?.payload?.screenMinutes
+    if (e?.type === 'phone_usage' && e.payload?.date && typeof v === 'number' && Number.isFinite(v) && v >= 0) out.set(e.payload.date, v)
+  }
+  return out
+}
+
 /**
- * Strate de sommeil de chaque bilan : 's' nuit plus courte que la médiane des nuits connues, 'l' sinon, '?' inconnue.
- * `null` quand trop peu de nuits sont connues (pas d'ajustement).
+ * Covariables candidates, par ordre de priorité. Toutes sont connues AVANT le jour du bilan (X avant Y) : la nuit
+ * qui finit le matin du bilan, le stress et le temps d'écran de la VEILLE. Ceux du jour même pourraient être une
+ * conséquence du ventre (on stresse ou on reste sur son téléphone parce qu'on a mal) : s'ajuster dessus fausserait
+ * la comparaison. Aucune n'est jugée « bonne » ou « mauvaise » : on coupe seulement à votre médiane.
  */
-function sleepStrata(entries, bilans) {
-  const nights = nightlySleep(entries)
-  const minutes = bilans.map((b) => nights.get(b.key))
-  const known = minutes.filter((m) => m != null).sort((a, b) => a - b)
-  if (known.length < SLEEP_COVARIATE_MIN_NIGHTS || known.length < SLEEP_COVARIATE_MIN_SHARE * bilans.length) return null
-  const median = known[Math.floor(known.length / 2)]
-  return minutes.map((m) => (m == null ? '?' : m < median ? 's' : 'l'))
+const COVARIATES = [
+  { id: 'sleep', values: (entries) => nightlySleep(entries), dayOf: (key) => key },
+  { id: 'stress', values: dailyStress, dayOf: prevDayKey },
+  { id: 'screen', values: dailyScreen, dayOf: prevDayKey },
+]
+
+/**
+ * Strates de chaque bilan : pour chaque covariable retenue, 'b' sous votre médiane, 'h' au-dessus, '?' inconnue.
+ * Une covariable n'est retenue que si elle est connue pour assez de bilans et va avec le ventre dans les blocs
+ * (COVARIATE_MIN_Z) ; au plus MAX_COVARIATES, les plus liées au ventre d'abord. Le choix ne regarde jamais les
+ * aliments : il ne peut pas favoriser une piste.
+ * @returns {{ ids: string[], strata: string[]|null }}
+ */
+function covariateStrata(entries, bilans, maxCovariates, minZ) {
+  const candidates = []
+  for (const cov of COVARIATES) {
+    const byDay = cov.values(entries)
+    const values = bilans.map((b) => byDay.get(cov.dayOf(b.key)))
+    const known = values.filter((v) => v != null).sort((a, b) => a - b)
+    if (known.length < COVARIATE_MIN_DAYS || known.length < COVARIATE_MIN_SHARE * bilans.length) continue
+    const median = known[Math.floor(known.length / 2)]
+    // Valeurs ex aequo (minutes arrondies, nuits identiques) : la coupure la plus équilibrée, « < » ou « ≤ » médiane.
+    const below = known.filter((v) => v < median).length
+    const atOrBelow = known.filter((v) => v <= median).length
+    const half = known.length / 2
+    const low = Math.abs(below - half) <= Math.abs(atOrBelow - half) ? (v) => v < median : (v) => v <= median
+    const column = values.map((v) => (v == null ? '?' : low(v) ? 'b' : 'h'))
+    const { z } = mantelHaenszel(bilans.flatMap((b, i) => (column[i] === '?' ? [] : [{ y: b.y, x: column[i] === 'h' ? 1 : 0, k: b.block }])))
+    if (z != null && Math.abs(z) >= minZ) candidates.push({ id: cov.id, column, z: Math.abs(z) })
+  }
+  const chosen = candidates.sort((a, b) => b.z - a.z).slice(0, maxCovariates)
+  chosen.sort((a, b) => COVARIATES.findIndex((c) => c.id === a.id) - COVARIATES.findIndex((c) => c.id === b.id))
+  const ids = chosen.map((c) => c.id)
+  const columns = chosen.map((c) => c.column)
+  if (!ids.length) return { ids, strata: null }
+  return { ids, strata: bilans.map((_, i) => columns.map((c) => c[i]).join('')) }
 }
 
 /** Blocs distincts parmi les strates informatives (une strate = un bloc, ou un bloc × une strate de sommeil). */
@@ -83,13 +158,17 @@ function exposed(bilan, meals, w, s = 0) {
 
 /**
  * @param {object[]} entries  entrées `food` et bilans du soir `gut` (les notes horodatées sont ignorées)
- * @param {{ blockDays?: number, minBlocks?: number }} [options]  pour le banc seulement
- * @returns {{ days: number, tested: number, adjustedFor: ('sleep')[], results: {
+ * @param {{ blockDays?: number, minBlocks?: number, maxCovariates?: number, minCovariateZ?: number }} [options]  pour le
+ *   banc seulement
+ * @returns {{ days: number, tested: number, adjustedFor: ('sleep'|'stress'|'screen')[], results: {
  *   factor: string, window: 'jour'|'veille', status: 'link'|'no_link'|'too_early',
  *   exposed: { days: number, symptoms: number }, unexposed: { days: number, symptoms: number },
  *   rr: number|null, p: number|null, q: number|null, u: number|null }[] }}
  */
-export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks = MIN_INFORMATIVE_DAY_BLOCKS } = {}) {
+export function analyzeGutDays(entries, {
+  blockDays = DAY_BLOCK_DAYS, minBlocks = MIN_INFORMATIVE_DAY_BLOCKS, maxCovariates = MAX_COVARIATES,
+  minCovariateZ = COVARIATE_MIN_Z,
+} = {}) {
   const meals = []
   const byDay = new Map()
   for (const e of entries || []) {
@@ -110,8 +189,9 @@ export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks 
 
   const first = bilans[0].day
   const last = bilans[bilans.length - 1].day
-  const sleep = sleepStrata(entries, bilans)
-  bilans.forEach((b, i) => { b.k = Math.floor((b.day - first) / blockDays) + (sleep ? `|${sleep[i]}` : '') })
+  bilans.forEach((b) => { b.block = Math.floor((b.day - first) / blockDays) })
+  const covariates = covariateStrata(entries, bilans, maxCovariates, minCovariateZ)
+  bilans.forEach((b, i) => { b.k = b.block + (covariates.strata ? `|${covariates.strata[i]}` : '') })
   const factors = selectTestedFactors(meals)
 
   const results = []
@@ -156,5 +236,5 @@ export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks 
   }
   settleTwins(results)
 
-  return { days: bilans.length, tested: tested.length, adjustedFor: sleep ? ['sleep'] : [], results }
+  return { days: bilans.length, tested: tested.length, adjustedFor: covariates.ids, results }
 }
