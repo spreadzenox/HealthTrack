@@ -34,3 +34,8 @@
 - N3b-2 (GOS des légumineuses cuites depuis le sec, `water_g`), N2b (inconnu ≠ 0 dans les totaux), N5 (pistes ventre
   par sous-groupe, banc des nulles et de puissance). Possible : la même ligne sur le résultat d'une analyse photo avant
   enregistrement et dans « Vos derniers jours ».
+
+## Après le merge (PR #406 → `05768ed`)
+- Checks de la PR tous verts (Vitest, Build APK, Publier l'APK, émulateur A56 API 35 et 36, relais, budget de
+  lectures, protocole montre).
+- Sur main : « Build & Release » vert, **v302**, APK sideload de 34 274 540 octets ; « Play — AAB » et « Tests » verts.
