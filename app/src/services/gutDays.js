@@ -19,8 +19,11 @@
  * Le ventre n'est jamais une entrée de l'estimateur du bien-être (règle anti-circularité).
  */
 import { localDateKey } from './analysisEngine'
-import { GUT_LINK_MAX_Q, GUT_TTS_MAX_U, TTS_SHIFT_DAYS, mantelHaenszel, mealFactors, truncatedTimeShift } from './gutWindows'
-import { benjaminiHochberg, normalCdf } from './statistics'
+import {
+  GUT_LINK_MAX_Q, GUT_TTS_MAX_U, TTS_SHIFT_DAYS, correctUnique, mantelHaenszel, mealFactors, selectTestedFactors,
+  settleTwins, truncatedTimeShift,
+} from './gutWindows'
+import { normalCdf } from './statistics'
 import { GUT_TYPE, isGutDayNote } from './today'
 
 export const GUT_DAY_WINDOWS = [
@@ -82,9 +85,10 @@ export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks 
   const first = bilans[0].day
   const last = bilans[bilans.length - 1].day
   const block = (d) => Math.floor((d - first) / blockDays)
-  const factors = [...new Set(meals.flatMap((m) => m.factors))].sort()
+  const factors = selectTestedFactors(meals)
 
   const results = []
+  const seen = new Map()
   for (const factor of factors) {
     const own = meals.filter((m) => m.factors.includes(factor))
     for (const w of GUT_DAY_WINDOWS) {
@@ -103,13 +107,15 @@ export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks 
         informative >= minBlocks && z != null
       const rr = enough ? ((ex.symptoms + 0.5) / (ex.days + 1)) / ((un.symptoms + 0.5) / (un.days + 1)) : null
       const p = enough ? 1 - normalCdf(z) : null
-      results.push({ factor, window: w.id, status: enough ? 'no_link' : 'too_early', exposed: ex, unexposed: un, rr, p, q: null, u: null })
+      const res = { factor, window: w.id, status: enough ? 'no_link' : 'too_early', exposed: ex, unexposed: un, rr, p, q: null, u: null }
+      const sig = `${w.id}|${rows.map((row) => row.x).join('')}`
+      if (enough && seen.has(sig)) res.twinOf = seen.get(sig)
+      else if (enough) seen.set(sig, res)
+      results.push(res)
     }
   }
 
-  const tested = results.filter((r) => r.p != null)
-  const qs = benjaminiHochberg(tested.map((r) => r.p))
-  tested.forEach((r, i) => { r.q = qs[i] })
+  const tested = correctUnique(results)
 
   const r = TTS_SHIFT_DAYS
   const kept = bilans.filter((b) => b.day - first >= r && last - b.day >= r)
@@ -121,6 +127,7 @@ export function analyzeGutDays(entries, { blockDays = DAY_BLOCK_DAYS, minBlocks 
     if (c.u == null) c.status = 'too_early'
     else if (c.u <= GUT_TTS_MAX_U) c.status = 'link'
   }
+  settleTwins(results)
 
   return { days: bilans.length, tested: tested.length, results }
 }

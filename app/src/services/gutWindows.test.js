@@ -215,3 +215,18 @@ describe('analyzeGutWindows', () => {
     expect(res).toEqual({ notes: 0, tested: 0, results: [] })
   })
 })
+
+describe('jumeaux par fenêtre (I173)', () => {
+  it('un aliment toujours mangé avec un autre ne compte qu’une comparaison', () => {
+    const base = simulateRealistic({ seed: 3, days: 63 })
+    const twin = base.map((e) => (e.type !== 'food' ? e : {
+      ...e,
+      payload: { items: e.payload.items.flatMap((it) => (it.ingredient === 'Ail' ? [it, { ingredient: 'Persil', quantity_g: 5 }] : [it])) },
+    }))
+    const res = analyzeGutWindows(twin)
+    expect(res.tested).toBe(analyzeGutWindows(base).tested)
+    const ail = res.results.filter((r) => r.factor === 'ail')
+    const persil = res.results.filter((r) => r.factor === 'persil')
+    expect(persil.map((r) => [r.window, r.q, r.status])).toEqual(ail.map((r) => [r.window, r.q, r.status]))
+  })
+})

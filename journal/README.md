@@ -41,8 +41,10 @@ temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est p
 notification du soir pour le bilan du ventre est livrée (26/10 01:33), et l'analyse jour par jour qui utilise ces
 bilans aussi (26/10 02:33 : « mangé le jour même » ou « la veille », mêmes protections ; sur des journaux simulés sans
 aucun effet, au plus 7 sur 200 gardent une fausse piste). Honnêteté : avec un bilan par jour, un effet net met 2 à
-3 mois à ressortir. Les deux analyses sont affichées dans Analyses depuis le 26/10 03:33. Suite : plus de puissance
-en testant moins d'aliments (les plus fréquents ou les groupes FODMAP), puis I134 (sommeil, stress, écran).
+3 mois à ressortir. Les deux analyses sont affichées dans Analyses depuis le 26/10 03:33. Plus de puissance depuis le 26/10 04:33 : on ne teste plus que les 12 aliments
+les mieux répartis dans vos jours (choisis sans regarder le ventre) et des aliments toujours mangés ensemble ne
+comptent qu'une fois ; sur des journaux simulés avec beaucoup d'aliments rares, un vrai effet ressort 20 à 28 % plus
+souvent, sans plus de fausses pistes. Suite : I134 (sommeil, stress, écran).
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -58,6 +60,7 @@ en testant moins d'aliments (les plus fréquents ou les groupes FODMAP), puis I1
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 04:33 — [I173 : moins de comparaisons](runs/2026-10-26-0433-i173-moins-de-comparaisons.md) | 🏗️ | 12 aliments testés au plus (les mieux répartis) + FODMAP, jumeaux comptés une fois ; longue traîne : 42 → 51 et 50 → 64/200 ; nulles ≤ 5/100 ; 2 280 Vitest |
 | 26/10 03:33 — [Pistes ventre dans Analyses](runs/2026-10-26-0333-pistes-ventre-analyses.md) | 🏗️ | `gutLinks.js` + `GutLinks.jsx` : « Votre ventre et vos repas » (une piste par aliment, mangés ensemble regroupés, I171 a/b, « Bientôt N/28 ») ; option `--gut-links` des captures ; 2 276 Vitest |
 | 26/10 02:33 — [I170 étape 3 : analyse jour par jour](runs/2026-10-26-0233-i170-analyse-jour.md) | 🏗️ | `gutDays.js` (jour même / veille, blocs de 7 j + BH + TTS) ; banc des nulles ≤ 7/200 ; rien d'affiché ; 2 266 Vitest |
 | 26/10 01:33 — [I170 étape 2 : bilan du ventre par notification](runs/2026-10-26-0133-i170-notification-soir.md) | 🏗️ | Notification native Calme / Gêne / Douleur (20 h ou heure apprise, avant minuit, choix × carte ventre) ; proposée dans la carte, interrupteur dans Paramètres ; 2 256 Vitest, 15 JUnit |

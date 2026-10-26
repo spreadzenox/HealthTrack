@@ -68,6 +68,17 @@ export const GUT_TTS_MAX_U = 0.1
 /** Jours gardés au minimum une fois r jours retirés à chaque bout (soit 28 jours de notes au moins). */
 export const TTS_MIN_KEPT_DAYS = 10
 
+/**
+ * Aliments testés au plus (I173), en plus du facteur « repas riches en FODMAP ». Chaque aliment testé ajoute des
+ * comparaisons à corriger : dans un vrai journal, une longue traîne d'ingrédients rares rendait les vrais liens
+ * invisibles. On ne garde que les aliments les mieux répartis (mangés ni presque tous les jours ni presque jamais),
+ * un choix qui ne regarde jamais le ventre : il ne peut pas fabriquer de fausse piste. Banc du 26/10 (bilans du soir,
+ * 13 semaines, effet ×4 le jour même, dix aliments + 20 ou 40 aliments rares, 200 jeux) : sans plafond, 42 et 50/200 ;
+ * avec 12, 51 et 64/200 (l'aliment en cause reste testé 196 et 175 fois sur 200) ; jeux nuls avec une piste : 5 et
+ * 0/200. Avec 8 ou 5, l'aliment en cause est trop souvent écarté.
+ */
+export const MAX_TESTED_FOODS = 12
+
 const H = 3_600_000
 const SYMPTOM_LEVELS = new Set(['discomfort', 'pain'])
 const KNOWN_LEVELS = new Set(['calm', ...SYMPTOM_LEVELS])
@@ -85,6 +96,55 @@ export function mealFactors(meal) {
     // Table nutritionnelle pas chargée : on garde seulement les aliments.
   }
   return [...factors]
+}
+
+/**
+ * Facteurs à tester (I173), choisis sans regarder le ventre : le facteur FODMAP (hypothèse de départ fixée d'avance)
+ * puis les `max` aliments les mieux répartis sur les jours observés, min(jours avec, jours sans) décroissant ; à
+ * égalité, ordre alphabétique (stable).
+ * @param {{ day: string|number, factors: string[] }[]} meals
+ * @param {number} [max]
+ * @returns {string[]}  trié par ordre alphabétique
+ */
+export function selectTestedFactors(meals, max = MAX_TESTED_FOODS) {
+  const days = new Set(meals.map((m) => m.day))
+  const eaten = new Map()
+  for (const m of meals) {
+    for (const f of m.factors) {
+      if (!eaten.has(f)) eaten.set(f, new Set())
+      eaten.get(f).add(m.day)
+    }
+  }
+  const balance = (f) => Math.min(eaten.get(f).size, days.size - eaten.get(f).size)
+  const foods = [...eaten.keys()]
+    .filter((f) => f !== FODMAP_FACTOR)
+    .sort((a, b) => balance(b) - balance(a) || a.localeCompare(b, 'fr'))
+    .slice(0, max)
+  return [...(eaten.has(FODMAP_FACTOR) ? [FODMAP_FACTOR] : []), ...foods].sort()
+}
+
+/**
+ * Comparaisons identiques comptées une fois (I173) : deux aliments toujours mangés ensemble ont exactement la même
+ * exposition, donc le même test. Le premier porte la p-valeur dans la correction ; les autres en sont des copies
+ * (`twinOf`), qui reçoivent ensuite son q, son u et son statut.
+ * @param {{ p: number|null, twinOf?: object }[]} results
+ * @returns {object[]}  les résultats testés et uniques, à corriger
+ */
+export function correctUnique(results) {
+  const unique = results.filter((r) => r.p != null && !r.twinOf)
+  const qs = benjaminiHochberg(unique.map((r) => r.p))
+  unique.forEach((r, i) => { r.q = qs[i] })
+  return unique
+}
+
+/** Recopie q, u et statut d'un test sur ses jumeaux (aliments mangés ensemble), puis retire le lien interne. */
+export function settleTwins(results) {
+  for (const r of results) {
+    if (!r.twinOf) continue
+    const { q, u, status } = r.twinOf
+    Object.assign(r, { q, u, status })
+    delete r.twinOf
+  }
 }
 
 /**
@@ -189,7 +249,7 @@ export function analyzeGutWindows(entries) {
   }
   if (notes.length === 0 || meals.length === 0) return { notes: notes.length, tested: 0, results: [] }
 
-  const factors = [...new Set(meals.flatMap((m) => m.factors))].sort()
+  const factors = selectTestedFactors(meals.map((m) => ({ day: localDateKey(m.at), factors: m.factors })))
   const exposures = notes.map((n) => mealExposures(n, meals))
   const days = new Set(notes.map((n) => localDateKey(n.at))).size
   const times = notes.map((n) => Date.parse(n.at))
@@ -198,6 +258,7 @@ export function analyzeGutWindows(entries) {
   const block = (t) => Math.floor((t - first) / (BLOCK_DAYS * 24 * H))
 
   const results = []
+  const seen = new Map()
   for (const factor of factors) {
     for (const w of GUT_WINDOWS) {
       const exposed = { notes: 0, symptoms: 0 }
@@ -221,13 +282,15 @@ export function analyzeGutWindows(entries) {
       // Unilatéral : la question posée d'avance est « plus de gêne après cet aliment ? ». Un aliment « protecteur »
       // dans une fenêtre n'est le plus souvent que l'ombre d'un effet dans une autre (heure de la note).
       const p = enough ? 1 - normalCdf(z) : null
-      results.push({ factor, window: w.id, status: enough ? 'no_link' : 'too_early', exposed, unexposed, rr, p, q: null, u: null, days })
+      const res = { factor, window: w.id, status: enough ? 'no_link' : 'too_early', exposed, unexposed, rr, p, q: null, u: null, days }
+      const sig = `${w.id}|${rows.map((row) => row.x).join('')}`
+      if (enough && seen.has(sig)) res.twinOf = seen.get(sig)
+      else if (enough) seen.set(sig, res)
+      results.push(res)
     }
   }
 
-  const tested = results.filter((r) => r.p != null)
-  const qs = benjaminiHochberg(tested.map((r) => r.p))
-  tested.forEach((r, i) => { r.q = qs[i] })
+  const tested = correctUnique(results)
 
   // Porte TTS, seulement pour les candidates. Trop peu de jours pour décaler : on préfère attendre.
   const candidates = tested.filter((r) => r.q < GUT_LINK_MAX_Q)
@@ -248,6 +311,7 @@ export function analyzeGutWindows(entries) {
       else if (c.u <= GUT_TTS_MAX_U) c.status = 'link'
     }
   }
+  settleTwins(results)
 
   return { notes: notes.length, tested: tested.length, results }
 }
