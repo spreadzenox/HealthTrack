@@ -17,6 +17,7 @@
 import { execFileSync, spawn } from 'node:child_process'
 import { mkdirSync, writeFileSync, appendFileSync } from 'node:fs'
 import { setTimeout as sleep } from 'node:timers/promises'
+import http from 'node:http'
 import { generateDemoEntries } from '../../../app/scripts/visual/demoData.mjs'
 
 const PKG = process.env.P28_PKG || 'fr.jpesquet.sante.apercu'
@@ -171,10 +172,16 @@ async function connectWebView(timeoutMs = 180000, { relaunchAfterMs = 0 } = {}) 
     tries += 1
     if (tries % 20 === 0) log('prises DevTools :', socks.join(', ') || 'aucune', '· pid :', pids.join(' ') || 'aucun')
     for (const sock of candidates) {
+      let port = 0
       try {
-        adb('forward', 'tcp:9222', `localabstract:${sock}`)
-        const pages = await (await fetch('http://127.0.0.1:9222/json', { signal: AbortSignal.timeout(30000) })).json()
+        // Port local neuf à chaque essai et requête sans keep-alive : une connexion gardée par fetch restait liée à
+        // l'ancienne redirection (essai du 26/10 19:40 : /json sans réponse 30 s de suite, app pourtant affichée).
+        port = Number(adb('forward', 'tcp:0', `localabstract:${sock}`).trim())
+        const pages = await getJson(`http://127.0.0.1:${port}/json/list`, 15000)
         const page = pages.find((p) => p.type === 'page' && p.webSocketDebuggerUrl)
+        if (!page && tries % 5 === 0) {
+          log('pages DevTools sans page utilisable :', JSON.stringify(pages.map((p) => [p.type, p.url, !!p.webSocketDebuggerUrl])))
+        }
         if (page) {
           cdp = new WebSocket(page.webSocketDebuggerUrl)
           await new Promise((res, rej) => {
@@ -191,12 +198,39 @@ async function connectWebView(timeoutMs = 180000, { relaunchAfterMs = 0 } = {}) 
           return true
         }
       } catch (e) {
-        log('WebView pas encore prête :', e.message)
+        log('WebView pas encore prête :', sock, e.message)
+        if (port) {
+          try {
+            adb('forward', '--remove', `tcp:${port}`)
+          } catch {
+            /* déjà retirée */
+          }
+        }
       }
     }
     await sleep(1500)
   }
   return false
+}
+
+/** GET JSON sans agent (aucune connexion réutilisée), avec délai. */
+function getJson(url, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const req = http.get(url, { agent: false, timeout: timeoutMs }, (res) => {
+      let body = ''
+      res.setEncoding('utf8')
+      res.on('data', (c) => (body += c))
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(body))
+        } catch (e) {
+          reject(e)
+        }
+      })
+    })
+    req.on('timeout', () => req.destroy(new Error(`pas de réponse en ${timeoutMs / 1000} s`)))
+    req.on('error', reject)
+  })
 }
 
 function send(method, params = {}) {
