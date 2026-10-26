@@ -88,8 +88,10 @@ d'abord. Repères tirés d'une fiche patient du NHS et des conseils de l'univers
 à adapter avec votre diététicienne. Depuis le 26/10 09:33, la logique du test est écrite et vérifiée (7a : départ
 seulement après 3 jours de ventre calme, une portion par jour, « C'est supportable ? » en cas de gêne, résultat en
 une phrase, un seul test à la fois, deux jours sautés → le test repart du jour 1). Depuis le 26/10 10:33, les écrans
-sont dans l'app (7b-1, ci-dessus) et le rappel de la portion aussi depuis 11:33 (7b-2) ; restent le lien depuis chaque piste ventre (7c) et
-le rapport PDF.
+sont dans l'app (7b-1, ci-dessus) et le rappel de la portion aussi depuis 11:33 (7b-2) ; le lien depuis chaque piste ventre aussi depuis 12:33 (7c). Le rapport PDF est commencé (26/10 13:48) : son contenu
+est calculé et vérifié (période de 2, 4 ou 12 semaines, ventre jour par jour, réintroductions, pistes « à confirmer »,
+sommeil, aliments fréquents, sources ; bien-être estimé seulement si vous le cochez), le fichier PDF lui-même et son
+bouton arrivent au prochain run.
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -105,6 +107,7 @@ le rapport PDF.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 13:48 — [I175-1 : contenu du rapport médecin](runs/2026-10-26-1348-i175-1-build-report.md) | 🏗️ | Modèle pur du rapport PDF (`buildReport.js`, 2 pages : en bref + détail), rien d'affiché ; 2 396 Vitest |
 | 26/10 11:33 — [7b-2 : rappel de la portion du jour](runs/2026-10-26-1133-7b2-rappel-portion.md) | 🏗️ | Notification « Votre portion du jour » à l'heure choisie (natif, deux variantes, au plus 3 rappels, toucher ouvre le test) ; état du test dans la carte d'entrée d'Analyses ; 2 356 Vitest, 4 JUnit de plus |
 | 26/10 12:33 — [7c : vérifier une piste ventre](runs/2026-10-26-1233-7c-verifier-piste.md) | 🏗️ | Lien « Vérifier avec une réintroduction guidée » sur chaque piste ventre, aliment présélectionné (correspondance aliment → groupe, exclusions lait végétal / sans gluten) ; 2 384 Vitest |
 | 26/10 10:33 — [7b-1 : écrans de la réintroduction](runs/2026-10-26-1033-7b-ecrans-reintroduction.md) | 🏗️ | `/reintroduction` : choix du groupe (étiquettes d'état), préparation (portions modifiables, 3 jours calmes avant), jour en cours (frise, portion en un geste, « supportable ? », reprise), résultat ; carte « Tester un groupe FODMAP » dans Analyses ; premium coché ; 2 339 Vitest |
