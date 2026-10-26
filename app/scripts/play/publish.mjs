@@ -16,6 +16,12 @@ export const ALLOWED_TRACKS = ['internal', 'alpha']
 export const NOTES_MAX = 500
 /** Groupe Google des testeurs du test fermé (piste alpha), ajouté à la piste s'il manque. */
 export const ALPHA_TESTERS_GROUP = 'halcya-testeurs@googlegroups.com'
+/**
+ * Brouillons gardés sur la piste quand une version normale y est placée : ceux de la déclaration P28 (AAB play avec
+ * l'interrupteur faceUnlockPlay, jamais déployé, journal/PLAY-CONFORMITE.md §1 bis). Les autres brouillons sont
+ * remplacés, comme avant.
+ */
+export const KEPT_DRAFT_PREFIX = 'p28-'
 
 export class PlayApiError extends Error {
   constructor(step, status, message) {
@@ -96,8 +102,12 @@ export async function call(fetchImpl, step, url, { method = 'GET', token, body, 
  * changesNotSentForReview, versionCode déjà envoyé (relance d'un run). Sur la piste alpha, un versionCode déjà
  * envoyé en test interne est réutilisé (c'est la promotion de la version candidate) et le groupe des testeurs est
  * ajouté à la piste s'il n'y est pas.
+ *
+ * `draft: true` (déclaration P28) : la version est créée en brouillon, jamais déployée, sous `releaseName`, et les
+ * versions déjà sur la piste (hors brouillons) y restent telles quelles. Sans `draft`, un brouillon P28 déjà sur la
+ * piste est gardé à côté de la nouvelle version ; si Play refuse l'ensemble, la version passe seule (`draftDropped`).
  */
-export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, testersGroup = ALPHA_TESTERS_GROUP, fetchImpl = fetch, sleep, log = () => {} }) {
+export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, draft = false, releaseName = String(versionCode), testersGroup = ALPHA_TESTERS_GROUP, fetchImpl = fetch, sleep, log = () => {} }) {
   if (!ALLOWED_TRACKS.includes(track)) throw new Error(`Piste « ${track} » refusée : seules ${ALLOWED_TRACKS.join(', ')} sont autorisées.`)
   fetchImpl = withRetry(fetchImpl, { sleep })
   const base = `${API}/${packageName}/edits`
@@ -131,25 +141,45 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
       }
     }
 
-    const release = (status) => ({
-      track,
-      releases: [
-        {
-          name: String(versionCode),
-          versionCodes: [String(versionCode)],
-          status,
-          ...(notes ? { releaseNotes: [{ language, text: notes }] } : {}),
-        },
-      ],
-    })
-    let status = 'completed'
+    let existing = []
     try {
-      await call(fetchImpl, `Piste ${track}`, `${editUrl}/tracks/${track}`, { method: 'PUT', token, body: release(status) })
+      existing = (await call(fetchImpl, `Lecture de la piste ${track}`, `${editUrl}/tracks/${track}`, { token }))?.releases ?? []
     } catch (err) {
-      if (!(err instanceof PlayApiError && /draft/i.test(err.apiMessage))) throw err
-      status = 'draft'
-      log('Play n’accepte que des versions brouillon pour l’instant : version créée en brouillon.')
-      await call(fetchImpl, `Piste ${track} (brouillon)`, `${editUrl}/tracks/${track}`, { method: 'PUT', token, body: release(status) })
+      if (!(err instanceof PlayApiError && err.status === 404)) throw err
+    }
+    const kept = draft
+      ? existing.filter((r) => r.status !== 'draft')
+      : existing.filter((r) => r.status === 'draft' && String(r.name ?? '').startsWith(KEPT_DRAFT_PREFIX) && !r.versionCodes?.includes(String(versionCode)))
+    const ours = (status) => ({
+      name: releaseName,
+      versionCodes: [String(versionCode)],
+      status,
+      ...(notes ? { releaseNotes: [{ language, text: notes }] } : {}),
+    })
+    const put = (step, releases) => call(fetchImpl, step, `${editUrl}/tracks/${track}`, { method: 'PUT', token, body: { track, releases } })
+
+    let status = draft ? 'draft' : 'completed'
+    let draftDropped = false
+    if (draft) {
+      await put(`Piste ${track} (brouillon)`, [...kept, ours(status)])
+      log(`Version ${releaseName} créée en brouillon sur la piste ${track} (jamais déployée) ; ${kept.length} version(s) déjà sur la piste gardée(s).`)
+    } else {
+      try {
+        await put(`Piste ${track}`, [ours(status), ...kept])
+      } catch (err) {
+        if (!(err instanceof PlayApiError)) throw err
+        if (kept.length && err.status === 400 && !/draft app/i.test(err.apiMessage)) {
+          draftDropped = true
+          log(`Play refuse de garder le brouillon ${kept.map((r) => r.name).join(', ')} (${err.apiMessage}) : version placée seule.`)
+          await put(`Piste ${track}`, [ours(status)])
+        } else if (/draft/i.test(err.apiMessage)) {
+          status = 'draft'
+          log('Play n’accepte que des versions brouillon pour l’instant : version créée en brouillon.')
+          await put(`Piste ${track} (brouillon)`, [ours(status)])
+        } else {
+          throw err
+        }
+      }
     }
 
     let testersAdded = false
@@ -171,7 +201,16 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
       notSentForReview = true
       await call(fetchImpl, 'Validation de l’edit (sans examen)', `${editUrl}:commit?changesNotSentForReview=true`, { method: 'POST', token })
     }
-    return { outcome: 'published', versionCode, track, status, language, notSentForReview, ...(track === 'alpha' ? { reusedBundle, testersAdded } : {}) }
+    return {
+      outcome: 'published',
+      versionCode,
+      track,
+      status,
+      language,
+      notSentForReview,
+      ...(track === 'alpha' ? { reusedBundle, testersAdded } : {}),
+      ...(!draft && kept.length ? { keptDrafts: kept.map((r) => r.name), draftDropped } : {}),
+    }
   } catch (err) {
     await abandon()
     throw err

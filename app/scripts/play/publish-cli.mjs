@@ -3,6 +3,8 @@
  * CLI du workflow « Play — AAB » : `node scripts/play/publish-cli.mjs <fichier.aab>` (depuis app/).
  * Variables : PLAY_ACCESS_TOKEN (jeton androidpublisher), VERSION_CODE, PLAY_TRACK (internal par défaut),
  * PLAY_PACKAGE (fr.jpesquet.sante par défaut), GITHUB_STEP_SUMMARY (facultatif).
+ * Déclaration P28 (workflow « Play — brouillon P28 ») : PLAY_DRAFT=1 crée la version en brouillon, jamais déployée,
+ * sous le nom PLAY_RELEASE_NAME, avec les notes PLAY_NOTES au lieu des Nouveautés.
  * Code de sortie : 0 publié (ou déjà envoyé), 2 accès refusé (à réessayer au run suivant), 1 autre erreur.
  */
 import { readFileSync, readdirSync, appendFileSync } from 'node:fs'
@@ -13,6 +15,8 @@ const aabPath = process.argv[2]
 const { PLAY_ACCESS_TOKEN: token, VERSION_CODE: versionCode, GITHUB_STEP_SUMMARY: summaryFile } = process.env
 const track = process.env.PLAY_TRACK || 'internal'
 const packageName = process.env.PLAY_PACKAGE || 'fr.jpesquet.sante'
+const draft = process.env.PLAY_DRAFT === '1'
+const releaseName = process.env.PLAY_RELEASE_NAME || String(versionCode)
 
 const summary = (lines) => {
   if (summaryFile) appendFileSync(summaryFile, `${lines.join('\n')}\n`)
@@ -28,10 +32,10 @@ const dir = resolve(process.cwd(), 'src/data/changelog')
 const entries = readdirSync(dir)
   .filter((f) => f.endsWith('.json'))
   .map((f) => ({ id: f, ...JSON.parse(readFileSync(resolve(dir, f), 'utf8')) }))
-const notes = buildReleaseNotes(entries)
+const notes = process.env.PLAY_NOTES || buildReleaseNotes(entries)
 
 try {
-  const r = await publishBundle({ packageName, aab: readFileSync(aabPath), versionCode, track, notes, token, log: console.log })
+  const r = await publishBundle({ packageName, aab: readFileSync(aabPath), versionCode, track, notes, token, draft, releaseName, log: console.log })
   if (r.outcome === 'already-uploaded') {
     summary(['', `### Google Play : versionCode ${versionCode} déjà envoyé`, '', 'Rien à faire (relance d’un run déjà publié).'])
   } else {
@@ -39,11 +43,14 @@ try {
       '',
       `### Google Play : versionCode ${versionCode} envoyé sur la piste « ${track} »`,
       '',
-      r.status === 'draft'
+      draft
+        ? `- Version **${releaseName}** créée **en brouillon**, jamais déployée : elle ne sert qu’à faire apparaître la déclaration « Autorisations des services de premier plan » (Play Console → Contenu de l’app). Les versions déjà en test interne restent en place.`
+        : r.status === 'draft'
         ? '- ⚠️ Version créée **en brouillon** (Play n’accepte que des brouillons tant que l’app n’est pas prête) : Play Console → Tester → Test interne → « Modifier la version » → « Déployer ».'
         : track === 'alpha'
           ? '- Déployée sur le test fermé (alpha) : Google l’examine d’abord (quelques heures à quelques jours), puis les membres du groupe des testeurs peuvent l’installer.'
           : '- Déployée auprès des testeurs internes (installation depuis le Play Store, quelques minutes après).',
+      ...(r.keptDrafts ? [r.draftDropped ? `- ⚠️ Play a refusé de garder le brouillon ${r.keptDrafts.join(', ')} à côté : il a été retiré de la piste (relancer « Play — brouillon P28 » si la déclaration n’est pas encore faite).` : `- Brouillon ${r.keptDrafts.join(', ')} gardé sur la piste (déclaration P28).`] : []),
       ...(r.reusedBundle ? ['- Même AAB que la version déjà envoyée en test interne (promotion de la version candidate).'] : []),
       ...(r.testersAdded ? ['- Groupe halcya-testeurs@googlegroups.com ajouté aux testeurs de la piste alpha.'] : []),
       r.notSentForReview ? '- Validée sans envoi automatique pour examen (des modifications attendent un envoi manuel dans la Play Console).' : '- Validée.',

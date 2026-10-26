@@ -36,11 +36,11 @@ describe('envoi Google Play (jalon 3c)', () => {
     const { fetchImpl, calls } = fakePlay(happy())
     const r = await publishBundle(args(fetchImpl))
     expect(r).toEqual({ outcome: 'published', versionCode: 350, track: 'internal', status: 'completed', language: 'fr-FR', notSentForReview: false })
-    expect(calls.map((c) => c.key.split(' ')[0])).toEqual(['POST', 'GET', 'POST', 'PUT', 'POST'])
+    expect(calls.map((c) => c.key.split(' ')[0])).toEqual(['POST', 'GET', 'POST', 'GET', 'PUT', 'POST'])
     const upload = calls[2].init
     expect(upload.headers).toEqual({ Authorization: 'Bearer tok', 'Content-Type': 'application/octet-stream' })
     expect(upload.body).toEqual(new Uint8Array([1, 2, 3]))
-    expect(JSON.parse(calls[3].init.body)).toEqual({
+    expect(JSON.parse(calls[4].init.body)).toEqual({
       track: 'internal',
       releases: [{ name: '350', versionCodes: ['350'], status: 'completed', releaseNotes: [{ language: 'fr-FR', text: '• Nouveau' }] }],
     })
@@ -62,7 +62,7 @@ describe('envoi Google Play (jalon 3c)', () => {
     const { fetchImpl, calls } = fakePlay(routes)
     const r = await publishBundle(args(fetchImpl))
     expect(r.status).toBe('draft')
-    expect(JSON.parse(calls[4].init.body).releases[0].status).toBe('draft')
+    expect(JSON.parse(calls[5].init.body).releases[0].status).toBe('draft')
   })
 
   it('validation qui exige changesNotSentForReview : relance avec le paramètre', async () => {
@@ -128,6 +128,51 @@ describe('envoi Google Play (jalon 3c)', () => {
     const { fetchImpl, calls } = fakePlay(happy())
     await publishBundle(args(fetchImpl))
     expect(calls.some((c) => c.key.includes('/testers/'))).toBe(false)
+  })
+
+  const live = { name: '410', versionCodes: ['410'], status: 'completed', releaseNotes: [{ language: 'fr-FR', text: '• Avant' }] }
+  const p28 = { name: 'p28-100410', versionCodes: ['100410'], status: 'draft' }
+  const putBody = (calls, i = 0) => JSON.parse(calls.filter((c) => c.key === `PUT ${EDITS}/E1/tracks/internal`)[i].init.body)
+
+  it('P28 : brouillon jamais déployé, nommé à part, la version en test interne reste en place', async () => {
+    const routes = happy()
+    routes[`GET ${EDITS}/E1/tracks/internal`] = { body: { track: 'internal', releases: [live, { name: 'vieux', versionCodes: ['3'], status: 'draft' }] } }
+    const { fetchImpl, calls } = fakePlay(routes)
+    const r = await publishBundle(args(fetchImpl, { versionCode: 100411, draft: true, releaseName: 'p28-100411', notes: '• Technique' }))
+    expect(r).toMatchObject({ outcome: 'published', status: 'draft', track: 'internal' })
+    expect(r.keptDrafts).toBeUndefined()
+    expect(putBody(calls).releases).toEqual([
+      live,
+      { name: 'p28-100411', versionCodes: ['100411'], status: 'draft', releaseNotes: [{ language: 'fr-FR', text: '• Technique' }] },
+    ])
+  })
+
+  it('version normale : le brouillon P28 déjà sur la piste est gardé, les autres brouillons remplacés', async () => {
+    const routes = happy()
+    routes[`GET ${EDITS}/E1/tracks/internal`] = { body: { releases: [live, p28, { name: 'vieux', versionCodes: ['3'], status: 'draft' }] } }
+    const { fetchImpl, calls } = fakePlay(routes)
+    const r = await publishBundle(args(fetchImpl))
+    expect(r).toMatchObject({ status: 'completed', keptDrafts: ['p28-100410'], draftDropped: false })
+    expect(putBody(calls).releases.map((x) => x.name)).toEqual(['350', 'p28-100410'])
+  })
+
+  it('Play refuse de garder le brouillon P28 : la version normale passe seule, sans échec', async () => {
+    const routes = happy()
+    routes[`GET ${EDITS}/E1/tracks/internal`] = { body: { releases: [live, p28] } }
+    routes[`PUT ${EDITS}/E1/tracks/internal`] = [{ status: 400, body: { error: { message: 'Too many releases' } } }, { body: {} }]
+    const { fetchImpl, calls } = fakePlay(routes)
+    const r = await publishBundle(args(fetchImpl))
+    expect(r).toMatchObject({ status: 'completed', keptDrafts: ['p28-100410'], draftDropped: true })
+    expect(putBody(calls, 1).releases.map((x) => x.name)).toEqual(['350'])
+  })
+
+  it('P28 : un refus de Play remonte tel quel (erreur exacte à noter)', async () => {
+    const routes = happy()
+    routes[`PUT ${EDITS}/E1/tracks/internal`] = { status: 403, body: { error: { message: 'You must complete the foreground service declaration' } } }
+    const { fetchImpl, calls } = fakePlay(routes)
+    const err = await publishBundle(args(fetchImpl, { draft: true, releaseName: 'p28-1' })).catch((e) => e)
+    expect(err.message).toMatch(/Piste internal \(brouillon\) : HTTP 403 — You must complete the foreground service declaration/)
+    expect(calls.at(-1).key).toBe(`DELETE ${EDITS}/E1`)
   })
 
   it('accès refusé : erreur reconnaissable, rien n’est laissé ouvert', async () => {
