@@ -110,6 +110,14 @@ sont pas mesurés par Ciqual : ils restent « inconnus » jusqu'à l'étape N3b,
 des articles scientifiques (citées aliment par aliment). Une valeur « sous la limite de détection » compte zéro, pour
 ne jamais faire apparaître de lactose dans l'oignon.
 
+**N3b préparé (run « idées » du 26/10 20:33)** : les teneurs que Ciqual ne mesure pas auront une source publique et
+réutilisable : le sorbitol et le mannitol de la **table officielle japonaise** (pomme, poire, pêche, pruneau, cerise,
+champignons, céleri…), les fructanes d'une étude slovène de 2024 (oignon, poireau, pain, pâtes, fruits, noix), les GOS
+de deux études sur les légumineuses et le soja (lentilles et pois chiches cuits estimés depuis le sec, en confiance
+basse). L'ail et l'échalote n'ont qu'une valeur citée par une revue (confiance basse). Restent inconnus : sorbitol de
+l'avocat, mannitol du chou-fleur. Au passage, un défaut du calcul N3a sera corrigé avant tout affichage : une teneur
+« inférieure à 0,5 g » ne doit pas faire dire « bas » quand la portion peut dépasser le repère (avocat, chou-fleur).
+
 **Prochain chantier (préparé par le run « idées » du 26/10 08:33)** : la **réintroduction FODMAP guidée** et le
 **rapport PDF pour votre médecin** (jalon 7) sont spécifiés : test d'un groupe sur 3 jours (portion de départ, puis
 double, puis triple, en regardant les 24 h qui suivent), seulement après 3 jours de ventre calme, un groupe à la fois,
@@ -140,6 +148,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 20:33 — [Idées : N3b prêt à coder](runs/2026-10-26-2033-idees-n3b-sources.md) | 💡 | Sources ouvertes des FODMAP non mesurés par Ciqual (`IDEES.md` I177–I179) : sorbitol / mannitol de la table officielle japonaise MEXT 2020, fructanes Ferjančič 2024, GOS Siva 2019 et Natale 2025, pertes à la cuisson Njoumi 2019 ; défaut trouvé dans N3a (« < 0,5 » compté 0) → N3a-bis ; page P28 en ligne vérifiée |
 | 26/10 19:33 — [P28 : film vert, PR #398 mergée](runs/2026-10-26-1933-p28-video-vert.md) | 🏗️ | Deux causes trouvées : l'appui « déplier » tombait sur toute la ligne de la notification (ouvrait l'app) ; connexion DevTools gardée sur une ancienne redirection (port neuf à chaque essai, sans keep-alive). **Film complet de 1 min 48 s** : divulgation → accord → notification avec « Arrêter » → caméra au déverrouillage → « Arrêter » → interrupteur coupé ; publication lancée sur main |
 | 26/10 18:33 — [N3a : FODMAP par sous-groupe (calcul)](runs/2026-10-26-1833-n3a-fodmap-sous-groupes.md) | 🏗️ | `fodmapGroups.js` : lactose / fructose en excès / polyols depuis Ciqual (« < x » = traces = 0), repères Varney 2017, niveau élevé / bas / inconnu par repas, aliments contributeurs ; `fodmapMeasurements.json` vide prêt pour N3b ; rien d'affiché ; 2 448 Vitest |
 | 26/10 17:33 — [P28 : mise au point du film](runs/2026-10-26-1733-p28-video-film.md) | 🏗️ | Reprise de la PR #398 : écran au format de l'A56 (720 × 1560), notification dépliée, ffmpeg statique ; un film de 106 s complet jusqu'au déverrouillage, puis la WebView n'a plus été trouvée par le script sur 2 essais → la prise existe mais la WebView répond trop lentement (délai porté à 30 s, essai suivant à lire) → **PR #398 toujours ouverte** |

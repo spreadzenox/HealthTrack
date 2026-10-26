@@ -9,6 +9,94 @@
 
 ---
 
+## Run du 26/10/2026 20:33 (Paris) — N3b prêt à coder : d'où viendront les fructanes, les GOS, le sorbitol et le mannitol
+
+**But** : que le run de code N3b remplisse `app/src/data/fodmapMeasurements.json` sans chercher ses sources, avec
+uniquement des mesures publiées réutilisables commercialement (jamais Monash ni FODMAP Friendly), et sans fausse
+précision. Tout ce qui suit a été lu dans les documents eux-mêmes le 26/10 (sauf mention « cité par »).
+
+### I177 — Sources retenues (par ordre d'usage)
+
+| # | Source | Licence | Ce qu'on y prend | Remarques |
+|---|---|---|---|---|
+| S1 | **Table de composition japonaise 2020 (8e éd.), volume « glucides »**, MEXT, tableau principal : https://www.mext.go.jp/content/20201225-mxt_kagsei-mext_01110_042.xlsx (md5 `84b49185ce943eece162a586098b0ce7`, mis à jour le 27/12/2021) | Règles du site MEXT : usage commercial permis, compatible CC BY 4.0 ; « les données chiffrées ne sont pas protégées » (https://www.mext.go.jp/b_menu/1351168.htm) | **Sorbitol (`SORTL`) et mannitol (`MANTL`)**, g/100 g, 1 075 aliments, dont 253 avec sorbitol et 190 avec mannitol renseignés | « - » = non mesuré (→ inconnu), « (x) » = estimé par MEXT (→ confiance basse), « Tr » = traces. Exemples : pomme crue 0,5–0,7 sorbitol ; poire « européenne » (2,9) ; pêche jaune 2,7 / blanche 0,3 ; nectarine (0,6) ; abricot (0,3) ; pruneau sec (12,1) ; cerise (2,2) ; champignon de Paris cru mannitol 1,3 ; céleri branche mannitol 1,0. **Non mesurés** : avocat, chou-fleur, patate douce, oignon, ail. |
+| S2 | **Ferjančič B. et al. 2024**, « Fructan content in most commonly consumed Slovenian foods… », *Front. Nutr.* 11:1446771, doi:10.3389/fnut.2024.1446771, tableau 1 | CC BY 4.0 | **Fructanes**, % de matière fraîche (= g/100 g), 37 aliments, méthode AOAC 999.03 (Megazyme) | Oignon 1,97 ; poireau 0,24 ; farine de blé T500 0,75 ; pâtes cuites 0,33 ; pain blanc 0,14 ; pain bis 0,14 ; flocons d'avoine 0,32 ; orge 0,47 ; petits pois en conserve 0,33 ; haricots en conserve 0,24 ; amande 0,60 ; noisette 0,73 ; noix 0,37 ; banane 0,11 ; pomme 0,09 ; orange 0,21 ; poire 0,13 ; mandarine 0,11 ; raisin 0,06 ; chou-fleur 0,09 ; carotte 0,11 ; non détecté : pommes de terre (toutes), riz cuit, corn-flakes, concombre, chou-rave, choucroute. |
+| S3 | **Siva N. et al. 2019**, « Variability in prebiotic carbohydrates in different market classes of chickpea, common bean, and lentil… », *Front. Nutr.* 6:38, doi:10.3389/fnut.2019.00038, tableaux 4 et 5 | CC BY | **GOS** (raffinose, stachyose, verbascose) et **sorbitol / mannitol** des légumineuses **sèches** (mg/100 g, base 10 % d'humidité) | Moyennes : lentilles raffinose 496 + stachyose 2 292 (+ verbascose 1 354), sorbitol 662, mannitol 22 ; haricots 662 + 2 218 (+ 168), sorbitol 0,8, mannitol 5,5 ; pois chiches 441 + 1 533 (+ 120), sorbitol 515, mannitol 17. |
+| S4 | **Natale A. et al. 2025**, « Quantification of naturally occurring prebiotics in selected foods », *Nutrients* 17(4):683, doi:10.3390/nu17040683, tableau 1 | CC BY 4.0 | **GOS** (raffinose + stachyose), g/100 g, produits du commerce italien (HPAEC-PAD) | Boisson au soja 0,039 + 0,230 ; tofu 0,026 + 0,114 ; tempeh < LQ + 0,035 ; yaourt au soja 0,026 + 0,112 ; farine de pois chiche 0,473 + 1,640 ; soja sec 0,513 + 2,810 ; boulgour 0,319 ; semoule 0,237 ; épeautre 0,409 ; son de blé 1,210 ; farine d'avoine 0,101 + 0,164 ; farine de seigle 0,307 ; quinoa 0,057 + 0,046. **Ses « FOS » (kestose, nystose) ne sont pas les fructanes totaux** : ne pas s'en servir pour les fructanes. |
+| S5 | **Njoumi S. et al. 2019**, « Soaking and cooking modify the α-galacto-oligosaccharide and dietary fibre content in five Mediterranean legumes », *Int J Food Sci Nutr* 70(5):551–561, doi:10.1080/09637486.2018.1544229 (HAL hal-02310096) | CC BY-NC-ND 4.0 : on ne reprend que des **facteurs chiffrés** (non protégés), cités | **Pertes de GOS au trempage et à la cuisson** : trempage −10 % (lentille, fève) à −40 % (pois chiche) ; cuisson après trempage : raffinose −32 %, stachyose −25 %, verbascose −35 %. Tableau 1 (sec, mg/100 g MS) : lentille raffinose 283, stachyose 1 829, verbascose 850 ; pois chiche 516, 1 824, 82. | Sert seulement à l'**analogie documentée** « cuit depuis sec » (ci-dessous). |
+
+**Écartées ou en attente** : Muir 2007 / 2009, Biesiekierski 2011, Yao 2014, Whelan 2011 (articles de l'équipe Monash, payants : citables en principe car ce sont des articles, mais **non lus** — ne rien reprendre sans avoir lu le tableau) ; la revue Wang & Cheong 2023 (*Molecules* 28:1613, CC BY) cite d'après Muir l'ail ≈ 17,4 g/100 g, l'échalote ≈ 8,9, le topinambour ≈ 12,2, le blé 1–4 : utilisable seulement en **confiance basse** (« cité par une revue »), faute de mieux pour l'**ail** et l'**échalote**, qui n'ont aucune autre mesure ouverte trouvée ; la base suédoise de Liljebo, Störsrud et Andreasson 2020 (*BMC Nutrition*, doi:10.1186/s40795-020-00374-3, CC BY 4.0) n'est qu'une compilation de ces mêmes articles (utile pour la liste des sources primaires et sa méthode de conversion sec → frais par l'eau de la table nationale) ; Frida (Danemark) : pas de sorbitol / mannitol trouvé, conditions d'usage commercial à vérifier.
+
+### I178 — Règles de calcul proposées pour N3b
+
+1. **Une source par aliment et par groupe**, la plus proche de l'aliment tel que mangé (cru / cuit, frais / sec) ;
+   les autres valeurs vont dans un champ `notes` (pas dans le calcul). Écarts à assumer : l'oignon vaut 1,97 g/100 g
+   chez Ferjančič mais 6,3 dans la base suédoise (d'après Muir 2009) — les fructanes varient fortement selon la
+   variété et la méthode ; avec le repère de 0,3 g par portion, 70 g d'oignon dépassent dans les deux cas.
+2. **GOS = raffinose + stachyose** (comme les mesures qui ont servi aux repères de Varney 2017) ; la verbascose, quand
+   elle est mesurée, va dans `notes` (elle fermente aussi : à revoir si les données personnelles le demandent).
+3. **Cuit depuis sec (légumineuses), en `analogie`** : `GOS_cuit = GOS_sec × (100 − eau_cuit) / (100 − eau_sec) ×
+   rétention`, eau prise dans Ciqual, rétention = (1 − perte au trempage) × (1 − perte à la cuisson) d'après S5
+   (lentille ≈ 0,9 × 0,72 ≈ 0,65 ; pois chiche ≈ 0,6 × 0,72 ≈ 0,43). Ordre de grandeur pour une lentille verte cuite
+   (≈ 70 % d'eau) : 2,79 g × 0,33 × 0,65 ≈ 0,6 g/100 g → 150 g ≈ 0,9 g, au-dessus du repère, comme attendu.
+   Ciqual n'a pas d'eau dans `ingredientsNutrition.json` : l'importeur doit la garder (champ `water_g`) ou la
+   relire depuis le fichier Ciqual au moment de construire `fodmapMeasurements.json`. Conserves : ajouter le
+   jus d'égouttage comme perte supplémentaire non chiffrée → confiance basse, sans autre correction.
+4. **Sorbitol / mannitol : Ciqual d'abord.** Quand Ciqual publie des polyols totaux > 0 (poire 2,02 ; pêche 0,72 ;
+   pruneau sec 9,6 ; céleri 0,8 ; champignon de Paris 0,28), on **répartit ce total** selon les proportions de S1
+   (ou S3) ; la valeur absolue de S1 va dans `notes` (champignon : 1,3 g chez MEXT contre 0,28 total chez Ciqual —
+   gros écart, on garde Ciqual et on le dit). Quand Ciqual n'a rien (pomme : `null`), on prend S1 tel quel.
+   Quand une seule des deux colonnes S1 est mesurée (« - » pour l'autre), la répartition est en `analogie`.
+5. ⚠️ **Correction à faire dans N3a (bug de méthode trouvé ce soir)** : `fodmapGroups.js` compte une teneur Ciqual
+   « < x » comme 0 avec le statut `traces`, donc le niveau du repas peut sortir `bas`. Or pour les polyols la limite
+   Ciqual est souvent « < 0,5 » g/100 g : **avocat, chou-fleur, lentilles et pois chiches cuits** ont « < 0,5 » ; une
+   portion de 100 g pourrait contenir jusqu'à 0,5 g, au-dessus du repère de 0,4 g. Règle proposée : une teneur
+   « < x » donne `bas` seulement si `portion × x / 100` reste sous le repère ; sinon le groupe reste `inconnu` (ou
+   prend la mesure publiée si elle existe). L'exemple de l'oignon reste juste : lactose « < x » avec une petite limite
+   → bien sous 1 g. À couvrir par un test (avocat 100 g → sorbitol `inconnu`, pas `bas`).
+6. **Trous assumés** (resteront « inconnu » faute de mesure ouverte trouvée) : sorbitol de l'avocat, mannitol du
+   chou-fleur et de la patate douce, fructanes de l'artichaut et du seigle (hors farine), GOS des noix de cajou et
+   pistaches. Les runs « idées » suivants peuvent chercher encore ; rien n'est inventé.
+7. **Mise en forme** : chaque entrée de `foods` porte `source` (clé de `sources`, avec titre, doi, licence, tableau),
+   `confidence` (`mesure` ou `analogie`), `analogy_of` pour une analogie, et `notes`. Le test existant vérifie déjà
+   que la source est déclarée et que l'aliment existe. Ajouter un test « aucune valeur sans source » et un test de
+   plausibilité (g/100 g ≤ glucides Ciqual de l'aliment quand ils sont connus).
+
+### I179 — Correspondance de départ (noms exacts de `ingredientsNutrition.json`)
+
+| Aliment de la table | Groupe(s) | Source |
+|---|---|---|
+| `Oignon, cru` | fructanes | S2 (oignon, 1,97) |
+| `Poireau, cru` | fructanes | S2 (0,24) |
+| `Ail, cru`, `Échalote, crue` | fructanes | revue Wang & Cheong 2023 citant Muir 2007 — `analogie`, confiance basse |
+| `Pâtes cuites` | fructanes | S2 (pâtes cuites, 0,33) |
+| `Pain blanc (par ex. : baguette, boule…)`, `Pain de tradition française (par ex. : baguette, boule…)` | fructanes | S2 (pain blanc, 0,14) |
+| `Farine de blé tendre ou froment T…` | fructanes | S2 (T500, 0,75) — `analogie` pour T110 / T150 |
+| `Flocons d'avoine` | fructanes, GOS | S2 (0,32) ; S4 (farine d'avoine, 0,265) |
+| `Amande, avec peau, sans sel ajouté`, `Noisette, sans sel ajouté` | fructanes | S2 (0,60 ; 0,73) |
+| `Banane, chair sans peau, crue`, `Orange, chair sans peau, sans pépins, crue` | fructanes | S2 (0,11 ; 0,21) |
+| `Pomme, chair et peau, crue` | fructanes, sorbitol | S2 (0,09) ; S1 (pomme avec peau, sorbitol 0,5) |
+| `Poire, chair et peau, crue` | fructanes, sorbitol | S2 (0,13) ; Ciqual 2,02 réparti selon S1 (sorbitol) |
+| `Pêche, chair et peau, sans noyau, crue`, `Nectarine ou brugnon, … crue` | sorbitol | Ciqual total réparti selon S1 |
+| `Abricot, dénoyauté, cru`, `Pruneau, sans noyau, sec` | sorbitol | S1 (0,3 estimé ; 12,1 estimé) / Ciqual (« < 0,5 » ; 9,6) |
+| `Champignon de Paris ou champignon de couche, cru` | mannitol | Ciqual 0,28 réparti selon S1 (mannitol seul) ; S1 1,3 en note |
+| `Céleri branche, cru` | mannitol | Ciqual 0,8 réparti selon S1 (mannitol seul) |
+| `Lentille verte / blonde / corail, bouillie/cuite à l'eau` | GOS | S3 sec × règle 3 (`analogie`) |
+| `Pois chiche, bouilli/cuit à l'eau`, `Pois chiches cuits` | GOS | S3 sec × règle 3 (`analogie`) |
+| `Haricot rouge / blanc, bouilli/cuit à l'eau` | GOS | S3 sec × règle 3 (`analogie`) |
+| `Tofu`, `Tofu nature, préemballé`, `Tempeh`, boissons au soja | GOS | S4 (mesures directes) |
+
+**Ce qu'il faut afficher (N4) avec ces données** : la source de chaque teneur dans les détails de la carte d'un repas
+(« fructanes : mesure publiée, Ferjančič 2024 » ; « estimation à partir des lentilles sèches ») et, pour une confiance
+basse, une formulation prudente (« probablement riche en GOS »). Les trous restent « on ne sait pas encore ».
+
+Sources consultées le 26/10/2026 : [Ferjančič 2024](https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2024.1446771/full),
+[Siva 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6462997/), [Natale 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC11858256/),
+[Njoumi 2019 (HAL)](https://hal.science/hal-02310096v1), [MEXT 2020, glucides](https://www.mext.go.jp/a_menu/syokuhinseibun/mext_01110.html),
+[conditions MEXT](https://www.mext.go.jp/b_menu/1351168.htm), [Liljebo 2020, BMC Nutrition](https://bmcnutr.biomedcentral.com/articles/10.1186/s40795-020-00374-3),
+[Wang & Cheong 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9967297/), [Alowo 2025](https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2025.1520510/full)
+(sorgho, millet, soja, sésame ; non retenu pour nos aliments).
+
 ## Run du 26/10/2026 08:33 (Paris) — jalon 7 prêt à coder : réintroduction FODMAP guidée et rapport PDF
 
 Contexte : le jalon 5 (pistes repas → ventre) est affiché depuis le 26/10 03:33 et renforcé jusqu'à 07:33 (I134). Le

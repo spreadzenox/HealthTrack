@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-10-26 (soir) — Veille (run « idées ») : mesures FODMAP par sous-groupe en accès libre
+
+- Sorbitol et mannitol mesurés par aliment existent dans une table **officielle** : Japon, MEXT 2020, volume glucides
+  (colonnes `SORTL`, `MANTL` ; 1 075 aliments, 253 / 190 renseignés) ; usage commercial permis (règles MEXT, compatibles
+  CC BY 4.0). Ni Ciqual ni (a priori) Frida ne séparent les deux.
+- Fructanes en accès libre : Ferjančič et al. 2024 (*Front. Nutr.*, CC BY, 37 aliments courants européens) ; les
+  valeurs varient beaucoup d'une étude à l'autre (oignon 1,97 contre 6,3 g/100 g selon la source).
+- GOS : Siva et al. 2019 (*Front. Nutr.*, CC BY, légumineuses sèches) et Natale et al. 2025 (*Nutrients*, CC BY,
+  soja et céréales) ; pertes au trempage et à la cuisson : Njoumi et al. 2019 (CC BY-NC-ND, facteurs chiffrés seulement).
+- Détail, chiffres et règles : `IDEES.md` I177–I179.
+
 ## 2026-10-21 — Veille (run « idées ») : Health Connect et déclarations Play, pistes SII avec délais, paywall Play
 
 > Détail, sources et idées dans `IDEES.md` (section du 21/10 08:30, I130–I138).

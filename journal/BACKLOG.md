@@ -1173,7 +1173,15 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   par portion Varney 2017 (PMID 28244665) : 0,3 / 0,3 / 0,15 / 1 / 0,4 / 0,4 g ; niveau `élevé` / `bas` (tous connus) /
   `inconnu` ; contributeurs par aliment ; `data/fodmapMeasurements.json` (vide, schéma + test : source déclarée,
   confiance `mesure` / `analogie`). Rien d'affiché.
-- [ ] **N3b** remplir `fodmapMeasurements.json` : fructanes, GOS, sorbitol, mannitol par aliment depuis des articles
+- [ ] **N3a-bis** (petit, à faire avec N3b) : une teneur Ciqual « < x » ne donne `bas` que si `portion × x / 100` reste
+  sous le repère, sinon `inconnu` (polyols « < 0,5 » : avocat, chou-fleur, légumineuses cuites passeraient `bas` à
+  tort) ; test « avocat 100 g → sorbitol inconnu ». Détail : `IDEES.md` I178 règle 5 (run « idées » du 26/10 20:33).
+- [ ] **N3b** remplir `fodmapMeasurements.json` — **sources prêtes** (`IDEES.md` I177–I179, 26/10 20:33) : sorbitol /
+  mannitol de la table japonaise MEXT 2020 (usage commercial permis, compatible CC BY ; xlsx et md5 notés), fructanes de
+  Ferjančič 2024 (CC BY), GOS des légumineuses sèches de Siva 2019 (CC BY) ramenés au cuit par l'eau Ciqual et les pertes
+  de Njoumi 2019 (`analogie`), GOS du soja de Natale 2025 (CC BY) ; Ciqual d'abord pour les polyols (total réparti
+  selon les proportions publiées) ; ail et échalote en confiance basse (cités par une revue) ; correspondance de
+  départ de ~30 aliments avec leurs noms exacts. Ancienne liste de pistes (articles payants, non lus) :
   (pistes : Muir et al. 2007 J Agric Food Chem 55:6619 fructanes légumes et fruits ; Muir et al. 2009 J Agric Food Chem
   57:554 HPLC ; Biesiekierski et al. 2011 J Hum Nutr Diet céréales ; Yao et al. 2014 J Hum Nutr Diet polyols ;
   Tuck / Ly et al. légumineuses) — vérifier chaque valeur dans l'article, citer page / tableau ; un run « idées » peut
