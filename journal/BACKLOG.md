@@ -1165,7 +1165,18 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   d'avertissement en bas de Nutrition) ; renvoyer la part connue par nutriment et l'afficher (« sodium : partiel »)
   dans Nutrition et les KPIs. Valeur Ciqual suspecte vue au passage : fer de l'oignon cru 0,00019 mg (publiée telle
   quelle).
-- [ ] **N3** FODMAP par sous-groupe (fructanes, GOS, lactose, fructose en excès du glucose, sorbitol, mannitol) par
+- [x] **N3a** calcul par sous-groupe — **FAIT le 26/10 18:33** : `services/fodmapGroups.js` (`fodmapPer100g`,
+  `estimateMealFodmap`, `highFodmapGroups`) ; lactose, fructose en excès du glucose, polyols totaux depuis Ciqual
+  (« < x » = traces = 0 ; excès sur glucose « < x » = `approché`) ; polyols nuls ⇒ sorbitol et mannitol nuls ; repères
+  par portion Varney 2017 (PMID 28244665) : 0,3 / 0,3 / 0,15 / 1 / 0,4 / 0,4 g ; niveau `élevé` / `bas` (tous connus) /
+  `inconnu` ; contributeurs par aliment ; `data/fodmapMeasurements.json` (vide, schéma + test : source déclarée,
+  confiance `mesure` / `analogie`). Rien d'affiché.
+- [ ] **N3b** remplir `fodmapMeasurements.json` : fructanes, GOS, sorbitol, mannitol par aliment depuis des articles
+  (pistes : Muir et al. 2007 J Agric Food Chem 55:6619 fructanes légumes et fruits ; Muir et al. 2009 J Agric Food Chem
+  57:554 HPLC ; Biesiekierski et al. 2011 J Hum Nutr Diet céréales ; Yao et al. 2014 J Hum Nutr Diet polyols ;
+  Tuck / Ly et al. légumineuses) — vérifier chaque valeur dans l'article, citer page / tableau ; un run « idées » peut
+  préparer la liste. Puis brancher `fodmap_score` des nouveaux repas sur le sous-groupe (anciens exports lisibles).
+- [ ] **N3** (reste) FODMAP par sous-groupe (fructanes, GOS, lactose, fructose en excès du glucose, sorbitol, mannitol) par
   portion : lactose / fructose / glucose / polyols depuis Ciqual, fructanes / GOS / sorbitol / mannitol depuis des
   mesures publiées citées par aliment (jamais Monash ni FODMAP Friendly), sinon « inconnu » ou analogie à confiance
   basse ; `fodmap_score` reste lisible dans les anciens exports.

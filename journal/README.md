@@ -100,6 +100,15 @@ bougent peu (33 aliments à plus de 10 % : pâtes cuites 131 → 167 kcal, riz b
 165 → 141) ; ail cru : potassium 200 → 530 mg, vitamine C 10 → 0,25 mg. En bas de Nutrition, la source est citée et
 une phrase dit qu'une teneur non mesurée n'est pas comptée. Ensuite : les FODMAP isolés par sous-groupe (fructanes,
 GOS, lactose, fructose, sorbitol, mannitol).
+**✅ N3a le 26/10 18:33 : le calcul des FODMAP par sous-groupe est prêt (rien d'affiché encore).** Pour chaque repas,
+l'app sait désormais estimer, groupe par groupe, combien de lactose, de fructose « en excès du glucose » et de polyols
+il contient (mesures Ciqual : 1 739 aliments ont leur lactose, 1 883 leur fructose et glucose), quels aliments les
+apportent, et si la portion dépasse le repère de départ publié (Varney et al. 2017 : 0,3 g de fructanes ou de GOS,
+0,15 g de fructose en excès, 1 g de lactose, 0,4 g de polyols). Exemple : 125 ml de lait demi-écrémé → lactose au-dessus
+du repère ; une poire de 150 g → fructose en excès. Les **fructanes et les GOS** (blé, oignon, ail, légumineuses) ne
+sont pas mesurés par Ciqual : ils restent « inconnus » jusqu'à l'étape N3b, qui reprendra des mesures publiées dans
+des articles scientifiques (citées aliment par aliment). Une valeur « sous la limite de détection » compte zéro, pour
+ne jamais faire apparaître de lactose dans l'oignon.
 
 **Prochain chantier (préparé par le run « idées » du 26/10 08:33)** : la **réintroduction FODMAP guidée** et le
 **rapport PDF pour votre médecin** (jalon 7) sont spécifiés : test d'un groupe sur 3 jours (portion de départ, puis
@@ -130,6 +139,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 18:33 — [N3a : FODMAP par sous-groupe (calcul)](runs/2026-10-26-1833-n3a-fodmap-sous-groupes.md) | 🏗️ | `fodmapGroups.js` : lactose / fructose en excès / polyols depuis Ciqual (« < x » = traces = 0), repères Varney 2017, niveau élevé / bas / inconnu par repas, aliments contributeurs ; `fodmapMeasurements.json` vide prêt pour N3b ; rien d'affiché ; 2 448 Vitest |
 | 26/10 17:33 — [P28 : mise au point du film](runs/2026-10-26-1733-p28-video-film.md) | 🏗️ | Reprise de la PR #398 : écran au format de l'A56 (720 × 1560), notification dépliée, ffmpeg statique ; un film de 106 s complet jusqu'au déverrouillage, puis la WebView n'a plus été trouvée par le script sur 2 essais → la prise existe mais la WebView répond trop lentement (délai porté à 30 s, essai suivant à lire) → **PR #398 toujours ouverte** |
 | 26/10 16:33 — [N2 : table rebâtie depuis Ciqual 2025](runs/2026-10-26-1633-n2-table-ciqual-2025.md) | 🏗️ | `ingredientsNutrition.json` reconstruite depuis Ciqual 2025 (Anses, Zenodo, CC BY 4.0, md5 vérifiés) : code Ciqual par aliment, inconnu = null, 69 alias pour les noms simples, mêmes 3 553 clés dans le même ordre ; audit 3 506 → 33 micros recopiés, 201 → 0 AGS > lipides ; attribution dans Nutrition |
 | 26/10 15:46 — [P28 : vidéo filmée par la CI](runs/2026-10-26-1546-p28-video-ci.md) | 🏗️ | Workflow « Play — vidéo P28 » (APK d'aperçu, émulateur, pilotage DevTools + appuis adb, preuve par plan, publication Pages) ; caméra au déverrouillage prouvée, notification pas encore filmée → **PR #398 ouverte, non mergée** ; ciqual.anses.fr toujours en 503 |
