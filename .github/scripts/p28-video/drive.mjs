@@ -97,8 +97,11 @@ async function expandOurNotification() {
   const xml = dumpUi()
   const title = nodeCenter(xml, /Lecture du visage active/)
   if (!title) return false
-  const chevrons = nodeCenters(xml, /expand_button|développer|expand/i)
-    .filter((c) => Math.abs(c[1] - title[1]) < 120)
+  // Seulement le bouton chevron : `expand` seul attrapait aussi `expandableNotificationRow` (toute la ligne), dont
+  // le centre ouvre l'app au lieu de déplier (essai du 26/10 18:42, logcat « NotificationLaunchAnimatorController »).
+  writeFileSync(`steps/ui-volet-${Date.now()}.xml`, xml)
+  const chevrons = nodeCenters(xml, /:id\/expand_button$|^(expand|développer|afficher plus)\b/i)
+    .filter((c) => Math.abs(c[1] - title[1]) < 120 && c[0] > title[0])
     .sort((a, b) => Math.abs(a[1] - title[1]) - Math.abs(b[1] - title[1]))
   if (chevrons.length) shell(`input tap ${chevrons[0][0]} ${chevrons[0][1]}`)
   else shell(`input swipe ${title[0]} ${title[1]} ${title[0]} ${title[1] + 300} 400`)
