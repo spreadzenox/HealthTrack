@@ -25,6 +25,16 @@ See `CONTRIBUTING.md` for TDD conventions and test file locations.
 
 A scheduled Claude routine improves the app every 2 hours. Its charter, backlog, research notes and per-run reports live in `journal/` (start with `journal/README.md`). User-visible changes get an entry in `app/src/data/changelog/` (one JSON file per change), shown in-app on the « Nouveautés » page.
 
+### iOS parity routine (separate, runs in parallel)
+
+A second scheduled routine, « Halcya iOS — parité avec Android » (hourly at :59 Paris time, sessions tagged `healthtrack-ios-routine`, PRs titled `[iOS] …`), ports the app to iOS and keeps the iOS version at the same feature level and version number as the Google Play version. Its charter, parity matrix and reports live in `journal/ios/` (start with `journal/ios/README.md`). The Android/product routine (`[Auto]` PRs) leads the product; the iOS routine follows and must never slow it down or change Android behaviour.
+
+Ownership, so the two routines never step on each other:
+
+- **iOS routine only**: `app/ios/**`, `app/scripts/ios/**`, `app/store-ios/**`, `.github/workflows/ios-*.yml`, `journal/ios/**`. The Android routine does not edit these, does not touch `[iOS]` PRs, and an `ios-*` workflow failing is not an Android failure to fix.
+- **Android routine only**: `app/android/**`, the other workflows, `app/store/**`, `app/scripts/play/**`, and the rest of `journal/`. The iOS routine reads them but never writes there.
+- **Shared** (`app/src/**`, `relay/**`, package files, Capacitor/Vite config): iOS changes must be additive, minimal and behind a platform/variant check (`Capacitor.getPlatform() === 'ios'` or the `appstore` distribution), with zero behaviour change for the `play` and `sideload` variants. Don't remove or "clean up" an iOS hook you find in shared code: the Android tests cover it on purpose.
+
 ### Gotchas
 
 - AI food analysis requires a `GEMINI_API_KEY` set in the app's Settings page (stored locally, never in the repo).

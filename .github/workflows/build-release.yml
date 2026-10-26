@@ -9,6 +9,11 @@ on:
     # pas de nouvelle release (sinon bannière de mise à jour pour rien).
     paths-ignore:
       - "journal/**"
+      # Version iOS (routine iOS, journal/ios/README.md) : rien ne change côté Android
+      - "app/ios/**"
+      - "app/scripts/ios/**"
+      - "app/store-ios/**"
+      - ".github/workflows/ios-*.yml"
   workflow_dispatch:
 
 permissions:
