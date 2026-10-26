@@ -4,8 +4,7 @@
 # déverrouillage allumée) selon le script de journal/PLAY-CONFORMITE.md §1 bis : Sources → « Aussi à chaque
 # déverrouillage » → divulgation → accord → notification « Lecture du visage active » avec « Arrêter » →
 # verrouillage / déverrouillage (point vert de la caméra) → Accueil → « Arrêter ». Données de démonstration
-# synthétiques ; dans la caméra virtuelle, un portrait du domaine public (NASA, déjà utilisé par les tests du
-# pipeline visage), jamais visible dans la vidéo. Rien de réel.
+# synthétiques ; caméra frontale de l'émulateur = mire synthétique. Rien de réel.
 #
 # - Sur une PR qui touche ce workflow ou son script : filme et publie la vidéo en artefact seulement (vérification).
 # - Lancé à la main sur main (Actions → « Play — vidéo P28 » → Run workflow) : publie aussi la vidéo à une adresse
@@ -80,33 +79,21 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      # Caméra frontale de l'émulateur = webcam virtuelle (v4l2loopback) qui diffuse le portrait. Si le module ne
-      # se charge pas sur ce runner, la scène virtuelle de l'émulateur sert de secours (la vidéo montre quand même
-      # la caméra s'ouvrir ; seule la nouvelle lecture du plan 7 peut manquer).
-      - name: Webcam virtuelle avec le portrait
-        id: cam
-        continue-on-error: true
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg v4l2loopback-dkms "linux-headers-$(uname -r)" || sudo apt-get install -y -qq ffmpeg
-          sudo modprobe v4l2loopback devices=1 video_nr=0 exclusive_caps=1 card_label=p28cam
-          sudo chmod 666 /dev/video0
-          nohup ffmpeg -loglevel error -re -loop 1 -i app/android/app/src/test/resources/face/face-frontal.png \
-            -vf "scale=640:480:force_original_aspect_ratio=decrease,pad=640:480:(ow-iw)/2:(oh-ih)/2:color=white,format=yuyv422" \
-            -r 15 -f v4l2 /dev/video0 > ffmpeg-cam.log 2>&1 &
-          sleep 3
-          v4l2-ctl --all -d /dev/video0 2>/dev/null | head -20 || true
-          echo "camera=webcam0" >> "$GITHUB_OUTPUT"
-
+      # Caméra frontale de l'émulateur : mire « emulated » (la scène virtuelle n'existe que pour la caméra arrière).
+      # La vidéo montre la caméra s'ouvrir au déverrouillage (point vert) ; sans visage, aucune lecture n'est gardée
+      # (plan 7 facultatif : la carte montre les lectures de démonstration). Essai du 26/10 écarté : une webcam
+      # virtuelle v4l2loopback ne se charge pas sur le noyau Azure des runners (module videodev absent) et son
+      # installation par apt prend plus de 30 min.
       - name: Installer l'image système API 35
         run: |
           sdkmanager --no_https "platforms;android-35" "emulator" "system-images;android-35;google_apis;x86_64"
-          if ! command -v ffmpeg >/dev/null; then sudo apt-get install -y -qq ffmpeg; fi
 
       - name: "Créer l'AVD (Galaxy A56, 1080 × 2340, 385 ppi)"
         run: |
           echo "no" | avdmanager create avd --name a56 --package "system-images;android-35;google_apis;x86_64" --device pixel_6 --force
-          CFG="$HOME/.android/avd/a56.avd/config.ini"
+          AVD_DIR=$(avdmanager list avd 2>/dev/null | grep -A3 "Name: a56" | grep "Path:" | awk '{print $2}')
+          CFG="$AVD_DIR/config.ini"
+          test -f "$CFG" || { echo "::error::config.ini de l'AVD introuvable"; avdmanager list avd; exit 1; }
           for kv in hw.lcd.width=1080 hw.lcd.height=2340 hw.lcd.density=385 hw.ramSize=6144 hw.sdCard=no hw.keyboard=no; do
             k="${kv%%=*}"; sed -i "/^${k}=/d" "$CFG"; echo "$kv" >> "$CFG"
           done
@@ -121,7 +108,7 @@ jobs:
           force-avd-creation: false
           emulator-options: >-
             -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-            -camera-front ${{ steps.cam.outputs.camera || 'virtualscene' }} -camera-back none
+            -camera-front emulated -camera-back none
           disable-animations: false
           script: bash .github/scripts/p28-video/run.sh
 
