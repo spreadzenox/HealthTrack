@@ -1172,6 +1172,8 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   (« Alcool (éthanol) », vitamine A en équivalents rétinol, vitamine E en alpha-tocophérol à défaut, énergie
   recalculée depuis les macros quand elle n'est pas publiée, marquée `calculé`) ; 69 alias (`aliases.mjs`) pour les
   noms simples ; mêmes clés, même ordre ; attribution CC BY en bas de Nutrition ; test de la table livrée.
+- [x] Test `UpdateBanner` « progression en Mo et en % » fiabilisé le 26/10 22:33 (attentes 3 s → 10 s : le suivi
+  interroge toutes les 800 ms en temps réel ; échec vu sous la charge de la suite complète).
 - [ ] **N2b** inconnu ≠ 0 dans les totaux : `computeTotalsFromItems` compte encore une teneur `null` comme 0 (phrase
   d'avertissement en bas de Nutrition) ; renvoyer la part connue par nutriment et l'afficher (« sodium : partiel »)
   dans Nutrition et les KPIs. Valeur Ciqual suspecte vue au passage : fer de l'oignon cru 0,00019 mg (publiée telle
@@ -1182,10 +1184,22 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   par portion Varney 2017 (PMID 28244665) : 0,3 / 0,3 / 0,15 / 1 / 0,4 / 0,4 g ; niveau `élevé` / `bas` (tous connus) /
   `inconnu` ; contributeurs par aliment ; `data/fodmapMeasurements.json` (vide, schéma + test : source déclarée,
   confiance `mesure` / `analogie`). Rien d'affiché.
-- [ ] **N3a-bis** (petit, à faire avec N3b) : une teneur Ciqual « < x » ne donne `bas` que si `portion × x / 100` reste
+- [x] **N3a-bis** — **FAIT le 26/10 22:33** (limite « < x » gardée en `max` ; `bas` seulement si le total au plafond reste sous le repère ; une mesure publiée ne précise un « < x » que si elle est ≤ x). Détail d'origine : : une teneur Ciqual « < x » ne donne `bas` que si `portion × x / 100` reste
   sous le repère, sinon `inconnu` (polyols « < 0,5 » : avocat, chou-fleur, légumineuses cuites passeraient `bas` à
   tort) ; test « avocat 100 g → sorbitol inconnu ». Détail : `IDEES.md` I178 règle 5 (run « idées » du 26/10 20:33).
-- [ ] **N3b** remplir `fodmapMeasurements.json` — **sources prêtes** (`IDEES.md` I177–I179, 26/10 20:33) : sorbitol /
+- [x] **N3b-1** — **FAIT le 26/10 22:33** : `fodmapMeasurements.json` v2 (une entrée par groupe : `g` ou `share` des polyols
+  Ciqual, `source`, `ref`, `confidence` `mesure` / `analogie` / `citée`, `notes`) ; 32 aliments : fructanes Ferjančič 2024
+  (oignon, poireau, pâtes, pain, farine T55 en analogie, avoine, amande, noisette, noix, banane, orange, clémentine, raisin,
+  pomme, poire), ail 17,4 et échalote 8,9 cités par Wang & Cheong 2023 (confiance basse), GOS Natale 2025 (tofu, tempeh,
+  boisson au soja, farine de pois chiche, soja, avoine en analogie), sorbitol / mannitol MEXT (pomme 0,5 ; parts des polyols
+  Ciqual : poire, pêche, pruneau → sorbitol ; champignon, céleri → mannitol ; abricot 0,3 précise « < 0,5 »). Tests :
+  intégrité (nom Ciqual non alias, source, confiance, part seulement si Ciqual mesure des polyols > 0, valeur ≤ glucides,
+  chaque valeur réellement utilisée) + exemples (oignon 70 g, ail 3 g, pomme, poire, tofu, pâtes).
+- [ ] **N3b-2** GOS des légumineuses cuites (lentilles, pois chiches, haricots ; S3 Siva 2019 × règle 3 d'`IDEES.md` I178,
+  `analogie`) : garder l'eau Ciqual (`water_g`) dans l'importeur ou la relire du fichier Ciqual ; nectarine (MEXT 0,6 >
+  Ciqual « < 0,5 » : contradiction, laissée inconnue), cerise, autres aliments MEXT ; brancher `fodmap_score` des nouveaux
+  repas sur les sous-groupes (anciens exports lisibles). Ancienne note N3b :
+- [ ] ~~**N3b**~~ remplir `fodmapMeasurements.json` — **sources prêtes** (`IDEES.md` I177–I179, 26/10 20:33) : sorbitol /
   mannitol de la table japonaise MEXT 2020 (usage commercial permis, compatible CC BY ; xlsx et md5 notés), fructanes de
   Ferjančič 2024 (CC BY), GOS des légumineuses sèches de Siva 2019 (CC BY) ramenés au cuit par l'eau Ciqual et les pertes
   de Njoumi 2019 (`analogie`), GOS du soja de Natale 2025 (CC BY) ; Ciqual d'abord pour les polyols (total réparti

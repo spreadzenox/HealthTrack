@@ -62,6 +62,9 @@ describe('UpdateBanner', () => {
     expect(screen.getByRole('button', { name: 'Télécharger depuis le navigateur' })).toBeInTheDocument()
   })
 
+  // Le suivi interroge le téléchargement toutes les 800 ms en temps réel : sous la charge de la suite complète, 3 s
+  // ne suffisaient pas toujours (échec ponctuel du 26/10). Marges larges, sans rien changer à ce qui est vérifié.
+  const WAIT = 10_000
   it('montre la progression en Mo et en %, puis ouvre l’installateur', async () => {
     const plugin = fakePlugin([{ state: 'none' }])
     // Le téléchargement reste « en cours » tant que le test n'a pas vu la progression (indépendant du minutage)
@@ -75,14 +78,14 @@ describe('UpdateBanner', () => {
     window.__HT_APP_UPDATE__ = plugin
     render(<UpdateBanner />)
     fireEvent.click(await screen.findByRole('button', { name: /Mettre à jour \(33,6\sMo\)/ }))
-    const bar = await screen.findByRole('progressbar', {}, { timeout: 3000 })
-    await waitFor(() => expect(bar).toHaveAttribute('aria-valuenow', '36'), { timeout: 3000 })
+    const bar = await screen.findByRole('progressbar', {}, { timeout: WAIT })
+    await waitFor(() => expect(bar).toHaveAttribute('aria-valuenow', '36'), { timeout: WAIT })
     expect(screen.getByText(/12,3\sMo \/ 33,6\sMo · 36 %/)).toBeInTheDocument()
     expect(screen.getByText(/le téléchargement continue/)).toBeInTheDocument()
     finished = true
-    await waitFor(() => expect(plugin.install).toHaveBeenCalled(), { timeout: 3000 })
+    await waitFor(() => expect(plugin.install).toHaveBeenCalled(), { timeout: WAIT })
     expect(await screen.findByText(/L’installateur Android est ouvert/)).toBeInTheDocument()
-  })
+  }, 30_000)
 
   it('échec : message exact, « Réessayer » et le navigateur en secours', async () => {
     const plugin = fakePlugin([{ state: 'failed', reason: 404, version: '188' }])

@@ -41,15 +41,29 @@ describe('fodmapPer100g', () => {
     expect(r.fructans.status).toBe('inconnu')
     expect(r.gos.status).toBe('inconnu')
   })
-  it('reprend une mesure publiée avec sa source, et une analogie en confiance basse', () => {
-    const r = fodmapPer100g(T.Poire, { sorbitol_g: 1.5, fructans_g: 0.1, source: 'art1', confidence: 'mesure' })
-    expect(r.sorbitol).toEqual({ g: 1.5, status: 'mesuré', source: 'art1', confidence: 'mesure' })
-    expect(r.fructans.g).toBe(0.1)
-    const a = fodmapPer100g(T.Oignon, { fructans_g: 2, source: 'art2', confidence: 'analogie' })
-    expect(a.fructans).toMatchObject({ status: 'approché', confidence: 'basse' })
+  it('reprend une mesure publiée avec sa source, et une analogie ou une valeur citée en confiance basse', () => {
+    const r = fodmapPer100g(T.Oignon, { fructans: { g: 1.97, source: 'art1', confidence: 'mesure' } })
+    expect(r.fructans).toEqual({ g: 1.97, status: 'mesuré', source: 'art1', confidence: 'mesure' })
+    const a = fodmapPer100g(T.Oignon, { gos: { g: 2, source: 'art2', confidence: 'analogie' } })
+    expect(a.gos).toMatchObject({ status: 'approché', confidence: 'basse' })
+    const c = fodmapPer100g(T.Oignon, { fructans: { g: 17, source: 'revue', confidence: 'citée' } })
+    expect(c.fructans).toMatchObject({ g: 17, confidence: 'basse' })
+  })
+  it('répartit les polyols totaux Ciqual selon la part publiée (Ciqual d’abord)', () => {
+    const r = fodmapPer100g(T.Poire, { sorbitol: { share: 1, source: 'mext', confidence: 'analogie' } })
+    expect(r.sorbitol).toEqual({ g: 2, status: 'approché', source: 'Ciqual + mext', confidence: 'basse' })
+    expect(r.mannitol.status).toBe('inconnu')
+    // une valeur absolue plus grande que le total Ciqual le contredirait : ignorée
+    expect(fodmapPer100g(T.Poire, { sorbitol: { g: 2.9, source: 'mext' } }).sorbitol.status).toBe('inconnu')
   })
   it('ne remplace jamais une valeur Ciqual par une mesure publiée', () => {
-    expect(fodmapPer100g(T.Riz, { sorbitol_g: 3, source: 'x' }).sorbitol.g).toBe(0)
+    expect(fodmapPer100g(T.Riz, { sorbitol: { g: 3, source: 'x' } }).sorbitol.g).toBe(0)
+  })
+  it('garde la limite d’une teneur « < x » ; une mesure publiée la précise seulement sans la contredire', () => {
+    const avocat = { polyols_g: 0.25, _q: { polyols_g: '<0.5' } }
+    expect(fodmapPer100g(avocat).sorbitol).toEqual({ g: 0, status: 'traces', max: 0.5, source: 'Ciqual' })
+    expect(fodmapPer100g(avocat, { sorbitol: { g: 0.3, source: 's', confidence: 'mesure' } }).sorbitol.g).toBe(0.3)
+    expect(fodmapPer100g(avocat, { sorbitol: { g: 0.6, source: 's' } }).sorbitol.status).toBe('traces')
   })
   it('aliment absent de la table : tout inconnu', () => {
     const r = fodmapPer100g(undefined)
@@ -81,13 +95,21 @@ describe('estimateMealFodmap', () => {
     const big = estimateMealFodmap([{ ingredient: 'Poire', quantity_g: 150 }], T)
     expect(big.sorbitol.level).toBe('inconnu')
   })
+  it('« < x » : bas seulement si le repas reste sous le repère au plafond de la limite (N3a-bis)', () => {
+    const avocat = { lactose_g: 0.1, polyols_g: 0.25, _q: { lactose_g: '<0.2', polyols_g: '<0.5' } }
+    const t = { ...T, Avocat: avocat }
+    const r = estimateMealFodmap([{ ingredient: 'Avocat', quantity_g: 100 }], t)
+    expect(r.sorbitol.level).toBe('inconnu') // jusqu'à 0,5 g ≥ 0,4
+    expect(r.lactose.level).toBe('bas') // jusqu'à 0,2 g < 1
+    expect(estimateMealFodmap([{ ingredient: 'Avocat', quantity_g: 30 }], t).sorbitol.level).toBe('bas')
+  })
   it('ignore les aliments sans quantité ; repas vide : tout inconnu', () => {
     const r = estimateMealFodmap([{ ingredient: 'Lait' }, { ingredient: '', quantity_g: 10 }], T)
     for (const g of FODMAP_SUBGROUPS) expect(r[g].level).toBe('inconnu')
     expect(estimateMealFodmap(null, T).lactose.level).toBe('inconnu')
   })
   it('cherche les mesures publiées sous le nom de l’alias', () => {
-    const m = { foods: { Riz: { fructans_g: 0.5, source: 's' } } }
+    const m = { foods: { Riz: { fructans: { g: 0.5, source: 's' } } } }
     const r = estimateMealFodmap([{ ingredient: 'Riz (alias)', quantity_g: 100 }], T, m)
     expect(r.fructans).toMatchObject({ g: 0.5, level: 'élevé' })
   })
@@ -110,12 +132,49 @@ describe('cohérence avec la réintroduction et les données livrées', () => {
     const poire = estimateMealFodmap([{ ingredient: 'Poire', quantity_g: 150 }], table)
     expect(poire.fructose.level).toBe('élevé')
   })
-  it('mesures publiées : chaque aliment existe dans la table et cite une source déclarée', () => {
-    for (const [name, m] of Object.entries(measurements.foods)) {
-      expect(table[name], name).toBeTruthy()
-      expect(measurements.sources[m.source], `${name} : source`).toBeTruthy()
-      expect(['mesure', 'analogie']).toContain(m.confidence)
-      if (m.confidence === 'analogie') expect(table[m.analogy_of], `${name} : analogie`).toBeTruthy()
+  it('table livrée : 100 g d’avocat (polyols « < 0,5 ») ne passent pas pour pauvres en sorbitol', () => {
+    const r = estimateMealFodmap([{ ingredient: 'Avocat', quantity_g: 100 }], table, measurements)
+    expect(r.sorbitol.level).toBe('inconnu')
+  })
+  it('table livrée + mesures : oignon et ail riches en fructanes, pomme en sorbitol, tofu pauvre en GOS', () => {
+    const est = (ingredient, quantity_g) => estimateMealFodmap([{ ingredient, quantity_g }], table, measurements)
+    expect(est('Oignon, cru', 70).fructans).toMatchObject({ level: 'élevé', g: 1.379 })
+    expect(est('Ail, cru', 3).fructans.level).toBe('élevé')
+    expect(est('Pomme', 150).sorbitol).toMatchObject({ level: 'élevé', g: 0.75 })
+    expect(est('Poire', 150).sorbitol.contributors[0].source).toBe('Ciqual + mext2020')
+    expect(est('Tofu', 100).gos).toMatchObject({ level: 'bas', g: 0.14 })
+    expect(est('Pâtes cuites', 200).fructans.level).toBe('élevé') // cherché sous le nom Ciqual de l'alias
+  })
+  it('mesures publiées : aliment existant, source déclarée, valeur ou part plausible', () => {
+    const groups = ['fructans', 'gos', 'sorbitol', 'mannitol']
+    expect(Object.keys(measurements.foods).length).toBeGreaterThan(20)
+    for (const [name, entry] of Object.entries(measurements.foods)) {
+      const food = table[name]
+      expect(food, name).toBeTruthy()
+      expect(food.alias_of, `${name} : nom Ciqual, pas un alias`).toBeUndefined()
+      for (const [group, m] of Object.entries(entry)) {
+        const label = `${name} / ${group}`
+        expect(groups, label).toContain(group)
+        expect(measurements.sources[m.source], `${label} : source`).toBeTruthy()
+        expect(['mesure', 'analogie', 'citée'], label).toContain(m.confidence)
+        if (m.analogy_of) expect(table[m.analogy_of], `${label} : analogie`).toBeTruthy()
+        if ('share' in m) {
+          expect(['sorbitol', 'mannitol'], label).toContain(group)
+          expect(m.share, label).toBeGreaterThan(0)
+          expect(m.share, label).toBeLessThanOrEqual(1)
+          // une part ne sert que si Ciqual mesure des polyols totaux > 0
+          expect(food.polyols_g, label).toBeGreaterThan(0)
+          expect(food._q?.polyols_g, label).toBeUndefined()
+        } else {
+          expect(typeof m.g, `${label} : valeur sans source ni nombre`).toBe('number')
+          expect(m.g, label).toBeGreaterThanOrEqual(0)
+          if (typeof food.carbohydrates_g === 'number' && food._q?.carbohydrates_g == null) {
+            expect(m.g, `${label} ≤ glucides`).toBeLessThanOrEqual(food.carbohydrates_g)
+          }
+        }
+        // chaque valeur doit être réellement utilisée par le calcul
+        expect(fodmapPer100g(food, entry)[group].source, `${label} : valeur ignorée`).toMatch(new RegExp(m.source))
+      }
     }
   })
 })

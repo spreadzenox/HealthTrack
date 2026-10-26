@@ -1,6 +1,131 @@
 {
-  "_doc": "Teneurs FODMAP par sous-groupe que Ciqual ne mesure pas (fructanes, GOS, sorbitol, mannitol), en g pour 100 g, reprises de mesures publiées dans des articles scientifiques (jamais des apps Monash ou FODMAP Friendly). Chaque aliment cite sa source (clé de `sources`) ; `confidence` vaut `mesure` (aliment mesuré) ou `analogie` (aliment proche mesuré, confiance basse, avec `analogy_of`). Clés = noms de ingredientsNutrition.json. Rempli à l'étape N3b.",
-  "version": 1,
-  "sources": {},
-  "foods": {}
+  "_doc": "Teneurs FODMAP par sous-groupe que Ciqual ne mesure pas (fructanes, GOS, sorbitol, mannitol), reprises de mesures publiées dans des articles scientifiques ou des tables officielles (jamais des apps Monash ou FODMAP Friendly). Clés = noms de ingredientsNutrition.json ; une entrée par groupe : `g` (g pour 100 g d'aliment tel que mangé) ou, pour le sorbitol et le mannitol, `share` (part des polyols totaux Ciqual de l'aliment, quand Ciqual les mesure), `source` (clé de `sources`), `ref` (tableau / ligne de la source), `confidence` : `mesure` (cet aliment mesuré), `analogie` (aliment proche, ou répartition supposée ; confiance basse) ou `citée` (valeur citée par une revue, article primaire non lu ; confiance basse), `notes`. Recherche des sources : journal/IDEES.md I177–I179 (26/10/2026).",
+  "version": 2,
+  "sources": {
+    "ferjancic2024": {
+      "title": "Ferjančič B. et al., Fructan content in most commonly consumed Slovenian foods, Front. Nutr. 2024;11:1446771",
+      "doi": "10.3389/fnut.2024.1446771",
+      "license": "CC BY 4.0",
+      "method": "AOAC 999.03 (fructanes totaux), % de matière fraîche"
+    },
+    "natale2025": {
+      "title": "Natale A. et al., Quantification of naturally occurring prebiotics in selected foods, Nutrients 2025;17(4):683",
+      "doi": "10.3390/nu17040683",
+      "license": "CC BY 4.0",
+      "method": "HPAEC-PAD ; GOS = raffinose + stachyose, g/100 g"
+    },
+    "mext2020": {
+      "title": "MEXT, Standard Tables of Food Composition in Japan 2020 (8e éd.), volume « glucides disponibles », tableau principal (colonnes SORTL, MANTL)",
+      "url": "https://www.mext.go.jp/a_menu/syokuhinseibun/mext_01110.html",
+      "license": "Conditions du site MEXT : réutilisation commerciale permise, compatible CC BY 4.0",
+      "method": "g/100 g ; « (x) » = valeur estimée par MEXT"
+    },
+    "wangcheong2023": {
+      "title": "Wang X., Cheong K.-L., Recent advances in fructans… (revue), Molecules 2023;28:1613, citant Muir J.G. et al. 2007",
+      "doi": "10.3390/molecules28041613",
+      "license": "CC BY 4.0",
+      "method": "valeurs citées par une revue (article primaire non lu) : confiance basse"
+    }
+  },
+  "foods": {
+    "Oignon, cru": {
+      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "mesure", "notes": "La base suédoise de Liljebo 2020 (d'après Muir 2009) donne 6,3 : forte variabilité selon la variété et la méthode." }
+    },
+    "Oignon jaune, cru": {
+      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru" }
+    },
+    "Oignon rouge, cru": {
+      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru" }
+    },
+    "Poireau, cru": {
+      "fructans": { "g": 0.24, "source": "ferjancic2024", "ref": "tableau 1, poireau", "confidence": "mesure" }
+    },
+    "Ail, cru": {
+      "fructans": { "g": 17.4, "source": "wangcheong2023", "ref": "citant Muir 2007", "confidence": "citée" }
+    },
+    "Échalote, crue": {
+      "fructans": { "g": 8.9, "source": "wangcheong2023", "ref": "citant Muir 2007", "confidence": "citée" }
+    },
+    "Pâtes sèches, standard, cuites, sans sel ajouté": {
+      "fructans": { "g": 0.33, "source": "ferjancic2024", "ref": "tableau 1, pâtes cuites", "confidence": "mesure" }
+    },
+    "Pain blanc (par ex. : baguette, boule…)": {
+      "fructans": { "g": 0.14, "source": "ferjancic2024", "ref": "tableau 1, pain blanc", "confidence": "mesure" }
+    },
+    "Pain de tradition française (par ex. : baguette, boule…)": {
+      "fructans": { "g": 0.14, "source": "ferjancic2024", "ref": "tableau 1, pain blanc", "confidence": "analogie", "analogy_of": "Pain blanc (par ex. : baguette, boule…)" }
+    },
+    "Farine de blé tendre ou froment T55 (pour pains)": {
+      "fructans": { "g": 0.75, "source": "ferjancic2024", "ref": "tableau 1, farine de blé type 500", "confidence": "analogie", "notes": "Type 500 slovène ≈ T55 française (taux de cendres voisin)." }
+    },
+    "Flocons d'avoine": {
+      "fructans": { "g": 0.32, "source": "ferjancic2024", "ref": "tableau 1, flocons d'avoine", "confidence": "mesure" },
+      "gos": { "g": 0.265, "source": "natale2025", "ref": "tableau 1, farine d'avoine (raffinose 0,101 + stachyose 0,164)", "confidence": "analogie", "notes": "Mesuré sur de la farine d'avoine." }
+    },
+    "Amande, avec peau, sans sel ajouté": {
+      "fructans": { "g": 0.6, "source": "ferjancic2024", "ref": "tableau 1, amande", "confidence": "mesure" }
+    },
+    "Noisette, sans sel ajouté": {
+      "fructans": { "g": 0.73, "source": "ferjancic2024", "ref": "tableau 1, noisette", "confidence": "mesure" }
+    },
+    "Noix, cerneau, séchée": {
+      "fructans": { "g": 0.37, "source": "ferjancic2024", "ref": "tableau 1, noix", "confidence": "mesure" }
+    },
+    "Banane, chair sans peau, crue": {
+      "fructans": { "g": 0.11, "source": "ferjancic2024", "ref": "tableau 1, banane", "confidence": "mesure" }
+    },
+    "Orange, chair sans peau, sans pépins, crue": {
+      "fructans": { "g": 0.21, "source": "ferjancic2024", "ref": "tableau 1, orange", "confidence": "mesure" }
+    },
+    "Clémentine ou mandarine, chair sans peau, sans pépins, crue": {
+      "fructans": { "g": 0.11, "source": "ferjancic2024", "ref": "tableau 1, mandarine", "confidence": "mesure" }
+    },
+    "Raisin cru (aliment moyen)": {
+      "fructans": { "g": 0.06, "source": "ferjancic2024", "ref": "tableau 1, raisin", "confidence": "mesure" }
+    },
+    "Pomme, chair et peau, crue": {
+      "fructans": { "g": 0.09, "source": "ferjancic2024", "ref": "tableau 1, pomme", "confidence": "mesure" },
+      "sorbitol": { "g": 0.5, "source": "mext2020", "ref": "pomme crue avec peau, SORTL", "confidence": "mesure", "notes": "Ciqual ne publie pas les polyols de cet aliment ; MEXT donne 0,5 à 0,7 selon la préparation." }
+    },
+    "Poire, chair et peau, crue": {
+      "fructans": { "g": 0.13, "source": "ferjancic2024", "ref": "tableau 1, poire", "confidence": "mesure" },
+      "sorbitol": { "share": 1, "source": "mext2020", "ref": "poire « européenne », SORTL (2,9, estimé)", "confidence": "analogie", "notes": "Polyols totaux Ciqual (2,02) attribués au sorbitol : MEXT ne mesure que le sorbitol pour la poire." }
+    },
+    "Poire, chair, crue (aliment moyen)": {
+      "sorbitol": { "share": 1, "source": "mext2020", "ref": "poire « européenne », SORTL (2,9, estimé)", "confidence": "analogie" }
+    },
+    "Pêche, chair et peau, sans noyau, crue": {
+      "sorbitol": { "share": 1, "source": "mext2020", "ref": "pêche jaune 2,7 / blanche 0,3, SORTL", "confidence": "analogie", "notes": "Polyols totaux Ciqual (0,72) attribués au sorbitol." }
+    },
+    "Pêche blanche, chair et peau, sans noyau, crue": {
+      "sorbitol": { "share": 1, "source": "mext2020", "ref": "pêche blanche 0,3, SORTL", "confidence": "analogie" }
+    },
+    "Abricot, dénoyauté, cru": {
+      "sorbitol": { "g": 0.3, "source": "mext2020", "ref": "abricot cru, SORTL (0,3, estimé)", "confidence": "analogie", "notes": "Ciqual : polyols < 0,5 ; la valeur MEXT est estimée par MEXT." }
+    },
+    "Pruneau, sans noyau, sec": {
+      "sorbitol": { "share": 1, "source": "mext2020", "ref": "pruneau sec, SORTL (12,1, estimé)", "confidence": "analogie", "notes": "Polyols totaux Ciqual (9,6) attribués au sorbitol." }
+    },
+    "Champignon de Paris ou champignon de couche, cru": {
+      "mannitol": { "share": 1, "source": "mext2020", "ref": "champignon de Paris cru, MANTL (1,3)", "confidence": "analogie", "notes": "On garde le total Ciqual (0,28) ; MEXT mesure 1,3 g de mannitol : gros écart, valeur Ciqual retenue." }
+    },
+    "Céleri branche, cru": {
+      "mannitol": { "share": 1, "source": "mext2020", "ref": "céleri branche cru, MANTL (1,0)", "confidence": "analogie", "notes": "Polyols totaux Ciqual (0,8) attribués au mannitol." }
+    },
+    "Tofu nature, préemballé": {
+      "gos": { "g": 0.14, "source": "natale2025", "ref": "tableau 1, tofu (raffinose 0,026 + stachyose 0,114)", "confidence": "mesure" }
+    },
+    "Tempeh": {
+      "gos": { "g": 0.035, "source": "natale2025", "ref": "tableau 1, tempeh (raffinose < LQ + stachyose 0,035)", "confidence": "mesure" }
+    },
+    "Boisson au soja, nature, non enrichie, préemballée": {
+      "gos": { "g": 0.269, "source": "natale2025", "ref": "tableau 1, boisson au soja (raffinose 0,039 + stachyose 0,230)", "confidence": "mesure" }
+    },
+    "Farine de pois chiche": {
+      "gos": { "g": 2.113, "source": "natale2025", "ref": "tableau 1, farine de pois chiche (raffinose 0,473 + stachyose 1,640)", "confidence": "mesure" }
+    },
+    "Soja, graine entière": {
+      "gos": { "g": 3.323, "source": "natale2025", "ref": "tableau 1, soja sec (raffinose 0,513 + stachyose 2,810)", "confidence": "mesure" }
+    }
+  }
 }

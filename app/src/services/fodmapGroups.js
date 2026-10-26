@@ -10,7 +10,14 @@
  *   sinon la répartition vient des mesures publiées (`fodmapMeasurements.json`) ou reste inconnue ;
  * - fructanes, GOS : mesures publiées seulement (`fodmapMeasurements.json`), sinon inconnus.
  * Une teneur Ciqual « < x » (sous la limite de détection) compte 0 avec le statut `traces` : la moitié de la limite,
- * utile pour les totaux nutritionnels, ferait apparaître du lactose dans l'oignon.
+ * utile pour les totaux nutritionnels, ferait apparaître du lactose dans l'oignon. La limite est gardée (`max`) : un
+ * repas n'est `bas` que si le total, limites comprises, reste sous le repère (polyols « < 0,5 » : 100 g d'avocat
+ * pourraient contenir 0,5 g, au-dessus du repère de 0,4 g).
+ *
+ * Mesures publiées (`fodmapMeasurements.json`, une entrée par groupe) : `g` pour 100 g, ou pour le sorbitol et le
+ * mannitol `share`, la part des polyols totaux Ciqual (Ciqual d'abord, la source ne sert qu'à répartir). Une mesure
+ * publiée ne remplace jamais une valeur Ciqual, sauf une teneur « < x » qu'elle précise sans la contredire (≤ x).
+ * Confiance `analogie` (aliment proche, répartition supposée) ou `citée` (valeur citée par une revue) : basse.
  *
  * Repères de départ par portion (Varney J et al., « FODMAPs: food composition, defining cutoff values and
  * international application », J Gastroenterol Hepatol 2017;32 Suppl 1:53-61, PMID 28244665) : oligosaccharides
@@ -32,35 +39,50 @@ export const CUTOFFS_SOURCE = 'Varney J et al. J Gastroenterol Hepatol 2017;32 S
 const CIQUAL = 'Ciqual'
 
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v)
-const belowDetection = (food, field) => typeof food?._q?.[field] === 'string' && food._q[field].startsWith('<')
 
-/** Valeur Ciqual d'un champ : { g, status } avec status `mesuré`, `traces` ou `inconnu`. */
+/** Limite de détection d'une teneur « < x » (en g/100 g), sinon null. */
+function detectionLimit(food, field) {
+  const q = food?._q?.[field]
+  if (typeof q !== 'string' || !q.startsWith('<')) return null
+  const x = Number(q.slice(1).replace(',', '.'))
+  return Number.isFinite(x) ? x : null
+}
+
+/** Valeur Ciqual d'un champ : { g, status, max? } avec status `mesuré`, `traces` ou `inconnu`. */
 function ciqualValue(food, field) {
-  if (belowDetection(food, field)) return { g: 0, status: 'traces' }
+  const limit = detectionLimit(food, field)
+  if (limit != null) return { g: 0, status: 'traces', max: limit }
+  if (typeof food?._q?.[field] === 'string' && food._q[field].startsWith('<')) return { g: 0, status: 'traces' }
   if (!isNum(food?.[field])) return { g: null, status: 'inconnu' }
   if (food._q?.[field] === 'traces') return { g: 0, status: 'traces' }
   return { g: food[field], status: 'mesuré' }
 }
 
 const unknown = () => ({ g: null, status: 'inconnu', source: null })
+const LOW_CONFIDENCE = new Set(['analogie', 'citée'])
+
+function fromPublished(entry, g, source = entry.source ?? null) {
+  const low = LOW_CONFIDENCE.has(entry.confidence)
+  return { g, status: low ? 'approché' : 'mesuré', source, confidence: low ? 'basse' : 'mesure' }
+}
 
 /**
  * Teneurs pour 100 g d'un aliment de la table.
  * @param {object} food entrée de ingredientsNutrition.json
  * @param {object} [published] entrée de fodmapMeasurements.json (foods[nom]) pour cet aliment
- * @returns {{ [group: string]: { g: number|null, status: string, source: string|null, confidence?: string } }}
+ * @returns {{ [group: string]: { g: number|null, status: string, source: string|null, confidence?: string, max?: number } }}
  */
 export function fodmapPer100g(food, published) {
   const out = Object.fromEntries(FODMAP_SUBGROUPS.map((g) => [g, unknown()]))
   if (!food) return out
+  const withSource = (v) => ({ ...v, source: v.g == null ? null : CIQUAL })
 
-  const lactose = ciqualValue(food, 'lactose_g')
-  out.lactose = { ...lactose, source: lactose.g == null ? null : CIQUAL }
+  out.lactose = withSource(ciqualValue(food, 'lactose_g'))
 
   const fru = ciqualValue(food, 'fructose_g')
   const glu = ciqualValue(food, 'glucose_g')
   if (fru.g === 0) {
-    out.fructose = { g: 0, status: fru.status, source: CIQUAL }
+    out.fructose = withSource(fru)
   } else if (fru.g != null && glu.g != null) {
     // glucose sous la limite de détection : on ne sait pas combien il couvre, confiance basse
     out.fructose = { g: Math.max(0, fru.g - glu.g), status: glu.status === 'traces' ? 'approché' : 'mesuré', source: CIQUAL }
@@ -68,23 +90,28 @@ export function fodmapPer100g(food, published) {
 
   const polyols = ciqualValue(food, 'polyols_g')
   if (polyols.g === 0) {
-    out.sorbitol = { g: 0, status: polyols.status, source: CIQUAL }
-    out.mannitol = { g: 0, status: polyols.status, source: CIQUAL }
+    out.sorbitol = withSource(polyols)
+    out.mannitol = withSource(polyols)
   }
 
-  if (published) {
-    for (const group of ['fructans', 'gos', 'sorbitol', 'mannitol']) {
-      const v = published[`${group}_g`]
-      if (!isNum(v) || out[group].status !== 'inconnu') continue
-      out[group] = {
-        g: v,
-        status: published.confidence === 'analogie' ? 'approché' : 'mesuré',
-        source: published.source ?? null,
-        confidence: published.confidence === 'analogie' ? 'basse' : 'mesure',
-      }
+  for (const group of ['fructans', 'gos', 'sorbitol', 'mannitol']) {
+    const entry = published?.[group]
+    if (!entry) continue
+    const current = out[group]
+    const isPolyol = group === 'sorbitol' || group === 'mannitol'
+    const ciqualTotal = isPolyol && polyols.status === 'mesuré' ? polyols.g : null
+    if (isNum(entry.share) && ciqualTotal > 0) {
+      out[group] = fromPublished(entry, ciqualTotal * entry.share, `${CIQUAL} + ${entry.source}`)
+    } else if (!isNum(entry.g)) {
+      continue
+    } else if (current.status === 'inconnu' && (ciqualTotal == null || entry.g <= ciqualTotal)) {
+      out[group] = fromPublished(entry, entry.g)
+    } else if (current.status === 'traces' && current.max != null && entry.g <= current.max) {
+      out[group] = fromPublished(entry, entry.g) // précise une teneur « < x » sans la contredire
     }
   }
   out.polyolsTotal = polyols.g
+  out.polyolsMax = polyols.g == null ? null : polyols.g + (polyols.max ?? 0)
   return out
 }
 
@@ -99,8 +126,9 @@ const round3 = (x) => Math.round(x * 1000) / 1000
  * @param {{ foods?: object }} [measurements] fodmapMeasurements.json
  */
 export function estimateMealFodmap(items, table, measurements = {}) {
-  const groups = Object.fromEntries(FODMAP_SUBGROUPS.map((g) => [g, { g: 0, unknownFoods: [], contributors: [] }]))
+  const groups = Object.fromEntries(FODMAP_SUBGROUPS.map((g) => [g, { g: 0, max: 0, unknownFoods: [], contributors: [] }]))
   let polyolsTotal = 0
+  let polyolsMax = 0
   let polyolsKnown = true
   let counted = 0
 
@@ -117,19 +145,24 @@ export function estimateMealFodmap(items, table, measurements = {}) {
       if (v.g == null) { groups[group].unknownFoods.push(name); continue }
       const grams = v.g * factor
       groups[group].g += grams
+      groups[group].max += grams + (v.max ?? 0) * factor
       if (grams > 0) groups[group].contributors.push({ ingredient: name, g: round3(grams), status: v.status, source: v.source })
     }
     if (per100.polyolsTotal == null) polyolsKnown = false
-    else polyolsTotal += per100.polyolsTotal * factor
+    else {
+      polyolsTotal += per100.polyolsTotal * factor
+      polyolsMax += per100.polyolsMax * factor
+    }
   }
 
   const result = {}
   for (const group of FODMAP_SUBGROUPS) {
-    const { g, unknownFoods, contributors } = groups[group]
+    const { g, max, unknownFoods, contributors } = groups[group]
     const cutoff = SERVING_CUTOFFS_G[group]
     let level = 'inconnu'
     if (counted > 0 && g >= cutoff) level = 'élevé'
-    else if (counted > 0 && unknownFoods.length === 0) level = 'bas'
+    // « < x » : bas seulement si le total reste sous le repère même au plafond des limites de détection
+    else if (counted > 0 && unknownFoods.length === 0 && max < cutoff) level = 'bas'
     result[group] = {
       g: round3(g),
       level,
@@ -138,8 +171,8 @@ export function estimateMealFodmap(items, table, measurements = {}) {
       unknownFoods,
     }
   }
-  // Polyols totaux connus et sous le repère : ni le sorbitol ni le mannitol ne peuvent le dépasser.
-  if (counted > 0 && polyolsKnown && polyolsTotal < SERVING_CUTOFFS_G.polyols) {
+  // Polyols totaux connus et sous le repère (limites comprises) : ni le sorbitol ni le mannitol ne peuvent le dépasser.
+  if (counted > 0 && polyolsKnown && polyolsMax < SERVING_CUTOFFS_G.polyols) {
     for (const group of ['sorbitol', 'mannitol']) {
       if (result[group].level === 'inconnu') result[group].level = 'bas'
     }

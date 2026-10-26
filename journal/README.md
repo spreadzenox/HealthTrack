@@ -109,6 +109,17 @@ du repère ; une poire de 150 g → fructose en excès. Les **fructanes et les G
 sont pas mesurés par Ciqual : ils restent « inconnus » jusqu'à l'étape N3b, qui reprendra des mesures publiées dans
 des articles scientifiques (citées aliment par aliment). Une valeur « sous la limite de détection » compte zéro, pour
 ne jamais faire apparaître de lactose dans l'oignon.
+**✅ N3a-bis + N3b (1re partie) le 26/10 22:33 : les fructanes, les GOS, le sorbitol et le mannitol de 32 aliments
+courants sont maintenant connus (rien d'affiché encore).** Chaque valeur cite sa source : fructanes mesurés par
+Ferjančič 2024 (oignon, poireau, pain, pâtes, blé, avoine, fruits à coque, fruits), GOS du soja et de la farine de pois
+chiche (Natale 2025), sorbitol et mannitol répartis à partir des polyols Ciqual selon la table officielle japonaise
+(poire, pêche, pruneau → sorbitol ; champignon de Paris, céleri → mannitol ; pomme 0,5 g). L'ail et l'échalote ne
+sont connus que par une revue qui cite d'anciennes mesures : confiance basse. Exemples : 70 g d'oignon cru → environ
+1,4 g de fructanes (repère 0,3 g) ; une pomme de 150 g → 0,75 g de sorbitol (repère 0,4 g) ; 100 g de tofu → 0,14 g de
+GOS (sous le repère). Correction de méthode au passage : une teneur Ciqual « sous la limite de détection » (« < 0,5 g »)
+ne fait plus passer un repas pour pauvre quand la portion pourrait dépasser le repère (100 g d'avocat : sorbitol
+« on ne sait pas », plus « bas »). Reste pour N3b : les GOS des lentilles, pois chiches et haricots cuits (calcul
+depuis le sec, il faut garder l'eau de Ciqual dans la table), et d'autres aliments de la table japonaise.
 
 **N3b préparé (run « idées » du 26/10 20:33)** : les teneurs que Ciqual ne mesure pas auront une source publique et
 réutilisable : le sorbitol et le mannitol de la **table officielle japonaise** (pomme, poire, pêche, pruneau, cerise,
@@ -154,6 +165,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 22:33 — [N3a-bis + N3b : mesures FODMAP publiées](runs/2026-10-26-2233-n3b-mesures-fodmap.md) | 🏗️ | `fodmapMeasurements.json` v2 (une entrée par groupe, source, tableau, confiance) : 32 aliments, 4 sources (Ferjančič 2024, Natale 2025, MEXT 2020, revue Wang & Cheong 2023) ; polyols Ciqual répartis plutôt que remplacés ; « < x » : `bas` seulement si la portion reste sous le repère au plafond de la limite ; test `UpdateBanner` fiabilisé ; rien d'affiché ; 2 457 Vitest |
 | 26/10 21:33 — [P28 : brouillon pour faire apparaître la déclaration](runs/2026-10-26-2133-p28-brouillon.md) | 🏗️ | Workflow « Play — brouillon P28 » : AAB play signé avec la lecture au déverrouillage, versionCode à part, envoyé en brouillon sur le test interne (jamais déployé ; **`p28-100487` accepté sans erreur**, v300) ; les envois normaux gardent ce brouillon ; tests de l'envoi Play (4 nouveaux) |
 | 26/10 20:33 — [Idées : N3b prêt à coder](runs/2026-10-26-2033-idees-n3b-sources.md) | 💡 | Sources ouvertes des FODMAP non mesurés par Ciqual (`IDEES.md` I177–I179) : sorbitol / mannitol de la table officielle japonaise MEXT 2020, fructanes Ferjančič 2024, GOS Siva 2019 et Natale 2025, pertes à la cuisson Njoumi 2019 ; défaut trouvé dans N3a (« < 0,5 » compté 0) → N3a-bis ; page P28 en ligne vérifiée |
 | 26/10 19:33 — [P28 : film vert, PR #398 mergée](runs/2026-10-26-1933-p28-video-vert.md) | 🏗️ | Deux causes trouvées : l'appui « déplier » tombait sur toute la ligne de la notification (ouvrait l'app) ; connexion DevTools gardée sur une ancienne redirection (port neuf à chaque essai, sans keep-alive). **Film complet de 1 min 48 s** : divulgation → accord → notification avec « Arrêter » → caméra au déverrouillage → « Arrêter » → interrupteur coupé ; publication lancée sur main |
