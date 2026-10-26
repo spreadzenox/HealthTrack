@@ -102,6 +102,64 @@ describe('GutCard — bilan du soir (I170)', () => {
   })
 })
 
+describe('GutCard — rappel du bilan par notification (I170 étape 2)', () => {
+  const evening = () => {
+    const d = new Date()
+    d.setHours(20, 30, 0, 0)
+    return d
+  }
+
+  beforeEach(() => {
+    localStorage.removeItem('healthtrack_gut_evening')
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ goal: 'gut' }))
+  })
+
+  it('hors de l’app Android : aucune proposition', async () => {
+    delete window.__healthtrackFakeGutEvening
+    wrap(<GutCard read={async () => []} now={evening()} />)
+    await screen.findByText(/dans l’ensemble/)
+    expect(screen.queryByText(/chaque soir/)).not.toBeInTheDocument()
+  })
+
+  it('le soir, propose le rappel ; un geste l’allume (autorisation demandée)', async () => {
+    const plugin = {
+      status: vi.fn(async () => ({ enabled: false, minuteOfDay: 20 * 60 })),
+      requestNotifications: vi.fn(async () => ({ asked: true, notifications: true })),
+      configure: vi.fn(async (o) => ({ enabled: !!o.enabled, notifications: true, minuteOfDay: 20 * 60 })),
+    }
+    window.__healthtrackFakeGutEvening = plugin
+    try {
+      const { listEntries } = await import('../storage/localHealthStorage')
+      listEntries.mockResolvedValue([])
+      wrap(<GutCard read={async () => []} now={evening()} />)
+      fireEvent.click(await screen.findByRole('button', { name: 'Me le demander chaque soir par notification' }))
+      expect(await screen.findByText(/rappel chaque soir vers 20 h/)).toBeInTheDocument()
+      expect(plugin.requestNotifications).toHaveBeenCalled()
+      expect(plugin.configure).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true }))
+    } finally {
+      delete window.__healthtrackFakeGutEvening
+    }
+  })
+
+  it('le matin, ou une fois le rappel choisi : rien', async () => {
+    window.__healthtrackFakeGutEvening = { status: async () => ({ enabled: true }), configure: vi.fn() }
+    try {
+      const morning = new Date()
+      morning.setHours(9, 0, 0, 0)
+      const { unmount } = wrap(<GutCard read={async () => []} now={morning} />)
+      await screen.findByText(/Un geste suffit/)
+      expect(screen.queryByText(/chaque soir/)).not.toBeInTheDocument()
+      unmount()
+      localStorage.setItem('healthtrack_gut_evening', JSON.stringify({ enabled: true }))
+      wrap(<GutCard read={async () => []} now={evening()} />)
+      await screen.findByText(/dans l’ensemble/)
+      expect(screen.queryByText(/chaque soir/)).not.toBeInTheDocument()
+    } finally {
+      delete window.__healthtrackFakeGutEvening
+    }
+  })
+})
+
 describe('GutCard onlyIfUsed (aucun objectif choisi, POL-4)', () => {
   it('ne montre rien sans note des 7 derniers jours', async () => {
     const read = vi.fn(async () => [])

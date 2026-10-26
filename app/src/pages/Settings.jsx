@@ -9,7 +9,9 @@ import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import { DISTRIBUTION, FEATURES } from '../config/distribution'
 import { feedbackLink } from '../config/feedback'
-import { GOALS, loadOnboarding, saveOnboarding } from '../settings/onboarding'
+import { GOALS, gutCardMode, loadOnboarding, saveOnboarding } from '../settings/onboarding'
+import { syncGutEvening } from '../services/gutEvening'
+import GutEveningReminder from '../components/GutEveningReminder'
 import AiCreditsHint from '../components/AiCreditsHint'
 import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
 import { syncEntitlement, restorePurchases } from '../services/playBilling'
@@ -148,6 +150,8 @@ export default function Settings() {
   const handleGoal = (value) => {
     saveOnboarding({ goal: value })
     setGoal(value)
+    // sans carte ventre, plus de rappel du bilan du soir (le choix est gardé pour plus tard)
+    syncGutEvening()
   }
 
   const handleTheme = (value) => {
@@ -199,6 +203,7 @@ export default function Settings() {
           La carte «&nbsp;Votre ventre&nbsp;» de l’Accueil n’apparaît qu’avec «&nbsp;Mon ventre&nbsp;». Vos notes ne
           sont jamais effacées : changez d’avis quand vous voulez.
         </p>
+        {gutCardMode({ ...loadOnboarding(), goal }) !== 'hide' && <GutEveningReminder variant="setting" />}
       </div>
 
       {FEATURES.billing && <SubscriptionBlock />}

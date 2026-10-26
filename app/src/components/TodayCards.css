@@ -308,3 +308,27 @@
   text-align: center;
   text-decoration: none;
 }
+
+/* Rappel du bilan du soir par notification (I170 étape 2) : une ligne discrète, pas un second bouton plein. */
+.gut-evening-reminder {
+  display: block;
+  margin: 8px 0 0;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--peach-label);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gut-evening-reminder-done {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--peach-text);
+}

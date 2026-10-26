@@ -16,6 +16,7 @@ import { recordTimezoneContext } from '../services/timezoneContext'
 import { importPendingFaceBursts } from '../services/faceBursts'
 import { readFaceOnOpen } from '../services/faceAppOpen'
 import { importPendingEveningNotes, syncEveningNote } from '../services/eveningNote'
+import { importPendingGutEvenings, syncGutEvening } from '../services/gutEvening'
 
 /**
  * Call inside any component that should trigger an auto-sync on mount.
@@ -52,7 +53,11 @@ export function useAutoSync() {
     readOnOpen()
     // Note du soir d'un geste (I113) : notes données depuis la notification rangées, puis heure et dernière note
     // transmises au natif (pas de notification un soir déjà noté).
-    const evening = () => importPendingEveningNotes().finally(() => syncEveningNote())
+    // Bilan du ventre du soir (I170) : même boîte native, même chemin, seulement avec la carte ventre.
+    const evening = () => {
+      importPendingEveningNotes().finally(() => syncEveningNote())
+      importPendingGutEvenings().finally(() => syncGutEvening())
+    }
     evening()
     // Montre Huawei en direct : au plus toutes les 30 min, seulement si HealthTrack a sa clé.
     compacted.finally(() => syncWatchIfStale())
@@ -69,7 +74,10 @@ export function useAutoSync() {
     }
     document.addEventListener('visibilitychange', onVisible)
     // … et après chaque note saisie : la notification de ce soir n'a plus lieu d'être.
-    const onEntries = () => syncEveningNote()
+    const onEntries = () => {
+      syncEveningNote()
+      syncGutEvening()
+    }
     window.addEventListener('health-entries-updated', onEntries)
     // … et tant que l'app reste à l'écran : la relecture native s'efface alors (« l'app s'en charge »), et sans ce
     // minuteur rien ne relisait la montre avant la prochaine ouverture (18/10/2026, « dernière synchro il y a 4 h »).
