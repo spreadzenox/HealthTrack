@@ -9,6 +9,142 @@
 
 ---
 
+## Run du 26/10/2026 08:33 (Paris) — jalon 7 prêt à coder : réintroduction FODMAP guidée et rapport PDF
+
+Contexte : le jalon 5 (pistes repas → ventre) est affiché depuis le 26/10 03:33 et renforcé jusqu'à 07:33 (I134). Le
+jalon 7 est le suivant ; deux de ses trois promesses sont déjà affichées dans le paywall comme « en préparation »
+(`config/premiumBenefits.js` : `fodmap`, `pdf-report`). Ce run fixe le protocole, les écrans, le modèle de données et
+la technique du PDF pour que les runs de code n'aient qu'à suivre.
+
+### Ce qu'on apprend (faits)
+- **Protocole clinique** [V, fiche patient NHS Gloucestershire, mise à jour 02/2023, PDF lu en entier] : attendre
+  **au moins 3 jours de symptômes minimes** avant chaque test ; même aliment les 3 jours ; **jour 1 = portion de
+  départ, jour 2 = double, jour 3 = triple**, en regardant les **24 h** qui suivent ; gêne jugée inacceptable → on
+  s'arrête là et on retestera plus tard avec moins ; arrêt à J2 ou J3 = « une petite quantité passe » / « une
+  portion modérée passe, pas sans limite » ; pas de gêne à J3 = groupe toléré, résultat **étendu au groupe**
+  (fructose, lactose, GOS, polyols) **sauf les fructanes, à tester source par source** (blé, oignon, ail…) ; sorbitol
+  et mannitol **testés séparément** ; on ne réintroduit durablement **qu'après la fin de tous les tests** ; pas de
+  repas dehors ni de café / alcool en plus pendant les 3 jours. Portions de départ : blé 1 tranche de pain (ou
+  5 c. à s. de pâtes cuites) ; oignon 1 c. à s. cuit ; ail ¼ de gousse ; autres fruits / légumes à fructanes 40 g ;
+  GOS 2 c. à s. de légumineuses (pois chiches, lentilles…) ; fructose ¼ de mangue ou 1 c. à c. de miel ; lactose
+  125 ml de lait demi-écrémé ou 125 g de yaourt nature ; sorbitol 3 c. à s. de maïs doux ou ¼ d'avocat ; mannitol
+  2 c. à s. de chou-fleur, ¼ de branche de céleri ou 3 c. à s. de patate douce.
+- **Monash** [V, blog « Reintroduction using the diary function »] : chaque sous-groupe sur **~3 jours**, un aliment
+  à la fois, sur fond pauvre en FODMAP ; **arrêt si symptômes désagréables à J1 ou J2** ; des gaz ou ballonnements
+  légers qui ne gênent pas la journée = **réussi** ; **combinaisons en dernier**, une fois les tolérances
+  individuelles connues ; ordre libre (commencer par un aliment qu'on mange souvent, ou qu'on pense bien tolérer).
+  Pas de durée de pause chiffrée.
+- **Variantes** [T, FODMAP Friendly, A Little Bit Yummy, UH Liverpool] : doses et ordres diffèrent d'une source à
+  l'autre (lait 125/250/375 ml chez l'un, 60 → 250 ml chez l'autre ; GOS 40/80/120 g) → **aucune table n'est « la »
+  norme** : la nôtre est une hypothèse de départ affichée comme telle (règle 6), modifiable par la personne ou sa
+  diététicienne. Les portions Monash de son application sont sa propriété : on ne les copie pas ; la fiche NHS est
+  une information publique de santé, on reprend des ordres de grandeur avec nos mots et en citant la source.
+- **Rapport pour le médecin** [T, guides de journaux SII ; V, carte « Bristol Stool Form Scale » de la Rome
+  Foundation] : ce que demandent les médecins = 2 à 4 semaines d'affilée, aliments avec l'heure, forme des selles
+  (échelle de Bristol, 7 types), douleur (intensité, soulagée ou non après les selles), sommeil / stress / cycle /
+  médicaments ; **un court résumé des tendances**, car un journal brut est rarement lu ; signes d'alerte (sang,
+  perte de poids inexpliquée, diarrhée qui réveille la nuit) à faire voir rapidement. Rome IV classe les sous-types
+  par la part de selles de types 1–2 et 6–7 sur les jours anormaux (seuil 25 %) — **on montre la répartition, jamais
+  le sous-type** (ce serait un diagnostic).
+- **Technique PDF** [V, registre npm le 26/10] : `pdf-lib` 1.17.1 (MIT) + `@pdf-lib/fontkit` 1.1.1 (MIT) génèrent
+  un PDF dans la WebView, hors ligne, avec **Figtree et IBM Plex Mono embarquées** (OFL 1.1 : l'incorporation dans un
+  document est permise) ; `jspdf` 4.2.1 (MIT) est plus lourd et moins net pour les polices. L'export JSON actuel
+  (`pages/Data.jsx`) écrit déjà dans `Directory.Documents` avec `@capacitor/filesystem` : même chemin pour le PDF,
+  aucun nouveau plugin natif. `window.print()` ne marche pas dans la WebView Capacitor : écarté.
+
+### Idées
+- **I174 (25) — Réintroduction guidée : machine à états pure + 4 écrans [V].** Précise I135. Besoin : la promesse
+  premium « réintroduction FODMAP guidée » (jalon 7), et la réponse honnête aux pistes « à confirmer » (I171 b).
+  - **Données** : nouvelle entrée `fodmap_challenge` (une par test) dans le magasin des entrées existant (aucune
+    migration de schéma : type nouveau, exporté / importé comme les autres, ignoré par les anciens fichiers) :
+    `{ group, food, doses: [{day, amount, unit, at}], state, startedAt, endedAt, verdict, blind?, note }`. Les
+    notes du ventre restent les entrées `gut` existantes : le verdict se **calcule** à partir d'elles (aucune donnée
+    en double).
+  - **Machine** (`services/fodmapChallenge.js`, sans React) : `ready` → `day1` → `day2` → `day3` → `washout` →
+    `done` ; garde de départ = **3 bilans du ventre « calme » d'affilée** (bilans du soir I170 ou aucune note de gêne
+    sur 3 jours) — sinon « On attend que votre ventre soit calme : ça rend le test lisible » ; à chaque jour, la
+    fenêtre est **les 24 h après la prise** ; gêne ou douleur dans la fenêtre → question « C'est supportable ? »
+    (oui = on continue, Monash : léger = réussi ; non = arrêt) ; arrêt à J1 → « à retester plus tard, en plus
+    petit », J2 → « une petite portion passe », J3 → « une portion moyenne passe », sans gêne → « bien toléré à cette
+    dose » ; `washout` jusqu'à 3 jours calmes (pas de durée fixe) ; **un seul test à la fois** (le suivant est
+    refusé pendant un test ou une pause) ; un verdict sur fructose / lactose / GOS / sorbitol / mannitol vaut pour le
+    groupe, sur les fructanes **seulement pour cet aliment** ; combinaisons proposées seulement quand ≥ 2 groupes
+    sont « bien tolérés ». Un jour sauté décale le test (aucune dose rattrapée en double) ; 2 jours sautés → le test
+    est mis en pause et repart de J1 (« pour garder un résultat lisible »).
+  - **Écrans** (Analyses, carte lilas « Tester un groupe », et lien depuis chaque piste ventre « Vérifier avec une
+    réintroduction guidée ») : ① choix du groupe — 7 cartes (Fructanes · blé, oignon, ail ; GOS ; Fructose ;
+    Lactose ; Sorbitol ; Mannitol ; Combinaisons, grisée), l'état de chacun en étiquette (« pas testé », « bien
+    toléré », « petite portion », « à retester »), les aliments suggérés en premier si une piste ventre les cite ;
+    ② préparation — l'aliment, les 3 portions (« jour 1 : 1 tranche de pain · jour 2 : 2 · jour 3 : 3 », modifiables,
+    étiquette « repère général, à adapter avec votre diététicienne »), 3 conseils courts (pas de repas dehors, pas
+    plus de café ni d'alcool que d'habitude, les autres repas pauvres en FODMAP), rappel à l'heure choisie (même
+    mécanisme que `gutEvening.js`), bouton « Commencer » ; ③ jour en cours — frise J1 / J2 / J3 / pause, « J'ai
+    mangé ma portion » (un geste, horodaté), puis la carte ventre habituelle ; ④ résultat — une phrase (« Blé :
+    une portion moyenne passe (2 tranches). Au-delà, gêne. »), la frise, « Une estimation de votre ventre, pas un
+    diagnostic. L'attente joue aussi : vous pouvez refaire le test, à l'aveugle avec un proche. » + « Refaire le
+    test ».
+  - **À l'aveugle (I171 c)** : option à l'étape ② — un proche prépare 3 jours où l'aliment est présent ou non (l'app
+    tire l'ordre, l'affiche seulement au proche derrière « Je suis le proche · afficher »), la personne note son
+    ventre sans savoir ; levée de l'aveugle au résultat. Deuxième temps (après la version simple).
+  - **Garde-fous** : texte testé par `wording.test.js` (jamais « intolérance », « allergie », « traitement ») ;
+    phrase d'entrée « À faire de préférence avec une diététicienne. En cas de sang dans les selles, de perte de
+    poids ou de diarrhée la nuit, parlez-en d'abord à votre médecin. » ; le régime d'éviction n'est **pas** proposé
+    par l'app (hors de notre rôle : on accompagne la réintroduction, sur un fond que la personne gère). Règle 5 :
+    le ventre n'entre jamais dans l'estimateur du bien-être.
+  - **Premium** : toute la saisie reste gratuite (« J'ai mangé ma portion » et les notes du ventre sont des
+    données) ; le guidage (machine, rappels, verdict) est premium ; sans premium, la carte montre ce que fait la
+    fonction et le bouton Débloquer. Dans la période de lancement (P23), tout le monde y a accès.
+  - **Tests** : table de transitions (chaque état × chaque évènement), refus d'un 2e test pendant la pause, garde
+    des 3 jours calmes, fenêtre 24 h (une note à 25 h ne compte pas pour ce jour), jour sauté, fructanes non
+    généralisés, import d'un ancien fichier sans `fodmap_challenge`, export / import aller-retour.
+  - Découpage : **7a** machine + données + tests (rien d'affiché) ; **7b** écrans ①–④ et rappel ; **7c** lien depuis
+    les pistes ventre + étiquettes d'état dans la carte lilas ; **7d** à l'aveugle. Impact 5, faisabilité 4.
+- **I175 (20) — Rapport PDF pour le médecin : 2 pages, local, résumé d'abord [V/T].** Besoin : la promesse premium
+  « rapport PDF » ; utile au premier rendez-vous et pour les diététiciennes (canal d'acquisition).
+  - **Contenu** (période au choix : 2, 4 ou 12 semaines ; défaut 4) — page 1 « En bref » : période, nombre de jours
+    notés, part des jours calmes / gêne / douleur (barre), évolution semaine par semaine, résultats de la
+    réintroduction (tableau groupe → résultat → portion), pistes ventre retenues **avec leur étiquette de
+    solidité et le nombre de comparaisons faites**, sommeil moyen et régularité si connus, encart « Estimations et
+    liens repérés dans un journal personnel, pas un diagnostic. » ; page 2 « Détail » : calendrier des 28 jours
+    (une case par jour, couleur du bilan, pictogramme repas riche en FODMAP), répartition des formes de selles si
+    I176 est fait (sans sous-type), liste des aliments les plus fréquents, sources des données (« montre Huawei »,
+    « Health Connect », « saisi à la main »), version de l'app. Rien sur le bien-être estimé du visage par défaut
+    (case à cocher « inclure mon bien-être estimé », décochée) : c'est une donnée sensible et une estimation.
+  - **Technique** : `services/report/buildReport.js` (pur : entrées → modèle du rapport, testé sans PDF) puis
+    `services/report/renderPdf.js` (pdf-lib + fontkit, polices de `src/assets/fonts`, A4, couleurs des tokens
+    converties) ; chargé à la demande (`import()` dynamique) pour ne pas alourdir le premier lancement (critère C4) ;
+    fichier `Halcya-rapport-AAAA-MM-JJ.pdf` écrit dans Documents comme l'export JSON, puis ouvert / partagé ;
+    **aucune donnée ne sort de l'appareil** sans geste de la personne (pas de mise à jour du formulaire Sécurité des
+    données nécessaire : rien n'est transmis par l'app). Test : modèle sur journal synthétique ; PDF généré lisible
+    par `pdf-lib` (nombre de pages, textes clés présents, aucun « HealthTrack ») ; taille < 300 Ko.
+  - **Accès** : Analyses (bas de page, « Rapport PDF pour mon médecin », comme la maquette) et Données → Export.
+    Premium ; dans la variante sideload, disponible sans abonnement (pas de Play Billing). Impact 4, faisabilité 4.
+- **I176 (15) — Forme des selles, facultative, en un geste [V Rome Foundation].** Besoin : ce que le médecin regarde
+  en premier, et un X utile (ou un second Y du ventre) pour les pistes. Dans la carte « Votre ventre », sous les trois
+  boutons, une ligne discrète « + selles » ouvrant 7 pictogrammes de l'échelle de Bristol regroupés en 3 (« dures »
+  1–2, « normales » 3–5, « liquides » 6–7) avec le détail au besoin ; entrée `stool` `{ bristol: 1..7 }` ; visible
+  seulement avec l'objectif « Mon ventre » ; aucun sous-type affiché (diagnostic) ; dans le rapport, répartition par
+  groupe. Pictogrammes dessinés par nous (la carte de la Rome Foundation est sous droits). Ne bloque pas I174 / I175.
+  Impact 3, faisabilité 4.
+- **Constat en passant** : `premiumBenefits.js` marque encore `pistes-delays` comme « en préparation » alors que les
+  pistes repas → ventre avec délais sont affichées dans Analyses depuis le 26/10 03:33 ; à passer à `delivered: true`
+  (avec `deliveredBy: 'src/services/gutLinks.js'`) au prochain run de code, si les pistes sont bien réservées au
+  premium hors période de lancement — sinon, décider (P25 ①) qu'elles restent gratuites et retirer la ligne.
+
+### Sources (consultées le 26/10/2026)
+- NHS Gloucestershire Hospitals, *Re-introduction of FODMAPs after exclusion* (fiche patient, 02/2023) —
+  https://www.gloshospitals.nhs.uk/documents/17365/FODMAP_reintroduction_information_for_website_Feb_23_update.pdf [V]
+- Monash University FODMAP, *Reintroduction using the diary function* —
+  https://monashfodmap.com/blog/reintroduction-using-diary-function [V]
+- FODMAP Friendly, *Reintroduction* — https://fodmapfriendly.com/blogpost/reintroduction/ [T] ; A Little Bit Yummy
+  (guide de réintroduction) [T] ; UH Liverpool, fiche « FODMAP reintroduction » (403 au chargement, citée par le
+  moteur de recherche seulement) [T]
+- Rome Foundation, *Bristol Stool Form Scale Card* (2021) — https://theromefoundation.org/wp-content/uploads/Bristol-Stool-Form-Scale-Card-2021.pdf [T, via résumé]
+- Guides de journal SII (Bupa, NHS Lothian, IFFGD) via recherche [T]
+- Registre npm : `pdf-lib` 1.17.1 MIT, `@pdf-lib/fontkit` 1.1.1 MIT, `jspdf` 4.2.1 MIT [V]
+
+---
+
 ## Run du 25/10/2026 20:33 (Paris) — préparer I133 / I134 : des pistes ventre qui résistent aux vraies données
 
 Contexte : le moteur repas → ventre (I132, `services/gutWindows.js`) est mergé depuis 19:33 mais pas encore affiché.

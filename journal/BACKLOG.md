@@ -342,7 +342,15 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   abonnement ») ; [ ] **I137** grâce / suspension (bandeau « Mettre à jour le paiement », jamais les fonctions locales)
 - [ ] **7 Réintroduction FODMAP guidée + rapport PDF médecin** — [ ] **I135** machine à états format Monash (3 jours
   croissants, pause ≥ 3 j ou jusqu'au calme, arrêt si gêne J1/J2, verdict à 3 niveaux, aucun verdict sans ventre
-  calme au départ, retest + mention de l'effet d'attente)
+  calme au départ, retest + mention de l'effet d'attente) — **spécifié le 26/10 08:33** (`IDEES.md` I174 : protocole
+  ×1 / ×2 / ×3 sur 24 h, 3 jours calmes avant, fructanes source par source, sorbitol et mannitol séparés, un test à la
+  fois ; entrée `fodmap_challenge`, verdict calculé depuis les notes `gut`) : [ ] **7a** machine pure + données +
+  tests (rien d'affiché) ; [ ] **7b** écrans choix / préparation / jour en cours / résultat + rappel ; [ ] **7c** lien
+  depuis les pistes ventre + états dans la carte lilas ; [ ] **7d** à l'aveugle avec un proche (I171 c) ;
+  [ ] **I175** rapport PDF 2 pages (`buildReport.js` pur puis `renderPdf.js` avec `pdf-lib` + `fontkit` MIT, polices
+  embarquées, chargé à la demande, écrit dans Documents comme l'export JSON) ; [ ] **I176** forme des selles
+  facultative (Bristol regroupée en 3, objectif ventre seulement, aucun sous-type affiché) ; [ ] `premiumBenefits.js` :
+  `pistes-delays` encore « en préparation » alors que les pistes ventre sont affichées (à trancher)
 - [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026) — [x] **I131**
   (21/10 10:30, avec 3b-2) manifeste play limité aux 15 lectures HC du connecteur (`READ_TYPES` exporté = seule
   source, test-garde + `check-play-manifest.sh` ; le plugin en déclarait 41 dont 20 écritures) ; historique > 30 j en option derrière `FEATURE_READ_HEALTH_DATA_HISTORY`
@@ -1133,6 +1141,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 26/10 (08:33 Paris, run « idées »)** : jalon 7 spécifié (`IDEES.md` I174–I176). Ordre conseillé pour
+les runs de code, une fois I134 étape 4 faite ou écartée : **7a** (machine de réintroduction, rien d'affiché) → **7b**
+(écrans) → **I175 étape 1** (`buildReport.js`) → **I175 étape 2** (PDF) → 7c → I176 → 7d. Trancher au passage
+`pistes-delays` dans `premiumBenefits.js`. POL-1d attend toujours P28.
 
 **Mise à jour du 26/10 (07:33 Paris)** : I134 étape 3 — aliments du même jour estimés ensemble dans `gutDays` (chaque piste recomparée à exposition égale aux pistes plus nettes) ; piège « ail qui accompagne l'oignon » 23 → 1/60, 38 → 6/60 au plus lié ; ne peut que retirer des pistes. Suite : I134 étape 4 facultative (`gutWindows`) ou I135 / I171 c ; POL-1d dès P28.
 
