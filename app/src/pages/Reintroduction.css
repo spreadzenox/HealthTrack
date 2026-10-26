@@ -1,0 +1,300 @@
+/* Réintroduction guidée (jalon 7b) : lilas, le pastel des analyses ; la carte ventre garde son pêche. */
+.fodmap-page {
+  padding-bottom: 24px;
+}
+
+.fodmap-back {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+}
+
+.fodmap-back a,
+.fodmap-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--color-brand);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fodmap-intro,
+.fodmap-note {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 14px;
+}
+
+.fodmap-note {
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+
+.fodmap-groups {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fodmap-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  min-height: var(--tap-min);
+  padding: 14px 16px;
+  text-align: left;
+  background: var(--lilac-bg);
+  color: var(--lilac-text);
+  border: 2px solid transparent;
+  border-radius: var(--radius-choice);
+  font: inherit;
+}
+
+button.fodmap-group {
+  cursor: pointer;
+}
+
+button.fodmap-group:focus-visible,
+.fodmap-food:focus-visible {
+  border-color: var(--lilac-bar);
+  outline: none;
+}
+
+.fodmap-group.is-disabled {
+  background: var(--color-surface);
+  color: var(--text-muted);
+}
+
+.fodmap-group-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.fodmap-group-hint {
+  font-size: 0.9rem;
+}
+
+.fodmap-tag {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: var(--radius-tag);
+  background: rgba(var(--bg-rgb), 0.7);
+  color: inherit;
+  font-size: 0.72rem;
+}
+
+.fodmap-foods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.fodmap-food {
+  min-height: var(--tap-min);
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--lilac-bar);
+  background: var(--color-bg);
+  color: var(--lilac-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fodmap-card {
+  background: var(--lilac-bg);
+  color: var(--lilac-text);
+}
+
+.fodmap-card .today-card-title,
+.fodmap-card .today-card-text {
+  color: var(--lilac-text);
+}
+
+.fodmap-kicker {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.fodmap-plan {
+  border: none;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.fodmap-plan legend {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.fodmap-plan-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+}
+
+.fodmap-plan-row .mono {
+  width: 52px;
+  font-size: 0.8rem;
+}
+
+.fodmap-plan-row input {
+  width: 72px;
+  min-height: var(--tap-min);
+  padding: 0 10px;
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+}
+
+.fodmap-tips {
+  margin: 8px 0 12px;
+  padding-left: 20px;
+  font-size: 0.92rem;
+}
+
+.fodmap-tips li {
+  margin: 4px 0;
+}
+
+.fodmap-wait {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(var(--bg-rgb), 0.6);
+  font-size: 0.92rem;
+}
+
+.fodmap-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--button-height);
+  margin-top: 8px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+}
+
+.fodmap-timeline {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 12px 0;
+  padding: 0;
+}
+
+.fodmap-step {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 6px;
+  border-radius: 12px;
+  background: rgba(var(--bg-rgb), 0.55);
+  text-align: center;
+  font-size: 0.75rem;
+  min-width: 0;
+}
+
+.fodmap-step-label {
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.fodmap-step-text {
+  overflow-wrap: anywhere;
+}
+
+.fodmap-step.is-done {
+  background: var(--lilac-bar);
+  color: var(--lilac-bg);
+}
+
+.fodmap-step.is-now {
+  outline: 2px solid var(--lilac-bar);
+  outline-offset: -2px;
+  background: var(--color-bg);
+}
+
+.fodmap-step.is-stopped {
+  background: var(--peach-bg);
+  color: var(--peach-label);
+  outline: 2px solid var(--peach-label);
+  outline-offset: -2px;
+}
+
+.fodmap-step.is-skipped {
+  opacity: 0.45;
+}
+
+.fodmap-question {
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--peach-bg);
+  color: var(--peach-text);
+}
+
+.fodmap-question-title {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.fodmap-question-choices {
+  display: flex;
+  gap: 8px;
+}
+
+.fodmap-question-choices .btn {
+  min-height: var(--tap-min);
+  border-radius: var(--radius-pill);
+}
+
+.fodmap-verdict {
+  margin: 4px 0 6px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.fodmap-done {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.fodmap-done li {
+  margin: 4px 0;
+}
+
+.fodmap-abandon {
+  text-align: center;
+  margin: 4px 0 0;
+}
+
+.fodmap-entry {
+  display: block;
+  text-decoration: none;
+}
+
+.fodmap-entry-line {
+  margin: 4px 0 0;
+  font-size: 0.92rem;
+}

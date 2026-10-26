@@ -24,6 +24,7 @@ const More = lazy(() => import('./pages/More'))
 const WatchData = lazy(() => import('./pages/WatchData'))
 const Premium = lazy(() => import('./pages/Premium'))
 const WellbeingHistory = lazy(() => import('./pages/WellbeingHistory'))
+const Reintroduction = lazy(() => import('./pages/Reintroduction'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 
 export default function App() {
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="montre" element={<WatchData />} />
             <Route path="premium" element={<Premium />} />
             <Route path="bien-etre" element={<WellbeingHistory />} />
+            <Route path="reintroduction" element={<Reintroduction />} />
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
           </Route>
         </Routes>

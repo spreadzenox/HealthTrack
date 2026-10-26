@@ -27,6 +27,7 @@ import { useDetailsMode } from '../hooks/useDetailsMode'
 import { PistesTeaser } from '../components/TodayCards'
 import DetailsToggle from '../components/DetailsToggle'
 import GutLinks from '../components/GutLinks'
+import ReintroductionEntry from '../components/ReintroductionEntry'
 import { gutCardMode, homeFocus } from '../settings/onboarding'
 import './Recommendations.css'
 
@@ -588,7 +589,7 @@ function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
 function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced, showGut = false }) {
   const { correlations: result } = analysis
   const soon = soonLines(analysis, showGut)
-  const gut = showGut ? <GutLinks gut={analysis.gut} /> : null
+  const gut = showGut ? <><GutLinks gut={analysis.gut} /><ReintroductionEntry /></> : null
 
   if (result.status === 'not_enough_data') {
     return (

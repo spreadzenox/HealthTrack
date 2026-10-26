@@ -45,6 +45,14 @@
   souvent, l'ail n'est plus accusé à tort : il ne reste une piste que s'il ressort aussi les jours sans oignon. Dans
   les détails : « Souvent mangé avec : ail. Comparé à part, il ne ressort pas à lui seul. »
 
+- **Réintroduction guidée** (26/10 10:33) — avec « Mon ventre », Analyses propose « Tester un groupe FODMAP » :
+  vous choisissez un groupe (blé, oignon ou ail un par un, GOS, fructose, lactose, sorbitol, mannitol), réglez les
+  3 portions, et le test démarre après 3 jours de ventre calme. Chaque jour, « J'ai mangé ma portion » en un geste,
+  puis votre ventre comme d'habitude ; en cas de gêne, « C'est supportable ? » ; à la fin, une phrase (« Blé : une
+  portion moyenne passe »). Premium sur la version Play, offert à tous pendant la période de lancement. **À tester** :
+  ouvrir Analyses → « Tester un groupe FODMAP », vérifier le choix des groupes et la préparation (le bouton
+  « Commencer » attend 3 jours de bilans du ventre « calme »).
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -68,8 +76,9 @@ résultat en une phrase (« Blé : une portion moyenne passe ») ; rapport de 2 
 d'abord. Repères tirés d'une fiche patient du NHS et des conseils de l'université Monash, présentés comme des repères
 à adapter avec votre diététicienne. Depuis le 26/10 09:33, la logique du test est écrite et vérifiée (7a : départ
 seulement après 3 jours de ventre calme, une portion par jour, « C'est supportable ? » en cas de gêne, résultat en
-une phrase, un seul test à la fois, deux jours sautés → le test repart du jour 1). Rien de visible dans l'app pour
-l'instant ; les écrans arrivent au prochain run de code (7b).
+une phrase, un seul test à la fois, deux jours sautés → le test repart du jour 1). Depuis le 26/10 10:33, les écrans
+sont dans l'app (7b-1, ci-dessus) ; restent le rappel de la portion (7b-2), le lien depuis chaque piste ventre (7c) et
+le rapport PDF.
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -85,6 +94,7 @@ l'instant ; les écrans arrivent au prochain run de code (7b).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 10:33 — [7b-1 : écrans de la réintroduction](runs/2026-10-26-1033-7b-ecrans-reintroduction.md) | 🏗️ | `/reintroduction` : choix du groupe (étiquettes d'état), préparation (portions modifiables, 3 jours calmes avant), jour en cours (frise, portion en un geste, « supportable ? », reprise), résultat ; carte « Tester un groupe FODMAP » dans Analyses ; premium coché ; 2 339 Vitest |
 | 26/10 09:33 — [7a : machine de réintroduction](runs/2026-10-26-0933-7a-machine-reintroduction.md) | 🏗️ | `fodmapChallenge.js` : 6 groupes, 3 jours calmes avant, ×1 / ×2 / ×3 sur 24 h, « supportable ? », verdict, pause de fin, un test à la fois, 2 jours sautés → pause ; « intolérance » / « allergie » interdits ; rien d'affiché ; 2 329 Vitest |
 | 26/10 08:33 — [Idées : jalon 7 prêt à coder](runs/2026-10-26-0833-idees-jalon7-reintroduction-pdf.md) | 💡 | Réintroduction FODMAP guidée (I174 : ×1 / ×2 / ×3 sur 24 h, 3 jours calmes avant, machine + 4 écrans, découpage 7a–7d), rapport PDF 2 pages (I175, `pdf-lib` MIT), selles facultatives (I176) ; journal seul |
 | 26/10 07:33 — [I134 étape 3 : aliments ensemble](runs/2026-10-26-0733-i134-aliments-ensemble.md) | 🏗️ | `gutDays` : pistes recomparées à exposition égale aux pistes plus nettes (même seuil de p) ; piège ail 23 → 1/60 ; « Souvent mangé avec » dans les détails ; 2 300 Vitest |
