@@ -109,8 +109,8 @@ bouton arrivent au prochain run.
 
 **👉 Vos prochaines actions, la plus utile d'abord**
 1. **Inviter les testeurs** (ci-dessus) — c'est ce qui lance les 14 jours obligatoires avant la production.
-2. **P28** : plus rien à filmer, **la CI fait la vidéo** (workflow « Play — vidéo P28 », 26/10 15:46). Il vous
-   reste la déclaration (voir [`PRODUIT.md`](PRODUIT.md) §4, P28 : cocher Caméra, coller les 3 textes de
+2. **P28** : plus rien à filmer, **la CI fait la vidéo** (workflow « Play — vidéo P28 », en cours de mise au point
+   dans la PR #398 : le lien arrive dans ce résumé dès qu'il est vert). Il vous restera la déclaration (voir [`PRODUIT.md`](PRODUIT.md) §4, P28 : cocher Caméra, coller les 3 textes de
    [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien de la vidéo, envoyer). Débloque la lecture du
    bien-être au déverrouillage dans la version Play.
 3. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
@@ -118,6 +118,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 15:46 — [P28 : vidéo filmée par la CI](runs/2026-10-26-1546-p28-video-ci.md) | 🏗️ | Workflow « Play — vidéo P28 » (APK d'aperçu, émulateur, pilotage DevTools + appuis adb, preuve par plan, publication Pages) ; caméra au déverrouillage prouvée, notification pas encore filmée → **PR #398 ouverte, non mergée** ; ciqual.anses.fr toujours en 503 |
 | 26/10 14:53 — [N1 : audit de la table nutritionnelle](runs/2026-10-26-1453-n1-audit-ciqual.md) | 🏗️ | Audit chiffré (3 506/3 553 aliments aux micronutriments recopiés, 201 AGS > lipides, 145 énergies fausses) + importeur Ciqual testé ; ciqual.anses.fr en maintenance, reconstruction au run suivant ; 20 tests de plus |
 | 26/10 13:48 — [I175-1 : contenu du rapport médecin](runs/2026-10-26-1348-i175-1-build-report.md) | 🏗️ | Modèle pur du rapport PDF (`buildReport.js`, 2 pages : en bref + détail), rien d'affiché ; 2 396 Vitest |
 | 26/10 11:33 — [7b-2 : rappel de la portion du jour](runs/2026-10-26-1133-7b2-rappel-portion.md) | 🏗️ | Notification « Votre portion du jour » à l'heure choisie (natif, deux variantes, au plus 3 rappels, toucher ouvre le test) ; état du test dans la carte d'entrée d'Analyses ; 2 356 Vitest, 4 JUnit de plus |

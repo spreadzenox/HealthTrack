@@ -123,7 +123,7 @@ des services de premier plan » (si la ligne n'existe pas encore, voir « Ordre 
 
   (FR : la lecture doit avoir lieu dans la seconde qui suit le déverrouillage, pendant que la personne regarde
   l'écran ; différée, elle est perdue ; interrompue, plus aucune lecture jusqu'à la prochaine ouverture de l'app.)
-- **Lien vidéo** : la vidéo YouTube en « Non répertoriée » (script ci-dessous).
+- **Lien vidéo** : la vidéo filmée par la CI (workflow « Play — vidéo P28 », 26/10 ; décision du propriétaire du 26/10 15:00), publiée à https://spreadzenox.github.io/HealthTrack/p28/ dès que le film est vert (le script ci-dessous reste la référence des plans).
 
 ### Script de la vidéo (Galaxy A56, 60 à 90 s, sans son)
 
