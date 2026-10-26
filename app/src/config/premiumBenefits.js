@@ -26,7 +26,9 @@ export const PREMIUM_BENEFITS = [
     id: 'fodmap',
     label: 'La réintroduction FODMAP guidée, groupe par groupe',
     playLabel: 'Réintroduction FODMAP guidée',
-    delivered: false, // jalon 7
+    delivered: true,
+    // Écrans de la réintroduction (jalon 7b) au-dessus de la machine services/fodmapChallenge.js
+    deliveredBy: 'app/src/pages/Reintroduction.jsx',
   },
   {
     id: 'pdf-report',

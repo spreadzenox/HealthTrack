@@ -945,6 +945,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     fireEvent.click(within(section).getAllByRole('button', { name: /détails/i })[0])
     expect(within(section).getByText(/L’attente joue aussi : une réintroduction guidée aide à trancher/)).toBeInTheDocument()
     expect(within(section).getByText(/RR = .* · q = /)).toBeInTheDocument()
+    expect(screen.getByTestId('reintro-entry')).toHaveAttribute('href', '/reintroduction')
   })
 
   it('says « trop tôt » in one discreet line while there are only a few days of gut notes', async () => {
@@ -971,5 +972,6 @@ describe('Recommendations — votre ventre et vos repas', () => {
     await screen.findByText(/Pistes à tester/)
     expect(screen.queryByTestId('gut-links')).toBeNull()
     expect(screen.queryByText('Votre ventre et vos repas')).toBeNull()
+    expect(screen.queryByTestId('reintro-entry')).toBeNull()
   })
 })

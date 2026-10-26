@@ -345,12 +345,12 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   calme au départ, retest + mention de l'effet d'attente) — **spécifié le 26/10 08:33** (`IDEES.md` I174 : protocole
   ×1 / ×2 / ×3 sur 24 h, 3 jours calmes avant, fructanes source par source, sorbitol et mannitol séparés, un test à la
   fois ; entrée `fodmap_challenge`, verdict calculé depuis les notes `gut`) : [x] **7a** machine pure + données +
-  tests (rien d'affiché) — **FAIT le 26/10 09:33** (`services/fodmapChallenge.js`, 29 tests) ; [ ] **7b** écrans choix / préparation / jour en cours / résultat + rappel ; [ ] **7c** lien
+  tests (rien d'affiché) — **FAIT le 26/10 09:33** (`services/fodmapChallenge.js`, 29 tests) ; [x] **7b-1** écrans choix / préparation / jour en cours / résultat — **FAIT le 26/10 10:33** (`pages/Reintroduction.jsx`, carte d'entrée dans Analyses, 10 tests) ; [ ] **7b-2** rappel de la portion + état dans la carte d'entrée ; [ ] **7c** lien
   depuis les pistes ventre + états dans la carte lilas ; [ ] **7d** à l'aveugle avec un proche (I171 c) ;
   [ ] **I175** rapport PDF 2 pages (`buildReport.js` pur puis `renderPdf.js` avec `pdf-lib` + `fontkit` MIT, polices
   embarquées, chargé à la demande, écrit dans Documents comme l'export JSON) ; [ ] **I176** forme des selles
   facultative (Bristol regroupée en 3, objectif ventre seulement, aucun sous-type affiché) ; [ ] `premiumBenefits.js` :
-  `pistes-delays` encore « en préparation » alors que les pistes ventre sont affichées (à trancher)
+  `pistes-delays` encore « en préparation » alors que les pistes ventre sont affichées (à trancher) ; `fodmap` coché le 26/10 10:33
 - [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026) — [x] **I131**
   (21/10 10:30, avec 3b-2) manifeste play limité aux 15 lectures HC du connecteur (`READ_TYPES` exporté = seule
   source, test-garde + `check-play-manifest.sh` ; le plugin en déclarait 41 dont 20 écritures) ; historique > 30 j en option derrière `FEATURE_READ_HEALTH_DATA_HISTORY`

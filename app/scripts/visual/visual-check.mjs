@@ -23,6 +23,9 @@
  *   npm run visual -- --routes=/connectors --hrv-gap  # plus de VFC depuis 4 jours (« qui envoie quoi »)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/recommendations --gut-links  # bilans du soir du ventre : une piste repas → ventre
+ *   npm run visual -- --routes=/reintroduction --fodmap  # réintroduction guidée (7b) : 8 jours de ventre calme, choix ;
+ *                                          --click="Blé" : préparation ; --fodmap=day2 : test du lait au jour 2 ;
+ *                                          =question : gêne après la portion ; =result : résultat et pause
  *   npm run visual -- --routes=/food --food-analysis
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
@@ -119,6 +122,7 @@ const DEFAULT_ROUTES = [
   ['/montre', 'montre'],
   ['/premium', 'premium'],
   ['/bien-etre', 'bien-etre'],
+  ['/reintroduction', 'reintroduction'],
   ['/bienvenue', 'bienvenue'],
 ]
 
@@ -804,6 +808,28 @@ async function main() {
         const level = rnd() < (banana ? 0.75 : 0.15) ? (rnd() < 0.5 ? 'pain' : 'discomfort') : 'calm'
         entries.push({ type: 'gut', source: 'app_gut', at: bilan.toISOString(), payload: { level, scope: 'day' } })
       }
+    }
+    if (args.fodmap) {
+      // Réintroduction guidée (7b) : ventre calme les 8 derniers jours (bilans du soir), puis un test selon l'option.
+      entries = entries.filter((e) => e.type !== 'gut' || new Date(e.at) < daysAgo(8, 0))
+      for (let n = 8; n >= 1; n--) entries.push({ type: 'gut', source: 'app_gut', at: daysAgo(n, 21).toISOString(), payload: { level: 'calm', scope: 'day' } })
+      const plans = {
+        milk: { unit: 'ml', units: 'ml', amounts: [125, 250, 375] },
+        wheat: { unit: 'tranche', units: 'tranches', amounts: [1, 2, 3] },
+      }
+      const test = (group, food, startN, doseDays) => ({
+        type: 'fodmap_challenge', source: 'app_fodmap', at: daysAgo(startN, 8).toISOString(),
+        payload: {
+          group, food, plan: plans[food], startedAt: daysAgo(startN, 8).toISOString(), answers: [], restarts: 0,
+          doses: doseDays.map(([n, h], i) => ({ day: i + 1, amount: plans[food].amounts[i], unit: plans[food].unit, at: daysAgo(n, h).toISOString() })),
+        },
+      })
+      if (args.fodmap === 'day2') entries.push(test('lactose', 'milk', 1, [[1, 12]]))
+      if (args.fodmap === 'question') {
+        entries.push(test('lactose', 'milk', 1, [[1, 12], [0, 9]]))
+        entries.push({ type: 'gut', source: 'app_gut', at: daysAgo(0, 14).toISOString(), payload: { level: 'discomfort' } })
+      }
+      if (args.fodmap === 'result') entries.push(test('fructans', 'wheat', 4, [[4, 12], [3, 12], [2, 12]]))
     }
     if (args['hrv-gap']) {
       // La montre n'envoie plus sa VFC depuis 4 jours (le reste continue d'arriver).
