@@ -1147,10 +1147,15 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
 - [x] **N1** audit chiffré + importeur Ciqual testé (`app/scripts/nutrition/` : `audit.mjs`, `ciqual.mjs`,
   `build-ciqual-table.mjs`) — **FAIT le 26/10 14:53**. Constat : 3 506 / 3 553 aliments partagent leur vecteur de
   micronutriments (59 gabarits inventés), 201 AGS > lipides, 145 énergies incohérentes, 98 sec / cuit implausibles.
-- [ ] **N2** reconstruction depuis Ciqual (dernière version) : site ciqual.anses.fr en maintenance le 26/10 15:00
-  (HTTP 503) ; réessayer, sinon workflow `workflow_dispatch` qui télécharge le zip en artefact. Renommage des anciens
-  noms pour les repas déjà saisis (aucune perte), `null` = inconnu partout (totaux, Nutrition, KPIs), attribution
-  Licence Ouverte affichée, repas recalculés, bilan chiffré.
+- [x] **N2** reconstruction depuis **Ciqual 2025** — **FAIT le 26/10 16:33**. Source : https://zenodo.org/records/17550133
+  (publiée par l'Anses, CC BY 4.0, md5 vérifiés ; ciqual.anses.fr toujours en 503). Importeur adapté au format 2025
+  (« Alcool (éthanol) », vitamine A en équivalents rétinol, vitamine E en alpha-tocophérol à défaut, énergie
+  recalculée depuis les macros quand elle n'est pas publiée, marquée `calculé`) ; 69 alias (`aliases.mjs`) pour les
+  noms simples ; mêmes clés, même ordre ; attribution CC BY en bas de Nutrition ; test de la table livrée.
+- [ ] **N2b** inconnu ≠ 0 dans les totaux : `computeTotalsFromItems` compte encore une teneur `null` comme 0 (phrase
+  d'avertissement en bas de Nutrition) ; renvoyer la part connue par nutriment et l'afficher (« sodium : partiel »)
+  dans Nutrition et les KPIs. Valeur Ciqual suspecte vue au passage : fer de l'oignon cru 0,00019 mg (publiée telle
+  quelle).
 - [ ] **N3** FODMAP par sous-groupe (fructanes, GOS, lactose, fructose en excès du glucose, sorbitol, mannitol) par
   portion : lactose / fructose / glucose / polyols depuis Ciqual, fructanes / GOS / sorbitol / mannitol depuis des
   mesures publiées citées par aliment (jamais Monash ni FODMAP Friendly), sinon « inconnu » ou analogie à confiance

@@ -50,7 +50,8 @@ export function dryCookedKey(name) {
 }
 
 export function auditTable(table) {
-  const names = Object.keys(table)
+  // Les alias (`alias_of`) copient un aliment Ciqual : ils ne sont pas des aliments distincts.
+  const names = Object.keys(table).filter((n) => !table[n].alias_of)
   const issues = { energy: [], sugar: [], saturatedFat: [], identicalMicros: [], dryCooked: [] }
   let unknownValues = 0
   let totalValues = 0
