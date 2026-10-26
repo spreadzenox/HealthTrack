@@ -25,6 +25,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(FaceSensePlugin.class);
         registerPlugin(EveningNotePlugin.class);
         registerPlugin(GutEveningPlugin.class);
+        registerPlugin(PortionReminderPlugin.class);
         registerPlugin(VoiceProbePlugin.class);
         // Mise à jour en un clic : variante sideload seulement (Google Play met l'app à jour lui-même)
         if (BuildConfig.SELF_UPDATE) registerPlugin(AppUpdatePlugin.class);
@@ -33,12 +34,19 @@ public class MainActivity extends BridgeActivity {
         registerPlugins(FlavorPlugins.list());
         super.onCreate(savedInstanceState);
         faceResumePending = isFaceResume(getIntent());
+        markPortionOpen(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (isFaceResume(intent)) faceResumePending = true;
+        markPortionOpen(intent);
+    }
+
+    /** Rappel « Votre portion du jour » touché : l'app ouvrira la réintroduction (PortionReminder.takeOpen). */
+    private void markPortionOpen(Intent intent) {
+        if (intent != null && PortionReminder.ACTION_OPEN.equals(intent.getAction())) PortionReminder.markOpen(this);
     }
 
     @Override

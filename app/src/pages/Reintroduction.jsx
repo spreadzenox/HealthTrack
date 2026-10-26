@@ -19,8 +19,12 @@ import { GUT_TYPE } from '../services/today'
 import {
   FODMAP_GROUPS, FODMAP_CHALLENGE_TYPE, FODMAP_CHALLENGE_SOURCE, CALM_DAYS_REQUIRED,
   findFood, findGroup, defaultPlan, startChallenge, challengeStatus, recordDose, answerTolerable,
-  restartChallenge, canStartChallenge, groupResults, combinationsAvailable, verdictSentence,
+  restartChallenge, canStartChallenge, groupResults, combinationsAvailable, verdictSentence, formatAmount,
+  currentChallenge,
 } from '../services/fodmapChallenge'
+import {
+  minuteToTime, portionReminderAvailable, portionReminderPrefs, setPortionReminder, timeToMinute,
+} from '../services/fodmapReminder'
 
 /** Notes du ventre relues : assez loin pour couvrir un test, sa pause et un redémarrage. */
 const GUT_WINDOW_DAYS = 120
@@ -38,7 +42,7 @@ const defaultStore = {
   update: (id, payload) => updateEntry(id, { payload }),
 }
 
-const fmt = (amount, plan) => `${String(amount).replace('.', ',')} ${amount > 1 ? plan.units : plan.unit}`
+const fmt = formatAmount
 const timeOf = (iso) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 
 /** Étiquette d'un groupe dans le choix : verdict du groupe, ou par aliment pour les fructanes. */
@@ -83,6 +87,41 @@ function Timeline({ challenge, status }) {
         </li>
       ))}
     </ol>
+  )
+}
+
+/** « Me rappeler ma portion chaque jour à 12:00 » : seulement là où le téléphone sait programmer le rappel. */
+function PortionReminderRow() {
+  const [prefs, setPrefs] = useState(() => portionReminderPrefs())
+  const [blocked, setBlocked] = useState(false)
+  if (!portionReminderAvailable()) return null
+  async function apply(next) {
+    setPrefs(next)
+    const r = await setPortionReminder(next)
+    setBlocked(r.blocked)
+  }
+  return (
+    <div className="fodmap-reminder">
+      <label className="fodmap-reminder-row">
+        <input
+          type="checkbox" checked={prefs.enabled}
+          onChange={(e) => apply({ ...prefs, enabled: e.target.checked })}
+        />
+        <span>Me rappeler ma portion chaque jour à</span>
+        <input
+          type="time" className="mono" value={minuteToTime(prefs.minute)} aria-label="Heure du rappel"
+          onChange={(e) => {
+            const minute = timeToMinute(e.target.value)
+            if (minute != null) apply({ ...prefs, minute })
+          }}
+        />
+      </label>
+      {blocked && (
+        <p className="fodmap-note" role="status">
+          Les notifications sont bloquées : autorisez-les dans les réglages d’Android pour recevoir le rappel.
+        </p>
+      )}
+    </div>
   )
 }
 
@@ -165,6 +204,7 @@ function Prepare({ group, food, start, onBack, onStart, busy }) {
           <li>Pas plus de café ni d’alcool que d’habitude.</li>
           <li>Les autres repas restent pauvres en FODMAP.</li>
         </ul>
+        <PortionReminderRow />
         {start.reason === 'not_calm' && (
           <p className="fodmap-wait" role="status">
             On attend que votre ventre soit calme : ça rend le test lisible.{' '}
@@ -230,6 +270,7 @@ function Running({ challenge, status, busy, onDose, onAnswer, onRestart, onAband
             {status.day < 3 ? ' ; la portion suivante, c’est demain.' : '.'}
           </p>
         )}
+        {/^day\d$/.test(status.state) && (challenge.doses || []).length < 3 && <PortionReminderRow />}
       </article>
       {status.state !== 'paused' && <GutCard details={false} onToggleDetails={() => {}} />}
       <p className="fodmap-abandon">
@@ -301,7 +342,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
       .filter((e) => e.payload?.group && !e.payload.abandonedAt)
       .map((e) => ({ entry: e, status: challengeStatus(e.payload, data.gut, now) }))
       .sort((a, b) => Date.parse(b.entry.payload.startedAt) - Date.parse(a.entry.payload.startedAt))
-    const current = live.find((c) => c.status.state !== 'done') ?? null
+    const current = currentChallenge(data.challenges, data.gut, now)
     const results = groupResults(data.challenges, data.gut, now)
     return {
       current,

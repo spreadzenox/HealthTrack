@@ -345,7 +345,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   calme au départ, retest + mention de l'effet d'attente) — **spécifié le 26/10 08:33** (`IDEES.md` I174 : protocole
   ×1 / ×2 / ×3 sur 24 h, 3 jours calmes avant, fructanes source par source, sorbitol et mannitol séparés, un test à la
   fois ; entrée `fodmap_challenge`, verdict calculé depuis les notes `gut`) : [x] **7a** machine pure + données +
-  tests (rien d'affiché) — **FAIT le 26/10 09:33** (`services/fodmapChallenge.js`, 29 tests) ; [x] **7b-1** écrans choix / préparation / jour en cours / résultat — **FAIT le 26/10 10:33** (`pages/Reintroduction.jsx`, carte d'entrée dans Analyses, 10 tests) ; [ ] **7b-2** rappel de la portion + état dans la carte d'entrée ; [ ] **7c** lien
+  tests (rien d'affiché) — **FAIT le 26/10 09:33** (`services/fodmapChallenge.js`, 29 tests) ; [x] **7b-1** écrans choix / préparation / jour en cours / résultat — **FAIT le 26/10 10:33** (`pages/Reintroduction.jsx`, carte d'entrée dans Analyses, 10 tests) ; [x] **7b-2** rappel de la portion + état dans la carte d'entrée — **FAIT le 26/10 11:33** (`services/fodmapReminder.js`, natif `PortionReminder*.java` + `gut/PortionSchedule.java`, notification qui ouvre `/reintroduction`) ; [ ] **7c** lien
   depuis les pistes ventre + états dans la carte lilas ; [ ] **7d** à l'aveugle avec un proche (I171 c) ;
   [ ] **I175** rapport PDF 2 pages (`buildReport.js` pur puis `renderPdf.js` avec `pdf-lib` + `fontkit` MIT, polices
   embarquées, chargé à la demande, écrit dans Documents comme l'export JSON) ; [ ] **I176** forme des selles

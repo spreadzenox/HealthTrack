@@ -25,7 +25,8 @@
  *   npm run visual -- --routes=/recommendations --gut-links  # bilans du soir du ventre : une piste repas → ventre
  *   npm run visual -- --routes=/reintroduction --fodmap  # réintroduction guidée (7b) : 8 jours de ventre calme, choix ;
  *                                          --click="Blé" : préparation ; --fodmap=day2 : test du lait au jour 2 ;
- *                                          =question : gêne après la portion ; =result : résultat et pause
+ *                                          =question : gêne après la portion ; =result : résultat et pause ;
+ *                                          --portion-reminder=on|off : rappel de la portion (7b-2, faux plugin)
  *   npm run visual -- --routes=/food --food-analysis
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
@@ -752,6 +753,17 @@ async function main() {
           remove: async () => ({ removed: 0 }),
         }
       }, String(args['evening-note']))
+    }
+    // Rappel de la portion d'une réintroduction (7b-2) : --portion-reminder=off (interrupteur éteint) | on.
+    if (args['portion-reminder']) {
+      await context.addInitScript((mode) => {
+        if (mode === 'on') localStorage.setItem('halcya_portion_reminder', JSON.stringify({ enabled: true, minute: 12 * 60 }))
+        window.__healthtrackFakePortionReminder = {
+          schedule: async (o) => ({ count: o.items.length, notifications: true }),
+          requestNotifications: async () => ({ asked: true, notifications: true }),
+          takeOpen: async () => ({ open: false }),
+        }
+      }, String(args['portion-reminder']))
     }
     // Bilan du ventre du soir par notification (I170) : --gut-evening=off (proposition dans la carte) | on.
     if (args['gut-evening']) {

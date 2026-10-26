@@ -33,6 +33,7 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
   beforeEach(() => {
     dist.play = false
     localStorage.clear()
+    delete window.__healthtrackFakePortionReminder
   })
 
   it('① liste les groupes avec leur état et la mise en garde, sans mot interdit', async () => {
@@ -134,5 +135,36 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     renderPage(makeStore())
     window.dispatchEvent(new CustomEvent(ENTITLEMENT_EVENT, { detail: { premium: true, source: 'launch' } }))
     expect(await screen.findByRole('button', { name: /Lactose/ })).toBeInTheDocument()
+  })
+
+  it('7b-2 : rappel de la portion, absent hors de l’app, programmé à l’heure choisie pendant le test', async () => {
+    const store = makeStore({ challenges: [challengeEntry(startChallenge({ group: 'lactose', food: 'milk' }, new Date(2026, 9, 26, 9)))] })
+    const first = renderPage(store)
+    expect(await screen.findByText('Lait · jour 1')).toBeInTheDocument()
+    expect(screen.queryByText(/Me rappeler ma portion/)).toBeNull()
+    first.unmount()
+
+    const plugin = {
+      schedule: vi.fn(async (o) => ({ count: o.items.length, notifications: true })),
+      requestNotifications: vi.fn(async () => ({ asked: true, notifications: true })),
+    }
+    window.__healthtrackFakePortionReminder = plugin
+    renderPage(store)
+    fireEvent.click(await screen.findByRole('checkbox', { name: /Me rappeler ma portion/ }))
+    await waitFor(() => expect(plugin.requestNotifications).toHaveBeenCalledTimes(1))
+    expect(JSON.parse(localStorage.getItem('halcya_portion_reminder'))).toEqual({ enabled: true, minute: 720 })
+    fireEvent.change(screen.getByLabelText('Heure du rappel'), { target: { value: '08:30' } })
+    await waitFor(() => expect(JSON.parse(localStorage.getItem('halcya_portion_reminder')).minute).toBe(510))
+  })
+
+  it('7b-2 : notifications bloquées → explication', async () => {
+    window.__healthtrackFakePortionReminder = {
+      schedule: vi.fn(async () => ({ notifications: false })),
+      requestNotifications: vi.fn(async () => ({ asked: false, notifications: false })),
+    }
+    renderPage(makeStore({ gutEntries: calm(3, 2, 1) }))
+    fireEvent.click(await screen.findByRole('button', { name: /Lactose/ }))
+    fireEvent.click(screen.getByRole('checkbox', { name: /Me rappeler ma portion/ }))
+    expect(await screen.findByText(/Les notifications sont bloquées/)).toBeInTheDocument()
   })
 })
