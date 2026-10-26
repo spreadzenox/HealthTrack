@@ -107,7 +107,7 @@ jobs:
           avd-name: a56
           force-avd-creation: false
           emulator-options: >-
-            -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+            -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -skin 1080x2340
             -camera-front emulated -camera-back none
           disable-animations: false
           script: bash .github/scripts/p28-video/run.sh

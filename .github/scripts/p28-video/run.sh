@@ -11,9 +11,10 @@ adb shell settings put global animator_duration_scale 0.5
 # Écran de verrouillage par balayage (sans code), qui envoie ACTION_USER_PRESENT au déverrouillage
 adb shell locksettings set-disabled false >/dev/null 2>&1 || true
 adb shell settings put system screen_off_timeout 600000
+# -g accorde caméra et notifications à l'installation : le plan 4 (« si Android le demande ») est sauté. Essai du
+# 26/10 : la boîte d'Android de l'émulateur n'était pas touchée de façon fiable, et sans notification les plans 5 et 8
+# ne se filment pas.
 adb install -r -g apercu.apk
-# -g accorde tout, y compris les notifications : on les retire pour que le plan 4 (demande d'Android) soit réel
-adb shell pm revoke fr.jpesquet.sante.apercu android.permission.POST_NOTIFICATIONS >/dev/null 2>&1 || true
 
 node .github/scripts/p28-video/drive.mjs
 STATUS=$?
