@@ -228,7 +228,13 @@ async function storedFaceReadings() {
 }
 
 // ── Préparation (hors vidéo) ───────────────────────────────────────────────────────────────────────────────────
+/** Boîte « … ne répond pas » d'Android sur l'émulateur lent : « Attendre ». */
+async function dismissAnr() {
+  if (await tapNative(/^(wait|attendre)$/i, 1500)) log('boîte « ne répond pas » fermée')
+}
+
 async function prepare() {
+  await dismissAnr()
   shell('settings put system show_touches 1')
   shell('settings put global heads_up_notifications_enabled 1')
   shell(`pm grant ${PKG} android.permission.CAMERA`)
@@ -286,6 +292,7 @@ async function prepare() {
 
 // ── Plans de la vidéo (PLAY-CONFORMITE.md §1 bis) ────────────────────────────────────────────────────────────
 async function film() {
+  await dismissAnr()
   // 1. Écran d'accueil → ouvrir Halcya
   shell(`monkey -p ${PKG} -c android.intent.category.LAUNCHER 1`)
   await connectWebView()
