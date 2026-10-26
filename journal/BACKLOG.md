@@ -347,7 +347,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   fois ; entrée `fodmap_challenge`, verdict calculé depuis les notes `gut`) : [x] **7a** machine pure + données +
   tests (rien d'affiché) — **FAIT le 26/10 09:33** (`services/fodmapChallenge.js`, 29 tests) ; [x] **7b-1** écrans choix / préparation / jour en cours / résultat — **FAIT le 26/10 10:33** (`pages/Reintroduction.jsx`, carte d'entrée dans Analyses, 10 tests) ; [x] **7b-2** rappel de la portion + état dans la carte d'entrée — **FAIT le 26/10 11:33** (`services/fodmapReminder.js`, natif `PortionReminder*.java` + `gut/PortionSchedule.java`, notification qui ouvre `/reintroduction`) ; [x] **7c** lien
   depuis les pistes ventre + états dans la carte lilas — **FAIT le 26/10 12:33** (`challengeFoodFor` / `challengePath`, aliment présélectionné) ; [ ] **7d** à l'aveugle avec un proche (I171 c) ;
-  [ ] **I175** rapport PDF 2 pages (`buildReport.js` pur puis `renderPdf.js` avec `pdf-lib` + `fontkit` MIT, polices
+  [ ] **I175** rapport PDF 2 pages ([x] étape 1 `services/report/buildReport.js` pur — **FAIT le 26/10 13:48**, 12 tests ; [ ] étape 2 `renderPdf.js` avec `pdf-lib` + `fontkit` MIT, polices
   embarquées, chargé à la demande, écrit dans Documents comme l'export JSON) ; [ ] **I176** forme des selles
   facultative (Bristol regroupée en 3, objectif ventre seulement, aucun sous-type affiché) ; [ ] `premiumBenefits.js` :
   `pistes-delays` encore « en préparation » alors que les pistes ventre sont affichées (à trancher) ; `fodmap` coché le 26/10 10:33
@@ -1141,6 +1141,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 26/10 (13:48 Paris)** : ✅ **I175 étape 1** — modèle pur du rapport (`services/report/buildReport.js` : période 2 / 4 / 12 semaines, ventre jour par jour à la note la plus forte, semaine par semaine, calendrier avec jours riches en FODMAP, tests de réintroduction, pistes « à confirmer » avec le nombre de comparaisons, sommeil mesuré et régularité, aliments fréquents, sources lisibles, bien-être estimé seulement sur demande) ; rien d'affiché. Suite : **I175 étape 2** (`renderPdf.js`, `pdf-lib` + `fontkit` chargés à la demande, polices embarquées, écriture dans Documents, accès depuis Analyses et Données) → I176 → 7d.
 
 **Mise à jour du 26/10 (09:33 Paris)** : ✅ **7a** — machine de réintroduction pure (`services/fodmapChallenge.js` :
 6 groupes et repères de départ, garde des 3 jours calmes, fenêtre de 24 h, question « supportable ? », verdict,
