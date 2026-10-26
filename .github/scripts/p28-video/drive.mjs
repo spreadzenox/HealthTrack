@@ -73,6 +73,42 @@ function nodeCenter(xml, re) {
   return null
 }
 
+/** Centres de tous les nœuds dont la description ou l'identifiant correspond à `re`. */
+function nodeCenters(xml, re) {
+  const out = []
+  for (const node of xml.split('<node ').slice(1)) {
+    const desc = /content-desc="([^"]*)"/.exec(node)?.[1] ?? ''
+    const rid = /resource-id="([^"]*)"/.exec(node)?.[1] ?? ''
+    if (!re.test(desc) && !re.test(rid)) continue
+    const b = /bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/.exec(node)
+    if (!b) continue
+    const [x1, y1, x2, y2] = b.slice(1).map(Number)
+    if (x2 > x1 && y2 > y1) out.push([Math.round((x1 + x2) / 2), Math.round((y1 + y2) / 2)])
+  }
+  return out
+}
+
+/**
+ * Déplie la notification « Lecture du visage active » (repliée dans « Silencieuses ») : on touche le chevron de SA
+ * ligne, le plus proche de son titre (essai du 26/10 : le premier chevron du volet était celui d'« Android System »),
+ * et, à défaut, on la tire vers le bas, geste d'Android pour déplier une notification.
+ */
+async function expandOurNotification() {
+  const xml = dumpUi()
+  const title = nodeCenter(xml, /Lecture du visage active/)
+  if (!title) return false
+  const chevrons = nodeCenters(xml, /expand_button|développer|expand/i)
+    .filter((c) => Math.abs(c[1] - title[1]) < 120)
+    .sort((a, b) => Math.abs(a[1] - title[1]) - Math.abs(b[1] - title[1]))
+  if (chevrons.length) shell(`input tap ${chevrons[0][0]} ${chevrons[0][1]}`)
+  else shell(`input swipe ${title[0]} ${title[1]} ${title[0]} ${title[1] + 300} 400`)
+  await sleep(1200)
+  if (nodeCenter(dumpUi(), /^Arr[êe]ter$/i)) return true
+  shell(`input swipe ${title[0]} ${title[1]} ${title[0]} ${title[1] + 300} 400`)
+  await sleep(1200)
+  return !!nodeCenter(dumpUi(), /^Arr[êe]ter$/i)
+}
+
 async function tapNative(re, timeoutMs = 8000) {
   const t0 = Date.now()
   while (Date.now() - t0 < timeoutMs) {
@@ -332,8 +368,7 @@ async function film() {
   let notif = await waitNative(/Lecture du visage active/, 6000)
   if (notif && !nodeCenter(dumpUi(), /^Arr[êe]ter$/i)) {
     // notification discrète repliée : on la déplie pour montrer le bouton
-    await tapNative(/expand_button|développer|expand/i, 3000)
-    await sleep(1200)
+    await expandOurNotification()
   }
   const stopVisible = !!nodeCenter(dumpUi(), /^Arr[êe]ter$/i)
   record('5. Notification « Lecture du visage active » avec « Arrêter »', notif && stopVisible, await shot('notification'))
@@ -348,7 +383,7 @@ async function film() {
   await sleep(3000)
   shell('input keyevent KEYCODE_WAKEUP')
   await sleep(1200)
-  shell('input swipe 540 1900 540 500 250')
+  shell('input swipe 360 1300 360 400 250') // écran 720 × 1560 (run.sh)
   shell('wm dismiss-keyguard')
   await sleep(700)
   await shot('deverrouillage')
@@ -374,7 +409,7 @@ async function film() {
   // 8. Volet → « Arrêter » : la notification disparaît ; dans Sources, l'interrupteur est coupé
   shell('cmd statusbar expand-notifications')
   await sleep(1500)
-  if (!nodeCenter(dumpUi(), /^Arr[êe]ter$/i)) await tapNative(/expand_button|développer|expand/i, 3000)
+  if (!nodeCenter(dumpUi(), /^Arr[êe]ter$/i)) await expandOurNotification()
   await sleep(1000)
   const stopped = await tapNative(/^Arr[êe]ter$/i, 6000)
   await sleep(2500)

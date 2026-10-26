@@ -72,6 +72,10 @@ jobs:
           ./gradlew assemblePlayDebug -PfaceUnlockPlay=true -PplayPreview=true -PextraAbis=x86_64 --no-daemon
           cp app/build/outputs/apk/play/debug/app-play-debug.apk "$GITHUB_WORKSPACE/apercu.apk"
 
+      # ffmpeg (images extraites et planche de contrôle) n'est plus fourni par les runners ubuntu-latest
+      - name: Installer ffmpeg
+        run: sudo apt-get install -y --no-install-recommends ffmpeg || { sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg; }
+
       - name: Activer KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
