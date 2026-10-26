@@ -66,7 +66,10 @@ fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit jou
 double, puis triple, en regardant les 24 h qui suivent), seulement après 3 jours de ventre calme, un groupe à la fois,
 résultat en une phrase (« Blé : une portion moyenne passe ») ; rapport de 2 pages créé sur le téléphone, résumé
 d'abord. Repères tirés d'une fiche patient du NHS et des conseils de l'université Monash, présentés comme des repères
-à adapter avec votre diététicienne. Rien de visible dans l'app pour l'instant.
+à adapter avec votre diététicienne. Depuis le 26/10 09:33, la logique du test est écrite et vérifiée (7a : départ
+seulement après 3 jours de ventre calme, une portion par jour, « C'est supportable ? » en cas de gêne, résultat en
+une phrase, un seul test à la fois, deux jours sautés → le test repart du jour 1). Rien de visible dans l'app pour
+l'instant ; les écrans arrivent au prochain run de code (7b).
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -82,6 +85,7 @@ d'abord. Repères tirés d'une fiche patient du NHS et des conseils de l'univers
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 09:33 — [7a : machine de réintroduction](runs/2026-10-26-0933-7a-machine-reintroduction.md) | 🏗️ | `fodmapChallenge.js` : 6 groupes, 3 jours calmes avant, ×1 / ×2 / ×3 sur 24 h, « supportable ? », verdict, pause de fin, un test à la fois, 2 jours sautés → pause ; « intolérance » / « allergie » interdits ; rien d'affiché ; 2 329 Vitest |
 | 26/10 08:33 — [Idées : jalon 7 prêt à coder](runs/2026-10-26-0833-idees-jalon7-reintroduction-pdf.md) | 💡 | Réintroduction FODMAP guidée (I174 : ×1 / ×2 / ×3 sur 24 h, 3 jours calmes avant, machine + 4 écrans, découpage 7a–7d), rapport PDF 2 pages (I175, `pdf-lib` MIT), selles facultatives (I176) ; journal seul |
 | 26/10 07:33 — [I134 étape 3 : aliments ensemble](runs/2026-10-26-0733-i134-aliments-ensemble.md) | 🏗️ | `gutDays` : pistes recomparées à exposition égale aux pistes plus nettes (même seuil de p) ; piège ail 23 → 1/60 ; « Souvent mangé avec » dans les détails ; 2 300 Vitest |
 | 26/10 06:33 — [I134 étape 2 : stress et écran](runs/2026-10-26-0633-i134-stress-ecran.md) | 🏗️ | `gutDays` : nuit / stress / écran de la veille candidats, retenus si liés au ventre (z ≥ 2 en valeur absolue, 2 au plus), coupure médiane équilibrée ; pièges café ≤ 3/30 ; « à … comparables » ; 2 293 Vitest |
