@@ -10,7 +10,7 @@
  * donnée, gratuite). La variante sideload n'a pas d'abonnement et garde tout.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { GutCard } from '../components/TodayCards'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { FEATURES } from '../config/distribution'
@@ -318,7 +318,13 @@ function Locked() {
 export default function Reintroduction({ now: nowProp = null, store = defaultStore }) {
   const [ent] = useEntitlement()
   const [data, setData] = useState(null)
-  const [pick, setPick] = useState(null)
+  const [params] = useSearchParams()
+  // 7c : ouvert depuis une piste ventre (« Vérifier avec une réintroduction guidée »), l'aliment est présélectionné.
+  const [pick, setPick] = useState(() => {
+    const group = params.get('groupe')
+    const food = params.get('aliment')
+    return findFood(group, food) ? { group, food } : null
+  })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const now = nowProp ?? new Date()

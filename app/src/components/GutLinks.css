@@ -75,3 +75,14 @@
   font-size: 0.9rem;
   line-height: 1.4;
 }
+
+/* 7c : vérifier la piste par une réintroduction guidée (lilas, le pastel des pistes) */
+.gut-link-check {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 6px;
+  font-weight: 600;
+  color: var(--lilac-text);
+  text-decoration: none;
+}

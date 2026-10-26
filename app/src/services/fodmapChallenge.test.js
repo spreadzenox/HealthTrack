@@ -2,8 +2,9 @@ import { describe, it, expect } from 'vitest'
 import {
   FODMAP_CHALLENGE_SOURCE, FODMAP_CHALLENGE_TYPE, FODMAP_GROUPS, answerTolerable, calmStreak, canStartChallenge,
   challengeStatus, combinationsAvailable, defaultPlan, groupResults, recordDose, restartChallenge, startChallenge,
-  verdictSentence,
+  verdictSentence, challengeFoodFor, challengePath,
 } from './fodmapChallenge'
+import { FODMAP_FACTOR } from './gutWindows'
 import { parseBackup } from '../storage/localHealthStorage'
 
 /** Heure locale du jour `d` (26/10/2026 = jour 0). */
@@ -220,5 +221,37 @@ describe('sauvegarde', () => {
     const { entries } = parseBackup(JSON.stringify({ entries: [gut(0, 'calm')] }))
     expect(canStartChallenge(entries, entries, at(0, 22))).toMatchObject({ reason: 'not_calm' })
     expect(groupResults(entries, entries).lactose).toEqual({ verdict: null, byFood: {} })
+  })
+})
+
+describe('aliment d’une piste ventre → groupe à tester (7c)', () => {
+  it.each([
+    ['oignon', 'fructans', 'onion'],
+    ['oignon rouge, cru', 'fructans', 'onion'],
+    ['échalote', 'fructans', 'onion'],
+    ['ail', 'fructans', 'garlic'],
+    ['pain de mie', 'fructans', 'wheat'],
+    ['pâtes alimentaires, cuites', 'fructans', 'wheat'],
+    ['lentilles', 'gos', 'chickpeas'],
+    ['houmous', 'gos', 'chickpeas'],
+    ['miel', 'fructose', 'honey'],
+    ['lait demi-écrémé', 'lactose', 'milk'],
+    ['yaourt nature', 'lactose', 'milk'],
+    ['avocat', 'sorbitol', 'avocado'],
+    ['champignons de paris', 'mannitol', 'mushrooms'],
+    ['chou-fleur', 'mannitol', 'mushrooms'],
+  ])('%s → %s / %s', (factor, group, food) => {
+    expect(challengeFoodFor(factor)).toEqual({ group, food })
+  })
+
+  it.each(['lait de coco', 'boisson à l’avoine', 'pain sans gluten', 'volaille', 'riz', 'café', FODMAP_FACTOR, ''])(
+    'rien pour « %s »', (factor) => {
+      expect(challengeFoodFor(factor)).toBeNull()
+    })
+
+  it('chemin de l’écran, aliment présélectionné ou simple choix du groupe', () => {
+    expect(challengePath('oignon')).toBe('/reintroduction?groupe=fructans&aliment=onion')
+    expect(challengePath('café')).toBe('/reintroduction')
+    expect(challengePath(['banane', 'café', 'yaourt nature'])).toBe('/reintroduction?groupe=lactose&aliment=milk')
   })
 })

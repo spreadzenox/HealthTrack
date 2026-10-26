@@ -27,36 +27,44 @@ export const MAX_SKIPPED_DAYS = 1
 
 /**
  * Groupes et repères de départ (J2 = 2 ×, J3 = 3 ×). `perFood` : le verdict vaut pour l'aliment seulement (les
- * fructanes du blé ne disent rien de ceux de l'oignon) ; sinon il vaut pour le groupe.
+ * fructanes du blé ne disent rien de ceux de l'oignon) ; sinon il vaut pour le groupe. `words` / `not` : noms
+ * d'aliments des repas qui renvoient à ce test depuis une piste ventre (7c), au singulier, sans accent requis.
  */
 export const FODMAP_GROUPS = [
   {
     id: 'fructans', label: 'Fructanes', hint: 'blé, oignon, ail', perFood: true,
     foods: [
-      { id: 'wheat', label: 'Blé', example: 'pain de blé', amount: 1, unit: 'tranche', units: 'tranches' },
-      { id: 'onion', label: 'Oignon', example: 'oignon cuit', amount: 1, unit: 'cuillère à soupe', units: 'cuillères à soupe' },
-      { id: 'garlic', label: 'Ail', example: 'ail', amount: 0.5, unit: 'gousse', units: 'gousses' },
+      { id: 'wheat', label: 'Blé', example: 'pain de blé', amount: 1, unit: 'tranche', units: 'tranches',
+        words: ['blé', 'pain', 'baguette', 'pâte', 'semoule', 'couscous', 'biscotte', 'croissant', 'brioche'], not: ['sans gluten'] },
+      { id: 'onion', label: 'Oignon', example: 'oignon cuit', amount: 1, unit: 'cuillère à soupe', units: 'cuillères à soupe',
+        words: ['oignon', 'échalote'] },
+      { id: 'garlic', label: 'Ail', example: 'ail', amount: 0.5, unit: 'gousse', units: 'gousses', words: ['ail'] },
     ],
   },
   {
     id: 'gos', label: 'GOS', hint: 'pois chiches, lentilles',
-    foods: [{ id: 'chickpeas', label: 'Pois chiches', example: 'pois chiches cuits', amount: 40, unit: 'g', units: 'g' }],
+    foods: [{ id: 'chickpeas', label: 'Pois chiches', example: 'pois chiches cuits', amount: 40, unit: 'g', units: 'g',
+      words: ['pois chiche', 'lentille', 'houmous', 'haricot rouge'] }],
   },
   {
     id: 'fructose', label: 'Fructose', hint: 'miel, mangue',
-    foods: [{ id: 'honey', label: 'Miel', example: 'miel', amount: 1, unit: 'cuillère à café', units: 'cuillères à café' }],
+    foods: [{ id: 'honey', label: 'Miel', example: 'miel', amount: 1, unit: 'cuillère à café', units: 'cuillères à café',
+      words: ['miel', 'mangue'] }],
   },
   {
     id: 'lactose', label: 'Lactose', hint: 'lait, yaourt',
-    foods: [{ id: 'milk', label: 'Lait', example: 'lait', amount: 125, unit: 'ml', units: 'ml' }],
+    foods: [{ id: 'milk', label: 'Lait', example: 'lait', amount: 125, unit: 'ml', units: 'ml',
+      words: ['lait', 'yaourt', 'yogourt', 'fromage blanc'], not: ['coco', 'amande', 'avoine', 'soja', 'riz', 'sans lactose'] }],
   },
   {
     id: 'sorbitol', label: 'Sorbitol', hint: 'avocat, mûres',
-    foods: [{ id: 'avocado', label: 'Avocat', example: 'avocat', amount: 0.25, unit: 'avocat', units: 'avocat' }],
+    foods: [{ id: 'avocado', label: 'Avocat', example: 'avocat', amount: 0.25, unit: 'avocat', units: 'avocat',
+      words: ['avocat', 'mûre'] }],
   },
   {
     id: 'mannitol', label: 'Mannitol', hint: 'champignons, chou-fleur',
-    foods: [{ id: 'mushrooms', label: 'Champignons', example: 'champignons de Paris', amount: 40, unit: 'g', units: 'g' }],
+    foods: [{ id: 'mushrooms', label: 'Champignons', example: 'champignons de Paris', amount: 40, unit: 'g', units: 'g',
+      words: ['champignon', 'chou fleur'] }],
   },
 ]
 
@@ -78,6 +86,42 @@ export function findGroup(groupId) {
 
 export function findFood(groupId, foodId) {
   return findGroup(groupId)?.foods.find((f) => f.id === foodId) ?? null
+}
+
+const plainWords = (text) => String(text ?? '')
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  .split(/[^a-z]+/).filter(Boolean)
+
+/** `phrase` (un ou plusieurs mots) apparaît dans `words`, au singulier ou au pluriel (« pâtes », « lentilles »). */
+function hasPhrase(words, phrase) {
+  const target = plainWords(phrase)
+  const same = (w, t) => w === t || w === `${t}s` || w === `${t}x`
+  return words.some((_, i) => target.every((t, k) => words[i + k] !== undefined && same(words[i + k], t)))
+}
+
+/**
+ * Le test qui correspond à un aliment des repas cité par une piste ventre (7c) : `{ group, food }`, ou null quand
+ * aucun groupe ne lui correspond (le facteur « repas riches en FODMAP » compris : la personne choisit alors).
+ */
+export function challengeFoodFor(factor) {
+  const words = plainWords(factor)
+  if (words.length === 0) return null
+  for (const g of FODMAP_GROUPS) {
+    for (const f of g.foods) {
+      if ((f.not ?? []).some((p) => hasPhrase(words, p))) continue
+      if (f.words.some((p) => hasPhrase(words, p))) return { group: g.id, food: f.id }
+    }
+  }
+  return null
+}
+
+/**
+ * Lien vers la réintroduction depuis une piste : le test du premier aliment qui en a un (une piste peut regrouper des
+ * aliments toujours mangés ensemble), sinon le choix du groupe.
+ */
+export function challengePath(factors) {
+  const match = [].concat(factors).map(challengeFoodFor).find(Boolean)
+  return match ? `/reintroduction?groupe=${match.group}&aliment=${match.food}` : '/reintroduction'
 }
 
 /** Portions prévues des 3 jours à partir du repère de départ (modifiables ensuite par la personne). */
