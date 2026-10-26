@@ -47,3 +47,10 @@
   il faut garder `water_g` dans l'importeur Ciqual ; autres aliments MEXT ; `fodmap_score` des nouveaux repas.
 - **N4** : carte d'un repas (« riche en fructanes : oignon », source dans les détails, « probablement » en confiance
   basse). **N2b** : inconnu ≠ 0 dans les totaux.
+
+## Après le merge (PR #404 → `fb6ca03`)
+- Checks de la PR verts (Vitest, Build APK, émulateur A56 API 35 et 36, relais, budget de lectures, protocole montre).
+  Un « Publier l'APK » rouge sur le premier commit `e3d95d1` : son build avait été annulé par le second push (APK
+  absent), sans rapport avec le code ; le même job est vert sur la tête `1770c33`.
+- Sur main : « Build & Release » vert, **v301**, APK sideload de 34 269 404 octets ; « Play — AAB », « Tests » et
+  émulateur verts.
