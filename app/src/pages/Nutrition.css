@@ -195,6 +195,18 @@
   background: var(--color-alert);
 }
 
+.nutrition-partial-tag {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  vertical-align: 1px;
+}
+
 .nutrition-bar-value {
   font-size: 0.8rem;
   color: var(--text-muted);

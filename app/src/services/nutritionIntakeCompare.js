@@ -27,6 +27,8 @@ const GROUPS = [
 
 /** Sous ce ratio énergie moyenne / besoins, des repas manquent probablement. */
 const INCOMPLETE_ENERGY_RATIO = 0.5
+/** Au-delà de 10 % du poids mangé sans teneur mesurée par Ciqual, l’apport affiché est un minimum (N2b). */
+const PARTIAL_UNKNOWN_SHARE = 0.1
 
 /**
  * Minuit (heure locale) du premier jour de la fenêtre de `days` jours incluant aujourd'hui.
@@ -79,6 +81,7 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
     const target = dailyTargets[key] ?? 0
     const limit = LOWER_IS_BETTER_NUTRIENTS.has(key)
     const pct = target > 0 ? Math.round((perDay / target) * 100) : 0
+    const unknownShare = totals.unknown_share?.[key] ?? 0
     return {
       key,
       label: NUTRIENT_LABELS[key] || key,
@@ -89,6 +92,9 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
       pct,
       barPct: Math.min(100, pct),
       status: statusFor(pct, limit),
+      unknownShare,
+      // Teneur non mesurée pour une part notable du poids mangé : la valeur est un minimum (N2b).
+      partial: unknownShare >= PARTIAL_UNKNOWN_SHARE,
     }
   })
 
@@ -113,6 +119,7 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
     windowDays: days,
     rows,
     groups,
+    partialCount: rows.filter((r) => r.partial).length,
     reachedCount: rows.filter((r) => !r.limit && r.status === 'ok').length,
     targetCount: rows.filter((r) => !r.limit).length,
     energyPerDay,

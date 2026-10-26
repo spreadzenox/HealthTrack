@@ -1174,7 +1174,7 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   noms simples ; mêmes clés, même ordre ; attribution CC BY en bas de Nutrition ; test de la table livrée.
 - [x] Test `UpdateBanner` « progression en Mo et en % » fiabilisé le 26/10 22:33 (attentes 3 s → 10 s : le suivi
   interroge toutes les 800 ms en temps réel ; échec vu sous la charge de la suite complète).
-- [ ] **N2b** inconnu ≠ 0 dans les totaux : `computeTotalsFromItems` compte encore une teneur `null` comme 0 (phrase
+- [x] **N2b** — **FAIT le 27/10 00:33** (`unknown_share` par champ au poids mangé ; ligne « partiel » + « ≥ » dans Nutrition au-delà de 10 % ; les KPIs de l'analyse gardent leurs valeurs). Détail d'origine : inconnu ≠ 0 dans les totaux : `computeTotalsFromItems` compte encore une teneur `null` comme 0 (phrase
   d'avertissement en bas de Nutrition) ; renvoyer la part connue par nutriment et l'afficher (« sodium : partiel »)
   dans Nutrition et les KPIs. Valeur Ciqual suspecte vue au passage : fer de l'oignon cru 0,00019 mg (publiée telle
   quelle).

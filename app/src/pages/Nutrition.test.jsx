@@ -81,6 +81,30 @@ describe('Nutrition page', () => {
     expect(screen.getByText(/Anses\. Ciqual 2025.*CC BY 4\.0/)).toBeInTheDocument()
   })
 
+  it('teneur non mesurée par Ciqual : « au moins » et étiquette « partiel », jamais un faux zéro (N2b)', async () => {
+    loadNutritionEntries.mockResolvedValueOnce([
+      {
+        type: 'food',
+        at: yesterdayNoon(),
+        payload: { items: [
+          { ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 100 },
+          { ingredient: 'Agneau, collier braisé ou bouilli', quantity_g: 100 },
+        ] },
+      },
+    ])
+    const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    await screen.findByText(/1\s*jour\b/)
+    const sodium = [...container.querySelectorAll('.nutrition-bar-row')]
+      .find((r) => r.querySelector('.nutrition-bar-label').textContent.startsWith('Sodium'))
+    expect(sodium.querySelector('.nutrition-bar-value').textContent).toMatch(/^≥\s/)
+    expect(sodium.querySelector('.nutrition-partial-tag').textContent).toBe('partiel')
+    expect(sodium.querySelector('[role="progressbar"]').getAttribute('aria-label')).toMatch(/au moins/)
+    const protein = [...container.querySelectorAll('.nutrition-bar-row')]
+      .find((r) => r.querySelector('.nutrition-bar-label').textContent.startsWith('Protéines'))
+    expect(protein.querySelector('.nutrition-partial-tag')).toBeNull()
+    expect(container.querySelector('.nutrition-source').textContent).toMatch(/«\u00a0partiel\u00a0»/)
+  })
+
   it('jours incomplets : une seule ligne d’avertissement, sans compte de repères trompeur (D1)', async () => {
     loadNutritionEntries.mockResolvedValueOnce([
       { type: 'food', at: yesterdayNoon(), payload: { items: [{ ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 200 }] } },
