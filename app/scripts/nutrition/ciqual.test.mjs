@@ -124,3 +124,61 @@ describe('buildTable', () => {
     expect(s.dryCooked).toBe(0)
   })
 })
+
+describe('format Ciqual 2025', () => {
+  // 2025 : « Alcool (éthanol) », vitamine A publiée en équivalents rétinol, vitamine E parfois en alpha-tocophérol
+  const r2025 = () => {
+    const r = raw()
+    const rename = { 'Alcool (g/100 g)': 'Alcool (éthanol) (g/100 g)' }
+    r.consts = r.consts.map((c) => ({ ...c, const_nom_fr: rename[c.const_nom_fr] || c.const_nom_fr }))
+    r.consts.push({ const_code: '51100', const_nom_fr: 'Activité vitaminique A, équivalents rétinol (µg/100 g)' })
+    r.consts.push({ const_code: '71010', const_nom_fr: 'Alpha-tocophérol (vitamine E) (mg/100 g)' })
+    r.compos.push({ alim_code: '1', const_code: '51100', teneur: '7' })
+    r.compos.push({ alim_code: '1', const_code: '71010', teneur: '0,8' })
+    r.compos.push({ alim_code: '2', const_code: '53100', teneur: '0,3' })
+    return r
+  }
+  const { table, meta } = buildTable(r2025(), {
+    version: 'Ciqual 2025',
+    license: 'CC BY 4.0',
+    source: 'doi:10.5281/zenodo.17550133',
+    keep: { 'Aliment A': { fodmap_score: 1 }, 'Aliment A, cru': { fodmap_score: 2 } },
+    keepFields: ['fodmap_score'],
+    aliases: { 'Aliment A': 'Aliment A, cru', Fantôme: 'Introuvable, cru' },
+  })
+
+  it("reconnaît « Alcool (éthanol) » et n'exige pas les constituants propres à 2025", () => {
+    expect(meta.missingConstituents).toEqual([])
+    expect(buildTable(raw(), { version: '2020' }).meta.missingConstituents).toEqual([])
+  })
+  it('préfère la vitamine A publiée en équivalents rétinol', () => expect(table['Aliment A, cru'].vitamin_a_ug).toBe(7))
+  it('prend l’alpha-tocophérol quand « Vitamine E » manque, et le marque', () => {
+    expect(table['Aliment A, cru'].vitamin_e_mg).toBe(0.8)
+    expect(table['Aliment A, cru']._q.vitamin_e_mg).toBe('alpha-tocophérol')
+    expect(table['Aliment A, cuit'].vitamin_e_mg).toBe(0.3)
+    expect(table['Aliment A, cuit']._q?.vitamin_e_mg).toBeUndefined()
+  })
+  it('un alias copie les valeurs de son aliment Ciqual et garde son propre score', () => {
+    const a = table['Aliment A']
+    expect(a.alias_of).toBe('Aliment A, cru')
+    expect(a.potassium_mg).toBe(150)
+    expect(a.fodmap_score).toBe(1)
+    expect(meta.missingFromCiqual).toEqual([])
+    expect(meta.missingAliasTargets).toEqual(['Introuvable, cru'])
+  })
+  it('les alias ne comptent pas comme aliments distincts dans l’audit', () => {
+    expect(auditTable(table).foods).toBe(3)
+  })
+  it("énergie non publiée : recalculée depuis les macros connues, sinon inconnue", () => {
+    const r = r2025()
+    r.compos = r.compos.filter((c) => !(String(c.const_code) === '328'))
+    const t = buildTable(r, { version: 'x' }).table
+    expect(t['Aliment A, cru'].energy_kcal).toBe(Math.round(1.5 * 4 + 7 * 4 + 0.2 * 9 + 1.8 * 2))
+    expect(t['Aliment A, cru']._q.energy_kcal).toBe('calculé')
+    expect(t['Aliment A, cuit'].energy_kcal).toBeNull()
+  })
+  it('attribution selon la licence de la source', () => {
+    expect(meta.attribution).toBe('Anses. Ciqual 2025. Table de composition nutritionnelle des aliments Ciqual (CC BY 4.0).')
+    expect(meta.source).toBe('doi:10.5281/zenodo.17550133')
+  })
+})

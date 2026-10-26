@@ -86,9 +86,20 @@ qu'un autre aliment** (59 gabarits par catégorie : ail = oignon n'était qu'un 
 de graisses saturées que de graisses, 145 ont une énergie incohérente avec leurs macros (abricot cru à 0 kcal, baba
 au rhum sous-estimé de moitié). Les micronutriments affichés dans Nutrition sont donc à prendre avec des pincettes
 jusqu'à la reconstruction. L'outil qui reconstruit la table depuis Ciqual (ANSES, Licence Ouverte : usage commercial
-permis avec attribution) est prêt et testé, avec « inconnu » plutôt qu'une valeur inventée ; le site Ciqual était en
-maintenance ce 26/10 vers 15:00, la reconstruction se fera dès qu'il répond. Ensuite : les FODMAP isolés par
-sous-groupe (fructanes, GOS, lactose, fructose, sorbitol, mannitol). Rien ne change encore dans l'app.
+permis avec attribution) est prêt et testé, avec « inconnu » plutôt qu'une valeur inventée.
+**✅ Table reconstruite le 26/10 16:33 depuis Ciqual 2025** (la table officielle de l'ANSES, publiée par l'ANSES
+elle-même sur Zenodo sous licence CC BY 4.0, fichiers vérifiés par leur empreinte ; le site ciqual.anses.fr est
+toujours en maintenance). Chaque valeur vient de Ciqual ou est « inconnue » (21 % des valeurs : Ciqual ne mesure pas
+tout). Les 69 noms simples (« Banane », « Riz blanc cuit »…) pointent vers un aliment Ciqual précis : vos repas déjà
+saisis sont recalculés sans rien perdre. Après : 33 aliments aux micronutriments identiques (de vrais doublons
+publiés par Ciqual, ex. croissant pur beurre « artisanal » = « aliment moyen ») au lieu de 3 506, plus aucune
+graisse saturée > graisses, 7 énergies « incohérentes » (vinaigres et confiseries sans sucres : polyols et acides que
+le calcul simple ne compte pas). **Ce que vous verrez changer** (Journal, Nutrition) : surtout les micronutriments
+(sodium changé de plus de 10 % sur 2 762 aliments, potassium 2 248, calcium 2 428, vitamine C 1 472) ; les calories
+bougent peu (33 aliments à plus de 10 % : pâtes cuites 131 → 167 kcal, riz blanc cuit 130 → 155, poulet grillé
+165 → 141) ; ail cru : potassium 200 → 530 mg, vitamine C 10 → 0,25 mg. En bas de Nutrition, la source est citée et
+une phrase dit qu'une teneur non mesurée n'est pas comptée. Ensuite : les FODMAP isolés par sous-groupe (fructanes,
+GOS, lactose, fructose, sorbitol, mannitol).
 
 **Prochain chantier (préparé par le run « idées » du 26/10 08:33)** : la **réintroduction FODMAP guidée** et le
 **rapport PDF pour votre médecin** (jalon 7) sont spécifiés : test d'un groupe sur 3 jours (portion de départ, puis
@@ -118,6 +129,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 16:33 — [N2 : table rebâtie depuis Ciqual 2025](runs/2026-10-26-1633-n2-table-ciqual-2025.md) | 🏗️ | `ingredientsNutrition.json` reconstruite depuis Ciqual 2025 (Anses, Zenodo, CC BY 4.0, md5 vérifiés) : code Ciqual par aliment, inconnu = null, 69 alias pour les noms simples, mêmes 3 553 clés dans le même ordre ; audit 3 506 → 33 micros recopiés, 201 → 0 AGS > lipides ; attribution dans Nutrition |
 | 26/10 15:46 — [P28 : vidéo filmée par la CI](runs/2026-10-26-1546-p28-video-ci.md) | 🏗️ | Workflow « Play — vidéo P28 » (APK d'aperçu, émulateur, pilotage DevTools + appuis adb, preuve par plan, publication Pages) ; caméra au déverrouillage prouvée, notification pas encore filmée → **PR #398 ouverte, non mergée** ; ciqual.anses.fr toujours en 503 |
 | 26/10 14:53 — [N1 : audit de la table nutritionnelle](runs/2026-10-26-1453-n1-audit-ciqual.md) | 🏗️ | Audit chiffré (3 506/3 553 aliments aux micronutriments recopiés, 201 AGS > lipides, 145 énergies fausses) + importeur Ciqual testé ; ciqual.anses.fr en maintenance, reconstruction au run suivant ; 20 tests de plus |
 | 26/10 13:48 — [I175-1 : contenu du rapport médecin](runs/2026-10-26-1348-i175-1-build-report.md) | 🏗️ | Modèle pur du rapport PDF (`buildReport.js`, 2 pages : en bref + détail), rien d'affiché ; 2 396 Vitest |

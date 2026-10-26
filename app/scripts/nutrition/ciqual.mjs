@@ -9,15 +9,24 @@
  * - « traces » → 0, marqué `traces` dans `_q` ;
  * - « < x » → x / 2 (convention « middle bound » des tables de composition), marqué `<x` dans `_q`.
  * Champs calculés (documentés, jamais devinés) :
- * - vitamin_a_ug = rétinol + bêta-carotène / 6 (équivalents rétinol, EFSA) ; null si l'un manque ;
+ * - vitamin_a_ug = « Activité vitaminique A, équivalents rétinol » publiée par Ciqual (2025) ; à défaut
+ *   (2020), rétinol + bêta-carotène / 6 (équivalents rétinol, EFSA) ; null si l'un manque ;
+ * - energy_kcal non publiée = protéines × 4 + glucides × 4 + lipides × 9 + fibres × 2 + alcool × 7
+ *   (facteurs UE 1169/2011), seulement si protéines, glucides et lipides sont connus ; marqué `calculé` ;
+ * - vitamin_e_mg = « Vitamine E », ou à défaut « Alpha-tocophérol (vitamine E) » (marqué dans `_q`) ;
  * - omega3_g = ALA + EPA + DHA ; null si l'ALA manque ; EPA ou DHA inconnus comptent 0 et le
  *   champ est marqué `partiel` dans `_q`.
- * Licence : Licence Ouverte / Etalab 2.0 (réutilisation commerciale permise avec attribution,
- * voir CIQUAL_ATTRIBUTION).
+ * Alias (`aliases`) : noms simples de l'ancienne table → aliment Ciqual dont ils copient les valeurs
+ *   (marqués `alias_of`), pour que les repas déjà saisis restent calculés.
+ * Licence : Licence Ouverte / Etalab 2.0 (site ciqual.anses.fr) ; Ciqual 2025 est publiée par l'Anses
+ * sur Zenodo sous CC BY 4.0 (doi:10.5281/zenodo.17550133). Les deux permettent la réutilisation
+ * commerciale avec attribution (voir CIQUAL_ATTRIBUTION).
  */
 
-export const CIQUAL_ATTRIBUTION = (version) =>
-  `Anses. ${version}. Table de composition nutritionnelle des aliments Ciqual (Licence Ouverte / Etalab).`
+import { energyFromMacros } from './audit.mjs'
+
+export const CIQUAL_ATTRIBUTION = (version, license = 'Licence Ouverte / Etalab') =>
+  `Anses. ${version}. Table de composition nutritionnelle des aliments Ciqual (${license}).`
 
 /** Constituants lus directement : champ de l'app → motif du nom français Ciqual. */
 export const DIRECT_FIELDS = {
@@ -28,7 +37,7 @@ export const DIRECT_FIELDS = {
   sugar_g: /^Sucres \(g\/100 ?g\)/i,
   fiber_g: /^Fibres alimentaires \(g\/100 ?g\)/i,
   saturated_fat_g: /^AG saturés \(g\/100 ?g\)/i,
-  alcohol_g: /^Alcool \(g\/100 ?g\)/i,
+  alcohol_g: /^Alcool( \(éthanol\))? \(g\/100 ?g\)/i,
   fructose_g: /^Fructose \(g\/100 ?g\)/i,
   glucose_g: /^Glucose \(g\/100 ?g\)/i,
   lactose_g: /^Lactose \(g\/100 ?g\)/i,
@@ -49,12 +58,17 @@ export const DIRECT_FIELDS = {
 
 /** Constituants qui ne servent qu'aux champs calculés. */
 const HELPER_FIELDS = {
+  alpha_tocopherol_mg: /^Alpha-tocophérol \(vitamine E\) \(mg\/100 ?g\)/i,
+  vitamin_a_re_ug: /^Activité vitaminique A, équivalents rétinol \(µg\/100 ?g\)/i,
   retinol_ug: /^Rétinol \(µg\/100 ?g\)/i,
   beta_carotene_ug: /^Beta-Carotène \(µg\/100 ?g\)/i,
   ala_g: /^AG 18:3 c9,c12,c15 \(n-3\)/i,
   epa_g: /^AG 20:5 5c,8c,11c,14c,17c \(n-3\)/i,
   dha_g: /^AG 22:6 4c,7c,10c,13c,16c,19c \(n-3\)/i,
 }
+
+/** Absents des anciennes versions (2020) : on retombe alors sur le calcul. */
+const OPTIONAL_HELPERS = new Set(['vitamin_a_re_ug', 'alpha_tocopherol_mg'])
 
 const ENTITIES = { amp: '&', lt: '<', gt: '>', apos: "'", quot: '"' }
 const decodeEntities = (s) =>
@@ -107,14 +121,14 @@ export const normalizeName = (s) => s.normalize('NFC').replace(/\s+/g, ' ').trim
  *   `keep` : ancienne table, dont on recopie seulement `keepFields` (ex. fodmap_score) pour les
  *   aliments au même nom, le temps que leur remplacement soit livré.
  */
-export function buildTable(raw, { version, keep = {}, keepFields = [] }) {
+export function buildTable(raw, { version, license, source, keep = {}, keepFields = [], aliases = {} }) {
   const all = { ...DIRECT_FIELDS, ...HELPER_FIELDS }
   const constToField = new Map()
   const missingConstituents = []
   for (const [field, re] of Object.entries(all)) {
     const c = raw.consts.find((k) => re.test(normalizeName(k.const_nom_fr || '')))
     if (c) constToField.set(String(c.const_code).trim(), field)
-    else missingConstituents.push(field)
+    else if (!OPTIONAL_HELPERS.has(field)) missingConstituents.push(field)
   }
 
   const values = new Map() // alim_code → { field: { value, q } }
@@ -147,7 +161,22 @@ export function buildTable(raw, { version, keep = {}, keepFields = [] }) {
     const get = (f) => (v[f] ? v[f].value : null)
     const ret = get('retinol_ug')
     const beta = get('beta_carotene_ug')
-    food.vitamin_a_ug = ret != null && beta != null ? round(ret + beta / 6) : null
+    // Ciqual 2025 publie la vitamine E soit en « Vitamine E », soit en « Alpha-tocophérol », jamais les deux
+    const alphaToco = get('alpha_tocopherol_mg')
+    if (food.vitamin_e_mg == null && alphaToco != null) {
+      food.vitamin_e_mg = alphaToco
+      q.vitamin_e_mg = v.alpha_tocopherol_mg.q || 'alpha-tocophérol'
+    }
+    // Énergie non publiée : recalculée depuis les macros publiées (facteurs UE 1169/2011), marquée
+    if (food.energy_kcal == null) {
+      const calc = energyFromMacros(food)
+      if (calc != null) {
+        food.energy_kcal = Math.round(calc)
+        q.energy_kcal = 'calculé'
+      }
+    }
+    const re = get('vitamin_a_re_ug')
+    food.vitamin_a_ug = re != null ? re : ret != null && beta != null ? round(ret + beta / 6) : null
     const ala = get('ala_g')
     if (ala == null) food.omega3_g = null
     else {
@@ -161,10 +190,23 @@ export function buildTable(raw, { version, keep = {}, keepFields = [] }) {
     table[name] = food
   }
 
+  const missingAliasTargets = []
+  for (const [alias, target] of Object.entries(aliases)) {
+    const base = table[normalizeName(target)]
+    if (!base) {
+      missingAliasTargets.push(target)
+      continue
+    }
+    const food = { ...base, alias_of: normalizeName(target) }
+    delete food.fodmap_score
+    for (const f of keepFields) if (keep[alias] && f in keep[alias]) food[f] = keep[alias][f]
+    table[alias] = food
+  }
+
   const previousNames = Object.keys(keep)
   const missingFromCiqual = previousNames.filter((n) => !table[normalizeName(n)])
   return {
     table,
-    meta: { version, attribution: CIQUAL_ATTRIBUTION(version), foods: Object.keys(table).length, missingConstituents, duplicates, missingFromCiqual },
+    meta: { version, attribution: CIQUAL_ATTRIBUTION(version, license), source: source || null, foods: Object.keys(table).length, missingConstituents, duplicates, missingFromCiqual, missingAliasTargets, aliases: Object.keys(aliases).length },
   }
 }
