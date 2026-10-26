@@ -239,7 +239,7 @@ describe('analyzeGutDays — stress et temps d’écran de la veille (I134 étap
   const linked = (res, factor) => res.results.some((r) => r.factor === factor && r.status === 'link')
   const count = (n, fn) => { let k = 0; for (let seed = 1; seed <= n; seed++) if (fn(seed)) k += 1; return k }
 
-  // Mesure du 26/10 (30 jeux par piège, 60 par puissance) : piège café 26–30/30 sans ajustement → 0 à 3/30 ;
+  // Mesure du 26/10 (30 jeux par piège, 60 par puissance) : piège café 26–29/30 sans ajustement → 0 à 3/30 ;
   // puissance (effet ×6) : rien ne joue 45/60 (inchangé), la nuit 27 → 34, le stress 28 → 27, nuit + stress 13 → 14.
   for (const driver of ['stress', 'screen']) {
     it(`le café qui suit le ${driver === 'stress' ? 'stress' : 'temps d’écran'} de la veille n’est plus accusé`, () => {

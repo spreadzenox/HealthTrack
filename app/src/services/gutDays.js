@@ -24,7 +24,7 @@
  * Stress et temps d'écran de la veille (I134 étape 2) : même mécanisme, mais une covariable n'est retenue que si elle
  * va avec le ventre (|z| ≥ 2 dans les blocs, sans regarder les aliments), au plus deux. Mesure du 26/10 : les trois
  * en même temps faisaient tomber la puissance de 45 à 9/60 ; ajoutées à l'aveugle par deux, de 35 à 15/60 quand
- * seule la nuit joue. Avec le tri : pièges « café » 26–30/30 → 0 à 3/30, puissance gardée (45/60 si rien ne joue,
+ * seule la nuit joue. Avec le tri : pièges « café » 26–29/30 → 0 à 3/30, puissance gardée (45/60 si rien ne joue,
  * 27 → 34 si la nuit joue), fausses pistes sans effet ≤ 5/150.
  * Le ventre n'est jamais une entrée de l'estimateur du bien-être (règle anti-circularité).
  */

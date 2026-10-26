@@ -56,7 +56,7 @@ journaux simulés où seule la nuit gêne le ventre, le café des nuits courtes 
 fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit joue (22 → 31 sur 60). Depuis le 26/10
 06:33, stress et temps d'écran de la veille aussi (I134 étape 2), mais seulement s'ils vont avec le ventre : ajoutés
 à l'aveugle, les trois ensemble faisaient tomber la puissance de 45 à 9 sur 60 ; triés, les pièges « café » passent de
-26–30 sur 30 à 3 au plus, sans perte de puissance. Suite : repas du même jour estimés ensemble.
+26–29 sur 30 à 3 au plus, sans perte de puissance. Suite : repas du même jour estimés ensemble.
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données

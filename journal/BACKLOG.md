@@ -1134,7 +1134,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 ## Prochaines étapes (ordre conseillé)
 
-**Mise à jour du 26/10 (06:33 Paris)** : I134 étape 2 — stress et temps d'écran de la veille en covariables des pistes ventre, retenus seulement s'ils vont avec le ventre (deux au plus) ; pièges « café » 26–30/30 → ≤ 3/30, puissance gardée. Suite : I134 étape 3 (repas du même jour estimés ensemble) ; POL-1d dès P28.
+**Mise à jour du 26/10 (06:33 Paris)** : I134 étape 2 — stress et temps d'écran de la veille en covariables des pistes ventre, retenus seulement s'ils vont avec le ventre (deux au plus) ; pièges « café » 26–29/30 → ≤ 3/30, puissance gardée. Suite : I134 étape 3 (repas du même jour estimés ensemble) ; POL-1d dès P28.
 
 **Mise à jour du 26/10 (05:33 Paris)** : I134 étape 1 — la nuit d'avant en covariable des pistes ventre jour par jour (piège « café des nuits courtes » évité ; puissance 22 → 31/60 quand la nuit joue, 51 → 45/60 sinon). Suite : I134 étape 2 (stress, écran) ; POL-1d dès P28.
 
