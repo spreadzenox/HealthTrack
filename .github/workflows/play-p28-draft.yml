@@ -1,0 +1,169 @@
+# P28 — faire apparaître la déclaration « Autorisations des services de premier plan » (Play Console → Contenu de
+# l'app) sans rien publier à personne (demande du propriétaire du 26/10 vers 20:40 ; journal/PLAY-CONFORMITE.md §1 bis).
+#
+# Google ne demande cette déclaration qu'après avoir vu un AAB qui déclare un service de premier plan caméra
+# (FOREGROUND_SERVICE_CAMERA). Les versions normales de la variante play l'ont coupé (interrupteur faceUnlockPlay) :
+# ce workflow construit le même AAB play signé AVEC l'interrupteur allumé et l'envoie en BROUILLON (status draft) sur
+# la piste de test interne. Un brouillon n'est jamais déployé : ni testeurs, ni Store. Les versions en test interne
+# restent en place, et les envois suivants de « Play — AAB » (interrupteur coupé) gardent ce brouillon à côté.
+#
+# - versionCode à part : 100000 + nombre de commits de main. Il ne croise jamais ceux de « Play — AAB » (nombre de
+#   commits, ~1000) ; ne JAMAIS déployer ce brouillon (le téléphone resterait ensuite sur ce numéro) : le supprimer de
+#   la piste une fois la déclaration acceptée, ou le laisser, il ne gêne rien.
+# - Lancé à la main sur main (Actions → « Play — brouillon P28 » → Run workflow) : la connexion sans clé à Google
+#   Cloud n'accepte que refs/heads/main. Sur une PR qui le touche : build non signé et vérification du manifeste seuls.
+name: Play — brouillon P28
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/play-p28-draft.yml"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: play-edits  # un seul edit Google Play à la fois (avec « Play — AAB » et « Play — fiche du Store »)
+  cancel-in-progress: false
+
+env:
+  GCP_PROJECT: healthtrack-824b26
+  PUBLISH: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' }}
+
+jobs:
+  draft:
+    name: AAB play avec la lecture au déverrouillage, en brouillon
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Connexion à Google Cloud (sans clé)
+        if: env.PUBLISH == 'true'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+
+      - name: Installer gcloud
+        if: env.PUBLISH == 'true'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Lire la clé d'envoi (Secret Manager)
+        if: env.PUBLISH == 'true'
+        run: |
+          set -euo pipefail
+          umask 077
+          gcloud secrets versions access latest --secret=android-upload-keystore --project="$GCP_PROJECT" --out-file="$RUNNER_TEMP/upload.b64"
+          gcloud secrets versions access latest --secret=android-upload-keystore-password --project="$GCP_PROJECT" --out-file="$RUNNER_TEMP/upload.pass"
+          echo "::add-mask::$(cat "$RUNNER_TEMP/upload.pass")"
+          base64 -d "$RUNNER_TEMP/upload.b64" > "$RUNNER_TEMP/upload.p12"
+          rm -f "$RUNNER_TEMP/upload.b64"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+
+      - name: Numéro de version (à part)
+        run: echo "VERSION_CODE=$((100000 + $(git rev-list --count HEAD)))" >> "$GITHUB_ENV"
+
+      - name: Install app dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Build app (variante play)
+        working-directory: app
+        env:
+          VITE_APP_VERSION: ${{ env.VERSION_CODE }}
+          VITE_DISTRIBUTION: play
+        run: npm run build
+
+      - name: Sync Capacitor
+        working-directory: app
+        run: npx cap sync android
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Install Android platform and build-tools
+        run: sdkmanager "platforms;android-35" "platforms;android-36" "build-tools;35.0.0"
+
+      - name: Create local.properties
+        working-directory: app/android
+        run: echo "sdk.dir=$ANDROID_HOME" >> local.properties
+
+      - name: Build AAB play (interrupteur faceUnlockPlay allumé)
+        working-directory: app/android
+        run: |
+          chmod +x gradlew
+          if [ "$PUBLISH" = "true" ]; then
+            export HT_UPLOAD_KEYSTORE="$RUNNER_TEMP/upload.p12" HT_UPLOAD_PASSWORD="$(cat "$RUNNER_TEMP/upload.pass")"
+          fi
+          ./gradlew bundlePlayRelease -PfaceUnlockPlay=true -PhtVersionCode="$VERSION_CODE" --no-daemon
+
+      - name: Effacer la clé du runner
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.p12" "$RUNNER_TEMP/upload.pass" "$RUNNER_TEMP/upload.b64"
+
+      - name: Vérifier le manifeste (service caméra présent, ni relance ni exemption de batterie)
+        run: |
+          set -euo pipefail
+          AAB=app/android/app/build/outputs/bundle/playRelease/app-play-release.aab
+          if [ "$PUBLISH" = "true" ]; then
+            jarsigner -verify "$AAB" | grep -q "jar verified" || { echo "::error::AAB non signé"; exit 1; }
+          fi
+          cd app && bash scripts/check-play-manifest.sh --face-unlock-play
+          cp "../$AAB" "../HealthTrack-play-p28-$VERSION_CODE.aab"
+
+      - name: Jeton Google Play (portée androidpublisher)
+        if: env.PUBLISH == 'true'
+        id: play-token
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+
+      - name: Envoyer en brouillon sur le test interne (jamais déployé)
+        if: env.PUBLISH == 'true'
+        working-directory: app
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
+          PLAY_TRACK: internal
+          PLAY_DRAFT: "1"
+          PLAY_RELEASE_NAME: p28-${{ env.VERSION_CODE }}
+          PLAY_NOTES: "Version technique jamais déployée : déclaration des services de premier plan (caméra)."
+        run: node scripts/play/publish-cli.mjs "../HealthTrack-play-p28-$VERSION_CODE.aab"
+
+      - name: Résumé
+        if: always()
+        run: |
+          {
+            echo ""
+            echo "## Brouillon P28 — versionCode $VERSION_CODE"
+            if [ "$PUBLISH" = "true" ]; then
+              echo "- Ensuite : Play Console → Contenu de l'app (Règles et programmes → Contenu de l'app) → « Actions requises » :"
+              echo "  « Autorisations des services de premier plan » devrait apparaître dans l'heure (textes : journal/PLAY-CONFORMITE.md §1 bis,"
+              echo "  vidéo : https://spreadzenox.github.io/HealthTrack/p28/). Ne pas déployer ce brouillon."
+            else
+              echo "- PR : build non signé et manifeste vérifiés, rien envoyé à Google Play."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

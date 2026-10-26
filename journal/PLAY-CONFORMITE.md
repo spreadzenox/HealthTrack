@@ -154,6 +154,17 @@ Puis YouTube (app ou studio.youtube.com) → Créer → Importer → titre « Ha
    refuse l'envoi (« déclaration des services de premier plan requise ») ou que la ligne n'apparaisse dans « Contenu de
    l'app » qu'après cet envoi : le run note l'erreur exacte et vous demande de remplir la déclaration (texte ci-dessus)
    puis de l'envoyer pour examen ; le run suivant renvoie la version.
+3 bis. **26/10 vers 20:40 : la ligne n'apparaissait pas** dans Contenu de l'app (10 déclarations traitées, rien en
+   attente) : Google ne la demande qu'après avoir vu un AAB qui déclare le service caméra. **Décision du propriétaire :
+   la faire apparaître sans rien publier à personne.** Livré le 26/10 21:33 : workflow « Play — brouillon P28 »
+   (`.github/workflows/play-p28-draft.yml`, lancé à la main sur main) qui construit l'AAB play signé avec
+   l'interrupteur **allumé** (`-PfaceUnlockPlay=true`, manifeste vérifié par `check-play-manifest.sh
+   --face-unlock-play`), sous un **versionCode à part** (100000 + nombre de commits), et l'envoie en **brouillon**
+   (status `draft`, nom `p28-<versionCode>`) sur la piste de test interne : jamais déployé, la version en test interne
+   reste en place, et les envois suivants de « Play — AAB » (interrupteur coupé) **gardent ce brouillon** à côté (si
+   Play refuse l'ensemble, la version normale passe seule et le résumé le dit). Si le brouillon ne suffit pas à faire
+   apparaître la ligne : une version en test interne (propriétaire seul) est acceptable (décision du 26/10). Ne
+   jamais déployer le brouillon (le téléphone resterait sur le versionCode 100xxx).
 4. Si Google refuse : le run coupe l'interrupteur (les versions suivantes repartent sans la fonction), note le motif
    exact et vous présente vos options (recours avec la vidéo, ou rester sur la lecture à l'ouverture de l'app).
 
