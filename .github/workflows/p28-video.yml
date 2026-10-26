@@ -1,0 +1,157 @@
+# P28 — vidéo de la déclaration « Autorisations des services de premier plan » (Play Console), filmée par la CI.
+#
+# Filme sur un émulateur calqué sur le Galaxy A56 l'APK d'aperçu play (fr.jpesquet.sante.apercu, lecture au
+# déverrouillage allumée) selon le script de journal/PLAY-CONFORMITE.md §1 bis : Sources → « Aussi à chaque
+# déverrouillage » → divulgation → accord → notification « Lecture du visage active » avec « Arrêter » →
+# verrouillage / déverrouillage (point vert de la caméra) → Accueil → « Arrêter ». Données de démonstration
+# synthétiques ; caméra frontale de l'émulateur = mire synthétique. Rien de réel.
+#
+# - Sur une PR qui touche ce workflow ou son script : filme et publie la vidéo en artefact seulement (vérification).
+# - Lancé à la main sur main (Actions → « Play — vidéo P28 » → Run workflow) : publie aussi la vidéo à une adresse
+#   publique stable, https://spreadzenox.github.io/HealthTrack/p28/ (via la release « p28-video », marquée
+#   pré-version pour ne jamais apparaître comme mise à jour de l'app), puis relance le site GitHub Pages.
+name: Play — vidéo P28
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/p28-video.yml"
+      - ".github/scripts/p28-video/**"
+
+concurrency:
+  group: p28-video-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  film:
+    name: Filmer la lecture au déverrouillage (API 35)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 22 : WebSocket natif (protocole DevTools de la WebView)
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+
+      - name: Installer les dépendances npm
+        working-directory: app
+        run: npm ci
+
+      - name: Build de l'app web (variante play)
+        working-directory: app
+        env:
+          VITE_DISTRIBUTION: play
+        run: |
+          npm run build
+          npx cap sync android
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Construire l'APK d'aperçu (interrupteur de la lecture au déverrouillage allumé)
+        working-directory: app/android
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          chmod +x gradlew
+          ./gradlew assemblePlayDebug -PfaceUnlockPlay=true -PplayPreview=true -PextraAbis=x86_64 --no-daemon
+          cp app/build/outputs/apk/play/debug/app-play-debug.apk "$GITHUB_WORKSPACE/apercu.apk"
+
+      # ffmpeg (images extraites et planche de contrôle) n'est plus fourni par les runners ubuntu-latest, et apt y a
+      # pris plus de 16 min le 26/10 : binaire statique (paquet npm ffmpeg-static, outil de CI seulement, jamais dans
+      # l'app).
+      - name: Installer ffmpeg (binaire statique)
+        run: |
+          npm install --no-save --no-audit --no-fund --prefix "$RUNNER_TEMP/ff" ffmpeg-static@5.3.0
+          mkdir -p "$RUNNER_TEMP/bin"
+          ln -sf "$RUNNER_TEMP/ff/node_modules/ffmpeg-static/ffmpeg" "$RUNNER_TEMP/bin/ffmpeg"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ffmpeg" -version | head -1
+
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # Caméra frontale de l'émulateur : mire « emulated » (la scène virtuelle n'existe que pour la caméra arrière).
+      # La vidéo montre la caméra s'ouvrir au déverrouillage (point vert) ; sans visage, aucune lecture n'est gardée
+      # (plan 7 facultatif : la carte montre les lectures de démonstration). Essai du 26/10 écarté : une webcam
+      # virtuelle v4l2loopback ne se charge pas sur le noyau Azure des runners (module videodev absent) et son
+      # installation par apt prend plus de 30 min.
+      - name: Installer l'image système API 35
+        run: |
+          sdkmanager --no_https "platforms;android-35" "emulator" "system-images;android-35;google_apis;x86_64"
+
+      - name: Filmer
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          # AVD créé par l'action avec le profil pixel_6 (1080 × 2400). Essais du 26/10 : un AVD créé à part par
+          # avdmanager n'est pas retrouvé par l'action, qui en recrée un par défaut en 320 × 640 ; et le plein
+          # 1080 × 2340 rend la WebView trop lente avec swiftshader. run.sh règle donc l'écran en 720 × 1560 à 257 ppi :
+          # la même largeur en dp que le Galaxy A56 (449 dp), avec 2,25 fois moins de pixels à dessiner.
+          profile: pixel_6
+          avd-name: a56
+          force-avd-creation: true
+          cores: 4
+          ram-size: 4096M
+          emulator-options: >-
+            -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+            -camera-front emulated -camera-back none
+          disable-animations: false
+          script: bash .github/scripts/p28-video/run.sh
+
+      - name: Vidéo et images extraites
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p28-video
+          path: |
+            p28-video.mp4
+            p28-video.md
+            p28-planche.png
+            steps/
+            frames/
+            p28-logcat.txt
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Publier la vidéo (release « p28-video », pré-version) et relancer GitHub Pages
+        if: success() && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp p28-video.mp4 halcya-face-unlock.mp4
+          if gh release view p28-video >/dev/null 2>&1; then
+            gh release upload p28-video halcya-face-unlock.mp4 --clobber
+          else
+            gh release create p28-video halcya-face-unlock.mp4 --prerelease --target main \
+              --title "P28 — vidéo pour la Play Console" \
+              --notes "Vidéo filmée par la CI (workflow « Play — vidéo P28 ») pour la déclaration « Autorisations des services de premier plan ». Ce n'est pas une version de l'app."
+          fi
+          gh workflow run pages.yml --ref main
+          {
+            echo ""
+            echo "### Adresse publique"
+            echo "- Page : https://spreadzenox.github.io/HealthTrack/p28/ (quelques minutes, le temps que « Site — GitHub Pages » finisse)"
+            echo "- Fichier : https://github.com/${{ github.repository }}/releases/download/p28-video/halcya-face-unlock.mp4"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -63,6 +63,29 @@ jobs:
       - name: Construire le site
         run: node app/scripts/site/build-site.mjs _site
 
+      # P28 : la vidéo filmée par la CI (workflow « Play — vidéo P28 », release pré-version « p28-video ») reste
+      # publiée à chaque reconstruction du site, à https://spreadzenox.github.io/HealthTrack/p28/
+      - name: Ajouter la vidéo P28 (si elle existe)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release download p28-video -R "${{ github.repository }}" -p halcya-face-unlock.mp4 -D _site/p28 2>/dev/null; then
+            cat > _site/p28/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Halcya – face reading at unlock</title>
+          <style>body{margin:0;background:#10231D;color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:16px}
+          video{max-width:100%;max-height:85vh;border-radius:12px}a{color:#5EE0B5}</style></head>
+          <body><h1 style="font-size:1.1rem">Halcya – optional wellbeing check-in at phone unlock (Play review)</h1>
+          <video src="halcya-face-unlock.mp4" controls playsinline muted></video>
+          <p><a href="halcya-face-unlock.mp4">Download the video (MP4)</a> · Demo data, recorded on an emulator.</p>
+          </body></html>
+          EOF
+            echo "Vidéo P28 ajoutée : $(du -h _site/p28/halcya-face-unlock.mp4 | cut -f1)"
+          else
+            echo "Pas encore de vidéo P28 (release p28-video absente)."
+          fi
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

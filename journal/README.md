@@ -129,16 +129,22 @@ bouton arrivent au prochain run.
 
 **👉 Vos prochaines actions, la plus utile d'abord**
 1. **Inviter les testeurs** (ci-dessus) — c'est ce qui lance les 14 jours obligatoires avant la production.
-2. **P28** : déclaration « Autorisations des services de premier plan » (texte et script vidéo prêts dans
-   [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis) — débloque la lecture du bien-être au déverrouillage dans la
-   version Play.
-3. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut) ; **P13** : confirmer le virement de test
-   de Google quand il arrive.
+2. **P28** : plus rien à filmer, **la CI a fait la vidéo** (26/10 19:33 : film complet de 1 min 48 s, chaque plan
+   prouvé). Lien : **https://spreadzenox.github.io/HealthTrack/p28/** (publié par « Play — vidéo P28 » lancé sur main
+   en fin de run). Il vous reste la déclaration (voir [`PRODUIT.md`](PRODUIT.md) §4, P28) : Play Console → Halcya →
+   Contenu de l'app → « Autorisations des services de premier plan » → cocher **Caméra**, coller les 3 textes de
+   [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien de la vidéo, envoyer (si la ligne manque : étape 3
+   de « Ordre des gestes », §1 bis). Débloque la lecture du bien-être au déverrouillage dans la version Play.
+3. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
+   quand Google le demande).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 19:33 — [P28 : film vert, PR #398 mergée](runs/2026-10-26-1933-p28-video-vert.md) | 🏗️ | Deux causes trouvées : l'appui « déplier » tombait sur toute la ligne de la notification (ouvrait l'app) ; connexion DevTools gardée sur une ancienne redirection (port neuf à chaque essai, sans keep-alive). **Film complet de 1 min 48 s** : divulgation → accord → notification avec « Arrêter » → caméra au déverrouillage → « Arrêter » → interrupteur coupé ; publication lancée sur main |
 | 26/10 18:33 — [N3a : FODMAP par sous-groupe (calcul)](runs/2026-10-26-1833-n3a-fodmap-sous-groupes.md) | 🏗️ | `fodmapGroups.js` : lactose / fructose en excès / polyols depuis Ciqual (« < x » = traces = 0), repères Varney 2017, niveau élevé / bas / inconnu par repas, aliments contributeurs ; `fodmapMeasurements.json` vide prêt pour N3b ; rien d'affiché ; 2 448 Vitest |
+| 26/10 17:33 — [P28 : mise au point du film](runs/2026-10-26-1733-p28-video-film.md) | 🏗️ | Reprise de la PR #398 : écran au format de l'A56 (720 × 1560), notification dépliée, ffmpeg statique ; un film de 106 s complet jusqu'au déverrouillage, puis la WebView n'a plus été trouvée par le script sur 2 essais → la prise existe mais la WebView répond trop lentement (délai porté à 30 s, essai suivant à lire) → **PR #398 toujours ouverte** |
 | 26/10 16:33 — [N2 : table rebâtie depuis Ciqual 2025](runs/2026-10-26-1633-n2-table-ciqual-2025.md) | 🏗️ | `ingredientsNutrition.json` reconstruite depuis Ciqual 2025 (Anses, Zenodo, CC BY 4.0, md5 vérifiés) : code Ciqual par aliment, inconnu = null, 69 alias pour les noms simples, mêmes 3 553 clés dans le même ordre ; audit 3 506 → 33 micros recopiés, 201 → 0 AGS > lipides ; attribution dans Nutrition |
+| 26/10 15:46 — [P28 : vidéo filmée par la CI](runs/2026-10-26-1546-p28-video-ci.md) | 🏗️ | Workflow « Play — vidéo P28 » (APK d'aperçu, émulateur, pilotage DevTools + appuis adb, preuve par plan, publication Pages) ; caméra au déverrouillage prouvée, notification pas encore filmée → **PR #398 ouverte, non mergée** ; ciqual.anses.fr toujours en 503 |
 | 26/10 14:53 — [N1 : audit de la table nutritionnelle](runs/2026-10-26-1453-n1-audit-ciqual.md) | 🏗️ | Audit chiffré (3 506/3 553 aliments aux micronutriments recopiés, 201 AGS > lipides, 145 énergies fausses) + importeur Ciqual testé ; ciqual.anses.fr en maintenance, reconstruction au run suivant ; 20 tests de plus |
 | 26/10 13:48 — [I175-1 : contenu du rapport médecin](runs/2026-10-26-1348-i175-1-build-report.md) | 🏗️ | Modèle pur du rapport PDF (`buildReport.js`, 2 pages : en bref + détail), rien d'affiché ; 2 396 Vitest |
 | 26/10 11:33 — [7b-2 : rappel de la portion du jour](runs/2026-10-26-1133-7b2-rappel-portion.md) | 🏗️ | Notification « Votre portion du jour » à l'heure choisie (natif, deux variantes, au plus 3 rappels, toucher ouvre le test) ; état du test dans la carte d'entrée d'Analyses ; 2 356 Vitest, 4 JUnit de plus |

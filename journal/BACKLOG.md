@@ -111,6 +111,17 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   seulement) : interrupteur qui coupe (actif ou en pause) ; coupée → lien vers Sources (allumage seulement derrière
   la divulgation) ; [ ] P28 par le propriétaire
   (APK d'aperçu prêt) ; [ ] allumer l'interrupteur dans « Play — AAB ».
+  [x] **P28-VIDEO (demande du 26/10 15:00 : la vidéo est faite par la CI)** — 26/10 15:46 : workflow
+  « Play — vidéo P28 » (`p28-video.yml` + `.github/scripts/p28-video/`) : APK d'aperçu, émulateur API 35, pilotage
+  DevTools de la WebView + vrais appuis adb, preuve système de chaque plan, artefact `p28-video` ; publication sur
+  main par release pré-version `p28-video` + `pages.yml` → https://spreadzenox.github.io/HealthTrack/p28/. Caméra
+  frontale émulée (mire) : v4l2loopback impossible sur les runners. Reste : film entièrement vert (PR #398), merge,
+  lancement manuel sur main, relecture des images extraites, lien dans le résumé.
+  26/10 17:33 : AVD pixel_6 créé par l'action + écran 720 × 1560 à 257 ppi (449 dp comme l'A56), notification
+  dépliée sur sa propre ligne, ffmpeg statique ; un film de 106 s complet jusqu'au déverrouillage (plans 1–6), puis
+  WebView introuvable par DevTools sur 2 essais (prise absente de `/proc/net/unix`) → connexion par pid (essai 5).
+  **26/10 19:33 : film vert** (chevron seul, la ligne entière ouvrait l'app ; port DevTools neuf à chaque essai,
+  sans keep-alive) → PR #398 mergée, publication lancée sur main (https://spreadzenox.github.io/HealthTrack/p28/).
 Ordre proposé : ~~SAUV~~ (fait 24/10 16:30) → ~~POL-5 + POL-4~~ (faits 24/10 17:30) → ~~POL-3~~ (fait 24/10 18:30) → ~~POL-2~~ (fait 24/10 19:30) → ~~POL-7~~ (fait 24/10 23:30) → ~~POL-6~~ (fait 25/10 00:30) → ~~POL-8~~ (fait 25/10 01:30) → POL-1a (fait 25/10 02:30) → ~~POL-1b~~ (fait 25/10 02:33 CET) → ~~POL-1c~~ (fait 25/10 03:33 CET) → P28 (propriétaire) → interrupteur allumé (POL-1d) → ~~M6b~~ (fait 25/10 04:33 CET) → ~~M7~~ (fait 25/10 05:33 CET : FC moyenne, courbe de FC et allures au km des séances, synchro app ouverte) → ~~M4 bis~~ (fait 25/10 06:33 CET : bits inconnus des minutes comptés par jour dans le journal de la synchro ; le propriétaire compare avec les étages de sa montre) → ~~M7b~~ (fait 25/10 07:33 CET : séances avec FC et allures relues app fermée, `WatchReader.workouts`) → ~~A.1 / A.2~~ (livrés le 18/10) → ~~tuiles montre + export (e)~~ (fait 25/10 14:33 CET).
 Inchangés (le propriétaire en est content) : Données, Paramètres, Nouveautés, Journal de bord, Confidentialité, Conditions.
 
