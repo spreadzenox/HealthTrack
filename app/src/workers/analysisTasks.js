@@ -14,6 +14,7 @@ import {
 import { computeTagEffects } from '../services/behaviorTags'
 import { computeLaggedEffects } from '../services/laggedEffects'
 import { computeFaceMoodCorrelations } from '../services/mood/faceMoodDays'
+import { summarizeGutLinks } from '../services/gutLinks'
 
 export const ANALYSIS_TASKS = {
   /** Accueil — « Prédiction du jour ». */
@@ -27,6 +28,8 @@ export const ANALYSIS_TASKS = {
       laggedEffects: computeLaggedEffects(entries),
       // Facteurs comparés à l'humeur estimée par le visage (Y automatique, sans note).
       faceMood: computeFaceMoodCorrelations(entries),
+      // Repas → ventre (jalon 5) : notes par fenêtre et bilans du soir ; le ventre n'explique jamais le bien-être.
+      gut: summarizeGutLinks(entries),
       totalDays: countTotalDataDays(entries),
     }
   },

@@ -194,8 +194,8 @@ describe('PistesTeaser', () => {
   it('dit les délais et la correction en mode détails, sans promettre plus que l’existant une fois prêt', async () => {
     wrap(<PistesTeaser read={async () => Array.from({ length: 25 }, (_, i) => day(i))} details onToggleDetails={() => {}} />)
     expect(await screen.findByText('Assez de jours pour chercher des pistes')).toBeInTheDocument()
-    expect(screen.getByText(/arrivent dans une prochaine version/)).toBeInTheDocument()
-    expect(screen.getByText(/Délais qui seront testés : 0–4 h, 4–24 h, 24–48 h/)).toBeInTheDocument()
+    expect(screen.getByText(/se précisent à chaque note/)).toBeInTheDocument()
+    expect(screen.getByText(/Délais testés : 0–4 h, 4–24 h, 24–48 h/)).toBeInTheDocument()
   })
 
   it('objectif énergie : compte les nuits avec une mesure du bien-être et parle sommeil → bien-être', async () => {

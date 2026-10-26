@@ -30,3 +30,5 @@ import './pages/Onboarding.css'
 import './pages/WellbeingHistory.css'
 // Ligne « Bientôt » partagée par Analyses et Tendances (POL-6, 25/10)
 import './components/SoonList.css'
+// Pistes repas → ventre dans Analyses (jalon 5, 26/10)
+import './components/GutLinks.css'

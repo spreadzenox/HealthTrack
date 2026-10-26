@@ -184,8 +184,8 @@ const readTrackedEnergy = async () => {
 const PISTES_TEXT = {
   gut: {
     count: 'jours avec un repas ou une note du ventre',
-    ready: 'les pistes repas → ventre arrivent dans une prochaine version',
-    details: 'Délais qui seront testés : 0–4 h, 4–24 h, 24–48 h après le repas',
+    ready: 'vos pistes repas → ventre se précisent à chaque note (28 jours de notes du ventre au moins)',
+    details: 'Délais testés : 0–4 h, 4–24 h, 24–48 h après le repas ; le jour même ou la veille pour le bilan du soir',
   },
   energy: {
     count: 'nuits suivies d’une mesure du bien-être',
