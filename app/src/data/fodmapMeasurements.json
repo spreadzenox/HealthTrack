@@ -1,0 +1,6 @@
+{
+  "_doc": "Teneurs FODMAP par sous-groupe que Ciqual ne mesure pas (fructanes, GOS, sorbitol, mannitol), en g pour 100 g, reprises de mesures publiées dans des articles scientifiques (jamais des apps Monash ou FODMAP Friendly). Chaque aliment cite sa source (clé de `sources`) ; `confidence` vaut `mesure` (aliment mesuré) ou `analogie` (aliment proche mesuré, confiance basse, avec `analogy_of`). Clés = noms de ingredientsNutrition.json. Rempli à l'étape N3b.",
+  "version": 1,
+  "sources": {},
+  "foods": {}
+}
