@@ -139,6 +139,7 @@ const pending = new Map()
 async function connectWebView(timeoutMs = 180000, { relaunchAfterMs = 0 } = {}) {
   const t0 = Date.now()
   let relaunched = false
+  let tries = 0
   while (Date.now() - t0 < timeoutMs) {
     if (relaunchAfterMs && !relaunched && Date.now() - t0 > relaunchAfterMs) {
       relaunched = true
@@ -156,12 +157,20 @@ async function connectWebView(timeoutMs = 180000, { relaunchAfterMs = 0 } = {}) 
           .filter(Boolean),
       ),
     ]
-    const sock = socks.find((s) => pids.some((p) => s.endsWith(`_${p}`))) || (socks.length === 1 ? socks[0] : null)
-    if (!sock && Date.now() - t0 > 20000 && (Date.now() - t0) % 30000 < 1600) log('prises DevTools :', socks.join(', ') || 'aucune', '· pid :', pids.join(' ') || 'aucun')
-    if (sock) {
+    // Prises listées, puis celles attendues d'après le pid (essais du 26/10 : liste parfois vide, app affichée)
+    const candidates = [
+      ...new Set([
+        ...socks.filter((x) => pids.some((p) => x.endsWith(`_${p}`))),
+        ...pids.map((p) => `webview_devtools_remote_${p}`),
+        ...socks,
+      ]),
+    ]
+    tries += 1
+    if (tries % 20 === 0) log('prises DevTools :', socks.join(', ') || 'aucune', '· pid :', pids.join(' ') || 'aucun')
+    for (const sock of candidates) {
       try {
         adb('forward', 'tcp:9222', `localabstract:${sock}`)
-        const pages = await (await fetch('http://127.0.0.1:9222/json')).json()
+        const pages = await (await fetch('http://127.0.0.1:9222/json', { signal: AbortSignal.timeout(5000) })).json()
         const page = pages.find((p) => p.type === 'page' && p.webSocketDebuggerUrl)
         if (page) {
           cdp = new WebSocket(page.webSocketDebuggerUrl)
