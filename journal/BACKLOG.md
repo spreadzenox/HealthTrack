@@ -115,7 +115,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   pas dans Contenu de l'app)** — 26/10 21:33 : workflow « Play — brouillon P28 » (`play-p28-draft.yml`, workflow_dispatch
   sur main) : AAB play signé avec `-PfaceUnlockPlay=true`, versionCode 100000 + n, brouillon `p28-<n>` sur la piste
   interne (jamais déployé, versions en place gardées) ; `publish.mjs` : option `draft` + brouillons `p28-*` gardés par
-  les envois normaux (repli : version seule si Play refuse). [ ] confirmer que la ligne apparaît (propriétaire) ; si
+  les envois normaux (repli : version seule si Play refuse). Envoyé : `p28-100487` (brouillon accepté sans erreur, 26/10 ~22:05). [ ] confirmer que la ligne apparaît (propriétaire) ; si
   non : version en test interne (propriétaire seul), puis POL-1d.
   [x] **P28-VIDEO (demande du 26/10 15:00 : la vidéo est faite par la CI)** — 26/10 15:46 : workflow
   « Play — vidéo P28 » (`p28-video.yml` + `.github/scripts/p28-video/`) : APK d'aperçu, émulateur API 35, pilotage
