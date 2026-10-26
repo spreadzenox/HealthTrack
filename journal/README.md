@@ -61,6 +61,13 @@ fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit jou
 à l'aveugle, les trois ensemble faisaient tomber la puissance de 45 à 9 sur 60 ; triés, les pièges « café » passent de
 26–29 sur 30 à 3 au plus, sans perte de puissance. Depuis le 26/10 07:33, les aliments d'un même jour sont estimés ensemble (I134 étape 3) : sur des journaux simulés où seul l'oignon joue et où l'ail l'accompagne 8 fois sur 10, l'ail était accusé 23 fois sur 60, plus qu'une fois ; l'oignon garde sa puissance (50 → 49 sur 60). Si deux aliments jouent tous les deux et se mangent presque toujours ensemble, une seule piste reste et l'autre est citée dans ses détails. Suite : même chose pour les notes horodatées (facultatif), puis le reste du jalon 5.
 
+**Prochain chantier (préparé par le run « idées » du 26/10 08:33)** : la **réintroduction FODMAP guidée** et le
+**rapport PDF pour votre médecin** (jalon 7) sont spécifiés : test d'un groupe sur 3 jours (portion de départ, puis
+double, puis triple, en regardant les 24 h qui suivent), seulement après 3 jours de ventre calme, un groupe à la fois,
+résultat en une phrase (« Blé : une portion moyenne passe ») ; rapport de 2 pages créé sur le téléphone, résumé
+d'abord. Repères tirés d'une fiche patient du NHS et des conseils de l'université Monash, présentés comme des repères
+à adapter avec votre diététicienne. Rien de visible dans l'app pour l'instant.
+
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
 🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
@@ -75,6 +82,7 @@ fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit jou
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 08:33 — [Idées : jalon 7 prêt à coder](runs/2026-10-26-0833-idees-jalon7-reintroduction-pdf.md) | 💡 | Réintroduction FODMAP guidée (I174 : ×1 / ×2 / ×3 sur 24 h, 3 jours calmes avant, machine + 4 écrans, découpage 7a–7d), rapport PDF 2 pages (I175, `pdf-lib` MIT), selles facultatives (I176) ; journal seul |
 | 26/10 07:33 — [I134 étape 3 : aliments ensemble](runs/2026-10-26-0733-i134-aliments-ensemble.md) | 🏗️ | `gutDays` : pistes recomparées à exposition égale aux pistes plus nettes (même seuil de p) ; piège ail 23 → 1/60 ; « Souvent mangé avec » dans les détails ; 2 300 Vitest |
 | 26/10 06:33 — [I134 étape 2 : stress et écran](runs/2026-10-26-0633-i134-stress-ecran.md) | 🏗️ | `gutDays` : nuit / stress / écran de la veille candidats, retenus si liés au ventre (z ≥ 2 en valeur absolue, 2 au plus), coupure médiane équilibrée ; pièges café ≤ 3/30 ; « à … comparables » ; 2 293 Vitest |
 | 26/10 05:33 — [I134 étape 1 : nuit comparable](runs/2026-10-26-0533-i134-nuit-comparable.md) | 🏗️ | `gutDays` : blocs × nuit courte / longue (si nuits connues pour 2 bilans sur 3) ; piège café 7/10 → ≤ 1/10 ; puissance 22 → 31/60 quand la nuit joue ; « à nuit comparable » dans les détails ; 2 285 Vitest |
