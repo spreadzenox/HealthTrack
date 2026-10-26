@@ -141,8 +141,9 @@ export function correctUnique(results) {
 export function settleTwins(results) {
   for (const r of results) {
     if (!r.twinOf) continue
-    const { q, u, status } = r.twinOf
+    const { q, u, status, explainedBy } = r.twinOf
     Object.assign(r, { q, u, status })
+    if (explainedBy) r.explainedBy = explainedBy
     delete r.twinOf
   }
 }

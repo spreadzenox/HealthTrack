@@ -296,3 +296,67 @@ describe('analyzeGutDays — stress et temps d’écran de la veille (I134 étap
     expect(analyzeGutDays(entries).adjustedFor).toEqual([])
   })
 })
+
+describe('analyzeGutDays — aliments du même jour estimés ensemble (I134 étape 3)', () => {
+  /** L'oignon gêne ; l'ail l'accompagne souvent (`together`), parfois seul (`alone`). Trames synthétiques. */
+  function coEaten(seed, { onionOdds = 6, garlicOdds = 1, together = 0.8, alone = 0.15 } = {}) {
+    let s = seed >>> 0
+    const rnd = () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 2 ** 32)
+    const entries = []
+    for (let d = 0; d < 91; d++) {
+      const day = new Date(Date.UTC(2026, 6, 1 + d)).toISOString().slice(0, 10)
+      const onion = rnd() < 0.4
+      const garlic = rnd() < (onion ? together : alone)
+      if (onion) entries.push(meal(`${day}T12:30:00`, 'Oignon'))
+      if (garlic) entries.push(meal(`${day}T19:00:00`, 'Ail'))
+      if (rnd() < 0.5) entries.push(meal(`${day}T08:00:00`, 'Pain'))
+      if (rnd() < 0.5) entries.push(meal(`${day}T13:00:00`, 'Riz'))
+      const odds = (0.2 / 0.8) * (onion ? onionOdds : 1) * (garlic ? garlicOdds : 1)
+      if (rnd() < 0.9) entries.push(bilan(`${day}T21:00:00`, rnd() < odds / (1 + odds) ? 'discomfort' : 'calm'))
+    }
+    return entries
+  }
+  const linked = (res, factor) => res.results.some((r) => r.factor === factor && r.status === 'link')
+  const count = (opts, factor, adjustFoods) => {
+    let n = 0
+    for (let seed = 1; seed <= 60; seed++) if (linked(analyzeGutDays(coEaten(seed * 211, opts), { adjustFoods }), factor)) n += 1
+    return n
+  }
+
+  it('l’ail qui accompagne l’oignon n’est plus accusé (mesure du 26/10 : 23 → 1 sur 60)', () => {
+    expect(count({}, 'ail', false)).toBeGreaterThanOrEqual(15)
+    expect(count({}, 'ail', true)).toBeLessThanOrEqual(3)
+    // Ail presque toujours avec l'oignon : le piège est plus fort, l'ajustement le désarme en grande partie (38 → 6).
+    expect(count({ together: 0.9, alone: 0.1 }, 'ail', true)).toBeLessThanOrEqual(8)
+  })
+
+  it('la vraie piste garde sa puissance, et l’aliment écarté dit par qui il s’explique', () => {
+    expect(count({}, 'oignon', true)).toBeGreaterThanOrEqual(count({}, 'oignon', false) - 4)
+    let explained = 0
+    for (let seed = 1; seed <= 10; seed++) {
+      const ail = analyzeGutDays(coEaten(seed * 211)).results.filter((r) => r.factor === 'ail' && r.explainedBy)
+      for (const r of ail) {
+        expect(r.status).toBe('no_link')
+        expect(r.explainedBy.factor).toBe('oignon')
+        explained += 1
+      }
+    }
+    expect(explained).toBeGreaterThanOrEqual(1)
+  })
+
+  it('une seule piste (rien de mangé avec elle) : résultat identique avec ou sans ajustement', () => {
+    for (let seed = 1; seed <= 10; seed++) {
+      const entries = coEaten(seed * 211, { together: 0.15 })
+      expect(analyzeGutDays(entries)).toEqual(analyzeGutDays(entries, { adjustFoods: false }))
+    }
+  })
+
+  it('l’ajustement ne fait jamais apparaître de piste : il ne peut qu’en retirer', () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const entries = simulateRealistic({ seed: seed * 7919 + 63, days: 90, ...NULL_SCENARIOS.tous, ...DAY_ONLY })
+      const keys = (res) => res.results.filter((r) => r.status === 'link').map((r) => `${r.factor}|${r.window}`)
+      const plain = keys(analyzeGutDays(entries, { adjustFoods: false }))
+      for (const k of keys(analyzeGutDays(entries))) expect(plain).toContain(k)
+    }
+  })
+})

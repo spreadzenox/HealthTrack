@@ -26,6 +26,10 @@
  * en même temps faisaient tomber la puissance de 45 à 9/60 ; ajoutées à l'aveugle par deux, de 35 à 15/60 quand
  * seule la nuit joue. Avec le tri : pièges « café » 26–29/30 → 0 à 3/30, puissance gardée (45/60 si rien ne joue,
  * 27 → 34 si la nuit joue), fausses pistes sans effet ≤ 5/150.
+ * Aliments du même jour estimés ensemble (I134 étape 3) : si l'oignon gêne et que l'ail l'accompagne souvent, l'ail
+ * passerait aussi pour une piste. Les pistes qui passent toutes les vérifications sont reprises de la plus nette à la
+ * moins nette ; chacune est recomparée à exposition égale aux pistes déjà gardées (les jours avec et sans l'oignon
+ * comparés séparément) et doit rester sous le même seuil de p ; sinon elle redevient « aucun lien » (`explainedBy`).
  * Le ventre n'est jamais une entrée de l'estimateur du bien-être (règle anti-circularité).
  */
 import { localDateKey } from './analysisEngine'
@@ -156,18 +160,55 @@ function exposed(bilan, meals, w, s = 0) {
   }) ? 1 : 0
 }
 
+/** Exposition de chaque bilan à l'aliment d'un résultat, dans sa fenêtre. */
+function exposureColumn(res, bilans, meals) {
+  const w = GUT_DAY_WINDOWS.find((win) => win.id === res.window)
+  const own = meals.filter((m) => m.factors.includes(res.factor))
+  return bilans.map((b) => exposed(b, own, w))
+}
+
+/**
+ * I134 étape 3 : chaque piste, de la plus nette à la moins nette, est recomparée à exposition égale aux pistes déjà
+ * gardées. Elle reste une piste si son p ajusté ne dépasse pas le seuil qui l'avait fait passer (le plus grand p
+ * retenu par Benjamini-Hochberg) et si assez de blocs restent informatifs ; sinon, « aucun lien » et `explainedBy`
+ * nomme l'aliment gardé qui l'accompagne le plus. Rien ne change quand il n'y a qu'une piste.
+ */
+function adjustForCoEaten(tested, bilans, meals, minBlocks) {
+  const links = tested.filter((c) => c.status === 'link').sort((a, b) => a.p - b.p)
+  if (links.length < 2) return
+  const cutoff = Math.max(...tested.filter((t) => t.q < GUT_LINK_MAX_Q).map((t) => t.p))
+  const kept = [{ res: links[0], x: exposureColumn(links[0], bilans, meals) }]
+  for (const c of links.slice(1)) {
+    const x = exposureColumn(c, bilans, meals)
+    const { z, informativeKeys } = mantelHaenszel(bilans.map((b, i) => ({
+      y: b.y, x: x[i], k: `${b.k}|${kept.map((a) => a.x[i]).join('')}`,
+    })))
+    const p = z == null ? null : 1 - normalCdf(z)
+    if (p != null && p <= cutoff && blocksOf(informativeKeys) >= minBlocks) {
+      c.pAdjusted = p
+      kept.push({ res: c, x })
+      continue
+    }
+    const overlap = (a) => x.reduce((n, xi, i) => n + (xi && a.x[i] ? 1 : 0), 0)
+    const by = kept.reduce((best, a) => (overlap(a) > overlap(best) ? a : best))
+    c.status = 'no_link'
+    c.explainedBy = { factor: by.res.factor, window: by.res.window }
+  }
+}
+
 /**
  * @param {object[]} entries  entrées `food` et bilans du soir `gut` (les notes horodatées sont ignorées)
- * @param {{ blockDays?: number, minBlocks?: number, maxCovariates?: number, minCovariateZ?: number }} [options]  pour le
- *   banc seulement
+ * @param {{ blockDays?: number, minBlocks?: number, maxCovariates?: number, minCovariateZ?: number,
+ *   adjustFoods?: boolean }} [options]  pour le banc seulement
  * @returns {{ days: number, tested: number, adjustedFor: ('sleep'|'stress'|'screen')[], results: {
  *   factor: string, window: 'jour'|'veille', status: 'link'|'no_link'|'too_early',
  *   exposed: { days: number, symptoms: number }, unexposed: { days: number, symptoms: number },
- *   rr: number|null, p: number|null, q: number|null, u: number|null }[] }}
+ *   rr: number|null, p: number|null, q: number|null, u: number|null, pAdjusted?: number,
+ *   explainedBy?: { factor: string, window: 'jour'|'veille' } }[] }}
  */
 export function analyzeGutDays(entries, {
   blockDays = DAY_BLOCK_DAYS, minBlocks = MIN_INFORMATIVE_DAY_BLOCKS, maxCovariates = MAX_COVARIATES,
-  minCovariateZ = COVARIATE_MIN_Z,
+  minCovariateZ = COVARIATE_MIN_Z, adjustFoods = true,
 } = {}) {
   const meals = []
   const byDay = new Map()
@@ -234,6 +275,7 @@ export function analyzeGutDays(entries, {
     if (c.u == null) c.status = 'too_early'
     else if (c.u <= GUT_TTS_MAX_U) c.status = 'link'
   }
+  if (adjustFoods) adjustForCoEaten(tested, bilans, meals, minBlocks)
   settleTwins(results)
 
   return { days: bilans.length, tested: tested.length, adjustedFor: covariates.ids, results }

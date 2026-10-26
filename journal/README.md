@@ -41,6 +41,9 @@
 - **… et à stress et écran de la veille comparables** (26/10 06:33) — même idée pour le stress de la montre et le
   temps d'écran de la veille, mais seulement quand ils vont vraiment avec votre ventre (deux au plus, pour ne pas
   retarder vos pistes). Mention dans les détails, par exemple « à nuit et stress de la veille comparables ».
+- **… et les aliments mangés ensemble départagés** (26/10 07:33) — si l'oignon gêne et que l'ail l'accompagne
+  souvent, l'ail n'est plus accusé à tort : il ne reste une piste que s'il ressort aussi les jours sans oignon. Dans
+  les détails : « Souvent mangé avec : ail. Comparé à part, il ne ressort pas à lui seul. »
 
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
@@ -56,7 +59,7 @@ journaux simulés où seule la nuit gêne le ventre, le café des nuits courtes 
 fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit joue (22 → 31 sur 60). Depuis le 26/10
 06:33, stress et temps d'écran de la veille aussi (I134 étape 2), mais seulement s'ils vont avec le ventre : ajoutés
 à l'aveugle, les trois ensemble faisaient tomber la puissance de 45 à 9 sur 60 ; triés, les pièges « café » passent de
-26–29 sur 30 à 3 au plus, sans perte de puissance. Suite : repas du même jour estimés ensemble.
+26–29 sur 30 à 3 au plus, sans perte de puissance. Depuis le 26/10 07:33, les aliments d'un même jour sont estimés ensemble (I134 étape 3) : sur des journaux simulés où seul l'oignon joue et où l'ail l'accompagne 8 fois sur 10, l'ail était accusé 23 fois sur 60, plus qu'une fois ; l'oignon garde sa puissance (50 → 49 sur 60). Si deux aliments jouent tous les deux et se mangent presque toujours ensemble, une seule piste reste et l'autre est citée dans ses détails. Suite : même chose pour les notes horodatées (facultatif), puis le reste du jalon 5.
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -72,6 +75,7 @@ fois sur 10 au plus ; un vrai effet ressort même plus souvent quand la nuit jou
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 07:33 — [I134 étape 3 : aliments ensemble](runs/2026-10-26-0733-i134-aliments-ensemble.md) | 🏗️ | `gutDays` : pistes recomparées à exposition égale aux pistes plus nettes (même seuil de p) ; piège ail 23 → 1/60 ; « Souvent mangé avec » dans les détails ; 2 300 Vitest |
 | 26/10 06:33 — [I134 étape 2 : stress et écran](runs/2026-10-26-0633-i134-stress-ecran.md) | 🏗️ | `gutDays` : nuit / stress / écran de la veille candidats, retenus si liés au ventre (z ≥ 2 en valeur absolue, 2 au plus), coupure médiane équilibrée ; pièges café ≤ 3/30 ; « à … comparables » ; 2 293 Vitest |
 | 26/10 05:33 — [I134 étape 1 : nuit comparable](runs/2026-10-26-0533-i134-nuit-comparable.md) | 🏗️ | `gutDays` : blocs × nuit courte / longue (si nuits connues pour 2 bilans sur 3) ; piège café 7/10 → ≤ 1/10 ; puissance 22 → 31/60 quand la nuit joue ; « à nuit comparable » dans les détails ; 2 285 Vitest |
 | 26/10 04:33 — [I173 : moins de comparaisons](runs/2026-10-26-0433-i173-moins-de-comparaisons.md) | 🏗️ | 12 aliments testés au plus (les mieux répartis) + FODMAP, jumeaux comptés une fois ; longue traîne : 42 → 51 et 50 → 64/200 ; nulles ≤ 5/100 ; 2 280 Vitest |
