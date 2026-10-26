@@ -157,7 +157,7 @@ async function connectWebView(timeoutMs = 180000, { relaunchAfterMs = 0 } = {}) 
           .filter(Boolean),
       ),
     ]
-    // Prises listées, puis celles attendues d'après le pid (essais du 26/10 : liste parfois vide, app affichée)
+    // Prises listées, puis celles attendues d'après le pid ; /json peut mettre plus de 5 s à répondre (essai du 26/10)
     const candidates = [
       ...new Set([
         ...socks.filter((x) => pids.some((p) => x.endsWith(`_${p}`))),
@@ -170,7 +170,7 @@ async function connectWebView(timeoutMs = 180000, { relaunchAfterMs = 0 } = {}) 
     for (const sock of candidates) {
       try {
         adb('forward', 'tcp:9222', `localabstract:${sock}`)
-        const pages = await (await fetch('http://127.0.0.1:9222/json', { signal: AbortSignal.timeout(5000) })).json()
+        const pages = await (await fetch('http://127.0.0.1:9222/json', { signal: AbortSignal.timeout(30000) })).json()
         const page = pages.find((p) => p.type === 'page' && p.webSocketDebuggerUrl)
         if (page) {
           cdp = new WebSocket(page.webSocketDebuggerUrl)

@@ -121,7 +121,8 @@ bouton arrivent au prochain run.
 **👉 Vos prochaines actions, la plus utile d'abord**
 1. **Inviter les testeurs** (ci-dessus) — c'est ce qui lance les 14 jours obligatoires avant la production.
 2. **P28** : plus rien à filmer, **la CI fait la vidéo** (workflow « Play — vidéo P28 », en cours de mise au point
-   dans la PR #398 : le lien arrive dans ce résumé dès qu'il est vert). Il vous restera la déclaration (voir [`PRODUIT.md`](PRODUIT.md) §4, P28 : cocher Caméra, coller les 3 textes de
+   dans la PR #398 — au 26/10 17:33, film complet jusqu’au déverrouillage obtenu une fois, connexion du script à
+   l’app encore instable : le lien arrive dans ce résumé dès qu’il est vert). Il vous restera la déclaration (voir [`PRODUIT.md`](PRODUIT.md) §4, P28 : cocher Caméra, coller les 3 textes de
    [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien de la vidéo, envoyer). Débloque la lecture du
    bien-être au déverrouillage dans la version Play.
 3. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
@@ -129,6 +130,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/10 17:33 — [P28 : mise au point du film](runs/2026-10-26-1733-p28-video-film.md) | 🏗️ | Reprise de la PR #398 : écran au format de l'A56 (720 × 1560), notification dépliée, ffmpeg statique ; un film de 106 s complet jusqu'au déverrouillage, puis la WebView n'a plus été trouvée par le script sur 2 essais → la prise existe mais la WebView répond trop lentement (délai porté à 30 s, essai suivant à lire) → **PR #398 toujours ouverte** |
 | 26/10 16:33 — [N2 : table rebâtie depuis Ciqual 2025](runs/2026-10-26-1633-n2-table-ciqual-2025.md) | 🏗️ | `ingredientsNutrition.json` reconstruite depuis Ciqual 2025 (Anses, Zenodo, CC BY 4.0, md5 vérifiés) : code Ciqual par aliment, inconnu = null, 69 alias pour les noms simples, mêmes 3 553 clés dans le même ordre ; audit 3 506 → 33 micros recopiés, 201 → 0 AGS > lipides ; attribution dans Nutrition |
 | 26/10 15:46 — [P28 : vidéo filmée par la CI](runs/2026-10-26-1546-p28-video-ci.md) | 🏗️ | Workflow « Play — vidéo P28 » (APK d'aperçu, émulateur, pilotage DevTools + appuis adb, preuve par plan, publication Pages) ; caméra au déverrouillage prouvée, notification pas encore filmée → **PR #398 ouverte, non mergée** ; ciqual.anses.fr toujours en 503 |
 | 26/10 14:53 — [N1 : audit de la table nutritionnelle](runs/2026-10-26-1453-n1-audit-ciqual.md) | 🏗️ | Audit chiffré (3 506/3 553 aliments aux micronutriments recopiés, 201 AGS > lipides, 145 énergies fausses) + importeur Ciqual testé ; ciqual.anses.fr en maintenance, reconstruction au run suivant ; 20 tests de plus |
