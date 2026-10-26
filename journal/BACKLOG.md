@@ -344,8 +344,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   croissants, pause ≥ 3 j ou jusqu'au calme, arrêt si gêne J1/J2, verdict à 3 niveaux, aucun verdict sans ventre
   calme au départ, retest + mention de l'effet d'attente) — **spécifié le 26/10 08:33** (`IDEES.md` I174 : protocole
   ×1 / ×2 / ×3 sur 24 h, 3 jours calmes avant, fructanes source par source, sorbitol et mannitol séparés, un test à la
-  fois ; entrée `fodmap_challenge`, verdict calculé depuis les notes `gut`) : [ ] **7a** machine pure + données +
-  tests (rien d'affiché) ; [ ] **7b** écrans choix / préparation / jour en cours / résultat + rappel ; [ ] **7c** lien
+  fois ; entrée `fodmap_challenge`, verdict calculé depuis les notes `gut`) : [x] **7a** machine pure + données +
+  tests (rien d'affiché) — **FAIT le 26/10 09:33** (`services/fodmapChallenge.js`, 29 tests) ; [ ] **7b** écrans choix / préparation / jour en cours / résultat + rappel ; [ ] **7c** lien
   depuis les pistes ventre + états dans la carte lilas ; [ ] **7d** à l'aveugle avec un proche (I171 c) ;
   [ ] **I175** rapport PDF 2 pages (`buildReport.js` pur puis `renderPdf.js` avec `pdf-lib` + `fontkit` MIT, polices
   embarquées, chargé à la demande, écrit dans Documents comme l'export JSON) ; [ ] **I176** forme des selles
@@ -1141,6 +1141,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 26/10 (09:33 Paris)** : ✅ **7a** — machine de réintroduction pure (`services/fodmapChallenge.js` :
+6 groupes et repères de départ, garde des 3 jours calmes, fenêtre de 24 h, question « supportable ? », verdict,
+pause de fin, un test à la fois, jours sautés, fructanes par aliment) ; rien d'affiché ; « intolérance » et
+« allergie » interdits dans les textes. I134 étape 4 laissée de côté (facultative). Suite : **7b** (écrans ①–④ +
+rappel, `recordDose` / `answerTolerable` branchés sur `createEntry` / `updateEntry`) → I175 étape 1 → I175 étape 2
+→ 7c → I176 → 7d. POL-1d attend P28.
 
 **Mise à jour du 26/10 (08:33 Paris, run « idées »)** : jalon 7 spécifié (`IDEES.md` I174–I176). Ordre conseillé pour
 les runs de code, une fois I134 étape 4 faite ou écartée : **7a** (machine de réintroduction, rien d'affiché) → **7b**
