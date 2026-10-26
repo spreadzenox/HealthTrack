@@ -178,10 +178,11 @@ chaque étape pas à pas, avec les valeurs exactes à saisir, au moment où elle
 - **Vérification visuelle web** : `cd app && npm run visual` (options en tête de
   `app/scripts/visual/visual-check.mjs`). Pour iOS, captures du simulateur produites par le workflow iOS (à créer
   en I1 : clair et sombre, données vierges et de démo).
-- **Mécanique** : la tâche planifiée « Halcya iOS — parité avec Android » réveille toutes les heures (à :59, heure
-  de Paris) la session « orchestrateur » iOS, qui crée une session neuve avec le dépôt attaché (étiquette
-  `healthtrack-ios-routine`) et lui transmet le prompt du run. Chaque run est indépendant : sa seule mémoire est ce
-  dossier.
+- **Mécanique** : une routine claude.ai « Halcya iOS — parité avec Android », créée avec le dépôt attaché, lance
+  toutes les heures (à :59, heure de Paris) une session neuve avec le prompt de [`PROMPT-ROUTINE.md`](PROMPT-ROUTINE.md).
+  Chaque run est indépendant : sa seule mémoire est ce dossier. (Le 26/10, deux autres mécaniques ont échoué : une
+  session « orchestrateur » qui crée les runs — refusée par la vérification du mode Auto — et une tâche planifiée qui
+  crée la session elle-même — session sans droit d'écriture sur le dépôt.)
 
 ### Modèle de compte rendu
 
