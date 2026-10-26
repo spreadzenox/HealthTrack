@@ -136,14 +136,28 @@ let cdp = null
 let msgId = 0
 const pending = new Map()
 
-async function connectWebView(timeoutMs = 180000) {
+async function connectWebView(timeoutMs = 180000, { relaunchAfterMs = 0 } = {}) {
   const t0 = Date.now()
+  let relaunched = false
   while (Date.now() - t0 < timeoutMs) {
-    const pid = shell(`pidof ${PKG}`).trim()
-    const sock = shell('cat /proc/net/unix')
-      .split('\n')
-      .map((l) => /@(webview_devtools_remote_\d+)/.exec(l)?.[1])
-      .find((s) => s && (!pid || s.endsWith(`_${pid}`)))
+    if (relaunchAfterMs && !relaunched && Date.now() - t0 > relaunchAfterMs) {
+      relaunched = true
+      log('prise DevTools absente : relance de l’app')
+      shell(`am force-stop ${PKG}`)
+      shell(`monkey -p ${PKG} -c android.intent.category.LAUNCHER 1`)
+    }
+    // pidof peut renvoyer plusieurs processus (essai du 26/10 : prise jamais trouvée en 180 s, app pourtant affichée)
+    const pids = shell(`pidof ${PKG}`).trim().split(/\s+/).filter(Boolean)
+    const socks = [
+      ...new Set(
+        shell('cat /proc/net/unix')
+          .split('\n')
+          .map((l) => /@([\w.]*devtools_remote\w*)/.exec(l)?.[1])
+          .filter(Boolean),
+      ),
+    ]
+    const sock = socks.find((s) => pids.some((p) => s.endsWith(`_${p}`))) || (socks.length === 1 ? socks[0] : null)
+    if (!sock && Date.now() - t0 > 20000 && (Date.now() - t0) % 30000 < 1600) log('prises DevTools :', socks.join(', ') || 'aucune', '· pid :', pids.join(' ') || 'aucun')
     if (sock) {
       try {
         adb('forward', 'tcp:9222', `localabstract:${sock}`)
@@ -275,7 +289,7 @@ async function prepare() {
   shell('settings put global heads_up_notifications_enabled 1')
   shell(`pm grant ${PKG} android.permission.CAMERA`)
   shell(`monkey -p ${PKG} -c android.intent.category.LAUNCHER 1`)
-  if (!(await connectWebView())) {
+  if (!(await connectWebView(180000, { relaunchAfterMs: 75000 }))) {
     await shot('echec-webview')
     throw new Error('WebView introuvable (débogage inactif ?)')
   }
