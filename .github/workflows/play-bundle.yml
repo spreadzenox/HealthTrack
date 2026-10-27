@@ -5,8 +5,10 @@
 # - Clé d'envoi lue dans Secret Manager (android-upload-keystore, PKCS12 en base64, alias « upload » ;
 #   android-upload-keystore-password). Absente → échec dès le début, avec l'action du propriétaire à faire (P9).
 #   Ni la clé ni le mot de passe ne passent par les logs ou le dépôt.
-# - versionCode = nombre de commits de main : toujours croissant (pas de force-push sur main) et indépendant du
-#   numéro de run de ce workflow.
+# - versionCode = 100000 + nombre de commits de main : toujours croissant (pas de force-push sur main) et indépendant
+#   du numéro de run de ce workflow. Le décalage de 100000 date du 27/10 : le propriétaire a déployé en test interne
+#   le brouillon P28 (versionCode 100487) ; sans lui, son téléphone ne recevrait plus aucune version. versionName (et
+#   le numéro affiché dans l'app) reste le nombre de commits.
 # - L'AAB est un artefact du workflow, puis il est envoyé en test interne (jalon 3c) par l'API Android Publisher
 #   (app/scripts/play/publish.mjs, jamais la production). Jeton à portée androidpublisher émis pour gh-deployer, invité
 #   dans la Play Console (P11). Accès refusé (invitation pas encore propagée) → avertissement, pas d'échec : nouvel
@@ -43,7 +45,7 @@ concurrency:
 
 env:
   GCP_PROJECT: healthtrack-824b26
-  FACE_UNLOCK_INTERNAL: "false"  # coupé le 27/10 vers 14:30 : Google exige d’abord la déclaration P28 (journal)
+  FACE_UNLOCK_INTERNAL: "true"  # rallumé le 27/10 vers 15:40 : le brouillon P28 (100487) a été accepté en test interne
 
 jobs:
   bundle:
@@ -106,7 +108,9 @@ jobs:
         env:
           TRACK: ${{ inputs.track || 'internal' }}
         run: |
-          echo "VERSION_CODE=$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
+          COMMITS=$(git rev-list --count HEAD)
+          echo "VERSION_NAME=$COMMITS" >> "$GITHUB_ENV"
+          echo "VERSION_CODE=$((100000 + COMMITS))" >> "$GITHUB_ENV"
           if [ "$FACE_UNLOCK_INTERNAL" = "true" ] && [ "$TRACK" = "internal" ]; then
             echo "FACE_UNLOCK=true" >> "$GITHUB_ENV"
           else
@@ -120,7 +124,7 @@ jobs:
       - name: Build app (variante play)
         working-directory: app
         env:
-          VITE_APP_VERSION: ${{ env.VERSION_CODE }}
+          VITE_APP_VERSION: ${{ env.VERSION_NAME }}
           VITE_DISTRIBUTION: play
         run: npm run build
 
@@ -151,7 +155,7 @@ jobs:
         run: |
           chmod +x gradlew
           HT_UPLOAD_KEYSTORE="$RUNNER_TEMP/upload.p12" HT_UPLOAD_PASSWORD="$(cat "$RUNNER_TEMP/upload.pass")" \
-            ./gradlew bundlePlayRelease -PfaceUnlockPlay="$FACE_UNLOCK" -PhtVersionCode="$VERSION_CODE" --no-daemon
+            ./gradlew bundlePlayRelease -PfaceUnlockPlay="$FACE_UNLOCK" -PhtVersionCode="$VERSION_CODE" -PhtVersionName="$VERSION_NAME" --no-daemon
 
       - name: Effacer la clé du runner
         if: always()

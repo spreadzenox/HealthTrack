@@ -248,20 +248,15 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
    de la montre (écran Activité) et ceux du Journal de Halcya ; renvoyez les 4 chiffres. Si les kcal de Halcya sont
    bien plus basses que la montre, c'est normal : Halcya ne compte que les calories d'activité qu'elle reçoit ; dites-le
    et un run lira la dépense totale.
-1. **P28 — la déclaration, maintenant exigée par Google (10 min)**. Le 27/10 vers 14:20, la CI a envoyé en test
-   interne une version avec la lecture au déverrouillage. Google l'a **refusée** avec ce message exact : « You must
-   let us know whether your app uses any Foreground Service permissions. » Rien n'a été publié, l'interrupteur est
-   recoupé et vos versions suivantes partent normalement. Google attend donc votre déclaration. Gestes :
-   ① Play Console → Halcya → Tester et publier → **Test interne** → onglet Versions → le brouillon **p28-100487** →
-   « Modifier la version » → « Suivant ». L'écran d'aperçu devrait afficher la même erreur avec un lien vers la
-   déclaration (sinon : Surveiller et améliorer → Règles et programmes → **Contenu de l'app**, rubriques « Actions
-   requises » et « Déclarations »). ② Cochez **Caméra**, puis collez les 3 textes de
-   [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien de la vidéo
-   **https://spreadzenox.github.io/HealthTrack/p28/** ; envoyez. ③ **Ne déployez pas** le brouillon : quittez sans
-   « Enregistrer et publier » (son numéro, 100487, bloquerait vos versions suivantes). ④ Écrivez « P28 envoyée » :
-   un run rallumera la fonction dans la version de test interne (vous seul), puis dans la version Play une fois la
-   déclaration acceptée. Votre autre option est d'y renoncer : la lecture à l'ouverture de l'app reste en place, et
-   la lecture au déverrouillage reste dans la version sideload.
+1. **P28 — vérifier la déclaration (5 min)**. Vous avez publié le brouillon **p28-100487** en test interne le 27/10
+   à 15:17 et Google l'a accepté. Depuis le run de 15:34, **toutes les versions Play portent un numéro au-dessus de
+   100487** (100000 + n, par exemple 100523) : votre téléphone continue donc de recevoir les mises à jour ; le numéro
+   affiché dans l'app reste n. Le test interne (vous seul) reçoit de nouveau la lecture au déverrouillage ; l'alpha
+   reste sans. Gestes : ① Play Console → Surveiller et améliorer → Règles et programmes → **Contenu de l'app** :
+   cherchez « Autorisations des services de premier plan » (« Actions requises » ou « Déclarations ») ; ② si elle y
+   est, cochez **Caméra**, collez les 3 textes de [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien
+   **https://spreadzenox.github.io/HealthTrack/p28/**, envoyez ; ③ écrivez « P28 faite ». Résultat de l'envoi
+   automatique avec la lecture allumée : voir la ligne « 27/10 15:34 » du tableau ci-dessous.
 2. **Inviter les testeurs** : quand vous le déciderez (au plus tôt la semaine prochaine).
 3. **P32** (pas urgent, avant la production) : dans quels pays vendre (proposition ci-dessus ; répondez
    « d'accord » ou votre liste).
@@ -270,6 +265,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 15:34 — [versionCode Play au-dessus de 100487](runs/2026-10-27-1534-versioncode-play.md) | 🏗️ | Votre brouillon P28 (100487) publié en test interne : « Play — AAB » envoie désormais 100000 + n (versionName et numéro affiché = n) ; brouillon P28 à 50000 + n (plus petit, ne bloque rien) ; interrupteur de la lecture au déverrouillage rallumé pour le test interne (vous seul) ; résultat dans le compte rendu |
 | 27/10 14:42 — [Pas de rapport PDF vide dans Analyses](runs/2026-10-27-1442-rapport-pdf-vide.md) | 🎨 | Audit play vierge (15 pages) ; Analyses (« Mon ventre ») ne pousse plus « Débloquer » pour un rapport PDF sans aucune note du ventre : ligne « Bientôt » à la place ; Données inchangé |
 | 27/10 13:33 — [P28 : test interne avec la lecture au déverrouillage](runs/2026-10-27-1333-p28-test-interne.md) | 🏗️ | « Play — AAB » : interrupteur `FACE_UNLOCK_INTERNAL` (test interne seul propriétaire vérifié, versionCode normal, alpha jamais allumée) ; résumé « testeurs » retiré (décision du 27/10 13:00) ; v315 ; **Google refuse la 518 : « You must let us know whether your app uses any Foreground Service permissions. »** → interrupteur recoupé, ce 403 n'est plus pris pour un accès refusé ; P28 au propriétaire (chemin par le brouillon) ; v316 et 519 en test interne normalement |
 | 27/10 12:33 — [🚑 Pas et kcal du jour](runs/2026-10-27-1233-pas-kcal-montre.md) | 🐛 | **v314** · signalement du 27/10 11:56 : kcal minute de la montre en cal (÷1000 à la synchro, migration `watchKcalFix.js`, correction à la lecture) ; pas : une source par heure (`activityTotals.js`, Journal, analyses, agrégats v2, écran Montre, premier import) ; garde-fou de plausibilité |

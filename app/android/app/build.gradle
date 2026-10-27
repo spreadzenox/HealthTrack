@@ -16,9 +16,10 @@ android {
         applicationId "com.healthtrack.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Numéro du run « Build & Release » (-PhtVersionCode=…) : Google Play exige un versionCode croissant
+        // Numéro du run « Build & Release » (-PhtVersionCode=…) : Google Play exige un versionCode croissant ;
+        // la variante play passe aussi -PhtVersionName (nombre de commits, versionCode = 100000 + n)
         versionCode((project.findProperty('htVersionCode') ?: '1') as int)
-        versionName((project.findProperty('htVersionCode') ?: '1.0') as String)
+        versionName((project.findProperty('htVersionName') ?: project.findProperty('htVersionCode') ?: '1.0') as String)
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // LiteRT n'embarque que les ABI utiles (I95) : téléphones 64 bits ; l'émulateur de la CI ajoute x86_64
         // (./gradlew -PextraAbis=x86_64), 6 Mo inutiles sur le téléphone
