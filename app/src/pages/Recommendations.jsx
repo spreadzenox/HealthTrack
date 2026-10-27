@@ -28,6 +28,7 @@ import { PistesTeaser } from '../components/TodayCards'
 import DetailsToggle from '../components/DetailsToggle'
 import GutLinks from '../components/GutLinks'
 import ReintroductionEntry from '../components/ReintroductionEntry'
+import DoctorReportCard from '../components/DoctorReportCard'
 import { gutCardMode, homeFocus } from '../settings/onboarding'
 import './Recommendations.css'
 
@@ -590,6 +591,8 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
   const { correlations: result } = analysis
   const soon = soonLines(analysis, showGut)
   const gut = showGut ? <><GutLinks gut={analysis.gut} /><ReintroductionEntry /></> : null
+  // Le rapport décrit d'abord le ventre : avec l'objectif ventre seulement (toujours dans Données)
+  const report = showGut ? <DoctorReportCard /> : null
 
   if (result.status === 'not_enough_data') {
     return (
@@ -602,6 +605,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
         )}
         {/* Habitudes et effets décalés attendent les mêmes notes que la carte lilas : seul le visage a son compteur */}
         <SoonSection lines={soon.filter((l) => l.id === 'face' || l.id === 'gut')} />
+        {report}
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
       </div>
     )
@@ -644,6 +648,8 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
       <LinksSection analysis={analysis} levers={levers} />
 
       <SoonSection lines={soon} />
+
+      {report}
 
       <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
     </div>

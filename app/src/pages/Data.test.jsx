@@ -11,6 +11,9 @@ vi.mock('../storage/localHealthStorage', () => ({
   countAllEntries: vi.fn(),
 }))
 
+// Le rapport PDF a ses propres tests (DoctorReportCard.test.jsx)
+vi.mock('../components/DoctorReportCard', () => ({ default: () => <div>Rapport PDF pour mon médecin</div> }))
+
 vi.mock('../services/deleteAllData', () => ({
   deleteAllMyData: vi.fn(),
 }))

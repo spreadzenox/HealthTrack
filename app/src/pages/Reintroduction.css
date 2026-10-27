@@ -336,3 +336,54 @@ button.fodmap-group:focus-visible,
   display: inline-block;
   margin-top: 8px;
 }
+
+/* Rapport PDF pour mon médecin (N6b) : bas d'Analyses et page Données */
+.report-card {
+  margin-top: 16px;
+}
+
+.report-periods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 4px;
+  padding: 0;
+  border: 0;
+}
+
+.report-periods legend {
+  width: 100%;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.report-period {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--lilac-bar);
+  background: var(--color-bg);
+  color: var(--lilac-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.report-period.is-on {
+  background: var(--lilac-bar);
+  color: var(--color-bg);
+}
+
+.report-period input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.report-period:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
