@@ -3,6 +3,8 @@ import { updateEntry } from '../storage/localHealthStorage'
 import { atToLocalInput, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
 import { mealTimeError } from '../services/quickMeals'
 import MealEditor from './MealEditor'
+import MealFodmapLine from './MealFodmapLine'
+import { gutCardMode } from '../settings/onboarding'
 import NutritionTableGate from './NutritionTableGate'
 
 /**
@@ -19,6 +21,8 @@ export default function SavedMealEditor(props) {
 
 function SavedMealEditorForm({ entry, onSaved, onCancel }) {
   const [items, setItems] = useState(() => itemsForEditing(entry.payload?.items))
+  // FODMAP du repas tel que corrigé (N4), seulement avec l'objectif « Mon ventre » comme la carte enregistrée
+  const [showFodmap] = useState(() => gutCardMode() !== 'hide')
   const initialTime = atToLocalInput(entry.at)
   const [time, setTime] = useState(initialTime)
   const [saving, setSaving] = useState(false)
@@ -67,6 +71,7 @@ function SavedMealEditorForm({ entry, onSaved, onCancel }) {
         />
       </div>
       <MealEditor items={items} onChange={setItems} disabled={saving} />
+      {showFodmap && <MealFodmapLine items={items} />}
       {error && <p className="error-msg" role="alert">{error}</p>}
       <div className="actions">
         <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={saving}>

@@ -1223,8 +1223,9 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   basse ; `fodmap_score` reste lisible dans les anciens exports.
 - [x] **N4** carte d'un repas — **FAIT le 26/10 23:33** : `MealFodmapLine` sous chaque repas de Journal → Repas (objectif
   ventre seulement, `gutCardMode`) : « Riche en fructanes : oignon », « Probablement riche » si le repère n'est dépassé
-  qu'avec des valeurs à confiance basse (`mealFodmapHighlights`), grammes / repère / origine au chevron. Reste possible :
-  la même ligne sur le résultat d'une analyse photo avant enregistrement, et dans « Vos derniers jours ».
+  qu'avec des valeurs à confiance basse (`mealFodmapHighlights`), grammes / repère / origine au chevron. **Fait le 27/10 06:33** : la même
+  ligne sous l'éditeur du résultat d'une analyse photo, de « Décrire » / « Refaire » et de « Modifier », en direct.
+  Reste possible (facultatif) : « Vos derniers jours ».
 - [x] **N5** — **FAIT le 27/10 02:33** : `mealFactors` produit `fodmap:<groupe>` pour chaque sous-groupe au-dessus du
   repère (`estimateMealFodmap`) au lieu de `fodmap_eleve` ; tous les sous-groupes mangés sont candidats (un groupe trop
   rare n'est pas testé, donc ne coûte rien ; jumeaux comptés une fois) ; libellés « Repas riches en lactose », piste
