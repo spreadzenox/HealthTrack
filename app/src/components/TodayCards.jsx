@@ -54,7 +54,8 @@ export function MeasureTiles({ tiles, details }) {
     return (
       <section className="today-tiles-wrap" aria-label="Mesures du jour">
         <p className="today-tiles-hint today-tiles-empty">
-          Sommeil, cœur et pas arrivent de votre montre · <Link to="/connectors">Ajouter une source</Link>
+          Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur ·{' '}
+          <Link to="/connectors">Ajouter une source</Link>
         </p>
       </section>
     )

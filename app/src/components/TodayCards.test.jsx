@@ -30,7 +30,9 @@ describe('MeasureTiles', () => {
   it('rien de mesuré : une seule ligne au lieu de trois tuiles « — » (VC-26)', () => {
     wrap(<MeasureTiles tiles={tiles.map((t) => ({ ...t, value: null }))} />)
     expect(screen.getByRole('link', { name: 'Ajouter une source' })).toHaveAttribute('href', '/connectors')
-    expect(screen.getByText(/Sommeil, cœur et pas arrivent de votre montre/)).toBeInTheDocument()
+    // Pas de montre supposée (POL-PLAY-2) : le téléphone peut donner pas et nuits
+    expect(screen.getByText(/peuvent venir de votre téléphone/)).toBeInTheDocument()
+    expect(screen.queryByText(/votre montre/)).not.toBeInTheDocument()
     expect(screen.queryByText('—')).not.toBeInTheDocument()
     expect(screen.queryByRole('list')).not.toBeInTheDocument()
   })

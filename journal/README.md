@@ -110,6 +110,12 @@
   mon médecin » (et son « Débloquer ») disparaît d'Analyses ; une ligne « Bientôt » l'annonce dès que vous avez commencé
   à noter. Toujours dans Données. **À tester** : rien, sauf sur une installation neuve.
 
+- **Accueil vierge et « Tester un groupe FODMAP »** (27/10 16:33) — sans aucune mesure, l'Accueil ne suppose plus
+  que vous avez une montre : « Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur · Ajouter une
+  source ». Dans Analyses, la carte « Tester un groupe FODMAP » a son chevron bien à droite et, sur la version Play
+  sans premium (après la période de lancement), une étiquette « premium » comme le rapport PDF. **À tester** : rien
+  (visible sur une installation neuve).
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -248,17 +254,11 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
    de la montre (écran Activité) et ceux du Journal de Halcya ; renvoyez les 4 chiffres. Si les kcal de Halcya sont
    bien plus basses que la montre, c'est normal : Halcya ne compte que les calories d'activité qu'elle reçoit ; dites-le
    et un run lira la dépense totale.
-1. **P28 — vérifier la déclaration (5 min)**. Vous avez publié le brouillon **p28-100487** en test interne le 27/10
-   à 15:17 et Google l'a accepté. Depuis le run de 15:34, **toutes les versions Play portent un numéro au-dessus de
-   100487** (100000 + n, par exemple 100523) : votre téléphone continue donc de recevoir les mises à jour ; le numéro
-   affiché dans l'app reste n. Le test interne (vous seul) reçoit de nouveau la lecture au déverrouillage ; l'alpha
-   reste sans. Gestes : ① Play Console → Surveiller et améliorer → Règles et programmes → **Contenu de l'app** :
-   cherchez « Autorisations des services de premier plan » (« Actions requises » ou « Déclarations ») ; ② si elle y
-   est, cochez **Caméra**, collez les 3 textes de [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien
-   **https://spreadzenox.github.io/HealthTrack/p28/**, envoyez ; ③ écrivez « P28 faite ». Le 27/10 vers 16:10, la
-   version **100522 (affichée 522), avec la lecture au déverrouillage**, a été acceptée par Google et déployée en
-   test interne : **à tester** sur votre téléphone (mise à jour depuis le Play Store, activer la lecture au
-   déverrouillage dans la carte bien-être, vérifier la notification permanente et son bouton « Arrêter »).
+1. **P28 faite (merci)** : déclaration envoyée vers 15:35 (Caméra, « Autre », vidéo), **en cours d'examen chez
+   Google**. Rien à faire d'ici là, sauf **tester la 100522** (affichée 522, test interne, vous seul) : mise à jour
+   depuis le Play Store, activer la lecture au déverrouillage dans la carte bien-être, vérifier la notification
+   permanente et son bouton « Arrêter ». Dites-nous quand la déclaration est acceptée : l'alpha recevra alors la
+   fonction.
 2. **Inviter les testeurs** : quand vous le déciderez (au plus tôt la semaine prochaine).
 3. **P32** (pas urgent, avant la production) : dans quels pays vendre (proposition ci-dessus ; répondez
    « d'accord » ou votre liste).
@@ -267,6 +267,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 16:33 — [Accueil vierge sans montre supposée ; FODMAP « premium »](runs/2026-10-27-1633-pol-play-2-3.md) | 🎨 | POL-PLAY-2 et 3 : la ligne de l'Accueil vierge ne suppose plus de montre (« Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur · Ajouter une source ») ; « Tester un groupe FODMAP » : chevron détaché à droite, étiquette « premium » sur Play hors lancement (comme le rapport PDF) |
 | 27/10 15:34 — [versionCode Play au-dessus de 100487](runs/2026-10-27-1534-versioncode-play.md) | 🏗️ | Votre brouillon P28 (100487) publié en test interne : « Play — AAB » envoie désormais 100000 + n (versionName et numéro affiché = n) ; brouillon P28 à 50000 + n (plus petit, ne bloque rien) ; interrupteur rallumé pour le test interne : **100522 accepté par Google et déployé avec la lecture au déverrouillage** (vous seul) ; v318 |
 | 27/10 14:42 — [Pas de rapport PDF vide dans Analyses](runs/2026-10-27-1442-rapport-pdf-vide.md) | 🎨 | Audit play vierge (15 pages) ; Analyses (« Mon ventre ») ne pousse plus « Débloquer » pour un rapport PDF sans aucune note du ventre : ligne « Bientôt » à la place ; Données inchangé |
 | 27/10 13:33 — [P28 : test interne avec la lecture au déverrouillage](runs/2026-10-27-1333-p28-test-interne.md) | 🏗️ | « Play — AAB » : interrupteur `FACE_UNLOCK_INTERNAL` (test interne seul propriétaire vérifié, versionCode normal, alpha jamais allumée) ; résumé « testeurs » retiré (décision du 27/10 13:00) ; v315 ; **Google refuse la 518 : « You must let us know whether your app uses any Foreground Service permissions. »** → interrupteur recoupé, ce 403 n'est plus pris pour un accès refusé ; P28 au propriétaire (chemin par le brouillon) ; v316 et 519 en test interne normalement |

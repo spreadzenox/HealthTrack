@@ -295,13 +295,34 @@ button.fodmap-group:focus-visible,
 }
 
 .fodmap-entry {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   text-decoration: none;
+}
+
+.fodmap-entry-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .fodmap-entry-line {
   margin: 4px 0 0;
   font-size: 0.92rem;
+}
+
+.fodmap-entry-premium {
+  margin-top: 8px;
+}
+
+.fodmap-entry-chevron {
+  flex: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  opacity: 0.7;
 }
 
 .fodmap-reminder {
