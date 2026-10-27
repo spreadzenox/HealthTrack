@@ -116,7 +116,8 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   indépendant du temps (faux minuteurs ou attente explicite).
   [x] **P28-INTERNE (27/10 13:30 : le brouillon ne suffit pas)** — 27/10 13:33 : « Play — AAB » allume l'interrupteur
   pour le test interne (`FACE_UNLOCK_INTERNAL`, versionCode normal, seul le propriétaire vérifié, alpha jamais
-  allumée) ; à couper si Google refuse (erreur exacte dans le compte rendu du run).
+  allumée) → **refusé** (403 « You must let us know whether your app uses any Foreground Service permissions. »),
+  interrupteur recoupé ; [ ] rallumer (`FACE_UNLOCK_INTERNAL: "true"`) dès que le propriétaire a envoyé la déclaration.
   [x] **P28-BROUILLON (demande du 26/10 20:40 : la ligne « Autorisations des services de premier plan » n'apparaît
   pas dans Contenu de l'app)** — 26/10 21:33 : workflow « Play — brouillon P28 » (`play-p28-draft.yml`, workflow_dispatch
   sur main) : AAB play signé avec `-PfaceUnlockPlay=true`, versionCode 100000 + n, brouillon `p28-<n>` sur la piste

@@ -43,7 +43,7 @@ concurrency:
 
 env:
   GCP_PROJECT: healthtrack-824b26
-  FACE_UNLOCK_INTERNAL: "true"
+  FACE_UNLOCK_INTERNAL: "false"  # coupé le 27/10 vers 14:30 : Google exige d’abord la déclaration P28 (journal)
 
 jobs:
   bundle:

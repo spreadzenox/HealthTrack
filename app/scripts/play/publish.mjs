@@ -34,7 +34,13 @@ export class PlayApiError extends Error {
 
 /** Accès refusé (compte de service pas encore invité ou invitation pas encore propagée côté API). */
 export function isAccessDenied(err) {
-  return err instanceof PlayApiError && (err.status === 401 || err.status === 403)
+  return err instanceof PlayApiError && (err.status === 401 || err.status === 403) && !isMissingDeclaration(err)
+}
+
+/** 403 « You must let us know whether your app uses any Foreground Service permissions » (27/10) : une déclaration
+ * de la Play Console manque ; ce n'est pas un problème d'accès, l'envoi doit échouer franchement. */
+export function isMissingDeclaration(err) {
+  return err instanceof PlayApiError && /must let us know/i.test(err.apiMessage ?? err.message)
 }
 
 /**

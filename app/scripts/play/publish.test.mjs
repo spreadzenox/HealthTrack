@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { publishBundle, buildReleaseNotes, isAccessDenied, withRetry, PlayApiError, API, UPLOAD_API } from './publish.mjs'
+import { publishBundle, buildReleaseNotes, isAccessDenied, isMissingDeclaration, withRetry, PlayApiError, API, UPLOAD_API } from './publish.mjs'
 
 const PKG = 'fr.jpesquet.sante'
 const EDITS = `${API}/${PKG}/edits`
@@ -275,5 +275,14 @@ describe('lecture au déverrouillage en test interne (P28, 27/10)', () => {
     const { fetchImpl, calls } = fakePlay(routes)
     await expect(publishBundle(args(fetchImpl, { track: 'alpha', noReuse: true }))).rejects.toThrow(/journal/)
     expect(calls.some((c) => c.key.startsWith('PUT'))).toBe(false)
+  })
+})
+
+describe('déclaration manquante (P28, 27/10)', () => {
+  it('le 403 « You must let us know … Foreground Service » n’est pas un accès refusé', () => {
+    const err = new PlayApiError('Validation de l’edit', 403, 'You must let us know whether your app uses any Foreground Service permissions.')
+    expect(isMissingDeclaration(err)).toBe(true)
+    expect(isAccessDenied(err)).toBe(false)
+    expect(isAccessDenied(new PlayApiError('Ouverture de l’edit', 403, 'The caller does not have permission'))).toBe(true)
   })
 })
