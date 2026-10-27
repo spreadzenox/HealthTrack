@@ -106,6 +106,10 @@
   comparez les pas et les kcal du jour sur la montre (écran Activité) et dans Halcya (Journal, aujourd'hui) ;
   ② dites-nous si une séance (Journal → séance) affiche des calories absurdes (leur unité n'est pas encore confirmée).
 
+- **Analyses : plus de rapport PDF vide** (27/10 14:42) — tant qu'aucun ventre n'est noté, la carte « Rapport PDF pour
+  mon médecin » (et son « Débloquer ») disparaît d'Analyses ; une ligne « Bientôt » l'annonce dès que vous avez commencé
+  à noter. Toujours dans Données. **À tester** : rien, sauf sur une installation neuve.
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -266,6 +270,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 14:42 — [Pas de rapport PDF vide dans Analyses](runs/2026-10-27-1442-rapport-pdf-vide.md) | 🎨 | Audit play vierge (15 pages) ; Analyses (« Mon ventre ») ne pousse plus « Débloquer » pour un rapport PDF sans aucune note du ventre : ligne « Bientôt » à la place ; Données inchangé |
 | 27/10 13:33 — [P28 : test interne avec la lecture au déverrouillage](runs/2026-10-27-1333-p28-test-interne.md) | 🏗️ | « Play — AAB » : interrupteur `FACE_UNLOCK_INTERNAL` (test interne seul propriétaire vérifié, versionCode normal, alpha jamais allumée) ; résumé « testeurs » retiré (décision du 27/10 13:00) ; v315 ; **Google refuse la 518 : « You must let us know whether your app uses any Foreground Service permissions. »** → interrupteur recoupé, ce 403 n'est plus pris pour un accès refusé ; P28 au propriétaire (chemin par le brouillon) |
 | 27/10 12:33 — [🚑 Pas et kcal du jour](runs/2026-10-27-1233-pas-kcal-montre.md) | 🐛 | **v314** · signalement du 27/10 11:56 : kcal minute de la montre en cal (÷1000 à la synchro, migration `watchKcalFix.js`, correction à la lecture) ; pas : une source par heure (`activityTotals.js`, Journal, analyses, agrégats v2, écran Montre, premier import) ; garde-fou de plausibilité |
 | 27/10 11:33 — [9a : socle i18n](runs/2026-10-27-1133-i18n-socle.md) | 🏗️ | `src/i18n/` (`t()`, pluriels, `appLocale()` dans 39 fichiers, `decimalMark()`), test de catalogue, réglage « Langue » caché (`VITE_I18N_EN`), `visual --lang=en` ; rien de visible ; 2 547 Vitest ; v313 |
