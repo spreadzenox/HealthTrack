@@ -1195,7 +1195,11 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   Ciqual : poire, pêche, pruneau → sorbitol ; champignon, céleri → mannitol ; abricot 0,3 précise « < 0,5 »). Tests :
   intégrité (nom Ciqual non alias, source, confiance, part seulement si Ciqual mesure des polyols > 0, valeur ≤ glucides,
   chaque valeur réellement utilisée) + exemples (oignon 70 g, ail 3 g, pomme, poire, tofu, pâtes).
-- [ ] **N3b-2** GOS des légumineuses cuites (lentilles, pois chiches, haricots ; S3 Siva 2019 × règle 3 d'`IDEES.md` I178,
+- [x] **N3b-2** — **FAIT le 27/10 01:33** (GOS) : `scripts/nutrition/legumeGos.mjs` relit l'eau Ciqual 2025 et calcule les
+  GOS de 13 légumineuses cuites / en conserve depuis Siva 2019 tableau 5 (base 10 % d'humidité) × pertes Njoumi 2019,
+  `analogie` avec `derivation` recalculable ; sources citées dans le chevron de la carte d'un repas (`cite`).
+  **Reste** (non bloquant) : sorbitol des lentilles / pois chiches (pertes à la cuisson inconnues), cerise et autres
+  aliments MEXT, `fodmap_score` des nouveaux repas. Note d'origine : GOS des légumineuses cuites (lentilles, pois chiches, haricots ; S3 Siva 2019 × règle 3 d'`IDEES.md` I178,
   `analogie`) : garder l'eau Ciqual (`water_g`) dans l'importeur ou la relire du fichier Ciqual ; nectarine (MEXT 0,6 >
   Ciqual « < 0,5 » : contradiction, laissée inconnue), cerise, autres aliments MEXT ; brancher `fodmap_score` des nouveaux
   repas sur les sous-groupes (anciens exports lisibles). Ancienne note N3b :

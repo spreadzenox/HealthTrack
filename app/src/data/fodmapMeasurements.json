@@ -4,27 +4,45 @@
   "sources": {
     "ferjancic2024": {
       "title": "Ferjančič B. et al., Fructan content in most commonly consumed Slovenian foods, Front. Nutr. 2024;11:1446771",
+      "cite": "Ferjančič 2024",
       "doi": "10.3389/fnut.2024.1446771",
       "license": "CC BY 4.0",
       "method": "AOAC 999.03 (fructanes totaux), % de matière fraîche"
     },
     "natale2025": {
       "title": "Natale A. et al., Quantification of naturally occurring prebiotics in selected foods, Nutrients 2025;17(4):683",
+      "cite": "Natale 2025",
       "doi": "10.3390/nu17040683",
       "license": "CC BY 4.0",
       "method": "HPAEC-PAD ; GOS = raffinose + stachyose, g/100 g"
     },
     "mext2020": {
       "title": "MEXT, Standard Tables of Food Composition in Japan 2020 (8e éd.), volume « glucides disponibles », tableau principal (colonnes SORTL, MANTL)",
+      "cite": "MEXT 2020",
       "url": "https://www.mext.go.jp/a_menu/syokuhinseibun/mext_01110.html",
       "license": "Conditions du site MEXT : réutilisation commerciale permise, compatible CC BY 4.0",
       "method": "g/100 g ; « (x) » = valeur estimée par MEXT"
     },
     "wangcheong2023": {
       "title": "Wang X., Cheong K.-L., Recent advances in fructans… (revue), Molecules 2023;28:1613, citant Muir J.G. et al. 2007",
+      "cite": "Wang & Cheong 2023",
       "doi": "10.3390/molecules28041613",
       "license": "CC BY 4.0",
       "method": "valeurs citées par une revue (article primaire non lu) : confiance basse"
+    },
+    "siva2019": {
+      "title": "Siva N. et al., Variability in prebiotic carbohydrates in different market classes of chickpea, common bean, and lentil collected from the American local market, Front. Nutr. 2019;6:38",
+      "cite": "Siva 2019 (pertes : Njoumi 2019)",
+      "doi": "10.3389/fnut.2019.00038",
+      "license": "CC BY 4.0",
+      "method": "HPAE-PAD ; mg/100 g de légumineuse sèche à 10 % d’humidité ; GOS = raffinose + stachyose"
+    },
+    "njoumi2019": {
+      "title": "Njoumi S. et al., Soaking and cooking modify the alpha-galacto-oligosaccharide and dietary fibre content in five Mediterranean legumes, Int J Food Sci Nutr 2019;70(5):551–561",
+      "cite": "Njoumi 2019",
+      "doi": "10.1080/09637486.2018.1544229",
+      "license": "CC BY-NC-ND 4.0 : seuls des facteurs chiffrés (non protégés) sont repris, cités",
+      "method": "pertes au trempage et à la cuisson"
     }
   },
   "foods": {
@@ -126,6 +144,45 @@
     },
     "Soja, graine entière": {
       "gos": { "g": 3.323, "source": "natale2025", "ref": "tableau 1, soja sec (raffinose 0,513 + stachyose 2,810)", "confidence": "mesure" }
+    },
+    "Lentille, bouillie/cuite à l'eau (aliment moyen)": {
+      "gos": { "g": 0.724, "source": "siva2019", "ref": "tableau 5, lentilles (moyenne des classes), raffinose 496 + stachyose 2292 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 64,8 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (1354 mg/100 g à sec) non comptée.", "derivation": {"dry": {"raffinose_mg": 496, "stachyose_mg": 2292}, "water_g": 64.8, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20360", "losses": "njoumi2019"} }
+    },
+    "Lentille verte, bouillie/cuite à l'eau": {
+      "gos": { "g": 0.724, "source": "siva2019", "ref": "tableau 5, lentilles (moyenne des classes), raffinose 496 + stachyose 2292 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 64,8 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (1354 mg/100 g à sec) non comptée.", "derivation": {"dry": {"raffinose_mg": 496, "stachyose_mg": 2292}, "water_g": 64.8, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20587", "losses": "njoumi2019"} }
+    },
+    "Lentille blonde, bouillie/cuite à l'eau": {
+      "gos": { "g": 0.691, "source": "siva2019", "ref": "tableau 5, lentilles (moyenne des classes), raffinose 496 + stachyose 2292 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 66,4 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (1354 mg/100 g à sec) non comptée.", "derivation": {"dry": {"raffinose_mg": 496, "stachyose_mg": 2292}, "water_g": 66.4, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20588", "losses": "njoumi2019"} }
+    },
+    "Lentille corail, bouillie/cuite à l'eau": {
+      "gos": { "g": 0.718, "source": "siva2019", "ref": "tableau 5, lentilles (moyenne des classes), raffinose 496 + stachyose 2292 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 65,1 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (1354 mg/100 g à sec) non comptée.", "derivation": {"dry": {"raffinose_mg": 496, "stachyose_mg": 2292}, "water_g": 65.1, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20589", "losses": "njoumi2019"} }
+    },
+    "Pois chiche, bouilli/cuit à l'eau": {
+      "gos": { "g": 0.367, "source": "siva2019", "ref": "tableau 5, pois chiches (moyenne des classes), raffinose 441 + stachyose 1533 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 62 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (120 mg/100 g à sec) non comptée.", "derivation": {"dry": {"raffinose_mg": 441, "stachyose_mg": 1533}, "water_g": 62, "soak_loss": 0.4, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20507", "losses": "njoumi2019"} }
+    },
+    "Pois chiche, appertisé, égoutté": {
+      "gos": { "g": 0.27, "source": "siva2019", "ref": "tableau 5, pois chiches (moyenne des classes), raffinose 441 + stachyose 1533 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 72,1 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (120 mg/100 g à sec) non comptée. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 441, "stachyose_mg": 1533}, "water_g": 72.1, "soak_loss": 0.4, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20532", "losses": "njoumi2019"} }
+    },
+    "Haricot blanc, bouilli/cuit à l'eau": {
+      "gos": { "g": 0.7, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 66,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 66.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20502", "losses": "njoumi2019"} }
+    },
+    "Haricot blanc, appertisé, égoutté": {
+      "gos": { "g": 0.573, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 72,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 72.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20511", "losses": "njoumi2019"} }
+    },
+    "Haricot rouge, bouilli/cuit à l'eau": {
+      "gos": { "g": 0.74, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 65 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 65, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20503", "losses": "njoumi2019"} }
+    },
+    "Haricot rouge, appertisé, égoutté": {
+      "gos": { "g": 0.657, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 68,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 68.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20524", "losses": "njoumi2019"} }
+    },
+    "Haricot flageolet, bouilli/cuit à l'eau": {
+      "gos": { "g": 0.7, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 66,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Flageolet : même espèce que les haricots mesurés (Phaseolus vulgaris). Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 66.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20513", "losses": "njoumi2019"} }
+    },
+    "Haricot flageolet, vert, bouilli/cuit à l'eau": {
+      "gos": { "g": 0.719, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 66 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Flageolet : même espèce que les haricots mesurés (Phaseolus vulgaris). Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 66, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20540", "losses": "njoumi2019"} }
+    },
+    "Haricot flageolet, appertisé, égoutté": {
+      "gos": { "g": 0.592, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 72 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Flageolet : même espèce que les haricots mesurés (Phaseolus vulgaris). Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 72, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20508", "losses": "njoumi2019"} }
     }
   }
 }
