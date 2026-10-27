@@ -1209,6 +1209,19 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   tuiles « VFC nuit » et « Pas » à « — » en fin de journée alors que la veille est connue (vérifier si les données de
   démo n'ont simplement pas le jour même, sinon afficher la veille avec « hier »).
 
+**Ajouté le 27/10 20:33 (run « idées », spécification dans `IDEES.md` I184–I185)** — remarques de la Play Console
+« Pour votre prochaine version » du 27/10, rangées dans le polissage :
+- [ ] **POL-PLAY-9** Bord à bord pour tous : `EdgeToEdge.enable(this)` avant `super.onCreate` dans `MainActivity`,
+  dépendance `androidx.activity` explicite ; job émulateur **API 30 ou 34** en plus (Accueil, une modale, clavier
+  ouvert) ; captures API 35/36 inchangées. Petit, sans risque pour les données.
+- [ ] **POL-PLAY-10 (R8a)** R8 sur la variante play (`release` = play seulement) : `minifyEnabled true`,
+  `proguard-android-optimize.txt`, `-keepattributes SourceFile,LineNumberTable` ; `mapping.txt` envoyé par
+  `publish.mjs` (deobfuscationFiles, testé) ; job émulateur sur un APK **play release** (visage ONNX/LiteRT, Health
+  Connect, Premium, PDF, notification, logcat sans `ClassNotFoundException`). Test interne seulement ; avant février 2027.
+- [ ] **POL-PLAY-11 (R8b/c)** Alpha après une journée sans plantage dans Android vitals ; `shrinkResources` à part.
+- [ ] **POL-PLAY-12** Nouvel audit `--play --empty` puis démo, écran par écran (Onboarding, Accueil, Journal, Analyses,
+  Sources, Paramètres) — prévu par le run de 19:33 ; « Marcher davantage » / « Bouger davantage » (même famille ?).
+
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 
 **Mise à jour du 27/10 (11:33 Paris)** : ✅ **9a** socle i18n (`src/i18n/` : `t()`, `t.plural`, `appLocale()`, `decimalMark()`, test de catalogue sur `converted.js` ; réglage « Langue » caché derrière `VITE_I18N_EN` ; `visual --lang=en` qui compte les mots français restants ; rien de visible). Suite : **9b** (Layout, navigation, Accueil, Paramètres : ajouter chaque fichier converti à `i18n/converted.js`) ou 7d ; POL-1d dès P28.

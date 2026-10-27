@@ -259,6 +259,14 @@ désormais par un seul réglage de langue (« 3,4 » et « mar. 27 oct. » en fr
 anglais) ; les textes passeront par une petite fonction de traduction, écran par écran (prochaines étapes). Le
 réglage « Langue » existe mais reste caché tant que l'anglais n'est pas complet : vous ne verrez aucun changement.
 
+**Les deux remarques de la Play Console du 27/10 sont préparées (run « idées » de 20:33)** : ① « le bord à bord peut
+ne pas s'afficher pour tous » : sur Android 8 à 14, l'app s'affiche encore sous des barres opaques ; une ligne dans le
+code natif suffit (nos écrans gèrent déjà les bords), à vérifier sur un émulateur Android 11 ou 14 en plus ; ②
+l'obscurcissement à 4 % : l'outil d'Android qui optimise et réduit le code (R8) est coupé. Il ne sera allumé que sur la
+version Play (la version GitHub ne change pas) et ne passera en alpha qu'après une version de test interne sans
+plantage : c'est la modification la plus délicate du natif (une erreur n'apparaît qu'en version finale), d'où un essai
+complet sur émulateur (visage, Health Connect, Premium, PDF) avant tout merge. Échéance Google : février 2027.
+
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
 🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
@@ -281,6 +289,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
 | 27/10 19:33 — [Une seule piste « calories »](runs/2026-10-27-1933-pol-play-5.md) | 🎨 | POL-PLAY-5 : dépense de l'activité et dépense de la journée réunies en un seul facteur dans la liste des liens d'Analyses (le plus solide gardé, pas de « Se retrouve aussi » redondant) ; effets décalés rattachés aux mêmes alias. Liste POL-PLAY soldée ; suite : audit `--empty` écran par écran |
 | 27/10 18:33 — [Tuiles « hier », repas sur une ligne, doublons d'Analyses](runs/2026-10-27-1833-pol-play-6-8.md) | 🎨 | POL-PLAY-6, 7, 8 : tuiles de l'Accueil qui reprennent la veille (« hier ») au lieu de « — » ; tuile repas du Journal sur une ligne ; « Alcool » plus en double (piste et collecte) ; ligne « Autres mesures » en phrase. Reste POL-PLAY-5 |
 | 27/10 17:33 — [Audit démo clair/sombre : petits textes](runs/2026-10-27-1733-pol-play-4.md) | 🎨 | POL-PLAY-4 (1re partie) : Accueil, Journal, Analyses, Sources relus sur données de démo, clair et sombre ; « hier à 10:19 » sur la carte ventre ; plus de « (Health Connect) » dans un titre d'Analyses (test sur tous les libellés) ; ligne « visage » simplifiée ; défauts restants rangés en POL-PLAY-5 à 8 |
