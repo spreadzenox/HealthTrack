@@ -309,13 +309,12 @@ export const VARIABLE_META = {
     group: 'lifestyle',
   },
   // ── FODMAPs ────────────────────────────────────────────────────────────────
+  // Nombre de sous-groupes FODMAP (fructanes, GOS, fructose en excès, lactose, sorbitol, mannitol) au-dessus de leur
+  // repère de départ dans le repas le plus chargé du jour (fodmapGroups.js) ; la clé garde son ancien nom.
   fodmap_score: {
-    label: 'Score FODMAP (repas le plus élevé)',
+    label: 'Groupes FODMAP au-dessus du repère (repas le plus chargé)',
     unit: '',
-    format: (v) => {
-      const labels = ['Aucun', 'Faible', 'Modéré', 'Élevé']
-      return labels[Math.round(v)] ?? `${frDecimal(v, 1)}`
-    },
+    format: (v) => (Number.isInteger(v) ? (v === 0 ? 'Aucun' : `${v} groupe${v > 1 ? 's' : ''}`) : `${frDecimal(v, 1)} groupes`),
     direction: 'lower_better',
     group: 'fodmap',
   },
@@ -1064,8 +1063,9 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
  * Lifestyle metrics (sleep, steps, etc.) are not lagged because they reflect
  * the state of the *current* day, not accumulated nutritional status.
  *
- * FODMAP score uses a special max-based approach rather than weighted sum,
- * so it is excluded from the linear-decay list and handled separately.
+ * The FODMAP count (groups above their cutoff in the day's most loaded meal)
+ * uses a max-based approach rather than a weighted sum, so it is excluded from
+ * the linear-decay list and handled separately.
  */
 const LAGGED_NUTRITION_KEYS = NUTRITION_FIELDS.filter((f) => f !== 'energy_kcal')
   .concat(['kcal'])
@@ -1375,7 +1375,7 @@ export const LEVER_ACTIONS = {
   screen_minutes: 'Passer moins de temps sur le téléphone',
   screen_late_minutes: 'Lâcher le téléphone plus tôt le soir',
   phone_unlocks: 'Prendre moins souvent son téléphone',
-  fodmap_score: 'Alléger les repas riches en FODMAP',
+  fodmap_score: 'Manger des repas qui cumulent moins de groupes FODMAP',
   vitamin_c_mg: 'Manger plus de fruits et légumes riches en vitamine C',
   vitamin_d_ug: 'Manger plus de vitamine D (poissons gras, œufs)',
   vitamin_b12_ug: 'Manger plus de vitamine B12 (produits animaux, aliments enrichis)',

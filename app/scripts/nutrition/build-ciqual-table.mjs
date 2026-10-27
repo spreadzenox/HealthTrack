@@ -45,7 +45,8 @@ const { table, meta } = buildTable(raw, {
   license: arg('--license') || undefined,
   source: arg('--source'),
   keep: previous,
-  keepFields: ['fodmap_score'],
+  // L'ancien fodmap_score (0–3, inventé en avril 2026) n'est plus recopié : les FODMAP viennent de fodmapGroups.js.
+  keepFields: [],
   aliases: ALIASES,
 })
 

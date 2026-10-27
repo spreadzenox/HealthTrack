@@ -5,10 +5,12 @@
  */
 
 import { getNutritionTable } from '../data/nutritionTable'
+import measurements from '../data/fodmapMeasurements.json'
+import { estimateMealFodmap, highFodmapGroups } from './fodmapGroups'
 
 /**
  * All numeric fields that can be summed from ingredientsNutrition.json
- * (excluding fodmap_score which is a categorical max, not a sum)
+ * (fodmap_score, lui, se calcule à part : voir computeTotalsFromItems)
  */
 export const NUTRITION_FIELDS = [
   'energy_kcal',
@@ -36,7 +38,9 @@ export const NUTRITION_FIELDS = [
 
 /**
  * @param {{ ingredient: string, quantity_g?: number }[]} items
- * @returns {object} totals for all NUTRITION_FIELDS plus fodmap_score (max of items) and unknown_share :
+ * @returns {object} totals for all NUTRITION_FIELDS, plus fodmap_groups (sous-groupes FODMAP au-dessus du repère de
+ *   départ, voir fodmapGroups.js), fodmap_score (leur nombre, 0–6 ; il remplace l'ancien score 0–3 de la table,
+ *   inventé, qui n'est plus lu) and unknown_share :
  *   pour chaque champ dont Ciqual n'a pas mesuré la teneur d'au moins un aliment, la part (0–1) du poids
  *   mangé concernée. Le total ne compte que les teneurs mesurées : il est alors un minimum, pas un zéro caché.
  */
@@ -47,9 +51,8 @@ export function computeTotalsFromItems(items) {
   const totals = Object.fromEntries(NUTRITION_FIELDS.map((f) => [f, 0]))
   const unknownG = Object.fromEntries(NUTRITION_FIELDS.map((f) => [f, 0]))
   let weightG = 0
-  let maxFodmap = 0
 
-  if (!Array.isArray(items)) return { ...totals, fodmap_score: maxFodmap, unknown_share: {} }
+  if (!Array.isArray(items)) return { ...totals, fodmap_score: 0, fodmap_groups: [], unknown_share: {} }
 
   for (const it of items) {
     const name = (it.ingredient || '').trim()
@@ -64,10 +67,6 @@ export function computeTotalsFromItems(items) {
       if (p100[field] == null) unknownG[field] += qtyG
       else totals[field] += p100[field] * factor
     }
-    // FODMAP: take the maximum score among all items in the meal
-    if (typeof p100.fodmap_score === 'number' && p100.fodmap_score > maxFodmap) {
-      maxFodmap = p100.fodmap_score
-    }
   }
 
   // Round summable fields to 1 decimal
@@ -75,7 +74,8 @@ export function computeTotalsFromItems(items) {
   for (const field of NUTRITION_FIELDS) {
     rounded[field] = Math.round(totals[field] * 10) / 10
   }
-  rounded.fodmap_score = maxFodmap
+  rounded.fodmap_groups = highFodmapGroups(estimateMealFodmap(items, nutritionMap, measurements))
+  rounded.fodmap_score = rounded.fodmap_groups.length
   rounded.unknown_share = {}
   for (const field of NUTRITION_FIELDS) {
     if (unknownG[field] > 0) rounded.unknown_share[field] = Math.round((unknownG[field] / weightG) * 100) / 100
