@@ -44,7 +44,6 @@ concurrency:
 env:
   GCP_PROJECT: healthtrack-824b26
   FACE_UNLOCK_INTERNAL: "true"
-  FACE_UNLOCK: ${{ (inputs.track || 'internal') == 'internal' && 'true' || 'false' }}
 
 jobs:
   bundle:
@@ -104,9 +103,15 @@ jobs:
           cache-dependency-path: app/package-lock.json
 
       - name: Numéro de version et interrupteur
+        env:
+          TRACK: ${{ inputs.track || 'internal' }}
         run: |
           echo "VERSION_CODE=$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
-          [ "$FACE_UNLOCK_INTERNAL" = "true" ] || echo "FACE_UNLOCK=false" >> "$GITHUB_ENV"
+          if [ "$FACE_UNLOCK_INTERNAL" = "true" ] && [ "$TRACK" = "internal" ]; then
+            echo "FACE_UNLOCK=true" >> "$GITHUB_ENV"
+          else
+            echo "FACE_UNLOCK=false" >> "$GITHUB_ENV"
+          fi
 
       - name: Install app dependencies
         working-directory: app
