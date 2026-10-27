@@ -33,3 +33,9 @@
 ## Suite
 - N3b-2 (GOS des légumineuses cuites depuis le sec, `water_g`), N5 (pistes ventre par sous-groupe, banc des nulles et
   de puissance). Valeur Ciqual suspecte toujours notée : fer de l'oignon cru 0,00019 mg (publiée telle quelle).
+
+## Après le merge (PR #408 → `a4f703f`)
+- Checks de la PR tous verts (Vitest, Build APK, Publier l'APK, émulateur A56 API 35 et 36, relais, budget de
+  lectures, protocole montre) ; `npm run visual` complet : 15 pages « ok », 0 erreur JS.
+- Sur main : « Build & Release » vert, **v303**, APK sideload de 34 275 148 octets ; « Play — AAB », « Tests » et
+  émulateur A56 verts.

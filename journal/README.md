@@ -179,7 +179,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
-| 27/10 00:33 — [N2b : plus de faux zéro dans Nutrition](runs/2026-10-27-0033-n2b-nutrition-partiel.md) | 🏗️ | `unknown_share` au poids mangé dans `computeTotalsFromItems` ; « ≥ » + « partiel » dans Nutrition au-delà de 10 % ; 2 471 Vitest |
+| 27/10 00:33 — [N2b : plus de faux zéro dans Nutrition](runs/2026-10-27-0033-n2b-nutrition-partiel.md) | 🏗️ | `unknown_share` au poids mangé dans `computeTotalsFromItems` ; « ≥ » + « partiel » dans Nutrition au-delà de 10 % ; 2 471 Vitest ; v303 |
 | 26/10 22:33 — [N3a-bis + N3b : mesures FODMAP publiées](runs/2026-10-26-2233-n3b-mesures-fodmap.md) | 🏗️ | `fodmapMeasurements.json` v2 (une entrée par groupe, source, tableau, confiance) : 32 aliments, 4 sources (Ferjančič 2024, Natale 2025, MEXT 2020, revue Wang & Cheong 2023) ; polyols Ciqual répartis plutôt que remplacés ; « < x » : `bas` seulement si la portion reste sous le repère au plafond de la limite ; test `UpdateBanner` fiabilisé ; rien d'affiché ; 2 457 Vitest |
 | 26/10 23:33 — [N4 : FODMAP sur la carte d'un repas](runs/2026-10-26-2333-n4-carte-repas-fodmap.md) | 🏗️ | « Riche en fructanes : oignon » sous chaque repas (objectif ventre), « probablement » en confiance basse, grammes et repère au chevron ; `mealFodmapHighlights` ; 2 466 Vitest ; v302 |
 | 26/10 21:33 — [P28 : brouillon pour faire apparaître la déclaration](runs/2026-10-26-2133-p28-brouillon.md) | 🏗️ | Workflow « Play — brouillon P28 » : AAB play signé avec la lecture au déverrouillage, versionCode à part, envoyé en brouillon sur le test interne (jamais déployé ; **`p28-100487` accepté sans erreur**, v300) ; les envois normaux gardent ce brouillon ; tests de l'envoi Play (4 nouveaux) |
