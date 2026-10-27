@@ -100,8 +100,12 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
   const entries = useEntries(read)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const [momentOpen, setMomentOpen] = useState(false)
   const summary = gutSummary(entries || [])
   const evening = gutEveningCheck(entries || [], now || new Date())
+  // Le soir, une seule question à l'écran (POL-PLAY-12) : le bilan du jour ; la note d'un moment précis reste à un geste
+  const eveningFirst = Boolean(entries && evening.ask)
+  const showMoment = !eveningFirst || momentOpen
 
   async function note(level, scope = null) {
     setSaving(true)
@@ -124,45 +128,56 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
         <h3 id="gut-card-title" className="today-card-title">Votre ventre</h3>
         <DetailsToggle on={details} onToggle={onToggleDetails} />
       </div>
-      <div className="gut-choices" role="group" aria-label="Comment va votre ventre ?">
-        {GUT_LEVELS.map((l) => (
-          <button
-            key={l.id}
-            type="button"
-            className="gut-choice"
-            aria-pressed={current === l.id}
-            disabled={saving || entries === null}
-            onClick={() => note(l.id)}
-          >
-            <span className="gut-choice-radio" aria-hidden="true" />
-            {l.label}
-          </button>
-        ))}
-      </div>
-      {error && <p className="error-msg" role="alert">{error}</p>}
-      <p className="today-card-text">
-        {summary.last
-          ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${lastNoteWhen(summary.last.at)}.`
-          : 'Un geste suffit, l’heure est notée. Vous pouvez noter plusieurs fois par jour.'}
-      </p>
-      {entries && evening.ask && (
-        <div className="gut-evening" role="group" aria-labelledby="gut-evening-title">
+      {eveningFirst && (
+        <div className="gut-evening gut-evening-first" role="group" aria-labelledby="gut-evening-title">
           <p id="gut-evening-title" className="gut-evening-title">Et votre ventre aujourd’hui, dans l’ensemble ?</p>
-          <div className="gut-evening-choices">
+          <div className="gut-choices">
             {GUT_LEVELS.map((l) => (
               <button
                 key={l.id}
                 type="button"
-                className="gut-evening-choice"
+                className="gut-choice"
                 disabled={saving}
                 onClick={() => note(l.id, GUT_DAY_SCOPE)}
                 aria-label={`Journée : ${l.label}`}
               >
+                <span className="gut-choice-radio" aria-hidden="true" />
                 {l.label}
               </button>
             ))}
           </div>
+          {!momentOpen && (
+            <button type="button" className="gut-moment-link" onClick={() => setMomentOpen(true)}>
+              Noter un moment précis
+            </button>
+          )}
         </div>
+      )}
+      {error && <p className="error-msg" role="alert">{error}</p>}
+      {showMoment && (
+        <>
+          {eveningFirst && <p className="gut-moment-title">À l’instant</p>}
+          <div className="gut-choices" role="group" aria-label="Comment va votre ventre ?">
+            {GUT_LEVELS.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className="gut-choice"
+                aria-pressed={current === l.id}
+                disabled={saving || entries === null}
+                onClick={() => note(l.id)}
+              >
+                <span className="gut-choice-radio" aria-hidden="true" />
+                {l.label}
+              </button>
+            ))}
+          </div>
+          <p className="today-card-text">
+            {summary.last
+              ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${lastNoteWhen(summary.last.at)}.`
+              : 'Un geste suffit, l’heure est notée. Vous pouvez noter plusieurs fois par jour.'}
+          </p>
+        </>
       )}
       {entries && evening.done && (
         <p className="gut-evening-done">Bilan du jour : {gutLevelLabel(evening.done.payload.level)}. Merci !</p>
