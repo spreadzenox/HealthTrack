@@ -20,4 +20,19 @@
   l'accepte, sinon coupé et erreur notée ». Google a accepté le brouillon publié depuis la Console : on retente par l'API.
 
 ## Vérifications
-- Aucun code de l'app touché ; voir la suite ci-dessous pour les checks, le merge et l'envoi.
+- `npm run test` : 209 fichiers, 2 565 tests verts ; `npm run build` OK ; lint : 6 erreurs, comme avant ;
+  `npm run visual -- --play` : 15 pages, 0 erreur JS (Accueil relue, aucun écran touché).
+
+## Merge et envoi
+- PR #437 : tous les checks verts (Vitest, Build APK, relais, protocole montre, budget de lectures, brouillon P28,
+  émulateurs API 35 et 36) → mergée (squash) en `efcdb21`. « Build & Release » vert : **v318**, APK 34 897 573 octets.
+- **« Play — AAB » (run 40524635501) : versionCode 100522 importé (sha256 cd72797b…), manifeste vérifié avec la
+  lecture au déverrouillage allumée, et DÉPLOYÉ en test interne** (aucun groupe de testeurs : le propriétaire seul).
+  Google n'a plus renvoyé le 403 « Foreground Service permissions » : la publication du brouillon par le propriétaire
+  a débloqué la validation par l'API. Alpha (453) inchangée.
+
+## Suite
+- Propriétaire : vérifier la mise à jour 100522 sur son téléphone et la lecture au déverrouillage (notification
+  permanente avec « Arrêter ») ; regarder la déclaration dans Contenu de l'app ; « P28 faite ».
+- Interrupteur laissé allumé pour le test interne. Prochaine version alpha : toujours coupée, numérotée 100000 + n.
+- Puis polissage de la version play par impact (BACKLOG, POL-PLAY).
