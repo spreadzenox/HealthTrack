@@ -32,3 +32,9 @@
 
 ## Suite
 - 9a (socle i18n) ou I176 (forme des selles) ; POL-1d dès P28.
+
+## Merge
+- PR #425 : tous les checks verts (Vitest, Build APK, relais, protocole montre, budget de lectures, émulateurs API 35
+  et 36) → mergée (squash) en `d00ba7a`.
+- « Build & Release » vert : **v311** publiée, APK 34,9 Mo (34 893 117 octets) ; « Play — abonnements » vert (fiche de
+  l'abonnement avec les 4 avantages) ; « Play — AAB » et « Site — GitHub Pages » (conditions) verts.
