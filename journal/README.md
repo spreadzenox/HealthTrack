@@ -126,6 +126,9 @@
   « Autres mesures : le jour même (visage) piste solide » devient « Se retrouve aussi avec votre bien-être estimé
   (le jour même). ». **À tester** : le matin avant la synchro de la montre, la tuile « VFC nuit » doit montrer la
   valeur d'hier marquée « hier ».
+- **Analyses : une seule piste « calories »** (27/10 19:33) — « Calories brûlées (activité) » et « Dépense totale de
+  la journée » disaient la même chose et apparaissaient comme deux liens : ils ne forment plus qu'un facteur, et
+  seul le lien le plus solide est montré. **À tester** : rien de particulier.
 
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
@@ -278,6 +281,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 19:33 — [Une seule piste « calories »](runs/2026-10-27-1933-pol-play-5.md) | 🎨 | POL-PLAY-5 : dépense de l'activité et dépense de la journée réunies en un seul facteur dans la liste des liens d'Analyses (le plus solide gardé, pas de « Se retrouve aussi » redondant) ; effets décalés rattachés aux mêmes alias. Liste POL-PLAY soldée ; suite : audit `--empty` écran par écran |
 | 27/10 18:33 — [Tuiles « hier », repas sur une ligne, doublons d'Analyses](runs/2026-10-27-1833-pol-play-6-8.md) | 🎨 | POL-PLAY-6, 7, 8 : tuiles de l'Accueil qui reprennent la veille (« hier ») au lieu de « — » ; tuile repas du Journal sur une ligne ; « Alcool » plus en double (piste et collecte) ; ligne « Autres mesures » en phrase. Reste POL-PLAY-5 |
 | 27/10 17:33 — [Audit démo clair/sombre : petits textes](runs/2026-10-27-1733-pol-play-4.md) | 🎨 | POL-PLAY-4 (1re partie) : Accueil, Journal, Analyses, Sources relus sur données de démo, clair et sombre ; « hier à 10:19 » sur la carte ventre ; plus de « (Health Connect) » dans un titre d'Analyses (test sur tous les libellés) ; ligne « visage » simplifiée ; défauts restants rangés en POL-PLAY-5 à 8 |
 | 27/10 16:33 — [Accueil vierge sans montre supposée ; FODMAP « premium »](runs/2026-10-27-1633-pol-play-2-3.md) | 🎨 | POL-PLAY-2 et 3 : la ligne de l'Accueil vierge ne suppose plus de montre (« Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur · Ajouter une source ») ; « Tester un groupe FODMAP » : chevron détaché à droite, étiquette « premium » sur Play hors lancement (comme le rapport PDF) |

@@ -294,8 +294,16 @@ function WeekendNote({ control }) {
  */
 const CHART_HIDDEN_VARIABLES = new Set(['screen_late_minutes'])
 
-/** Un même facteur sous deux noms (variable continue et tag) : un seul verdict (POL-7c). */
-const FACTOR_ALIAS = { alcohol_g: 'alcohol', screen_late_minutes: 'late_screen' }
+/**
+ * Un même facteur sous deux noms (variable continue et tag) : un seul verdict (POL-7c). La dépense de l'activité et
+ * celle de la journée entière disent la même chose (POL-PLAY-5) : un seul lien, le plus solide.
+ */
+const FACTOR_ALIAS = {
+  alcohol_g: 'alcohol',
+  screen_late_minutes: 'late_screen',
+  activityCalories: 'energy_out',
+  dailyCaloriesHC: 'energy_out',
+}
 
 const EVIDENCE_RANK = { solide: 0, 'à confirmer': 1, incertain: 2 }
 
@@ -318,11 +326,11 @@ function mergeLinks({ correlations: basic, tagEffects, laggedEffects, faceMood }
   const lags = (l) => (l?.status === 'ok' ? l.effects : [])
   add('notes', okCorr(basic?.status === 'ok' ? basic.correlations : []), 'corr', corrKey)
   add('notes', tags(tagEffects), 'tag', (e) => e.tagId)
-  add('notes', lags(laggedEffects), 'lag', (e) => e.variable)
+  add('notes', lags(laggedEffects), 'lag', corrKey)
   if (faceMood?.status === 'ok') {
     add('visage', okCorr(faceMood.correlations), 'corr', corrKey)
     add('visage', tags(faceMood.tagEffects), 'tag', (e) => e.tagId)
-    add('visage', lags(faceMood.laggedEffects), 'lag', (e) => e.variable)
+    add('visage', lags(faceMood.laggedEffects), 'lag', corrKey)
   }
   const leverKeys = new Set([...leverVariables].map((v) => FACTOR_ALIAS[v] ?? v))
   const rank = (a) => [EVIDENCE_RANK[a.item.evidence] ?? 2, a.item.q ?? 1, a.source === 'notes' ? 0 : 1]
@@ -350,8 +358,9 @@ function mergeLinks({ correlations: basic, tagEffects, laggedEffects, faceMood }
 const KIND_LABEL = { corr: 'le jour même', tag: 'jours avec / sans', lag: 'avec délai' }
 
 /** Les autres mesures nettes d'un même facteur, en une ligne sous son verdict (les incertaines n'apprennent rien). */
-function AlsoLine({ others }) {
-  const clear = others.filter((o) => o.item.evidence !== 'incertain')
+function AlsoLine({ best, others }) {
+  // Même source et même mesure qu'au-dessus (dépense de l'activité / de la journée) : rien de neuf à rappeler.
+  const clear = others.filter((o) => o.item.evidence !== 'incertain' && (o.source !== best.source || o.kind !== best.kind))
   if (!clear.length) return null
   // En phrase (POL-PLAY-7) : « Se retrouve aussi avec votre bien-être estimé (le jour même). »
   const parts = [...new Set(clear.map((o) => `${ALSO_SOURCE[o.source]} (${KIND_LABEL[o.kind]})`))]
@@ -370,7 +379,7 @@ function LinkItem({ link }) {
   const extra = (
     <>
       <SourceChip source={source} />
-      <AlsoLine others={others} />
+      <AlsoLine best={link} others={others} />
     </>
   )
   if (kind === 'tag') return <TagEffectCard effect={item} measure={face ? 'bien-être estimé' : 'bien-être'} extra={extra} />
