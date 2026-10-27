@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-27",
+  "kind": "amélioration",
+  "title": "FODMAP : des groupes mesurés plutôt qu’un score",
+  "items": [
+    "Dans les analyses du bien-être, l’ancien « score FODMAP » (0 à 3) est remplacé par le nombre de groupes FODMAP (fructanes, GOS, fructose, lactose, sorbitol, mannitol) au-dessus de leur repère dans votre repas le plus chargé du jour.",
+    "Ces groupes sont calculés depuis la table Ciqual de l’ANSES et des mesures publiées, aliment par aliment ; un groupe non mesuré n’est jamais compté comme présent."
+  ]
+}

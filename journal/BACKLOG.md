@@ -1213,6 +1213,10 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   57:554 HPLC ; Biesiekierski et al. 2011 J Hum Nutr Diet céréales ; Yao et al. 2014 J Hum Nutr Diet polyols ;
   Tuck / Ly et al. légumineuses) — vérifier chaque valeur dans l'article, citer page / tableau ; un run « idées » peut
   préparer la liste. Puis brancher `fodmap_score` des nouveaux repas sur le sous-groupe (anciens exports lisibles).
+- [x] **N3c** — **FAIT le 27/10 05:33** : `fodmap_score` des repas calculé depuis les sous-groupes (nombre de groupes au-dessus
+  du repère, 0–6 ; `fodmap_groups` à côté) dans `computeTotalsFromItems` ; libellé « Groupes FODMAP au-dessus du repère » dans
+  le moteur du bien-être ; champ inventé retiré de la table (et de `keepFields`). 1 104 → 600 aliments « chargés » à 100 g
+  (fructanes du blé des produits transformés non mesurés → inconnus).
 - [ ] **N3** (reste) FODMAP par sous-groupe (fructanes, GOS, lactose, fructose en excès du glucose, sorbitol, mannitol) par
   portion : lactose / fructose / glucose / polyols depuis Ciqual, fructanes / GOS / sorbitol / mannitol depuis des
   mesures publiées citées par aliment (jamais Monash ni FODMAP Friendly), sinon « inconnu » ou analogie à confiance

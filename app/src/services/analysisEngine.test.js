@@ -2238,3 +2238,29 @@ describe('selectLevers — pistes à deux étages (I108)', () => {
     expect(selectLevers([corr('steps', 0.5, 0.25), corr('restingHR', -0.6, 0.001)])).toEqual([])
   })
 })
+
+describe('fodmap_score : sous-groupes FODMAP au-dessus du repère (plus l\'ancien score inventé)', () => {
+  it('libellé et format en nombre de groupes', () => {
+    expect(VARIABLE_META.fodmap_score.label).toMatch(/Groupes FODMAP/)
+    expect(VARIABLE_META.fodmap_score.format(0)).toBe('Aucun')
+    expect(VARIABLE_META.fodmap_score.format(1)).toBe('1 groupe')
+    expect(VARIABLE_META.fodmap_score.format(2)).toBe('2 groupes')
+  })
+})
+
+describe('fodmap_score par jour', () => {
+  it('garde le repas le plus chargé du jour (lait + oignon = 2 groupes, lait seul = 1)', () => {
+    const ds = buildDailyDataset([
+      makeWellbeing('2026-01-01', 3),
+      makeWellbeing('2026-01-02', 3),
+      makeFood('2026-01-01', [{ ingredient: 'Lait demi-écrémé, UHT', quantity_g: 250 }]),
+      makeFood('2026-01-01', [
+        { ingredient: 'Oignon, cru', quantity_g: 70 },
+        { ingredient: 'Lait demi-écrémé, UHT', quantity_g: 250 },
+      ]),
+      makeFood('2026-01-02', [{ ingredient: 'Lait demi-écrémé, UHT', quantity_g: 250 }]),
+    ])
+    expect(ds.find((d) => d.dateKey === '2026-01-01').fodmap_score).toBe(2)
+    expect(ds.find((d) => d.dateKey === '2026-01-02').fodmap_score).toBe(1)
+  })
+})

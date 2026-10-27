@@ -71,6 +71,11 @@
   pendant le lancement). **À tester** : créer un rapport de 4 semaines, l'ouvrir depuis Fichiers › Documents, puis
   l'envoyer à vous-même par e-mail ; dites-nous ce qui manque pour votre gastro-entérologue ou diététicienne.
 
+- **FODMAP : plus aucun score inventé** (27/10 05:33) — dans les analyses du bien-être, l'ancien « score FODMAP »
+  0–3 (écrit par l'ancien modèle) est remplacé par le nombre de groupes au-dessus de leur repère dans le repas le plus
+  chargé du jour, calculé comme la carte d'un repas. Sur 3 553 aliments (100 g), 600 sont « chargés » au lieu de 1 104 :
+  les fructanes du blé des produits transformés ne sont pas mesurés et restent inconnus plutôt que devinés.
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -210,6 +215,7 @@ décompte, pas une analyse), fichier de 20 à 30 Ko ; le bouton « Rapport PDF p
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 05:33 — [N3c : score FODMAP depuis les sous-groupes](runs/2026-10-27-0533-n3c-fodmap-score-groupes.md) | 🏗️ | le moteur du bien-être compte les groupes FODMAP au-dessus du repère (repas le plus chargé) au lieu du score 0–3 inventé, retiré de la table ; 1 104 → 600 aliments « chargés » à 100 g ; 2 517 Vitest |
 | 27/10 04:33 — [N6b : bouton « Rapport PDF pour mon médecin »](runs/2026-10-27-0433-n6b-rapport-pdf.md) | 🏗️ | carte en bas d'Analyses (objectif ventre) et dans Données : 2 / 4 / 12 semaines, bien-être décoché par défaut, PDF dans Documents puis partage Android (`@capacitor/share` 8.0.3, MIT) ; premium sur play ; essai de bout en bout sur les données de démo ; 2 511 Vitest ; v307 |
 | 27/10 03:33 — [N6a : le rapport PDF se dessine](runs/2026-10-27-0333-n6a-rendu-pdf.md) | 🏗️ | `renderPdf.js` (pdf-lib + fontkit, MIT) : 2 pages A4, calendrier avec sous-groupes FODMAP abrégés, décompte par sous-groupe, polices TTF embarquées (conversion WOFF → TTF scriptée) ; 19–26 Ko ; rien d'affiché ; 2 507 Vitest ; v306 |
 | 27/10 02:33 — [N5 : pistes du ventre par sous-groupe FODMAP](runs/2026-10-27-0233-n5-pistes-fodmap.md) | 🏗️ | facteurs `fodmap:<groupe>` au lieu de `fodmap_eleve` ; banc 200 jeux : nulles ≤ 13/200 (inchangé), lactose 25 vs 13/200, oignon 64 vs 66 ; lien vers le test du même groupe ; calendrier du rapport par sous-groupe ; 2 496 Vitest ; v305 |
