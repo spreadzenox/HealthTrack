@@ -11,7 +11,8 @@
  *   confirmer », avec le nombre de comparaisons faites : l'analyse porte sur tout le journal, pas seulement la
  *   période, et on le dit ;
  * - le bien-être estimé par le visage est une donnée sensible et une estimation : absent sauf `includeWellbeing` ;
- * - aucune norme : on décrit, on ne juge pas (pas de « bon » ou « mauvais » sommeil).
+ * - aucune norme : on décrit, on ne juge pas (pas de « bon » ou « mauvais » sommeil) ;
+ * - forme des selles (I176) : répartition dures / normales / liquides seulement, aucun sous-type du SII déduit.
  */
 import { APP_NAME } from '../../config/brand'
 import { localDateKey } from '../analysisEngine'
@@ -22,6 +23,7 @@ import { fodmapGroupOf, mealFactors } from '../gutWindows'
 import { faceMoodDays } from '../mood/faceMoodDays'
 import { nightlySleep } from '../radar'
 import { computeSleepRegularity } from '../sleepRegularity'
+import { STOOL_TYPE, stoolCounts } from '../stool'
 import { GUT_LEVELS, GUT_TYPE, SOURCE_LABELS, entrySourceLabel } from '../today'
 
 export const REPORT_PERIODS = [2, 4, 12]
@@ -176,7 +178,7 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
     .slice(0, REPORT_TOP_FOODS)
 
   let wellbeing = null
-  const sourceTypes = new Set([GUT_TYPE, 'food', 'sleep', FODMAP_CHALLENGE_TYPE])
+  const sourceTypes = new Set([GUT_TYPE, STOOL_TYPE, 'food', 'sleep', FODMAP_CHALLENGE_TYPE])
   if (includeWellbeing) {
     const est = faceMoodDays(period).filter((d) => d.date >= from && d.date <= to)
     wellbeing = est.length ? {
@@ -199,6 +201,8 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
     period: { from, to, weeks: nWeeks, days: calendar.length },
     disclaimer: REPORT_DISCLAIMER,
     gut: { notedDays, ...counts, shares },
+    // Forme des selles (I176), facultative : `null` sans aucune note, répartition par forme, jamais de sous-type.
+    stool: stoolCounts(period),
     weekly,
     fodmapGroups,
     challenges,

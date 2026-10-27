@@ -155,3 +155,14 @@ describe('buildReport — bien-être et textes', () => {
     expect(reportFileName(NOW)).toBe('Halcya-rapport-2026-10-26.pdf')
   })
 })
+
+describe('buildReport — forme des selles (I176)', () => {
+  const stool = (d, payload) => ({ type: 'stool', source: 'app_stool', at: at(d, 9).toISOString(), payload })
+
+  it('null sans note ; sinon répartition de la période, saisie comptée comme « saisi à la main »', () => {
+    expect(buildReport([gut(0, 'calm')], { now: NOW }).stool).toBeNull()
+    const r = buildReport([stool(0, { form: 'normal' }), stool(-1, { form: 'hard', bristol: 1 }), stool(-1, { bristol: 7 }), stool(-40, { form: 'loose' })], { now: NOW })
+    expect(r.stool).toEqual({ total: 3, days: 2, hard: 1, normal: 1, loose: 1 })
+    expect(r.sources).toContain('Saisi à la main')
+  })
+})

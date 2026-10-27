@@ -321,6 +321,14 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
   if (!report.topFoods.length) para('Aucun repas noté sur la période.', { color: C.muted })
   else para(report.topFoods.map((f) => `${f.label} (${f.days} j)`).join(' · '), { size: 9.5 })
 
+  // Forme des selles (I176) : section absente sans aucune note (la saisie est facultative).
+  if (report.stool) {
+    const st = report.stool
+    heading('Forme des selles')
+    para(`${st.total} ${st.total > 1 ? 'notes' : 'note'} sur ${st.days} ${st.days > 1 ? 'jours' : 'jour'} : dures (Bristol 1–2) ${st.hard} · normales (3–5) ${st.normal} · liquides (6–7) ${st.loose}.`, { size: 9.5 })
+    para('Saisie facultative : un jour sans note ne veut pas dire sans selles.', { size: 8.5, color: C.muted })
+  }
+
   heading('Sources des données')
   para(report.sources.length ? report.sources.join(' · ') : 'Aucune donnée sur la période.', { size: 9.5, color: report.sources.length ? C.ink : C.muted })
   y -= 4

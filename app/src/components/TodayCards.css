@@ -327,6 +327,124 @@
   cursor: pointer;
 }
 
+/* Forme des selles (I176) : facultative, une ligne discrète qui s'ouvre sur trois formes, le détail sur demande. */
+.stool-line {
+  margin-top: 4px;
+}
+
+.stool-line-open {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(var(--ink-rgb), 0.12);
+}
+
+.stool-open,
+.stool-precise-toggle {
+  display: block;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--peach-label);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.stool-precise-toggle {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.stool-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stool-title {
+  margin: 0;
+  font-weight: 700;
+  color: var(--peach-label);
+}
+
+.stool-close {
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: var(--peach-text);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.stool-forms {
+  display: flex;
+  gap: 8px;
+}
+
+.stool-form {
+  flex: 1;
+  min-height: 44px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--peach-label);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.stool-bristol {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.stool-bristol-choice {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: var(--radius-choice);
+  border: 1.5px solid rgba(var(--ink-rgb), 0.18);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.stool-bristol-n {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--peach-label);
+  color: var(--peach-bg);
+  font-size: 0.8rem;
+}
+
+.stool-form:disabled,
+.stool-bristol-choice:disabled {
+  opacity: 0.7;
+}
+
+.stool-saved {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+}
+
 .gut-evening-reminder-done {
   margin: 8px 0 0;
   font-size: 0.85rem;

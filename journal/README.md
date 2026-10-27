@@ -94,6 +94,12 @@
   flou (aucun aliment dans la page) avec « Débloquer » ; « rien ne ressort » reste gratuit. **Pendant la période de
   lancement, rien ne change pour vous ni pour les testeurs** (premium offert) : l'aperçu n'apparaîtra qu'après le 20/11.
 
+- **Forme des selles, en un geste** (27/10 10:33) — dans la carte « Votre ventre », une ligne discrète « + Selles » :
+  Dures / Normales / Liquides en un geste, et « Préciser le type » pour l'échelle de Bristol (1 à 7, décrits en mots
+  simples). Facultatif, objectif « Mon ventre » seulement. Les notes sont dans le Journal (supprimables) et, résumées
+  par forme, dans le rapport PDF (section absente si vous n'en notez pas). Aucun sous-type du SII n'est déduit.
+  **À tester** : Accueil → « + Selles » → « Normales » ; puis Journal ; puis un rapport PDF.
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -243,6 +249,7 @@ francophones, puis au Royaume-Uni, en Irlande et dans le reste de l'UE quand l'a
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 10:33 — [Forme des selles](runs/2026-10-27-1033-forme-des-selles.md) | 🏗️ | I176 : « + Selles » dans la carte ventre (3 formes, Bristol sur demande), Journal, section du PDF ; 2 532 Vitest |
 | 27/10 09:33 — [Premium à jour + paywall des pistes ventre](runs/2026-10-27-0933-premium-pistes-ventre.md) | 🏗️ | `premiumBenefits` : pistes avec délais et PDF livrés (plus rien « en préparation ») ; `GutLinks` floutées sans premium sur Play (nombre de pistes, aucun aliment, « Débloquer ») ; conditions alignées ; 2 524 Vitest ; v311 |
 | 27/10 08:33 — [Idées : jalon 9 (anglais) prêt à coder](runs/2026-10-27-0833-idees-jalon9-anglais.md) | 💡 | `IDEES.md` I180–I183 : ≈ 2 800 chaînes mesurées (≈ 2 000 visibles hors diagnostic), 41 `fr-FR` en dur, 25 fichiers Java ; `t()` maison, français = clé ; Ciqual 2025 `alim_nom_eng` 3 484 / 3 484 ; découpage 9a–9h ; P32 (pays, États-Unis exclus : HBNR, My Health My Data) ; journal seul |
 | 27/10 07:35 — [N6c : partage du PDF vérifié sur l'émulateur](runs/2026-10-27-0735-n6c-partage-pdf-emulateur.md) | 🏗️ | script CI `pdf-share/drive.mjs` (job API 35, non bloquant) : feuille de partage avec le PDF, fichier de 20 Ko dans Documents, partage annulé → message, 2ᵉ rapport du jour ; tout vert ; PR #421 (journal) mergée ; 2 519 Vitest ; v310 |

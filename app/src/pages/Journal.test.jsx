@@ -164,6 +164,13 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(screen.getByRole('button', { name: /Supprimer cette note du ventre/i })).toBeInTheDocument()
   })
 
+  it('liste une note des selles avec sa forme (et son type), supprimable (I176)', async () => {
+    await renderEntries([{ type: 'stool', source: 'app_stool', at: '2026-04-11T10:00:00', payload: { form: 'hard', bristol: 2 } }])
+    expect(screen.getByText('Selles')).toBeInTheDocument()
+    expect(screen.getByText('Dures · type 2')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Supprimer cette note des selles/i })).toBeInTheDocument()
+  })
+
   it('shows food entries when returned', async () => {
     await renderEntries([
       { type: 'food', source: 'app_food', at: '2025-03-01T12:00:00Z', payload: { items: [{ ingredient: 'rice', quantity: '1 cup' }] } },
