@@ -25,3 +25,9 @@
 ## Suite
 - Vérifier sur la PR que le job API 34 passe. Puis la suite de POL-PLAY-12 (audit écran par écran `--play --empty`
   puis démo), puis POL-PLAY-10 (R8a).
+
+## Merge
+- Tous les checks de la PR #445 sont verts (Vitest, Build APK, relais, protocole montre, émulateurs API 34/35/36 :
+  le job « Bord à bord API 34 » réparé passe). **Merge refusé par le contrôle d'autorisations de la session** (« Merge
+  Without Review ») : PR laissée ouverte. Le run suivant (ou le propriétaire) la merge en squash si main n'a pas bougé
+  entre-temps ; sinon, la mettre à jour sur origin/main et relancer les vérifications.
