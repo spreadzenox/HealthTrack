@@ -29,6 +29,7 @@ import { localDateKey } from '../analysisEngine'
 import { FACE_BURST_TYPE, moodFaceBursts } from '../faceBursts'
 import { evaluateGate, gateDays } from './gate'
 import { calibrateRidge, predictCalibrated } from './calibration'
+import { appLocale } from '../../i18n/locale.js'
 
 /** Indices d'expression lus par l'estimateur (yaw / asymmetry / jawOpen servent à la qualité, pas à l'humeur). */
 export const EXPRESSION_KEYS = ['smile', 'duchenne', 'mouthFrown', 'browDown', 'browInnerUp']
@@ -346,8 +347,8 @@ export function testReadingEstimate(entries, { now = new Date() } = {}) {
   return estimateBurst(last, { bursts, calibration: personalCalibration(entries) })
 }
 
-const fmt = (v) => v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-const hour = (iso) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+const fmt = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+const hour = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
 const DUO_WORDS = { accord: 'deux modèles d’accord', partiel: 'deux modèles à peu près d’accord', 'désaccord': 'deux modèles en désaccord' }
 
@@ -358,7 +359,7 @@ export function describeFaceMood(est) {
   if (est.day) {
     lines.push(`Bien-être estimé aujourd’hui : ${est.day.label}, ≈ ${fmt(est.day.note)} / 5 (entre ${fmt(est.day.low)} et ${fmt(est.day.high)}).`)
   }
-  const when = est.moment.today ? `à ${hour(est.moment.at)}` : `le ${new Date(est.moment.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${hour(est.moment.at)}`
+  const when = est.moment.today ? `à ${hour(est.moment.at)}` : `le ${new Date(est.moment.at).toLocaleDateString(appLocale(), { day: 'numeric', month: 'long' })} à ${hour(est.moment.at)}`
   lines.push(`Bien-être à la dernière lecture (${when}) : ${est.moment.label}.`)
   if (est.moment.arousalLabel) {
     const dayArousal = est.day?.arousalLabel && est.day.readings > 1 ? ` (aujourd’hui : ${est.day.arousalLabel})` : ''

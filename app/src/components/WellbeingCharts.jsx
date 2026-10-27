@@ -3,6 +3,7 @@ import { listEntries, countEntries } from '../storage/localHealthStorage'
 import { seriesByCalendarDay, seriesByHourToday } from '../services/wellbeingSeries'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { pickLabelIndices } from '../utils/format'
+import { decimalMark } from '../i18n/locale.js'
 import './WellbeingCharts.css'
 
 const W = 320
@@ -125,7 +126,7 @@ function WellbeingLineChart({ points, xDomain, labels, emptyMessage, predictionP
   )
 }
 
-const fmt = (v) => v.toFixed(1).replace('.', ',')
+const fmt = (v) => v.toFixed(1).replace('.', decimalMark())
 
 /**
  * Une seule mention de la prédiction, sous le graphique (nettoyage D1 / I87) : avant, une grande carte

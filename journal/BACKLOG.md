@@ -378,7 +378,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   (≈ 12 000 mots) hors diagnostic ; `t()` maison sans dépendance, **français = clé**, catalogue `i18n/en.json`, tests
   forcés en `fr`, test de catalogue (extraction `@babel/parser`) ; noms des aliments = `alim_nom_eng` de Ciqual 2025
   (3 484 / 3 484) + 69 alias à la main ; dictée du soir sans lexique anglais au départ (licences) ; États-Unis exclus
-  tant qu'un juriste n'a pas relu (HBNR FTC, My Health My Data Act → P32). Étapes : [ ] **9a** socle (`i18n/`,
+  tant qu'un juriste n'a pas relu (HBNR FTC, My Health My Data Act → P32). Étapes : [x] **9a** socle — **FAIT le 27/10 11:33** (`i18n/`,
   `locale.js` à la place des 41 `fr-FR` et 14 virgules, réglage « Langue » caché `VITE_I18N_EN`, `visual --lang=en`
   avec alerte sur le français restant ; rien de visible) ; [ ] **9b** Layout, navigation, Accueil, Paramètres ;
   [ ] **9c** onboarding, paywall, divulgations ; [ ] **9d** Journal, Repas, Nutrition, FODMAP, `name_en` ;
@@ -1172,6 +1172,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 27/10 (11:33 Paris)** : ✅ **9a** socle i18n (`src/i18n/` : `t()`, `t.plural`, `appLocale()`, `decimalMark()`, test de catalogue sur `converted.js` ; réglage « Langue » caché derrière `VITE_I18N_EN` ; `visual --lang=en` qui compte les mots français restants ; rien de visible). Suite : **9b** (Layout, navigation, Accueil, Paramètres : ajouter chaque fichier converti à `i18n/converted.js`) ou 7d ; POL-1d dès P28.
 
 **Mise à jour du 27/10 (10:33 Paris)** : ✅ **I176** forme des selles (« + Selles » dans la carte ventre : dures / normales / liquides, type de Bristol sur demande ; Journal ; PDF). Suite : **9a** (socle i18n, rien de visible) ou 7d ; POL-1d dès P28. Idée notée : forme des selles comme second Y des pistes repas → ventre (I176 b, plus tard, après assez de notes).
 

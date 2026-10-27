@@ -38,6 +38,7 @@ import {
   isWeekendKey,
   residualizeByGroup,
 } from './statistics'
+import { appLocale, decimalMark } from '../i18n/locale.js'
 
 // ─── Public constants ────────────────────────────────────────────────────────
 
@@ -118,7 +119,7 @@ const WEEKEND_KEY = 'isWeekend'
 
 /** Fixed-decimal number written the French way (« 4,32 »). */
 function frDecimal(v, digits) {
-  return v.toFixed(digits).replace('.', ',')
+  return v.toFixed(digits).replace('.', decimalMark())
 }
 
 export const VARIABLE_META = {
@@ -133,7 +134,7 @@ export const VARIABLE_META = {
   steps: {
     label: 'Pas quotidiens',
     unit: 'pas',
-    format: (v) => `${Math.round(v).toLocaleString('fr-FR')} pas`,
+    format: (v) => `${Math.round(v).toLocaleString(appLocale())} pas`,
     direction: 'higher_better',
     group: 'lifestyle',
   },

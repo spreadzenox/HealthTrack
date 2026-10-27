@@ -4,6 +4,7 @@ import { listEntries } from '../storage/localHealthStorage'
 import { computeHeartBaselines, BASELINE_METRICS, RECENT_DAYS, BASELINE_DAYS } from '../services/baselines'
 import { APP_NAME } from '../config/brand'
 import './BaselineCards.css'
+import { appLocale } from '../i18n/locale.js'
 
 // 7 jours récents + 60 jours de norme, avec un peu de marge
 const HISTORY_DAYS = RECENT_DAYS + BASELINE_DAYS + 2
@@ -15,7 +16,7 @@ const STATUS_LABELS = {
 }
 
 const fmtWith = (digits) => (v) =>
-  v.toLocaleString('fr-FR', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+  v.toLocaleString(appLocale(), { minimumFractionDigits: digits, maximumFractionDigits: digits })
 
 // Entiers par défaut ; une décimale quand l'arrondi contredirait le statut
 // (ex. moyenne 60,6 sous une norme 61,4–65 → « 61 » dans « 61–65 » mais « plus basse »).

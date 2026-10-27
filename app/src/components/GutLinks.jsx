@@ -7,8 +7,9 @@ import { FODMAP_FACTOR_LABELS, comparableLabel } from '../services/gutLinks'
 import { fodmapGroupOf } from '../services/gutWindows'
 import { challengePath } from '../services/fodmapChallenge'
 import './GutLinks.css'
+import { appLocale } from '../i18n/locale.js'
 
-const fr = (v, digits = 1) => v.toLocaleString('fr-FR', { maximumFractionDigits: digits, minimumFractionDigits: digits })
+const fr = (v, digits = 1) => v.toLocaleString(appLocale(), { maximumFractionDigits: digits, minimumFractionDigits: digits })
 const times = (k, n) => `${k} fois sur ${n}`
 
 /** La piste en une phrase, avec les deux comptes (avec / sans l'aliment). */

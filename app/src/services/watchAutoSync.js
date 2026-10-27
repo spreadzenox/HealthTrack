@@ -17,6 +17,7 @@ import { getBodySettings } from '../settings/bodySettings'
 import { listEntries } from '../storage/localHealthStorage'
 import { syncVaultAfterConnection, vaultPlugin } from './watchVault'
 import { getBackgroundSync, importPendingCaptures, shareResumeWithNative } from './watchCaptures'
+import { appLocale } from '../i18n/locale.js'
 
 /** Profil envoyé à la montre (7/0x02) : taille, poids, âge, sexe connus de HealthTrack (lectures par index). */
 export async function watchProfile() {
@@ -234,7 +235,7 @@ async function runIfStale({
 }
 
 /** Phrase d'état pour la carte « Connexion à la montre », ou null s'il n'y a encore rien eu. */
-const plural = (n, one, many) => `${n.toLocaleString('fr-FR')} ${n > 1 ? many : one}`
+const plural = (n, one, many) => `${n.toLocaleString(appLocale())} ${n > 1 ? many : one}`
 
 /**
  * État de la montre en une ligne pour la carte : { tone: 'ok' | 'warn', title, text } ou null tant

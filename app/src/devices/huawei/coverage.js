@@ -5,6 +5,7 @@
  */
 import { OUTCOME_LABELS, WATCH_SOURCE } from './sync'
 import { formatDuration, workoutDetailParts, workoutTypeLabel } from '../../utils/format'
+import { appLocale } from '../../i18n/locale.js'
 
 const DAY = 86_400_000
 export const COVERAGE_DAYS = 7
@@ -13,7 +14,7 @@ export const COVERAGE_LOOKBACK_DAYS = 30
 
 const p = (e) => e.payload || {}
 const isHr = (subtype) => (e) => e.type === 'heart_rate' && p(e).subtype === subtype
-const num = (v, digits = 0) => Number(v).toLocaleString('fr-FR', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+const num = (v, digits = 0) => Number(v).toLocaleString(appLocale(), { minimumFractionDigits: digits, maximumFractionDigits: digits })
 const AWAKE = ['awake', 'out_of_bed', 'unknown']
 
 /** Nuit d'une période de sommeil : date locale de (fin − 12 h), la même pour 23:00–23:50 et 00:10–07:00. */

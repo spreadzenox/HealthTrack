@@ -14,6 +14,7 @@ import { matchHealthApp } from '../devices/healthApps'
 import { mainSleepPeriods } from './sleepRegularity'
 import { localDateKey } from './wellbeingSeries'
 import { isDaytimeHrv } from './hrv'
+import { appLocale } from '../i18n/locale.js'
 
 const DAY_MS = 24 * 3600 * 1000
 
@@ -47,7 +48,7 @@ function formatDuration(minutes) {
   return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`
 }
 
-const fmtInt = (n) => Math.round(n).toLocaleString('fr-FR')
+const fmtInt = (n) => Math.round(n).toLocaleString(appLocale())
 
 /** « Garmin Connect via Health Connect » : les apps d'origine, sinon Health Connect seul. */
 function sourceLine(entries) {

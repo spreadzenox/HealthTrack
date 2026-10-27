@@ -10,6 +10,7 @@ import { loadNutritionTable } from '../data/nutritionTable'
 import { prepareImageForGemini } from './imagePrep.js'
 import { MEAL_TEXT_MAX_LENGTH, toMealResult } from './geminiStandalone.js'
 import { getIntegrityToken } from './playIntegrity.js'
+import { appLocale } from '../i18n/locale.js'
 
 export const RELAY_URL = (import.meta.env?.VITE_RELAY_URL || 'https://halcya-relay-81378799481.europe-west1.run.app')
   .replace(/\/+$/, '')
@@ -117,8 +118,8 @@ export function describeCredits(credits) {
   const reset = new Date(credits.resetAt)
   // « 1er novembre » plutôt que « 1 novembre »
   const date = reset.getDate() === 1
-    ? `1er ${reset.toLocaleDateString('fr-FR', { month: 'long' })}`
-    : reset.toLocaleDateString('fr-FR', MONTHS_LONG)
+    ? `1er ${reset.toLocaleDateString(appLocale(), { month: 'long' })}`
+    : reset.toLocaleDateString(appLocale(), MONTHS_LONG)
   return `${count} · renouvellement le ${date}`
 }
 

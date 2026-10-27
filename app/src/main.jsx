@@ -10,8 +10,11 @@ import './index.css'
 import { initTheme } from './theme/theme'
 import App from './App.jsx'
 import { checkRestore } from './services/restoreGuard'
+import { getLang } from './i18n/locale.js'
 
 initTheme()
+// Langue du document (lecteurs d'écran, césure) : « fr » sauf si l'anglais est choisi (jalon 9)
+document.documentElement.lang = getLang()
 
 // Avant tout le reste : après une restauration de la sauvegarde Android, retire les secrets de l'ancien téléphone.
 checkRestore().finally(() => {

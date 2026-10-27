@@ -14,6 +14,7 @@ import { useNutritionTable } from '../data/nutritionTable'
 import { SOURCE_LABELS, gutLevelLabel, isGutDayNote } from '../services/today'
 import { stoolEntryLabel } from '../services/stool'
 import { INITIAL_DAYS, MORE_DAYS, loadJournalEntries } from '../services/journalEntries'
+import { appLocale } from '../i18n/locale.js'
 
 /**
  * « Vos derniers jours » : le journal par jour (résumé chiffré, saisies et événements avec leur heure), déplacé de
@@ -63,7 +64,7 @@ const DELETE_LABELS = {
 const ITEM_TYPES_WITH_RENDERER = ['food', 'wellbeing', 'cigarette', 'gut', 'stool', 'activity', 'weight', 'height', 'body_composition']
 
 function frNumber(v) {
-  return v.toLocaleString('fr-FR', { maximumFractionDigits: 1 })
+  return v.toLocaleString(appLocale(), { maximumFractionDigits: 1 })
 }
 
 /** Principales mesures d'une composition corporelle Withings, en français. */
@@ -77,7 +78,7 @@ function bodyCompositionParts(p) {
 }
 
 function timeOf(at) {
-  return new Date(at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(at).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 }
 
 /** Tags affichés d'une note ; « Écran tard » déclaré est inutile un jour où le téléphone a mesuré l'écran. */
@@ -184,7 +185,7 @@ function chipTheme(label) {
 /** Résumé chiffré d'une journée : seules les valeurs disponibles sont affichées. */
 function summaryChips(s) {
   const chips = []
-  const fr = (v) => v.toLocaleString('fr-FR')
+  const fr = (v) => v.toLocaleString(appLocale())
   if (s.sleepMinutes != null) chips.push([s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil', formatDuration(s.sleepMinutes)])
   if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
   if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
@@ -197,7 +198,7 @@ function summaryChips(s) {
   if (s.watchStress != null) chips.push(['Stress montre', `${s.watchStress} / 99`])
   if (s.bloodPressure) chips.push(['Tension', `${s.bloodPressure.systolic}/${s.bloodPressure.diastolic} mmHg`])
   if (s.glucoseMgDl != null) {
-    chips.push(['Glycémie', `${(s.glucoseMgDl / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g/L`])
+    chips.push(['Glycémie', `${(s.glucoseMgDl / 100).toLocaleString(appLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g/L`])
   }
   if (s.heartRate) {
     const { min, max } = s.heartRate
@@ -337,7 +338,7 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
                 <time className="entry-at" dateTime={e.at}>{timeOf(e.at)}</time>
                 <span className="entry-type">{entryTitle(e)}</span>
                 {e.type === 'food' && mealKcal(e.payload?.items) > 0 && (
-                  <span className="entry-kcal">≈ {mealKcal(e.payload.items).toLocaleString('fr-FR')} kcal</span>
+                  <span className="entry-kcal">≈ {mealKcal(e.payload.items).toLocaleString(appLocale())} kcal</span>
                 )}
                 {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
                   <span className="entry-kcal entry-score"><strong>{e.payload.score}</strong> / 5</span>

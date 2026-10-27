@@ -7,8 +7,9 @@
 import { useState } from 'react'
 import { createEntry } from '../storage/localHealthStorage'
 import { BRISTOL_TYPES, STOOL_FORMS, STOOL_SOURCE, STOOL_TYPE, stoolEntryLabel, stoolPayload } from '../services/stool'
+import { appLocale } from '../i18n/locale.js'
 
-const timeOf = (iso) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+const timeOf = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
 export default function StoolLine() {
   const [open, setOpen] = useState(false)

@@ -1,3 +1,5 @@
+import { appLocale, decimalMark } from '../i18n/locale.js'
+
 /**
  * Formatage des dates pour l'affichage (entrées, repas).
  * @param {string} at - Date ISO ou valeur affichable
@@ -7,7 +9,7 @@ export function formatAt(at) {
   if (!at) return ''
   try {
     const d = new Date(at)
-    return d.toLocaleDateString('fr-FR', {
+    return d.toLocaleDateString(appLocale(), {
       day: 'numeric',
       month: 'short',
       hour: '2-digit',
@@ -92,7 +94,7 @@ export function pickLabelIndices(n, max) {
  */
 export function formatSigned(value, digits) {
   const text = Math.abs(value).toFixed(digits)
-  const abs = text.replace('.', ',')
+  const abs = text.replace('.', decimalMark())
   if (Number(text) === 0) return abs
   return (value > 0 ? '+' : '−') + abs
 }

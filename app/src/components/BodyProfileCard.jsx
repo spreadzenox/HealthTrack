@@ -6,14 +6,15 @@ import { computeBmi } from '../services/bodyProfile'
 import { computeDailyEnergyKcal, ACTIVITY_LEVELS, activityLevel } from '../services/nutrientReferenceIntakes'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import DetailsToggle from './DetailsToggle'
+import { appLocale } from '../i18n/locale.js'
 
-const formatNumber = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)
-const formatInt = (v) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(v)
+const formatNumber = (v) => new Intl.NumberFormat(appLocale(), { maximumFractionDigits: 1 }).format(v)
+const formatInt = (v) => new Intl.NumberFormat(appLocale(), { maximumFractionDigits: 0 }).format(v)
 
 const SEX_LABEL = { M: 'Homme', F: 'Femme' }
 // Le point reste collé à la valeur qui le précède : une ligne repliée ne commence jamais par « · ».
 const SEP = '\u00a0· '
-const formatDayMonth = (iso) => new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit' }).format(new Date(iso))
+const formatDayMonth = (iso) => new Intl.DateTimeFormat(appLocale(), { day: '2-digit', month: '2-digit' }).format(new Date(iso))
 
 // Composition de la dernière pesée Withings : une ligne du profil au lieu d'une section à part (D1).
 const COMPOSITION_FIELDS = [

@@ -25,6 +25,7 @@ import {
 import {
   minuteToTime, portionReminderAvailable, portionReminderPrefs, setPortionReminder, timeToMinute,
 } from '../services/fodmapReminder'
+import { appLocale } from '../i18n/locale.js'
 
 /** Notes du ventre relues : assez loin pour couvrir un test, sa pause et un redémarrage. */
 const GUT_WINDOW_DAYS = 120
@@ -43,7 +44,7 @@ const defaultStore = {
 }
 
 const fmt = formatAmount
-const timeOf = (iso) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+const timeOf = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
 /** Étiquette d'un groupe dans le choix : verdict du groupe, ou par aliment pour les fructanes. */
 function groupTag(group, result) {

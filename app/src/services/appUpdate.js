@@ -8,6 +8,7 @@
  */
 import { APP_NAME } from '../config/brand'
 import { notThenable } from './nativePlugin'
+import { appLocale } from '../i18n/locale.js'
 
 export const REPO_RELEASES_URL = 'https://github.com/spreadzenox/HealthTrack/releases/latest'
 
@@ -28,7 +29,7 @@ export function getApkAsset(release) {
   }
 }
 
-const nf1 = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+const nf1 = new Intl.NumberFormat(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 export function formatMo(bytes) {
   if (!(bytes >= 0)) return '?'

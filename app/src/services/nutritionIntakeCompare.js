@@ -14,6 +14,7 @@ import {
   NUTRIENT_UNITS,
   LOWER_IS_BETTER_NUTRIENTS,
 } from './nutrientReferenceIntakes'
+import { appLocale } from '../i18n/locale.js'
 
 export const RECENT_WINDOW_DAYS = 7
 
@@ -48,7 +49,7 @@ function localDayKey(iso) {
 export function formatNutrientAmount(value) {
   const v = Number(value) || 0
   const digits = Math.abs(v) < 10 ? 1 : 0
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: digits }).format(v)
+  return new Intl.NumberFormat(appLocale(), { maximumFractionDigits: digits }).format(v)
 }
 
 function statusFor(pct, limit) {
@@ -110,7 +111,7 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
 
   const energyPerDay = (totals.energy_kcal ?? 0) / divisor
   const energyTarget = dailyTargets.energy_kcal || 0
-  const fmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' })
+  const fmt = new Intl.DateTimeFormat(appLocale(), { day: 'numeric', month: 'short' })
 
   return {
     totals,

@@ -19,6 +19,8 @@ import '../Food.css'
 import { useEntitlement } from '../hooks/useEntitlement'
 import LineIcon from '../components/LineIcon'
 import FaceUnlockSetting from '../components/FaceUnlockSetting'
+import LanguageSetting from '../components/LanguageSetting'
+import { I18N_EN } from '../i18n/locale.js'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
@@ -181,6 +183,9 @@ export default function Settings() {
           ))}
         </div>
       </div>
+
+      {/* Jalon 9 : caché tant que l'anglais n'est pas complet (interrupteur de build VITE_I18N_EN) */}
+      {I18N_EN && <LanguageSetting />}
 
       {/* L'objectif de l'onboarding règle l'Accueil (I155, POL-4) : carte ventre seulement avec « Mon ventre ». */}
       <div className="settings-block">

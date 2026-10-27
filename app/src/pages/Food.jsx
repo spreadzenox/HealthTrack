@@ -18,13 +18,14 @@ import { frequentMeals, mealLabel } from '../services/quickMeals'
 import LineIcon from '../components/LineIcon'
 import MealFodmapLine from '../components/MealFodmapLine'
 import { gutCardMode } from '../settings/onboarding'
+import { appLocale } from '../i18n/locale.js'
 
 /** Jours de repas affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
 const INITIAL_DAYS = 5
 const MORE_DAYS = 7
 
 function timeOf(at) {
-  return new Date(at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(at).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 }
 
 export default function Food() {
@@ -250,7 +251,7 @@ export default function Food() {
                 >
                   <span className="meal-habit-name">{h.label}</span>
                   <span className="meal-habit-meta">
-                    {h.kcal > 0 ? `≈ ${h.kcal.toLocaleString('fr-FR')} kcal` : `${h.items.length} ingr.`}
+                    {h.kcal > 0 ? `≈ ${h.kcal.toLocaleString(appLocale())} kcal` : `${h.items.length} ingr.`}
                     {h.count > 1 && ` · ${h.count} fois`}
                   </span>
                 </button>
@@ -372,7 +373,7 @@ export default function Food() {
                   {day.meals.length > 1 && (
                     <span className="meal-day-total">
                       {day.meals.length} repas
-                      {day.kcal > 0 && ` · ≈ ${day.kcal.toLocaleString('fr-FR')} kcal`}
+                      {day.kcal > 0 && ` · ≈ ${day.kcal.toLocaleString(appLocale())} kcal`}
                     </span>
                   )}
                 </h4>
@@ -382,7 +383,7 @@ export default function Food() {
                       <div className="meal-head">
                         <time className="meal-at" dateTime={e.at}>{timeOf(e.at)}</time>
                         {mealKcal(e.payload?.items) > 0 && (
-                          <span className="meal-kcal">≈ {mealKcal(e.payload.items).toLocaleString('fr-FR')} kcal</span>
+                          <span className="meal-kcal">≈ {mealKcal(e.payload.items).toLocaleString(appLocale())} kcal</span>
                         )}
                       </div>
                       {e.payload?.dish && <p className="meal-dish">{e.payload.dish}</p>}

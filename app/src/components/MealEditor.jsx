@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { itemKcal, mealKcal, searchIngredients, setItemGrams } from '../services/mealEditing'
 import './MealEditor.css'
+import { appLocale } from '../i18n/locale.js'
 
 const STEP_G = 10
 const DEFAULT_G = 100
@@ -121,7 +122,7 @@ export default function MealEditor({ items, onChange, disabled = false }) {
 
       {items.length > 0 && (
         <p className="meal-editor-total">
-          Total estimé : <strong>≈ {total.toLocaleString('fr-FR')} kcal</strong>
+          Total estimé : <strong>≈ {total.toLocaleString(appLocale())} kcal</strong>
           {items.some((it) => it.unknown) && (
             <span className="mei-total-note"> (hors aliments absents de la base)</span>
           )}

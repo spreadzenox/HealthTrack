@@ -20,11 +20,12 @@ import DetailsToggle from './DetailsToggle'
 import GutEveningReminder from './GutEveningReminder'
 import StoolLine from './StoolLine'
 import './TodayCards.css'
+import { appLocale } from '../i18n/locale.js'
 
 const DAY_MS = 86_400_000
 
 function timeOf(iso) {
-  return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 }
 
 /** Rechargé à chaque écriture (`health-entries-updated`). */
@@ -127,7 +128,7 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
       {error && <p className="error-msg" role="alert">{error}</p>}
       <p className="today-card-text">
         {summary.last
-          ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${summary.lastToday ? `à ${timeOf(summary.last.at)}` : `le ${new Date(summary.last.at).toLocaleDateString('fr-FR', { weekday: 'long' })} à ${timeOf(summary.last.at)}`}.`
+          ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${summary.lastToday ? `à ${timeOf(summary.last.at)}` : `le ${new Date(summary.last.at).toLocaleDateString(appLocale(), { weekday: 'long' })} à ${timeOf(summary.last.at)}`}.`
           : 'Un geste suffit, l’heure est notée. Vous pouvez noter plusieurs fois par jour.'}
       </p>
       {entries && evening.ask && (

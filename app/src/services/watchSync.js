@@ -8,6 +8,7 @@
 import { deleteEntry, listEntries, upsertEntries } from '../storage/localHealthStorage'
 import { countEntryKinds, describeServices, describeUnknownBits, readWatchData, stalledServices, stepsCheck, syncWindow, totalsEntries, WATCH_SOURCE, watchEntries } from '../devices/huawei/sync'
 import { dataFromCapture } from '../devices/huawei/capture'
+import { appLocale } from '../i18n/locale.js'
 
 const KEY = 'healthtrack_watch_sync'
 /**
@@ -93,7 +94,7 @@ function setState(watchKey, state, storage) {
   }
 }
 
-const plural = (n, one, many) => `${n.toLocaleString('fr-FR')} ${n > 1 ? many : one}`
+const plural = (n, one, many) => `${n.toLocaleString(appLocale())} ${n > 1 ? many : one}`
 
 /** Nombre de nuits distinctes (date de fin de chaque période, ou de chaque nuit détaillée). */
 const countNights = (sleep, nights = []) =>
