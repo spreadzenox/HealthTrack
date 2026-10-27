@@ -143,6 +143,14 @@ adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
 adb exec-out cat /sdcard/ui.xml > ui_plus.xml 2>/dev/null || true
 ls -lh screenshot_app.png screenshot_plus.png
 
+# Rapport PDF pour le médecin (N6c) : création, fichier dans Documents, feuille de partage (job API 35 seulement).
+# Non bloquant pour l'instant : le résultat va dans le résumé du job (pdf_share.md) et un avertissement s'affiche.
+if [ "${PDF_SHARE_CHECK:-0}" = 1 ]; then
+  echo "=== Rapport PDF : création et partage ==="
+  node .github/scripts/pdf-share/drive.mjs \
+    || echo "::warning::Rapport PDF sur l'émulateur : une étape a échoué, voir pdf_share.md"
+fi
+
 # Variante play : premier lancement à froid sur données vierges (critère C4, VC-9).
 PLAY_OK=1
 bash .github/scripts/play-cold-start.sh || PLAY_OK=0
