@@ -42,3 +42,8 @@
 ## Suite
 - N6c (partage du PDF sur l'émulateur) ; la ligne FODMAP sur le résultat d'une analyse photo avant enregistrement
   (reste de N4) ; puis M6 / suite.
+
+## Après le merge (PR #418 → `0e989b3`)
+- Checks de la PR verts (Vitest, Build APK, Budget de lectures, relais, protocole montre, Publier l'APK).
+- Sur main : « Build & Release » vert, **v308**, APK sideload de 34 892 193 octets (−15 Ko : champ retiré de la
+  table) ; « Play — AAB » vert.
