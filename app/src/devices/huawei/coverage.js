@@ -6,6 +6,7 @@
 import { OUTCOME_LABELS, WATCH_SOURCE } from './sync'
 import { formatDuration, workoutDetailParts, workoutTypeLabel } from '../../utils/format'
 import { appLocale } from '../../i18n/locale.js'
+import { totalOf } from '../../services/activityTotals'
 
 const DAY = 86_400_000
 export const COVERAGE_DAYS = 7
@@ -30,11 +31,8 @@ const dayKey = (e) => {
 
 const asleepMinutes = (list) => list.filter((e) => !AWAKE.includes(p(e).sleepState)).reduce((s, e) => s + (Number(p(e).durationMinutes) || 0), 0)
 
-/** Total d'un jour : l'entrée « period: day » (totaux de la montre) si elle existe, sinon la somme des heures. */
-function dayTotal(list) {
-  const day = list.filter((e) => p(e).period === 'day').pop()
-  return day ? Number(p(day).value) || 0 : list.reduce((s, e) => s + (Number(p(e).value) || 0), 0)
-}
+/** Total d'un jour : le plus grand entre le total du jour de la montre et la somme des heures (kcal corrigées). */
+const dayTotal = (list) => totalOf(list, list[0]?.type) ?? 0
 
 /**
  * Types suivis, dans l'ordre de valeur pour le produit. `reads` : lectures de la synchro (SYNC_READS) qui les

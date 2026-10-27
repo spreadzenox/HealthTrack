@@ -9,6 +9,7 @@ import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
 import { mealKcal } from './mealEditing'
 import { appLocale } from '../i18n/locale.js'
+import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
 
 /** Types uniquement résumés (jamais listés individuellement). */
 export const JOURNAL_SUMMARY_TYPES = [
@@ -40,9 +41,7 @@ function emptyDay(dateKey) {
     items: [],
     _sleep: 0,
     _inBed: 0,
-    _dayTotals: { steps: [], calories: [] },
-    _partials: { steps: 0, calories: 0 },
-    _hasPartial: { steps: false, calories: false },
+    _activity: { steps: createActivityTotal(), calories: createActivityTotal() },
     _hr: [],
     _resting: [],
     _hrv: [],
@@ -69,13 +68,11 @@ function last(values) {
 }
 
 /**
- * Total journalier : le plus grand entre le total fourni par la source (Health Connect agrégé, total du
- * jour de la montre, lu en cours de journée) et la somme des tranches, qui comptent les mêmes pas.
+ * Total journalier (activityTotals.js) : par heure, la source qui compte le plus (montre et Health Connect
+ * mesurent les mêmes pas) ; puis le plus grand entre ce total et les totaux « du jour » des sources.
  */
 function dailyTotal(day, kind) {
-  const totals = day._dayTotals[kind]
-  if (!totals.length) return day._hasPartial[kind] ? day._partials[kind] : null
-  return Math.max(...totals, day._hasPartial[kind] ? day._partials[kind] : 0)
+  return activityTotal(day._activity[kind], kind)
 }
 
 function phoneSleep(day) {
@@ -215,13 +212,7 @@ export function buildDailyJournal(entries) {
     switch (e.type) {
       case 'steps':
       case 'calories': {
-        const kind = e.type
-        if (!isNum(p.value)) break
-        if (p.period === 'day') day._dayTotals[kind].push(p.value)
-        else {
-          day._partials[kind] += p.value
-          day._hasPartial[kind] = true
-        }
+        addActivity(day._activity[e.type], e)
         break
       }
       case 'heart_rate': {

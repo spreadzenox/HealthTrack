@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-27",
+  "kind": "correctif",
+  "title": "Pas et calories du jour corrigés",
+  "items": [
+    "Les calories dépensées venues de la montre Huawei étaient affichées 1 000 fois trop grandes (par exemple « 658 625 kcal » au lieu d’environ 659). Elles sont corrigées partout, y compris pour les jours passés, sans rien effacer.",
+    "Quand la montre et le téléphone (via Health Connect) comptent les mêmes pas, ils ne s’additionnent plus : pour chaque heure, Halcya garde la source qui en compte le plus.",
+    "Un total de journée impossible n’est plus affiché : mieux vaut un trou qu’un chiffre faux."
+  ]
+}

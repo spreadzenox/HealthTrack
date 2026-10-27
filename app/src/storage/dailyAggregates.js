@@ -13,8 +13,11 @@
  * remplace tout) ou après un changement de format (`AGG_VERSION`), tout est reconstruit à la lecture.
  */
 
+import { activityValue } from '../services/activityTotals'
+
 export const AGG_STORE = 'daily_aggregates'
-export const AGG_VERSION = 1
+// v2 (27/10/2026) : pas et calories, une seule source par heure (la plus grande) ; kcal de la montre corrigées
+export const AGG_VERSION = 2
 const STATE_KEY = '__state'
 const HOUR = 3600_000
 
@@ -46,6 +49,7 @@ export function rawRange(series, from, to) {
 }
 
 function valueOf(series, e) {
+  if (!series.mean) return activityValue(e)
   const p = e.payload || {}
   const v = series.subtype === 'oxygenSaturation' ? p.value ?? p.bpm : series.mean ? p.bpm ?? p.value : p.value
   return typeof v === 'number' && v > 0 ? v : null
@@ -64,6 +68,8 @@ function endMs(e) {
  * Enregistrement d'un jour d'une série à partir de ses entrées brutes.
  * `hours` : [début de l'heure (ms), somme, nombre, premier début (ms), dernière fin (ms)] ;
  * `totals` (pas, calories) : les totaux « du jour » (`period: 'day'`), gardés tels quels.
+ * Pas et calories : chaque heure garde la seule source qui en compte le plus (montre et Health Connect mesurent
+ * les mêmes pas, activityTotals.js).
  */
 export function buildRecord(series, day, entries) {
   const hours = new Map()
@@ -77,8 +83,9 @@ export function buildRecord(series, day, entries) {
       continue
     }
     const h = Math.floor(start / HOUR) * HOUR
-    const b = hours.get(h)
-    if (!b) hours.set(h, [h, v, 1, start, endMs(e)])
+    const k = series.mean ? h : `${h}|${e.source || ''}|${e.payload?.sourceName || ''}`
+    const b = hours.get(k)
+    if (!b) hours.set(k, [h, v, 1, start, endMs(e)])
     else {
       b[1] += v
       b[2] += 1
@@ -87,7 +94,13 @@ export function buildRecord(series, day, entries) {
     }
   }
   totals.sort((a, b) => (a.at < b.at ? -1 : 1))
-  return { key: aggKey(series.key, day), series: series.key, day, hours: [...hours.values()].sort((a, b) => a[0] - b[0]), totals }
+  let list = [...hours.values()]
+  if (!series.mean) {
+    const best = new Map()
+    for (const b of list) if (!best.has(b[0]) || b[1] > best.get(b[0])[1]) best.set(b[0], b)
+    list = [...best.values()]
+  }
+  return { key: aggKey(series.key, day), series: series.key, day, hours: list.sort((a, b) => a[0] - b[0]), totals }
 }
 
 /**

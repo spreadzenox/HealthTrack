@@ -240,6 +240,15 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   quand tout a échoué, borner « Importer depuis N jours » ; tests avec un faux plugin qui lève au-delà de J−30 ; puis
   vérification sur l'émulateur (message d'erreur exact).
 
+## 🚑 Signalement du propriétaire du 27/10/2026 11:56 — pas et kcal aberrants (Journal, version play)
+- [x] kcal minute de la montre en petites calories → kcal à la synchro (`rawCal`), migration `watchKcalFix.js`,
+  correction à la lecture (`activityTotals.js`) — 27/10 12:33
+- [x] pas montre + Health Connect additionnés → une source par heure partout (Journal, analyses, agrégats v2, écran
+  Montre, premier import) + garde-fou (> 100 000 pas, > 15 000 kcal) — 27/10 12:33
+- [ ] confirmation du propriétaire : pas et kcal du jour, montre (écran Activité) vs Halcya au même moment
+- [ ] unité des calories des séances (0x17, 4 octets) à confirmer (kcal ou cal ?) ; dépense totale (BMR + activité)
+  si le propriétaire attend le chiffre total de la montre
+
 ## 🧭 Chantier produit — décisions du propriétaire du 20/10/2026 au soir (charte §000000000, détail : `PRODUIT.md`)
 Cadre général depuis le 20/10 au soir : produit vendable sur Google Play ; porte d'entrée SII ; bien-être ; toutes
 les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état tenu dans `PRODUIT.md`) :

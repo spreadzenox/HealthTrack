@@ -12,6 +12,7 @@ import { syncPhoneUsage } from '../services/phoneUsageSync'
 import { syncWatchIfStale, WATCH_FOREGROUND_CHECK_MS } from '../services/watchAutoSync'
 import { listenWatchPresence } from '../services/watchPresence'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
+import { fixWatchKcalOnce } from '../services/watchKcalFix'
 import { recordTimezoneContext } from '../services/timezoneContext'
 import { importPendingFaceBursts } from '../services/faceBursts'
 import { readFaceOnOpen } from '../services/faceAppOpen'
@@ -33,9 +34,12 @@ export function useAutoSync() {
   useEffect(() => {
     // Une fois par téléphone : anciennes SpO₂ « minute » de la montre regroupées par 10 min (I82, perf)
     // (avant la synchro de la montre, qui pourrait sinon écrire la même tranche en parallèle)
-    const compacted = compactWatchSpo2Once().then((r) => {
-      if (r?.removed) window.dispatchEvent(new CustomEvent('health-entries-updated'))
-    })
+    // puis, une fois aussi : anciennes calories de la montre (petites calories) converties en kcal (27/10/2026)
+    const compacted = compactWatchSpo2Once()
+      .then((r) => fixWatchKcalOnce().then((k) => r?.removed || k?.removed))
+      .then((changed) => {
+        if (changed) window.dispatchEvent(new CustomEvent('health-entries-updated'))
+      })
     triggerAutoSync()
     // Fuseau horaire du jour (une écriture par jour et par fuseau) : un changement fait « Voyage » sans rien cocher.
     recordTimezoneContext()
