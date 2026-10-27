@@ -16,6 +16,7 @@
 import { APP_NAME } from '../../config/brand'
 import { localDateKey } from '../analysisEngine'
 import { FODMAP_CHALLENGE_TYPE, challengeStatus, findFood, findGroup, verdictSentence } from '../fodmapChallenge'
+import { FODMAP_SUBGROUPS } from '../fodmapGroups'
 import { gutFactorLabel, summarizeGutLinks } from '../gutLinks'
 import { fodmapGroupOf, mealFactors } from '../gutWindows'
 import { faceMoodDays } from '../mood/faceMoodDays'
@@ -108,6 +109,19 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
   const notedDays = calendar.filter((d) => d.level).length
   const shares = Object.fromEntries(GUT_LEVELS.map((l) => [l.id, notedDays ? counts[l.id] / notedDays : 0]))
 
+  // FODMAP par sous-groupe (N6) : un simple décompte de jours, pas une analyse (les liens vérifiés sont les pistes).
+  const fodmapGroups = FODMAP_SUBGROUPS.map((group) => {
+    const days = calendar.filter((d) => d.fodmapGroups.includes(group))
+    const noted = days.filter((d) => d.level)
+    return {
+      group,
+      label: findGroup(group)?.label ?? group,
+      days: days.length,
+      notedDays: noted.length,
+      symptomDays: noted.filter((d) => d.level !== 'calm').length,
+    }
+  }).filter((g) => g.days > 0)
+
   const weekly = Array.from({ length: nWeeks }, (_, i) => {
     const days = calendar.slice(i * 7, i * 7 + 7)
     const c = levelCounts(days)
@@ -186,6 +200,7 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
     disclaimer: REPORT_DISCLAIMER,
     gut: { notedDays, ...counts, shares },
     weekly,
+    fodmapGroups,
     challenges,
     links,
     sleep,
