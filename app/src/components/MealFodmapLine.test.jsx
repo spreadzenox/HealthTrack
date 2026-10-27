@@ -21,6 +21,13 @@ describe('MealFodmapLine — FODMAP par sous-groupe sur la carte d’un repas (N
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
     expect(screen.getByText(/≈ 1,4 g · repère 0,3 g par repas/)).toBeTruthy()
     expect(screen.getByText(/hypothèse de départ : vos propres données priment/)).toBeTruthy()
+    expect(screen.getByText(/Teneurs : Ferjančič 2024\./)).toBeTruthy()
+  })
+  it('lentilles cuites : « probablement riche en GOS », source citée avec le calcul depuis le sec', () => {
+    render(<MealFodmapLine items={[{ ingredient: 'Lentilles cuites', quantity_g: 150 }]} />)
+    expect(screen.getByText('Probablement riche en GOS')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
+    expect(screen.getByText(/Teneurs : .*Siva 2019 \(pertes : Njoumi 2019\)/)).toBeTruthy()
   })
   it('rien quand aucun groupe ne dépasse son repère ou sans ingrédients', () => {
     const { container, rerender } = render(<MealFodmapLine items={[{ ingredient: 'Riz blanc cuit', quantity_g: 150 }]} />)

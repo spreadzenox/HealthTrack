@@ -18,6 +18,7 @@
  * mannitol `share`, la part des polyols totaux Ciqual (Ciqual d'abord, la source ne sert qu'à répartir). Une mesure
  * publiée ne remplace jamais une valeur Ciqual, sauf une teneur « < x » qu'elle précise sans la contredire (≤ x).
  * Confiance `analogie` (aliment proche, répartition supposée) ou `citée` (valeur citée par une revue) : basse.
+ * GOS des légumineuses cuites : calculés depuis leur mesure à sec (scripts/nutrition/legumeGos.mjs, `derivation`).
  *
  * Repères de départ par portion (Varney J et al., « FODMAPs: food composition, defining cutoff values and
  * international application », J Gastroenterol Hepatol 2017;32 Suppl 1:53-61, PMID 28244665) : oligosaccharides
@@ -192,12 +193,14 @@ export function highFodmapGroups(estimate) {
  * Ce que la carte d'un repas dit des FODMAP (N4) : pour chaque groupe au-dessus du repère, les aliments qui en
  * apportent le plus (3 au plus) et `probable` quand le repère n'est dépassé qu'en comptant des valeurs à confiance
  * basse (analogie, valeur citée, glucose sous la limite de détection).
- * @returns {{ group: string, foods: string[], probable: boolean, g: number, cutoff: number }[]}
+ * `sources` : clés des sources de ces teneurs (`Ciqual` ou clés de `fodmapMeasurements.json`), pour les citer.
+ * @returns {{ group: string, foods: string[], probable: boolean, g: number, cutoff: number, sources: string[] }[]}
  */
 export function mealFodmapHighlights(estimate) {
   return highFodmapGroups(estimate).map((group) => {
     const { g, cutoff, contributors } = estimate[group]
     const sure = contributors.filter((c) => c.status === 'mesuré').reduce((s, c) => s + c.g, 0)
-    return { group, foods: contributors.slice(0, 3).map((c) => c.ingredient), probable: sure < cutoff, g, cutoff }
+    const sources = [...new Set(contributors.flatMap((c) => (c.source ? c.source.split(' + ') : [])))]
+    return { group, foods: contributors.slice(0, 3).map((c) => c.ingredient), probable: sure < cutoff, g, cutoff, sources }
   })
 }

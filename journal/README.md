@@ -135,6 +135,14 @@ un nutriment pour plus de 10 % (en poids) de ce que vous avez mangé, la ligne a
 étiquette « partiel » : c'est un minimum, l'apport réel est sans doute plus élevé. Sur les données de démo : oméga-3 et
 folates. **À tester** : Journal → Nutrition, repérer les lignes « partiel » et lire la note en bas de page.
 
+**✅ N3b-2 le 27/10 01:33 : les lentilles, pois chiches et haricots ont leurs GOS.** Ciqual ne les mesure pas ; on
+part de mesures publiées sur légumineuses sèches (Siva 2019), ramenées au cuit avec l'eau de Ciqual et les pertes au
+trempage et à la cuisson publiées (Njoumi 2019). Ordres de grandeur : 150 g de lentilles cuites ≈ 1,1 g de GOS
+(repère 0,3 g), 120 g de pois chiches cuits ≈ 0,45 g, 50 g de pois chiches en conserve sous le repère. Toujours affiché
+« Probablement riche en GOS » (valeur calculée, confiance basse). Le chevron de la carte d'un repas cite maintenant
+les sources réellement utilisées (« Teneurs : Ciqual (Anses), Ferjančič 2024. »). **À tester** : Journal → Repas, un
+repas avec des lentilles ou des pois chiches → la ligne pêche ; toucher le chevron.
+
 **N3b préparé (run « idées » du 26/10 20:33)** : les teneurs que Ciqual ne mesure pas auront une source publique et
 réutilisable : le sorbitol et le mannitol de la **table officielle japonaise** (pomme, poire, pêche, pruneau, cerise,
 champignons, céleri…), les fructanes d'une étude slovène de 2024 (oignon, poireau, pain, pâtes, fruits, noix), les GOS
@@ -179,6 +187,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 01:33 — [N3b-2 : GOS des légumineuses cuites](runs/2026-10-27-0133-n3b2-gos-legumineuses.md) | 🏗️ | `legumeGos.mjs` : eau Ciqual 2025 × Siva 2019 (tableau 5, relu) × pertes Njoumi 2019, 13 aliments en `analogie` recalculables ; sources citées dans le chevron de la carte d'un repas ; 2 478 Vitest |
 | 27/10 00:33 — [N2b : plus de faux zéro dans Nutrition](runs/2026-10-27-0033-n2b-nutrition-partiel.md) | 🏗️ | `unknown_share` au poids mangé dans `computeTotalsFromItems` ; « ≥ » + « partiel » dans Nutrition au-delà de 10 % ; 2 471 Vitest ; v303 |
 | 26/10 22:33 — [N3a-bis + N3b : mesures FODMAP publiées](runs/2026-10-26-2233-n3b-mesures-fodmap.md) | 🏗️ | `fodmapMeasurements.json` v2 (une entrée par groupe, source, tableau, confiance) : 32 aliments, 4 sources (Ferjančič 2024, Natale 2025, MEXT 2020, revue Wang & Cheong 2023) ; polyols Ciqual répartis plutôt que remplacés ; « < x » : `bas` seulement si la portion reste sous le repère au plafond de la limite ; test `UpdateBanner` fiabilisé ; rien d'affiché ; 2 457 Vitest |
 | 26/10 23:33 — [N4 : FODMAP sur la carte d'un repas](runs/2026-10-26-2333-n4-carte-repas-fodmap.md) | 🏗️ | « Riche en fructanes : oignon » sous chaque repas (objectif ventre), « probablement » en confiance basse, grammes et repère au chevron ; `mealFodmapHighlights` ; 2 466 Vitest ; v302 |

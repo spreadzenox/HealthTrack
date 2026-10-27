@@ -16,6 +16,12 @@ const LABELS = Object.fromEntries(FODMAP_GROUPS.map((g) => [g.id, g.label.toLowe
 LABELS.gos = 'GOS'
 LABELS.fructose = 'fructose en excès'
 
+/** « Ciqual (Anses), Ferjančič 2024 » : les sources des teneurs affichées (attribution des licences CC BY). */
+function citeSources(highlights) {
+  const keys = [...new Set(highlights.flatMap((h) => h.sources))]
+  return keys.map((k) => (k === 'Ciqual' ? 'Ciqual (Anses)' : measurements.sources[k]?.cite ?? k)).join(', ')
+}
+
 const grams = (v) => v.toLocaleString('fr-FR', { maximumFractionDigits: v < 1 ? 2 : 1 })
 const foodList = (foods) => foods.map((f) => shortFoodName(f).toLowerCase()).join(', ')
 
@@ -43,8 +49,8 @@ export default function MealFodmapLine({ items }) {
       <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />
       {open && (
         <p className="meal-fodmap-note">
-          Repères généraux (Varney 2017), une hypothèse de départ : vos propres données priment. Teneurs Ciqual
-          (Anses) et mesures publiées.
+          Repères généraux (Varney 2017), une hypothèse de départ : vos propres données priment. Teneurs :{' '}
+          {citeSources(highlights)}.
         </p>
       )}
     </div>

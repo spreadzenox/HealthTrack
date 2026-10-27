@@ -149,6 +149,12 @@ describe('mealFodmapHighlights', () => {
     expect(est('Ail, cru', 3)[0]).toMatchObject({ group: 'fructans', probable: true })
     expect(est('Oignon, cru', 70)[0]).toMatchObject({ group: 'fructans', probable: false, foods: ['Oignon, cru'] })
   })
+  it('table livrée : lentilles et pois chiches cuits (GOS calculés depuis le sec) donnent un « probablement riche en GOS »', () => {
+    const est = (ingredient, quantity_g) => mealFodmapHighlights(estimateMealFodmap([{ ingredient, quantity_g }], table, measurements))
+    expect(est('Lentilles cuites', 150)[0]).toMatchObject({ group: 'gos', probable: true, foods: ['Lentilles cuites'] })
+    expect(est('Pois chiches cuits', 120)[0]).toMatchObject({ group: 'gos', probable: true })
+    expect(est('Pois chiche, appertisé, égoutté', 50).find((h) => h.group === 'gos')).toBeUndefined()
+  })
 })
 
 describe('cohérence avec la réintroduction et les données livrées', () => {
