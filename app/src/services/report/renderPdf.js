@@ -13,6 +13,7 @@ import { PDFDocument, rgb } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import { findGroup } from '../fodmapChallenge'
 import { CUTOFFS_SOURCE } from '../fodmapGroups'
+import { appLocale, decimalMark } from '../../i18n/locale.js'
 
 const W = 595.28
 const H = 841.89
@@ -96,7 +97,7 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
   doc.setCreator(report.app)
   doc.setProducer(report.app)
   doc.setSubject(report.disclaimer)
-  doc.setLanguage('fr-FR')
+  doc.setLanguage(appLocale())
   doc.setCreationDate(new Date(report.generatedAt))
 
   let page
@@ -267,7 +268,7 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
   if (report.wellbeing) {
     heading('Bien-être estimé')
     const wb = report.wellbeing
-    para(`${String(wb.mean).replace('.', ',')} / ${wb.scale} en moyenne sur ${wb.days} jours. ${wb.note}`, { size: 9.5 })
+    para(`${String(wb.mean).replace('.', decimalMark())} / ${wb.scale} en moyenne sur ${wb.days} jours. ${wb.note}`, { size: 9.5 })
   }
 
   // ── Page 2 : Détail ─────────────────────────────────────────────────────────────────────────────────────

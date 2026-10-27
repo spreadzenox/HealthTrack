@@ -5,6 +5,7 @@
  * Ces appareils envoient leurs mesures par « indications » juste après la mesure (souvent aussi
  * celles gardées en mémoire), puis se déconnectent. Valeurs au format IEEE-11073 (SFLOAT / FLOAT).
  */
+import { decimalMark } from '../../i18n/locale.js'
 
 const KPA_TO_MMHG = 7.50062
 const LB_TO_KG = 0.45359237
@@ -205,7 +206,7 @@ export function measurementsToEntries(measurements, { deviceName, now = new Date
 
 /** Libellé court d'une mesure reçue, pour l'affichage (« Tension 128/82 mmHg · pouls 64 »). */
 export function describeMeasurement(m) {
-  const fmt = (v) => String(v).replace('.', ',')
+  const fmt = (v) => String(v).replace('.', decimalMark())
   switch (m.kind) {
     case 'blood_pressure':
       return `Tension ${m.systolic}/${m.diastolic} mmHg${m.pulseBpm != null ? ` · pouls ${m.pulseBpm}` : ''}`

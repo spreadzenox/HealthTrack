@@ -5,6 +5,7 @@ import { BASELINE_METRICS } from '../services/baselines'
 import { localDateKey } from '../services/wellbeingSeries'
 import { formatDuration } from '../utils/format'
 import './HealthRadar.css'
+import { appLocale } from '../i18n/locale.js'
 
 const HISTORY_DAYS = RADAR_DAYS + RADAR_BASELINE_DAYS + 2
 
@@ -13,7 +14,7 @@ const BADGES = {
   watch: 'Inhabituel chez vous',
 }
 
-const fmt = (v) => Math.round(v).toLocaleString('fr-FR')
+const fmt = (v) => Math.round(v).toLocaleString(appLocale())
 
 function formatValue(metric, v) {
   return metric.key === 'sleepMinutes' ? formatDuration(v) : `${fmt(v)} ${metric.unit}`
@@ -26,7 +27,7 @@ function dayLabel(dateKey) {
   if (dateKey === localDateKey(y.toISOString())) return 'Hier'
   const [yy, mm, dd] = dateKey.split('-').map(Number)
   const d = new Date(yy, mm - 1, dd)
-  const s = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric' })
+  const s = d.toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric' })
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 

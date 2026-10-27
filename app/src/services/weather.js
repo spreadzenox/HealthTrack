@@ -6,6 +6,7 @@
  * pression moyenne et sa variation depuis la veille, humidité, indice européen de qualité de l'air et
  * pollens. Seules les journées terminées sont enregistrées : celle en cours changerait encore.
  */
+import { decimalMark } from '../i18n/locale.js'
 
 const FORECAST_API = 'https://api.open-meteo.com/v1/forecast'
 const AIR_API = 'https://air-quality-api.open-meteo.com/v1/air-quality'
@@ -185,7 +186,7 @@ export function pollenLabel(v) {
   return 'très élevé'
 }
 
-const fr = (v) => String(v).replace('.', ',')
+const fr = (v) => String(v).replace('.', decimalMark())
 
 /** Résumé court d'une journée (« 18° / 9° », « 1014 hPa (−6) », « air : bonne »…). */
 export function weatherSummaryParts(d) {

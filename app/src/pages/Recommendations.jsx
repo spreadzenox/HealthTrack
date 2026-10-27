@@ -30,6 +30,7 @@ import GutLinks from '../components/GutLinks'
 import ReintroductionEntry from '../components/ReintroductionEntry'
 import DoctorReportCard from '../components/DoctorReportCard'
 import { gutCardMode, homeFocus } from '../settings/onboarding'
+import { decimalMark } from '../i18n/locale.js'
 import './Recommendations.css'
 
 // ─── Correlation bar chart (SVG) ─────────────────────────────────────────────
@@ -143,7 +144,7 @@ function LeverCard({ rank, lever, lag }) {
 // ─── Behaviour tags (« jours avec / sans ») ──────────────────────────────────
 
 function frScore(v, digits = 1) {
-  return v.toFixed(digits).replace('.', ',')
+  return v.toFixed(digits).replace('.', decimalMark())
 }
 
 function frDiff(v) {
@@ -543,7 +544,7 @@ function CorrelationMethod({ result }) {
       </p>
       <p>
         Pistes : « Chez vous » quand le lien tient même en comptant tous les facteurs testés
-        (q &lt; {LEVER_PERSONAL_Q.toString().replace('.', ',')}) ; au plus une « À vérifier » quand il est plus fragile (q &lt; {LEVER_MAX_Q.toString().replace('.', ',')}).
+        (q &lt; {LEVER_PERSONAL_Q.toString().replace('.', decimalMark())}) ; au plus une « À vérifier » quand il est plus fragile (q &lt; {LEVER_MAX_Q.toString().replace('.', decimalMark())}).
       </p>
       <p>
         Tout est calculé sur votre téléphone. Ce sont des hypothèses : une corrélation ne prouve
@@ -745,12 +746,12 @@ function AdvancedTab({ analysis }) {
           <p>
             Toutes les entrées sont regroupées par <strong>jour calendaire</strong> (somme pour les pas, calories et
             nutriments, moyenne pour le cœur et le bien-être). Les nutriments sont <strong>lissés sur{' '}
-            {String(modelInfo.lagDays).replace('.', ',')} jours</strong> : un repas compte pour les jours suivants, de moins en moins.
+            {String(modelInfo.lagDays).replace('.', decimalMark())} jours</strong> : un repas compte pour les jours suivants, de moins en moins.
           </p>
           <p>
-            La régularisation Ridge{modelInfo.lambda != null && <> (λ = {String(modelInfo.lambda).replace('.', ',')})</>} est
+            La régularisation Ridge{modelInfo.lambda != null && <> (λ = {String(modelInfo.lambda).replace('.', decimalMark())})</>} est
             choisie par validation croisée : plus vos données sont bruitées, plus les effets sont prudemment réduits vers
-            zéro. Seuls les effets d’au moins {String(MIN_ADVICE_EFFECT).replace('.', ',')} écart-type deviennent des
+            zéro. Seuls les effets d’au moins {String(MIN_ADVICE_EFFECT).replace('.', decimalMark())} écart-type deviennent des
             pistes. Le modèle est entraîné <strong>sans les {HOLD_OUT_DAYS} derniers jours</strong>, que « A-t-il vu
             juste ? » et l’« attendu d’après vos habitudes » des Tendances les estiment donc sans les avoir vus.
           </p>
@@ -810,8 +811,8 @@ function AdvancedTab({ analysis }) {
               return (
                 <div key={r.dateKey} className="reco-residual-row">
                   <span className="reco-residual-date">{d}/{m}</span>
-                  <span className="reco-residual-actual">Réel : <strong>{r.actual.toFixed(1).replace('.', ',')}</strong></span>
-                  <span className="reco-residual-pred">Prédit : <strong>{r.predicted.toFixed(1).replace('.', ',')}</strong></span>
+                  <span className="reco-residual-actual">Réel : <strong>{r.actual.toFixed(1).replace('.', decimalMark())}</strong></span>
+                  <span className="reco-residual-pred">Prédit : <strong>{r.predicted.toFixed(1).replace('.', decimalMark())}</strong></span>
                   <span className={'reco-residual-diff ' + (diff >= 0 ? 'reco-diff-pos' : 'reco-diff-neg')}>
                     {formatSigned(diff, 1)}
                   </span>

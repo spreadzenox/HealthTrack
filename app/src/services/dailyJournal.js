@@ -8,6 +8,7 @@
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
 import { mealKcal } from './mealEditing'
+import { appLocale } from '../i18n/locale.js'
 
 /** Types uniquement résumés (jamais listés individuellement). */
 export const JOURNAL_SUMMARY_TYPES = [
@@ -289,10 +290,10 @@ export function dayHeading(dateKey, now = new Date()) {
   let title
   if (dateKey === localDateKey(now.toISOString())) title = 'Aujourd’hui'
   else if (dateKey === localDateKey(yesterday.toISOString())) title = 'Hier'
-  else title = capitalize(date.toLocaleDateString('fr-FR', { weekday: 'long' }))
+  else title = capitalize(date.toLocaleDateString(appLocale(), { weekday: 'long' }))
   const opts = { day: 'numeric', month: 'long' }
   if (y !== now.getFullYear()) opts.year = 'numeric'
-  return { title, date: date.toLocaleDateString('fr-FR', opts) }
+  return { title, date: date.toLocaleDateString(appLocale(), opts) }
 }
 
 /**

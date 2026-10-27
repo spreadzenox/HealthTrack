@@ -25,6 +25,7 @@ import { getWatchAutoSyncState } from '../services/watchAutoSync'
 import { detectPhoneApps } from '../devices/phoneApps'
 import useDisclosure from '../hooks/useDisclosure'
 import './Connectors.css'
+import { appLocale } from '../i18n/locale.js'
 
 /**
  * How far back to look when doing the first historical import.
@@ -47,7 +48,7 @@ function withTimeout(promise, ms, fallback) {
 function formatDate(isoString) {
   if (!isoString) return '—'
   try {
-    return new Intl.DateTimeFormat('fr-FR', {
+    return new Intl.DateTimeFormat(appLocale(), {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit',
     }).format(new Date(isoString))

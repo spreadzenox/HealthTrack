@@ -10,6 +10,7 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import LineIcon from '../components/LineIcon'
 import { loadWellbeingHistory } from '../services/mood/faceMoodData'
 import { frDecimal } from '../services/today'
+import { appLocale } from '../i18n/locale.js'
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Jour' },
@@ -45,8 +46,8 @@ function axisLabels(period, from) {
     out.push({
       at: d.toISOString(),
       text: period === 'week'
-        ? d.toLocaleDateString('fr-FR', { weekday: 'narrow' })
-        : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }).replace('.', ''),
+        ? d.toLocaleDateString(appLocale(), { weekday: 'narrow' })
+        : d.toLocaleDateString(appLocale(), { day: 'numeric', month: 'short' }).replace('.', ''),
     })
   }
   return out
@@ -103,7 +104,7 @@ function BipolarBar({ value, left, right, label }) {
     <div className="wbh-bipolar">
       <div className="wbh-bipolar-head">
         <span className="wbh-bipolar-label">{label}</span>
-        <span className="mono">{value > 0 ? '+' : value < 0 ? '−' : ''}{Math.abs(value).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+        <span className="mono">{value > 0 ? '+' : value < 0 ? '−' : ''}{Math.abs(value).toLocaleString(appLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
       </div>
       <div className="wbh-bipolar-track" aria-hidden="true">
         <span className="wbh-bipolar-zero" />

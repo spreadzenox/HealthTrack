@@ -11,6 +11,7 @@ import { FODMAP_GROUPS } from '../services/fodmapChallenge'
 import { shortFoodName } from '../utils/format'
 import DetailsToggle from './DetailsToggle'
 import './MealFodmapLine.css'
+import { appLocale } from '../i18n/locale.js'
 
 const LABELS = Object.fromEntries(FODMAP_GROUPS.map((g) => [g.id, g.label.toLowerCase()]))
 LABELS.gos = 'GOS'
@@ -22,7 +23,7 @@ function citeSources(highlights) {
   return keys.map((k) => (k === 'Ciqual' ? 'Ciqual (Anses)' : measurements.sources[k]?.cite ?? k)).join(', ')
 }
 
-const grams = (v) => v.toLocaleString('fr-FR', { maximumFractionDigits: v < 1 ? 2 : 1 })
+const grams = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: v < 1 ? 2 : 1 })
 const foodList = (foods) => foods.map((f) => shortFoodName(f).toLowerCase()).join(', ')
 
 export default function MealFodmapLine({ items }) {

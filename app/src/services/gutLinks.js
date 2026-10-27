@@ -12,6 +12,7 @@ import { analyzeGutDays, GUT_DAY_WINDOWS } from './gutDays'
 import { analyzeGutWindows, GUT_WINDOWS, LEGACY_FODMAP_FACTOR, fodmapGroupOf, TTS_MIN_KEPT_DAYS, TTS_SHIFT_DAYS, mealFactors } from './gutWindows'
 import { GUT_TYPE, isGutDayNote } from './today'
 import { shortFoodName } from '../utils/format'
+import { appLocale } from '../i18n/locale.js'
 
 /** Jours de notes du ventre avant de pouvoir garder une piste (porte TTS : r jours retirés à chaque bout + 10). */
 export const GUT_LINKS_MIN_DAYS = 2 * TTS_SHIFT_DAYS + TTS_MIN_KEPT_DAYS
@@ -36,10 +37,10 @@ export function gutFactorLabel(factor) {
   const group = fodmapGroupOf(factor)
   if (group) return `Repas riches en ${FODMAP_FACTOR_LABELS[group] ?? group}`
   const name = shortFoodName(factor) || factor
-  return name.charAt(0).toLocaleUpperCase('fr-FR') + name.slice(1)
+  return name.charAt(0).toLocaleUpperCase(appLocale()) + name.slice(1)
 }
 
-const lowerFirst = (s) => s.charAt(0).toLocaleLowerCase('fr-FR') + s.slice(1)
+const lowerFirst = (s) => s.charAt(0).toLocaleLowerCase(appLocale()) + s.slice(1)
 
 /**
  * Libellé d'une piste qui regroupe des facteurs indiscernables : « Oignon, ail ou échalote ». Un aliment et le
@@ -142,7 +143,7 @@ export function summarizeGutLinks(entries) {
       // I134 étape 3 : aliments souvent mangés avec celui-ci qui, comparés à part, ne ressortent pas à eux seuls.
       oftenWith: [...new Set(byDay.results
         .filter((o) => o.explainedBy?.factor === r.factor && o.explainedBy.window === r.window && o.factor !== r.factor)
-        .map((o) => gutFactorLabel(o.factor).toLocaleLowerCase('fr-FR')))],
+        .map((o) => gutFactorLabel(o.factor).toLocaleLowerCase(appLocale())))],
     }
   })
 

@@ -17,6 +17,8 @@
  *   npm run visual -- --routes=/ --click="Noter moi-même"   # la note de bien-être manuelle (carte bien-être, POL-3)
  *   npm run visual -- --routes=/ --tz=America/New_York  # autre fuseau, pour voir l'Accueil à une autre heure
  *                                          (ex. le bilan du soir du ventre, proposé à partir de 18 h)
+ *   npm run visual -- --lang=en            # app en anglais (VITE_I18N_EN=1, langue choisie « English », jalon 9) :
+ *                                          compte par page les mots français restants (avertissement, pas un échec)
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
  *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
@@ -221,6 +223,17 @@ function routeName(path) {
   return path === '/' ? 'dashboard' : path.replace(/^\//, '').replace(/\//g, '_')
 }
 
+/**
+ * Mots français encore visibles dans une page censée être en anglais (`--lang=en`) : mots-outils fréquents et mots à
+ * lettres accentuées françaises. Exécuté dans la page ; un avertissement pour les runs de traduction, pas un échec.
+ */
+function countFrench() {
+  const STOP = new Set(['vous', 'votre', 'vos', 'les', 'des', 'une', 'est', 'pas', 'sur', 'avec', 'pour', 'dans', 'aux', 'du', 'et', 'ou', 'le', 'la'])
+  const words = (document.body.innerText || '').split(/[^\p{L}'’-]+/u).filter(Boolean)
+  const hits = words.filter((w) => STOP.has(w.toLowerCase()) || /[àâçéèêëîïôûùüœ]/i.test(w))
+  return { count: hits.length, samples: [...new Set(hits)].slice(0, 5) }
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2))
   const port = Number(args.port || 5199)
@@ -237,7 +250,12 @@ async function main() {
     server = spawn(join(APP_DIR, 'node_modules/.bin/vite'), ['--port', String(port), '--strictPort', '--host', '127.0.0.1'], {
       cwd: APP_DIR,
       stdio: ['ignore', 'pipe', 'pipe'],
-      env: { ...process.env, BROWSER: 'none', ...(args.play ? { VITE_DISTRIBUTION: 'play' } : {}) },
+      env: {
+        ...process.env,
+        BROWSER: 'none',
+        ...(args.play ? { VITE_DISTRIBUTION: 'play' } : {}),
+        ...(args.lang === 'en' ? { VITE_I18N_EN: '1' } : {}),
+      },
     })
     server.stderr.on('data', (d) => process.stderr.write(`[vite] ${d}`))
   }
@@ -254,10 +272,15 @@ async function main() {
       deviceScaleFactor: Number(args.dpr || 2),
       isMobile: true,
       hasTouch: true,
-      locale: 'fr-FR',
+      locale: args.lang === 'en' ? 'en-GB' : 'fr-FR',
       timezoneId: args.tz || 'Europe/Paris',
       colorScheme: args.light ? 'light' : 'dark',
     })
+
+    // Langue de l'app (src/i18n/locale.js, jalon 9) : choisie dans les Paramètres
+    if (args.lang === 'en') {
+      await context.addInitScript(() => localStorage.setItem('halcya.lang', 'en'))
+    }
 
     // Thème de l'app (src/theme/theme.js) : clair par défaut, comme sur un premier lancement.
     const themeChoice = args.dark ? 'dark' : args.theme
@@ -1016,6 +1039,7 @@ async function main() {
           current.tiles.push(tile)
         }
         await page.evaluate(() => document.querySelector('.tabbar')?.style.removeProperty('visibility'))
+        if (args.lang === 'en') current.frenchLeft = await page.evaluate(countFrench)
         current.overflowX = await page.evaluate(
           () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
         )
@@ -1036,6 +1060,7 @@ async function main() {
         r.pageErrors.length ? `${r.pageErrors.length} erreur(s) JS` : null,
         r.console.length ? `${r.console.length} msg console` : null,
         r.overflowX ? 'DÉBORDEMENT HORIZONTAL' : null,
+        r.frenchLeft?.count ? `${r.frenchLeft.count} mot(s) français restant(s) (ex. « ${r.frenchLeft.samples.join(' », « ')} »)` : null,
       ].filter(Boolean)
       console.log(`  ${r.path.padEnd(18)} ${flags.join(' · ')}${r.tiles ? `  (${r.tiles.length} écran(s))` : ''}`)
     }

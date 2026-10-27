@@ -224,6 +224,11 @@ soit complet. **Une décision pour vous, pas urgente (P32)** : vendre d'abord en
 francophones, puis au Royaume-Uni, en Irlande et dans le reste de l'UE quand l'anglais est prêt, et **pas aux
 États-Unis** tant qu'un juriste n'a pas relu (deux règles américaines visent précisément les apps de santé).
 
+**✅ 9a le 27/10 11:33 : le socle de la traduction est posé (rien de visible).** Les dates et les nombres passent
+désormais par un seul réglage de langue (« 3,4 » et « mar. 27 oct. » en français, « 3.4 » et « Tue 27 Oct » en
+anglais) ; les textes passeront par une petite fonction de traduction, écran par écran (prochaines étapes). Le
+réglage « Langue » existe mais reste caché tant que l'anglais n'est pas complet : vous ne verrez aucun changement.
+
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
 🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
@@ -249,6 +254,7 @@ francophones, puis au Royaume-Uni, en Irlande et dans le reste de l'UE quand l'a
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 11:33 — [9a : socle i18n](runs/2026-10-27-1133-i18n-socle.md) | 🏗️ | `src/i18n/` (`t()`, pluriels, `appLocale()` dans 39 fichiers, `decimalMark()`), test de catalogue, réglage « Langue » caché (`VITE_I18N_EN`), `visual --lang=en` ; rien de visible ; 2 547 Vitest |
 | 27/10 10:33 — [Forme des selles](runs/2026-10-27-1033-forme-des-selles.md) | 🏗️ | I176 : « + Selles » dans la carte ventre (3 formes, Bristol sur demande), Journal, section du PDF ; 2 532 Vitest ; v312 |
 | 27/10 09:33 — [Premium à jour + paywall des pistes ventre](runs/2026-10-27-0933-premium-pistes-ventre.md) | 🏗️ | `premiumBenefits` : pistes avec délais et PDF livrés (plus rien « en préparation ») ; `GutLinks` floutées sans premium sur Play (nombre de pistes, aucun aliment, « Débloquer ») ; conditions alignées ; 2 524 Vitest ; v311 |
 | 27/10 08:33 — [Idées : jalon 9 (anglais) prêt à coder](runs/2026-10-27-0833-idees-jalon9-anglais.md) | 💡 | `IDEES.md` I180–I183 : ≈ 2 800 chaînes mesurées (≈ 2 000 visibles hors diagnostic), 41 `fr-FR` en dur, 25 fichiers Java ; `t()` maison, français = clé ; Ciqual 2025 `alim_nom_eng` 3 484 / 3 484 ; découpage 9a–9h ; P32 (pays, États-Unis exclus : HBNR, My Health My Data) ; journal seul |

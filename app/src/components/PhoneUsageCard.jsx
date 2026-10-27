@@ -24,9 +24,10 @@ import { APP_NAME } from '../config/brand'
 import './MyDevices.css'
 import './WeatherCard.css'
 import './PhoneUsageCard.css'
+import { appLocale } from '../i18n/locale.js'
 
 function hhmm(iso) {
-  return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 }
 
 /** « réseaux sociaux 1 h 12 · vidéo 40 min » : les 3 catégories les plus utilisées (hors « autres »). */

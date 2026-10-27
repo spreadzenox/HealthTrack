@@ -1,6 +1,7 @@
 import { useDebug } from '../contexts/DebugContext'
 import { onboardingDiagnostic } from '../settings/onboarding'
 import './DebugPanel.css'
+import { appLocale } from '../i18n/locale.js'
 
 const LEVEL_EMOJI = {
   info: 'ℹ️',
@@ -12,7 +13,7 @@ const LEVEL_EMOJI = {
 function formatTs(iso) {
   try {
     const d = new Date(iso)
-    return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    return d.toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' })
   } catch {
     return iso
   }

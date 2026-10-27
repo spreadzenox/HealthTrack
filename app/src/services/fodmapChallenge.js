@@ -16,6 +16,7 @@
  */
 import { localDateKey } from './analysisEngine'
 import { GUT_TYPE, GUT_LEVELS } from './today'
+import { decimalMark } from '../i18n/locale.js'
 
 export const FODMAP_CHALLENGE_TYPE = 'fodmap_challenge'
 export const FODMAP_CHALLENGE_SOURCE = 'app_fodmap'
@@ -339,7 +340,7 @@ export function combinationsAvailable(results) {
 
 /** Portion lisible (« 2,5 tranches », « 250 ml »). */
 export function formatAmount(amount, plan) {
-  const n = String(amount).replace('.', ',')
+  const n = String(amount).replace('.', decimalMark())
   return `${n} ${amount > 1 ? plan.units : plan.unit}`
 }
 

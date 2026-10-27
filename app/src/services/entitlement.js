@@ -7,6 +7,7 @@
  * Aucune donnée de santé.
  */
 import { RELAY_URL, getInstallId } from './aiRelay'
+import { appLocale } from '../i18n/locale.js'
 
 const ENTITLEMENT_KEY = 'halcya_entitlement'
 /** Événement `window` émis à chaque nouvel état donné par le relais (`detail` : les droits à jour). */
@@ -94,7 +95,7 @@ export async function refreshEntitlement({ purchaseToken = null, fetchImpl = glo
 }
 
 const shortDate = (iso) =>
-  new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+  new Date(iso).toLocaleDateString(appLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
 
 /** La fin de la période de lancement est exclue : on affiche le dernier jour offert (minuit → la veille). */
 export const lastLaunchDay = (iso) => shortDate(Date.parse(iso) - 1)

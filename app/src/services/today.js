@@ -10,6 +10,7 @@
  */
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
+import { appLocale } from '../i18n/locale.js'
 
 export const GUT_TYPE = 'gut'
 export const GUT_SOURCE = 'app_gut'
@@ -57,11 +58,11 @@ export const TREND_MIN_PAST_DAYS = 3
 
 const DAY_MS = 86_400_000
 
-export const frDecimal = (v) => v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+export const frDecimal = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 /** « mer. 21 oct. · Bonjour » (prénom ajouté quand l'onboarding le demandera). */
 export function headerLine(now = new Date(), firstName = '') {
-  const date = now.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+  const date = now.toLocaleDateString(appLocale(), { weekday: 'short', day: 'numeric', month: 'short' })
   return `${date} · Bonjour${firstName ? ` ${firstName}` : ''}`
 }
 
@@ -182,7 +183,7 @@ export function measureTiles(summary, entries, now = new Date()) {
     {
       key: 'steps',
       label: 'Pas',
-      value: s.steps != null ? Math.round(s.steps).toLocaleString('fr-FR') : null,
+      value: s.steps != null ? Math.round(s.steps).toLocaleString(appLocale()) : null,
       sources: sourcesOf('steps'),
     },
   ]

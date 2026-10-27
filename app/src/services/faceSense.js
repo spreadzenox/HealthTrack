@@ -13,6 +13,7 @@
 import { registerPlugin } from '@capacitor/core'
 import { eveningNoteDiagnostic, eveningNotePlugin } from './eveningNote'
 import { voiceProbeDiagnostic, voiceProbeLine } from './voiceProbe'
+import { appLocale } from '../i18n/locale.js'
 
 const KEY = 'healthtrack_face_sense'
 const NativeFaceSense = registerPlugin('FaceSense')
@@ -534,7 +535,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
     : `Service : ${r.service.running ? 'actif' : 'arrêté'} · caméra ${r.service.cameraPermission ? 'autorisée' : 'non autorisée'} · batterie ${r.service.batteryExempt ? 'sans restriction' : 'optimisée par Android'}`)
   // Variante play : ni service, ni déverrouillage, ni relance ; ces lignes ne concernent que la sideload.
   if (!appOpen && r.service.stopCause) {
-    const since = s0(status).startedAt ? ` (démarré le ${new Date(s0(status).startedAt).toLocaleDateString('fr-FR')} à ${hhmm(s0(status).startedAt)})` : ''
+    const since = s0(status).startedAt ? ` (démarré le ${new Date(s0(status).startedAt).toLocaleDateString(appLocale())} à ${hhmm(s0(status).startedAt)})` : ''
     lines.push(`Arrêt : ${STOP_CAUSES[r.service.stopCause]}${since}`)
   }
   const det = r.detection

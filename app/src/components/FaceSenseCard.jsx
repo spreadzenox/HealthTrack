@@ -49,6 +49,7 @@ import { APP_NAME } from '../config/brand'
 import './MyDevices.css'
 import '../pages/Connectors.css'
 import './WeatherCard.css'
+import { appLocale } from '../i18n/locale.js'
 
 async function defaultSave(json, filename) {
   const isNative = typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
@@ -128,7 +129,7 @@ function PermanentCameraGuide({ access, open = false }) {
   )
 }
 
-const fmt = (v) => v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+const fmt = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 /** Humeur estimée (dès la première lecture) : la phrase du jour, celle du moment, la confiance et le modèle. */
 export function FaceMoodBlock({ estimate }) {
@@ -142,7 +143,7 @@ export function FaceMoodBlock({ estimate }) {
 }
 
 function frenchDate(iso) {
-  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+  return new Date(iso).toLocaleDateString(appLocale(), { day: 'numeric', month: 'long' })
 }
 
 /**

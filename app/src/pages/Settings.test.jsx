@@ -139,3 +139,10 @@ describe('Settings — Votre avis (sideload)', () => {
     expect(link).toHaveAttribute('target', '_blank')
   })
 })
+
+describe('Settings — langue (jalon 9)', () => {
+  it('le réglage « Langue » reste caché tant que l’anglais n’est pas prêt (VITE_I18N_EN coupé)', () => {
+    renderSettings()
+    expect(screen.queryByRole('radiogroup', { name: 'Langue' })).not.toBeInTheDocument()
+  })
+})

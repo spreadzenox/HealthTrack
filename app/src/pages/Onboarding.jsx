@@ -15,6 +15,7 @@ import { getLastSeenId, markAllSeen } from '../services/whatsNew'
 import LineIcon from '../components/LineIcon'
 import { APP_NAME } from '../config/brand'
 import './Onboarding.css'
+import { appLocale } from '../i18n/locale.js'
 
 const WATCHES = [
   {
@@ -344,7 +345,7 @@ function AhaStep({ imported, onImported, onReady }) {
   )
 }
 
-const fmt1 = (v) => v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+const fmt1 = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 /**
  * Bien-être estimé, facultatif (écran 7 d'I154) : trois lignes d'explication, la divulgation caméra de la variante
@@ -465,7 +466,7 @@ function GestureStep({ goal, gesture, onGesture }) {
     }
   }
 
-  const time = current ? new Date(current.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : null
+  const time = current ? new Date(current.at).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' }) : null
 
   return (
     <>

@@ -11,6 +11,7 @@ import { PURCHASE_TOKEN_KEY, getInstallId } from './aiRelay'
 import { refreshEntitlement } from './entitlement'
 import { FEATURES } from '../config/distribution'
 import { notThenable } from './nativePlugin'
+import { appLocale } from '../i18n/locale.js'
 
 /** Abonnement unique, deux formules (« base plans ») ; créés dans la Play Console par l'API (étape 6d). */
 export const PRODUCT_ID = 'halcya_premium'
@@ -84,7 +85,7 @@ export function describePlans(products) {
 export function formatMicros(micros, currency) {
   if (!Number.isFinite(micros) || !currency) return null
   try {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(micros / 1_000_000)
+    return new Intl.NumberFormat(appLocale(), { style: 'currency', currency }).format(micros / 1_000_000)
   } catch {
     return null
   }
