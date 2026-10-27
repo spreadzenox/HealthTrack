@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { NULL_SCENARIOS, simulateRealistic } from './gutWindows.sim'
-import { GUT_WINDOWS, TTS_SHIFT_DAYS, analyzeGutWindows, mantelHaenszel, mealExposures, truncatedTimeShift } from './gutWindows'
+import {
+  GUT_WINDOWS, TTS_SHIFT_DAYS, analyzeGutWindows, fodmapGroupOf, mantelHaenszel, mealExposures, mealFactors, truncatedTimeShift,
+} from './gutWindows'
 
 /** Générateur pseudo-aléatoire reproductible (mulberry32) : trames synthétiques, jamais de vraies données. */
 function rng(seed) {
@@ -228,5 +230,27 @@ describe('jumeaux par fenêtre (I173)', () => {
     const ail = res.results.filter((r) => r.factor === 'ail')
     const persil = res.results.filter((r) => r.factor === 'persil')
     expect(persil.map((r) => [r.window, r.q, r.status])).toEqual(ail.map((r) => [r.window, r.q, r.status]))
+  })
+})
+
+describe('mealFactors : sous-groupes FODMAP (N5)', () => {
+  const meal = (items) => ({ type: 'food', at: '2026-09-01T12:00:00Z', payload: { items } })
+
+  it('un facteur par sous-groupe au-dessus du repère, plus les aliments', () => {
+    expect(mealFactors(meal([{ ingredient: 'Oignon jaune, cru', quantity_g: 40 }]))).toEqual(['oignon jaune, cru', 'fodmap:fructans'])
+    expect(mealFactors(meal([{ ingredient: 'Lait demi-écrémé, UHT', quantity_g: 200 }]))).toContain('fodmap:lactose')
+    expect(mealFactors(meal([{ ingredient: 'Riz blanc cuit', quantity_g: 150 }]))).toEqual(['riz blanc cuit'])
+  })
+
+  it('le score FODMAP générique n’est plus un facteur', () => {
+    const factors = mealFactors(meal([{ ingredient: 'Oignon jaune, cru', quantity_g: 40 }, { ingredient: 'Yaourt nature', quantity_g: 125 }]))
+    expect(factors).not.toContain('fodmap_eleve')
+    expect(factors.filter(fodmapGroupOf).sort()).toEqual(['fodmap:fructans', 'fodmap:lactose'])
+  })
+
+  it('fodmapGroupOf', () => {
+    expect(fodmapGroupOf('fodmap:gos')).toBe('gos')
+    expect(fodmapGroupOf('fodmap_eleve')).toBeNull()
+    expect(fodmapGroupOf('oignon')).toBeNull()
   })
 })

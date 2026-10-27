@@ -26,7 +26,9 @@
  * réintroduction guidée (I135) sont là pour ça. On préfère attendre plutôt que montrer de faux suspects.
  */
 import { localDateKey } from './analysisEngine'
-import { computeTotalsFromItems } from './nutritionKPIs'
+import { getNutritionTable } from '../data/nutritionTable'
+import measurements from '../data/fodmapMeasurements.json'
+import { estimateMealFodmap, highFodmapGroups } from './fodmapGroups'
 import { benjaminiHochberg, normalCdf } from './statistics'
 import { GUT_TYPE, isGutDayNote } from './today'
 
@@ -45,8 +47,18 @@ export const GUT_WINDOWS = [
   },
 ]
 
-/** Facteur « repas riche en FODMAP » : hypothèse de départ issue d'une table générale, jamais un verdict. */
-export const FODMAP_FACTOR = 'fodmap_eleve'
+/**
+ * Facteurs FODMAP par sous-groupe (N5) : « repas riche en fructanes », « … en lactose »… (au-dessus du repère de départ
+ * par portion, `fodmapGroups.js`). Hypothèses de départ issues de tables générales, jamais un verdict : on teste
+ * lequel des groupes va avec le ventre de la personne. Ancien facteur unique `fodmap_eleve` (jusqu'au 27/10) : il
+ * n'est plus produit, son libellé reste connu.
+ */
+export const FODMAP_FACTOR_PREFIX = 'fodmap:'
+export const LEGACY_FODMAP_FACTOR = 'fodmap_eleve'
+export const fodmapFactor = (group) => `${FODMAP_FACTOR_PREFIX}${group}`
+/** Sous-groupe d'un facteur FODMAP (`fructans`…), sinon null. */
+export const fodmapGroupOf = (factor) =>
+  (typeof factor === 'string' && factor.startsWith(FODMAP_FACTOR_PREFIX) ? factor.slice(FODMAP_FACTOR_PREFIX.length) : null)
 
 /** Notes minimales avec et sans l'aliment dans une fenêtre avant de tester (provisoire, calibré par I133). */
 export const MIN_EXPOSED_NOTES = 8
@@ -69,7 +81,7 @@ export const GUT_TTS_MAX_U = 0.1
 export const TTS_MIN_KEPT_DAYS = 10
 
 /**
- * Aliments testés au plus (I173), en plus du facteur « repas riches en FODMAP ». Chaque aliment testé ajoute des
+ * Aliments testés au plus (I173), en plus des sous-groupes FODMAP. Chaque aliment testé ajoute des
  * comparaisons à corriger : dans un vrai journal, une longue traîne d'ingrédients rares rendait les vrais liens
  * invisibles. On ne garde que les aliments les mieux répartis (mangés ni presque tous les jours ni presque jamais),
  * un choix qui ne regarde jamais le ventre : il ne peut pas fabriquer de fausse piste. Banc du 26/10 (bilans du soir,
@@ -90,17 +102,15 @@ export function mealFactors(meal) {
   if (!Array.isArray(items)) return []
   const factors = new Set(items.map((it) => normalize(it.ingredient)).filter(Boolean))
   if (factors.size === 0) return []
-  try {
-    if (computeTotalsFromItems(items).fodmap_score >= 2) factors.add(FODMAP_FACTOR)
-  } catch {
-    // Table nutritionnelle pas chargée : on garde seulement les aliments.
-  }
+  const table = getNutritionTable()
+  // Table nutritionnelle pas chargée : on garde seulement les aliments.
+  if (table) for (const g of highFodmapGroups(estimateMealFodmap(items, table, measurements))) factors.add(fodmapFactor(g))
   return [...factors]
 }
 
 /**
- * Facteurs à tester (I173), choisis sans regarder le ventre : le facteur FODMAP (hypothèse de départ fixée d'avance)
- * puis les `max` aliments les mieux répartis sur les jours observés, min(jours avec, jours sans) décroissant ; à
+ * Facteurs à tester (I173), choisis sans regarder le ventre : les sous-groupes FODMAP mangés au-dessus du repère
+ * (hypothèses de départ fixées d'avance, N5 ; un sous-groupe trop rare ne coûte rien : il n'est pas testé) puis les `max` aliments les mieux répartis sur les jours observés, min(jours avec, jours sans) décroissant ; à
  * égalité, ordre alphabétique (stable).
  * @param {{ day: string|number, factors: string[] }[]} meals
  * @param {number} [max]
@@ -117,10 +127,10 @@ export function selectTestedFactors(meals, max = MAX_TESTED_FOODS) {
   }
   const balance = (f) => Math.min(eaten.get(f).size, days.size - eaten.get(f).size)
   const foods = [...eaten.keys()]
-    .filter((f) => f !== FODMAP_FACTOR)
+    .filter((f) => !fodmapGroupOf(f))
     .sort((a, b) => balance(b) - balance(a) || a.localeCompare(b, 'fr'))
     .slice(0, max)
-  return [...(eaten.has(FODMAP_FACTOR) ? [FODMAP_FACTOR] : []), ...foods].sort()
+  return [...[...eaten.keys()].filter(fodmapGroupOf), ...foods].sort()
 }
 
 /**

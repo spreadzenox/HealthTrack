@@ -43,3 +43,28 @@ describe('GutLinks — vérifier une piste par une réintroduction guidée (7c)'
     expect(screen.getByRole('link', { name: /Vérifier avec une réintroduction guidée/ })).toHaveAttribute('href', '/reintroduction')
   })
 })
+
+describe('GutLinks — pistes par sous-groupe FODMAP (N5)', () => {
+  const lactose = link({ factor: 'fodmap:lactose', label: 'Repas riches en lactose' })
+
+  it('phrase simple et lien vers le test du même groupe', () => {
+    render(<GutLinks gut={{ status: 'links', noteDays: 70, tested: 12, links: [lactose] }} />)
+    expect(screen.getByText('Repas riches en lactose', { exact: false })).toBeTruthy()
+    expect(screen.getByText(/^Les jours avec un repas riche en lactose, gêne ou douleur 12 fois sur 20\./)).toBeTruthy()
+    expect(screen.getByRole('link', { name: /Vérifier/ })).toHaveAttribute('href', '/reintroduction?groupe=lactose&aliment=milk')
+  })
+
+  it('fructanes : la veille, et le choix de l’aliment dans le groupe', () => {
+    const f = link({ factor: 'fodmap:fructans', label: 'Repas riches en fructanes', when: 'veille', whenLabel: 'la veille' })
+    render(<GutLinks gut={{ status: 'links', noteDays: 70, tested: 12, links: [f] }} />)
+    expect(screen.getByText(/^Les lendemains d’un repas riche en fructanes,/)).toBeTruthy()
+    expect(screen.getByRole('link', { name: /Vérifier/ })).toHaveAttribute('href', '/reintroduction?groupe=fructans')
+  })
+
+  it('dans les détails, le repère présenté comme une hypothèse de départ', () => {
+    render(<GutLinks gut={{ status: 'links', noteDays: 70, tested: 12, links: [lactose] }} />)
+    expect(screen.queryByText(/hypothèse de départ/)).toBeNull()
+    fireEvent.click(screen.getByRole('button'))
+    expect(screen.getByText(/repère général par portion \(une hypothèse de départ\)\. Vos données priment\./)).toBeTruthy()
+  })
+})

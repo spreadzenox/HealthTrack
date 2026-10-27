@@ -64,6 +64,11 @@ button.fodmap-group {
   cursor: pointer;
 }
 
+/* N5 : groupe ouvert depuis une piste du ventre */
+.is-focus > .fodmap-group {
+  border-color: var(--lilac-bar);
+}
+
 button.fodmap-group:focus-visible,
 .fodmap-food:focus-visible {
   border-color: var(--lilac-bar);

@@ -4,7 +4,7 @@ import {
   challengeStatus, combinationsAvailable, defaultPlan, groupResults, recordDose, restartChallenge, startChallenge,
   verdictSentence, challengeFoodFor, challengePath,
 } from './fodmapChallenge'
-import { FODMAP_FACTOR } from './gutWindows'
+import { LEGACY_FODMAP_FACTOR } from './gutWindows'
 import { parseBackup } from '../storage/localHealthStorage'
 
 /** Heure locale du jour `d` (26/10/2026 = jour 0). */
@@ -244,10 +244,26 @@ describe('aliment d’une piste ventre → groupe à tester (7c)', () => {
     expect(challengeFoodFor(factor)).toEqual({ group, food })
   })
 
-  it.each(['lait de coco', 'boisson à l’avoine', 'pain sans gluten', 'volaille', 'riz', 'café', FODMAP_FACTOR, ''])(
+  it.each(['lait de coco', 'boisson à l’avoine', 'pain sans gluten', 'volaille', 'riz', 'café', LEGACY_FODMAP_FACTOR, 'fodmap:inconnu', ''])(
     'rien pour « %s »', (factor) => {
       expect(challengeFoodFor(factor)).toBeNull()
     })
+
+  it.each([
+    ['fodmap:lactose', 'lactose', 'milk'],
+    ['fodmap:gos', 'gos', 'chickpeas'],
+    ['fodmap:fructose', 'fructose', 'honey'],
+    ['fodmap:sorbitol', 'sorbitol', 'avocado'],
+    ['fodmap:mannitol', 'mannitol', 'mushrooms'],
+    ['fodmap:fructans', 'fructans', null],
+  ])('piste du sous-groupe %s → test du même groupe (N5)', (factor, group, food) => {
+    expect(challengeFoodFor(factor)).toEqual({ group, food })
+  })
+
+  it('piste « fructanes » : le groupe seul, l’aliment reste à choisir (N5)', () => {
+    expect(challengePath('fodmap:fructans')).toBe('/reintroduction?groupe=fructans')
+    expect(challengePath('fodmap:lactose')).toBe('/reintroduction?groupe=lactose&aliment=milk')
+  })
 
   it('chemin de l’écran, aliment présélectionné ou simple choix du groupe', () => {
     expect(challengePath('oignon')).toBe('/reintroduction?groupe=fructans&aliment=onion')

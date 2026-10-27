@@ -1221,8 +1221,17 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   ventre seulement, `gutCardMode`) : « Riche en fructanes : oignon », « Probablement riche » si le repère n'est dépassé
   qu'avec des valeurs à confiance basse (`mealFodmapHighlights`), grammes / repère / origine au chevron. Reste possible :
   la même ligne sur le résultat d'une analyse photo avant enregistrement, et dans « Vos derniers jours ».
-- [ ] **N5** pistes repas → ventre par sous-groupe (banc des nulles et de puissance), lien vers la réintroduction du
-  même groupe ; **N6** rapport PDF par sous-groupe (avec I175 étape 2).
+- [x] **N5** — **FAIT le 27/10 02:33** : `mealFactors` produit `fodmap:<groupe>` pour chaque sous-groupe au-dessus du
+  repère (`estimateMealFodmap`) au lieu de `fodmap_eleve` ; tous les sous-groupes mangés sont candidats (un groupe trop
+  rare n'est pas testé, donc ne coûte rien ; jumeaux comptés une fois) ; libellés « Repas riches en lactose », piste
+  regroupée « Lentille verte (riche en GOS) » ou « Banane, yaourt nature ou le lactose » ; lien vers le test du même
+  groupe (fructanes : groupe en tête, aliment à choisir) ; calendrier du rapport avec `fodmapGroups` par jour. Banc
+  `gutFodmap.calibration.test.js` (vrais noms Ciqual, 200 jeux, 63 j) : nulles ≤ 13/200 avec, ≤ 14/200 sans ; puissance
+  lactose (lait ou yaourt ×4, 90 j) 25/200 contre 13/200, oignon ×4 64 contre 66/200.
+  **Reste** : fructanes presque toujours `too_early` dans un journal où oignon, ail ou pâtes reviennent chaque jour
+  (peu de jours sans) : normal, la réintroduction guidée est là pour ça ; carotte « riche en fructose en excès » à 80 g
+  d'après Ciqual (fructose 1,51 > glucose 0,89) : à surveiller (donnée Ciqual, pas une erreur de calcul).
+- [ ] **N6** rapport PDF par sous-groupe (avec I175 étape 2) : `calendar[].fodmapGroups` est prêt.
 
 **Mise à jour du 26/10 (13:48 Paris)** : ✅ **I175 étape 1** — modèle pur du rapport (`services/report/buildReport.js` : période 2 / 4 / 12 semaines, ventre jour par jour à la note la plus forte, semaine par semaine, calendrier avec jours riches en FODMAP, tests de réintroduction, pistes « à confirmer » avec le nombre de comparaisons, sommeil mesuré et régularité, aliments fréquents, sources lisibles, bien-être estimé seulement sur demande) ; rien d'affiché. Suite : **I175 étape 2** (`renderPdf.js`, `pdf-lib` + `fontkit` chargés à la demande, polices embarquées, écriture dans Documents, accès depuis Analyses et Données) → I176 → 7d.
 

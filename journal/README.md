@@ -135,6 +135,19 @@ un nutriment pour plus de 10 % (en poids) de ce que vous avez mangé, la ligne a
 étiquette « partiel » : c'est un minimum, l'apport réel est sans doute plus élevé. Sur les données de démo : oméga-3 et
 folates. **À tester** : Journal → Nutrition, repérer les lignes « partiel » et lire la note en bas de page.
 
+**✅ N5 le 27/10 02:33 : les pistes du ventre disent lequel des FODMAP.** Dans Analyses (objectif « Mon ventre »), le
+facteur unique « Repas riches en FODMAP » est remplacé par six facteurs : « Repas riches en fructanes », « … en GOS »,
+« … en lactose », « … en fructose en excès », « … en sorbitol », « … en mannitol » (repère de départ par portion
+dépassé, présenté comme une hypothèse). Mêmes protections que les aliments (blocs de jours voisins, correction des
+comparaisons multiples, décalage temporel, aliments mangés ensemble). Banc de 200 journaux simulés aux vrais noms
+Ciqual : **pas plus de fausses pistes** (au plus 13/200, comme avant) ; un effet qui passe par le lait et le yaourt
+est repéré **25 fois sur 200 au lieu de 13** (le lactose réunit les deux) ; un effet de l'oignon seul, 64 au lieu de 66.
+« Vérifier avec une réintroduction guidée » ouvre le test du même groupe (lactose → lait ; fructanes → le groupe en
+tête, vous choisissez blé, oignon ou ail). Honnêteté : si l'oignon, l'ail ou les pâtes reviennent presque tous les
+jours, les fructanes restent « trop tôt pour dire » (trop peu de jours sans) : la réintroduction tranche mieux.
+**À tester** : rien de visible tant que vous n'avez pas 28 jours de bilans du ventre ; ensuite, une piste « Repas riches
+en … » doit mener au test du même groupe.
+
 **✅ N3b-2 le 27/10 01:33 : les lentilles, pois chiches et haricots ont leurs GOS.** Ciqual ne les mesure pas ; on
 part de mesures publiées sur légumineuses sèches (Siva 2019), ramenées au cuit avec l'eau de Ciqual et les pertes au
 trempage et à la cuisson publiées (Njoumi 2019). Ordres de grandeur : 150 g de lentilles cuites ≈ 1,1 g de GOS
@@ -187,6 +200,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 02:33 — [N5 : pistes du ventre par sous-groupe FODMAP](runs/2026-10-27-0233-n5-pistes-fodmap.md) | 🏗️ | facteurs `fodmap:<groupe>` au lieu de `fodmap_eleve` ; banc 200 jeux : nulles ≤ 13/200 (inchangé), lactose 25 vs 13/200, oignon 64 vs 66 ; lien vers le test du même groupe ; calendrier du rapport par sous-groupe ; 2 496 Vitest |
 | 27/10 01:33 — [N3b-2 : GOS des légumineuses cuites](runs/2026-10-27-0133-n3b2-gos-legumineuses.md) | 🏗️ | `legumeGos.mjs` : eau Ciqual 2025 × Siva 2019 (tableau 5, relu) × pertes Njoumi 2019, 13 aliments en `analogie` recalculables ; sources citées dans le chevron de la carte d'un repas ; 2 478 Vitest ; v304 |
 | 27/10 00:33 — [N2b : plus de faux zéro dans Nutrition](runs/2026-10-27-0033-n2b-nutrition-partiel.md) | 🏗️ | `unknown_share` au poids mangé dans `computeTotalsFromItems` ; « ≥ » + « partiel » dans Nutrition au-delà de 10 % ; 2 471 Vitest ; v303 |
 | 26/10 22:33 — [N3a-bis + N3b : mesures FODMAP publiées](runs/2026-10-26-2233-n3b-mesures-fodmap.md) | 🏗️ | `fodmapMeasurements.json` v2 (une entrée par groupe, source, tableau, confiance) : 32 aliments, 4 sources (Ferjančič 2024, Natale 2025, MEXT 2020, revue Wang & Cheong 2023) ; polyols Ciqual répartis plutôt que remplacés ; « < x » : `bas` seulement si la portion reste sous le repère au plafond de la limite ; test `UpdateBanner` fiabilisé ; rien d'affiché ; 2 457 Vitest |

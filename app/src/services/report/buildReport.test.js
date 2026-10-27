@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { REPORT_DISCLAIMER, buildReport, reportFileName } from './buildReport'
 import { FODMAP_CHALLENGE_SOURCE, FODMAP_CHALLENGE_TYPE, recordDose, startChallenge } from '../fodmapChallenge'
-import { FODMAP_FACTOR, mealFactors } from '../gutWindows'
+import { fodmapGroupOf, mealFactors } from '../gutWindows'
 import { simulateRealistic } from '../gutWindows.sim'
 
 /** Heure locale du jour `d` (26/10/2026 = jour 0, « aujourd'hui »). */
@@ -66,9 +66,19 @@ describe('buildReport — repas, sommeil, sources', () => {
     expect(r.topFoods[0]).toEqual({ label: 'Oignon', days: 2 })
     expect(r.topFoods[1]).toEqual({ label: 'Riz', days: 1 })
     expect(r.topFoods.some((f) => f.label === 'Repas riches en FODMAP')).toBe(false)
-    const fodmapToday = mealFactors(meal(0, 'Oignon')).includes(FODMAP_FACTOR)
+    const fodmapToday = mealFactors(meal(0, 'Oignon')).some(fodmapGroupOf)
     expect(r.calendar.at(-1).fodmap).toBe(fodmapToday)
     expect(r.calendar.at(-2).fodmap).toBe(fodmapToday)
+  })
+
+  it('calendrier : les sous-groupes FODMAP du jour (N5)', () => {
+    const entries = [
+      { type: 'food', at: new Date(NOW.getTime() - 3600_000).toISOString(), payload: { items: [{ ingredient: 'Oignon jaune, cru', quantity_g: 40 }, { ingredient: 'Yaourt nature', quantity_g: 125 }] } },
+    ]
+    const r = buildReport(entries, { now: NOW })
+    expect(r.calendar.at(-1)).toMatchObject({ fodmap: true, fodmapGroups: ['fructans', 'lactose'] })
+    expect(r.calendar.at(-2)).toMatchObject({ fodmap: false, fodmapGroups: [] })
+    expect(r.topFoods.some((f) => /riches en/.test(f.label))).toBe(false)
   })
 
   it('sommeil : durée moyenne des nuits mesurées de la période, régularité seulement avec assez de nuits', () => {
