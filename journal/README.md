@@ -64,6 +64,13 @@
   yaourt, miel, avocat, champignons…), portions prêtes ; sinon vous choisissez le groupe. **À tester** : dès qu'une
   piste ventre apparaît, toucher le lien et vérifier l'aliment proposé.
 
+- **Rapport PDF pour mon médecin** (27/10 04:33) — en bas d'Analyses (objectif « Mon ventre ») et dans Données :
+  2, 4 ou 12 semaines, puis « Créer le PDF » : 2 pages (ventre semaine par semaine, calendrier avec les groupes
+  FODMAP du jour, tests de réintroduction, pistes « à confirmer »), rangées dans Documents, puis Android propose
+  l'envoi (e-mail, messagerie…). Le bien-être estimé n'y est que si vous cochez la case. Premium sur Play (offert
+  pendant le lancement). **À tester** : créer un rapport de 4 semaines, l'ouvrir depuis Fichiers › Documents, puis
+  l'envoyer à vous-même par e-mail ; dites-nous ce qui manque pour votre gastro-entérologue ou diététicienne.
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -203,6 +210,7 @@ décompte, pas une analyse), fichier de 20 à 30 Ko ; le bouton « Rapport PDF p
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 04:33 — [N6b : bouton « Rapport PDF pour mon médecin »](runs/2026-10-27-0433-n6b-rapport-pdf.md) | 🏗️ | carte en bas d'Analyses (objectif ventre) et dans Données : 2 / 4 / 12 semaines, bien-être décoché par défaut, PDF dans Documents puis partage Android (`@capacitor/share` 8.0.3, MIT) ; premium sur play ; essai de bout en bout sur les données de démo ; 2 511 Vitest |
 | 27/10 03:33 — [N6a : le rapport PDF se dessine](runs/2026-10-27-0333-n6a-rendu-pdf.md) | 🏗️ | `renderPdf.js` (pdf-lib + fontkit, MIT) : 2 pages A4, calendrier avec sous-groupes FODMAP abrégés, décompte par sous-groupe, polices TTF embarquées (conversion WOFF → TTF scriptée) ; 19–26 Ko ; rien d'affiché ; 2 507 Vitest ; v306 |
 | 27/10 02:33 — [N5 : pistes du ventre par sous-groupe FODMAP](runs/2026-10-27-0233-n5-pistes-fodmap.md) | 🏗️ | facteurs `fodmap:<groupe>` au lieu de `fodmap_eleve` ; banc 200 jeux : nulles ≤ 13/200 (inchangé), lactose 25 vs 13/200, oignon 64 vs 66 ; lien vers le test du même groupe ; calendrier du rapport par sous-groupe ; 2 496 Vitest ; v305 |
 | 27/10 01:33 — [N3b-2 : GOS des légumineuses cuites](runs/2026-10-27-0133-n3b2-gos-legumineuses.md) | 🏗️ | `legumeGos.mjs` : eau Ciqual 2025 × Siva 2019 (tableau 5, relu) × pertes Njoumi 2019, 13 aliments en `analogie` recalculables ; sources citées dans le chevron de la carte d'un repas ; 2 478 Vitest ; v304 |

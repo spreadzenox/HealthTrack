@@ -946,6 +946,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     expect(within(section).getByText(/L’attente joue aussi : une réintroduction guidée aide à trancher/)).toBeInTheDocument()
     expect(within(section).getByText(/RR = .* · q = /)).toBeInTheDocument()
     expect(screen.getByTestId('reintro-entry')).toHaveAttribute('href', '/reintroduction')
+    expect(screen.getByTestId('doctor-report')).toHaveTextContent('Rapport PDF pour mon médecin')
   })
 
   it('says « trop tôt » in one discreet line while there are only a few days of gut notes', async () => {
@@ -973,5 +974,6 @@ describe('Recommendations — votre ventre et vos repas', () => {
     expect(screen.queryByTestId('gut-links')).toBeNull()
     expect(screen.queryByText('Votre ventre et vos repas')).toBeNull()
     expect(screen.queryByTestId('reintro-entry')).toBeNull()
+    expect(screen.queryByTestId('doctor-report')).toBeNull()
   })
 })

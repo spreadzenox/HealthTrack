@@ -4,6 +4,7 @@ import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { deleteAllMyData } from '../services/deleteAllData'
 import { activityLevel } from '../services/nutrientReferenceIntakes'
 import { APP_NAME } from '../config/brand'
+import DoctorReportCard from '../components/DoctorReportCard'
 import '../Food.css'
 
 async function isAndroidNative() {
@@ -204,6 +205,8 @@ export default function Data() {
           </button>
           {exportStatus && <p className="data-status">{exportStatus}</p>}
         </div>
+
+        <DoctorReportCard />
 
         <div className="data-block">
           <h3 className="section-title">Importer (restaurer)</h3>
