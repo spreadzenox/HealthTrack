@@ -44,3 +44,9 @@
 - N5 (pistes repas → ventre par sous-groupe, banc des nulles et de puissance) ; reste de N3b-2 possible plus tard :
   sorbitol des lentilles et pois chiches (Siva 662 / 515 mg à sec, pertes à la cuisson inconnues : laissé inconnu),
   cerise et autres aliments MEXT, `fodmap_score` des nouveaux repas branché sur les sous-groupes.
+
+## Après le merge (PR #410 → `28ef6e6`)
+- Checks de la PR tous verts (Vitest, Build APK, Publier l'APK, émulateur A56 API 35 et 36, relais, budget de
+  lectures, protocole montre).
+- Sur main : « Build & Release » vert, **v304**, APK sideload de 34 276 876 octets ; « Play — AAB », « Tests » et
+  émulateur A56 verts.
