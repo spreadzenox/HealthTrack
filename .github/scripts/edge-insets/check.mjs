@@ -116,9 +116,10 @@ if (!(await connect())) {
   shot('accueil')
   const statusFrame = shell('dumpsys window | grep -m3 -iE "statusBars|status_bar.*frame"').trim()
   lines.push('```', statusFrame, shell('logcat -d -s HalcyaInsets').trim().split('\n').slice(-6).join('\n'), '```')
-  const restOk = rest && rest.top >= 20 && rest.bottom >= 16
+  // Haut : barre d'état + encoche, jamais plus de 64 dp sur un téléphone (105 = barre de titre en trop)
+  const restOk = rest && rest.top >= 20 && rest.top <= 64 && rest.bottom >= 16
   ok &&= restOk
-  lines.push(`- ${restOk ? '✅' : '❌'} encarts au repos : haut ${rest?.top} px, bas ${rest?.bottom} px (attendu ≥ 20 et ≥ 16)`)
+  lines.push(`- ${restOk ? '✅' : '❌'} encarts au repos : haut ${rest?.top} px, bas ${rest?.bottom} px (attendu 20–64 et ≥ 16)`)
 
   // Clavier : premier champ de saisie visible, touché par un vrai appui (s'il existe sur l'écran affiché)
   const field = await evaluate(`(() => { const el = [...document.querySelectorAll('input:not([type=checkbox]):not([type=radio]),textarea')]
