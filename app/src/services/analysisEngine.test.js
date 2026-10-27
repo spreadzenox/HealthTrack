@@ -2240,6 +2240,16 @@ describe('selectLevers — pistes à deux étages (I108)', () => {
     expect(levers.every((l) => l.stage === 'personal')).toBe(true)
   })
 
+  it('shows one movement lever, not both « Marcher » and « Bouger davantage » (POL-PLAY-12)', () => {
+    const levers = selectLevers([
+      corr('activityCalories', 0.5, 0.01), corr('steps', 0.45, 0.01), corr('sleepMinutes', 0.4, 0.02),
+    ])
+    expect(levers.map((l) => l.variable)).toEqual(['activityCalories', 'sleepMinutes'])
+    // le plus solide l'emporte, même avec un |r| plus faible
+    expect(selectLevers([corr('activityCalories', 0.5, 0.15), corr('steps', 0.45, 0.01)]).map((l) => l.variable))
+      .toEqual(['steps'])
+  })
+
   it('never proposes q ≥ 0.2 or a non-actionable variable', () => {
     expect(selectLevers([corr('steps', 0.5, 0.25), corr('restingHR', -0.6, 0.001)])).toEqual([])
   })
