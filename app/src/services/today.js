@@ -119,6 +119,7 @@ export const SOURCE_LABELS = {
   app_wellbeing: 'Bien-être (app)',
   app_cigarette: 'Tabac (app)',
   app_gut: 'Ventre (app)',
+  app_stool: 'Selles (app)',
   samsung_watch: 'Montre Samsung',
   health_connect: 'Health Connect',
   huawei_watch: 'Montre Huawei',

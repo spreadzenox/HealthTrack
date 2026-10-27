@@ -215,3 +215,33 @@ describe('PistesTeaser', () => {
     expect(screen.getByText(/pistes sommeil → bien-être/)).toBeInTheDocument()
   })
 })
+
+describe('GutCard — forme des selles (I176)', () => {
+  beforeEach(async () => {
+    const { createEntry } = await import('../storage/localHealthStorage')
+    createEntry.mockReset()
+    createEntry.mockResolvedValue(1)
+  })
+
+  it('« + Selles » s’ouvre sur trois formes ; un geste enregistre la forme et confirme', async () => {
+    const { createEntry } = await import('../storage/localHealthStorage')
+    wrap(<GutCard read={async () => []} />)
+    expect(screen.queryByRole('button', { name: 'Normales' })).not.toBeInTheDocument()
+    fireEvent.click(await screen.findByRole('button', { name: '+ Selles' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Normales' }))
+    await waitFor(() => expect(createEntry).toHaveBeenCalledWith(expect.objectContaining({ type: 'stool', source: 'app_stool', payload: { form: 'normal' } })))
+    expect(await screen.findByText(/Selles notées : Normales, à \d\d:\d\d\./)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Dures' })).not.toBeInTheDocument()
+  })
+
+  it('le type de Bristol seulement sur demande, et il fixe la forme', async () => {
+    const { createEntry } = await import('../storage/localHealthStorage')
+    wrap(<GutCard read={async () => []} />)
+    fireEvent.click(await screen.findByRole('button', { name: '+ Selles' }))
+    expect(screen.queryByText('Petites boules dures, séparées')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Préciser le type (échelle de Bristol)' }))
+    fireEvent.click(screen.getByRole('button', { name: /Petites boules dures/ }))
+    await waitFor(() => expect(createEntry).toHaveBeenCalledWith(expect.objectContaining({ payload: { form: 'hard', bristol: 1 } })))
+    expect(await screen.findByText(/Selles notées : Dures · type 1/)).toBeInTheDocument()
+  })
+})

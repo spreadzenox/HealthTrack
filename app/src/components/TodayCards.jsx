@@ -18,6 +18,7 @@ import {
 } from '../services/today'
 import DetailsToggle from './DetailsToggle'
 import GutEveningReminder from './GutEveningReminder'
+import StoolLine from './StoolLine'
 import './TodayCards.css'
 
 const DAY_MS = 86_400_000
@@ -152,6 +153,7 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
         <p className="gut-evening-done">Bilan du jour : {gutLevelLabel(evening.done.payload.level)}. Merci !</p>
       )}
       {entries && (evening.ask || evening.done) && <GutEveningReminder />}
+      {entries && <StoolLine />}
       {details && entries && <p className="today-details-line mono">{gutWeekLine(summary)}</p>}
     </section>
   )

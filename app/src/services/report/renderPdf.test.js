@@ -39,6 +39,7 @@ describe('renderReportPdf', () => {
     expect(all).toMatch(/Aucune nuit mesurée sur la période\./)
     expect(all).toMatch(/pas un diagnostic/)
     expect(all).not.toMatch(/HealthTrack/)
+    expect(all).not.toMatch(/Forme des selles/)
   })
 
   it('FODMAP par sous-groupe : abréviation dans le calendrier, ligne du tableau, repère présenté comme une hypothèse', async () => {
@@ -59,7 +60,9 @@ describe('renderReportPdf', () => {
     for (let seed = 1; seed <= 8 && !report; seed++) {
       const entries = simulateRealistic({ seed: seed * 31, days: 90, timedNotes: false, dayNotes: true, dayEffect: { food: 'oignon', day: 0, odds: 8 } })
       const last = new Date(Math.max(...entries.map((e) => Date.parse(e.at))))
-      const r = buildReport(entries, { now: last, weeks: 12, appVersion: 'v305' })
+      // Forme des selles (I176) notée un jour sur deux : la section tient sans faire déborder la page 2.
+      const stools = Array.from({ length: 45 }, (_, i) => ({ type: 'stool', source: 'app_stool', at: new Date(last.getTime() - i * 2 * 86_400_000).toISOString(), payload: { form: ['hard', 'normal', 'loose'][i % 3] } }))
+      const r = buildReport([...entries, ...stools], { now: last, weeks: 12, appVersion: 'v305' })
       if (r.links.items.length) report = r
     }
     expect(report).not.toBeNull()
@@ -69,6 +72,8 @@ describe('renderReportPdf', () => {
     expect(onPage(1)).toMatch(/à confirmer/)
     expect(onPage(1)).toMatch(/comparaisons faites/)
     expect(all).toMatch(/Halcya v305/)
+    expect(onPage(2)).toMatch(/Forme des selles/)
+    expect(onPage(2)).toMatch(/42 notes sur 42 jours : dures \(Bristol 1–2\) 14 · normales \(3–5\) 14 · liquides \(6–7\) 14\./)
     expect(all).not.toMatch(/HealthTrack|diagnostiqu|traitement|prédi/i)
   })
 

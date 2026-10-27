@@ -12,6 +12,7 @@ import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 import { mealKcal } from '../services/mealEditing'
 import { useNutritionTable } from '../data/nutritionTable'
 import { SOURCE_LABELS, gutLevelLabel, isGutDayNote } from '../services/today'
+import { stoolEntryLabel } from '../services/stool'
 import { INITIAL_DAYS, MORE_DAYS, loadJournalEntries } from '../services/journalEntries'
 
 /**
@@ -27,6 +28,7 @@ const TYPE_LABELS = {
   wellbeing: 'Bien-être',
   cigarette: 'Cigarette',
   gut: 'Ventre',
+  stool: 'Selles',
   steps: 'Pas',
   heart_rate: 'Fréquence cardiaque',
   calories: 'Calories',
@@ -54,10 +56,11 @@ const DELETE_LABELS = {
   wellbeing: 'cette note de bien-être',
   cigarette: 'cette cigarette',
   gut: 'cette note du ventre',
+  stool: 'cette note des selles',
 }
 
 /** Types qui ont un affichage dédié ; les autres montrent leurs données brutes. */
-const ITEM_TYPES_WITH_RENDERER = ['food', 'wellbeing', 'cigarette', 'gut', 'activity', 'weight', 'height', 'body_composition']
+const ITEM_TYPES_WITH_RENDERER = ['food', 'wellbeing', 'cigarette', 'gut', 'stool', 'activity', 'weight', 'height', 'body_composition']
 
 function frNumber(v) {
   return v.toLocaleString('fr-FR', { maximumFractionDigits: 1 })
@@ -247,7 +250,7 @@ function CigaretteGroupRow({ group }) {
 /** Une cigarette seule, ou une note sans tag (note dans l'en-tête), n'a rien à afficher sous son titre. */
 function hasBody(e, measuredScreen) {
   if (e.type === 'wellbeing') return visibleTags(e, measuredScreen).length > 0
-  if (e.type === 'gut') return false
+  if (e.type === 'gut' || e.type === 'stool') return false
   return !(e.type === 'cigarette' && !(e.payload?.count > 1))
 }
 
@@ -341,6 +344,9 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
                 )}
                 {e.type === 'gut' && gutLevelLabel(e.payload?.level) && (
                   <span className="entry-kcal entry-score">{gutLevelLabel(e.payload.level)}</span>
+                )}
+                {e.type === 'stool' && stoolEntryLabel(e) && (
+                  <span className="entry-kcal entry-score">{stoolEntryLabel(e)}</span>
                 )}
                 {!isDeletableEntry(e) && (
                   <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>

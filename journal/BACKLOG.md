@@ -368,8 +368,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   tests (rien d'affiché) — **FAIT le 26/10 09:33** (`services/fodmapChallenge.js`, 29 tests) ; [x] **7b-1** écrans choix / préparation / jour en cours / résultat — **FAIT le 26/10 10:33** (`pages/Reintroduction.jsx`, carte d'entrée dans Analyses, 10 tests) ; [x] **7b-2** rappel de la portion + état dans la carte d'entrée — **FAIT le 26/10 11:33** (`services/fodmapReminder.js`, natif `PortionReminder*.java` + `gut/PortionSchedule.java`, notification qui ouvre `/reintroduction`) ; [x] **7c** lien
   depuis les pistes ventre + états dans la carte lilas — **FAIT le 26/10 12:33** (`challengeFoodFor` / `challengePath`, aliment présélectionné) ; [ ] **7d** à l'aveugle avec un proche (I171 c) ;
   [ ] **I175** rapport PDF 2 pages ([x] étape 1 `services/report/buildReport.js` pur — **FAIT le 26/10 13:48**, 12 tests ; [ ] étape 2 `renderPdf.js` avec `pdf-lib` + `fontkit` MIT, polices
-  embarquées, chargé à la demande, écrit dans Documents comme l'export JSON) ; [ ] **I176** forme des selles
-  facultative (Bristol regroupée en 3, objectif ventre seulement, aucun sous-type affiché) ; [x] `premiumBenefits.js` :
+  embarquées, chargé à la demande, écrit dans Documents comme l'export JSON) ; [x] **I176** forme des selles
+  facultative (Bristol regroupée en 3, objectif ventre seulement, aucun sous-type affiché) — **FAIT le 27/10 10:33** (`services/stool.js`, `StoolLine.jsx` dans la carte ventre, Journal, section « Forme des selles » du PDF ; pas un facteur des analyses) ; [x] `premiumBenefits.js` :
   `pistes-delays` encore « en préparation » alors que les pistes ventre sont affichées (à trancher) — **FAIT le 27/10 09:33** : pistes ventre premium sur Play (aperçu flouté + « Débloquer »), PDF et pistes cochés ; `fodmap` coché le 26/10 10:33
 - [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026) — [x] **I131**
   (21/10 10:30, avec 3b-2) manifeste play limité aux 15 lectures HC du connecteur (`READ_TYPES` exporté = seule
@@ -1172,6 +1172,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 27/10 (10:33 Paris)** : ✅ **I176** forme des selles (« + Selles » dans la carte ventre : dures / normales / liquides, type de Bristol sur demande ; Journal ; PDF). Suite : **9a** (socle i18n, rien de visible) ou 7d ; POL-1d dès P28. Idée notée : forme des selles comme second Y des pistes repas → ventre (I176 b, plus tard, après assez de notes).
 
 **Mise à jour du 27/10 (09:33 Paris)** : ✅ paywall au moment de la valeur pour les pistes repas → ventre (Play sans premium : nombre + aperçu flouté + « Débloquer ») ; écran premium : 4 avantages livrés. Suite : **9a** (socle i18n, rien de visible) ou I176 (forme des selles) ; POL-1d dès P28.
 
