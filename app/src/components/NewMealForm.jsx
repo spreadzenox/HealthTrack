@@ -8,6 +8,8 @@ import {
 } from '../services/mealAi'
 import useDisclosure from '../hooks/useDisclosure'
 import MealEditor from './MealEditor'
+import MealFodmapLine from './MealFodmapLine'
+import { gutCardMode } from '../settings/onboarding'
 import AiCreditsHint from './AiCreditsHint'
 import NutritionTableGate from './NutritionTableGate'
 
@@ -26,6 +28,8 @@ export default function NewMealForm(props) {
 
 function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
   const [items, setItems] = useState(() => itemsForEditing(initialItems))
+  // FODMAP du repas en cours de saisie (N4), seulement avec l'objectif « Mon ventre »
+  const [showFodmap] = useState(() => gutCardMode() !== 'hide')
   // Description libre → IA (relais en play, clé Gemini en sideload), seulement pour un repas vide (pas pour « Refaire »)
   const [describable] = useState(() => items.length === 0)
   const [canDescribe] = useState(() => canAnalyzeMeals())
@@ -154,6 +158,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
         />
       </div>
       <MealEditor items={items} onChange={setItems} disabled={saving || describing} />
+      {showFodmap && <MealFodmapLine items={items} />}
       {error && <p className="error-msg" role="alert">{error}</p>}
       <div className="actions">
         <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={saving}>

@@ -29,6 +29,7 @@
  *                                          =question : gêne après la portion ; =result : résultat et pause ;
  *                                          --portion-reminder=on|off : rappel de la portion (7b-2, faux plugin)
  *   npm run visual -- --routes=/food --food-analysis
+ *                                          --food-analysis=fodmap : lentilles, oignon, ail (FODMAP avant d'enregistrer, N4)
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
@@ -137,6 +138,18 @@ const FAKE_MEAL_ANALYSIS = {
     { ingredient: 'Haricot vert, cuit', quantity_g: 90, confidence: 'medium' },
     { ingredient: "Huile d'olive vierge extra", quantity_g: 10, confidence: 'low' },
     { ingredient: 'Sauce maison du chef', quantity_g: 30, confidence: 'low' },
+  ],
+}
+
+// --food-analysis=fodmap : un repas riche en plusieurs groupes FODMAP (ligne pêche sous l'éditeur, N4)
+const FAKE_MEAL_ANALYSIS_FODMAP = {
+  not_food: false,
+  dish: 'Dahl de lentilles, oignon et ail',
+  ingredients: [
+    { ingredient: "Lentille verte, bouillie/cuite à l'eau", quantity_g: 150, confidence: 'medium' },
+    { ingredient: 'Oignon, cru', quantity_g: 60, confidence: 'medium' },
+    { ingredient: 'Ail, cru', quantity_g: 6, confidence: 'low' },
+    { ingredient: 'riz blanc, cuit', quantity_g: 120, confidence: 'medium' },
   ],
 }
 
@@ -402,6 +415,8 @@ async function main() {
     }
     if (args['food-analysis'] || args['meal-text']) {
       // Analyse photo ou texte sans clé réelle ni appel réseau : réponse Gemini factice.
+      const fakeMeal = args['meal-text'] ? FAKE_MEAL_TEXT_ANALYSIS
+        : args['food-analysis'] === 'fodmap' ? FAKE_MEAL_ANALYSIS_FODMAP : FAKE_MEAL_ANALYSIS
       await context.addInitScript(() => {
         try {
           localStorage.setItem('healthtrack_gemini_api_key', 'demo-key')
@@ -413,7 +428,7 @@ async function main() {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(args['meal-text'] ? FAKE_MEAL_TEXT_ANALYSIS : FAKE_MEAL_ANALYSIS) }] } }] }),
+          body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(fakeMeal) }] } }] }),
         })
       )
       // Variante play : même réponse, par le relais Halcya
@@ -423,7 +438,7 @@ async function main() {
           contentType: 'application/json',
           headers: { 'Access-Control-Allow-Origin': '*' },
           body: JSON.stringify({
-            parsed: args['meal-text'] ? FAKE_MEAL_TEXT_ANALYSIS : FAKE_MEAL_ANALYSIS,
+            parsed: fakeMeal,
             model: 'gemini-2.5-flash-lite',
             quota: { remaining: 18, resetAt: new Date(Date.now() + 6 * 3600_000).toISOString() },
           }),
@@ -879,7 +894,7 @@ async function main() {
             if (args['ai-consent'] !== 'ask') await accept.click()
           }
           if (!(args.play && args['ai-consent'] === 'ask')) {
-            await page.getByRole('heading', { name: FAKE_MEAL_ANALYSIS.dish }).waitFor({ timeout: 10000 })
+            await page.getByRole('heading', { name: (args['food-analysis'] === 'fodmap' ? FAKE_MEAL_ANALYSIS_FODMAP : FAKE_MEAL_ANALYSIS).dish }).waitFor({ timeout: 10000 })
           }
         }
         if (args['meal-text'] && path === '/food') {

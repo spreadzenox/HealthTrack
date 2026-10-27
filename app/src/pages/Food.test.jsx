@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import Food from './Food'
 
@@ -130,6 +130,30 @@ describe('Food — correction avant enregistrement', () => {
     const { listEntries, createEntry } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([])
     createEntry.mockResolvedValue('id-1')
+  })
+
+  it('résultat d’une analyse photo : FODMAP par sous-groupe avant d’enregistrer, suit les grammes corrigés (N4)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    const { saveOnboarding } = await import('../settings/onboarding')
+    setGeminiApiKey('KEY')
+    saveOnboarding({ goal: 'gut' })
+    const gemini = await import('../services/geminiStandalone')
+    vi.spyOn(gemini, 'analyzeWithGemini').mockResolvedValue({
+      provider: 'gemini',
+      dish: 'Soupe à l’oignon',
+      items: [{ ingredient: 'Oignon, cru', quantity: '70 g', quantity_g: 70 }],
+    })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.change(screen.getByLabelText(/Choisir depuis la galerie/i), {
+      target: { files: [new File(['x'], 'repas.jpg', { type: 'image/jpeg' })] },
+    })
+    fireEvent.click(await screen.findByRole('button', { name: /Analyser les ingrédients/i }))
+    await screen.findByRole('heading', { name: 'Soupe à l’oignon' })
+    const results = document.querySelector('.results')
+    expect(await within(results).findByText('Riche en fructanes')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText(/Grammes de Oignon/i), { target: { value: '5' } })
+    await vi.waitFor(() => expect(within(results).queryByTestId('meal-fodmap')).not.toBeInTheDocument())
+    saveOnboarding({ goal: null })
   })
 
   it('enregistre les grammes corrigés par l’utilisateur, sans les ingrédients supprimés', async () => {
@@ -287,6 +311,33 @@ describe('Food — modifier un repas enregistré', () => {
     saveOnboarding({ goal: 'energy' })
     render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Soupe', { selector: '.meal-dish' })
+    expect(screen.queryByTestId('meal-fodmap')).not.toBeInTheDocument()
+    saveOnboarding({ goal: null })
+  })
+
+  it('éditeurs d’un repas (Modifier, Refaire) : FODMAP en direct avec l’objectif « Mon ventre » (N4)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const { saveOnboarding } = await import('../settings/onboarding')
+    const onion = { id: 3, at: '2026-10-07T12:00:00Z', type: 'food', source: 'app_food',
+      payload: { dish: 'Soupe', items: [{ ingredient: 'Oignon, cru', quantity: '70 g', quantity_g: 70 }] } }
+    listEntries.mockResolvedValue([onion])
+    saveOnboarding({ goal: 'gut' })
+    const { unmount } = render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Soupe', { selector: '.meal-dish' })
+    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    const editor = document.querySelector('.saved-meal-editor')
+    expect(await within(editor).findByText('Riche en fructanes')).toBeInTheDocument()
+    fireEvent.change(within(editor).getByLabelText(/Grammes de Oignon/i), { target: { value: '5' } })
+    await vi.waitFor(() => expect(within(editor).queryByTestId('meal-fodmap')).not.toBeInTheDocument())
+    fireEvent.click(screen.getByRole('button', { name: /^Annuler$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Refaire ce repas/i }))
+    expect(await screen.findByText('Riche en fructanes', { selector: '.new-meal *' })).toBeInTheDocument()
+    unmount()
+    saveOnboarding({ goal: 'energy' })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Soupe', { selector: '.meal-dish' })
+    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    await screen.findByLabelText(/Grammes de Oignon/i)
     expect(screen.queryByTestId('meal-fodmap')).not.toBeInTheDocument()
     saveOnboarding({ goal: null })
   })

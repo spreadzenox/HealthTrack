@@ -335,6 +335,8 @@ export default function Food() {
             </p>
           )}
           <MealEditor items={items} onChange={setItems} disabled={Boolean(savedId) || saving} />
+          {/* Avant d'enregistrer : les FODMAP du repas tel que corrigé (N4), comme sur la carte enregistrée. */}
+          {showFodmap && <MealFodmapLine items={items} />}
           <div className="actions">
             {savedId ? (
               <p className="saved-msg">✓ Repas enregistré</p>
