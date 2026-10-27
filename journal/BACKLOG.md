@@ -114,6 +114,9 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   [ ] **FLAKY-UPDATEBANNER** (26/10 21:33) : `UpdateBanner.test.jsx` « montre la progression en Mo et en %, puis ouvre
   l'installateur » a échoué une fois en CI (progressbar introuvable, 3 s) sur une PR de journal seul : le rendre
   indépendant du temps (faux minuteurs ou attente explicite).
+  [x] **P28-VERSIONCODE (27/10 15:17 : le propriétaire a publié `p28-100487` en test interne)** — 27/10 15:34 :
+  « Play — AAB » envoie versionCode 100000 + n (versionName = n), brouillon P28 50000 + n ; interrupteur rallumé
+  (test interne) ; [ ] « P28 faite » par le propriétaire.
   [x] **P28-INTERNE (27/10 13:30 : le brouillon ne suffit pas)** — 27/10 13:33 : « Play — AAB » allume l'interrupteur
   pour le test interne (`FACE_UNLOCK_INTERNAL`, versionCode normal, seul le propriétaire vérifié, alpha jamais
   allumée) → **refusé** (403 « You must let us know whether your app uses any Foreground Service permissions. »),

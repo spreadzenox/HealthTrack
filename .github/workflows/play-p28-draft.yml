@@ -7,8 +7,9 @@
 # la piste de test interne. Un brouillon n'est jamais déployé : ni testeurs, ni Store. Les versions en test interne
 # restent en place, et les envois suivants de « Play — AAB » (interrupteur coupé) gardent ce brouillon à côté.
 #
-# - versionCode à part : 100000 + nombre de commits de main. Il ne croise jamais ceux de « Play — AAB » (nombre de
-#   commits, ~1000) ; ne JAMAIS déployer ce brouillon (le téléphone resterait ensuite sur ce numéro) : le supprimer de
+# - versionCode à part : 50000 + nombre de commits de main (100000 + n jusqu'au 27/10, où le propriétaire a déployé
+#   100487 ; « Play — AAB » est passé à 100000 + n). Il ne croise jamais ceux de « Play — AAB » et, déployé par
+#   erreur, il ne bloquerait plus les versions suivantes (plus petit) ; ne JAMAIS déployer ce brouillon (le téléphone resterait ensuite sur ce numéro) : le supprimer de
 #   la piste une fois la déclaration acceptée, ou le laisser, il ne gêne rien.
 # - Lancé à la main sur main (Actions → « Play — brouillon P28 » → Run workflow) : la connexion sans clé à Google
 #   Cloud n'accepte que refs/heads/main. Sur une PR qui le touche : build non signé et vérification du manifeste seuls.
@@ -73,7 +74,7 @@ jobs:
           cache-dependency-path: app/package-lock.json
 
       - name: Numéro de version (à part)
-        run: echo "VERSION_CODE=$((100000 + $(git rev-list --count HEAD)))" >> "$GITHUB_ENV"
+        run: echo "VERSION_CODE=$((50000 + $(git rev-list --count HEAD)))" >> "$GITHUB_ENV"
 
       - name: Install app dependencies
         working-directory: app
