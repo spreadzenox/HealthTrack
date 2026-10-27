@@ -450,3 +450,9 @@
   font-size: 0.85rem;
   color: var(--peach-text);
 }
+
+/* Chiffre de la veille quand aujourd'hui n'en a pas encore (POL-PLAY-8) */
+.today-tile-when {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}

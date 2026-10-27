@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { weatherSummaryParts } from '../services/weather'
-import { formatScreenMinutes } from '../services/phoneUsage'
 import WellbeingPrompt from './WellbeingPrompt'
 import DeleteEntryButton from './DeleteEntryButton'
 import SavedMealEditor from './SavedMealEditor'
@@ -15,6 +13,7 @@ import { SOURCE_LABELS, gutLevelLabel, isGutDayNote } from '../services/today'
 import { stoolEntryLabel } from '../services/stool'
 import { INITIAL_DAYS, MORE_DAYS, loadJournalEntries } from '../services/journalEntries'
 import { appLocale } from '../i18n/locale.js'
+import { chipTheme, summaryChips } from '../services/journalChips'
 
 /**
  * « Vos derniers jours » : le journal par jour (résumé chiffré, saisies et événements avec leur heure), déplacé de
@@ -163,60 +162,6 @@ export function HeartRateSpark({ curve }) {
       <polyline points={points} fill="none" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
     </svg>
   )
-}
-
-/**
- * Pastel de chaque mesure du résumé (POL-6, palette de journal/DESIGN.md) : menthe = corps et bien-être, pêche = repas
- * (le ventre), lilas = ce qu'on fait (pas, dépense, écran), neutre pour la météo.
- */
-const CHIP_THEMES = {
-  Pas: 'lilac',
-  Dépense: 'lilac',
-  Écran: 'lilac',
-  'Réseaux sociaux': 'lilac',
-  Repas: 'peach',
-  Météo: 'neutral',
-}
-
-function chipTheme(label) {
-  return CHIP_THEMES[label] || 'mint'
-}
-
-/** Résumé chiffré d'une journée : seules les valeurs disponibles sont affichées. */
-function summaryChips(s) {
-  const chips = []
-  const fr = (v) => v.toLocaleString(appLocale())
-  if (s.sleepMinutes != null) chips.push([s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil', formatDuration(s.sleepMinutes)])
-  if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
-  if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
-  if (s.hrv != null) chips.push(['VFC', `${Math.round(s.hrv)} ms`])
-  if (s.hrvDay != null) chips.push(['VFC jour', `${s.hrvDay} ms`])
-  if (s.spo2 != null) chips.push(['SpO₂', `${frNumber(s.spo2)} %`])
-  if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
-  if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])
-  if (s.skinTempC != null) chips.push(['Temp. peau', `${frNumber(s.skinTempC)} °C`])
-  if (s.watchStress != null) chips.push(['Stress montre', `${s.watchStress} / 99`])
-  if (s.bloodPressure) chips.push(['Tension', `${s.bloodPressure.systolic}/${s.bloodPressure.diastolic} mmHg`])
-  if (s.glucoseMgDl != null) {
-    chips.push(['Glycémie', `${(s.glucoseMgDl / 100).toLocaleString(appLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g/L`])
-  }
-  if (s.heartRate) {
-    const { min, max } = s.heartRate
-    chips.push(['FC', min === max ? `${Math.round(min)} bpm` : `${Math.round(min)} à ${Math.round(max)} bpm`])
-  }
-  if (s.burnedKcal != null) chips.push(['Dépense', `${fr(s.burnedKcal)} kcal`])
-  // Une seule note, ou des cigarettes : déjà lisibles dans les lignes du jour, juste en dessous
-  if (s.wellbeing?.count > 1) chips.push(['Bien-être', `${frNumber(s.wellbeing.average)} / 5`])
-  if (s.meals > 0) {
-    chips.push(['Repas', s.mealKcal > 0 ? `${s.meals} · ≈ ${fr(s.mealKcal)} kcal` : String(s.meals)])
-  }
-  if (s.screenMinutes != null) chips.push(['Écran', formatScreenMinutes(s.screenMinutes)])
-  if (s.socialMinutes > 0) chips.push(['Réseaux sociaux', formatScreenMinutes(s.socialMinutes)])
-  if (s.weather) {
-    const w = weatherSummaryParts(s.weather)
-    if (w.length) chips.push(['Météo', w[0]])
-  }
-  return chips
 }
 
 function CigaretteGroupRow({ group }) {

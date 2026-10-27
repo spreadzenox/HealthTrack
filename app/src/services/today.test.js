@@ -100,6 +100,13 @@ describe('measureTiles', () => {
     expect(measureTiles(null, [], NOW).map((t) => t.value)).toEqual([null, null, null])
     expect(measureTiles({ sleepMinutes: 420, sleepEstimated: true }, [], NOW)[0]).toMatchObject({ label: 'Sommeil (estimé)', value: '7 h' })
   })
+
+  it('reprend la veille, marquée « hier », quand aujourd’hui n’a pas encore le chiffre (POL-PLAY-8)', () => {
+    const tiles = measureTiles({ sleepMinutes: 452 }, entries, NOW, { sleepMinutes: 400, hrv: 38, steps: 9000 })
+    expect(tiles.map((t) => [t.value, t.when])).toEqual([['7 h 32', null], ['38 ms', 'hier'], ['9 000'.replace(' ', '\u202f'), 'hier']])
+    expect(tiles[2].sources).toEqual(['Health Connect'])
+    expect(measureTiles(null, [], NOW, null).map((t) => t.when)).toEqual([null, null, null])
+  })
 })
 
 describe('entrySourceLabel', () => {

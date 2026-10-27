@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-27",
+  "kind": "amélioration",
+  "title": "Moins de tirets, moins de doublons",
+  "items": [
+    "Accueil : quand la VFC de la nuit ou les pas d’aujourd’hui ne sont pas encore arrivés, la tuile montre le chiffre d’hier, marqué « hier », plutôt qu’un tiret.",
+    "Journal : la tuile des repas tient sur une ligne (« ≈ 479 kcal », « 3 repas » quand il y en a plusieurs).",
+    "Analyses : une habitude déjà montrée comme piste n’est plus aussi « en cours de collecte », et le rappel des autres mesures est dit en une phrase simple."
+  ]
+}
