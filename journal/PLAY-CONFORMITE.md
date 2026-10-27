@@ -95,6 +95,13 @@ déverrouillage (`stopUnlock`) ; « Désactiver » coupe tout. Service arrêté 
 d'aperçu est prêt à filmer pour P28.** Reste au code : un raccourci « couper » dans Paramètres (le point 4 le
 prévoit ; la carte et la notification suffisent pour la vidéo).
 
+**État au 27/10 13:33 CET (P28-INTERNE)** : le brouillon `p28-100487` n'a pas fait apparaître la ligne (constat du
+propriétaire, 27/10 13:30 : Contenu de l'app sans ligne ; la vérification du brouillon n'affiche que 2 avertissements,
+désobscurcissement et symboles natifs). « Play — AAB » envoie désormais **chaque version de test interne** avec
+l'interrupteur allumé (`FACE_UNLOCK_INTERNAL: "true"`, statut completed, versionCode normal, seul le propriétaire
+testeur, vérifié avant l'envoi) ; l'alpha reste coupée. Si Google refuse l'envoi : erreur exacte dans le résumé du
+workflow → passer `FACE_UNLOCK_INTERNAL` à `"false"`.
+
 ### P28 — texte exact à coller dans la Play Console
 
 Où : Play Console → Halcya → **Surveiller et améliorer → Règles et programmes → Contenu de l'app** → « Autorisations

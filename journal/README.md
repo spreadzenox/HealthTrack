@@ -8,14 +8,10 @@
 > sideload, identité visuelle, onboarding, abonnement et relais, montre M1–M7, polissage du parcours, version candidate
 > en test fermé ; v189 → v278).
 
-> **👉 Version candidate prête : vous pouvez inviter les testeurs** (depuis le 25/10 14:03). La version Play **453**
-> est sur la piste **Test fermé — Alpha** avec le groupe `halcya-testeurs@googlegroups.com` (vérifiez dans Play
-> Console → Vue d'ensemble de la publication que l'examen de Google est passé). Premium offert à tous jusqu'au
-> **20 novembre inclus**. Gestes : ① lien du groupe https://groups.google.com/g/halcya-testeurs ; ② lien « Rejoindre
-> sur le Web » (Play Console → Halcya → Tester → Test fermé → Alpha → onglet Testeurs → « Copier le lien ») ;
-> ③ installation : https://play.google.com/store/apps/details?id=fr.jpesquet.sante. Texte d'invitation prêt à copier
-> (avec l'astuce « forcer l'arrêt du Play Store et vider son cache ») : [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md)
-> §3. Invitez-en **15** pour garder 12 inscrits 14 jours d'affilée.
+> **Testeurs : pas encore** (votre décision du 27/10 vers 13:00). Vous les inviterez au plus tôt la semaine
+> prochaine, quand vous le direz : d'ici là, les runs polissent la version Play (bugs, chiffres fiables, parcours
+> écran par écran). La version **453** reste sur la piste alpha sans changement ; la fin de la période de lancement
+> (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
 - **Ventre : le bilan du soir** (26/10 00:33) — à partir de 18 h, la carte « Votre ventre » de l'Accueil demande
@@ -248,19 +244,17 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
    de la montre (écran Activité) et ceux du Journal de Halcya ; renvoyez les 4 chiffres. Si les kcal de Halcya sont
    bien plus basses que la montre, c'est normal : Halcya ne compte que les calories d'activité qu'elle reçoit ; dites-le
    et un run lira la dépense totale.
-1. **Inviter les testeurs** (ci-dessus) — c'est ce qui lance les 14 jours obligatoires avant la production.
-2. **P28** : la vidéo est faite par la CI (**https://spreadzenox.github.io/HealthTrack/p28/**). Vous avez vu le 26/10
-   vers 20:40 que la ligne « Autorisations des services de premier plan » **n'apparaissait pas** dans Contenu de
-   l'app : Google ne la demande qu'après avoir reçu une version qui contient la fonction. **Depuis le 26/10 21:33, la
-   CI envoie cette version en brouillon** sur le test interne (« Play — brouillon P28 », nom `p28-1xxxxx`) : un
-   brouillon n'est installé par personne, et vos versions de test restent en place. **Ne déployez pas ce brouillon.**
-   **Envoyé le 26/10 vers 22:05 : brouillon `p28-100487`, accepté par Google sans erreur** (votre version de test
-   487 reste en place). Geste : à partir de 23:00 environ, Play Console → Halcya → Surveiller et
-   améliorer → Règles et programmes → **Contenu de l'app** → « Actions requises » → « Autorisations des services de
-   premier plan » → cocher **Caméra**, coller les 3 textes de [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et
-   le lien de la vidéo, envoyer. Si la ligne n'apparaît toujours pas le lendemain, dites-le : un run enverra la
-   version en test interne (vous seul) à la place. Débloque la lecture du bien-être au déverrouillage dans la
-   version Play.
+1. **P28 — à faire dès que la version de test interne avec la lecture au déverrouillage est en place** (voir
+   le run de 13:33 ci-dessous ; le brouillon `p28-100487` ne suffisait pas). Depuis le 27/10 13:33, **chaque
+   version envoyée en test interne (vous seul) a la lecture au déverrouillage** ; l'alpha n'est pas touchée. Geste :
+   Play Console → Halcya → Surveiller et améliorer → Règles et programmes → **Contenu de l'app** → « Actions
+   requises » (ou plus bas, « Autorisations des services de premier plan ») → cocher **Caméra** → coller les 3 textes
+   de [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien de la vidéo
+   **https://spreadzenox.github.io/HealthTrack/p28/** → envoyer. Si la ligne n'apparaît pas le lendemain : Publication
+   → Vue d'ensemble de la publication → s'il y a « Modifications non envoyées pour examen », un bouton peut demander
+   la déclaration ; dites-nous ce que vous voyez. **Sur votre téléphone** : la mise à jour de test interne ajoute dans
+   Sources → Lecture du visage l'interrupteur « Aussi à chaque déverrouillage » (comme en sideload) ; essayez-le.
+2. **Inviter les testeurs** : quand vous le déciderez (au plus tôt la semaine prochaine).
 3. **P32** (pas urgent, avant la production) : dans quels pays vendre (proposition ci-dessus ; répondez
    « d'accord » ou votre liste).
 4. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
@@ -268,6 +262,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 13:33 — [P28 : test interne avec la lecture au déverrouillage](runs/2026-10-27-1333-p28-test-interne.md) | 🏗️ | « Play — AAB » : interrupteur `FACE_UNLOCK_INTERNAL` (test interne seul propriétaire vérifié, versionCode normal, alpha jamais allumée) ; résumé « testeurs » retiré (décision du 27/10 13:00) ; 2 563 Vitest |
 | 27/10 12:33 — [🚑 Pas et kcal du jour](runs/2026-10-27-1233-pas-kcal-montre.md) | 🐛 | **v314** · signalement du 27/10 11:56 : kcal minute de la montre en cal (÷1000 à la synchro, migration `watchKcalFix.js`, correction à la lecture) ; pas : une source par heure (`activityTotals.js`, Journal, analyses, agrégats v2, écran Montre, premier import) ; garde-fou de plausibilité |
 | 27/10 11:33 — [9a : socle i18n](runs/2026-10-27-1133-i18n-socle.md) | 🏗️ | `src/i18n/` (`t()`, pluriels, `appLocale()` dans 39 fichiers, `decimalMark()`), test de catalogue, réglage « Langue » caché (`VITE_I18N_EN`), `visual --lang=en` ; rien de visible ; 2 547 Vitest ; v313 |
 | 27/10 10:33 — [Forme des selles](runs/2026-10-27-1033-forme-des-selles.md) | 🏗️ | I176 : « + Selles » dans la carte ventre (3 formes, Bristol sur demande), Journal, section du PDF ; 2 532 Vitest ; v312 |

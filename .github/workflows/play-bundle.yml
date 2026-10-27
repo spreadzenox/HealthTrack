@@ -11,6 +11,13 @@
 #   (app/scripts/play/publish.mjs, jamais la production). Jeton à portée androidpublisher émis pour gh-deployer, invité
 #   dans la Play Console (P11). Accès refusé (invitation pas encore propagée) → avertissement, pas d'échec : nouvel
 #   essai à la version suivante. workflow_dispatch : choisir la piste (internal par défaut).
+# - Interrupteur FACE_UNLOCK_INTERNAL (P28, 27/10) : allumé, les envois en TEST INTERNE (seul le propriétaire y est
+#   testeur, vérifié avant l'envoi) ont la lecture du bien-être au déverrouillage (-PfaceUnlockPlay=true, service de
+#   premier plan caméra), pour que la Play Console demande la déclaration « Autorisations des services de premier
+#   plan » (un brouillon ne suffisait pas). L'alpha garde toujours l'interrupteur coupé et n'est jamais un AAB du test
+#   interne : pour une version alpha, lancer ce workflow sur un commit de main qui ne touche que journal/ (son
+#   versionCode n'a jamais été envoyé). Si Google refuse l'envoi (déclaration manquante), noter l'erreur exacte du
+#   résumé et passer FACE_UNLOCK_INTERNAL à "false" pour débloquer les versions suivantes.
 name: Play — AAB
 
 on:
@@ -36,6 +43,7 @@ concurrency:
 
 env:
   GCP_PROJECT: healthtrack-824b26
+  FACE_UNLOCK_INTERNAL: "true"
 
 jobs:
   bundle:
@@ -94,8 +102,16 @@ jobs:
           cache: "npm"
           cache-dependency-path: app/package-lock.json
 
-      - name: Numéro de version
-        run: echo "VERSION_CODE=$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
+      - name: Numéro de version et interrupteur
+        env:
+          TRACK: ${{ inputs.track || 'internal' }}
+        run: |
+          echo "VERSION_CODE=$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
+          if [ "$FACE_UNLOCK_INTERNAL" = "true" ] && [ "$TRACK" = "internal" ]; then
+            echo "FACE_UNLOCK=true" >> "$GITHUB_ENV"
+          else
+            echo "FACE_UNLOCK=false" >> "$GITHUB_ENV"
+          fi
 
       - name: Install app dependencies
         working-directory: app
@@ -135,7 +151,7 @@ jobs:
         run: |
           chmod +x gradlew
           HT_UPLOAD_KEYSTORE="$RUNNER_TEMP/upload.p12" HT_UPLOAD_PASSWORD="$(cat "$RUNNER_TEMP/upload.pass")" \
-            ./gradlew bundlePlayRelease -PhtVersionCode="$VERSION_CODE" --no-daemon
+            ./gradlew bundlePlayRelease -PfaceUnlockPlay="$FACE_UNLOCK" -PhtVersionCode="$VERSION_CODE" --no-daemon
 
       - name: Effacer la clé du runner
         if: always()
@@ -147,7 +163,12 @@ jobs:
           AAB=app/android/app/build/outputs/bundle/playRelease/app-play-release.aab
           jarsigner -verify "$AAB" | tail -1
           jarsigner -verify "$AAB" | grep -q "jar verified" || { echo "::error::AAB non signé"; exit 1; }
-          cd app && bash scripts/check-play-manifest.sh --play-only
+          cd app
+          if [ "$FACE_UNLOCK" = "true" ]; then
+            bash scripts/check-play-manifest.sh --face-unlock-play
+          else
+            bash scripts/check-play-manifest.sh --play-only
+          fi
           cp "../$AAB" "../HealthTrack-play-$VERSION_CODE.aab"
           echo "AAB_SIZE=$(stat -c %s "../$AAB")" >> "$GITHUB_ENV"
 
@@ -164,6 +185,7 @@ jobs:
           {
             echo "## AAB play signé — versionCode $VERSION_CODE"
             echo ""
+            echo "- Lecture au déverrouillage (service caméra) : $([ "$FACE_UNLOCK" = "true" ] && echo "**allumée** (test interne seulement, P28)" || echo "coupée")"
             echo "- Identifiant : \`fr.jpesquet.sante\` · taille : $((AAB_SIZE / 1024 / 1024)) Mo ($AAB_SIZE octets)"
             echo "- Certificat d'envoi (SHA-256) : \`${UPLOAD_CERT_SHA256:-?}\`"
             echo "- Téléchargement : artefact **HealthTrack-play-$VERSION_CODE** ci-dessous (30 jours)."
@@ -185,6 +207,8 @@ jobs:
         env:
           PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
           PLAY_TRACK: ${{ inputs.track || 'internal' }}
+          PLAY_FACE_UNLOCK: ${{ env.FACE_UNLOCK == 'true' && '1' || '' }}
+          PLAY_NO_REUSE: ${{ env.FACE_UNLOCK_INTERNAL == 'true' && inputs.track == 'alpha' && '1' || '' }}
         run: |
           set +e
           node scripts/play/publish-cli.mjs "../HealthTrack-play-$VERSION_CODE.aab"
