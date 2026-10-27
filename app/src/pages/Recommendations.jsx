@@ -15,6 +15,7 @@ import {
   DAY_OVER_HOUR,
   LEVER_MAX_Q,
   LEVER_PERSONAL_Q,
+  LEVER_FAMILY,
 } from '../services/analysisEngine'
 import { MIN_TAG_DAYS, AUTO_LATE_SCREEN_MIN, EVENING_SPORT_FROM_HOUR, LATE_MEAL_FROM_HOUR } from '../services/behaviorTags'
 import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
@@ -332,7 +333,11 @@ function mergeLinks({ correlations: basic, tagEffects, laggedEffects, faceMood }
     add('visage', tags(faceMood.tagEffects), 'tag', (e) => e.tagId)
     add('visage', lags(faceMood.laggedEffects), 'lag', corrKey)
   }
-  const leverKeys = new Set([...leverVariables].map((v) => FACTOR_ALIAS[v] ?? v))
+  // Un facteur de la même famille qu'une piste montrée (pas → « Marcher davantage », calories d'activité →
+  // « Bouger davantage ») ne se répète pas sous « Autres liens repérés » (POL-PLAY-14).
+  const families = new Set([...leverVariables].map((v) => LEVER_FAMILY[v]).filter(Boolean))
+  const sameFamily = Object.keys(LEVER_FAMILY).filter((v) => families.has(LEVER_FAMILY[v]))
+  const leverKeys = new Set([...leverVariables, ...sameFamily].map((v) => FACTOR_ALIAS[v] ?? v))
   const rank = (a) => [EVIDENCE_RANK[a.item.evidence] ?? 2, a.item.q ?? 1, a.source === 'notes' ? 0 : 1]
   const better = (a, b) => {
     const ra = rank(a)

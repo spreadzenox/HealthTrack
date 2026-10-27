@@ -466,6 +466,23 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
+  it('does not repeat a lever of the same family under « Autres liens repérés » (POL-PLAY-14)', async () => {
+    const lever = {
+      ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
+      direction: 'higher_better', action: 'Marcher davantage',
+    }
+    const calories = { ...baseCorr, variable: 'activityCalories', label: 'Calories brûlées (activité)', r: 0.4, direction: 'higher_better' }
+    const hrv = { ...baseCorr, variable: 'hrv', label: 'Variabilité cardiaque', r: 0.5, direction: 'higher_better' }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [hrv, lever, calories], levers: [lever],
+    })
+    await screen.findByText('Marcher davantage')
+    expect(screen.getByText('Variabilité cardiaque')).toBeInTheDocument()
+    expect(screen.queryByText('Calories brûlées (activité)')).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
   it('hides the correlation section when every clear link is already a lever', async () => {
     const lever = {
       ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,

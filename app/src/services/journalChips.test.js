@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { chipTheme, summaryChips } from './journalChips'
+import { chipTheme, summaryChips, watchStressBand } from './journalChips'
 
 describe('summaryChips — repas', () => {
   const meals = (s) => summaryChips(s).find(([label]) => /repas$/i.test(label))
@@ -14,5 +14,16 @@ describe('summaryChips — repas', () => {
   it('« 3 repas » garde la couleur pêche des repas', () => {
     expect(chipTheme('3 repas')).toBe('peach')
     expect(chipTheme('Repas')).toBe('peach')
+  })
+})
+
+describe('summaryChips — stress de la montre (POL-PLAY-15)', () => {
+  it('dit la plage de la montre plutôt que « / 99 »', () => {
+    expect(summaryChips({ watchStress: 37 })).toContainEqual(['Stress montre', '37 · normal'])
+  })
+
+  it('suit l’échelle de la montre aux bornes', () => {
+    expect([1, 29, 30, 59, 60, 79, 80, 99].map(watchStressBand))
+      .toEqual(['détendu', 'détendu', 'normal', 'normal', 'moyen', 'moyen', 'élevé', 'élevé'])
   })
 })

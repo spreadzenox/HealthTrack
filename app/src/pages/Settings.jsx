@@ -205,8 +205,11 @@ export default function Settings() {
           ))}
         </div>
         <p className="hint">
-          La carte «&nbsp;Votre ventre&nbsp;» de l’Accueil n’apparaît qu’avec «&nbsp;Mon ventre&nbsp;». Vos notes ne
-          sont jamais effacées : changez d’avis quand vous voulez.
+          La carte «&nbsp;Votre ventre&nbsp;» de l’Accueil n’apparaît qu’avec «&nbsp;Mon ventre&nbsp;»
+          {goal ? '' : gutCardMode(loadOnboarding()) === 'used'
+            ? ', ou si vous avez noté votre ventre ces 7 derniers jours'
+            : ', ou tant que vous n’avez rien choisi'}. Vos notes ne sont jamais effacées : changez d’avis
+          quand vous voulez.
         </p>
         {gutCardMode({ ...loadOnboarding(), goal }) !== 'hide' && <GutEveningReminder variant="setting" />}
       </div>
