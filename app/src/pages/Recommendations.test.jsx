@@ -127,6 +127,7 @@ describe('Recommendations page', () => {
     expect(text).not.toContain('📊')
     // Données vierges : la carte lilas seule, ni « Bientôt » ni note de méthode
     expect(screen.queryByTestId('reco-soon')).toBeNull()
+    expect(screen.queryByTestId('doctor-report')).toBeNull()
     expect(screen.queryByText(/Comment c.est calculé/)).toBeNull()
     // Déjà sur la page Pistes : pas de lien vers elle-même
     expect(screen.queryByRole('link', { name: /onglet (Pistes|Analyses)/i })).not.toBeInTheDocument()
@@ -962,6 +963,19 @@ describe('Recommendations — votre ventre et vos repas', () => {
     expect(within(soon).getByText('Votre ventre et vos repas')).toBeInTheDocument()
     expect(within(soon).getByText('1/28 jours')).toBeInTheDocument()
     expect(screen.queryByTestId('gut-links')).toBeNull()
+  })
+
+  it('no gut note yet: the PDF report is one discreet « Bientôt » line, never an empty report or « Débloquer »', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
+    renderPage()
+    const soon = await screen.findByTestId('reco-soon')
+    expect(within(soon).getByText('Rapport PDF pour mon médecin')).toBeInTheDocument()
+    expect(within(soon).getByText('dès votre 1re note du ventre')).toBeInTheDocument()
+    expect(screen.queryByTestId('doctor-report')).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Débloquer' })).toBeNull()
   })
 
   it('shows nothing about the gut with another goal (POL-4), without deleting anything', async () => {

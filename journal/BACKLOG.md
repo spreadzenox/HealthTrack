@@ -1186,6 +1186,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 ## Prochaines étapes (ordre conseillé)
 
+**Mise à jour du 27/10 (14:42 Paris)** : polissage de la version play, liste **POL-PLAY** (audit `--play --empty` du 27/10) :
+- [x] **POL-PLAY-1** Analyses vierges : plus de carte « Rapport PDF » ni « Débloquer » sans note du ventre (ligne « Bientôt »).
+- [ ] **POL-PLAY-2** Accueil vierge : « Sommeil, cœur et pas arrivent de votre montre » suppose une montre ; dire que
+  le téléphone en donne déjà (pas, nuits) et proposer Sources.
+- [ ] **POL-PLAY-3** « Tester un groupe FODMAP » : chevron collé au texte ; étiquette « premium » en play hors période
+  de lancement (comme le rapport PDF).
+- [ ] **POL-PLAY-4** Même audit sur données de démo, clair et sombre, écran par écran (Accueil, Journal, Analyses, Sources).
+
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 
 **Mise à jour du 27/10 (11:33 Paris)** : ✅ **9a** socle i18n (`src/i18n/` : `t()`, `t.plural`, `appLocale()`, `decimalMark()`, test de catalogue sur `converted.js` ; réglage « Langue » caché derrière `VITE_I18N_EN` ; `visual --lang=en` qui compte les mots français restants ; rien de visible). Suite : **9b** (Layout, navigation, Accueil, Paramètres : ajouter chaque fichier converti à `i18n/converted.js`) ou 7d ; POL-1d dès P28.

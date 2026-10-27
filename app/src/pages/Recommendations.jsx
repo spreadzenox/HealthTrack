@@ -481,6 +481,10 @@ function soonLines({ faceMood, tagEffects, laggedEffects, gut } = {}, showGut = 
   if (showGut && gut?.status === 'too_early') {
     lines.push({ id: 'gut', label: 'Votre ventre et vos repas', progress: `${Math.min(gut.noteDays, gut.minDays)}/${gut.minDays} jours` })
   }
+  // Aucune note du ventre : pas de rapport vide (ni de « Débloquer » pour rien), une ligne discrète à la place
+  if (showGut && gut?.status === 'no_notes') {
+    lines.push({ id: 'report', label: 'Rapport PDF pour mon médecin', progress: 'dès votre 1re note du ventre' })
+  }
   if (faceMood && faceMood.status !== 'ok' && faceMood.status !== 'no_face') {
     lines.push({
       id: 'face',
@@ -593,7 +597,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
   const soon = soonLines(analysis, showGut)
   const gut = showGut ? <><GutLinks gut={analysis.gut} /><ReintroductionEntry /></> : null
   // Le rapport décrit d'abord le ventre : avec l'objectif ventre seulement (toujours dans Données)
-  const report = showGut ? <DoctorReportCard /> : null
+  const report = showGut && analysis.gut?.status !== 'no_notes' ? <DoctorReportCard /> : null
 
   if (result.status === 'not_enough_data') {
     return (
@@ -605,7 +609,10 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
           <LinksSection analysis={{ faceMood: analysis.faceMood }} />
         )}
         {/* Habitudes et effets décalés attendent les mêmes notes que la carte lilas : seul le visage a son compteur */}
-        <SoonSection lines={soon.filter((l) => l.id === 'face' || l.id === 'gut')} />
+        {/* Données vierges : la carte lilas seule ; le rapport n'a sa ligne qu'une fois quelque chose noté */}
+        <SoonSection
+          lines={soon.filter((l) => l.id === 'face' || l.id === 'gut' || (l.id === 'report' && result.currentDays > 0))}
+        />
         {report}
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
       </div>
