@@ -115,6 +115,10 @@
   source ». Dans Analyses, la carte « Tester un groupe FODMAP » a son chevron bien à droite et, sur la version Play
   sans premium (après la période de lancement), une étiquette « premium » comme le rapport PDF. **À tester** : rien
   (visible sur une installation neuve).
+- **Petits textes plus justes** (27/10 17:33) — carte « Votre ventre » : « Dernière note : Douleur, hier à 10:19 »
+  au lieu de « le lundi à 10:19 » (jour de la semaine ensuite, date au-delà d'une semaine). Analyses : « Calories
+  brûlées totales (Health Connect) » devient « Dépense totale de la journée » ; la petite ligne « « visage » : … »
+  dit simplement « comparé à votre bien-être estimé par la caméra (30 jours) ». **À tester** : rien de particulier.
 
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
@@ -267,6 +271,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 17:33 — [Audit démo clair/sombre : petits textes](runs/2026-10-27-1733-pol-play-4.md) | 🎨 | POL-PLAY-4 (1re partie) : Accueil, Journal, Analyses, Sources relus sur données de démo, clair et sombre ; « hier à 10:19 » sur la carte ventre ; plus de « (Health Connect) » dans un titre d'Analyses (test sur tous les libellés) ; ligne « visage » simplifiée ; défauts restants rangés en POL-PLAY-5 à 8 |
 | 27/10 16:33 — [Accueil vierge sans montre supposée ; FODMAP « premium »](runs/2026-10-27-1633-pol-play-2-3.md) | 🎨 | POL-PLAY-2 et 3 : la ligne de l'Accueil vierge ne suppose plus de montre (« Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur · Ajouter une source ») ; « Tester un groupe FODMAP » : chevron détaché à droite, étiquette « premium » sur Play hors lancement (comme le rapport PDF) |
 | 27/10 15:34 — [versionCode Play au-dessus de 100487](runs/2026-10-27-1534-versioncode-play.md) | 🏗️ | Votre brouillon P28 (100487) publié en test interne : « Play — AAB » envoie désormais 100000 + n (versionName et numéro affiché = n) ; brouillon P28 à 50000 + n (plus petit, ne bloque rien) ; interrupteur rallumé pour le test interne : **100522 accepté par Google et déployé avec la lecture au déverrouillage** (vous seul) ; v318 |
 | 27/10 14:42 — [Pas de rapport PDF vide dans Analyses](runs/2026-10-27-1442-rapport-pdf-vide.md) | 🎨 | Audit play vierge (15 pages) ; Analyses (« Mon ventre ») ne pousse plus « Débloquer » pour un rapport PDF sans aucune note du ventre : ligne « Bientôt » à la place ; Données inchangé |

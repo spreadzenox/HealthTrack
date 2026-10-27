@@ -875,7 +875,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     renderPage()
     const section = await screen.findByTestId('reco-links')
     expect(section).toHaveTextContent('Liens repérés')
-    expect(section).toHaveTextContent('« visage » : avec votre bien-être estimé, sur 20 jours, sans aucune note')
+    expect(section).toHaveTextContent('« visage » : comparé à votre bien-être estimé par la caméra (20 jours)')
     expect(section).toHaveTextContent('Pas')
     expect(section.querySelector('.reco-link-src')).toHaveTextContent('visage')
     // Les notes manquent toujours pour l'analyse classique : la carte lilas le dit, sans second seuil (VC-12).

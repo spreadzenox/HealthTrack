@@ -377,6 +377,12 @@ describe('buildDailyDataset', () => {
     expect(ds[0].dailyCaloriesHC).toBeCloseTo(2500)
   })
 
+  it('aucun nom technique de source dans les libellés visibles des facteurs (POL-PLAY-4)', () => {
+    for (const meta of Object.values(VARIABLE_META)) {
+      expect(meta.label).not.toMatch(/Health Connect|Gadgetbridge|Huawei/)
+    }
+  })
+
   it('dailyCaloriesHC is null (not measured) when no calories HC entries exist', () => {
     const entries = [makeWellbeing('2026-01-01', 4)]
     const ds = buildDailyDataset(entries)

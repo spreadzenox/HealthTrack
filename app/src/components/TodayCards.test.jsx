@@ -66,6 +66,28 @@ describe('GutCard', () => {
     expect(screen.getByRole('button', { name: 'Calme' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByText('7 jours · 1 note : 1 calme · 6 jours sans note')).toBeInTheDocument()
   })
+
+  it('dit « hier » pour une note de la veille, le jour de la semaine ensuite, la date au-delà (POL-PLAY-4)', async () => {
+    const at = (daysAgo) => {
+      const d = new Date()
+      d.setDate(d.getDate() - daysAgo)
+      d.setHours(10, 19, 0, 0)
+      return d
+    }
+    const note = (d) => async () => [{ type: 'gut', source: 'app_gut', at: d.toISOString(), payload: { level: 'pain' } }]
+    const { unmount } = wrap(<GutCard read={note(at(1))} />)
+    expect(await screen.findByText('Dernière note : Douleur, hier à 10:19.')).toBeInTheDocument()
+    unmount()
+    const three = at(3)
+    const weekday = three.toLocaleDateString('fr-FR', { weekday: 'long' })
+    const r2 = wrap(<GutCard read={note(three)} />)
+    expect(await screen.findByText(`Dernière note : Douleur, ${weekday} à 10:19.`)).toBeInTheDocument()
+    r2.unmount()
+    const old = at(10)
+    const date = old.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+    wrap(<GutCard read={note(old)} />)
+    expect(await screen.findByText(`Dernière note : Douleur, le ${date} à 10:19.`)).toBeInTheDocument()
+  })
 })
 
 describe('GutCard — bilan du soir (I170)', () => {
