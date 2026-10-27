@@ -30,3 +30,8 @@ analyse photo avant enregistrement)
 ## Suite
 - N6c (partage du PDF vérifié sur l'émulateur) ; la ligne FODMAP dans « Vos derniers jours » (facultatif) ; puis
   M6 / suite selon l'ordre du propriétaire.
+
+## Merge
+- PR #420 : checks « Frontend (Vitest) », « Build APK », relais, protocole montre et budget de lectures verts →
+  mergée (squash) en `2cb2ab0`. « Build & Release » vert : **v309** publiée, APK 34,9 Mo (34 892 421 octets) ;
+  « Play — AAB » vert (envoi en test interne).
