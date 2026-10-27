@@ -71,7 +71,10 @@ export default function Dashboard() {
 
   const todayKey = localDateKey(new Date().toISOString())
   const todaySummary = days.find((d) => d.dateKey === todayKey)?.summary ?? null
-  const tiles = useMemo(() => measureTiles(todaySummary, entries), [todaySummary, entries])
+  const yesterdayKey = localDateKey(new Date(Date.now() - 86_400_000).toISOString())
+  const yesterdaySummary = days.find((d) => d.dateKey === yesterdayKey)?.summary ?? null
+  const tiles = useMemo(() => measureTiles(todaySummary, entries, new Date(), yesterdaySummary),
+    [todaySummary, yesterdaySummary, entries])
 
   return (
     <section className="dashboard">

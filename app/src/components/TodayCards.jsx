@@ -79,6 +79,7 @@ export function MeasureTiles({ tiles, details }) {
           <li key={t.key} className="today-tile">
             <span className="today-tile-label">{t.label}</span>
             <span className="today-tile-value mono">{t.value ?? '—'}</span>
+            {t.when && <span className="today-tile-when mono">{t.when}</span>}
             {details && (
               <span className="today-tile-source mono">{t.sources.length ? t.sources.join(', ') : 'aucune source'}</span>
             )}

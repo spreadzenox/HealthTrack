@@ -561,8 +561,8 @@
 }
 
 .reco-link-also {
-  font-family: var(--font-mono);
+  /* Une phrase (POL-PLAY-7) : Figtree, pas la mono des chiffres */
   margin: 6px 0 0;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }

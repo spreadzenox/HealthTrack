@@ -1201,11 +1201,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   simplifiée. Rien à redire en sombre (contrastes corrects). Défauts restants :
 - [ ] **POL-PLAY-5** Analyses : « Calories brûlées (activité) » et « Dépense totale de la journée » apparaissent comme
   deux liens presque identiques ; n'en garder qu'un (le plus solide) ou les regrouper.
-- [ ] **POL-PLAY-6** Analyses : « Alcool » est à la fois une piste « À confirmer » (6 jours avec) et « En cours de
+- [x] **POL-PLAY-6** (27/10 18:33) Analyses : « Alcool » est à la fois une piste « À confirmer » (6 jours avec) et « En cours de
   collecte : Alcool (4/5 jours avec) » (fenêtre visage) : ne pas lister en collecte un tag déjà montré.
-- [ ] **POL-PLAY-7** Analyses : la ligne mono « Autres mesures : le jour même (visage) piste solide » est technique ;
+- [x] **POL-PLAY-7** (27/10 18:33) Analyses : la ligne mono « Autres mesures : le jour même (visage) piste solide » est technique ;
   la dire en phrase (« aussi avec votre bien-être estimé ») ou la mettre dans les détails.
-- [ ] **POL-PLAY-8** Journal : la tuile « Repas · 1 · ≈ 479 kcal » passe sur deux lignes (« kcal » seul) ; Accueil :
+- [x] **POL-PLAY-8** (27/10 18:33) Journal : la tuile « Repas · 1 · ≈ 479 kcal » passe sur deux lignes (« kcal » seul) ; Accueil :
   tuiles « VFC nuit » et « Pas » à « — » en fin de journée alors que la veille est connue (vérifier si les données de
   démo n'ont simplement pas le jour même, sinon afficher la veille avec « hier »).
 

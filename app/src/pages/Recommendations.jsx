@@ -353,9 +353,12 @@ const KIND_LABEL = { corr: 'le jour même', tag: 'jours avec / sans', lag: 'avec
 function AlsoLine({ others }) {
   const clear = others.filter((o) => o.item.evidence !== 'incertain')
   if (!clear.length) return null
-  const parts = [...new Set(clear.map((o) => `${KIND_LABEL[o.kind]} (${o.source}) ${evidenceLabel(o.item.evidence).toLowerCase()}`))]
-  return <p className="reco-link-also">Autres mesures : {parts.join(' · ')}</p>
+  // En phrase (POL-PLAY-7) : « Se retrouve aussi avec votre bien-être estimé (le jour même). »
+  const parts = [...new Set(clear.map((o) => `${ALSO_SOURCE[o.source]} (${KIND_LABEL[o.kind]})`))]
+  return <p className="reco-link-also">Se retrouve aussi {parts.join(' et ')}.</p>
 }
+
+const ALSO_SOURCE = { notes: 'avec vos notes', visage: 'avec votre bien-être estimé' }
 
 function SourceChip({ source }) {
   return source === 'visage' ? <span className="reco-link-src">visage</span> : null
@@ -397,6 +400,8 @@ function LinksSection({ analysis, levers = [] }) {
       ? analysis.faceMood.tagEffects.pending.filter((t) => !t.weekendOnly)
       : []),
   ].filter((t, i, all) => all.findIndex((u) => u.tagId === t.tagId) === i)
+    // Un tag déjà montré comme lien n'est pas aussi « en cours de collecte » (POL-PLAY-6)
+    .filter((t) => !links.some((l) => l.key === t.tagId))
   if (!links.length && !pending.length) return null
   const clear = links.filter((l) => l.item.evidence !== 'incertain')
   const uncertain = links.filter((l) => l.item.evidence === 'incertain')

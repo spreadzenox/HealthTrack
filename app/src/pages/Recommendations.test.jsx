@@ -491,6 +491,22 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
+  it('does not list a tag as « en cours de collecte » when it is already shown as a link (POL-PLAY-6)', async () => {
+    const tagsModule = await import('../services/behaviorTags')
+    const tagSpy = vi.spyOn(tagsModule, 'computeTagEffects').mockReturnValue({
+      status: 'ok', trackedDays: 40,
+      pending: [{ tagId: 'alcohol', label: 'Alcool', nWith: 4, nWithout: 30 }, { tagId: 'sick', label: 'Malade', nWith: 2, nWithout: 30 }],
+      effects: [],
+    })
+    const alcohol = { ...baseCorr, variable: 'alcohol_g', label: 'Alcool', r: -0.45, q: 0.004, evidence: 'solide' }
+    const spy = await renderWithBasic({ status: 'ok', datasetDays: 40, reliability: 'good', correlations: [alcohol], levers: [] })
+    const pending = await screen.findByText(/En cours de collecte/i)
+    expect(pending).toHaveTextContent(/Malade/)
+    expect(pending).not.toHaveTextContent(/Alcool/)
+    spy.mockRestore()
+    tagSpy.mockRestore()
+  })
+
   it('gives one verdict per factor: alcohol as a variable and as a tag shown once (POL-7c)', async () => {
     const tagsModule = await import('../services/behaviorTags')
     const tagSpy = vi.spyOn(tagsModule, 'computeTagEffects').mockReturnValue({
@@ -505,7 +521,7 @@ describe('Recommendations levers', () => {
     const section = await screen.findByTestId('reco-links')
     expect(within(section).getAllByText('Alcool')).toHaveLength(1)
     expect(section.querySelector('.reco-link-card--tag')).toBeNull()
-    expect(section).toHaveTextContent('Autres mesures : jours avec / sans (notes) à confirmer')
+    expect(section).toHaveTextContent('Se retrouve aussi avec vos notes (jours avec / sans).')
     expect(section).not.toHaveTextContent('🍷')
     spy.mockRestore()
     tagSpy.mockRestore()

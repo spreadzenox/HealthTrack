@@ -165,26 +165,39 @@ function formatSleep(minutes) {
 
 /**
  * Les trois tuiles de mesures du jour (sommeil, VFC de la nuit, pas), avec la source de chaque chiffre.
- * @param {object | null} summary  résumé du jour (buildDailyJournal) ou null
- * @param {object[]} entries       entrées lues par l'accueil (pour les sources)
+ * Un chiffre absent aujourd'hui (montre pas encore synchronisée, journée qui commence) reprend celui de la veille,
+ * marqué `when: 'hier'`, plutôt qu'un « — » alors que la veille est connue (POL-PLAY-8).
+ * @param {object | null} summary    résumé du jour (buildDailyJournal) ou null
+ * @param {object[]} entries         entrées lues par l'accueil (pour les sources)
+ * @param {object | null} yesterday  résumé de la veille ou null
  */
-export function measureTiles(summary, entries, now = new Date()) {
+export function measureTiles(summary, entries, now = new Date(), yesterday = null) {
   const day = localDateKey(now.toISOString())
-  const s = summary || {}
-  const sourcesOf = (key) => [...new Set((entries || []).filter((e) => e && TILE_MATCHERS[key](e, day)).map(tileSourceLabel))]
+  const prevDay = localDateKey(new Date(now.getTime() - DAY_MS).toISOString())
+  const sourcesOf = (key, d) => [...new Set((entries || []).filter((e) => e && TILE_MATCHERS[key](e, d)).map(tileSourceLabel))]
+  const pick = (key, has) => {
+    if (summary && has(summary)) return { s: summary, d: day, when: null }
+    if (yesterday && has(yesterday)) return { s: yesterday, d: prevDay, when: 'hier' }
+    return { s: {}, d: day, when: null }
+  }
+  const sleep = pick('sleep', (s) => s.sleepMinutes != null)
+  const hrv = pick('hrv', (s) => s.hrv != null)
+  const steps = pick('steps', (s) => s.steps != null)
   return [
     {
       key: 'sleep',
-      label: s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil',
-      value: s.sleepMinutes != null ? formatSleep(s.sleepMinutes) : null,
-      sources: sourcesOf('sleep'),
+      label: sleep.s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil',
+      value: sleep.s.sleepMinutes != null ? formatSleep(sleep.s.sleepMinutes) : null,
+      when: sleep.when,
+      sources: sourcesOf('sleep', sleep.d),
     },
-    { key: 'hrv', label: 'VFC nuit', value: s.hrv != null ? `${Math.round(s.hrv)} ms` : null, sources: sourcesOf('hrv') },
+    { key: 'hrv', label: 'VFC nuit', value: hrv.s.hrv != null ? `${Math.round(hrv.s.hrv)} ms` : null, when: hrv.when, sources: sourcesOf('hrv', hrv.d) },
     {
       key: 'steps',
       label: 'Pas',
-      value: s.steps != null ? Math.round(s.steps).toLocaleString(appLocale()) : null,
-      sources: sourcesOf('steps'),
+      value: steps.s.steps != null ? Math.round(steps.s.steps).toLocaleString(appLocale()) : null,
+      when: steps.when,
+      sources: sourcesOf('steps', steps.d),
     },
   ]
 }
