@@ -1224,12 +1224,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   un seul levier par famille (le plus solide). ✅ (27/10 23:33) audit `--play --empty` puis démo relu (Accueil,
   Journal, Analyses, Sources, Paramètres, Premium) ; carte ventre du soir : une seule question (bilan du jour), la
   note « à l'instant » derrière « Noter un moment précis ». Défauts restants rangés en POL-PLAY-13 à 15.
-- [ ] **POL-PLAY-13** Paramètres → « Ce qui vous amène » sans aucun choix : le texte dit que la carte ventre n'apparaît
+- [x] **POL-PLAY-13** (28/10 00:33) Paramètres → « Ce qui vous amène » sans aucun choix : le texte dit que la carte ventre n'apparaît
   qu'avec « Mon ventre », alors qu'elle s'affiche tant qu'aucun choix n'est fait (gutCardMode 'show'). Ajuster la phrase
   (« … ou tant que vous n'avez rien choisi ») ou présélectionner l'objectif.
-- [ ] **POL-PLAY-14** Analyses (démo) : « Autres liens repérés » montre « Calories brûlées (activité) … Piste : Bouger
+- [x] **POL-PLAY-14** (28/10 00:33 ; famille du levier masquée dans les liens) Analyses (démo) : « Autres liens repérés » montre « Calories brûlées (activité) … Piste : Bouger
   davantage » juste sous la piste « Marcher davantage » : même famille, à regrouper ou à ne pas répéter.
-- [ ] **POL-PLAY-15** Journal (démo) : « Stress montre 37 / 99 » — l'échelle « / 99 » est déroutante ; « 37 / 100 » ou
+- [x] **POL-PLAY-15** (28/10 00:33 ; « 37 · normal », échelle de la montre) Journal (démo) : « Stress montre 37 / 99 » — l'échelle « / 99 » est déroutante ; « 37 / 100 » ou
   « stress 37 (bas) ». Vérifier l'échelle réelle de la montre avant de changer.
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.

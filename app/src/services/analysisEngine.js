@@ -1329,8 +1329,8 @@ export const LEVER_PERSONAL_Q = 0.05
 
 const MAX_LEVERS = 3
 
-/** Leviers qui disent la même chose à l'utilisateur : un seul par famille est proposé. */
-const LEVER_FAMILY = { steps: 'movement', activityCalories: 'movement' }
+/** Leviers qui disent la même chose à l'utilisateur : un seul par famille est proposé (et listé, POL-PLAY-14). */
+export const LEVER_FAMILY = { steps: 'movement', activityCalories: 'movement' }
 
 /**
  * Pistes à deux étages (I108) : jusqu'à 3 « chez vous » (q < 0,05), puis au plus

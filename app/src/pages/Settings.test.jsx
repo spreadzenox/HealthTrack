@@ -79,6 +79,14 @@ describe('Settings — Ce qui vous amène (I155)', () => {
     expect(JSON.parse(localStorage.getItem('healthtrack_onboarding'))).toMatchObject({ done: true, goal: 'energy' })
   })
 
+  it('sans objectif choisi, dit que la carte ventre reste affichée (POL-PLAY-13)', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
+    renderSettings()
+    expect(screen.getByText(/ou tant que vous n’avez rien choisi/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('radio', { name: 'Mon ventre' }))
+    expect(screen.queryByText(/ou tant que vous n’avez rien choisi/)).not.toBeInTheDocument()
+  })
+
   it('rappel du bilan du ventre : seulement avec la carte ventre, et retiré du natif quand l’objectif change (I170)', async () => {
     const configure = vi.fn(async (o) => ({ enabled: !!o.enabled }))
     window.__healthtrackFakeGutEvening = { status: async () => ({ enabled: true, minuteOfDay: 20 * 60 + 30 }), configure }

@@ -22,6 +22,17 @@ export function chipTheme(label) {
   return CHIP_THEMES[label] || (/ repas$/.test(label) ? 'peach' : 'mint')
 }
 
+/**
+ * Plage du score de stress de la montre (1–99), avec les mots de l'échelle de la montre elle-même (1–29 détendu,
+ * 30–59 normal, 60–79 moyen, 80–99 élevé) : « 37 / 99 » déroutait (POL-PLAY-15). Une description, pas un jugement.
+ */
+export function watchStressBand(score) {
+  if (score < 30) return 'détendu'
+  if (score < 60) return 'normal'
+  if (score < 80) return 'moyen'
+  return 'élevé'
+}
+
 /** Résumé chiffré d'une journée : seules les valeurs disponibles sont affichées. */
 export function summaryChips(s) {
   const chips = []
@@ -35,7 +46,7 @@ export function summaryChips(s) {
   if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
   if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])
   if (s.skinTempC != null) chips.push(['Temp. peau', `${frNumber(s.skinTempC)} °C`])
-  if (s.watchStress != null) chips.push(['Stress montre', `${s.watchStress} / 99`])
+  if (s.watchStress != null) chips.push(['Stress montre', `${s.watchStress} · ${watchStressBand(s.watchStress)}`])
   if (s.bloodPressure) chips.push(['Tension', `${s.bloodPressure.systolic}/${s.bloodPressure.diastolic} mmHg`])
   if (s.glucoseMgDl != null) {
     chips.push(['Glycémie', `${(s.glucoseMgDl / 100).toLocaleString(appLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g/L`])
