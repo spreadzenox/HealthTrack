@@ -199,6 +199,35 @@
   border-top: 1px solid rgba(var(--ink-rgb), 0.12);
 }
 
+.gut-evening-first {
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Le soir, la note d'un moment précis attend derrière ce lien (POL-PLAY-12) */
+.gut-moment-link {
+  display: block;
+  margin-top: 6px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--peach-label);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gut-moment-title {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--peach-text);
+}
+
 .gut-evening-title {
   margin: 0 0 8px;
   font-weight: 700;

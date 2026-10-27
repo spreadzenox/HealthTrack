@@ -134,6 +134,12 @@
   onglets dégagés, clavier qui remonte la page. Sur votre téléphone (Android 16), rien ne change. Vérifié à chaque
   modification sur un émulateur Android 14. **À tester** : rien (sauf si vous avez un vieux téléphone sous la main).
 
+- **Votre ventre, le soir : une seule question** (27/10 23:33) — à partir de 18 h, la carte ne montre plus deux rangées
+  Calme / Gêne / Douleur l'une sous l'autre : seule « Et votre ventre aujourd'hui, dans l'ensemble ? » reste ; pour
+  noter un moment précis (après le dîner, par exemple), « Noter un moment précis ». Une fois le bilan donné, la note
+  horodatée revient comme le matin. **À tester** : ce soir, ouvrir l'Accueil, vérifier qu'il n'y a qu'une rangée, puis
+  toucher « Noter un moment précis ».
+
 - **Analyses : une seule piste pour bouger** (27/10 22:33) — « Marcher davantage » et « Bouger davantage » ne
   s'affichent plus comme deux pistes : seule la plus solide reste. **À tester** : rien de particulier.
 
@@ -297,6 +303,7 @@ complet sur émulateur (visage, Health Connect, Premium, PDF) avant tout merge. 
 | Run | Type | Résultat |
 |---|---|---|
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
+| 27/10 23:33 — [Ventre du soir : une seule question](runs/2026-10-27-2333-ventre-soir-une-question.md) | 🎨 | PR #445 mergée (checks verts, merge bloqué à la session précédente) ; audit POL-PLAY-12 vierge + démo ; carte ventre du soir sans rangée en double ; POL-PLAY-13 à 15 au BACKLOG |
 | 27/10 22:33 — [CI bord à bord réparée + une piste « mouvement »](runs/2026-10-27-2233-ci-bord-a-bord-pistes.md) | 🔧 | Job émulateur API 34 rouge sur main (attente DevTools sans délai) : délai, reconnexion, 3 essais ; POL-PLAY-12 : un seul levier « mouvement » |
 | 27/10 21:33 — [Polissage play : bord à bord pour tous](runs/2026-10-27-2133-pol-play-9-bord-a-bord.md) | 🎨 | POL-PLAY-9 : `EdgeToEdge.enable` ; encarts CSS et clavier gérés par `SystemBarsPlugin` sous Android ≤ 14 (Capacitor ne le fait qu'à partir de 15) ; job émulateur API 34 |
 | 27/10 19:33 — [Une seule piste « calories »](runs/2026-10-27-1933-pol-play-5.md) | 🎨 | POL-PLAY-5 : dépense de l'activité et dépense de la journée réunies en un seul facteur dans la liste des liens d'Analyses (le plus solide gardé, pas de « Se retrouve aussi » redondant) ; effets décalés rattachés aux mêmes alias. Liste POL-PLAY soldée ; suite : audit `--empty` écran par écran |
