@@ -1236,7 +1236,7 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   **Reste** : fructanes presque toujours `too_early` dans un journal où oignon, ail ou pâtes reviennent chaque jour
   (peu de jours sans) : normal, la réintroduction guidée est là pour ça ; carotte « riche en fructose en excès » à 80 g
   d'après Ciqual (fructose 1,51 > glucose 0,89) : à surveiller (donnée Ciqual, pas une erreur de calcul).
-- [ ] **N6** rapport PDF par sous-groupe (avec I175 étape 2) — [x] **N6a FAIT le 27/10 03:33** : `services/report/renderPdf.js`
+- [x] **N6** rapport PDF par sous-groupe (avec I175 étape 2) — [x] **N6a FAIT le 27/10 03:33** : `services/report/renderPdf.js`
   (pdf-lib 1.17.1 + @pdf-lib/fontkit 1.1.1, MIT ; A4, 2 pages « En bref » / « Détail » ; calendrier avec les
   sous-groupes du jour en abrégé Fn / G / Fr / L / S / M ; tableau « FODMAP par sous-groupe » = décompte de jours
   riches / notés / gêne ou douleur, dit « pas une analyse » ; repère Varney présenté comme hypothèse ; attribution
@@ -1247,8 +1247,12 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   d'Analyses et dans Données (choix 2 / 4 / 12 semaines, case « inclure mon bien-être estimé » décochée), premium sur
   play (offert pendant le lancement), libre en sideload ; vérifier le partage sur l'émulateur.
   Livré : `services/report/createReportPdf.js` + `components/DoctorReportCard.jsx` ; partage par `@capacitor/share` 8.0.3
-  (MIT, aucune permission) ; partage annulé = fichier gardé dans Documents. [ ] **N6c** vérifier le partage sur
-  l'émulateur (feuille de partage Android avec le PDF) et, si possible, une capture du PDF dans le résumé émulateur.
+  (MIT, aucune permission) ; partage annulé = fichier gardé dans Documents. [x] **N6c FAIT le 27/10 07:35** : `.github/scripts/pdf-share/drive.mjs`
+  dans le job émulateur API 35 (non bloquant) : Données → « Créer le PDF » → feuille de partage Android (« Sharing 1 file ·
+  Halcya-rapport-AAAA-MM-JJ.pdf », Quick Share, Drive, Messages…), fichier de 20 Ko dans Documents (`%PDF-`), partage annulé →
+  « … est dans Documents », 2ᵉ rapport le même jour remplacé sans erreur ; captures + PDF dans l'artefact « rapport-pdf-emulateur ».
+  Reste (facultatif) : `apt-get update` avant poppler-utils pour l'aperçu PNG dans la CI ; rendre l'étape bloquante après
+  quelques runs verts.
 
 **Mise à jour du 26/10 (13:48 Paris)** : ✅ **I175 étape 1** — modèle pur du rapport (`services/report/buildReport.js` : période 2 / 4 / 12 semaines, ventre jour par jour à la note la plus forte, semaine par semaine, calendrier avec jours riches en FODMAP, tests de réintroduction, pistes « à confirmer » avec le nombre de comparaisons, sommeil mesuré et régularité, aliments fréquents, sources lisibles, bien-être estimé seulement sur demande) ; rien d'affiché. Suite : **I175 étape 2** (`renderPdf.js` ✅ 27/10 03:33 avec N6a ; reste l'accès N6b) → I176 → 7d.
 

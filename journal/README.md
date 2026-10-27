@@ -81,6 +81,12 @@
   les ingrédients et suit vos corrections de grammes. Objectif « Mon ventre » seulement. **À tester** : photographier
   un repas avec de l'oignon ou de l'ail, baisser les grammes, voir la ligne changer avant « Enregistrer ce repas ».
 
+- **Rapport PDF : le partage vérifié sur un vrai Android** (27/10 07:35) — rien de neuf à l'écran : à chaque
+  modification, la CI rejoue maintenant sur un émulateur Android 15 « Créer le PDF » depuis Données. Constaté du premier
+  coup : la feuille de partage d'Android s'ouvre avec « Halcya-rapport-2026-10-27.pdf » (Quick Share, Drive,
+  Messages, Bluetooth, Imprimer), le fichier (2 pages, 20 Ko) est bien dans Documents, et si vous annulez l'envoi,
+  l'app vous dit où il est. Un 2ᵉ rapport le même jour remplace le premier sans erreur.
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -220,6 +226,7 @@ décompte, pas une analyse), fichier de 20 à 30 Ko ; le bouton « Rapport PDF p
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 07:35 — [N6c : partage du PDF vérifié sur l'émulateur](runs/2026-10-27-0735-n6c-partage-pdf-emulateur.md) | 🏗️ | script CI `pdf-share/drive.mjs` (job API 35, non bloquant) : feuille de partage avec le PDF, fichier de 20 Ko dans Documents, partage annulé → message, 2ᵉ rapport du jour ; tout vert ; PR #421 (journal) mergée ; 2 519 Vitest ; v310 |
 | 27/10 06:33 — [N4 (reste) : FODMAP avant d'enregistrer](runs/2026-10-27-0633-n4-fodmap-avant-enregistrer.md) | 🏗️ | `MealFodmapLine` sous l'éditeur du résultat d'une analyse photo, de « Décrire » / « Refaire » et de « Modifier », en direct sur les grammes corrigés ; option `--food-analysis=fodmap` des captures ; 2 519 Vitest ; v309 |
 | 27/10 05:33 — [N3c : score FODMAP depuis les sous-groupes](runs/2026-10-27-0533-n3c-fodmap-score-groupes.md) | 🏗️ | le moteur du bien-être compte les groupes FODMAP au-dessus du repère (repas le plus chargé) au lieu du score 0–3 inventé, retiré de la table ; 1 104 → 600 aliments « chargés » à 100 g ; 2 517 Vitest ; v308 |
 | 27/10 04:33 — [N6b : bouton « Rapport PDF pour mon médecin »](runs/2026-10-27-0433-n6b-rapport-pdf.md) | 🏗️ | carte en bas d'Analyses (objectif ventre) et dans Données : 2 / 4 / 12 semaines, bien-être décoché par défaut, PDF dans Documents puis partage Android (`@capacitor/share` 8.0.3, MIT) ; premium sur play ; essai de bout en bout sur les données de démo ; 2 511 Vitest ; v307 |
