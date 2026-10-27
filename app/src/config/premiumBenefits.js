@@ -20,7 +20,9 @@ export const PREMIUM_BENEFITS = [
     id: 'pistes-delays',
     label: 'Vos pistes personnelles, avec des délais de 2 à 48 h entre repas et ventre',
     playLabel: 'Pistes personnelles avec délais',
-    delivered: false, // jalon 5
+    delivered: true,
+    // Pistes repas → ventre d'Analyses (jalon 5), floutées sans premium sur la version Play
+    deliveredBy: 'app/src/components/GutLinks.jsx',
   },
   {
     id: 'fodmap',
@@ -34,7 +36,9 @@ export const PREMIUM_BENEFITS = [
     id: 'pdf-report',
     label: 'Un rapport PDF pour votre médecin ou votre diététicienne',
     playLabel: 'Rapport PDF pour votre médecin',
-    delivered: false, // jalon 7
+    delivered: true,
+    // Rapport PDF (N6b) en bas d'Analyses et dans Données
+    deliveredBy: 'app/src/components/DoctorReportCard.jsx',
   },
 ]
 

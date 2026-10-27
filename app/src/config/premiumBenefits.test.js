@@ -21,7 +21,7 @@ describe('Avantages premium (VC-17)', () => {
   })
 
   it('ce qui n’est pas livré n’est jamais coché', () => {
-    expect(upcomingBenefits().map((b) => b.id)).toEqual(['pistes-delays', 'pdf-report'])
+    expect(upcomingBenefits().map((b) => b.id)).toEqual([])
     expect(new Set(PREMIUM_BENEFITS.map((b) => b.id)).size).toBe(PREMIUM_BENEFITS.length)
   })
 })
