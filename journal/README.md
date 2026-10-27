@@ -100,6 +100,16 @@
   par forme, dans le rapport PDF (section absente si vous n'en notez pas). Aucun sous-type du SII n'est déduit.
   **À tester** : Accueil → « + Selles » → « Normales » ; puis Journal ; puis un rapport PDF.
 
+- **🚑 Pas et calories du jour corrigés — votre signalement du 27/10 11:56** (27/10 12:33) — « 658 625 kcal » : les
+  calories minute de la montre arrivent en **petites calories** (cal), rangées jusqu'ici comme des kcal (×1000). Elles
+  sont converties en kcal à la synchro, les jours déjà enregistrés sont réécrits une fois au lancement (valeur
+  d'origine gardée, rien d'effacé) et corrigés à la lecture en attendant. « 30 199 pas » : la montre et le téléphone
+  (Samsung Health via Health Connect) comptaient les mêmes pas, **additionnés** ; maintenant, pour chaque heure, seule
+  la source qui en compte le plus est retenue (Journal, Accueil, analyses, nutrition, écran Montre, premier import).
+  Garde-fou : un total au-delà de 100 000 pas ou 15 000 kcal n'est plus affiché. **À tester** : ① à un moment donné,
+  comparez les pas et les kcal du jour sur la montre (écran Activité) et dans Halcya (Journal, aujourd'hui) ;
+  ② dites-nous si une séance (Journal → séance) affiche des calories absurdes (leur unité n'est pas encore confirmée).
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -234,6 +244,10 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
 
 **👉 Vos prochaines actions, la plus utile d'abord**
+0. **Pas et kcal (2 min)** : avec la version de 12:33 ou plus récente, comparez au même moment les pas et kcal du jour
+   de la montre (écran Activité) et ceux du Journal de Halcya ; renvoyez les 4 chiffres. Si les kcal de Halcya sont
+   bien plus basses que la montre, c'est normal : Halcya ne compte que les calories d'activité qu'elle reçoit ; dites-le
+   et un run lira la dépense totale.
 1. **Inviter les testeurs** (ci-dessus) — c'est ce qui lance les 14 jours obligatoires avant la production.
 2. **P28** : la vidéo est faite par la CI (**https://spreadzenox.github.io/HealthTrack/p28/**). Vous avez vu le 26/10
    vers 20:40 que la ligne « Autorisations des services de premier plan » **n'apparaissait pas** dans Contenu de
@@ -254,6 +268,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 12:33 — [🚑 Pas et kcal du jour](runs/2026-10-27-1233-pas-kcal-montre.md) | 🐛 | signalement du 27/10 11:56 : kcal minute de la montre en cal (÷1000 à la synchro, migration `watchKcalFix.js`, correction à la lecture) ; pas : une source par heure (`activityTotals.js`, Journal, analyses, agrégats v2, écran Montre, premier import) ; garde-fou de plausibilité |
 | 27/10 11:33 — [9a : socle i18n](runs/2026-10-27-1133-i18n-socle.md) | 🏗️ | `src/i18n/` (`t()`, pluriels, `appLocale()` dans 39 fichiers, `decimalMark()`), test de catalogue, réglage « Langue » caché (`VITE_I18N_EN`), `visual --lang=en` ; rien de visible ; 2 547 Vitest ; v313 |
 | 27/10 10:33 — [Forme des selles](runs/2026-10-27-1033-forme-des-selles.md) | 🏗️ | I176 : « + Selles » dans la carte ventre (3 formes, Bristol sur demande), Journal, section du PDF ; 2 532 Vitest ; v312 |
 | 27/10 09:33 — [Premium à jour + paywall des pistes ventre](runs/2026-10-27-0933-premium-pistes-ventre.md) | 🏗️ | `premiumBenefits` : pistes avec délais et PDF livrés (plus rien « en préparation ») ; `GutLinks` floutées sans premium sur Play (nombre de pistes, aucun aliment, « Débloquer ») ; conditions alignées ; 2 524 Vitest ; v311 |

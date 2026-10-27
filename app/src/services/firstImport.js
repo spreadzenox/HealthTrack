@@ -15,6 +15,7 @@ import { mainSleepPeriods } from './sleepRegularity'
 import { localDateKey } from './wellbeingSeries'
 import { isDaytimeHrv } from './hrv'
 import { appLocale } from '../i18n/locale.js'
+import { totalOf } from './activityTotals'
 
 const DAY_MS = 24 * 3600 * 1000
 
@@ -86,8 +87,9 @@ export function summarizeImport(entries, now = new Date()) {
 
   const steps = recent.filter((e) => e.type === 'steps' && typeof e.payload?.value === 'number')
   const byDay = new Map()
-  for (const e of steps) byDay.set(localDateKey(e.at), (byDay.get(localDateKey(e.at)) || 0) + e.payload.value)
-  const stepDays = [...byDay.values()].filter((v) => v > 0)
+  for (const e of steps) byDay.set(localDateKey(e.at), [...(byDay.get(localDateKey(e.at)) || []), e])
+  // Une source par heure, total du jour compris (activityTotals.js) : jamais montre + téléphone additionnés
+  const stepDays = [...byDay.values()].map((list) => totalOf(list, 'steps')).filter((v) => v > 0)
   if (stepDays.length) {
     facts.push({
       key: 'steps',

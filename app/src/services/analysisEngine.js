@@ -39,6 +39,7 @@ import {
   residualizeByGroup,
 } from './statistics'
 import { appLocale, decimalMark } from '../i18n/locale.js'
+import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
 
 // ─── Public constants ────────────────────────────────────────────────────────
 
@@ -825,11 +826,8 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       case 'steps': {
         if (afterRating(dk, e)) break
         const val = e.payload?.value
-        if (typeof val === 'number' && val > 0) {
-          // Total du jour (Health Connect agrégé, montre) et tranches couvrent les mêmes pas : le plus grand des deux
-          if (e.payload?.period === 'day') day._stepsDay = Math.max(day._stepsDay || 0, val)
-          else day.steps += val
-        }
+        // Total du jour et tranches, montre et Health Connect couvrent les mêmes pas (activityTotals.js)
+        if (typeof val === 'number' && val > 0) addActivity(day._steps ??= createActivityTotal(), e)
         break
       }
 
@@ -874,11 +872,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
 
       case 'calories': {
         if (afterRating(dk, e)) break
-        const cal = e.payload?.value
-        if (typeof cal === 'number' && cal > 0) {
-          if (e.payload?.period === 'day') day._kcalDay = Math.max(day._kcalDay || 0, cal)
-          else day.dailyCaloriesHC += cal
-        }
+        addActivity(day._kcal ??= createActivityTotal(), e)
         break
       }
 
@@ -998,13 +992,13 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
       dateKey:            day.dateKey,
       wellbeing:          day._wellbeingCount > 0 ? day._wellbeingSum / day._wellbeingCount : null,
       sleepMinutes:       day.sleepMinutes,
-      steps:              Math.max(day._stepsDay || 0, day.steps),
+      steps:              day._steps ? activityTotal(day._steps, 'steps') ?? 0 : 0,
       activityCalories:   day.activityCalories,
       restingHR:          day._hrCount > 0 ? day._hrSum / day._hrCount : 0,
       avgHR:              day._avgHRCount > 0 ? day._avgHRSum / day._avgHRCount : 0,
       hrv_ms:             day._hrvCount > 0 ? day._hrvSum / day._hrvCount : 0,
       spo2_pct:           day._spo2Count > 0 ? day._spo2Sum / day._spo2Count : 0,
-      dailyCaloriesHC:    Math.max(day._kcalDay || 0, day.dailyCaloriesHC),
+      dailyCaloriesHC:    day._kcal ? activityTotal(day._kcal, 'calories') ?? 0 : 0,
       kcal:               day.kcal,
       protein_g:        day.protein_g,
       fat_g:            day.fat_g,
@@ -1496,8 +1490,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
       case 'steps': {
         const val = e.payload?.value
         if (typeof val === 'number' && val > 0) {
-          if (e.payload?.period === 'day') row._stepsDay = Math.max(row._stepsDay || 0, val)
-          else row.steps += val
+          addActivity(row._steps ??= createActivityTotal(), e)
         }
         break
       }
@@ -1524,11 +1517,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
         break
       }
       case 'calories': {
-        const cal = e.payload?.value
-        if (typeof cal === 'number' && cal > 0) {
-          if (e.payload?.period === 'day') row._kcalDay = Math.max(row._kcalDay || 0, cal)
-          else row.dailyCaloriesHC += cal
-        }
+        addActivity(row._kcal ??= createActivityTotal(), e)
         break
       }
       case 'food': {
@@ -1572,8 +1561,8 @@ export function buildTodayRow(entries, historicalRawDataset) {
   // Finalise averaged metrics
   const todayRaw = {
     ...row,
-    steps:      Math.max(row._stepsDay || 0, row.steps),
-    dailyCaloriesHC: Math.max(row._kcalDay || 0, row.dailyCaloriesHC),
+    steps:      row._steps ? activityTotal(row._steps, 'steps') ?? 0 : 0,
+    dailyCaloriesHC: row._kcal ? activityTotal(row._kcal, 'calories') ?? 0 : 0,
     restingHR:  row._hrCount    > 0 ? row._hrSum    / row._hrCount    : 0,
     avgHR:      row._avgHRCount > 0 ? row._avgHRSum  / row._avgHRCount : 0,
     hrv_ms:     row._hrvCount   > 0 ? row._hrvSum    / row._hrvCount   : 0,

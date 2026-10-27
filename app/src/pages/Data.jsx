@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { exportToJson, importFromJson, parseBackup, countAllEntries } from '../storage/localHealthStorage'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
+import { fixWatchKcalOnce } from '../services/watchKcalFix'
 import { deleteAllMyData } from '../services/deleteAllData'
 import { activityLevel } from '../services/nutrientReferenceIntakes'
 import { APP_NAME } from '../config/brand'
@@ -141,6 +142,7 @@ export default function Data() {
       const result = await importFromJson(pending.text, { merge })
       // Un ancien fichier peut ramener des SpO₂ « minute » de la montre : regroupées par 10 min (I82)
       await compactWatchSpo2Once({ force: true })
+      await fixWatchKcalOnce({ force: true })
       setImportStatus(importResultMessage(result, merge))
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
       setPending(null)

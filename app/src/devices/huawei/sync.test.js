@@ -155,8 +155,8 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
   it('entrées : pas et calories par heure, FC et SpO₂ par 10 min, FC repos par jour terminé, sommeil — tranches finies seulement', () => {
     const h0 = Date.UTC(2026, 9, 12, 8) // 08:00 UTC
     const minutes = [
-      { t: h0, steps: 100, kcal: 5, hr: 70 },
-      { t: h0 + 5 * 60_000, steps: 50, kcal: 2, hr: 80, spo2: 97 },
+      { t: h0, steps: 100, kcal: 5000, hr: 70 }, // kcal des minutes : petites calories (27/10/2026)
+      { t: h0 + 5 * 60_000, steps: 50, kcal: 2345, hr: 80, spo2: 97 },
       { t: h0 + 12 * 60_000, hr: 90 },
       { t: h0 + 3600_000 + 60_000, steps: 999, hr: 100 }, // heure suivante : pas finie
     ]
@@ -165,7 +165,7 @@ describe('montre Huawei : lecture des mesures (§7)', () => {
     const pick = (type, sub) => entries.filter((e) => e.type === type && (!sub || e.payload.subtype === sub))
     expect(entries.every((e) => e.source === WATCH_SOURCE && e.payload.sourceName === 'HUAWEI WATCH GT 6 Pro-1A2')).toBe(true)
     expect(pick('steps')).toEqual([expect.objectContaining({ at: new Date(h0).toISOString(), payload: expect.objectContaining({ value: 150, endDate: new Date(h0 + 3600_000).toISOString() }) })])
-    expect(pick('calories').map((e) => e.payload.value)).toEqual([7])
+    expect(pick('calories').map((e) => [e.payload.value, e.payload.unit, e.payload.rawCal])).toEqual([[7.3, 'kcal', 7345]])
     expect(pick('heart_rate', 'heartRate').map((e) => [e.at.slice(11, 16), e.payload.bpm])).toEqual([
       ['08:00', 75],
       ['08:10', 90],

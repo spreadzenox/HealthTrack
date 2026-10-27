@@ -523,7 +523,9 @@ export function watchEntries({ minutes = [], sleep = [], nights = [], workouts =
   for (const [h, b] of hourly) {
     const endDate = iso(h + HOUR)
     if (b.steps) out.push({ type: 'steps', source: WATCH_SOURCE, at: iso(h), payload: { value: b.steps, unit: 'count', endDate, ...base } })
-    if (b.kcal) out.push({ type: 'calories', source: WATCH_SOURCE, at: iso(h), payload: { value: b.kcal, unit: 'kcal', endDate, ...base } })
+    // Les minutes donnent des petites calories (signalement du 27/10/2026 : « 658 625 kcal ») : kcal à 0,1 près,
+    // valeur brute gardée (`rawCal`, qui marque aussi l'entrée comme déjà convertie)
+    if (b.kcal) out.push({ type: 'calories', source: WATCH_SOURCE, at: iso(h), payload: { value: Math.round(b.kcal / 100) / 10, unit: 'kcal', rawCal: b.kcal, endDate, ...base } })
   }
   for (const [s, values] of slots) {
     const bpm = Math.round(values.reduce((a, v) => a + v, 0) / values.length)
