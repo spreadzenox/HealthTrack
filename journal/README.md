@@ -244,16 +244,20 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
    de la montre (écran Activité) et ceux du Journal de Halcya ; renvoyez les 4 chiffres. Si les kcal de Halcya sont
    bien plus basses que la montre, c'est normal : Halcya ne compte que les calories d'activité qu'elle reçoit ; dites-le
    et un run lira la dépense totale.
-1. **P28 — à faire dès que la version de test interne avec la lecture au déverrouillage est en place** (voir
-   le run de 13:33 ci-dessous ; le brouillon `p28-100487` ne suffisait pas). Depuis le 27/10 13:33, **chaque
-   version envoyée en test interne (vous seul) a la lecture au déverrouillage** ; l'alpha n'est pas touchée. Geste :
-   Play Console → Halcya → Surveiller et améliorer → Règles et programmes → **Contenu de l'app** → « Actions
-   requises » (ou plus bas, « Autorisations des services de premier plan ») → cocher **Caméra** → coller les 3 textes
-   de [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien de la vidéo
-   **https://spreadzenox.github.io/HealthTrack/p28/** → envoyer. Si la ligne n'apparaît pas le lendemain : Publication
-   → Vue d'ensemble de la publication → s'il y a « Modifications non envoyées pour examen », un bouton peut demander
-   la déclaration ; dites-nous ce que vous voyez. **Sur votre téléphone** : la mise à jour de test interne ajoute dans
-   Sources → Lecture du visage l'interrupteur « Aussi à chaque déverrouillage » (comme en sideload) ; essayez-le.
+1. **P28 — la déclaration, maintenant exigée par Google (10 min)**. Le 27/10 vers 14:20, la CI a envoyé en test
+   interne une version avec la lecture au déverrouillage. Google l'a **refusée** avec ce message exact : « You must
+   let us know whether your app uses any Foreground Service permissions. » Rien n'a été publié, l'interrupteur est
+   recoupé et vos versions suivantes partent normalement. Google attend donc votre déclaration. Gestes :
+   ① Play Console → Halcya → Tester et publier → **Test interne** → onglet Versions → le brouillon **p28-100487** →
+   « Modifier la version » → « Suivant ». L'écran d'aperçu devrait afficher la même erreur avec un lien vers la
+   déclaration (sinon : Surveiller et améliorer → Règles et programmes → **Contenu de l'app**, rubriques « Actions
+   requises » et « Déclarations »). ② Cochez **Caméra**, puis collez les 3 textes de
+   [`PLAY-CONFORMITE.md`](PLAY-CONFORMITE.md) §1 bis et le lien de la vidéo
+   **https://spreadzenox.github.io/HealthTrack/p28/** ; envoyez. ③ **Ne déployez pas** le brouillon : quittez sans
+   « Enregistrer et publier » (son numéro, 100487, bloquerait vos versions suivantes). ④ Écrivez « P28 envoyée » :
+   un run rallumera la fonction dans la version de test interne (vous seul), puis dans la version Play une fois la
+   déclaration acceptée. Votre autre option est d'y renoncer : la lecture à l'ouverture de l'app reste en place, et
+   la lecture au déverrouillage reste dans la version sideload.
 2. **Inviter les testeurs** : quand vous le déciderez (au plus tôt la semaine prochaine).
 3. **P32** (pas urgent, avant la production) : dans quels pays vendre (proposition ci-dessus ; répondez
    « d'accord » ou votre liste).
@@ -262,7 +266,7 @@ réglage « Langue » existe mais reste caché tant que l'anglais n'est pas comp
 
 | Run | Type | Résultat |
 |---|---|---|
-| 27/10 13:33 — [P28 : test interne avec la lecture au déverrouillage](runs/2026-10-27-1333-p28-test-interne.md) | 🏗️ | « Play — AAB » : interrupteur `FACE_UNLOCK_INTERNAL` (test interne seul propriétaire vérifié, versionCode normal, alpha jamais allumée) ; résumé « testeurs » retiré (décision du 27/10 13:00) ; 2 563 Vitest |
+| 27/10 13:33 — [P28 : test interne avec la lecture au déverrouillage](runs/2026-10-27-1333-p28-test-interne.md) | 🏗️ | « Play — AAB » : interrupteur `FACE_UNLOCK_INTERNAL` (test interne seul propriétaire vérifié, versionCode normal, alpha jamais allumée) ; résumé « testeurs » retiré (décision du 27/10 13:00) ; v315 ; **Google refuse la 518 : « You must let us know whether your app uses any Foreground Service permissions. »** → interrupteur recoupé, ce 403 n'est plus pris pour un accès refusé ; P28 au propriétaire (chemin par le brouillon) |
 | 27/10 12:33 — [🚑 Pas et kcal du jour](runs/2026-10-27-1233-pas-kcal-montre.md) | 🐛 | **v314** · signalement du 27/10 11:56 : kcal minute de la montre en cal (÷1000 à la synchro, migration `watchKcalFix.js`, correction à la lecture) ; pas : une source par heure (`activityTotals.js`, Journal, analyses, agrégats v2, écran Montre, premier import) ; garde-fou de plausibilité |
 | 27/10 11:33 — [9a : socle i18n](runs/2026-10-27-1133-i18n-socle.md) | 🏗️ | `src/i18n/` (`t()`, pluriels, `appLocale()` dans 39 fichiers, `decimalMark()`), test de catalogue, réglage « Langue » caché (`VITE_I18N_EN`), `visual --lang=en` ; rien de visible ; 2 547 Vitest ; v313 |
 | 27/10 10:33 — [Forme des selles](runs/2026-10-27-1033-forme-des-selles.md) | 🏗️ | I176 : « + Selles » dans la carte ventre (3 formes, Bristol sur demande), Journal, section du PDF ; 2 532 Vitest ; v312 |

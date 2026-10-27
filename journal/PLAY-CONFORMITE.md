@@ -101,6 +101,10 @@ désobscurcissement et symboles natifs). « Play — AAB » envoie désormais **
 l'interrupteur allumé (`FACE_UNLOCK_INTERNAL: "true"`, statut completed, versionCode normal, seul le propriétaire
 testeur, vérifié avant l'envoi) ; l'alpha reste coupée. Si Google refuse l'envoi : erreur exacte dans le résumé du
 workflow → passer `FACE_UNLOCK_INTERNAL` à `"false"`.
+**27/10 vers 14:20 : refusé.** AAB 518 importé, validation de l'edit refusée : `HTTP 403 — You must let us know whether
+your app uses any Foreground Service permissions.` Interrupteur recoupé. La déclaration est un préalable à toute
+version active avec le service caméra ; chemin proposé au propriétaire : test interne → brouillon `p28-100487` →
+« Modifier la version » → « Suivant » (lien vers la déclaration), sans déployer. Rallumer après son envoi.
 
 ### P28 — texte exact à coller dans la Play Console
 
