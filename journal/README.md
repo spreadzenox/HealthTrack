@@ -134,6 +134,9 @@
   onglets dégagés, clavier qui remonte la page. Sur votre téléphone (Android 16), rien ne change. Vérifié à chaque
   modification sur un émulateur Android 14. **À tester** : rien (sauf si vous avez un vieux téléphone sous la main).
 
+- **Analyses : une seule piste pour bouger** (27/10 22:33) — « Marcher davantage » et « Bouger davantage » ne
+  s'affichent plus comme deux pistes : seule la plus solide reste. **À tester** : rien de particulier.
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -294,6 +297,7 @@ complet sur émulateur (visage, Health Connect, Premium, PDF) avant tout merge. 
 | Run | Type | Résultat |
 |---|---|---|
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
+| 27/10 22:33 — [CI bord à bord réparée + une piste « mouvement »](runs/2026-10-27-2233-ci-bord-a-bord-pistes.md) | 🔧 | Job émulateur API 34 rouge sur main (attente DevTools sans délai) : délai, reconnexion, 3 essais ; POL-PLAY-12 : un seul levier « mouvement » |
 | 27/10 21:33 — [Polissage play : bord à bord pour tous](runs/2026-10-27-2133-pol-play-9-bord-a-bord.md) | 🎨 | POL-PLAY-9 : `EdgeToEdge.enable` ; encarts CSS et clavier gérés par `SystemBarsPlugin` sous Android ≤ 14 (Capacitor ne le fait qu'à partir de 15) ; job émulateur API 34 |
 | 27/10 19:33 — [Une seule piste « calories »](runs/2026-10-27-1933-pol-play-5.md) | 🎨 | POL-PLAY-5 : dépense de l'activité et dépense de la journée réunies en un seul facteur dans la liste des liens d'Analyses (le plus solide gardé, pas de « Se retrouve aussi » redondant) ; effets décalés rattachés aux mêmes alias. Liste POL-PLAY soldée ; suite : audit `--empty` écran par écran |
 | 27/10 18:33 — [Tuiles « hier », repas sur une ligne, doublons d'Analyses](runs/2026-10-27-1833-pol-play-6-8.md) | 🎨 | POL-PLAY-6, 7, 8 : tuiles de l'Accueil qui reprennent la veille (« hier ») au lieu de « — » ; tuile repas du Journal sur une ligne ; « Alcool » plus en double (piste et collecte) ; ligne « Autres mesures » en phrase. Reste POL-PLAY-5 |

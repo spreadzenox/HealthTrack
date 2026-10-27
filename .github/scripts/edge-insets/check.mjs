@@ -70,6 +70,12 @@ async function connect(timeoutMs = 120000) {
           cdp.onopen = res
           cdp.onerror = rej
         })
+        cdp.onclose = () => {
+          // Page rechargée ou WebView recréée : on libère les attentes, l'appelant se reconnecte
+          for (const done of pending.values()) done({})
+          pending.clear()
+          cdp = null
+        }
         cdp.onmessage = (ev) => {
           const msg = JSON.parse(ev.data)
           if (msg.id && pending.has(msg.id)) {
@@ -86,12 +92,50 @@ async function connect(timeoutMs = 120000) {
   }
   return false
 }
-function evaluate(expression) {
+function evaluateOnce(expression, timeoutMs = 10000) {
   const id = ++msgId
   return new Promise((resolve) => {
-    pending.set(id, (msg) => resolve(msg.result?.result?.value))
-    cdp.send(JSON.stringify({ id, method: 'Runtime.evaluate', params: { expression, returnByValue: true } }))
+    const timer = setTimeout(() => {
+      pending.delete(id)
+      resolve(undefined)
+    }, timeoutMs)
+    pending.set(id, (msg) => {
+      clearTimeout(timer)
+      resolve(msg.result?.result?.value)
+    })
+    try {
+      cdp.send(JSON.stringify({ id, method: 'Runtime.evaluate', params: { expression, returnByValue: true } }))
+    } catch {
+      clearTimeout(timer)
+      pending.delete(id)
+      resolve(undefined)
+    }
   })
+}
+// La WebView peut recharger sa page (redirection, réinjection des encarts) : sans réponse, on se reconnecte et on
+// réessaie, au lieu de rester bloqué sur une promesse jamais résolue (échec du 27/10 21:16, code 13).
+async function evaluate(expression) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (!cdp || cdp.readyState !== WebSocket.OPEN) {
+      try {
+        cdp?.close()
+      } catch {
+        /* déjà fermée */
+      }
+      cdp = null
+      if (!(await connect(30000))) return undefined
+    }
+    const value = await evaluateOnce(expression)
+    if (value !== undefined) return value
+    try {
+      cdp?.close()
+    } catch {
+      /* déjà fermée */
+    }
+    cdp = null
+    await sleep(2000)
+  }
+  return undefined
 }
 const readInsets = () =>
   evaluate(`(() => { const s = getComputedStyle(document.documentElement); const n = (k) => parseFloat(s.getPropertyValue(k)) || 0;

@@ -1329,6 +1329,9 @@ export const LEVER_PERSONAL_Q = 0.05
 
 const MAX_LEVERS = 3
 
+/** Leviers qui disent la même chose à l'utilisateur : un seul par famille est proposé. */
+const LEVER_FAMILY = { steps: 'movement', activityCalories: 'movement' }
+
 /**
  * Pistes à deux étages (I108) : jusqu'à 3 « chez vous » (q < 0,05), puis au plus
  * une seule « à vérifier » (q < 0,2) s'il reste de la place. Avec des dizaines de
@@ -1337,7 +1340,14 @@ const MAX_LEVERS = 3
  * @param {Array<{variable: string, r: number, q: number}>} correlations triées par |r|
  */
 export function selectLevers(correlations) {
-  const actionable = correlations.filter((c) => c.q < LEVER_MAX_Q && leverSuggestion(c.variable, c.r))
+  const candidates = correlations.filter((c) => c.q < LEVER_MAX_Q && leverSuggestion(c.variable, c.r))
+  // « Marcher davantage » et « Bouger davantage » : une seule action, le lien le plus solide (POL-PLAY-12)
+  const best = new Map()
+  for (const c of candidates) {
+    const family = LEVER_FAMILY[c.variable] || c.variable
+    if (!best.has(family) || c.q < best.get(family).q) best.set(family, c)
+  }
+  const actionable = candidates.filter((c) => best.get(LEVER_FAMILY[c.variable] || c.variable) === c)
   const personal = actionable.filter((c) => c.q < LEVER_PERSONAL_Q).slice(0, MAX_LEVERS)
   const toVerify = personal.length < MAX_LEVERS
     ? actionable.filter((c) => c.q >= LEVER_PERSONAL_Q).slice(0, 1)

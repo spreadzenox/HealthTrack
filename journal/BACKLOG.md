@@ -1220,7 +1220,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   Connect, Premium, PDF, notification, logcat sans `ClassNotFoundException`). Test interne seulement ; avant février 2027.
 - [ ] **POL-PLAY-11 (R8b/c)** Alpha après une journée sans plantage dans Android vitals ; `shrinkResources` à part.
 - [ ] **POL-PLAY-12** Nouvel audit `--play --empty` puis démo, écran par écran (Onboarding, Accueil, Journal, Analyses,
-  Sources, Paramètres) — prévu par le run de 19:33 ; « Marcher davantage » / « Bouger davantage » (même famille ?).
+  Sources, Paramètres) — prévu par le run de 19:33 ; ✅ (27/10 22:33) « Marcher davantage » / « Bouger davantage » :
+  un seul levier par famille (le plus solide). Reste : l'audit écran par écran.
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 
