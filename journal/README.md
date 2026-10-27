@@ -203,7 +203,7 @@ décompte, pas une analyse), fichier de 20 à 30 Ko ; le bouton « Rapport PDF p
 
 | Run | Type | Résultat |
 |---|---|---|
-| 27/10 03:33 — [N6a : le rapport PDF se dessine](runs/2026-10-27-0333-n6a-rendu-pdf.md) | 🏗️ | `renderPdf.js` (pdf-lib + fontkit, MIT) : 2 pages A4, calendrier avec sous-groupes FODMAP abrégés, décompte par sous-groupe, polices TTF embarquées (conversion WOFF → TTF scriptée) ; 19–26 Ko ; rien d'affiché ; 2 507 Vitest |
+| 27/10 03:33 — [N6a : le rapport PDF se dessine](runs/2026-10-27-0333-n6a-rendu-pdf.md) | 🏗️ | `renderPdf.js` (pdf-lib + fontkit, MIT) : 2 pages A4, calendrier avec sous-groupes FODMAP abrégés, décompte par sous-groupe, polices TTF embarquées (conversion WOFF → TTF scriptée) ; 19–26 Ko ; rien d'affiché ; 2 507 Vitest ; v306 |
 | 27/10 02:33 — [N5 : pistes du ventre par sous-groupe FODMAP](runs/2026-10-27-0233-n5-pistes-fodmap.md) | 🏗️ | facteurs `fodmap:<groupe>` au lieu de `fodmap_eleve` ; banc 200 jeux : nulles ≤ 13/200 (inchangé), lactose 25 vs 13/200, oignon 64 vs 66 ; lien vers le test du même groupe ; calendrier du rapport par sous-groupe ; 2 496 Vitest ; v305 |
 | 27/10 01:33 — [N3b-2 : GOS des légumineuses cuites](runs/2026-10-27-0133-n3b2-gos-legumineuses.md) | 🏗️ | `legumeGos.mjs` : eau Ciqual 2025 × Siva 2019 (tableau 5, relu) × pertes Njoumi 2019, 13 aliments en `analogie` recalculables ; sources citées dans le chevron de la carte d'un repas ; 2 478 Vitest ; v304 |
 | 27/10 00:33 — [N2b : plus de faux zéro dans Nutrition](runs/2026-10-27-0033-n2b-nutrition-partiel.md) | 🏗️ | `unknown_share` au poids mangé dans `computeTotalsFromItems` ; « ≥ » + « partiel » dans Nutrition au-delà de 10 % ; 2 471 Vitest ; v303 |
