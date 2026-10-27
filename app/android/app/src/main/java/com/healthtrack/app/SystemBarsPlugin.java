@@ -1,6 +1,7 @@
 package com.healthtrack.app;
 
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -43,6 +44,11 @@ public class SystemBarsPlugin extends Plugin {
                     WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
             boolean keyboard = insets.isVisible(WindowInsetsCompat.Type.ime());
             int keyboardBottom = keyboard ? insets.getInsets(WindowInsetsCompat.Type.ime()).bottom : 0;
+            Log.i("HalcyaInsets", "status=" + insets.getInsets(WindowInsetsCompat.Type.statusBars())
+                    + " nav=" + insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+                    + " caption=" + insets.getInsets(WindowInsetsCompat.Type.captionBar())
+                    + " cutout=" + insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+                    + " ime=" + keyboardBottom + " viewTop=" + v.getTop());
             injectSafeArea(bars.top, bars.right, keyboard ? 0 : bars.bottom, bars.left);
             ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
             if (lp.bottomMargin != keyboardBottom) {

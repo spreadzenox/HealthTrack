@@ -103,14 +103,19 @@ const sdk = shell('getprop ro.build.version.sdk').trim()
 lines.push(`### Bord à bord (Android API ${sdk}, POL-PLAY-9)`, '')
 
 shell(`am force-stop ${PKG}`)
+shell('logcat -c')
 shell(`monkey -p ${PKG} -c android.intent.category.LAUNCHER 1`)
 if (!(await connect())) {
   lines.push('- ❌ WebView inaccessible (protocole DevTools)')
   ok = false
 } else {
   await sleep(6000)
+  shot('accueil-6s')
+  await sleep(10000)
   const rest = await readInsets()
   shot('accueil')
+  const statusFrame = shell('dumpsys window | grep -m3 -iE "statusBars|status_bar.*frame"').trim()
+  lines.push('```', statusFrame, shell('logcat -d -s HalcyaInsets').trim().split('\n').slice(-6).join('\n'), '```')
   const restOk = rest && rest.top >= 20 && rest.bottom >= 16
   ok &&= restOk
   lines.push(`- ${restOk ? '✅' : '❌'} encarts au repos : haut ${rest?.top} px, bas ${rest?.bottom} px (attendu ≥ 20 et ≥ 16)`)
