@@ -374,7 +374,18 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
 - [ ] **8 Imports 100 % Health Connect + permission d'historique** (Google Fit s'arrête fin 2026) — [x] **I131**
   (21/10 10:30, avec 3b-2) manifeste play limité aux 15 lectures HC du connecteur (`READ_TYPES` exporté = seule
   source, test-garde + `check-play-manifest.sh` ; le plugin en déclarait 41 dont 20 écritures) ; historique > 30 j en option derrière `FEATURE_READ_HEALTH_DATA_HISTORY`
-- [ ] **9 i18n + anglais**
+- [ ] **9 i18n + anglais** — **spécifié le 27/10 08:33** (`IDEES.md` I180–I183) : ≈ 2 000 chaînes visibles
+  (≈ 12 000 mots) hors diagnostic ; `t()` maison sans dépendance, **français = clé**, catalogue `i18n/en.json`, tests
+  forcés en `fr`, test de catalogue (extraction `@babel/parser`) ; noms des aliments = `alim_nom_eng` de Ciqual 2025
+  (3 484 / 3 484) + 69 alias à la main ; dictée du soir sans lexique anglais au départ (licences) ; États-Unis exclus
+  tant qu'un juriste n'a pas relu (HBNR FTC, My Health My Data Act → P32). Étapes : [ ] **9a** socle (`i18n/`,
+  `locale.js` à la place des 41 `fr-FR` et 14 virgules, réglage « Langue » caché `VITE_I18N_EN`, `visual --lang=en`
+  avec alerte sur le français restant ; rien de visible) ; [ ] **9b** Layout, navigation, Accueil, Paramètres ;
+  [ ] **9c** onboarding, paywall, divulgations ; [ ] **9d** Journal, Repas, Nutrition, FODMAP, `name_en` ;
+  [ ] **9e** Analyses, Réintroduction, PDF ; [ ] **9f** Sources, Health Connect, visage, montre ; [ ] **9g** natif
+  (`strings.xml`, `values-en`, `locales_config.xml`, langue lue auprès du natif — comportement de `navigator.language`
+  à vérifier sur l'émulateur) + relais (`lang`) ; [ ] **9h** fiche Play en-GB / en-US, confidentialité et conditions
+  en anglais, interrupteur allumé.
 - [ ] **10 Fiche Play** (textes FR, captures, Data safety, déclaration apps de santé) + `journal/legal/` (brouillons
   confidentialité, CGU / CGV, mentions légales « à faire valider par un juriste ») — [ ] **I138** phrase « n'est pas un
   dispositif médical… » (exigée par Play) en une seule source ; déclaration Health apps en catégories **Health &
