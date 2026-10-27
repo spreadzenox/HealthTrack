@@ -527,6 +527,18 @@ describe('Recommendations levers', () => {
     tagSpy.mockRestore()
   })
 
+  it('shows activity calories and the total daily expenditure as one factor (POL-PLAY-5)', async () => {
+    const active = { ...baseCorr, variable: 'activityCalories', label: 'Calories brûlées (activité)', r: 0.4, q: 0.02, evidence: 'à confirmer' }
+    const total = { ...baseCorr, variable: 'dailyCaloriesHC', label: 'Dépense totale de la journée', r: 0.45, q: 0.004, evidence: 'solide' }
+    const spy = await renderWithBasic({ status: 'ok', datasetDays: 40, reliability: 'good', correlations: [active, total], levers: [] })
+    const section = await screen.findByTestId('reco-links')
+    expect(within(section).getByText('Dépense totale de la journée')).toBeInTheDocument()
+    expect(within(section).queryByText('Calories brûlées (activité)')).not.toBeInTheDocument()
+    // même source, même mesure : rien à rappeler en « Se retrouve aussi »
+    expect(section).not.toHaveTextContent('Se retrouve aussi')
+    spy.mockRestore()
+  })
+
   it('shows a near-zero correlation as 0,00 (never −0,00)', async () => {
     const tiny = { ...baseCorr, variable: 'fat_g', label: 'Lipides', r: -0.001, q: 0.99, evidence: 'incertain', direction: 'neutral' }
     const spy = await renderWithBasic({

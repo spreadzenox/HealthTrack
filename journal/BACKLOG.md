@@ -1199,7 +1199,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   Sources) : « hier à 10:19 » sur la carte ventre ; « Dépense totale de la journée » au lieu de « Calories brûlées
   totales (Health Connect) » (test : aucun nom de source dans les libellés de `VARIABLE_META`) ; ligne « visage »
   simplifiée. Rien à redire en sombre (contrastes corrects). Défauts restants :
-- [ ] **POL-PLAY-5** Analyses : « Calories brûlées (activité) » et « Dépense totale de la journée » apparaissent comme
+- [x] **POL-PLAY-5** (27/10 19:33 : alias `energy_out` dans `mergeLinks`) Analyses : « Calories brûlées (activité) » et « Dépense totale de la journée » apparaissent comme
   deux liens presque identiques ; n'en garder qu'un (le plus solide) ou les regrouper.
 - [x] **POL-PLAY-6** (27/10 18:33) Analyses : « Alcool » est à la fois une piste « À confirmer » (6 jours avec) et « En cours de
   collecte : Alcool (4/5 jours avec) » (fenêtre visage) : ne pas lister en collecte un tag déjà montré.
