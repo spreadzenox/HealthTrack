@@ -101,9 +101,12 @@ function hasPhrase(words, phrase) {
 
 /**
  * Le test qui correspond à un aliment des repas cité par une piste ventre (7c) : `{ group, food }`, ou null quand
- * aucun groupe ne lui correspond (le facteur « repas riches en FODMAP » compris : la personne choisit alors).
+ * aucun groupe ne lui correspond. Piste d'un sous-groupe FODMAP (N5, `fodmap:lactose`…) : le test du même groupe ;
+ * pour les fructanes, testés aliment par aliment, `food` vaut null (la personne choisit blé, oignon ou ail).
  */
 export function challengeFoodFor(factor) {
+  const group = typeof factor === 'string' && factor.startsWith('fodmap:') ? findGroup(factor.slice(7)) : null
+  if (group) return { group: group.id, food: group.foods.length === 1 ? group.foods[0].id : null }
   const words = plainWords(factor)
   if (words.length === 0) return null
   for (const g of FODMAP_GROUPS) {
@@ -121,7 +124,8 @@ export function challengeFoodFor(factor) {
  */
 export function challengePath(factors) {
   const match = [].concat(factors).map(challengeFoodFor).find(Boolean)
-  return match ? `/reintroduction?groupe=${match.group}&aliment=${match.food}` : '/reintroduction'
+  if (!match) return '/reintroduction'
+  return `/reintroduction?groupe=${match.group}${match.food ? `&aliment=${match.food}` : ''}`
 }
 
 /** Portions prévues des 3 jours à partir du repère de départ (modifiables ensuite par la personne). */

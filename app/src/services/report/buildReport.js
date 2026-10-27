@@ -17,7 +17,7 @@ import { APP_NAME } from '../../config/brand'
 import { localDateKey } from '../analysisEngine'
 import { FODMAP_CHALLENGE_TYPE, challengeStatus, findFood, findGroup, verdictSentence } from '../fodmapChallenge'
 import { gutFactorLabel, summarizeGutLinks } from '../gutLinks'
-import { FODMAP_FACTOR, mealFactors } from '../gutWindows'
+import { fodmapGroupOf, mealFactors } from '../gutWindows'
 import { faceMoodDays } from '../mood/faceMoodDays'
 import { nightlySleep } from '../radar'
 import { computeSleepRegularity } from '../sleepRegularity'
@@ -83,13 +83,15 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
 
   // Repas : aliments par jour et jours riches en FODMAP.
   const foodDays = new Map()
-  const fodmapDays = new Set()
+  const fodmapDays = new Map() // jour → sous-groupes FODMAP au-dessus du repère dans au moins un repas (N5)
   for (const e of period) {
     if (e.type !== 'food') continue
     const k = localDateKey(e.at)
     for (const f of mealFactors(e)) {
-      if (f === FODMAP_FACTOR) {
-        fodmapDays.add(k)
+      const group = fodmapGroupOf(f)
+      if (group) {
+        if (!fodmapDays.has(k)) fodmapDays.set(k, new Set())
+        fodmapDays.get(k).add(group)
         continue
       }
       if (!foodDays.has(f)) foodDays.set(f, new Set())
@@ -99,7 +101,7 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
 
   const calendar = []
   for (let k = from; k <= to; k = addDays(k, 1)) {
-    calendar.push({ date: k, level: gutByDay.get(k) ?? null, fodmap: fodmapDays.has(k) })
+    calendar.push({ date: k, level: gutByDay.get(k) ?? null, fodmap: fodmapDays.has(k), fodmapGroups: [...(fodmapDays.get(k) ?? [])].sort() })
   }
 
   const counts = levelCounts(calendar)

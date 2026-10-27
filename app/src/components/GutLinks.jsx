@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import DetailsToggle from './DetailsToggle'
-import { comparableLabel } from '../services/gutLinks'
+import { FODMAP_FACTOR_LABELS, comparableLabel } from '../services/gutLinks'
+import { fodmapGroupOf } from '../services/gutWindows'
 import { challengePath } from '../services/fodmapChallenge'
 import './GutLinks.css'
 
@@ -11,11 +12,16 @@ const times = (k, n) => `${k} fois sur ${n}`
 /** La piste en une phrase, avec les deux comptes (avec / sans l'aliment). */
 function linkSentence(link) {
   const { exposed: ex, unexposed: un } = link
+  // N5 : piste d'un sous-groupe FODMAP seul (pas regroupée avec un aliment)
+  const group = link.together.length ? null : fodmapGroupOf(link.factor)
+  const rich = group && `un repas riche en ${FODMAP_FACTOR_LABELS[group] ?? group}`
   if (link.kind === 'day') {
-    const withText = link.when === 'veille' ? 'Les lendemains des jours où vous en avez mangé' : 'Les jours où vous en avez mangé'
+    let withText = link.when === 'veille' ? 'Les lendemains des jours où vous en avez mangé' : 'Les jours où vous en avez mangé'
+    if (rich) withText = link.when === 'veille' ? `Les lendemains d’${rich}` : `Les jours avec ${rich}`
     return `${withText}, gêne ou douleur ${times(ex.symptoms, ex.n)}. Les autres jours, ${times(un.symptoms, un.n)}.`
   }
-  return `Dans les ${link.whenLabel.replace(' après', '')} après en avoir mangé, gêne ou douleur ${times(ex.symptoms, ex.n)}. Le reste du temps, ${times(un.symptoms, un.n)}.`
+  const after = rich ? `après ${rich}` : 'après en avoir mangé'
+  return `Dans les ${link.whenLabel.replace(' après', '')} ${after}, gêne ou douleur ${times(ex.symptoms, ex.n)}. Le reste du temps, ${times(un.symptoms, un.n)}.`
 }
 
 function GutLinkCard({ link }) {
@@ -48,6 +54,11 @@ function GutLinkCard({ link }) {
             {link.nearMeal != null && link.nearMeal > 0 && (
               <p className="gut-link-stats">
                 {Math.round(link.nearMeal * 100)} % de ces notes ont été prises dans les 2 h après ce repas.
+              </p>
+            )}
+            {(fodmapGroupOf(link.factor) || link.together.some(fodmapGroupOf)) && (
+              <p className="gut-link-text">
+                « Riche » : au-dessus d’un repère général par portion (une hypothèse de départ). Vos données priment.
               </p>
             )}
             <p className="gut-link-text">L’attente joue aussi : une réintroduction guidée aide à trancher.</p>

@@ -15,6 +15,19 @@
  * base : sans cette option, les journaux simulés ne changent pas.
  */
 
+/**
+ * `realNames` (N5) : les dix aliments prennent un vrai nom Ciqual et une portion réaliste, pour que les sous-groupes
+ * FODMAP (fructanes de l'oignon, de l'ail et des pâtes, GOS des pois chiches (pour « Lentilles »), fructose et sorbitol de la pomme, lactose
+ * du lait et du yaourt, fructose en excès de la carotte d'après Ciqual) deviennent des facteurs comme dans un vrai
+ * journal. Les effets se désignent toujours par le nom court (`oignon`), ou une liste (`['lait', 'yaourt']`).
+ */
+export const SIM_REAL_NAMES = {
+  Oignon: ['Oignon jaune, cru', 40], Ail: ['Ail, cru', 3], Blé: ['Pâtes cuites', 150],
+  Lentilles: ['Pois chiche, appertisé, égoutté', 150], Pomme: ['Pomme', 150],
+  Lait: ['Lait demi-écrémé, UHT', 200], Riz: ['Riz blanc cuit', 150], Poulet: ['Poulet grillé', 120],
+  Carotte: ['Carotte, crue', 80], Yaourt: ['Yaourt nature', 125],
+}
+
 export const SIM_FOODS = ['Oignon', 'Ail', 'Blé', 'Lentilles', 'Pomme', 'Lait', 'Riz', 'Poulet', 'Carotte', 'Yaourt']
 
 export const NULL_SCENARIOS = {
@@ -40,8 +53,9 @@ const H = 3_600_000
 const START = Date.parse('2026-09-01T00:00:00Z')
 const MEAL_HOURS = [8, 12.5, 19.5]
 
-export function simulateRealistic({ seed, days = 63, drift = false, series = false, informative = false, postMeal = false, effect = null, timedNotes = true, dayNotes = false, dayEffect = null, extraFoods = 0 }) {
+export function simulateRealistic({ seed, days = 63, drift = false, series = false, informative = false, postMeal = false, effect = null, timedNotes = true, dayNotes = false, dayEffect = null, extraFoods = 0, realNames = false }) {
   const rand = rng(seed)
+  const hits = (foods, food) => [].concat(food).some((f) => foods.has(f))
   const entries = []
   const meals = []
   let latent = 0
@@ -60,8 +74,12 @@ export function simulateRealistic({ seed, days = 63, drift = false, series = fal
       }
       if (!items.length) items.push({ ingredient: 'Pâtes', quantity_g: 100 })
       const t = START + (d * 24 + h) * H
-      const meal = { type: 'food', at: new Date(t).toISOString(), payload: { items } }
-      meals.push({ t, foods: new Set(items.map((it) => it.ingredient.toLocaleLowerCase('fr-FR'))) })
+      const foods = new Set(items.map((it) => it.ingredient.toLocaleLowerCase('fr-FR')))
+      const logged = realNames
+        ? items.map((it) => (SIM_REAL_NAMES[it.ingredient] ? { ingredient: SIM_REAL_NAMES[it.ingredient][0], quantity_g: SIM_REAL_NAMES[it.ingredient][1] } : it))
+        : items
+      const meal = { type: 'food', at: new Date(t).toISOString(), payload: { items: logged } }
+      meals.push({ t, foods })
       entries.push(meal)
       if (postMeal) moments.push(t + (0.5 + rand() * 1.5) * H)
     }
@@ -70,7 +88,7 @@ export function simulateRealistic({ seed, days = 63, drift = false, series = fal
 
     for (const t of timedNotes ? moments : []) {
       let logit = latent * 1.5 - 0.8
-      if (effect && meals.some((m) => m.foods.has(effect.food) && t - m.t >= effect.fromH * H && t - m.t < effect.toH * H)) {
+      if (effect && meals.some((m) => hits(m.foods, effect.food) && t - m.t >= effect.fromH * H && t - m.t < effect.toH * H)) {
         logit += Math.log(effect.odds)
       }
       const bad = rand() < 1 / (1 + Math.exp(-logit))
@@ -84,7 +102,7 @@ export function simulateRealistic({ seed, days = 63, drift = false, series = fal
       if (dayEffect) {
         const from = START + (d - dayEffect.day) * 24 * H
         const to = dayEffect.day === 0 ? t : from + 24 * H
-        if (meals.some((m) => m.foods.has(dayEffect.food) && m.t >= from && m.t < to)) logit += Math.log(dayEffect.odds)
+        if (meals.some((m) => hits(m.foods, dayEffect.food) && m.t >= from && m.t < to)) logit += Math.log(dayEffect.odds)
       }
       const bad = rand() < 1 / (1 + Math.exp(-logit))
       if (!informative || rand() < (bad ? 0.8 : 0.3)) {

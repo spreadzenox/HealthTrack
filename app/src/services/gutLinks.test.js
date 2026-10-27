@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { simulateRealistic } from './gutWindows.sim'
-import { GUT_LINKS_MIN_DAYS, comparableLabel, gutFactorLabel, summarizeGutLinks } from './gutLinks'
-import { FODMAP_FACTOR } from './gutWindows'
+import { GUT_LINKS_MIN_DAYS, comparableLabel, gutFactorLabel, summarizeGutLinks, togetherLabel } from './gutLinks'
+import { LEGACY_FODMAP_FACTOR } from './gutWindows'
 
 const DAY_ONLY = { timedNotes: false, dayNotes: true }
 const note = (iso, level) => ({ type: 'gut', at: iso, payload: { level } })
@@ -89,7 +89,10 @@ describe('summarizeGutLinks', () => {
 describe('gutFactorLabel', () => {
   it('nom court avec une majuscule ; FODMAP en clair', () => {
     expect(gutFactorLabel('oignon')).toBe('Oignon')
-    expect(gutFactorLabel(FODMAP_FACTOR)).toBe('Repas riches en FODMAP')
+    expect(gutFactorLabel(LEGACY_FODMAP_FACTOR)).toBe('Repas riches en FODMAP')
+    expect(gutFactorLabel('fodmap:fructans')).toBe('Repas riches en fructanes')
+    expect(gutFactorLabel('fodmap:fructose')).toBe('Repas riches en fructose en excès')
+    expect(gutFactorLabel('fodmap:gos')).toBe('Repas riches en GOS')
   })
 })
 
@@ -130,5 +133,27 @@ describe('summarizeGutLinks — aliments souvent mangés ensemble (I134 étape 3
       if (link?.oftenWith.includes('ail')) hits += 1
     }
     expect(hits).toBe(1)
+  })
+})
+
+describe('pistes par sous-groupe FODMAP (N5)', () => {
+  it('libellé d’aliments indiscernables, avec ou sans leur sous-groupe', () => {
+    expect(togetherLabel(['oignon', 'ail', 'échalote'])).toBe('Oignon, ail ou échalote')
+    expect(togetherLabel(['fodmap:gos', "lentille verte, bouillie/cuite à l'eau"])).toBe('Lentille verte (riche en GOS)')
+    expect(togetherLabel(['fodmap:fructose', 'fodmap:sorbitol', 'pomme'])).toBe('Pomme (riche en fructose en excès et sorbitol)')
+    expect(togetherLabel(['banane', 'fodmap:lactose', 'yaourt nature'])).toBe('Banane, yaourt nature ou le lactose')
+    expect(togetherLabel(['fodmap:fructose', 'fodmap:sorbitol'])).toBe('Repas riches en fructose en excès ou sorbitol')
+  })
+
+  it('un effet du lait et du yaourt ressort comme « Repas riches en lactose », lié au test du lactose', () => {
+    const entries = simulateRealistic({
+      seed: 3, days: 90, timedNotes: false, dayNotes: true, realNames: true,
+      dayEffect: { food: ['lait', 'yaourt'], day: 0, odds: 6 },
+    })
+    const s = summarizeGutLinks(entries)
+    expect(s.status).toBe('links')
+    const lactose = s.links.find((l) => l.factor === 'fodmap:lactose')
+    expect(lactose).toMatchObject({ label: 'Repas riches en lactose', when: 'jour', together: [] })
+    expect(s.links.every((l) => !l.factor.startsWith('fodmap:') || l.factor === 'fodmap:lactose')).toBe(true)
   })
 })

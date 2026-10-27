@@ -23,6 +23,7 @@
  *   npm run visual -- --routes=/connectors --hrv-gap  # plus de VFC depuis 4 jours (« qui envoie quoi »)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/recommendations --gut-links  # bilans du soir du ventre : une piste repas → ventre
+ *                                          --gut-links=lactose : gêne les jours de lait ou yaourt (piste par sous-groupe, N5)
  *   npm run visual -- --routes=/reintroduction --fodmap  # réintroduction guidée (7b) : 8 jours de ventre calme, choix ;
  *                                          --click="Blé" : préparation ; --fodmap=day2 : test du lait au jour 2 ;
  *                                          =question : gêne après la portion ; =result : résultat et pause ;
@@ -815,8 +816,9 @@ async function main() {
       for (let n = 74; n >= 1; n--) {
         const bilan = daysAgo(n, 21)
         const start = daysAgo(n, 0)
+        const culprit = args['gut-links'] === 'lactose' ? /^(lait|yaourt)/i : /^banane/i
         const banana = entries.some((e) => e.type === 'food' && new Date(e.at) >= start && new Date(e.at) < bilan &&
-          e.payload?.items?.some((it) => /^banane/i.test(it.ingredient)))
+          e.payload?.items?.some((it) => culprit.test(it.ingredient)))
         const level = rnd() < (banana ? 0.75 : 0.15) ? (rnd() < 0.5 ? 'pain' : 'discomfort') : 'calm'
         entries.push({ type: 'gut', source: 'app_gut', at: bilan.toISOString(), payload: { level, scope: 'day' } })
       }

@@ -127,7 +127,9 @@ function PortionReminderRow() {
 
 // ─── ① Choix du groupe ──────────────────────────────────────────────────────
 
-function ChooseGroup({ results, onPick, combos }) {
+function ChooseGroup({ results, onPick, combos, focus = null }) {
+  // N5 : ouvert depuis une piste « fructanes », le groupe passe en tête (l'aliment reste à choisir).
+  const groups = focus ? [...FODMAP_GROUPS].sort((a, b) => (b.id === focus) - (a.id === focus)) : FODMAP_GROUPS
   return (
     <>
       <p className="fodmap-intro">
@@ -135,8 +137,8 @@ function ChooseGroup({ results, onPick, combos }) {
         votre ventre comme d’habitude ; l’app vous dit ce qui passe.
       </p>
       <ul className="fodmap-groups">
-        {FODMAP_GROUPS.map((g) => (
-          <li key={g.id}>
+        {groups.map((g) => (
+          <li key={g.id} className={g.id === focus ? 'is-focus' : undefined}>
             {g.foods.length === 1 ? (
               <button type="button" className="fodmap-group" onClick={() => onPick(g.id, g.foods[0].id)}>
                 <span className="fodmap-group-name">{g.label}</span>
@@ -418,7 +420,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
       )}
       {view && !current && premium && !pick && (
         <>
-          <ChooseGroup results={view.results} combos={view.combos} onPick={(group, food) => setPick({ group, food })} />
+          <ChooseGroup results={view.results} combos={view.combos} focus={findGroup(params.get('groupe'))?.id ?? null} onPick={(group, food) => setPick({ group, food })} />
           {view.done.length > 0 && (
             <article className="today-card fodmap-card" aria-labelledby="fodmap-done-title">
               <h3 id="fodmap-done-title" className="today-card-title">Vos résultats</h3>

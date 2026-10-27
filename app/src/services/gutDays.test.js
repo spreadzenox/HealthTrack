@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { NULL_SCENARIOS, simulateRealistic } from './gutWindows.sim'
 import { GUT_DAY_WINDOWS, TTS_SHIFT_DAYS, analyzeGutDays } from './gutDays'
 import { MAX_TESTED_FOODS, analyzeGutWindows, selectTestedFactors } from './gutWindows'
+import { FODMAP_SUBGROUPS } from './fodmapGroups'
 
 const DAY_ONLY = { timedNotes: false, dayNotes: true }
 const find = (res, factor, window) => res.results.find((r) => r.factor === factor && r.window === window)
@@ -100,22 +101,23 @@ describe('analyzeGutDays (I170 étape 3)', () => {
 describe('moins de comparaisons (I173)', () => {
   const days = (n, from = 1) => Array.from({ length: n }, (_, i) => `2026-09-${String(from + i).padStart(2, '0')}`)
 
-  it('selectTestedFactors : FODMAP toujours, puis les aliments les mieux répartis', () => {
+  it('selectTestedFactors : sous-groupes FODMAP toujours, puis les aliments les mieux répartis', () => {
     const meals = [
       ...days(20).map((day) => ({ day, factors: ['pain'] })), // tous les jours : peu informatif
       ...days(10).map((day) => ({ day, factors: ['riz'] })), // un jour sur deux : le mieux réparti
-      ...days(4).map((day) => ({ day, factors: ['pomme', 'fodmap_eleve'] })),
+      ...days(4).map((day) => ({ day, factors: ['pomme', 'fodmap:fructose', 'fodmap:sorbitol'] })),
       { day: '2026-09-05', factors: ['kiwi'] },
     ]
-    expect(selectTestedFactors(meals, 2)).toEqual(['fodmap_eleve', 'pomme', 'riz'])
-    expect(selectTestedFactors(meals, 3)).toEqual(['fodmap_eleve', 'kiwi', 'pomme', 'riz'])
-    expect(selectTestedFactors(meals, 10)).toEqual(['fodmap_eleve', 'kiwi', 'pain', 'pomme', 'riz'])
+    expect(selectTestedFactors(meals, 2)).toEqual(['fodmap:fructose', 'fodmap:sorbitol', 'pomme', 'riz'])
+    expect(selectTestedFactors(meals, 3)).toEqual(['fodmap:fructose', 'fodmap:sorbitol', 'kiwi', 'pomme', 'riz'])
+    expect(selectTestedFactors(meals, 10)).toEqual(['fodmap:fructose', 'fodmap:sorbitol', 'kiwi', 'pain', 'pomme', 'riz'])
   })
 
   it(`au plus ${MAX_TESTED_FOODS} aliments testés par fenêtre, quelle que soit la longueur de la liste`, () => {
     const entries = simulateRealistic({ seed: 5, days: 63, ...DAY_ONLY, extraFoods: 30 })
     const factors = new Set(analyzeGutDays(entries).results.map((r) => r.factor))
-    expect(factors.size).toBeLessThanOrEqual(MAX_TESTED_FOODS + 1)
+    expect([...factors].filter((f) => !f.startsWith('fodmap:')).length).toBeLessThanOrEqual(MAX_TESTED_FOODS)
+    expect(factors.size).toBeLessThanOrEqual(MAX_TESTED_FOODS + FODMAP_SUBGROUPS.length)
   })
 
   it('deux aliments toujours mangés ensemble ne comptent qu’une comparaison et reçoivent le même verdict', () => {

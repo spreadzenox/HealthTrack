@@ -86,6 +86,19 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     expect(await screen.findByRole('button', { name: /Lactose/ })).toBeInTheDocument()
   })
 
+  it('N5 : ouvert depuis une piste « fructanes », le groupe passe en tête et l’aliment reste à choisir', async () => {
+    render(
+      <MemoryRouter initialEntries={['/reintroduction?groupe=fructans']}>
+        <Reintroduction now={NOW} store={makeStore()} />
+      </MemoryRouter>,
+    )
+    expect(await screen.findByRole('button', { name: /Lactose/ })).toBeInTheDocument()
+    const first = document.querySelector('.fodmap-groups li')
+    expect(first).toHaveClass('is-focus')
+    expect(first.textContent).toMatch(/Fructanes/)
+    expect(screen.queryByLabelText('Portion du jour 1')).not.toBeInTheDocument()
+  })
+
   it('③ note la portion du jour en un geste', async () => {
     const c = startChallenge({ group: 'lactose', food: 'milk' }, new Date(2026, 9, 26, 8))
     const store = makeStore({ challenges: [challengeEntry(c)], gutEntries: calm(3, 2, 1) })

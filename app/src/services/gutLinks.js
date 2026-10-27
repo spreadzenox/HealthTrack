@@ -9,7 +9,7 @@
  */
 import { localDateKey } from './analysisEngine'
 import { analyzeGutDays, GUT_DAY_WINDOWS } from './gutDays'
-import { analyzeGutWindows, FODMAP_FACTOR, GUT_WINDOWS, TTS_MIN_KEPT_DAYS, TTS_SHIFT_DAYS, mealFactors } from './gutWindows'
+import { analyzeGutWindows, GUT_WINDOWS, LEGACY_FODMAP_FACTOR, fodmapGroupOf, TTS_MIN_KEPT_DAYS, TTS_SHIFT_DAYS, mealFactors } from './gutWindows'
 import { GUT_TYPE, isGutDayNote } from './today'
 import { shortFoodName } from '../utils/format'
 
@@ -25,10 +25,42 @@ const WHEN = {
   ...Object.fromEntries(GUT_DAY_WINDOWS.map((w) => [w.id, { kind: 'day', label: w.label, order: 1 }])),
 }
 
+/** N5 : « Repas riches en fructanes »… (repère de départ par portion dépassé, `fodmapGroups.js`). */
+export const FODMAP_FACTOR_LABELS = {
+  fructans: 'fructanes', gos: 'GOS', fructose: 'fructose en excès', lactose: 'lactose', sorbitol: 'sorbitol',
+  mannitol: 'mannitol',
+}
+
 export function gutFactorLabel(factor) {
-  if (factor === FODMAP_FACTOR) return 'Repas riches en FODMAP'
+  if (factor === LEGACY_FODMAP_FACTOR) return 'Repas riches en FODMAP'
+  const group = fodmapGroupOf(factor)
+  if (group) return `Repas riches en ${FODMAP_FACTOR_LABELS[group] ?? group}`
   const name = shortFoodName(factor) || factor
   return name.charAt(0).toLocaleUpperCase('fr-FR') + name.slice(1)
+}
+
+const lowerFirst = (s) => s.charAt(0).toLocaleLowerCase('fr-FR') + s.slice(1)
+
+/**
+ * Libellé d'une piste qui regroupe des facteurs indiscernables : « Oignon, ail ou échalote ». Un aliment et le
+ * sous-groupe FODMAP qu'il est seul à apporter (N5) : « Lentille verte (riche en GOS) » plutôt que « Repas riches en
+ * GOS ou lentille verte » ; avec plusieurs aliments, le sous-groupe est une possibilité de plus (« Banane, café ou le
+ * lactose »).
+ */
+export function togetherLabel(factors) {
+  const groups = factors.map(fodmapGroupOf).filter(Boolean)
+  const foods = factors.filter((f) => !fodmapGroupOf(f)).map(gutFactorLabel)
+  if (!foods.length) return joinOr(groups.map((g, i) => (i === 0 ? gutFactorLabel(`fodmap:${g}`) : FODMAP_FACTOR_LABELS[g] ?? g)))
+  const names = foods.map((l, i) => (i === 0 ? l : lowerFirst(l)))
+  if (!groups.length) return joinOr(names)
+  if (foods.length === 1) return `${names[0]} (riche en ${groups.map((g) => FODMAP_FACTOR_LABELS[g] ?? g).join(' et ')})`
+  // Plusieurs aliments : on ne sait pas lequel apporte le sous-groupe, il est une possibilité de plus.
+  return joinOr([...names, ...groups.map((g) => FODMAP_WITH_ARTICLE[g] ?? g)])
+}
+
+const FODMAP_WITH_ARTICLE = {
+  fructans: 'les fructanes', gos: 'les GOS', fructose: 'le fructose en excès', lactose: 'le lactose',
+  sorbitol: 'le sorbitol', mannitol: 'le mannitol',
 }
 
 const joinOr = (names) => (names.length < 2 ? names[0] : `${names.slice(0, -1).join(', ')} ou ${names[names.length - 1]}`)
@@ -124,7 +156,7 @@ export function summarizeGutLinks(entries) {
   }
   const merged = [...groups.values()].map((g) => (g.length === 1 ? { ...g[0], together: [] } : {
     ...g[0],
-    label: joinOr(g.map((l, i) => (i === 0 ? l.label : l.label.charAt(0).toLocaleLowerCase('fr-FR') + l.label.slice(1)))),
+    label: togetherLabel(g.map((l) => l.factor)),
     together: g.map((l) => l.factor),
   }))
 
