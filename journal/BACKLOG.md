@@ -1211,7 +1211,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 **Ajouté le 27/10 20:33 (run « idées », spécification dans `IDEES.md` I184–I185)** — remarques de la Play Console
 « Pour votre prochaine version » du 27/10, rangées dans le polissage :
-- [ ] **POL-PLAY-9** Bord à bord pour tous : `EdgeToEdge.enable(this)` avant `super.onCreate` dans `MainActivity`,
+- [x] **POL-PLAY-9** (27/10 21:33 ; encarts sous Android ≤ 14 injectés par notre `SystemBarsPlugin`, Capacitor ne le fait qu'à partir de 15) Bord à bord pour tous : `EdgeToEdge.enable(this)` avant `super.onCreate` dans `MainActivity`,
   dépendance `androidx.activity` explicite ; job émulateur **API 30 ou 34** en plus (Accueil, une modale, clavier
   ouvert) ; captures API 35/36 inchangées. Petit, sans risque pour les données.
 - [ ] **POL-PLAY-10 (R8a)** R8 sur la variante play (`release` = play seulement) : `minifyEnabled true`,

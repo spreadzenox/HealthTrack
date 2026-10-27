@@ -3,6 +3,8 @@ package com.healthtrack.app;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
+
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -33,6 +35,10 @@ public class MainActivity extends BridgeActivity {
         // Plugins d'une seule variante (play : Google Play Billing ; sideload : aucun), voir FlavorPlugins
         registerPlugins(FlavorPlugins.list());
         super.onCreate(savedInstanceState);
+        // Bord à bord sur toutes les versions (Android 15+ l'impose déjà) : encarts en CSS, voir SystemBarsPlugin.
+        // Après super.onCreate : BridgeActivity y quitte le thème de démarrage, dont la fenêtre a une barre de titre
+        // (appelé avant, la fenêtre était créée trop tôt : bande de 56 dp en haut, vue à l'émulateur le 27/10).
+        EdgeToEdge.enable(this);
         faceResumePending = isFaceResume(getIntent());
         markPortionOpen(getIntent());
     }
