@@ -47,3 +47,10 @@
 
 ## Suite
 - Retour du propriétaire (4 chiffres montre / Halcya) ; puis reprise : 9b (i18n) ou suite FODMAP selon PRODUIT.md.
+
+## Merge
+- Build `npm run build` OK ; lint : 6 erreurs, comme avant ; `npm run visual --routes=/,/journal,/sources` : 0 erreur JS,
+  captures regardées (Accueil, Journal « Hier » 10 085 pas / 2 352 kcal sur la démo : inchangé).
+- PR #431 : tous les checks verts (Vitest, Build APK, relais, protocole montre, budget de lectures, émulateurs API 35
+  et 36) → mergée (squash) en `1e4f44d`.
+- « Build & Release » vert : **v314** publiée, APK 34,9 Mo (34 897 289 octets) ; « Play — AAB », « Tests », émulateur verts.
