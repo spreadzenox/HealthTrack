@@ -203,6 +203,14 @@ sous-groupes FODMAP du jour (Fn = fructanes, G = GOS, L = lactose…), tableau d
 décompte, pas une analyse), fichier de 20 à 30 Ko ; le bouton « Rapport PDF pour mon médecin » arrive au prochain run
 (N6b).
 
+**Prochain gros chantier préparé (run « idées » du 27/10 08:33) : Halcya en anglais (jalon 9).** Mesuré : environ
+2 000 phrases visibles (le mode diagnostic reste en français). Bonne nouvelle : la table officielle Ciqual 2025 donne
+déjà le **nom anglais de chacun de ses 3 484 aliments**, donc rien à traduire à la main côté aliments (sauf 69 noms
+simples). Plan en 8 étapes, la langue suit celle du téléphone (réglable), tout reste caché jusqu'à ce que l'anglais
+soit complet. **Une décision pour vous, pas urgente (P32)** : vendre d'abord en France et dans les pays
+francophones, puis au Royaume-Uni, en Irlande et dans le reste de l'UE quand l'anglais est prêt, et **pas aux
+États-Unis** tant qu'un juriste n'a pas relu (deux règles américaines visent précisément les apps de santé).
+
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
 🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
@@ -221,11 +229,14 @@ décompte, pas une analyse), fichier de 20 à 30 Ko ; le bouton « Rapport PDF p
    le lien de la vidéo, envoyer. Si la ligne n'apparaît toujours pas le lendemain, dites-le : un run enverra la
    version en test interne (vous seul) à la place. Débloque la lecture du bien-être au déverrouillage dans la
    version Play.
-3. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
+3. **P32** (pas urgent, avant la production) : dans quels pays vendre (proposition ci-dessus ; répondez
+   « d'accord » ou votre liste).
+4. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
    quand Google le demande).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 08:33 — [Idées : jalon 9 (anglais) prêt à coder](runs/2026-10-27-0833-idees-jalon9-anglais.md) | 💡 | `IDEES.md` I180–I183 : ≈ 2 800 chaînes mesurées (≈ 2 000 visibles hors diagnostic), 41 `fr-FR` en dur, 25 fichiers Java ; `t()` maison, français = clé ; Ciqual 2025 `alim_nom_eng` 3 484 / 3 484 ; découpage 9a–9h ; P32 (pays, États-Unis exclus : HBNR, My Health My Data) ; journal seul |
 | 27/10 07:35 — [N6c : partage du PDF vérifié sur l'émulateur](runs/2026-10-27-0735-n6c-partage-pdf-emulateur.md) | 🏗️ | script CI `pdf-share/drive.mjs` (job API 35, non bloquant) : feuille de partage avec le PDF, fichier de 20 Ko dans Documents, partage annulé → message, 2ᵉ rapport du jour ; tout vert ; PR #421 (journal) mergée ; 2 519 Vitest ; v310 |
 | 27/10 06:33 — [N4 (reste) : FODMAP avant d'enregistrer](runs/2026-10-27-0633-n4-fodmap-avant-enregistrer.md) | 🏗️ | `MealFodmapLine` sous l'éditeur du résultat d'une analyse photo, de « Décrire » / « Refaire » et de « Modifier », en direct sur les grammes corrigés ; option `--food-analysis=fodmap` des captures ; 2 519 Vitest ; v309 |
 | 27/10 05:33 — [N3c : score FODMAP depuis les sous-groupes](runs/2026-10-27-0533-n3c-fodmap-score-groupes.md) | 🏗️ | le moteur du bien-être compte les groupes FODMAP au-dessus du repère (repas le plus chargé) au lieu du score 0–3 inventé, retiré de la table ; 1 104 → 600 aliments « chargés » à 100 g ; 2 517 Vitest ; v308 |

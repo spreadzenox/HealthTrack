@@ -9,6 +9,116 @@
 
 ---
 
+## Run du 27/10/2026 08:33 (Paris) — Jalon 9 (anglais) prêt à coder : mesure, choix technique, découpage
+
+**But** : que les runs de code du jalon 9 (i18n + anglais) n'aient plus rien à chercher, et que le propriétaire
+tranche à temps le seul vrai choix produit (quels pays anglophones). Le chantier FODMAP du 26/10 est livré (N1–N6c) ;
+le jalon 9 est le plus gros chantier restant sans spécification. Mesures faites sur `main` (`90569d4`) le 27/10.
+
+### I180 (18) — Ce qu'il y a à traduire, mesuré [V, dépôt]
+- **Textes de l'app web** : script jetable (`@babel/parser`, déjà en devDependencies) sur 211 fichiers `src/**/*.js(x)`
+  hors tests : **≈ 2 800 chaînes à espaces / accents, ≈ 17 500 mots** (surestimation : messages de journal et de
+  diagnostic compris). Par dossier : components 733, pages 678, services 648, devices 407, connectors 136, config 72,
+  data 64. Plus gros fichiers : `pages/Recommendations.jsx` 161, `services/faceSense.js` 146,
+  `connectors/HealthConnectConnector.js` 120, `devices/huawei/diagnostic.js` 84, `pages/Data.jsx` 79,
+  `pages/Onboarding.jsx` 78, `components/FaceSenseCard.jsx` 77, `components/BleDevices.jsx` 75,
+  `pages/Reintroduction.jsx` 70, `pages/Connectors.jsx` 69, `config/permissionDisclosures.js` 57,
+  `services/report/renderPdf.js` 51.
+- **À laisser en français** (mode diagnostic caché, jamais vu par un utilisateur normal) : `devices/huawei/diagnostic.js`,
+  journaux de synchro de la montre, écran de diagnostic du visage → ≈ 300 chaînes de moins. Reste **≈ 2 000 chaînes
+  visibles, ≈ 12 000 mots**.
+- **Formats** : `fr-FR` écrit en dur dans **41 fichiers** ; **14** `.replace('.', ',')` pour la virgule décimale.
+- **Natif** : 25 fichiers Java hors tests contiennent du texte français (notifications : bilan du soir, portion du jour,
+  reprise de la lecture du visage, synchro montre, Play Billing…), sans `res/values/strings.xml` pour ces textes.
+- **Relais** : `relay/src/prompts.js` demande `dish` et `reason` « en français » ; les noms d'ingrédients rendus par
+  le modèle sont des **clés** (noms Ciqual français copiés de la liste) : à garder tels quels.
+- **Table des aliments** : **Ciqual 2025 publie un nom anglais pour chacun de ses 3 484 aliments** (`alim_nom_eng`
+  dans `alim_2025_11_03.xml` de https://zenodo.org/records/17550133, vérifié le 27/10 : 3 484 / 3 484, aucun
+  manquant ; ex. « Pastis » → « Pastis (anise-flavoured spirit) »). La table `ingredientsNutrition.json` garde déjà
+  `ciqual_code` : l'importeur peut ajouter `name_en` sans traduction maison (+ ≈ 100 Ko non compressés, à mesurer).
+  Seuls les **69 alias** de `scripts/nutrition/aliases.mjs` (« Banane », « Riz blanc cuit »…) demandent un nom anglais
+  écrit à la main.
+- **Tests** : 59 fichiers de test cherchent des textes français (`getByText`…) → ils doivent continuer de tourner en
+  français (langue forcée dans `src/test/setup`), sinon des centaines de tests cassent.
+- **Nouveautés** : 202 entrées JSON en français ; on ne traduit pas l'historique.
+
+### I181 (17) — Choix technique : un `t()` maison, le français comme clé [V/H]
+- **Proposition** : `app/src/i18n/` sans dépendance (≈ 80 lignes) : `t('Plutôt une bonne journée')` ; interpolation
+  `t('{n} jours notés', { n })` ; pluriels par `Intl.PluralRules` (`t.plural(n, { one: '…', other: '…' })` — attention :
+  en français 0 est « one », en anglais « other », c'est `Intl` qui tranche) ; dates et nombres par `Intl` via
+  `i18n/locale.js` qui remplace les 41 `fr-FR` et les 14 `replace('.', ',')` (« 3,4 / 5 » → « 3.4 / 5 »).
+  Catalogue `i18n/en.json` { « texte français » : « English text » }. Clé absente → **le français s'affiche** (jamais
+  une clé brute ni un vide).
+- **Pourquoi le français comme clé** (façon gettext / Lingui) : le code reste lisible et cherchable, les 59 fichiers de
+  test ne bougent pas, et une conversion se fait fichier par fichier sans renommer quoi que ce soit. Inconvénient
+  connu : modifier une phrase française change sa clé → un **test de catalogue** extrait (même `@babel/parser`) tous les
+  `t('…')` littéraux des fichiers déclarés « convertis » et échoue si l'un manque dans `en.json` ou si `en.json` garde
+  des clés orphelines.
+- **Écartés** : i18next + react-i18next (MIT, ≈ 40 Ko, API plus large que le besoin) ; Lingui (MIT, mais macro Babel
+  / SWC à brancher dans Vite 5 et étape de compilation) ; react-intl (BSD-3, ICU complet, plus lourd). Aucun n'apporte
+  ce dont des runs d'une heure ont besoin de plus qu'un `t()` testé. À reconsidérer seulement si une 3ᵉ langue arrive.
+- **Choix de la langue** : Paramètres → « Langue » (Automatique / Français / English), Automatique = français si la
+  langue du téléphone est le français, **sinon anglais** une fois l'anglais complet. Tant que l'anglais n'est pas
+  complet, le réglage reste caché derrière `VITE_I18N_EN` (français partout, comme aujourd'hui).
+- **Android** : déclarer `res/xml/locales_config.xml` (fr, en) + `android:localeConfig` pour le réglage système
+  « Langue de l'app » d'Android 13+ ; textes natifs dans `res/values/strings.xml` (français, langue par défaut) +
+  `res/values-en/` ; le JS lit la langue effective **auprès du natif** (petite méthode de plugin) plutôt que
+  `navigator.language`, dont le comportement avec une langue par app dans la WebView n'est pas documenté
+  **[à vérifier sur l'émulateur]**. Plugins Capacitor tiers repérés pour ce réglage (`@capacitor-trancee/app-language`)
+  : inutiles, 10 lignes Java suffisent.
+- **Relais** : champ `lang` (fr | en) dans la requête ; `dish` / `reason` dans cette langue ; clés d'ingrédients
+  inchangées ; affichage par `name_en`.
+- **Lexique de la dictée du soir** (`services/mood/lexicon.js`, FEEL, français) : pas d'équivalent anglais repris sans
+  vérification — le lexique NRC VAD, le plus connu, n'est gratuit que pour la recherche (licence commerciale payante)
+  **[H : à vérifier avant tout usage ; les normes de Warriner 2013 aussi]** → en anglais, la proposition automatique
+  de mots est **désactivée** au départ (la note libre reste).
+
+### I182 (16) — Où vendre en anglais : Royaume-Uni et Irlande d'abord, États-Unis plus tard [T]
+- **États-Unis** : deux textes visent directement les apps de santé hors HIPAA. ① La **Health Breach Notification Rule**
+  de la FTC, élargie le 26/04/2024 (en vigueur le 29/07/2024), couvre explicitement les apps de santé et compte comme
+  « faille » toute divulgation **non autorisée par la personne**, même volontaire (amendes jusqu'à ≈ 51 744 $ par
+  infraction) ; ② le **My Health My Data Act** de l'État de Washington (RCW 19.373) : aucun seuil de taille,
+  politique de confidentialité **dédiée aux données de santé**, consentement séparé, droit d'action privé. Notre
+  modèle local réduit beaucoup le risque, mais l'envoi des photos de repas au relais et l'abonnement en font des
+  sujets de juriste. Sources : Federal Register 89 FR 47028 (30/05/2024) ; synthèses Mofo, Mondaq, Fenwick, OneTrust,
+  accountablehq (consultées le 27/10, secondaires).
+- **Royaume-Uni / Irlande** : RGPD (Irlande) ou UK GDPR, régime proche du nôtre ; questions pour le juriste : frais
+  de protection des données de l'ICO et représentant britannique (UK GDPR art. 27) pour un responsable établi en
+  France [H].
+- **Proposition (P32, décision du propriétaire)** : à la mise en production, pays = France + Belgique, Suisse,
+  Luxembourg, Canada (francophones) **puis**, quand l'anglais est fini, Royaume-Uni, Irlande et le reste de l'UE ;
+  **États-Unis exclus** jusqu'à une relecture juridique (politique « Consumer Health Data » de Washington). Les pays
+  se règlent dans la Play Console (Production → Pays / régions), sans mise à jour de l'app.
+- **Concurrence en anglais** (fiches App Store / Play lues le 27/10, chiffres non vérifiés) : *Tract* (SII et MICI,
+  « FODMAP stacking » entre repas, iOS), *IBS Tracker: FODMAP Food Guide* (14,99 $ une fois, « données sur
+  l'appareil », iOS), *bloaty* (code-barres, FODMAP **par ingrédient**, iOS), sur Android *mySymptoms*, *FODMAP Helper*,
+  *Fodmap Snap*, *FoodLog*. La décomposition par sous-groupe se banalise (bloaty) : notre avance reste **l'analyse
+  personnelle avec délais + montres + local + Android**. Mots-clés à tester (non mesurés) : « IBS tracker »,
+  « FODMAP », « food and symptom diary », « bloating », « gut health », « symptom tracker ».
+- **Vocabulaire anglais interdit / préféré** (même règle qu'en français, à mettre dans `wording.test.js` pour `en.json`) :
+  jamais *diagnose, detect, predict (a flare), treat, cure, prevent* ; dire *possible link, pattern, estimate — not a
+  diagnosis, talk to your doctor*. « piste » → *lead* ou *possible link* (pas *trigger*, qui sous-entend une cause).
+
+### I183 (18) — Découpage du jalon 9 (un run = une étape testable)
+1. **9a socle** : `i18n/` (`t`, `t.plural`, `locale.js`), langue forcée `fr` dans les tests, test de catalogue,
+   remplacement des 41 `fr-FR` / 14 virgules par `locale.js` ; réglage « Langue » caché (`VITE_I18N_EN`) ; option
+   `--lang=en` de `npm run visual` + avertissement si une page anglaise contient encore des lettres accentuées
+   françaises ou des mots-outils français (« vous », « les », « des »). **Rien de visible.**
+2. **9b** Layout, navigation, Accueil (`TodayCards`…), Paramètres.
+3. **9c** Onboarding, Premium / paywall, `permissionDisclosures.js` (divulgations : à relire mot à mot, Play les lit).
+4. **9d** Journal, Repas, Nutrition, ligne FODMAP ; importeur Ciqual → `name_en` (3 484 noms officiels) + 69 alias
+   anglais à la main ; attribution Ciqual en anglais.
+5. **9e** Analyses, Réintroduction, rapport PDF (`buildReport` / `renderPdf`).
+6. **9f** Sources, Health Connect, lecture du visage, montre (hors diagnostic).
+7. **9g** natif (`strings.xml` + `values-en`, `locales_config.xml`) et relais (`lang`).
+8. **9h** fiche Play en-GB / en-US (titre ≤ 30 car. : « Halcya — gut & wellbeing », 24 car.), captures anglaises,
+   politique de confidentialité et conditions en anglais sur Pages, `VITE_I18N_EN` allumé. Sécurité des données :
+   inchangée (ne dépend pas de la langue).
+Coût estimé : 8 runs. Traduction faite par la routine, relue par le propriétaire sur les captures `--lang=en` (P33,
+facultatif : faire relire par un anglophone l'onboarding et le paywall).
+
+---
+
 ## Run du 26/10/2026 20:33 (Paris) — N3b prêt à coder : d'où viendront les fructanes, les GOS, le sorbitol et le mannitol
 
 **But** : que le run de code N3b remplisse `app/src/data/fodmapMeasurements.json` sans chercher ses sources, avec
