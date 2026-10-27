@@ -114,6 +114,9 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   [ ] **FLAKY-UPDATEBANNER** (26/10 21:33) : `UpdateBanner.test.jsx` « montre la progression en Mo et en %, puis ouvre
   l'installateur » a échoué une fois en CI (progressbar introuvable, 3 s) sur une PR de journal seul : le rendre
   indépendant du temps (faux minuteurs ou attente explicite).
+  [x] **P28-INTERNE (27/10 13:30 : le brouillon ne suffit pas)** — 27/10 13:33 : « Play — AAB » allume l'interrupteur
+  pour le test interne (`FACE_UNLOCK_INTERNAL`, versionCode normal, seul le propriétaire vérifié, alpha jamais
+  allumée) ; à couper si Google refuse (erreur exacte dans le compte rendu du run).
   [x] **P28-BROUILLON (demande du 26/10 20:40 : la ligne « Autorisations des services de premier plan » n'apparaît
   pas dans Contenu de l'app)** — 26/10 21:33 : workflow « Play — brouillon P28 » (`play-p28-draft.yml`, workflow_dispatch
   sur main) : AAB play signé avec `-PfaceUnlockPlay=true`, versionCode 100000 + n, brouillon `p28-<n>` sur la piste
@@ -1181,6 +1184,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       sans compte ; un guide d'une ligne dans la bannière suffira
 
 ## Prochaines étapes (ordre conseillé)
+
+**Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 
 **Mise à jour du 27/10 (11:33 Paris)** : ✅ **9a** socle i18n (`src/i18n/` : `t()`, `t.plural`, `appLocale()`, `decimalMark()`, test de catalogue sur `converted.js` ; réglage « Langue » caché derrière `VITE_I18N_EN` ; `visual --lang=en` qui compte les mots français restants ; rien de visible). Suite : **9b** (Layout, navigation, Accueil, Paramètres : ajouter chaque fichier converti à `i18n/converted.js`) ou 7d ; POL-1d dès P28.
 

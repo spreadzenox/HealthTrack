@@ -106,8 +106,13 @@ export async function call(fetchImpl, step, url, { method = 'GET', token, body, 
  * `draft: true` (déclaration P28) : la version est créée en brouillon, jamais déployée, sous `releaseName`, et les
  * versions déjà sur la piste (hors brouillons) y restent telles quelles. Sans `draft`, un brouillon P28 déjà sur la
  * piste est gardé à côté de la nouvelle version ; si Play refuse l'ensemble, la version passe seule (`draftDropped`).
+ *
+ * Lecture au déverrouillage allumée en test interne (P28, 27/10) : `privateTrack: true` refuse d'envoyer si le groupe
+ * des testeurs du test fermé est aussi testeur de la piste (le test interne doit rester au seul propriétaire) et
+ * renvoie les groupes lus (`internalGroups`, null si Play ne les donne pas) ; `noReuse: true` refuse de placer sur
+ * l'alpha un versionCode déjà envoyé en test interne (cet AAB-là a l'interrupteur allumé).
  */
-export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, draft = false, releaseName = String(versionCode), testersGroup = ALPHA_TESTERS_GROUP, fetchImpl = fetch, sleep, log = () => {} }) {
+export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, draft = false, releaseName = String(versionCode), testersGroup = ALPHA_TESTERS_GROUP, privateTrack = false, noReuse = false, fetchImpl = fetch, sleep, log = () => {} }) {
   if (!ALLOWED_TRACKS.includes(track)) throw new Error(`Piste « ${track} » refusée : seules ${ALLOWED_TRACKS.join(', ')} sont autorisées.`)
   fetchImpl = withRetry(fetchImpl, { sleep })
   const base = `${API}/${packageName}/edits`
@@ -134,10 +139,27 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
           await abandon()
           return { outcome: 'already-uploaded', versionCode, track }
         }
+        if (noReuse) {
+          throw new Error(`versionCode ${versionCode} déjà envoyé en test interne avec la lecture au déverrouillage : il ne doit pas aller sur la piste ${track}. Relancez sur un commit de main qui ne touche que journal/ (son numéro n'a jamais été envoyé).`)
+        }
         reusedBundle = true
         log(`versionCode ${versionCode} déjà envoyé : la même version est placée sur la piste ${track}.`)
       } else {
         throw err
+      }
+    }
+
+    let internalGroups
+    if (privateTrack && track === 'internal') {
+      internalGroups = null
+      try {
+        internalGroups = (await call(fetchImpl, 'Lecture des testeurs internes', `${editUrl}/testers/${track}`, { token }))?.googleGroups ?? []
+      } catch (err) {
+        if (!(err instanceof PlayApiError) || isAccessDenied(err)) throw err
+        log(`Testeurs internes illisibles (${err.message}) : envoi poursuivi.`)
+      }
+      if (internalGroups?.includes(testersGroup)) {
+        throw new Error(`Le groupe ${testersGroup} est testeur du test interne : la version avec la lecture au déverrouillage n'y est pas envoyée (le test interne doit rester au seul propriétaire).`)
       }
     }
 
@@ -210,6 +232,7 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
       notSentForReview,
       ...(track === 'alpha' ? { reusedBundle, testersAdded } : {}),
       ...(!draft && kept.length ? { keptDrafts: kept.map((r) => r.name), draftDropped } : {}),
+      ...(internalGroups !== undefined ? { internalGroups } : {}),
     }
   } catch (err) {
     await abandon()

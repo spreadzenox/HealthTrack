@@ -241,3 +241,39 @@ describe('réessais sur les pannes passagères de Play (5xx, 429)', () => {
     expect(r.outcome).toBe('published')
   })
 })
+
+describe('lecture au déverrouillage en test interne (P28, 27/10)', () => {
+  it('test interne au seul propriétaire : lit les groupes testeurs puis envoie en completed', async () => {
+    const routes = happy()
+    routes[`GET ${EDITS}/E1/testers/internal`] = { body: {} }
+    const { fetchImpl, calls } = fakePlay(routes)
+    const r = await publishBundle(args(fetchImpl, { privateTrack: true }))
+    expect(r).toMatchObject({ outcome: 'published', status: 'completed', internalGroups: [] })
+    expect(calls.some((c) => c.key === `PUT ${EDITS}/E1/tracks/internal`)).toBe(true)
+  })
+
+  it('refuse si le groupe du test fermé est testeur interne, sans rien valider', async () => {
+    const routes = happy()
+    routes[`GET ${EDITS}/E1/testers/internal`] = { body: { googleGroups: ['halcya-testeurs@googlegroups.com'] } }
+    const { fetchImpl, calls } = fakePlay(routes)
+    await expect(publishBundle(args(fetchImpl, { privateTrack: true }))).rejects.toThrow(/seul propriétaire/)
+    expect(calls.some((c) => c.key.startsWith('PUT'))).toBe(false)
+    expect(calls.some((c) => c.key === `POST ${EDITS}/E1:commit`)).toBe(false)
+    expect(calls.at(-1).key).toBe(`DELETE ${EDITS}/E1`)
+  })
+
+  it('testeurs illisibles (400) : envoi poursuivi, groupes inconnus', async () => {
+    const routes = happy()
+    routes[`GET ${EDITS}/E1/testers/internal`] = { status: 400, body: { error: { message: 'Testers not supported' } } }
+    const { fetchImpl } = fakePlay(routes)
+    expect(await publishBundle(args(fetchImpl, { privateTrack: true }))).toMatchObject({ status: 'completed', internalGroups: null })
+  })
+
+  it('alpha : refuse de promouvoir un versionCode déjà envoyé en test interne (interrupteur allumé)', async () => {
+    const routes = happy()
+    routes[`POST ${UPLOAD_API}/${PKG}/edits/E1/bundles?uploadType=media`] = { status: 400, body: { error: { message: 'APK specifies a version code that has already been used.' } } }
+    const { fetchImpl, calls } = fakePlay(routes)
+    await expect(publishBundle(args(fetchImpl, { track: 'alpha', noReuse: true }))).rejects.toThrow(/journal/)
+    expect(calls.some((c) => c.key.startsWith('PUT'))).toBe(false)
+  })
+})
