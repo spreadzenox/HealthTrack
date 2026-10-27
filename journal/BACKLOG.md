@@ -1231,9 +1231,18 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   **Reste** : fructanes presque toujours `too_early` dans un journal où oignon, ail ou pâtes reviennent chaque jour
   (peu de jours sans) : normal, la réintroduction guidée est là pour ça ; carotte « riche en fructose en excès » à 80 g
   d'après Ciqual (fructose 1,51 > glucose 0,89) : à surveiller (donnée Ciqual, pas une erreur de calcul).
-- [ ] **N6** rapport PDF par sous-groupe (avec I175 étape 2) : `calendar[].fodmapGroups` est prêt.
+- [ ] **N6** rapport PDF par sous-groupe (avec I175 étape 2) — [x] **N6a FAIT le 27/10 03:33** : `services/report/renderPdf.js`
+  (pdf-lib 1.17.1 + @pdf-lib/fontkit 1.1.1, MIT ; A4, 2 pages « En bref » / « Détail » ; calendrier avec les
+  sous-groupes du jour en abrégé Fn / G / Fr / L / S / M ; tableau « FODMAP par sous-groupe » = décompte de jours
+  riches / notés / gêne ou douleur, dit « pas une analyse » ; repère Varney présenté comme hypothèse ; attribution
+  Ciqual) ; `buildReport().fodmapGroups` ; polices TTF de `src/assets/fonts/report/` (conversion WOFF → TTF par
+  `scripts/fonts/woff-to-ttf.mjs` : le WOFF2 casse le découpage de fontkit, le WOFF de Plex Mono ses glyphes vides) ;
+  2 pages même sur 12 semaines, 19–26 Ko ; rien d'affiché. [ ] **N6b** accès : `createReportPdf` (import dynamique,
+  `loadReportFonts`), écriture dans Documents + partage (Share), bouton « Rapport PDF pour mon médecin » en bas
+  d'Analyses et dans Données (choix 2 / 4 / 12 semaines, case « inclure mon bien-être estimé » décochée), premium sur
+  play (offert pendant le lancement), libre en sideload ; vérifier le partage sur l'émulateur.
 
-**Mise à jour du 26/10 (13:48 Paris)** : ✅ **I175 étape 1** — modèle pur du rapport (`services/report/buildReport.js` : période 2 / 4 / 12 semaines, ventre jour par jour à la note la plus forte, semaine par semaine, calendrier avec jours riches en FODMAP, tests de réintroduction, pistes « à confirmer » avec le nombre de comparaisons, sommeil mesuré et régularité, aliments fréquents, sources lisibles, bien-être estimé seulement sur demande) ; rien d'affiché. Suite : **I175 étape 2** (`renderPdf.js`, `pdf-lib` + `fontkit` chargés à la demande, polices embarquées, écriture dans Documents, accès depuis Analyses et Données) → I176 → 7d.
+**Mise à jour du 26/10 (13:48 Paris)** : ✅ **I175 étape 1** — modèle pur du rapport (`services/report/buildReport.js` : période 2 / 4 / 12 semaines, ventre jour par jour à la note la plus forte, semaine par semaine, calendrier avec jours riches en FODMAP, tests de réintroduction, pistes « à confirmer » avec le nombre de comparaisons, sommeil mesuré et régularité, aliments fréquents, sources lisibles, bien-être estimé seulement sur demande) ; rien d'affiché. Suite : **I175 étape 2** (`renderPdf.js` ✅ 27/10 03:33 avec N6a ; reste l'accès N6b) → I176 → 7d.
 
 **Mise à jour du 26/10 (09:33 Paris)** : ✅ **7a** — machine de réintroduction pure (`services/fodmapChallenge.js` :
 6 groupes et repères de départ, garde des 3 jours calmes, fenêtre de 24 h, question « supportable ? », verdict,

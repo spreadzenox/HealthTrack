@@ -81,6 +81,13 @@ describe('buildReport — repas, sommeil, sources', () => {
     expect(r.topFoods.some((f) => /riches en/.test(f.label))).toBe(false)
   })
 
+  it('FODMAP par sous-groupe : jours riches, jours notés et jours de gêne ou douleur, sans les groupes absents (N6)', () => {
+    const onion = (d) => ({ type: 'food', at: at(d, 12).toISOString(), payload: { items: [{ ingredient: 'Oignon jaune, cru', quantity_g: 40 }] } })
+    const r = buildReport([onion(0), onion(-1), onion(-2), gut(0, 'pain'), gut(-1, 'calm')], { now: NOW })
+    expect(r.fodmapGroups).toEqual([{ group: 'fructans', label: 'Fructanes', days: 3, notedDays: 2, symptomDays: 1 }])
+    expect(buildReport([], { now: NOW }).fodmapGroups).toEqual([])
+  })
+
   it('sommeil : durée moyenne des nuits mesurées de la période, régularité seulement avec assez de nuits', () => {
     const few = buildReport([night(0, 420), night(-1, 480)], { now: NOW })
     expect(few.sleep).toEqual({ nights: 2, meanMinutes: 450, regularity: null })

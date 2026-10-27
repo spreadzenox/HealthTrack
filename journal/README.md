@@ -174,8 +174,11 @@ seulement après 3 jours de ventre calme, une portion par jour, « C'est support
 une phrase, un seul test à la fois, deux jours sautés → le test repart du jour 1). Depuis le 26/10 10:33, les écrans
 sont dans l'app (7b-1, ci-dessus) et le rappel de la portion aussi depuis 11:33 (7b-2) ; le lien depuis chaque piste ventre aussi depuis 12:33 (7c). Le rapport PDF est commencé (26/10 13:48) : son contenu
 est calculé et vérifié (période de 2, 4 ou 12 semaines, ventre jour par jour, réintroductions, pistes « à confirmer »,
-sommeil, aliments fréquents, sources ; bien-être estimé seulement si vous le cochez), le fichier PDF lui-même et son
-bouton arrivent au prochain run.
+sommeil, aliments fréquents, sources ; bien-être estimé seulement si vous le cochez). Depuis le 27/10 03:33, le PDF
+lui-même se dessine (N6a) : 2 pages A4 aux couleurs de Halcya, calendrier du ventre avec, dans chaque case, les
+sous-groupes FODMAP du jour (Fn = fructanes, G = GOS, L = lactose…), tableau des jours riches par sous-groupe (simple
+décompte, pas une analyse), fichier de 20 à 30 Ko ; le bouton « Rapport PDF pour mon médecin » arrive au prochain run
+(N6b).
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -200,6 +203,7 @@ bouton arrivent au prochain run.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/10 03:33 — [N6a : le rapport PDF se dessine](runs/2026-10-27-0333-n6a-rendu-pdf.md) | 🏗️ | `renderPdf.js` (pdf-lib + fontkit, MIT) : 2 pages A4, calendrier avec sous-groupes FODMAP abrégés, décompte par sous-groupe, polices TTF embarquées (conversion WOFF → TTF scriptée) ; 19–26 Ko ; rien d'affiché ; 2 507 Vitest |
 | 27/10 02:33 — [N5 : pistes du ventre par sous-groupe FODMAP](runs/2026-10-27-0233-n5-pistes-fodmap.md) | 🏗️ | facteurs `fodmap:<groupe>` au lieu de `fodmap_eleve` ; banc 200 jeux : nulles ≤ 13/200 (inchangé), lactose 25 vs 13/200, oignon 64 vs 66 ; lien vers le test du même groupe ; calendrier du rapport par sous-groupe ; 2 496 Vitest ; v305 |
 | 27/10 01:33 — [N3b-2 : GOS des légumineuses cuites](runs/2026-10-27-0133-n3b2-gos-legumineuses.md) | 🏗️ | `legumeGos.mjs` : eau Ciqual 2025 × Siva 2019 (tableau 5, relu) × pertes Njoumi 2019, 13 aliments en `analogie` recalculables ; sources citées dans le chevron de la carte d'un repas ; 2 478 Vitest ; v304 |
 | 27/10 00:33 — [N2b : plus de faux zéro dans Nutrition](runs/2026-10-27-0033-n2b-nutrition-partiel.md) | 🏗️ | `unknown_share` au poids mangé dans `computeTotalsFromItems` ; « ≥ » + « partiel » dans Nutrition au-delà de 10 % ; 2 471 Vitest ; v303 |
