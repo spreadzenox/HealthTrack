@@ -59,19 +59,15 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     }
   })
 
-  it('VC-17 : seuls les avantages livrés sont cochés, le reste est « en préparation » derrière « détails »', async () => {
+  it('VC-17 : les quatre avantages sont livrés et cochés, plus rien « en préparation »', async () => {
     billing.loadPlans.mockResolvedValue([YEAR, MONTH])
     renderPremium()
     await screen.findByRole('radio', { name: /Annuel/ })
     expect(screen.getByText(/analyse IA des repas/)).toBeInTheDocument()
     expect(screen.getByText(/réintroduction FODMAP guidée/)).toBeInTheDocument()
-    expect(screen.getByText('En préparation, inclus sans supplément')).toBeInTheDocument()
-    expect(screen.queryByText(/rapport PDF/)).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
-    const upcoming = screen.getByRole('list', { name: 'En préparation' })
-    expect(upcoming).not.toHaveTextContent(/FODMAP/)
-    expect(upcoming).toHaveTextContent(/rapport PDF/)
-    expect(upcoming).toHaveTextContent(/délais de 2 à 48 h/)
+    expect(screen.getByText(/rapport PDF/)).toBeInTheDocument()
+    expect(screen.getByText(/délais de 2 à 48 h/)).toBeInTheDocument()
+    expect(screen.queryByText('En préparation, inclus sans supplément')).toBeNull()
   })
 
   it('VC-18 : liens « Conditions » et « Confidentialité » vers les pages publiées', async () => {

@@ -86,3 +86,43 @@
   color: var(--lilac-text);
   text-decoration: none;
 }
+
+/* Paywall au moment de la valeur : aperçu flouté, sans aucun aliment */
+.gut-links-locked {
+  background: var(--peach-bg);
+  color: var(--peach-text);
+  border-radius: var(--radius-card);
+  padding: 16px;
+}
+
+.gut-links-locked .fodmap-tag {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.gut-links-locked-title {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.gut-links-preview {
+  filter: blur(3px);
+  margin: 4px 0 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.gut-links-preview-bar {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--peach-label);
+  opacity: 0.45;
+  margin: 4px 0 8px;
+}
+
+.gut-links-preview-bar.is-thin {
+  width: 90%;
+  height: 8px;
+  opacity: 0.25;
+}

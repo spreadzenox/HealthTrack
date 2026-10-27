@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import DetailsToggle from './DetailsToggle'
+import { FEATURES } from '../config/distribution'
+import { useEntitlement } from '../hooks/useEntitlement'
 import { FODMAP_FACTOR_LABELS, comparableLabel } from '../services/gutLinks'
 import { fodmapGroupOf } from '../services/gutWindows'
 import { challengePath } from '../services/fodmapChallenge'
@@ -71,18 +73,48 @@ function GutLinkCard({ link }) {
 }
 
 /**
+ * Paywall au moment de la valeur (version Play sans premium) : combien de pistes ressortent, un aperçu flouté fait de
+ * barres neutres — aucun aliment dans la page, un flou CSS se retire — et « Débloquer ». Le calcul reste local.
+ */
+function LockedGutLinks({ count }) {
+  return (
+    <div className="gut-links-locked">
+      <p className="gut-links-locked-title">
+        {count} {count > 1 ? 'pistes repérées' : 'piste repérée'} entre vos repas et votre ventre
+      </p>
+      <div className="gut-links-preview" aria-hidden="true" data-testid="gut-links-preview">
+        {Array.from({ length: Math.min(count, 3) }, (_, i) => (
+          <div key={i}>
+            <span className="gut-links-preview-bar" style={{ width: `${70 - i * 12}%` }} />
+            <span className="gut-links-preview-bar is-thin" />
+          </div>
+        ))}
+      </div>
+      <p className="gut-link-text">Quels aliments, après combien de temps, et comment le vérifier.</p>
+      <span className="fodmap-tag mono">premium</span>
+      <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>
+    </div>
+  )
+}
+
+/**
  * « Votre ventre et vos repas » dans Analyses : seulement les pistes gardées par les deux moteurs (BH + TTS), ou une
- * phrase honnête quand rien ne ressort. Le « trop tôt » passe par la ligne « Bientôt » de la page.
+ * phrase honnête quand rien ne ressort. Le « trop tôt » passe par la ligne « Bientôt » de la page. Premium sur la
+ * version Play (offert pendant le lancement) ; libre en sideload.
  */
 export default function GutLinks({ gut }) {
+  const [ent] = useEntitlement()
   if (!gut || (gut.status !== 'links' && gut.status !== 'none')) return null
+  const locked = gut.status === 'links' && FEATURES.billing && !ent.premium
   return (
     <section className="reco-section gut-links" data-testid="gut-links">
       <h3 className="reco-section-title">Votre ventre et vos repas</h3>
       <p className="gut-links-meta">
         {gut.noteDays} jours de notes du ventre · {gut.tested} comparaisons · délais 0–48 h
       </p>
-      {gut.status === 'links' ? (
+      {locked ? (
+        <LockedGutLinks count={gut.links.length} />
+      ) : gut.status === 'links' ? (
         <ul className="gut-link-list">
           {gut.links.map((l) => <GutLinkCard key={`${l.factor}:${l.when}`} link={l} />)}
         </ul>
