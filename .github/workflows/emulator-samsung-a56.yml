@@ -241,8 +241,19 @@ jobs:
           update_or_add "hw.ramSize"     "8192"
           update_or_add "hw.sdCard"      "no"
 
+      # Rapport PDF (N6c) : Node 22 (WebSocket intégré) pour piloter la WebView, pdftoppm pour l'aperçu du PDF
+      - name: Configurer Node.js 22 (pilotage du rapport PDF)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Installer pdftoppm (aperçu du rapport PDF)
+        run: sudo apt-get install -y --no-install-recommends poppler-utils >/dev/null || echo "pdftoppm indisponible"
+
       - name: Lancer l'émulateur API 35 et exécuter les tests
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          PDF_SHARE_CHECK: "1"
         with:
           api-level: 35
           target: google_apis
@@ -278,6 +289,20 @@ jobs:
       - name: Premier lancement play dans le résumé (API 35)
         if: always()
         run: cat play_coldstart.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Rapport PDF dans le résumé (API 35, N6c)
+        if: always()
+        run: cat pdf_share.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Publier le rapport PDF et ses captures (API 35, N6c)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-pdf-emulateur
+          path: |
+            pdf_share.md
+            pdf-share/
+          if-no-files-found: warn
 
       - name: Publier le rapport de tests instrumentés (API 35)
         if: always()
