@@ -9,6 +9,84 @@
 
 ---
 
+## Run du 27/10/2026 20:33 (Paris) — Les deux remarques de la Play Console (bord à bord, R8) prêtes à coder
+
+**But** : que le run de code qui traite les deux avertissements « Pour votre prochaine version » du 27/10 n'ait rien
+à chercher, et ne casse rien (R8 est la modification la plus risquée du natif depuis des semaines : une classe retirée
+par erreur ne plante qu'en version release, jamais en debug ni dans les tests). Lu sur `main` (`a6d9dc5`) le 27/10 ;
+pas de SDK Android dans la session : tout ce qui suit est à vérifier par la CI (émulateurs API 35 et 36 existants).
+
+### I184 (18) — Bord à bord pour tous : `EdgeToEdge.enable()` dans `MainActivity` [V dépôt, T forums]
+- **Constat** : `targetSdk` 36 → Android 15 et 16 affichent déjà l'app bord à bord (imposé). Sur **Android 8 à 14**
+  (minSdk 26), rien ne l'active : l'app s'y affiche sous des barres opaques. C'est exactement le message « Le bord à bord
+  peut ne pas s'afficher pour tous les utilisateurs » ; le correctif que Google indique dans ce message est
+  `EdgeToEdge.enable()` (Java) pour la rétrocompatibilité [T : forums Flutter, Solar2D, Kodular, AppMySite, 2025-2026].
+- **Aucun appel déprécié chez nous** (`setStatusBarColor`, `setNavigationBarColor`, `statusBarColor` dans un thème) :
+  `grep` vide sur `app/android/app/src`, `@capacitor/android` 8.2.0 et les plugins. `styles.xml` ne règle que
+  `android:windowLightStatusBar` (non déprécié). Le second avertissement possible (« API obsolètes ») n'a pas été
+  signalé ; s'il venait, il citerait une bibliothèque (androidx l'appelle lui-même sous Android 15), à noter sans plus.
+- **Les encarts sont déjà gérés** : le plugin `SystemBars` de Capacitor 8 (`capacitor.config` : `style: DARK`,
+  `insetsHandling` « css » par défaut) injecte `--safe-area-inset-*` sur toutes les versions, et `src/index.css` en
+  tire `--safe-top` / `--safe-bottom` (11 usages). Sur Android ≤ 14, ces valeurs passeront de 0 à la vraie hauteur
+  des barres : c'est voulu.
+- **Code (3 lignes)** : `import androidx.activity.EdgeToEdge;` puis `EdgeToEdge.enable(this);` dans `onCreate` **avant**
+  `super.onCreate` (la fenêtre existe déjà ; `BridgeActivity` pose sa vue dans `super.onCreate`). Ajouter la
+  dépendance explicite `androidx.activity:activity:$androidxActivityVersion` (1.9.2 déjà déclarée dans
+  `variables.gradle`, tirée aujourd'hui seulement par appcompat). Le style par défaut suit le thème du **système** ;
+  `SystemBars` (au chargement) puis `SystemBarsPlugin.setStyle` (thème de l'app) passent après et gardent le dernier
+  mot sur la couleur des icônes : à vérifier en captures (thème de l'app clair sur un téléphone en mode sombre).
+- **Vérification** : ajouter au workflow émulateur un passage **API 30 ou 34** (captures Accueil + une modale + le
+  clavier ouvert dans « Décrire ») : en-tête sous la barre d'état mais lisible, barre d'onglets au-dessus de la barre
+  de gestes / des 3 boutons, rien sous l'encoche ; API 35 et 36 inchangés. Les deux variantes sont concernées (code
+  commun), sans risque pour les données.
+
+### I185 (18) — R8 sur la variante play : optimisation, obscurcissement, réduction [V dépôt, T Capgo]
+- **Exigence** (Play Console, Android vitals « Optimisation de l'app ») : obscurcissement, optimisation et réduction
+  du code DEX chacun **≥ 25 %** ; appliquée à partir de **février 2027** aux bundles de plus de 10 Mo de DEX [T :
+  guide Capgo, oct. 2026, qui cite la page Google]. Nous sommes à 4 % : R8 est simplement coupé.
+- **Où** : `app/android/app/build.gradle`, `buildTypes.release` : `minifyEnabled false` + `proguard-android.txt` (qui
+  contient `-dontoptimize`). **Seule la variante play est construite en release** (Build & Release fait
+  `assembleSideloadDebug`, l'émulateur aussi en debug) : passer `release` à R8 ne touche donc que Play — la sideload
+  ne change pas, ce qui est le bon ordre de risque.
+- **Réglage** : `minifyEnabled true`, `proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+  'proguard-rules.pro'` ; `shrinkResources` **pas tout de suite** (le visage et les polices passent par des
+  ressources et des assets lus par nom : étape à part, gain faible). `proguard-rules.pro` :
+  `-keepattributes SourceFile,LineNumberTable` + `-renamesourcefileattribute SourceFile` (traces lisibles avec le
+  fichier de correspondance).
+- **Ce qui est déjà protégé** : `@capacitor/android` fournit des règles « consumer » qui gardent toute classe
+  `extends com.getcapacitor.Plugin` (tous nos plugins maison, dont `PlayBillingPlugin`, `PlayIntegrityPlugin`,
+  `FlavorPlugins`, et ceux de npm), leurs `@PluginMethod`, rappels de permission et d'activité, et Cordova ;
+  `proguard-android-optimize.txt` garde les `@JavascriptInterface` ; les services, récepteurs, jobs et l'activité
+  déclarés dans le manifeste sont gardés par AAPT. Pas de réflexion dans notre code (`Class.forName`, `getMethod` :
+  `grep` vide) ; le JSON passe par `JSONObject` et `MiniJson` (pas de sérialisation par noms de champs).
+- **Ce qui est à surveiller** (bibliothèques JNI, dont les noms de classes et de méthodes sont appelés depuis le
+  natif) : `onnxruntime-android` 1.22.0 et `litert` 1.4.2 (lecture du visage), Health Connect (via
+  `@capgo/capacitor-health`, Kotlin), `billing` 8.3.0 et `integrity` 1.6.0 (fournissent leurs règles). Si l'une
+  plante en release : règle **étroite** (`-keep class ai.onnxruntime.** { *; }`, `-keep class com.google.ai.edge.litert.** { *; }`
+  ou `org.tensorflow.lite.**`), jamais `-keep class ** { *; }` (qui ramènerait le score près de 0).
+- **Fichier de correspondance** : AGP 8.10.1 range `mapping.txt` dans `build/outputs/mapping/playRelease/` (et met
+  `r8.json` dans l'AAB). `scripts/play/publish.mjs` l'envoie dans la même édition que l'AAB :
+  `POST {UPLOAD_API}/{pkg}/edits/{edit}/apks/{versionCode}/deobfuscationFiles/proguard?uploadType=media` (test sur les
+  routes simulées comme les autres appels ; échec = avertissement dans le résumé, pas un échec de l'envoi). Le fichier
+  ne contient que des noms de classes : rien de secret, mais il ne va **pas** dans la release GitHub publique.
+- **Preuve avant merge** (sinon la PR reste ouverte) : un job émulateur API 35 qui installe un **APK play release**
+  (`assemblePlayRelease` signé avec la clé de debug **pour ce test seulement**, propriété `-PreleaseDebugSign=true`,
+  jamais quand `HT_UPLOAD_KEYSTORE` est là) et rejoue : démarrage sans plantage, lecture du visage à l'ouverture
+  (ONNX + LiteRT chargés, un score rendu), Health Connect (écran de permission ouvert), écran Premium (Play Billing
+  répond « non disponible » sans planter sur l'émulateur sans compte), création du rapport PDF (partage), notification
+  du soir. `adb logcat` sans `ClassNotFoundException` / `NoSuchMethodError` / `UnsatisfiedLinkError`.
+- **Découpage** : **R8a** (règles, build, mapping envoyé, job émulateur release ; publication en test interne
+  seulement : le propriétaire installe et dit si tout marche) ; **R8b** après une journée sans plantage remonté dans
+  Android vitals : la même version peut aller en alpha. `shrinkResources` éventuel en R8c.
+
+**Sources** : [Capgo, « Google Play obfuscation » pour Capacitor](https://capgo.app/blog/google-play-obfuscation-capacitor-android/)
+(lu le 27/10) ; fils [AppMySite](https://community.appmysite.com/t/edge-to-edge-may-not-display-for-all-users/2544),
+[Solar2D](https://forums.solar2d.com/t/warnings-on-play-console/357455),
+[Flutter #169810](https://github.com/flutter/flutter/issues/169810) (texte du message et correctif `EdgeToEdge.enable()`) ;
+règles consumer lues dans `node_modules/@capacitor/android/capacitor/proguard-rules.pro` (8.2.0).
+
+---
+
 ## Run du 27/10/2026 08:33 (Paris) — Jalon 9 (anglais) prêt à coder : mesure, choix technique, découpage
 
 **But** : que les runs de code du jalon 9 (i18n + anglais) n'aient plus rien à chercher, et que le propriétaire
