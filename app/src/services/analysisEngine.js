@@ -175,7 +175,7 @@ export const VARIABLE_META = {
     group: 'lifestyle',
   },
   dailyCaloriesHC: {
-    label: 'Calories brûlées totales (Health Connect)',
+    label: 'Dépense totale de la journée',
     unit: 'kcal',
     format: (v) => `${Math.round(v)} kcal`,
     direction: 'higher_better',

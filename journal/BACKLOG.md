@@ -1195,7 +1195,19 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   le téléphone en donne déjà (pas, nuits) et proposer Sources.
 - [x] **POL-PLAY-3** (fait le 27/10 16:33) « Tester un groupe FODMAP » : chevron collé au texte ; étiquette « premium » en play hors période
   de lancement (comme le rapport PDF).
-- [ ] **POL-PLAY-4** Même audit sur données de démo, clair et sombre, écran par écran (Accueil, Journal, Analyses, Sources).
+- [x] **POL-PLAY-4** (fait le 27/10 17:33) Même audit sur données de démo, clair et sombre (Accueil, Journal, Analyses,
+  Sources) : « hier à 10:19 » sur la carte ventre ; « Dépense totale de la journée » au lieu de « Calories brûlées
+  totales (Health Connect) » (test : aucun nom de source dans les libellés de `VARIABLE_META`) ; ligne « visage »
+  simplifiée. Rien à redire en sombre (contrastes corrects). Défauts restants :
+- [ ] **POL-PLAY-5** Analyses : « Calories brûlées (activité) » et « Dépense totale de la journée » apparaissent comme
+  deux liens presque identiques ; n'en garder qu'un (le plus solide) ou les regrouper.
+- [ ] **POL-PLAY-6** Analyses : « Alcool » est à la fois une piste « À confirmer » (6 jours avec) et « En cours de
+  collecte : Alcool (4/5 jours avec) » (fenêtre visage) : ne pas lister en collecte un tag déjà montré.
+- [ ] **POL-PLAY-7** Analyses : la ligne mono « Autres mesures : le jour même (visage) piste solide » est technique ;
+  la dire en phrase (« aussi avec votre bien-être estimé ») ou la mettre dans les détails.
+- [ ] **POL-PLAY-8** Journal : la tuile « Repas · 1 · ≈ 479 kcal » passe sur deux lignes (« kcal » seul) ; Accueil :
+  tuiles « VFC nuit » et « Pas » à « — » en fin de journée alors que la veille est connue (vérifier si les données de
+  démo n'ont simplement pas le jour même, sinon afficher la veille avec « hier »).
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 

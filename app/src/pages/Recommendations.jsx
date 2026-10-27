@@ -413,7 +413,7 @@ function LinksSection({ analysis, levers = [] }) {
     <section className="reco-section" data-testid="reco-links">
       <h3 className="reco-section-title">{leverVariables.size > 0 ? 'Autres liens repérés' : 'Liens repérés'}</h3>
       {faceDays != null && (
-        <p className="reco-section-hint">« visage » : avec votre bien-être estimé, sur {faceDays} jours, sans aucune note.</p>
+        <p className="reco-section-hint">« visage » : comparé à votre bien-être estimé par la caméra ({faceDays} jours).</p>
       )}
       {clear.length > 0 ? list(clear.slice(0, LINKS_SHOWN)) : (
         <p className="reco-empty-levers">

@@ -28,6 +28,18 @@ function timeOf(iso) {
   return new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 }
 
+/** « à 08:15 » aujourd'hui, « hier à 10:19 », « lundi à 10:19 » dans la semaine, « le 12 octobre à 10:19 » au-delà. */
+function lastNoteWhen(iso) {
+  const at = new Date(iso)
+  const midnight = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+  const days = Math.round((midnight(new Date()) - midnight(at)) / DAY_MS)
+  const time = `à ${timeOf(iso)}`
+  if (days <= 0) return time
+  if (days === 1) return `hier ${time}`
+  if (days < 7) return `${at.toLocaleDateString(appLocale(), { weekday: 'long' })} ${time}`
+  return `le ${at.toLocaleDateString(appLocale(), { day: 'numeric', month: 'long' })} ${time}`
+}
+
 /** Rechargé à chaque écriture (`health-entries-updated`). */
 function useEntries(read) {
   const [entries, setEntries] = useState(null)
@@ -129,7 +141,7 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
       {error && <p className="error-msg" role="alert">{error}</p>}
       <p className="today-card-text">
         {summary.last
-          ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${summary.lastToday ? `à ${timeOf(summary.last.at)}` : `le ${new Date(summary.last.at).toLocaleDateString(appLocale(), { weekday: 'long' })} à ${timeOf(summary.last.at)}`}.`
+          ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${lastNoteWhen(summary.last.at)}.`
           : 'Un geste suffit, l’heure est notée. Vous pouvez noter plusieurs fois par jour.'}
       </p>
       {entries && evening.ask && (
