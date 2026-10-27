@@ -1191,9 +1191,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 
 **Mise à jour du 27/10 (14:42 Paris)** : polissage de la version play, liste **POL-PLAY** (audit `--play --empty` du 27/10) :
 - [x] **POL-PLAY-1** Analyses vierges : plus de carte « Rapport PDF » ni « Débloquer » sans note du ventre (ligne « Bientôt »).
-- [ ] **POL-PLAY-2** Accueil vierge : « Sommeil, cœur et pas arrivent de votre montre » suppose une montre ; dire que
+- [x] **POL-PLAY-2** (fait le 27/10 16:33) Accueil vierge : « Sommeil, cœur et pas arrivent de votre montre » suppose une montre ; dire que
   le téléphone en donne déjà (pas, nuits) et proposer Sources.
-- [ ] **POL-PLAY-3** « Tester un groupe FODMAP » : chevron collé au texte ; étiquette « premium » en play hors période
+- [x] **POL-PLAY-3** (fait le 27/10 16:33) « Tester un groupe FODMAP » : chevron collé au texte ; étiquette « premium » en play hors période
   de lancement (comme le rapport PDF).
 - [ ] **POL-PLAY-4** Même audit sur données de démo, clair et sombre, écran par écran (Accueil, Journal, Analyses, Sources).
 
