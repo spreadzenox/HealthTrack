@@ -218,8 +218,8 @@ export default function Food() {
         />
 
         <div className="upload-actions">
-          <label htmlFor="camera-upload" className="upload-btn">
-            <LineIcon name="camera" /> Photo
+          <label htmlFor="camera-upload" className="upload-btn upload-btn--primary">
+            <LineIcon name="camera" /> Photo du repas
           </label>
           <label htmlFor="gallery-upload" className="upload-btn">
             <LineIcon name="image" /> Galerie
