@@ -32,3 +32,8 @@
 
 ## Suite
 - POL-PLAY-18 (couleurs et axe de l'historique du bien-être), 19 (écran Montre), puis 24 à 28.
+
+## Après le merge (#466, `6e9e9d3`)
+- 9 checks de la PR verts (Vitest, Build APK, Publier l'APK, émulateurs API 34, 35, 36, relais, montre, budget de lectures).
+- Sur main : Build & Release **v337** publiée, APK **34,5 Mo** (34 491 165 octets) ; Play — AAB (test interne), Tests et
+  émulateur Galaxy A56 verts.
