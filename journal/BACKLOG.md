@@ -1261,7 +1261,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   exposés** (démo). Les pistes ventre exigent 8 jours exposés (`gutDays.MIN_EXPOSED_DAYS`) ; les facteurs binaires du
   bien-être semblent n'en demander que 5 (« En cours de collecte : Malade (2/5 jours avec) »). Aligner : « Piste
   solide » seulement à partir de 8 jours exposés (sinon « à confirmer » au mieux), et le vérifier au banc des nulles.
-- [ ] **POL-PLAY-24** Boutons de deux formes : pilules (« Continuer », « Photo du repas », « Débloquer ») et rectangles
+- [x] **POL-PLAY-24** (28/10 15:39 ; `.btn` et `.upload-btn` en pilule, 52 px, compacts 44 px, `buttonShape.test.js`) Boutons de deux formes : pilules (« Continuer », « Photo du repas », « Débloquer ») et rectangles
   arrondis (« Découvrir le premium », « Restaurer un achat », « Ajouter une source », « Utiliser ma position
   approximative », « Connecter une montre », « Désactiver », « Donner mon avis sur le Play Store », « + 1 cigarette »).
   DESIGN.md : boutons pilule de 52 à 56 px → `.btn` en pilule partout, captures avant/après.

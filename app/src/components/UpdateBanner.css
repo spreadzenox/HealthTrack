@@ -102,6 +102,7 @@
   background: transparent;
   color: inherit;
   border: none;
+  min-height: var(--tap-min);
   padding: 0;
   font-size: 0.85rem;
   text-decoration: underline;
@@ -127,8 +128,9 @@
   background: var(--color-on-brand);
   color: var(--color-brand);
   border: none;
+  min-height: var(--tap-min);
   padding: 8px 16px;
-  border-radius: var(--radius, 6px);
+  border-radius: var(--radius-pill);
   font-weight: 600;
   cursor: pointer;
 }
@@ -141,8 +143,9 @@
   background: transparent;
   color: rgba(var(--tint-rgb), 0.9);
   border: 1px solid rgba(var(--tint-rgb), 0.6);
+  min-height: var(--tap-min);
   padding: 8px 12px;
-  border-radius: var(--radius, 6px);
+  border-radius: var(--radius-pill);
   cursor: pointer;
 }
 

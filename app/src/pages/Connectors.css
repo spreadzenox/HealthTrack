@@ -292,6 +292,7 @@
 
 .connector-btn {
   flex: none;
+  min-height: var(--tap-min);
   padding: 10px 18px;
   font-size: 0.9rem;
   white-space: nowrap;
