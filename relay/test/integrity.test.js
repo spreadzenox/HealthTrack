@@ -122,6 +122,14 @@ test('jeton absent : la raison donnée par l\'app (bornée) et l\'origine CI son
   assert.ok(!JSON.stringify(logs).includes('a@b.fr'))
 })
 
+test('appareil de test de Google (rapport de pré-lancement) : signalé par l\'app, journalisé à part', async () => {
+  const { g, logs } = guard({ mode: 'observe' })
+  await g.check('sans-jeton-installation-1', undefined, { clientStatus: 'timeout', testDevice: true })
+  await g.check('sans-jeton-installation-2', undefined, { clientStatus: 'timeout' })
+  await g.check(INSTALL, TOKEN, { testDevice: true })
+  assert.deepEqual(logs.map((e) => [e.status, e.testlab]), [['missing', true], ['missing', false], ['passed', true]])
+})
+
 test('jeton présent : origine CI journalisée aussi avec le verdict', async () => {
   const { g, logs } = guard({ mode: 'observe' })
   await g.check(INSTALL, TOKEN)

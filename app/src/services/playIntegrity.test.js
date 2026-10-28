@@ -1,10 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getIntegrityToken, integrityRequestHash, requestIntegrity, resetIntegrityBackoff } from './playIntegrity'
+import { getIntegrityToken, integrityRequestHash, isTestDevice, requestIntegrity, resetIntegrityBackoff, resetTestDeviceCache } from './playIntegrity'
 
 const TOKEN = 'a'.repeat(200)
 
 describe('Play Integrity (variante play)', () => {
-  beforeEach(() => resetIntegrityBackoff())
+  beforeEach(() => {
+    resetIntegrityBackoff()
+    resetTestDeviceCache()
+  })
 
   it('requestHash identique à requestHashFor du relais (sha256 de « halcya-integrity:<installation> »)', async () => {
     // Même vecteur que relay/test/integrity.test.js
@@ -58,5 +61,20 @@ describe('Play Integrity (variante play)', () => {
     const slow = { request: vi.fn(() => new Promise(() => {})) }
     expect(await requestIntegrity('abc123', opts(slow))).toEqual({ token: null, reason: 'timeout' })
     expect(await requestIntegrity('abc123', opts(slow))).toEqual({ token: null, reason: 'backoff' })
+  })
+
+  it('appareil de test de Google (Firebase Test Lab, INSTALLS-21) : lu une fois, jamais d’erreur', async () => {
+    const native = { environment: vi.fn().mockResolvedValue({ testLab: true }) }
+    expect(await isTestDevice({ native })).toBe(true)
+    expect(await isTestDevice({ native })).toBe(true)
+    expect(native.environment).toHaveBeenCalledTimes(1)
+    resetTestDeviceCache()
+    expect(await isTestDevice({ native: { environment: vi.fn().mockResolvedValue({ testLab: false }) } })).toBe(false)
+    resetTestDeviceCache()
+    expect(await isTestDevice({ native: { environment: vi.fn().mockRejectedValue(new Error('ancienne version')) } })).toBe(false)
+    resetTestDeviceCache()
+    expect(await isTestDevice({ native: {} })).toBe(false)
+    resetTestDeviceCache()
+    expect(await isTestDevice({ native: null })).toBe(false)
   })
 })
