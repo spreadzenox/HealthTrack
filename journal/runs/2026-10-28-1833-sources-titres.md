@@ -30,3 +30,9 @@
 
 ## Suite
 - POL-PLAY-12 : nouvel audit `--play --empty` puis démo, écran par écran.
+
+## Après le merge (#480, `41ae7d3`)
+- Checks de la PR verts (Vitest, Build APK, relais, protocole montre, budget de lectures, bord à bord API 34,
+  émulateur A56 API 35 et 36).
+- Sur main : Build & Release **v344** publiée, APK **34,5 Mo** (34 492 765 octets) ; Play — AAB (test interne) vert ;
+  Tests verts.
