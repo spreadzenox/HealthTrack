@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-28",
+  "kind": "amélioration",
+  "variants": ["play", "sideload"],
+  "title": "Écran « Données de la montre » plus clair",
+  "items": [
+    "En haut, la date de la dernière mesure reçue au lieu d'un « synchronisez la montre » trompeur quand des données arrivent déjà.",
+    "Toutes les lignes ont la même forme ; les types sans données sont simplement atténués."
+  ]
+}

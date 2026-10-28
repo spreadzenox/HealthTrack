@@ -41,6 +41,13 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
 
   // sans montre ni mesure : une phrase et un bouton plutôt que 12 lignes « rien » (VC-6)
   const hasWatch = Boolean(state.everConnected || state.readsAt) || Boolean(rows?.some((r) => r.last))
+  // sans lecture détaillée mais avec des mesures (synchro de base) : leur date plutôt qu'un « synchronisez » trompeur
+  const lastAt = rows?.reduce((max, r) => (r.last && (!max || r.last.at > max) ? r.last.at : max), null)
+  const syncLine = state.readsAt
+    ? `Dernière lecture par l’app : ${formatAgo(state.readsAt, new Date(now()))}.`
+    : lastAt
+      ? `Dernière mesure reçue : ${formatAgo(lastAt, new Date(now()))}.`
+      : 'Pas encore de lecture détaillée : synchronisez la montre depuis Sources.'
 
   return (
     <section className="food-page watch-data-page">
@@ -53,9 +60,7 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
         de mesures des {COVERAGE_DAYS} derniers jours.
       </p>
       {hasWatch && (
-        <p className="watch-data-sync">
-          {state.readsAt ? `Dernière lecture par l’app : ${formatAgo(state.readsAt)}.` : 'Pas encore de lecture détaillée : synchronisez la montre depuis Sources.'}
-        </p>
+        <p className="watch-data-sync">{rows ? syncLine : null}</p>
       )}
       {error && <p className="hint">Lecture impossible : {error}</p>}
       {!rows && !error && <p className="hint">Chargement…</p>}
@@ -72,7 +77,7 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
           <p className="watch-data-summary">{coverageSummary(rows)}</p>
           <ul className="watch-data-list" aria-label="Données de la montre">
             {rows.map((r) => (
-              <li key={r.id} className={`watch-data-row watch-data-${r.status}`}>
+              <li key={r.id} className={`watch-data-row watch-data-row--${r.status}`}>
                 <div className="watch-data-head">
                   <span className="watch-data-label">{r.label}</span>
                   <span className="watch-data-tag">{STATUS_LABELS[r.status]}</span>

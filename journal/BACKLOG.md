@@ -1228,7 +1228,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   libellé + marge ; contrôle « TEXTE QUI DÉBORDE » ajouté à `npm run visual` (à lancer avec `--size=360x780`).
 - [x] **POL-PLAY-18** (28/10 13:33 ; jours en deux lettres, barres en `--mint-label`) Historique du bien-être : les barres « Expressions » sont en lilas (couleur des pistes) sur une page
   menthe (bien-être) ; axe des jours « J V S D L M M » ambigu (deux « M ») → « lu ma me » ou dates courtes.
-- [ ] **POL-PLAY-19** Écran Montre (démo) : « Pas encore de lecture détaillée : synchronisez la montre » alors que
+- [x] **POL-PLAY-19** (28/10 14:42 ; « Dernière mesure reçue », lignes `watch-data-row--<état>`) Écran Montre (démo) : « Pas encore de lecture détaillée : synchronisez la montre » alors que
   4 types sont reçus ; cartes « rien » à bordure et cartes « reçu » sans bordure (style incohérent).
 - [x] **POL-PLAY-20** (28/10 07:33 ; bordure, badge et repère en encre neutre) Tendances : « FC au repos · Plus basse que d'habitude » en ocre (couleur d'alerte) alors qu'aucun
   écart n'est bon ou mauvais par principe (règle 6) : couleur neutre pour un écart sans jugement.
