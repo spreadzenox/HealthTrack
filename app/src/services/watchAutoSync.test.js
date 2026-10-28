@@ -5,6 +5,7 @@ import {
   describeWatchStatus,
   getWatchAutoSyncState,
   isAutoSyncPaused,
+  markWatchRestored,
   noteBackgroundSuccess,
   recordWatchConnection,
   syncWatchIfStale,
@@ -325,5 +326,34 @@ describe('relecture native comptée comme dernière synchro (capture du 18/10/20
     recordWatchConnection(report('unreachable'), { storage, now: () => T0 - 3600_000 })
     noteBackgroundSuccess({ lastSuccessAt: T0 - 600_000 }, { storage })
     expect(describeWatchStatus(getWatchAutoSyncState(storage), { now: T0, formatAgo })).toMatchObject({ tone: 'ok', title: 'Connectée' })
+  })
+})
+
+describe('données restaurées par la sauvegarde Android (SAUV, clé de la montre restée sur l’ancien téléphone)', () => {
+  const at = new Date(T0).toISOString()
+  it('une montre déjà connectée passe « À reconnecter » : plus de « Connectée » trompeur, automatique en pause', () => {
+    const storage = memoryStorage()
+    storage.setItem('healthtrack_watch_autosync', JSON.stringify({ at, outcome: 'connected', battery: 80, inserted: 4, everConnected: true }))
+    expect(markWatchRestored({ storage, now: () => T0 + 1000 })).toBe(true)
+    const state = getWatchAutoSyncState(storage)
+    expect(state).toMatchObject({ outcome: 'restored', everConnected: true, battery: null })
+    expect(isAutoSyncPaused(state)).toBe(true)
+    expect(describeWatchStatus(state, { now: T0 + 2000, formatAgo })).toEqual({
+      tone: 'warn',
+      title: 'À reconnecter',
+      text: 'Vos données sont revenues sur ce téléphone, pas la clé de la montre (elle ne quitte jamais un téléphone). Touchez « Reconnecter ma montre ».',
+    })
+  })
+  it('aucune montre jamais connectée : rien n’est écrit', () => {
+    const storage = memoryStorage()
+    expect(markWatchRestored({ storage })).toBe(false)
+    expect(storage.getItem('healthtrack_watch_autosync')).toBeNull()
+  })
+  it('une connexion réussie efface l’état « À reconnecter »', () => {
+    const storage = memoryStorage()
+    storage.setItem('healthtrack_watch_autosync', JSON.stringify({ at, outcome: 'connected', everConnected: true }))
+    markWatchRestored({ storage })
+    recordWatchConnection(report('connected'), { storage, now: () => T0 + 5000 })
+    expect(describeWatchStatus(getWatchAutoSyncState(storage), { now: T0 + 6000, formatAgo }).title).toBe('Connectée')
   })
 })

@@ -55,6 +55,7 @@
  *   npm run visual -- --routes=/connectors --ble=watch-silent --devices --setup  # … assistant « Libérer et appairer »
  *   npm run visual -- --routes=/connectors --ble=watch --connect       # … « Connexion à la montre » (avant import des paramètres)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done  # … montre appairée et authentifiée (rapport factice)
+ *   npm run visual -- --routes=/connectors --ble=watch --connect=restored  # … données restaurées (sauvegarde Android) : « À reconnecter »
  *   npm run visual -- --routes=/montre --connect=done   # écran « Données de la montre » (M5) avec l'issue de chaque lecture
  *   npm run visual -- --routes=/connectors --ble=watch --connect=stalled  # … la montre n'a pas répondu pour le sommeil
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion  # … « Synchro dès que la montre se reconnecte » (à activer)
@@ -497,17 +498,18 @@ async function main() {
         { top, bottom }
       )
     }
-    if (args.connect === 'done' || args.connect === 'stalled') {
+    if (args.connect === 'done' || args.connect === 'stalled' || args.connect === 'restored') {
       // --connect=done : « Connexion à la montre » réussie (rapport factice déjà en mémoire)
       // --connect=stalled : … mais la montre n'a pas répondu pour le sommeil (I69)
-      await context.addInitScript((stalled) => {
+      // --connect=restored : données restaurées par la sauvegarde Android, clé de la montre restée sur l'ancien téléphone
+      await context.addInitScript(([stalled, restored]) => {
         const step = (id, label, status, detail = null) => ({ id, label, status, detail })
         const t = new Date(Date.now() - 120000).toISOString()
         localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: '00', v2: '00', v3: '00' }))
         localStorage.setItem(
           'healthtrack_watch_autosync',
           JSON.stringify({
-            at: t, auto: true, outcome: 'connected', label: '38 minutes → 9 mesures', inserted: stalled ? 0 : 9, stalled: stalled ? ['sommeil'] : null, battery: 84, failures: 0, everConnected: true,
+            at: t, auto: true, outcome: restored ? 'restored' : 'connected', label: '38 minutes → 9 mesures', inserted: stalled ? 0 : 9, stalled: stalled ? ['sommeil'] : null, battery: 84, failures: 0, everConnected: true,
             // Issue de chaque lecture (écran « Montre », M5)
             readsAt: t,
             reads: [['sleep', 'ok'], ['minutes', 'ok'], ['totals', 'ok'], ['workouts', 'empty'], ['sleepFile', stalled ? 'timeout' : 'ok'], ['stress', 'ok'], ['hrvDay', 'ok'], ['skinTemp', 'ok']].map(([id, outcome]) => ({ id, outcome, count: outcome === 'ok' ? 3 : 0 })),
@@ -534,7 +536,7 @@ async function main() {
             log: [],
           }),
         )
-      }, args.connect === 'stalled')
+      }, [args.connect === 'stalled', args.connect === 'restored'])
     }
     if (args.companion) {
       // Montre en appareil compagnon (src/services/watchPresence.js) : Android 13+, association à faire ou faite
@@ -972,7 +974,11 @@ async function main() {
           })
           await page.waitForTimeout(300)
         }
-        if (args.ble === 'watch' || args.ble === 'watch-silent') {
+        if (args.ble === 'watch' && args.connect === 'restored') {
+          // --connect=restored : seulement la carte « À reconnecter » (le test de connexion n'est pas affiché hors diagnostic)
+          await page.evaluate(() => document.querySelector('.watch-connect')?.scrollIntoView({ block: 'center' }))
+          await page.waitForTimeout(300)
+        } else if (args.ble === 'watch' || args.ble === 'watch-silent') {
           // le test vit sous « Dépannage », replié une fois la montre connectée
           await page.evaluate(() => document.querySelectorAll('details.watch-trouble, details.connectors-more').forEach((d) => (d.open = true)))
           const testButton = page.getByRole('button', { name: /^(Tester la connexion directe|Relancer le test)$/ }).first()

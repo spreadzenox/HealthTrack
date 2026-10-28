@@ -63,3 +63,21 @@ describe('checkRestore', () => {
     expect(storage.getItem('healthtrack_gemini_api_key')).toBe('cle')
   })
 })
+
+describe('checkRestore — montre (SAUV : réappairage explicite)', () => {
+  it('clé de la montre retirée : la carte montre passe « À reconnecter » au lieu de « Connectée »', async () => {
+    const storage = memoryStorage({
+      ...SECRETS,
+      [MARKER_KEY]: 'ancien',
+      healthtrack_watch_autosync: JSON.stringify({ at: '2026-10-20T08:00:00.000Z', outcome: 'connected', everConnected: true }),
+    })
+    await checkRestore({ plugin: plugin('neuf'), storage })
+    expect(JSON.parse(storage.getItem('healthtrack_watch_autosync'))).toMatchObject({ outcome: 'restored', everConnected: true })
+  })
+  it('pas de clé de montre dans les données restaurées : l’état de la montre n’est pas touché', async () => {
+    const before = JSON.stringify({ at: '2026-10-20T08:00:00.000Z', outcome: 'connected', everConnected: true })
+    const storage = memoryStorage({ healthtrack_gemini_api_key: 'cle', [MARKER_KEY]: 'ancien', healthtrack_watch_autosync: before })
+    await checkRestore({ plugin: plugin('neuf'), storage })
+    expect(storage.getItem('healthtrack_watch_autosync')).toBe(before)
+  })
+})

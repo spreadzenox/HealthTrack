@@ -46,7 +46,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   `restoreGuard.js` qui retire les secrets du localStorage après une restauration, textes honnêtes, Sécurité des
   données inchangée — raisonnement dans PLAY-CONFORMITE §5). **À tester par le propriétaire** à la prochaine
   réinstallation : données revenues, montre à réappairer (PIN), clé Gemini (sideload) à ressaisir, premium revenu seul.
-  Reste ouvert : si l'auto-synchro de la montre tente un réappairage sans geste après restauration, le rendre explicite.
+  ✅ (28/10 04:33) Reste ouvert traité : l'auto-synchro ne réappairait rien (clé retirée → `not_paired`), mais la carte
+  disait encore « Connectée » et la synchro s'arrêtait en silence → état `restored` posé par `restoreGuard`
+  (`markWatchRestored`), « À reconnecter » + « Reconnecter ma montre » (PIN au geste), automatique en pause.
   Texte d'origine : (a) textes honnêtes (confidentialité, onboarding (a) textes honnêtes (confidentialité, onboarding
   « 0 Mo envoyé sans votre accord », Paramètres → Données, conditions : données incluses dans la sauvegarde Google du
   téléphone si activée, chiffrée, gérée par Android, jamais lue par Halcya) ; (b) règles Play / Sécurité des données

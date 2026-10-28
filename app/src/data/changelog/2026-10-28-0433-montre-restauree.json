@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-28",
+  "kind": "amélioration",
+  "title": "Nouveau téléphone : la montre à reconnecter",
+  "items": [
+    "Quand vos données reviennent par la sauvegarde Android (nouveau téléphone ou réinstallation), la carte « Montre Huawei » de Sources ne dit plus « Connectée » : elle indique « À reconnecter », car la clé de la montre ne quitte jamais un téléphone.",
+    "Un seul geste, « Reconnecter ma montre », refait l’appairage ; d’ici là, l’app ne tente rien en silence."
+  ]
+}

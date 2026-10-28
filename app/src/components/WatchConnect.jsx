@@ -137,7 +137,7 @@ export default function WatchConnect({ connect, fetchSecrets = defaultFetchSecre
 
       <div className="my-device-actions">
         <button type="button" className="btn btn-primary connector-btn" onClick={() => start(false)} disabled={running}>
-          {running ? 'Connexion…' : everConnected ? 'Synchroniser la montre' : 'Connecter ma montre'}
+          {running ? 'Connexion…' : auto?.outcome === 'restored' ? 'Reconnecter ma montre' : everConnected ? 'Synchroniser la montre' : 'Connecter ma montre'}
         </button>
       </div>
       {message && <p className="my-device-message">{message}</p>}
