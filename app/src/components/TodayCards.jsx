@@ -23,6 +23,7 @@ import { gutCardMode } from '../settings/onboarding'
 import { readPistesSummary } from '../services/pistesSummary'
 import GutEveningReminder from './GutEveningReminder'
 import StoolLine from './StoolLine'
+import LineIcon from './LineIcon'
 import './TodayCards.css'
 import { appLocale } from '../i18n/locale.js'
 
@@ -150,11 +151,6 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
               </button>
             ))}
           </div>
-          {!momentOpen && (
-            <button type="button" className="gut-moment-link" onClick={() => setMomentOpen(true)}>
-              Noter un moment précis
-            </button>
-          )}
         </div>
       )}
       {error && <p className="error-msg" role="alert">{error}</p>}
@@ -187,7 +183,18 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
         <p className="gut-evening-done">Bilan du jour : {gutLevelLabel(evening.done.payload.level)}. Merci !</p>
       )}
       {entries && (evening.ask || evening.done) && <GutEveningReminder />}
-      {entries && <StoolLine />}
+      {entries && (
+        // Les gestes facultatifs sur une seule ligne, comme « Noter moi-même · Historique » (POL-PLAY-29)
+        <div className="gut-card-actions">
+          {eveningFirst && !momentOpen && (
+            <button type="button" className="gut-moment-link" onClick={() => setMomentOpen(true)}>
+              <LineIcon name="plus" size={16} />
+              Noter un moment précis
+            </button>
+          )}
+          <StoolLine />
+        </div>
+      )}
       {details && entries && <p className="today-details-line mono">{gutWeekLine(summary)}</p>}
     </section>
   )

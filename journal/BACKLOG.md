@@ -1295,6 +1295,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-28** (28/10 18:33 : titre « Health Connect » + « Montre, bague, balance : … » en tête de la description ; carte visage éteinte en play avec `unlockAvailable` : « … et, si vous le voulez, à chaque déverrouillage » ; tests) Sources (vierge) : titre « Health Connect (montre, bague, balance…) » sur 2 lignes → « Health
   Connect » + sous-titre ; vérifier que la carte « Lecture du visage » parle du déverrouillage quand `faceUnlockPlay`
   est allumé (aujourd'hui « quand vous ouvrez Halcya »).
+- [x] **POL-PLAY-29** (28/10 19:33 : ligne `.gut-card-actions`, icône « plus » comme « Noter moi-même », test) Accueil, carte
+  « Votre ventre » le soir : « Noter un moment précis » et « + Selles » empilés sur deux lignes avec un vide, styles
+  différents → une seule ligne de gestes facultatifs.
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 
