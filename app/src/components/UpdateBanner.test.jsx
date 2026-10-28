@@ -77,7 +77,11 @@ describe('UpdateBanner', () => {
     })
     window.__HT_APP_UPDATE__ = plugin
     render(<UpdateBanner />)
-    fireEvent.click(await screen.findByRole('button', { name: /Mettre à jour \(33,6\sMo\)/ }))
+    const button = await screen.findByRole('button', { name: /Mettre à jour \(33,6\sMo\)/ })
+    // Le bouton s'affiche dès que le plugin et la release sont connus, mais le pilote naît dans un effet : sous la
+    // charge de la CI, un clic trop tôt ne faisait rien (échecs du 28/10). On attend qu'il ait interrogé le plugin.
+    await waitFor(() => expect(plugin.status).toHaveBeenCalled(), { timeout: WAIT })
+    fireEvent.click(button)
     const bar = await screen.findByRole('progressbar', {}, { timeout: WAIT })
     await waitFor(() => expect(bar).toHaveAttribute('aria-valuenow', '36'), { timeout: WAIT })
     expect(screen.getByText(/12,3\sMo \/ 33,6\sMo · 36 %/)).toBeInTheDocument()
