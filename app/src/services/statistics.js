@@ -78,9 +78,19 @@ export function correlationStrength(r) {
   return 'fort'
 }
 
-/** Confidence level from a q-value (FDR-adjusted p-value). */
-export function evidenceLevel(q) {
-  if (q < 0.05) return 'solide'
+/**
+ * Days needed in the smaller group (with / without a factor) before a lead may be called
+ * « solide » — the same bar as the gut leads (gutDays.MIN_EXPOSED_DAYS). Below it, a small
+ * q-value from a handful of days stays « à confirmer » at best.
+ */
+export const MIN_SOLID_GROUP_DAYS = 8
+
+/**
+ * Confidence level from a q-value (FDR-adjusted p-value). `minGroupDays`, for a comparison
+ * of two groups of days, is the size of the smaller one.
+ */
+export function evidenceLevel(q, minGroupDays = Infinity) {
+  if (q < 0.05) return minGroupDays >= MIN_SOLID_GROUP_DAYS ? 'solide' : 'à confirmer'
   if (q < 0.2) return 'à confirmer'
   return 'incertain'
 }

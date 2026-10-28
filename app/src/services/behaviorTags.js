@@ -422,7 +422,7 @@ export function computeTagEffects(entries, { outcomeByDay } = {}) {
   const q = benjaminiHochberg(effects.map((e) => e.p))
   effects.forEach((e, i) => {
     e.q = q[i]
-    e.evidence = evidenceLevel(e.q)
+    e.evidence = evidenceLevel(e.q, Math.min(e.nWith, e.nWithout))
   })
   effects.sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff))
 

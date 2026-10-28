@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { MIN_EXPOSED_DAYS } from './gutDays'
 import {
   normalCdf,
   lag1Autocorrelation,
@@ -7,6 +8,7 @@ import {
   benjaminiHochberg,
   correlationStrength,
   evidenceLevel,
+  MIN_SOLID_GROUP_DAYS,
   isWeekendKey,
   residualizeByGroup,
   fisherExactTwoSided,
@@ -111,6 +113,16 @@ describe('evidenceLevel', () => {
     expect(evidenceLevel(0.01)).toBe('solide')
     expect(evidenceLevel(0.1)).toBe('à confirmer')
     expect(evidenceLevel(0.5)).toBe('incertain')
+  })
+
+  it(`never says « solide » with fewer than ${MIN_SOLID_GROUP_DAYS} days in the smaller group (POL-PLAY-23)`, () => {
+    expect(MIN_SOLID_GROUP_DAYS).toBe(MIN_EXPOSED_DAYS) // same bar as the gut leads
+    expect(evidenceLevel(0.01, 6)).toBe('à confirmer')
+    expect(evidenceLevel(0.01, 7)).toBe('à confirmer')
+    expect(evidenceLevel(0.01, 8)).toBe('solide')
+    // Only caps « solide »: weaker levels stay as they are.
+    expect(evidenceLevel(0.1, 3)).toBe('à confirmer')
+    expect(evidenceLevel(0.5, 3)).toBe('incertain')
   })
 })
 

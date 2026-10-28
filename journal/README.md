@@ -162,6 +162,10 @@
 - **Tendances : un écart à votre norme n'est plus en couleur d'alerte** (28/10 07:33) — « FC au repos · Plus basse
   que d'habitude » s'affichait en ocre, comme un avertissement ; un écart n'est ni bon ni mauvais par principe : il est
   maintenant en gris encre, la norme restant en vert. Le « Radar forme » (signes inhabituels simultanés) garde ses couleurs.
+- **« Piste solide » seulement avec assez de jours** (28/10 09:33) — Analyses montrait « Alcool · le lendemain ·
+  Piste solide » avec 6 jours d'alcool seulement. Désormais, une piste « jours avec / sans » n'est dite solide qu'à
+  partir de 8 jours de chaque côté (la même exigence que les pistes du ventre) ; en dessous, « À confirmer » au mieux.
+  **À tester** : rien ; si une de vos pistes passe de « solide » à « à confirmer », c'est voulu.
 
 - **Les robots de Google comptés à part** (28/10 05:33) — rien de nouveau à l'écran. Le relais voyait 21 « nouvelles
   installations » en 7 jours alors que vous êtes seul sur la version Play : très probablement les appareils de test de
@@ -358,6 +362,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/10 09:33 — [« Piste solide » à partir de 8 jours](runs/2026-10-28-0933-piste-solide-8-jours.md) | 🎨 | POL-PLAY-23 : `evidenceLevel(q, n)` plafonne à « à confirmer » sous 8 jours dans le plus petit groupe (même seuil que `gutDays.MIN_EXPOSED_DAYS`) ; pistes « jours avec / sans » (notes, sport le soir, écran tard, visage) ; Alcool (6 jours) passe à « À confirmer » |
 | 28/10 08:33 — [Idées : audit écran par écran de la version Play](runs/2026-10-28-0833-idees-audit-play.md) | 💡 | Captures `--play --empty` (clair) et `--play --dark` (démo) relues écran par écran ; `IDEES.md` I186–I188 ; POL-PLAY-21 à 28 au BACKLOG (pistes non annoncées sur l'Accueil, statistiques trop visibles dans Analyses, « piste solide » sur 6 jours, boutons, textes « tout reste ici », encart météo) ; journal seul |
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
 | 27/10 23:33 — [Ventre du soir : une seule question](runs/2026-10-27-2333-ventre-soir-une-question.md) | 🎨 | PR #445 mergée (checks verts, merge bloqué à la session précédente) ; audit POL-PLAY-12 vierge + démo ; carte ventre du soir sans rangée en double ; POL-PLAY-13 à 15 au BACKLOG |
