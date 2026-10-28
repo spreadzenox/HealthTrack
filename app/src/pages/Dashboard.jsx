@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
@@ -122,15 +122,6 @@ export default function Dashboard() {
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
 
-      {!loading && !error && !empty && (
-        <>
-          {/* Forme et courbes : Journal → Tendances (jalon 2b), l'accueil s'arrête au résumé du jour. */}
-          <nav className="today-journal-links" aria-label="Plus de détails">
-            <Link to="/journal" className="btn btn-secondary today-journal-link">Vos derniers jours, dans le Journal</Link>
-            <Link to="/tendances" className="btn btn-secondary today-journal-link">Vos tendances, dans le Journal</Link>
-          </nav>
-        </>
-      )}
     </section>
   )
 }

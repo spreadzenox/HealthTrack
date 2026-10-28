@@ -166,6 +166,12 @@
   Piste solide » avec 6 jours d'alcool seulement. Désormais, une piste « jours avec / sans » n'est dite solide qu'à
   partir de 8 jours de chaque côté (la même exigence que les pistes du ventre) ; en dessous, « À confirmer » au mieux.
   **À tester** : rien ; si une de vos pistes passe de « solide » à « à confirmer », c'est voulu.
+- **Accueil : vos pistes annoncées** (28/10 10:33) — la carte lilas disait encore « Assez de jours pour chercher des
+  pistes… voyez l'onglet Analyses » alors qu'Analyses en montrait déjà. Maintenant : « 2 pistes repérées », la
+  première en une ligne (« Dormir un peu plus longtemps »), et toute la carte ouvre Analyses. Sur la version Play sans
+  premium (après la période de lancement), une piste du ventre reste floue, comme dans Analyses. Les deux boutons
+  « … dans le Journal » du bas de l'Accueil sont retirés (doublons de la barre d'onglets). **À tester** : ouvrir
+  Analyses une fois, revenir à l'Accueil : la carte lilas doit annoncer les mêmes pistes.
 
 - **Les robots de Google comptés à part** (28/10 05:33) — rien de nouveau à l'écran. Le relais voyait 21 « nouvelles
   installations » en 7 jours alors que vous êtes seul sur la version Play : très probablement les appareils de test de
@@ -362,6 +368,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/10 10:33 — [Accueil : pistes annoncées](runs/2026-10-28-1033-accueil-pistes.md) | 🎨 | POL-PLAY-21 : Analyses mémorise un résumé de ses pistes (titres seulement, effacé avec les données), la carte lilas de l'Accueil l'affiche sans recalcul (budget de lectures tenu) ; pistes du ventre floues sans premium ; boutons « … dans le Journal » retirés |
 | 28/10 09:33 — [« Piste solide » à partir de 8 jours](runs/2026-10-28-0933-piste-solide-8-jours.md) | 🎨 | POL-PLAY-23 : `evidenceLevel(q, n)` plafonne à « à confirmer » sous 8 jours dans le plus petit groupe (même seuil que `gutDays.MIN_EXPOSED_DAYS`) ; pistes « jours avec / sans » (notes, sport le soir, écran tard, visage) ; Alcool (6 jours) passe à « À confirmer » ; v335 (APK 34,5 Mo) |
 | 28/10 08:33 — [Idées : audit écran par écran de la version Play](runs/2026-10-28-0833-idees-audit-play.md) | 💡 | Captures `--play --empty` (clair) et `--play --dark` (démo) relues écran par écran ; `IDEES.md` I186–I188 ; POL-PLAY-21 à 28 au BACKLOG (pistes non annoncées sur l'Accueil, statistiques trop visibles dans Analyses, « piste solide » sur 6 jours, boutons, textes « tout reste ici », encart météo) ; journal seul |
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |

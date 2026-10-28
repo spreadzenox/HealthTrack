@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-28",
+  "kind": "amélioration",
+  "title": "Accueil : vos pistes annoncées",
+  "items": [
+    "Dès qu'Analyses a repéré des pistes, la carte lilas de l'Accueil le dit (« 2 pistes repérées ») et montre la première ; la toucher ouvre Analyses.",
+    "Les deux boutons « … dans le Journal » du bas de l'Accueil sont retirés : la barre d'onglets y mène déjà."
+  ]
+}

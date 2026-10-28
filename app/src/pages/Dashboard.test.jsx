@@ -138,33 +138,20 @@ describe('Dashboard', () => {
       { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
     ])
     renderDashboard()
-    await screen.findByRole('link', { name: /Vos derniers jours, dans le Journal/ })
+    await screen.findByRole('region', { name: 'Mesures du jour' })
     expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).not.toBeInTheDocument()
   })
 
-  it('renvoie « Vos derniers jours » vers l’onglet Journal au lieu de les lister (jalon 2c-2)', async () => {
+  it('ne double plus la barre d’onglets par des boutons Journal / Tendances (POL-PLAY-21)', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([
       { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
     ])
     renderDashboard()
-    const link = await screen.findByRole('link', { name: 'Vos derniers jours, dans le Journal' })
-    expect(link).toHaveAttribute('href', '/journal')
+    await screen.findByRole('region', { name: 'Mesures du jour' })
+    expect(screen.queryByRole('link', { name: /dans le Journal/ })).not.toBeInTheDocument()
     expect(document.querySelector('.day-list')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /Voir les jours précédents/i })).not.toBeInTheDocument()
-  })
-
-  it('renvoie la forme et les courbes vers Journal → Tendances au lieu de les afficher (jalon 2b)', async () => {
-    const { listEntries } = await import('../storage/localHealthStorage')
-    listEntries.mockResolvedValue([
-      { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
-    ])
-    renderDashboard()
-    const link = await screen.findByRole('link', { name: 'Vos tendances, dans le Journal' })
-    expect(link).toHaveAttribute('href', '/tendances')
     expect(screen.queryByTestId('wellbeing-charts')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('baseline-cards')).not.toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'Votre forme' })).not.toBeInTheDocument()
   })
 
   it('relit les tuiles du jour quand une saisie arrive', async () => {

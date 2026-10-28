@@ -334,6 +334,20 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
+  it('remembers the levers it shows for the home lilac card (POL-PLAY-21)', async () => {
+    const lever = {
+      ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
+      direction: 'higher_better', action: 'Marcher davantage',
+    }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good',
+      correlations: [lever], levers: [lever],
+    })
+    await screen.findByText('Marcher davantage')
+    expect(JSON.parse(localStorage.getItem('healthtrack_pistes_summary'))).toMatchObject({ gut: [], levers: ['Marcher davantage'] })
+    spy.mockRestore()
+  })
+
   it('says « Chez vous » on a lever with q < 0.05 and « À vérifier » on the single tentative one (I108)', async () => {
     const solid = {
       ...baseCorr, variable: 'sleepMinutes', label: 'Sommeil', r: 0.5,
