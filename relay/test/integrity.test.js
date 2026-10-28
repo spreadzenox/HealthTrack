@@ -105,6 +105,30 @@ test('garde observe : ne bloque jamais, mais journalise le verdict sans jeton ni
   assert.ok(!JSON.stringify(logs).includes(TOKEN))
 })
 
+test('jeton absent : la raison donnée par l\'app (bornée) et l\'origine CI sont journalisées, rien d\'autre', async () => {
+  const { g, logs } = guard({ mode: 'observe' })
+  await g.check('sans-jeton-installation-1', undefined, { clientStatus: 'timeout' })
+  await g.check('sans-jeton-installation-2', undefined, { clientStatus: 'error:-12' })
+  await g.check('ci-smoke-1234567890', undefined)
+  await g.check('sans-jeton-installation-3', undefined, { clientStatus: 'x'.repeat(80) })
+  await g.check('sans-jeton-installation-4', undefined, { clientStatus: 'mon e-mail <a@b.fr>' })
+  assert.deepEqual(logs.map((e) => [e.status, e.client, e.ci]), [
+    ['missing', 'timeout', false],
+    ['missing', 'error:-12', false],
+    ['missing', 'none', true],
+    ['missing', 'other', false],
+    ['missing', 'other', false],
+  ])
+  assert.ok(!JSON.stringify(logs).includes('a@b.fr'))
+})
+
+test('jeton présent : origine CI journalisée aussi avec le verdict', async () => {
+  const { g, logs } = guard({ mode: 'observe' })
+  await g.check(INSTALL, TOKEN)
+  assert.equal(logs[0].status, 'passed')
+  assert.equal(logs[0].ci, false)
+})
+
 test('garde enforce : refuse sans jeton ou sur mauvais verdict, accepte un bon verdict', async () => {
   assert.equal((await guard({ mode: 'enforce' }).g.check(INSTALL, undefined)).ok, false)
   assert.equal((await guard({ mode: 'enforce', payload: goodPayload({ appIntegrity: {} }) }).g.check(INSTALL, TOKEN)).ok, false)

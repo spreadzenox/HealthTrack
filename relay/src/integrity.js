@@ -37,6 +37,21 @@ export const requestHashFor = (installId) => createHash('sha256').update(`halcya
 
 export const isIntegrityToken = (value) => INTEGRITY_TOKEN.test(String(value ?? ''))
 
+/**
+ * Raison donnée par l'app quand elle n'a pas de jeton (en-tête `X-Integrity-Status`, 6b-2c-2) : `timeout`, `backoff`,
+ * `no_plugin`, `bad_token` ou `error:<code>` (code d'erreur de Google Play, chiffres ou majuscules). Toute autre
+ * valeur devient `other` : rien de libre ne finit dans les journaux.
+ */
+const CLIENT_STATUS = /^(timeout|backoff|no_plugin|bad_token|error:[A-Z0-9_-]{1,24})$/
+export const clientIntegrityStatus = (value) => {
+  if (value === undefined || value === null || value === '') return 'none'
+  const text = String(value)
+  return CLIENT_STATUS.test(text) ? text : 'other'
+}
+
+/** Analyse de test du workflow de déploiement : jamais de jeton, à séparer des vrais téléphones dans le bilan. */
+const isCiInstall = (installId) => String(installId).startsWith('ci-smoke-')
+
 export class IntegrityApiError extends Error {
   constructor(message, status) {
     super(message)
@@ -92,7 +107,7 @@ export function evaluateVerdict(payload, { packageName, requestHash, now = Date.
 }
 
 /**
- * Garde Play Integrity du relais. `check(installId, token)` → `{ ok, mode, status }` ; `ok` vaut toujours `true` hors
+ * Garde Play Integrity du relais. `check(installId, token, { clientStatus })` → `{ ok, mode, status }` ; `ok` vaut toujours `true` hors
  * du mode `enforce`. `status` : 'off' | 'trusted' (cache) | 'passed' | 'missing' | 'rejected' | 'unavailable'.
  */
 export function createIntegrityGuard({ client, packageName, mode = 'observe', log = () => {}, now = Date.now, hash = (id) => id }) {
@@ -108,7 +123,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', lo
 
   return {
     mode: effective,
-    async check(installId, integrityToken) {
+    async check(installId, integrityToken, { clientStatus } = {}) {
       if (effective === 'off' || !client) return { ok: true, mode: 'off', status: 'off' }
       const t = now()
       const cached = cache.get(installId)
@@ -116,7 +131,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', lo
         return result(cached.ok, cached.ok ? 'trusted' : 'rejected')
       }
       if (!isIntegrityToken(integrityToken)) {
-        log({ event: 'integrity', status: 'missing', mode: effective, install: hash(installId) })
+        log({ event: 'integrity', status: 'missing', mode: effective, client: clientIntegrityStatus(clientStatus), ci: isCiInstall(installId), install: hash(installId) })
         return result(false, 'missing')
       }
       try {
@@ -124,7 +139,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', lo
         const verdict = evaluateVerdict(payload, { packageName, requestHash: requestHashFor(installId), now: t })
         prune(t)
         cache.set(installId, { ok: verdict.ok, until: t + (verdict.ok ? VERDICT_CACHE_MS : REJECT_CACHE_MS) })
-        log({ event: 'integrity', status: verdict.ok ? 'passed' : 'rejected', mode: effective, reasons: verdict.reasons, licensed: verdict.licensed, install: hash(installId) })
+        log({ event: 'integrity', status: verdict.ok ? 'passed' : 'rejected', mode: effective, reasons: verdict.reasons, licensed: verdict.licensed, ci: isCiInstall(installId), install: hash(installId) })
         return result(verdict.ok, verdict.ok ? 'passed' : 'rejected')
       } catch (err) {
         // Google injoignable : on ne punit pas l'utilisateur (les plafonds du relais restent en place)

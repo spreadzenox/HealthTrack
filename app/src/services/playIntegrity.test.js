@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getIntegrityToken, integrityRequestHash, resetIntegrityBackoff } from './playIntegrity'
+import { getIntegrityToken, integrityRequestHash, requestIntegrity, resetIntegrityBackoff } from './playIntegrity'
 
 const TOKEN = 'a'.repeat(200)
 
@@ -42,5 +42,21 @@ describe('Play Integrity (variante play)', () => {
     now += 61 * 60_000
     native.request.mockResolvedValue({ token: TOKEN })
     expect(await getIntegrityToken('abc123', { native, timeoutMs: 10, now: () => now })).toBe(TOKEN)
+  })
+
+  it('sans jeton, dit pourquoi au relais (6b-2c-2) : jamais le message d’erreur, seulement un code borné', async () => {
+    let now = 1_000_000
+    const opts = (native) => ({ native, timeoutMs: 10, now: () => now })
+    expect(await requestIntegrity('abc123', opts({ request: vi.fn().mockResolvedValue({ token: TOKEN }) }))).toEqual({ token: TOKEN, reason: null })
+    expect(await requestIntegrity('abc123', opts(null))).toEqual({ token: null, reason: 'no_plugin' })
+    const failing = (code) => ({ request: vi.fn().mockRejectedValue(Object.assign(new Error('Play Store absent sur cet appareil'), { code })) })
+    expect(await requestIntegrity('abc123', opts(failing('-2')))).toEqual({ token: null, reason: 'error:-2' })
+    expect(await requestIntegrity('abc123', opts(failing('UNKNOWN')))).toEqual({ token: null, reason: 'error:UNKNOWN' })
+    expect(await requestIntegrity('abc123', opts(failing(undefined)))).toEqual({ token: null, reason: 'error:UNKNOWN' })
+    expect(await requestIntegrity('abc123', opts(failing('message libre <x>')))).toEqual({ token: null, reason: 'error:UNKNOWN' })
+    expect(await requestIntegrity('abc123', opts({ request: vi.fn().mockResolvedValue({ token: 42 }) }))).toEqual({ token: null, reason: 'bad_token' })
+    const slow = { request: vi.fn(() => new Promise(() => {})) }
+    expect(await requestIntegrity('abc123', opts(slow))).toEqual({ token: null, reason: 'timeout' })
+    expect(await requestIntegrity('abc123', opts(slow))).toEqual({ token: null, reason: 'backoff' })
   })
 })

@@ -227,18 +227,22 @@ jobs:
         run: |
           set -uo pipefail
           # Avant de passer le relais en mode « enforce », on regarde ce que les vrais téléphones envoient.
-          # Les essais de la CI (identifiant ci-smoke-…) n'ont jamais de jeton : ils comptent dans « missing ».
+          # Les essais de la CI (identifiant ci-smoke-…) n'ont jamais de jeton : colonne « Origine » (champ ci, 6b-2c-2).
+          # « Raison » : verdict refusé (reasons) ou, sans jeton, ce que l'app a répondu (client : timeout, backoff,
+          # error:<code Google Play>, no_plugin ; « none » = version de l'app antérieure à 6b-2c-2).
           gcloud logging read \
             "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.event=\"integrity\"" \
-            --project="$GCP_PROJECT" --freshness=7d --limit=500 --format=json > "$RUNNER_TEMP/integrity.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/integrity.json"
+            --project="$GCP_PROJECT" --freshness=7d --limit=1000 --format=json > "$RUNNER_TEMP/integrity.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/integrity.json"
           total=$(jq 'length' "$RUNNER_TEMP/integrity.json")
           {
             echo
             echo "### Play Integrity — 7 derniers jours ($total événement(s))"
             echo
-            echo "| Statut | Mode | Raisons | Installations | Événements |"
-            echo "|---|---|---|---|---|"
-            jq -r 'group_by([.jsonPayload.status, .jsonPayload.mode, ((.jsonPayload.reasons // []) | join(", "))])[]
-              | "| \(.[0].jsonPayload.status) | \(.[0].jsonPayload.mode // "—") | \((.[0].jsonPayload.reasons // []) | join(", ") | if . == "" then "—" else . end) | \(map(.jsonPayload.install // "—") | unique | length) | \(length) |"' \
+            echo "| Origine | Statut | Mode | Raison | Installations | Événements |"
+            echo "|---|---|---|---|---|---|"
+            jq -r 'map(. + { origin: (if .jsonPayload.ci == true then "CI" elif .jsonPayload.ci == false then "téléphones" else "—" end),
+                            why: ((.jsonPayload.reasons // []) + (if .jsonPayload.client then [.jsonPayload.client] else [] end) | join(", ") | if . == "" then "—" else . end) })
+              | group_by([.origin, .jsonPayload.status, .jsonPayload.mode, .why])[]
+              | "| \(.[0].origin) | \(.[0].jsonPayload.status) | \(.[0].jsonPayload.mode // "—") | \(.[0].why) | \(map(.jsonPayload.install // "—") | unique | length) | \(length) |"' \
               "$RUNNER_TEMP/integrity.json"
           } | tee -a "$GITHUB_STEP_SUMMARY"
