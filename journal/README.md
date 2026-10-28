@@ -247,6 +247,12 @@
   --project=healthtrack-824b26` (sans cela, la date est écrite mais rien n'est effacé ; détail dans PRODUIT.md §4).
   **À tester** : rien (Paramètres → IA : nouvelle phrase « effacé au bout de 13 mois sans analyse »).
 
+- **Pistes : un lien, pas un ordre** (28/10 22:33) — les pistes du bien-être s'intitulent « facteur → effet »
+  (« Nuits plus longues → meilleur bien-être », « Plus de pas → meilleur bien-être ») dans Analyses et sur la carte
+  lilas de l'Accueil, au lieu de « Dormir un peu plus longtemps » (règle 6 : décrire votre lien, pas prescrire). Ce
+  qu'on pourrait tester reste derrière le chevron (« À tester : dormir un peu plus longtemps »). **À tester** : ouvrir
+  Analyses une fois (la carte de l'Accueil reprend le nouveau titre au calcul suivant).
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -421,6 +427,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/10 22:33 — [Pistes « facteur → effet »](runs/2026-10-28-2233-pistes-facteur-effet.md) | 🎨 | POL-PLAY-32 : titre « facteur → effet » (`leverTitle`, côté du meilleur bien-être) dans Analyses et la carte lilas ; action derrière le chevron ; 4 tests |
 | 28/10 21:33 — [Compteurs du relais datés, textes honnêtes](runs/2026-10-28-2133-compteurs-expiration.md) | 🎨 | POL-PLAY-30 : `expireAt` sur chaque compteur Firestore (`expiryOf`, 13 mois), textes Paramètres / Données / divulgation IA / confidentialité ; tests relais (2) et `serverRetentionTexts.test.js` ; action P33 |
 | 28/10 17:34 — [Actions du Journal derrière « ⋯ »](runs/2026-10-28-1734-journal-actions.md) | 🎨 | POL-PLAY-27 : « ⋯ » par saisie, tuile Météo lilas, Sommeil « cette nuit » ; tests (Journal, today, journalChips) ; captures clair / sombre / déplié relues ; #478 mergée, v343 (APK 34,5 Mo) |
 | 28/10 20:33 — [Idées : audit Paramètres, Données, Premium](runs/2026-10-28-2033-idees-audit-reglages.md) | 💡 | Captures `--play --dark` (démo) et `--subscription=launch` relues (Paramètres, Données, Onboarding, Premium, Réintroduction) ; défaut trouvé : le relais garde les compteurs de crédits dans Firestore sans expiration alors que la confidentialité dit « en mémoire » (POL-PLAY-30, P33) ; POL-PLAY-31 à 33 ; journal seul |

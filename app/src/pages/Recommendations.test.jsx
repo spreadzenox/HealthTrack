@@ -342,6 +342,22 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
+  it('titles a lever « facteur → effet » and keeps the action behind the chevron (POL-PLAY-32)', async () => {
+    const lever = {
+      ...baseCorr, variable: 'sleepMinutes', label: 'Sommeil', r: 0.42, direction: 'higher_better',
+      action: 'Dormir un peu plus longtemps', title: 'Nuits plus longues → meilleur bien-être',
+    }
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 40, reliability: 'good', correlations: [lever], levers: [lever],
+    })
+    const title = await screen.findByText('Nuits plus longues → meilleur bien-être')
+    expect(screen.queryByText(/Dormir un peu plus longtemps/)).not.toBeInTheDocument()
+    const card = title.closest('li')
+    fireEvent.click(within(card).getByRole('button', { name: 'Afficher les détails' }))
+    expect(within(card).getByText('À tester : dormir un peu plus longtemps')).toBeInTheDocument()
+    spy.mockRestore()
+  })
+
   it('remembers the levers it shows for the home lilac card (POL-PLAY-21)', async () => {
     const lever = {
       ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
@@ -835,7 +851,7 @@ describe('Recommendations — lagged effects', () => {
     listEntriesForAnalysis.mockResolvedValue(laggedEntries())
     renderPage()
     // POL-7c : un facteur = un verdict. Les pas sont déjà une piste : leur effet de la veille est rappelé au chevron
-    const lever = (await screen.findByText('Marcher davantage')).closest('li')
+    const lever = (await screen.findByText('Plus de pas → meilleur bien-être')).closest('li')
     expect(screen.queryByTestId('reco-links')?.querySelector('.reco-lag-card') ?? null).toBeNull()
     fireEvent.click(within(lever).getByRole('button', { name: 'Afficher les détails' }))
     expect(lever).toHaveTextContent(/La veille, .*pas de plus que d’habitude → bien-être \+\d,\d point/)

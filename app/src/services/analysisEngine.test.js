@@ -1544,10 +1544,31 @@ describe('computeBasicCorrelations — levers', () => {
 
 describe('leverSuggestion — D6 (aucune norme imposée)', () => {
   it('follows the sign of the personal link, whatever the general norm', () => {
-    expect(leverSuggestion('steps', 0.4)).toEqual({ action: 'Marcher davantage', againstNorm: false })
-    expect(leverSuggestion('steps', -0.4)).toEqual({ action: 'Ne pas chercher à marcher davantage', againstNorm: true })
-    expect(leverSuggestion('screen_late_minutes', -0.4)).toEqual({ action: 'Lâcher le téléphone plus tôt le soir', againstNorm: false })
-    expect(leverSuggestion('screen_late_minutes', 0.4)).toEqual({ action: 'Ne pas chercher à lâcher le téléphone plus tôt le soir', againstNorm: true })
+    expect(leverSuggestion('steps', 0.4)).toMatchObject({ action: 'Marcher davantage', againstNorm: false })
+    expect(leverSuggestion('steps', -0.4)).toMatchObject({ action: 'Ne pas chercher à marcher davantage', againstNorm: true })
+    expect(leverSuggestion('screen_late_minutes', -0.4)).toMatchObject({ action: 'Lâcher le téléphone plus tôt le soir', againstNorm: false })
+    expect(leverSuggestion('screen_late_minutes', 0.4)).toMatchObject({ action: 'Ne pas chercher à lâcher le téléphone plus tôt le soir', againstNorm: true })
+  })
+
+  it('titles each lever « facteur → effet », on the side of the better wellbeing (POL-PLAY-32, règle 6)', () => {
+    expect(leverSuggestion('sleepMinutes', 0.4).title).toBe('Nuits plus longues → meilleur bien-être')
+    expect(leverSuggestion('sleepMinutes', -0.4).title).toBe('Nuits plus courtes → meilleur bien-être')
+    expect(leverSuggestion('steps', 0.4).title).toBe('Plus de pas → meilleur bien-être')
+    expect(leverSuggestion('screen_late_minutes', -0.4).title).toBe('Moins d’écran le soir → meilleur bien-être')
+    expect(leverSuggestion('omega3_g', 0.4).title).toBe('Plus d’oméga-3 → meilleur bien-être')
+    expect(leverSuggestion('alcohol_g', -0.4).title).toBe('Moins d’alcool → meilleur bien-être')
+  })
+
+  it('has a « facteur → effet » title for every actionable variable, never an imperative', () => {
+    for (const key of Object.keys(LEVER_ACTIONS)) {
+      for (const r of [0.4, -0.4]) {
+        const s = leverSuggestion(key, r)
+        if (!s) continue
+        expect(s.title, key).toMatch(/^\S.* → meilleur bien-être$/)
+        expect(s.title, key).not.toMatch(/^(Dormir|Marcher|Bouger|Manger|Limiter|Boire|Fumer|Passer|Lâcher|Prendre|Ne pas)\b/)
+        expect(s.title, key).not.toMatch(/undefined/)
+      }
+    }
   })
 
   it('drops the examples in parentheses from a counter-norm action', () => {

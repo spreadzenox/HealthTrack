@@ -117,8 +117,12 @@ function LeverCard({ rank, lever, lag }) {
     <li className={'reco-advice-card' + (toVerify ? ' reco-advice-card--verify' : '')}>
       <span className="reco-advice-rank">{toVerify ? '?' : rank}</span>
       <div className="reco-advice-content">
-        <p className="reco-advice-text">{lever.action}</p>
+        {/* POL-PLAY-32 : le lien en titre (« facteur → effet ») ; l'action à tester derrière le chevron */}
+        <p className="reco-advice-text">{lever.title ?? lever.action}</p>
         {lever.againstNorm && <AgainstNormNote />}
+        {open && lever.title && lever.action && (
+          <p className="reco-advice-stats">À tester : {lever.action.charAt(0).toLowerCase() + lever.action.slice(1)}</p>
+        )}
         <p className="reco-advice-impact">
           {toVerify ? 'Lien possible' : `Lien ${lever.strength}`} avec votre bien-être
         </p>

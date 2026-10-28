@@ -1305,7 +1305,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   justes, test qui interdit les anciennes phrases ; data-safety inchangé (déjà « éphémère : non »), à relire.
 - [ ] **POL-PLAY-31** (I190 ①) Données : « Supprimer toutes mes données » en bouton d'action irréversible (contour orange ou
   encre), distinct d'« Importer ».
-- [ ] **POL-PLAY-32** (I190 ③, règle 6) Accueil, carte lilas, et titres de pistes : « facteur → effet » (« Nuits plus longues →
+- [x] **POL-PLAY-32** ✅ 28/10 22:33 (`leverTitle` dans `leverSuggestion` ; Analyses et carte lilas ; action « À tester : … » au chevron) (I190 ③, règle 6) Accueil, carte lilas, et titres de pistes : « facteur → effet » (« Nuits plus longues →
   meilleur bien-être ») au lieu de l'impératif `LEVER_ACTIONS` ; l'action reste dans les détails d'Analyses.
 - [ ] **POL-PLAY-33** (I190 ② ④) Réintroduction : chevron sur chaque groupe, étiquette « pas testé » retirée (seulement les
   résultats) ; Analyses : « Voir les liens incertains » sans le nombre.

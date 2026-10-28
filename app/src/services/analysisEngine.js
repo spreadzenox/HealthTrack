@@ -1396,6 +1396,51 @@ export const LEVER_ACTIONS = {
 }
 
 /**
+ * POL-PLAY-32 (règle 6) : le titre d'une piste décrit le lien personnel, « facteur → effet », sans prescrire.
+ * Chaque variable de LEVER_ACTIONS a ici le nom de son facteur ; le côté (« plus de » / « moins de ») est celui
+ * qui va avec le meilleur bien-être chez la personne. Les nuits ont leurs propres mots.
+ */
+const LEVER_FACTORS = {
+  sleepMinutes: ['Nuits plus longues', 'Nuits plus courtes'],
+  steps: 'pas',
+  activityCalories: 'activité physique',
+  protein_g: 'protéines',
+  fiber_g: 'fibres',
+  sugar_g: 'sucre',
+  saturated_fat_g: 'graisses saturées',
+  omega3_g: 'oméga-3',
+  alcohol_g: 'alcool',
+  cigaretteCount: 'cigarettes',
+  screen_minutes: 'temps d’écran',
+  screen_late_minutes: 'écran le soir',
+  phone_unlocks: 'déverrouillages du téléphone',
+  fodmap_score: 'groupes FODMAP par repas',
+  vitamin_c_mg: 'vitamine C',
+  vitamin_d_ug: 'vitamine D',
+  vitamin_b12_ug: 'vitamine B12',
+  vitamin_b9_ug: 'folates',
+  vitamin_a_ug: 'vitamine A',
+  vitamin_e_mg: 'vitamine E',
+  calcium_mg: 'calcium',
+  iron_mg: 'fer',
+  magnesium_mg: 'magnésium',
+  zinc_mg: 'zinc',
+  potassium_mg: 'potassium',
+  sodium_mg: 'sel',
+}
+
+/** « Plus de pas → meilleur bien-être » quand r > 0, « Moins de pas → … » quand r < 0. */
+function leverTitle(variable, r) {
+  const factor = LEVER_FACTORS[variable]
+  if (!factor) return null
+  const more = r > 0
+  const phrase = Array.isArray(factor)
+    ? factor[more ? 0 : 1]
+    : `${more ? 'Plus' : 'Moins'} ${/^[aeiouyéèêâîôûœh]/i.test(factor) ? 'd’' : 'de '}${factor}`
+  return `${phrase} → meilleur bien-être`
+}
+
+/**
  * Substances for which the app never phrases a counter-norm suggestion
  * (« ne pas chercher à boire moins »), even when the personal data point
  * that way: the link stays visible, as is, among the correlations.
@@ -1421,10 +1466,11 @@ export function leverSuggestion(variable, r) {
   const direction = VARIABLE_META[variable]?.direction
   const normSign = direction === 'higher_better' ? 1 : direction === 'lower_better' ? -1 : 0
   if (normSign === 0) return null
-  if (Math.sign(r) === normSign) return { action, againstNorm: false }
+  const title = leverTitle(variable, r)
+  if (Math.sign(r) === normSign) return { action, title, againstNorm: false }
   if (NO_COUNTER_SUGGESTION.has(variable)) return null
   const bare = action.replace(/\s*\([^)]*\)$/, '')
-  return { action: `Ne pas chercher à ${lowerFirst(bare)}`, againstNorm: true }
+  return { action: `Ne pas chercher à ${lowerFirst(bare)}`, title, againstNorm: true }
 }
 
 // ─── Step 5 — advanced ML analysis (OLS multiple regression) ─────────────────

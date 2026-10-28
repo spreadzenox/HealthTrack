@@ -16,6 +16,11 @@ describe('pistesSummary', () => {
     expect(s).toEqual({ gut: ['Oignon → ventre'], levers: ['Marcher davantage'] })
   })
 
+  it('préfère le titre « facteur → effet » à l’action impérative (POL-PLAY-32)', () => {
+    const s = summarizePistes(analysis({ levers: [{ action: 'Dormir un peu plus longtemps', title: 'Nuits plus longues → meilleur bien-être' }] }))
+    expect(s.levers).toEqual(['Nuits plus longues → meilleur bien-être'])
+  })
+
   it('pas assez de jours et aucune piste du ventre : rien à résumer (la carte garde son compte à rebours)', () => {
     expect(summarizePistes(analysis({ status: 'not_enough_data' }))).toBeNull()
     expect(summarizePistes(analysis({ status: 'not_enough_data', gut: ['Ail'] }))).toEqual({ gut: ['Ail → ventre'], levers: [] })

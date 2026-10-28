@@ -17,7 +17,7 @@ export function summarizePistes(analysis) {
   if (!analysis) return null
   const gut = analysis.gut?.status === 'links' ? analysis.gut.links.map(gutTitle) : []
   const ready = analysis.correlations?.status === 'ok'
-  const levers = ready ? (analysis.correlations.levers ?? []).map((l) => l.action).filter(Boolean) : []
+  const levers = ready ? (analysis.correlations.levers ?? []).map((l) => l.title ?? l.action).filter(Boolean) : []
   if (!ready && !gut.length) return null
   return { gut, levers }
 }
