@@ -133,6 +133,8 @@ describe('computeTagEffects', () => {
     expect(e.nWith).toBe(5)
     expect(e.nWithout).toBe(9)
     expect(e.diff).toBeCloseTo(-2)
+    // A clear gap on 5 days is shown, but never as a « solid » lead (POL-PLAY-23).
+    expect(e.evidence).toBe('à confirmer')
   })
 
   it('only counts days from the first time any tag was used', () => {

@@ -1257,7 +1257,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   en-tête « … · week-end pris en compte » dans les détails ; « « visage » : comparé à votre bien-être estimé par la
   caméra (29 jours) » à réécrire ; « plus c'est élevé, meilleur est votre bien-être » → « va avec un meilleur
   bien-être » (corrélation, pas causalité) ; « Comment c'est calculé » en petit (retour 7 du 24/10).
-- [ ] **POL-PLAY-23** Statistique à vérifier : « Alcool · le lendemain · −0,2 point · Piste solide » avec **6 jours
+- [x] **POL-PLAY-23** (28/10 09:33 ; `evidenceLevel(q, minGroupDays)`, seuil `MIN_SOLID_GROUP_DAYS = 8` = `gutDays.MIN_EXPOSED_DAYS`) Statistique à vérifier : « Alcool · le lendemain · −0,2 point · Piste solide » avec **6 jours
   exposés** (démo). Les pistes ventre exigent 8 jours exposés (`gutDays.MIN_EXPOSED_DAYS`) ; les facteurs binaires du
   bien-être semblent n'en demander que 5 (« En cours de collecte : Malade (2/5 jours avec) »). Aligner : « Piste
   solide » seulement à partir de 8 jours exposés (sinon « à confirmer » au mieux), et le vérifier au banc des nulles.
