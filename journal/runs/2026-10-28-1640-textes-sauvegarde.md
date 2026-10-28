@@ -34,3 +34,7 @@
 ## Suite
 - POL-PLAY-27 (tuile Sommeil « cette nuit », tuile Météo du Journal sans pastel, « Modifier · Supprimer » des notes),
   POL-PLAY-28 (titre Health Connect sur 2 lignes, carte visage au déverrouillage quand `faceUnlockPlay`).
+
+## Après le merge (#476, `d9e2f25`)
+- Checks de la PR verts (Vitest, Build APK, relais, protocole montre, budget de lectures, bord à bord API 34).
+- Sur main : Build & Release **v342** publiée, APK **34,5 Mo** (34 491 937 octets) ; Play — AAB (test interne) vert.
