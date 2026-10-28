@@ -27,3 +27,7 @@
 ## Suite
 - POL-PLAY-25 (textes « tout reste ici » honnêtes ; « Tout reste sur cet appareil » encore visible en tête de Sources),
   puis 26 à 28.
+
+## Après le merge (#474, `78bdd6a`)
+- Checks de la PR verts (Vitest, Build APK, relais, protocole montre, budget de lectures, bord à bord API 34).
+- Sur main : Build & Release **v341** publiée, APK **34,5 Mo** (34 491 801 octets) ; Play — AAB (test interne) vert.
