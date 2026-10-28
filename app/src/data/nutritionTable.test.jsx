@@ -5,6 +5,7 @@ import {
   loadNutritionTable,
   useNutritionTable,
   _resetNutritionTable,
+  fetchTableFile,
 } from './nutritionTable'
 import { ingredientNames, itemKcal, matchIngredientName, mealKcal } from '../services/mealEditing'
 import { computeTotalsFromItems } from '../services/nutritionKPIs'
@@ -67,5 +68,25 @@ describe('table Ciqual chargée à la demande', () => {
     // nom rapproché de la base (pas signalé « absent »), kcal calculées
     expect(screen.getByText(/Abondance/)).toBeInTheDocument()
     expect(screen.getByText(/Total estimé/)).toBeInTheDocument()
+  })
+})
+
+describe('table Ciqual en fichier partagé (application et worker, une seule copie)', () => {
+  it('lit le fichier JSON à son adresse', async () => {
+    const calls = []
+    const fakeFetch = async (url) => {
+      calls.push(url)
+      return { ok: true, status: 200, json: async () => ({ Abondance: { energy_kcal: 400 } }) }
+    }
+    const t = await fetchTableFile('assets/table.json', fakeFetch)
+    expect(calls).toEqual(['assets/table.json'])
+    expect(t.Abondance.energy_kcal).toBe(400)
+  })
+
+  it('refuse une réponse en erreur ou vide (nouvel essai au prochain appel)', async () => {
+    const notFound = async () => ({ ok: false, status: 404, json: async () => ({}) })
+    await expect(fetchTableFile('x.json', notFound)).rejects.toThrow(/404/)
+    const empty = async () => ({ ok: true, status: 200, json: async () => ({}) })
+    await expect(fetchTableFile('x.json', empty)).rejects.toThrow(/vide/)
   })
 })

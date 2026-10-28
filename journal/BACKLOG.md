@@ -425,8 +425,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   Budget `/tendances` 22 000 en attendant (mesure corrigée le 21/10 18:30, voir le compte rendu).
 - [ ] **I129 alléger l'APK** : convertir MobileFaceNet (valence / éveil) en LiteRT et retirer ONNX Runtime (−18 Mo,
   APK ≈ 15 Mo), ou build ONNX Runtime minimale ; vérifier l'accord des sorties avant / après sur les images de test.
-- [ ] Retirer la dépendance npm `@m430/capacitor-app-install`, plus importée.
-- [ ] Doublon `ingredientsNutrition-*.js` (2 × 1,5 Mo non compressé) dans l'APK : chunk importé de deux façons ?
+- [x] Retirer la dépendance npm `@m430/capacitor-app-install`, plus importée. **Fait le 28/10 03:33** (npm + gradle Capacitor).
+- [x] Doublon `ingredientsNutrition-*.js` (2 × 2 Mo non compressé) dans l'APK : **fait le 28/10 03:33** — c'était l'app et le worker d'analyse (deux graphes de modules) ; en production, la table est un seul fichier `ingredientsNutrition-*.json` lu par `fetch` (`fetchTableFile`), en dev / tests l'import dynamique reste. Vérifié sur `vite preview` : page Repas et tâche du worker (200 sur le même fichier).
 
 ## 🔴🔴🔴 Consigne du propriétaire du 19/10/2026 au soir — bien-être 100 % auto, sans attendre la calibration (charte §0000000)
 
@@ -1220,6 +1220,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   `proguard-android-optimize.txt`, `-keepattributes SourceFile,LineNumberTable` ; `mapping.txt` envoyé par
   `publish.mjs` (deobfuscationFiles, testé) ; job émulateur sur un APK **play release** (visage ONNX/LiteRT, Health
   Connect, Premium, PDF, notification, logcat sans `ClassNotFoundException`). Test interne seulement ; avant février 2027.
+- [x] **POL-PLAY-16** (28/10 03:33) Table Ciqual en un seul exemplaire dans l'APK (−2 Mo non compressé) + dépendance `@m430/capacitor-app-install` retirée.
 - [ ] **POL-PLAY-11 (R8b/c)** Alpha après une journée sans plantage dans Android vitals ; `shrinkResources` à part.
 - [ ] **POL-PLAY-12** Nouvel audit `--play --empty` puis démo, écran par écran (Onboarding, Accueil, Journal, Analyses,
   Sources, Paramètres) — prévu par le run de 19:33 ; ✅ (27/10 22:33) « Marcher davantage » / « Bouger davantage » :
