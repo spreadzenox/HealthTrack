@@ -30,3 +30,7 @@
 
 ## Suite
 - POL-PLAY-21 (Accueil : annoncer les pistes), POL-PLAY-22 (statistiques derrière le chevron), puis 18, 19, 24 à 28.
+
+## Après le merge (#463, `b8bddfe`)
+- 9 checks de la PR verts (Vitest, Build APK, émulateurs API 34, 35, 36, relais, montre, budget de lectures).
+- Build & Release **v335** publiée : APK **34,5 Mo** (34 490 309 octets). Play — AAB (test interne) et Tests verts sur main.
