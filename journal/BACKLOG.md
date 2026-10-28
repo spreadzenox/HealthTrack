@@ -1292,7 +1292,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-27** (28/10 17:34 : « ⋯ » par saisie, Météo lilas, « cette nuit », tests) Petits défauts : Accueil, tuile « Sommeil 6 h 30 » sans « cette nuit » alors que VFC et Pas disent
   « hier » ; Journal › Jours, tuile « Météo » noire (seule sans pastel, retour 6 du 24/10 « plus de couleur ») ;
   chaque note du jour garde « Modifier · Supprimer » visibles (encombrant) → toucher la ligne ou menu « ⋯ ».
-- [ ] **POL-PLAY-28** Sources (vierge) : titre « Health Connect (montre, bague, balance…) » sur 2 lignes → « Health
+- [x] **POL-PLAY-28** (28/10 18:33 : titre « Health Connect » + « Montre, bague, balance : … » en tête de la description ; carte visage éteinte en play avec `unlockAvailable` : « … et, si vous le voulez, à chaque déverrouillage » ; tests) Sources (vierge) : titre « Health Connect (montre, bague, balance…) » sur 2 lignes → « Health
   Connect » + sous-titre ; vérifier que la carte « Lecture du visage » parle du déverrouillage quand `faceUnlockPlay`
   est allumé (aujourd'hui « quand vous ouvrez Halcya »).
 

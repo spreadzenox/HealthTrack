@@ -51,6 +51,13 @@ describe('FaceSenseCard', () => {
     expect(screen.getByText('Aujourd’hui : 3 déverrouillages, 3 lectures, visage lu 2 fois.')).toBeInTheDocument()
   })
 
+  it('variante play avec faceUnlockPlay : la carte éteinte annonce aussi le déverrouillage, en option (POL-PLAY-28)', async () => {
+    const plugin = fake({ ...base, enabled: false, running: false, mode: 'app_open', unlockAvailable: true, unlock: false })
+    render(<FaceSenseCard plugin={plugin} appOpen importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    expect(await screen.findByText(new RegExp(`quand vous ouvrez ${APP_NAME} et, si vous le voulez, à chaque déverrouillage`))).toBeInTheDocument()
+    expect(screen.getByText(/Si vous ajoutez le déverrouillage/)).toBeInTheDocument()
+  })
+
   it('variante play : divulgation « à l’ouverture », première lecture tout de suite, ni batterie ni Samsung', async () => {
     const plugin = fake({ ...base, enabled: false, running: false, batteryExempt: false, manufacturer: 'samsung', mode: 'app_open', dayAppOpens: 1, dayAppOpenFaces: 1 })
     const readOnOpen = vi.fn(async () => 'face')

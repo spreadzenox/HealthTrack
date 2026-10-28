@@ -193,6 +193,12 @@
   Sommeil dit « cette nuit » (ou « nuit d’avant ») comme VFC et Pas disent « hier ». **À tester** : toucher le « ⋯ »
   d'un repas puis « Modifier ».
 
+- **Sources : titres plus nets** (28/10 18:33) — la carte « Health Connect (montre, bague, balance…) » qui tenait
+  sur deux lignes s'appelle simplement « Health Connect », et sa description commence par « Montre, bague,
+  balance : … ». Sur une version Play où la lecture au déverrouillage existe, la carte « Lecture du visage » éteinte
+  le dit aussi (« quand vous ouvrez Halcya et, si vous le voulez, à chaque déverrouillage ») au lieu de ne parler que
+  de l'ouverture. **À tester** : rien de particulier.
+
 - **Historique du bien-être plus lisible** (28/10 13:33) — Accueil → carte « Bien-être estimé » → historique : en
   semaine, les jours se lisent « lu ma me je ve sa di » (avant « L M M », mardi et mercredi confondus) ; les barres
   « Expressions » sont en menthe, la couleur du bien-être (elles étaient en lilas, celle des analyses). **À tester** :
@@ -403,6 +409,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 28/10 17:34 — [Actions du Journal derrière « ⋯ »](runs/2026-10-28-1734-journal-actions.md) | 🎨 | POL-PLAY-27 : « ⋯ » par saisie, tuile Météo lilas, Sommeil « cette nuit » ; tests (Journal, today, journalChips) ; captures clair / sombre / déplié relues ; #478 mergée, v343 (APK 34,5 Mo) |
+| 28/10 18:33 — [Sources : Health Connect et visage](runs/2026-10-28-1833-sources-titres.md) | 🎨 | POL-PLAY-28 : titre « Health Connect » sur une ligne, carte visage éteinte qui annonce le déverrouillage en play (faceUnlockPlay) ; tests (FaceSenseCard, HealthConnectConnector) ; captures Sources vierge clair et démo sombre relues |
 | 28/10 16:40 — [Textes « tout reste ici » honnêtes](runs/2026-10-28-1640-textes-sauvegarde.md) | 🎨 | POL-PLAY-25 (sauvegarde du téléphone, IOS-4) et POL-PLAY-26 (encart météo retiré) ; `honestStorageTexts.test.js` (2) ; captures clair / sombre / vierge relues ; #476 mergée, v342 (APK 34,5 Mo) |
 | 28/10 15:39 — [Boutons pilule partout](runs/2026-10-28-1539-boutons-pilule.md) | 🎨 | POL-PLAY-24 : `.btn` et `.upload-btn` en pilule (52 px ; compacts 44 px), contour secondaire 2 px ; `buttonShape.test.js` (4) ; captures clair / sombre / vierge relues ; #474 mergée, v341 (APK 34,5 Mo) |
 | 28/10 14:42 — [Écran « Données de la montre » cohérent](runs/2026-10-28-1442-ecran-montre.md) | 🎨 | POL-PLAY-19 : « Dernière mesure reçue : il y a … » au lieu de « synchronisez la montre » quand des mesures arrivent ; lignes « rien » sans la classe du bloc vide (même carte partout) ; 2 tests ; captures clair/sombre relues ; #472 mergée, v340 (APK 34,5 Mo) |
