@@ -36,3 +36,9 @@
 
 ## Suite
 - POL-PLAY-12 : poursuivre l'audit écran par écran (Paramètres, Données, Onboarding en sombre).
+
+## Après le merge (#482, `d38475c`)
+- Checks de la PR verts (Vitest, Build APK, relais, protocole montre, budget de lectures, bord à bord API 34,
+  émulateur A56 API 35 et 36).
+- Sur main : Build & Release **v345** publiée, APK **34,5 Mo** (34 492 841 octets) ; Play — AAB (test interne) vert ;
+  Tests verts.
