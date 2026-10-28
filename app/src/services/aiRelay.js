@@ -4,7 +4,8 @@
  *
  * Ce qui part : la photo réduite et ré-encodée (sans métadonnées, voir imagePrep.js) ou la description du repas,
  * et un identifiant d'installation aléatoire (créé ici, sans lien avec la personne ni le téléphone) qui sert
- * seulement à compter les analyses IA (crédits, quotas). Le relais ne garde rien (relay/README.md).
+ * seulement à compter les analyses IA (crédits, quotas). Le relais ne garde qu'un compteur
+ * d'analyses par empreinte, effacé 13 mois après la dernière (relay/src/credits.js).
  */
 import { loadNutritionTable } from '../data/nutritionTable'
 import { prepareImageForGemini } from './imagePrep.js'

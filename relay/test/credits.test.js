@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createCredits, createFirestoreStore, monthKey, nextMonth, parseClientState, formatState } from '../src/credits.js'
+import { createCredits, createFirestoreStore, expiryOf, monthKey, nextMonth, parseClientState, formatState } from '../src/credits.js'
 
 const clock = (start) => {
   let t = start
@@ -139,6 +139,25 @@ test('registre durable : une lecture en échec est retentée à la requête suiv
   assert.equal(store.reads, 1)
 })
 
+test('expiration : 13 mois après la fin du mois de la dernière analyse', () => {
+  assert.equal(expiryOf(T0), '2027-12-01T00:00:00.000Z')
+  assert.equal(expiryOf(Date.parse('2026-12-31T23:00:00Z')), '2028-02-01T00:00:00.000Z')
+})
+
+test('registre durable : chaque écriture repousse la date d\'expiration du compteur', async () => {
+  const c = clock(T0)
+  const store = memoryStore()
+  const cr = createCredits({ ...opts(c), store })
+  cr.take('a', { premium: false })
+  await cr.persist('a')
+  const [key] = store.docs.keys()
+  assert.equal(store.docs.get(key).expireAt, '2027-12-01T00:00:00.000Z')
+  c.set('2027-03-10T08:00:00Z')
+  cr.take('a', { premium: false })
+  await cr.persist('a')
+  assert.equal(store.docs.get(key).expireAt, '2028-05-01T00:00:00.000Z')
+})
+
 test('Firestore : lecture, document absent, écriture des seuls compteurs', async () => {
   const calls = []
   const fetchImpl = async (url, init = {}) => {
@@ -152,10 +171,12 @@ test('Firestore : lecture, document absent, écriture des seuls compteurs', asyn
   assert.equal(calls[0].url, 'https://firestore.googleapis.com/v1/projects/p/databases/(default)/documents/credits/abc')
   assert.equal(calls[0].init.headers.Authorization, 'Bearer jeton')
   assert.equal(await store.get('absent'), null)
-  await store.set('abc', { month: '2026-10', used: 4, welcomeUsed: 1, day: '2026-10-23', dayUsed: 0 })
+  await store.set('abc', { month: '2026-10', used: 4, welcomeUsed: 1, day: '2026-10-23', dayUsed: 0, expireAt: '2027-12-01T00:00:00.000Z' })
   const body = JSON.parse(calls[2].init.body)
-  assert.deepEqual(Object.keys(body.fields).sort(), ['day', 'dayUsed', 'month', 'used', 'welcomeUsed'])
+  assert.deepEqual(Object.keys(body.fields).sort(), ['day', 'dayUsed', 'expireAt', 'month', 'used', 'welcomeUsed'])
   assert.equal(body.fields.used.integerValue, '4')
+  // Champ d'horodatage : c'est lui que la politique TTL de Firestore (P33) lit pour effacer le document
+  assert.equal(body.fields.expireAt.timestampValue, '2027-12-01T00:00:00.000Z')
   const failing = createFirestoreStore({ project: 'p', getToken: async () => 'j', fetchImpl: async () => ({ ok: false, status: 403 }) })
   await assert.rejects(failing.get('abc'), /403/)
 })

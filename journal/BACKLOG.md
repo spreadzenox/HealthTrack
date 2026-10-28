@@ -1298,7 +1298,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-29** (28/10 19:33 : ligne `.gut-card-actions`, icône « plus » comme « Noter moi-même », test) Accueil, carte
   « Votre ventre » le soir : « Noter un moment précis » et « + Selles » empilés sur deux lignes avec un vide, styles
   différents → une seule ligne de gestes facultatifs.
-- [ ] **POL-PLAY-30** (idées 28/10 20:33, I189 ; **avant les testeurs**) Relais : compteurs de crédits dans Firestore sans
+- [x] **POL-PLAY-30** ✅ 28/10 21:33 (`expireAt` = 1er du mois, 13 mois après le mois de la dernière analyse, `expiryOf` ; textes app + confidentialité ; test `serverRetentionTexts.test.js` ; reste **P33** au propriétaire) (idées 28/10 20:33, I189 ; **avant les testeurs**) Relais : compteurs de crédits dans Firestore sans
   expiration alors que confidentialité (« en mémoire »), Données (« Nos serveurs ne gardent rien ») et Paramètres
   (« Notre serveur ne garde rien ») disent le contraire. (a) `expireAt` écrit par `persist` (+ 13 mois) + test relais ;
   (b) action du propriétaire **P33** : politique TTL (commande dans I189) ; (c) textes app + `privacypolicy.html`

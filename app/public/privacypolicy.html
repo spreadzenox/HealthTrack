@@ -35,7 +35,7 @@
 </head>
 <body>
   <h1>Politique de confidentialité</h1>
-  <p class="updated">Halcya · mise à jour du 23 octobre 2026</p>
+  <p class="updated">Halcya · mise à jour du 28 octobre 2026</p>
 
   <div class="summary">
     <p><strong>En bref</strong></p>
@@ -141,8 +141,9 @@
     Avec chaque analyse part aussi un identifiant aléatoire créé par l'app à son installation (sans lien avec
     vous, votre compte Google ou votre téléphone) : il sert seulement à compter vos analyses (10 offertes, puis
     15 par mois en version gratuite, 10 par jour au plus en premium) et à limiter le nombre d'analyses par jour.
-    Le serveur n'en garde qu'une empreinte et ces compteurs, en mémoire, jusqu'à leur renouvellement ; l'app lui
-    renvoie le dernier état de ses compteurs pour qu'ils restent justes.
+    Le serveur n'en garde qu'une empreinte (impossible à retourner vers l'identifiant) et ces compteurs, dans une base
+    de Google Cloud en Europe (Firestore, Belgique) ; chaque compteur est effacé automatiquement 13 mois après la
+    dernière analyse. L'app lui renvoie le dernier état de ses compteurs pour qu'ils restent justes.
     Dans la version Google Play, chaque analyse emporte aussi un jeton Google Play Integrity, fourni par Google Play
     sur le téléphone : le serveur le fait lire par Google pour vérifier que l'app a bien été installée depuis Google
     Play, sur un appareil certifié (c'est ce qui protège les analyses offertes contre les abus). Ce jeton ne contient

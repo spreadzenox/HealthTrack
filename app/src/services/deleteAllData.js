@@ -1,7 +1,8 @@
 /**
  * « Supprimer toutes mes données » (Réglages → Données, VC-10). Efface ce qui décrit la santé de la personne :
  * toutes les entrées (repas, notes, mesures, lectures du visage), les agrégats, le profil, et les caches qui en
- * contiennent des résultats ou des traces. Rien ne quitte l'appareil : le relais d'analyse IA ne garde rien.
+ * contiennent des résultats ou des traces. Rien ne quitte l'appareil ; le relais d'analyse IA ne garde
+ * qu'un compteur d'analyses sous une empreinte, effacé 13 mois après la dernière (relay/src/credits.js).
  *
  * Restent les réglages qui reflètent un état d'Android ou du compte (lecture du visage, temps d'écran, rappels,
  * connexions et leurs dates de reprise, appairage de la montre, abonnement, crédits IA, thème) : les effacer
