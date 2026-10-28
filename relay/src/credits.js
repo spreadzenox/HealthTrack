@@ -13,6 +13,10 @@
  * (`hydrate`) et réécrite après chaque crédit pris ou rendu (`persist`). L'app renvoie aussi le dernier état connu
  * (en-tête `X-Credits`, « AAAA-MM:utilisés du mois:offerts utilisés ») et le relais garde le plus restrictif. Si
  * Firestore ne répond pas, on continue en mémoire : les plafonds de quota.js protègent la facture.
+ *
+ * Chaque document porte une date d'expiration (`expireAt`, repoussée à chaque écriture) : la politique TTL de
+ * Firestore (action du propriétaire P33) efface un compteur 13 mois après le mois de sa dernière analyse. Une
+ * installation revenue après plus d'un an retrouverait donc ses analyses offertes : c'est le prix de la minimisation.
  */
 import { createHash } from 'node:crypto'
 import { dayKey, nextReset } from './quota.js'
@@ -27,6 +31,15 @@ export const monthKey = (ms) => new Date(ms).toISOString().slice(0, 7)
 export function nextMonth(ms) {
   const d = new Date(ms)
   return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1)).toISOString()
+}
+
+/** Durée de conservation d'un compteur sans nouvelle analyse, en mois (confidentialité : « effacé au bout de 13 mois »). */
+export const RETENTION_MONTHS = 13
+
+/** Date d'effacement d'un compteur écrit à `ms` : premier jour du mois, 13 mois après la fin du mois en cours. */
+export function expiryOf(ms) {
+  const d = new Date(ms)
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1 + RETENTION_MONTHS, 1)).toISOString()
 }
 
 const STATE = /^(\d{4})-(0[1-9]|1[0-2]):(\d{1,3}):(\d{1,3})$/
@@ -112,7 +125,7 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
       const e = ledger.get(key)
       if (!store || !e) return
       const { month, used, welcomeUsed, day, dayUsed } = e
-      await store.set(key, { month, used, welcomeUsed, day, dayUsed })
+      await store.set(key, { month, used, welcomeUsed, day, dayUsed, expireAt: expiryOf(now()) })
     },
 
     /** Crédits restants, sans rien consommer. */
@@ -170,7 +183,8 @@ export const DATASTORE_SCOPE = 'https://www.googleapis.com/auth/datastore'
 /**
  * Registre durable des crédits dans Firestore (base « (default) », europe-west1, offre gratuite : 50 000 lectures et
  * 20 000 écritures par jour, bien au-delà des plafonds du relais). Un document par empreinte d'installation, collection
- * `credits` ; seuls des compteurs y sont écrits, aucune donnée personnelle ni identifiant en clair.
+ * `credits` ; seuls des compteurs et leur date d'expiration y sont écrits, aucune donnée personnelle ni identifiant en
+ * clair.
  */
 export function createFirestoreStore({ project, getToken, fetchImpl = fetch, collection = 'credits' }) {
   const url = (key) => `${FIRESTORE}/projects/${project}/databases/(default)/documents/${collection}/${key}`
@@ -189,13 +203,14 @@ export function createFirestoreStore({ project, getToken, fetchImpl = fetch, col
         dayUsed: Number(f.dayUsed?.integerValue ?? 0),
       }
     },
-    async set(key, { month, used, welcomeUsed, day, dayUsed }) {
+    async set(key, { month, used, welcomeUsed, day, dayUsed, expireAt }) {
       const fields = {
         month: { stringValue: month },
         used: { integerValue: String(used) },
         welcomeUsed: { integerValue: String(welcomeUsed) },
         day: { stringValue: day },
         dayUsed: { integerValue: String(dayUsed) },
+        ...(expireAt ? { expireAt: { timestampValue: expireAt } } : {}),
       }
       const res = await fetchImpl(url(key), { method: 'PATCH', headers: await headers(), body: JSON.stringify({ fields }) })
       if (!res.ok) throw Object.assign(new Error(`Firestore : écriture refusée (${res.status})`), { status: res.status })

@@ -31,7 +31,8 @@ describe('Settings — variante play (relais Halcya)', () => {
     expect(screen.getByText(/Aucune clé à saisir/)).toBeInTheDocument()
     const sent = screen.getByText(/Ce qui est envoyé/i).closest('p')
     expect(sent).toHaveTextContent(/identifiant aléatoire/)
-    expect(sent).toHaveTextContent(/ne garde rien/)
+    expect(sent).toHaveTextContent(/ne garde ni la photo ni le texte/)
+    expect(sent).toHaveTextContent(/13 mois/)
   })
 
   it('montre les crédits d’analyse IA relus auprès du relais', async () => {

@@ -15,7 +15,9 @@ ni ici. Décisions et infrastructure : `journal/INFRA.md`, jalon 6 de `journal/P
   modèle n'a pas répondu.
 - `GET /v1/credits` (mêmes en-têtes) → `{ "credits": { … } }` sans rien consommer. Règle (`src/credits.js`) :
   10 analyses offertes une fois + 15 par mois civil non cumulables en gratuit, 10 par jour en premium. Registre en
-  mémoire (empreintes seulement) ; l'app renvoie son dernier état et le relais garde le plus restrictif.
+  mémoire recopié dans Firestore (collection `credits`, empreintes seulement, champ `expireAt` = 13 mois après le mois
+  de la dernière analyse, effacé par la politique TTL de Firestore, action du propriétaire P33) ; l'app renvoie son
+  dernier état et le relais garde le plus restrictif.
 - `POST /v1/subscription/verify` (en-tête `X-Install-Id`) : `{ "purchaseToken": "…" }` (ou au format du validateur
   cdv-purchase, `{ "transaction": { "purchaseToken": "…" } }`) → droits premium relus chez Google Play
   (`subscriptionsv2.get`) : `{ "ok": true, "premium": true, "source": "play", "state": "active", "expiresAt": "…",

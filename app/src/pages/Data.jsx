@@ -310,8 +310,9 @@ export default function Data() {
         <div className="data-block">
           <h3 className="section-title">Supprimer</h3>
           <p className="data-hint">
-            Efface de ce téléphone vos repas, notes, mesures, lectures du visage et votre profil. Nos serveurs
-            ne gardent rien : il n’y a rien d’autre à effacer.
+            Efface de ce téléphone vos repas, notes, mesures, lectures du visage et votre profil. Chez nous, il
+            ne reste au plus qu’un compteur d’analyses IA, sous une empreinte anonyme, effacé seul au bout de
+            13 mois sans analyse.
           </p>
           {!wipe ? (
             <button type="button" className="btn btn-secondary" onClick={askWipe}>
