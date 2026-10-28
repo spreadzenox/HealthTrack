@@ -51,6 +51,14 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
     expect(screen.getByText(/aucune image/)).toBeInTheDocument()
   })
 
+  it('étiquette les 7 jours de la semaine sans ambiguïté (deux lettres, aucun doublon) (POL-PLAY-18)', async () => {
+    const { container } = renderPage()
+    await screen.findByText('3,4')
+    const labels = [...container.querySelectorAll('svg.wbh-chart text.wbh-axis')]
+      .map((t) => t.textContent).filter((t) => !/^\d/.test(t))
+    expect(labels).toEqual(['di', 'lu', 'ma', 'me', 'je', 've', 'sa'])
+  })
+
   it('change de période : jour, semaine, mois', async () => {
     renderPage()
     await screen.findByText('3,4')

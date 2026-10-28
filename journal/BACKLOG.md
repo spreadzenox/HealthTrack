@@ -1226,7 +1226,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-16** (28/10 03:33) Table Ciqual en un seul exemplaire dans l'APK (−2 Mo non compressé) + dépendance `@m430/capacitor-app-install` retirée.
 - [x] **POL-PLAY-17** (28/10 06:33) Sous-onglets du Journal à 360 px : « Tendances » touchait sa bordure → largeur selon le
   libellé + marge ; contrôle « TEXTE QUI DÉBORDE » ajouté à `npm run visual` (à lancer avec `--size=360x780`).
-- [ ] **POL-PLAY-18** Historique du bien-être : les barres « Expressions » sont en lilas (couleur des pistes) sur une page
+- [x] **POL-PLAY-18** (28/10 13:33 ; jours en deux lettres, barres en `--mint-label`) Historique du bien-être : les barres « Expressions » sont en lilas (couleur des pistes) sur une page
   menthe (bien-être) ; axe des jours « J V S D L M M » ambigu (deux « M ») → « lu ma me » ou dates courtes.
 - [ ] **POL-PLAY-19** Écran Montre (démo) : « Pas encore de lecture détaillée : synchronisez la montre » alors que
   4 types sont reçus ; cartes « rien » à bordure et cartes « reçu » sans bordure (style incohérent).

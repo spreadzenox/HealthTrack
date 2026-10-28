@@ -46,7 +46,8 @@ function axisLabels(period, from) {
     out.push({
       at: d.toISOString(),
       text: period === 'week'
-        ? d.toLocaleDateString(appLocale(), { weekday: 'narrow' })
+        // Deux lettres (« lu ma me ») : l'initiale seule confond mardi et mercredi.
+        ? d.toLocaleDateString(appLocale(), { weekday: 'short' }).replace('.', '').slice(0, 2)
         : d.toLocaleDateString(appLocale(), { day: 'numeric', month: 'short' }).replace('.', ''),
     })
   }
