@@ -119,15 +119,18 @@
   box-shadow: 0 0 0 2px var(--bg);
 }
 
-/* Sous-onglets du Journal : Jours | Repas | Nutrition (pilules, cibles ≥ 44 px). */
+/* Sous-onglets du Journal : Jours | Repas | Nutrition | Tendances (pilules, cibles ≥ 44 px). Largeur selon le
+   libellé, avec une marge intérieure : sur un écran de 360 px, « Tendances » ne touche plus sa bordure. */
 .journal-tabs {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin: 4px 0 12px;
 }
 
 .journal-tab {
-  flex: 1 1 0;
+  flex: 1 1 auto;
+  padding: 0 8px;
+  white-space: nowrap;
   min-height: var(--tap-min);
   display: flex;
   align-items: center;
@@ -144,6 +147,13 @@
   border-color: var(--accent);
   background: var(--accent);
   color: var(--color-on-brand);
+}
+
+@media (max-width: 380px) {
+  .journal-tab {
+    padding: 0 6px;
+    font-size: 15px;
+  }
 }
 
 .journal-tab:focus-visible {
