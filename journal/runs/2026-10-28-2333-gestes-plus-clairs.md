@@ -24,7 +24,7 @@
 - Captures relues : `--play --dark --routes=/data,/reintroduction` (bouton orange clair sur fond sombre ; la
   réintroduction est derrière le paywall sans abonnement, normal) et `--play --subscription=launch
   --routes=/reintroduction,/data` (clair : chevrons alignés, aucune étiquette, Fructanes avec ses trois boutons ;
-  bouton orange lisible sur la surface). `npm run visual` complet : voir ci-dessous.
+  bouton orange lisible sur la surface). `npm run visual` complet : 15 pages ok, aucune erreur JS.
 
 ## Demandes iOS
 - Note de Nouveautés commune aux deux plateformes (écrans partagés) : pas de `variants`.
