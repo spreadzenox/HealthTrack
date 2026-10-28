@@ -1298,6 +1298,17 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-29** (28/10 19:33 : ligne `.gut-card-actions`, icône « plus » comme « Noter moi-même », test) Accueil, carte
   « Votre ventre » le soir : « Noter un moment précis » et « + Selles » empilés sur deux lignes avec un vide, styles
   différents → une seule ligne de gestes facultatifs.
+- [ ] **POL-PLAY-30** (idées 28/10 20:33, I189 ; **avant les testeurs**) Relais : compteurs de crédits dans Firestore sans
+  expiration alors que confidentialité (« en mémoire »), Données (« Nos serveurs ne gardent rien ») et Paramètres
+  (« Notre serveur ne garde rien ») disent le contraire. (a) `expireAt` écrit par `persist` (+ 13 mois) + test relais ;
+  (b) action du propriétaire **P33** : politique TTL (commande dans I189) ; (c) textes app + `privacypolicy.html`
+  justes, test qui interdit les anciennes phrases ; data-safety inchangé (déjà « éphémère : non »), à relire.
+- [ ] **POL-PLAY-31** (I190 ①) Données : « Supprimer toutes mes données » en bouton d'action irréversible (contour orange ou
+  encre), distinct d'« Importer ».
+- [ ] **POL-PLAY-32** (I190 ③, règle 6) Accueil, carte lilas, et titres de pistes : « facteur → effet » (« Nuits plus longues →
+  meilleur bien-être ») au lieu de l'impératif `LEVER_ACTIONS` ; l'action reste dans les détails d'Analyses.
+- [ ] **POL-PLAY-33** (I190 ② ④) Réintroduction : chevron sur chaque groupe, étiquette « pas testé » retirée (seulement les
+  résultats) ; Analyses : « Voir les liens incertains » sans le nombre.
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 

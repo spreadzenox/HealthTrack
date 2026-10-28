@@ -238,6 +238,12 @@
 - **Analyses : une seule piste pour bouger** (27/10 22:33) — « Marcher davantage » et « Bouger davantage » ne
   s'affichent plus comme deux pistes : seule la plus solide reste. **À tester** : rien de particulier.
 
+- **À corriger avant les testeurs (trouvé le 28/10 20:33)** — depuis le 24/10, le serveur d'analyse garde le compteur
+  d'analyses IA de chaque installation (sous une empreinte anonyme, aucune donnée de santé) dans sa base Firestore,
+  **sans date de fin** ; or la politique de confidentialité dit « en mémoire » et l'app « notre serveur ne garde rien ».
+  Un prochain run de code ajoute une date d'expiration (13 mois) et corrige les textes ; ensuite, **P33** : une commande
+  de 2 minutes dans Cloud Shell (donnée dans PRODUIT.md §4) pour que Firestore efface seul les compteurs expirés.
+
 **En coulisses — chantier produit (jalon 5 : analyses avec délais)** : le moteur repas → ventre (3 fenêtres 0–4 h,
 4–24 h, 24–48 h ; comparaison dans des blocs de 3 jours ; correction des comparaisons multiples ; test du décalage
 temporel) passe le banc des fausses pistes depuis le 25/10 au soir, mais n'est pas encore affiché. La
@@ -413,6 +419,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 28/10 17:34 — [Actions du Journal derrière « ⋯ »](runs/2026-10-28-1734-journal-actions.md) | 🎨 | POL-PLAY-27 : « ⋯ » par saisie, tuile Météo lilas, Sommeil « cette nuit » ; tests (Journal, today, journalChips) ; captures clair / sombre / déplié relues ; #478 mergée, v343 (APK 34,5 Mo) |
+| 28/10 20:33 — [Idées : audit Paramètres, Données, Premium](runs/2026-10-28-2033-idees-audit-reglages.md) | 💡 | Captures `--play --dark` (démo) et `--subscription=launch` relues (Paramètres, Données, Onboarding, Premium, Réintroduction) ; défaut trouvé : le relais garde les compteurs de crédits dans Firestore sans expiration alors que la confidentialité dit « en mémoire » (POL-PLAY-30, P33) ; POL-PLAY-31 à 33 ; journal seul |
 | 28/10 19:33 — [Carte ventre : une ligne de gestes](runs/2026-10-28-1933-ventre-une-ligne.md) | 🎨 | POL-PLAY-29 (audit POL-PLAY-12 `--play --empty` + démo sombre) : « + Noter un moment précis » et « + Selles » sur une ligne ; test ; captures clair et sombre relues ; #482 mergée, v345 (APK 34,5 Mo) |
 | 28/10 18:33 — [Sources : Health Connect et visage](runs/2026-10-28-1833-sources-titres.md) | 🎨 | POL-PLAY-28 : titre « Health Connect » sur une ligne, carte visage éteinte qui annonce le déverrouillage en play (faceUnlockPlay) ; tests (FaceSenseCard, HealthConnectConnector) ; captures Sources vierge clair et démo sombre relues ; #480 mergée, v344 (APK 34,5 Mo) |
 | 28/10 16:40 — [Textes « tout reste ici » honnêtes](runs/2026-10-28-1640-textes-sauvegarde.md) | 🎨 | POL-PLAY-25 (sauvegarde du téléphone, IOS-4) et POL-PLAY-26 (encart météo retiré) ; `honestStorageTexts.test.js` (2) ; captures clair / sombre / vierge relues ; #476 mergée, v342 (APK 34,5 Mo) |
