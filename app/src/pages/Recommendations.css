@@ -518,9 +518,22 @@
 }
 
 .reco-link-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
   background: var(--surface);
   border-radius: var(--radius);
   padding: 12px 14px;
+}
+
+/* POL-PLAY-22 : le texte d'abord, le chevron des chiffres à droite */
+.reco-link-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.reco-link-card .details-toggle {
+  flex-shrink: 0;
 }
 
 .reco-link-card-uncertain {

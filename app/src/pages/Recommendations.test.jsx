@@ -5,6 +5,11 @@ import Recommendations from './Recommendations'
 import { _resetAnalysisRunner } from '../services/analysisRunner'
 import { bumpDataRevision } from '../storage/dataRevision'
 
+/** POL-PLAY-22 : les chiffres d'un lien (jours, r, week-end) s'ouvrent au chevron de sa carte. */
+function openLinkDetails(card) {
+  fireEvent.click(within(card).getByRole('button', { name: 'Afficher les détails' }))
+}
+
 vi.mock('../storage/localHealthStorage', () => ({
   listEntriesForAnalysis: vi.fn(),
   countAllEntries: vi.fn().mockResolvedValue(0),
@@ -249,11 +254,14 @@ describe('Correlation link direction', () => {
     renderPage()
 
     const protein = (await screen.findByText('Protéines')).closest('.reco-link-card')
-    expect(protein).toHaveTextContent('plus c’est élevé, moins bon est votre bien-être')
+    expect(protein).toHaveTextContent('les jours où c’est plus élevé vont avec un moins bon bien-être')
+    // POL-PLAY-22 : simple d'abord, r derrière le chevron
+    expect(protein).not.toHaveTextContent('r = ')
+    openLinkDetails(protein)
     expect(protein).toHaveTextContent('r = −0,97')
 
     const lipid = screen.getByText('Lipides').closest('.reco-link-card')
-    expect(lipid).toHaveTextContent('plus c’est élevé, meilleur est votre bien-être')
+    expect(lipid).toHaveTextContent('les jours où c’est plus élevé vont avec un meilleur bien-être')
     expect(lipid).toHaveClass('reco-link-card--corr')
 
     expect(document.querySelector('.reco-corr-pos, .reco-corr-neg')).toBeNull()
@@ -577,6 +585,7 @@ describe('Recommendations levers', () => {
       correlations: [tiny], levers: [],
     })
     const row = (await screen.findByText('Lipides')).closest('.reco-link-card')
+    openLinkDetails(row)
     expect(row).toHaveTextContent('0,00')
     expect(row).not.toHaveTextContent('−0,00')
     spy.mockRestore()
@@ -674,8 +683,11 @@ describe('Recommendations — behaviour tags', () => {
     renderPage()
     const alcohol = (await screen.findByText('Alcool')).closest('.reco-link-card')
     expect(alcohol).toHaveTextContent(/\+0,6 point/)
-    expect(alcohol).toHaveTextContent(/week-end à part : −0,3/)
+    expect(alcohol).not.toHaveTextContent(/week-end à part/)
+    openLinkDetails(alcohol)
+    expect(alcohol).toHaveTextContent(/12 jours avec · 28 sans · week-end à part : −0,3/)
     const stress = screen.getByText('Stress').closest('.reco-link-card')
+    openLinkDetails(stress)
     expect(stress).not.toHaveTextContent(/week-end à part/)
     expect(document.querySelector('.reco-method-note')).toHaveTextContent(
       /week-ends sont comparés aux week-ends/i,
@@ -702,10 +714,13 @@ describe('Recommendations — behaviour tags', () => {
     listEntriesForAnalysis.mockResolvedValue(makeEntries(10))
     renderPage()
     const sport = (await screen.findByText('Sport le soir')).closest('.reco-link-card')
+    const late = screen.getByText('Écran tard').closest('.reco-link-card')
+    const meal = screen.getByText('Repas tardif').closest('.reco-link-card')
+    for (const card of [sport, late, meal]) openLinkDetails(card)
     expect(sport).toHaveTextContent(/déduit de vos séances/)
     expect(sport).not.toHaveTextContent(/téléphone/)
-    expect(screen.getByText('Écran tard').closest('.reco-link-card')).toHaveTextContent(/mesuré par le téléphone/)
-    expect(screen.getByText('Repas tardif').closest('.reco-link-card')).toHaveTextContent(/déduit de vos repas notés \(après 21 h\)/)
+    expect(late).toHaveTextContent(/mesuré par le téléphone/)
+    expect(meal).toHaveTextContent(/déduit de vos repas notés \(après 21 h\)/)
     spy.mockRestore()
   })
 })
@@ -775,7 +790,8 @@ describe('Recommendations — week-end control', () => {
       status: 'ok', datasetDays: 40, reliability: 'good', correlations: [lever], levers: [lever],
       weekendControl: { applied: true, weekendDays: 11, weekdayDays: 29, weekendMean: 3.6, weekdayMean: 3.2 },
     })
-    fireEvent.click(await screen.findByRole('button', { name: 'Afficher les détails' }))
+    const card = (await screen.findByText('Marcher davantage')).closest('li')
+    fireEvent.click(within(card).getByRole('button', { name: 'Afficher les détails' }))
     expect(screen.getByText(/\+0,52 sans tenir compte du week-end/)).toBeInTheDocument()
     spy.mockRestore()
   })
@@ -934,7 +950,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     renderPage()
     const section = await screen.findByTestId('reco-links')
     expect(section).toHaveTextContent('Liens repérés')
-    expect(section).toHaveTextContent('« visage » : comparé à votre bien-être estimé par la caméra (20 jours)')
+    expect(section).toHaveTextContent('Étiquette « visage » : lien repéré avec votre bien-être estimé par la caméra (20 jours).')
     expect(section).toHaveTextContent('Pas')
     expect(section.querySelector('.reco-link-src')).toHaveTextContent('visage')
     // Les notes manquent toujours pour l'analyse classique : la carte lilas le dit, sans second seuil (VC-12).

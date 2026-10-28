@@ -179,16 +179,21 @@ function Delta({ value }) {
 
 /**
  * VC-24 : un seul gabarit pour tous les liens (le jour même, jours avec / sans, avec délai) : le facteur en
- * entier, une phrase, une ligne de chiffres en mono, la solidité.
+ * entier, une phrase, la solidité. La ligne de chiffres en mono (jours, r, week-end) n'apparaît qu'au chevron
+ * (POL-PLAY-22 : simple d'abord, détails pour qui veut creuser).
  */
 function LinkCard({ kind, name, children, meta, evidence, extra }) {
+  const [open, setOpen] = useState(false)
   return (
     <li className={`reco-link-card reco-link-card--${kind}` + (evidence === 'incertain' ? ' reco-link-card-uncertain' : '')}>
-      <p className="reco-link-name">{name}</p>
-      {children}
-      {meta && <p className="reco-link-meta">{meta}</p>}
-      <EvidenceBadge evidence={evidence} />
-      {extra}
+      <div className="reco-link-body">
+        <p className="reco-link-name">{name}</p>
+        {children}
+        {open && meta && <p className="reco-link-meta">{meta}</p>}
+        <EvidenceBadge evidence={evidence} />
+        {extra}
+      </div>
+      {meta && <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />}
     </li>
   )
 }
@@ -241,7 +246,7 @@ function CorrelationCard({ item, measure = 'bien-être', extra }) {
   return (
     <LinkCard kind="corr" name={item.label} meta={meta.join(' · ')} evidence={item.evidence} extra={extra}>
       <p className="reco-link-text">
-        Le jour même : plus c’est élevé, {item.r >= 0 ? 'meilleur' : 'moins bon'} est votre {measure}
+        Le jour même : les jours où c’est plus élevé vont avec un {item.r >= 0 ? 'meilleur' : 'moins bon'} {measure}
       </p>
     </LinkCard>
   )
@@ -433,7 +438,7 @@ function LinksSection({ analysis, levers = [] }) {
     <section className="reco-section" data-testid="reco-links">
       <h3 className="reco-section-title">{leverVariables.size > 0 ? 'Autres liens repérés' : 'Liens repérés'}</h3>
       {faceDays != null && (
-        <p className="reco-section-hint">« visage » : comparé à votre bien-être estimé par la caméra ({faceDays} jours).</p>
+        <p className="reco-section-hint">Étiquette « visage » : lien repéré avec votre bien-être estimé par la caméra ({faceDays} jours).</p>
       )}
       {clear.length > 0 ? list(clear.slice(0, LINKS_SHOWN)) : (
         <p className="reco-empty-levers">
@@ -938,7 +943,6 @@ function analysisMetaLine(analysis) {
   if (!r || r.status === 'not_enough_data') return null
   const parts = [`analyse sur ${r.datasetDays} jour${r.datasetDays > 1 ? 's' : ''} notés`]
   if (analysis.totalDays > r.datasetDays) parts.push(`${analysis.totalDays} jours de données`)
-  if (r.weekendControl?.applied) parts.push('week-end pris en compte')
   return parts.join(' · ')
 }
 
