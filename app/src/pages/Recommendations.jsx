@@ -458,7 +458,7 @@ function LinksSection({ analysis, levers = [] }) {
       {uncertain.length > 0 && (
         <details className="reco-corr-more">
           <summary>
-            {uncertain.length === 1 ? 'Voir le lien incertain' : `Voir les ${uncertain.length} liens incertains`}
+            {uncertain.length === 1 ? 'Voir le lien incertain' : 'Voir les liens incertains'}
           </summary>
           <p className="reco-section-hint">Trop tôt pour dire : peut-être le hasard.</p>
           {list(uncertain)}

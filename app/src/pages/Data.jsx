@@ -315,7 +315,7 @@ export default function Data() {
             13 mois sans analyse.
           </p>
           {!wipe ? (
-            <button type="button" className="btn btn-secondary" onClick={askWipe}>
+            <button type="button" className="btn btn-irreversible" onClick={askWipe}>
               Supprimer toutes mes données
             </button>
           ) : (

@@ -35,3 +35,7 @@
 ## Suite
 - POL-PLAY-31 (bouton « Supprimer toutes mes données »), POL-PLAY-33 (réintroduction : chevrons ; « Voir les liens
   incertains » sans nombre).
+
+## Après le merge (noté par le run de 23:33)
+- #487 mergée (`7beec40`) : Build & Release **v347** publiée (`HealthTrack-v347.apk`, 34 494 305 octets) ; Tests,
+  Play — AAB et émulateur A56 verts.

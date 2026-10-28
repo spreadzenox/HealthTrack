@@ -164,6 +164,18 @@
   filter: brightness(0.92);
 }
 
+/* POL-PLAY-31 : geste irréversible (première étape, la confirmation reste en .btn-danger) — contour orange, pas
+   l'émeraude des actions ordinaires comme « Choisir un fichier à importer ». */
+.btn-irreversible {
+  background: var(--surface);
+  color: var(--color-alert);
+  border: 2px solid var(--color-alert);
+}
+
+.btn-irreversible:hover:not(:disabled) {
+  background: rgba(var(--alert-rgb), 0.1);
+}
+
 /* Paramètres */
 .settings-block {
   margin-bottom: 28px;

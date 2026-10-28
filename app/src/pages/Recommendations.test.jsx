@@ -449,7 +449,7 @@ describe('Recommendations levers', () => {
     expect(solidRow).not.toHaveClass('reco-link-card-uncertain')
     spy.mockRestore()
   })
-  it('folds uncertain correlations behind « Voir les N liens incertains »', async () => {
+  it('folds uncertain correlations behind « Voir les liens incertains » (sans le nombre, POL-PLAY-33)', async () => {
     const solid = { ...baseCorr, variable: 'sleepMinutes', label: 'Durée de sommeil', r: 0.5, direction: 'higher_better' }
     const weak1 = { ...baseCorr, variable: 'fat_g', label: 'Lipides', r: -0.1, q: 0.8, evidence: 'incertain', direction: 'neutral' }
     const weak2 = { ...baseCorr, variable: 'sugar_g', label: 'Sucres', r: 0.08, q: 0.9, evidence: 'incertain', direction: 'neutral' }
@@ -457,7 +457,7 @@ describe('Recommendations levers', () => {
       status: 'ok', datasetDays: 40, reliability: 'good',
       correlations: [solid, weak1, weak2], levers: [],
     })
-    const summary = await screen.findByText(/Voir les 2 liens incertains/i)
+    const summary = await screen.findByText('Voir les liens incertains')
     const details = summary.closest('details')
     expect(details).not.toHaveAttribute('open')
     expect(details).toContainElement(screen.getByText('Lipides'))
