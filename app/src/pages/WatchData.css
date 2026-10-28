@@ -36,12 +36,12 @@
   padding: 12px 14px;
   border-radius: var(--radius-choice);
   background: var(--surface);
-  border: 2px solid transparent;
 }
 
-.watch-data-none {
-  border-color: var(--color-border);
-  background: var(--bg);
+/* « rien » / « ancien » : même carte, libellé atténué (POL-PLAY-19 : plus de bordure à part) */
+.watch-data-row--none .watch-data-label,
+.watch-data-row--stale .watch-data-label {
+  color: var(--text-muted);
 }
 
 .watch-data-head {
@@ -66,7 +66,7 @@
   background: rgba(var(--tint-rgb), 0.06);
 }
 
-.watch-data-ok .watch-data-tag {
+.watch-data-row--ok .watch-data-tag {
   color: var(--color-ok);
   background: var(--bg);
 }

@@ -49,6 +49,21 @@ describe('WatchData (écran « Montre », M5)', () => {
     expect(screen.getByText(/dernière lecture : vide/)).toBeInTheDocument()
   })
 
+  it('mesures reçues sans lecture détaillée : la date de la dernière mesure, pas « synchronisez » (POL-PLAY-19)', async () => {
+    renderPage(async () => ENTRIES)
+    expect(await screen.findByText('Dernière mesure reçue : il y a 4 h.')).toBeInTheDocument()
+    expect(screen.queryByText(/Pas encore de lecture détaillée/)).toBeNull()
+  })
+
+  it('chaque ligne a une classe d’état propre, distincte du bloc « aucune montre » (POL-PLAY-19)', async () => {
+    renderPage(async () => ENTRIES)
+    const list = await screen.findByRole('list', { name: 'Données de la montre' })
+    for (const li of within(list).getAllByRole('listitem')) {
+      expect(li.classList.contains('watch-data-none')).toBe(false)
+      expect([...li.classList].some((c) => c.startsWith('watch-data-row--'))).toBe(true)
+    }
+  })
+
   it('dit quand la base ne peut pas être lue', async () => {
     renderPage(async () => {
       throw new Error('base fermée')
