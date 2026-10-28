@@ -27,6 +27,18 @@ describe('changelog par variante (VC-5)', () => {
     }
   })
 
+  it('une note propre à Android (play et sideload) reste visible dans les deux variantes', () => {
+    const android = [{ id: '2026-10-27-2133-x', variants: ['play', 'sideload'] }]
+    expect(changelogFor(android, 'play')).toHaveLength(1)
+    expect(changelogFor(android, 'sideload')).toHaveLength(1)
+  })
+
+  it('les notes Android connues sont marquées pour l’app iPhone (barres système, sauvegarde, montre restaurée)', () => {
+    for (const id of ['2026-10-27-2133-bord-a-bord', '2026-10-28-0433-montre-restauree', '2026-10-24-1630-sauvegarde-android']) {
+      expect(ALL_CHANGELOG.find((e) => e.id === id)?.variants, id).toEqual(['play', 'sideload'])
+    }
+  })
+
   it('sideload garde l’historique complet d’avant la variante play', () => {
     expect(changelogFor(ALL_CHANGELOG, 'sideload').some((e) => e.id < PLAY_CHANGELOG_SINCE)).toBe(true)
   })

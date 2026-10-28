@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  createIntegrityClient, createIntegrityGuard, evaluateVerdict, requestHashFor, isIntegrityToken,
+  createIntegrityClient, createIntegrityGuard, evaluateVerdict, requestHashFor, isIntegrityToken, requestPlatform,
   REJECT_CACHE_MS, VERDICT_CACHE_MS, MAX_TOKEN_AGE_MS,
 } from '../src/integrity.js'
 
@@ -174,4 +174,24 @@ test('garde : Google injoignable → on laisse passer (les plafonds du relais re
 test('garde : mode off ou inconnu', async () => {
   assert.equal((await guard({ mode: 'off' }).g.check(INSTALL, undefined)).status, 'off')
   assert.equal(guard({ mode: 'n-importe-quoi' }).g.mode, 'observe')
+})
+
+test('requestPlatform : iOS par X-Platform, ou par no_plugin sans X-Platform ; Android sinon', () => {
+  assert.equal(requestPlatform('ios'), 'ios')
+  assert.equal(requestPlatform(' iOS '), 'ios')
+  assert.equal(requestPlatform(undefined, 'no_plugin'), 'ios')
+  assert.equal(requestPlatform('android', 'no_plugin'), 'android')
+  assert.equal(requestPlatform(undefined, 'timeout'), 'android')
+  assert.equal(requestPlatform(undefined, undefined), 'android')
+  assert.equal(requestPlatform('windows'), 'android')
+})
+
+test('garde enforce : une requête iPhone n\'est jamais bloquée, journalisée à part ; Android sans jeton reste refusé', async () => {
+  const { g, logs, decodes } = guard({ mode: 'enforce' })
+  assert.deepEqual(await g.check('iphone-installation-1', undefined, { clientStatus: 'no_plugin', platform: 'ios' }), { ok: true, mode: 'enforce', status: 'not_android' })
+  assert.deepEqual(await g.check('iphone-installation-2', undefined, { clientStatus: 'no_plugin' }), { ok: true, mode: 'enforce', status: 'not_android' })
+  assert.deepEqual(await g.check('android-installation-1', undefined, { clientStatus: 'timeout' }), { ok: false, mode: 'enforce', status: 'missing' })
+  assert.deepEqual(await g.check('android-installation-2', undefined, { clientStatus: 'no_plugin', platform: 'android' }), { ok: false, mode: 'enforce', status: 'missing' })
+  assert.equal(decodes(), 0)
+  assert.deepEqual(logs.map((e) => [e.status, e.platform]), [['not_android', 'ios'], ['not_android', 'ios'], ['missing', undefined], ['missing', undefined]])
 })

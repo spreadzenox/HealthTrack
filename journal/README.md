@@ -178,6 +178,15 @@
   pistes à tester. « Plus c'est élevé, meilleur est votre bien-être » devient « les jours où c'est plus élevé vont avec
   un meilleur bien-être » (un lien, pas une cause). **À tester** : toucher le chevron d'un lien et vérifier les chiffres.
 
+- **Demandes de l'app iPhone reprises** (28/10 12:33) — rien de nouveau à l'écran sur Android, sauf un mot : la page
+  Données dit « la sauvegarde du téléphone » au lieu de « la sauvegarde Google » (texte commun avec l'app iPhone). Côté
+  relais : Play Integrity n'est exigé que des requêtes Android ; une requête de l'app iPhone (`X-Platform: ios`, ou
+  `no_plugin` sans cet en-tête) n'est jamais bloquée, même en mode « enforce », jusqu'à App Attest. Ces en-têtes sont
+  falsifiables : les plafonds par installation et le plafond global restent la vraie barrière. Le bilan Play
+  Integrity du déploiement a une ligne « iPhone » et la part des requêtes iPhone. Trois notes de Nouveautés propres à
+  Android (plein écran, sauvegarde, montre restaurée) sont marquées pour ne pas s'afficher sur iPhone. L'abonnement
+  App Store côté relais est inscrit au BACKLOG (I6-RELAIS). **À tester** : rien.
+
 - **Les robots de Google comptés à part** (28/10 05:33) — rien de nouveau à l'écran. Le relais voyait 21 « nouvelles
   installations » en 7 jours alors que vous êtes seul sur la version Play : très probablement les appareils de test de
   Google (rapport de pré-lancement, qui parcourent l'app à chaque version envoyée et peuvent lancer une analyse IA).
@@ -373,6 +382,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/10 12:33 — [Demandes de l'app iPhone](runs/2026-10-28-1233-demandes-ios.md) | 🏗️ | Relais : Play Integrity exigé des seules requêtes Android (`X-Platform: ios` ou `no_plugin` → `not_android`, jamais bloqué), en-tête CORS, ligne « iPhone » et part iOS dans le bilan ; 3 notes de Nouveautés marquées `["play", "sideload"]` ; « sauvegarde du téléphone » dans Données ; I6-RELAIS au BACKLOG |
 | 28/10 11:33 — [Analyses : chiffres au chevron](runs/2026-10-28-1133-analyses-chiffres-chevron.md) | 🎨 | #465 mergée (v336) ; POL-PLAY-22 : `LinkCard` à chevron (jours, r, week-end au chevron), « vont avec un meilleur bien-être » (corrélation, pas cause), légende « visage » réécrite, en-tête sans « week-end pris en compte » ; v337 (APK 34,5 Mo) |
 | 28/10 10:33 — [Accueil : pistes annoncées](runs/2026-10-28-1033-accueil-pistes.md) | 🎨 | POL-PLAY-21 : Analyses mémorise un résumé de ses pistes (titres seulement, effacé avec les données), la carte lilas de l'Accueil l'affiche sans recalcul (budget de lectures tenu) ; pistes du ventre floues sans premium ; boutons « … dans le Journal » retirés ; PR #465 verte, mergée par le run de 11:33 ; v336 (APK 34,5 Mo) |
 | 28/10 09:33 — [« Piste solide » à partir de 8 jours](runs/2026-10-28-0933-piste-solide-8-jours.md) | 🎨 | POL-PLAY-23 : `evidenceLevel(q, n)` plafonne à « à confirmer » sous 8 jours dans le plus petit groupe (même seuil que `gutDays.MIN_EXPOSED_DAYS`) ; pistes « jours avec / sans » (notes, sport le soir, écran tard, visage) ; Alcool (6 jours) passe à « À confirmer » ; v335 (APK 34,5 Mo) |

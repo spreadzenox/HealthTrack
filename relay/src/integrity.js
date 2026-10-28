@@ -12,6 +12,10 @@
  *   `enforce` (une analyse sans verdict accepté est refusée). On passe à `enforce` quand les journaux montrent que
  *   les vrais téléphones passent.
  * - Rien n'est stocké ni journalisé du jeton ou du verdict, sauf les raisons d'un refus.
+ * - Plateforme (demande de l'app iPhone du 28/10) : le jeton n'est exigé que des requêtes Android. Une requête est iOS si
+ *   elle porte `X-Platform: ios`, ou, sans cet en-tête, `X-Integrity-Status: no_plugin` (ce qu'envoie l'app iPhone
+ *   aujourd'hui) ; elle est alors journalisée `not_android` avec `platform: 'ios'` et jamais bloquée, jusqu'à App Attest.
+ *   Ces en-têtes sont falsifiables : les plafonds par installation et le plafond global restent la vraie barrière.
  * - Limite assumée : une réinstallation sur un vrai téléphone redonne un identifiant neuf ; les plafonds par jour du
  *   relais bornent ce cas (et les crédits durables de P24 le fermeront).
  */
@@ -47,6 +51,17 @@ export const clientIntegrityStatus = (value) => {
   if (value === undefined || value === null || value === '') return 'none'
   const text = String(value)
   return CLIENT_STATUS.test(text) ? text : 'other'
+}
+
+/**
+ * Plateforme d'une requête : `'ios'` si l'en-tête `X-Platform` vaut `ios` (casse ignorée), ou, sans cet en-tête, si
+ * l'app dit n'avoir aucun module Play Integrity (`no_plugin`, cas de l'app iPhone) ; sinon `'android'`.
+ */
+export const requestPlatform = (platformHeader, clientStatus) => {
+  const header = String(platformHeader ?? '').trim().toLowerCase()
+  if (header === 'ios') return 'ios'
+  if (header === '' && clientStatus === 'no_plugin') return 'ios'
+  return 'android'
 }
 
 /** Analyse de test du workflow de déploiement : jamais de jeton, à séparer des vrais téléphones dans le bilan. */
@@ -107,8 +122,9 @@ export function evaluateVerdict(payload, { packageName, requestHash, now = Date.
 }
 
 /**
- * Garde Play Integrity du relais. `check(installId, token, { clientStatus, testDevice })` → `{ ok, mode, status }` ; `ok` vaut toujours `true` hors
- * du mode `enforce`. `status` : 'off' | 'trusted' (cache) | 'passed' | 'missing' | 'rejected' | 'unavailable'.
+ * Garde Play Integrity du relais. `check(installId, token, { clientStatus, testDevice, platform })` → `{ ok, mode, status }` ; `ok` vaut toujours
+ * `true` hors du mode `enforce`, et pour une requête iOS (`platform` = en-tête `X-Platform`, voir requestPlatform).
+ * `status` : 'off' | 'not_android' | 'trusted' (cache) | 'passed' | 'missing' | 'rejected' | 'unavailable'.
  */
 export function createIntegrityGuard({ client, packageName, mode = 'observe', log = () => {}, now = Date.now, hash = (id) => id }) {
   const effective = INTEGRITY_MODES.includes(mode) ? mode : 'observe'
@@ -123,10 +139,15 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', lo
 
   return {
     mode: effective,
-    async check(installId, integrityToken, { clientStatus, testDevice = false } = {}) {
+    async check(installId, integrityToken, { clientStatus, testDevice = false, platform } = {}) {
       // Appareil de test de Google (robots du rapport de pré-lancement), signalé par l'app : journalisé à part
       const testlab = testDevice === true
       if (effective === 'off' || !client) return { ok: true, mode: 'off', status: 'off' }
+      if (requestPlatform(platform, clientStatus) === 'ios') {
+        // Pas de Play Integrity sur iPhone : jamais bloqué (App Attest plus tard), compté à part dans le bilan
+        log({ event: 'integrity', status: 'not_android', mode: effective, platform: 'ios', client: clientIntegrityStatus(clientStatus), ci: isCiInstall(installId), testlab, install: hash(installId) })
+        return { ok: true, mode: effective, status: 'not_android' }
+      }
       const t = now()
       const cached = cache.get(installId)
       if (cached && cached.until > t) {
