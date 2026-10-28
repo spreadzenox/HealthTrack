@@ -1,5 +1,6 @@
 package com.healthtrack.app;
 
+import android.provider.Settings;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -41,6 +42,23 @@ public class PlayIntegrityPlugin extends Plugin {
             return;
         }
         withProvider(call, p -> requestToken(call, p, requestHash, true));
+    }
+
+    /**
+     * Appareil de test de Google (Firebase Test Lab, où tournent les robots du rapport de pré-lancement) : réglage
+     * système « firebase.test.lab » documenté par Google. Sert seulement aux bilans du relais (INSTALLS-21).
+     */
+    @PluginMethod
+    public void environment(PluginCall call) {
+        boolean testLab = false;
+        try {
+            testLab = "true".equals(Settings.System.getString(getContext().getContentResolver(), "firebase.test.lab"));
+        } catch (Exception ignored) {
+            // réglage illisible : appareil ordinaire
+        }
+        JSObject ret = new JSObject();
+        ret.put("testLab", testLab);
+        call.resolve(ret);
     }
 
     private interface ProviderTask {

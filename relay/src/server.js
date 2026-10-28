@@ -165,7 +165,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       if (origin && origins.has(origin)) {
         headers['Access-Control-Allow-Origin'] = origin
         headers['Access-Control-Allow-Methods'] = 'POST, GET'
-        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status'
+        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status, X-Test-Device'
       }
       res.writeHead(204, headers)
       res.end()
@@ -250,13 +250,16 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
     try {
       installId = String(req.headers['x-install-id'] ?? '')
       if (!INSTALL_ID.test(installId)) throw new HttpError(400, 'install_id', 'Identifiant d\'installation manquant.')
+      // Appareil de test de Google (Firebase Test Lab : robots du rapport de pré-lancement de la Play Console), signalé
+      // par l'app (INSTALLS-21). Seulement pour les bilans : il ne change aucun droit, le falsifier n'apporte rien
+      const testDevice = req.headers['x-test-device'] === '1'
 
       const body = await readJson(req, MAX_BODY_BYTES)
       const request = buildRequest(body, ingredientNames)
       kind = request.kind
 
       if (integrity) {
-        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'] })
+        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], testDevice })
         if (!check.ok) throw new HttpError(403, 'integrity', INTEGRITY_MESSAGE)
       }
 
@@ -291,7 +294,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       log({ event: 'analyze', kind, model, location, status: 200, ms: now() - started, install: hashInstallId(installId) })
       // Nouvelle installation qui prend son premier crédit (CREDITS-INSTALLS) : compté par jour, sans identifiant ;
       // l'analyse de test du workflow (« ci-smoke-<run> », une installation neuve à chaque fois) n'est pas comptée
-      if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan })
+      if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan, ...(testDevice ? { testlab: true } : {}) })
       const payload = { parsed, model, quota: { remaining: slot.remaining, resetAt: slot.resetAt } }
       if (credit) {
         const { ok: _ok, firstUse: _first, ...state } = credit

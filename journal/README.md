@@ -155,6 +155,14 @@
   geste seulement). **À tester** à votre prochaine réinstallation : Sources → « À reconnecter » → le bouton → PIN sur
   la montre → « Connectée ».
 
+- **Les robots de Google comptés à part** (28/10 05:33) — rien de nouveau à l'écran. Le relais voyait 21 « nouvelles
+  installations » en 7 jours alors que vous êtes seul sur la version Play : très probablement les appareils de test de
+  Google (rapport de pré-lancement, qui parcourent l'app à chaque version envoyée et peuvent lancer une analyse IA).
+  L'app les reconnaît maintenant (réglage système officiel de Firebase Test Lab) et le dit au relais, qui les compte à
+  part (« dont N robot(s) du rapport de pré-lancement de Google » dans le résumé du déploiement). Une phrase ajoutée à
+  la politique de confidentialité. Si, dans quelques jours, il reste beaucoup de « vraies » nouvelles installations,
+  on réduira les crédits offerts à 5. **À tester** : rien.
+
 - **Application plus légère** (28/10 03:33) — rien de nouveau à l'écran : la table nutritionnelle (Ciqual, 2 Mo) était
   copiée deux fois dans l'app (écrans et calculs d'analyse en arrière-plan) ; il n'en reste qu'une, lue au besoin. Un
   module Android inutilisé (ancienne installation des mises à jour) est aussi retiré. **À tester** : rien de particulier
@@ -337,6 +345,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 |---|---|---|
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
 | 27/10 23:33 — [Ventre du soir : une seule question](runs/2026-10-27-2333-ventre-soir-une-question.md) | 🎨 | PR #445 mergée (checks verts, merge bloqué à la session précédente) ; audit POL-PLAY-12 vierge + démo ; carte ventre du soir sans rangée en double ; POL-PLAY-13 à 15 au BACKLOG |
+| 28/10 05:33 — [Robots de Google comptés à part](runs/2026-10-28-0533-appareils-test.md) | 🏗️ | INSTALLS-21 : l'app play signale les appareils Firebase Test Lab (`X-Test-Device`), le relais marque `testlab` (`first_credit`, `integrity`), résumé du déploiement « dont N robot(s) » ; confidentialité ; relais 84 tests, app 2 596 |
 | 28/10 04:33 — [Montre à reconnecter après une restauration](runs/2026-10-28-0433-montre-restauree.md) | 🎨 | SAUV (reste) : après une restauration de la sauvegarde Android, carte montre « À reconnecter » + « Reconnecter ma montre » au lieu d'un « Connectée » trompeur ; synchro auto en pause jusqu'au geste ; v331 (APK 34,5 Mo) |
 | 28/10 03:33 — [Table Ciqual en un seul exemplaire](runs/2026-10-28-0333-table-unique.md) | 🏗️ | La table nutritionnelle n'est plus embarquée deux fois (application + worker d'analyse : 2 × 2 Mo) mais lue dans un seul fichier JSON ; dépendance native inutilisée retirée ; v330 (APK 34,5 Mo, −0,4 Mo) ; rien de visible |
 | 28/10 02:33 — [Bilan Play Integrity lisible](runs/2026-10-28-0233-integrity-bilan.md) | 🏗️ | PR #450 (journal R8) mergée ; bilan 6b-2c lu (votre téléphone passe, 51 sans jeton) ; l'app envoie la raison d'un jeton manquant, le relais sépare CI et téléphones ; reste en observation |

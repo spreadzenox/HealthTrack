@@ -78,3 +78,27 @@ export async function requestIntegrity(installId, { native, timeoutMs = INTEGRIT
 export async function getIntegrityToken(installId, options) {
   return (await requestIntegrity(installId, options)).token
 }
+
+let testDeviceCache = null
+
+export function resetTestDeviceCache() {
+  testDeviceCache = null
+}
+
+/**
+ * Vrai sur un appareil de test de Google (Firebase Test Lab : robots du rapport de pré-lancement de la Play Console,
+ * qui parcourent l'app à chaque version envoyée). Le relais compte alors leurs analyses à part (INSTALLS-21) ; rien ne
+ * change pour l'app. Lu une fois par lancement ; faux sans plugin ou si la lecture échoue.
+ */
+export async function isTestDevice({ native } = {}) {
+  if (testDeviceCache !== null) return testDeviceCache
+  let result = false
+  try {
+    const plugin = native === undefined ? await loadIntegrityPlugin() : native
+    if (typeof plugin?.environment === 'function') result = (await plugin.environment())?.testLab === true
+  } catch {
+    result = false
+  }
+  testDeviceCache = result
+  return result
+}

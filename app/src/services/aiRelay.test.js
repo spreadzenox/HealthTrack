@@ -54,6 +54,16 @@ describe('relais Halcya (variante play)', () => {
     expect(fetchImpl.mock.calls[1][1].headers).not.toHaveProperty('X-Integrity-Status')
   })
 
+  it('appareil de test de Google : le dit au relais (X-Test-Device), pour ses bilans seulement', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(okResponse({ parsed: { not_food: false, ingredients: [] }, model: 'm', quota: null }))
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve(null), testDevice: () => Promise.resolve(true) })
+    expect(fetchImpl.mock.calls[0][1].headers['X-Test-Device']).toBe('1')
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve(null), testDevice: () => Promise.resolve(false) })
+    expect(fetchImpl.mock.calls[1][1].headers).not.toHaveProperty('X-Test-Device')
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve(null) })
+    expect(fetchImpl.mock.calls[2][1].headers).not.toHaveProperty('X-Test-Device')
+  })
+
   it('texte : description tronquée à 500 caractères, vide refusée sans appel', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(okResponse({ parsed: { not_food: false, ingredients: [] }, model: 'm', quota: null }))
     await analyzeTextViaRelay('a'.repeat(600), { fetchImpl })

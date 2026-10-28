@@ -107,7 +107,7 @@ export function evaluateVerdict(payload, { packageName, requestHash, now = Date.
 }
 
 /**
- * Garde Play Integrity du relais. `check(installId, token, { clientStatus })` → `{ ok, mode, status }` ; `ok` vaut toujours `true` hors
+ * Garde Play Integrity du relais. `check(installId, token, { clientStatus, testDevice })` → `{ ok, mode, status }` ; `ok` vaut toujours `true` hors
  * du mode `enforce`. `status` : 'off' | 'trusted' (cache) | 'passed' | 'missing' | 'rejected' | 'unavailable'.
  */
 export function createIntegrityGuard({ client, packageName, mode = 'observe', log = () => {}, now = Date.now, hash = (id) => id }) {
@@ -123,7 +123,9 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', lo
 
   return {
     mode: effective,
-    async check(installId, integrityToken, { clientStatus } = {}) {
+    async check(installId, integrityToken, { clientStatus, testDevice = false } = {}) {
+      // Appareil de test de Google (robots du rapport de pré-lancement), signalé par l'app : journalisé à part
+      const testlab = testDevice === true
       if (effective === 'off' || !client) return { ok: true, mode: 'off', status: 'off' }
       const t = now()
       const cached = cache.get(installId)
@@ -131,7 +133,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', lo
         return result(cached.ok, cached.ok ? 'trusted' : 'rejected')
       }
       if (!isIntegrityToken(integrityToken)) {
-        log({ event: 'integrity', status: 'missing', mode: effective, client: clientIntegrityStatus(clientStatus), ci: isCiInstall(installId), install: hash(installId) })
+        log({ event: 'integrity', status: 'missing', mode: effective, client: clientIntegrityStatus(clientStatus), ci: isCiInstall(installId), testlab, install: hash(installId) })
         return result(false, 'missing')
       }
       try {
@@ -139,7 +141,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', lo
         const verdict = evaluateVerdict(payload, { packageName, requestHash: requestHashFor(installId), now: t })
         prune(t)
         cache.set(installId, { ok: verdict.ok, until: t + (verdict.ok ? VERDICT_CACHE_MS : REJECT_CACHE_MS) })
-        log({ event: 'integrity', status: verdict.ok ? 'passed' : 'rejected', mode: effective, reasons: verdict.reasons, licensed: verdict.licensed, ci: isCiInstall(installId), install: hash(installId) })
+        log({ event: 'integrity', status: verdict.ok ? 'passed' : 'rejected', mode: effective, reasons: verdict.reasons, licensed: verdict.licensed, ci: isCiInstall(installId), testlab, install: hash(installId) })
         return result(verdict.ok, verdict.ok ? 'passed' : 'rejected')
       } catch (err) {
         // Google injoignable : on ne punit pas l'utilisateur (les plafonds du relais restent en place)
