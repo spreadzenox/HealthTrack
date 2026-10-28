@@ -155,7 +155,18 @@ fi
 PLAY_OK=1
 bash .github/scripts/play-cold-start.sh || PLAY_OK=0
 
+# Variante play en release (R8, POL-PLAY-10) : plugins natifs et modèles du visage après obscurcissement (job API 35).
+RELEASE_OK=1
+if [ "${PLAY_RELEASE_CHECK:-0}" = 1 ]; then
+  echo "=== Variante play release (R8) ==="
+  node .github/scripts/play-release/smoke.mjs || RELEASE_OK=0
+fi
+
 echo "=== Vérification du succès des tests ==="
+if [ "$RELEASE_OK" != 1 ]; then
+  echo "::error::Variante play release (R8) en échec, voir play_release.md"
+  exit 1
+fi
 if [ "$PLAY_OK" != 1 ]; then
   echo "::error::Premier lancement de la variante play en échec, voir play_coldstart.md"
   exit 1

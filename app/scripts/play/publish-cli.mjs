@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * CLI du workflow « Play — AAB » : `node scripts/play/publish-cli.mjs <fichier.aab>` (depuis app/).
+ * CLI du workflow « Play — AAB » : `node scripts/play/publish-cli.mjs <fichier.aab> [mapping.txt]` (depuis app/).
+ * mapping.txt (R8, POL-PLAY-10) : facultatif ; envoyé avec l'AAB s'il existe.
  * Variables : PLAY_ACCESS_TOKEN (jeton androidpublisher), VERSION_CODE, PLAY_TRACK (internal par défaut),
  * PLAY_PACKAGE (fr.jpesquet.sante par défaut), GITHUB_STEP_SUMMARY (facultatif).
  * Déclaration P28 (workflow « Play — brouillon P28 ») : PLAY_DRAFT=1 crée la version en brouillon, jamais déployée,
@@ -9,11 +10,12 @@
  * allumé : test interne au seul propriétaire vérifié), PLAY_NO_REUSE=1 (alpha : jamais l'AAB du test interne).
  * Code de sortie : 0 publié (ou déjà envoyé), 2 accès refusé (à réessayer au run suivant), 1 autre erreur.
  */
-import { readFileSync, readdirSync, appendFileSync } from 'node:fs'
+import { readFileSync, readdirSync, appendFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { publishBundle, buildReleaseNotes, isAccessDenied } from './publish.mjs'
 
 const aabPath = process.argv[2]
+const mappingPath = process.argv[3]
 const { PLAY_ACCESS_TOKEN: token, VERSION_CODE: versionCode, GITHUB_STEP_SUMMARY: summaryFile } = process.env
 const track = process.env.PLAY_TRACK || 'internal'
 const packageName = process.env.PLAY_PACKAGE || 'fr.jpesquet.sante'
@@ -39,7 +41,7 @@ const entries = readdirSync(dir)
 const notes = process.env.PLAY_NOTES || buildReleaseNotes(entries)
 
 try {
-  const r = await publishBundle({ packageName, aab: readFileSync(aabPath), versionCode, track, notes, token, draft, releaseName, privateTrack: faceUnlock, noReuse, log: console.log })
+  const r = await publishBundle({ packageName, aab: readFileSync(aabPath), mapping: mappingPath && existsSync(mappingPath) ? readFileSync(mappingPath) : undefined, versionCode, track, notes, token, draft, releaseName, privateTrack: faceUnlock, noReuse, log: console.log })
   if (r.outcome === 'already-uploaded') {
     summary(['', `### Google Play : versionCode ${versionCode} déjà envoyé`, '', 'Rien à faire (relance d’un run déjà publié).'])
   } else {
@@ -62,6 +64,8 @@ try {
           ]
         : []),
       ...(r.reusedBundle ? ['- Même AAB que la version déjà envoyée en test interne (promotion de la version candidate).'] : []),
+      ...(r.mapping === 'uploaded' ? ['- Fichier de correspondance R8 envoyé (traces de plantage lisibles dans Android vitals).'] : []),
+      ...(r.mapping === 'failed' ? [`- ⚠️ Fichier de correspondance R8 refusé (${r.mappingError}) : les traces de plantage de cette version resteront obscurcies.`] : []),
       ...(r.testersAdded ? ['- Groupe halcya-testeurs@googlegroups.com ajouté aux testeurs de la piste alpha.'] : []),
       r.notSentForReview ? '- Validée sans envoi automatique pour examen (des modifications attendent un envoi manuel dans la Play Console).' : '- Validée.',
       `- Notes de version (${r.language}) :`,

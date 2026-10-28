@@ -122,4 +122,20 @@ describe('variantes Android play / sideload', () => {
     expect(service).toMatch(/\.addAction\(0, "Arrêter", stop\)/)
     expect(service).toMatch(/BuildConfig\.FACE_KEEPALIVE \? NotificationManager\.IMPORTANCE_MIN : NotificationManager\.IMPORTANCE_LOW/)
   })
+
+  it('POL-PLAY-10 : R8 sur la release (variante play seule), règles étroites pour les modèles du visage', () => {
+    const gradle = read('build.gradle')
+    const release = gradle.match(/release \{[\s\S]*?\n {8}\}/)[0]
+    expect(release).toMatch(/minifyEnabled true/)
+    expect(release).toMatch(/proguard-android-optimize\.txt/)
+    // la clé de debug ne signe une release que pour le test sur émulateur, jamais quand la clé d'envoi est là
+    expect(release).toMatch(/HT_UPLOAD_KEYSTORE[\s\S]*signingConfigs\.upload[\s\S]*else if \(releaseDebugSign\)/)
+    const rules = read('proguard-rules.pro')
+    expect(rules).toMatch(/^-keepattributes SourceFile,LineNumberTable/m)
+    expect(rules).toMatch(/^-keep class ai\.onnxruntime\.\*\* \{ \*; \}/m)
+    expect(rules).toMatch(/^-keep class org\.tensorflow\.lite\.\*\* \{ \*; \}/m)
+    // jamais tout garder : l'obscurcissement exigé par Google Play tomberait à zéro
+    expect(rules).not.toMatch(/^-keep[a-z]* class \*\* /m)
+    expect(rules).not.toMatch(/^-dontobfuscate|^-dontoptimize|^-dontshrink/m)
+  })
 })

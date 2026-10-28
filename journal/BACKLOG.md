@@ -1214,7 +1214,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-9** (27/10 21:33 ; encarts sous Android ≤ 14 injectés par notre `SystemBarsPlugin`, Capacitor ne le fait qu'à partir de 15) Bord à bord pour tous : `EdgeToEdge.enable(this)` avant `super.onCreate` dans `MainActivity`,
   dépendance `androidx.activity` explicite ; job émulateur **API 30 ou 34** en plus (Accueil, une modale, clavier
   ouvert) ; captures API 35/36 inchangées. Petit, sans risque pour les données.
-- [ ] **POL-PLAY-10 (R8a)** R8 sur la variante play (`release` = play seulement) : `minifyEnabled true`,
+- [~] **POL-PLAY-10 (R8a)** (28/10 01:33 : codé, PR « [Auto] R8 » ; merge seulement si le job émulateur « play release » est vert) R8 sur la variante play (`release` = play seulement) : `minifyEnabled true`,
   `proguard-android-optimize.txt`, `-keepattributes SourceFile,LineNumberTable` ; `mapping.txt` envoyé par
   `publish.mjs` (deobfuscationFiles, testé) ; job émulateur sur un APK **play release** (visage ONNX/LiteRT, Health
   Connect, Premium, PDF, notification, logcat sans `ClassNotFoundException`). Test interne seulement ; avant février 2027.

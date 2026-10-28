@@ -106,6 +106,17 @@ jobs:
           npx cap copy android
           cd android && ./gradlew assemblePlayDebug -PextraAbis=x86_64 --no-daemon
 
+      # POL-PLAY-10 (R8a) : APK play RELEASE, optimisé et obscurci par R8 comme l'AAB envoyé sur Play, signé avec la clé
+      # de debug et WebView inspectable POUR CE TEST SEULEMENT (capacitor.config.json modifié dans cet APK, jamais
+      # publié) : .github/scripts/play-release/smoke.mjs y appelle les plugins natifs (job API 35).
+      - name: Construire l'APK play release (R8) pour l'émulateur
+        working-directory: app
+        run: |
+          node -e "const f='android/app/src/main/assets/capacitor.config.json';const fs=require('fs');const c=JSON.parse(fs.readFileSync(f,'utf8'));c.android={...(c.android||{}),webContentsDebuggingEnabled:true};fs.writeFileSync(f,JSON.stringify(c,null,2))"
+          cd android && ./gradlew assemblePlayRelease -PreleaseDebugSign=true -PextraAbis=x86_64 --no-daemon
+          test -s app/build/outputs/mapping/playRelease/mapping.txt || { echo "::error::R8 n'a pas tourné (mapping.txt absent)"; exit 1; }
+          cd .. && npx cap copy android
+
       - name: Ramener les APK sideload aux chemins habituels
         working-directory: app/android/app/build/outputs/apk
         run: |
@@ -132,6 +143,7 @@ jobs:
             app/android/app/build/outputs/apk/debug/app-debug.apk
             app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
             app/android/app/build/outputs/apk/play/debug/app-play-debug.apk
+            app/android/app/build/outputs/apk/play/release/app-play-release.apk
 
       # POL-1 (journal/PLAY-CONFORMITE.md §1 bis) : APK d'aperçu play, interrupteur de la lecture au déverrouillage
       # ALLUMÉ, identifiant fr.jpesquet.sante.apercu (s'installe à côté de l'app du Play Store) : c'est lui que le
@@ -179,6 +191,8 @@ jobs:
             find . -name "app-debug-androidTest.apk" -exec cp {} app/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk \;
           find . -maxdepth 4 -name "app-play-debug.apk" | head -1 | \
             xargs -I{} sh -c 'mkdir -p app/android/app/build/outputs/apk/play/debug && cp {} app/android/app/build/outputs/apk/play/debug/app-play-debug.apk'
+          find . -maxdepth 5 -name "app-play-release.apk" ! -path "./app/android/*" | head -1 | \
+            xargs -I{} sh -c 'mkdir -p app/android/app/build/outputs/apk/play/release && cp {} app/android/app/build/outputs/apk/play/release/app-play-release.apk'
 
       - name: Activer KVM
         run: |
@@ -255,6 +269,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         env:
           PDF_SHARE_CHECK: "1"
+          PLAY_RELEASE_CHECK: "1"
         with:
           api-level: 35
           target: google_apis
@@ -283,6 +298,9 @@ jobs:
             play_coldstart.md
             play_logcat.txt
             play_crash.txt
+            play_release.md
+            play_release_logcat.txt
+            screenshot_play_release.png
             ui_app.xml
             ui_plus.xml
           if-no-files-found: warn
@@ -290,6 +308,10 @@ jobs:
       - name: Premier lancement play dans le résumé (API 35)
         if: always()
         run: cat play_coldstart.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Variante play release (R8) dans le résumé (API 35, POL-PLAY-10)
+        if: always()
+        run: cat play_release.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
 
       - name: Rapport PDF dans le résumé (API 35, N6c)
         if: always()
