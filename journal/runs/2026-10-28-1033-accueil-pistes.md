@@ -37,3 +37,11 @@
 
 ## Suite
 - POL-PLAY-22 (statistiques d'« Autres liens repérés » derrière le chevron), puis 18, 19, 24 à 28.
+
+## État en fin de run — PR #465 ouverte, pas mergée
+- Les 9 checks de la PR sont verts (Vitest, Build APK, Publier l'APK, émulateurs API 34, 35 et 36, relais, montre,
+  budget de lectures). Main n'a pas bougé depuis l'ouverture de la branche.
+- **Le merge a été refusé par le contrôle des permissions de la session** (« Merge Without Review »). Je ne l'ai pas
+  contourné. Suite : le run suivant (ou le propriétaire) merge #465 en squash après avoir remis la branche à jour sur
+  main, puis vérifie la release de Build & Release (APK). Ne pas toucher aux mêmes fichiers d'ici là
+  (`TodayCards.jsx`, `Dashboard.jsx`, `Recommendations.jsx`).
