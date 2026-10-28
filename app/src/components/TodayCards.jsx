@@ -17,6 +17,10 @@ import {
   pistesProgress,
 } from '../services/today'
 import DetailsToggle from './DetailsToggle'
+import { FEATURES } from '../config/distribution'
+import { useEntitlement } from '../hooks/useEntitlement'
+import { gutCardMode } from '../settings/onboarding'
+import { readPistesSummary } from '../services/pistesSummary'
 import GutEveningReminder from './GutEveningReminder'
 import StoolLine from './StoolLine'
 import './TodayCards.css'
@@ -226,10 +230,50 @@ const PISTES_TEXT = {
   },
 }
 
+/**
+ * POL-PLAY-21 : des pistes déjà repérées par Analyses (résumé mémorisé, rien recalculé ici) — leur nombre et la
+ * première en une ligne ; toucher la carte ouvre Analyses. Les pistes du ventre restent floues sans premium
+ * (version Play), comme dans Analyses.
+ */
+function PistesFound({ gut, levers, locked }) {
+  const count = gut.length + levers.length
+  const first = locked ? levers[0] : (gut[0] ?? levers[0])
+  return (
+    <Link to="/recommendations" className="today-card pistes-card pistes-card--found" aria-labelledby="pistes-card-title">
+      <div className="today-card-head">
+        <h3 id="pistes-card-title" className="today-card-title">
+          {count} {count > 1 ? 'pistes repérées' : 'piste repérée'}
+        </h3>
+        <span className="pistes-card-chevron" aria-hidden="true">›</span>
+      </div>
+      {first ? (
+        <p className="pistes-first">{first}</p>
+      ) : (
+        <p className="pistes-first pistes-first--locked">
+          <span className="pistes-first-blur" aria-hidden="true" />
+          <span className="pistes-premium-tag mono">premium</span>
+        </p>
+      )}
+      <p className="today-card-text">
+        {count > 1 ? 'Des liens repérés dans vos données, pas des causes.' : 'Un lien repéré dans vos données, pas une cause.'}
+      </p>
+    </Link>
+  )
+}
+
 /** Carte lilas : jours suivis avant les pistes ; on préfère attendre que montrer de faux suspects. */
 export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, onPistesPage = false, extraDetail = null }) {
   const entries = useEntries(read || (focus === 'energy' ? readTrackedEnergy : readTracked))
+  const [summary] = useState(() => (onPistesPage ? null : readPistesSummary()))
+  const [ent] = useEntitlement()
   if (entries === null) return null
+  if (summary) {
+    const gut = gutCardMode() !== 'hide' ? summary.gut : []
+    if (gut.length + summary.levers.length > 0) {
+      const locked = gut.length > 0 && FEATURES.billing && !ent.premium
+      return <PistesFound gut={gut} levers={summary.levers} locked={locked} />
+    }
+  }
   const p = pistesProgress(entries, focus)
   const text = PISTES_TEXT[focus] || PISTES_TEXT.gut
   return (

@@ -227,6 +227,38 @@ describe('PistesTeaser', () => {
     return { type: 'food', at: d.toISOString() }
   }
 
+  const remember = (summary) => localStorage.setItem('healthtrack_pistes_summary', JSON.stringify({ at: 'x', ...summary }))
+  beforeEach(() => localStorage.clear())
+
+  it('annonce les pistes déjà repérées par Analyses, la première en une ligne, toute la carte y mène (POL-PLAY-21)', async () => {
+    remember({ gut: [], levers: ['Marcher davantage', 'Dormir plus'] })
+    wrap(<PistesTeaser read={async () => [day(0)]} />)
+    expect(await screen.findByText('2 pistes repérées')).toBeInTheDocument()
+    expect(screen.getByText('Marcher davantage')).toBeInTheDocument()
+    expect(screen.getByText(/pas des causes/)).toBeInTheDocument()
+    expect(screen.getByText('2 pistes repérées').closest('a')).toHaveAttribute('href', '/recommendations')
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+  })
+
+  it('les pistes du ventre comptent tant que la carte ventre est montrée', async () => {
+    remember({ gut: ['Oignon → ventre'], levers: [] })
+    wrap(<PistesTeaser read={async () => [day(0)]} />)
+    expect(await screen.findByText('1 piste repérée')).toBeInTheDocument()
+    expect(screen.getByText('Oignon → ventre')).toBeInTheDocument()
+  })
+
+  it('sans aucune piste dans le résumé : le compte à rebours habituel', async () => {
+    remember({ gut: [], levers: [] })
+    wrap(<PistesTeaser read={async () => [day(0)]} />)
+    expect(await screen.findByText('Vos pistes arrivent dans 20 jours')).toBeInTheDocument()
+  })
+
+  it('dans Analyses, la carte ne s’annonce jamais elle-même', async () => {
+    remember({ gut: [], levers: ['Marcher davantage'] })
+    wrap(<PistesTeaser read={async () => [day(0)]} onPistesPage />)
+    expect(await screen.findByText('Vos pistes arrivent dans 20 jours')).toBeInTheDocument()
+  })
+
   it('compte les jours avant les pistes et préfère attendre', async () => {
     wrap(<PistesTeaser read={async () => [day(0), day(1), day(1), day(3)]} />)
     expect(await screen.findByText('Vos pistes arrivent dans 18 jours')).toBeInTheDocument()

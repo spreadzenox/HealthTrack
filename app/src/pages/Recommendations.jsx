@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
+import { rememberPistesSummary } from '../services/pistesSummary'
 import {
   buildDailyDataset,
   localDateKey,
@@ -971,7 +972,10 @@ export default function Recommendations() {
       // Déjà calculé et données inchangées : servi par le cache, sans recalcul
       getAnalysis(TAB_TASKS[tab])
         .then((result) => {
-          if (alive) setAnalyses((a) => ({ ...a, [tab]: result }))
+          if (!alive) return
+          setAnalyses((a) => ({ ...a, [tab]: result }))
+          // POL-PLAY-21 : la carte lilas de l'Accueil annonce ces pistes sans recalculer
+          if (tab === 'basic') rememberPistesSummary(result)
         })
         .catch((e) => {
           if (alive) setError(e.message)

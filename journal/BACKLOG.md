@@ -1247,7 +1247,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   « stress 37 (bas) ». Vérifier l'échelle réelle de la montre avant de changer.
 - **Audit du run « idées » du 28/10 08:33** (`npm run visual -- --play --empty` clair, puis `--play --dark` sur
   données de démo ; défauts nouveaux, classés par impact) :
-- [ ] **POL-PLAY-21** Accueil (démo) : la carte lilas dit encore « Assez de jours pour chercher des pistes… voyez
+- [x] **POL-PLAY-21** (28/10 10:33 ; résumé `services/pistesSummary.js` écrit par Analyses, lu par l'Accueil) Accueil (démo) : la carte lilas dit encore « Assez de jours pour chercher des pistes… voyez
   l'onglet Analyses » alors qu'Analyses montre déjà 2 pistes solides → « 2 pistes repérées » + la première en une
   ligne (aperçu flou hors premium, comme Analyses), toucher = Analyses. Retirer les deux boutons contour « Vos derniers
   jours, dans le Journal » / « Vos tendances, dans le Journal » (doublons de la barre d'onglets, bas de page chargé).

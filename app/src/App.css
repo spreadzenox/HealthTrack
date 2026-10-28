@@ -375,22 +375,6 @@
   margin-bottom: 16px;
 }
 
-/* Accueil → onglet Journal (« Vos derniers jours », jalon 2c-2 ; « Vos tendances », jalon 2b). */
-.today-journal-links {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 24px 0 16px;
-}
-
-.today-journal-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  text-decoration: none;
-}
-
 .entries-list {
   list-style: none;
   margin: 0;

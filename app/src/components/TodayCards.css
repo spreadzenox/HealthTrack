@@ -485,3 +485,43 @@
   font-size: 0.65rem;
   color: var(--text-muted);
 }
+
+/* POL-PLAY-21 : pistes repérées, toute la carte mène à Analyses */
+.pistes-card--found {
+  display: block;
+  text-decoration: none;
+}
+
+.pistes-card-chevron {
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--lilac-bar);
+}
+
+.pistes-first {
+  margin: 10px 0 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--lilac-text);
+}
+
+.pistes-first--locked {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pistes-first-blur {
+  flex: 1;
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(var(--violet-rgb), 0.25);
+  filter: blur(2px);
+}
+
+.pistes-premium-tag {
+  padding: 3px 8px;
+  border-radius: var(--radius-tag);
+  background: rgba(var(--bg-rgb), 0.7);
+  font-size: 0.72rem;
+}
