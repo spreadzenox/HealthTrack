@@ -79,6 +79,12 @@ describe('Data page — export (web)', () => {
     expect(screen.getByRole('button', { name: /Télécharger la sauvegarde/i })).toBeInTheDocument()
   })
 
+  it('parle de « la sauvegarde du téléphone », pas de « la sauvegarde Google » (texte commun avec l’app iPhone)', () => {
+    const { container } = renderData()
+    expect(container.textContent).toMatch(/sauvegarde du téléphone est activée/)
+    expect(container.textContent).not.toMatch(/sauvegarde Google/)
+  })
+
   it('reste court : pas de mode d’emploi navigateur ni de chemin de fichier avant l’export (D1)', () => {
     const { container } = renderData()
     expect(container.textContent).not.toMatch(/navigateur/i)

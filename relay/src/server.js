@@ -13,7 +13,8 @@
  * - GET  /v1/credits            → crédits d'analyse IA de l'installation (src/credits.js), sans rien consommer.
  *
  * Play Integrity (src/integrity.js) : en-tête facultatif `X-Integrity-Token` sur l'analyse ; selon INTEGRITY_MODE, un
- * verdict refusé est seulement journalisé (observe) ou bloque l'analyse avec une 403 `integrity` (enforce).
+ * verdict refusé est seulement journalisé (observe) ou bloque l'analyse avec une 403 `integrity` (enforce). Seules les
+ * requêtes Android sont concernées : `X-Platform: ios` (app iPhone) n'est jamais bloqué.
  *
  * Crédits : en-têtes facultatifs `X-Credits` (dernier état donné par le relais) et `X-Purchase-Token` (jeton
  * Google Play, pour retrouver le premium après un redémarrage du relais). Les réponses d'analyse et de crédits
@@ -165,7 +166,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       if (origin && origins.has(origin)) {
         headers['Access-Control-Allow-Origin'] = origin
         headers['Access-Control-Allow-Methods'] = 'POST, GET'
-        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status, X-Test-Device'
+        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status, X-Test-Device, X-Platform'
       }
       res.writeHead(204, headers)
       res.end()
@@ -259,7 +260,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       kind = request.kind
 
       if (integrity) {
-        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], testDevice })
+        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], testDevice, platform: req.headers['x-platform'] })
         if (!check.ok) throw new HttpError(403, 'integrity', INTEGRITY_MESSAGE)
       }
 

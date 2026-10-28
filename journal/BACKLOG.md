@@ -1265,7 +1265,23 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   arrondis (« Découvrir le premium », « Restaurer un achat », « Ajouter une source », « Utiliser ma position
   approximative », « Connecter une montre », « Désactiver », « Donner mon avis sur le Play Store », « + 1 cigarette »).
   DESIGN.md : boutons pilule de 52 à 56 px → `.btn` en pilule partout, captures avant/après.
-- [ ] **POL-PLAY-25** Textes « tout reste ici » à rendre honnêtes (décision « sauvegarde Android conservée » du 24/10,
+- **Demandes de la routine iOS** (dépôt spreadzenox/HealthTrack-iOS, `journal/DEMANDES.md`, transmises le 28/10) :
+- [x] **IOS-1** (28/10 12:33) Relais : Play Integrity exigé des seules requêtes Android. `requestPlatform()` :
+  `X-Platform: ios`, ou `X-Integrity-Status: no_plugin` sans `X-Platform` → statut `not_android`, jamais bloqué (même
+  en `enforce`) jusqu'à App Attest ; `X-Platform` dans les en-têtes CORS ; bilan du déploiement : origine « iPhone »
+  et « Part des requêtes iPhone (hors CI) ». En-têtes falsifiables : plafonds par installation et global inchangés.
+- [ ] **I6-RELAIS** (quand l'abonnement iPhone I6 sera prévu) Le relais accepte aussi les abonnements App Store sans
+  rien changer au chemin Google Play : transaction StoreKit 2 vérifiée sur place (signature JWS, chaîne x5c jusqu'à
+  la racine d'Apple, bundleId `fr.jpesquet.sante`, `appAccountToken` tiré de l'identifiant d'installation),
+  notifications serveur V2 sur une route à part, mêmes droits, mêmes crédits, même période de lancement.
+- [x] **IOS-3** (28/10 12:33) Notes de Nouveautés propres à Android marquées `"variants": ["play", "sideload"]`
+  (`2026-10-24-1630-sauvegarde-android`, `2026-10-27-2133-bord-a-bord`, `2026-10-28-0433-montre-restauree`) ; à
+  faire pour toutes les suivantes (barres système, sauvegarde Android, montre Huawei en Bluetooth, Health Connect,
+  Play Billing → `["play"]`).
+- [x] **IOS-4** (28/10 12:33) Données : « la sauvegarde du téléphone » (« gérées par le système ») au lieu de « la
+  sauvegarde Google » ; test. La politique de confidentialité et les conditions publiées restent celles de la version
+  Android (Paramètres Android → Google) : l'app iPhone aura les siennes. À appliquer aussi dans POL-PLAY-25.
+- [ ] **POL-PLAY-25** (écrire « la sauvegarde du téléphone », IOS-4) Textes « tout reste ici » à rendre honnêtes (décision « sauvegarde Android conservée » du 24/10,
   point a) : « Tout reste **sur cet appareil** » (Sources, `Connectors.jsx:500` ; profil corporel,
   `BodyProfileCard.jsx`) et « Vos données restent sur votre téléphone » (Premium) — alors que la météo envoie une
   position arrondie et que la sauvegarde Google du téléphone copie les données. Reprendre la formule déjà juste de

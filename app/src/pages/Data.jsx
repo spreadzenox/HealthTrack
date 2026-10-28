@@ -193,7 +193,7 @@ export default function Data() {
       <h2 className="page-title">Vos données</h2>
       <p className="page-intro">
         Vos données restent <strong>sur cet appareil</strong> et survivent aux mises à jour. Si la sauvegarde
-        Google du téléphone est activée, elles y sont incluses (chiffrées, gérées par Android,
+        du téléphone est activée, elles y sont incluses (chiffrées, gérées par le système,
         jamais lues par {APP_NAME}). Avant de réinstaller ou de changer de téléphone, exportez-les aussi.
       </p>
 

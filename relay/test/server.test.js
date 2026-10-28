@@ -215,23 +215,24 @@ test('crédits : un état rapporté par l\'app plus restrictif est gardé ; Vert
 test('Play Integrity : jeton transmis à la garde ; refus en enforce → 403 sans appeler le modèle ni consommer de quota', async () => {
   const calls = []
   const seen = []
-  const integrity = { check: async (id, token, opts) => (seen.push({ id, token, clientStatus: opts?.clientStatus, testDevice: opts?.testDevice }), { ok: false, mode: 'enforce', status: 'rejected' }) }
+  const integrity = { check: async (id, token, opts) => (seen.push({ id, token, clientStatus: opts?.clientStatus, testDevice: opts?.testDevice, platform: opts?.platform }), { ok: false, mode: 'enforce', status: 'rejected' }) }
   await withServer({ vertex: okVertex(calls), integrity }, async (url) => {
     const res = await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': INSTALL, 'X-Integrity-Token': 'jeton-integrite', 'X-Integrity-Status': 'timeout' })
-    await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': INSTALL, 'X-Test-Device': '1' })
+    await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': INSTALL, 'X-Test-Device': '1', 'X-Platform': 'ios' })
     assert.equal(res.status, 403)
     const body = await res.json()
     assert.equal(body.error, 'integrity')
     assert.match(body.message, /Google Play/)
     assert.deepEqual(seen, [
-      { id: INSTALL, token: 'jeton-integrite', clientStatus: 'timeout', testDevice: false },
-      { id: INSTALL, token: undefined, clientStatus: undefined, testDevice: true },
+      { id: INSTALL, token: 'jeton-integrite', clientStatus: 'timeout', testDevice: false, platform: undefined },
+      { id: INSTALL, token: undefined, clientStatus: undefined, testDevice: true, platform: 'ios' },
     ])
     assert.equal(calls.length, 0)
     const pre = await fetch(`${url}/v1/meal/analyze`, { method: 'OPTIONS', headers: { Origin: 'https://localhost' } })
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Integrity-Token/)
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Integrity-Status/)
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Test-Device/)
+    assert.match(pre.headers.get('access-control-allow-headers'), /X-Platform/)
   })
 })
 
