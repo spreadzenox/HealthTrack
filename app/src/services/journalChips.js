@@ -7,7 +7,8 @@ const frNumber = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1
 
 /**
  * Pastel de chaque mesure du résumé (POL-6, palette de journal/DESIGN.md) : menthe = corps et bien-être, pêche = repas
- * (le ventre), lilas = ce qu'on fait (pas, dépense, écran), neutre pour la météo.
+ * (le ventre), lilas = ce qu'on fait et ce qui entoure la journée (pas, dépense, écran, météo : une tuile neutre
+ * paraissait noire en thème sombre, POL-PLAY-27).
  */
 const CHIP_THEMES = {
   Pas: 'lilac',
@@ -15,7 +16,7 @@ const CHIP_THEMES = {
   Écran: 'lilac',
   'Réseaux sociaux': 'lilac',
   Repas: 'peach',
-  Météo: 'neutral',
+  Météo: 'lilac',
 }
 
 export function chipTheme(label) {

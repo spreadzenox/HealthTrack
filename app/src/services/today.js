@@ -188,7 +188,8 @@ export function measureTiles(summary, entries, now = new Date(), yesterday = nul
       key: 'sleep',
       label: sleep.s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil',
       value: sleep.s.sleepMinutes != null ? formatSleep(sleep.s.sleepMinutes) : null,
-      when: sleep.when,
+      // La nuit est rangée au jour du réveil : « cette nuit », comme VFC et pas disent « hier » (POL-PLAY-27)
+      when: sleep.s.sleepMinutes == null ? null : sleep.when ? 'nuit d’avant' : 'cette nuit',
       sources: sourcesOf('sleep', sleep.d),
     },
     { key: 'hrv', label: 'VFC nuit', value: hrv.s.hrv != null ? `${Math.round(hrv.s.hrv)} ms` : null, when: hrv.when, sources: sourcesOf('hrv', hrv.d) },

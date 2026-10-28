@@ -172,6 +172,7 @@ function CigaretteGroupRow({ group }) {
     })
     .join(' · ')
   const lastDeletable = [...group.entries].reverse().find(isDeletableEntry)
+  const [open, setOpen] = useState(false)
   return (
     <li className="entry-card" data-type="cigarette">
       <div className="entry-card-header">
@@ -182,12 +183,13 @@ function CigaretteGroupRow({ group }) {
         <div className="entry-card-body">
           <p className="entry-cigarette-times">{times}</p>
         </div>
-        {lastDeletable && (
+        {lastDeletable && open && (
           <DeleteEntryButton
             entryId={lastDeletable.id}
             label={`la dernière cigarette (${timeOf(lastDeletable.at)})`}
           />
         )}
+        {lastDeletable && <ActionsToggle open={open} label="ces cigarettes" onToggle={() => setOpen((o) => !o)} />}
       </div>
     </li>
   )
@@ -254,6 +256,76 @@ function MealButtons({ e, onEditMeal, onRedoMeal }) {
   )
 }
 
+/**
+ * « ⋯ » : les actions d'une saisie (Refaire, Modifier, Supprimer) restent repliées derrière un seul bouton discret,
+ * plutôt que visibles sur chaque ligne du jour (POL-PLAY-27).
+ */
+function ActionsToggle({ open, label, onToggle }) {
+  return (
+    <div className={`entry-edit${open ? ' entry-actions-close' : ''}`}>
+      <button
+        type="button"
+        className="entry-delete-btn entry-actions-toggle"
+        aria-expanded={open}
+        aria-label={open ? `Fermer les actions de ${label}` : `Actions pour ${label}`}
+        onClick={onToggle}
+      >
+        <span aria-hidden>{open ? '✕' : '⋯'}</span>
+      </button>
+    </div>
+  )
+}
+
+function hasActions(e) {
+  return isDeletableEntry(e) || (e.type === 'food' && e.payload?.items?.length > 0)
+}
+
+function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
+  const [open, setOpen] = useState(false)
+  const label = DELETE_LABELS[e.type] || 'cette entrée'
+  const editWellbeing = (entry) => { setOpen(false); onEdit(entry) }
+  const editMeal = (id) => { setOpen(false); onEditMeal(id) }
+  const toggle = hasActions(e) && <ActionsToggle open={open} label={label} onToggle={() => setOpen((o) => !o)} />
+  const withBody = hasBody(e, measuredScreen)
+  return (
+    <li className="entry-card" data-type={e.type}>
+      <div className="entry-card-header">
+        <time className="entry-at" dateTime={e.at}>{timeOf(e.at)}</time>
+        <span className="entry-type">{entryTitle(e)}</span>
+        {e.type === 'food' && mealKcal(e.payload?.items) > 0 && (
+          <span className="entry-kcal">≈ {mealKcal(e.payload.items).toLocaleString(appLocale())} kcal</span>
+        )}
+        {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
+          <span className="entry-kcal entry-score"><strong>{e.payload.score}</strong> / 5</span>
+        )}
+        {e.type === 'gut' && gutLevelLabel(e.payload?.level) && (
+          <span className="entry-kcal entry-score">{gutLevelLabel(e.payload.level)}</span>
+        )}
+        {e.type === 'stool' && stoolEntryLabel(e) && (
+          <span className="entry-kcal entry-score">{stoolEntryLabel(e)}</span>
+        )}
+        {!isDeletableEntry(e) && (
+          <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
+        )}
+        {!withBody && open && <EditButton e={e} onEdit={editWellbeing} />}
+        {!withBody && open && isDeletableEntry(e) && <DeleteButton e={e} />}
+        {!withBody && toggle}
+      </div>
+      {e.type === 'food' && editingMealId === e.id ? (
+        <SavedMealEditor entry={e} onCancel={() => onEditMeal(null)} onSaved={() => onEditMeal(null)} />
+      ) : withBody && (
+        <div className={`entry-card-row${!open ? ' entry-card-row-closed' : e.type === 'food' && e.payload?.items?.length ? ' entry-card-row-stacked' : ''}`}>
+          <EntryBody e={e} measuredScreen={measuredScreen} />
+          {open && <EditButton e={e} onEdit={editWellbeing} />}
+          {open && e.type === 'food' && <MealButtons e={e} onEditMeal={editMeal} onRedoMeal={onRedoMeal} />}
+          {open && isDeletableEntry(e) && <DeleteButton e={e} />}
+          {toggle}
+        </div>
+      )}
+    </li>
+  )
+}
+
 function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
   const { title, date } = dayHeading(day.dateKey)
   const chips = summaryChips(day.summary)
@@ -278,39 +350,15 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
           {groupCigarettes(day.items).map((e) => e.type === 'cigarette_group' ? (
             <CigaretteGroupRow key={e.id} group={e} />
           ) : (
-            <li key={e.id} className="entry-card" data-type={e.type}>
-              <div className="entry-card-header">
-                <time className="entry-at" dateTime={e.at}>{timeOf(e.at)}</time>
-                <span className="entry-type">{entryTitle(e)}</span>
-                {e.type === 'food' && mealKcal(e.payload?.items) > 0 && (
-                  <span className="entry-kcal">≈ {mealKcal(e.payload.items).toLocaleString(appLocale())} kcal</span>
-                )}
-                {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
-                  <span className="entry-kcal entry-score"><strong>{e.payload.score}</strong> / 5</span>
-                )}
-                {e.type === 'gut' && gutLevelLabel(e.payload?.level) && (
-                  <span className="entry-kcal entry-score">{gutLevelLabel(e.payload.level)}</span>
-                )}
-                {e.type === 'stool' && stoolEntryLabel(e) && (
-                  <span className="entry-kcal entry-score">{stoolEntryLabel(e)}</span>
-                )}
-                {!isDeletableEntry(e) && (
-                  <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
-                )}
-                {!hasBody(e, measuredScreen) && <EditButton e={e} onEdit={onEdit} />}
-                {isDeletableEntry(e) && !hasBody(e, measuredScreen) && <DeleteButton e={e} />}
-              </div>
-              {e.type === 'food' && editingMealId === e.id ? (
-                <SavedMealEditor entry={e} onCancel={() => onEditMeal(null)} onSaved={() => onEditMeal(null)} />
-              ) : hasBody(e, measuredScreen) && (
-                <div className={`entry-card-row${e.type === 'food' && e.payload?.items?.length ? ' entry-card-row-stacked' : ''}`}>
-                  <EntryBody e={e} measuredScreen={measuredScreen} />
-                  <EditButton e={e} onEdit={onEdit} />
-                  {e.type === 'food' && <MealButtons e={e} onEditMeal={onEditMeal} onRedoMeal={onRedoMeal} />}
-                  {isDeletableEntry(e) && <DeleteButton e={e} />}
-                </div>
-              )}
-            </li>
+            <EntryItem
+              key={e.id}
+              e={e}
+              measuredScreen={measuredScreen}
+              onEdit={onEdit}
+              editingMealId={editingMealId}
+              onEditMeal={onEditMeal}
+              onRedoMeal={onRedoMeal}
+            />
           ))}
         </ul>
       )}
