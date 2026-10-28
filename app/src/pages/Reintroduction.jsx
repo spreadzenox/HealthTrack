@@ -331,6 +331,8 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const now = nowProp ?? new Date()
+  // Les actions lisent la même horloge que l'écran (sinon un test au 26/10 refusait la portion le 28/10)
+  const clock = () => nowProp ?? new Date()
 
   const load = useCallback(async () => {
     try {
@@ -379,7 +381,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
 
   const premium = !FEATURES.billing || ent.premium
   const current = view?.current
-  const save = (fn) => run(() => store.update(current.entry.id, fn(current.entry.payload, data.gut, new Date())))
+  const save = (fn) => run(() => store.update(current.entry.id, fn(current.entry.payload, data.gut, clock())))
 
   return (
     <section className="fodmap-page">
@@ -402,7 +404,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
           onRestart={() => save((p, gut, t) => restartChallenge(p, gut, t))}
           onAbandon={() => {
             if (window.confirm('Arrêter ce test ? Les portions et notes déjà prises restent dans vos données.')) {
-              save((p) => ({ ...p, abandonedAt: new Date().toISOString() }))
+              save((p) => ({ ...p, abandonedAt: clock().toISOString() }))
             }
           }}
         />
@@ -414,7 +416,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
           key={`${pick.group}-${pick.food}`} group={pick.group} food={pick.food} start={view.start} busy={busy}
           onBack={() => setPick(null)}
           onStart={(plan) => run(async () => {
-            await store.create(startChallenge({ group: pick.group, food: pick.food, plan }, new Date()))
+            await store.create(startChallenge({ group: pick.group, food: pick.food, plan }, clock()))
             setPick(null)
           })}
         />
