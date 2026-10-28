@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import BaselineCards from './BaselineCards'
 import { listEntries } from '../storage/localHealthStorage'
+import { readFileSync } from 'node:fs'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
@@ -93,5 +94,12 @@ describe('BaselineCards', () => {
     expect(screen.getByText('Plus haute que d’habitude')).toBeInTheDocument()
     expect(screen.queryByText(/Hypothèse générale/)).not.toBeInTheDocument()
     expect(document.querySelectorAll('.baseline-card.is-outside')).toHaveLength(2)
+  })
+
+  it('POL-PLAY-20 : un écart à la norme n’a pas la couleur d’alerte (règle 6 : ni bon ni mauvais par principe)', () => {
+    const css = readFileSync('src/components/BaselineCards.css', 'utf8')
+    const outsideRules = css.split('}').filter((rule) => rule.includes('.is-outside'))
+    expect(outsideRules.length).toBeGreaterThan(0)
+    for (const rule of outsideRules) expect(rule).not.toMatch(/warn/)
   })
 })

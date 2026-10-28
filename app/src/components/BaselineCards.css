@@ -19,7 +19,8 @@
 }
 
 .baseline-card.is-outside {
-  border-left-color: var(--color-warn);
+  /* POL-PLAY-20 : un écart n'est ni bon ni mauvais par principe (règle 6) → couleur neutre, pas d'alerte */
+  border-left-color: var(--text-muted);
 }
 
 .baseline-card-header {
@@ -46,8 +47,8 @@
 }
 
 .baseline-badge.is-outside {
-  background: rgba(var(--warn-rgb), 0.15);
-  color: var(--color-warn);
+  background: rgba(var(--tint-rgb), 0.08);
+  color: var(--text);
 }
 
 .baseline-card-value {
@@ -92,7 +93,7 @@
 }
 
 .baseline-range-marker.is-outside {
-  background: var(--color-warn);
+  background: var(--text);
 }
 
 .baseline-card-note {
