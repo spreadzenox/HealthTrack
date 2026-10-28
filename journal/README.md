@@ -402,7 +402,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
-| 28/10 17:34 — [Actions du Journal derrière « ⋯ »](runs/2026-10-28-1734-journal-actions.md) | 🎨 | POL-PLAY-27 : « ⋯ » par saisie, tuile Météo lilas, Sommeil « cette nuit » ; tests (Journal, today, journalChips) ; captures clair / sombre / déplié relues |
+| 28/10 17:34 — [Actions du Journal derrière « ⋯ »](runs/2026-10-28-1734-journal-actions.md) | 🎨 | POL-PLAY-27 : « ⋯ » par saisie, tuile Météo lilas, Sommeil « cette nuit » ; tests (Journal, today, journalChips) ; captures clair / sombre / déplié relues ; #478 mergée, v343 (APK 34,5 Mo) |
 | 28/10 16:40 — [Textes « tout reste ici » honnêtes](runs/2026-10-28-1640-textes-sauvegarde.md) | 🎨 | POL-PLAY-25 (sauvegarde du téléphone, IOS-4) et POL-PLAY-26 (encart météo retiré) ; `honestStorageTexts.test.js` (2) ; captures clair / sombre / vierge relues ; #476 mergée, v342 (APK 34,5 Mo) |
 | 28/10 15:39 — [Boutons pilule partout](runs/2026-10-28-1539-boutons-pilule.md) | 🎨 | POL-PLAY-24 : `.btn` et `.upload-btn` en pilule (52 px ; compacts 44 px), contour secondaire 2 px ; `buttonShape.test.js` (4) ; captures clair / sombre / vierge relues ; #474 mergée, v341 (APK 34,5 Mo) |
 | 28/10 14:42 — [Écran « Données de la montre » cohérent](runs/2026-10-28-1442-ecran-montre.md) | 🎨 | POL-PLAY-19 : « Dernière mesure reçue : il y a … » au lieu de « synchronisez la montre » quand des mesures arrivent ; lignes « rien » sans la classe du bloc vide (même carte partout) ; 2 tests ; captures clair/sombre relues ; #472 mergée, v340 (APK 34,5 Mo) |
