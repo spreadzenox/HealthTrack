@@ -27,3 +27,9 @@
 
 ## Suite
 - POL-PLAY-18 à 20 ; POL-PLAY-11 (alpha après une journée sans plantage) ; lire le résumé du relais (« dont N robots »).
+
+## Merge
+- PR #459 : les 9 checks sont verts (Vitest, Build APK, Relais, Protocole montre, budget de lectures, émulateurs API 34, 35, 36).
+- **Merge refusé par le contrôle des permissions de la session** (« Merge Without Review »), comme au run du 27/10 22:33.
+  PR laissée ouverte, à jour sur main (`110f838`). Le run suivant (ou le propriétaire) la merge en squash si main n'a pas
+  bougé, sinon après mise à jour de la branche et nouvelle passe des checks.
