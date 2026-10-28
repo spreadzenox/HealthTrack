@@ -89,6 +89,8 @@
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer > Continuer > Health Connect > Continuer"
  *                                          # écran Health Connect (dans le navigateur : « pas disponible »)
  *   npm run visual -- --size=360x640 --dpr=3   # autre viewport (captures 1080×1920 de la fiche Play)
+ *   npm run visual -- --play --size=360x780     # petit téléphone : « TEXTE QUI DÉBORDE » signale les boutons, liens
+ *                                          # et onglets dont le libellé dépasse ou touche le bord (avertissement)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -222,6 +224,29 @@ function latestChangelogId() {
 
 function routeName(path) {
   return path === '/' ? 'dashboard' : path.replace(/^\//, '').replace(/\//g, '_')
+}
+
+/**
+ * Boutons, liens et onglets dont le libellé dépasse de leur cadre (texte qui touche ou franchit la bordure sur un
+ * écran étroit, `--size=360x780`). Exécuté dans la page ; un avertissement à regarder, pas un échec.
+ */
+function findTextOverflow() {
+  const out = []
+  for (const el of document.querySelectorAll('button, a, [role="tab"]')) {
+    const st = getComputedStyle(el)
+    if (st.display === 'none' || st.visibility === 'hidden' || el.clientWidth === 0) continue
+    const boxed = parseFloat(st.borderLeftWidth) > 0 || !/rgba\(0, 0, 0, 0\)|transparent/.test(st.backgroundColor)
+    const range = document.createRange()
+    range.selectNodeContents(el)
+    const textWidth = range.getBoundingClientRect().width
+    // Texte plus large que le cadre, ou (bouton à bord ou à fond) collé à moins de 4 px de chaque bord
+    const tight = boxed ? textWidth > el.clientWidth - 8 : false
+    if (el.scrollWidth > el.clientWidth + 1 || tight) {
+      const text = (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 40)
+      if (text && !out.includes(text)) out.push(text)
+    }
+  }
+  return out.slice(0, 8)
 }
 
 /**
@@ -1049,6 +1074,7 @@ async function main() {
         current.overflowX = await page.evaluate(
           () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
         )
+        current.textOverflow = await page.evaluate(findTextOverflow)
       } catch (e) {
         current.error = String(e?.message || e)
       }
@@ -1066,6 +1092,7 @@ async function main() {
         r.pageErrors.length ? `${r.pageErrors.length} erreur(s) JS` : null,
         r.console.length ? `${r.console.length} msg console` : null,
         r.overflowX ? 'DÉBORDEMENT HORIZONTAL' : null,
+        r.textOverflow?.length ? `TEXTE QUI DÉBORDE (« ${r.textOverflow.join(' », « ')} »)` : null,
         r.frenchLeft?.count ? `${r.frenchLeft.count} mot(s) français restant(s) (ex. « ${r.frenchLeft.samples.join(' », « ')} »)` : null,
       ].filter(Boolean)
       console.log(`  ${r.path.padEnd(18)} ${flags.join(' · ')}${r.tiles ? `  (${r.tiles.length} écran(s))` : ''}`)

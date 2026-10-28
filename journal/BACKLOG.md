@@ -113,7 +113,7 @@ par thème ; rien d'empilé sans hiérarchie. Un run = une étape, captures clai
   seulement) : interrupteur qui coupe (actif ou en pause) ; coupée → lien vers Sources (allumage seulement derrière
   la divulgation) ; [ ] P28 par le propriétaire
   (APK d'aperçu prêt) ; [ ] allumer l'interrupteur dans « Play — AAB ».
-  [ ] **FLAKY-UPDATEBANNER** (26/10 21:33) : `UpdateBanner.test.jsx` « montre la progression en Mo et en %, puis ouvre
+  [x] **FLAKY-UPDATEBANNER** (26/10 21:33 ; réparé par #448 le 28/10, coché le 28/10 06:33) : `UpdateBanner.test.jsx` « montre la progression en Mo et en %, puis ouvre
   l'installateur » a échoué une fois en CI (progressbar introuvable, 3 s) sur une PR de journal seul : le rendre
   indépendant du temps (faux minuteurs ou attente explicite).
   [x] **P28-VERSIONCODE (27/10 15:17 : le propriétaire a publié `p28-100487` en test interne)** — 27/10 15:34 :
@@ -1224,6 +1224,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   `publish.mjs` (deobfuscationFiles, testé) ; job émulateur sur un APK **play release** (visage ONNX/LiteRT, Health
   Connect, Premium, PDF, notification, logcat sans `ClassNotFoundException`). Test interne seulement ; avant février 2027.
 - [x] **POL-PLAY-16** (28/10 03:33) Table Ciqual en un seul exemplaire dans l'APK (−2 Mo non compressé) + dépendance `@m430/capacitor-app-install` retirée.
+- [x] **POL-PLAY-17** (28/10 06:33) Sous-onglets du Journal à 360 px : « Tendances » touchait sa bordure → largeur selon le
+  libellé + marge ; contrôle « TEXTE QUI DÉBORDE » ajouté à `npm run visual` (à lancer avec `--size=360x780`).
+- [ ] **POL-PLAY-18** Historique du bien-être : les barres « Expressions » sont en lilas (couleur des pistes) sur une page
+  menthe (bien-être) ; axe des jours « J V S D L M M » ambigu (deux « M ») → « lu ma me » ou dates courtes.
+- [ ] **POL-PLAY-19** Écran Montre (démo) : « Pas encore de lecture détaillée : synchronisez la montre » alors que
+  4 types sont reçus ; cartes « rien » à bordure et cartes « reçu » sans bordure (style incohérent).
+- [ ] **POL-PLAY-20** Tendances : « FC au repos · Plus basse que d'habitude » en ocre (couleur d'alerte) alors qu'aucun
+  écart n'est bon ou mauvais par principe (règle 6) : couleur neutre pour un écart sans jugement.
 - [ ] **POL-PLAY-11 (R8b/c)** Alpha après une journée sans plantage dans Android vitals ; `shrinkResources` à part.
 - [ ] **POL-PLAY-12** Nouvel audit `--play --empty` puis démo, écran par écran (Onboarding, Accueil, Journal, Analyses,
   Sources, Paramètres) — prévu par le run de 19:33 ; ✅ (27/10 22:33) « Marcher davantage » / « Bouger davantage » :
