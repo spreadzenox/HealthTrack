@@ -36,3 +36,9 @@
 - Après la prochaine version play envoyée en test interne : lire le résumé du déploiement du relais (« dont N robots »).
   Si les premiers crédits non-robots restent nombreux → 5 crédits offerts (CREDITS-INSTALLS).
 - POL-PLAY-11 ; suite de l'audit écran par écran.
+
+## Après le merge (#457, `c87d3d2`)
+- Build & Release **v332** publiée : APK **34,5 Mo** (34 489 669 octets).
+- Tests, Pages, Play — AAB (test interne), Relais — déploiement et émulateur Galaxy A56 verts ; checks de la PR (dont
+  émulateurs API 34, 35 et 36) verts. Les robots du rapport de pré-lancement de cette version seront comptés à part
+  dans le prochain résumé du déploiement du relais.
