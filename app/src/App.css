@@ -101,7 +101,7 @@
   cursor: pointer;
   background: transparent;
   border: 2px solid var(--accent);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   color: var(--accent);
   font-weight: 600;
   font-size: 0.95rem;
@@ -139,12 +139,18 @@
 
 .btn {
   flex: 1;
-  padding: 14px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--button-height);
+  padding: 12px 20px;
   font-size: 1rem;
   font-weight: 600;
+  text-align: center;
   background: var(--accent);
   color: var(--bg);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   transition: background 0.2s;
 }
 
@@ -160,7 +166,7 @@
 .btn-secondary {
   background: var(--surface);
   color: var(--accent);
-  border: 1px solid var(--accent);
+  border: 2px solid var(--accent);
 }
 
 .btn-secondary:hover:not(:disabled) {
