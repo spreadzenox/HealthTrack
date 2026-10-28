@@ -278,7 +278,7 @@ export default function Settings() {
           <p className="hint">
             <strong><LineIcon name="lock" size={16} /> Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans
             métadonnées (position GPS, date, modèle de téléphone), ou le texte d’un repas décrit. Les
-            calories sont calculées sur le téléphone ; aucune autre donnée de santé ne quitte l’appareil.
+            calories sont calculées sur le téléphone ; aucune autre donnée de santé n’est envoyée.
           </p>
           <p className="hint">
             <strong>Avec une clé gratuite</strong>, Google peut utiliser les photos et textes envoyés pour

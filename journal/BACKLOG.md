@@ -1281,12 +1281,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **IOS-4** (28/10 12:33) Données : « la sauvegarde du téléphone » (« gérées par le système ») au lieu de « la
   sauvegarde Google » ; test. La politique de confidentialité et les conditions publiées restent celles de la version
   Android (Paramètres Android → Google) : l'app iPhone aura les siennes. À appliquer aussi dans POL-PLAY-25.
-- [ ] **POL-PLAY-25** (écrire « la sauvegarde du téléphone », IOS-4) Textes « tout reste ici » à rendre honnêtes (décision « sauvegarde Android conservée » du 24/10,
+- [x] **POL-PLAY-25** (28/10 16:40 : « rangées sur ce téléphone, jamais chez Halcya », divulgations « Envoyé par Halcya : rien … sauvegarde du téléphone », test qui interdit les anciennes phrases) (écrire « la sauvegarde du téléphone », IOS-4) Textes « tout reste ici » à rendre honnêtes (décision « sauvegarde Android conservée » du 24/10,
   point a) : « Tout reste **sur cet appareil** » (Sources, `Connectors.jsx:500` ; profil corporel,
   `BodyProfileCard.jsx`) et « Vos données restent sur votre téléphone » (Premium) — alors que la météo envoie une
   position arrondie et que la sauvegarde Google du téléphone copie les données. Reprendre la formule déjà juste de
   Données (`Data.jsx:195`).
-- [ ] **POL-PLAY-26** Sources, carte météo : encart ambre « Pression en forte baisse : souvent citée comme déclencheur
+- [x] **POL-PLAY-26** (28/10 16:40 : encart retiré, test) Sources, carte météo : encart ambre « Pression en forte baisse : souvent citée comme déclencheur
   de maux de tête chez les personnes sensibles » — couleur d'alerte pour une norme générale (règle 6, même logique que
   POL-PLAY-20), hors de la cible ventre → encart neutre ou retiré (les Analyses disent si la pression compte pour vous).
 - [ ] **POL-PLAY-27** Petits défauts : Accueil, tuile « Sommeil 6 h 30 » sans « cette nuit » alors que VFC et Pas disent

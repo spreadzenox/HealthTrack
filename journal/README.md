@@ -181,6 +181,12 @@
 - **Tous les boutons en pilule** (28/10 15:39) — « Découvrir le premium », « Restaurer un achat », « Ajouter une
   source », « Désactiver », Photo / Galerie / Décrire… ont la même forme arrondie que « Photo du repas » (52 px de
   haut, 44 px pour les petits). **À tester** : rien de particulier, dites-nous si un bouton vous semble trop gros.
+- **Où vont vos données : des phrases justes** (28/10 16:40) — Sources, profil, Premium, lecture du visage et
+  temps d'écran ne disent plus « tout reste sur cet appareil » (faux depuis que la sauvegarde Android est gardée) :
+  « rangées sur ce téléphone, jamais chez Halcya » ; avant chaque autorisation, « Envoyé par Halcya : rien. Vos
+  mesures suivent la sauvegarde du téléphone, si elle est activée. » La carte météo n'affiche plus l'encart ambre
+  « Pression en forte baisse… maux de tête » (norme générale en couleur d'alerte ; les Analyses disent si la pression
+  compte pour vous). **À tester** : rien de particulier.
 
 - **Historique du bien-être plus lisible** (28/10 13:33) — Accueil → carte « Bien-être estimé » → historique : en
   semaine, les jours se lisent « lu ma me je ve sa di » (avant « L M M », mardi et mercredi confondus) ; les barres
@@ -391,6 +397,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/10 16:40 — [Textes « tout reste ici » honnêtes](runs/2026-10-28-1640-textes-sauvegarde.md) | 🎨 | POL-PLAY-25 (sauvegarde du téléphone, IOS-4) et POL-PLAY-26 (encart météo retiré) ; `honestStorageTexts.test.js` (2) ; captures clair / sombre / vierge relues |
 | 28/10 15:39 — [Boutons pilule partout](runs/2026-10-28-1539-boutons-pilule.md) | 🎨 | POL-PLAY-24 : `.btn` et `.upload-btn` en pilule (52 px ; compacts 44 px), contour secondaire 2 px ; `buttonShape.test.js` (4) ; captures clair / sombre / vierge relues ; #474 mergée, v341 (APK 34,5 Mo) |
 | 28/10 14:42 — [Écran « Données de la montre » cohérent](runs/2026-10-28-1442-ecran-montre.md) | 🎨 | POL-PLAY-19 : « Dernière mesure reçue : il y a … » au lieu de « synchronisez la montre » quand des mesures arrivent ; lignes « rien » sans la classe du bloc vide (même carte partout) ; 2 tests ; captures clair/sombre relues ; #472 mergée, v340 (APK 34,5 Mo) |
 | 28/10 13:33 — [Historique du bien-être : jours et couleurs](runs/2026-10-28-1333-historique-bien-etre.md) | 🎨 | POL-PLAY-18 : axe de la semaine en deux lettres (« lu ma me », plus de doublon « M »), barres « Expressions » en menthe (`--mint-label`) au lieu du lilas ; 1 test ; captures clair/sombre relues ; #470 mergée, v339 (APK 34,5 Mo) |

@@ -26,6 +26,7 @@ import { detectPhoneApps } from '../devices/phoneApps'
 import useDisclosure from '../hooks/useDisclosure'
 import './Connectors.css'
 import { appLocale } from '../i18n/locale.js'
+import { APP_NAME } from '../config/brand'
 
 /**
  * How far back to look when doing the first historical import.
@@ -497,7 +498,7 @@ export default function Connectors() {
     <section className="food-page">
       <h2 className="page-title">Vos sources</h2>
       <p className="page-intro">
-        Ce qui envoie déjà vos mesures, puis ce qui reste à brancher. Tout reste <strong>sur cet appareil</strong>.
+        Ce qui envoie déjà vos mesures, puis ce qui reste à brancher. Vos mesures sont rangées <strong>sur ce téléphone</strong>, jamais chez {APP_NAME}.
       </p>
 
       <MyDevices detect={detectApps} />

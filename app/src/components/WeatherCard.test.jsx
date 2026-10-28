@@ -74,7 +74,8 @@ describe('WeatherCard', () => {
     expect(screen.getByText('Nantes')).toBeInTheDocument()
     expect(screen.getByText(/14° \/ 7°/)).toBeInTheDocument()
     expect(screen.getByText(/1004 hPa \(−8\)/)).toBeInTheDocument()
-    expect(screen.getByText(/Pression en forte baisse/)).toBeInTheDocument()
+    // Pas d'encart d'alerte pour une norme générale (règle 6, POL-PLAY-26) : les Analyses disent si la pression compte.
+    expect(screen.queryByText(/Pression en forte baisse/)).not.toBeInTheDocument()
     // Tout arrive seul à chaque ouverture : pas de bouton « Mettre à jour » quand la météo du jour est là.
     expect(screen.queryByRole('button', { name: 'Mettre à jour' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Réessayer' })).not.toBeInTheDocument()

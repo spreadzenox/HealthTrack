@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-28",
+  "kind": "amélioration",
+  "title": "Où vont vos données : des phrases plus justes",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Sources, profil, Premium et lecture du visage disent désormais « rangées sur ce téléphone, jamais chez Halcya » au lieu de « tout reste sur cet appareil ».",
+    "Avant chaque autorisation, la ligne « Envoyé par Halcya : rien » précise que vos mesures suivent la sauvegarde du téléphone, si vous l’avez activée. Aucune image n’est jamais gardée."
+  ]
+}

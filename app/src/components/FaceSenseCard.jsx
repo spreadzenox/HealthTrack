@@ -336,7 +336,7 @@ export default function FaceSenseCard({
         <>
           <p className="my-devices-intro">
             Votre bien-être estimé sans rien saisir, d’après quelques images de la caméra frontale{' '}
-            {appOpen ? `quand vous ouvrez ${APP_NAME}` : 'au déverrouillage'}. Rien ne quitte le téléphone.
+            {appOpen ? `quand vous ouvrez ${APP_NAME}` : 'au déverrouillage'}. Aucune image gardée ni envoyée.
           </p>
           <MethodNote summary="Détails">
             {appOpen
