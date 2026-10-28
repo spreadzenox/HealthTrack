@@ -9,6 +9,38 @@
 
 ---
 
+## Run du 28/10/2026 08:33 (Paris) — Audit écran par écran de la version Play (vierge + démo)
+
+**But** : nourrir le polissage avant l'invitation des testeurs (décision du 27/10 13:00) avec des défauts concrets,
+classés par impact, pour que chaque run de code en prenne un sans rien chercher. Méthode : `npm run visual -- --play
+--empty` (thème clair, premier lancement) puis `--play --dark` (75 jours de démo), 20 et 29 captures relues
+(Accueil, Journal ×4, Analyses, Sources, Montre, Historique du bien-être, Premium, Paramètres, Onboarding). Aucun
+code produit. Résultat : **POL-PLAY-21 à 28** dans `BACKLOG.md`.
+
+### Ce qui va bien (à ne pas casser)
+- Onboarding « 01/05 » fidèle à la maquette ; « 0 Mo envoyé à Halcya sans votre accord » honnête ; 18 ans rappelé.
+- États vides explicites partout (Journal, Repas, Montre, Historique du bien-être, pistes « 0/21 ») : aucun zéro
+  trompeur, aucune carte cassée ; carte ventre en pêche, carte bien-être en menthe, pistes en lilas.
+- Journal › Jours désormais coloré par thème ; Tendances sans couleur d'alerte (POL-PLAY-20).
+
+### I186 (17) — Le premier écran doit dire ce qu'on a trouvé (POL-PLAY-21) [V captures]
+- Sur la démo, Analyses a 2 pistes solides mais l'Accueil répète « Assez de jours pour chercher des pistes… voyez
+  l'onglet Analyses ». Le moment de valeur (le « aha » qui justifie le paywall des jours 14–21) est caché un onglet
+  plus loin. Proposition : carte lilas « 2 pistes repérées » + la première en une ligne (« Dormir un peu plus
+  longtemps · piste solide »), aperçu flou hors premium (même rendu que l'aperçu d'Analyses), toucher = Analyses.
+
+### I187 (16) — Analyses : une phrase, puis les chiffres (POL-PLAY-22, 23) [V captures, V code]
+- Les cartes « Autres liens repérés » montrent la ligne mono des statistiques sans qu'on la demande : c'est le
+  « tout empilé » que le propriétaire a décrit le 24/10. Les chiffres vont derrière le chevron, comme pour « Pistes à
+  tester ».
+- Honnêteté : une piste « solide » sur 6 jours d'exposition (Alcool, démo) est plus permissive que la règle des pistes
+  ventre (8 jours). `evidenceLevel(q)` ne regarde que q : ajouter un plancher de jours exposés pour « solide ».
+
+### I188 (12) — Cohérence visuelle et textes honnêtes (POL-PLAY-24 à 28) [V captures]
+- Deux familles de boutons (pilule / rectangle arrondi) cohabitent ; DESIGN.md dit pilule.
+- « Tout reste sur cet appareil » contredit la sauvegarde Android conservée (24/10) et l'appel météo.
+- Encart ambre « maux de tête » de la météo : norme générale en couleur d'alerte (règle 6), hors cible ventre.
+
 ## Run du 27/10/2026 20:33 (Paris) — Les deux remarques de la Play Console (bord à bord, R8) prêtes à coder
 
 **But** : que le run de code qui traite les deux avertissements « Pour votre prochaine version » du 27/10 n'ait rien

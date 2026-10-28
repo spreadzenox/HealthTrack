@@ -321,6 +321,13 @@ version Play (la version GitHub ne change pas) et ne passera en alpha qu'après 
 plantage : c'est la modification la plus délicate du natif (une erreur n'apparaît qu'en version finale), d'où un essai
 complet sur émulateur (visage, Health Connect, Premium, PDF) avant tout merge. Échéance Google : février 2027.
 
+**Audit écran par écran de la version Play (run « idées » du 28/10 08:33)** : toutes les pages relues sur un premier
+lancement (clair) et sur 75 jours de démo (sombre). L'essentiel tient : onboarding, états vides clairs, couleurs par
+thème. Huit défauts restent pour les prochains runs, les plus visibles d'abord : l'Accueil ne dit pas encore « 2 pistes
+repérées » quand Analyses en a ; Analyses montre des statistiques sans qu'on les demande ; une piste peut être dite
+« solide » sur 6 jours seulement (plus permissif que les pistes du ventre, 8 jours) ; deux formes de boutons ;
+quelques phrases « tout reste sur cet appareil » à nuancer à cause de la sauvegarde Android que vous gardez.
+
 **Protection des analyses IA offertes (Play Integrity, 28/10 02:33)** : premier bilan lu. Sur 7 jours, **votre
 téléphone passe la vérification de Google** (1 installation « acceptée », aucune refusée) ; 51 analyses sont arrivées
 sans jeton, mais le relais ne savait pas dire lesquelles venaient des essais automatiques de la CI et lesquelles de
@@ -351,6 +358,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/10 08:33 — [Idées : audit écran par écran de la version Play](runs/2026-10-28-0833-idees-audit-play.md) | 💡 | Captures `--play --empty` (clair) et `--play --dark` (démo) relues écran par écran ; `IDEES.md` I186–I188 ; POL-PLAY-21 à 28 au BACKLOG (pistes non annoncées sur l'Accueil, statistiques trop visibles dans Analyses, « piste solide » sur 6 jours, boutons, textes « tout reste ici », encart météo) ; journal seul |
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
 | 27/10 23:33 — [Ventre du soir : une seule question](runs/2026-10-27-2333-ventre-soir-une-question.md) | 🎨 | PR #445 mergée (checks verts, merge bloqué à la session précédente) ; audit POL-PLAY-12 vierge + démo ; carte ventre du soir sans rangée en double ; POL-PLAY-13 à 15 au BACKLOG |
 | 28/10 07:33 — [Écart à la norme sans alerte](runs/2026-10-28-0733-ecart-neutre.md) | 🎨 | POL-PLAY-20 : FC au repos / VFC hors norme en couleur neutre (règle 6) au lieu de l'ocre d'alerte ; test sur le CSS ; #459 du run précédent mergée |

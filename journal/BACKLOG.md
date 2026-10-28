@@ -1245,6 +1245,40 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   davantage » juste sous la piste « Marcher davantage » : même famille, à regrouper ou à ne pas répéter.
 - [x] **POL-PLAY-15** (28/10 00:33 ; « 37 · normal », échelle de la montre) Journal (démo) : « Stress montre 37 / 99 » — l'échelle « / 99 » est déroutante ; « 37 / 100 » ou
   « stress 37 (bas) ». Vérifier l'échelle réelle de la montre avant de changer.
+- **Audit du run « idées » du 28/10 08:33** (`npm run visual -- --play --empty` clair, puis `--play --dark` sur
+  données de démo ; défauts nouveaux, classés par impact) :
+- [ ] **POL-PLAY-21** Accueil (démo) : la carte lilas dit encore « Assez de jours pour chercher des pistes… voyez
+  l'onglet Analyses » alors qu'Analyses montre déjà 2 pistes solides → « 2 pistes repérées » + la première en une
+  ligne (aperçu flou hors premium, comme Analyses), toucher = Analyses. Retirer les deux boutons contour « Vos derniers
+  jours, dans le Journal » / « Vos tendances, dans le Journal » (doublons de la barre d'onglets, bas de page chargé).
+- [ ] **POL-PLAY-22** Analyses, « Autres liens repérés » : la vue simple affiche les statistiques en mono (« 30 jours
+  avec · 44 sans · déduit de vos séances (début après 18 h) · week-end à part : +0,8 », « r = +0,48 · ≈ 63 jours
+  indépendants ») → une phrase + l'étiquette, chiffres derrière le chevron (principe « simple d'abord » du 24/10) ;
+  en-tête « … · week-end pris en compte » dans les détails ; « « visage » : comparé à votre bien-être estimé par la
+  caméra (29 jours) » à réécrire ; « plus c'est élevé, meilleur est votre bien-être » → « va avec un meilleur
+  bien-être » (corrélation, pas causalité) ; « Comment c'est calculé » en petit (retour 7 du 24/10).
+- [ ] **POL-PLAY-23** Statistique à vérifier : « Alcool · le lendemain · −0,2 point · Piste solide » avec **6 jours
+  exposés** (démo). Les pistes ventre exigent 8 jours exposés (`gutDays.MIN_EXPOSED_DAYS`) ; les facteurs binaires du
+  bien-être semblent n'en demander que 5 (« En cours de collecte : Malade (2/5 jours avec) »). Aligner : « Piste
+  solide » seulement à partir de 8 jours exposés (sinon « à confirmer » au mieux), et le vérifier au banc des nulles.
+- [ ] **POL-PLAY-24** Boutons de deux formes : pilules (« Continuer », « Photo du repas », « Débloquer ») et rectangles
+  arrondis (« Découvrir le premium », « Restaurer un achat », « Ajouter une source », « Utiliser ma position
+  approximative », « Connecter une montre », « Désactiver », « Donner mon avis sur le Play Store », « + 1 cigarette »).
+  DESIGN.md : boutons pilule de 52 à 56 px → `.btn` en pilule partout, captures avant/après.
+- [ ] **POL-PLAY-25** Textes « tout reste ici » à rendre honnêtes (décision « sauvegarde Android conservée » du 24/10,
+  point a) : « Tout reste **sur cet appareil** » (Sources, `Connectors.jsx:500` ; profil corporel,
+  `BodyProfileCard.jsx`) et « Vos données restent sur votre téléphone » (Premium) — alors que la météo envoie une
+  position arrondie et que la sauvegarde Google du téléphone copie les données. Reprendre la formule déjà juste de
+  Données (`Data.jsx:195`).
+- [ ] **POL-PLAY-26** Sources, carte météo : encart ambre « Pression en forte baisse : souvent citée comme déclencheur
+  de maux de tête chez les personnes sensibles » — couleur d'alerte pour une norme générale (règle 6, même logique que
+  POL-PLAY-20), hors de la cible ventre → encart neutre ou retiré (les Analyses disent si la pression compte pour vous).
+- [ ] **POL-PLAY-27** Petits défauts : Accueil, tuile « Sommeil 6 h 30 » sans « cette nuit » alors que VFC et Pas disent
+  « hier » ; Journal › Jours, tuile « Météo » noire (seule sans pastel, retour 6 du 24/10 « plus de couleur ») ;
+  chaque note du jour garde « Modifier · Supprimer » visibles (encombrant) → toucher la ligne ou menu « ⋯ ».
+- [ ] **POL-PLAY-28** Sources (vierge) : titre « Health Connect (montre, bague, balance…) » sur 2 lignes → « Health
+  Connect » + sous-titre ; vérifier que la carte « Lecture du visage » parle du déverrouillage quand `faceUnlockPlay`
+  est allumé (aujourd'hui « quand vous ouvrez Halcya »).
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 
