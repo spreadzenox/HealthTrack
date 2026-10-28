@@ -1289,7 +1289,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-26** (28/10 16:40 : encart retiré, test) Sources, carte météo : encart ambre « Pression en forte baisse : souvent citée comme déclencheur
   de maux de tête chez les personnes sensibles » — couleur d'alerte pour une norme générale (règle 6, même logique que
   POL-PLAY-20), hors de la cible ventre → encart neutre ou retiré (les Analyses disent si la pression compte pour vous).
-- [ ] **POL-PLAY-27** Petits défauts : Accueil, tuile « Sommeil 6 h 30 » sans « cette nuit » alors que VFC et Pas disent
+- [x] **POL-PLAY-27** (28/10 17:34 : « ⋯ » par saisie, Météo lilas, « cette nuit », tests) Petits défauts : Accueil, tuile « Sommeil 6 h 30 » sans « cette nuit » alors que VFC et Pas disent
   « hier » ; Journal › Jours, tuile « Météo » noire (seule sans pastel, retour 6 du 24/10 « plus de couleur ») ;
   chaque note du jour garde « Modifier · Supprimer » visibles (encombrant) → toucher la ligne ou menu « ⋯ ».
 - [ ] **POL-PLAY-28** Sources (vierge) : titre « Health Connect (montre, bague, balance…) » sur 2 lignes → « Health

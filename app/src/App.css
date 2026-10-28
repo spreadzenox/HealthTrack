@@ -801,8 +801,25 @@
 }
 
 .entry-edit + .entry-delete:not(.entry-delete-confirm),
-.entry-edit + .entry-edit {
+.entry-edit + .entry-edit,
+.entry-actions-close {
   margin-left: 0;
+}
+
+/* « ⋯ » (POL-PLAY-27) : un seul bouton discret, assez grand pour le doigt */
+.entry-actions-toggle {
+  min-width: 44px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Replié, le « ⋯ » reste au bout de la dernière ligne du contenu, sans ligne à lui */
+.entry-card-row-closed {
+  flex-wrap: nowrap;
+}
+
+.entry-card-row-closed > :first-child {
+  flex: 1 1 0;
 }
 
 /* Plusieurs boutons (repas : Refaire, Modifier, Supprimer) : contenu pleine largeur, boutons alignés dessous */

@@ -187,6 +187,11 @@
   mesures suivent la sauvegarde du téléphone, si elle est activée. » La carte météo n'affiche plus l'encart ambre
   « Pression en forte baisse… maux de tête » (norme générale en couleur d'alerte ; les Analyses disent si la pression
   compte pour vous). **À tester** : rien de particulier.
+- **Journal plus léger** (28/10 17:34) — dans « Vos derniers jours », « Refaire · Modifier · Supprimer » ne
+  s'affichent plus sur chaque note : un petit « ⋯ » au bout de la ligne les fait apparaître (« ✕ » pour refermer). La
+  tuile Météo du Journal prend le pastel lilas (elle paraissait noire en thème sombre) ; sur l'Accueil, la tuile
+  Sommeil dit « cette nuit » (ou « nuit d’avant ») comme VFC et Pas disent « hier ». **À tester** : toucher le « ⋯ »
+  d'un repas puis « Modifier ».
 
 - **Historique du bien-être plus lisible** (28/10 13:33) — Accueil → carte « Bien-être estimé » → historique : en
   semaine, les jours se lisent « lu ma me je ve sa di » (avant « L M M », mardi et mercredi confondus) ; les barres
@@ -397,6 +402,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/10 17:34 — [Actions du Journal derrière « ⋯ »](runs/2026-10-28-1734-journal-actions.md) | 🎨 | POL-PLAY-27 : « ⋯ » par saisie, tuile Météo lilas, Sommeil « cette nuit » ; tests (Journal, today, journalChips) ; captures clair / sombre / déplié relues |
 | 28/10 16:40 — [Textes « tout reste ici » honnêtes](runs/2026-10-28-1640-textes-sauvegarde.md) | 🎨 | POL-PLAY-25 (sauvegarde du téléphone, IOS-4) et POL-PLAY-26 (encart météo retiré) ; `honestStorageTexts.test.js` (2) ; captures clair / sombre / vierge relues ; #476 mergée, v342 (APK 34,5 Mo) |
 | 28/10 15:39 — [Boutons pilule partout](runs/2026-10-28-1539-boutons-pilule.md) | 🎨 | POL-PLAY-24 : `.btn` et `.upload-btn` en pilule (52 px ; compacts 44 px), contour secondaire 2 px ; `buttonShape.test.js` (4) ; captures clair / sombre / vierge relues ; #474 mergée, v341 (APK 34,5 Mo) |
 | 28/10 14:42 — [Écran « Données de la montre » cohérent](runs/2026-10-28-1442-ecran-montre.md) | 🎨 | POL-PLAY-19 : « Dernière mesure reçue : il y a … » au lieu de « synchronisez la montre » quand des mesures arrivent ; lignes « rien » sans la classe du bloc vide (même carte partout) ; 2 tests ; captures clair/sombre relues ; #472 mergée, v340 (APK 34,5 Mo) |

@@ -15,6 +15,13 @@ describe('summaryChips — repas', () => {
     expect(chipTheme('3 repas')).toBe('peach')
     expect(chipTheme('Repas')).toBe('peach')
   })
+
+  it('donne un pastel à chaque tuile, météo comprise (POL-PLAY-27 : la tuile Météo restait sans couleur)', () => {
+    expect(chipTheme('Météo')).toBe('lilac')
+    for (const label of ['Sommeil', 'Pas', 'VFC', 'Repas', 'Écran', 'Météo', 'Stress montre']) {
+      expect(['mint', 'peach', 'lilac']).toContain(chipTheme(label))
+    }
+  })
 })
 
 describe('summaryChips — stress de la montre (POL-PLAY-15)', () => {

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-28",
+  "kind": "amélioration",
+  "title": "Journal plus léger, tuile Sommeil plus claire",
+  "items": [
+    "Dans « Vos derniers jours », Refaire, Modifier et Supprimer se cachent derrière un petit « ⋯ » au bout de chaque note : touchez-le pour les faire apparaître.",
+    "La tuile Météo du Journal prend elle aussi un pastel, comme les autres mesures.",
+    "Sur l'Accueil, la tuile Sommeil précise « cette nuit » (ou « nuit d’avant »), comme VFC et Pas disent « hier »."
+  ]
+}

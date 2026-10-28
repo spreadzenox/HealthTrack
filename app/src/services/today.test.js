@@ -101,9 +101,14 @@ describe('measureTiles', () => {
     expect(measureTiles({ sleepMinutes: 420, sleepEstimated: true }, [], NOW)[0]).toMatchObject({ label: 'Sommeil (estimé)', value: '7 h' })
   })
 
+  it('dit de quelle nuit vient le sommeil, comme VFC et pas disent « hier » (POL-PLAY-27)', () => {
+    expect(measureTiles({ sleepMinutes: 452 }, entries, NOW)[0].when).toBe('cette nuit')
+    expect(measureTiles({}, entries, NOW, { sleepMinutes: 400 })[0]).toMatchObject({ value: '6 h 40', when: 'nuit d’avant' })
+  })
+
   it('reprend la veille, marquée « hier », quand aujourd’hui n’a pas encore le chiffre (POL-PLAY-8)', () => {
     const tiles = measureTiles({ sleepMinutes: 452 }, entries, NOW, { sleepMinutes: 400, hrv: 38, steps: 9000 })
-    expect(tiles.map((t) => [t.value, t.when])).toEqual([['7 h 32', null], ['38 ms', 'hier'], ['9 000'.replace(' ', '\u202f'), 'hier']])
+    expect(tiles.map((t) => [t.value, t.when])).toEqual([['7 h 32', 'cette nuit'], ['38 ms', 'hier'], ['9 000'.replace(' ', '\u202f'), 'hier']])
     expect(tiles[2].sources).toEqual(['Health Connect'])
     expect(measureTiles(null, [], NOW, null).map((t) => t.when)).toEqual([null, null, null])
   })

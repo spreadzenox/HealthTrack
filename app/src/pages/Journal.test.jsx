@@ -35,6 +35,11 @@ function renderJournal() {
   )
 }
 
+/** Déplie le « ⋯ » de chaque saisie (POL-PLAY-27). */
+function openActions() {
+  screen.queryAllByRole('button', { name: /^Actions pour/ }).forEach((b) => fireEvent.click(b))
+}
+
 describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 2c-2)', () => {
   beforeEach(async () => {
     const { listEntries, countEntries } = await import('../storage/localHealthStorage')
@@ -161,6 +166,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     await renderEntries([{ type: 'gut', source: 'app_gut', at: '2026-04-11T10:00:00', payload: { level: 'discomfort' } }])
     expect(screen.getByText('Ventre')).toBeInTheDocument()
     expect(screen.getByText('Gêne')).toBeInTheDocument()
+    openActions()
     expect(screen.getByRole('button', { name: /Supprimer cette note du ventre/i })).toBeInTheDocument()
   })
 
@@ -168,6 +174,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     await renderEntries([{ type: 'stool', source: 'app_stool', at: '2026-04-11T10:00:00', payload: { form: 'hard', bristol: 2 } }])
     expect(screen.getByText('Selles')).toBeInTheDocument()
     expect(screen.getByText('Dures · type 2')).toBeInTheDocument()
+    openActions()
     expect(screen.getByRole('button', { name: /Supprimer cette note des selles/i })).toBeInTheDocument()
   })
 
@@ -192,8 +199,9 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(rows).toHaveLength(1)
     expect(rows[0].querySelector('.entry-card-header')).toHaveTextContent('Cigarettes4')
     expect(rows[0]).toHaveTextContent('09:05 ×2 · 11:30 · 15:00')
-    // Une seule action : retirer la dernière notée (celle de 15:00, id 1)
+    // Une seule action, repliée derrière « ⋯ » : retirer la dernière notée (celle de 15:00, id 1)
     expect(within(rows[0]).getAllByRole('button')).toHaveLength(1)
+    fireEvent.click(within(rows[0]).getByRole('button', { name: 'Actions pour ces cigarettes' }))
     fireEvent.click(within(rows[0]).getByRole('button', { name: 'Supprimer la dernière cigarette (15:00)' }))
     fireEvent.click(within(rows[0]).getByRole('button', { name: 'Confirmer' }))
     const { deleteEntry } = await import('../storage/localHealthStorage')
@@ -207,6 +215,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const rows = document.querySelectorAll('.entry-card[data-type="cigarette"]')
     expect(rows).toHaveLength(1)
     expect(rows[0]).toHaveTextContent('15:00')
+    openActions()
     expect(within(rows[0]).getByRole('button', { name: 'Supprimer cette cigarette' })).toBeInTheDocument()
   })
 
@@ -234,6 +243,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const row = document.querySelector('.entry-card[data-type="wellbeing"]')
     expect(row.querySelector('.entry-card-header')).toHaveTextContent('09:00Bien-être4 / 5')
     expect(row).not.toHaveTextContent('Note :')
+    openActions()
     expect(within(row).getByRole('button', { name: /Modifier/ })).toBeInTheDocument()
     expect(within(row).getByRole('button', { name: /Supprimer/ })).toBeInTheDocument()
     expect(screen.queryByText('Bien-être', { selector: 'dt' })).not.toBeInTheDocument()
@@ -396,7 +406,10 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const hr = { id: 2, type: 'heart_rate', source: 'health_connect', at: '2026-04-11T09:00:00', payload: { bpm: 70 } }
     listEntries.mockResolvedValue([cig, hr])
     renderJournal()
-    const buttons = await screen.findAllByRole('button', { name: /^Supprimer/ })
+    await screen.findAllByRole('button', { name: /^Actions pour/ })
+    expect(screen.getAllByRole('button', { name: /^Actions pour/ })).toHaveLength(1)
+    openActions()
+    const buttons = screen.getAllByRole('button', { name: /^Supprimer/ })
     expect(buttons).toHaveLength(1)
     expect(buttons[0]).toHaveAccessibleName(/cette cigarette/i)
 
@@ -456,7 +469,9 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const synced = { id: 13, type: 'wellbeing', source: 'health_connect', at: '2026-04-11T11:00:00', payload: { score: 4 } }
     listEntries.mockResolvedValue([wb, synced])
     renderJournal()
-    const buttons = await screen.findAllByRole('button', { name: /^Modifier/ })
+    await screen.findAllByRole('button', { name: /^Actions pour/ })
+    openActions()
+    const buttons = screen.getAllByRole('button', { name: /^Modifier/ })
     expect(buttons).toHaveLength(1)
     expect(buttons[0]).toHaveAccessibleName(/cette note de bien-être/i)
     fireEvent.click(buttons[0])
@@ -474,10 +489,12 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     listEntries.mockResolvedValue([food])
     updateEntry.mockResolvedValue(undefined)
     renderJournal()
-    fireEvent.click(await screen.findByRole('button', { name: 'Modifier ce repas' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Actions pour ce repas' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Modifier ce repas' }))
     expect(screen.getByLabelText('Heure du repas')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Annuler' }))
     expect(screen.queryByLabelText('Heure du repas')).not.toBeInTheDocument()
+    openActions()
     fireEvent.click(screen.getByRole('button', { name: 'Modifier ce repas' }))
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer les modifications' }))
     await waitFor(() => expect(updateEntry).toHaveBeenCalledWith(12, expect.objectContaining({ payload: expect.any(Object) })))
@@ -492,7 +509,8 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     ])
     navigateMock.mockClear()
     renderJournal()
-    fireEvent.click(await screen.findByRole('button', { name: 'Refaire ce repas' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Actions pour ce repas' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Refaire ce repas' }))
     expect(navigateMock).toHaveBeenCalledWith('/food', { state: { redoMeal: { dish: 'Riz', items } } })
   })
 
@@ -505,6 +523,26 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     await screen.findByText(/Vos derniers jours/i)
     await screen.findAllByText(/Déjeuner/)
     expect(screen.queryByRole('button', { name: 'Modifier ce repas' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Refaire ce repas' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Actions pour/ })).not.toBeInTheDocument()
+  })
+
+  it('replie Refaire · Modifier · Supprimer derrière un seul « ⋯ » par saisie (POL-PLAY-27)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 12, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { dish: 'Riz', items: [{ ingredient: 'Riz blanc cuit', quantity: '150 g' }] } },
+      { id: 13, type: 'gut', source: 'app_gut', at: '2026-04-11T15:00:00', payload: { level: 'calm' } },
+    ])
+    renderJournal()
+    const toggle = await screen.findByRole('button', { name: 'Actions pour ce repas' })
+    expect(screen.queryByRole('button', { name: /^(Refaire|Modifier|Supprimer) / })).not.toBeInTheDocument()
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(toggle)
+    expect(screen.getByRole('button', { name: 'Refaire ce repas' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Supprimer ce repas' })).toBeInTheDocument()
+    // Seule la saisie touchée s'ouvre
+    expect(screen.queryByRole('button', { name: /Supprimer cette note du ventre/ })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer les actions de ce repas' }))
     expect(screen.queryByRole('button', { name: 'Refaire ce repas' })).not.toBeInTheDocument()
   })
 })
