@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { GutCard, MeasureTiles, PistesTeaser } from './TodayCards'
 
@@ -125,6 +125,18 @@ describe('GutCard — bilan du soir (I170)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Gêne' }))
     await waitFor(() => expect(createEntry).toHaveBeenCalledWith({ type: 'gut', source: 'app_gut', payload: { level: 'discomfort' } }))
     expect(screen.getByText('Et votre ventre aujourd’hui, dans l’ensemble ?')).toBeInTheDocument()
+  })
+
+  it('le soir, « Noter un moment précis » et « Selles » sur une même ligne d’actions (POL-PLAY-29)', async () => {
+    const now = new Date()
+    now.setHours(20, 30, 0, 0)
+    const { container } = wrap(<GutCard read={async () => []} now={now} />)
+    await screen.findByText('Et votre ventre aujourd’hui, dans l’ensemble ?')
+    const row = container.querySelector('.gut-card-actions')
+    expect(row).not.toBeNull()
+    expect(within(row).getByRole('button', { name: 'Noter un moment précis' })).toBeInTheDocument()
+    expect(within(row).getByRole('button', { name: 'Selles' })).toBeInTheDocument()
+    expect(row.querySelectorAll('svg')).toHaveLength(2)
   })
 
   it('pas de question le matin ; une fois répondu, une ligne de remerciement', async () => {
@@ -299,11 +311,11 @@ describe('GutCard — forme des selles (I176)', () => {
     createEntry.mockResolvedValue(1)
   })
 
-  it('« + Selles » s’ouvre sur trois formes ; un geste enregistre la forme et confirme', async () => {
+  it('« Selles » s’ouvre sur trois formes ; un geste enregistre la forme et confirme', async () => {
     const { createEntry } = await import('../storage/localHealthStorage')
     wrap(<GutCard read={async () => []} />)
     expect(screen.queryByRole('button', { name: 'Normales' })).not.toBeInTheDocument()
-    fireEvent.click(await screen.findByRole('button', { name: '+ Selles' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Selles' }))
     fireEvent.click(screen.getByRole('button', { name: 'Normales' }))
     await waitFor(() => expect(createEntry).toHaveBeenCalledWith(expect.objectContaining({ type: 'stool', source: 'app_stool', payload: { form: 'normal' } })))
     expect(await screen.findByText(/Selles notées : Normales, à \d\d:\d\d\./)).toBeInTheDocument()
@@ -313,7 +325,7 @@ describe('GutCard — forme des selles (I176)', () => {
   it('le type de Bristol seulement sur demande, et il fixe la forme', async () => {
     const { createEntry } = await import('../storage/localHealthStorage')
     wrap(<GutCard read={async () => []} />)
-    fireEvent.click(await screen.findByRole('button', { name: '+ Selles' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Selles' }))
     expect(screen.queryByText('Petites boules dures, séparées')).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Préciser le type (échelle de Bristol)' }))
     fireEvent.click(screen.getByRole('button', { name: /Petites boules dures/ }))

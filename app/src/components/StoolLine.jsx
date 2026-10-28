@@ -1,5 +1,5 @@
 /**
- * Forme des selles (I176) dans la carte « Votre ventre » : une ligne discrète « + Selles », puis Dures / Normales /
+ * Forme des selles (I176) dans la carte « Votre ventre » : un lien discret « + Selles » (icône plus), puis Dures / Normales /
  * Liquides en un geste ; le type précis de l'échelle de Bristol (1 à 7) seulement si la personne veut préciser.
  * Rien n'est lu au chargement (budget de lectures de l'accueil) : la confirmation ne montre que la note qu'on vient
  * d'enregistrer, le Journal montre les autres.
@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { createEntry } from '../storage/localHealthStorage'
 import { BRISTOL_TYPES, STOOL_FORMS, STOOL_SOURCE, STOOL_TYPE, stoolEntryLabel, stoolPayload } from '../services/stool'
 import { appLocale } from '../i18n/locale.js'
+import LineIcon from './LineIcon'
 
 const timeOf = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
@@ -42,7 +43,8 @@ export default function StoolLine() {
           <p className="stool-saved">Selles notées : {stoolEntryLabel(saved)}, à {timeOf(saved.at)}.</p>
         )}
         <button type="button" className="stool-open" onClick={() => setOpen(true)} aria-expanded="false">
-          + Selles
+          <LineIcon name="plus" size={16} />
+          Selles
         </button>
       </div>
     )

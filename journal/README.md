@@ -193,6 +193,10 @@
   Sommeil dit « cette nuit » (ou « nuit d’avant ») comme VFC et Pas disent « hier ». **À tester** : toucher le « ⋯ »
   d'un repas puis « Modifier ».
 
+- **Votre ventre : les petits gestes sur une ligne** (28/10 19:33) — le soir, sous « Et votre ventre aujourd’hui,
+  dans l’ensemble ? », « + Noter un moment précis » et « + Selles » sont côte à côte (avant : l’un sous l’autre avec un
+  vide), avec le même « + » que « Noter moi-même » du bien-être. **À tester** : rien de particulier.
+
 - **Sources : titres plus nets** (28/10 18:33) — la carte « Health Connect (montre, bague, balance…) » qui tenait
   sur deux lignes s'appelle simplement « Health Connect », et sa description commence par « Montre, bague,
   balance : … ». Sur une version Play où la lecture au déverrouillage existe, la carte « Lecture du visage » éteinte
@@ -409,6 +413,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 28/10 17:34 — [Actions du Journal derrière « ⋯ »](runs/2026-10-28-1734-journal-actions.md) | 🎨 | POL-PLAY-27 : « ⋯ » par saisie, tuile Météo lilas, Sommeil « cette nuit » ; tests (Journal, today, journalChips) ; captures clair / sombre / déplié relues ; #478 mergée, v343 (APK 34,5 Mo) |
+| 28/10 19:33 — [Carte ventre : une ligne de gestes](runs/2026-10-28-1933-ventre-une-ligne.md) | 🎨 | POL-PLAY-29 (audit POL-PLAY-12 `--play --empty` + démo sombre) : « + Noter un moment précis » et « + Selles » sur une ligne ; test ; captures clair et sombre relues |
 | 28/10 18:33 — [Sources : Health Connect et visage](runs/2026-10-28-1833-sources-titres.md) | 🎨 | POL-PLAY-28 : titre « Health Connect » sur une ligne, carte visage éteinte qui annonce le déverrouillage en play (faceUnlockPlay) ; tests (FaceSenseCard, HealthConnectConnector) ; captures Sources vierge clair et démo sombre relues ; #480 mergée, v344 (APK 34,5 Mo) |
 | 28/10 16:40 — [Textes « tout reste ici » honnêtes](runs/2026-10-28-1640-textes-sauvegarde.md) | 🎨 | POL-PLAY-25 (sauvegarde du téléphone, IOS-4) et POL-PLAY-26 (encart météo retiré) ; `honestStorageTexts.test.js` (2) ; captures clair / sombre / vierge relues ; #476 mergée, v342 (APK 34,5 Mo) |
 | 28/10 15:39 — [Boutons pilule partout](runs/2026-10-28-1539-boutons-pilule.md) | 🎨 | POL-PLAY-24 : `.btn` et `.upload-btn` en pilule (52 px ; compacts 44 px), contour secondaire 2 px ; `buttonShape.test.js` (4) ; captures clair / sombre / vierge relues ; #474 mergée, v341 (APK 34,5 Mo) |

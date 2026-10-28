@@ -207,8 +207,9 @@
 
 /* Le soir, la note d'un moment précis attend derrière ce lien (POL-PLAY-12) */
 .gut-moment-link {
-  display: block;
-  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 44px;
   padding: 0;
   border: 0;
@@ -358,7 +359,21 @@
 
 /* Forme des selles (I176) : facultative, une ligne discrète qui s'ouvre sur trois formes, le détail sur demande. */
 .stool-line {
+  margin-top: 0;
+}
+
+/* Gestes facultatifs de la carte ventre sur une ligne : « + Noter un moment précis » à gauche, « + Selles » ensuite ;
+   la ligne des selles ouverte prend toute la largeur (POL-PLAY-29). */
+.gut-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  column-gap: 20px;
   margin-top: 4px;
+}
+
+.gut-card-actions .stool-line-open {
+  flex-basis: 100%;
 }
 
 .stool-line-open {
@@ -367,9 +382,14 @@
   border-top: 1px solid rgba(var(--ink-rgb), 0.12);
 }
 
+.stool-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .stool-open,
 .stool-precise-toggle {
-  display: block;
   min-height: 44px;
   padding: 0;
   border: 0;
@@ -383,6 +403,7 @@
 }
 
 .stool-precise-toggle {
+  display: block;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
