@@ -148,6 +148,11 @@
   Connect) et qu'aucune pièce n'a été retirée par erreur. **À tester** (version de test interne suivante) : ouvrir
   l'app, la lecture du visage à l'ouverture, Premium, un rapport PDF ; dites-nous si quelque chose plante.
 
+- **Application plus légère** (28/10 03:33) — rien de nouveau à l'écran : la table nutritionnelle (Ciqual, 2 Mo) était
+  copiée deux fois dans l'app (écrans et calculs d'analyse en arrière-plan) ; il n'en reste qu'une, lue au besoin. Un
+  module Android inutilisé (ancienne installation des mises à jour) est aussi retiré. **À tester** : rien de particulier
+  (Journal → Repas et Nutrition, Analyses doivent s'afficher comme avant).
+
 - **Petits textes plus clairs** (28/10 00:33) — Journal : le stress de la montre se lit « 37 · normal » (détendu,
   normal, moyen, élevé : l'échelle de la montre) au lieu de « 37 / 99 ». Analyses : les calories d'activité ne se
   répètent plus sous « Marcher davantage ». Paramètres → Ce qui vous amène : sans choix, le texte dit que la carte
@@ -325,6 +330,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 |---|---|---|
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
 | 27/10 23:33 — [Ventre du soir : une seule question](runs/2026-10-27-2333-ventre-soir-une-question.md) | 🎨 | PR #445 mergée (checks verts, merge bloqué à la session précédente) ; audit POL-PLAY-12 vierge + démo ; carte ventre du soir sans rangée en double ; POL-PLAY-13 à 15 au BACKLOG |
+| 28/10 03:33 — [Table Ciqual en un seul exemplaire](runs/2026-10-28-0333-table-unique.md) | 🏗️ | La table nutritionnelle n'est plus embarquée deux fois (application + worker d'analyse : 2 × 2 Mo) mais lue dans un seul fichier JSON ; dépendance native inutilisée retirée ; rien de visible |
 | 28/10 02:33 — [Bilan Play Integrity lisible](runs/2026-10-28-0233-integrity-bilan.md) | 🏗️ | PR #450 (journal R8) mergée ; bilan 6b-2c lu (votre téléphone passe, 51 sans jeton) ; l'app envoie la raison d'un jeton manquant, le relais sépare CI et téléphones ; reste en observation |
 | 28/10 01:33 — [R8 sur la version Play](runs/2026-10-28-0133-r8-play.md) | 🏗️ | POL-PLAY-10 (R8a) : release play optimisée et obscurcie (règles étroites ONNX / LiteRT), `mapping.txt` envoyé avec l'AAB, APK play release testé à l'émulateur (plugins, visage, journal) ; rien de visible |
 | 28/10 00:33 — [POL-PLAY-13 à 15](runs/2026-10-28-0033-pol-play-13-15.md) | 🎨 | Phrase « Ce qui vous amène » sans choix ; plus de calories répétées sous « Marcher davantage » ; stress montre « 37 · normal » |
