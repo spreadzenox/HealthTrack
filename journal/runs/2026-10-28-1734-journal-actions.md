@@ -32,3 +32,8 @@
 
 ## Suite
 - POL-PLAY-28 (titre Health Connect sur 2 lignes, carte visage au déverrouillage quand `faceUnlockPlay`).
+
+## Après le merge (#478, `0ff467f`)
+- Checks de la PR verts (Vitest, Build APK, relais, protocole montre, budget de lectures, bord à bord API 34,
+  émulateur A56 API 35 et 36).
+- Sur main : Build & Release **v343** publiée, APK **34,5 Mo** (34 492 545 octets) ; Play — AAB (test interne) vert.
