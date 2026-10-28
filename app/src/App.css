@@ -87,8 +87,13 @@
 
 .upload-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
+}
+
+/* Sans « Décrire » (saisie rapide ouverte), la galerie prend toute la ligne. */
+.upload-actions > :last-child:nth-child(2) {
+  grid-column: 1 / -1;
 }
 
 .upload-btn {
@@ -114,6 +119,21 @@
 .upload-btn:active {
   background: var(--accent);
   color: var(--color-on-brand);
+}
+
+/* Le geste principal (photo du repas) prend toute la ligne, plein ; galerie et
+   description restent en contour, côte à côte en dessous (POL-PLAY-34). */
+.upload-btn--primary {
+  grid-column: 1 / -1;
+  min-height: var(--button-height);
+  background: var(--accent);
+  color: var(--color-on-brand);
+  font-size: 1rem;
+}
+
+.upload-btn--primary:hover,
+.upload-btn--primary:active {
+  background: var(--accent-dim);
 }
 
 .preview-wrap {

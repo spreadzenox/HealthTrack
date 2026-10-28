@@ -62,8 +62,20 @@ describe('Food', () => {
         <Food />
       </BrowserRouter>
     )
-    expect(screen.getByText('Photo')).toBeInTheDocument()
+    expect(screen.getByText('Photo du repas')).toBeInTheDocument()
     expect(screen.getByText('Galerie')).toBeInTheDocument()
+  })
+
+  it('met la photo du repas en geste principal, galerie et description en second (POL-PLAY-34)', () => {
+    render(
+      <BrowserRouter>
+        <Food />
+      </BrowserRouter>
+    )
+    const photo = screen.getByText('Photo du repas').closest('label')
+    expect(photo).toHaveClass('upload-btn', 'upload-btn--primary')
+    expect(screen.getByText('Galerie').closest('label')).not.toHaveClass('upload-btn--primary')
+    expect(screen.getByText('Décrire').closest('button')).not.toHaveClass('upload-btn--primary')
   })
 
   it('va droit aux trois façons de saisir, sans texte d’explication redondant', () => {

@@ -1309,6 +1309,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   meilleur bien-être ») au lieu de l'impératif `LEVER_ACTIONS` ; l'action reste dans les détails d'Analyses.
 - [x] **POL-PLAY-33** ✅ 28/10 23:33 (`GroupTag` : rien tant que pas testé ; chevron `.fodmap-group-chevron` sur les groupes à un aliment ; « Voir les liens incertains ») (I190 ② ④) Réintroduction : chevron sur chaque groupe, étiquette « pas testé » retirée (seulement les
   résultats) ; Analyses : « Voir les liens incertains » sans le nombre.
+- [x] **POL-PLAY-34** ✅ 29/10 00:33 (`upload-btn--primary` : « Photo du repas » plein émeraude sur toute la ligne, Galerie et Décrire en contour dessous ; test) Journal › Repas : les trois gestes « Photo / Galerie / Décrire » avaient le même poids (retour 5 du 24/10 appliqué à l'Accueil seulement).
+- [ ] **POL-PLAY-35** Journal : le titre « Repas » / « Nutrition » répète le sous-onglet actif (« Jours » dit « Vos derniers jours ») → titre utile ou retiré, petit.
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
 
