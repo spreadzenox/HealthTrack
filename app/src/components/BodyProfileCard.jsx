@@ -7,6 +7,7 @@ import { computeDailyEnergyKcal, ACTIVITY_LEVELS, activityLevel } from '../servi
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import DetailsToggle from './DetailsToggle'
 import { appLocale } from '../i18n/locale.js'
+import { APP_NAME } from '../config/brand'
 
 const formatNumber = (v) => new Intl.NumberFormat(appLocale(), { maximumFractionDigits: 1 }).format(v)
 const formatInt = (v) => new Intl.NumberFormat(appLocale(), { maximumFractionDigits: 0 }).format(v)
@@ -139,7 +140,7 @@ function ProfileForm({ profile, onCancel, onSaved }) {
         </p>
       </fieldset>
       <p className="nutrition-profile-hint">
-        Un nouveau poids est enregistré comme une pesée du jour. Tout reste sur cet appareil.
+        Un nouveau poids est enregistré comme une pesée du jour. Rangé sur ce téléphone, jamais chez {APP_NAME}.
       </p>
       {error && <p className="nutrition-profile-error" role="alert">{error}</p>}
       <div className="nutrition-profile-actions">
@@ -202,7 +203,7 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
         {head}
         <p className="nutrition-profile-hint">
           Complétez votre profil pour voir vos repères (protéines, fer, vitamines…) ajustés à vous.
-          Tout reste sur cet appareil.
+          Rangé sur ce téléphone, jamais chez {APP_NAME}.
         </p>
         {compositionLine.length > 0 && (
           <p className="nutrition-profile-line">{compositionLine.join(SEP)}<Hint>(Withings)</Hint></p>

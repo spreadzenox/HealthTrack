@@ -9,7 +9,7 @@ describe('divulgations avant les autorisations sensibles', () => {
     for (const [key, d] of Object.entries(DISCLOSURES)) {
       expect(d.title, key).toMatch(/^Avant /)
       expect(d.points.length, key).toBeGreaterThanOrEqual(2)
-      expect(d.leaves, key).toMatch(/quitte|Envoyé/)
+      expect(d.leaves, key).toMatch(/Envoyé/)
       expect(d.accept, key).toMatch(/^J’accepte/)
       expect(d.decline, key).toBe('Pas maintenant')
     }

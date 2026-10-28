@@ -21,7 +21,7 @@ describe('PhoneUsageCard', () => {
   it('hors Android : explique sans bouton', () => {
     render(<PhoneUsageCard {...props({ available: false })} />)
     expect(screen.getByText('Temps d’écran et sommeil')).toBeInTheDocument()
-    expect(screen.getByText(/rien ne quitte le téléphone/)).toBeInTheDocument()
+    expect(screen.getByText(/n’envoie rien/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Activer' })).toBeNull()
   })
 
@@ -43,7 +43,7 @@ describe('PhoneUsageCard', () => {
     render(<PhoneUsageCard {...p} />)
     await waitFor(() => expect(p.checkAccess).toHaveBeenCalled())
     fireEvent.click(screen.getByRole('button', { name: 'Activer' }))
-    expect((await screen.findByRole('dialog')).textContent).toMatch(/Rien ne quitte le téléphone/)
+    expect((await screen.findByRole('dialog')).textContent).toMatch(/Envoyé par .* : rien/)
     fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
     expect(p.openSettings).not.toHaveBeenCalled()

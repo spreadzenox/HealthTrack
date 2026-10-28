@@ -11,6 +11,11 @@
  */
 import { APP_NAME } from './brand'
 
+// Sauvegarde Android conservée (décision du 24/10) : les nombres gardés suivent la sauvegarde du téléphone si la
+// personne l'a activée ; l'app, elle, n'envoie rien (POL-PLAY-25).
+const CAMERA_LEAVES = `Envoyé par ${APP_NAME} : rien, ni image ni mesure. Les nombres suivent la sauvegarde du téléphone, si elle est activée.`
+const DATA_LEAVES = `Envoyé par ${APP_NAME} : rien. Vos mesures suivent la sauvegarde du téléphone, si elle est activée.`
+
 export const DISCLOSURES = {
   camera: {
     title: 'Avant d’autoriser la caméra',
@@ -20,7 +25,7 @@ export const DISCLOSURES = {
       'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
       'Une notification reste affichée tant que la lecture est active. « Désactiver » l’arrête à tout moment, et vous pouvez retirer l’accès dans les réglages d’Android.',
     ],
-    leaves: 'Rien ne quitte le téléphone : ni image, ni mesure.',
+    leaves: CAMERA_LEAVES,
     accept: 'J’accepte, autoriser la caméra',
     decline: 'Pas maintenant',
   },
@@ -33,7 +38,7 @@ export const DISCLOSURES = {
       'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
       'Rien ne se passe quand l’app est fermée. « Désactiver » l’arrête à tout moment, et vous pouvez retirer l’accès dans les réglages d’Android.',
     ],
-    leaves: 'Rien ne quitte le téléphone : ni image, ni mesure.',
+    leaves: CAMERA_LEAVES,
     accept: 'J’accepte, autoriser la caméra',
     decline: 'Pas maintenant',
   },
@@ -48,7 +53,7 @@ export const DISCLOSURES = {
       'Une notification « Lecture du visage active » reste affichée tant que c’est en marche, avec un bouton « Arrêter ». Vous pouvez aussi couper ici à tout moment.',
       `Après un redémarrage du téléphone, rien ne reprend tout seul : il faudra rouvrir ${APP_NAME}.`,
     ],
-    leaves: 'Rien ne quitte le téléphone : ni image, ni mesure.',
+    leaves: CAMERA_LEAVES,
     accept: 'J’accepte, lire au déverrouillage',
     decline: 'Pas maintenant',
   },
@@ -61,7 +66,7 @@ export const DISCLOSURES = {
       'Les 30 derniers jours sont importés tout de suite, puis les nouvelles données au fil des jours.',
       'Elles restent dans vos données, sur le téléphone. Vous pouvez retirer l’accès à tout moment dans Health Connect.',
     ],
-    leaves: 'Rien ne quitte le téléphone.',
+    leaves: DATA_LEAVES,
     accept: 'J’accepte, ouvrir Health Connect',
     decline: 'Pas maintenant',
   },
@@ -83,7 +88,7 @@ export const DISCLOSURES = {
       'Ça sert à estimer votre temps d’écran et votre sommeil, pour les comparer à votre bien-être.',
       `Android va ouvrir « Accès aux données d’utilisation » : activez-y ${APP_NAME}. Vous pourrez le retirer au même endroit.`,
     ],
-    leaves: 'Rien ne quitte le téléphone.',
+    leaves: DATA_LEAVES,
     accept: 'J’accepte, ouvrir le réglage',
     decline: 'Pas maintenant',
   },

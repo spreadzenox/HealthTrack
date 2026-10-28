@@ -92,15 +92,6 @@
   color: var(--text-muted);
 }
 
-.weather-note {
-  margin: 8px 0 0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: rgba(var(--warn-rgb), 0.1);
-  color: var(--color-warn);
-  font-size: 0.82rem;
-  line-height: 1.45;
-}
 
 .weather-error {
   margin: 8px 0 0;

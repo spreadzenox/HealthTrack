@@ -12,9 +12,6 @@ import useDisclosure from '../hooks/useDisclosure'
 import './MyDevices.css'
 import './WeatherCard.css'
 
-/** Chute de pression (hPa en un jour) signalée sur la carte. */
-const PRESSURE_DROP_HPA = 6
-
 function defaultGetPosition() {
   return new Promise((resolve, reject) => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
@@ -107,7 +104,6 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
   const on = settings.enabled && settings.location
   const today = settings.today
   const parts = weatherSummaryParts(today)
-  const drop = today?.pressureChangeHpa != null && today.pressureChangeHpa <= -PRESSURE_DROP_HPA
 
   return (
     <section className="weather-card" aria-labelledby="weather-card-title">
@@ -170,12 +166,6 @@ export default function WeatherCard({ sync = syncWeather, getPosition = defaultG
             </p>
           ) : (
             !settings.lastError && <p className="my-device-message">{busy ? 'Récupération de la météo…' : 'Météo du jour pas encore reçue.'}</p>
-          )}
-          {drop && (
-            <p className="weather-note">
-              Pression en forte baisse : souvent citée comme déclencheur de maux de tête chez les personnes sensibles.
-              Vos Analyses vérifient si c’est votre cas.
-            </p>
           )}
           {settings.lastError && <p className="weather-error">{settings.lastError}</p>}
           {settings.lastSyncAt && (

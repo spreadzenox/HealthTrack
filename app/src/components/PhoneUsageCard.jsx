@@ -127,7 +127,7 @@ export default function PhoneUsageCard({
         <>
           <p className="my-devices-intro">
             Votre temps d’écran, l’écran tard le soir et vos nuits sans montre, lus sur le téléphone. Jamais le contenu
-            des apps ni vos messages, et rien ne quitte le téléphone.
+            des apps ni vos messages, et {APP_NAME} n’envoie rien.
           </p>
           <MethodNote summary="Détails">
             Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : {APP_NAME} en tire votre temps
