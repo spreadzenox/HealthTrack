@@ -27,12 +27,14 @@ const PKG = 'fr.jpesquet.sante'
 const APK = process.env.PLAY_RELEASE_APK || 'app/android/app/build/outputs/apk/play/release/app-play-release.apk'
 const OUT_MD = 'play_release.md'
 const FIRST_SCREEN = 'Comprenez ce qui va'
-// Plugins maison (main + play) et Health Connect : tous doivent survivre à R8
+// Plugins maison (main + play) et Health Connect : tous doivent survivre à R8 (AppUpdate n'existe que dans la
+// sideload, SELF_UPDATE)
 const PLUGINS = [
-  'AppManager', 'AppUpdate', 'BackupMarker', 'BtClassic', 'Companion', 'EveningNote', 'FaceSense', 'GutEvening',
+  'AppManager', 'BackupMarker', 'BtClassic', 'Companion', 'EveningNote', 'FaceSense', 'GutEvening',
   'PhoneUsage', 'PlayBilling', 'PlayIntegrity', 'PortionReminder', 'SystemBars', 'TrialReminder', 'VoiceProbe',
   'WatchCapture', 'WatchVault', 'Health',
 ]
+const ABSENT = ['AppUpdate']
 const LINKAGE = /ClassNotFoundException|NoClassDefFoundError|NoSuchMethodError|NoSuchFieldError|UnsatisfiedLinkError|AbstractMethodError|IncompatibleClassChangeError/
 
 const checks = []
@@ -181,6 +183,8 @@ async function main() {
   const headers = (await evaluate('(window.Capacitor.PluginHeaders || []).map((h) => h.name)')) || []
   const missing = PLUGINS.filter((p) => !headers.includes(p))
   record('Plugins natifs enregistrés', missing.length === 0, missing.length ? `absents : ${missing.join(', ')}` : `${PLUGINS.length} plugins présents (${headers.length} au total)`)
+  const extra = ABSENT.filter((p) => headers.includes(p))
+  record('Pas de mise à jour hors Play (AppUpdate absent)', extra.length === 0, extra.length ? `présents : ${extra.join(', ')}` : 'absent')
 
   // Lecture du visage : modèles LiteRT (embarqués) et ONNX (téléchargés à la demande)
   const prep = await callPlugin('FaceSense', 'prepareAffect')
