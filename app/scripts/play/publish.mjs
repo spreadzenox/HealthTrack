@@ -117,8 +117,12 @@ export async function call(fetchImpl, step, url, { method = 'GET', token, body, 
  * des testeurs du test fermé est aussi testeur de la piste (le test interne doit rester au seul propriétaire) et
  * renvoie les groupes lus (`internalGroups`, null si Play ne les donne pas) ; `noReuse: true` refuse de placer sur
  * l'alpha un versionCode déjà envoyé en test interne (cet AAB-là a l'interrupteur allumé).
+ *
+ * `mapping` (facultatif, octets de mapping.txt de R8) : envoyé comme fichier de désobscurcissement de la version dans
+ * le même edit, pour des traces de plantage lisibles dans la Play Console ; un refus ne bloque pas la version
+ * (`mapping: 'failed'`, `mappingError`).
  */
-export async function publishBundle({ packageName, aab, versionCode, track = 'internal', notes, token, draft = false, releaseName = String(versionCode), testersGroup = ALPHA_TESTERS_GROUP, privateTrack = false, noReuse = false, fetchImpl = fetch, sleep, log = () => {} }) {
+export async function publishBundle({ packageName, aab, mapping, versionCode, track = 'internal', notes, token, draft = false, releaseName = String(versionCode), testersGroup = ALPHA_TESTERS_GROUP, privateTrack = false, noReuse = false, fetchImpl = fetch, sleep, log = () => {} }) {
   if (!ALLOWED_TRACKS.includes(track)) throw new Error(`Piste « ${track} » refusée : seules ${ALLOWED_TRACKS.join(', ')} sont autorisées.`)
   fetchImpl = withRetry(fetchImpl, { sleep })
   const base = `${API}/${packageName}/edits`
@@ -131,6 +135,7 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
     log(`Edit ${edit.id} ouvert, langue de la fiche : ${language}`)
 
     let reusedBundle = false
+    let mappingResult = {}
     try {
       const bundle = await call(fetchImpl, 'Import de l’AAB', `${UPLOAD_API}/${packageName}/edits/${edit.id}/bundles?uploadType=media`, {
         method: 'POST',
@@ -139,6 +144,21 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
         contentType: 'application/octet-stream',
       })
       log(`AAB importé : versionCode ${bundle?.versionCode}, sha256 ${bundle?.sha256 ?? '?'}`)
+      if (mapping) {
+        try {
+          await call(fetchImpl, 'Fichier de correspondance R8', `${UPLOAD_API}/${packageName}/edits/${edit.id}/apks/${versionCode}/deobfuscationFiles/proguard?uploadType=media`, {
+            method: 'POST',
+            token,
+            body: mapping,
+            contentType: 'application/octet-stream',
+          })
+          mappingResult = { mapping: 'uploaded' }
+          log('Fichier de correspondance R8 envoyé.')
+        } catch (err) {
+          mappingResult = { mapping: 'failed', mappingError: err.message }
+          log(`Fichier de correspondance R8 refusé : ${err.message}`)
+        }
+      }
     } catch (err) {
       if (err instanceof PlayApiError && /version code .*already been used|already been used/i.test(err.apiMessage)) {
         if (track === 'internal') {
@@ -236,6 +256,7 @@ export async function publishBundle({ packageName, aab, versionCode, track = 'in
       status,
       language,
       notSentForReview,
+      ...mappingResult,
       ...(track === 'alpha' ? { reusedBundle, testersAdded } : {}),
       ...(!draft && kept.length ? { keptDrafts: kept.map((r) => r.name), draftDropped } : {}),
       ...(internalGroups !== undefined ? { internalGroups } : {}),

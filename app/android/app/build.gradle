@@ -8,6 +8,9 @@ apply from: 'face-models.gradle'
 // batterie). -PplayPreview=true ajoute le suffixe « .apercu » (APK à filmer pour P28, à côté de l'app du Play Store).
 def faceUnlockPlay = (project.findProperty('faceUnlockPlay') ?: 'false').toBoolean()
 def playPreview = (project.findProperty('playPreview') ?: 'false').toBoolean()
+// -PreleaseDebugSign=true : APK play release signé avec la clé de debug, POUR LE TEST SUR ÉMULATEUR SEULEMENT (code R8
+// identique à celui envoyé sur Play) ; ignoré quand la clé d'envoi est là (HT_UPLOAD_KEYSTORE).
+def releaseDebugSign = (project.findProperty('releaseDebugSign') ?: 'false').toBoolean()
 
 android {
     namespace "com.healthtrack.app"
@@ -88,11 +91,17 @@ android {
         debug {
             signingConfig signingConfigs.debug
         }
+        // Seule la variante play est construite en release (la sideload part en debug) : R8 (optimisation,
+        // obscurcissement, réduction du code DEX) ne touche donc que Play (POL-PLAY-10, exigence Play de février 2027).
+        // Règles dans proguard-rules.pro ; mapping.txt envoyé à Play avec l'AAB (scripts/play/publish.mjs).
+        // shrinkResources reste coupé (visage et polices lus par nom, étape à part).
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             if (System.getenv('HT_UPLOAD_KEYSTORE')) {
                 signingConfig signingConfigs.upload
+            } else if (releaseDebugSign) {
+                signingConfig signingConfigs.debug
             }
         }
     }

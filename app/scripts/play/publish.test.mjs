@@ -194,6 +194,36 @@ describe('envoi Google Play (jalon 3c)', () => {
   })
 })
 
+describe('fichier de correspondance R8 (POL-PLAY-10)', () => {
+  const MAPPING_URL = `${UPLOAD_API}/${PKG}/edits/E1/apks/350/deobfuscationFiles/proguard?uploadType=media`
+
+  it('envoie mapping.txt dans le même edit, après l’AAB et avant la validation', async () => {
+    const { fetchImpl, calls } = fakePlay({ ...happy(), [`POST ${MAPPING_URL}`]: { body: { deobfuscationFile: { symbolType: 'proguard' } } } })
+    const r = await publishBundle(args(fetchImpl, { mapping: new Uint8Array([9]) }))
+    expect(r.mapping).toBe('uploaded')
+    const keys = calls.map((c) => c.key)
+    expect(keys.indexOf(`POST ${MAPPING_URL}`)).toBe(3)
+    expect(keys.at(-1)).toBe(`POST ${EDITS}/E1:commit`)
+    expect(calls[3].init.headers['Content-Type']).toBe('application/octet-stream')
+    expect(calls[3].init.body).toEqual(new Uint8Array([9]))
+  })
+
+  it('refus du fichier : la version part quand même, avec l’erreur notée', async () => {
+    const { fetchImpl } = fakePlay({ ...happy(), [`POST ${MAPPING_URL}`]: { status: 400, body: { error: { message: 'bad mapping' } } } })
+    const r = await publishBundle(args(fetchImpl, { mapping: new Uint8Array([9]) }))
+    expect(r.outcome).toBe('published')
+    expect(r.mapping).toBe('failed')
+    expect(r.mappingError).toMatch(/bad mapping/)
+  })
+
+  it('sans fichier (build non obscurci) : aucun appel, aucun champ', async () => {
+    const { fetchImpl, calls } = fakePlay(happy())
+    const r = await publishBundle(args(fetchImpl))
+    expect(r.mapping).toBeUndefined()
+    expect(calls.some((c) => c.key.includes('deobfuscation'))).toBe(false)
+  })
+})
+
 describe('notes de version', () => {
   const e = (id, title) => ({ id, title })
 

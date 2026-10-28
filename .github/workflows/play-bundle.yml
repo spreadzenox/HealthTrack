@@ -167,6 +167,8 @@ jobs:
           AAB=app/android/app/build/outputs/bundle/playRelease/app-play-release.aab
           jarsigner -verify "$AAB" | tail -1
           jarsigner -verify "$AAB" | grep -q "jar verified" || { echo "::error::AAB non signé"; exit 1; }
+          # R8 (POL-PLAY-10) : la variante play part optimisée et obscurcie, avec son fichier de correspondance
+          test -s app/android/app/build/outputs/mapping/playRelease/mapping.txt || { echo "::error::mapping.txt absent : R8 n'a pas tourné"; exit 1; }
           cd app
           if [ "$FACE_UNLOCK" = "true" ]; then
             bash scripts/check-play-manifest.sh --face-unlock-play
@@ -215,7 +217,9 @@ jobs:
           PLAY_NO_REUSE: ${{ env.FACE_UNLOCK_INTERNAL == 'true' && inputs.track == 'alpha' && '1' || '' }}
         run: |
           set +e
-          node scripts/play/publish-cli.mjs "../HealthTrack-play-$VERSION_CODE.aab"
+          # mapping.txt de R8 (POL-PLAY-10) : envoyé avec l'AAB pour des traces de plantage lisibles ; jamais publié
+          # dans les releases GitHub
+          node scripts/play/publish-cli.mjs "../HealthTrack-play-$VERSION_CODE.aab" android/app/build/outputs/mapping/playRelease/mapping.txt
           code=$?
           # 2 = accès refusé : avertissement (invitation pas encore propagée), réessai à la version suivante
           if [ "$code" = 2 ]; then exit 0; fi

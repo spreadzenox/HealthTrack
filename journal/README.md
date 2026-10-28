@@ -140,6 +140,14 @@
   horodatée revient comme le matin. **À tester** : ce soir, ouvrir l'Accueil, vérifier qu'il n'y a qu'une rangée, puis
   toucher « Noter un moment précis ».
 
+- **Version Play allégée et protégée (R8)** (28/10 01:33) — rien de nouveau à l'écran : la version Play est maintenant
+  optimisée et « obscurcie » par l'outil officiel d'Android (R8), comme Google le demandait dans la Play Console
+  (« optimisation du code DEX » sous le seuil, à corriger avant février 2027). Les plantages éventuels restent
+  lisibles dans la Play Console (fichier de correspondance envoyé avec chaque version). Avant chaque version, un
+  émulateur vérifie que la version obscurcie démarre, que ses modules natifs répondent (visage, abonnement, Health
+  Connect) et qu'aucune pièce n'a été retirée par erreur. **À tester** (version de test interne suivante) : ouvrir
+  l'app, la lecture du visage à l'ouverture, Premium, un rapport PDF ; dites-nous si quelque chose plante.
+
 - **Petits textes plus clairs** (28/10 00:33) — Journal : le stress de la montre se lit « 37 · normal » (détendu,
   normal, moyen, élevé : l'échelle de la montre) au lieu de « 37 / 99 ». Analyses : les calories d'activité ne se
   répètent plus sous « Marcher davantage ». Paramètres → Ce qui vous amène : sans choix, le texte dit que la carte
@@ -309,6 +317,7 @@ complet sur émulateur (visage, Health Connect, Premium, PDF) avant tout merge. 
 |---|---|---|
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
 | 27/10 23:33 — [Ventre du soir : une seule question](runs/2026-10-27-2333-ventre-soir-une-question.md) | 🎨 | PR #445 mergée (checks verts, merge bloqué à la session précédente) ; audit POL-PLAY-12 vierge + démo ; carte ventre du soir sans rangée en double ; POL-PLAY-13 à 15 au BACKLOG |
+| 28/10 01:33 — [R8 sur la version Play](runs/2026-10-28-0133-r8-play.md) | 🏗️ | POL-PLAY-10 (R8a) : release play optimisée et obscurcie (règles étroites ONNX / LiteRT), `mapping.txt` envoyé avec l'AAB, APK play release testé à l'émulateur (plugins, visage, journal) ; rien de visible |
 | 28/10 00:33 — [POL-PLAY-13 à 15](runs/2026-10-28-0033-pol-play-13-15.md) | 🎨 | Phrase « Ce qui vous amène » sans choix ; plus de calories répétées sous « Marcher davantage » ; stress montre « 37 · normal » |
 | 27/10 22:33 — [CI bord à bord réparée + une piste « mouvement »](runs/2026-10-27-2233-ci-bord-a-bord-pistes.md) | 🔧 | Job émulateur API 34 rouge sur main (attente DevTools sans délai) : délai, reconnexion, 3 essais ; POL-PLAY-12 : un seul levier « mouvement » |
 | 27/10 21:33 — [Polissage play : bord à bord pour tous](runs/2026-10-27-2133-pol-play-9-bord-a-bord.md) | 🎨 | POL-PLAY-9 : `EdgeToEdge.enable` ; encarts CSS et clavier gérés par `SystemBarsPlugin` sous Android ≤ 14 (Capacitor ne le fait qu'à partir de 15) ; job émulateur API 34 |
