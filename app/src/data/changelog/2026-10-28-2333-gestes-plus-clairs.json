@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-28",
+  "kind": "amélioration",
+  "title": "Des gestes plus clairs",
+  "items": [
+    "Données : « Supprimer toutes mes données » a maintenant un contour orange, différent du bouton « Importer », pour qu'on voie tout de suite que c'est un geste définitif (la confirmation, avec « Exporter d'abord », ne change pas).",
+    "Réintroduction guidée : chaque groupe (GOS, fructose, lactose…) a un chevron qui montre qu'on peut le toucher, et l'étiquette « pas testé » répétée sur chaque carte disparaît : seuls vos résultats s'affichent.",
+    "Analyses : « Voir les liens incertains », sans le nombre, qui impressionnait sans rien apprendre."
+  ]
+}

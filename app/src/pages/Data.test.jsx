@@ -334,6 +334,13 @@ describe('Data page — supprimer toutes mes données (VC-10)', () => {
     expect(screen.getByText(/42 entrées supprimées/)).toBeInTheDocument()
   })
 
+  it('le bouton se distingue d’« Importer » : action irréversible (POL-PLAY-31)', () => {
+    renderData()
+    const wipe = screen.getByRole('button', { name: 'Supprimer toutes mes données' })
+    expect(wipe).toHaveClass('btn-irreversible')
+    expect(wipe).not.toHaveClass('btn-secondary')
+  })
+
   it('« Annuler » ne supprime rien', async () => {
     const { deleteAllMyData } = await import('../services/deleteAllData')
     renderData()

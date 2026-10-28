@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { GutCard } from '../components/TodayCards'
+import LineIcon from '../components/LineIcon'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { FEATURES } from '../config/distribution'
 import { createEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
@@ -46,14 +47,22 @@ const defaultStore = {
 const fmt = formatAmount
 const timeOf = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
-/** Étiquette d'un groupe dans le choix : verdict du groupe, ou par aliment pour les fructanes. */
+/**
+ * Étiquette d'un groupe dans le choix : verdict du groupe, ou par aliment pour les fructanes ; rien tant qu'il n'est
+ * pas testé (POL-PLAY-33 : « pas testé » répété sur chaque carte n'apprenait rien).
+ */
 function groupTag(group, result) {
   if (group.perFood) {
     const tested = group.foods.filter((f) => result.byFood[f.id])
-    if (!tested.length) return 'pas testé'
+    if (!tested.length) return null
     return tested.map((f) => `${f.label.toLowerCase()} : ${result.byFood[f.id].tag}`).join(' · ')
   }
-  return result.verdict?.tag ?? 'pas testé'
+  return result.verdict?.tag ?? null
+}
+
+function GroupTag({ group, result }) {
+  const tag = groupTag(group, result)
+  return tag ? <span className="fodmap-tag mono">{tag}</span> : null
 }
 
 function Disclaimer() {
@@ -144,13 +153,14 @@ function ChooseGroup({ results, onPick, combos, focus = null }) {
               <button type="button" className="fodmap-group" onClick={() => onPick(g.id, g.foods[0].id)}>
                 <span className="fodmap-group-name">{g.label}</span>
                 <span className="fodmap-group-hint">{g.hint}</span>
-                <span className="fodmap-tag mono">{groupTag(g, results[g.id])}</span>
+                <GroupTag group={g} result={results[g.id]} />
+                <span className="fodmap-group-chevron"><LineIcon name="chevron" size={20} /></span>
               </button>
             ) : (
               <div className="fodmap-group is-multi">
                 <span className="fodmap-group-name">{g.label}</span>
                 <span className="fodmap-group-hint">un aliment à la fois : le résultat vaut pour lui seul</span>
-                <span className="fodmap-tag mono">{groupTag(g, results[g.id])}</span>
+                <GroupTag group={g} result={results[g.id]} />
                 <div className="fodmap-foods">
                   {g.foods.map((f) => (
                     <button key={f.id} type="button" className="fodmap-food" onClick={() => onPick(g.id, f.id)}>{f.label}</button>

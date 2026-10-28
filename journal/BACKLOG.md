@@ -1303,11 +1303,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   (« Notre serveur ne garde rien ») disent le contraire. (a) `expireAt` écrit par `persist` (+ 13 mois) + test relais ;
   (b) action du propriétaire **P33** : politique TTL (commande dans I189) ; (c) textes app + `privacypolicy.html`
   justes, test qui interdit les anciennes phrases ; data-safety inchangé (déjà « éphémère : non »), à relire.
-- [ ] **POL-PLAY-31** (I190 ①) Données : « Supprimer toutes mes données » en bouton d'action irréversible (contour orange ou
+- [x] **POL-PLAY-31** ✅ 28/10 23:33 (`.btn-irreversible` : contour et texte `--color-alert`, clair et sombre ; confirmation `.btn-danger` inchangée) (I190 ①) Données : « Supprimer toutes mes données » en bouton d'action irréversible (contour orange ou
   encre), distinct d'« Importer ».
 - [x] **POL-PLAY-32** ✅ 28/10 22:33 (`leverTitle` dans `leverSuggestion` ; Analyses et carte lilas ; action « À tester : … » au chevron) (I190 ③, règle 6) Accueil, carte lilas, et titres de pistes : « facteur → effet » (« Nuits plus longues →
   meilleur bien-être ») au lieu de l'impératif `LEVER_ACTIONS` ; l'action reste dans les détails d'Analyses.
-- [ ] **POL-PLAY-33** (I190 ② ④) Réintroduction : chevron sur chaque groupe, étiquette « pas testé » retirée (seulement les
+- [x] **POL-PLAY-33** ✅ 28/10 23:33 (`GroupTag` : rien tant que pas testé ; chevron `.fodmap-group-chevron` sur les groupes à un aliment ; « Voir les liens incertains ») (I190 ② ④) Réintroduction : chevron sur chaque groupe, étiquette « pas testé » retirée (seulement les
   résultats) ; Analyses : « Voir les liens incertains » sans le nombre.
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.

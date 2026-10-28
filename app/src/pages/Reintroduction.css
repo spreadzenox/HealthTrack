@@ -61,7 +61,19 @@
 }
 
 button.fodmap-group {
+  position: relative;
+  padding-right: 44px;
   cursor: pointer;
+}
+
+/* POL-PLAY-33 : chevron à droite, la carte se touche */
+.fodmap-group-chevron {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  display: flex;
+  transform: translateY(-50%) rotate(-90deg);
+  color: var(--lilac-bar);
 }
 
 /* N5 : groupe ouvert depuis une piste du ventre */

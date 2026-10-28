@@ -38,7 +38,10 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
 
   it('① liste les groupes avec leur état et la mise en garde, sans mot interdit', async () => {
     renderPage(makeStore())
-    expect(await screen.findByRole('button', { name: /Lactose/ })).toHaveTextContent('pas testé')
+    const lactose = await screen.findByRole('button', { name: /Lactose/ })
+    // POL-PLAY-33 : pas d'étiquette « pas testé » répétée, un chevron dit que la carte se touche
+    expect(document.body.textContent).not.toMatch(/pas testé/)
+    expect(lactose.querySelector('.fodmap-group-chevron')).not.toBeNull()
     expect(screen.getByRole('button', { name: 'Blé' })).toBeInTheDocument()
     expect(screen.getByText(/Combinaisons/).closest('[aria-disabled]')).toHaveTextContent('après 2 groupes bien tolérés')
     expect(screen.getByText(/parlez-en d’abord à votre médecin/)).toBeInTheDocument()
