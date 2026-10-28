@@ -64,7 +64,8 @@ describe('HealthConnectConnector', () => {
 
   it('has correct id and name', () => {
     expect(connector.id).toBe('health_connect')
-    expect(connector.name).toContain('Health Connect')
+    expect(connector.name).toBe('Health Connect')
+    expect(connector.description).toMatch(/^Montre, bague, balance : /)
   })
 
   it('has the expected dataTypes', () => {

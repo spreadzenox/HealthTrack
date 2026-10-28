@@ -319,6 +319,8 @@ export default function FaceSenseCard({
 
   const d = describeFaceSense(status)
   const unlock = appOpen ? describeFaceUnlock(status) : null
+  // POL-PLAY-28 : version play avec faceUnlockPlay, la carte éteinte annonce aussi le déverrouillage (en option)
+  const unlockOffered = appOpen && status?.unlockAvailable === true
   const available = plugin != null
   // Réglages propres au service en arrière-plan (One UI, batterie, accès permanent) : sans objet en play.
   const samsung = !appOpen && isSamsungDevice(status)
@@ -336,13 +338,16 @@ export default function FaceSenseCard({
         <>
           <p className="my-devices-intro">
             Votre bien-être estimé sans rien saisir, d’après quelques images de la caméra frontale{' '}
-            {appOpen ? `quand vous ouvrez ${APP_NAME}` : 'au déverrouillage'}. Aucune image gardée ni envoyée.
+            {appOpen
+              ? `quand vous ouvrez ${APP_NAME}${unlockOffered ? ' et, si vous le voulez, à chaque déverrouillage' : ''}`
+              : 'au déverrouillage'}. Aucune image gardée ni envoyée.
           </p>
           <MethodNote summary="Détails">
             {appOpen
               ? <>À chaque ouverture de l’app, la caméra frontale prend quelques images (un bandeau l’indique), le
                 téléphone en tire une dizaine de mesures d’expression puis les efface. Au plus une lecture par
-                demi-heure, jamais app fermée. </>
+                demi-heure, jamais app fermée. {unlockOffered && <>Si vous ajoutez le déverrouillage, 3 images à
+                chaque déverrouillage, avec une notification visible tant que c’est en marche. </>}</>
               : <>À chaque déverrouillage, la caméra frontale prend 3 images, le téléphone en tire une dizaine de
                 mesures d’expression puis les efface. </>}
             Un bien-être estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives,
