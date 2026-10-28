@@ -1230,7 +1230,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   menthe (bien-être) ; axe des jours « J V S D L M M » ambigu (deux « M ») → « lu ma me » ou dates courtes.
 - [ ] **POL-PLAY-19** Écran Montre (démo) : « Pas encore de lecture détaillée : synchronisez la montre » alors que
   4 types sont reçus ; cartes « rien » à bordure et cartes « reçu » sans bordure (style incohérent).
-- [ ] **POL-PLAY-20** Tendances : « FC au repos · Plus basse que d'habitude » en ocre (couleur d'alerte) alors qu'aucun
+- [x] **POL-PLAY-20** (28/10 07:33 ; bordure, badge et repère en encre neutre) Tendances : « FC au repos · Plus basse que d'habitude » en ocre (couleur d'alerte) alors qu'aucun
   écart n'est bon ou mauvais par principe (règle 6) : couleur neutre pour un écart sans jugement.
 - [ ] **POL-PLAY-11 (R8b/c)** Alpha après une journée sans plantage dans Android vitals ; `shrinkResources` à part.
 - [ ] **POL-PLAY-12** Nouvel audit `--play --empty` puis démo, écran par écran (Onboarding, Accueil, Journal, Analyses,

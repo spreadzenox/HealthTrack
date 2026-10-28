@@ -159,6 +159,9 @@
   « Nutrition » touchaient le bord de leur bouton en haut du Journal ; chaque onglet prend maintenant la largeur de son
   nom. Sur votre A56, à peine visible. En coulisses, la vérification visuelle signale désormais tout bouton dont le
   texte déborde. **À tester** : rien.
+- **Tendances : un écart à votre norme n'est plus en couleur d'alerte** (28/10 07:33) — « FC au repos · Plus basse
+  que d'habitude » s'affichait en ocre, comme un avertissement ; un écart n'est ni bon ni mauvais par principe : il est
+  maintenant en gris encre, la norme restant en vert. Le « Radar forme » (signes inhabituels simultanés) garde ses couleurs.
 
 - **Les robots de Google comptés à part** (28/10 05:33) — rien de nouveau à l'écran. Le relais voyait 21 « nouvelles
   installations » en 7 jours alors que vous êtes seul sur la version Play : très probablement les appareils de test de
@@ -350,6 +353,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 |---|---|---|
 | 27/10 20:33 — [Idées : bord à bord et R8 prêts à coder](runs/2026-10-27-2033-idees-bord-a-bord-r8.md) | 💡 | `IDEES.md` I184 (`EdgeToEdge.enable` avant `super.onCreate`, aucun appel déprécié, encarts CSS déjà là, émulateur API 30/34 à ajouter) et I185 (R8 : `release` = play seul, `proguard-android-optimize.txt`, règles Capacitor fournies, JNI ONNX/LiteRT à surveiller, `mapping.txt` via `deobfuscationFiles`, APK play release testé à l'émulateur) ; POL-PLAY-9 à 12 au BACKLOG ; journal seul |
 | 27/10 23:33 — [Ventre du soir : une seule question](runs/2026-10-27-2333-ventre-soir-une-question.md) | 🎨 | PR #445 mergée (checks verts, merge bloqué à la session précédente) ; audit POL-PLAY-12 vierge + démo ; carte ventre du soir sans rangée en double ; POL-PLAY-13 à 15 au BACKLOG |
+| 28/10 07:33 — [Écart à la norme sans alerte](runs/2026-10-28-0733-ecart-neutre.md) | 🎨 | POL-PLAY-20 : FC au repos / VFC hors norme en couleur neutre (règle 6) au lieu de l'ocre d'alerte ; test sur le CSS ; #459 du run précédent mergée |
 | 28/10 06:33 — [Onglets du Journal sur petit écran](runs/2026-10-28-0633-onglets-journal.md) | 🎨 | POL-PLAY-17 : sous-onglets du Journal lisibles à 360 px ; contrôle « TEXTE QUI DÉBORDE » dans `npm run visual` ; audit bien-être / Montre / Nutrition / Tendances → POL-PLAY-18 à 20 |
 | 28/10 05:33 — [Robots de Google comptés à part](runs/2026-10-28-0533-appareils-test.md) | 🏗️ | INSTALLS-21 : l'app play signale les appareils Firebase Test Lab (`X-Test-Device`), le relais marque `testlab` (`first_credit`, `integrity`), résumé du déploiement « dont N robot(s) » ; confidentialité ; relais 84 tests, app 2 596 ; v332 (APK 34,5 Mo) |
 | 28/10 04:33 — [Montre à reconnecter après une restauration](runs/2026-10-28-0433-montre-restauree.md) | 🎨 | SAUV (reste) : après une restauration de la sauvegarde Android, carte montre « À reconnecter » + « Reconnecter ma montre » au lieu d'un « Connectée » trompeur ; synchro auto en pause jusqu'au geste ; v331 (APK 34,5 Mo) |
