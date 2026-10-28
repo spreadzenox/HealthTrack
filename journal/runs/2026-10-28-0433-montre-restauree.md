@@ -29,3 +29,7 @@
 ## Suite
 - À tester par le propriétaire à la prochaine réinstallation (voir résumé).
 - POL-PLAY-11 (alpha après une journée sans plantage, Android vitals) ; suite de l'audit écran par écran.
+
+## Après le merge (#455, `5de107c`)
+- Build & Release **v331** publiée : APK **34,5 Mo** (34 489 433 octets).
+- Tests, Play — AAB (test interne) et émulateur Galaxy A56 verts ; checks de la PR (dont émulateurs API 34, 35 et 36) verts.
