@@ -23,6 +23,39 @@ code produit. Résultat : **POL-PLAY-21 à 28** dans `BACKLOG.md`.
   trompeur, aucune carte cassée ; carte ventre en pêche, carte bien-être en menthe, pistes en lilas.
 - Journal › Jours désormais coloré par thème ; Tendances sans couleur d'alerte (POL-PLAY-20).
 
+### I189 (18) — Le relais garde des compteurs durables : le dire, et les faire expirer (POL-PLAY-30) [V code]
+
+Constat du 28/10 20:33 : depuis P24, le registre des crédits est recopié dans Firestore (`relay/src/credits.js`,
+`createFirestoreStore`, collection `credits`, un document par empreinte SHA-256 de l'identifiant d'installation),
+**sans date d'expiration**. Or la politique de confidentialité dit « ces compteurs, en mémoire, jusqu'à leur
+renouvellement » (`app/public/privacypolicy.html`), Données dit « Nos serveurs ne gardent rien : il n'y a rien d'autre
+à effacer » (`Data.jsx:314`) et Paramètres « Notre serveur ne garde rien » (`Settings.jsx:43`,
+`permissionDisclosures.js:100`). Ce ne sont pas des données de santé (empreinte d'un identifiant aléatoire + nombres
+d'analyses), et le formulaire Sécurité des données est déjà prudent (« éphémère : non »), mais un texte public inexact
+est précisément ce qu'un examen Play ou un juriste relève. Proposition : (a) champ `expireAt` écrit à chaque `persist`
+(fin du mois suivant + 13 mois : assez pour que les analyses offertes ne reviennent pas, minimisation RGPD) et
+politique TTL Firestore (gratuite) posée par le propriétaire — gh-deployer n'a pas le droit d'administrer les index :
+`gcloud firestore fields ttls update expireAt --collection-group=credits --enable-ttl --project=healthtrack-824b26` ;
+(b) textes : « Notre serveur ne garde ni la photo ni le texte ; il garde seulement, sous une empreinte, le nombre
+d'analyses faites (effacé au bout de 13 mois sans usage) » ; Données → Supprimer : « … Seul reste chez nous un compteur
+d'analyses sous une empreinte anonyme, effacé seul au bout de 13 mois » ; (c) test qui interdit « ne garde rien » et
+« en mémoire » à côté de « compteur ». Option écartée pour l'instant : un appel « effacer mon compteur » au relais
+depuis Supprimer (nouvel appel réseau, et un compteur effacé rendrait les 10 analyses offertes : contraire au but).
+
+### I190 (13) — Petits défauts vus en lançant la période de lancement (POL-PLAY-31 à 33) [V captures]
+
+Captures `--play --dark` (démo) et `--play --subscription=launch` (clair) de Paramètres, Données, Réglages,
+Onboarding, Premium, Réintroduction, Analyses, Accueil : tout s'affiche, aucune erreur JS ; « Premium offert pendant le
+test, jusqu'au … : vous n'avez rien à payer » bien présent dans Paramètres. Défauts : ① Données → « Supprimer toutes
+mes données » a le même bouton contour émeraude que « Choisir un fichier à importer » : rien ne signale un geste
+irréversible (contour orange `#C2410C` ou texte encre, et la confirmation existante) ; ② Réintroduction : « pas testé »
+répété sur les 6 cartes de groupe, et seules les « Fructanes » ont des boutons visibles : on ne voit pas que GOS,
+Fructose… se touchent (chevron, et étiquette seulement quand il y a un résultat) ; ③ Accueil, carte lilas : le titre de
+la piste est l'action générique `LEVER_ACTIONS` (« Dormir un peu plus longtemps ») : un conseil à l'impératif, alors que
+DESIGN.md demande « facteur → effet » (« Nuits plus longues → meilleur bien-être ») ; règle 6 : décrire le lien
+personnel, pas prescrire ; ④ Analyses : « Voir les 39 liens incertains » : le nombre impressionne sans rien apprendre
+(« Voir les liens incertains »).
+
 ### I186 (17) — Le premier écran doit dire ce qu'on a trouvé (POL-PLAY-21) [V captures]
 - Sur la démo, Analyses a 2 pistes solides mais l'Accueil répète « Assez de jours pour chercher des pistes… voyez
   l'onglet Analyses ». Le moment de valeur (le « aha » qui justifie le paywall des jours 14–21) est caché un onglet
