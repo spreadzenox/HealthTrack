@@ -30,7 +30,7 @@ export const WATCH_AUTO_SYNC_MS = 30 * 60 * 1000
 const MAX_BACKOFF_STEPS = 3 // 30 min × 2³ = 4 h
 const STATE_KEY = 'healthtrack_watch_autosync'
 /** Issues qui ne se corrigent pas seules : l'automatique attend une connexion manuelle. */
-const PAUSING = ['key_rejected', 'pin_failed', 'need_secrets', 'unsupported']
+const PAUSING = ['key_rejected', 'pin_failed', 'need_secrets', 'unsupported', 'restored']
 
 const NativeBtClassic = registerPlugin('BtClassic')
 
@@ -84,6 +84,22 @@ export function recordWatchConnection(report, { auto = false, storage = globalTh
   }
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('watch-sync-updated'))
   return next
+}
+
+/**
+ * Données restaurées par la sauvegarde Android (restoreGuard.js) : la clé de la montre est restée sur l'ancien téléphone.
+ * Une montre déjà connectée passe « À reconnecter » (automatique en pause) au lieu d'un « Connectée » trompeur ; le
+ * réappairage se fait au geste « Reconnecter ma montre ». Rend true si l'état a changé.
+ */
+export function markWatchRestored({ storage = globalThis.localStorage, now = () => Date.now() } = {}) {
+  const prev = getWatchAutoSyncState(storage)
+  if (!prev.everConnected && prev.outcome !== 'connected') return false
+  try {
+    storage?.setItem(STATE_KEY, JSON.stringify({ ...prev, at: new Date(now()).toISOString(), auto: true, outcome: 'restored', title: null, battery: null, everConnected: true }))
+  } catch {
+    return false
+  }
+  return true
 }
 
 /**
@@ -243,6 +259,13 @@ const plural = (n, one, many) => `${n.toLocaleString(appLocale())} ${n > 1 ? man
  */
 export function describeWatchStatus(state, { now = Date.now(), formatAgo } = {}) {
   if (!state?.at || !state.everConnected) return null
+  if (state.outcome === 'restored') {
+    return {
+      tone: 'warn',
+      title: 'À reconnecter',
+      text: 'Vos données sont revenues sur ce téléphone, pas la clé de la montre (elle ne quitte jamais un téléphone). Touchez « Reconnecter ma montre ».',
+    }
+  }
   const when = formatAgo(state.at, new Date(now))
   if (isAutoSyncPaused(state)) {
     return { tone: 'warn', title: 'Synchro en pause', text: `${state.title || 'connexion refusée'} (${when}). « Synchroniser la montre » la relance.` }

@@ -10,6 +10,7 @@
  */
 import { registerPlugin } from '@capacitor/core'
 import { withTimeout } from '../utils/withTimeout'
+import { markWatchRestored } from './watchAutoSync'
 
 const NativeMarker = registerPlugin('BackupMarker')
 
@@ -52,6 +53,8 @@ export async function checkRestore({ plugin = markerPlugin(), storage = globalTh
         }
       }
     }
+    // la montre se réappaire au geste « Reconnecter ma montre », jamais en silence
+    if (removed.includes('healthtrack_watch_keys')) markWatchRestored({ storage })
     storage.setItem(MARKER_KEY, id)
     return seen ? { restored: true, removed } : { restored: false }
   } catch {

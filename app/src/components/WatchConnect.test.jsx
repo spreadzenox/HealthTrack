@@ -107,6 +107,14 @@ describe('WatchConnect', () => {
     expect(screen.getByRole('button', { name: 'Synchroniser la montre' })).toBeTruthy()
   })
 
+  it('données restaurées sur un nouveau téléphone : « À reconnecter » et bouton « Reconnecter ma montre »', () => {
+    localStorage.setItem('healthtrack_watch_autosync', JSON.stringify({ at: new Date().toISOString(), outcome: 'restored', everConnected: true }))
+    render(<WatchConnect connect={vi.fn()} troubleshooting={false} />)
+    expect(screen.getByText('À reconnecter')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Reconnecter ma montre' })).toBeTruthy()
+    expect(screen.queryByText('Diagnostic')).toBeNull()
+  })
+
   it('remonte le rapport final à la carte (journal commun)', async () => {
     localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: 'a', v2: 'b', v3: 'c' }))
     const onReport = vi.fn()
