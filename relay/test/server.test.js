@@ -215,17 +215,18 @@ test('crédits : un état rapporté par l\'app plus restrictif est gardé ; Vert
 test('Play Integrity : jeton transmis à la garde ; refus en enforce → 403 sans appeler le modèle ni consommer de quota', async () => {
   const calls = []
   const seen = []
-  const integrity = { check: async (id, token) => (seen.push({ id, token }), { ok: false, mode: 'enforce', status: 'rejected' }) }
+  const integrity = { check: async (id, token, opts) => (seen.push({ id, token, clientStatus: opts?.clientStatus }), { ok: false, mode: 'enforce', status: 'rejected' }) }
   await withServer({ vertex: okVertex(calls), integrity }, async (url) => {
-    const res = await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': INSTALL, 'X-Integrity-Token': 'jeton-integrite' })
+    const res = await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': INSTALL, 'X-Integrity-Token': 'jeton-integrite', 'X-Integrity-Status': 'timeout' })
     assert.equal(res.status, 403)
     const body = await res.json()
     assert.equal(body.error, 'integrity')
     assert.match(body.message, /Google Play/)
-    assert.deepEqual(seen, [{ id: INSTALL, token: 'jeton-integrite' }])
+    assert.deepEqual(seen, [{ id: INSTALL, token: 'jeton-integrite', clientStatus: 'timeout' }])
     assert.equal(calls.length, 0)
     const pre = await fetch(`${url}/v1/meal/analyze`, { method: 'OPTIONS', headers: { Origin: 'https://localhost' } })
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Integrity-Token/)
+    assert.match(pre.headers.get('access-control-allow-headers'), /X-Integrity-Status/)
   })
 })
 

@@ -42,14 +42,18 @@ export async function loadIntegrityPlugin() {
   }
 }
 
+/** Code d'erreur du plugin natif (StandardIntegrityErrorCode, ou UNKNOWN) ; jamais le message, qui est libre. */
+const ERROR_CODE = /^[A-Z0-9_-]{1,24}$/
+
 /**
- * Jeton Play Integrity neuf pour cette installation, ou null. Ne lève jamais : un échec ne doit pas empêcher
- * l'analyse.
+ * Jeton Play Integrity neuf pour cette installation, ou la raison de son absence (6b-2c-2) :
+ * `{ token, reason }` avec `reason` ∈ no_plugin | backoff | timeout | bad_token | error:<code>. Ne lève jamais : un
+ * échec ne doit pas empêcher l'analyse.
  */
-export async function getIntegrityToken(installId, { native, timeoutMs = INTEGRITY_TIMEOUT_MS, now = Date.now } = {}) {
-  if (now() < skipUntil) return null
+export async function requestIntegrity(installId, { native, timeoutMs = INTEGRITY_TIMEOUT_MS, now = Date.now } = {}) {
+  if (now() < skipUntil) return { token: null, reason: 'backoff' }
   const plugin = native === undefined ? await loadIntegrityPlugin() : native
-  if (!plugin) return null
+  if (!plugin) return { token: null, reason: 'no_plugin' }
   let timer
   try {
     const requestHash = await integrityRequestHash(installId)
@@ -59,12 +63,18 @@ export async function getIntegrityToken(installId, { native, timeoutMs = INTEGRI
     const result = await Promise.race([plugin.request({ requestHash }), timeout])
     if (result === 'timeout') {
       skipUntil = now() + INTEGRITY_BACKOFF_MS
-      return null
+      return { token: null, reason: 'timeout' }
     }
-    return typeof result?.token === 'string' && result.token ? result.token : null
-  } catch {
-    return null
+    return typeof result?.token === 'string' && result.token ? { token: result.token, reason: null } : { token: null, reason: 'bad_token' }
+  } catch (err) {
+    const code = String(err?.code ?? '')
+    return { token: null, reason: `error:${ERROR_CODE.test(code) ? code : 'UNKNOWN'}` }
   } finally {
     clearTimeout(timer)
   }
+}
+
+/** Jeton Play Integrity neuf pour cette installation, ou null. */
+export async function getIntegrityToken(installId, options) {
+  return (await requestIntegrity(installId, options)).token
 }

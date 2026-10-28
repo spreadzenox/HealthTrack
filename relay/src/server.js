@@ -165,7 +165,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       if (origin && origins.has(origin)) {
         headers['Access-Control-Allow-Origin'] = origin
         headers['Access-Control-Allow-Methods'] = 'POST, GET'
-        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token'
+        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status'
       }
       res.writeHead(204, headers)
       res.end()
@@ -256,7 +256,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       kind = request.kind
 
       if (integrity) {
-        const check = await integrity.check(installId, req.headers['x-integrity-token'])
+        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'] })
         if (!check.ok) throw new HttpError(403, 'integrity', INTEGRITY_MESSAGE)
       }
 

@@ -9,7 +9,7 @@
 import { loadNutritionTable } from '../data/nutritionTable'
 import { prepareImageForGemini } from './imagePrep.js'
 import { MEAL_TEXT_MAX_LENGTH, toMealResult } from './geminiStandalone.js'
-import { getIntegrityToken } from './playIntegrity.js'
+import { requestIntegrity } from './playIntegrity.js'
 import { appLocale } from '../i18n/locale.js'
 
 export const RELAY_URL = (import.meta.env?.VITE_RELAY_URL || 'https://halcya-relay-81378799481.europe-west1.run.app')
@@ -145,11 +145,14 @@ export async function refreshCredits({ fetchImpl = globalThis.fetch, timeoutMs =
 
 const NETWORK_MESSAGE = "Pas de connexion au service d’analyse IA. Vérifiez votre connexion et réessayez."
 
-async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = getIntegrityToken } = {}) {
+async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = requestIntegrity } = {}) {
   const headers = { 'Content-Type': 'application/json', ...relayHeaders() }
-  // Jeton Play Integrity (variante play) : le relais vérifie que la demande vient de l'app Google Play (6b-2b)
-  const integrityToken = await integrity(headers['X-Install-Id'])
+  // Jeton Play Integrity (variante play) : le relais vérifie que la demande vient de l'app Google Play (6b-2b) ;
+  // sans jeton, seulement la raison (délai, code d'erreur de Google Play) pour son bilan avant « enforce » (6b-2c-2)
+  const result = await integrity(headers['X-Install-Id'])
+  const integrityToken = typeof result === 'string' ? result : result?.token
   if (integrityToken) headers['X-Integrity-Token'] = integrityToken
+  else if (result?.reason) headers['X-Integrity-Status'] = result.reason
   const controller = typeof AbortController === 'function' ? new AbortController() : null
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
   let res

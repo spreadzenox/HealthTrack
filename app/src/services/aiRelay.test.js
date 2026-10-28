@@ -44,6 +44,16 @@ describe('relais Halcya (variante play)', () => {
     expect(fetchImpl.mock.calls[1][1].headers).not.toHaveProperty('X-Integrity-Token')
   })
 
+  it('sans jeton, envoie seulement la raison (X-Integrity-Status) pour le bilan du relais', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(okResponse({ parsed: { not_food: false, ingredients: [] }, model: 'm', quota: null }))
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve({ token: null, reason: 'timeout' }) })
+    expect(fetchImpl.mock.calls[0][1].headers['X-Integrity-Status']).toBe('timeout')
+    expect(fetchImpl.mock.calls[0][1].headers).not.toHaveProperty('X-Integrity-Token')
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve({ token: 'jeton-integrity', reason: null }) })
+    expect(fetchImpl.mock.calls[1][1].headers['X-Integrity-Token']).toBe('jeton-integrity')
+    expect(fetchImpl.mock.calls[1][1].headers).not.toHaveProperty('X-Integrity-Status')
+  })
+
   it('texte : description tronquée à 500 caractères, vide refusée sans appel', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(okResponse({ parsed: { not_food: false, ingredients: [] }, model: 'm', quota: null }))
     await analyzeTextViaRelay('a'.repeat(600), { fetchImpl })

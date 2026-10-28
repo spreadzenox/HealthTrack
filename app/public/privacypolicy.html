@@ -147,8 +147,9 @@
     sur le téléphone : le serveur le fait lire par Google pour vérifier que l'app a bien été installée depuis Google
     Play, sur un appareil certifié (c'est ce qui protège les analyses offertes contre les abus). Ce jeton ne contient
     aucune de vos données de santé ; le serveur n'en garde que le résultat (accepté ou non), en mémoire, au plus une
-    journée. Pour fabriquer ce jeton, Google Play utilise des informations sur l'appareil, selon ses propres
-    conditions.
+    journée. Quand Google Play ne fournit pas de jeton, l'app indique seulement pourquoi (délai dépassé ou code
+    d'erreur de Google Play), pour que nous vérifiions que cette protection ne gêne pas de vrais utilisateurs.
+    Pour fabriquer ce jeton, Google Play utilise des informations sur l'appareil, selon ses propres conditions.
     Rien d'autre n'est envoyé : ni votre ventre, ni votre sommeil, ni vos autres mesures. Sans analyse lancée,
     rien ne part. (Dans la version installée hors Google Play, l'analyse utilise à la place la clé Gemini que
     vous saisissez dans les paramètres, et Google traite la demande selon ses propres conditions.)
