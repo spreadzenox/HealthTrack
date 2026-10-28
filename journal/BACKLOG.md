@@ -1251,7 +1251,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   l'onglet Analyses » alors qu'Analyses montre déjà 2 pistes solides → « 2 pistes repérées » + la première en une
   ligne (aperçu flou hors premium, comme Analyses), toucher = Analyses. Retirer les deux boutons contour « Vos derniers
   jours, dans le Journal » / « Vos tendances, dans le Journal » (doublons de la barre d'onglets, bas de page chargé).
-- [ ] **POL-PLAY-22** Analyses, « Autres liens repérés » : la vue simple affiche les statistiques en mono (« 30 jours
+- [x] **POL-PLAY-22** (28/10 11:33 ; `LinkCard` à chevron, en-tête sans « week-end ») Analyses, « Autres liens repérés » : la vue simple affiche les statistiques en mono (« 30 jours
   avec · 44 sans · déduit de vos séances (début après 18 h) · week-end à part : +0,8 », « r = +0,48 · ≈ 63 jours
   indépendants ») → une phrase + l'étiquette, chiffres derrière le chevron (principe « simple d'abord » du 24/10) ;
   en-tête « … · week-end pris en compte » dans les détails ; « « visage » : comparé à votre bien-être estimé par la
