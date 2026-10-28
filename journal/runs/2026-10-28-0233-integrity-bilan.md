@@ -42,3 +42,13 @@
 - Le déploiement du relais (push sur main) lira le bilan ; quelques jours après la version play suivante, lire les
   lignes « téléphones » : `enforce` seulement si tout passe ; `timeout` récurrent → rester en `observe`.
 - Polissage : POL-PLAY-11 (alpha après une journée sans plantage dans Android vitals, `shrinkResources` à part).
+
+## Après le merge (#451, `01df703`)
+- Build & Release **v329** publiée (APK 34,9 Mo), Tests, Pages, Play — AAB et Relais — déploiement verts.
+- Nouveau bilan (02:0x UTC) : `CI · missing · none` (1) ; `— · missing` 52 installations / 60 (événements d'avant
+  6b-2c-2) ; `— · passed` 1. Les lignes « téléphones » viendront avec la prochaine version play installée.
+- **À surveiller** : « Nouvelles installations qui prennent leur 1er crédit IA » = **21 en 7 jours** hors CI
+  (25/10 : 2, 26/10 : 10, 27/10 : 9) alors que seul le propriétaire a la version play. Hypothèse : robots des rapports
+  de pré-lancement de Google Play (appareils de test qui parcourent l'app à chaque version envoyée) ; à vérifier au
+  prochain run (Play Console → Tests → Rapport de pré-lancement, ou l'origine `ci`/`client` des prochains événements).
+  Sans effet sur la facture (plafonds du relais) ; si ce n'est pas ça, envisager 5 crédits offerts (CREDITS-INSTALLS).
