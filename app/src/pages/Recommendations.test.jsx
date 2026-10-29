@@ -973,6 +973,29 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
     expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
   })
 
+  it('explains the « visage » label only when a link shows it', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    // La VFC va avec les notes comme avec le visage : le lien « notes » l'emporte, le visage n'est plus qu'une
+    // ligne « aussi », sans étiquette à expliquer.
+    const entries = []
+    for (let i = 0; i < 30; i++) {
+      const wave = Math.sin(i * 1.7)
+      const day = (h) => new Date(2026, 8, 1 + i, h).toISOString()
+      entries.push({ type: 'heart_rate', source: 'health_connect', at: day(3), payload: { subtype: 'heartRateVariability', value: 45 + 15 * wave } })
+      entries.push({ type: 'wellbeing', source: 'app_wellbeing', at: day(21), payload: { score: Math.round(3 + 1.8 * wave) } })
+      for (let k = 0; k < 3; k++) {
+        entries.push({ type: 'face_burst', source: 'face_sense', at: day(8 + k), payload: { v: 1, trigger: 'unlock', frames: 3, valid: 3, values: { ...NEUTRAL, valence: 0.5 * wave + 0.3 * Math.cos(i * 2.3), arousal: 0 } } })
+      }
+    }
+    listEntriesForAnalysis.mockResolvedValue(entries)
+    renderPage()
+    const section = await screen.findByTestId('reco-links', {}, { timeout: 4000 })
+    expect(section).toHaveTextContent('Variabilité cardiaque')
+    expect(section).toHaveTextContent('Se retrouve aussi avec votre bien-être estimé')
+    expect(section.querySelector('.reco-link-src')).toBeNull()
+    expect(section).not.toHaveTextContent('Étiquette « visage »')
+  })
+
   it('shows the habits compared to the estimated mood, without the felt stress and without any lever', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     const entries = faceHistory(42).filter((e) => e.type !== 'face_burst')

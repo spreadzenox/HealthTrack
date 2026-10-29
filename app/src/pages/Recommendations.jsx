@@ -438,12 +438,15 @@ function LinksSection({ analysis, levers = [] }) {
   )
   const more = clear.length - LINKS_SHOWN
   const faceDays = analysis.faceMood?.status === 'ok' ? analysis.faceMood.faceDays : null
+  // L'étiquette « visage » ne s'explique qu'au-dessus d'une liste qui la montre (pas pour une ligne « aussi »).
+  const hasFace = (ls) => faceDays != null && ls.some((l) => l.source === 'visage')
+  const faceHint = (
+    <p className="reco-section-hint">Étiquette « visage » : lien repéré avec votre bien-être estimé par la caméra ({faceDays} jours).</p>
+  )
   return (
     <section className="reco-section" data-testid="reco-links">
       <h3 className="reco-section-title">{leverVariables.size > 0 ? 'Autres liens repérés' : 'Liens repérés'}</h3>
-      {faceDays != null && (
-        <p className="reco-section-hint">Étiquette « visage » : lien repéré avec votre bien-être estimé par la caméra ({faceDays} jours).</p>
-      )}
+      {hasFace(clear) && faceHint}
       {clear.length > 0 ? list(clear.slice(0, LINKS_SHOWN)) : (
         <p className="reco-empty-levers">
           Aucun {leverVariables.size > 0 ? 'autre ' : ''}lien net pour l’instant : continuez à noter votre bien-être.
@@ -461,6 +464,7 @@ function LinksSection({ analysis, levers = [] }) {
             {uncertain.length === 1 ? 'Voir le lien incertain' : 'Voir les liens incertains'}
           </summary>
           <p className="reco-section-hint">Trop tôt pour dire : peut-être le hasard.</p>
+          {!hasFace(clear) && hasFace(uncertain) && faceHint}
           {list(uncertain)}
         </details>
       )}
