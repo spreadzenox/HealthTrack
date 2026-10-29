@@ -118,7 +118,7 @@ describe('Recommendations page', () => {
   it('shows the same lilac card as the home page when there is no data, without tabs nor jargon', async () => {
     const { container } = renderPage()
     expect(await screen.findByText(/Vos pistes arrivent dans 21 jours/i)).toBeInTheDocument()
-    expect(screen.getByText(/0\/21 jours avec un repas ou une note du ventre/)).toBeInTheDocument()
+    expect(container.querySelector('.pistes-count')).toHaveTextContent(/0\/21 jours avec un repas ou une note du ventre/)
     expect(screen.getByText(/On préfère attendre plutôt que de vous montrer de faux suspects/)).toBeInTheDocument()
     // VC-12 : un seul seuil visible sous la carte lilas
     expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
