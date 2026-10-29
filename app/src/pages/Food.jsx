@@ -10,6 +10,7 @@ import { shortFoodName } from '../utils/format'
 import { groupMealsByDay, dayHeading } from '../services/dailyJournal'
 import MealEditor from '../components/MealEditor'
 import DeleteEntryButton from '../components/DeleteEntryButton'
+import EntryActionsToggle from '../components/EntryActionsToggle'
 import { isDeletableEntry } from '../utils/entries'
 import { itemForStorage, mealKcal } from '../services/mealEditing'
 import SavedMealEditor from '../components/SavedMealEditor'
@@ -26,6 +27,44 @@ const MORE_DAYS = 7
 
 function timeOf(at) {
   return new Date(at).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
+}
+
+/**
+ * Un repas enregistré : ses ingrédients, et « Refaire · Modifier · Supprimer » repliés derrière « ⋯ » (POL-PLAY-50,
+ * comme le Journal depuis POL-PLAY-27) pour ne pas répéter trois liens sous chaque repas.
+ */
+function MealRow({ e, onRedo, onEdit, onDeleted }) {
+  const [open, setOpen] = useState(false)
+  const items = e.payload?.items || []
+  const deletable = isDeletableEntry(e)
+  const hasActions = items.length > 0 || deletable
+  const run = (action) => () => { setOpen(false); action() }
+  return (
+    <div className={`entry-card-row${!open ? ' entry-card-row-closed' : ' entry-card-row-stacked'}`}>
+      <ul className="meal-items inline-list">
+        {items.slice(0, 6).map((item, i) => (
+          <li key={i} title={item.ingredient}>{shortFoodName(item.ingredient)}{'\u00a0'}: {item.quantity}</li>
+        ))}
+        {items.length > 6 && <li className="meal-more">+{items.length - 6}</li>}
+      </ul>
+      {open && items.length > 0 && (
+        <div className="entry-edit">
+          <button type="button" className="entry-delete-btn" onClick={run(onRedo)} aria-label="Refaire ce repas">
+            Refaire
+          </button>
+        </div>
+      )}
+      {open && deletable && (
+        <div className="entry-edit">
+          <button type="button" className="entry-delete-btn" onClick={run(onEdit)} aria-label="Modifier ce repas">
+            Modifier
+          </button>
+        </div>
+      )}
+      {open && deletable && <DeleteEntryButton entryId={e.id} label="ce repas" onDeleted={onDeleted} />}
+      {hasActions && <EntryActionsToggle open={open} label="ce repas" onToggle={() => setOpen((o) => !o)} />}
+    </div>
+  )
 }
 
 export default function Food() {
@@ -397,47 +436,12 @@ export default function Food() {
                           }}
                         />
                       ) : (
-                        <div className="entry-card-row">
-                          <ul className="meal-items inline-list">
-                            {e.payload?.items?.slice(0, 6).map((item, i) => (
-                              <li key={i} title={item.ingredient}>{shortFoodName(item.ingredient)}{'\u00a0'}: {item.quantity}</li>
-                            ))}
-                            {e.payload?.items?.length > 6 && (
-                              <li className="meal-more">+{e.payload.items.length - 6}</li>
-                            )}
-                          </ul>
-                          {e.payload?.items?.length > 0 && (
-                            <div className="entry-edit">
-                              <button
-                                type="button"
-                                className="entry-delete-btn"
-                                onClick={() => redo(e.payload)}
-                                aria-label="Refaire ce repas"
-                              >
-                                Refaire
-                              </button>
-                            </div>
-                          )}
-                          {isDeletableEntry(e) && (
-                            <div className="entry-edit">
-                              <button
-                                type="button"
-                                className="entry-delete-btn"
-                                onClick={() => setEditingId(e.id)}
-                                aria-label="Modifier ce repas"
-                              >
-                                Modifier
-                              </button>
-                            </div>
-                          )}
-                          {isDeletableEntry(e) && (
-                            <DeleteEntryButton
-                              entryId={e.id}
-                              label="ce repas"
-                              onDeleted={(id) => setRecentMeals((meals) => meals.filter((m) => m.id !== id))}
-                            />
-                          )}
-                        </div>
+                        <MealRow
+                          e={e}
+                          onRedo={() => redo(e.payload)}
+                          onEdit={() => setEditingId(e.id)}
+                          onDeleted={(id) => setRecentMeals((meals) => meals.filter((m) => m.id !== id))}
+                        />
                       )}
                       {showFodmap && editingId !== e.id && <MealFodmapLine items={e.payload?.items} />}
                     </li>

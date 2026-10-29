@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import WellbeingPrompt from './WellbeingPrompt'
+import EntryActionsToggle from './EntryActionsToggle'
 import DeleteEntryButton from './DeleteEntryButton'
 import SavedMealEditor from './SavedMealEditor'
 import JournalEmpty from './JournalEmpty'
@@ -190,7 +191,7 @@ function CigaretteGroupRow({ group }) {
             label={`la dernière cigarette (${timeOf(lastDeletable.at)})`}
           />
         )}
-        {lastDeletable && <ActionsToggle open={open} label="ces cigarettes" onToggle={() => setOpen((o) => !o)} />}
+        {lastDeletable && <EntryActionsToggle open={open} label="ces cigarettes" onToggle={() => setOpen((o) => !o)} />}
       </div>
     </li>
   )
@@ -257,26 +258,6 @@ function MealButtons({ e, onEditMeal, onRedoMeal }) {
   )
 }
 
-/**
- * « ⋯ » : les actions d'une saisie (Refaire, Modifier, Supprimer) restent repliées derrière un seul bouton discret,
- * plutôt que visibles sur chaque ligne du jour (POL-PLAY-27).
- */
-function ActionsToggle({ open, label, onToggle }) {
-  return (
-    <div className={`entry-edit${open ? ' entry-actions-close' : ''}`}>
-      <button
-        type="button"
-        className="entry-delete-btn entry-actions-toggle"
-        aria-expanded={open}
-        aria-label={open ? `Fermer les actions de ${label}` : `Actions pour ${label}`}
-        onClick={onToggle}
-      >
-        <span aria-hidden>{open ? '✕' : '⋯'}</span>
-      </button>
-    </div>
-  )
-}
-
 function hasActions(e) {
   return isDeletableEntry(e) || (e.type === 'food' && e.payload?.items?.length > 0)
 }
@@ -286,7 +267,7 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
   const label = DELETE_LABELS[e.type] || 'cette entrée'
   const editWellbeing = (entry) => { setOpen(false); onEdit(entry) }
   const editMeal = (id) => { setOpen(false); onEditMeal(id) }
-  const toggle = hasActions(e) && <ActionsToggle open={open} label={label} onToggle={() => setOpen((o) => !o)} />
+  const toggle = hasActions(e) && <EntryActionsToggle open={open} label={label} onToggle={() => setOpen((o) => !o)} />
   const withBody = hasBody(e, measuredScreen)
   return (
     <li className="entry-card" data-type={e.type}>

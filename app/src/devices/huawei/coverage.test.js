@@ -51,7 +51,7 @@ describe('watchCoverage (écran « Montre », M5)', () => {
     expect(row(rows, 'skinTemp').last.value).toBe('33,7 °C')
     expect(row(rows, 'resp').last.value).toBe('14,2 /min')
     expect(row(rows, 'spo2').last.value).toBe('97 %')
-    expect(row(rows, 'stress')).toMatchObject({ status: 'ok', count: 2, last: { value: '31 / 99' } })
+    expect(row(rows, 'stress')).toMatchObject({ status: 'ok', count: 2, last: { value: '31 · normal' } })
     expect(row(rows, 'hr')).toMatchObject({ status: 'ok', last: { value: '70 bpm' } })
     expect(row(rows, 'restingHr').last.value).toBe('55 bpm')
     // Le total du jour rendu par la montre l'emporte sur la somme des heures
