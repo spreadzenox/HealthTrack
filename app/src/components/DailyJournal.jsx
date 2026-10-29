@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import WellbeingPrompt from './WellbeingPrompt'
 import DeleteEntryButton from './DeleteEntryButton'
 import SavedMealEditor from './SavedMealEditor'
+import JournalEmpty from './JournalEmpty'
 import { groupCigarettes, isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
 import { formatDuration, workoutTypeLabel, workoutDetailParts, shortFoodName } from '../utils/format'
@@ -451,10 +452,7 @@ export default function DailyJournal() {
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
       {!loading && !error && (days.length === 0 ? (
-        <p className="empty-hint">
-          Aucune donnée pour l’instant. Notez votre ventre depuis <Link to="/">Aujourd’hui</Link> ou{' '}
-          <Link to="/food">enregistrez un repas</Link> pour commencer.
-        </p>
+        <JournalEmpty />
       ) : (
         <>
           <ul className="day-list">

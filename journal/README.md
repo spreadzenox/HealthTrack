@@ -279,6 +279,9 @@
 - **Sources : « Ce que lit Halcya »** (29/10 17:37) — les sources branchées (météo, Health Connect, visage, temps
   d'écran) ont leur propre titre au lieu de suivre « Mes appareils » comme si c'étaient des appareils. **À tester** :
   onglet Sources, vérifier que vos sources actives sont sous « Ce que lit Halcya ».
+- **Journal : un départ en couleur** (29/10 18:33) — tant que rien n'est noté, le Journal propose trois tuiles
+  pastel (photo du repas, ventre — ou bien-être si le ventre n'est pas votre objectif —, ajouter une source) au lieu
+  d'une phrase grise qui parlait du ventre même sans carte ventre.
 - **Analyses : moins de texte inutile** (29/10 15:00) — la phrase qui explique l'étiquette « visage » ne s'affiche
   plus quand aucun lien ne la porte, et « Comment c'est calculé » se fait discret, centré tout en bas. **À tester** :
   rien de particulier, un coup d'œil au bas de l'onglet Analyses.
@@ -507,6 +510,7 @@ semoule, couscous, boulgour, topinambour (595 aliments) ; **✅ 29/10 12:33 (N3g
 | 29/10 10:33 — [Fructanes des aliments courants](runs/2026-10-29-1033-fructanes-courants.md) | 🔬 | N3e : 49 entrées Ferjančič 2024 (générateur reproductible, « ND » en limite prudente), fructanes et GOS nuls sans glucides ni fibres ; fructanes connus 20 → 573 aliments ; 10 tests |
 | 29/10 17:00 — [Rapport PDF : zéros trompeurs](runs/2026-10-29-1700-rapport-pdf.md) | 🎨 | POL-PLAY-44 (audit du rapport PDF sur démo et vierge, carte en période de lancement) : « pas encore assez de notes » au lieu de « aucun lien » (statut `too_early` mal lu), semaines sans note en « – », pas de tableau ni de « 0 comparaisons » sans notes ; 1 test neuf, 1 renforcé |
 | 29/10 17:37 — [Sources : titre des sources actives](runs/2026-10-29-1737-sources-titre.md) | 🎨 | POL-PLAY-45 (audit Sources et Paramètres play, démo sombre et vierge clair) : sources actives sous « Ce que lit Halcya » au lieu de suivre « Mes appareils » ; Paramètres : rien à redire ; 1 test |
+| 29/10 18:33 — [Journal vierge en couleur](runs/2026-10-29-1833-journal-vide.md) | 🎨 | POL-PLAY-46 (audit Accueil et Journal play vierge sombre) : trois tuiles pastel au lieu d'une phrase grise ; plus de « ventre » sans carte ventre ; POL-PLAY-47 noté ; 2 tests |
 | 29/10 15:00 — [Analyses : légende et pied de page](runs/2026-10-29-1500-analyses-pied-de-page.md) | 🎨 | POL-PLAY-42 (audit Analyses play démo, clair et sombre) : légende « visage » seulement si un lien la porte ; « Comment c'est calculé » centré, gris ; 1 test |
 | 29/10 16:00 — [Réintroduction : aliments de test](runs/2026-10-29-1600-reintroduction-aliments.md) | 🎨 | POL-PLAY-43 (audit Réintroduction play, lancement) : sorbitol → pruneaux secs, mannitol → champignons poêlés (avocat, mûres, chou-fleur sous le repère d'après Ciqual) ; avocat gardé lisible ; « Lait (lait) » → « Lait » ; test de cohérence avec la table |
 | 29/10 13:41 — [Fer de l'oignon cru](runs/2026-10-29-1341-fer-oignon.md) | 🔬 | N2c : erreur d'unité de Ciqual 2025 (oignon cru, fer 0,00019 mg) → inconnue, liste `suspects.mjs` testée ; table reproduite à l'octet près depuis Zenodo ; relecture de tous les micronutriments (seul cas) ; 4 tests |

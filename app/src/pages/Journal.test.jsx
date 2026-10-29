@@ -135,8 +135,8 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
   it('shows empty hint when no entries', async () => {
     renderJournal()
     await screen.findByText(/Vos derniers jours/i)
-    expect(screen.getByText(/Aucune donnée/)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Enregistrez un repas/i })).toHaveAttribute('href', '/food')
+    expect(await screen.findByText('Rien de noté pour l’instant')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Photographier un repas/i })).toHaveAttribute('href', '/food')
   })
 
   async function renderEntries(entries) {
