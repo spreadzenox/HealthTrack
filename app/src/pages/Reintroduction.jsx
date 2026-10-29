@@ -211,7 +211,7 @@ function Prepare({ group, food, start, onBack, onStart, busy }) {
               <span>{parsed[i] > 1 ? plan.units : plan.unit}</span>
             </label>
           ))}
-          <p className="fodmap-tag mono">repère général, à adapter avec votre diététicienne</p>
+          <p className="fodmap-plan-note">Repère général, à adapter avec votre diététicienne.</p>
         </fieldset>
         <ul className="fodmap-tips">
           <li>Pendant ces 3 jours, plutôt pas de repas dehors.</li>
