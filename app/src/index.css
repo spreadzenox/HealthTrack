@@ -21,6 +21,13 @@ body {
   padding: var(--safe-top) 0 var(--safe-bottom);
 }
 
+/* Titres en lignes équilibrées : pas de mot seul sur la dernière ligne (« à « je / comprends » », POL-PLAY-36). */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
 /* Fond opaque sous la barre d'état : le contenu qui défile ne passe pas sous l'heure et les icônes. */
 body::before {
   content: '';
