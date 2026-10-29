@@ -80,6 +80,25 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     expect(await screen.findByRole('button', { name: /Lactose/ })).toBeInTheDocument()
   })
 
+  it('titre de la préparation : la précision seulement si elle dit autre chose que le nom', async () => {
+    renderPage(makeStore())
+    fireEvent.click(await screen.findByRole('button', { name: /Lactose/ }))
+    expect(screen.getByRole('heading', { level: 3, name: 'Lait' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /autre groupe/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /Sorbitol/ }))
+    expect(screen.getByRole('heading', { level: 3, name: 'Pruneaux (pruneaux secs)' })).toBeInTheDocument()
+  })
+
+  it('un lien vers un aliment retiré (avocat) ouvre le choix du groupe, sans avocat', async () => {
+    render(
+      <MemoryRouter initialEntries={['/reintroduction?groupe=sorbitol&aliment=avocado']}>
+        <Reintroduction now={NOW} store={makeStore()} />
+      </MemoryRouter>,
+    )
+    expect(await screen.findByRole('button', { name: /Sorbitol/ })).toHaveTextContent('pruneaux, prunes')
+    expect(document.body.textContent).not.toMatch(/avocat/i)
+  })
+
   it('7c : un lien inconnu ouvre simplement le choix du groupe', async () => {
     render(
       <MemoryRouter initialEntries={['/reintroduction?groupe=fructans&aliment=pomme']}>

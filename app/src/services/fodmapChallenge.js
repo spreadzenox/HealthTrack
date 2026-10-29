@@ -36,38 +36,57 @@ export const FODMAP_GROUPS = [
     id: 'fructans', label: 'Fructanes', hint: 'blé, oignon, ail', perFood: true,
     foods: [
       { id: 'wheat', label: 'Blé', example: 'pain de blé', amount: 1, unit: 'tranche', units: 'tranches',
+        reference: { ingredient: 'Pain (aliment moyen)', grams: 30 },
         words: ['blé', 'pain', 'baguette', 'pâte', 'semoule', 'couscous', 'biscotte', 'croissant', 'brioche'], not: ['sans gluten'] },
       { id: 'onion', label: 'Oignon', example: 'oignon cuit', amount: 1, unit: 'cuillère à soupe', units: 'cuillères à soupe',
+        reference: { ingredient: 'Oignon blanc ou jaune, sauté/poêlé sans matière grasse', grams: 15 },
         words: ['oignon', 'échalote'] },
-      { id: 'garlic', label: 'Ail', example: 'ail', amount: 0.5, unit: 'gousse', units: 'gousses', words: ['ail'] },
+      { id: 'garlic', label: 'Ail', example: 'ail', amount: 0.5, unit: 'gousse', units: 'gousses',
+        reference: { ingredient: 'Ail, cru', grams: 2.5 }, words: ['ail'] },
     ],
   },
   {
     id: 'gos', label: 'GOS', hint: 'pois chiches, lentilles',
     foods: [{ id: 'chickpeas', label: 'Pois chiches', example: 'pois chiches cuits', amount: 40, unit: 'g', units: 'g',
+      reference: { ingredient: 'Pois chiche, appertisé, égoutté', grams: 40 },
       words: ['pois chiche', 'lentille', 'houmous', 'haricot rouge'] }],
   },
   {
     id: 'fructose', label: 'Fructose', hint: 'miel, mangue',
     foods: [{ id: 'honey', label: 'Miel', example: 'miel', amount: 1, unit: 'cuillère à café', units: 'cuillères à café',
-      words: ['miel', 'mangue'] }],
+      reference: { ingredient: 'Miel', grams: 7 }, words: ['miel', 'mangue'] }],
   },
   {
     id: 'lactose', label: 'Lactose', hint: 'lait, yaourt',
     foods: [{ id: 'milk', label: 'Lait', example: 'lait', amount: 125, unit: 'ml', units: 'ml',
+      reference: { ingredient: 'Lait demi-écrémé, UHT', grams: 125 },
       words: ['lait', 'yaourt', 'yogourt', 'fromage blanc'], not: ['coco', 'amande', 'avoine', 'soja', 'riz', 'sans lactose'] }],
   },
   {
-    id: 'sorbitol', label: 'Sorbitol', hint: 'avocat, mûres',
-    foods: [{ id: 'avocado', label: 'Avocat', example: 'avocat', amount: 0.25, unit: 'avocat', units: 'avocat',
-      words: ['avocat', 'mûre'] }],
+    // Avocat et mûres retirés le 29/10 : Ciqual 2025 y mesure moins de 0,5 g de polyols pour 100 g (le test n'aurait
+    // rien apporté). `retired` : plus proposé ni relié aux pistes, mais un ancien test reste lisible.
+    id: 'sorbitol', label: 'Sorbitol', hint: 'pruneaux, prunes',
+    foods: [
+      { id: 'prunes', label: 'Pruneaux', example: 'pruneaux secs', amount: 1, unit: 'pruneau', units: 'pruneaux',
+        reference: { ingredient: 'Pruneau, sans noyau, sec', grams: 8 }, words: ['pruneau', 'prune'] },
+      { id: 'avocado', label: 'Avocat', example: 'avocat', amount: 0.25, unit: 'avocat', units: 'avocat', retired: true,
+        reference: { ingredient: 'Avocat', grams: 40 }, words: [] },
+    ],
   },
   {
-    id: 'mannitol', label: 'Mannitol', hint: 'champignons, chou-fleur',
-    foods: [{ id: 'mushrooms', label: 'Champignons', example: 'champignons de Paris', amount: 40, unit: 'g', units: 'g',
-      words: ['champignon', 'chou fleur'] }],
+    // Chou-fleur retiré du conseil le 29/10 (Ciqual 2025 : moins de 0,5 g de polyols pour 100 g) ; champignons de
+    // Paris cuits (Ciqual 3 g de polyols pour 100 g poêlés ; le cru, 0,28 g, n'atteindrait pas le repère).
+    id: 'mannitol', label: 'Mannitol', hint: 'champignons, pois mange-tout',
+    foods: [{ id: 'mushrooms', label: 'Champignons', example: 'champignons de Paris poêlés', amount: 40, unit: 'g', units: 'g',
+      reference: { ingredient: 'Champignon de Paris ou champignon de couche, sauté/poêlé, sans matière grasse', grams: 40 },
+      words: ['champignon', 'pois mange tout', 'pois gourmand'] }],
   },
 ]
+
+/** Groupes avec les seuls aliments encore proposés (sans les aliments retirés, gardés pour lire les anciens tests). */
+export function pickableGroups() {
+  return FODMAP_GROUPS.map((g) => ({ ...g, foods: g.foods.filter((f) => !f.retired) }))
+}
 
 /** Verdicts, du plus prudent au plus favorable. */
 export const VERDICTS = {
@@ -107,10 +126,13 @@ function hasPhrase(words, phrase) {
  */
 export function challengeFoodFor(factor) {
   const group = typeof factor === 'string' && factor.startsWith('fodmap:') ? findGroup(factor.slice(7)) : null
-  if (group) return { group: group.id, food: group.foods.length === 1 ? group.foods[0].id : null }
+  if (group) {
+    const foods = group.foods.filter((f) => !f.retired)
+    return { group: group.id, food: foods.length === 1 ? foods[0].id : null }
+  }
   const words = plainWords(factor)
   if (words.length === 0) return null
-  for (const g of FODMAP_GROUPS) {
+  for (const g of pickableGroups()) {
     for (const f of g.foods) {
       if ((f.not ?? []).some((p) => hasPhrase(words, p))) continue
       if (f.words.some((p) => hasPhrase(words, p))) return { group: g.id, food: f.id }
@@ -187,7 +209,8 @@ export function calmStreak(gutEntries, now = new Date(), { sinceKey = null } = {
 /** Crée un test (payload de l'entrée `fodmap_challenge`). */
 export function startChallenge({ group, food, plan }, now = new Date()) {
   const g = findGroup(group)
-  if (!g || !findFood(group, food)) throw new Error('Groupe ou aliment inconnu')
+  const f = findFood(group, food)
+  if (!g || !f || f.retired) throw new Error('Groupe ou aliment inconnu')
   const p = plan ?? defaultPlan(group, food)
   if (!Array.isArray(p?.amounts) || p.amounts.length !== CHALLENGE_DAYS || !p.amounts.every((a) => Number.isFinite(a) && a > 0)) {
     throw new Error('Trois portions positives attendues')

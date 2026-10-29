@@ -2,8 +2,11 @@ import { describe, it, expect } from 'vitest'
 import {
   FODMAP_CHALLENGE_SOURCE, FODMAP_CHALLENGE_TYPE, FODMAP_GROUPS, answerTolerable, calmStreak, canStartChallenge,
   challengeStatus, combinationsAvailable, defaultPlan, groupResults, recordDose, restartChallenge, startChallenge,
-  verdictSentence, challengeFoodFor, challengePath,
+  verdictSentence, challengeFoodFor, challengePath, findFood, findGroup, pickableGroups,
 } from './fodmapChallenge'
+import { estimateMealFodmap } from './fodmapGroups'
+import table from '../data/ingredientsNutrition.json'
+import measurements from '../data/fodmapMeasurements.json'
 import { LEGACY_FODMAP_FACTOR } from './gutWindows'
 import { parseBackup } from '../storage/localHealthStorage'
 
@@ -35,6 +38,29 @@ describe('repères et départ', () => {
       expect(g.foods.length).toBeGreaterThan(0)
       for (const f of g.foods) expect(f.amount).toBeGreaterThan(0)
     }
+  })
+
+  it('la portion du 3e jour atteint le repère du groupe d’après la table de l’app (jamais « bas »)', () => {
+    for (const g of pickableGroups()) {
+      for (const f of g.foods) {
+        const { ingredient, grams } = f.reference
+        expect(table[ingredient], ingredient).toBeTruthy()
+        const level = estimateMealFodmap([{ ingredient, quantity_g: grams * 3 }], table, measurements)[g.id].level
+        expect(level, `${g.id} / ${f.id}`).not.toBe('bas')
+      }
+    }
+    // sorbitol et mannitol : connus et au-dessus du repère dès le 1er jour
+    for (const id of ['sorbitol', 'mannitol']) {
+      const { ingredient, grams } = findFood(id, findGroup(id).foods.find((f) => !f.retired).id).reference
+      expect(estimateMealFodmap([{ ingredient, quantity_g: grams }], table, measurements)[id].level).toBe('élevé')
+    }
+  })
+
+  it('un ancien test d’avocat reste lisible, mais l’avocat n’est plus proposé', () => {
+    expect(findFood('sorbitol', 'avocado')).toMatchObject({ label: 'Avocat', retired: true })
+    expect(pickableGroups().find((g) => g.id === 'sorbitol').foods.map((f) => f.id)).toEqual(['prunes'])
+    expect(defaultPlan('sorbitol', 'prunes')).toMatchObject({ unit: 'pruneau', amounts: [1, 2, 3] })
+    expect(() => startChallenge({ group: 'sorbitol', food: 'avocado' })).toThrow()
   })
 
   it('refuse un groupe inconnu ou des portions invalides', () => {
@@ -237,14 +263,15 @@ describe('aliment d’une piste ventre → groupe à tester (7c)', () => {
     ['miel', 'fructose', 'honey'],
     ['lait demi-écrémé', 'lactose', 'milk'],
     ['yaourt nature', 'lactose', 'milk'],
-    ['avocat', 'sorbitol', 'avocado'],
+    ['pruneaux', 'sorbitol', 'prunes'],
+    ['prune reine-claude', 'sorbitol', 'prunes'],
     ['champignons de paris', 'mannitol', 'mushrooms'],
-    ['chou-fleur', 'mannitol', 'mushrooms'],
+    ['pois mange-tout', 'mannitol', 'mushrooms'],
   ])('%s → %s / %s', (factor, group, food) => {
     expect(challengeFoodFor(factor)).toEqual({ group, food })
   })
 
-  it.each(['lait de coco', 'boisson à l’avoine', 'pain sans gluten', 'volaille', 'riz', 'café', LEGACY_FODMAP_FACTOR, 'fodmap:inconnu', ''])(
+  it.each(['avocat', 'mûres', 'chou-fleur', 'lait de coco', 'boisson à l’avoine', 'pain sans gluten', 'volaille', 'riz', 'café', LEGACY_FODMAP_FACTOR, 'fodmap:inconnu', ''])(
     'rien pour « %s »', (factor) => {
       expect(challengeFoodFor(factor)).toBeNull()
     })
@@ -253,7 +280,7 @@ describe('aliment d’une piste ventre → groupe à tester (7c)', () => {
     ['fodmap:lactose', 'lactose', 'milk'],
     ['fodmap:gos', 'gos', 'chickpeas'],
     ['fodmap:fructose', 'fructose', 'honey'],
-    ['fodmap:sorbitol', 'sorbitol', 'avocado'],
+    ['fodmap:sorbitol', 'sorbitol', 'prunes'],
     ['fodmap:mannitol', 'mannitol', 'mushrooms'],
     ['fodmap:fructans', 'fructans', null],
   ])('piste du sous-groupe %s → test du même groupe (N5)', (factor, group, food) => {
