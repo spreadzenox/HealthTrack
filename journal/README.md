@@ -429,6 +429,15 @@ lent, code d'erreur de Google Play) et le bilan sépare « CI » et « télépho
 (elle ne bloque personne) ; on ne la durcira que si les vrais téléphones passent tous, quelques jours après la
 prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de repas de temps en temps.
 
+**FODMAP : les chiffres revérifiés (run « idées » du 29/10 08:33).** En relisant les mesures publiées, un vrai
+défaut : les repères « riche en … » viennent des mesures de l'équipe de Monash, mais pour le pain et le poireau la table
+utilise une autre étude, 7 à 15 fois plus basse. Résultat : un sandwich ou une soupe de poireaux sont aujourd'hui dits
+« pauvres en fructanes », et ces jours-là ne comptent pas pour la piste « fructanes → ventre ». Les études divergent
+vraiment (la fermentation du pain détruit plus de la moitié des fructanes), donc le prochain run de code affichera une
+fourchette (« 0,1 à 0,8 g selon les mesures publiées », « probablement riche ») au lieu d'un faux « pauvre ». Ensuite,
+une quarantaine d'aliments courants aujourd'hui « inconnus » (riz, pommes de terre, carottes, semoule, pruneaux,
+chou-fleur…) recevront une valeur publiée et citée, tirée d'études en accès libre.
+
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
 🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
@@ -452,6 +461,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
+| 29/10 08:33 — [Idées : FODMAP fiables](runs/2026-10-29-0833-idees-fodmap-fiables.md) | 💡 | pain et poireau comptés « bas en fructanes » à cause d'une seule source 7 à 15 fois plus basse que celle des repères ; N3d (fourchette), N3e et N3f (aliments courants, Liljebo 2020 CC BY / CC0) préparés ; journal seul |
 | 29/10 07:33 — [Enregistrer un repas](runs/2026-10-29-0733-enregistrer-repas.md) | 🎨 | audit de l'analyse photo play et du repas décrit (POL-PLAY-12, clair et sombre) ; POL-PLAY-41 (ligne FODMAP en phrase, « Enregistrer ce repas » sur toute la ligne) ; 2 tests |
 | 29/10 06:33 — [Source du « aha »](runs/2026-10-29-0633-source-aha.md) | 🎨 | audit de l'onboarding play avec Health Connect et lecture du visage (POL-PLAY-12) ; POL-PLAY-40 (« Vos 30 derniers jours » : source dite une fois) ; 1 test |
 | 29/10 05:33 — [Paywall du lancement](runs/2026-10-29-0533-paywall-lancement.md) | 🎨 | audit de l'onboarding play pas à pas (POL-PLAY-12, vierge, clair et sombre) ; POL-PLAY-39 (paywall de lancement sans doublon, dates insécables, « 1er déc. ») ; 1 test neuf, 2 mis à jour |

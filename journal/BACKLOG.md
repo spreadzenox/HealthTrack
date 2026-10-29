@@ -1387,6 +1387,22 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   portion : lactose / fructose / glucose / polyols depuis Ciqual, fructanes / GOS / sorbitol / mannitol depuis des
   mesures publiées citées par aliment (jamais Monash ni FODMAP Friendly), sinon « inconnu » ou analogie à confiance
   basse ; `fodmap_score` reste lisible dans les anciens exports.
+  - [ ] **N3d** (I191, préparé le 29/10 08:33, **chiffres fiables : à faire avant les testeurs**) fourchette quand deux
+    mesures publiées divergent de plus de 2 fois : `g_high` + `source_high` / `ref_high` dans `fodmapMeasurements.json`
+    (pain blanc et de tradition 0,14 → 1,02 Whelan 2011 ; poireau 0,24 → 3,8 et oignon ×3 1,97 → 6,3 Muir 2007, tous
+    via Liljebo 2020 CC BY / CC0, source `liljebo2020`, confiance `citée`) ; `estimateMealFodmap` : `max += g_high`,
+    jamais `bas` si la borne haute dépasse le repère, `probable` entre les deux. Tests : 80 g de baguette et 100 g de
+    poireau → `probable` (aujourd'hui `bas`) ; 40 g d'oignon → `élevé` ; chevron « 0,1 à 0,8 g selon les mesures
+    publiées ». Nouveautés : « Pain et poireau ne sont plus dits pauvres en fructanes ».
+  - [ ] **N3e** (I192) les 23 lignes restantes de Ferjančič 2024 (légumes courants, pommes de terre, riz, polenta,
+    orge, conserves de pois et haricots, pain bis) ; « ND » en limite (`lt`), limite de détection à lire dans
+    l'article (sinon 0,01) ; analogies cuit ← cru par l'eau Ciqual. Effet : « poulet, riz, carottes » n'est plus
+    « inconnu » en fructanes.
+  - [ ] **N3f** (I193) Liljebo 2020 en `citée` : fructanes (ail 17,4 en remplacement de Wang & Cheong, topinambour,
+    son de blé, pains de seigle, semoule / couscous / boulgour ramenés au cuit par l'eau Ciqual, pain complet) ;
+    sorbitol / mannitol quand Ciqual ne mesure pas les polyols (pruneau, abricot sec, mûre, prune, chou-fleur, pois
+    mange-tout, champignon, avocat, poivron, maïs) ; « green peas 1,88 » = pois cassés, pas les petits pois. Liste
+    complète et noms Ciqual exacts : `IDEES.md` I193.
 - [x] **N4** carte d'un repas — **FAIT le 26/10 23:33** : `MealFodmapLine` sous chaque repas de Journal → Repas (objectif
   ventre seulement, `gutCardMode`) : « Riche en fructanes : oignon », « Probablement riche » si le repère n'est dépassé
   qu'avec des valeurs à confiance basse (`mealFodmapHighlights`), grammes / repère / origine au chevron. **Fait le 27/10 06:33** : la même
