@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import { computeHeartBaselines, BASELINE_METRICS, RECENT_DAYS, BASELINE_DAYS } from '../services/baselines'
 import { APP_NAME } from '../config/brand'
+import PastelTiles from './PastelTiles'
 import './BaselineCards.css'
 import { appLocale } from '../i18n/locale.js'
 
@@ -121,10 +121,13 @@ export default function BaselineCards({ onStatus }) {
   return (
     <div className="baselines">
       {!hasAnyData ? (
-        <p className="empty-hint">
-          Ajoutez une montre dans <Link to="/connectors">Sources</Link> : après 3 semaines de mesures,{' '}
-          {APP_NAME} compare votre FC au repos et votre VFC à <em>vos</em> valeurs habituelles.
-        </p>
+        <>
+          <p className="empty-hint">
+            Avec une montre, après 3 semaines de mesures, {APP_NAME} compare votre FC au repos et votre VFC à{' '}
+            <em>vos</em> valeurs habituelles.
+          </p>
+          <PastelTiles tiles={[{ to: '/connectors', theme: 'lilac', icon: 'plus', label: 'Ajouter une montre' }]} />
+        </>
       ) : (
         <>
           {ready.length > 0 && (

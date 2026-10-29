@@ -231,7 +231,19 @@ describe('WellbeingCharts — ne lit que les 14 jours affichés (perf D2)', () =
     expect(container.querySelector('.wellbeing-chart-empty')).toBeNull()
     expect(container.querySelector('.wellbeing-chart-block')).toBeNull()
     expect(screen.queryByText(/Par jour/)).toBeNull()
-    expect(screen.getByRole('link', { name: 'Aujourd’hui' })).toHaveAttribute('href', '/')
+    const note = screen.getByRole('link', { name: /Noter votre bien-être/ })
+    expect(note).toHaveAttribute('href', '/')
+    expect(note).toHaveAttribute('data-theme', 'mint')
+  })
+
+  it('sans note : la lecture du visage et la note manuelle en tuiles menthe, pas une phrase grise (POL-PLAY-48)', async () => {
+    listEntries.mockResolvedValue([])
+    countEntries.mockResolvedValue(0)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
+    const face = await screen.findByRole('link', { name: /Activer la lecture du visage/ })
+    expect(face).toHaveAttribute('href', '/connectors')
+    expect(face).toHaveAttribute('data-theme', 'mint')
+    expect(screen.queryByText(/notez-le vous-même/)).toBeNull()
   })
 
   it('titre en mots simples, comme « Votre forme » (POL-PLAY-38)', async () => {

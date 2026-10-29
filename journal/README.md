@@ -279,6 +279,10 @@
 - **Sources : « Ce que lit Halcya »** (29/10 17:37) — les sources branchées (météo, Health Connect, visage, temps
   d'écran) ont leur propre titre au lieu de suivre « Mes appareils » comme si c'étaient des appareils. **À tester** :
   onglet Sources, vérifier que vos sources actives sont sous « Ce que lit Halcya ».
+- **Tendances : un départ en couleur** (29/10 21:34) — sans montre ni bien-être noté, l'onglet Journal › Tendances
+  propose des tuiles en couleur (« Ajouter une montre » en lilas ; « Activer la lecture du visage » et « Noter votre
+  bien-être » en menthe) au lieu de deux phrases grises, comme le Journal vierge. **À tester** : rien sur votre
+  téléphone (vous avez des données) ; un coup d'œil sur une installation neuve si vous en faites une.
 - **Carte des pistes : la ligne du compte plus lisible** (29/10 19:34) — « 0/21 jours avec un repas ou une note du
   ventre » : seul le chiffre reste en police « données », la phrase est en police normale, et « (6 dernières
   semaines) » ne se coupe plus après le 6.
@@ -528,6 +532,7 @@ de données) ; le formulaire le dit tel quel.
 | 29/10 17:00 — [Rapport PDF : zéros trompeurs](runs/2026-10-29-1700-rapport-pdf.md) | 🎨 | POL-PLAY-44 (audit du rapport PDF sur démo et vierge, carte en période de lancement) : « pas encore assez de notes » au lieu de « aucun lien » (statut `too_early` mal lu), semaines sans note en « – », pas de tableau ni de « 0 comparaisons » sans notes ; 1 test neuf, 1 renforcé |
 | 29/10 17:37 — [Sources : titre des sources actives](runs/2026-10-29-1737-sources-titre.md) | 🎨 | POL-PLAY-45 (audit Sources et Paramètres play, démo sombre et vierge clair) : sources actives sous « Ce que lit Halcya » au lieu de suivre « Mes appareils » ; Paramètres : rien à redire ; 1 test |
 | 29/10 18:33 — [Journal vierge en couleur](runs/2026-10-29-1833-journal-vide.md) | 🎨 | POL-PLAY-46 (audit Accueil et Journal play vierge sombre) : trois tuiles pastel au lieu d'une phrase grise ; plus de « ventre » sans carte ventre ; POL-PLAY-47 noté ; 2 tests |
+| 29/10 21:34 — [Tendances vierges en couleur](runs/2026-10-29-2134-tendances-vides.md) | 🎨 | POL-PLAY-48 (audit Tendances play vierge sombre et clair) : tuiles pastel (`PastelTiles`, partagé avec le Journal vierge) au lieu de deux phrases grises ; espace insécable de #508 réécrite (lint revenu à 6 erreurs) ; 3 tests |
 | 29/10 20:33 — [Idées : campagne des testeurs](runs/2026-10-29-2033-idees-campagne-testeurs.md) | 💡 | exigences officielles du test fermé relues ; 4 messages « missions » ; brouillon des 10 réponses du formulaire d'accès à la production (P30) ; tableau des changements pendant le test ; recalage de la période de lancement ; TF-1, TF-2 |
 | 29/10 19:34 — [Ligne du compte des pistes](runs/2026-10-29-1934-pistes-compte.md) | 🎨 | POL-PLAY-47 : chiffre en mono, phrase en Figtree, « (6 dernières semaines) » insécable ; audit Analyses play vierge clair et sombre ; 1 test renforcé |
 | 29/10 15:00 — [Analyses : légende et pied de page](runs/2026-10-29-1500-analyses-pied-de-page.md) | 🎨 | POL-PLAY-42 (audit Analyses play démo, clair et sombre) : légende « visage » seulement si un lien la porte ; « Comment c'est calculé » centré, gris ; 1 test |
