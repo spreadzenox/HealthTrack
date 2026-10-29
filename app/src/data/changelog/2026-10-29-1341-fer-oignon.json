@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-29",
+  "kind": "correctif",
+  "title": "Fer de l'oignon cru : une erreur de la table corrigée",
+  "items": [
+    "La table Ciqual donne à l'oignon cru 1 000 fois moins de fer que l'oignon jaune, rouge ou cuit : sans doute une erreur d'unité de la source.",
+    "Plutôt que d'inventer une valeur, ce fer est désormais « inconnu » : vos apports en fer ne sont plus sous-estimés sans le dire.",
+    "Toute la table a été relue de la même façon : c'est la seule valeur de ce genre."
+  ]
+}

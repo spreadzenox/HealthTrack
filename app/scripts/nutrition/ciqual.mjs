@@ -16,6 +16,8 @@
  * - vitamin_e_mg = « Vitamine E », ou à défaut « Alpha-tocophérol (vitamine E) » (marqué dans `_q`) ;
  * - omega3_g = ALA + EPA + DHA ; null si l'ALA manque ; EPA ou DHA inconnus comptent 0 et le
  *   champ est marqué `partiel` dans `_q`.
+ * Valeurs suspectes (`suspects`, voir suspects.mjs) : publiées par Ciqual mais manifestement fausses ;
+ *   deviennent null, marquées `suspect` ; une entrée dont la valeur Ciqual a changé est signalée périmée.
  * Alias (`aliases`) : noms simples de l'ancienne table → aliment Ciqual dont ils copient les valeurs
  *   (marqués `alias_of`), pour que les repas déjà saisis restent calculés.
  * Licence : Licence Ouverte / Etalab 2.0 (site ciqual.anses.fr) ; Ciqual 2025 est publiée par l'Anses
@@ -121,7 +123,7 @@ export const normalizeName = (s) => s.normalize('NFC').replace(/\s+/g, ' ').trim
  *   `keep` : ancienne table, dont on recopie seulement `keepFields` (ex. fodmap_score) pour les
  *   aliments au même nom, le temps que leur remplacement soit livré.
  */
-export function buildTable(raw, { version, license, source, keep = {}, keepFields = [], aliases = {} }) {
+export function buildTable(raw, { version, license, source, keep = {}, keepFields = [], aliases = {}, suspects = [] }) {
   const all = { ...DIRECT_FIELDS, ...HELPER_FIELDS }
   const constToField = new Map()
   const missingConstituents = []
@@ -142,6 +144,7 @@ export function buildTable(raw, { version, license, source, keep = {}, keepField
 
   const table = {}
   const duplicates = []
+  const staleSuspects = []
   for (const a of raw.alims) {
     const name = normalizeName(a.alim_nom_fr || '')
     const code = String(a.alim_code).trim()
@@ -185,6 +188,13 @@ export function buildTable(raw, { version, license, source, keep = {}, keepField
       food.omega3_g = round(ala + (epa ?? 0) + (dha ?? 0))
       if (epa == null || dha == null) q.omega3_g = 'partiel'
     }
+    for (const s of suspects) {
+      if (s.code !== code || !(s.field in food)) continue
+      if (food[s.field] === s.ciqual) {
+        food[s.field] = null
+        q[s.field] = 'suspect'
+      } else staleSuspects.push(`${s.code} ${s.field}`)
+    }
     for (const f of keepFields) if (keep[name] && f in keep[name]) food[f] = keep[name][f]
     if (Object.keys(q).length) food._q = q
     table[name] = food
@@ -207,6 +217,6 @@ export function buildTable(raw, { version, license, source, keep = {}, keepField
   const missingFromCiqual = previousNames.filter((n) => !table[normalizeName(n)])
   return {
     table,
-    meta: { version, attribution: CIQUAL_ATTRIBUTION(version, license), source: source || null, foods: Object.keys(table).length, missingConstituents, duplicates, missingFromCiqual, missingAliasTargets, aliases: Object.keys(aliases).length },
+    meta: { version, attribution: CIQUAL_ATTRIBUTION(version, license), source: source || null, foods: Object.keys(table).length, missingConstituents, duplicates, missingFromCiqual, missingAliasTargets, staleSuspects, aliases: Object.keys(aliases).length },
   }
 }
