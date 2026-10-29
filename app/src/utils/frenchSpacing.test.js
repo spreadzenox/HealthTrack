@@ -19,6 +19,20 @@ describe('fixFrenchSpacing', () => {
     expect(fixFrenchSpacing('')).toBe('')
   })
 
+  it('lie un nombre à son unité (POL-PLAY-37)', () => {
+    expect(fixFrenchSpacing('· 1004 hPa (−8)')).toBe(`· 1004${NB}hPa (−8)`)
+    expect(fixFrenchSpacing('7 h 30, 2,5 km, 12 °C, 50 %, 4,99 €, 320 kcal, 64 bpm, 14 j'))
+      .toBe(`7${NB}h 30, 2,5${NB}km, 12${NB}°C, 50${NB}%, 4,99${NB}€, 320${NB}kcal, 64${NB}bpm, 14${NB}j`)
+  })
+
+  it('ne lie pas un nombre au mot qui suit', () => {
+    expect(fixFrenchSpacing('2 mois, 3 semaines, 5 grammes')).toBe('2 mois, 3 semaines, 5 grammes')
+  })
+
+  it('garde les milliers ensemble', () => {
+    expect(fixFrenchSpacing('3 553 aliments, 12 480 pas')).toBe(`3${NB}553 aliments, 12${NB}480${NB}pas`)
+  })
+
   it('ne transforme pas un deux-points en début de texte', () => {
     expect(fixFrenchSpacing(' : suite')).toBe(' : suite')
   })

@@ -440,6 +440,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
+| 29/10 03:33 — [Nombres et unités](runs/2026-10-29-0333-nombres-unites.md) | 🎨 | POL-PLAY-37 (« 1004 hPa », « 7 h », « 12 480 pas » jamais coupés en fin de ligne, à l'affichage) ; 3 tests |
 | 29/10 01:33 — [Titres du Journal](runs/2026-10-29-0133-titres-journal.md) | 🎨 | POL-PLAY-35 (« Vos repas », « Vos apports » au lieu de répéter le sous-onglet) ; 2 tests |
 | 29/10 00:33 — [« Photo du repas » en geste principal](runs/2026-10-29-0033-photo-du-repas.md) | 🎨 | POL-PLAY-34 (Journal › Repas : photo en bouton plein, galerie et description dessous) ; audit `--play --empty` des écrans secondaires ; POL-PLAY-35 noté ; 1 test |
 | 28/10 23:33 — [Gestes plus clairs](runs/2026-10-28-2333-gestes-plus-clairs.md) | 🎨 | POL-PLAY-31 (bouton de suppression en contour orange) et POL-PLAY-33 (chevrons de la réintroduction, plus de « pas testé », liens incertains sans nombre) ; 3 tests |
