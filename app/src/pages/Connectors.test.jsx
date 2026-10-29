@@ -314,6 +314,19 @@ describe('Connectors page', () => {
     unmount()
   })
 
+  it('sources actives sous leur propre titre, pas sous « Mes appareils » (POL-PLAY-45)', async () => {
+    const { getConnectorSettings } = await import('../settings/connectorSettings')
+    getConnectorSettings.mockReturnValue({ enabled: true, lastSyncAt: null, lastSyncResult: null })
+    const { container, unmount } = renderConnectors()
+    const block = container.querySelector('.connectors-active')
+    expect(within(block).getByRole('heading', { name: 'Ce que lit Halcya' })).toBeInTheDocument()
+    expect(within(block).getByText('Test Connector')).toBeInTheDocument()
+    unmount()
+    getConnectorSettings.mockReturnValue({ enabled: false, lastSyncAt: null, lastSyncResult: null })
+    renderConnectors()
+    expect(screen.queryByRole('heading', { name: 'Ce que lit Halcya' })).not.toBeInTheDocument()
+  })
+
   it('premier lancement : rien de branché, « Sources à brancher » en vue, sans volet replié', async () => {
     const { getConnectorSettings } = await import('../settings/connectorSettings')
     getConnectorSettings.mockReturnValue({ enabled: false, lastSyncAt: null, lastSyncResult: null })
