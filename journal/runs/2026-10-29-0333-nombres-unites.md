@@ -16,7 +16,7 @@
 - `frenchSpacing.test.js` : +3 (unités, mots non touchés, milliers) ; rouges avant, verts après.
 
 ## Vérifications
-- `npm run test` : vert (2 651) ; lint 6 erreurs (inchangé) ; build OK.
+- `npm run test` : vert (2 651) ; un premier passage CI a échoué sur `noHardcodedPrice` (« 4,99 € » dans la note de Nouveautés, ajoutée après le test local) : exemple retiré ; lint 6 erreurs (inchangé) ; build OK.
 - `npm run visual -- --play` sur `/connectors`, `/`, `/journal`, `/premium` : captures relues ; carte météo
   « 1004 hPa (−8) » sur une seule ligne, tuile « 10 085 » pas, rien ne déborde.
 - Scripts de l'émulateur : recherche de texte déjà insensible aux espaces insécables (run précédent).

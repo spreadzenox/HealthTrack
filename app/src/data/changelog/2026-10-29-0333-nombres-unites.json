@@ -3,7 +3,7 @@
   "kind": "amélioration",
   "title": "Les nombres restent avec leur unité",
   "items": [
-    "Une mesure n'est plus coupée en fin de ligne : « 1004 hPa », « 7 h », « 64 bpm » ou « 4,99 € » restent sur la même ligne.",
+    "Une mesure n'est plus coupée en fin de ligne : « 1004 hPa », « 7 h » ou « 64 bpm » restent sur la même ligne.",
     "Les grands nombres ne se séparent plus non plus : « 12 480 pas » s'affiche d'un seul tenant."
   ]
 }
