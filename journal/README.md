@@ -265,6 +265,9 @@
   fructanes », et sous le chevron « 0,11 à 0,82 g selon les mesures publiées » (deux études citées). Ces repas comptent
   maintenant dans la piste « fructanes → ventre ». **À tester** : Journal → Repas, décrire « une baguette » ou « soupe
   de poireaux » → ligne pêche « Probablement riche en fructanes » ; toucher le chevron → la fourchette.
+- **Analyses : moins de texte inutile** (29/10 15:00) — la phrase qui explique l'étiquette « visage » ne s'affiche
+  plus quand aucun lien ne la porte, et « Comment c'est calculé » se fait discret, centré tout en bas. **À tester** :
+  rien de particulier, un coup d'œil au bas de l'onglet Analyses.
 - **Fer de l'oignon cru corrigé** (29/10 13:41) — la table Ciqual lui donne 1 000 fois moins de fer que l'oignon
   jaune, rouge ou cuit (erreur d'unité de la source) : ce fer est maintenant « inconnu » plutôt que presque nul. Toute la
   table a été relue de la même façon : c'est la seule valeur de ce genre. **À tester** : rien.
@@ -488,6 +491,7 @@ semoule, couscous, boulgour, topinambour (595 aliments) ; **✅ 29/10 12:33 (N3g
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
 | 29/10 10:33 — [Fructanes des aliments courants](runs/2026-10-29-1033-fructanes-courants.md) | 🔬 | N3e : 49 entrées Ferjančič 2024 (générateur reproductible, « ND » en limite prudente), fructanes et GOS nuls sans glucides ni fibres ; fructanes connus 20 → 573 aliments ; 10 tests |
+| 29/10 15:00 — [Analyses : légende et pied de page](runs/2026-10-29-1500-analyses-pied-de-page.md) | 🎨 | POL-PLAY-42 (audit Analyses play démo, clair et sombre) : légende « visage » seulement si un lien la porte ; « Comment c'est calculé » centré, gris ; 1 test |
 | 29/10 13:41 — [Fer de l'oignon cru](runs/2026-10-29-1341-fer-oignon.md) | 🔬 | N2c : erreur d'unité de Ciqual 2025 (oignon cru, fer 0,00019 mg) → inconnue, liste `suspects.mjs` testée ; table reproduite à l'octet près depuis Zenodo ; relecture de tous les micronutriments (seul cas) ; 4 tests |
 | 29/10 12:33 — [Polyols des fruits et légumes](runs/2026-10-29-1233-polyols-liljebo.md) | 🔬 | N3g : 14 entrées sorbitol / mannitol Liljebo 2020 (supplément tableau 6 relu, Yao 2014 et Muir 2009) ; « Ciqual d'abord » (part du total mesuré, sinon valeur citée ; contradictions avec un « < 0,5 » écartées) ; sorbitol connu 2 860 → 2 869, mannitol 2 856 → 2 861 ; 4 tests |
 | 29/10 11:33 — [Fructanes des céréales et pains complets](runs/2026-10-29-1133-fructanes-cereales.md) | 🔬 | N3f (fructanes) : 23 entrées Liljebo 2020 relues dans le supplément (générateur reproductible, sec → cuit par les glucides Ciqual) ; ail cité de première main ; fructanes connus 573 → 595 aliments ; 6 tests |

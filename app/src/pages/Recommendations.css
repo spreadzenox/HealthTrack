@@ -45,6 +45,17 @@
   text-align: left;
 }
 
+/* En tout petit, sous la mise en garde (retour 7 du 24/10) : centré, gris, sans gras */
+.reco-footer .reco-method-note > summary {
+  justify-content: center;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.reco-footer .reco-method-note[open] > summary {
+  justify-content: flex-start;
+}
+
 .reco-footer .reco-model-note {
   margin-top: 10px;
   text-align: left;
