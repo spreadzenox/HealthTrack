@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import WellbeingCharts from './WellbeingCharts'
 import { computeTodayPrediction } from '../services/analysisEngine'
 import { listEntries, countEntries } from '../storage/localHealthStorage'
@@ -28,14 +29,14 @@ describe('WellbeingCharts — prédiction du jour', () => {
 
   it('signale que la journée en cours est complétée par une journée habituelle', async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: ['steps'] })
-    render(<WellbeingCharts />)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
     expect(screen.getByText(/compte comme une journée\s+habituelle/)).toBeInTheDocument()
   })
 
   it("n'affiche pas la mention quand tout est déjà connu", async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 3.1, actual: 3, assumedTypical: [] })
-    render(<WellbeingCharts />)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
     expect(screen.queryByText(/journée\s+habituelle/)).not.toBeInTheDocument()
   })
@@ -49,7 +50,7 @@ describe('WellbeingCharts — une seule mention de la prédiction (nettoyage D1)
 
   it("n'affiche plus de grande carte au-dessus du graphique : la valeur est dans la légende du point", async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: 'x', predicted: 1.6, actual: null, assumedTypical: ['steps'] })
-    const { container } = render(<WellbeingCharts />)
+    const { container } = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText('1,6 / 5')).toBeInTheDocument()
     expect(container.querySelector('.wellbeing-prediction-badge')).toBeNull()
     expect(screen.getAllByText(/Attendu d’après vos habitudes/)).toHaveLength(1)
@@ -67,7 +68,7 @@ describe('WellbeingCharts — une seule mention de la prédiction (nettoyage D1)
       { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: now.toISOString(), payload: { score: 3 } },
     ])
     computeTodayPrediction.mockReturnValue({ dateKey: 'x', predicted: 3.1, actual: 3, assumedTypical: [] })
-    const { container } = render(<WellbeingCharts />)
+    const { container } = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
     expect(container.querySelector('.wellbeing-chart-pred-dot')).toBeNull()
     expect(container.querySelector('.wellbeing-chart-pred-legend')).toHaveTextContent(/réel : 3,0/)
@@ -83,7 +84,7 @@ describe('WellbeingCharts — libellés et bloc « Par heure »', () => {
 
   it('parle d’« Attendu d’après vos habitudes » (ni « ML » ni « prédiction », jalon 2e)', async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
-    render(<WellbeingCharts />)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText(/Attendu d’après vos habitudes/)).toBeInTheDocument()
     expect(screen.queryByText(/\bML\b/)).not.toBeInTheDocument()
     expect(screen.queryByText(/prédiction/i)).not.toBeInTheDocument()
@@ -91,7 +92,12 @@ describe('WellbeingCharts — libellés et bloc « Par heure »', () => {
 
   it("masque le graphique « Par heure » tant qu'aucune note n'a été saisie aujourd'hui", async () => {
     computeTodayPrediction.mockReturnValue(null)
-    render(<WellbeingCharts />)
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    listEntries.mockResolvedValueOnce([
+      { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: yesterday.toISOString(), payload: { score: 3 } },
+    ])
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText(/Par jour/)).toBeInTheDocument()
     expect(screen.queryByText(/Par heure/)).not.toBeInTheDocument()
     expect(screen.queryByText(/Aucune note aujourd'hui/)).not.toBeInTheDocument()
@@ -104,7 +110,7 @@ describe('WellbeingCharts — libellés et bloc « Par heure »', () => {
     listEntries.mockResolvedValue([
       { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: now.toISOString(), payload: { score: 4 } },
     ])
-    render(<WellbeingCharts />)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText(/Par heure/)).toBeInTheDocument()
   })
 })
@@ -126,7 +132,7 @@ describe('WellbeingCharts — axe du calendrier (« 14 derniers jours » = 14 jo
   it('place les points selon leur date : un trou de saisie reste visible', async () => {
     // Notes 13, 12 et 1 jour(s) avant aujourd'hui : avant, les trois points étaient régulièrement espacés
     listEntries.mockResolvedValue([wb(1, 13, 3), wb(2, 12, 4), wb(3, 1, 2)])
-    const { container } = render(<WellbeingCharts />)
+    const { container } = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     await screen.findByText(/Par jour/)
     const xs = [...container.querySelectorAll('.wellbeing-chart-dot')].map((c) => Number(c.getAttribute('cx')))
     expect(xs).toHaveLength(3)
@@ -138,7 +144,7 @@ describe('WellbeingCharts — axe du calendrier (« 14 derniers jours » = 14 jo
 
   it('ne relie pas deux notes séparées par des jours sans note', async () => {
     listEntries.mockResolvedValue([wb(1, 13, 3), wb(2, 12, 4), wb(3, 1, 2)])
-    const { container } = render(<WellbeingCharts />)
+    const { container } = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     await screen.findByText(/Par jour/)
     const d = container.querySelector('.wellbeing-chart-line').getAttribute('d')
     // Un seul segment (13 → 12 jours) ; le point d'hier reste un point isolé
@@ -150,7 +156,7 @@ describe('WellbeingCharts — axe du calendrier (« 14 derniers jours » = 14 jo
     // Seules les notes des 14 jours sont lues ; les plus anciennes ne sont que comptées
     listEntries.mockResolvedValue([])
     countEntries.mockResolvedValue(2)
-    const { container } = render(<WellbeingCharts />)
+    const { container } = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText(/Aucune note ces 14 derniers jours/)).toBeInTheDocument()
     expect(container.querySelectorAll('.wellbeing-chart-dot')).toHaveLength(0)
   })
@@ -158,7 +164,7 @@ describe('WellbeingCharts — axe du calendrier (« 14 derniers jours » = 14 jo
   it("place la prédiction du jour à aujourd'hui, sans la relier à une note vieille de plusieurs jours", async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: 'x', predicted: 3, actual: null, assumedTypical: [] })
     listEntries.mockResolvedValue([wb(1, 6, 3), wb(2, 5, 4)])
-    const { container } = render(<WellbeingCharts />)
+    const { container } = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     await screen.findByText(/Par jour/)
     const xs = [...container.querySelectorAll('.wellbeing-chart-dot')].map((c) => Number(c.getAttribute('cx')))
     const pred = Number(container.querySelector('.wellbeing-chart-pred-dot').getAttribute('cx'))
@@ -169,7 +175,7 @@ describe('WellbeingCharts — axe du calendrier (« 14 derniers jours » = 14 jo
   it("relie la prédiction à la note d'hier", async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: 'x', predicted: 3, actual: null, assumedTypical: [] })
     listEntries.mockResolvedValue([wb(1, 2, 3), wb(2, 1, 4)])
-    const { container } = render(<WellbeingCharts />)
+    const { container } = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     await screen.findByText(/Par jour/)
     expect(container.querySelector('.wellbeing-chart-pred-line')).not.toBeNull()
   })
@@ -185,8 +191,8 @@ describe('WellbeingCharts — ne lit que les 14 jours affichés (perf D2)', () =
 
   it('lit les notes de bien-être depuis le premier jour affiché, par plage', async () => {
     listEntries.mockResolvedValue([])
-    render(<WellbeingCharts />)
-    await screen.findByText(/Par jour/)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
+    await screen.findByText(/Pas encore de bien-être noté|Aucune note ces/)
     const [opts] = listEntries.mock.calls[0]
     expect(opts.type).toBe('wellbeing')
     const first = new Date()
@@ -203,7 +209,7 @@ describe('WellbeingCharts — ne lit que les 14 jours affichés (perf D2)', () =
     listEntries.mockResolvedValue([
       { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: now.toISOString(), payload: { score: 4 } },
     ])
-    render(<WellbeingCharts />)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     await screen.findByText(/Par heure/)
     expect(countEntries).not.toHaveBeenCalled()
   })
@@ -211,9 +217,28 @@ describe('WellbeingCharts — ne lit que les 14 jours affichés (perf D2)', () =
   it('sans aucune note : invite à noter son bien-être', async () => {
     listEntries.mockResolvedValue([])
     countEntries.mockResolvedValue(0)
-    render(<WellbeingCharts />)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText(/Pas encore de bien-être noté/)).toBeInTheDocument()
     expect(countEntries.mock.calls[0][0]).toMatchObject({ type: 'wellbeing' })
+  })
+
+  it('sans note dans les 14 jours : une ligne discrète, pas un grand cadre de graphique vide (POL-PLAY-38)', async () => {
+    listEntries.mockResolvedValue([])
+    countEntries.mockResolvedValue(0)
+    const { container } = render(<WellbeingCharts />, { wrapper: MemoryRouter })
+    const hint = await screen.findByText(/Pas encore de bien-être noté/)
+    expect(hint.closest('.wellbeing-charts-empty')).not.toBeNull()
+    expect(container.querySelector('.wellbeing-chart-empty')).toBeNull()
+    expect(container.querySelector('.wellbeing-chart-block')).toBeNull()
+    expect(screen.queryByText(/Par jour/)).toBeNull()
+    expect(screen.getByRole('link', { name: 'Aujourd’hui' })).toHaveAttribute('href', '/')
+  })
+
+  it('titre en mots simples, comme « Votre forme » (POL-PLAY-38)', async () => {
+    listEntries.mockResolvedValue([])
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
+    expect(await screen.findByRole('heading', { level: 3, name: 'Votre bien-être' })).toBeInTheDocument()
+    expect(screen.queryByText(/Bien-être \(0–5\)/)).toBeNull()
   })
 })
 
@@ -225,12 +250,12 @@ describe('WellbeingCharts — prédiction en cache (perf D2)', () => {
 
   it('ne recalcule pas la prédiction tant que les données ne changent pas', async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
-    const first = render(<WellbeingCharts />)
+    const first = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
     first.unmount()
     _resetAnalysisRunner() // relance de l'app : seul le cache persistant reste
 
-    render(<WellbeingCharts />)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     // Servie par le cache, sans recalcul
     expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
     expect(computeTodayPrediction).toHaveBeenCalledTimes(1)
@@ -238,13 +263,13 @@ describe('WellbeingCharts — prédiction en cache (perf D2)', () => {
 
   it('recalcule après une écriture dans la base', async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
-    const first = render(<WellbeingCharts />)
+    const first = render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
     first.unmount()
 
     bumpDataRevision()
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 3.4, actual: null, assumedTypical: [] })
-    render(<WellbeingCharts />)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
     expect(await screen.findByText('3,4 / 5')).toBeInTheDocument()
     expect(computeTodayPrediction).toHaveBeenCalledTimes(2)
   })

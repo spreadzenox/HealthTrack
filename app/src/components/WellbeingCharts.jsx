@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { listEntries, countEntries } from '../storage/localHealthStorage'
 import { seriesByCalendarDay, seriesByHourToday } from '../services/wellbeingSeries'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
@@ -231,22 +232,38 @@ export default function WellbeingCharts() {
     )
   }
 
+  const title = (
+    <h3 id="wellbeing-charts-title" className="section-title">
+      Votre bien-être
+    </h3>
+  )
+
+  // POL-PLAY-38 : sans aucune note sur 14 jours, une ligne discrète plutôt qu'un grand cadre de graphique vide
+  if (dayPoints.length === 0 && !showPredictionOnChart) {
+    return (
+      <section className="wellbeing-charts" aria-labelledby="wellbeing-charts-title">
+        {title}
+        <p className="empty-hint wellbeing-charts-empty">
+          {hasOlderNotes ? `Aucune note ces ${DAYS} derniers jours.` : 'Pas encore de bien-être noté.'}{' '}
+          Activez la lecture du visage dans <Link to="/connectors">Sources</Link>, ou notez-le vous-même depuis{' '}
+          <Link to="/">Aujourd’hui</Link>.
+        </p>
+      </section>
+    )
+  }
+
   return (
     <section className="wellbeing-charts" aria-labelledby="wellbeing-charts-title">
-      <h2 id="wellbeing-charts-title" className="section-title">
-        Bien-être (0–5)
-      </h2>
+      {title}
 
       <div className="wellbeing-chart-block">
-        <h3 className="wellbeing-chart-subtitle">Par jour ({DAYS} derniers jours)</h3>
+        <h4 className="wellbeing-chart-subtitle">Par jour, sur 5 ({DAYS} derniers jours)</h4>
         <WellbeingLineChart
           points={dayPoints}
           xDomain={[0, DAYS - 1]}
           labels={dayLabels}
           maxGap={1}
-          emptyMessage={hasOlderNotes
-            ? `Aucune note ces ${DAYS} derniers jours. Notez votre bien-être pour suivre son évolution.`
-            : 'Pas encore de bien-être noté. Activez la lecture du visage ou notez-le avec «\u00a0Noter moi-même\u00a0», dans la carte Bien-être estimé.'}
+          emptyMessage={`Aucune note ces ${DAYS} derniers jours.`}
           predictionPoint={showPredictionOnChart ? { x: DAYS - 1, v: todayPrediction.predicted } : null}
         />
         {todayPrediction != null && (
@@ -257,7 +274,7 @@ export default function WellbeingCharts() {
       {/* Sans note aujourd'hui, ce bloc n'était qu'un grand cadre vide : il apparaît à la première note. */}
       {hourSeries.length > 0 && (
         <div className="wellbeing-chart-block">
-          <h3 className="wellbeing-chart-subtitle">Par heure (aujourd’hui)</h3>
+          <h4 className="wellbeing-chart-subtitle">Par heure (aujourd’hui)</h4>
           <WellbeingLineChart
             points={hourPoints}
             xDomain={hourDomain}

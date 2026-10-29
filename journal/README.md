@@ -260,6 +260,9 @@
   collés à leur mot, et « : », « ? », « ! » au mot qui précède (espaces insécables à l'affichage). Les titres se
   coupent en lignes équilibrées : le paywall dit « Passez de « je note » / à « je comprends » » au lieu de laisser
   « comprends » seul. **À tester** : rien de particulier, lisez simplement les écrans.
+- **Tendances plus nettes au début** (29/10 04:33) — Journal › Tendances, sans bien-être noté : une ligne
+  « Pas encore de bien-être noté… » (liens Sources et Aujourd'hui) remplace le grand cadre de graphique vide ; le titre
+  « Bien-être (0–5) » devient « Votre bien-être », comme « Votre forme ». Rien ne change dès qu'une note existe.
 - **Titres du Journal sans répétition** (29/10 01:33) — sous les onglets « Repas » et « Nutrition », les titres
   deviennent « Vos repas » et « Vos apports », comme « Vos derniers jours » et « Vos tendances ».
 - **« Photo du repas » bien en vue** (29/10 00:33) — Journal › Repas : la photo est le grand bouton plein en haut
@@ -440,6 +443,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
+| 29/10 04:33 — [Tendances vierges](runs/2026-10-29-0433-tendances-vierges.md) | 🎨 | POL-PLAY-38 (Tendances sans bien-être : ligne discrète au lieu d'un cadre vide ; « Votre bien-être ») ; 2 tests |
 | 29/10 03:33 — [Nombres et unités](runs/2026-10-29-0333-nombres-unites.md) | 🎨 | POL-PLAY-37 (« 1004 hPa », « 7 h », « 12 480 pas » jamais coupés en fin de ligne, à l'affichage) ; 3 tests |
 | 29/10 01:33 — [Titres du Journal](runs/2026-10-29-0133-titres-journal.md) | 🎨 | POL-PLAY-35 (« Vos repas », « Vos apports » au lieu de répéter le sous-onglet) ; 2 tests |
 | 29/10 00:33 — [« Photo du repas » en geste principal](runs/2026-10-29-0033-photo-du-repas.md) | 🎨 | POL-PLAY-34 (Journal › Repas : photo en bouton plein, galerie et description dessous) ; audit `--play --empty` des écrans secondaires ; POL-PLAY-35 noté ; 1 test |
