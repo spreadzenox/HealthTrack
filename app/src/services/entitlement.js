@@ -94,8 +94,12 @@ export async function refreshEntitlement({ purchaseToken = null, fetchImpl = glo
   }
 }
 
-const shortDate = (iso) =>
-  new Date(iso).toLocaleDateString(appLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
+// « 1er déc. 2026 » plutôt que « 1 déc. 2026 » en français
+const shortDate = (iso) => {
+  const date = new Date(iso)
+  const text = date.toLocaleDateString(appLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
+  return date.getDate() === 1 && appLocale().startsWith('fr') ? text.replace(/^1(?=\s)/, '1er') : text
+}
 
 /** La fin de la période de lancement est exclue : on affiche le dernier jour offert (minuit → la veille). */
 export const lastLaunchDay = (iso) => shortDate(Date.parse(iso) - 1)

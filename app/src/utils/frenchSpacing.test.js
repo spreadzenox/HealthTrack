@@ -33,6 +33,15 @@ describe('fixFrenchSpacing', () => {
     expect(fixFrenchSpacing('3 553 aliments, 12 480 pas')).toBe(`3${NB}553 aliments, 12${NB}480${NB}pas`)
   })
 
+  it('garde une date d’un seul tenant : jour, mois et année (POL-PLAY-39)', () => {
+    expect(fixFrenchSpacing('jusqu’au 18 nov. 2026 : rien')).toBe(`jusqu’au 18${NB}nov.${NB}2026${NB}: rien`)
+    expect(fixFrenchSpacing('le 1er décembre')).toBe(`le 1er${NB}décembre`)
+    expect(fixFrenchSpacing('29 oct.')).toBe(`29${NB}oct.`)
+    expect(fixFrenchSpacing('3 mai 2027')).toBe(`3${NB}mai${NB}2027`)
+    // un mot qui commence comme un mois n'est pas une date
+    expect(fixFrenchSpacing('2 maisons')).toBe('2 maisons')
+  })
+
   it('ne transforme pas un deux-points en début de texte', () => {
     expect(fixFrenchSpacing(' : suite')).toBe(' : suite')
   })

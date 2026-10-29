@@ -85,10 +85,10 @@ describe('texte de l’état d’abonnement', () => {
 
   it('gratuit, lancement, actif, essai, annulé, période de grâce, pause, suspendu', () => {
     expect(describeEntitlement({ premium: false, source: null })).toMatch(/Version gratuite/)
-    expect(describeEntitlement({ premium: true, source: 'launch', launchUntil: date })).toMatch(/Premium offert pendant le test, jusqu’au 1 déc\. 2026 : vous n’avez rien à payer\./)
-    expect(describeEntitlement({ premium: true, source: 'play', state: 'active', expiresAt: date, autoRenewing: true })).toMatch(/Premium actif · renouvellement le 1 déc\. 2026/)
-    expect(describeEntitlement({ premium: true, source: 'play', state: 'active', trial: true, expiresAt: date, autoRenewing: true })).toMatch(/Essai gratuit en cours · premier paiement le 1 déc\. 2026/)
-    expect(describeEntitlement({ premium: true, source: 'play', state: 'canceled', expiresAt: date })).toMatch(/Abonnement annulé · premium jusqu’au 1 déc\. 2026/)
+    expect(describeEntitlement({ premium: true, source: 'launch', launchUntil: date })).toMatch(/Premium offert pendant le test, jusqu’au 1er déc\. 2026 : vous n’avez rien à payer\./)
+    expect(describeEntitlement({ premium: true, source: 'play', state: 'active', expiresAt: date, autoRenewing: true })).toMatch(/Premium actif · renouvellement le 1er déc\. 2026/)
+    expect(describeEntitlement({ premium: true, source: 'play', state: 'active', trial: true, expiresAt: date, autoRenewing: true })).toMatch(/Essai gratuit en cours · premier paiement le 1er déc\. 2026/)
+    expect(describeEntitlement({ premium: true, source: 'play', state: 'canceled', expiresAt: date })).toMatch(/Abonnement annulé · premium jusqu’au 1er déc\. 2026/)
     expect(describeEntitlement({ premium: true, source: 'play', state: 'grace', expiresAt: date })).toMatch(/Paiement à régulariser dans Google Play/)
     expect(describeEntitlement({ premium: false, state: 'paused' })).toMatch(/Abonnement en pause/)
     expect(describeEntitlement({ premium: false, state: 'on_hold' })).toMatch(/Abonnement suspendu : paiement à régulariser/)
