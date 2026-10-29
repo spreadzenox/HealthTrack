@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { listEntries, countEntries } from '../storage/localHealthStorage'
 import { seriesByCalendarDay, seriesByHourToday } from '../services/wellbeingSeries'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { pickLabelIndices } from '../utils/format'
 import { decimalMark } from '../i18n/locale.js'
+import PastelTiles from './PastelTiles'
 import './WellbeingCharts.css'
 
 const W = 320
@@ -13,6 +13,11 @@ const PAD = { top: 12, right: 16, bottom: 28, left: 22 }
 // ~45 px de viewBox par étiquette « 07/10 » : au-delà elles se chevauchent sur un écran de 412 px
 const MAX_X_LABELS = 7
 const DAYS = 14
+// POL-PLAY-48 : sans note, les deux façons d'en avoir, en tuiles menthe (couleur du bien-être)
+const EMPTY_TILES = [
+  { to: '/connectors', theme: 'mint', icon: 'camera', label: 'Activer la lecture du visage' },
+  { to: '/', theme: 'mint', icon: 'pen', label: 'Noter votre bien-être' },
+]
 
 // Relie les points successifs, sauf s'ils sont séparés de plus de `maxGap` (jours sans note) :
 // le trou reste visible au lieu d'être comblé par une droite trompeuse.
@@ -244,10 +249,9 @@ export default function WellbeingCharts() {
       <section className="wellbeing-charts" aria-labelledby="wellbeing-charts-title">
         {title}
         <p className="empty-hint wellbeing-charts-empty">
-          {hasOlderNotes ? `Aucune note ces ${DAYS} derniers jours.` : 'Pas encore de bien-être noté.'}{' '}
-          Activez la lecture du visage dans <Link to="/connectors">Sources</Link>, ou notez-le vous-même depuis{' '}
-          <Link to="/">Aujourd’hui</Link>.
+          {hasOlderNotes ? `Aucune note ces ${DAYS} derniers jours.` : 'Pas encore de bien-être noté.'}
         </p>
+        <PastelTiles tiles={EMPTY_TILES} />
       </section>
     )
   }

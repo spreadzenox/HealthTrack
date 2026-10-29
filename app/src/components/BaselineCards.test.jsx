@@ -34,14 +34,17 @@ describe('BaselineCards', () => {
   it('ne lit que la FC repos et la VFC, pas les tranches de FC / SpO₂ (perf D2)', async () => {
     listEntries.mockResolvedValue([])
     renderCards()
-    await screen.findByText(/Ajoutez une montre/i)
+    await screen.findByRole('link', { name: /Ajouter une montre/ })
     expect([...listEntries.mock.calls[0][0].subtypes].sort()).toEqual(['heartRateVariability', 'restingHeartRate'])
   })
 
-  it('invites to connect a watch when there is no heart data at all', async () => {
+  it('invites to connect a watch when there is no heart data at all, with a lilac tile (POL-PLAY-48)', async () => {
     listEntries.mockResolvedValue([])
     renderCards()
-    expect(await screen.findByText(/Ajoutez une montre/i)).toBeInTheDocument()
+    const tile = await screen.findByRole('link', { name: /Ajouter une montre/ })
+    expect(tile).toHaveAttribute('href', '/connectors')
+    expect(tile).toHaveAttribute('data-theme', 'lilac')
+    expect(screen.getByText(/après 3 semaines de mesures/i)).toBeInTheDocument()
   })
 
   it('signale au bloc Forme combien de jours manquent pour établir la norme, sans carte (POL-6)', async () => {

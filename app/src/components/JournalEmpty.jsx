@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-import LineIcon from './LineIcon'
+import PastelTiles from './PastelTiles'
 import { gutCardMode } from '../settings/onboarding'
 
 /**
@@ -20,16 +19,7 @@ export default function JournalEmpty() {
     <div className="journal-empty">
       <p className="journal-empty-title">Rien de noté pour l’instant</p>
       <p className="journal-empty-text">Vos jours s’afficheront ici, en couleur.</p>
-      <ul className="journal-empty-tiles">
-        {tiles.map((t) => (
-          <li key={t.label}>
-            <Link to={t.to} className="journal-empty-tile" data-theme={t.theme}>
-              <LineIcon name={t.icon} size={22} />
-              <span>{t.label}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <PastelTiles tiles={tiles} />
     </div>
   )
 }
