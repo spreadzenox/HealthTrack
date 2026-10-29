@@ -351,7 +351,7 @@ export default function Food() {
                 {saving ? 'Enregistrement…' : 'Enregistrer ce repas'}
               </button>
             )}
-            <button type="button" className="btn btn-secondary" onClick={reset} style={{ flex: 1 }}>
+            <button type="button" className="btn btn-secondary" onClick={reset}>
               Nouvelle photo
             </button>
           </div>

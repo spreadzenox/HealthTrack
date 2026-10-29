@@ -20,6 +20,14 @@
   padding: 0;
 }
 
+/* Dans la carte d'analyse d'une photo (.results), les lignes d'ingrédients sont en flex « espace entre » :
+   une ligne FODMAP reste une phrase (POL-PLAY-41). */
+.meal-fodmap-list li {
+  display: block;
+  padding: 0;
+  border: 0;
+}
+
 .meal-fodmap-list li + li {
   margin-top: 4px;
 }

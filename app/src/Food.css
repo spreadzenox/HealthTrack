@@ -382,6 +382,13 @@
   font-size: 1.05rem;
 }
 
+/* Analyse d'une photo et repas décrit : « Enregistrer ce repas » sur toute la ligne, l'autre geste dessous
+   (côte à côte, le principal se coupait sur deux lignes à 412 px, POL-PLAY-41). */
+.results .actions,
+.new-meal .actions {
+  flex-direction: column;
+}
+
 .new-meal .actions {
   margin-top: 8px;
 }
