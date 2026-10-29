@@ -286,6 +286,9 @@
 - **Nutrition : un départ en couleur** (29/10 22:33) — une semaine sans repas, Journal › Nutrition affiche
   « Aucun repas ces 7 derniers jours » et une tuile pêche « Photographier un repas » au lieu d'une phrase grise et
   d'un second bouton plein sous « Compléter mon profil ».
+- **Repas : des cartes plus légères** (29/10 23:33) — dans Journal › Repas, « Refaire · Modifier · Supprimer »
+  sont rangés derrière un petit « ⋯ » au bout de chaque repas, comme dans Jours ; écran Données de la montre :
+  stress « 46 · normal » au lieu de « 46 / 99 ».
 - **Carte des pistes : la ligne du compte plus lisible** (29/10 19:34) — « 0/21 jours avec un repas ou une note du
   ventre » : seul le chiffre reste en police « données », la phrase est en police normale, et « (6 dernières
   semaines) » ne se coupe plus après le 6.
@@ -537,6 +540,7 @@ de données) ; le formulaire le dit tel quel.
 | 29/10 18:33 — [Journal vierge en couleur](runs/2026-10-29-1833-journal-vide.md) | 🎨 | POL-PLAY-46 (audit Accueil et Journal play vierge sombre) : trois tuiles pastel au lieu d'une phrase grise ; plus de « ventre » sans carte ventre ; POL-PLAY-47 noté ; 2 tests |
 | 29/10 21:34 — [Tendances vierges en couleur](runs/2026-10-29-2134-tendances-vides.md) | 🎨 | POL-PLAY-48 (audit Tendances play vierge sombre et clair) : tuiles pastel (`PastelTiles`, partagé avec le Journal vierge) au lieu de deux phrases grises ; espace insécable de #508 réécrite (lint revenu à 6 erreurs) ; 3 tests |
 | 29/10 22:33 — [Nutrition vierge en couleur](runs/2026-10-29-2233-nutrition-vide.md) | 🎨 | POL-PLAY-49 (audit Repas et Nutrition play vierges, sombre et clair, 360 px) : tuile pêche « Photographier un repas » (`PastelTiles`) au lieu d'une phrase grise et d'un bouton plein ; Repas vierge : rien à redire ; 1 test |
+| 29/10 23:33 — [Repas : actions derrière « ⋯ »](runs/2026-10-29-2333-repas-actions.md) | 🎨 | POL-PLAY-50 (audit Repas, Nutrition et Montre play démo sombre) : actions de chaque repas derrière « ⋯ » (`EntryActionsToggle` partagé avec Jours) ; stress de la montre « 46 · normal » ; 1 test |
 | 29/10 20:33 — [Idées : campagne des testeurs](runs/2026-10-29-2033-idees-campagne-testeurs.md) | 💡 | exigences officielles du test fermé relues ; 4 messages « missions » ; brouillon des 10 réponses du formulaire d'accès à la production (P30) ; tableau des changements pendant le test ; recalage de la période de lancement ; TF-1, TF-2 |
 | 29/10 19:34 — [Ligne du compte des pistes](runs/2026-10-29-1934-pistes-compte.md) | 🎨 | POL-PLAY-47 : chiffre en mono, phrase en Figtree, « (6 dernières semaines) » insécable ; audit Analyses play vierge clair et sombre ; 1 test renforcé |
 | 29/10 15:00 — [Analyses : légende et pied de page](runs/2026-10-29-1500-analyses-pied-de-page.md) | 🎨 | POL-PLAY-42 (audit Analyses play démo, clair et sombre) : légende « visage » seulement si un lien la porte ; « Comment c'est calculé » centré, gris ; 1 test |

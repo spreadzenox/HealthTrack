@@ -10,6 +10,19 @@ vi.mock('../storage/localHealthStorage', () => ({
   updateEntry: vi.fn(),
 }))
 
+/** POL-PLAY-50 : « Refaire · Modifier · Supprimer » d'un repas sont repliés derrière « ⋯ ». */
+function openMealActions() {
+  screen.queryAllByRole('button', { name: 'Actions pour ce repas' }).forEach((b) => fireEvent.click(b))
+}
+function mealAction(name) {
+  openMealActions()
+  return screen.getByRole('button', { name })
+}
+async function findMealAction(name) {
+  await screen.findAllByRole('button', { name: 'Actions pour ce repas' })
+  return mealAction(name)
+}
+
 describe('Food', () => {
   beforeEach(async () => {
     globalThis.fetch = vi.fn()
@@ -224,6 +237,25 @@ describe('Food — correction avant enregistrement', () => {
 })
 
 describe('Food — supprimer un repas', () => {
+  it('replie Refaire, Modifier et Supprimer derrière « ⋯ » (POL-PLAY-50)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 9, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { dish: 'Pâtes', items: [{ ingredient: 'Pâtes', quantity: '200 g' }] } },
+    ])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    const toggle = await screen.findByRole('button', { name: 'Actions pour ce repas' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    for (const name of [/Refaire ce repas/i, /Modifier ce repas/i, /Supprimer ce repas/i]) {
+      expect(screen.queryByRole('button', { name })).not.toBeInTheDocument()
+    }
+    fireEvent.click(toggle)
+    for (const name of [/Refaire ce repas/i, /Modifier ce repas/i, /Supprimer ce repas/i]) {
+      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer les actions de ce repas' }))
+    expect(screen.queryByRole('button', { name: /Modifier ce repas/i })).not.toBeInTheDocument()
+  })
+
   it('retire le repas de la liste après confirmation', async () => {
     const { listEntries, deleteEntry } = await import('../storage/localHealthStorage')
     deleteEntry.mockResolvedValue()
@@ -238,7 +270,7 @@ describe('Food — supprimer un repas', () => {
     await screen.findByText('Pâtes au pesto', { selector: '.meal-dish' })
     expect(screen.getByText('Pâtes : 200 g')).toBeInTheDocument()
     listEntries.mockResolvedValue([])
-    fireEvent.click(screen.getByRole('button', { name: /Supprimer ce repas/i }))
+    fireEvent.click(mealAction(/Supprimer ce repas/i))
     fireEvent.click(screen.getByRole('button', { name: /Confirmer/i }))
     await screen.findByText(/Aucun repas enregistré/i)
     expect(deleteEntry).toHaveBeenCalledWith(9)
@@ -265,7 +297,7 @@ describe('Food — modifier un repas enregistré', () => {
     window.addEventListener('health-entries-updated', onUpdate)
     render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Fromage', { selector: '.meal-dish' })
-    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.click(mealAction(/Modifier ce repas/i))
     fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '50' } })
     fireEvent.click(screen.getByRole('button', { name: /Supprimer Fromage lunaire/i }))
     fireEvent.change(screen.getByLabelText(/Heure du repas/i), { target: { value: '2026-10-08T20:15' } })
@@ -291,7 +323,7 @@ describe('Food — modifier un repas enregistré', () => {
     listEntries.mockResolvedValue([meal])
     render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Fromage', { selector: '.meal-dish' })
-    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.click(mealAction(/Modifier ce repas/i))
     fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '120' } })
     fireEvent.click(screen.getByRole('button', { name: /Enregistrer les modifications/i }))
     await vi.waitFor(() => expect(updateEntry).toHaveBeenCalled())
@@ -304,7 +336,7 @@ describe('Food — modifier un repas enregistré', () => {
     listEntries.mockResolvedValue([meal])
     render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Fromage', { selector: '.meal-dish' })
-    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.click(mealAction(/Modifier ce repas/i))
     fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '500' } })
     fireEvent.click(screen.getByRole('button', { name: /^Annuler$/ }))
     expect(screen.queryByLabelText(/Grammes de Abondance/i)).not.toBeInTheDocument()
@@ -338,19 +370,19 @@ describe('Food — modifier un repas enregistré', () => {
     saveOnboarding({ goal: 'gut' })
     const { unmount } = render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Soupe', { selector: '.meal-dish' })
-    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.click(mealAction(/Modifier ce repas/i))
     const editor = document.querySelector('.saved-meal-editor')
     expect(await within(editor).findByText('Riche en fructanes')).toBeInTheDocument()
     fireEvent.change(within(editor).getByLabelText(/Grammes de Oignon/i), { target: { value: '4' } })
     await vi.waitFor(() => expect(within(editor).queryByTestId('meal-fodmap')).not.toBeInTheDocument())
     fireEvent.click(screen.getByRole('button', { name: /^Annuler$/ }))
-    fireEvent.click(screen.getByRole('button', { name: /Refaire ce repas/i }))
+    fireEvent.click(mealAction(/Refaire ce repas/i))
     expect(await screen.findByText('Riche en fructanes', { selector: '.new-meal *' })).toBeInTheDocument()
     unmount()
     saveOnboarding({ goal: 'energy' })
     render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Soupe', { selector: '.meal-dish' })
-    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.click(mealAction(/Modifier ce repas/i))
     await screen.findByLabelText(/Grammes de Oignon/i)
     expect(screen.queryByTestId('meal-fodmap')).not.toBeInTheDocument()
     saveOnboarding({ goal: null })
@@ -362,7 +394,7 @@ describe('Food — modifier un repas enregistré', () => {
     listEntries.mockResolvedValue([meal])
     render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Fromage', { selector: '.meal-dish' })
-    fireEvent.click(screen.getByRole('button', { name: /Modifier ce repas/i }))
+    fireEvent.click(mealAction(/Modifier ce repas/i))
     fireEvent.change(screen.getByLabelText(/Heure du repas/i), { target: { value: '2999-01-01T12:00' } })
     fireEvent.click(screen.getByRole('button', { name: /Enregistrer les modifications/i }))
     expect(await screen.findByRole('alert')).toHaveTextContent(/futur/)
@@ -374,6 +406,8 @@ describe('Food — modifier un repas enregistré', () => {
     listEntries.mockResolvedValue([{ ...meal, source: 'health_connect' }])
     render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Fromage', { selector: '.meal-dish' })
+    openMealActions()
+    expect(screen.getByRole('button', { name: /Refaire ce repas/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Modifier ce repas/i })).not.toBeInTheDocument()
   })
 })
@@ -440,7 +474,7 @@ describe('Food — saisie sans photo', () => {
     listEntries.mockResolvedValue([fromage(1, '2026-10-07T12:00:00Z', 100)])
     render(<BrowserRouter><Food /></BrowserRouter>)
     await screen.findByText('Fromage', { selector: '.meal-dish' })
-    fireEvent.click(screen.getByRole('button', { name: /Refaire ce repas/i }))
+    fireEvent.click(mealAction(/Refaire ce repas/i))
     expect(screen.getByLabelText(/Grammes de Abondance/i)).toHaveValue(100)
     fireEvent.click(screen.getByRole('button', { name: /^Annuler$/ }))
     expect(screen.queryByLabelText(/Grammes de Abondance/i)).not.toBeInTheDocument()
@@ -451,7 +485,7 @@ describe('Food — saisie sans photo', () => {
     const { listEntries, createEntry } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([fromage(1, '2026-10-07T12:00:00Z', 100)])
     render(<BrowserRouter><Food /></BrowserRouter>)
-    fireEvent.click(await screen.findByRole('button', { name: /Refaire ce repas/i }))
+    fireEvent.click(await findMealAction(/Refaire ce repas/i))
     fireEvent.change(screen.getByLabelText(/Heure du repas/i), { target: { value: '2999-01-01T12:00' } })
     fireEvent.click(screen.getByRole('button', { name: /Enregistrer ce repas/i }))
     expect(await screen.findByRole('alert')).toHaveTextContent(/futur/)
@@ -529,7 +563,7 @@ describe('Food — décrire un repas en quelques mots', () => {
       payload: { items: [{ ingredient: 'Abondance', quantity: '50 g', quantity_g: 50 }] },
     }])
     render(<BrowserRouter><Food /></BrowserRouter>)
-    fireEvent.click(await screen.findByRole('button', { name: /Refaire ce repas/i }))
+    fireEvent.click(await findMealAction(/Refaire ce repas/i))
     expect(screen.queryByLabelText(/Décrivez votre repas/i)).not.toBeInTheDocument()
   })
 })
