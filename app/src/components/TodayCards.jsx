@@ -301,7 +301,7 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
       >
         <div className="pistes-progress-bar" style={{ width: `${(p.days / p.target) * 100}%` }} />
       </div>
-      <p className="pistes-count mono">{p.days}/{p.target} {text.count} (6 dernières semaines)</p>
+      <p className="pistes-count"><span className="mono">{p.days}/{p.target}</span> {text.count} (6 dernières semaines)</p>
       <p className="today-card-text">
         {p.ready
           ? (onPistesPage

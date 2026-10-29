@@ -275,7 +275,11 @@ describe('PistesTeaser', () => {
     wrap(<PistesTeaser read={async () => [day(0), day(1), day(1), day(3)]} />)
     expect(await screen.findByText('Vos pistes arrivent dans 18 jours')).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Jours suivis' })).toHaveAttribute('aria-valuenow', '3')
-    expect(screen.getByText('3/21 jours avec un repas ou une note du ventre (6 dernières semaines)')).toBeInTheDocument()
+    const count = document.querySelector('.pistes-count')
+    expect(count).toHaveTextContent('3/21 jours avec un repas ou une note du ventre (6 dernières semaines)')
+    // POL-PLAY-47 : le chiffre en mono, la phrase en Figtree
+    expect(count).not.toHaveClass('mono')
+    expect(count.querySelector('.mono')).toHaveTextContent(/^3\/21$/)
     expect(screen.getByText('On préfère attendre plutôt que de vous montrer de faux suspects.')).toBeInTheDocument()
   })
 
@@ -299,7 +303,7 @@ describe('PistesTeaser', () => {
     ]
     wrap(<PistesTeaser focus="energy" read={async () => entries} details onToggleDetails={() => {}} />)
     expect(await screen.findByText('Vos pistes arrivent dans 20 jours')).toBeInTheDocument()
-    expect(screen.getByText('1/21 nuits suivies d’une mesure du bien-être (6 dernières semaines)')).toBeInTheDocument()
+    expect(document.querySelector('.pistes-count')).toHaveTextContent('1/21 nuits suivies d’une mesure du bien-être (6 dernières semaines)')
     expect(screen.getByText(/pistes sommeil → bien-être/)).toBeInTheDocument()
   })
 })
