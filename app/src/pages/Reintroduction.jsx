@@ -18,7 +18,7 @@ import { FEATURES } from '../config/distribution'
 import { createEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
 import { GUT_TYPE } from '../services/today'
 import {
-  FODMAP_GROUPS, FODMAP_CHALLENGE_TYPE, FODMAP_CHALLENGE_SOURCE, CALM_DAYS_REQUIRED,
+  pickableGroups, FODMAP_CHALLENGE_TYPE, FODMAP_CHALLENGE_SOURCE, CALM_DAYS_REQUIRED,
   findFood, findGroup, defaultPlan, startChallenge, challengeStatus, recordDose, answerTolerable,
   restartChallenge, canStartChallenge, groupResults, combinationsAvailable, verdictSentence, formatAmount,
   currentChallenge,
@@ -139,7 +139,8 @@ function PortionReminderRow() {
 
 function ChooseGroup({ results, onPick, combos, focus = null }) {
   // N5 : ouvert depuis une piste « fructanes », le groupe passe en tête (l'aliment reste à choisir).
-  const groups = focus ? [...FODMAP_GROUPS].sort((a, b) => (b.id === focus) - (a.id === focus)) : FODMAP_GROUPS
+  const all = pickableGroups()
+  const groups = focus ? all.sort((a, b) => (b.id === focus) - (a.id === focus)) : all
   return (
     <>
       <p className="fodmap-intro">
@@ -197,7 +198,7 @@ function Prepare({ group, food, start, onBack, onStart, busy }) {
       <p className="fodmap-back"><button type="button" className="fodmap-link" onClick={onBack}>← Autre groupe</button></p>
       <article className="today-card fodmap-card">
         <p className="fodmap-kicker mono">{g.label}</p>
-        <h3 className="today-card-title">{f.label} ({f.example})</h3>
+        <h3 className="today-card-title">{f.label}{f.example.toLowerCase() !== f.label.toLowerCase() && ` (${f.example})`}</h3>
         <fieldset className="fodmap-plan">
           <legend>Vos portions</legend>
           {[0, 1, 2].map((i) => (
@@ -336,7 +337,8 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
   const [pick, setPick] = useState(() => {
     const group = params.get('groupe')
     const food = params.get('aliment')
-    return findFood(group, food) ? { group, food } : null
+    const f = findFood(group, food)
+    return f && !f.retired ? { group, food } : null
   })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
