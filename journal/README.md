@@ -487,6 +487,16 @@ au lieu d'un faux « pauvre ». **✅ 29/10 10:33 (N3e)** : fructanes connus pou
 pommes de terre, carottes, chou-fleur… et zéro pour viandes et poissons) ; **✅ 29/10 11:33 (N3f, 1ʳᵉ partie)** : pains complets, seigle,
 semoule, couscous, boulgour, topinambour (595 aliments) ; **✅ 29/10 12:33 (N3g)** : polyols de la prune, des abricots secs et au sirop, des pois mange-tout et des champignons cuits (sorbitol connu pour 2 869 aliments, mannitol 2 861) ; reste N2c (fer de l'oignon).
 
+**Campagne des testeurs préparée (run « idées » du 29/10 20:33)** : l'aide officielle de la Play Console, relue ce
+soir, confirme 12 testeurs inscrits **14 jours sans interruption** (un testeur qui part puis revient recommence ses
+14 jours) et un formulaire d'accès à la production en 10 questions, dont « les testeurs ont-ils utilisé toutes les
+fonctions ? » et « quels changements avez-vous faits grâce au test ? ». Les refus viennent surtout de testeurs qui
+installent une fois puis oublient l'app, et de réponses trop vagues. D'où : 4 petites « missions » de 2 minutes
+(photo de repas, bilan du ventre, Journal et Sources, réintroduction et rapport PDF) qui font toucher tout le
+parcours ; les 10 réponses rédigées en anglais, à compléter avec les vrais retours ; un tableau « changements faits
+pendant le test » que chaque run remplira. Honnêteté : en 14 jours, aucun testeur ne verra de piste (21 à 28 jours
+de données) ; le formulaire le dit tel quel.
+
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
 🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
@@ -501,7 +511,11 @@ semoule, couscous, boulgour, topinambour (595 aliments) ; **✅ 29/10 12:33 (N3g
    depuis le Play Store, activer la lecture au déverrouillage dans la carte bien-être, vérifier la notification
    permanente et son bouton « Arrêter ». Dites-nous quand la déclaration est acceptée : l'alpha recevra alors la
    fonction.
-2. **Inviter les testeurs** : quand vous le déciderez (au plus tôt la semaine prochaine).
+2. **Inviter les testeurs** : quand vous le déciderez (au plus tôt la semaine prochaine). Tout est prêt dans
+   [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md) : dites simplement « j'invite le <date> » dans une consigne, le
+   run suivant recale la fin du premium offert (invitation + 14 jours + 10 de marge) et met la date dans le texte.
+   Pendant le test : 4 messages « missions » à envoyer au groupe (jours 1, 3, 7, 10, §4), et au jour 14 le formulaire
+   d'accès à la production (**P30**, réponses prêtes en anglais au §5).
 3. **P32** (pas urgent, avant la production) : dans quels pays vendre (proposition ci-dessus ; répondez
    « d'accord » ou votre liste).
 4. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
@@ -514,6 +528,7 @@ semoule, couscous, boulgour, topinambour (595 aliments) ; **✅ 29/10 12:33 (N3g
 | 29/10 17:00 — [Rapport PDF : zéros trompeurs](runs/2026-10-29-1700-rapport-pdf.md) | 🎨 | POL-PLAY-44 (audit du rapport PDF sur démo et vierge, carte en période de lancement) : « pas encore assez de notes » au lieu de « aucun lien » (statut `too_early` mal lu), semaines sans note en « – », pas de tableau ni de « 0 comparaisons » sans notes ; 1 test neuf, 1 renforcé |
 | 29/10 17:37 — [Sources : titre des sources actives](runs/2026-10-29-1737-sources-titre.md) | 🎨 | POL-PLAY-45 (audit Sources et Paramètres play, démo sombre et vierge clair) : sources actives sous « Ce que lit Halcya » au lieu de suivre « Mes appareils » ; Paramètres : rien à redire ; 1 test |
 | 29/10 18:33 — [Journal vierge en couleur](runs/2026-10-29-1833-journal-vide.md) | 🎨 | POL-PLAY-46 (audit Accueil et Journal play vierge sombre) : trois tuiles pastel au lieu d'une phrase grise ; plus de « ventre » sans carte ventre ; POL-PLAY-47 noté ; 2 tests |
+| 29/10 20:33 — [Idées : campagne des testeurs](runs/2026-10-29-2033-idees-campagne-testeurs.md) | 💡 | exigences officielles du test fermé relues ; 4 messages « missions » ; brouillon des 10 réponses du formulaire d'accès à la production (P30) ; tableau des changements pendant le test ; recalage de la période de lancement ; TF-1, TF-2 |
 | 29/10 19:34 — [Ligne du compte des pistes](runs/2026-10-29-1934-pistes-compte.md) | 🎨 | POL-PLAY-47 : chiffre en mono, phrase en Figtree, « (6 dernières semaines) » insécable ; audit Analyses play vierge clair et sombre ; 1 test renforcé |
 | 29/10 15:00 — [Analyses : légende et pied de page](runs/2026-10-29-1500-analyses-pied-de-page.md) | 🎨 | POL-PLAY-42 (audit Analyses play démo, clair et sombre) : légende « visage » seulement si un lien la porte ; « Comment c'est calculé » centré, gris ; 1 test |
 | 29/10 16:00 — [Réintroduction : aliments de test](runs/2026-10-29-1600-reintroduction-aliments.md) | 🎨 | POL-PLAY-43 (audit Réintroduction play, lancement) : sorbitol → pruneaux secs, mannitol → champignons poêlés (avocat, mûres, chou-fleur sous le repère d'après Ciqual) ; avocat gardé lisible ; « Lait (lait) » → « Lait » ; test de cohérence avec la table |
