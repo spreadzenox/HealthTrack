@@ -40,6 +40,21 @@ describe('renderReportPdf', () => {
     expect(all).toMatch(/pas un diagnostic/)
     expect(all).not.toMatch(/HealthTrack/)
     expect(all).not.toMatch(/Forme des selles/)
+    // Pas de tableau de semaines à zéro ni de « 0 comparaisons faites » (POL-PLAY-44).
+    expect(all).not.toMatch(/Semaine par semaine/)
+    expect(all).not.toMatch(/comparaisons faites/)
+  })
+
+  it('peu de jours notés : « pas encore assez », semaines sans note en tirets (POL-PLAY-44)', async () => {
+    const entries = [gut(0, 'pain'), gut(-1, 'calm'), gut(-2, 'discomfort')]
+    const { onPage, texts } = await render(buildReport(entries, { now: NOW }))
+    const p1 = onPage(1)
+    expect(p1).toMatch(/Pas encore assez de notes du ventre \(3\/\d+ jours\)/)
+    expect(p1).not.toMatch(/Aucun lien n’a passé/)
+    expect(p1).not.toMatch(/comparaisons faites/)
+    // La première semaine (sans note) : « 0 » jours notés, puis des tirets, jamais « 0 calme ».
+    const i = texts.findIndex((x) => x.t === 'Douleur')
+    expect(texts.slice(i + 2, i + 6).map((x) => x.t)).toEqual(['0', '–', '–', '–'])
   })
 
   it('FODMAP par sous-groupe : abréviation dans le calendrier, ligne du tableau, repère présenté comme une hypothèse', async () => {
