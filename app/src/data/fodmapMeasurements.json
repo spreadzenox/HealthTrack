@@ -66,7 +66,7 @@
       "fructans": { "g": 0.24, "source": "ferjancic2024", "ref": "tableau 1, poireau", "confidence": "mesure", "g_high": 3.8, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Leek (d'après Muir 2007, moyenne poireau entier et blanc)" }
     },
     "Ail, cru": {
-      "fructans": { "g": 17.4, "source": "wangcheong2023", "ref": "citant Muir 2007", "confidence": "citée" }
+      "fructans": { "g": 17.4, "source": "liljebo2020", "ref": "suppl. tableau 3, Garlic (d’après Muir 2007)", "confidence": "citée" }
     },
     "Échalote, crue": {
       "fructans": { "g": 8.9, "source": "wangcheong2023", "ref": "citant Muir 2007", "confidence": "citée" }
@@ -333,6 +333,72 @@
     },
     "Haricot vert, appertisé, égoutté": {
       "fructans": { "g": 0.03, "source": "ferjancic2024", "ref": "tableau 1, haricots verts", "confidence": "analogie", "analogy_of": "Haricot vert, cuit" }
+    },
+    "Ail, grillé/poêlé, sans matière grasse": {
+      "fructans": { "g": 20.58, "source": "liljebo2020", "ref": "suppl. tableau 3, Garlic (d’après Muir 2007)", "confidence": "analogie", "analogy_of": "Ail, cru", "notes": "Ramené par les glucides Ciqual (cuit / cru) : ail seul, sans autre ingrédient." }
+    },
+    "Ail, rôti/cuit au four": {
+      "fructans": { "g": 22.26, "source": "liljebo2020", "ref": "suppl. tableau 3, Garlic (d’après Muir 2007)", "confidence": "analogie", "analogy_of": "Ail, cru", "notes": "Ramené par les glucides Ciqual (cuit / cru) : ail seul, sans autre ingrédient." }
+    },
+    "Ail séché, poudre": {
+      "fructans": { "g": 59.59, "source": "liljebo2020", "ref": "suppl. tableau 3, Garlic (d’après Muir 2007)", "confidence": "analogie", "analogy_of": "Ail, cru", "notes": "Ramené par les glucides Ciqual (poudre / cru)." }
+    },
+    "Topinambour, cru": {
+      "fructans": { "g": 12.2, "source": "liljebo2020", "ref": "suppl. tableau 3, Jerusalem artichoke (d’après Muir 2007)", "confidence": "citée" }
+    },
+    "Topinambour, cuit": {
+      "fructans": { "g": 12.2, "source": "liljebo2020", "ref": "suppl. tableau 3, Jerusalem artichoke puré and boiled (d’après Muir 2007)", "confidence": "citée" }
+    },
+    "Son de blé": {
+      "fructans": { "g": 3.7, "source": "liljebo2020", "ref": "suppl. tableau 3, Wheat bran (d’après Haskå 2008)", "confidence": "citée" }
+    },
+    "Germe de blé": {
+      "fructans": { "g": 2.25, "source": "liljebo2020", "ref": "suppl. tableau 3, Wheat germ (d’après Haskå 2008)", "confidence": "citée" }
+    },
+    "Semoule de blé dur, crue": {
+      "fructans": { "g": 2.25, "source": "liljebo2020", "ref": "suppl. tableau 3, Semolina (d’après Haskå 2008)", "confidence": "citée" }
+    },
+    "Semoule ou graine de couscous, cuite, sans sel ajouté": {
+      "fructans": { "g": 1, "source": "liljebo2020", "ref": "suppl. tableau 3, Semolina (d’après Haskå 2008)", "confidence": "analogie", "analogy_of": "Semoule de blé dur, crue", "notes": "Ramené au cuit par les glucides Ciqual (cuit / sec) : une partie des fructanes passe dans l’eau, estimation plutôt haute." }
+    },
+    "Semoule ou graine de couscous semi-complète, cuite, sans sel ajouté": {
+      "fructans": { "g": 1.04, "source": "liljebo2020", "ref": "suppl. tableau 3, Semolina (d’après Haskå 2008)", "confidence": "analogie", "analogy_of": "Semoule de blé dur, crue", "notes": "Ramené au cuit par les glucides Ciqual (cuit / sec) : une partie des fructanes passe dans l’eau, estimation plutôt haute." }
+    },
+    "Semoule ou graine de couscous complète, cuite, sans sel ajouté": {
+      "fructans": { "g": 0.86, "source": "liljebo2020", "ref": "suppl. tableau 3, Semolina (d’après Haskå 2008)", "confidence": "analogie", "analogy_of": "Semoule de blé dur, crue", "notes": "Ramené au cuit par les glucides Ciqual (cuit / sec) : une partie des fructanes passe dans l’eau, estimation plutôt haute. Semoule complète non mesurée : celle de la semoule reprise." }
+    },
+    "Boulgour de blé, cru": {
+      "fructans": { "g": 2, "source": "liljebo2020", "ref": "suppl. tableau 3, Bulgur (valeur du couscous, d’après Biesiekierski 2011)", "confidence": "analogie", "notes": "Liljebo reprend pour le boulgour la mesure du couscous." }
+    },
+    "Boulgour de blé, cuit, sans sel ajouté": {
+      "fructans": { "g": 0.73, "source": "liljebo2020", "ref": "suppl. tableau 3, Bulgur (valeur du couscous, d’après Biesiekierski 2011)", "confidence": "analogie", "analogy_of": "Boulgour de blé, cru", "notes": "Ramené au cuit par les glucides Ciqual (cuit / sec) : une partie des fructanes passe dans l’eau, estimation plutôt haute. Liljebo reprend pour le boulgour la mesure du couscous." }
+    },
+    "Pain complet ou intégral (à la farine T150)": {
+      "fructans": { "g": 0.79, "source": "liljebo2020", "ref": "suppl. tableau 1, Wheat whole meal bread 6 % fiber (moyenne Whelan 2011 et Biesiekierski 2011)", "confidence": "citée" }
+    },
+    "Pain de mie complet, préemballé": {
+      "fructans": { "g": 0.79, "source": "liljebo2020", "ref": "suppl. tableau 1, Wheat whole meal bread 6 % fiber (moyenne Whelan 2011 et Biesiekierski 2011)", "confidence": "analogie", "analogy_of": "Pain complet ou intégral (à la farine T150)" }
+    },
+    "Pain pour burger ou hot dog (bun) complet, préemballé": {
+      "fructans": { "g": 0.79, "source": "liljebo2020", "ref": "suppl. tableau 1, Wheat whole meal bread 6 % fiber (moyenne Whelan 2011 et Biesiekierski 2011)", "confidence": "analogie", "analogy_of": "Pain complet ou intégral (à la farine T150)" }
+    },
+    "Pain complet au seigle, préemballé": {
+      "fructans": { "g": 1.14, "source": "liljebo2020", "ref": "suppl. tableau 3, Whole meal rye bread (d’après Andersson 2009)", "confidence": "citée" }
+    },
+    "Pain de seigle et froment": {
+      "fructans": { "g": 1.14, "source": "liljebo2020", "ref": "suppl. tableau 3, Whole meal rye bread (d’après Andersson 2009)", "confidence": "analogie", "analogy_of": "Pain complet au seigle, préemballé", "notes": "Seigle et blé mélangés : teneur du pain de seigle complet, estimation plutôt haute." }
+    },
+    "Seigle complet, cru": {
+      "fructans": { "g": 3.52, "source": "liljebo2020", "ref": "suppl. tableau 3, Whole meal rye and crushed rye (d’après Andersson 2009)", "confidence": "citée" }
+    },
+    "Farine de seigle T170": {
+      "fructans": { "g": 3.52, "source": "liljebo2020", "ref": "suppl. tableau 3, Whole meal rye and crushed rye (d’après Andersson 2009)", "confidence": "analogie", "analogy_of": "Seigle complet, cru", "notes": "Farine de seigle intégrale." }
+    },
+    "Tartine croustillante au seigle, source ou riche en fibres": {
+      "fructans": { "g": 3.2, "source": "liljebo2020", "ref": "suppl. tableau 3, Crisp Bread, yeast, sourdough (d’après Andersson 2009)", "confidence": "analogie", "notes": "Pain croustillant de seigle (type suédois)." }
+    },
+    "Pain bis (à la farine T80 ou T110)": {
+      "fructans": { "g": 0.14, "source": "ferjancic2024", "ref": "tableau 1, pain blanc", "confidence": "analogie", "analogy_of": "Pain blanc (par ex. : baguette, boule…)", "g_high": 1.02, "source_high": "liljebo2020", "ref_high": "suppl. tableau 1, White bread fiber 5 % (d'après Whelan 2011)", "notes": "Farine T80 ou T110, entre le pain blanc et le pain complet (0,79 g, Liljebo 2020) : fourchette du pain blanc reprise." }
     }
   }
 }
