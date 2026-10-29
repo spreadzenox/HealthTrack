@@ -5,6 +5,20 @@
 
 ---
 
+## 2026-10-29 (matin) — Veille (run « idées ») : cohérence des mesures FODMAP avec les repères
+
+- Liljebo T. et al., *BMC Nutrition* 2020;6:47 (PMC7499970) : CC BY 4.0, données CC0 ; supplément MOESM1 (PDF,
+  15 p.) = valeurs par aliment avec la référence primaire (Muir 2007/2009, Biesiekierski 2011, Whelan 2011, Yao 2014,
+  Haskå 2008, Andersson 2009). Réutilisable en confiance « citée ». Sorbitol et mannitol additionnés (« polyols »),
+  sous-groupe précisé en commentaire.
+- Les repères de Varney 2017 (0,3 g de fructanes par portion) sont issus des mesures de Monash ; Ferjančič 2024 donne
+  des valeurs bien plus basses pour le pain (0,14 contre 1,02 g/100 g), le poireau (0,24 contre 3,8) et l'oignon
+  (1,97 contre 6,3), mais concorde pour les pâtes (0,33 contre 0,34). Pejcz et al., *Foods* 2019;8:663 (CC BY) :
+  pains de blé 0,23–0,58 g/100 g MS, −56 à −60 % de fructanes avec une fermentation longue : la divergence est réelle.
+- Miranda et al., *IJERPH* 2020 (CC BY) : céréales espagnoles mesurées mais seuls des apports g/j publiés.
+- AFCD / NUTTAB (FSANZ) : licence dérivée d'une CC BY-SA 3.0 + accord d'utilisation : écartée pour une app fermée.
+- Actions : `IDEES.md` I191–I193, `BACKLOG.md` N3d–N3f.
+
 ## 2026-10-26 (soir) — Veille (run « idées ») : mesures FODMAP par sous-groupe en accès libre
 
 - Sorbitol et mannitol mesurés par aliment existent dans une table **officielle** : Japon, MEXT 2020, volume glucides

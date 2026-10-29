@@ -9,6 +9,94 @@
 
 ---
 
+## Run du 29/10/2026 08:33 (Paris) — FODMAP : des valeurs qui collent aux repères, et les aliments courants couverts
+
+**But** : la demande du 26/10 14:45 (« vérifie bien que la base est fiable ») appliquée aux mesures FODMAP elles-mêmes,
+pas seulement à Ciqual. Méthode : relecture de `fodmapMeasurements.json` (45 aliments) et de `fodmapGroups.js`
+(repères Varney 2017 : fructanes et GOS 0,3 g, fructose en excès 0,15 g, lactose 1 g, polyols 0,4 g par portion),
+puis lecture des sources ouvertes. Aucun code produit. Résultat : **N3d à N3f** dans `BACKLOG.md`.
+
+### Sources lues (29/10)
+- **Liljebo T. et al., BMC Nutrition 2020;6:47** (doi 10.1186/s40795-020-00374-3, PMC7499970) : article **CC BY 4.0,
+  données CC0** [V]. Le supplément `40795_2020_374_MOESM1_ESM.pdf` (15 p.) donne, aliment par aliment et avec la
+  référence primaire, les 20 aliments les plus riches pour chaque groupe (fructanes, GOS, lactose, polyols) et les
+  aliments les plus consommés. Valeurs **compilées** depuis des articles publiés (Muir 2007 et 2009, Biesiekierski 2011,
+  Whelan 2011, Yao 2014, Haskå 2008, Andersson 2009) : à citer en confiance `citée` (comme Wang & Cheong 2023), jamais
+  en `mesure`. Ce ne sont pas des données d'application Monash : ce sont les articles scientifiques de cette équipe,
+  ce que la consigne autorise. Sorbitol et mannitol y sont additionnés (« polyols ») sauf mention dans la colonne
+  commentaire (« Sorbitol », « Mannitol »).
+- **Ferjančič 2024** (déjà utilisé) : le tableau 1 a 40 aliments ; **23 ne sont pas encore repris**, dont 12 « ND »
+  (non détecté) [V].
+- **Pejcz E. et al., Foods 2019;8:663** (CC BY, PMC6963594) [V] : pains de blé 0,23 à 0,58 g/100 g de matière sèche
+  selon la fermentation (−56 à −60 % avec 150 min en deux temps) ; farines 1,18 (type 450) et 1,59 (complète).
+- **Miranda J. et al., IJERPH 2020;17:5882** (CC BY) [V] : 87 produits céréaliers espagnols mesurés, mais seulement
+  des apports en g/jour publiés : rien de réutilisable par aliment.
+- **Écartée : table australienne AFCD / NUTTAB (FSANZ)** [V/T] : licence dérivée d'une CC BY-SA 3.0 et accord
+  d'utilisation des données à accepter : le partage à l'identique est risqué pour une app commerciale fermée.
+
+### I191 (18) — Pain, poireau, oignon : des mesures qui divergent de 3 à 15 fois → une fourchette, jamais « bas » [V code]
+
+Les repères de Varney 2017 ont été fixés avec les mesures de l'équipe de Monash (Muir 2007, Biesiekierski 2011). La
+table utilise surtout Ferjančič 2024, nettement plus bas pour les aliments qui comptent le plus :
+
+| Aliment (100 g) | Ferjančič 2024 | Série Monash (via Liljebo 2020) | Portion | Avec Ferjančič | Avec Monash |
+|---|---|---|---|---|---|
+| Pain blanc / tradition | 0,14 | 1,02 (Whelan 2011) | 80 g | 0,11 g → **bas** | 0,82 g → élevé |
+| Poireau cru | 0,24 | 3,8 (Muir 2007) | 100 g | 0,24 g → **bas** | 3,8 g → élevé |
+| Oignon cru | 1,97 | 6,3 (Muir 2007) | 40 g | 0,79 g → élevé | 2,5 g → élevé |
+| Pâtes cuites | 0,33 | 0,34 (Biesiekierski 2011) | 200 g | 0,66 g → élevé | 0,68 g → élevé |
+
+Conséquence aujourd'hui : un sandwich ou une soupe de poireaux sont classés « bas en fructanes » ; ces jours-là
+comptent comme « sans fructanes » dans les pistes repas → ventre (facteur `fodmap:fructans`), ce qui dilue le seul
+groupe que la plupart des personnes SII cherchent. Les pâtes, elles, sont « élevées » : incohérent pour un utilisateur.
+La divergence est réelle et documentée (Pejcz 2019 : la fermentation détruit 56 à 60 % des fructanes du pain ; la
+variété d'oignon et la méthode comptent), donc ni l'une ni l'autre valeur n'est « la bonne ».
+**Proposition** : un champ `g_high` (borne haute publiée, avec sa propre `source_high` et `ref_high`) quand deux
+mesures publiées diffèrent de plus de 2 fois ; `estimateMealFodmap` ajoute `g_high` au `max` existant (le mécanisme
+des « < x » sert déjà à ça) : le repas n'est jamais « bas » si la borne haute dépasse le repère ; il est « élevé » si la
+borne basse le dépasse ; sinon `probable` (la carte affiche déjà « probable »). Rien n'est inventé, l'incertitude est
+dite (« 0,1 à 0,8 g selon les mesures publiées »), et les données personnelles tranchent (l'aliment « pain » reste
+testé à part dans les pistes, règle 6). Entrées concernées : pain blanc, pain de tradition, poireau, oignon (3
+variantes). Test : 80 g de baguette → `probable`, jamais `bas` ; 100 g de poireau idem ; 40 g d'oignon → `élevé`.
+
+### I192 (17) — Les aliments courants à fructanes « non détectés » ou faibles : Ferjančič en entier [V]
+
+Les 23 lignes de Ferjančič 2024 non reprises couvrent l'ordinaire d'une assiette : carotte 0,11 ; tomate 0,01 ;
+laitue 0,01 ; poivron 0,02 ; chou-fleur 0,09 ; brocoli 0,02 ; chou 0,03 ; courgette 0,01 ; haricot vert 0,03 ;
+polenta cuite 0,04 ; orge mondé 0,47 ; petits pois en conserve 0,33 ; haricots en conserve 0,24 ; pain bis 0,14 ;
+ND : chou-rave, concombre, cornichon, navet aigre, choucroute, pomme de terre cuite et au four, frites, chips, riz
+cuit, pétales de maïs. Aujourd'hui, un « poulet, riz, carottes » reste **inconnu** en fructanes faute de mesure, alors
+que les trois aliments en sont presque dépourvus. **Proposition** : les reprendre (noms Ciqual exacts, analogies
+cuit/cru seulement par l'eau Ciqual comme `legumeGos.mjs`) ; « ND » saisi comme une limite (« < limite de
+détection ») et non comme 0 — **à vérifier dans l'article** : la limite de détection du dosage (sinon prendre 0,01,
+la plus petite valeur publiée du tableau, comme borne haute prudente). Les aliments faibles sont ceux où les deux
+séries s'accordent (pâtes, fruits), donc sans risque de faux « bas ». Effet visible : moins de « inconnu » dans la
+carte d'un repas, le calendrier du rapport PDF et le décompte des jours.
+
+### I193 (16) — Fructanes des céréales et polyols des fruits et légumes : Liljebo 2020 [V]
+
+Valeurs `citée` à reprendre, aliment par aliment, en priorité celles qui manquent (la règle « Ciqual d'abord » pour les
+polyols tient toujours : ne remplir que si Ciqual ne mesure pas les polyols de l'aliment) :
+- **Fructanes** : ail 17,4 (Muir 2007 ; remplace la citation de seconde main Wang & Cheong) ; topinambour 12,2 ; son
+  de blé 3,7 (Haskå 2008) ; pain de seigle complet 1,14 (Andersson 2009) ; pain croustillant de seigle 3,2 à 4,27 ;
+  semoule 2,25 (Haskå, produit sec) et boulgour / couscous 2,0 (Biesiekierski, sec) → **cuits par l'eau Ciqual**
+  (analogie, dérivation recalculable) ; pain complet de blé 0,79 (moyenne Whelan + Biesiekierski).
+- **Polyols** (colonne commentaire = sous-groupe) : pruneau 10,8 sorbitol ; abricot sec 6,0 sorbitol ; mûre 4,76
+  sorbitol ; prune 2,4 sorbitol ; abricot 1,2 sorbitol (contredit Ciqual « < 0,5 » et MEXT 0,3 déjà en place : garder MEXT, noter l'écart) ;
+  nectarine 1,01 sorbitol (Ciqual « < 0,5 » : contradiction, laisser inconnu comme décidé le 27/10) ; chou-fleur 2,96 mannitol ; pois mange-tout 1,16 mannitol ; céleri 1,5
+  mannitol (déjà couvert par Ciqual) ; champignon de Paris 2,74 sorbitol + mannitol ; avocat 0,65 ; poivron 0,37 ;
+  maïs doux en conserve 0,45.
+- **GOS** : « Green peas 1,88 » correspond aux **pois cassés bouillis** d'après le texte de l'article : ne pas
+  l'appliquer aux petits pois frais ; soja 0,79 ; lentilles cuites 0,46 et haricots blancs cuits 0,42 (à comparer aux
+  valeurs Siva × Njoumi déjà en place, qui priment car recalculables).
+Correspondance Ciqual vérifiée le 29/10 (noms exacts présents) : « Semoule ou graine de couscous, cuite, sans sel
+ajouté », « Boulgour de blé, cuit, sans sel ajouté », « Son de blé », « Topinambour, cru », « Pain complet ou intégral
+(à la farine T150) », « Pain de seigle et froment », « Chou-fleur, cru », « Prune, sans noyau, crue », « Mûre (de
+ronce), crue », « Pois mange-tout ou pois gourmand, cru », « Avocat, chair sans peau, sans noyau, cru », « Maïs doux,
+appertisé, égoutté », « Poivron rouge, cru ». Analogies cuit ← cru à prévoir pour « Oignon cuit », « Poireau, cuit »,
+« Ail, rôti/cuit au four » (par l'eau Ciqual ; les fructanes résistent à la cuisson à sec, une partie passe dans
+l'eau de cuisson : confiance basse).
+
 ## Run du 28/10/2026 08:33 (Paris) — Audit écran par écran de la version Play (vierge + démo)
 
 **But** : nourrir le polissage avant l'invitation des testeurs (décision du 27/10 13:00) avec des défauts concrets,
