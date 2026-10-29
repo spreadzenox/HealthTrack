@@ -9,6 +9,37 @@
 
 ---
 
+## Run du 29/10/2026 20:33 (Paris) — Campagne des testeurs et accès à la production
+
+### I194 (22) — Faire réussir le test fermé du premier coup [V sur l'aide officielle ; T pour les causes de refus]
+- **Besoin servi** : la mise en production (le seul clic du propriétaire) dépend d'un test fermé validé par Google.
+  Un refus coûte au moins 14 jours de plus.
+- **Règles officielles** (support.google.com/googleplay/android-developer/answer/14151465, lue le 29/10) [V] : comptes
+  personnels créés après le 13/11/2023 ; **au moins 12 testeurs inscrits sans interruption pendant au moins 14 jours**
+  au moment de la demande ; un testeur qui quitte puis revient doit refaire **14 jours consécutifs** (les jours
+  d'avant ne comptent plus). Le formulaire a **3 parties, 10 questions** : (1) facilité de recrutement (choix),
+  (2) les testeurs ont-ils utilisé toutes les fonctions, (3) l'usage ressemblait-il à la production, (4) résumé des
+  retours, (5) comment ils ont été collectés ; (6) public visé, (7) valeur apportée, (8) installations estimées la
+  1re année (choix) ; (9) changements faits grâce au test, (10) comment vous avez jugé l'app prête. Google conseille
+  un canal de retour clair, de lire *Commentaires des testeurs* dans la Play Console, de **répondre et corriger**, et
+  avertit que « Supprimer » ou quitter la page sans « Suivant » perd les réponses.
+- **Causes de refus rapportées** (choicely, testerscommunity, extendsclass, levelup ; sources commerciales) [T] :
+  « engagement insuffisant » (installés une fois puis oubliés, proches surtout) ; réponses vagues ; plantages ou ANR
+  non corrigés du rapport de pré-lancement. Les sources se contredisent sur la remise à zéro sous 12 : on garde la
+  règle prudente (inviter 15, rappel au jour 7).
+- **Ce qui est préparé (sans code)** : `INVITATION-TESTEURS.md` §4 (4 messages « missions » jours 1, 3, 7, 10 qui
+  couvrent onboarding, photo de repas, bilan du ventre, Journal et Tendances, Sources, réintroduction, PDF et export,
+  avis) et §5 (10 réponses en anglais avec traduction, champs `<…>` à remplir au jour 12) ; `PRODUIT.md` §4 bis
+  (tableau des changements pendant le test) et P30 ; formule de recalage de `until` (invitation + 14 + 10 jours).
+- **Limite honnête** : en 14 jours, aucun testeur ne voit de piste (21 jours de repas, 28 jours de ventre) ni de
+  résultat de réintroduction ; la réponse 3 le dit et renvoie aux bancs simulés.
+- **Écarté** : une carte « mission du jour » dans l'app pendant la période de lancement (code visible de tous les
+  utilisateurs play, et la période sert aussi au lancement public) ; les services payants de testeurs (comptes
+  inconnus, engagement factice : c'est précisément ce que Google détecte).
+- **Étapes** : **TF-1** et **TF-2** dans `BACKLOG.md`.
+
+---
+
 ## Run du 29/10/2026 08:33 (Paris) — FODMAP : des valeurs qui collent aux repères, et les aliments courants couverts
 
 **But** : la demande du 26/10 14:45 (« vérifie bien que la base est fiable ») appliquée aux mesures FODMAP elles-mêmes,

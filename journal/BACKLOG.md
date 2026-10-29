@@ -1324,6 +1324,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-45** ✅ 29/10 17:37 (audit Sources et Paramètres play, démo sombre et vierge clair) Sources : les sources actives (météo, Health Connect…) suivaient « Mes appareils » sans titre et se lisaient comme des appareils → bloc « Ce que lit Halcya » ; Paramètres : rien à redire.
 - [x] **POL-PLAY-46** ✅ 29/10 18:33 (audit Accueil et Journal play vierge sombre ; `JournalEmpty.test.jsx`) Journal vierge : phrase grise seule, et « Notez votre ventre depuis Aujourd'hui » même avec l'objectif énergie (pas de carte ventre) → « Rien de noté pour l'instant » + tuiles pastel (repas, ventre ou bien-être selon `gutCardMode`, source).
 - [x] **POL-PLAY-47** ✅ 29/10 19:34 (`TodayCards.test.jsx` : chiffre seul en mono ; « (6 dernières semaines) » insécable ; Analyses play vierge clair et sombre relues) Accueil, carte « Vos pistes arrivent » : « 0/21 jours avec un repas ou une note du ventre (6 dernières semaines) » est une phrase en mono (DESIGN : mono pour les chiffres) → chiffre en mono, phrase en Figtree.
+- [ ] **TF-1** (I194 ; le jour où le propriétaire dit « j'invite le <date> ») `relay/src/launch-period.json` :
+  `until` = invitation + 14 + 10 jours à 23:00 UTC ; date dans le texte d'invitation (`INVITATION-TESTEURS.md` §3,
+  `<date de fin de la période de lancement>`) ; vérifier le résumé du déploiement du relais et l'affichage
+  « jusqu'au … » (Premium, fin de l'onboarding). Pendant le test : au moins 2 versions en alpha (une par jour au plus),
+  `PRODUIT.md` §4 bis tenu à jour à chaque changement venu d'un testeur.
+- [ ] **TF-2** (I194 ; jour 12 du test) Compléter le brouillon P30 (`INVITATION-TESTEURS.md` §5) avec les vrais
+  retours (le propriétaire colle les commentaires des testeurs), la liste du §4 bis et l'état réel d'Android vitals
+  et du rapport de pré-lancement (POL-PLAY-11) ; signaler en tête du résumé « 👉 Formulaire d'accès prêt ».
 - Audit 29/10 02:33 (démo sombre, Historique du bien-être, Montre, Données, Premium, Paramètres, Réglages) : rien d'autre de bloquant ; « 30 lectures » en tête de l'historique et « sur 10 lectures » sous les expressions (seules les lectures récentes ont les probabilités) peut surprendre : à expliquer en une demi-ligne si un retour le signale.
 
 **Mise à jour du 27/10 (13:33 Paris)** : ✅ **P28-INTERNE** (version de test interne avec la lecture au déverrouillage). Décision du propriétaire du 27/10 13:00 : testeurs au plus tôt la semaine prochaine, 9 (anglais) en pause, priorité au **polissage de la version play** par impact (bugs, chiffres fiables, parcours écran par écran sur données vierges et de démo) ; fin de la période de lancement à recaler sur l'invitation.
