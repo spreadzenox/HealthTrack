@@ -187,7 +187,7 @@ export default function Food() {
     <section className="food-page">
       {disclosure}
       <JournalTabs />
-      <h2 className="page-title">Repas</h2>
+      <h2 className="page-title">Vos repas</h2>
 
       <div
         className="upload-zone"

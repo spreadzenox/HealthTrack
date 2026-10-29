@@ -256,6 +256,8 @@
   le même bouton émeraude qu'« Importer ») ; la confirmation avec « Exporter d'abord » ne change pas. Réintroduction :
   chaque groupe (GOS, fructose, lactose…) a un chevron, et « pas testé » n'est plus répété sur chaque carte (seuls vos
   résultats s'affichent). Analyses : « Voir les liens incertains », sans le nombre. **À tester** : rien de particulier.
+- **Titres du Journal sans répétition** (29/10 01:33) — sous les onglets « Repas » et « Nutrition », les titres
+  deviennent « Vos repas » et « Vos apports », comme « Vos derniers jours » et « Vos tendances ».
 - **« Photo du repas » bien en vue** (29/10 00:33) — Journal › Repas : la photo est le grand bouton plein en haut
   (comme sur l'Accueil), « Galerie » et « Décrire » côte à côte dessous. **À tester** : rien de particulier.
 
@@ -433,6 +435,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 
 | Run | Type | Résultat |
 |---|---|---|
+| 29/10 01:33 — [Titres du Journal](runs/2026-10-29-0133-titres-journal.md) | 🎨 | POL-PLAY-35 (« Vos repas », « Vos apports » au lieu de répéter le sous-onglet) ; 2 tests |
 | 29/10 00:33 — [« Photo du repas » en geste principal](runs/2026-10-29-0033-photo-du-repas.md) | 🎨 | POL-PLAY-34 (Journal › Repas : photo en bouton plein, galerie et description dessous) ; audit `--play --empty` des écrans secondaires ; POL-PLAY-35 noté ; 1 test |
 | 28/10 23:33 — [Gestes plus clairs](runs/2026-10-28-2333-gestes-plus-clairs.md) | 🎨 | POL-PLAY-31 (bouton de suppression en contour orange) et POL-PLAY-33 (chevrons de la réintroduction, plus de « pas testé », liens incertains sans nombre) ; 3 tests |
 | 28/10 22:33 — [Pistes « facteur → effet »](runs/2026-10-28-2233-pistes-facteur-effet.md) | 🎨 | POL-PLAY-32 : titre « facteur → effet » (`leverTitle`, côté du meilleur bien-être) dans Analyses et la carte lilas ; action derrière le chevron ; 4 tests |

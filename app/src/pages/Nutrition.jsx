@@ -85,7 +85,7 @@ export default function Nutrition() {
     return (
       <section className="food-page nutrition-page">
         <JournalTabs />
-      <h2 className="page-title">Nutrition</h2>
+        <h2 className="page-title">Vos apports</h2>
         <p>Chargement…</p>
       </section>
     )
@@ -94,7 +94,7 @@ export default function Nutrition() {
   return (
     <section className="food-page nutrition-page">
       <JournalTabs />
-      <h2 className="page-title">Nutrition</h2>
+      <h2 className="page-title">Vos apports</h2>
 
       <BodyProfileCard profile={profile} composition={bodyComp} onSaved={load} />
 
