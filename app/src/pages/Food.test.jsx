@@ -23,7 +23,9 @@ describe('Food', () => {
         <Food />
       </BrowserRouter>
     )
-    expect(screen.getByRole('heading', { name: /^Repas$/i })).toBeInTheDocument()
+    // POL-PLAY-35 : le titre ne répète pas le sous-onglet « Repas », comme « Vos derniers jours » et « Vos tendances ».
+    expect(screen.getByRole('heading', { name: 'Vos repas' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /^Repas$/ })).not.toBeInTheDocument()
   })
 
   it('renders two separate file inputs: camera and gallery', () => {

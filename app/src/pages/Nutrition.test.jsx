@@ -41,8 +41,10 @@ describe('Nutrition page', () => {
       </MemoryRouter>,
     )
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /nutrition/i })).toBeInTheDocument()
+      // POL-PLAY-35 : le titre ne répète pas le sous-onglet « Nutrition ».
+      expect(screen.getByRole('heading', { name: 'Vos apports' })).toBeInTheDocument()
     })
+    expect(screen.queryByRole('heading', { name: /^Nutrition$/ })).not.toBeInTheDocument()
     // VC-3 : aucune valeur par défaut affichée comme si elle était vraie.
     expect(screen.getByText(/Complétez votre profil pour voir vos repères/)).toBeInTheDocument()
     const card = document.querySelector('.nutrition-profile-card')
