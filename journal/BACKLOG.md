@@ -1412,7 +1412,14 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
     boulgour 2,0 (« valeur du couscous ») ; pain complet 0,79 ; pain de seigle complet 1,14 ; seigle complet 3,52 ; pain
     croustillant de seigle 3,2) ; sec → cuit par le rapport des glucides Ciqual (couscous 1,0, boulgour 0,73, ail grillé,
     rôti, poudre) ; pain bis = fourchette du pain blanc (0,14–1,02). Fructanes connus 573 → 595.
-  - [ ] **N3g** (reste de N3f, I193) polyols Liljebo 2020 quand Ciqual ne mesure pas les polyols : pruneau 10,8 et abricot
+  - [x] **N3g — FAIT le 29/10 12:33** : `scripts/nutrition/liljeboPolyols.mjs` (14 entrées, tableau 6 relu : prune 2,4
+    sorbitol et pois mange-tout crus 1,16 mannitol en `citée` ; prune violette en analogie ; mirabelle, reine-claude,
+    abricot sec, sec moelleux et au sirop égouttés : part 1 du total Ciqual en sorbitol ; champignon de Paris sauté,
+    bouilli, surgelé, appertisé : part 1 en mannitol comme le cru). Écartés (Ciqual « < 0,5 » contredit) : mûre 4,76,
+    chou-fleur 2,96, avocat 0,65, nectarine 1,01, abricot cru 1,2 (MEXT 0,3 gardé, écart noté) ; poivron et maïs
+    (sous-groupe non indiqué) ; pois mange-tout cuits, pruneau cuit et jus (non mesurés). Écart noté : abricot sec Ciqual
+    22,6 g de polyols contre 6,0 g de sorbitol chez Liljebo (total Ciqual gardé).
+  - [ ] ~~**N3g**~~ (détail initial) polyols Liljebo 2020 quand Ciqual ne mesure pas les polyols : pruneau 10,8 et abricot
     sec 6,0 sorbitol (Yao 2014), mûre 4,76, prune 2,4 sorbitol ; chou-fleur 2,96 et pois mange-tout 1,16 mannitol (Muir
     2009) ; champignon 2,74 (sorbitol + mannitol, répartition à documenter) ; avocat 0,65 ; abricot frais : garder MEXT,
     noter l'écart ; nectarine : laisser inconnu. Valeurs relues le 29/10 dans le supplément, tableau 6.
