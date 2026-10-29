@@ -503,7 +503,13 @@ export default function Connectors() {
 
       <MyDevices detect={detectApps} />
 
-      {layout.active.map(renderSource)}
+      {/* POL-PLAY-45 : sans titre, les sources actives (météo, Health Connect…) se lisaient comme des « appareils ». */}
+      {layout.active.length > 0 && (
+        <div className="connectors-active">
+          <h3 className="connectors-toconnect-title">Ce que lit {APP_NAME}</h3>
+          {layout.active.map(renderSource)}
+        </div>
+      )}
 
       {/* VC-25 : un seul geste pour brancher quelque chose. Au premier lancement, les sources à brancher restent en
           vue ; dès qu'une source envoie, elles rejoignent « Ajouter une source » (l'ancien volet « Brancher une autre
