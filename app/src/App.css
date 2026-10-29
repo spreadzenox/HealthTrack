@@ -919,3 +919,22 @@
   width: 100%;
   border-radius: var(--radius-pill);
 }
+
+/* POL-PLAY-46 : Journal vierge en couleur (repas pêche, ventre pêche ou bien-être menthe, source lilas). */
+.journal-empty { margin-top: 8px; }
+.journal-empty-title { margin: 0; font-weight: 700; font-size: 1.05rem; color: var(--text); }
+.journal-empty-text { margin: 4px 0 14px; color: var(--text-muted); }
+.journal-empty-tiles { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.journal-empty-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 18px;
+  border-radius: 18px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.journal-empty-tile[data-theme="mint"] { background: var(--mint-bg); color: var(--mint-label); }
+.journal-empty-tile[data-theme="peach"] { background: var(--peach-bg); color: var(--peach-label); }
+.journal-empty-tile[data-theme="lilac"] { background: var(--lilac-bg); color: var(--lilac-bar); }
