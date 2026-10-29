@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-29",
+  "kind": "correctif",
+  "title": "Rapport PDF : plus de zéros trompeurs",
+  "items": [
+    "Avant 28 jours de notes du ventre, le rapport dit « Pas encore assez de notes du ventre (9/28 jours) » au lieu de « Aucun lien n'a passé toutes les vérifications » : rien n'avait encore été cherché.",
+    "Une semaine sans note affiche « – » plutôt que « 0 calme, 0 gêne, 0 douleur » ; sans aucune note, le tableau des semaines n'apparaît plus."
+  ]
+}

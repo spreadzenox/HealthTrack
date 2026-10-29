@@ -198,26 +198,31 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
     para('Chaque jour noté prend sa note la plus forte (douleur > gêne > calme). Un jour sans note n’est pas compté.', { size: 8.5, color: C.muted })
   }
 
-  heading('Semaine par semaine')
-  const cols = [M, M + 150, M + 230, M + 290, M + 350]
-  const head = ['Semaine', 'Jours notés', 'Calme', 'Gêne', 'Douleur']
-  head.forEach((h, i) => text(h, cols[i], y, { font: 'bold', size: 8.5, color: C.muted }))
-  y -= 13
-  const weekly = report.weekly
-  const weekLine = weekly.length > 4 ? 10.5 : 13
-  for (const w of weekly) {
-    text(`${frDate(w.from, false)} – ${frDate(w.to, false)}`, cols[0], y, { font: 'mono', size: 8.5 })
-    ;[w.notedDays, w.calm, w.discomfort, w.pain].forEach((v, i) => text(String(v), cols[i + 1], y, { font: 'mono', size: 8.5 }))
-    // Mini barre empilée.
-    if (w.notedDays) {
-      let bx = M + 410
-      for (const id of ['calm', 'discomfort', 'pain']) {
-        const bw = (CW - 410) * (w[id] / 7)
-        if (bw > 0) rect(bx, y - 1, bw, 7, LEVEL_COLORS[id])
-        bx += bw
+  // Sans aucune note, « Ventre » le dit déjà : pas de tableau de semaines à zéro.
+  if (g.notedDays) {
+    heading('Semaine par semaine')
+    const cols = [M, M + 150, M + 230, M + 290, M + 350]
+    const head = ['Semaine', 'Jours notés', 'Calme', 'Gêne', 'Douleur']
+    head.forEach((h, i) => text(h, cols[i], y, { font: 'bold', size: 8.5, color: C.muted }))
+    y -= 13
+    const weekly = report.weekly
+    const weekLine = weekly.length > 4 ? 10.5 : 13
+    for (const w of weekly) {
+      text(`${frDate(w.from, false)} – ${frDate(w.to, false)}`, cols[0], y, { font: 'mono', size: 8.5 })
+      // Semaine sans note : « – » plutôt que « 0 calme, 0 gêne » (aucun zéro trompeur).
+      const counts = w.notedDays ? [w.calm, w.discomfort, w.pain] : ['–', '–', '–']
+      ;[w.notedDays, ...counts].forEach((v, i) => text(String(v), cols[i + 1], y, { font: 'mono', size: 8.5 }))
+      // Mini barre empilée.
+      if (w.notedDays) {
+        let bx = M + 410
+        for (const id of ['calm', 'discomfort', 'pain']) {
+          const bw = (CW - 410) * (w[id] / 7)
+          if (bw > 0) rect(bx, y - 1, bw, 7, LEVEL_COLORS[id])
+          bx += bw
+        }
       }
+      y -= weekLine
     }
-    y -= weekLine
   }
 
   heading('Réintroduction FODMAP guidée')
@@ -239,7 +244,7 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
   const L = report.links
   if (L.status !== 'links' || !L.items.length) {
     const why = L.status === 'no_notes' ? 'Aucune note du ventre.'
-      : L.status === 'collecting' ? `Pas encore assez de notes du ventre (${L.noteDays}/${L.minDays} jours) : on préfère attendre plutôt que de montrer de faux suspects.`
+      : L.status === 'too_early' ? `Pas encore assez de notes du ventre (${L.noteDays}/${L.minDays} jours) : on préfère attendre plutôt que de montrer de faux suspects.`
         : 'Aucun lien n’a passé toutes les vérifications.'
     para(why, { color: C.muted })
   } else {
@@ -256,7 +261,9 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
     }
     if (L.items.length > shown.length) para(`… et ${L.items.length - shown.length} autres pistes.`, { size: 8.5, color: C.muted })
   }
-  para(`Analyse sur tout le journal (${L.noteDays ?? 0} jours notés), pas seulement la période ; ${L.comparisons ?? 0} comparaisons faites, corrigées pour leur nombre. Un lien repéré n’est pas une cause.`, { size: 8.5, color: C.muted })
+  if (L.comparisons) {
+    para(`Analyse sur tout le journal (${L.noteDays} jours notés), pas seulement la période ; ${L.comparisons} comparaisons faites, corrigées pour leur nombre. Un lien repéré n’est pas une cause.`, { size: 8.5, color: C.muted })
+  }
 
   heading('Sommeil mesuré')
   if (!report.sleep) para('Aucune nuit mesurée sur la période.', { color: C.muted })
