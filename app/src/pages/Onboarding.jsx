@@ -318,6 +318,9 @@ function AhaStep({ imported, onImported, onReady }) {
     )
   }
 
+  // Une seule ligne de source quand tous les chiffres viennent de la même app (POL-PLAY-40), sinon une par chiffre
+  const sharedSource = facts?.length && facts.every((f) => f.source === facts[0].source) ? facts[0].source : null
+
   return (
     <>
       <h1 className="onb-title">Vos 30 derniers jours</h1>
@@ -328,10 +331,11 @@ function AhaStep({ imported, onImported, onReady }) {
               <li key={f.key} className="onb-fact">
                 <span className="onb-fact-value">{f.value}</span>
                 <span className="onb-fact-label">{f.label}</span>
-                <span className="onb-fact-source">{f.source}</span>
+                {!sharedSource && <span className="onb-fact-source">{f.source}</span>}
               </li>
             ))}
           </ul>
+          {sharedSource && <p className="onb-facts-source">D’après {sharedSource}</p>}
           <p className="onb-lead">Ce sont vos chiffres de départ. Les pistes viendront en les croisant avec votre ventre et votre bien-être.</p>
         </>
       ) : (
