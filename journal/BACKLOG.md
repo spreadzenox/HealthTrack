@@ -1399,7 +1399,10 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
     jamais `bas` si la borne haute dépasse le repère, `probable` entre les deux. Tests : 80 g de baguette et 100 g de
     poireau → `probable` (aujourd'hui `bas`) ; 40 g d'oignon → `élevé` ; chevron « 0,1 à 0,8 g selon les mesures
     publiées ». Nouveautés : « Pain et poireau ne sont plus dits pauvres en fructanes ».
-  - [ ] **N2c** (vu le 29/10 09:33, à vérifier) `Oignon, cru` a `iron_mg` 0,00019 dans la table (l'ordre de grandeur attendu
+  - [x] **N2c** — **FAIT le 29/10 13:41** : valeur de Ciqual 2025 elle-même (0,00019, confiance A ; jaune 0,1, rouge 0,19,
+    cuit 0,21) → `scripts/nutrition/suspects.mjs` (null + `_q: suspect`, ligne périmée signalée si Ciqual corrige) ;
+    recherche sur tous les micronutriments (sous-groupe ×300, variantes ×100) : seul cas retenu. Détail initial :
+    `Oignon, cru` a `iron_mg` 0,00019 dans la table (l'ordre de grandeur attendu
     est ~0,2 mg) : relire la valeur Ciqual 2025 de l'oignon et, si c'est une erreur d'unité du script, chercher les autres
     (41 aliments sous 0,01 mg, surtout des eaux, plausibles).
   - [x] **N3e** (I192) — **FAIT le 29/10 10:33** : `scripts/nutrition/ferjancicFructans.mjs`, 49 entrées (20 lignes

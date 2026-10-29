@@ -18,6 +18,7 @@ import { fileURLToPath } from 'node:url'
 import { buildTable, decodeXml, parseRecords } from './ciqual.mjs'
 import { auditTable } from './audit.mjs'
 import { ALIASES } from './aliases.mjs'
+import { SUSPECT_VALUES } from './suspects.mjs'
 
 const args = process.argv.slice(2)
 const arg = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : null }
@@ -48,6 +49,7 @@ const { table, meta } = buildTable(raw, {
   // L'ancien fodmap_score (0–3, inventé en avril 2026) n'est plus recopié : les FODMAP viennent de fodmapGroups.js.
   keepFields: [],
   aliases: ALIASES,
+  suspects: SUSPECT_VALUES,
 })
 
 console.log(`${meta.foods} aliments, ${raw.compos.length} teneurs lues`)
@@ -57,6 +59,10 @@ if (meta.missingConstituents.length) {
 }
 if (meta.missingAliasTargets.length) {
   console.error(`Alias vers des aliments absents de ${version} : ${meta.missingAliasTargets.join(' | ')}`)
+  process.exit(1)
+}
+if (meta.staleSuspects.length) {
+  console.error(`Valeurs suspectes corrigées par ${version} (à retirer de suspects.mjs) : ${meta.staleSuspects.join(', ')}`)
   process.exit(1)
 }
 console.log(`Alias : ${meta.aliases}`)
