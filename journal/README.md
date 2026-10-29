@@ -260,6 +260,11 @@
   collés à leur mot, et « : », « ? », « ! » au mot qui précède (espaces insécables à l'affichage). Les titres se
   coupent en lignes équilibrées : le paywall dit « Passez de « je note » / à « je comprends » » au lieu de laisser
   « comprends » seul. **À tester** : rien de particulier, lisez simplement les écrans.
+- **Pain, poireau, oignon : des fructanes plus honnêtes** (29/10 09:33) — un sandwich, 80 g de baguette ou une
+  soupe de poireaux ne sont plus dits pauvres en fructanes : la carte du repas dit « Probablement riche en
+  fructanes », et sous le chevron « 0,11 à 0,82 g selon les mesures publiées » (deux études citées). Ces repas comptent
+  maintenant dans la piste « fructanes → ventre ». **À tester** : Journal → Repas, décrire « une baguette » ou « soupe
+  de poireaux » → ligne pêche « Probablement riche en fructanes » ; toucher le chevron → la fourchette.
 - **Enregistrer un repas, plus net** (29/10 07:33) — après l'analyse d'une photo ou un repas décrit, « Enregistrer
   ce repas » tient sur toute la ligne (il se coupait en deux dans un demi-bouton), « Nouvelle photo » ou « Annuler »
   dessous ; la ligne pêche « Riche en fructanes : oignon, ail » se lit comme une phrase au lieu d'être étirée d'un bord
@@ -433,8 +438,10 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 défaut : les repères « riche en … » viennent des mesures de l'équipe de Monash, mais pour le pain et le poireau la table
 utilise une autre étude, 7 à 15 fois plus basse. Résultat : un sandwich ou une soupe de poireaux sont aujourd'hui dits
 « pauvres en fructanes », et ces jours-là ne comptent pas pour la piste « fructanes → ventre ». Les études divergent
-vraiment (la fermentation du pain détruit plus de la moitié des fructanes), donc le prochain run de code affichera une
-fourchette (« 0,1 à 0,8 g selon les mesures publiées », « probablement riche ») au lieu d'un faux « pauvre ». Ensuite,
+vraiment (la fermentation du pain détruit plus de la moitié des fructanes) : **✅ corrigé le 29/10 09:33 (N3d)**, la
+table garde les deux mesures (pain blanc et de tradition 0,14 → 1,02 ; poireau 0,24 → 3,8 ; oignon 1,97 → 6,3 g pour
+100 g, chiffres relus dans le supplément de Liljebo 2020) et la carte affiche une fourchette et « probablement riche »
+au lieu d'un faux « pauvre ». Ensuite,
 une quarantaine d'aliments courants aujourd'hui « inconnus » (riz, pommes de terre, carottes, semoule, pruneaux,
 chou-fleur…) recevront une valeur publiée et citée, tirée d'études en accès libre.
 
@@ -461,6 +468,7 @@ chou-fleur…) recevront une valeur publiée et citée, tirée d'études en acc�
 | Run | Type | Résultat |
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
+| 29/10 09:33 — [FODMAP : une fourchette](runs/2026-10-29-0933-fodmap-fourchette.md) | 🔬 | N3d : borne haute publiée (`g_high`, Liljebo 2020) pour pain, poireau, oignon ; niveau `probable` jamais « bas », compté dans les pistes ; fourchette sous le chevron ; 8 tests neufs, 3 mis à jour |
 | 29/10 08:33 — [Idées : FODMAP fiables](runs/2026-10-29-0833-idees-fodmap-fiables.md) | 💡 | pain et poireau comptés « bas en fructanes » à cause d'une seule source 7 à 15 fois plus basse que celle des repères ; N3d (fourchette), N3e et N3f (aliments courants, Liljebo 2020 CC BY / CC0) préparés ; journal seul |
 | 29/10 07:33 — [Enregistrer un repas](runs/2026-10-29-0733-enregistrer-repas.md) | 🎨 | audit de l'analyse photo play et du repas décrit (POL-PLAY-12, clair et sombre) ; POL-PLAY-41 (ligne FODMAP en phrase, « Enregistrer ce repas » sur toute la ligne) ; 2 tests |
 | 29/10 06:33 — [Source du « aha »](runs/2026-10-29-0633-source-aha.md) | 🎨 | audit de l'onboarding play avec Health Connect et lecture du visage (POL-PLAY-12) ; POL-PLAY-40 (« Vos 30 derniers jours » : source dite une fois) ; 1 test |

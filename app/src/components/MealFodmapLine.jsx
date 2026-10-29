@@ -1,7 +1,8 @@
 /**
  * Carte d'un repas (N4) : « Riche en fructanes : oignon », un groupe FODMAP par ligne, simple d'abord. Le chevron
- * montre les grammes estimés, le repère de départ et d'où viennent les teneurs. Rien quand aucun groupe ne dépasse
- * son repère (un groupe inconnu n'est jamais présenté comme bas). Repères = hypothèses de départ (règle 6).
+ * montre les grammes estimés (une fourchette quand les mesures publiées divergent), le repère de départ et d'où
+ * viennent les teneurs. Rien quand aucun groupe ne dépasse son repère (un groupe inconnu n'est jamais présenté comme
+ * bas). Repères = hypothèses de départ (règle 6).
  */
 import { useState } from 'react'
 import { useNutritionTable } from '../data/nutritionTable'
@@ -41,7 +42,10 @@ export default function MealFodmapLine({ items }) {
             {' '}{foodList(h.foods)}
             {open && (
               <span className="meal-fodmap-detail">
-                ≈ {grams(h.g)} g · repère {grams(h.cutoff)} g par repas{h.probable && ' · teneurs approchées'}
+                {h.high != null
+                  ? <>{grams(h.g)} à {grams(h.high)} g selon les mesures publiées</>
+                  : <>≈ {grams(h.g)} g</>}
+                {' '}· repère {grams(h.cutoff)} g par repas{h.probable && h.high == null && ' · teneurs approchées'}
               </span>
             )}
           </li>

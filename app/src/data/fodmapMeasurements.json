@@ -1,5 +1,5 @@
 {
-  "_doc": "Teneurs FODMAP par sous-groupe que Ciqual ne mesure pas (fructanes, GOS, sorbitol, mannitol), reprises de mesures publiées dans des articles scientifiques ou des tables officielles (jamais des apps Monash ou FODMAP Friendly). Clés = noms de ingredientsNutrition.json ; une entrée par groupe : `g` (g pour 100 g d'aliment tel que mangé) ou, pour le sorbitol et le mannitol, `share` (part des polyols totaux Ciqual de l'aliment, quand Ciqual les mesure), `source` (clé de `sources`), `ref` (tableau / ligne de la source), `confidence` : `mesure` (cet aliment mesuré), `analogie` (aliment proche, ou répartition supposée ; confiance basse) ou `citée` (valeur citée par une revue, article primaire non lu ; confiance basse), `notes`. Recherche des sources : journal/IDEES.md I177–I179 (26/10/2026).",
+  "_doc": "Teneurs FODMAP par sous-groupe que Ciqual ne mesure pas (fructanes, GOS, sorbitol, mannitol), reprises de mesures publiées dans des articles scientifiques ou des tables officielles (jamais des apps Monash ou FODMAP Friendly). Clés = noms de ingredientsNutrition.json ; une entrée par groupe : `g` (g pour 100 g d'aliment tel que mangé) ou, pour le sorbitol et le mannitol, `share` (part des polyols totaux Ciqual de l'aliment, quand Ciqual les mesure), `source` (clé de `sources`), `ref` (tableau / ligne de la source), `confidence` : `mesure` (cet aliment mesuré), `analogie` (aliment proche, ou répartition supposée ; confiance basse) ou `citée` (valeur citée par une revue, article primaire non lu ; confiance basse), `notes`. Quand deux mesures publiées divergent de plus de 2 fois : `g_high` (borne haute), `source_high`, `ref_high` ; un repas n'est alors jamais dit pauvre si la borne haute dépasse le repère (N3d). Recherche des sources : journal/IDEES.md I177–I179 (26/10/2026).",
   "version": 2,
   "sources": {
     "ferjancic2024": {
@@ -43,20 +43,27 @@
       "doi": "10.1080/09637486.2018.1544229",
       "license": "CC BY-NC-ND 4.0 : seuls des facteurs chiffrés (non protégés) sont repris, cités",
       "method": "pertes au trempage et à la cuisson"
+    },
+    "liljebo2020": {
+      "title": "Liljebo T., Störsrud S., Andreasson A., Presence of FODMAPs in commonly eaten foods: extension of a database to indicate dietary FODMAP content and calculation of intake in the general population from food diary data, BMC Nutrition 2020;6:47, supplément 1",
+      "cite": "Liljebo 2020",
+      "doi": "10.1186/s40795-020-00374-3",
+      "license": "CC BY 4.0 (données CC0)",
+      "method": "compilation de mesures publiées, g/100 g d'aliment, référence primaire citée par aliment : confiance basse"
     }
   },
   "foods": {
     "Oignon, cru": {
-      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "mesure", "notes": "La base suédoise de Liljebo 2020 (d'après Muir 2009) donne 6,3 : forte variabilité selon la variété et la méthode." }
+      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "mesure", "g_high": 6.3, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Onion (d'après Muir 2007)", "notes": "Forte variabilité selon la variété et la méthode : d'où la fourchette." }
     },
     "Oignon jaune, cru": {
-      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru" }
+      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru", "g_high": 6.3, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Onion (d'après Muir 2007)" }
     },
     "Oignon rouge, cru": {
-      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru" }
+      "fructans": { "g": 1.97, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru", "g_high": 6.3, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Onion (d'après Muir 2007)" }
     },
     "Poireau, cru": {
-      "fructans": { "g": 0.24, "source": "ferjancic2024", "ref": "tableau 1, poireau", "confidence": "mesure" }
+      "fructans": { "g": 0.24, "source": "ferjancic2024", "ref": "tableau 1, poireau", "confidence": "mesure", "g_high": 3.8, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Leek (d'après Muir 2007, moyenne poireau entier et blanc)" }
     },
     "Ail, cru": {
       "fructans": { "g": 17.4, "source": "wangcheong2023", "ref": "citant Muir 2007", "confidence": "citée" }
@@ -68,10 +75,10 @@
       "fructans": { "g": 0.33, "source": "ferjancic2024", "ref": "tableau 1, pâtes cuites", "confidence": "mesure" }
     },
     "Pain blanc (par ex. : baguette, boule…)": {
-      "fructans": { "g": 0.14, "source": "ferjancic2024", "ref": "tableau 1, pain blanc", "confidence": "mesure" }
+      "fructans": { "g": 0.14, "source": "ferjancic2024", "ref": "tableau 1, pain blanc", "confidence": "mesure", "g_high": 1.02, "source_high": "liljebo2020", "ref_high": "suppl. tableau 1, White bread fiber 5 % (d'après Whelan 2011)", "notes": "Écart lié au blé et à la fermentation (Pejcz 2019 : −56 à −60 % de fructanes avec une longue fermentation)." }
     },
     "Pain de tradition française (par ex. : baguette, boule…)": {
-      "fructans": { "g": 0.14, "source": "ferjancic2024", "ref": "tableau 1, pain blanc", "confidence": "analogie", "analogy_of": "Pain blanc (par ex. : baguette, boule…)" }
+      "fructans": { "g": 0.14, "source": "ferjancic2024", "ref": "tableau 1, pain blanc", "confidence": "analogie", "analogy_of": "Pain blanc (par ex. : baguette, boule…)", "g_high": 1.02, "source_high": "liljebo2020", "ref_high": "suppl. tableau 1, White bread fiber 5 % (d'après Whelan 2011)" }
     },
     "Farine de blé tendre ou froment T55 (pour pains)": {
       "fructans": { "g": 0.75, "source": "ferjancic2024", "ref": "tableau 1, farine de blé type 500", "confidence": "analogie", "notes": "Type 500 slovène ≈ T55 française (taux de cendres voisin)." }

@@ -65,6 +65,10 @@ describe('fodmapPer100g', () => {
     expect(fodmapPer100g(avocat, { sorbitol: { g: 0.3, source: 's', confidence: 'mesure' } }).sorbitol.g).toBe(0.3)
     expect(fodmapPer100g(avocat, { sorbitol: { g: 0.6, source: 's' } }).sorbitol.status).toBe('traces')
   })
+  it('deux mesures publiées divergentes : garde la borne haute et sa source (N3d)', () => {
+    const entry = { fructans: { g: 0.14, source: 'a', confidence: 'mesure', g_high: 1.02, source_high: 'b' } }
+    expect(fodmapPer100g(T.Riz, entry).fructans).toMatchObject({ g: 0.14, high: 1.02, source: 'a', sourceHigh: 'b' })
+  })
   it('aliment absent de la table : tout inconnu', () => {
     const r = fodmapPer100g(undefined)
     for (const g of FODMAP_SUBGROUPS) expect(r[g].status).toBe('inconnu')
@@ -113,6 +117,14 @@ describe('estimateMealFodmap', () => {
     const r = estimateMealFodmap([{ ingredient: 'Riz (alias)', quantity_g: 100 }], T, m)
     expect(r.fructans).toMatchObject({ g: 0.5, level: 'élevé' })
   })
+  it('fourchette de mesures publiées : jamais « bas » si la borne haute dépasse le repère (N3d)', () => {
+    const m = { foods: { Riz: { fructans: { g: 0.14, source: 'a', confidence: 'mesure', g_high: 1.02, source_high: 'b' } } } }
+    const r = estimateMealFodmap([{ ingredient: 'Riz', quantity_g: 80 }], T, m)
+    expect(r.fructans).toMatchObject({ g: 0.112, high: 0.816, level: 'probable' })
+    expect(highFodmapGroups(r)).toEqual(['fructans'])
+    expect(estimateMealFodmap([{ ingredient: 'Riz', quantity_g: 20 }], T, m).fructans.level).toBe('bas') // 0,2 g au plus
+    expect(estimateMealFodmap([{ ingredient: 'Riz', quantity_g: 300 }], T, m).fructans.level).toBe('élevé')
+  })
   it('classe les groupes élevés par rapport au repère', () => {
     const r = estimateMealFodmap([{ ingredient: 'Lait', quantity_g: 30 }, { ingredient: 'Miel', quantity_g: 20 }], T)
     // lactose 1,44 g (1,4 × repère) ; fructose 1 g (6,7 × repère)
@@ -137,6 +149,12 @@ describe('mealFodmapHighlights', () => {
     expect(fructans).toMatchObject({ group: 'fructans', foods: ['Riz', 'Oignon'], probable: true })
     const sure = { foods: { ...m.foods, Oignon: { fructans: { g: 0.4, source: 's', confidence: 'mesure' } } } }
     expect(mealFodmapHighlights(estimateMealFodmap(items, T, sure))[0].probable).toBe(false)
+  })
+  it('« probable » avec la fourchette quand seule la borne haute dépasse le repère (N3d)', () => {
+    const m = { foods: { Riz: { fructans: { g: 0.14, source: 'a', confidence: 'mesure', g_high: 1.02, source_high: 'b' } } } }
+    const [h] = mealFodmapHighlights(estimateMealFodmap([{ ingredient: 'Riz', quantity_g: 80 }], T, m))
+    expect(h).toMatchObject({ group: 'fructans', probable: true, g: 0.112, high: 0.816, foods: ['Riz'] })
+    expect(h.sources).toEqual(['a', 'b'])
   })
   it('trois aliments au plus ; rien d’élevé : liste vide', () => {
     const m = { foods: Object.fromEntries(['Lait', 'Miel', 'Oignon', 'Poire'].map((n) => [n, { fructans: { g: 1, source: 's' } }])) }
@@ -182,6 +200,14 @@ describe('cohérence avec la réintroduction et les données livrées', () => {
     expect(est('Tofu', 100).gos).toMatchObject({ level: 'bas', g: 0.14 })
     expect(est('Pâtes cuites', 200).fructans.level).toBe('élevé') // cherché sous le nom Ciqual de l'alias
   })
+  it('table livrée : pain et poireau jamais « bas » en fructanes, l’oignon reste élevé (N3d)', () => {
+    const est = (ingredient, quantity_g) => estimateMealFodmap([{ ingredient, quantity_g }], table, measurements)
+    expect(est('Pain blanc (par ex. : baguette, boule…)', 80).fructans).toMatchObject({ level: 'probable', g: 0.112, high: 0.816 })
+    expect(est('Pain de tradition française (par ex. : baguette, boule…)', 80).fructans.level).toBe('probable')
+    expect(est('Poireau, cru', 100).fructans).toMatchObject({ level: 'probable', g: 0.24, high: 3.8 })
+    expect(est('Oignon, cru', 40).fructans.level).toBe('élevé')
+    expect(est('Oignon rouge, cru', 40).fructans.high).toBeCloseTo(2.52)
+  })
   it('mesures publiées : aliment existant, source déclarée, valeur ou part plausible', () => {
     const groups = ['fructans', 'gos', 'sorbitol', 'mannitol']
     expect(Object.keys(measurements.foods).length).toBeGreaterThan(20)
@@ -208,6 +234,14 @@ describe('cohérence avec la réintroduction et les données livrées', () => {
           if (typeof food.carbohydrates_g === 'number' && food._q?.carbohydrates_g == null) {
             expect(m.g, `${label} ≤ glucides`).toBeLessThanOrEqual(food.carbohydrates_g)
           }
+        }
+        if ('g_high' in m) {
+          // fourchette seulement quand deux mesures publiées divergent de plus de 2 fois (N3d)
+          expect(m.g_high, `${label} : borne haute`).toBeGreaterThan(2 * m.g)
+          expect(measurements.sources[m.source_high], `${label} : source de la borne haute`).toBeTruthy()
+          expect(m.ref_high, `${label} : référence de la borne haute`).toBeTruthy()
+          // les fructanes comptent dans les fibres de Ciqual (glucides disponibles + fibres)
+          expect(m.g_high, `${label} ≤ glucides + fibres`).toBeLessThanOrEqual((food.carbohydrates_g ?? Infinity) + (food.fiber_g ?? 0))
         }
         // chaque valeur doit être réellement utilisée par le calcul
         expect(fodmapPer100g(food, entry)[group].source, `${label} : valeur ignorée`).toMatch(new RegExp(m.source))
