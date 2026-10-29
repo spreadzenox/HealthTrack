@@ -161,11 +161,11 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
       {showFodmap && <MealFodmapLine items={items} />}
       {error && <p className="error-msg" role="alert">{error}</p>}
       <div className="actions">
-        <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={saving}>
-          Annuler
-        </button>
         <button type="button" className="btn" onClick={save} disabled={saving || items.length === 0}>
           {saving ? 'Enregistrement…' : 'Enregistrer ce repas'}
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={saving}>
+          Annuler
         </button>
       </div>
     </section>

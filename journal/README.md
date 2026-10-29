@@ -260,6 +260,10 @@
   collés à leur mot, et « : », « ? », « ! » au mot qui précède (espaces insécables à l'affichage). Les titres se
   coupent en lignes équilibrées : le paywall dit « Passez de « je note » / à « je comprends » » au lieu de laisser
   « comprends » seul. **À tester** : rien de particulier, lisez simplement les écrans.
+- **Enregistrer un repas, plus net** (29/10 07:33) — après l'analyse d'une photo ou un repas décrit, « Enregistrer
+  ce repas » tient sur toute la ligne (il se coupait en deux dans un demi-bouton), « Nouvelle photo » ou « Annuler »
+  dessous ; la ligne pêche « Riche en fructanes : oignon, ail » se lit comme une phrase au lieu d'être étirée d'un bord
+  à l'autre.
 - **Paywall de la période de test plus clair** (29/10 05:33) — en fin d'onboarding et dans Premium, pendant la
   période de lancement : une seule phrase « Merci de tester l'app ! Jusqu'au 18 nov. 2026, tout ce qui suit est
   débloqué : vous n'avez rien à payer, aucune carte bancaire n'est demandée. », sans le cadre qui répétait le titre.
@@ -448,6 +452,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
+| 29/10 07:33 — [Enregistrer un repas](runs/2026-10-29-0733-enregistrer-repas.md) | 🎨 | audit de l'analyse photo play et du repas décrit (POL-PLAY-12, clair et sombre) ; POL-PLAY-41 (ligne FODMAP en phrase, « Enregistrer ce repas » sur toute la ligne) ; 2 tests |
 | 29/10 06:33 — [Source du « aha »](runs/2026-10-29-0633-source-aha.md) | 🎨 | audit de l'onboarding play avec Health Connect et lecture du visage (POL-PLAY-12) ; POL-PLAY-40 (« Vos 30 derniers jours » : source dite une fois) ; 1 test |
 | 29/10 05:33 — [Paywall du lancement](runs/2026-10-29-0533-paywall-lancement.md) | 🎨 | audit de l'onboarding play pas à pas (POL-PLAY-12, vierge, clair et sombre) ; POL-PLAY-39 (paywall de lancement sans doublon, dates insécables, « 1er déc. ») ; 1 test neuf, 2 mis à jour |
 | 29/10 04:33 — [Tendances vierges](runs/2026-10-29-0433-tendances-vierges.md) | 🎨 | POL-PLAY-38 (Tendances sans bien-être : ligne discrète au lieu d'un cadre vide ; « Votre bien-être ») ; 2 tests |
