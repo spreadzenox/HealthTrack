@@ -1402,10 +1402,11 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
   - [ ] **N2c** (vu le 29/10 09:33, à vérifier) `Oignon, cru` a `iron_mg` 0,00019 dans la table (l'ordre de grandeur attendu
     est ~0,2 mg) : relire la valeur Ciqual 2025 de l'oignon et, si c'est une erreur d'unité du script, chercher les autres
     (41 aliments sous 0,01 mg, surtout des eaux, plausibles).
-  - [ ] **N3e** (I192) les 23 lignes restantes de Ferjančič 2024 (légumes courants, pommes de terre, riz, polenta,
-    orge, conserves de pois et haricots, pain bis) ; « ND » en limite (`lt`), limite de détection à lire dans
-    l'article (sinon 0,01) ; analogies cuit ← cru par l'eau Ciqual. Effet : « poulet, riz, carottes » n'est plus
-    « inconnu » en fructanes.
+  - [x] **N3e** (I192) — **FAIT le 29/10 10:33** : `scripts/nutrition/ferjancicFructans.mjs`, 49 entrées (20 lignes
+    du tableau 1) ; « ND » = `{ g: 0, lt }`, limite prudente 0,3 % MS (l'article la donne en absorbance) ; analogies
+    cuit ← cru à teneur égale (eau Ciqual absente de la table) ; fructanes et GOS nuls quand glucides et fibres Ciqual
+    sont nuls (504 aliments). Fructanes connus 20 → 573. Écartés : pomme de terre au four, choucroute, navet aigre,
+    chips, **pain bis (à reprendre dans N3f avec une borne haute)**.
   - [ ] **N3f** (I193) Liljebo 2020 en `citée` : fructanes (ail 17,4 en remplacement de Wang & Cheong, topinambour,
     son de blé, pains de seigle, semoule / couscous / boulgour ramenés au cuit par l'eau Ciqual, pain complet) ;
     sorbitol / mannitol quand Ciqual ne mesure pas les polyols (pruneau, abricot sec, mûre, prune, chou-fleur, pois

@@ -8,7 +8,8 @@
  * - fructose en excès du glucose : Ciqual (`fructose_g` − `glucose_g`, 0 si le glucose couvre le fructose) ;
  * - sorbitol, mannitol : Ciqual ne publie que les polyols totaux (`polyols_g`) ; s'ils valent 0, les deux valent 0,
  *   sinon la répartition vient des mesures publiées (`fodmapMeasurements.json`) ou reste inconnue ;
- * - fructanes, GOS : mesures publiées seulement (`fodmapMeasurements.json`), sinon inconnus.
+ * - fructanes, GOS : mesures publiées seulement (`fodmapMeasurements.json`), sinon inconnus ; 0 quand Ciqual donne
+ *   glucides et fibres nuls (viandes, poissons, œufs, huiles : ce sont des glucides, comptés dans les fibres).
  * Une teneur Ciqual « < x » (sous la limite de détection) compte 0 avec le statut `traces` : la moitié de la limite,
  * utile pour les totaux nutritionnels, ferait apparaître du lactose dans l'oignon. La limite est gardée (`max`) : un
  * repas n'est `bas` que si le total, limites comprises, reste sous le repère (polyols « < 0,5 » : 100 g d'avocat
@@ -19,6 +20,7 @@
  * publiée ne remplace jamais une valeur Ciqual, sauf une teneur « < x » qu'elle précise sans la contredire (≤ x).
  * Confiance `analogie` (aliment proche, répartition supposée) ou `citée` (valeur citée par une revue) : basse.
  * GOS des légumineuses cuites : calculés depuis leur mesure à sec (scripts/nutrition/legumeGos.mjs, `derivation`).
+ * Mesure « non détectable » (N3e) : `{ g: 0, lt }`, compté 0 avec la limite `lt` en `max`, comme un « < x » Ciqual.
  * Fourchette (N3d) : quand deux mesures publiées divergent de plus de 2 fois (pain, poireau, oignon), `g_high` donne
  * la borne haute (`high`). Les repères ont été fixés avec la série de mesures la plus haute : un repas n'est alors
  * jamais `bas` si la borne haute dépasse le repère, mais `probable` (compté comme mangé dans les pistes).
@@ -68,6 +70,7 @@ const LOW_CONFIDENCE = new Set(['analogie', 'citée'])
 function fromPublished(entry, g, source = entry.source ?? null) {
   const low = LOW_CONFIDENCE.has(entry.confidence)
   const out = { g, status: low ? 'approché' : 'mesuré', source, confidence: low ? 'basse' : 'mesure' }
+  if (isNum(entry.lt) && g === 0) Object.assign(out, { status: 'traces', max: entry.lt })
   if (isNum(entry.g_high) && entry.g_high > g) Object.assign(out, { high: entry.g_high, sourceHigh: entry.source_high ?? null })
   return out
 }
@@ -98,6 +101,14 @@ export function fodmapPer100g(food, published) {
   if (polyols.g === 0) {
     out.sorbitol = withSource(polyols)
     out.mannitol = withSource(polyols)
+  }
+
+  const carbs = ciqualValue(food, 'carbohydrates_g')
+  const fiber = ciqualValue(food, 'fiber_g')
+  if (carbs.g === 0 && fiber.g === 0) {
+    const max = (carbs.max ?? 0) + (fiber.max ?? 0)
+    const status = carbs.status === 'mesuré' && fiber.status === 'mesuré' ? 'mesuré' : 'traces'
+    for (const group of ['fructans', 'gos']) out[group] = { g: 0, status, source: CIQUAL, ...(max > 0 ? { max } : {}) }
   }
 
   for (const group of ['fructans', 'gos', 'sorbitol', 'mannitol']) {
