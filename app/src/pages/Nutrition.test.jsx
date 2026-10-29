@@ -147,6 +147,11 @@ describe('Nutrition page', () => {
     await waitFor(() => {
       expect(screen.getByText(/aucun repas/i)).toBeInTheDocument()
     })
+    // POL-PLAY-49 : tuile pêche vers Repas plutôt qu'une phrase grise et un second bouton plein.
+    const tile = screen.getByRole('link', { name: 'Photographier un repas' })
+    expect(tile).toHaveAttribute('href', '/food')
+    expect(tile).toHaveAttribute('data-theme', 'peach')
+    expect(document.querySelector('.nutrition-empty .btn')).toBeNull()
   })
 
   it('profil vide : invite à le compléter, repères annoncés comme non ajustés', async () => {
