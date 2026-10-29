@@ -20,7 +20,7 @@
   historique. `IDEES.md` : I194. `BACKLOG.md` : TF-1, TF-2. Résumé de la semaine : encart et action 2 complétée.
 
 ## Vérifications
-- Journal seul : `npm run test` (voir ci-dessous).
+- Journal seul : `npm run test` vert (2 698 réussis, 44 ignorés).
 
 ## Demandes iOS
 - Aucune concernée (rien de visible dans l'app).
