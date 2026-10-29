@@ -111,6 +111,12 @@ button.fodmap-group:focus-visible,
   font-size: 0.72rem;
 }
 
+.fodmap-plan-note {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
 .fodmap-foods {
   display: flex;
   flex-wrap: wrap;
