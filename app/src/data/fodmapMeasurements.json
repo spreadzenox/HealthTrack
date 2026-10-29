@@ -126,7 +126,7 @@
       "sorbitol": { "share": 1, "source": "mext2020", "ref": "pêche blanche 0,3, SORTL", "confidence": "analogie" }
     },
     "Abricot, dénoyauté, cru": {
-      "sorbitol": { "g": 0.3, "source": "mext2020", "ref": "abricot cru, SORTL (0,3, estimé)", "confidence": "analogie", "notes": "Ciqual : polyols < 0,5 ; la valeur MEXT est estimée par MEXT." }
+      "sorbitol": { "g": 0.3, "source": "mext2020", "ref": "abricot cru, SORTL (0,3, estimé)", "confidence": "analogie", "notes": "Ciqual : polyols < 0,5 ; la valeur MEXT est estimée par MEXT. Liljebo 2020 cite 1,2 (Yao 2014), au-dessus de la limite Ciqual : non retenu." }
     },
     "Pruneau, sans noyau, sec": {
       "sorbitol": { "share": 1, "source": "mext2020", "ref": "pruneau sec, SORTL (12,1, estimé)", "confidence": "analogie", "notes": "Polyols totaux Ciqual (9,6) attribués au sorbitol." }
@@ -399,6 +399,48 @@
     },
     "Pain bis (à la farine T80 ou T110)": {
       "fructans": { "g": 0.14, "source": "ferjancic2024", "ref": "tableau 1, pain blanc", "confidence": "analogie", "analogy_of": "Pain blanc (par ex. : baguette, boule…)", "g_high": 1.02, "source_high": "liljebo2020", "ref_high": "suppl. tableau 1, White bread fiber 5 % (d'après Whelan 2011)", "notes": "Farine T80 ou T110, entre le pain blanc et le pain complet (0,79 g, Liljebo 2020) : fourchette du pain blanc reprise." }
+    },
+    "Prune, sans noyau, crue": {
+      "sorbitol": { "g": 2.4, "source": "liljebo2020", "ref": "suppl. tableau 6, Plum (d’après Yao 2014)", "confidence": "citée" }
+    },
+    "Prune violette, sans noyau, crue": {
+      "sorbitol": { "g": 2.4, "source": "liljebo2020", "ref": "suppl. tableau 6, Plum (d’après Yao 2014)", "confidence": "analogie", "analogy_of": "Prune, sans noyau, crue", "notes": "Prune violette non mesurée : teneur de la prune reprise." }
+    },
+    "Prune mirabelle, sans noyau, crue": {
+      "sorbitol": { "share": 1, "source": "liljebo2020", "ref": "suppl. tableau 6, Plum (d’après Yao 2014)", "confidence": "analogie", "notes": "Polyols totaux Ciqual attribués à ce polyol, le seul que Liljebo 2020 indique pour ce fruit." }
+    },
+    "Prune Reine-Claude, sans noyau, crue": {
+      "sorbitol": { "share": 1, "source": "liljebo2020", "ref": "suppl. tableau 6, Plum (d’après Yao 2014)", "confidence": "analogie", "notes": "Polyols totaux Ciqual attribués à ce polyol, le seul que Liljebo 2020 indique pour ce fruit." }
+    },
+    "Abricot, dénoyauté, sec": {
+      "sorbitol": { "share": 1, "source": "liljebo2020", "ref": "suppl. tableau 6, Dried apricot (d’après Yao 2014)", "confidence": "analogie", "notes": "Polyols totaux Ciqual attribués à ce polyol, le seul que Liljebo 2020 indique pour ce fruit. Écart : Ciqual 22,6 g de polyols, Liljebo 6,0 g de sorbitol ; le total Ciqual est gardé." }
+    },
+    "Abricot, dénoyauté, sec, moelleux (réhydraté à 35-45%)": {
+      "sorbitol": { "share": 1, "source": "liljebo2020", "ref": "suppl. tableau 6, Dried apricot (d’après Yao 2014)", "confidence": "analogie", "notes": "Polyols totaux Ciqual attribués à ce polyol, le seul que Liljebo 2020 indique pour ce fruit." }
+    },
+    "Abricot au sirop (sans précision sur léger ou classique), appertisé, égoutté (aliment moyen)": {
+      "sorbitol": { "share": 1, "source": "liljebo2020", "ref": "suppl. tableau 6, Canned apricot (valeur de l’abricot, d’après Yao 2014)", "confidence": "analogie", "notes": "Polyols totaux Ciqual attribués à ce polyol, le seul que Liljebo 2020 indique pour ce fruit." }
+    },
+    "Abricot au sirop léger, appertisé, égoutté": {
+      "sorbitol": { "share": 1, "source": "liljebo2020", "ref": "suppl. tableau 6, Canned apricot (valeur de l’abricot, d’après Yao 2014)", "confidence": "analogie", "notes": "Polyols totaux Ciqual attribués à ce polyol, le seul que Liljebo 2020 indique pour ce fruit." }
+    },
+    "Abricot au sirop, appertisé, égoutté": {
+      "sorbitol": { "share": 1, "source": "liljebo2020", "ref": "suppl. tableau 6, Canned apricot (valeur de l’abricot, d’après Yao 2014)", "confidence": "analogie", "notes": "Polyols totaux Ciqual attribués à ce polyol, le seul que Liljebo 2020 indique pour ce fruit." }
+    },
+    "Pois mange-tout ou pois gourmand, cru": {
+      "mannitol": { "g": 1.16, "source": "liljebo2020", "ref": "suppl. tableau 6, Snow peas (d’après Muir 2009)", "confidence": "citée" }
+    },
+    "Champignon de Paris ou champignon de couche, sauté/poêlé, sans matière grasse": {
+      "mannitol": { "share": 1, "source": "mext2020", "ref": "champignon de Paris cru, MANTL (1,3)", "confidence": "analogie", "analogy_of": "Champignon de Paris ou champignon de couche, cru", "notes": "Répartition du champignon cru reprise (polyols totaux Ciqual attribués au mannitol) ; Liljebo 2020 indique sorbitol et mannitol sans les séparer." }
+    },
+    "Champignon de Paris ou champignon de couche, bouilli/cuit à l'eau": {
+      "mannitol": { "share": 1, "source": "mext2020", "ref": "champignon de Paris cru, MANTL (1,3)", "confidence": "analogie", "analogy_of": "Champignon de Paris ou champignon de couche, cru", "notes": "Répartition du champignon cru reprise (polyols totaux Ciqual attribués au mannitol) ; Liljebo 2020 indique sorbitol et mannitol sans les séparer." }
+    },
+    "Champignon de Paris ou champignon de couche, surgelé, cru": {
+      "mannitol": { "share": 1, "source": "mext2020", "ref": "champignon de Paris cru, MANTL (1,3)", "confidence": "analogie", "analogy_of": "Champignon de Paris ou champignon de couche, cru", "notes": "Répartition du champignon cru reprise (polyols totaux Ciqual attribués au mannitol) ; Liljebo 2020 indique sorbitol et mannitol sans les séparer." }
+    },
+    "Champignon de Paris ou champignon de couche, appertisé, égoutté": {
+      "mannitol": { "share": 1, "source": "mext2020", "ref": "champignon de Paris cru, MANTL (1,3)", "confidence": "analogie", "analogy_of": "Champignon de Paris ou champignon de couche, cru", "notes": "Répartition du champignon cru reprise (polyols totaux Ciqual attribués au mannitol) ; Liljebo 2020 indique sorbitol et mannitol sans les séparer." }
     }
   }
 }

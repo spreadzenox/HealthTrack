@@ -265,6 +265,12 @@
   fructanes », et sous le chevron « 0,11 à 0,82 g selon les mesures publiées » (deux études citées). Ces repas comptent
   maintenant dans la piste « fructanes → ventre ». **À tester** : Journal → Repas, décrire « une baguette » ou « soupe
   de poireaux » → ligne pêche « Probablement riche en fructanes » ; toucher le chevron → la fourchette.
+- **Prunes, abricots secs, pois mange-tout : leurs polyols comptés** (29/10 12:33) — la prune crue (2,4 g de sorbitol)
+  et les pois mange-tout crus (1,16 g de mannitol) ne sont plus « inconnus » (mesures publiées, citées) ; pour les
+  mirabelles, reines-claudes, abricots secs et au sirop, le total de polyols mesuré par Ciqual est attribué au sorbitol,
+  et pour les champignons de Paris cuits, surgelés ou en conserve au mannitol. Quand Ciqual mesure « moins de 0,5 g »
+  (mûre, chou-fleur, avocat, nectarine), Ciqual garde le dernier mot. **À tester** : décrire « 2 prunes » → ligne pêche
+  « Riche en sorbitol : prune ».
 - **Pain complet, couscous, boulgour : leurs fructanes comptés** (29/10 11:33) — pains complets et de seigle,
   semoule et couscous (ramenés au cuit), boulgour, son et germe de blé, topinambour et ail (grillé, rôti, en poudre)
   reçoivent une teneur en fructanes publiée et citée (Liljebo 2020) ; le pain bis garde la fourchette du pain blanc.
@@ -453,7 +459,7 @@ table garde les deux mesures (pain blanc et de tradition 0,14 → 1,02 ; poireau
 100 g, chiffres relus dans le supplément de Liljebo 2020) et la carte affiche une fourchette et « probablement riche »
 au lieu d'un faux « pauvre ». **✅ 29/10 10:33 (N3e)** : fructanes connus pour 573 aliments au lieu de 20 (riz,
 pommes de terre, carottes, chou-fleur… et zéro pour viandes et poissons) ; **✅ 29/10 11:33 (N3f, 1ʳᵉ partie)** : pains complets, seigle,
-semoule, couscous, boulgour, topinambour (595 aliments) ; restent les polyols des fruits secs et de quelques légumes (N3g).
+semoule, couscous, boulgour, topinambour (595 aliments) ; **✅ 29/10 12:33 (N3g)** : polyols de la prune, des abricots secs et au sirop, des pois mange-tout et des champignons cuits (sorbitol connu pour 2 869 aliments, mannitol 2 861) ; reste N2c (fer de l'oignon).
 
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
@@ -479,6 +485,7 @@ semoule, couscous, boulgour, topinambour (595 aliments) ; restent les polyols de
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
 | 29/10 10:33 — [Fructanes des aliments courants](runs/2026-10-29-1033-fructanes-courants.md) | 🔬 | N3e : 49 entrées Ferjančič 2024 (générateur reproductible, « ND » en limite prudente), fructanes et GOS nuls sans glucides ni fibres ; fructanes connus 20 → 573 aliments ; 10 tests |
+| 29/10 12:33 — [Polyols des fruits et légumes](runs/2026-10-29-1233-polyols-liljebo.md) | 🔬 | N3g : 14 entrées sorbitol / mannitol Liljebo 2020 (supplément tableau 6 relu, Yao 2014 et Muir 2009) ; « Ciqual d'abord » (part du total mesuré, sinon valeur citée ; contradictions avec un « < 0,5 » écartées) ; sorbitol connu 2 860 → 2 869, mannitol 2 856 → 2 861 ; 4 tests |
 | 29/10 11:33 — [Fructanes des céréales et pains complets](runs/2026-10-29-1133-fructanes-cereales.md) | 🔬 | N3f (fructanes) : 23 entrées Liljebo 2020 relues dans le supplément (générateur reproductible, sec → cuit par les glucides Ciqual) ; ail cité de première main ; fructanes connus 573 → 595 aliments ; 6 tests |
 | 29/10 09:33 — [FODMAP : une fourchette](runs/2026-10-29-0933-fodmap-fourchette.md) | 🔬 | N3d : borne haute publiée (`g_high`, Liljebo 2020) pour pain, poireau, oignon ; niveau `probable` jamais « bas », compté dans les pistes ; fourchette sous le chevron ; 8 tests neufs, 3 mis à jour |
 | 29/10 08:33 — [Idées : FODMAP fiables](runs/2026-10-29-0833-idees-fodmap-fiables.md) | 💡 | pain et poireau comptés « bas en fructanes » à cause d'une seule source 7 à 15 fois plus basse que celle des repères ; N3d (fourchette), N3e et N3f (aliments courants, Liljebo 2020 CC BY / CC0) préparés ; journal seul |
