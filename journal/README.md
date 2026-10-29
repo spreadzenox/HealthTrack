@@ -448,6 +448,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
+| 29/10 06:33 — [Source du « aha »](runs/2026-10-29-0633-source-aha.md) | 🎨 | audit de l'onboarding play avec Health Connect et lecture du visage (POL-PLAY-12) ; POL-PLAY-40 (« Vos 30 derniers jours » : source dite une fois) ; 1 test |
 | 29/10 05:33 — [Paywall du lancement](runs/2026-10-29-0533-paywall-lancement.md) | 🎨 | audit de l'onboarding play pas à pas (POL-PLAY-12, vierge, clair et sombre) ; POL-PLAY-39 (paywall de lancement sans doublon, dates insécables, « 1er déc. ») ; 1 test neuf, 2 mis à jour |
 | 29/10 04:33 — [Tendances vierges](runs/2026-10-29-0433-tendances-vierges.md) | 🎨 | POL-PLAY-38 (Tendances sans bien-être : ligne discrète au lieu d'un cadre vide ; « Votre bien-être ») ; 2 tests |
 | 29/10 03:33 — [Nombres et unités](runs/2026-10-29-0333-nombres-unites.md) | 🎨 | POL-PLAY-37 (« 1004 hPa », « 7 h », « 12 480 pas » jamais coupés en fin de ligne, à l'affichage) ; 3 tests |

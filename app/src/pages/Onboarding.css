@@ -282,6 +282,13 @@
   color: var(--text);
 }
 
+.onb-facts-source {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
 .onb-fact-source {
   font-family: var(--font-mono);
   font-size: 0.75rem;

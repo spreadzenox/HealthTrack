@@ -86,6 +86,21 @@ describe('Onboarding (jalon 4b) : Health Connect, import et « aha »', () => {
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
   })
 
+  it('« aha » : une seule ligne de source quand tous les chiffres viennent de la même app (POL-PLAY-40)', async () => {
+    const step = (day) => ({
+      type: 'steps',
+      source: 'health_connect',
+      at: new Date(Date.now() - day * 86400000 - 3 * 3600000).toISOString(),
+      payload: { value: 6000, sourceName: 'com.garmin.android.apps.connectmobile' },
+    })
+    stored.entries = [night(1), night(2), step(1), step(2)]
+    saveOnboarding({ goal: 'energy', watch: 'health_connect', health: 'granted', imported: true, step: 4 })
+    renderAt()
+    expect(await screen.findByText(/sur 2 nuits/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Garmin Connect via Health Connect/)).toHaveLength(1)
+    expect(screen.getByText('D’après Garmin Connect via Health Connect')).toBeInTheDocument()
+  })
+
   it('rien d’importé → phrase honnête, aucun zéro', async () => {
     saveOnboarding({ goal: 'gut', watch: 'health_connect', health: 'granted', step: 4 })
     renderAt()
