@@ -138,3 +138,14 @@
   font-size: 0.75rem;
   line-height: 1.35;
 }
+
+/* POL-PLAY-38 : sans note sur 14 jours, une ligne discrète (comme « Votre forme ») au lieu d'un cadre vide */
+.wellbeing-charts-empty {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.wellbeing-charts-empty a {
+  color: var(--accent);
+}
