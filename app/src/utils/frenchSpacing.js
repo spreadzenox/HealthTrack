@@ -8,6 +8,11 @@ const NB = ' '
 // Suivies d'une lettre, ce n'est plus une unité (« 2 mois », « 5 grammes ») : on n'y touche pas.
 const UNIT = /(\d) (hPa|kcal|cal|bpm|pas|km|cm|mm|ms|min|mg|µg|kg|ml|mL|Mo|Go|°C|h|j|g|l|L|m|s|%|€|°)(?![\p{L}\d])/gu
 
+// Une date reste d'un seul tenant (« jusqu'au 18 / nov. 2026 » sur le paywall, POL-PLAY-39).
+const MONTH = '(?:janv\\.|févr\\.|avr\\.|juil\\.|sept\\.|oct\\.|nov\\.|déc\\.|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)'
+const DAY_MONTH = new RegExp(`(\\d(?:er)?) (${MONTH})(?![\\p{L}])`, 'gu')
+const MONTH_YEAR = new RegExp(`(${MONTH}) (\\d{4})(?!\\d)`, 'gu')
+
 const SKIP = new Set(['TEXTAREA', 'INPUT', 'CODE', 'PRE', 'SCRIPT', 'STYLE'])
 
 export function fixFrenchSpacing(text) {
@@ -18,6 +23,8 @@ export function fixFrenchSpacing(text) {
     .replace(/(\S) ([:;?!])/g, `$1${NB}$2`)
     .replace(/(\d) (?=\d{3}(?!\d))/g, `$1${NB}`)
     .replace(UNIT, `$1${NB}$2`)
+    .replace(DAY_MONTH, `$1${NB}$2`)
+    .replace(MONTH_YEAR, `$1${NB}$2`)
 }
 
 function fixNode(node) {

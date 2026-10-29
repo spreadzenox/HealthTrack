@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FEATURES } from '../config/distribution'
-import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
+import { describeEntitlement, lastLaunchDay, manageSubscriptionUrl } from '../services/entitlement'
 import { loadPlans, purchasePlan, restorePurchases, monthlyEquivalent, annualSavingPercent } from '../services/playBilling'
 import { APP_NAME, PRIVACY_URL, TERMS_URL } from '../config/brand'
 import { deliveredBenefits, upcomingBenefits } from '../config/premiumBenefits'
@@ -121,7 +121,7 @@ export default function Premium({ context = null, onClose = null }) {
       <h2 className="paywall-title">{launch ? 'Premium offert pendant le test' : 'Passez de « je note » à « je comprends »'}</h2>
       <p className="paywall-lead">
         {launch
-          ? 'Merci de tester l’app ! Tout ce qui suit est débloqué, sans achat ni carte bancaire.'
+          ? `Merci de tester l’app ! ${ent.launchUntil ? `Jusqu’au ${lastLaunchDay(ent.launchUntil)}, tout` : 'Tout'} ce qui suit est débloqué : vous n’avez rien à payer, aucune carte bancaire n’est demandée.`
           : onboarding
           ? 'Vos pistes arriveront vers le 21ᵉ jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.'
           : `Vos données sont rangées sur votre téléphone, jamais chez ${APP_NAME}. Le premium vous aide à voir ce qui va avec vos bons et mauvais jours.`}
@@ -156,7 +156,8 @@ export default function Premium({ context = null, onClose = null }) {
         données.
       </p>
 
-      {ent.premium ? (
+      {/* Période de lancement : tout est dit dans le titre et la phrase d'accueil, rien à répéter (POL-PLAY-39) */}
+      {launch ? null : ent.premium ? (
         <div className="paywall-active" role="status">
           <p>{describeEntitlement(ent)}</p>
           {ent.source === 'play' && (

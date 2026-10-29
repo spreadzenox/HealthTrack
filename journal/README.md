@@ -260,6 +260,11 @@
   collés à leur mot, et « : », « ? », « ! » au mot qui précède (espaces insécables à l'affichage). Les titres se
   coupent en lignes équilibrées : le paywall dit « Passez de « je note » / à « je comprends » » au lieu de laisser
   « comprends » seul. **À tester** : rien de particulier, lisez simplement les écrans.
+- **Paywall de la période de test plus clair** (29/10 05:33) — en fin d'onboarding et dans Premium, pendant la
+  période de lancement : une seule phrase « Merci de tester l'app ! Jusqu'au 18 nov. 2026, tout ce qui suit est
+  débloqué : vous n'avez rien à payer, aucune carte bancaire n'est demandée. », sans le cadre qui répétait le titre.
+  Partout, les dates restent d'un seul tenant (« 18 nov. 2026 » jamais coupé) et le premier du mois s'écrit « 1er déc. ».
+  **À tester** : rien de particulier, lisez la fin de l'onboarding après une réinstallation.
 - **Tendances plus nettes au début** (29/10 04:33) — Journal › Tendances, sans bien-être noté : une ligne
   « Pas encore de bien-être noté… » (liens Sources et Aujourd'hui) remplace le grand cadre de graphique vide ; le titre
   « Bien-être (0–5) » devient « Votre bien-être », comme « Votre forme ». Rien ne change dès qu'une note existe.
@@ -443,6 +448,7 @@ prochaine version. Rien à faire de votre côté, sauf faire une analyse IA de r
 | Run | Type | Résultat |
 |---|---|---|
 | 29/10 02:33 — [Typographie française](runs/2026-10-29-0233-typographie.md) | 🎨 | POL-PLAY-36 (espaces insécables autour de « », :, ;, ?, ! à l'affichage ; titres `text-wrap: balance`) ; audit démo sombre des écrans secondaires (POL-PLAY-12) ; POL-PLAY-37 noté ; 6 tests |
+| 29/10 05:33 — [Paywall du lancement](runs/2026-10-29-0533-paywall-lancement.md) | 🎨 | audit de l'onboarding play pas à pas (POL-PLAY-12, vierge, clair et sombre) ; POL-PLAY-39 (paywall de lancement sans doublon, dates insécables, « 1er déc. ») ; 1 test neuf, 2 mis à jour |
 | 29/10 04:33 — [Tendances vierges](runs/2026-10-29-0433-tendances-vierges.md) | 🎨 | POL-PLAY-38 (Tendances sans bien-être : ligne discrète au lieu d'un cadre vide ; « Votre bien-être ») ; 2 tests |
 | 29/10 03:33 — [Nombres et unités](runs/2026-10-29-0333-nombres-unites.md) | 🎨 | POL-PLAY-37 (« 1004 hPa », « 7 h », « 12 480 pas » jamais coupés en fin de ligne, à l'affichage) ; 3 tests |
 | 29/10 01:33 — [Titres du Journal](runs/2026-10-29-0133-titres-journal.md) | 🎨 | POL-PLAY-35 (« Vos repas », « Vos apports » au lieu de répéter le sous-onglet) ; 2 tests |
