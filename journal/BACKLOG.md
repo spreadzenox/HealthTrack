@@ -1407,7 +1407,16 @@ fiabilité de la table nutritionnelle** (passe avant I175 étape 2, M6 et le res
     cuit ← cru à teneur égale (eau Ciqual absente de la table) ; fructanes et GOS nuls quand glucides et fibres Ciqual
     sont nuls (504 aliments). Fructanes connus 20 → 573. Écartés : pomme de terre au four, choucroute, navet aigre,
     chips, **pain bis (à reprendre dans N3f avec une borne haute)**.
-  - [ ] **N3f** (I193) Liljebo 2020 en `citée` : fructanes (ail 17,4 en remplacement de Wang & Cheong, topinambour,
+  - [x] **N3f — fructanes FAIT le 29/10 11:33** : `scripts/nutrition/liljeboFructans.mjs` (23 entrées, valeurs relues
+    dans le supplément MOESM1 : ail 17,4 remplace Wang & Cheong ; topinambour 12,2 ; son 3,7 ; germe 2,25 ; semoule 2,25 ;
+    boulgour 2,0 (« valeur du couscous ») ; pain complet 0,79 ; pain de seigle complet 1,14 ; seigle complet 3,52 ; pain
+    croustillant de seigle 3,2) ; sec → cuit par le rapport des glucides Ciqual (couscous 1,0, boulgour 0,73, ail grillé,
+    rôti, poudre) ; pain bis = fourchette du pain blanc (0,14–1,02). Fructanes connus 573 → 595.
+  - [ ] **N3g** (reste de N3f, I193) polyols Liljebo 2020 quand Ciqual ne mesure pas les polyols : pruneau 10,8 et abricot
+    sec 6,0 sorbitol (Yao 2014), mûre 4,76, prune 2,4 sorbitol ; chou-fleur 2,96 et pois mange-tout 1,16 mannitol (Muir
+    2009) ; champignon 2,74 (sorbitol + mannitol, répartition à documenter) ; avocat 0,65 ; abricot frais : garder MEXT,
+    noter l'écart ; nectarine : laisser inconnu. Valeurs relues le 29/10 dans le supplément, tableau 6.
+  - [ ] ~~**N3f** (I193)~~ (détail initial) Liljebo 2020 en `citée` : fructanes (ail 17,4 en remplacement de Wang & Cheong, topinambour,
     son de blé, pains de seigle, semoule / couscous / boulgour ramenés au cuit par l'eau Ciqual, pain complet) ;
     sorbitol / mannitol quand Ciqual ne mesure pas les polyols (pruneau, abricot sec, mûre, prune, chou-fleur, pois
     mange-tout, champignon, avocat, poivron, maïs) ; « green peas 1,88 » = pois cassés, pas les petits pois. Liste

@@ -232,6 +232,16 @@ describe('cohérence avec la réintroduction et les données livrées', () => {
     expect(est('Oignon, cru', 40).fructans.level).toBe('élevé')
     expect(est('Oignon rouge, cru', 40).fructans.high).toBeCloseTo(2.52)
   })
+  it('table livrée : pain complet, couscous et boulgour au-dessus du repère fructanes, pain bis jamais « bas » (N3f)', () => {
+    const est = (ingredient, quantity_g) => estimateMealFodmap([{ ingredient, quantity_g }], table, measurements)
+    const hi = (ingredient, quantity_g) => mealFodmapHighlights(est(ingredient, quantity_g)).find((h) => h.group === 'fructans')
+    expect(est('Pain complet', 60).fructans).toMatchObject({ level: 'élevé', g: 0.474 }) // alias du pain complet T150
+    expect(hi('Pain complet', 60)).toMatchObject({ probable: true }) // valeur citée : confiance basse
+    expect(est('Semoule ou graine de couscous, cuite, sans sel ajouté', 150).fructans.level).toBe('élevé')
+    expect(est('Boulgour de blé, cuit, sans sel ajouté', 150).fructans.level).toBe('élevé')
+    expect(est('Pain bis (à la farine T80 ou T110)', 80).fructans).toMatchObject({ level: 'probable', high: 0.816 })
+    expect(est('Topinambour, cuit', 100).fructans.level).toBe('élevé')
+  })
   it('mesures publiées : aliment existant, source déclarée, valeur ou part plausible', () => {
     const groups = ['fructans', 'gos', 'sorbitol', 'mannitol']
     expect(Object.keys(measurements.foods).length).toBeGreaterThan(20)
