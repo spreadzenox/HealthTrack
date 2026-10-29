@@ -39,7 +39,7 @@ export const NUTRITION_FIELDS = [
 /**
  * @param {{ ingredient: string, quantity_g?: number }[]} items
  * @returns {object} totals for all NUTRITION_FIELDS, plus fodmap_groups (sous-groupes FODMAP au-dessus du repère de
- *   départ, voir fodmapGroups.js), fodmap_score (leur nombre, 0–6 ; il remplace l'ancien score 0–3 de la table,
+ *   départ, `probable` compris, voir fodmapGroups.js), fodmap_score (leur nombre, 0–6 ; il remplace l'ancien score 0–3 de la table,
  *   inventé, qui n'est plus lu) and unknown_share :
  *   pour chaque champ dont Ciqual n'a pas mesuré la teneur d'au moins un aliment, la part (0–1) du poids
  *   mangé concernée. Le total ne compte que les teneurs mesurées : il est alors un minimum, pas un zéro caché.
