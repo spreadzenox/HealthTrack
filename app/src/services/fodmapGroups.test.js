@@ -36,6 +36,21 @@ describe('fodmapPer100g', () => {
     expect(fodmapPer100g(T.Poire).sorbitol).toEqual({ g: null, status: 'inconnu', source: null })
     expect(fodmapPer100g(T.Poire).polyolsTotal).toBe(2)
   })
+  it('fructanes et GOS nuls quand Ciqual donne glucides et fibres nuls, limites gardées (N3e)', () => {
+    const viande = { carbohydrates_g: 0, fiber_g: 0, lactose_g: 0 }
+    expect(fodmapPer100g(viande).fructans).toEqual({ g: 0, status: 'mesuré', source: 'Ciqual' })
+    expect(fodmapPer100g(viande).gos).toEqual({ g: 0, status: 'mesuré', source: 'Ciqual' })
+    expect(fodmapPer100g({ carbohydrates_g: 0, fiber_g: 0.4, _q: { fiber_g: '<0.5' } }).fructans).toMatchObject({ g: 0, status: 'traces', max: 0.5 })
+    expect(fodmapPer100g({ carbohydrates_g: 0.7, fiber_g: 0 }).fructans.status).toBe('inconnu')
+  })
+  it('une mesure « non détectable » compte 0 avec sa limite (N3e)', () => {
+    const nd = { fructans: { g: 0, lt: 0.06, source: 'ferjancic2024', confidence: 'mesure' } }
+    expect(fodmapPer100g(T.Riz, nd).fructans).toMatchObject({ g: 0, status: 'traces', max: 0.06, source: 'ferjancic2024' })
+    const t = { Riz: T.Riz }, m = { foods: { Riz: nd } }
+    expect(estimateMealFodmap([{ ingredient: 'Riz', quantity_g: 250 }], t, m).fructans.level).toBe('bas')
+    // 600 g : la limite (0,36 g) dépasse le repère, on ne peut plus dire « bas »
+    expect(estimateMealFodmap([{ ingredient: 'Riz', quantity_g: 600 }], t, m).fructans.level).toBe('inconnu')
+  })
   it('laisse fructanes et GOS inconnus sans mesure publiée', () => {
     const r = fodmapPer100g(T.Oignon)
     expect(r.fructans.status).toBe('inconnu')
@@ -200,6 +215,15 @@ describe('cohérence avec la réintroduction et les données livrées', () => {
     expect(est('Tofu', 100).gos).toMatchObject({ level: 'bas', g: 0.14 })
     expect(est('Pâtes cuites', 200).fructans.level).toBe('élevé') // cherché sous le nom Ciqual de l'alias
   })
+  it('table livrée : « poulet, riz, carottes » pauvre en fructanes, petits pois en conserve au repère (N3e)', () => {
+    const meal = [
+      { ingredient: 'Poulet, filet sans peau grillé/poêlé', quantity_g: 120 },
+      { ingredient: 'Riz blanc cuit', quantity_g: 200 },
+      { ingredient: 'Carotte cuite', quantity_g: 100 },
+    ]
+    expect(estimateMealFodmap(meal, table, measurements).fructans).toMatchObject({ level: 'bas', unknownFoods: [] })
+    expect(estimateMealFodmap([{ ingredient: 'Petits pois, appertisés, égouttés', quantity_g: 100 }], table, measurements).fructans.level).toBe('élevé')
+  })
   it('table livrée : pain et poireau jamais « bas » en fructanes, l’oignon reste élevé (N3d)', () => {
     const est = (ingredient, quantity_g) => estimateMealFodmap([{ ingredient, quantity_g }], table, measurements)
     expect(est('Pain blanc (par ex. : baguette, boule…)', 80).fructans).toMatchObject({ level: 'probable', g: 0.112, high: 0.816 })
@@ -230,6 +254,11 @@ describe('cohérence avec la réintroduction et les données livrées', () => {
           expect(food._q?.polyols_g, label).toBeUndefined()
         } else {
           expect(typeof m.g, `${label} : valeur sans source ni nombre`).toBe('number')
+          if ('lt' in m) {
+            // « non détectable » : 0 avec une limite positive (N3e)
+            expect(m.g, label).toBe(0)
+            expect(m.lt, label).toBeGreaterThan(0)
+          }
           expect(m.g, label).toBeGreaterThanOrEqual(0)
           if (typeof food.carbohydrates_g === 'number' && food._q?.carbohydrates_g == null) {
             expect(m.g, `${label} ≤ glucides`).toBeLessThanOrEqual(food.carbohydrates_g)

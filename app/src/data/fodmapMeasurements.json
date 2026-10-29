@@ -1,5 +1,5 @@
 {
-  "_doc": "Teneurs FODMAP par sous-groupe que Ciqual ne mesure pas (fructanes, GOS, sorbitol, mannitol), reprises de mesures publiées dans des articles scientifiques ou des tables officielles (jamais des apps Monash ou FODMAP Friendly). Clés = noms de ingredientsNutrition.json ; une entrée par groupe : `g` (g pour 100 g d'aliment tel que mangé) ou, pour le sorbitol et le mannitol, `share` (part des polyols totaux Ciqual de l'aliment, quand Ciqual les mesure), `source` (clé de `sources`), `ref` (tableau / ligne de la source), `confidence` : `mesure` (cet aliment mesuré), `analogie` (aliment proche, ou répartition supposée ; confiance basse) ou `citée` (valeur citée par une revue, article primaire non lu ; confiance basse), `notes`. Quand deux mesures publiées divergent de plus de 2 fois : `g_high` (borne haute), `source_high`, `ref_high` ; un repas n'est alors jamais dit pauvre si la borne haute dépasse le repère (N3d). Recherche des sources : journal/IDEES.md I177–I179 (26/10/2026).",
+  "_doc": "Teneurs FODMAP par sous-groupe que Ciqual ne mesure pas (fructanes, GOS, sorbitol, mannitol), reprises de mesures publiées dans des articles scientifiques ou des tables officielles (jamais des apps Monash ou FODMAP Friendly). Clés = noms de ingredientsNutrition.json ; une entrée par groupe : `g` (g pour 100 g d'aliment tel que mangé) ou, pour le sorbitol et le mannitol, `share` (part des polyols totaux Ciqual de l'aliment, quand Ciqual les mesure), `source` (clé de `sources`), `ref` (tableau / ligne de la source), `confidence` : `mesure` (cet aliment mesuré), `analogie` (aliment proche, ou répartition supposée ; confiance basse) ou `citée` (valeur citée par une revue, article primaire non lu ; confiance basse), `notes`. Mesure « non détectable » : `g` 0 et `lt` (borne haute prudente, g pour 100 g), compté comme une teneur Ciqual « < x » (N3e, scripts/nutrition/ferjancicFructans.mjs). Quand deux mesures publiées divergent de plus de 2 fois : `g_high` (borne haute), `source_high`, `ref_high` ; un repas n'est alors jamais dit pauvre si la borne haute dépasse le repère (N3d). Recherche des sources : journal/IDEES.md I177–I179 (26/10/2026).",
   "version": 2,
   "sources": {
     "ferjancic2024": {
@@ -174,13 +174,15 @@
       "gos": { "g": 0.7, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 66,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 66.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20502", "losses": "njoumi2019"} }
     },
     "Haricot blanc, appertisé, égoutté": {
-      "gos": { "g": 0.573, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 72,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 72.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20511", "losses": "njoumi2019"} }
+      "gos": { "g": 0.573, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 72,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 72.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20511", "losses": "njoumi2019"} },
+      "fructans": { "g": 0.24, "source": "ferjancic2024", "ref": "tableau 1, haricots en conserve", "confidence": "analogie", "notes": "Espèce des haricots en conserve non précisée dans l’article." }
     },
     "Haricot rouge, bouilli/cuit à l'eau": {
       "gos": { "g": 0.74, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 65 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 65, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20503", "losses": "njoumi2019"} }
     },
     "Haricot rouge, appertisé, égoutté": {
-      "gos": { "g": 0.657, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 68,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 68.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20524", "losses": "njoumi2019"} }
+      "gos": { "g": 0.657, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 68,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 68.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20524", "losses": "njoumi2019"} },
+      "fructans": { "g": 0.24, "source": "ferjancic2024", "ref": "tableau 1, haricots en conserve", "confidence": "analogie", "notes": "Espèce des haricots en conserve non précisée dans l’article." }
     },
     "Haricot flageolet, bouilli/cuit à l'eau": {
       "gos": { "g": 0.7, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 66,9 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Flageolet : même espèce que les haricots mesurés (Phaseolus vulgaris). Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 66.9, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20513", "losses": "njoumi2019"} }
@@ -190,6 +192,147 @@
     },
     "Haricot flageolet, appertisé, égoutté": {
       "gos": { "g": 0.592, "source": "siva2019", "ref": "tableau 5, haricots communs (moyenne des classes), raffinose 662 + stachyose 2218 mg/100 g à sec", "confidence": "analogie", "notes": "Calculé depuis le sec : eau Ciqual 72 g, pertes au trempage et à la cuisson (Njoumi 2019). Verbascose (168 mg/100 g à sec) non comptée. Flageolet : même espèce que les haricots mesurés (Phaseolus vulgaris). Perte au trempage des haricots non mesurée : on prend la plus faible publiée (10 %), estimation plutôt haute. Conserve : perte supplémentaire dans le jus d’égouttage non chiffrée, la valeur réelle est sans doute plus basse.", "derivation": {"dry": {"raffinose_mg": 662, "stachyose_mg": 2218}, "water_g": 72, "soak_loss": 0.1, "cook_loss": {"raffinose": 0.32, "stachyose": 0.25}, "ciqual_code": "20508", "losses": "njoumi2019"} }
+    },
+    "Carotte, crue": {
+      "fructans": { "g": 0.11, "source": "ferjancic2024", "ref": "tableau 1, carotte", "confidence": "mesure" }
+    },
+    "Carotte, cuite (aliment moyen)": {
+      "fructans": { "g": 0.11, "source": "ferjancic2024", "ref": "tableau 1, carotte", "confidence": "analogie", "analogy_of": "Carotte, crue", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Carotte, bouillie/cuite à l'eau (aliment moyen)": {
+      "fructans": { "g": 0.11, "source": "ferjancic2024", "ref": "tableau 1, carotte", "confidence": "analogie", "analogy_of": "Carotte, crue", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Carotte, cuite à la vapeur": {
+      "fructans": { "g": 0.11, "source": "ferjancic2024", "ref": "tableau 1, carotte", "confidence": "analogie", "analogy_of": "Carotte, crue", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Chou-rave, cru": {
+      "fructans": { "g": 0, "lt": 0.027, "source": "ferjancic2024", "ref": "tableau 1, chou-rave (ND)", "confidence": "mesure", "notes": "Non détectable : moins de 0,027 g pour 100 g (borne haute prudente)." }
+    },
+    "Chou-rave, bouilli/cuit à l'eau": {
+      "fructans": { "g": 0, "lt": 0.027, "source": "ferjancic2024", "ref": "tableau 1, chou-rave (ND)", "confidence": "analogie", "analogy_of": "Chou-rave, cru", "notes": "Non détectable : moins de 0,027 g pour 100 g (borne haute prudente). Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Tomate sans précision, crue (aliment moyen)": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, tomate", "confidence": "mesure" }
+    },
+    "Tomate ronde, crue": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, tomate", "confidence": "analogie", "analogy_of": "Tomate sans précision, crue (aliment moyen)" }
+    },
+    "Tomate cerise, crue": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, tomate", "confidence": "analogie", "analogy_of": "Tomate sans précision, crue (aliment moyen)" }
+    },
+    "Tomate grappe, crue": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, tomate", "confidence": "analogie", "analogy_of": "Tomate sans précision, crue (aliment moyen)" }
+    },
+    "Laitue, crue": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, laitue", "confidence": "mesure" }
+    },
+    "Laitue iceberg, crue": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, laitue", "confidence": "analogie", "analogy_of": "Laitue, crue" }
+    },
+    "Laitue romaine, crue": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, laitue", "confidence": "analogie", "analogy_of": "Laitue, crue" }
+    },
+    "Poivron, vert, jaune ou rouge, cru": {
+      "fructans": { "g": 0.02, "source": "ferjancic2024", "ref": "tableau 1, poivron", "confidence": "mesure" }
+    },
+    "Poivron rouge, cru": {
+      "fructans": { "g": 0.02, "source": "ferjancic2024", "ref": "tableau 1, poivron", "confidence": "analogie", "analogy_of": "Poivron, vert, jaune ou rouge, cru" }
+    },
+    "Poivron vert, cru": {
+      "fructans": { "g": 0.02, "source": "ferjancic2024", "ref": "tableau 1, poivron", "confidence": "analogie", "analogy_of": "Poivron, vert, jaune ou rouge, cru" }
+    },
+    "Poivron jaune, cru": {
+      "fructans": { "g": 0.02, "source": "ferjancic2024", "ref": "tableau 1, poivron", "confidence": "analogie", "analogy_of": "Poivron, vert, jaune ou rouge, cru" }
+    },
+    "Chou-fleur, cru": {
+      "fructans": { "g": 0.09, "source": "ferjancic2024", "ref": "tableau 1, chou-fleur", "confidence": "mesure" }
+    },
+    "Chou-fleur, bouilli/cuit à l'eau": {
+      "fructans": { "g": 0.09, "source": "ferjancic2024", "ref": "tableau 1, chou-fleur", "confidence": "analogie", "analogy_of": "Chou-fleur, cru", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Chou-fleur, cuit à la vapeur": {
+      "fructans": { "g": 0.09, "source": "ferjancic2024", "ref": "tableau 1, chou-fleur", "confidence": "analogie", "analogy_of": "Chou-fleur, cru", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Brocoli, cru": {
+      "fructans": { "g": 0.02, "source": "ferjancic2024", "ref": "tableau 1, brocoli", "confidence": "mesure" }
+    },
+    "Brocoli, cuit (aliment moyen)": {
+      "fructans": { "g": 0.02, "source": "ferjancic2024", "ref": "tableau 1, brocoli", "confidence": "analogie", "analogy_of": "Brocoli, cru", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Brocoli, bouilli/cuit à l'eau (aliment moyen)": {
+      "fructans": { "g": 0.02, "source": "ferjancic2024", "ref": "tableau 1, brocoli", "confidence": "analogie", "analogy_of": "Brocoli, cru", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Brocoli, cuit à la vapeur": {
+      "fructans": { "g": 0.02, "source": "ferjancic2024", "ref": "tableau 1, brocoli", "confidence": "analogie", "analogy_of": "Brocoli, cru", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Concombre, chair et peau, cru": {
+      "fructans": { "g": 0, "lt": 0.015, "source": "ferjancic2024", "ref": "tableau 1, concombre (ND)", "confidence": "mesure", "notes": "Non détectable : moins de 0,015 g pour 100 g (borne haute prudente)." }
+    },
+    "Concombre, chair sans peau, cru": {
+      "fructans": { "g": 0, "lt": 0.015, "source": "ferjancic2024", "ref": "tableau 1, concombre (ND)", "confidence": "analogie", "analogy_of": "Concombre, chair et peau, cru", "notes": "Non détectable : moins de 0,015 g pour 100 g (borne haute prudente)." }
+    },
+    "Chou blanc, cru": {
+      "fructans": { "g": 0.03, "source": "ferjancic2024", "ref": "tableau 1, chou", "confidence": "mesure" }
+    },
+    "Chou blanc, bouilli/cuit à l'eau": {
+      "fructans": { "g": 0.03, "source": "ferjancic2024", "ref": "tableau 1, chou", "confidence": "analogie", "analogy_of": "Chou blanc, cru", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Chou vert, cru": {
+      "fructans": { "g": 0.03, "source": "ferjancic2024", "ref": "tableau 1, chou", "confidence": "analogie", "analogy_of": "Chou blanc, cru" }
+    },
+    "Courgette, chair et peau, crue": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, courgette", "confidence": "mesure" }
+    },
+    "Courgette, chair et peau, cuite": {
+      "fructans": { "g": 0.01, "source": "ferjancic2024", "ref": "tableau 1, courgette", "confidence": "analogie", "analogy_of": "Courgette, chair et peau, crue", "notes": "Cuit : on reprend la teneur du cru (une partie des fructanes passe dans l’eau de cuisson), estimation plutôt haute." }
+    },
+    "Cornichon, au vinaigre": {
+      "fructans": { "g": 0, "lt": 0.018, "source": "ferjancic2024", "ref": "tableau 1, cornichon (ND)", "confidence": "mesure", "notes": "Non détectable : moins de 0,018 g pour 100 g (borne haute prudente)." }
+    },
+    "Pomme de terre, bouillie/cuite à l'eau": {
+      "fructans": { "g": 0, "lt": 0.048, "source": "ferjancic2024", "ref": "tableau 1, pomme de terre cuite (ND)", "confidence": "mesure", "notes": "Non détectable : moins de 0,048 g pour 100 g (borne haute prudente)." }
+    },
+    "Pomme de terre, cuite (aliment moyen)": {
+      "fructans": { "g": 0, "lt": 0.048, "source": "ferjancic2024", "ref": "tableau 1, pomme de terre cuite (ND)", "confidence": "analogie", "analogy_of": "Pomme de terre, bouillie/cuite à l'eau", "notes": "Non détectable : moins de 0,048 g pour 100 g (borne haute prudente)." }
+    },
+    "Frites de pommes de terre, surgelées, cuites en friteuse": {
+      "fructans": { "g": 0, "lt": 0.045, "source": "ferjancic2024", "ref": "tableau 1, frites (ND)", "confidence": "mesure", "notes": "Non détectable : moins de 0,045 g pour 100 g (borne haute prudente). Eau et matières grasses comptées ensemble dans l’article." }
+    },
+    "Riz blanc, cuit, sans sel ajouté": {
+      "fructans": { "g": 0, "lt": 0.063, "source": "ferjancic2024", "ref": "tableau 1, riz cuit (ND)", "confidence": "mesure", "notes": "Non détectable : moins de 0,063 g pour 100 g (borne haute prudente)." }
+    },
+    "Riz basmati, cuit, sans sel ajouté": {
+      "fructans": { "g": 0, "lt": 0.063, "source": "ferjancic2024", "ref": "tableau 1, riz cuit (ND)", "confidence": "analogie", "analogy_of": "Riz blanc, cuit, sans sel ajouté", "notes": "Non détectable : moins de 0,063 g pour 100 g (borne haute prudente)." }
+    },
+    "Riz blanc étuvé, cuit, sans sel ajouté": {
+      "fructans": { "g": 0, "lt": 0.063, "source": "ferjancic2024", "ref": "tableau 1, riz cuit (ND)", "confidence": "analogie", "analogy_of": "Riz blanc, cuit, sans sel ajouté", "notes": "Non détectable : moins de 0,063 g pour 100 g (borne haute prudente)." }
+    },
+    "Pétales de maïs nature, non enrichis en vitamines et minéraux": {
+      "fructans": { "g": 0, "lt": 0.3, "source": "ferjancic2024", "ref": "tableau 1, pétales de maïs (ND)", "confidence": "mesure", "notes": "Non détectable : moins de 0,3 g pour 100 g (borne haute prudente)." }
+    },
+    "Pétales de maïs nature, enrichis en vitamines et minéraux": {
+      "fructans": { "g": 0, "lt": 0.3, "source": "ferjancic2024", "ref": "tableau 1, pétales de maïs (ND)", "confidence": "analogie", "analogy_of": "Pétales de maïs nature, non enrichis en vitamines et minéraux", "notes": "Non détectable : moins de 0,3 g pour 100 g (borne haute prudente)." }
+    },
+    "Polenta ou semoule de maïs, cuite, sans sel ajouté": {
+      "fructans": { "g": 0.04, "source": "ferjancic2024", "ref": "tableau 1, polenta cuite", "confidence": "mesure" }
+    },
+    "Orge complète, crue": {
+      "fructans": { "g": 0.47, "source": "ferjancic2024", "ref": "tableau 1, orge mondé", "confidence": "mesure" }
+    },
+    "Orge perlée, crue": {
+      "fructans": { "g": 0.47, "source": "ferjancic2024", "ref": "tableau 1, orge mondé", "confidence": "analogie", "analogy_of": "Orge complète, crue" }
+    },
+    "Petits pois, appertisés, égouttés": {
+      "fructans": { "g": 0.33, "source": "ferjancic2024", "ref": "tableau 1, petits pois en conserve", "confidence": "mesure" }
+    },
+    "Haricot vert, cuit": {
+      "fructans": { "g": 0.03, "source": "ferjancic2024", "ref": "tableau 1, haricots verts", "confidence": "mesure" }
+    },
+    "Haricot vert, bouilli/cuit à l'eau": {
+      "fructans": { "g": 0.03, "source": "ferjancic2024", "ref": "tableau 1, haricots verts", "confidence": "analogie", "analogy_of": "Haricot vert, cuit" }
+    },
+    "Haricot vert, appertisé, égoutté": {
+      "fructans": { "g": 0.03, "source": "ferjancic2024", "ref": "tableau 1, haricots verts", "confidence": "analogie", "analogy_of": "Haricot vert, cuit" }
     }
   }
 }
