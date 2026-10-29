@@ -1,12 +1,15 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import JournalTabs from '../components/JournalTabs'
-import { Link } from 'react-router-dom'
 import { loadNutritionEntries } from '../services/nutritionData'
 import { getBodyProfile, getLatestBodyComposition } from '../services/bodyProfile'
 import { compareRecentIntake, formatNutrientAmount } from '../services/nutritionIntakeCompare'
 import BodyProfileCard from '../components/BodyProfileCard'
+import PastelTiles from '../components/PastelTiles'
 import ciqualMeta from '../data/ciqualMeta.json'
 import './Nutrition.css'
+
+// POL-PLAY-49 : semaine sans repas → tuile pêche (repas), comme le Journal vierge.
+const EMPTY_TILES = [{ to: '/food', theme: 'peach', icon: 'camera', label: 'Photographier un repas' }]
 
 const STATUS_TEXT = {
   ok: 'atteint',
@@ -100,10 +103,9 @@ export default function Nutrition() {
 
       {comparison && comparison.mealCount === 0 ? (
         <div className="nutrition-empty">
-          <p>Aucun repas enregistré ces 7 derniers jours.</p>
-          <p>
-            <Link to="/food" className="btn">Ajouter un repas</Link>
-          </p>
+          <p className="journal-empty-title">Aucun repas ces 7 derniers jours</p>
+          <p className="journal-empty-text">Vos apports s’afficheront ici dès votre premier repas.</p>
+          <PastelTiles tiles={EMPTY_TILES} />
         </div>
       ) : comparison ? (
         <>
