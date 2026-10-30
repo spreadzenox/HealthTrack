@@ -24,6 +24,10 @@ import { I18N_EN } from '../i18n/locale.js'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
+  const [ent] = useEntitlement()
+  let quota = 'Sans abonnement : 10 analyses offertes, puis 15 par mois. Avec le premium : jusqu’à 10 par jour.'
+  if (ent.premium && ent.source === 'launch') quota = 'Pendant le test : jusqu’à 10 analyses par jour, sans rien payer.'
+  else if (ent.premium) quota = 'Avec votre premium : jusqu’à 10 analyses par jour.'
   return (
     <div className="settings-block">
       <h3 className="section-title">Analyse des repas (IA)</h3>
@@ -33,9 +37,7 @@ function RelayAiBlock() {
         saisie manuelle reste possible.
       </p>
       <AiCreditsHint />
-      <p className="hint">
-        Sans abonnement : 10 analyses offertes, puis 15 par mois. Avec le premium : jusqu’à 10 par jour.
-      </p>
+      <p className="hint">{quota}</p>
       <div className="gemini-privacy">
         <p className="hint">
           <strong><LineIcon name="lock" size={16} /> Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans métadonnées

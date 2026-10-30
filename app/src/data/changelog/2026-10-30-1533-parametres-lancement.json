@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-30",
+  "kind": "correctif",
+  "variants": ["play"],
+  "title": "Paramètres : le quota d'analyses IA pendant le test",
+  "items": [
+    "Pendant la période de test, Paramètres dit simplement « jusqu'à 10 analyses par jour, sans rien payer » au lieu de parler d'abonnement."
+  ]
+}
