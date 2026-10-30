@@ -32,7 +32,7 @@ describe('Onboarding (jalon 4a)', () => {
     expect(screen.getByRole('radio', { name: /Tout comprendre de mes données/ })).toBeInTheDocument()
     expect(screen.getByText(/18 ans ou plus/)).toBeInTheDocument()
     expect(screen.getByText(/Local par défaut/)).toBeInTheDocument()
-    expect(screen.getByText('01/04')).toBeInTheDocument()
+    expect(screen.getByText('01/06')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Passer' })).not.toBeInTheDocument()
     expect(cont()).toBeDisabled()
   })
@@ -105,9 +105,18 @@ describe('Onboarding (jalon 4a)', () => {
     saveOnboarding({ goal: 'gut', step: 1 })
     renderAt()
     expect(screen.getByRole('heading', { name: 'Que voulez-vous suivre ?' })).toBeInTheDocument()
-    expect(screen.getByText('02/04')).toBeInTheDocument()
+    expect(screen.getByText('02/06')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Retour' }))
     expect(screen.getByRole('radio', { name: /Mon ventre/ })).toBeChecked()
+  })
+
+  it('le compteur ne grimpe jamais : il compte d’abord les écrans d’une montre Health Connect, puis baisse (POL-PLAY-61)', () => {
+    saveOnboarding({ goal: 'gut', step: 2 })
+    renderAt()
+    expect(screen.getByText('03/06')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('radio', { name: /Pas de montre/ }))
+    expect(screen.getByText('03/04')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Avancement' })).toHaveAttribute('aria-valuemax', '4')
   })
 
   it('« Passer » termine l’onboarding sans rien demander', async () => {

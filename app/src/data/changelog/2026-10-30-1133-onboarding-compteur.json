@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-30",
+  "kind": "amélioration",
+  "title": "Bienvenue : un compteur d'écrans qui ne grimpe plus",
+  "items": [
+    "Au premier lancement, le compteur en haut (« 01/07 ») annonce dès le départ tous les écrans possibles. Il ne fait plus que baisser : sans montre, il passe à « /05 » au lieu de grimper en cours de route quand vous choisissez une montre Health Connect."
+  ]
+}
