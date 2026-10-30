@@ -1354,6 +1354,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   rapidement à votre médecin. » Jamais déclenchée par les données (pas de détection : ce serait une fonction
   médicale), jamais en rouge. Même phrase que `Reintroduction.jsx:71` (une seule source de texte). Test : présente
   avec « Mon ventre », absente sinon.
+- [x] **POL-PLAY-61** ✅ 30/10 11:33 (petit point laissé par POL-PLAY-58 ; `displayedStepCount` dans `Onboarding.jsx`, test « le compteur ne grimpe jamais ») Onboarding : le compteur passait de « /05 » à « /07 » quand on choisissait une montre Health Connect (écrans ajoutés). Il compte maintenant d'avance ces écrans (montre pas encore choisie → Health Connect supposée, accès pas encore décidé → accordé supposé) et ne fait que baisser ; la barre suit. Le diagnostic local (`markScreenSeen`) garde le vrai nombre d'écrans.
 - [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement
   de `com.healthtrack.app` dans la Play Console comme « app distribuée hors de Google Play » une fois signée avec une
   clé privée (la clé de debug publique ne peut pas prouver la propriété) ; échéance : avant l'extension mondiale de

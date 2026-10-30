@@ -44,6 +44,15 @@ function stepsFor(state) {
   return steps
 }
 
+/**
+ * Nombre d'écrans affiché : le plus grand possible tant que les choix qui ajoutent des écrans ne sont pas faits
+ * (montre Health Connect, accès accordé). Le compteur ne fait donc que baisser (« /07 » puis « /05 » sans montre),
+ * jamais grimper en cours de route (audit du 30/10, POL-PLAY-61).
+ */
+function displayedStepCount(state) {
+  return stepsFor({ ...state, watch: state.watch ?? 'health_connect', health: state.health ?? 'granted' }).length
+}
+
 /** Au-delà, l'import continue en arrière-plan et l'on peut passer à la suite. */
 export const IMPORT_PATIENCE_MS = 20000
 
@@ -543,6 +552,7 @@ export default function Onboarding() {
   const [ahaReady, setAhaReady] = useState(false)
   const STEPS = stepsFor(state)
   const step = STEPS[state.step]
+  const shownCount = displayedStepCount(state)
   const tracks = state.tracks || defaultTracks(state.goal)
 
   const update = (patch) => setState(saveOnboarding(patch))
@@ -595,13 +605,13 @@ export default function Onboarding() {
           role="progressbar"
           aria-label="Avancement"
           aria-valuemin={1}
-          aria-valuemax={STEPS.length}
+          aria-valuemax={shownCount}
           aria-valuenow={state.step + 1}
         >
-          <span style={{ width: `${((state.step + 1) / STEPS.length) * 100}%` }} />
+          <span style={{ width: `${((state.step + 1) / shownCount) * 100}%` }} />
         </div>
         <span className="onb-count">
-          {pad(state.step + 1)}/{pad(STEPS.length)}
+          {pad(state.step + 1)}/{pad(shownCount)}
         </span>
         {state.step > 0 && step !== 'premium' && (
           <button type="button" className="onb-skip" onClick={() => end('skipped')}>
