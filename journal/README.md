@@ -289,6 +289,10 @@
 - **Repas : des cartes plus légères** (29/10 23:33) — dans Journal › Repas, « Refaire · Modifier · Supprimer »
   sont rangés derrière un petit « ⋯ » au bout de chaque repas, comme dans Jours ; écran Données de la montre :
   stress « 46 · normal » au lieu de « 46 / 99 ».
+- **Pistes du ventre plus lisibles** (30/10 04:33) — quand des aliments toujours mangés ensemble forment une seule
+  piste, le titre se lit « Banane, café, yaourt nature ou le lactose → ventre » (au lieu de « Banane, chair sans peau,
+  café, non instantané… ») ; une précision utile reste entre parenthèses (« Fromage (emmental) »). Les listes de repas
+  disent aussi « Banane » ou « Pêche » plutôt que « Banane, chair sans peau ».
 - **Données : plus de rapport PDF vide** (30/10 03:33) — sur une installation neuve, la carte « Rapport PDF pour mon
   médecin » de Données ne propose plus « Préparer le rapport » (qui aurait créé 2 pages vides) : elle dit « Le rapport
   se remplit dès votre première note du ventre ou votre premier repas. » Dès une note ou un repas, rien ne change.
