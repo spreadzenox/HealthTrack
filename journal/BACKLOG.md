@@ -1394,7 +1394,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   donnaient 14 h. Tests : 3 connecteur, 2 premier import. Restent à vérifier : les autres lectures à `limit: 500`
   (sommeil = sessions, FC au repos, SpO₂, VFC : quelques-unes par jour, sous la limite sur 30 jours ; à surveiller
   pour un historique long) — noté **POL-PLAY-67**.
-- [ ] **POL-PLAY-67** Historique long (> 30 jours) : lectures à `limit: 500` (FC au repos, VFC, SpO₂, sommeil, calories)
+- [x] **POL-PLAY-67** (30/10 18:33 ; `readInWindows`, `windowMs: Infinity` pour les types peu denses, séances comprises) Historique long (> 30 jours) : lectures à `limit: 500` (FC au repos, VFC, SpO₂, sommeil, calories)
   coupées après ~500 jours ou plus tôt pour une source dense (SpO₂ la nuit) → même `readSamplesInWindows` (par
   semaine pour ces types) ; à mesurer sur l'émulateur avant de changer.
 - [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement

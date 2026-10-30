@@ -378,6 +378,7 @@ describe('HealthConnectConnector', () => {
 
     // Le plugin trie puis garde les `limit` premiers échantillons (ordre croissant) : sur 30 jours de FC dense,
     // les jours les plus récents étaient perdus, et la synchro suivante repartait de maintenant (jamais relus).
+    const DAY = 24 * 3600000
     const densePlugin = (dataType, everyMs) => ({ dataType: t, startDate, endDate, limit }) => {
       if (t !== dataType) return Promise.resolve({ samples: [] })
       const out = []
@@ -425,6 +426,59 @@ describe('HealthConnectConnector', () => {
       const steps = written.filter((e) => e.type === 'steps')
       expect(steps).toHaveLength(2 * 1440)
       expect(steps.at(-1).at).toBe('2026-01-02T23:59:00.000Z')
+    })
+
+    // POL-PLAY-67 : historique long, types peu denses lus d'un bloc à `limit: 500` → les plus récents perdus.
+    it('historique de 2 ans : FC au repos, VFC, sommeil, SpO₂ et poids complets, jusqu’au dernier jour', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      const daily = densePlugin('restingHeartRate', DAY)
+      const types = ['restingHeartRate', 'heartRateVariability', 'sleep', 'weight']
+      const nightSpo2 = densePlugin('oxygenSaturation', 10 * 60000) // 144 par jour : 105 000 en 2 ans
+      Health.readSamples.mockImplementation((q) =>
+        q.dataType === 'oxygenSaturation' ? nightSpo2(q) : types.includes(q.dataType) ? daily({ ...q, dataType: 'restingHeartRate' }) : Promise.resolve({ samples: [] }))
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+      const { written, writer } = makeWriter()
+      await connector.sync({ since: new Date('2024-01-31T00:00:00Z'), until: new Date('2026-01-31T00:00:00Z'), writer })
+      const days = 731
+      const sub = (s) => written.filter((e) => e.payload.subtype === s)
+      expect(sub('restingHeartRate')).toHaveLength(days)
+      expect(sub('restingHeartRate').at(-1).at).toBe('2026-01-30T00:00:00.000Z')
+      expect(sub('heartRateVariability')).toHaveLength(days)
+      expect(written.filter((e) => e.type === 'sleep')).toHaveLength(days)
+      expect(written.filter((e) => e.type === 'weight')).toHaveLength(days)
+      expect(sub('oxygenSaturation')).toHaveLength(days * 144)
+      expect(sub('oxygenSaturation').at(-1).at).toBe('2026-01-30T23:50:00.000Z')
+    })
+
+    it('type peu dense sous la limite : une seule lecture, pas une par jour', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(densePlugin('restingHeartRate', DAY))
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+      const { writer } = makeWriter()
+      await connector.sync({ since: new Date('2026-01-01T00:00:00Z'), until: new Date('2026-01-31T00:00:00Z'), writer })
+      const calls = Health.readSamples.mock.calls.filter(([q]) => q.dataType === 'restingHeartRate')
+      expect(calls).toHaveLength(1)
+    })
+
+    it('séances : plus de 200 sur l’historique → toutes lues', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockResolvedValue({ samples: [] })
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockImplementation(({ startDate, endDate, limit }) => {
+        const out = []
+        for (let at = Math.ceil(Date.parse(startDate) / DAY) * DAY; at < Date.parse(endDate); at += DAY) {
+          const iso = new Date(at).toISOString()
+          out.push({ startDate: iso, endDate: iso, workoutType: 'running', duration: 1800, platformId: `w${at}` })
+        }
+        return Promise.resolve({ workouts: out.slice(0, limit) })
+      })
+      const { written, writer } = makeWriter()
+      await connector.sync({ since: new Date('2025-01-31T00:00:00Z'), until: new Date('2026-01-31T00:00:00Z'), writer })
+      const acts = written.filter((e) => e.type === 'activity')
+      expect(acts).toHaveLength(365)
+      expect(acts.at(-1).at).toBe('2026-01-30T00:00:00.000Z')
     })
 
     it('onProgress : types lus / total, dans l’ordre, puis done === total à la fin', async () => {

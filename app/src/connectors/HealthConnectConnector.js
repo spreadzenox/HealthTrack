@@ -130,39 +130,45 @@ const DAY_MS = 24 * 3600 * 1000
 const MIN_WINDOW_MS = 15 * 60 * 1000
 
 /**
- * Lecture sans perte des types denses (FC, pas en échantillons). Le plugin trie puis ne garde que les `limit`
- * premiers échantillons : en une seule lecture sur 30 jours, les jours les plus récents disparaissaient, et la
- * synchro suivante repartait de la date de fin (jamais relus). On lit jour par jour, et une fenêtre qui atteint
- * la limite est coupée en deux (jusqu'à 15 min). Un enregistrement à cheval sur deux fenêtres n'est gardé qu'une fois.
+ * Lecture sans perte. Le plugin trie puis ne garde que les `limit` premiers résultats : en une seule lecture, les
+ * plus récents disparaissaient, et la synchro suivante repartait de la date de fin (jamais relus). On lit par
+ * fenêtres de `windowMs` (un jour pour les types denses, toute la période pour les autres), et une fenêtre qui
+ * atteint la limite est coupée en deux (jusqu'à 15 min). Un enregistrement à cheval sur deux fenêtres n'est gardé
+ * qu'une fois. `read(fromIso, toIso)` rend la liste lue sur la fenêtre.
  */
-export async function readSamplesInWindows(Health, { dataType, startDate, endDate, limit }) {
+export async function readInWindows(read, { label, startDate, endDate, limit, windowMs = DAY_MS }) {
   const seen = new Set()
   const out = []
   const keep = (list) => {
     for (const sm of list || []) {
-      const k = `${sm.platformId ?? ''}|${sm.startDate}|${sm.endDate ?? ''}|${sm.value}`
+      const k = `${sm.platformId ?? ''}|${sm.startDate}|${sm.endDate ?? ''}|${sm.value ?? sm.workoutType ?? ''}`
       if (seen.has(k)) continue
       seen.add(k)
       out.push(sm)
     }
   }
   const readWindow = async (from, to) => {
-    const { samples } = await Health.readSamples({
-      dataType, startDate: new Date(from).toISOString(), endDate: new Date(to).toISOString(), limit, ascending: true,
-    })
-    if ((samples?.length ?? 0) >= limit && to - from > MIN_WINDOW_MS) {
+    const list = await read(new Date(from).toISOString(), new Date(to).toISOString())
+    if ((list?.length ?? 0) >= limit && to - from > MIN_WINDOW_MS) {
       const mid = from + Math.floor((to - from) / 2)
       await readWindow(from, mid)
       await readWindow(mid, to)
       return
     }
-    if ((samples?.length ?? 0) >= limit) debugWarn(TAG, `${dataType} : plus de ${limit} échantillons en 15 min, lecture partielle`)
-    keep(samples)
+    if ((list?.length ?? 0) >= limit) debugWarn(TAG, `${label} : plus de ${limit} résultats en 15 min, lecture partielle`)
+    keep(list)
   }
   const start = Date.parse(startDate)
   const end = Date.parse(endDate)
-  for (let from = start; from < end; from += DAY_MS) await readWindow(from, Math.min(from + DAY_MS, end))
+  for (let from = start; from < end; from += windowMs) await readWindow(from, Math.min(from + windowMs, end))
   return out.sort((a, b) => (a.startDate < b.startDate ? -1 : a.startDate > b.startDate ? 1 : 0))
+}
+
+/** Échantillons Health Connect sans perte ; `windowMs: Infinity` pour un type peu dense (une lecture s'il tient). */
+export function readSamplesInWindows(Health, { dataType, startDate, endDate, limit, windowMs }) {
+  const read = async (from, to) =>
+    (await Health.readSamples({ dataType, startDate: from, endDate: to, limit, ascending: true }))?.samples
+  return readInWindows(read, { label: dataType, startDate, endDate, limit, windowMs })
 }
 
 function toEntryType(dataType) {
@@ -898,13 +904,7 @@ export class HealthConnectConnector extends BaseConnector {
     step('sleep')
     if (canRead('sleep')) try {
       debugDebug(TAG, 'Lecture du sommeil…')
-      const { samples } = await Health.readSamples({
-        dataType: 'sleep',
-        startDate,
-        endDate,
-        limit: 500,
-        ascending: true,
-      })
+      const samples = await readSamplesInWindows(Health, { dataType: 'sleep', startDate, endDate, limit: 500, windowMs: Infinity })
       debugInfo(TAG, `Sommeil : ${samples.length} entrées récupérées`)
       const entries = samples.map((s) => ({
         type: 'sleep',
@@ -960,13 +960,7 @@ export class HealthConnectConnector extends BaseConnector {
     step('restingHeartRate')
     if (canRead('restingHeartRate')) try {
       debugDebug(TAG, 'Lecture FC repos…')
-      const { samples } = await Health.readSamples({
-        dataType: 'restingHeartRate',
-        startDate,
-        endDate,
-        limit: 500,
-        ascending: true,
-      })
+      const samples = await readSamplesInWindows(Health, { dataType: 'restingHeartRate', startDate, endDate, limit: 500, windowMs: Infinity })
       debugInfo(TAG, `FC repos : ${samples.length} entrées récupérées`)
       const entries = samples.map((s) => ({
         type: 'heart_rate',
@@ -992,13 +986,7 @@ export class HealthConnectConnector extends BaseConnector {
     step('oxygenSaturation')
     if (canRead('oxygenSaturation')) try {
       debugDebug(TAG, 'Lecture SpO₂…')
-      const { samples } = await Health.readSamples({
-        dataType: 'oxygenSaturation',
-        startDate,
-        endDate,
-        limit: 500,
-        ascending: true,
-      })
+      const samples = await readSamplesInWindows(Health, { dataType: 'oxygenSaturation', startDate, endDate, limit: 500, windowMs: Infinity })
       debugInfo(TAG, `SpO₂ : ${samples.length} entrées récupérées`)
       const entries = samples.map((s) => ({
         type: 'heart_rate',
@@ -1024,13 +1012,7 @@ export class HealthConnectConnector extends BaseConnector {
     step('heartRateVariability')
     if (canRead('heartRateVariability')) try {
       debugDebug(TAG, 'Lecture HRV…')
-      const { samples } = await Health.readSamples({
-        dataType: 'heartRateVariability',
-        startDate,
-        endDate,
-        limit: 500,
-        ascending: true,
-      })
+      const samples = await readSamplesInWindows(Health, { dataType: 'heartRateVariability', startDate, endDate, limit: 500, windowMs: Infinity })
       debugInfo(TAG, `HRV : ${samples.length} entrées récupérées`)
       const entries = samples.map((s) => ({
         type: 'heart_rate',
@@ -1080,13 +1062,7 @@ export class HealthConnectConnector extends BaseConnector {
         await writer(entries)
         synced += entries.length
       } else {
-        const { samples } = await Health.readSamples({
-          dataType: 'calories',
-          startDate,
-          endDate,
-          limit: 500,
-          ascending: true,
-        })
+        const samples = await readSamplesInWindows(Health, { dataType: 'calories', startDate, endDate, limit: 500, windowMs: Infinity })
         debugInfo(TAG, `Calories (échantillons) : ${samples.length} entrées récupérées`)
         const entries = samples.map((s) => ({
           type: 'calories',
@@ -1113,12 +1089,10 @@ export class HealthConnectConnector extends BaseConnector {
     step('workouts')
     if (canRead('workouts')) try {
       debugDebug(TAG, 'Lecture activités/entraînements…')
-      const { workouts } = await Health.queryWorkouts({
-        startDate,
-        endDate,
-        limit: 200,
-        ascending: true,
-      })
+      const workouts = await readInWindows(
+        async (from, to) => (await Health.queryWorkouts({ startDate: from, endDate: to, limit: 200, ascending: true }))?.workouts,
+        { label: 'workouts', startDate, endDate, limit: 200, windowMs: Infinity },
+      )
       debugInfo(TAG, `Activités : ${workouts.length} entraînements récupérés`)
       const entries = workouts.map((w) => ({
         type: 'activity',
@@ -1147,13 +1121,7 @@ export class HealthConnectConnector extends BaseConnector {
       step(reader.dataType)
       if (!canRead(reader.dataType)) continue
       try {
-        const { samples } = await Health.readSamples({
-          dataType: reader.dataType,
-          startDate,
-          endDate,
-          limit: 1000,
-          ascending: true,
-        })
+        const samples = await readSamplesInWindows(Health, { dataType: reader.dataType, startDate, endDate, limit: 1000, windowMs: Infinity })
         const entries = []
         for (const s of samples || []) {
           const payload = reader.toPayload(s)

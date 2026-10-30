@@ -311,6 +311,12 @@
   dépasse la limite). Le résumé « Vos 30 derniers jours » ne compte plus deux fois une nuit écrite par deux apps
   (7 h, pas 14 h). Vos données déjà importées ne changent pas. **À tester** : rien sur votre téléphone (montre
   Huawei en direct) ; sur une installation neuve avec Samsung Health, la FC des derniers jours doit apparaître.
+- **Historique complet sur plusieurs années** (30/10 18:33) — même défaut pour l'historique long : FC au repos, VFC,
+  sommeil, SpO₂, dépense, séances, respiration, température, tension, glycémie et pesées étaient lus d'un bloc et
+  coupés à 500 (200 séances, 1 000 mesures) : sur 2 ans, la FC au repos s'arrêtait après ~16 mois, la SpO₂ de nuit
+  après quelques jours. Chaque type est maintenant lu en une fois s'il tient, sinon redécoupé jusqu'à ce que rien ne
+  manque. **À tester** : rien sur votre téléphone ; une resynchro de l'historique depuis Sources rapatrie les jours
+  manquants (sans doublon).
 - **Fiche Google Play réécrite** (30/10 12:33) — rien ne change dans l'app ; la page Play de Halcya met maintenant
   les montres et les délais repas → ventre avant « local » (Plop, un concurrent, dit aussi « local »), et décrit ce qui
   est arrivé cette semaine : bilan du soir, FODMAP groupe par groupe (Ciqual), réintroduction guidée, rapport PDF, et ce
@@ -631,6 +637,7 @@ automatique (POL-PLAY-60).
 | 30/10 07:33 — [Onboarding : « Continuer » désactivé lisible](runs/2026-10-30-0733-onboarding-continuer.md) | 🎨 | POL-PLAY-12 (audit onboarding play à 360 px, sombre et clair : 7 écrans) → POL-PLAY-58 : « Continuer » sans choix passait pour actif → gris neutre ; lint 7 → 6 ; 1 test |
 | 30/10 17:33 — [Lecture du visage sans plantage](runs/2026-10-30-1733-visage-sans-plantage.md) | 🐛 | Signalement du 30/10 16:35 : cause = R8 retirait les annotations `@Permission` de Capacitor → `NullPointerException` dans `getPermissionStates` (trace prise à l'émulateur) ; règles R8 ; en chemin : `startService` au lieu de `startForegroundService`, message clair, erreurs natives rattrapées ; smoke R8 avec faceUnlockPlay (permissions de chaque plugin, Activer, déverrouillage, caméra refusée) ; 5 tests |
 | 30/10 16:33 — [Health Connect : lecture sans perte](runs/2026-10-30-1633-lecture-sans-perte.md) | 🐛 | POL-PLAY-66 : FC et pas lus jour par jour (`readSamplesInWindows`, fenêtre redécoupée à la limite) au lieu d'une lecture qui gardait les 2 000 plus anciens échantillons ; « aha » du premier import : une source par nuit et intervalles réunis ; 6 tests |
+| 30/10 18:33 — [Health Connect : historique long complet](runs/2026-10-30-1833-historique-long.md) | 🐛 | POL-PLAY-67 : FC au repos, VFC, sommeil, SpO₂, dépense, séances et mesures vitales lus sans la coupure à 500 / 200 / 1 000 (`readInWindows` : une lecture si elle tient, sinon redécoupée) ; PR #531 (visage, run de 17:33) mergée pendant ce run, sans conflit de code ; 3 tests |
 | 30/10 15:33 — [Paramètres pendant le test](runs/2026-10-30-1533-parametres-lancement.md) | 🎨 | POL-PLAY-65 : audit Paramètres / Premium / Données / Sources (vierge, sombre, période de lancement) ; quota IA « Pendant le test : jusqu'à 10 analyses par jour, sans rien payer » au lieu de « Sans abonnement… » ; émulateur API 35 de main relancé (image système non téléchargée) |
 | 30/10 14:33 — [Audit sombre : VFC nuit, étiquette premium](runs/2026-10-30-1433-audit-sombre.md) | 🎨 | POL-PLAY-64 : tuile « VFC » du Journal → « VFC nuit » (comme l'Accueil) ; étiquette « premium » de la réintroduction espacée du titre ; reste de l'audit sombre sans défaut |
 | 30/10 13:36 — [Sport : une source par séance](runs/2026-10-30-1336-seances-une-source.md) | 🐛 | POL-PLAY-63 : `workoutSources.js` garde une source par séance (FC, montre, durée) dans le Journal, les analyses (`activityCalories`) et le premier import ; recherche des autres sommes entre sources : aucune ; 7 tests ; rien d'effacé |

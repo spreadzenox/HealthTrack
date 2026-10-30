@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-30",
+  "kind": "correctif",
+  "title": "Health Connect : tout votre historique, même sur plusieurs années",
+  "variants": ["play", "sideload"],
+  "items": [
+    "En important un long historique, la fréquence cardiaque au repos, la VFC, le sommeil, la SpO₂, les séances et les pesées s'arrêtaient après quelques centaines de mesures : tout est maintenant lu, jusqu'au dernier jour.",
+    "Pour récupérer les jours manquants, relancez l'import de l'historique depuis Sources : rien n'est compté deux fois."
+  ]
+}
