@@ -170,6 +170,19 @@ describe('FaceSenseCard', () => {
     expect(await screen.findByText('Accès à la caméra refusé : rien n’a été activé.')).toBeInTheDocument()
   })
 
+  it('carte fermée pendant l’activation : plus de relecture ni de mise à jour après coup', async () => {
+    const plugin = fake({ ...base, enabled: false, running: false })
+    plugin.start = vi.fn(async () => ({ started: false, permission: false }))
+    const { unmount } = render(<FaceSenseCard plugin={plugin} />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Activer la lecture du visage' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'J’accepte, autoriser la caméra' }))
+    await screen.findByText('Accès à la caméra refusé : rien n’a été activé.')
+    const calls = plugin.status.mock.calls.length
+    unmount()
+    await new Promise((r) => setTimeout(r, 500))
+    expect(plugin.status.mock.calls.length).toBe(calls)
+  })
+
   it('divulgation avant la caméra : ce qui est lu et gardé ; « Pas maintenant » ne demande rien à Android', async () => {
     const plugin = fake({ ...base, enabled: false, running: false })
     render(<FaceSenseCard plugin={plugin} />)

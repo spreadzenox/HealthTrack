@@ -166,6 +166,12 @@ export default function FaceSenseCard({
   const [voice, setVoice] = useState(null)
   const [loaded, setLoaded] = useState(false)
   const [busy, setBusy] = useState(false)
+  // Carte fermée pendant une activation (pause de 400 ms) : plus de relecture ni de mise à jour d'état.
+  const mounted = useRef(true)
+  useEffect(() => {
+    mounted.current = true
+    return () => { mounted.current = false }
+  }, [])
   const [message, setMessage] = useState(null)
   const [disclosure, askConsent] = useDisclosure()
   const affectAsked = useRef(false)
@@ -207,9 +213,9 @@ export default function FaceSenseCard({
       else if (appOpen) await readOnOpen({ enabled: true, plugin })
       // le service met un instant à démarrer
       await new Promise((r) => setTimeout(r, 400))
-      await refresh()
+      if (mounted.current) await refresh()
     } finally {
-      setBusy(false)
+      if (mounted.current) setBusy(false)
     }
   }
 

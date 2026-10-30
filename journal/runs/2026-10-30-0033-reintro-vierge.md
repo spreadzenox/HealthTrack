@@ -28,6 +28,16 @@
 ## Demandes iOS
 - Page commune aux deux plateformes : note de Nouveautés sans `variants`.
 
+## Après le merge : « Tests » rouge sur main (#513), réparé
+- Run `40976009612`, job « Frontend (Vitest) » : 2 700 tests verts mais 1 erreur non gérée, `ReferenceError: window is
+  not defined` dans `FaceSenseCard.jsx` (`setBusy(false)` après `activateWithConsent`) : la pause de 400 ms de
+  l'activation survivait à la fin du fichier de test (environnement jsdom déjà démonté). Sans lien avec POL-PLAY-51 ;
+  verte sur la PR, rouge sur main : course temporelle, pas un « flake » à relancer.
+- Correctif : `mounted` (ref) dans `FaceSenseCard` : après la pause, ni relecture du statut ni `setBusy` si la carte a
+  été fermée (vrai aussi dans l'app : quitter Sources pendant l'activation). Test « carte fermée pendant
+  l'activation » (rouge avant : 2 lectures du statut au lieu de 1). Fichier relancé 3 fois, suite complète 2 701 verts.
+- Build & Release de #513 : vert (release publiée).
+
 ## Suite
 - POL-PLAY-12 : audit de la Réintroduction en cours de test (`--fodmap=day2`, `=question`, `=result`) en démo,
   clair et sombre ; POL-PLAY-11 quand Android vitals le permet.
