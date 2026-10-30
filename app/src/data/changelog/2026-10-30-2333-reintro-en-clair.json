@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-30",
+  "kind": "amélioration",
+  "title": "Réintroduction : l'attente en clair",
+  "items": [
+    "Avant et après un test, la réintroduction dit combien de jours calmes il reste à attendre (« encore 2 jours calmes ») plutôt que « 1/3 jours calmes », aussi sur la carte du test dans Analyses.",
+    "Après une gêne, les deux réponses sont plus courtes (« Oui, continuer » / « Non, arrêter ») et tiennent chacune sur une ligne."
+  ]
+}

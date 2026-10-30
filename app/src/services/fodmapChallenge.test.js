@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   FODMAP_CHALLENGE_SOURCE, FODMAP_CHALLENGE_TYPE, FODMAP_GROUPS, answerTolerable, calmStreak, canStartChallenge,
   challengeStatus, combinationsAvailable, defaultPlan, groupResults, recordDose, restartChallenge, startChallenge,
-  verdictSentence, challengeFoodFor, challengePath, findFood, findGroup, pickableGroups,
+  verdictSentence, calmDaysLeftText, challengeFoodFor, challengePath, findFood, findGroup, pickableGroups,
 } from './fodmapChallenge'
 import { estimateMealFodmap } from './fodmapGroups'
 import table from '../data/ingredientsNutrition.json'
@@ -71,6 +71,14 @@ describe('repères et départ', () => {
   it('les portions modifiées par la personne sont gardées', () => {
     const ch = startChallenge({ group: 'lactose', food: 'milk', plan: { unit: 'ml', units: 'ml', amounts: [60, 120, 200] } }, at(0))
     expect(recordDose(ch, [], at(0, 12)).doses[0]).toMatchObject({ day: 1, amount: 60, unit: 'ml' })
+  })
+})
+
+describe('calmDaysLeftText (POL-PLAY-71)', () => {
+  it('dit combien de jours calmes il manque, sans compteur « N/3 »', () => {
+    expect(calmDaysLeftText(0)).toBe('encore 3 jours calmes')
+    expect(calmDaysLeftText(2)).toBe('encore 1 jour calme')
+    expect(calmDaysLeftText(3)).toBe('plus aucun jour calme à attendre')
   })
 })
 

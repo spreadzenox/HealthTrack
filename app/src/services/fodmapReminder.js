@@ -11,7 +11,7 @@
 import { registerPlugin } from '@capacitor/core'
 import { listEntries } from '../storage/localHealthStorage'
 import { GUT_TYPE } from './today'
-import { CALM_DAYS_REQUIRED, CHALLENGE_DAYS, FODMAP_CHALLENGE_TYPE, currentChallenge, findFood, formatAmount } from './fodmapChallenge'
+import { CHALLENGE_DAYS, FODMAP_CHALLENGE_TYPE, calmDaysLeftText, currentChallenge, findFood, formatAmount } from './fodmapChallenge'
 
 export const PORTION_DEFAULT_MINUTE = 12 * 60
 const KEY = 'halcya_portion_reminder'
@@ -98,7 +98,7 @@ export function challengeSummary(current) {
   const label = findFood(c.group, c.food)?.label ?? 'Test'
   if (s.state === 'question') return `${label} · une question vous attend`
   if (s.state === 'paused') return `${label} · test en pause`
-  if (s.state === 'washout') return `${label} · résultat prêt · pause ${s.calmDays}/${CALM_DAYS_REQUIRED} jours calmes`
+  if (s.state === 'washout') return `${label} · résultat prêt · pause : ${calmDaysLeftText(s.calmDays)}`
   if (s.canTakeDose) return `${label} · jour ${s.day} · portion à prendre`
   return `${label} · jour ${s.day} · portion notée`
 }

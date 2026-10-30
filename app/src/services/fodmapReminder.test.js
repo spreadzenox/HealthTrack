@@ -80,6 +80,12 @@ describe('challengeSummary', () => {
     expect(challengeSummary(currentChallenge([entry(ch)], [gut(0, 'pain')], at(0, 22)))).toBe('Lait · une question vous attend')
     expect(challengeSummary(currentChallenge([entry(milk())], [], at(3, 9)))).toBe('Lait · test en pause')
   })
+
+  it('pause de fin : jours calmes restants, pas « N/3 » (POL-PLAY-71)', () => {
+    const doses = [0, 1, 2].reduce((c, d) => recordDose(c, [], at(d, 12)), milk())
+    const s = challengeSummary(currentChallenge([entry(doses)], [0, 1, 2].map((d) => gut(d, 'calm')), at(3, 22)))
+    expect(s).toMatch(/^Lait · résultat prêt · pause : encore \d jours? calmes?$/)
+  })
 })
 
 describe('préférences et heure', () => {
