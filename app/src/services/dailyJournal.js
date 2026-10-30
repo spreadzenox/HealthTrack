@@ -10,6 +10,7 @@ import { isDaytimeHrv } from './hrv'
 import { mealKcal } from './mealEditing'
 import { appLocale } from '../i18n/locale.js'
 import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
+import { oneSleepSourcePerNight, sleepNightKey } from './sleepSources'
 
 /** Types uniquement résumés (jamais listés individuellement). */
 export const JOURNAL_SUMMARY_TYPES = [
@@ -23,16 +24,6 @@ const NOT_ASLEEP = new Set(['awake', 'inBed', 'outOfBed'])
 
 function isNum(v) {
   return typeof v === 'number' && Number.isFinite(v)
-}
-
-/** Jour du réveil : une nuit commencée le 7 à 23 h compte pour le 8. */
-function sleepDateKey(entry) {
-  const p = entry.payload || {}
-  if (p.endDate) return localDateKey(p.endDate)
-  if (isNum(p.durationMinutes)) {
-    return localDateKey(new Date(new Date(entry.at).getTime() + p.durationMinutes * 60000).toISOString())
-  }
-  return localDateKey(entry.at)
 }
 
 function emptyDay(dateKey) {
@@ -175,13 +166,14 @@ export function buildDailyJournal(entries) {
     return days.get(key)
   }
   // Ordre chronologique : « la dernière valeur » d'un jour est bien la plus récente.
-  const sorted = mergeWeighIns((entries || []).filter((e) => e?.at)).sort((a, b) => (a.at < b.at ? -1 : 1))
+  // Une nuit vue par la montre et par Health Connect ne compte qu'une fois (sleepSources.js).
+  const sorted = mergeWeighIns(oneSleepSourcePerNight((entries || []).filter((e) => e?.at))).sort((a, b) => (a.at < b.at ? -1 : 1))
 
   for (const e of sorted) {
     const p = e.payload || {}
     if (e.type === 'sleep') {
       if (p.nap) continue // sieste de la montre : pas dans la nuit (gardée dans l'historique et l'export)
-      const day = getDay(sleepDateKey(e))
+      const day = getDay(sleepNightKey(e))
       day._hasOwnData = true
       if (isNum(p.durationMinutes) && p.durationMinutes > 0) {
         if (!NOT_ASLEEP.has(p.sleepState)) day._sleep += p.durationMinutes
