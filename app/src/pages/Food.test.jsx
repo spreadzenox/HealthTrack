@@ -268,7 +268,7 @@ describe('Food — supprimer un repas', () => {
       </BrowserRouter>
     )
     await screen.findByText('Pâtes au pesto', { selector: '.meal-dish' })
-    expect(screen.getByText('Pâtes : 200 g')).toBeInTheDocument()
+    expect(screen.getByText('Pâtes', { selector: '.meal-item-name' })).toBeInTheDocument()
     listEntries.mockResolvedValue([])
     fireEvent.click(mealAction(/Supprimer ce repas/i))
     fireEvent.click(screen.getByRole('button', { name: /Confirmer/i }))
@@ -585,8 +585,10 @@ describe('Food — derniers repas regroupés par jour', () => {
     // Un seul repas : sa carte donne déjà l'estimation, le titre du jour ne la redit pas (D1).
     expect(days[1]).not.toHaveTextContent(/repas|kcal/)
     expect(screen.getAllByText('20:15', { selector: '.meal-at' })).toHaveLength(1)
-    const item = screen.getAllByText('Poulet, cuisse : 150 g')[0]
+    const item = screen.getAllByText('Poulet, cuisse')[0].closest('li')
     expect(item).toHaveAttribute('title', "Poulet, cuisse, viande bouillie/cuite à l'eau")
+    expect(item.closest('ul')).toHaveClass('meal-item-list')
+    expect(item.querySelector('.meal-item-qty')).toHaveTextContent('150 g')
   })
 
   it('affiche les jours les plus récents puis « Voir les jours précédents »', async () => {

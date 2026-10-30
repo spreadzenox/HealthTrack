@@ -495,17 +495,26 @@
   padding: 0;
 }
 
-/* Aliments d'un repas sur une ligne qui se replie : « Poulet : 150 g · Riz : 180 g » (Accueil et page Repas) */
-/* Un aliment ne se coupe pas en fin de ligne, sauf s'il est plus long qu'une ligne */
-.inline-list li {
-  display: inline-block;
-  max-width: 100%;
-  margin-right: 0.3em;
+/* Aliments d'un repas, un par ligne, quantité à droite en mono (Journal et page Repas) : plus de « · » orphelin */
+.meal-item-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  line-height: 1.45;
 }
 
-.inline-list li:not(:last-child)::after {
-  content: ' ·';
+.meal-item-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.meal-item-qty {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .entry-more {

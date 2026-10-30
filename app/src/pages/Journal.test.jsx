@@ -351,7 +351,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
   it('translates the workout type of an activity', async () => {
     await renderEntries([{ type: 'activity', source: 'health_connect', at: '2026-04-10T18:00:00', payload: { workoutType: 'cycling', durationSeconds: 3360, totalCalories: 329 } }])
     const row = document.querySelector('.entry-card')
-    expect(row).toHaveTextContent('Vélo — 56 min — 329 kcal')
+    expect(row).toHaveTextContent('Vélo · 56 min · 329 kcal')
     expect(row).not.toHaveTextContent('cycling')
   })
 
@@ -426,17 +426,21 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
       { id: 5, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { items: [{ ingredient: 'Riz', quantity: '150 g' }] } },
     ])
     renderJournal()
-    expect(await screen.findByText('Riz : 150 g')).toBeInTheDocument()
+    const item = (await screen.findByText('Riz')).closest('li')
+    expect(item).toHaveTextContent('Riz150 g')
+    expect(item.querySelector('.meal-item-qty')).toHaveTextContent('150 g')
   })
 
-  it('met les aliments d’un repas à la suite, comme la page Repas (D1)', async () => {
+  it('un aliment par ligne, quantité à droite : plus de « · » orphelin en fin de ligne (comme la page Repas)', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([
       { id: 6, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { items: [{ ingredient: 'Riz', quantity: '150 g' }, { ingredient: 'Saumon', quantity: '130 g' }] } },
     ])
     renderJournal()
-    const item = await screen.findByText('Riz : 150 g')
-    expect(item.closest('ul')).toHaveClass('inline-list')
+    const list = (await screen.findByText('Riz')).closest('ul')
+    expect(list).toHaveClass('meal-item-list')
+    expect(list).not.toHaveClass('inline-list')
+    expect(list.querySelectorAll('li')).toHaveLength(2)
   })
 
   it('raccourcit les noms d’aliments Ciqual (nom complet en infobulle)', async () => {
@@ -446,7 +450,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
       { id: 7, type: 'food', source: 'app_food', at: '2026-04-11T12:00:00', payload: { items: [{ ingredient: name, quantity: '150 g' }] } },
     ])
     renderJournal()
-    const item = await screen.findByText('Poulet, cuisse : 150 g')
+    const item = (await screen.findByText('Poulet, cuisse')).closest('li')
     expect(item).toHaveAttribute('title', name)
   })
 

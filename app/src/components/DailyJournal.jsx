@@ -7,7 +7,8 @@ import SavedMealEditor from './SavedMealEditor'
 import JournalEmpty from './JournalEmpty'
 import { groupCigarettes, isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
-import { formatDuration, workoutTypeLabel, workoutDetailParts, shortFoodName } from '../utils/format'
+import MealItemList from './MealItemList'
+import { formatDuration, workoutTypeLabel, workoutDetailParts } from '../utils/format'
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 import { mealKcal } from '../services/mealEditing'
 import { useNutritionTable } from '../data/nutritionTable'
@@ -97,14 +98,7 @@ function EntryBody({ e, measuredScreen = false }) {
     <div className="entry-card-body">
       {e.type === 'food' && e.payload?.dish && <p className="entry-dish">{e.payload.dish}</p>}
       {e.type === 'food' && e.payload?.items?.length > 0 && (
-        <ul className="entry-items inline-list">
-          {e.payload.items.slice(0, 5).map((item, i) => (
-            <li key={i} title={item.ingredient}>{shortFoodName(item.ingredient)}{'\u00a0'}: {item.quantity}</li>
-          ))}
-          {e.payload.items.length > 5 && (
-            <li className="entry-more">+{e.payload.items.length - 5} autres</li>
-          )}
-        </ul>
+        <MealItemList items={e.payload.items} max={5} moreLabel={(n) => `+${n} autres`} moreClassName="entry-more" />
       )}
       {e.type === 'wellbeing' && shownTags.length > 0 && (
         <p className="entry-wellbeing-tags">
@@ -134,8 +128,8 @@ function EntryBody({ e, measuredScreen = false }) {
       {e.type === 'activity' && e.payload?.workoutType && (
         <p className="entry-wellbeing-score">
           {workoutTypeLabel(e.payload.workoutType)}
-          {e.payload.durationSeconds && ` — ${formatDuration(e.payload.durationSeconds / 60)}`}
-          {e.payload.totalCalories && ` — ${Math.round(e.payload.totalCalories)} kcal`}
+          {e.payload.durationSeconds && ` · ${formatDuration(e.payload.durationSeconds / 60)}`}
+          {e.payload.totalCalories && ` · ${Math.round(e.payload.totalCalories)} kcal`}
         </p>
       )}
       {e.type === 'activity' && workoutDetailParts(e.payload).length > 0 && (
