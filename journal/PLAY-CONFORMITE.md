@@ -4,6 +4,15 @@
 > du manifeste, divulgations avant les autorisations sensibles. Les règles Play bougent : **à revérifier à chaque
 > run « idées »** (sources ci-dessous) et avant l'envoi en test fermé. Ce n'est pas un avis juridique.
 
+## 0. Relectures datées des règles
+
+- **30/10/2026 08:33** (`IDEES.md` I196) — annonces Play du 15/07 et du 29/10/2026 et tableau des échéances relus :
+  réseau local et « gérer les contacts » (25/08/2027, Android 17), AppFunctions (14/04/2027), géorepérage retiré des
+  services de premier plan, remises d'éligibilité, sélecteur de contacts, bouton de localisation (27/01/2027).
+  **Rien ne concerne Halcya** (BLE seulement, pas de contacts, localisation approximative en API ≥ 31). Rien de neuf
+  sur santé, Health Connect ou caméra. Vérification des développeurs : enregistrement des apps Play exigé depuis le
+  30/09/2026 (P34) ; version GitHub à enregistrer après la migration de clé (VEILLE-1).
+
 ## 1. Lecture du visage : quelle option pour Google Play ?
 
 Aujourd'hui (variante sideload) : un **service de premier plan de type `camera`** (`FaceSenseService`), démarré app

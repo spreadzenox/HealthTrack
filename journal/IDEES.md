@@ -9,6 +9,86 @@
 
 ---
 
+## Run du 30/10/2026 08:33 (Paris) — Règles Play d'octobre, concurrents 2026, une nuit comptée deux fois
+
+### I195 (25) — Une nuit de sommeil comptée deux fois quand deux sources la voient [V code + essai Vitest hors dépôt]
+- **Besoin servi** : des chiffres fiables (consigne du 27/10 : « ne jamais additionner deux sources des mêmes pas » ;
+  même principe pour le sommeil, facteur X clé des analyses).
+- **Constat** : `nightlySleep` (`services/radar.js`) additionne toutes les phases endormies (`light`, `deep`, `rem`,
+  `asleep`) rattachées au jour du réveil, **quelle que soit la source**. Essai : montre Huawei 23:00–06:00 (240 + 180
+  min) et Health Connect 23:05–06:05 (250 + 170 min) → **840 min (14 h)**, gardés car sous le plafond de 960 min.
+  `dailyJournal.js:187` fait la même somme (`day._sleep +=`). Touchés : tuile « Sommeil » de l'Accueil, Journal → Jours,
+  analyses (`sleepMinutes`, sommeil comme facteur des pistes ventre « à nuit comparable »), Radar, rapport PDF.
+- **Qui est concerné** : tout utilisateur avec deux écrivains de sommeil. Montre Huawei en direct + Health Sync
+  (passerelle Huawei → Health Connect, toujours la seule voie en septembre 2026, aucune synchro officielle [T fitmesh,
+  healthsync.app]) ; Samsung Health + Sleep as Android ; une bague + une montre. Le propriétaire a Samsung Health dans
+  Health Connect (pas du 27/10) : à vérifier s'il y écrit aussi des nuits.
+- **Piste** : choisir **une source par nuit** au lieu d'additionner (comme les pas par heure) : priorité aux sources
+  avec phases, puis à la plus longue durée endormie, la montre Huawei d'abord à égalité ; fonction partagée par
+  `nightlySleep` et `dailyJournal`. Choix à la lecture : aucune donnée effacée, rien à migrer. → **POL-PLAY-59**.
+- **Impact 5 × faisabilité 5 = 25.**
+
+### I196 (12) — Règles Google Play relues le 30/10 : rien de bloquant, deux points à noter [V aide officielle]
+- **Annonce du 29/10/2026** (Play Console → Annonces, lue ce matin) et tableau des échéances : permission « réseau
+  local » réservée et déclarée pour les apps qui ciblent Android 17 (25/08/2027) ; « gérer les contacts » restreinte
+  (25/08/2027) ; règles des AppFunctions / agents IA (14/04/2027) ; le géorepérage n'est plus un usage de service de
+  premier plan, abonnements à remise « sous condition » (étudiants…) à expliciter, sélecteur de contacts et bouton de
+  localisation (27/01/2027). **Halcya n'est concernée par aucune** : pas de réseau local (BLE seulement), pas de
+  contacts, pas de remise d'éligibilité, localisation **approximative** seulement en API ≥ 31 (`ACCESS_FINE_LOCATION`
+  plafonnée à l'API 30 pour le Bluetooth). Rien de neuf sur les apps de santé, Health Connect ou la caméra.
+- **Vérification des développeurs** : depuis le **30/09/2026**, les apps doivent être enregistrées dans la Play Console
+  sous peine de retrait ; Google dit que 99 % des apps Play l'ont été automatiquement [V support.google.com 10788890].
+  → vérification de 2 minutes pour le propriétaire (P34). Côté sideload : obligation appliquée au Brésil, en Indonésie,
+  à Singapour et en Thaïlande depuis le 30/09/2026, **mondiale en 2027 sans date publiée** [T androidauthority,
+  gsmarena] ; une app distribuée hors Play peut être enregistrée **depuis la Play Console** [V developer.android.com
+  /developer-verification]. L'APK GitHub signé avec la clé de debug publique ne pourra pas l'être tel quel → **VEILLE-1**
+  (rattacher l'enregistrement à la migration de clé déjà prévue dans `INFRA.md`).
+- **Impact 3 × faisabilité 4 = 12.**
+
+### I197 (12) — Concurrents en octobre 2026 : le terrain se remplit, notre angle tient [T fiches et sites]
+- **FoodLog: IBS & Gut Health** (iOS et Android, fiche Play mise à jour le 25/10/2026) : base FODMAP, « analyse de
+  motifs » et export PDF / CSV **en premium**, méthode non décrite. **Plop** (plopdiary.com) : le plus proche de notre
+  discours « local » — données sur l'appareil par défaut, sauvegarde chiffrée facultative, échelle de Bristol, rapport
+  PDF fait sur l'appareil, motifs visibles après **2 à 3 semaines**, mode « aidant » (enfant, parent âgé) ; **aucune
+  montre** (Apple Santé « prévu »). **Gut Health IBS Symptom Tracker** : résumé IA « Pro » qui envoie noms d'aliments et
+  symptômes à une IA tierce. Nombreuses apps « IA scanne ton assiette » (FODMAPai, FODMAP Snap, Gut Lens), avis qui
+  doutent de leurs teneurs.
+- **Cara Care** : à corriger dans nos notes. Ce n'est pas « abandonnée sur Android » : la version **DiGA sur
+  ordonnance** (Allemagne, Bayer depuis 2025, code d'activation de 16 chiffres donné par la caisse, 90 jours) existe sur
+  iOS et Android, notée 4,4 [T diga-verzeichnis.de, cara.care]. La version **grand public**, elle, n'existe plus en
+  France. Aucune de nos pages publiques ne la cite (vérifié : `app/`, fiche Play).
+- **Ce qui reste à nous** (à garder dans la fiche et le paywall, sans dénigrer personne) : montres (Health Connect +
+  Huawei en direct), délais 2–48 h et **honnêteté statistique publiée** (« pas encore assez de données »), FODMAP par
+  sous-groupe avec sources citées, réintroduction guidée, bien-être estimé sur l'appareil, français d'abord. Plop
+  montre que « local par défaut » ne suffit plus comme seul argument : le mettre **après** les montres et les délais.
+- **Idée tirée de Plop, pour plus tard** : rien pour l'« aidant » (18+ et une personne par téléphone chez nous).
+- **Impact 3 × faisabilité 4 = 12** (texte de fiche à revoir au jalon 10 ; pas de code).
+
+### I198 (16) — « Quand consulter » : une ligne statique, jamais une alerte [V sources médicales françaises]
+- **Besoin servi** : une app pour le ventre doit rappeler, sans alarmer, les signes qui ne sont **pas** du SII.
+  Aujourd'hui seule la réintroduction le dit (`Reintroduction.jsx:71`).
+- **Signes d'alarme** cités par les synthèses françaises : âge > 50 ans au début des symptômes, amaigrissement, sang
+  dans les selles (rectorragies), anémie, fièvre, symptômes **nocturnes**, apparition ou changement récent, antécédent
+  familial de cancer colorectal ou de MICI [V Progrès en urologie 2010 (synthèse SII) ; Le Quotidien du médecin,
+  « Intestin irritable : gare aux pathologies organiques »]. La page ameli « que faire, quand consulter » a refusé la
+  lecture (403) : à relire au prochain run « idées ».
+- **Piste** : une phrase fixe sous le chevron de la carte « Votre ventre » et en pied du rapport PDF ; jamais déclenchée
+  par les données (une détection serait une fonction médicale, règle « jamais diagnostiquer »), jamais en rouge, même
+  texte partout. → **POL-PLAY-60**.
+- **Impact 4 × faisabilité 4 = 16.**
+
+**Sources (30/10/2026)** : support.google.com/googleplay/android-developer/announcements/13412212 (annonces du 15/07 et
+du 29/10/2026) ; support.google.com/googleplay/android-developer/table/12921780 (échéances) ;
+support.google.com/googleplay/android-developer/answer/10788890 ; developer.android.com/developer-verification ;
+androidauthority.com (calendrier de la vérification, première vague) ; gsmarena.com (calendrier) ;
+play.google.com (fiches FoodLog, FODMAP Snap, CareClinic, IBS Tracker) ; apps.apple.com (FoodLog, Gut Lens, FODMAPai) ;
+plopdiary.com/en ; diga-verzeichnis.de/digas/verdauung/reizdarm ; cara.care ; bayer.com (rachat de HiDoc) ;
+fitmesh.fit (Huawei et Health Connect, 25/09/2026) ; healthsync.app ; urofrance.org (Progrès en urologie 2010) ;
+lequotidiendumedecin.fr. Inaccessibles : ameli.fr (403), fiche Play FoodLog (page tronquée), apkcombo.com (hors
+réseau autorisé).
+
+---
+
 ## Run du 29/10/2026 20:33 (Paris) — Campagne des testeurs et accès à la production
 
 ### I194 (22) — Faire réussir le test fermé du premier coup [V sur l'aide officielle ; T pour les causes de refus]
