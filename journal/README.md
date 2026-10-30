@@ -289,6 +289,11 @@
 - **Repas : des cartes plus légères** (29/10 23:33) — dans Journal › Repas, « Refaire · Modifier · Supprimer »
   sont rangés derrière un petit « ⋯ » au bout de chaque repas, comme dans Jours ; écran Données de la montre :
   stress « 46 · normal » au lieu de « 46 / 99 ».
+- **Fiche Google Play réécrite** (30/10 12:33) — rien ne change dans l'app ; la page Play de Halcya met maintenant
+  les montres et les délais repas → ventre avant « local » (Plop, un concurrent, dit aussi « local »), et décrit ce qui
+  est arrivé cette semaine : bilan du soir, FODMAP groupe par groupe (Ciqual), réintroduction guidée, rapport PDF, et ce
+  qui est gratuit ou Premium (sans prix : ils viennent de Google Play). **À regarder** : la fiche sur le Play Store
+  (lien https://play.google.com/store/apps/details?id=fr.jpesquet.sante), après le workflow « Play — fiche du Store ».
 - **Bienvenue : le compteur d'écrans ne grimpe plus** (30/10 11:33) — au premier lancement, le compteur en haut
   annonçait « /05 » puis grimpait à « /07 » si vous choisissiez une montre Health Connect. Il annonce maintenant
   d'emblée le maximum (« 01/07 ») et ne fait que baisser (« 03/05 » sans montre). **À tester** : rien (installation neuve).
@@ -600,6 +605,7 @@ automatique (POL-PLAY-60).
 | 30/10 04:33 — [Pistes du ventre lisibles](runs/2026-10-30-0433-noms-pistes.md) | 🎨 | PR #517 (rapport vide) mergée ; audit démo clair Analyses + Accueil → POL-PLAY-55 : titres des pistes d'aliments mangés ensemble raccourcis (« Banane, café, yaourt nature ou le lactose → ventre ») ; 2 tests |
 | 30/10 06:33 — [Compte à rebours des pistes du ventre](runs/2026-10-30-0633-pistes-ventre.md) | 🎨 | POL-PLAY-12 (audit démo sombre à 360 px de l'Accueil, de Sources et de Paramètres) → POL-PLAY-57 : carte lilas « Assez de jours » puis « 28 jours de notes au moins » → compte à rebours des notes du ventre (N/28) ; 3 tests |
 | 30/10 07:33 — [Onboarding : « Continuer » désactivé lisible](runs/2026-10-30-0733-onboarding-continuer.md) | 🎨 | POL-PLAY-12 (audit onboarding play à 360 px, sombre et clair : 7 écrans) → POL-PLAY-58 : « Continuer » sans choix passait pour actif → gris neutre ; lint 7 → 6 ; 1 test |
+| 30/10 12:33 — [Fiche Play : montres et délais d'abord](runs/2026-10-30-1233-fiche-play.md) | 🎨 | POL-PLAY-62 (I197) : description longue réordonnée et complétée (réintroduction, PDF, FODMAP par groupe, gratuit / Premium sans prix), 3 951 car. ; test d'ordre et de contenu. |
 | 30/10 11:33 — [Onboarding : compteur qui ne grimpe plus](runs/2026-10-30-1133-onboarding-compteur.md) | 🎨 | POL-PLAY-61 (petit point laissé par l'audit POL-PLAY-58) : `displayedStepCount` compte d'avance les écrans Health Connect (accès supposé accordé) ; le compteur et la barre ne font que baisser ; 1 test, 2 attendus mis à jour |
 | 30/10 10:33 — [« Quand consulter »](runs/2026-10-30-1033-quand-consulter.md) | 🎨 | POL-PLAY-60 : `WHEN_TO_SEE_DOCTOR` (`today.js`), seule source de texte : détails de la carte ventre, réintroduction, pied du rapport PDF ; 1 test + 3 assertions |
 | 30/10 09:33 — [Sommeil : une source par nuit](runs/2026-10-30-0933-sommeil-une-source.md) | 🐛 | POL-PLAY-59 : `sleepSources.js` garde une source par nuit (phases, puis durée, montre à égalité) dans `nightlySleep` et `buildDailyJournal` (Accueil, Journal, analyses, Radar, PDF) ; 7 tests ; rien d'effacé |
