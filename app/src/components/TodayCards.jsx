@@ -15,6 +15,7 @@ import {
   gutSummary,
   gutWeekLine,
   pistesProgress,
+  gutNotesProgress,
 } from '../services/today'
 import DetailsToggle from './DetailsToggle'
 import { FEATURES } from '../config/distribution'
@@ -227,12 +228,13 @@ const readTrackedEnergy = async () => {
 const PISTES_TEXT = {
   gut: {
     count: 'jours avec un repas ou une note du ventre',
-    ready: 'vos pistes repas → ventre se précisent à chaque note (28 jours de notes du ventre au moins)',
+    ready: 'Aucune piste pour l’instant : elles se précisent à chaque note du ventre',
+    notes: 'jours avec une note du ventre',
     details: 'Délais testés : 0–4 h, 4–24 h, 24–48 h après le repas ; le jour même ou la veille pour le bilan du soir',
   },
   energy: {
     count: 'nuits suivies d’une mesure du bien-être',
-    ready: 'les pistes sommeil → bien-être arrivent dans une prochaine version',
+    ready: 'Les pistes sommeil → bien-être arrivent dans une prochaine version',
     details: 'Vos pistes sommeil → bien-être compareront chaque nuit au bien-être du jour qui suit',
   },
 }
@@ -283,35 +285,42 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
   }
   const p = pistesProgress(entries, focus)
   const text = PISTES_TEXT[focus] || PISTES_TEXT.gut
+  // Objectif ventre, 21 jours suivis : le seuil qui reste est celui des notes du ventre (un seul compte à rebours)
+  const notes = p.ready && focus !== 'energy' ? gutNotesProgress(entries) : null
+  const waitNotes = notes && !notes.ready
+  const bar = waitNotes ? notes : p
+  const title = waitNotes
+    ? `Vos pistes du ventre arrivent dans ${notes.remaining} jour${notes.remaining > 1 ? 's' : ''}`
+    : p.ready ? 'Assez de jours pour chercher des pistes' : `Vos pistes arrivent dans ${p.remaining} jour${p.remaining > 1 ? 's' : ''}`
   return (
     <section className="today-card pistes-card" aria-labelledby="pistes-card-title">
       <div className="today-card-head">
-        <h3 id="pistes-card-title" className="today-card-title">
-          {p.ready ? 'Assez de jours pour chercher des pistes' : `Vos pistes arrivent dans ${p.remaining} jour${p.remaining > 1 ? 's' : ''}`}
-        </h3>
+        <h3 id="pistes-card-title" className="today-card-title">{title}</h3>
         <DetailsToggle on={details} onToggle={onToggleDetails} />
       </div>
       <div
         className="pistes-progress"
         role="progressbar"
         aria-valuemin={0}
-        aria-valuemax={p.target}
-        aria-valuenow={p.days}
-        aria-label="Jours suivis"
+        aria-valuemax={bar.target}
+        aria-valuenow={bar.days}
+        aria-label={waitNotes ? 'Jours de notes du ventre' : 'Jours suivis'}
       >
-        <div className="pistes-progress-bar" style={{ width: `${(p.days / p.target) * 100}%` }} />
+        <div className="pistes-progress-bar" style={{ width: `${(bar.days / bar.target) * 100}%` }} />
       </div>
-      <p className="pistes-count"><span className="mono">{p.days}/{p.target}</span> {text.count} (6{'\u00a0'}dernières semaines)</p>
+      <p className="pistes-count">
+        <span className="mono">{bar.days}/{bar.target}</span> {waitNotes ? text.notes : text.count} (6{'\u00a0'}dernières semaines)
+      </p>
       <p className="today-card-text">
-        {p.ready
+        {p.ready && !waitNotes
           ? (onPistesPage
-            ? `Vos jours sont prêts ; ${text.ready}.`
-            : <>Vos jours sont prêts ; {text.ready}. En attendant, voyez <Link to="/recommendations">l’onglet Analyses</Link>.</>)
+            ? `${text.ready}.`
+            : <>{text.ready}. Voyez <Link to="/recommendations">l’onglet Analyses</Link>.</>)
           : 'On préfère attendre plutôt que de vous montrer de faux suspects.'}
       </p>
       {details && (
         <p className="today-details-line mono">
-          {text.details} · comparaisons multiples corrigées (Benjamini-Hochberg) · minimum 21 jours
+          {text.details} · comparaisons multiples corrigées (Benjamini-Hochberg) · minimum 21 jours suivis{focus === 'energy' ? '' : ' et 28 jours de notes du ventre'}
         </p>
       )}
       {details && extraDetail && <p className="today-details-line mono">{extraDetail}</p>}

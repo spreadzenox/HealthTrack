@@ -283,11 +283,24 @@ describe('PistesTeaser', () => {
     expect(screen.getByText('On préfère attendre plutôt que de vous montrer de faux suspects.')).toBeInTheDocument()
   })
 
+  const gut = (back) => ({ ...day(back), type: 'gut' })
+
+  it('21 jours suivis mais peu de notes du ventre : le compte à rebours des notes, pas « assez de jours »', async () => {
+    const entries = [...Array.from({ length: 25 }, (_, i) => day(i)), ...Array.from({ length: 10 }, (_, i) => gut(i))]
+    wrap(<PistesTeaser read={async () => entries} />)
+    expect(await screen.findByText('Vos pistes du ventre arrivent dans 18 jours')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Jours de notes du ventre' })).toHaveAttribute('aria-valuenow', '10')
+    expect(document.querySelector('.pistes-count')).toHaveTextContent('10/28 jours avec une note du ventre (6 dernières semaines)')
+    expect(screen.getByText('On préfère attendre plutôt que de vous montrer de faux suspects.')).toBeInTheDocument()
+    expect(screen.queryByText(/Assez de jours/)).not.toBeInTheDocument()
+  })
+
   it('dit les délais et la correction en mode détails, sans promettre plus que l’existant une fois prêt', async () => {
-    wrap(<PistesTeaser read={async () => Array.from({ length: 25 }, (_, i) => day(i))} details onToggleDetails={() => {}} />)
+    wrap(<PistesTeaser read={async () => Array.from({ length: 30 }, (_, i) => gut(i))} details onToggleDetails={() => {}} />)
     expect(await screen.findByText('Assez de jours pour chercher des pistes')).toBeInTheDocument()
-    expect(screen.getByText(/se précisent à chaque note/)).toBeInTheDocument()
+    expect(screen.getByText(/Aucune piste pour l’instant : elles se précisent à chaque note du ventre/)).toBeInTheDocument()
     expect(screen.getByText(/Délais testés : 0–4 h, 4–24 h, 24–48 h/)).toBeInTheDocument()
+    expect(screen.getByText(/minimum 21 jours suivis et 28 jours de notes du ventre/)).toBeInTheDocument()
   })
 
   it('objectif énergie : compte les nuits avec une mesure du bien-être et parle sommeil → bien-être', async () => {

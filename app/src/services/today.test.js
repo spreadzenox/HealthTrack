@@ -9,8 +9,11 @@ import {
   headerLine,
   measureTiles,
   pistesProgress,
+  gutNotesProgress,
+  GUT_PISTES_MIN_NOTE_DAYS,
   wellbeingTrend,
 } from './today'
+import { GUT_LINKS_MIN_DAYS } from './gutLinks'
 
 // Mercredi 21 octobre 2026, 12 h (heure locale)
 const NOW = new Date(2026, 9, 21, 12, 0)
@@ -172,6 +175,19 @@ describe('pistesProgress', () => {
     ]
     expect(pistesProgress(entries, 'energy')).toEqual({ days: 2, target: 21, remaining: 19, ready: false })
     expect(pistesProgress(entries, 'gut').days).toBe(1)
+  })
+})
+
+describe('gutNotesProgress', () => {
+  it('compte les jours avec une note du ventre, jusqu’au seuil des pistes repas → ventre', () => {
+    const entries = [{ type: 'gut', at: at(1) }, { type: 'gut', at: at(1, 20) }, { type: 'gut', at: at(2) }, { type: 'food', at: at(3) }]
+    expect(gutNotesProgress(entries)).toEqual({ days: 2, target: 28, remaining: 26, ready: false })
+    const many = Array.from({ length: 30 }, (_, i) => ({ type: 'gut', at: new Date(2026, 8, i + 1, 21).toISOString() }))
+    expect(gutNotesProgress(many).ready).toBe(true)
+  })
+
+  it('suit le seuil de l’analyse du ventre', () => {
+    expect(GUT_PISTES_MIN_NOTE_DAYS).toBe(GUT_LINKS_MIN_DAYS)
   })
 })
 
