@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-30",
+  "kind": "correctif",
+  "title": "Sport : une séance n'est plus comptée deux fois",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Si votre montre et Health Connect (Samsung Health, Garmin, Health Sync…) enregistrent la même séance, Halcya n'en garde plus qu'une : celle qui a la fréquence cardiaque, puis celle de la montre. Ses calories ne comptent plus double dans vos analyses.",
+    "Journal, analyses et résumé du premier import sont corrigés ; rien n'est effacé de vos données."
+  ]
+}

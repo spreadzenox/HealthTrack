@@ -11,6 +11,7 @@ import { mealKcal } from './mealEditing'
 import { appLocale } from '../i18n/locale.js'
 import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
 import { oneSleepSourcePerNight, sleepNightKey } from './sleepSources'
+import { oneSourcePerWorkout } from './workoutSources'
 
 /** Types uniquement résumés (jamais listés individuellement). */
 export const JOURNAL_SUMMARY_TYPES = [
@@ -166,8 +167,9 @@ export function buildDailyJournal(entries) {
     return days.get(key)
   }
   // Ordre chronologique : « la dernière valeur » d'un jour est bien la plus récente.
-  // Une nuit vue par la montre et par Health Connect ne compte qu'une fois (sleepSources.js).
-  const sorted = mergeWeighIns(oneSleepSourcePerNight((entries || []).filter((e) => e?.at))).sort((a, b) => (a.at < b.at ? -1 : 1))
+  // Une nuit ou une séance vue par la montre et par Health Connect ne compte qu'une fois (sleepSources.js,
+  // workoutSources.js).
+  const sorted = mergeWeighIns(oneSourcePerWorkout(oneSleepSourcePerNight((entries || []).filter((e) => e?.at)))).sort((a, b) => (a.at < b.at ? -1 : 1))
 
   for (const e of sorted) {
     const p = e.payload || {}

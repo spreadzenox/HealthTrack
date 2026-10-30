@@ -557,7 +557,9 @@ de données) ; le formulaire le dit tel quel.
 Si **deux sources** voient la même nuit (la montre en direct **et** Health Connect, par exemple Samsung Health, Health
 Sync ou une app de sommeil), Halcya **additionne** les deux : une nuit de 7 h devient 14 h sur l'Accueil, dans le
 Journal, les analyses et le rapport PDF. Vérifié par un essai ; **corrigé au run de 09:33** (une seule
-source par nuit, rien d'effacé, POL-PLAY-59). **Si vous avez vu une nuit anormalement longue, c'est ça.** Côté règles
+source par nuit, rien d'effacé, POL-PLAY-59). **Si vous avez vu une nuit anormalement longue, c'est ça.** Même défaut
+cherché ailleurs au run de 13:36 et trouvé pour les **séances de sport** (montre + Samsung Health / Garmin : calories
+d'activité comptées deux fois dans les analyses) : corrigé de la même façon (POL-PLAY-63) ; rien d'autre n'est additionné. Côté règles
 Google Play, l'annonce du 29/10 et les échéances jusqu'à août 2027 ne touchent pas Halcya. Côté concurrents, de
 nouvelles apps SII font l'analyse et le PDF en premium (FoodLog) ou misent sur le « local » (Plop, sans montre) :
 nos atouts restent les montres, les délais et les FODMAP par sous-groupe, à mettre en avant avant le « local ». Une
@@ -605,6 +607,7 @@ automatique (POL-PLAY-60).
 | 30/10 04:33 — [Pistes du ventre lisibles](runs/2026-10-30-0433-noms-pistes.md) | 🎨 | PR #517 (rapport vide) mergée ; audit démo clair Analyses + Accueil → POL-PLAY-55 : titres des pistes d'aliments mangés ensemble raccourcis (« Banane, café, yaourt nature ou le lactose → ventre ») ; 2 tests |
 | 30/10 06:33 — [Compte à rebours des pistes du ventre](runs/2026-10-30-0633-pistes-ventre.md) | 🎨 | POL-PLAY-12 (audit démo sombre à 360 px de l'Accueil, de Sources et de Paramètres) → POL-PLAY-57 : carte lilas « Assez de jours » puis « 28 jours de notes au moins » → compte à rebours des notes du ventre (N/28) ; 3 tests |
 | 30/10 07:33 — [Onboarding : « Continuer » désactivé lisible](runs/2026-10-30-0733-onboarding-continuer.md) | 🎨 | POL-PLAY-12 (audit onboarding play à 360 px, sombre et clair : 7 écrans) → POL-PLAY-58 : « Continuer » sans choix passait pour actif → gris neutre ; lint 7 → 6 ; 1 test |
+| 30/10 13:36 — [Sport : une source par séance](runs/2026-10-30-1336-seances-une-source.md) | 🐛 | POL-PLAY-63 : `workoutSources.js` garde une source par séance (FC, montre, durée) dans le Journal, les analyses (`activityCalories`) et le premier import ; recherche des autres sommes entre sources : aucune ; 7 tests ; rien d'effacé |
 | 30/10 12:33 — [Fiche Play : montres et délais d'abord](runs/2026-10-30-1233-fiche-play.md) | 🎨 | POL-PLAY-62 (I197) : description longue réordonnée et complétée (réintroduction, PDF, FODMAP par groupe, gratuit / Premium sans prix), 3 951 car. ; test d'ordre et de contenu. |
 | 30/10 11:33 — [Onboarding : compteur qui ne grimpe plus](runs/2026-10-30-1133-onboarding-compteur.md) | 🎨 | POL-PLAY-61 (petit point laissé par l'audit POL-PLAY-58) : `displayedStepCount` compte d'avance les écrans Health Connect (accès supposé accordé) ; le compteur et la barre ne font que baisser ; 1 test, 2 attendus mis à jour |
 | 30/10 10:33 — [« Quand consulter »](runs/2026-10-30-1033-quand-consulter.md) | 🎨 | POL-PLAY-60 : `WHEN_TO_SEE_DOCTOR` (`today.js`), seule source de texte : détails de la carte ventre, réintroduction, pied du rapport PDF ; 1 test + 3 assertions |

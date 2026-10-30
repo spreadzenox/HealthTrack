@@ -40,6 +40,7 @@ import {
 } from './statistics'
 import { appLocale, decimalMark } from '../i18n/locale.js'
 import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
+import { oneSourcePerWorkout } from './workoutSources'
 
 // ─── Public constants ────────────────────────────────────────────────────────
 
@@ -804,7 +805,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
     }
   }
 
-  for (const e of entries) {
+  for (const e of oneSourcePerWorkout(entries)) { // une séance vue par deux sources : une fois
     if (!e.at) continue
     const dk = localDateKey(e.at)
     const day = getDay(dk)
@@ -1519,7 +1520,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
     hasAnyData = true
   }
 
-  for (const e of entries) {
+  for (const e of oneSourcePerWorkout(entries)) { // une séance vue par deux sources : une fois
     if (!e.at || localDateKey(e.at) !== todayKey) continue
     hasAnyData = true
 
