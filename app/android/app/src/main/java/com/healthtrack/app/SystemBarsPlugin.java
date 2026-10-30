@@ -13,6 +13,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
+import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -68,8 +69,14 @@ public class SystemBarsPlugin extends Plugin {
         ViewCompat.requestApplyInsets(container);
     }
 
+    /** Derniers encarts injectés (dp), relus par la page au démarrage si un rechargement les a effacés. */
+    private volatile int[] lastInsetsDp;
+
     private void injectSafeArea(int top, int right, int bottom, int left) {
         float density = getActivity().getResources().getDisplayMetrics().density;
+        lastInsetsDp = new int[] {
+                Math.round(top / density), Math.round(right / density),
+                Math.round(bottom / density), Math.round(left / density)};
         String script = String.format(Locale.US,
                 "try{var s=document.documentElement.style;"
                         + "s.setProperty('--safe-area-inset-top','%dpx');"
@@ -82,6 +89,20 @@ public class SystemBarsPlugin extends Plugin {
             WebView webView = getBridge().getWebView();
             if (webView != null) webView.evaluateJavascript(script, null);
         });
+    }
+
+    @PluginMethod
+    public void getInsets(PluginCall call) {
+        int[] dp = lastInsetsDp;
+        JSObject result = new JSObject();
+        result.put("known", dp != null);
+        if (dp != null) {
+            result.put("top", dp[0]);
+            result.put("right", dp[1]);
+            result.put("bottom", dp[2]);
+            result.put("left", dp[3]);
+        }
+        call.resolve(result);
     }
 
     @PluginMethod

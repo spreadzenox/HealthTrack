@@ -29,6 +29,9 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **Android 14 et avant : la barre d'état ne recouvre plus l'app** (31/10 00:33) — rarement, au démarrage, le haut de
+  l'écran pouvait passer sous l'heure et les icônes du téléphone ; l'app redemande maintenant ces marges au démarrage.
+  Rien à tester sur votre A56 (Android 15+, non concerné).
 - **Réintroduction : l'attente en clair** (30/10 23:33) — « Pause avant le test suivant : encore 2 jours calmes » au
   lieu de « 1/3 jours calmes » (aussi avant de commencer et sur la carte du test dans Analyses) ; après une gêne,
   « Oui, continuer » / « Non, arrêter », chacun sur une ligne.
@@ -658,6 +661,7 @@ pour quatre lignes.
 | 30/10 16:33 — [Health Connect : lecture sans perte](runs/2026-10-30-1633-lecture-sans-perte.md) | 🐛 | POL-PLAY-66 : FC et pas lus jour par jour (`readSamplesInWindows`, fenêtre redécoupée à la limite) au lieu d'une lecture qui gardait les 2 000 plus anciens échantillons ; « aha » du premier import : une source par nuit et intervalles réunis ; 6 tests |
 | 30/10 22:33 — [« Bientôt comparés »](runs/2026-10-30-2233-bientot-compares.md) | 🎨 | POL-PLAY-70 (audit Analyses démo, clair, 360 px, avec et sans premium) : repères pas encore comparés dits en mots simples (« encore 3 jours notés », « 2 jours sans », « avec » pour un repère mesuré) ; 1 test renforcé |
 | 30/10 23:33 — [Réintroduction en clair](runs/2026-10-30-2333-reintro-en-clair.md) | 🎨 | POL-PLAY-71 (audit réintroduction, clair, 360 px, 5 états) : jours calmes restants en mots, réponses courtes sur une ligne, « Une estimation, pas un diagnostic » ; 4 tests |
+| 31/10 00:33 — [Encarts relus au démarrage](runs/2026-10-31-0033-encarts-relus.md) | 🐛 | POL-PLAY-72 : émulateur API 34 rouge sur main (encarts à 0 px, aléa d'un rechargement après l'injection native) → le natif garde les derniers encarts, la page les relit au démarrage (`getInsets`) ; 3 tests |
 | 30/10 21:33 — [« Œuf » bien écrit](runs/2026-10-30-2133-ligatures.md) | 🎨 | POL-PLAY-69 (reste vu à 19:33) : `frenchLigatures` (« oe » → « œ » devant « u »/« il » en début de mot ; « moelleux », « phoenix » intacts) dans `shortFoodName`, `mealLabel`, l'éditeur de repas ; affichage seulement, noms Ciqual inchangés dans les données ; 3 tests |
 | 30/10 20:33 — [Idées : inventaire montre, premier lancement en clair](runs/2026-10-30-2033-idees-inventaire-montre.md) | 💡 | Inventaire montre à jour (huawei.md §10.20, une ligne par donnée dans ce résumé) ; altitude du jour lisible avec le décodeur actuel (I199) ; audit `--play --empty --theme=system --light` à 360 px d'Accueil, Analyses, Sources, Journal : rien à corriger ; journal seul |
 | 30/10 19:33 — [Repas : un aliment par ligne](runs/2026-10-30-1933-aliments-en-liste.md) | 🎨 | POL-PLAY-68 (audit `--play` à 360 px sur démo, 15 pages, puis vierge : Repas, Nutrition, Tendances, Réglages, Nouveautés) : aliments d'un repas un par ligne, quantité à droite en mono (`MealItemList`, Journal et Repas) au lieu d'une liste « à la suite » qui laissait un « · » seul en bout de ligne ; séance « Course à pied · 32 min · 330 kcal » ; note « sommeil une source » marquée Android (IOS-3) ; 5 tests ajustés |

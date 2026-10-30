@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-31",
+  "kind": "correctif",
+  "title": "La barre d'état ne recouvre plus l'app",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Sur Android 14 et les versions antérieures, le haut de l'app pouvait rarement passer sous l'heure et les icônes du téléphone au démarrage : les marges sont maintenant redemandées à chaque ouverture."
+  ]
+}
