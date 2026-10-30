@@ -290,7 +290,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(summaryValue('Dépense')).toMatch(/^2\s233 kcal$/)
     expect(summaryValue('FC')).toBe('76 à 82 bpm')
     expect(summaryValue('FC au repos')).toBe('58 bpm')
-    expect(summaryValue('VFC')).toBe('46 ms')
+    expect(summaryValue('VFC nuit')).toBe('46 ms')
     expect(summaryValue('SpO₂')).toBe('97 %')
     expect(document.querySelector('.entry-card')).toBeNull()
     expect(document.body).not.toHaveTextContent('millisecond')

@@ -319,7 +319,7 @@ function Result({ challenge, status }) {
 function Locked() {
   return (
     <article className="today-card fodmap-card">
-      <span className="fodmap-tag mono">premium</span>
+      <span className="fodmap-tag fodmap-tag--lead mono">premium</span>
       <h3 className="today-card-title">Testez vos aliments, un groupe à la fois</h3>
       <p className="today-card-text">
         Sur 3 jours, des portions croissantes et vos notes du ventre : l’app vous dit en une phrase ce qui passe
