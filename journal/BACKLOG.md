@@ -1367,6 +1367,20 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   jour » s'affichait aussi aux testeurs qui ont déjà le premium offert (P23 a : ne pas pousser à l'achat pendant la
   période) → « Pendant le test : jusqu'à 10 analyses par jour, sans rien payer. » ; premium payé : « Avec votre
   premium : jusqu'à 10 analyses par jour. » (`Settings.jsx`, 2 tests dans `Settings.play.test.jsx`).
+- [x] **POL-PLAY-66 — Health Connect : des jours perdus au premier import.** ✅ 30/10 16:33 (même famille que
+  POL-PLAY-59/63, « chiffres fiables ») : le plugin trie puis garde les `limit` premiers échantillons ; FC (`limit:
+  2000`) et pas en échantillons (`limit: 1000`) lus en une fois sur 30 jours → avec une FC toutes les 5 min (8 640
+  échantillons), les ~23 derniers jours étaient coupés, et `lastSyncAt = maintenant` empêchait de les relire.
+  `readSamplesInWindows` (HealthConnectConnector.js) : une lecture par jour, fenêtre coupée en deux tant qu'elle
+  atteint la limite (jusqu'à 15 min), doublons aux bords retirés. Historique > 30 jours : FC brute des 30 derniers
+  jours seulement (avant : les 2 000 plus anciens ; FC au repos et VFC à part, complètes). « Aha » (`summarizeImport`) :
+  `oneSleepSourcePerNight` + intervalles endormis réunis (`sleepRegularity.unionOf`) — deux apps pour une nuit
+  donnaient 14 h. Tests : 3 connecteur, 2 premier import. Restent à vérifier : les autres lectures à `limit: 500`
+  (sommeil = sessions, FC au repos, SpO₂, VFC : quelques-unes par jour, sous la limite sur 30 jours ; à surveiller
+  pour un historique long) — noté **POL-PLAY-67**.
+- [ ] **POL-PLAY-67** Historique long (> 30 jours) : lectures à `limit: 500` (FC au repos, VFC, SpO₂, sommeil, calories)
+  coupées après ~500 jours ou plus tôt pour une source dense (SpO₂ la nuit) → même `readSamplesInWindows` (par
+  semaine pour ces types) ; à mesurer sur l'émulateur avant de changer.
 - [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement
   de `com.healthtrack.app` dans la Play Console comme « app distribuée hors de Google Play » une fois signée avec une
   clé privée (la clé de debug publique ne peut pas prouver la propriété) ; échéance : avant l'extension mondiale de

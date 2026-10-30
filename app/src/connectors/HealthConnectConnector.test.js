@@ -376,6 +376,57 @@ describe('HealthConnectConnector', () => {
       expect(result.synced).toBeGreaterThan(0)
     })
 
+    // Le plugin trie puis garde les `limit` premiers échantillons (ordre croissant) : sur 30 jours de FC dense,
+    // les jours les plus récents étaient perdus, et la synchro suivante repartait de maintenant (jamais relus).
+    const densePlugin = (dataType, everyMs) => ({ dataType: t, startDate, endDate, limit }) => {
+      if (t !== dataType) return Promise.resolve({ samples: [] })
+      const out = []
+      for (let at = Math.ceil(Date.parse(startDate) / everyMs) * everyMs; at < Date.parse(endDate); at += everyMs) {
+        const iso = new Date(at).toISOString()
+        out.push({ startDate: iso, endDate: iso, value: 60, unit: 'bpm', platformId: `r${Math.floor(at / 3600000)}` })
+      }
+      return Promise.resolve({ samples: limit > 0 ? out.slice(0, limit) : out })
+    }
+
+    it('FC dense sur 30 jours : rien n’est coupé, les jours récents compris', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(densePlugin('heartRate', 5 * 60000)) // 288 par jour, 8 640 en 30 jours
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+      const { written, writer } = makeWriter()
+      const since = new Date('2026-01-01T00:00:00Z')
+      const until = new Date('2026-01-31T00:00:00Z')
+      await connector.sync({ since, until, writer })
+      const hr = written.filter((e) => e.type === 'heart_rate' && e.payload.subtype === 'heartRate')
+      expect(hr).toHaveLength(30 * 288)
+      expect(new Set(hr.map((e) => e.at)).size).toBe(hr.length)
+      expect(hr.at(-1).at).toBe('2026-01-30T23:55:00.000Z')
+    })
+
+    it('historique de 2 ans : la FC brute des 30 derniers jours seulement', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(densePlugin('heartRate', 3600000))
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+      const { written, writer } = makeWriter()
+      await connector.sync({ since: new Date('2024-01-31T00:00:00Z'), until: new Date('2026-01-31T00:00:00Z'), writer })
+      const hr = written.filter((e) => e.type === 'heart_rate' && e.payload.subtype === 'heartRate')
+      expect(hr).toHaveLength(30 * 24)
+      expect(hr[0].at).toBe('2026-01-01T00:00:00.000Z')
+    })
+
+    it('pas en échantillons : une journée plus dense que la limite est redécoupée', async () => {
+      const { Health } = await import('@capgo/capacitor-health')
+      Health.readSamples.mockImplementation(densePlugin('steps', 60000)) // 1 440 par jour > limite de 1 000
+      Health.queryAggregated.mockResolvedValue({ samples: [] })
+      Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+      const { written, writer } = makeWriter()
+      await connector.sync({ since: new Date('2026-01-01T00:00:00Z'), until: new Date('2026-01-03T00:00:00Z'), writer })
+      const steps = written.filter((e) => e.type === 'steps')
+      expect(steps).toHaveLength(2 * 1440)
+      expect(steps.at(-1).at).toBe('2026-01-02T23:59:00.000Z')
+    })
+
     it('onProgress : types lus / total, dans l’ordre, puis done === total à la fin', async () => {
       const { Health } = await import('@capgo/capacitor-health')
       Health.readSamples.mockResolvedValue({ samples: [] })

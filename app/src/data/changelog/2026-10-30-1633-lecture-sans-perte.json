@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-30",
+  "kind": "correctif",
+  "title": "Health Connect : plus de jours perdus au premier import",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Au premier import, la fréquence cardiaque et les pas des derniers jours pouvaient manquer quand votre montre mesure souvent : ils sont maintenant lus jour par jour, sans rien couper.",
+    "Le résumé « Vos 30 derniers jours » ne compte plus deux fois une nuit enregistrée par deux apps."
+  ]
+}

@@ -289,6 +289,13 @@
 - **Repas : des cartes plus légères** (29/10 23:33) — dans Journal › Repas, « Refaire · Modifier · Supprimer »
   sont rangés derrière un petit « ⋯ » au bout de chaque repas, comme dans Jours ; écran Données de la montre :
   stress « 46 · normal » au lieu de « 46 / 99 ».
+- **Premier import Health Connect : plus de jours perdus** (30/10 16:33) — en lisant les 30 derniers jours, Halcya
+  demandait la fréquence cardiaque et les pas en une seule fois, et Health Connect n'en rendait que les 2 000 (ou
+  1 000) **plus anciens** : avec une montre qui mesure souvent, les deux dernières semaines manquaient, et la synchro
+  suivante ne revenait pas les chercher. La lecture se fait maintenant jour par jour (redécoupée si une journée
+  dépasse la limite). Le résumé « Vos 30 derniers jours » ne compte plus deux fois une nuit écrite par deux apps
+  (7 h, pas 14 h). Vos données déjà importées ne changent pas. **À tester** : rien sur votre téléphone (montre
+  Huawei en direct) ; sur une installation neuve avec Samsung Health, la FC des derniers jours doit apparaître.
 - **Fiche Google Play réécrite** (30/10 12:33) — rien ne change dans l'app ; la page Play de Halcya met maintenant
   les montres et les délais repas → ventre avant « local » (Plop, un concurrent, dit aussi « local »), et décrit ce qui
   est arrivé cette semaine : bilan du soir, FODMAP groupe par groupe (Ciqual), réintroduction guidée, rapport PDF, et ce
@@ -607,6 +614,7 @@ automatique (POL-PLAY-60).
 | 30/10 04:33 — [Pistes du ventre lisibles](runs/2026-10-30-0433-noms-pistes.md) | 🎨 | PR #517 (rapport vide) mergée ; audit démo clair Analyses + Accueil → POL-PLAY-55 : titres des pistes d'aliments mangés ensemble raccourcis (« Banane, café, yaourt nature ou le lactose → ventre ») ; 2 tests |
 | 30/10 06:33 — [Compte à rebours des pistes du ventre](runs/2026-10-30-0633-pistes-ventre.md) | 🎨 | POL-PLAY-12 (audit démo sombre à 360 px de l'Accueil, de Sources et de Paramètres) → POL-PLAY-57 : carte lilas « Assez de jours » puis « 28 jours de notes au moins » → compte à rebours des notes du ventre (N/28) ; 3 tests |
 | 30/10 07:33 — [Onboarding : « Continuer » désactivé lisible](runs/2026-10-30-0733-onboarding-continuer.md) | 🎨 | POL-PLAY-12 (audit onboarding play à 360 px, sombre et clair : 7 écrans) → POL-PLAY-58 : « Continuer » sans choix passait pour actif → gris neutre ; lint 7 → 6 ; 1 test |
+| 30/10 16:33 — [Health Connect : lecture sans perte](runs/2026-10-30-1633-lecture-sans-perte.md) | 🐛 | POL-PLAY-66 : FC et pas lus jour par jour (`readSamplesInWindows`, fenêtre redécoupée à la limite) au lieu d'une lecture qui gardait les 2 000 plus anciens échantillons ; « aha » du premier import : une source par nuit et intervalles réunis ; 6 tests |
 | 30/10 15:33 — [Paramètres pendant le test](runs/2026-10-30-1533-parametres-lancement.md) | 🎨 | POL-PLAY-65 : audit Paramètres / Premium / Données / Sources (vierge, sombre, période de lancement) ; quota IA « Pendant le test : jusqu'à 10 analyses par jour, sans rien payer » au lieu de « Sans abonnement… » ; émulateur API 35 de main relancé (image système non téléchargée) |
 | 30/10 14:33 — [Audit sombre : VFC nuit, étiquette premium](runs/2026-10-30-1433-audit-sombre.md) | 🎨 | POL-PLAY-64 : tuile « VFC » du Journal → « VFC nuit » (comme l'Accueil) ; étiquette « premium » de la réintroduction espacée du titre ; reste de l'audit sombre sans défaut |
 | 30/10 13:36 — [Sport : une source par séance](runs/2026-10-30-1336-seances-une-source.md) | 🐛 | POL-PLAY-63 : `workoutSources.js` garde une source par séance (FC, montre, durée) dans le Journal, les analyses (`activityCalories`) et le premier import ; recherche des autres sommes entre sources : aucune ; 7 tests ; rien d'effacé |

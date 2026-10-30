@@ -25,6 +25,26 @@ describe('summarizeImport — le « aha » des 30 derniers jours', () => {
     expect(facts[0].source).toMatch(/Garmin/)
   })
 
+  it('une nuit écrite par deux apps dans Health Connect compte une fois (7 h, pas 14 h)', () => {
+    const end = new Date('2026-10-22T07:00:00')
+    const start = new Date(end.getTime() - 7 * 3600000)
+    const samsung = hc('sleep', start.toISOString(), { endDate: end.toISOString(), sleepState: 'light', durationMinutes: 420, sourceName: 'com.sec.android.app.shealth' })
+    const facts = summarizeImport([night(22), samsung], NOW)
+    expect(facts[0]).toMatchObject({ key: 'sleep', value: '7 h', label: 'de sommeil en moyenne, sur 1 nuit' })
+  })
+
+  it('des enregistrements qui se chevauchent dans une même app ne comptent pas deux fois', () => {
+    const end = new Date('2026-10-22T07:00:00')
+    const start = new Date(end.getTime() - 7 * 3600000)
+    const mid = new Date(end.getTime() - 3 * 3600000)
+    const src = { sourceName: 'com.garmin.android.apps.connectmobile' }
+    const facts = summarizeImport([
+      hc('sleep', start.toISOString(), { ...src, endDate: end.toISOString() }),            // session entière, sans phase
+      hc('sleep', mid.toISOString(), { ...src, endDate: end.toISOString(), sleepState: 'deep' }), // phase dans la session
+    ], NOW)
+    expect(facts[0]).toMatchObject({ key: 'sleep', value: '7 h' })
+  })
+
   it('pas : moyenne par jour, seulement sur les jours où il y en a', () => {
     const facts = summarizeImport([
       hc('steps', '2026-10-21T09:00:00', { value: 4000 }),
