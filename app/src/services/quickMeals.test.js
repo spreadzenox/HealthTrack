@@ -14,6 +14,11 @@ describe('mealLabel', () => {
     expect(mealLabel({ dish: 'Pâtes au pesto', items: [{ ingredient: 'Pâtes' }] })).toBe('Pâtes au pesto')
   })
 
+  it('écrit « Œuf » et « Bœuf » à l’écran (noms Ciqual en « oe »)', () => {
+    expect(mealLabel({ items: [{ ingredient: 'Oeuf brouillé, avec matière grasse' }, { ingredient: 'Boeuf, steak' }] }))
+      .toBe('Œuf brouillé, Bœuf')
+  })
+
   it('sinon liste les 3 premiers ingrédients', () => {
     expect(mealLabel({ items: [{ ingredient: 'Riz' }, { ingredient: 'Poulet' }] })).toBe('Riz, Poulet')
     expect(mealLabel({

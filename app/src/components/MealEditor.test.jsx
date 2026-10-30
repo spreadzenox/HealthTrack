@@ -35,6 +35,20 @@ describe('MealEditor', () => {
     expect(onChange).toHaveBeenLastCalledWith([expect.objectContaining({ quantity_g: 80 })])
   })
 
+  it('écrit « Œuf » à l’écran sans changer le nom enregistré', () => {
+    const onChange = vi.fn()
+    render(<Harness initial={[{ ingredient: 'Oeuf dur', quantity: '50 g', quantity_g: 50 }]} onChange={onChange} />)
+    expect(screen.getByText('Œuf dur')).toBeInTheDocument()
+    fireEvent.change(screen.getByPlaceholderText(/ex\. riz/), { target: { value: 'boeuf hach' } })
+    const option = screen.getAllByRole('option')[0]
+    expect(option.textContent).toMatch(/^Bœuf/)
+    fireEvent.click(option)
+    expect(onChange).toHaveBeenLastCalledWith(expect.arrayContaining([
+      expect.objectContaining({ ingredient: 'Oeuf dur' }),
+      expect.objectContaining({ ingredient: expect.stringMatching(/^Boeuf/) }),
+    ]))
+  })
+
   it('supprime un ingrédient', () => {
     const onChange = vi.fn()
     render(<Harness initial={[cheese]} onChange={onChange} />)

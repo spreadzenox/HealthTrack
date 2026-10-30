@@ -2,6 +2,7 @@
  * Saisie rapide des repas sans photo : repas habituels (mêmes ingrédients) à refaire en un tap.
  */
 import { mealKcal, normalizeName } from './mealEditing'
+import { frenchLigatures } from '../utils/format'
 
 const LABEL_INGREDIENTS = 3
 /** Marge tolérée pour une heure « maintenant » saisie à la minute près. */
@@ -15,7 +16,9 @@ function ingredientsOf(payload) {
 export function mealLabel(payload) {
   if (payload?.dish) return payload.dish
   // « Poulet, cuisse, viande bouillie… » (base Ciqual) → « Poulet »
-  const names = ingredientsOf(payload).map((it) => String(it.ingredient).split(',')[0].trim() || String(it.ingredient).trim())
+  const names = ingredientsOf(payload)
+    .map((it) => frenchLigatures(it.ingredient))
+    .map((name) => name.split(',')[0].trim() || name.trim())
   if (!names.length) return 'Repas'
   const shown = names.slice(0, LABEL_INGREDIENTS).join(', ')
   return names.length > LABEL_INGREDIENTS ? `${shown}…` : shown

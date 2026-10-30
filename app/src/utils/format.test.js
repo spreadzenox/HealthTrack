@@ -120,6 +120,16 @@ describe('shortFoodName', () => {
     expect(shortFoodName('Fromage, emmental')).toBe('Fromage, emmental')
     expect(shortFoodName('Pain, baguette, courante')).toBe('Pain, baguette')
   })
+  it('écrit les ligatures que la table Ciqual n’a pas (« Oeuf » → « Œuf »)', () => {
+    expect(shortFoodName('Oeuf brouillé, avec matière grasse')).toBe('Œuf brouillé')
+    expect(shortFoodName('Oeufs de lump, semi-conserve')).toBe('Œufs de lump')
+    expect(shortFoodName('Boeuf, steak haché 5% MG, cuit')).toBe('Bœuf, steak haché 5% MG')
+    expect(shortFoodName('Coeur de palmier, appertisé')).toBe('Cœur de palmier')
+    expect(shortFoodName('Pâtes aux oeufs, cuites')).toBe('Pâtes aux œufs')
+    expect(shortFoodName('Gâteau moelleux au chocolat')).toBe('Gâteau moelleux au chocolat')
+    expect(shortFoodName('Datte, phoenix')).toBe('Datte, phoenix')
+    expect(shortFoodName('Potatoes')).toBe('Potatoes')
+  })
   it('laisse un nom simple tel quel', () => {
     expect(shortFoodName('Riz blanc cuit')).toBe('Riz blanc cuit')
     expect(shortFoodName('  Café  ')).toBe('Café')
