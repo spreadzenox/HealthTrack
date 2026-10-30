@@ -1408,6 +1408,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-69** (30/10 21:33 ; `frenchLigatures`, affichage seulement) « Oeuf brouillé », « Boeuf », « Coeur » (noms
   Ciqual) → « Œuf », « Bœuf », « Cœur » dans les listes d'aliments, Repas habituels, l'éditeur de repas et les pistes du
   ventre ; nom enregistré inchangé.
+- [x] **POL-PLAY-70** (30/10 22:33 ; `pendingText`, Recommendations.jsx) Audit Analyses (démo, clair, 360 px, avec et sans
+  premium) : « En cours de collecte : Malade (2/5 jours avec) » → « Bientôt comparés : Malade (encore 3 jours notés) »
+  (« jours sans » si ce sont eux qui manquent, « avec » pour un repère mesuré). Prochain audit : réintroduction en clair.
 - [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement
   de `com.healthtrack.app` dans la Play Console comme « app distribuée hors de Google Play » une fois signée avec une
   clé privée (la clé de debug publique ne peut pas prouver la propriété) ; échéance : avant l'extension mondiale de

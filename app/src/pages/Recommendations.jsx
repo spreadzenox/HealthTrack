@@ -408,7 +408,14 @@ function LinkItem({ link }) {
 
 function pendingText(t) {
   if (t.weekendOnly) return `${t.label} (pas encore comparable : jours avec et sans jamais du même type, semaine ou week-end)`
-  return `${t.label} (${Math.min(t.nWith, MIN_TAG_DAYS)}/${MIN_TAG_DAYS} jours avec${t.nWithout < MIN_TAG_DAYS ? `, ${t.nWithout}/${MIN_TAG_DAYS} sans` : ''})`
+  // POL-PLAY-70 : ce qui manque en mots simples, plutôt que « 2/5 jours avec, 3/5 sans ».
+  const days = (n) => `${n} jour${n > 1 ? 's' : ''}`
+  const missing = [
+    // Un repère mesuré (écran, sport du soir) n'est pas « noté ».
+    t.nWith < MIN_TAG_DAYS && `${days(MIN_TAG_DAYS - t.nWith)} ${t.auto ? 'avec' : `noté${MIN_TAG_DAYS - t.nWith > 1 ? 's' : ''}`}`,
+    t.nWithout < MIN_TAG_DAYS && `${days(MIN_TAG_DAYS - t.nWithout)} sans`,
+  ].filter(Boolean)
+  return `${t.label} (encore ${missing.join(' et ')})`
 }
 
 /**
@@ -469,7 +476,7 @@ function LinksSection({ analysis, levers = [] }) {
         </details>
       )}
       {pending.length > 0 && (
-        <p className="reco-tag-pending">En cours de collecte : {pending.map(pendingText).join(' · ')}</p>
+        <p className="reco-tag-pending">Bientôt comparés : {pending.map(pendingText).join(' · ')}</p>
       )}
     </section>
   )

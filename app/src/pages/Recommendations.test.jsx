@@ -550,13 +550,14 @@ describe('Recommendations levers', () => {
     const tagsModule = await import('../services/behaviorTags')
     const tagSpy = vi.spyOn(tagsModule, 'computeTagEffects').mockReturnValue({
       status: 'ok', trackedDays: 40,
-      pending: [{ tagId: 'alcohol', label: 'Alcool', nWith: 4, nWithout: 30 }, { tagId: 'sick', label: 'Malade', nWith: 2, nWithout: 30 }],
+      pending: [{ tagId: 'alcohol', label: 'Alcool', nWith: 4, nWithout: 30 }, { tagId: 'sick', label: 'Malade', nWith: 2, nWithout: 30 }, { tagId: 'travel', label: 'Voyage', nWith: 4, nWithout: 3 }, { tagId: 'evening_sport', label: 'Sport le soir', nWith: 1, nWithout: 30, auto: true }],
       effects: [],
     })
     const alcohol = { ...baseCorr, variable: 'alcohol_g', label: 'Alcool', r: -0.45, q: 0.004, evidence: 'solide' }
     const spy = await renderWithBasic({ status: 'ok', datasetDays: 40, reliability: 'good', correlations: [alcohol], levers: [] })
-    const pending = await screen.findByText(/En cours de collecte/i)
-    expect(pending).toHaveTextContent(/Malade/)
+    const pending = await screen.findByText(/Bientôt comparés/i)
+    // POL-PLAY-70 : en mots simples, ce qui manque (« 2/5 jours avec » n'était pas compris).
+    expect(pending).toHaveTextContent('Bientôt comparés : Malade (encore 3 jours notés) · Voyage (encore 1 jour noté et 2 jours sans) · Sport le soir (encore 4 jours avec)')
     expect(pending).not.toHaveTextContent(/Alcool/)
     spy.mockRestore()
     tagSpy.mockRestore()
@@ -643,7 +644,7 @@ describe('Recommendations — behaviour tags', () => {
     expect(card).toHaveTextContent(/−2,0 point/)
     expect(card).toHaveTextContent(/Piste solide/)
     // A tag used on fewer than 5 days is listed as still being collected.
-    expect(screen.getByText(/En cours de collecte/i)).toHaveTextContent(/Malade/)
+    expect(screen.getByText(/Bientôt comparés/i)).toHaveTextContent(/Malade/)
   })
 
   it('never compares felt stress with wellbeing as a cause (it is part of the mood, D5)', async () => {
@@ -708,7 +709,7 @@ describe('Recommendations — behaviour tags', () => {
     expect(document.querySelector('.reco-method-note')).toHaveTextContent(
       /week-ends sont comparés aux week-ends/i,
     )
-    expect(screen.getByText(/En cours de collecte/i)).toHaveTextContent(
+    expect(screen.getByText(/Bientôt comparés/i)).toHaveTextContent(
       /Repas tardif \(pas encore comparable : jours avec et sans jamais du même type/,
     )
     spy.mockRestore()
