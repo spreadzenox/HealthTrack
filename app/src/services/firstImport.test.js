@@ -54,6 +54,12 @@ describe('summarizeImport — le « aha » des 30 derniers jours', () => {
     const facts = summarizeImport([hc('activity', '2026-10-21T18:00:00', { workoutType: 'running' })], NOW)
     expect(facts).toEqual([{ key: 'workouts', value: '1', label: 'séance de sport', source: 'Health Connect' }])
   })
+
+  it('une séance écrite par deux apps dans Health Connect compte une fois', () => {
+    const run = (sourceName) => hc('activity', '2026-10-21T18:00:00', { workoutType: 'running', durationSeconds: 2700, sourceName })
+    const facts = summarizeImport([run('com.sec.android.app.shealth'), run('nl.appyhapps.healthsync')], NOW)
+    expect(facts[0]).toMatchObject({ key: 'workouts', value: '1', label: 'séance de sport' })
+  })
 })
 
 describe('runFirstImport', () => {

@@ -16,6 +16,7 @@ import { localDateKey } from './wellbeingSeries'
 import { isDaytimeHrv } from './hrv'
 import { appLocale } from '../i18n/locale.js'
 import { totalOf } from './activityTotals'
+import { oneSourcePerWorkout } from './workoutSources'
 
 const DAY_MS = 24 * 3600 * 1000
 
@@ -120,7 +121,8 @@ export function summarizeImport(entries, now = new Date()) {
     })
   }
 
-  const workouts = recent.filter((e) => e.type === 'activity')
+  // Deux apps qui écrivent la même séance dans Health Connect : une séance (workoutSources.js).
+  const workouts = oneSourcePerWorkout(recent.filter((e) => e.type === 'activity'))
   if (workouts.length && facts.length < 4) {
     facts.push({
       key: 'workouts',
