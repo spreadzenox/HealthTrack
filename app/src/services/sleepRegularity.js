@@ -56,6 +56,17 @@ function segmentsOf(entries) {
   return segs.sort((a, b) => a.start - b.start)
 }
 
+/** Intervalles réunis, sans chevauchement : une session et ses phases ne comptent qu'une fois. */
+function unionOf(intervals) {
+  const out = []
+  for (const [a, b] of [...intervals].sort((x, y) => x[0] - y[0])) {
+    const last = out[out.length - 1]
+    if (last && a <= last[1]) last[1] = Math.max(last[1], b)
+    else out.push([a, b])
+  }
+  return out
+}
+
 /** Périodes de sommeil (enregistrements réunis), avec leurs intervalles endormis. */
 function sleepPeriods(entries) {
   const periods = []
@@ -72,7 +83,7 @@ function sleepPeriods(entries) {
   for (const p of periods) {
     const asleep = p.segs.filter((s) => s.asleep)
     // Seulement « au lit » (ou éveils) : faute de mieux, toute la période compte comme sommeil
-    p.asleep = (asleep.length ? asleep : p.segs).map((s) => [s.start, s.end])
+    p.asleep = unionOf((asleep.length ? asleep : p.segs).map((s) => [s.start, s.end]))
     delete p.segs
   }
   return periods

@@ -126,6 +126,45 @@ const POINT_READERS = [
  * Map a @capgo/capacitor-health dataType to a HealthTrack entry type.
  * HealthTrack entry types: 'steps' | 'sleep' | 'heart_rate' | 'activity' | 'calories'
  */
+const DAY_MS = 24 * 3600 * 1000
+const MIN_WINDOW_MS = 15 * 60 * 1000
+
+/**
+ * Lecture sans perte des types denses (FC, pas en échantillons). Le plugin trie puis ne garde que les `limit`
+ * premiers échantillons : en une seule lecture sur 30 jours, les jours les plus récents disparaissaient, et la
+ * synchro suivante repartait de la date de fin (jamais relus). On lit jour par jour, et une fenêtre qui atteint
+ * la limite est coupée en deux (jusqu'à 15 min). Un enregistrement à cheval sur deux fenêtres n'est gardé qu'une fois.
+ */
+export async function readSamplesInWindows(Health, { dataType, startDate, endDate, limit }) {
+  const seen = new Set()
+  const out = []
+  const keep = (list) => {
+    for (const sm of list || []) {
+      const k = `${sm.platformId ?? ''}|${sm.startDate}|${sm.endDate ?? ''}|${sm.value}`
+      if (seen.has(k)) continue
+      seen.add(k)
+      out.push(sm)
+    }
+  }
+  const readWindow = async (from, to) => {
+    const { samples } = await Health.readSamples({
+      dataType, startDate: new Date(from).toISOString(), endDate: new Date(to).toISOString(), limit, ascending: true,
+    })
+    if ((samples?.length ?? 0) >= limit && to - from > MIN_WINDOW_MS) {
+      const mid = from + Math.floor((to - from) / 2)
+      await readWindow(from, mid)
+      await readWindow(mid, to)
+      return
+    }
+    if ((samples?.length ?? 0) >= limit) debugWarn(TAG, `${dataType} : plus de ${limit} échantillons en 15 min, lecture partielle`)
+    keep(samples)
+  }
+  const start = Date.parse(startDate)
+  const end = Date.parse(endDate)
+  for (let from = start; from < end; from += DAY_MS) await readWindow(from, Math.min(from + DAY_MS, end))
+  return out.sort((a, b) => (a.startDate < b.startDate ? -1 : a.startDate > b.startDate ? 1 : 0))
+}
+
 function toEntryType(dataType) {
   const map = {
     steps: 'steps',
@@ -832,13 +871,7 @@ export class HealthConnectConnector extends BaseConnector {
         await writer(entries)
         synced += entries.length
       } else {
-        const { samples } = await Health.readSamples({
-          dataType: 'steps',
-          startDate,
-          endDate,
-          limit: 1000,
-          ascending: true,
-        })
+        const samples = await readSamplesInWindows(Health, { dataType: 'steps', startDate, endDate, limit: 1000 })
         debugInfo(TAG, `Pas (échantillons) : ${samples.length} entrées récupérées`)
         const entries = samples.map((s) => ({
           type: 'steps',
@@ -898,13 +931,10 @@ export class HealthConnectConnector extends BaseConnector {
     step('heartRate')
     if (canRead('heartRate')) try {
       debugDebug(TAG, 'Lecture fréquence cardiaque…')
-      const { samples } = await Health.readSamples({
-        dataType: 'heartRate',
-        startDate,
-        endDate,
-        limit: 2000,
-        ascending: true,
-      })
+      // Historique long : la FC brute des 30 derniers jours seulement (FC au repos et VFC, lues à part, gardent
+      // tout l'historique) ; avant, une seule lecture gardait les 2 000 plus anciens échantillons.
+      const hrStart = isHistorical ? new Date(Date.parse(endDate) - 30 * DAY_MS).toISOString() : startDate
+      const samples = await readSamplesInWindows(Health, { dataType: 'heartRate', startDate: hrStart, endDate, limit: 2000 })
       debugInfo(TAG, `FC : ${samples.length} entrées récupérées`)
       const entries = samples.map((s) => ({
         type: 'heart_rate',

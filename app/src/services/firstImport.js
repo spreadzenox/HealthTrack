@@ -17,6 +17,7 @@ import { isDaytimeHrv } from './hrv'
 import { appLocale } from '../i18n/locale.js'
 import { totalOf } from './activityTotals'
 import { oneSourcePerWorkout } from './workoutSources'
+import { oneSleepSourcePerNight } from './sleepSources'
 
 const DAY_MS = 24 * 3600 * 1000
 
@@ -73,7 +74,8 @@ export function summarizeImport(entries, now = new Date()) {
   const recent = (entries || []).filter((e) => e?.source === 'health_connect' && Date.parse(e.at) >= from)
   const facts = []
 
-  const sleep = recent.filter((e) => e.type === 'sleep')
+  // Deux apps qui écrivent la même nuit dans Health Connect : une seule source par nuit (sleepSources.js).
+  const sleep = oneSleepSourcePerNight(recent.filter((e) => e.type === 'sleep'))
   const nights = [...mainSleepPeriods(sleep).values()]
   if (nights.length) {
     const asleep = nights.map((p) => p.asleep.reduce((s, [a, b]) => s + (b - a), 0) / 60000)
