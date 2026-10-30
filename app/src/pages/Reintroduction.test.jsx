@@ -164,8 +164,18 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     renderPage(makeStore({ challenges: [challengeEntry(c)], gutEntries: [...calm(6, 5, 4, 3, 2, 1)] }))
     expect(await screen.findByText(/Blé : bien toléré jusqu’à 3 tranches/)).toBeInTheDocument()
     expect(screen.getByText(/pas un diagnostic/)).toBeInTheDocument()
+    // POL-PLAY-52 : rien sur l'appréhension ni sur un nouveau test quand tout passe
+    expect(screen.queryByText(/attente|refaire le test/)).not.toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent('0/3 jours calmes')
     expect(screen.getByText('carte ventre')).toBeInTheDocument()
+  })
+
+  it('④ gêne en cours de test : le résultat rappelle que l’appréhension joue et qu’on peut refaire le test', async () => {
+    const doses = [3, 2].map((d, i) => ({ day: i + 1, amount: [125, 250][i], unit: 'ml', at: at(d, 12) }))
+    const c = { ...startChallenge({ group: 'lactose', food: 'milk' }, new Date(2026, 9, 23, 8)), doses, answers: [{ day: 2, tolerable: false, at: at(2, 20) }] }
+    renderPage(makeStore({ challenges: [challengeEntry(c)], gutEntries: [...calm(6, 5, 4, 3), gut(2, 'pain', 19)] }))
+    expect(await screen.findByText(/Lait : une petite portion passe \(125 ml\)/)).toBeInTheDocument()
+    expect(screen.getByText(/S’attendre à une gêne peut suffire à en ressentir/)).toBeInTheDocument()
   })
 
   it('un test terminé apparaît dans « Vos résultats » et en étiquette', async () => {
