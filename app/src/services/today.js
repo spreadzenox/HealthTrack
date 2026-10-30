@@ -51,6 +51,11 @@ export function gutLevelLabel(id) {
 
 /** Jours suivis avant de chercher des pistes (« Vos pistes arrivent dans N jours »). */
 export const PISTES_MIN_DAYS = 21
+/**
+ * Jours de notes du ventre avant les pistes repas → ventre (= `gutLinks.GUT_LINKS_MIN_DAYS`, vérifié par un test ;
+ * recopié ici pour que l'Accueil n'embarque pas la table nutritionnelle).
+ */
+export const GUT_PISTES_MIN_NOTE_DAYS = 28
 /** Fenêtre du bien-être estimé (courbe et moyenne). */
 export const TREND_DAYS = 14
 /** Jours estimés nécessaires avant de se comparer à sa moyenne. */
@@ -257,6 +262,16 @@ export function pistesProgress(entries, focus = 'gut') {
   }
   const n = Math.min(days.size, PISTES_MIN_DAYS)
   return { days: n, target: PISTES_MIN_DAYS, remaining: PISTES_MIN_DAYS - n, ready: n >= PISTES_MIN_DAYS }
+}
+
+/**
+ * Objectif ventre, une fois les 21 jours suivis atteints : jours distincts avec une note du ventre, jusqu'au seuil
+ * des pistes repas → ventre. Sans cela, la carte lilas disait « assez de jours » puis « il en faut 28 ».
+ */
+export function gutNotesProgress(entries) {
+  const days = new Set((entries || []).filter((e) => e?.at && e.type === GUT_TYPE).map((e) => localDateKey(e.at)))
+  const n = Math.min(days.size, GUT_PISTES_MIN_NOTE_DAYS)
+  return { days: n, target: GUT_PISTES_MIN_NOTE_DAYS, remaining: GUT_PISTES_MIN_NOTE_DAYS - n, ready: n >= GUT_PISTES_MIN_NOTE_DAYS }
 }
 
 /** Ce que dit le modèle du bien-être, en clair (mode détails). */
