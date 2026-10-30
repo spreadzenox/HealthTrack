@@ -1395,3 +1395,46 @@ par le fichier `sequence_data` (M1). SpO₂, stress et respiration : pas de clas
   fin de sa série seulement, la séance garde ses totaux.
 - Garde : le service n'est demandé en arrière-plan que si l'app l'a déjà lu (issue « ok » ou « vide » de `workouts`
   → `workoutsRead` dans l'état de la synchro, recopié au natif par `shareResume` → `State.workouts`, définitif).
+
+### 10.20 Inventaire à jour au 30/10/2026 (run « idées » de 20:33 CET) — remplace le tableau du §10.1
+
+Le tableau du §10.1 date du 21/10, avant M1–M7b : il disait « ❌ » pour des données livrées depuis. État relu dans le
+code (`src/devices/huawei/coverage.js`, `sync.js`, `p2p.js`, `files.js`, lecteur Java) et dans le journal. « Confirmé »
+= vu sur la GT 6 Pro du propriétaire (P17 du 22/10 sur la v362 : « j'ai bien tout qui remonte de la montre » ;
+stress confirmé le 24/10, M4 validé). « Code seul » = livré et testé sur trames synthétiques, pas encore vu sur la
+montre après sa livraison.
+
+| Donnée | Voie | Rattrapage / arrière-plan | État | Où on la voit |
+|---|---|---|---|---|
+| Sommeil : phases, coucher, lever, durée, réveils | fichier 0x2C `sequence_data` (§10.3) | 60 j la 1re fois ; Java (M6a) | ✅ confirmé (P17) | Accueil (tuile Sommeil), Journal, écran Montre |
+| Siestes | idem (phase 5) | idem | ✅ code (exclues des nuits) | écran Montre |
+| FC de la nuit (moy. / mini / maxi) | résumé du fichier | idem | 🟡 gardée dans la nuit (`avgHeartRate`…), pas affichée | payload de la nuit (export) |
+| Score de sommeil | résumé (`sleepScore`) | idem | ✅ code | écran Montre (« 7 h 12 · score 82 ») ; pas dans le Journal |
+| Latence, efficacité, lignes de base | résumé (`watchSummary`, brut : unités pas sûres) | idem | 🟡 gardé brut, non affiché | export seulement |
+| **VFC de la nuit** | résumé 700013878 | idem | ✅ confirmé (P17) | Accueil (tuile « VFC nuit »), Journal, Radar, pistes |
+| VFC de journée | P2P 500044 (§10.4) | tout l'historique ; Java (M6b) | ✅ code (à revoir sur la montre) | Journal « VFC jour », écran Montre (à part de la nuit) |
+| **Température de la peau** | P2P 400012 (§10.5) | idem ; mesure continue au choix (7/0x2A) | ✅ code (à revoir sur la montre) | Journal « Temp. peau », écran Montre |
+| SpO₂ jour et nuit | minutes 7/0x0B + résumé | idem | ✅ confirmé (P17) | écran Montre, Journal |
+| Respiration de la nuit | résumé 700013646 | idem | ✅ code | écran Montre |
+| FC continue, FC au repos | minutes 7/0x0B | Java depuis A.3 | ✅ confirmé (P17) | Journal, Tendances, écran Montre |
+| Stress (score, niveau) | fichier `rrisqi_data.bin` (§10.14) | 60 j ; Java (M6a) | ✅ **confirmé 24/10** (M4 validé) | Journal « Stress montre », écran Montre ; jamais entrée du bien-être (D5) |
+| Pas, distance, calories | minutes + totaux 7/0x03 | Java | ✅ confirmé ; kcal ÷ 1000 corrigées le 27/10 ; une source par heure | Accueil, Journal, écran Montre |
+| Séances : type, durée, kcal, FC mini/maxi | 0x17/0x07–0x08 | Java (M7b) | ✅ confirmé (P17) ; une séance vue deux fois ne compte qu'une fois (POL-PLAY-63) | Journal |
+| Séances : courbe FC, allure | 0x17/0x0A, 0x0C | Java (M7b) | ✅ code (à revoir sur une séance après la v266) | Journal (« FC moy. · allure » + courbe) |
+| Étages / dénivelé | bits inconnus des minutes (1/0x10 ?) ; altitude du jour = P2P 200003 | journal de synchro (M4 bis) | 🟡 comptés, pas nommés : attend la journée de comparaison du propriétaire | — |
+| Émotions estimées par la montre | P2P 500031 | — | ❌ volontaire : jamais une entrée du bien-être (D5) | — |
+| Apnée (niveau, RDI) | P2P 500002 ; résumé 700013759 | — | ❌ faible priorité ; vocabulaire non médical obligatoire | — |
+| Cycle menstruel | aucune voie connue | — | ❌ hors périmètre (extension future) | — |
+| ECG, tension | — | — | hors périmètre (médical) | — |
+
+**Nouveau fait lu le 30/10 (PR #6579 de [G], toujours ouverte, mise à jour le 27/10 ; discussion seulement)** :
+l'altitude « toute la journée » (classe 200003, champ 200003586) se lit comme les autres réels du dictionnaire :
+réel **gros-boutiste sur 4 octets (simple précision) ou 8 octets (double)** selon la longueur — exactement la règle
+déjà appliquée par `parseDictionaryPage` (§10.11). Elle ne coïncide pas avec l'altitude d'une séance (écart de
+quelques mètres constaté par un contributeur : filtrage barométrique différent). Conséquence pour nous : une lecture
+de la classe 200003 (dénivelé du jour = somme des montées) est possible sans nouveau décodeur, sur le même ping que
+la VFC de journée ; valeur produit faible tant que les étages ne servent à aucune analyse → idée I199 (pas une étape).
+
+**À tester par le propriétaire (une fois, quand il le peut)** : écran « Données de la montre » après une nuit avec
+la montre : chaque ligne doit dire « reçu » avec une date de la nuit ; en particulier VFC de journée, température de
+la peau (mesure continue activée dans la carte montre) et une séance de course (FC moyenne et allure).

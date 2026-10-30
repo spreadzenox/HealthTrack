@@ -596,9 +596,19 @@ nos atouts restent les montres, les délais et les FODMAP par sous-groupe, à me
 phrase fixe « quand consulter » (sang dans les selles, perte de poids…) sera ajoutée à la carte ventre, sans alerte
 automatique (POL-PLAY-60).
 
-**Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
-« Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
-🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
+**Chantier montre — état par type de donnée (relu le 30/10 20:33, détail : `protocoles/huawei.md` §10.20)** : M1 à
+M7b sont livrés, y compris la relecture en arrière-plan (M6) ; il ne manque que votre confirmation sur la montre
+pour quatre lignes.
+- ✅ vu sur votre montre : sommeil (phases, durée), VFC de la nuit, SpO₂, FC et FC au repos, pas / distance / kcal,
+  séances (totaux), stress (M4 validé le 24/10).
+- ✅ livré, **à confirmer sur votre montre** : VFC de journée, température de la peau (mesure continue à activer
+  dans la carte montre), courbe FC et allure d'une course, respiration de la nuit, siestes.
+- 🟡 gardé mais pas encore affiché : FC de la nuit, latence d'endormissement (dans l'export) ; le score de sommeil
+  n'apparaît que dans l'écran Montre. 🟡 étages : comptés, pas encore
+  nommés (il faut une journée de comparaison avec la montre).
+- ❌ volontairement pas lus : émotions estimées par la montre (jamais mélangées au bien-être), apnée, cycle, ECG.
+- **À tester** : après une nuit avec la montre, Sources → montre → « Voir ce qui remonte de la montre » : chaque ligne
+  doit dire « reçu » avec une date récente ; envoyez une capture si une ligne reste vide.
 
 **👉 Vos prochaines actions, la plus utile d'abord**
 0. **Pas et kcal (2 min)** : avec la version de 12:33 ou plus récente, comparez au même moment les pas et kcal du jour
@@ -639,6 +649,7 @@ automatique (POL-PLAY-60).
 | 30/10 07:33 — [Onboarding : « Continuer » désactivé lisible](runs/2026-10-30-0733-onboarding-continuer.md) | 🎨 | POL-PLAY-12 (audit onboarding play à 360 px, sombre et clair : 7 écrans) → POL-PLAY-58 : « Continuer » sans choix passait pour actif → gris neutre ; lint 7 → 6 ; 1 test |
 | 30/10 17:33 — [Lecture du visage sans plantage](runs/2026-10-30-1733-visage-sans-plantage.md) | 🐛 | Signalement du 30/10 16:35 : cause = R8 retirait les annotations `@Permission` de Capacitor → `NullPointerException` dans `getPermissionStates` (trace prise à l'émulateur) ; règles R8 ; en chemin : `startService` au lieu de `startForegroundService`, message clair, erreurs natives rattrapées ; smoke R8 avec faceUnlockPlay (permissions de chaque plugin, Activer, déverrouillage, caméra refusée) ; 5 tests |
 | 30/10 16:33 — [Health Connect : lecture sans perte](runs/2026-10-30-1633-lecture-sans-perte.md) | 🐛 | POL-PLAY-66 : FC et pas lus jour par jour (`readSamplesInWindows`, fenêtre redécoupée à la limite) au lieu d'une lecture qui gardait les 2 000 plus anciens échantillons ; « aha » du premier import : une source par nuit et intervalles réunis ; 6 tests |
+| 30/10 20:33 — [Idées : inventaire montre, premier lancement en clair](runs/2026-10-30-2033-idees-inventaire-montre.md) | 💡 | Inventaire montre à jour (huawei.md §10.20, une ligne par donnée dans ce résumé) ; altitude du jour lisible avec le décodeur actuel (I199) ; audit `--play --empty --theme=system --light` à 360 px d'Accueil, Analyses, Sources, Journal : rien à corriger ; journal seul |
 | 30/10 19:33 — [Repas : un aliment par ligne](runs/2026-10-30-1933-aliments-en-liste.md) | 🎨 | POL-PLAY-68 (audit `--play` à 360 px sur démo, 15 pages, puis vierge : Repas, Nutrition, Tendances, Réglages, Nouveautés) : aliments d'un repas un par ligne, quantité à droite en mono (`MealItemList`, Journal et Repas) au lieu d'une liste « à la suite » qui laissait un « · » seul en bout de ligne ; séance « Course à pied · 32 min · 330 kcal » ; note « sommeil une source » marquée Android (IOS-3) ; 5 tests ajustés |
 | 30/10 18:33 — [Health Connect : historique long complet](runs/2026-10-30-1833-historique-long.md) | 🐛 | POL-PLAY-67 : FC au repos, VFC, sommeil, SpO₂, dépense, séances et mesures vitales lus sans la coupure à 500 / 200 / 1 000 (`readInWindows` : une lecture si elle tient, sinon redécoupée) ; PR #531 (visage, run de 17:33) mergée pendant ce run, sans conflit de code ; 3 tests |
 | 30/10 15:33 — [Paramètres pendant le test](runs/2026-10-30-1533-parametres-lancement.md) | 🎨 | POL-PLAY-65 : audit Paramètres / Premium / Données / Sources (vierge, sombre, période de lancement) ; quota IA « Pendant le test : jusqu'à 10 analyses par jour, sans rien payer » au lieu de « Sans abonnement… » ; émulateur API 35 de main relancé (image système non téléchargée) |
