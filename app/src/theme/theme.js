@@ -5,6 +5,8 @@
  * poser <html data-theme="light|dark"> et accorder les icônes des barres système Android.
  */
 
+import { restoreSafeArea } from './safeAreaRestore'
+
 const THEME_KEY = 'healthtrack_theme'
 
 export const THEME_CHOICES = [
@@ -52,7 +54,9 @@ async function styleSystemBars(dark) {
   try {
     const { Capacitor, registerPlugin } = await import('@capacitor/core')
     if (!Capacitor.isNativePlatform()) return
-    await registerPlugin('SystemBars').setStyle({ dark })
+    const bars = registerPlugin('SystemBars')
+    restoreSafeArea(bars)
+    await bars.setStyle({ dark })
   } catch {
     // Ancienne version native sans le plugin : les icônes restent celles du thème Android.
   }
