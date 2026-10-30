@@ -289,6 +289,9 @@
 - **Repas : des cartes plus légères** (29/10 23:33) — dans Journal › Repas, « Refaire · Modifier · Supprimer »
   sont rangés derrière un petit « ⋯ » au bout de chaque repas, comme dans Jours ; écran Données de la montre :
   stress « 46 · normal » au lieu de « 46 / 99 ».
+- **Phrases d'aide plus discrètes** (30/10 02:33) — dans Paramètres (« Ce qui vous amène », analyses IA restantes,
+  « Ce qui est envoyé », « Votre avis »), Premium, Montre et Nouveautés, les phrases d'aide passent en gris secondaire
+  un peu plus petit, comme les autres explications : elles ne crient plus plus fort que les titres.
 - **Réintroduction : le test et le résultat relus** (30/10 01:33) — « Oui, je continue » / « Non, j'arrête » ont
   la même largeur (le premier ne passe plus sur deux lignes) ; sous un résultat où tout passe (« Blé : bien toléré
   jusqu'à 3 tranches »), plus de « L'attente joue aussi… » ; après une gêne, la phrase devient claire : « S'attendre
@@ -549,6 +552,7 @@ de données) ; le formulaire le dit tel quel.
 | 29/10 22:33 — [Nutrition vierge en couleur](runs/2026-10-29-2233-nutrition-vide.md) | 🎨 | POL-PLAY-49 (audit Repas et Nutrition play vierges, sombre et clair, 360 px) : tuile pêche « Photographier un repas » (`PastelTiles`) au lieu d'une phrase grise et d'un bouton plein ; Repas vierge : rien à redire ; 1 test |
 | 29/10 23:33 — [Repas : actions derrière « ⋯ »](runs/2026-10-29-2333-repas-actions.md) | 🎨 | POL-PLAY-50 (audit Repas, Nutrition et Montre play démo sombre) : actions de chaque repas derrière « ⋯ » (`EntryActionsToggle` partagé avec Jours) ; stress de la montre « 46 · normal » ; 1 test |
 | 30/10 00:33 — [Réintroduction : préparation relue](runs/2026-10-30-0033-reintro-vierge.md) | 🎨 | POL-PLAY-51 (audit Réintroduction et Montre play vierges, clair et sombre) : repère des portions en phrase Figtree au lieu d'une étiquette mono ; 1 test ajusté. Puis « Tests » rouge sur main (erreur non gérée de `FaceSenseCard` après la fin du fichier de test) : garde `mounted`, 1 test |
+| 30/10 02:33 — [Phrases d'aide discrètes](runs/2026-10-30-0233-hint-style.md) | 🎨 | POL-PLAY-12 (audit démo sombre de Données et Paramètres) → POL-PLAY-53 : `.hint` sans style commun (texte encre 1 rem) → gris secondaire 0,9 rem dans `App.css` ; 1 test ; Données : rien à redire |
 | 30/10 01:33 — [Réintroduction : test et résultat relus](runs/2026-10-30-0133-reintro-test.md) | 🎨 | POL-PLAY-52 (audit Réintroduction en cours de test, `--fodmap=day2`/`question`/`result`, clair et sombre) : boutons de la question à largeur égale ; « l'attente joue aussi » remplacé, et seulement si une gêne a arrêté le test ; 1 test ajouté, 1 ajusté |
 | 29/10 20:33 — [Idées : campagne des testeurs](runs/2026-10-29-2033-idees-campagne-testeurs.md) | 💡 | exigences officielles du test fermé relues ; 4 messages « missions » ; brouillon des 10 réponses du formulaire d'accès à la production (P30) ; tableau des changements pendant le test ; recalage de la période de lancement ; TF-1, TF-2 |
 | 29/10 19:34 — [Ligne du compte des pistes](runs/2026-10-29-1934-pistes-compte.md) | 🎨 | POL-PLAY-47 : chiffre en mono, phrase en Figtree, « (6 dernières semaines) » insécable ; audit Analyses play vierge clair et sombre ; 1 test renforcé |
