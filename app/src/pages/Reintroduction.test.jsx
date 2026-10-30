@@ -44,7 +44,7 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     expect(lactose.querySelector('.fodmap-group-chevron')).not.toBeNull()
     expect(screen.getByRole('button', { name: 'Blé' })).toBeInTheDocument()
     expect(screen.getByText(/Combinaisons/).closest('[aria-disabled]')).toHaveTextContent('après 2 groupes bien tolérés')
-    expect(screen.getByText(/parlez-en d’abord à votre médecin/)).toBeInTheDocument()
+    expect(screen.getByText(/parlez-en rapidement à votre médecin/)).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/intolérance|allergie|traitement/i)
   })
 

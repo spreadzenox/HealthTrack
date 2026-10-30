@@ -71,6 +71,21 @@ describe('GutCard', () => {
     expect(screen.getByText('7 jours · 1 note : 1 calme · 6 jours sans note')).toBeInTheDocument()
   })
 
+  it('« Quand consulter » : une phrase fixe dans les détails, jamais sans eux (POL-PLAY-60)', async () => {
+    const { WHEN_TO_SEE_DOCTOR } = await import('../services/today')
+    const morning = new Date()
+    morning.setHours(9, 0, 0, 0)
+    const { unmount } = wrap(<GutCard read={async () => []} now={morning} />)
+    await screen.findByText(/Un geste suffit/)
+    expect(screen.queryByText(WHEN_TO_SEE_DOCTOR)).not.toBeInTheDocument()
+    unmount()
+    wrap(<GutCard read={async () => []} details onToggleDetails={() => {}} now={morning} />)
+    const line = await screen.findByText(WHEN_TO_SEE_DOCTOR)
+    expect(line).toHaveClass('gut-consult-note')
+    expect(line).not.toHaveClass('mono')
+    expect(WHEN_TO_SEE_DOCTOR).toMatch(/Sang dans les selles.*parlez-en rapidement à votre médecin\.$/)
+  })
+
   it('dit « hier » pour une note de la veille, le jour de la semaine ensuite, la date au-delà (POL-PLAY-4)', async () => {
     const at = (daysAgo) => {
       const d = new Date()

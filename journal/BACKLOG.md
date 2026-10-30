@@ -1348,7 +1348,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   source → inchangé ; deux sources sur deux nuits différentes → deux nuits. Aucune donnée effacée (choix à la
   lecture). Vérifier aussi la VFC et la FC au repos de la nuit (moyennes, pas des sommes : a priori juste) et
   la tuile « Sommeil » (sources listées : garder les deux noms, mais un seul chiffre).
-- [ ] **POL-PLAY-60 (I198) — « Quand consulter » sans alarmer.** Une ligne discrète, statique, sous le chevron de la
+- [x] **POL-PLAY-60 (I198) — « Quand consulter » sans alarmer.** ✅ 30/10 10:33 (`WHEN_TO_SEE_DOCTOR` dans `services/today.js` ; détails de la carte ventre — la carte n'existe qu'avec « Mon ventre » ou des notes du ventre —, `Reintroduction.jsx` Disclaimer, `report.whenToConsult` en pied du PDF ; `TodayCards.test.jsx`, `buildReport.test.js`, `renderPdf.test.js`). Une ligne discrète, statique, sous le chevron de la
   carte « Votre ventre » (objectif « Mon ventre ») et dans le rapport PDF : « Sang dans les selles, perte de poids
   sans raison, fièvre, réveils la nuit à cause du ventre, ou symptômes nouveaux après 50 ans : parlez-en
   rapidement à votre médecin. » Jamais déclenchée par les données (pas de détection : ce serait une fonction

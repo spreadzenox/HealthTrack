@@ -24,7 +24,7 @@ import { faceMoodDays } from '../mood/faceMoodDays'
 import { nightlySleep } from '../radar'
 import { computeSleepRegularity } from '../sleepRegularity'
 import { STOOL_TYPE, stoolCounts } from '../stool'
-import { GUT_LEVELS, GUT_TYPE, SOURCE_LABELS, entrySourceLabel } from '../today'
+import { GUT_LEVELS, GUT_TYPE, SOURCE_LABELS, WHEN_TO_SEE_DOCTOR, entrySourceLabel } from '../today'
 
 export const REPORT_PERIODS = [2, 4, 12]
 export const REPORT_DEFAULT_WEEKS = 4
@@ -200,6 +200,8 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
     generatedAt: now.toISOString(),
     period: { from, to, weeks: nWeeks, days: calendar.length },
     disclaimer: REPORT_DISCLAIMER,
+    // « Quand consulter » (POL-PLAY-60) : phrase fixe, la même que la carte ventre ; jamais tirée des données.
+    whenToConsult: WHEN_TO_SEE_DOCTOR,
     gut: { notedDays, ...counts, shares },
     // Forme des selles (I176), facultative : `null` sans aucune note, répartition par forme, jamais de sous-type.
     stool: stoolCounts(period),
