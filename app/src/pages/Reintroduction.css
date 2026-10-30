@@ -111,6 +111,11 @@ button.fodmap-group:focus-visible,
   font-size: 0.72rem;
 }
 
+/* Étiquette posée au-dessus d'un titre (carte « Débloquer ») : ne pas la coller au titre */
+.fodmap-tag--lead {
+  margin: 0 0 10px;
+}
+
 .fodmap-plan-note {
   margin: 8px 0 0;
   font-size: 0.85rem;
