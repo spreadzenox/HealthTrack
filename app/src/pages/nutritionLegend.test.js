@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import process from 'node:process'
 
 const css = readFileSync(resolve(process.cwd(), 'src/pages/Nutrition.css'), 'utf8')
 
