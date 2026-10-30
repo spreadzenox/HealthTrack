@@ -187,8 +187,9 @@
   background: var(--color-warn);
 }
 
+/* POL-PLAY-56 : un repère pas encore atteint n'est pas une alerte (règle 6), et se distingue de « limite dépassée » */
 .nutrition-bar-low {
-  background: var(--color-danger);
+  background: var(--text-muted);
 }
 
 .nutrition-bar-over {
