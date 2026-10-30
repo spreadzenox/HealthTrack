@@ -32,6 +32,14 @@
   font-size: 0.9rem;
 }
 
+/* Phrases d'aide (POL-PLAY-53) : même rang que les explications .page-intro, jamais plus fortes qu'elles. */
+.hint {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
 /* En-tête compact : la navigation est dans la barre d'onglets en bas. */
 .header {
   display: flex;
