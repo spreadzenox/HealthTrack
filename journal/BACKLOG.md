@@ -1405,6 +1405,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   note « sommeil une source » marquée Android (`variants`, IOS-3). Restes vus, non traités : « Oeuf brouillé » (nom
   Ciqual sans ligature « Œ ») ; tuile « Ajouter une montre » de Tendances en lilas (choix établi : lilas = sources
   dans les tuiles pastel, à revoir seulement si le propriétaire le signale).
+- [x] **POL-PLAY-69** (30/10 21:33 ; `frenchLigatures`, affichage seulement) « Oeuf brouillé », « Boeuf », « Coeur » (noms
+  Ciqual) → « Œuf », « Bœuf », « Cœur » dans les listes d'aliments, Repas habituels, l'éditeur de repas et les pistes du
+  ventre ; nom enregistré inchangé.
 - [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement
   de `com.healthtrack.app` dans la Play Console comme « app distribuée hors de Google Play » une fois signée avec une
   clé privée (la clé de debug publique ne peut pas prouver la propriété) ; échéance : avant l'extension mondiale de

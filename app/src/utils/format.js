@@ -195,12 +195,22 @@ const FOOD_PREPARATION_WORDS = [
 ]
 
 /**
+ * Ligature « œ » que la table Ciqual écrit « oe » : « Oeuf » → « Œuf », « boeuf », « coeur », « oeil », « noeud »,
+ * « soeur », « voeu ». Seulement devant « u » ou « il » en début de mot (« moelleux », « phoenix », « Potatoes »
+ * restent tels quels). Affichage seulement : le nom enregistré ne change pas.
+ */
+export function frenchLigatures(text) {
+  return String(text ?? '').replace(/(^|[^\p{L}])([bcnsvBCNSV]?)(o|O)e(?=u|il)/gu,
+    (_, before, prefix, o) => `${before}${prefix}${o === 'O' ? 'Œ' : 'œ'}`)
+}
+
+/**
  * Nom d'aliment court pour les listes : « Poulet, cuisse, viande bouillie/cuite à l'eau » → « Poulet, cuisse ».
  * Garde la première partie, plus la deuxième si la première n'est qu'un mot et que la deuxième précise
  * l'aliment (« Fromage, emmental ») plutôt que sa cuisson (« Saumon, cuit à la vapeur » → « Saumon »).
  */
 export function shortFoodName(name) {
-  const parts = String(name ?? '')
+  const parts = frenchLigatures(name)
     .replace(/\s*\([^)]*\)/g, '')
     .split(',')
     .map((p) => p.trim())

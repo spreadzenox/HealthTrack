@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { itemKcal, mealKcal, searchIngredients, setItemGrams } from '../services/mealEditing'
 import './MealEditor.css'
+import { frenchLigatures } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
 
 const STEP_G = 10
@@ -53,7 +54,7 @@ export default function MealEditor({ items, onChange, disabled = false }) {
           return (
             <li key={i} className={`meal-editor-item${item.unknown ? ' is-unknown' : ''}`}>
               <div className="mei-head">
-                <span className="mei-name">{item.ingredient}</span>
+                <span className="mei-name">{frenchLigatures(item.ingredient)}</span>
                 {item.confidence === 'low' && <span className="mei-badge">à vérifier</span>}
               </div>
               {item.unknown && (
@@ -159,7 +160,7 @@ export default function MealEditor({ items, onChange, disabled = false }) {
                   onClick={() => pick(name)}
                   onKeyDown={(e) => { if (e.key === 'Enter') pick(name) }}
                 >
-                  {name}
+                  {frenchLigatures(name)}
                 </li>
               ))}
             </ul>
