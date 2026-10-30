@@ -287,6 +287,8 @@ button.fodmap-group:focus-visible,
 }
 
 .fodmap-question-choices .btn {
+  flex: 1 1 0;
+  padding-inline: 12px;
   min-height: var(--tap-min);
   border-radius: var(--radius-pill);
 }

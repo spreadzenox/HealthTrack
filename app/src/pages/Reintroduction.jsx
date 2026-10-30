@@ -303,7 +303,9 @@ function Result({ challenge, status }) {
       <h3 id="fodmap-result-title" className="fodmap-verdict">{verdictSentence(challenge, status.verdict)}</h3>
       <Timeline challenge={challenge} status={status} />
       <p className="today-card-text">
-        Une estimation de votre ventre, pas un diagnostic. L’attente joue aussi : vous pourrez refaire le test plus tard.
+        Une estimation de votre ventre, pas un diagnostic.
+        {status.verdict?.id !== 'tolerated' &&
+          ' S’attendre à une gêne peut suffire à en ressentir : vous pourrez refaire le test plus tard.'}
       </p>
       {status.state === 'washout' && (
         <p className="fodmap-wait" role="status">
