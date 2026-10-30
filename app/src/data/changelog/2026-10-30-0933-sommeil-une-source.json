@@ -1,6 +1,7 @@
 {
   "date": "2026-10-30",
   "kind": "correctif",
+  "variants": ["play", "sideload"],
   "title": "Sommeil : une nuit n'est plus comptée deux fois",
   "items": [
     "Si votre montre et Health Connect (Samsung Health, Health Sync, une app de sommeil…) voient la même nuit, Halcya n'en garde plus qu'une : celle qui a les phases du sommeil, puis la plus longue. Une nuit de 7 h ne s'affiche plus 14 h.",

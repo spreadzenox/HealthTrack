@@ -6,7 +6,7 @@ import { listEntries, createEntry } from '../storage/localHealthStorage'
 import AiCreditsHint from '../components/AiCreditsHint'
 import { aiPrivacyHint, analyzeMealPhoto, canAnalyzeMeals, MISSING_KEY_MESSAGE, needsAiConsent, rememberAiConsent } from '../services/mealAi'
 import useDisclosure from '../hooks/useDisclosure'
-import { shortFoodName } from '../utils/format'
+import MealItemList from '../components/MealItemList'
 import { groupMealsByDay, dayHeading } from '../services/dailyJournal'
 import MealEditor from '../components/MealEditor'
 import DeleteEntryButton from '../components/DeleteEntryButton'
@@ -41,12 +41,7 @@ function MealRow({ e, onRedo, onEdit, onDeleted }) {
   const run = (action) => () => { setOpen(false); action() }
   return (
     <div className={`entry-card-row${!open ? ' entry-card-row-closed' : ' entry-card-row-stacked'}`}>
-      <ul className="meal-items inline-list">
-        {items.slice(0, 6).map((item, i) => (
-          <li key={i} title={item.ingredient}>{shortFoodName(item.ingredient)}{'\u00a0'}: {item.quantity}</li>
-        ))}
-        {items.length > 6 && <li className="meal-more">+{items.length - 6}</li>}
-      </ul>
+      <MealItemList items={items} max={6} />
       {open && items.length > 0 && (
         <div className="entry-edit">
           <button type="button" className="entry-delete-btn" onClick={run(onRedo)} aria-label="Refaire ce repas">

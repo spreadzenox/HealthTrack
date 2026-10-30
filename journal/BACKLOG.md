@@ -1397,6 +1397,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-67** (30/10 18:33 ; `readInWindows`, `windowMs: Infinity` pour les types peu denses, séances comprises) Historique long (> 30 jours) : lectures à `limit: 500` (FC au repos, VFC, SpO₂, sommeil, calories)
   coupées après ~500 jours ou plus tôt pour une source dense (SpO₂ la nuit) → même `readSamplesInWindows` (par
   semaine pour ces types) ; à mesurer sur l'émulateur avant de changer.
+- [x] **POL-PLAY-68** (30/10 19:33 ; `MealItemList`, partagé Journal / Repas) Audit `--play --size=360x780` (démo, 15 pages,
+  aucun débordement signalé) puis `--play --empty` (Repas, Nutrition, Tendances, Réglages, Nouveautés) : les aliments
+  d'un repas « à la suite » (D1) laissaient un « · » seul en bout de ligne dès qu'un nom Ciqual était long (« Poulet,
+  cuisse : 150 g · » / « Pomme de terre : 200 g · ») → un aliment par ligne, quantité à droite en mono (comme une
+  étiquette nutritionnelle) ; séance du Journal « Course à pied · 32 min · 330 kcal » au lieu de tirets cadratins ;
+  note « sommeil une source » marquée Android (`variants`, IOS-3). Restes vus, non traités : « Oeuf brouillé » (nom
+  Ciqual sans ligature « Œ ») ; tuile « Ajouter une montre » de Tendances en lilas (choix établi : lilas = sources
+  dans les tuiles pastel, à revoir seulement si le propriétaire le signale).
 - [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement
   de `com.healthtrack.app` dans la Play Console comme « app distribuée hors de Google Play » une fois signée avec une
   clé privée (la clé de debug publique ne peut pas prouver la propriété) ; échéance : avant l'extension mondiale de
