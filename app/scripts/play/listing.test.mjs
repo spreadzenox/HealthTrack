@@ -5,6 +5,7 @@ import { publishListing, readListing, validateListing, pngSize, sha256, isMissin
 import { API, UPLOAD_API, PlayApiError, isAccessDenied } from './publish.mjs'
 import { FORBIDDEN_WORDING } from '../../src/data/wordingRules.js'
 import { APP_NAME } from '../../src/config/brand.js'
+import { PREMIUM_AI_DAILY } from '../../src/config/premiumBenefits.js'
 
 const PKG = 'fr.jpesquet.sante'
 const EDITS = `${API}/${PKG}/edits`
@@ -192,6 +193,21 @@ describe('fiche française du dépôt (app/store/listing/fr-FR)', () => {
     expect(fr.fullDescription).toMatch(/FODMAP/)
     // Google Play refuse les listes de mots-clés : aucune ligne faite seulement de mots séparés par des virgules.
     expect(fr.fullDescription.split('\n').some((l) => /^([\wÀ-ÿ' -]+,\s*){4,}[\wÀ-ÿ' -]+$/.test(l.trim()))).toBe(false)
+  })
+
+  it('met les montres et les délais avant « local », et décrit ce qui est livré (I197)', () => {
+    const d = fr.fullDescription
+    const at = (re) => d.search(re)
+    expect(at(/^★ Vos montres/m)).toBeGreaterThan(-1)
+    expect(at(/^★ Des pistes qui tiennent compte des délais/m)).toBeGreaterThan(-1)
+    expect(at(/^★ Vos montres/m)).toBeLessThan(at(/^★ Local par défaut/m))
+    expect(at(/^★ Des pistes qui tiennent compte des délais/m)).toBeLessThan(at(/^★ Local par défaut/m))
+    // Chaque avantage premium livré a sa phrase dans la fiche ; aucun prix (lu dans Play Billing).
+    expect(d).toMatch(/fructanes/)
+    expect(d).toMatch(/Réintroduction FODMAP guidée/)
+    expect(d).toMatch(/Rapport PDF/)
+    expect(d).toMatch(new RegExp(`jusqu'à ${PREMIUM_AI_DAILY} par jour`))
+    expect(d).toMatch(/Ciqual de l'Anses/)
   })
 
   it('n’emploie pas d’arguments interdits par Google Play (classements, superlatifs, appels aux avis)', () => {
