@@ -16,6 +16,7 @@ import {
   gutWeekLine,
   pistesProgress,
   gutNotesProgress,
+  WHEN_TO_SEE_DOCTOR,
 } from '../services/today'
 import DetailsToggle from './DetailsToggle'
 import { FEATURES } from '../config/distribution'
@@ -197,6 +198,7 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
         </div>
       )}
       {details && entries && <p className="today-details-line mono">{gutWeekLine(summary)}</p>}
+      {details && <p className="gut-consult-note">{WHEN_TO_SEE_DOCTOR}</p>}
     </section>
   )
 }

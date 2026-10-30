@@ -340,6 +340,7 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
   heading('Sources des données')
   para(report.sources.length ? report.sources.join(' · ') : 'Aucune donnée sur la période.', { size: 9.5, color: report.sources.length ? C.ink : C.muted })
   y -= 4
+  if (report.whenToConsult) para(report.whenToConsult, { size: 8.5, color: C.muted })
   para(`Rapport créé le ${frDate(report.period.to)} sur le téléphone, par l’app ${report.app}${report.appVersion ? ` (version ${report.appVersion})` : ''}.`, { size: 8.5, color: C.muted })
 
   footer(doc.getPageCount())

@@ -16,7 +16,7 @@ import LineIcon from '../components/LineIcon'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { FEATURES } from '../config/distribution'
 import { createEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
-import { GUT_TYPE } from '../services/today'
+import { GUT_TYPE, WHEN_TO_SEE_DOCTOR } from '../services/today'
 import {
   pickableGroups, FODMAP_CHALLENGE_TYPE, FODMAP_CHALLENGE_SOURCE, CALM_DAYS_REQUIRED,
   findFood, findGroup, defaultPlan, startChallenge, challengeStatus, recordDose, answerTolerable,
@@ -68,8 +68,7 @@ function GroupTag({ group, result }) {
 function Disclaimer() {
   return (
     <p className="fodmap-note">
-      À faire de préférence avec une diététicienne. En cas de sang dans les selles, de perte de poids ou de diarrhée la
-      nuit, parlez-en d’abord à votre médecin.
+      À faire de préférence avec une diététicienne. {WHEN_TO_SEE_DOCTOR}
     </p>
   )
 }

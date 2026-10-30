@@ -15,6 +15,14 @@ import { appLocale } from '../i18n/locale.js'
 export const GUT_TYPE = 'gut'
 export const GUT_SOURCE = 'app_gut'
 
+/**
+ * « Quand consulter » (POL-PLAY-60, IDEES.md I198) : les signes qui ne sont pas du SII, d'après les synthèses
+ * françaises. Phrase fixe, une seule source de texte (carte ventre, réintroduction, rapport PDF) : jamais déclenchée
+ * par les données (ce serait une détection, donc une fonction médicale), jamais en rouge.
+ */
+export const WHEN_TO_SEE_DOCTOR =
+  'Sang dans les selles, perte de poids sans raison, fièvre, réveils la nuit à cause du ventre, ou symptômes nouveaux après 50 ans : parlez-en rapidement à votre médecin.'
+
 /** Les trois niveaux, dans l'ordre affiché. */
 export const GUT_LEVELS = [
   { id: 'calm', label: 'Calme', plural: 'calmes' },

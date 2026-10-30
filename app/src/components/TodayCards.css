@@ -78,6 +78,14 @@
   line-height: 1.4;
 }
 
+/* « Quand consulter » (POL-PLAY-60) : phrase fixe et discrète, jamais en rouge. */
+.gut-consult-note {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
 /* Tuiles de mesures */
 .today-tiles-wrap {
   margin: 0 0 12px;

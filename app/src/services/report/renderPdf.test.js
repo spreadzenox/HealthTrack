@@ -38,6 +38,8 @@ describe('renderReportPdf', () => {
     expect(all).toMatch(/Aucun test de réintroduction fait\./)
     expect(all).toMatch(/Aucune nuit mesurée sur la période\./)
     expect(all).toMatch(/pas un diagnostic/)
+    // « Quand consulter » (POL-PLAY-60) : la même phrase fixe que la carte ventre, toujours là, jamais calculée.
+    expect(all.replace(/\n/g, ' ')).toMatch(/Sang dans les selles.*votre médecin\./)
     expect(all).not.toMatch(/HealthTrack/)
     expect(all).not.toMatch(/Forme des selles/)
     // Pas de tableau de semaines à zéro ni de « 0 comparaisons faites » (POL-PLAY-44).

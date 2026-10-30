@@ -3,6 +3,7 @@ import { REPORT_DISCLAIMER, buildReport, reportFileName } from './buildReport'
 import { FODMAP_CHALLENGE_SOURCE, FODMAP_CHALLENGE_TYPE, recordDose, startChallenge } from '../fodmapChallenge'
 import { fodmapGroupOf, mealFactors } from '../gutWindows'
 import { simulateRealistic } from '../gutWindows.sim'
+import { WHEN_TO_SEE_DOCTOR } from '../today'
 
 /** Heure locale du jour `d` (26/10/2026 = jour 0, « aujourd'hui »). */
 const at = (d, h = 12) => new Date(2026, 9, 26 + d, h, 0)
@@ -29,6 +30,7 @@ describe('buildReport — période et ventre', () => {
     expect(r.wellbeing).toBeNull()
     expect(r.sources).toEqual([])
     expect(r.disclaimer).toBe(REPORT_DISCLAIMER)
+    expect(r.whenToConsult).toBe(WHEN_TO_SEE_DOCTOR)
   })
 
   it('période au choix 2, 4 ou 12 semaines ; une autre valeur revient à 4', () => {
