@@ -205,6 +205,14 @@
   border-radius: var(--radius-pill);
 }
 
+/* Aucun choix fait : bouton neutre, pour ne pas passer pour un bouton actif qui ne réagit pas (POL-PLAY-58). */
+.onb-continue:disabled {
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+  opacity: 1;
+}
+
 .onb-sr {
   position: absolute;
   width: 1px;

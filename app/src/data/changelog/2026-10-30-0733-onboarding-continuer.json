@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-30",
+  "kind": "amélioration",
+  "title": "Premiers pas : un bouton « Continuer » plus clair",
+  "items": [
+    "Dans les premiers écrans, tant qu'aucune réponse n'est choisie, le bouton « Continuer » est gris : il ne ressemble plus à un bouton actif qui ne réagit pas. Il redevient vert dès que vous choisissez."
+  ]
+}
