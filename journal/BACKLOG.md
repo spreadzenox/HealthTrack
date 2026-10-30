@@ -1859,6 +1859,14 @@ montre réduite à l'essentiel (fait le 14/10 12:30), puis D1 (nettoyage génér
     Bluetooth système (condition d'I75) ; entrées du fichier stress (RRI) et dictionnaire VFC 500044 pour §7.11 bis ; comptes rendus de
     labo français.
 
+- [ ] **MONTRE-SCORE (I200, basse priorité, après le polissage)** — afficher dans les détails de l'écran Montre et
+  de Journal → Jours le score de sommeil (déjà dans l'écran Montre) et la FC de la nuit déjà gardés ; latence
+  seulement une fois son unité confirmée (`watchSummary`, brut) ; source
+  « montre » ; jamais une entrée du bien-être (D5). Test : une nuit synthétique avec résumé → ligne présente ; sans
+  résumé → rien.
+- [ ] **MONTRE-ALT (I199, à la demande)** — dénivelé positif du jour depuis la classe P2P 200003 (même canal que la
+  VFC de journée, réels 4/8 octets déjà décodés) ; seulement si le propriétaire envoie sa journée de comparaison.
+
 ## Idées en vrac (à trier)
 
 - ~~Tableau de bord : introduction affichée même avec des données ; « Prédiction ML » ; cadre « Par heure » vide~~ (run 10/10 18:30).

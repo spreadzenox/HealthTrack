@@ -9,6 +9,36 @@
 
 ---
 
+## Run du 30/10/2026 20:33 (Paris) — Inventaire montre à jour, premier lancement en clair
+
+### I199 (6) — Dénivelé du jour de la montre : lisible sans nouveau décodeur [V discussion publique de la PR #6579 de Gadgetbridge, 27/10/2026]
+- **Fait** : l'altitude « toute la journée » des montres Huawei (dictionnaire, classe 200003) est un réel gros-boutiste
+  de 4 ou 8 octets, comme la VFC de journée et la température ; elle diffère de quelques mètres de l'altitude d'une
+  séance (filtrage barométrique différent). La PR reste ouverte côté Gadgetbridge (pas d'interface).
+- **Pour nous** : lire la classe 200003 sur le même ping que la VFC de journée (aucun décodeur nouveau, `readClass`),
+  en tirer « dénivelé positif du jour » (somme des montées, seuil anti-bruit de quelques mètres à fixer sur des
+  trames synthétiques), affiché dans l'écran Montre. **Impact faible** tant que les étages ne nourrissent aucune
+  analyse ; à faire seulement si le propriétaire envoie sa journée de comparaison (M4 bis) ou le demande.
+- Spécification avec nos mots : `protocoles/huawei.md` §10.20. Aucun code lu ni repris (discussion seulement).
+
+### I200 (8) — Montrer ce que la montre sait déjà de la nuit [V code : `sync.js` l. 545–552, `coverage.js` l. 50]
+- **Constat** : le score de sommeil n'apparaît que dans l'écran Montre (`coverage.js`) ; la FC de la nuit
+  (`avgHeartRate`…) et la latence / l'efficacité (`watchSummary`, brutes, unités pas sûres) sont gardées (export)
+  mais affichées nulle part. Un utilisateur Huawei voit dans Huawei Santé un « score 82 » qu'il ne retrouve pas
+  dans son Journal.
+- **Piste** : écran Montre et Journal → Jours : « Score de la montre 82 · endormi en 12 min » (source « montre »,
+  en mono), dans les détails seulement (principe « simple d'abord »). Jamais une entrée du bien-être (D5) ; comme
+  facteur X des pistes, seulement si le propriétaire le souhaite (le score mélange durée et phases déjà comptées).
+- **Effort** : petit (lecture d'un champ déjà stocké, pas de migration). → BACKLOG MONTRE-SCORE (basse priorité,
+  après le polissage).
+
+### Audit du premier lancement en schéma clair du téléphone (consigne du run de 19:33)
+- `npm run visual -- --play --empty --theme=system --light --size=360x780` sur Accueil, Analyses, Sources, Journal :
+  aucune erreur, aucun débordement ; le bilan du soir du ventre s'affiche (après 18 h) ; états vides clairs
+  (« Vos pistes arrivent dans 21 jours », « Rien de noté pour l'instant »). Rien à corriger.
+
+---
+
 ## Run du 30/10/2026 08:33 (Paris) — Règles Play d'octobre, concurrents 2026, une nuit comptée deux fois
 
 ### I195 (25) — Une nuit de sommeil comptée deux fois quand deux sources la voient [V code + essai Vitest hors dépôt]
