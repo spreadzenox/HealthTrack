@@ -1361,6 +1361,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   « VFC nuit » (même valeur que la tuile « VFC nuit » de l'Accueil ; « VFC jour » reste à part) ; étiquette « premium »
   de la carte « Débloquer » de la réintroduction collée au titre → `fodmap-tag--lead` (10 px). Reste de l'audit sombre
   (Accueil, Journal, Tendances, Analyses, Sources, Premium, Historique du bien-être) : rien à redire.
+- [x] **POL-PLAY-65 — Paramètres pendant la période de lancement : le quota IA parlait d'abonnement.** ✅ 30/10 15:33 :
+  audit `--play --empty` (sombre, puis `--subscription=launch`) de Paramètres, Premium, Données et Sources ; seul défaut :
+  sous le compteur d'analyses IA, « Sans abonnement : 10 offertes, puis 15 par mois. Avec le premium : jusqu'à 10 par
+  jour » s'affichait aussi aux testeurs qui ont déjà le premium offert (P23 a : ne pas pousser à l'achat pendant la
+  période) → « Pendant le test : jusqu'à 10 analyses par jour, sans rien payer. » ; premium payé : « Avec votre
+  premium : jusqu'à 10 analyses par jour. » (`Settings.jsx`, 2 tests dans `Settings.play.test.jsx`).
 - [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement
   de `com.healthtrack.app` dans la Play Console comme « app distribuée hors de Google Play » une fois signée avec une
   clé privée (la clé de debug publique ne peut pas prouver la propriété) ; échéance : avant l'extension mondiale de
