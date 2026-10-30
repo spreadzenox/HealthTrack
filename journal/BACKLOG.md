@@ -1335,6 +1335,29 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-56** ✅ 30/10 05:33 (audit démo sombre Analyses, Jours, Repas, Tendances, Nutrition, POL-PLAY-12 ; `nutritionLegend.test.js`) Nutrition : barres et légende « bas » (`--color-danger` #ff7b72) indiscernables de « limite dépassée » (`--color-alert` #ff8a65) en sombre, et un repère pas atteint en rouge = jugement (règle 6) → `--text-muted`. Reste relu sans défaut : Analyses (pistes ventre, bien-être, autres liens, PDF), Jours, Tendances. Petit point laissé : « Sport le soir · bien-être 2,7 / 5 contre 2,0 sans +0,7 point » (le « +0,7 point » passe à la ligne, lisible).
 - [x] **POL-PLAY-57** ✅ 30/10 06:33 (audit démo sombre à 360 px de l'Accueil, de Sources et de Paramètres, POL-PLAY-12 ; `gutNotesProgress`, `GUT_PISTES_MIN_NOTE_DAYS` = `GUT_LINKS_MIN_DAYS` vérifié par test) Accueil, carte lilas (objectif ventre, 21 jours suivis, aucune piste) : titre « Assez de jours pour chercher des pistes » contredit par « … (28 jours de notes du ventre au moins). En attendant, voyez l'onglet Analyses » → « Vos pistes du ventre arrivent dans N jours », barre et « n/28 jours avec une note du ventre » ; une fois 28 jours : « Aucune piste pour l'instant : elles se précisent à chaque note du ventre. » Sources et Paramètres : rien à redire. Reste : onboarding play à 360 px en sombre.
 - [x] **POL-PLAY-58** ✅ 30/10 07:33 (audit onboarding play à 360 px, sombre puis clair, POL-PLAY-12 ; `onboardingContinue.test.js`) « Continuer » désactivé (aucun objectif, aucune montre ou aucun choix Health Connect) gardait le fond émeraude à 60 % d'opacité : en sombre comme en clair il passait pour un bouton actif qui ne réagissait pas → fond `--surface`, texte `--text-muted`, bordure `--border`. Écrans relus sans autre défaut : objectif, suivis, montre, visage, premier geste ventre, « aha », paywall de lancement. Petit point laissé : le compteur passe de « /05 » à « /07 » quand on choisit une montre Health Connect (étapes ajoutées), la barre reste juste.
+
+**Ajouté le 30/10 08:33 (run « idées », `IDEES.md` I195–I198)** — par impact :
+- [ ] **POL-PLAY-59 (I195) — 🔴 Une nuit comptée deux fois.** Vérifié par un essai (hors dépôt) : `nightlySleep`
+  (`services/radar.js`) additionne les phases de **toutes** les sources rattachées au même jour de réveil ; une nuit de
+  7 h lue par la montre Huawei **et** par Health Connect (Samsung Health, Health Sync, Sleep as Android…) donne
+  **840 min (14 h)**, sous le seuil d'invraisemblance (960) donc gardée. Même somme dans `dailyJournal.js:187`
+  (`_sleep +=`), donc Accueil (tuile « Sommeil »), Journal, analyses (`sleepMinutes`), Radar, rapport PDF, `gutDays`.
+  Correctif, comme les pas du 27/10 : **une seule source par nuit** (celle qui a des phases, puis la plus longue
+  durée endormie ; la montre Huawei d'abord à égalité), choisie dans une fonction partagée par `nightlySleep` et
+  `dailyJournal` ; tests : deux sources qui se chevauchent → 7 h, pas 14 h ; sieste toujours exclue ; une seule
+  source → inchangé ; deux sources sur deux nuits différentes → deux nuits. Aucune donnée effacée (choix à la
+  lecture). Vérifier aussi la VFC et la FC au repos de la nuit (moyennes, pas des sommes : a priori juste) et
+  la tuile « Sommeil » (sources listées : garder les deux noms, mais un seul chiffre).
+- [ ] **POL-PLAY-60 (I198) — « Quand consulter » sans alarmer.** Une ligne discrète, statique, sous le chevron de la
+  carte « Votre ventre » (objectif « Mon ventre ») et dans le rapport PDF : « Sang dans les selles, perte de poids
+  sans raison, fièvre, réveils la nuit à cause du ventre, ou symptômes nouveaux après 50 ans : parlez-en
+  rapidement à votre médecin. » Jamais déclenchée par les données (pas de détection : ce serait une fonction
+  médicale), jamais en rouge. Même phrase que `Reintroduction.jsx:71` (une seule source de texte). Test : présente
+  avec « Mon ventre », absente sinon.
+- [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement
+  de `com.healthtrack.app` dans la Play Console comme « app distribuée hors de Google Play » une fois signée avec une
+  clé privée (la clé de debug publique ne peut pas prouver la propriété) ; échéance : avant l'extension mondiale de
+  la vérification des développeurs (2027, date pas encore publiée).
 - [ ] **TF-1** (I194 ; le jour où le propriétaire dit « j'invite le <date> ») `relay/src/launch-period.json` :
   `until` = invitation + 14 + 10 jours à 23:00 UTC ; date dans le texte d'invitation (`INVITATION-TESTEURS.md` §3,
   `<date de fin de la période de lancement>`) ; vérifier le résumé du déploiement du relais et l'affichage

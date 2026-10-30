@@ -535,6 +535,17 @@ parcours ; les 10 réponses rédigées en anglais, à compléter avec les vrais 
 pendant le test » que chaque run remplira. Honnêteté : en 14 jours, aucun testeur ne verra de piste (21 à 28 jours
 de données) ; le formulaire le dit tel quel.
 
+**Veille du 30/10 (run « idées » de 08:33)** : un défaut de chiffres trouvé, du même genre que vos pas du 27/10.
+Si **deux sources** voient la même nuit (la montre en direct **et** Health Connect, par exemple Samsung Health, Health
+Sync ou une app de sommeil), Halcya **additionne** les deux : une nuit de 7 h devient 14 h sur l'Accueil, dans le
+Journal, les analyses et le rapport PDF. Vérifié par un essai ; le prochain run de code le corrige en premier (une seule
+source par nuit, rien d'effacé, POL-PLAY-59). **Si vous avez vu une nuit anormalement longue, c'est ça.** Côté règles
+Google Play, l'annonce du 29/10 et les échéances jusqu'à août 2027 ne touchent pas Halcya. Côté concurrents, de
+nouvelles apps SII font l'analyse et le PDF en premium (FoodLog) ou misent sur le « local » (Plop, sans montre) :
+nos atouts restent les montres, les délais et les FODMAP par sous-groupe, à mettre en avant avant le « local ». Une
+phrase fixe « quand consulter » (sang dans les selles, perte de poids…) sera ajoutée à la carte ventre, sans alerte
+automatique (POL-PLAY-60).
+
 **Chantier montre** : état par type de donnée inchangé depuis la semaine dernière (voir l'archive S43, tableau
 « Montre Huawei ») ; restent M6 (resynchronisation en arrière-plan) et la confirmation sur votre montre des données
 🟡 (sommeil détaillé, VFC de journée, température de la peau, FC et allure des séances).
@@ -558,6 +569,8 @@ de données) ; le formulaire le dit tel quel.
    « d'accord » ou votre liste).
 4. **P25** (facultatif) : ce que promet le paywall (① appliqué par défaut). P13 fait le 26/10 (reste le W-8BEN
    quand Google le demande).
+5. **P34** (2 min, pas urgent) : Play Console → page d'accueil : s'il y a un encart « Enregistrez vos applications »
+   (vérification des développeurs Android), enregistrez Halcya ; sinon rien à faire. Dites-nous ce que vous avez vu.
 
 | Run | Type | Résultat |
 |---|---|---|
@@ -574,6 +587,7 @@ de données) ; le formulaire le dit tel quel.
 | 30/10 04:33 — [Pistes du ventre lisibles](runs/2026-10-30-0433-noms-pistes.md) | 🎨 | PR #517 (rapport vide) mergée ; audit démo clair Analyses + Accueil → POL-PLAY-55 : titres des pistes d'aliments mangés ensemble raccourcis (« Banane, café, yaourt nature ou le lactose → ventre ») ; 2 tests |
 | 30/10 06:33 — [Compte à rebours des pistes du ventre](runs/2026-10-30-0633-pistes-ventre.md) | 🎨 | POL-PLAY-12 (audit démo sombre à 360 px de l'Accueil, de Sources et de Paramètres) → POL-PLAY-57 : carte lilas « Assez de jours » puis « 28 jours de notes au moins » → compte à rebours des notes du ventre (N/28) ; 3 tests |
 | 30/10 07:33 — [Onboarding : « Continuer » désactivé lisible](runs/2026-10-30-0733-onboarding-continuer.md) | 🎨 | POL-PLAY-12 (audit onboarding play à 360 px, sombre et clair : 7 écrans) → POL-PLAY-58 : « Continuer » sans choix passait pour actif → gris neutre ; lint 7 → 6 ; 1 test |
+| 30/10 08:33 — [Idées : règles Play, concurrents, sommeil en double](runs/2026-10-30-0833-idees-regles-concurrents-sommeil.md) | 💡 | Annonce Play du 29/10 et échéances 2027 relues (rien ne concerne Halcya) ; P34 (enregistrement « vérification des développeurs ») ; FoodLog, Plop, Cara Care ; défaut trouvé : une nuit vue par deux sources comptée deux fois (7 h → 14 h) → POL-PLAY-59 ; « Quand consulter » (POL-PLAY-60) ; journal seul |
 | 30/10 05:33 — [Nutrition : « bas » en neutre](runs/2026-10-30-0533-nutrition-bas.md) | 🎨 | POL-PLAY-12 (audit démo sombre d'Analyses, Journal, Repas, Tendances, Nutrition) → POL-PLAY-56 : barres « bas » en gris neutre (confondues avec « limite dépassée », et pas une alerte, règle 6) ; 2 tests |
 | 30/10 02:33 — [Phrases d'aide discrètes](runs/2026-10-30-0233-hint-style.md) | 🎨 | POL-PLAY-12 (audit démo sombre de Données et Paramètres) → POL-PLAY-53 : `.hint` sans style commun (texte encre 1 rem) → gris secondaire 0,9 rem dans `App.css` ; 1 test ; Données : rien à redire |
 | 30/10 01:33 — [Réintroduction : test et résultat relus](runs/2026-10-30-0133-reintro-test.md) | 🎨 | POL-PLAY-52 (audit Réintroduction en cours de test, `--fodmap=day2`/`question`/`result`, clair et sombre) : boutons de la question à largeur égale ; « l'attente joue aussi » remplacé, et seulement si une gêne a arrêté le test ; 1 test ajouté, 1 ajusté |
