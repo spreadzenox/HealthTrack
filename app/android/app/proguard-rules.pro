@@ -15,3 +15,11 @@
 -keep class com.google.ai.edge.litert.** { *; }
 -keep class org.tensorflow.lite.** { *; }
 -dontwarn ai.onnxruntime.**
+
+# Plantage du 30/10 (« activer la lecture du visage ») : Capacitor lit les permissions d'un plugin dans son annotation
+# @CapacitorPlugin(permissions = @Permission(...)) au moment de getPermissionState (Bridge.getPermissionStates).
+# Sans ces règles, R8 retirait de quoi relire ces annotations : NullPointerException dans FaceSensePlugin.start, sur le
+# fil des plugins, et l'app se fermait. Valable pour tout plugin qui déclare des permissions par alias.
+-keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations,AnnotationDefault,InnerClasses,EnclosingMethod
+-keep @interface com.getcapacitor.annotation.** { *; }
+-keep @interface com.getcapacitor.NativePlugin { *; }

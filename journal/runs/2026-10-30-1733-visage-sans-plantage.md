@@ -1,4 +1,4 @@
-# Run du 30/10/2026 17:33 (Paris, CET) — Lecture du visage : plantage reproduit, interrupteur coupé (signalement du 30/10 16:35)
+# Run du 30/10/2026 17:33 (Paris, CET) — Lecture du visage sans plantage (signalement du 30/10 16:35)
 
 **Type** : 🐛 Signalement du propriétaire, priorité absolue
 
@@ -57,11 +57,29 @@
   caméra frontale émulée sur l'AVD API 35 (`hw.camera.front`, `-camera-front emulated`) pour que la capture réelle
   passe aussi par R8.
 
+## Deuxième passage : la trace, donc la vraie cause
+```
+FATAL EXCEPTION: CapacitorPlugins — Process: fr.jpesquet.sante
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+Caused by: java.lang.NullPointerException
+  at com.getcapacitor.C.getPermissionStates(Unknown Source:18)
+  at com.getcapacitor.C.getPermissionState(Unknown Source:0)
+  at com.healthtrack.app.FaceSensePlugin.start(Unknown Source:40)
+```
+- `Bridge.getPermissionStates` relit `@CapacitorPlugin(permissions = @Permission(alias = "camera", …))` ; sous R8 cette
+  lecture rendait null. `start()` commence par `getPermissionState("camera")` : « Activer » (lecture à l'ouverture,
+  interrupteur ou non) plantait aussi. La première hypothèse (startForegroundService + stopSelf) était un vrai défaut
+  mais pas celui-ci.
+- Correctif : règles R8 (`-keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations,AnnotationDefault,
+  InnerClasses,EnclosingMethod`, `-keep @interface com.getcapacitor.annotation.** { *; }`, `NativePlugin`) ; test de
+  garde sur `proguard-rules.pro` (rouge avant). Smoke : `checkPermissions` de chaque plugin puis `FaceSense.start`,
+  bloquants ; `UNLOCK_KNOWN = false` ; `FACE_UNLOCK_INTERNAL` rallumé (il avait été coupé au premier passage).
+
 ## Données
 - Aucune donnée touchée ; préférences `face_sense` inchangées.
 
 ## Suite
-- Run suivant : lire la trace (`[release] tampon crash après la lecture au déverrouillage` dans le log du job API 35
-  de main, ou `play_release_unlock.txt`), corriger avec un test, puis `UNLOCK_KNOWN = false` et
-  `FACE_UNLOCK_INTERNAL: "true"` quand les deux scénarios sont verts. Le propriétaire retest « Activer » (lecture à
-  l'ouverture) sur la version de test interne suivante.
+- Retest du propriétaire sur la version de test interne suivante (Activer, déverrouillage, autres autorisations). Si
+  un plantage revient : `FACE_UNLOCK_INTERNAL: "false"` et trace dans Android vitals (mapping.txt envoyé).
+- Vérifier dans Android vitals si d'autres plantages `getPermissionStates` sont remontés depuis l'activation de R8
+  (POL-PLAY-10) : notifications du bilan du soir, Health Connect.

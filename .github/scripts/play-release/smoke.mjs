@@ -148,10 +148,9 @@ function callPlugin(plugin, method, options = {}) {
 const notImplemented = (r) => !r.ok && /not implemented|UNIMPLEMENTED/i.test(r.error)
 const brief = (v) => JSON.stringify(v).slice(0, 200)
 
-// Plantage du 30/10 reproduit ici avant d'être compris : la lecture au déverrouillage est coupée dans les versions
-// publiées (FACE_UNLOCK_INTERNAL=false, play-bundle.yml) ; ses scénarios restent affichés sans bloquer le job tant
-// que la cause n'est pas corrigée. Repasser à false quand ils sont verts.
-const UNLOCK_KNOWN = true
+// À passer à true (scénarios affichés ⚠️ sans bloquer) seulement si la lecture au déverrouillage est coupée dans les
+// versions publiées (FACE_UNLOCK_INTERNAL=false, play-bundle.yml) le temps de corriger un défaut connu.
+const UNLOCK_KNOWN = false
 
 /** Appel de plugin borné dans le temps : si l'app est tuée, la WebView ne répond plus jamais. */
 const callWithin = (ms, plugin, method, options) =>
@@ -166,6 +165,21 @@ const callWithin = (ms, plugin, method, options) =>
  */
 async function unlockScenarios() {
   const pid0 = shell(`pidof ${PKG}`).trim()
+  // Cause du 30/10 : sous R8, Capacitor ne relisait plus les annotations @Permission → NullPointerException dans
+  // getPermissionState, app fermée (« Activer » comme « Aussi à chaque déverrouillage »). checkPermissions passe par
+  // le même code pour chaque plugin.
+  const perms = []
+  for (const plugin of PLUGINS) {
+    const r = await callWithin(10000, plugin, 'checkPermissions')
+    if (!r.ok && /app fermée/.test(r.error)) {
+      perms.push(`${plugin} : ${r.error}`)
+      break
+    }
+  }
+  record('checkPermissions de chaque plugin (annotations gardées par R8)', perms.length === 0 && shell(`pidof ${PKG}`).trim() === pid0, perms.join(' ; ') || `${PLUGINS.length} plugins`)
+  if (perms.length) return
+  const enable = await callWithin(10000, 'FaceSense', 'start')
+  record('« Activer » la lecture du visage (FaceSense.start)', enable.ok && enable.value?.started === true, brief(enable.ok ? enable.value : enable.error))
   const st = (await callWithin(10000, 'FaceSense', 'status')).value || {}
   if (st.unlockAvailable !== true) {
     record('Lecture au déverrouillage (interrupteur faceUnlockPlay)', false, `absente de cet APK : ${brief(st)}`)

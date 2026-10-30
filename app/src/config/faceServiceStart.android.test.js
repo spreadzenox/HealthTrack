@@ -27,4 +27,10 @@ describe('lecture du visage : aucun échec ne ferme l’app', () => {
     expect(java['FaceSenseService.java']).toMatch(/pipeline\.burst\([^)]*\);\s*\}\s*catch \(RuntimeException \| LinkageError \| OutOfMemoryError e\)/)
     expect(java['FaceSensePlugin.java']).toMatch(/FaceOneShot\.run\([^)]*\)\);\s*\}\s*catch \(Exception \| LinkageError \| OutOfMemoryError e\)/)
   })
+
+  it('R8 garde les annotations de permissions de Capacitor (NullPointerException dans getPermissionStates)', () => {
+    const rules = readFileSync(join(import.meta.dirname, '../../android/app/proguard-rules.pro'), 'utf8')
+    expect(rules).toMatch(/^-keep @interface com\.getcapacitor\.annotation\.\*\* \{ \*; \}$/m)
+    expect(rules).toMatch(/^-keepattributes [^\n]*RuntimeVisibleAnnotations[^\n]*AnnotationDefault/m)
+  })
 })

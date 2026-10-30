@@ -4,7 +4,7 @@
   "title": "Lecture du visage : l'app ne se ferme plus",
   "variants": ["play"],
   "items": [
-    "Si Android refuse la caméra à la lecture au déverrouillage, un message l'explique désormais, et la lecture à l'ouverture de l'app continue.",
-    "Version de test : l'option « Aussi à chaque déverrouillage » est retirée le temps de corriger un plantage. La lecture à l'ouverture de l'app reste."
+    "Activer la lecture du visage fermait l'app dans la version du Play Store : c'est corrigé, comme pour les autres demandes d'autorisation.",
+    "Si Android refuse la caméra à la lecture au déverrouillage, un message l'explique désormais, et la lecture à l'ouverture de l'app continue."
   ]
 }
