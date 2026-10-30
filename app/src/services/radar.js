@@ -23,6 +23,7 @@
 import { BASELINE_METRICS, dailyValues } from './baselines'
 import { localDateKey } from './wellbeingSeries'
 import { BEHAVIOR_TAGS, measuredTagsByDay } from './behaviorTags'
+import { oneSleepSourcePerNight } from './sleepSources'
 
 export const RADAR_DAYS = 3
 export const RADAR_BASELINE_DAYS = 60
@@ -51,7 +52,8 @@ export const RADAR_METRICS = [
  * Durée de sommeil par nuit, rattachée au jour local du réveil.
  * Les phases (léger, profond, paradoxal, « endormi ») sont additionnées ; les éveils
  * sont ignorés ; « au lit » ne sert que si c'est le seul enregistrement de la nuit
- * (sinon il chevauche les phases et serait compté deux fois).
+ * (sinon il chevauche les phases et serait compté deux fois). Une seule source par nuit (sleepSources.js) :
+ * montre et Health Connect ne s'additionnent jamais.
  * `phoneFallback` : une nuit sans montre prend la durée estimée par le téléphone (entrée `phone_usage`) ;
  * le Radar ne l'utilise pas (trop imprécise pour signaler un écart).
  * @returns {Map<string, number>} jour (YYYY-MM-DD) → minutes
@@ -60,7 +62,7 @@ export function nightlySleep(entries, { phoneFallback = false } = {}) {
   const asleep = new Map()
   const inBed = new Map()
   const phone = new Map()
-  for (const e of entries || []) {
+  for (const e of oneSleepSourcePerNight(entries)) {
     if (phoneFallback && e?.type === 'phone_usage') {
       const est = e.payload?.sleepEstimate
       if (e.payload?.date && Number.isFinite(est?.minutes) && est.minutes > 0) phone.set(e.payload.date, est.minutes)

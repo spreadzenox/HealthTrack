@@ -1337,7 +1337,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-58** ✅ 30/10 07:33 (audit onboarding play à 360 px, sombre puis clair, POL-PLAY-12 ; `onboardingContinue.test.js`) « Continuer » désactivé (aucun objectif, aucune montre ou aucun choix Health Connect) gardait le fond émeraude à 60 % d'opacité : en sombre comme en clair il passait pour un bouton actif qui ne réagissait pas → fond `--surface`, texte `--text-muted`, bordure `--border`. Écrans relus sans autre défaut : objectif, suivis, montre, visage, premier geste ventre, « aha », paywall de lancement. Petit point laissé : le compteur passe de « /05 » à « /07 » quand on choisit une montre Health Connect (étapes ajoutées), la barre reste juste.
 
 **Ajouté le 30/10 08:33 (run « idées », `IDEES.md` I195–I198)** — par impact :
-- [ ] **POL-PLAY-59 (I195) — 🔴 Une nuit comptée deux fois.** Vérifié par un essai (hors dépôt) : `nightlySleep`
+- [x] **POL-PLAY-59 (I195) — 🔴 Une nuit comptée deux fois.** ✅ 30/10 09:33 (`services/sleepSources.js` `oneSleepSourcePerNight`, branché dans `nightlySleep` et `buildDailyJournal` ; `sleepSources.test.js`, 7 tests ; VFC et FC au repos vérifiées : moyennes, non concernées ; tuile : sources listées inchangées, un seul chiffre). Vérifié par un essai (hors dépôt) : `nightlySleep`
   (`services/radar.js`) additionne les phases de **toutes** les sources rattachées au même jour de réveil ; une nuit de
   7 h lue par la montre Huawei **et** par Health Connect (Samsung Health, Health Sync, Sleep as Android…) donne
   **840 min (14 h)**, sous le seuil d'invraisemblance (960) donc gardée. Même somme dans `dailyJournal.js:187`
