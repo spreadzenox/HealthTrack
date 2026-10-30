@@ -106,17 +106,6 @@ jobs:
           npx cap copy android
           cd android && ./gradlew assemblePlayDebug -PextraAbis=x86_64 --no-daemon
 
-      # POL-PLAY-10 (R8a) : APK play RELEASE, optimisé et obscurci par R8 comme l'AAB envoyé sur Play, signé avec la clé
-      # de debug et WebView inspectable POUR CE TEST SEULEMENT (capacitor.config.json modifié dans cet APK, jamais
-      # publié) : .github/scripts/play-release/smoke.mjs y appelle les plugins natifs (job API 35).
-      - name: Construire l'APK play release (R8) pour l'émulateur
-        working-directory: app
-        run: |
-          node -e "const f='android/app/src/main/assets/capacitor.config.json';const fs=require('fs');const c=JSON.parse(fs.readFileSync(f,'utf8'));c.android={...(c.android||{}),webContentsDebuggingEnabled:true};fs.writeFileSync(f,JSON.stringify(c,null,2))"
-          cd android && ./gradlew assemblePlayRelease -PreleaseDebugSign=true -PextraAbis=x86_64 --no-daemon
-          test -s app/build/outputs/mapping/playRelease/mapping.txt || { echo "::error::R8 n'a pas tourné (mapping.txt absent)"; exit 1; }
-          cd .. && npx cap copy android
-
       - name: Ramener les APK sideload aux chemins habituels
         working-directory: app/android/app/build/outputs/apk
         run: |
@@ -127,6 +116,20 @@ jobs:
       - name: Vérifier les manifestes des variantes (play sans REQUEST_INSTALL_PACKAGES)
         working-directory: app
         run: bash scripts/check-play-manifest.sh
+
+      # POL-PLAY-10 (R8a) : APK play RELEASE, optimisé et obscurci par R8 comme l'AAB envoyé sur Play, signé avec la clé
+      # de debug et WebView inspectable POUR CE TEST SEULEMENT (capacitor.config.json modifié dans cet APK, jamais
+      # publié) : .github/scripts/play-release/smoke.mjs y appelle les plugins natifs (job API 35).
+      # Interrupteur faceUnlockPlay allumé, comme les versions de test interne que le propriétaire installe : le
+      # service caméra au déverrouillage passe aussi par R8 (plantage du 30/10). Après la vérification des manifestes,
+      # qui porte sur l'AAB play normal (interrupteur coupé).
+      - name: Construire l'APK play release (R8) pour l'émulateur
+        working-directory: app
+        run: |
+          node -e "const f='android/app/src/main/assets/capacitor.config.json';const fs=require('fs');const c=JSON.parse(fs.readFileSync(f,'utf8'));c.android={...(c.android||{}),webContentsDebuggingEnabled:true};fs.writeFileSync(f,JSON.stringify(c,null,2))"
+          cd android && ./gradlew assemblePlayRelease -PfaceUnlockPlay=true -PreleaseDebugSign=true -PextraAbis=x86_64 --no-daemon
+          test -s app/build/outputs/mapping/playRelease/mapping.txt || { echo "::error::R8 n'a pas tourné (mapping.txt absent)"; exit 1; }
+          cd .. && npx cap copy android
 
       - name: Afficher les infos APK
         run: |

@@ -128,9 +128,13 @@ export function describeFaceUnlock(status) {
  * Démarre la lecture au déverrouillage (app à l'écran) puis demande l'autorisation des notifications (Android 13+) :
  * la notification permanente « Lecture du visage active » doit se voir. Rend { started, permission, notifications? }.
  */
-export async function startFaceUnlock(plugin = faceSensePlugin(), { notify = eveningNotePlugin() } = {}) {
+export async function startFaceUnlock(
+  plugin = faceSensePlugin(),
+  { notify = eveningNotePlugin(), wait = (ms) => new Promise((r) => setTimeout(r, ms)) } = {},
+) {
   if (!plugin?.start) return { started: false, permission: false, error: 'unavailable' }
   let res
+  const since = Date.now() - 1000
   try {
     res = (await plugin.start({ unlock: true })) || {}
   } catch (e) {
@@ -138,6 +142,12 @@ export async function startFaceUnlock(plugin = faceSensePlugin(), { notify = eve
   }
   const out = { started: !!res.started, permission: res.permission !== false }
   if (!out.started) return res.error ? { ...out, error: res.error } : out
+  // Le service démarre après la réponse du plugin : Android peut encore le refuser (caméra retirée, app passée en
+  // arrière-plan). Il s'arrête alors seul, sans fermer l'app (plantage du 30/10), et on le dit au lieu de « activé ».
+  if (plugin.status) {
+    const running = await serviceRunning(plugin, wait, since)
+    if (running !== true) return { started: false, permission: true, error: running || 'not_running' }
+  }
   try {
     const ask = await notify?.requestNotifications?.()
     if (ask && typeof ask.notifications === 'boolean') out.notifications = ask.notifications
@@ -145,6 +155,25 @@ export async function startFaceUnlock(plugin = faceSensePlugin(), { notify = eve
     /* sans autorisation, Android garde la notification dans le gestionnaire de tâches */
   }
   return out
+}
+
+/**
+ * true dès que le service tourne (jusqu'à ~2 s), sinon l'erreur notée par le service depuis `since` (une erreur plus
+ * ancienne, d'un essai précédent, ne compte pas), ou null.
+ */
+async function serviceRunning(plugin, wait, since) {
+  let last = null
+  for (let i = 0; i < 8; i++) {
+    try {
+      last = (await plugin.status()) || {}
+    } catch {
+      return 'status_error'
+    }
+    if (last.running === true) return true
+    if (last.lastError && !(last.lastErrorAt < since)) return last.lastError
+    await wait(250)
+  }
+  return last?.lastError && !(last.lastErrorAt < since) ? last.lastError : null
 }
 
 /** Coupe la seule lecture au déverrouillage ; la lecture à l'ouverture de l'app continue. */

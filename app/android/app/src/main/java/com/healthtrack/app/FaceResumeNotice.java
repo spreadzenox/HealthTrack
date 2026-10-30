@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.healthtrack.app.face.FaceResume;
 
@@ -89,7 +88,8 @@ final class FaceResumeNotice {
         if (!p.getBoolean("enabled", false) || FaceSenseService.isRunning()
                 || !FaceSenseService.hasCameraPermission(context)) return;
         try {
-            ContextCompat.startForegroundService(context,
+            // App à l'écran : startService suffit, et un refus dans le service ne fait pas tuer l'app (FaceSensePlugin).
+            context.startService(
                     new Intent(context, FaceSenseService.class).setAction(FaceSenseService.ACTION_START)
                             .putExtra(FaceSenseService.EXTRA_ORIGIN, FaceSenseService.ORIGIN_APP));
         } catch (RuntimeException e) {

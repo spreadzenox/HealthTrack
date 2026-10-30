@@ -104,6 +104,24 @@ describe('FaceSenseCard', () => {
     await waitFor(() => expect(screen.getByRole('switch', { name: /Aussi à chaque déverrouillage/ })).toHaveAttribute('aria-checked', 'false'))
   })
 
+  it('variante play : Android refuse le service au déverrouillage → message clair, interrupteur coupé (plantage du 30/10)', async () => {
+    const plugin = fake({ ...base, running: false, mode: 'app_open', unlockAvailable: true, unlock: false })
+    plugin.start.mockImplementation(async () => {
+      plugin.status.mockImplementation(async () => ({
+        ...base, mode: 'app_open', unlockAvailable: true, unlock: false, running: false,
+        lastError: 'start_refused:SecurityException', lastErrorAt: Date.now(),
+      }))
+      return { started: true, permission: true }
+    })
+    const notify = { requestNotifications: vi.fn() }
+    render(<FaceSenseCard plugin={plugin} appOpen notifyPlugin={notify} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
+    fireEvent.click(await screen.findByRole('switch', { name: /Aussi à chaque déverrouillage/ }))
+    fireEvent.click(await screen.findByRole('button', { name: 'J’accepte, lire au déverrouillage' }))
+    expect(await screen.findByText(/Android n’a pas permis la lecture au déverrouillage/)).toBeInTheDocument()
+    expect(screen.getByRole('switch', { name: /Aussi à chaque déverrouillage/ })).toHaveAttribute('aria-checked', 'false')
+    expect(notify.requestNotifications).not.toHaveBeenCalled()
+  })
+
   it('variante play : « Pas maintenant » ne démarre rien ; arrêtée par Android → « Reprendre »', async () => {
     const plugin = fake({ ...base, running: false, mode: 'app_open', unlockAvailable: true, unlock: false })
     render(<FaceSenseCard plugin={plugin} appOpen notifyPlugin={null} importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)

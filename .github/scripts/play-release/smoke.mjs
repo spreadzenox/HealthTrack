@@ -147,6 +147,49 @@ function callPlugin(plugin, method, options = {}) {
 const notImplemented = (r) => !r.ok && /not implemented|UNIMPLEMENTED/i.test(r.error)
 const brief = (v) => JSON.stringify(v).slice(0, 200)
 
+/** Appel de plugin borné dans le temps : si l'app est tuée, la WebView ne répond plus jamais. */
+const callWithin = (ms, plugin, method, options) =>
+  Promise.race([callPlugin(plugin, method, options), sleep(ms).then(() => ({ ok: false, error: 'pas de réponse (app fermée ?)' }))])
+
+/**
+ * Plantage du 30/10 (Galaxy A56, « activer la lecture du visage ») : APK construit avec l'interrupteur faceUnlockPlay
+ * comme les versions de test interne. (1) Lecture au déverrouillage démarrée puis coupée ; (2) caméra refusée par
+ * Android (appops « ignore » : la permission reste accordée mais le service caméra ne peut plus passer au premier
+ * plan) : le service doit s'arrêter seul et l'app rester ouverte (avant le correctif : startForegroundService puis
+ * stopSelf → Android tuait l'app). Le délai de 12 s couvre celui qu'Android laisse pour appeler startForeground.
+ */
+async function unlockScenarios() {
+  const pid0 = shell(`pidof ${PKG}`).trim()
+  const st = (await callWithin(10000, 'FaceSense', 'status')).value || {}
+  if (st.unlockAvailable !== true) {
+    record('Lecture au déverrouillage (interrupteur faceUnlockPlay)', false, `absente de cet APK : ${brief(st)}`)
+    return
+  }
+  const on = await callWithin(10000, 'FaceSense', 'start', { unlock: true })
+  await sleep(3000)
+  const running = (await callWithin(10000, 'FaceSense', 'status')).value || {}
+  record(
+    'Lecture au déverrouillage démarrée (R8)',
+    on.ok && running.running === true && shell(`pidof ${PKG}`).trim() === pid0,
+    `start ${brief(on.ok ? on.value : on.error)}, running ${running.running}, lastError ${running.lastError ?? '—'}`,
+  )
+  await callWithin(10000, 'FaceSense', 'stopUnlock')
+  await sleep(1500)
+
+  shell(`cmd appops set ${PKG} CAMERA ignore`)
+  const refused = await callWithin(10000, 'FaceSense', 'start', { unlock: true })
+  await sleep(12000)
+  const pid1 = shell(`pidof ${PKG}`).trim()
+  const after = (await callWithin(10000, 'FaceSense', 'status')).value || null
+  record(
+    'Caméra refusée par Android : l’app reste ouverte',
+    pid1 === pid0 && !!after,
+    `pid ${pid0} → ${pid1 || 'aucun'}, start ${brief(refused.ok ? refused.value : refused.error)}, running ${after?.running}, lastError ${after?.lastError ?? '—'}`,
+  )
+  shell(`cmd appops set ${PKG} CAMERA allow`)
+  await callWithin(10000, 'FaceSense', 'stopUnlock')
+}
+
 // ── Déroulé ────────────────────────────────────────────────────────────────────────────────────────────────────
 async function main() {
   if (!existsSync(APK)) {
@@ -211,6 +254,8 @@ async function main() {
     read.ok && outcome !== '' && !modelsBroken,
     `issue « ${outcome || read.error} »${after.modelLoadMs != null ? `, modèles chargés en ${after.modelLoadMs} ms` : ''}${affectErr ? `, erreur ONNX ${affectErr}` : ''}${onnxReady ? '' : ' (ONNX absents)'}`,
   )
+
+  await unlockScenarios()
 
   for (const [plugin, method, options] of [
     ['PlayBilling', 'getProducts', { productIds: ['premium'] }],

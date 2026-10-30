@@ -68,7 +68,7 @@ final class FaceOneShot {
             FaceIndices.Burst result;
             try {
                 result = models.pipeline(affect, affect2).burst(cap.images, cap.width, cap.height, rejections);
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | LinkageError | OutOfMemoryError e) {
                 return outcome(app, trigger, "inference_error", e.getClass().getSimpleName(), now);
             } finally {
                 cap.images.clear(); // images oubliées dès l'inférence faite

@@ -451,6 +451,34 @@ describe('lecture au déverrouillage de la variante play (POL-1b)', () => {
     expect(notify.requestNotifications).toHaveBeenCalledTimes(1)
   })
 
+  it('vérifie que le service tourne vraiment : un refus d’Android dans le service est rendu, l’app reste ouverte (plantage du 30/10)', async () => {
+    const notify = { requestNotifications: vi.fn() }
+    const refused = {
+      start: vi.fn(async () => ({ started: true, permission: true })),
+      status: vi.fn(async () => ({ running: false, lastError: 'start_refused:SecurityException' })),
+    }
+    expect(await startFaceUnlock(refused, { notify, wait: async () => {} })).toEqual({
+      started: false,
+      permission: true,
+      error: 'start_refused:SecurityException',
+    })
+    expect(notify.requestNotifications).not.toHaveBeenCalled()
+
+    let polls = 0
+    const slow = {
+      start: async () => ({ started: true, permission: true }),
+      status: async () => ({ running: ++polls >= 3 }),
+    }
+    expect((await startFaceUnlock(slow, { notify: null, wait: async () => {} })).started).toBe(true)
+    const stale = {
+      start: async () => ({ started: true }),
+      status: async () => ({ running: false, lastError: 'no_permission', lastErrorAt: Date.now() - 3600e3 }),
+    }
+    expect(await startFaceUnlock(stale, { notify: null, wait: async () => {} })).toEqual({ started: false, permission: true, error: 'not_running' })
+    const broken = { start: async () => ({ started: true }), status: async () => { throw new Error('x') } }
+    expect((await startFaceUnlock(broken, { notify: null, wait: async () => {} })).started).toBe(false)
+  })
+
   it('ne lève jamais, ne demande pas les notifications si le service ne démarre pas', async () => {
     const notify = { requestNotifications: vi.fn() }
     expect((await startFaceUnlock({ start: async () => { throw new Error('x') } }, { notify })).started).toBe(false)
