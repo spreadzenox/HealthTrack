@@ -258,6 +258,8 @@ jobs:
           update_or_add "hw.lcd.density" "385"
           update_or_add "hw.ramSize"     "8192"
           update_or_add "hw.sdCard"      "no"
+          # Caméra frontale émulée : la lecture du visage capture vraiment (plantage du 30/10, smoke R8).
+          update_or_add "hw.camera.front" "emulated"
 
       # Rapport PDF (N6c) : Node 22 (WebSocket intégré) pour piloter la WebView, pdftoppm pour l'aperçu du PDF
       - name: Configurer Node.js 22 (pilotage du rapport PDF)
@@ -281,6 +283,7 @@ jobs:
           force-avd-creation: false
           emulator-options: >-
             -no-snapshot-save
+            -camera-front emulated
             -no-window
             -gpu swiftshader_indirect
             -noaudio
@@ -303,6 +306,7 @@ jobs:
             play_crash.txt
             play_release.md
             play_release_logcat.txt
+            play_release_unlock.txt
             screenshot_play_release.png
             ui_app.xml
             ui_plus.xml

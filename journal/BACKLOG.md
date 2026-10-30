@@ -1367,21 +1367,21 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   jour » s'affichait aussi aux testeurs qui ont déjà le premium offert (P23 a : ne pas pousser à l'achat pendant la
   période) → « Pendant le test : jusqu'à 10 analyses par jour, sans rien payer. » ; premium payé : « Avec votre
   premium : jusqu'à 10 analyses par jour. » (`Settings.jsx`, 2 tests dans `Settings.play.test.jsx`).
-- [x] **SIGNALEMENT 30/10 16:35 — plantage « activer la lecture du visage » (Galaxy A56).** ✅ 30/10 17:33 (PR à merger
-  après l'émulateur). Cause (lecture du code, reproduction demandée à l'émulateur) : `FaceSensePlugin` et
-  `FaceResumeNotice` lançaient `FaceSenseService` par `startForegroundService` ; quand Android refusait ensuite le
-  premier plan caméra (Android 14+ : `startForeground` de type camera lève une `SecurityException` si l'accès caméra
-  n'est pas utilisable à cet instant) ou sans caméra, le service faisait `stopSelf()` sans `startForeground` → Android
-  tue l'app (« startForegroundService() did not then call startForeground() »). Correctif : `startService` (l'app est
-  toujours à l'écran quand on démarre le service, aucune promesse de premier plan) ; le service s'arrête seul et note
-  `lastError` ; `startFaceUnlock` vérifie ~2 s que le service tourne vraiment, sinon message « Android n'a pas permis
-  la lecture au déverrouillage… La lecture à l'ouverture de l'app continue. » ; lectures (`FaceOneShot`, rafales du
-  service) rattrapent aussi `LinkageError` / `OutOfMemoryError`. R8 : règles keep ONNX / LiteRT déjà en place ;
-  l'APK release R8 de l'émulateur est désormais construit **avec** faceUnlockPlay et `smoke.mjs` démarre la lecture
-  au déverrouillage, puis la refait caméra refusée (appops `ignore`) en vérifiant que le processus survit. Tests :
-  `faceServiceStart.android.test.js` (2, rouges sur l'ancien code), `faceSense.test.js` (1), `FaceSenseCard.test.jsx` (1).
-  Reste : **retest du propriétaire** sur la version de test interne suivante ; si un plantage revient, couper
-  `FACE_UNLOCK_INTERNAL` dans `play-bundle.yml` et lire le tampon crash (Play Console → Android vitals).
+- [ ] **SIGNALEMENT 30/10 16:35 — plantage « activer la lecture du visage » (Galaxy A56) — PRIORITÉ ABSOLUE.**
+  Run du 30/10 17:33 : **reproduit** à l'émulateur API 35 (smoke R8 de l'APK play release construit avec
+  faceUnlockPlay, PR #531) : `FaceSense.start({ unlock: true })` ne répond jamais et le processus change de pid (app
+  tuée puis relancée) ; la lecture à l'ouverture (`test`) passe. Trace perdue à ce premier passage (le script restait
+  bloqué) : le smoke la garde désormais (`play_release_unlock.txt` dans l'artefact screenshots-samsung-a56-api35, et
+  dans le log du job). **Mesure prise** : `FACE_UNLOCK_INTERNAL: "false"` dans `play-bundle.yml` (versions de test
+  interne sans le service caméra). Déjà corrigé en chemin (certain, mais pas suffisant) : `startService` au lieu de
+  `startForegroundService` (un `stopSelf` sans `startForeground` faisait tuer l'app), `startFaceUnlock` vérifie que le
+  service tourne et la carte dit « Android n'a pas permis la lecture au déverrouillage… », erreurs natives
+  (`LinkageError`, `OutOfMemoryError`) rattrapées. **Suite** : lire la trace du job API 35 de main ; pistes : code
+  du service sous R8 (classe `FaceSenseService` / `UnlockWatch` / `ServiceCompat`), notification (`ic_stat_healthtrack`),
+  `registerReceiver` ; comparer avec l'APK debug faceUnlockPlay (vidéo P28, qui marchait) ; corriger avec un test ;
+  repasser `UNLOCK_KNOWN` à false dans `smoke.mjs` et `FACE_UNLOCK_INTERNAL` à "true" quand les deux scénarios
+  « lecture au déverrouillage » sont verts. Caméra frontale émulée ajoutée à l'AVD API 35 : la capture réelle (chemin
+  du téléphone) passe aussi par R8.
 - [x] **POL-PLAY-66 — Health Connect : des jours perdus au premier import.** ✅ 30/10 16:33 (même famille que
   POL-PLAY-59/63, « chiffres fiables ») : le plugin trie puis garde les `limit` premiers échantillons ; FC (`limit:
   2000`) et pas en échantillons (`limit: 1000`) lus en une fois sur 30 jours → avec une FC toutes les 5 min (8 640

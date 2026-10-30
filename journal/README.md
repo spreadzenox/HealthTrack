@@ -8,18 +8,16 @@
 > sideload, identité visuelle, onboarding, abonnement et relais, montre M1–M7, polissage du parcours, version candidate
 > en test fermé ; v189 → v278).
 
-> 🛠️ **Plantage « activer la lecture du visage » (votre signalement du 30/10 vers 16:35) — corrigé le 30/10 vers
-> 18:30.** *Cause* : le service caméra de la lecture au déverrouillage était lancé avec une « promesse de premier
-> plan » ; quand Android refusait ensuite la caméra à ce service (Android 14 et plus, Galaxy A56), le service
-> s'arrêtait sans tenir la promesse, et Android fermait toute l'app. *Correctif* : le service est lancé sans cette
-> promesse (l'app est toujours ouverte à ce moment), un refus s'arrête proprement et l'app affiche « Android n'a pas
-> permis la lecture au déverrouillage : elle reste coupée. La lecture à l'ouverture de l'app continue. » ; les
-> erreurs des modèles ne ferment plus l'app non plus. L'émulateur le vérifie maintenant sur la version optimisée
-> (R8) avec la lecture au déverrouillage, y compris caméra refusée. *À installer* : la prochaine version de **test
-> interne** du Play Store (celle qui suit la release du 30/10 au soir, notes « Lecture du visage : l'app ne se ferme
-> plus »). *À retester* : Sources → Lecture du visage → « Activer » puis « Aussi à chaque déverrouillage » ; l'app
-> doit rester ouverte dans tous les cas (au pire un message). Si elle se ferme encore, dites-le : la lecture au
-> déverrouillage sera coupée dans la version suivante.
+> 🛠️ **Plantage « activer la lecture du visage » (votre signalement du 30/10 vers 16:35) — reproduit, pas encore
+> résolu : lecture au déverrouillage COUPÉE dans les prochaines versions.** *Ce qu'on sait* : l'émulateur Android 15,
+> sur la même version optimisée que celle du Play Store, ferme l'app dès qu'on active « Aussi à chaque déverrouillage »
+> (la lecture à l'ouverture de l'app, elle, marche). Un premier défaut certain a été corrigé (le service caméra était
+> lancé d'une façon qui fait fermer l'app dès qu'Android le refuse ; message clair à la place), mais l'app se ferme
+> encore : la cause exacte n'est pas confirmée, la trace du plantage est maintenant enregistrée par l'émulateur pour
+> le prochain run. *Ce qui change pour vous* : la version de **test interne** qui suit la release du 30/10 au soir
+> n'a plus l'option « Aussi à chaque déverrouillage » ; la lecture à l'ouverture de l'app reste. *À installer* : cette
+> version depuis le Play Store (test interne). *À retester* : Sources → Lecture du visage → « Activer » : l'app doit
+> rester ouverte. Si elle se ferme encore, dites-le (c'est alors un autre chemin).
 
 > **Testeurs : pas encore** (votre décision du 27/10 vers 13:00). Vous les inviterez au plus tôt la semaine
 > prochaine, quand vous le direz : d'ici là, les runs polissent la version Play (bugs, chiffres fiables, parcours
@@ -627,7 +625,7 @@ automatique (POL-PLAY-60).
 | 30/10 04:33 — [Pistes du ventre lisibles](runs/2026-10-30-0433-noms-pistes.md) | 🎨 | PR #517 (rapport vide) mergée ; audit démo clair Analyses + Accueil → POL-PLAY-55 : titres des pistes d'aliments mangés ensemble raccourcis (« Banane, café, yaourt nature ou le lactose → ventre ») ; 2 tests |
 | 30/10 06:33 — [Compte à rebours des pistes du ventre](runs/2026-10-30-0633-pistes-ventre.md) | 🎨 | POL-PLAY-12 (audit démo sombre à 360 px de l'Accueil, de Sources et de Paramètres) → POL-PLAY-57 : carte lilas « Assez de jours » puis « 28 jours de notes au moins » → compte à rebours des notes du ventre (N/28) ; 3 tests |
 | 30/10 07:33 — [Onboarding : « Continuer » désactivé lisible](runs/2026-10-30-0733-onboarding-continuer.md) | 🎨 | POL-PLAY-12 (audit onboarding play à 360 px, sombre et clair : 7 écrans) → POL-PLAY-58 : « Continuer » sans choix passait pour actif → gris neutre ; lint 7 → 6 ; 1 test |
-| 30/10 17:33 — [Lecture du visage sans plantage](runs/2026-10-30-1733-visage-sans-plantage.md) | 🐛 | Signalement du 30/10 16:35 : `FaceSenseService` par `startService` (plus de `stopSelf` sans `startForeground`), vérification « service en marche » + message clair, erreurs natives rattrapées ; émulateur R8 avec faceUnlockPlay et caméra refusée ; 4 tests |
+| 30/10 17:33 — [Lecture du visage sans plantage](runs/2026-10-30-1733-visage-sans-plantage.md) | 🐛 | Signalement du 30/10 16:35 : plantage **reproduit** à l'émulateur (R8 + faceUnlockPlay, `start({unlock:true})`), pas encore résolu → `FACE_UNLOCK_INTERNAL=false` ; corrigé en chemin : `startService` au lieu de `startForegroundService`, message clair si le service ne tourne pas, erreurs natives rattrapées ; smoke : trace du plantage gardée, caméra frontale émulée ; 4 tests |
 | 30/10 16:33 — [Health Connect : lecture sans perte](runs/2026-10-30-1633-lecture-sans-perte.md) | 🐛 | POL-PLAY-66 : FC et pas lus jour par jour (`readSamplesInWindows`, fenêtre redécoupée à la limite) au lieu d'une lecture qui gardait les 2 000 plus anciens échantillons ; « aha » du premier import : une source par nuit et intervalles réunis ; 6 tests |
 | 30/10 15:33 — [Paramètres pendant le test](runs/2026-10-30-1533-parametres-lancement.md) | 🎨 | POL-PLAY-65 : audit Paramètres / Premium / Données / Sources (vierge, sombre, période de lancement) ; quota IA « Pendant le test : jusqu'à 10 analyses par jour, sans rien payer » au lieu de « Sans abonnement… » ; émulateur API 35 de main relancé (image système non téléchargée) |
 | 30/10 14:33 — [Audit sombre : VFC nuit, étiquette premium](runs/2026-10-30-1433-audit-sombre.md) | 🎨 | POL-PLAY-64 : tuile « VFC » du Journal → « VFC nuit » (comme l'Accueil) ; étiquette « premium » de la réintroduction espacée du titre ; reste de l'audit sombre sans défaut |

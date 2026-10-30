@@ -38,8 +38,9 @@ const ABSENT = ['AppUpdate']
 const LINKAGE = /ClassNotFoundException|NoClassDefFoundError|NoSuchMethodError|NoSuchFieldError|UnsatisfiedLinkError|AbstractMethodError|IncompatibleClassChangeError/
 
 const checks = []
-const record = (name, ok, proof) => {
-  checks.push({ name, ok, proof })
+// `known` : défaut connu d'une fonction coupée dans les versions publiées (affiché ⚠️, ne fait pas échouer le job).
+const record = (name, ok, proof, known = false) => {
+  checks.push({ name, ok, proof, known })
   console.log('[release]', ok ? 'OK ' : 'ÉCHEC', name, '—', proof)
 }
 const adb = (...args) => execFileSync('adb', args, { encoding: 'utf8', maxBuffer: 64 << 20 }).replace(/\r/g, '')
@@ -147,6 +148,11 @@ function callPlugin(plugin, method, options = {}) {
 const notImplemented = (r) => !r.ok && /not implemented|UNIMPLEMENTED/i.test(r.error)
 const brief = (v) => JSON.stringify(v).slice(0, 200)
 
+// Plantage du 30/10 reproduit ici avant d'être compris : la lecture au déverrouillage est coupée dans les versions
+// publiées (FACE_UNLOCK_INTERNAL=false, play-bundle.yml) ; ses scénarios restent affichés sans bloquer le job tant
+// que la cause n'est pas corrigée. Repasser à false quand ils sont verts.
+const UNLOCK_KNOWN = true
+
 /** Appel de plugin borné dans le temps : si l'app est tuée, la WebView ne répond plus jamais. */
 const callWithin = (ms, plugin, method, options) =>
   Promise.race([callPlugin(plugin, method, options), sleep(ms).then(() => ({ ok: false, error: 'pas de réponse (app fermée ?)' }))])
@@ -172,6 +178,7 @@ async function unlockScenarios() {
     'Lecture au déverrouillage démarrée (R8)',
     on.ok && running.running === true && shell(`pidof ${PKG}`).trim() === pid0,
     `start ${brief(on.ok ? on.value : on.error)}, running ${running.running}, lastError ${running.lastError ?? '—'}`,
+    UNLOCK_KNOWN,
   )
   await callWithin(10000, 'FaceSense', 'stopUnlock')
   await sleep(1500)
@@ -185,6 +192,7 @@ async function unlockScenarios() {
     'Caméra refusée par Android : l’app reste ouverte',
     pid1 === pid0 && !!after,
     `pid ${pid0} → ${pid1 || 'aucun'}, start ${brief(refused.ok ? refused.value : refused.error)}, running ${after?.running}, lastError ${after?.lastError ?? '—'}`,
+    UNLOCK_KNOWN,
   )
   shell(`cmd appops set ${PKG} CAMERA allow`)
   await callWithin(10000, 'FaceSense', 'stopUnlock')
@@ -255,8 +263,6 @@ async function main() {
     `issue « ${outcome || read.error} »${after.modelLoadMs != null ? `, modèles chargés en ${after.modelLoadMs} ms` : ''}${affectErr ? `, erreur ONNX ${affectErr}` : ''}${onnxReady ? '' : ' (ONNX absents)'}`,
   )
 
-  await unlockScenarios()
-
   for (const [plugin, method, options] of [
     ['PlayBilling', 'getProducts', { productIds: ['premium'] }],
     ['PlayBilling', 'queryPurchases', {}],
@@ -290,7 +296,28 @@ const crashed = new RegExp(`Process: ${PKG.replace(/\./g, '\\.')}[,:]`).test(cra
 record('Aucune classe ou méthode retirée par R8 (journal)', linkage.length === 0, linkage.length ? linkage.slice(0, 3).join(' | ').slice(0, 300) : 'journal propre')
 record('Aucun plantage du processus', !crashed, crashed ? 'FATAL EXCEPTION dans le tampon crash' : 'aucun')
 
-const failed = checks.filter((c) => !c.ok)
+// Lecture au déverrouillage en dernier : si elle tue l'app, la WebView ne répond plus. Trace du plantage et journal
+// complet gardés dans play_release_unlock.txt (artefact) et affichés ici.
+if (cdp) {
+  adb('logcat', '-b', 'all', '-c')
+  try {
+    await unlockScenarios()
+  } catch (e) {
+    record('Lecture au déverrouillage (déroulé)', false, e.message, UNLOCK_KNOWN)
+  }
+  await sleep(2000)
+  const unlockCrash = shell('logcat -d -b crash')
+  const unlockLog = shell('logcat -d -b main -b system -v threadtime')
+    .split('\n')
+    .filter((l) => /FaceSense|AndroidRuntime|ActivityManager|ActiveServices|ForegroundService|healthtrack|jpesquet/.test(l))
+    .join('\n')
+  writeFileSync('play_release_unlock.txt', `== tampon crash ==\n${unlockCrash}\n== journal filtré ==\n${unlockLog}\n`)
+  console.log('[release] tampon crash après la lecture au déverrouillage :\n' + (unlockCrash.trim() || '(vide)').slice(0, 6000))
+  const fatal = unlockCrash.split('\n').find((l) => /Exception|Error/.test(l))
+  if (fatal) record('Lecture au déverrouillage : trace du plantage', false, fatal.trim().slice(0, 300), UNLOCK_KNOWN)
+}
+
+const failed = checks.filter((c) => !c.ok && !c.known)
 writeFileSync(
   OUT_MD,
   [
@@ -298,7 +325,7 @@ writeFileSync(
     '',
     '| Vérification | Résultat | Détail |',
     '|---|---|---|',
-    ...checks.map((c) => `| ${c.name} | ${c.ok ? '✅' : '❌'} | ${c.proof.replace(/\|/g, '/')} |`),
+    ...checks.map((c) => `| ${c.name} | ${c.ok ? '✅' : c.known ? '⚠️ connu' : '❌'} | ${c.proof.replace(/\|/g, '/')} |`),
     '',
     failed.length ? `**${failed.length} vérification(s) en échec.**` : 'Tout est vert : le code obscurci par R8 se comporte comme la build debug sur ces points.',
     '',

@@ -1,4 +1,4 @@
-# Run du 30/10/2026 17:33 (Paris, CET) — Lecture du visage sans plantage (signalement du 30/10 16:35)
+# Run du 30/10/2026 17:33 (Paris, CET) — Lecture du visage : plantage reproduit, interrupteur coupé (signalement du 30/10 16:35)
 
 **Type** : 🐛 Signalement du propriétaire, priorité absolue
 
@@ -45,9 +45,23 @@
   message texte change, couvert par le test de la carte.
 - CI de la PR : Build APK (compile Java), émulateur A56 (smoke R8 avec les deux scénarios).
 
+## Résultat de l'émulateur (PR #531, premier passage) — le correctif ne suffit pas
+- Job API 35 : « Lecture au déverrouillage démarrée (R8) » ÉCHEC — `start({ unlock: true })` sans réponse ; « Caméra
+  refusée » ÉCHEC — pid 6146 → 6333 : l'app est tuée (puis relancée) **dès le démarrage normal**, avec la caméra
+  accordée. La lecture à l'ouverture (`test`) passe, modèles LiteRT + ONNX chargés. Le script est resté bloqué après
+  le plantage (« unsettled top-level await ») : ni logcat ni tampon crash enregistrés.
+- Donc : plantage reproduit, cause exacte **pas encore** confirmée. Comme demandé, **`FACE_UNLOCK_INTERNAL` coupé**
+  (`play-bundle.yml`) : les prochaines versions de test interne n'ont plus le service caméra.
+- Smoke revu : scénarios du déverrouillage en dernier, tampon crash et journal filtré gardés
+  (`play_release_unlock.txt`, artefact + log du job), affichés « ⚠️ connu » sans bloquer tant que `UNLOCK_KNOWN` ;
+  caméra frontale émulée sur l'AVD API 35 (`hw.camera.front`, `-camera-front emulated`) pour que la capture réelle
+  passe aussi par R8.
+
 ## Données
 - Aucune donnée touchée ; préférences `face_sense` inchangées.
 
 ## Suite
-- Retest du propriétaire sur la version de test interne suivante. Si l'app se ferme encore : couper
-  `FACE_UNLOCK_INTERNAL` dans `.github/workflows/play-bundle.yml` et lire la trace dans Android vitals.
+- Run suivant : lire la trace (`[release] tampon crash après la lecture au déverrouillage` dans le log du job API 35
+  de main, ou `play_release_unlock.txt`), corriger avec un test, puis `UNLOCK_KNOWN = false` et
+  `FACE_UNLOCK_INTERNAL: "true"` quand les deux scénarios sont verts. Le propriétaire retest « Activer » (lecture à
+  l'ouverture) sur la version de test interne suivante.
