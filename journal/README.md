@@ -289,6 +289,10 @@
 - **Repas : des cartes plus légères** (29/10 23:33) — dans Journal › Repas, « Refaire · Modifier · Supprimer »
   sont rangés derrière un petit « ⋯ » au bout de chaque repas, comme dans Jours ; écran Données de la montre :
   stress « 46 · normal » au lieu de « 46 / 99 ».
+- **Pistes du ventre plus lisibles** (30/10 04:33) — quand des aliments toujours mangés ensemble forment une seule
+  piste, le titre se lit « Banane, café, yaourt nature ou le lactose → ventre » (au lieu de « Banane, chair sans peau,
+  café, non instantané… ») ; une précision utile reste entre parenthèses (« Fromage (emmental) »). Les listes de repas
+  disent aussi « Banane » ou « Pêche » plutôt que « Banane, chair sans peau ».
 - **Données : plus de rapport PDF vide** (30/10 03:33) — sur une installation neuve, la carte « Rapport PDF pour mon
   médecin » de Données ne propose plus « Préparer le rapport » (qui aurait créé 2 pages vides) : elle dit « Le rapport
   se remplit dès votre première note du ventre ou votre premier repas. » Dès une note ou un repas, rien ne change.
@@ -556,6 +560,7 @@ de données) ; le formulaire le dit tel quel.
 | 29/10 23:33 — [Repas : actions derrière « ⋯ »](runs/2026-10-29-2333-repas-actions.md) | 🎨 | POL-PLAY-50 (audit Repas, Nutrition et Montre play démo sombre) : actions de chaque repas derrière « ⋯ » (`EntryActionsToggle` partagé avec Jours) ; stress de la montre « 46 · normal » ; 1 test |
 | 30/10 00:33 — [Réintroduction : préparation relue](runs/2026-10-30-0033-reintro-vierge.md) | 🎨 | POL-PLAY-51 (audit Réintroduction et Montre play vierges, clair et sombre) : repère des portions en phrase Figtree au lieu d'une étiquette mono ; 1 test ajusté. Puis « Tests » rouge sur main (erreur non gérée de `FaceSenseCard` après la fin du fichier de test) : garde `mounted`, 1 test |
 | 30/10 03:33 — [Données : pas de rapport vide](runs/2026-10-30-0333-rapport-vide.md) | 🎨 | POL-PLAY-12 (audit complet `--play --empty` en clair, 15 pages) → POL-PLAY-54 : sur données vierges, Données proposait un rapport PDF vide → phrase « se remplit dès votre première note du ventre ou votre premier repas » ; 3 tests ; le reste du parcours vierge : rien à redire |
+| 30/10 04:33 — [Pistes du ventre lisibles](runs/2026-10-30-0433-noms-pistes.md) | 🎨 | PR #517 (rapport vide) mergée ; audit démo clair Analyses + Accueil → POL-PLAY-55 : titres des pistes d'aliments mangés ensemble raccourcis (« Banane, café, yaourt nature ou le lactose → ventre ») ; 2 tests |
 | 30/10 02:33 — [Phrases d'aide discrètes](runs/2026-10-30-0233-hint-style.md) | 🎨 | POL-PLAY-12 (audit démo sombre de Données et Paramètres) → POL-PLAY-53 : `.hint` sans style commun (texte encre 1 rem) → gris secondaire 0,9 rem dans `App.css` ; 1 test ; Données : rien à redire |
 | 30/10 01:33 — [Réintroduction : test et résultat relus](runs/2026-10-30-0133-reintro-test.md) | 🎨 | POL-PLAY-52 (audit Réintroduction en cours de test, `--fodmap=day2`/`question`/`result`, clair et sombre) : boutons de la question à largeur égale ; « l'attente joue aussi » remplacé, et seulement si une gêne a arrêté le test ; 1 test ajouté, 1 ajusté |
 | 29/10 20:33 — [Idées : campagne des testeurs](runs/2026-10-29-2033-idees-campagne-testeurs.md) | 💡 | exigences officielles du test fermé relues ; 4 messages « missions » ; brouillon des 10 réponses du formulaire d'accès à la production (P30) ; tableau des changements pendant le test ; recalage de la période de lancement ; TF-1, TF-2 |

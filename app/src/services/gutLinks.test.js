@@ -145,6 +145,11 @@ describe('pistes par sous-groupe FODMAP (N5)', () => {
     expect(togetherLabel(['fodmap:fructose', 'fodmap:sorbitol'])).toBe('Repas riches en fructose en excès ou sorbitol')
   })
 
+  it('une précision d’aliment passe entre parenthèses dans une liste, pour ne pas se confondre avec elle (POL-PLAY-55)', () => {
+    expect(togetherLabel(['fromage, emmental', 'pain, baguette, courante', 'ail'])).toBe('Fromage (emmental), pain (baguette) ou ail')
+    expect(togetherLabel(['fodmap:lactose', 'fromage, emmental'])).toBe('Fromage, emmental (riche en lactose)')
+  })
+
   it('un effet du lait et du yaourt ressort comme « Repas riches en lactose », lié au test du lactose', () => {
     const entries = simulateRealistic({
       seed: 3, days: 90, timedNotes: false, dayNotes: true, realNames: true,

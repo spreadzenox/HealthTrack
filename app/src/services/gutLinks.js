@@ -52,7 +52,9 @@ export function togetherLabel(factors) {
   const groups = factors.map(fodmapGroupOf).filter(Boolean)
   const foods = factors.filter((f) => !fodmapGroupOf(f)).map(gutFactorLabel)
   if (!foods.length) return joinOr(groups.map((g, i) => (i === 0 ? gutFactorLabel(`fodmap:${g}`) : FODMAP_FACTOR_LABELS[g] ?? g)))
-  const names = foods.map((l, i) => (i === 0 ? l : lowerFirst(l)))
+  // POL-PLAY-55 : dans une liste, « Fromage, emmental » devient « Fromage (emmental) » pour ne pas se confondre avec elle.
+  const listed = foods.length > 1 ? foods.map((l) => l.replace(/, (.+)$/, ' ($1)')) : foods
+  const names = listed.map((l, i) => (i === 0 ? l : lowerFirst(l)))
   if (!groups.length) return joinOr(names)
   if (foods.length === 1) return `${names[0]} (riche en ${groups.map((g) => FODMAP_FACTOR_LABELS[g] ?? g).join(' et ')})`
   // Plusieurs aliments : on ne sait pas lequel apporte le sous-groupe, il est une possibilité de plus.

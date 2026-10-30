@@ -108,6 +108,13 @@ describe('shortFoodName', () => {
     expect(shortFoodName("Pomme de terre, bouillie/cuite à l'eau")).toBe('Pomme de terre')
     expect(shortFoodName('Haricot vert, cuit')).toBe('Haricot vert')
   })
+  it('retire aussi la partie du fruit et la forme du café (POL-PLAY-55)', () => {
+    expect(shortFoodName('Banane, chair sans peau, crue')).toBe('Banane')
+    expect(shortFoodName('Pomme, chair et peau, crue')).toBe('Pomme')
+    expect(shortFoodName('Café, non instantané, non sucré, prêt à boire')).toBe('Café')
+    expect(shortFoodName('Mangue, pulpe, crue')).toBe('Mangue')
+    expect(shortFoodName('Pêche, pelée, crue')).toBe('Pêche')
+  })
   it('garde la précision qui distingue l’aliment après un mot seul', () => {
     expect(shortFoodName("Poulet, cuisse, viande bouillie/cuite à l'eau")).toBe('Poulet, cuisse')
     expect(shortFoodName('Fromage, emmental')).toBe('Fromage, emmental')
