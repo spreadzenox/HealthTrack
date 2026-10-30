@@ -40,6 +40,26 @@ describe('DoctorReportCard', () => {
     expect(save).toHaveBeenCalledWith(pdf)
   })
 
+  it('rien de noté : pas de rapport vide, une phrase dit quand il se remplit', async () => {
+    const count = vi.fn(async () => 0)
+    renderCard({ count })
+    await waitFor(() => expect(screen.getByText(/se remplit dès votre première note du ventre/)).toBeInTheDocument())
+    expect(screen.queryByRole('button', { name: 'Préparer le rapport' })).not.toBeInTheDocument()
+    expect(count).toHaveBeenCalled()
+  })
+
+  it('une note du ventre ou un repas suffit pour préparer le rapport', async () => {
+    renderCard({ count: async () => 1 })
+    expect(await screen.findByRole('button', { name: 'Préparer le rapport' })).toBeInTheDocument()
+    expect(screen.queryByText(/se remplit dès/)).not.toBeInTheDocument()
+  })
+
+  it('si le comptage échoue, le bouton reste (jamais bloqué par erreur)', async () => {
+    renderCard({ count: async () => { throw new Error('idb') } })
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.getByRole('button', { name: 'Préparer le rapport' })).toBeInTheDocument()
+  })
+
   it('par défaut, le bien-être estimé n’est pas inclus', async () => {
     const create = vi.fn(async () => pdf)
     renderCard({ create, save: async () => ({ saved: 'download' }) })

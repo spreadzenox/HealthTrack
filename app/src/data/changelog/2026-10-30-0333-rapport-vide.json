@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-30",
+  "kind": "amélioration",
+  "title": "Pas de rapport PDF vide",
+  "items": [
+    "Dans Données, tant que vous n'avez noté ni votre ventre ni un repas, la carte « Rapport PDF pour mon médecin » ne propose plus de créer un rapport vide : elle vous dit qu'il se remplira dès votre première note."
+  ]
+}

@@ -1,16 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FEATURES } from '../config/distribution'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { REPORT_DEFAULT_WEEKS, REPORT_PERIODS } from '../services/report/buildReport'
 import { createReportPdf, saveAndShareReport } from '../services/report/createReportPdf'
+import { countEntries } from '../storage/localHealthStorage'
+import { GUT_TYPE } from '../services/today'
+
+/** Notes du ventre et repas enregistrés : sans aucun des deux, le rapport serait vide. */
+async function countReportEntries() {
+  const [gut, food] = await Promise.all([countEntries({ type: GUT_TYPE }), countEntries({ type: 'food' })])
+  return gut + food
+}
 
 /**
  * « Rapport PDF pour mon médecin » (N6b), en bas d'Analyses et dans Données : période de 2, 4 ou 12 semaines, bien-être
  * estimé exclu sauf case cochée (donnée sensible et estimation), puis fichier dans Documents et feuille de partage.
- * Premium sur la version Play (offert pendant le lancement) ; libre en sideload.
+ * Premium sur la version Play (offert pendant le lancement) ; libre en sideload. Sans aucune note du ventre ni aucun
+ * repas, pas de rapport vide : une phrase dit quand il se remplit (un comptage en échec laisse le bouton).
  */
-export default function DoctorReportCard({ create = createReportPdf, save = saveAndShareReport }) {
+export default function DoctorReportCard({ create = createReportPdf, save = saveAndShareReport, count = countReportEntries }) {
   const [ent] = useEntitlement()
   const premium = !FEATURES.billing || ent.premium
   const [open, setOpen] = useState(false)
@@ -18,6 +27,13 @@ export default function DoctorReportCard({ create = createReportPdf, save = save
   const [wellbeing, setWellbeing] = useState(false)
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState(null)
+  const [empty, setEmpty] = useState(false)
+
+  useEffect(() => {
+    let alive = true
+    count().then((n) => { if (alive) setEmpty(n === 0) }, () => {})
+    return () => { alive = false }
+  }, [count])
 
   const run = async () => {
     setBusy(true)
@@ -48,12 +64,15 @@ export default function DoctorReportCard({ create = createReportPdf, save = save
           <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>
         </>
       )}
-      {premium && !open && (
+      {premium && empty && (
+        <p className="fodmap-note">Le rapport se remplit dès votre première note du ventre ou votre premier repas.</p>
+      )}
+      {premium && !empty && !open && (
         <button type="button" className="btn btn-secondary fodmap-cta" onClick={() => setOpen(true)}>
           Préparer le rapport
         </button>
       )}
-      {premium && open && (
+      {premium && !empty && open && (
         <>
           <fieldset className="report-periods">
             <legend>Période</legend>
