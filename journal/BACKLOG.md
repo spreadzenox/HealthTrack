@@ -1411,6 +1411,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-70** (30/10 22:33 ; `pendingText`, Recommendations.jsx) Audit Analyses (démo, clair, 360 px, avec et sans
   premium) : « En cours de collecte : Malade (2/5 jours avec) » → « Bientôt comparés : Malade (encore 3 jours notés) »
   (« jours sans » si ce sont eux qui manquent, « avec » pour un repère mesuré). Prochain audit : réintroduction en clair.
+- [x] **POL-PLAY-71** (30/10 23:33 ; `calmDaysLeftText` dans `fodmapChallenge.js`, utilisé par `Reintroduction.jsx` et
+  `challengeSummary`) Audit réintroduction (`--play --light --size=360x780 --subscription=launch --fodmap`, choix, Blé,
+  `=day2`, `=question`, `=result`) : « 1/3 jours calmes » → « encore 2 jours calmes » (attente avant de commencer, pause
+  de fin, carte d'Analyses) ; « Oui, je continue » passait sur deux lignes à 360 px → « Oui, continuer » / « Non,
+  arrêter » ; « Une estimation de votre ventre, pas un diagnostic » → « Une estimation, pas un diagnostic ». Vu, laissé
+  tel quel : choix des groupes, préparation (portions, conseils), jour 2. Prochain audit : Journal → modifier un repas
+  (démo, clair, 360 px).
 - [ ] **VEILLE-1 (I196)** Sideload : ajouter à la migration de clé (`INFRA.md`, signature sideload) l'enregistrement
   de `com.healthtrack.app` dans la Play Console comme « app distribuée hors de Google Play » une fois signée avec une
   clé privée (la clé de debug publique ne peut pas prouver la propriété) ; échéance : avant l'extension mondiale de

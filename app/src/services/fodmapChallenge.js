@@ -189,6 +189,13 @@ function dayDiff(fromKey, toKey) {
   return Math.round((b - a) / DAY_MS)
 }
 
+/** Ce qui manque avant la fin de l'attente, en mots (« encore 2 jours calmes ») plutôt qu'en compteur « 1/3 » (POL-PLAY-71). */
+export function calmDaysLeftText(calmDays) {
+  const left = Math.max(0, CALM_DAYS_REQUIRED - (calmDays || 0))
+  if (left === 0) return 'plus aucun jour calme à attendre'
+  return left === 1 ? 'encore 1 jour calme' : `encore ${left} jours calmes`
+}
+
 /**
  * Nombre de jours calmes d'affilée qui finissent aujourd'hui (ou hier si rien n'est encore noté aujourd'hui). Un jour
  * compte s'il a au moins une note du ventre et aucune gêne ni douleur : sans note, on ne sait pas, donc on ne compte

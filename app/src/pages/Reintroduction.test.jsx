@@ -51,7 +51,7 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
   it('② « Commencer » attend 3 jours de ventre calme', async () => {
     renderPage(makeStore({ gutEntries: [...calm(2, 1), gut(3, 'pain')] }))
     fireEvent.click(await screen.findByRole('button', { name: /Lactose/ }))
-    expect(screen.getByRole('status')).toHaveTextContent('2/3 jours calmes')
+    expect(screen.getByRole('status')).toHaveTextContent('encore 1 jour calme')
     expect(screen.getByRole('button', { name: 'Commencer aujourd’hui' })).toBeDisabled()
   })
 
@@ -143,7 +143,9 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     renderPage(store)
     expect(await screen.findByText(/C’est supportable/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /J’ai mangé ma portion/ })).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Non, j’arrête' }))
+    // POL-PLAY-71 : deux réponses courtes, sur une ligne chacune à 360 px
+    expect(screen.getByRole('button', { name: 'Oui, continuer' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Non, arrêter' }))
     await waitFor(() => expect(store.update).toHaveBeenCalledTimes(1))
     expect(store.update.mock.calls[0][1].answers).toEqual([expect.objectContaining({ day: 1, tolerable: false })])
   })
@@ -166,7 +168,9 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     expect(screen.getByText(/pas un diagnostic/)).toBeInTheDocument()
     // POL-PLAY-52 : rien sur l'appréhension ni sur un nouveau test quand tout passe
     expect(screen.queryByText(/attente|refaire le test/)).not.toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('0/3 jours calmes')
+    expect(screen.getByRole('status')).toHaveTextContent('Pause avant le test suivant : encore 3 jours calmes.')
+    // POL-PLAY-71 : la phrase habituelle, sans « de votre ventre »
+    expect(screen.getByText(/^Une estimation, pas un diagnostic\./)).toBeInTheDocument()
     expect(screen.getByText('carte ventre')).toBeInTheDocument()
   })
 

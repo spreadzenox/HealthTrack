@@ -21,7 +21,7 @@ import {
   pickableGroups, FODMAP_CHALLENGE_TYPE, FODMAP_CHALLENGE_SOURCE, CALM_DAYS_REQUIRED,
   findFood, findGroup, defaultPlan, startChallenge, challengeStatus, recordDose, answerTolerable,
   restartChallenge, canStartChallenge, groupResults, combinationsAvailable, verdictSentence, formatAmount,
-  currentChallenge,
+  currentChallenge, calmDaysLeftText,
 } from '../services/fodmapChallenge'
 import {
   minuteToTime, portionReminderAvailable, portionReminderPrefs, setPortionReminder, timeToMinute,
@@ -221,7 +221,7 @@ function Prepare({ group, food, start, onBack, onStart, busy }) {
         {start.reason === 'not_calm' && (
           <p className="fodmap-wait" role="status">
             On attend que votre ventre soit calme : ça rend le test lisible.{' '}
-            <span className="mono">{start.calmDays}/{CALM_DAYS_REQUIRED}</span> jours calmes
+            Il faut {calmDaysLeftText(start.calmDays)}
             {' '}(notez votre ventre chaque jour, le bilan du soir suffit).
           </p>
         )}
@@ -258,8 +258,8 @@ function Running({ challenge, status, busy, onDose, onAnswer, onRestart, onAband
               Vous avez noté une gêne après la portion du jour {status.question.day}. C’est supportable ?
             </p>
             <div className="fodmap-question-choices">
-              <button type="button" className="btn" disabled={busy} onClick={() => onAnswer(true)}>Oui, je continue</button>
-              <button type="button" className="btn btn-secondary" disabled={busy} onClick={() => onAnswer(false)}>Non, j’arrête</button>
+              <button type="button" className="btn" disabled={busy} onClick={() => onAnswer(true)}>Oui, continuer</button>
+              <button type="button" className="btn btn-secondary" disabled={busy} onClick={() => onAnswer(false)}>Non, arrêter</button>
             </div>
           </div>
         )}
@@ -302,13 +302,13 @@ function Result({ challenge, status }) {
       <h3 id="fodmap-result-title" className="fodmap-verdict">{verdictSentence(challenge, status.verdict)}</h3>
       <Timeline challenge={challenge} status={status} />
       <p className="today-card-text">
-        Une estimation de votre ventre, pas un diagnostic.
+        Une estimation, pas un diagnostic.
         {status.verdict?.id !== 'tolerated' &&
           ' S’attendre à une gêne peut suffire à en ressentir : vous pourrez refaire le test plus tard.'}
       </p>
       {status.state === 'washout' && (
         <p className="fodmap-wait" role="status">
-          Pause avant le test suivant : <span className="mono">{status.calmDays}/{CALM_DAYS_REQUIRED}</span> jours calmes.
+          Pause avant le test suivant : {calmDaysLeftText(status.calmDays)}.
           Mangez comme avant le test.
         </p>
       )}
