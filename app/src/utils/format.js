@@ -184,10 +184,14 @@ export function evidenceLabel(evidence) {
   return EVIDENCE_LABELS[evidence] ?? evidence
 }
 
-/** Mots qui décrivent la préparation plutôt que l'aliment (« cuit à la vapeur », « aliment moyen »). */
+/**
+ * Mots qui décrivent la préparation plutôt que l'aliment (« cuit à la vapeur », « aliment moyen »), ou la partie
+ * mangée (« chair sans peau », « pelée ») et la forme du café (« non instantané ») : rien qui change d'aliment.
+ */
 const FOOD_PREPARATION_WORDS = [
   'cuit', 'bouilli', 'vapeur', 'cru', 'frit', 'rôti', 'grill', 'poêl', 'brais', 'sauté',
   'préemballé', 'prêt à', 'surgelé', 'appertisé', 'égoutté', 'aliment moyen',
+  'chair', 'pulpe', 'pelé', 'instantané',
 ]
 
 /**
