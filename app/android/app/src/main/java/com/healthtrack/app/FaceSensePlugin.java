@@ -11,7 +11,6 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.provider.Settings;
 
-import androidx.core.content.ContextCompat;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -202,7 +201,8 @@ public class FaceSensePlugin extends Plugin {
             JSObject ret = new JSObject();
             try {
                 ret.put("outcome", FaceOneShot.run(context, trigger));
-            } catch (RuntimeException e) {
+            } catch (Exception | LinkageError | OutOfMemoryError e) {
+                // Sur ce fil, une erreur non rattrapée fermerait l'app : jamais pour une lecture du visage.
                 ret.put("outcome", "error");
                 ret.put("error", e.getClass().getSimpleName());
             }
@@ -223,10 +223,12 @@ public class FaceSensePlugin extends Plugin {
             return;
         }
         try {
-            // Appelé depuis la WebView : l'app est à l'écran.
+            // Appelé depuis la WebView : l'app est à l'écran. startService et non startForegroundService : sans
+            // promesse de premier plan, un refus d'Android dans le service (caméra retirée, app passée en arrière-plan)
+            // se termine par stopSelf sans que le système tue l'app (plantage du 30/10 sur Galaxy A56).
             Intent intent = new Intent(getContext(), FaceSenseService.class).setAction(action)
                     .putExtra(FaceSenseService.EXTRA_ORIGIN, FaceSenseService.ORIGIN_APP);
-            ContextCompat.startForegroundService(getContext(), intent);
+            getContext().startService(intent);
             FaceSenseService.prefs(getContext()).edit().putBoolean("enabled", true).apply();
             if (BuildConfig.FACE_KEEPALIVE) FaceResumeJob.ensureScheduled(getContext());
             ret.put("started", true);

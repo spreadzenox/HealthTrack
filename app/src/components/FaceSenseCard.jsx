@@ -149,6 +149,10 @@ function frenchDate(iso) {
 /**
  * @param {{ plugin?: object|null, save?: Function, importBursts?: Function, loadHistory?: Function, loadEveningNote?: Function, loadVoice?: Function, appOpen?: boolean, readOnOpen?: Function, notifyPlugin?: object|null }} props
  */
+/** Android refuse le service au déverrouillage (caméra, arrière-plan) : l'app reste ouverte, le secours continue. */
+const UNLOCK_REFUSED =
+  'Android n’a pas permis la lecture au déverrouillage : elle reste coupée. La lecture à l’ouverture de l’app continue. Réessayez app ouverte.'
+
 export default function FaceSenseCard({
   plugin = faceSensePlugin(),
   save = defaultSave,
@@ -233,7 +237,7 @@ export default function FaceSenseCard({
     try {
       const res = await startFaceUnlock(plugin, { notify: notifyPlugin })
       if (!res.permission) setMessage('Accès à la caméra refusé : rien n’a été activé.')
-      else if (!res.started) setMessage('Android a refusé de démarrer la lecture. Réessayez app ouverte.')
+      else if (!res.started) setMessage(UNLOCK_REFUSED)
       else if (res.notifications === false) {
         setMessage('Notifications refusées : la lecture marche, mais sa notification ne s’affiche que dans le gestionnaire de tâches d’Android.')
       }
@@ -249,7 +253,7 @@ export default function FaceSenseCard({
     setMessage(null)
     try {
       const res = await startFaceUnlock(plugin, { notify: notifyPlugin })
-      if (!res.started) setMessage('Android a refusé de reprendre la lecture. Réessayez app ouverte.')
+      if (!res.started) setMessage(UNLOCK_REFUSED)
       await new Promise((r) => setTimeout(r, 400))
       await refresh()
     } finally {

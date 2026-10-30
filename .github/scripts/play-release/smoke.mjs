@@ -38,8 +38,9 @@ const ABSENT = ['AppUpdate']
 const LINKAGE = /ClassNotFoundException|NoClassDefFoundError|NoSuchMethodError|NoSuchFieldError|UnsatisfiedLinkError|AbstractMethodError|IncompatibleClassChangeError/
 
 const checks = []
-const record = (name, ok, proof) => {
-  checks.push({ name, ok, proof })
+// `known` : défaut connu d'une fonction coupée dans les versions publiées (affiché ⚠️, ne fait pas échouer le job).
+const record = (name, ok, proof, known = false) => {
+  checks.push({ name, ok, proof, known })
   console.log('[release]', ok ? 'OK ' : 'ÉCHEC', name, '—', proof)
 }
 const adb = (...args) => execFileSync('adb', args, { encoding: 'utf8', maxBuffer: 64 << 20 }).replace(/\r/g, '')
@@ -147,6 +148,70 @@ function callPlugin(plugin, method, options = {}) {
 const notImplemented = (r) => !r.ok && /not implemented|UNIMPLEMENTED/i.test(r.error)
 const brief = (v) => JSON.stringify(v).slice(0, 200)
 
+// À passer à true (scénarios affichés ⚠️ sans bloquer) seulement si la lecture au déverrouillage est coupée dans les
+// versions publiées (FACE_UNLOCK_INTERNAL=false, play-bundle.yml) le temps de corriger un défaut connu.
+const UNLOCK_KNOWN = false
+
+/** Appel de plugin borné dans le temps : si l'app est tuée, la WebView ne répond plus jamais. */
+const callWithin = (ms, plugin, method, options) =>
+  Promise.race([callPlugin(plugin, method, options), sleep(ms).then(() => ({ ok: false, error: 'pas de réponse (app fermée ?)' }))])
+
+/**
+ * Plantage du 30/10 (Galaxy A56, « activer la lecture du visage ») : APK construit avec l'interrupteur faceUnlockPlay
+ * comme les versions de test interne. (1) Lecture au déverrouillage démarrée puis coupée ; (2) caméra refusée par
+ * Android (appops « ignore » : la permission reste accordée mais le service caméra ne peut plus passer au premier
+ * plan) : le service doit s'arrêter seul et l'app rester ouverte (avant le correctif : startForegroundService puis
+ * stopSelf → Android tuait l'app). Le délai de 12 s couvre celui qu'Android laisse pour appeler startForeground.
+ */
+async function unlockScenarios() {
+  const pid0 = shell(`pidof ${PKG}`).trim()
+  // Cause du 30/10 : sous R8, Capacitor ne relisait plus les annotations @Permission → NullPointerException dans
+  // getPermissionState, app fermée (« Activer » comme « Aussi à chaque déverrouillage »). checkPermissions passe par
+  // le même code pour chaque plugin.
+  const perms = []
+  for (const plugin of PLUGINS) {
+    const r = await callWithin(10000, plugin, 'checkPermissions')
+    if (!r.ok && /app fermée/.test(r.error)) {
+      perms.push(`${plugin} : ${r.error}`)
+      break
+    }
+  }
+  record('checkPermissions de chaque plugin (annotations gardées par R8)', perms.length === 0 && shell(`pidof ${PKG}`).trim() === pid0, perms.join(' ; ') || `${PLUGINS.length} plugins`)
+  if (perms.length) return
+  const enable = await callWithin(10000, 'FaceSense', 'start')
+  record('« Activer » la lecture du visage (FaceSense.start)', enable.ok && enable.value?.started === true, brief(enable.ok ? enable.value : enable.error))
+  const st = (await callWithin(10000, 'FaceSense', 'status')).value || {}
+  if (st.unlockAvailable !== true) {
+    record('Lecture au déverrouillage (interrupteur faceUnlockPlay)', false, `absente de cet APK : ${brief(st)}`)
+    return
+  }
+  const on = await callWithin(10000, 'FaceSense', 'start', { unlock: true })
+  await sleep(3000)
+  const running = (await callWithin(10000, 'FaceSense', 'status')).value || {}
+  record(
+    'Lecture au déverrouillage démarrée (R8)',
+    on.ok && running.running === true && shell(`pidof ${PKG}`).trim() === pid0,
+    `start ${brief(on.ok ? on.value : on.error)}, running ${running.running}, lastError ${running.lastError ?? '—'}`,
+    UNLOCK_KNOWN,
+  )
+  await callWithin(10000, 'FaceSense', 'stopUnlock')
+  await sleep(1500)
+
+  shell(`cmd appops set ${PKG} CAMERA ignore`)
+  const refused = await callWithin(10000, 'FaceSense', 'start', { unlock: true })
+  await sleep(12000)
+  const pid1 = shell(`pidof ${PKG}`).trim()
+  const after = (await callWithin(10000, 'FaceSense', 'status')).value || null
+  record(
+    'Caméra refusée par Android : l’app reste ouverte',
+    pid1 === pid0 && !!after,
+    `pid ${pid0} → ${pid1 || 'aucun'}, start ${brief(refused.ok ? refused.value : refused.error)}, running ${after?.running}, lastError ${after?.lastError ?? '—'}`,
+    UNLOCK_KNOWN,
+  )
+  shell(`cmd appops set ${PKG} CAMERA allow`)
+  await callWithin(10000, 'FaceSense', 'stopUnlock')
+}
+
 // ── Déroulé ────────────────────────────────────────────────────────────────────────────────────────────────────
 async function main() {
   if (!existsSync(APK)) {
@@ -245,7 +310,28 @@ const crashed = new RegExp(`Process: ${PKG.replace(/\./g, '\\.')}[,:]`).test(cra
 record('Aucune classe ou méthode retirée par R8 (journal)', linkage.length === 0, linkage.length ? linkage.slice(0, 3).join(' | ').slice(0, 300) : 'journal propre')
 record('Aucun plantage du processus', !crashed, crashed ? 'FATAL EXCEPTION dans le tampon crash' : 'aucun')
 
-const failed = checks.filter((c) => !c.ok)
+// Lecture au déverrouillage en dernier : si elle tue l'app, la WebView ne répond plus. Trace du plantage et journal
+// complet gardés dans play_release_unlock.txt (artefact) et affichés ici.
+if (cdp) {
+  adb('logcat', '-b', 'all', '-c')
+  try {
+    await unlockScenarios()
+  } catch (e) {
+    record('Lecture au déverrouillage (déroulé)', false, e.message, UNLOCK_KNOWN)
+  }
+  await sleep(2000)
+  const unlockCrash = shell('logcat -d -b crash')
+  const unlockLog = shell('logcat -d -b main -b system -v threadtime')
+    .split('\n')
+    .filter((l) => /FaceSense|AndroidRuntime|ActivityManager|ActiveServices|ForegroundService|healthtrack|jpesquet/.test(l))
+    .join('\n')
+  writeFileSync('play_release_unlock.txt', `== tampon crash ==\n${unlockCrash}\n== journal filtré ==\n${unlockLog}\n`)
+  console.log('[release] tampon crash après la lecture au déverrouillage :\n' + (unlockCrash.trim() || '(vide)').slice(0, 6000))
+  const fatal = unlockCrash.split('\n').find((l) => /Exception|Error/.test(l))
+  if (fatal) record('Lecture au déverrouillage : trace du plantage', false, fatal.trim().slice(0, 300), UNLOCK_KNOWN)
+}
+
+const failed = checks.filter((c) => !c.ok && !c.known)
 writeFileSync(
   OUT_MD,
   [
@@ -253,7 +339,7 @@ writeFileSync(
     '',
     '| Vérification | Résultat | Détail |',
     '|---|---|---|',
-    ...checks.map((c) => `| ${c.name} | ${c.ok ? '✅' : '❌'} | ${c.proof.replace(/\|/g, '/')} |`),
+    ...checks.map((c) => `| ${c.name} | ${c.ok ? '✅' : c.known ? '⚠️ connu' : '❌'} | ${c.proof.replace(/\|/g, '/')} |`),
     '',
     failed.length ? `**${failed.length} vérification(s) en échec.**` : 'Tout est vert : le code obscurci par R8 se comporte comme la build debug sur ces points.',
     '',

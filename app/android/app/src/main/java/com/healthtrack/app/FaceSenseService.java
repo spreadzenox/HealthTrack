@@ -330,7 +330,8 @@ public class FaceSenseService extends Service {
         FaceIndices.Burst result;
         try {
             result = pipeline.burst(cap.images, cap.width, cap.height, rejections);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | LinkageError | OutOfMemoryError e) {
+            // Sur le fil du service, une erreur non rattrapée fermerait l'app entière.
             outcome(trigger, source, retry, "inference_error", e.getClass().getSimpleName(), now);
             return;
         } finally {

@@ -45,7 +45,7 @@ concurrency:
 
 env:
   GCP_PROJECT: healthtrack-824b26
-  FACE_UNLOCK_INTERNAL: "true"  # rallumé le 27/10 vers 15:40 : le brouillon P28 (100487) a été accepté en test interne
+  FACE_UNLOCK_INTERNAL: "true"  # rallumé le 30/10 vers 18:30 : plantage du 30/10 corrigé (règles R8 des annotations Capacitor), vérifié par le smoke R8 de l'émulateur (lecture au déverrouillage)
 
 jobs:
   bundle:
