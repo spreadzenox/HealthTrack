@@ -1448,5 +1448,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   montre », « Activer la lecture du visage », « Noter votre bien-être »), Nutrition vierge (profil puis « Aucun repas
   ces 7 derniers jours » + « Photographier un repas »), formulaire du profil. Prochain audit : Repas → recherche d'un
   aliment et Jours en sombre.
+- [x] **POL-PLAY-77** (31/10 05:33 ; `.github/scripts/edge-insets/check.mjs`) Émulateur API 34 rouge sur main (#546,
+  journal seul) : « encarts au repos : haut 0 px », alors que la capture montre l'onboarding bien sous la barre d'état,
+  les logs natifs `top=128` et un dialogue « Pixel Launcher isn't responding » (émulateur surchargé). 3 échecs sur 25
+  exécutions, dont un avant le correctif POL-PLAY-72. Contrôle durci : page `https://localhost` choisie parmi les cibles
+  DevTools, dialogues système fermés, encarts relus jusqu'à 5 fois (≈ 15 s) avant de conclure, numéro de lecture et
+  page lue dans le résumé. Une vraie régression (0 px persistant) reste rouge. Si l'échec revient malgré tout : lire
+  « page lue » et la lecture n/5 dans le résumé avant de toucher au code de l'app.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

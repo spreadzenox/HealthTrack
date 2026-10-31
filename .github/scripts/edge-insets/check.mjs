@@ -55,6 +55,7 @@ function getJson(url) {
 }
 
 let cdp = null
+let pageInfo = '?'
 let msgId = 0
 const pending = new Map()
 async function connect(timeoutMs = 120000) {
@@ -63,8 +64,11 @@ async function connect(timeoutMs = 120000) {
     for (const pid of shell(`pidof ${PKG}`).trim().split(/\s+/).filter(Boolean)) {
       try {
         const port = Number(adb('forward', 'tcp:0', `localabstract:webview_devtools_remote_${pid}`).trim())
-        const page = (await getJson(`http://127.0.0.1:${port}/json/list`)).find((p) => p.type === 'page' && p.webSocketDebuggerUrl)
+        // La page de l'app (https://localhost) plutôt qu'une autre cible éventuelle (about:blank…)
+        const pages = (await getJson(`http://127.0.0.1:${port}/json/list`)).filter((p) => p.type === 'page' && p.webSocketDebuggerUrl)
+        const page = pages.find((p) => /^https?:\/\/localhost/.test(p.url)) || pages[0]
         if (!page) continue
+        pageInfo = `${page.url} (${pages.length} page${pages.length > 1 ? 's' : ''})`
         cdp = new WebSocket(page.webSocketDebuggerUrl)
         await new Promise((res, rej) => {
           cdp.onopen = res
@@ -140,6 +144,19 @@ async function evaluate(expression) {
 const readInsets = () =>
   evaluate(`(() => { const s = getComputedStyle(document.documentElement); const n = (k) => parseFloat(s.getPropertyValue(k)) || 0;
     return { top: n('--safe-area-inset-top'), bottom: n('--safe-area-inset-bottom'), innerHeight: innerHeight } })()`)
+const insetsOk = (r) => r && r.top >= 20 && r.top <= 64 && r.bottom >= 16
+// Émulateur chargé (« Pixel Launcher isn't responding » le 31/10 04:21) : une seule lecture ne suffit pas à conclure.
+// On ferme les dialogues système et on relit jusqu'à 5 fois (≈ 15 s) ; une vraie régression reste à 0 px.
+async function readInsetsSettled() {
+  let r
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    r = await readInsets()
+    if (insetsOk(r)) return { ...r, attempt }
+    shell('am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS')
+    await sleep(3000)
+  }
+  return r && { ...r, attempt: 5 }
+}
 
 const lines = []
 let ok = true
@@ -156,14 +173,15 @@ if (!(await connect())) {
   await sleep(6000)
   shot('accueil-6s')
   await sleep(10000)
-  const rest = await readInsets()
+  const rest = await readInsetsSettled()
   shot('accueil')
   const statusFrame = shell('dumpsys window | grep -m3 -iE "statusBars|status_bar.*frame"').trim()
   lines.push('```', statusFrame, shell('logcat -d -s HalcyaInsets').trim().split('\n').slice(-6).join('\n'), '```')
   // Haut : barre d'état + encoche, jamais plus de 64 dp sur un téléphone (105 = barre de titre en trop)
-  const restOk = rest && rest.top >= 20 && rest.top <= 64 && rest.bottom >= 16
+  const restOk = insetsOk(rest)
   ok &&= restOk
-  lines.push(`- ${restOk ? '✅' : '❌'} encarts au repos : haut ${rest?.top} px, bas ${rest?.bottom} px (attendu 20–64 et ≥ 16)`)
+  lines.push(`- ${restOk ? '✅' : '❌'} encarts au repos : haut ${rest?.top} px, bas ${rest?.bottom} px (attendu 20–64 et ≥ 16 ; lecture ${rest?.attempt ?? '?'}/5)`)
+  lines.push(`- page lue : ${pageInfo}`)
 
   // Clavier : premier champ de saisie visible, touché par un vrai appui (s'il existe sur l'écran affiché)
   const field = await evaluate(`(() => { const el = [...document.querySelectorAll('input:not([type=checkbox]):not([type=radio]),textarea')]
