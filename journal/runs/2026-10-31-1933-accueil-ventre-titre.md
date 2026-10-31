@@ -31,3 +31,8 @@
 
 ## Suite
 - Premium et paywall de l'onboarding en vierge sombre, puis Historique du bien-être en démo sombre (vue Mois).
+
+## Après le merge (#574)
+- Les 9 checks de la PR étaient verts (Vitest, Build APK, relais, Java, émulateurs…).
+- Tests, Build & Release et Play — AAB verts sur main (`0504abf`) : release **v413** publiée (APK 34 523 114 octets) ;
+  AAB play envoyé en test interne.
