@@ -182,12 +182,15 @@
   transition: background 0.2s;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--accent-dim);
 }
 
+/* Bouton désactivé : neutre, pour ne pas passer pour un bouton actif qui ne réagit pas (POL-PLAY-74, comme POL-PLAY-58). */
 .btn:disabled {
-  opacity: 0.6;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 2px solid var(--border);
   cursor: not-allowed;
 }
 

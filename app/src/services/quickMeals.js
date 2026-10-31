@@ -20,8 +20,21 @@ export function mealLabel(payload) {
     .map((it) => frenchLigatures(it.ingredient))
     .map((name) => name.split(',')[0].trim() || name.trim())
   if (!names.length) return 'Repas'
-  const shown = names.slice(0, LABEL_INGREDIENTS).join(', ')
+  // Une liste, une seule majuscule : « Poulet, pomme de terre » ; sigles et marques gardés (« AOP Comté »).
+  const shown = names
+    .slice(0, LABEL_INGREDIENTS)
+    .map((name, i) => (i === 0 ? capitalize(name) : lowerInitial(name)))
+    .join(', ')
   return names.length > LABEL_INGREDIENTS ? `${shown}…` : shown
+}
+
+function capitalize(name) {
+  return name.charAt(0).toLocaleUpperCase('fr-FR') + name.slice(1)
+}
+
+function lowerInitial(name) {
+  const second = name.charAt(1)
+  return second && second !== second.toLocaleUpperCase('fr-FR') ? name.charAt(0).toLocaleLowerCase('fr-FR') + name.slice(1) : name
 }
 
 /** Même repas = même ensemble d'ingrédients (ordre, casse et accents ignorés ; grammes libres). */

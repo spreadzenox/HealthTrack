@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-31",
+  "kind": "amélioration",
+  "title": "Boutons inactifs plus clairs",
+  "items": [
+    "Un bouton qui ne peut pas encore servir (par exemple « Remplir avec l’IA » tant que le repas n’est pas décrit) est maintenant gris clair : il ne ressemble plus à un bouton vert qui ne réagit pas.",
+    "Repas habituels : « Poulet, pomme de terre, haricot vert », avec une seule majuscule."
+  ]
+}

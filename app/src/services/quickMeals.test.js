@@ -16,11 +16,11 @@ describe('mealLabel', () => {
 
   it('écrit « Œuf » et « Bœuf » à l’écran (noms Ciqual en « oe »)', () => {
     expect(mealLabel({ items: [{ ingredient: 'Oeuf brouillé, avec matière grasse' }, { ingredient: 'Boeuf, steak' }] }))
-      .toBe('Œuf brouillé, Bœuf')
+      .toBe('Œuf brouillé, bœuf')
   })
 
   it('sinon liste les 3 premiers ingrédients', () => {
-    expect(mealLabel({ items: [{ ingredient: 'Riz' }, { ingredient: 'Poulet' }] })).toBe('Riz, Poulet')
+    expect(mealLabel({ items: [{ ingredient: 'Riz' }, { ingredient: 'Poulet' }] })).toBe('Riz, poulet')
     expect(mealLabel({
       items: [{ ingredient: 'A' }, { ingredient: 'B' }, { ingredient: 'C' }, { ingredient: 'D' }],
     })).toBe('A, B, C…')
@@ -33,7 +33,13 @@ describe('mealLabel', () => {
         { ingredient: 'Pomme de terre, bouillie/cuite à l\'eau' },
         { ingredient: 'Haricot vert, cuit' },
       ],
-    })).toBe('Poulet, Pomme de terre, Haricot vert')
+    })).toBe('Poulet, pomme de terre, haricot vert')
+  })
+
+  it('une seule majuscule en tête de liste, sigles et marques gardés (POL-PLAY-74)', () => {
+    expect(mealLabel({ items: [{ ingredient: 'Yaourt nature' }, { ingredient: 'Banane' }, { ingredient: 'Café' }] }))
+      .toBe('Yaourt nature, banane, café')
+    expect(mealLabel({ items: [{ ingredient: 'pain' }, { ingredient: 'AOP Comté' }] })).toBe('Pain, AOP Comté')
   })
 
   it('renvoie « Repas » sans contenu exploitable', () => {
