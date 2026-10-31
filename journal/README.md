@@ -29,6 +29,10 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **Paramètres : l'analyse IA en une phrase** (31/10 09:33) — « Ce qui est envoyé » tient en une ligne (« Seule la
+  photo ou la description du repas part, sans métadonnées ; rien d'autre de votre santé. ») ; le détail complet est
+  derrière « Ce qui est envoyé, en détail ». Un lien périmé ramène à l'Accueil au lieu d'une page blanche.
+  **À tester** : Réglages → Paramètres, toucher « Ce qui est envoyé, en détail ».
 - **Vos données : ce que contient la sauvegarde** (31/10 07:33) — Paramètres → Vos données dit « 1 920 entrées et
   votre profil » au-dessus de « Télécharger la sauvegarde » (bouton grisé avec « Rien à sauvegarder pour l’instant »
   sur une installation neuve) ; le rapport PDF ne propose plus « Débloquer » tant qu’il serait vide ; boutons pleine
@@ -685,6 +689,7 @@ pour quatre lignes.
 | 31/10 01:33 — [Modifier un repas à 360 px](runs/2026-10-31-0133-modifier-un-repas.md) | 🎨 | POL-PLAY-73 : éditeur de repas, kcal sur la ligne du nom (✕ hors de la carte à 360 px), « Enregistrer » sur une ligne ; 1 test ; v395 ; CI : téléchargement de JUnit réessayé (404 passager de Maven Central) |
 | 31/10 04:33 — [Champs à la police de l’app](runs/2026-10-31-0433-champs-figtree.md) | 🎨 | POL-PLAY-76 : `input`, `textarea`, `select` héritent de Figtree (police système avant) ; audit Tendances / Nutrition vierges et formulaire du profil ; 1 test ; v399 |
 | 31/10 05:33 — [Contrôle bord à bord fiabilisé](runs/2026-10-31-0533-encarts-ci.md) | 🔧 | POL-PLAY-77 : émulateur API 34 rouge sur main (« Pixel Launcher isn't responding », encarts lus à 0 px alors que l'écran est juste) ; page DevTools de l'app choisie, dialogues fermés, 5 relectures avant d’échouer ; v400 |
+| 31/10 09:33 — [Paramètres : l'analyse IA en une phrase](runs/2026-10-31-0933-parametres-ia.md) | 🎨 | POL-PLAY-80 : « Ce qui est envoyé » en une phrase + détail replié ; adresse inconnue → Accueil (plus de page blanche) ; Paramètres et Nouveautés relus en vierge et sombre ; 3 tests |
 | 31/10 08:33 — [Idées : invitation des testeurs relue](runs/2026-10-31-0833-idees-invitation-relue.md) | 💡 | `INVITATION-TESTEURS.md` relu contre la v402 : chemins « Réglages → … » précisés, missions ventre / FODMAP réservées à « Mon ventre », prérequis Android 8+, règle Google des 12 testeurs × 14 jours relue (inchangée) ; I201 ; journal seul |
 | 31/10 07:33 — [Vos données : ce que contient la sauvegarde](runs/2026-10-31-0733-vos-donnees.md) | 🎨 | POL-PLAY-79 : nombre d'entrées exportées, export grisé si rien, pas de « Débloquer » pour un rapport PDF vide, boutons pleine largeur, écarts réguliers ; repas habituels sombres relus ; 5 tests ; v402 |
 | 31/10 06:33 — [Recherche d'aliments plus juste](runs/2026-10-31-0633-recherche-aliments.md) | 🎨 | POL-PLAY-78 : recherche en début de mot (« ail » ≠ volaille), mots entiers d'abord (laits avant laitue), alias Ciqual dédoublonnés, croix de recherche aux couleurs de l'app ; Journal sombre relu ; 4 tests ; v401 |

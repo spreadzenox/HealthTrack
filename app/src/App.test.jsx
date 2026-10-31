@@ -36,4 +36,11 @@ describe('App', () => {
     await screen.findByRole('heading', { name: 'Vos derniers jours' })
     expect(document.documentElement.scrollTop).toBe(0)
   })
+
+  it('une adresse inconnue ramène à l’Accueil au lieu d’une page blanche', async () => {
+    window.history.pushState({}, '', '/whats-new')
+    render(<App />)
+    expect(await screen.findByRole('navigation', { name: 'Principal' })).toBeInTheDocument()
+    expect(window.location.pathname).toBe('/')
+  })
 })

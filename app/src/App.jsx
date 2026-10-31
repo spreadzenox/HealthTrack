@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './Layout'
 import Dashboard from './pages/Dashboard'
 import './pageStyles'
@@ -57,6 +57,8 @@ export default function App() {
             <Route path="bien-etre" element={<WellbeingHistory />} />
             <Route path="reintroduction" element={<Reintroduction />} />
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
+            {/* Adresse inconnue (ancienne notification, lien périmé) : l'Accueil plutôt qu'une page blanche. */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
       </BrowserRouter>

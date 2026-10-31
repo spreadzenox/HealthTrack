@@ -29,10 +29,19 @@ describe('Settings — variante play (relais Halcya)', () => {
     expect(screen.queryByLabelText(/Clé API Gemini/i)).toBeNull()
     expect(screen.getByText('Analyse des repas (IA)')).toBeInTheDocument()
     expect(screen.getByText(/Aucune clé à saisir/)).toBeInTheDocument()
-    const sent = screen.getByText(/Ce qui est envoyé/i).closest('p')
-    expect(sent).toHaveTextContent(/identifiant aléatoire/)
-    expect(sent).toHaveTextContent(/ne garde ni la photo ni le texte/)
-    expect(sent).toHaveTextContent(/13 mois/)
+    const details = screen.getByText(/Ce qui est envoyé, en détail/i).closest('details')
+    expect(details).toHaveTextContent(/identifiant aléatoire/)
+    expect(details).toHaveTextContent(/ne garde ni la photo ni le texte/)
+    expect(details).toHaveTextContent(/13 mois/)
+  })
+
+  it('simple d’abord : une phrase sur ce qui est envoyé, le détail replié', () => {
+    renderSettings()
+    const short = screen.getByText(/Seule la photo ou la description du repas part/)
+    expect(short.closest('details')).toBeNull()
+    expect(short).toHaveTextContent(/rien d’autre de votre santé/)
+    const details = screen.getByText(/Ce qui est envoyé, en détail/i).closest('details')
+    expect(details.open).toBe(false)
   })
 
   it('montre les crédits d’analyse IA relus auprès du relais', async () => {
