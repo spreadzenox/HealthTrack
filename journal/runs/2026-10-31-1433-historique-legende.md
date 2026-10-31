@@ -39,3 +39,8 @@
 
 ## Suite
 - Nutrition en sombre (POL-PLAY-82), puis Journal → Tendances en vierge.
+
+## Après le merge (#564)
+- Les 9 checks de la PR étaient verts (Vitest, Build APK, Publier l'APK, relais, Java, budget, émulateurs API 34/35/36).
+- Tests, Build & Release et Play — AAB verts sur main (`2845cf9`) : release **v408** publiée (APK 34 521 922 octets) ;
+  AAB play envoyé en test interne.
