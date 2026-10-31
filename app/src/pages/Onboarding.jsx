@@ -451,7 +451,7 @@ function FaceStep({ face, onFace, onPitch, onLater }) {
         <li>Facultatif : la caméra frontale regarde votre expression une à deux secondes, {shownWhen}.</li>
         <li>Une IA l’analyse sur le téléphone. Seuls quelques nombres sont gardés, aucune image.</li>
         {unlockOffered && <li>Une notification reste affichée tant que c’est en marche, avec « Arrêter ».</li>}
-        <li>Vous obtenez une estimation de votre bien-être, pas un diagnostic.</li>
+        <li>Le résultat est une estimation. Il ne remplace pas l’avis d’un médecin.</li>
       </ul>
       {busy && (
         <p className="onb-note" role="status">
@@ -461,8 +461,8 @@ function FaceStep({ face, onFace, onPitch, onLater }) {
       {!busy && face === 'on' && estimate && (
         <p className="onb-note onb-note-ok" role="status">
           Lecture faite : {estimate.label}, ≈ <span className="mono">{fmt1(estimate.note)} / 5</span> (entre{' '}
-          <span className="mono">{fmt1(estimate.low)}</span> et <span className="mono">{fmt1(estimate.high)}</span>). Une
-          estimation, pas un diagnostic. Cet essai ne compte pas ; les lectures suivantes se feront {shownWhen}.
+          <span className="mono">{fmt1(estimate.low)}</span> et <span className="mono">{fmt1(estimate.high)}</span>). Cet
+          essai ne compte pas ; les lectures suivantes se feront {shownWhen}.
         </p>
       )}
       {!busy && face === 'on' && !estimate && (

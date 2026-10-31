@@ -38,7 +38,7 @@ export default function FormeSection() {
           {RADAR_BASELINE_DAYS} jours précédents, alerte seulement si au moins deux signaux s’écartent ensemble. Cœur :
           moyenne des {RECENT_DAYS} derniers jours face à votre moyenne ± 1 écart-type des {BASELINE_DAYS} jours
           précédents. Sommeil ({REGULARITY_DAYS} derniers jours) : l’indice (0 à 100) mesure la chance d’être dans le
-          même état — endormi ou éveillé — à la même heure d’un jour au suivant. Une observation, pas un diagnostic.
+          même état (endormi ou éveillé) à la même heure d’un jour au suivant.
         </MethodNote>
       )}
     </section>

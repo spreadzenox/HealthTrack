@@ -295,8 +295,8 @@ export default function BleDevices({
                 ))}
               </ul>
               <p className="my-device-meta">
-                Retrouvez-les dans « Vos derniers jours » et vos Analyses. Une mesure isolée compte peu : c’est la tendance qui parle.
-                Une estimation, pas un diagnostic — en cas de valeur inhabituelle, parlez-en à un professionnel de santé.
+                Retrouvez-les dans « Vos derniers jours » et dans Analyses. Une seule mesure compte peu. Une valeur vous
+                inquiète : parlez-en à votre médecin.
               </p>
             </>
           ) : (
@@ -323,7 +323,7 @@ export default function BleDevices({
               {result.disconnected && <p className="my-device-message">Le capteur s’est déconnecté avant la fin.</p>}
               <p className="my-device-meta">
                 La VFC varie beaucoup d’un jour à l’autre : comparez-la à votre propre norme (carte « Votre cœur ») plutôt qu’à des
-                valeurs de référence. Une estimation, pas un diagnostic.
+                valeurs de référence.
               </p>
             </>
           ) : (

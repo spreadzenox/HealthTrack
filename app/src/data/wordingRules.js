@@ -21,3 +21,17 @@ export function stripComments(code) {
     .split('\n')
     .map((l) => l.replace(/(^|\s)\/\/.*$/, '$1'))
 }
+
+/**
+ * SLOP-1 (demande du propriétaire du 31/10/2026 vers 21:35) : formules qui « sentent l'IA ». La règle « rien n'est un
+ * diagnostic » se dit une fois, là où elle sert (onboarding, historique du bien-être, conditions, rapport PDF), jamais en
+ * refrain sur chaque carte. Testées sur le texte de chaque fichier, lignes jointes (une phrase JSX peut être coupée).
+ */
+export const SLOP_WORDING = [
+  { re: /\b(une|c[’']est une|toujours une) (estimation|observation|mesure de la montre|description)s?,? (pas|jamais) (un|une)\b/i, why: 'refrain « une estimation, pas un diagnostic »' },
+  { re: /\b(pas|jamais) un diagnostic\b/i, why: 'dire la règle une fois (onboarding, historique, conditions), pas en refrain' },
+  { re: /en toute (sérénité|simplicité|confiance)/i, why: 'mot creux' },
+  { re: /votre (fidèle )?compagnon/i, why: 'mot creux' },
+  { re: /c[’']est la tendance qui parle/i, why: 'formule toute faite' },
+]
+

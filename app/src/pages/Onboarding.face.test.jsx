@@ -64,7 +64,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     renderAt()
     expect(heading()).toBeInTheDocument()
     expect(screen.getByText('04/05')).toBeInTheDocument()
-    expect(screen.getByText(/pas un diagnostic/)).toBeInTheDocument()
+    expect(screen.getByText(/Il ne remplace pas l’avis d’un médecin/)).toBeInTheDocument()
     expect(screen.getByText(/quand vous déverrouillez le téléphone/)).toBeInTheDocument()
     expect(cont()).toBeEnabled()
     fireEvent.click(cont())

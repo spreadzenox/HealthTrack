@@ -166,7 +166,7 @@ export default function MoodEstimateCard({
         </div>
       )}
       <p className="today-card-text">
-        {est.day ? trend.phrase : 'Pas encore de lecture aujourd’hui.'} Une estimation, pas un diagnostic.
+        {est.day ? trend.phrase : 'Pas encore de lecture aujourd’hui.'}
       </p>
       {reminder}
       <div className="mood-actions">

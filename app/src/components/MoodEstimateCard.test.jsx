@@ -26,7 +26,7 @@ describe('MoodEstimateCard', () => {
     expect(screen.getByText('3,4')).toBeInTheDocument()
     expect(screen.getByText('+0,4 vs moy.')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: /4 derniers jours estimés/ })).toBeInTheDocument()
-    expect(screen.getByText('Un peu mieux que votre moyenne des 14 derniers jours. Une estimation, pas un diagnostic.')).toBeInTheDocument()
+    expect(screen.getByText('Un peu mieux que votre moyenne des 14 derniers jours.')).toBeInTheDocument()
   })
 
   it('le chevron ouvre des détails visuels : fourchette, badge de confiance, lectures, moyenne, modèle', () => {
@@ -68,7 +68,7 @@ describe('MoodEstimateCard', () => {
     renderCard({ data: { est: { ...estimate, day: null, moment: { ...estimate.moment, today: false } }, days } })
     expect(screen.getByText(/dernière lecture ·/)).toBeInTheDocument()
     expect(screen.queryByText(/vs moy\./)).not.toBeInTheDocument()
-    expect(screen.getByText('Pas encore de lecture aujourd’hui. Une estimation, pas un diagnostic.')).toBeInTheDocument()
+    expect(screen.getByText('Pas encore de lecture aujourd’hui.')).toBeInTheDocument()
   })
 
   it('sans aucune lecture du visage, invite à l’activer dans Sources', () => {

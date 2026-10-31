@@ -21,7 +21,7 @@ export const DISCLOSURES = {
     title: 'Avant d’autoriser la caméra',
     points: [
       'Quand vous déverrouillez le téléphone, la caméra frontale prend quelques images de votre visage, pendant une à deux secondes.',
-      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être. Une estimation, pas un diagnostic.',
+      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être.',
       'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
       'Une notification reste affichée tant que la lecture est active. « Désactiver » l’arrête à tout moment, et vous pouvez retirer l’accès dans les réglages d’Android.',
     ],
@@ -34,7 +34,7 @@ export const DISCLOSURES = {
     title: 'Avant d’autoriser la caméra',
     points: [
       `Quand vous ouvrez ${APP_NAME}, la caméra frontale prend quelques images de votre visage, pendant une à deux secondes, au plus une fois par demi-heure. Un bandeau l’indique à l’écran pendant toute la lecture.`,
-      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être. Une estimation, pas un diagnostic.',
+      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être.',
       'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
       'Rien ne se passe quand l’app est fermée. « Désactiver » l’arrête à tout moment, et vous pouvez retirer l’accès dans les réglages d’Android.',
     ],
@@ -48,7 +48,7 @@ export const DISCLOSURES = {
     title: 'Avant la lecture à chaque déverrouillage',
     points: [
       'À chaque déverrouillage du téléphone, la caméra frontale prend 3 images de votre visage, en une à deux secondes. Le témoin vert de la caméra d’Android s’allume.',
-      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être. Une estimation, pas un diagnostic.',
+      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être.',
       'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
       'Une notification « Lecture du visage active » reste affichée tant que c’est en marche, avec un bouton « Arrêter ». Vous pouvez aussi couper ici à tout moment.',
       `Après un redémarrage du téléphone, rien ne reprend tout seul : il faudra rouvrir ${APP_NAME}.`,
@@ -63,7 +63,7 @@ export const DISCLOSURES = {
     title: 'Avant d’activer la lecture du visage',
     points: [
       `À chaque déverrouillage du téléphone, et quand vous ouvrez ${APP_NAME} (au plus une fois par demi-heure), la caméra frontale prend 3 images de votre visage, en une à deux secondes. Le témoin vert de la caméra d’Android s’allume.`,
-      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être. Une estimation, pas un diagnostic.',
+      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être.',
       'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
       'Une notification « Lecture du visage active » reste affichée tant que la lecture au déverrouillage est en marche, avec un bouton « Arrêter ». Vous pouvez tout couper à tout moment dans l’onglet Sources.',
       `Après un redémarrage du téléphone, la lecture au déverrouillage ne reprend pas toute seule : il faudra rouvrir ${APP_NAME}.`,

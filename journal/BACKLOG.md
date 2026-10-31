@@ -53,6 +53,20 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
 - [ ] **SLOP-1** (demande du 31/10 vers 21:35, priorité des runs de code après GOLD-a) Relire tous les textes
   visibles (app, onboarding, paywall, notifications, Nouveautés, fiche Play, confidentialité) et réécrire ce qui sonne
   généré ; test qui échoue si une formule bannie revient ; captures avant/après et liste des changements dans le journal.
+  - [x] **SLOP-1a** (31/10 23:33) Refrain « une estimation / observation, pas (jamais) un diagnostic » retiré du code
+    de l'app (11 fichiers) ; règle dite une fois : onboarding (écran visage), historique du bien-être, rapport PDF
+    (encart), conditions et confidentialité (site). `SLOP_WORDING` dans `src/data/wordingRules.js` + test dans
+    `wording.test.js` (lignes jointes). Captures `journal/captures/slop-1a/`.
+  - [ ] **SLOP-1b** Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
+    « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
+    inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
+    Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.
+  - [ ] **SLOP-1c** Notifications (bilan du soir, lecture du visage, rappels) et textes natifs Android (`strings.xml`).
+  - [ ] **SLOP-1d** Fiche Play (`store/listing/fr-FR/full-description.txt` contient encore « C'est une estimation, pas
+    un diagnostic » ; `scripts/play/listing.test.mjs` l'exige : à remplacer par une phrase unique), formulaire
+    d'abonnement, page de confidentialité et conditions (site), en gardant la règle une fois.
+  - [ ] **SLOP-1e** Nouveautés : 20 anciennes notes contiennent le refrain (`grep -l "pas un diagnostic"
+    app/src/data/changelog`) ; les alléger, puis étendre le test aux notes.
 
 ## 🎯 Version candidate avant les testeurs (décision du 22/10 19:15 ; critères dans `PRODUIT.md` §2 bis)
 **Retours et décisions du propriétaire du 24/10 13:30–14:30 (session guidée sur la version play) — avant M6b et M7, dans cet ordre :**

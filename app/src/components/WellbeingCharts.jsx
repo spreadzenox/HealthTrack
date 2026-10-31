@@ -155,7 +155,7 @@ function PredictionLegend({ prediction, onChart }) {
       <summary>{line}</summary>
       <p className="wellbeing-prediction-note">
         Journée en cours : ce qui n’est pas encore connu (pas, repas, mesures…) compte comme une journée
-        habituelle. Une estimation, pas une mesure.
+        habituelle.
       </p>
     </details>
   )
