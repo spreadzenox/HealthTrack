@@ -54,6 +54,13 @@ button {
   border-radius: var(--radius);
 }
 
+/* Les navigateurs donnent aux champs leur propre police système : ils reprennent Figtree (POL-PLAY-76). */
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
 input[type="file"] {
   position: absolute;
   width: 0.1px;
