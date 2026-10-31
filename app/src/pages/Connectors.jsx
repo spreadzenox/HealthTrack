@@ -16,7 +16,7 @@ import PhoneUsageCard from '../components/PhoneUsageCard'
 import FaceSenseCard from '../components/FaceSenseCard'
 import { isFaceSenseAvailable, isFaceSenseEnabled } from '../services/faceSense'
 import { READ_TYPE_LABELS } from '../connectors/HealthConnectConnector'
-import { splitSourcesByStatus, visibleConnectorIds } from '../connectors/connectorsLayout'
+import { splitSourcesByStatus, visibleConnectorIds, sourceTone } from '../connectors/connectorsLayout'
 import { FEATURES } from '../config/distribution'
 import { noteFirstGrant, readsAllFailed, syncSince, historyOptions } from '../connectors/syncWindow'
 import { getWeatherSettings } from '../services/weatherSync'
@@ -474,7 +474,18 @@ export default function Connectors() {
     [initial, watchDetected, debugMode],
   )
 
+  // Retour 8 du 24/10 : chaque carte prend le pastel de son thème (menthe corps et bien-être, lilas contexte).
   const renderSource = (id) => {
+    const card = renderSourceCard(id)
+    const tone = sourceTone(id)
+    return card && tone ? (
+      <div key={id} className={`source-tint source-tint-${tone}`} data-tone={tone}>
+        {card}
+      </div>
+    ) : card
+  }
+
+  const renderSourceCard = (id) => {
     if (id === 'watch') return <WatchDiagnostic key={id} troubleshooting={debugMode} />
     if (id === 'weather') return <WeatherCard key={id} />
     if (id === 'phone') return <PhoneUsageCard key={id} />

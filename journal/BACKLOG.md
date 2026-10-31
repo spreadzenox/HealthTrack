@@ -1520,5 +1520,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   « Derniers repas enregistrés » ; remplacée par une carte pêche en trois étapes numérotées (photo ou mots → heure et
   aliments notés → comparés à votre ventre, ou à vos jours si la carte ventre est masquée). Prochain audit : Journal →
   Jours avec données de démo en sombre, puis Sources en vierge sombre.
+- [x] **POL-PLAY-89** (31/10 18:33 ; `connectorsLayout.js` `sourceTone`, `Connectors.jsx`, `Connectors.css`) Audit
+  Journal → Jours (démo, sombre) : coloré et lisible, rien à corriger. Sources en vierge sombre : quatre cartes grises
+  identiques (« un peu triste », retour 8 du 24/10). Chaque carte prend le pastel de son thème, comme les tuiles de
+  « Vos derniers jours » : menthe (visage, Health Connect, Withings), lilas (météo, temps d'écran), filet à gauche ;
+  montre, capteurs et guides restent neutres. Prochain audit : Accueil en vierge sombre, puis Paramètres en démo clair.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

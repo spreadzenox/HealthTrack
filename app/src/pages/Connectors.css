@@ -541,3 +541,27 @@
   background: var(--bg);
   border-color: var(--text-muted);
 }
+
+/* Retour 8 du 24/10 : un pastel par source, comme les tuiles de « Vos derniers jours » (menthe : corps et
+   bien-être ; lilas : contexte). Fond pastel et filet à gauche ; le texte garde ses couleurs (contraste ≥ 4,5:1). */
+.source-tint-mint {
+  --source-bg: var(--mint-bg);
+  --source-accent: var(--mint-label);
+}
+
+.source-tint-lilac {
+  --source-bg: var(--lilac-bg);
+  --source-accent: var(--lilac-bar);
+}
+
+.source-tint > .weather-card,
+.source-tint .connector-card {
+  background: var(--source-bg);
+  border-color: transparent;
+  border-left: 4px solid var(--source-accent);
+}
+
+.source-tint .connector-card-enabled {
+  border-color: transparent;
+  border-left-color: var(--source-accent);
+}

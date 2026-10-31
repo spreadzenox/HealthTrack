@@ -29,6 +29,9 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **Sources en couleur** (31/10 18:33) — chaque carte de Sources prend la couleur de son thème, comme les tuiles de
+  « Vos derniers jours » : menthe pour le visage et Health Connect, lilas pour la météo et le temps d'écran (au lieu de
+  quatre cartes grises). **À tester** : ouvrir Sources, en clair et en sombre.
 - **Repas : un début plus parlant** (31/10 17:33) — tant qu'aucun repas n'est enregistré, Journal → Repas montre une
   carte pêche en trois étapes (une photo ou quelques mots → l'heure et les aliments notés → comparés à votre ventre)
   au lieu d'une phrase grise. **À tester** : rien sur votre A56 (vous avez des repas) ; sur une installation neuve.
@@ -729,6 +732,7 @@ pour quatre lignes.
 | 31/10 15:33 — [Nutrition : barres hachurées](runs/2026-10-31-1533-nutrition-hachures.md) | 🎨 | POL-PLAY-86 : audit Nutrition en sombre ; barres « incertain : repas manquants » hachurées (contraste de la piste 2,0:1 → teinte de référence 5,7:1 en sombre) ; 1 test ; v409 |
 | 31/10 16:33 — [« Noter votre bien-être » ouvre la note](runs/2026-10-31-1633-noter-sur-place.md) | 🎨 | POL-PLAY-87 : Tendances relues en vierge (clair, sombre) ; la tuile « Noter votre bien-être » ouvre la note sur place (Tendances, Journal vierge) ; 2 tests + 2 adaptés ; v410 |
 | 31/10 17:33 — [Repas vierges en couleur](runs/2026-10-31-1733-repas-vierges.md) | 🎨 | POL-PLAY-88 : Analyses relues en vierge sombre (rien à corriger) ; Journal → Repas vierge : carte pêche en trois étapes ; 2 tests ; v411 |
+| 31/10 18:33 — [Sources en couleur](runs/2026-10-31-1833-sources-couleur.md) | 🎨 | POL-PLAY-89 : Journal → Jours relu en démo sombre (rien à corriger) ; Sources : cartes au pastel de leur thème (menthe / lilas) ; 2 tests |
 | 31/10 09:33 — [Paramètres : l'analyse IA en une phrase](runs/2026-10-31-0933-parametres-ia.md) | 🎨 | POL-PLAY-80 : « Ce qui est envoyé » en une phrase + détail replié ; adresse inconnue → Accueil (plus de page blanche) ; Paramètres et Nouveautés relus en vierge et sombre ; 3 tests ; v403 |
 | 31/10 08:33 — [Idées : invitation des testeurs relue](runs/2026-10-31-0833-idees-invitation-relue.md) | 💡 | `INVITATION-TESTEURS.md` relu contre la v402 : chemins « Réglages → … » précisés, missions ventre / FODMAP réservées à « Mon ventre », prérequis Android 8+, règle Google des 12 testeurs × 14 jours relue (inchangée) ; I201 ; journal seul |
 | 31/10 07:33 — [Vos données : ce que contient la sauvegarde](runs/2026-10-31-0733-vos-donnees.md) | 🎨 | POL-PLAY-79 : nombre d'entrées exportées, export grisé si rien, pas de « Débloquer » pour un rapport PDF vide, boutons pleine largeur, écarts réguliers ; repas habituels sombres relus ; 5 tests ; v402 |

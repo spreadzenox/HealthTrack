@@ -42,3 +42,20 @@ export function splitSourcesByStatus({
 export function visibleConnectorIds(connectorIds, { withingsApi, withingsInUse }) {
   return connectorIds.filter((id) => id !== 'withings' || withingsApi || withingsInUse)
 }
+
+/**
+ * Pastel d'une carte de source (retour 8 du 24/10 : plus de couleur). Même code que les tuiles de « Vos derniers
+ * jours » : menthe pour le corps et le bien-être (visage, Health Connect, Withings), lilas pour le contexte (météo,
+ * temps d'écran). Les blocs sans carte (montre, capteurs Bluetooth, guides) restent neutres : `null`.
+ */
+const SOURCE_TONES = {
+  face: 'mint',
+  health_connect: 'mint',
+  withings: 'mint',
+  weather: 'lilac',
+  phone: 'lilac',
+}
+
+export function sourceTone(id) {
+  return SOURCE_TONES[id] ?? null
+}
