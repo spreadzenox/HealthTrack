@@ -35,6 +35,16 @@
   margin-top: 6px;
 }
 
+.fodmap-when {
+  background: var(--peach-bg);
+  color: var(--peach-text);
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
 .fodmap-groups {
   list-style: none;
   margin: 0 0 14px;

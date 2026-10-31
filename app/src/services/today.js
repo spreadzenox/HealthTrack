@@ -21,7 +21,7 @@ export const GUT_SOURCE = 'app_gut'
  * par les données (ce serait une détection, donc une fonction médicale), jamais en rouge.
  */
 export const WHEN_TO_SEE_DOCTOR =
-  'Sang dans les selles, perte de poids sans raison, fièvre, réveils la nuit à cause du ventre, ou symptômes nouveaux après 50 ans : parlez-en rapidement à votre médecin.'
+  'Sang dans les selles, perte de poids sans raison, fièvre, réveils la nuit à cause du ventre, symptômes nouveaux après 50 ans, ou un proche (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de l’intestin : parlez-en rapidement à votre médecin.'
 
 /** Les trois niveaux, dans l'ordre affiché. */
 export const GUT_LEVELS = [

@@ -142,6 +142,9 @@ function ChooseGroup({ results, onPick, combos, focus = null }) {
   const groups = focus ? all.sort((a, b) => (b.id === focus) - (a.id === focus)) : all
   return (
     <>
+      <p className="fodmap-when">
+        À faire après 2 à 6 semaines de repas pauvres en FODMAP, si votre ventre va mieux.
+      </p>
       <p className="fodmap-intro">
         Testez un groupe à la fois, sur 3 jours : une portion le 1er jour, le double le 2e, le triple le 3e. Vous notez
         votre ventre comme d’habitude ; l’app vous dit ce qui passe.
