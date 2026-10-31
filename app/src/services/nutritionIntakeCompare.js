@@ -112,6 +112,12 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
   const energyPerDay = (totals.energy_kcal ?? 0) / divisor
   const energyTarget = dailyTargets.energy_kcal || 0
   const fmt = new Intl.DateTimeFormat(appLocale(), { day: 'numeric', month: 'short' })
+  const likelyIncomplete = mealCount > 0 && energyTarget > 0 && energyPerDay < energyTarget * INCOMPLETE_ENERGY_RATIO
+  // POL-PLAY-75 : des repas manquent → « bas » ou « proche » ne voudraient rien dire (l'apport réel est plus élevé) ;
+  // « atteint » et « limite dépassée » restent vrais malgré les repas manquants.
+  if (likelyIncomplete) {
+    for (const row of rows) if (row.status === 'low' || row.status === 'partial') row.status = 'uncertain'
+  }
 
   return {
     totals,
@@ -125,7 +131,9 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
     targetCount: rows.filter((r) => !r.limit).length,
     energyPerDay,
     energyTarget,
-    likelyIncomplete: mealCount > 0 && energyTarget > 0 && energyPerDay < energyTarget * INCOMPLETE_ENERGY_RATIO,
+    likelyIncomplete,
+    // Statuts présents (légende sans entrée inutile)
+    statuses: [...new Set(rows.map((r) => r.status))].sort(),
     periodLabel: `${fmt.format(start)} – ${fmt.format(now)}`,
   }
 }

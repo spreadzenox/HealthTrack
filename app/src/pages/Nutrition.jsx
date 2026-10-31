@@ -16,7 +16,17 @@ const STATUS_TEXT = {
   partial: 'proche',
   low: 'bas',
   over: 'dépassé',
+  uncertain: 'incertain',
 }
+
+// Légende : seulement les statuts présents (POL-PLAY-75), dans cet ordre
+const LEGEND = [
+  ['ok', 'atteint'],
+  ['partial', 'proche (≥ 70 %)'],
+  ['low', 'bas'],
+  ['uncertain', 'incertain : repas manquants'],
+  ['over', 'limite dépassée'],
+]
 
 function NutrientBar({ row }) {
   const barClass = `nutrition-bar-${row.status}`
@@ -127,10 +137,9 @@ export default function Nutrition() {
             </p>
           )}
           <div className="nutrition-legend" aria-hidden="true">
-            <span><i className="nutrition-dot nutrition-bar-ok" /> atteint</span>
-            <span><i className="nutrition-dot nutrition-bar-partial" /> proche (≥ 70 %)</span>
-            <span><i className="nutrition-dot nutrition-bar-low" /> bas</span>
-            <span><i className="nutrition-dot nutrition-bar-over" /> limite dépassée</span>
+            {LEGEND.filter(([status]) => comparison.statuses.includes(status)).map(([status, text]) => (
+              <span key={status}><i className={`nutrition-dot nutrition-bar-${status}`} /> {text}</span>
+            ))}
           </div>
           {comparison.groups.map((group) => (
             <div key={group.title}>

@@ -192,6 +192,11 @@
   background: var(--text-muted);
 }
 
+/* POL-PLAY-75 : repas manquants, apport sans doute sous-estimé → pastel neutre, ni « bas » ni alerte */
+.nutrition-bar-uncertain {
+  background: var(--chart-bar-2);
+}
+
 .nutrition-bar-over {
   background: var(--color-alert);
 }
