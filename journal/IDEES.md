@@ -9,6 +9,44 @@
 
 ---
 
+## Run du 31/10/2026 20:33 (Paris) — « Quand consulter » relu, réintroduction après l'éviction
+
+### I202 (16) — « Quand consulter » : ajouter les antécédents familiaux [V synthèses françaises]
+- **Constat** : la phrase fixe `WHEN_TO_SEE_DOCTOR` (`services/today.js`, POL-PLAY-60) cite le sang dans les selles, la
+  perte de poids, la fièvre, les réveils nocturnes et les symptômes nouveaux après 50 ans. Les deux synthèses françaises
+  relues ce soir ajoutent un signe qu'elle n'a pas : **antécédent familial de cancer du côlon ou de MICI** (Crohn,
+  rectocolite) [V FMC-HGE, POST'U 2022, J.-M. Sabaté, résumé des recommandations ACG 2020 (Lacy et al., Am J
+  Gastroenterol 2021) ; T VIDAL Recos « Syndrome de l'intestin irritable », mise à jour 19/12/2022, extrait visible dans
+  les résultats de recherche : « rectorragies, méléna, anémie, syndrome inflammatoire, perte de poids inexpliquée,
+  antécédents familiaux de cancer colique, masse abdominale »]. Anémie et syndrome inflammatoire ne se voient qu'en
+  prise de sang : pas pour une phrase grand public.
+- **Piste** : « … ou un proche (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de
+  l'intestin : parlez-en à votre médecin. » Même règle qu'avant : phrase statique, jamais déclenchée par les données,
+  jamais en rouge, un seul texte (carte ventre, réintroduction, PDF). → **POL-PLAY-91**.
+- La page ameli « quand consulter » refuse toujours la lecture (403, 31/10) ; la SNFGE indique que ses recommandations
+  françaises de 2016 sont en cours d'actualisation (cité par FMC-HGE) : à relire quand elles paraîtront.
+- **Impact 4 × faisabilité 4 = 16** (un texte et ses tests).
+
+### I203 (12) — Réintroduction : dire qu'elle vient après 2 à 6 semaines d'éviction [V FMC-HGE 2022 / ACG]
+- **Constat** : l'écran de réintroduction suppose que la personne mange déjà pauvre en FODMAP (« Les autres repas
+  restent pauvres en FODMAP ») et attend un ventre calme, mais ne dit nulle part que la réintroduction **suit** une
+  phase d'éviction. Recommandation ACG reprise par la FMC-HGE : éviction « pendant 2 à 6 semaines » pour voir si l'on
+  répond, puis réintroduction progressive, idéalement avec un diététicien formé (recommandation conditionnelle, niveau
+  de preuve très faible).
+- **Piste** : une ligne statique en tête de l'écran (« À faire après 2 à 6 semaines de repas pauvres en FODMAP, si
+  votre ventre va mieux »), sans bloquer personne ni compter les semaines (pas de règle imposée, règle 6).
+  → **POL-PLAY-92**.
+- **Vérifié au passage** : le journal des selles de 2 semaines conseillé pour le sous-type (échelle de Bristol) existe
+  déjà (I176, `services/stool.js`) et ne déduit volontairement aucun sous-type : conforme, rien à changer.
+- **Impact 3 × faisabilité 4 = 12.**
+
+**Sources (31/10/2026)** : fmcgastro.org/texte-postu/postu-2022/recommandations-sur-la-prise-en-charge-du-syndrome-de-
+lintestin-irritable-sii/ ; vidal.fr/maladies/recommandations/syndrome-de-l-intestin-irritable-2499.html (texte réservé
+aux abonnés, extrait de la liste lu dans les résultats de recherche) ; msdmanuals.com (SII, grand public). Inaccessible :
+ameli.fr (403).
+
+---
+
 ## Run du 30/10/2026 20:33 (Paris) — Inventaire montre à jour, premier lancement en clair
 
 ### I199 (6) — Dénivelé du jour de la montre : lisible sans nouveau décodeur [V discussion publique de la PR #6579 de Gadgetbridge, 27/10/2026]
