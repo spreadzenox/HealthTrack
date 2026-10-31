@@ -1487,5 +1487,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   légende « « rien » : aucune mesure reçue depuis 30 jours » est dite une fois en bas ; un type qui porte l'issue d'une
   lecture (« dernière lecture : vide / sans réponse ») garde sa carte complète. Ordre des types inchangé (sommeil et
   VFC d'abord). Prochain audit : Sources (variante play) en `--empty` et sombre, puis Réintroduction en sombre.
+- [x] **POL-PLAY-82** (31/10 11:33 ; `TabBar.jsx`) Audit Sources (`--play --empty` clair, `--play --dark` démo) et
+  Réintroduction (`--play --dark`, `--fodmap` et `--fodmap=day2`). Sources : conforme à VC-25 / POL-PLAY-45 (sources
+  à brancher en vue au premier lancement, « Ce que lit Halcya » puis « Ajouter une source » ensuite), rien à redire.
+  Réintroduction en sombre : contrastes corrects ; mais aucun onglet du bas n'était surligné sur `/reintroduction`,
+  ni sur `/montre` et `/bien-etre` (on ne savait plus où l'on était). Corrigé : Réintroduction sous Analyses, Montre
+  sous Sources, Historique du bien-être sous Aujourd'hui ; Premium et réglages restent sans onglet. Prochain audit :
+  Historique du bien-être (`/bien-etre`) en vierge et sombre, puis Nutrition en sombre.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

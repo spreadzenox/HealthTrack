@@ -232,6 +232,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **31/10 04:33 CET** — **Polissage play** : POL-PLAY-76, champs de saisie (profil, description d'un repas, réglages) en Figtree au lieu de la police système.
 - **31/10 07:33 CET** — **Polissage** : POL-PLAY-79, Vos données dit ce que contient la sauvegarde (export grisé si rien), pas de « Débloquer » pour un rapport PDF vide, boutons et écarts réguliers.
 - **31/10 08:33 CET** (idées) — **Invitation des testeurs relue contre la v402** (`INVITATION-TESTEURS.md`) : chemins précisés, missions du ventre réservées à « Mon ventre », prérequis Android 8+, règle Google des 12 testeurs × 14 jours confirmée (I201). Journal seul.
+- **31/10 11:33 CET** — **Polissage** : POL-PLAY-82, l'onglet du bas reste surligné sur Réintroduction (Analyses), Montre (Sources) et Historique du bien-être (Aujourd'hui) ; Sources relue en vierge et sombre, rien à redire.
 - **31/10 10:33 CET** — **Polissage** : POL-PLAY-81, Montre : les types sans mesure tiennent sur une ligne (plus 9 fois « Rien reçu depuis 30 jours ») ; paywall relu en vierge et sombre, rien à redire.
 - **31/10 09:33 CET** — **Polissage** : POL-PLAY-80, Paramètres : « Ce qui est envoyé » en une phrase, détail replié ; une adresse inconnue ramène à l'Accueil au lieu d'une page blanche.
 - **31/10 06:33 CET** — **Polissage** : POL-PLAY-78, recherche d'aliments plus juste (début de mot, mots entiers d'abord, alias Ciqual une seule fois) ; croix de recherche aux couleurs de l'app.
