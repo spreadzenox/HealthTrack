@@ -1511,5 +1511,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   sombre, 1,3:1 en clair). Hachures `--chart-ref` / `--chart-bar-2` (signe d'une estimation), légende comprise ;
   reste lisible, sans couleur d'alerte. Profil, avertissement « repas manquent », étiquette « partiel » et notes :
   rien à redire. Prochain audit : Journal → Tendances en vierge (clair et sombre).
+- [x] **POL-PLAY-87** (31/10 16:33 ; `PastelTiles.jsx`, `WellbeingCharts.jsx`, `JournalEmpty.jsx`) Audit Tendances en
+  vierge (clair et sombre) : propre, « 3 semaines » juste (7 + 14 j). La tuile « Noter votre bien-être » (Tendances,
+  Journal vierge) renvoyait à l'Accueil sans ouvrir la note : elle l'ouvre sur place. Prochain audit : Analyses en
+  vierge sombre, puis Journal → Repas en vierge.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

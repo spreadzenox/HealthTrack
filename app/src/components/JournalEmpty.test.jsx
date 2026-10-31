@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import JournalEmpty from './JournalEmpty'
 import { saveOnboarding } from '../settings/onboarding'
@@ -26,8 +26,14 @@ describe('JournalEmpty (Journal vierge en couleur, POL-PLAY-46)', () => {
     saveOnboarding({ goal: 'energy' })
     renderEmpty()
     expect(screen.queryByText(/ventre/)).not.toBeInTheDocument()
-    const wellbeing = screen.getByRole('link', { name: /Noter votre bien-être/ })
-    expect(wellbeing).toHaveAttribute('href', '/')
+    const wellbeing = screen.getByRole('button', { name: /Noter votre bien-être/ })
     expect(wellbeing).toHaveAttribute('data-theme', 'mint')
+  })
+
+  it('the well-being tile opens the note in place instead of sending to Today (POL-PLAY-87)', async () => {
+    saveOnboarding({ goal: 'energy' })
+    renderEmpty()
+    fireEvent.click(screen.getByRole('button', { name: /Noter votre bien-être/ }))
+    expect(await screen.findByRole('dialog', { name: /Comment vous sentez-vous/ })).toBeInTheDocument()
   })
 })

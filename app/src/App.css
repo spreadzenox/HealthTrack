@@ -956,6 +956,7 @@
   font-weight: 700;
   text-decoration: none;
 }
+button.pastel-tile { width: 100%; border: 0; font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
 .pastel-tile[data-theme="mint"] { background: var(--mint-bg); color: var(--mint-label); }
 .pastel-tile[data-theme="peach"] { background: var(--peach-bg); color: var(--peach-label); }
 .pastel-tile[data-theme="lilac"] { background: var(--lilac-bg); color: var(--lilac-bar); }
