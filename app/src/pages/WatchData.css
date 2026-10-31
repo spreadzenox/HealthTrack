@@ -38,6 +38,11 @@
   background: var(--surface);
 }
 
+/* POL-PLAY-81 : « rien » sans lecture → une ligne basse, sans phrase répétée */
+.watch-data-row--compact {
+  padding: 8px 14px;
+}
+
 /* « rien » / « ancien » : même carte, libellé atténué (POL-PLAY-19 : plus de bordure à part) */
 .watch-data-row--none .watch-data-label,
 .watch-data-row--stale .watch-data-label {

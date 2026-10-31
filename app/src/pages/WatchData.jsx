@@ -76,8 +76,11 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
         <>
           <p className="watch-data-summary">{coverageSummary(rows)}</p>
           <ul className="watch-data-list" aria-label="Données de la montre">
-            {rows.map((r) => (
-              <li key={r.id} className={`watch-data-row watch-data-row--${r.status}`}>
+            {rows.map((r) => {
+              // POL-PLAY-81 : rien reçu et aucune lecture à montrer → une ligne, la légende « rien » est en bas
+              const compact = r.status === 'none' && !r.last && !r.read
+              return (
+              <li key={r.id} className={`watch-data-row watch-data-row--${r.status}${compact ? ' watch-data-row--compact' : ''}`}>
                 <div className="watch-data-head">
                   <span className="watch-data-label">{r.label}</span>
                   <span className="watch-data-tag">{STATUS_LABELS[r.status]}</span>
@@ -86,7 +89,7 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
                   <p className="watch-data-value">
                     <strong>{r.last.value}</strong> <span className="watch-data-date">· {formatAt(r.last.at)}</span>
                   </p>
-                ) : (
+                ) : compact ? null : (
                   <p className="watch-data-empty">
                     {r.status === 'planned' ? 'Pas encore lu par l’app : prévu dans une prochaine version.' : `Rien reçu depuis ${COVERAGE_LOOKBACK_DAYS} jours.`}
                   </p>
@@ -97,10 +100,11 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
                   </p>
                 )}
               </li>
-            ))}
+              )
+            })}
           </ul>
           <p className="hint">
-            Un type « rien » alors que la montre le mesure ? Vérifiez sur la montre que la mesure est activée (TruSleep pour le sommeil,
+            « rien » : aucune mesure reçue depuis {COVERAGE_LOOKBACK_DAYS} jours. Un type « rien » alors que la montre le mesure ? Vérifiez sur la montre que la mesure est activée (TruSleep pour le sommeil,
             température de la peau, stress automatique), synchronisez, puis envoyez une capture de cette page.
           </p>
         </>
