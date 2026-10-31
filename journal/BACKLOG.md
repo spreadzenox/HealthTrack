@@ -1429,3 +1429,5 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   mono ; « Enregistrer les modifications » sur trois lignes → « Enregistrer ». Vu, laissé : format de l'heure (locale
   du navigateur de capture), apostrophes droites des noms Ciqual. Prochain audit : Repas → repas habituels et
   « Décrire » (démo, clair, 360 px).
+- [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
+  le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
