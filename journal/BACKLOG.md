@@ -1525,5 +1525,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   identiques (« un peu triste », retour 8 du 24/10). Chaque carte prend le pastel de son thème, comme les tuiles de
   « Vos derniers jours » : menthe (visage, Health Connect, Withings), lilas (météo, temps d'écran), filet à gauche ;
   montre, capteurs et guides restent neutres. Prochain audit : Accueil en vierge sombre, puis Paramètres en démo clair.
+- [x] **POL-PLAY-90** (31/10 19:33 ; `TodayCards.css`, `gutCardHierarchy.test.js`) Audit Accueil en vierge sombre et
+  clair, et démo clair : le soir, la carte « Votre ventre » empilait deux titres de même couleur et presque même poids
+  (« Votre ventre » puis « Et votre ventre aujourd'hui, dans l'ensemble ? »). La question prend le texte pêche, poids
+  600 : un seul titre. Boutons Calme / Gêne / Douleur un peu moins serrés (marge intérieure, petits écrans). Paramètres
+  en démo clair relus : rien à corriger. Prochain audit : Premium et paywall de l'onboarding en vierge sombre, puis
+  Historique du bien-être en démo sombre vue Mois.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
