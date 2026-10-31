@@ -85,25 +85,50 @@ function HistoryLink() {
   )
 }
 
+/**
+ * Rappel discret, une seule fois (POL-PLAY-84) : pour qui a répondu « Plus tard » à la lecture au déverrouillage
+ * dans l'onboarding. Le lien mène à Sources, où l'activation reste derrière sa divulgation ; la croix le ferme pour
+ * de bon. Aucun chiffre de précision.
+ */
+function UnlockReminder({ onDismiss }) {
+  return (
+    <div className="mood-unlock-reminder" role="note">
+      <p>
+        À chaque déverrouillage, bien plus de lectures : une estimation plus solide.{' '}
+        <Link to="/connectors" onClick={onDismiss}>Voir dans Sources</Link>
+      </p>
+      <button type="button" className="mood-unlock-close" onClick={onDismiss} aria-label="Ne plus afficher ce rappel">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+  )
+}
+
 function hourOf(iso) {
   return new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 }
 
 /**
  * @param {{ data: undefined | null | { est: object | null, days: object[] }, details?: boolean,
- *   onToggleDetails?: () => void, onAddManual?: () => void, now?: Date }} props
+ *   onToggleDetails?: () => void, onAddManual?: () => void, unlockReminder?: boolean,
+ *   onDismissReminder?: () => void, now?: Date }} props
  *   `data` : undefined pendant la lecture, null sans lecture.
  */
-export default function MoodEstimateCard({ data, details = false, onToggleDetails, onAddManual, now }) {
+export default function MoodEstimateCard({
+  data, details = false, onToggleDetails, onAddManual, unlockReminder = false, onDismissReminder, now,
+}) {
+  const reminder = unlockReminder && <UnlockReminder onDismiss={onDismissReminder} />
   if (data === undefined) return null
   if (!data?.est) {
     return (
       <section className="today-card mood-estimate is-empty" aria-labelledby="mood-estimate-title">
         <h3 id="mood-estimate-title" className="today-card-title">Bien-être estimé</h3>
-        <p className="today-card-text">
-          Votre bien-être peut s’estimer tout seul, sur le téléphone, avec la lecture du visage.{' '}
-          <Link to="/connectors">L’activer dans Sources</Link>
-        </p>
+        {reminder || (
+          <p className="today-card-text">
+            Votre bien-être peut s’estimer tout seul, sur le téléphone, avec la lecture du visage.{' '}
+            <Link to="/connectors">L’activer dans Sources</Link>
+          </p>
+        )}
         <ManualNoteButton onClick={onAddManual} />
       </section>
     )
@@ -143,6 +168,7 @@ export default function MoodEstimateCard({ data, details = false, onToggleDetail
       <p className="today-card-text">
         {est.day ? trend.phrase : 'Pas encore de lecture aujourd’hui.'} Une estimation, pas un diagnostic.
       </p>
+      {reminder}
       <div className="mood-actions">
         <ManualNoteButton onClick={onAddManual} />
         <HistoryLink />

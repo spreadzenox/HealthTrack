@@ -168,6 +168,8 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Plus tard' }))
       expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
       expect(loadOnboarding().face).toBe('later')
+      // seul ce « Plus tard » ouvre droit au rappel de l'Accueil (POL-PLAY-84)
+      expect(loadOnboarding().unlockLater).toBe(true)
       expect(trial.runFaceTrial).not.toHaveBeenCalled()
       expect(face.startFaceUnlock).not.toHaveBeenCalled()
     })
@@ -193,6 +195,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
       await waitFor(() => expect(loadOnboarding().face).toBe('later'))
       expect(trial.runFaceTrial).not.toHaveBeenCalled()
+      expect(loadOnboarding().unlockLater).toBeUndefined()
     })
 
     it('version play sans l’interrupteur : l’écran habituel, sans mise en avant', async () => {

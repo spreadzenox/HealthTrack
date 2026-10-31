@@ -9,6 +9,8 @@ import {
   gutCardMode,
   markScreenSeen,
   onboardingDiagnostic,
+  shouldShowUnlockReminder,
+  dismissUnlockReminder,
   GOALS,
   TRACKS,
 } from './onboarding'
@@ -136,8 +138,39 @@ describe('settings/onboarding', () => {
       const d = onboardingDiagnostic()
       expect(d).toMatchObject({ done: true, endedBy: 'skipped', goal: 'gut', watch: 'none', step: 2, maxStep: 2 })
       expect(Object.keys(d).sort()).toEqual(
-        ['done', 'doneAt', 'endedBy', 'face', 'goal', 'health', 'lastScreen', 'maxStep', 'screens', 'seen', 'step', 'watch'],
+        ['done', 'doneAt', 'endedBy', 'face', 'goal', 'health', 'lastScreen', 'maxStep', 'screens', 'seen', 'step', 'unlockLater', 'unlockReminderDone', 'watch'],
       )
+    })
+  })
+
+  describe('rappel de la lecture au déverrouillage (POL-PLAY-84)', () => {
+    const doneAt = new Date(2026, 9, 20, 9).toISOString()
+    const off = { state: 'off' }
+    const later = (days) => new Date(new Date(doneAt).getTime() + days * 86_400_000)
+
+    it('après « Plus tard » sur l’écran mis en avant, 2 jours après la fin, tant que c’est coupé', () => {
+      saveOnboarding({ done: true, doneAt, face: 'later', unlockLater: true })
+      expect(shouldShowUnlockReminder(loadOnboarding(), off, later(1))).toBe(false)
+      expect(shouldShowUnlockReminder(loadOnboarding(), off, later(2))).toBe(true)
+      expect(shouldShowUnlockReminder(loadOnboarding(), { state: 'on' }, later(3))).toBe(false)
+      expect(shouldShowUnlockReminder(loadOnboarding(), { state: 'paused' }, later(3))).toBe(false)
+      // version sans lecture au déverrouillage (sideload, play sans l'interrupteur)
+      expect(shouldShowUnlockReminder(loadOnboarding(), null, later(3))).toBe(false)
+    })
+
+    it('jamais après un refus dans la divulgation, ni sans onboarding fini', () => {
+      saveOnboarding({ done: true, doneAt, face: 'later' })
+      expect(shouldShowUnlockReminder(loadOnboarding(), off, later(5))).toBe(false)
+      localStorage.clear()
+      saveOnboarding({ unlockLater: true })
+      expect(shouldShowUnlockReminder(loadOnboarding(), off, later(5))).toBe(false)
+    })
+
+    it('une seule fois : fermé, il ne revient plus', () => {
+      saveOnboarding({ done: true, doneAt, unlockLater: true })
+      dismissUnlockReminder()
+      expect(shouldShowUnlockReminder(loadOnboarding(), off, later(10))).toBe(false)
+      expect(onboardingDiagnostic()).toMatchObject({ unlockLater: true, unlockReminderDone: true })
     })
   })
 })

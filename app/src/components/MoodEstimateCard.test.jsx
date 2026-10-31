@@ -80,4 +80,30 @@ describe('MoodEstimateCard', () => {
     const { container } = renderCard({ data: undefined })
     expect(container).toBeEmptyDOMElement()
   })
+
+  describe('rappel de la lecture au déverrouillage (POL-PLAY-84)', () => {
+    it('absent par défaut', () => {
+      renderCard({ data: { est: estimate, days } })
+      expect(screen.queryByRole('note')).toBeNull()
+    })
+
+    it('une ligne discrète vers Sources, fermable ; aucun chiffre de précision', () => {
+      const dismiss = vi.fn()
+      renderCard({ data: { est: estimate, days }, unlockReminder: true, onDismissReminder: dismiss })
+      const note = screen.getByRole('note')
+      expect(note).toHaveTextContent('À chaque déverrouillage, bien plus de lectures')
+      expect(note.textContent).not.toMatch(/%/)
+      expect(screen.getByRole('link', { name: 'Voir dans Sources' })).toHaveAttribute('href', '/connectors')
+      fireEvent.click(screen.getByRole('button', { name: 'Ne plus afficher ce rappel' }))
+      expect(dismiss).toHaveBeenCalledTimes(1)
+      fireEvent.click(screen.getByRole('link', { name: 'Voir dans Sources' }))
+      expect(dismiss).toHaveBeenCalledTimes(2)
+    })
+
+    it('sans lecture : le rappel remplace l’invitation générique (pas deux fois la même chose)', () => {
+      renderCard({ data: null, unlockReminder: true, onDismissReminder: () => {} })
+      expect(screen.getByRole('note')).toBeInTheDocument()
+      expect(screen.queryByText('L’activer dans Sources')).toBeNull()
+    })
+  })
 })

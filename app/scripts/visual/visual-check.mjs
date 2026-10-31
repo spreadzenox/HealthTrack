@@ -86,6 +86,8 @@
  *   npm run visual -- --routes=/bienvenue --onboarding=gesture   # premier geste (jalon 4c ; gesture-energy : 0 à 5)
  *   npm run visual -- --face=on --routes=/bienvenue --onboarding=face   # lecture du visage facultative (jalon 4c-2)
  *   npm run visual -- --play --routes=/bienvenue --onboarding=premium   # paywall soft en fin d'onboarding (play)
+ *   npm run visual -- --play --face=on --face-unlock=off --routes=/ --onboarding=unlock-later   # rappel discret de la
+ *                                          lecture au déverrouillage dans la carte Bien-être (POL-PLAY-84)
  *   npm run visual -- --routes=/ --goal=energy   # Accueil réglé par l'objectif « énergie et sommeil » (I155 ; sans carte ventre, POL-4)
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer > Continuer > Health Connect > Continuer"
  *                                          # écran Health Connect (dans le navigateur : « pas disponible »)
@@ -424,7 +426,20 @@ async function main() {
       face: { goal: 'gut', watch: 'none', step: 3, maxStep: 3 },
       premium: { goal: 'gut', watch: 'none', step: 4, maxStep: 4 },
     }
-    if (ONBOARDING_AT[args.onboarding]) {
+    if (args.onboarding === 'unlock-later') {
+      // « Plus tard » à la lecture au déverrouillage il y a 3 jours (POL-PLAY-84) : rappel discret dans la carte
+      // Bien-être de l'Accueil (avec --play --face --face-unlock=off)
+      await context.addInitScript(() => {
+        try {
+          const doneAt = new Date(Date.now() - 3 * 86_400_000).toISOString()
+          localStorage.setItem('healthtrack_onboarding', JSON.stringify({
+            done: true, endedBy: 'completed', doneAt, goal: 'gut', face: 'later', unlockLater: true, step: 6, maxStep: 6,
+          }))
+        } catch {
+          /* ignore */
+        }
+      })
+    } else if (ONBOARDING_AT[args.onboarding]) {
       await context.addInitScript((state) => {
         try {
           localStorage.setItem('healthtrack_onboarding', JSON.stringify(state))
