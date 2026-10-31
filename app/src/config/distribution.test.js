@@ -32,4 +32,9 @@ describe('variante de distribution', () => {
     expect(featuresFor('sideload').debugMenu).toBe(true)
     expect(featuresFor('play').debugMenu).toBe(false)
   })
+
+  it('nom technique du modèle d’IA : jamais dans la variante play (31/10)', () => {
+    expect(featuresFor('play').aiModelName).toBe(false)
+    expect(featuresFor('sideload').aiModelName).toBe(true)
+  })
 })

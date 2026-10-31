@@ -21,6 +21,11 @@ const DEFAULT_INGREDIENTS = fileURLToPath(new URL('../../app/src/data/ingredient
 /** Période de lancement (P23) : relay/src/launch-period.json, embarqué dans l'image ; LAUNCH_PREMIUM_* l'emportent. */
 const DEFAULT_LAUNCH_PERIOD = fileURLToPath(new URL('./launch-period.json', import.meta.url))
 
+const num = (value, fallback) => {
+  const n = Number.parseFloat(value)
+  return Number.isFinite(n) && n >= 0 ? n : fallback
+}
+
 export function readLaunchPeriod(path = DEFAULT_LAUNCH_PERIOD) {
   try {
     const raw = JSON.parse(readFileSync(path, 'utf8'))
@@ -45,7 +50,21 @@ export function loadConfig(env = process.env) {
     project: env.VERTEX_PROJECT || 'healthtrack-824b26',
     locations: list(env.VERTEX_LOCATIONS, ['eu', 'europe-west1']),
     models: list(env.VERTEX_MODELS, ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite']),
-    globalPerDay: int(env.GLOBAL_DAILY_CAP, 200),
+    // Flash-Lite : 30 s au plus, pour que Gold (25 s) puis son secours tiennent dans les 60 s de Cloud Run
+    timeoutMs: int(env.VERTEX_TIMEOUT_MS, 30_000),
+    // Gold (31/10) : dernier Flash de la zone eu, réflexion MEDIUM, ~25 s avant de passer à Flash-Lite
+    goldModels: list(env.GOLD_MODELS, ['gemini-3.8-flash']),
+    goldLocations: list(env.GOLD_LOCATIONS, ['eu']),
+    goldThinkingLevel: env.GOLD_THINKING_LEVEL || 'MEDIUM',
+    goldTimeoutMs: int(env.GOLD_TIMEOUT_MS, 25_000),
+    goldDailyCap: int(env.GOLD_DAILY_CAP, 40),
+    // Empreintes (12 caractères, comme dans les journaux) des installations qui gardent Gold après la période de lancement
+    goldInstalls: list(env.GOLD_INSTALLS, []),
+    // Coût Vertex du mois (src/costs.js) : Gold coupé au-delà de 15 €, toutes les analyses au-delà de 19 €
+    goldMonthlyEur: num(env.GOLD_MONTHLY_EUR, 15),
+    stopMonthlyEur: num(env.STOP_MONTHLY_EUR, 19),
+    modelPrices: env.MODEL_PRICES || '',
+    globalPerDay: int(env.GLOBAL_DAILY_CAP, 150),
     installPerDay: int(env.INSTALL_DAILY_CAP, 20),
     globalPerMinute: int(env.GLOBAL_PER_MINUTE_CAP, 10),
     // Crédits d'analyse IA (jalon 6c-3b) : offerts une fois, par mois (gratuit), par jour (premium)

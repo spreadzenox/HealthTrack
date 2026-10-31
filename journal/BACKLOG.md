@@ -21,6 +21,39 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🥇 Silver et Gold — décision du propriétaire du 31/10 vers 22:45 (bascule vers Gemini 3.8 Flash, sans banc préalable)
+Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du 31/10 vers 21:35) → (b) produits et écrans → (c) plus tard.
+- [x] **GOLD-a** (31/10 22:33, `relay/src/costs.js`, `server.js`, `vertex.js`, `config.js`, `relay-deploy.yml`) Le relais
+  sert Gold avec `gemini-3.8-flash` (zone `eu` seulement, `thinkingConfig.thinkingLevel = MEDIUM`, délai 25 s) puis
+  Flash-Lite en secours (délai, modèle absent, réponse illisible, 429) ; Silver (abonnement actuel, `source: play`) et
+  gratuit restent sur Flash-Lite (3.5 puis 3.1, zone eu puis europe-west1, délai ramené à 30 s : Gold + secours < 60 s
+  de Cloud Run). Gold = toute installation premium par la période de lancement (`source: launch`) + empreintes de
+  `GOLD_INSTALLS`. Jetons de chaque appel journalisés (`event: usage` : entrée, cache, réflexion, sortie, coût ; jamais
+  le contenu), cumul du mois en micro-euros (mémoire + Firestore `relay-costs/AAAA-MM`, incrément serveur) : Gold
+  coupé au-delà de 15 € (`GOLD_MONTHLY_EUR`), toutes les analyses au-delà de 19 € (`STOP_MONTHLY_EUR`, budget 20 €).
+  Plafonds recalculés : `GOLD_DAILY_CAP=40` (≤ 1,72 €/jour au pire à 4,3 c), `GLOBAL_DAILY_CAP` 200 → **150**
+  (pire jour ≈ 40 × 4,3 c + 110 × 1 c ≈ 2,8 €). Grille de prix prudente dans `costs.js` (`MODEL_PRICES` la remplace).
+  Variante play : le nom du modèle n'apparaît plus dans les détails de la carte de résultat (`FEATURES.aiModelName`).
+- [ ] **GOLD-a2 — vérifier en production** : après le déploiement, lire les journaux du relais (`event: usage`,
+  `served: gold`, `gold_fallback`) via le workflow de vérification ; si `gemini-3.8-flash` est refusé en zone `eu`,
+  les analyses passent sur Flash-Lite (rien de cassé) : le noter et prévenir le propriétaire.
+- [ ] **GOLD-a3 — Gold du propriétaire après la période de lancement** : moyen retenu, `GOLD_INSTALLS` (empreinte de
+  12 caractères de son installation, telle qu'elle figure dans les journaux, aucune donnée personnelle). À brancher dans
+  le workflow avant la fin de la période (lire l'empreinte de ses analyses dans les journaux, ou l'afficher dans le
+  mode diagnostic caché).
+- [ ] **GOLD-a4 — prix 2027** : la grille `DEFAULT_PRICES` doit doubler au 1er janvier 2027 (coût Gold 2,8 à 8,6 c) ;
+  revoir alors `GOLD_DAILY_CAP` (20) et le seuil de 15 €.
+- [ ] **GOLD-b** (après le polissage des textes) Silver = abonnement actuel ; Gold = nouveau produit Play 10 €/mois,
+  20 analyses/jour ; annuel et essai Gold à proposer au propriétaire ; paywall et page d'abonnement à deux niveaux ;
+  aucun nom de modèle dans la variante play ; confidentialité : Google (Vertex AI, UE). Promesse « moins d'erreurs »
+  seulement après le banc CI Nutrition5k (~40 assiettes pesées, CC BY 4.0, images jamais commitées).
+- [ ] **GOLD-c** (plus tard) Cache explicite de la partie fixe (consignes + liste d'ingrédients, aucune donnée
+  d'utilisateur), TTL glissant de 30 min, créé seulement si une autre analyse a eu lieu dans les 30 min ; rentable
+  vers 10 utilisateurs actifs ; en cas d'erreur, appel normal.
+- [ ] **SLOP-1** (demande du 31/10 vers 21:35, priorité des runs de code après GOLD-a) Relire tous les textes
+  visibles (app, onboarding, paywall, notifications, Nouveautés, fiche Play, confidentialité) et réécrire ce qui sonne
+  généré ; test qui échoue si une formule bannie revient ; captures avant/après et liste des changements dans le journal.
+
 ## 🎯 Version candidate avant les testeurs (décision du 22/10 19:15 ; critères dans `PRODUIT.md` §2 bis)
 **Retours et décisions du propriétaire du 24/10 13:30–14:30 (session guidée sur la version play) — avant M6b et M7, dans cet ordre :**
 - [x] **CRÉDITS — FAIT le 24/10 14:30** : compteur premium revenu à 10 après une analyse (13:38 → 14:11). Cause : le

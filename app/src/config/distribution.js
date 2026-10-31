@@ -43,6 +43,8 @@ export function featuresFor(distribution) {
     // Réglage « Cigarettes » (épingler « + 1 cigarette » sur l'Accueil) : hors parcours ventre + bien-être, masqué
     // en play sauf s'il est déjà activé ; le compteur reste là dès qu'une cigarette a été notée (VC-14)
     cigaretteSetting: d === 'sideload',
+    // Nom technique du modèle d'IA (détails de la carte de résultat) : jamais dans la variante play (31/10)
+    aiModelName: d === 'sideload',
   }
 }
 

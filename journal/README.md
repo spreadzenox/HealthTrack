@@ -23,6 +23,17 @@
 > plus »). *À retester* : Sources → Lecture du visage → « Activer », puis « Aussi à chaque déverrouillage » ; et
 > n'importe quelle autre demande d'autorisation (notifications du bilan du soir, Health Connect).
 
+> 🥇 **Gold sur Gemini 3.8 Flash (votre décision du 31/10 vers 22:45) — bascule faite le 31/10 à 22:33.** Pendant
+> la période de lancement, toute installation de la version Play reçoit Gold : l'analyse des repas passe d'abord par
+> `gemini-3.8-flash` (zone UE, réflexion moyenne, 25 s au plus), puis par Flash-Lite si le modèle ne répond pas à
+> temps. Silver (l'abonnement actuel) et la version gratuite restent sur Flash-Lite. Le relais note les jetons de
+> chaque appel (jamais le contenu) et le coût du mois : **au-delà de 15 € de Vertex, Gold repasse sur Flash-Lite ;
+> au-delà de 19 €, plus d'analyse jusqu'au mois suivant** (budget de 20 €). Plafond du jour recalculé : 150 analyses,
+> dont 40 Gold au plus (pire journée ≈ 2,80 €). Le nom du modèle n'apparaît plus dans la version Play. **À
+> tester** : analysez 2 ou 3 repas en photo ; le résultat peut mettre quelques secondes de plus. Après la période, vous
+> garderez Gold grâce à l'empreinte de votre installation (rien à faire maintenant). Suite : le polissage des textes,
+> puis le produit Gold à 10 €/mois.
+
 > **Testeurs : pas encore** (votre décision du 27/10 vers 13:00). Vous les inviterez au plus tôt la semaine
 > prochaine, quand vous le direz : d'ici là, les runs polissent la version Play (bugs, chiffres fiables, parcours
 > écran par écran). La version **453** reste sur la piste alpha sans changement ; la fin de la période de lancement
@@ -743,6 +754,7 @@ pour quatre lignes.
 | 31/10 16:33 — [« Noter votre bien-être » ouvre la note](runs/2026-10-31-1633-noter-sur-place.md) | 🎨 | POL-PLAY-87 : Tendances relues en vierge (clair, sombre) ; la tuile « Noter votre bien-être » ouvre la note sur place (Tendances, Journal vierge) ; 2 tests + 2 adaptés ; v410 |
 | 31/10 17:33 — [Repas vierges en couleur](runs/2026-10-31-1733-repas-vierges.md) | 🎨 | POL-PLAY-88 : Analyses relues en vierge sombre (rien à corriger) ; Journal → Repas vierge : carte pêche en trois étapes ; 2 tests ; v411 |
 | 31/10 21:33 — [« Quand consulter » et éviction](runs/2026-10-31-2133-quand-consulter-eviction.md) | 🎨 | POL-PLAY-91 : antécédents familiaux (cancer du côlon, MICI) dans `WHEN_TO_SEE_DOCTOR` (carte ventre, réintroduction, PDF) ; POL-PLAY-92 : ligne pêche « après 2 à 6 semaines » en tête de la réintroduction ; 2 tests ; v414 |
+| 31/10 22:33 — [Gold sur Gemini 3.8 Flash](runs/2026-10-31-2233-gold-flash-relais.md) | 🔧 | Bascule (a) du 31/10 22:45 : relais Gold = `gemini-3.8-flash` (eu, réflexion MEDIUM, 25 s, Flash-Lite en secours) pour la période de lancement ; jetons et coût de chaque appel, Gold coupé à 15 €/mois, tout coupé à 19 € ; plafonds 150/jour dont 40 Gold ; nom du modèle masqué en play ; 16 tests relais |
 | 31/10 20:33 — [Idées : « quand consulter » relu](runs/2026-10-31-2033-idees-quand-consulter.md) | 💡 | Phrase « Quand consulter » relue contre FMC-HGE 2022 (ACG) et VIDAL : antécédents familiaux à ajouter (POL-PLAY-91) ; réintroduction « après 2 à 6 semaines d'éviction » (POL-PLAY-92) ; ameli toujours en 403 ; I202–I203 ; journal seul |
 | 31/10 19:33 — [Accueil : carte ventre](runs/2026-10-31-1933-accueil-ventre-titre.md) | 🎨 | POL-PLAY-90 : Accueil relu en vierge sombre / clair et en démo ; question du soir du ventre en texte, plus en second titre ; Paramètres démo clair relus (rien) ; 2 tests ; v413 |
 | 31/10 18:33 — [Sources en couleur](runs/2026-10-31-1833-sources-couleur.md) | 🎨 | POL-PLAY-89 : Journal → Jours relu en démo sombre (rien à corriger) ; Sources : cartes au pastel de leur thème (menthe / lilas) ; 2 tests |

@@ -22,11 +22,18 @@
  *
  * Rien n'est stocké : la photo ou le texte ne vivent que le temps de la requête, et les journaux ne contiennent que
  * le type d'analyse, le modèle, la durée et le statut (jamais le contenu, ni l'identifiant d'installation en clair).
+ *
+ * Niveaux (31/10) : Gold appelle d'abord le dernier Flash (GOLD_MODELS, réflexion MEDIUM, délai d'environ 25 s) puis
+ * Flash-Lite en secours ; Silver et gratuit appellent Flash-Lite. Les jetons de chaque appel (entrée, cache, réflexion,
+ * sortie) et son coût sont journalisés et cumulés par mois (src/costs.js) : au-delà de 15 € de Vertex dans le mois,
+ * Gold repasse sur Flash-Lite ; au-delà de 19 €, plus d'analyse jusqu'au mois suivant.
  */
 import { createHash } from 'node:crypto'
 import { HttpError, readJson } from './http.js'
 import { stripJpegMetadata } from './jpeg.js'
 import { parseClientState } from './credits.js'
+import { dayKey } from './quota.js'
+import { readUsage } from './costs.js'
 import { MEAL_TEXT_MAX_LENGTH, RESPONSE_SCHEMA, photoInstruction, textInstruction, textUserPart } from './prompts.js'
 
 /** Taille maximale du corps JSON (photo en base64 comprise). */
@@ -95,33 +102,108 @@ export function buildRequest(body, ingredientNames) {
  *   billingQuota?: ReturnType<import('./quota.js').createQuota>, allowedOrigins?: string[],
  *   log?: (entry: object) => void, now?: () => number }} deps
  */
-export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, billingQuota = null, allowedOrigins = [], log = () => {}, now = Date.now }) {
+export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, billingQuota = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
   const origins = new Set(allowedOrigins)
-  /** installId → { premium, until } : droits relus récemment (mémoire seulement). */
+  /** installId → { premium, source, until } : droits relus récemment (mémoire seulement). */
   const premiumCache = new Map()
+  /** Empreintes (hashInstallId) des installations qui gardent Gold hors période de lancement (GOLD_INSTALLS). */
+  const goldSet = new Set(goldInstalls)
+  /** Analyses Gold du jour (UTC) sur cette instance : borne le coût d'une journée ; le cumul du mois, lui, est durable. */
+  const goldDay = { day: '', count: 0 }
 
   function rememberEntitlement(installId, payload) {
     const t = now()
     const expires = Date.parse(payload?.launchUntil ?? payload?.expiresAt ?? '')
     const horizon = t + PREMIUM_CACHE_MS
     const until = payload?.premium && Number.isFinite(expires) ? Math.min(expires, horizon) : horizon
-    premiumCache.set(installId, { premium: Boolean(payload?.premium), until })
+    premiumCache.set(installId, { premium: Boolean(payload?.premium), source: payload?.premium ? payload?.source ?? null : null, until })
   }
 
-  /** Premium de cette installation : cache, sinon une relecture (bornée par billingQuota) auprès de Google Play. */
-  async function isPremium(installId, purchaseToken) {
+  /** Droits de cette installation : cache, sinon une relecture (bornée par billingQuota) auprès de Google Play. */
+  async function entitlementOf(installId, purchaseToken) {
     const cached = premiumCache.get(installId)
-    if (cached && cached.until > now()) return cached.premium
-    if (!billing) return false
+    const fallback = { premium: Boolean(cached?.premium), source: cached?.source ?? null }
+    if (cached && cached.until > now()) return fallback
+    if (!billing) return { premium: false, source: null }
     const slot = billingQuota ? billingQuota.take(installId) : { ok: true }
-    if (!slot.ok) return Boolean(cached?.premium)
+    if (!slot.ok) return fallback
     try {
       const result = await billing.verify(purchaseToken ? { purchaseToken } : {}, installId)
       rememberEntitlement(installId, result.payload)
-      return Boolean(result.payload?.premium)
+      return { premium: Boolean(result.payload?.premium), source: result.payload?.premium ? result.payload?.source ?? null : null }
     } catch (err) {
       log({ event: 'premium_lookup_failed', status: err?.status ?? null })
-      return Boolean(cached?.premium)
+      return fallback
+    }
+  }
+  const isPremium = async (installId, purchaseToken) => (await entitlementOf(installId, purchaseToken)).premium
+
+  /**
+   * Niveau de l'analyse : Gold pendant la période de lancement (toute installation play premium par `launch`) et pour
+   * les installations de GOLD_INSTALLS ; Silver pour l'abonnement actuel ; sinon gratuit. Silver et gratuit gardent
+   * Flash-Lite.
+   */
+  function tierOf(installId, entitlement) {
+    if (!entitlement.premium) return goldSet.has(hashInstallId(installId)) ? 'gold' : 'free'
+    if (entitlement.source === 'launch' || goldSet.has(hashInstallId(installId))) return 'gold'
+    return 'silver'
+  }
+
+  /** Gold sert le dernier Flash seulement sous les plafonds : coût du mois (15 €) et analyses Gold du jour. */
+  function goldSlot() {
+    if (!goldVertex) return { ok: false, why: 'off' }
+    if (costs && !costs.goldAllowed()) return { ok: false, why: 'month_budget' }
+    const day = dayKey(now())
+    if (goldDay.day !== day) Object.assign(goldDay, { day, count: 0 })
+    if (goldDay.count >= goldDailyCap) return { ok: false, why: 'day_cap' }
+    goldDay.count += 1
+    return { ok: true }
+  }
+
+  /** Note les jetons de chaque appel facturé (jamais le contenu) et ajoute leur coût au cumul du mois. */
+  async function account(spent, tier) {
+    let eur = 0
+    for (const { model, usageMetadata } of spent ?? []) {
+      const usage = readUsage(usageMetadata)
+      let cost = null
+      if (costs) {
+        try {
+          cost = await costs.add(model, usage)
+        } catch (err) {
+          log({ event: 'costs_store_failed', op: 'add', status: err?.status ?? null })
+        }
+      }
+      if (cost !== null) eur += cost
+      log({ event: 'usage', model, tier, ...usage, ...(cost !== null ? { eur: Number(cost.toFixed(5)) } : {}) })
+    }
+    return eur
+  }
+
+  async function generate(request, tier) {
+    const args = { systemInstruction: request.systemInstruction, parts: request.parts, schema: RESPONSE_SCHEMA }
+    if (tier === 'gold') {
+      const slot = goldSlot()
+      if (slot.ok) {
+        try {
+          const out = await goldVertex.generateJson(args)
+          const eur = await account(out.spent, tier)
+          return { ...out, eur, served: 'gold' }
+        } catch (err) {
+          // Délai dépassé, modèle indisponible ou plafond chez Google : Flash-Lite prend le relais
+          await account(err?.spent, tier)
+          log({ event: 'gold_fallback', status: err?.status ?? null, reason: err?.name === 'TimeoutError' ? 'timeout' : 'error', message: String(err?.message ?? err).slice(0, 200) })
+        }
+      } else {
+        log({ event: 'gold_fallback', reason: slot.why })
+      }
+    }
+    try {
+      const out = await vertex.generateJson(args)
+      const eur = await account(out.spent, tier)
+      return { ...out, eur, served: 'lite' }
+    } catch (err) {
+      await account(err?.spent, tier)
+      throw err
     }
   }
 
@@ -248,6 +330,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
     let reserved = false
     let credit = null
     let premium = false
+    let tier = 'free'
     try {
       installId = String(req.headers['x-install-id'] ?? '')
       if (!INSTALL_ID.test(installId)) throw new HttpError(400, 'install_id', 'Identifiant d\'installation manquant.')
@@ -264,6 +347,20 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         if (!check.ok) throw new HttpError(403, 'integrity', INTEGRITY_MESSAGE)
       }
 
+      // Budget Vertex du mois épuisé (19 € par défaut, sur 20 €) : plus d'analyse jusqu'au mois suivant
+      if (costs) {
+        try {
+          await costs.hydrate()
+        } catch (err) {
+          log({ event: 'costs_store_failed', op: 'get', status: err?.status ?? null })
+        }
+        if (costs.stopped()) {
+          log({ event: 'quota', scope: 'global', reason: 'month_budget' })
+          send(res, 429, { error: 'quota', scope: 'global', message: QUOTA_MESSAGES.global }, origin)
+          return
+        }
+      }
+
       const slot = quota.take(installId)
       if (!slot.ok) {
         log({ event: 'quota', scope: slot.scope, install: hashInstallId(installId) })
@@ -273,7 +370,9 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       reserved = true
 
       if (credits) {
-        premium = await isPremium(installId, purchaseTokenHeader(req))
+        const entitlement = await entitlementOf(installId, purchaseTokenHeader(req))
+        premium = entitlement.premium
+        tier = tierOf(installId, entitlement)
         await hydrateCredits(installId)
         credit = credits.take(installId, { premium, reported: reportedCredits(req) })
         if (credit.ok) await persistCredits(installId)
@@ -287,12 +386,8 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         }
       }
 
-      const { parsed, model, location } = await vertex.generateJson({
-        systemInstruction: request.systemInstruction,
-        parts: request.parts,
-        schema: RESPONSE_SCHEMA,
-      })
-      log({ event: 'analyze', kind, model, location, status: 200, ms: now() - started, install: hashInstallId(installId) })
+      const { parsed, model, location, eur, served } = await generate(request, tier)
+      log({ event: 'analyze', kind, model, location, tier, served, eur: Number(eur.toFixed(5)), status: 200, ms: now() - started, install: hashInstallId(installId) })
       // Nouvelle installation qui prend son premier crédit (CREDITS-INSTALLS) : compté par jour, sans identifiant ;
       // l'analyse de test du workflow (« ci-smoke-<run> », une installation neuve à chaque fois) n'est pas comptée
       if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan, ...(testDevice ? { testlab: true } : {}) })

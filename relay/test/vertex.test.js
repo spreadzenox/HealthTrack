@@ -37,7 +37,7 @@ test('envoie consignes, contenu et schéma avec le jeton du compte de service, e
   const f = fakeFetch([answer('{"not_food":false,"ingredients":[]}')])
   const client = createVertexClient({ ...base, fetchImpl: f.fetchImpl })
   const out = await client.generateJson({ systemInstruction: 'SYS', parts: [{ text: 'repas' }], schema: { type: 'OBJECT' } })
-  assert.deepEqual(out, { parsed: { not_food: false, ingredients: [] }, model: 'm-lite', location: 'europe-west1' })
+  assert.deepEqual(out, { parsed: { not_food: false, ingredients: [] }, model: 'm-lite', location: 'europe-west1', spent: [{ model: 'm-lite', usageMetadata: {} }] })
   const [call] = f.calls
   assert.equal(call.headers.Authorization, 'Bearer tok')
   assert.equal(call.url.includes('key='), false)
@@ -121,4 +121,24 @@ test('jeton des métadonnées mis en cache jusqu’à une minute avant expiratio
 test('texte de réponse sans les « pensées », JSON tolérant aux blocs de code', () => {
   assert.equal(extractResponseText({ candidates: [{ content: { parts: [{ text: 'x', thought: true }, { text: '{}' }] } }] }), '{}')
   assert.deepEqual(parseModelJson('```json\n{"a":1}\n```'), { a: 1 })
+})
+
+test('réflexion réglable (Gold : MEDIUM) et jetons de chaque appel facturé rendus, même en cas d’échec', async () => {
+  const usage = { promptTokenCount: 40000, cachedContentTokenCount: 30000, thoughtsTokenCount: 900, candidatesTokenCount: 200 }
+  const ok = json(200, { usageMetadata: usage, candidates: [{ content: { parts: [{ text: '{"not_food":true}' }] } }] })
+  const f = fakeFetch([ok])
+  const client = createVertexClient({ ...base, models: ['m-flash'], thinkingLevel: 'MEDIUM', fetchImpl: f.fetchImpl })
+  const out = await client.generateJson({ systemInstruction: 'S', parts: [{ text: 'x' }] })
+  assert.deepEqual(f.calls[0].body.generationConfig.thinkingConfig, { thinkingLevel: 'MEDIUM' })
+  assert.deepEqual(out.spent, [{ model: 'm-flash', usageMetadata: usage }])
+
+  const bad = json(200, { usageMetadata: usage, candidates: [{ content: { parts: [{ text: 'pas du json' }] } }] })
+  const g = fakeFetch([bad])
+  const lite = createVertexClient({ ...base, fetchImpl: g.fetchImpl })
+  await assert.rejects(lite.generateJson({ systemInstruction: 'S', parts: [{ text: 'x' }] }), (err) => {
+    assert.equal(err.billed, true)
+    assert.equal(err.spent.length, 1)
+    return true
+  })
+  assert.equal(g.calls[0].body.generationConfig.thinkingConfig, undefined)
 })
