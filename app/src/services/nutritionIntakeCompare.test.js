@@ -72,8 +72,9 @@ describe('nutritionIntakeCompare', () => {
     expect(sodium.status).toBe('ok')
   })
 
-  it('statuses: ok ≥ 100 %, partial ≥ 70 %, low below', () => {
-    const result = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString())], profile)
+  it('statuses: ok ≥ 100 %, partial ≥ 70 %, low below (journée complète)', () => {
+    const result = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 2000)], profile)
+    expect(result.likelyIncomplete).toBe(false)
     for (const row of result.rows.filter((r) => !r.limit)) {
       const expected = row.pct >= 100 ? 'ok' : row.pct >= 70 ? 'partial' : 'low'
       expect(row.status).toBe(expected)
@@ -94,6 +95,23 @@ describe('nutritionIntakeCompare', () => {
   it('flags probably incomplete logging when energy per logged day is far below needs', () => {
     const tiny = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 50)], profile)
     expect(tiny.likelyIncomplete).toBe(true)
+  })
+
+  it('jours incomplets : « bas » et « proche » deviennent « incertain » (POL-PLAY-75), atteint et dépassé restent', () => {
+    const tiny = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 50)], profile)
+    for (const row of tiny.rows) {
+      const raw = row.limit ? (row.pct > 100 ? 'over' : 'ok') : row.pct >= 100 ? 'ok' : 'uncertain'
+      expect(row.status).toBe(raw)
+    }
+    expect(tiny.rows.some((r) => r.status === 'uncertain')).toBe(true)
+    expect(tiny.statuses).toEqual([...new Set(tiny.rows.map((r) => r.status))].sort())
+  })
+
+  it('jours complets : aucun statut « incertain », légende limitée aux statuts présents', () => {
+    const full = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 2000)], profile)
+    expect(full.likelyIncomplete).toBe(false)
+    expect(full.rows.some((r) => r.status === 'uncertain')).toBe(false)
+    expect(full.statuses).toEqual([...new Set(full.rows.map((r) => r.status))].sort())
   })
 
   it('marks a nutrient « partiel » when Ciqual did not measure it for ≥ 10 % of the eaten weight (N2b)', () => {

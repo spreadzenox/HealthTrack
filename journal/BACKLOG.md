@@ -1434,5 +1434,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   émeraude à 60 % → fond neutre, texte secondaire, bordure (comme POL-PLAY-58, pour toute l’app) ; repas habituels
   « Poulet, Pomme de terre » → « Poulet, pomme de terre » (sigles gardés). Prochain audit : Nutrition → « compléter
   mon profil » et Tendances (démo, clair, 360 px).
+- [x] **POL-PLAY-75** (31/10 03:33 ; statut `uncertain` dans `nutritionIntakeCompare.js`, légende filtrée dans
+  `Nutrition.jsx`) Audit Nutrition et Tendances (démo, clair puis sombre, 360 px) : avec des repas manquants (≈ 627 kcal/j),
+  presque toutes les barres étaient « bas » en gris foncé (trompeur : l'apport réel est plus élevé, et triste) → vert
+  pâle « incertain : repas manquants » (`--chart-bar-2`) ; « atteint » et « limite dépassée » restent ; la légende ne
+  montre que les statuts présents. Vu, laissé tel quel : Tendances (VFC : l'étiquette passe sous le titre long ;
+  graphique du bien-être en émeraude plutôt qu'en menthe) ; « À compléter : taille, sexe, âge » dans le profil.
+  Prochain audit : Nutrition → « Modifier » le profil (formulaire) et Tendances en `--empty`.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

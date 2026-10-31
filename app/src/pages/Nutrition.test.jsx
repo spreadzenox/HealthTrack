@@ -122,6 +122,12 @@ describe('Nutrition page', () => {
     expect(warning.textContent).toMatch(/des repas manquent sans doute/)
     expect(warning.textContent.length).toBeLessThan(110)
     expect(container.textContent).not.toMatch(/repères? atteints? sur/)
+    // POL-PLAY-75 : pas de barres « bas » quand des repas manquent, et légende sans statut absent
+    expect(container.querySelector('.nutrition-bar-fill.nutrition-bar-low')).toBeNull()
+    expect(container.querySelector('.nutrition-bar-fill.nutrition-bar-uncertain')).not.toBeNull()
+    const legend = container.querySelector('.nutrition-legend').textContent
+    expect(legend).toMatch(/incertain : repas manquants/)
+    expect(legend).not.toMatch(/\bbas\b/)
   })
 
   it('composition Withings dans « Votre profil », plus de section « Dernière mesure Withings » (D1)', async () => {
