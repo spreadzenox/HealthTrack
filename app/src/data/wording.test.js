@@ -62,6 +62,9 @@ describe('formules « slop IA » (SLOP-1)', () => {
     expect(slopOffences('C’est une observation, jamais un diagnostic.')).not.toEqual([])
     expect(slopOffences('Une mesure de la montre, pas un diagnostic.')).not.toEqual([])
     expect(slopOffences('Profitez-en en toute sérénité.')).not.toEqual([])
+    expect(slopOffences('On préfère attendre plutôt que de vous montrer de faux\n suspects.')).not.toEqual([])
+    expect(slopOffences('Des liens repérés dans vos données, pas des causes.')).not.toEqual([])
+    expect(slopOffences('Une corrélation ne prouve pas une cause.')).toEqual([])
     expect(slopOffences('Le résultat est une estimation. Il ne remplace pas l’avis d’un médecin.')).toEqual([])
   })
 

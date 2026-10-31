@@ -264,7 +264,7 @@ describe('PistesTeaser', () => {
     wrap(<PistesTeaser read={async () => [day(0)]} />)
     expect(await screen.findByText('2 pistes repérées')).toBeInTheDocument()
     expect(screen.getByText('Marcher davantage')).toBeInTheDocument()
-    expect(screen.getByText(/pas des causes/)).toBeInTheDocument()
+    expect(screen.getByText(/comment les vérifier/)).toBeInTheDocument()
     expect(screen.getByText('2 pistes repérées').closest('a')).toHaveAttribute('href', '/recommendations')
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
   })
@@ -288,7 +288,7 @@ describe('PistesTeaser', () => {
     expect(await screen.findByText('Vos pistes arrivent dans 20 jours')).toBeInTheDocument()
   })
 
-  it('compte les jours avant les pistes et préfère attendre', async () => {
+  it('compte les jours avant les pistes et dit pourquoi attendre', async () => {
     wrap(<PistesTeaser read={async () => [day(0), day(1), day(1), day(3)]} />)
     expect(await screen.findByText('Vos pistes arrivent dans 18 jours')).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Jours suivis' })).toHaveAttribute('aria-valuenow', '3')
@@ -297,7 +297,7 @@ describe('PistesTeaser', () => {
     // POL-PLAY-47 : le chiffre en mono, la phrase en Figtree
     expect(count).not.toHaveClass('mono')
     expect(count.querySelector('.mono')).toHaveTextContent(/^3\/21$/)
-    expect(screen.getByText('On préfère attendre plutôt que de vous montrer de faux suspects.')).toBeInTheDocument()
+    expect(screen.getByText('Avec moins de jours, les résultats seraient surtout dus au hasard.')).toBeInTheDocument()
   })
 
   const gut = (back) => ({ ...day(back), type: 'gut' })
@@ -308,7 +308,7 @@ describe('PistesTeaser', () => {
     expect(await screen.findByText('Vos pistes du ventre arrivent dans 18 jours')).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Jours de notes du ventre' })).toHaveAttribute('aria-valuenow', '10')
     expect(document.querySelector('.pistes-count')).toHaveTextContent('10/28 jours avec une note du ventre (6 dernières semaines)')
-    expect(screen.getByText('On préfère attendre plutôt que de vous montrer de faux suspects.')).toBeInTheDocument()
+    expect(screen.getByText('Avec moins de jours, les résultats seraient surtout dus au hasard.')).toBeInTheDocument()
     expect(screen.queryByText(/Assez de jours/)).not.toBeInTheDocument()
   })
 

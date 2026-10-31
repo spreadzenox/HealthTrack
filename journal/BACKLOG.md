@@ -57,7 +57,9 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     de l'app (11 fichiers) ; règle dite une fois : onboarding (écran visage), historique du bien-être, rapport PDF
     (encart), conditions et confidentialité (site). `SLOP_WORDING` dans `src/data/wordingRules.js` + test dans
     `wording.test.js` (lignes jointes). Captures `journal/captures/slop-1a/`.
-  - [ ] **SLOP-1b** Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
+  - [x] **SLOP-1b-1** (01/11 00:33) Accueil et Analyses : « on préfère attendre… faux suspects » (4 écrans dont le
+    PDF) et « des liens…, pas des causes » réécrits ; règles ajoutées à `SLOP_WORDING`.
+  - [ ] **SLOP-1b** (suite : Journal, Sources, onboarding, paywall) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
     Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.

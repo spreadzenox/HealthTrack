@@ -244,7 +244,7 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
   const L = report.links
   if (L.status !== 'links' || !L.items.length) {
     const why = L.status === 'no_notes' ? 'Aucune note du ventre.'
-      : L.status === 'too_early' ? `Pas encore assez de notes du ventre (${L.noteDays}/${L.minDays} jours) : on préfère attendre plutôt que de montrer de faux suspects.`
+      : L.status === 'too_early' ? `Pas encore assez de notes du ventre (${L.noteDays}/${L.minDays} jours) pour repérer un lien.`
         : 'Aucun lien n’a passé toutes les vérifications.'
     para(why, { color: C.muted })
   } else {
@@ -262,7 +262,7 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
     if (L.items.length > shown.length) para(`… et ${L.items.length - shown.length} autres pistes.`, { size: 8.5, color: C.muted })
   }
   if (L.comparisons) {
-    para(`Analyse sur tout le journal (${L.noteDays} jours notés), pas seulement la période ; ${L.comparisons} comparaisons faites, corrigées pour leur nombre. Un lien repéré n’est pas une cause.`, { size: 8.5, color: C.muted })
+    para(`Analyse sur tout le journal (${L.noteDays} jours notés), pas seulement la période ; ${L.comparisons} comparaisons faites, corrigées pour leur nombre.`, { size: 8.5, color: C.muted })
   }
 
   heading('Sommeil mesuré')

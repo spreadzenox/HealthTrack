@@ -98,7 +98,7 @@ describe('Recommendations page', () => {
     expect(screen.getByText(/analyse sur 5 jours notés/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Analyse simple|Analyse avancée/i })).toBeNull()
     expect(container.textContent).not.toMatch(/Analyse (simple|avancée)/)
-    expect(screen.getByText('Des liens repérés dans vos données, pas des causes ni un diagnostic.')).toBeInTheDocument()
+    expect(screen.getByText('Des liens repérés dans vos données, à vérifier avant d’y croire.')).toBeInTheDocument()
   })
 
   it('keeps a single « Comment c’est calculé » note, at the bottom of the page', async () => {
@@ -119,7 +119,7 @@ describe('Recommendations page', () => {
     const { container } = renderPage()
     expect(await screen.findByText(/Vos pistes arrivent dans 21 jours/i)).toBeInTheDocument()
     expect(container.querySelector('.pistes-count')).toHaveTextContent(/0\/21 jours avec un repas ou une note du ventre/)
-    expect(screen.getByText(/On préfère attendre plutôt que de vous montrer de faux suspects/)).toBeInTheDocument()
+    expect(screen.getByText(/résultats seraient surtout dus au hasard/)).toBeInTheDocument()
     // VC-12 : un seul seuil visible sous la carte lilas
     expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/au moins 5 jours/i)).not.toBeInTheDocument()

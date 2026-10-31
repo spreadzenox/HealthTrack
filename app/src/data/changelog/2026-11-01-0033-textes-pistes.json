@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-01",
+  "kind": "amélioration",
+  "title": "Analyses : des phrases plus claires",
+  "items": [
+    "Tant qu’il n’y a pas assez de jours, la carte des pistes dit simplement pourquoi : avec moins de jours, les résultats seraient surtout dus au hasard.",
+    "La carte des pistes repérées vous invite à l’ouvrir pour voir comment les vérifier, et l’onglet Analyses ne répète plus « pas des causes » à chaque bloc."
+  ]
+}

@@ -502,8 +502,8 @@ function FaceMoodMethod() {
         avant, à bien-être de la veille égal, liens solides seulement.
       </p>
       <p>
-        C’est une estimation, moins précise qu’une note : un lien est une hypothèse à observer, pas une
-        cause, et aucun comportement n’est jugé bon ou mauvais d’avance.
+        Le bien-être vient ici d’une estimation, moins précise qu’une note. Aucun comportement n’est jugé bon ou
+        mauvais d’avance.
       </p>
     </>
   )
@@ -1033,7 +1033,7 @@ export default function Recommendations() {
       {/* Données vierges : la carte lilas seule (rien à nuancer encore) */}
       {current && !waiting && (
         <p className="reco-intro">
-          Des liens repérés dans vos données, pas des causes ni un diagnostic.
+          Des liens repérés dans vos données, à vérifier avant d’y croire.
         </p>
       )}
 

@@ -121,8 +121,7 @@ export default function GutLinks({ gut }) {
         </ul>
       ) : (
         <p className="gut-links-empty">
-          Aucun aliment ne ressort nettement pour l’instant. On préfère attendre plutôt que de vous montrer de faux
-          suspects.
+          Aucun aliment ne ressort nettement pour l’instant.
         </p>
       )}
     </section>
