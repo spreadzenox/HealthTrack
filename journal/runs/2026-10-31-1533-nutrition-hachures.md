@@ -32,3 +32,8 @@
 
 ## Suite
 - Journal → Tendances en vierge (clair et sombre).
+
+## Après le merge (#566)
+- Les 9 checks de la PR étaient verts (Vitest, Build APK, relais, Java, émulateurs…).
+- Tests, Build & Release et Play — AAB verts sur main (`8dc6325`) : release **v409** publiée (APK 34 522 062 octets) ;
+  AAB play envoyé en test interne.
