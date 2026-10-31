@@ -1506,5 +1506,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   sombre et clair, Jour / Semaine / Mois) : légende « moyenne » (pointillés) et « fourchette » (vue Jour), « 1 jour »
   retiré en vue Jour, expressions « sur 13 des 33 lectures ». Prochain audit : Nutrition en sombre, puis Tendances
   en vierge.
+- [x] **POL-PLAY-86** (31/10 15:33 ; `Nutrition.css`) Audit Nutrition en sombre et clair (démo) : les barres
+  « incertain : repas manquants » (pastel `--chart-bar-2`) se voyaient à peine sur leur piste (contraste 2,0:1 en
+  sombre, 1,3:1 en clair). Hachures `--chart-ref` / `--chart-bar-2` (signe d'une estimation), légende comprise ;
+  reste lisible, sans couleur d'alerte. Profil, avertissement « repas manquent », étiquette « partiel » et notes :
+  rien à redire. Prochain audit : Journal → Tendances en vierge (clair et sombre).
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
