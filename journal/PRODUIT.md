@@ -231,6 +231,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **31/10 00:33 CET** — **Polissage play** : POL-PLAY-72, Android ≤ 14 : encarts de la barre d'état relus au démarrage (page rechargée après l'injection native : contenu sous la barre d'état ; émulateur API 34 rouge sur main).
 - **31/10 04:33 CET** — **Polissage play** : POL-PLAY-76, champs de saisie (profil, description d'un repas, réglages) en Figtree au lieu de la police système.
 - **31/10 07:33 CET** — **Polissage** : POL-PLAY-79, Vos données dit ce que contient la sauvegarde (export grisé si rien), pas de « Débloquer » pour un rapport PDF vide, boutons et écarts réguliers.
+- **31/10 08:33 CET** (idées) — **Invitation des testeurs relue contre la v402** (`INVITATION-TESTEURS.md`) : chemins précisés, missions du ventre réservées à « Mon ventre », prérequis Android 8+, règle Google des 12 testeurs × 14 jours confirmée (I201). Journal seul.
 - **31/10 06:33 CET** — **Polissage** : POL-PLAY-78, recherche d'aliments plus juste (début de mot, mots entiers d'abord, alias Ciqual une seule fois) ; croix de recherche aux couleurs de l'app.
 - **31/10 05:33 CET** — **CI** : POL-PLAY-77, contrôle bord à bord de l'émulateur API 34 moins sensible à un émulateur surchargé (relectures, bonne page DevTools) ; rien de visible dans l'app.
 - **31/10 03:33 CET** — **Polissage play** : POL-PLAY-75, Nutrition : avec des repas manquants, plus de barres « bas » en gris foncé (« incertain : repas manquants », vert pâle) ; légende limitée aux statuts présents.

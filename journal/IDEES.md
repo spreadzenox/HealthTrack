@@ -32,6 +32,17 @@
 - **Effort** : petit (lecture d'un champ déjà stocké, pas de migration). → BACKLOG MONTRE-SCORE (basse priorité,
   après le polissage).
 
+### I201 (7) — Invitation des testeurs relue contre la v402 (31/10 08:33, run « idées »)
+- **Constat** : `INVITATION-TESTEURS.md` renvoyait à « Paramètres → Votre avis » et « Données » sans dire qu'ils sont
+  derrière la roue dentée « Réglages » ; les missions du jour 3 (bilan du soir) et du jour 10 (« Tester un groupe
+  FODMAP ») ne s'affichent qu'avec l'objectif « Mon ventre » ; aucun prérequis Android (minSdk 26 = Android 8).
+- **Fait** (journal seul) : chemins précisés, missions conditionnées, prérequis ajouté, astuce « passer à Mon ventre
+  le temps du test » pour couvrir toutes les fonctions (question 2 du formulaire de production). Règle de Google
+  relue (aide officielle answer/14151465, lue le 31/10) : 12 testeurs inscrits sans interruption ≥ 14 jours, toujours
+  inscrits le jour de la demande, inchangée.
+- **Piste code (faible, à garder pour le polissage)** : un lien « Votre avis » directement dans la page Réglages
+  (sans passer par Paramètres) pendant le test fermé, pour que les testeurs le trouvent en un geste.
+
 ### Audit du premier lancement en schéma clair du téléphone (consigne du run de 19:33)
 - `npm run visual -- --play --empty --theme=system --light --size=360x780` sur Accueil, Analyses, Sources, Journal :
   aucune erreur, aucun débordement ; le bilan du soir du ventre s'affiche (après 18 h) ; états vides clairs
