@@ -29,6 +29,9 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **Boutons inactifs en gris clair** (31/10 02:33) — un bouton qui ne peut pas encore servir (« Remplir avec l’IA »
+  tant que rien n’est décrit, « Enregistrer ce repas » sans aliment…) n’est plus vert pâle : gris clair avec un
+  contour, partout dans l’app. Repas habituels : « Poulet, pomme de terre, haricot vert ».
 - **Modifier un repas : tout tient à l'écran** (31/10 01:33) — dans Journal → « ⋯ » → Modifier, les calories de
   chaque aliment sont sur la ligne de son nom ; le bouton qui retire un aliment ne sort plus de la carte sur un petit
   écran, et « Enregistrer » tient sur une ligne.
@@ -666,6 +669,7 @@ pour quatre lignes.
 | 30/10 23:33 — [Réintroduction en clair](runs/2026-10-30-2333-reintro-en-clair.md) | 🎨 | POL-PLAY-71 (audit réintroduction, clair, 360 px, 5 états) : jours calmes restants en mots, réponses courtes sur une ligne, « Une estimation, pas un diagnostic » ; 4 tests |
 | 31/10 00:33 — [Encarts relus au démarrage](runs/2026-10-31-0033-encarts-relus.md) | 🐛 | POL-PLAY-72 : émulateur API 34 rouge sur main (encarts à 0 px, aléa d'un rechargement après l'injection native) → le natif garde les derniers encarts, la page les relit au démarrage (`getInsets`) ; 3 tests |
 | 31/10 01:33 — [Modifier un repas à 360 px](runs/2026-10-31-0133-modifier-un-repas.md) | 🎨 | POL-PLAY-73 : éditeur de repas, kcal sur la ligne du nom (✕ hors de la carte à 360 px), « Enregistrer » sur une ligne ; 1 test ; v395 ; CI : téléchargement de JUnit réessayé (404 passager de Maven Central) |
+| 31/10 02:33 — [Repas : boutons inactifs](runs/2026-10-31-0233-boutons-grises.md) | 🎨 | POL-PLAY-74 : `.btn` désactivé neutre (fond, texte secondaire, bordure) au lieu d’émeraude à 60 % ; repas habituels avec une seule majuscule ; 3 tests |
 | 30/10 21:33 — [« Œuf » bien écrit](runs/2026-10-30-2133-ligatures.md) | 🎨 | POL-PLAY-69 (reste vu à 19:33) : `frenchLigatures` (« oe » → « œ » devant « u »/« il » en début de mot ; « moelleux », « phoenix » intacts) dans `shortFoodName`, `mealLabel`, l'éditeur de repas ; affichage seulement, noms Ciqual inchangés dans les données ; 3 tests |
 | 30/10 20:33 — [Idées : inventaire montre, premier lancement en clair](runs/2026-10-30-2033-idees-inventaire-montre.md) | 💡 | Inventaire montre à jour (huawei.md §10.20, une ligne par donnée dans ce résumé) ; altitude du jour lisible avec le décodeur actuel (I199) ; audit `--play --empty --theme=system --light` à 360 px d'Accueil, Analyses, Sources, Journal : rien à corriger ; journal seul |
 | 30/10 19:33 — [Repas : un aliment par ligne](runs/2026-10-30-1933-aliments-en-liste.md) | 🎨 | POL-PLAY-68 (audit `--play` à 360 px sur démo, 15 pages, puis vierge : Repas, Nutrition, Tendances, Réglages, Nouveautés) : aliments d'un repas un par ligne, quantité à droite en mono (`MealItemList`, Journal et Repas) au lieu d'une liste « à la suite » qui laissait un « · » seul en bout de ligne ; séance « Course à pied · 32 min · 330 kcal » ; note « sommeil une source » marquée Android (IOS-3) ; 5 tests ajustés |
