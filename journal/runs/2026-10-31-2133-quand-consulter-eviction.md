@@ -30,3 +30,8 @@
 ## Suite
 - Liste de polissage : Premium et paywall de l'onboarding en vierge sombre, Historique du bien-être vue Mois en démo
   sombre.
+
+## Après le merge (#577)
+- Les 9 checks de la PR étaient verts (Vitest, Build APK, relais, Java, émulateurs…).
+- Tests, Build & Release, Play — AAB et émulateur A56 verts sur main (`eb46dfa`) : release **v414** publiée (APK
+  34 523 474 octets) ; AAB play envoyé en test interne.
