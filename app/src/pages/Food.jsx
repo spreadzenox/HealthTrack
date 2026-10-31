@@ -21,6 +21,7 @@ import MealsEmpty from '../components/MealsEmpty'
 import MealFodmapLine from '../components/MealFodmapLine'
 import { gutCardMode } from '../settings/onboarding'
 import { appLocale } from '../i18n/locale.js'
+import { FEATURES } from '../config/distribution'
 
 /** Jours de repas affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
 const INITIAL_DAYS = 5
@@ -351,7 +352,7 @@ export default function Food() {
           <h2 id="results-title">{result.dish || 'Ingrédients détectés'}</h2>
           <div className="provider-tag">
             Analyse IA · une estimation
-            {(result.model || result.provider) && (
+            {FEATURES.aiModelName && (result.model || result.provider) && (
               <details className="provider-details">
                 <summary>détails</summary>
                 <span>Modèle : {result.model || result.provider}</span>

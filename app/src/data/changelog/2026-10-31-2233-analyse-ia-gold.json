@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-31",
+  "kind": "amélioration",
+  "variants": ["play"],
+  "title": "Analyse des repas : un modèle plus récent pendant le test",
+  "items": [
+    "Pendant le test, l’analyse d’une photo de repas passe par un modèle d’IA plus récent. Elle peut prendre quelques secondes de plus.",
+    "La carte du résultat n’affiche plus de nom technique."
+  ]
+}

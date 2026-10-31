@@ -7,6 +7,7 @@ import { createHandler, hashInstallId } from './server.js'
 import { ANDROIDPUBLISHER_SCOPE, createBillingRoutes, createPlayClient, createPushVerifier } from './billing.js'
 import { PLAYINTEGRITY_SCOPE, createIntegrityClient, createIntegrityGuard } from './integrity.js'
 import { createVertexClient, metadataTokenProvider } from './vertex.js'
+import { createCostLedger, createFirestoreCostStore, parsePrices } from './costs.js'
 
 const config = loadConfig()
 const ingredientNames = loadIngredientNames(config.ingredientsPath)
@@ -17,6 +18,26 @@ const log = (entry) => console.log(JSON.stringify({ severity: entry.event === 'e
 const handler = createHandler({
   quota: createQuota(config),
   vertex: createVertexClient({ ...config, getToken: metadataTokenProvider() }),
+  goldVertex: config.goldModels.length
+    ? createVertexClient({
+      project: config.project,
+      locations: config.goldLocations,
+      models: config.goldModels,
+      thinkingLevel: config.goldThinkingLevel,
+      timeoutMs: config.goldTimeoutMs,
+      getToken: metadataTokenProvider(),
+    })
+    : null,
+  costs: createCostLedger({
+    goldMonthlyEur: config.goldMonthlyEur,
+    stopMonthlyEur: config.stopMonthlyEur,
+    prices: parsePrices(config.modelPrices),
+    store: config.creditsStore === 'firestore'
+      ? createFirestoreCostStore({ project: config.project, getToken: metadataTokenProvider({ scopes: [DATASTORE_SCOPE] }) })
+      : null,
+  }),
+  goldDailyCap: config.goldDailyCap,
+  goldInstalls: config.goldInstalls,
   ingredientNames,
   credits: createCredits({
     welcome: config.creditsWelcome,
@@ -52,5 +73,5 @@ createServer((req, res) => {
     res.end()
   })
 }).listen(config.port, () => {
-  log({ event: 'start', port: config.port, models: config.models, locations: config.locations, ingredients: ingredientNames.length, launchPremium: config.launchPremium, integrity: config.integrityMode, creditsStore: config.creditsStore })
+  log({ event: 'start', port: config.port, models: config.models, goldModels: config.goldModels, goldDailyCap: config.goldDailyCap, locations: config.locations, ingredients: ingredientNames.length, launchPremium: config.launchPremium, integrity: config.integrityMode, creditsStore: config.creditsStore })
 })

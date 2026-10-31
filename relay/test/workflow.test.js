@@ -39,3 +39,15 @@ test('workflow relais : Play Integrity déployé en mode observe (jalon 6b-2)', 
   const vars = Object.fromEntries(envVars().map((item) => item.split(/=(.*)/s).slice(0, 2)))
   assert.equal(vars.INTEGRITY_MODE, 'observe')
 })
+
+test('workflow relais : Gold sur le dernier Flash de la zone eu, réflexion MEDIUM, plafonds de coût (31/10)', () => {
+  const vars = Object.fromEntries(envVars().map((item) => item.split(/=(.*)/s).slice(0, 2)))
+  assert.equal(vars.GOLD_MODELS, 'gemini-3.8-flash')
+  assert.equal(vars.GOLD_LOCATIONS, 'eu')
+  assert.equal(vars.GOLD_THINKING_LEVEL, 'MEDIUM')
+  assert.equal(vars.GOLD_MONTHLY_EUR, '15')
+  assert.equal(vars.GLOBAL_DAILY_CAP, '150')
+  // Gold puis son secours tiennent dans les 60 s de Cloud Run
+  assert.ok(Number(vars.GOLD_TIMEOUT_MS) + Number(vars.VERTEX_TIMEOUT_MS) < 60_000)
+  assert.match(workflow, /--timeout=60/)
+})

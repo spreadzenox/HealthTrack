@@ -68,9 +68,11 @@ async function readError(res) {
 }
 
 /**
- * @param {{ project: string, locations: string[], models: string[], getToken: () => Promise<string>, fetchImpl?: typeof fetch, timeoutMs?: number }} options
+ * `thinkingLevel` (MINIMAL, LOW, MEDIUM, HIGH) règle la réflexion des modèles qui l'acceptent (Gold : MEDIUM).
+ * Chaque réponse facturée est rendue dans `spent` (modèle et `usageMetadata`, jamais le contenu), aussi sur l'erreur.
+ * @param {{ project: string, locations: string[], models: string[], getToken: () => Promise<string>, fetchImpl?: typeof fetch, timeoutMs?: number, thinkingLevel?: string | null }} options
  */
-export function createVertexClient({ project, locations, models, getToken, fetchImpl = fetch, timeoutMs = 45_000 }) {
+export function createVertexClient({ project, locations, models, getToken, fetchImpl = fetch, timeoutMs = 45_000, thinkingLevel = null }) {
   const candidates = models.flatMap((model) => locations.map((location) => ({ model, location })))
   let preferred = 0
 
@@ -87,12 +89,13 @@ export function createVertexClient({ project, locations, models, getToken, fetch
   return {
     /**
      * Génère une réponse JSON décodée.
-     * @returns {Promise<{ parsed: object, model: string, location: string }>}
+     * @returns {Promise<{ parsed: object, model: string, location: string, spent: { model: string, usageMetadata: object }[] }>}
      */
     async generateJson({ systemInstruction, parts, schema }) {
       const order = [...candidates.slice(preferred), ...candidates.slice(0, preferred)]
       let lastError = null
       let billed = false
+      const spent = []
       for (const candidate of order) {
         let withSchema = Boolean(schema)
         const build = () => ({
@@ -101,6 +104,7 @@ export function createVertexClient({ project, locations, models, getToken, fetch
           generationConfig: {
             responseMimeType: 'application/json',
             temperature: 0.2,
+            ...(thinkingLevel ? { thinkingConfig: { thinkingLevel } } : {}),
             ...(withSchema ? { responseSchema: schema } : {}),
           },
         })
@@ -118,6 +122,7 @@ export function createVertexClient({ project, locations, models, getToken, fetch
         }
         if (res.ok) {
           const data = await res.json()
+          spent.push({ model: candidate.model, usageMetadata: data?.usageMetadata ?? {} })
           const text = extractResponseText(data)
           let parsed
           try {
@@ -133,16 +138,18 @@ export function createVertexClient({ project, locations, models, getToken, fetch
             continue
           }
           preferred = candidates.indexOf(candidate)
-          return { parsed, model: candidate.model, location: candidate.location }
+          return { parsed, model: candidate.model, location: candidate.location, spent }
         }
         const message = await readError(res)
         // Plafond atteint chez Google : inutile d'insister sur d'autres modèles
-        if (res.status === 429) throw new VertexError(message, 429, billed)
+        if (res.status === 429) throw Object.assign(new VertexError(message, 429, billed), { spent })
         // Modèle absent de cette région, pas ouvert au projet, requête qu'il refuse ou panne : on essaie le suivant
         lastError = new VertexError(`${candidate.model}@${candidate.location} : ${message}`, res.status, billed)
       }
-      if (lastError) lastError.billed = billed
-      throw lastError ?? new VertexError('Aucun modèle configuré.', 500)
+      const error = lastError ?? new VertexError('Aucun modèle configuré.', 500)
+      error.billed = billed
+      error.spent = spent
+      throw error
     },
   }
 }
