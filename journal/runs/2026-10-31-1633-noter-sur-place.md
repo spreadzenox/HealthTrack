@@ -37,3 +37,8 @@
 
 ## Suite
 - Analyses en vierge sombre, puis Journal → Repas en vierge.
+
+## Après le merge (#568)
+- Les 9 checks de la PR étaient verts (Vitest, Build APK, relais, Java, émulateurs…).
+- Tests, Build & Release et Play — AAB verts sur main (`4612f02`) : release **v410** publiée (APK 34 522 258 octets) ;
+  AAB play envoyé en test interne.
