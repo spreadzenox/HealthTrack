@@ -22,6 +22,8 @@
 }
 
 .mei-name {
+  flex: 1 1 0;
+  min-width: 0;
   font-weight: 500;
   color: var(--text);
   line-height: 1.3;
@@ -114,11 +116,13 @@
   color: var(--text-muted);
 }
 
+/* Sur la ligne du nom, à droite : la rangée − g + ✕ tient dans 360 px (POL-PLAY-73). */
 .mei-kcal {
-  min-width: 64px;
-  font-size: 0.85rem;
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
   color: var(--text-muted);
-  text-align: right;
+  white-space: nowrap;
 }
 
 .meal-editor-total {

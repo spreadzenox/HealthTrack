@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-31",
+  "kind": "amélioration",
+  "title": "Modifier un repas : tout tient à l'écran",
+  "items": [
+    "Quand vous modifiez un repas, les calories de chaque aliment sont sur la ligne de son nom : sur un petit téléphone, le bouton qui retire un aliment ne déborde plus de la carte.",
+    "Le bouton « Enregistrer » tient sur une ligne."
+  ]
+}

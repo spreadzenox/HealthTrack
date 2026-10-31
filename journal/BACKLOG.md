@@ -1424,3 +1424,8 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   (contenu sous la barre d'état, Android ≤ 14, rare). Le natif garde les derniers encarts (dp) et la page les relit au
   démarrage (`restoreSafeArea`, appelé avec `setStyle`) ; Android 15+ : `known: false`, rien ne change. Prochain
   audit : Journal → modifier un repas (démo, clair, 360 px).
+- [x] **POL-PLAY-73** (31/10 01:33 ; `MealEditor` : kcal sur la ligne du nom) Audit Journal → modifier un repas (démo,
+  clair, 360 px) : la rangée « − g + kcal ✕ » débordait de la carte (✕ hors de la carte) → kcal à droite du nom, en
+  mono ; « Enregistrer les modifications » sur trois lignes → « Enregistrer ». Vu, laissé : format de l'heure (locale
+  du navigateur de capture), apostrophes droites des noms Ciqual. Prochain audit : Repas → repas habituels et
+  « Décrire » (démo, clair, 360 px).

@@ -56,6 +56,7 @@ export default function MealEditor({ items, onChange, disabled = false }) {
               <div className="mei-head">
                 <span className="mei-name">{frenchLigatures(item.ingredient)}</span>
                 {item.confidence === 'low' && <span className="mei-badge">à vérifier</span>}
+                <span className="mei-kcal">{kcal != null ? `${kcal} kcal` : '—'}</span>
               </div>
               {item.unknown && (
                 <p className="mei-warn">
@@ -104,7 +105,6 @@ export default function MealEditor({ items, onChange, disabled = false }) {
                 >
                   +
                 </button>
-                <span className="mei-kcal">{kcal != null ? `${kcal} kcal` : '—'}</span>
                 {!disabled && (
                   <button
                     type="button"

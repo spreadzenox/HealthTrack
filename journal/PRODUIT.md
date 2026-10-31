@@ -229,6 +229,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **30/10 22:33 CET** — **Polissage play** : POL-PLAY-70, Analyses : « Bientôt comparés : Malade (encore 3 jours notés) » au lieu de « 2/5 jours avec ».
 - **30/10 23:33 CET** — **Polissage play** : POL-PLAY-71, réintroduction : « encore 2 jours calmes » au lieu de « 1/3 jours calmes », réponses « Oui, continuer » / « Non, arrêter » sur une ligne.
 - **31/10 00:33 CET** — **Polissage play** : POL-PLAY-72, Android ≤ 14 : encarts de la barre d'état relus au démarrage (page rechargée après l'injection native : contenu sous la barre d'état ; émulateur API 34 rouge sur main).
+- **31/10 01:33 CET** — **Polissage play** : POL-PLAY-73, modifier un repas à 360 px : kcal sur la ligne du nom (le bouton ✕ ne déborde plus de la carte), bouton « Enregistrer » sur une ligne.
 - **30/10 21:33 CET** — **Polissage play** : POL-PLAY-69, « Œuf », « Bœuf », « Cœur » écrits avec leur ligature à l'écran (noms Ciqual inchangés dans les données).
 - **30/10 19:33 CET** — **Polissage play** : POL-PLAY-68, audit 360 px (démo, 15 pages) et vierge (Repas, Nutrition, Tendances, Réglages, Nouveautés) ; aliments d'un repas un par ligne, quantité à droite (Repas et Journal).
 - **30/10 18:33 CET** — **Chiffres fiables** (POL-PLAY-67) : historique Health Connect de plusieurs années complet pour tous les types (plus de coupure à 500 / 200 / 1 000 lectures).
