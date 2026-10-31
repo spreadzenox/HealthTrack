@@ -1470,5 +1470,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   contenu, boutons pleine largeur, écarts réguliers. Vu, rien à redire : repas habituels et derniers repas en sombre
   (quantités en IBM Plex Mono vérifiées), Repas vierge. Noté : `--empty` démarre avec 2 entrées automatiques (non
   gênant). Prochain audit : Paramètres en `--empty` et sombre, Nouveautés.
+- [x] **POL-PLAY-80** (31/10 09:33 ; `Settings.jsx` `RelayAiBlock`, `App.jsx`) Audit Paramètres (`--play --empty` clair,
+  `--play --dark`, 360 px) et Nouveautés (sombre). Défauts : « Ce qui est envoyé » de l'analyse IA en un paragraphe
+  de 10 lignes (mur de texte, principe « simple d'abord » du 24/10) ; une adresse inconnue (lien périmé, ancienne
+  notification) affichait une page blanche sans barre d'onglets. Corrigé : une phrase « Seule la photo ou la
+  description du repas part, sans métadonnées ; rien d'autre de votre santé. », le détail dans un dépliant fermé
+  « Ce qui est envoyé, en détail » (texte inchangé sauf « Halcya n'envoie aucune autre donnée de santé » au lieu de
+  « ne quitte l'appareil », que le test POL-PLAY-25 interdit) ; route `*` → Accueil. Vu, rien à redire : Apparence,
+  Ce qui vous amène, Abonnement, Votre avis, Nouveautés (longue mais claire). Prochain audit : Premium (paywall) en
+  `--empty` et sombre, puis Montre.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

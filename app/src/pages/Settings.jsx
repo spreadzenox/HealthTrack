@@ -40,13 +40,19 @@ function RelayAiBlock() {
       <p className="hint">{quota}</p>
       <div className="gemini-privacy">
         <p className="hint">
-          <strong><LineIcon name="lock" size={16} /> Ce qui est envoyé :</strong> uniquement la photo du repas, réduite et sans métadonnées
-          (position GPS, date, modèle de téléphone), ou le texte d’un repas décrit, avec un identifiant aléatoire
-          qui sert à compter vos analyses. Notre serveur ne garde ni la photo ni le texte : seulement ce
-          compteur, sous une empreinte anonyme, effacé au bout de 13 mois sans analyse. Google ne s’en sert pas pour
-          entraîner ses modèles. Les calories sont calculées sur le téléphone ; aucune autre donnée de santé ne
-          quitte l’appareil.
+          <LineIcon name="lock" size={16} /> Seule la photo ou la description du repas part, sans métadonnées ;
+          rien d’autre de votre santé.
         </p>
+        <details className="settings-advanced">
+          <summary>Ce qui est envoyé, en détail</summary>
+          <p className="hint">
+            Uniquement la photo du repas, réduite et sans métadonnées (position GPS, date, modèle de téléphone), ou
+            le texte d’un repas décrit, avec un identifiant aléatoire qui sert à compter vos analyses. Notre serveur
+            ne garde ni la photo ni le texte : seulement ce compteur, sous une empreinte anonyme, effacé au bout de
+            13 mois sans analyse. Google ne s’en sert pas pour entraîner ses modèles. Les calories sont calculées sur
+            le téléphone ; Halcya n’envoie aucune autre donnée de santé.
+          </p>
+        </details>
       </div>
     </div>
   )
