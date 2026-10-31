@@ -1479,5 +1479,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   « ne quitte l'appareil », que le test POL-PLAY-25 interdit) ; route `*` → Accueil. Vu, rien à redire : Apparence,
   Ce qui vous amène, Abonnement, Votre avis, Nouveautés (longue mais claire). Prochain audit : Premium (paywall) en
   `--empty` et sombre, puis Montre.
+- [x] **POL-PLAY-81** (31/10 10:33 ; `WatchData.jsx`, `WatchData.css`) Audit Premium (paywall `--play --empty` clair et
+  `--play --dark`) et Montre (`--play` clair et sombre, données de démo). Paywall : rien de bloquant (structure, textes,
+  prix du faux Play Billing, frise de l'essai, « Plus tard » conformes à la maquette). Montre : 9 cartes sur 13
+  répétaient « Rien reçu depuis 30 jours. », la page faisait deux écrans et demi et les types reçus se perdaient entre
+  elles. Corrigé : un type sans mesure ni issue de lecture tient sur une ligne (libellé + étiquette « rien »), la
+  légende « « rien » : aucune mesure reçue depuis 30 jours » est dite une fois en bas ; un type qui porte l'issue d'une
+  lecture (« dernière lecture : vide / sans réponse ») garde sa carte complète. Ordre des types inchangé (sommeil et
+  VFC d'abord). Prochain audit : Sources (variante play) en `--empty` et sombre, puis Réintroduction en sombre.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

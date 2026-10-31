@@ -29,7 +29,10 @@ describe('WatchData (écran « Montre », M5)', () => {
     expect(within(list).getAllByRole('listitem')).toHaveLength(13)
     expect(within(list).getByText('35 ms')).toBeInTheDocument()
     expect(within(list).getByText('33,6 °C')).toBeInTheDocument()
-    expect(within(list).getAllByText('Rien reçu depuis 30 jours.').length).toBe(11)
+    // POL-PLAY-81 : un type sans rien ni lecture tient sur une ligne (plus 11 fois la même phrase)
+    expect(within(list).queryByText('Rien reçu depuis 30 jours.')).toBeNull()
+    expect(list.querySelectorAll('.watch-data-row--compact')).toHaveLength(11)
+    expect(screen.getByText(/« rien » : aucune mesure reçue depuis 30 jours/)).toBeInTheDocument()
     // M4 : le stress est lu, plus aucun type « à venir »
     expect(within(list).queryByText(/prévu dans une prochaine version/)).toBeNull()
     // Une seule lecture de la base, sur 30 jours
@@ -47,6 +50,9 @@ describe('WatchData (écran « Montre », M5)', () => {
     expect(screen.getByText(/Dernière lecture par l’app/)).toBeInTheDocument()
     expect(screen.getAllByText(/dernière lecture : sans réponse/).length).toBeGreaterThan(0)
     expect(screen.getByText(/dernière lecture : vide/)).toBeInTheDocument()
+    // une ligne qui porte l'issue d'une lecture garde sa carte complète
+    const sleep = screen.getByText(/dernière lecture : vide/).closest('li')
+    expect(sleep.classList.contains('watch-data-row--compact')).toBe(false)
   })
 
   it('mesures reçues sans lecture détaillée : la date de la dernière mesure, pas « synchronisez » (POL-PLAY-19)', async () => {
