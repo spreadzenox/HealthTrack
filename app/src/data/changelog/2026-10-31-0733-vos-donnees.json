@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-31",
+  "kind": "amélioration",
+  "title": "Vos données : ce que contient la sauvegarde",
+  "items": [
+    "Dans Paramètres → Vos données, la carte « Exporter » dit combien d’entrées le fichier contiendra ; sans rien d’enregistré, elle le dit au lieu de proposer un fichier vide.",
+    "Le rapport PDF pour le médecin ne propose plus « Débloquer » tant qu’il n’y a rien à y mettre : une phrase dit quand il se remplit.",
+    "Boutons pleine largeur et cartes régulièrement espacées sur cette page."
+  ]
+}

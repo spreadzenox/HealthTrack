@@ -325,7 +325,7 @@ describe('Data page — supprimer toutes mes données (VC-10)', () => {
     renderData()
     fireEvent.click(screen.getByRole('button', { name: 'Supprimer toutes mes données' }))
     expect(deleteAllMyData).not.toHaveBeenCalled()
-    expect(await screen.findByText(/42 entrées/)).toBeInTheDocument()
+    expect(await screen.findByText(/42 entrées seront supprimées/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Exporter d’abord' })).toBeInTheDocument()
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Supprimer définitivement' }))
@@ -345,7 +345,7 @@ describe('Data page — supprimer toutes mes données (VC-10)', () => {
     const { deleteAllMyData } = await import('../services/deleteAllData')
     renderData()
     fireEvent.click(screen.getByRole('button', { name: 'Supprimer toutes mes données' }))
-    await screen.findByText(/42 entrées/)
+    await screen.findByText(/42 entrées seront supprimées/)
     fireEvent.click(screen.getByRole('button', { name: 'Garder mes données' }))
     expect(deleteAllMyData).not.toHaveBeenCalled()
     expect(screen.getByRole('button', { name: 'Supprimer toutes mes données' })).toBeInTheDocument()
@@ -356,10 +356,50 @@ describe('Data page — supprimer toutes mes données (VC-10)', () => {
     deleteAllMyData.mockRejectedValue(new Error('base verrouillée'))
     renderData()
     fireEvent.click(screen.getByRole('button', { name: 'Supprimer toutes mes données' }))
-    await screen.findByText(/42 entrées/)
+    await screen.findByText(/42 entrées seront supprimées/)
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Supprimer définitivement' }))
     })
     expect(screen.getByText(/base verrouillée/)).toBeInTheDocument()
+  })
+})
+
+describe('Data page — ce que contient la sauvegarde (POL-PLAY-79)', () => {
+  beforeEach(async () => {
+    const { countAllEntries } = await import('../storage/localHealthStorage')
+    countAllEntries.mockReset()
+  })
+
+  it('aucune entrée : rien à exporter, bouton désactivé et phrase claire', async () => {
+    const { countAllEntries } = await import('../storage/localHealthStorage')
+    countAllEntries.mockResolvedValue(0)
+    renderData()
+    expect(await screen.findByText(/Rien à sauvegarder pour l’instant/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Télécharger la sauvegarde' })).toBeDisabled()
+  })
+
+  it('avec des entrées : dit combien le fichier en contiendra', async () => {
+    const { countAllEntries } = await import('../storage/localHealthStorage')
+    countAllEntries.mockResolvedValue(1918)
+    renderData()
+    expect(await screen.findByText(/1\s918 entrées et votre profil/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Télécharger la sauvegarde' })).toBeEnabled()
+  })
+
+  it('se met à jour après un import ou une nouvelle entrée', async () => {
+    const { countAllEntries } = await import('../storage/localHealthStorage')
+    countAllEntries.mockResolvedValueOnce(0).mockResolvedValue(12)
+    renderData()
+    await screen.findByText(/Rien à sauvegarder/)
+    await act(async () => { window.dispatchEvent(new CustomEvent('health-entries-updated')) })
+    expect(await screen.findByText(/12 entrées et votre profil/)).toBeInTheDocument()
+  })
+
+  it('si le comptage échoue, l’export reste possible', async () => {
+    const { countAllEntries } = await import('../storage/localHealthStorage')
+    countAllEntries.mockRejectedValue(new Error('idb'))
+    renderData()
+    await act(async () => {})
+    expect(screen.getByRole('button', { name: 'Télécharger la sauvegarde' })).toBeEnabled()
   })
 })

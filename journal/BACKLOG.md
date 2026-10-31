@@ -1461,5 +1461,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   secours), mots entiers d'abord, un aliment Ciqual une seule fois ; croix « effacer » aux couleurs de l'app ; option
   `--search` de la capture. Journal → Jours en sombre : rien à redire. Prochain audit : repas habituels en sombre,
   Données en `--empty`.
+- [x] **POL-PLAY-79** (31/10 07:33 ; `Data.jsx`, `DoctorReportCard.jsx`, `Food.css`) Audit Données en `--empty` et
+  sombre, Repas (repas habituels) en sombre. Défauts : l'export ne disait pas ce qu'il contenait et proposait un fichier
+  vide sur une installation neuve ; le rapport PDF poussait « Débloquer » (paywall) pour un rapport encore vide ; écart
+  de 40 px au-dessus de la carte PDF contre 24 ailleurs, boutons de largeurs différentes. Corrigé : ligne mono
+  « N entrées et votre profil » (recomptée après import, suppression ou nouvelle entrée ; comptage en échec = export
+  laissé possible), export grisé avec « Rien à sauvegarder pour l’instant » à 0 entrée, pas de « Débloquer » sans
+  contenu, boutons pleine largeur, écarts réguliers. Vu, rien à redire : repas habituels et derniers repas en sombre
+  (quantités en IBM Plex Mono vérifiées), Repas vierge. Noté : `--empty` démarre avec 2 entrées automatiques (non
+  gênant). Prochain audit : Paramètres en `--empty` et sombre, Nouveautés.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
