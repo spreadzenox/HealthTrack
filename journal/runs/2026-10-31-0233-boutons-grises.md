@@ -38,3 +38,7 @@
 ## Suite
 - Retest du visage par le propriétaire ; POL-PLAY-11 (alpha) après une journée sans plantage dans Android vitals.
 - Prochain audit : Nutrition → « compléter mon profil » et Tendances (démo, clair, 360 px).
+
+## Après le merge (#541)
+- Checks de la PR tous verts (Vitest, Build APK, relais, Java, émulateurs API 34/35/36).
+- Build & Release : release **v397** publiée (APK 34 517 446 octets) ; Play — AAB et Tests verts sur main.
