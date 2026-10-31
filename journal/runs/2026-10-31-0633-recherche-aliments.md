@@ -39,3 +39,9 @@
 ## Suite
 - Retest du visage par le propriétaire ; POL-PLAY-11 (alpha) après une journée sans plantage dans Android vitals.
 - Prochain audit : Repas → repas habituels en sombre, Données (export/import) en `--empty`.
+
+## Après le merge (#549)
+- 1er push : « Frontend (Vitest) » rouge — `tokens.test.js` refuse le mot `black` dans le SVG du masque de la croix ;
+  remplacé par `currentColor` (un masque ne lit que l'opacité), rendu identique vérifié en capture.
+- Checks de la PR tous verts (Vitest, Build APK, relais, Java, budget, émulateur A56 API 35/36 et bord à bord API 34).
+- Tests, Build & Release et Play — AAB verts sur main : release **v401** publiée (APK 34 518 614 octets).
