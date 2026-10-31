@@ -236,6 +236,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **31/10 12:33 CET** — **Produit** : POL-PLAY-83, la lecture au déverrouillage est mise en avant dans l'onboarding de la version play (bénéfice en image, divulgation complète, « Activer » / « Plus tard ») et allumée dans toutes les versions play, alpha comprise (`FACE_UNLOCK_PLAY`).
 - **31/10 13:33 CET** — **Produit** : POL-PLAY-84, rappel discret et unique de la lecture au déverrouillage dans la carte Bien-être pour qui a dit « Plus tard » dans l'onboarding (2 jours après, fermable, jamais après un refus).
 - **31/10 15:33 CET** — **Polissage** : POL-PLAY-86, Nutrition : barres « incertain : repas manquants » hachurées, visibles en clair comme en sombre.
+- **31/10 18:33 CET** — **Polissage** : POL-PLAY-89, Journal → Jours relu en démo sombre (rien à corriger) ; Sources : chaque carte prend le pastel de son thème (menthe corps et bien-être, lilas contexte) au lieu de quatre cartes grises.
 - **31/10 17:33 CET** — **Polissage** : POL-PLAY-88, Analyses relues en vierge sombre (rien à corriger) ; Journal → Repas vierge : carte pêche en trois étapes au lieu d'une phrase grise.
 - **31/10 16:33 CET** — **Polissage** : POL-PLAY-87, Tendances relues en vierge (clair, sombre) ; « Noter votre bien-être » ouvre la note sur place (Tendances, Journal vierge) au lieu de renvoyer à l'Accueil.
 - **31/10 14:33 CET** — **Polissage** : POL-PLAY-85, Historique du bien-être : légende « moyenne » et « fourchette », « 1 jour » retiré en vue Jour, expressions « sur 13 des 33 lectures ».

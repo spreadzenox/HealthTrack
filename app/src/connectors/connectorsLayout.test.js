@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { splitSourcesByStatus, visibleConnectorIds } from './connectorsLayout'
+import { splitSourcesByStatus, visibleConnectorIds, sourceTone } from './connectorsLayout'
 
 const base = {
   connectorIds: ['health_connect', 'withings'],
@@ -71,5 +71,22 @@ describe('visibleConnectorIds (VC-7)', () => {
   })
   it('… sauf s’il sert déjà : on ne retire jamais une source branchée', () => {
     expect(visibleConnectorIds(ids, { withingsApi: false, withingsInUse: true })).toEqual(ids)
+  })
+})
+
+describe('sourceTone (couleur des cartes de Sources)', () => {
+  it('menthe pour le corps et le bien-être, lilas pour le contexte', () => {
+    expect(sourceTone('face')).toBe('mint')
+    expect(sourceTone('health_connect')).toBe('mint')
+    expect(sourceTone('withings')).toBe('mint')
+    expect(sourceTone('weather')).toBe('lilac')
+    expect(sourceTone('phone')).toBe('lilac')
+  })
+
+  it('aucune teinte pour les blocs sans carte', () => {
+    expect(sourceTone('watch')).toBeNull()
+    expect(sourceTone('ble')).toBeNull()
+    expect(sourceTone('guides')).toBeNull()
+    expect(sourceTone('inconnu')).toBeNull()
   })
 })
