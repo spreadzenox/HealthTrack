@@ -235,6 +235,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **31/10 11:33 CET** — **Polissage** : POL-PLAY-82, l'onglet du bas reste surligné sur Réintroduction (Analyses), Montre (Sources) et Historique du bien-être (Aujourd'hui) ; Sources relue en vierge et sombre, rien à redire.
 - **31/10 12:33 CET** — **Produit** : POL-PLAY-83, la lecture au déverrouillage est mise en avant dans l'onboarding de la version play (bénéfice en image, divulgation complète, « Activer » / « Plus tard ») et allumée dans toutes les versions play, alpha comprise (`FACE_UNLOCK_PLAY`).
 - **31/10 13:33 CET** — **Produit** : POL-PLAY-84, rappel discret et unique de la lecture au déverrouillage dans la carte Bien-être pour qui a dit « Plus tard » dans l'onboarding (2 jours après, fermable, jamais après un refus).
+- **31/10 15:33 CET** — **Polissage** : POL-PLAY-86, Nutrition : barres « incertain : repas manquants » hachurées, visibles en clair comme en sombre.
 - **31/10 14:33 CET** — **Polissage** : POL-PLAY-85, Historique du bien-être : légende « moyenne » et « fourchette », « 1 jour » retiré en vue Jour, expressions « sur 13 des 33 lectures ».
 - **31/10 10:33 CET** — **Polissage** : POL-PLAY-81, Montre : les types sans mesure tiennent sur une ligne (plus 9 fois « Rien reçu depuis 30 jours ») ; paywall relu en vierge et sombre, rien à redire.
 - **31/10 09:33 CET** — **Polissage** : POL-PLAY-80, Paramètres : « Ce qui est envoyé » en une phrase, détail replié ; une adresse inconnue ramène à l'Accueil au lieu d'une page blanche.

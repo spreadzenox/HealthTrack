@@ -20,3 +20,14 @@ describe('couleurs des barres de Nutrition (POL-PLAY-56)', () => {
     expect(background('nutrition-bar-low')).not.toMatch(/danger|alert/)
   })
 })
+
+// Audit Nutrition en sombre du 31/10 (POL-PLAY-86) : le pastel seul (--chart-bar-2) ne se voyait presque pas sur la
+// piste de la barre (1,3:1 en clair, 2,0:1 en sombre). Hachures avec la teinte de la ligne de référence.
+describe('barre « incertain : repas manquants » (POL-PLAY-86)', () => {
+  it('est hachurée avec une teinte visible sur la piste, sans couleur d’alerte', () => {
+    const bg = background('nutrition-bar-uncertain')
+    expect(bg).toMatch(/repeating-linear-gradient/)
+    expect(bg).toMatch(/--chart-ref/)
+    expect(bg).not.toMatch(/danger|alert|warn/)
+  })
+})

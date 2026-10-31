@@ -192,9 +192,15 @@
   background: var(--text-muted);
 }
 
-/* POL-PLAY-75 : repas manquants, apport sans doute sous-estimé → pastel neutre, ni « bas » ni alerte */
+/* POL-PLAY-75 : repas manquants, apport sans doute sous-estimé → pastel neutre, ni « bas » ni alerte.
+   POL-PLAY-86 : hachures (signe d'une estimation) avec la teinte de la ligne de référence, pour que la barre se
+   voie sur sa piste dans les deux thèmes (le pastel seul : contraste 1,3:1 en clair, 2,0:1 en sombre). */
 .nutrition-bar-uncertain {
-  background: var(--chart-bar-2);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--chart-ref) 0 4px,
+    var(--chart-bar-2) 4px 7px
+  );
 }
 
 .nutrition-bar-over {
