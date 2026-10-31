@@ -170,7 +170,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
+  padding: 0 6px;
   border-radius: var(--radius-choice);
   border: 2px solid rgba(var(--ink-rgb), 0.18);
   background: var(--color-bg);
@@ -237,10 +238,13 @@
   color: var(--peach-text);
 }
 
+/* La question du soir est le texte de la carte, pas un second titre (POL-PLAY-90) : seul « Votre ventre » garde la
+   couleur d'étiquette ; la question prend le texte pêche, un cran plus léger. */
 .gut-evening-title {
-  margin: 0 0 8px;
-  font-weight: 700;
-  color: var(--peach-label);
+  margin: 4px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--peach-text);
 }
 
 .gut-evening-choices {
