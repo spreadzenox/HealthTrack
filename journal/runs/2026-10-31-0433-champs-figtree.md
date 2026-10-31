@@ -34,3 +34,7 @@
 ## Suite
 - Retest du visage par le propriétaire ; POL-PLAY-11 (alpha) après une journée sans plantage dans Android vitals.
 - Prochain audit : Repas → recherche d'un aliment, Jours en sombre.
+
+## Après le merge (#545)
+- Checks de la PR tous verts (Vitest, Build APK, relais, Java, budget de lectures, émulateurs API 34/35/36).
+- Build & Release : release **v399** publiée (APK 34 517 838 octets) ; Play — AAB vert sur main.
