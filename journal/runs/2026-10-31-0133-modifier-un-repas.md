@@ -33,6 +33,13 @@
 ## Demandes iOS
 - Changement commun aux plateformes : note de Nouveautés sans `variants`.
 
+## Après le merge (#539)
+- Build & Release : release **v395** publiée (APK 34 517 066 octets) ; Play — AAB vert.
+- Tests sur main rouge : job « Protocole montre (Java) », `curl: (22) … 404` en téléchargeant JUnit depuis Maven
+  Central (URL valide, même job vert sur la PR) → échec passager ; job relancé. Le script continuait malgré l'échec
+  et javac finissait en « package org.junit does not exist » trompeur.
+- Seconde PR (CI) : `java-protocol-test.sh` réessaie 4 fois et s'arrête net avec « Téléchargement impossible ».
+
 ## Suite
 - Retest du visage par le propriétaire ; POL-PLAY-11 (alpha) après une journée sans plantage dans Android vitals.
 - Prochain audit : Repas → repas habituels et « Décrire » (démo, clair, 360 px).

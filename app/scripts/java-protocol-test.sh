@@ -18,7 +18,14 @@ fetch() { # nom, chemin maven, variable
   if [ -n "${!var:-}" ]; then echo "${!var}"; return; fi
   found="$(ls /opt/gradle*/lib/"$name" 2>/dev/null | head -1 || true)"
   if [ -n "$found" ]; then echo "$found"; return; fi
-  [ -f "$LIB/$name" ] || curl -sSfL "https://repo1.maven.org/maven2/$path/$name" -o "$LIB/$name"
+  # Maven Central répond parfois 404 un instant (vu sur main le 31/10) : nouvelles tentatives, puis arrêt net
+  # (sans ça, javac échouait plus loin avec des « package org.junit does not exist » trompeurs).
+  [ -f "$LIB/$name" ] || curl -sSfL --retry 4 --retry-delay 5 --retry-all-errors \
+    "https://repo1.maven.org/maven2/$path/$name" -o "$LIB/$name" || {
+    rm -f "$LIB/$name"
+    echo "Téléchargement impossible : $name (Maven Central). Relancez le job." >&2
+    exit 1
+  }
   echo "$LIB/$name"
 }
 JUNIT="$(fetch junit-4.13.2.jar junit/junit/4.13.2 JUNIT_JAR)"
