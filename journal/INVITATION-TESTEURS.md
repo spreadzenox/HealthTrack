@@ -2,6 +2,13 @@
 
 > Préparé le 24/10 15:30 (BACKLOG « 6f »). À envoyer **seulement** quand le résumé de la semaine affiche
 > « 👉 Version candidate prête : vous pouvez inviter les testeurs ». Ne rien envoyer avant.
+>
+> **Relu le 31/10 08:33 contre la version 402** (run « idées ») : chaque chemin cité existe tel quel dans l'app ;
+> chemins précisés (« Votre avis » et « Données » sont derrière la roue dentée « Réglages », en haut à droite) ;
+> missions du ventre et de la réintroduction réservées à l'objectif « Mon ventre » (ailleurs, elles ne s'affichent
+> pas) ; prérequis ajouté (Android 8 ou plus récent, pas d'iPhone). Règle de Google relue le même jour sur l'aide
+> officielle (answer/14151465) : toujours **12 testeurs inscrits sans interruption pendant au moins 14 jours**, et
+> encore inscrits le jour de la demande ; un testeur qui quitte puis revient ne compte pas.
 
 ## 1. Le jour où la version candidate part en alpha (fait par Claude, via la CI)
 
@@ -60,14 +67,17 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 > **Le premium est offert pendant le test (jusqu'au <date de fin de la période de lancement>) : vous n'avez rien à payer**, aucune carte
 > bancaire n'est demandée.
 >
+> Il faut un téléphone **Android 8 ou plus récent** (l'app n'existe pas encore sur iPhone).
+>
 > Ce qu'il faut faire (5 minutes, avec le compte Gmail de votre téléphone Android) :
 > 1. Rejoindre le groupe des testeurs : https://groups.google.com/g/halcya-testeurs
 > 2. Accepter le test : <lien « Rejoindre sur le Web »>
 > 3. Installer l'app depuis le Play Store : https://play.google.com/store/apps/details?id=fr.jpesquet.sante
 > 4. **Garder l'app installée pendant 14 jours, sans quitter le groupe ni le test**, et **l'ouvrir au moins tous les
 >    2 ou 3 jours** (une photo de repas, une note du ventre, ce que vous voulez) : Google vérifie que l'app est
->    vraiment utilisée. Vos retours, même courts, me sont précieux : dans l'app, Paramètres → « Votre avis »
->    (ou, sur la page Halcya du Play Store, « Envoyer des commentaires privés au développeur »).
+>    vraiment utilisée. Vos retours, même courts, me sont précieux : dans l'app, roue dentée en haut à droite →
+>    Paramètres → « Votre avis » (ou directement, sur la page Halcya du Play Store, « Envoyer des commentaires privés
+>    au développeur »).
 >
 > Astuces :
 > - L'app ne sort pas dans la recherche du Play Store tant qu'elle est en test : passez par le lien ci-dessus, ou
@@ -100,18 +110,25 @@ visage et Health Connect (les deux restent facultatifs).
 
 **Jour 3** :
 > Petite mission Halcya (2 min) : photographiez votre prochain repas avec « Photo du repas » sur l'écran
-> Aujourd'hui, corrigez un ingrédient si besoin, puis enregistrez. Le soir, répondez à « Et votre ventre aujourd'hui,
-> dans l'ensemble ? » (si vous avez choisi « Mon ventre »). Si quelque chose vous paraît bizarre : Paramètres →
-> « Votre avis ».
+> Aujourd'hui, corrigez un ingrédient si besoin, puis enregistrez. Le soir, si vous avez choisi « Mon ventre » au
+> démarrage, répondez sur le même écran à « Et votre ventre aujourd'hui, dans l'ensemble ? ». Si quelque chose vous
+> paraît bizarre : roue dentée en haut à droite → Paramètres → « Votre avis ».
 
 **Jour 7** : le rappel ci-dessus (« Rappel du jour 7 »), avec en plus :
 > Mission de la semaine : allez voir l'onglet **Journal** (vos derniers jours, Tendances) et l'onglet **Sources**.
 > Dites-moi en une phrase ce qui vous a paru clair ou confus.
 
 **Jour 10** :
-> Dernière mission (3 min) : dans **Analyses**, ouvrez « Tester un groupe FODMAP » (sans forcément le commencer) et
-> regardez ce qui est proposé ; puis dans **Données**, créez un « Rapport PDF pour mon médecin » ou un export de vos
-> données. Et dites-moi : recommanderiez-vous l'app à quelqu'un ? Pourquoi (pas) ?
+> Dernière mission (3 min) : si vous avez choisi « Mon ventre », ouvrez dans **Analyses** « Tester un groupe
+> FODMAP » (sans forcément le commencer) et regardez ce qui est proposé. Puis, pour tout le monde : roue dentée en
+> haut à droite → **Données** → « Rapport PDF pour mon médecin » ou « Télécharger la sauvegarde ». Et dites-moi :
+> recommanderiez-vous l'app à quelqu'un ? Pourquoi (pas) ?
+
+> Note (31/10) : la carte « Tester un groupe FODMAP », le bilan du soir du ventre et la carte « Votre ventre » ne
+> s'affichent qu'avec l'objectif « Mon ventre » (choisi au démarrage ou dans Paramètres → « Ce qui vous amène ») ;
+> c'est voulu (retour du 24/10, point 4). Si le formulaire de production doit dire que « la plupart » des fonctions
+> ont été utilisées, glissez dans le message du jour 3 : « si vous ne l'avez pas choisi, vous pouvez passer à
+> “Mon ventre” dans Paramètres → Ce qui vous amène, le temps du test ».
 
 Honnêteté à garder en tête : en 14 jours, personne ne verra de « piste » (il faut 21 jours de repas ou 28 jours de
 notes du ventre) ni de résultat de réintroduction (3 jours de ventre calme, puis 3 jours de test). C'est normal et
@@ -171,6 +188,6 @@ c'est dit dans le formulaire (question 3 ci-dessous) : on préfère attendre plu
 10. *Comment avez-vous décidé que l'app était prête ?*
    `<à vérifier au jour 12 : Android vitals et rapport de pré-lancement réellement propres>`
    > No crashes or ANRs reported in Android vitals and the pre-launch report for the last versions; all screens
-   > checked in light and dark themes on empty and demo data before each release; about 2,700 automated tests plus
+   > checked in light and dark themes on empty and demo data before each release; about 2,800 automated tests plus
    > an emulator test run on every change; tester feedback addressed; subscription and free launch period verified
    > end to end with a license tester account.

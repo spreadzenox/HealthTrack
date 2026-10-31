@@ -233,7 +233,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
 - [x] **VC-PUBLIER** (25/10 13:33 : versionCode 453 en alpha, validé ; dates posées `2026-10-25T12:00Z` → `2026-11-20T23:00Z` ; « Play — AAB » en `alpha` réutilise l'AAB déjà envoyé en test interne et ajoute le groupe des testeurs s'il manque ; échéance affichée inclusive « jusqu'au 20 nov. » ; envoi alpha lancé après le merge, voir le compte rendu) dès VC-22 → AVIS mergés : poser `from` (jour de la publication) / `until` (+14 j + 7 j de marge)
   dans `relay/src/launch-period.json`, vérifier « Premium offert pendant le test » sur la version play, publier la
   version en **alpha**, C5 ✅, « 👉 Version candidate prête » en tête du résumé avec les gestes et le texte
-  d'invitation (`INVITATION-TESTEURS.md`, mis à jour le 25/10 : ouvrir l'app tous les 2-3 jours, rappel du jour 7).
+  d'invitation (`INVITATION-TESTEURS.md`, mis à jour le 25/10 : ouvrir l'app tous les 2-3 jours, rappel du jour 7 ; relu contre la v402 le 31/10, I201).
   Pendant les 14 jours : au moins 2 versions en alpha, et une liste « changements faits pendant le test » dans
   `PRODUIT.md` pour le formulaire d’accès à la production (P30, à préparer au jour 10).
 - [x] **CREDITS-INSTALLS — FAIT le 25/10 17:33** (événement `first_credit` sans identifiant, seulement pour une installation inconnue du registre Firestore et sans crédit rapporté par l'app ; analyse de test `ci-smoke-*` exclue ; résumé du workflow relais : total et par jour sur 7 j) (I167) résumé du workflow relais : nombre de nouvelles installations par jour qui prennent
