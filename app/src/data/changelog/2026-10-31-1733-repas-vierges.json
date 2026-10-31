@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-31",
+  "kind": "amélioration",
+  "title": "Repas : un début plus parlant",
+  "items": [
+    "Tant qu’aucun repas n’est enregistré, Journal → Repas montre en trois étapes ce qui se passe : une photo ou quelques mots, l’heure et les aliments notés, puis la comparaison avec votre ventre."
+  ]
+}
