@@ -702,7 +702,7 @@ export default function Onboarding() {
             face={state.face}
             onFace={(face) => update({ face })}
             onPitch={setFacePitch}
-            onLater={() => update({ face: 'later', step: state.step + 1 })}
+            onLater={() => update({ face: 'later', unlockLater: true, step: state.step + 1 })}
           />
         )}
         {step === 'gesture' && (

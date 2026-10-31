@@ -13,7 +13,8 @@ import { MeasureTiles, GutCard, PistesTeaser } from '../components/TodayCards'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { daySummaryTitle, headerLine, measureTiles } from '../services/today'
 import { APP_NAME } from '../config/brand'
-import { homeFocus, gutCardMode } from '../settings/onboarding'
+import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
+import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import LineIcon from '../components/LineIcon'
 
 export default function Dashboard() {
@@ -30,6 +31,20 @@ export default function Dashboard() {
   const [gutMode] = useState(() => gutCardMode())
   // Bien-être estimé (visage) : undefined pendant la lecture, null sans aucune lecture avec un visage
   const [wellbeing, setWellbeing] = useState(undefined)
+  // Rappel discret de la lecture au déverrouillage (POL-PLAY-84), une seule fois, pour qui a dit « Plus tard »
+  const [unlockReminder, setUnlockReminder] = useState(false)
+  useEffect(() => {
+    if (!shouldShowUnlockReminder(undefined, { state: 'off' })) return undefined
+    let alive = true
+    getFaceSenseStatus()
+      .then((s) => { if (alive) setUnlockReminder(shouldShowUnlockReminder(undefined, describeFaceUnlock(s))) })
+      .catch(() => {})
+    return () => { alive = false }
+  }, [])
+  const closeUnlockReminder = useCallback(() => {
+    dismissUnlockReminder()
+    setUnlockReminder(false)
+  }, [])
   const days = useMemo(() => buildDailyJournal(entries), [entries])
   // Aucune donnée : pas de renvoi vers un Journal et des Tendances vides (VC-26)
   const empty = days.length === 0
@@ -93,7 +108,8 @@ export default function Dashboard() {
       )}
 
       <MoodEstimateCard data={wellbeing} details={details} onToggleDetails={toggleDetails}
-        onAddManual={() => setWellbeingOpen(true)} />
+        onAddManual={() => setWellbeingOpen(true)} unlockReminder={unlockReminder}
+        onDismissReminder={closeUnlockReminder} />
       {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
       {gutMode !== 'hide' && (
         <GutCard details={details} onToggleDetails={toggleDetails} onlyIfUsed={gutMode === 'used'} />

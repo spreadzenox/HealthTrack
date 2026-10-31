@@ -50,6 +50,12 @@ vi.mock('../components/CigaretteQuickAdd', () => ({
   ),
 }))
 
+const faceStatus = { value: null }
+vi.mock('../services/faceSense', async (orig) => ({
+  ...(await orig()),
+  getFaceSenseStatus: vi.fn(async () => faceStatus.value),
+}))
+
 function renderDashboard() {
   return render(
     <BrowserRouter>
@@ -210,5 +216,31 @@ describe('Dashboard', () => {
     expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
     fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  describe('rappel de la lecture au déverrouillage (POL-PLAY-84)', () => {
+    const doneAt = new Date(Date.now() - 3 * 86_400_000).toISOString()
+    beforeEach(() => {
+      localStorage.clear()
+      faceStatus.value = { mode: 'app_open', unlockAvailable: true, unlock: false }
+    })
+
+    it('après « Plus tard » : un rappel, fermé pour de bon', async () => {
+      const { saveOnboarding, loadOnboarding } = await import('../settings/onboarding')
+      saveOnboarding({ done: true, doneAt, face: 'later', unlockLater: true })
+      renderDashboard()
+      fireEvent.click(await screen.findByRole('button', { name: 'Ne plus afficher ce rappel' }))
+      expect(screen.queryByRole('note')).toBeNull()
+      expect(loadOnboarding().unlockReminderDone).toBe(true)
+    })
+
+    it('déjà activée : aucun rappel', async () => {
+      const { saveOnboarding } = await import('../settings/onboarding')
+      saveOnboarding({ done: true, doneAt, face: 'later', unlockLater: true })
+      faceStatus.value = { mode: 'app_open', unlockAvailable: true, unlock: true, running: true }
+      renderDashboard()
+      await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
+      await waitFor(() => expect(screen.queryByRole('note')).toBeNull())
+    })
   })
 })

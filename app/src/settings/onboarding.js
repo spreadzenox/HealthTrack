@@ -105,12 +105,35 @@ export function onboardingDiagnostic(s = loadOnboarding()) {
     watch: s.watch ?? null,
     health: s.health ?? null,
     face: s.face ?? null,
+    unlockLater: s.unlockLater === true,
+    unlockReminderDone: !!s.unlockReminderDone,
     step: s.step || 0,
     maxStep: s.maxStep || 0,
     screens: s.screens ?? null,
     lastScreen: s.lastScreen ?? null,
     seen: Array.isArray(s.seen) ? s.seen : [],
   }
+}
+
+/** Délai avant le rappel de la lecture au déverrouillage (POL-PLAY-84) : pas le lendemain de « Plus tard ». */
+export const UNLOCK_REMINDER_DELAY_MS = 2 * 86_400_000
+
+/**
+ * Rappel discret de la lecture au déverrouillage dans la carte Bien-être (POL-PLAY-84, demande du propriétaire du
+ * 31/10) : seulement pour qui a touché « Plus tard » sur l'écran qui la met en avant (`unlockLater`, jamais après un
+ * « Pas maintenant » dans la divulgation), au moins 2 jours après la fin de l'onboarding, tant qu'elle est coupée et
+ * existe dans cette version (`unlock` : describeFaceUnlock), et une seule fois : fermé ou suivi, il ne revient plus.
+ */
+export function shouldShowUnlockReminder(s = loadOnboarding(), unlock = null, now = new Date()) {
+  if (s.unlockLater !== true || s.unlockReminderDone) return false
+  if (unlock?.state !== 'off' || !s.doneAt) return false
+  const since = now.getTime() - new Date(s.doneAt).getTime()
+  return Number.isFinite(since) && since >= UNLOCK_REMINDER_DELAY_MS
+}
+
+/** Le rappel ne revient plus (fermé, ou « Voir dans Sources » touché). */
+export function dismissUnlockReminder() {
+  return saveOnboarding({ unlockReminderDone: true })
 }
 
 /** @param {'completed'|'skipped'|'existing'} endedBy */

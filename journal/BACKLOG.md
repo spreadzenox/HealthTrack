@@ -1498,8 +1498,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   propriétaire du 31/10 : lecture au déverrouillage dans toutes les versions play (`FACE_UNLOCK_PLAY`, test interne et
   alpha) et mise en avant dans l'onboarding (bénéfice en image sans chiffre de précision, divulgation complète
   `camera_onboarding_unlock`, « Activer » principal, « Plus tard » visible qui passe à la suite, rien de précoché).
-- [ ] **POL-PLAY-84** Rappel discret, une seule fois, dans la carte Bien-être de l'Accueil pour qui a répondu « Plus
-  tard » à la lecture au déverrouillage dans l'onboarding (variante play avec l'interrupteur) ; jamais après un refus
-  dans la divulgation répété, fermable, sans motif trompeur.
+- [x] **POL-PLAY-84** (31/10 13:33 ; `onboarding.js`, `MoodEstimateCard.jsx`, `Dashboard.jsx`) Rappel discret, une
+  seule fois, dans la carte Bien-être de l'Accueil pour qui a répondu « Plus tard » à la lecture au déverrouillage
+  dans l'onboarding (variante play avec l'interrupteur) : 2 jours après, tant qu'elle est coupée ; jamais après un
+  « Pas maintenant » dans la divulgation ; « Voir dans Sources » ou la croix le ferment pour de bon.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
