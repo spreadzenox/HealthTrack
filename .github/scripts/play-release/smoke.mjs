@@ -149,7 +149,7 @@ const notImplemented = (r) => !r.ok && /not implemented|UNIMPLEMENTED/i.test(r.e
 const brief = (v) => JSON.stringify(v).slice(0, 200)
 
 // À passer à true (scénarios affichés ⚠️ sans bloquer) seulement si la lecture au déverrouillage est coupée dans les
-// versions publiées (FACE_UNLOCK_INTERNAL=false, play-bundle.yml) le temps de corriger un défaut connu.
+// versions publiées (FACE_UNLOCK_PLAY=false, play-bundle.yml) le temps de corriger un défaut connu.
 const UNLOCK_KNOWN = false
 
 /** Appel de plugin borné dans le temps : si l'app est tuée, la WebView ne répond plus jamais. */

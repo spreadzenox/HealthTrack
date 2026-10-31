@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-31",
+  "kind": "amélioration",
+  "variants": ["play"],
+  "title": "Bien-être : la lecture au déverrouillage dès l’accueil",
+  "items": [
+    "À la première ouverture, l’écran « Votre bien-être, estimé tout seul » montre ce que change la lecture à chaque déverrouillage : bien plus de lectures dans la journée, donc une estimation plus solide.",
+    "« Activer » affiche d’abord tout ce qui est lu et gardé (des nombres seulement, aucune image), puis lance une lecture d’essai. « Plus tard » ne demande rien et passe à la suite ; vous pouvez l’activer quand vous voulez depuis Sources."
+  ]
+}

@@ -57,6 +57,21 @@ export const DISCLOSURES = {
     accept: 'J’accepte, lire au déverrouillage',
     decline: 'Pas maintenant',
   },
+  // Onboarding de la variante play avec faceUnlockPlay (demande du propriétaire du 31/10) : un seul « Activer » allume
+  // la lecture à l'ouverture de l'app ET au déverrouillage (start({ unlock: true }) note les deux accords).
+  camera_onboarding_unlock: {
+    title: 'Avant d’activer la lecture du visage',
+    points: [
+      `À chaque déverrouillage du téléphone, et quand vous ouvrez ${APP_NAME} (au plus une fois par demi-heure), la caméra frontale prend 3 images de votre visage, en une à deux secondes. Le témoin vert de la caméra d’Android s’allume.`,
+      'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être. Une estimation, pas un diagnostic.',
+      'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
+      'Une notification « Lecture du visage active » reste affichée tant que la lecture au déverrouillage est en marche, avec un bouton « Arrêter ». Vous pouvez tout couper à tout moment dans l’onglet Sources.',
+      `Après un redémarrage du téléphone, la lecture au déverrouillage ne reprend pas toute seule : il faudra rouvrir ${APP_NAME}.`,
+    ],
+    leaves: CAMERA_LEAVES,
+    accept: 'J’accepte, activer',
+    decline: 'Pas maintenant',
+  },
   // Onboarding (jalon 4b) et Sources : lecture seule de Health Connect.
   health_connect: {
     title: 'Avant d’autoriser Health Connect',

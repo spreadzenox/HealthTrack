@@ -1494,5 +1494,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   ni sur `/montre` et `/bien-etre` (on ne savait plus où l'on était). Corrigé : Réintroduction sous Analyses, Montre
   sous Sources, Historique du bien-être sous Aujourd'hui ; Premium et réglages restent sans onglet. Prochain audit :
   Historique du bien-être (`/bien-etre`) en vierge et sombre, puis Nutrition en sombre.
+- [x] **POL-PLAY-83** (31/10 12:33 ; `Onboarding.jsx`, `permissionDisclosures.js`, `play-bundle.yml`) Demande du
+  propriétaire du 31/10 : lecture au déverrouillage dans toutes les versions play (`FACE_UNLOCK_PLAY`, test interne et
+  alpha) et mise en avant dans l'onboarding (bénéfice en image sans chiffre de précision, divulgation complète
+  `camera_onboarding_unlock`, « Activer » principal, « Plus tard » visible qui passe à la suite, rien de précoché).
+- [ ] **POL-PLAY-84** Rappel discret, une seule fois, dans la carte Bien-être de l'Accueil pour qui a répondu « Plus
+  tard » à la lecture au déverrouillage dans l'onboarding (variante play avec l'interrupteur) ; jamais après un refus
+  dans la divulgation répété, fermable, sans motif trompeur.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
