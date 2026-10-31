@@ -21,7 +21,7 @@
 - `nutritionLegend.test.js` : 1 cas (dégradé hachuré, teinte `--chart-ref`, aucune couleur d'alerte).
 
 ## Vérifications
-- `npm run test` ( réussis), `npm run build`, `npm run lint` (6 erreurs, comme avant), `npm run visual` complet (15 pages ok).
+- `npm run test` (2 792 réussis), `npm run build`, `npm run lint` (6 erreurs, comme avant), `npm run visual` complet (15 pages ok).
 - Captures relues : `/nutrition` `--play --dark` et `--play` (clair), avant et après.
 
 ## Données
