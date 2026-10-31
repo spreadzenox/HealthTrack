@@ -307,7 +307,7 @@ describe('Food — modifier un repas enregistré', () => {
       payload: { ...meal.payload, items: [{ ingredient: 'Abondance', quantity: '50 g', quantity_g: 50 }] },
     }
     listEntries.mockResolvedValue([updated])
-    fireEvent.click(screen.getByRole('button', { name: /Enregistrer les modifications/i }))
+    fireEvent.click(screen.getByRole('button', { name: /^Enregistrer$/i }))
     await vi.waitFor(() => expect(screen.queryByLabelText(/Grammes de Abondance/i)).not.toBeInTheDocument())
     expect(await screen.findByText('≈ 197 kcal', { selector: '.meal-kcal' })).toBeInTheDocument()
     expect(updateEntry).toHaveBeenCalledWith(7, { payload: updated.payload, at: updated.at })
@@ -325,7 +325,7 @@ describe('Food — modifier un repas enregistré', () => {
     await screen.findByText('Fromage', { selector: '.meal-dish' })
     fireEvent.click(mealAction(/Modifier ce repas/i))
     fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '120' } })
-    fireEvent.click(screen.getByRole('button', { name: /Enregistrer les modifications/i }))
+    fireEvent.click(screen.getByRole('button', { name: /^Enregistrer$/i }))
     await vi.waitFor(() => expect(updateEntry).toHaveBeenCalled())
     expect(updateEntry.mock.calls[0][1].at).toBeUndefined()
   })
@@ -396,7 +396,7 @@ describe('Food — modifier un repas enregistré', () => {
     await screen.findByText('Fromage', { selector: '.meal-dish' })
     fireEvent.click(mealAction(/Modifier ce repas/i))
     fireEvent.change(screen.getByLabelText(/Heure du repas/i), { target: { value: '2999-01-01T12:00' } })
-    fireEvent.click(screen.getByRole('button', { name: /Enregistrer les modifications/i }))
+    fireEvent.click(screen.getByRole('button', { name: /^Enregistrer$/i }))
     expect(await screen.findByRole('alert')).toHaveTextContent(/futur/)
     expect(updateEntry).not.toHaveBeenCalled()
   })

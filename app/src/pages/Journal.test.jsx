@@ -500,7 +500,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(screen.queryByLabelText('Heure du repas')).not.toBeInTheDocument()
     openActions()
     fireEvent.click(screen.getByRole('button', { name: 'Modifier ce repas' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer les modifications' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     await waitFor(() => expect(updateEntry).toHaveBeenCalledWith(12, expect.objectContaining({ payload: expect.any(Object) })))
     await waitFor(() => expect(screen.queryByLabelText('Heure du repas')).not.toBeInTheDocument())
   })

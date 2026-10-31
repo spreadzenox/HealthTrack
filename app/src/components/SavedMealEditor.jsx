@@ -78,7 +78,7 @@ function SavedMealEditorForm({ entry, onSaved, onCancel }) {
           Annuler
         </button>
         <button type="button" className="btn" onClick={save} disabled={saving}>
-          {saving ? 'Enregistrement…' : 'Enregistrer les modifications'}
+          {saving ? 'Enregistrement…' : 'Enregistrer'}
         </button>
       </div>
     </div>

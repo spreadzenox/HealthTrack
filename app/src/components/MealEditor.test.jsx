@@ -93,4 +93,11 @@ describe('MealEditor', () => {
     expect(screen.getByLabelText(/Grammes de Abondance/i)).toBeDisabled()
     expect(screen.queryByLabelText(/Ajouter un ingrédient/i)).not.toBeInTheDocument()
   })
+
+  it('met les kcal sur la ligne du nom : la rangée − g + ✕ tient dans un petit écran (POL-PLAY-73)', () => {
+    render(<Harness initial={[cheese]} />)
+    const kcal = screen.getByText('197 kcal')
+    expect(kcal.closest('.mei-head')).not.toBeNull()
+    expect(kcal.closest('.mei-controls')).toBeNull()
+  })
 })
