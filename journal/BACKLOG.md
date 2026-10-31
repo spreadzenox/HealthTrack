@@ -1515,5 +1515,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   vierge (clair et sombre) : propre, « 3 semaines » juste (7 + 14 j). La tuile « Noter votre bien-être » (Tendances,
   Journal vierge) renvoyait à l'Accueil sans ouvrir la note : elle l'ouvre sur place. Prochain audit : Analyses en
   vierge sombre, puis Journal → Repas en vierge.
+- [x] **POL-PLAY-88** (31/10 17:33 ; `MealsEmpty.jsx`, `Food.jsx`) Audit Analyses en vierge sombre : propre (carte lilas
+  « 0/21 », « Tester un groupe FODMAP » premium), rien à corriger. Journal → Repas vierge : une phrase grise seule sous
+  « Derniers repas enregistrés » ; remplacée par une carte pêche en trois étapes numérotées (photo ou mots → heure et
+  aliments notés → comparés à votre ventre, ou à vos jours si la carte ventre est masquée). Prochain audit : Journal →
+  Jours avec données de démo en sombre, puis Sources en vierge sombre.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

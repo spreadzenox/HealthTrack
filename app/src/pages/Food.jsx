@@ -17,6 +17,7 @@ import SavedMealEditor from '../components/SavedMealEditor'
 import NewMealForm from '../components/NewMealForm'
 import { frequentMeals, mealLabel } from '../services/quickMeals'
 import LineIcon from '../components/LineIcon'
+import MealsEmpty from '../components/MealsEmpty'
 import MealFodmapLine from '../components/MealFodmapLine'
 import { gutCardMode } from '../settings/onboarding'
 import { appLocale } from '../i18n/locale.js'
@@ -394,7 +395,7 @@ export default function Food() {
 
       <h3 className="section-title">Derniers repas enregistrés</h3>
       {recentMeals.length === 0 ? (
-        <p className="empty-hint">Aucun repas enregistré pour l’instant.</p>
+        <MealsEmpty />
       ) : (
         <>
           {mealDays.slice(0, visibleDays).map((day) => {

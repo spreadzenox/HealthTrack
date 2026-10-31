@@ -960,3 +960,10 @@ button.pastel-tile { width: 100%; border: 0; font: inherit; font-weight: 700; te
 .pastel-tile[data-theme="mint"] { background: var(--mint-bg); color: var(--mint-label); }
 .pastel-tile[data-theme="peach"] { background: var(--peach-bg); color: var(--peach-label); }
 .pastel-tile[data-theme="lilac"] { background: var(--lilac-bg); color: var(--lilac-bar); }
+/* Repas vierges (POL-PLAY-88) : carte pêche en trois étapes. */
+.meals-empty { background: var(--peach-bg); color: var(--peach-text); border-radius: 22px; padding: 18px 20px; }
+.meals-empty-title { margin: 0 0 12px; font-weight: 700; color: var(--peach-label); }
+.meals-empty-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.meals-empty-steps li { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.meals-empty-steps svg { color: var(--peach-label); flex: none; }
+.meals-empty-num { font-family: var(--font-mono); font-size: 0.8rem; color: var(--peach-label); min-width: 1.5em; }
