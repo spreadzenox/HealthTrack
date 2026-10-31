@@ -45,3 +45,8 @@ tard dans la carte Bien-être »)
 
 ## Suite
 - Audit de l'Historique du bien-être (`/bien-etre`) en vierge et sombre, puis Nutrition en sombre (POL-PLAY-82).
+
+## Après le merge (#562)
+- Les 10 checks de la PR étaient verts (Vitest, Build APK, Publier l'APK, relais, Java, budget, émulateurs API 34/35/36).
+- Tests, Build & Release et Play — AAB verts sur main (`c6b66a4`) : release **v407** publiée (APK 34 521 534 octets) ;
+  AAB play envoyé en test interne.
