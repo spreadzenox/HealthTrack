@@ -84,6 +84,8 @@ describe('GutCard', () => {
     expect(line).toHaveClass('gut-consult-note')
     expect(line).not.toHaveClass('mono')
     expect(WHEN_TO_SEE_DOCTOR).toMatch(/Sang dans les selles.*parlez-en rapidement à votre médecin\.$/)
+    // POL-PLAY-91 (I202) : antécédent familial de cancer du côlon ou de MICI
+    expect(WHEN_TO_SEE_DOCTOR).toMatch(/un proche \(parent, frère, sœur\) qui a eu un cancer du côlon ou une maladie inflammatoire de l’intestin/)
   })
 
   it('dit « hier » pour une note de la veille, le jour de la semaine ensuite, la date au-delà (POL-PLAY-4)', async () => {

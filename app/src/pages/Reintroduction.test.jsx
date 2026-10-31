@@ -45,6 +45,8 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     expect(screen.getByRole('button', { name: 'Blé' })).toBeInTheDocument()
     expect(screen.getByText(/Combinaisons/).closest('[aria-disabled]')).toHaveTextContent('après 2 groupes bien tolérés')
     expect(screen.getByText(/parlez-en rapidement à votre médecin/)).toBeInTheDocument()
+    // POL-PLAY-92 (I203) : la réintroduction vient après l'éviction, ligne statique qui ne bloque rien
+    expect(screen.getByText('À faire après 2 à 6 semaines de repas pauvres en FODMAP, si votre ventre va mieux.')).toHaveClass('fodmap-when')
     expect(document.body.textContent).not.toMatch(/intolérance|allergie|traitement/i)
   })
 
