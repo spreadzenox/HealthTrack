@@ -35,3 +35,8 @@
 
 ## Suite
 - Accueil en vierge sombre, puis Paramètres en démo clair.
+
+## Après le merge (#572)
+- Les 9 checks de la PR étaient verts (Vitest, Build APK, relais, Java, émulateurs API 34/35/36…).
+- Tests, Build & Release et Play — AAB verts sur main (`6500199`) : release **v412** publiée (APK 34 522 970 octets) ;
+  AAB play envoyé en test interne.
