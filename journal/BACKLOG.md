@@ -1531,5 +1531,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   600 : un seul titre. Boutons Calme / Gêne / Douleur un peu moins serrés (marge intérieure, petits écrans). Paramètres
   en démo clair relus : rien à corriger. Prochain audit : Premium et paywall de l'onboarding en vierge sombre, puis
   Historique du bien-être en démo sombre vue Mois.
+- [ ] **POL-PLAY-91 (I202) — « Quand consulter » : antécédents familiaux.** Ajouter à `WHEN_TO_SEE_DOCTOR` un proche (parent, frère, sœur) avec un cancer du côlon ou une MICI ; texte statique, mêmes trois endroits ; tests `TodayCards`, `buildReport`, `renderPdf` adaptés. Sources : FMC-HGE POST'U 2022 (ACG 2020), VIDAL Recos 2022.
+- [ ] **POL-PLAY-92 (I203) — Réintroduction : après l'éviction.** Une ligne statique en tête de `Reintroduction.jsx` : « À faire après 2 à 6 semaines de repas pauvres en FODMAP, si votre ventre va mieux. » Ne bloque rien, ne compte rien ; 1 test.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

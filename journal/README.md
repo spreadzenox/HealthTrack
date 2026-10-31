@@ -28,6 +28,8 @@
 > écran par écran). La version **453** reste sur la piste alpha sans changement ; la fin de la période de lancement
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
+> 💡 **Idée du soir (31/10 20:33)** : la phrase « Quand consulter » (carte ventre, réintroduction, rapport PDF) oublie un signe que citent les synthèses médicales françaises : un proche qui a eu un cancer du côlon ou une maladie inflammatoire de l'intestin. Correction prévue au prochain run de code (POL-PLAY-91), avec une ligne qui rappelle que la réintroduction FODMAP vient après 2 à 6 semaines d'éviction (POL-PLAY-92).
+
 **Ce que vous verrez dans l'app cette semaine**
 - **Carte « Votre ventre » plus lisible le soir** (31/10 19:33) — à partir de 18 h, la question « Et votre ventre
   aujourd'hui, dans l'ensemble ? » n'a plus la couleur ni le gras du titre « Votre ventre » : un seul titre, puis la
@@ -735,6 +737,7 @@ pour quatre lignes.
 | 31/10 15:33 — [Nutrition : barres hachurées](runs/2026-10-31-1533-nutrition-hachures.md) | 🎨 | POL-PLAY-86 : audit Nutrition en sombre ; barres « incertain : repas manquants » hachurées (contraste de la piste 2,0:1 → teinte de référence 5,7:1 en sombre) ; 1 test ; v409 |
 | 31/10 16:33 — [« Noter votre bien-être » ouvre la note](runs/2026-10-31-1633-noter-sur-place.md) | 🎨 | POL-PLAY-87 : Tendances relues en vierge (clair, sombre) ; la tuile « Noter votre bien-être » ouvre la note sur place (Tendances, Journal vierge) ; 2 tests + 2 adaptés ; v410 |
 | 31/10 17:33 — [Repas vierges en couleur](runs/2026-10-31-1733-repas-vierges.md) | 🎨 | POL-PLAY-88 : Analyses relues en vierge sombre (rien à corriger) ; Journal → Repas vierge : carte pêche en trois étapes ; 2 tests ; v411 |
+| 31/10 20:33 — [Idées : « quand consulter » relu](runs/2026-10-31-2033-idees-quand-consulter.md) | 💡 | Phrase « Quand consulter » relue contre FMC-HGE 2022 (ACG) et VIDAL : antécédents familiaux à ajouter (POL-PLAY-91) ; réintroduction « après 2 à 6 semaines d'éviction » (POL-PLAY-92) ; ameli toujours en 403 ; I202–I203 ; journal seul |
 | 31/10 19:33 — [Accueil : carte ventre](runs/2026-10-31-1933-accueil-ventre-titre.md) | 🎨 | POL-PLAY-90 : Accueil relu en vierge sombre / clair et en démo ; question du soir du ventre en texte, plus en second titre ; Paramètres démo clair relus (rien) ; 2 tests ; v413 |
 | 31/10 18:33 — [Sources en couleur](runs/2026-10-31-1833-sources-couleur.md) | 🎨 | POL-PLAY-89 : Journal → Jours relu en démo sombre (rien à corriger) ; Sources : cartes au pastel de leur thème (menthe / lilas) ; 2 tests |
 | 31/10 09:33 — [Paramètres : l'analyse IA en une phrase](runs/2026-10-31-0933-parametres-ia.md) | 🎨 | POL-PLAY-80 : « Ce qui est envoyé » en une phrase + détail replié ; adresse inconnue → Accueil (plus de page blanche) ; Paramètres et Nouveautés relus en vierge et sombre ; 3 tests ; v403 |
