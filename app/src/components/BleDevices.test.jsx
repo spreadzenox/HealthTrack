@@ -162,7 +162,7 @@ describe('BleDevices', () => {
     expect(await screen.findByText(/1 mesure enregistrée/)).toBeInTheDocument()
     const saved = save.mock.calls[0][0]
     expect(saved).toEqual([expect.objectContaining({ type: 'blood_pressure', source: 'ble', payload: expect.objectContaining({ systolic: 128, sourceName: 'BP7000' }) })])
-    expect(screen.getByText(/pas un diagnostic/)).toBeInTheDocument()
+    expect(screen.getByText(/Une valeur vous inquiète : parlez-en à votre médecin/)).toBeInTheDocument()
   })
 
   it('aucune mesure reçue : explique quoi faire (appairage, symbole Bluetooth)', async () => {

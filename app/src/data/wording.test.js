@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { parse } from '@babel/parser'
-import { FORBIDDEN_WORDING, stripComments } from './wordingRules.js'
+import { FORBIDDEN_WORDING, SLOP_WORDING, stripComments } from './wordingRules.js'
 
 export { stripComments }
 
@@ -44,6 +44,36 @@ describe('vocabulaire des textes visibles', () => {
 
   it('aucun « humeur », « 100 % privé » ni terme médical interdit dans le code de l’app', () => {
     expect(offences()).toEqual([])
+  })
+})
+
+/**
+ * SLOP-1 (31/10/2026) : la règle « rien n'est un diagnostic » se dit une fois, là où elle sert, jamais en refrain.
+ * Lignes jointes : une phrase JSX peut être coupée en deux.
+ */
+export function slopOffences(text, rules = SLOP_WORDING) {
+  const flat = text.replace(/\s+/g, ' ')
+  return rules.filter(({ re }) => re.test(flat)).map(({ why }) => why)
+}
+
+describe('formules « slop IA » (SLOP-1)', () => {
+  it('repère le refrain, même coupé sur deux lignes', () => {
+    expect(slopOffences('Plutôt calme. Une estimation,\n pas un diagnostic.')).not.toEqual([])
+    expect(slopOffences('C’est une observation, jamais un diagnostic.')).not.toEqual([])
+    expect(slopOffences('Une mesure de la montre, pas un diagnostic.')).not.toEqual([])
+    expect(slopOffences('Profitez-en en toute sérénité.')).not.toEqual([])
+    expect(slopOffences('Le résultat est une estimation. Il ne remplace pas l’avis d’un médecin.')).toEqual([])
+  })
+
+  it('aucun refrain ni mot creux dans le code de l’app', () => {
+    const found = []
+    for (const root of ROOTS) {
+      for (const file of sourceFiles(path.resolve(root))) {
+        const why = slopOffences(stripComments(fs.readFileSync(file, 'utf8')).join('\n'))
+        if (why.length) found.push(`${path.relative(path.resolve(), file)} (${why.join(' ; ')})`)
+      }
+    }
+    expect(found).toEqual([])
   })
 })
 

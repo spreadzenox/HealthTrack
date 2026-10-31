@@ -175,7 +175,7 @@ describe('faceMood — duo de modèles du visage (I126)', () => {
     expect(lines.some((l) => l.startsWith('Deux modèles valence / éveil embarqués (HSEmotion)'))).toBe(true)
     const off = describeFaceMood(faceMoodEstimate([burst(at(0, 8), duo(0.5))], { now: NOW }))
     expect(off.some((l) => l.includes('deux modèles en désaccord'))).toBe(true)
-    expect(off.join(' ')).toMatch(/pas un diagnostic/)
+    expect(off.join(' ')).not.toMatch(/diagnostic/)
   })
 
   it('disagreement never moves the estimate itself, only its uncertainty', () => {
@@ -200,7 +200,7 @@ describe('faceMood — garde-fous', () => {
 
   it('always words it as an estimate, never a diagnosis', () => {
     const lines = describeFaceMood(faceMoodEstimate([burst(at(0, 8))], { now: NOW }))
-    expect(lines.join(' ')).toMatch(/estimation, pas un diagnostic/)
+    expect(lines.join(' ')).not.toMatch(/diagnostic/)
     expect(lines.join(' ')).toMatch(/Confiance faible/)
     expect(lines.join(' ')).toMatch(/entre .* et /)
   })
@@ -269,7 +269,7 @@ describe('faceMood — modèle valence / éveil embarqué (étape 2)', () => {
     const lines = describeFaceMood(faceMoodEstimate([burst(at(0, 8), { valence: 0.3, arousal: 0.4 })], { now: NOW }))
     expect(lines.some((l) => l.includes('Éveil à la dernière lecture : plutôt animé'))).toBe(true)
     expect(lines.some((l) => l.startsWith('Modèle valence / éveil embarqué (HSEmotion)'))).toBe(true)
-    expect(lines.join(' ')).toMatch(/pas un diagnostic/)
+    expect(lines.join(' ')).not.toMatch(/diagnostic/)
   })
 })
 

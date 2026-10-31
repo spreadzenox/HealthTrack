@@ -18,7 +18,7 @@ describe('divulgations avant les autorisations sensibles', () => {
   it.each(['camera', 'camera_app_open', 'camera_unlock'])('%s : transparence de l’AI Act (reconnaissance des émotions), estimation, aucune image gardée', (key) => {
     const text = DISCLOSURES[key].points.join(' ')
     expect(text).toMatch(/reconnaissance des émotions/)
-    expect(text).toMatch(/pas un diagnostic/)
+    expect(text).toMatch(/l’estimation de votre bien-être/)
     expect(text).toMatch(/Aucune image/)
   })
 

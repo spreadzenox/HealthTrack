@@ -29,7 +29,7 @@ import { GUT_LEVELS, GUT_TYPE, SOURCE_LABELS, WHEN_TO_SEE_DOCTOR, entrySourceLab
 export const REPORT_PERIODS = [2, 4, 12]
 export const REPORT_DEFAULT_WEEKS = 4
 export const REPORT_TOP_FOODS = 8
-export const REPORT_DISCLAIMER = 'Estimations et liens repérés dans un journal personnel, pas un diagnostic.'
+export const REPORT_DISCLAIMER = 'Journal tenu par la personne elle-même. Les liens repérés par l’app sont des pistes à discuter avec elle.'
 
 const RANK = { calm: 0, discomfort: 1, pain: 2 }
 const REGULARITY = { regular: 'régulier', fairly: 'assez régulier', variable: 'variable' }
@@ -185,7 +185,7 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
       days: est.length,
       mean: Math.round((est.reduce((a, d) => a + d.note, 0) / est.length) * 10) / 10,
       scale: 5,
-      note: 'Estimation à partir du visage, pas un diagnostic.',
+      note: 'Estimé à partir de l’expression du visage.',
     } : null
     if (est.length) sourceTypes.add('face_burst')
   }
