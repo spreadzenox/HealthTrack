@@ -29,6 +29,10 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **Recherche d’aliments plus juste** (31/10 06:33) — en ajoutant un aliment à un repas, « ail » propose l’ail
+  (plus « Haché de volaille »), « lait » les laits avant la laitue, « vin » les vins avant le vinaigre ; un même
+  aliment n’apparaît plus deux fois (« Oignon cuit » / « Oignon, cuit »). **À tester** : Journal → « ⋯ » d'un repas →
+  Modifier → « Ajouter un ingrédient », tapez « ail » ou « lait ».
 - **Champs de saisie à la police de l’app** (31/10 04:33) — l'année de naissance, la taille et le poids du profil
   Nutrition, la description d'un repas et les réglages s'écrivaient dans la police du téléphone : ils prennent
   maintenant celle du reste de l’app. **À tester** : rien de particulier.
@@ -677,6 +681,7 @@ pour quatre lignes.
 | 31/10 01:33 — [Modifier un repas à 360 px](runs/2026-10-31-0133-modifier-un-repas.md) | 🎨 | POL-PLAY-73 : éditeur de repas, kcal sur la ligne du nom (✕ hors de la carte à 360 px), « Enregistrer » sur une ligne ; 1 test ; v395 ; CI : téléchargement de JUnit réessayé (404 passager de Maven Central) |
 | 31/10 04:33 — [Champs à la police de l’app](runs/2026-10-31-0433-champs-figtree.md) | 🎨 | POL-PLAY-76 : `input`, `textarea`, `select` héritent de Figtree (police système avant) ; audit Tendances / Nutrition vierges et formulaire du profil ; 1 test ; v399 |
 | 31/10 05:33 — [Contrôle bord à bord fiabilisé](runs/2026-10-31-0533-encarts-ci.md) | 🔧 | POL-PLAY-77 : émulateur API 34 rouge sur main (« Pixel Launcher isn't responding », encarts lus à 0 px alors que l'écran est juste) ; page DevTools de l'app choisie, dialogues fermés, 5 relectures avant d’échouer ; v400 |
+| 31/10 06:33 — [Recherche d'aliments plus juste](runs/2026-10-31-0633-recherche-aliments.md) | 🎨 | POL-PLAY-78 : recherche en début de mot (« ail » ≠ volaille), mots entiers d'abord (laits avant laitue), alias Ciqual dédoublonnés, croix de recherche aux couleurs de l'app ; Journal sombre relu ; 4 tests |
 | 31/10 03:33 — [Nutrition : apports incertains](runs/2026-10-31-0333-apports-incertains.md) | 🎨 | POL-PLAY-75 : avec des repas manquants, statut « incertain » (vert pâle) au lieu de « bas » gris foncé ; légende limitée aux statuts présents ; 3 tests ; v398 |
 | 31/10 02:33 — [Repas : boutons inactifs](runs/2026-10-31-0233-boutons-grises.md) | 🎨 | POL-PLAY-74 : `.btn` désactivé neutre (fond, texte secondaire, bordure) au lieu d’émeraude à 60 % ; repas habituels avec une seule majuscule ; 3 tests ; v397 |
 | 30/10 21:33 — [« Œuf » bien écrit](runs/2026-10-30-2133-ligatures.md) | 🎨 | POL-PLAY-69 (reste vu à 19:33) : `frenchLigatures` (« oe » → « œ » devant « u »/« il » en début de mot ; « moelleux », « phoenix » intacts) dans `shortFoodName`, `mealLabel`, l'éditeur de repas ; affichage seulement, noms Ciqual inchangés dans les données ; 3 tests |
