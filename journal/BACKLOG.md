@@ -1441,5 +1441,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   montre que les statuts présents. Vu, laissé tel quel : Tendances (VFC : l'étiquette passe sous le titre long ;
   graphique du bien-être en émeraude plutôt qu'en menthe) ; « À compléter : taille, sexe, âge » dans le profil.
   Prochain audit : Nutrition → « Modifier » le profil (formulaire) et Tendances en `--empty`.
+- [x] **POL-PLAY-76** (31/10 04:33 ; `input, textarea, select { font-family: inherit }` dans `index.css`) Audit Nutrition →
+  « Modifier » le profil (démo, clair, 360 px) et Tendances / Nutrition en `--empty` : les champs (année de naissance,
+  taille, poids, mais aussi la description d'un repas, les réglages, la recherche d'aliments) gardaient la police
+  système du navigateur au lieu de Figtree → règle globale. Vu, rien à redire : Tendances vierge (« Ajouter une
+  montre », « Activer la lecture du visage », « Noter votre bien-être »), Nutrition vierge (profil puis « Aucun repas
+  ces 7 derniers jours » + « Photographier un repas »), formulaire du profil. Prochain audit : Repas → recherche d'un
+  aliment et Jours en sombre.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
