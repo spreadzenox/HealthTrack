@@ -42,7 +42,18 @@ describe('TabBar', () => {
     expect(screen.getByRole('link', { name: 'Sources' })).toHaveAttribute('aria-current', 'page')
   })
 
-  it.each(['/plus', '/data', '/settings', '/nouveautes'])('highlights no tab on settings page %s', (path) => {
+  it.each([
+    ['/reintroduction', 'Analyses'],
+    ['/montre', 'Sources'],
+    ['/bien-etre', 'Aujourd’hui'],
+  ])('keeps the parent tab active on the sub-page %s (POL-PLAY-82)', (path, tab) => {
+    renderAt(path)
+    expect(screen.getByRole('link', { name: tab })).toHaveAttribute('aria-current', 'page')
+    const nav = screen.getByRole('navigation', { name: 'Principal' })
+    expect(within(nav).getAllByRole('link').filter((a) => a.getAttribute('aria-current'))).toHaveLength(1)
+  })
+
+  it.each(['/premium', '/plus', '/data', '/settings', '/nouveautes'])('highlights no tab on settings page %s', (path) => {
     renderAt(path)
     const nav = screen.getByRole('navigation', { name: 'Principal' })
     within(nav).getAllByRole('link').forEach((a) => expect(a).not.toHaveAttribute('aria-current'))

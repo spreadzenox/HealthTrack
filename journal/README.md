@@ -29,6 +29,9 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **L'onglet du bas suit les sous-pages** (31/10 11:33) — dans la réintroduction guidée, « Analyses » reste surligné ;
+  dans « Données de la montre », « Sources » ; dans l'historique du bien-être, « Aujourd'hui ». **À tester** : rien de
+  particulier.
 - **Données de la montre : plus courte** (31/10 10:33) — Sources → montre → « Données de la montre » : un type qui
   n'a rien envoyé tient sur une ligne avec « rien », au lieu d'une carte avec « Rien reçu depuis 30 jours » ; les types
   reçus (valeur, date, nombre de mesures) ressortent. **À tester** : ouvrir l'écran après une synchronisation.
@@ -693,6 +696,7 @@ pour quatre lignes.
 | 31/10 04:33 — [Champs à la police de l’app](runs/2026-10-31-0433-champs-figtree.md) | 🎨 | POL-PLAY-76 : `input`, `textarea`, `select` héritent de Figtree (police système avant) ; audit Tendances / Nutrition vierges et formulaire du profil ; 1 test ; v399 |
 | 31/10 05:33 — [Contrôle bord à bord fiabilisé](runs/2026-10-31-0533-encarts-ci.md) | 🔧 | POL-PLAY-77 : émulateur API 34 rouge sur main (« Pixel Launcher isn't responding », encarts lus à 0 px alors que l'écran est juste) ; page DevTools de l'app choisie, dialogues fermés, 5 relectures avant d’échouer ; v400 |
 | 31/10 10:33 — [Montre : une ligne par type absent](runs/2026-10-31-1033-montre-compacte.md) | 🎨 | POL-PLAY-81 : écran Montre, les types sans mesure tiennent sur une ligne, légende « rien » dite une fois ; paywall relu (vierge, sombre) : rien à redire ; 2 tests adaptés ; v404 |
+| 31/10 11:33 — [Onglet actif sur les sous-pages](runs/2026-10-31-1133-onglet-actif.md) | 🎨 | POL-PLAY-82 : onglet du bas surligné sur Réintroduction, Montre et Historique du bien-être ; Sources (vierge, sombre) et Réintroduction (sombre) relues ; 3 tests |
 | 31/10 09:33 — [Paramètres : l'analyse IA en une phrase](runs/2026-10-31-0933-parametres-ia.md) | 🎨 | POL-PLAY-80 : « Ce qui est envoyé » en une phrase + détail replié ; adresse inconnue → Accueil (plus de page blanche) ; Paramètres et Nouveautés relus en vierge et sombre ; 3 tests ; v403 |
 | 31/10 08:33 — [Idées : invitation des testeurs relue](runs/2026-10-31-0833-idees-invitation-relue.md) | 💡 | `INVITATION-TESTEURS.md` relu contre la v402 : chemins « Réglages → … » précisés, missions ventre / FODMAP réservées à « Mon ventre », prérequis Android 8+, règle Google des 12 testeurs × 14 jours relue (inchangée) ; I201 ; journal seul |
 | 31/10 07:33 — [Vos données : ce que contient la sauvegarde](runs/2026-10-31-0733-vos-donnees.md) | 🎨 | POL-PLAY-79 : nombre d'entrées exportées, export grisé si rien, pas de « Débloquer » pour un rapport PDF vide, boutons pleine largeur, écarts réguliers ; repas habituels sombres relus ; 5 tests ; v402 |

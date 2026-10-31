@@ -26,19 +26,21 @@ const ICONS = {
 /**
  * Navigation en 4 onglets de la maquette validée (jalon 2c). Les réglages (Données, Paramètres,
  * Nouveautés) passent par le bouton en haut à droite (SettingsButton) : aucun onglet n'y est actif.
- * `paths` : préfixes de pages rangées sous l'onglet (Repas et Nutrition sous Journal, retour Withings sous Sources).
+ * `paths` : préfixes de pages rangées sous l'onglet (Repas et Nutrition sous Journal, Réintroduction sous Analyses,
+ * données de la montre et retour Withings sous Sources, historique du bien-être sous Aujourd'hui — POL-PLAY-82).
  */
 const TABS = [
-  { to: '/', label: 'Aujourd’hui', icon: 'today', end: true },
+  { to: '/', label: 'Aujourd’hui', icon: 'today', end: true, paths: ['/bien-etre'] },
   { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition', '/tendances'] },
-  { to: '/recommendations', label: 'Analyses', icon: 'pistes' },
-  { to: '/connectors', label: 'Sources', icon: 'sources' },
+  { to: '/recommendations', label: 'Analyses', icon: 'pistes', paths: ['/recommendations', '/reintroduction'] },
+  { to: '/connectors', label: 'Sources', icon: 'sources', paths: ['/connectors', '/montre'] },
 ]
 
 export default function TabBar() {
   const { pathname } = useLocation()
   const isUnder = (p) => pathname === p || pathname.startsWith(p + '/')
-  const isActive = (tab) => (tab.end ? pathname === tab.to : (tab.paths || [tab.to]).some(isUnder))
+  const isActive = (tab) =>
+    (tab.end && pathname === tab.to) || (tab.paths || (tab.end ? [] : [tab.to])).some(isUnder)
 
   return (
     <nav className="tabbar" aria-label="Principal">
