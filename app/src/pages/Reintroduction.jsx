@@ -304,11 +304,11 @@ function Result({ challenge, status }) {
       <p className="fodmap-kicker mono">{findGroup(challenge.group).label} · résultat</p>
       <h3 id="fodmap-result-title" className="fodmap-verdict">{verdictSentence(challenge, status.verdict)}</h3>
       <Timeline challenge={challenge} status={status} />
-      <p className="today-card-text">
-        Une estimation, pas un diagnostic.
-        {status.verdict?.id !== 'tolerated' &&
-          ' S’attendre à une gêne peut suffire à en ressentir : vous pourrez refaire le test plus tard.'}
-      </p>
+      {status.verdict?.id !== 'tolerated' && (
+        <p className="today-card-text">
+          S’attendre à une gêne peut suffire à en ressentir : vous pourrez refaire le test plus tard.
+        </p>
+      )}
       {status.state === 'washout' && (
         <p className="fodmap-wait" role="status">
           Pause avant le test suivant : {calmDaysLeftText(status.calmDays)}.
@@ -448,7 +448,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
                   <li key={c.entry.id ?? c.entry.payload.startedAt}>{verdictSentence(c.entry.payload, c.status.verdict)}</li>
                 ))}
               </ul>
-              <p className="fodmap-tag mono">estimations de votre ventre, pas un diagnostic</p>
+              <p className="fodmap-tag mono">d’après vos notes de ventre</p>
             </article>
           )}
           <Disclaimer />

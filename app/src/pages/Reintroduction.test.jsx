@@ -167,12 +167,10 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     const c = { ...startChallenge({ group: 'fructans', food: 'wheat' }, new Date(2026, 9, 23, 8)), doses }
     renderPage(makeStore({ challenges: [challengeEntry(c)], gutEntries: [...calm(6, 5, 4, 3, 2, 1)] }))
     expect(await screen.findByText(/Blé : bien toléré jusqu’à 3 tranches/)).toBeInTheDocument()
-    expect(screen.getByText(/pas un diagnostic/)).toBeInTheDocument()
+    expect(screen.queryByText(/diagnostic/)).not.toBeInTheDocument()
     // POL-PLAY-52 : rien sur l'appréhension ni sur un nouveau test quand tout passe
     expect(screen.queryByText(/attente|refaire le test/)).not.toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent('Pause avant le test suivant : encore 3 jours calmes.')
-    // POL-PLAY-71 : la phrase habituelle, sans « de votre ventre »
-    expect(screen.getByText(/^Une estimation, pas un diagnostic\./)).toBeInTheDocument()
     expect(screen.getByText('carte ventre')).toBeInTheDocument()
   })
 

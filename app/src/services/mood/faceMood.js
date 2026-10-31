@@ -383,11 +383,11 @@ export function describeFaceMood(est) {
   lines.push(`Confiance ${est.confidence} : ${parts.join(', ')}.`)
   const habit = est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''
   lines.push(est.model === 'personal'
-    ? `Modèle personnel, appris sur vos ${est.calibrationDays} jours notés. Une estimation, pas un diagnostic.`
+    ? `Modèle personnel, appris sur vos ${est.calibrationDays} jours notés.`
     : est.model === 'va' && est.duo
-      ? `Deux modèles valence / éveil embarqués (HSEmotion), appris sur des centaines de milliers de visages, mis en commun${habit} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`
+      ? `Deux modèles valence / éveil embarqués (HSEmotion), appris sur des centaines de milliers de visages, mis en commun${habit} ; vos notes, facultatives, l’affineront.`
       : est.model === 'va'
-      ? `Modèle valence / éveil embarqué (HSEmotion), appris sur des centaines de milliers de visages${habit} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`
-      : `Modèle général des expressions${est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''} ; vos notes, facultatives, l’affineront. Une estimation, pas un diagnostic.`)
+      ? `Modèle valence / éveil embarqué (HSEmotion), appris sur des centaines de milliers de visages${habit} ; vos notes, facultatives, l’affineront.`
+      : `Modèle général des expressions${est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''} ; vos notes, facultatives, l’affineront.`)
   return lines
 }

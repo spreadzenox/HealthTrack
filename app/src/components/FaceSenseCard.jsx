@@ -361,7 +361,7 @@ export default function FaceSenseCard({
               : <>À chaque déverrouillage, la caméra frontale prend 3 images, le téléphone en tire une dizaine de
                 mesures d’expression puis les efface. </>}
             Un bien-être estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives,
-            l’affinent. Une estimation, jamais un diagnostic.
+            l’affinent.
           </MethodNote>
         </>
       )}

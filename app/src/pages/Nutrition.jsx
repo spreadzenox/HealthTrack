@@ -152,8 +152,7 @@ export default function Nutrition() {
           <p className="nutrition-footnote">
             Repères ANSES pour un adulte{profileComplete ? ', ajustés à votre profil' : ' (complétez votre profil pour les ajuster)'} ;
             apports estimés (photos, portions).
-            Ce n’est pas un diagnostic de carence : en cas de doute, parlez-en à un médecin ou à
-            un·e diététicien·ne.
+            Un doute sur une carence : parlez-en à un médecin ou à un·e diététicien·ne.
           </p>
           <p className="nutrition-footnote nutrition-source">
             Composition des aliments : {ciqualMeta.attribution}

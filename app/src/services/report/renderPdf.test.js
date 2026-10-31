@@ -37,7 +37,7 @@ describe('renderReportPdf', () => {
     expect(all).toMatch(/Aucune note du ventre sur la période\./)
     expect(all).toMatch(/Aucun test de réintroduction fait\./)
     expect(all).toMatch(/Aucune nuit mesurée sur la période\./)
-    expect(all).toMatch(/pas un diagnostic/)
+    expect(all.replace(/\n/g, ' ')).toMatch(/Journal tenu par la personne elle-même/)
     // « Quand consulter » (POL-PLAY-60) : la même phrase fixe que la carte ventre, toujours là, jamais calculée.
     expect(all.replace(/\n/g, ' ')).toMatch(/Sang dans les selles.*votre médecin\./)
     expect(all).not.toMatch(/HealthTrack/)
@@ -97,7 +97,7 @@ describe('renderReportPdf', () => {
   it('le bien-être estimé n’apparaît que s’il est dans le modèle', async () => {
     const { all } = await render(buildReport([], { now: NOW }))
     expect(all).not.toMatch(/Bien-être estimé/)
-    const { all: withWb } = await render({ ...buildReport([], { now: NOW }), wellbeing: { days: 5, mean: 3.4, scale: 5, note: 'Estimation à partir du visage, pas un diagnostic.' } })
+    const { all: withWb } = await render({ ...buildReport([], { now: NOW }), wellbeing: { days: 5, mean: 3.4, scale: 5, note: 'Estimé à partir de l’expression du visage.' } })
     expect(withWb).toMatch(/Bien-être estimé/)
     expect(withWb).toMatch(/3,4 \/ 5 en moyenne sur 5 jours/)
   })
