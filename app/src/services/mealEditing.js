@@ -63,19 +63,42 @@ export function matchIngredientName(name) {
 }
 
 /**
- * Ingrédients de la base contenant tous les mots de la requête (au moins 2 caractères).
- * Ordre : noms qui commencent par la requête, puis les plus courts (les plus génériques).
+ * Ingrédients de la base dont un mot commence par chacun des mots de la requête (au moins
+ * 2 caractères) ; en secours, s'il n'y en a aucun, ceux qui les contiennent n'importe où.
+ * Ordre : noms qui commencent par la requête en mot entier (« Lait entier »), puis par la requête
+ * (« Laitue »), puis par son premier mot ; à rang égal, mots entiers d'abord, puis les plus courts
+ * (les plus génériques). Un même aliment Ciqual (anciens noms gardés) n'est proposé qu'une fois.
  */
 export function searchIngredients(query, limit = 8) {
   const q = normalizeName(query)
   if (q.length < 2) return []
   const words = q.split(' ')
-  return nameIndexes().search
-    .filter(({ norm }) => words.every((w) => norm.includes(w)))
-    .sort((a, b) => {
-      const pa = a.norm.startsWith(q) ? 0 : a.norm.startsWith(words[0]) ? 1 : 2
-      const pb = b.norm.startsWith(q) ? 0 : b.norm.startsWith(words[0]) ? 1 : 2
-      return pa - pb || a.name.length - b.name.length || a.name.localeCompare(b.name, 'fr')
+  const { search, table } = nameIndexes()
+  const tokensOf = (norm) => norm.split(/[^a-z0-9%]+/).filter(Boolean)
+  let hits = search.filter(({ norm }) => {
+    const tokens = tokensOf(norm)
+    return words.every((w) => tokens.some((t) => t.startsWith(w)))
+  })
+  if (hits.length === 0) hits = search.filter(({ norm }) => words.every((w) => norm.includes(w)))
+  const rank = ({ norm }) => {
+    if (norm.startsWith(q) && !/^[a-z0-9%]/.test(norm.slice(q.length))) return 0
+    if (norm.startsWith(q)) return 1
+    if (norm.startsWith(words[0])) return 2
+    return 3
+  }
+  const whole = ({ norm }) => {
+    const tokens = tokensOf(norm)
+    return words.every((w) => tokens.includes(w)) ? 0 : 1
+  }
+  const seen = new Set()
+  return hits
+    .map((h) => ({ ...h, r: rank(h), w: whole(h) }))
+    .sort((a, b) => a.r - b.r || a.w - b.w || a.name.length - b.name.length || a.name.localeCompare(b.name, 'fr'))
+    .filter(({ name }) => {
+      const key = table[name]?.ciqual_code ?? name
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
     })
     .slice(0, limit)
     .map(({ name }) => name)

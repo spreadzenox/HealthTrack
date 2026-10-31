@@ -1455,5 +1455,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   DevTools, dialogues système fermés, encarts relus jusqu'à 5 fois (≈ 15 s) avant de conclure, numéro de lecture et
   page lue dans le résumé. Une vraie régression (0 px persistant) reste rouge. Si l'échec revient malgré tout : lire
   « page lue » et la lecture n/5 dans le résumé avant de toucher au code de l'app.
+- [x] **POL-PLAY-78** (31/10 06:33 ; `mealEditing.searchIngredients`, `index.css`) Audit Repas → recherche d'un aliment :
+  « ail » proposait « Haché de volaille » (milieu de mot), « lait » la laitue avant les laits, « vin » le vinaigre
+  avant les vins, et les alias Ciqual (même code) apparaissaient deux fois. Recherche en début de mot (milieu de mot en
+  secours), mots entiers d'abord, un aliment Ciqual une seule fois ; croix « effacer » aux couleurs de l'app ; option
+  `--search` de la capture. Journal → Jours en sombre : rien à redire. Prochain audit : repas habituels en sombre,
+  Données en `--empty`.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

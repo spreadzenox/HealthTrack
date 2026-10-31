@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-31",
+  "kind": "amélioration",
+  "title": "Recherche d’aliments plus juste",
+  "items": [
+    "En ajoutant un aliment à un repas, « ail » propose d’abord l’ail (et plus « Haché de volaille »), « lait » les laits avant la laitue, « vin » les vins avant le vinaigre.",
+    "Un même aliment n’apparaît plus deux fois sous deux noms presque identiques (« Oignon cuit » et « Oignon, cuit »).",
+    "La croix qui efface la recherche prend les couleurs de l’app."
+  ]
+}

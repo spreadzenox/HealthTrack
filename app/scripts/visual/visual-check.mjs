@@ -35,6 +35,7 @@
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
+ *   npm run visual -- --routes=/food --meal-text --search=ail  # … recherche d'un aliment dans l'éditeur du repas
  *   npm run visual -- --play --routes=/food --food-analysis  # variante play : relais Halcya factice, accord accepté ;
  *                                                  --ai-consent=ask : s'arrête sur la divulgation avant l'envoi (6a-2)
  *   npm run visual -- --play --routes=/premium [--billing=none]  # paywall : faux plugin Play Billing (formules
@@ -1046,6 +1047,14 @@ async function main() {
           if (await field.count()) {
             await field.fill(String(args.phrase))
             await field.evaluate((el) => el.scrollIntoView({ block: 'center' }))
+            await page.waitForTimeout(300)
+          }
+        }
+        if (args.search) {
+          const field = page.locator('input.mei-search').first()
+          if (await field.count()) {
+            await field.fill(String(args.search))
+            await field.evaluate((el) => el.scrollIntoView({ block: 'start' }))
             await page.waitForTimeout(300)
           }
         }

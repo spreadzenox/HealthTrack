@@ -43,6 +43,24 @@ describe('searchIngredients', () => {
     expect(searchIngredients('œuf dur')).toContain('Oeuf dur')
     expect(matchIngredientName('Œuf poché')).toBe('Oeuf poché')
   })
+  it('cherche en début de mot : « ail » ne propose pas « Haché de volaille »', () => {
+    const res = searchIngredients('ail', 8)
+    expect(res[0]).toMatch(/^Ail\b/)
+    expect(res).not.toContain('Haché de volaille')
+  })
+  it('met les mots entiers avant les débuts de mot : les laits avant « Laitue », le vin avant « Vinaigre »', () => {
+    const lait = searchIngredients('lait', 6)
+    expect(lait.indexOf('Laitue, crue')).toBe(-1)
+    const vin = searchIngredients('vin', 5)
+    expect(vin.slice(0, 4).every((n) => /^Vin\b/.test(n))).toBe(true)
+  })
+  it('garde le milieu de mot en secours quand aucun mot ne commence ainsi', () => {
+    expect(searchIngredients('olaill', 3).length).toBeGreaterThan(0)
+  })
+  it('ne propose qu’une fois un même aliment Ciqual (« Oignon cuit » et « Oignon, cuit »)', () => {
+    const res = searchIngredients('oignon', 6)
+    expect(res.filter((n) => /^Oignon,? cuit$/.test(n))).toHaveLength(1)
+  })
   it('ne renvoie rien pour une requête de moins de 2 caractères', () => {
     expect(searchIngredients('a')).toEqual([])
     expect(searchIngredients('  ')).toEqual([])
