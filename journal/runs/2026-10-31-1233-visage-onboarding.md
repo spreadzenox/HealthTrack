@@ -47,3 +47,9 @@ dans l'onboarding avant la version candidate)
 - Rappel discret dans la carte Bien-être de l'Accueil pour qui a choisi « Plus tard » (au plus un, refus respecté).
 - `journal/PLAY-CONFORMITE.md` §1 bis tenu à jour ; la prochaine version candidate alpha aura la lecture au
   déverrouillage (examen Google à surveiller : en cas de refus, erreur notée et `FACE_UNLOCK_PLAY` coupé).
+
+## Après le merge (#560)
+- Les 9 checks de la PR étaient verts (Vitest, Build APK, relais, Java, budget, émulateurs).
+- Tests, Build & Release et Play — AAB verts sur main (`ec8bc28`) : release **v406** publiée (APK 34 520 766 octets) ;
+  AAB play envoyé en test interne avec la lecture au déverrouillage (`FACE_UNLOCK_PLAY`). Émulateur A56 en cours au
+  moment d'écrire.
