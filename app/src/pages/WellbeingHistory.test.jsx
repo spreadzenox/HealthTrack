@@ -81,6 +81,33 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
     expect(screen.getByText('note manuelle ouverte')).toBeInTheDocument()
   })
 
+  it('légende : la ligne pointillée est la moyenne ; en vue Jour, la fourchette de chaque lecture (POL-PLAY-85)', async () => {
+    renderPage()
+    await screen.findByText('3,4')
+    expect(screen.getByText('moyenne')).toBeInTheDocument()
+    expect(screen.queryByText('fourchette')).not.toBeInTheDocument()
+    loadWellbeingHistory.mockResolvedValue(history({
+      period: 'day', from: new Date(2026, 9, 24).toISOString(), days: 1, readings: 2, notes: [],
+      points: [
+        { at: new Date(2026, 9, 24, 9).toISOString(), date: '2026-10-24', note: 3, low: 2, high: 4 },
+        { at: new Date(2026, 9, 24, 13).toISOString(), date: '2026-10-24', note: 3.4, low: 2.6, high: 4.2 },
+      ],
+    }))
+    fireEvent.click(screen.getByRole('button', { name: 'Jour' }))
+    expect(await screen.findByText('fourchette')).toBeInTheDocument()
+    // « 1 jour » ne dit rien de plus en vue Jour.
+    expect(screen.getByText('2 lectures')).toBeInTheDocument()
+    expect(screen.queryByText(/· 1 jour/)).not.toBeInTheDocument()
+  })
+
+  it('expressions lues sur une partie des lectures seulement : le dit (« 3 des 7 lectures ») (POL-PLAY-85)', async () => {
+    renderPage()
+    expect(await screen.findByText('sur 3 des 7 lectures')).toBeInTheDocument()
+    loadWellbeingHistory.mockResolvedValue(history({ readings: 3 }))
+    fireEvent.click(screen.getByRole('button', { name: 'Mois' }))
+    expect(await screen.findByText('sur 3 lectures')).toBeInTheDocument()
+  })
+
   it('lectures sans expressions (anciennes) : le dit simplement', async () => {
     loadWellbeingHistory.mockResolvedValue(history({ expressions: null }))
     renderPage()
