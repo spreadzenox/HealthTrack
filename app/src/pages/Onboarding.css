@@ -370,3 +370,58 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Lecture au déverrouillage mise en avant (variante play, demande du 31/10) : deux lignes de points d'illustration */
+.onb-unlock-benefit {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 16px 18px;
+  border-radius: var(--radius-card);
+  background: var(--mint-bg);
+  color: var(--mint-text);
+}
+
+.onb-unlock-row {
+  display: grid;
+  gap: 6px;
+}
+
+.onb-unlock-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.onb-unlock-label-strong {
+  color: var(--mint-label);
+  font-weight: 700;
+}
+
+.onb-unlock-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.onb-unlock-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.onb-unlock-dot-few {
+  background: var(--chart-bar-2);
+}
+
+.onb-unlock-dot-many {
+  background: var(--color-brand);
+}
+
+.onb-unlock-caption {
+  margin: 0;
+  font-weight: 600;
+}
+
+.onb-face-actions-pitch {
+  gap: 10px;
+}

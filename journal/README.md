@@ -29,6 +29,15 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **Lecture au déverrouillage mise en avant dès l'accueil** (31/10 12:33, votre demande du 31/10) — à la première
+  ouverture, l'écran « Votre bien-être, estimé tout seul » montre en image ce qu'apporte la lecture à chaque
+  déverrouillage (bien plus de lectures, une estimation plus solide ; aucun chiffre de précision), « Activer » en
+  bouton principal et « Plus tard » bien visible. « Activer » affiche d'abord la divulgation complète, puis une lecture
+  d'essai. Elle est désormais **allumée dans toutes les versions play** (test interne et prochaine version candidate de
+  l'alpha). **À tester** (l'onboarding ne s'affiche qu'à la première ouverture : sur un second téléphone, ou après
+  « Vider le stockage » de l'app dans Android, **après avoir téléchargé votre sauvegarde** depuis Vos données) : aller
+  jusqu'à l'écran du bien-être, toucher « Activer », lire la divulgation, accepter ; la notification « Lecture du
+  visage active » doit apparaître.
 - **L'onglet du bas suit les sous-pages** (31/10 11:33) — dans la réintroduction guidée, « Analyses » reste surligné ;
   dans « Données de la montre », « Sources » ; dans l'historique du bien-être, « Aujourd'hui ». **À tester** : rien de
   particulier.
@@ -697,6 +706,7 @@ pour quatre lignes.
 | 31/10 05:33 — [Contrôle bord à bord fiabilisé](runs/2026-10-31-0533-encarts-ci.md) | 🔧 | POL-PLAY-77 : émulateur API 34 rouge sur main (« Pixel Launcher isn't responding », encarts lus à 0 px alors que l'écran est juste) ; page DevTools de l'app choisie, dialogues fermés, 5 relectures avant d’échouer ; v400 |
 | 31/10 10:33 — [Montre : une ligne par type absent](runs/2026-10-31-1033-montre-compacte.md) | 🎨 | POL-PLAY-81 : écran Montre, les types sans mesure tiennent sur une ligne, légende « rien » dite une fois ; paywall relu (vierge, sombre) : rien à redire ; 2 tests adaptés ; v404 |
 | 31/10 11:33 — [Onglet actif sur les sous-pages](runs/2026-10-31-1133-onglet-actif.md) | 🎨 | POL-PLAY-82 : onglet du bas surligné sur Réintroduction, Montre et Historique du bien-être ; Sources (vierge, sombre) et Réintroduction (sombre) relues ; 3 tests ; v405 |
+| 31/10 12:33 — [Lecture au déverrouillage dans l'onboarding](runs/2026-10-31-1233-visage-onboarding.md) | 🚀 | POL-PLAY-83 : écran de l'onboarding qui met en avant la lecture au déverrouillage (divulgation complète, « Activer » / « Plus tard ») ; `FACE_UNLOCK_PLAY` sur toutes les pistes play ; 5 tests |
 | 31/10 09:33 — [Paramètres : l'analyse IA en une phrase](runs/2026-10-31-0933-parametres-ia.md) | 🎨 | POL-PLAY-80 : « Ce qui est envoyé » en une phrase + détail replié ; adresse inconnue → Accueil (plus de page blanche) ; Paramètres et Nouveautés relus en vierge et sombre ; 3 tests ; v403 |
 | 31/10 08:33 — [Idées : invitation des testeurs relue](runs/2026-10-31-0833-idees-invitation-relue.md) | 💡 | `INVITATION-TESTEURS.md` relu contre la v402 : chemins « Réglages → … » précisés, missions ventre / FODMAP réservées à « Mon ventre », prérequis Android 8+, règle Google des 12 testeurs × 14 jours relue (inchangée) ; I201 ; journal seul |
 | 31/10 07:33 — [Vos données : ce que contient la sauvegarde](runs/2026-10-31-0733-vos-donnees.md) | 🎨 | POL-PLAY-79 : nombre d'entrées exportées, export grisé si rien, pas de « Débloquer » pour un rapport PDF vide, boutons pleine largeur, écarts réguliers ; repas habituels sombres relus ; 5 tests ; v402 |

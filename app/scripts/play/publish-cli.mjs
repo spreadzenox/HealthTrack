@@ -6,8 +6,8 @@
  * PLAY_PACKAGE (fr.jpesquet.sante par défaut), GITHUB_STEP_SUMMARY (facultatif).
  * Déclaration P28 (workflow « Play — brouillon P28 ») : PLAY_DRAFT=1 crée la version en brouillon, jamais déployée,
  * sous le nom PLAY_RELEASE_NAME, avec les notes PLAY_NOTES au lieu des Nouveautés.
- * Lecture au déverrouillage allumée en test interne (P28, 27/10) : PLAY_FACE_UNLOCK=1 (AAB avec l'interrupteur
- * allumé : test interne au seul propriétaire vérifié), PLAY_NO_REUSE=1 (alpha : jamais l'AAB du test interne).
+ * Lecture au déverrouillage (P28 traitée ; toutes les pistes depuis le 31/10) : PLAY_FACE_UNLOCK=1 (AAB avec
+ * l'interrupteur allumé, rappelé dans le résumé avec le frein d'urgence).
  * Code de sortie : 0 publié (ou déjà envoyé), 2 accès refusé (à réessayer au run suivant), 1 autre erreur.
  */
 import { readFileSync, readdirSync, appendFileSync, existsSync } from 'node:fs'
@@ -22,7 +22,6 @@ const packageName = process.env.PLAY_PACKAGE || 'fr.jpesquet.sante'
 const draft = process.env.PLAY_DRAFT === '1'
 const releaseName = process.env.PLAY_RELEASE_NAME || String(versionCode)
 const faceUnlock = process.env.PLAY_FACE_UNLOCK === '1'
-const noReuse = process.env.PLAY_NO_REUSE === '1'
 
 const summary = (lines) => {
   if (summaryFile) appendFileSync(summaryFile, `${lines.join('\n')}\n`)
@@ -41,7 +40,7 @@ const entries = readdirSync(dir)
 const notes = process.env.PLAY_NOTES || buildReleaseNotes(entries)
 
 try {
-  const r = await publishBundle({ packageName, aab: readFileSync(aabPath), mapping: mappingPath && existsSync(mappingPath) ? readFileSync(mappingPath) : undefined, versionCode, track, notes, token, draft, releaseName, privateTrack: faceUnlock, noReuse, log: console.log })
+  const r = await publishBundle({ packageName, aab: readFileSync(aabPath), mapping: mappingPath && existsSync(mappingPath) ? readFileSync(mappingPath) : undefined, versionCode, track, notes, token, draft, releaseName, log: console.log })
   if (r.outcome === 'already-uploaded') {
     summary(['', `### Google Play : versionCode ${versionCode} déjà envoyé`, '', 'Rien à faire (relance d’un run déjà publié).'])
   } else {
@@ -59,8 +58,7 @@ try {
       ...(r.keptDrafts ? [r.draftDropped ? `- ⚠️ Play a refusé de garder le brouillon ${r.keptDrafts.join(', ')} à côté : il a été retiré de la piste (relancer « Play — brouillon P28 » si la déclaration n’est pas encore faite).` : `- Brouillon ${r.keptDrafts.join(', ')} gardé sur la piste (déclaration P28).`] : []),
       ...(faceUnlock
         ? [
-            '- **Lecture du bien-être au déverrouillage allumée** (service de premier plan caméra, P28) : version réservée au test interne.',
-            `- Groupes testeurs du test interne : ${r.internalGroups == null ? 'illisibles par l’API (liste d’adresses e-mail seulement ?)' : r.internalGroups.length ? r.internalGroups.join(', ') : 'aucun (liste d’adresses e-mail seulement)'}.`,
+            '- **Lecture du bien-être au déverrouillage allumée** (service de premier plan caméra, déclaration P28 traitée).',
           ]
         : []),
       ...(r.reusedBundle ? ['- Même AAB que la version déjà envoyée en test interne (promotion de la version candidate).'] : []),
@@ -85,7 +83,7 @@ try {
     '### Google Play : envoi impossible',
     '',
     `- ${err.message}`,
-    ...(faceUnlock ? ['- AAB avec la lecture au déverrouillage : si Google le refuse faute de déclaration P28, couper l’interrupteur `FACE_UNLOCK_INTERNAL` de `.github/workflows/play-bundle.yml` pour débloquer les versions suivantes.'] : []),
+    ...(faceUnlock ? ['- AAB avec la lecture au déverrouillage : si Google le refuse faute de déclaration P28, couper l’interrupteur `FACE_UNLOCK_PLAY` de `.github/workflows/play-bundle.yml` pour débloquer les versions suivantes.'] : []),
   ])
   process.exit(1)
 }

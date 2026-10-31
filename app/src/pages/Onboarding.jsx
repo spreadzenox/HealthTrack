@@ -8,7 +8,7 @@ import { FEATURES } from '../config/distribution'
 import Premium from './Premium'
 import { AHA_DAYS, runFirstImport, summarizeImport } from '../services/firstImport'
 import useDisclosure from '../hooks/useDisclosure'
-import { isFaceSenseAvailable, isFaceSenseEnabled } from '../services/faceSense'
+import { getFaceSenseStatus, isAppOpenMode, isFaceSenseAvailable, isFaceSenseEnabled, startFaceUnlock } from '../services/faceSense'
 import { runFaceTrial } from '../services/faceTrial'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId, markAllSeen } from '../services/whatsNew'
@@ -360,12 +360,43 @@ function AhaStep({ imported, onImported, onReady }) {
 
 const fmt1 = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
+/** Points d'illustration (pas des mesures) : quelques lectures à l'ouverture, bien plus au déverrouillage. */
+const FEW_DOTS = 3
+const MANY_DOTS = 14
+
+/**
+ * Bénéfice de la lecture au déverrouillage, en image (demande du 31/10) : deux lignes de points, sans aucun chiffre
+ * de précision (rien n'est mesuré à ce sujet).
+ */
+function UnlockBenefit() {
+  const dots = (n, cls) => (
+    <span className="onb-unlock-dots" aria-hidden="true">
+      {Array.from({ length: n }, (_, i) => <span key={i} className={`onb-unlock-dot ${cls}`} />)}
+    </span>
+  )
+  return (
+    <div className="onb-unlock-benefit">
+      <div className="onb-unlock-row">
+        <span className="onb-unlock-label">Quand vous ouvrez l’app</span>
+        {dots(FEW_DOTS, 'onb-unlock-dot-few')}
+        <span className="onb-sr">quelques lectures par jour</span>
+      </div>
+      <div className="onb-unlock-row">
+        <span className="onb-unlock-label onb-unlock-label-strong">À chaque déverrouillage</span>
+        {dots(MANY_DOTS, 'onb-unlock-dot-many')}
+        <span className="onb-sr">bien plus de lectures par jour</span>
+      </div>
+      <p className="onb-unlock-caption">Plus de lectures dans la journée, une estimation plus solide.</p>
+    </div>
+  )
+}
+
 /**
  * Bien-être estimé, facultatif (écran 7 d'I154) : trois lignes d'explication, la divulgation caméra de la variante
  * avant la demande d'Android, puis une lecture d'essai (qui ne compte pas dans l'estimation du jour) ; « Plus tard »
  * ne demande rien.
  */
-function FaceStep({ face, onFace }) {
+function FaceStep({ face, onFace, onPitch, onLater }) {
   const [disclosure, askConsent] = useDisclosure()
   const [busy, setBusy] = useState(false)
   const [estimate, setEstimate] = useState(null)
@@ -374,15 +405,36 @@ function FaceStep({ face, onFace }) {
     ? 'quand vous ouvrez l’app, au plus une fois par demi-heure'
     : 'quand vous déverrouillez le téléphone'
   const already = face == null && isFaceSenseEnabled()
+  // Variante play avec faceUnlockPlay (demande du propriétaire du 31/10) : la lecture au déverrouillage est mise en
+  // avant ici, « Activer » en bouton principal et « Plus tard » bien visible ; jamais précochée ni forcée.
+  // null tant que le statut natif n'est pas lu (variante play) : aucun bouton, pour ne pas montrer l'autre écran
+  const [unlockKnown, setUnlockKnown] = useState(null)
+  const unlockOffered = unlockKnown === true
+  useEffect(() => {
+    if (!appOpen) return undefined
+    let alive = true
+    getFaceSenseStatus().then((s) => {
+      if (!alive) return
+      const offered = isAppOpenMode(s) && s.unlockAvailable === true
+      setUnlockKnown(offered)
+      onPitch?.(offered)
+    })
+    return () => {
+      alive = false
+    }
+  }, [appOpen, onPitch])
+  const unlockWhen = 'à chaque déverrouillage du téléphone'
+  const shownWhen = unlockOffered ? unlockWhen : when
 
   const tryNow = async () => {
-    if (!(await askConsent(appOpen ? 'camera_app_open' : 'camera'))) {
+    const kind = unlockOffered ? 'camera_onboarding_unlock' : appOpen ? 'camera_app_open' : 'camera'
+    if (!(await askConsent(kind))) {
       onFace('later')
       return
     }
     setBusy(true)
     try {
-      const r = await runFaceTrial()
+      const r = await runFaceTrial(unlockOffered ? { start: (plugin) => startFaceUnlock(plugin) } : undefined)
       setEstimate(r.estimate)
       onFace({ read: 'on', no_face: 'on', denied: 'denied', failed: 'failed' }[r.outcome] || 'failed')
     } finally {
@@ -394,9 +446,11 @@ function FaceStep({ face, onFace }) {
     <>
       {disclosure}
       <h1 className="onb-title">Votre bien-être, estimé tout seul</h1>
+      {unlockOffered && <UnlockBenefit />}
       <ul className="onb-face-lines">
-        <li>Facultatif : la caméra frontale regarde votre expression une à deux secondes, {when}.</li>
+        <li>Facultatif : la caméra frontale regarde votre expression une à deux secondes, {shownWhen}.</li>
         <li>Une IA l’analyse sur le téléphone. Seuls quelques nombres sont gardés, aucune image.</li>
+        {unlockOffered && <li>Une notification reste affichée tant que c’est en marche, avec « Arrêter ».</li>}
         <li>Vous obtenez une estimation de votre bien-être, pas un diagnostic.</li>
       </ul>
       {busy && (
@@ -408,12 +462,12 @@ function FaceStep({ face, onFace }) {
         <p className="onb-note onb-note-ok" role="status">
           Lecture faite : {estimate.label}, ≈ <span className="mono">{fmt1(estimate.note)} / 5</span> (entre{' '}
           <span className="mono">{fmt1(estimate.low)}</span> et <span className="mono">{fmt1(estimate.high)}</span>). Une
-          estimation, pas un diagnostic. Cet essai ne compte pas ; les lectures suivantes se feront {when}.
+          estimation, pas un diagnostic. Cet essai ne compte pas ; les lectures suivantes se feront {shownWhen}.
         </p>
       )}
       {!busy && face === 'on' && !estimate && (
         <p className="onb-note onb-note-ok" role="status">
-          C’est activé. Aucun visage n’a été lu cette fois ; les prochaines lectures se feront {when}.
+          C’est activé. Aucun visage n’a été lu cette fois ; les prochaines lectures se feront {shownWhen}.
         </p>
       )}
       {already && (
@@ -436,7 +490,19 @@ function FaceStep({ face, onFace }) {
           Pas de souci : vous pourrez l’activer quand vous voulez depuis l’onglet Sources.
         </p>
       )}
-      {face !== 'on' && !already && (
+      {face !== 'on' && !already && unlockOffered && (
+        <div className="onb-face-actions onb-face-actions-pitch">
+          <button type="button" className="btn btn-primary onb-action" onClick={tryNow} disabled={busy}>
+            {busy ? 'Lecture en cours…' : 'Activer'}
+          </button>
+          {face == null && !busy && (
+            <button type="button" className="btn btn-secondary onb-action" onClick={onLater}>
+              Plus tard
+            </button>
+          )}
+        </div>
+      )}
+      {face !== 'on' && !already && !unlockOffered && (!appOpen || unlockKnown !== null) && (
         <div className="onb-face-actions">
           <button type="button" className="btn btn-secondary onb-action" onClick={tryNow} disabled={busy}>
             {busy ? 'Lecture en cours…' : 'Essayer maintenant'}
@@ -550,6 +616,7 @@ export default function Onboarding() {
     return { ...s, step: Math.min(s.step || 0, stepsFor(s).length - 1) }
   })
   const [ahaReady, setAhaReady] = useState(false)
+  const [facePitch, setFacePitch] = useState(false)
   const STEPS = stepsFor(state)
   const step = STEPS[state.step]
   const shownCount = displayedStepCount(state)
@@ -630,14 +697,21 @@ export default function Onboarding() {
         {step === 'aha' && (
           <AhaStep imported={!!state.imported} onImported={() => update({ imported: true })} onReady={() => setAhaReady(true)} />
         )}
-        {step === 'face' && <FaceStep face={state.face} onFace={(face) => update({ face })} />}
+        {step === 'face' && (
+          <FaceStep
+            face={state.face}
+            onFace={(face) => update({ face })}
+            onPitch={setFacePitch}
+            onLater={() => update({ face: 'later', step: state.step + 1 })}
+          />
+        )}
         {step === 'gesture' && (
           <GestureStep goal={state.goal} gesture={state.gesture} onGesture={(gesture) => update({ gesture })} />
         )}
         {step === 'premium' && <Premium context="onboarding" onClose={() => end('completed')} />}
       </main>
 
-      {step !== 'premium' && (
+      {step !== 'premium' && !(step === 'face' && facePitch && state.face == null) && (
         <div className="onb-footer">
           <button type="button" className="btn onb-continue" onClick={next} disabled={!canContinue}>
             Continuer

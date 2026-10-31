@@ -16,11 +16,13 @@ vi.mock('../config/distribution', async (importOriginal) => {
   }
 })
 
-const face = vi.hoisted(() => ({ available: true, enabled: false }))
+const face = vi.hoisted(() => ({ available: true, enabled: false, status: null, startFaceUnlock: vi.fn() }))
 vi.mock('../services/faceSense', async (orig) => ({
   ...(await orig()),
   isFaceSenseAvailable: () => face.available,
   isFaceSenseEnabled: () => face.enabled,
+  getFaceSenseStatus: async () => face.status,
+  startFaceUnlock: (...a) => face.startFaceUnlock(...a),
 }))
 const trial = vi.hoisted(() => ({ runFaceTrial: vi.fn() }))
 vi.mock('../services/faceTrial', async (orig) => ({ ...(await orig()), ...trial }))
@@ -52,6 +54,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     variant.name = 'sideload'
     face.available = true
     face.enabled = false
+    face.status = null
     billing.loadPlans.mockResolvedValue([])
     trial.runFaceTrial.mockResolvedValue({ outcome: 'read', estimate: { label: 'plutôt bien', note: 3.4, low: 2.9, high: 3.9 } })
   })
@@ -124,7 +127,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
     renderAt()
     expect(screen.getByText(/quand vous ouvrez l’app/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Essayer maintenant' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Essayer maintenant' }))
     expect(screen.getByText(/Quand vous ouvrez/)).toBeInTheDocument()
   })
 
@@ -134,5 +137,69 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     renderAt()
     expect(screen.getByText('La lecture du visage est déjà activée.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Essayer maintenant' })).not.toBeInTheDocument()
+  })
+
+  describe('variante play avec la lecture au déverrouillage (demande du 31/10)', () => {
+    beforeEach(() => {
+      variant.name = 'play'
+      face.status = { mode: 'app_open', unlockAvailable: true, unlock: false }
+      saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    })
+
+    it('met le déverrouillage en avant : « Activer » principal, « Plus tard » bien visible, rien de précoché', async () => {
+      renderAt()
+      const activate = await screen.findByRole('button', { name: 'Activer' })
+      expect(activate).toHaveClass('btn-primary')
+      expect(screen.getByRole('button', { name: 'Plus tard' })).toHaveClass('btn')
+      expect(screen.getByText('À chaque déverrouillage')).toBeInTheDocument()
+      expect(screen.getByText(/une estimation plus solide/)).toBeInTheDocument()
+      expect(screen.getByText(/à chaque déverrouillage du téléphone/)).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Essayer maintenant' })).not.toBeInTheDocument()
+      expect(screen.queryByText(/%/)).not.toBeInTheDocument()
+      expect(loadOnboarding().face).toBeUndefined()
+      expect(face.startFaceUnlock).not.toHaveBeenCalled()
+      // un seul bouton plein à l'écran tant qu'aucun choix n'est fait
+      expect(screen.queryByRole('button', { name: 'Continuer' })).not.toBeInTheDocument()
+    })
+
+    it('« Plus tard » passe à l’écran suivant sans rien demander', async () => {
+      renderAt()
+      await screen.findByRole('button', { name: 'Activer' })
+      fireEvent.click(screen.getByRole('button', { name: 'Plus tard' }))
+      expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
+      expect(loadOnboarding().face).toBe('later')
+      expect(trial.runFaceTrial).not.toHaveBeenCalled()
+      expect(face.startFaceUnlock).not.toHaveBeenCalled()
+    })
+
+    it('« Activer » : divulgation complète d’abord, puis lecture d’essai par le déverrouillage', async () => {
+      renderAt()
+      fireEvent.click(await screen.findByRole('button', { name: 'Activer' }))
+      expect(screen.getByText('Avant d’activer la lecture du visage')).toBeInTheDocument()
+      expect(screen.getByText(/Aucune image n’est conservée/)).toBeInTheDocument()
+      expect(screen.getByText(/bouton « Arrêter »/)).toBeInTheDocument()
+      expect(trial.runFaceTrial).not.toHaveBeenCalled()
+      fireEvent.click(screen.getByRole('button', { name: 'J’accepte, activer' }))
+      await waitFor(() => expect(loadOnboarding().face).toBe('on'))
+      expect(cont()).toBeEnabled()
+      const opts = trial.runFaceTrial.mock.calls[0][0]
+      await opts.start('plugin')
+      expect(face.startFaceUnlock).toHaveBeenCalledWith('plugin')
+    })
+
+    it('refus respecté : « Plus tard » et « Pas maintenant » ne demandent rien', async () => {
+      renderAt()
+      fireEvent.click(await screen.findByRole('button', { name: 'Activer' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
+      await waitFor(() => expect(loadOnboarding().face).toBe('later'))
+      expect(trial.runFaceTrial).not.toHaveBeenCalled()
+    })
+
+    it('version play sans l’interrupteur : l’écran habituel, sans mise en avant', async () => {
+      face.status = { mode: 'app_open', unlockAvailable: false }
+      renderAt()
+      expect(await screen.findByRole('button', { name: 'Essayer maintenant' })).toBeInTheDocument()
+      expect(screen.queryByText('À chaque déverrouillage')).not.toBeInTheDocument()
+    })
   })
 })

@@ -188,6 +188,16 @@ Puis YouTube (app ou studio.youtube.com) → Créer → Importer → titre « Ha
 4. Si Google refuse : le run coupe l'interrupteur (les versions suivantes repartent sans la fonction), note le motif
    exact et vous présente vos options (recours avec la vidéo, ou rester sur la lecture à l'ouverture de l'app).
 
+### 31/10 : diffusion dans toutes les versions play
+
+P28 traitée (vue par le propriétaire le 30/10, envoi n° 6 du 27/10 publié) ; le 31/10 le propriétaire a vérifié la
+lecture en arrière-plan sur son Galaxy A56 et demandé de la diffuser. Livré le 31/10 12:33 (POL-PLAY-83) :
+interrupteur de CI `FACE_UNLOCK_PLAY` (ex-`FACE_UNLOCK_INTERNAL`) appliqué à **toutes** les pistes (test interne et
+alpha, donc la production quand le propriétaire la promouvra) ; et écran de l'onboarding qui la met en avant
+(bénéfice en image, sans chiffre de précision ; divulgation complète `camera_onboarding_unlock` avant toute demande
+d'Android ; « Activer » principal, « Plus tard » bien visible ; rien de précoché ni forcé). Frein d'urgence inchangé :
+si Google refuse une version, noter l'erreur exacte et passer `FACE_UNLOCK_PLAY` à `"false"`.
+
 ## 2. Revue des permissions du manifeste (main + flavors)
 
 | Permission | Usage | Sideload | Play | Commentaire |
