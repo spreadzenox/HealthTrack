@@ -84,4 +84,12 @@ describe('DoctorReportCard', () => {
     expect(screen.queryByRole('button', { name: 'Préparer le rapport' })).not.toBeInTheDocument()
     expect(create).not.toHaveBeenCalled()
   })
+
+  it('play sans premium et rien de noté : pas de « Débloquer » pour un rapport vide (POL-PLAY-79)', async () => {
+    dist.play = true
+    renderCard({ count: async () => 0 })
+    await waitFor(() => expect(screen.getByText(/se remplit dès votre première note du ventre/)).toBeInTheDocument())
+    expect(screen.queryByRole('link', { name: 'Débloquer' })).not.toBeInTheDocument()
+    expect(screen.getByText('premium')).toBeInTheDocument()
+  })
 })

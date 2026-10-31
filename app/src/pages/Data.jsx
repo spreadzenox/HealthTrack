@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { exportToJson, importFromJson, parseBackup, countAllEntries } from '../storage/localHealthStorage'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { fixWatchKcalOnce } from '../services/watchKcalFix'
@@ -69,6 +69,19 @@ export default function Data() {
   const [importStatus, setImportStatus] = useState(null)
   const [importing, setImporting] = useState(false)
   const fileInputRef = useRef(null)
+  // Ce que contiendra la sauvegarde (POL-PLAY-79) : null tant qu'inconnu ou si le comptage échoue (export laissé possible).
+  const [entryCount, setEntryCount] = useState(null)
+  const refreshCount = useCallback(() => {
+    Promise.resolve()
+      .then(() => countAllEntries())
+      .then((n) => setEntryCount(typeof n === 'number' ? n : null), () => setEntryCount(null))
+  }, [])
+  useEffect(() => {
+    refreshCount()
+    window.addEventListener('health-entries-updated', refreshCount)
+    return () => window.removeEventListener('health-entries-updated', refreshCount)
+  }, [refreshCount])
+  const nothingToExport = entryCount === 0
 
   const handleExport = async () => {
     setExportStatus(null)
@@ -182,6 +195,7 @@ export default function Data() {
         `${entries ? plural(entries, 'entrée supprimée', 'entrées supprimées') : 'Aucune entrée à supprimer'}, profil effacé. ` +
           'Vos réglages et connexions restent : seules les nouvelles mesures arriveront.'
       )
+      refreshCount()
     } catch (err) {
       setWipe((w) => ({ ...w, running: false }))
       setWipeStatus('Erreur : ' + (err.message || 'suppression impossible') + '. Rien n’a été supprimé.')
@@ -201,9 +215,14 @@ export default function Data() {
         <div className="data-block">
           <h3 className="section-title">Exporter (sauvegarde)</h3>
           <p className="data-hint">
-            Un fichier avec toutes vos entrées et votre profil, rangé dans <strong>Documents</strong>.
+            {nothingToExport
+              ? 'Rien à sauvegarder pour l’instant : vos repas, notes et mesures s’y ajouteront.'
+              : <>Un fichier avec toutes vos entrées et votre profil, rangé dans <strong>Documents</strong>.</>}
           </p>
-          <button type="button" className="btn" onClick={handleExport}>
+          {entryCount > 0 && (
+            <p className="data-count mono">{plural(entryCount, 'entrée')} et votre profil</p>
+          )}
+          <button type="button" className="btn" onClick={handleExport} disabled={nothingToExport}>
             Télécharger la sauvegarde
           </button>
           {exportStatus && <p className="data-status">{exportStatus}</p>}

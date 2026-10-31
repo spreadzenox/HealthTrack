@@ -17,7 +17,8 @@ async function countReportEntries() {
  * « Rapport PDF pour mon médecin » (N6b), en bas d'Analyses et dans Données : période de 2, 4 ou 12 semaines, bien-être
  * estimé exclu sauf case cochée (donnée sensible et estimation), puis fichier dans Documents et feuille de partage.
  * Premium sur la version Play (offert pendant le lancement) ; libre en sideload. Sans aucune note du ventre ni aucun
- * repas, pas de rapport vide : une phrase dit quand il se remplit (un comptage en échec laisse le bouton).
+ * repas, pas de rapport vide : une phrase dit quand il se remplit (un comptage en échec laisse le bouton), et pas de
+ * « Débloquer » sur la version Play tant qu'il n'y a rien à mettre dedans (POL-PLAY-79).
  */
 export default function DoctorReportCard({ create = createReportPdf, save = saveAndShareReport, count = countReportEntries }) {
   const [ent] = useEntitlement()
@@ -58,13 +59,9 @@ export default function DoctorReportCard({ create = createReportPdf, save = save
         Votre ventre semaine par semaine, vos repas et vos pistes, sur 2 pages. Créé sur votre téléphone : vous
         choisissez à qui l’envoyer.
       </p>
-      {!premium && (
-        <>
-          <span className="fodmap-tag mono">premium</span>
-          <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>
-        </>
-      )}
-      {premium && empty && (
+      {!premium && <span className="fodmap-tag mono">premium</span>}
+      {!premium && !empty && <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>}
+      {empty && (
         <p className="fodmap-note">Le rapport se remplit dès votre première note du ventre ou votre premier repas.</p>
       )}
       {premium && !empty && !open && (
