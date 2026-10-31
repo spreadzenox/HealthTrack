@@ -1502,5 +1502,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   seule fois, dans la carte Bien-être de l'Accueil pour qui a répondu « Plus tard » à la lecture au déverrouillage
   dans l'onboarding (variante play avec l'interrupteur) : 2 jours après, tant qu'elle est coupée ; jamais après un
   « Pas maintenant » dans la divulgation ; « Voir dans Sources » ou la croix le ferment pour de bon.
+- [x] **POL-PLAY-85** (31/10 14:33 ; `WellbeingHistory.jsx`) Audit Historique du bien-être (vierge clair, démo
+  sombre et clair, Jour / Semaine / Mois) : légende « moyenne » (pointillés) et « fourchette » (vue Jour), « 1 jour »
+  retiré en vue Jour, expressions « sur 13 des 33 lectures ». Prochain audit : Nutrition en sombre, puis Tendances
+  en vierge.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.

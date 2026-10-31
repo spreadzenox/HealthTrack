@@ -130,6 +130,12 @@ function ExpressionBars({ mix }) {
   )
 }
 
+/** « sur 13 lectures », ou « sur 13 des 33 lectures » quand les expressions ne viennent que des lectures récentes. */
+function expressionsBase(n, total) {
+  const word = (k) => (k > 1 ? 'lectures' : 'lecture')
+  return total > n ? `sur ${n} des ${total} ${word(total)}` : `sur ${n} ${word(n)}`
+}
+
 export default function WellbeingHistory({ now: givenNow }) {
   const [period, setPeriod] = useState('week')
   const [history, setHistory] = useState(undefined)
@@ -180,7 +186,8 @@ export default function WellbeingHistory({ now: givenNow }) {
             )}
           </p>
           {!empty && <p className="wbh-figure-sub mono">
-            {history.readings} {history.readings > 1 ? 'lectures' : 'lecture'} · {history.days} {history.days > 1 ? 'jours' : 'jour'}
+            {history.readings} {history.readings > 1 ? 'lectures' : 'lecture'}
+            {history.period !== 'day' && ` · ${history.days} ${history.days > 1 ? 'jours' : 'jour'}`}
             {history.notes.length > 0 && ` · ${history.notes.length} ${history.notes.length > 1 ? 'notes' : 'note'} à la main`}
           </p>}
           {empty ? (
@@ -194,6 +201,12 @@ export default function WellbeingHistory({ now: givenNow }) {
           {!empty && <ul className="wbh-legend" aria-label="Légende">
             <li><span className="wbh-key is-estimate" aria-hidden="true" />estimé (visage)</li>
             {history.notes.length > 0 && <li><span className="wbh-key is-note" aria-hidden="true" />noté à la main</li>}
+            {history.period === 'day' && history.points.some((p) => Number.isFinite(p.low) && Number.isFinite(p.high)) && (
+              <li><span className="wbh-key is-range" aria-hidden="true" />fourchette</li>
+            )}
+            {history.mean != null && history.points.length > 1 && (
+              <li><span className="wbh-key is-mean" aria-hidden="true" />moyenne</li>
+            )}
             {history.points.some((p) => p.few) && <li><span className="wbh-key is-few" aria-hidden="true" />peu de lectures</li>}
           </ul>}
           <button type="button" className="mood-manual" onClick={() => setNoteOpen(true)}>
@@ -223,7 +236,7 @@ export default function WellbeingHistory({ now: givenNow }) {
             <>
               <h4 className="wbh-subtitle">Expressions</h4>
               <ExpressionBars mix={history.expressions} />
-              <p className="wbh-foot mono">sur {history.expressions.readings} {history.expressions.readings > 1 ? 'lectures' : 'lecture'}</p>
+              <p className="wbh-foot mono">{expressionsBase(history.expressions.readings, history.readings)}</p>
             </>
           ) : (
             <p className="wbh-foot">Les expressions (joie, neutre, surprise…) apparaîtront avec les prochaines lectures.</p>

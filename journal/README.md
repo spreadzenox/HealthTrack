@@ -29,6 +29,9 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **Historique du bien-être : légende complète** (31/10 14:33) — la ligne pointillée est légendée « moyenne » et, en
+  vue Jour, les barres verticales « fourchette » ; les expressions disent sur combien de lectures elles portent
+  (« sur 13 des 33 lectures »). **À tester** : Accueil → toucher la carte « Bien-être estimé » → « Jour ».
 - **Un seul rappel pour la lecture au déverrouillage** (31/10 13:33) — si l'on répond « Plus tard » à l'écran qui la
   met en avant à la première ouverture, la carte « Bien-être estimé » le rappelle **une seule fois**, 2 jours après, en
   une ligne (« À chaque déverrouillage, bien plus de lectures : une estimation plus solide. Voir dans Sources » et une
@@ -713,6 +716,7 @@ pour quatre lignes.
 | 31/10 11:33 — [Onglet actif sur les sous-pages](runs/2026-10-31-1133-onglet-actif.md) | 🎨 | POL-PLAY-82 : onglet du bas surligné sur Réintroduction, Montre et Historique du bien-être ; Sources (vierge, sombre) et Réintroduction (sombre) relues ; 3 tests ; v405 |
 | 31/10 12:33 — [Lecture au déverrouillage dans l'onboarding](runs/2026-10-31-1233-visage-onboarding.md) | 🚀 | POL-PLAY-83 : écran de l'onboarding qui met en avant la lecture au déverrouillage (divulgation complète, « Activer » / « Plus tard ») ; `FACE_UNLOCK_PLAY` sur toutes les pistes play ; 5 tests ; v406 |
 | 31/10 13:33 — [Rappel de la lecture au déverrouillage](runs/2026-10-31-1333-rappel-deverrouillage.md) | 🚀 | POL-PLAY-84 : une ligne discrète, une seule fois, dans la carte Bien-être pour qui a dit « Plus tard » (2 jours après, fermable, jamais après un refus) ; 9 tests ; v407 |
+| 31/10 14:33 — [Historique du bien-être : légende](runs/2026-10-31-1433-historique-legende.md) | 🎨 | POL-PLAY-85 : audit `/bien-etre` (vierge, sombre, Jour/Semaine/Mois) ; légende « moyenne » et « fourchette », « 1 jour » retiré en vue Jour, expressions « sur 13 des 33 lectures » ; 2 tests |
 | 31/10 09:33 — [Paramètres : l'analyse IA en une phrase](runs/2026-10-31-0933-parametres-ia.md) | 🎨 | POL-PLAY-80 : « Ce qui est envoyé » en une phrase + détail replié ; adresse inconnue → Accueil (plus de page blanche) ; Paramètres et Nouveautés relus en vierge et sombre ; 3 tests ; v403 |
 | 31/10 08:33 — [Idées : invitation des testeurs relue](runs/2026-10-31-0833-idees-invitation-relue.md) | 💡 | `INVITATION-TESTEURS.md` relu contre la v402 : chemins « Réglages → … » précisés, missions ventre / FODMAP réservées à « Mon ventre », prérequis Android 8+, règle Google des 12 testeurs × 14 jours relue (inchangée) ; I201 ; journal seul |
 | 31/10 07:33 — [Vos données : ce que contient la sauvegarde](runs/2026-10-31-0733-vos-donnees.md) | 🎨 | POL-PLAY-79 : nombre d'entrées exportées, export grisé si rien, pas de « Débloquer » pour un rapport PDF vide, boutons pleine largeur, écarts réguliers ; repas habituels sombres relus ; 5 tests ; v402 |
