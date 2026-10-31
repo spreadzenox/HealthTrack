@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import WellbeingCharts from './WellbeingCharts'
 import { computeTodayPrediction } from '../services/analysisEngine'
@@ -231,9 +231,18 @@ describe('WellbeingCharts — ne lit que les 14 jours affichés (perf D2)', () =
     expect(container.querySelector('.wellbeing-chart-empty')).toBeNull()
     expect(container.querySelector('.wellbeing-chart-block')).toBeNull()
     expect(screen.queryByText(/Par jour/)).toBeNull()
-    const note = screen.getByRole('link', { name: /Noter votre bien-être/ })
-    expect(note).toHaveAttribute('href', '/')
+    const note = screen.getByRole('button', { name: /Noter votre bien-être/ })
     expect(note).toHaveAttribute('data-theme', 'mint')
+  })
+
+  it('« Noter votre bien-être » ouvre la note sur place, au lieu de renvoyer à l’Accueil (POL-PLAY-87)', async () => {
+    listEntries.mockResolvedValue([])
+    countEntries.mockResolvedValue(0)
+    render(<WellbeingCharts />, { wrapper: MemoryRouter })
+    const note = await screen.findByRole('button', { name: /Noter votre bien-être/ })
+    expect(screen.queryByRole('dialog')).toBeNull()
+    fireEvent.click(note)
+    expect(await screen.findByRole('dialog', { name: /Comment vous sentez-vous/ })).toBeInTheDocument()
   })
 
   it('sans note : la lecture du visage et la note manuelle en tuiles menthe, pas une phrase grise (POL-PLAY-48)', async () => {

@@ -29,6 +29,9 @@
 > (aujourd'hui le 20/11) sera recalée sur la date de votre invitation (+ 14 jours + marge).
 
 **Ce que vous verrez dans l'app cette semaine**
+- **« Noter votre bien-être » ouvre la note** (31/10 16:33) — dans Journal → Tendances (et un Journal encore vide),
+  la tuile ouvre directement la note de 0 à 5, au lieu de vous renvoyer à l'Accueil. **À tester** : rien sur votre
+  A56 (vos tendances sont remplies) ; sur une installation neuve, Journal → Tendances → « Noter votre bien-être ».
 - **Nutrition : les apports incertains se voient** (31/10 15:33) — quand des repas semblent manquer, les barres des
   apports sont hachurées (une estimation) au lieu d'un vert très pâle qu'on distinguait à peine, surtout en thème
   sombre. **À tester** : Journal → Nutrition, en thème sombre.
@@ -721,6 +724,7 @@ pour quatre lignes.
 | 31/10 13:33 — [Rappel de la lecture au déverrouillage](runs/2026-10-31-1333-rappel-deverrouillage.md) | 🚀 | POL-PLAY-84 : une ligne discrète, une seule fois, dans la carte Bien-être pour qui a dit « Plus tard » (2 jours après, fermable, jamais après un refus) ; 9 tests ; v407 |
 | 31/10 14:33 — [Historique du bien-être : légende](runs/2026-10-31-1433-historique-legende.md) | 🎨 | POL-PLAY-85 : audit `/bien-etre` (vierge, sombre, Jour/Semaine/Mois) ; légende « moyenne » et « fourchette », « 1 jour » retiré en vue Jour, expressions « sur 13 des 33 lectures » ; 2 tests ; v408 |
 | 31/10 15:33 — [Nutrition : barres hachurées](runs/2026-10-31-1533-nutrition-hachures.md) | 🎨 | POL-PLAY-86 : audit Nutrition en sombre ; barres « incertain : repas manquants » hachurées (contraste de la piste 2,0:1 → teinte de référence 5,7:1 en sombre) ; 1 test ; v409 |
+| 31/10 16:33 — [« Noter votre bien-être » ouvre la note](runs/2026-10-31-1633-noter-sur-place.md) | 🎨 | POL-PLAY-87 : Tendances relues en vierge (clair, sombre) ; la tuile « Noter votre bien-être » ouvre la note sur place (Tendances, Journal vierge) ; 2 tests + 2 adaptés |
 | 31/10 09:33 — [Paramètres : l'analyse IA en une phrase](runs/2026-10-31-0933-parametres-ia.md) | 🎨 | POL-PLAY-80 : « Ce qui est envoyé » en une phrase + détail replié ; adresse inconnue → Accueil (plus de page blanche) ; Paramètres et Nouveautés relus en vierge et sombre ; 3 tests ; v403 |
 | 31/10 08:33 — [Idées : invitation des testeurs relue](runs/2026-10-31-0833-idees-invitation-relue.md) | 💡 | `INVITATION-TESTEURS.md` relu contre la v402 : chemins « Réglages → … » précisés, missions ventre / FODMAP réservées à « Mon ventre », prérequis Android 8+, règle Google des 12 testeurs × 14 jours relue (inchangée) ; I201 ; journal seul |
 | 31/10 07:33 — [Vos données : ce que contient la sauvegarde](runs/2026-10-31-0733-vos-donnees.md) | 🎨 | POL-PLAY-79 : nombre d'entrées exportées, export grisé si rien, pas de « Débloquer » pour un rapport PDF vide, boutons pleine largeur, écarts réguliers ; repas habituels sombres relus ; 5 tests ; v402 |

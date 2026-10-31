@@ -5,6 +5,7 @@ import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { pickLabelIndices } from '../utils/format'
 import { decimalMark } from '../i18n/locale.js'
 import PastelTiles from './PastelTiles'
+import WellbeingPrompt from './WellbeingPrompt'
 import './WellbeingCharts.css'
 
 const W = 320
@@ -13,10 +14,11 @@ const PAD = { top: 12, right: 16, bottom: 28, left: 22 }
 // ~45 px de viewBox par étiquette « 07/10 » : au-delà elles se chevauchent sur un écran de 412 px
 const MAX_X_LABELS = 7
 const DAYS = 14
-// POL-PLAY-48 : sans note, les deux façons d'en avoir, en tuiles menthe (couleur du bien-être)
-const EMPTY_TILES = [
+// POL-PLAY-48 : sans note, les deux façons d'en avoir, en tuiles menthe (couleur du bien-être) ;
+// la note s'ouvre sur place (POL-PLAY-87)
+const emptyTiles = (onNote) => [
   { to: '/connectors', theme: 'mint', icon: 'camera', label: 'Activer la lecture du visage' },
-  { to: '/', theme: 'mint', icon: 'pen', label: 'Noter votre bien-être' },
+  { onClick: onNote, theme: 'mint', icon: 'pen', label: 'Noter votre bien-être' },
 ]
 
 // Relie les points successifs, sauf s'ils sont séparés de plus de `maxGap` (jours sans note) :
@@ -171,6 +173,7 @@ export default function WellbeingCharts() {
   // Prédiction en cache (données inchangées depuis le dernier calcul) : affichée dès le premier rendu
   const [todayPrediction, setTodayPrediction] = useState(() => peekAnalysis('todayPrediction').result ?? null)
   const [loading, setLoading] = useState(true)
+  const [noteOpen, setNoteOpen] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -251,7 +254,8 @@ export default function WellbeingCharts() {
         <p className="empty-hint wellbeing-charts-empty">
           {hasOlderNotes ? `Aucune note ces ${DAYS} derniers jours.` : 'Pas encore de bien-être noté.'}
         </p>
-        <PastelTiles tiles={EMPTY_TILES} />
+        <PastelTiles tiles={emptyTiles(() => setNoteOpen(true))} />
+        <WellbeingPrompt open={noteOpen} onClose={() => setNoteOpen(false)} />
       </section>
     )
   }
