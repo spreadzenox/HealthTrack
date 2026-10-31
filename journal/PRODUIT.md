@@ -230,6 +230,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 - **30/10 23:33 CET** — **Polissage play** : POL-PLAY-71, réintroduction : « encore 2 jours calmes » au lieu de « 1/3 jours calmes », réponses « Oui, continuer » / « Non, arrêter » sur une ligne.
 - **31/10 00:33 CET** — **Polissage play** : POL-PLAY-72, Android ≤ 14 : encarts de la barre d'état relus au démarrage (page rechargée après l'injection native : contenu sous la barre d'état ; émulateur API 34 rouge sur main).
 - **31/10 04:33 CET** — **Polissage play** : POL-PLAY-76, champs de saisie (profil, description d'un repas, réglages) en Figtree au lieu de la police système.
+- **31/10 05:33 CET** — **CI** : POL-PLAY-77, contrôle bord à bord de l'émulateur API 34 moins sensible à un émulateur surchargé (relectures, bonne page DevTools) ; rien de visible dans l'app.
 - **31/10 03:33 CET** — **Polissage play** : POL-PLAY-75, Nutrition : avec des repas manquants, plus de barres « bas » en gris foncé (« incertain : repas manquants », vert pâle) ; légende limitée aux statuts présents.
 - **31/10 02:33 CET** — **Polissage play** : POL-PLAY-74, boutons désactivés neutres dans toute l’app (plus de vert pâle qui ne réagit pas) ; repas habituels avec une seule majuscule.
 - **31/10 01:33 CET** — **Polissage play** : POL-PLAY-73, modifier un repas à 360 px : kcal sur la ligne du nom (le bouton ✕ ne déborde plus de la carte), bouton « Enregistrer » sur une ligne.
