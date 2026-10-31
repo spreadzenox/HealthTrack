@@ -37,3 +37,8 @@
 ## Suite
 - Retest du visage par le propriétaire ; POL-PLAY-11 (alpha) après une journée sans plantage dans Android vitals.
 - Prochain audit : Sources (variante play) en `--empty` et sombre, puis Réintroduction en sombre.
+
+## Après le merge (#556)
+- Checks de la PR tous verts (Vitest, Build APK, relais, Java, budget, émulateur A56 API 35/36 et bord à bord API 34).
+- Tests, Build & Release, Play — AAB et émulateur A56 verts sur main (`4acb997`) : release **v404** publiée
+  (APK 34 519 398 octets).
