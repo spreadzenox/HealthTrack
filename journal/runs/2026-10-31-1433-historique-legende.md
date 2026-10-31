@@ -27,7 +27,7 @@
 - `WellbeingHistory.test.jsx` : 2 cas (légende moyenne / fourchette et « 1 jour » retiré ; base des expressions).
 
 ## Vérifications
-- `npm run test` (), `npm run build`, `npm run lint` (6 erreurs, comme avant), `npm run visual` complet (toutes les pages ok).
+- `npm run test` (2 791 réussis), `npm run build`, `npm run lint` (6 erreurs, comme avant), `npm run visual` complet (toutes les pages ok).
 - Captures relues : `/bien-etre` `--play --empty`, `--play --dark` (Semaine), `--play` (Jour, Semaine, Mois),
   `--play --dark --click=Jour` après correctif.
 
