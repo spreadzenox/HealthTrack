@@ -43,6 +43,15 @@ export function getInstallId() {
   }
 }
 
+/**
+ * Empreinte de cette installation (12 caractères hexadécimaux) : les 12 premiers du SHA-256 de l'identifiant, la même
+ * que `hashInstallId` du relais (journaux, `GOLD_INSTALLS`). Ne révèle pas l'identifiant.
+ */
+export async function installFingerprint() {
+  const digest = await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(getInstallId()))
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('').slice(0, 12)
+}
+
 /** Dernier état connu du compteur d'analyses du jour : `{ remaining, resetAt }` ou null. */
 export function getLastQuota() {
   try {

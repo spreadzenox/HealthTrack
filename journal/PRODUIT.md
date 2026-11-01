@@ -121,6 +121,11 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
+- **P37 (01/11 22:33, pour garder Gold après la période de lancement, GOLD-a3)** : sur votre téléphone, Halcya →
+  Paramètres (roue en haut à droite) → descendre tout en bas → toucher 7 fois « Version … » → sous « Mode diagnostic »,
+  recopier les 12 caractères de « Empreinte de l'installation » et les donner à la routine (session ou ticket). Rien
+  de personnel : c'est un code tiré au hasard à l'installation. À refaire seulement si vous réinstallez l'app.
+
 | # | Action | État | Pas à pas |
 |---|---|---|---|
 | P36 | *(1 min)* **Promesse Gold après le banc** | ⏳ posée le 01/11 17:20 | Le banc Nutrition5k (39 assiettes) montre Gold nettement meilleur sur les **quantités** (−18 % d'erreur sur la masse) mais **pas sur les calories**. Répondez « quantités » pour afficher « Gold estime mieux les quantités » (sans chiffre) sur le paywall et la fiche Gold ; sans réponse, aucune promesse (paywall : « 20 analyses par jour »). |
@@ -172,6 +177,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **01/11 22:33** — PR #612 (I6-RELAIS-7) mergée après ses checks verts. **GOLD-a3 côté app** : l'empreinte de l'installation (celle des journaux du relais) s'affiche dans le mode diagnostic caché ; P37 demandée au propriétaire. **POL-PLAY-93** : tuiles Silver / Gold, chiffre seul en mono. Prochain : GOLD-a2.
 - **01/11 20:33** — Run « idées » : audit en captures de la variante play vierge (clair, puis période de lancement en sombre) : rien de cassé sur Android. Trouvé : **I6-RELAIS-7**, sur iPhone la page d'abonnement promettrait un rappel de fin d'essai que l'app ne programme pas (à corriger au prochain run de code, avant toute soumission iPhone) ; POL-PLAY-93, phrase des tuiles Silver / Gold en mono. Prochain : I6-RELAIS-7, puis GOLD-a2, a3.
 - **01/11 21:33** — I6-RELAIS-7 livré : sur l'App Store, le paywall ne promet plus de rappel de fin d'essai (réservé à Google Play, seul magasin où l'app le programme). Android inchangé. Prochain : GOLD-a2, GOLD-a3, POL-PLAY-93 ; I6-RELAIS-5 (App Attest) plus tard.
 - **01/11 19:33** — **I6-RELAIS-6** (abonnements iPhone) : l'app nomme le magasin d'après `VITE_STORE` (« Google Play » par défaut, « l'App Store » pour l'iPhone) ; un achat App Store mène aux abonnements Apple et passe à Gold sans ancien jeton. Android inchangé. Restent : I6-RELAIS-5 (App Attest, plus tard) et la question de la période de lancement sur iPhone. Prochain : GOLD-a2, a3, puis le polissage.

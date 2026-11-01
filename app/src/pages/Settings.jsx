@@ -21,6 +21,7 @@ import LineIcon from '../components/LineIcon'
 import FaceUnlockSetting from '../components/FaceUnlockSetting'
 import LanguageSetting from '../components/LanguageSetting'
 import { I18N_EN } from '../i18n/locale.js'
+import { installFingerprint } from '../services/aiRelay'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
@@ -342,6 +343,7 @@ export default function Settings() {
             <span className="debug-toggle-label">Afficher les journaux techniques</span>
           </div>
           <p className="hint">Connexions et analyses, pour comprendre un problème ou les transmettre.</p>
+          <InstallFingerprint />
         </div>
       )}
 
@@ -351,6 +353,22 @@ export default function Settings() {
         Version {CURRENT_VERSION}
       </button>
     </section>
+  )
+}
+
+/** GOLD-a3 : empreinte de l'installation, celle des journaux du relais (pour l'ajouter à GOLD_INSTALLS). */
+function InstallFingerprint() {
+  const [fp, setFp] = useState('')
+  useEffect(() => {
+    let alive = true
+    installFingerprint().then((v) => alive && setFp(v), () => {})
+    return () => { alive = false }
+  }, [])
+  if (!fp) return null
+  return (
+    <p className="hint">
+      Empreinte de l’installation : <span style={{ fontFamily: 'var(--font-mono)' }} data-testid="install-fingerprint">{fp}</span>
+    </p>
   )
 }
 

@@ -37,7 +37,9 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
 - [ ] **GOLD-a2 — vérifier en production** : après le déploiement, lire les journaux du relais (`event: usage`,
   `served: gold`, `gold_fallback`) via le workflow de vérification ; si `gemini-3.8-flash` est refusé en zone `eu`,
   les analyses passent sur Flash-Lite (rien de cassé) : le noter et prévenir le propriétaire.
-- [ ] **GOLD-a3 — Gold du propriétaire après la période de lancement** : moyen retenu, `GOLD_INSTALLS` (empreinte de
+- [ ] **GOLD-a3 — Gold du propriétaire après la période de lancement** : (01/11 22:33, côté app fait : empreinte
+  affichée dans le mode diagnostic caché, `installFingerprint()` = `hashInstallId` ; reste : recevoir l'empreinte du
+  propriétaire, P37, et l'ajouter à `GOLD_INSTALLS` dans le workflow du relais) moyen retenu, `GOLD_INSTALLS` (empreinte de
   12 caractères de son installation, telle qu'elle figure dans les journaux, aucune donnée personnelle). À brancher dans
   le workflow avant la fin de la période (lire l'empreinte de ses analyses dans les journaux, ou l'afficher dans le
   mode diagnostic caché).
@@ -1693,6 +1695,6 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   Historique du bien-être en démo sombre vue Mois.
 - [x] **POL-PLAY-91 (I202) — « Quand consulter » : antécédents familiaux.** Ajouter à `WHEN_TO_SEE_DOCTOR` un proche (parent, frère, sœur) avec un cancer du côlon ou une MICI ; texte statique, mêmes trois endroits ; tests `TodayCards`, `buildReport`, `renderPdf` adaptés. Sources : FMC-HGE POST'U 2022 (ACG 2020), VIDAL Recos 2022. **Livré 31/10 21:33** (`today.js`, test `TodayCards.test.jsx`).
 - [x] **POL-PLAY-92 (I203) — Réintroduction : après l'éviction.** Une ligne statique en tête de `Reintroduction.jsx` : « À faire après 2 à 6 semaines de repas pauvres en FODMAP, si votre ventre va mieux. » Ne bloque rien, ne compte rien ; 1 test. **Livré 31/10 21:33** (`.fodmap-when`, pêche, dans `ChooseGroup`).
-- [ ] **POL-PLAY-93 (I207) — Paywall : phrase des tuiles Silver / Gold en mono.** `.paywall-tier-note` met « 10 analyses IA par jour » en IBM Plex Mono (deux lignes à 412 px) : chiffre en mono, reste en Figtree. Capture `--play --routes=/premium`, clair et sombre. Trouvé le 01/11 20:33.
+- [x] **POL-PLAY-93 (I207)** (01/11 22:33 : chiffre seul en mono, phrase en Figtree, une ligne) — — Paywall : phrase des tuiles Silver / Gold en mono.** `.paywall-tier-note` met « 10 analyses IA par jour » en IBM Plex Mono (deux lignes à 412 px) : chiffre en mono, reste en Figtree. Capture `--play --routes=/premium`, clair et sombre. Trouvé le 01/11 20:33.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
