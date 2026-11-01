@@ -9,7 +9,7 @@
  */
 import { PURCHASE_TOKEN_KEY, getInstallId } from './aiRelay'
 import { refreshEntitlement } from './entitlement'
-import { FEATURES } from '../config/distribution'
+import { FEATURES, STORE } from '../config/distribution'
 import { notThenable } from './nativePlugin'
 import { appLocale } from '../i18n/locale.js'
 
@@ -165,7 +165,7 @@ function verifyToken(token, refresh) {
   return verifying.get(token)
 }
 
-const ERROR_MESSAGE = 'Google Play n’a pas pu finaliser l’achat. Vérifiez votre connexion et réessayez ; rien n’a été débité.'
+const errorMessage = (store) => `${store.Name} n’a pas pu finaliser l’achat. Vérifiez votre connexion et réessayez ; rien n’a été débité.`
 
 /**
  * Passage Silver → Gold (GOLD-b2) : un seul abonnement à la fois. L'achat Gold remplace l'abonnement Silver de ce
@@ -175,7 +175,8 @@ const ERROR_MESSAGE = 'Google Play n’a pas pu finaliser l’achat. Vérifiez v
  * exige une même période de facturation. Gold → Silver n'est pas proposé dans l'app (annulation dans Google Play).
  */
 export const UPGRADE_REPLACEMENT_MODE = 'WITH_TIME_PRORATION'
-export const ALREADY_GOLD_MESSAGE = 'Vous avez déjà Gold sur ce compte Google Play : il comprend tout ce que donne Silver.'
+const alreadyGoldMessage = (store) => `Vous avez déjà Gold sur ${store.account} : il comprend tout ce que donne Silver.`
+export const ALREADY_GOLD_MESSAGE = alreadyGoldMessage(STORE)
 
 /** Abonnement Halcya en cours sur ce compte Google Play, d'après Google lui-même (null s'il n'y en a pas). */
 async function currentOwnPurchase(plugin) {
@@ -189,19 +190,20 @@ async function currentOwnPurchase(plugin) {
 /**
  * Lance l'achat d'une formule. Rend `{ status: 'purchased' | 'pending' | 'cancelled' | 'error', entitlement?, message? }`.
  */
-export async function purchasePlan(plan, { native, refresh = refreshEntitlement } = {}) {
+export async function purchasePlan(plan, { native, refresh = refreshEntitlement, store = STORE } = {}) {
   const plugin = await resolveNative(native)
-  if (!plugin || !plan?.offerToken) return { status: 'error', message: ERROR_MESSAGE }
+  if (!plugin || !plan?.offerToken) return { status: 'error', message: errorMessage(store) }
   const productId = plan.productId ?? PRODUCT_ID
   let result
   try {
     // Abonnement déjà en cours : jamais deux abonnements Halcya sur le même compte (GOLD-b2)
     const current = await currentOwnPurchase(plugin)
-    if (current?.productId === GOLD_PRODUCT_ID && productId !== GOLD_PRODUCT_ID) return { status: 'error', message: ALREADY_GOLD_MESSAGE }
-    const upgrade = current && current.productId !== productId ? { oldPurchaseToken: current.token, replacementMode: UPGRADE_REPLACEMENT_MODE } : {}
+    if (current?.productId === GOLD_PRODUCT_ID && productId !== GOLD_PRODUCT_ID) return { status: 'error', message: alreadyGoldMessage(store) }
+    // App Store : Apple fait le passage dans le groupe d'abonnements, sans ancien jeton (I6-RELAIS-6)
+    const upgrade = store.id === 'play' && current && current.productId !== productId ? { oldPurchaseToken: current.token, replacementMode: UPGRADE_REPLACEMENT_MODE } : {}
     result = await plugin.purchase({ productId, offerToken: plan.offerToken, obfuscatedAccountId: await obfuscatedAccountId(), ...upgrade })
   } catch {
-    return { status: 'error', message: ERROR_MESSAGE }
+    return { status: 'error', message: errorMessage(store) }
   }
   if (result?.status === 'cancelled') return { status: 'cancelled' }
   const done = ownPurchase(result?.purchases)
@@ -210,9 +212,9 @@ export async function purchasePlan(plan, { native, refresh = refreshEntitlement 
     return { status: 'purchased', entitlement: await verifyToken(done.purchaseToken, refresh) }
   }
   if (result?.status === 'pending' || ownPurchase(result?.purchases, 'pending')) {
-    return { status: 'pending', message: 'Paiement en attente chez Google Play : le premium s’activera dès qu’il sera confirmé.' }
+    return { status: 'pending', message: `Paiement en attente ${store.at} : le premium s’activera dès qu’il sera confirmé.` }
   }
-  return { status: 'error', message: ERROR_MESSAGE }
+  return { status: 'error', message: errorMessage(store) }
 }
 
 /** « Restaurer un achat » : relit les abonnements de ce compte Google Play et les fait revérifier par le relais. */

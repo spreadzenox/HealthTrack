@@ -7,7 +7,7 @@ import { CURRENT_VERSION } from '../services/updateCheck'
 import { useDebug } from '../contexts/DebugContext'
 import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings/cigaretteCounter'
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
-import { DISTRIBUTION, FEATURES } from '../config/distribution'
+import { DISTRIBUTION, FEATURES, STORE, storeOfPurchase } from '../config/distribution'
 import { feedbackLink } from '../config/feedback'
 import { GOALS, gutCardMode, loadOnboarding, saveOnboarding } from '../settings/onboarding'
 import { syncGutEvening } from '../services/gutEvening'
@@ -80,9 +80,9 @@ function SubscriptionBlock() {
       const { found, entitlement } = await restorePurchases()
       setEnt(entitlement)
       if (entitlement.offline) setRestoreMsg('Pas de connexion : réessayez dans un instant.')
-      else setRestoreMsg(found ? 'Abonnement retrouvé.' : 'Aucun abonnement trouvé sur ce compte Google Play.')
+      else setRestoreMsg(found ? 'Abonnement retrouvé.' : `Aucun abonnement trouvé sur ${STORE.account}.`)
     } catch {
-      setRestoreMsg('Google Play ne répond pas : réessayez dans un instant.')
+      setRestoreMsg(`${STORE.Name} ne répond pas : réessayez dans un instant.`)
     } finally {
       setRestoring(false)
     }
@@ -92,9 +92,9 @@ function SubscriptionBlock() {
     <div className="settings-block">
       <h3 className="section-title">Abonnement</h3>
       <p className="page-intro">{describeEntitlement(ent)}</p>
-      {ent.source === 'play' && (
-        <a className="btn btn-secondary settings-link-btn" href={manageSubscriptionUrl(ent.productId)} target="_blank" rel="noopener noreferrer">
-          Gérer mon abonnement dans Google Play
+      {(ent.source === 'play' || ent.source === 'appstore') && (
+        <a className="btn btn-secondary settings-link-btn" href={manageSubscriptionUrl(ent.productId, ent.source)} target="_blank" rel="noopener noreferrer">
+          Gérer mon abonnement {storeOfPurchase(ent.source).inStore}
         </a>
       )}
       {!ent.premium && (

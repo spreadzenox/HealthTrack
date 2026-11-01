@@ -28,6 +28,12 @@ describe('droits premium lus auprès du relais (jalon 6c)', () => {
     expect(getEntitlement()).toMatchObject({ premium: true, source: 'play', productId: 'halcya_premium', autoRenewing: true })
   })
 
+  it('achat App Store : la source « appstore » est gardée (I6-RELAIS-6)', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(response({ ok: true, premium: true, source: 'appstore', state: 'active', tier: 'gold', productId: 'halcya_gold_mensuel', expiresAt: inDays(30), autoRenewing: true }))
+    await refreshEntitlement({ purchaseToken: 'a.b.c', fetchImpl })
+    expect(getEntitlement()).toMatchObject({ premium: true, source: 'appstore', tier: 'gold' })
+  })
+
   it('période de lancement : premium jusqu’à la date donnée par le relais, puis plus', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(response({ ok: true, premium: true, source: 'launch', launchUntil: inDays(10) }))
     await refreshEntitlement({ fetchImpl })
@@ -118,6 +124,18 @@ describe('texte de l’état d’abonnement', () => {
 })
 
 describe('lien de gestion de l’abonnement', () => {
+  it('achat App Store : lien vers les abonnements Apple, textes sans Google (I6-RELAIS-6)', () => {
+    const date = new Date(Date.now() + 5 * 86400000).toISOString()
+    expect(manageSubscriptionUrl('halcya_gold_mensuel', 'appstore')).toBe('https://apps.apple.com/account/subscriptions')
+    expect(manageSubscriptionUrl('halcya_premium', 'play')).toMatch(/^https:\/\/play\.google\.com/)
+    const ent = { premium: true, source: 'appstore', state: 'grace', productId: 'halcya_premium_mensuel', expiresAt: date }
+    expect(describeEntitlement(ent)).toMatch(/paiement à régulariser dans l’App Store\.$/)
+    expect(describeEntitlement({ ...ent, premium: false, state: 'on_hold' })).toMatch(/dans l’App Store\.$/)
+    const issue = paymentIssue(ent)
+    expect(issue.url).toBe('https://apps.apple.com/account/subscriptions')
+    expect(issue.text).not.toMatch(/Google/)
+  })
+
   it('pointe vers la page Abonnements de Google Play, sur le bon produit quand on le connaît', () => {
     expect(manageSubscriptionUrl('halcya_premium')).toBe('https://play.google.com/store/account/subscriptions?sku=halcya_premium&package=fr.jpesquet.sante')
     expect(manageSubscriptionUrl(null)).toBe('https://play.google.com/store/account/subscriptions')

@@ -50,3 +50,46 @@ export function featuresFor(distribution) {
 
 export const DISTRIBUTION = resolveDistribution(import.meta.env?.VITE_DISTRIBUTION)
 export const FEATURES = featuresFor(DISTRIBUTION)
+
+/**
+ * Magasin d'applications qui vend l'abonnement (I6-RELAIS-6), fixé au build (`VITE_STORE`) : `play` (défaut, Android)
+ * ou `appstore` (app iPhone, spreadzenox/HealthTrack-iOS, qui réutilise ce code). Les textes visibles prennent leur
+ * nom ici au lieu de l'écrire en dur ; un achat garde le magasin d'où il vient (`source` rendu par le relais).
+ */
+export const STORES = ['play', 'appstore']
+
+export function resolveStore(value) {
+  const v = String(value ?? '').trim().toLowerCase()
+  return STORES.includes(v) ? v : 'play'
+}
+
+const PLAY_PACKAGE = 'fr.jpesquet.sante'
+
+const STORE_TEXTS = {
+  play: { name: 'Google Play', Name: 'Google Play', account: 'ce compte Google Play', at: 'chez Google Play' },
+  appstore: { name: 'l’App Store', Name: 'L’App Store', account: 'ce compte Apple', at: 'chez Apple' },
+}
+
+/** Noms et lien de gestion d'un magasin : `name` en cours de phrase, `Name` en début, `inStore` = « dans … ». */
+export function storeFor(store) {
+  const id = resolveStore(store)
+  const t = STORE_TEXTS[id]
+  return Object.freeze({
+    id,
+    ...t,
+    inStore: `dans ${t.name}`,
+    fromStore: `auprès de ${t.name}`,
+    manageUrl(productId) {
+      if (id === 'appstore') return 'https://apps.apple.com/account/subscriptions'
+      const base = 'https://play.google.com/store/account/subscriptions'
+      return productId ? `${base}?sku=${encodeURIComponent(productId)}&package=${PLAY_PACKAGE}` : base
+    },
+  })
+}
+
+/** Magasin d'un achat : celui de sa source s'il en a un (`play`, `appstore`), sinon celui de cette version. */
+export function storeOfPurchase(source, store = STORE) {
+  return source === 'play' || source === 'appstore' ? storeFor(source) : store
+}
+
+export const STORE = storeFor(import.meta.env?.VITE_STORE)

@@ -203,6 +203,16 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       expect(screen.queryByRole('button', { name: /Passer à Gold/ })).toBeNull()
     })
 
+    it('abonné Silver de l’App Store (I6-RELAIS-6) : gestion chez Apple, « Passer à Gold » proposé', async () => {
+      billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH, GOLD])
+      localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'appstore', state: 'active', tier: 'silver', productId: 'halcya_premium_mensuel', autoRenewing: true, expiresAt: '2099-01-01T00:00:00Z' }))
+      renderPremium()
+      expect(await screen.findByText(/Silver actif · renouvellement le/)).toBeInTheDocument()
+      const link = screen.getByRole('link', { name: 'Gérer mon abonnement dans l’App Store' })
+      expect(link).toHaveAttribute('href', 'https://apps.apple.com/account/subscriptions')
+      expect(await screen.findByRole('button', { name: 'Passer à Gold · 9,99 € / mois' })).toBeInTheDocument()
+    })
+
     it('abonné Silver sans produit Gold chez Google Play : aucun bouton de passage', async () => {
       billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH])
       localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'play', state: 'active', tier: 'silver', productId: 'halcya_premium', autoRenewing: true, expiresAt: '2099-01-01T00:00:00Z' }))

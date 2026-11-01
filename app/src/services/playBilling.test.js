@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createHash } from 'node:crypto'
 
 import { getInstallId } from './aiRelay'
+import { storeFor } from '../config/distribution'
 import {
   PRODUCT_ID,
   GOLD_PRODUCT_ID,
@@ -137,6 +138,20 @@ describe('Google Play Billing côté app (jalon 6c-2)', () => {
       expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'jeton-gold' })
       expect(getStoredPurchaseToken()).toBe('jeton-gold')
       expect(res).toMatchObject({ status: 'purchased', entitlement: { tier: 'gold' } })
+    })
+
+    it('App Store : « Passer à Gold » part sans ancien jeton, Apple fait le passage (I6-RELAIS-6)', async () => {
+      const native = {
+        queryPurchases: vi.fn().mockResolvedValue({ purchases: [purchased('jeton-silver')] }),
+        purchase: vi.fn().mockResolvedValue({ status: 'cancelled' }),
+      }
+      await purchasePlan(goldPlan, { native, refresh: vi.fn(), store: storeFor('appstore') })
+      expect(native.purchase.mock.calls[0][0]).not.toHaveProperty('oldPurchaseToken')
+      expect(native.purchase.mock.calls[0][0]).not.toHaveProperty('replacementMode')
+      const failing = { queryPurchases: vi.fn().mockResolvedValue({ purchases: [] }), purchase: vi.fn().mockRejectedValue(new Error('x')) }
+      const res = await purchasePlan(goldPlan, { native: failing, refresh: vi.fn(), store: storeFor('appstore') })
+      expect(res.message).toMatch(/^L’App Store n’a pas pu finaliser l’achat/)
+      expect(res.message).not.toMatch(/Google/)
     })
 
     it('Gold en cours → aucun achat Silver lancé (jamais deux abonnements)', async () => {
