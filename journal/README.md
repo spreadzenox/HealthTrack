@@ -73,6 +73,11 @@
   tirets cadratins ou des énumérations par trois sont réécrites en phrases courtes (2 phrases de refrain retirées).
   Un test échoue désormais si une note de Nouveautés reprend une formule bannie. **À tester** : Réglages →
   Nouveautés, faire défiler jusqu'à octobre.
+- **Sources et Nutrition plus simples** (01/11 05:33) — chaque carte de Sources tient en une ou deux phrases
+  (Health Connect, temps d'écran, capteurs Bluetooth, montre Huawei) ; « rangé sur ce téléphone, jamais chez
+  Halcya », répété sur 4 écrans, n'est plus dit qu'en tête de Sources (« Elles restent sur ce téléphone. ») ; le bas
+  de Nutrition dit d'où viennent objectifs et apports. Le Journal, relu, n'avait rien à changer. Captures :
+  `journal/captures/slop-1b-3/`. **À tester** : Sources → « Ajouter une source ».
 - **« Quand consulter » complété, réintroduction mieux située** (31/10 21:33) — la phrase des signes à signaler à
   votre médecin (détails de la carte « Votre ventre », réintroduction, bas du rapport PDF) ajoute « un proche
   (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de l'intestin ». En tête du choix
@@ -791,6 +796,7 @@ pour quatre lignes.
 | 01/11 01:33 — [Textes : repas et premiers pas](runs/2026-11-01-0133-slop-repas.md) | ✍️ | SLOP-1b-2 : rappel de l'envoi IA des repas sans emoji ni « Gemini » en play, « ✨ » retiré du bouton, 3 phrases de l'onboarding, 9 tirets cadratins ; règles tirets / emojis / « sans jamais le remplacer » au test ; captures avant/après ; v418 (APK 34 523 794 o) |
 | 01/11 02:33 — [Textes : notifications et Sources](runs/2026-11-01-0233-slop-notifications.md) | ✍️ | SLOP-1c : notification « Lecture du visage arrêtée » sans énumération, montre refusée et carte montre restaurée plus courtes, Sources (Health Connect qui ne répond pas, détails du visage, caméra refusée) ; le test des formules bannies lit aussi le code natif Android |
 | 01/11 03:33 — [Textes : fiche Play et site](runs/2026-11-01-0333-slop-fiche-site.md) | ✍️ | SLOP-1d : fiche Play sans refrain ni « faux suspects », confidentialité (lecture au déverrouillage ajoutée, refrain retiré), conditions et accueil du site ; « diagnostic » une fois par page, formules bannies testées sur la fiche et le site |
+| 01/11 05:33 — [Textes : Sources et Nutrition](runs/2026-11-01-0533-slop-sources.md) | ✍️ | SLOP-1b-3 : Journal relu (rien à changer) ; Sources (intro, Health Connect, temps d'écran, Bluetooth, montre Huawei, guide des montres) et bas de Nutrition réécrits ; refrain « jamais chez Halcya » retiré de 4 écrans ; règles « jamais chez Halcya » et « Astuce : » |
 | 01/11 04:33 — [Textes : anciennes Nouveautés](runs/2026-11-01-0433-slop-nouveautes.md) | ✍️ | SLOP-1e : 41 phrases de 39 notes de Nouveautés réécrites (refrain « pas un diagnostic », « faux suspects », « pas une cause », tirets cadratins, énumérations par trois ; 2 phrases de refrain supprimées) ; test des formules bannies étendu aux notes |
 | 31/10 20:33 — [Idées : « quand consulter » relu](runs/2026-10-31-2033-idees-quand-consulter.md) | 💡 | Phrase « Quand consulter » relue contre FMC-HGE 2022 (ACG) et VIDAL : antécédents familiaux à ajouter (POL-PLAY-91) ; réintroduction « après 2 à 6 semaines d'éviction » (POL-PLAY-92) ; ameli toujours en 403 ; I202–I203 ; journal seul |
 | 31/10 19:33 — [Accueil : carte ventre](runs/2026-10-31-1933-accueil-ventre-titre.md) | 🎨 | POL-PLAY-90 : Accueil relu en vierge sombre / clair et en démo ; question du soir du ventre en texte, plus en second titre ; Paramètres démo clair relus (rien) ; 2 tests ; v413 |

@@ -63,7 +63,10 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     « Gemini » en play ; « ✨ » du bouton), onboarding (suivi, premier geste), 9 tirets cadratins (aide Health Connect,
     VFC, visage, éditeur de repas, conseils avancés, diagnostic). Règles : tiret cadratin entre deux mots, emojis
     décoratifs, « sans jamais le remplacer » / « c'est idéal ».
-  - [ ] **SLOP-1b** (suite : Journal, Sources, paywall — le paywall sera réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
+  - [x] **SLOP-1b-3** (01/11 05:33) Journal (rien à changer), Sources (intro, Health Connect, temps d'écran,
+    Bluetooth, montre Huawei, guide des montres, Withings), bas de Nutrition ; refrain « jamais chez Halcya » retiré
+    de 4 écrans (dit une fois en tête de Sources) ; règles « jamais chez Halcya » et « Astuce : ».
+  - [ ] **SLOP-1b** (suite : Paramètres, Données, détails dépliés des Analyses, réintroduction, onboarding complet ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
     Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.

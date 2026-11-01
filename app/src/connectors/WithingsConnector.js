@@ -109,7 +109,7 @@ export class WithingsConnector extends BaseConnector {
       id: 'withings',
       name: 'Withings Body Scan',
       description:
-        'Balance Withings Body Scan : poids, taille, masse grasse, masse musculaire, BMR, âge vasculaire et autres biomarqueurs.',
+        'Poids, masse grasse et musculaire, âge vasculaire… lus sur votre balance.',
       dataTypes: ['weight', 'height', 'body_composition'],
     })
   }

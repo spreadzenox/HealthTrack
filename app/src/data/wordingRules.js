@@ -43,5 +43,8 @@ export const SLOP_WORDING = [
   { re: /sans jamais (le|la|les) remplacer|c[’']est idéal/i, why: 'formule toute faite' },
   // SLOP-1c (01/11) : énumération par trois entre parenthèses (« (mise à jour, redémarrage ou économie de batterie) »)
   { re: /\([\p{L}’' -]{2,30}, [\p{L}’' -]{2,30},? (ou|et) [\p{L}’' -]{2,30}\)/u, why: 'énumération par trois : garder le cas utile' },
+  // SLOP-1b-3 (01/11) : « rangé sur ce téléphone, jamais chez Halcya » revenait sur 4 écrans (Sources, profil ×2, Premium)
+  { re: /jamais chez (\$?\{APP_NAME\}|Halcya)/, why: 'refrain « jamais chez Halcya » : dit une fois, dans Sources' },
+  { re: /^Astuce ?:|[>'"`]\s*Astuce ?:/m, why: 'étiquette « Astuce » : dire la chose directement' },
 ]
 

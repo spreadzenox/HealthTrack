@@ -124,7 +124,7 @@ export default function Premium({ context = null, onClose = null }) {
           ? `Merci de tester l’app ! ${ent.launchUntil ? `Jusqu’au ${lastLaunchDay(ent.launchUntil)}, tout` : 'Tout'} ce qui suit est débloqué : vous n’avez rien à payer, aucune carte bancaire n’est demandée.`
           : onboarding
           ? 'Vos pistes arriveront vers le 21ᵉ jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.'
-          : `Vos données sont rangées sur votre téléphone, jamais chez ${APP_NAME}. Le premium vous aide à voir ce qui va avec vos bons et mauvais jours.`}
+          : 'Le premium vous aide à voir ce qui va avec vos bons et mauvais jours.'}
       </p>
 
       {/* Seulement ce qui marche aujourd'hui (VC-17) ; le reste dans « détails » */}

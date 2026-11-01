@@ -46,7 +46,7 @@ describe('Nutrition page', () => {
     })
     expect(screen.queryByRole('heading', { name: /^Nutrition$/ })).not.toBeInTheDocument()
     // VC-3 : aucune valeur par défaut affichée comme si elle était vraie.
-    expect(screen.getByText(/Complétez votre profil pour voir vos repères/)).toBeInTheDocument()
+    expect(screen.getByText(/Complétez votre profil pour des repères ajustés/)).toBeInTheDocument()
     const card = document.querySelector('.nutrition-profile-card')
     expect(card.textContent).not.toMatch(/70 kg|170 cm|Homme|30 ans|kcal|IMC|par défaut/)
     expect(card.querySelector('.details-toggle')).toBeNull()
@@ -167,7 +167,7 @@ describe('Nutrition page', () => {
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
     expect(await screen.findByRole('button', { name: /compléter mon profil/i })).toBeInTheDocument()
     expect(screen.queryByText(/70 kg/)).not.toBeInTheDocument()
-    expect(screen.getByText(/complétez votre profil pour les ajuster/)).toBeInTheDocument()
+    expect(screen.getByText(/repères de l’ANSES pour un adulte. Les apports/)).toBeInTheDocument()
   })
 
   it('profil partiel : seules les valeurs connues, la liste de ce qui manque, ni IMC ni kcal', async () => {

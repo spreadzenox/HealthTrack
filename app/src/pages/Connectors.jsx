@@ -508,7 +508,7 @@ export default function Connectors() {
     <section className="food-page">
       <h2 className="page-title">Vos sources</h2>
       <p className="page-intro">
-        Ce qui envoie déjà vos mesures, puis ce qui reste à brancher. Vos mesures sont rangées <strong>sur ce téléphone</strong>, jamais chez {APP_NAME}.
+        Les apps et appareils qui envoient vos mesures. Elles restent sur ce téléphone.
       </p>
 
       <MyDevices detect={detectApps} />
@@ -545,8 +545,8 @@ export default function Connectors() {
           <div id="connectors-add-panel" className="connectors-add-panel">
             <p className="page-intro">
               {nothingActive
-                ? 'Une montre, une bague, une balance ou un capteur qui n’apparaît pas plus haut.'
-                : 'Une autre source du téléphone, une montre, une bague, une balance ou un capteur.'}
+                ? 'Une montre, une balance ou un capteur absent de la liste.'
+                : 'Montre, bague, balance ou capteur Bluetooth.'}
             </p>
             {toConnectInPanel.map(renderSource)}
             {layout.addable.map(renderSource)}

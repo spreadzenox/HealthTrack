@@ -21,7 +21,7 @@ describe('PhoneUsageCard', () => {
   it('hors Android : explique sans bouton', () => {
     render(<PhoneUsageCard {...props({ available: false })} />)
     expect(screen.getByText('Temps d’écran et sommeil')).toBeInTheDocument()
-    expect(screen.getByText(/n’envoie rien/)).toBeInTheDocument()
+    expect(screen.getByText(/lit pas le contenu des apps/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Activer' })).toBeNull()
   })
 
