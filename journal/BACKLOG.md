@@ -84,10 +84,12 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     (test : tout libellé cité existe dans `EVIDENCE`), « jugé bon ou mauvais d'avance » une fois, « habitudes » au
     lieu de « Tags » ; carte verrouillée « Quel aliment, et combien de temps après le repas. » ; sous-titre « Ce qui va
     avec vos meilleurs jours. » ; phrase propre à chaque facteur au lieu de « les jours où c'est plus élevé vont avec… ». Fait : pied de page retiré, méthode avec `evidenceLabel()` (impossible de citer une étiquette absente), « Tags » → « habitudes », refrain « jugé bon ou mauvais » et week-end dits une fois ; cartes : « Le jour même : quand ce chiffre monte, le bien-être est meilleur. » (le titre nomme déjà le facteur) ; 2 règles `SLOP_WORDING`. Captures `slop-1b-6/`.
-  - [ ] **SLOP-1b-7** (prêt, I204) Réintroduction : « l'app vous dit ce qui passe » une fois (carte premium, avec
+  - [x] **SLOP-1b-7** (01/11 10:33 ; I204) Réintroduction : « l'app vous dit ce qui passe » une fois (carte premium, avec
     l'exemple « Blé : une portion moyenne passe ») ; intro et entrée raccourcies ; « diététicienne » une fois sur la
-    préparation. Paywall : titre « Comprendre vos bons et mauvais jours » proposé pour GOLD-b.
-  - [ ] **SLOP-1b** (suite : détails dépliés des Analyses, réintroduction ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
+    préparation. Paywall : titre « Comprendre vos bons et mauvais jours » proposé pour GOLD-b. Fait : entrée « 3 jours,
+    des portions croissantes. », intro en deux phrases, carte premium avec l'exemple seul, `Disclaimer` sans
+    « diététicienne » ; règle `SLOP_WORDING` « l'app vous dit ce qui passe ». Captures `slop-1b-7/`.
+  - [ ] **SLOP-1b** (suite : détails dépliés des Analyses ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
     Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.

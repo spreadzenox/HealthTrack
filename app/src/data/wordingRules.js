@@ -51,5 +51,7 @@ export const SLOP_WORDING = [
   // SLOP-1b-6 (01/11) : phrase-gabarit répétée mot pour mot sur chaque carte d'Analyses ; slogan de sous-titre
   { re: /les jours où c[’']est plus élevé vont avec/i, why: 'gabarit répété : phrase courte (« quand ce chiffre monte, le bien-être est meilleur »)' },
   { re: /et sur quoi vous pouvez agir/i, why: 'formule de slogan : dire ce que montre la section' },
+  // SLOP-1b-7 (01/11) : « l'app vous dit ce qui passe » revenait 3 fois (entrée, intro, carte premium) ; l'exemple suffit
+  { re: /l[’']app vous dit (en une phrase )?ce qui passe/i, why: 'refrain : l’exemple « Blé : une portion moyenne passe » suffit' },
 ]
 

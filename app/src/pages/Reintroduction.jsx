@@ -68,7 +68,7 @@ function GroupTag({ group, result }) {
 function Disclaimer() {
   return (
     <p className="fodmap-note">
-      À faire de préférence avec une diététicienne. {WHEN_TO_SEE_DOCTOR}
+      {WHEN_TO_SEE_DOCTOR}
     </p>
   )
 }
@@ -146,8 +146,8 @@ function ChooseGroup({ results, onPick, combos, focus = null }) {
         À faire après 2 à 6 semaines de repas pauvres en FODMAP, si votre ventre va mieux.
       </p>
       <p className="fodmap-intro">
-        Testez un groupe à la fois, sur 3 jours : une portion le 1er jour, le double le 2e, le triple le 3e. Vous notez
-        votre ventre comme d’habitude ; l’app vous dit ce qui passe.
+        Un groupe à la fois, sur 3 jours : une portion, puis le double, puis le triple. Notez votre ventre comme
+        d’habitude.
       </p>
       <ul className="fodmap-groups">
         {groups.map((g) => (
@@ -325,8 +325,8 @@ function Locked() {
       <span className="fodmap-tag fodmap-tag--lead mono">premium</span>
       <h3 className="today-card-title">Testez vos aliments, un groupe à la fois</h3>
       <p className="today-card-text">
-        Sur 3 jours, des portions croissantes et vos notes du ventre : l’app vous dit en une phrase ce qui passe
-        (« Blé : une portion moyenne passe »). Vos notes du ventre restent gratuites.
+        Trois jours de portions croissantes, puis le résultat en une phrase, par exemple « Blé : une portion
+        moyenne passe ». Vos notes du ventre restent gratuites.
       </p>
       <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>
     </article>

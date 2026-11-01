@@ -101,6 +101,11 @@
   lien tient en une phrase (« Le jour même : quand ce chiffre monte, le bien-être est meilleur. ») au lieu de la
   même phrase longue sur chaque carte. Captures : `journal/captures/slop-1b-6/`. **À tester** : Analyses, ouvrez
   « Comment c'est calculé ».
+- **Réintroduction : consignes plus courtes** (01/11 10:33) — « l'app vous dit ce qui passe » revenait trois fois
+  (entrée d'Analyses, choix du groupe, carte premium) : seule reste la carte premium, avec l'exemple « Blé : une portion
+  moyenne passe ». Le choix du groupe dit « Un groupe à la fois, sur 3 jours : une portion, puis le double, puis le
+  triple. Notez votre ventre comme d'habitude. » ; la diététicienne n'est plus citée qu'une fois, à côté des portions.
+  Captures : `journal/captures/slop-1b-7/`. **À tester** : Analyses → Réintroduction guidée → Blé.
 - **« Quand consulter » complété, réintroduction mieux située** (31/10 21:33) — la phrase des signes à signaler à
   votre médecin (détails de la carte « Votre ventre », réintroduction, bas du rapport PDF) ajoute « un proche
   (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de l'intestin ». En tête du choix
@@ -823,6 +828,7 @@ pour quatre lignes.
 | 01/11 06:33 — [Textes : Paramètres et Données](runs/2026-11-01-0633-slop-parametres.md) | ✍️ | SLOP-1b-4 : « Gemini » retiré de Paramètres et de la divulgation IA en play (tests) ; carte ventre, abonnement gratuit, avis, Données (intro, export, import, PDF, suppression) en phrases courtes ; captures avant/après |
 | 01/11 07:33 — [Textes : onboarding](runs/2026-11-01-0733-slop-onboarding.md) | ✍️ | SLOP-1b-5 : les 7 écrans de l'onboarding relus (objectifs, suivis, montre, Health Connect, import, visage, premier geste) ; « Pas de souci » retiré et banni au test ; captures avant/après |
 | 01/11 09:33 — [Textes : Analyses](runs/2026-11-01-0933-slop-analyses.md) | ✍️ | SLOP-1b-6 : pied de page « pas un avis médical » retiré (l'encart du haut le dit), « Comment c'est calculé » cite les vraies étiquettes et dit chaque idée une fois, phrase des liens raccourcie ; 2 règles au test ; captures |
+| 01/11 10:33 — [Textes : réintroduction](runs/2026-11-01-1033-slop-reintroduction.md) | ✍️ | SLOP-1b-7 : refrain « l'app vous dit ce qui passe » retiré (2 écrans sur 3), intro du choix raccourcie, « diététicienne » une fois ; 1 règle au test ; captures |
 | 01/11 08:33 — [Idées : textes restants et offre Gold](runs/2026-11-01-0833-idees-gold-textes.md) | 💡 | Inventaire des textes encore « générés » d'Analyses, de la réintroduction et du paywall, réécritures prêtes (I204, SLOP-1b-6/-7) ; offre Gold chiffrée à vous soumettre (P35, I205) ; risque de double facturation Silver → Gold noté (GOLD-b2) |
 | 01/11 04:33 — [Textes : anciennes Nouveautés](runs/2026-11-01-0433-slop-nouveautes.md) | ✍️ | SLOP-1e : 41 phrases de 39 notes de Nouveautés réécrites (refrain « pas un diagnostic », « faux suspects », « pas une cause », tirets cadratins, énumérations par trois ; 2 phrases de refrain supprimées) ; test des formules bannies étendu aux notes |
 | 31/10 20:33 — [Idées : « quand consulter » relu](runs/2026-10-31-2033-idees-quand-consulter.md) | 💡 | Phrase « Quand consulter » relue contre FMC-HGE 2022 (ACG) et VIDAL : antécédents familiaux à ajouter (POL-PLAY-91) ; réintroduction « après 2 à 6 semaines d'éviction » (POL-PLAY-92) ; ameli toujours en 403 ; I202–I203 ; journal seul |
