@@ -10,7 +10,11 @@ import {
   PRODUCT_ID,
   TRIAL_OFFER_ID,
   REGIONS_VERSION,
+  GOLD,
+  GOLD_PRODUCT_ID,
+  PRODUCTS,
 } from './subscriptions.mjs'
+import { SILVER_PRODUCT_ID as RELAY_SILVER, GOLD_PRODUCT_ID as RELAY_GOLD } from '../../../relay/src/billing.js'
 import { API, PlayApiError, isAccessDenied } from './publish.mjs'
 import { PRODUCT_ID as APP_PRODUCT_ID } from '../../src/services/playBilling.js'
 import { deliveredBenefits, PREMIUM_BENEFITS } from '../../src/config/premiumBenefits.js'
@@ -50,6 +54,69 @@ describe('identifiants (immuables chez Google)', () => {
     expect(APP_PRODUCT_ID).toBe(PRODUCT_ID)
     expect(BASE_PLANS.map((p) => p.basePlanId)).toEqual(['annuel', 'mensuel'])
     expect(TRIAL_OFFER_ID).toBe('essai-14j')
+    expect(GOLD_PRODUCT_ID).toBe('halcya_gold')
+  })
+
+  it('sont ceux d’après lesquels le relais déduit le niveau (Silver / Gold)', () => {
+    expect(RELAY_SILVER).toBe(PRODUCT_ID)
+    expect(RELAY_GOLD).toBe(GOLD_PRODUCT_ID)
+    expect(PRODUCTS.map((p) => [p.tier, p.productId])).toEqual([
+      ['silver', 'halcya_premium'],
+      ['gold', 'halcya_gold'],
+    ])
+  })
+})
+
+describe('Gold (halcya_gold)', () => {
+  const { subscription, offer } = buildCatalog(PKG, GOLD)
+
+  it('formule mensuelle à 9,99 €, sans essai (proposition P35)', () => {
+    expect(subscription.productId).toBe('halcya_gold')
+    expect(subscription.basePlans).toHaveLength(1)
+    const [mensuel] = subscription.basePlans
+    expect(mensuel.basePlanId).toBe('mensuel')
+    expect(mensuel.autoRenewingBasePlanType).toMatchObject({ billingPeriodDuration: 'P1M', gracePeriodDuration: 'P7D', accountHoldDuration: 'P53D' })
+    expect(mensuel.regionalConfigs[0].price).toEqual({ currencyCode: 'EUR', units: '9', nanos: 990000000 })
+    expect(offer).toBeNull()
+  })
+
+  it('fiche dans les limites, 20 analyses par jour, sans nom de modèle ni promesse de précision', () => {
+    const [listing] = subscription.listings
+    expect(listing.title).toMatch(/Gold$/)
+    expect([...listing.title].length).toBeLessThanOrEqual(LISTING_LIMITS.title)
+    expect([...listing.description].length).toBeLessThanOrEqual(LISTING_LIMITS.description)
+    expect(listing.benefits.length).toBeLessThanOrEqual(LISTING_LIMITS.benefits)
+    expect(listing.benefits[0]).toBe('Analyse IA des repas, 20 par jour')
+    for (const t of [listing.title, listing.description, ...listing.benefits]) {
+      expect([...t].length).toBeLessThanOrEqual(t === listing.title ? LISTING_LIMITS.title : LISTING_LIMITS.description)
+      expect(t).not.toMatch(/gemini|flash|erreur|précis/i)
+      for (const { re } of FORBIDDEN_WORDING) expect(t).not.toMatch(re)
+    }
+    for (const b of listing.benefits) expect([...b].length).toBeLessThanOrEqual(LISTING_LIMITS.benefit)
+  })
+
+  it('rien sur Play : crée l’abonnement, active la formule, ne touche à aucune offre', async () => {
+    const GSUB = `${API}/${PKG}/subscriptions/halcya_gold`
+    const gplan = { ...plan('mensuel', 'ACTIVE', '9') }
+    const play = fakePlay({
+      [`GET ${GSUB}`]: [NOT_FOUND, { body: { productId: 'halcya_gold', basePlans: [gplan] } }],
+      [`POST ${API}/${PKG}/subscriptions?productId=halcya_gold&${RV}`]: { body: { productId: 'halcya_gold', basePlans: [plan('mensuel', 'DRAFT', '9')] } },
+      [`POST ${GSUB}/basePlans/mensuel:activate`]: { body: {} },
+    })
+    const r = await ensureCatalog({ packageName: PKG, token: 't', product: GOLD, fetchImpl: play.fetchImpl, sleep: async () => {} })
+    expect(r).toMatchObject({ productId: 'halcya_gold', created: true, offerCreated: false, activated: ['mensuel'], drift: [], offerState: null })
+    expect(r.plans).toEqual([{ basePlanId: 'mensuel', state: 'ACTIVE', period: 'P1M', price: formatPrice({ currencyCode: 'EUR', units: '9', nanos: 990000000 }) }])
+    expect(play.calls.some((c) => c.key.includes('/offers'))).toBe(false)
+    expect(play.calls.every((c) => !c.key.includes('halcya_premium'))).toBe(true)
+  })
+
+  it('déjà en place : aucune écriture ; prix changé à la main sur Play : signalé, jamais modifié', async () => {
+    const GSUB = `${API}/${PKG}/subscriptions/halcya_gold`
+    const play = fakePlay({ [`GET ${GSUB}`]: { body: { productId: 'halcya_gold', basePlans: [plan('mensuel', 'ACTIVE', '10')] } } })
+    const r = await ensureCatalog({ packageName: PKG, token: 't', product: GOLD, fetchImpl: play.fetchImpl, sleep: async () => {} })
+    expect(play.calls.every((c) => c.key.startsWith('GET'))).toBe(true)
+    expect(r.drift).toHaveLength(1)
+    expect(r.drift[0]).toMatch(/^halcya_gold\/mensuel : 10,99/)
   })
 })
 
@@ -152,7 +219,7 @@ describe('ensureCatalog', () => {
     expect(r.addedBasePlans).toEqual(['mensuel'])
     expect(r.activated).toEqual(['mensuel'])
     expect(r.drift).toHaveLength(1)
-    expect(r.drift[0]).toMatch(/^annuel : 19,99/)
+    expect(r.drift[0]).toMatch(/^halcya_premium\/annuel : 19,99/)
     const patch = play.calls.find((c) => c.key.startsWith('PATCH'))
     expect(patch.body.basePlans.map((b) => b.basePlanId)).toEqual(['annuel', 'mensuel'])
     expect(patch.body.basePlans[0].regionalConfigs[0].price.units).toBe('19')

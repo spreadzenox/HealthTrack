@@ -54,6 +54,14 @@
 > mêmes plafonds. **À tester** : le compteur « analyses IA restantes » (Repas) affiche 20 après le déploiement du
 > relais. Suite : création du produit Gold sur Play, puis paywall à deux niveaux.
 
+> 🥇 **Produit Gold sur Google Play (01/11 13:33)** : le workflow « Play — abonnements » crée maintenant aussi
+> l'abonnement **« Halcya Gold »** (`halcya_gold`) : formule mensuelle à **9,99 €**, sans essai, mêmes délais de grâce
+> (7 jours) et de suspension (53 jours) que le mensuel Silver. Fiche : « Analyse IA des repas, 20 par jour » et les
+> trois autres avantages de Premium ; aucune promesse de précision tant que le banc n'a pas tourné. Rien ne change
+> dans l'app : elle ne propose pas encore Gold à l'achat (paywall à deux niveaux au prochain run). **À vérifier si
+> vous voulez** : Play Console → Monétiser → Abonnements, « Halcya Gold » apparaît, actif. Pour changer le prix
+> avant que quelqu'un l'achète : dites-le, ou modifiez-le dans la console (le script ne réécrit jamais un prix).
+
 **Ce que vous verrez dans l'app cette semaine**
 - **Moins de « une estimation, pas un diagnostic »** (31/10 23:33, votre demande du 31/10 vers 21:35, 1re étape) —
   la phrase ne revient plus en refrain sous la carte « Bien-être estimé », la lecture du visage, le résultat d'une
@@ -841,6 +849,7 @@ pour quatre lignes.
 | 01/11 07:33 — [Textes : onboarding](runs/2026-11-01-0733-slop-onboarding.md) | ✍️ | SLOP-1b-5 : les 7 écrans de l'onboarding relus (objectifs, suivis, montre, Health Connect, import, visage, premier geste) ; « Pas de souci » retiré et banni au test ; captures avant/après |
 | 01/11 09:33 — [Textes : Analyses](runs/2026-11-01-0933-slop-analyses.md) | ✍️ | SLOP-1b-6 : pied de page « pas un avis médical » retiré (l'encart du haut le dit), « Comment c'est calculé » cite les vraies étiquettes et dit chaque idée une fois, phrase des liens raccourcie ; 2 règles au test ; captures |
 | 01/11 10:33 — [Textes : réintroduction](runs/2026-11-01-1033-slop-reintroduction.md) | ✍️ | SLOP-1b-7 : refrain « l'app vous dit ce qui passe » retiré (2 écrans sur 3), intro du choix raccourcie, « diététicienne » une fois ; 1 règle au test ; captures |
+| 01/11 13:33 — [Produit Gold sur Play](runs/2026-11-01-1333-gold-b3-produit.md) | 🥇 | GOLD-b3 : `scripts/play/subscriptions.mjs` tient deux abonnements, Silver `halcya_premium` (inchangé) et Gold `halcya_gold` (mensuel 9,99 €, sans essai, fiche « 20 par jour », aucun nom de modèle) ; identifiants vérifiés contre le relais ; créé par la CI au merge |
 | 01/11 12:33 — [Gold côté relais](runs/2026-11-01-1233-gold-b1-relais.md) | 🥇 | GOLD-b1 : le relais déduit le niveau du produit Play acheté (`halcya_gold` = Gold, `halcya_premium` = Silver), 20 analyses/jour en Gold et 10 en Silver ; période de lancement = Gold pour tous (donc 20/jour pour les testeurs) ; plafonds globaux et budget inchangés ; P35 sans réponse : proposition appliquée |
 | 01/11 11:33 — [Textes : Analyses dépliées](runs/2026-11-01-1133-slop-analyses-details.md) | ✍️ | SLOP-1b-8 : phrase des liens raccourcie (une vingtaine de cartes), « À tester » en texte, phrase en doublon retirée des pistes ventre, méthode du visage découpée ; `--open-details` ; 2 règles au test ; **polissage des textes terminé dans l'app** (paywall avec GOLD-b) |
 | 01/11 08:33 — [Idées : textes restants et offre Gold](runs/2026-11-01-0833-idees-gold-textes.md) | 💡 | Inventaire des textes encore « générés » d'Analyses, de la réintroduction et du paywall, réécritures prêtes (I204, SLOP-1b-6/-7) ; offre Gold chiffrée à vous soumettre (P35, I205) ; risque de double facturation Silver → Gold noté (GOLD-b2) |
