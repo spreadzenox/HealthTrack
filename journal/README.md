@@ -54,7 +54,7 @@
 > mêmes plafonds. **À tester** : le compteur « analyses IA restantes » (Repas) affiche 20 après le déploiement du
 > relais. Suite : création du produit Gold sur Play, puis paywall à deux niveaux.
 
-> 🥇 **Produit Gold sur Google Play (01/11 13:33)** : le workflow « Play — abonnements » crée maintenant aussi
+> 🥇 **Produit Gold sur Google Play (01/11 13:33, créé et actif, vérifié)** : le workflow « Play — abonnements » a créé
 > l'abonnement **« Halcya Gold »** (`halcya_gold`) : formule mensuelle à **9,99 €**, sans essai, mêmes délais de grâce
 > (7 jours) et de suspension (53 jours) que le mensuel Silver. Fiche : « Analyse IA des repas, 20 par jour » et les
 > trois autres avantages de Premium ; aucune promesse de précision tant que le banc n'a pas tourné. Rien ne change

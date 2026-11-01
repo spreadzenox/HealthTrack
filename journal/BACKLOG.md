@@ -59,8 +59,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   - [x] **GOLD-b3 — produit `halcya_gold` sur Play** (01/11 13:33) : `PRODUCTS` dans `scripts/play/subscriptions.mjs`
     (Silver `halcya_premium` inchangé, Gold `halcya_gold` : `mensuel` 9,99 €, grâce 7 j + suspension 53 j, sans essai) ;
     fiche « Halcya Gold » (`goldPlayBenefits`, 20 par jour, aucun nom de modèle ni promesse de précision) ; identifiants
-    figés contre `relay/src/billing.js` ; le workflow crée le produit au merge. À vérifier au run suivant : résumé du
-    workflow « Play — abonnements » (actif, 9,99 €). Le titre Play de Silver reste « Halcya Premium » (le script ne
+    figés contre `relay/src/billing.js` ; **créé par la CI au merge, formule `mensuel` ACTIVE à 9,99 €** (vérifié). Le titre Play de Silver reste « Halcya Premium » (le script ne
     réécrit pas une fiche existante) : à renommer « Halcya Silver » en GOLD-b4 si le paywall dit « Silver ».
   - [ ] **GOLD-b4 — paywall et page d'abonnement à deux niveaux** : Silver et Gold côte à côte, prix lus dans Play
     Billing ; « Gold offert pendant le test » tant que la période court ; `premiumBenefits.js` (10 / 20 par jour) ;
