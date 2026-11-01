@@ -74,3 +74,13 @@ describe('divulgations avant les autorisations sensibles', () => {
     expect(offenders).toEqual([])
   })
 })
+
+describe('divulgation de l’analyse IA (variante play)', () => {
+  it('ne nomme aucun modèle, mais dit que c’est Google, en Europe (31/10)', async () => {
+    const { disclosureFor } = await import('./permissionDisclosures')
+    const text = [...disclosureFor('ai_meal').points, disclosureFor('ai_meal').leaves].join(' ')
+    expect(text).not.toMatch(/Gemini/)
+    expect(text).toMatch(/Google/)
+    expect(text).toMatch(/Europe/)
+  })
+})

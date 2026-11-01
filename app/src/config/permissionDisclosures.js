@@ -111,9 +111,9 @@ export const DISCLOSURES = {
   ai_meal: {
     title: 'Avant d’analyser un repas avec l’IA',
     points: [
-      'Pour remplir le repas, la photo (réduite, sans position ni modèle de téléphone) ou votre description part vers notre serveur, qui la fait analyser par Gemini (Google Cloud, en Europe).',
-      'Notre serveur ne garde ni la photo ni le texte, seulement le nombre d’analyses faites (effacé au bout de 13 mois sans analyse), et Google ne s’en sert pas pour entraîner ses modèles. Seuls les aliments et les grammes reviennent sur le téléphone, et les calories sont calculées ici.',
-      'Aucune autre donnée de santé ne part. Sans IA, vous pouvez toujours ajouter les aliments à la main.',
+      'La photo, réduite et sans position, ou votre description part vers notre serveur. Une IA de Google l’analyse en Europe.',
+      'Notre serveur ne garde ni la photo ni le texte. Il compte vos analyses, et ce compteur s’efface après 13 mois sans analyse. Google ne s’en sert pas pour entraîner ses modèles.',
+      'Seuls les aliments et leurs grammes reviennent. Aucune autre donnée de santé ne part.',
     ],
     leaves: 'Envoyé : la photo ou la description du repas, à chaque analyse que vous lancez. Rien d’autre.',
     accept: 'J’accepte, analyser ce repas',

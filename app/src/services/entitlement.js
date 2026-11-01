@@ -130,7 +130,7 @@ export function describeEntitlement(ent) {
     default:
       break
   }
-  return 'Version gratuite : journal, imports des montres, bien-être estimé, graphiques et export restent gratuits.'
+  return 'Version gratuite. Ce que vous notez et importez le reste, avec ou sans abonnement.'
 }
 
 /** Page « Abonnements » de Google Play (règle Play : lien de gestion et d'annulation dans l'app). */
