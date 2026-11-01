@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-01",
+  "kind": "nouveau",
+  "variants": ["play"],
+  "title": "Deux abonnements : Silver et Gold",
+  "items": [
+    "La page d’abonnement propose Silver (10 analyses de repas par jour) et Gold (20 par jour).",
+    "Pendant le test, Gold vous est offert : rien à payer."
+  ]
+}

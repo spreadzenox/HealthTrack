@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FEATURES } from '../config/distribution'
-import { describeEntitlement, lastLaunchDay, manageSubscriptionUrl } from '../services/entitlement'
+import { describeEntitlement, lastLaunchDay, manageSubscriptionUrl, tierName } from '../services/entitlement'
 import { loadPlans, purchasePlan, restorePurchases, monthlyEquivalent, annualSavingPercent } from '../services/playBilling'
 import { APP_NAME, PRIVACY_URL, TERMS_URL } from '../config/brand'
-import { deliveredBenefits, upcomingBenefits } from '../config/premiumBenefits'
+import { benefitsFor, upcomingBenefits, PREMIUM_AI_DAILY, GOLD_AI_DAILY } from '../config/premiumBenefits'
 import DetailsToggle from '../components/DetailsToggle'
 import './Premium.css'
 import { useEntitlement } from '../hooks/useEntitlement'
@@ -12,6 +12,17 @@ import { REMINDER_DAYS_BEFORE, trialReminderAvailable } from '../services/trialR
 
 
 const PER = { year: 'an', month: 'mois' }
+
+/** Les deux niveaux (GOLD-b4) : seul le plafond quotidien de l'analyse IA des repas les distingue aujourd'hui. */
+const TIERS = [
+  { id: 'silver', name: 'Silver', note: `${PREMIUM_AI_DAILY} analyses IA par jour` },
+  { id: 'gold', name: 'Gold', note: `${GOLD_AI_DAILY} analyses IA par jour` },
+]
+const tierOf = (plan) => plan?.tier ?? 'silver'
+const defaultPlan = (list, tier) => {
+  const own = list.filter((p) => tierOf(p) === tier)
+  return (own.find((p) => p.period === 'year') ?? own[0])?.basePlanId ?? null
+}
 
 /** Frise de l'essai, seulement quand Google Play propose un essai à cette personne. */
 function TrialTimeline({ days, reminder }) {
@@ -46,6 +57,7 @@ export default function Premium({ context = null, onClose = null }) {
   const navigate = useNavigate()
   const [ent, setEnt] = useEntitlement()
   const [plans, setPlans] = useState(null)
+  const [tier, setTier] = useState('silver')
   const [selected, setSelected] = useState(null)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
@@ -58,7 +70,8 @@ export default function Premium({ context = null, onClose = null }) {
     loadPlans().then((list) => {
       if (!alive) return
       setPlans(list)
-      setSelected((list.find((p) => p.period === 'year') ?? list[0])?.basePlanId ?? null)
+      setSelected(defaultPlan(list, 'silver') ?? defaultPlan(list, 'gold'))
+      if (!list.some((p) => tierOf(p) === 'silver') && list.length) setTier('gold')
     })
     return () => {
       alive = false
@@ -74,8 +87,16 @@ export default function Premium({ context = null, onClose = null }) {
   // Période de lancement (P23 ②) : premium offert par le relais ; aucun achat proposé tant qu'elle court
   const launch = ent.premium && ent.source === 'launch'
   const close = onClose ?? (() => (window.history.length > 1 ? navigate(-1) : navigate('/')))
-  const plan = plans?.find((p) => p.basePlanId === selected) ?? null
-  const saving = plans ? annualSavingPercent(plans) : null
+  const tierPlans = plans?.filter((p) => tierOf(p) === tier) ?? null
+  const offeredTiers = TIERS.filter((t) => plans?.some((p) => tierOf(p) === t.id))
+  const plan = tierPlans?.find((p) => p.basePlanId === selected) ?? null
+  const saving = tierPlans ? annualSavingPercent(tierPlans) : null
+  // Avantages du niveau dont la personne profite, sinon de celui qu'elle regarde
+  const shownTier = (tierName(ent) ?? '').toLowerCase() || tier
+  const chooseTier = (id) => {
+    setTier(id)
+    setSelected(defaultPlan(plans ?? [], id))
+  }
 
   const buy = async () => {
     if (!plan) return
@@ -112,25 +133,27 @@ export default function Premium({ context = null, onClose = null }) {
   return (
     <section className="paywall">
       <div className="paywall-top">
-        <span className="paywall-tag">premium</span>
+        <span className="paywall-tag">{launch ? 'gold' : 'premium'}</span>
         <button type="button" className="paywall-close" onClick={close} aria-label="Fermer">
           ×
         </button>
       </div>
 
-      <h2 className="paywall-title">{launch ? 'Premium offert pendant le test' : 'Passez de « je note » à « je comprends »'}</h2>
+      <h2 className="paywall-title">{launch ? 'Gold offert pendant le test' : 'Comprendre vos bons et mauvais jours'}</h2>
       <p className="paywall-lead">
         {launch
           ? `Merci de tester l’app ! ${ent.launchUntil ? `Jusqu’au ${lastLaunchDay(ent.launchUntil)}, tout` : 'Tout'} ce qui suit est débloqué : vous n’avez rien à payer, aucune carte bancaire n’est demandée.`
           : onboarding
           ? 'Vos pistes arriveront vers le 21ᵉ jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.'
-          : 'Le premium vous aide à voir ce qui va avec vos bons et mauvais jours.'}
+          : offeredTiers.length > 1
+          ? 'Silver ou Gold : seul le nombre d’analyses IA par jour change.'
+          : 'Voici ce que l’abonnement ajoute.'}
       </p>
 
       {/* Seulement ce qui marche aujourd'hui (VC-17) ; le reste dans « détails » */}
       <div className="paywall-benefits-box">
         <ul className="paywall-benefits">
-          {deliveredBenefits().map((b) => (
+          {benefitsFor(shownTier).map((b) => (
             <li key={b.id}>{b.label}</li>
           ))}
         </ul>
@@ -177,8 +200,20 @@ export default function Premium({ context = null, onClose = null }) {
         </p>
       ) : (
         <>
+          {offeredTiers.length > 1 && (
+            <div className="paywall-tiers" role="radiogroup" aria-label="Niveaux">
+              {offeredTiers.map((t) => (
+                <label key={t.id} className={`paywall-tier paywall-tier-${t.id}${tier === t.id ? ' is-selected' : ''}`}>
+                  <input type="radio" name="tier" value={t.id} checked={tier === t.id} onChange={() => chooseTier(t.id)} />
+                  <span className="paywall-tier-name">{t.name}</span>
+                  <span className="paywall-tier-note">{t.note}</span>
+                </label>
+              ))}
+            </div>
+          )}
+
           <div className="paywall-plans" role="radiogroup" aria-label="Formules">
-            {plans.map((p) => {
+            {tierPlans.map((p) => {
               const monthly = monthlyEquivalent(p)
               return (
                 <label key={p.basePlanId} className={`paywall-plan${selected === p.basePlanId ? ' is-selected' : ''}`}>

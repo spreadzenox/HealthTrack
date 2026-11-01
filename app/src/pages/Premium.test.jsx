@@ -16,6 +16,9 @@ import { PRIVACY_URL, TERMS_URL } from '../config/brand'
 
 const YEAR = { basePlanId: 'annuel', offerToken: 't-a', period: 'year', price: '29,99 €', priceMicros: 29_990_000, currency: 'EUR', trialDays: 14 }
 const MONTH = { basePlanId: 'mensuel', offerToken: 't-m', period: 'month', price: '4,99 €', priceMicros: 4_990_000, currency: 'EUR', trialDays: null }
+const GOLD = { productId: 'halcya_gold', tier: 'gold', basePlanId: 'mensuel', offerToken: 't-g', period: 'month', price: '9,99 €', priceMicros: 9_990_000, currency: 'EUR', trialDays: null }
+const S_YEAR = { ...YEAR, productId: 'halcya_premium', tier: 'silver' }
+const S_MONTH = { ...MONTH, productId: 'halcya_premium', tier: 'silver' }
 
 const renderPremium = () => render(<MemoryRouter initialEntries={['/premium']}><Premium /></MemoryRouter>)
 
@@ -118,7 +121,7 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     act(() => {
       window.dispatchEvent(new CustomEvent(ENTITLEMENT_EVENT, { detail }))
     })
-    expect(await screen.findByText(/Premium actif · renouvellement le/)).toBeInTheDocument()
+    expect(await screen.findByText(/Silver actif · renouvellement le/)).toBeInTheDocument()
     expect(screen.queryByRole('alert')).toBeNull()
   })
 
@@ -142,6 +145,51 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     expect(screen.getByRole('button', { name: 'Restaurer un achat' })).toBeInTheDocument()
   })
 
+  describe('deux niveaux, Silver et Gold (GOLD-b4)', () => {
+    it('Silver choisi par défaut avec son essai ; Gold affiche son seul mensuel et 20 analyses par jour', async () => {
+      billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH, GOLD])
+      renderPremium()
+      const silver = await screen.findByRole('radio', { name: /Silver/ })
+      expect(screen.getByText('Silver ou Gold : seul le nombre d’analyses IA par jour change.')).toBeInTheDocument()
+      expect(silver).toBeChecked()
+      expect(screen.getByRole('radio', { name: /Annuel/ })).toBeChecked()
+      expect(screen.getByText(/jusqu’à 10 par jour/)).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('radio', { name: /Gold/ }))
+      expect(screen.getByRole('radio', { name: /Gold/ })).toBeChecked()
+      expect(screen.queryByRole('radio', { name: /Annuel/ })).toBeNull()
+      expect(screen.getByRole('radio', { name: /Mensuel/ })).toBeChecked()
+      expect(screen.getByText('9,99 € / mois')).toBeInTheDocument()
+      expect(screen.getByText(/jusqu’à 20 par jour/)).toBeInTheDocument()
+      expect(screen.queryByLabelText('Déroulé de l’essai')).toBeNull()
+      billing.purchasePlan.mockResolvedValue({ status: 'cancelled' })
+      fireEvent.click(screen.getByRole('button', { name: 'S’abonner · 9,99 € / mois' }))
+      await waitFor(() => expect(billing.purchasePlan).toHaveBeenCalledWith(GOLD))
+    })
+
+    it('aucun nom de modèle d’IA ni promesse de précision sur le paywall', async () => {
+      billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH, GOLD])
+      const { container } = renderPremium()
+      fireEvent.click(await screen.findByRole('radio', { name: /Gold/ }))
+      expect(container.textContent).not.toMatch(/gemini|flash|lite|vertex|moins d’erreurs|plus précis/i)
+    })
+
+    it('sans produit Gold chez Google Play : pas de choix de niveau, le paywall Silver reste tel quel', async () => {
+      billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH])
+      renderPremium()
+      await screen.findByRole('radio', { name: /Annuel/ })
+      expect(screen.queryByRole('radiogroup', { name: 'Niveaux' })).toBeNull()
+    })
+
+    it('abonné Gold : « Gold actif » et ses 20 analyses par jour', async () => {
+      billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH, GOLD])
+      localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'play', state: 'active', tier: 'gold', productId: 'halcya_gold', autoRenewing: true, expiresAt: '2099-01-01T00:00:00Z' }))
+      renderPremium()
+      expect(await screen.findByText(/Gold actif · renouvellement le/)).toBeInTheDocument()
+      expect(screen.getByText(/jusqu’à 20 par jour/)).toBeInTheDocument()
+      expect(screen.queryByRole('radio')).toBeNull()
+    })
+  })
+
   describe('période de lancement (P23 ②) : premium offert pendant le test', () => {
     const launchEnt = (until) => localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'launch', launchUntil: until }))
 
@@ -149,10 +197,11 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       billing.loadPlans.mockResolvedValue([YEAR, MONTH])
       launchEnt('2099-12-01T12:00:00.000Z')
       renderPremium()
-      expect(screen.getByRole('heading', { name: 'Premium offert pendant le test' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Gold offert pendant le test' })).toBeInTheDocument()
       // une seule fois, dans la phrase d'accueil : plus de cadre qui répète le titre (POL-PLAY-39)
       expect(screen.getByText(/Jusqu’au 1er déc\. 2099, tout ce qui suit est débloqué : vous n’avez rien à payer/)).toBeInTheDocument()
-      expect(screen.getAllByText(/Premium offert pendant le test/)).toHaveLength(1)
+      expect(screen.getAllByText(/Gold offert pendant le test/)).toHaveLength(1)
+      expect(screen.getByText(/jusqu’à 20 par jour/)).toBeInTheDocument()
       await waitFor(() => expect(billing.loadPlans).toHaveBeenCalled())
       expect(screen.queryByRole('radio')).toBeNull()
       expect(screen.queryByRole('button', { name: /Essayer|S’abonner/ })).toBeNull()
@@ -165,7 +214,7 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       billing.loadPlans.mockResolvedValue([YEAR, MONTH])
       launchEnt('2099-12-01T00:00:00.000Z')
       render(<MemoryRouter><Premium context="onboarding" onClose={() => {}} /></MemoryRouter>)
-      expect(screen.getByRole('heading', { name: 'Premium offert pendant le test' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Gold offert pendant le test' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Continuer' })).toBeInTheDocument()
       expect(screen.queryByText('Continuer gratuitement')).toBeNull()
     })
@@ -174,7 +223,7 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       billing.loadPlans.mockResolvedValue([YEAR, MONTH])
       launchEnt('2020-01-01T00:00:00.000Z')
       renderPremium()
-      expect(screen.getByRole('heading', { name: 'Passez de « je note » à « je comprends »' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Comprendre vos bons et mauvais jours' })).toBeInTheDocument()
       expect(await screen.findByRole('radio', { name: /Annuel/ })).toBeChecked()
       expect(screen.getByRole('button', { name: 'Essayer 14 jours gratuitement' })).toBeEnabled()
       expect(screen.getByRole('button', { name: 'Restaurer un achat' })).toBeInTheDocument()

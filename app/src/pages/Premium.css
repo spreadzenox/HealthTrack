@@ -107,6 +107,63 @@
   font-size: 0.92rem;
 }
 
+.paywall-tiers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.paywall-tier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  min-height: var(--tap-min);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-choice);
+  background: var(--surface, transparent);
+  cursor: pointer;
+}
+
+.paywall-tier input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.paywall-tier.is-selected {
+  border-color: var(--color-brand);
+}
+
+.paywall-tier:has(input:focus-visible) {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.paywall-tier-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+/* Point ambre (accent graphique de l'identité, jamais pour du texte) devant « Gold » */
+.paywall-tier-gold .paywall-tier-name::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--accent-amber);
+  vertical-align: middle;
+}
+
+.paywall-tier-note {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .paywall-plans {
   display: flex;
   flex-direction: column;
