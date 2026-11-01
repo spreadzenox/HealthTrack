@@ -1413,9 +1413,17 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
     (`locked` au journal) ; registre injoignable → abonné jamais bloqué (`lockError`), notification → 503 (relivrée).
     URL : `https://halcya-relay-81378799481.europe-west1.run.app/appstore/notifications` (App Store Connect, production et sandbox, version 2). Limite connue : le cache des droits du relais
     (1 h par installation, en mémoire) peut garder Gold jusqu'à 1 h après un remboursement.
-  - [ ] **I6-RELAIS-6** App : nom du magasin dans une constante de distribution (« Google Play » / « l'App Store ») à
-    la place des 4 textes en dur ; pour un achat `source: 'appstore'`, « Gérer mon abonnement » →
-    https://apps.apple.com/account/subscriptions et « Passer à Gold » sans ancien jeton.
+  - [x] **I6-RELAIS-6** (01/11 19:33) App : `STORE` dans `config/distribution.js`, fixé au build par `VITE_STORE`
+    (`play` par défaut, `appstore` pour l'app iPhone) : `name`, `Name`, `inStore`, `fromStore`, `account`, `at`,
+    `manageUrl`. Page d'abonnement (« … » pendant l'achat, « Annulable à tout moment … », « Lecture des formules … »,
+    aucune formule, restauration), Paramètres, messages d'achat (erreur, attente, `ALREADY_GOLD_MESSAGE`) tirés de
+    `STORE`. `storeOfPurchase(source)` : un achat garde son magasin (`play` / `appstore`), sinon celui de la version ;
+    l'app garde maintenant `source: 'appstore'` du relais ; « Gérer mon abonnement » → https://apps.apple.com/account/subscriptions,
+    grâce / suspension (Paramètres, carte de l'Accueil) nomment l'App Store ; `purchasePlan(…, { store })` : sur
+    l'App Store, « Passer à Gold » part sans `oldPurchaseToken` ni `replacementMode`. Textes Android identiques.
+    **À faire côté routine iOS** : construire avec `VITE_STORE=appstore` ; le plugin StoreKit doit rendre les
+    `products` sous les identifiants `halcya_premium` / `halcya_gold` (ou adapter `OWN_PRODUCTS`) pour que le garde
+    « déjà Gold » marche ; le rappel de fin d'essai reste réservé aux achats Play (Apple envoie le sien).
   - [ ] **I6-RELAIS-5** (plus tard) App Attest ; d'ici là exemption iOS (`X-Platform: ios` / `no_plugin`) inchangée.
   - Question ouverte : la période de lancement (Gold pour toute installation sans jeton) vaut aussi pour l'iPhone
     aujourd'hui, puisque le relais ne distingue pas la plateforme sur `/v1/subscription/verify` ; à confirmer avec la

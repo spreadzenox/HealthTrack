@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FEATURES } from '../config/distribution'
+import { FEATURES, STORE, storeOfPurchase } from '../config/distribution'
 import { describeEntitlement, lastLaunchDay, manageSubscriptionUrl, tierName } from '../services/entitlement'
 import { loadPlans, purchasePlan, restorePurchases, monthlyEquivalent, annualSavingPercent } from '../services/playBilling'
 import { APP_NAME, PRIVACY_URL, TERMS_URL } from '../config/brand'
@@ -94,7 +94,7 @@ export default function Premium({ context = null, onClose = null }) {
   // Avantages du niveau dont la personne profite, sinon de celui qu'elle regarde
   const shownTier = (tierName(ent) ?? '').toLowerCase() || tier
   // Abonné Silver (GOLD-b2) : Gold remplace Silver chez Google Play, sans second abonnement
-  const goldUpgrade = ent.premium && ent.source === 'play' && tierName(ent) === 'Silver' ? (plans?.find((p) => tierOf(p) === 'gold') ?? null) : null
+  const goldUpgrade = ent.premium && (ent.source === 'play' || ent.source === 'appstore') && tierName(ent) === 'Silver' ? (plans?.find((p) => tierOf(p) === 'gold') ?? null) : null
   const chooseTier = (id) => {
     setTier(id)
     setSelected(defaultPlan(plans ?? [], id))
@@ -124,9 +124,9 @@ export default function Premium({ context = null, onClose = null }) {
       const { found, entitlement } = await restorePurchases()
       setEnt(entitlement)
       if (entitlement.offline) setMessage('Pas de connexion : réessayez dans un instant.')
-      else if (!found) setMessage('Aucun abonnement trouvé sur ce compte Google Play.')
+      else if (!found) setMessage(`Aucun abonnement trouvé sur ${STORE.account}.`)
     } catch {
-      setMessage('Google Play ne répond pas : réessayez dans un instant.')
+      setMessage(`${STORE.Name} ne répond pas : réessayez dans un instant.`)
     } finally {
       setBusy(false)
     }
@@ -185,20 +185,20 @@ export default function Premium({ context = null, onClose = null }) {
       {launch ? null : ent.premium ? (
         <div className="paywall-active" role="status">
           <p>{describeEntitlement(ent)}</p>
-          {ent.source === 'play' && (
-            <a className="btn btn-secondary settings-link-btn" href={manageSubscriptionUrl(ent.productId)} target="_blank" rel="noopener noreferrer">
-              Gérer mon abonnement dans Google Play
+          {(ent.source === 'play' || ent.source === 'appstore') && (
+            <a className="btn btn-secondary settings-link-btn" href={manageSubscriptionUrl(ent.productId, ent.source)} target="_blank" rel="noopener noreferrer">
+              Gérer mon abonnement {storeOfPurchase(ent.source).inStore}
             </a>
           )}
           {goldUpgrade && (
             <div className="paywall-upgrade">
               <p className="paywall-upgrade-title">Passer à Gold : {GOLD_AI_DAILY} analyses IA par jour au lieu de {PREMIUM_AI_DAILY}.</p>
               <button type="button" className="btn paywall-cta" onClick={() => buy(goldUpgrade)} disabled={busy}>
-                {busy ? 'Google Play…' : `Passer à Gold · ${goldUpgrade.price} / ${PER[goldUpgrade.period]}`}
+                {busy ? `${STORE.Name}…` : `Passer à Gold · ${goldUpgrade.price} / ${PER[goldUpgrade.period]}`}
               </button>
               <p className="paywall-fine">
                 Gold remplace Silver : vous n’aurez qu’un abonnement. Le temps déjà payé de Silver devient du temps de
-                Gold. Google Play affiche le détail avant de valider.
+                Gold. {STORE.Name} affiche le détail avant de valider.
               </p>
             </div>
           )}
@@ -206,10 +206,10 @@ export default function Premium({ context = null, onClose = null }) {
       ) : !FEATURES.billing ? (
         <p className="hint">L’abonnement se prend depuis la version Google Play de l’app.</p>
       ) : plans === null ? (
-        <p className="hint">Lecture des formules auprès de Google Play…</p>
+        <p className="hint">Lecture des formules {STORE.fromStore}…</p>
       ) : plans.length === 0 ? (
         <p className="hint" role="status">
-          Google Play ne propose pas encore de formule pour cette app. Réessayez un peu plus tard ; tout le reste de
+          {STORE.Name} ne propose pas encore de formule pour cette app. Réessayez un peu plus tard ; tout le reste de
           l’app fonctionne sans abonnement.
         </p>
       ) : (
@@ -255,7 +255,7 @@ export default function Premium({ context = null, onClose = null }) {
 
           <button type="button" className="btn paywall-cta" onClick={() => buy()} disabled={!plan || busy}>
             {busy
-              ? 'Google Play…'
+              ? `${STORE.Name}…`
               : plan?.trialDays
                 ? `Essayer ${plan.trialDays} jours gratuitement`
                 : `S’abonner · ${plan?.price} / ${PER[plan?.period]}`}
@@ -264,7 +264,7 @@ export default function Premium({ context = null, onClose = null }) {
             <p className="paywall-fine">
               {plan.trialDays ? `Puis ${plan.price} par ${PER[plan.period]}. ` : `${plan.price} par ${PER[plan.period]}. `}
               {plan.trialDays && reminder && plan.trialDays > REMINDER_DAYS_BEFORE && `Rappel ${REMINDER_DAYS_BEFORE} jours avant la fin de l’essai. `}
-              Annulable à tout moment dans Google Play.
+              Annulable à tout moment {STORE.inStore}.
             </p>
           )}
         </>

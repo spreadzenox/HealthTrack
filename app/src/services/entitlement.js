@@ -8,11 +8,11 @@
  */
 import { RELAY_URL, getInstallId } from './aiRelay'
 import { appLocale } from '../i18n/locale.js'
+import { storeOfPurchase } from '../config/distribution'
 
 const ENTITLEMENT_KEY = 'halcya_entitlement'
 /** Événement `window` émis à chaque nouvel état donné par le relais (`detail` : les droits à jour). */
 export const ENTITLEMENT_EVENT = 'halcya:entitlement'
-const PLAY_PACKAGE = 'fr.jpesquet.sante'
 export const ENTITLEMENT_TIMEOUT_MS = 15_000
 const GRACE_OFFLINE_MS = 3 * 86_400_000
 
@@ -36,7 +36,7 @@ function readStored() {
 function fromRelay(data) {
   return {
     premium: data.premium === true,
-    source: data.source === 'play' || data.source === 'launch' ? data.source : null,
+    source: ['play', 'appstore', 'launch'].includes(data.source) ? data.source : null,
     state: typeof data.state === 'string' ? data.state : null,
     tier: data.tier === 'gold' || data.tier === 'silver' ? data.tier : null,
     productId: typeof data.productId === 'string' ? data.productId : null,
@@ -137,21 +137,23 @@ export function describeEntitlement(ent) {
       if (!ent.premium) break
       return until ? `Abonnement annulé · ${name} jusqu’au ${until}.` : 'Abonnement annulé.'
     case 'grace':
-      return `${name} actif · paiement à régulariser dans Google Play.`
+      return `${name} actif · paiement à régulariser ${storeOfPurchase(ent.source).inStore}.`
     case 'paused':
       return 'Abonnement en pause : le premium reprendra automatiquement à la fin de la pause.'
     case 'on_hold':
-      return 'Abonnement suspendu : paiement à régulariser dans Google Play.'
+      return `Abonnement suspendu : paiement à régulariser ${storeOfPurchase(ent.source).inStore}.`
     default:
       break
   }
   return 'Version gratuite. Ce que vous notez et importez le reste, avec ou sans abonnement.'
 }
 
-/** Page « Abonnements » de Google Play (règle Play : lien de gestion et d'annulation dans l'app). */
-export function manageSubscriptionUrl(productId) {
-  const base = 'https://play.google.com/store/account/subscriptions'
-  return productId ? `${base}?sku=${encodeURIComponent(productId)}&package=${PLAY_PACKAGE}` : base
+/**
+ * Page « Abonnements » du magasin de l'achat (règle Play et Apple : lien de gestion et d'annulation dans l'app) :
+ * Google Play sur le bon produit, ou les abonnements du compte Apple pour un achat `source: 'appstore'`.
+ */
+export function manageSubscriptionUrl(productId, source) {
+  return storeOfPurchase(source).manageUrl(productId)
 }
 
 /**
@@ -162,15 +164,15 @@ export function paymentIssue(ent) {
   if (ent?.state === 'grace') {
     return {
       title: 'Votre paiement n’est pas passé',
-      text: 'Votre premium reste actif pour l’instant. Mettez à jour votre moyen de paiement dans Google Play pour le garder.',
-      url: manageSubscriptionUrl(ent.productId),
+      text: `Votre premium reste actif pour l’instant. Mettez à jour votre moyen de paiement ${storeOfPurchase(ent.source).inStore} pour le garder.`,
+      url: manageSubscriptionUrl(ent.productId, ent.source),
     }
   }
   if (ent?.state === 'on_hold') {
     return {
       title: 'Abonnement suspendu',
-      text: 'Le paiement n’a pas pu être fait. Votre premium reviendra dès que le paiement sera régularisé dans Google Play. Vos données ne changent pas.',
-      url: manageSubscriptionUrl(ent.productId),
+      text: `Le paiement n’a pas pu être fait. Votre premium reviendra dès que le paiement sera régularisé ${storeOfPurchase(ent.source).inStore}. Vos données ne changent pas.`,
+      url: manageSubscriptionUrl(ent.productId, ent.source),
     }
   }
   return null
