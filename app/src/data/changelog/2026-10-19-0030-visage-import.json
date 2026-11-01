@@ -4,7 +4,7 @@
   "title": "Lecture du visage : les lectures sont gardées dans votre historique",
   "items": [
     "Ce que la caméra lit à chaque déverrouillage (une dizaine de mesures d'expression, jamais d'image) est maintenant rangé dans votre historique à chaque ouverture de l'app, sans doublon. Ces lectures font partie de la sauvegarde (export / import).",
-    "La carte « Lecture du visage » dit combien de lectures sont gardées et depuis quand. Aucun chiffre n'est encore affiché : il faut d'abord plusieurs semaines de vos notes pour leur donner un sens. Ce sera une estimation, jamais un diagnostic.",
+    "La carte « Lecture du visage » dit combien de lectures sont gardées et depuis quand. Aucun chiffre n'est encore affiché : il faut d'abord plusieurs semaines de vos notes pour leur donner un sens.",
     "Seules les lectures faites au déverrouillage compteront pour l'humeur ; celles de « Tester maintenant » servent uniquement au diagnostic."
   ]
 }

@@ -3,9 +3,9 @@
   "kind": "nouveau",
   "title": "Votre cœur comparé à votre propre norme",
   "items": [
-    "Nouveau sur le tableau de bord : votre FC au repos et votre VFC (variabilité cardiaque) des 7 derniers jours, comparées à vos valeurs habituelles des 60 jours précédents — et non à une moyenne de population.",
+    "Nouveau sur le tableau de bord : votre FC au repos et votre VFC (variabilité cardiaque) des 7 derniers jours, comparées à vos propres valeurs des 60 jours précédents.",
     "Une barre montre votre plage normale et où vous en êtes cette semaine, avec un repère « Dans votre norme », « Plus haute » ou « Plus basse que d’habitude ».",
-    "Si un écart va dans le mauvais sens (FC au repos qui monte, VFC qui baisse), l’app rappelle les causes fréquentes (nuit courte, stress, alcool, entraînement, début d’infection) — une observation, jamais un diagnostic.",
+    "Si la FC au repos monte ou si la VFC baisse, l’app cite les raisons fréquentes : nuit courte, stress, alcool, entraînement ou début d’infection.",
     "Il faut environ 3 semaines de mesures de votre montre (via Health Connect) pour établir votre norme ; l’app indique combien de jours il manque."
   ]
 }

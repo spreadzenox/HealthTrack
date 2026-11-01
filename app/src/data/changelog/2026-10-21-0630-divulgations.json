@@ -4,7 +4,7 @@
   "title": "On vous explique avant de demander un accès",
   "items": [
     "Avant de demander l'accès à la caméra, à votre position ou à vos données d'utilisation, l'app vous dit en clair ce qu'elle lit, pourquoi, et ce qui quitte (ou pas) le téléphone.",
-    "Lecture du visage : il est précisé qu'un système d'IA de reconnaissance des émotions travaille sur le téléphone, qu'aucune image n'est gardée et que le résultat est une estimation, pas un diagnostic.",
+    "Lecture du visage : l'explication précise qu'un système d'IA de reconnaissance des émotions travaille sur le téléphone et qu'aucune image n'est gardée.",
     "« Pas maintenant » ne demande rien à Android et n'active rien. Rien ne change dans vos données."
   ]
 }

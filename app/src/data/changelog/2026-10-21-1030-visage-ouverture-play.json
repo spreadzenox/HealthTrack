@@ -4,7 +4,7 @@
   "title": "Version Google Play : lecture du visage à l'ouverture de l'app",
   "items": [
     "Dans la version distribuée par Google Play, la lecture du visage n'a lieu que quand vous ouvrez l'app, au plus une fois par demi-heure, jamais app fermée. Un bandeau « Lecture du visage » l'indique à l'écran pendant toute la lecture.",
-    "Avant d'autoriser la caméra, l'explication le précise. Comme toujours, aucune image n'est gardée et le résultat est une estimation, pas un diagnostic.",
+    "L'explication le précise avant d'autoriser la caméra. Aucune image n'est gardée.",
     "La version installée depuis GitHub ne change pas : la lecture au déverrouillage continue. Rien ne change dans vos données."
   ]
 }
