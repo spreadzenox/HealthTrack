@@ -8,7 +8,7 @@ import { createAppStoreBilling, createAppStoreNotifications, createAppStoreVerif
 import { ANDROIDPUBLISHER_SCOPE, createBillingRoutes, createPlayClient, createPushVerifier } from './billing.js'
 import { PLAYINTEGRITY_SCOPE, createIntegrityClient, createIntegrityGuard } from './integrity.js'
 import { createVertexClient, metadataTokenProvider } from './vertex.js'
-import { createCostLedger, createFirestoreCostStore, parsePrices } from './costs.js'
+import { createCostLedger, createFirestoreCostStore, parsePrices, priceFactorAt } from './costs.js'
 
 const config = loadConfig()
 const ingredientNames = loadIngredientNames(config.ingredientsPath)
@@ -87,5 +87,5 @@ createServer((req, res) => {
     res.end()
   })
 }).listen(config.port, () => {
-  log({ event: 'start', port: config.port, models: config.models, goldModels: config.goldModels, goldDailyCap: config.goldDailyCap, locations: config.locations, ingredients: ingredientNames.length, launchPremium: config.launchPremium, integrity: config.integrityMode, creditsStore: config.creditsStore })
+  log({ event: 'start', port: config.port, models: config.models, goldModels: config.goldModels, goldDailyCap: config.goldDailyCap, locations: config.locations, ingredients: ingredientNames.length, launchPremium: config.launchPremium, integrity: config.integrityMode, creditsStore: config.creditsStore, priceFactor: priceFactorAt(Date.now()) })
 })
