@@ -37,3 +37,8 @@
 
 ## Suite
 - GOLD-a2 (vérifier Gold en production), GOLD-a3, puis le polissage de la version Play.
+
+## Après le merge
+- PR #609 mergée (`066a6e4`), tous les checks verts (Frontend, Relais, Build APK, Java, perf, bord à bord, émulateurs
+  A56 API 35 et 36).
+- « Build & Release » : **v435** (APK 34 525 214 o). Relais non touché.
