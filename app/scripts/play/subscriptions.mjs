@@ -7,9 +7,12 @@
  * abonnement déjà créé ne sont jamais modifiés ici (un changement de prix touche les abonnés : décision du
  * propriétaire) ; un écart est seulement signalé. Les identifiants sont immuables chez Google : ils sont figés par
  * subscriptions.test.mjs et doivent rester ceux que l'app attend (src/services/playBilling.js).
+ *
+ * Deux niveaux depuis le 01/11 (décision du 31/10, GOLD-b3) : Silver = `halcya_premium` (inchangé), Gold =
+ * `halcya_gold`, formule `mensuel` à 9,99 €, sans essai (proposition P35 appliquée sans réponse du propriétaire).
  */
 import { API, PlayApiError, call, withRetry } from './publish.mjs'
-import { PREMIUM_BENEFITS } from '../../src/config/premiumBenefits.js'
+import { PREMIUM_BENEFITS, goldPlayBenefits } from '../../src/config/premiumBenefits.js'
 import { APP_NAME } from '../../src/config/brand.js'
 
 export const PRODUCT_ID = 'halcya_premium'
@@ -30,31 +33,61 @@ export const BASE_PLANS = [
 ]
 export const TRIAL = { basePlanId: 'annuel', duration: 'P14D' }
 
+export const GOLD_PRODUCT_ID = 'halcya_gold'
+export const GOLD_BASE_PLANS = [
+  { basePlanId: 'mensuel', period: 'P1M', price: { units: '9', nanos: 990000000 }, grace: 'P7D', hold: 'P53D' },
+]
+
+/** Les abonnements tenus par ce script. Silver garde son identifiant historique. */
+export const PRODUCTS = [
+  {
+    tier: 'silver',
+    productId: PRODUCT_ID,
+    title: `${APP_NAME} Premium`,
+    description: 'Comprendre ce qui va avec vos bons et mauvais jours.',
+    // Seulement ce qui est livré : jamais plus que le paywall (VC-17).
+    benefits: () => PREMIUM_BENEFITS.filter((b) => b.delivered).map((b) => b.playLabel),
+    basePlans: BASE_PLANS,
+    trial: { ...TRIAL, offerId: TRIAL_OFFER_ID },
+  },
+  {
+    tier: 'gold',
+    productId: GOLD_PRODUCT_ID,
+    title: `${APP_NAME} Gold`,
+    description: 'Tout Premium, et deux fois plus d’analyses IA de repas par jour.',
+    benefits: goldPlayBenefits,
+    basePlans: GOLD_BASE_PLANS,
+    trial: null,
+  },
+]
+export const SILVER = PRODUCTS[0]
+export const GOLD = PRODUCTS[1]
+
 const days = (iso) => Number(/^P(\d+)D$/.exec(iso)?.[1] ?? NaN)
 export const holdTotalDays = (plan) => days(plan.grace) + days(plan.hold)
 
-/** Corps des requêtes de création (fonction pure, testée). */
-export function buildCatalog(packageName) {
+/** Corps des requêtes de création (fonction pure, testée). `offer` est null pour un abonnement sans essai. */
+export function buildCatalog(packageName, product = SILVER) {
   const subscription = {
     packageName,
-    productId: PRODUCT_ID,
+    productId: product.productId,
     listings: [
       {
         languageCode: 'fr-FR',
-        title: `${APP_NAME} Premium`,
-        description: 'Comprendre ce qui va avec vos bons et mauvais jours.',
-        // Seulement ce qui est livré : jamais plus que le paywall (VC-17).
-        benefits: PREMIUM_BENEFITS.filter((b) => b.delivered).map((b) => b.playLabel),
+        title: product.title,
+        description: product.description,
+        benefits: product.benefits(),
       },
     ],
-    basePlans: BASE_PLANS.map(buildBasePlan),
+    basePlans: product.basePlans.map(buildBasePlan),
   }
-  const offer = {
+  const { trial } = product
+  const offer = trial && {
     packageName,
-    productId: PRODUCT_ID,
-    basePlanId: TRIAL.basePlanId,
-    offerId: TRIAL_OFFER_ID,
-    phases: [{ recurrenceCount: 1, duration: TRIAL.duration, regionalConfigs: [{ regionCode: REGION.regionCode, free: {} }] }],
+    productId: product.productId,
+    basePlanId: trial.basePlanId,
+    offerId: trial.offerId,
+    phases: [{ recurrenceCount: 1, duration: trial.duration, regionalConfigs: [{ regionCode: REGION.regionCode, free: {} }] }],
     regionalConfigs: [{ regionCode: REGION.regionCode, newSubscriberAvailability: true }],
     // « N'a jamais eu cet abonnement » : Google ne montre l'essai qu'aux personnes éligibles.
     targeting: { acquisitionRule: { scope: { thisSubscription: {} } } },
@@ -98,15 +131,17 @@ const notFound = (err) => err instanceof PlayApiError && err.status === 404
 
 /**
  * Crée ce qui manque, active les brouillons, relit et rend un résumé :
- * `{ created, addedBasePlans, offerCreated, activated, drift, plans, offerState }`.
+ * `{ productId, created, addedBasePlans, offerCreated, activated, drift, plans, offerState }`
+ * (`offerState` null pour un abonnement sans essai).
  */
-export async function ensureCatalog({ packageName, token, fetchImpl = fetch, sleep, log = () => {} }) {
+export async function ensureCatalog({ packageName, token, product = SILVER, fetchImpl = fetch, sleep, log = () => {} }) {
   const f = withRetry(fetchImpl, sleep ? { sleep } : undefined)
+  const { productId, trial } = product
   const base = `${API}/${packageName}/subscriptions`
-  const sub = `${base}/${PRODUCT_ID}`
+  const sub = `${base}/${productId}`
   const rv = `regionsVersion.version=${encodeURIComponent(REGIONS_VERSION)}`
-  const catalog = buildCatalog(packageName)
-  const result = { created: false, addedBasePlans: [], offerCreated: false, activated: [], drift: [] }
+  const catalog = buildCatalog(packageName, product)
+  const result = { productId, created: false, addedBasePlans: [], offerCreated: false, activated: [], drift: [] }
 
   let remote = null
   try {
@@ -116,8 +151,8 @@ export async function ensureCatalog({ packageName, token, fetchImpl = fetch, sle
   }
 
   if (!remote) {
-    log(`Création de l’abonnement ${PRODUCT_ID}…`)
-    remote = await call(f, 'création de l’abonnement', `${base}?productId=${PRODUCT_ID}&${rv}`, { method: 'POST', token, body: catalog.subscription })
+    log(`Création de l’abonnement ${productId}…`)
+    remote = await call(f, 'création de l’abonnement', `${base}?productId=${productId}&${rv}`, { method: 'POST', token, body: catalog.subscription })
     result.created = true
   } else {
     const have = new Set((remote.basePlans ?? []).map((p) => p.basePlanId))
@@ -131,59 +166,61 @@ export async function ensureCatalog({ packageName, token, fetchImpl = fetch, sle
       })
       result.addedBasePlans = missing.map((p) => p.basePlanId)
     }
-    for (const want of BASE_PLANS) {
+    for (const want of product.basePlans) {
       const got = (remote.basePlans ?? []).find((p) => p.basePlanId === want.basePlanId)
       const fr = got?.regionalConfigs?.find((c) => c.regionCode === REGION.regionCode)
       const expected = formatPrice({ currencyCode: REGION.currencyCode, ...want.price })
       if (fr && formatPrice(fr.price) !== expected) {
-        result.drift.push(`${want.basePlanId} : ${formatPrice(fr.price)} sur Play, ${expected} attendu (non modifié)`)
+        result.drift.push(`${productId}/${want.basePlanId} : ${formatPrice(fr.price)} sur Play, ${expected} attendu (non modifié)`)
       }
     }
   }
 
-  const offerUrl = `${sub}/basePlans/${TRIAL.basePlanId}/offers`
+  const offerUrl = trial && `${sub}/basePlans/${trial.basePlanId}/offers`
   let offer = null
-  try {
-    offer = await call(f, 'lecture de l’offre d’essai', `${offerUrl}/${TRIAL_OFFER_ID}`, { token })
-  } catch (err) {
-    if (!notFound(err)) throw err
-  }
-  if (!offer) {
-    log(`Création de l’offre ${TRIAL_OFFER_ID}…`)
-    offer = await call(f, 'création de l’offre d’essai', `${offerUrl}?offerId=${TRIAL_OFFER_ID}&${rv}`, { method: 'POST', token, body: catalog.offer })
-    result.offerCreated = true
+  if (trial) {
+    try {
+      offer = await call(f, 'lecture de l’offre d’essai', `${offerUrl}/${trial.offerId}`, { token })
+    } catch (err) {
+      if (!notFound(err)) throw err
+    }
+    if (!offer) {
+      log(`Création de l’offre ${trial.offerId}…`)
+      offer = await call(f, 'création de l’offre d’essai', `${offerUrl}?offerId=${trial.offerId}&${rv}`, { method: 'POST', token, body: catalog.offer })
+      result.offerCreated = true
+    }
   }
 
   // Formules et offres naissent en brouillon ; la formule doit être active pour que l'offre serve.
   for (const plan of remote.basePlans ?? []) {
-    if (!BASE_PLANS.some((p) => p.basePlanId === plan.basePlanId) || plan.state === 'ACTIVE') continue
-    log(`Activation de la formule ${plan.basePlanId}…`)
+    if (!product.basePlans.some((p) => p.basePlanId === plan.basePlanId) || plan.state === 'ACTIVE') continue
+    log(`Activation de la formule ${productId}/${plan.basePlanId}…`)
     await call(f, `activation de la formule ${plan.basePlanId}`, `${sub}/basePlans/${plan.basePlanId}:activate`, {
       method: 'POST',
       token,
-      body: { packageName, productId: PRODUCT_ID, basePlanId: plan.basePlanId },
+      body: { packageName, productId, basePlanId: plan.basePlanId },
     })
     result.activated.push(plan.basePlanId)
   }
-  if (offer.state !== 'ACTIVE') {
-    log(`Activation de l’offre ${TRIAL_OFFER_ID}…`)
-    await call(f, 'activation de l’offre d’essai', `${offerUrl}/${TRIAL_OFFER_ID}:activate`, {
+  if (trial && offer.state !== 'ACTIVE') {
+    log(`Activation de l’offre ${trial.offerId}…`)
+    await call(f, 'activation de l’offre d’essai', `${offerUrl}/${trial.offerId}:activate`, {
       method: 'POST',
       token,
-      body: { packageName, productId: PRODUCT_ID, basePlanId: TRIAL.basePlanId, offerId: TRIAL_OFFER_ID },
+      body: { packageName, productId, basePlanId: trial.basePlanId, offerId: trial.offerId },
     })
-    result.activated.push(TRIAL_OFFER_ID)
+    result.activated.push(trial.offerId)
   }
 
   // Relecture : ce que Play a réellement enregistré (sert aussi de sonde aux runs suivants).
   const final = await call(f, 'relecture de l’abonnement', sub, { token })
-  const finalOffer = await call(f, 'relecture de l’offre d’essai', `${offerUrl}/${TRIAL_OFFER_ID}`, { token })
+  const finalOffer = trial ? await call(f, 'relecture de l’offre d’essai', `${offerUrl}/${trial.offerId}`, { token }) : null
   result.plans = (final.basePlans ?? []).map((p) => ({
     basePlanId: p.basePlanId,
     state: p.state ?? '?',
     period: p.autoRenewingBasePlanType?.billingPeriodDuration ?? '?',
     price: formatPrice(p.regionalConfigs?.find((c) => c.regionCode === REGION.regionCode)?.price),
   }))
-  result.offerState = finalOffer.state ?? '?'
+  result.offerState = trial ? (finalOffer.state ?? '?') : null
   return result
 }

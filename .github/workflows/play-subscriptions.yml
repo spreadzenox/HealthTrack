@@ -1,6 +1,6 @@
-# Abonnement Google Play (étape 6d, journal/IDEES.md I158) : `halcya_premium`, formules `annuel` (29,99 €/an) et
-# `mensuel` (4,99 €/mois), grâce + suspension de compte, essai gratuit de 14 jours sur l'annuel
-# (app/scripts/play/subscriptions.mjs). Idempotent : ne crée que ce qui manque, n'active que les brouillons, ne
+# Abonnements Google Play (étape 6d, journal/IDEES.md I158) : Silver `halcya_premium`, formules `annuel` (29,99 €/an)
+# et `mensuel` (4,99 €/mois), essai gratuit de 14 jours sur l'annuel ; Gold `halcya_gold` (GOLD-b3), formule `mensuel`
+# (9,99 €/mois), sans essai ; grâce + suspension de compte (app/scripts/play/subscriptions.mjs). Idempotent : ne crée que ce qui manque, n'active que les brouillons, ne
 # modifie jamais un prix existant. Connexion sans clé (Workload Identity Federation, main uniquement).
 # Refus de Google (accès, profil de paiement pas encore vérifié) → avertissement avec l'erreur exacte, pas d'échec.
 name: Play — abonnements
@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   subscriptions:
-    name: Abonnement halcya_premium
+    name: Abonnements halcya_premium et halcya_gold
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,7 +49,7 @@ jobs:
           access_token_scopes: https://www.googleapis.com/auth/androidpublisher
           create_credentials_file: false
 
-      - name: Créer et activer l'abonnement (Google Play)
+      - name: Créer et activer les abonnements (Google Play)
         working-directory: app
         env:
           PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}

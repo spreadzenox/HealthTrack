@@ -6,6 +6,8 @@
  * (≤ 40 caractères, limite de Google) reprise dans la fiche de l'abonnement sur Play (scripts/play/subscriptions.mjs).
  */
 export const PREMIUM_AI_DAILY = 10
+/** Plafond Gold du relais (relay/src/config.js goldDaily). */
+export const GOLD_AI_DAILY = 20
 
 export const PREMIUM_BENEFITS = [
   {
@@ -44,3 +46,10 @@ export const PREMIUM_BENEFITS = [
 
 export const deliveredBenefits = () => PREMIUM_BENEFITS.filter((b) => b.delivered)
 export const upcomingBenefits = () => PREMIUM_BENEFITS.filter((b) => !b.delivered)
+
+/**
+ * Avantages de Gold pour la fiche Play de `halcya_gold` : ceux de Silver, avec le plafond IA de Gold. Aucune promesse
+ * de précision tant que le banc Nutrition5k ne l'a pas confirmée (décision du 31/10, GOLD-b).
+ */
+export const goldPlayBenefits = () =>
+  deliveredBenefits().map((b) => (b.id === 'ai-meals' ? `Analyse IA des repas, ${GOLD_AI_DAILY} par jour` : b.playLabel))
