@@ -113,7 +113,9 @@ describe('Onboarding (jalon 4b) : Health Connect, import et « aha »', () => {
     renderAt()
     fireEvent.click(await screen.findByRole('button', { name: 'Autoriser Health Connect' }))
     fireEvent.click(await screen.findByRole('button', { name: 'Pas maintenant' }))
-    expect(await screen.findByText(/vous pourrez l’autoriser plus tard/)).toBeInTheDocument()
+    expect(await screen.findByText('Vous pourrez l’autoriser plus tard depuis l’onglet Sources.')).toBeInTheDocument()
+    // SLOP-1b-5 : pas de « Pas de souci » de chatbot devant
+    expect(screen.queryByText(/Pas de souci/)).not.toBeInTheDocument()
     expect(hc.requestPermissions).not.toHaveBeenCalled()
     expect(screen.getByText('04/05')).toBeInTheDocument()
     fireEvent.click(cont())

@@ -86,7 +86,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     expect(trial.runFaceTrial).not.toHaveBeenCalled()
     expect(screen.queryByText('Avant d’autoriser la caméra')).not.toBeInTheDocument()
     expect(loadOnboarding().face).toBe('later')
-    expect(screen.getByText(/depuis l’onglet Sources/)).toBeInTheDocument()
+    expect(screen.getByText('Vous pourrez l’activer plus tard depuis l’onglet Sources.')).toBeInTheDocument()
   })
 
   it('« Essayer maintenant » : divulgation puis lecture d’essai et son estimation', async () => {

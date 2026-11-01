@@ -23,8 +23,8 @@ const WATCHES = [
     label: 'Une montre ou une bague qui écrit dans Health Connect',
     hint: 'Garmin, Oura, Samsung, Withings, Fitbit, Xiaomi…',
   },
-  { id: 'huawei', label: 'Une montre compatible Huawei', hint: 'reliée directement en Bluetooth' },
-  { id: 'none', label: 'Pas de montre', hint: 'le téléphone et vos notes suffisent pour commencer' },
+  { id: 'huawei', label: 'Une montre compatible Huawei', hint: 'reliée en Bluetooth' },
+  { id: 'none', label: 'Pas de montre', hint: 'le téléphone et vos notes suffisent' },
 ]
 
 /**
@@ -153,7 +153,7 @@ function WatchStep({ watch, onWatch }) {
   return (
     <>
       <h1 className="onb-title">Avez-vous une montre ?</h1>
-      <p className="onb-lead">Rien n’est demandé à cette étape : vous choisirez ce que l’app peut lire juste après.</p>
+      <p className="onb-lead">Aucune autorisation pour l’instant. Vous choisirez ensuite ce que l’app peut lire.</p>
       <fieldset className="onb-choices">
         <legend className="onb-sr">Votre montre</legend>
         {WATCHES.map((w) => (
@@ -222,7 +222,7 @@ function HealthStep({ health, onHealth }) {
       {disclosure}
       <h1 className="onb-title">Vos données Health Connect</h1>
       <p className="onb-lead">
-        Sommeil, pas, cœur, VFC et activité de vos 30 derniers jours, lus sur le téléphone. Rien n’est envoyé.
+        L’app lit sur le téléphone vos 30 derniers jours de sommeil, de pas et de cœur. Rien n’est envoyé.
       </p>
       {health === 'granted' && (
         <p className="onb-note onb-note-ok" role="status">
@@ -231,13 +231,12 @@ function HealthStep({ health, onHealth }) {
       )}
       {health === 'declined' && (
         <p className="onb-note" role="status">
-          Pas de souci : vous pourrez l’autoriser plus tard depuis l’onglet Sources.
+          Vous pourrez l’autoriser plus tard depuis l’onglet Sources.
         </p>
       )}
       {health === 'unavailable' && (
         <p className="onb-note" role="status">
-          Health Connect n’est pas disponible sur ce téléphone pour l’instant. Vous pourrez le relier plus tard depuis
-          l’onglet Sources.
+          Health Connect n’est pas disponible sur ce téléphone. Vous pourrez le relier plus tard depuis l’onglet Sources.
         </p>
       )}
       {health !== 'granted' && health !== 'unavailable' && (
@@ -320,7 +319,7 @@ function AhaStep({ imported, onImported, onReady }) {
         </p>
         {slow && (
           <p className="onb-note" role="status">
-            C’est un peu long : vous pouvez continuer, l’import se poursuit en arrière-plan.
+            Vous pouvez continuer : l’import se poursuit en arrière-plan.
           </p>
         )}
       </>
@@ -345,13 +344,13 @@ function AhaStep({ imported, onImported, onReady }) {
             ))}
           </ul>
           {sharedSource && <p className="onb-facts-source">D’après {sharedSource}</p>}
-          <p className="onb-lead">Ce sont vos chiffres de départ. Les pistes viendront en les croisant avec votre ventre et votre bien-être.</p>
+          <p className="onb-lead">Vos chiffres de départ. L’app les comparera à votre ventre et à votre bien-être.</p>
         </>
       ) : (
         <p className="onb-note" role="status">
           {error
-            ? 'L’import n’a pas abouti. Il sera retenté tout seul ; vous pourrez aussi le relancer depuis l’onglet Sources.'
-            : 'Rien à importer pour l’instant : vos données arriveront au fil des jours.'}
+            ? 'L’import n’a pas abouti. L’app réessaiera seule, ou relancez-le depuis l’onglet Sources.'
+            : 'Rien à importer pour l’instant. Les données arriveront au fil des jours.'}
         </p>
       )}
     </>
@@ -448,9 +447,9 @@ function FaceStep({ face, onFace, onPitch, onLater }) {
       <h1 className="onb-title">Votre bien-être, estimé tout seul</h1>
       {unlockOffered && <UnlockBenefit />}
       <ul className="onb-face-lines">
-        <li>Facultatif : la caméra frontale regarde votre expression une à deux secondes, {shownWhen}.</li>
-        <li>Une IA l’analyse sur le téléphone. Seuls quelques nombres sont gardés, aucune image.</li>
-        {unlockOffered && <li>Une notification reste affichée tant que c’est en marche, avec « Arrêter ».</li>}
+        <li>La caméra frontale regarde votre visage une à deux secondes, {shownWhen}.</li>
+        <li>Une IA l’analyse sur le téléphone et ne garde que des scores, aucune image.</li>
+        {unlockOffered && <li>Une notification avec « Arrêter » reste affichée tant que c’est en marche.</li>}
         <li>Le résultat est une estimation. Il ne remplace pas l’avis d’un médecin.</li>
       </ul>
       {busy && (
@@ -462,12 +461,12 @@ function FaceStep({ face, onFace, onPitch, onLater }) {
         <p className="onb-note onb-note-ok" role="status">
           Lecture faite : {estimate.label}, ≈ <span className="mono">{fmt1(estimate.note)} / 5</span> (entre{' '}
           <span className="mono">{fmt1(estimate.low)}</span> et <span className="mono">{fmt1(estimate.high)}</span>). Cet
-          essai ne compte pas ; les lectures suivantes se feront {shownWhen}.
+          essai ne compte pas. Les prochaines lectures se feront {shownWhen}.
         </p>
       )}
       {!busy && face === 'on' && !estimate && (
         <p className="onb-note onb-note-ok" role="status">
-          C’est activé. Aucun visage n’a été lu cette fois ; les prochaines lectures se feront {shownWhen}.
+          C’est activé. Aucun visage lu cette fois. Les prochaines lectures se feront {shownWhen}.
         </p>
       )}
       {already && (
@@ -477,7 +476,7 @@ function FaceStep({ face, onFace, onPitch, onLater }) {
       )}
       {face === 'denied' && (
         <p className="onb-note" role="status">
-          Accès à la caméra refusé : rien n’est activé. Vous pourrez le faire plus tard depuis l’onglet Sources.
+          Accès à la caméra refusé : rien n’est activé. Vous pourrez revenir dessus depuis l’onglet Sources.
         </p>
       )}
       {face === 'failed' && (
@@ -487,7 +486,7 @@ function FaceStep({ face, onFace, onPitch, onLater }) {
       )}
       {face === 'later' && (
         <p className="onb-note" role="status">
-          Pas de souci : vous pourrez l’activer quand vous voulez depuis l’onglet Sources.
+          Vous pourrez l’activer plus tard depuis l’onglet Sources.
         </p>
       )}
       {face !== 'on' && !already && unlockOffered && (
@@ -591,16 +590,16 @@ function GestureStep({ goal, gesture, onGesture }) {
       {current && (
         <p className="onb-note onb-note-ok" role="status">
           {gut
-            ? `C’est noté, à ${time} : c’est votre premier jour de suivi. Les pistes arrivent vers le 21ᵉ.`
+            ? `C’est noté, à ${time}. C’est votre premier jour de suivi ; les premières pistes viennent vers le 21ᵉ.`
             : `C’est noté, à ${time}. Vous la retrouverez dans le Journal.`}
         </p>
       )}
       {error && (
         <p className="onb-note" role="alert">
-          L’enregistrement n’a pas abouti. Réessayez, ou continuez : vous pourrez le faire depuis Aujourd’hui.
+          L’enregistrement n’a pas abouti. Réessayez, ou notez-le plus tard depuis Aujourd’hui.
         </p>
       )}
-      {!current && !error && <p className="onb-fine">Facultatif : vous pouvez aussi continuer sans répondre.</p>}
+      {!current && !error && <p className="onb-fine">Vous pouvez aussi continuer sans répondre.</p>}
     </>
   )
 }

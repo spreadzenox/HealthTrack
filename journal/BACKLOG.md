@@ -68,7 +68,10 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     de 4 écrans (dit une fois en tête de Sources) ; règles « jamais chez Halcya » et « Astuce : ».
   - [x] **SLOP-1b-4** (01/11 06:33) Paramètres (IA sans « Gemini » en play, carte ventre, abonnement gratuit, avis),
     divulgation `ai_meal` sans nom de modèle, Données (intro, export, import, PDF, suppression). Captures `slop-1b-4/`.
-  - [ ] **SLOP-1b** (suite : détails dépliés des Analyses, réintroduction, onboarding complet ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
+  - [x] **SLOP-1b-5** (01/11 07:33) Onboarding complet : sous-titres des objectifs et des suivis sans énumération par
+    trois, écran montre, Health Connect, import et « aha », lecture du visage, premier geste ; « Pas de souci : »
+    retiré (2 écrans) et banni par `SLOP_WORDING`. Divulgations de permission inchangées (conformité). Captures `slop-1b-5/`.
+  - [ ] **SLOP-1b** (suite : détails dépliés des Analyses, réintroduction ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
     Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.
