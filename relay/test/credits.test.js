@@ -209,3 +209,16 @@ test('nouvelle installation : un premier crédit rendu (analyse sans coût) rest
   cr.refund('a', { premium: false })
   assert.equal(cr.take('a', { premium: false }).firstUse, true)
 })
+
+test('Gold : 20 analyses par jour (Silver : 10), même compteur du jour', () => {
+  const c = clock(T0)
+  const cr = createCredits({ ...opts(c), goldDaily: 20 })
+  assert.deepEqual([cr.peek('g', { premium: true, tier: 'gold' }).daily, cr.peek('g', { premium: true, tier: 'gold' }).tier], [20, 'gold'])
+  assert.deepEqual([cr.peek('s', { premium: true }).daily, cr.peek('s', { premium: true }).tier], [10, 'silver'])
+  for (let i = 0; i < 20; i += 1) assert.equal(cr.take('g', { premium: true, tier: 'gold' }).ok, true)
+  assert.equal(cr.take('g', { premium: true, tier: 'gold' }).scope, 'premium_day')
+  // Redescendu en Silver le même jour : déjà au-delà de 10, rien de plus
+  assert.equal(cr.take('g', { premium: true, tier: 'silver' }).ok, false)
+  // Gratuit inchangé
+  assert.equal(cr.peek('g', { premium: false }).remaining, 25)
+})

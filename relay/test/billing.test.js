@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
 import {
   accountIdFor, createBillingRoutes, createPlayClient, createPushVerifier, entitlementFrom, hashToken, PlayApiError,
-  isLaunchPeriod, purchaseTokenFrom, verifyResponse,
+  isLaunchPeriod, purchaseTokenFrom, verifyResponse, GOLD_PRODUCT_ID, SILVER_PRODUCT_ID,
 } from '../src/billing.js'
 import { loadConfig, readLaunchPeriod } from '../src/config.js'
 import { createHandler } from '../src/server.js'
@@ -313,4 +313,16 @@ test('période de lancement : fichier du dépôt lisible, dates cohérentes ; va
     { from: '', until: '2026-12-01T00:00:00Z', off: true },
   )
   assert.deepEqual(readLaunchPeriod('/nulle/part.json'), { from: '', until: '', off: false })
+})
+
+test('niveau : halcya_gold → Gold, halcya_premium → Silver ; période de lancement → Gold pour tous', () => {
+  const gold = entitlementFrom(sub({}, { productId: GOLD_PRODUCT_ID }), NOW)
+  const silver = entitlementFrom(sub({}, { productId: SILVER_PRODUCT_ID }), NOW)
+  assert.deepEqual([gold.tier, silver.tier], ['gold', 'silver'])
+  assert.equal(entitlementFrom(sub({ subscriptionState: 'SUBSCRIPTION_STATE_EXPIRED' }, { productId: GOLD_PRODUCT_ID }), NOW).tier, null)
+  assert.equal(verifyResponse({ ent: gold, launchUntil: null }).tier, 'gold')
+  assert.equal(verifyResponse({ ent: silver, launchUntil: null }).tier, 'silver')
+  assert.equal(verifyResponse({ ent: silver, launchUntil: '2026-12-01T00:00:00.000Z' }).tier, 'gold')
+  assert.equal(verifyResponse({ ent: null, launchUntil: '2026-12-01T00:00:00.000Z' }).tier, 'gold')
+  assert.equal(verifyResponse({ ent: null, launchUntil: null }).tier, null)
 })

@@ -71,6 +71,8 @@ export function loadConfig(env = process.env) {
     creditsWelcome: int(env.CREDITS_WELCOME, 10),
     creditsMonthly: int(env.CREDITS_MONTHLY, 15),
     premiumDaily: int(env.PREMIUM_DAILY_CAP, 10),
+    // Gold (31/10) : 20 analyses par jour et par abonné (Silver : 10)
+    goldDaily: int(env.GOLD_PREMIUM_DAILY_CAP, 20),
     // Registre durable des crédits (P24) : firestore | memory (tests, développement)
     creditsStore: env.CREDITS_STORE || 'firestore',
     // Abonnements Google Play (jalon 6b)
