@@ -446,7 +446,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       }
 
       const { parsed, model, location, eur, served } = await generate(request, tier)
-      log({ event: 'analyze', kind, model, location, tier, served, eur: Number(eur.toFixed(5)), status: 200, ms: now() - started, install: hashInstallId(installId) })
+      log({ event: 'analyze', kind, model, location, tier, served, eur: Number(eur.toFixed(5)), status: 200, ms: now() - started, install: hashInstallId(installId), ...(installId.startsWith('ci-smoke-') ? { ci: true } : {}) })
       // Nouvelle installation qui prend son premier crédit (CREDITS-INSTALLS) : compté par jour, sans identifiant ;
       // l'analyse de test du workflow (« ci-smoke-<run> », une installation neuve à chaque fois) n'est pas comptée
       if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan, ...(testDevice ? { testlab: true } : {}) })

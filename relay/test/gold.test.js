@@ -156,3 +156,12 @@ test('abonnement Silver : 10 analyses par jour', async () => {
   }, { times: 11 })
   assert.deepEqual([statuses.filter((s) => s === 200).length, statuses.at(-1)], [10, 429])
 })
+
+test('GOLD-a2 : l’analyse de test du workflow (ci-smoke-…) est marquée ci, les vraies installations non', async () => {
+  const run = (install) => analyze({ vertex: fakeVertex('gemini-3.5-flash-lite'), costs: createCostLedger(), billing: billingFor({ premium: false, source: null }) }, { install })
+  const { logs } = await run('ci-smoke-41324122596')
+  const smoke = logs.find((e) => e.event === 'analyze')
+  assert.equal(smoke.ci, true)
+  const real = (await run(INSTALL)).logs.find((e) => e.event === 'analyze')
+  assert.equal('ci' in real, false)
+})
