@@ -9,6 +9,44 @@
 
 ---
 
+## Run du 01/11/2026 20:33 (Paris) — audit en captures de la variante play vierge, et de l'iPhone d'après le code
+
+Captures relues : `npm run visual -- --play --empty` (clair, toutes les pages) puis `--subscription=launch --dark`
+(Accueil, abonnement, Paramètres, Repas, Analyses, historique du bien-être, onboarding). Aucune erreur JS, aucun
+débordement. Rien de cassé sur Android ; deux défauts, dont un qui toucherait l'iPhone.
+
+### I206 (20) — iPhone : le paywall promettrait un rappel de fin d'essai qui ne viendrait jamais [V code]
+- **Constat** : `trialReminderAvailable()` (`services/trialReminder.js`) rend vrai dès que `FEATURES.billing` et la
+  plateforme native sont là. `registerPlugin('TrialReminder')` rend un objet toujours « vrai », même si l'app iPhone
+  n'a pas ce plugin. Sur iPhone, la page d'abonnement afficherait donc « jour 12 : On vous prévient par une
+  notification » et « Rappel 2 jours avant la fin de l'essai. », alors que `trialReminderPlan` ne programme rien
+  hors `source: 'play'` (et le texte de la notification nomme Google Play). Promesse fausse sur un écran de paiement :
+  risque de refus à l'examen d'Apple (règle 3.1.2 : conditions de l'abonnement exactes) et de plainte.
+- **Correctif proposé (I6-RELAIS-7, un run)** : promettre le rappel seulement si le magasin de la version est Google
+  Play (`STORE.id === 'play'`) et que le plugin est réellement présent (`Capacitor.isPluginAvailable('TrialReminder')`).
+  Sur l'App Store, frise sans la ligne « jour 12 » et mention « Apple vous prévient avant la fin de l'essai » si l'on
+  veut dire quelque chose (Apple envoie un e-mail avant le renouvellement d'un essai). Test : `VITE_STORE=appstore` →
+  ni « On vous prévient », ni « Rappel 2 jours » ; Android inchangé (capture `--play --routes=/premium`).
+- **Impact 5 × faisabilité 4 = 20**.
+
+### I207 (12) — Paywall : « 10 analyses IA par jour » écrit en police mono [V capture premium-1]
+- **Constat** : les deux tuiles Silver / Gold (`.paywall-tier-note`) mettent toute la phrase en IBM Plex Mono, qui
+  passe sur deux lignes à 412 px (« 10 analyses IA par / jour »). La charte réserve la mono aux chiffres et aux
+  étiquettes, jamais aux phrases.
+- **Correctif proposé (POL-PLAY-93)** : chiffre en mono gras, reste en Figtree (« **10** analyses IA par jour »), ou
+  « 10 / jour » en mono. Capture `--play --routes=/premium`, clair et sombre.
+- **Impact 3 × faisabilité 4 = 12**.
+
+### Vu et conforme (rien à faire)
+- Période de lancement : page d'abonnement « Gold offert pendant le test », aucune formule ni bouton d'achat, date de
+  fin affichée ; Paramètres sans achat proposé.
+- Accueil vierge : carte bien-être avec « L'activer dans Sources » et « Noter moi-même », carte ventre visible tant
+  qu'aucun objectif n'est choisi (texte du réglage cohérent), « Photo du repas » avec l'icône appareil photo.
+- Analyses vierge : une seule carte d'attente (0/21) et la réintroduction ; aucun bloc vide en grand.
+- Onboarding 01/07, sombre : contrastes lisibles, mention 18 ans.
+
+---
+
 ## Run du 01/11/2026 08:33 (Paris) — textes restants (Analyses dépliées, réintroduction, paywall) et offre Gold
 
 ### I204 (20) — Analyses, réintroduction, paywall : inventaire des textes restants et réécritures proposées [V captures]

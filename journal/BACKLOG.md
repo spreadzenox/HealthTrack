@@ -1424,6 +1424,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
     **À faire côté routine iOS** : construire avec `VITE_STORE=appstore` ; le plugin StoreKit doit rendre les
     `products` sous les identifiants `halcya_premium` / `halcya_gold` (ou adapter `OWN_PRODUCTS`) pour que le garde
     « déjà Gold » marche ; le rappel de fin d'essai reste réservé aux achats Play (Apple envoie le sien).
+  - [ ] **I6-RELAIS-7** (trouvé le 01/11 20:33, IDEES I206 ; prochain run de code) Sur l'App Store, la page
+    d'abonnement promettrait « jour 12 : On vous prévient par une notification » et « Rappel 2 jours avant la fin de
+    l'essai » (`trialReminderAvailable()` vrai dès que le build est natif avec `FEATURES.billing`, plugin absent ou
+    non), alors que le rappel n'est programmé que pour `source: 'play'`. Ne promettre le rappel que si
+    `STORE.id === 'play'` et `Capacitor.isPluginAvailable('TrialReminder')` ; test `VITE_STORE=appstore` ; Android
+    inchangé. À signaler à la routine iOS une fois livré.
   - [ ] **I6-RELAIS-5** (plus tard) App Attest ; d'ici là exemption iOS (`X-Platform: ios` / `no_plugin`) inchangée.
   - Question ouverte : la période de lancement (Gold pour toute installation sans jeton) vaut aussi pour l'iPhone
     aujourd'hui, puisque le relais ne distingue pas la plateforme sur `/v1/subscription/verify` ; à confirmer avec la
@@ -1687,5 +1693,6 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   Historique du bien-être en démo sombre vue Mois.
 - [x] **POL-PLAY-91 (I202) — « Quand consulter » : antécédents familiaux.** Ajouter à `WHEN_TO_SEE_DOCTOR` un proche (parent, frère, sœur) avec un cancer du côlon ou une MICI ; texte statique, mêmes trois endroits ; tests `TodayCards`, `buildReport`, `renderPdf` adaptés. Sources : FMC-HGE POST'U 2022 (ACG 2020), VIDAL Recos 2022. **Livré 31/10 21:33** (`today.js`, test `TodayCards.test.jsx`).
 - [x] **POL-PLAY-92 (I203) — Réintroduction : après l'éviction.** Une ligne statique en tête de `Reintroduction.jsx` : « À faire après 2 à 6 semaines de repas pauvres en FODMAP, si votre ventre va mieux. » Ne bloque rien, ne compte rien ; 1 test. **Livré 31/10 21:33** (`.fodmap-when`, pêche, dans `ChooseGroup`).
+- [ ] **POL-PLAY-93 (I207) — Paywall : phrase des tuiles Silver / Gold en mono.** `.paywall-tier-note` met « 10 analyses IA par jour » en IBM Plex Mono (deux lignes à 412 px) : chiffre en mono, reste en Figtree. Capture `--play --routes=/premium`, clair et sombre. Trouvé le 01/11 20:33.
 - [x] **CI-JUNIT** (31/10 01:33) « Protocole montre (Java) » rouge sur main après #539 : 404 passager de Maven Central sur
   le jar JUnit ; `java-protocol-test.sh` réessaie (`--retry 4 --retry-all-errors`) et s'arrête net sinon.
