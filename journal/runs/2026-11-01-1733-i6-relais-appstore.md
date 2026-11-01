@@ -39,6 +39,11 @@
   clé ni vraie transaction dans le dépôt.
 - App : aucun fichier touché (pas de capture, pas de note de Nouveautés) ; checks CI de la PR.
 
+## Après le merge
+- PR #605 mergée (`6a24a54`), checks verts (Frontend, Relais, Build APK, Java, perf). « Build & Release » : **v433**
+  (APK 34 524 870 o). « Relais — déploiement » : succès (vérificateur App Store actif en production).
+- En local avant merge : `npm run test` (2 839 verts), `npm run build`, `npm run visual` (aucune erreur JS, Accueil relu).
+
 ## Demandes iOS
 - I6-RELAIS (1) et (2) faits. `accountMatch` rapporté sans bloquer, comme pour Play (une réinstallation change
   l'identifiant d'installation ; la restauration doit rester possible). Question notée au BACKLOG : la période de
