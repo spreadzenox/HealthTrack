@@ -133,3 +133,16 @@ Après le build signé, « Play — AAB » demande un **jeton à portée `androi
 | Niveaux (31/10 22:33) | **Gold** = `gemini-3.8-flash` en zone `eu` seulement (`GOLD_MODELS`, `GOLD_LOCATIONS`), `thinkingLevel` MEDIUM, délai 25 s (`GOLD_TIMEOUT_MS`), puis Flash-Lite en secours ; **Silver** (abonnement actuel) et **gratuit** = Flash-Lite (délai 30 s, `VERTEX_TIMEOUT_MS` : Gold + secours < 60 s de Cloud Run). Gold = premium par la période de lancement (`source: launch`) ou empreinte listée dans `GOLD_INSTALLS` (Gold du propriétaire après la période) |
 | Coût du mois | `src/costs.js` : jetons de chaque appel (`event: usage` : `input`, `cached`, `thinking`, `output`, `eur` ; jamais le contenu) ; cumul en micro-euros, mémoire + Firestore `relay-costs/AAAA-MM` (champ `micro`, incrément serveur, même base que les crédits, offre gratuite) ; Gold coupé au-delà de **15 €** (`GOLD_MONTHLY_EUR`), toute analyse refusée (429 « global ») au-delà de **19 €** (`STOP_MONTHLY_EUR`). Grille de prix prudente en €/M jetons (`DEFAULT_PRICES`, remplaçable par `MODEL_PRICES` en JSON) : 3.8 Flash 0,75 / 0,075 (cache) / 4,5 (sortie et réflexion) ; Flash-Lite 0,25 / 0,025 / 1,5 ; modèle inconnu = prix le plus élevé. **Prix ×2 au 1/1/2027** : relever la grille (GOLD-a4) |
 | Plafonds recalculés (31/10) | `GOLD_DAILY_CAP=40` (au-delà, Flash-Lite ; ≤ 1,72 €/jour au pire à 4,3 c) ; `GLOBAL_DAILY_CAP` 200 → **150** (pire jour ≈ 40 × 4,3 c + 110 × 1 c ≈ 2,8 €) ; le seuil mensuel de 19 € borne le mois sous le budget de 20 € |
+
+## Banc Silver / Gold (GOLD-b5, 01/11 16:33)
+- Workflow `.github/workflows/bench-gold.yml`, **workflow_dispatch sur main seulement** (chaque banc coûte 1 à 2 €).
+- La CI obtient un **jeton OIDC** de gh-deployer (`google-github-actions/auth`, `token_format: id_token`, audience
+  `https://halcya-relay-81378799481.europe-west1.run.app/v1/bench/analyze`, e-mail inclus). Le relais le vérifie par
+  tokeninfo (`createPushVerifier`, comme le push RTDN) : seul `BENCH_SERVICE_ACCOUNT` (par défaut gh-deployer) peut
+  imposer le niveau Silver ou Gold d'une analyse. Droit utilisé : `iam.serviceAccounts.getOpenIdToken`, compris dans
+  `roles/iam.workloadIdentityUser` déjà accordé au pool GitHub. Si la génération du jeton échoue (403), action du
+  propriétaire : `gcloud iam service-accounts add-iam-policy-binding gh-deployer@healthtrack-824b26.iam.gserviceaccount.com --role=roles/iam.serviceAccountOpenIdTokenCreator --member="principalSet://iam.googleapis.com/projects/81378799481/locations/global/workloadIdentityPools/github/attribute.repository/spreadzenox/HealthTrack" --project=healthtrack-824b26`
+  (vérifier d'abord le format exact du `member` dans la politique existante de gh-deployer).
+- Plafonds : chaque plat a son « identifiant d'installation » `bench-<dish>` ; le banc compte dans le plafond global du
+  jour (150), par minute (10 ; le script attend 7 s entre deux appels), Gold du jour (40) et budget du mois (15 € /
+  19 €). Rien n'est contourné. Photos Nutrition5k dans un dossier temporaire, effacé ; artefact = chiffres seulement.

@@ -79,6 +79,8 @@ export function loadConfig(env = process.env) {
     packageName: env.PLAY_PACKAGE || 'fr.jpesquet.sante',
     publicUrl: env.PUBLIC_URL || 'https://halcya-relay-81378799481.europe-west1.run.app',
     rtdnServiceAccount: env.RTDN_SERVICE_ACCOUNT || 'relay-runtime@healthtrack-824b26.iam.gserviceaccount.com',
+    // Banc Silver / Gold (GOLD-b5) : seul ce compte (la CI, jeton OIDC) peut choisir le niveau d'une analyse
+    benchServiceAccount: env.BENCH_SERVICE_ACCOUNT || 'gh-deployer@healthtrack-824b26.iam.gserviceaccount.com',
     // « Période de lancement » (P23) : toute installation play est premium de `from` à `until` ; vide = aucune
     launchPremium: launchFrom(env),
     // Play Integrity (jalon 6b-2) : off | observe (vérifie et journalise) | enforce (bloque l'analyse sans verdict)

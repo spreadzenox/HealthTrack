@@ -1,0 +1,76 @@
+# Banc Silver / Gold sur Nutrition5k (GOLD-b5, décision du propriétaire du 31/10 vers 22:45).
+#
+# Lancé à la main (workflow_dispatch sur main) : ~40 assiettes pesées du jeu public Nutrition5k (Google Research,
+# CC BY 4.0), photos téléchargées pendant le banc dans un dossier temporaire, jamais commitées ni gardées en artefact.
+# Chaque photo est analysée par le relais déployé en Silver puis en Gold (route /v1/bench/analyze, jeton OIDC de
+# gh-deployer : personne d'autre ne peut choisir le niveau). Le banc passe par les plafonds habituels du relais
+# (jour, minute, Gold du jour, budget du mois) : rien n'est contourné. Coût attendu : 1 à 2 € (40 analyses Gold).
+# Le verdict (app/scripts/bench/nutrition5k.mjs) dit si la promesse « Gold fait moins d'erreurs » est confirmée, et
+# avec quel chiffre prudent ; seuls les chiffres sont gardés (artefact bench-gold, 90 jours).
+name: Banc Silver / Gold (Nutrition5k)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dishes:
+        description: "Nombre d'assiettes (40 par défaut ; au plus 40, le plafond Gold du jour)"
+        required: false
+        default: "40"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: bench-gold
+  cancel-in-progress: false
+
+env:
+  RELAY_URL: https://halcya-relay-81378799481.europe-west1.run.app
+
+jobs:
+  bench:
+    name: Banc Nutrition5k
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Jeton OIDC de la CI pour le relais (sans clé)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: id_token
+          id_token_audience: https://halcya-relay-81378799481.europe-west1.run.app/v1/bench/analyze
+          id_token_include_email: true
+
+      - name: Lancer le banc
+        env:
+          BENCH_ID_TOKEN: ${{ steps.auth.outputs.id_token }}
+          DISHES: ${{ inputs.dishes }}
+        run: |
+          set -euo pipefail
+          n="${DISHES:-40}"
+          if ! [[ "$n" =~ ^[0-9]+$ ]] || [ "$n" -lt 1 ] || [ "$n" -gt 40 ]; then n=40; fi
+          command -v convert >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q imagemagick)
+          cd app
+          node scripts/bench/nutrition5k-cli.mjs --relay="$RELAY_URL" --dishes="$n" --out="$RUNNER_TEMP/bench"
+          cat "$RUNNER_TEMP/bench/report.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Garder les chiffres (aucune image)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-gold
+          path: ${{ runner.temp }}/bench/
+          retention-days: 90
+          if-no-files-found: ignore

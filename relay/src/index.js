@@ -63,6 +63,7 @@ const handler = createHandler({
     log,
   }),
   billingQuota: createQuota({ installPerDay: config.verifyPerDay, globalPerDay: config.verifyGlobalPerDay, globalPerMinute: config.verifyPerMinute }),
+  benchAuth: createPushVerifier({ audience: `${config.publicUrl}/v1/bench/analyze`, serviceAccount: config.benchServiceAccount }),
   allowedOrigins: config.allowedOrigins,
   log,
 })

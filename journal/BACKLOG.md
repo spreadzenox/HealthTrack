@@ -74,6 +74,19 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     deux abonnements. Passer l'ancien jeton + `CHARGE_PRORATED_PRICE` pour monter, `DEFERRED` pour descendre ; le
     relais déduit le niveau du `productId` actif (ignorer le jeton remplacé via `linkedPurchaseToken`). Tests sur faux
     plugin, puis P27-bis au testeur de licence.
+  - [x] **GOLD-b5 — banc Nutrition5k en CI** (01/11 16:33) : route relais `/v1/bench/analyze` (jeton OIDC de
+    gh-deployer vérifié par tokeninfo, niveau imposé, plafonds global / minute / Gold du jour / budget du mois
+    inchangés, `served` dit si Gold a vraiment répondu) ; `app/scripts/bench/nutrition5k.mjs` (assiettes de 2 à 8
+    ingrédients et 80 à 900 g dans un ordre fixe, erreurs masse / kcal / macros avec la table Ciqual de l'app,
+    bootstrap apparié, verdict sur masse ET kcal, chiffre = borne basse arrondie à 5 % en dessous, rien sous 10 % ou
+    sous 30 paires) ; workflow manuel `bench-gold.yml` (artefact = chiffres seulement).
+  - [ ] **GOLD-b6 — lancer le banc et décider la promesse** : après le déploiement du relais de GOLD-b5, déclencher
+    « Banc Silver / Gold (Nutrition5k) » sur main (de préférence le soir, il prend les 40 Gold du jour), lire
+    l'artefact ; confirmé → afficher la promesse (paywall, fiche Gold, avec le chiffre s'il y en a un) ; sinon →
+    prévenir le propriétaire en tête du résumé. Si l'ID token est refusé (droit `getOpenIdToken` manquant pour
+    gh-deployer) : action du propriétaire avec la commande gcloud exacte.
+  - [ ] **GOLD-b7 (facultatif)** — mesure de la reconnaissance seule : correspondance noms Nutrition5k (anglais) →
+    groupes d'aliments, rappel pondéré par la masse ; seulement si la promesse doit nommer la reconnaissance à part.
 - [ ] **GOLD-c** (plus tard) Cache explicite de la partie fixe (consignes + liste d'ingrédients, aucune donnée
   d'utilisateur), TTL glissant de 30 min, créé seulement si une autre analyse a eu lieu dans les 30 min ; rentable
   vers 10 utilisateurs actifs ; en cas d'erreur, appel normal.
