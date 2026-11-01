@@ -67,6 +67,7 @@ describe('formules « slop IA » (SLOP-1)', () => {
     expect(slopOffences('Un module intégré — il n’est pas dans le Play Store.')).not.toEqual([])
     expect(slopOffences('✨ Remplir avec l’IA')).not.toEqual([])
     expect(slopOffences('Elle complète le bien-être estimé, sans jamais le remplacer.')).not.toEqual([])
+    expect(slopOffences('Android l’a mise en pause (mise à jour, redémarrage ou économie de batterie).')).not.toEqual([])
     expect(slopOffences('{value ?? \'—\'} bpm')).toEqual([])
     expect(slopOffences('Une corrélation ne prouve pas une cause.')).toEqual([])
     expect(slopOffences('Le résultat est une estimation. Il ne remplace pas l’avis d’un médecin.')).toEqual([])
@@ -79,6 +80,40 @@ describe('formules « slop IA » (SLOP-1)', () => {
         const why = slopOffences(stripComments(fs.readFileSync(file, 'utf8')).join('\n'))
         if (why.length) found.push(`${path.relative(path.resolve(), file)} (${why.join(' ; ')})`)
       }
+    }
+    expect(found).toEqual([])
+  })
+})
+
+/**
+ * SLOP-1c (01/11/2026) : notifications et textes natifs Android (canaux, boutons, messages). Les chaînes Java
+ * coupées par « " + " » sont recollées avant d'appliquer les mêmes règles que pour l'app.
+ */
+export function javaText(code) {
+  return stripComments(code).join('\n').replace(/"\s*\+\s*"/g, '')
+}
+
+function javaFiles(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
+    const p = path.join(dir, d.name)
+    if (d.isDirectory()) return /^(build|test|androidTest)$/.test(d.name) ? [] : javaFiles(p)
+    return /\.(java|kt)$/.test(d.name) ? [p] : []
+  })
+}
+
+describe('notifications et textes natifs Android (SLOP-1c)', () => {
+  it('recolle une phrase coupée par une concaténation Java', () => {
+    expect(javaText('.bigText("Android a mis la lecture en"\n + " pause (mise à jour, redémarrage ou économie de batterie).")'))
+      .toContain('en pause (mise à jour')
+    expect(slopOffences(javaText('.setContentText("Une estimation, " + "pas un diagnostic.")'))).not.toEqual([])
+  })
+
+  it('aucune formule bannie ni terme interdit dans le code natif', () => {
+    const found = []
+    for (const file of javaFiles(path.resolve('android/app/src'))) {
+      const text = javaText(fs.readFileSync(file, 'utf8'))
+      const why = [...slopOffences(text), ...slopOffences(text, FORBIDDEN_WORDING)]
+      if (why.length) found.push(`${path.relative(path.resolve(), file)} (${why.join(' ; ')})`)
     }
     expect(found).toEqual([])
   })

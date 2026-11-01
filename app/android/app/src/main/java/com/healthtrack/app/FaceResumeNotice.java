@@ -60,7 +60,7 @@ final class FaceResumeNotice {
                     .setContentTitle("Lecture du visage arrêtée")
                     .setContentText("Android l'a mise en pause. Touchez « Reprendre » pour la relancer.")
                     .setStyle(new NotificationCompat.BigTextStyle().bigText("Android a mis la lecture du visage en"
-                            + " pause (mise à jour, redémarrage ou économie de batterie). Touchez « Reprendre » : "
+                            + " pause, souvent pour économiser la batterie. Touchez « Reprendre » : "
                             + context.getString(R.string.app_name) + " s'ouvre et la relance."))
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setOnlyAlertOnce(true)

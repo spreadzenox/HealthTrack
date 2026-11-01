@@ -55,7 +55,7 @@ describe('FaceSenseCard', () => {
     const plugin = fake({ ...base, enabled: false, running: false, mode: 'app_open', unlockAvailable: true, unlock: false })
     render(<FaceSenseCard plugin={plugin} appOpen importBursts={async () => {}} loadHistory={async () => null} loadEveningNote={async () => null} />)
     expect(await screen.findByText(new RegExp(`quand vous ouvrez ${APP_NAME} et, si vous le voulez, à chaque déverrouillage`))).toBeInTheDocument()
-    expect(screen.getByText(/Si vous ajoutez le déverrouillage/)).toBeInTheDocument()
+    expect(screen.getByText(/Au déverrouillage, si vous l’ajoutez : 3 images/)).toBeInTheDocument()
   })
 
   it('variante play : divulgation « à l’ouverture », première lecture tout de suite, ni batterie ni Samsung', async () => {

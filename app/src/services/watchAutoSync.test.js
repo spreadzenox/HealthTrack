@@ -341,7 +341,7 @@ describe('données restaurées par la sauvegarde Android (SAUV, clé de la montr
     expect(describeWatchStatus(state, { now: T0 + 2000, formatAgo })).toEqual({
       tone: 'warn',
       title: 'À reconnecter',
-      text: 'Vos données sont revenues sur ce téléphone, pas la clé de la montre (elle ne quitte jamais un téléphone). Touchez « Reconnecter ma montre ».',
+      text: 'Vos données sont restaurées. La clé de la montre n’est jamais sauvegardée : touchez « Reconnecter ma montre ».',
     })
   })
   it('aucune montre jamais connectée : rien n’est écrit', () => {

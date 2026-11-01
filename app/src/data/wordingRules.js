@@ -41,5 +41,7 @@ export const SLOP_WORDING = [
   { re: /[\p{L}.)»] — [\p{L}«(]/u, why: 'tiret cadratin dans une phrase : point, deux-points ou virgule' },
   { re: /[✨🔒🎙🚀🎉💡👉]/u, why: 'emoji décoratif' },
   { re: /sans jamais (le|la|les) remplacer|c[’']est idéal/i, why: 'formule toute faite' },
+  // SLOP-1c (01/11) : énumération par trois entre parenthèses (« (mise à jour, redémarrage ou économie de batterie) »)
+  { re: /\([\p{L}’' -]{2,30}, [\p{L}’' -]{2,30},? (ou|et) [\p{L}’' -]{2,30}\)/u, why: 'énumération par trois : garder le cas utile' },
 ]
 

@@ -67,7 +67,9 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
     Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.
-  - [ ] **SLOP-1c** Notifications (bilan du soir, lecture du visage, rappels) et textes natifs Android (`strings.xml`).
+  - [x] **SLOP-1c** (01/11 02:33) Notifications et textes natifs Android : visage arrêté (énumération par trois), montre
+    refusée, carte montre restaurée ; Sources (Health Connect qui ne répond pas, détails du visage, caméra refusée).
+    `wording.test.js` scanne désormais le Java (chaînes recollées) ; règle « énumération par trois entre parenthèses ».
   - [ ] **SLOP-1d** Fiche Play (`store/listing/fr-FR/full-description.txt` contient encore « C'est une estimation, pas
     un diagnostic » ; `scripts/play/listing.test.mjs` l'exige : à remplacer par une phrase unique), formulaire
     d'abonnement, page de confidentialité et conditions (site), en gardant la règle une fois.

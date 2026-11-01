@@ -57,6 +57,11 @@
   « Ces sujets passeront en premier. Les autres restent accessibles. », « Notez-le d'un geste. Les pistes viennent de
   ces notes, comparées à vos repas. » Derniers tirets cadratins des phrases retirés (aide Health Connect, VFC…). Le
   test refuse désormais tirets cadratins entre deux mots et emojis décoratifs. Captures : `journal/captures/slop-1b-2/`.
+- **Textes, suite : notifications et Sources** (01/11 02:33) — la notification « Lecture du visage arrêtée » dit
+  « Android a mis la lecture du visage en pause, souvent pour économiser la batterie. » ; celle de la montre refusée
+  tient en phrases courtes. Dans Sources, les détails de la lecture du visage et le message « Health Connect ne
+  répond pas » sont raccourcis. Le test des formules bannies lit désormais aussi le code natif Android.
+  **À tester** : Sources → Lecture du visage → « Détails ».
 - **« Quand consulter » complété, réintroduction mieux située** (31/10 21:33) — la phrase des signes à signaler à
   votre médecin (détails de la carte « Votre ventre », réintroduction, bas du rapport PDF) ajoute « un proche
   (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de l'intestin ». En tête du choix
@@ -773,6 +778,7 @@ pour quatre lignes.
 | 31/10 23:33 — [Textes : fin du refrain « pas un diagnostic »](runs/2026-10-31-2333-slop-refrain.md) | ✍️ | SLOP-1a : « une estimation, pas un diagnostic » retiré de 11 écrans (carte bien-être, visage, réintroduction, nutrition, VFC, tensiomètre, divulgations…), dit une fois dans l'onboarding, l'historique du bien-être et le rapport PDF ; test des formules bannies ; captures avant/après ; v416 (APK 34 523 614 o) |
 | 01/11 00:33 — [Textes : formules des pistes](runs/2026-11-01-0033-slop-pistes.md) | ✍️ | SLOP-1b-1 : « on préfère attendre plutôt que de vous montrer de faux suspects » (Accueil, Analyses, liens ventre, PDF) et « pas des causes » réécrits en phrases concrètes ; deux règles ajoutées au test des formules bannies ; merge refusé par la session, fait au run suivant (v417) |
 | 01/11 01:33 — [Textes : repas et premiers pas](runs/2026-11-01-0133-slop-repas.md) | ✍️ | SLOP-1b-2 : rappel de l'envoi IA des repas sans emoji ni « Gemini » en play, « ✨ » retiré du bouton, 3 phrases de l'onboarding, 9 tirets cadratins ; règles tirets / emojis / « sans jamais le remplacer » au test ; captures avant/après ; v418 (APK 34 523 794 o) |
+| 01/11 02:33 — [Textes : notifications et Sources](runs/2026-11-01-0233-slop-notifications.md) | ✍️ | SLOP-1c : notification « Lecture du visage arrêtée » sans énumération, montre refusée et carte montre restaurée plus courtes, Sources (Health Connect qui ne répond pas, détails du visage, caméra refusée) ; le test des formules bannies lit aussi le code natif Android |
 | 31/10 20:33 — [Idées : « quand consulter » relu](runs/2026-10-31-2033-idees-quand-consulter.md) | 💡 | Phrase « Quand consulter » relue contre FMC-HGE 2022 (ACG) et VIDAL : antécédents familiaux à ajouter (POL-PLAY-91) ; réintroduction « après 2 à 6 semaines d'éviction » (POL-PLAY-92) ; ameli toujours en 403 ; I202–I203 ; journal seul |
 | 31/10 19:33 — [Accueil : carte ventre](runs/2026-10-31-1933-accueil-ventre-titre.md) | 🎨 | POL-PLAY-90 : Accueil relu en vierge sombre / clair et en démo ; question du soir du ventre en texte, plus en second titre ; Paramètres démo clair relus (rien) ; 2 tests ; v413 |
 | 31/10 18:33 — [Sources en couleur](runs/2026-10-31-1833-sources-couleur.md) | 🎨 | POL-PLAY-89 : Journal → Jours relu en démo sombre (rien à corriger) ; Sources : cartes au pastel de leur thème (menthe / lilas) ; 2 tests |
