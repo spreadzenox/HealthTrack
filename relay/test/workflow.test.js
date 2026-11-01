@@ -51,3 +51,12 @@ test('workflow relais : Gold sur le dernier Flash de la zone eu, réflexion MEDI
   assert.ok(Number(vars.GOLD_TIMEOUT_MS) + Number(vars.VERTEX_TIMEOUT_MS) < 60_000)
   assert.match(workflow, /--timeout=60/)
 })
+
+test('workflow relais : bilan des analyses IA (GOLD-a2) qui sépare la CI et lit les secours Gold', () => {
+  const step = workflow.slice(workflow.indexOf('Analyses IA des 7 derniers jours'))
+  assert.ok(step.length > 40, 'étape GOLD-a2 absente')
+  assert.match(step, /continue-on-error: true/)
+  assert.match(step, /jsonPayload\.event=\\"analyze\\"/)
+  assert.match(step, /jsonPayload\.event=\\"gold_fallback\\"/)
+  assert.match(step, /jsonPayload\.ci == true/)
+})

@@ -254,3 +254,33 @@ jobs:
               | "Part des requêtes iPhone (hors CI) : \($ios) sur \($n)" + (if $n > 0 then " (\($ios * 100 / $n | floor) %)" else "" end)' \
               "$RUNNER_TEMP/integrity.json"
           } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Analyses IA des 7 derniers jours (Gold / Silver, GOLD-a2, non bloquant)
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          # GOLD-a2 : quel niveau a été servi (gold = Gemini Flash, lite = Flash-Lite), par quel modèle, combien de fois
+          # Gold est retombé sur Flash-Lite et pourquoi (timeout, error + statut Vertex, plafond gold_cap / gold_budget),
+          # et le coût Vertex estimé. Les analyses de test de la CI (ci-smoke-…, champ ci) sont comptées à part.
+          # Aucun contenu ni identifiant d'installation n'est journalisé (seulement son empreinte, comptée ici).
+          gcloud logging read \
+            "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND (jsonPayload.event=\"analyze\" OR jsonPayload.event=\"gold_fallback\")" \
+            --project="$GCP_PROJECT" --freshness=7d --limit=2000 --format=json > "$RUNNER_TEMP/analyses.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/analyses.json"
+          {
+            echo
+            echo "### Analyses IA — 7 derniers jours"
+            echo
+            echo "| Origine | Niveau | Servi | Modèle | Zone | Analyses | Installations | Coût estimé |"
+            echo "|---|---|---|---|---|---|---|---|"
+            jq -r '[.[] | select(.jsonPayload.event == "analyze")]
+              | map(. + { origin: (if .jsonPayload.ci == true then "CI" else "téléphones" end) })
+              | group_by([.origin, .jsonPayload.tier, .jsonPayload.served, .jsonPayload.model, .jsonPayload.location])[]
+              | "| \(.[0].origin) | \(.[0].jsonPayload.tier // "—") | \(.[0].jsonPayload.served // "—") | `\(.[0].jsonPayload.model // "—")` | \(.[0].jsonPayload.location // "—") | \(length) | \(map(.jsonPayload.install // "—") | unique | length) | \(map(.jsonPayload.eur // 0) | add * 1000 | round / 1000) € |"' \
+              "$RUNNER_TEMP/analyses.json"
+            echo
+            jq -r '[.[] | select(.jsonPayload.event == "gold_fallback")] as $f
+              | if ($f | length) == 0 then "Gold retombé sur Flash-Lite : jamais"
+                else "Gold retombé sur Flash-Lite : " + ($f | group_by([.jsonPayload.reason, .jsonPayload.status])
+                  | map("\(.[0].jsonPayload.reason // "—")\(if .[0].jsonPayload.status then " HTTP \(.[0].jsonPayload.status)" else "" end) × \(length)") | join(", ")) end' \
+              "$RUNNER_TEMP/analyses.json"
+          } | tee -a "$GITHUB_STEP_SUMMARY"

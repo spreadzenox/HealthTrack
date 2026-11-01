@@ -177,6 +177,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **01/11 23:33** — **GOLD-a2** : le workflow de déploiement du relais résume les analyses IA des 7 derniers jours (niveau servi, modèle, zone, installations, coût) et les secours Gold → Flash-Lite par raison ; l'analyse de test de la CI est marquée `ci` et comptée à part. Prochain : lire ce bilan, puis polissage.
 - **01/11 22:33** — PR #612 (I6-RELAIS-7) mergée après ses checks verts. **GOLD-a3 côté app** : l'empreinte de l'installation (celle des journaux du relais) s'affiche dans le mode diagnostic caché ; P37 demandée au propriétaire. **POL-PLAY-93** : tuiles Silver / Gold, chiffre seul en mono. Prochain : GOLD-a2.
 - **01/11 20:33** — Run « idées » : audit en captures de la variante play vierge (clair, puis période de lancement en sombre) : rien de cassé sur Android. Trouvé : **I6-RELAIS-7**, sur iPhone la page d'abonnement promettrait un rappel de fin d'essai que l'app ne programme pas (à corriger au prochain run de code, avant toute soumission iPhone) ; POL-PLAY-93, phrase des tuiles Silver / Gold en mono. Prochain : I6-RELAIS-7, puis GOLD-a2, a3.
 - **01/11 21:33** — I6-RELAIS-7 livré : sur l'App Store, le paywall ne promet plus de rappel de fin d'essai (réservé à Google Play, seul magasin où l'app le programme). Android inchangé. Prochain : GOLD-a2, GOLD-a3, POL-PLAY-93 ; I6-RELAIS-5 (App Attest) plus tard.
