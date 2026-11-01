@@ -8,7 +8,7 @@
  *   décodé par l'app comme dans l'appel direct.
  *
  * - POST /v1/subscription/verify → droits premium de la variante play (`{ purchaseToken? }`, en-tête `X-Install-Id`),
- *   relus chez Google Play (src/billing.js) ;
+ *   relus chez Google Play (src/billing.js), ou transaction StoreKit 2 signée de l'app iPhone (src/appstore.js) ;
  * - POST /pubsub/rtdn          → notifications d'abonnement Google Play (push Pub/Sub authentifié) ;
  * - GET  /v1/credits            → crédits d'analyse IA de l'installation (src/credits.js), sans rien consommer.
  * - POST /v1/bench/analyze      → banc Silver / Gold (GOLD-b5, .github/workflows/bench-gold.yml) : jeton OIDC du compte
@@ -34,6 +34,7 @@
  */
 import { createHash } from 'node:crypto'
 import { HttpError, readJson } from './http.js'
+import { isTokenShape } from './billing.js'
 import { stripJpegMetadata } from './jpeg.js'
 import { parseClientState } from './credits.js'
 import { dayKey } from './quota.js'
@@ -213,7 +214,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
 
   const purchaseTokenHeader = (req) => {
     const raw = String(req.headers['x-purchase-token'] ?? '')
-    return /^[A-Za-z0-9._-]{20,4096}$/.test(raw) ? raw : null
+    return isTokenShape(raw) ? raw : null
   }
   const reportedCredits = (req) => parseClientState(req.headers['x-credits'])
 

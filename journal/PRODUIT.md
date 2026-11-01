@@ -172,6 +172,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **01/11 17:33** — **I6-RELAIS-1+2** (demande du 01/11 vers 17:10, abonnements iPhone) : le relais vérifie une transaction StoreKit 2 signée (chaîne jusqu'à Apple Root CA - G3, bundleId, environnement, échéance, remboursement) et en tire Silver / Gold avec les mêmes droits et crédits que Play ; chemin Play inchangé. Prochain : I6-RELAIS-3 (notifications serveur V2), puis I6-RELAIS-6 (nom du magasin dans l'app).
 - **24/10 16:30** — **SAUV** : sauvegarde Android conservée avec des règles explicites (secrets du téléphone exclus, repère de restauration qui retire clé Gemini, clés de la montre et jetons du localStorage restauré), textes honnêtes (confidentialité, conditions, Données, onboarding). Sécurité des données : rien à déclarer en plus (sauvegarde du système, chiffrée de bout en bout) → P21 n'a pas à être relancée. Prochain : POL-5 + POL-4.
 - **24/10 17:30** — **POL-5 + POL-4** : « Photo du repas » pleine largeur avec icône appareil photo, « Ajouter une note » ; carte « Votre ventre » seulement avec l'objectif « Mon ventre » (Paramètres → « Ce qui vous amène », rien d'effacé). Prochain : POL-3.
 - **24/10 18:30** — **POL-3** : chevron discret à la place de « simple / détails » partout ; détails du bien-être visuels (barre de fourchette, badge de confiance, pastilles) ; « Noter moi-même » dans la carte (bouton « Ajouter une note » retiré) ; plus de demande de bien-être à l'ouverture. Prochain : POL-2 (historique du bien-être).

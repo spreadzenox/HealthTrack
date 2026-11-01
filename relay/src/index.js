@@ -4,6 +4,7 @@ import { loadConfig, loadIngredientNames } from './config.js'
 import { createQuota } from './quota.js'
 import { DATASTORE_SCOPE, createCredits, createFirestoreStore } from './credits.js'
 import { createHandler, hashInstallId } from './server.js'
+import { createAppStoreBilling, createAppStoreVerifier } from './appstore.js'
 import { ANDROIDPUBLISHER_SCOPE, createBillingRoutes, createPlayClient, createPushVerifier } from './billing.js'
 import { PLAYINTEGRITY_SCOPE, createIntegrityClient, createIntegrityGuard } from './integrity.js'
 import { createVertexClient, metadataTokenProvider } from './vertex.js'
@@ -50,6 +51,7 @@ const handler = createHandler({
   }),
   billing: createBillingRoutes({
     play: createPlayClient({ packageName: config.packageName, getToken: metadataTokenProvider({ scopes: [ANDROIDPUBLISHER_SCOPE] }) }),
+    appStore: createAppStoreBilling({ verifyJws: createAppStoreVerifier(), bundleId: config.appStoreBundleId }),
     packageName: config.packageName,
     launchPremium: config.launchPremium,
     verifyPush: createPushVerifier({ audience: `${config.publicUrl}/pubsub/rtdn`, serviceAccount: config.rtdnServiceAccount }),
