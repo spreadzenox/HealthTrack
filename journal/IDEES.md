@@ -9,6 +9,76 @@
 
 ---
 
+## Run du 01/11/2026 08:33 (Paris) — textes restants (Analyses dépliées, réintroduction, paywall) et offre Gold
+
+### I204 (20) — Analyses, réintroduction, paywall : inventaire des textes restants et réécritures proposées [V captures]
+Relu sur les captures `npm run visual` (démo, `--gut-links=lactose`, « Comment c'est calculé » et « Voir les liens
+incertains » ouverts ; `--play --routes=/premium`) et dans le code. Prêt à appliquer par le run de code SLOP-1b-6/-7.
+- **Analyses, deux mises en garde sur la même page** : encart en tête « Des liens repérés dans vos données, à vérifier
+  avant d'y croire. » **et** pied de page « Hypothèses tirées de vos seules données, calculées sur votre téléphone : pas
+  un avis médical. » (`MethodFooter`, `Recommendations.jsx`). → Garder l'encart du haut (maquette validée), **retirer
+  le pied de page** ; « Tout est calculé sur votre téléphone » est déjà dans « Comment c'est calculé ».
+- **« Comment c'est calculé » contredit l'écran** : il parle de pistes « Chez vous » et « À vérifier », alors que les
+  étiquettes affichées sont « Piste solide » et « À confirmer » (libellés changés depuis). → « Piste solide : le lien
+  tient même en comptant tous les facteurs testés (q < 0,05). À confirmer : plus fragile (q < 0,2), une au plus. »
+  Test : chaque libellé d'étiquette cité dans la méthode existe dans `EVIDENCE` (sinon échec).
+- **Refrain dans « Comment c'est calculé »** : « Aucun comportement n'est jugé bon ou mauvais d'avance » deux fois
+  (méthode des notes, puis méthode du visage) ; « week-end » et « jours qui se ressemblent » expliqués deux fois ;
+  « Tags » puis « Habitudes » pour la même chose. → Une seule fois chaque idée ; dire « habitudes » partout ;
+  « une corrélation ne prouve pas une cause » gardé (c'est l'endroit prévu par SLOP-1b-1).
+- **Énumération par trois** : carte verrouillée « Quels aliments, après combien de temps, et comment le vérifier. »
+  (`GutLinks.jsx`) → « Quel aliment, et combien de temps après le repas. »
+- **Sous-titre long** : « Ce qui va de pair avec un meilleur bien-être dans vos données, et sur quoi vous pouvez agir. »
+  → « Ce qui va avec vos meilleurs jours. »
+- **Cartes des liens** : « Le jour même : les jours où c'est plus élevé vont avec un meilleur bien-être » répété mot
+  pour mot sur chaque carte (VFC, temps d'écran, pollen…). → Phrase propre au facteur : « Le jour même : VFC plus
+  haute, meilleur bien-être. » (gabarit `{facteur} plus haut(e), {meilleur | moins bon} bien-être`), sans « c'est ».
+- **Réintroduction** : « l'app vous dit ce qui passe » revient trois fois (entrée d'Analyses, intro du choix, carte
+  premium, `Reintroduction.jsx:150,328` et `ReintroductionEntry.jsx:45`). → Garder l'exemple concret de la carte premium
+  (« Blé : une portion moyenne passe ») ; entrée : « 3 jours, des portions croissantes. » ; intro : « Un groupe à la
+  fois, sur 3 jours : une portion, puis le double, puis le triple. Notez votre ventre comme d'habitude. »
+  « diététicienne » deux fois sur l'écran de préparation (l.71 et l.216) → garder la seconde (« Repère général, à
+  adapter avec votre diététicienne. »), la première devient seulement `WHEN_TO_SEE_DOCTOR`. La liste des 3 consignes
+  (repas dehors, café/alcool, autres repas) reste : ce sont de vraies consignes, pas une figure de style.
+- **Paywall** (réécrit en GOLD-b de toute façon) : le titre « Passez de « je note » à « je comprends » » est une
+  formule « de X à Y » de slogan (texte d'exemple de la maquette, soumis au polissage du 31/10). Proposition :
+  « Comprendre vos bons et mauvais jours » ; sous-titre supprimé (il redit le titre). « L'analyse IA des repas sans
+  compter les crédits, jusqu'à 10 par jour » → « 10 analyses de repas par jour » (Silver) / « 20 » (Gold).
+- **Impact 4 × faisabilité 5 = 20** (textes et tests ; la règle du libellé d'étiquette protège la cohérence).
+
+### I205 (16) — Offre Gold : prix annuel, essai et passage Silver → Gold [V code ; T sources RevenueCat, prix concurrents]
+Proposition au propriétaire (sa décision du 31/10 demande « annuel et essai Gold : à proposer »).
+- **Coût et marge** (Play prélève 15 % sur l'abonnement : 10 % + 5 % avec Play Billing ; TVA 20 % en France) :
+  9,99 € TTC/mois → 8,33 € HT → **≈ 7,08 € nets**. Usage supposé d'un abonné Gold : 2 à 3 analyses/jour, soit 60 à 90
+  par mois × 2,9 c en moyenne = **1,7 à 2,6 €/mois en 2026, 3,5 à 5,2 € dès 2027** (prix doublés) [H usage].
+  - Annuel à **59,99 €** (−50 % comme Silver) → 4,25 € HT/mois → **3,54 € nets/mois : à perte en 2027** pour un
+    utilisateur assidu. Écarté.
+  - Annuel à **79,99 €** (−33 %, « soit 6,67 € par mois ») → **4,72 € nets/mois** : à l'équilibre en 2027 au pire.
+  - **Recommandé** : Gold **mensuel seul au lancement** (9,99 € ou 10,00 € : Play accepte les deux, à choisir), puis
+    l'annuel à 79,99 € quand le relais aura un mois de vrais jetons Gold (`event: usage`) pour vérifier la marge.
+- **Essai Gold** : **pas d'essai Gold** au lancement. L'essai de 14 jours reste sur l'annuel Silver ; un essai Gold
+  coûte 1 à 4 € de Vertex par personne (14 j × 2–3 analyses × 2,9 à 5,8 c) sans revenu garanti, et la période de
+  lancement donne déjà Gold aux testeurs. À revoir avec les chiffres réels.
+- **Piège trouvé dans le code** : `playBilling.js` n'achète que `halcya_premium` et le plugin natif ne passe aucun
+  mode de remplacement. Avec Gold en **produit séparé**, un abonné Silver qui prend Gold aurait **deux abonnements
+  facturés**. Il faut, au passage Silver → Gold, appeler Play Billing avec `SubscriptionUpdateParams` (ancien jeton
+  d'achat + `ReplacementMode.CHARGE_PRORATED_PRICE` : Gold tout de suite, différence facturée au prorata), et
+  `DEFERRED` pour redescendre Gold → Silver (au renouvellement ; Google refuse `DEFERRED` pour une montée) [T
+  RevenueCat, codelab Google « Subscription replacements »]. Le relais lit le niveau depuis `productId` du dernier
+  achat (`linkedPurchaseToken` pour ignorer l'ancien). Alternative : Gold comme **formules** (`basePlans`) du même
+  produit `halcya_premium`, où Play gère le changement seul ; mais la décision du 31/10 dit « nouveau produit Play » :
+  on garde le produit séparé, avec le remplacement.
+- **Repères de prix** (applis d'analyse de repas par photo, 2026, sources tierces) : MyNetDiary 8,99 $/mois ou
+  59,99 $/an ; MyFitnessPal Premium 19,99 $/mois ou 79,99 $/an ; Calorie Magic 6,99 $/mois ou 49,99 $/an. Gold à 10 €
+  sans IA « sans compter » reste dans la fourchette haute ; la promesse « moins d'erreurs » (après le banc Nutrition5k)
+  est ce qui la justifie.
+- Sources (01/11/2026) : revenuecat.com/guides/google-play-billing/subscription-upgrades-downgrades-and-plan-changes ;
+  revenuecat.com/blog/engineering/google-proration ; codelabs.developers.google.com/codelabs/play-billing-subs-replacement ;
+  eesel.ai/en/blog/cal-ai-pricing ; jotform.com/ai/best-ai-calorie-tracker ; fiches App Store de Calorie Magic.
+- **Impact 4 × faisabilité 4 = 16** → GOLD-b0 (choix du propriétaire, P35) et GOLD-b2 (remplacement d'abonnement).
+
+---
+
 ## Run du 31/10/2026 20:33 (Paris) — « Quand consulter » relu, réintroduction après l'éviction
 
 ### I202 (16) — « Quand consulter » : ajouter les antécédents familiaux [V synthèses françaises]

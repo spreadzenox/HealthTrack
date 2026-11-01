@@ -47,6 +47,14 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   20 analyses/jour ; annuel et essai Gold à proposer au propriétaire ; paywall et page d'abonnement à deux niveaux ;
   aucun nom de modèle dans la variante play ; confidentialité : Google (Vertex AI, UE). Promesse « moins d'erreurs »
   seulement après le banc CI Nutrition5k (~40 assiettes pesées, CC BY 4.0, images jamais commitées).
+  - [ ] **GOLD-b0 — choix du propriétaire (P35)** : proposition du 01/11 08:33 (`IDEES.md` I205) : Gold mensuel seul
+    au lancement (9,99 € ou 10,00 €), annuel à 79,99 € après un mois de vrais coûts Gold, pas d'essai Gold (l'essai de
+    14 jours reste sur l'annuel Silver). Sans réponse : appliquer cette proposition (réversible, aucun achat réel).
+  - [ ] **GOLD-b2 — passage Silver ↔ Gold sans double facturation** : le plugin natif et `playBilling.js` n'achètent
+    que `halcya_premium` sans mode de remplacement ; avec un produit `halcya_gold` séparé, un Silver qui monte aurait
+    deux abonnements. Passer l'ancien jeton + `CHARGE_PRORATED_PRICE` pour monter, `DEFERRED` pour descendre ; le
+    relais déduit le niveau du `productId` actif (ignorer le jeton remplacé via `linkedPurchaseToken`). Tests sur faux
+    plugin, puis P27-bis au testeur de licence.
 - [ ] **GOLD-c** (plus tard) Cache explicite de la partie fixe (consignes + liste d'ingrédients, aucune donnée
   d'utilisateur), TTL glissant de 30 min, créé seulement si une autre analyse a eu lieu dans les 30 min ; rentable
   vers 10 utilisateurs actifs ; en cas d'erreur, appel normal.
@@ -71,6 +79,14 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   - [x] **SLOP-1b-5** (01/11 07:33) Onboarding complet : sous-titres des objectifs et des suivis sans énumération par
     trois, écran montre, Health Connect, import et « aha », lecture du visage, premier geste ; « Pas de souci : »
     retiré (2 écrans) et banni par `SLOP_WORDING`. Divulgations de permission inchangées (conformité). Captures `slop-1b-5/`.
+  - [ ] **SLOP-1b-6** (prêt, `IDEES.md` I204) Analyses : retirer le pied de page « Hypothèses… pas un avis médical »
+    (doublon de l'encart du haut) ; « Comment c'est calculé » avec les vrais libellés « Piste solide » / « À confirmer »
+    (test : tout libellé cité existe dans `EVIDENCE`), « jugé bon ou mauvais d'avance » une fois, « habitudes » au
+    lieu de « Tags » ; carte verrouillée « Quel aliment, et combien de temps après le repas. » ; sous-titre « Ce qui va
+    avec vos meilleurs jours. » ; phrase propre à chaque facteur au lieu de « les jours où c'est plus élevé vont avec… ».
+  - [ ] **SLOP-1b-7** (prêt, I204) Réintroduction : « l'app vous dit ce qui passe » une fois (carte premium, avec
+    l'exemple « Blé : une portion moyenne passe ») ; intro et entrée raccourcies ; « diététicienne » une fois sur la
+    préparation. Paywall : titre « Comprendre vos bons et mauvais jours » proposé pour GOLD-b.
   - [ ] **SLOP-1b** (suite : détails dépliés des Analyses, réintroduction ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
