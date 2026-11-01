@@ -11,6 +11,10 @@
  *   relus chez Google Play (src/billing.js) ;
  * - POST /pubsub/rtdn          → notifications d'abonnement Google Play (push Pub/Sub authentifié) ;
  * - GET  /v1/credits            → crédits d'analyse IA de l'installation (src/credits.js), sans rien consommer.
+ * - POST /v1/bench/analyze      → banc Silver / Gold (GOLD-b5, .github/workflows/bench-gold.yml) : jeton OIDC du compte
+ *   de la CI obligatoire ; `{ tier: 'silver' | 'gold', dish, kind, image | description }`. Même chemin que l'analyse
+ *   (modèles, plafond global du jour et par minute, plafond Gold du jour, budget du mois) ; la réponse dit quel
+ *   niveau a réellement répondu (`served`) pour que le banc écarte une mesure Gold servie par Flash-Lite.
  *
  * Play Integrity (src/integrity.js) : en-tête facultatif `X-Integrity-Token` sur l'analyse ; selon INTEGRITY_MODE, un
  * verdict refusé est seulement journalisé (observe) ou bloque l'analyse avec une 403 `integrity` (enforce). Seules les
@@ -102,7 +106,7 @@ export function buildRequest(body, ingredientNames) {
  *   billingQuota?: ReturnType<import('./quota.js').createQuota>, allowedOrigins?: string[],
  *   log?: (entry: object) => void, now?: () => number }} deps
  */
-export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, billingQuota = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
+export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, billingQuota = null, benchAuth = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
   const origins = new Set(allowedOrigins)
   /** installId → { premium, source, until } : droits relus récemment (mémoire seulement). */
   const premiumCache = new Map()
@@ -313,6 +317,54 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       const { premium } = entitlement
       await hydrateCredits(installId)
       send(res, 200, { credits: credits.peek(installId, { premium, tier: tierOf(installId, entitlement), reported: reportedCredits(req) }) }, origin)
+      return
+    }
+
+    if (benchAuth && path === '/v1/bench/analyze') {
+      if (req.method !== 'POST') {
+        send(res, 405, { error: 'method', message: 'POST attendu.' }, origin)
+        return
+      }
+      const started = now()
+      let slotId = null
+      try {
+        if (!(await benchAuth(req.headers.authorization))) throw new HttpError(401, 'unauthenticated', 'Banc réservé à la CI.')
+        const body = await readJson(req, MAX_BODY_BYTES)
+        const tier = body?.tier
+        if (tier !== 'gold' && tier !== 'silver') throw new HttpError(400, 'bad_tier', 'Niveau attendu : silver ou gold.')
+        const dish = typeof body?.dish === 'string' ? body.dish : ''
+        if (!/^[A-Za-z0-9_-]{1,40}$/.test(dish)) throw new HttpError(400, 'bad_dish', 'Identifiant de plat attendu.')
+        const request = buildRequest(body, ingredientNames)
+        if (costs) {
+          try {
+            await costs.hydrate()
+          } catch (err) {
+            log({ event: 'costs_store_failed', op: 'get', status: err?.status ?? null })
+          }
+          if (costs.stopped()) {
+            send(res, 429, { error: 'quota', scope: 'global', reason: 'month_budget' }, origin)
+            return
+          }
+        }
+        // Un « identifiant d'installation » par plat : le banc compte dans les plafonds global et par minute
+        const slot = quota.take(`bench-${dish}`)
+        if (!slot.ok) {
+          send(res, 429, { error: 'quota', scope: slot.scope, resetAt: slot.resetAt }, origin)
+          return
+        }
+        slotId = `bench-${dish}`
+        const { parsed, model, location, eur, served } = await generate(request, tier)
+        log({ event: 'bench', kind: request.kind, model, location, tier, served, eur: Number(eur.toFixed(5)), status: 200, ms: now() - started })
+        send(res, 200, { parsed, model, served, eur: Number(eur.toFixed(5)), ms: now() - started }, origin)
+      } catch (err) {
+        if (err instanceof HttpError) {
+          send(res, err.status, { error: err.code, message: err.message }, origin)
+          return
+        }
+        if (slotId && !err?.billed) quota.refund(slotId)
+        log({ event: 'error', route: path, status: err?.status ?? null, message: String(err?.message ?? err).slice(0, 300) })
+        send(res, err?.status === 429 ? 503 : 502, { error: 'upstream', status: err?.status ?? null }, origin)
+      }
       return
     }
 
