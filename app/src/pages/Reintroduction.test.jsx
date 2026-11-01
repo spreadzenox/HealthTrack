@@ -62,6 +62,8 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     renderPage(store)
     fireEvent.click(await screen.findByRole('button', { name: 'Blé' }))
     const note = screen.getByText(/Repère général, à adapter avec votre diététicienne/)
+    // SLOP-1b-7 : « diététicienne » une seule fois sur l'écran de préparation
+    expect(document.body.textContent.match(/diététicienne/g)).toHaveLength(1)
     // Une phrase : en Figtree, jamais en mono (DESIGN.md, POL-PLAY-51)
     expect(note).not.toHaveClass('mono')
     fireEvent.change(screen.getByLabelText('Portion du jour 3'), { target: { value: '2,5' } })
@@ -194,6 +196,9 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     dist.play = true
     const { unmount } = renderPage(makeStore({ gutEntries: calm(3, 2, 1) }))
     expect(await screen.findByRole('link', { name: 'Débloquer' })).toHaveAttribute('href', '/premium')
+    // SLOP-1b-7 : l'exemple concret, sans le refrain « l'app vous dit ce qui passe »
+    expect(document.body.textContent).toMatch(/« Blé : une portion moyenne passe »/)
+    expect(document.body.textContent).not.toMatch(/vous dit (en une phrase )?ce qui passe/)
     expect(screen.queryByRole('button', { name: /Lactose/ })).not.toBeInTheDocument()
     unmount()
 

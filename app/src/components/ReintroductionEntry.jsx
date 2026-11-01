@@ -42,7 +42,7 @@ export default function ReintroductionEntry({ read = readSummary }) {
         {summary ? (
           <span className="fodmap-tag mono fodmap-entry-state">{summary}</span>
         ) : (
-          <span className="fodmap-entry-line">3 jours, des portions croissantes : l’app vous dit ce qui passe.</span>
+          <span className="fodmap-entry-line">3 jours, des portions croissantes.</span>
         )}
         {!premium && !summary && <span className="fodmap-tag mono fodmap-entry-premium">premium</span>}
       </span>
