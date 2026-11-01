@@ -91,7 +91,7 @@ function LockedGutLinks({ count }) {
           </div>
         ))}
       </div>
-      <p className="gut-link-text">Quels aliments, après combien de temps, et comment le vérifier.</p>
+      <p className="gut-link-text">Quel aliment, et combien de temps après le repas.</p>
       <span className="fodmap-tag mono">premium</span>
       <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>
     </div>
