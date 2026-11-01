@@ -352,7 +352,7 @@ describe('modèle valence / éveil (consigne du 19/10 au soir, étape 2)', () =>
     expect(lines.some((l) => l.startsWith('Modèle valence / éveil : prêt (HSEmotion, sur le téléphone) · 5 lectures avec valence'))).toBe(true)
     expect(lines.some((l) => l.includes('IllegalStateException: ort'))).toBe(true)
     const err = faceDiagnosticLines({ ...active, affectModel: false, affectState: 'error', affectError: 'IOException: HTTP 404' })
-    expect(err.some((l) => l === 'Modèle valence / éveil : échec du téléchargement [IOException: HTTP 404] — nouvel essai à la prochaine ouverture')).toBe(true)
+    expect(err.some((l) => l === 'Modèle valence / éveil : échec du téléchargement [IOException: HTTP 404], nouvel essai à la prochaine ouverture')).toBe(true)
     expect(faceDiagnosticReport({ ...active }).affect).toBe(null)
     expect(JSON.stringify(r)).not.toMatch(/"valence"\s*:/)
   })

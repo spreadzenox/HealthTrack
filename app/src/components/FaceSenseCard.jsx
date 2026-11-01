@@ -101,7 +101,7 @@ const SHIZUKU_CMD = 'appops set com.healthtrack.app CAMERA allow'
 const STOPPED_TEXT = {
   update: 'Android a arrêté la lecture du visage pendant la mise à jour de l’app, comme à chaque mise à jour.',
   reboot: 'Le téléphone a redémarré : Android ne relance pas la lecture du visage tout seul.',
-  system: 'Le téléphone a arrêté la lecture du visage de lui-même, sans mise à jour ni redémarrage — sans doute pour économiser la batterie.',
+  system: 'Le téléphone a arrêté la lecture du visage de lui-même, sans mise à jour ni redémarrage. Sans doute pour économiser la batterie.',
   default: 'Android a arrêté la lecture du visage (mise à jour, redémarrage du téléphone, économie d’énergie…).',
 }
 

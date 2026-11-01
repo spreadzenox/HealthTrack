@@ -166,7 +166,7 @@ export default function MealEditor({ items, onChange, disabled = false }) {
             </ul>
           )}
           {query.trim().length >= 2 && suggestions.length === 0 && (
-            <p className="mei-none">Aucun aliment trouvé — essayez un mot plus simple.</p>
+            <p className="mei-none">Aucun aliment trouvé. Essayez un mot plus simple.</p>
           )}
         </div>
       )}

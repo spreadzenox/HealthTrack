@@ -2222,5 +2222,5 @@ function buildAdvancedAdvice(variable, coefficient, dataset) {
   const meta = VARIABLE_META[variable]
   const avg = knownMean(dataset, variable) ?? 0
   const note = suggestion.againstNorm ? ' Contraire à l’hypothèse générale : chez vous, vos données font foi.' : ''
-  return `${suggestion.action} — votre moyenne actuelle : ${meta.format(avg)}.${note}`
+  return `${suggestion.action}. Votre moyenne actuelle : ${meta.format(avg)}.${note}`
 }

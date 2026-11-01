@@ -129,7 +129,7 @@ function TracksStep({ tracks, onToggle }) {
     <>
       <h1 className="onb-title">Que voulez-vous suivre ?</h1>
       <p className="onb-lead">
-        On vous montrera d’abord ce qui compte pour vous. Rien n’est effacé ni bloqué : tout reste accessible.
+        Ces sujets passeront en premier. Les autres restent accessibles.
       </p>
       <fieldset className="onb-choices">
         <legend className="onb-sr">Ce que vous voulez suivre</legend>
@@ -552,8 +552,8 @@ function GestureStep({ goal, gesture, onGesture }) {
       <h1 className="onb-title">{gut ? 'Comment va votre ventre ?' : 'Comment vous sentez-vous ?'}</h1>
       <p className="onb-lead">
         {gut
-          ? 'Un geste suffit, quand vous voulez. C’est en croisant ces notes avec vos repas que les pistes apparaîtront.'
-          : 'Une note de 0 à 5, pour vous. Elle complète le bien-être estimé, sans jamais le remplacer.'}
+          ? 'Notez-le d’un geste. Les pistes viennent de ces notes, comparées à vos repas.'
+          : 'Une note de 0 à 5. Elle s’ajoute au bien-être estimé.'}
       </p>
       {gut ? (
         <div className="onb-gesture" role="group" aria-label="Comment va votre ventre ?">

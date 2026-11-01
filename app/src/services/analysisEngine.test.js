@@ -1604,7 +1604,7 @@ describe('computeAdvancedAnalysis — recommendations coherence', () => {
       }
       // D6 : la piste personnelle reste, formulée sans norme
       if (stepsImp.advice) {
-        expect(stepsImp.advice).toMatch(/^Ne pas chercher à marcher davantage — .*vos données font foi/)
+        expect(stepsImp.advice).toMatch(/^Ne pas chercher à marcher davantage\. Votre moyenne .*vos données font foi/)
       }
     }
     for (const advice of result.topRecommendations) {
