@@ -4,7 +4,7 @@ import { loadConfig, loadIngredientNames } from './config.js'
 import { createQuota } from './quota.js'
 import { DATASTORE_SCOPE, createCredits, createFirestoreStore } from './credits.js'
 import { createHandler, hashInstallId } from './server.js'
-import { createAppStoreBilling, createAppStoreVerifier } from './appstore.js'
+import { createAppStoreBilling, createAppStoreNotifications, createAppStoreVerifier, createFirestoreStatusStore, createMemoryStatusStore } from './appstore.js'
 import { ANDROIDPUBLISHER_SCOPE, createBillingRoutes, createPlayClient, createPushVerifier } from './billing.js'
 import { PLAYINTEGRITY_SCOPE, createIntegrityClient, createIntegrityGuard } from './integrity.js'
 import { createVertexClient, metadataTokenProvider } from './vertex.js'
@@ -15,6 +15,15 @@ const ingredientNames = loadIngredientNames(config.ingredientsPath)
 
 // Une ligne JSON par événement : Cloud Logging la lit comme un journal structuré
 const log = (entry) => console.log(JSON.stringify({ severity: entry.event === 'error' ? 'ERROR' : 'INFO', ...entry }))
+
+const verifyAppStoreJws = createAppStoreVerifier()
+const appStoreNotifications = createAppStoreNotifications({
+  verifyJws: verifyAppStoreJws,
+  bundleId: config.appStoreBundleId,
+  status: config.creditsStore === 'firestore'
+    ? createFirestoreStatusStore({ project: config.project, getToken: metadataTokenProvider({ scopes: [DATASTORE_SCOPE] }) })
+    : createMemoryStatusStore(),
+})
 
 const handler = createHandler({
   quota: createQuota(config),
@@ -51,7 +60,8 @@ const handler = createHandler({
   }),
   billing: createBillingRoutes({
     play: createPlayClient({ packageName: config.packageName, getToken: metadataTokenProvider({ scopes: [ANDROIDPUBLISHER_SCOPE] }) }),
-    appStore: createAppStoreBilling({ verifyJws: createAppStoreVerifier(), bundleId: config.appStoreBundleId }),
+    appStore: createAppStoreBilling({ verifyJws: verifyAppStoreJws, bundleId: config.appStoreBundleId, notifications: appStoreNotifications }),
+    appStoreNotifications,
     packageName: config.packageName,
     launchPremium: config.launchPremium,
     verifyPush: createPushVerifier({ audience: `${config.publicUrl}/pubsub/rtdn`, serviceAccount: config.rtdnServiceAccount }),

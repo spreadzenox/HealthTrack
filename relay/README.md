@@ -26,6 +26,13 @@ ni ici. Décisions et infrastructure : `journal/INFRA.md`, jalon 6 de `journal/P
   « période de lancement » (`LAUNCH_PREMIUM_UNTIL`, vide par défaut). 404 si Google ne connaît pas le jeton.
 - `POST /pubsub/rtdn` : notifications d'abonnement Google Play (abonnement push `play-rtdn-relay` du sujet
   `play-rtdn`, créé par la CI, jeton OIDC de relay-runtime vérifié) → relecture de l'abonnement et accusé.
+- `POST /appstore/notifications` : notifications serveur V2 de l'App Store (`{ signedPayload }`), URL à saisir dans
+  App Store Connect (production et sandbox) : `https://halcya-relay-81378799481.europe-west1.run.app/appstore/notifications`.
+  Signature et chaîne vérifiées jusqu'à Apple Root CA - G3, puis les JWS emboîtés (transaction, renouvellement).
+  Remboursement, révocation, expiration ou fin de grâce posent un verrou par abonnement (empreinte de
+  `originalTransactionId`, collection Firestore `appstore-status`, aucun identifiant de personne) : une transaction
+  signée avant le verrou ne donne plus de droits ; un renouvellement ou un nouvel achat le lève. 200 si traitée ou à
+  ignorer, 400 si la signature est fausse, 503 si Firestore est injoignable (l'App Store relivre).
 - `GET /health` → `{ "ok": true }`.
 
 Garde-fous : les consignes sont construites par le relais (pas de prompt libre), métadonnées des photos retirées,

@@ -41,6 +41,8 @@ const INTERMEDIATE_OID = Buffer.from('060a2a864886f76364060201', 'hex') // 1.2.8
 const JWS = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/
 /** Taille maximale d'un JWS StoreKit (trois certificats dans l'en-tête : environ 5 Ko en pratique). */
 export const MAX_JWS_LENGTH = 16_384
+/** Une notification V2 emboîte la transaction et le renouvellement signés (deux JWS) : bien plus longue. */
+export const MAX_NOTIFICATION_LENGTH = 64 * 1024
 
 export class AppStoreJwsError extends Error {
   constructor(code, message) {
@@ -53,8 +55,8 @@ const b64url = (s) => Buffer.from(s, 'base64url')
 const json = (part) => JSON.parse(b64url(part).toString('utf8'))
 
 /** En-tête JWS décodé, ou null si ce n'est pas un JWS (un jeton Google Play, par exemple). */
-function jwsHeader(token) {
-  if (typeof token !== 'string' || token.length > MAX_JWS_LENGTH || !JWS.test(token)) return null
+function jwsHeader(token, maxLength = MAX_JWS_LENGTH) {
+  if (typeof token !== 'string' || token.length > maxLength || !JWS.test(token)) return null
   try {
     const header = json(token.split('.', 1)[0])
     return header && typeof header === 'object' && typeof header.alg === 'string' ? header : null
@@ -95,8 +97,8 @@ export function createAppStoreVerifier({ roots = [APPLE_ROOT_CA_G3_PEM], now = D
   const trusted = roots.map((pem) => new X509Certificate(pem).raw)
 
   /** Charge utile vérifiée, ou AppStoreJwsError. */
-  return function verifyJws(token) {
-    const header = jwsHeader(token)
+  return function verifyJws(token, { maxLength = MAX_JWS_LENGTH } = {}) {
+    const header = jwsHeader(token, maxLength)
     if (!header) throw new AppStoreJwsError('not_jws', 'Ce n\'est pas une transaction signée.')
     if (header.alg !== 'ES256') throw new AppStoreJwsError('bad_alg', 'Algorithme de signature inattendu.')
     const x5c = header.x5c
@@ -175,16 +177,17 @@ export function entitlementFromTransaction(tx, renewal = null, now = Date.now())
 
 /**
  * Vérification complète d'un achat iPhone pour /v1/subscription/verify.
- * @returns {{ ent: ReturnType<typeof entitlementFromTransaction>, accountMatch: boolean|null, environment: string }}
+ * @returns {Promise<{ ent: ReturnType<typeof entitlementFromTransaction>, accountMatch: boolean|null, environment: string,
+ *   locked: boolean, lockError: boolean }>}
  */
-export function createAppStoreBilling({ verifyJws, bundleId = APPSTORE_BUNDLE_ID }) {
+export function createAppStoreBilling({ verifyJws, bundleId = APPSTORE_BUNDLE_ID, notifications = null }) {
   const checkApp = (payload) => {
     if (payload?.bundleId !== bundleId) throw new AppStoreJwsError('other_app', 'Achat d\'une autre app.')
     if (!ENVIRONMENTS.has(payload?.environment)) throw new AppStoreJwsError('bad_environment', 'Environnement inconnu.')
   }
   return {
     isJws: isAppStoreJws,
-    verify(signedTransaction, installId, { signedRenewalInfo = null, now = Date.now() } = {}) {
+    async verify(signedTransaction, installId, { signedRenewalInfo = null, now = Date.now() } = {}) {
       const tx = verifyJws(signedTransaction)
       checkApp(tx)
       if (tx.type && tx.type !== 'Auto-Renewable Subscription') {
@@ -200,9 +203,122 @@ export function createAppStoreBilling({ verifyJws, bundleId = APPSTORE_BUNDLE_ID
         }
         if (renewal?.environment !== tx.environment) renewal = null
       }
-      const ent = entitlementFromTransaction(tx, renewal, now)
+      let ent = entitlementFromTransaction(tx, renewal, now)
+      // Verrou posé par une notification (remboursement, révocation…) après la signature de cette transaction.
+      // Registre injoignable : on ne bloque pas un abonné, la transaction signée fait foi (lockError rapporté).
+      let locked = null
+      let lockError = false
+      if (notifications && ent.premium) {
+        try {
+          locked = await notifications.lockFor(tx)
+        } catch {
+          lockError = true
+        }
+        if (locked) ent = { ...ent, premium: false, tier: null, state: locked.state, autoRenewing: false }
+      }
       const accountMatch = ent.accountId ? ent.accountId === appAccountTokenFor(installId) : null
-      return { ent, accountMatch, environment: tx.environment }
+      return { ent, accountMatch, environment: tx.environment, locked: Boolean(locked), lockError }
+    },
+  }
+}
+
+/**
+ * Notifications serveur V2 de l'App Store (I6-RELAIS-3) : l'App Store POSTe `{ signedPayload }` sur
+ * /appstore/notifications à chaque changement d'un abonnement (renouvellement, expiration, remboursement, révocation,
+ * période de grâce, changement de formule…). Même vérification que les transactions, puis celle des deux JWS
+ * emboîtés (`data.signedTransactionInfo`, `data.signedRenewalInfo`).
+ *
+ * Le relais ne garde aucun achat : il vérifie à chaque appel la transaction que l'app lui envoie. Mais une transaction
+ * signée avant un remboursement reste valide jusqu'à son `expiresDate`. La notification sert donc à poser un
+ * « verrou » par abonnement (empreinte de `originalTransactionId`, sans identifiant de personne) quand il n'ouvre plus
+ * de droits (remboursé, révoqué, expiré), et à le lever dès qu'il en rouvre (renouvellement, nouvel achat) ; le
+ * registre garde le dernier état et sa date, pour qu'une notification ancienne relivrée ne reverrouille rien. Une
+ * transaction signée avant le verrou est refusée ; une transaction signée après (achat refait) passe.
+ */
+export const subscriptionKey = (originalTransactionId) =>
+  createHash('sha256').update(`appstore:${originalTransactionId}`).digest('hex').slice(0, 32)
+
+/** Registre des verrous en mémoire (tests, ou relais sans Firestore). */
+export function createMemoryStatusStore() {
+  const map = new Map()
+  return {
+    async get(key) { return map.get(key) ?? null },
+    async set(key, value) { map.set(key, { ...value }) },
+  }
+}
+
+export function createAppStoreNotifications({ verifyJws, bundleId = APPSTORE_BUNDLE_ID, status = createMemoryStatusStore() }) {
+  return {
+    /**
+     * Notification vérifiée et appliquée au registre.
+     * @returns {{ type: string, subtype: string|null, environment: string|null, uuid: string|null,
+     *   ent: object|null, lock: 'set'|'cleared'|null, key: string|null }}
+     */
+    async handle(signedPayload, now = Date.now()) {
+      const note = verifyJws(signedPayload, { maxLength: MAX_NOTIFICATION_LENGTH })
+      const data = note?.data ?? null
+      const type = typeof note?.notificationType === 'string' ? note.notificationType : 'UNKNOWN'
+      const subtype = typeof note?.subtype === 'string' ? note.subtype : null
+      const uuid = typeof note?.notificationUUID === 'string' ? note.notificationUUID : null
+      const environment = data?.environment ?? null
+      const base = { type, subtype, environment, uuid, ent: null, lock: null, key: null }
+      if (!data) return base // notifications récapitulatives sans abonnement (SUMMARY…)
+      if (data.bundleId !== bundleId) throw new AppStoreJwsError('other_app', 'Notification d\'une autre app.')
+      if (!ENVIRONMENTS.has(environment)) throw new AppStoreJwsError('bad_environment', 'Environnement inconnu.')
+      if (type === 'TEST' || !data.signedTransactionInfo) return base
+      const tx = verifyJws(data.signedTransactionInfo)
+      if (tx.bundleId !== bundleId || tx.environment !== environment) {
+        throw new AppStoreJwsError('other_app', 'Transaction d\'une autre app.')
+      }
+      let renewal = null
+      if (data.signedRenewalInfo) {
+        try {
+          renewal = verifyJws(data.signedRenewalInfo)
+        } catch {
+          renewal = null
+        }
+      }
+      if (!tx.originalTransactionId) return base
+      // État à la date de la notification (l'App Store peut relivrer une notification ancienne : on ne remonte pas
+      // le temps, et un verrou plus récent n'est jamais écrasé par une notification plus ancienne)
+      const signedAt = Number.isFinite(note.signedDate) ? note.signedDate : now
+      const ent = entitlementFromTransaction(tx, renewal, signedAt)
+      const key = subscriptionKey(tx.originalTransactionId)
+      const current = await status.get(key)
+      if (current && current.at > signedAt) return { ...base, ent, key }
+      // On garde aussi l'état « ouvert » et sa date, pour qu'une notification ancienne relivrée ne reverrouille pas
+      await status.set(key, { state: ent.state, premium: ent.premium, at: signedAt })
+      const wasLocked = Boolean(current && !current.premium)
+      return { ...base, ent, key, lock: ent.premium ? (wasLocked ? 'cleared' : null) : 'set' }
+    },
+
+    /** Verrou posé après la signature de cette transaction ? (alors elle ne vaut plus) */
+    async lockFor(tx) {
+      if (!tx?.originalTransactionId) return null
+      const current = await status.get(subscriptionKey(tx.originalTransactionId))
+      const signedAt = Number.isFinite(tx.signedDate) ? tx.signedDate : 0
+      return current && !current.premium && current.at > signedAt ? current : null
+    },
+  }
+}
+
+/** Registre des verrous dans Firestore (collection `appstore-status`, un document par abonnement, sans donnée personnelle). */
+export function createFirestoreStatusStore({ project, getToken, fetchImpl = fetch, collection = 'appstore-status' }) {
+  const url = (key) => `https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents/${collection}/${key}`
+  const headers = async () => ({ Authorization: `Bearer ${await getToken()}`, 'Content-Type': 'application/json' })
+  const fail = (what, res) => Object.assign(new Error(`Firestore : ${what} refusée (${res.status})`), { status: res.status })
+  return {
+    async get(key) {
+      const res = await fetchImpl(url(key), { headers: await headers() })
+      if (res.status === 404) return null
+      if (!res.ok) throw fail('lecture', res)
+      const f = (await res.json())?.fields ?? {}
+      return { state: f.state?.stringValue ?? 'expired', premium: f.premium?.booleanValue === true, at: Number(f.at?.integerValue ?? 0) }
+    },
+    async set(key, { state, premium, at }) {
+      const fields = { state: { stringValue: state }, premium: { booleanValue: Boolean(premium) }, at: { integerValue: String(at) } }
+      const res = await fetchImpl(url(key), { method: 'PATCH', headers: await headers(), body: JSON.stringify({ fields }) })
+      if (!res.ok) throw fail('écriture', res)
     },
   }
 }

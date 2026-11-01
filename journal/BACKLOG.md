@@ -1403,11 +1403,16 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
     `data.transaction.type: 'ios-appstore'` ; JWS refusé → 400 `invalid_purchase`. `X-Purchase-Token` accepte un JWS
     (16 Kio max) pour les crédits (10/jour Silver, 20 Gold, inchangés). 10 tests sur une chaîne générée par openssl
     dans un dossier temporaire (aucune clé dans le dépôt).
-  - [ ] **I6-RELAIS-3** Route `POST /appstore/notifications` (notifications serveur V2, `signedPayload` vérifié par
-    `createAppStoreVerifier`, puis `data.signedTransactionInfo` / `signedRenewalInfo`) : DID_RENEW, EXPIRED, REFUND,
-    REVOKE, GRACE_PERIOD_EXPIRED, DID_FAIL_TO_RENEW, DID_CHANGE_RENEWAL_PREF / STATUS, SUBSCRIBED, TEST ; journal sans
-    jeton ni identifiant ; URL à donner au propriétaire (`<PUBLIC_URL>/appstore/notifications`, App Store Connect →
-    App → Informations sur l'app → Notifications du serveur de l'App Store, version 2, Production et Sandbox).
+  - [x] **I6-RELAIS-3** (01/11 18:33) `POST /appstore/notifications` : `signedPayload` vérifié par
+    `createAppStoreVerifier` (64 Kio au plus), puis `signedTransactionInfo` / `signedRenewalInfo` ; bundleId et
+    environnement contrôlés (autre app ou Xcode → 200 sans effet, signature fausse → 400). État de l'abonnement à la
+    date de la notification : non premium (REFUND, REVOKE, EXPIRED, GRACE_PERIOD_EXPIRED, DID_FAIL_TO_RENEW sans grâce)
+    → verrou ; premium (DID_RENEW, SUBSCRIBED, grâce, DID_CHANGE_RENEWAL_*) → ouvert. Registre `appstore-status`
+    (Firestore ; clé = empreinte de `originalTransactionId`, champs state / premium / at) ; une notification plus
+    ancienne que l'état connu ne change rien. `/v1/subscription/verify` refuse une transaction signée avant un verrou
+    (`locked` au journal) ; registre injoignable → abonné jamais bloqué (`lockError`), notification → 503 (relivrée).
+    URL : `https://halcya-relay-81378799481.europe-west1.run.app/appstore/notifications` (App Store Connect, production et sandbox, version 2). Limite connue : le cache des droits du relais
+    (1 h par installation, en mémoire) peut garder Gold jusqu'à 1 h après un remboursement.
   - [ ] **I6-RELAIS-6** App : nom du magasin dans une constante de distribution (« Google Play » / « l'App Store ») à
     la place des 4 textes en dur ; pour un achat `source: 'appstore'`, « Gérer mon abonnement » →
     https://apps.apple.com/account/subscriptions et « Passer à Gold » sans ancien jeton.
