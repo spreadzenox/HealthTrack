@@ -7,6 +7,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { SLOP_WORDING } from './wordingRules.js'
 import { APP_NAME } from '../config/brand.js'
 import { buildSite, PRIVACY_PATH } from '../../scripts/site/build-site.mjs'
 
@@ -49,6 +50,15 @@ describe('politique de confidentialité', () => {
     expect(text).toMatch(/pas un diagnostic|ne pose pas de diagnostic/)
   })
 
+  it('n’a pas de formule qui sonne générée ; « aucun diagnostic » dit une fois (SLOP-1d)', () => {
+    const body = html
+      .replace(/<title>[\s\S]*?<\/title>|<style[\s\S]*?<\/style>|<!--[\s\S]*?-->/g, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+    for (const { re, why } of SLOP_WORDING) expect(re.test(body), `${why} : ${body.match(re)?.[0]}`).toBe(false)
+    expect(text.match(/diagnostic/g)).toHaveLength(1)
+  })
+
   it('ne charge rien depuis Internet (page lue hors ligne par Health Connect)', () => {
     expect(html).not.toMatch(/<(script|link)\b/i)
     expect(html).not.toMatch(/fonts\.googleapis/)
@@ -65,6 +75,8 @@ describe('site GitHub Pages', () => {
     expect(landing).toContain(`href="${PRIVACY_PATH}"`)
     expect(landing).toContain(APP_NAME)
     expect(landing).not.toMatch(/<script\b|fonts\.googleapis/)
+    const landingText = landing.replace(/<title>[\s\S]*?<\/title>|<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ')
+    for (const { re, why } of SLOP_WORDING) expect(re.test(landingText), why).toBe(false)
     expect(fs.existsSync(path.join(out, '.nojekyll'))).toBe(true)
   })
 })

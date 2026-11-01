@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { publishListing, readListing, validateListing, pngSize, sha256, isMissingContactEmail, LIMITS } from './listing.mjs'
 import { API, UPLOAD_API, PlayApiError, isAccessDenied } from './publish.mjs'
-import { FORBIDDEN_WORDING } from '../../src/data/wordingRules.js'
+import { FORBIDDEN_WORDING, SLOP_WORDING } from '../../src/data/wordingRules.js'
 import { APP_NAME } from '../../src/config/brand.js'
 import { PREMIUM_AI_DAILY } from '../../src/config/premiumBenefits.js'
 
@@ -172,9 +172,16 @@ describe('fiche française du dépôt (app/store/listing/fr-FR)', () => {
     for (const { re, why } of FORBIDDEN_WORDING) expect(re.test(all), why).toBe(false)
   })
 
+  it('n’a pas de formule qui sonne générée (SLOP-1d ; le titre décidé par le propriétaire garde son tiret)', () => {
+    const text = [fr.shortDescription, fr.fullDescription].join('\n')
+    for (const { re, why } of SLOP_WORDING) expect(re.test(text), `${why} : ${text.match(re)?.[0]}`).toBe(false)
+  })
+
   it('dit ce que l’app n’est pas, que l’IA est facultative, et l’âge minimum (politique Play santé)', () => {
     expect(fr.fullDescription).toMatch(/pas un dispositif médical/)
-    expect(fr.fullDescription).toMatch(/estimation, pas un diagnostic/)
+    // SLOP-1d : la règle se dit une fois, dans le dernier paragraphe, jamais en refrain
+    expect(fr.fullDescription.match(/diagnostic/g)).toHaveLength(1)
+    expect(fr.fullDescription).toMatch(/ne pose aucun diagnostic/)
     expect(fr.fullDescription).toMatch(/facultative/)
     expect(fr.fullDescription).toMatch(/18 ans et plus/)
     expect(fr.fullDescription).toMatch(/Compatible avec les montres Huawei/)
