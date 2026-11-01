@@ -206,9 +206,9 @@ export default function Data() {
     <section className="food-page">
       <h2 className="page-title">Vos données</h2>
       <p className="page-intro">
-        Vos données restent <strong>sur cet appareil</strong> et survivent aux mises à jour. Si la sauvegarde
-        du téléphone est activée, elles y sont incluses (chiffrées, gérées par le système,
-        jamais lues par {APP_NAME}). Avant de réinstaller ou de changer de téléphone, exportez-les aussi.
+        Vos données sont sur ce téléphone et passent les mises à jour. Si la sauvegarde du téléphone est
+        activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas. Exportez-les avant de réinstaller
+        l’app ou de changer de téléphone.
       </p>
 
       <div className="data-actions">
@@ -217,7 +217,7 @@ export default function Data() {
           <p className="data-hint">
             {nothingToExport
               ? 'Rien à sauvegarder pour l’instant : vos repas, notes et mesures s’y ajouteront.'
-              : <>Un fichier avec toutes vos entrées et votre profil, rangé dans <strong>Documents</strong>.</>}
+              : 'Un fichier rangé dans Documents.'}
           </p>
           {entryCount > 0 && (
             <p className="data-count mono">{plural(entryCount, 'entrée')} et votre profil</p>
@@ -233,7 +233,7 @@ export default function Data() {
         <div className="data-block">
           <h3 className="section-title">Importer (restaurer)</h3>
           <p className="data-hint">
-            Vous verrez son contenu avant de choisir : <strong>ajouter</strong> (sans doublons) ou <strong>remplacer</strong>.
+            Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.
           </p>
           <input
             ref={fileInputRef}
@@ -329,9 +329,8 @@ export default function Data() {
         <div className="data-block">
           <h3 className="section-title">Supprimer</h3>
           <p className="data-hint">
-            Efface de ce téléphone vos repas, notes, mesures, lectures du visage et votre profil. Chez nous, il
-            ne reste au plus qu’un compteur d’analyses IA, sous une empreinte anonyme, effacé seul au bout de
-            13 mois sans analyse.
+            Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses
+            IA, anonyme, effacé après 13 mois sans analyse.
           </p>
           {!wipe ? (
             <button type="button" className="btn btn-irreversible" onClick={askWipe}>

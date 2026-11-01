@@ -32,16 +32,14 @@ function RelayAiBlock() {
     <div className="settings-block">
       <h3 className="section-title">Analyse des repas (IA)</h3>
       <p className="page-intro">
-        Pour remplir un repas depuis une photo ou une description, l’app la fait analyser par Gemini (Google Cloud,
-        en Europe) via notre serveur, seulement quand vous touchez « Analyser ». Aucune clé à saisir. Sans IA, la
-        saisie manuelle reste possible.
+        Quand vous touchez « Analyser », notre serveur envoie la photo ou la description du repas à une IA de
+        Google, en Europe. Sans IA, vous pouvez ajouter les aliments à la main.
       </p>
       <AiCreditsHint />
       <p className="hint">{quota}</p>
       <div className="gemini-privacy">
         <p className="hint">
-          <LineIcon name="lock" size={16} /> Seule la photo ou la description du repas part, sans métadonnées ;
-          rien d’autre de votre santé.
+          <LineIcon name="lock" size={16} /> Seule la photo ou la description part, sans ses métadonnées.
         </p>
         <details className="settings-advanced">
           <summary>Ce qui est envoyé, en détail</summary>
@@ -214,11 +212,10 @@ export default function Settings() {
           ))}
         </div>
         <p className="hint">
-          La carte «&nbsp;Votre ventre&nbsp;» de l’Accueil n’apparaît qu’avec «&nbsp;Mon ventre&nbsp;»
+          L’Accueil montre la carte «&nbsp;Votre ventre&nbsp;» avec «&nbsp;Mon ventre&nbsp;»
           {goal ? '' : gutCardMode(loadOnboarding()) === 'used'
             ? ', ou si vous avez noté votre ventre ces 7 derniers jours'
-            : ', ou tant que vous n’avez rien choisi'}. Vos notes ne sont jamais effacées : changez d’avis
-          quand vous voulez.
+            : ', ou tant que rien n’est choisi'}. Vos notes sont gardées, quel que soit votre choix.
         </p>
         {gutCardMode({ ...loadOnboarding(), goal }) !== 'hide' && <GutEveningReminder variant="setting" />}
       </div>
@@ -363,7 +360,7 @@ function FeedbackBlock() {
   return (
     <div className="settings-block">
       <h3 className="section-title">Votre avis</h3>
-      <p className="hint">{link.hint} Vous écrivez ce que vous voulez : aucune donnée n’est jointe.</p>
+      <p className="hint">{link.hint} Aucune donnée n’est jointe.</p>
       <div className="actions">
         <a className="btn btn-secondary settings-link-btn" href={link.url} target="_blank" rel="noopener noreferrer">
           {link.label}

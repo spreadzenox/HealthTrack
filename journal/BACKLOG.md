@@ -66,7 +66,9 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   - [x] **SLOP-1b-3** (01/11 05:33) Journal (rien à changer), Sources (intro, Health Connect, temps d'écran,
     Bluetooth, montre Huawei, guide des montres, Withings), bas de Nutrition ; refrain « jamais chez Halcya » retiré
     de 4 écrans (dit une fois en tête de Sources) ; règles « jamais chez Halcya » et « Astuce : ».
-  - [ ] **SLOP-1b** (suite : Paramètres, Données, détails dépliés des Analyses, réintroduction, onboarding complet ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
+  - [x] **SLOP-1b-4** (01/11 06:33) Paramètres (IA sans « Gemini » en play, carte ventre, abonnement gratuit, avis),
+    divulgation `ai_meal` sans nom de modèle, Données (intro, export, import, PDF, suppression). Captures `slop-1b-4/`.
+  - [ ] **SLOP-1b** (suite : détails dépliés des Analyses, réintroduction, onboarding complet ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
     Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.

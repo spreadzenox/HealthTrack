@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-01",
+  "kind": "amélioration",
+  "title": "Paramètres et Données plus courts",
+  "items": [
+    "Paramètres : l'analyse des repas, l'abonnement et « Votre avis » tiennent en phrases courtes.",
+    "Données : l'export, l'import, le rapport PDF et la suppression disent l'essentiel en une ou deux phrases."
+  ]
+}

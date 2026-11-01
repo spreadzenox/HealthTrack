@@ -82,9 +82,9 @@ describe('Settings — Ce qui vous amène (I155)', () => {
   it('sans objectif choisi, dit que la carte ventre reste affichée (POL-PLAY-13)', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
     renderSettings()
-    expect(screen.getByText(/ou tant que vous n’avez rien choisi/)).toBeInTheDocument()
+    expect(screen.getByText(/ou tant que rien n’est choisi/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('radio', { name: 'Mon ventre' }))
-    expect(screen.queryByText(/ou tant que vous n’avez rien choisi/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/ou tant que rien n’est choisi/)).not.toBeInTheDocument()
   })
 
   it('rappel du bilan du ventre : seulement avec la carte ventre, et retiré du natif quand l’objectif change (I170)', async () => {

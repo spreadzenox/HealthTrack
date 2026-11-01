@@ -14,7 +14,7 @@ export function feedbackLink(distribution, version) {
     return {
       url: PLAY_STORE_URL,
       label: 'Donner mon avis sur le Play Store',
-      hint: 'Pendant le test : « Envoyer des commentaires privés au développeur », en bas de la page Halcya. Ensuite : « Noter cette application ».',
+      hint: 'Sur la page Halcya du Play Store : « Envoyer des commentaires privés au développeur » pendant le test, « Noter cette application » ensuite.',
     }
   }
   const title = `Avis — ${APP_NAME} v${version}`

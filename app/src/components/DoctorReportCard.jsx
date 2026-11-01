@@ -56,8 +56,8 @@ export default function DoctorReportCard({ create = createReportPdf, save = save
     <article className="today-card fodmap-card report-card" data-testid="doctor-report">
       <span className="today-card-title">Rapport PDF pour mon médecin</span>
       <p className="today-card-text">
-        Votre ventre semaine par semaine, vos repas et vos pistes, sur 2 pages. Créé sur votre téléphone : vous
-        choisissez à qui l’envoyer.
+        Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et
+        c’est vous qui l’envoyez.
       </p>
       {!premium && <span className="fodmap-tag mono">premium</span>}
       {!premium && !empty && <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>}
