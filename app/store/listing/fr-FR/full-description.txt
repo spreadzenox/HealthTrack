@@ -1,6 +1,6 @@
-Halcya vous aide à comprendre ce qui va avec vos bons et vos mauvais jours : repas, ventre, sommeil, activité et bien-être, réunis dans un journal, sur votre téléphone.
+Halcya réunit vos repas, votre ventre, votre sommeil, votre activité et votre bien-être dans un journal, sur votre téléphone. Vous voyez ce qui va avec vos bons et vos mauvais jours.
 
-Pensée d'abord pour les personnes qui ont le ventre sensible — ballonnements, inconforts digestifs, syndrome de l'intestin irritable ou côlon irritable (SII) —, Halcya convient aussi à qui veut mieux connaître son énergie, ses nuits et sa forme.
+Elle est pensée d'abord pour les personnes qui ont le ventre sensible : ballonnements, syndrome de l'intestin irritable ou côlon irritable (SII). Elle sert aussi à suivre son énergie et ses nuits.
 
 ★ Vos montres et capteurs, sans ressaisie
 • Health Connect : sommeil, fréquence cardiaque, VFC, pas, dépense, séances, respiration, SpO₂… des montres, bagues et applis qui y écrivent.
@@ -9,36 +9,36 @@ Pensée d'abord pour les personnes qui ont le ventre sensible — ballonnements,
 • Temps d'écran du téléphone, si vous l'autorisez.
 
 ★ Notez en un geste
-• Votre ventre : Calme, Gêne ou Douleur, horodaté en une touche, et un bilan du soir, même depuis une notification.
-• Vos repas : un journal alimentaire horodaté, avec une photo, une image de la galerie ou quelques mots. L'analyse par IA des ingrédients est facultative et ne part que si vous la lancez.
-• Les FODMAP de chaque repas, groupe par groupe : « riche en fructanes : oignon » plutôt qu'un score unique. Teneurs tirées de la table Ciqual de l'Anses et de mesures publiées ; ce qui n'est pas mesuré reste « inconnu ».
+• Votre ventre : Calme, Gêne ou Douleur, horodaté en une touche. Le soir, un bilan rapide, même depuis la notification.
+• Vos repas : un journal alimentaire horodaté, à partir d'une photo, d'une image de la galerie ou de quelques mots. L'analyse par IA des ingrédients est facultative et ne part que si vous la lancez.
+• Les FODMAP de chaque repas, groupe par groupe, par exemple « riche en fructanes : oignon ». Les teneurs viennent de la table Ciqual de l'Anses et de mesures publiées. Une teneur jamais mesurée est marquée « inconnue ».
 
 ★ Des pistes qui tiennent compte des délais
-• Le ventre réagit parfois des heures après un repas : Halcya compare vos repas à votre ventre dans les 48 h qui suivent, à nuit comparable quand vos nuits sont connues.
-• On parle de pistes, jamais de causes, et on préfère attendre d'avoir assez de jours plutôt que de vous montrer de faux suspects.
-• Les repères FODMAP généraux ne servent que d'hypothèses de départ : ce sont vos propres données qui comptent.
+• Le ventre réagit parfois des heures après un repas. Halcya compare chaque repas à votre ventre dans les 48 h qui suivent, à nuit comparable.
+• Une piste n'apparaît qu'avec assez de jours pour comparer : en général trois à quatre semaines de notes.
+• Les repères FODMAP généraux servent de point de départ. Dès que vos propres données suffisent, ce sont elles qui comptent.
 
 ★ Vérifier une piste
-• Réintroduction FODMAP guidée, un groupe à la fois (blé, oignon, ail, GOS, lactose, fructose, sorbitol, mannitol) : trois portions croissantes, un rappel chaque jour si vous le voulez, et à la fin une phrase simple sur la portion qui passe.
-• Rapport PDF de 2, 4 ou 12 semaines à montrer à votre médecin ou à votre diététicienne.
+• Réintroduction FODMAP guidée, un groupe à la fois (blé, oignon, ail, GOS, lactose, fructose, sorbitol, mannitol) : trois portions croissantes, un rappel par jour si vous le voulez, puis la portion qui vous convient.
+• Rapport PDF de 2, 4 ou 12 semaines pour votre médecin ou votre diététicienne.
 
 ★ Votre bien-être, estimé sans saisie
-Si vous l'activez, une lecture du visage de quelques secondes à l'ouverture de l'app estime votre bien-être, sur le téléphone : aucune image n'est gardée ni envoyée, seuls quelques nombres sont enregistrés. C'est une estimation, pas un diagnostic, avec sa marge d'incertitude affichée.
+Si vous l'activez, une lecture du visage de quelques secondes estime votre bien-être, à l'ouverture de l'app et, si vous l'ajoutez, à chaque déverrouillage. Tout se passe sur le téléphone : aucune image n'est gardée ni envoyée, seuls quelques nombres sont enregistrés. La marge d'incertitude est affichée.
 
 ★ Comprendre vos tendances
-• Tendances : votre forme comparée à votre propre norme, pas à une moyenne imposée.
+• Tendances : votre forme comparée à vos propres semaines habituelles.
 • Analyses : ce qui va de pair avec votre ventre et votre bien-être, calculé sur le téléphone.
 
 ★ Sans abonnement, ou avec Premium
-• Sans abonnement : journal, saisie en un geste, imports des montres, bien-être estimé, graphiques, export de vos données et des analyses IA de repas offertes chaque mois.
+• Sans abonnement : journal, saisie en un geste, imports des montres, bien-être estimé, graphiques, export de vos données, et des analyses IA de repas offertes chaque mois.
 • Avec l'abonnement Premium : vos pistes repas → ventre en détail, la réintroduction guidée, le rapport PDF et l'analyse IA des repas jusqu'à 10 par jour. Prix et essai affichés dans l'app avant tout achat.
 
 ★ Local par défaut, l'IA seulement si vous le voulez
 • Vos données restent sur votre téléphone, sans compte à créer.
-• Rien ne sort sans votre accord : seule l'analyse IA d'un repas, quand vous la lancez, envoie la photo réduite (sans métadonnées) ou sa description.
+• Seule l'analyse IA d'un repas, quand vous la lancez, envoie la photo réduite (sans métadonnées) ou sa description.
 • Export complet de vos données en un geste (fichier JSON).
-• Si la sauvegarde Google du téléphone est activée, Android y inclut les données de l'app (chiffrées, gérées par Android, jamais lues par Halcya) : elles reviennent sur un nouveau téléphone. Sinon, tout s'efface à la désinstallation.
+• Si la sauvegarde Google du téléphone est activée, Android y inclut les données de l'app, chiffrées et jamais lues par Halcya : elles reviennent sur un nouveau téléphone. Sinon, tout s'efface à la désinstallation.
 
-Halcya n'est pas un dispositif médical : elle ne pose aucun diagnostic et ne remplace pas l'avis d'un professionnel de santé. Parlez de vos pistes à votre médecin ou à votre diététicienne.
+Halcya n'est pas un dispositif médical. Elle ne pose aucun diagnostic et ne remplace pas l'avis d'un professionnel de santé : parlez de vos pistes à votre médecin ou à votre diététicienne.
 
 Réservée aux personnes de 18 ans et plus.

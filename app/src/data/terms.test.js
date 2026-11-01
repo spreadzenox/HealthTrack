@@ -8,6 +8,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { SLOP_WORDING } from './wordingRules.js'
 import { APP_NAME, TERMS_URL } from '../config/brand.js'
 import { loadConfig } from '../../../relay/src/config.js'
 import { buildSite, TERMS_PATH } from '../../scripts/site/build-site.mjs'
@@ -57,6 +58,15 @@ describe('conditions d’utilisation et de vente', () => {
 
   it('renvoient à la politique de confidentialité publiée', () => {
     expect(html).toContain('href="https://spreadzenox.github.io/HealthTrack/confidentialite/"')
+  })
+
+  it('n’a pas de formule qui sonne générée ; « aucun diagnostic » dit une fois (SLOP-1d)', () => {
+    const body = html
+      .replace(/<title>[\s\S]*?<\/title>|<style[\s\S]*?<\/style>|<!--[\s\S]*?-->/g, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+    for (const { re, why } of SLOP_WORDING) expect(re.test(body), `${why} : ${body.match(re)?.[0]}`).toBe(false)
+    expect(text.match(/diagnostic/g)).toHaveLength(1)
   })
 
   it('ne chargent rien depuis Internet', () => {

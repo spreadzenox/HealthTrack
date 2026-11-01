@@ -38,8 +38,7 @@ export function landingHtml() {
   <h1>Halcya</h1>
   <p class="muted">Ventre et bien-être</p>
   <p>Comprenez ce qui va avec vos bons et mauvais jours : repas, sommeil, montres et bien-être, analysés sur votre
-  téléphone. Local par défaut, l'IA seulement si vous le voulez. Une aide pour repérer des tendances, pas un
-  diagnostic.</p>
+  téléphone. Local par défaut, l'IA seulement si vous le voulez.</p>
   <p><a href="${PRIVACY_PATH}">Politique de confidentialité</a> · <a href="${TERMS_PATH}">Conditions d'utilisation et de vente</a></p>
 </body>
 </html>

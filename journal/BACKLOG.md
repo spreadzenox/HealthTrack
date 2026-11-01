@@ -70,9 +70,10 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   - [x] **SLOP-1c** (01/11 02:33) Notifications et textes natifs Android : visage arrêté (énumération par trois), montre
     refusée, carte montre restaurée ; Sources (Health Connect qui ne répond pas, détails du visage, caméra refusée).
     `wording.test.js` scanne désormais le Java (chaînes recollées) ; règle « énumération par trois entre parenthèses ».
-  - [ ] **SLOP-1d** Fiche Play (`store/listing/fr-FR/full-description.txt` contient encore « C'est une estimation, pas
-    un diagnostic » ; `scripts/play/listing.test.mjs` l'exige : à remplacer par une phrase unique), formulaire
-    d'abonnement, page de confidentialité et conditions (site), en gardant la règle une fois.
+  - [x] **SLOP-1d** (01/11 03:33) Fiche Play (refrain, « faux suspects », tiret cadratin, « plutôt qu'un score
+    unique »), confidentialité (refrain, énumération ; **lecture au déverrouillage ajoutée**, elle manquait),
+    conditions (refrain ×2, « pas des causes »), accueil du site. « Diagnostic » une seule fois par page ;
+    `SLOP_WORDING` testé sur la fiche, les deux pages et l'accueil du site. Fiche d'abonnement déjà sobre.
   - [ ] **SLOP-1e** Nouveautés : 20 anciennes notes contiennent le refrain (`grep -l "pas un diagnostic"
     app/src/data/changelog`) ; les alléger, puis étendre le test aux notes.
 
