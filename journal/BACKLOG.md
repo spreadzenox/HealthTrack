@@ -1424,7 +1424,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
     **À faire côté routine iOS** : construire avec `VITE_STORE=appstore` ; le plugin StoreKit doit rendre les
     `products` sous les identifiants `halcya_premium` / `halcya_gold` (ou adapter `OWN_PRODUCTS`) pour que le garde
     « déjà Gold » marche ; le rappel de fin d'essai reste réservé aux achats Play (Apple envoie le sien).
-  - [ ] **I6-RELAIS-7** (trouvé le 01/11 20:33, IDEES I206 ; prochain run de code) Sur l'App Store, la page
+  - [x] **I6-RELAIS-7** (livré le 01/11 21:33 : `trialReminderPlugin(store = STORE)` rend `null` hors `STORE.id === 'play'`, faux plugin compris ; test unitaire ; captures `--play --routes=/premium` avec et sans `VITE_STORE=appstore`) (trouvé le 01/11 20:33, IDEES I206) Sur l'App Store, la page
     d'abonnement promettrait « jour 12 : On vous prévient par une notification » et « Rappel 2 jours avant la fin de
     l'essai » (`trialReminderAvailable()` vrai dès que le build est natif avec `FEATURES.billing`, plugin absent ou
     non), alors que le rappel n'est programmé que pour `source: 'play'`. Ne promettre le rappel que si
