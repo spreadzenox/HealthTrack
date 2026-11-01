@@ -64,7 +64,6 @@ function GutLinkCard({ link }) {
                 « Riche » : au-dessus d’un repère général par portion (une hypothèse de départ). Vos données priment.
               </p>
             )}
-            <p className="gut-link-text">L’attente joue aussi : une réintroduction guidée aide à trancher.</p>
           </>
         )}
       </div>

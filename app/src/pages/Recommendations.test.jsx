@@ -254,14 +254,14 @@ describe('Correlation link direction', () => {
     renderPage()
 
     const protein = (await screen.findByText('Protéines')).closest('.reco-link-card')
-    expect(protein).toHaveTextContent('Le jour même : quand ce chiffre monte, le bien-être est moins bon.')
+    expect(protein).toHaveTextContent('Le jour même : plus haut, bien-être moins bon.')
     // POL-PLAY-22 : simple d'abord, r derrière le chevron
     expect(protein).not.toHaveTextContent('r = ')
     openLinkDetails(protein)
     expect(protein).toHaveTextContent('r = −0,97')
 
     const lipid = screen.getByText('Lipides').closest('.reco-link-card')
-    expect(lipid).toHaveTextContent('Le jour même : quand ce chiffre monte, le bien-être est meilleur.')
+    expect(lipid).toHaveTextContent('Le jour même : plus haut, meilleur bien-être.')
     expect(lipid).toHaveClass('reco-link-card--corr')
 
     expect(document.querySelector('.reco-corr-pos, .reco-corr-neg')).toBeNull()
@@ -395,7 +395,7 @@ describe('Recommendations levers', () => {
     expect(verifyCard).toHaveClass('reco-advice-card--verify')
     expect(screen.queryByText(/Chez vous : lien net|À vérifier : peut-être|Hypothèse (solide|à confirmer|incertaine)/)).not.toBeInTheDocument()
     fireEvent.click(within(verifyCard).getByRole('button'))
-    expect(verifyCard).toHaveTextContent('Peut-être encore le hasard')
+    expect(verifyCard).toHaveTextContent('Peut-être le hasard')
     spy.mockRestore()
   })
 
@@ -630,7 +630,7 @@ describe('Recommendations — behaviour tags', () => {
     listEntriesForAnalysis.mockResolvedValue(makeEntries(10))
     renderPage()
     expect(await screen.findByText(/Vos habitudes/i)).toBeInTheDocument()
-    expect(screen.getByText(/Ajoutez des tags/i)).toBeInTheDocument()
+    expect(screen.getByText(/à ajouter à vos notes/)).toBeInTheDocument()
   })
 
   it('compares days with and without each tag, with the day the effect is measured', async () => {
@@ -1064,9 +1064,10 @@ describe('Recommendations — votre ventre et vos repas', () => {
     expect(within(section).getByText(/Les jours où vous en avez mangé, gêne ou douleur \d+ fois sur \d+/)).toBeInTheDocument()
     expect(within(section).getByText('À confirmer')).toBeInTheDocument()
     expect(section.textContent).not.toMatch(/cause|intolérance|diagnostic/i)
-    expect(within(section).queryByText(/L’attente joue aussi/)).toBeNull()
     fireEvent.click(within(section).getAllByRole('button', { name: /détails/i })[0])
-    expect(within(section).getByText(/L’attente joue aussi : une réintroduction guidée aide à trancher/)).toBeInTheDocument()
+    // SLOP-1b-8 : le lien « Vérifier avec une réintroduction guidée » suffit, la phrase qui le redisait est retirée
+    expect(within(section).queryByText(/L’attente joue aussi/)).toBeNull()
+    expect(within(section).getAllByText(/Vérifier avec une réintroduction guidée/).length).toBeGreaterThan(0)
     expect(within(section).getByText(/RR = .* · q = /)).toBeInTheDocument()
     expect(screen.getByTestId('reintro-entry')).toHaveAttribute('href', '/reintroduction')
     expect(screen.getByTestId('doctor-report')).toHaveTextContent('Rapport PDF pour mon médecin')

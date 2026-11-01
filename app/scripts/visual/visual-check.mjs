@@ -98,6 +98,7 @@
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
  *                                          # (variables --safe-area-inset-* injectées par Capacitor, en px)
+ *   npm run visual -- --routes=/recommendations --open-details  # tous les chevrons « détails » et volets ouverts
  *   npm run visual -- --routes=/recommendations --click="Comment c’est calculé > Le modèle qui prédit votre bien-être"
  *                                          # clique un bouton (nom accessible) ou un volet <summary> avant la capture
  *                                          # (« Analyse avancée > Comment fonctionne » : plusieurs clics à la suite)
@@ -1056,6 +1057,14 @@ async function main() {
             await button.click()
             await page.waitForTimeout(700)
           }
+        }
+        // Tous les chevrons « détails » et volets <details> ouverts d'un coup (relecture des textes dépliés, SLOP-1b-8).
+        if (args['open-details']) {
+          await page.evaluate(() => {
+            document.querySelectorAll('details').forEach((d) => { d.open = true })
+            document.querySelectorAll('button[aria-label="Afficher les détails"]').forEach((b) => b.click())
+          })
+          await page.waitForTimeout(500)
         }
         if (args.phrase) {
           const field = page.getByLabel(/En une phrase/).first()

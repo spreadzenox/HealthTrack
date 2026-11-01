@@ -102,8 +102,8 @@ function AgainstNormNote() {
 
 /** I108 : une piste nette « chez vous » (q < 0,05) ou une seule « à vérifier » (q < 0,2). */
 const LEVER_STAGE = {
-  personal: { evidence: 'solide', note: 'Lien net chez vous : il tient même en comptant tous les facteurs examinés.' },
-  toVerify: { evidence: 'à confirmer', note: 'Peut-être encore le hasard : quelques jours de plus le diront.' },
+  personal: { evidence: 'solide', note: 'Le lien tient même en comptant tous les facteurs testés.' },
+  toVerify: { evidence: 'à confirmer', note: 'Peut-être le hasard. À revoir dans quelques jours.' },
 }
 
 /** POL-7b : la piste en mots d'abord ; r, jours indépendants et week-end derrière le chevron. */
@@ -121,13 +121,13 @@ function LeverCard({ rank, lever, lag }) {
         <p className="reco-advice-text">{lever.title ?? lever.action}</p>
         {lever.againstNorm && <AgainstNormNote />}
         {open && lever.title && lever.action && (
-          <p className="reco-advice-stats">À tester : {lever.action.charAt(0).toLowerCase() + lever.action.slice(1)}</p>
+          <p className="reco-advice-impact">À tester : {lever.action.charAt(0).toLowerCase() + lever.action.slice(1)}</p>
         )}
         <p className="reco-advice-impact">
           {toVerify ? 'Lien possible' : `Lien ${lever.strength}`} avec votre bien-être
         </p>
         <EvidenceBadge evidence={stage?.evidence ?? lever.evidence} />
-        {open && stage && <p className="reco-advice-stats">{stage.note}</p>}
+        {open && stage && <p className="reco-advice-impact">{stage.note}</p>}
         {open && (
           <p className="reco-advice-stats">
             r = {formatR(lever.r)} · ≈ {days} jours indépendants
@@ -250,7 +250,7 @@ function CorrelationCard({ item, measure = 'bien-être', extra }) {
   return (
     <LinkCard kind="corr" name={item.label} meta={meta.join(' · ')} evidence={item.evidence} extra={extra}>
       <p className="reco-link-text">
-        Le jour même : quand ce chiffre monte, le {measure} est {item.r >= 0 ? 'meilleur' : 'moins bon'}.
+        Le jour même : plus haut, {item.r >= 0 ? `meilleur ${measure}` : `${measure} moins bon`}.
       </p>
     </LinkCard>
   )
@@ -488,16 +488,13 @@ function FaceMoodMethod() {
     <>
       <p className="reco-method-sub">Avec votre bien-être estimé (visage)</p>
       <p>
-        Chaque jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit un bien-être estimé
-        (médiane de ses lectures), comparée à chaque facteur comme une note donnée à la dernière lecture : avant{' '}
-        {DAY_OVER_HOUR} h, ce que vous faites après elle ne compte pas. Mêmes garde-fous que pour vos notes :
-        week-end, jours qui se ressemblent, nombre de facteurs testés. Le bien-être estimé ne
-        vient que de votre visage (et de vos notes si vous en donnez) : aucun de ces facteurs ne sert à
-        l’estimer, sinon le lien serait circulaire.
+        Un jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit un bien-être estimé : la
+        médiane de ses lectures. Il compte comme une note prise à la dernière lecture : avant {DAY_OVER_HOUR} h, ce
+        que vous faites ensuite ne compte pas. Mêmes garde-fous que pour vos notes. Ce bien-être ne vient que de
+        votre visage (et de vos notes si vous en donnez) : aucun facteur comparé ne sert à l’estimer.
       </p>
       <p>
-        Habitudes : celles de vos notes ou mesurées par le téléphone, comparées de la même façon. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
-        avant, à bien-être de la veille égal, liens solides seulement.
+        Habitudes et effets décalés : comparés de la même façon, liens solides seulement pour les effets décalés.
       </p>
       <p>
         Le bien-être vient ici d’une estimation, moins précise qu’une note.
@@ -530,7 +527,7 @@ function soonLines({ faceMood, tagEffects, laggedEffects, gut } = {}, showGut = 
     })
   }
   if (tagEffects?.status === 'no_tags') {
-    lines.push({ id: 'tags', label: 'Vos habitudes', progress: 'ajoutez des tags à vos notes' })
+    lines.push({ id: 'tags', label: 'Vos habitudes', progress: 'à ajouter à vos notes' })
   } else if (tagEffects?.status === 'ok' && tagEffects.effects.length === 0) {
     const counts = tagEffects.pending.filter((t) => !t.weekendOnly).map((t) => Math.min(t.nWith, t.nWithout, MIN_TAG_DAYS))
     const best = counts.length ? Math.max(...counts) : 0
@@ -578,9 +575,9 @@ function CorrelationMethod({ result }) {
         n’est pas présenté comme sa cause.
       </p>
       <p>
-        Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
-        avant, à bien-être de la veille égal (une bonne passe qui dure n’est pas créditée à
-        vos comportements) et à journée égale (sommeil, pas… du jour même).
+        Liens « la veille » ou « 2 jours avant » : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
+        avant, à bien-être de la veille égal et à journée égale (sommeil, pas… du jour même). Une bonne passe qui
+        dure n’est donc pas créditée à vos comportements.
       </p>
       <p>
         {evidenceLabel('solide')} : le lien tient même en comptant tous les facteurs testés

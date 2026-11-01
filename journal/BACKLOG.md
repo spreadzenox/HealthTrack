@@ -89,7 +89,10 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     préparation. Paywall : titre « Comprendre vos bons et mauvais jours » proposé pour GOLD-b. Fait : entrée « 3 jours,
     des portions croissantes. », intro en deux phrases, carte premium avec l'exemple seul, `Disclaimer` sans
     « diététicienne » ; règle `SLOP_WORDING` « l'app vous dit ce qui passe ». Captures `slop-1b-7/`.
-  - [ ] **SLOP-1b** (suite : détails dépliés des Analyses ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
+  - [x] **SLOP-1b-8** (01/11 11:33) Analyses dépliées : phrase des liens « Le jour même : plus haut, meilleur
+    bien-être. », « À tester » et solidité en texte (plus en mono), « L'attente joue aussi » retiré des pistes ventre,
+    méthode du visage en phrases courtes, « tags » → « habitudes » ; `--open-details` pour les captures ; 2 règles.
+  - [x] **SLOP-1b** (terminé le 01/11 11:33 ; paywall réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
     Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.
