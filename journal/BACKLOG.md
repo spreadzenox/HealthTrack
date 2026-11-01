@@ -79,11 +79,11 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   - [x] **SLOP-1b-5** (01/11 07:33) Onboarding complet : sous-titres des objectifs et des suivis sans énumération par
     trois, écran montre, Health Connect, import et « aha », lecture du visage, premier geste ; « Pas de souci : »
     retiré (2 écrans) et banni par `SLOP_WORDING`. Divulgations de permission inchangées (conformité). Captures `slop-1b-5/`.
-  - [ ] **SLOP-1b-6** (prêt, `IDEES.md` I204) Analyses : retirer le pied de page « Hypothèses… pas un avis médical »
+  - [x] **SLOP-1b-6** (01/11 09:33 ; I204) Analyses : retirer le pied de page « Hypothèses… pas un avis médical »
     (doublon de l'encart du haut) ; « Comment c'est calculé » avec les vrais libellés « Piste solide » / « À confirmer »
     (test : tout libellé cité existe dans `EVIDENCE`), « jugé bon ou mauvais d'avance » une fois, « habitudes » au
     lieu de « Tags » ; carte verrouillée « Quel aliment, et combien de temps après le repas. » ; sous-titre « Ce qui va
-    avec vos meilleurs jours. » ; phrase propre à chaque facteur au lieu de « les jours où c'est plus élevé vont avec… ».
+    avec vos meilleurs jours. » ; phrase propre à chaque facteur au lieu de « les jours où c'est plus élevé vont avec… ». Fait : pied de page retiré, méthode avec `evidenceLabel()` (impossible de citer une étiquette absente), « Tags » → « habitudes », refrain « jugé bon ou mauvais » et week-end dits une fois ; cartes : « Le jour même : quand ce chiffre monte, le bien-être est meilleur. » (le titre nomme déjà le facteur) ; 2 règles `SLOP_WORDING`. Captures `slop-1b-6/`.
   - [ ] **SLOP-1b-7** (prêt, I204) Réintroduction : « l'app vous dit ce qui passe » une fois (carte premium, avec
     l'exemple « Blé : une portion moyenne passe ») ; intro et entrée raccourcies ; « diététicienne » une fois sur la
     préparation. Paywall : titre « Comprendre vos bons et mauvais jours » proposé pour GOLD-b.

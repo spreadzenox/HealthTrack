@@ -250,7 +250,7 @@ function CorrelationCard({ item, measure = 'bien-être', extra }) {
   return (
     <LinkCard kind="corr" name={item.label} meta={meta.join(' · ')} evidence={item.evidence} extra={extra}>
       <p className="reco-link-text">
-        Le jour même : les jours où c’est plus élevé vont avec un {item.r >= 0 ? 'meilleur' : 'moins bon'} {measure}
+        Le jour même : quand ce chiffre monte, le {measure} est {item.r >= 0 ? 'meilleur' : 'moins bon'}.
       </p>
     </LinkCard>
   )
@@ -491,19 +491,16 @@ function FaceMoodMethod() {
         Chaque jour avec au moins {FACE_MOOD_MIN_READINGS} lectures au déverrouillage reçoit un bien-être estimé
         (médiane de ses lectures), comparée à chaque facteur comme une note donnée à la dernière lecture : avant{' '}
         {DAY_OVER_HOUR} h, ce que vous faites après elle ne compte pas. Mêmes garde-fous que pour vos notes :
-        week-end pris en compte, jours qui se ressemblent, nombre de facteurs testés. Le bien-être estimé ne
+        week-end, jours qui se ressemblent, nombre de facteurs testés. Le bien-être estimé ne
         vient que de votre visage (et de vos notes si vous en donnez) : aucun de ces facteurs ne sert à
         l’estimer, sinon le lien serait circulaire.
       </p>
       <p>
-        Habitudes : bien-être estimé les jours avec chaque tag (ceux de vos notes, ou mesurés par le téléphone)
-        contre les jours sans, le lendemain pour le soir ; le stress ressenti fait partie du bien-être, il
-        n’est jamais comparé. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
+        Habitudes : celles de vos notes ou mesurées par le téléphone, comparées de la même façon. Effets décalés : ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
         avant, à bien-être de la veille égal, liens solides seulement.
       </p>
       <p>
-        Le bien-être vient ici d’une estimation, moins précise qu’une note. Aucun comportement n’est jugé bon ou
-        mauvais d’avance.
+        Le bien-être vient ici d’une estimation, moins précise qu’une note.
       </p>
     </>
   )
@@ -576,10 +573,9 @@ function CorrelationMethod({ result }) {
       </p>
       <WeekendNote control={result.weekendControl} />
       <p>
-        Tags : bien-être les jours avec chaque tag comparé aux jours sans ; pour les
-        habitudes du soir, c’est le lendemain qui compte. Les week-ends sont comparés aux
-        week-ends et les jours de semaine entre eux. Le stress ressenti fait partie de votre
-        bien-être : il n’est pas présenté comme sa cause.
+        Habitudes : bien-être les jours avec chaque habitude comparé aux jours sans. Pour celles du
+        soir, c’est le lendemain qui compte. Le stress ressenti fait partie de votre bien-être : il
+        n’est pas présenté comme sa cause.
       </p>
       <p>
         Liens « la veille » ou « 2 jours avant » : bien-être comparé à ce que vous avez fait {LAGS[0]} à {LAGS[LAGS.length - 1]} jours
@@ -587,8 +583,8 @@ function CorrelationMethod({ result }) {
         vos comportements) et à journée égale (sommeil, pas… du jour même).
       </p>
       <p>
-        Pistes : « Chez vous » quand le lien tient même en comptant tous les facteurs testés
-        (q &lt; {LEVER_PERSONAL_Q.toString().replace('.', decimalMark())}) ; au plus une « À vérifier » quand il est plus fragile (q &lt; {LEVER_MAX_Q.toString().replace('.', decimalMark())}).
+        {evidenceLabel('solide')} : le lien tient même en comptant tous les facteurs testés
+        (q &lt; {LEVER_PERSONAL_Q.toString().replace('.', decimalMark())}). {evidenceLabel('à confirmer')} : plus fragile (q &lt; {LEVER_MAX_Q.toString().replace('.', decimalMark())}), une au plus.
       </p>
       <p>
         Tout est calculé sur votre téléphone. Ce sont des hypothèses : une corrélation ne prouve
@@ -601,7 +597,7 @@ function CorrelationMethod({ result }) {
 }
 
 /**
- * Pied de page (POL-7) : la mise en garde en petit, puis une seule note « Comment c’est calculé » qui réunit
+ * Pied de page (POL-7, SLOP-1b-6 : la mise en garde reste dans l'encart du haut) : une seule note « Comment c’est calculé » qui réunit
  * la méthode des liens, celle du bien-être estimé et le modèle de prédiction (calculé seulement à l’ouverture).
  */
 function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
@@ -611,9 +607,6 @@ function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
   if (!correlationsOk && !faceOk) return null
   return (
     <footer className="reco-footer">
-      <p className="reco-disclaimer">
-        Hypothèses tirées de vos seules données, calculées sur votre téléphone : pas un avis médical.
-      </p>
       <details className="reco-method-note">
         <summary>Comment c’est calculé</summary>
         {correlationsOk && <CorrelationMethod result={analysis.correlations} />}
@@ -677,7 +670,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
       <section className="reco-section">
         <h3 className="reco-section-title">Pistes à tester</h3>
         <p className="reco-section-hint">
-          Ce qui va de pair avec un meilleur bien-être dans vos données, et sur quoi vous pouvez agir.
+          Ce qui va avec vos meilleurs jours.
         </p>
         {levers.length > 0 ? (
           <ol className="reco-advice-list">

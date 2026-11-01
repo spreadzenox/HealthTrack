@@ -254,14 +254,14 @@ describe('Correlation link direction', () => {
     renderPage()
 
     const protein = (await screen.findByText('Protéines')).closest('.reco-link-card')
-    expect(protein).toHaveTextContent('les jours où c’est plus élevé vont avec un moins bon bien-être')
+    expect(protein).toHaveTextContent('Le jour même : quand ce chiffre monte, le bien-être est moins bon.')
     // POL-PLAY-22 : simple d'abord, r derrière le chevron
     expect(protein).not.toHaveTextContent('r = ')
     openLinkDetails(protein)
     expect(protein).toHaveTextContent('r = −0,97')
 
     const lipid = screen.getByText('Lipides').closest('.reco-link-card')
-    expect(lipid).toHaveTextContent('les jours où c’est plus élevé vont avec un meilleur bien-être')
+    expect(lipid).toHaveTextContent('Le jour même : quand ce chiffre monte, le bien-être est meilleur.')
     expect(lipid).toHaveClass('reco-link-card--corr')
 
     expect(document.querySelector('.reco-corr-pos, .reco-corr-neg')).toBeNull()
@@ -328,7 +328,7 @@ describe('Recommendations levers', () => {
     expect(await screen.findByText(/Pistes à tester/i)).toBeInTheDocument()
     expect(screen.getByText('Marcher davantage')).toBeInTheDocument()
     expect(screen.getByText(/lien modéré/i)).toBeInTheDocument()
-    expect(screen.getByText(/solide/i)).toBeInTheDocument()
+    expect(within(screen.getByText('Marcher davantage').closest('li')).getByText(/solide/i)).toBeInTheDocument()
     // Simple d'abord : pas de r ni de jours indépendants avant le chevron
     expect(screen.queryByText(/r = \+0,42/)).not.toBeInTheDocument()
     const card = screen.getByText('Marcher davantage').closest('li')
@@ -372,7 +372,7 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
-  it('says « Chez vous » on a lever with q < 0.05 and « À vérifier » on the single tentative one (I108)', async () => {
+  it('says « Piste solide » on a lever with q < 0.05 and « À vérifier » on the single tentative one (I108)', async () => {
     const solid = {
       ...baseCorr, variable: 'sleepMinutes', label: 'Sommeil', r: 0.5,
       direction: 'higher_better', action: 'Dormir davantage', stage: 'personal',
@@ -707,7 +707,7 @@ describe('Recommendations — behaviour tags', () => {
     openLinkDetails(stress)
     expect(stress).not.toHaveTextContent(/week-end à part/)
     expect(document.querySelector('.reco-method-note')).toHaveTextContent(
-      /week-ends sont comparés aux week-ends/i,
+      /en tenant compte du week-end/i,
     )
     expect(screen.getByText(/Bientôt comparés/i)).toHaveTextContent(
       /Repas tardif \(pas encore comparable : jours avec et sans jamais du même type/,
@@ -892,6 +892,11 @@ describe('Recommendations — explanations grouped (D1)', () => {
     expect(note).toHaveTextContent(/le lendemain qui compte/)
     expect(note).toHaveTextContent(/bien-être de la veille égal/)
     expect(note).toHaveTextContent(/une corrélation ne prouve pas une cause/)
+    // SLOP-1b-6 : la méthode cite les étiquettes réellement affichées, et « habitudes », jamais « Tags »
+    expect(note).toHaveTextContent(/Piste solide : le lien tient/)
+    expect(note).toHaveTextContent(/À confirmer : plus fragile/)
+    expect(note).not.toHaveTextContent(/Chez vous|À vérifier|Tags :/)
+    expect(note.textContent.match(/jugé bon ou mauvais d’avance/g)).toHaveLength(1)
     expect(note).toHaveTextContent(/Un jour noté avant 20 h, seuls les pas.*d’avant la note comptent|Un jour noté avant 20 h, seuls les pas.*d'avant la note comptent/)
   })
 
@@ -902,7 +907,9 @@ describe('Recommendations — explanations grouped (D1)', () => {
     await screen.findByText(/Comment c.est calculé/)
     const text = document.querySelector('.reco-tab-content').textContent
     expect(text.match(/corrélation ne prouve pas une cause/g)).toHaveLength(1)
-    expect(text).toMatch(/pas un avis médical/)
+    // SLOP-1b-6 : la mise en garde est dite une fois, dans l'encart du haut ; plus de pied de page qui la répète
+    expect(text).not.toMatch(/pas un avis médical/)
+    expect(document.querySelector('.reco-disclaimer')).toBeNull()
     for (const hint of document.querySelectorAll('.reco-section-hint')) {
       expect(hint.textContent.length).toBeLessThan(110)
     }

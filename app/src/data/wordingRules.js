@@ -48,5 +48,8 @@ export const SLOP_WORDING = [
   { re: /^Astuce ?:|[>'"`]\s*Astuce ?:/m, why: 'étiquette « Astuce » : dire la chose directement' },
   // SLOP-1b-5 (01/11) : tic de chatbot de l'onboarding (« Pas de souci : vous pourrez… »)
   { re: /\b[Pp]as de (souci|panique)\b|[Pp]as d[’']inquiétude/, why: 'tic de chatbot : dire seulement ce qui reste possible' },
+  // SLOP-1b-6 (01/11) : phrase-gabarit répétée mot pour mot sur chaque carte d'Analyses ; slogan de sous-titre
+  { re: /les jours où c[’']est plus élevé vont avec/i, why: 'gabarit répété : phrase courte (« quand ce chiffre monte, le bien-être est meilleur »)' },
+  { re: /et sur quoi vous pouvez agir/i, why: 'formule de slogan : dire ce que montre la section' },
 ]
 

@@ -95,6 +95,12 @@
   départ. L'app les comparera à votre ventre et à votre bien-être. » Les fenêtres d'accord avant une permission ne
   changent pas. Captures : `journal/captures/slop-1b-5/`. **À tester** : rien d'urgent ; à la prochaine installation
   neuve, lisez les écrans de bienvenue.
+- **Analyses, textes plus courts** (01/11 09:33) — la mise en garde du bas de page, qui redisait l'encart du
+  haut, disparaît. « Comment c'est calculé » parlait d'étiquettes « Chez vous » et « À vérifier » qui n'existent
+  plus : il reprend maintenant « Piste solide » et « À confirmer », et dit « habitudes » au lieu de « Tags ». Chaque
+  lien tient en une phrase (« Le jour même : quand ce chiffre monte, le bien-être est meilleur. ») au lieu de la
+  même phrase longue sur chaque carte. Captures : `journal/captures/slop-1b-6/`. **À tester** : Analyses, ouvrez
+  « Comment c'est calculé ».
 - **« Quand consulter » complété, réintroduction mieux située** (31/10 21:33) — la phrase des signes à signaler à
   votre médecin (détails de la carte « Votre ventre », réintroduction, bas du rapport PDF) ajoute « un proche
   (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de l'intestin ». En tête du choix
@@ -816,6 +822,7 @@ pour quatre lignes.
 | 01/11 05:33 — [Textes : Sources et Nutrition](runs/2026-11-01-0533-slop-sources.md) | ✍️ | SLOP-1b-3 : Journal relu (rien à changer) ; Sources (intro, Health Connect, temps d'écran, Bluetooth, montre Huawei, guide des montres) et bas de Nutrition réécrits ; refrain « jamais chez Halcya » retiré de 4 écrans ; règles « jamais chez Halcya » et « Astuce : » |
 | 01/11 06:33 — [Textes : Paramètres et Données](runs/2026-11-01-0633-slop-parametres.md) | ✍️ | SLOP-1b-4 : « Gemini » retiré de Paramètres et de la divulgation IA en play (tests) ; carte ventre, abonnement gratuit, avis, Données (intro, export, import, PDF, suppression) en phrases courtes ; captures avant/après |
 | 01/11 07:33 — [Textes : onboarding](runs/2026-11-01-0733-slop-onboarding.md) | ✍️ | SLOP-1b-5 : les 7 écrans de l'onboarding relus (objectifs, suivis, montre, Health Connect, import, visage, premier geste) ; « Pas de souci » retiré et banni au test ; captures avant/après |
+| 01/11 09:33 — [Textes : Analyses](runs/2026-11-01-0933-slop-analyses.md) | ✍️ | SLOP-1b-6 : pied de page « pas un avis médical » retiré (l'encart du haut le dit), « Comment c'est calculé » cite les vraies étiquettes et dit chaque idée une fois, phrase des liens raccourcie ; 2 règles au test ; captures |
 | 01/11 08:33 — [Idées : textes restants et offre Gold](runs/2026-11-01-0833-idees-gold-textes.md) | 💡 | Inventaire des textes encore « générés » d'Analyses, de la réintroduction et du paywall, réécritures prêtes (I204, SLOP-1b-6/-7) ; offre Gold chiffrée à vous soumettre (P35, I205) ; risque de double facturation Silver → Gold noté (GOLD-b2) |
 | 01/11 04:33 — [Textes : anciennes Nouveautés](runs/2026-11-01-0433-slop-nouveautes.md) | ✍️ | SLOP-1e : 41 phrases de 39 notes de Nouveautés réécrites (refrain « pas un diagnostic », « faux suspects », « pas une cause », tirets cadratins, énumérations par trois ; 2 phrases de refrain supprimées) ; test des formules bannies étendu aux notes |
 | 31/10 20:33 — [Idées : « quand consulter » relu](runs/2026-10-31-2033-idees-quand-consulter.md) | 💡 | Phrase « Quand consulter » relue contre FMC-HGE 2022 (ACG) et VIDAL : antécédents familiaux à ajouter (POL-PLAY-91) ; réintroduction « après 2 à 6 semaines d'éviction » (POL-PLAY-92) ; ameli toujours en 403 ; I202–I203 ; journal seul |
