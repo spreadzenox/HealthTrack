@@ -5,7 +5,7 @@
 ## Constat au démarrage
 - Main à `f61a841` (SLOP-1b-4) ; Build & Release, Play — AAB, Tests et émulateur A56 verts. Aucune PR « [Auto] »
   ouverte ; #51 (`cursor/*`) non touchée.
-- Les captures `journal/captures/slop-1b-4/` citées par le run précédent ne sont pas dans le dépôt (seuls `slop-1a/`
+- Les captures `journal/captures/slop-1b-4/` citées par le run précédent ne sont pas dans le dépôt : `.gitignore` ignore les `*.jpg`, il faut `git add -f` (seuls `slop-1a/`
   et `slop-1b-3/` y sont) : rien de bloquant, à ne pas citer comme preuve.
 
 ## Inventaire (captures `npm run visual -- --play` de `/bienvenue` relues : accueil, suivis, montre, visage, premier geste, « aha »)
