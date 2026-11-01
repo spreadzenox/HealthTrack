@@ -143,7 +143,7 @@ export async function loadPlans({ native } = {}) {
   }
 }
 
-/** Achat Halcya dans l'état voulu ; Gold d'abord si les deux existent (ne devrait pas arriver, voir GOLD-b2). */
+/** Achat Halcya dans l'état voulu ; Gold d'abord si les deux existent (un instant, pendant un passage à Gold). */
 const ownPurchase = (purchases, state = 'purchased') => {
   const list = (Array.isArray(purchases) ? purchases : []).filter((p) => p?.state === state && p.purchaseToken)
   for (const id of OWN_PRODUCTS) {
@@ -168,14 +168,38 @@ function verifyToken(token, refresh) {
 const ERROR_MESSAGE = 'Google Play n’a pas pu finaliser l’achat. Vérifiez votre connexion et réessayez ; rien n’a été débité.'
 
 /**
+ * Passage Silver → Gold (GOLD-b2) : un seul abonnement à la fois. L'achat Gold remplace l'abonnement Silver de ce
+ * compte Google Play (ancien jeton + mode de remplacement) au lieu d'en ouvrir un second. Mode « avec prorata de
+ * temps » : effet immédiat, sans débit le jour même ; le temps déjà payé de Silver est converti en jours de Gold.
+ * Il marche quelle que soit la formule Silver (annuelle, mensuelle, en essai), contrairement au prorata de prix qui
+ * exige une même période de facturation. Gold → Silver n'est pas proposé dans l'app (annulation dans Google Play).
+ */
+export const UPGRADE_REPLACEMENT_MODE = 'WITH_TIME_PRORATION'
+export const ALREADY_GOLD_MESSAGE = 'Vous avez déjà Gold sur ce compte Google Play : il comprend tout ce que donne Silver.'
+
+/** Abonnement Halcya en cours sur ce compte Google Play, d'après Google lui-même (null s'il n'y en a pas). */
+async function currentOwnPurchase(plugin) {
+  if (typeof plugin.queryPurchases !== 'function') return null
+  const { purchases } = await plugin.queryPurchases()
+  const owned = ownPurchase(purchases)
+  if (!owned) return null
+  return { token: owned.purchaseToken, productId: OWN_PRODUCTS.find((id) => owned.products?.includes(id)) }
+}
+
+/**
  * Lance l'achat d'une formule. Rend `{ status: 'purchased' | 'pending' | 'cancelled' | 'error', entitlement?, message? }`.
  */
 export async function purchasePlan(plan, { native, refresh = refreshEntitlement } = {}) {
   const plugin = await resolveNative(native)
   if (!plugin || !plan?.offerToken) return { status: 'error', message: ERROR_MESSAGE }
+  const productId = plan.productId ?? PRODUCT_ID
   let result
   try {
-    result = await plugin.purchase({ productId: plan.productId ?? PRODUCT_ID, offerToken: plan.offerToken, obfuscatedAccountId: await obfuscatedAccountId() })
+    // Abonnement déjà en cours : jamais deux abonnements Halcya sur le même compte (GOLD-b2)
+    const current = await currentOwnPurchase(plugin)
+    if (current?.productId === GOLD_PRODUCT_ID && productId !== GOLD_PRODUCT_ID) return { status: 'error', message: ALREADY_GOLD_MESSAGE }
+    const upgrade = current && current.productId !== productId ? { oldPurchaseToken: current.token, replacementMode: UPGRADE_REPLACEMENT_MODE } : {}
+    result = await plugin.purchase({ productId, offerToken: plan.offerToken, obfuscatedAccountId: await obfuscatedAccountId(), ...upgrade })
   } catch {
     return { status: 'error', message: ERROR_MESSAGE }
   }

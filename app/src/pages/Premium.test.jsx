@@ -187,6 +187,29 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       expect(await screen.findByText(/Gold actif · renouvellement le/)).toBeInTheDocument()
       expect(screen.getByText(/jusqu’à 20 par jour/)).toBeInTheDocument()
       expect(screen.queryByRole('radio')).toBeNull()
+      expect(screen.queryByRole('button', { name: /Passer à Gold/ })).toBeNull()
+    })
+
+    it('abonné Silver (GOLD-b2) : « Passer à Gold » achète la formule Gold, qui remplace Silver', async () => {
+      billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH, GOLD])
+      billing.purchasePlan.mockResolvedValue({ status: 'purchased', entitlement: { premium: true, source: 'play', state: 'active', tier: 'gold', productId: 'halcya_gold', autoRenewing: true, expiresAt: '2099-01-01T00:00:00Z' } })
+      localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'play', state: 'active', tier: 'silver', productId: 'halcya_premium', autoRenewing: true, expiresAt: '2099-01-01T00:00:00Z' }))
+      renderPremium()
+      expect(await screen.findByText(/Silver actif · renouvellement le/)).toBeInTheDocument()
+      expect(screen.getByText(/Gold remplace Silver : vous n’aurez qu’un abonnement/)).toBeInTheDocument()
+      fireEvent.click(await screen.findByRole('button', { name: 'Passer à Gold · 9,99 € / mois' }))
+      await waitFor(() => expect(billing.purchasePlan).toHaveBeenCalledWith(GOLD))
+      expect(await screen.findByText(/Gold actif · renouvellement le/)).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /Passer à Gold/ })).toBeNull()
+    })
+
+    it('abonné Silver sans produit Gold chez Google Play : aucun bouton de passage', async () => {
+      billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH])
+      localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'play', state: 'active', tier: 'silver', productId: 'halcya_premium', autoRenewing: true, expiresAt: '2099-01-01T00:00:00Z' }))
+      renderPremium()
+      expect(await screen.findByText(/Silver actif/)).toBeInTheDocument()
+      await waitFor(() => expect(billing.loadPlans).toHaveBeenCalled())
+      expect(screen.queryByRole('button', { name: /Passer à Gold/ })).toBeNull()
     })
   })
 
