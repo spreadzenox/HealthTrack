@@ -231,7 +231,7 @@ export function createPushVerifier({ audience, serviceAccount, fetchImpl = fetch
  * @param {{ play: ReturnType<typeof createPlayClient>, packageName: string, launchPremium?: { from?: string, until?: string, off?: boolean },
  *   verifyPush: (authorization: string) => Promise<boolean>, log?: (e: object) => void, now?: () => number }} deps
  */
-export function createBillingRoutes({ play, appStore = null, packageName, launchPremium = {}, verifyPush, log = () => {}, now = Date.now }) {
+export function createBillingRoutes({ play, appStore = null, appStoreNotifications = null, packageName, launchPremium = {}, verifyPush, log = () => {}, now = Date.now }) {
   return {
     /** POST /v1/subscription/verify — droits premium d'une installation (avec ou sans jeton d'achat). */
     async verify(body, installId) {
@@ -244,14 +244,14 @@ export function createBillingRoutes({ play, appStore = null, packageName, launch
         const signedRenewalInfo = body?.renewalInfo ?? body?.transaction?.renewalInfo ?? null
         let checked
         try {
-          checked = appStore.verify(purchaseToken, installId, { signedRenewalInfo, now: now() })
+          checked = await appStore.verify(purchaseToken, installId, { signedRenewalInfo, now: now() })
         } catch (err) {
           if (!err?.code) throw err
           log({ event: 'verify', source: 'appstore', result: err.code, token: hashToken(purchaseToken) })
           return { status: 400, payload: { ok: false, error: 'invalid_purchase', message: 'Achat App Store non reconnu.', ...verifyResponse({ ent: null, launchUntil }) } }
         }
-        const { ent, accountMatch, environment } = checked
-        log({ event: 'verify', source: 'appstore', environment, state: ent.state, premium: ent.premium, tier: ent.tier, accountMatch, token: hashToken(purchaseToken) })
+        const { ent, accountMatch, environment, locked = false, lockError = false } = checked
+        log({ event: 'verify', source: 'appstore', environment, state: ent.state, premium: ent.premium, tier: ent.tier, accountMatch, locked, lockError, token: hashToken(purchaseToken) })
         return { status: 200, payload: verifyResponse({ ent, launchUntil, acknowledged: true, accountMatch }) }
       }
 
@@ -276,6 +276,31 @@ export function createBillingRoutes({ play, appStore = null, packageName, launch
       }
       log({ event: 'verify', state: ent.state, premium: ent.premium, test: ent.test, acknowledged, accountMatch, token: hashToken(purchaseToken) })
       return { status: 200, payload: verifyResponse({ ent, launchUntil, acknowledged, accountMatch }) }
+    },
+
+    /**
+     * POST /appstore/notifications — notification serveur V2 de l'App Store (`{ signedPayload }`). 200 quand elle est
+     * traitée ou à ignorer ; 400 si elle ne se vérifie pas (ce n'est pas l'App Store) ; 503 si le registre est
+     * injoignable (l'App Store relivre). Journal : type, sous-type, état, empreinte de l'abonnement, rien d'autre.
+     */
+    async appStoreNotification(body) {
+      if (!appStoreNotifications) throw new HttpError(404, 'not_found', 'Route inconnue.')
+      const signedPayload = body?.signedPayload
+      if (typeof signedPayload !== 'string') throw new HttpError(400, 'bad_message', 'signedPayload attendu.')
+      let result
+      try {
+        result = await appStoreNotifications.handle(signedPayload, now())
+      } catch (err) {
+        if (err?.code) {
+          log({ event: 'appstore_notification', result: err.code })
+          return { status: err.code === 'other_app' || err.code === 'bad_environment' ? 200 : 400, payload: { ok: false, error: err.code } }
+        }
+        log({ event: 'appstore_notification', result: 'store_error', status: err?.status ?? null })
+        return { status: 503, payload: { ok: false, error: 'unavailable' } }
+      }
+      const { type, subtype, environment, ent, lock, key } = result
+      log({ event: 'appstore_notification', type, subtype, environment, state: ent?.state ?? null, premium: ent?.premium ?? null, tier: ent?.tier ?? null, lock, subscription: key ? key.slice(0, 12) : null })
+      return { status: 200, payload: { ok: true } }
     },
 
     /**

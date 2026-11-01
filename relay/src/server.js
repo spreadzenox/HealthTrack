@@ -10,6 +10,7 @@
  * - POST /v1/subscription/verify → droits premium de la variante play (`{ purchaseToken? }`, en-tête `X-Install-Id`),
  *   relus chez Google Play (src/billing.js), ou transaction StoreKit 2 signée de l'app iPhone (src/appstore.js) ;
  * - POST /pubsub/rtdn          → notifications d'abonnement Google Play (push Pub/Sub authentifié) ;
+ * - POST /appstore/notifications → notifications serveur V2 de l'App Store (`{ signedPayload }` signé par Apple) ;
  * - GET  /v1/credits            → crédits d'analyse IA de l'installation (src/credits.js), sans rien consommer.
  * - POST /v1/bench/analyze      → banc Silver / Gold (GOLD-b5, .github/workflows/bench-gold.yml) : jeton OIDC du compte
  *   de la CI obligatoire ; `{ tier: 'silver' | 'gold', dish, kind, image | description }`. Même chemin que l'analyse
@@ -68,6 +69,8 @@ export const hashInstallId = (id) => createHash('sha256').update(id).digest('hex
 
 /** Taille maximale des corps des routes d'abonnement (jeton d'achat, message Pub/Sub). */
 const SMALL_BODY_BYTES = 64 * 1024
+/** Notification V2 de l'App Store : trois JWS emboîtés (environ 20 Ko en pratique). */
+const NOTIFICATION_BODY_BYTES = 96 * 1024
 
 /** Valide la demande et prépare les parties envoyées au modèle. */
 export function buildRequest(body, ingredientNames) {
@@ -265,7 +268,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       return
     }
 
-    if (billing && (path === '/v1/subscription/verify' || path === '/pubsub/rtdn')) {
+    if (billing && (path === '/v1/subscription/verify' || path === '/pubsub/rtdn' || path === '/appstore/notifications')) {
       if (req.method !== 'POST') {
         send(res, 405, { error: 'method', message: 'POST attendu.' }, origin)
         return
@@ -274,6 +277,8 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         let result
         if (path === '/pubsub/rtdn') {
           result = await billing.rtdn(await readJson(req, SMALL_BODY_BYTES), req.headers.authorization)
+        } else if (path === '/appstore/notifications') {
+          result = await billing.appStoreNotification(await readJson(req, NOTIFICATION_BODY_BYTES))
         } else {
           const installId = String(req.headers['x-install-id'] ?? '')
           if (!INSTALL_ID.test(installId)) throw new HttpError(400, 'install_id', 'Identifiant d\'installation manquant.')
