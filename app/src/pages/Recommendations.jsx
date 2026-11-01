@@ -753,7 +753,7 @@ function AdvancedTab({ analysis }) {
               négatif ou bien plus bas, il signale un sur-apprentissage et le modèle est marqué peu fiable.</>
             )}
             {modelInfo?.overfit_risk && (
-              <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours — R² entraînement non fiable.</span></>
+              <> <span className="reco-overfit-warn">⚠ Plus de variables que de jours : R² d’entraînement non fiable.</span></>
             )}
           </p>
           {modelInfo?.nFeaturesFinal != null && modelInfo?.nFeaturesCandidate != null && (
@@ -904,7 +904,7 @@ function RecoDebugPanel({ entries, totalDbCount }) {
 
   return (
     <details className="reco-debug-panel" open>
-      <summary className="reco-debug-title">🛠 Debug — Données Recommandations</summary>
+      <summary className="reco-debug-title">Debug : données Recommandations</summary>
       <div className="reco-debug-body">
         <p><strong>Total entrées en base (DB) :</strong> {totalDbCount ?? '…'}</p>
         <p><strong>Total entrées chargées (après limites par type) :</strong> {entries.length}</p>

@@ -82,7 +82,7 @@ const UNAVAILABLE_MESSAGES = {
     body: (
       <>
         Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un <strong>module système</strong>{' '}
-        intégré — il n’est pas dans le Play Store. Pour le mettre à jour, allez dans {SYSTEM_UPDATE} et installez la
+        intégré : il n’est pas dans le Play Store. Pour le mettre à jour, allez dans {SYSTEM_UPDATE} et installez la
         dernière version.
       </>
     ),
@@ -93,7 +93,7 @@ const UNAVAILABLE_MESSAGES = {
     body: (
       <>
         Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est un{' '}
-        <strong>module système intégré</strong> — assurez-vous que votre appareil est à jour via {SYSTEM_UPDATE}.
+        <strong>module système intégré</strong>. Mettez le téléphone à jour via {SYSTEM_UPDATE}.
       </>
     ),
     settings: true,
@@ -113,8 +113,8 @@ const UNAVAILABLE_MESSAGES = {
     title: 'Health Connect non disponible.',
     body: (
       <>
-        Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est <strong>intégré au système</strong>{' '}
-        — assurez-vous que votre appareil est à jour via {SYSTEM_UPDATE}. Sur Android 8–13 uniquement, installez
+        Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est <strong>intégré au système</strong>.
+        Mettez le téléphone à jour via {SYSTEM_UPDATE}. Sur Android 8–13 uniquement, installez
         &quot;Health Connect&quot; depuis le Play Store. Activez ensuite la synchronisation dans Samsung Health →
         Paramètres → Health Connect.
       </>

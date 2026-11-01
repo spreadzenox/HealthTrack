@@ -37,5 +37,9 @@ export const SLOP_WORDING = [
   { re: /préf[èé]r\w* attendre|faux suspects/i, why: 'formule toute faite : dire concrètement pourquoi il faut plus de jours' },
   // « Des liens repérés…, pas des causes » : la règle se dit une fois (« Comment c'est calculé »), pas sur chaque carte
   { re: /\b(liens?|hypothèses?)\b[^.]{0,40}, pas (des|une) causes?\b/i, why: 'refrain « pas une cause » : une fois, dans « Comment c’est calculé »' },
+  // SLOP-1b-2 (01/11) : tirets cadratins entre deux mots (le tiret seul, « — », reste le signe d'une valeur absente)
+  { re: /[\p{L}.)»] — [\p{L}«(]/u, why: 'tiret cadratin dans une phrase : point, deux-points ou virgule' },
+  { re: /[✨🔒🎙🚀🎉💡👉]/u, why: 'emoji décoratif' },
+  { re: /sans jamais (le|la|les) remplacer|c[’']est idéal/i, why: 'formule toute faite' },
 ]
 

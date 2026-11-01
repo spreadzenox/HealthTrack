@@ -47,13 +47,13 @@ export function analyzeMealDescription(text, features = FEATURES) {
 export function aiPrivacyHint(kind, features = FEATURES) {
   if (features.aiRelay) {
     return kind === 'photo'
-      ? '🔒 Seule la photo, réduite et sans position GPS ni infos de l’appareil, part vers notre serveur pour être analysée par Gemini (Google Cloud, en Europe). Rien n’y est gardé.'
-      : '🎙️ Le micro du clavier permet de dicter. 🔒 Seul ce texte part vers notre serveur, analysé par Gemini (Google Cloud, en Europe) ; rien n’y est gardé, et les nutriments sont calculés sur le téléphone.'
+      ? 'Seule la photo part vers notre serveur, réduite et sans position GPS. Une IA de Google l’analyse en Europe. Rien n’est gardé.'
+      : 'Vous pouvez dicter avec le micro du clavier. Seul ce texte part vers notre serveur, analysé par une IA de Google en Europe. Rien n’est gardé. Les nutriments sont calculés sur le téléphone.'
   }
   return kind === 'photo'
-    ? '🔒 Seule la photo, réduite et sans position GPS ni infos de l’appareil, est envoyée à Google Gemini avec votre clé. Avec une clé gratuite, Google peut l’utiliser pour améliorer ses produits.'
-    : '🎙️ Le micro du clavier permet de dicter. 🔒 Seul ce texte est envoyé à Google Gemini avec votre clé ; les nutriments sont calculés sur le téléphone.'
+    ? 'Seule la photo est envoyée à Google Gemini avec votre clé, réduite et sans position GPS. Avec une clé gratuite, Google peut s’en servir pour améliorer ses produits.'
+    : 'Vous pouvez dicter avec le micro du clavier. Seul ce texte est envoyé à Google Gemini avec votre clé. Les nutriments sont calculés sur le téléphone.'
 }
 
 /** Libellé du bouton qui remplit un repas décrit. */
-export const describeButtonLabel = (features = FEATURES) => (features.aiRelay ? '✨ Remplir avec l’IA' : '✨ Remplir avec Gemini')
+export const describeButtonLabel = (features = FEATURES) => (features.aiRelay ? 'Remplir avec l’IA' : 'Remplir avec Gemini')

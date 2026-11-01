@@ -245,14 +245,14 @@ export default function BleDevices({
         <p className="my-devices-intro">Dans l’app Android, un bouton lance la recherche des appareils autour de vous.</p>
       ) : phase === 'measuring' && live ? (
         <div className="my-device ble-live" aria-live="polite">
-          <p className="ble-live-title">Mesure en cours — {live.device.name || 'capteur cardio'}</p>
+          <p className="ble-live-title">Mesure en cours : {live.device.name || 'capteur cardio'}</p>
           <p className="ble-live-bpm">
             <span className="ble-live-value">{live.bpm ?? '—'}</span> <span className="ble-live-unit">bpm</span>
           </p>
           <p className="my-device-meta">
             {formatClock(Date.now() - live.startedAt)} / {formatClock(sessionMs)} · {live.beats} battements reçus
           </p>
-          <p className="my-device-message">Restez assis ou allongé, immobile, et respirez normalement. Le matin au réveil, c’est idéal pour suivre votre VFC.</p>
+          <p className="my-device-message">Restez assis ou allongé, sans bouger, et respirez normalement. Pour suivre votre VFC, mesurez le matin au réveil.</p>
           <div className="my-device-actions">
             <button type="button" className="btn btn-primary connector-btn" onClick={() => finish()}>
               Terminer et enregistrer

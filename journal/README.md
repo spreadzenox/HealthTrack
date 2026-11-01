@@ -50,6 +50,13 @@
   pistes à discuter avec elle. »). Un test échoue si le refrain revient. Captures avant/après :
   `journal/captures/slop-1a/`. Suite : formules toutes faites, tirets cadratins et phrases longues écran par écran,
   puis Nouveautés, fiche Play et confidentialité. **À tester** : Accueil, la carte bien-être est plus courte.
+- **Textes, suite : repas et premiers pas** (01/11 00:33 et 01:33) — « on préfère attendre plutôt que de vous montrer
+  de faux suspects » et « des liens…, pas des causes » réécrits en phrases concrètes (Accueil, Analyses, PDF). Sous la
+  photo ou la description d'un repas, le rappel tient en phrases courtes, sans 🔒 ni 🎙️, et ne nomme plus « Gemini »
+  dans la version Play (« une IA de Google l'analyse en Europe ») ; « Remplir avec l'IA » perd son ✨. Onboarding :
+  « Ces sujets passeront en premier. Les autres restent accessibles. », « Notez-le d'un geste. Les pistes viennent de
+  ces notes, comparées à vos repas. » Derniers tirets cadratins des phrases retirés (aide Health Connect, VFC…). Le
+  test refuse désormais tirets cadratins entre deux mots et emojis décoratifs. Captures : `journal/captures/slop-1b-2/`.
 - **« Quand consulter » complété, réintroduction mieux située** (31/10 21:33) — la phrase des signes à signaler à
   votre médecin (détails de la carte « Votre ventre », réintroduction, bas du rapport PDF) ajoute « un proche
   (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de l'intestin ». En tête du choix
@@ -764,7 +771,8 @@ pour quatre lignes.
 | 31/10 21:33 — [« Quand consulter » et éviction](runs/2026-10-31-2133-quand-consulter-eviction.md) | 🎨 | POL-PLAY-91 : antécédents familiaux (cancer du côlon, MICI) dans `WHEN_TO_SEE_DOCTOR` (carte ventre, réintroduction, PDF) ; POL-PLAY-92 : ligne pêche « après 2 à 6 semaines » en tête de la réintroduction ; 2 tests ; v414 |
 | 31/10 22:33 — [Gold sur Gemini 3.8 Flash](runs/2026-10-31-2233-gold-flash-relais.md) | 🔧 | Bascule (a) du 31/10 22:45 : relais Gold = `gemini-3.8-flash` (eu, réflexion MEDIUM, 25 s, Flash-Lite en secours) pour la période de lancement ; jetons et coût de chaque appel, Gold coupé à 15 €/mois, tout coupé à 19 € ; plafonds 150/jour dont 40 Gold ; nom du modèle masqué en play ; 13 tests relais ; v415, relais redéployé |
 | 31/10 23:33 — [Textes : fin du refrain « pas un diagnostic »](runs/2026-10-31-2333-slop-refrain.md) | ✍️ | SLOP-1a : « une estimation, pas un diagnostic » retiré de 11 écrans (carte bien-être, visage, réintroduction, nutrition, VFC, tensiomètre, divulgations…), dit une fois dans l'onboarding, l'historique du bien-être et le rapport PDF ; test des formules bannies ; captures avant/après ; v416 (APK 34 523 614 o) |
-| 01/11 00:33 — [Textes : formules des pistes](runs/2026-11-01-0033-slop-pistes.md) | ✍️ | SLOP-1b-1 : « on préfère attendre plutôt que de vous montrer de faux suspects » (Accueil, Analyses, liens ventre, PDF) et « pas des causes » réécrits en phrases concrètes ; deux règles ajoutées au test des formules bannies |
+| 01/11 00:33 — [Textes : formules des pistes](runs/2026-11-01-0033-slop-pistes.md) | ✍️ | SLOP-1b-1 : « on préfère attendre plutôt que de vous montrer de faux suspects » (Accueil, Analyses, liens ventre, PDF) et « pas des causes » réécrits en phrases concrètes ; deux règles ajoutées au test des formules bannies ; merge refusé par la session, fait au run suivant (v417) |
+| 01/11 01:33 — [Textes : repas et premiers pas](runs/2026-11-01-0133-slop-repas.md) | ✍️ | SLOP-1b-2 : rappel de l'envoi IA des repas sans emoji ni « Gemini » en play, « ✨ » retiré du bouton, 3 phrases de l'onboarding, 9 tirets cadratins ; règles tirets / emojis / « sans jamais le remplacer » au test ; captures avant/après |
 | 31/10 20:33 — [Idées : « quand consulter » relu](runs/2026-10-31-2033-idees-quand-consulter.md) | 💡 | Phrase « Quand consulter » relue contre FMC-HGE 2022 (ACG) et VIDAL : antécédents familiaux à ajouter (POL-PLAY-91) ; réintroduction « après 2 à 6 semaines d'éviction » (POL-PLAY-92) ; ameli toujours en 403 ; I202–I203 ; journal seul |
 | 31/10 19:33 — [Accueil : carte ventre](runs/2026-10-31-1933-accueil-ventre-titre.md) | 🎨 | POL-PLAY-90 : Accueil relu en vierge sombre / clair et en démo ; question du soir du ventre en texte, plus en second titre ; Paramètres démo clair relus (rien) ; 2 tests ; v413 |
 | 31/10 18:33 — [Sources en couleur](runs/2026-10-31-1833-sources-couleur.md) | 🎨 | POL-PLAY-89 : Journal → Jours relu en démo sombre (rien à corriger) ; Sources : cartes au pastel de leur thème (menthe / lilas) ; 2 tests |

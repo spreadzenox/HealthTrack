@@ -59,7 +59,11 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     `wording.test.js` (lignes jointes). Captures `journal/captures/slop-1a/`.
   - [x] **SLOP-1b-1** (01/11 00:33) Accueil et Analyses : « on préfère attendre… faux suspects » (4 écrans dont le
     PDF) et « des liens…, pas des causes » réécrits ; règles ajoutées à `SLOP_WORDING`.
-  - [ ] **SLOP-1b** (suite : Journal, Sources, onboarding, paywall) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
+  - [x] **SLOP-1b-2** (01/11 01:33) Repas (rappel de l'envoi IA : sans 🔒 🎙️, « une IA de Google » au lieu de
+    « Gemini » en play ; « ✨ » du bouton), onboarding (suivi, premier geste), 9 tirets cadratins (aide Health Connect,
+    VFC, visage, éditeur de repas, conseils avancés, diagnostic). Règles : tiret cadratin entre deux mots, emojis
+    décoratifs, « sans jamais le remplacer » / « c'est idéal ».
+  - [ ] **SLOP-1b** (suite : Journal, Sources, paywall — le paywall sera réécrit en GOLD-b) Formules toutes faites dans l'app (« pas X, mais Y », « on préfère attendre plutôt que… »,
     « c'est … qui parle »), tirets cadratins dans les phrases, énumérations par trois, emphase, phrases longues :
     inventaire par écran (`grep -rn "—" src/pages src/components`), réécriture écran par écran (Accueil, Journal,
     Analyses, Sources, onboarding, paywall), avec les règles ajoutées à `SLOP_WORDING` au fur et à mesure.

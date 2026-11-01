@@ -618,7 +618,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
     } else if (a.state === 'downloading') {
       lines.push('Modèle valence / éveil : téléchargement en cours (16 Mo, une seule fois)')
     } else if (a.state === 'error') {
-      lines.push(`Modèle valence / éveil : échec du téléchargement${a.error ? ` [${a.error}]` : ''} — nouvel essai à la prochaine ouverture`)
+      lines.push(`Modèle valence / éveil : échec du téléchargement${a.error ? ` [${a.error}]` : ''}, nouvel essai à la prochaine ouverture`)
     } else {
       lines.push('Modèle valence / éveil : pas encore téléchargé (16 Mo, demandé à chaque ouverture de cette carte, lecture active)')
     }
@@ -629,7 +629,7 @@ export function faceDiagnosticLines(status, { history = null, lastImport = null,
         : d.state === 'downloading'
           ? 'Second modèle (MobileFaceNet) : téléchargement en cours (8 Mo, une seule fois)'
           : d.state === 'error'
-            ? 'Second modèle (MobileFaceNet) : échec du téléchargement — nouvel essai à la prochaine ouverture'
+            ? 'Second modèle (MobileFaceNet) : échec du téléchargement, nouvel essai à la prochaine ouverture'
             : 'Second modèle (MobileFaceNet) : pas encore téléchargé (8 Mo, demandé à l’ouverture de cette carte, lecture active)')
     }
     if (a.lastError) lines.push(`Dernière erreur du modèle valence / éveil : ${a.lastError}`)
