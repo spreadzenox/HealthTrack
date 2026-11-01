@@ -11,9 +11,9 @@ import { countAllEntries } from '../storage/localHealthStorage'
 const KEY = 'healthtrack_onboarding'
 
 export const GOALS = [
-  { id: 'gut', label: 'Mon ventre', hint: 'SII, ballonnements, inconforts digestifs' },
-  { id: 'energy', label: 'Mon énergie et mon sommeil', hint: 'fatigue, nuits, récupération' },
-  { id: 'all', label: 'Tout comprendre de mes données', hint: 'toutes mes montres, tout mesurer' },
+  { id: 'gut', label: 'Mon ventre', hint: 'SII, ballonnements' },
+  { id: 'energy', label: 'Mon énergie et mon sommeil', hint: 'fatigue, nuits' },
+  { id: 'all', label: 'Tout comprendre de mes données', hint: 'toutes mes montres et mesures' },
 ]
 
 export const TRACKS = [
@@ -21,7 +21,7 @@ export const TRACKS = [
   { id: 'meals', label: 'Mes repas', hint: 'une photo ou quelques mots' },
   { id: 'sleep', label: 'Mon sommeil', hint: 'durée et régularité des nuits' },
   { id: 'wellbeing', label: 'Mon énergie et mon bien-être', hint: 'estimé ou noté par vous' },
-  { id: 'activity', label: 'Mon activité', hint: 'pas, cœur, entraînements' },
+  { id: 'activity', label: 'Mon activité', hint: 'pas et entraînements' },
 ]
 
 const DEFAULT_TRACKS = {
