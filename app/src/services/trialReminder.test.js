@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 import { ENTITLEMENT_EVENT } from './entitlement'
-import { REMINDER_DAYS_BEFORE, startTrialReminderWatch, syncTrialReminder, trialReminderPlan } from './trialReminder'
+import { REMINDER_DAYS_BEFORE, startTrialReminderWatch, syncTrialReminder, trialReminderAvailable, trialReminderPlan } from './trialReminder'
+import { storeFor } from '../config/distribution'
 
 const NOW = Date.parse('2026-10-24T10:00:00Z')
 const DAY = 86_400_000
@@ -17,6 +18,17 @@ const fakePlugin = (notifications = true) => ({
 
 describe('rappel de fin d’essai (VC-18b)', () => {
   beforeEach(() => localStorage.clear())
+
+  it('promis seulement sur Google Play : rien sur l’App Store, même avec un plugin (I6-RELAIS-7)', () => {
+    window.__HT_TRIAL_REMINDER__ = fakePlugin()
+    try {
+      expect(trialReminderAvailable(storeFor('play'))).toBe(true)
+      expect(trialReminderAvailable(storeFor('appstore'))).toBe(false)
+      expect(trialReminderPlan(trial(14, { source: 'appstore' }), NOW)).toBeNull()
+    } finally {
+      delete window.__HT_TRIAL_REMINDER__
+    }
+  })
 
   it('pendant un essai qui se renouvellera : 2 jours avant le premier paiement, avec le lien Google Play', () => {
     const plan = trialReminderPlan(trial(14), NOW)

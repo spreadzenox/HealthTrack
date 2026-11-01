@@ -6,7 +6,7 @@
  */
 import { registerPlugin } from '@capacitor/core'
 import { ENTITLEMENT_EVENT, getEntitlement, manageSubscriptionUrl } from './entitlement'
-import { FEATURES } from '../config/distribution'
+import { FEATURES, STORE } from '../config/distribution'
 import { appLocale } from '../i18n/locale.js'
 
 export const REMINDER_DAYS_BEFORE = 2
@@ -16,14 +16,19 @@ const KEY = 'halcya_trial_reminder'
 const NativeTrialReminder = registerPlugin('TrialReminder')
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
 
-/** Plugin natif de la variante play, faux plugin des captures / tests, sinon aucun. */
-export function trialReminderPlugin() {
+/**
+ * Plugin natif de la variante play, faux plugin des captures / tests, sinon aucun. Réservé aux versions vendues sur
+ * Google Play (I6-RELAIS-7) : sur l'App Store, `trialReminderPlan` ne programme rien (Apple envoie son propre rappel),
+ * donc le paywall ne doit rien promettre.
+ */
+export function trialReminderPlugin(store = STORE) {
+  if (store?.id !== 'play') return null
   if (typeof window !== 'undefined' && window.__HT_TRIAL_REMINDER__) return window.__HT_TRIAL_REMINDER__
   return FEATURES.billing && isNative() ? NativeTrialReminder : null
 }
 
 /** Le paywall ne promet le rappel que là où le téléphone sait le programmer. */
-export const trialReminderAvailable = () => Boolean(trialReminderPlugin())
+export const trialReminderAvailable = (store = STORE) => Boolean(trialReminderPlugin(store))
 
 const longDate = (ms) => new Date(ms).toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric', month: 'long' })
 
