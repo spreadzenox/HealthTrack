@@ -34,7 +34,10 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   Plafonds recalculés : `GOLD_DAILY_CAP=40` (≤ 1,72 €/jour au pire à 4,3 c), `GLOBAL_DAILY_CAP` 200 → **150**
   (pire jour ≈ 40 × 4,3 c + 110 × 1 c ≈ 2,8 €). Grille de prix prudente dans `costs.js` (`MODEL_PRICES` la remplace).
   Variante play : le nom du modèle n'apparaît plus dans les détails de la carte de résultat (`FEATURES.aiModelName`).
-- [ ] **GOLD-a2 — vérifier en production** : (01/11 23:33 : étape « Analyses IA des 7 derniers jours » du workflow
+- [x] **GOLD-a2 — vérifié en production le 02/11 vers 00:10** (déploiement 41359490864 de #614) : 7 derniers jours,
+  téléphones : **18 analyses Gold servies par `gemini-3.8-flash` en zone eu**, 15 installations, 0,70 € (≈ 3,9 c
+  l'analyse) ; 80 analyses plus anciennes sur Flash-Lite (avant la bascule, sans niveau journalisé) ; un seul retour
+  sur Flash-Lite, `day_cap` (plafond du jour), aucune erreur Vertex. Analyse de test de la CI : Gold, 200. (01/11 23:33 : étape « Analyses IA des 7 derniers jours » du workflow
   relais, tableau origine CI / téléphones × niveau × servi × modèle × zone, installations, coût, et `gold_fallback` par
   raison ; reste : lire le résumé du déploiement de ce merge et, s'il y a des `gold_fallback` en erreur, prévenir le
   propriétaire) après le déploiement, lire les journaux du relais (`event: usage`,
