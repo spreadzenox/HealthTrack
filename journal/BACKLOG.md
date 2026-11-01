@@ -74,8 +74,9 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     unique »), confidentialité (refrain, énumération ; **lecture au déverrouillage ajoutée**, elle manquait),
     conditions (refrain ×2, « pas des causes »), accueil du site. « Diagnostic » une seule fois par page ;
     `SLOP_WORDING` testé sur la fiche, les deux pages et l'accueil du site. Fiche d'abonnement déjà sobre.
-  - [ ] **SLOP-1e** Nouveautés : 20 anciennes notes contiennent le refrain (`grep -l "pas un diagnostic"
-    app/src/data/changelog`) ; les alléger, puis étendre le test aux notes.
+  - [x] **SLOP-1e** (01/11 04:33) Nouveautés : 41 phrases de 39 anciennes notes réécrites (refrain, « faux
+    suspects », « pas une cause », tirets cadratins, énumérations par trois), 2 phrases de refrain supprimées ;
+    `wording.test.js` applique `SLOP_WORDING` à chaque titre et phrase des notes.
 
 ## 🎯 Version candidate avant les testeurs (décision du 22/10 19:15 ; critères dans `PRODUIT.md` §2 bis)
 **Retours et décisions du propriétaire du 24/10 13:30–14:30 (session guidée sur la version play) — avant M6b et M7, dans cet ordre :**

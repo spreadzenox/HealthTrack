@@ -4,7 +4,7 @@
   "title": "Humeur estimée par un vrai modèle valence / éveil, sur le téléphone",
   "items": [
     "Jusqu'ici, l'humeur estimée venait d'une règle générale sur quelques expressions (sourire, froncement…). Désormais, chaque lecture du déverrouillage passe aussi par un modèle de reconnaissance des émotions appris sur des centaines de milliers de visages (HSEmotion), qui donne directement la valence (agréable ↔ désagréable) et l'éveil (calme ↔ animé).",
-    "La carte « Humeur estimée » dit maintenant aussi l'éveil (« plutôt calme », « modéré », « plutôt animé ») et quel modèle a servi. La fourchette est un peu plus étroite qu'avec la règle générale ; c'est toujours une estimation, jamais un diagnostic, et vos notes, facultatives, l'affinent.",
+    "La carte dit maintenant aussi l'éveil (« plutôt calme », « modéré », « plutôt animé ») et quel modèle a servi. La fourchette est un peu plus étroite qu'avec la règle générale. Vos notes, facultatives, l'affinent.",
     "Le modèle (16 Mo) est téléchargé une seule fois par le téléphone, depuis le dépôt officiel de ses auteurs, la première fois que vous ouvrez la carte « Lecture du visage » avec la lecture activée ; il n'est gardé que si son empreinte est exactement la bonne. Rien ne part de votre téléphone : ni image, ni mesure.",
     "Le Diagnostic de la Lecture du visage dit si le modèle est prêt, combien de lectures l'ont utilisé, son temps de chargement et l'erreur exacte en cas de problème."
   ]

@@ -5,7 +5,7 @@
   "items": [
     "Sur l’accueil, sous le Radar forme : « Humeur estimée » dit si vous êtes aujourd’hui dans votre plage habituelle, au-dessus ou en dessous, d’après l’écart de votre sommeil, de votre VFC, de votre FC au repos, de vos pas de la veille et de l’écran tard à vos 4 dernières semaines.",
     "Chaque signal est affiché avec sa valeur habituelle, pour voir d’où vient l’estimation.",
-    "Après 14 jours de notes de bien-être, HealthTrack apprend ce qui suit vraiment votre humeur et donne une note estimée sur 5 avec une fourchette — seulement si elle prédit vos notes mieux que votre simple moyenne.",
-    "C’est une estimation, pas un diagnostic. Si elle reste basse environ deux semaines, l’app le signale doucement et rappelle qu’en parler peut aider. Tout est calculé sur le téléphone."
+    "Après 14 jours de notes de bien-être, HealthTrack apprend ce qui suit vraiment votre bien-être et donne une note estimée sur 5 avec une fourchette. Elle n’apparaît que si elle prédit vos notes mieux que votre simple moyenne.",
+    "Si elle reste basse environ deux semaines, l’app le signale doucement et rappelle qu’en parler peut aider. Tout est calculé sur le téléphone."
   ]
 }

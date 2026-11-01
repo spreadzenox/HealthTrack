@@ -5,7 +5,6 @@
   "items": [
     "À chaque synchronisation, Halcya demande aussi à la montre la température de votre peau au poignet (compatible avec les montres Huawei qui la mesurent, comme la Watch GT 6 Pro). La première fois, elle récupère tout l'historique que la montre garde encore.",
     "Journal → Jours affiche « Temp. peau » (la moyenne de la journée). Ce n'est pas une température corporelle : elle reste à part de celle d'un thermomètre.",
-    "Sources → montre : un nouveau réglage « Mesure continue de la température de la peau », désactivé par défaut (il consomme un peu plus de batterie). Si vous l'activez, il est envoyé à la montre à la synchronisation suivante.",
-    "Une mesure de la montre, pas un diagnostic."
+    "Sources → montre : un nouveau réglage « Mesure continue de la température de la peau », désactivé par défaut (il consomme un peu plus de batterie). Si vous l'activez, il est envoyé à la montre à la synchronisation suivante."
   ]
 }

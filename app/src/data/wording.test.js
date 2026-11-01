@@ -83,6 +83,20 @@ describe('formules « slop IA » (SLOP-1)', () => {
     }
     expect(found).toEqual([])
   })
+
+  // SLOP-1e (01/11/2026) : les notes de « Nouveautés », anciennes comprises, sont lues dans l'app
+  it('aucune formule bannie dans les notes de Nouveautés', () => {
+    const dir = path.resolve('src/data/changelog')
+    const found = []
+    for (const name of fs.readdirSync(dir).filter((n) => n.endsWith('.json'))) {
+      const note = JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8'))
+      for (const text of [note.title, ...(note.items || [])]) {
+        const why = slopOffences(String(text))
+        if (why.length) found.push(`${name} : « ${text} » (${why.join(' ; ')})`)
+      }
+    }
+    expect(found).toEqual([])
+  })
 })
 
 /**

@@ -4,7 +4,7 @@
   "title": "Lecture du visage : l'humeur captée sans rien saisir (premier pas)",
   "items": [
     "Nouvelle carte « Lecture du visage » en tête de Connecteurs : un bouton pour l'activer. Ensuite, à chaque déverrouillage du téléphone, la caméra frontale prend 3 images en basse résolution, le téléphone en tire une dizaine de mesures d'expression (sourire, sourcils, ouverture des yeux…) puis efface les images. Rien d'autre n'est gardé, rien ne quitte le téléphone.",
-    "Aucun chiffre n'est encore affiché : ces mesures ne voudront dire quelque chose qu'une fois comparées à vos propres notes, après plusieurs semaines. Ce sera une estimation, jamais un diagnostic.",
+    "Aucun chiffre n'est encore affiché : ces mesures ne voudront dire quelque chose qu'une fois comparées à vos propres notes, après plusieurs semaines.",
     "La carte dit combien de lectures ont eu lieu aujourd'hui, propose « Relancer » si Android a arrêté la lecture, et « Sans restriction » pour qu'Android ne la coupe pas en arrière-plan. Une notification discrète reste affichée tant qu'elle est active, avec un bouton « Arrêter ».",
     "Diagnostic → « Enregistrer le diagnostic » : un petit fichier (temps de la caméra et de l'analyse, images écartées et pourquoi, batterie) pour vérifier que tout marche sur votre téléphone. Il ne contient ni image ni mesure d'expression."
   ]
