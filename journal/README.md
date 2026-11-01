@@ -34,7 +34,10 @@
 > garderez Gold grâce à l'empreinte de votre installation : **P37** (01/11 22:33), Paramètres → 7 touches sur « Version » → recopiez « Empreinte de l'installation » (12 caractères, rien de personnel) et donnez-la à la routine. Suite : le polissage des textes,
 > puis le produit Gold à 10 €/mois. **Vérification en production (01/11 23:33, GOLD-a2)** : chaque déploiement du
 > relais écrit dans son résumé un tableau des analyses IA des 7 derniers jours (niveau, modèle qui a répondu, nombre
-> d'installations, coût estimé) et combien de fois Gold est retombé sur Flash-Lite, et pourquoi. Rien à faire de votre côté.
+> d'installations, coût estimé) et combien de fois Gold est retombé sur Flash-Lite, et pourquoi. Premier bilan (02/11
+> vers 00:10) : **18 analyses Gold sur 7 jours, 15 installations, 0,70 € au total (environ 4 centimes l'analyse)**,
+> aucune erreur du modèle Gold ; une seule analyse servie par Flash-Lite, quand le plafond du jour a été atteint. Rien
+> à faire de votre côté.
 
 > **Testeurs : pas encore** (votre décision du 27/10 vers 13:00). Vous les inviterez au plus tôt la semaine
 > prochaine, quand vous le direz : d'ici là, les runs polissent la version Play (bugs, chiffres fiables, parcours
