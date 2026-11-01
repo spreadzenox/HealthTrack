@@ -53,3 +53,9 @@ export const upcomingBenefits = () => PREMIUM_BENEFITS.filter((b) => !b.delivere
  */
 export const goldPlayBenefits = () =>
   deliveredBenefits().map((b) => (b.id === 'ai-meals' ? `Analyse IA des repas, ${GOLD_AI_DAILY} par jour` : b.playLabel))
+
+/** Avantages affichés par le paywall pour un niveau (GOLD-b4) : Gold ne change que le plafond de l'analyse IA. */
+export const benefitsFor = (tier) =>
+  deliveredBenefits().map((b) =>
+    tier === 'gold' && b.id === 'ai-meals' ? { ...b, label: `L’analyse IA des repas sans compter les crédits, jusqu’à ${GOLD_AI_DAILY} par jour` } : b,
+  )

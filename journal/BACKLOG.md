@@ -61,9 +61,14 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     fiche « Halcya Gold » (`goldPlayBenefits`, 20 par jour, aucun nom de modèle ni promesse de précision) ; identifiants
     figés contre `relay/src/billing.js` ; **créé par la CI au merge, formule `mensuel` ACTIVE à 9,99 €** (vérifié). Le titre Play de Silver reste « Halcya Premium » (le script ne
     réécrit pas une fiche existante) : à renommer « Halcya Silver » en GOLD-b4 si le paywall dit « Silver ».
-  - [ ] **GOLD-b4 — paywall et page d'abonnement à deux niveaux** : Silver et Gold côte à côte, prix lus dans Play
-    Billing ; « Gold offert pendant le test » tant que la période court ; `premiumBenefits.js` (10 / 20 par jour) ;
-    aucun nom de modèle ; promesse « moins d'erreurs » seulement après le banc.
+  - [x] **GOLD-b4 — paywall et page d'abonnement à deux niveaux** (01/11 14:33) : `playBilling.js` lit Silver et Gold
+    (`TIER_PRODUCTS`, figés contre le relais), chaque formule porte `productId` et `tier`, l'achat part sous le bon
+    produit, un achat Gold est restauré et revérifié ; `entitlement.js` retient `tier` et `tierName()` (« Silver actif »,
+    « Gold actif », « Gold offert pendant le test ») ; paywall : choix Silver / Gold (10 / 20 analyses IA par jour),
+    formules du niveau choisi, avantages du niveau, aucun nom de modèle ni promesse de précision (test) ; titre
+    « Comprendre vos bons et mauvais jours » (fin de la formule « je note / je comprends », SLOP). Un abonné Silver ne
+    voit pas encore de bouton « Passer à Gold » (double facturation : GOLD-b2). Le titre Play de Silver reste
+    « Halcya Premium » (visible seulement dans Google Play) : à renommer par l'API si le propriétaire le souhaite.
   - [ ] **GOLD-b2 — passage Silver ↔ Gold sans double facturation** : le plugin natif et `playBilling.js` n'achètent
     que `halcya_premium` sans mode de remplacement ; avec un produit `halcya_gold` séparé, un Silver qui monte aurait
     deux abonnements. Passer l'ancien jeton + `CHARGE_PRORATED_PRICE` pour monter, `DEFERRED` pour descendre ; le

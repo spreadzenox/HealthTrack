@@ -4,6 +4,8 @@ import { createHash } from 'node:crypto'
 import { getInstallId } from './aiRelay'
 import {
   PRODUCT_ID,
+  GOLD_PRODUCT_ID,
+  TIER_PRODUCTS,
   obfuscatedAccountId,
   describePlans,
   loadPlans,
@@ -17,6 +19,7 @@ import {
   monthlyEquivalent,
   annualSavingPercent,
 } from './playBilling'
+import { SILVER_PRODUCT_ID as RELAY_SILVER, GOLD_PRODUCT_ID as RELAY_GOLD } from '../../../relay/src/billing.js'
 
 const phase = (formattedPrice, priceMicros, billingPeriod, extra = {}) => ({
   formattedPrice,
@@ -82,11 +85,32 @@ describe('Google Play Billing côté app (jalon 6c-2)', () => {
     await expect(loadPlans({ native: null })).resolves.toEqual([])
   })
 
-  it('loadPlans demande le seul produit Halcya au plugin natif', async () => {
+  it('loadPlans demande Silver et Gold au plugin natif (GOLD-b4)', async () => {
     const native = { getProducts: vi.fn().mockResolvedValue({ products: PRODUCTS }) }
     const plans = await loadPlans({ native })
-    expect(native.getProducts).toHaveBeenCalledWith({ productIds: [PRODUCT_ID] })
+    expect(native.getProducts).toHaveBeenCalledWith({ productIds: [PRODUCT_ID, GOLD_PRODUCT_ID] })
     expect(plans).toHaveLength(2)
+    expect(plans.every((p) => p.tier === 'silver' && p.productId === PRODUCT_ID)).toBe(true)
+  })
+
+  it('GOLD-b4 : identifiants identiques à ceux du relais et du script Play ; formule Gold achetée sous halcya_gold', async () => {
+    expect(TIER_PRODUCTS).toEqual({ silver: RELAY_SILVER, gold: RELAY_GOLD })
+    const gold = [{ productId: GOLD_PRODUCT_ID, offers: [{ basePlanId: 'mensuel', offerId: null, offerToken: 'tok-gold', phases: [{ priceMicros: 9_990_000, formattedPrice: '9,99 €', currency: 'EUR', billingPeriod: 'P1M' }] }] }]
+    const native = { getProducts: vi.fn().mockResolvedValue({ products: [...PRODUCTS, ...gold] }), purchase: vi.fn().mockResolvedValue({ status: 'cancelled' }) }
+    const plans = await loadPlans({ native })
+    expect(plans.map((p) => `${p.tier}/${p.basePlanId}`)).toEqual(['silver/annuel', 'silver/mensuel', 'gold/mensuel'])
+    // l'économie de l'annuel Silver ne se calcule jamais contre le mensuel Gold
+    expect(annualSavingPercent([plans[0], plans[2]])).toBeNull()
+    await purchasePlan(plans[2], { native, refresh: vi.fn() })
+    expect(native.purchase).toHaveBeenCalledWith(expect.objectContaining({ productId: GOLD_PRODUCT_ID, offerToken: 'tok-gold' }))
+  })
+
+  it('GOLD-b4 : un achat Gold est reconnu et revérifié comme un achat Silver', async () => {
+    const refresh = vi.fn().mockResolvedValue({ premium: true, tier: 'gold' })
+    const native = { queryPurchases: vi.fn().mockResolvedValue({ purchases: [{ state: 'purchased', products: [GOLD_PRODUCT_ID], purchaseToken: 'jeton-gold' }] }) }
+    const res = await restorePurchases({ native, refresh })
+    expect(res.found).toBe(true)
+    expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'jeton-gold' })
   })
 
   it('achat réussi : le jeton est vérifié par le relais (seule source de vérité) puis retenu', async () => {

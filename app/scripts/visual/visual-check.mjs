@@ -39,7 +39,8 @@
  *   npm run visual -- --play --routes=/food --food-analysis  # variante play : relais Halcya factice, accord accepté ;
  *                                                  --ai-consent=ask : s'arrête sur la divulgation avant l'envoi (6a-2)
  *   npm run visual -- --play --routes=/premium [--billing=none]  # paywall : faux plugin Play Billing (formules
- *                                                     synthétiques, essai 14 j) ; --billing=none : aucune formule
+ *                                                     synthétiques, essai 14 j, Gold mensuel) ; --billing=none :
+ *                                                     aucune formule ; --billing=silver : Silver seul
  *   npm run visual -- --play --routes=/settings --subscription=active  # état d'abonnement factice renvoyé par le
  *                                                  relais (free par défaut, launch, active, trial, paused, grace,
  *                                                  on_hold ; grace / on_hold : carte de l'Accueil, 6e) (6c)
@@ -376,8 +377,12 @@ async function main() {
           { basePlanId: 'annuel', offerId: 'essai', offerToken: 'fake-a', phases: [phase('Gratuit', 0, 'P14D'), phase('29,99 €', 29990000, 'P1Y')] },
           { basePlanId: 'mensuel', offerId: null, offerToken: 'fake-m', phases: [phase('4,99 €', 4990000, 'P1M')] },
         ]
+        // Gold (GOLD-b4) : mensuel seul, sans essai ; --billing=silver : Gold pas encore proposé
+        const gold = mode === 'none' || mode === 'silver' ? [] : [
+          { productId: 'halcya_gold', offers: [{ basePlanId: 'mensuel', offerId: null, offerToken: 'fake-g', phases: [phase('9,99 €', 9990000, 'P1M')] }] },
+        ]
         window.__HT_PLAY_BILLING__ = {
-          getProducts: async () => ({ products: offers.length ? [{ productId: 'halcya_premium', offers }] : [] }),
+          getProducts: async () => ({ products: offers.length ? [{ productId: 'halcya_premium', offers }, ...gold] : [] }),
           purchase: async () => ({ status: 'cancelled' }),
           queryPurchases: async () => ({ purchases: [] }),
           addListener: async () => ({ remove() {} }),
@@ -392,7 +397,8 @@ async function main() {
       const states = {
         free: { premium: false, source: null },
         launch: { premium: true, source: 'launch', launchUntil: inDays(20) },
-        active: { premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: inDays(300), autoRenewing: true },
+        active: { premium: true, source: 'play', state: 'active', tier: 'silver', productId: 'halcya_premium', expiresAt: inDays(300), autoRenewing: true },
+        gold: { premium: true, source: 'play', state: 'active', tier: 'gold', productId: 'halcya_gold', expiresAt: inDays(30), autoRenewing: true },
         trial: { premium: true, source: 'play', state: 'active', trial: true, productId: 'halcya_premium', expiresAt: inDays(12), autoRenewing: true },
         paused: { premium: false, source: null, state: 'paused', productId: 'halcya_premium', expiresAt: inDays(25) },
         grace: { premium: true, source: 'play', state: 'grace', productId: 'halcya_premium', expiresAt: inDays(5), autoRenewing: true },
@@ -1051,10 +1057,12 @@ async function main() {
         for (const target of args.click ? String(args.click).split(' > ') : []) {
           let button = page.getByRole('button', { name: target }).first()
           if (!(await button.count())) button = page.locator('summary', { hasText: target }).first()
-          if (!(await button.count())) button = page.getByRole('radio', { name: target }).first()
-          if (!(await button.count())) button = page.getByRole('checkbox', { name: target }).first()
+          // radio ou case masqués sous leur libellé (choix Silver / Gold du paywall) : clic forcé
+          let force = false
+          if (!(await button.count())) (button = page.getByRole('radio', { name: target }).first()), (force = true)
+          if (!(await button.count())) (button = page.getByRole('checkbox', { name: target }).first()), (force = true)
           if (await button.count()) {
-            await button.click()
+            await button.click({ force })
             await page.waitForTimeout(700)
           }
         }

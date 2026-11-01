@@ -13,8 +13,14 @@ import { FEATURES } from '../config/distribution'
 import { notThenable } from './nativePlugin'
 import { appLocale } from '../i18n/locale.js'
 
-/** Abonnement unique, deux formules (« base plans ») ; créés dans la Play Console par l'API (étape 6d). */
+/**
+ * Deux abonnements créés dans la Play Console par l'API (scripts/play/subscriptions.mjs) : Silver (`halcya_premium`,
+ * annuel avec essai et mensuel) et Gold (`halcya_gold`, mensuel ; GOLD-b3). Identifiants figés contre le relais.
+ */
 export const PRODUCT_ID = 'halcya_premium'
+export const GOLD_PRODUCT_ID = 'halcya_gold'
+export const TIER_PRODUCTS = Object.freeze({ silver: PRODUCT_ID, gold: GOLD_PRODUCT_ID })
+const OWN_PRODUCTS = [GOLD_PRODUCT_ID, PRODUCT_ID]
 const PLAN_ORDER = ['annuel', 'mensuel']
 const TOKEN_KEY = PURCHASE_TOKEN_KEY
 
@@ -56,8 +62,9 @@ const PERIODS = { P1Y: 'year', P1M: 'month' }
  * Formules affichables à partir des ProductDetails réduits du plugin natif. Pour chaque formule, l'offre d'essai si
  * Google la propose à cette personne (il ne renvoie que les offres auxquelles elle a droit), sinon l'offre de base.
  */
-export function describePlans(products) {
-  const product = Array.isArray(products) ? products.find((p) => p?.productId === PRODUCT_ID) : null
+export function describePlans(products, productId = PRODUCT_ID) {
+  const tier = productId === GOLD_PRODUCT_ID ? 'gold' : 'silver'
+  const product = Array.isArray(products) ? products.find((p) => p?.productId === productId) : null
   if (!product || !Array.isArray(product.offers)) return []
   const plans = []
   for (const basePlanId of PLAN_ORDER) {
@@ -69,6 +76,8 @@ export function describePlans(products) {
     if (!recurring?.formattedPrice || !PERIODS[recurring.billingPeriod]) continue
     const trial = offer.phases.find((p) => p.priceMicros === 0)
     plans.push({
+      productId,
+      tier,
       basePlanId,
       offerToken: offer.offerToken,
       period: PERIODS[recurring.billingPeriod],
@@ -97,10 +106,10 @@ export function monthlyEquivalent(plan) {
   return formatMicros(Math.round(plan.priceMicros / 12), plan.currency)
 }
 
-/** Économie de l'annuel par rapport à 12 mois du mensuel, en %, calculée sur les prix de Google Play ; sinon null. */
+/** Économie de l'annuel par rapport à 12 mois du mensuel (d'un même niveau), en %, sur les prix de Google Play ; sinon null. */
 export function annualSavingPercent(plans) {
   const year = plans?.find((p) => p.period === 'year')
-  const month = plans?.find((p) => p.period === 'month')
+  const month = plans?.find((p) => p.period === 'month' && (p.productId ?? null) === (year?.productId ?? null))
   if (!year || !month || year.currency !== month.currency || !(month.priceMicros > 0)) return null
   const pct = Math.round((1 - year.priceMicros / (12 * month.priceMicros)) * 100)
   return pct >= 5 ? pct : null
@@ -127,15 +136,22 @@ export async function loadPlans({ native } = {}) {
   const plugin = await resolveNative(native)
   if (!plugin) return []
   try {
-    const { products } = await plugin.getProducts({ productIds: [PRODUCT_ID] })
-    return describePlans(products)
+    const { products } = await plugin.getProducts({ productIds: [PRODUCT_ID, GOLD_PRODUCT_ID] })
+    return [...describePlans(products, PRODUCT_ID), ...describePlans(products, GOLD_PRODUCT_ID)]
   } catch {
     return []
   }
 }
 
-const ownPurchase = (purchases, state = 'purchased') =>
-  (Array.isArray(purchases) ? purchases : []).find((p) => p?.state === state && p.products?.includes(PRODUCT_ID) && p.purchaseToken)
+/** Achat Halcya dans l'état voulu ; Gold d'abord si les deux existent (ne devrait pas arriver, voir GOLD-b2). */
+const ownPurchase = (purchases, state = 'purchased') => {
+  const list = (Array.isArray(purchases) ? purchases : []).filter((p) => p?.state === state && p.purchaseToken)
+  for (const id of OWN_PRODUCTS) {
+    const hit = list.find((p) => p.products?.includes(id))
+    if (hit) return hit
+  }
+  return undefined
+}
 
 /** Un même jeton n'est vérifié qu'une fois à la fois (l'événement natif et la fin de l'achat arrivent ensemble). */
 const verifying = new Map()
@@ -159,7 +175,7 @@ export async function purchasePlan(plan, { native, refresh = refreshEntitlement 
   if (!plugin || !plan?.offerToken) return { status: 'error', message: ERROR_MESSAGE }
   let result
   try {
-    result = await plugin.purchase({ productId: PRODUCT_ID, offerToken: plan.offerToken, obfuscatedAccountId: await obfuscatedAccountId() })
+    result = await plugin.purchase({ productId: plan.productId ?? PRODUCT_ID, offerToken: plan.offerToken, obfuscatedAccountId: await obfuscatedAccountId() })
   } catch {
     return { status: 'error', message: ERROR_MESSAGE }
   }

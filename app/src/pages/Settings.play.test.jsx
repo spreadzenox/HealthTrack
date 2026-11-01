@@ -78,7 +78,7 @@ describe('Settings — variante play (relais Halcya)', () => {
   it('bloc Abonnement : l’état renvoyé par le relais s’affiche, avec le lien Google Play', async () => {
     globalThis.fetch = relayAnswer({ ok: true, premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: new Date(Date.now() + 20 * 86_400_000).toISOString(), autoRenewing: true })
     renderSettings()
-    expect(await screen.findByText(/Premium actif · renouvellement le/)).toBeInTheDocument()
+    expect(await screen.findByText(/Silver actif · renouvellement le/)).toBeInTheDocument()
     const link = screen.getByRole('link', { name: /Gérer mon abonnement dans Google Play/ })
     expect(link).toHaveAttribute('href', 'https://play.google.com/store/account/subscriptions?sku=halcya_premium&package=fr.jpesquet.sante')
   })
@@ -103,7 +103,7 @@ describe('Settings — variante play (relais Halcya)', () => {
   it('premium actif : pas de bouton « Restaurer un achat »', async () => {
     globalThis.fetch = relayAnswer({ ok: true, premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: new Date(Date.now() + 20 * 86_400_000).toISOString(), autoRenewing: true })
     renderSettings()
-    await screen.findByText(/Premium actif/)
+    await screen.findByText(/Silver actif/)
     expect(screen.queryByRole('button', { name: 'Restaurer un achat' })).toBeNull()
   })
 

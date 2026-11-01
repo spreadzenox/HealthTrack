@@ -95,7 +95,7 @@ describe('Onboarding (jalon 4c) : premier geste et paywall passable', () => {
     renderAt()
     expect(screen.getByText('04/05')).toBeInTheDocument()
     fireEvent.click(cont())
-    expect(await screen.findByRole('heading', { name: /je comprends/ })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /bons et mauvais jours/ })).toBeInTheDocument()
     expect(screen.getByText('05/05')).toBeInTheDocument()
     expect(screen.getByText(/vers le 21ᵉ jour/)).toBeInTheDocument()
     // Le bouton « Continuer » de l'onboarding laisse la place à celui du paywall

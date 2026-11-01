@@ -16,7 +16,10 @@ const PLAY_PACKAGE = 'fr.jpesquet.sante'
 export const ENTITLEMENT_TIMEOUT_MS = 15_000
 const GRACE_OFFLINE_MS = 3 * 86_400_000
 
-const FREE = Object.freeze({ premium: false, source: null, state: null, productId: null, expiresAt: null, launchUntil: null })
+const FREE = Object.freeze({ premium: false, source: null, state: null, tier: null, productId: null, expiresAt: null, launchUntil: null })
+
+/** Produit Play de Gold (relay/src/billing.js GOLD_PRODUCT_ID) ; tout autre abonnement Halcya est Silver. */
+const GOLD_PRODUCT = 'halcya_gold'
 
 const isFuture = (iso, now) => Boolean(iso) && Date.parse(iso) > now
 
@@ -35,6 +38,7 @@ function fromRelay(data) {
     premium: data.premium === true,
     source: data.source === 'play' || data.source === 'launch' ? data.source : null,
     state: typeof data.state === 'string' ? data.state : null,
+    tier: data.tier === 'gold' || data.tier === 'silver' ? data.tier : null,
     productId: typeof data.productId === 'string' ? data.productId : null,
     expiresAt: typeof data.expiresAt === 'string' ? data.expiresAt : null,
     launchUntil: typeof data.launchUntil === 'string' ? data.launchUntil : null,
@@ -104,25 +108,36 @@ const shortDate = (iso) => {
 /** La fin de la période de lancement est exclue : on affiche le dernier jour offert (minuit → la veille). */
 export const lastLaunchDay = (iso) => shortDate(Date.parse(iso) - 1)
 
+/**
+ * Niveau affiché (GOLD-b4) : « Gold » pendant la période de lancement (le relais y sert Gold) ou pour l'abonnement
+ * `halcya_gold`, « Silver » pour l'abonnement historique ; null sans premium. Le relais reste seul juge du droit.
+ */
+export function tierName(ent) {
+  if (!ent?.premium) return null
+  if (ent.source === 'launch' || ent.tier === 'gold' || ent.productId === GOLD_PRODUCT) return 'Gold'
+  return 'Silver'
+}
+
 /** Une phrase simple pour les Réglages, sans vocabulaire technique. */
 export function describeEntitlement(ent) {
   const until = ent?.expiresAt ? shortDate(ent.expiresAt) : null
   if (ent?.premium && ent.source === 'launch') {
     return ent.launchUntil
-      ? `Premium offert pendant le test, jusqu’au ${lastLaunchDay(ent.launchUntil)} : vous n’avez rien à payer.`
-      : 'Premium offert pendant le test : vous n’avez rien à payer.'
+      ? `Gold offert pendant le test, jusqu’au ${lastLaunchDay(ent.launchUntil)} : vous n’avez rien à payer.`
+      : 'Gold offert pendant le test : vous n’avez rien à payer.'
   }
+  const name = tierName(ent) ?? 'Premium'
   switch (ent?.state) {
     case 'active':
       if (!ent.premium) break
       if (ent.trial) return until ? `Essai gratuit en cours · premier paiement le ${until}, sauf si vous annulez.` : 'Essai gratuit en cours.'
-      if (!until) return 'Premium actif.'
-      return ent.autoRenewing ? `Premium actif · renouvellement le ${until}.` : `Premium actif · jusqu’au ${until}.`
+      if (!until) return `${name} actif.`
+      return ent.autoRenewing ? `${name} actif · renouvellement le ${until}.` : `${name} actif · jusqu’au ${until}.`
     case 'canceled':
       if (!ent.premium) break
-      return until ? `Abonnement annulé · premium jusqu’au ${until}.` : 'Abonnement annulé.'
+      return until ? `Abonnement annulé · ${name} jusqu’au ${until}.` : 'Abonnement annulé.'
     case 'grace':
-      return 'Premium actif · Paiement à régulariser dans Google Play.'
+      return `${name} actif · paiement à régulariser dans Google Play.`
     case 'paused':
       return 'Abonnement en pause : le premium reprendra automatiquement à la fin de la pause.'
     case 'on_hold':
