@@ -33,5 +33,9 @@ export const SLOP_WORDING = [
   { re: /en toute (sérénité|simplicité|confiance)/i, why: 'mot creux' },
   { re: /votre (fidèle )?compagnon/i, why: 'mot creux' },
   { re: /c[’']est la tendance qui parle/i, why: 'formule toute faite' },
+  // SLOP-1b (01/11) : « on préfère attendre plutôt que de vous montrer de faux suspects » revenait sur 4 écrans
+  { re: /préf[èé]r\w* attendre|faux suspects/i, why: 'formule toute faite : dire concrètement pourquoi il faut plus de jours' },
+  // « Des liens repérés…, pas des causes » : la règle se dit une fois (« Comment c'est calculé »), pas sur chaque carte
+  { re: /\b(liens?|hypothèses?)\b[^.]{0,40}, pas (des|une) causes?\b/i, why: 'refrain « pas une cause » : une fois, dans « Comment c’est calculé »' },
 ]
 

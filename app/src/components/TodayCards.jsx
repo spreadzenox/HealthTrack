@@ -266,13 +266,13 @@ function PistesFound({ gut, levers, locked }) {
         </p>
       )}
       <p className="today-card-text">
-        {count > 1 ? 'Des liens repérés dans vos données, pas des causes.' : 'Un lien repéré dans vos données, pas une cause.'}
+        {count > 1 ? 'Touchez pour voir le détail et comment les vérifier.' : 'Touchez pour voir le détail et comment la vérifier.'}
       </p>
     </Link>
   )
 }
 
-/** Carte lilas : jours suivis avant les pistes ; on préfère attendre que montrer de faux suspects. */
+/** Carte lilas : jours suivis avant les pistes (pas de piste tant que le hasard domine). */
 export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, onPistesPage = false, extraDetail = null }) {
   const entries = useEntries(read || (focus === 'energy' ? readTrackedEnergy : readTracked))
   const [summary] = useState(() => (onPistesPage ? null : readPistesSummary()))
@@ -318,7 +318,7 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
           ? (onPistesPage
             ? `${text.ready}.`
             : <>{text.ready}. Voyez <Link to="/recommendations">l’onglet Analyses</Link>.</>)
-          : 'On préfère attendre plutôt que de vous montrer de faux suspects.'}
+          : 'Avec moins de jours, les résultats seraient surtout dus au hasard.'}
       </p>
       {details && (
         <p className="today-details-line mono">
