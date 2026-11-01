@@ -21,6 +21,10 @@ export const ANDROIDPUBLISHER_SCOPE = 'https://www.googleapis.com/auth/androidpu
 
 /** Jetons d'achat Play : longues chaînes opaques (lettres, chiffres, points, tirets, soulignés). */
 const PURCHASE_TOKEN = /^[A-Za-z0-9._-]{20,4096}$/
+/** Transactions StoreKit 2 de l'app iPhone (I6-RELAIS) : JWS compact, jusqu'à 16 Kio (trois certificats dans l'en-tête). */
+const JWS_TOKEN = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/
+export const isTokenShape = (token) => typeof token === 'string' &&
+  (PURCHASE_TOKEN.test(token) || (token.length <= 16_384 && JWS_TOKEN.test(token)))
 
 /**
  * Niveaux payants (31/10) : Silver = l'abonnement historique `halcya_premium`, Gold = le produit séparé `halcya_gold`.
@@ -153,7 +157,7 @@ export const isLaunchPeriod = ({ from = '', until = '', off = false } = {}, now)
  */
 export function verifyResponse({ ent, launchUntil, acknowledged, accountMatch }) {
   const premium = Boolean(ent?.premium) || Boolean(launchUntil)
-  const source = ent?.premium ? 'play' : launchUntil ? 'launch' : null
+  const source = ent?.premium ? ent.source ?? 'play' : launchUntil ? 'launch' : null
   // Pendant la période de lancement, toute installation play a Gold (décision du 31/10), même abonnée Silver
   const tier = launchUntil ? 'gold' : ent?.premium ? ent.tier ?? tierOfProduct(ent.productId) : null
   const payload = {
@@ -177,7 +181,7 @@ export function verifyResponse({ ent, launchUntil, acknowledged, accountMatch })
     data: {
       id: payload.productId,
       latest_receipt: true,
-      transaction: { type: 'android-playstore' },
+      transaction: { type: ent?.source === 'appstore' ? 'ios-appstore' : 'android-playstore' },
       collection: ent?.productId
         ? [{
             id: ent.productId,
@@ -197,7 +201,7 @@ export function verifyResponse({ ent, launchUntil, acknowledged, accountMatch })
 export function purchaseTokenFrom(body) {
   const token = body?.purchaseToken ?? body?.transaction?.purchaseToken ?? null
   if (token == null || token === '') return null
-  if (typeof token !== 'string' || !PURCHASE_TOKEN.test(token)) {
+  if (!isTokenShape(token)) {
     throw new HttpError(400, 'bad_token', 'Jeton d\'achat invalide.')
   }
   return token
@@ -227,13 +231,29 @@ export function createPushVerifier({ audience, serviceAccount, fetchImpl = fetch
  * @param {{ play: ReturnType<typeof createPlayClient>, packageName: string, launchPremium?: { from?: string, until?: string, off?: boolean },
  *   verifyPush: (authorization: string) => Promise<boolean>, log?: (e: object) => void, now?: () => number }} deps
  */
-export function createBillingRoutes({ play, packageName, launchPremium = {}, verifyPush, log = () => {}, now = Date.now }) {
+export function createBillingRoutes({ play, appStore = null, packageName, launchPremium = {}, verifyPush, log = () => {}, now = Date.now }) {
   return {
     /** POST /v1/subscription/verify — droits premium d'une installation (avec ou sans jeton d'achat). */
     async verify(body, installId) {
       const launchUntil = isLaunchPeriod(launchPremium, now())
       const purchaseToken = purchaseTokenFrom(body)
       if (!purchaseToken) return { status: 200, payload: verifyResponse({ ent: null, launchUntil }) }
+
+      // Achat iPhone (transaction StoreKit 2 signée) : vérifié sur place, sans appel à Google ni à Apple
+      if (appStore?.isJws(purchaseToken)) {
+        const signedRenewalInfo = body?.renewalInfo ?? body?.transaction?.renewalInfo ?? null
+        let checked
+        try {
+          checked = appStore.verify(purchaseToken, installId, { signedRenewalInfo, now: now() })
+        } catch (err) {
+          if (!err?.code) throw err
+          log({ event: 'verify', source: 'appstore', result: err.code, token: hashToken(purchaseToken) })
+          return { status: 400, payload: { ok: false, error: 'invalid_purchase', message: 'Achat App Store non reconnu.', ...verifyResponse({ ent: null, launchUntil }) } }
+        }
+        const { ent, accountMatch, environment } = checked
+        log({ event: 'verify', source: 'appstore', environment, state: ent.state, premium: ent.premium, tier: ent.tier, accountMatch, token: hashToken(purchaseToken) })
+        return { status: 200, payload: verifyResponse({ ent, launchUntil, acknowledged: true, accountMatch }) }
+      }
 
       let sub
       try {

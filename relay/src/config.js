@@ -77,6 +77,8 @@ export function loadConfig(env = process.env) {
     creditsStore: env.CREDITS_STORE || 'firestore',
     // Abonnements Google Play (jalon 6b)
     packageName: env.PLAY_PACKAGE || 'fr.jpesquet.sante',
+    // App iPhone (I6-RELAIS) : bundle ID attendu dans les transactions StoreKit 2
+    appStoreBundleId: env.APPSTORE_BUNDLE_ID || 'fr.jpesquet.sante',
     publicUrl: env.PUBLIC_URL || 'https://halcya-relay-81378799481.europe-west1.run.app',
     rtdnServiceAccount: env.RTDN_SERVICE_ACCOUNT || 'relay-runtime@healthtrack-824b26.iam.gserviceaccount.com',
     // Banc Silver / Gold (GOLD-b5) : seul ce compte (la CI, jeton OIDC) peut choisir le niveau d'une analyse

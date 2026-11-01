@@ -92,6 +92,14 @@
 > ou rien pour garder le paywall sans promesse. Effet de bord : le banc a pris les 40 analyses Gold de ce jour ; vos
 > analyses jusqu'à 01:00 passent par Flash-Lite.
 
+> 🍏 **Abonnements iPhone, côté relais (votre demande du 01/11 vers 17:10, 1re étape faite à 17:33).** Le relais
+> reconnaît maintenant un achat fait sur l'App Store : la transaction signée par Apple est vérifiée sur place
+> (signature, chaîne de certificats jusqu'à la racine publique d'Apple, app `fr.jpesquet.sante`, date de fin,
+> remboursement), `halcya_gold…` donne Gold et `halcya_premium…` Silver, avec les mêmes droits et crédits que sur
+> Google Play (10 analyses par jour en Silver, 20 en Gold). Le chemin Google Play ne change pas. Rien à faire pour
+> vous. Suite : la route des notifications de l'App Store (je vous donnerai son adresse à coller dans App Store
+> Connect), puis le nom du magasin dans la page d'abonnement.
+
 **Ce que vous verrez dans l'app cette semaine**
 - **Moins de « une estimation, pas un diagnostic »** (31/10 23:33, votre demande du 31/10 vers 21:35, 1re étape) —
   la phrase ne revient plus en refrain sous la carte « Bien-être estimé », la lecture du visage, le résultat d'une
@@ -881,6 +889,7 @@ pour quatre lignes.
 | 01/11 10:33 — [Textes : réintroduction](runs/2026-11-01-1033-slop-reintroduction.md) | ✍️ | SLOP-1b-7 : refrain « l'app vous dit ce qui passe » retiré (2 écrans sur 3), intro du choix raccourcie, « diététicienne » une fois ; 1 règle au test ; captures |
 | 01/11 13:33 — [Produit Gold sur Play](runs/2026-11-01-1333-gold-b3-produit.md) | 🥇 | GOLD-b3 : `scripts/play/subscriptions.mjs` tient deux abonnements, Silver `halcya_premium` (inchangé) et Gold `halcya_gold` (mensuel 9,99 €, sans essai, fiche « 20 par jour », aucun nom de modèle) ; identifiants vérifiés contre le relais ; créé par la CI au merge |
 | 01/11 14:33 — [Paywall Silver et Gold](runs/2026-11-01-1433-gold-b4-paywall.md) | 🥇 | GOLD-b4 : le paywall propose Silver (10 analyses IA/jour) et Gold (20/jour, mensuel) côte à côte, prix lus dans Google Play ; « Gold offert pendant le test » ; « Silver actif » / « Gold actif » dans Paramètres ; titre « Comprendre vos bons et mauvais jours » ; aucun nom de modèle (test) ; v430 (APK 34 524 234 o) |
+| 01/11 17:33 — [Achats App Store vérifiés par le relais](runs/2026-11-01-1733-i6-relais-appstore.md) | 🍏 | I6-RELAIS-1+2 : `relay/src/appstore.js` vérifie une transaction StoreKit 2 (ES256, chaîne x5c jusqu'à Apple Root CA - G3, OID App Store, bundleId, Sandbox/Production, échéance, remboursement, grâce et renouvellement si fournis) ; `halcya_gold…` → Gold, `halcya_premium…` → Silver ; même sortie que Play avec `source: 'appstore'` ; chemin Play inchangé ; 10 tests (chaîne de test générée à la volée) |
 | 01/11 16:33 — [Banc Silver / Gold](runs/2026-11-01-1633-gold-b5-banc.md) | 🥇 | GOLD-b5 + b6 : route `/v1/bench/analyze` du relais (jeton OIDC de la CI, plafonds habituels) ; banc Nutrition5k et workflow manuel ; 15 tests ; v432 ; banc lancé : masse −18 % (net), calories sans différence → promesse non confirmée, question au propriétaire (P36) ; 1,87 € |
 | 01/11 15:33 — [Passage Silver → Gold](runs/2026-11-01-1533-gold-b2-passage.md) | 🥇 | GOLD-b2 : « Passer à Gold » pour un abonné Silver ; l'achat Gold remplace Silver chez Google Play (ancien jeton, prorata de temps), jamais deux abonnements ; achat Silver refusé à un abonné Gold ; 7 tests (app, relais) ; v431 |
 | 01/11 12:33 — [Gold côté relais](runs/2026-11-01-1233-gold-b1-relais.md) | 🥇 | GOLD-b1 : le relais déduit le niveau du produit Play acheté (`halcya_gold` = Gold, `halcya_premium` = Silver), 20 analyses/jour en Gold et 10 en Silver ; période de lancement = Gold pour tous (donc 20/jour pour les testeurs) ; plafonds globaux et budget inchangés ; P35 sans réponse : proposition appliquée |

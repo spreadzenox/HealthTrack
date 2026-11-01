@@ -1388,10 +1388,33 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   `X-Platform: ios`, ou `X-Integrity-Status: no_plugin` sans `X-Platform` → statut `not_android`, jamais bloqué (même
   en `enforce`) jusqu'à App Attest ; `X-Platform` dans les en-têtes CORS ; bilan du déploiement : origine « iPhone »
   et « Part des requêtes iPhone (hors CI) ». En-têtes falsifiables : plafonds par installation et global inchangés.
-- [ ] **I6-RELAIS** (quand l'abonnement iPhone I6 sera prévu) Le relais accepte aussi les abonnements App Store sans
-  rien changer au chemin Google Play : transaction StoreKit 2 vérifiée sur place (signature JWS, chaîne x5c jusqu'à
-  la racine d'Apple, bundleId `fr.jpesquet.sante`, `appAccountToken` tiré de l'identifiant d'installation),
-  notifications serveur V2 sur une route à part, mêmes droits, mêmes crédits, même période de lancement.
+- [ ] **I6-RELAIS** (PRIORITÉ des runs de code depuis la demande du 01/11 vers 17:10 ; seule une CI cassée passe avant)
+  Le relais accepte aussi les abonnements App Store sans rien changer au chemin Google Play. Étapes :
+  - [x] **I6-RELAIS-1+2** (01/11 17:33) `relay/src/appstore.js` : un `purchaseToken` en forme de JWS (en-tête JSON
+    avec `alg`) est une transaction StoreKit 2, vérifiée sur place : ES256, chaîne x5c feuille → intermédiaire →
+    racine égale octet pour octet à Apple Root CA - G3 (embarquée, empreinte testée), marqueurs OID de l'App Store,
+    validité des certificats à `signedDate` ; bundleId `fr.jpesquet.sante` (`APPSTORE_BUNDLE_ID`), environnement
+    Sandbox ou Production, abonnement auto-renouvelable ; `expiresDate`, `revocationDate` (→ `revoked`), essai
+    (`offerDiscountType: FREE_TRIAL`) ; `renewalInfo` facultatif (à côté du jeton ou dans `transaction`) vérifié de la
+    même façon : `autoRenewStatus` (0 → `canceled`, premium jusqu'à l'échéance) et `gracePeriodExpiresDate` (→ `grace`).
+    `halcya_gold…` → Gold, `halcya_premium…` → Silver, autre → pas de premium. `appAccountTokenFor(installation)` =
+    32 premiers chiffres de `accountIdFor` au format UUID ; comme pour Play, `accountMatch` est rapporté, pas bloquant
+    (une réinstallation change l'identifiant). Sortie identique à Play avec `source: 'appstore'`,
+    `data.transaction.type: 'ios-appstore'` ; JWS refusé → 400 `invalid_purchase`. `X-Purchase-Token` accepte un JWS
+    (16 Kio max) pour les crédits (10/jour Silver, 20 Gold, inchangés). 10 tests sur une chaîne générée par openssl
+    dans un dossier temporaire (aucune clé dans le dépôt).
+  - [ ] **I6-RELAIS-3** Route `POST /appstore/notifications` (notifications serveur V2, `signedPayload` vérifié par
+    `createAppStoreVerifier`, puis `data.signedTransactionInfo` / `signedRenewalInfo`) : DID_RENEW, EXPIRED, REFUND,
+    REVOKE, GRACE_PERIOD_EXPIRED, DID_FAIL_TO_RENEW, DID_CHANGE_RENEWAL_PREF / STATUS, SUBSCRIBED, TEST ; journal sans
+    jeton ni identifiant ; URL à donner au propriétaire (`<PUBLIC_URL>/appstore/notifications`, App Store Connect →
+    App → Informations sur l'app → Notifications du serveur de l'App Store, version 2, Production et Sandbox).
+  - [ ] **I6-RELAIS-6** App : nom du magasin dans une constante de distribution (« Google Play » / « l'App Store ») à
+    la place des 4 textes en dur ; pour un achat `source: 'appstore'`, « Gérer mon abonnement » →
+    https://apps.apple.com/account/subscriptions et « Passer à Gold » sans ancien jeton.
+  - [ ] **I6-RELAIS-5** (plus tard) App Attest ; d'ici là exemption iOS (`X-Platform: ios` / `no_plugin`) inchangée.
+  - Question ouverte : la période de lancement (Gold pour toute installation sans jeton) vaut aussi pour l'iPhone
+    aujourd'hui, puisque le relais ne distingue pas la plateforme sur `/v1/subscription/verify` ; à confirmer avec la
+    routine iOS si l'iPhone doit en être exclu.
 - [x] **IOS-3** (28/10 12:33) Notes de Nouveautés propres à Android marquées `"variants": ["play", "sideload"]`
   (`2026-10-24-1630-sauvegarde-android`, `2026-10-27-2133-bord-a-bord`, `2026-10-28-0433-montre-restauree`) ; à
   faire pour toutes les suivantes (barres système, sauvegarde Android, montre Huawei en Bluetooth, Health Connect,
