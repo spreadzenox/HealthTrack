@@ -102,9 +102,8 @@ const UNAVAILABLE_MESSAGES = {
     title: 'Health Connect ne répond pas.',
     body: (
       <>
-        Le module natif Health Connect n’a pas répondu dans les délais (10 s). Cela peut indiquer que le module
-        système est bloqué ou nécessite une mise à jour. Essayez de mettre à jour via {SYSTEM_UPDATE}, puis relancez
-        l’application.
+        Health Connect n’a pas répondu en 10 secondes. Le module système est peut-être bloqué ou pas à jour. Mettez-le
+        à jour via {SYSTEM_UPDATE}, puis relancez l’app.
       </>
     ),
     settings: false,
@@ -115,7 +114,7 @@ const UNAVAILABLE_MESSAGES = {
       <>
         Sur Android 14 et supérieur (dont Android 16 / One UI 8), Health Connect est <strong>intégré au système</strong>.
         Mettez le téléphone à jour via {SYSTEM_UPDATE}. Sur Android 8–13 uniquement, installez
-        &quot;Health Connect&quot; depuis le Play Store. Activez ensuite la synchronisation dans Samsung Health →
+        « Health Connect » depuis le Play Store. Activez ensuite la synchronisation dans Samsung Health →
         Paramètres → Health Connect.
       </>
     ),

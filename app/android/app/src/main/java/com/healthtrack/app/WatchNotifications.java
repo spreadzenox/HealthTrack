@@ -36,8 +36,8 @@ final class WatchNotifications {
                     .setContentTitle("Synchro de la montre en pause")
                     .setContentText(who + " n'accepte plus la connexion. Ouvrez " + app + " → « Synchroniser la montre ».")
                     .setStyle(new Notification.BigTextStyle().bigText(who
-                            + " n'accepte plus la connexion de " + app + " (elle a peut-être été réinitialisée ou liée à une"
-                            + " autre app). Ouvrez " + app + " et touchez « Synchroniser la montre »."))
+                            + " n'accepte plus la connexion de " + app + ". Elle a peut-être été réinitialisée. Ouvrez "
+                            + app + " et touchez « Synchroniser la montre »."))
                     .setContentIntent(tap)
                     .setAutoCancel(true)
                     .build());

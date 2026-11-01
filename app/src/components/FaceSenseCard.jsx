@@ -354,12 +354,12 @@ export default function FaceSenseCard({
           </p>
           <MethodNote summary="Détails">
             {appOpen
-              ? <>À chaque ouverture de l’app, la caméra frontale prend quelques images (un bandeau l’indique), le
-                téléphone en tire une dizaine de mesures d’expression puis les efface. Au plus une lecture par
-                demi-heure, jamais app fermée. {unlockOffered && <>Si vous ajoutez le déverrouillage, 3 images à
-                chaque déverrouillage, avec une notification visible tant que c’est en marche. </>}</>
-              : <>À chaque déverrouillage, la caméra frontale prend 3 images, le téléphone en tire une dizaine de
-                mesures d’expression puis les efface. </>}
+              ? <>À chaque ouverture de l’app, la caméra frontale prend quelques images, et un bandeau l’indique. Le
+                téléphone en tire une dizaine de mesures d’expression, puis les efface. Une lecture par demi-heure au
+                plus, jamais app fermée. {unlockOffered && <>Au déverrouillage, si vous l’ajoutez : 3 images, et une
+                notification reste visible. </>}</>
+              : <>À chaque déverrouillage, la caméra frontale prend 3 images. Le téléphone en tire une dizaine de
+                mesures d’expression, puis les efface. </>}
             Un bien-être estimé s’affiche dès la première lecture, avec sa fourchette ; vos notes, facultatives,
             l’affinent.
           </MethodNote>
@@ -428,9 +428,9 @@ export default function FaceSenseCard({
         <>
           {d.lines.map((line) => <p key={line} className="weather-today">{line}</p>)}
           <p className="my-device-message">
-            Android a refusé la caméra au dernier déverrouillage : le réglage « Autoriser seulement lorsque l’appli
-            est utilisée » ne la laisse au service que s’il a démarré app ouverte. Touchez « Relancer » maintenant,
-            app ouverte ; pour ne plus dépendre de ce détail, accordez l’accès permanent (guide ci-dessous).
+            Android a refusé la caméra au dernier déverrouillage. Avec « Autoriser seulement lorsque l’appli est
+            utilisée », la lecture doit démarrer app ouverte. Touchez « Relancer » maintenant, ou accordez l’accès
+            permanent (guide ci-dessous).
           </p>
           <div className="my-device-actions">
             <button type="button" className="btn btn-primary connector-btn" onClick={() => activate({ restart: true })} disabled={busy}>Relancer</button>

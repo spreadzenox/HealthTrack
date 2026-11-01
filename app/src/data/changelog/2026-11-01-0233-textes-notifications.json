@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-01",
+  "kind": "amélioration",
+  "title": "Notifications et lecture du visage : des textes plus courts",
+  "items": [
+    "La notification « Lecture du visage arrêtée » dit simplement qu’Android l’a mise en pause, souvent pour économiser la batterie.",
+    "Les détails de la lecture du visage, dans Sources, tiennent en phrases courtes.",
+    "Le message de Health Connect qui ne répond pas est plus clair."
+  ]
+}
