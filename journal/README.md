@@ -78,14 +78,19 @@
 > offert à tous). **À tester plus tard** (après la période de lancement, avec votre compte testeur de licence) : prendre
 > Silver mensuel, puis « Passer à Gold » ; Google Play → Abonnements ne doit montrer qu'un seul abonnement Halcya.
 
-> 🥇 **Banc Silver / Gold prêt (01/11 16:33)** : la promesse « Gold fait moins d'erreurs » ne s'affichera que si un
-> banc la confirme. Il est en place : le workflow **« Banc Silver / Gold (Nutrition5k) »** fait analyser jusqu'à 40
-> assiettes pesées du jeu public Nutrition5k (Google Research, CC BY 4.0 ; photos téléchargées le temps du banc,
-> jamais gardées) en Silver puis en Gold, et compare l'erreur sur la masse et sur les calories. Verdict prudent :
-> « confirmé » seulement si l'écart est net sur les deux (intervalle de confiance à 95 %), avec un chiffre arrondi vers
-> le bas ; sinon, pas de promesse et je vous préviens. Le banc passe par les plafonds habituels du relais (coût
-> attendu 1 à 2 €). Effet de bord : un jour de banc, les 40 analyses Gold du jour sont prises ; vos analyses de ce
-> jour-là passent par Flash-Lite. **Rien à faire** : le prochain run le lance (soir, après le déploiement du relais).
+> ⚠️ **Banc Silver / Gold : promesse « Gold fait moins d'erreurs » NON confirmée (01/11 17:20) — à trancher.** Le banc
+> (workflow « Banc Silver / Gold (Nutrition5k) », 40 assiettes pesées du jeu public Nutrition5k, photos jamais gardées,
+> coût 1,87 €) a comparé les deux niveaux sur 39 paires :
+> - **quantités (masse totale)** : Gold se trompe de 54,6 g en moyenne contre 66,8 g pour Silver (**−18 %**, écart net :
+>   intervalle de confiance à 95 % de +4,4 à +20,1 g en faveur de Gold ; Gold meilleur sur 25 assiettes sur 39) ;
+> - **calories** : aucune différence (70,7 kcal contre 69,0 ; Gold meilleur sur 21 sur 39) ;
+> - glucides −18 % (net), protéines −9 % et lipides −8 % (pas nets).
+>
+> La règle fixée (net sur les quantités ET sur les calories) n'est donc pas remplie : **rien n'est affiché dans l'app**,
+> le paywall reste sur « 20 analyses par jour ». Ce qui serait défendable, si vous le voulez : « Gold estime mieux les
+> quantités », **sans chiffre** (la borne basse prudente n'est que de 6 %). Répondez « quantités » pour l'afficher ainsi,
+> ou rien pour garder le paywall sans promesse. Effet de bord : le banc a pris les 40 analyses Gold de ce jour ; vos
+> analyses jusqu'à 01:00 passent par Flash-Lite.
 
 **Ce que vous verrez dans l'app cette semaine**
 - **Moins de « une estimation, pas un diagnostic »** (31/10 23:33, votre demande du 31/10 vers 21:35, 1re étape) —
@@ -876,7 +881,7 @@ pour quatre lignes.
 | 01/11 10:33 — [Textes : réintroduction](runs/2026-11-01-1033-slop-reintroduction.md) | ✍️ | SLOP-1b-7 : refrain « l'app vous dit ce qui passe » retiré (2 écrans sur 3), intro du choix raccourcie, « diététicienne » une fois ; 1 règle au test ; captures |
 | 01/11 13:33 — [Produit Gold sur Play](runs/2026-11-01-1333-gold-b3-produit.md) | 🥇 | GOLD-b3 : `scripts/play/subscriptions.mjs` tient deux abonnements, Silver `halcya_premium` (inchangé) et Gold `halcya_gold` (mensuel 9,99 €, sans essai, fiche « 20 par jour », aucun nom de modèle) ; identifiants vérifiés contre le relais ; créé par la CI au merge |
 | 01/11 14:33 — [Paywall Silver et Gold](runs/2026-11-01-1433-gold-b4-paywall.md) | 🥇 | GOLD-b4 : le paywall propose Silver (10 analyses IA/jour) et Gold (20/jour, mensuel) côte à côte, prix lus dans Google Play ; « Gold offert pendant le test » ; « Silver actif » / « Gold actif » dans Paramètres ; titre « Comprendre vos bons et mauvais jours » ; aucun nom de modèle (test) ; v430 (APK 34 524 234 o) |
-| 01/11 16:33 — [Banc Silver / Gold](runs/2026-11-01-1633-gold-b5-banc.md) | 🥇 | GOLD-b5 : route `/v1/bench/analyze` du relais (jeton OIDC de la CI, plafonds habituels, `served` pour écarter un Gold servi par Flash-Lite) ; banc Nutrition5k (40 assiettes pesées, masse et kcal, IC 95 % apparié, chiffre prudent) et workflow manuel ; 15 tests |
+| 01/11 16:33 — [Banc Silver / Gold](runs/2026-11-01-1633-gold-b5-banc.md) | 🥇 | GOLD-b5 + b6 : route `/v1/bench/analyze` du relais (jeton OIDC de la CI, plafonds habituels) ; banc Nutrition5k et workflow manuel ; 15 tests ; v432 ; banc lancé : masse −18 % (net), calories sans différence → promesse non confirmée, question au propriétaire (P36) ; 1,87 € |
 | 01/11 15:33 — [Passage Silver → Gold](runs/2026-11-01-1533-gold-b2-passage.md) | 🥇 | GOLD-b2 : « Passer à Gold » pour un abonné Silver ; l'achat Gold remplace Silver chez Google Play (ancien jeton, prorata de temps), jamais deux abonnements ; achat Silver refusé à un abonné Gold ; 7 tests (app, relais) ; v431 |
 | 01/11 12:33 — [Gold côté relais](runs/2026-11-01-1233-gold-b1-relais.md) | 🥇 | GOLD-b1 : le relais déduit le niveau du produit Play acheté (`halcya_gold` = Gold, `halcya_premium` = Silver), 20 analyses/jour en Gold et 10 en Silver ; période de lancement = Gold pour tous (donc 20/jour pour les testeurs) ; plafonds globaux et budget inchangés ; P35 sans réponse : proposition appliquée |
 | 01/11 11:33 — [Textes : Analyses dépliées](runs/2026-11-01-1133-slop-analyses-details.md) | ✍️ | SLOP-1b-8 : phrase des liens raccourcie (une vingtaine de cartes), « À tester » en texte, phrase en doublon retirée des pistes ventre, méthode du visage découpée ; `--open-details` ; 2 règles au test ; **polissage des textes terminé dans l'app** (paywall avec GOLD-b) |
