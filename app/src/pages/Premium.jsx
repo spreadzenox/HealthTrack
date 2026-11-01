@@ -15,8 +15,8 @@ const PER = { year: 'an', month: 'mois' }
 
 /** Les deux niveaux (GOLD-b4) : seul le plafond quotidien de l'analyse IA des repas les distingue aujourd'hui. */
 const TIERS = [
-  { id: 'silver', name: 'Silver', note: `${PREMIUM_AI_DAILY} analyses IA par jour` },
-  { id: 'gold', name: 'Gold', note: `${GOLD_AI_DAILY} analyses IA par jour` },
+  { id: 'silver', name: 'Silver', daily: PREMIUM_AI_DAILY },
+  { id: 'gold', name: 'Gold', daily: GOLD_AI_DAILY },
 ]
 const tierOf = (plan) => plan?.tier ?? 'silver'
 const defaultPlan = (list, tier) => {
@@ -220,7 +220,7 @@ export default function Premium({ context = null, onClose = null }) {
                 <label key={t.id} className={`paywall-tier paywall-tier-${t.id}${tier === t.id ? ' is-selected' : ''}`}>
                   <input type="radio" name="tier" value={t.id} checked={tier === t.id} onChange={() => chooseTier(t.id)} />
                   <span className="paywall-tier-name">{t.name}</span>
-                  <span className="paywall-tier-note">{t.note}</span>
+                  <span className="paywall-tier-note"><span className="paywall-tier-count">{t.daily}</span> analyses IA par jour</span>
                 </label>
               ))}
             </div>

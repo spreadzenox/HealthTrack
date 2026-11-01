@@ -118,6 +118,12 @@ describe('Settings — variante play (relais Halcya)', () => {
     expect(screen.getByTestId('debug-mode-toggle')).not.toBeChecked()
   })
 
+  it('GOLD-a3 : le mode diagnostic montre l’empreinte de l’installation (rien de personnel)', async () => {
+    localStorage.setItem('healthtrack_debug_mode_enabled', 'true')
+    renderSettings()
+    expect(await screen.findByTestId('install-fingerprint')).toHaveTextContent(/^[0-9a-f]{12}$/)
+  })
+
   it('VC-4 : le réglage reste visible une fois déverrouillé, ou si le mode est déjà actif', () => {
     localStorage.setItem('healthtrack_debug_mode_enabled', 'true')
     renderSettings()

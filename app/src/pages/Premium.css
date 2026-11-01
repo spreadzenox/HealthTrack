@@ -159,9 +159,12 @@
 }
 
 .paywall-tier-note {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.paywall-tier-count {
+  font-family: var(--font-mono);
 }
 
 .paywall-plans {
