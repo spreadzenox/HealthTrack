@@ -68,6 +68,8 @@ describe('formules « slop IA » (SLOP-1)', () => {
     expect(slopOffences('✨ Remplir avec l’IA')).not.toEqual([])
     expect(slopOffences('Elle complète le bien-être estimé, sans jamais le remplacer.')).not.toEqual([])
     expect(slopOffences('Android l’a mise en pause (mise à jour, redémarrage ou économie de batterie).')).not.toEqual([])
+    expect(slopOffences('Rangé sur ce téléphone, jamais chez {APP_NAME}.')).not.toEqual([])
+    expect(slopOffences('<p>Astuce : beaucoup de montres diffusent.')).not.toEqual([])
     expect(slopOffences('{value ?? \'—\'} bpm')).toEqual([])
     expect(slopOffences('Une corrélation ne prouve pas une cause.')).toEqual([])
     expect(slopOffences('Le résultat est une estimation. Il ne remplace pas l’avis d’un médecin.')).toEqual([])

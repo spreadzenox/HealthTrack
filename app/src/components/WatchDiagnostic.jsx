@@ -13,6 +13,7 @@ import { runHuaweiDiagnostic, STEPS } from '../devices/huawei/diagnostic'
 import { detectPhoneApps } from '../devices/phoneApps'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import { formatAgo } from '../utils/timeAgo'
+import { APP_NAME } from '../config/brand'
 import WatchSetup from './WatchSetup'
 import WatchConnect from './WatchConnect'
 import { backgroundForJournal, loadLastConnect, watchJournal } from '../devices/huawei/journal'
@@ -182,7 +183,7 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
     <>
       {!available ? (
         <p className="my-devices-intro">
-          Connectez une montre compatible Huawei depuis l’app Android : elle lit ses mesures directement, montre allumée près du téléphone.
+          Dans l’app Android, {APP_NAME} lit directement les mesures d’une montre Huawei compatible, allumée près du téléphone.
         </p>
       ) : (
         <>

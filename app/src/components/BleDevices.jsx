@@ -237,8 +237,7 @@ export default function BleDevices({
     <section className="my-devices ble-devices" aria-labelledby="ble-devices-title">
       <h3 id="ble-devices-title" className="my-devices-title">Capteurs Bluetooth</h3>
       <p className="my-devices-intro">
-        Ceinture cardio, montre qui diffuse sa fréquence cardiaque, tensiomètre, balance… {APP_NAME} reconnaît tout seul les
-        appareils au profil Bluetooth standard, quelle que soit la marque.
+        Ceinture cardio, tensiomètre, balance… {APP_NAME} reconnaît les appareils Bluetooth standard, de toute marque.
       </p>
 
       {!available ? (
@@ -393,9 +392,8 @@ export default function BleDevices({
           )}
           {hasWatch && (
             <p className="my-device-meta ble-tip">
-              Astuce : beaucoup de montres peuvent diffuser leur fréquence cardiaque en Bluetooth (réglage « diffusion » ou
-              « partage de la fréquence cardiaque », souvent dans les réglages d’entraînement). Elles apparaissent alors ici comme
-              capteur cardio compatible.
+              Beaucoup de montres peuvent diffuser leur fréquence cardiaque en Bluetooth. Cherchez « partage de la fréquence
+              cardiaque » dans leurs réglages d’entraînement : la montre apparaît alors ici.
             </p>
           )}
           {unknownCount > 0 && (

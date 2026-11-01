@@ -395,8 +395,7 @@ export class HealthConnectConnector extends BaseConnector {
       // VC-27 : une phrase avec des marques connues du public ; la liste complète des types vit au chevron
       // « Ce qui est importé » de la carte (`importedList`, ci-dessous)
       description:
-        'Montre, bague, balance : ce que vos apps santé y écrivent (Samsung Health, Garmin, Withings, Oura…) : ' +
-        'sommeil, cœur, pas, poids…',
+        'Sommeil, cœur, pas, poids… écrits par vos apps santé : Samsung Health, Garmin, Withings, Oura.',
       dataTypes: ['steps', 'sleep', 'heart_rate', 'activity', 'calories', 'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weight', 'body_composition'],
     })
     /** Tout ce que la carte peut importer, replié sous « Ce qui est importé ». */

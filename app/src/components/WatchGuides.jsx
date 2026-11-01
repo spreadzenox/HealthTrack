@@ -7,7 +7,6 @@
  * gadgetbridge.org/basics/integrations/health-connect/ (consultées le 11/10/2026).
  */
 import { watchGuidesFor } from '../data/watchGuides'
-import { APP_NAME } from '../config/brand'
 import './WatchGuides.css'
 
 export default function WatchGuides() {
@@ -15,8 +14,7 @@ export default function WatchGuides() {
     <section className="watch-guides" aria-labelledby="watch-guides-title">
       <h3 id="watch-guides-title" className="watch-guides-title">Votre montre n’apparaît pas ?</h3>
       <p className="watch-guides-intro">
-        {APP_NAME} lit tout ce qui passe par <strong>Health Connect</strong>. Choisissez votre marque pour la brancher en
-        quelques minutes.
+        Choisissez sa marque : on vous montre comment envoyer ses mesures vers Health Connect.
       </p>
       {watchGuidesFor().map((g) => (
         <details key={g.id} id={`guide-${g.id}`} className="watch-guide">

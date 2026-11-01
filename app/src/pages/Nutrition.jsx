@@ -150,8 +150,8 @@ export default function Nutrition() {
             </div>
           ))}
           <p className="nutrition-footnote">
-            Repères ANSES pour un adulte{profileComplete ? ', ajustés à votre profil' : ' (complétez votre profil pour les ajuster)'} ;
-            apports estimés (photos, portions).
+            Objectifs : repères de l’ANSES pour un adulte{profileComplete ? ', ajustés à votre profil' : ''}. Les apports
+            sont calculés d’après vos repas et leurs portions : ce sont des ordres de grandeur.
             Un doute sur une carence : parlez-en à un médecin ou à un·e diététicien·ne.
           </p>
           <p className="nutrition-footnote nutrition-source">
