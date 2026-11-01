@@ -116,36 +116,36 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
     const expires = Date.parse(payload?.launchUntil ?? payload?.expiresAt ?? '')
     const horizon = t + PREMIUM_CACHE_MS
     const until = payload?.premium && Number.isFinite(expires) ? Math.min(expires, horizon) : horizon
-    premiumCache.set(installId, { premium: Boolean(payload?.premium), source: payload?.premium ? payload?.source ?? null : null, until })
+    premiumCache.set(installId, { premium: Boolean(payload?.premium), source: payload?.premium ? payload?.source ?? null : null, tier: payload?.premium ? payload?.tier ?? null : null, until })
   }
 
   /** Droits de cette installation : cache, sinon une relecture (bornée par billingQuota) auprès de Google Play. */
   async function entitlementOf(installId, purchaseToken) {
     const cached = premiumCache.get(installId)
-    const fallback = { premium: Boolean(cached?.premium), source: cached?.source ?? null }
+    const fallback = { premium: Boolean(cached?.premium), source: cached?.source ?? null, tier: cached?.tier ?? null }
     if (cached && cached.until > now()) return fallback
-    if (!billing) return { premium: false, source: null }
+    if (!billing) return { premium: false, source: null, tier: null }
     const slot = billingQuota ? billingQuota.take(installId) : { ok: true }
     if (!slot.ok) return fallback
     try {
       const result = await billing.verify(purchaseToken ? { purchaseToken } : {}, installId)
       rememberEntitlement(installId, result.payload)
-      return { premium: Boolean(result.payload?.premium), source: result.payload?.premium ? result.payload?.source ?? null : null }
+      const premium = Boolean(result.payload?.premium)
+      return { premium, source: premium ? result.payload?.source ?? null : null, tier: premium ? result.payload?.tier ?? null : null }
     } catch (err) {
       log({ event: 'premium_lookup_failed', status: err?.status ?? null })
       return fallback
     }
   }
-  const isPremium = async (installId, purchaseToken) => (await entitlementOf(installId, purchaseToken)).premium
 
   /**
-   * Niveau de l'analyse : Gold pendant la période de lancement (toute installation play premium par `launch`) et pour
-   * les installations de GOLD_INSTALLS ; Silver pour l'abonnement actuel ; sinon gratuit. Silver et gratuit gardent
-   * Flash-Lite.
+   * Niveau de l'analyse : Gold pendant la période de lancement (toute installation play premium par `launch`), pour un
+   * abonnement au produit Gold (`halcya_gold`, niveau relu chez Google) et pour les installations de GOLD_INSTALLS ;
+   * Silver pour l'abonnement historique ; sinon gratuit. Silver et gratuit gardent Flash-Lite.
    */
   function tierOf(installId, entitlement) {
     if (!entitlement.premium) return goldSet.has(hashInstallId(installId)) ? 'gold' : 'free'
-    if (entitlement.source === 'launch' || goldSet.has(hashInstallId(installId))) return 'gold'
+    if (entitlement.source === 'launch' || entitlement.tier === 'gold' || goldSet.has(hashInstallId(installId))) return 'gold'
     return 'silver'
   }
 
@@ -309,9 +309,10 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         send(res, 400, { error: 'install_id', message: 'Identifiant d\'installation manquant.' }, origin)
         return
       }
-      const premium = await isPremium(installId, purchaseTokenHeader(req))
+      const entitlement = await entitlementOf(installId, purchaseTokenHeader(req))
+      const { premium } = entitlement
       await hydrateCredits(installId)
-      send(res, 200, { credits: credits.peek(installId, { premium, reported: reportedCredits(req) }) }, origin)
+      send(res, 200, { credits: credits.peek(installId, { premium, tier: tierOf(installId, entitlement), reported: reportedCredits(req) }) }, origin)
       return
     }
 
@@ -374,7 +375,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         premium = entitlement.premium
         tier = tierOf(installId, entitlement)
         await hydrateCredits(installId)
-        credit = credits.take(installId, { premium, reported: reportedCredits(req) })
+        credit = credits.take(installId, { premium, tier, reported: reportedCredits(req) })
         if (credit.ok) await persistCredits(installId)
         if (!credit.ok) {
           quota.refund(installId)

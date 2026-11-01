@@ -22,6 +22,14 @@ export const ANDROIDPUBLISHER_SCOPE = 'https://www.googleapis.com/auth/androidpu
 /** Jetons d'achat Play : longues chaînes opaques (lettres, chiffres, points, tirets, soulignés). */
 const PURCHASE_TOKEN = /^[A-Za-z0-9._-]{20,4096}$/
 
+/**
+ * Niveaux payants (31/10) : Silver = l'abonnement historique `halcya_premium`, Gold = le produit séparé `halcya_gold`.
+ * Le relais déduit le niveau du produit de l'achat relu chez Google, jamais d'une déclaration de l'app.
+ */
+export const SILVER_PRODUCT_ID = 'halcya_premium'
+export const GOLD_PRODUCT_ID = 'halcya_gold'
+export const tierOfProduct = (productId) => (productId === GOLD_PRODUCT_ID ? 'gold' : 'silver')
+
 export const hashToken = (token) => createHash('sha256').update(String(token)).digest('hex').slice(0, 12)
 
 /**
@@ -108,6 +116,7 @@ export function entitlementFrom(sub, now = Date.now()) {
     : rawState === 'SUBSCRIPTION_STATE_CANCELED' && notExpired
   return {
     premium,
+    tier: premium ? tierOfProduct(item?.productId) : null,
     state: SHORT_STATE[rawState] ?? 'unknown',
     productId: item?.productId ?? null,
     basePlanId: item?.offerDetails?.basePlanId ?? null,
@@ -145,9 +154,12 @@ export const isLaunchPeriod = ({ from = '', until = '', off = false } = {}, now)
 export function verifyResponse({ ent, launchUntil, acknowledged, accountMatch }) {
   const premium = Boolean(ent?.premium) || Boolean(launchUntil)
   const source = ent?.premium ? 'play' : launchUntil ? 'launch' : null
+  // Pendant la période de lancement, toute installation play a Gold (décision du 31/10), même abonnée Silver
+  const tier = launchUntil ? 'gold' : ent?.premium ? ent.tier ?? tierOfProduct(ent.productId) : null
   const payload = {
     premium,
     source,
+    tier,
     launchUntil,
     state: ent?.state ?? null,
     productId: ent?.productId ?? null,

@@ -50,6 +50,17 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   - [ ] **GOLD-b0 — choix du propriétaire (P35)** : proposition du 01/11 08:33 (`IDEES.md` I205) : Gold mensuel seul
     au lancement (9,99 € ou 10,00 €), annuel à 79,99 € après un mois de vrais coûts Gold, pas d'essai Gold (l'essai de
     14 jours reste sur l'annuel Silver). Sans réponse : appliquer cette proposition (réversible, aucun achat réel).
+  - [x] **GOLD-b1 — niveau Gold côté relais** (01/11 12:33) : `halcya_gold` (produit Gold) → `tier: 'gold'`,
+    `halcya_premium` → Silver, déduit du `productId` relu chez Google (`entitlementFrom`), jamais de l'app ; période de
+    lancement → Gold pour tous ; `tier` dans `/v1/subscription/verify`, dans le cache des droits et dans les crédits.
+    Plafond du jour par abonné : 10 en Silver, **20 en Gold** (`GOLD_PREMIUM_DAILY_CAP`) ; plafonds globaux
+    (`GLOBAL_DAILY_CAP` 150, `GOLD_DAILY_CAP` 40, 15 € / 19 €) inchangés, donc coût maximal inchangé.
+    `INSTALL_DAILY_CAP` (20) égale le plafond Gold : à relever à 25 si un Gold se plaint d'un refus avant 20.
+  - [ ] **GOLD-b3 — produit `halcya_gold` sur Play** : `scripts/play/subscriptions.mjs` crée aussi `halcya_gold`
+    (formule `mensuel` 9,99 €, grâce 7 j + suspension 53 j, sans essai) ; fiche « Halcya Gold » ; test du catalogue.
+  - [ ] **GOLD-b4 — paywall et page d'abonnement à deux niveaux** : Silver et Gold côte à côte, prix lus dans Play
+    Billing ; « Gold offert pendant le test » tant que la période court ; `premiumBenefits.js` (10 / 20 par jour) ;
+    aucun nom de modèle ; promesse « moins d'erreurs » seulement après le banc.
   - [ ] **GOLD-b2 — passage Silver ↔ Gold sans double facturation** : le plugin natif et `playBilling.js` n'achètent
     que `halcya_premium` sans mode de remplacement ; avec un produit `halcya_gold` séparé, un Silver qui monte aurait
     deux abonnements. Passer l'ancien jeton + `CHARGE_PRORATED_PRICE` pour monter, `DEFERRED` pour descendre ; le

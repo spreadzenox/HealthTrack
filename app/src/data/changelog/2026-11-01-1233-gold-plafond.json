@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-01",
+  "kind": "amélioration",
+  "variants": ["play"],
+  "title": "Analyse des repas : 20 par jour pendant le test",
+  "items": [
+    "Pendant le test, vous pouvez analyser jusqu’à 20 repas par jour au lieu de 10.",
+    "Le compteur des analyses restantes en tient compte."
+  ]
+}

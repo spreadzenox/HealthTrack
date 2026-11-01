@@ -2,7 +2,7 @@
  * Crédits d'analyse IA (jalon 6c-3b) — « collecter est gratuit, comprendre est payant » :
  * - version gratuite : 10 analyses offertes à la première utilisation (elles ne périment pas) + 15 par mois civil
  *   (UTC), non cumulables ; les crédits du mois passent avant les crédits offerts ;
- * - premium : usage sans compter, avec un plafond raisonnable de 10 analyses par jour (minuit UTC).
+ * - premium : usage sans compter, avec un plafond raisonnable par jour (minuit UTC) : 10 en Silver, 20 en Gold.
  *
  * Les plafonds de quota.js (par installation, global, par minute) restent en place par-dessus : ce sont eux qui
  * protègent la facture. Les crédits, eux, sont la règle du produit.
@@ -56,7 +56,7 @@ export function parseClientState(raw, { freeMonthly = 15, welcome = 10 } = {}) {
 
 export const formatState = ({ month, used, welcomeUsed }) => `${month}:${used}:${welcomeUsed}`
 
-export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 10, store = null, now = Date.now } = {}) {
+export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 10, goldDaily = 20, store = null, now = Date.now } = {}) {
   /** empreinte de l'installation → { month, used, welcomeUsed, day, dayUsed } */
   const ledger = new Map()
   /** empreintes déjà relues dans le registre durable par cette instance */
@@ -92,10 +92,14 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
     if (other.day && other.day === e.day) e.dayUsed = Math.max(e.dayUsed, Number(other.dayUsed) || 0)
   }
 
-  function view(e, premium, t) {
+  /** Plafond du jour d'un abonné : 10 analyses en Silver, 20 en Gold (décision du 31/10). */
+  const dailyOf = (tier) => (tier === 'gold' ? goldDaily : premiumDaily)
+
+  function view(e, premium, t, tier = 'silver') {
     const state = formatState(e)
     if (premium) {
-      return { plan: 'premium', remaining: Math.max(0, premiumDaily - e.dayUsed), daily: premiumDaily, resetAt: nextReset(t), state }
+      const daily = dailyOf(tier)
+      return { plan: 'premium', tier: tier === 'gold' ? 'gold' : 'silver', remaining: Math.max(0, daily - e.dayUsed), daily, resetAt: nextReset(t), state }
     }
     const monthly = Math.max(0, freeMonthly - e.used)
     const welcomeLeft = Math.max(0, welcome - e.welcomeUsed)
@@ -129,9 +133,9 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
     },
 
     /** Crédits restants, sans rien consommer. */
-    peek(installId, { premium = false, reported = null } = {}) {
+    peek(installId, { premium = false, tier = 'silver', reported = null } = {}) {
       const t = now()
-      return view(entry(installId, reported, t), premium, t)
+      return view(entry(installId, reported, t), premium, t, tier)
     },
 
     /**
@@ -139,13 +143,13 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
      * connaissait pas (sans registre, on ne sait pas : toujours faux) ; sert à compter les nouvelles installations.
      * @returns {({ ok: true, firstUse: boolean } & ReturnType<typeof view>) | { ok: false, scope: 'credits'|'premium_day', resetAt: string, plan: string, state: string }}
      */
-    take(installId, { premium = false, reported = null } = {}) {
+    take(installId, { premium = false, tier = 'silver', reported = null } = {}) {
       const t = now()
       const key = keyOf(installId)
       const e = entry(installId, reported, t)
       const blank = e.used === 0 && e.welcomeUsed === 0 && e.dayUsed === 0
       if (premium) {
-        if (e.dayUsed >= premiumDaily) return { ok: false, scope: 'premium_day', ...view(e, true, t) }
+        if (e.dayUsed >= dailyOf(tier)) return { ok: false, scope: 'premium_day', ...view(e, true, t, tier) }
         e.dayUsed += 1
       } else if (e.used < freeMonthly) {
         e.used += 1
@@ -158,7 +162,7 @@ export function createCredits({ welcome = 10, freeMonthly = 15, premiumDaily = 1
       }
       const firstUse = fresh.delete(key) && blank
       e.lastWasFirst = firstUse
-      return { ok: true, firstUse, ...view(e, premium, t) }
+      return { ok: true, firstUse, ...view(e, premium, t, tier) }
     },
 
     /** Rend le dernier crédit pris (analyse qui n'a rien coûté). */

@@ -43,6 +43,7 @@ const handler = createHandler({
     welcome: config.creditsWelcome,
     freeMonthly: config.creditsMonthly,
     premiumDaily: config.premiumDaily,
+    goldDaily: config.goldDaily,
     store: config.creditsStore === 'firestore'
       ? createFirestoreStore({ project: config.project, getToken: metadataTokenProvider({ scopes: [DATASTORE_SCOPE] }) })
       : null,

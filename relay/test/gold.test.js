@@ -133,3 +133,26 @@ test('plafond Gold du jour : les analyses suivantes passent sur Flash-Lite', asy
   assert.equal(gold.calls.length, 2)
   assert.equal(lite.calls.length, 1)
 })
+
+test('abonnement Gold (halcya_gold relu chez Google) : dernier Flash et 20 analyses par jour', async () => {
+  const gold = fakeVertex('gemini-3.8-flash')
+  const lite = fakeVertex('gemini-3.5-flash-lite')
+  const { logs, statuses } = await analyze({
+    vertex: lite, goldVertex: gold, costs: createCostLedger(),
+    credits: createCredits({ premiumDaily: 10, goldDaily: 20 }),
+    billing: billingFor({ premium: true, source: 'play', tier: 'gold' }),
+  }, { times: 21 })
+  assert.equal(statuses.filter((s) => s === 200).length, 20)
+  assert.equal(statuses.at(-1), 429)
+  assert.equal(logs.find((e) => e.event === 'analyze').tier, 'gold')
+  assert.equal(lite.calls.length, 0)
+})
+
+test('abonnement Silver : 10 analyses par jour', async () => {
+  const { statuses } = await analyze({
+    vertex: fakeVertex('gemini-3.5-flash-lite'), goldVertex: fakeVertex('gemini-3.8-flash'),
+    credits: createCredits({ premiumDaily: 10, goldDaily: 20 }),
+    billing: billingFor({ premium: true, source: 'play', tier: 'silver' }),
+  }, { times: 11 })
+  assert.deepEqual([statuses.filter((s) => s === 200).length, statuses.at(-1)], [10, 429])
+})
