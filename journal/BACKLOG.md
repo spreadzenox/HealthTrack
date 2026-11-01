@@ -49,8 +49,14 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   12 caractères de son installation, telle qu'elle figure dans les journaux, aucune donnée personnelle). À brancher dans
   le workflow avant la fin de la période (lire l'empreinte de ses analyses dans les journaux, ou l'afficher dans le
   mode diagnostic caché).
-- [ ] **GOLD-a4 — prix 2027** : la grille `DEFAULT_PRICES` doit doubler au 1er janvier 2027 (coût Gold 2,8 à 8,6 c) ;
-  revoir alors `GOLD_DAILY_CAP` (20) et le seuil de 15 €.
+- [x] **GOLD-a4 — prix 2027** (02/11 00:33) : `PRICE_SCHEDULE = [{ from: '2027-01-01', factor: 2 }]` dans
+  `relay/src/costs.js` ; `pricesAt(ms)` multiplie la grille (par défaut ou `MODEL_PRICES`, toujours en prix 2026) et
+  le cumul du mois l'applique à la date de chaque appel (décembre ×1, janvier ×2) ; facteur noté dans l'événement
+  `start`. Revue des plafonds : Gold 2027 ≈ 2,8 à 8,6 c (pire jour 40 × 8,6 c ≈ 3,4 €, plus 110 Flash-Lite ≈ 3 €) ;
+  seuils 15 € / 19 € gardés en euros (vérifiés à chaque appel, dépassement au plus d'un appel) : budget de 20 €
+  protégé ; ≈ 190 Gold/mois avant la bascule sur Flash-Lite. `GOLD_DAILY_CAP` 40 et `GOLD_PREMIUM_DAILY_CAP` 20
+  inchangés. **À revoir** (GOLD-a4b) dès les premiers abonnés Gold payants : budget et seuils proportionnels aux
+  abonnements (décision du propriétaire).
 - [ ] **GOLD-b** (après le polissage des textes) Silver = abonnement actuel ; Gold = nouveau produit Play 10 €/mois,
   20 analyses/jour ; annuel et essai Gold à proposer au propriétaire ; paywall et page d'abonnement à deux niveaux ;
   aucun nom de modèle dans la variante play ; confidentialité : Google (Vertex AI, UE). Promesse « moins d'erreurs »

@@ -12,13 +12,34 @@ import { monthKey } from './credits.js'
 
 /**
  * Prix en euros par million de jetons (entrée, entrée lue dans le cache, sortie ; la réflexion est facturée comme de
- * la sortie). Valeurs prudentes, arrondies vers le haut ; MODEL_PRICES (JSON, même forme) les remplace. Les prix
- * doublent à partir de 2027 : la grille devra être relevée à ce moment (voir journal/INFRA.md).
+ * la sortie). Valeurs prudentes de 2026, arrondies vers le haut ; MODEL_PRICES (JSON, même forme) les remplace. Les
+ * prix doublent au 1er janvier 2027 : `PRICE_SCHEDULE` applique ce facteur à la grille (par défaut ou MODEL_PRICES)
+ * selon la date de l'appel, sans redéploiement.
  */
 export const DEFAULT_PRICES = {
   'gemini-3.8-flash': { input: 0.75, cached: 0.075, output: 4.5 },
   'gemini-3.5-flash-lite': { input: 0.25, cached: 0.025, output: 1.5 },
   'gemini-3.1-flash-lite': { input: 0.25, cached: 0.025, output: 1.5 },
+}
+
+/** Paliers de prix (date UTC de début, facteur appliqué à la grille de 2026). */
+export const PRICE_SCHEDULE = [{ from: '2027-01-01', factor: 2 }]
+
+/** Facteur de prix en vigueur à l'instant `ms` : celui du dernier palier commencé, 1 avant le premier. */
+export function priceFactorAt(ms, schedule = PRICE_SCHEDULE) {
+  let best = null
+  for (const step of schedule) {
+    const start = Date.parse(`${step.from}T00:00:00Z`)
+    if (start <= ms && (!best || start > best.start)) best = { start, factor: step.factor }
+  }
+  return best ? best.factor : 1
+}
+
+/** Grille en vigueur à l'instant `ms` (nouvel objet ; la grille de base n'est jamais modifiée). */
+export function pricesAt(ms, prices = DEFAULT_PRICES, schedule = PRICE_SCHEDULE) {
+  const f = priceFactorAt(ms, schedule)
+  if (f === 1) return prices
+  return Object.fromEntries(Object.entries(prices).map(([model, p]) => [model, { input: p.input * f, cached: p.cached * f, output: p.output * f }]))
 }
 
 /** Modèle absent de la grille : on compte le prix le plus élevé connu, pour ne jamais sous-estimer la facture. */
@@ -66,9 +87,10 @@ export function parsePrices(raw) {
 /**
  * Cumul du coût du mois.
  * @param {{ goldMonthlyEur?: number, stopMonthlyEur?: number, store?: { get(month: string): Promise<number>, add(month: string, micro: number): Promise<void> } | null,
- *   prices?: object, now?: () => number }} options
+ *   prices?: object, schedule?: Array<{ from: string, factor: number }>, now?: () => number }} options
+ * Les seuils restent en euros : avec les prix doublés de 2027, ils sont atteints avec deux fois moins d'analyses.
  */
-export function createCostLedger({ goldMonthlyEur = 15, stopMonthlyEur = 19, store = null, prices = DEFAULT_PRICES, now = Date.now } = {}) {
+export function createCostLedger({ goldMonthlyEur = 15, stopMonthlyEur = 19, store = null, prices = DEFAULT_PRICES, schedule = PRICE_SCHEDULE, now = Date.now } = {}) {
   let month = monthKey(now())
   let micro = 0
   let hydrated = false
@@ -94,7 +116,7 @@ export function createCostLedger({ goldMonthlyEur = 15, stopMonthlyEur = 19, sto
     /** Ajoute le coût d'un appel ; renvoie le coût en euros. */
     async add(model, usage) {
       roll()
-      const eur = costOf(model, usage, prices)
+      const eur = costOf(model, usage, pricesAt(now(), prices, schedule))
       const delta = Math.round(eur * 1e6)
       micro += delta
       if (store && delta > 0) await store.add(month, delta)
