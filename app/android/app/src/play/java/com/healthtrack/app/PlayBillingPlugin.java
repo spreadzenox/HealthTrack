@@ -180,14 +180,24 @@ public class PlayBillingPlugin extends Plugin {
         return ret;
     }
 
-    /** { productId, offerToken, obfuscatedAccountId } → { status: purchased | pending | cancelled, purchases } */
+    /**
+     * { productId, offerToken, obfuscatedAccountId, oldPurchaseToken?, replacementMode? }
+     * → { status: purchased | pending | cancelled, purchases }. Avec `oldPurchaseToken`, l'achat remplace l'abonnement
+     * Halcya en cours (Silver → Gold, GOLD-b2) au lieu d'en ouvrir un second ; seul WITH_TIME_PRORATION est accepté.
+     */
     @PluginMethod
     public void purchase(PluginCall call) {
         String productId = call.getString("productId");
         String offerToken = call.getString("offerToken");
         String accountId = call.getString("obfuscatedAccountId");
+        String oldToken = call.getString("oldPurchaseToken");
+        String mode = call.getString("replacementMode");
         if (productId == null || offerToken == null) {
             call.reject("productId et offerToken attendus");
+            return;
+        }
+        if (oldToken != null && !"WITH_TIME_PRORATION".equals(mode)) {
+            call.reject("Mode de remplacement non pris en charge");
             return;
         }
         if (purchaseCall != null) {
@@ -200,24 +210,31 @@ public class PlayBillingPlugin extends Plugin {
                 pd = details.get(productId);
             }
             if (pd != null) {
-                launch(call, pd, offerToken, accountId);
+                launch(call, pd, offerToken, accountId, oldToken);
                 return;
             }
             List<String> ids = new ArrayList<>();
             ids.add(productId);
             queryDetails(ids, call, (list) -> {
                 if (list.isEmpty()) call.reject("Formule introuvable dans Google Play", "ITEM_UNAVAILABLE");
-                else launch(call, list.get(0), offerToken, accountId);
+                else launch(call, list.get(0), offerToken, accountId, oldToken);
             });
         });
     }
 
-    private void launch(PluginCall call, ProductDetails pd, String offerToken, String accountId) {
+    private void launch(PluginCall call, ProductDetails pd, String offerToken, String accountId, String oldToken) {
         Activity activity = getActivity();
         List<BillingFlowParams.ProductDetailsParams> items = new ArrayList<>();
         items.add(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(pd).setOfferToken(offerToken).build());
         BillingFlowParams.Builder flow = BillingFlowParams.newBuilder().setProductDetailsParamsList(items);
         if (accountId != null && !accountId.isEmpty()) flow.setObfuscatedAccountId(accountId);
+        if (oldToken != null && !oldToken.isEmpty()) {
+            // Effet immédiat, sans débit le jour même : le temps payé de l'ancien abonnement devient du temps du nouveau
+            flow.setSubscriptionUpdateParams(BillingFlowParams.SubscriptionUpdateParams.newBuilder()
+                .setOldPurchaseToken(oldToken)
+                .setSubscriptionReplacementMode(BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITH_TIME_PRORATION)
+                .build());
+        }
         BillingFlowParams params = flow.build();
         activity.runOnUiThread(() -> {
             purchaseCall = call;

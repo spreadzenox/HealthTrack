@@ -18,6 +18,8 @@ import {
   formatMicros,
   monthlyEquivalent,
   annualSavingPercent,
+  UPGRADE_REPLACEMENT_MODE,
+  ALREADY_GOLD_MESSAGE,
 } from './playBilling'
 import { SILVER_PRODUCT_ID as RELAY_SILVER, GOLD_PRODUCT_ID as RELAY_GOLD } from '../../../relay/src/billing.js'
 
@@ -111,6 +113,59 @@ describe('Google Play Billing côté app (jalon 6c-2)', () => {
     const res = await restorePurchases({ native, refresh })
     expect(res.found).toBe(true)
     expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'jeton-gold' })
+  })
+
+  describe('GOLD-b2 : un seul abonnement Halcya à la fois', () => {
+    const goldPlan = { productId: GOLD_PRODUCT_ID, tier: 'gold', basePlanId: 'mensuel', offerToken: 'tok-gold' }
+
+    it('Silver en cours → l’achat Gold remplace l’abonnement Silver (ancien jeton, prorata de temps)', async () => {
+      const native = {
+        queryPurchases: vi.fn().mockResolvedValue({ purchases: [purchased('jeton-silver')] }),
+        purchase: vi.fn().mockResolvedValue({ status: 'purchased', purchases: [purchased('jeton-gold', { products: [GOLD_PRODUCT_ID] })] }),
+      }
+      const refresh = vi.fn().mockResolvedValue({ premium: true, tier: 'gold' })
+      const res = await purchasePlan(goldPlan, { native, refresh })
+      expect(native.purchase).toHaveBeenCalledWith({
+        productId: GOLD_PRODUCT_ID,
+        offerToken: 'tok-gold',
+        obfuscatedAccountId: await obfuscatedAccountId(),
+        oldPurchaseToken: 'jeton-silver',
+        replacementMode: UPGRADE_REPLACEMENT_MODE,
+      })
+      expect(UPGRADE_REPLACEMENT_MODE).toBe('WITH_TIME_PRORATION')
+      // le nouveau jeton (Gold) est vérifié et retenu, jamais l'ancien
+      expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'jeton-gold' })
+      expect(getStoredPurchaseToken()).toBe('jeton-gold')
+      expect(res).toMatchObject({ status: 'purchased', entitlement: { tier: 'gold' } })
+    })
+
+    it('Gold en cours → aucun achat Silver lancé (jamais deux abonnements)', async () => {
+      const native = {
+        queryPurchases: vi.fn().mockResolvedValue({ purchases: [purchased('jeton-gold', { products: [GOLD_PRODUCT_ID] })] }),
+        purchase: vi.fn(),
+      }
+      const res = await purchasePlan(describePlans(PRODUCTS)[1], { native, refresh: vi.fn() })
+      expect(native.purchase).not.toHaveBeenCalled()
+      expect(res).toEqual({ status: 'error', message: ALREADY_GOLD_MESSAGE })
+    })
+
+    it('aucun abonnement, ou même produit (autre formule) : achat simple, sans remplacement', async () => {
+      for (const purchases of [[], [purchased('jeton-silver', { state: 'pending' })]]) {
+        const native = { queryPurchases: vi.fn().mockResolvedValue({ purchases }), purchase: vi.fn().mockResolvedValue({ status: 'cancelled' }) }
+        await purchasePlan(goldPlan, { native, refresh: vi.fn() })
+        expect(native.purchase.mock.calls[0][0]).not.toHaveProperty('oldPurchaseToken')
+      }
+      const native = { queryPurchases: vi.fn().mockResolvedValue({ purchases: [purchased('jeton-silver')] }), purchase: vi.fn().mockResolvedValue({ status: 'cancelled' }) }
+      await purchasePlan(describePlans(PRODUCTS)[1], { native, refresh: vi.fn() })
+      expect(native.purchase.mock.calls[0][0]).not.toHaveProperty('oldPurchaseToken')
+    })
+
+    it('Google Play ne dit pas ce qui est en cours : pas d’achat à l’aveugle', async () => {
+      const native = { queryPurchases: vi.fn().mockRejectedValue(new Error('SERVICE_UNAVAILABLE')), purchase: vi.fn() }
+      const res = await purchasePlan(goldPlan, { native, refresh: vi.fn() })
+      expect(native.purchase).not.toHaveBeenCalled()
+      expect(res.status).toBe('error')
+    })
   })
 
   it('achat réussi : le jeton est vérifié par le relais (seule source de vérité) puis retenu', async () => {

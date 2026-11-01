@@ -326,3 +326,14 @@ test('niveau : halcya_gold → Gold, halcya_premium → Silver ; période de lan
   assert.equal(verifyResponse({ ent: null, launchUntil: '2026-12-01T00:00:00.000Z' }).tier, 'gold')
   assert.equal(verifyResponse({ ent: null, launchUntil: null }).tier, null)
 })
+
+test('GOLD-b2 : après un passage Silver → Gold, l’ancien jeton Silver ne donne plus rien, le nouveau donne Gold', () => {
+  // Google marque l'abonnement remplacé comme expiré ; le nouvel achat porte l'ancien jeton dans linkedPurchaseToken
+  const replaced = entitlementFrom(sub({ subscriptionState: 'SUBSCRIPTION_STATE_EXPIRED' }, { productId: SILVER_PRODUCT_ID, expiryTime: '2026-11-10T11:00:00Z' }), NOW)
+  assert.equal(replaced.premium, false)
+  assert.equal(replaced.tier, null)
+  const gold = entitlementFrom(sub({ linkedPurchaseToken: TOKEN }, { productId: GOLD_PRODUCT_ID, offerDetails: { basePlanId: 'mensuel' } }), NOW)
+  assert.equal(gold.premium, true)
+  assert.equal(gold.tier, 'gold')
+  assert.equal(gold.replaces, TOKEN)
+})

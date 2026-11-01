@@ -275,3 +275,14 @@
   font-size: inherit;
   padding: 10px 4px;
 }
+
+/* Passage Silver → Gold (GOLD-b2) */
+.paywall-upgrade {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.paywall-active .paywall-upgrade-title {
+  font-weight: 700;
+}

@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-01",
+  "kind": "nouveau",
+  "variants": ["play"],
+  "title": "Passer de Silver à Gold",
+  "items": [
+    "Abonné Silver, vous pouvez passer à Gold depuis la page d’abonnement.",
+    "Gold remplace Silver : un seul abonnement, et le temps déjà payé est repris."
+  ]
+}

@@ -93,17 +93,19 @@ export default function Premium({ context = null, onClose = null }) {
   const saving = tierPlans ? annualSavingPercent(tierPlans) : null
   // Avantages du niveau dont la personne profite, sinon de celui qu'elle regarde
   const shownTier = (tierName(ent) ?? '').toLowerCase() || tier
+  // Abonné Silver (GOLD-b2) : Gold remplace Silver chez Google Play, sans second abonnement
+  const goldUpgrade = ent.premium && ent.source === 'play' && tierName(ent) === 'Silver' ? (plans?.find((p) => tierOf(p) === 'gold') ?? null) : null
   const chooseTier = (id) => {
     setTier(id)
     setSelected(defaultPlan(plans ?? [], id))
   }
 
-  const buy = async () => {
-    if (!plan) return
+  const buy = async (chosen = plan) => {
+    if (!chosen) return
     setBusy(true)
     setMessage('')
     try {
-      const result = await purchasePlan(plan)
+      const result = await purchasePlan(chosen)
       if (result.status === 'purchased') {
         setEnt(result.entitlement)
         if (!result.entitlement?.premium) setMessage('Achat reçu : la vérification prend un instant, cette page se mettra à jour toute seule.')
@@ -188,6 +190,18 @@ export default function Premium({ context = null, onClose = null }) {
               Gérer mon abonnement dans Google Play
             </a>
           )}
+          {goldUpgrade && (
+            <div className="paywall-upgrade">
+              <p className="paywall-upgrade-title">Passer à Gold : {GOLD_AI_DAILY} analyses IA par jour au lieu de {PREMIUM_AI_DAILY}.</p>
+              <button type="button" className="btn paywall-cta" onClick={() => buy(goldUpgrade)} disabled={busy}>
+                {busy ? 'Google Play…' : `Passer à Gold · ${goldUpgrade.price} / ${PER[goldUpgrade.period]}`}
+              </button>
+              <p className="paywall-fine">
+                Gold remplace Silver : vous n’aurez qu’un abonnement. Le temps déjà payé de Silver devient du temps de
+                Gold. Google Play affiche le détail avant de valider.
+              </p>
+            </div>
+          )}
         </div>
       ) : !FEATURES.billing ? (
         <p className="hint">L’abonnement se prend depuis la version Google Play de l’app.</p>
@@ -239,7 +253,7 @@ export default function Premium({ context = null, onClose = null }) {
 
           {plan?.trialDays && <TrialTimeline days={plan.trialDays} reminder={reminder} />}
 
-          <button type="button" className="btn paywall-cta" onClick={buy} disabled={!plan || busy}>
+          <button type="button" className="btn paywall-cta" onClick={() => buy()} disabled={!plan || busy}>
             {busy
               ? 'Google Play…'
               : plan?.trialDays
