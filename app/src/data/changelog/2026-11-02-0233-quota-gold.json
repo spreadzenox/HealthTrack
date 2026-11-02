@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-02",
+  "kind": "correctif",
+  "variants": ["play"],
+  "title": "Analyses IA par jour selon la formule",
+  "items": [
+    "Paramètres indique le bon nombre d’analyses IA par jour : 20 avec Gold, y compris pendant le test, 10 avec Silver."
+  ]
+}
