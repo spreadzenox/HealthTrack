@@ -53,18 +53,29 @@ describe('Settings — variante play (relais Halcya)', () => {
     expect(screen.getByText(/10 analyses offertes, puis 15 par mois/)).toBeInTheDocument()
   })
 
-  it('période de lancement : le quota IA ne parle ni d’abonnement ni de prix (P23 a)', async () => {
+  it('version gratuite : le quota IA donne le plafond de Silver et de Gold', () => {
+    renderSettings()
+    expect(screen.getByText('Sans abonnement : 10 analyses offertes, puis 15 par mois. Silver : 10 par jour, Gold : 20.')).toBeInTheDocument()
+  })
+
+  it('période de lancement : Gold, donc 20 analyses par jour, sans parler de prix (P23 a, POL-PLAY-95)', async () => {
     globalThis.fetch = relayAnswer({ ok: true, premium: true, source: 'launch', launchUntil: '2099-11-19T23:00:00.000Z' })
     renderSettings()
-    expect(await screen.findByText('Pendant le test : jusqu’à 10 analyses par jour, sans rien payer.')).toBeInTheDocument()
+    expect(await screen.findByText('Pendant le test : jusqu’à 20 analyses par jour, sans rien payer.')).toBeInTheDocument()
     expect(screen.queryByText(/Sans abonnement/)).toBeNull()
   })
 
-  it('premium payé : le quota IA dit simplement « jusqu’à 10 par jour »', async () => {
+  it('Silver payé : le quota IA dit « jusqu’à 10 par jour »', async () => {
     globalThis.fetch = relayAnswer({ ok: true, premium: true, source: 'play', state: 'active', productId: 'halcya_premium', expiresAt: new Date(Date.now() + 20 * 86_400_000).toISOString(), autoRenewing: true })
     renderSettings()
-    expect(await screen.findByText('Avec votre premium : jusqu’à 10 analyses par jour.')).toBeInTheDocument()
+    expect(await screen.findByText('Avec Silver : jusqu’à 10 analyses par jour.')).toBeInTheDocument()
     expect(screen.queryByText(/Sans abonnement/)).toBeNull()
+  })
+
+  it('Gold payé : le quota IA dit « jusqu’à 20 par jour » (POL-PLAY-95)', async () => {
+    globalThis.fetch = relayAnswer({ ok: true, premium: true, source: 'play', state: 'active', tier: 'gold', productId: 'halcya_gold', expiresAt: new Date(Date.now() + 20 * 86_400_000).toISOString(), autoRenewing: true })
+    renderSettings()
+    expect(await screen.findByText('Avec Gold : jusqu’à 20 analyses par jour.')).toBeInTheDocument()
   })
 
   it('bloc Abonnement : version gratuite par défaut, sans lien de gestion', async () => {

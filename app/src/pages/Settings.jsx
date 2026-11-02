@@ -13,7 +13,8 @@ import { GOALS, gutCardMode, loadOnboarding, saveOnboarding } from '../settings/
 import { syncGutEvening } from '../services/gutEvening'
 import GutEveningReminder from '../components/GutEveningReminder'
 import AiCreditsHint from '../components/AiCreditsHint'
-import { describeEntitlement, manageSubscriptionUrl } from '../services/entitlement'
+import { describeEntitlement, manageSubscriptionUrl, tierName } from '../services/entitlement'
+import { PREMIUM_AI_DAILY, GOLD_AI_DAILY } from '../config/premiumBenefits'
 import { syncEntitlement, restorePurchases } from '../services/playBilling'
 import '../Food.css'
 import { useEntitlement } from '../hooks/useEntitlement'
@@ -26,9 +27,12 @@ import { installFingerprint } from '../services/aiRelay'
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
   const [ent] = useEntitlement()
-  let quota = 'Sans abonnement : 10 analyses offertes, puis 15 par mois. Avec le premium : jusqu’à 10 par jour.'
-  if (ent.premium && ent.source === 'launch') quota = 'Pendant le test : jusqu’à 10 analyses par jour, sans rien payer.'
-  else if (ent.premium) quota = 'Avec votre premium : jusqu’à 10 analyses par jour.'
+  // Plafond du jour selon le niveau servi par le relais : Gold pendant la période de lancement (POL-PLAY-95)
+  const tier = tierName(ent)
+  const daily = tier === 'Gold' ? GOLD_AI_DAILY : PREMIUM_AI_DAILY
+  let quota = `Sans abonnement : 10 analyses offertes, puis 15 par mois. Silver : ${PREMIUM_AI_DAILY} par jour, Gold : ${GOLD_AI_DAILY}.`
+  if (ent.premium && ent.source === 'launch') quota = `Pendant le test : jusqu’à ${daily} analyses par jour, sans rien payer.`
+  else if (ent.premium) quota = `Avec ${tier} : jusqu’à ${daily} analyses par jour.`
   return (
     <div className="settings-block">
       <h3 className="section-title">Analyse des repas (IA)</h3>

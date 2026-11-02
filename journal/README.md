@@ -30,6 +30,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 02:33 — [Quota IA selon la formule](runs/2026-11-02-0233-quota-gold.md) | 🔧 | Audit démo sombre Paramètres, Données, Réintroduction (POL-PLAY-12) ; POL-PLAY-95 : Paramètres dit 20 analyses IA par jour pendant le test et avec Gold (au lieu de 10) |
 | 02/11 01:33 — [Milliers lisibles](runs/2026-11-02-0133-milliers.md) | 🔧 | Audit démo sombre de la version Play (POL-PLAY-12) ; POL-PLAY-94 : « 1039 kcal » → « 1 039 kcal » partout (espace fine d'Intl élargie à l'affichage) ; reste de l'audit conforme |
 | 02/11 00:33 — [Prix 2027 du relais](runs/2026-11-02-0033-gold-a4-prix-2027.md) | 🔧 | Archive S44 ; GOLD-a4 : `PRICE_SCHEDULE` (×2 au 1/1/2027 UTC) appliqué par le cumul du mois selon la date de l'appel, facteur dans l'événement `start` ; seuils 15 € / 19 € et plafonds revus, inchangés ; 134 tests relais |
 
