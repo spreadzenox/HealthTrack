@@ -8,6 +8,9 @@ import { createAppStoreBilling, createAppStoreNotifications, createAppStoreVerif
 import { ANDROIDPUBLISHER_SCOPE, createBillingRoutes, createPlayClient, createPushVerifier } from './billing.js'
 import { PLAYINTEGRITY_SCOPE, createIntegrityClient, createIntegrityGuard } from './integrity.js'
 import { createVertexClient, metadataTokenProvider } from './vertex.js'
+import { createAppAttestVerifier, createAssertionVerifier } from './appattest.js'
+import { createAttestRegistry, createFirestoreAttestStore, memoryAttestStore } from './attestregistry.js'
+import { createAttestRoutes } from './attestroutes.js'
 import { createCostLedger, createFirestoreCostStore, parsePrices, priceFactorAt } from './costs.js'
 
 const config = loadConfig()
@@ -24,6 +27,22 @@ const appStoreNotifications = createAppStoreNotifications({
     ? createFirestoreStatusStore({ project: config.project, getToken: metadataTokenProvider({ scopes: [DATASTORE_SCOPE] }) })
     : createMemoryStatusStore(),
 })
+
+// App Attest (I6-RELAIS-5d) : routes créées seulement avec un mode autre que `off` et un Team ID (P38)
+const appAttest = config.appAttestMode !== 'off' && config.appleTeamId
+  ? createAttestRoutes({
+    registry: createAttestRegistry({
+      verifyAttestation: createAppAttestVerifier({ teamId: config.appleTeamId, bundleId: config.appStoreBundleId }),
+      verifyAssertion: createAssertionVerifier({ teamId: config.appleTeamId, bundleId: config.appStoreBundleId }),
+      store: config.creditsStore === 'firestore'
+        ? createFirestoreAttestStore({ project: config.project, getToken: metadataTokenProvider({ scopes: [DATASTORE_SCOPE] }) })
+        : memoryAttestStore(),
+    }),
+    mode: config.appAttestMode,
+    hash: hashInstallId,
+    log,
+  })
+  : null
 
 const handler = createHandler({
   quota: createQuota(config),
@@ -74,6 +93,7 @@ const handler = createHandler({
     hash: hashInstallId,
     log,
   }),
+  appAttest,
   billingQuota: createQuota({ installPerDay: config.verifyPerDay, globalPerDay: config.verifyGlobalPerDay, globalPerMinute: config.verifyPerMinute }),
   benchAuth: createPushVerifier({ audience: `${config.publicUrl}/v1/bench/analyze`, serviceAccount: config.benchServiceAccount }),
   allowedOrigins: config.allowedOrigins,
@@ -87,5 +107,5 @@ createServer((req, res) => {
     res.end()
   })
 }).listen(config.port, () => {
-  log({ event: 'start', port: config.port, models: config.models, goldModels: config.goldModels, goldDailyCap: config.goldDailyCap, locations: config.locations, ingredients: ingredientNames.length, launchPremium: config.launchPremium, integrity: config.integrityMode, creditsStore: config.creditsStore, priceFactor: priceFactorAt(Date.now()) })
+  log({ event: 'start', port: config.port, models: config.models, goldModels: config.goldModels, goldDailyCap: config.goldDailyCap, locations: config.locations, ingredients: ingredientNames.length, launchPremium: config.launchPremium, integrity: config.integrityMode, appAttest: appAttest ? config.appAttestMode : 'off', creditsStore: config.creditsStore, priceFactor: priceFactorAt(Date.now()) })
 })

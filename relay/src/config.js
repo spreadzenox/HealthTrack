@@ -4,6 +4,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { appAttestModeOf } from './attestroutes.js'
 
 const list = (value, fallback) => {
   const items = String(value ?? '').split(',').map((s) => s.trim()).filter(Boolean)
@@ -87,6 +88,9 @@ export function loadConfig(env = process.env) {
     launchPremium: launchFrom(env),
     // Play Integrity (jalon 6b-2) : off | observe (vérifie et journalise) | enforce (bloque l'analyse sans verdict)
     integrityMode: env.INTEGRITY_MODE || 'observe',
+    // App Attest (I6-RELAIS-5d) : off (défaut, routes absentes) | observe | enforce ; Team ID Apple (10 caractères, P38)
+    appAttestMode: appAttestModeOf(env.APP_ATTEST_MODE),
+    appleTeamId: /^[A-Z0-9]{10}$/.test(env.APPLE_TEAM_ID ?? '') ? env.APPLE_TEAM_ID : '',
     verifyPerDay: int(env.VERIFY_DAILY_CAP, 50),
     verifyGlobalPerDay: int(env.VERIFY_GLOBAL_DAILY_CAP, 5000),
     verifyPerMinute: int(env.VERIFY_PER_MINUTE_CAP, 60),
