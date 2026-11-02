@@ -33,6 +33,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 11:33 — [App Attest 5c : assertions](runs/2026-11-02-1133-appattest-assertions.md) | 🔧 | Relais : vérification de la signature de chaque requête de l'iPhone (anti-rejeu) et registre des clés dans Firestore (troisième des 5 étapes d'App Attest) ; rien de branché, aucun changement visible |
 | 02/11 10:33 — [App Attest 5b : attestation](runs/2026-11-02-1033-appattest-attestation.md) | 🔧 | Relais : vérification de l'attestation envoyée une fois par l'iPhone (deuxième des 5 étapes d'App Attest) ; rien de branché, aucun changement visible |
 | 02/11 09:33 — [App Attest 5a : CBOR](runs/2026-11-02-0933-appattest-cbor.md) | 🔧 | Relais : lecteur CBOR et lecture des données de clé envoyées par l'iPhone (première des 5 étapes d'App Attest) ; rien de branché, aucun changement visible |
 | 02/11 08:33 — [Idées : App Attest](runs/2026-11-02-0833-idees-app-attest.md) | 💡 | I6-RELAIS-5 spécifié d'après la doc d'Apple (attestation, assertion, registre Firestore, interrupteur à part, tests sur chaîne jetable, zéro secret) et découpé en 5 runs ; P38 : votre Team ID Apple, pas urgent |
