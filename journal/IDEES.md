@@ -9,6 +9,89 @@
 
 ---
 
+## Run du 02/11/2026 08:33 (Paris) — App Attest pour l'iPhone : spécification du relais (I6-RELAIS-5)
+
+But : préparer l'étape (5) de la demande du 01/11 17:10 (« App Attest pour l'iPhone, comme Play Integrity pour
+Android »), pour que les runs de code n'aient plus qu'à l'écrire. Sources lues le 02/11 :
+[V] Apple, « Validating apps that connect to your server » (developer.apple.com/documentation/devicecheck, lue via
+son JSON public) ; [V] Apple, « Assessing fraud risk » (même dossier) ; [V] racine publique
+`https://www.apple.com/certificateauthority/Apple_App_Attestation_Root_CA.pem` téléchargée et inspectée (CN « Apple
+App Attestation Root CA », P-384, valide du 18/03/2020 au 15/03/2045, SHA-256
+`1C:B9:82:3B:A2:8B:A6:AD:2D:33:A0:06:94:1D:E2:AE:4F:51:3E:F1:D4:E8:31:B9:F7:E0:FA:7B:62:42:C9:32`). Aucun code tiers lu
+ni repris : le relais garde zéro dépendance.
+
+### I208 (20) — App Attest dans le relais : ce qu'il faut vérifier, et comment [V doc Apple]
+- **Principe** : l'iPhone crée une clé P-256 dans la Secure Enclave (`DCAppAttestService.generateKey`), la fait
+  attester une fois par Apple (`attestKey`), puis signe ses requêtes sensibles avec (`generateAssertion`). Le relais
+  vérifie l'attestation une fois, garde la clé publique, puis vérifie chaque assertion avec. C'est l'équivalent de
+  Play Integrity : prouver que la requête vient de la vraie app sur un vrai iPhone.
+- **Attestation** (objet CBOR `{ fmt: "apple-appattest", attStmt: { x5c, receipt }, authData }`), envoyée avec le
+  `keyId` (base64) :
+  1. `x5c` = [certificat de la clé, intermédiaire] ; chaîne vérifiée jusqu'à la racine App Attest ci-dessus (même
+     méthode que `appstore.js` : `X509Certificate.verify`, dates, `ca`), racine épinglée par son empreinte.
+  2. `clientDataHash = SHA-256(défi)` ; `nonce = SHA-256(authData ‖ clientDataHash)`.
+  3. Extension OID `1.2.840.113635.100.8.2` du certificat de la clé : une SEQUENCE DER qui contient un seul OCTET
+     STRING, égal à `nonce`.
+  4. `SHA-256(clé publique du certificat, point non compressé X9.62, 65 octets)` = `keyId` = `credentialId` de
+     `authData`.
+  5. `authData` : `rpIdHash` (32 octets) = `SHA-256("<Team ID>.fr.jpesquet.sante")` ; `counter` (4 octets) = 0 ;
+     `aaguid` (16 octets) = `appattest` + 7 octets nuls (TestFlight et App Store) ou `appattestdevelop` (build Xcode,
+     refusé en `enforce`).
+  6. Nouveau chez Apple : extensions CBOR de `authData` `apple_validation_category_01` (2 = TestFlight, 4 = App
+     Store, 3 = développement, 0 = invalide) et `apple_bundle_version_01`. [H] Absentes sur les anciennes versions
+     d'iOS : les lire si elles sont là (journalisées), n'exiger que 2 ou 4 quand elles sont présentes.
+  7. Une clé publique déjà liée à une autre installation est refusée (Apple le demande contre le rejeu).
+- **Assertion** (CBOR `{ signature, authenticatorData }`) sur `clientData` :
+  1. `nonce = SHA-256(authenticatorData ‖ SHA-256(clientData))` ; signature ECDSA P-256 (DER) vérifiée sur `nonce`
+     avec la clé gardée (`crypto.verify('sha256', nonce, …)` : la signature porte sur le condensat du nonce).
+  2. `rpIdHash` identique ; `counter` strictement supérieur au dernier vu (puis gardé) : c'est lui qui empêche le
+     rejeu, sans aller-retour par requête.
+  3. `clientData` pour Halcya : `halcya-assert:<installId>:<horodatage ms>:<SHA-256 du corps de la requête>`,
+     horodatage à ±5 min. Apple veut un défi du serveur dans `clientData` ; ici, compteur + horodatage + corps
+     signés suffisent pour des crédits d'analyse (même compromis que `requestHashFor` côté Play Integrity). [H]
+- **Défi de l'attestation** : `POST /v1/attest/challenge` (en-tête `X-Install-Id`) rend 32 octets aléatoires, gardés
+  5 min en mémoire et à usage unique ; si l'instance Cloud Run redémarre entre deux, l'app redemande (un seul échec
+  silencieux). Pas de secret à créer.
+- **Ce qui est gardé** : Firestore, collection `appattest`, document = `keyId` en hexadécimal : `{ install:
+  <empreinte de l'installation, comme les journaux>, publicKey (base64), counter, env: 'production'|'development',
+  category, createdAt, expireAt (13 mois) }`. Aucune donnée personnelle (la clé est tirée au hasard par l'iPhone). Une
+  écriture par analyse (compteur) : bien sous l'offre gratuite (20 000 écritures/jour). Cache mémoire devant, comme
+  `credits.js`.
+- **Le reçu et le « fraud metric »** (nombre de clés attestées sur un même iPhone) demandent un appel à
+  `data.appattest.apple.com` signé par une clé DeviceCheck du compte développeur Apple : c'est un secret à créer.
+  **Laissé de côté** au départ (le compteur et les plafonds du relais suffisent) ; reçu ni gardé ni envoyé.
+- **Branchement dans `integrity.js`** : la branche iOS de `createIntegrityGuard.check` (aujourd'hui `not_android`,
+  toujours accepté) passe par `appAttest.check(installId, headers, body)` → statuts `attest_passed`, `attest_missing`,
+  `attest_rejected` (raisons : `chain`, `nonce`, `key_id`, `rp_id`, `aaguid`, `counter`, `signature`, `clock`,
+  `key_reused`, `category`), `unavailable` (Firestore injoignable : accepté, comme Google injoignable). Interrupteur à
+  part, `APP_ATTEST_MODE=off|observe|enforce` (défaut `off`, puis `observe`), pour que `INTEGRITY_MODE=enforce` sur
+  Android ne bloque pas l'iPhone tant que l'app iPhone n'envoie rien. Plafonds inchangés. Le bilan du déploiement
+  ajoute une ligne « iPhone : attest_passed / missing / rejected ».
+- **En-têtes envoyés par l'app iPhone** : première fois `X-AppAttest-KeyId` + `X-AppAttest-Attestation` (base64 de
+  l'objet CBOR, ≈ 5 Ko) sur `/v1/attest/register` ; ensuite, sur `/v1/meal/analyze` et `/v1/credits`,
+  `X-AppAttest-KeyId`, `X-AppAttest-Assertion` (base64, ≈ 150 o) et `X-AppAttest-Time`. Les trois s'ajoutent aux
+  en-têtes CORS. Sans Secure Enclave (simulateur, `DCAppAttestService.isSupported == false`) : `X-Integrity-Status:
+  unsupported`, journalisé, jamais bloqué en `observe`.
+- **Tests sans rien de réel** : comme `appstore.test.js`, une chaîne de test fabriquée par `openssl` dans un dossier
+  temporaire (racine P-384, intermédiaire, certificat de clé P-256 avec l'extension `1.2.840.113635.100.8.2` posée en
+  `DER:` dans le fichier d'extensions), un `authData` et un objet CBOR construits par le test ; aucune clé privée ni
+  vraie attestation dans le dépôt. La racine d'Apple, publique, peut y être (épinglée par son empreinte).
+- **Décodeur CBOR** : écrit par nous (≈ 80 lignes : entiers, octets, textes, tableaux, tables ; longueur bornée,
+  refus des types inattendus), testé à part.
+- **Prérequis côté propriétaire (P38)** : le **Team ID** Apple (10 caractères, Apple Developer → Membership details ;
+  public, il apparaît dans chaque app signée) pour `rpIdHash`, et la capacité « App Attest » ajoutée à l'identifiant
+  `fr.jpesquet.sante` avec l'environnement `production` dans les droits de l'app (c'est le dépôt iOS qui le pose).
+  Sans Team ID, les étapes a et b se codent et se testent avec un Team ID de test ; seul le déploiement attend.
+- **Découpage en runs** (I6-RELAIS-5a à 5e, BACKLOG) : (a) `cbor.js` + lecture de `authData` ; (b) `appattest.js`
+  attestation (chaîne, nonce, keyId, rpId, aaguid, compteur 0, catégorie) ; (c) assertion + registre Firestore
+  (compteur, clé réutilisée, cache) ; (d) routes `/v1/attest/challenge` et `/v1/attest/register`, branche iOS de la
+  garde, `APP_ATTEST_MODE`, bilan du déploiement ; (e) demande à la routine iOS (plugin Swift, en-têtes ci-dessus),
+  puis `observe` quelques jours avant `enforce`.
+- **Impact 4** (ferme la seule porte sans contrôle avant les crédits payants de l'iPhone) **× faisabilité 5** (tout en
+  `node:crypto`, même méthode que `appstore.js`, zéro dépendance, zéro secret) **= 20**.
+
+---
+
 ## Run du 01/11/2026 20:33 (Paris) — audit en captures de la variante play vierge, et de l'iPhone d'après le code
 
 Captures relues : `npm run visual -- --play --empty` (clair, toutes les pages) puis `--subscription=launch --dark`

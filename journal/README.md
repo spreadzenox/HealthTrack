@@ -25,11 +25,15 @@
 - **Testeurs : pas encore** (votre décision du 27/10). Quand vous direz « j'invite le <date> », la fin de la période
   de lancement (aujourd'hui le 20/11) sera recalée (+ 14 jours + marge). Tout est prêt dans
   [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md).
+- **P38 — Team ID Apple** (pas urgent) : pour qu'à terme le relais vérifie que les requêtes de l'iPhone viennent
+  de la vraie app (App Attest, l'équivalent de Play Integrity). developer.apple.com → Account → Membership details →
+  « Team ID » (10 caractères, rien de secret). Le code avance sans ; seul le déploiement l'attend.
 - P32 (pays de vente), P34 (encart « Enregistrez vos applications » dans la Play Console) : pas urgents, détail dans
   [`semaines/2026-S44.md`](semaines/2026-S44.md).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 08:33 — [Idées : App Attest](runs/2026-11-02-0833-idees-app-attest.md) | 💡 | I6-RELAIS-5 spécifié d'après la doc d'Apple (attestation, assertion, registre Firestore, interrupteur à part, tests sur chaîne jetable, zéro secret) et découpé en 5 runs ; P38 : votre Team ID Apple, pas urgent |
 | 02/11 07:33 — [« 1er novembre »](runs/2026-11-02-0733-premier-du-mois.md) | 🔧 | Audit play en clair du parcours repas (analyse photo, éditeur, historique ; POL-PLAY-12) ; POL-PLAY-99 : le premier du mois s’écrit « 1er » dans toutes les dates (Journal, Repas, Accueil, bien-être, Données, Nouveautés) |
 | 02/11 06:33 — [Merge #620 et #621](runs/2026-11-02-0633-merge-620-621.md) | 🔧 | Les deux PR vertes restées ouvertes (merge refusé aux runs précédents) sont mergées, #621 après remise à jour du journal |
 | 02/11 05:33 — [Bientôt sur Analyses](runs/2026-11-02-0533-analyses-bientot.md) | 🔧 | Audit démo en clair (Jours, Repas, Tendances, Analyses, Bien-être, Sources ; POL-PLAY-12) ; POL-PLAY-98 : les habitudes pas encore comparables ont chacune leur ligne dans « Bientôt » au lieu d’une phrase isolée. PR #621 mergée au run de 06:33 |
