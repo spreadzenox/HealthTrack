@@ -25,6 +25,7 @@ const WatchData = lazy(() => import('./pages/WatchData'))
 const Premium = lazy(() => import('./pages/Premium'))
 const WellbeingHistory = lazy(() => import('./pages/WellbeingHistory'))
 const Reintroduction = lazy(() => import('./pages/Reintroduction'))
+const Licences = lazy(() => import('./pages/Licences'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 
 export default function App() {
@@ -56,6 +57,7 @@ export default function App() {
             <Route path="premium" element={<Premium />} />
             <Route path="bien-etre" element={<WellbeingHistory />} />
             <Route path="reintroduction" element={<Reintroduction />} />
+            <Route path="licences" element={<Licences />} />
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
             {/* Adresse inconnue (ancienne notification, lien périmé) : l'Accueil plutôt qu'une page blanche. */}
             <Route path="*" element={<Navigate to="/" replace />} />

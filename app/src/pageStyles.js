@@ -36,3 +36,5 @@ import './components/SoonList.css'
 import './components/GutLinks.css'
 // FODMAP par sous-groupe sur la carte d'un repas (N4, 26/10)
 import './components/MealFodmapLine.css'
+// Licences des composants de tiers (LICENCES-TIERCES, 02/11)
+import './pages/Licences.css'

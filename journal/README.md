@@ -33,6 +33,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 17:08 — [Page Licences](runs/2026-11-02-1708-licences.md) | 🔧 | Nouvelle page Réglages → « Licences » : bibliothèques, polices, modèles du visage (sans nom en version Play), table Ciqual et sources FODMAP, chacun avec sa licence ; un test échoue si une dépendance est ajoutée sans y figurer |
 | 02/11 15:56 — [Audit onboarding en clair](runs/2026-11-02-1556-audit-onboarding-clair.md) | 🔧 | Audit Play sur données vierges en clair : onboarding complet, Paramètres, paywall Silver et Gold (POL-PLAY-12) ; rien à corriger, aucun changement dans l’app ; petite idée de typographie notée (POL-PLAY-101) |
 | 02/11 14:48 — [Modèle du visage sans nom](runs/2026-11-02-1448-modele-visage.md) | 🔧 | App Attest fait jusqu’à ce qui attend P38 ; audit Play de Montre, Nouveautés, Historique du bien-être, Données, Réintroduction (POL-PLAY-12) ; POL-PLAY-100 : « HSEmotion » n’apparaît plus dans la version Play (historique et détails du bien-être), comme pour les modèles de l’analyse des repas |
 | 02/11 13:46 — [App Attest 5d-2 : vérification](runs/2026-11-02-1346-appattest-garde.md) | 🔧 | Relais : chaque analyse de l'iPhone est vérifiée par sa signature App Attest (quatrième des 5 étapes) ; coupé tant que `APP_ATTEST_MODE` vaut `off`, aucun changement visible ni au déploiement ; bilan du déploiement complété |

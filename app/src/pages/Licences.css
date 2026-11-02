@@ -1,0 +1,49 @@
+.licences-section h3 {
+  font-size: 1.05rem;
+  margin: 20px 0 8px;
+}
+
+.licences-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+.licences-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.licences-list li:first-child {
+  border-top: none;
+}
+
+.licences-name {
+  flex: 1 1 60%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.licences-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+a.licences-tag {
+  color: var(--accent);
+}
+
+.licences-note {
+  flex-basis: 100%;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
