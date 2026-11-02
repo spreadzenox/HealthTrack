@@ -152,7 +152,7 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       billing.loadPlans.mockResolvedValue([S_YEAR, S_MONTH, GOLD])
       renderPremium()
       const silver = await screen.findByRole('radio', { name: /Silver/ })
-      expect(screen.getByText('Silver ou Gold : seul le nombre d’analyses IA par jour change.')).toBeInTheDocument()
+      expect(screen.getByText('Silver ou Gold : Gold analyse plus de repas par jour et estime mieux les quantités.')).toBeInTheDocument()
       expect(silver).toBeChecked()
       expect(screen.getByRole('radio', { name: /Annuel/ })).toBeChecked()
       expect(screen.getByText(/jusqu’à 10 par jour/)).toBeInTheDocument()

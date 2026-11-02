@@ -87,7 +87,7 @@ jobs:
             --allow-unauthenticated \
             --min-instances=0 --max-instances=1 --concurrency=8 \
             --cpu=1 --memory=512Mi --timeout=60 \
-            --set-env-vars="^;^VERTEX_PROJECT=${GCP_PROJECT};VERTEX_LOCATIONS=eu,europe-west1;VERTEX_MODELS=gemini-3.5-flash-lite,gemini-3.1-flash-lite;VERTEX_TIMEOUT_MS=30000;GOLD_MODELS=gemini-3.8-flash;GOLD_LOCATIONS=eu;GOLD_THINKING_LEVEL=MEDIUM;GOLD_TIMEOUT_MS=25000;GOLD_DAILY_CAP=40;GOLD_MONTHLY_EUR=15;STOP_MONTHLY_EUR=19;GLOBAL_DAILY_CAP=150;INSTALL_DAILY_CAP=20;GLOBAL_PER_MINUTE_CAP=10;PLAY_PACKAGE=fr.jpesquet.sante;PUBLIC_URL=${RELAY_URL};RTDN_SERVICE_ACCOUNT=${RUNTIME_SA};INTEGRITY_MODE=observe" \
+            --set-env-vars="^;^VERTEX_PROJECT=${GCP_PROJECT};VERTEX_LOCATIONS=eu,europe-west1;VERTEX_MODELS=gemini-3.5-flash-lite,gemini-3.1-flash-lite;VERTEX_TIMEOUT_MS=30000;GOLD_MODELS=gemini-3.8-flash;GOLD_LOCATIONS=eu;GOLD_THINKING_LEVEL=MEDIUM;GOLD_TIMEOUT_MS=25000;GOLD_DAILY_CAP=40;GOLD_MONTHLY_EUR=15;STOP_MONTHLY_EUR=19;GLOBAL_DAILY_CAP=150;INSTALL_DAILY_CAP=20;GLOBAL_PER_MINUTE_CAP=10;PLAY_PACKAGE=fr.jpesquet.sante;PUBLIC_URL=${RELAY_URL};RTDN_SERVICE_ACCOUNT=${RUNTIME_SA};INTEGRITY_MODE=observe;APP_ATTEST_MODE=observe;APPLE_TEAM_ID=67R69L355R" \
             --quiet
 
       - name: Vérifier le service (santé + une analyse de texte)
@@ -217,6 +217,14 @@ jobs:
             -H 'Content-Type: application/json' -H "X-Install-Id: ci-smoke-${GITHUB_RUN_ID}" -d '{}' \
             | jq -r '"premium=\(.premium) source=\(.source // "—") jusqu’au \(.launchUntil // "—")"' 2>/dev/null || echo "illisible")
           echo "- Installation sans achat : $launch" >> "$GITHUB_STEP_SUMMARY"
+          # App Attest (P38, 02/11) : en APP_ATTEST_MODE=observe avec le Team ID, la route du défi répond (non bloquant)
+          attest=$(curl -sS -o "$RUNNER_TEMP/attest.json" -w '%{http_code}' --max-time 30 -X POST "$RELAY_URL/v1/attest/challenge" \
+            -H "X-Install-Id: ci-smoke-${GITHUB_RUN_ID}" -H 'X-Platform: ios' || echo "000")
+          if [ "$attest" = "200" ] && jq -e '.challenge | length > 0' "$RUNNER_TEMP/attest.json" >/dev/null 2>&1; then
+            echo "- App Attest : ✅ route du défi active (mode observe, aucune requête bloquée)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- App Attest : ❓ route du défi HTTP $attest (attendu 200 en mode observe)" >> "$GITHUB_STEP_SUMMARY"
+          fi
           sleep 3
           gcloud logging read \
             "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.route=\"/v1/subscription/verify\"" \

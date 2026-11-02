@@ -54,7 +54,7 @@ export const PRODUCTS = [
     tier: 'gold',
     productId: GOLD_PRODUCT_ID,
     title: `${APP_NAME} Gold`,
-    description: 'Tout Premium, et deux fois plus d’analyses IA de repas par jour.',
+    description: 'Tout Premium, deux fois plus d’analyses IA par jour, quantités mieux estimées.',
     benefits: goldPlayBenefits,
     basePlans: GOLD_BASE_PLANS,
     trial: null,

@@ -47,15 +47,22 @@ export const PREMIUM_BENEFITS = [
 export const deliveredBenefits = () => PREMIUM_BENEFITS.filter((b) => b.delivered)
 export const upcomingBenefits = () => PREMIUM_BENEFITS.filter((b) => !b.delivered)
 
+/** Ce que Gold ajoute, sans chiffre (P36, réponse du 02/11 : banc du 01/11, −18 % d'erreur sur la masse des portions). */
+export const GOLD_QUANTITIES = 'Gold estime mieux les quantités'
+
 /**
- * Avantages de Gold pour la fiche Play de `halcya_gold` : ceux de Silver, avec le plafond IA de Gold. Aucune promesse
- * de précision tant que le banc Nutrition5k ne l'a pas confirmée (décision du 31/10, GOLD-b).
+ * Avantages de Gold pour la fiche Play de `halcya_gold` : ceux de Silver, l'analyse IA avec le plafond de Gold et sa
+ * meilleure estimation des quantités (4 avantages de 40 caractères au plus chez Google). Aucun chiffre de précision.
  */
 export const goldPlayBenefits = () =>
-  deliveredBenefits().map((b) => (b.id === 'ai-meals' ? `Analyse IA des repas, ${GOLD_AI_DAILY} par jour` : b.playLabel))
+  deliveredBenefits().map((b) => (b.id === 'ai-meals' ? `IA : ${GOLD_AI_DAILY}/jour, estime mieux les quantités` : b.playLabel))
 
-/** Avantages affichés par le paywall pour un niveau (GOLD-b4) : Gold ne change que le plafond de l'analyse IA. */
+/** Avantages affichés par le paywall pour un niveau (GOLD-b4, GOLD-b6) : plafond de Gold et quantités mieux estimées. */
 export const benefitsFor = (tier) =>
-  deliveredBenefits().map((b) =>
-    tier === 'gold' && b.id === 'ai-meals' ? { ...b, label: `L’analyse IA des repas sans compter les crédits, jusqu’à ${GOLD_AI_DAILY} par jour` } : b,
-  )
+  tier === 'gold'
+    ? deliveredBenefits().flatMap((b) =>
+        b.id === 'ai-meals'
+          ? [{ ...b, label: `L’analyse IA des repas sans compter les crédits, jusqu’à ${GOLD_AI_DAILY} par jour` }, { id: 'gold-quantities', label: GOLD_QUANTITIES }]
+          : [b],
+      )
+    : deliveredBenefits()

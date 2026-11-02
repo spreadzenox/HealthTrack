@@ -102,6 +102,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     ingrédients et 80 à 900 g dans un ordre fixe, erreurs masse / kcal / macros avec la table Ciqual de l'app,
     bootstrap apparié, verdict sur masse ET kcal, chiffre = borne basse arrondie à 5 % en dessous, rien sous 10 % ou
     sous 30 paires) ; workflow manuel `bench-gold.yml` (artefact = chiffres seulement).
+  - [x] **GOLD-b6 / P36 — affiché le 02/11 21:35** : « Gold estime mieux les quantités » (sans chiffre) sur le paywall Gold, dans l'en-tête Silver/Gold, l'encart « Passer à Gold », la fiche `halcya_gold` (avantage ≤ 40 caractères) ; test `premiumBenefits.test.js`.
   - [x] **GOLD-b6 — banc lancé le 01/11 17:01** (run 41324122596, 1,87 €, 39 paires) : masse −18 % (IC [4,4 ; 20,1] g, net), kcal +2 % (IC [−13,8 ; 11,3], pas net), glucides −18 % (net), protéines −9 % et lipides −8 % (pas nets) → **non confirmé**, aucune promesse affichée ; propriétaire prévenu (P36 : « Gold estime mieux les quantités », sans chiffre, s'il le veut). Relancer le banc si le modèle Gold ou le prompt changent. Énoncé d'origine : après le déploiement du relais de GOLD-b5, déclencher
     « Banc Silver / Gold (Nutrition5k) » sur main (de préférence le soir, il prend les 40 Gold du jour), lire
     l'artefact ; confirmé → afficher la promesse (paywall, fiche Gold, avec le chiffre s'il y en a un) ; sinon →
