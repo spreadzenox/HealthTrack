@@ -406,16 +406,31 @@ function LinkItem({ link }) {
   return <CorrelationCard item={item} measure={face ? 'bien-être estimé' : 'bien-être'} extra={extra} />
 }
 
-function pendingText(t) {
-  if (t.weekendOnly) return `${t.label} (pas encore comparable : jours avec et sans jamais du même type, semaine ou week-end)`
-  // POL-PLAY-70 : ce qui manque en mots simples, plutôt que « 2/5 jours avec, 3/5 sans ».
+/** Ce qui manque encore à une habitude pour être comparée, en mots simples (POL-PLAY-70). */
+function pendingProgress(t) {
+  if (t.weekendOnly) return 'pas encore comparable (semaine et week-end)'
   const days = (n) => `${n} jour${n > 1 ? 's' : ''}`
   const missing = [
     // Un repère mesuré (écran, sport du soir) n'est pas « noté ».
     t.nWith < MIN_TAG_DAYS && `${days(MIN_TAG_DAYS - t.nWith)} ${t.auto ? 'avec' : `noté${MIN_TAG_DAYS - t.nWith > 1 ? 's' : ''}`}`,
     t.nWithout < MIN_TAG_DAYS && `${days(MIN_TAG_DAYS - t.nWithout)} sans`,
   ].filter(Boolean)
-  return `${t.label} (encore ${missing.join(' et ')})`
+  return `encore ${missing.join(' et ')}`
+}
+
+/**
+ * Habitudes pas encore comparables (POL-PLAY-98) : une ligne chacune dans « Bientôt », au lieu d'une phrase
+ * « Bientôt comparés : … » posée seule au-dessus de cette section. Un tag déjà montré comme lien n'y est pas (POL-PLAY-6).
+ */
+function pendingTagLines(analysis, links) {
+  return [
+    ...(analysis.tagEffects?.status === 'ok' ? analysis.tagEffects.pending : []),
+    ...(analysis.faceMood?.status === 'ok' && analysis.faceMood.tagEffects?.status === 'ok'
+      ? analysis.faceMood.tagEffects.pending.filter((t) => !t.weekendOnly)
+      : []),
+  ].filter((t, i, all) => all.findIndex((u) => u.tagId === t.tagId) === i)
+    .filter((t) => !links.some((l) => l.key === t.tagId))
+    .map((t) => ({ id: `tag:${t.tagId}`, label: t.label, progress: pendingProgress(t) }))
 }
 
 /**
@@ -425,15 +440,7 @@ function pendingText(t) {
 function LinksSection({ analysis, levers = [] }) {
   const leverVariables = new Set(levers.map((l) => l.variable))
   const links = mergeLinks(analysis, leverVariables)
-  const pending = [
-    ...(analysis.tagEffects?.status === 'ok' ? analysis.tagEffects.pending : []),
-    ...(analysis.faceMood?.status === 'ok' && analysis.faceMood.tagEffects?.status === 'ok'
-      ? analysis.faceMood.tagEffects.pending.filter((t) => !t.weekendOnly)
-      : []),
-  ].filter((t, i, all) => all.findIndex((u) => u.tagId === t.tagId) === i)
-    // Un tag déjà montré comme lien n'est pas aussi « en cours de collecte » (POL-PLAY-6)
-    .filter((t) => !links.some((l) => l.key === t.tagId))
-  if (!links.length && !pending.length) return null
+  if (!links.length) return null
   const clear = links.filter((l) => l.item.evidence !== 'incertain')
   const uncertain = links.filter((l) => l.item.evidence === 'incertain')
   const list = (ls) => (
@@ -475,9 +482,6 @@ function LinksSection({ analysis, levers = [] }) {
           {list(uncertain)}
         </details>
       )}
-      {pending.length > 0 && (
-        <p className="reco-tag-pending">Bientôt comparés : {pending.map(pendingText).join(' · ')}</p>
-      )}
     </section>
   )
 }
@@ -509,7 +513,7 @@ function FaceMoodMethod() {
  * Une ligne discrète par bloc qui n'a pas encore assez de données (POL-7) : jamais une carte presque vide.
  * Rien n'est calculé ici, seuls les compteurs déjà rendus par les analyses sont repris.
  */
-function soonLines({ faceMood, tagEffects, laggedEffects, gut } = {}, showGut = false) {
+function soonLines({ faceMood, tagEffects, laggedEffects, gut } = {}, showGut = false, tagLines = []) {
   const lines = []
   // Aucune note du ventre : la carte lilas suffit (un seul seuil visible, VC-12)
   if (showGut && gut?.status === 'too_early') {
@@ -528,6 +532,9 @@ function soonLines({ faceMood, tagEffects, laggedEffects, gut } = {}, showGut = 
   }
   if (tagEffects?.status === 'no_tags') {
     lines.push({ id: 'tags', label: 'Vos habitudes', progress: 'à ajouter à vos notes' })
+  } else if (tagLines.length > 0) {
+    // Chaque habitude a sa ligne : pas de compteur « Vos habitudes » en plus
+    lines.push(...tagLines)
   } else if (tagEffects?.status === 'ok' && tagEffects.effects.length === 0) {
     const counts = tagEffects.pending.filter((t) => !t.weekendOnly).map((t) => Math.min(t.nWith, t.nWithout, MIN_TAG_DAYS))
     const best = counts.length ? Math.max(...counts) : 0
@@ -624,7 +631,11 @@ function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
 
 function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced, showGut = false }) {
   const { correlations: result } = analysis
-  const soon = soonLines(analysis, showGut)
+  const levers = result.status === 'not_enough_data' ? [] : result.levers ?? []
+  // Données insuffisantes : seuls les liens du visage sont montrés, donc seules ses habitudes en attente
+  const linkScope = result.status === 'not_enough_data' ? { faceMood: analysis.faceMood } : analysis
+  const tagLines = pendingTagLines(linkScope, mergeLinks(linkScope, new Set(levers.map((l) => l.variable))))
+  const soon = soonLines(analysis, showGut, tagLines)
   const gut = showGut ? <><GutLinks gut={analysis.gut} /><ReintroductionEntry /></> : null
   // Le rapport décrit d'abord le ventre : avec l'objectif ventre seulement (toujours dans Données)
   const report = showGut && analysis.gut?.status !== 'no_notes' ? <DoctorReportCard /> : null
@@ -641,7 +652,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
         {/* Habitudes et effets décalés attendent les mêmes notes que la carte lilas : seul le visage a son compteur */}
         {/* Données vierges : la carte lilas seule ; le rapport n'a sa ligne qu'une fois quelque chose noté */}
         <SoonSection
-          lines={soon.filter((l) => l.id === 'face' || l.id === 'gut' || (l.id === 'report' && result.currentDays > 0))}
+          lines={soon.filter((l) => l.id === 'face' || l.id === 'gut' || l.id.startsWith('tag:') || (l.id === 'report' && result.currentDays > 0))}
         />
         {report}
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
@@ -649,7 +660,6 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
     )
   }
 
-  const levers = result.levers ?? []
   const lagByVariable = new Map(
     (analysis.laggedEffects?.status === 'ok' ? analysis.laggedEffects.effects : []).map((e) => [e.variable, e]),
   )
