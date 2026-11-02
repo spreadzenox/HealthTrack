@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Licences from './Licences'
 import More from './More'
-import { featuresFor } from '../config/distribution'
+import { featuresFor, storeFor } from '../config/distribution'
 
 describe('page Licences (LICENCES-TIERCES)', () => {
   it('liste les sections et relie chaque licence à son texte', () => {
@@ -14,6 +14,12 @@ describe('page Licences (LICENCES-TIERCES)', () => {
     }
     expect(screen.getAllByRole('link', { name: 'OFL-1.1' })[0]).toHaveAttribute('href', 'https://openfontlicense.org')
     expect(screen.queryByText(/HSEmotion/)).toBeNull()
+  })
+
+  it('app iPhone : pas de bibliothèque Android', () => {
+    render(<Licences features={featuresFor('play')} store={storeFor('appstore')} />)
+    expect(screen.queryByText(/AndroidX|Play Billing/)).toBeNull()
+    expect(screen.getByText('Capacitor', { selector: '.licences-name' })).toBeInTheDocument()
   })
 
   it('est accessible depuis Réglages', () => {

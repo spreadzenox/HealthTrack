@@ -3,7 +3,10 @@
  * Affichés par la page « Licences » (Réglages). Le test `thirdPartyLicenses.test.js` échoue si une dépendance npm de
  * production ou une bibliothèque Android de `android/app/build.gradle` manque ici, ou si sa licence a changé.
  * Version Play : aucun nom de modèle visible (décision du 31/10) ; les auteurs sont cités, pas les modèles.
+ * App iPhone (`VITE_STORE=appstore`, LICENCES-IOS) : aucune bibliothèque Android ; ses bibliothèques propres (Swift)
+ * sont à lister dans `IOS_LICENSES` par la routine iOS quand elle en ajoute.
  */
+import { STORE } from '../config/distribution.js'
 import ciqualMeta from '../data/ciqualMeta.json'
 import measurements from '../data/fodmapMeasurements.json'
 
@@ -40,6 +43,9 @@ export const ANDROID_LICENSES = [
     license: 'Android SDK', play: true },
 ]
 
+/** Bibliothèques natives de l'app iPhone (hors npm), ajoutées seulement quand le magasin est l'App Store. */
+export const IOS_LICENSES = []
+
 function faceModels(features) {
   const named = features?.aiModelName
   return [
@@ -67,11 +73,17 @@ function dataSources() {
   ]
 }
 
-/** Sections de la page, filtrées par variante (Play Billing et Integrity : version Play seulement). */
-export function licenseSections(features = {}) {
+/**
+ * Sections de la page, filtrées par variante (Play Billing et Integrity : version Play seulement) et par magasin
+ * (l'app iPhone n'embarque aucune bibliothèque Android).
+ */
+export function licenseSections(features = {}, store = STORE) {
   const isPlay = Boolean(features.billing)
+  const native = store?.id === 'appstore'
+    ? IOS_LICENSES
+    : ANDROID_LICENSES.filter((a) => !a.play || isPlay)
   return [
-    { title: 'Bibliothèques', items: [...NPM_LICENSES, ...ANDROID_LICENSES.filter((a) => !a.play || isPlay)] },
+    { title: 'Bibliothèques', items: [...NPM_LICENSES, ...native] },
     { title: 'Lecture du visage', items: faceModels(features) },
     { title: 'Données sur les aliments', items: dataSources() },
   ].map((s) => ({ ...s, items: s.items.map(({ name, license, note }) => ({ name, license, note })) }))

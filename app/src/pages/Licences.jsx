@@ -1,13 +1,13 @@
-import { FEATURES } from '../config/distribution'
+import { FEATURES, STORE } from '../config/distribution'
 import { APP_NAME } from '../config/brand'
 import { LICENSE_URLS, licenseSections } from '../services/thirdPartyLicenses'
 
-export default function Licences({ features = FEATURES }) {
+export default function Licences({ features = FEATURES, store = STORE }) {
   return (
     <section className="food-page licences-page">
       <h2 className="page-title">Licences</h2>
       <p className="page-intro">Les composants d’autres auteurs utilisés par {APP_NAME}, et leur licence.</p>
-      {licenseSections(features).map((section) => (
+      {licenseSections(features, store).map((section) => (
         <div key={section.title} className="licences-section">
           <h3>{section.title}</h3>
           <ul className="licences-list">
