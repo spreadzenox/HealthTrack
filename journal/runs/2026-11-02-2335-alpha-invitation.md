@@ -27,7 +27,7 @@
 4. `BACKLOG.md` : ALPHA-0211, POL-PLAY-11 (Alpha = 100721).
 
 ## Vérifications
-- Journal seul : `npm run test` lancé pour respecter les garde-fous (voir la PR).
+- Journal seul : `npm run test` 2 887 tests verts (239 fichiers) ; aucun code ni écran touché (pas de build ni de captures nécessaires, aucune Nouveauté).
 
 ## Suite
 - Quand le propriétaire dit le jour de l'invitation : recaler `until` si J ≠ 03/11.
