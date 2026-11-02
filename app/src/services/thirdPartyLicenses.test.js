@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { NPM_LICENSES, ANDROID_LICENSES, LICENSE_URLS, licenseSections } from './thirdPartyLicenses.js'
-import { featuresFor } from '../config/distribution.js'
+import { featuresFor, storeFor } from '../config/distribution.js'
 
 const pkg = JSON.parse(fs.readFileSync(path.resolve('package.json'), 'utf8'))
 
@@ -53,5 +53,19 @@ describe('licences des composants de tiers (LICENCES-TIERCES)', () => {
     expect(food.find((f) => f.name === 'Njoumi 2019').license).toBe('CC BY-NC-ND 4.0')
     expect(food.find((f) => f.name === 'Liljebo 2020').license).toBe('CC BY 4.0')
     expect(food.find((f) => f.name === 'MEXT 2020').license).toBe('Conditions MEXT')
+  })
+
+  it('app iPhone (VITE_STORE=appstore) : aucune bibliothèque Android ni Google Play', () => {
+    const libs = licenseSections(featuresFor('play'), storeFor('appstore')).find((s) => s.title === 'Bibliothèques')
+    const text = JSON.stringify(libs)
+    expect(text).not.toMatch(/AndroidX|LiteRT|ONNX|Play Billing|Play Integrity/)
+    expect(text).toMatch(/Capacitor/)
+    expect(text).toMatch(/Figtree/)
+  })
+
+  it('Android : la variante play garde ses bibliothèques Android avec le magasin par défaut', () => {
+    const text = JSON.stringify(licenseSections(featuresFor('play'), storeFor('play')))
+    expect(text).toMatch(/AndroidX/)
+    expect(text).toMatch(/Play Billing/)
   })
 })
