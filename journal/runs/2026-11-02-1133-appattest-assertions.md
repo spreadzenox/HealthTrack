@@ -30,6 +30,13 @@
 - Relais : `npm test` 172/172. App (non modifiée) : `npm run test`, `npm run build`, `npm run visual` (voir PR).
   Pas de note de Nouveautés (rien de visible).
 
+## Merge
+- PR #626 mergée (squash, `73dfd88`) après Frontend, Build APK et Relais verts ; « Build & Release » a publié
+  **v448** (APK 34 526 668 octets), « Relais — déploiement » vert (aucun comportement changé).
+- « Tests » sur main : `Frontend (Vitest)` rouge une fois, sur `Premium.test.jsx` (« Gold remplace Silver… » lu par
+  `getByText` avant que les formules soient chargées) : course du test, pas du code (vert sur la PR et en local).
+  Job relancé ; assertion passée en `findByText` dans une seconde PR « [Auto] » de ce run.
+
 ## À noter pour la suite
 - Une politique TTL Firestore sur `appattest` (comme P33 pour `credits`) sera à demander au propriétaire au moment du
   déploiement (5d/5e), sans quoi `expireAt` est écrit mais rien n'est effacé.
