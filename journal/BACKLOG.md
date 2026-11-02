@@ -1452,9 +1452,13 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       counter, aaguid → `production` / `development`, credentialId, clé COSE ES256 → point X9.62 + KeyObject, point
       hors courbe refusé, extensions `apple_validation_category_01` / `apple_bundle_version_01`) ; 12 tests, aucun
       branchement dans le serveur pour l'instant.
-    - [ ] **5b** `relay/src/appattest.js` : attestation (chaîne `x5c` → racine App Attest, nonce de l'OID
-      1.2.840.113635.100.8.2, keyId, rpId `<Team ID>.fr.jpesquet.sante`, aaguid, compteur 0, catégorie 2 ou 4 si
-      présente) ; tests sur une chaîne `openssl` jetable comme `appstore.test.js`.
+    - [x] **5b** ✅ 02/11 10:33 `relay/src/appattest.js` : `createAppAttestVerifier({ teamId })` vérifie l'attestation
+      (chaîne `x5c` → racine « Apple App Attestation Root CA » épinglée, empreinte revérifiée ; nonce de l'OID
+      1.2.840.113635.100.8.2 lu par un petit lecteur DER, forme `[1]` d'Apple et forme nue ; keyId = SHA-256 du point
+      = credentialId, clé COSE identique au certificat ; rpId `<Team ID>.fr.jpesquet.sante`, compteur 0, aaguid de
+      production, développement seulement avec `allowDevelopment` ; catégorie 2/4, 3 en développement) ; raisons
+      `format`, `chain`, `nonce`, `key_id`, `rp_id`, `aaguid`, `counter`, `category`. 11 tests sur une chaîne
+      `openssl` jetable (racine et intermédiaire P-384), Team ID fictif ; rien de branché.
     - [ ] **5c** assertion (signature, rpId, compteur croissant, `clientData` = installId + heure ±5 min + empreinte du
       corps) + registre Firestore `appattest` (clé déjà liée ailleurs refusée, `expireAt` 13 mois, cache mémoire).
     - [ ] **5d** routes `/v1/attest/challenge` et `/v1/attest/register`, branche iOS de `createIntegrityGuard`,
