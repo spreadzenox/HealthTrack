@@ -233,7 +233,9 @@ jobs:
           # « robots Google » : appareils Firebase Test Lab du rapport de pré-lancement, signalés par l'app (testlab, INSTALLS-21).
           # « Raison » : verdict refusé (reasons) ou, sans jeton, ce que l'app a répondu (client : timeout, backoff,
           # error:<code Google Play>, no_plugin ; « none » = version de l'app antérieure à 6b-2c-2).
-          # « iPhone » : requêtes X-Platform: ios (ou no_plugin sans X-Platform), statut not_android, jamais bloquées (App Attest plus tard).
+          # « iPhone » : requêtes X-Platform: ios (ou no_plugin sans X-Platform). Statut not_android tant qu'APP_ATTEST_MODE vaut off ;
+          # sinon attest_passed / attest_missing / attest_rejected (raison : counter, signature, unknown_key…) / attest_unavailable,
+          # bloquants seulement en APP_ATTEST_MODE=enforce (I6-RELAIS-5d-2).
           gcloud logging read \
             "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.event=\"integrity\"" \
             --project="$GCP_PROJECT" --freshness=7d --limit=1000 --format=json > "$RUNNER_TEMP/integrity.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/integrity.json"
@@ -253,6 +255,14 @@ jobs:
             jq -r '(map(select(.jsonPayload.ci != true)) | length) as $n | (map(select(.jsonPayload.platform == "ios")) | length) as $ios
               | "Part des requêtes iPhone (hors CI) : \($ios) sur \($n)" + (if $n > 0 then " (\($ios * 100 / $n | floor) %)" else "" end)' \
               "$RUNNER_TEMP/integrity.json"
+            # Enregistrements des clés App Attest de l'iPhone (route /v1/attest/register, I6-RELAIS-5d) par statut et raison
+            gcloud logging read \
+              "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.event=\"appattest\"" \
+              --project="$GCP_PROJECT" --freshness=7d --limit=1000 --format=json > "$RUNNER_TEMP/appattest.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/appattest.json"
+            jq -r 'if length == 0 then "App Attest (clés de l’iPhone) : aucun enregistrement"
+              else "App Attest (clés de l’iPhone) : " + (group_by([.jsonPayload.status, .jsonPayload.reason])
+                | map("\(.[0].jsonPayload.status)\(if .[0].jsonPayload.reason then " (\(.[0].jsonPayload.reason))" else "" end) × \(length)") | join(", ")) end' \
+              "$RUNNER_TEMP/appattest.json"
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Analyses IA des 7 derniers jours (Gold / Silver, GOLD-a2, non bloquant)

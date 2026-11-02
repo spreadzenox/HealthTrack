@@ -1479,9 +1479,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       un Team ID : **aucun changement au déploiement** (404 comme avant). CORS : `X-AppAttest-Key`,
       `X-AppAttest-Assertion`, `X-AppAttest-Time`. Journaux `event: 'appattest'` (statut, raison, empreinte ; jamais
       le défi ni la clé). 10 tests (`attestroutes.test.js`).
-    - [ ] **5d-2** branche iOS de `createIntegrityGuard` (en-têtes `X-AppAttest-*` → `registry.check` avec le corps
-      brut ; `attest_passed` / `missing` / `rejected` / `unavailable` ; bloquant seulement en `enforce`), ligne
-      « App Attest » du bilan du déploiement (événements `appattest` par statut et raison).
+    - [x] **5d-2** ✅ 02/11 13:46 `createIntegrityGuard({ appAttest })` : requête iOS (X-Platform: ios ou no_plugin)
+      avec `APP_ATTEST_MODE` ≠ off → `appAttest.verify` (`attestroutes.js`) : en-têtes `X-AppAttest-*` →
+      `registry.check` sur le **corps brut** (le serveur lit les octets puis les parse) ; statuts `attest_passed` /
+      `attest_missing` / `attest_rejected` (raison dans `reasons`) / `attest_unavailable` (Firestore : jamais bloquant),
+      bloquants seulement en `APP_ATTEST_MODE=enforce`, indépendamment d'`INTEGRITY_MODE` ; 403 avec un message
+      « App Store » pour l'iPhone. Journal `event: 'integrity', platform: 'ios'` (même tableau du bilan, origine
+      « iPhone ») ; ligne « App Attest (clés de l'iPhone) » du bilan du déploiement (événements `appattest`).
+      Mode `off` : comportement d'avant (`not_android`). 7 tests (`attestguard.test.js`), 188 tests relais.
     - [ ] **5e** demande à la routine iOS (plugin Swift, en-têtes `X-AppAttest-*`), `observe` quelques jours puis
       `enforce`. Déploiement : attend **P38** (Team ID).
   - Question ouverte : la période de lancement (Gold pour toute installation sans jeton) vaut aussi pour l'iPhone

@@ -33,6 +33,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 13:46 — [App Attest 5d-2 : vérification](runs/2026-11-02-1346-appattest-garde.md) | 🔧 | Relais : chaque analyse de l'iPhone est vérifiée par sa signature App Attest (quatrième des 5 étapes) ; coupé tant que `APP_ATTEST_MODE` vaut `off`, aucun changement visible ni au déploiement ; bilan du déploiement complété |
 | 02/11 12:33 — [App Attest 5d-1 : routes](runs/2026-11-02-1233-appattest-routes.md) | 🔧 | Relais : routes « défi » et « enregistrement de la clé » pour l'iPhone, coupées tant que `APP_ATTEST_MODE` vaut `off` et qu'il n'y a pas de Team ID (P38) ; aucun changement visible ni au déploiement |
 | 02/11 11:33 — [App Attest 5c : assertions](runs/2026-11-02-1133-appattest-assertions.md) | 🔧 | Relais : vérification de la signature de chaque requête de l'iPhone (anti-rejeu) et registre des clés dans Firestore (troisième des 5 étapes d'App Attest) ; rien de branché, aucun changement visible |
 | 02/11 10:33 — [App Attest 5b : attestation](runs/2026-11-02-1033-appattest-attestation.md) | 🔧 | Relais : vérification de l'attestation envoyée une fois par l'iPhone (deuxième des 5 étapes d'App Attest) ; rien de branché, aucun changement visible |
