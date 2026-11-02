@@ -17,6 +17,7 @@ const STATUS_TEXT = {
   low: 'bas',
   over: 'dépassé',
   uncertain: 'incertain',
+  under: 'sous la limite',
 }
 
 // Légende : seulement les statuts présents (POL-PLAY-75), dans cet ordre
@@ -25,6 +26,7 @@ const LEGEND = [
   ['partial', 'proche (≥ 70 %)'],
   ['low', 'bas'],
   ['uncertain', 'incertain : repas manquants'],
+  ['under', 'sous la limite'],
   ['over', 'limite dépassée'],
 ]
 

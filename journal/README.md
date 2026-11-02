@@ -30,6 +30,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 04:33 — [Sodium sous la limite](runs/2026-11-02-0433-sodium-limite.md) | 🔧 | Audit démo clair Jours, Repas, Nutrition, Tendances (POL-PLAY-12) ; POL-PLAY-97 : le sodium sous son maximum n’est plus coloré « atteint » (état « sous la limite », « incertain » si des repas manquent) |
 | 02/11 03:33 — [Prix dit une fois](runs/2026-11-02-0333-paywall-prix.md) | 🔧 | Audit play sur données vierges en sombre, onboarding compris (POL-PLAY-12) ; POL-PLAY-96 : paywall mensuel sans essai, le prix n’est plus répété sous le bouton |
 | 02/11 02:33 — [Quota IA selon la formule](runs/2026-11-02-0233-quota-gold.md) | 🔧 | Audit démo sombre Paramètres, Données, Réintroduction (POL-PLAY-12) ; POL-PLAY-95 : Paramètres dit 20 analyses IA par jour pendant le test et avec Gold (au lieu de 10) |
 | 02/11 01:33 — [Milliers lisibles](runs/2026-11-02-0133-milliers.md) | 🔧 | Audit démo sombre de la version Play (POL-PLAY-12) ; POL-PLAY-94 : « 1039 kcal » → « 1 039 kcal » partout (espace fine d'Intl élargie à l'affichage) ; reste de l'audit conforme |

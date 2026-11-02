@@ -203,6 +203,12 @@
   );
 }
 
+/* POL-PLAY-97 : sous une limite (sodium), rien n'est « atteint » : teinte de la ligne de référence, pleine,
+   distincte de l'émeraude « atteint » et de « limite dépassée » */
+.nutrition-bar-under {
+  background: var(--chart-ref);
+}
+
 .nutrition-bar-over {
   background: var(--color-alert);
 }
