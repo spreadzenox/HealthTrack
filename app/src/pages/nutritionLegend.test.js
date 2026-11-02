@@ -31,3 +31,15 @@ describe('barre « incertain : repas manquants » (POL-PLAY-86)', () => {
     expect(bg).not.toMatch(/danger|alert|warn/)
   })
 })
+
+// Audit démo clair du 02/11 (POL-PLAY-97) : le sodium sous sa limite prenait la couleur « atteint » (émeraude
+// pleine) alors qu'aucun repère n'est « atteint » pour une limite. État propre « sous la limite », sans alerte.
+describe('barre « sous la limite » (POL-PLAY-97)', () => {
+  it('a sa propre couleur, distincte de « atteint » et de « limite dépassée », sans couleur d’alerte', () => {
+    const under = background('nutrition-bar-under')
+    expect(under).toBeTruthy()
+    expect(under).not.toBe(background('nutrition-bar-ok'))
+    expect(under).not.toBe(background('nutrition-bar-over'))
+    expect(under).not.toMatch(/danger|alert|warn/)
+  })
+})

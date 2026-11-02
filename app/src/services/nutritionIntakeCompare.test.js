@@ -64,12 +64,24 @@ describe('nutritionIntakeCompare', () => {
     expect(fiber.target).toBe(30)
   })
 
-  it('treats sodium as an upper limit: low intake is ok, over the limit is flagged', () => {
-    const light = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 10)], profile)
-    const sodium = light.rows.find((r) => r.key === 'sodium_mg')
+  it('treats sodium as an upper limit: « sous la limite » (pas « atteint »), dépassement signalé (POL-PLAY-97)', () => {
+    const full = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 2000)], profile)
+    const sodium = full.rows.find((r) => r.key === 'sodium_mg')
     expect(sodium.limit).toBe(true)
     expect(sodium.target).toBe(2000)
-    expect(sodium.status).toBe('ok')
+    expect(full.likelyIncomplete).toBe(false)
+    expect(sodium.status).toBe(sodium.pct > 100 ? 'over' : 'under')
+  })
+
+  it('sodium bien sous sa limite, journée complète : « sous la limite » (POL-PLAY-97)', () => {
+    const at = new Date(2026, 4, 20, 12).toISOString()
+    const oil = { type: 'food', at, payload: { items: [{ ingredient: "Huile d'amande", quantity_g: 300 }] } }
+    const result = compareRecentIntake([oil], profile)
+    expect(result.likelyIncomplete).toBe(false)
+    const sodium = result.rows.find((r) => r.key === 'sodium_mg')
+    expect(sodium.status).toBe('under')
+    expect(result.statuses).toContain('under')
+    expect(result.reachedCount).toBe(result.rows.filter((r) => !r.limit && r.status === 'ok').length)
   })
 
   it('statuses: ok ≥ 100 %, partial ≥ 70 %, low below (journée complète)', () => {
@@ -97,10 +109,10 @@ describe('nutritionIntakeCompare', () => {
     expect(tiny.likelyIncomplete).toBe(true)
   })
 
-  it('jours incomplets : « bas » et « proche » deviennent « incertain » (POL-PLAY-75), atteint et dépassé restent', () => {
+  it('jours incomplets : « bas », « proche » et « sous la limite » deviennent « incertain » (POL-PLAY-75, 97), atteint et dépassé restent', () => {
     const tiny = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 50)], profile)
     for (const row of tiny.rows) {
-      const raw = row.limit ? (row.pct > 100 ? 'over' : 'ok') : row.pct >= 100 ? 'ok' : 'uncertain'
+      const raw = row.limit ? (row.pct > 100 ? 'over' : 'uncertain') : row.pct >= 100 ? 'ok' : 'uncertain'
       expect(row.status).toBe(raw)
     }
     expect(tiny.rows.some((r) => r.status === 'uncertain')).toBe(true)

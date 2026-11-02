@@ -53,7 +53,8 @@ export function formatNutrientAmount(value) {
 }
 
 function statusFor(pct, limit) {
-  if (limit) return pct <= 100 ? 'ok' : 'over'
+  // POL-PLAY-97 : une limite n'est pas un objectif ; sous la limite n'est pas « atteint »
+  if (limit) return pct <= 100 ? 'under' : 'over'
   if (pct >= 100) return 'ok'
   if (pct >= 70) return 'partial'
   return 'low'
@@ -114,9 +115,9 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
   const fmt = new Intl.DateTimeFormat(appLocale(), { day: 'numeric', month: 'short' })
   const likelyIncomplete = mealCount > 0 && energyTarget > 0 && energyPerDay < energyTarget * INCOMPLETE_ENERGY_RATIO
   // POL-PLAY-75 : des repas manquent → « bas » ou « proche » ne voudraient rien dire (l'apport réel est plus élevé) ;
-  // « atteint » et « limite dépassée » restent vrais malgré les repas manquants.
+  // « atteint » et « limite dépassée » restent vrais malgré les repas manquants ; « sous la limite » non (POL-PLAY-97).
   if (likelyIncomplete) {
-    for (const row of rows) if (row.status === 'low' || row.status === 'partial') row.status = 'uncertain'
+    for (const row of rows) if (['low', 'partial', 'under'].includes(row.status)) row.status = 'uncertain'
   }
 
   return {
