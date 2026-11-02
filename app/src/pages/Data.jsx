@@ -7,7 +7,7 @@ import { activityLevel } from '../services/nutrientReferenceIntakes'
 import { APP_NAME } from '../config/brand'
 import DoctorReportCard from '../components/DoctorReportCard'
 import '../Food.css'
-import { appLocale } from '../i18n/locale.js'
+import { appLocale, localeDate } from '../i18n/locale.js'
 
 async function isAndroidNative() {
   try {
@@ -27,7 +27,7 @@ function plural(n, singular, pluralForm = `${singular}s`) {
 }
 
 function formatDay(at) {
-  return new Date(at).toLocaleDateString(appLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
+  return localeDate(at, { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 /** « 12 repas · 30 notes de bien-être · 2 cigarettes · 1 200 mesures (montre, balance…) » */

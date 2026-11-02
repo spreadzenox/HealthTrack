@@ -7,7 +7,7 @@
 import { registerPlugin } from '@capacitor/core'
 import { ENTITLEMENT_EVENT, getEntitlement, manageSubscriptionUrl } from './entitlement'
 import { FEATURES, STORE } from '../config/distribution'
-import { appLocale } from '../i18n/locale.js'
+import { localeDate } from '../i18n/locale.js'
 
 export const REMINDER_DAYS_BEFORE = 2
 const DAY_MS = 86_400_000
@@ -30,7 +30,7 @@ export function trialReminderPlugin(store = STORE) {
 /** Le paywall ne promet le rappel que là où le téléphone sait le programmer. */
 export const trialReminderAvailable = (store = STORE) => Boolean(trialReminderPlugin(store))
 
-const longDate = (ms) => new Date(ms).toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric', month: 'long' })
+const longDate = (ms) => localeDate(ms, { weekday: 'long', day: 'numeric', month: 'long' })
 
 /** Rappel à programmer pour ces droits (`{ at, title, body, url }`), ou null s'il n'y a rien à rappeler. */
 export function trialReminderPlan(ent, now = Date.now()) {

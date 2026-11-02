@@ -8,7 +8,7 @@
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
 import { mealKcal } from './mealEditing'
-import { appLocale } from '../i18n/locale.js'
+import { appLocale, localeDate } from '../i18n/locale.js'
 import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
 import { oneSleepSourcePerNight, sleepNightKey } from './sleepSources'
 import { oneSourcePerWorkout } from './workoutSources'
@@ -278,7 +278,7 @@ export function dayHeading(dateKey, now = new Date()) {
   else title = capitalize(date.toLocaleDateString(appLocale(), { weekday: 'long' }))
   const opts = { day: 'numeric', month: 'long' }
   if (y !== now.getFullYear()) opts.year = 'numeric'
-  return { title, date: date.toLocaleDateString(appLocale(), opts) }
+  return { title, date: localeDate(date, opts) }
 }
 
 /**

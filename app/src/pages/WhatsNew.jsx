@@ -5,7 +5,7 @@ import { CURRENT_VERSION } from '../services/updateCheck'
 import { APP_NAME } from '../config/brand'
 import '../Food.css'
 import '../components/WhatsNew.css'
-import { appLocale } from '../i18n/locale.js'
+import { localeDate } from '../i18n/locale.js'
 
 const KIND_LABELS = {
   nouveau: 'Nouveau',
@@ -15,7 +15,7 @@ const KIND_LABELS = {
 
 function formatDate(iso) {
   const d = new Date(`${iso}T12:00:00`)
-  return d.toLocaleDateString(appLocale(), { day: 'numeric', month: 'long', year: 'numeric' })
+  return localeDate(d, { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 export default function WhatsNew({ changelog = CHANGELOG }) {

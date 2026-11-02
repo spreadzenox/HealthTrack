@@ -5,7 +5,7 @@ import { BASELINE_METRICS } from '../services/baselines'
 import { localDateKey } from '../services/wellbeingSeries'
 import { formatDuration } from '../utils/format'
 import './HealthRadar.css'
-import { appLocale } from '../i18n/locale.js'
+import { appLocale, localeDate } from '../i18n/locale.js'
 
 const HISTORY_DAYS = RADAR_DAYS + RADAR_BASELINE_DAYS + 2
 
@@ -27,7 +27,7 @@ function dayLabel(dateKey) {
   if (dateKey === localDateKey(y.toISOString())) return 'Hier'
   const [yy, mm, dd] = dateKey.split('-').map(Number)
   const d = new Date(yy, mm - 1, dd)
-  const s = d.toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric' })
+  const s = localeDate(d, { weekday: 'long', day: 'numeric' })
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 

@@ -49,7 +49,7 @@ import { APP_NAME } from '../config/brand'
 import './MyDevices.css'
 import '../pages/Connectors.css'
 import './WeatherCard.css'
-import { appLocale } from '../i18n/locale.js'
+import { appLocale, localeDate } from '../i18n/locale.js'
 
 async function defaultSave(json, filename) {
   const isNative = typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
@@ -143,7 +143,7 @@ export function FaceMoodBlock({ estimate }) {
 }
 
 function frenchDate(iso) {
-  return new Date(iso).toLocaleDateString(appLocale(), { day: 'numeric', month: 'long' })
+  return localeDate(iso, { day: 'numeric', month: 'long' })
 }
 
 /**

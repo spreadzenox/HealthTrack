@@ -192,7 +192,7 @@ describe('describeGate', () => {
   it('compte les jours de la vérification facultative, sans jamais bloquer l’affichage', () => {
     expect(describeGate({ ...base, state: 'candidate', nDays: 1 })).toMatch(/^Vérification facultative : 1 jour sur 30 avec une note/)
     expect(describeGate({ ...base, state: 'candidate', nDays: 45 })).toMatch(/ne suit pas encore nettement vos notes/)
-    expect(describeGate({ ...base, state: 'candidate', nDays: 3, closedAt: '2026-12-01' })).toMatch(/^Le lien visage ↔ notes s’est perdu le 1 décembre : on recompte/)
+    expect(describeGate({ ...base, state: 'candidate', nDays: 3, closedAt: '2026-12-01' })).toMatch(/^Le lien visage ↔ notes s’est perdu le 1er décembre : on recompte/)
     expect(describeGate({ ...base, state: 'active', nDays: 50, openedAt: '2026-11-20' })).toMatch(/suit vos notes depuis le 20 novembre/)
     expect(describeGate(null)).toMatch(/facultatives/)
     for (const g of [null, { ...base, state: 'candidate', nDays: 1 }, { ...base, state: 'candidate', nDays: 45 }]) {
