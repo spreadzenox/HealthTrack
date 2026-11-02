@@ -21,7 +21,9 @@ export function fixFrenchSpacing(text) {
     .replace(/« /g, `«${NB}`)
     .replace(/(\S) »/g, `$1${NB}»`)
     .replace(/(\S) ([:;?!])/g, `$1${NB}$2`)
-    .replace(/(\d) (?=\d{3}(?!\d))/g, `$1${NB}`)
+    // Milliers : espace du texte ou espace fine (U+202F) d'Intl en français, presque invisible en Figtree
+    // (« 1039 kcal » sur la page Repas, POL-PLAY-94) ; l'insécable ordinaire garde la largeur d'une espace.
+    .replace(/(\d)[ \u202F](?=\d{3}(?!\d))/g, `$1${NB}`)
     .replace(UNIT, `$1${NB}$2`)
     .replace(DAY_MONTH, `$1${NB}$2`)
     .replace(MONTH_YEAR, `$1${NB}$2`)
