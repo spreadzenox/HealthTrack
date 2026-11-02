@@ -8,6 +8,47 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 👉 **Version candidate prête : vous pouvez inviter les testeurs** (02/11 23:35), **dès que la Play Console
+> n'affiche plus « En cours d'examen » pour Alpha.** Vous avez lancé l'envoi vous-même hier soir (P40, merci) :
+> la version **100721** (même code que la 100719 du test interne, sans plantage connu) est sur Alpha depuis 22:41,
+> avec le groupe des testeurs ; Google l'examine (quelques heures à 2 jours). Le relais en production sert bien
+> **Gold offert jusqu'au 27 novembre inclus** pour Android (et jusqu'au 6 novembre pour l'iPhone), vérifié au bilan
+> du déploiement. **Gestes** : (1) Play Console → Halcya → Tester → Test fermé → **Alpha** : attendez que 100721 soit
+> disponible ; (2) envoyez le texte ci-dessous (e-mail, WhatsApp…) à 12 à 15 personnes avec un téléphone Android ;
+> (3) vérifiez au passage que le lien du point 2 est le même que « Rejoindre sur le Web » (onglet **Testeurs** de la
+> piste, en bas) ; (4) les jours 3, 7 et 10 : messages courts de [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md)
+> §4. **Si vous invitez après le mardi 3/11, dites le jour à la routine** : elle décale la date de fin d'autant.
+>
+> Texte à envoyer :
+>
+> > Bonjour,
+> >
+> > Je lance **Halcya**, une app Android qui aide à comprendre ce qui va avec vos bons et mauvais jours (ventre,
+> > sommeil, énergie, bien-être), en gardant vos données sur votre téléphone. Avant sa sortie publique, Google
+> > m'impose un test fermé de **14 jours avec au moins 12 personnes** : pouvez-vous m'aider ?
+> >
+> > **Gold (le premium) est offert pendant le test (jusqu'au 27 novembre inclus) : vous n'avez rien à payer**,
+> > aucune carte bancaire n'est demandée. Il faut un téléphone **Android 8 ou plus récent** (pas encore d'iPhone).
+> >
+> > Ce qu'il faut faire (5 minutes, avec le compte Gmail de votre téléphone Android) :
+> > 1. Rejoindre le groupe des testeurs : https://groups.google.com/g/halcya-testeurs
+> > 2. Accepter le test : https://play.google.com/apps/testing/fr.jpesquet.sante
+> > 3. Installer l'app depuis le Play Store : https://play.google.com/store/apps/details?id=fr.jpesquet.sante
+> > 4. **Garder l'app installée pendant 14 jours, sans quitter le groupe ni le test**, et **l'ouvrir au moins tous
+> >    les 2 ou 3 jours** (une photo de repas, une note du ventre…). Vos retours, même courts, me sont précieux :
+> >    roue dentée en haut à droite → Paramètres → « Votre avis ».
+> >
+> > Astuces : l'app ne sort pas dans la recherche du Play Store tant qu'elle est en test, passez par le lien du
+> > point 3 (ou Play Store → photo de profil → Gérer les applications et l'appareil → Gérer → « Non installées »).
+> > Si l'app ou sa mise à jour n'apparaît pas : Paramètres du téléphone → Applications → Google Play Store → Forcer
+> > l'arrêt, puis Stockage → Vider le cache, et rouvrez le lien.
+> >
+> > Merci beaucoup !
+>
+> Ensuite : P30 (accès à la production) au plus tôt 14 jours après l'inscription du 12ᵉ testeur, réponses prêtes
+> dans `INVITATION-TESTEURS.md` §5. P2 (activité de l'auto-entreprise) : étapes exactes sur le guichet unique
+> écrites dans [`PRODUIT.md`](PRODUIT.md) §4, à vous de décider.
+
 > 💶 **Prix de Google doublés au 1er janvier 2027 : déjà pris en compte (02/11 00:33, GOLD-a4).** Le relais compte le
 > coût de chaque analyse avec une grille de prix qui double d'elle-même le 1er janvier 2027 (aucun redéploiement à
 > faire). Une analyse Gold passera d'environ 4 à 8 centimes. Les seuils restent en euros : Gold repasse sur Flash-Lite
@@ -16,21 +57,12 @@
 > faire tant qu'il n'y a pas d'abonnés payants ; avec des abonnés Gold, il faudra relever ce budget (proposition au
 > moment voulu). Le résumé de chaque déploiement du relais continue d'afficher le coût réel des 7 derniers jours.
 
-> ⏸️ **Version candidate : un clic de votre part avant d'inviter (P40, 02/11 21:45).** Tout est prêt sauf l'envoi
-> sur Alpha : la session de la routine n'a pas eu le droit de lancer « Play — AAB » sur la piste `alpha` (sa couche
-> de permissions l'a classé « déploiement en production »). **Geste** : GitHub → HealthTrack → **Actions** →
-> « Play — AAB » → **Run workflow** → branche `main`, piste **`alpha`** → Run (même code que la 100719 du test
-> interne). Ou autorisez ce geste pour la routine, et le run suivant le fera. Ensuite, quand Alpha affiche la version :
-> invitation de [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md) §2–§3, **Gold offert jusqu'au 27 novembre inclus**
-> (calculé pour une invitation le 03/11 ; recalé si ça glisse). Déjà fait ce soir : fin de la période au 27/11, App
-> Attest de l'iPhone en observation (Team ID reçu), « Gold estime mieux les quantités » sur le paywall et la fiche.
-
 > 🍎 **iPhone : fin de « Gold offert » le vendredi 6 novembre inclus (02/11 22:35).** Comme décidé ce soir, le relais
 > arrête la période de lancement pour l'app iPhone le 06/11 à minuit (Paris) ; à partir du 07/11, l'iPhone sans
 > achat voit l'écran d'abonnement (Silver / Gold), ce qu'Apple doit pouvoir essayer pendant l'examen. Google Play n'est
 > pas touché (Gold offert jusqu'au 27/11). Relais en production vérifié ce soir : 27/11 pour Android, App Attest en
 > observation (défi App Attest OK). La routine iOS est prévenue dans [`POUR-IOS.md`](POUR-IOS.md) (date, réponse du
-> relais, test en TestFlight). Le bilan du prochain déploiement affiche une ligne « iPhone sans achat ».
+> relais, test en TestFlight). Vérifié au déploiement du 02/11 22:59 (Paris) : « iPhone sans achat … jusqu’au 2026-11-06 ».
 
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **P37 — votre Gold après la période de lancement** : Paramètres → touchez 7 fois « Version » → recopiez
@@ -41,6 +73,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 23:35 — [Alpha en examen, invitation prête](runs/2026-11-02-2335-alpha-invitation.md) | 🔧 | Votre envoi sur Alpha a marché : la 100721 est en examen chez Google. Relais vérifié en production (Android 27/11, iPhone 06/11). **Version candidate prête** : gestes et texte d'invitation en tête du résumé ; étapes P2 (guichet unique) écrites. Rien ne change dans l'app |
 | 02/11 22:35 — [Fin du lancement sur iPhone](runs/2026-11-02-2235-fin-lancement-iphone.md) | 🔧 | Sur iPhone, Gold offert s’arrête le vendredi 6/11 inclus (Google Play reste au 27/11) ; après, l’app iPhone montre l’écran d’achat pour l’examen d’Apple. Relais vérifié en production (27/11, App Attest en observation) ; routine iOS prévenue (`POUR-IOS.md`). Rien ne change sur Android |
 | 02/11 21:35 — [Compte rendu du 02/11](runs/2026-11-02-2135-compte-rendu-0211.md) | 🔧 | Gold offert jusqu’au 27 novembre (relais) ; App Attest de l’iPhone en observation avec votre Team ID ; « Gold estime mieux les quantités » sur le paywall et la fiche Gold. **Envoi sur Alpha refusé à la session : P40, un clic pour vous** |
 | 02/11 20:35 — [Idées : fiche Play et abonnements](runs/2026-11-02-2035-idees-fiche-silver-gold.md) | 💡 | Défaut trouvé : la fiche du Play Store parle encore d’un seul « Premium » (sans Gold), et Google affiche « Halcya Premium » au moment de payer alors que l’app dit « Silver ». Texte corrigé prêt (LISTING-2, prochain run de code), description courte avec « SII, FODMAP ». Règles Play de 2027 relues : Halcya non concernée |
