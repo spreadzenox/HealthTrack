@@ -1459,8 +1459,16 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       production, développement seulement avec `allowDevelopment` ; catégorie 2/4, 3 en développement) ; raisons
       `format`, `chain`, `nonce`, `key_id`, `rp_id`, `aaguid`, `counter`, `category`. 11 tests sur une chaîne
       `openssl` jetable (racine et intermédiaire P-384), Team ID fictif ; rien de branché.
-    - [ ] **5c** assertion (signature, rpId, compteur croissant, `clientData` = installId + heure ±5 min + empreinte du
-      corps) + registre Firestore `appattest` (clé déjà liée ailleurs refusée, `expireAt` 13 mois, cache mémoire).
+    - [x] **5c** ✅ 02/11 11:33 `createAssertionVerifier` (`appattest.js`) : signature ECDSA sur
+      SHA-256(authenticatorData ‖ SHA-256(clientData)), `clientData` recomposé par le relais
+      (`halcya-assert:<installId>:<heure ms>:<SHA-256 hex du corps>`), heure ±5 min, rpIdHash, compteur strictement
+      croissant ; raisons `signature`, `clock`, `counter`, `rp_id`, `format`. `relay/src/attestregistry.js` :
+      `createAttestRegistry` (`register` : attestation vérifiée puis clé liée à l'empreinte `appattest:<installId>`,
+      `key_reused` si autre installation ; `check` : `unknown_key`, `key_reused`, compteur avancé en mémoire avant
+      l'écriture, rejeu simultané refusé, lecture Firestore en panne → erreur brute pour `unavailable` en 5d, écriture
+      en panne → `persisted: false`), cache borné, `createFirestoreAttestStore` (collection `appattest`, `expireAt`
+      13 mois). 15 tests (clés P-256 jetables + un bout-en-bout sur la chaîne openssl). Rien de branché.
+      Au déploiement (5d/5e) : politique TTL sur `appattest` à ajouter à l'action du propriétaire (comme P33).
     - [ ] **5d** routes `/v1/attest/challenge` et `/v1/attest/register`, branche iOS de `createIntegrityGuard`,
       `APP_ATTEST_MODE` (défaut `off`), en-têtes CORS, ligne « iPhone » du bilan du déploiement.
     - [ ] **5e** demande à la routine iOS (plugin Swift, en-têtes `X-AppAttest-*`), `observe` quelques jours puis

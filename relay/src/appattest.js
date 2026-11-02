@@ -8,9 +8,12 @@
  *   4. rpIdHash = SHA-256(« <Team ID>.fr.jpesquet.sante »), compteur 0, aaguid de production (ou de développement
  *      si on l'autorise), catégorie de validation 2 (TestFlight) ou 4 (App Store) si l'iPhone l'envoie.
  * Le reçu (receipt) n'est ni lu ni gardé : il ne sert qu'au « fraud metric », qui demanderait une clé secrète.
- * Rien n'est branché dans le serveur à cette étape.
+ * Puis, à chaque requête, l'assertion (5c, `createAssertionVerifier`) : signature de la clé attestée sur
+ * SHA-256(authenticatorData ‖ SHA-256(clientData)), même rpIdHash, compteur strictement croissant, et un `clientData`
+ * que le relais recompose lui-même (installation, heure à ±5 min, empreinte du corps). Le registre des clés est dans
+ * `attestregistry.js`. Rien n'est branché dans le serveur à cette étape.
  */
-import { createHash, timingSafeEqual, X509Certificate } from 'node:crypto'
+import { createHash, createPublicKey, timingSafeEqual, verify as verifySignature, X509Certificate } from 'node:crypto'
 import { decodeCbor, CborError } from './cbor.js'
 import { parseAuthData, aaguidEnvironment, appleExtensions, AuthDataError } from './authdata.js'
 import { APPSTORE_BUNDLE_ID } from './appstore.js'
@@ -42,7 +45,10 @@ const RELEASE_CATEGORIES = new Set([2, 4])
 const DEVELOPMENT_CATEGORY = 3
 
 export class AppAttestError extends Error {
-  /** @param {'format'|'chain'|'nonce'|'key_id'|'rp_id'|'aaguid'|'counter'|'category'} reason */
+  /**
+   * @param {'format'|'chain'|'nonce'|'key_id'|'rp_id'|'aaguid'|'counter'|'category'|'signature'|'clock'|
+   *   'unknown_key'|'key_reused'} reason
+   */
   constructor(reason, message) {
     super(message)
     this.name = 'AppAttestError'
@@ -235,5 +241,92 @@ export function createAppAttestVerifier({
       throw new AppAttestError('category', 'Catégorie de validation refusée.')
     }
     return { keyId: keyIdBytes, publicKey: point, keyObject: auth.keyObject, environment, category, bundleVersion, counter: 0 }
+  }
+}
+
+// --- Assertions (I6-RELAIS-5c) -------------------------------------------------------------------------------------
+
+/** Taille maximale d'une assertion (≈ 150 octets en pratique : une signature DER et 37 octets de authData). */
+export const MAX_ASSERTION_BYTES = 1024
+
+/** Écart toléré entre l'heure de l'iPhone et celle du relais. */
+export const ASSERTION_CLOCK_SKEW_MS = 5 * 60 * 1000
+
+/**
+ * Ce que l'iPhone signe pour une requête : « halcya-assert:<installId>:<heure en ms>:<SHA-256 hex du corps> ».
+ * Le relais le recompose à partir de la requête reçue : un corps ou une installation différents cassent la signature.
+ */
+export function assertionClientData({ installId, time, body = '' }) {
+  const bodyHash = createHash('sha256').update(body ?? '').digest('hex')
+  return `halcya-assert:${installId}:${time}:${bodyHash}`
+}
+
+/** Clé publique gardée (point X9.62 de 65 octets, en octets ou base64) → KeyObject. */
+export function keyFromPoint(point) {
+  const p = toBytes(point, 'Clé publique')
+  if (p.length !== 65 || p[0] !== 0x04) throw new AppAttestError('format', 'Clé publique gardée invalide.')
+  return createPublicKey({
+    key: { kty: 'EC', crv: 'P-256', x: p.subarray(1, 33).toString('base64url'), y: p.subarray(33).toString('base64url') },
+    format: 'jwk',
+  })
+}
+
+/**
+ * @param {{ teamId: string, bundleId?: string, now?: () => number, skewMs?: number }} opts
+ */
+export function createAssertionVerifier({ teamId, bundleId = APPSTORE_BUNDLE_ID, now = Date.now, skewMs = ASSERTION_CLOCK_SKEW_MS }) {
+  if (!/^[A-Z0-9]{10}$/.test(String(teamId ?? ''))) throw new Error('Team ID Apple invalide (10 caractères).')
+  const rpIdHash = sha256(`${teamId}.${bundleId}`)
+
+  /**
+   * @param {{ assertion: Buffer|string, installId: string, time: string|number, body?: Buffer|string,
+   *   publicKey: Buffer|string|import('node:crypto').KeyObject, lastCounter: number }} input
+   * @returns {{ counter: number }} le nouveau compteur, à garder
+   */
+  return function verifyAssertion({ assertion, installId, time, body = '', publicKey, lastCounter }) {
+    const raw = toBytes(assertion, 'Assertion')
+    if (raw.length > MAX_ASSERTION_BYTES) throw new AppAttestError('format', 'Assertion trop longue.')
+    const t = Number(time)
+    if (!/^\d{1,16}$/.test(String(time ?? '')) || !Number.isSafeInteger(t)) {
+      throw new AppAttestError('clock', 'Heure de la requête absente.')
+    }
+    if (Math.abs(now() - t) > skewMs) throw new AppAttestError('clock', 'Heure de la requête trop éloignée.')
+
+    let obj
+    try {
+      obj = decodeCbor(raw, { maxBytes: MAX_ASSERTION_BYTES })
+    } catch (err) {
+      if (err instanceof CborError) throw new AppAttestError('format', 'Assertion illisible.')
+      throw err
+    }
+    const signature = obj instanceof Map ? obj.get('signature') : null
+    const authBytes = obj instanceof Map ? obj.get('authenticatorData') : null
+    if (!Buffer.isBuffer(signature) || !Buffer.isBuffer(authBytes)) {
+      throw new AppAttestError('format', 'Ce n\'est pas une assertion App Attest.')
+    }
+    let auth
+    try {
+      auth = parseAuthData(authBytes)
+    } catch (err) {
+      if (err instanceof AuthDataError) throw new AppAttestError('format', err.message)
+      throw err
+    }
+    if (auth.credentialId) throw new AppAttestError('format', 'Une assertion ne porte pas de clé.')
+
+    const key = publicKey && typeof publicKey === 'object' && publicKey.asymmetricKeyType ? publicKey : keyFromPoint(publicKey)
+    const clientData = assertionClientData({ installId, time: String(time), body })
+    const nonce = sha256(authBytes, sha256(clientData))
+    let ok = false
+    try {
+      ok = verifySignature('sha256', nonce, { key, dsaEncoding: 'der' }, signature)
+    } catch {
+      ok = false
+    }
+    if (!ok) throw new AppAttestError('signature', 'Signature de l\'assertion invalide.')
+    if (!same(auth.rpIdHash, rpIdHash)) throw new AppAttestError('rp_id', 'Assertion d\'une autre app.')
+    if (!Number.isInteger(lastCounter) || auth.counter <= lastCounter) {
+      throw new AppAttestError('counter', 'Compteur déjà vu (rejeu).')
+    }
+    return { counter: auth.counter }
   }
 }
