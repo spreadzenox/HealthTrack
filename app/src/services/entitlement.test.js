@@ -34,6 +34,15 @@ describe('droits premium lus auprès du relais (jalon 6c)', () => {
     expect(getEntitlement()).toMatchObject({ premium: true, source: 'appstore', tier: 'gold' })
   })
 
+  it('achat App Store : renewalInfo transmis avec le jeton, jamais sans jeton ; pas d’en-tête X-Platform en build play', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(response({ ok: true, premium: true, source: 'appstore', state: 'active', tier: 'gold', productId: 'halcya_gold_mensuel', expiresAt: inDays(30), autoRenewing: false }))
+    await refreshEntitlement({ purchaseToken: 'a.b.c', renewalInfo: 'r.s.t', fetchImpl })
+    expect(JSON.parse(fetchImpl.mock.calls[0][1].body)).toEqual({ purchaseToken: 'a.b.c', renewalInfo: 'r.s.t' })
+    expect(fetchImpl.mock.calls[0][1].headers).not.toHaveProperty('X-Platform')
+    await refreshEntitlement({ renewalInfo: 'r.s.t', fetchImpl })
+    expect(JSON.parse(fetchImpl.mock.calls[1][1].body)).toEqual({})
+  })
+
   it('période de lancement : premium jusqu’à la date donnée par le relais, puis plus', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(response({ ok: true, premium: true, source: 'launch', launchUntil: inDays(10) }))
     await refreshEntitlement({ fetchImpl })

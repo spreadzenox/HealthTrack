@@ -64,6 +64,14 @@ export const requestPlatform = (platformHeader, clientStatus) => {
   return 'android'
 }
 
+/**
+ * Requête de l'app iPhone (en-têtes Node, en minuscules) : plateforme iOS au sens de requestPlatform, ou clé App Attest
+ * jointe. Sert à la fin de la période de lancement sur iPhone : ces signes ne donnent jamais plus de droits.
+ */
+export const isIosRequest = (headers = {}) =>
+  requestPlatform(headers['x-platform'], headers['x-integrity-status']) === 'ios' ||
+  (String(headers['x-platform'] ?? '').trim() === '' && Boolean(headers['x-appattest-key']))
+
 /** Analyse de test du workflow de déploiement : jamais de jeton, à séparer des vrais téléphones dans le bilan. */
 const isCiInstall = (installId) => String(installId).startsWith('ci-smoke-')
 

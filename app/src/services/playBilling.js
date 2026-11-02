@@ -155,10 +155,13 @@ const ownPurchase = (purchases, state = 'purchased') => {
 
 /** Un même jeton n'est vérifié qu'une fois à la fois (l'événement natif et la fin de l'achat arrivent ensemble). */
 const verifying = new Map()
-function verifyToken(token, refresh) {
+// App iPhone : le plugin de l'App Store joint `renewalInfo` à l'achat ; Google Play n'en a pas (repris du correctif iOS 37)
+const withRenewal = (purchaseToken, renewalInfo) => (renewalInfo ? { purchaseToken, renewalInfo } : { purchaseToken })
+
+function verifyToken(token, refresh, renewalInfo = null) {
   if (!verifying.has(token)) {
     const run = Promise.resolve()
-      .then(() => refresh({ purchaseToken: token }))
+      .then(() => refresh(withRenewal(token, renewalInfo)))
       .finally(() => verifying.delete(token))
     verifying.set(token, run)
   }
@@ -209,7 +212,7 @@ export async function purchasePlan(plan, { native, refresh = refreshEntitlement,
   const done = ownPurchase(result?.purchases)
   if (done) {
     storeToken(done.purchaseToken)
-    return { status: 'purchased', entitlement: await verifyToken(done.purchaseToken, refresh) }
+    return { status: 'purchased', entitlement: await verifyToken(done.purchaseToken, refresh, done.renewalInfo) }
   }
   if (result?.status === 'pending' || ownPurchase(result?.purchases, 'pending')) {
     return { status: 'pending', message: `Paiement en attente ${store.at} : le premium s’activera dès qu’il sera confirmé.` }
@@ -224,7 +227,7 @@ export async function restorePurchases({ native, refresh = refreshEntitlement } 
   const { purchases } = await plugin.queryPurchases()
   const owned = ownPurchase(purchases)
   storeToken(owned?.purchaseToken ?? null)
-  return { found: Boolean(owned), entitlement: await refresh({ purchaseToken: owned?.purchaseToken ?? null }) }
+  return { found: Boolean(owned), entitlement: await refresh(withRenewal(owned?.purchaseToken ?? null, owned?.renewalInfo)) }
 }
 
 /** À l'ouverture des Réglages : droits à jour, avec Google Play s'il répond, sinon avec le dernier jeton retenu. */
@@ -252,7 +255,7 @@ export async function handlePurchasesUpdated(event, { refresh = refreshEntitleme
   const done = ownPurchase(event.purchases)
   if (!done) return null
   storeToken(done.purchaseToken)
-  return verifyToken(done.purchaseToken, refresh)
+  return verifyToken(done.purchaseToken, refresh, done.renewalInfo)
 }
 
 export const RESUME_SYNC_MS = 15 * 60_000

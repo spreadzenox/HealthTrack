@@ -310,9 +310,9 @@ test('période de lancement : fichier du dépôt lisible, dates cohérentes ; va
   assert.deepEqual(loadConfig({}).launchPremium, file)
   assert.deepEqual(
     loadConfig({ LAUNCH_PREMIUM_FROM: '', LAUNCH_PREMIUM_UNTIL: '2026-12-01T00:00:00Z', LAUNCH_PREMIUM_OFF: '1' }).launchPremium,
-    { from: '', until: '2026-12-01T00:00:00Z', off: true },
+    { from: '', until: '2026-12-01T00:00:00Z', iosUntil: file.iosUntil, off: true },
   )
-  assert.deepEqual(readLaunchPeriod('/nulle/part.json'), { from: '', until: '', off: false })
+  assert.deepEqual(readLaunchPeriod('/nulle/part.json'), { from: '', until: '', iosUntil: '', off: false })
 })
 
 test('niveau : halcya_gold → Gold, halcya_premium → Silver ; période de lancement → Gold pour tous', () => {

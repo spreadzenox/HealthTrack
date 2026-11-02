@@ -10,7 +10,8 @@
  *   empreinte courte du jeton.
  * - « Période de lancement » (P23, option ②) : entre `from` (inclus, facultatif) et `until` (exclu), toute installation
  *   de la variante play a les droits premium, sans achat (pour les testeurs du test fermé). Réglée dans
- *   src/launch-period.json ; `off` la coupe sans toucher aux dates. Vide par défaut.
+ *   src/launch-period.json ; `off` la coupe sans toucher aux dates. Vide par défaut. `iosUntil` l'arrête plus tôt pour
+ *   les requêtes de l'app iPhone (02/11), voir launchUntilFor.
  */
 import { createHash } from 'node:crypto'
 import { HttpError } from './http.js'
@@ -141,6 +142,19 @@ async function acknowledgeIfNeeded(play, ent, purchaseToken) {
   return true
 }
 
+/**
+ * Période de lancement d'une requête : celle de la variante play, et pour une requête iPhone (`platform` = 'ios') la
+ * même, arrêtée à `iosUntil` s'il est plus tôt (décision du 02/11 : l'écran d'achat doit s'afficher pendant l'examen
+ * d'Apple). Une requête qui se dit Android n'obtient jamais plus que la période play.
+ */
+export const launchUntilFor = (period = {}, now, platform = 'android') => {
+  if (platform !== 'ios') return isLaunchPeriod(period, now)
+  const play = Date.parse(period.until ?? '')
+  const ios = Date.parse(period.iosUntil ?? '')
+  const until = Number.isFinite(ios) && (!Number.isFinite(play) || ios < play) ? period.iosUntil : period.until
+  return isLaunchPeriod({ ...period, until }, now)
+}
+
 /** Date de fin (ISO) si la période de lancement court à l'instant `now`, sinon null. */
 export const isLaunchPeriod = ({ from = '', until = '', off = false } = {}, now) => {
   if (off) return null
@@ -228,14 +242,14 @@ export function createPushVerifier({ audience, serviceAccount, fetchImpl = fetch
 
 /**
  * Routes d'abonnement, branchées par server.js.
- * @param {{ play: ReturnType<typeof createPlayClient>, packageName: string, launchPremium?: { from?: string, until?: string, off?: boolean },
+ * @param {{ play: ReturnType<typeof createPlayClient>, packageName: string, launchPremium?: { from?: string, until?: string, iosUntil?: string, off?: boolean },
  *   verifyPush: (authorization: string) => Promise<boolean>, log?: (e: object) => void, now?: () => number }} deps
  */
 export function createBillingRoutes({ play, appStore = null, appStoreNotifications = null, packageName, launchPremium = {}, verifyPush, log = () => {}, now = Date.now }) {
   return {
     /** POST /v1/subscription/verify — droits premium d'une installation (avec ou sans jeton d'achat). */
-    async verify(body, installId) {
-      const launchUntil = isLaunchPeriod(launchPremium, now())
+    async verify(body, installId, { platform = 'android' } = {}) {
+      const launchUntil = launchUntilFor(launchPremium, now(), platform)
       const purchaseToken = purchaseTokenFrom(body)
       if (!purchaseToken) return { status: 200, payload: verifyResponse({ ent: null, launchUntil }) }
 

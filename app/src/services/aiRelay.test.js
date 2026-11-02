@@ -2,7 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('./imagePrep.js', () => ({ prepareImageForGemini: () => Promise.resolve({ base64: 'AAAA', mimeType: 'image/jpeg' }) }))
 
-import { RELAY_URL, analyzePhotoViaRelay, analyzeTextViaRelay, describeCredits, getInstallId, installFingerprint, getLastCredits, getLastQuota, refreshCredits } from './aiRelay'
+import { RELAY_URL, analyzePhotoViaRelay, analyzeTextViaRelay, describeCredits, getInstallId, installFingerprint, getLastCredits, getLastQuota, platformHeaders, refreshCredits } from './aiRelay'
+import { storeFor } from '../config/distribution'
 
 const okResponse = (body, status = 200) => ({ ok: status < 400, status, json: () => Promise.resolve(body) })
 const future = () => new Date(Date.now() + 3600_000).toISOString()
@@ -16,6 +17,15 @@ describe('relais Halcya (variante play)', () => {
     expect(fp).toMatch(/^[0-9a-f]{12}$/)
     const { createHash } = await import('node:crypto')
     expect(fp).toBe(createHash('sha256').update(getInstallId()).digest('hex').slice(0, 12))
+  })
+
+  it('fin du lancement sur iPhone (02/11) : X-Platform: ios seulement dans l’app iPhone (VITE_STORE=appstore)', async () => {
+    expect(platformHeaders(storeFor('appstore'))).toEqual({ 'X-Platform': 'ios' })
+    expect(platformHeaders(storeFor('play'))).toEqual({})
+    // Build de test = play : aucun en-tête de plateforme sur les appels Android
+    const fetchImpl = vi.fn().mockResolvedValue(okResponse({ credits: { plan: 'free', remaining: 5, resetAt: future() } }))
+    await refreshCredits({ fetchImpl })
+    expect(fetchImpl.mock.calls[0][1].headers).not.toHaveProperty('X-Platform')
   })
 
   it('identifiant d’installation aléatoire, stable, au format accepté par le relais', () => {

@@ -6,7 +6,7 @@
  * Ce qui part : l'identifiant d'installation aléatoire (aiRelay.js) et, quand il existe, le jeton d'achat Google Play.
  * Aucune donnée de santé.
  */
-import { RELAY_URL, getInstallId } from './aiRelay'
+import { RELAY_URL, getInstallId, platformHeaders } from './aiRelay'
 import { localeDate } from '../i18n/locale.js'
 import { storeOfPurchase } from '../config/distribution'
 
@@ -70,14 +70,15 @@ export function getEntitlement({ now = Date.now() } = {}) {
  * Demande au relais les droits de cette installation (avec le jeton d'achat Google Play s'il y en a un).
  * Hors connexion ou en cas d'erreur, rend le dernier état connu marqué `offline: true`.
  */
-export async function refreshEntitlement({ purchaseToken = null, fetchImpl = globalThis.fetch, timeoutMs = ENTITLEMENT_TIMEOUT_MS } = {}) {
+export async function refreshEntitlement({ purchaseToken = null, renewalInfo = null, fetchImpl = globalThis.fetch, timeoutMs = ENTITLEMENT_TIMEOUT_MS } = {}) {
   const controller = typeof AbortController === 'function' ? new AbortController() : null
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
   try {
     const res = await fetchImpl(`${RELAY_URL}/v1/subscription/verify`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Install-Id': getInstallId() },
-      body: JSON.stringify(purchaseToken ? { purchaseToken } : {}),
+      headers: { 'Content-Type': 'application/json', 'X-Install-Id': getInstallId(), ...platformHeaders() },
+      // App iPhone : informations de renouvellement signées par Apple, lues par le relais (repris du correctif iOS 37)
+      body: JSON.stringify(purchaseToken ? { purchaseToken, ...(renewalInfo ? { renewalInfo } : {}) } : {}),
       ...(controller ? { signal: controller.signal } : {}),
     })
     const data = await res.json().catch(() => null)

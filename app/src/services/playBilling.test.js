@@ -116,6 +116,13 @@ describe('Google Play Billing côté app (jalon 6c-2)', () => {
     expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'jeton-gold' })
   })
 
+  it('App Store : renewalInfo de l’achat restauré transmis au relais (repris du correctif iOS 37)', async () => {
+    const refresh = vi.fn().mockResolvedValue({ premium: true, tier: 'gold' })
+    const native = { queryPurchases: vi.fn().mockResolvedValue({ purchases: [{ state: 'purchased', products: [GOLD_PRODUCT_ID], purchaseToken: 'a.b.c', renewalInfo: 'r.s.t' }] }) }
+    await restorePurchases({ native, refresh })
+    expect(refresh).toHaveBeenCalledWith({ purchaseToken: 'a.b.c', renewalInfo: 'r.s.t' })
+  })
+
   describe('GOLD-b2 : un seul abonnement Halcya à la fois', () => {
     const goldPlan = { productId: GOLD_PRODUCT_ID, tier: 'gold', basePlanId: 'mensuel', offerToken: 'tok-gold' }
 

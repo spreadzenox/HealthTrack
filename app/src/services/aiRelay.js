@@ -8,6 +8,7 @@
  * d'analyses par empreinte, effacé 13 mois après la dernière (relay/src/credits.js).
  */
 import { loadNutritionTable } from '../data/nutritionTable'
+import { STORE } from '../config/distribution'
 import { prepareImageForGemini } from './imagePrep.js'
 import { MEAL_TEXT_MAX_LENGTH, toMealResult } from './geminiStandalone.js'
 import { isTestDevice, requestIntegrity } from './playIntegrity.js'
@@ -104,8 +105,16 @@ function rememberCredits(credits) {
  * En-têtes de chaque appel : l'identifiant d'installation, le dernier état des crédits (le relais garde le plus
  * restrictif, pour que le compteur ne remonte pas quand il redémarre) et le jeton d'achat s'il y en a un.
  */
+/**
+ * Plateforme dite au relais : `X-Platform: ios` dans l'app iPhone (`VITE_STORE=appstore`), rien ailleurs. Le relais y
+ * arrête plus tôt la période de lancement (02/11) ; l'en-tête ne donne jamais plus de droits.
+ */
+export function platformHeaders(store = STORE) {
+  return store?.id === 'appstore' ? { 'X-Platform': 'ios' } : {}
+}
+
 function relayHeaders() {
-  const headers = { 'X-Install-Id': getInstallId() }
+  const headers = { 'X-Install-Id': getInstallId(), ...platformHeaders() }
   const state = readJson(CREDITS_KEY)?.state
   if (typeof state === 'string' && state) headers['X-Credits'] = state
   try {
