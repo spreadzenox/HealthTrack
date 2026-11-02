@@ -11,6 +11,7 @@ import LineIcon from '../components/LineIcon'
 import { loadWellbeingHistory } from '../services/mood/faceMoodData'
 import { frDecimal } from '../services/today'
 import { appLocale } from '../i18n/locale.js'
+import { faceModelTag } from '../services/mood/modelName'
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Jour' },
@@ -136,7 +137,7 @@ function expressionsBase(n, total) {
   return total > n ? `sur ${n} des ${total} ${word(total)}` : `sur ${n} ${word(n)}`
 }
 
-export default function WellbeingHistory({ now: givenNow }) {
+export default function WellbeingHistory({ now: givenNow, features }) {
   const [period, setPeriod] = useState('week')
   const [history, setHistory] = useState(undefined)
   const [noteOpen, setNoteOpen] = useState(false)
@@ -242,7 +243,7 @@ export default function WellbeingHistory({ now: givenNow }) {
             <p className="wbh-foot">Les expressions (joie, neutre, surprise…) apparaîtront avec les prochaines lectures.</p>
           )}
           <p className="wbh-foot">
-            Deux modèles embarqués (HSEmotion), sur le téléphone. Seuls ces nombres sont gardés, aucune image.
+            Deux modèles embarqués{faceModelTag(features)}, sur le téléphone. Seuls ces nombres sont gardés, aucune image.
           </p>
         </article>
       )}

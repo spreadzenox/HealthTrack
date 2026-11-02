@@ -30,6 +30,7 @@ import { FACE_BURST_TYPE, moodFaceBursts } from '../faceBursts'
 import { evaluateGate, gateDays } from './gate'
 import { calibrateRidge, predictCalibrated } from './calibration'
 import { appLocale, localeDate } from '../../i18n/locale.js'
+import { faceModelTag } from './modelName'
 
 /** Indices d'expression lus par l'estimateur (yaw / asymmetry / jawOpen servent à la qualité, pas à l'humeur). */
 export const EXPRESSION_KEYS = ['smile', 'duchenne', 'mouthFrown', 'browDown', 'browInnerUp']
@@ -353,7 +354,7 @@ const hour = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-d
 const DUO_WORDS = { accord: 'deux modèles d’accord', partiel: 'deux modèles à peu près d’accord', 'désaccord': 'deux modèles en désaccord' }
 
 /** Phrases pour la carte (et le tableau de bord). Toujours une estimation, jamais un diagnostic. */
-export function describeFaceMood(est) {
+export function describeFaceMood(est, { features } = {}) {
   if (!est) return null
   const lines = []
   if (est.day) {
@@ -385,9 +386,9 @@ export function describeFaceMood(est) {
   lines.push(est.model === 'personal'
     ? `Modèle personnel, appris sur vos ${est.calibrationDays} jours notés.`
     : est.model === 'va' && est.duo
-      ? `Deux modèles valence / éveil embarqués (HSEmotion), appris sur des centaines de milliers de visages, mis en commun${habit} ; vos notes, facultatives, l’affineront.`
+      ? `Deux modèles valence / éveil embarqués${faceModelTag(features)}, appris sur des centaines de milliers de visages, mis en commun${habit} ; vos notes, facultatives, l’affineront.`
       : est.model === 'va'
-      ? `Modèle valence / éveil embarqué (HSEmotion), appris sur des centaines de milliers de visages${habit} ; vos notes, facultatives, l’affineront.`
+      ? `Modèle valence / éveil embarqué${faceModelTag(features)}, appris sur des centaines de milliers de visages${habit} ; vos notes, facultatives, l’affineront.`
       : `Modèle général des expressions${est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''} ; vos notes, facultatives, l’affineront.`)
   return lines
 }

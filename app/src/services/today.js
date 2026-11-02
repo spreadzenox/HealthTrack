@@ -11,6 +11,8 @@
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
 import { appLocale, localeDate } from '../i18n/locale.js'
+import { faceModelTag } from './mood/modelName'
+import { FEATURES } from '../config/distribution'
 
 export const GUT_TYPE = 'gut'
 export const GUT_SOURCE = 'app_gut'
@@ -285,6 +287,13 @@ export function gutNotesProgress(entries) {
 /** Ce que dit le modèle du bien-être, en clair (mode détails). */
 export const MODEL_LABELS = {
   prior: 'expressions du visage (réglage de départ)',
-  va: 'deux modèles valence / éveil (HSEmotion)',
+  va: 'deux modèles valence / éveil',
   personal: 'calibré sur vos notes',
+}
+
+/** Libellé du modèle ; nom technique (« HSEmotion ») en sideload seulement (POL-PLAY-100). */
+export function modelLabel(model, features = FEATURES) {
+  const label = MODEL_LABELS[model]
+  if (!label) return model
+  return model === 'va' ? `${label}${faceModelTag(features)}` : label
 }
