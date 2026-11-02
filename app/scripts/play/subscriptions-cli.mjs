@@ -42,6 +42,7 @@ for (const product of PRODUCTS) {
       '',
       ...r.plans.map((p) => `- Formule \`${p.basePlanId}\` : ${p.state}, ${p.price} / ${p.period}`),
       product.trial ? `- Offre \`${product.trial.offerId}\` : ${r.offerState}${r.offerCreated ? ' (créée)' : ''}` : '- Sans essai gratuit',
+      r.listingUpdated ? `- Fiche mise à jour : « ${buildCatalog(packageName, product).subscription.listings[0].title} »` : '- Fiche déjà à jour.',
       r.addedBasePlans.length ? `- Formules ajoutées : ${r.addedBasePlans.join(', ')}` : null,
       r.activated.length ? `- Activés à ce passage : ${r.activated.join(', ')}` : '- Rien à activer.',
       ...r.drift.map((d) => `- ⚠️ Écart de prix : ${d}`),

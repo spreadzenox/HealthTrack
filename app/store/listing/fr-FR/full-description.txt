@@ -29,9 +29,11 @@ Si vous l'activez, une lecture du visage de quelques secondes estime votre bien-
 • Tendances : votre forme comparée à vos propres semaines habituelles.
 • Analyses : ce qui va de pair avec votre ventre et votre bien-être, calculé sur le téléphone.
 
-★ Sans abonnement, ou avec Premium
+★ Sans abonnement, avec Silver ou Gold
 • Sans abonnement : journal, saisie en un geste, imports des montres, bien-être estimé, graphiques, export de vos données, et des analyses IA de repas offertes chaque mois.
-• Avec l'abonnement Premium : vos pistes repas → ventre en détail, la réintroduction guidée, le rapport PDF et l'analyse IA des repas jusqu'à 10 par jour. Prix et essai affichés dans l'app avant tout achat.
+• Silver : vos pistes repas → ventre en détail, la réintroduction guidée, le rapport PDF et l'analyse IA des repas jusqu'à 10 par jour.
+• Gold : tout Silver, avec l'analyse IA des repas jusqu'à 20 par jour. Gold estime mieux les quantités.
+Prix et essai affichés dans l'app avant tout achat.
 
 ★ Local par défaut, l'IA seulement si vous le voulez
 • Vos données restent sur votre téléphone, sans compte à créer.

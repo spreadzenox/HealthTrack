@@ -43,7 +43,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   propriétaire) après le déploiement, lire les journaux du relais (`event: usage`,
   `served: gold`, `gold_fallback`) via le workflow de vérification ; si `gemini-3.8-flash` est refusé en zone `eu`,
   les analyses passent sur Flash-Lite (rien de cassé) : le noter et prévenir le propriétaire.
-- [ ] **LISTING-2 — fiche Play et abonnements aux noms Silver / Gold** (idée du 02/11 20:35, `IDEES.md` I209–I210 ;
+- [x] **LISTING-2 — fiche Play et abonnements aux noms Silver / Gold** (livré le 03/11 00:35 : titre « Halcya Silver », Gold « Tout Silver… », fiche « Sans abonnement, avec Silver ou Gold », description courte « SII, FODMAP » ; `ensureCatalog` réécrit désormais la fiche fr-FR d'un abonnement existant si elle diffère (`updateMask=listings`, autres langues et prix intacts) ; à vérifier au résumé des workflows « Play — fiche » et « Play — abonnements » après le merge) (idée du 02/11 20:35, `IDEES.md` I209–I210 ;
   run de code court, avant la version candidate) : la fiche dit encore « Premium » (10 analyses par jour, Gold absent)
   et le produit Silver s'appelle « Halcya Premium » dans la feuille d'achat de Google alors que l'app dit « Silver ».
   (a) section abonnement de `full-description.txt` (texte prêt dans I209) ; (b) `subscriptions.mjs` : titre
