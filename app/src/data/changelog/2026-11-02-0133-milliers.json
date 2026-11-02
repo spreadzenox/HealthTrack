@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02",
-  "kind": "correction",
+  "kind": "correctif",
   "title": "Grands nombres plus lisibles",
   "items": [
     "Les nombres à quatre chiffres ou plus gardent une espace visible entre les milliers, par exemple « 1 039 kcal » sur la page Repas."
