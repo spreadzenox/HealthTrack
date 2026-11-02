@@ -178,6 +178,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **02/11 09:33** — **I6-RELAIS-5a** (App Attest, étape 1/5) : le relais sait lire le format CBOR et les « données d'authentificateur » qu'envoie l'iPhone (clé publique, compteur, environnement), avec 12 tests ; rien n'est encore branché, aucun effet sur Android ni sur l'iPhone. Prochain : POL-PLAY-12 (onboarding en clair) ou I6-RELAIS-5b (attestation).
 - **02/11 08:33** — **Run idées** : App Attest pour l'iPhone spécifié (I6-RELAIS-5, `IDEES.md` I208 : attestation, assertion, registre Firestore, interrupteur `APP_ATTEST_MODE`, tests sur chaîne jetable), découpé en 5a–5e ; P38 (Team ID) posée. Prochain run de code : POL-PLAY-12 (onboarding en clair), puis I6-RELAIS-5a.
 - **02/11 02:33** — **Polissage play** : audit sombre sur démo de Paramètres, Données et Réintroduction (POL-PLAY-12) ; POL-PLAY-95 : Paramètres annonçait « jusqu’à 10 analyses par jour » pendant le test et avec Gold, alors que le relais en sert 20 → plafond selon le niveau (Silver 10, Gold 20, lancement = Gold). Prochain : POL-PLAY-12 sur données vierges en sombre (onboarding compris) ; P37 attendu pour GOLD-a3.
 - **02/11 04:33** — **Polissage play** : audit démo clair Jours, Repas, Nutrition, Tendances (POL-PLAY-12) ; POL-PLAY-97 : le sodium sous son maximum s’affiche « sous la limite » (plus la couleur « atteint »), « incertain » si des repas manquent.

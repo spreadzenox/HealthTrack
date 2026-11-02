@@ -33,6 +33,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 09:33 — [App Attest 5a : CBOR](runs/2026-11-02-0933-appattest-cbor.md) | 🔧 | Relais : lecteur CBOR et lecture des données de clé envoyées par l'iPhone (première des 5 étapes d'App Attest) ; rien de branché, aucun changement visible |
 | 02/11 08:33 — [Idées : App Attest](runs/2026-11-02-0833-idees-app-attest.md) | 💡 | I6-RELAIS-5 spécifié d'après la doc d'Apple (attestation, assertion, registre Firestore, interrupteur à part, tests sur chaîne jetable, zéro secret) et découpé en 5 runs ; P38 : votre Team ID Apple, pas urgent |
 | 02/11 07:33 — [« 1er novembre »](runs/2026-11-02-0733-premier-du-mois.md) | 🔧 | Audit play en clair du parcours repas (analyse photo, éditeur, historique ; POL-PLAY-12) ; POL-PLAY-99 : le premier du mois s’écrit « 1er » dans toutes les dates (Journal, Repas, Accueil, bien-être, Données, Nouveautés) |
 | 02/11 06:33 — [Merge #620 et #621](runs/2026-11-02-0633-merge-620-621.md) | 🔧 | Les deux PR vertes restées ouvertes (merge refusé aux runs précédents) sont mergées, #621 après remise à jour du journal |
