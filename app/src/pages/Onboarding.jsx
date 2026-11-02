@@ -16,6 +16,7 @@ import LineIcon from '../components/LineIcon'
 import { APP_NAME } from '../config/brand'
 import './Onboarding.css'
 import { appLocale } from '../i18n/locale.js'
+import Ordinal from '../components/Ordinal'
 
 const WATCHES = [
   {
@@ -590,7 +591,7 @@ function GestureStep({ goal, gesture, onGesture }) {
       {current && (
         <p className="onb-note onb-note-ok" role="status">
           {gut
-            ? `C’est noté, à ${time}. C’est votre premier jour de suivi ; les premières pistes viennent vers le 21ᵉ.`
+            ? <>C’est noté, à {time}. C’est votre premier jour de suivi ; les premières pistes viennent vers le <Ordinal n={21} />.</>
             : `C’est noté, à ${time}. Vous la retrouverez dans le Journal.`}
         </p>
       )}

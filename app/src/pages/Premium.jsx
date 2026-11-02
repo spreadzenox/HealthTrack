@@ -9,6 +9,7 @@ import DetailsToggle from '../components/DetailsToggle'
 import './Premium.css'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { REMINDER_DAYS_BEFORE, trialReminderAvailable } from '../services/trialReminder'
+import Ordinal from '../components/Ordinal'
 
 
 const PER = { year: 'an', month: 'mois' }
@@ -40,7 +41,7 @@ function TrialTimeline({ days, reminder }) {
       )}
       <li>
         <span className="paywall-timeline-day">jour {days}</span>
-        <span>1er paiement, sauf si vous annulez avant</span>
+        <span><Ordinal n={1} /> paiement, sauf si vous annulez avant</span>
       </li>
     </ol>
   )
@@ -146,7 +147,7 @@ export default function Premium({ context = null, onClose = null }) {
         {launch
           ? `Merci de tester l’app ! ${ent.launchUntil ? `Jusqu’au ${lastLaunchDay(ent.launchUntil)}, tout` : 'Tout'} ce qui suit est débloqué : vous n’avez rien à payer, aucune carte bancaire n’est demandée.`
           : onboarding
-          ? 'Vos pistes arriveront vers le 21ᵉ jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.'
+          ? <>Vos pistes arriveront vers le <Ordinal n={21} /> jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.</>
           : offeredTiers.length > 1
           ? 'Silver ou Gold : seul le nombre d’analyses IA par jour change.'
           : 'Voici ce que l’abonnement ajoute.'}
