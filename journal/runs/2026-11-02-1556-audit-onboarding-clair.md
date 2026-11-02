@@ -21,7 +21,7 @@
   phrase contextuelle : tout était livré). Idée **POL-PLAY-101** : « 1er » sans exposant à côté de « 21ᵉ ».
 
 ## Vérifications
-- Aucun fichier de l’app modifié ; `npm run test` lancé pour la PR (journal seul).
+- Aucun fichier de l’app modifié ; `npm run test` 2 864 verts (journal seul, aucun build ni capture à refaire).
 
 ## Suite
 - POL-PLAY-12 : audit démo en clair de Sources et de Plus ; LICENCES-TIERCES (page des licences, sans nom de modèle
