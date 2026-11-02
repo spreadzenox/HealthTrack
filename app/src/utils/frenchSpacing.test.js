@@ -33,6 +33,13 @@ describe('fixFrenchSpacing', () => {
     expect(fixFrenchSpacing('3 553 aliments, 12 480 pas')).toBe(`3${NB}553 aliments, 12${NB}480${NB}pas`)
   })
 
+  it('élargit l’espace fine des milliers d’Intl, presque invisible en Figtree (« 1039 kcal », POL-PLAY-94)', () => {
+    const intl = (1039).toLocaleString('fr-FR')
+    expect(fixFrenchSpacing(`2 repas · ≈ ${intl} kcal`)).toBe(`2 repas · ≈ 1${NB}039${NB}kcal`)
+    expect(fixFrenchSpacing('12\u202f480\u202f000 pas')).toBe(`12${NB}480${NB}000${NB}pas`)
+    expect(fixFrenchSpacing('1\u202f039')).not.toContain('\u202f')
+  })
+
   it('garde une date d’un seul tenant : jour, mois et année (POL-PLAY-39)', () => {
     expect(fixFrenchSpacing('jusqu’au 18 nov. 2026 : rien')).toBe(`jusqu’au 18${NB}nov.${NB}2026${NB}: rien`)
     expect(fixFrenchSpacing('le 1er décembre')).toBe(`le 1er${NB}décembre`)
