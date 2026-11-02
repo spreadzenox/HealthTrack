@@ -1445,6 +1445,19 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
     `STORE.id === 'play'` et `Capacitor.isPluginAvailable('TrialReminder')` ; test `VITE_STORE=appstore` ; Android
     inchangé. À signaler à la routine iOS une fois livré.
   - [ ] **I6-RELAIS-5** (plus tard) App Attest ; d'ici là exemption iOS (`X-Platform: ios` / `no_plugin`) inchangée.
+    **Spécifié le 02/11 08:33** (`IDEES.md` I208, doc Apple lue, racine App Attest épinglée par son empreinte ; zéro
+    dépendance, zéro secret ; reçu et « fraud metric » laissés de côté). Un run par étape :
+    - [ ] **5a** `relay/src/cbor.js` (décodeur borné, testé seul) + lecture de `authData` (rpIdHash, flags, counter,
+      aaguid, credentialId, clé COSE, extensions).
+    - [ ] **5b** `relay/src/appattest.js` : attestation (chaîne `x5c` → racine App Attest, nonce de l'OID
+      1.2.840.113635.100.8.2, keyId, rpId `<Team ID>.fr.jpesquet.sante`, aaguid, compteur 0, catégorie 2 ou 4 si
+      présente) ; tests sur une chaîne `openssl` jetable comme `appstore.test.js`.
+    - [ ] **5c** assertion (signature, rpId, compteur croissant, `clientData` = installId + heure ±5 min + empreinte du
+      corps) + registre Firestore `appattest` (clé déjà liée ailleurs refusée, `expireAt` 13 mois, cache mémoire).
+    - [ ] **5d** routes `/v1/attest/challenge` et `/v1/attest/register`, branche iOS de `createIntegrityGuard`,
+      `APP_ATTEST_MODE` (défaut `off`), en-têtes CORS, ligne « iPhone » du bilan du déploiement.
+    - [ ] **5e** demande à la routine iOS (plugin Swift, en-têtes `X-AppAttest-*`), `observe` quelques jours puis
+      `enforce`. Déploiement : attend **P38** (Team ID).
   - Question ouverte : la période de lancement (Gold pour toute installation sans jeton) vaut aussi pour l'iPhone
     aujourd'hui, puisque le relais ne distingue pas la plateforme sur `/v1/subscription/verify` ; à confirmer avec la
     routine iOS si l'iPhone doit en être exclu.
