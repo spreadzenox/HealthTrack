@@ -19,7 +19,9 @@
  *
  * Play Integrity (src/integrity.js) : en-tête facultatif `X-Integrity-Token` sur l'analyse ; selon INTEGRITY_MODE, un
  * verdict refusé est seulement journalisé (observe) ou bloque l'analyse avec une 403 `integrity` (enforce). Seules les
- * requêtes Android sont concernées : `X-Platform: ios` (app iPhone) n'est jamais bloqué.
+ * requêtes Android sont concernées. Une requête iPhone (`X-Platform: ios`) n'est vérifiée que si APP_ATTEST_MODE n'est
+ * pas `off` : assertion App Attest (`X-AppAttest-Key`, `X-AppAttest-Assertion`, `X-AppAttest-Time`) sur le corps brut,
+ * bloquante seulement en `enforce` (I6-RELAIS-5d-2).
  *
  * Crédits : en-têtes facultatifs `X-Credits` (dernier état donné par le relais) et `X-Purchase-Token` (jeton
  * Google Play, pour retrouver le premium après un redémarrage du relais). Les réponses d'analyse et de crédits
@@ -34,7 +36,7 @@
  * Gold repasse sur Flash-Lite ; au-delà de 19 €, plus d'analyse jusqu'au mois suivant.
  */
 import { createHash } from 'node:crypto'
-import { HttpError, readJson } from './http.js'
+import { HttpError, readBody, readJson } from './http.js'
 import { isTokenShape } from './billing.js'
 import { stripJpegMetadata } from './jpeg.js'
 import { parseClientState } from './credits.js'
@@ -58,6 +60,8 @@ const QUOTA_MESSAGES = {
 }
 
 /** Refus Play Integrity (mode enforce) : app modifiée, appareil non certifié, ou app installée hors de Google Play. */
+export const INTEGRITY_MESSAGE_IOS =
+  "L'analyse IA n'est disponible que dans l'app installée depuis l'App Store. Mettez l'app à jour, puis réessayez."
 export const INTEGRITY_MESSAGE =
   "L'analyse IA n'est disponible que dans l'app installée depuis Google Play, sur un téléphone certifié. Mettez l'app à jour depuis le Play Store, puis réessayez."
 
@@ -421,13 +425,21 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       // par l'app (INSTALLS-21). Seulement pour les bilans : il ne change aucun droit, le falsifier n'apporte rien
       const testDevice = req.headers['x-test-device'] === '1'
 
-      const body = await readJson(req, MAX_BODY_BYTES)
+      // Corps brut gardé : l'assertion App Attest de l'iPhone signe ces octets exacts (I6-RELAIS-5d-2)
+      const raw = await readBody(req, MAX_BODY_BYTES)
+      let body
+      try {
+        body = JSON.parse(raw.toString('utf8'))
+      } catch {
+        throw new HttpError(400, 'bad_json', 'JSON attendu.')
+      }
       const request = buildRequest(body, ingredientNames)
       kind = request.kind
 
       if (integrity) {
-        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], testDevice, platform: req.headers['x-platform'] })
-        if (!check.ok) throw new HttpError(403, 'integrity', INTEGRITY_MESSAGE)
+        const attest = { keyId: req.headers['x-appattest-key'], assertion: req.headers['x-appattest-assertion'], time: req.headers['x-appattest-time'] }
+        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], testDevice, platform: req.headers['x-platform'], attest, body: raw })
+        if (!check.ok) throw new HttpError(403, 'integrity', String(check.status).startsWith('attest_') ? INTEGRITY_MESSAGE_IOS : INTEGRITY_MESSAGE)
       }
 
       // Budget Vertex du mois épuisé (19 € par défaut, sur 20 €) : plus d'analyse jusqu'au mois suivant

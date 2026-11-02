@@ -125,8 +125,11 @@ export function evaluateVerdict(payload, { packageName, requestHash, now = Date.
  * Garde Play Integrity du relais. `check(installId, token, { clientStatus, testDevice, platform })` → `{ ok, mode, status }` ; `ok` vaut toujours
  * `true` hors du mode `enforce`, et pour une requête iOS (`platform` = en-tête `X-Platform`, voir requestPlatform).
  * `status` : 'off' | 'not_android' | 'trusted' (cache) | 'passed' | 'missing' | 'rejected' | 'unavailable'.
+ * Avec `appAttest` (routes de src/attestroutes.js, mode autre que `off`), une requête iOS est confiée à
+ * `appAttest.verify` (`attest` = en-têtes X-AppAttest-*, `body` = corps brut) : statuts 'attest_passed',
+ * 'attest_missing', 'attest_rejected', 'attest_unavailable', bloquants seulement en APP_ATTEST_MODE=enforce.
  */
-export function createIntegrityGuard({ client, packageName, mode = 'observe', log = () => {}, now = Date.now, hash = (id) => id }) {
+export function createIntegrityGuard({ client, packageName, mode = 'observe', appAttest = null, log = () => {}, now = Date.now, hash = (id) => id }) {
   const effective = INTEGRITY_MODES.includes(mode) ? mode : 'observe'
   /** installId → { ok, until } */
   const cache = new Map()
@@ -139,9 +142,13 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', lo
 
   return {
     mode: effective,
-    async check(installId, integrityToken, { clientStatus, testDevice = false, platform } = {}) {
+    async check(installId, integrityToken, { clientStatus, testDevice = false, platform, attest, body } = {}) {
       // Appareil de test de Google (robots du rapport de pré-lancement), signalé par l'app : journalisé à part
       const testlab = testDevice === true
+      // iPhone avec App Attest réglé (APP_ATTEST_MODE, I6-RELAIS-5d-2) : assertion vérifiée, indépendamment d'INTEGRITY_MODE
+      if (appAttest && appAttest.mode !== 'off' && requestPlatform(platform, clientStatus) === 'ios') {
+        return appAttest.verify(installId, { attest, body })
+      }
       if (effective === 'off' || !client) return { ok: true, mode: 'off', status: 'off' }
       if (requestPlatform(platform, clientStatus) === 'ios') {
         // Pas de Play Integrity sur iPhone : jamais bloqué (App Attest plus tard), compté à part dans le bilan

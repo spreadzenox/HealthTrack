@@ -56,6 +56,11 @@ export function createChallengeStore({ now = Date.now, ttlMs = CHALLENGE_TTL_MS,
 }
 
 const isField = (value) => typeof value === 'string' && value.length > 0 && value.length <= MAX_FIELD_CHARS
+/** Assertion d'une requête : quelques centaines d'octets en base64 ; keyId : 32 octets en base64. */
+const MAX_ASSERTION_CHARS = 4096
+const isHeader = (value, max) => typeof value === 'string' && value.length > 0 && value.length <= max
+/** Analyse de test du workflow de déploiement, comptée à part dans le bilan. */
+const isCiInstall = (installId) => String(installId).startsWith('ci-smoke-')
 
 /**
  * @param {{ registry: ReturnType<import('./attestregistry.js').createAttestRegistry>,
@@ -89,6 +94,32 @@ export function createAttestRoutes({ registry, challenges = createChallengeStore
         }
         log({ ...entry, status: 'unavailable', httpStatus: err?.status ?? null })
         return { status: 503, payload: { error: 'unavailable', message: 'Réessayez dans un instant.' } }
+      }
+    },
+
+    /**
+     * Vérifie l'assertion d'une requête iPhone (I6-RELAIS-5d-2), appelée par la garde d'intégrité.
+     * `attest` = en-têtes X-AppAttest-Key / X-AppAttest-Assertion / X-AppAttest-Time ; `body` = corps brut (octets).
+     * Statuts : attest_passed, attest_missing, attest_rejected, attest_unavailable. `ok` ne vaut faux qu'en `enforce`,
+     * pour une assertion absente ou refusée ; un registre injoignable (Firestore) ne bloque jamais.
+     * Journal `event: 'integrity'`, `platform: 'ios'` (même bilan que Play Integrity), jamais la clé ni l'assertion.
+     * @returns {Promise<{ ok: boolean, mode: string, status: string }>}
+     */
+    async verify(installId, { attest = {}, body = Buffer.alloc(0) } = {}) {
+      const { keyId, assertion, time } = attest ?? {}
+      const entry = { event: 'integrity', platform: 'ios', mode: effective, ci: isCiInstall(installId), install: hash(installId) }
+      const done = (status, extra = {}) => {
+        log({ ...entry, status, ...extra })
+        const blocked = status === 'attest_missing' || status === 'attest_rejected'
+        return { ok: !(effective === 'enforce' && blocked), mode: effective, status }
+      }
+      if (!isHeader(keyId, 64) || !isHeader(assertion, MAX_ASSERTION_CHARS) || !isHeader(time, 16)) return done('attest_missing')
+      try {
+        const result = await registry.check({ installId, keyId, assertion, time, body })
+        return done('attest_passed', { environment: result.environment, persisted: result.persisted })
+      } catch (err) {
+        if (err instanceof AppAttestError) return done('attest_rejected', { reasons: [err.reason] })
+        return done('attest_unavailable', { httpStatus: err?.status ?? null })
       }
     },
   }

@@ -90,6 +90,7 @@ const handler = createHandler({
     client: createIntegrityClient({ packageName: config.packageName, getToken: metadataTokenProvider({ scopes: [PLAYINTEGRITY_SCOPE] }) }),
     packageName: config.packageName,
     mode: config.integrityMode,
+    appAttest,
     hash: hashInstallId,
     log,
   }),
