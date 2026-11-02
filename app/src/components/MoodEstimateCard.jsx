@@ -12,7 +12,7 @@ import { MODEL_LABELS, formatDelta, frDecimal, wellbeingTrend } from '../service
 import DetailsToggle from './DetailsToggle'
 import LineIcon from './LineIcon'
 import './MoodEstimateCard.css'
-import { appLocale } from '../i18n/locale.js'
+import { appLocale, localeDate } from '../i18n/locale.js'
 
 const pct = (v) => `${(v / 5) * 100}%`
 
@@ -151,7 +151,7 @@ export default function MoodEstimateCard({
           </span>
         )}
       </p>
-      {!est.day && <p className="mood-estimate-when mono">dernière lecture · {new Date(est.moment.at).toLocaleDateString(appLocale(), { day: 'numeric', month: 'short' })} {hourOf(est.moment.at)}</p>}
+      {!est.day && <p className="mood-estimate-when mono">dernière lecture · {localeDate(est.moment.at, { day: 'numeric', month: 'short' })} {hourOf(est.moment.at)}</p>}
       <Sparkline series={trend.series} mean={trend.mean} />
       {details && (
         <div className="mood-details">

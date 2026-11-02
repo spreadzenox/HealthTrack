@@ -10,7 +10,7 @@
  */
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
-import { appLocale } from '../i18n/locale.js'
+import { appLocale, localeDate } from '../i18n/locale.js'
 
 export const GUT_TYPE = 'gut'
 export const GUT_SOURCE = 'app_gut'
@@ -75,7 +75,7 @@ export const frDecimal = (v) => v.toLocaleString(appLocale(), { minimumFractionD
 
 /** « mer. 21 oct. · Bonjour » (prénom ajouté quand l'onboarding le demandera). */
 export function headerLine(now = new Date(), firstName = '') {
-  const date = now.toLocaleDateString(appLocale(), { weekday: 'short', day: 'numeric', month: 'short' })
+  const date = localeDate(now, { weekday: 'short', day: 'numeric', month: 'short' })
   return `${date} · Bonjour${firstName ? ` ${firstName}` : ''}`
 }
 

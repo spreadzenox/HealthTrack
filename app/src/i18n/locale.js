@@ -80,3 +80,14 @@ export const appLocale = () => LOCALES[current]
  * `(3.4).toFixed(1).replace('.', decimalMark())` → « 3,4 » en français, « 3.4 » en anglais.
  */
 export const decimalMark = () => (current === 'fr' ? ',' : '.')
+
+/**
+ * `date.toLocaleDateString(appLocale(), opts)`, avec « 1er » pour le premier du mois en français
+ * (« dimanche 1er novembre », « 1er déc. 2026 ») : Intl écrit « 1 novembre ».
+ */
+export function localeDate(date, opts) {
+  const d = date instanceof Date ? date : new Date(date)
+  const text = d.toLocaleDateString(appLocale(), opts)
+  if (current !== 'fr' || !opts?.day || d.getDate() !== 1) return text
+  return text.replace(/(^|\s)1(?=[\s  ])/, '$11er')
+}

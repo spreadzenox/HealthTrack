@@ -27,7 +27,7 @@ import GutEveningReminder from './GutEveningReminder'
 import StoolLine from './StoolLine'
 import LineIcon from './LineIcon'
 import './TodayCards.css'
-import { appLocale } from '../i18n/locale.js'
+import { appLocale, localeDate } from '../i18n/locale.js'
 
 const DAY_MS = 86_400_000
 
@@ -44,7 +44,7 @@ function lastNoteWhen(iso) {
   if (days <= 0) return time
   if (days === 1) return `hier ${time}`
   if (days < 7) return `${at.toLocaleDateString(appLocale(), { weekday: 'long' })} ${time}`
-  return `le ${at.toLocaleDateString(appLocale(), { day: 'numeric', month: 'long' })} ${time}`
+  return `le ${localeDate(at, { day: 'numeric', month: 'long' })} ${time}`
 }
 
 /** Rechargé à chaque écriture (`health-entries-updated`). */

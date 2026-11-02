@@ -7,7 +7,7 @@
  * Aucune donnée de santé.
  */
 import { RELAY_URL, getInstallId } from './aiRelay'
-import { appLocale } from '../i18n/locale.js'
+import { localeDate } from '../i18n/locale.js'
 import { storeOfPurchase } from '../config/distribution'
 
 const ENTITLEMENT_KEY = 'halcya_entitlement'
@@ -99,11 +99,7 @@ export async function refreshEntitlement({ purchaseToken = null, fetchImpl = glo
 }
 
 // « 1er déc. 2026 » plutôt que « 1 déc. 2026 » en français
-const shortDate = (iso) => {
-  const date = new Date(iso)
-  const text = date.toLocaleDateString(appLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
-  return date.getDate() === 1 && appLocale().startsWith('fr') ? text.replace(/^1(?=\s)/, '1er') : text
-}
+const shortDate = (iso) => localeDate(iso, { day: 'numeric', month: 'short', year: 'numeric' })
 
 /** La fin de la période de lancement est exclue : on affiche le dernier jour offert (minuit → la veille). */
 export const lastLaunchDay = (iso) => shortDate(Date.parse(iso) - 1)

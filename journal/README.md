@@ -30,6 +30,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 07:33 — [« 1er novembre »](runs/2026-11-02-0733-premier-du-mois.md) | 🔧 | Audit play en clair du parcours repas (analyse photo, éditeur, historique ; POL-PLAY-12) ; POL-PLAY-99 : le premier du mois s’écrit « 1er » dans toutes les dates (Journal, Repas, Accueil, bien-être, Données, Nouveautés) |
 | 02/11 06:33 — [Merge #620 et #621](runs/2026-11-02-0633-merge-620-621.md) | 🔧 | Les deux PR vertes restées ouvertes (merge refusé aux runs précédents) sont mergées, #621 après remise à jour du journal |
 | 02/11 05:33 — [Bientôt sur Analyses](runs/2026-11-02-0533-analyses-bientot.md) | 🔧 | Audit démo en clair (Jours, Repas, Tendances, Analyses, Bien-être, Sources ; POL-PLAY-12) ; POL-PLAY-98 : les habitudes pas encore comparables ont chacune leur ligne dans « Bientôt » au lieu d’une phrase isolée. PR #621 mergée au run de 06:33 |
 | 02/11 04:33 — [Sodium sous la limite](runs/2026-11-02-0433-sodium-limite.md) | 🔧 | Audit démo clair Jours, Repas, Nutrition, Tendances (POL-PLAY-12) ; POL-PLAY-97 : le sodium sous son maximum n’est plus coloré « atteint » (état « sous la limite », « incertain » si des repas manquent) ; PR #620 mergée au run de 06:33 |

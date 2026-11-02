@@ -30,7 +30,7 @@
 import { localDateKey } from '../analysisEngine'
 import { moodFaceBursts } from '../faceBursts'
 import { blockedRidgePredictions, effectiveZ, lag1Autocorrelation, sharedAutocorrelation } from './blockCv'
-import { appLocale } from '../../i18n/locale.js'
+import { localeDate } from '../../i18n/locale.js'
 
 export const GATE_MIN_DAYS = 30
 export const GATE_Z_OPEN = 3.29
@@ -243,7 +243,7 @@ export function evaluateGate(days, { today } = {}) {
   return out
 }
 
-const frenchDay = (key) => new Date(`${key}T12:00:00`).toLocaleDateString(appLocale(), { day: 'numeric', month: 'long' })
+const frenchDay = (key) => localeDate(`${key}T12:00:00`, { day: 'numeric', month: 'long' })
 
 /**
  * Une phrase pour la carte « Lecture du visage » : où en est la vérification facultative « votre visage suit vos
