@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-02",
+  "kind": "correctif",
+  "variants": ["play"],
+  "title": "Prix de l’abonnement mensuel dit une fois",
+  "items": [
+    "Page d’abonnement : avec la formule mensuelle, le prix n’est plus répété sous le bouton."
+  ]
+}
