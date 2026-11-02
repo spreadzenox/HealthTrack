@@ -39,7 +39,7 @@ import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { generateDemoEntries } from '../visual/demoData.mjs'
-import { checkBudget } from './budget.mjs'
+import { checkBudget, workerSettled } from './budget.mjs'
 
 process.env.TZ = 'Europe/Paris'
 const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -128,8 +128,19 @@ function latestChangelogId() {
  * longues. `pending` = requêtes pas encore terminées.
  */
 function instrument() {
-  const stats = { idbReads: 0, idbRecords: 0, pending: 0, longTasks: [] }
+  const stats = { idbReads: 0, idbRecords: 0, pending: 0, tasks: 0, replies: 0, longTasks: [] }
   globalThis.__perf = stats
+  // Dans le Worker : tâches reçues et réponses envoyées, pour savoir quand il a vraiment fini (I139)
+  if (typeof WorkerGlobalScope !== 'undefined' && globalThis instanceof WorkerGlobalScope) {
+    globalThis.addEventListener('message', () => {
+      stats.tasks++
+    })
+    const post = globalThis.postMessage.bind(globalThis)
+    globalThis.postMessage = (...a) => {
+      stats.replies++
+      return post(...a)
+    }
+  }
   const wrap = (proto, name, count) => {
     const orig = proto[name]
     if (!orig) return
@@ -168,16 +179,21 @@ function instrument() {
   }
 }
 
-/** Lectures du Worker des analyses de la page : attendre qu'il ait fini (500 ms sans nouvelle lecture). */
-async function workerStats(page) {
+/** Lectures du Worker des analyses de la page : attendre qu'il ait fini (`workerSettled`, budget.mjs). */
+async function workerStats(page, { waitForWorker = false } = {}) {
   const m = { workerReads: 0, workerRecords: 0 }
+  // Échauffement (I139) : l'événement « load » précède le lancement du Worker par React ; sans cette attente,
+  // l'échauffement ne mesurait rien et la reconstruction unique des agrégats retombait sur la page suivante.
+  if (waitForWorker && page.workers().length === 0) {
+    await page.waitForEvent('worker', { timeout: 30000 }).catch(() => null)
+  }
   for (const w of page.workers()) {
     const t0 = Date.now()
     let last = null
     while (Date.now() - t0 < 60000) {
-      const s = await w.evaluate(() => ({ reads: globalThis.__perf?.idbReads ?? 0, records: globalThis.__perf?.idbRecords ?? 0, pending: globalThis.__perf?.pending ?? 0 })).catch(() => null)
+      const s = await w.evaluate(() => ({ reads: globalThis.__perf?.idbReads ?? 0, records: globalThis.__perf?.idbRecords ?? 0, pending: globalThis.__perf?.pending ?? 0, tasks: globalThis.__perf?.tasks ?? 0, replies: globalThis.__perf?.replies ?? 0 })).catch(() => null)
       if (!s) break
-      if (last && s.pending === 0 && s.reads === last.reads) {
+      if (workerSettled(last, s)) {
         m.workerReads += s.reads
         m.workerRecords += s.records
         break
@@ -278,7 +294,7 @@ async function main() {
     // Échauffement non mesuré : la reconstruction unique des agrégats journaliers (première analyse après
     // le remplissage) ne doit pas compter pour la première page qui lance le Worker, quelle qu'elle soit.
     await page.goto(baseUrl + '/recommendations', { waitUntil: 'load', timeout: 60000 })
-    await workerStats(page)
+    await workerStats(page, { waitForWorker: true })
 
     const results = []
     for (const path of routes) {
@@ -309,7 +325,7 @@ async function main() {
             idbRecords: p.idbRecords,
           }
         })
-        // Lectures du Worker des analyses : attendre qu'il ait fini (500 ms sans nouvelle lecture)
+        // Lectures du Worker des analyses : attendre que chaque tâche ait répondu (workerSettled)
         Object.assign(m, await workerStats(page))
         samples.push(m)
       }

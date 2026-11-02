@@ -15,3 +15,14 @@ export function checkBudget(results, budget) {
   }
   return over
 }
+
+/**
+ * Le Worker des analyses a-t-il fini ses lectures ? (I139) Entre deux échantillons espacés de 500 ms : aucune
+ * requête en cours, aucune nouvelle lecture, et chaque tâche reçue a répondu. Le calme seul ne suffit pas :
+ * une tâche calcule parfois plus de 500 ms entre deux lectures, et la mesure s'arrêtait avant sa dernière phase.
+ * `tasks` / `replies` : messages reçus et envoyés par le Worker (0 / 0 si le cache évite tout calcul).
+ */
+export function workerSettled(last, s) {
+  if (!last) return false
+  return s.pending === 0 && s.reads === last.reads && s.replies >= s.tasks
+}

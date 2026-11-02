@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { checkBudget } from './budget.mjs'
+import { checkBudget, workerSettled } from './budget.mjs'
 
 // jsdom : import.meta.url n'est pas une URL file:, on part du dossier de l'app (racine de vitest)
 const DIR = resolve(process.cwd(), 'scripts/perf')
@@ -36,5 +36,27 @@ describe('budget de lectures IndexedDB (garde-fou D2)', () => {
     const src = readFileSync(resolve(DIR, 'perf-check.mjs'), 'utf8')
     const routes = JSON.parse(src.match(/const DEFAULT_ROUTES = (\[[^\]]*\])/)[1].replace(/'/g, '"'))
     expect(Object.keys(repoBudget.routes).sort()).toEqual([...routes].sort())
+  })
+
+  describe('fin des lectures du Worker (I139 : la mesure coupait avant la dernière phase)', () => {
+    const at = (reads, tasks, replies, pending = 0) => ({ reads, pending, tasks, replies })
+
+    it('calme mais une tâche reçue sans réponse : pas fini (calcul en cours entre deux lectures)', () => {
+      expect(workerSettled(at(35, 1, 0), at(35, 1, 0))).toBe(false)
+    })
+
+    it('chaque tâche a répondu et plus aucune lecture : fini', () => {
+      expect(workerSettled(at(41, 2, 2), at(41, 2, 2))).toBe(true)
+    })
+
+    it('une lecture en cours ou de nouvelles lectures : pas fini', () => {
+      expect(workerSettled(at(41, 1, 1), at(41, 1, 1, 1))).toBe(false)
+      expect(workerSettled(at(35, 1, 1), at(41, 1, 1))).toBe(false)
+      expect(workerSettled(null, at(41, 1, 1))).toBe(false)
+    })
+
+    it('aucune tâche reçue (cache des analyses gardé) : le calme suffit', () => {
+      expect(workerSettled(at(0, 0, 0), at(0, 0, 0))).toBe(true)
+    })
   })
 })
