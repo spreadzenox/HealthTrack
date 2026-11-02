@@ -480,12 +480,6 @@
 }
 
 
-.reco-tag-pending {
-  margin: 10px 0 0;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
 
 /* Habitudes et effets décalés sous les liens avec l'humeur estimée (visage) */
 .reco-face-habits {
