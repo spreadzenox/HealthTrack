@@ -3,7 +3,7 @@
   "routes": {
     "/": 1500,
     "/journal": 500,
-    "/tendances": 22000,
+    "/tendances": 17500,
     "/food": 150,
     "/nutrition": 1000,
     "/data": 50,

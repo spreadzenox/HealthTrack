@@ -555,9 +555,13 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   installée, taille, Mo / % / débit / reste, étapes, blocage 45 s, Réessayer, Annuler, navigateur).
 - [ ] **Retour du propriétaire** : installation manuelle de la v188+ depuis le navigateur faite ? À la release
   suivante, la barre avance-t-elle et l'installateur s'ouvre-t-il ? (sinon : capture du bandeau, qui donne la cause)
-- [ ] **I139 perf : valeur attendue du jour (Tendances)** — la tâche `todayPrediction` lit ~20 300 enregistrements
-  (3 ans de démo) contre ~14 700 pour les Pistes : regarder ce qu'elle lit en plus (6 lectures) et le réduire.
-  Budget `/tendances` 22 000 en attendant (mesure corrigée le 21/10 18:30, voir le compte rendu).
+- [x] **I139 perf : valeur attendue du jour (Tendances)** ✅ 02/11 19:35 : artefact de mesure, pas une lecture en
+  trop. Les deux pages lisent les mêmes 23 lots ; l'échauffement de `perf-check` (sur /recommendations) appelait
+  `workerStats` avant que React lance le Worker, ne mesurait rien, et la reconstruction unique des agrégats
+  journaliers (pas, calories, FC : 6 lectures, 5 040 enregistrements) retombait sur la première page mesurée qui
+  utilise le Worker (Tendances). Échauffement qui attend l'événement `worker`, fin du Worker = chaque tâche reçue a
+  répondu (`workerSettled`, 4 tests) ; Tendances 825 + 15 809 = 16 634 → budget 22 000 → 17 500. (Mesure du
+  21/10 : ~20 300 contre ~14 700, voir le compte rendu de ce jour-là.)
 - [ ] **I129 alléger l'APK** : convertir MobileFaceNet (valence / éveil) en LiteRT et retirer ONNX Runtime (−18 Mo,
   APK ≈ 15 Mo), ou build ONNX Runtime minimale ; vérifier l'accord des sorties avant / après sur les images de test.
 - [x] Retirer la dépendance npm `@m430/capacitor-app-install`, plus importée. **Fait le 28/10 03:33** (npm + gradle Capacitor).
