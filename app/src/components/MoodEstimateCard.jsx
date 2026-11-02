@@ -8,7 +8,7 @@
  * discrètement, dans la carte. Sans aucune lecture avec un visage : une invitation à activer la lecture.
  */
 import { Link } from 'react-router-dom'
-import { MODEL_LABELS, formatDelta, frDecimal, wellbeingTrend } from '../services/today'
+import { modelLabel, formatDelta, frDecimal, wellbeingTrend } from '../services/today'
 import DetailsToggle from './DetailsToggle'
 import LineIcon from './LineIcon'
 import './MoodEstimateCard.css'
@@ -162,7 +162,7 @@ export default function MoodEstimateCard({
             <span className="mood-chip mono">{est.day ? `${est.day.readings} ${est.day.readings > 1 ? 'lectures' : 'lecture'} auj.` : '1 lecture'}</span>
             {trend.mean != null && <span className="mood-chip mono">moy. {frDecimal(trend.mean)} · {trend.pastDays} j</span>}
           </div>
-          <p className="mood-details-model mono">{MODEL_LABELS[est.model] || est.model}</p>
+          <p className="mood-details-model mono">{modelLabel(est.model)}</p>
         </div>
       )}
       <p className="today-card-text">

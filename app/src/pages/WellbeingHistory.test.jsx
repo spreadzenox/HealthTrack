@@ -51,6 +51,15 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
     expect(screen.getByText(/aucune image/)).toBeInTheDocument()
   })
 
+  it('ne nomme le modèle (HSEmotion) qu’en sideload, jamais dans la variante play (POL-PLAY-100)', async () => {
+    const { unmount } = render(<BrowserRouter><WellbeingHistory now={NOW} features={{ aiModelName: false }} /></BrowserRouter>)
+    expect(await screen.findByText(/Deux modèles embarqués, sur le téléphone/)).toBeInTheDocument()
+    expect(screen.queryByText(/HSEmotion/)).toBeNull()
+    unmount()
+    render(<BrowserRouter><WellbeingHistory now={NOW} features={{ aiModelName: true }} /></BrowserRouter>)
+    expect(await screen.findByText(/Deux modèles embarqués \(HSEmotion\)/)).toBeInTheDocument()
+  })
+
   it('étiquette les 7 jours de la semaine sans ambiguïté (deux lettres, aucun doublon) (POL-PLAY-18)', async () => {
     const { container } = renderPage()
     await screen.findByText('3,4')
