@@ -181,6 +181,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 00:35** — **LISTING-2** : la fiche du Play Store et la feuille d'achat de Google disent « Silver » et « Gold » comme l'app (titre « Halcya Silver » au lieu de « Halcya Premium », fiche Gold « Tout Silver… », section abonnement de la fiche avec les deux formules et leurs plafonds 10 / 20, description courte avec « SII, FODMAP ») ; le script des abonnements met à jour la fiche d'un abonnement déjà créé. Rien ne change dans l'app.
 - **02/11 23:35** — **Alpha envoyée par le propriétaire (P40 ✅)** : versionCode 100721 sur Alpha depuis le 02/11 22:41 (Paris), en examen chez Google. Relais vérifié : période play jusqu'au 27/11, iPhone jusqu'au 06/11 (bilan du déploiement de `b7e583e`). P41 (inviter les testeurs dès qu'Alpha affiche 100721) et étapes P2 (guichet unique) écrites ; « 👉 Version candidate prête » en tête du résumé.
 
 - **02/11 22:35** — **Fin de la période de lancement sur iPhone au 06/11 inclus** (décision du 02/11 au soir) : `iosUntil` dans `relay/src/launch-period.json`, requêtes iPhone reconnues (`X-Platform: ios` envoyé par l'app iPhone), Google Play inchangé (27/11). Relais vérifié en production : période play jusqu'au 27/11, défi App Attest 200 ; message I6-RELAIS-5e et fin de période dans `journal/POUR-IOS.md`. P40 (Alpha) toujours en attente du propriétaire.

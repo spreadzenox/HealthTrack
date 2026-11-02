@@ -5,7 +5,7 @@ import { publishListing, readListing, validateListing, pngSize, sha256, isMissin
 import { API, UPLOAD_API, PlayApiError, isAccessDenied } from './publish.mjs'
 import { FORBIDDEN_WORDING, SLOP_WORDING } from '../../src/data/wordingRules.js'
 import { APP_NAME } from '../../src/config/brand.js'
-import { PREMIUM_AI_DAILY } from '../../src/config/premiumBenefits.js'
+import { PREMIUM_AI_DAILY, GOLD_AI_DAILY, GOLD_QUANTITIES } from '../../src/config/premiumBenefits.js'
 
 const PKG = 'fr.jpesquet.sante'
 const EDITS = `${API}/${PKG}/edits`
@@ -215,6 +215,16 @@ describe('fiche française du dépôt (app/store/listing/fr-FR)', () => {
     expect(d).toMatch(/Rapport PDF/)
     expect(d).toMatch(new RegExp(`jusqu'à ${PREMIUM_AI_DAILY} par jour`))
     expect(d).toMatch(/Ciqual de l'Anses/)
+  })
+
+  it('nomme les formules comme l’app, Silver et Gold, avec leurs plafonds (LISTING-2)', () => {
+    const d = fr.fullDescription
+    expect(d).toMatch(new RegExp(`^• Silver : .*jusqu'à ${PREMIUM_AI_DAILY} par jour`, 'm'))
+    expect(d).toMatch(new RegExp(`^• Gold : tout Silver.*jusqu'à ${GOLD_AI_DAILY} par jour`, 'm'))
+    expect(d).toMatch(new RegExp(GOLD_QUANTITIES))
+    expect(all).not.toMatch(/premium/i)
+    expect(fr.shortDescription).toMatch(/SII/)
+    expect(fr.shortDescription).toMatch(/FODMAP/)
   })
 
   it('n’emploie pas d’arguments interdits par Google Play (classements, superlatifs, appels aux avis)', () => {

@@ -10,6 +10,10 @@
  *
  * Deux niveaux depuis le 01/11 (décision du 31/10, GOLD-b3) : Silver = `halcya_premium` (inchangé), Gold =
  * `halcya_gold`, formule `mensuel` à 9,99 €, sans essai (proposition P35 appliquée sans réponse du propriétaire).
+ *
+ * Fiche de l'abonnement (titre, description, avantages en fr-FR) : c'est ce que Google affiche dans la feuille
+ * d'achat, le reçu et « Abonnements » du Play Store. Elle est remise à jour quand elle diffère du dépôt (LISTING-2 :
+ * Silver s'appelait encore « Halcya Premium ») ; les autres langues éventuelles ne sont pas touchées.
  */
 import { API, PlayApiError, call, withRetry } from './publish.mjs'
 import { PREMIUM_BENEFITS, goldPlayBenefits } from '../../src/config/premiumBenefits.js'
@@ -43,7 +47,7 @@ export const PRODUCTS = [
   {
     tier: 'silver',
     productId: PRODUCT_ID,
-    title: `${APP_NAME} Premium`,
+    title: `${APP_NAME} Silver`,
     description: 'Comprendre ce qui va avec vos bons et mauvais jours.',
     // Seulement ce qui est livré : jamais plus que le paywall (VC-17).
     benefits: () => PREMIUM_BENEFITS.filter((b) => b.delivered).map((b) => b.playLabel),
@@ -54,7 +58,7 @@ export const PRODUCTS = [
     tier: 'gold',
     productId: GOLD_PRODUCT_ID,
     title: `${APP_NAME} Gold`,
-    description: 'Tout Premium, deux fois plus d’analyses IA par jour, quantités mieux estimées.',
+    description: 'Tout Silver, deux fois plus d’analyses IA par jour, quantités mieux estimées.',
     benefits: goldPlayBenefits,
     basePlans: GOLD_BASE_PLANS,
     trial: null,
@@ -127,6 +131,14 @@ export function isPaymentProfilePending(err) {
   return err instanceof PlayApiError && /payment|merchant|paiement|marchand/i.test(err.apiMessage ?? '')
 }
 
+/** Vrai si la fiche de cette langue manque sur Play ou n'a pas le titre, la description ou les avantages voulus. */
+export function listingDiffers(remoteListings, wanted) {
+  const got = (remoteListings ?? []).find((l) => l.languageCode === wanted.languageCode)
+  if (!got) return true
+  const same = (a, b) => JSON.stringify(a ?? []) === JSON.stringify(b ?? [])
+  return got.title !== wanted.title || got.description !== wanted.description || !same(got.benefits, wanted.benefits)
+}
+
 const notFound = (err) => err instanceof PlayApiError && err.status === 404
 
 /**
@@ -141,7 +153,7 @@ export async function ensureCatalog({ packageName, token, product = SILVER, fetc
   const sub = `${base}/${productId}`
   const rv = `regionsVersion.version=${encodeURIComponent(REGIONS_VERSION)}`
   const catalog = buildCatalog(packageName, product)
-  const result = { productId, created: false, addedBasePlans: [], offerCreated: false, activated: [], drift: [] }
+  const result = { productId, created: false, addedBasePlans: [], offerCreated: false, activated: [], drift: [], listingUpdated: false }
 
   let remote = null
   try {
@@ -165,6 +177,17 @@ export async function ensureCatalog({ packageName, token, product = SILVER, fetc
         body: { ...remote, basePlans: [...(remote.basePlans ?? []), ...missing] },
       })
       result.addedBasePlans = missing.map((p) => p.basePlanId)
+    }
+    const wanted = catalog.subscription.listings[0]
+    if (listingDiffers(remote.listings, wanted)) {
+      log(`Mise à jour de la fiche ${wanted.languageCode} de ${productId} (« ${wanted.title} »)…`)
+      const others = (remote.listings ?? []).filter((l) => l.languageCode !== wanted.languageCode)
+      remote = await call(f, 'mise à jour de la fiche de l’abonnement', `${sub}?updateMask=listings&${rv}`, {
+        method: 'PATCH',
+        token,
+        body: { ...remote, listings: [...others, wanted] },
+      })
+      result.listingUpdated = true
     }
     for (const want of product.basePlans) {
       const got = (remote.basePlans ?? []).find((p) => p.basePlanId === want.basePlanId)

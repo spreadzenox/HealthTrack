@@ -73,6 +73,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 03/11 00:35 — [Fiche Play aux noms Silver / Gold](runs/2026-11-03-0035-listing-silver-gold.md) | 🔧 | Au moment de payer, Google affichait « Halcya Premium » alors que l'app dit « Silver » : corrigé (« Halcya Silver », « Halcya Gold »). La fiche du Play Store présente les deux formules (10 et 20 analyses IA par jour, « Gold estime mieux les quantités ») et sa description courte cite « SII, FODMAP ». Rien ne change dans l'app |
 | 02/11 23:35 — [Alpha en examen, invitation prête](runs/2026-11-02-2335-alpha-invitation.md) | 🔧 | Votre envoi sur Alpha a marché : la 100721 est en examen chez Google. Relais vérifié en production (Android 27/11, iPhone 06/11). **Version candidate prête** : gestes et texte d'invitation en tête du résumé ; étapes P2 (guichet unique) écrites. Rien ne change dans l'app |
 | 02/11 22:35 — [Fin du lancement sur iPhone](runs/2026-11-02-2235-fin-lancement-iphone.md) | 🔧 | Sur iPhone, Gold offert s’arrête le vendredi 6/11 inclus (Google Play reste au 27/11) ; après, l’app iPhone montre l’écran d’achat pour l’examen d’Apple. Relais vérifié en production (27/11, App Attest en observation) ; routine iOS prévenue (`POUR-IOS.md`). Rien ne change sur Android |
 | 02/11 21:35 — [Compte rendu du 02/11](runs/2026-11-02-2135-compte-rendu-0211.md) | 🔧 | Gold offert jusqu’au 27 novembre (relais) ; App Attest de l’iPhone en observation avec votre Team ID ; « Gold estime mieux les quantités » sur le paywall et la fiche Gold. **Envoi sur Alpha refusé à la session : P40, un clic pour vous** |

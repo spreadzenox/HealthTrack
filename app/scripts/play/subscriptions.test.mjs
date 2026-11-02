@@ -13,7 +13,11 @@ import {
   GOLD,
   GOLD_PRODUCT_ID,
   PRODUCTS,
+  SILVER,
+  listingDiffers,
 } from './subscriptions.mjs'
+import { APP_NAME } from '../../src/config/brand.js'
+import { tierName } from '../../src/services/entitlement.js'
 import { SILVER_PRODUCT_ID as RELAY_SILVER, GOLD_PRODUCT_ID as RELAY_GOLD } from '../../../relay/src/billing.js'
 import { API, PlayApiError, isAccessDenied } from './publish.mjs'
 import { PRODUCT_ID as APP_PRODUCT_ID } from '../../src/services/playBilling.js'
@@ -46,7 +50,9 @@ const plan = (id, state, units = id === 'annuel' ? '29' : '4') => ({
   autoRenewingBasePlanType: { billingPeriodDuration: id === 'annuel' ? 'P1Y' : 'P1M' },
   regionalConfigs: [{ regionCode: 'FR', price: { currencyCode: 'EUR', units, nanos: 990000000 } }],
 })
-const remoteSub = (state) => ({ productId: PRODUCT_ID, listings: [{}], basePlans: [plan('annuel', state), plan('mensuel', state)] })
+const silverListings = () => buildCatalog(PKG, SILVER).subscription.listings
+const goldListings = () => buildCatalog(PKG, GOLD).subscription.listings
+const remoteSub = (state) => ({ productId: PRODUCT_ID, listings: silverListings(), basePlans: [plan('annuel', state), plan('mensuel', state)] })
 
 describe('identifiants (immuables chez Google)', () => {
   it('sont figés et sont ceux que l’app attend', () => {
@@ -112,7 +118,7 @@ describe('Gold (halcya_gold)', () => {
 
   it('déjà en place : aucune écriture ; prix changé à la main sur Play : signalé, jamais modifié', async () => {
     const GSUB = `${API}/${PKG}/subscriptions/halcya_gold`
-    const play = fakePlay({ [`GET ${GSUB}`]: { body: { productId: 'halcya_gold', basePlans: [plan('mensuel', 'ACTIVE', '10')] } } })
+    const play = fakePlay({ [`GET ${GSUB}`]: { body: { productId: 'halcya_gold', listings: goldListings(), basePlans: [plan('mensuel', 'ACTIVE', '10')] } } })
     const r = await ensureCatalog({ packageName: PKG, token: 't', product: GOLD, fetchImpl: play.fetchImpl, sleep: async () => {} })
     expect(play.calls.every((c) => c.key.startsWith('GET'))).toBe(true)
     expect(r.drift).toHaveLength(1)
@@ -167,6 +173,32 @@ describe('buildCatalog', () => {
   })
 })
 
+describe('noms des formules (LISTING-2)', () => {
+  it('le titre de chaque abonnement chez Google est le nom de l’app suivi du niveau que l’app affiche', () => {
+    expect(SILVER.title).toBe(`${APP_NAME} ${tierName({ premium: true, productId: PRODUCT_ID })}`)
+    expect(GOLD.title).toBe(`${APP_NAME} ${tierName({ premium: true, productId: GOLD_PRODUCT_ID })}`)
+    expect([SILVER.title, GOLD.title]).toEqual(['Halcya Silver', 'Halcya Gold'])
+  })
+
+  it('« Premium » ne désigne plus une formule dans la fiche des abonnements', () => {
+    for (const product of PRODUCTS) {
+      const [l] = buildCatalog(PKG, product).subscription.listings
+      for (const t of [l.title, l.description, ...l.benefits]) expect(t).not.toMatch(/premium/i)
+    }
+    expect(GOLD.description).toMatch(/^Tout Silver/)
+  })
+
+  it('listingDiffers : fiche absente, titre, description ou avantages différents', () => {
+    const [want] = silverListings()
+    expect(listingDiffers(undefined, want)).toBe(true)
+    expect(listingDiffers([{ ...want, languageCode: 'en-US' }], want)).toBe(true)
+    expect(listingDiffers([{ ...want }], want)).toBe(false)
+    expect(listingDiffers([{ ...want, title: 'Halcya Premium' }], want)).toBe(true)
+    expect(listingDiffers([{ ...want, description: 'x' }], want)).toBe(true)
+    expect(listingDiffers([{ ...want, benefits: want.benefits.slice(1) }], want)).toBe(true)
+  })
+})
+
 describe('ensureCatalog', () => {
   const run = (routes) => {
     const play = fakePlay(routes)
@@ -207,7 +239,7 @@ describe('ensureCatalog', () => {
   })
 
   it('formule manquante : ajoutée sans toucher à l’autre ; prix différent : signalé, jamais modifié', async () => {
-    const existing = { productId: PRODUCT_ID, listings: [{}], basePlans: [plan('annuel', 'ACTIVE', '19')] }
+    const existing = { productId: PRODUCT_ID, listings: silverListings(), basePlans: [plan('annuel', 'ACTIVE', '19')] }
     const patched = { ...existing, basePlans: [...existing.basePlans, plan('mensuel', 'DRAFT')] }
     const { play, p } = run({
       [`GET ${SUB}`]: [{ body: existing }, { body: patched }],
@@ -223,6 +255,24 @@ describe('ensureCatalog', () => {
     const patch = play.calls.find((c) => c.key.startsWith('PATCH'))
     expect(patch.body.basePlans.map((b) => b.basePlanId)).toEqual(['annuel', 'mensuel'])
     expect(patch.body.basePlans[0].regionalConfigs[0].price.units).toBe('19')
+  })
+
+  it('fiche encore « Halcya Premium » : seule la fiche fr-FR est réécrite, les autres langues et les prix restent', async () => {
+    const en = { languageCode: 'en-US', title: 'Halcya Premium', description: 'd', benefits: ['b'] }
+    const old = { ...silverListings()[0], title: 'Halcya Premium' }
+    const existing = { ...remoteSub('ACTIVE'), listings: [en, old] }
+    const patched = { ...existing, listings: [en, silverListings()[0]] }
+    const { play, p } = run({
+      [`GET ${SUB}`]: [{ body: existing }, { body: patched }],
+      [`PATCH ${SUB}?updateMask=listings&${RV}`]: { body: patched },
+      [`GET ${OFFERS}/essai-14j`]: { body: { state: 'ACTIVE' } },
+    })
+    const r = await p
+    expect(r).toMatchObject({ listingUpdated: true, created: false, addedBasePlans: [], activated: [], drift: [] })
+    const patches = play.calls.filter((c) => c.key.startsWith('PATCH'))
+    expect(patches).toHaveLength(1)
+    expect(patches[0].body.listings).toEqual([en, silverListings()[0]])
+    expect(patches[0].body.basePlans).toEqual(existing.basePlans)
   })
 
   it('accès refusé : erreur reconnaissable, rien n’est écrit', async () => {
