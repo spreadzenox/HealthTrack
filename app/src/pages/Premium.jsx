@@ -14,7 +14,7 @@ import Ordinal from '../components/Ordinal'
 
 const PER = { year: 'an', month: 'mois' }
 
-/** Les deux niveaux (GOLD-b4) : seul le plafond quotidien de l'analyse IA des repas les distingue aujourd'hui. */
+/** Les deux niveaux (GOLD-b4, GOLD-b6) : Gold a un plafond IA plus haut et estime mieux les quantités. */
 const TIERS = [
   { id: 'silver', name: 'Silver', daily: PREMIUM_AI_DAILY },
   { id: 'gold', name: 'Gold', daily: GOLD_AI_DAILY },
@@ -149,7 +149,7 @@ export default function Premium({ context = null, onClose = null }) {
           : onboarding
           ? <>Vos pistes arriveront vers le <Ordinal n={21} /> jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.</>
           : offeredTiers.length > 1
-          ? 'Silver ou Gold : seul le nombre d’analyses IA par jour change.'
+          ? 'Silver ou Gold : Gold analyse plus de repas par jour et estime mieux les quantités.'
           : 'Voici ce que l’abonnement ajoute.'}
       </p>
 
@@ -193,7 +193,7 @@ export default function Premium({ context = null, onClose = null }) {
           )}
           {goldUpgrade && (
             <div className="paywall-upgrade">
-              <p className="paywall-upgrade-title">Passer à Gold : {GOLD_AI_DAILY} analyses IA par jour au lieu de {PREMIUM_AI_DAILY}.</p>
+              <p className="paywall-upgrade-title">Passer à Gold : {GOLD_AI_DAILY} analyses IA par jour au lieu de {PREMIUM_AI_DAILY}, et des quantités mieux estimées.</p>
               <button type="button" className="btn paywall-cta" onClick={() => buy(goldUpgrade)} disabled={busy}>
                 {busy ? `${STORE.Name}…` : `Passer à Gold · ${goldUpgrade.price} / ${PER[goldUpgrade.period]}`}
               </button>

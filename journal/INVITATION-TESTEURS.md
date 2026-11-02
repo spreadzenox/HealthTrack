@@ -12,6 +12,12 @@
 
 ## 1. Le jour où la version candidate part en alpha (fait par Claude, via la CI)
 
+**🔁 Recalé le 02/11 21:35 (Paris), décision du propriétaire du 02/11 (invitation dès qu'Alpha est à jour)** :
+`until` = `2026-11-27T23:00:00Z` (J = 03/11 + 14 jours + 10 jours de marge) : **Gold offert jusqu'au 27 novembre
+2026 inclus**. Si Alpha n'est en ligne qu'après le 03/11, le run suivant décale `until` d'autant. ⚠️ L'envoi de la
+version 100719 sur Alpha (« Play — AAB », piste `alpha`) a été refusé à la session par sa couche de permissions le
+02/11 21:40 : voir le résumé de la semaine (geste d'un clic pour le propriétaire).
+
 **✅ Fait le 25/10 13:33 (Paris)** : `from` = `2026-10-25T12:00:00Z` (publication de la version candidate) et
 `until` = `2026-11-20T23:00:00Z` (fin exclue : premium offert **jusqu'au 20 novembre 2026 inclus**, heure de Paris ;
 l'app affiche « jusqu'au 20 nov. 2026 »). Calcul : invitation vers le 27/10 (après l'examen de la piste alpha par
@@ -64,7 +70,7 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 > sommeil, énergie, bien-être), en gardant vos données sur votre téléphone. Avant sa sortie publique, Google
 > m'impose un test fermé de **14 jours avec au moins 12 personnes** : pouvez-vous m'aider ?
 >
-> **Le premium est offert pendant le test (jusqu'au <date de fin de la période de lancement>) : vous n'avez rien à payer**, aucune carte
+> **Gold (le premium) est offert pendant le test (jusqu'au 27 novembre inclus) : vous n'avez rien à payer**, aucune carte
 > bancaire n'est demandée.
 >
 > Il faut un téléphone **Android 8 ou plus récent** (l'app n'existe pas encore sur iPhone).

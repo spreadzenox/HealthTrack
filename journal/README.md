@@ -16,23 +16,25 @@
 > faire tant qu'il n'y a pas d'abonnés payants ; avec des abonnés Gold, il faudra relever ce budget (proposition au
 > moment voulu). Le résumé de chaque déploiement du relais continue d'afficher le coût réel des 7 derniers jours.
 
+> ⏸️ **Version candidate : un clic de votre part avant d'inviter (P40, 02/11 21:45).** Tout est prêt sauf l'envoi
+> sur Alpha : la session de la routine n'a pas eu le droit de lancer « Play — AAB » sur la piste `alpha` (sa couche
+> de permissions l'a classé « déploiement en production »). **Geste** : GitHub → HealthTrack → **Actions** →
+> « Play — AAB » → **Run workflow** → branche `main`, piste **`alpha`** → Run (même code que la 100719 du test
+> interne). Ou autorisez ce geste pour la routine, et le run suivant le fera. Ensuite, quand Alpha affiche la version :
+> invitation de [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md) §2–§3, **Gold offert jusqu'au 27 novembre inclus**
+> (calculé pour une invitation le 03/11 ; recalé si ça glisse). Déjà fait ce soir : fin de la période au 27/11, App
+> Attest de l'iPhone en observation (Team ID reçu), « Gold estime mieux les quantités » sur le paywall et la fiche.
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **P37 — votre Gold après la période de lancement** : Paramètres → touchez 7 fois « Version » → recopiez
   « Empreinte de l'installation » (12 caractères, rien de personnel) et donnez-la à la routine.
-- **P36 — promesse Gold** : le banc du 01/11 montre que Gold estime mieux les **quantités** (−18 % d'erreur sur la
-  masse), sans différence sur les calories. Répondez « quantités » pour afficher « Gold estime mieux les quantités »
-  (sans chiffre), ou rien pour garder le paywall sans promesse.
-- **Testeurs : pas encore** (votre décision du 27/10). Quand vous direz « j'invite le <date> », la fin de la période
-  de lancement (aujourd'hui le 20/11) sera recalée (+ 14 jours + marge). Tout est prêt dans
-  [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md).
-- **P38 — Team ID Apple** (pas urgent) : pour qu'à terme le relais vérifie que les requêtes de l'iPhone viennent
-  de la vraie app (App Attest, l'équivalent de Play Integrity). developer.apple.com → Account → Membership details →
-  « Team ID » (10 caractères, rien de secret). Le code avance sans ; seul le déploiement l'attend.
+- **P39** (pas urgent) : expiration des clés App Attest dans Firestore, même geste que P33 (commande dans `PRODUIT.md` §4).
 - P32 (pays de vente), P34 (encart « Enregistrez vos applications » dans la Play Console) : pas urgents, détail dans
   [`semaines/2026-S44.md`](semaines/2026-S44.md).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 21:35 — [Compte rendu du 02/11](runs/2026-11-02-2135-compte-rendu-0211.md) | 🔧 | Gold offert jusqu’au 27 novembre (relais) ; App Attest de l’iPhone en observation avec votre Team ID ; « Gold estime mieux les quantités » sur le paywall et la fiche Gold. **Envoi sur Alpha refusé à la session : P40, un clic pour vous** |
 | 02/11 20:35 — [Idées : fiche Play et abonnements](runs/2026-11-02-2035-idees-fiche-silver-gold.md) | 💡 | Défaut trouvé : la fiche du Play Store parle encore d’un seul « Premium » (sans Gold), et Google affiche « Halcya Premium » au moment de payer alors que l’app dit « Silver ». Texte corrigé prêt (LISTING-2, prochain run de code), description courte avec « SII, FODMAP ». Règles Play de 2027 relues : Halcya non concernée |
 | 02/11 19:35 — [Mesure de perf de Tendances](runs/2026-11-02-1935-perf-tendances.md) | 🔧 | Audit Play de Sources et Réglages en démo (clair et sombre) : rien à corriger. En coulisses : Tendances ne lisait pas plus que les Analyses, c’est la mesure qui se trompait ; corrigée, et le garde-fou de la CI pour Tendances est resserré. Rien ne change dans l’app |
 | 02/11 18:40 — [Ordinaux](runs/2026-11-02-1840-ordinaux.md) | 🔧 | POL-PLAY-101 : le « e » de « 21e » (paywall, premier geste de l’onboarding) s’affichait dans une autre police que Figtree ; « 21e » et « 1er paiement » ont maintenant un exposant propre, en clair comme en sombre |

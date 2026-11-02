@@ -86,7 +86,7 @@ describe('Gold (halcya_gold)', () => {
     expect([...listing.title].length).toBeLessThanOrEqual(LISTING_LIMITS.title)
     expect([...listing.description].length).toBeLessThanOrEqual(LISTING_LIMITS.description)
     expect(listing.benefits.length).toBeLessThanOrEqual(LISTING_LIMITS.benefits)
-    expect(listing.benefits[0]).toBe('Analyse IA des repas, 20 par jour')
+    expect(listing.benefits[0]).toBe('IA : 20/jour, estime mieux les quantités')
     for (const t of [listing.title, listing.description, ...listing.benefits]) {
       expect([...t].length).toBeLessThanOrEqual(t === listing.title ? LISTING_LIMITS.title : LISTING_LIMITS.description)
       expect(t).not.toMatch(/gemini|flash|erreur|précis/i)
