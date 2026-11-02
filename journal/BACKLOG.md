@@ -1447,8 +1447,11 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   - [ ] **I6-RELAIS-5** (plus tard) App Attest ; d'ici là exemption iOS (`X-Platform: ios` / `no_plugin`) inchangée.
     **Spécifié le 02/11 08:33** (`IDEES.md` I208, doc Apple lue, racine App Attest épinglée par son empreinte ; zéro
     dépendance, zéro secret ; reçu et « fraud metric » laissés de côté). Un run par étape :
-    - [ ] **5a** `relay/src/cbor.js` (décodeur borné, testé seul) + lecture de `authData` (rpIdHash, flags, counter,
-      aaguid, credentialId, clé COSE, extensions).
+    - [x] **5a** ✅ 02/11 09:33 `relay/src/cbor.js` (décodeur borné : longueurs indéfinies, étiquettes, flottants,
+      doublons, octets en trop refusés ; vecteurs de la RFC 8949) + `relay/src/authdata.js` (rpIdHash, flags,
+      counter, aaguid → `production` / `development`, credentialId, clé COSE ES256 → point X9.62 + KeyObject, point
+      hors courbe refusé, extensions `apple_validation_category_01` / `apple_bundle_version_01`) ; 12 tests, aucun
+      branchement dans le serveur pour l'instant.
     - [ ] **5b** `relay/src/appattest.js` : attestation (chaîne `x5c` → racine App Attest, nonce de l'OID
       1.2.840.113635.100.8.2, keyId, rpId `<Team ID>.fr.jpesquet.sante`, aaguid, compteur 0, catégorie 2 ou 4 si
       présente) ; tests sur une chaîne `openssl` jetable comme `appstore.test.js`.
