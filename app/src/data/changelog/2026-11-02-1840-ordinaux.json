@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-02",
+  "kind": "correctif",
+  "title": "« 1er » et « 21e » dans la bonne police",
+  "items": [
+    "Le « e » de « 21e » (premier jour de suivi, abonnement) s’affichait dans une autre police ; « 1er » et « 21e » ont maintenant le même exposant."
+  ]
+}

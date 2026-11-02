@@ -92,3 +92,10 @@ a {
 code {
   overflow-wrap: anywhere;
 }
+
+/* Ordinaux « 1er », « 21e » (POL-PLAY-101) : exposant sans décaler la ligne. */
+.ordinal sup {
+  font-size: 0.7em;
+  line-height: 0;
+  vertical-align: 0.35em;
+}
