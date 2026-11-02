@@ -377,6 +377,7 @@ sombre) — à corriger dans la passe de finition, chacun avec son test :
   d'invitation (`INVITATION-TESTEURS.md`, mis à jour le 25/10 : ouvrir l'app tous les 2-3 jours, rappel du jour 7 ; relu contre la v402 le 31/10, I201).
   Pendant les 14 jours : au moins 2 versions en alpha, et une liste « changements faits pendant le test » dans
   `PRODUIT.md` pour le formulaire d’accès à la production (P30, à préparer au jour 10).
+- [x] **ALPHA-0211** (02/11 23:35) compte rendu du 02/11 : Alpha = 100721 (P40, propriétaire, 02/11 22:41), `until` = 27/11 servi par le relais (vérifié), « 👉 Version candidate prête » en tête du résumé avec gestes et texte final ; lien d'inscription au test écrit dans le texte. **Reste** : P41 (le propriétaire invite dès la fin de l'examen) ; décaler `until` si l'invitation part après le 03/11 ; au moins une seconde version en alpha pendant les 14 jours.
 - [x] **CREDITS-INSTALLS — FAIT le 25/10 17:33** (événement `first_credit` sans identifiant, seulement pour une installation inconnue du registre Firestore et sans crédit rapporté par l'app ; analyse de test `ci-smoke-*` exclue ; résumé du workflow relais : total et par jour sur 7 j) (I167) résumé du workflow relais : nombre de nouvelles installations par jour qui prennent
   leurs crédits offerts (le « device recall » de Play Integrity est réservé à des partenaires) ; passer à 5 crédits
   offerts seulement si ce nombre s'envole.
@@ -1378,6 +1379,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **POL-PLAY-20** (28/10 07:33 ; bordure, badge et repère en encre neutre) Tendances : « FC au repos · Plus basse que d'habitude » en ocre (couleur d'alerte) alors qu'aucun
   écart n'est bon ou mauvais par principe (règle 6) : couleur neutre pour un écart sans jugement.
 - [ ] **POL-PLAY-11 (R8b/c)** Alpha après une journée sans plantage dans Android vitals ; `shrinkResources` à part.
+  **02/11 22:41 : Alpha = 100721** (envoyée par le propriétaire, P40 ; code de `bd7d5ac`, sans plantage connu en test interne) ; reste `shrinkResources`.
 - [ ] **POL-PLAY-12** Nouvel audit `--play --empty` puis démo, écran par écran (Onboarding, Accueil, Journal, Analyses,
   Sources, Paramètres) — prévu par le run de 19:33 ; ✅ (27/10 22:33) « Marcher davantage » / « Bouger davantage » :
   un seul levier par famille (le plus solide). ✅ (27/10 23:33) audit `--play --empty` puis démo relu (Accueil,

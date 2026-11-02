@@ -16,7 +16,9 @@
 `until` = `2026-11-27T23:00:00Z` (J = 03/11 + 14 jours + 10 jours de marge) : **Gold offert jusqu'au 27 novembre
 2026 inclus**. Si Alpha n'est en ligne qu'après le 03/11, le run suivant décale `until` d'autant. ⚠️ L'envoi de la
 version 100719 sur Alpha (« Play — AAB », piste `alpha`) a été refusé à la session par sa couche de permissions le
-02/11 21:40 : voir le résumé de la semaine (geste d'un clic pour le propriétaire).
+02/11 21:40 ; **le propriétaire l'a lancé lui-même le 02/11 à 22:36 (Paris) : versionCode 100721 placé sur Alpha
+à 22:41, en examen chez Google.** Dès que la Play Console n'affiche plus « En cours d'examen » pour Alpha, l'invitation
+(§3) peut partir. Si elle part après le 03/11, le run suivant décale `until` d'autant (dites-lui le jour).
 
 **✅ Fait le 25/10 13:33 (Paris)** : `from` = `2026-10-25T12:00:00Z` (publication de la version candidate) et
 `until` = `2026-11-20T23:00:00Z` (fin exclue : premium offert **jusqu'au 20 novembre 2026 inclus**, heure de Paris ;
@@ -64,6 +66,10 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 
 ## 3. Texte d'invitation à envoyer (copier-coller)
 
+> Lien du point 2 : c'est l'adresse standard d'inscription aux tests de Google Play pour `fr.jpesquet.sante` ;
+> vérifiez d'un coup d'œil qu'elle est identique au lien « Rejoindre sur le Web » (Play Console → Tester → Test fermé
+> → Alpha → onglet Testeurs, en bas). Elle ne marche qu'avec un compte membre du groupe (point 1).
+
 > Bonjour,
 >
 > Je lance **Halcya**, une app Android qui aide à comprendre ce qui va avec vos bons et mauvais jours (ventre,
@@ -77,7 +83,7 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 >
 > Ce qu'il faut faire (5 minutes, avec le compte Gmail de votre téléphone Android) :
 > 1. Rejoindre le groupe des testeurs : https://groups.google.com/g/halcya-testeurs
-> 2. Accepter le test : <lien « Rejoindre sur le Web »>
+> 2. Accepter le test : https://play.google.com/apps/testing/fr.jpesquet.sante
 > 3. Installer l'app depuis le Play Store : https://play.google.com/store/apps/details?id=fr.jpesquet.sante
 > 4. **Garder l'app installée pendant 14 jours, sans quitter le groupe ni le test**, et **l'ouvrir au moins tous les
 >    2 ou 3 jours** (une photo de repas, une note du ventre, ce que vous voulez) : Google vérifie que l'app est
