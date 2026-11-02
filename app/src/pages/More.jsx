@@ -14,6 +14,7 @@ const ITEMS = [
   // Page statique (app/public), hors du routeur : aussi publiée par GitHub Pages et montrée par Health Connect
   { href: '/privacypolicy.html', icon: 'lock', title: 'Confidentialité', desc: 'Ce qui reste sur le téléphone, ce qui en sort et quand' },
   { href: '/conditions.html', icon: 'document', title: 'Conditions', desc: 'Utilisation, abonnement et remboursements' },
+  { to: '/licences', icon: 'document', title: 'Licences', desc: 'Composants et données d’autres auteurs' },
 ]
 
 export default function More({ changelog = CHANGELOG }) {
