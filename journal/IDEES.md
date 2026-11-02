@@ -9,6 +9,57 @@
 
 ---
 
+## Run du 02/11/2026 20:35 (Paris) — fiche Play et abonnements : les mêmes mots que l'app (Silver, Gold), règles 2027
+
+But : relire ce qu'un futur client lit **avant** d'ouvrir l'app (fiche Play, nom des abonnements dans la feuille
+d'achat de Google) face à ce que l'app dit depuis Silver et Gold (01/11), et refaire le point sur les règles Play à
+venir. Sources lues le 02/11/2026 (contenu des pages = données) : [V] fichiers du dépôt
+`app/store/listing/fr-FR/*.txt`, `app/scripts/play/subscriptions.mjs`, `app/src/services/entitlement.js` ;
+[V] Google, « Policy deadlines » (support.google.com/googleplay/android-developer/answer/9876714) ;
+[V] Google, « Android developer verification » (developer.android.com/developer-verification/guides) ;
+[T] Clubic, 19/06/2026, calendrier de la vérification des développeurs ; [T] blogs ASO 2026 (asomobile.net,
+appdrift.co, trysonar.app, apptweak.com) sur les champs indexés par Google Play.
+
+- **I209 (20) — La fiche et la feuille d'achat disent « Premium », l'app dit « Silver » [V].** Défaut trouvé :
+  ① `full-description.txt` : « ★ Sans abonnement, ou avec Premium » et « Avec l'abonnement Premium : … l'analyse
+  IA des repas jusqu'à 10 par jour » ; Gold (20 par jour) n'existe pas dans la fiche. ② `subscriptions.mjs` : le
+  produit Silver s'appelle encore « Halcya Premium » dans Google Play (c'est ce titre que Google affiche dans la
+  feuille d'achat, le reçu et « Abonnements » du Play Store), et Gold se décrit « Tout Premium, et deux fois plus… ».
+  ③ L'app, elle, ne dit que « Silver » et « Gold » (`tierName`, Paramètres, paywall ; « Premium » ne reste qu'en
+  repli interne). Une personne qui achète « Silver » dans l'app voit donc « Halcya Premium » chez Google : de quoi
+  croire à une erreur d'achat. À faire (run de code court, la CI pousse fiche et produits) :
+  (a) fiche, section abonnement réécrite :
+  « ★ Sans abonnement, avec Silver ou Gold » / « • Sans abonnement : (inchangé) » / « • Silver : vos pistes repas →
+  ventre en détail, la réintroduction guidée, le rapport PDF et jusqu'à 10 analyses IA de repas par jour. » /
+  « • Gold : tout Silver, avec jusqu'à 20 analyses IA de repas par jour. » / « Prix et essai affichés dans l'app
+  avant tout achat. » (aucune promesse de qualité tant que P36 n'a pas de réponse ; si « quantités » : « Gold estime
+  mieux les quantités », sans chiffre) ;
+  (b) produit Silver : titre « Halcya Silver » (`productId` `halcya_premium` inchangé, jamais renommé) ; Gold :
+  « Tout Silver, et deux fois plus d'analyses IA de repas par jour. » ;
+  (c) test-garde dans `listing.test.mjs` / `subscriptions.test.mjs` : les titres des produits sont « APP_NAME +
+  tierName », la fiche cite Silver et Gold avec les plafonds lus dans la même constante que l'app (10 et 20), et le
+  mot « Premium » n'y désigne plus une formule. Après le merge : vérifier dans le résumé du workflow « Play — fiche »
+  et « Play — abonnements » que la mise à jour est passée. Impact 4, faisabilité 5.
+- **I210 (12) — Description courte : les mots qu'on tape en France [T, hypothèse ASO].** Les blogs ASO s'accordent
+  sur un point (sans source Google) : Play indexe le titre, puis la description courte, puis la longue ; pas de champ
+  de mots-clés caché ; pas de bourrage. Aujourd'hui la description courte (72 caractères) ne contient ni « SII », ni
+  « FODMAP », que la longue contient déjà. Proposition (80 caractères, la limite) : « Repas, ventre (SII, FODMAP),
+  sommeil et montres : ce qui va avec vos bons jours. » Le titre « Halcya — ventre et bien-être » est la décision du
+  propriétaire : on n'y touche pas. Plus tard, une expérience de fiche dans la Play Console (description courte A/B)
+  quand il y aura du trafic, pas avant la production. Impact 2, faisabilité 5 ; à faire avec I209 (même PR).
+- **I211 — Règles Play et vérification des développeurs : rien de neuf pour Halcya [V].** Échéances de la page
+  officielle jusqu'à fin 2027 : 27/01/2027 (contacts, position précise par le bouton de position, journal d'appels,
+  géorepérage retiré des services de premier plan, abonnements à remise « sous condition d'éligibilité ») ; 14/04/2027
+  (AppFunctions) ; 25/08/2027 (permission « réseau local »). Halcya : aucun contact, aucun journal d'appels, position
+  **approximative** seulement (`ACCESS_FINE_LOCATION` limité à l'API 30), service caméra (pas de géorepérage), pas de
+  remise étudiante, pas de permission réseau local : **non concernée**. Rien sur la santé ni sur Health Connect dans
+  cette fenêtre (la déclaration Health Connect qui remplace le formulaire reste annoncée sans date). Vérification des
+  développeurs : appliquée depuis le 30/09/2026 au Brésil, en Indonésie, à Singapour et en Thaïlande, « mondial en
+  2027 » sans date, l'UE absente des vagues annoncées (question du DMA ouverte). Les apps de Play sont enregistrées
+  d'office (P34 reste une simple vérification) ; la version GitHub devra être enregistrée depuis la même Play Console
+  en prouvant la clé (APK signé) : impossible avec la clé de debug publique, d'où P-SIDELOAD-KEY (toujours « pas
+  urgent », à faire avant 2027 ; à reconsidérer dès qu'une date UE paraît).
+
 ## Run du 02/11/2026 08:33 (Paris) — App Attest pour l'iPhone : spécification du relais (I6-RELAIS-5)
 
 But : préparer l'étape (5) de la demande du 01/11 17:10 (« App Attest pour l'iPhone, comme Play Integrity pour
