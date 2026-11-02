@@ -28,3 +28,11 @@
 ## Suite
 - POL-PLAY-12 : Nutrition en clair une fois #620 mergée, puis parcours repas (analyse photo, éditeur).
 - P37 toujours en attente pour GOLD-a3 ; P36 pour GOLD-b6.
+
+## Non mergé (à reprendre)
+- PR #621 : tous les checks verts (Vitest, Build APK, relais, montre, émulateurs API 34/35/36, budget de lectures),
+  branche à jour sur `a798e1f`. Le squash-merge a été **refusé par le contrôle de permissions de la session**
+  (« merge sans revue »). Rien n'a été contourné. Le run suivant (ou le propriétaire) peut la merger telle quelle
+  après remise à jour sur main ; la PR #620 (POL-PLAY-97, run de 04:33) est dans le même état, ouverte et verte.
+  Les deux touchent `journal/README.md`, `BACKLOG.md` et `PRODUIT.md` : conflits de journal seulement, à résoudre en
+  gardant les deux lignes.
