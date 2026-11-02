@@ -33,6 +33,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 20:35 — [Idées : fiche Play et abonnements](runs/2026-11-02-2035-idees-fiche-silver-gold.md) | 💡 | Défaut trouvé : la fiche du Play Store parle encore d’un seul « Premium » (sans Gold), et Google affiche « Halcya Premium » au moment de payer alors que l’app dit « Silver ». Texte corrigé prêt (LISTING-2, prochain run de code), description courte avec « SII, FODMAP ». Règles Play de 2027 relues : Halcya non concernée |
 | 02/11 19:35 — [Mesure de perf de Tendances](runs/2026-11-02-1935-perf-tendances.md) | 🔧 | Audit Play de Sources et Réglages en démo (clair et sombre) : rien à corriger. En coulisses : Tendances ne lisait pas plus que les Analyses, c’est la mesure qui se trompait ; corrigée, et le garde-fou de la CI pour Tendances est resserré. Rien ne change dans l’app |
 | 02/11 18:40 — [Ordinaux](runs/2026-11-02-1840-ordinaux.md) | 🔧 | POL-PLAY-101 : le « e » de « 21e » (paywall, premier geste de l’onboarding) s’affichait dans une autre police que Figtree ; « 21e » et « 1er paiement » ont maintenant un exposant propre, en clair comme en sombre |
 | 02/11 18:10 — [Licences sur iPhone](runs/2026-11-02-1810-licences-ios.md) | 🔧 | LICENCES-IOS : la page Licences de l’app iPhone ne cite plus les bibliothèques Android ni Google Play ; rien ne change sur Android |

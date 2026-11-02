@@ -43,6 +43,14 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   propriétaire) après le déploiement, lire les journaux du relais (`event: usage`,
   `served: gold`, `gold_fallback`) via le workflow de vérification ; si `gemini-3.8-flash` est refusé en zone `eu`,
   les analyses passent sur Flash-Lite (rien de cassé) : le noter et prévenir le propriétaire.
+- [ ] **LISTING-2 — fiche Play et abonnements aux noms Silver / Gold** (idée du 02/11 20:35, `IDEES.md` I209–I210 ;
+  run de code court, avant la version candidate) : la fiche dit encore « Premium » (10 analyses par jour, Gold absent)
+  et le produit Silver s'appelle « Halcya Premium » dans la feuille d'achat de Google alors que l'app dit « Silver ».
+  (a) section abonnement de `full-description.txt` (texte prêt dans I209) ; (b) `subscriptions.mjs` : titre
+  « Halcya Silver » (`halcya_premium` inchangé), Gold « Tout Silver, et deux fois plus… » ; (c) description courte
+  avec « SII, FODMAP » (I210, 80 caractères) ; (d) tests-gardes (titres = APP_NAME + tierName, plafonds 10 / 20 de la
+  même constante, plus de « Premium » comme formule) ; puis lire les résumés des workflows « Play — fiche » et
+  « Play — abonnements ».
 - [ ] **GOLD-a3 — Gold du propriétaire après la période de lancement** : (01/11 22:33, côté app fait : empreinte
   affichée dans le mode diagnostic caché, `installFingerprint()` = `hashInstallId` ; reste : recevoir l'empreinte du
   propriétaire, P37, et l'ajouter à `GOLD_INSTALLS` dans le workflow du relais) moyen retenu, `GOLD_INSTALLS` (empreinte de
