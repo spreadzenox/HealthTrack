@@ -1469,8 +1469,19 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       en panne → `persisted: false`), cache borné, `createFirestoreAttestStore` (collection `appattest`, `expireAt`
       13 mois). 15 tests (clés P-256 jetables + un bout-en-bout sur la chaîne openssl). Rien de branché.
       Au déploiement (5d/5e) : politique TTL sur `appattest` à ajouter à l'action du propriétaire (comme P33).
-    - [ ] **5d** routes `/v1/attest/challenge` et `/v1/attest/register`, branche iOS de `createIntegrityGuard`,
-      `APP_ATTEST_MODE` (défaut `off`), en-têtes CORS, ligne « iPhone » du bilan du déploiement.
+    - [x] **5d-1** ✅ 02/11 12:33 `relay/src/attestroutes.js` : `createChallengeStore` (32 octets aléatoires, 5 min,
+      usage unique, lié à l'installation, brûlé à la première présentation, borné à 10 000) et `createAttestRoutes`
+      (`POST /v1/attest/challenge` sans corps → `{ challenge, expiresInSec }` ; `POST /v1/attest/register`
+      `{ keyId, attestation, challenge }` → `{ ok, environment }`, 400 corps incomplet, 403 `{ error: 'attest',
+      reason }` dont `challenge`, 503 si Firestore ne répond pas). Même quota par installation que
+      `/v1/subscription/verify`. `APP_ATTEST_MODE` (`off` par défaut, valeur inconnue → `off`) et `APPLE_TEAM_ID`
+      (10 caractères, sinon vide) dans `config.js` ; `index.js` ne crée les routes qu'avec un mode autre que `off` ET
+      un Team ID : **aucun changement au déploiement** (404 comme avant). CORS : `X-AppAttest-Key`,
+      `X-AppAttest-Assertion`, `X-AppAttest-Time`. Journaux `event: 'appattest'` (statut, raison, empreinte ; jamais
+      le défi ni la clé). 10 tests (`attestroutes.test.js`).
+    - [ ] **5d-2** branche iOS de `createIntegrityGuard` (en-têtes `X-AppAttest-*` → `registry.check` avec le corps
+      brut ; `attest_passed` / `missing` / `rejected` / `unavailable` ; bloquant seulement en `enforce`), ligne
+      « App Attest » du bilan du déploiement (événements `appattest` par statut et raison).
     - [ ] **5e** demande à la routine iOS (plugin Swift, en-têtes `X-AppAttest-*`), `observe` quelques jours puis
       `enforce`. Déploiement : attend **P38** (Team ID).
   - Question ouverte : la période de lancement (Gold pour toute installation sans jeton) vaut aussi pour l'iPhone

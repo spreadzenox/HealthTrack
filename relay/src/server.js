@@ -110,7 +110,7 @@ export function buildRequest(body, ingredientNames) {
  *   billingQuota?: ReturnType<import('./quota.js').createQuota>, allowedOrigins?: string[],
  *   log?: (entry: object) => void, now?: () => number }} deps
  */
-export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, billingQuota = null, benchAuth = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
+export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, appAttest = null, billingQuota = null, benchAuth = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
   const origins = new Set(allowedOrigins)
   /** installId → { premium, source, until } : droits relus récemment (mémoire seulement). */
   const premiumCache = new Map()
@@ -256,7 +256,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       if (origin && origins.has(origin)) {
         headers['Access-Control-Allow-Origin'] = origin
         headers['Access-Control-Allow-Methods'] = 'POST, GET'
-        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status, X-Test-Device, X-Platform'
+        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status, X-Test-Device, X-Platform, X-AppAttest-Key, X-AppAttest-Assertion, X-AppAttest-Time'
       }
       res.writeHead(204, headers)
       res.end()
@@ -265,6 +265,30 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
 
     if (req.method === 'GET' && path === '/health') {
       send(res, 200, { ok: true }, origin)
+      return
+    }
+
+    if (appAttest && (path === '/v1/attest/challenge' || path === '/v1/attest/register')) {
+      if (req.method !== 'POST') {
+        send(res, 405, { error: 'method', message: 'POST attendu.' }, origin)
+        return
+      }
+      try {
+        const installId = String(req.headers['x-install-id'] ?? '')
+        if (!INSTALL_ID.test(installId)) throw new HttpError(400, 'install_id', 'Identifiant d\'installation manquant.')
+        // Le défi n'a pas de corps ; l'enregistrement porte keyId, attestation et challenge
+        const body = path === '/v1/attest/register' ? await readJson(req, SMALL_BODY_BYTES) : null
+        const slot = billingQuota ? billingQuota.take(installId) : { ok: true }
+        if (!slot.ok) {
+          send(res, 429, { error: 'quota', scope: slot.scope, message: QUOTA_MESSAGES.minute, resetAt: slot.resetAt }, origin)
+          return
+        }
+        const result = body === null ? appAttest.challenge(installId) : await appAttest.register(installId, body)
+        send(res, result.status, result.payload, origin)
+      } catch (err) {
+        if (!(err instanceof HttpError)) throw err
+        send(res, err.status, { error: err.code, message: err.message }, origin)
+      }
       return
     }
 
