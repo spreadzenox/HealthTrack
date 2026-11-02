@@ -262,7 +262,8 @@ export default function Premium({ context = null, onClose = null }) {
           </button>
           {plan && (
             <p className="paywall-fine">
-              {plan.trialDays ? `Puis ${plan.price} par ${PER[plan.period]}. ` : `${plan.price} par ${PER[plan.period]}. `}
+              {/* Sans essai, le prix est déjà sur la formule et sur le bouton (POL-PLAY-96) */}
+              {plan.trialDays ? `Puis ${plan.price} par ${PER[plan.period]}. ` : null}
               {plan.trialDays && reminder && plan.trialDays > REMINDER_DAYS_BEFORE && `Rappel ${REMINDER_DAYS_BEFORE} jours avant la fin de l’essai. `}
               Annulable à tout moment {STORE.inStore}.
             </p>

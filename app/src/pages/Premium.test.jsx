@@ -87,7 +87,9 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     fireEvent.click(await screen.findByRole('radio', { name: /Mensuel/ }))
     expect(screen.getByRole('button', { name: 'S’abonner · 4,99 € / mois' })).toBeInTheDocument()
     expect(screen.queryByLabelText('Déroulé de l’essai')).toBeNull()
-    expect(screen.getByText(/^4,99 € par mois\./)).toBeInTheDocument()
+    // Le prix est déjà sur la formule et sur le bouton : la mention ne le répète pas une troisième fois (POL-PLAY-96)
+    expect(screen.getByText('Annulable à tout moment dans Google Play.')).toBeInTheDocument()
+    expect(screen.queryByText(/^4,99 € par mois\./)).toBeNull()
   })
 
   it('Google Play ne propose aucune formule (abonnement pas encore créé) : message clair, aucun prix', async () => {
