@@ -38,6 +38,7 @@
 import { createHash } from 'node:crypto'
 import { HttpError, readBody, readJson } from './http.js'
 import { isTokenShape } from './billing.js'
+import { isIosRequest } from './integrity.js'
 import { stripJpegMetadata } from './jpeg.js'
 import { parseClientState } from './credits.js'
 import { dayKey } from './quota.js'
@@ -116,32 +117,38 @@ export function buildRequest(body, ingredientNames) {
  */
 export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, appAttest = null, billingQuota = null, benchAuth = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
   const origins = new Set(allowedOrigins)
-  /** installId → { premium, source, until } : droits relus récemment (mémoire seulement). */
+  /**
+   * « plateforme:installId » → { premium, source, until } : droits relus récemment (mémoire seulement). La plateforme
+   * fait partie de la clé : la période de lancement de l'iPhone finit plus tôt (02/11), et des droits vus côté play ne
+   * doivent pas servir à une requête iPhone.
+   */
   const premiumCache = new Map()
   /** Empreintes (hashInstallId) des installations qui gardent Gold hors période de lancement (GOLD_INSTALLS). */
   const goldSet = new Set(goldInstalls)
   /** Analyses Gold du jour (UTC) sur cette instance : borne le coût d'une journée ; le cumul du mois, lui, est durable. */
   const goldDay = { day: '', count: 0 }
 
-  function rememberEntitlement(installId, payload) {
+  const cacheKey = (installId, platform) => `${platform}:${installId}`
+
+  function rememberEntitlement(installId, payload, platform = 'android') {
     const t = now()
     const expires = Date.parse(payload?.launchUntil ?? payload?.expiresAt ?? '')
     const horizon = t + PREMIUM_CACHE_MS
     const until = payload?.premium && Number.isFinite(expires) ? Math.min(expires, horizon) : horizon
-    premiumCache.set(installId, { premium: Boolean(payload?.premium), source: payload?.premium ? payload?.source ?? null : null, tier: payload?.premium ? payload?.tier ?? null : null, until })
+    premiumCache.set(cacheKey(installId, platform), { premium: Boolean(payload?.premium), source: payload?.premium ? payload?.source ?? null : null, tier: payload?.premium ? payload?.tier ?? null : null, until })
   }
 
   /** Droits de cette installation : cache, sinon une relecture (bornée par billingQuota) auprès de Google Play. */
-  async function entitlementOf(installId, purchaseToken) {
-    const cached = premiumCache.get(installId)
+  async function entitlementOf(installId, purchaseToken, platform = 'android') {
+    const cached = premiumCache.get(cacheKey(installId, platform))
     const fallback = { premium: Boolean(cached?.premium), source: cached?.source ?? null, tier: cached?.tier ?? null }
     if (cached && cached.until > now()) return fallback
     if (!billing) return { premium: false, source: null, tier: null }
     const slot = billingQuota ? billingQuota.take(installId) : { ok: true }
     if (!slot.ok) return fallback
     try {
-      const result = await billing.verify(purchaseToken ? { purchaseToken } : {}, installId)
-      rememberEntitlement(installId, result.payload)
+      const result = await billing.verify(purchaseToken ? { purchaseToken } : {}, installId, { platform })
+      rememberEntitlement(installId, result.payload, platform)
       const premium = Boolean(result.payload?.premium)
       return { premium, source: premium ? result.payload?.source ?? null : null, tier: premium ? result.payload?.tier ?? null : null }
     } catch (err) {
@@ -316,8 +323,9 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
             send(res, 429, { error: 'quota', scope: slot.scope, message: QUOTA_MESSAGES.minute, resetAt: slot.resetAt }, origin)
             return
           }
-          result = await billing.verify(body, installId)
-          if (result.status === 200) rememberEntitlement(installId, result.payload)
+          const platform = isIosRequest(req.headers) ? 'ios' : 'android'
+          result = await billing.verify(body, installId, { platform })
+          if (result.status === 200) rememberEntitlement(installId, result.payload, platform)
         }
         if (result.status === 204) {
           res.writeHead(204, { 'Cache-Control': 'no-store' })
@@ -347,7 +355,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         send(res, 400, { error: 'install_id', message: 'Identifiant d\'installation manquant.' }, origin)
         return
       }
-      const entitlement = await entitlementOf(installId, purchaseTokenHeader(req))
+      const entitlement = await entitlementOf(installId, purchaseTokenHeader(req), isIosRequest(req.headers) ? 'ios' : 'android')
       const { premium } = entitlement
       await hydrateCredits(installId)
       send(res, 200, { credits: credits.peek(installId, { premium, tier: tierOf(installId, entitlement), reported: reportedCredits(req) }) }, origin)
@@ -465,7 +473,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       reserved = true
 
       if (credits) {
-        const entitlement = await entitlementOf(installId, purchaseTokenHeader(req))
+        const entitlement = await entitlementOf(installId, purchaseTokenHeader(req), isIosRequest(req.headers) ? 'ios' : 'android')
         premium = entitlement.premium
         tier = tierOf(installId, entitlement)
         await hydrateCredits(installId)

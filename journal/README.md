@@ -25,6 +25,13 @@
 > (calculé pour une invitation le 03/11 ; recalé si ça glisse). Déjà fait ce soir : fin de la période au 27/11, App
 > Attest de l'iPhone en observation (Team ID reçu), « Gold estime mieux les quantités » sur le paywall et la fiche.
 
+> 🍎 **iPhone : fin de « Gold offert » le vendredi 6 novembre inclus (02/11 22:35).** Comme décidé ce soir, le relais
+> arrête la période de lancement pour l'app iPhone le 06/11 à minuit (Paris) ; à partir du 07/11, l'iPhone sans
+> achat voit l'écran d'abonnement (Silver / Gold), ce qu'Apple doit pouvoir essayer pendant l'examen. Google Play n'est
+> pas touché (Gold offert jusqu'au 27/11). Relais en production vérifié ce soir : 27/11 pour Android, App Attest en
+> observation (défi App Attest OK). La routine iOS est prévenue dans [`POUR-IOS.md`](POUR-IOS.md) (date, réponse du
+> relais, test en TestFlight). Le bilan du prochain déploiement affiche une ligne « iPhone sans achat ».
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **P37 — votre Gold après la période de lancement** : Paramètres → touchez 7 fois « Version » → recopiez
   « Empreinte de l'installation » (12 caractères, rien de personnel) et donnez-la à la routine.
@@ -34,6 +41,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 02/11 22:35 — [Fin du lancement sur iPhone](runs/2026-11-02-2235-fin-lancement-iphone.md) | 🔧 | Sur iPhone, Gold offert s’arrête le vendredi 6/11 inclus (Google Play reste au 27/11) ; après, l’app iPhone montre l’écran d’achat pour l’examen d’Apple. Relais vérifié en production (27/11, App Attest en observation) ; routine iOS prévenue (`POUR-IOS.md`). Rien ne change sur Android |
 | 02/11 21:35 — [Compte rendu du 02/11](runs/2026-11-02-2135-compte-rendu-0211.md) | 🔧 | Gold offert jusqu’au 27 novembre (relais) ; App Attest de l’iPhone en observation avec votre Team ID ; « Gold estime mieux les quantités » sur le paywall et la fiche Gold. **Envoi sur Alpha refusé à la session : P40, un clic pour vous** |
 | 02/11 20:35 — [Idées : fiche Play et abonnements](runs/2026-11-02-2035-idees-fiche-silver-gold.md) | 💡 | Défaut trouvé : la fiche du Play Store parle encore d’un seul « Premium » (sans Gold), et Google affiche « Halcya Premium » au moment de payer alors que l’app dit « Silver ». Texte corrigé prêt (LISTING-2, prochain run de code), description courte avec « SII, FODMAP ». Règles Play de 2027 relues : Halcya non concernée |
 | 02/11 19:35 — [Mesure de perf de Tendances](runs/2026-11-02-1935-perf-tendances.md) | 🔧 | Audit Play de Sources et Réglages en démo (clair et sombre) : rien à corriger. En coulisses : Tendances ne lisait pas plus que les Analyses, c’est la mesure qui se trompait ; corrigée, et le garde-fou de la CI pour Tendances est resserré. Rien ne change dans l’app |

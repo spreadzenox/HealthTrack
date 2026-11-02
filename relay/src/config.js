@@ -30,9 +30,9 @@ const num = (value, fallback) => {
 export function readLaunchPeriod(path = DEFAULT_LAUNCH_PERIOD) {
   try {
     const raw = JSON.parse(readFileSync(path, 'utf8'))
-    return { from: String(raw.from ?? ''), until: String(raw.until ?? ''), off: raw.off === true }
+    return { from: String(raw.from ?? ''), until: String(raw.until ?? ''), iosUntil: String(raw.iosUntil ?? ''), off: raw.off === true }
   } catch {
-    return { from: '', until: '', off: false }
+    return { from: '', until: '', iosUntil: '', off: false }
   }
 }
 
@@ -41,6 +41,7 @@ function launchFrom(env) {
   return {
     from: env.LAUNCH_PREMIUM_FROM ?? file.from,
     until: env.LAUNCH_PREMIUM_UNTIL ?? file.until,
+    iosUntil: env.LAUNCH_PREMIUM_IOS_UNTIL ?? file.iosUntil,
     off: env.LAUNCH_PREMIUM_OFF !== undefined ? env.LAUNCH_PREMIUM_OFF === '1' : file.off,
   }
 }

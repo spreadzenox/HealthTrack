@@ -217,6 +217,12 @@ jobs:
             -H 'Content-Type: application/json' -H "X-Install-Id: ci-smoke-${GITHUB_RUN_ID}" -d '{}' \
             | jq -r '"premium=\(.premium) source=\(.source // "—") jusqu’au \(.launchUntil // "—")"' 2>/dev/null || echo "illisible")
           echo "- Installation sans achat : $launch" >> "$GITHUB_STEP_SUMMARY"
+          # Fin de la période sur iPhone (02/11) : une requête iPhone (X-Platform: ios) s'arrête à iosUntil
+          launch_ios=$(curl -sS --max-time 30 -X POST "$RELAY_URL/v1/subscription/verify" \
+            -H 'Content-Type: application/json' -H "X-Install-Id: ci-smoke-${GITHUB_RUN_ID}" -H 'X-Platform: ios' -d '{}' \
+            | jq -r '"premium=\(.premium) source=\(.source // "—") jusqu’au \(.launchUntil // "—")"' 2>/dev/null || echo "illisible")
+          echo "- iPhone sans achat : $launch_ios (fin prévue : $(jq -r '.iosUntil // "—"' relay/src/launch-period.json))" >> "$GITHUB_STEP_SUMMARY"
+          echo "Installation sans achat : $launch ; iPhone sans achat : $launch_ios"
           # App Attest (P38, 02/11) : en APP_ATTEST_MODE=observe avec le Team ID, la route du défi répond (non bloquant)
           attest=$(curl -sS -o "$RUNNER_TEMP/attest.json" -w '%{http_code}' --max-time 30 -X POST "$RELAY_URL/v1/attest/challenge" \
             -H "X-Install-Id: ci-smoke-${GITHUB_RUN_ID}" -H 'X-Platform: ios' || echo "000")

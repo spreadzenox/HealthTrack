@@ -1500,11 +1500,19 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       « App Store » pour l'iPhone. Journal `event: 'integrity', platform: 'ios'` (même tableau du bilan, origine
       « iPhone ») ; ligne « App Attest (clés de l'iPhone) » du bilan du déploiement (événements `appattest`).
       Mode `off` : comportement d'avant (`not_android`). 7 tests (`attestguard.test.js`), 188 tests relais.
-    - [ ] **5e** demande à la routine iOS (plugin Swift, en-têtes `X-AppAttest-*`), `observe` quelques jours puis
-      `enforce`. Déploiement : attend **P38** (Team ID).
-  - Question ouverte : la période de lancement (Gold pour toute installation sans jeton) vaut aussi pour l'iPhone
-    aujourd'hui, puisque le relais ne distingue pas la plateforme sur `/v1/subscription/verify` ; à confirmer avec la
-    routine iOS si l'iPhone doit en être exclu.
+    - [~] **5e** relais déployé en `APP_ATTEST_MODE=observe` avec le Team ID (02/11 21:35, vérifié le 02/11 22:35 :
+      `POST /v1/attest/challenge` → 200) ; message à la routine iOS écrit dans `journal/POUR-IOS.md` (02/11 22:35).
+      Reste : quelques jours propres en observation (bilan « App Attest » du déploiement), puis `enforce`
+      seulement quand l'app iPhone signe ses requêtes.
+  - [x] **IOS-LANCEMENT-FIN** (02/11 22:35, décision du propriétaire du 02/11 au soir) : `iosUntil`
+    (`2026-11-06T23:00:00Z`) dans `relay/src/launch-period.json` ; `launchUntilFor(période, now, plateforme)` dans
+    `billing.js` (iPhone = la plus tôt des deux dates ; une requête qui se dit Android n'a jamais plus que la période
+    play) ; `isIosRequest` (`X-Platform: ios`, `no_plugin` sans en-tête, ou clé App Attest) sur `/v1/subscription/verify`,
+    `/v1/credits` et l'analyse ; cache des droits séparé par plateforme ; variable `LAUNCH_PREMIUM_IOS_UNTIL`. App :
+    `platformHeaders()` (`X-Platform: ios` si `VITE_STORE=appstore`) sur les appels au relais ; `renewalInfo` transmis
+    (repris du correctif iOS 37). Bilan du déploiement : ligne « iPhone sans achat ». Tests : `launch-ios.test.js`
+    (6), app (3). Captures `--play --store=appstore --routes=/premium --subscription=launch [--ios-launch=ended]`.
+    **À vérifier au déploiement** : « iPhone sans achat … jusqu'au 2026-11-06 », puis le 07/11 « premium=false ».
 - [x] **IOS-3** (28/10 12:33) Notes de Nouveautés propres à Android marquées `"variants": ["play", "sideload"]`
   (`2026-10-24-1630-sauvegarde-android`, `2026-10-27-2133-bord-a-bord`, `2026-10-28-0433-montre-restauree`) ; à
   faire pour toutes les suivantes (barres système, sauvegarde Android, montre Huawei en Bluetooth, Health Connect,

@@ -41,6 +41,9 @@
  *   npm run visual -- --play --routes=/premium [--billing=none]  # paywall : faux plugin Play Billing (formules
  *                                                     synthétiques, essai 14 j, Gold mensuel) ; --billing=none :
  *                                                     aucune formule ; --billing=silver : Silver seul
+ *   npm run visual -- --play --store=appstore --routes=/premium --subscription=launch [--ios-launch=ended]  # app
+ *                                          iPhone (VITE_STORE=appstore) : le relais factice voit X-Platform: ios ;
+ *                                          --ios-launch=ended : période de lancement finie sur iPhone (02/11)
  *   npm run visual -- --play --routes=/settings --subscription=active  # état d'abonnement factice renvoyé par le
  *                                                  relais (free par défaut, launch, active, trial, paused, grace,
  *                                                  on_hold ; grace / on_hold : carte de l'Accueil, 6e) (6c)
@@ -286,6 +289,7 @@ async function main() {
         ...process.env,
         BROWSER: 'none',
         ...(args.play ? { VITE_DISTRIBUTION: 'play' } : {}),
+        ...(args.store ? { VITE_STORE: String(args.store) } : {}),
         ...(args.lang === 'en' ? { VITE_I18N_EN: '1' } : {}),
       },
     })
@@ -405,7 +409,11 @@ async function main() {
         grace: { premium: true, source: 'play', state: 'grace', productId: 'halcya_premium', expiresAt: inDays(5), autoRenewing: true },
         on_hold: { premium: false, source: 'play', state: 'on_hold', productId: 'halcya_premium', expiresAt: inDays(-1) },
       }
-      const sub = typeof args.subscription === 'string' && states[args.subscription] ? args.subscription : 'free'
+      let sub = typeof args.subscription === 'string' && states[args.subscription] ? args.subscription : 'free'
+      // --ios-launch=ended : comme le relais après le 06/11, plus de Gold d'office pour une requête X-Platform: ios
+      const ios = route.request().headers()['x-platform'] === 'ios'
+      if (sub === 'launch' && ios && args['ios-launch'] === 'ended') sub = 'free'
+      console.log(`  relais factice : /v1/subscription/verify${ios ? ' (X-Platform: ios)' : ''} → ${sub}`)
       return route.fulfill({
         status: 200,
         contentType: 'application/json',
