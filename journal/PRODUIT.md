@@ -186,6 +186,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 23:35** — **Lint à 0** : les 7 erreurs ESLint historiques corrigées (deux `setState` dans un effet, espaces insécables dans une expression régulière, globales de Vite et de Node), et le check « Frontend (Vitest) » lance maintenant `npm run lint` : toute nouvelle erreur bloque la PR. Rien ne change dans l’app. Prochain : TEST-ALPHA-1 (07–08/11).
 - **03/11 22:35** — **FIN-LANCEMENT-2** (I213) : au premier lancement après la fin de Gold offert, carte Accueil « Le test est terminé. Merci ! » · « Rien n’est effacé : votre journal et vos mesures restent dans l’app. » · « Voir les formules » ; une fois par date de fin, pas au-delà de 30 jours, rien pour un abonné ni dans l’app iPhone. Prochain : TEST-ALPHA-1 (07–08/11), FIN-LANCEMENT-MSG (vers le 24/11).
 - **03/11 21:35** — **FIN-LANCEMENT-1** (I213) : carte Accueil « Gold offert jusqu’au … » dans les 3 derniers jours de la période de lancement (une fois par date de fin, croix, lien vers la fiche Gold), variante play seulement, jamais dans l’app iPhone ; dernière fin de période retenue pour FIN-LANCEMENT-2. Prochain : FIN-LANCEMENT-2 (carte « Le test est terminé », avant le 27/11).
 - **03/11 19:35** — **Chantier montre (e)** : MONTRE-SCORE (I200), score de la nuit de la montre (sur 100) et FC moyenne de la nuit en tuiles du Journal → Jours, juste après le sommeil ; rien sans montre, aucun facteur d'analyse. À comparer avec Huawei Santé.

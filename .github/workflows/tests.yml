@@ -23,6 +23,11 @@ jobs:
           cd app
           npm ci
 
+      - name: Lint (ESLint, 0 erreur)
+        run: |
+          cd app
+          npm run lint
+
       - name: Run frontend tests
         run: |
           cd app

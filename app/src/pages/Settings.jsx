@@ -118,7 +118,7 @@ function SubscriptionBlock() {
 }
 
 export default function Settings() {
-  const [apiKey, setApiKey] = useState('')
+  const [apiKey, setApiKey] = useState(() => getGeminiApiKey())
   const [saved, setSaved] = useState(false)
   const [geminiModel, setGeminiModelState] = useState(() => getGeminiModel())
 
@@ -133,10 +133,6 @@ export default function Settings() {
   const [cigarettePinned, setCigarettePinned] = useState(() => isCigaretteCounterPinned())
   const [theme, setTheme] = useState(() => getThemeChoice())
   const [goal, setGoal] = useState(() => loadOnboarding().goal)
-
-  useEffect(() => {
-    setApiKey(getGeminiApiKey())
-  }, [])
 
   const handleSave = () => {
     setGeminiApiKey(apiKey)
