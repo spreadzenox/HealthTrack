@@ -39,6 +39,8 @@ export function summaryChips(s) {
   const chips = []
   const fr = (v) => v.toLocaleString(appLocale())
   if (s.sleepMinutes != null) chips.push([s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil', formatDuration(s.sleepMinutes)])
+  if (s.watchSleepScore != null) chips.push(['Score montre', `${s.watchSleepScore} / 100`])
+  if (s.sleepHr != null) chips.push(['FC nuit', `${s.sleepHr} bpm`])
   if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
   if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
   if (s.hrv != null) chips.push(['VFC nuit', `${Math.round(s.hrv)} ms`])

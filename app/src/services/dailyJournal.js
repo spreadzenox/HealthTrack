@@ -33,6 +33,8 @@ function emptyDay(dateKey) {
     items: [],
     _sleep: 0,
     _inBed: 0,
+    _sleepScore: null,
+    _sleepHr: null,
     _activity: { steps: createActivityTotal(), calories: createActivityTotal() },
     _hr: [],
     _resting: [],
@@ -83,6 +85,9 @@ function finalize(day) {
       // À défaut de montre : nuit estimée par le téléphone (temps d'écran)
       sleepMinutes: day._sleep > 0 ? day._sleep : day._inBed > 0 ? day._inBed : phoneSleep(day),
       sleepEstimated: !(day._sleep > 0 || day._inBed > 0) && phoneSleep(day) != null,
+      // Score de la nuit (0–100) et FC moyenne de la nuit, tels que la montre les calcule (MONTRE-SCORE)
+      watchSleepScore: day._sleepScore != null ? Math.round(day._sleepScore) : null,
+      sleepHr: day._sleepHr != null ? Math.round(day._sleepHr) : null,
       screenMinutes: isNum(day._phone?.screenMinutes) ? day._phone.screenMinutes : null,
       socialMinutes: day._apps ? (isNum(day._apps.minutes?.social) ? day._apps.minutes.social : 0) : null,
       steps: dailyTotal(day, 'steps'),
@@ -181,6 +186,9 @@ export function buildDailyJournal(entries) {
         if (!NOT_ASLEEP.has(p.sleepState)) day._sleep += p.durationMinutes
         else if (p.sleepState === 'inBed') day._inBed += p.durationMinutes
       }
+      // Résumé de la nuit calculé par la montre (I200) : répété sur chaque phase, on garde le premier
+      if (day._sleepScore == null && isNum(p.sleepScore) && p.sleepScore > 0) day._sleepScore = p.sleepScore
+      if (day._sleepHr == null && isNum(p.avgHeartRate) && p.avgHeartRate > 0) day._sleepHr = p.avgHeartRate
       continue
     }
     // Fuseau horaire du jour : sert seulement à déduire « Voyage », rien à afficher.
