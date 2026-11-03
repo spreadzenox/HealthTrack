@@ -54,9 +54,9 @@ describe('renderReportPdf', () => {
     expect(p1).toMatch(/Pas encore assez de notes du ventre \(3\/\d+ jours\)/)
     expect(p1).not.toMatch(/Aucun lien n’a passé/)
     expect(p1).not.toMatch(/comparaisons faites/)
-    // La première semaine (sans note) : « 0 » jours notés, puis des tirets, jamais « 0 calme ».
-    const i = texts.findIndex((x) => x.t === 'Douleur')
-    expect(texts.slice(i + 2, i + 6).map((x) => x.t)).toEqual(['0', '–', '–', '–'])
+    // Les semaines d'avant la première note ne font plus de rangées (POL-PLAY-105) : une phrase les résume.
+    expect(p1).toMatch(/Aucune note avant la semaine du /)
+    expect(texts.some((x) => x.t === '–')).toBe(false)
   })
 
   it('FODMAP par sous-groupe : abréviation dans le calendrier, ligne du tableau, repère présenté comme une hypothèse', async () => {
@@ -104,6 +104,23 @@ describe('renderReportPdf', () => {
 
   it('dates en français', () => {
     expect(frDate('2026-10-27')).toBe('27 oct. 2026')
-    expect(frDate('2026-02-01', false)).toBe('1 févr.')
+    expect(frDate('2026-02-01', false)).toBe('1er févr.')
+    expect(frDate('2026-11-01')).toBe('1er nov. 2026')
+    expect(frDate('2026-11-11', false)).toBe('11 nov.')
+  })
+
+  it('semaines d’avant la première note : une ligne au lieu de rangées « 0 – – – » (POL-PLAY-105)', async () => {
+    // 12 semaines demandées, notes seulement les 3 derniers jours : la première semaine notée et une seule phrase.
+    const entries = [gut(0, 'pain'), gut(-1, 'calm'), gut(-2, 'discomfort'), gut(-20, 'calm')]
+    const { onPage } = await render(buildReport(entries, { now: NOW, weeks: 12 }))
+    const p1 = onPage(1)
+    const rows = p1.split('\n').filter((t) => /^\d+(er)? [a-zéû.]+ – \d+(er)? [a-zéû.]+$/.test(t))
+    // Semaine de la note à J−20, la semaine vide qui suit (un trou au milieu reste visible), puis les deux dernières.
+    expect(rows.length).toBeGreaterThanOrEqual(3)
+    expect(rows.length).toBeLessThanOrEqual(5)
+    expect(p1).toMatch(/Aucune note avant la semaine du \d+(er)? [a-zéû]+\.$/m)
+    expect(p1).not.toMatch(/\.\./)
+    // Un trou au milieu reste visible, en tirets (jamais « 0 calme »).
+    expect(p1.split('\n')).toContain('–')
   })
 })
