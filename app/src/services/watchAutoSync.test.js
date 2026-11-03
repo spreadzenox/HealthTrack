@@ -7,6 +7,7 @@ import {
   isAutoSyncPaused,
   markWatchRestored,
   noteBackgroundSuccess,
+  noteCaptureReads,
   recordWatchConnection,
   syncWatchIfStale,
   WATCH_AUTO_SYNC_MS,
@@ -211,6 +212,44 @@ describe('issue de chaque lecture (écran « Montre », M5)', () => {
     expect(failed.reads).toEqual(first.reads)
     expect(failed.readsAt).toBe(first.readsAt)
     expect(recordWatchConnection({ outcome: { code: 'failed' } }, { storage: memoryStorage(), now: () => T0 }).reads).toBeUndefined()
+  })
+})
+
+describe('issue des lectures faites en arrière-plan (captures du client Java, M5)', () => {
+  const services = [{ id: 'sleepFile', label: 'sommeil détaillé', outcome: 'ok', count: 2 }, { id: 'stress', outcome: 'empty' }]
+  it('la capture la plus récente remplace une lecture plus ancienne, avec sa date et la mention « arrière-plan »', () => {
+    const storage = memoryStorage()
+    recordWatchConnection({ outcome: { code: 'connected' }, sync: { services: [{ id: 'hrvDay', outcome: 'ok', count: 1 }] } }, { storage, now: () => T0 })
+    const reports = [{ at: T0 + 3_600_000, services: [{ id: 'minutes', outcome: 'ok', count: 9 }] }, { at: T0 + 7_200_000, services }]
+    expect(noteCaptureReads(reports, { storage })).toBe(true)
+    const state = getWatchAutoSyncState(storage)
+    expect(state.reads).toEqual([{ id: 'sleepFile', outcome: 'ok', count: 2 }, { id: 'stress', outcome: 'empty', count: 0 }])
+    expect(state.readsAt).toBe(new Date(T0 + 7_200_000).toISOString())
+    expect(state.readsBackground).toBe(true)
+    expect(state.outcome).toBe('connected')
+  })
+  it('une capture plus ancienne que la dernière lecture de l’app, ou sans lecture, ne change rien', () => {
+    const storage = memoryStorage()
+    recordWatchConnection({ outcome: { code: 'connected' }, sync: { services: [{ id: 'hrvDay', outcome: 'ok', count: 1 }] } }, { storage, now: () => T0 })
+    expect(noteCaptureReads([{ at: T0 - 60_000, services }], { storage })).toBe(false)
+    expect(noteCaptureReads([{ at: T0 + 60_000, services: [] }, { services }], { storage })).toBe(false)
+    expect(noteCaptureReads(undefined, { storage })).toBe(false)
+    expect(getWatchAutoSyncState(storage).readsBackground).toBe(false)
+  })
+  it('une synchro de l’app plus récente reprend la main (plus de mention « arrière-plan »)', () => {
+    const storage = memoryStorage()
+    noteCaptureReads([{ at: T0, services }], { storage })
+    expect(getWatchAutoSyncState(storage).readsBackground).toBe(true)
+    const kept = recordWatchConnection({ outcome: { code: 'connect_failed' } }, { storage, now: () => T0 + 60_000 })
+    expect(kept.readsBackground).toBe(true)
+    const live = recordWatchConnection({ outcome: { code: 'connected' }, sync: { services: [{ id: 'hrvDay', outcome: 'ok', count: 1 }] } }, { storage, now: () => T0 + 120_000 })
+    expect(live.readsBackground).toBe(false)
+  })
+  it('branchée sur l’ouverture de l’app : les lectures des captures importées arrivent dans l’état', async () => {
+    const storage = memoryStorage()
+    const importCaptures = vi.fn(async () => ({ imported: 1, reports: [{ at: T0, services }] }))
+    await syncWatchIfStale({ classic: null, storage, importCaptures })
+    expect(getWatchAutoSyncState(storage).readsAt).toBe(new Date(T0).toISOString())
   })
 })
 

@@ -55,6 +55,15 @@ describe('WatchData (écran « Montre », M5)', () => {
     expect(sleep.classList.contains('watch-data-row--compact')).toBe(false)
   })
 
+  it('lecture faite app fermée : elle est dite « en arrière-plan »', async () => {
+    localStorage.setItem(
+      'healthtrack_watch_autosync',
+      JSON.stringify({ readsAt: new Date(NOW - 3600_000).toISOString(), readsBackground: true, reads: [{ id: 'sleepFile', outcome: 'ok', count: 1 }] }),
+    )
+    renderPage(async () => [])
+    expect(await screen.findByText('Dernière lecture en arrière-plan : il y a 1 h.')).toBeInTheDocument()
+  })
+
   it('mesures reçues sans lecture détaillée : la date de la dernière mesure, pas « synchronisez » (POL-PLAY-19)', async () => {
     renderPage(async () => ENTRIES)
     expect(await screen.findByText('Dernière mesure reçue : il y a 4 h.')).toBeInTheDocument()

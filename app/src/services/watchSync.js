@@ -270,5 +270,5 @@ export async function importWatchCapture(capture, {
     withTotals: newer,
     keepAt: prev?.at || null,
   })
-  return { ...report, battery: data.battery, background: true }
+  return { ...report, at: capture.at, battery: data.battery, background: true }
 }
