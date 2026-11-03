@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-03",
+  "kind": "amélioration",
+  "title": "Montre : lectures faites app fermée",
+  "variants": ["play", "sideload"],
+  "items": [
+    "L’écran « Données de la montre » tient compte des lectures faites pendant que l’app était fermée et l’indique (« Dernière lecture en arrière-plan »)."
+  ]
+}

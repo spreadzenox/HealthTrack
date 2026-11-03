@@ -44,7 +44,7 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
   // sans lecture détaillée mais avec des mesures (synchro de base) : leur date plutôt qu'un « synchronisez » trompeur
   const lastAt = rows?.reduce((max, r) => (r.last && (!max || r.last.at > max) ? r.last.at : max), null)
   const syncLine = state.readsAt
-    ? `Dernière lecture par l’app : ${formatAgo(state.readsAt, new Date(now()))}.`
+    ? `Dernière lecture ${state.readsBackground ? 'en arrière-plan' : 'par l’app'} : ${formatAgo(state.readsAt, new Date(now()))}.`
     : lastAt
       ? `Dernière mesure reçue : ${formatAgo(lastAt, new Date(now()))}.`
       : 'Pas encore de lecture détaillée : synchronisez la montre depuis Sources.'

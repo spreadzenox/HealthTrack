@@ -62,6 +62,7 @@
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done  # … montre appairée et authentifiée (rapport factice)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=restored  # … données restaurées (sauvegarde Android) : « À reconnecter »
  *   npm run visual -- --routes=/montre --connect=done   # écran « Données de la montre » (M5) avec l'issue de chaque lecture
+ *   npm run visual -- --routes=/montre --connect=background   # … dernière lecture faite app fermée (« en arrière-plan »)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=stalled  # … la montre n'a pas répondu pour le sommeil
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion  # … « Synchro dès que la montre se reconnecte » (à activer)
  *   npm run visual -- --routes=/connectors --ble=watch --connect=done --companion=on  # … activée, montre vue il y a 5 min, relue app fermée il y a 3 min
@@ -568,11 +569,12 @@ async function main() {
         { top, bottom }
       )
     }
-    if (args.connect === 'done' || args.connect === 'stalled' || args.connect === 'restored') {
+    if (args.connect === 'done' || args.connect === 'stalled' || args.connect === 'restored' || args.connect === 'background') {
       // --connect=done : « Connexion à la montre » réussie (rapport factice déjà en mémoire)
       // --connect=stalled : … mais la montre n'a pas répondu pour le sommeil (I69)
       // --connect=restored : données restaurées par la sauvegarde Android, clé de la montre restée sur l'ancien téléphone
-      await context.addInitScript(([stalled, restored]) => {
+      // --connect=background : dernière lecture faite app fermée (capture du client Java, écran « Montre »)
+      await context.addInitScript(([stalled, restored, background]) => {
         const step = (id, label, status, detail = null) => ({ id, label, status, detail })
         const t = new Date(Date.now() - 120000).toISOString()
         localStorage.setItem('healthtrack_huawei_secrets', JSON.stringify({ v1: '00', v2: '00', v3: '00' }))
@@ -582,6 +584,7 @@ async function main() {
             at: t, auto: true, outcome: restored ? 'restored' : 'connected', label: '38 minutes → 9 mesures', inserted: stalled ? 0 : 9, stalled: stalled ? ['sommeil'] : null, battery: 84, failures: 0, everConnected: true,
             // Issue de chaque lecture (écran « Montre », M5)
             readsAt: t,
+            readsBackground: background,
             reads: [['sleep', 'ok'], ['minutes', 'ok'], ['totals', 'ok'], ['workouts', 'empty'], ['sleepFile', stalled ? 'timeout' : 'ok'], ['stress', 'ok'], ['hrvDay', 'ok'], ['skinTemp', 'ok']].map(([id, outcome]) => ({ id, outcome, count: outcome === 'ok' ? 3 : 0 })),
           }),
         )
@@ -606,7 +609,7 @@ async function main() {
             log: [],
           }),
         )
-      }, [args.connect === 'stalled', args.connect === 'restored'])
+      }, [args.connect === 'stalled', args.connect === 'restored', args.connect === 'background'])
     }
     if (args.companion) {
       // Montre en appareil compagnon (src/services/watchPresence.js) : Android 13+, association à faire ou faite

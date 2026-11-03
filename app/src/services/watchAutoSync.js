@@ -53,9 +53,32 @@ export function getWatchAutoSyncState(storage = globalThis.localStorage) {
 }
 
 /** { reads, readsAt } : issue (et nombre) de chaque lecture, des nombres seulement ; sinon ceux d'avant. */
+const readsList = (services) => services.map((s) => ({ id: s.id, outcome: s.outcome, count: s.count ?? 0 }))
+
 function readsOf(services, prev, now) {
-  if (!Array.isArray(services) || !services.length) return prev.reads ? { reads: prev.reads, readsAt: prev.readsAt || null } : {}
-  return { reads: services.map((s) => ({ id: s.id, outcome: s.outcome, count: s.count ?? 0 })), readsAt: new Date(now()).toISOString() }
+  if (!Array.isArray(services) || !services.length) return prev.reads ? { reads: prev.reads, readsAt: prev.readsAt || null, readsBackground: !!prev.readsBackground } : {}
+  return { reads: readsList(services), readsAt: new Date(now()).toISOString(), readsBackground: false }
+}
+
+/**
+ * Lectures faites app fermée (captures du client Java importées à l'ouverture) : la plus récente remplace l'issue
+ * gardée pour l'écran « Montre » si elle est plus récente que la dernière lecture de l'app. Rend true si l'état change.
+ */
+export function noteCaptureReads(reports, { storage = globalThis.localStorage } = {}) {
+  const newest = (Array.isArray(reports) ? reports : [])
+    .filter((r) => Number(r?.at) > 0 && Array.isArray(r.services) && r.services.length)
+    .reduce((best, r) => (!best || r.at > best.at ? r : best), null)
+  if (!newest) return false
+  const state = getWatchAutoSyncState(storage)
+  if (newest.at <= (Date.parse(state.readsAt || '') || 0)) return false
+  const next = { ...state, reads: readsList(newest.services), readsAt: new Date(newest.at).toISOString(), readsBackground: true }
+  try {
+    storage?.setItem(STATE_KEY, JSON.stringify(next))
+  } catch {
+    return false
+  }
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('watch-sync-updated'))
+  return true
 }
 
 /** Retient l'issue d'une connexion (manuelle ou automatique) pour régler les essais suivants. */
@@ -222,7 +245,7 @@ async function runIfStale({
 } = {}) {
   try {
     // Ce que le client Java a relu app tuée (§9.1 d) passe d'abord : la synchro en direct peut alors être inutile
-    if (!isWatchBusy()) await withWatchLock(() => importCaptures({ storage }))
+    if (!isWatchBusy()) noteCaptureReads((await withWatchLock(() => importCaptures({ storage })))?.reports, { storage })
     if (!classic) return { ran: false, reason: 'unavailable' }
     if (isWatchBusy()) return { ran: false, reason: 'busy' }
     const state = getWatchAutoSyncState(storage)

@@ -29,7 +29,8 @@ describe('importWatchCapture', () => {
     const written = d.write.mock.calls[0][0]
     expect(written.every((e) => e.source === 'huawei_watch')).toBe(true)
     expect(written.filter((e) => e.payload.period === 'day').map((e) => e.type)).toEqual(['steps', 'calories'])
-    expect(r).toMatchObject({ background: true, battery: 64, minutes: 4, nights: 1 })
+    expect(r).toMatchObject({ background: true, battery: 64, minutes: 4, nights: 1, at: javaCapture().at })
+    expect(r.services.length).toBeGreaterThan(0)
     expect(r.inserted).toBe(written.length)
     expect(getWatchSyncState(ADDRESS, storage)).toMatchObject({ v: SYNC_STATE_VERSION, until: READ_WINDOW.until, at: new Date(READ_WINDOW.at).toISOString() })
   })
