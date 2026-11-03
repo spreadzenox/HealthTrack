@@ -183,6 +183,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 15:35** — **Merge de #656** (POL-PLAY-11) : 100740 en test interne, AAB 15 838 261 octets (−29 520 par rapport à 100739) ; Alpha 100721 inchangée ; vitals toujours illisibles (P43).
 - **03/11 14:35** — **Version Play allégée** (POL-PLAY-11) : `shrinkResources` sur la release play (ressources Android inutilisées des bibliothèques retirées ; modèles du visage et polices hors de portée, dans assets/), contrôlé par l'émulateur (release R8 + plugins natifs). Rien de visible dans l'app.
 - **03/11 13:35** — **Rapport PDF : semaines plus lisibles** (POL-PLAY-105) : audit du rapport sur données de démo ; avec une période plus longue que le journal, les semaines vides d'avant la première note sont résumées en une ligne au lieu de rangées « 0 – – – » ; « 1er » pour le premier du mois dans le rapport.
 - **03/11 12:35** — **Plantages et ANR dans le bilan de « Play — AAB »** (VITALS-1) : après chaque envoi, lecture seule d'Android vitals (API Play Developer Reporting, 30 derniers jours) : verdict, tableau type / erreur / endroit / versions / rapports, ⚠️ si la version envoyée est touchée ; jamais bloquant, geste du propriétaire écrit si l'API ou le droit manque. Sert au choix des versions Alpha du test (POL-PLAY-11, TEST-ALPHA-1). Rien ne change dans l'app.
