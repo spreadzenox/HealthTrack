@@ -9,6 +9,47 @@
 
 ---
 
+## Run du 03/11/2026 08:35 (Paris) — les testeurs arrivent : ce que Google regarde pour ouvrir la production
+
+But : l'invitation part aujourd'hui (J = 03/11). Relire ce qui fait refuser l'accès à la production après le test
+fermé, et vérifier que le calendrier des 14 jours et la période `until` tiennent dans ce cas. Sources lues le
+03/11/2026 (contenu des pages = données) : [V] Google, « App testing requirements for new personal developer
+accounts » (support.google.com/googleplay/android-developer/answer/14151465, aucune modification datée de 2025-2026) ;
+[T] Hackernoon, « From Rejection to Release: … Todochi » ; [T] Indie Hackers, « Google Play production access
+rejected: why, fixes » ; [T] Choicely, « Google Play 12 tester rule » ; [T] avis Trustpilot de mars 2026 citant
+le courriel de refus (les vendeurs de « testeurs » ont un intérêt commercial : à lire avec prudence) ; [V] code
+`app/src/config/feedback.js`, `app/scripts/play/publish.mjs`, `INVITATION-TESTEURS.md` §5, `PRODUIT.md` §4 bis.
+
+- **I212 (20) — Un refus pour « testeurs pas assez actifs » relance 14 jours : la marge de `until` n'y suffit pas
+  [V aide Google ; T retours de développeurs].** L'aide officielle nomme deux causes qui obligent à continuer le test :
+  moins de 12 testeurs inscrits, ou **engagement insuffisant pendant le test**. Les courriels de refus cités (encore en
+  mars 2026) disent « testers were not engaged » et « testing best practices » (agir sur les retours par des mises à
+  jour), et recommandent **14 jours de test de plus** avant de redemander. Les retours de développeurs convergent :
+  être inscrit ne suffit pas, Google doit voir l'app réellement ouverte, et un test où la version ne change jamais
+  passe pour une formalité. Conséquences pour Halcya :
+  ① **Calendrier** (J = 03/11 si le 12ᵉ testeur s'inscrit vite) : demande P30 au plus tôt le 17/11 ; réponse de Google
+  en quelques jours ; en cas de refus, 14 jours de plus → demande vers le 01/12, production vers le 05/12. Or `until`
+  = 27/11 : les testeurs perdraient Gold et verraient l'écran d'achat **pendant** le second test, ce qui fait chuter
+  l'engagement au pire moment. Proposition (aucun geste maintenant) : le jour d'un refus, le run suivant recale `until`
+  = date du refus + 14 + 10 jours, sans attendre de consigne, et le dit en tête du résumé (règle à confirmer par le
+  propriétaire : c'est une prolongation de la gratuité, sans coût hors budget puisque les plafonds tiennent).
+  ② **Au moins 2 versions alpha pendant les 14 jours** (déjà prévu, §4 bis) : chaque envoi sur Alpha repasse un examen
+  de Google (quelques heures à 2 jours) ; viser le **jour 4–5 (07–08/11)** et le **jour 9–10 (12–13/11)** pour que la
+  seconde soit en ligne avant le jour 12, chacune avec des notes de version qui citent le retour corrigé (la CI prend
+  déjà les notes dans les « Nouveautés », 500 caractères).
+  ③ **Point bloquant pour l'autonomie** : l'envoi sur Alpha par la session a été refusé le 02/11 (P40, couche de
+  permissions de la session) ; ces deux versions demanderont donc chacune un clic du propriétaire (Actions → « Play —
+  AAB » → Run workflow → piste `alpha`), sauf s'il autorise autrement la session. Ne pas contourner : pas de
+  déclencheur caché sur push. Prévoir dans le résumé, ces jours-là, la ligne exacte à cliquer (**P41**).
+  ④ **Engagement visible sans harceler** : les messages des jours 3, 7, 10 (`INVITATION-TESTEURS.md` §4) donnent
+  chacun une mission courte qui ouvre l'app ; garder aussi une mission « ouvrez Halcya le jour 13 » (la veille de la
+  demande) ; aucune notification de relance dans l'app (règle des motifs trompeurs, et ce serait propre au test).
+  ⑤ Le bouton « Votre avis » de la version Play ouvre la fiche du Play Store, où les testeurs ont « Envoyer des
+  commentaires privés au développeur » [V code] : canal déjà cité en réponse 5 de P30. Rien à changer.
+  Impact 4 (un refus coûte 2 semaines de lancement), faisabilité 5 (journal et calendrier ; un recalage de `until`).
+
+---
+
 ## Run du 02/11/2026 20:35 (Paris) — fiche Play et abonnements : les mêmes mots que l'app (Silver, Gold), règles 2027
 
 But : relire ce qu'un futur client lit **avant** d'ouvrir l'app (fiche Play, nom des abonnements dans la feuille
