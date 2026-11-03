@@ -473,6 +473,7 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
     (03/11 16:35) Bilan du relais : la répartition `testenv` n'était que dans le résumé du workflow (illisible par
     l'API) → aussi dans le journal de l'étape « Nouvelles installations », par jour. Seulement 2 installations le 03/11 :
     relire au prochain déploiement, après 2 ou 3 versions du test interne (les robots passent à chaque version).
+    Première lecture (déploiement du merge #658) : `absent` 62, **`unset` 1** (le 03/11) ; rien à conclure.
 - [ ] **6 (préparé le 22/10 08:30, I146–I148)** Play Billing : plugin `capacitor-plugin-cdv-purchase` (MIT, PBL 9) avec
   validateur = relais ; relais : `subscriptionsv2.get` + accusé côté serveur + `linkedPurchaseToken` + RTDN ; prix et
   essai lus dans `pricingPhases`, jamais en dur ; lien d'annulation Play dans Réglages. Maintenance : aligner
