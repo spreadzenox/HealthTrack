@@ -181,7 +181,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   « Gold offert jusqu'au … Ensuite, le journal, les montres, le bien-être estimé et l'export restent gratuits. » +
   « Voir les formules ». Une fois par valeur de `until` ; coupée pour l'App Store (drapeau) ; tests jsdom à horloge
   simulée, `SLOP_WORDING` étendu, captures `--play` clair/sombre.
-- [ ] **FIN-LANCEMENT-2** (avant le 27/11 ; I213) : au premier lancement après la fin, une seule fois : « Le test est
+- [x] **FIN-LANCEMENT-2** (03/11 22:35) LIVRÉ : `launchEndedNotice()` (une fois par date de fin, jusqu'à 30 jours après, jamais avec un premium actif ni sur iPhone), même `LaunchEndCard`, capture `--launch-ended=2`. Spécification : au premier lancement après la fin, une seule fois : « Le test est
   terminé. Merci ! Vos données restent sur votre téléphone, rien n'est effacé. » + « Voir les formules ». Garder
   `launch.lastUntil` pendant la période (le relais ne renvoie plus `launchUntil` après). Note Nouveautés `play`.
 - [ ] **FIN-LANCEMENT-MSG** (vers le 24/11) : message du jour ~21 dans `INVITATION-TESTEURS.md` §4 (fin de Gold

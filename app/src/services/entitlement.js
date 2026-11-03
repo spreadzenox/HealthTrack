@@ -15,6 +15,8 @@ const ENTITLEMENT_KEY = 'halcya_entitlement'
 const LAUNCH_LAST_UNTIL_KEY = 'halcya_launch_last_until'
 /** Fin de période pour laquelle la carte « Gold offert jusqu'au … » a été fermée (FIN-LANCEMENT-1). */
 const LAUNCH_END_SEEN_KEY = 'halcya_launch_end_seen'
+/** Fin de période pour laquelle la carte « Le test est terminé » a été vue (FIN-LANCEMENT-2). */
+const LAUNCH_ENDED_SEEN_KEY = 'halcya_launch_ended_seen'
 /** Événement `window` émis à chaque nouvel état donné par le relais (`detail` : les droits à jour). */
 export const ENTITLEMENT_EVENT = 'halcya:entitlement'
 export const ENTITLEMENT_TIMEOUT_MS = 15_000
@@ -146,6 +148,39 @@ function launchEndSeen() {
 export function dismissLaunchEndNotice(until) {
   try {
     localStorage.setItem(LAUNCH_END_SEEN_KEY, until)
+  } catch {
+    // stockage indisponible : la carte reviendra au prochain lancement
+  }
+}
+
+/** La carte « Le test est terminé » n'est plus montrée au-delà de 30 jours après la fin (installation rouverte tard). */
+export const LAUNCH_ENDED_NOTICE_MS = 30 * 86_400_000
+
+const readKey = (key) => {
+  try {
+    return localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Carte « Le test est terminé » (FIN-LANCEMENT-2, `IDEES.md` I213) : au premier lancement après la fin de la période
+ * de lancement, une fois par date de fin, pour qui n'a plus de premium (un achat ou une période recalée la taisent).
+ * `last` : dernière fin servie par le relais, retenue par `refreshEntitlement` (il ne la renvoie plus après).
+ */
+export function launchEndedNotice(ent, { now = Date.now(), last = lastLaunchUntil(), seen = readKey(LAUNCH_ENDED_SEEN_KEY) } = {}) {
+  if (!last || ent?.premium) return null
+  const end = Date.parse(last)
+  if (!Number.isFinite(end) || now < end || now >= end + LAUNCH_ENDED_NOTICE_MS) return null
+  if (seen === last) return null
+  return { until: last }
+}
+
+/** Marque la carte « Le test est terminé » comme vue pour cette date de fin. */
+export function dismissLaunchEndedNotice(until) {
+  try {
+    localStorage.setItem(LAUNCH_ENDED_SEEN_KEY, until)
   } catch {
     // stockage indisponible : la carte reviendra au prochain lancement
   }
