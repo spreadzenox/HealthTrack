@@ -57,10 +57,14 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   12 caractères de son installation, telle qu'elle figure dans les journaux, aucune donnée personnelle). À brancher dans
   le workflow avant la fin de la période (lire l'empreinte de ses analyses dans les journaux, ou l'afficher dans le
   mode diagnostic caché).
-  - [~] **GOLD-a3-1** (03/11 17:35) bilan de « Relais — déploiement » : empreintes des installations Android au jeton
+  - [x] **GOLD-a3-1** (03/11 17:35, mergé et lu le 03/11 18:35 : une seule installation, `5e4a69f72ffb`, 29/10 → 02/11,
+    6 événements) bilan de « Relais — déploiement » : empreintes des installations Android au jeton
     Play Integrity accepté (hors CI et robots), avec leurs jours. Lu avant l'arrivée des testeurs, c'est l'empreinte du
     téléphone du propriétaire (seul `passed`) ; reste : sa confirmation (P37 simplifiée : les 4 premiers caractères),
     puis `GOLD_INSTALLS=<empreinte>` dans `relay-deploy.yml` (GOLD-a3-2), avant le 27/11.
+  - [ ] **GOLD-a3-2** dès « P37 oui » : `GOLD_INSTALLS=5e4a69f72ffb` dans `relay-deploy.yml` (test 123 couvre déjà le
+    mécanisme), vérifier au bilan. Sans réponse le 20/11 : le redemander en tête du résumé (ne pas l'ajouter sans
+    confirmation : une erreur donnerait Gold à un testeur).
 - [x] **GOLD-a4 — prix 2027** (02/11 00:33) : `PRICE_SCHEDULE = [{ from: '2027-01-01', factor: 2 }]` dans
   `relay/src/costs.js` ; `pricesAt(ms)` multiplie la grille (par défaut ou `MODEL_PRICES`, toujours en prix 2026) et
   le cumul du mois l'applique à la date de chaque appel (décembre ×1, janvier ×2) ; facteur noté dans l'événement
