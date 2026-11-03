@@ -1,5 +1,7 @@
 package com.healthtrack.app;
 
+import android.app.ActivityManager;
+import android.os.Build;
 import android.provider.Settings;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -46,18 +48,33 @@ public class PlayIntegrityPlugin extends Plugin {
 
     /**
      * Appareil de test de Google (Firebase Test Lab, où tournent les robots du rapport de pré-lancement) : réglage
-     * système « firebase.test.lab » documenté par Google. Sert seulement aux bilans du relais (INSTALLS-21).
+     * système « firebase.test.lab » documenté par Google, et mode « test harness » public d'Android (API 29+). Sert
+     * seulement aux bilans du relais (INSTALLS-21). `setting` dit comment la lecture du réglage s'est terminée
+     * (true, unset, other, denied, error) pour comprendre pourquoi aucun robot n'était repéré (INSTALLS-21b).
      */
     @PluginMethod
     public void environment(PluginCall call) {
-        boolean testLab = false;
+        String setting;
         try {
-            testLab = "true".equals(Settings.System.getString(getContext().getContentResolver(), "firebase.test.lab"));
-        } catch (Exception ignored) {
-            // réglage illisible : appareil ordinaire
+            String value = Settings.System.getString(getContext().getContentResolver(), "firebase.test.lab");
+            setting = value == null ? "unset" : ("true".equals(value) ? "true" : "other");
+        } catch (SecurityException e) {
+            setting = "denied";
+        } catch (Exception e) {
+            setting = "error";
+        }
+        boolean harness = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                harness = ActivityManager.isRunningInUserTestHarness();
+            } catch (Exception ignored) {
+                // illisible : appareil ordinaire
+            }
         }
         JSObject ret = new JSObject();
-        ret.put("testLab", testLab);
+        ret.put("testLab", "true".equals(setting) || harness);
+        ret.put("setting", setting);
+        ret.put("harness", harness);
         call.resolve(ret);
     }
 

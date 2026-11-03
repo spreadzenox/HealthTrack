@@ -82,6 +82,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 03/11 11:35 — [Robots de Google : diagnostic](runs/2026-11-03-1135-signal-robots.md) | 🔧 | L'app dit maintenant au serveur pourquoi elle ne reconnaît pas les robots de test de Google (réglage illisible, absent…), sans rien de personnel : le prochain bilan du serveur dira quelle correction faire, pour distinguer vos testeurs des robots pendant le test. Rien ne change dans l'app |
 | 03/11 10:35 — [Bilan du relais](runs/2026-11-03-1035-bilan-relais.md) | 🔎 | Vérifié avant vos testeurs : Alpha a bien la 100721 ; Gold répond avec le bon modèle, en Europe, sans erreur (≈ 1,3 € de Google sur 7 jours). Environ 10 installations par jour viennent sans doute des robots de test de Google, que l'app ne reconnaît pas encore : sans risque ni coût notable, à corriger pour lire les chiffres du test. Rien ne change dans l'app |
 | 03/11 09:35 — [État des pistes Play](runs/2026-11-03-0935-etat-pistes.md) | 🔧 | Le bilan de chaque envoi sur Google Play montre maintenant quelle version est sur chaque piste (test interne, Alpha, production) : la routine voit d'un coup d'œil ce qu'ont vos testeurs. Rien ne change dans l'app |
 | 03/11 08:35 — [Idées : refus de la production](runs/2026-11-03-0835-idees-refus-production.md) | 💡 | Ce qui fait refuser l'accès à la production après le test : testeurs inactifs, version jamais mise à jour ; un refus coûte 14 jours. Calendrier de deux versions Alpha (P42, votre clic) et question sur la prolongation de Gold en cas de refus. Rien ne change dans l'app |

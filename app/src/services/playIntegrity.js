@@ -85,20 +85,35 @@ export function resetTestDeviceCache() {
   testDeviceCache = null
 }
 
+const TEST_SETTINGS = ['true', 'unset', 'other', 'denied', 'error']
+
 /**
- * Vrai sur un appareil de test de Google (Firebase Test Lab : robots du rapport de pré-lancement de la Play Console,
- * qui parcourent l'app à chaque version envoyée). Le relais compte alors leurs analyses à part (INSTALLS-21) ; rien ne
- * change pour l'app. Lu une fois par lancement ; faux sans plugin ou si la lecture échoue.
+ * Environnement de test de Google (Firebase Test Lab : robots du rapport de pré-lancement de la Play Console, qui
+ * parcourent l'app à chaque version envoyée). `testLab` : vrai sur un tel appareil ; `env` : comment s'est terminée la
+ * lecture (réglage `true` / `unset` / `other` / `denied` / `error`, `+harness` en mode test d'Android ; `legacy`
+ * sans ce détail, `failed` si le plugin échoue, `null` sans plugin), valeur bornée envoyée au relais pour comprendre
+ * pourquoi aucun robot n'était repéré (INSTALLS-21b). Rien ne change pour l'app. Lu une fois par lancement.
  */
-export async function isTestDevice({ native } = {}) {
+export async function testEnvironment({ native } = {}) {
   if (testDeviceCache !== null) return testDeviceCache
-  let result = false
+  let result = { testLab: false, env: null }
   try {
     const plugin = native === undefined ? await loadIntegrityPlugin() : native
-    if (typeof plugin?.environment === 'function') result = (await plugin.environment())?.testLab === true
+    if (typeof plugin?.environment === 'function') {
+      const raw = (await plugin.environment()) ?? {}
+      let env = 'legacy'
+      if (typeof raw.setting === 'string') env = TEST_SETTINGS.includes(raw.setting) ? raw.setting : 'other'
+      if (raw.harness === true) env += '+harness'
+      result = { testLab: raw.testLab === true, env }
+    }
   } catch {
-    result = false
+    result = { testLab: false, env: 'failed' }
   }
   testDeviceCache = result
   return result
+}
+
+/** Vrai sur un appareil de test de Google (voir `testEnvironment`) ; faux sans plugin ou si la lecture échoue. */
+export async function isTestDevice(options) {
+  return (await testEnvironment(options)).testLab
 }

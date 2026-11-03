@@ -232,6 +232,7 @@ test('Play Integrity : jeton transmis à la garde ; refus en enforce → 403 san
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Integrity-Token/)
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Integrity-Status/)
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Test-Device/)
+    assert.match(pre.headers.get('access-control-allow-headers'), /X-Test-Env/)
     assert.match(pre.headers.get('access-control-allow-headers'), /X-Platform/)
   })
 })
@@ -274,7 +275,8 @@ test('crédits : la première analyse d\'une installation inconnue du registre e
     assert.equal((await post(url, { kind: 'text', description: 'une poire' })).status, 200)
     const first = logs.filter((l) => l.event === 'first_credit')
     assert.equal(first.length, 1)
-    assert.deepEqual(Object.keys(first[0]).sort(), ['event', 'plan'])
+    assert.deepEqual(Object.keys(first[0]).sort(), ['event', 'plan', 'testenv'])
+    assert.equal(first[0].testenv, 'none')
   })
   // L'analyse de test du workflow de déploiement n'est pas une vraie installation
   await withServer({ vertex: okVertex(), credits: createCredits({ store }) }, async (url, logs) => {
@@ -287,5 +289,13 @@ test('crédits : la première analyse d\'une installation inconnue du registre e
     const res = await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'robot-de-test-google-1', 'X-Test-Device': '1' })
     assert.equal(res.status, 200)
     assert.deepEqual(logs.filter((l) => l.event === 'first_credit').map((l) => l.testlab), [true])
+  })
+  // Comment l'app a lu le réglage de Test Lab (INSTALLS-21b) : journalisé borné avec le premier crédit
+  await withServer({ vertex: okVertex(), credits: createCredits({ store }) }, async (url, logs) => {
+    await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'installation-env-1-aaaa', 'X-Test-Env': 'denied' })
+    await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'installation-env-2-aaaa', 'X-Test-Env': 'unset+harness' })
+    await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'installation-env-3-aaaa', 'X-Test-Env': 'n\'importe quoi' })
+    await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'installation-env-4-aaaa' })
+    assert.deepEqual(logs.filter((l) => l.event === 'first_credit').map((l) => l.testenv), ['denied', 'unset+harness', 'invalid', 'none'])
   })
 })

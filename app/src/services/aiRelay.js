@@ -11,7 +11,7 @@ import { loadNutritionTable } from '../data/nutritionTable'
 import { STORE } from '../config/distribution'
 import { prepareImageForGemini } from './imagePrep.js'
 import { MEAL_TEXT_MAX_LENGTH, toMealResult } from './geminiStandalone.js'
-import { isTestDevice, requestIntegrity } from './playIntegrity.js'
+import { requestIntegrity, testEnvironment } from './playIntegrity.js'
 import { localeDate } from '../i18n/locale.js'
 
 export const RELAY_URL = (import.meta.env?.VITE_RELAY_URL || 'https://halcya-relay-81378799481.europe-west1.run.app')
@@ -161,7 +161,7 @@ export async function refreshCredits({ fetchImpl = globalThis.fetch, timeoutMs =
 
 const NETWORK_MESSAGE = "Pas de connexion au service d’analyse IA. Vérifiez votre connexion et réessayez."
 
-async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = requestIntegrity, testDevice = isTestDevice } = {}) {
+async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = requestIntegrity, testDevice = testEnvironment } = {}) {
   const headers = { 'Content-Type': 'application/json', ...relayHeaders() }
   // Jeton Play Integrity (variante play) : le relais vérifie que la demande vient de l'app Google Play (6b-2b) ;
   // sans jeton, seulement la raison (délai, code d'erreur de Google Play) pour son bilan avant « enforce » (6b-2c-2)
@@ -170,7 +170,10 @@ async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY
   if (integrityToken) headers['X-Integrity-Token'] = integrityToken
   else if (result?.reason) headers['X-Integrity-Status'] = result.reason
   // Robots du rapport de pré-lancement de Google : comptés à part dans les bilans du relais (INSTALLS-21)
-  if (await testDevice()) headers['X-Test-Device'] = '1'
+  // (booléen ou { testLab, env } ; `env` dit comment l'app a lu le réglage de Test Lab, valeur bornée : INSTALLS-21b)
+  const test = await testDevice()
+  if (test === true || test?.testLab === true) headers['X-Test-Device'] = '1'
+  if (typeof test?.env === 'string') headers['X-Test-Env'] = test.env
   const controller = typeof AbortController === 'function' ? new AbortController() : null
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
   let res

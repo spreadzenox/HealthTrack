@@ -52,6 +52,17 @@ export const MAX_IMAGE_BYTES = 4 * 1024 * 1024
 
 const INSTALL_ID = /^[A-Za-z0-9_-]{16,64}$/
 
+const TEST_ENV = /^(true|unset|other|denied|error|legacy|failed)(\+harness)?$/
+/**
+ * En-tête `X-Test-Env` de l'app (INSTALLS-21b) : comment elle a lu le réglage « firebase.test.lab ». Toujours une
+ * valeur bornée : `none` sans en-tête, `invalid` si elle n'est pas dans la liste.
+ */
+export const testEnvValue = (value) => {
+  if (value === undefined || value === null || value === '') return 'none'
+  const text = String(value)
+  return text.length <= 24 && TEST_ENV.test(text) ? text : 'invalid'
+}
+
 const QUOTA_MESSAGES = {
   install: "Vous avez utilisé toutes vos analyses IA d'aujourd'hui. Elles reviennent demain.",
   global: "Le service d'analyse IA a atteint sa limite du jour. Réessayez demain.",
@@ -267,7 +278,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       if (origin && origins.has(origin)) {
         headers['Access-Control-Allow-Origin'] = origin
         headers['Access-Control-Allow-Methods'] = 'POST, GET'
-        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status, X-Test-Device, X-Platform, X-AppAttest-Key, X-AppAttest-Assertion, X-AppAttest-Time'
+        headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Install-Id, X-Credits, X-Purchase-Token, X-Integrity-Token, X-Integrity-Status, X-Test-Device, X-Test-Env, X-Platform, X-AppAttest-Key, X-AppAttest-Assertion, X-AppAttest-Time'
       }
       res.writeHead(204, headers)
       res.end()
@@ -432,6 +443,9 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       // Appareil de test de Google (Firebase Test Lab : robots du rapport de pré-lancement de la Play Console), signalé
       // par l'app (INSTALLS-21). Seulement pour les bilans : il ne change aucun droit, le falsifier n'apporte rien
       const testDevice = req.headers['x-test-device'] === '1'
+      // Comment l'app a lu le réglage de Test Lab (INSTALLS-21b) : valeur bornée, pour comprendre pourquoi aucun robot
+      // n'était repéré ; journalisée avec le premier crédit seulement
+      const testEnv = testEnvValue(req.headers['x-test-env'])
 
       // Corps brut gardé : l'assertion App Attest de l'iPhone signe ces octets exacts (I6-RELAIS-5d-2)
       const raw = await readBody(req, MAX_BODY_BYTES)
@@ -493,7 +507,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       log({ event: 'analyze', kind, model, location, tier, served, eur: Number(eur.toFixed(5)), status: 200, ms: now() - started, install: hashInstallId(installId), ...(installId.startsWith('ci-smoke-') ? { ci: true } : {}) })
       // Nouvelle installation qui prend son premier crédit (CREDITS-INSTALLS) : compté par jour, sans identifiant ;
       // l'analyse de test du workflow (« ci-smoke-<run> », une installation neuve à chaque fois) n'est pas comptée
-      if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan, ...(testDevice ? { testlab: true } : {}) })
+      if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan, ...(testDevice ? { testlab: true } : {}), testenv: testEnv })
       const payload = { parsed, model, quota: { remaining: slot.remaining, resetAt: slot.resetAt } }
       if (credit) {
         const { ok: _ok, firstUse: _first, ...state } = credit
