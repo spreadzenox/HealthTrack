@@ -276,6 +276,14 @@ jobs:
             jq -r '(map(select(.jsonPayload.ci != true)) | length) as $n | (map(select(.jsonPayload.platform == "ios")) | length) as $ios
               | "Part des requêtes iPhone (hors CI) : \($ios) sur \($n)" + (if $n > 0 then " (\($ios * 100 / $n | floor) %)" else "" end)' \
               "$RUNNER_TEMP/integrity.json"
+            # GOLD-a3 (P37) : empreintes (12 caractères, hashInstallId, rien de personnel) des installations Android dont le
+            # jeton Play Integrity a été accepté, hors CI et robots, avec leurs jours. Avant l'arrivée des testeurs, seul le
+            # téléphone du propriétaire passe : c'est son empreinte, à ajouter à GOLD_INSTALLS après sa confirmation.
+            jq -r 'map(select(.jsonPayload.status == "passed" and .jsonPayload.ci != true and .jsonPayload.testlab != true and .jsonPayload.platform != "ios" and .jsonPayload.install != null))
+              | if length == 0 then "Installations Android au jeton accepté (GOLD-a3) : aucune"
+                else "Installations Android au jeton accepté (GOLD-a3) : " + (group_by(.jsonPayload.install)
+                  | map("\(.[0].jsonPayload.install) (\(map(.timestamp[0:10]) | min) → \(map(.timestamp[0:10]) | max), \(length) événement(s))") | join(" ; ")) end' \
+              "$RUNNER_TEMP/integrity.json"
             # Enregistrements des clés App Attest de l'iPhone (route /v1/attest/register, I6-RELAIS-5d) par statut et raison
             gcloud logging read \
               "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.event=\"appattest\"" \
