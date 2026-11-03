@@ -21,7 +21,9 @@
 
 ## Vérifications
 - `vitals.test.mjs` : 11 tests (pagination, refus, tri, version touchée, cellules sûres, messages d'erreur).
-- Suite complète, lint, build et `npm run visual -- --play` : voir la PR.
+- `npm run test` 2926 verts ; lint 7 erreurs (comme avant) ; build et `npm run visual -- --play` OK (captures inchangées).
+- PR #653 verte, mergée (`eb6510a`) ; Build & Release v468 (APK 34,5 Mo), Play — AAB vert. Bilan : « API Google Play
+  Developer Reporting pas activée » → **P43** posée (1 min, console Google Cloud).
 
 ## Demandes iOS
 - Aucune (Android seulement).

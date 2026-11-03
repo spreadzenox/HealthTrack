@@ -73,6 +73,7 @@
 > pour que la routine décale alors `until` d'elle-même (jour du refus + 24 jours) ? Répondez oui ou non dans une consigne.
 
 **Toujours en attente de vous (repris de la semaine dernière)**
+- **P43** (1 min, nouveau, pas urgent) : activer « Google Play Developer Reporting API » dans la console Google Cloud (projet healthtrack-824b26 → API et services → Bibliothèque → Activer). La routine pourra alors lire elle-même les plantages signalés par Google et choisir les versions Alpha du test sans plantage connu.
 - **P37 — votre Gold après la période de lancement** : Paramètres → touchez 7 fois « Version » → recopiez
   « Empreinte de l'installation » (12 caractères, rien de personnel) et donnez-la à la routine.
 - **P39** (pas urgent) : expiration des clés App Attest dans Firestore, même geste que P33 (commande dans `PRODUIT.md` §4).
