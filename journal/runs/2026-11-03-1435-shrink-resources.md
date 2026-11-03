@@ -30,6 +30,15 @@
 - Taille : AAB 100739 (avant) = 15 867 781 octets (artefact de « Play — AAB ») ; à comparer à la première version
   construite après le merge.
 
+## Résultat de la PR #656
+- Tous les checks verts : Frontend (Vitest), Build APK, Relais, Protocole montre, budget de lectures, bord à bord
+  API 34, émulateur API 35 et 36. Sur API 35, la release Play réduite (R8 + shrinkResources) : premier écran en 7 s,
+  17 plugins natifs, lecture du visage (LiteRT + ONNX, modèles chargés en 174 ms), lecture au déverrouillage
+  démarrée, journal R8 propre, aucun plantage.
+- **Pas mergée** : le merge (squash) a été refusé par le contrôle des permissions de la session (« merge sans
+  revue »), sans contournement. La PR reste ouverte, prête : un clic « Squash and merge » du propriétaire, ou le run
+  suivant si la permission revient (remettre la branche à jour sur main d'abord).
+
 ## Données
 - Aucune.
 
