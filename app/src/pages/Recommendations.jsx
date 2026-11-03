@@ -3,6 +3,7 @@ import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { rememberPistesSummary } from '../services/pistesSummary'
+import { getHiddenLinks, hideLink, unhideAllLinks } from '../settings/hiddenLinks'
 import {
   buildDailyDataset,
   localDateKey,
@@ -107,7 +108,7 @@ const LEVER_STAGE = {
 }
 
 /** POL-7b : la piste en mots d'abord ; r, jours indépendants et week-end derrière le chevron. */
-function LeverCard({ rank, lever, lag }) {
+function LeverCard({ rank, lever, lag, onHide }) {
   const [open, setOpen] = useState(false)
   const days = Math.round(lever.nEff)
   const weekendShift = lever.rRaw != null && Math.abs(lever.rRaw - lever.r) >= WEEKEND_R_SHIFT
@@ -141,6 +142,7 @@ function LeverCard({ rank, lever, lag }) {
             point{Math.abs(lag.effectPerSd) >= 2 ? 's' : ''} ({evidenceLabel(lag.evidence).toLowerCase()})
           </p>
         )}
+        {open && onHide && <HideButton label="Masquer cette piste" onHide={onHide} />}
       </div>
       <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />
     </li>
@@ -186,7 +188,16 @@ function Delta({ value }) {
  * entier, une phrase, la solidité. La ligne de chiffres en mono (jours, r, week-end) n'apparaît qu'au chevron
  * (POL-PLAY-22 : simple d'abord, détails pour qui veut creuser).
  */
-function LinkCard({ kind, name, children, meta, evidence, extra }) {
+/** I86 : retirer un lien évident, faux ou sans intérêt (réversible en bas de page, rien n'est effacé). */
+function HideButton({ label, onHide }) {
+  return (
+    <button type="button" className="reco-hide-btn" onClick={onHide}>
+      {label}
+    </button>
+  )
+}
+
+function LinkCard({ kind, name, children, meta, evidence, extra, onHide }) {
   const [open, setOpen] = useState(false)
   return (
     <li className={`reco-link-card reco-link-card--${kind}` + (evidence === 'incertain' ? ' reco-link-card-uncertain' : '')}>
@@ -196,13 +207,14 @@ function LinkCard({ kind, name, children, meta, evidence, extra }) {
         {open && meta && <p className="reco-link-meta">{meta}</p>}
         <EvidenceBadge evidence={evidence} />
         {extra}
+        {open && onHide && <HideButton label="Masquer ce lien" onHide={onHide} />}
       </div>
       {meta && <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />}
     </li>
   )
 }
 
-function TagEffectCard({ effect, measure = 'bien-être', extra }) {
+function TagEffectCard({ effect, measure = 'bien-être', extra, onHide }) {
   const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
   // Écart des moyennes affichées : les chiffres collent toujours à une décimale.
   const shown = round1(round1(effect.meanWith) - round1(effect.meanWithout))
@@ -213,7 +225,7 @@ function TagEffectCard({ effect, measure = 'bien-être', extra }) {
     weekendShift && `week-end à part : ${frDiff(effect.diff)}`,
   ].filter(Boolean).join(' · ')
   return (
-    <LinkCard kind="tag" name={effect.label} meta={meta} evidence={effect.evidence} extra={extra}>
+    <LinkCard kind="tag" name={effect.label} meta={meta} evidence={effect.evidence} extra={extra} onHide={onHide}>
       <p className="reco-link-text">
         {when} : {measure} {frScore(effect.meanWith)} / 5 contre {frScore(effect.meanWithout)} sans{' '}
         <Delta value={shown} />
@@ -224,7 +236,7 @@ function TagEffectCard({ effect, measure = 'bien-être', extra }) {
 
 // ─── Lagged effects (« la veille », « 2 jours avant ») ───────────────────────
 
-function LaggedEffectCard({ effect, measure = 'bien-être du jour', extra }) {
+function LaggedEffectCard({ effect, measure = 'bien-être du jour', extra, onHide }) {
   return (
     <LinkCard
       kind="lag"
@@ -232,6 +244,7 @@ function LaggedEffectCard({ effect, measure = 'bien-être du jour', extra }) {
       meta={`Lien ${effect.strength} · r = ${formatR(effect.r)} · ≈ ${Math.round(effect.nEff)} jours indépendants`}
       evidence={effect.evidence}
       extra={extra}
+      onHide={onHide}
     >
       <p className="reco-link-text">
         {effect.when}, {effect.sdText} de plus que d’habitude → {measure} <Delta value={effect.effectPerSd} />
@@ -244,11 +257,11 @@ function LaggedEffectCard({ effect, measure = 'bien-être du jour', extra }) {
 
 // ─── Same-day correlations ───────────────────────────────────────────────────
 
-function CorrelationCard({ item, measure = 'bien-être', extra }) {
+function CorrelationCard({ item, measure = 'bien-être', extra, onHide }) {
   const meta = [`Lien ${item.strength ?? correlationStrength(item.r)}`, `r = ${formatR(item.r)}`]
   if (item.nEff != null) meta.push(`≈ ${Math.round(item.nEff)} jours indépendants`)
   return (
-    <LinkCard kind="corr" name={item.label} meta={meta.join(' · ')} evidence={item.evidence} extra={extra}>
+    <LinkCard kind="corr" name={item.label} meta={meta.join(' · ')} evidence={item.evidence} extra={extra} onHide={onHide}>
       <p className="reco-link-text">
         Le jour même : plus haut, {item.r >= 0 ? `meilleur ${measure}` : `${measure} moins bon`}.
       </p>
@@ -388,8 +401,9 @@ function SourceChip({ source }) {
   return source === 'visage' ? <span className="reco-link-src">visage</span> : null
 }
 
-function LinkItem({ link }) {
+function LinkItem({ link, onHide }) {
   const { kind, source, item, others } = link
+  const hide = onHide ? () => onHide(link.key) : undefined
   const face = source === 'visage'
   const extra = (
     <>
@@ -397,13 +411,13 @@ function LinkItem({ link }) {
       <AlsoLine best={link} others={others} />
     </>
   )
-  if (kind === 'tag') return <TagEffectCard effect={item} measure={face ? 'bien-être estimé' : 'bien-être'} extra={extra} />
+  if (kind === 'tag') return <TagEffectCard effect={item} measure={face ? 'bien-être estimé' : 'bien-être'} extra={extra} onHide={hide} />
   if (kind === 'lag') {
     // D6 : le bien-être estimé ne propose jamais de piste
     const effect = face ? { ...item, action: null } : item
-    return <LaggedEffectCard effect={effect} measure={face ? 'bien-être estimé du jour' : 'bien-être du jour'} extra={extra} />
+    return <LaggedEffectCard effect={effect} measure={face ? 'bien-être estimé du jour' : 'bien-être du jour'} extra={extra} onHide={hide} />
   }
-  return <CorrelationCard item={item} measure={face ? 'bien-être estimé' : 'bien-être'} extra={extra} />
+  return <CorrelationCard item={item} measure={face ? 'bien-être estimé' : 'bien-être'} extra={extra} onHide={hide} />
 }
 
 /** Ce qui manque encore à une habitude pour être comparée, en mots simples (POL-PLAY-70). */
@@ -437,16 +451,16 @@ function pendingTagLines(analysis, links) {
  * « Autres liens repérés » (POL-7c, maquette I163 §4) : une seule liste, un verdict par facteur, les liens nets
  * d'abord (5 visibles, puis « Voir N autres liens »), les incertains repliés.
  */
-function LinksSection({ analysis, levers = [] }) {
+function LinksSection({ analysis, levers = [], hidden = [], onHide }) {
   const leverVariables = new Set(levers.map((l) => l.variable))
-  const links = mergeLinks(analysis, leverVariables)
+  const links = mergeLinks(analysis, leverVariables).filter((l) => !hidden.includes(l.key))
   if (!links.length) return null
   const clear = links.filter((l) => l.item.evidence !== 'incertain')
   const uncertain = links.filter((l) => l.item.evidence === 'incertain')
   const list = (ls) => (
     <ul className="reco-link-list">
       {ls.map((l) => (
-        <LinkItem key={`${l.kind}:${l.source}:${l.key}`} link={l} />
+        <LinkItem key={`${l.kind}:${l.source}:${l.key}`} link={l} onHide={onHide} />
       ))}
     </ul>
   )
@@ -629,12 +643,37 @@ function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
 
 // ─── Vue unique des analyses ────────────────────────────────────────────────
 
+/** I86 : « 2 liens masqués · Tout réafficher », seulement s'il y a quelque chose de masqué parmi ce qui serait montré. */
+function HiddenLine({ count, onUnhide }) {
+  if (!count) return null
+  return (
+    <p className="reco-hidden-line" data-testid="reco-hidden-line">
+      {count === 1 ? '1 lien masqué' : `${count} liens masqués`}
+      <button type="button" className="reco-hide-btn" onClick={onUnhide}>Tout réafficher</button>
+    </p>
+  )
+}
+
 function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced, showGut = false }) {
   const { correlations: result } = analysis
   const levers = result.status === 'not_enough_data' ? [] : result.levers ?? []
   // Données insuffisantes : seuls les liens du visage sont montrés, donc seules ses habitudes en attente
   const linkScope = result.status === 'not_enough_data' ? { faceMood: analysis.faceMood } : analysis
-  const tagLines = pendingTagLines(linkScope, mergeLinks(linkScope, new Set(levers.map((l) => l.variable))))
+  const allLinks = mergeLinks(linkScope, new Set(levers.map((l) => l.variable)))
+  const tagLines = pendingTagLines(linkScope, allLinks)
+  // I86 : masquer ne change aucun calcul ; la carte lilas de l'Accueil suit (résumé réécrit)
+  const [hidden, setHidden] = useState(getHiddenLinks)
+  const onHide = (key) => {
+    setHidden(hideLink(key))
+    rememberPistesSummary(analysis)
+  }
+  const onUnhide = () => {
+    setHidden(unhideAllLinks())
+    rememberPistesSummary(analysis)
+  }
+  const shownLevers = levers.filter((l) => !hidden.includes(l.variable))
+  const hiddenCount = (levers.length - shownLevers.length) + allLinks.filter((l) => hidden.includes(l.key)).length
+  const hiddenLine = <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
   const soon = soonLines(analysis, showGut, tagLines)
   const gut = showGut ? <><GutLinks gut={analysis.gut} /><ReintroductionEntry /></> : null
   // Le rapport décrit d'abord le ventre : avec l'objectif ventre seulement (toujours dans Données)
@@ -647,8 +686,9 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
         {!teaserShown && <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />}
         {gut}
         {analysis.faceMood?.status === 'ok' && (
-          <LinksSection analysis={{ faceMood: analysis.faceMood }} />
+          <LinksSection analysis={{ faceMood: analysis.faceMood }} hidden={hidden} onHide={onHide} />
         )}
+        {hiddenLine}
         {/* Habitudes et effets décalés attendent les mêmes notes que la carte lilas : seul le visage a son compteur */}
         {/* Données vierges : la carte lilas seule ; le rapport n'a sa ligne qu'une fois quelque chose noté */}
         <SoonSection
@@ -679,12 +719,20 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
         <p className="reco-section-hint">
           Ce qui va avec vos meilleurs jours.
         </p>
-        {levers.length > 0 ? (
+        {shownLevers.length > 0 ? (
           <ol className="reco-advice-list">
-            {levers.map((l, i) => (
-              <LeverCard key={l.variable} rank={i + 1} lever={l} lag={lagByVariable.get(l.variable)} />
+            {shownLevers.map((l, i) => (
+              <LeverCard
+                key={l.variable}
+                rank={i + 1}
+                lever={l}
+                lag={lagByVariable.get(l.variable)}
+                onHide={() => onHide(l.variable)}
+              />
             ))}
           </ol>
+        ) : levers.length > 0 ? (
+          <p className="reco-empty-levers">Vous avez masqué toutes les pistes.</p>
         ) : (
           <p className="reco-empty-levers">
             Aucune piste ne se dégage encore nettement de vos données : les liens observés
@@ -693,7 +741,9 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
         )}
       </section>
 
-      <LinksSection analysis={analysis} levers={levers} />
+      <LinksSection analysis={analysis} levers={levers} hidden={hidden} onHide={onHide} />
+
+      {hiddenLine}
 
       <SoonSection lines={soon} />
 

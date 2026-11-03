@@ -16,6 +16,7 @@ export const DELETED_KEYS = [
   'healthtrack_body_profile',
   'healthtrack-analysis-cache-v1',
   'healthtrack_pistes_summary',
+  'healthtrack_hidden_links',
   'healthtrack_watch_diagnostic_last',
   'healthtrack_watch_connect_last',
   'healthtrack_ble_unknown_devices',

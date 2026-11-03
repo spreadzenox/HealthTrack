@@ -934,8 +934,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       de l'entrée précédente (≤ 3 jours avant ; l'heure d'été ne compte pas) ; tag déclaré compte encore ; masqué dans
       la saisie le jour du changement seulement ; Analyses « déduit des changements de fuseau horaire » ; Radar forme
       (run 17/10 10:30). Piste : lieu (géolocalisation grossière) pour les trajets dans le même fuseau.
-- [ ] **I86** (score 12, absorbe I80) : « Pas pertinent pour moi » sur chaque lien des Analyses (masqué partout,
-      réversible, exporté) ; force et confiance séparées, en mots
+- [x] **I86** (04/11 00:35, partie « masquer ») : « Masquer ce lien » / « Masquer cette piste » derrière le chevron de
+      chaque lien et piste à tester des Analyses ; « N liens masqués · Tout réafficher » en bas ; réglage local
+      `healthtrack_hidden_links` (`settings/hiddenLinks.js`), joint à l'export JSON (`hiddenLinks`, remplacer / réunir à
+      l'import, anciens fichiers acceptés), effacé avec « Supprimer toutes les données » ; la carte lilas de l'Accueil
+      ne cite plus une piste masquée. Aucun calcul changé (comparaisons multiples inchangées). Reste : pistes repas →
+      ventre (`GutLinks`) ; « force et confiance séparées, en mots » (I87).
 
 ### D2 — Performance (mesurer d'abord)
 - [x] Mesure : `npm run perf` (build de prod, 3 ans de démo, `--dense`, CPU ×4) — temps stabilisé, temps bloquant,

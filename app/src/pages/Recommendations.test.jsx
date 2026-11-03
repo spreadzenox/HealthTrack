@@ -536,6 +536,51 @@ describe('Recommendations levers', () => {
     spy.mockRestore()
   })
 
+  it('hides a link behind its chevron, keeps it hidden after a reload, and shows it again on demand (I86)', async () => {
+    const lever = {
+      ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.42,
+      direction: 'higher_better', action: 'Marcher davantage',
+    }
+    const hrv = { ...baseCorr, variable: 'hrv', label: 'Variabilité cardiaque', r: 0.5, direction: 'higher_better' }
+    const result = { status: 'ok', datasetDays: 40, reliability: 'good', correlations: [hrv, lever], levers: [lever] }
+    const spy = await renderWithBasic(result)
+    const card = (await screen.findByText('Variabilité cardiaque')).closest('li')
+    // Simple d'abord : le bouton n'apparaît qu'au chevron
+    expect(within(card).queryByRole('button', { name: 'Masquer ce lien' })).not.toBeInTheDocument()
+    openLinkDetails(card)
+    fireEvent.click(within(card).getByRole('button', { name: 'Masquer ce lien' }))
+    expect(screen.queryByText('Variabilité cardiaque')).not.toBeInTheDocument()
+    expect(screen.getByTestId('reco-hidden-line')).toHaveTextContent('1 lien masqué')
+    expect(JSON.parse(localStorage.getItem('healthtrack_hidden_links'))).toEqual(['hrv'])
+
+    // La piste se masque aussi, et disparaît de la carte lilas de l'Accueil
+    const leverCard = screen.getByText('Marcher davantage').closest('li')
+    fireEvent.click(within(leverCard).getByRole('button', { name: 'Afficher les détails' }))
+    fireEvent.click(within(leverCard).getByRole('button', { name: 'Masquer cette piste' }))
+    expect(screen.queryByText('Marcher davantage')).not.toBeInTheDocument()
+    expect(screen.getByText('Vous avez masqué toutes les pistes.')).toBeInTheDocument()
+    expect(screen.getByTestId('reco-hidden-line')).toHaveTextContent('2 liens masqués')
+    expect(JSON.parse(localStorage.getItem('healthtrack_pistes_summary')).levers).toEqual([])
+
+    fireEvent.click(screen.getByRole('button', { name: 'Tout réafficher' }))
+    expect(screen.getByText('Variabilité cardiaque')).toBeInTheDocument()
+    expect(screen.getByText('Marcher davantage')).toBeInTheDocument()
+    expect(screen.queryByTestId('reco-hidden-line')).not.toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem('healthtrack_pistes_summary')).levers).toEqual(['Marcher davantage'])
+    spy.mockRestore()
+  })
+
+  it('reads hidden links at load and never counts a hidden factor that is not shown anyway (I86)', async () => {
+    localStorage.setItem('healthtrack_hidden_links', JSON.stringify(['hrv', 'cafe_absent']))
+    const hrv = { ...baseCorr, variable: 'hrv', label: 'Variabilité cardiaque', r: 0.5, direction: 'higher_better' }
+    const sleep = { ...baseCorr, variable: 'sleep', label: 'Sommeil', r: 0.45, direction: 'higher_better' }
+    const spy = await renderWithBasic({ status: 'ok', datasetDays: 40, reliability: 'good', correlations: [hrv, sleep], levers: [] })
+    await screen.findByText('Sommeil')
+    expect(screen.queryByText('Variabilité cardiaque')).not.toBeInTheDocument()
+    expect(screen.getByTestId('reco-hidden-line')).toHaveTextContent('1 lien masqué')
+    spy.mockRestore()
+  })
+
   it('folds clear links beyond the first 5 behind « Voir N autres liens » (POL-7c)', async () => {
     const labels = ['Sommeil', 'Pas', 'Fibres', 'Eau', 'Café', 'Sucres', 'Sel']
     const corrs = labels.map((label, i) => ({ ...baseCorr, variable: `v${i}`, label, r: 0.6 - i * 0.05, q: 0.001 * (i + 1) }))

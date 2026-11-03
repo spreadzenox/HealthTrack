@@ -584,3 +584,36 @@
   font-size: 0.8rem;
   color: var(--text-muted);
 }
+
+/* I86 « Masquer ce lien » / « Tout réafficher » : un lien texte discret, cible tactile de 44 px */
+.reco-hide-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 2px 0 -10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.reco-hidden-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.reco-hidden-line .reco-hide-btn {
+  margin: 0;
+  color: var(--accent);
+}
