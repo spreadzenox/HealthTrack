@@ -13,20 +13,14 @@ import { createRequire } from 'node:module'
 import { execFileSync, execSync } from 'node:child_process'
 import { GLYPH } from '../brand/render-icons.mjs'
 import { APP_NAME } from '../../src/config/brand.js'
+import { SCREENSHOTS, SCREENSHOT_ARGS } from './screenshots.mjs'
 
 const root = resolve(import.meta.dirname, '../..')
 const listingDir = resolve(root, 'store/listing/fr-FR')
 const shotsDir = resolve(listingDir, 'phone-screenshots')
 const work = resolve(root, '.visual/store')
 
-/** Captures retenues, dans l'ordre de la fiche : [route de l'app, nom de la capture visuelle, nom du fichier]. */
-export const SCREENSHOTS = [
-  ['/', 'dashboard', '01-aujourdhui'],
-  ['/food', 'food', '02-repas'],
-  ['/journal', 'journal', '03-jours'],
-  ['/tendances', 'tendances', '04-tendances'],
-  ['/recommendations', 'recommendations', '05-pistes'],
-]
+export { SCREENSHOTS, SCREENSHOT_ARGS }
 
 async function loadPlaywright() {
   try {
@@ -41,7 +35,7 @@ function screenshots() {
   rmSync(work, { recursive: true, force: true })
   execFileSync(
     process.execPath,
-    ['scripts/visual/visual-check.mjs', '--play', '--size=360x640', '--dpr=3', '--out=.visual/store', `--routes=${SCREENSHOTS.map(([r]) => r).join(',')}`],
+    ['scripts/visual/visual-check.mjs', ...SCREENSHOT_ARGS, `--routes=${SCREENSHOTS.map(([r]) => r).join(',')}`],
     { cwd: root, stdio: 'inherit' },
   )
   rmSync(shotsDir, { recursive: true, force: true })
