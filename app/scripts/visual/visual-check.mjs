@@ -423,10 +423,13 @@ async function main() {
     })
     // Crédits d'analyse IA (variante play) : compteur factice, premium si l'abonnement factice l'est
     await context.route('**/v1/credits', (route) => {
-      const premium = ['launch', 'active', 'trial', 'grace'].includes(String(args.subscription ?? ''))
+      // Comme relay/src/credits.js : période de lancement et Gold = 20 par jour, Silver (actif, essai, grâce) = 10.
+      const sub = String(args.subscription ?? '')
+      const premium = ['launch', 'gold', 'active', 'trial', 'grace'].includes(sub)
+      const gold = sub === 'launch' || sub === 'gold'
       const d = new Date()
       const credits = premium
-        ? { plan: 'premium', remaining: 9, daily: 10, resetAt: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)).toISOString(), state: 'x' }
+        ? { plan: 'premium', tier: gold ? 'gold' : 'silver', remaining: gold ? 19 : 9, daily: gold ? 20 : 10, resetAt: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)).toISOString(), state: 'x' }
         : { plan: 'free', remaining: 22, monthly: 12, welcome: 10, resetAt: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1)).toISOString(), state: 'x' }
       return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ credits }) })
     })
