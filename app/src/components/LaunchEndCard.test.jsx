@@ -9,7 +9,10 @@ vi.mock('../config/distribution', async (importOriginal) => {
 })
 
 import LaunchEndCard from './LaunchEndCard'
-import { launchEndNotice, dismissLaunchEndNotice, refreshEntitlement, lastLaunchUntil } from '../services/entitlement'
+import {
+  launchEndNotice, dismissLaunchEndNotice, refreshEntitlement, lastLaunchUntil,
+  launchEndedNotice, dismissLaunchEndedNotice, LAUNCH_ENDED_NOTICE_MS,
+} from '../services/entitlement'
 
 const UNTIL = '2026-11-27T23:00:00Z'
 const END = Date.parse(UNTIL)
@@ -100,6 +103,74 @@ describe('LaunchEndCard — carte de l’Accueil', () => {
     store.id = 'appstore'
     storeEnt(futureEnt)
     renderCard(FEND - DAY)
+    expect(screen.queryByRole('heading')).toBeNull()
+  })
+})
+
+describe('launchEndedNotice — le test est terminé (FIN-LANCEMENT-2)', () => {
+  beforeEach(() => localStorage.clear())
+  const free = { premium: false, source: null }
+
+  it('après la fin, une fois, avec la dernière date vue', () => {
+    expect(launchEndedNotice(free, { now: END + DAY, last: UNTIL, seen: null })).toEqual({ until: UNTIL })
+    expect(launchEndedNotice(free, { now: END + DAY, last: UNTIL, seen: UNTIL })).toBeNull()
+  })
+
+  it('rien avant la fin, sans période vue, ni bien après', () => {
+    expect(launchEndedNotice(free, { now: END - 1000, last: UNTIL, seen: null })).toBeNull()
+    expect(launchEndedNotice(free, { now: END + DAY, last: null, seen: null })).toBeNull()
+    expect(launchEndedNotice(free, { now: END + LAUNCH_ENDED_NOTICE_MS + 1000, last: UNTIL, seen: null })).toBeNull()
+  })
+
+  it('rien pour qui a Gold ou Silver (achat, ou période recalée)', () => {
+    expect(launchEndedNotice({ premium: true, source: 'play' }, { now: END + DAY, last: UNTIL, seen: null })).toBeNull()
+    expect(launchEndedNotice({ premium: true, source: 'launch' }, { now: END + DAY, last: UNTIL, seen: null })).toBeNull()
+  })
+
+  it('lit le stockage par défaut, et la fermeture tient', () => {
+    localStorage.setItem('halcya_launch_last_until', UNTIL)
+    expect(launchEndedNotice(free, { now: END + DAY })).toEqual({ until: UNTIL })
+    dismissLaunchEndedNotice(UNTIL)
+    expect(launchEndedNotice(free, { now: END + DAY })).toBeNull()
+  })
+})
+
+describe('LaunchEndCard — après la fin', () => {
+  const PAST = new Date(Date.now() - 2 * DAY).toISOString()
+  beforeEach(() => {
+    localStorage.clear()
+    store.id = 'play'
+    localStorage.setItem('halcya_launch_last_until', PAST)
+    storeEnt({ premium: false, source: null })
+  })
+
+  it('remercie, rassure sur les données et mène aux formules', () => {
+    renderCard()
+    expect(screen.getByRole('heading', { name: 'Le test est terminé. Merci !' })).toBeInTheDocument()
+    expect(screen.getByText(/Rien n’est effacé/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Voir les formules' })).toHaveAttribute('href', '/premium')
+  })
+
+  it('une seule fois', () => {
+    const { unmount } = renderCard()
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer' }))
+    expect(screen.queryByRole('heading')).toBeNull()
+    unmount()
+    renderCard()
+    expect(screen.queryByRole('heading')).toBeNull()
+  })
+
+  it('le lien compte comme vu', () => {
+    const { unmount } = renderCard()
+    fireEvent.click(screen.getByRole('link', { name: 'Voir les formules' }))
+    unmount()
+    renderCard()
+    expect(screen.queryByRole('heading')).toBeNull()
+  })
+
+  it('jamais dans l’app iPhone', () => {
+    store.id = 'appstore'
+    renderCard()
     expect(screen.queryByRole('heading')).toBeNull()
   })
 })
