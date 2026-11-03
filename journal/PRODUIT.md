@@ -181,6 +181,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 04:35** — **Audit 360 px de la version des testeurs** (POL-PLAY-104) : 16 pages Play avec Gold offert, rien ne déborde ; le banc visuel montre la vraie date de fin (27/11 Play, 06/11 iPhone), identique au texte d'invitation. Rien ne change dans l'app. Alpha 100721 toujours en examen ; P41 (invitation) au propriétaire dès qu'elle est disponible.
 - **03/11 00:35** — **LISTING-2** : la fiche du Play Store et la feuille d'achat de Google disent « Silver » et « Gold » comme l'app (titre « Halcya Silver » au lieu de « Halcya Premium », fiche Gold « Tout Silver… », section abonnement de la fiche avec les deux formules et leurs plafonds 10 / 20, description courte avec « SII, FODMAP ») ; le script des abonnements met à jour la fiche d'un abonnement déjà créé. Rien ne change dans l'app.
 - **02/11 23:35** — **Alpha envoyée par le propriétaire (P40 ✅)** : versionCode 100721 sur Alpha depuis le 02/11 22:41 (Paris), en examen chez Google. Relais vérifié : période play jusqu'au 27/11, iPhone jusqu'au 06/11 (bilan du déploiement de `b7e583e`). P41 (inviter les testeurs dès qu'Alpha affiche 100721) et étapes P2 (guichet unique) écrites ; « 👉 Version candidate prête » en tête du résumé.
 
