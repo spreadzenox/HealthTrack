@@ -4,6 +4,8 @@
  * calcul, ce qu'il montre (titres seulement), et l'Accueil le relit sans rien recalculer. Un résumé d'un jour ou
  * deux reste juste à l'échelle de pistes qui demandent des semaines de données.
  */
+import { getHiddenLinks } from '../settings/hiddenLinks'
+
 export const PISTES_SUMMARY_KEY = 'healthtrack_pistes_summary'
 
 /** Titre d'une piste repas → ventre, comme dans Analyses (« Oignon → ventre »). */
@@ -11,13 +13,13 @@ const gutTitle = (link) => `${link.label} → ventre`
 
 /**
  * Ce que montre Analyses, réduit aux titres : pistes repas → ventre (si l'analyse du ventre en a) puis pistes à
- * tester du bien-être. `null` tant que l'analyse n'a pas assez de jours (la carte garde son compte à rebours).
+ * tester du bien-être, sans celles que la personne a masquées (I86). `null` tant que l'analyse n'a pas assez de jours (la carte garde son compte à rebours).
  */
-export function summarizePistes(analysis) {
+export function summarizePistes(analysis, hidden = getHiddenLinks()) {
   if (!analysis) return null
   const gut = analysis.gut?.status === 'links' ? analysis.gut.links.map(gutTitle) : []
   const ready = analysis.correlations?.status === 'ok'
-  const levers = ready ? (analysis.correlations.levers ?? []).map((l) => l.title ?? l.action).filter(Boolean) : []
+  const levers = ready ? (analysis.correlations.levers ?? []).filter((l) => !hidden.includes(l.variable)).map((l) => l.title ?? l.action).filter(Boolean) : []
   if (!ready && !gut.length) return null
   return { gut, levers }
 }

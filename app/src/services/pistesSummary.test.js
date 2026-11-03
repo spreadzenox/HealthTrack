@@ -21,6 +21,13 @@ describe('pistesSummary', () => {
     expect(s.levers).toEqual(['Nuits plus longues → meilleur bien-être'])
   })
 
+  it('laisse de côté les pistes masquées dans Analyses (I86)', () => {
+    const levers = [{ variable: 'steps', action: 'Marcher davantage' }, { variable: 'sleep', action: 'Dormir plus' }]
+    expect(summarizePistes(analysis({ levers }), ['steps']).levers).toEqual(['Dormir plus'])
+    localStorage.setItem('healthtrack_hidden_links', JSON.stringify(['sleep']))
+    expect(summarizePistes(analysis({ levers })).levers).toEqual(['Marcher davantage'])
+  })
+
   it('pas assez de jours et aucune piste du ventre : rien à résumer (la carte garde son compte à rebours)', () => {
     expect(summarizePistes(analysis({ status: 'not_enough_data' }))).toBeNull()
     expect(summarizePistes(analysis({ status: 'not_enough_data', gut: ['Ail'] }))).toEqual({ gut: ['Ail → ventre'], levers: [] })

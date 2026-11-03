@@ -16,6 +16,7 @@ beforeEach(() => {
 
 // Import after IDB is set up
 import { getBodySettings, setBodySettings } from '../settings/bodySettings'
+import { getHiddenLinks, setHiddenLinks } from '../settings/hiddenLinks'
 import {
   createEntry,
   listEntries,
@@ -485,6 +486,34 @@ describe('sauvegarde — profil (sexe, année, taille, activité)', () => {
     const res = await importFromJson(json, { merge: true })
     expect(res.profileRestored).toBe(false)
     expect(getBodySettings()).toEqual({ sex: 'M', birthYear: 1985, heightCm: 180 })
+  })
+})
+
+describe('sauvegarde — liens masqués des Analyses (I86)', () => {
+  beforeEach(() => localStorage.clear())
+  const entry = { type: 'steps', source: 'hc', payload: { value: 1 }, at: '2026-01-01T00:00:00Z' }
+
+  it('exporte les liens masqués, rien si aucun', async () => {
+    await createEntry(entry)
+    expect(JSON.parse(await exportToJson())).not.toHaveProperty('hiddenLinks')
+    setHiddenLinks(['alcool', 'sleep_duration'])
+    expect(JSON.parse(await exportToJson()).hiddenLinks).toEqual(['alcool', 'sleep_duration'])
+  })
+
+  it('l\'aperçu lit les liens masqués nettoyés ; un ancien fichier reste accepté', () => {
+    expect(parseBackup(JSON.stringify({ version: 1, entries: [entry], hiddenLinks: ['a', 3, 'a'] })).hiddenLinks).toEqual(['a'])
+    expect(parseBackup(JSON.stringify({ version: 1, entries: [entry] })).hiddenLinks).toEqual([])
+    expect(parseBackup(JSON.stringify([entry])).hiddenLinks).toEqual([])
+  })
+
+  it('remplacer reprend ceux du fichier ; ajouter les réunit ; un ancien fichier ne change rien', async () => {
+    setHiddenLinks(['steps'])
+    await importFromJson(JSON.stringify({ version: 1, entries: [entry], hiddenLinks: ['alcool'] }), { merge: true })
+    expect(getHiddenLinks()).toEqual(['steps', 'alcool'])
+    await importFromJson(JSON.stringify([entry]))
+    expect(getHiddenLinks()).toEqual(['steps', 'alcool'])
+    await importFromJson(JSON.stringify({ version: 1, entries: [entry], hiddenLinks: ['cafe'] }))
+    expect(getHiddenLinks()).toEqual(['cafe'])
   })
 })
 

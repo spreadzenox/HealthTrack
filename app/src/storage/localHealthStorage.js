@@ -12,6 +12,7 @@
  * dailyAggregates.js) — built from the entries on first analysis, entries untouched (perf D2).
  */
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
+import { getHiddenLinks, setHiddenLinks, sanitizeHiddenLinks } from '../settings/hiddenLinks'
 import { bumpDataRevision } from './dataRevision'
 import { AGG_STORE, DENSE_SERIES, markDirty, readAggregatedEntries } from './dailyAggregates'
 import { APP_NAME } from '../config/brand'
@@ -584,6 +585,8 @@ export async function exportToJson() {
   const backup = { version: 1, exportedAt: new Date().toISOString(), entries }
   const profile = getBodySettings()
   if (Object.keys(profile).length > 0) backup.profile = profile
+  const hiddenLinks = getHiddenLinks()
+  if (hiddenLinks.length > 0) backup.hiddenLinks = hiddenLinks
   return JSON.stringify(backup, null, 2)
 }
 
@@ -624,7 +627,7 @@ function normalizeBackupEntry(e, now) {
  * Accepte le format actuel `{ version, exportedAt, entries, profile? }` et l'ancien tableau nu.
  * @param {string} json
  * @returns {{ entries: object[], invalid: number, exportedAt: string|null, firstAt: string|null, lastAt: string|null,
- *   byType: Record<string, number>, profile: object|null }}
+ *   byType: Record<string, number>, profile: object|null, hiddenLinks: string[] }}
  * @throws si le JSON est illisible ou ne ressemble pas à une sauvegarde HealthTrack
  */
 export function parseBackup(json) {
@@ -664,7 +667,8 @@ export function parseBackup(json) {
   const exportedAt = !Array.isArray(data) && isNonEmptyString(data.exportedAt) ? data.exportedAt : null
   const cleanProfile = Array.isArray(data) ? {} : sanitizeBodySettings(data.profile)
   const profile = Object.keys(cleanProfile).length > 0 ? cleanProfile : null
-  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile }
+  const hiddenLinks = Array.isArray(data) ? [] : sanitizeHiddenLinks(data.hiddenLinks)
+  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile, hiddenLinks }
 }
 
 /**
@@ -695,7 +699,7 @@ function restoreProfile(profile, merge) {
  * @returns {Promise<{ imported: number, skipped: number, invalid: number, profileRestored: boolean }>}
  */
 export async function importFromJson(json, opts = {}) {
-  const { entries, invalid, profile } = parseBackup(json)
+  const { entries, invalid, profile, hiddenLinks } = parseBackup(json)
   if (entries.length === 0) return { imported: 0, skipped: 0, invalid, profileRestored: false }
 
   const db = await openDB()
@@ -731,6 +735,8 @@ export async function importFromJson(json, opts = {}) {
     markDirty(agg, added)
     tx.oncomplete = () => {
       if (imported > 0 || !opts.merge) bumpDataRevision()
+      // I86 : liens masqués du fichier (remplacer : ceux du fichier ; ajouter : réunis) ; ancien fichier : rien ne change
+      if (hiddenLinks.length > 0) setHiddenLinks(opts.merge ? [...getHiddenLinks(), ...hiddenLinks] : hiddenLinks)
       resolve({ imported, skipped, invalid, profileRestored: restoreProfile(profile, opts.merge) })
     }
     tx.onerror = () => reject(tx.error)

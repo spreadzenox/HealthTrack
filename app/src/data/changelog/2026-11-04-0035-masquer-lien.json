@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-04",
+  "kind": "nouveau",
+  "title": "Analyses : masquer un lien",
+  "items": [
+    "Un lien évident ou qui ne vous parle pas peut être retiré de vos Analyses : touchez sa flèche, puis « Masquer ce lien ». Vos données ne changent pas.",
+    "En bas de la liste, « Tout réafficher » les remet. Les liens masqués suivent votre export."
+  ]
+}
