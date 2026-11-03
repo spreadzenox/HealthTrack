@@ -79,6 +79,7 @@
   au 02/11). Il suffit de **confirmer** : Paramètres → touchez 7 fois « Version » → « Empreinte de l'installation »
   commence-t-elle par **5e4a** ? Répondez « P37 oui » (ou donnez l'empreinte affichée si elle diffère) : la routine
   l'ajoute alors au relais et vous gardez Gold après le 27/11.
+- **P44** (question, réponse avant le 20/11) : remercier les testeurs restés jusqu'au bout par **un mois de Gold en plus** (jusqu'au 27/12, sans carte bancaire, sous les plafonds du budget) ? Répondez « P44 oui » ou « P44 non » dans une consigne ; détail dans [`PRODUIT.md`](PRODUIT.md) §4.
 - **P39** (pas urgent) : expiration des clés App Attest dans Firestore, même geste que P33 (commande dans `PRODUIT.md` §4).
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4 (abonnements déjà prêts dans les 5 pays ; Suisse 4,90 / 29,00 / 9,90 CHF, Canada 6,99 / 39,99 / 12,99 $CA hors taxes : dites-le si vous voulez d'autres prix).
 - P34 (encart « Enregistrez vos applications » dans la Play Console) : pas urgents, détail dans
@@ -86,6 +87,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 03/11 20:35 — [Idées : fin de Gold offert](runs/2026-11-03-2035-idees-fin-gold-offert.md) | 💡 | Le 28/11, vos testeurs passeront sans un mot de Gold à la version gratuite. Deux petites cartes prévues avant cette date (« Gold offert jusqu'au 27 nov., ensuite … reste gratuit », puis « Le test est terminé. Merci ! ») ; vérifié que chaque testeur gardera droit aux 14 jours d'essai. **Question P44** : leur offrir un mois de Gold en plus ? Rien ne change dans l'app |
 | 03/11 19:35 — [Score de la montre](runs/2026-11-03-1935-score-montre.md) | 🔧 | Avec votre montre Huawei, Journal → Jours montre maintenant le score de la nuit calculé par la montre (sur 100) et votre FC moyenne de la nuit, juste à côté du sommeil (ils étaient enregistrés mais invisibles). **À regarder** : le score est-il le même que dans Huawei Santé pour la même nuit ? |
 | 03/11 18:35 — [Votre empreinte lue](runs/2026-11-03-1835-empreinte-lue.md) | 🔧 | PR #660 mergée, relais redéployé (vert, 27/11 Android et 06/11 iPhone toujours servis). Une seule installation Android au jeton accepté : `5e4a69f72ffb`, sans doute votre téléphone. Il reste à confirmer ses 4 premiers caractères (P37, 30 s) pour que vous gardiez Gold après le 27/11. |
 | 03/11 17:35 — [Votre empreinte pour Gold](runs/2026-11-03-1735-empreinte-proprio.md) | 🔧 | Pour que vous gardiez Gold après le 27/11 sans rien recopier : le bilan du serveur listera l'installation dont la vérification Google passe (aujourd'hui, seulement votre téléphone), avant que les testeurs ne s'y ajoutent. PR #660 verte, merge refusé à la session : repris au run suivant. Rien ne change dans l'app |
