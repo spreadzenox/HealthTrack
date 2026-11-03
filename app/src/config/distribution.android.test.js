@@ -138,4 +138,17 @@ describe('variantes Android play / sideload', () => {
     expect(rules).not.toMatch(/^-keep[a-z]* class \*\* /m)
     expect(rules).not.toMatch(/^-dontobfuscate|^-dontoptimize|^-dontshrink/m)
   })
+
+  it('POL-PLAY-11 : shrinkResources sur la release, mode safe, ressources de l\'app gardées, modèles hors de res/', () => {
+    const gradle = read('build.gradle')
+    const release = gradle.match(/release \{[\s\S]*?\n {8}\}/)[0]
+    expect(release).toMatch(/shrinkResources true/)
+    const keep = read('src/main/res/raw/keep.xml')
+    expect(keep).toMatch(/tools:shrinkMode="safe"/)
+    for (const res of ['@drawable/ic_stat_healthtrack', '@layout/notification_*', '@xml/backup_rules', '@xml/data_extraction_rules']) {
+      expect(keep).toContain(res)
+    }
+    // les modèles du visage restent dans assets/ (jamais réduits) : aucun .tflite / .onnx sous res/
+    expect(gradle).toMatch(/assets\.srcDir faceModelsAssetsDir/)
+  })
 })
