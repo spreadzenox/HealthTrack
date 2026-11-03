@@ -35,6 +35,11 @@ n'aurait proposé aucune formule : l'écran d'achat de l'app y serait resté vid
 - L'app lit déjà prix et devise dans Play Billing (`formatMicros(priceMicros, currency)`) : CHF et $CA s'affichent
   sans changement de code.
 
+## Après le merge (#641 → `ab16d9a`)
+- Tous les workflows de main verts ; release **v460** publiée (APK 34 530 388 octets).
+- « Play — abonnements » : pays ajoutés sans refus ; Silver `annuel` et `mensuel`, essai `essai-14j`, Gold `mensuel` :
+  ACTIVE, pays BE, CA, CH, FR, LU ; prix français relus inchangés (29,99 €, 4,99 €, 9,99 €).
+
 ## Suite
 - Après le merge : lire le résumé de « Play — abonnements » (pays : FR, BE, LU, CH, CA pour chaque formule et l'essai).
   Si Google refuse l'ajout de pays à une formule active : noter l'erreur exacte et passer par
