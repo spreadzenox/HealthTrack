@@ -18,8 +18,12 @@
   répartition par jour), lisible par `gh api …/jobs/<id>/logs`. Commande jq vérifiée localement sur un échantillon.
 
 ## Après le merge
-- Le push sur main redéploie le relais (chemin du workflow) : relire la ligne « Lecture du réglage Test Lab » du
-  journal. Avec 2 installations le 03/11, rien à conclure encore.
+- PR #658 mergée (`848cfed`) : Tests, Build & Release (**v471**, APK sideload 34 531 778 octets), Play — AAB
+  (**100742** en test interne) et « Relais — déploiement » verts ; émulateur encore en cours à la fin du run.
+- Journal du relais redéployé, lu par l'API : `Lecture du réglage Test Lab (INSTALLS-21b) : absent : 62, unset : 1` ;
+  le 03/11 : `absent×1 unset×1`. Première installation avec le diagnostic : `unset` (lecture réussie, réglage
+  absent). Une seule mesure : rien à conclure ; si `unset` domine après 2 ou 3 versions, ce ne sont pas des appareils
+  Test Lab marqués → run « idées » pour un autre signal.
 
 ## Données
 - Aucune.
