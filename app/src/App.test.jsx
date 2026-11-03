@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, within, fireEvent } from '@testing-library/react'
+import { render, screen, within, fireEvent, waitFor } from '@testing-library/react'
 import App from './App'
 import { APP_NAME } from './config/brand'
 
@@ -41,6 +41,7 @@ describe('App', () => {
     window.history.pushState({}, '', '/whats-new')
     render(<App />)
     expect(await screen.findByRole('navigation', { name: 'Principal' })).toBeInTheDocument()
-    expect(window.location.pathname).toBe('/')
+    // au premier lancement, la page attend de savoir s'il faut l'onboarding (Layout)
+    await waitFor(() => expect(window.location.pathname).toBe('/'))
   })
 })

@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useLayoutEffect } from 'react'
+import { Suspense, useEffect, useLayoutEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import UpdateBanner from './components/UpdateBanner'
 import WhatsNewBanner from './components/WhatsNewBanner'
@@ -8,7 +8,7 @@ import SettingsButton from './components/SettingsButton'
 import { APP_NAME } from './config/brand'
 import { useAutoSync } from './hooks/useAutoSync'
 import { FEATURES } from './config/distribution'
-import { needsOnboarding } from './settings/onboarding'
+import { loadOnboarding, needsOnboarding } from './settings/onboarding'
 import { takePortionOpen } from './services/fodmapReminder'
 import './App.css'
 
@@ -48,22 +48,33 @@ function usePurchaseWatch() {
 /**
  * Premier lancement sur une base vide : ouvre l'onboarding (jalon 4). Jamais après une mise à jour chez quelqu'un
  * qui a déjà des données (settings/onboarding.js), ni sur le retour de connexion Withings.
+ * Rend `true` tant que la réponse n'est pas connue : la page (l'Accueil et ses calculs) attend alors, au lieu de se
+ * monter pour rien et de s'afficher un instant avant « Bienvenue » (C4, premier lancement). Onboarding déjà fait :
+ * aucune attente.
  */
 function useOnboardingRedirect() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const [pending, setPending] = useState(() => !pathname.startsWith('/connectors/withings') && !loadOnboarding().done)
   useEffect(() => {
-    if (pathname.startsWith('/connectors/withings')) return undefined
+    if (!pending) return undefined
     let alive = true
-    needsOnboarding().then((needed) => {
-      if (alive && needed) navigate('/bienvenue', { replace: true })
-    })
+    // l'écran d'accueil de l'onboarding se télécharge pendant qu'on compte les entrées
+    import('./pages/Onboarding').catch(() => {})
+    needsOnboarding()
+      .catch(() => false)
+      .then((needed) => {
+        if (!alive) return
+        if (needed) navigate('/bienvenue', { replace: true })
+        else setPending(false)
+      })
     return () => {
       alive = false
     }
     // Une seule fois, à l'ouverture de l'app.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  return pending
 }
 
 /** Rappel « Votre portion du jour » touché (réintroduction guidée, 7b-2) : on ouvre la réintroduction. */
@@ -81,7 +92,7 @@ function usePortionOpen() {
 }
 
 export default function Layout() {
-  useOnboardingRedirect()
+  const onboardingPending = useOnboardingRedirect()
   usePortionOpen()
   useAutoSync()
   usePurchaseWatch()
@@ -103,9 +114,13 @@ export default function Layout() {
       </header>
       <main className="main">
         <WhatsNewBanner />
-        <Suspense fallback={<PageLoading />}>
-          <Outlet />
-        </Suspense>
+        {onboardingPending ? (
+          <PageLoading />
+        ) : (
+          <Suspense fallback={<PageLoading />}>
+            <Outlet />
+          </Suspense>
+        )}
       </main>
       <TabBar />
     </div>

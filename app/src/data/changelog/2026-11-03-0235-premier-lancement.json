@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-03",
+  "kind": "amélioration",
+  "title": "Premier lancement plus net",
+  "items": [
+    "À la première ouverture, l’app passe directement à l’écran de bienvenue, sans afficher un instant l’Accueil vide."
+  ]
+}
