@@ -165,6 +165,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
 ## 🧪 Test fermé en cours (J = 03/11) — idée du 03/11 08:35 (`IDEES.md` I212)
 - [x] **TEST-PISTES** (03/11 09:35) Bilan de « Play — AAB » : tableau « État des pistes Google Play » (version et état de
   chaque piste, lecture seule, edit abandonné) pour suivre la version des testeurs à chaque envoi.
+- [x] **VITALS-1** (03/11 12:35) Bilan de « Play — AAB » : plantages et ANR d'Android vitals (`scripts/play/vitals.mjs`, `errorIssues:search`, lecture seule, jeton `playdeveloperreporting` à part, étape `continue-on-error`) : la routine voit enfin les plantages avant de choisir une version Alpha. Si l'API n'est pas activée, le bilan donne la commande du propriétaire (P43).
 - [ ] **TEST-ALPHA-1** (jour 4–5, 07–08/11) : une version alpha avec les premiers retours des testeurs (ou les
   correctifs trouvés d'ici là), notes de version qui citent le retour ; ligne dans `PRODUIT.md` §4 bis ; clic P42.
 - [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; clic P42.

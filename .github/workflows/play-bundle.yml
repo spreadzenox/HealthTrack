@@ -220,3 +220,24 @@ jobs:
           # 2 = accès refusé : avertissement (invitation pas encore propagée), réessai à la version suivante
           if [ "$code" = 2 ]; then exit 0; fi
           exit "$code"
+
+      # Plantages et ANR (Android vitals) : lecture seule, jamais bloquante (POL-PLAY-11, TEST-ALPHA-1)
+      - name: Jeton Android vitals (portée playdeveloperreporting)
+        id: vitals-token
+        if: always()
+        continue-on-error: true
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/playdeveloperreporting
+          create_credentials_file: false
+
+      - name: Plantages et ANR (Android vitals)
+        if: always()
+        continue-on-error: true
+        working-directory: app
+        env:
+          PLAY_REPORTING_TOKEN: ${{ steps.vitals-token.outputs.access_token }}
+        run: node scripts/play/vitals-cli.mjs
