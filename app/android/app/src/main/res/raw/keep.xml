@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- POL-PLAY-11 : shrinkResources en mode « safe » (les noms lus par getIdentifier restent gardés). Ressources de
+     l'app gardées explicitement, même si un jour elles ne sont plus lues que par leur nom. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:shrinkMode="safe"
+    tools:keep="@drawable/ic_stat_healthtrack,@drawable/ic_launcher_*,@drawable/launch_screen,@mipmap/ic_launcher*,@layout/notification_*,@xml/backup_rules,@xml/data_extraction_rules,@xml/file_paths" />

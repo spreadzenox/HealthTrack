@@ -94,9 +94,12 @@ android {
         // Seule la variante play est construite en release (la sideload part en debug) : R8 (optimisation,
         // obscurcissement, réduction du code DEX) ne touche donc que Play (POL-PLAY-10, exigence Play de février 2027).
         // Règles dans proguard-rules.pro ; mapping.txt envoyé à Play avec l'AAB (scripts/play/publish.mjs).
-        // shrinkResources reste coupé (visage et polices lus par nom, étape à part).
+        // shrinkResources (POL-PLAY-11) retire les ressources Android inutilisées (res/ des bibliothèques) ; modèles
+        // du visage et polices sont dans assets/, que la réduction ne touche jamais. res/raw/keep.xml garde par
+        // prudence les ressources de l'app lues hors du code (notifications, sauvegarde, icônes).
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             if (System.getenv('HT_UPLOAD_KEYSTORE')) {
                 signingConfig signingConfigs.upload

@@ -183,6 +183,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 14:35** — **Version Play allégée** (POL-PLAY-11) : `shrinkResources` sur la release play (ressources Android inutilisées des bibliothèques retirées ; modèles du visage et polices hors de portée, dans assets/), contrôlé par l'émulateur (release R8 + plugins natifs). Rien de visible dans l'app.
 - **03/11 13:35** — **Rapport PDF : semaines plus lisibles** (POL-PLAY-105) : audit du rapport sur données de démo ; avec une période plus longue que le journal, les semaines vides d'avant la première note sont résumées en une ligne au lieu de rangées « 0 – – – » ; « 1er » pour le premier du mois dans le rapport.
 - **03/11 12:35** — **Plantages et ANR dans le bilan de « Play — AAB »** (VITALS-1) : après chaque envoi, lecture seule d'Android vitals (API Play Developer Reporting, 30 derniers jours) : verdict, tableau type / erreur / endroit / versions / rapports, ⚠️ si la version envoyée est touchée ; jamais bloquant, geste du propriétaire écrit si l'API ou le droit manque. Sert au choix des versions Alpha du test (POL-PLAY-11, TEST-ALPHA-1). Rien ne change dans l'app.
 - **03/11 11:35** — **Robots de Google : diagnostic** (INSTALLS-21b-1) : l'app dit au relais comment se termine sa lecture du réglage « firebase.test.lab » (valeur bornée, rien de personnel) et lit aussi le mode test d'Android ; le bilan du relais en donnera la répartition après les prochaines versions en test interne. Rien de visible dans l'app.
