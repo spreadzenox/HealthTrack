@@ -177,7 +177,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
 - [ ] **TEST-ALPHA-1** (jour 4–5, 07–08/11) : une version alpha avec les premiers retours des testeurs (ou les
   correctifs trouvés d'ici là), notes de version qui citent le retour ; ligne dans `PRODUIT.md` §4 bis ; clic P42.
 - [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; clic P42.
-- [ ] **FIN-LANCEMENT-1** (avant le 24/11 ; `IDEES.md` I213) : carte Accueil fermable à partir de `launchUntil` − 3 j :
+- [x] **FIN-LANCEMENT-1** (03/11 21:35 ; `IDEES.md` I213) LIVRÉ : `LaunchEndCard` + `launchEndNotice()` ; lien « Voir ce que comprend Gold » (pendant la période, /premium n'affiche pas de prix) ; `launch.lastUntil` déjà retenu (`halcya_launch_last_until`) pour FIN-LANCEMENT-2 ; capture `--launch-ends-in=2`. Spécification d'origine : carte Accueil fermable à partir de `launchUntil` − 3 j :
   « Gold offert jusqu'au … Ensuite, le journal, les montres, le bien-être estimé et l'export restent gratuits. » +
   « Voir les formules ». Une fois par valeur de `until` ; coupée pour l'App Store (drapeau) ; tests jsdom à horloge
   simulée, `SLOP_WORDING` étendu, captures `--play` clair/sombre.
