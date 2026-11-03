@@ -44,6 +44,8 @@
  *   npm run visual -- --play --store=appstore --routes=/premium --subscription=launch [--ios-launch=ended]  # app
  *                                          iPhone (VITE_STORE=appstore) : le relais factice voit X-Platform: ios ;
  *                                          --ios-launch=ended : période de lancement finie sur iPhone (02/11)
+ *   npm run visual -- --play --routes=/ --subscription=launch --launch-ends-in=2  # fin de Gold offert dans 2 jours :
+ *                                          carte de l'Accueil (FIN-LANCEMENT-1)
  *   npm run visual -- --play --routes=/settings --subscription=active  # état d'abonnement factice renvoyé par le
  *                                                  relais (free par défaut, launch, active, trial, paused, grace,
  *                                                  on_hold ; grace / on_hold : carte de l'Accueil, 6e) (6c)
@@ -404,6 +406,8 @@ async function main() {
       // qu'elle est à venir, pour que les captures montrent la date que verront les testeurs ; sinon J+20.
       const ios = route.request().headers()['x-platform'] === 'ios'
       const launchUntil = (() => {
+        // --launch-ends-in=N : fin de période dans N jours (carte « Gold offert jusqu'au … », FIN-LANCEMENT-1)
+        if (args['launch-ends-in'] !== undefined) return inDays(Number(args['launch-ends-in']))
         try {
           const p = JSON.parse(readFileSync(join(APP_DIR, '../relay/src/launch-period.json'), 'utf8'))
           const until = (ios && p.iosUntil) || p.until

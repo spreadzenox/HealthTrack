@@ -558,3 +558,37 @@
   background: rgba(var(--bg-rgb), 0.7);
   font-size: 0.72rem;
 }
+
+/* Fin de Gold offert pendant le test (FIN-LANCEMENT-1) : surface neutre, une croix pour la fermer. */
+.launch-end-card {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.launch-end-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.launch-end-close {
+  flex: none;
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  margin: -10px -10px 0 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink-2);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.launch-end-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--color-brand);
+  font-weight: 700;
+}

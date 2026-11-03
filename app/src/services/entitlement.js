@@ -11,6 +11,10 @@ import { localeDate } from '../i18n/locale.js'
 import { storeOfPurchase } from '../config/distribution'
 
 const ENTITLEMENT_KEY = 'halcya_entitlement'
+/** Dernière fin de période de lancement servie par le relais (il ne la renvoie plus une fois passée : FIN-LANCEMENT-2). */
+const LAUNCH_LAST_UNTIL_KEY = 'halcya_launch_last_until'
+/** Fin de période pour laquelle la carte « Gold offert jusqu'au … » a été fermée (FIN-LANCEMENT-1). */
+const LAUNCH_END_SEEN_KEY = 'halcya_launch_end_seen'
 /** Événement `window` émis à chaque nouvel état donné par le relais (`detail` : les droits à jour). */
 export const ENTITLEMENT_EVENT = 'halcya:entitlement'
 export const ENTITLEMENT_TIMEOUT_MS = 15_000
@@ -86,6 +90,7 @@ export async function refreshEntitlement({ purchaseToken = null, renewalInfo = n
     const ent = fromRelay(data)
     try {
       localStorage.setItem(ENTITLEMENT_KEY, JSON.stringify(ent))
+      if (ent.source === 'launch' && ent.launchUntil) localStorage.setItem(LAUNCH_LAST_UNTIL_KEY, ent.launchUntil)
     } catch {
       // stockage indisponible : l'état sera redemandé
     }
@@ -104,6 +109,47 @@ const shortDate = (iso) => localeDate(iso, { day: 'numeric', month: 'short', yea
 
 /** La fin de la période de lancement est exclue : on affiche le dernier jour offert (minuit → la veille). */
 export const lastLaunchDay = (iso) => shortDate(Date.parse(iso) - 1)
+
+/** Dernière fin de période de lancement vue (ISO), gardée après la fin pour la carte « Le test est terminé ». */
+export function lastLaunchUntil() {
+  try {
+    return localStorage.getItem(LAUNCH_LAST_UNTIL_KEY) || null
+  } catch {
+    return null
+  }
+}
+
+/** La carte « Gold offert jusqu'au … » apparaît dans les 3 derniers jours de la période de lancement. */
+export const LAUNCH_END_NOTICE_MS = 3 * 86_400_000
+
+/**
+ * Carte de fin de Gold offert (FIN-LANCEMENT-1, `IDEES.md` I213) : à partir de 3 jours avant la fin de la période de
+ * lancement, une fois par date de fin (si le relais recale la date, la carte revient). Null sinon.
+ */
+export function launchEndNotice(ent, { now = Date.now(), seen = launchEndSeen() } = {}) {
+  if (!ent?.premium || ent.source !== 'launch' || !ent.launchUntil) return null
+  const end = Date.parse(ent.launchUntil)
+  if (!Number.isFinite(end) || now >= end || now < end - LAUNCH_END_NOTICE_MS) return null
+  if (seen === ent.launchUntil) return null
+  return { until: ent.launchUntil, lastDay: lastLaunchDay(ent.launchUntil) }
+}
+
+function launchEndSeen() {
+  try {
+    return localStorage.getItem(LAUNCH_END_SEEN_KEY)
+  } catch {
+    return null
+  }
+}
+
+/** Ferme la carte pour cette date de fin seulement. */
+export function dismissLaunchEndNotice(until) {
+  try {
+    localStorage.setItem(LAUNCH_END_SEEN_KEY, until)
+  } catch {
+    // stockage indisponible : la carte reviendra au prochain lancement
+  }
+}
 
 /**
  * Niveau affiché (GOLD-b4) : « Gold » pendant la période de lancement (le relais y sert Gold) ou pour l'abonnement

@@ -5,6 +5,7 @@ import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
 import MoodEstimateCard from '../components/MoodEstimateCard'
 import PaymentIssueCard from '../components/PaymentIssueCard'
+import LaunchEndCard from '../components/LaunchEndCard'
 import { loadWellbeingToday } from '../services/mood/faceMoodData'
 import { loadJournalEntries } from '../services/journalEntries'
 import { buildDailyJournal } from '../services/dailyJournal'
@@ -98,6 +99,7 @@ export default function Dashboard() {
         <h2 className="today-title">{daySummaryTitle(wellbeing?.est)}</h2>
       </header>
       <PaymentIssueCard />
+      <LaunchEndCard />
       {/* Présentation utile au premier lancement seulement, en une phrase (VC-26) : la ligne des mesures propose
           déjà d'ajouter une source. */}
       {!loading && !error && empty && (
