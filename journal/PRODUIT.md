@@ -121,9 +121,11 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
-- **P37 (01/11 22:33, pour garder Gold après la période de lancement, GOLD-a3)** : sur votre téléphone, Halcya →
+- **P37 (01/11 22:33, simplifiée le 03/11 18:35, pour garder Gold après la période de lancement, GOLD-a3)** : le
+  relais a lu une seule installation Android au jeton accepté, `5e4a69f72ffb`. Sur votre téléphone, Halcya →
   Paramètres (roue en haut à droite) → descendre tout en bas → toucher 7 fois « Version … » → sous « Mode diagnostic »,
-  recopier les 12 caractères de « Empreinte de l'installation » et les donner à la routine (session ou ticket). Rien
+  vérifier que « Empreinte de l'installation » commence par **5e4a**, puis répondre « P37 oui » à la routine (ou
+  donner l'empreinte affichée si elle diffère). Rien
   de personnel : c'est un code tiré au hasard à l'installation. À refaire seulement si vous réinstallez l'app.
 
 | # | Action | État | Pas à pas |
@@ -183,6 +185,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 18:35** — PR #660 mergée, relais redéployé (vert ; 27/11 Android, 06/11 iPhone). Empreinte lue : une seule installation Android au jeton accepté, `5e4a69f72ffb` (29/10 → 02/11). P37 réduite à une confirmation (4 premiers caractères) ; GOLD-a3-2 ensuite.
 - **03/11 17:35** — GOLD-a3-1 : bilan du relais avec l'empreinte des installations Android au jeton Integrity accepté (aujourd'hui seul le propriétaire), pour brancher `GOLD_INSTALLS` sans attendre P37. PR #660 verte, merge refusé à la session : à merger au run suivant, puis lire l'empreinte avant les jetons des testeurs.
 - **03/11 16:35** — Relais redéployé à la main (run 41665157520, vert) : Android 27/11 et iPhone 06/11 servis ; 63 nouvelles installations en 7 jours (2 le 03/11) ; Integrity `error:-9` 56 installations, toujours `observe`. Répartition `testenv` aussi écrite dans le journal du workflow (INSTALLS-21b-2 lisible par la routine).
 - **03/11 15:35** — **Merge de #656** (POL-PLAY-11) : 100740 en test interne, AAB 15 838 261 octets (−29 520 par rapport à 100739) ; Alpha 100721 inchangée ; vitals toujours illisibles (P43).

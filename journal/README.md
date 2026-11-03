@@ -74,8 +74,11 @@
 
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **P43** (1 min, nouveau, pas urgent) : activer « Google Play Developer Reporting API » dans la console Google Cloud (projet healthtrack-824b26 → API et services → Bibliothèque → Activer). La routine pourra alors lire elle-même les plantages signalés par Google et choisir les versions Alpha du test sans plantage connu.
-- **P37 — votre Gold après la période de lancement** : Paramètres → touchez 7 fois « Version » → recopiez
-  « Empreinte de l'installation » (12 caractères, rien de personnel) et donnez-la à la routine.
+- **P37 — votre Gold après la période de lancement (simplifié le 03/11 18:35)** : le relais a trouvé une seule
+  installation Android au jeton accepté, la vôtre en toute vraisemblance : empreinte **`5e4a69f72ffb`** (vue du 29/10
+  au 02/11). Il suffit de **confirmer** : Paramètres → touchez 7 fois « Version » → « Empreinte de l'installation »
+  commence-t-elle par **5e4a** ? Répondez « P37 oui » (ou donnez l'empreinte affichée si elle diffère) : la routine
+  l'ajoute alors au relais et vous gardez Gold après le 27/11.
 - **P39** (pas urgent) : expiration des clés App Attest dans Firestore, même geste que P33 (commande dans `PRODUIT.md` §4).
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4 (abonnements déjà prêts dans les 5 pays ; Suisse 4,90 / 29,00 / 9,90 CHF, Canada 6,99 / 39,99 / 12,99 $CA hors taxes : dites-le si vous voulez d'autres prix).
 - P34 (encart « Enregistrez vos applications » dans la Play Console) : pas urgents, détail dans
@@ -83,6 +86,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 03/11 18:35 — [Votre empreinte lue](runs/2026-11-03-1835-empreinte-lue.md) | 🔧 | PR #660 mergée, relais redéployé (vert, 27/11 Android et 06/11 iPhone toujours servis). Une seule installation Android au jeton accepté : `5e4a69f72ffb`, sans doute votre téléphone. Il reste à confirmer ses 4 premiers caractères (P37, 30 s) pour que vous gardiez Gold après le 27/11. |
 | 03/11 17:35 — [Votre empreinte pour Gold](runs/2026-11-03-1735-empreinte-proprio.md) | 🔧 | Pour que vous gardiez Gold après le 27/11 sans rien recopier : le bilan du serveur listera l'installation dont la vérification Google passe (aujourd'hui, seulement votre téléphone), avant que les testeurs ne s'y ajoutent. PR #660 verte, merge refusé à la session : repris au run suivant. Rien ne change dans l'app |
 | 03/11 16:35 — [Bilan du relais lisible](runs/2026-11-03-1635-testenv-journal.md) | 🔧 | Relais redéployé et vérifié : Gold offert jusqu'au 27/11 sur Android et au 06/11 sur iPhone, analyses Gold en Europe sans erreur (≈ 1,5 € sur 7 jours). Le diagnostic des robots de Google s'écrit maintenant aussi là où la routine peut le lire ; trop tôt pour conclure (2 installations aujourd'hui). Rien ne change dans l'app |
 | 03/11 15:35 — [Merge de la version allégée](runs/2026-11-03-1535-merge-shrink.md) | 🔧 | La PR #656 est mergée : la version 100740 du test interne est un peu plus légère (−29 Ko sur 15,8 Mo ; les bibliothèques n'avaient presque rien d'inutile). Alpha garde la 100721 de vos testeurs. Rien à faire de votre côté ; rien ne change dans l'app |
