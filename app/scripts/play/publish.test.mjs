@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { publishBundle, buildReleaseNotes, isAccessDenied, isMissingDeclaration, withRetry, PlayApiError, API, UPLOAD_API } from './publish.mjs'
+import { publishBundle, readTracks, formatTracks, sortTracks, buildReleaseNotes, isAccessDenied, isMissingDeclaration, withRetry, PlayApiError, API, UPLOAD_API } from './publish.mjs'
 
 const PKG = 'fr.jpesquet.sante'
 const EDITS = `${API}/${PKG}/edits`
@@ -314,5 +314,56 @@ describe('déclaration manquante (P28, 27/10)', () => {
     expect(isMissingDeclaration(err)).toBe(true)
     expect(isAccessDenied(err)).toBe(false)
     expect(isAccessDenied(new PlayApiError('Ouverture de l’edit', 403, 'The caller does not have permission'))).toBe(true)
+  })
+})
+
+describe('état des pistes dans le bilan (lecture seule, 03/11)', () => {
+  const list = {
+    tracks: [
+      { track: 'production', releases: [] },
+      { track: 'alpha', releases: [{ name: '100721', versionCodes: ['100721'], status: 'completed' }] },
+      { track: 'internal', releases: [{ name: '100731', versionCodes: ['100731'], status: 'completed' }, { name: 'p28-x', versionCodes: ['100500'], status: 'draft' }] },
+    ],
+  }
+
+  it('ouvre un edit, lit toutes les pistes, puis abandonne l’edit sans rien valider', async () => {
+    const { fetchImpl, calls } = fakePlay({
+      [`POST ${EDITS}`]: { body: { id: 'R1' } },
+      [`GET ${EDITS}/R1/tracks`]: { body: list },
+      [`DELETE ${EDITS}/R1`]: { body: {} },
+    })
+    const tracks = await readTracks({ packageName: PKG, token: 'tok', fetchImpl, sleep: async () => {} })
+    expect(calls.map((c) => c.key)).toEqual([`POST ${EDITS}`, `GET ${EDITS}/R1/tracks`, `DELETE ${EDITS}/R1`])
+    expect(tracks.map((t) => t.track)).toEqual(['internal', 'alpha', 'production'])
+    expect(tracks[0].releases).toHaveLength(2)
+  })
+
+  it('erreur de lecture : l’edit est quand même abandonné et l’erreur remonte', async () => {
+    const { fetchImpl, calls } = fakePlay({
+      [`POST ${EDITS}`]: { body: { id: 'R1' } },
+      [`GET ${EDITS}/R1/tracks`]: { status: 403, body: { error: { message: 'non' } } },
+      [`DELETE ${EDITS}/R1`]: { body: {} },
+    })
+    await expect(readTracks({ packageName: PKG, token: 'tok', fetchImpl, sleep: async () => {} })).rejects.toThrow(/403/)
+    expect(calls.at(-1).key).toBe(`DELETE ${EDITS}/R1`)
+  })
+
+  it('tableau lisible : une ligne par version, pistes nommées en français, piste vide dite', () => {
+    const lines = formatTracks([
+      { track: 'internal', releases: [{ name: '100731', versionCodes: ['100731'], status: 'completed' }, { name: 'p28-x', versionCodes: ['100500'], status: 'draft' }] },
+      { track: 'alpha', releases: [{ name: '100721', versionCodes: ['100721'], status: 'inProgress', userFraction: 0.2 }] },
+      { track: 'production', releases: [] },
+    ])
+    const text = lines.join('\n')
+    expect(text).toContain('| Test interne | 100731 | déployée |')
+    expect(text).toContain('| Test interne | 100500 (p28-x) | brouillon |')
+    expect(text).toContain('| Test fermé (Alpha) | 100721 | déploiement progressif (20 %) |')
+    expect(text).toContain('| Production | — | aucune version |')
+    expect(text).toMatch(/examen/)
+  })
+
+  it('pistes rangées : test interne, alpha, puis les autres', () => {
+    const sorted = sortTracks([{ track: 'production' }, { track: 'beta' }, { track: 'alpha' }, { track: 'internal' }])
+    expect(sorted.map((t) => t.track)).toEqual(['internal', 'alpha', 'beta', 'production'])
   })
 })

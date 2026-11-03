@@ -163,6 +163,8 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     `wording.test.js` applique `SLOP_WORDING` à chaque titre et phrase des notes.
 
 ## 🧪 Test fermé en cours (J = 03/11) — idée du 03/11 08:35 (`IDEES.md` I212)
+- [x] **TEST-PISTES** (03/11 09:35) Bilan de « Play — AAB » : tableau « État des pistes Google Play » (version et état de
+  chaque piste, lecture seule, edit abandonné) pour suivre la version des testeurs à chaque envoi.
 - [ ] **TEST-ALPHA-1** (jour 4–5, 07–08/11) : une version alpha avec les premiers retours des testeurs (ou les
   correctifs trouvés d'ici là), notes de version qui citent le retour ; ligne dans `PRODUIT.md` §4 bis ; clic P42.
 - [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; clic P42.

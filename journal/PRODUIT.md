@@ -182,6 +182,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 09:35** — **État des pistes dans le bilan de « Play — AAB »** : après chaque envoi, tableau de la version et de l'état de chaque piste (test interne, Alpha, production ; lecture seule). Sert au suivi du test fermé (TEST-ALPHA-1, TEST-REFUS). Rien ne change dans l'app.
 - **03/11 08:35** (idées) — **Testeurs : ce qui fait refuser la production** (I212) : l'aide de Google cite l'engagement insuffisant ; les refus de 2026 recommandent 14 jours de test en plus. `until` (27/11) ne couvrirait pas ce second test : proposition de le recaler d'office le jour d'un refus (à confirmer par le propriétaire). Deux versions alpha visées les 07–08/11 et 12–13/11, chacune un clic du propriétaire (**P42**). Journal seul.
 - **03/11 07:35** — **Temps de chargement mesurés avant les testeurs (C4)** : 3 ans de données denses, CPU ×4, toutes les pages prêtes en moins de 0,75 s (Accueil 0,36 s, 913 enregistrements lus) ; rien à corriger ;
 - **03/11 06:35** — **Montre (M5)** : l'écran « Données de la montre » reprend l'issue des lectures faites app fermée (captures du client Java) et dit « Dernière lecture en arrière-plan » ; avant, seule une synchro faite app ouverte y apparaissait. Chantier montre : reste la confirmation sur la GT 6 Pro (M1 à M7) et les étages (M4 bis, attend un relevé du propriétaire).

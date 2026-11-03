@@ -82,6 +82,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 03/11 09:35 — [État des pistes Play](runs/2026-11-03-0935-etat-pistes.md) | 🔧 | Le bilan de chaque envoi sur Google Play montre maintenant quelle version est sur chaque piste (test interne, Alpha, production) : la routine voit d'un coup d'œil ce qu'ont vos testeurs. Rien ne change dans l'app |
 | 03/11 08:35 — [Idées : refus de la production](runs/2026-11-03-0835-idees-refus-production.md) | 💡 | Ce qui fait refuser l'accès à la production après le test : testeurs inactifs, version jamais mise à jour ; un refus coûte 14 jours. Calendrier de deux versions Alpha (P42, votre clic) et question sur la prolongation de Gold en cas de refus. Rien ne change dans l'app |
 | 03/11 02:35 — [Premier lancement](runs/2026-11-03-0235-premier-lancement.md) | 🔧 | À la toute première ouverture, l'Accueil vide s'affichait un instant avant l'écran de bienvenue (et calculait pour rien) : l'app attend maintenant de savoir s'il faut l'onboarding, puis va droit à « Bienvenue » (sur l'émulateur, version Play : 3 s au lieu de 8). Rien ne change pour vous (onboarding déjà fait). Mergée au run de 03:35 (#643) |
 | 03/11 03:35 — [Audit avant les testeurs](runs/2026-11-03-0335-audit-testeurs.md) | 🔧 | Premier lancement mergé (#643). Revu toute la version Play telle que vos testeurs la verront, vierge, avec Gold offert, en clair et en sombre : rien à corriger dans l'app. Le simulateur des captures comptait 10 analyses par jour pendant le test au lieu de 20 (le vrai serveur dit bien 20) : recalé. Rien ne change dans l'app |
