@@ -36,6 +36,11 @@ s'il fallait l'onboarding, puis basculait vers « Bienvenue ». Mesuré en Chrom
 - Premier écran utile : **12,5 s** en debug (avant 14,4 s) et **3 s** en release R8 (avant 8 s) ; 0 plantage, 1 erreur
   JS attendue (Play Billing absent de l'émulateur). Tous les checks verts.
 
+## Merge
+- PR **#643** verte (tous les checks, y compris émulateurs), à jour sur `def46c5` ; **merge refusé à cette session** par
+  le garde-fou d'autorisations (« Merge Without Review »). **Le run suivant la merge** (squash) après l'avoir remise à
+  jour sur origin/main, puis vérifie « Build & Release » (taille de l'APK) et le résumé émulateur de main.
+
 ## Suite
 - Lire « Premier écran utile » dans le résumé du job émulateur de la PR et de main (avant : 14,4 s debug, 8 s release).
 - Quand le propriétaire dit le jour de l'invitation : recaler `until` si J ≠ 03/11. 07/11 : bilan du relais
