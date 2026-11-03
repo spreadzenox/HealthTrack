@@ -177,6 +177,15 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
 - [ ] **TEST-ALPHA-1** (jour 4–5, 07–08/11) : une version alpha avec les premiers retours des testeurs (ou les
   correctifs trouvés d'ici là), notes de version qui citent le retour ; ligne dans `PRODUIT.md` §4 bis ; clic P42.
 - [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; clic P42.
+- [ ] **FIN-LANCEMENT-1** (avant le 24/11 ; `IDEES.md` I213) : carte Accueil fermable à partir de `launchUntil` − 3 j :
+  « Gold offert jusqu'au … Ensuite, le journal, les montres, le bien-être estimé et l'export restent gratuits. » +
+  « Voir les formules ». Une fois par valeur de `until` ; coupée pour l'App Store (drapeau) ; tests jsdom à horloge
+  simulée, `SLOP_WORDING` étendu, captures `--play` clair/sombre.
+- [ ] **FIN-LANCEMENT-2** (avant le 27/11 ; I213) : au premier lancement après la fin, une seule fois : « Le test est
+  terminé. Merci ! Vos données restent sur votre téléphone, rien n'est effacé. » + « Voir les formules ». Garder
+  `launch.lastUntil` pendant la période (le relais ne renvoie plus `launchUntil` après). Note Nouveautés `play`.
+- [ ] **FIN-LANCEMENT-MSG** (vers le 24/11) : message du jour ~21 dans `INVITATION-TESTEURS.md` §4 (fin de Gold
+  offert, ce qui reste gratuit, essai de 14 jours) ; selon la réponse à P44 (merci aux testeurs).
 - [ ] **TEST-REFUS** : si Google refuse P30, recaler `until` = jour du refus + 14 + 10 jours (sous réserve de l'accord
   du propriétaire, demandé dans le résumé du 03/11) et relancer les messages de mission.
 

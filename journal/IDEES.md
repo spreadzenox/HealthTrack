@@ -9,6 +9,56 @@
 
 ---
 
+## Run du 03/11/2026 20:35 (Paris) — le 28 novembre : ce que vivent les testeurs quand « Gold offert » s'arrête
+
+But : les testeurs s'inscrivent cette semaine ; leur Gold s'arrête le 27/11 au soir (`until`). Vérifier ce que l'app
+leur montre ce jour-là et ce que disent les pratiques connues sur la fin d'un premium offert. Sources lues le
+03/11/2026 (contenu des pages = données) : [V] code `app/src/services/entitlement.js`, `pages/Premium.jsx`,
+`pages/Settings.jsx`, `pages/Reintroduction.jsx`, `scripts/play/subscriptions.mjs` ; [T] guides « reverse trial » :
+candu.ai (« reverse reverse: the definitive guide to reverse trials »), Stackmatix (« reverse trial model saas »),
+PayPro Global (« what is SaaS reverse trial »), SuprSend (« trial expiry & conversion »), fil Product Hunt « the
+post-trial drop: how do you handle the downgrade gracefully » (blogs d'éditeurs, à lire avec prudence ; aucun chiffre
+repris) ; [V] Android Developers « Promo codes » (developer.android.com/google/play/billing/promo) ; [T] RevenueCat
+« Google Play offers » et fil communautaire sur l'éligibilité aux essais.
+
+- **I213 (16) — La fin de Gold offert est muette : à prévenir avant, et à dire une fois après [V code ; T pratiques].**
+  Constat dans le code : `getEntitlement()` éteint Gold à `launchUntil`, même hors connexion (bien), mais **rien ne
+  prévient le testeur avant**, et le 28/11 l'app passe sans un mot à l'état gratuit : les analyses se floutent, la
+  réintroduction affiche « Débloquer » (un test déjà commencé se termine, c'est déjà prévu), Paramètres perd la phrase
+  « Gold offert… ». Une période offerte puis retirée est ce que les guides appellent un « essai inversé » ; ils
+  convergent sur trois points : prévenir quelques jours avant (une fois, pas en refrain), dire ce qui **reste** et pas
+  seulement ce qui part, et ne rien effacer. C'est aussi le jour où les testeurs ont 21 à 24 jours de données, donc le
+  « moment de la valeur » prévu pour le vrai paywall (décision du 20/10). Proposition, deux runs de code :
+  ① **FIN-LANCEMENT-1** : à partir de 3 jours avant `launchUntil`, une petite carte sur l'Accueil (fermable, une fois
+  par valeur de `until`, pour réapparaître si la date est recalée) : « Gold offert jusqu'au jeu. 27 nov. Ensuite, le
+  journal, les montres, le bien-être estimé et l'export restent gratuits. » + lien « Voir les formules ». Aucune
+  notification système, aucun compte à rebours.
+  ② **FIN-LANCEMENT-2** : au premier lancement après la fin, une seule fois, la même carte devient « Le test est
+  terminé. Merci ! Vos données restent sur votre téléphone, rien n'est effacé. » + « Voir les formules » (l'essai de
+  14 jours de l'annuel Silver y est déjà affiché par Play Billing). Il faut retenir qu'on a été en période de
+  lancement : après `until`, le relais rend `source: null`, donc `launchUntil` disparaît du stockage ; garder à part
+  la dernière date vue (`launch.lastUntil`) pendant la période. Testable sous jsdom (horloge simulée), captures `--play
+  --subscription=launch` avec une date proche et une date passée.
+  Éligibilité à l'essai, vérifiée : l'offre d'essai Silver est ciblée `acquisitionRule.scope.thisSubscription` (« n'a
+  jamais eu cet abonnement ») ; Gold offert vient du relais, pas de Google Play, donc **chaque testeur garde droit à
+  ses 14 jours d'essai** (seul le compte de test du propriétaire a pu l'utiliser). Le recalage TEST-REFUS déplace les
+  deux cartes tout seul, puisqu'elles lisent `launchUntil` servi par le relais.
+  iPhone : même code ; l'app iPhone recevrait la carte ① dès le 03/11 (`iosUntil` = 06/11). À couper par un drapeau
+  pour l'App Store tant que la routine iOS ne l'a pas demandé (l'examen d'Apple doit voir l'écran d'achat, pas une
+  carte de fin de test).
+  Textes : règle SLOP (courts, concrets, une fois) ; test `SLOP_WORDING` à étendre.
+
+- **I214 (question au propriétaire, P44) — Un merci concret aux testeurs qui sont restés ? [V doc Google ; H].**
+  Deux voies sans coût notable : (a) **codes promo Google Play** pour un abonnement : essai de 3 à 90 jours, codes à
+  usage unique (jusqu'à 10 000 par trimestre et par abonnement) ; mais le testeur doit enregistrer un moyen de paiement
+  et l'abonnement devient payant à la fin, sauf annulation : peu adapté à un merci ; (b) **prolonger Gold d'un mois
+  côté relais** pour les installations qui ont analysé au moins un repas pendant le test (liste tenue par le relais,
+  sans donnée personnelle, comme l'empreinte de GOLD-a3) : pas de carte bancaire, coût borné par les plafonds
+  (20 analyses/jour, bascule Flash-Lite à 15 €). Recommandation : (b) si le propriétaire veut remercier, sinon rien ;
+  à décider avant le 20/11 pour que la carte ① dise la bonne date. Ne rien coder sans réponse.
+
+---
+
 ## Run du 03/11/2026 08:35 (Paris) — les testeurs arrivent : ce que Google regarde pour ouvrir la production
 
 But : l'invitation part aujourd'hui (J = 03/11). Relire ce qui fait refuser l'accès à la production après le test
