@@ -175,6 +175,9 @@ jobs:
           # app sans ce détail, « absent » = journal d’avant ce relais ; « +harness » = mode test d’Android)
           envs=$(jq -r '[.[] | (.jsonPayload.testenv // "absent")] | group_by(.)[] | "\(.[0]) : \(length)"' "$RUNNER_TEMP/installs.json" | paste -sd ',' - | sed 's/,/, /g')
           echo "- Lecture du réglage Test Lab par ces installations (INSTALLS-21b) : ${envs:-aucune}" >> "$GITHUB_STEP_SUMMARY"
+          # Aussi dans le journal de l’étape : la routine lit les journaux par l’API, pas le résumé (03/11 16:35)
+          echo "Lecture du réglage Test Lab (INSTALLS-21b) : ${envs:-aucune}"
+          echo "Par jour : $(jq -r 'group_by(.timestamp[0:10])[] | "\(.[0].timestamp[0:10]) \(map(.jsonPayload.testenv // "absent") | group_by(.) | map("\(.[0])×\(length)") | join(" "))"' "$RUNNER_TEMP/installs.json" | paste -sd ';' - | sed 's/;/ ; /g')"
 
       - name: Notifications Google Play (abonnement push play-rtdn → relais)
         continue-on-error: true
