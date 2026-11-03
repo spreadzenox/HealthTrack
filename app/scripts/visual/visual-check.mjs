@@ -113,7 +113,7 @@
  */
 import { spawn, execSync } from 'node:child_process'
 import { createRequire } from 'node:module'
-import { mkdirSync, readdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { generateDemoEntries } from './demoData.mjs'
@@ -399,9 +399,20 @@ async function main() {
     // Abonnement (variante play) : jamais d'appel au vrai relais ; état factice choisi par --subscription
     await context.route('**/v1/subscription/verify', (route) => {
       const inDays = (n) => new Date(Date.now() + n * 86_400_000).toISOString()
+      // Période de lancement : la vraie date du relais (relay/src/launch-period.json, iosUntil pour l'iPhone) tant
+      // qu'elle est à venir, pour que les captures montrent la date que verront les testeurs ; sinon J+20.
+      const ios = route.request().headers()['x-platform'] === 'ios'
+      const launchUntil = (() => {
+        try {
+          const p = JSON.parse(readFileSync(join(APP_DIR, '../relay/src/launch-period.json'), 'utf8'))
+          const until = (ios && p.iosUntil) || p.until
+          if (until && Date.parse(until) > Date.now()) return new Date(until).toISOString()
+        } catch { /* fichier absent : date synthétique */ }
+        return inDays(20)
+      })()
       const states = {
         free: { premium: false, source: null },
-        launch: { premium: true, source: 'launch', launchUntil: inDays(20) },
+        launch: { premium: true, source: 'launch', launchUntil },
         active: { premium: true, source: 'play', state: 'active', tier: 'silver', productId: 'halcya_premium', expiresAt: inDays(300), autoRenewing: true },
         gold: { premium: true, source: 'play', state: 'active', tier: 'gold', productId: 'halcya_gold', expiresAt: inDays(30), autoRenewing: true },
         trial: { premium: true, source: 'play', state: 'active', trial: true, productId: 'halcya_premium', expiresAt: inDays(12), autoRenewing: true },
@@ -411,7 +422,6 @@ async function main() {
       }
       let sub = typeof args.subscription === 'string' && states[args.subscription] ? args.subscription : 'free'
       // --ios-launch=ended : comme le relais après le 06/11, plus de Gold d'office pour une requête X-Platform: ios
-      const ios = route.request().headers()['x-platform'] === 'ios'
       if (sub === 'launch' && ios && args['ios-launch'] === 'ended') sub = 'free'
       console.log(`  relais factice : /v1/subscription/verify${ios ? ' (X-Platform: ios)' : ''} → ${sub}`)
       return route.fulfill({
