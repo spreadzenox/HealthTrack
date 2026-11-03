@@ -20,7 +20,11 @@ installent l'app, d'autres `passed` apparaîtront** et on ne pourra plus la dist
   (échantillon et liste vide). Relais : 194 tests verts.
 
 ## Après le merge
-- (voir la suite ci-dessous, complétée en fin de run)
+- PR **#660** : tous les checks verts (Vitest, Build APK, émulateur A56 API 35/36, API 34, relais, montre, perf).
+- **Merge refusé à la session** (classifieur « merge sans revue »). PR laissée ouverte, verte, à jour sur main.
+  **Run suivant** : la merger (squash) puis lire dans le journal de « Relais — déploiement » la ligne
+  « Installations Android au jeton accepté (GOLD-a3) » ; **à faire vite**, avant que les testeurs n'aient des
+  jetons acceptés (sinon : prendre l'empreinte la plus ancienne, vue dès le 28/10).
 
 ## Données
 - Aucune.
