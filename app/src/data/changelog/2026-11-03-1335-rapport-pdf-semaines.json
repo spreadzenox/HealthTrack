@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-03",
+  "kind": "correctif",
+  "title": "Rapport PDF : semaines plus lisibles",
+  "items": [
+    "Si vous choisissez une période plus longue que votre journal, le rapport ne liste plus les semaines vides d’avant votre première note : une ligne les résume.",
+    "Le premier du mois s’écrit « 1er » dans le rapport aussi."
+  ]
+}

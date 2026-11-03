@@ -41,7 +41,8 @@ const parseKey = (k) => k.split('-').map(Number)
 /** « 26 oct. 2026 » (ou « 26 oct. » sans l'année). */
 export function frDate(key, withYear = true) {
   const [y, m, d] = parseKey(key)
-  return `${d} ${MONTHS[m - 1]}${withYear ? ` ${y}` : ''}`
+  // « 1er » pour le premier du mois, comme dans le reste de l'app (POL-PLAY-99).
+  return `${d === 1 ? '1er' : d} ${MONTHS[m - 1]}${withYear ? ` ${y}` : ''}`
 }
 const weekdayIndex = (key) => {
   const [y, m, d] = parseKey(key)
@@ -205,7 +206,14 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
     const head = ['Semaine', 'Jours notés', 'Calme', 'Gêne', 'Douleur']
     head.forEach((h, i) => text(h, cols[i], y, { font: 'bold', size: 8.5, color: C.muted }))
     y -= 13
-    const weekly = report.weekly
+    // Semaines d'avant la première note (période plus longue que le journal) : une phrase au lieu de rangées
+    // « 0 – – – » (POL-PLAY-105). Une semaine vide entre deux semaines notées reste une rangée : le trou se voit.
+    const first = report.weekly.findIndex((w) => w.notedDays)
+    const weekly = report.weekly.slice(Math.max(0, first))
+    if (first > 0) {
+      text(`Aucune note avant la semaine du ${frDate(weekly[0].from, false)}`.replace(/\.?$/, '.'), cols[0], y, { size: 8.5, color: C.muted })
+      y -= 13
+    }
     const weekLine = weekly.length > 4 ? 10.5 : 13
     for (const w of weekly) {
       text(`${frDate(w.from, false)} – ${frDate(w.to, false)}`, cols[0], y, { font: 'mono', size: 8.5 })
