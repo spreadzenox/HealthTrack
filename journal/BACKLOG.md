@@ -460,6 +460,15 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
   `firebase.test.lab` ne remonte jamais) : run « idées » (doc Play Console / Test Lab, propriétés de build des
   appareils, compte Google absent), puis run de code ; rien qui identifie une personne. Sans urgence (coût ≈ 1 €/semaine),
   mais utile pour lire les bilans du test fermé.
+  - [x] **INSTALLS-21b-1** (03/11 11:35) Diagnostic : le plugin dit comment se termine la lecture du réglage (`true`,
+    `unset`, `other`, `denied` = SecurityException, `error`) et lit aussi le mode « test harness » public d'Android
+    (`ActivityManager.isRunningInUserTestHarness`, API 29+, compté robot) ; l'app l'envoie borné (`X-Test-Env`), le
+    relais le journalise avec `first_credit` (`testenv`, `none` / `invalid` sinon), le bilan de « Relais — déploiement »
+    en donne la répartition. Rien qui identifie une personne. Hypothèse : lecture refusée sur Android récent
+    (exception avalée → « pas un robot »).
+  - [ ] **INSTALLS-21b-2** (après 2 ou 3 versions en test interne et un déploiement du relais) lire la répartition
+    `testenv` : `denied`/`error` majoritaires → autre voie de lecture ; `unset` partout → ce ne sont pas des appareils
+    Test Lab marqués, chercher un autre signal (run « idées ») ; `true` → corrigé.
 - [ ] **6 (préparé le 22/10 08:30, I146–I148)** Play Billing : plugin `capacitor-plugin-cdv-purchase` (MIT, PBL 9) avec
   validateur = relais ; relais : `subscriptionsv2.get` + accusé côté serveur + `linkedPurchaseToken` + RTDN ; prix et
   essai lus dans `pricingPhases`, jamais en dur ; lien d'annulation Play dans Réglages. Maintenance : aligner

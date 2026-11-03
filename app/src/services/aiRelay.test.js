@@ -80,6 +80,13 @@ describe('relais Halcya (variante play)', () => {
     expect(fetchImpl.mock.calls[1][1].headers).not.toHaveProperty('X-Test-Device')
     await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve(null) })
     expect(fetchImpl.mock.calls[2][1].headers).not.toHaveProperty('X-Test-Device')
+    // Comment l'app a lu le réglage de Test Lab (INSTALLS-21b), recopié tel que borné par testEnvironment
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve(null), testDevice: () => Promise.resolve({ testLab: false, env: 'denied' }) })
+    expect(fetchImpl.mock.calls[3][1].headers['X-Test-Env']).toBe('denied')
+    expect(fetchImpl.mock.calls[3][1].headers).not.toHaveProperty('X-Test-Device')
+    await analyzeTextViaRelay('pâtes', { fetchImpl, integrity: () => Promise.resolve(null), testDevice: () => Promise.resolve({ testLab: true, env: 'unset+harness' }) })
+    expect(fetchImpl.mock.calls[4][1].headers['X-Test-Device']).toBe('1')
+    expect(fetchImpl.mock.calls[4][1].headers['X-Test-Env']).toBe('unset+harness')
   })
 
   it('texte : description tronquée à 500 caractères, vide refusée sans appel', async () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getIntegrityToken, integrityRequestHash, isTestDevice, requestIntegrity, resetIntegrityBackoff, resetTestDeviceCache } from './playIntegrity'
+import { getIntegrityToken, integrityRequestHash, isTestDevice, testEnvironment, requestIntegrity, resetIntegrityBackoff, resetTestDeviceCache } from './playIntegrity'
 
 const TOKEN = 'a'.repeat(200)
 
@@ -76,5 +76,25 @@ describe('Play Integrity (variante play)', () => {
     expect(await isTestDevice({ native: {} })).toBe(false)
     resetTestDeviceCache()
     expect(await isTestDevice({ native: null })).toBe(false)
+  })
+  it('lecture du réglage de Test Lab résumée pour le relais (INSTALLS-21b) : valeur bornée, harness compté robot', async () => {
+    expect(await testEnvironment({ native: { environment: vi.fn().mockResolvedValue({ testLab: false, setting: 'denied', harness: false }) } }))
+      .toEqual({ testLab: false, env: 'denied' })
+    resetTestDeviceCache()
+    expect(await testEnvironment({ native: { environment: vi.fn().mockResolvedValue({ testLab: true, setting: 'unset', harness: true }) } }))
+      .toEqual({ testLab: true, env: 'unset+harness' })
+    resetTestDeviceCache()
+    // Valeur inattendue du plugin : jamais recopiée telle quelle
+    expect(await testEnvironment({ native: { environment: vi.fn().mockResolvedValue({ testLab: false, setting: 'x'.repeat(50) }) } }))
+      .toEqual({ testLab: false, env: 'other' })
+    resetTestDeviceCache()
+    // Ancienne version du plugin (sans setting) : on dit seulement le résultat
+    expect(await testEnvironment({ native: { environment: vi.fn().mockResolvedValue({ testLab: false }) } }))
+      .toEqual({ testLab: false, env: 'legacy' })
+    resetTestDeviceCache()
+    expect(await testEnvironment({ native: { environment: vi.fn().mockRejectedValue(new Error('x')) } }))
+      .toEqual({ testLab: false, env: 'failed' })
+    resetTestDeviceCache()
+    expect(await testEnvironment({ native: null })).toEqual({ testLab: false, env: null })
   })
 })
