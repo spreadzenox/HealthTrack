@@ -11,23 +11,19 @@ export default function WithingsCallback() {
   const navigate = useNavigate()
   const [status, setStatus] = useState('loading')
   const [error, setError] = useState(null)
-
-  useEffect(() => {
+  // Paramètres de retour invalides : erreur connue dès le premier rendu, sans appel réseau.
+  const [paramError] = useState(() => {
     const code = searchParams.get('code')
     const state = searchParams.get('state')
     const savedState = sessionStorage.getItem('withings_oauth_state')
+    if (!code) return 'Code d’autorisation manquant.'
+    if (state && savedState && state !== savedState) return 'État OAuth invalide (protection CSRF).'
+    return null
+  })
 
-    if (!code) {
-      setStatus('error')
-      setError('Code d’autorisation manquant.')
-      return
-    }
-
-    if (state && savedState && state !== savedState) {
-      setStatus('error')
-      setError('État OAuth invalide (protection CSRF).')
-      return
-    }
+  useEffect(() => {
+    if (paramError) return
+    const code = searchParams.get('code')
 
     sessionStorage.removeItem('withings_oauth_state')
 
@@ -47,20 +43,23 @@ export default function WithingsCallback() {
         setError(e.message || 'Connexion impossible')
       }
     })()
-  }, [searchParams, navigate])
+  }, [searchParams, navigate, paramError])
+
+  const shownStatus = paramError ? 'error' : status
+  const shownError = paramError ?? error
 
   return (
     <section className="food-page">
       <h2 className="page-title">Connexion Withings</h2>
-      {status === 'loading' && <p>Connexion en cours…</p>}
-      {status === 'ok' && (
+      {shownStatus === 'loading' && <p>Connexion en cours…</p>}
+      {shownStatus === 'ok' && (
         <p className="hint hint-success">
           ✓ Compte Withings connecté. Redirection vers les connecteurs…
         </p>
       )}
-      {status === 'error' && (
+      {shownStatus === 'error' && (
         <>
-          <p className="hint hint-error" role="alert">{error}</p>
+          <p className="hint hint-error" role="alert">{shownError}</p>
           <Link to="/connectors" className="btn btn-secondary">Retour aux connecteurs</Link>
         </>
       )}

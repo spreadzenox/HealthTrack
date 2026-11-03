@@ -1,3 +1,4 @@
+/* global __APP_VERSION__ */
 /**
  * Vérification des mises à jour via GitHub Releases.
  * Compare la version courante avec la dernière release et fournit l'URL de téléchargement (APK).
@@ -24,7 +25,7 @@ export async function fetchLatestRelease() {
     )
     if (!res.ok) return null
     return await res.json()
-  } catch (_) {
+  } catch {
     return null
   }
 }

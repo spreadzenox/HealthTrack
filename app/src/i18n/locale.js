@@ -89,5 +89,5 @@ export function localeDate(date, opts) {
   const d = date instanceof Date ? date : new Date(date)
   const text = d.toLocaleDateString(appLocale(), opts)
   if (current !== 'fr' || !opts?.day || d.getDate() !== 1) return text
-  return text.replace(/(^|\s)1(?=[\s  ])/, '$11er')
+  return text.replace(/(^|\s)1(?=[\s\u00a0\u202f])/, '$11er')
 }

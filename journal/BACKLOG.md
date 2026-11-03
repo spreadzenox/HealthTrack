@@ -1372,7 +1372,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **Profil corporel juste** : sexe Withings corrigé (0 = homme), profil saisi dans l'app (sexe, année, taille, poids → pesée `app_weight`), provenance de chaque valeur affichée (run 11/10 10:30)
 - [x] **Profil, étape 2** : profil (sexe, année, taille, activité) dans la sauvegarde JSON (champ `profile` optionnel, anciens fichiers acceptés ; « Ajouter » complète, « Remplacer » restaure) ; niveau d'activité choisi ou estimé d'après les pas des 14 derniers jours (×1,4 à ×1,85) (run 11/10 12:30)
 - [ ] Dépense énergétique adaptative / TDEE (R#18)
-- [ ] Lint à 0 erreur (6 erreurs, 1 warning au 12/10 02:30)
+- [x] Lint à 0 erreur (03/11 23:35 : 7 erreurs corrigées ; `npm run lint` dans le check « Frontend (Vitest) » de `tests.yml`)
 - [x] **Sauvegarde exhaustive** : l'export n'applique plus les plafonds de l'analyse (perte silencieuse des données anciennes) (#72)
 - [ ] Performance IndexedDB : `listEntries` fait un `getAll()` + filtre JS à chaque appel → utiliser les index
 - [ ] Code splitting (bundle principal > 500 kB, avertissement Vite)
