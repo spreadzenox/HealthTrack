@@ -12,7 +12,7 @@
  */
 import { readFileSync, readdirSync, appendFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { publishBundle, buildReleaseNotes, isAccessDenied } from './publish.mjs'
+import { publishBundle, buildReleaseNotes, isAccessDenied, readTracks, formatTracks } from './publish.mjs'
 
 const aabPath = process.argv[2]
 const mappingPath = process.argv[3]
@@ -31,6 +31,15 @@ const summary = (lines) => {
 if (!aabPath || !token || !versionCode) {
   console.error('Usage : PLAY_ACCESS_TOKEN=… VERSION_CODE=… node scripts/play/publish-cli.mjs <fichier.aab>')
   process.exit(1)
+}
+
+/** État des pistes en fin de bilan (lecture seule) ; un échec n'est que signalé, jamais bloquant. */
+async function reportTracks() {
+  try {
+    summary(formatTracks(await readTracks({ packageName, token })))
+  } catch (err) {
+    summary(['', `- État des pistes illisible : ${err.message}`])
+  }
 }
 
 const dir = resolve(process.cwd(), 'src/data/changelog')
@@ -71,6 +80,7 @@ try {
       ...notes.split('\n').map((l) => `  ${l}`),
     ])
   }
+  await reportTracks()
 } catch (err) {
   if (isAccessDenied(err)) {
     console.log(`::warning title=Google Play : accès refusé::${err.message}. gh-deployer n’a pas encore accès à l’app dans la Play Console (l’invitation d’un compte de service peut mettre 24 à 48 h à s’appliquer). Réessai automatique à la prochaine version ; l’AAB reste en artefact.`)

@@ -266,3 +266,57 @@ export async function publishBundle({ packageName, aab, mapping, versionCode, tr
     throw err
   }
 }
+
+const TRACK_ORDER = ['internal', 'alpha', 'beta', 'production']
+const TRACK_LABELS = { internal: 'Test interne', alpha: 'Test fermé (Alpha)', beta: 'Test ouvert', production: 'Production' }
+const STATUS_LABELS = { completed: 'déployée', draft: 'brouillon', halted: 'interrompue', inProgress: 'déploiement progressif' }
+
+/** Pistes rangées : test interne, alpha, test ouvert, production, puis les pistes inconnues dans l'ordre reçu. */
+export function sortTracks(tracks) {
+  const rank = (t) => (TRACK_ORDER.includes(t.track) ? TRACK_ORDER.indexOf(t.track) : TRACK_ORDER.length)
+  return [...tracks].sort((a, b) => rank(a) - rank(b))
+}
+
+/**
+ * État de toutes les pistes, en lecture seule (03/11 : savoir à chaque envoi quelle version ont les testeurs) :
+ * edit ouvert, `tracks` lu, edit abandonné (jamais validé). L'API ne dit pas si Google a fini d'examiner une version.
+ */
+export async function readTracks({ packageName, token, fetchImpl = fetch, sleep }) {
+  fetchImpl = withRetry(fetchImpl, { sleep })
+  const base = `${API}/${packageName}/edits`
+  const edit = await call(fetchImpl, 'Ouverture de l’edit (lecture des pistes)', base, { method: 'POST', token, body: {} })
+  const editUrl = `${base}/${edit.id}`
+  try {
+    const list = await call(fetchImpl, 'Lecture des pistes', `${editUrl}/tracks`, { token })
+    return sortTracks(list?.tracks ?? [])
+  } finally {
+    await call(fetchImpl, 'Abandon de l’edit', editUrl, { method: 'DELETE', token }).catch(() => {})
+  }
+}
+
+/** Tableau Markdown du bilan : une ligne par version de chaque piste. */
+export function formatTracks(tracks) {
+  const rows = []
+  for (const t of tracks) {
+    const label = TRACK_LABELS[t.track] ?? t.track
+    const releases = t.releases ?? []
+    if (!releases.length) rows.push(`| ${label} | — | aucune version |`)
+    for (const r of releases) {
+      const codes = (r.versionCodes ?? []).join(', ') || '—'
+      const name = r.name && r.name !== codes ? ` (${r.name})` : ''
+      let status = STATUS_LABELS[r.status] ?? r.status ?? '?'
+      if (r.status === 'inProgress' && typeof r.userFraction === 'number') status += ` (${Math.round(r.userFraction * 100)} %)`
+      rows.push(`| ${label} | ${codes}${name} | ${status} |`)
+    }
+  }
+  return [
+    '',
+    '#### État des pistes Google Play',
+    '',
+    '| Piste | Version | État |',
+    '|---|---|---|',
+    ...rows,
+    '',
+    '« déployée » veut dire validée par l’envoi ; l’API ne dit pas si Google a fini l’examen (Play Console → Vue d’ensemble de la publication).',
+  ]
+}
