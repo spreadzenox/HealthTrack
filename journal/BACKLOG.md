@@ -162,6 +162,13 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     suspects », « pas une cause », tirets cadratins, énumérations par trois), 2 phrases de refrain supprimées ;
     `wording.test.js` applique `SLOP_WORDING` à chaque titre et phrase des notes.
 
+## 🧪 Test fermé en cours (J = 03/11) — idée du 03/11 08:35 (`IDEES.md` I212)
+- [ ] **TEST-ALPHA-1** (jour 4–5, 07–08/11) : une version alpha avec les premiers retours des testeurs (ou les
+  correctifs trouvés d'ici là), notes de version qui citent le retour ; ligne dans `PRODUIT.md` §4 bis ; clic P42.
+- [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; clic P42.
+- [ ] **TEST-REFUS** : si Google refuse P30, recaler `until` = jour du refus + 14 + 10 jours (sous réserve de l'accord
+  du propriétaire, demandé dans le résumé du 03/11) et relancer les messages de mission.
+
 ## 🎯 Version candidate avant les testeurs (décision du 22/10 19:15 ; critères dans `PRODUIT.md` §2 bis)
 **Retours et décisions du propriétaire du 24/10 13:30–14:30 (session guidée sur la version play) — avant M6b et M7, dans cet ordre :**
 - [x] **CRÉDITS — FAIT le 24/10 14:30** : compteur premium revenu à 10 après une analyse (13:38 → 14:11). Cause : le

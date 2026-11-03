@@ -64,6 +64,14 @@
 > observation (défi App Attest OK). La routine iOS est prévenue dans [`POUR-IOS.md`](POUR-IOS.md) (date, réponse du
 > relais, test en TestFlight). Vérifié au déploiement du 02/11 22:59 (Paris) : « iPhone sans achat … jusqu’au 2026-11-06 ».
 
+> 🧪 **Pendant les 14 jours du test (idée du 03/11 08:35, I212)** : Google refuse souvent la production pour
+> « testeurs pas assez actifs » et demande alors **14 jours de test en plus**. Deux choses pour l'éviter : des testeurs
+> qui ouvrent vraiment l'app (les messages des jours 3, 7 et 10 servent à ça) et **au moins deux mises à jour sur Alpha**
+> pendant le test. L'envoi sur Alpha étant refusé à la session, il faudra **votre clic deux fois** (P42, vers le 07–08/11
+> puis le 12–13/11 ; le résumé dira le jour) : Actions → « Play — AAB » → Run workflow → piste `alpha`.
+> **Une question pour vous** : en cas de refus, Gold offert s'arrêterait le 27/11 au milieu du second test. D'accord
+> pour que la routine décale alors `until` d'elle-même (jour du refus + 24 jours) ? Répondez oui ou non dans une consigne.
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **P37 — votre Gold après la période de lancement** : Paramètres → touchez 7 fois « Version » → recopiez
   « Empreinte de l'installation » (12 caractères, rien de personnel) et donnez-la à la routine.
@@ -74,6 +82,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 03/11 08:35 — [Idées : refus de la production](runs/2026-11-03-0835-idees-refus-production.md) | 💡 | Ce qui fait refuser l'accès à la production après le test : testeurs inactifs, version jamais mise à jour ; un refus coûte 14 jours. Calendrier de deux versions Alpha (P42, votre clic) et question sur la prolongation de Gold en cas de refus. Rien ne change dans l'app |
 | 03/11 02:35 — [Premier lancement](runs/2026-11-03-0235-premier-lancement.md) | 🔧 | À la toute première ouverture, l'Accueil vide s'affichait un instant avant l'écran de bienvenue (et calculait pour rien) : l'app attend maintenant de savoir s'il faut l'onboarding, puis va droit à « Bienvenue » (sur l'émulateur, version Play : 3 s au lieu de 8). Rien ne change pour vous (onboarding déjà fait). Mergée au run de 03:35 (#643) |
 | 03/11 03:35 — [Audit avant les testeurs](runs/2026-11-03-0335-audit-testeurs.md) | 🔧 | Premier lancement mergé (#643). Revu toute la version Play telle que vos testeurs la verront, vierge, avec Gold offert, en clair et en sombre : rien à corriger dans l'app. Le simulateur des captures comptait 10 analyses par jour pendant le test au lieu de 20 (le vrai serveur dit bien 20) : recalé. Rien ne change dans l'app |
 | 03/11 04:35 — [Audit 360 px](runs/2026-11-03-0435-audit-360.md) | 🔧 | Revu la version Play sur un petit écran (360 px, comme les téléphones d'entrée de gamme de vos testeurs) : rien ne déborde, rien à corriger. Les captures de contrôle affichent désormais la vraie date de fin du test (« jusqu'au 27 nov. », 6 nov. sur iPhone), la même que dans votre texte d'invitation. Rien ne change dans l'app |
