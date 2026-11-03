@@ -181,6 +181,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 07:35** — **Temps de chargement mesurés avant les testeurs (C4)** : 3 ans de données denses, CPU ×4, toutes les pages prêtes en moins de 0,75 s (Accueil 0,36 s, 913 enregistrements lus) ; rien à corriger ;
 - **03/11 06:35** — **Montre (M5)** : l'écran « Données de la montre » reprend l'issue des lectures faites app fermée (captures du client Java) et dit « Dernière lecture en arrière-plan » ; avant, seule une synchro faite app ouverte y apparaissait. Chantier montre : reste la confirmation sur la GT 6 Pro (M1 à M7) et les étages (M4 bis, attend un relevé du propriétaire).
 - **03/11 04:35** — **Audit 360 px de la version des testeurs** (POL-PLAY-104) : 16 pages Play avec Gold offert, rien ne déborde ; le banc visuel montre la vraie date de fin (27/11 Play, 06/11 iPhone), identique au texte d'invitation. Rien ne change dans l'app. Alpha 100721 toujours en examen ; P41 (invitation) au propriétaire dès qu'elle est disponible.
 - **03/11 00:35** — **LISTING-2** : la fiche du Play Store et la feuille d'achat de Google disent « Silver » et « Gold » comme l'app (titre « Halcya Silver » au lieu de « Halcya Premium », fiche Gold « Tout Silver… », section abonnement de la fiche avec les deux formules et leurs plafonds 10 / 20, description courte avec « SII, FODMAP ») ; le script des abonnements met à jour la fiche d'un abonnement déjà créé. Rien ne change dans l'app.

@@ -905,9 +905,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] Accueil : `HealthRadar` et `BaselineCards` lisent FC repos / VFC **par sous-type** (schéma v4, index
       `type_subtype_at`, `listEntries({ subtypes })`) au lieu de toute la FC : 706 → 403 ms, 16 210 → 3 988
       enregistrements lus (3 ans `--dense --spo2=slot`, run 17/10 00:30)
-- [ ] Accueil : « Vos derniers jours » (`loadJournalEntries`) relit toutes les tranches FC / SpO₂ des 7 jours → mesurer
-      sa part des 3 988 restants, puis lecture par type ou agrégat journalier
-- [ ] Cache d'agrégats journaliers / hebdo précalculés, invalidés à l'écriture (`health-entries-updated`)
+- [x] Accueil : « Vos derniers jours » (`loadJournalEntries`) — **mesuré le 03/11 07:35, rien à faire** : la fenêtre
+      est déjà réduite à 3 jours + la veille ; `npm run perf -- --dense --spo2=slot` (53 639 entrées, 3 ans, CPU ×4) :
+      Accueil 913 enregistrements lus, 360 ms, tâche la plus longue 29 ms ; Journal 718 ms ; Analyses 452 ms ; aucune
+      page au-delà de 0,75 s
+- [ ] Cache d'agrégats journaliers / hebdo précalculés, invalidés à l'écriture (`health-entries-updated`) — **pas utile
+      aujourd'hui** (mesure du 03/11 ci-dessus) ; à rouvrir si une page dépasse 1 s chez un testeur
 - [ ] **I83** (score 16) : courbes à résolution adaptée — MinMaxLTTB (`utils/downsample.js`) au-delà de ~2 points
       par pixel, périodes longues servies par les agrégats ci-dessus
 - [x] Web Worker pour l'analyse + cache des résultats invalidé à chaque écriture (révision des données) : Accueil
