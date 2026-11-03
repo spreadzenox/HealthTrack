@@ -182,6 +182,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **03/11 10:35** — **Bilan du relais avant les testeurs** (journal seulement) : Alpha = 100721, test interne 100734 ; Gold servi par le bon modèle en zone UE, aucune erreur Vertex, ≈ 1,3 € sur 7 jours ; Play Integrity reste en observation (54 installations sans jeton, `error:-9`) ; ≈ 10 nouvelles installations par jour sans testeur inscrit, sans doute les robots du rapport de pré-lancement, que la détection du 28/10 ne voit pas (INSTALLS-21b).
 - **03/11 09:35** — **État des pistes dans le bilan de « Play — AAB »** : après chaque envoi, tableau de la version et de l'état de chaque piste (test interne, Alpha, production ; lecture seule). Sert au suivi du test fermé (TEST-ALPHA-1, TEST-REFUS). Rien ne change dans l'app.
 - **03/11 08:35** (idées) — **Testeurs : ce qui fait refuser la production** (I212) : l'aide de Google cite l'engagement insuffisant ; les refus de 2026 recommandent 14 jours de test en plus. `until` (27/11) ne couvrirait pas ce second test : proposition de le recaler d'office le jour d'un refus (à confirmer par le propriétaire). Deux versions alpha visées les 07–08/11 et 12–13/11, chacune un clic du propriétaire (**P42**). Journal seul.
 - **03/11 07:35** — **Temps de chargement mesurés avant les testeurs (C4)** : 3 ans de données denses, CPU ×4, toutes les pages prêtes en moins de 0,75 s (Accueil 0,36 s, 913 enregistrements lus) ; rien à corriger ;
