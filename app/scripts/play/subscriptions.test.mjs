@@ -15,6 +15,10 @@ import {
   PRODUCTS,
   SILVER,
   listingDiffers,
+  missingRegions,
+  regionPrice,
+  GOLD_BASE_PLANS,
+  SALE_REGIONS,
 } from './subscriptions.mjs'
 import { APP_NAME } from '../../src/config/brand.js'
 import { tierName } from '../../src/services/entitlement.js'
@@ -44,11 +48,25 @@ function fakePlay(routes) {
 }
 
 const NOT_FOUND = { status: 404, body: { error: { message: 'Not found' } } }
-const plan = (id, state, units = id === 'annuel' ? '29' : '4') => ({
+const ALL = SALE_REGIONS.map((r) => r.regionCode)
+const plan = (id, state, units = id === 'annuel' ? '29' : '4', regions = ALL) => ({
   basePlanId: id,
   state,
   autoRenewingBasePlanType: { billingPeriodDuration: id === 'annuel' ? 'P1Y' : 'P1M' },
-  regionalConfigs: [{ regionCode: 'FR', price: { currencyCode: 'EUR', units, nanos: 990000000 } }],
+  regionalConfigs: [
+    { regionCode: 'FR', price: { currencyCode: 'EUR', units, nanos: 990000000 } },
+    ...SALE_REGIONS.filter((r) => r.regionCode !== 'FR' && regions.includes(r.regionCode)).map((r) => ({
+      regionCode: r.regionCode,
+      newSubscriberAvailability: true,
+      price: { currencyCode: r.currencyCode, units: '1', nanos: 0 },
+    })),
+  ],
+})
+const trialOffer = (state, regions = ALL) => ({
+  offerId: 'essai-14j',
+  state,
+  phases: [{ recurrenceCount: 1, duration: 'P14D', regionalConfigs: regions.map((regionCode) => ({ regionCode, free: {} })) }],
+  regionalConfigs: regions.map((regionCode) => ({ regionCode, newSubscriberAvailability: true })),
 })
 const silverListings = () => buildCatalog(PKG, SILVER).subscription.listings
 const goldListings = () => buildCatalog(PKG, GOLD).subscription.listings
@@ -111,7 +129,7 @@ describe('Gold (halcya_gold)', () => {
     })
     const r = await ensureCatalog({ packageName: PKG, token: 't', product: GOLD, fetchImpl: play.fetchImpl, sleep: async () => {} })
     expect(r).toMatchObject({ productId: 'halcya_gold', created: true, offerCreated: false, activated: ['mensuel'], drift: [], offerState: null })
-    expect(r.plans).toEqual([{ basePlanId: 'mensuel', state: 'ACTIVE', period: 'P1M', price: formatPrice({ currencyCode: 'EUR', units: '9', nanos: 990000000 }) }])
+    expect(r.plans).toEqual([{ basePlanId: 'mensuel', state: 'ACTIVE', period: 'P1M', price: formatPrice({ currencyCode: 'EUR', units: '9', nanos: 990000000 }), regions: ALL }])
     expect(play.calls.some((c) => c.key.includes('/offers'))).toBe(false)
     expect(play.calls.every((c) => !c.key.includes('halcya_premium'))).toBe(true)
   })
@@ -148,7 +166,8 @@ describe('buildCatalog', () => {
 
   it('essai gratuit de 14 jours sur l’annuel, réservé à qui n’a jamais eu l’abonnement', () => {
     expect(offer).toMatchObject({ productId: PRODUCT_ID, basePlanId: 'annuel', offerId: 'essai-14j' })
-    expect(offer.phases).toEqual([{ recurrenceCount: 1, duration: 'P14D', regionalConfigs: [{ regionCode: 'FR', free: {} }] }])
+    expect(offer.phases).toEqual([{ recurrenceCount: 1, duration: 'P14D', regionalConfigs: ALL.map((regionCode) => ({ regionCode, free: {} })) }])
+    expect(offer.regionalConfigs.map((c) => c.regionCode)).toEqual(ALL)
     expect(offer.targeting.acquisitionRule.scope).toEqual({ thisSubscription: {} })
   })
 
@@ -199,6 +218,47 @@ describe('noms des formules (LISTING-2)', () => {
   })
 })
 
+describe('pays de vente (P32)', () => {
+  it('France, Belgique, Luxembourg, Suisse et Canada ; jamais les États-Unis', () => {
+    expect(ALL).toEqual(['FR', 'BE', 'LU', 'CH', 'CA'])
+    expect(ALL).not.toContain('US')
+    expect(SALE_REGIONS.find((r) => r.regionCode === 'CH').currencyCode).toBe('CHF')
+    expect(SALE_REGIONS.find((r) => r.regionCode === 'CA').currencyCode).toBe('CAD')
+  })
+
+  it('chaque formule a un prix dans chaque pays ; zone euro au même prix qu’en France', () => {
+    for (const product of PRODUCTS) {
+      for (const bp of buildCatalog(PKG, product).subscription.basePlans) {
+        expect(bp.regionalConfigs.map((c) => c.regionCode)).toEqual(ALL)
+        const fr = bp.regionalConfigs[0].price
+        for (const c of bp.regionalConfigs) {
+          expect(c.newSubscriberAvailability).toBe(true)
+          expect(Number(c.price.units) + c.price.nanos / 1e9).toBeGreaterThan(0)
+          if (c.price.currencyCode === 'EUR') expect(c.price).toEqual(fr)
+        }
+      }
+    }
+  })
+
+  it('l’annuel reste nettement moins cher que 12 mensuels dans chaque devise, Gold plus cher que Silver', () => {
+    const [annuel, mensuel] = BASE_PLANS
+    const [gold] = GOLD_BASE_PLANS
+    const v = (plan, r) => {
+      const p = regionPrice(plan, r)
+      return Number(p.units) + p.nanos / 1e9
+    }
+    for (const r of SALE_REGIONS) {
+      expect(v(annuel, r)).toBeLessThan(v(mensuel, r) * 12 * 0.6)
+      expect(v(gold, r)).toBeGreaterThan(v(mensuel, r))
+    }
+  })
+
+  it('missingRegions : seulement les pays de vente absents', () => {
+    expect(missingRegions([{ regionCode: 'FR' }, { regionCode: 'CH' }]).map((r) => r.regionCode)).toEqual(['BE', 'LU', 'CA'])
+    expect(missingRegions(undefined)).toHaveLength(5)
+  })
+})
+
 describe('ensureCatalog', () => {
   const run = (routes) => {
     const play = fakePlay(routes)
@@ -209,8 +269,8 @@ describe('ensureCatalog', () => {
     const { play, p } = run({
       [`GET ${SUB}`]: [NOT_FOUND, { body: remoteSub('ACTIVE') }],
       [`POST ${API}/${PKG}/subscriptions?productId=${PRODUCT_ID}&${RV}`]: { body: remoteSub('DRAFT') },
-      [`GET ${OFFERS}/essai-14j`]: [NOT_FOUND, { body: { state: 'ACTIVE' } }],
-      [`POST ${OFFERS}?offerId=essai-14j&${RV}`]: { body: { state: 'DRAFT' } },
+      [`GET ${OFFERS}/essai-14j`]: [NOT_FOUND, { body: trialOffer('ACTIVE') }],
+      [`POST ${OFFERS}?offerId=essai-14j&${RV}`]: { body: trialOffer('DRAFT') },
       [`POST ${SUB}/basePlans/annuel:activate`]: { body: {} },
       [`POST ${SUB}/basePlans/mensuel:activate`]: { body: {} },
       [`POST ${OFFERS}/essai-14j:activate`]: { body: {} },
@@ -231,7 +291,7 @@ describe('ensureCatalog', () => {
   it('déjà en place et actif : aucune écriture', async () => {
     const { play, p } = run({
       [`GET ${SUB}`]: { body: remoteSub('ACTIVE') },
-      [`GET ${OFFERS}/essai-14j`]: { body: { state: 'ACTIVE' } },
+      [`GET ${OFFERS}/essai-14j`]: { body: trialOffer('ACTIVE') },
     })
     const r = await p
     expect(r).toMatchObject({ created: false, offerCreated: false, activated: [], addedBasePlans: [], drift: [] })
@@ -244,7 +304,7 @@ describe('ensureCatalog', () => {
     const { play, p } = run({
       [`GET ${SUB}`]: [{ body: existing }, { body: patched }],
       [`PATCH ${SUB}?updateMask=basePlans&${RV}`]: { body: patched },
-      [`GET ${OFFERS}/essai-14j`]: { body: { state: 'ACTIVE' } },
+      [`GET ${OFFERS}/essai-14j`]: { body: trialOffer('ACTIVE') },
       [`POST ${SUB}/basePlans/mensuel:activate`]: { body: {} },
     })
     const r = await p
@@ -265,7 +325,7 @@ describe('ensureCatalog', () => {
     const { play, p } = run({
       [`GET ${SUB}`]: [{ body: existing }, { body: patched }],
       [`PATCH ${SUB}?updateMask=listings&${RV}`]: { body: patched },
-      [`GET ${OFFERS}/essai-14j`]: { body: { state: 'ACTIVE' } },
+      [`GET ${OFFERS}/essai-14j`]: { body: trialOffer('ACTIVE') },
     })
     const r = await p
     expect(r).toMatchObject({ listingUpdated: true, created: false, addedBasePlans: [], activated: [], drift: [] })
@@ -273,6 +333,44 @@ describe('ensureCatalog', () => {
     expect(patches).toHaveLength(1)
     expect(patches[0].body.listings).toEqual([en, silverListings()[0]])
     expect(patches[0].body.basePlans).toEqual(existing.basePlans)
+  })
+
+  it('abonnement créé en France seulement : ajoute les autres pays aux formules et à l’essai, prix français intacts', async () => {
+    const frOnly = { ...remoteSub('ACTIVE'), basePlans: [plan('annuel', 'ACTIVE', '29', ['FR']), plan('mensuel', 'ACTIVE', '4', ['FR'])] }
+    const { play, p } = run({
+      [`GET ${SUB}`]: [{ body: frOnly }, { body: remoteSub('ACTIVE') }],
+      [`PATCH ${SUB}?updateMask=basePlans&${RV}`]: { body: remoteSub('ACTIVE') },
+      [`GET ${OFFERS}/essai-14j`]: [{ body: trialOffer('ACTIVE', ['FR']) }, { body: trialOffer('ACTIVE') }],
+      [`PATCH ${OFFERS}/essai-14j?updateMask=phases,regionalConfigs&${RV}`]: { body: trialOffer('ACTIVE') },
+    })
+    const r = await p
+    expect(r.regionError).toBeNull()
+    expect(r.addedRegions).toEqual(['annuel : BE, LU, CH, CA', 'mensuel : BE, LU, CH, CA', 'essai-14j : BE, LU, CH, CA'])
+    const [subPatch, offerPatch] = play.calls.filter((c) => c.key.startsWith('PATCH'))
+    const annuel = subPatch.body.basePlans[0]
+    expect(annuel.regionalConfigs[0]).toEqual(frOnly.basePlans[0].regionalConfigs[0])
+    expect(annuel.regionalConfigs.find((c) => c.regionCode === 'CH').price).toEqual({ currencyCode: 'CHF', units: '29', nanos: 0 })
+    expect(annuel.regionalConfigs.find((c) => c.regionCode === 'BE').price).toEqual({ currencyCode: 'EUR', units: '29', nanos: 990000000 })
+    expect(subPatch.body.listings).toEqual(frOnly.listings)
+    expect(offerPatch.body.phases[0].regionalConfigs.map((c) => c.regionCode)).toEqual(ALL)
+    expect(offerPatch.body.phases[0].regionalConfigs.every((c) => c.free)).toBe(true)
+    expect(offerPatch.body.regionalConfigs.map((c) => c.regionCode)).toEqual(ALL)
+    expect(r.plans[0].regions).toEqual(ALL)
+    expect(play.calls.some((c) => c.key.endsWith(':activate'))).toBe(false)
+  })
+
+  it('pays refusés par Google : erreur rapportée, essai non touché, le reste continue', async () => {
+    const frOnly = { ...remoteSub('ACTIVE'), basePlans: [plan('annuel', 'ACTIVE', '29', ['FR']), plan('mensuel', 'ACTIVE', '4', ['FR'])] }
+    const { play, p } = run({
+      [`GET ${SUB}`]: [{ body: frOnly }, { body: frOnly }],
+      [`PATCH ${SUB}?updateMask=basePlans&${RV}`]: { status: 400, body: { error: { message: 'Price is out of range' } } },
+      [`GET ${OFFERS}/essai-14j`]: { body: trialOffer('ACTIVE', ['FR']) },
+    })
+    const r = await p
+    expect(r.regionError).toContain('Price is out of range')
+    expect(r.addedRegions).toEqual([])
+    expect(play.calls.filter((c) => c.key.startsWith('PATCH'))).toHaveLength(1)
+    expect(r.plans[0].regions).toEqual(['FR'])
   })
 
   it('accès refusé : erreur reconnaissable, rien n’est écrit', async () => {

@@ -6,7 +6,7 @@
  * Code de sortie : 0 catalogue en place (ou vérifié), 2 refus à réessayer (accès, profil de paiement), 1 autre erreur.
  */
 import { appendFileSync } from 'node:fs'
-import { buildCatalog, ensureCatalog, formatPrice, isPaymentProfilePending, PRODUCTS } from './subscriptions.mjs'
+import { buildCatalog, ensureCatalog, formatPrice, isPaymentProfilePending, PRODUCTS, regionPrice, SALE_REGIONS } from './subscriptions.mjs'
 import { isAccessDenied } from './publish.mjs'
 
 const { PLAY_ACCESS_TOKEN: token, GITHUB_STEP_SUMMARY: summaryFile } = process.env
@@ -22,7 +22,10 @@ const planned = PRODUCTS.flatMap((product) => {
   const { trial } = product
   return [
     `- Abonnement \`${product.productId}\` (${product.tier}) — « ${subscription.listings[0].title} » : ${subscription.listings[0].benefits.join(' · ')}`,
-    ...product.basePlans.map((p) => `  - Formule \`${p.basePlanId}\` : ${formatPrice({ currencyCode: 'EUR', ...p.price })} / ${p.period}, grâce ${p.grace}, suspension ${p.hold}`),
+    ...product.basePlans.map(
+      (p) =>
+        `  - Formule \`${p.basePlanId}\` : ${SALE_REGIONS.map((r) => `${r.regionCode} ${formatPrice(regionPrice(p, r))}`).join(', ')} / ${p.period}, grâce ${p.grace}, suspension ${p.hold}`,
+    ),
     trial
       ? `  - Offre \`${trial.offerId}\` sur \`${trial.basePlanId}\` : gratuit ${trial.duration}, réservé à qui n’a jamais eu l’abonnement`
       : '  - Sans essai gratuit',
@@ -40,13 +43,16 @@ for (const product of PRODUCTS) {
     summary([
       `### Abonnement \`${r.productId}\` : ${r.created ? 'créé' : 'déjà présent'}`,
       '',
-      ...r.plans.map((p) => `- Formule \`${p.basePlanId}\` : ${p.state}, ${p.price} / ${p.period}`),
+      ...r.plans.map((p) => `- Formule \`${p.basePlanId}\` : ${p.state}, ${p.price} / ${p.period} ; pays : ${p.regions.join(', ') || '?'}`),
       product.trial ? `- Offre \`${product.trial.offerId}\` : ${r.offerState}${r.offerCreated ? ' (créée)' : ''}` : '- Sans essai gratuit',
       r.listingUpdated ? `- Fiche mise à jour : « ${buildCatalog(packageName, product).subscription.listings[0].title} »` : '- Fiche déjà à jour.',
       r.addedBasePlans.length ? `- Formules ajoutées : ${r.addedBasePlans.join(', ')}` : null,
+      r.addedRegions.length ? `- Pays de vente ajoutés : ${r.addedRegions.join(' ; ')}` : null,
+      r.regionError ? `- ⚠️ Pays de vente refusés par Google (rien d’autre n’a changé) : ${r.regionError}` : null,
       r.activated.length ? `- Activés à ce passage : ${r.activated.join(', ')}` : '- Rien à activer.',
       ...r.drift.map((d) => `- ⚠️ Écart de prix : ${d}`),
     ].filter(Boolean))
+    if (r.regionError) console.log(`::warning title=Abonnements : pays de vente refusés::${r.productId} : ${r.regionError}`)
     if (r.drift.length) console.log(`::warning title=Abonnements : écart de prix::${r.drift.join(' ; ')}`)
   } catch (err) {
     if (isAccessDenied(err) || isPaymentProfilePending(err)) {

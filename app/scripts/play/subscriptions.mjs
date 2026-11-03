@@ -24,6 +24,20 @@ export const TRIAL_OFFER_ID = 'essai-14j'
 export const REGIONS_VERSION = '2022/02'
 export const REGION = { regionCode: 'FR', currencyCode: 'EUR' }
 
+/**
+ * Pays de vente (P32, décision du propriétaire du 02/11) : France, Belgique, Luxembourg, Suisse, Canada ; pas les
+ * États-Unis. Sans configuration régionale, Google ne propose aucune formule dans un pays et l'écran d'achat y reste
+ * vide. Ajoutés aux formules et à l'essai déjà créés sans toucher aux prix existants (prix TTC en zone euro et en
+ * Suisse ; au Canada, Google ajoute les taxes au prix affiché).
+ */
+export const SALE_REGIONS = [
+  REGION,
+  { regionCode: 'BE', currencyCode: 'EUR' },
+  { regionCode: 'LU', currencyCode: 'EUR' },
+  { regionCode: 'CH', currencyCode: 'CHF' },
+  { regionCode: 'CA', currencyCode: 'CAD' },
+]
+
 /** Limites de Google pour la fiche d'un abonnement (caractères). */
 export const LISTING_LIMITS = { title: 55, description: 80, benefit: 40, benefits: 4 }
 
@@ -32,15 +46,43 @@ export const LISTING_LIMITS = { title: 55, description: 80, benefit: 40, benefit
  * 30 et 60 jours au total (règle de Google) : le maximum, pour laisser le temps de corriger un moyen de paiement.
  */
 export const BASE_PLANS = [
-  { basePlanId: 'annuel', period: 'P1Y', price: { units: '29', nanos: 990000000 }, grace: 'P14D', hold: 'P46D' },
-  { basePlanId: 'mensuel', period: 'P1M', price: { units: '4', nanos: 990000000 }, grace: 'P7D', hold: 'P53D' },
+  {
+    basePlanId: 'annuel',
+    period: 'P1Y',
+    price: { units: '29', nanos: 990000000 },
+    localPrices: { CHF: { units: '29', nanos: 0 }, CAD: { units: '39', nanos: 990000000 } },
+    grace: 'P14D',
+    hold: 'P46D',
+  },
+  {
+    basePlanId: 'mensuel',
+    period: 'P1M',
+    price: { units: '4', nanos: 990000000 },
+    localPrices: { CHF: { units: '4', nanos: 900000000 }, CAD: { units: '6', nanos: 990000000 } },
+    grace: 'P7D',
+    hold: 'P53D',
+  },
 ]
 export const TRIAL = { basePlanId: 'annuel', duration: 'P14D' }
 
 export const GOLD_PRODUCT_ID = 'halcya_gold'
 export const GOLD_BASE_PLANS = [
-  { basePlanId: 'mensuel', period: 'P1M', price: { units: '9', nanos: 990000000 }, grace: 'P7D', hold: 'P53D' },
+  {
+    basePlanId: 'mensuel',
+    period: 'P1M',
+    price: { units: '9', nanos: 990000000 },
+    localPrices: { CHF: { units: '9', nanos: 900000000 }, CAD: { units: '12', nanos: 990000000 } },
+    grace: 'P7D',
+    hold: 'P53D',
+  },
 ]
+
+/** Prix d'une formule dans la devise d'un pays : le prix en euros, ou le prix local décidé ici (CHF, CAD). */
+export function regionPrice(plan, region) {
+  const amount = region.currencyCode === 'EUR' ? plan.price : plan.localPrices?.[region.currencyCode]
+  if (!amount) throw new Error(`Pas de prix en ${region.currencyCode} pour la formule ${plan.basePlanId}`)
+  return { currencyCode: region.currencyCode, ...amount }
+}
 
 /** Les abonnements tenus par ce script. Silver garde son identifiant historique. */
 export const PRODUCTS = [
@@ -91,8 +133,8 @@ export function buildCatalog(packageName, product = SILVER) {
     productId: product.productId,
     basePlanId: trial.basePlanId,
     offerId: trial.offerId,
-    phases: [{ recurrenceCount: 1, duration: trial.duration, regionalConfigs: [{ regionCode: REGION.regionCode, free: {} }] }],
-    regionalConfigs: [{ regionCode: REGION.regionCode, newSubscriberAvailability: true }],
+    phases: [{ recurrenceCount: 1, duration: trial.duration, regionalConfigs: SALE_REGIONS.map(offerPhaseRegion) }],
+    regionalConfigs: SALE_REGIONS.map(offerRegion),
     // « N'a jamais eu cet abonnement » : Google ne montre l'essai qu'aux personnes éligibles.
     targeting: { acquisitionRule: { scope: { thisSubscription: {} } } },
     offerTags: [{ tag: 'essai' }],
@@ -100,16 +142,17 @@ export function buildCatalog(packageName, product = SILVER) {
   return { subscription, offer }
 }
 
+const offerPhaseRegion = (r) => ({ regionCode: r.regionCode, free: {} })
+const offerRegion = (r) => ({ regionCode: r.regionCode, newSubscriberAvailability: true })
+
 function buildBasePlan(plan) {
   return {
     basePlanId: plan.basePlanId,
-    regionalConfigs: [
-      {
-        regionCode: REGION.regionCode,
-        newSubscriberAvailability: true,
-        price: { currencyCode: REGION.currencyCode, ...plan.price },
-      },
-    ],
+    regionalConfigs: SALE_REGIONS.map((r) => ({
+      regionCode: r.regionCode,
+      newSubscriberAvailability: true,
+      price: regionPrice(plan, r),
+    })),
     autoRenewingBasePlanType: {
       billingPeriodDuration: plan.period,
       gracePeriodDuration: plan.grace,
@@ -153,7 +196,17 @@ export async function ensureCatalog({ packageName, token, product = SILVER, fetc
   const sub = `${base}/${productId}`
   const rv = `regionsVersion.version=${encodeURIComponent(REGIONS_VERSION)}`
   const catalog = buildCatalog(packageName, product)
-  const result = { productId, created: false, addedBasePlans: [], offerCreated: false, activated: [], drift: [], listingUpdated: false }
+  const result = {
+    productId,
+    created: false,
+    addedBasePlans: [],
+    addedRegions: [],
+    regionError: null,
+    offerCreated: false,
+    activated: [],
+    drift: [],
+    listingUpdated: false,
+  }
 
   let remote = null
   try {
@@ -189,6 +242,7 @@ export async function ensureCatalog({ packageName, token, product = SILVER, fetc
       })
       result.listingUpdated = true
     }
+    remote = await addMissingRegions({ f, sub, rv, token, remote, product, result, log })
     for (const want of product.basePlans) {
       const got = (remote.basePlans ?? []).find((p) => p.basePlanId === want.basePlanId)
       const fr = got?.regionalConfigs?.find((c) => c.regionCode === REGION.regionCode)
@@ -211,6 +265,8 @@ export async function ensureCatalog({ packageName, token, product = SILVER, fetc
       log(`Création de l’offre ${trial.offerId}…`)
       offer = await call(f, 'création de l’offre d’essai', `${offerUrl}?offerId=${trial.offerId}&${rv}`, { method: 'POST', token, body: catalog.offer })
       result.offerCreated = true
+    } else if (!result.regionError) {
+      offer = await addMissingOfferRegions({ f, url: `${offerUrl}/${trial.offerId}`, rv, token, offer, product, result, log })
     }
   }
 
@@ -243,7 +299,76 @@ export async function ensureCatalog({ packageName, token, product = SILVER, fetc
     state: p.state ?? '?',
     period: p.autoRenewingBasePlanType?.billingPeriodDuration ?? '?',
     price: formatPrice(p.regionalConfigs?.find((c) => c.regionCode === REGION.regionCode)?.price),
+    regions: (p.regionalConfigs ?? []).map((c) => c.regionCode),
   }))
   result.offerState = trial ? (finalOffer.state ?? '?') : null
   return result
+}
+
+/** Codes des pays de vente absents d'une liste de configurations régionales. */
+export function missingRegions(regionalConfigs) {
+  const have = new Set((regionalConfigs ?? []).map((c) => c.regionCode))
+  return SALE_REGIONS.filter((r) => !have.has(r.regionCode))
+}
+
+/**
+ * Ajoute aux formules déjà créées les pays de vente qui leur manquent (P32). Les configurations existantes (et donc
+ * leurs prix) sont renvoyées telles quelles. Un refus de Google est rapporté dans `result.regionError` sans arrêter
+ * le reste (fiche, activation, relecture).
+ */
+async function addMissingRegions({ f, sub, rv, token, remote, product, result, log }) {
+  const added = []
+  const basePlans = (remote.basePlans ?? []).map((p) => {
+    const want = product.basePlans.find((w) => w.basePlanId === p.basePlanId)
+    const missing = want ? missingRegions(p.regionalConfigs) : []
+    if (!missing.length) return p
+    added.push(`${p.basePlanId} : ${missing.map((r) => r.regionCode).join(', ')}`)
+    const configs = missing.map((r) => ({ regionCode: r.regionCode, newSubscriberAvailability: true, price: regionPrice(want, r) }))
+    return { ...p, regionalConfigs: [...(p.regionalConfigs ?? []), ...configs] }
+  })
+  if (!added.length) return remote
+  log(`Ajout des pays de vente à ${product.productId} (${added.join(' ; ')})…`)
+  try {
+    const patched = await call(f, 'ajout des pays de vente', `${sub}?updateMask=basePlans&${rv}`, {
+      method: 'PATCH',
+      token,
+      body: { ...remote, basePlans },
+    })
+    result.addedRegions.push(...added)
+    return patched
+  } catch (err) {
+    if (!(err instanceof PlayApiError)) throw err
+    result.regionError = err.message
+    return remote
+  }
+}
+
+/** Même chose pour l'offre d'essai (ses pays doivent exister sur la formule). */
+async function addMissingOfferRegions({ f, url, rv, token, offer, product, result, log }) {
+  const missing = missingRegions(offer.regionalConfigs)
+  if (!missing.length) return offer
+  const [phase, ...rest] = offer.phases ?? []
+  const phaseHave = new Set((phase?.regionalConfigs ?? []).map((c) => c.regionCode))
+  const body = {
+    ...offer,
+    phases: phase
+      ? [{ ...phase, regionalConfigs: [...(phase.regionalConfigs ?? []), ...missing.filter((r) => !phaseHave.has(r.regionCode)).map(offerPhaseRegion)] }, ...rest]
+      : offer.phases,
+    regionalConfigs: [...(offer.regionalConfigs ?? []), ...missing.map(offerRegion)],
+  }
+  const label = `${product.trial.offerId} : ${missing.map((r) => r.regionCode).join(', ')}`
+  log(`Ajout des pays de vente à l’offre ${label}…`)
+  try {
+    const patched = await call(f, 'ajout des pays de vente à l’offre d’essai', `${url}?updateMask=phases,regionalConfigs&${rv}`, {
+      method: 'PATCH',
+      token,
+      body,
+    })
+    result.addedRegions.push(label)
+    return patched
+  } catch (err) {
+    if (!(err instanceof PlayApiError)) throw err
+    result.regionError = err.message
+    return offer
+  }
 }

@@ -68,11 +68,13 @@
 - **P37 — votre Gold après la période de lancement** : Paramètres → touchez 7 fois « Version » → recopiez
   « Empreinte de l'installation » (12 caractères, rien de personnel) et donnez-la à la routine.
 - **P39** (pas urgent) : expiration des clés App Attest dans Firestore, même geste que P33 (commande dans `PRODUIT.md` §4).
-- P32 (pays de vente), P34 (encart « Enregistrez vos applications » dans la Play Console) : pas urgents, détail dans
+- **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4 (abonnements déjà prêts dans les 5 pays ; Suisse 4,90 / 29,00 / 9,90 CHF, Canada 6,99 / 39,99 / 12,99 $CA hors taxes : dites-le si vous voulez d'autres prix).
+- P34 (encart « Enregistrez vos applications » dans la Play Console) : pas urgents, détail dans
   [`semaines/2026-S44.md`](semaines/2026-S44.md).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 03/11 01:35 — [Abonnements dans les 5 pays](runs/2026-11-03-0135-pays-abonnements.md) | 🔧 | En préparant P32, défaut trouvé : Silver et Gold n'avaient de prix qu'en France, l'écran d'achat aurait été vide en Belgique, Suisse, Luxembourg et au Canada. Corrigé (prix en euros, francs suisses et dollars canadiens, essai de 14 jours partout) ; votre geste du jour de la production est écrit dans `PRODUIT.md` §4 (P32). Rien ne change dans l'app |
 | 03/11 00:35 — [Fiche Play aux noms Silver / Gold](runs/2026-11-03-0035-listing-silver-gold.md) | 🔧 | Au moment de payer, Google affichait « Halcya Premium » alors que l'app dit « Silver » : corrigé (« Halcya Silver », « Halcya Gold »). La fiche du Play Store présente les deux formules (10 et 20 analyses IA par jour, « Gold estime mieux les quantités ») et sa description courte cite « SII, FODMAP ». Rien ne change dans l'app |
 | 02/11 23:35 — [Alpha en examen, invitation prête](runs/2026-11-02-2335-alpha-invitation.md) | 🔧 | Votre envoi sur Alpha a marché : la 100721 est en examen chez Google. Relais vérifié en production (Android 27/11, iPhone 06/11). **Version candidate prête** : gestes et texte d'invitation en tête du résumé ; étapes P2 (guichet unique) écrites. Rien ne change dans l'app |
 | 02/11 22:35 — [Fin du lancement sur iPhone](runs/2026-11-02-2235-fin-lancement-iphone.md) | 🔧 | Sur iPhone, Gold offert s’arrête le vendredi 6/11 inclus (Google Play reste au 27/11) ; après, l’app iPhone montre l’écran d’achat pour l’examen d’Apple. Relais vérifié en production (27/11, App Attest en observation) ; routine iOS prévenue (`POUR-IOS.md`). Rien ne change sur Android |
