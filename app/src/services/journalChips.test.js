@@ -24,6 +24,20 @@ describe('summaryChips — repas', () => {
   })
 })
 
+describe('summaryChips — nuit de la montre (MONTRE-SCORE, I200)', () => {
+  it('montre le score de la montre et la FC de la nuit juste après le sommeil', () => {
+    const chips = summaryChips({ sleepMinutes: 441, watchSleepScore: 82, sleepHr: 57, steps: 4000 })
+    expect(chips.slice(0, 3)).toEqual([['Sommeil', '7 h 21'], ['Score montre', '82 / 100'], ['FC nuit', '57 bpm']])
+    expect(chipTheme('Score montre')).toBe('mint')
+  })
+
+  it('n’ajoute rien sans montre', () => {
+    const labels = summaryChips({ sleepMinutes: 441 }).map(([l]) => l)
+    expect(labels).not.toContain('Score montre')
+    expect(labels).not.toContain('FC nuit')
+  })
+})
+
 describe('summaryChips — stress de la montre (POL-PLAY-15)', () => {
   it('dit la plage de la montre plutôt que « / 99 »', () => {
     expect(summaryChips({ watchStress: 37 })).toContainEqual(['Stress montre', '37 · normal'])

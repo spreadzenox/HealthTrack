@@ -221,6 +221,21 @@ describe('buildDailyJournal', () => {
     expect(only.summary.temperatureC).toBeNull()
   })
 
+  it('MONTRE-SCORE : score de sommeil et FC moyenne de la nuit de la montre, sur le jour du réveil', () => {
+    const night = { sleepScore: 82, avgHeartRate: 57, nightStart: '2026-10-07T23:05:00', nightEnd: '2026-10-08T06:46:00', detail: true }
+    const [day] = buildDailyJournal([
+      e('sleep', '2026-10-07T23:05:00', { durationMinutes: 200, sleepState: 'light', endDate: '2026-10-08T02:25:00', ...night }, 'huawei_watch'),
+      e('sleep', '2026-10-08T02:25:00', { durationMinutes: 241, sleepState: 'deep', endDate: '2026-10-08T06:26:00', ...night }, 'huawei_watch'),
+      e('sleep', '2026-10-08T13:00:00', { durationMinutes: 30, sleepState: 'asleep', endDate: '2026-10-08T13:30:00', nap: true, sleepScore: 40, avgHeartRate: 70 }, 'huawei_watch'),
+    ])
+    expect(day.dateKey).toBe('2026-10-08')
+    expect(day.summary.watchSleepScore).toBe(82)
+    expect(day.summary.sleepHr).toBe(57)
+    const [plain] = buildDailyJournal([e('sleep', '2026-10-09T23:05:00', { durationMinutes: 400, sleepState: 'asleep', endDate: '2026-10-10T05:45:00' })])
+    expect(plain.summary.watchSleepScore).toBeNull()
+    expect(plain.summary.sleepHr).toBeNull()
+  })
+
   it('M4 : le stress de la montre est résumé (moyenne du jour), jamais listé ni mêlé aux notes', () => {
     const [day] = buildDailyJournal([
       e('watch_stress', '2026-10-08T10:00:00', { value: 30, unit: 'score', level: 2 }),
