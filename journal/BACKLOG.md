@@ -1318,7 +1318,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   licence et guides montre à 44 px ; `src/tapTargets.test.js`. Audits `--play` démo et `--empty` : 0 avertissement
   sur 16 pages. **A11Y-2 fait (04/11 06:35)** : onboarding pas à pas (0 avertissement) ; contrôle « CONTRASTE FAIBLE »
   (WCAG 1.4.3) dans `npm run visual` ; étiquettes vertes « Reçu », « Automatique », « Dans votre norme » 3,7–4:1 → couple
-  menthe des tokens (`src/badgeContrast.test.js`). Reste : A11Y-3 lecteur d'écran réel (TalkBack) sur l'émulateur.
+  menthe des tokens (`src/badgeContrast.test.js`). **A11Y-3 fait (04/11 07:35)** : contrôles « CLIQUABLE MUET » (élément touchable sans rôle, que TalkBack lit comme du texte) et « SANS TITRE H1 » dans `npm run visual` : 0 sur 16 pages (démo et vierge sombre) ; balayage du code : un seul onClick hors bouton (`MealEditor` li, avec rôle et tabIndex), toutes les bascules ont `aria-expanded` ; verrou `src/screenReader.test.js` (onClick sans rôle, img sans alt). Reste (faible) : écoute réelle avec TalkBack sur l'émulateur de la CI (ordre de lecture), si un testeur le demande.
 
 ### C2 — Écran « Aujourd'hui »
 - [x] **Remplacer le flux brut « Dernières entrées » par des résumés du jour** : « Vos derniers jours », une carte par jour (sommeil au jour du réveil, pas, FC repos, VFC, plage FC, dépense, bien-être, repas/kcal, cigarettes) + saisies du jour (#76)
