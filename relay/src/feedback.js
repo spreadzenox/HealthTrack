@@ -53,6 +53,9 @@ export function createMemoryFeedbackStore() {
     async add(entry) {
       items.push(entry)
     },
+    async list({ since }) {
+      return items.filter((e) => e.createdAt >= since).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    },
   }
 }
 
@@ -79,5 +82,86 @@ export function createFirestoreFeedbackStore({ project, getToken, fetchImpl = fe
       })
       if (!res.ok) throw Object.assign(new Error(`Firestore : écriture refusée (${res.status})`), { status: res.status })
     },
+    /** Avis reçus depuis `since` (ISO), les plus récents d'abord, 500 au plus (requête sur un seul champ : sans index). */
+    async list({ since, limit = DIGEST_MAX_ITEMS }) {
+      const res = await fetchImpl(`${FIRESTORE}/projects/${project}/databases/(default)/documents:runQuery`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${await getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          structuredQuery: {
+            from: [{ collectionId: collection }],
+            where: { fieldFilter: { field: { fieldPath: 'createdAt' }, op: 'GREATER_THAN_OR_EQUAL', value: { timestampValue: since } } },
+            orderBy: [{ field: { fieldPath: 'createdAt' }, direction: 'DESCENDING' }],
+            limit,
+          },
+        }),
+      })
+      if (!res.ok) throw Object.assign(new Error(`Firestore : lecture refusée (${res.status})`), { status: res.status })
+      const rows = await res.json()
+      return (Array.isArray(rows) ? rows : [])
+        .map((row) => row?.document?.fields)
+        .filter(Boolean)
+        .map((f) => ({
+          text: f.text?.stringValue ?? '',
+          version: f.version?.stringValue ?? 'inconnue',
+          variant: f.variant?.stringValue ?? 'inconnue',
+          platform: f.platform?.stringValue ?? 'android',
+          day: f.day?.stringValue ?? '',
+          createdAt: f.createdAt?.timestampValue ?? '',
+        }))
+    },
+  }
+}
+
+export const DIGEST_MAX_ITEMS = 500
+export const DIGEST_MAX_DAYS = 30
+
+/**
+ * Thèmes repérés par mots-clés (AVIS-RELAIS-3). Le résumé ne contient que des comptes : jamais le texte d'un avis,
+ * pour qu'il puisse être publié dans le résumé d'un workflow d'un dépôt public. Un avis peut toucher plusieurs thèmes.
+ */
+export const FEEDBACK_THEMES = [
+  ['plantage', 'Plantage ou blocage', /plant|crash|se ferme|s'est fermée?|ferme toute seule|bloqu|fig[ée]|écran blanc|ne s'ouvre|freeze/i],
+  ['bug', 'Bug ou erreur', /\bbugs?\b|erreur|marche pas|fonctionne pas|probl[eè]me|ne s'affiche|n'apparai|ne remonte/i],
+  ['lenteur', 'Lenteur', /\blente?s?\b|lenteur|\brame\b|met du temps|longtemps|chargement/i],
+  ['clarte', 'Pas clair', /comprends? pas|pas compris|pas clair|confus|compliqu|perdu|à quoi sert/i],
+  ['idee', 'Idée ou demande', /j'aimerais|ce serait|serait bien|pourriez|pourrait|ajout|idée|souhait|il manque|manque/i],
+  ['prix', 'Prix ou abonnement', /prix|abonnement|payer|payant|\bgold\b|\bsilver\b|\bcher\b|essai|€/i],
+  ['sources', 'Montre ou sources', /montre|huawei|health connect|garmin|samsung|withings|oura|fitbit|xiaomi|synchro|bluetooth/i],
+  ['repas', 'Repas et photos', /repas|photo|\bplats?\b|aliment|calorie|nutrition|fodmap|ingrédient/i],
+  ['bienetre', 'Bien-être et visage', /bien[- ]?être|visage|caméra|camera|humeur|émotion|déverrouill/i],
+  ['ventre', 'Ventre', /ventre|selles?\b|bristol|ballonn|digestion|intestin/i],
+  ['analyses', 'Analyses et pistes', /analyse|pistes?\b|corrélation|tendance|graphique|courbe/i],
+  ['merci', 'Compliment', /merci|bravo|super|génial|\btop\b|j'adore|j'aime|bien fait|chouette|pratique/i],
+]
+
+const countBy = (items, key) => {
+  const out = {}
+  for (const item of items) out[item[key]] = (out[item[key]] ?? 0) + 1
+  return out
+}
+
+/** Résumé anonyme : comptes par jour, variante, plateforme, version et thème ; aucun texte. */
+export function digestFeedback(items, { since, until }) {
+  const themes = Object.fromEntries(FEEDBACK_THEMES.map(([key]) => [key, 0]))
+  let unclassified = 0
+  for (const { text } of items) {
+    const hits = FEEDBACK_THEMES.filter(([, , re]) => re.test(text))
+    for (const [key] of hits) themes[key]++
+    if (!hits.length) unclassified++
+  }
+  return {
+    since,
+    until,
+    total: items.length,
+    truncated: items.length >= DIGEST_MAX_ITEMS,
+    byDay: countBy(items, 'day'),
+    byVariant: countBy(items, 'variant'),
+    byPlatform: countBy(items, 'platform'),
+    byVersion: countBy(items, 'version'),
+    themes,
+    themeLabels: Object.fromEntries(FEEDBACK_THEMES.map(([key, label]) => [key, label])),
+    unclassified,
+    medianChars: items.length ? [...items.map((i) => i.text.length)].sort((a, b) => a - b)[Math.floor(items.length / 2)] : 0,
   }
 }

@@ -14,6 +14,8 @@
  * - GET  /v1/credits            → crédits d'analyse IA de l'installation (src/credits.js), sans rien consommer.
  * - POST /v1/feedback          → « Votre avis » (`{ text, version, variant }`, en-tête `X-Install-Id`), envoyé sur geste
  *   de l'utilisateur ; quota en mémoire (src/feedback.js), texte gardé 90 jours sans identifiant d'installation.
+ * - GET  /v1/feedback/digest?days=7 → résumé anonyme des avis (AVIS-RELAIS-3, .github/workflows/feedback-digest.yml) :
+ *   jeton OIDC du compte de la CI obligatoire ; comptes par jour, variante, version et thème, jamais le texte d'un avis.
  * - POST /v1/bench/analyze      → banc Silver / Gold (GOLD-b5, .github/workflows/bench-gold.yml) : jeton OIDC du compte
  *   de la CI obligatoire ; `{ tier: 'silver' | 'gold', dish, kind, image | description }`. Même chemin que l'analyse
  *   (modèles, plafond global du jour et par minute, plafond Gold du jour, budget du mois) ; la réponse dit quel
@@ -45,7 +47,7 @@ import { stripJpegMetadata } from './jpeg.js'
 import { parseClientState } from './credits.js'
 import { dayKey } from './quota.js'
 import { readUsage } from './costs.js'
-import { FEEDBACK_MAX_LENGTH, parseFeedback } from './feedback.js'
+import { DIGEST_MAX_DAYS, FEEDBACK_MAX_LENGTH, digestFeedback, parseFeedback } from './feedback.js'
 import { MEAL_TEXT_MAX_LENGTH, RESPONSE_SCHEMA, photoInstruction, textInstruction, textUserPart } from './prompts.js'
 
 /** Taille maximale du corps JSON (photo en base64 comprise). */
@@ -379,6 +381,30 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       const { premium } = entitlement
       await hydrateCredits(installId)
       send(res, 200, { credits: credits.peek(installId, { premium, tier: tierOf(installId, entitlement), reported: reportedCredits(req) }) }, origin)
+      return
+    }
+
+    if (feedback?.digestAuth && path === '/v1/feedback/digest') {
+      if (req.method !== 'GET') {
+        send(res, 405, { error: 'method', message: 'GET attendu.' }, origin)
+        return
+      }
+      if (!(await feedback.digestAuth(req.headers.authorization))) {
+        send(res, 401, { error: 'unauthenticated', message: 'Résumé réservé à la CI.' }, origin)
+        return
+      }
+      const asked = Number(new URL(req.url, 'http://relay').searchParams.get('days'))
+      const days = Number.isInteger(asked) && asked >= 1 ? Math.min(asked, DIGEST_MAX_DAYS) : 7
+      const until = new Date(now()).toISOString()
+      const since = new Date(now() - days * 86_400_000).toISOString()
+      try {
+        const items = await feedback.store.list({ since })
+        log({ event: 'feedback_digest', days, total: items.length, status: 200 })
+        send(res, 200, { days, ...digestFeedback(items, { since, until }) }, origin)
+      } catch (err) {
+        log({ event: 'feedback_store_failed', op: 'list', status: err?.status ?? null })
+        send(res, 503, { error: 'store', status: err?.status ?? null }, origin)
+      }
       return
     }
 
