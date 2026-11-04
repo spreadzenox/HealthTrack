@@ -24,6 +24,10 @@
   `--play --empty --onboarding=health` et `--play --face=on --onboarding=face` (écran du visage, même classe) lus ;
   captures avant / après du bouton (646 → 52 px).
 
+## Après le merge
+- PR #671 mergée (squash, `6fed0f1`) après Frontend (Vitest) et Build APK verts : Tests, **Build & Release v479**
+  (APK sideload 34 534 198 octets) et Play — AAB verts.
+
 ## Demandes iOS
 - Reprises : 29/10 bouton d'onboarding ; 30/10 et 31/10 notes de Nouveautés (5). Non reprises : notes du 29/10
   (antérieures à la version iPhone du 29/10, déjà cachées).
