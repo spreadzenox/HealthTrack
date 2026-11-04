@@ -2,6 +2,12 @@
   "appId": "com.healthtrack.app",
   "appName": "Halcya",
   "webDir": "dist",
+  "server": {
+    "errorPath": "webview-ancienne.html"
+  },
+  "android": {
+    "minWebViewVersion": 93
+  },
   "plugins": {
     "SystemBars": {
       "style": "DARK"

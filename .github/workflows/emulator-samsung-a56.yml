@@ -10,6 +10,7 @@
 #   emulator-test-api35 : image API 35 (référence stable)
 #   emulator-test-api36 : image API 36 (Android 16 / One UI 8 — cible de correction HC)
 #   emulator-test-api34-edge : image API 34, encarts du bord à bord avant Android 15 (POL-PLAY-9)
+#   emulator-test-api28-old-webview : Android 9, WebView d’origine trop ancienne → page de mise à jour (WEBVIEW-MIN)
 #
 # Ce workflow est déclenché sur push vers main, sur les PR vers main, et
 # manuellement (workflow_dispatch). Les branches de PR (ex. cursor/**) ne
@@ -577,6 +578,64 @@ jobs:
           path: |
             edge_insets.md
             edge-insets/
+          if-no-files-found: warn
+
+  # WEBVIEW-MIN (04/11) : Android 9 avec la WebView d'origine de l'image (ancienne, jamais mise à jour) : l'app
+  # montre sa page « Mettez à jour Android System WebView » au lieu d'un écran blanc, sans planter.
+  emulator-test-api28-old-webview:
+    name: WebView trop ancienne (API 28)
+    runs-on: ubuntu-latest
+    needs: build
+    # Image ancienne, démarrage parfois lent : borné. Bloquant : il couvre aussi le démarrage natif sous Android 9
+    # (plantage AssociationInfo du 04/11, PLUGIN-API).
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Télécharger les APKs buildés
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-build
+          path: apk-artifacts
+
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Lancer l'émulateur API 28 et vérifier la page
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 28
+          target: default
+          arch: x86_64
+          profile: pixel_3a
+          emulator-options: >-
+            -no-snapshot-save
+            -no-window
+            -gpu swiftshader_indirect
+            -noaudio
+            -no-boot-anim
+          disable-animations: true
+          emulator-boot-timeout: 600
+          script: bash .github/scripts/old-webview/check.sh "$(find apk-artifacts -name app-debug.apk ! -path '*androidTest*' | head -1)"
+
+      - name: WebView ancienne dans le résumé (API 28)
+        if: always()
+        run: cat old_webview.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Publier la capture (API 28)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: old-webview-api28
+          path: |
+            old_webview.md
+            old-webview/
           if-no-files-found: warn
 
   # ─────────────────────────────────────────────────────────────────────────────

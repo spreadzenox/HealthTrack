@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-04",
+  "kind": "correctif",
+  "title": "Un message plutôt qu'un écran blanc",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Sur un téléphone dont le composant « Android System WebView » est trop ancien, l'app explique comment le mettre à jour depuis le Play Store au lieu de rester blanche."
+  ]
+}

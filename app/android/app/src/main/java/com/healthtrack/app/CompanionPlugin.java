@@ -162,34 +162,36 @@ public class CompanionPlugin extends Plugin {
                 try {
                     getActivity().startIntentSenderForResult(sender, REQUEST_ASSOCIATE, null, 0, 0, 0);
                 } catch (IntentSender.SendIntentException e) {
-                    finish(call, null, "Boîte Android introuvable");
+                    finish(call, -1, "Boîte Android introuvable");
                 }
             }
 
             @Override
             public void onAssociationCreated(AssociationInfo info) {
                 observe(m, address);
-                finish(call, info, null);
+                finish(call, info.getId(), null);
             }
 
             @Override
             public void onFailure(CharSequence error) {
-                finish(call, null, error == null ? "Association refusée" : error.toString());
+                finish(call, -1, error == null ? "Association refusée" : error.toString());
             }
         });
     }
 
-    private void finish(PluginCall call, AssociationInfo info, String error) {
+    // Identifiant plutôt que l'AssociationInfo (Android 13) : Capacitor lit la signature de chaque méthode du plugin au
+    // démarrage, et ce type absent faisait planter l'app à l'ouverture sous Android 12 et avant (PLUGIN-API, 04/11).
+    private void finish(PluginCall call, int id, String error) {
         if (error != null) {
             call.reject(error);
             return;
         }
         JSObject ret = new JSObject();
         ret.put("associated", true);
-        ret.put("id", info.getId());
+        ret.put("id", id);
         call.resolve(ret);
         JSObject data = new JSObject();
-        data.put("id", info.getId());
+        data.put("id", id);
         notifyListeners("companionAssociated", data);
     }
 
