@@ -1,10 +1,11 @@
 import { useReducer } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { CHANGELOG } from '../data/changelog'
+import { useChangelog } from '../hooks/useChangelog'
 import { getLastSeenId, getUnseenEntries, markAllSeen } from '../services/whatsNew'
 import './WhatsNew.css'
 
-export default function WhatsNewBanner({ changelog = CHANGELOG }) {
+export default function WhatsNewBanner({ changelog: given }) {
+  const changelog = useChangelog(given)
   // Relu à chaque navigation : la page Nouveautés marque tout comme vu.
   const { pathname } = useLocation()
   const [, rerender] = useReducer((n) => n + 1, 0)

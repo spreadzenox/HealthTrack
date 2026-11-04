@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-04",
+  "kind": "amélioration",
+  "title": "Ouverture de l'app plus légère",
+  "items": [
+    "La liste des Nouveautés se charge juste après l'ouverture de l'app : le code lu au démarrage est plus petit d'un quart."
+  ]
+}
