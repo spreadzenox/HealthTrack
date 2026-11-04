@@ -1,5 +1,6 @@
 {
   "date": "2026-10-31",
+  "variants": ["play", "sideload"],
   "kind": "amélioration",
   "title": "Données de la montre : plus courte",
   "items": [

@@ -1,5 +1,6 @@
 {
   "date": "2026-10-30",
+  "variants": ["play", "sideload"],
   "kind": "correctif",
   "title": "Journal : « VFC nuit », comme sur l'Accueil",
   "items": [

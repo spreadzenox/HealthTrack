@@ -35,3 +35,11 @@ describe('forme des boutons (POL-PLAY-24)', () => {
     }
   })
 })
+
+// Demande iOS du 29/10 : `.btn { flex: 1 }` (App.css) dans la colonne flexible `.onb-body` étirait « Autoriser Health
+// Connect » (et les boutons de la lecture du visage) sur toute la hauteur libre de l'écran, en grande pilule verticale.
+describe('boutons de l’onboarding (IOS-ONB-ACTION)', () => {
+  it('.onb-action garde sa hauteur au lieu de remplir la colonne', () => {
+    expect(rule(read('./pages/Onboarding.css'), '.onb-action')).toContain('flex: 0 0 auto')
+  })
+})

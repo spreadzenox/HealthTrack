@@ -223,7 +223,9 @@
 }
 
 /* Jalon 4b : Health Connect, import et « aha » */
+/* flex: 0 0 auto : sinon le flex: 1 de .btn étire le bouton sur toute la hauteur libre de .onb-body */
 .onb-action {
+  flex: 0 0 auto;
   width: 100%;
   min-height: var(--button-height);
   border-radius: var(--radius-pill);

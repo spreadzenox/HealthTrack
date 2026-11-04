@@ -1472,6 +1472,14 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
   approximative », « Connecter une montre », « Désactiver », « Donner mon avis sur le Play Store », « + 1 cigarette »).
   DESIGN.md : boutons pilule de 52 à 56 px → `.btn` en pilule partout, captures avant/après.
 - **Demandes de la routine iOS** (dépôt spreadzenox/HealthTrack-iOS, `journal/DEMANDES.md`, transmises le 28/10) :
+- [x] **IOS-ONB-ACTION** (04/11 02:35 ; demande iOS du 29/10) Onboarding, écran Health Connect : `.btn { flex: 1 }` dans la colonne
+  `.onb-body` étirait « Autoriser Health Connect » en pilule de 646 px ; `flex: 0 0 auto` sur `.onb-action` (52 px), test
+  `buttonShape.test.js`. Invisible aux audits : sur le web Health Connect est « indisponible », le bouton n'apparaît pas ;
+  `--onboarding=health` ajouté au banc visuel (même limite : bouton vérifié par injection dans le DOM).
+- [x] **IOS-NOTES-3010** (04/11 02:35 ; demandes iOS du 30 et 31/10) `variants: ["play", "sideload"]` sur `vfc-nuit`,
+  `montre-compacte`, `sources-couleur` ; `onboarding-compteur` sans « Health Connect », `phrases-aide` sans la liste
+  d'écrans (`sommeil-une-source` était déjà marquée). Encore « à transmettre » côté iOS : `repas-actions` (29/10, à
+  scinder), `sources-titre` (29/10), `paywall-lancement` (29/10) — antérieures au 29/10 ou déjà cachées sur iPhone.
 - [x] **IOS-1** (28/10 12:33) Relais : Play Integrity exigé des seules requêtes Android. `requestPlatform()` :
   `X-Platform: ios`, ou `X-Integrity-Status: no_plugin` sans `X-Platform` → statut `not_android`, jamais bloqué (même
   en `enforce`) jusqu'à App Attest ; `X-Platform` dans les en-têtes CORS ; bilan du déploiement : origine « iPhone »
