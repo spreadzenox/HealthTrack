@@ -4,7 +4,9 @@
  * les lectures qui les portent, les probabilités des 8 expressions d'AffectNet (FaceAffect.EXPRESSIONS). Fonction
  * pure, rien de stocké.
  *
- * - Jour : chaque lecture du déverrouillage (ou de l'ouverture, en play) est un point, avec sa fourchette.
+ * - Jour : chaque lecture du déverrouillage (ou de l'ouverture, en play) est un point, avec sa fourchette ; au-delà
+ *   de DAY_MAX_POINTS lectures (une toutes les 2 min au plus), un point par heure (médianes pondérées de la note et de
+ *   la fourchette), sinon la courbe devient un trait illisible sur un écran de téléphone (I83).
  * - Semaine / mois : un point par jour lu, médiane pondérée de ses lectures (même règle que faceMoodDays) ; un jour
  *   de moins de FACE_MOOD_MIN_READINGS lectures est marqué « peu de lectures » (il ne compte pas dans les Analyses).
  * - Les notes de bien-être données à la main sont montrées à part (points distincts), jamais mêlées à l'estimation.
@@ -18,6 +20,8 @@ import { estimateBurst, personalCalibration, personalNeutral, readingWeight, wei
 import { FACE_MOOD_MIN_READINGS } from './faceMoodDays'
 
 export const PERIODS = { day: 1, week: 7, month: 30 }
+/** Au-delà, la vue « jour » regroupe les lectures par heure (≈ 12 px par point sur la largeur de la courbe). */
+export const DAY_MAX_POINTS = 24
 
 /** Les 8 expressions, dans l'ordre d'affichage, avec leur libellé (clés écrites par FacePipeline.java). */
 export const EXPRESSIONS = [
@@ -57,11 +61,34 @@ export function expressionMix(bursts) {
   }
 }
 
+/** Lectures d'un jour regroupées par heure locale : médianes pondérées, à l'heure de la lecture du milieu. */
+function byHour(readings, date) {
+  const hours = new Map()
+  for (const r of readings) {
+    const h = new Date(r.at).getHours()
+    if (!hours.has(h)) hours.set(h, [])
+    hours.get(h).push(r)
+  }
+  const wm = (list, key) => {
+    const withV = list.filter((r) => isNum(r[key]))
+    return withV.length ? round2(weightedMedian(withV.map((r) => r[key]), withV.map(readingWeight))) : undefined
+  }
+  return [...hours.values()].map((list) => ({
+    at: list[Math.floor(list.length / 2)].at,
+    date,
+    note: wm(list, 'note'),
+    low: wm(list, 'low'),
+    high: wm(list, 'high'),
+    readings: list.length,
+    hourly: true,
+  }))
+}
+
 /**
  * @param {object[]} entries  entrées `face_burst` et `wellbeing` (les autres sont ignorées)
  * @param {{ period?: 'day'|'week'|'month', now?: Date }} [opts]
  * @returns {{ period, from: string, points: { at: string, date: string, note: number, low?: number, high?: number,
- *   readings: number, few?: boolean }[], notes: { at: string, score: number }[], readings: number, days: number,
+ *   readings: number, few?: boolean, hourly?: boolean }[], notes: { at: string, score: number }[], readings: number, days: number,
  *   mean: number|null, valence: number|null, arousal: number|null,
  *   expressions: null | { readings: number, items: { key, label, p }[] } }}
  */
@@ -78,12 +105,14 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
     if (!byDay.has(dk)) byDay.set(dk, [])
     byDay.get(dk).push(b)
   }
-  const points = []
+  let points = []
+  const dayReadings = []
   for (const [date, list] of byDay) {
     // Visage habituel calculé une fois par jour, à sa dernière lecture (comme faceMoodDays).
     const base = personalNeutral(all, list[list.length - 1].at)
     const readings = list.map((b) => estimateBurst(b, { bursts: all, calibration, base }))
     if (period === 'day') {
+      dayReadings.push(...readings)
       for (const r of readings) points.push({ at: r.at, date, note: r.note, low: r.low, high: r.high, readings: 1 })
     } else {
       const note = weightedMedian(readings.map((r) => r.note), readings.map(readingWeight))
@@ -99,7 +128,9 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
     .map((e) => ({ at: e.at, score: e.payload.score }))
   const valence = mean(inPeriod.map((b) => b.payload.values.valence))
   const arousal = mean(inPeriod.map((b) => b.payload.values.arousal))
-  const m = mean(points.map((p) => p.note))
+  // La moyenne du jour reste celle des lectures, qu'elles soient regroupées par heure ou non.
+  const m = mean(period === 'day' ? dayReadings.map((r) => r.note) : points.map((p) => p.note))
+  if (period === 'day' && dayReadings.length > DAY_MAX_POINTS) points = byHour(dayReadings, localDateKey(from))
   return {
     period,
     from: fromIso,

@@ -70,7 +70,7 @@ export function HistoryChart({ history, now }) {
   const line = points.map((p, i) => `${i ? 'L' : 'M'} ${x(pointAt(p)).toFixed(1)} ${y(p.note).toFixed(1)}`).join(' ')
   return (
     <svg className="wbh-chart" viewBox={`0 0 ${W} ${H}`} width="100%" role="img"
-      aria-label={`Bien-être estimé ${PERIOD_WORDS[period]} : ${points.length} ${period === 'day' ? 'lectures' : 'jours'}`}>
+      aria-label={`Bien-être estimé ${PERIOD_WORDS[period]} : ${period === 'day' ? `${history.readings} lectures` : `${points.length} jours`}${points.some((p) => p.hourly) ? ', un point par heure' : ''}`}>
       {[0, 2.5, 5].map((g) => (
         <g key={g}>
           <line className="wbh-grid" x1={PAD.left} x2={W - PAD.right} y1={y(g)} y2={y(g)} />
@@ -200,7 +200,7 @@ export default function WellbeingHistory({ now: givenNow, features }) {
             <HistoryChart history={history} now={now} />
           )}
           {!empty && <ul className="wbh-legend" aria-label="Légende">
-            <li><span className="wbh-key is-estimate" aria-hidden="true" />estimé (visage)</li>
+            <li><span className="wbh-key is-estimate" aria-hidden="true" />estimé (visage){history.points.some((p) => p.hourly) && ', par heure'}</li>
             {history.notes.length > 0 && <li><span className="wbh-key is-note" aria-hidden="true" />noté à la main</li>}
             {history.period === 'day' && history.points.some((p) => Number.isFinite(p.low) && Number.isFinite(p.high)) && (
               <li><span className="wbh-key is-range" aria-hidden="true" />fourchette</li>

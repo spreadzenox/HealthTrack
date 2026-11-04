@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { wellbeingHistory, expressionMix, EXPRESSIONS } from './wellbeingHistory'
+import { wellbeingHistory, expressionMix, EXPRESSIONS, DAY_MAX_POINTS } from './wellbeingHistory'
 
 const NEUTRAL = { smile: 0.1, duchenne: 0.05, mouthFrown: 0.05, browDown: 0.15, browInnerUp: 0.1, yaw: 4 }
 const EX_ZERO = Object.fromEntries(EXPRESSIONS.map(({ key }) => [key, 0]))
@@ -21,6 +21,30 @@ describe('wellbeingHistory — historique du bien-être (POL-2)', () => {
     expect(h.days).toBe(1)
     expect(h.valence).toBeCloseTo(0.3, 5)
     expect(h.arousal).toBeCloseTo(0, 5)
+  })
+
+  it('jour : au-delà de DAY_MAX_POINTS lectures, un point par heure (médiane), la moyenne reste celle des lectures', () => {
+    // Toutes les 5 min de 8 h à 10 h (24 lectures basses), puis toutes les 15 min de 10 h à 11 h (4 hautes).
+    const entries = []
+    for (let m = 0; m < 120; m += 5) entries.push(burst(new Date(2026, 9, 24, 8, m), { valence: -0.4 }))
+    for (let m = 0; m < 60; m += 15) entries.push(burst(new Date(2026, 9, 24, 10, m), { valence: 0.6 }))
+    const h = wellbeingHistory(entries, { period: 'day', now: NOW })
+    expect(entries.length).toBeGreaterThan(DAY_MAX_POINTS)
+    expect(h.readings).toBe(28)
+    expect(h.points.map((p) => p.readings)).toEqual([12, 12, 4])
+    expect(h.points.every((p) => p.hourly)).toBe(true)
+    expect(h.points.map((p) => new Date(p.at).getHours())).toEqual([8, 9, 10])
+    expect(h.points[0].note).toBeLessThan(h.points[2].note)
+    expect(h.points[0].low).toBeLessThan(h.points[0].note)
+    expect(h.points[0].high).toBeGreaterThan(h.points[0].note)
+    // Moyenne des 28 lectures (pondérée par heure), pas des 3 heures.
+    const byReadings = h.points.reduce((s, p) => s + p.note * p.readings, 0) / 28
+    const byHours = h.points.reduce((s, p) => s + p.note, 0) / 3
+    expect(h.mean).toBeCloseTo(byReadings, 1)
+    expect(Math.abs(h.mean - byHours)).toBeGreaterThan(0.2)
+    const perReading = wellbeingHistory(entries.slice(0, DAY_MAX_POINTS), { period: 'day', now: NOW })
+    expect(perReading.points).toHaveLength(DAY_MAX_POINTS)
+    expect(perReading.points.some((p) => p.hourly)).toBe(false)
   })
 
   it('semaine : un point par jour, marqué « peu de lectures » sous 3', () => {
