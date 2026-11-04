@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import DetailsToggle from './DetailsToggle'
+import DomainTag from './DomainTag'
 import { FEATURES } from '../config/distribution'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { FODMAP_FACTOR_LABELS, comparableLabel } from '../services/gutLinks'
@@ -33,6 +34,7 @@ function GutLinkCard({ link, onHide }) {
   return (
     <li className="gut-link-card">
       <div className="gut-link-content">
+        <DomainTag domain="gut" />
         <p className="gut-link-title">
           {link.label} → ventre <span className="gut-link-when">{link.whenLabel}</span>
         </p>

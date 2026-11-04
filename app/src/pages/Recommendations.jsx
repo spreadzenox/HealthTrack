@@ -3,6 +3,7 @@ import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { rememberPistesSummary } from '../services/pistesSummary'
+import DomainTag from '../components/DomainTag'
 import { getHiddenLinks, gutLinkKey, hideLink, unhideAllLinks } from '../settings/hiddenLinks'
 import {
   buildDailyDataset,
@@ -118,6 +119,7 @@ function LeverCard({ rank, lever, lag, onHide }) {
     <li className={'reco-advice-card' + (toVerify ? ' reco-advice-card--verify' : '')}>
       <span className="reco-advice-rank">{toVerify ? '?' : rank}</span>
       <div className="reco-advice-content">
+        <DomainTag domain="wellbeing" />
         {/* POL-PLAY-32 : le lien en titre (« facteur → effet ») ; l'action à tester derrière le chevron */}
         <p className="reco-advice-text">{lever.title ?? lever.action}</p>
         {lever.againstNorm && <AgainstNormNote />}
@@ -202,6 +204,7 @@ function LinkCard({ kind, name, children, meta, evidence, extra, onHide }) {
   return (
     <li className={`reco-link-card reco-link-card--${kind}` + (evidence === 'incertain' ? ' reco-link-card-uncertain' : '')}>
       <div className="reco-link-body">
+        <DomainTag domain="wellbeing" />
         <p className="reco-link-name">{name}</p>
         {children}
         {open && meta && <p className="reco-link-meta">{meta}</p>}
@@ -719,7 +722,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
       <section className="reco-section">
         <h3 className="reco-section-title">Pistes à tester</h3>
         <p className="reco-section-hint">
-          Ce qui va avec vos meilleurs jours.
+          Ce qui va avec vos meilleurs jours de bien-être.
         </p>
         {shownLevers.length > 0 ? (
           <ol className="reco-advice-list">

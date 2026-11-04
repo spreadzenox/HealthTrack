@@ -11,7 +11,8 @@
 > `BACKLOG.md`, section « Retours du propriétaire du 04/11 ») : (1) livraison continue vers Alpha par la CI, sans clic
 > du propriétaire (fait le 04/11 20:35, CD-ALPHA-1) ; (2) retours des utilisateurs lus par la routine (« Votre avis »
 > par le relais, plantages, avis du Play Store ; étude I219) ; (3) ventre et bien-être séparés clairement, notes du
-> ventre pour ajuster le bien-être (modèle proposé I220, réponse attendue) ; (4) Analyses en sous-onglets et trois
+> ventre pour ajuster le bien-être (modèle proposé I220, réponse attendue ; étiquette « Ventre » / « Bien-être » sur
+> chaque piste d'Analyses le 04/11 21:35, VENTRE-BE-1) ; (4) Analyses en sous-onglets et trois
 > horizons ; (5) bien-être sous-estimé : biais mesuré, calibration de départ 3 à 5 jours ; (6) détail d'une lecture
 > en touchant la courbe ; (7) selles en photo (Bristol estimé, discret, rien gardé) ; (8) Journal, Sources,
 > Nouveautés, Données, Paramètres, Confidentialité : ok.
