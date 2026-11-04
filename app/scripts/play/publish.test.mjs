@@ -231,6 +231,16 @@ describe('notes de version', () => {
     expect(buildReleaseNotes([e('2026-10-20-a.json', 'Ancien'), e('2026-10-21-b.json', 'Récent')])).toBe('• Récent\n• Ancien')
   })
 
+  it('écarte les notes réservées à une autre variante (sideload, iPhone)', () => {
+    const notes = buildReleaseNotes([
+      e('2026-11-04-0100-a.json', 'Pour tous'),
+      { ...e('2026-11-04-0200-b.json', 'Sideload seule'), variants: ['sideload'] },
+      { ...e('2026-11-04-0300-c.json', 'Android'), variants: ['play', 'sideload'] },
+      { ...e('2026-11-04-0400-d.json', 'Play seule'), variants: ['play'] },
+    ])
+    expect(notes).toBe('• Play seule\n• Android\n• Pour tous')
+  })
+
   it('jamais plus de 500 caractères, sans couper une ligne', () => {
     const many = Array.from({ length: 40 }, (_, i) => e(`2026-10-${String(i).padStart(2, '0')}.json`, `Titre numéro ${i} assez long pour remplir`))
     const notes = buildReleaseNotes(many)
