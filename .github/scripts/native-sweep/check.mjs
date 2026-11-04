@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PLUGIN-API-2 (04/11) — sous Android 12 (API 31), avec une WebView assez récente pour lancer le JS : parcourt les
+ * PLUGIN-API-2 (04/11) — sous Android 12L (API 32 ; l'image API 31 n'a que la WebView 91), avec une WebView assez récente pour lancer le JS : parcourt les
  * écrans du premier lancement (onboarding, Accueil, Sources, Journal, Analyses, Montre, Paramètres) puis appelle
  * directement les méthodes natives de lecture des plugins (statuts, listes, vérifications d'accès). Le job API 28 ne
  * voit que le démarrage (sa WebView est trop ancienne) : celui-ci exécute les corps des méthodes natives, où un
@@ -179,10 +179,15 @@ if (!(await connect())) {
   const boot = await evaluate(`(() => ({ path: location.pathname, root: (document.getElementById('root')?.childElementCount || 0),
     native: !!window.Capacitor?.isNativePlatform?.(), page: document.title }))()`)
   shot('premier-ecran')
-  if (!boot || !boot.root) fail(`le JS n'a rien affiché (${JSON.stringify(boot)})`)
-  else lines.push(`- ✅ premier écran : ${boot.path} (natif : ${boot.native ? 'oui' : 'non'})`)
+  const booted = boot && boot.root && boot.native
+  if (!booted) {
+    // WebView de l'image plus ancienne que minWebViewVersion : page de mise à jour, aucun JS de l'app. Le job
+    // doit alors passer à une image plus récente (API 32 ou WebView installée), pas conclure à tort.
+    const hint = boot?.path?.includes('webview-ancienne') ? " : WebView de l'image trop ancienne, changer d'image" : ''
+    fail(`le JS de l'app n'a pas démarré (${JSON.stringify(boot)})${hint}`)
+  } else lines.push(`- ✅ premier écran : ${boot.path}`)
 
-  for (const route of ROUTES) {
+  for (const route of booted ? ROUTES : []) {
     if (!alive()) break
     await evaluate(`(() => { history.pushState({}, '', ${JSON.stringify(route)}); dispatchEvent(new PopStateEvent('popstate')); return true })()`)
     await sleep(4000)
@@ -191,15 +196,18 @@ if (!(await connect())) {
     lines.push(`- ${alive() ? '✅' : '❌'} écran ${route} (affiché : ${seen ?? '?'})`)
   }
 
-  lines.push('', '| Plugin | Méthode | Résultat |', '|---|---|---|')
-  for (const [plugin, method] of CALLS) {
+  if (booted) lines.push('', '| Plugin | Méthode | Résultat |', '|---|---|---|')
+  for (const [plugin, method] of booted ? CALLS : []) {
     if (!alive()) break
-    const r = await evaluate(`(async () => { const p = window.Capacitor?.Plugins?.[${JSON.stringify(plugin)}];
-      if (!p || typeof p[${JSON.stringify(method)}] !== 'function') return { skipped: true };
-      try { const v = await Promise.race([p[${JSON.stringify(method)}]({}), new Promise((r) => setTimeout(() => r({ timeout: true }), 8000))]);
+    // Directement au pont natif : Capacitor.Plugins ne contient que les plugins déjà chargés par le JS.
+    const r = await evaluate(`(async () => { const C = window.Capacitor;
+      const P = ${JSON.stringify(plugin)}, M = ${JSON.stringify(method)};
+      const call = C?.nativePromise ? () => C.nativePromise(P, M, {}) : C?.Plugins?.[P]?.[M] ? () => C.Plugins[P][M]({}) : null;
+      if (!call) return { skipped: true };
+      try { const v = await Promise.race([call(), new Promise((r) => setTimeout(() => r({ timeout: true }), 8000))]);
         return { ok: true, keys: Object.keys(v || {}).slice(0, 6).join(', '), timeout: !!v?.timeout } }
-      catch (e) { return { error: String(e?.message || e).slice(0, 120) } } })()`)
-    const res = !r ? 'pas de réponse' : r.skipped ? 'absent de cette variante' : r.error ? `erreur JS : ${r.error}` : r.timeout ? 'sans réponse en 8 s' : `ok (${r.keys || '—'})`
+      catch (e) { return { error: String(e?.message || e?.code || e).slice(0, 120) } } })()`)
+    const res = !r ? 'pas de réponse' : r.skipped ? 'pont natif absent' : r.error ? `erreur JS : ${r.error}` : r.timeout ? 'sans réponse en 8 s' : `ok (${r.keys || '—'})`
     if (r?.error && /NoSuchMethod|NoClassDef|VerifyError/.test(r.error)) apiErrors.push(`${plugin}.${method}`)
     lines.push(`| ${plugin} | ${method} | ${res.replace(/\|/g, '/')} |`)
     await sleep(500)
