@@ -185,6 +185,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
   corrigés à 360 px (bouton météo des Sources hors de sa carte, « Douleur » collé au bord sur l'Accueil).
 - [x] **FONT-SCALE-2** (04/11 15:35 : mesure ajoutée au job émulateur API 32, `native-sweep/check.mjs`, avertissement seulement. **Résultat sur #689 : la WebView suit la police du système, lignes ×1,30 à `font_scale` 1,3 ; titres 19,2 → 25 px ; aucun débordement sur Accueil, Sources, Paramètres**) Confirmer sur l'émulateur (`settings put system font_scale 1.3`) que la WebView suit la police du
   système ; ajouter `--font-scale=1.3` à l'audit de chaque version candidate (TEST-ALPHA-1 et 2).
+- [x] **IOS-NOTES-29-10** (04/11 16:35) Demandes iOS du 29/10 : `sources-titre` en `["play", "sideload"]`, stress de la montre sorti de `repas-actions` dans sa propre note Android ; badge « Nouveau » des Nouveautés recalé sur `--mint-label` / `--mint-bg` (4,16 → ≥ 4,5:1).
 - [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; clic P42.
 - [x] **FIN-LANCEMENT-1** (03/11 21:35 ; `IDEES.md` I213) LIVRÉ : `LaunchEndCard` + `launchEndNotice()` ; lien « Voir ce que comprend Gold » (pendant la période, /premium n'affiche pas de prix) ; `launch.lastUntil` déjà retenu (`halcya_launch_last_until`) pour FIN-LANCEMENT-2 ; capture `--launch-ends-in=2`. Spécification d'origine : carte Accueil fermable à partir de `launchUntil` − 3 j :
   « Gold offert jusqu'au … Ensuite, le journal, les montres, le bien-être estimé et l'export restent gratuits. » +
