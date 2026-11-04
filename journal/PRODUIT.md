@@ -187,6 +187,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **04/11 09:35** — **WEBVIEW-MIN** : `android.minWebViewVersion` 93 (mesuré : `Object.hasOwn` dans le stockage, Chrome 93 ; syntaxe ES2020 vérifiée par es-check) et `server.errorPath` → `public/webview-ancienne.html` (ES5, « Mettez à jour Android System WebView », lien Play Store ; « Réessayer » si la WebView est récente) ; verrou `webviewMinimum.test.js` ; job émulateur API 28 « WebView trop ancienne ». Critère C4 (aucun plantage connu) renforcé pour les téléphones Android 8–9 des testeurs.
 - **04/11 07:35** — **A11Y-3** : contrôles lecteur d'écran dans `npm run visual` (« CLIQUABLE MUET », « SANS TITRE H1 ») : 0 sur 16 pages Play ; verrou `screenReader.test.js` (onClick sans rôle, image sans alt). Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 06:35** — **A11Y-2** : onboarding Play parcouru écran par écran (0 avertissement) ; contrôle « CONTRASTE FAIBLE » (WCAG 1.4.3) dans `npm run visual` ; « Reçu », « Automatique », « Dans votre norme » passés de 3,7–4:1 à ≥ 4,5:1 (couple menthe), test `badgeContrast.test.js`. Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 05:35** — **A11Y-1** : contrôle « SANS NOM ACCESSIBLE » / « CIBLE < 44 px » dans `npm run visual` ; 8 cibles trop petites corrigées (volets « Comment c’est calculé », « Désactiver », « Restaurer un achat », licences…), test `tapTargets.test.js` ; 0 avertissement sur 16 pages Play (démo et vierge). Prochain : TEST-ALPHA-1 (07–08/11).
