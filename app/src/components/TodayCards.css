@@ -316,7 +316,7 @@
   height: 8px;
   margin-top: 12px;
   border-radius: var(--radius-pill);
-  background: rgba(var(--violet-rgb), 0.15);
+  background: var(--lilac-track);
   overflow: hidden;
 }
 

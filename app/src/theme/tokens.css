@@ -35,6 +35,7 @@
   --lilac-bg: #ece9ff; /* pistes */
   --lilac-text: #3e3870;
   --lilac-bar: #4b3fc9;
+  --lilac-track: #c6bff5; /* rail de la barre de progression (≥ 1,4:1 sur lilas) */
 
   /* Badges et accents graphiques (ambre et menthe vive : jamais pour du texte) */
   --color-badge: #c2410c;
@@ -112,6 +113,7 @@
   --lilac-bg: #27244a;
   --lilac-text: #dcd8ff;
   --lilac-bar: #a99fff;
+  --lilac-track: #48428a;
   --color-badge: #c2410c;
   --color-on-badge: #ffffff;
   --chart-bar-2: #2f5a4b;

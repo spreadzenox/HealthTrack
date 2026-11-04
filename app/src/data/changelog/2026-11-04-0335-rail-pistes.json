@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-04",
+  "kind": "correctif",
+  "title": "Pistes : une barre qui se voit en sombre",
+  "items": [
+    "Sur la carte « Vos pistes arrivent dans … jours », la barre de progression se distingue mieux du fond en thème sombre."
+  ]
+}
