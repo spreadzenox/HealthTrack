@@ -36,3 +36,13 @@ Type : 🔧 run de code (23:35 Paris).
 - AVIS-RELAIS-3 : workflow quotidien qui lit `feedback` (gh-deployer : lecture Firestore à vérifier, sinon action
   du propriétaire) et publie un résumé anonyme dans le journal ; puis avis du Play Store (`reviews.list`).
 - Puis ANALYSES-ONGLETS ; VENTRE-BE-1 étape 2 attend « I220 oui / non ».
+
+## Après le merge (#699, `b481d9e`)
+- Checks de la PR tous verts (Vitest, Build APK, relais, émulateurs API 28/32/34/35/36).
+- Build & Release **v498** (APK 34 539 795 octets), Play — AAB (test interne **100782**), Site — GitHub Pages
+  (politique de confidentialité du 4 novembre en ligne) et Tests verts.
+- « Play — fiche du Store » **annulé** sans job : déclenché par `app/store/**` (seules les réponses Sécurité des
+  données changeaient, pas la fiche), son exécution en attente a été remplacée dans le groupe `play-edits` par les
+  envois Alpha. Rien à refaire.
+- Émulateur Galaxy A56 vert, puis « Play — Alpha » : **100782 placée sur Alpha** (7 fichiers de l'app changés depuis
+  100778, même AAB que le test interne) ; en examen chez Google, comme 100778 avant elle.
