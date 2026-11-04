@@ -170,8 +170,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 0 6px;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  /* Grande police d'Android : le rond passe au-dessus du mot au lieu de le pousser hors du cadre */
+  padding: 4px 6px;
   border-radius: var(--radius-choice);
   border: 2px solid rgba(var(--ink-rgb), 0.18);
   background: var(--color-bg);

@@ -181,6 +181,10 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
 - [x] **PLUGIN-API** (04/11 09:35, 🚑) **Plantage à l'ouverture sous Android 8 à 12 depuis le 15/10 (#162)** : `CompanionPlugin.finish(PluginCall, AssociationInfo, String)` ; Capacitor lit toutes les méthodes des plugins au démarrage (`Plugin.initializeActivityLaunchers` → `getDeclaredMethods`), `AssociationInfo` (API 33) → `NoClassDefFoundError`. Corrigé (identifiant `int`), verrou `src/pluginSignatures.test.js` (types récents interdits dans les signatures de premier niveau des plugins), job API 28 bloquant. Alpha 100721 touchée → P42 avancé.
 - [x] **PLUGIN-API-2** (statique 04/11 11:35 : Lint `NewApi` ; dynamique 04/11 12:35 : job « Méthodes natives sous Android 12L (API 32) », `native-sweep/check.mjs`, 9 écrans + 17 méthodes natives, aucun plantage ; l'image API 31 n'a que la WebView 91) Les corps de méthodes natives appelés depuis le JS (API 29–33 sans test de version) ne sont pas couverts par le job API 28 (WebView trop ancienne, le JS ne tourne pas) : ajouter un job API 30 ou 31 avec une WebView ≥ 93 (image `google_apis` récente ou WebView installée) qui parcourt l'onboarding et les Sources ; en attendant, relire les `Build.VERSION.SDK_INT` des plugins appelés au premier lancement (Health Connect, montre, notifications, visage).
 - [x] **WEBVIEW-MIN** (04/11 09:35) Téléphones Android 8–9 à WebView non mise à jour : Capacitor n'exigeait que la WebView 60 et chargeait l'app sans page d'erreur (écran blanc dès `Object.hasOwn`, Chrome 93). `minWebViewVersion` 93 + page `webview-ancienne.html` + test-garde des fonctions récentes (table version Chrome) + job émulateur API 28. Si une fonction plus récente entre dans le code, le test demande de relever le minimum (ou d'éviter la fonction).
+- [x] **FONT-SCALE-1** (04/11 14:35) Grande taille de police d'Android : `npm run visual -- --font-scale=1.3` ; 2 défauts
+  corrigés à 360 px (bouton météo des Sources hors de sa carte, « Douleur » collé au bord sur l'Accueil).
+- [ ] **FONT-SCALE-2** Confirmer sur l'émulateur (`settings put system font_scale 1.3`) que la WebView suit la police du
+  système ; ajouter `--font-scale=1.3` à l'audit de chaque version candidate (TEST-ALPHA-1 et 2).
 - [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; clic P42.
 - [x] **FIN-LANCEMENT-1** (03/11 21:35 ; `IDEES.md` I213) LIVRÉ : `LaunchEndCard` + `launchEndNotice()` ; lien « Voir ce que comprend Gold » (pendant la période, /premium n'affiche pas de prix) ; `launch.lastUntil` déjà retenu (`halcya_launch_last_until`) pour FIN-LANCEMENT-2 ; capture `--launch-ends-in=2`. Spécification d'origine : carte Accueil fermable à partir de `launchUntil` − 3 j :
   « Gold offert jusqu'au … Ensuite, le journal, les montres, le bien-être estimé et l'export restent gratuits. » +
@@ -983,9 +987,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] Nutrition par index (28 → 5 lectures) ; `upsertEntries` par source et plage (run 14/10 16:30, PR #158)
 - [ ] Sous-échantillonnage des longues séries, graphiques chargés en différé
 - [x] Test anti-régression : Vitest échoue si une lecture filtrée relit tout le magasin (run 14/10 00:30)
-- [ ] Budget `npm run perf` en CI (lectures par page ≤ N, temps bloquant de l'Accueil) — les temps sont bruités
-      (± 200 ms), viser plutôt le nombre d'enregistrements lus
-- [ ] Accueil : `WellbeingCharts` lit encore `listEntriesForAnalysis` (≈ 15 k entrées) → agrégats journaliers
+- [x] Budget `npm run perf` en CI (lectures par page ≤ N, temps bloquant de l'Accueil) — job `perf-budget` de `tests.yml`
+      (`npm run perf -- --budget`, `scripts/perf/budget.json`) ; constaté le 04/11 14:35
+- [x] Accueil : `WellbeingCharts` lit encore `listEntriesForAnalysis` (≈ 15 k entrées) → agrégats journaliers — constaté le
+      04/11 14:35 : il lit `listEntries({ type: 'wellbeing', since, limit: 2000 })` et vit dans Tendances
 - Piste détaillée (run idées 12/10 20:30, I43) : index composé `[type, date]` (migration = ajout d'index seul),
   `listEntries({types, from, to})` par `IDBKeyRange`, magasin `daily_agg` versionné, LTTB ≥ 2 000 points dans un Worker,
   test « Accueil lit ≤ N entrées » — `localHealthStorage.js` fait aujourd'hui 7 `getAll()` sur tout le store

@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-04",
+  "kind": "correctif",
+  "title": "Grande taille de police : les boutons restent dans leur cadre",
+  "items": [
+    "Si vous avez agrandi le texte dans les réglages du téléphone, « Utiliser ma position approximative » (Sources, météo) passe à la ligne au lieu de sortir de la carte, et « Douleur » reste dans son bouton sur la carte du ventre."
+  ]
+}
