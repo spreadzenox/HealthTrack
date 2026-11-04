@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-04",
+  "kind": "correctif",
+  "title": "L'app s'ouvre de nouveau sous Android 12 et avant",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Sur les téléphones sous Android 8 à 12, l'app se fermait dès l'ouverture depuis la mi-octobre. C'est corrigé ; vos données n'ont pas été touchées."
+  ]
+}
