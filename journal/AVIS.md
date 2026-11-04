@@ -7,3 +7,4 @@ récente en haut. Ce qu'un thème appelle (correction, question, réponse dans l
 
 | Bilan lu | Période | Avis | Thèmes | Suite donnée |
 |---|---|---|---|---|
+| 05/11 00:55 (lancement à la main) | 05/10 → 04/11 | 0 | — | Aucune : chaîne vérifiée de bout en bout |
