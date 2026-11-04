@@ -61,8 +61,8 @@ export const DATA_SAFETY_ANSWERS = [
   { question: 'PSL_DATA_TYPES_PHOTOS_AND_VIDEOS', response: 'PSL_PHOTOS', value: true, why: 'Photo du repas (réduite, sans métadonnées) envoyée au relais Halcya (analyse par Gemini sur Vertex AI, UE) quand la personne lance l’analyse.' },
   ...collectedForFunctionality('PSL_PHOTOS', 'Envoyée à notre relais et à Vertex AI, prestataire d’analyse : collectée, pas partagée.'),
 
-  { question: 'PSL_DATA_TYPES_APP_ACTIVITY', response: 'PSL_USER_GENERATED_CONTENT', value: true, why: 'Description écrite d’un repas envoyée au relais Halcya (analyse par Gemini sur Vertex AI, UE) quand la personne lance l’analyse.' },
-  ...collectedForFunctionality('PSL_USER_GENERATED_CONTENT', 'Envoyée à notre relais et à Vertex AI, prestataire d’analyse : collectée, pas partagée.'),
+  { question: 'PSL_DATA_TYPES_APP_ACTIVITY', response: 'PSL_USER_GENERATED_CONTENT', value: true, why: 'Description écrite d’un repas envoyée au relais Halcya (analyse par Gemini sur Vertex AI, UE) quand la personne lance l’analyse ; texte de « Votre avis » envoyé au relais quand la personne touche « Envoyer » (gardé 90 jours, AVIS-RELAIS-2).' },
+  ...collectedForFunctionality('PSL_USER_GENERATED_CONTENT', 'Envoyés à notre relais (et la description à Vertex AI, prestataire d’analyse) : collectés, pas partagés.'),
 
   ...installIdAnswers,
   ...purchaseAnswers,

@@ -22,7 +22,7 @@ import LineIcon from '../components/LineIcon'
 import FaceUnlockSetting from '../components/FaceUnlockSetting'
 import LanguageSetting from '../components/LanguageSetting'
 import { I18N_EN } from '../i18n/locale.js'
-import { installFingerprint } from '../services/aiRelay'
+import { installFingerprint, sendFeedback, FEEDBACK_MAX_LENGTH } from '../services/aiRelay'
 
 /** Variante play : l'analyse passe par le relais Halcya, sans clé (jalon 6a). */
 function RelayAiBlock() {
@@ -372,18 +372,51 @@ function InstallFingerprint() {
   )
 }
 
-/** « Votre avis » (AVIS) : un lien sortant, rien n'est joint. */
+/**
+ * « Votre avis » (AVIS-RELAIS-2, retours du 04/11) : un texte envoyé au relais sur le geste de la personne, avec la
+ * version et la variante de l'app, rien d'autre. Le lien d'avant (Play Store ou ticket GitHub) reste en secours.
+ */
 function FeedbackBlock() {
   const link = feedbackLink(DISTRIBUTION, CURRENT_VERSION)
+  const [text, setText] = useState('')
+  const [status, setStatus] = useState('idle') // idle | sending | sent | error
+  const [error, setError] = useState('')
+  const send = async () => {
+    setStatus('sending')
+    setError('')
+    try {
+      await sendFeedback(text, { version: CURRENT_VERSION, variant: STORE?.id === 'appstore' ? 'ios' : DISTRIBUTION })
+      setText('')
+      setStatus('sent')
+    } catch (err) {
+      setError(err?.message || 'Votre avis n’a pas pu partir. Réessayez plus tard.')
+      setStatus('error')
+    }
+  }
   return (
     <div className="settings-block">
       <h3 className="section-title">Votre avis</h3>
-      <p className="hint">{link.hint} Aucune donnée n’est jointe.</p>
+      <label className="hint" htmlFor="feedback-text">Un souci, une idée, ce qui vous plaît : écrivez-le ici.</label>
+      <textarea
+        id="feedback-text"
+        className="feedback-text"
+        rows={4}
+        maxLength={FEEDBACK_MAX_LENGTH}
+        value={text}
+        disabled={status === 'sending'}
+        onChange={(e) => { setText(e.target.value); if (status !== 'sending') setStatus('idle') }}
+      />
+      <p className="hint">Seuls ce texte et la version de l’app partent. N’y mettez ni nom, ni e-mail, ni donnée de santé.</p>
+      {status === 'sent' && <p className="hint" role="status" data-testid="feedback-sent">Merci, votre avis est bien arrivé.</p>}
+      {status === 'error' && <p className="hint" role="alert">{error}</p>}
       <div className="actions">
-        <a className="btn btn-secondary settings-link-btn" href={link.url} target="_blank" rel="noopener noreferrer">
-          {link.label}
-        </a>
+        <button type="button" className="btn" onClick={send} disabled={status === 'sending' || !text.trim()}>
+          {status === 'sending' ? 'Envoi…' : 'Envoyer'}
+        </button>
       </div>
+      <p className="hint">
+        Autre moyen : <a href={link.url} target="_blank" rel="noopener noreferrer">{link.fallback}</a>
+      </p>
     </div>
   )
 }

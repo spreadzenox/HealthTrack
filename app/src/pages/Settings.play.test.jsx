@@ -167,11 +167,39 @@ describe('Settings — Votre avis (play)', () => {
     globalThis.fetch = relayAnswer({ ok: true, premium: false, source: null })
   })
 
-  it('renvoie vers la page Halcya du Play Store, rien n’est joint', () => {
+  it('renvoie vers la page Halcya du Play Store en secours', () => {
     renderSettings()
     expect(screen.getByText('Votre avis')).toBeInTheDocument()
-    const link = screen.getByRole('link', { name: 'Donner mon avis sur le Play Store' })
+    const link = screen.getByRole('link', { name: 'la page Halcya du Play Store' })
     expect(link).toHaveAttribute('href', 'https://play.google.com/store/apps/details?id=fr.jpesquet.sante')
-    expect(screen.getByText(/Aucune donnée n’est jointe/)).toBeInTheDocument()
+    expect(screen.getByText(/ni nom, ni e-mail, ni donnée de santé/)).toBeInTheDocument()
+  })
+
+  it('AVIS-RELAIS-2 : envoie le texte au relais sur le geste, avec la version et la variante', async () => {
+    renderSettings()
+    const send = screen.getByRole('button', { name: 'Envoyer' })
+    expect(send).toBeDisabled()
+    // rien ne part tant que la personne n'a pas touché « Envoyer »
+    fireEvent.change(screen.getByLabelText(/Un souci, une idée/), { target: { value: 'Le graphique du sommeil est super' } })
+    expect(globalThis.fetch.mock.calls.filter(([url]) => String(url).endsWith('/v1/feedback'))).toHaveLength(0)
+    fireEvent.click(send)
+    await waitFor(() => expect(screen.getByTestId('feedback-sent')).toBeInTheDocument())
+    const calls = globalThis.fetch.mock.calls.filter(([url]) => String(url).endsWith('/v1/feedback'))
+    expect(calls).toHaveLength(1)
+    const body = JSON.parse(calls[0][1].body)
+    expect(body).toMatchObject({ text: 'Le graphique du sommeil est super', variant: 'play' })
+    expect(Object.keys(body).sort()).toEqual(['text', 'variant', 'version'])
+    expect(screen.getByLabelText(/Un souci, une idée/)).toHaveValue('')
+  })
+
+  it('AVIS-RELAIS-2 : affiche le message du relais quand l’envoi est refusé', async () => {
+    globalThis.fetch = vi.fn((url) => Promise.resolve(String(url).endsWith('/v1/feedback')
+      ? { ok: false, status: 429, json: () => Promise.resolve({ error: 'quota', message: 'Vous avez déjà envoyé 5 avis aujourd’hui.' }) }
+      : { ok: true, status: 200, json: () => Promise.resolve({ ok: true, premium: false, source: null }) }))
+    renderSettings()
+    fireEvent.change(screen.getByLabelText(/Un souci, une idée/), { target: { value: 'Encore un' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('5 avis')
+    expect(screen.getByLabelText(/Un souci, une idée/)).toHaveValue('Encore un')
   })
 })

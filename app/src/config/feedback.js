@@ -14,6 +14,7 @@ export function feedbackLink(distribution, version) {
     return {
       url: PLAY_STORE_URL,
       label: 'Donner mon avis sur le Play Store',
+      fallback: 'la page Halcya du Play Store',
       hint: 'Sur la page Halcya du Play Store : « Envoyer des commentaires privés au développeur » pendant le test, « Noter cette application » ensuite.',
     }
   }
@@ -21,6 +22,7 @@ export function feedbackLink(distribution, version) {
   return {
     url: `${GITHUB_ISSUES_URL}?${new URLSearchParams({ title })}`,
     label: 'Envoyer un avis',
+    fallback: 'un ticket GitHub',
     hint: 'Un ticket GitHub s’ouvre avec le numéro de version : décrivez ce qui vous gêne ou vous plaît.',
   }
 }

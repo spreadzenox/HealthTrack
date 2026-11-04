@@ -180,7 +180,7 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   espacer (24 h minimum, variable testée dans `alphaGate`) et le dire en tête du résumé. Erreur d'envoi = erreur exacte
   en tête du résumé, rien de contourné.
 - [ ] **AVIS-RELAIS-1..4** (retour (2), étude I219) ~~relais `POST /v1/feedback` (texte, version, variante ; quotas ; TTL
-  à demander)~~ ✅ 04/11 22:35 (`relay/src/feedback.js`, 10 tests, P46 pour le TTL) → formulaire « Votre avis » dans l'app + Sécurité des données + confidentialité → workflow de résumé
+  à demander)~~ ✅ 04/11 22:35 (`relay/src/feedback.js`, 10 tests, P46 pour le TTL) → ~~formulaire « Votre avis » dans l'app + Sécurité des données + confidentialité~~ ✅ 04/11 23:35 (AVIS-RELAIS-2 : Paramètres, `sendFeedback`, lien d'avant en secours ; Sécurité des données inchangée, « Autre contenu généré par l'utilisateur » déjà déclaré ; confidentialité §« Votre avis ») → workflow de résumé
   anonyme quotidien → avis du Play Store en lecture (`reviews.list`). Plantages : VITALS-1 (attend P43).
 - [ ] **VENTRE-BE-1** (retour (3), étude I220) ~~d'ici la réponse du propriétaire : chaque piste dit « Ventre » ou
   « Bien-être » (étiquette pêche / menthe)~~ ✅ 04/11 21:35 (`DomainTag`, Analyses) ; puis, si accord, notes du ventre comme auto-déclaration à poids faible de
