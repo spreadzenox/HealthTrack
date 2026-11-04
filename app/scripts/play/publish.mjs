@@ -45,14 +45,16 @@ export function isMissingDeclaration(err) {
 
 /**
  * Notes de version (≤ 500 caractères, limite de Play) depuis les entrées « Nouveautés » les plus récentes :
- * un titre par ligne, de la plus récente à la plus ancienne, sans couper une ligne en deux.
+ * un titre par ligne, de la plus récente à la plus ancienne, sans couper une ligne en deux. Une entrée dont
+ * `variants` exclut `variant` (play par défaut, comme `changelogFor`) n'y figure jamais.
  */
-export function buildReleaseNotes(entries, max = NOTES_MAX) {
+export function buildReleaseNotes(entries, max = NOTES_MAX, variant = 'play') {
   const sorted = [...entries].sort((a, b) => (b.id ?? '').localeCompare(a.id ?? ''))
   const lines = []
   let len = 0
   for (const e of sorted) {
     if (!e.title) continue
+    if (Array.isArray(e.variants) && !e.variants.includes(variant)) continue
     const line = `• ${e.title}`
     const add = (lines.length ? 1 : 0) + line.length
     if (len + add > max) break

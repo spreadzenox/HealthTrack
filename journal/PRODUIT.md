@@ -186,6 +186,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **04/11 04:35** — **NOTES-VARIANTES** : les notes de version Play (`buildReleaseNotes`) écartent les Nouveautés réservées à une autre variante (test). Relance manuelle du relais refusée à la session (INSTALLS-21b reporté au prochain déploiement). Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 03:35** — **POL-PLAY-105** : audit de la version Play sur données vierges en thème sombre (16 pages, rien de cassé) ; rail de la barre « Vos pistes arrivent dans N jours » plus visible (token `--lilac-track`, test de contraste).
 - **04/11 02:35** — **IOS-ONB-ACTION** (demande iOS du 29/10) : onboarding, « Autoriser Health Connect » ne s’étire plus sur toute la hauteur de l’écran (646 px → 52 px, `flex: 0 0 auto` sur `.onb-action`, test CSS) ; banc visuel `--onboarding=health`. Six notes de Nouveautés du 30–31/10 rendues justes sur iPhone (variantes ou formulation sans Health Connect). PR #670 (I86 ventre) mergée.
 - **04/11 01:35** — **I86, pistes du ventre** : « Masquer cette piste » aussi dans « Votre ventre et vos repas » (l’aliment, tous délais) ; compteur, « Tout réafficher » et carte lilas suivent. Aucun calcul changé.
