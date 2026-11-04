@@ -33,6 +33,12 @@ ni ici. Décisions et infrastructure : `journal/INFRA.md`, jalon 6 de `journal/P
   `originalTransactionId`, collection Firestore `appstore-status`, aucun identifiant de personne) : une transaction
   signée avant le verrou ne donne plus de droits ; un renouvellement ou un nouvel achat le lève. 200 si traitée ou à
   ignorer, 400 si la signature est fausse, 503 si Firestore est injoignable (l'App Store relivre).
+- `POST /v1/feedback` (en-tête `X-Install-Id`, AVIS-RELAIS-1) : `{ "text": "…", "version": "1.0.496", "variant":
+  "play" | "sideload" | "ios" }` → `{ "ok": true }`. Envoyé seulement sur geste de l'utilisateur (« Votre avis »).
+  Texte de 2 000 caractères au plus, e-mails et longs numéros masqués à la réception ; gardé dans Firestore (collection
+  `feedback`) avec version, variante, plateforme et jour, **sans identifiant d'installation ni empreinte**, champ
+  `expireAt` = 90 jours (politique TTL, action du propriétaire P46). Quota en mémoire : 5 par installation et par jour,
+  200 par jour, 20 par minute (`FEEDBACK_*_CAP`) ; 429 au-delà, 503 si Firestore ne répond pas (quota rendu).
 - `GET /health` → `{ "ok": true }`.
 
 Garde-fous : les consignes sont construites par le relais (pas de prompt libre), métadonnées des photos retirées,

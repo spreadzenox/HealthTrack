@@ -95,6 +95,10 @@ export function loadConfig(env = process.env) {
     verifyPerDay: int(env.VERIFY_DAILY_CAP, 50),
     verifyGlobalPerDay: int(env.VERIFY_GLOBAL_DAILY_CAP, 5000),
     verifyPerMinute: int(env.VERIFY_PER_MINUTE_CAP, 60),
+    // « Votre avis » (AVIS-RELAIS-1) : 5 par installation et par jour, 200 par jour au total, 20 par minute
+    feedbackPerDay: int(env.FEEDBACK_DAILY_CAP, 5),
+    feedbackGlobalPerDay: int(env.FEEDBACK_GLOBAL_DAILY_CAP, 200),
+    feedbackPerMinute: int(env.FEEDBACK_PER_MINUTE_CAP, 20),
     ingredientsPath: env.INGREDIENTS_PATH || DEFAULT_INGREDIENTS,
     // WebView Capacitor (https://localhost sur Android) et serveur de développement Vite
     allowedOrigins: list(env.ALLOWED_ORIGINS, ['https://localhost', 'http://localhost', 'capacitor://localhost', 'http://localhost:5173']),
