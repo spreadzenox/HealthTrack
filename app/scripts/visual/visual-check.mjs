@@ -104,6 +104,8 @@
  *   npm run visual -- --size=360x640 --dpr=3   # autre viewport (captures 1080×1920 de la fiche Play)
  *   npm run visual -- --play --size=360x780     # petit téléphone : « TEXTE QUI DÉBORDE » signale les boutons, liens
  *                                          # et onglets dont le libellé dépasse ou touche le bord (avertissement)
+ *                                          # « SANS NOM ACCESSIBLE » / « CIBLE < 44 px » : bouton icône sans
+ *                                          # aria-label, champ sans étiquette, cible tactile trop petite (avertissement)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -262,6 +264,70 @@ function findTextOverflow() {
     }
   }
   return out.slice(0, 8)
+}
+
+/**
+ * Accessibilité (lecteur d'écran, doigts) : éléments interactifs visibles sans nom accessible (bouton icône sans
+ * aria-label, champ sans étiquette), et cibles tactiles de moins de 44 px de côté (DESIGN.md). Exécuté dans la page ;
+ * un avertissement comme « TEXTE QUI DÉBORDE », pas un échec. Les liens dans une phrase ne comptent pas comme cibles.
+ */
+function findA11y() {
+  const unnamed = []
+  const small = []
+  const sel = 'button, a[href], input:not([type="hidden"]), select, textarea, [role="button"], [role="tab"], [role="switch"], [role="checkbox"], [role="radio"], summary'
+  const label = (el) => {
+    const t = (s) => (s || '').trim().replace(/\s+/g, ' ')
+    if (t(el.getAttribute('aria-label'))) return t(el.getAttribute('aria-label'))
+    const by = el.getAttribute('aria-labelledby')
+    if (by) {
+      const txt = by.split(/\s+/).map((id) => document.getElementById(id)?.textContent || '').join(' ')
+      if (t(txt)) return t(txt)
+    }
+    if (el.labels?.length) {
+      const txt = [...el.labels].map((l) => l.textContent).join(' ')
+      if (t(txt)) return t(txt)
+    }
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName)) {
+      if (['button', 'submit', 'reset'].includes(el.type) && t(el.value)) return t(el.value)
+      return t(el.getAttribute('title')) || t(el.getAttribute('placeholder'))
+    }
+    const alt = [...el.querySelectorAll('img[alt], svg[aria-label], [role="img"][aria-label]')]
+      .map((i) => i.getAttribute('alt') || i.getAttribute('aria-label')).join(' ')
+    return t(el.innerText) || t(alt) || t(el.getAttribute('title'))
+  }
+  const describe = (el) => {
+    const cls = typeof el.className === 'string' && el.className ? '.' + el.className.trim().split(/\s+/)[0] : ''
+    return `${el.tagName.toLowerCase()}${cls}`
+  }
+  for (const el of document.querySelectorAll(sel)) {
+    const st = getComputedStyle(el)
+    const r = el.getBoundingClientRect()
+    if (st.display === 'none' || st.visibility === 'hidden' || r.width === 0 || r.height === 0) continue
+    if (el.closest('[aria-hidden="true"], [inert]')) continue
+    // Dans un volet replié (hors de son <summary>) : pas rendu, innerText vide
+    let hidden = false
+    for (let d = el.parentElement?.closest('details:not([open])'); d && !hidden; d = d.parentElement?.closest('details:not([open])')) {
+      hidden = !d.querySelector(':scope > summary')?.contains(el)
+    }
+    if (hidden) continue
+    // Champ fichier caché : la cible est l'étiquette ou le bouton qui l'ouvre
+    if (el.tagName === 'INPUT' && el.type === 'file') continue
+    if (el.tagName === 'INPUT' && ['radio', 'checkbox'].includes(el.type) && (st.opacity === '0' || r.width < 2)) continue
+    if (!label(el)) {
+      const d = describe(el)
+      if (!unnamed.includes(d)) unnamed.push(d)
+    }
+    // Lien dans une phrase (inline au milieu d'un texte) : pas une cible isolée
+    const inline = el.tagName === 'A' && st.display === 'inline' && (el.parentElement?.innerText || '').trim().length > (el.innerText || '').trim().length + 2
+    // La zone touchable peut être agrandie par une étiquette englobante (case dans un <label>)
+    const box = el.closest('label')?.getBoundingClientRect() || r
+    if (!inline && (box.height < 43.5 || box.width < 43.5)) {
+      const name = (label(el) || describe(el)).slice(0, 30)
+      const d = `${name} ${Math.round(box.width)}×${Math.round(box.height)}`
+      if (!small.includes(d)) small.push(d)
+    }
+  }
+  return { unnamed: unnamed.slice(0, 8), small: small.slice(0, 8) }
 }
 
 /**
@@ -1155,6 +1221,7 @@ async function main() {
           () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
         )
         current.textOverflow = await page.evaluate(findTextOverflow)
+        current.a11y = await page.evaluate(findA11y)
       } catch (e) {
         current.error = String(e?.message || e)
       }
@@ -1173,6 +1240,8 @@ async function main() {
         r.console.length ? `${r.console.length} msg console` : null,
         r.overflowX ? 'DÉBORDEMENT HORIZONTAL' : null,
         r.textOverflow?.length ? `TEXTE QUI DÉBORDE (« ${r.textOverflow.join(' », « ')} »)` : null,
+        r.a11y?.unnamed.length ? `SANS NOM ACCESSIBLE (${r.a11y.unnamed.join(', ')})` : null,
+        r.a11y?.small.length ? `CIBLE < 44 px (« ${r.a11y.small.join(' », « ')} »)` : null,
         r.frenchLeft?.count ? `${r.frenchLeft.count} mot(s) français restant(s) (ex. « ${r.frenchLeft.samples.join(' », « ')} »)` : null,
       ].filter(Boolean)
       console.log(`  ${r.path.padEnd(18)} ${flags.join(' · ')}${r.tiles ? `  (${r.tiles.length} écran(s))` : ''}`)

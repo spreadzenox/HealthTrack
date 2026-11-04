@@ -123,7 +123,7 @@
   cursor: pointer;
   font-size: 0.8rem;
   color: var(--text-muted);
-  min-height: 32px;
+  min-height: var(--tap-min);
   display: flex;
   align-items: center;
   gap: 6px;
