@@ -26,7 +26,13 @@ Type : 🎨 run de code (22:35 Paris).
 - `npm run visual` : toutes les pages ok ; `/recommendations --gut-links` regardé en clair et en sombre : étiquettes
   lisibles, distinctes des badges, aucun débordement.
 
+## Après le merge (#695, `5d403aa`)
+- Tests, Build & Release (**v496**, APK 34 538 419 octets), Play — AAB (test interne **100778**) et émulateur verts.
+- **Premier envoi automatique sur Alpha réussi** (« Play — Alpha », run 41912610888) : deux passages « en attente »
+  (émulateur en cours), puis « envoi (6 fichiers de l'app modifiés depuis 100776) » → **100778 placé sur l'alpha**
+  (même AAB que le test interne). Google l'examine. 100776 était peut-être encore en examen : si les examens
+  s'enchaînent sans aboutir, espacer les envois (consigne du 04/11), à surveiller au prochain bilan.
+
 ## Suite
-- Après le merge : premier vrai envoi automatique attendu sur Alpha (cette version change l'app).
 - VENTRE-BE-1 étape 2 attend « I220 oui / non » du propriétaire. Prochain run de code : AVIS-RELAIS-1 (route
   `POST /v1/feedback` du relais) ou ANALYSES-ONGLETS (sous-onglets Bien-être / Ventre / FODMAP / Tendances).
