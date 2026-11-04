@@ -118,6 +118,20 @@ jobs:
         working-directory: app
         run: bash scripts/check-play-manifest.sh
 
+      # PLUGIN-API-2 : Android Lint « NewApi » sur le code natif de l'app (minSdk 26) : tout appel d'une API plus
+      # récente sans test de version fait échouer ce job (le job API 28 ne voit que le démarrage).
+      - name: Vérifier les API Android récentes (lint NewApi, minSdk 26)
+        working-directory: app/android
+        run: ./gradlew :app:lintPlayDebug -PnewApiOnly --no-daemon
+
+      - name: Publier le rapport lint NewApi
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-newapi
+          path: app/android/app/build/reports/lint-results-playDebug.*
+          if-no-files-found: ignore
+
       # POL-PLAY-10 (R8a) : APK play RELEASE, optimisé et obscurci par R8 comme l'AAB envoyé sur Play, signé avec la clé
       # de debug et WebView inspectable POUR CE TEST SEULEMENT (capacitor.config.json modifié dans cet APK, jamais
       # publié) : .github/scripts/play-release/smoke.mjs y appelle les plugins natifs (job API 35).
