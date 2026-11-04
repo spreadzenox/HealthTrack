@@ -186,6 +186,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **04/11 03:35** — **POL-PLAY-105** : audit de la version Play sur données vierges en thème sombre (16 pages, rien de cassé) ; rail de la barre « Vos pistes arrivent dans N jours » plus visible (token `--lilac-track`, test de contraste).
 - **04/11 02:35** — **IOS-ONB-ACTION** (demande iOS du 29/10) : onboarding, « Autoriser Health Connect » ne s’étire plus sur toute la hauteur de l’écran (646 px → 52 px, `flex: 0 0 auto` sur `.onb-action`, test CSS) ; banc visuel `--onboarding=health`. Six notes de Nouveautés du 30–31/10 rendues justes sur iPhone (variantes ou formulation sans Health Connect). PR #670 (I86 ventre) mergée.
 - **04/11 01:35** — **I86, pistes du ventre** : « Masquer cette piste » aussi dans « Votre ventre et vos repas » (l’aliment, tous délais) ; compteur, « Tout réafficher » et carte lilas suivent. Aucun calcul changé.
 - **04/11 00:35** — **I86 « Masquer ce lien »** : dans Analyses, chaque lien et chaque piste à tester se masque derrière son chevron, « Tout réafficher » en bas ; réglage local exporté avec le JSON, effacé avec les données ; la carte lilas de l’Accueil suit. Aucun calcul changé. Relais revérifié (27/11, 06/11). Prochain : TEST-ALPHA-1 (07–08/11).
