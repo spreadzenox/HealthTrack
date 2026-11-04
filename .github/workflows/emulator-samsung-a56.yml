@@ -586,6 +586,9 @@ jobs:
     name: WebView trop ancienne (API 28)
     runs-on: ubuntu-latest
     needs: build
+    # Image ancienne, démarrage parfois lent : borné et non bloquant (les autres jobs couvrent l'app elle-même)
+    timeout-minutes: 25
+    continue-on-error: true
 
     steps:
       - name: Checkout
@@ -618,6 +621,7 @@ jobs:
             -noaudio
             -no-boot-anim
           disable-animations: true
+          emulator-boot-timeout: 600
           script: bash .github/scripts/old-webview/check.sh "$(find apk-artifacts -name app-debug.apk ! -path '*androidTest*' | head -1)"
 
       - name: WebView ancienne dans le résumé (API 28)

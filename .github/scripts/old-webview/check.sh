@@ -10,18 +10,18 @@ mkdir -p "$OUT"
 MIN=$(node -e "console.log(require('./app/capacitor.config.json').android.minWebViewVersion)")
 PKG=com.healthtrack.app
 
-adb install -r "$APK" >/dev/null
-WV=$(adb shell dumpsys webviewupdate | tr -d '\r' | grep -m1 -oE 'Current WebView package \(name, version\): \([^)]*\)' || true)
+timeout 180 adb install -r "$APK" >/dev/null || { echo "::error::installation impossible"; exit 1; }
+WV=$(timeout 30 adb shell dumpsys webviewupdate | tr -d '\r' | grep -m1 -oE 'Current WebView package \(name, version\): \([^)]*\)' || true)
 MAJOR=$(echo "$WV" | grep -oE ', [0-9]+' | head -1 | tr -dc '0-9')
-adb logcat -c
-adb shell am start -W -n "$PKG/.MainActivity" >/dev/null
+timeout 15 adb logcat -c
+timeout 60 adb shell am start -n "$PKG/.MainActivity" >/dev/null
 sleep 12
-adb exec-out screencap -p > "$OUT/ecran.png"
-adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-adb pull /sdcard/ui.xml "$OUT/ui.xml" >/dev/null 2>&1 || true
-adb logcat -d > "$OUT/logcat.txt"
+timeout 30 adb exec-out screencap -p > "$OUT/ecran.png"
+timeout 60 adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+timeout 30 adb pull /sdcard/ui.xml "$OUT/ui.xml" >/dev/null 2>&1 || true
+timeout 30 adb logcat -d > "$OUT/logcat.txt"
 
-ALIVE=$(adb shell pidof "$PKG" | tr -d '\r')
+ALIVE=$(timeout 15 adb shell pidof "$PKG" | tr -d '\r')
 CRASH=$(grep -c "FATAL EXCEPTION" "$OUT/logcat.txt" || true)
 SHOWN=$(grep -c "Android System WebView" "$OUT/ui.xml" 2>/dev/null || true)
 
