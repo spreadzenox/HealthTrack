@@ -3,7 +3,7 @@
   align-items: center;
   gap: 12px;
   margin: 4px 0 16px;
-  padding: 10px 12px 10px 14px;
+  padding: 6px 6px 6px 14px;
   background: rgba(var(--brand-rgb), 0.1);
   border: 1px solid rgba(var(--brand-rgb), 0.35);
   border-radius: var(--radius);
@@ -24,7 +24,13 @@
 }
 
 .whats-new-banner-link {
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: var(--tap-min);
+  min-width: var(--tap-min);
+  padding: 0 14px;
   border-radius: var(--radius);
   background: var(--accent);
   color: var(--bg);
@@ -34,8 +40,8 @@
 }
 
 .whats-new-banner-close {
-  width: 32px;
-  height: 32px;
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
   background: transparent;
   color: var(--text-muted);
   font-size: 1.3rem;

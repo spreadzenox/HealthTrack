@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Halcya</title>
+  <!-- WEBVIEW-MIN (04/11) : page affichée par Capacitor (server.errorPath de capacitor.config.json) quand la WebView
+       du téléphone est plus ancienne que android.minWebViewVersion, ou quand la page principale ne se charge pas.
+       Écrite pour une WebView 60 : JavaScript ES5, CSS sans flex gap ni fonctions récentes, rien de l'extérieur.
+       Le script choisit le texte : WebView ancienne (Object.hasOwn absent) → mise à jour ; sinon → réessayer. -->
+  <style>
+    :root { --bg: #FFFFFF; --surface: #F4F6F5; --ink: #10231D; --ink-2: #4A5E57; --brand: #0B7A5E; --mint: #E3F5EE; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #10231D; --surface: #17302A; --ink: #F1F5F3; --ink-2: #B8C9C2; --mint: #1C3A31; }
+    }
+    html, body { margin: 0; background: #FFFFFF; background: var(--bg); }
+    body {
+      font-family: system-ui, -apple-system, Roboto, sans-serif; color: #10231D; color: var(--ink);
+      line-height: 1.5; padding: 48px 20px 32px; max-width: 480px; margin: 0 auto;
+    }
+    .mark { width: 64px; height: 64px; border-radius: 16px; display: block; margin: 0 0 24px; }
+    h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 12px; }
+    p { margin: 0 0 14px; color: #4A5E57; color: var(--ink-2); }
+    .card { background: #E3F5EE; background: var(--mint); border-radius: 22px; padding: 16px 18px; margin: 20px 0; }
+    .card p { margin: 0; color: #10231D; color: var(--ink); }
+    .button {
+      display: block; box-sizing: border-box; width: 100%; min-height: 52px; line-height: 52px; border-radius: 26px;
+      background: #0B7A5E; color: #FFFFFF; text-align: center; font-weight: 700; font-size: 1rem;
+      text-decoration: none; border: 0; margin: 24px 0 12px; font-family: inherit;
+    }
+    [hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <svg class="mark" viewBox="0 0 108 108" aria-hidden="true">
+    <rect width="108" height="108" fill="#10231D"/>
+    <rect x="30" y="28" width="11" height="52" rx="5.5" fill="#FFFFFF"/>
+    <rect x="67" y="28" width="11" height="52" rx="5.5" fill="#FFFFFF"/>
+    <path d="M36 64 C46 64 46 50 54 50 C62 50 62 42 72 42" fill="none" stroke="#5EE0B5" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="54" cy="50" r="5.5" fill="#FFB84D"/>
+  </svg>
+
+  <main id="ancienne">
+    <h1>Mettez à jour Android System WebView</h1>
+    <p>Halcya s'affiche avec ce composant d'Android. Sur ce téléphone, sa version est trop ancienne.</p>
+    <a class="button" href="https://play.google.com/store/apps/details?id=com.google.android.webview">Ouvrir le Play Store</a>
+    <div class="card">
+      <p>Sur Android 9 ou plus ancien, mettez aussi à jour Google Chrome, puis rouvrez Halcya.</p>
+    </div>
+  </main>
+
+  <main id="autre" hidden>
+    <h1>Halcya ne s'est pas ouverte</h1>
+    <p>Vos données sont toujours sur le téléphone.</p>
+    <a class="button" href="/" id="retry">Réessayer</a>
+  </main>
+
+  <script>
+    (function () {
+      var recente = typeof Object.hasOwn === 'function' && typeof [].at === 'function';
+      if (recente) {
+        document.getElementById('ancienne').hidden = true;
+        document.getElementById('autre').hidden = false;
+      }
+    })();
+  </script>
+</body>
+</html>
