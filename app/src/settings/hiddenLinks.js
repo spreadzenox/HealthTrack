@@ -41,6 +41,11 @@ export function setHiddenLinks(keys) {
   return clean
 }
 
+/** Clé d'une piste repas → ventre : l'aliment (ou le sous-groupe FODMAP), tous délais confondus. */
+export function gutLinkKey(link) {
+  return `gut:${link.factor}`
+}
+
 export function hideLink(key) {
   return setHiddenLinks([...getHiddenLinks(), key])
 }

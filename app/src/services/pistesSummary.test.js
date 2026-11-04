@@ -52,3 +52,10 @@ describe('pistesSummary', () => {
     expect(DELETED_KEYS).toContain(PISTES_SUMMARY_KEY)
   })
 })
+
+describe('summarizePistes — pistes du ventre masquées (I86)', () => {
+  it('ne cite plus une piste repas → ventre masquée', () => {
+    const s = summarizePistes(analysis({ gut: ['Oignon', 'Ail'] }), ['gut:oignon'])
+    expect(s.gut).toEqual(['Ail → ventre'])
+  })
+})

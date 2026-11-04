@@ -68,3 +68,25 @@ describe('GutLinks — pistes par sous-groupe FODMAP (N5)', () => {
     expect(screen.getByText(/repère général par portion \(une hypothèse de départ\)\. Vos données priment\./)).toBeTruthy()
   })
 })
+
+describe('GutLinks — masquer une piste (I86)', () => {
+  const gut = { status: 'links', noteDays: 70, tested: 12, links: [link(), link({ factor: 'ail', label: 'Ail' })] }
+
+  it('« Masquer cette piste » seulement derrière le chevron, avec la clé de l’aliment', () => {
+    const hidden = []
+    render(<GutLinks gut={gut} onHide={(k) => hidden.push(k)} />)
+    expect(screen.queryByRole('button', { name: 'Masquer cette piste' })).toBeNull()
+    fireEvent.click(screen.getAllByRole('button', { name: /détails/i })[0])
+    fireEvent.click(screen.getByRole('button', { name: 'Masquer cette piste' }))
+    expect(hidden).toEqual(['gut:oignon'])
+  })
+
+  it('n’affiche plus une piste masquée, et le dit quand tout est masqué', () => {
+    const { unmount } = render(<GutLinks gut={gut} hidden={['gut:oignon']} />)
+    expect(screen.queryByText(/Oignon → ventre/)).toBeNull()
+    expect(screen.getByText(/Ail → ventre/)).toBeTruthy()
+    unmount()
+    render(<GutLinks gut={gut} hidden={['gut:oignon', 'gut:ail']} />)
+    expect(screen.getByText('Vous avez masqué toutes les pistes du ventre.')).toBeTruthy()
+  })
+})
