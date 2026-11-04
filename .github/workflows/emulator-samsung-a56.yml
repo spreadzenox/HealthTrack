@@ -11,6 +11,7 @@
 #   emulator-test-api36 : image API 36 (Android 16 / One UI 8 — cible de correction HC)
 #   emulator-test-api34-edge : image API 34, encarts du bord à bord avant Android 15 (POL-PLAY-9)
 #   emulator-test-api28-old-webview : Android 9, WebView d’origine trop ancienne → page de mise à jour (WEBVIEW-MIN)
+#   emulator-test-api31-native : Android 12, écrans du premier lancement et méthodes natives de lecture (PLUGIN-API-2)
 #
 # Ce workflow est déclenché sur push vers main, sur les PR vers main, et
 # manuellement (workflow_dispatch). Les branches de PR (ex. cursor/**) ne
@@ -650,6 +651,71 @@ jobs:
           path: |
             old_webview.md
             old-webview/
+          if-no-files-found: warn
+
+  # PLUGIN-API-2 (04/11) : Android 12 avec une WebView qui lance le JS : parcours des écrans du premier lancement et
+  # appel des méthodes natives de lecture des plugins. Le job API 28 ne voit que le démarrage ; celui-ci exécute les
+  # corps des méthodes, où une API plus récente sans test de version ferait planter l'app sous Android 8 à 12.
+  emulator-test-api31-native:
+    name: Méthodes natives sous Android 12 (API 31)
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Télécharger les APKs buildés
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-build
+          path: apk-artifacts
+
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # WebSocket intégré pour piloter la WebView (protocole DevTools)
+      - name: Configurer Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Lancer l'émulateur API 31 et appeler les méthodes natives
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          emulator-options: >-
+            -no-snapshot-save
+            -no-window
+            -gpu swiftshader_indirect
+            -noaudio
+            -no-boot-anim
+          disable-animations: true
+          emulator-boot-timeout: 600
+          script: |
+            adb install -r "$(find apk-artifacts -name app-debug.apk ! -path '*androidTest*' | head -1)"
+            node .github/scripts/native-sweep/check.mjs
+
+      - name: Méthodes natives dans le résumé (API 31)
+        if: always()
+        run: cat native_sweep.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Publier les captures (API 31)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-sweep-api31
+          path: |
+            native_sweep.md
+            native-sweep/
           if-no-files-found: warn
 
   # ─────────────────────────────────────────────────────────────────────────────
