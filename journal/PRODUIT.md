@@ -186,6 +186,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **04/11 01:35** — **I86, pistes du ventre** : « Masquer cette piste » aussi dans « Votre ventre et vos repas » (l’aliment, tous délais) ; compteur, « Tout réafficher » et carte lilas suivent. Aucun calcul changé.
 - **04/11 00:35** — **I86 « Masquer ce lien »** : dans Analyses, chaque lien et chaque piste à tester se masque derrière son chevron, « Tout réafficher » en bas ; réglage local exporté avec le JSON, effacé avec les données ; la carte lilas de l’Accueil suit. Aucun calcul changé. Relais revérifié (27/11, 06/11). Prochain : TEST-ALPHA-1 (07–08/11).
 - **03/11 23:35** — **Lint à 0** : les 7 erreurs ESLint historiques corrigées (deux `setState` dans un effet, espaces insécables dans une expression régulière, globales de Vite et de Node), et le check « Frontend (Vitest) » lance maintenant `npm run lint` : toute nouvelle erreur bloque la PR. Rien ne change dans l’app. Prochain : TEST-ALPHA-1 (07–08/11).
 - **03/11 22:35** — **FIN-LANCEMENT-2** (I213) : au premier lancement après la fin de Gold offert, carte Accueil « Le test est terminé. Merci ! » · « Rien n’est effacé : votre journal et vos mesures restent dans l’app. » · « Voir les formules » ; une fois par date de fin, pas au-delà de 30 jours, rien pour un abonné ni dans l’app iPhone. Prochain : TEST-ALPHA-1 (07–08/11), FIN-LANCEMENT-MSG (vers le 24/11).
