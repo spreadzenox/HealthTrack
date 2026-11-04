@@ -161,8 +161,8 @@ export async function refreshCredits({ fetchImpl = globalThis.fetch, timeoutMs =
 
 const NETWORK_MESSAGE = "Pas de connexion au service d’analyse IA. Vérifiez votre connexion et réessayez."
 
-async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = requestIntegrity, testDevice = testEnvironment } = {}) {
-  const headers = { 'Content-Type': 'application/json', ...relayHeaders() }
+/** Ajoute le jeton Play Integrity (ou la raison de son absence) et le signal des appareils de test de Google. */
+async function addIntegrityHeaders(headers, { integrity = requestIntegrity, testDevice = testEnvironment } = {}) {
   // Jeton Play Integrity (variante play) : le relais vérifie que la demande vient de l'app Google Play (6b-2b) ;
   // sans jeton, seulement la raison (délai, code d'erreur de Google Play) pour son bilan avant « enforce » (6b-2c-2)
   const result = await integrity(headers['X-Install-Id'])
@@ -174,6 +174,11 @@ async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY
   const test = await testDevice()
   if (test === true || test?.testLab === true) headers['X-Test-Device'] = '1'
   if (typeof test?.env === 'string') headers['X-Test-Env'] = test.env
+}
+
+async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = requestIntegrity, testDevice = testEnvironment } = {}) {
+  const headers = { 'Content-Type': 'application/json', ...relayHeaders() }
+  await addIntegrityHeaders(headers, { integrity, testDevice })
   const controller = typeof AbortController === 'function' ? new AbortController() : null
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
   let res
@@ -227,4 +232,39 @@ export async function analyzeTextViaRelay(text, options) {
   await loadNutritionTable()
   const data = await postRelay({ kind: 'text', description }, options)
   return toMealResult(data, 'Ce texte ne semble pas décrire un repas.', 'relay')
+}
+
+export const FEEDBACK_MAX_LENGTH = 2000
+const FEEDBACK_NETWORK_MESSAGE = 'Pas de connexion. Vérifiez votre connexion et réessayez.'
+
+/**
+ * « Votre avis » (AVIS-RELAIS-2) : envoie au relais le texte écrit par la personne, avec la version et la variante de
+ * l'app, sur son geste seulement. Ni donnée de santé, ni crédits, ni jeton d'achat : l'identifiant d'installation ne
+ * sert qu'au quota du relais (5 avis par jour), qui ne le garde pas.
+ * @returns {Promise<true>} ; lève une Error au message lisible sinon.
+ */
+export async function sendFeedback(text, { version, variant, fetchImpl = globalThis.fetch, timeoutMs = 20_000, integrity = requestIntegrity, testDevice = testEnvironment } = {}) {
+  const clean = String(text ?? '').trim()
+  if (!clean) throw new Error('Écrivez quelques mots avant d’envoyer.')
+  if (clean.length > FEEDBACK_MAX_LENGTH) throw new Error(`Votre avis dépasse ${FEEDBACK_MAX_LENGTH} caractères.`)
+  const headers = { 'Content-Type': 'application/json', 'X-Install-Id': getInstallId(), ...platformHeaders() }
+  await addIntegrityHeaders(headers, { integrity, testDevice })
+  const controller = typeof AbortController === 'function' ? new AbortController() : null
+  const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
+  let res
+  try {
+    res = await fetchImpl(`${RELAY_URL}/v1/feedback`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ text: clean, version: String(version ?? ''), variant: String(variant ?? '') }),
+      ...(controller ? { signal: controller.signal } : {}),
+    })
+  } catch {
+    throw new Error(FEEDBACK_NETWORK_MESSAGE)
+  } finally {
+    if (timer) clearTimeout(timer)
+  }
+  if (res.ok) return true
+  const data = await res.json().catch(() => null)
+  throw new Error(data?.message || 'Votre avis n’a pas pu partir. Réessayez plus tard.')
 }

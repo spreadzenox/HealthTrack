@@ -424,7 +424,8 @@
   color: var(--text-muted);
 }
 
-.meal-describe textarea {
+.meal-describe textarea,
+.settings-block .feedback-text {
   width: 100%;
   box-sizing: border-box;
   min-height: 64px;
@@ -438,7 +439,8 @@
   resize: vertical;
 }
 
-.meal-describe textarea:focus {
+.meal-describe textarea:focus,
+.settings-block .feedback-text:focus {
   outline: none;
   border-color: var(--accent);
 }
@@ -515,4 +517,11 @@
   margin-top: 10px;
   text-align: center;
   text-decoration: none;
+}
+
+/* « Votre avis » (AVIS-RELAIS-2) : la zone de texte prend la largeur de la carte */
+.settings-block .feedback-text {
+  display: block;
+  margin: 6px 0 4px;
+  min-height: 96px;
 }

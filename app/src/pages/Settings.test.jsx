@@ -142,7 +142,7 @@ describe('Settings — Votre avis (sideload)', () => {
 
   it('ouvre un ticket GitHub prérempli avec la version', () => {
     renderSettings()
-    const link = screen.getByRole('link', { name: 'Envoyer un avis' })
+    const link = screen.getByRole('link', { name: 'un ticket GitHub' })
     expect(link.getAttribute('href')).toMatch(/^https:\/\/github\.com\/spreadzenox\/HealthTrack\/issues\/new\?title=/)
     expect(link).toHaveAttribute('target', '_blank')
   })

@@ -35,13 +35,13 @@
 </head>
 <body>
   <h1>Politique de confidentialité</h1>
-  <p class="updated">Halcya · mise à jour du 1er novembre 2026</p>
+  <p class="updated">Halcya · mise à jour du 4 novembre 2026</p>
 
   <div class="summary">
     <p><strong>En bref</strong></p>
     <ul>
       <li>Vos données restent sur votre téléphone, par défaut. Halcya n'a ni compte, ni serveur qui les garde, ni publicité, ni outil de mesure d'audience.</li>
-      <li>Rien ne quitte le téléphone sans une action de votre part : l'analyse IA d'un repas, la météo, l'export d'une sauvegarde.</li>
+      <li>Rien ne quitte le téléphone sans une action de votre part : l'analyse IA d'un repas, la météo, l'export d'une sauvegarde, un avis que vous nous envoyez.</li>
       <li>La lecture du visage se fait sur le téléphone : aucune image n'est gardée ni envoyée.</li>
       <li>Si la sauvegarde Google de votre téléphone est activée, Android y inclut les données de l'app (chiffrées, gérées par Android, jamais lues par Halcya).</li>
       <li>Vous pouvez tout exporter, et tout effacer, à tout moment.</li>
@@ -171,6 +171,19 @@
     cet identifiant d'installation, qui ne permet pas de vous identifier. Sans abonnement, aucun achat n'est envoyé.
   </p>
 
+  <h2 id="avis">Votre avis (seulement si vous l'envoyez)</h2>
+  <p>
+    Dans Réglages → Paramètres → « Votre avis », vous pouvez nous écrire. Quand vous touchez « Envoyer », et
+    seulement à ce moment, le serveur de Halcya (Google Cloud, Belgique) reçoit votre texte, le numéro de version
+    de l'app et sa version (Google Play ou installée hors Google Play). Aucune donnée de santé n'est jointe. Avant
+    de l'enregistrer, le serveur masque les adresses e-mail et les longs numéros (téléphone, par exemple) que le
+    texte contiendrait. L'identifiant aléatoire d'installation et, dans la version Google Play, le jeton Google Play
+    Integrity accompagnent l'envoi : ils servent seulement à limiter le nombre d'avis par jour contre les abus, et
+    ne sont pas gardés avec l'avis. Le texte est conservé 90 jours au plus dans une base de Google Cloud en Europe
+    (Firestore, Belgique), puis effacé automatiquement. Nous en tirons des résumés anonymes pour améliorer l'app.
+    N'y écrivez ni votre nom, ni votre adresse, ni une information sur votre santé.
+  </p>
+
   <h2>Notifications</h2>
   <p>
     Les rappels (par exemple la note du soir) et les notifications de l'app sont programmés sur le téléphone. Vous pouvez les
@@ -187,7 +200,7 @@
   <h2 id="vos-droits">Vos droits et le contrôle de vos données</h2>
   <ul>
     <li><strong>Exporter</strong> : Réglages → Données → Exporter crée un fichier de sauvegarde que vous gardez où vous voulez.</li>
-    <li><strong>Supprimer</strong> : chaque saisie se supprime dans le Journal ; pour tout effacer, utilisez Réglages → Données → « Supprimer toutes mes données » dans l'application (un export vous est proposé juste avant), ou désinstallez-la. Rien ne reste chez nous, puisque rien n'y est envoyé. Une copie peut rester dans la sauvegarde Google de votre téléphone (voir « Sauvegarde Android »).</li>
+    <li><strong>Supprimer</strong> : chaque saisie se supprime dans le Journal ; pour tout effacer, utilisez Réglages → Données → « Supprimer toutes mes données » dans l'application (un export vous est proposé juste avant), ou désinstallez-la. Rien de votre journal ne reste chez nous, puisque rien n'y est envoyé (un avis envoyé s'efface seul au bout de 90 jours). Une copie peut rester dans la sauvegarde Google de votre téléphone (voir « Sauvegarde Android »).</li>
     <li><strong>Retirer un accès</strong> : Health Connect, caméra, position, données d'utilisation et Bluetooth se retirent dans les paramètres Android.</li>
   </ul>
   <p>
