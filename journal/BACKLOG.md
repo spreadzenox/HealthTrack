@@ -938,8 +938,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       chaque lien et piste à tester des Analyses ; « N liens masqués · Tout réafficher » en bas ; réglage local
       `healthtrack_hidden_links` (`settings/hiddenLinks.js`), joint à l'export JSON (`hiddenLinks`, remplacer / réunir à
       l'import, anciens fichiers acceptés), effacé avec « Supprimer toutes les données » ; la carte lilas de l'Accueil
-      ne cite plus une piste masquée. Aucun calcul changé (comparaisons multiples inchangées). Reste : pistes repas →
-      ventre (`GutLinks`) ; « force et confiance séparées, en mots » (I87).
+      ne cite plus une piste masquée. Aucun calcul changé (comparaisons multiples inchangées). **04/11 01:35** : pistes
+      repas → ventre aussi (`GutLinks`, clé `gut:<aliment>` tous délais confondus, « Vous avez masqué toutes les pistes
+      du ventre. », compteur et carte lilas suivent). Reste : « force et confiance séparées, en mots » (I87).
 
 ### D2 — Performance (mesurer d'abord)
 - [x] Mesure : `npm run perf` (build de prod, 3 ans de démo, `--dense`, CPU ×4) — temps stabilisé, temps bloquant,

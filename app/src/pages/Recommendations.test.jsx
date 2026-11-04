@@ -1127,6 +1127,24 @@ describe('Recommendations — votre ventre et vos repas', () => {
     expect(screen.getByTestId('doctor-report')).toHaveTextContent('Rapport PDF pour mon médecin')
   })
 
+  it('hides a gut link behind its chevron and shows it again with « Tout réafficher » (I86)', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(await gutEntries())
+    renderPage()
+    const section = await screen.findByTestId('gut-links')
+    const card = within(section).getByText(/Oignon → ventre/).closest('li')
+    fireEvent.click(within(card).getByRole('button', { name: /détails/i }))
+    fireEvent.click(within(card).getByRole('button', { name: 'Masquer cette piste' }))
+    expect(within(section).queryByText(/Oignon → ventre/)).toBeNull()
+    expect(JSON.parse(localStorage.getItem('healthtrack_hidden_links'))).toEqual(['gut:oignon'])
+    expect(screen.getByTestId('reco-hidden-line')).toHaveTextContent('1 lien masqué')
+    expect(JSON.parse(localStorage.getItem('healthtrack_pistes_summary')).gut).not.toContain('Oignon → ventre')
+    fireEvent.click(screen.getByRole('button', { name: 'Tout réafficher' }))
+    expect(within(screen.getByTestId('gut-links')).getByText(/Oignon → ventre/)).toBeInTheDocument()
+  })
+
   it('says « trop tôt » in one discreet line while there are only a few days of gut notes', async () => {
     const { saveOnboarding } = await import('../settings/onboarding')
     saveOnboarding({ goal: 'gut' })

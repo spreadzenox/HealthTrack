@@ -6,6 +6,7 @@ import { useEntitlement } from '../hooks/useEntitlement'
 import { FODMAP_FACTOR_LABELS, comparableLabel } from '../services/gutLinks'
 import { fodmapGroupOf } from '../services/gutWindows'
 import { challengePath } from '../services/fodmapChallenge'
+import { gutLinkKey } from '../settings/hiddenLinks'
 import './GutLinks.css'
 import { appLocale } from '../i18n/locale.js'
 
@@ -27,7 +28,7 @@ function linkSentence(link) {
   return `Dans les ${link.whenLabel.replace(' après', '')} ${after}, gêne ou douleur ${times(ex.symptoms, ex.n)}. Le reste du temps, ${times(un.symptoms, un.n)}.`
 }
 
-function GutLinkCard({ link }) {
+function GutLinkCard({ link, onHide }) {
   const [open, setOpen] = useState(false)
   return (
     <li className="gut-link-card">
@@ -63,6 +64,9 @@ function GutLinkCard({ link }) {
               <p className="gut-link-text">
                 « Riche » : au-dessus d’un repère général par portion (une hypothèse de départ). Vos données priment.
               </p>
+            )}
+            {onHide && (
+              <button type="button" className="reco-hide-btn" onClick={onHide}>Masquer cette piste</button>
             )}
           </>
         )}
@@ -102,10 +106,12 @@ function LockedGutLinks({ count }) {
  * phrase honnête quand rien ne ressort. Le « trop tôt » passe par la ligne « Bientôt » de la page. Premium sur la
  * version Play (offert pendant le lancement) ; libre en sideload.
  */
-export default function GutLinks({ gut }) {
+export default function GutLinks({ gut, hidden = [], onHide }) {
   const [ent] = useEntitlement()
   if (!gut || (gut.status !== 'links' && gut.status !== 'none')) return null
-  const locked = gut.status === 'links' && FEATURES.billing && !ent.premium
+  // I86 : une piste masquée (tous délais du même aliment) n'est plus montrée ; rien n'est recalculé
+  const shown = gut.status === 'links' ? gut.links.filter((l) => !hidden.includes(gutLinkKey(l))) : []
+  const locked = shown.length > 0 && FEATURES.billing && !ent.premium
   return (
     <section className="reco-section gut-links" data-testid="gut-links">
       <h3 className="reco-section-title">Votre ventre et vos repas</h3>
@@ -113,11 +119,15 @@ export default function GutLinks({ gut }) {
         {gut.noteDays} jours de notes du ventre · {gut.tested} comparaisons · délais 0–48 h
       </p>
       {locked ? (
-        <LockedGutLinks count={gut.links.length} />
-      ) : gut.status === 'links' ? (
+        <LockedGutLinks count={shown.length} />
+      ) : shown.length > 0 ? (
         <ul className="gut-link-list">
-          {gut.links.map((l) => <GutLinkCard key={`${l.factor}:${l.when}`} link={l} />)}
+          {shown.map((l) => (
+            <GutLinkCard key={`${l.factor}:${l.when}`} link={l} onHide={onHide && (() => onHide(gutLinkKey(l)))} />
+          ))}
         </ul>
+      ) : gut.status === 'links' ? (
+        <p className="gut-links-empty">Vous avez masqué toutes les pistes du ventre.</p>
       ) : (
         <p className="gut-links-empty">
           Aucun aliment ne ressort nettement pour l’instant.

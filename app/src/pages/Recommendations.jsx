@@ -3,7 +3,7 @@ import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { rememberPistesSummary } from '../services/pistesSummary'
-import { getHiddenLinks, hideLink, unhideAllLinks } from '../settings/hiddenLinks'
+import { getHiddenLinks, gutLinkKey, hideLink, unhideAllLinks } from '../settings/hiddenLinks'
 import {
   buildDailyDataset,
   localDateKey,
@@ -672,10 +672,12 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
     rememberPistesSummary(analysis)
   }
   const shownLevers = levers.filter((l) => !hidden.includes(l.variable))
-  const hiddenCount = (levers.length - shownLevers.length) + allLinks.filter((l) => hidden.includes(l.key)).length
+  const gutLinks = showGut && analysis.gut?.status === 'links' ? analysis.gut.links : []
+  const hiddenGut = new Set(gutLinks.map(gutLinkKey).filter((k) => hidden.includes(k))).size
+  const hiddenCount = (levers.length - shownLevers.length) + allLinks.filter((l) => hidden.includes(l.key)).length + hiddenGut
   const hiddenLine = <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
   const soon = soonLines(analysis, showGut, tagLines)
-  const gut = showGut ? <><GutLinks gut={analysis.gut} /><ReintroductionEntry /></> : null
+  const gut = showGut ? <><GutLinks gut={analysis.gut} hidden={hidden} onHide={onHide} /><ReintroductionEntry /></> : null
   // Le rapport décrit d'abord le ventre : avec l'objectif ventre seulement (toujours dans Données)
   const report = showGut && analysis.gut?.status !== 'no_notes' ? <DoctorReportCard /> : null
 

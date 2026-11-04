@@ -87,6 +87,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 04/11 01:35 — [Masquer une piste du ventre](runs/2026-11-04-0135-masquer-piste-ventre.md) | 🎨 | Même geste pour « Votre ventre et vos repas » : flèche de la carte → « Masquer cette piste » (l'aliment disparaît, tous délais confondus, et la carte lilas de l'Accueil ne le cite plus) ; « Tout réafficher » le remet. Rien n'est effacé, aucun calcul ne change. Rien à faire de votre côté |
 | 04/11 00:35 — [Masquer un lien](runs/2026-11-04-0035-masquer-lien.md) | 🎨 | Dans Analyses, un lien ou une piste qui ne vous parle pas (évident, faux) se retire : flèche de la carte → « Masquer ce lien » ; « Tout réafficher » en bas de la liste. Rien n'est effacé, aucun calcul ne change, l'export le garde. Relais revérifié (27/11 Android, 06/11 iPhone). Mergée (#668, v477). Rien à faire de votre côté |
 | 03/11 23:35 — [Lint à zéro](runs/2026-11-03-2335-lint-zero.md) | 🔧 | Ménage du code : les 7 erreurs de vérification automatique (ESLint) qui traînaient depuis octobre sont corrigées, et la CI refuse désormais toute nouvelle erreur. Rien ne change dans l'app, rien à faire de votre côté |
 | 03/11 22:35 — [« Le test est terminé. Merci ! »](runs/2026-11-03-2235-fin-lancement-2.md) | 🔧 | Le 28/11, au premier lancement après la fin de Gold offert, vos testeurs verront une seule fois sur l'Accueil « Le test est terminé. Merci ! », « Rien n'est effacé : votre journal et vos mesures restent dans l'app » et un lien vers les formules. Rien pour un abonné, rien dans l'app iPhone. Rien à faire de votre côté |

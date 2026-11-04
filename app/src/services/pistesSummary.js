@@ -4,7 +4,7 @@
  * calcul, ce qu'il montre (titres seulement), et l'Accueil le relit sans rien recalculer. Un résumé d'un jour ou
  * deux reste juste à l'échelle de pistes qui demandent des semaines de données.
  */
-import { getHiddenLinks } from '../settings/hiddenLinks'
+import { getHiddenLinks, gutLinkKey } from '../settings/hiddenLinks'
 
 export const PISTES_SUMMARY_KEY = 'healthtrack_pistes_summary'
 
@@ -17,7 +17,7 @@ const gutTitle = (link) => `${link.label} → ventre`
  */
 export function summarizePistes(analysis, hidden = getHiddenLinks()) {
   if (!analysis) return null
-  const gut = analysis.gut?.status === 'links' ? analysis.gut.links.map(gutTitle) : []
+  const gut = analysis.gut?.status === 'links' ? analysis.gut.links.filter((l) => !hidden.includes(gutLinkKey(l))).map(gutTitle) : []
   const ready = analysis.correlations?.status === 'ok'
   const levers = ready ? (analysis.correlations.levers ?? []).filter((l) => !hidden.includes(l.variable)).map((l) => l.title ?? l.action).filter(Boolean) : []
   if (!ready && !gut.length) return null
