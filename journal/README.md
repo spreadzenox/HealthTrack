@@ -73,6 +73,7 @@
 > pour que la routine décale alors `until` d'elle-même (jour du refus + 24 jours) ? Répondez oui ou non dans une consigne.
 
 **Toujours en attente de vous (repris de la semaine dernière)**
+- **P45** (1 min, avant d'inviter, nouveau) : Play Console → Halcya → Tester → Test fermé → Alpha → onglet Testeurs → « Adresse e-mail ou URL pour les commentaires » : si vide, mettez l'adresse de contact de la fiche Play. Ensuite, aux jours 4, 8 et 11, collez les retours des testeurs dans une consigne (« RETOURS TESTEURS jour N : … », sans nom ni adresse) : aucune API ne permet à la routine de les lire seule.
 - **P43** (1 min, nouveau, pas urgent) : activer « Google Play Developer Reporting API » dans la console Google Cloud (projet healthtrack-824b26 → API et services → Bibliothèque → Activer). La routine pourra alors lire elle-même les plantages signalés par Google et choisir les versions Alpha du test sans plantage connu.
 - **P37 — votre Gold après la période de lancement (simplifié le 03/11 18:35)** : le relais a trouvé une seule
   installation Android au jeton accepté, la vôtre en toute vraisemblance : empreinte **`5e4a69f72ffb`** (vue du 29/10
@@ -87,6 +88,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 04/11 08:35 — [Idées : retours des testeurs](runs/2026-11-04-0835-idees-retours-testeurs.md) | 💡 | Aucune API ne donne les commentaires d'un test fermé (seulement la production) : la routine ne lira les retours de vos testeurs que si vous les collez dans une consigne, aux jours 4, 8 et 11 (format prêt dans `INVITATION-TESTEURS.md` §4). **P45 (1 min)** : adresse de commentaires sur la piste Alpha. La 2e mise à jour Alpha portera leurs corrections (question 9 du formulaire de production). Rien ne change dans l'app |
 | 04/11 06:35 — [Contrastes](runs/2026-11-04-0635-contrastes.md) | 🎨 | v483. Accessibilité, suite : l’onboarding a été vérifié écran par écran (rien à corriger). Le contrôle des captures mesure désormais le contraste de chaque texte ; « Reçu », « Automatique » (Sources) et « Dans votre norme » (Tendances) étaient un peu pâles en thème clair, ils sont maintenant plus foncés. Rien à faire de votre côté |
 | 04/11 05:35 — [Cibles tactiles](runs/2026-11-04-0535-cibles-tactiles.md) | 🎨 | Accessibilité : « Comment c’est calculé », « Restaurer un achat », « Désactiver » et les liens de la page Licences étaient plus petits que la taille de doigt recommandée (32 à 40 px au lieu de 44) ; corrigé. Le contrôle des captures signale désormais tout bouton trop petit ou sans nom pour les lecteurs d’écran : 0 sur les 16 pages de la version Play. Rien à faire de votre côté |
 | 04/11 04:35 — [Notes de version Play](runs/2026-11-04-0435-notes-play-variantes.md) | 🔧 | En coulisses : les notes de version envoyées au Play Store (ce que vos testeurs lisent à chaque mise à jour) ne pourront plus reprendre une Nouveauté réservée à la version sideload. La relecture du bilan du serveur (robots de Google) a été refusée à la session : reprise au prochain déploiement. Rien ne change dans l'app, rien à faire de votre côté |

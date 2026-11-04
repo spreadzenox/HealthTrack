@@ -142,6 +142,16 @@ visage et Health Connect (les deux restent facultatifs).
 > ont été utilisées, glissez dans le message du jour 3 : « si vous ne l'avez pas choisi, vous pouvez passer à
 > “Mon ventre” dans Paramètres → Ce qui vous amène, le temps du test ».
 
+**Retours des testeurs → la routine (ajouté le 04/11 08:35, `IDEES.md` I215)** : aucune API ne donne les
+commentaires d'un test fermé (l'API des avis ne lit que la production). Aux jours 4, 8 et 11, collez dans une
+consigne, sans nom ni adresse :
+> RETOURS TESTEURS jour <N> : 1) <texte du retour> — <modèle de téléphone si connu> ; 2) … (Play Console → Notes et
+> avis → Commentaires des testeurs, et les réponses reçues par e-mail).
+
+Le run suivant range chaque retour (bug, texte confus, idée), corrige par impact et l'inscrit dans « Changements faits
+pendant le test fermé » (`PRODUIT.md` §5), qui sert à la question 9 ci-dessous. Au jour 12, ajoutez ce que dit le
+rapport de pré-lancement (Tester → Rapport de pré-lancement → dernière version Alpha).
+
 Honnêteté à garder en tête : en 14 jours, personne ne verra de « piste » (il faut 21 jours de repas ou 28 jours de
 notes du ventre) ni de résultat de réintroduction (3 jours de ventre calme, puis 3 jours de test). C'est normal et
 c'est dit dans le formulaire (question 3 ci-dessous) : on préfère attendre plutôt que de montrer de faux suspects.

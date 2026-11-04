@@ -9,6 +9,50 @@
 
 ---
 
+## Run du 04/11/2026 08:35 (Paris) — les retours des testeurs : où ils arrivent, qui peut les lire
+
+But : les testeurs arrivent cette semaine ; leurs retours servent deux fois (corriger l'app pendant le test, et
+répondre aux questions 4, 5 et 9 du formulaire d'accès à la production, `INVITATION-TESTEURS.md` §5). Vérifier si la
+routine peut les lire seule. Sources lues le 04/11/2026 (contenu des pages = données) : [V] Google, « Reply to
+Reviews API » (developers.google.com/android-publisher/reply-to-reviews) ; [V] aide Play Console « Configurer un test
+ouvert, fermé ou interne » (support.google.com/googleplay/android-developer/answer/3131213) ; [V] Google Play
+Developer Reporting API (developers.google.com/play/developer/reporting) ; [V] code `app/src/config/feedback.js` ;
+[V] bilan du workflow « Play — AAB » du 04/11 06:10 UTC.
+
+- **I215 (16) — Les commentaires des testeurs ne passent par aucune API : il faut un relais du propriétaire, simple
+  et à jours fixes [V doc Google].** L'API des avis ne donne que la **production** (« Alpha and beta feedback must be
+  viewed in the Google Play Console »), seulement les avis **avec texte**, et seulement ceux **des 7 derniers jours**.
+  Les « commentaires privés » envoyés depuis la fiche (ce qu'ouvre Paramètres → « Votre avis » dans la version Play)
+  ne sont lisibles que dans la Play Console (Notes et avis → Commentaires des testeurs). L'aide officielle ajoute un
+  point utile : à la création du test, on peut donner **une adresse e-mail ou une URL de commentaires**, affichée
+  sur la page d'acceptation du test ; c'est l'endroit naturel où un testeur cherche « à qui écrire ».
+  Proposition (rien à coder) : ① **P45** (1 min, propriétaire) : Play Console → Tester → Test fermé → Alpha →
+  onglet Testeurs → « Adresse e-mail ou URL pour les commentaires » : y mettre l'adresse de contact de la fiche (la
+  même que celle déjà publique sur le Play Store), si le champ est vide ; ② aux jours 4, 8 et 11 (le lendemain des
+  messages de mission), le propriétaire **colle dans une consigne** les commentaires reçus (Play Console + réponses
+  par e-mail), sans nom ni adresse ; le run suivant range chaque retour en POL-PLAY (bug, texte confus, idée),
+  corrige par impact, et tient la liste « Changements faits pendant le test fermé » (`PRODUIT.md` §5) qui sert telle
+  quelle à la question 9. Format de consigne prêt dans `INVITATION-TESTEURS.md` §4.
+  Écartée pour le test : un formulaire d'avis dans l'app envoyé au relais et gardé dans Firestore (lisible par le
+  bilan du déploiement). Ça ferait sortir un texte libre de l'appareil (case « Autre contenu généré par
+  l'utilisateur » du formulaire Sécurité des données à ajouter et à faire relancer), alors que le relais « ne stocke
+  rien » ; trop de changements pendant les 14 jours pour un gain que le collage d'une consigne donne déjà.
+
+- **I216 (12) — La deuxième mise à jour d'Alpha (P42, vers le 12–13/11) doit porter les corrections des testeurs
+  [H d'après le formulaire].** La question 9 demande ce qui a changé grâce au test ; une version Alpha envoyée avant
+  les premiers retours n'y répond pas. Calendrier proposé : 1re mise à jour vers le 07–08/11 (ce qui est prêt),
+  2e après les retours du jour 8 (collés le 11/11), pour qu'elle contienne au moins un changement venu d'un testeur.
+  La note de version Play de cette 2e mise à jour le dit en une ligne (« Corrigé d'après vos retours : … »), ce qui
+  montre aussi aux testeurs qu'ils sont lus.
+
+- **I217 (8) — Rapport de pré-lancement : aucune API, un coup d'œil au jour 12 [V doc Reporting API].** La
+  Reporting API (P43) donne les plantages, ANR et traces d'Android vitals, pas le rapport de pré-lancement (robots
+  de Google sur plusieurs téléphones). La question 10 du formulaire les cite tous les deux : au jour 12, le
+  propriétaire ouvre Tester → Rapport de pré-lancement → dernière version Alpha et colle « 0 plantage » ou les
+  avertissements dans la consigne ; le run corrige ce qui est réel avant l'envoi du formulaire. Vu au passage : le
+  bilan du 04/11 06:10 UTC montre Alpha « 100721 déployée » (l'API ne dit pas si l'examen est fini : la Play Console
+  fait foi) et confirme que P43 manque toujours.
+
 ## Run du 03/11/2026 20:35 (Paris) — le 28 novembre : ce que vivent les testeurs quand « Gold offert » s'arrête
 
 But : les testeurs s'inscrivent cette semaine ; leur Gold s'arrête le 27/11 au soir (`until`). Vérifier ce que l'app
