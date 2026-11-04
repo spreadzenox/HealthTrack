@@ -23,6 +23,11 @@
   `npm run visual -- --play --routes=/recommendations --gut-links` (clair, sans abonnement : aperçu flouté inchangé) et
   `--subscription=launch --dark --click="Afficher les détails"` : captures lues (bouton discret en bas de la carte pêche).
 
+## PR
+- PR #670 : Frontend (Vitest), Build APK, Relais (Node), Budget de lectures, Protocole montre verts (émulateurs encore en
+  cours). **Merge refusé à la session** (classificateur « Merge Without Review ») : non contourné ; au run suivant, remettre
+  la branche à jour sur origin/main, revérifier les checks et merger (squash).
+
 ## Demandes iOS
 - Aucune nouvelle.
 
