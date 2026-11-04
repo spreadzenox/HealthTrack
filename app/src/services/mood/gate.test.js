@@ -200,3 +200,44 @@ describe('describeGate', () => {
     }
   })
 })
+
+describe('evaluateGate — mémoïsation (perf, BACKLOG « evaluateGate recalculé 3 fois »)', () => {
+  const build = (n, seed = 3) => {
+    let s = seed
+    const r = () => ((s = (s * 16807) % 2147483647) / 2147483647)
+    return Array.from({ length: n }, (_, i) => ({
+      date: new Date(Date.UTC(2026, 0, 1) + i * 86400000).toISOString().slice(0, 10),
+      note: 1 + Math.round(r() * 4),
+      face: { smile: r(), brow: r() },
+    }))
+  }
+
+  it('même contenu (nouveaux tableaux) : même résultat, sans le recalculer', () => {
+    const days = build(200)
+    const t0 = performance.now()
+    const first = evaluateGate(days, { today: '2026-08-01' })
+    const computed = performance.now() - t0
+    const t = performance.now()
+    const second = evaluateGate(build(200), { today: '2026-08-01' })
+    expect(performance.now() - t).toBeLessThan(Math.max(2, computed / 4))
+    expect(second).toEqual(first)
+  })
+
+  it('le résultat rendu est une copie : le modifier ne touche pas les appels suivants', () => {
+    const a = evaluateGate(build(40, 5))
+    a.looks.push({ date: 'x' })
+    a.state = 'zzz'
+    const b = evaluateGate(build(40, 5))
+    expect(b.state).not.toBe('zzz')
+    expect(b.looks.some((l) => l.date === 'x')).toBe(false)
+  })
+
+  it('un jour, une note ou une date du jour différents donnent un nouveau calcul', () => {
+    const days = build(60, 9)
+    const base = evaluateGate(days)
+    expect(base.r).not.toBeNull()
+    const changed = days.map((d, i) => (i === 10 ? { ...d, note: d.note === 5 ? 1 : 5 } : d))
+    expect(evaluateGate(changed).r).not.toBe(base.r)
+    expect(evaluateGate(days, { today: '2026-12-31' }).looks.length).toBeGreaterThan(base.looks.length)
+  })
+})

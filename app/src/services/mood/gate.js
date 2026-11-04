@@ -202,6 +202,25 @@ function agreement(days) {
  *   précédents (diagnostic : ce que la correction des dérives lentes fait chez l'utilisateur).
  */
 export function evaluateGate(days, { today } = {}) {
+  // Mémoïsé par contenu : la carte, faceMoodEstimate et testReadingEstimate le demandent pour les mêmes jours à
+  // chaque ouverture, et un calcul coûte ≈ 50 ms pour 150 jours notés, 430 ms pour deux ans (PC ; ×5 sur téléphone).
+  // La clé (jours + date du regard) coûte moins d'une milliseconde ; le résultat rendu est une copie (pas de JSON : z peut valoir Infinity).
+  const key = `${today || ''}|${JSON.stringify(days || [])}`
+  let out = gateCache.get(key)
+  if (out) {
+    gateCache.delete(key)
+  } else {
+    out = computeGate(days, today)
+    if (gateCache.size >= GATE_CACHE_SIZE) gateCache.delete(gateCache.keys().next().value)
+  }
+  gateCache.set(key, out)
+  return { ...out, periods: out.periods.map((p) => ({ ...p })), looks: out.looks.map((l) => ({ ...l })) }
+}
+
+const GATE_CACHE_SIZE = 4
+const gateCache = new Map()
+
+function computeGate(days, today) {
   const sorted = [...(days || [])].sort((a, b) => (a.date < b.date ? -1 : 1))
   const out = { state: 'candidate', nDays: 0, needed: GATE_MIN_DAYS, r: null, z: null, a: null, drift: null, detrended: false, openedAt: null, closedAt: null, periods: [], looks: [] }
   if (!sorted.length) return out
