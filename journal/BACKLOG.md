@@ -182,8 +182,8 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
 - [ ] **AVIS-RELAIS-1..4** (retour (2), étude I219) relais `POST /v1/feedback` (texte, version, variante ; quotas ; TTL
   à demander) → formulaire « Votre avis » dans l'app + Sécurité des données + confidentialité → workflow de résumé
   anonyme quotidien → avis du Play Store en lecture (`reviews.list`). Plantages : VITALS-1 (attend P43).
-- [ ] **VENTRE-BE-1** (retour (3), étude I220) d'ici la réponse du propriétaire : chaque piste dit « Ventre » ou
-  « Bien-être » (étiquette pêche / menthe) ; puis, si accord, notes du ventre comme auto-déclaration à poids faible de
+- [ ] **VENTRE-BE-1** (retour (3), étude I220) ~~d'ici la réponse du propriétaire : chaque piste dit « Ventre » ou
+  « Bien-être » (étiquette pêche / menthe)~~ ✅ 04/11 21:35 (`DomainTag`, Analyses) ; puis, si accord, notes du ventre comme auto-déclaration à poids faible de
   l'estimateur et ventre retiré des facteurs des pistes bien-être (test de la règle 5 étendu).
 - [ ] **ANALYSES-ONGLETS** (retour (4)) sous-onglets Bien-être, Ventre, FODMAP, Tendances (Tendances quitte le
   Journal) ; trois horizons (heures, jours, semaines) ; « tester les FODMAP », « pistes à tester », « liens repérés »

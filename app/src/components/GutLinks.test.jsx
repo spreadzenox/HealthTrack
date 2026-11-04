@@ -90,3 +90,11 @@ describe('GutLinks — masquer une piste (I86)', () => {
     expect(screen.getByText('Vous avez masqué toutes les pistes du ventre.')).toBeTruthy()
   })
 })
+
+describe('GutLinks — chaque piste dit qu’elle porte sur le ventre (VENTRE-BE-1)', () => {
+  it('étiquette « Ventre » sur la carte', () => {
+    render(<GutLinks gut={{ status: 'links', noteDays: 30, tested: 12, links: [link()] }} />)
+    const card = screen.getByText(/Oignon/).closest('li')
+    expect(card.querySelector('.domain-tag--gut')).toHaveTextContent('Ventre')
+  })
+})

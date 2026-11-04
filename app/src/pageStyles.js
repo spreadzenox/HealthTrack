@@ -33,6 +33,7 @@ import './pages/Reintroduction.css'
 // Ligne « Bientôt » partagée par Analyses et Tendances (POL-6, 25/10)
 import './components/SoonList.css'
 // Pistes repas → ventre dans Analyses (jalon 5, 26/10)
+import './components/DomainTag.css'
 import './components/GutLinks.css'
 // FODMAP par sous-groupe sur la carte d'un repas (N4, 26/10)
 import './components/MealFodmapLine.css'

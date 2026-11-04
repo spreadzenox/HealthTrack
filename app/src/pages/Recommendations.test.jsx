@@ -263,6 +263,8 @@ describe('Correlation link direction', () => {
     const lipid = screen.getByText('Lipides').closest('.reco-link-card')
     expect(lipid).toHaveTextContent('Le jour même : plus haut, meilleur bien-être.')
     expect(lipid).toHaveClass('reco-link-card--corr')
+    // VENTRE-BE-1 : chaque lien dit qu'il porte sur le bien-être
+    expect(lipid.querySelector('.domain-tag--wellbeing')).toHaveTextContent('Bien-être')
 
     expect(document.querySelector('.reco-corr-pos, .reco-corr-neg')).toBeNull()
     expect(screen.queryByText(/Vert =|Rouge =/)).not.toBeInTheDocument()
@@ -329,6 +331,8 @@ describe('Recommendations levers', () => {
     expect(screen.getByText('Marcher davantage')).toBeInTheDocument()
     expect(screen.getByText(/lien modéré/i)).toBeInTheDocument()
     expect(within(screen.getByText('Marcher davantage').closest('li')).getByText(/solide/i)).toBeInTheDocument()
+    // VENTRE-BE-1 : la piste dit en toutes lettres qu'elle porte sur le bien-être
+    expect(screen.getByText('Marcher davantage').closest('li').querySelector('.domain-tag--wellbeing')).toHaveTextContent('Bien-être')
     // Simple d'abord : pas de r ni de jours indépendants avant le chevron
     expect(screen.queryByText(/r = \+0,42/)).not.toBeInTheDocument()
     const card = screen.getByText('Marcher davantage').closest('li')
