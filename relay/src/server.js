@@ -12,6 +12,8 @@
  * - POST /pubsub/rtdn          → notifications d'abonnement Google Play (push Pub/Sub authentifié) ;
  * - POST /appstore/notifications → notifications serveur V2 de l'App Store (`{ signedPayload }` signé par Apple) ;
  * - GET  /v1/credits            → crédits d'analyse IA de l'installation (src/credits.js), sans rien consommer.
+ * - POST /v1/feedback          → « Votre avis » (`{ text, version, variant }`, en-tête `X-Install-Id`), envoyé sur geste
+ *   de l'utilisateur ; quota en mémoire (src/feedback.js), texte gardé 90 jours sans identifiant d'installation.
  * - POST /v1/bench/analyze      → banc Silver / Gold (GOLD-b5, .github/workflows/bench-gold.yml) : jeton OIDC du compte
  *   de la CI obligatoire ; `{ tier: 'silver' | 'gold', dish, kind, image | description }`. Même chemin que l'analyse
  *   (modèles, plafond global du jour et par minute, plafond Gold du jour, budget du mois) ; la réponse dit quel
@@ -43,6 +45,7 @@ import { stripJpegMetadata } from './jpeg.js'
 import { parseClientState } from './credits.js'
 import { dayKey } from './quota.js'
 import { readUsage } from './costs.js'
+import { FEEDBACK_MAX_LENGTH, parseFeedback } from './feedback.js'
 import { MEAL_TEXT_MAX_LENGTH, RESPONSE_SCHEMA, photoInstruction, textInstruction, textUserPart } from './prompts.js'
 
 /** Taille maximale du corps JSON (photo en base64 comprise). */
@@ -76,6 +79,12 @@ export const INTEGRITY_MESSAGE_IOS =
   "L'analyse IA n'est disponible que dans l'app installée depuis l'App Store. Mettez l'app à jour, puis réessayez."
 export const INTEGRITY_MESSAGE =
   "L'analyse IA n'est disponible que dans l'app installée depuis Google Play, sur un téléphone certifié. Mettez l'app à jour depuis le Play Store, puis réessayez."
+
+/** « Votre avis » : quota atteint (5 par jour et par installation, ou plafond global du jour). */
+export const FEEDBACK_QUOTA_MESSAGE = "Merci, nous avons bien reçu vos avis d'aujourd'hui. Vous pourrez en envoyer d'autres demain."
+/** « Votre avis » : stockage injoignable. */
+export const FEEDBACK_STORE_MESSAGE = "Votre avis n'a pas pu être envoyé. Réessayez dans quelques minutes."
+export { FEEDBACK_MAX_LENGTH }
 
 /** Durée pendant laquelle le relais se fie à un droit premium (ou à son absence) déjà relu chez Google Play. */
 export const PREMIUM_CACHE_MS = 60 * 60_000
@@ -126,7 +135,7 @@ export function buildRequest(body, ingredientNames) {
  *   billingQuota?: ReturnType<import('./quota.js').createQuota>, allowedOrigins?: string[],
  *   log?: (entry: object) => void, now?: () => number }} deps
  */
-export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, appAttest = null, billingQuota = null, benchAuth = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
+export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, appAttest = null, billingQuota = null, benchAuth = null, feedback = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
   const origins = new Set(allowedOrigins)
   /**
    * « plateforme:installId » → { premium, source, until } : droits relus récemment (mémoire seulement). La plateforme
@@ -370,6 +379,53 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       const { premium } = entitlement
       await hydrateCredits(installId)
       send(res, 200, { credits: credits.peek(installId, { premium, tier: tierOf(installId, entitlement), reported: reportedCredits(req) }) }, origin)
+      return
+    }
+
+    if (feedback && path === '/v1/feedback') {
+      if (req.method !== 'POST') {
+        send(res, 405, { error: 'method', message: 'POST attendu.' }, origin)
+        return
+      }
+      try {
+        const installId = String(req.headers['x-install-id'] ?? '')
+        if (!INSTALL_ID.test(installId)) throw new HttpError(400, 'install_id', 'Identifiant d\'installation manquant.')
+        // Texte (2 000 caractères) et quelques champs : 16 Ko suffisent largement, même en UTF-8 accentué
+        const raw = await readBody(req, 16 * 1024)
+        let body
+        try {
+          body = JSON.parse(raw.toString('utf8'))
+        } catch {
+          throw new HttpError(400, 'bad_json', 'JSON attendu.')
+        }
+        const platform = isIosRequest(req.headers) ? 'ios' : 'android'
+        const entry = parseFeedback(body, { now: now(), platform })
+        if (integrity) {
+          const attest = { keyId: req.headers['x-appattest-key'], assertion: req.headers['x-appattest-assertion'], time: req.headers['x-appattest-time'] }
+          const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], platform: req.headers['x-platform'], attest, body: raw })
+          if (!check.ok) throw new HttpError(403, 'integrity', platform === 'ios' ? INTEGRITY_MESSAGE_IOS : INTEGRITY_MESSAGE)
+        }
+        const slot = feedback.quota.take(installId)
+        if (!slot.ok) {
+          send(res, 429, { error: 'quota', scope: slot.scope, message: FEEDBACK_QUOTA_MESSAGE, resetAt: slot.resetAt }, origin)
+          return
+        }
+        try {
+          await feedback.store.add(entry)
+        } catch (err) {
+          feedback.quota.refund(installId)
+          log({ event: 'feedback_store_failed', status: err?.status ?? null })
+          send(res, 503, { error: 'store', message: FEEDBACK_STORE_MESSAGE }, origin)
+          return
+        }
+        // Journal : ni le texte, ni l'identifiant d'installation
+        log({ event: 'feedback', variant: entry.variant, platform, chars: entry.text.length, status: 200 })
+        send(res, 200, { ok: true }, origin)
+      } catch (err) {
+        if (!(err instanceof HttpError)) throw err
+        log({ event: 'rejected', route: path, code: err.code, status: err.status })
+        send(res, err.status, { error: err.code, message: err.message }, origin)
+      }
       return
     }
 

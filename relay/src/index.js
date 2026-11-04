@@ -11,6 +11,7 @@ import { createVertexClient, metadataTokenProvider } from './vertex.js'
 import { createAppAttestVerifier, createAssertionVerifier } from './appattest.js'
 import { createAttestRegistry, createFirestoreAttestStore, memoryAttestStore } from './attestregistry.js'
 import { createAttestRoutes } from './attestroutes.js'
+import { createFirestoreFeedbackStore, createMemoryFeedbackStore } from './feedback.js'
 import { createCostLedger, createFirestoreCostStore, parsePrices, priceFactorAt } from './costs.js'
 
 const config = loadConfig()
@@ -96,6 +97,12 @@ const handler = createHandler({
   }),
   appAttest,
   billingQuota: createQuota({ installPerDay: config.verifyPerDay, globalPerDay: config.verifyGlobalPerDay, globalPerMinute: config.verifyPerMinute }),
+  feedback: {
+    quota: createQuota({ installPerDay: config.feedbackPerDay, globalPerDay: config.feedbackGlobalPerDay, globalPerMinute: config.feedbackPerMinute }),
+    store: config.creditsStore === 'firestore'
+      ? createFirestoreFeedbackStore({ project: config.project, getToken: metadataTokenProvider({ scopes: [DATASTORE_SCOPE] }) })
+      : createMemoryFeedbackStore(),
+  },
   benchAuth: createPushVerifier({ audience: `${config.publicUrl}/v1/bench/analyze`, serviceAccount: config.benchServiceAccount }),
   allowedOrigins: config.allowedOrigins,
   log,
