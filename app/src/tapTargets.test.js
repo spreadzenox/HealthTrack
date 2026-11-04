@@ -46,4 +46,13 @@ describe('cibles tactiles de 44 px (accessibilité)', () => {
     expect(body).toContain('min-height: var(--tap-min)')
     expect(body).toContain('min-width: var(--tap-min)')
   })
+
+  it('le bandeau des Nouveautés (après chaque mise à jour) a des boutons de 44 px', () => {
+    const css = read('components/WhatsNew.css')
+    for (const selector of ['.whats-new-banner-link', '.whats-new-banner-close']) {
+      const body = rule(css, selector)
+      expect(body, selector).toContain('min-height: var(--tap-min)')
+      expect(body, selector).toContain('min-width: var(--tap-min)')
+    }
+  })
 })

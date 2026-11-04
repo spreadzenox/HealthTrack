@@ -29,6 +29,12 @@
   d'origine) : l'app ne plante pas et, si la WebView < 93, la page est lue à l'écran (uiautomator) ; capture publiée.
 - Nouveautés « Un message plutôt qu'un écran blanc » (play, sideload).
 
+## Trouvé en route
+- Le banc a affiché le bandeau « Nouveautés » (entrée créée pendant qu'il tournait) : **« Voir » 49×28 et « × » 32×32**,
+  sous les 44 px, sur chaque page. A11Y-1 ne l'avait pas vu (bandeau masqué par le banc), alors que chaque mise à jour
+  le montre aux utilisateurs. Corrigé (TDD, `tapTargets.test.js`) : les deux à `--tap-min` ; capture
+  `--play --routes=/ --whats-new --dark` relue, 0 avertissement. Nouveautés « Bandeau des nouveautés plus facile à toucher ».
+
 ## Vérifications
 - `npm run test` 3001 verts ; `npm run lint` 0 erreur ; `npm run build` (page copiée dans `dist/`) ; captures de la
   page (Chromium, `Object.hasOwn` retiré ou non, clair et sombre) relues ; `npm run visual -- --play`.
