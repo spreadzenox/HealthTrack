@@ -23,3 +23,8 @@
 
 ## Suite
 - TEST-ALPHA-1 (07–08/11, clic P42) ; TEST-RETOURS à la première consigne de retours ; P37, P43, P44, P45.
+
+## Merge
+- PR #680 : Frontend (Vitest), Build APK, relais, perf, montre verts ; **merge refusé à la session** (classifieur
+  « Merge Without Review »). Laissée ouverte, journal seul : à merger au run suivant après remise à jour sur main
+  (conflit probable avec #679 dans le tableau du README, à résoudre en gardant les deux lignes).
