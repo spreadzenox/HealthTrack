@@ -79,4 +79,22 @@ describe('SleepRegularityCard', () => {
     expect(await screen.findByText('Horaires variables')).toBeInTheDocument()
     expect(screen.getByRole('note')).toBeInTheDocument()
   })
+
+  it('aucune couleur de jugement : des horaires variables sont un écart neutre (règle 6, POL-PLAY-20)', async () => {
+    listEntries.mockResolvedValue(Array.from({ length: 14 }, (_, n) =>
+      n % 2 === 0 ? night(n, [22, 0], [6, 0]) : night(n, [0, 30], [8, 30]),
+    ))
+    const { container } = render(<SleepRegularityCard />)
+    const badge = await screen.findByText('Horaires variables')
+    expect(badge).toHaveClass('is-outside')
+    expect(container.querySelector('.baseline-card')).toHaveClass('is-outside')
+    expect(container.innerHTML).not.toMatch(/favourable/)
+  })
+
+  it('des horaires réguliers ont le style habituel, sans classe de jugement', async () => {
+    listEntries.mockResolvedValue(Array.from({ length: 14 }, (_, n) => night(n, [23, 0], [7, 0])))
+    const { container } = render(<SleepRegularityCard />)
+    expect(await screen.findByText('Horaires réguliers')).toHaveClass('is-within')
+    expect(container.innerHTML).not.toMatch(/favourable/)
+  })
 })
