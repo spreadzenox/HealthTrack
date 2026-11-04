@@ -9,6 +9,65 @@
 
 ---
 
+## Run du 04/11/2026 20:35 (Paris) — retours du propriétaire du 04/11 19:45 : livraison continue, retours des utilisateurs, ventre et bien-être
+
+Sources : retours du propriétaire (prompt de la routine), code du dépôt (`app/src/config/feedback.js`,
+`app/scripts/play/*.mjs`, `relay/src/server.js`), étude I215–I217 du matin. Aucune page web lue ce soir.
+
+### I218 — Livraison continue vers l'alpha (fait ce soir, CI) — impact 5, faisabilité 5
+Besoin : le propriétaire ne veut plus lancer « Play — AAB » ; Google veut voir des mises à jour pendant le test.
+Fait : workflow « Play — Alpha (livraison continue) » (`workflow_run` des Tests, des émulateurs et de « Play — AAB »),
+décision pure et testée dans `alphaGate.mjs` : tout vert sur le commit (dont le job Android 9), versionCode plus grand
+que l'alpha, version bien en test interne, au moins un fichier de l'app modifié depuis la version de l'alpha (le
+journal, le relais, les scripts et les tests ne relancent pas d'examen). Aucun AAB reconstruit (`reuseOnly`). Frein :
+`ALPHA_AUTO: "false"`. Risque à surveiller : un examen Google remplacé par le suivant avant d'aboutir. L'API ne dit
+pas si l'examen est fini : le bilan du soir compare la version alpha de la Play Console (lue par le propriétaire) à
+celle envoyée ; si deux bilans de suite montrent « En cours d'examen » sur une version remplacée, passer à un envoi
+au plus toutes les 24 h (variable à ajouter dans `alphaGate`, test en premier).
+
+### I219 — « Votre avis » envoyé au relais, lu par un workflow (étude, retours (2)) — impact 5, faisabilité 3
+Aujourd'hui « Votre avis » ouvre un lien sortant (e-mail ou formulaire), illisible par la routine.
+Proposition, en 4 runs testables :
+1. **Relais** `POST /v1/feedback` : corps `{ text ≤ 2 000 caractères, version, variant, store }`, jamais d'identifiant
+   d'installation stocké en clair (empreinte hachée et salée seulement pour le quota : 5 avis/jour/installation, 200/jour
+   au total) ; stockage Firestore `feedback/` avec TTL de 90 jours (même geste propriétaire que P33 : à demander) ;
+   jeton Play Integrity comme pour l'analyse. Aucune donnée de santé : le texte est libre, l'écran le dit avant l'envoi.
+2. **App** : Paramètres → « Votre avis » devient un petit formulaire (zone de texte, « Envoyer », rappel de ce qui part :
+   votre texte, la version et la variante) ; sideload et iPhone gardent le lien si le relais n'est pas joignable.
+   Formulaire Sécurité des données : ajouter « Commentaires de l'utilisateur » (collecte facultative, non partagée) puis
+   relancer « Play — sécurité des données » par la CI ; confidentialité mise à jour (GitHub Pages).
+3. **Workflow** `feedback-digest.yml` (planifié chaque jour, sur main) : lit `feedback/` via gh-deployer (droit
+   `datastore.viewer` à demander au propriétaire, commande gcloud exacte), publie dans le résumé du workflow un
+   compte rendu anonyme (texte sans e-mail ni numéro : filtrage par expressions régulières, testé), et la routine le
+   recopie, résumé, dans `journal/retours/AAAA-MM-JJ.md`. Jamais de nom, d'e-mail ni de donnée de santé dans le dépôt.
+4. **Réponse** : pas de canal de retour vers une installation anonyme ; la réponse passe par une note de Nouveautés
+   (« Vous nous avez dit… ») quand le retour est corrigé. Jamais de diagnostic.
+Plantages et ANR : déjà lus (VITALS-1), bloqués par P43. Avis du Play Store : `reviews.list` (lecture) possible avec
+le droit « Afficher les informations de l'application » ; y répondre (`reviews.reply`) demande « Répondre aux avis »,
+droit que gh-deployer n'a pas : action du propriétaire le jour de la production.
+
+### I220 — Un modèle clair ventre / bien-être (retour (3), proposition au propriétaire) — impact 5, faisabilité 3
+Constat : les pistes mélangent deux Y sans le dire (« ce qui va avec vos mauvais jours de ventre » et « ce qui va avec
+votre bien-être »), et les notes du ventre n'ajustent pas l'estimation du bien-être.
+Modèle proposé (à valider, d'ici là chaque piste dit en toutes lettres « ventre » ou « bien-être ») :
+- **Deux mesures, jamais confondues.** *Ventre* = notes du ventre (calme / gêne / douleur) et selles (Bristol) : ce que
+  la personne déclare de son ventre. *Bien-être* = un seul indicateur global (valence, éveil) estimé par le visage, la
+  voix et les notes de bien-être.
+- **Le ressenti du ventre ajuste le bien-être, sans circularité.** Proposition : une note « douleur » ou « gêne » entre
+  dans l'estimation du bien-être comme une auto-déclaration de plus (poids faible, déclaré dans la liste des entrées de
+  l'estimateur), et le ventre sort alors de la liste des facteurs X des pistes « bien-être » (règle 5 : une variable
+  n'est jamais à la fois entrée et facteur). Les pistes « ventre » gardent leurs X (repas, FODMAP, sommeil…) et leur Y
+  ventre. Test : `estimatorInputs` ∩ `wellbeingFactors` = ∅ (le test existant de la règle 5 s'étend au ventre).
+- **Écran Analyses** (retour (4)) : sous-onglets *Bien-être*, *Ventre* (si « Mon ventre » est choisi), *FODMAP*
+  (réintroduction et sous-groupes), *Tendances* (sorti du Journal). Dans chaque sous-onglet, trois horizons : *dans
+  les heures* (repas → ventre 0–4 h, 4–24 h), *sur quelques jours* (sommeil, activité, J+1 à J+3), *sur quelques
+  semaines* (moyennes glissantes, tendances). Chaque piste porte une étiquette de couleur : pêche « Ventre », menthe
+  « Bien-être ».
+- Ce qui n'est pas proposé : un score unique qui additionne ventre et bien-être (on ne saurait plus ce qui bouge).
+Question au propriétaire (dans le résumé) : « ventre → bien-être comme auto-déclaration à poids faible : ok ? ».
+
+---
+
 ## Run du 04/11/2026 08:35 (Paris) — les retours des testeurs : où ils arrivent, qui peut les lire
 
 But : les testeurs arrivent cette semaine ; leurs retours servent deux fois (corriger l'app pendant le test, et

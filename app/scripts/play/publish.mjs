@@ -120,12 +120,16 @@ export async function call(fetchImpl, step, url, { method = 'GET', token, body, 
  * renvoie les groupes lus (`internalGroups`, null si Play ne les donne pas) ; `noReuse: true` refuse de placer sur
  * l'alpha un versionCode déjà envoyé en test interne (cet AAB-là a l'interrupteur allumé).
  *
+ * `reuseOnly: true` (livraison continue vers l'alpha, retours du 04/11) : aucun AAB importé, la version déjà envoyée en
+ * test interne sous `versionCode` est placée telle quelle sur l'alpha.
+ *
  * `mapping` (facultatif, octets de mapping.txt de R8) : envoyé comme fichier de désobscurcissement de la version dans
  * le même edit, pour des traces de plantage lisibles dans la Play Console ; un refus ne bloque pas la version
  * (`mapping: 'failed'`, `mappingError`).
  */
-export async function publishBundle({ packageName, aab, mapping, versionCode, track = 'internal', notes, token, draft = false, releaseName = String(versionCode), testersGroup = ALPHA_TESTERS_GROUP, privateTrack = false, noReuse = false, fetchImpl = fetch, sleep, log = () => {} }) {
+export async function publishBundle({ packageName, aab, mapping, versionCode, track = 'internal', notes, token, draft = false, releaseName = String(versionCode), testersGroup = ALPHA_TESTERS_GROUP, privateTrack = false, noReuse = false, reuseOnly = false, fetchImpl = fetch, sleep, log = () => {} }) {
   if (!ALLOWED_TRACKS.includes(track)) throw new Error(`Piste « ${track} » refusée : seules ${ALLOWED_TRACKS.join(', ')} sont autorisées.`)
+  if (reuseOnly && track !== 'alpha') throw new Error('reuseOnly : seulement pour placer sur l’alpha une version déjà en test interne.')
   fetchImpl = withRetry(fetchImpl, { sleep })
   const base = `${API}/${packageName}/edits`
   const edit = await call(fetchImpl, 'Ouverture de l’edit', base, { method: 'POST', token, body: {} })
@@ -136,9 +140,10 @@ export async function publishBundle({ packageName, aab, mapping, versionCode, tr
     const language = details?.defaultLanguage || 'fr-FR'
     log(`Edit ${edit.id} ouvert, langue de la fiche : ${language}`)
 
-    let reusedBundle = false
+    let reusedBundle = reuseOnly
     let mappingResult = {}
-    try {
+    if (reuseOnly) log(`versionCode ${versionCode} déjà en test interne : la même version est placée sur la piste ${track}.`)
+    else try {
       const bundle = await call(fetchImpl, 'Import de l’AAB', `${UPLOAD_API}/${packageName}/edits/${edit.id}/bundles?uploadType=media`, {
         method: 'POST',
         token,

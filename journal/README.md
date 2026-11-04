@@ -8,20 +8,17 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
-> 🚨 **À lire avant d'inviter : la version Alpha 100721 se ferme dès l'ouverture sur les téléphones sous Android 12
-> ou plus ancien (04/11 09:35).** Un nouveau test sur un émulateur Android 9 l'a trouvé ce matin : depuis le 15/10, un
-> morceau de code de la montre (réservé à Android 13+) faisait planter l'app au démarrage sur Android 8 à 12. Votre
-> Galaxy A56 (Android 16) et les tests de la CI (Android 14 à 16) ne pouvaient pas le voir. **Corrigé et vérifié sur
-> l'émulateur Android 9 (#681).** Ce qu'il faut faire :
-> 1. **Envoyer la version corrigée sur Alpha** (c'est votre premier clic P42, avancé) : GitHub → Actions → « Play — AAB »
->    → Run workflow → branche `main`, piste **`alpha`**, la version corrigée est en test interne depuis le 04/11 vers 11:10
->    (**100769** au 04/11 13:22, vérifié au bilan : Alpha est toujours sur 100721) : la piste `alpha` reprend cet AAB. Google l'examine ensuite (quelques
->    heures à 2 jours).
-> 2. **Jusque-là, n'invitez que des testeurs sous Android 13 ou plus récent** (Paramètres du téléphone → À propos du
->    téléphone → Informations sur le logiciel → Version d'Android). Ceux qui ont déjà installé l'app sur un téléphone
->    plus ancien recevront la correction par le Play Store, sans rien perdre.
-> 3. Si la page « Mettez à jour Android System WebView » s'affiche chez un testeur : c'est voulu (composant d'Android
->    trop ancien), le bouton l'emmène au Play Store.
+> 🚀 **Livraison continue vers Alpha : vous n'avez plus rien à lancer (04/11 20:35, retours du 04/11 19:45).**
+> La routine a envoyé elle-même la version actuelle du test interne (**100776**, corrigée pour Android 8 à 12) sur
+> Alpha ce soir ; Google l'examine (quelques heures à 2 jours). Ensuite, un nouveau workflow, « Play — Alpha
+> (livraison continue) », envoie seul sur Alpha chaque version de main qui change l'app, dès que les tests, les
+> émulateurs (dont Android 9) et l'envoi en test interne sont verts. P42 est retirée de vos actions. La production
+> reste votre clic. **Ce que vous pouvez vérifier** : Play Console → Tester → Test fermé → Alpha : 100776 « En cours
+> d'examen » puis disponible. **D'ici là, n'invitez que des testeurs sous Android 13 ou plus récent** (l'Alpha 100721
+> se ferme à l'ouverture sous Android 8 à 12). **Une question pour vous (I220, `IDEES.md`)** : pour mêler ventre et
+> bien-être proprement, les notes du ventre ajusteraient l'estimation du bien-être comme une note de ressenti à poids
+> faible, et le ventre ne serait plus un facteur des pistes « bien-être » (règle 5). D'accord ? Répondez « I220 oui »
+> ou « I220 non » dans une consigne.
 
 > 👉 **Version candidate prête : vous pouvez inviter les testeurs** (02/11 23:35), **dès que la Play Console
 > n'affiche plus « En cours d'examen » pour Alpha.** Vous avez lancé l'envoi vous-même hier soir (P40, merci) :
@@ -103,6 +100,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 04/11 20:35 — [Livraison continue vers Alpha](runs/2026-11-04-2035-livraison-continue.md) | 💡🚀 | Version 100776 envoyée sur Alpha par la routine (plus de clic P42) ; workflow « Play — Alpha (livraison continue) » pour chaque version suivante qui change l'app. Retours du 04/11 rangés (BACKLOG) ; études : « Votre avis » par le relais (I219), modèle ventre / bien-être (I220, question posée) ; décisions iPhone du 04/11 reportées à la routine iOS |
 | 04/11 19:35 — [Démarrage allégé](runs/2026-11-04-1935-demarrage-allege.md) | ⚡ | Le fichier de code lu à l'ouverture de l'app perd un quart de son poids (902 → 696 Ko) : la liste des Nouveautés (340 notes) se charge juste après le premier affichage. Rien ne change à l'écran. **Toujours à faire : P42 (Alpha)** |
 | 04/11 18:35 — [Bien-être : un point par heure](runs/2026-11-04-1835-bien-etre-par-heure.md) | 🎨 | Historique du bien-être, vue « Jour » : avec la lecture du visage à chaque déverrouillage (jusqu'à une toutes les 2 min), la courbe empilait plus de 100 points illisibles. Au-delà de 24 lectures, elle montre un point par heure ; la moyenne du jour reste celle de toutes les lectures. **Toujours à faire : P42 (Alpha)** |
 | 04/11 17:35 — [Vérification visage ↔ notes plus rapide](runs/2026-11-04-1735-memo-porte.md) | 🔧 | La PR de 16:35 (Nouveautés propres à Android, badge « Nouveau » plus lisible) est mergée. En coulisses : la vérification « votre visage suit vos notes » était refaite 3 fois à chaque ouverture de la carte du visage ; mesurée (jusqu'à 0,4 s sur ce PC après deux ans de notes), elle n'est plus calculée qu'une fois tant que rien ne change. Rien ne change à l'écran. **Toujours à faire : P42 (Alpha)** |

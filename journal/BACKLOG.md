@@ -170,13 +170,43 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     suspects », « pas une cause », tirets cadratins, énumérations par trois), 2 phrases de refrain supprimées ;
     `wording.test.js` applique `SLOP_WORDING` à chaque titre et phrase des notes.
 
+## 🗣️ Retours du propriétaire du 04/11 vers 19:45 — priorité des runs de code juste après le compte rendu du 02/11
+Un run = une étape testable ; les runs « idées » préparent maquettes et études (I218–I220 dans `IDEES.md`).
+- [x] **CD-ALPHA-1** (04/11 20:35, retour (1), priorité absolue) Version actuelle du test interne (653e48c, versionCode
+  100776) envoyée sur l'alpha par la routine (workflow_dispatch de « Play — AAB », piste alpha) ; nouveau workflow
+  « Play — Alpha (livraison continue) » : chaque version de main qui change l'app part sur l'alpha quand les Tests,
+  les émulateurs (dont Android 9) et « Play — AAB » sont verts (`scripts/play/alphaGate.mjs`, tests). P42 retirée.
+- [ ] **CD-ALPHA-2** Suivre les examens : si deux bilans montrent une version alpha remplacée avant d'avoir abouti,
+  espacer (24 h minimum, variable testée dans `alphaGate`) et le dire en tête du résumé. Erreur d'envoi = erreur exacte
+  en tête du résumé, rien de contourné.
+- [ ] **AVIS-RELAIS-1..4** (retour (2), étude I219) relais `POST /v1/feedback` (texte, version, variante ; quotas ; TTL
+  à demander) → formulaire « Votre avis » dans l'app + Sécurité des données + confidentialité → workflow de résumé
+  anonyme quotidien → avis du Play Store en lecture (`reviews.list`). Plantages : VITALS-1 (attend P43).
+- [ ] **VENTRE-BE-1** (retour (3), étude I220) d'ici la réponse du propriétaire : chaque piste dit « Ventre » ou
+  « Bien-être » (étiquette pêche / menthe) ; puis, si accord, notes du ventre comme auto-déclaration à poids faible de
+  l'estimateur et ventre retiré des facteurs des pistes bien-être (test de la règle 5 étendu).
+- [ ] **ANALYSES-ONGLETS** (retour (4)) sous-onglets Bien-être, Ventre, FODMAP, Tendances (Tendances quitte le
+  Journal) ; trois horizons (heures, jours, semaines) ; « tester les FODMAP », « pistes à tester », « liens repérés »
+  rangés et expliqués.
+- [ ] **BE-BIAIS** (retour (5)) mesurer le biais (visage neutre lu triste ou méprisant : 42 % tristesse, 11 % mépris
+  sur 32 lectures alors qu'il allait bien), recalage personnel, calibration de départ (notes de bien-être demandées les
+  3 à 5 premiers jours, la plus courte qui suffit, puis calibration continue), lissage des creux et pics, fiabilité
+  affichée honnêtement.
+- [ ] **BE-HISTO-DETAIL** (retour (6)) toucher un point de la courbe ouvre la lecture (matrice des émotions, valence,
+  éveil, qualité) ; défilement aussi loin qu'on veut ; inspiration Emobot, rien de copié.
+- [ ] **SELLES-PHOTO** (retour (7)) type de Bristol estimé par photo, dans un endroit dédié et discret (pas sur
+  l'Accueil), geste explicite, analyse IA comme les repas, aucune photo gardée par défaut, résultat modifiable, jamais
+  un diagnostic ; Sécurité des données et confidentialité à jour.
+- (8) Journal, Sources, Nouveautés, Données, Paramètres et Confidentialité : le propriétaire en est content, ne pas
+  les remanier sans raison.
+
 ## 🧪 Test fermé en cours (J = 03/11) — idée du 03/11 08:35 (`IDEES.md` I212)
 - [x] **TEST-PISTES** (03/11 09:35) Bilan de « Play — AAB » : tableau « État des pistes Google Play » (version et état de
   chaque piste, lecture seule, edit abandonné) pour suivre la version des testeurs à chaque envoi.
 - [x] **VITALS-1** (03/11 12:35) Bilan de « Play — AAB » : plantages et ANR d'Android vitals (`scripts/play/vitals.mjs`, `errorIssues:search`, lecture seule, jeton `playdeveloperreporting` à part, étape `continue-on-error`) : la routine voit enfin les plantages avant de choisir une version Alpha. Si l'API n'est pas activée, le bilan donne la commande du propriétaire (P43).
 - [x] **NOTES-VARIANTES** (04/11 04:35) Notes de version Play : `buildReleaseNotes` écarte les Nouveautés dont `variants` exclut `play` (même règle que `changelogFor`), test dans `publish.test.mjs`.
 - [ ] **TEST-ALPHA-1** (jour 4–5, 07–08/11) : une version alpha avec les premiers retours des testeurs (ou les
-  correctifs trouvés d'ici là), notes de version qui citent le retour ; ligne dans `PRODUIT.md` §4 bis ; clic P42.
+  correctifs trouvés d'ici là), notes de version qui citent le retour ; ligne dans `PRODUIT.md` §4 bis ; envoi par la CI (CD-ALPHA-1, plus de clic P42).
 - [ ] **TEST-RETOURS** (jours 4, 8, 11 : 07, 11, 14/11 ; idée du 04/11 08:35, `IDEES.md` I215–I217) : à chaque consigne « RETOURS TESTEURS », ranger chaque retour en POL-PLAY (bug / texte confus / idée), corriger par impact, tenir « Changements faits pendant le test fermé » (`PRODUIT.md` §5, question 9) ; TEST-ALPHA-2 doit en contenir au moins un, dit dans sa note de version Play. Jour 12 : rapport de pré-lancement collé par le propriétaire (pas d'API).
 - [x] **PLUGIN-API** (04/11 09:35, 🚑) **Plantage à l'ouverture sous Android 8 à 12 depuis le 15/10 (#162)** : `CompanionPlugin.finish(PluginCall, AssociationInfo, String)` ; Capacitor lit toutes les méthodes des plugins au démarrage (`Plugin.initializeActivityLaunchers` → `getDeclaredMethods`), `AssociationInfo` (API 33) → `NoClassDefFoundError`. Corrigé (identifiant `int`), verrou `src/pluginSignatures.test.js` (types récents interdits dans les signatures de premier niveau des plugins), job API 28 bloquant. Alpha 100721 touchée → P42 avancé.
 - [x] **PLUGIN-API-2** (statique 04/11 11:35 : Lint `NewApi` ; dynamique 04/11 12:35 : job « Méthodes natives sous Android 12L (API 32) », `native-sweep/check.mjs`, 9 écrans + 17 méthodes natives, aucun plantage ; l'image API 31 n'a que la WebView 91) Les corps de méthodes natives appelés depuis le JS (API 29–33 sans test de version) ne sont pas couverts par le job API 28 (WebView trop ancienne, le JS ne tourne pas) : ajouter un job API 30 ou 31 avec une WebView ≥ 93 (image `google_apis` récente ou WebView installée) qui parcourt l'onboarding et les Sources ; en attendant, relire les `Build.VERSION.SDK_INT` des plugins appelés au premier lancement (Health Connect, montre, notifications, visage).
@@ -186,7 +216,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
 - [x] **FONT-SCALE-2** (04/11 15:35 : mesure ajoutée au job émulateur API 32, `native-sweep/check.mjs`, avertissement seulement. **Résultat sur #689 : la WebView suit la police du système, lignes ×1,30 à `font_scale` 1,3 ; titres 19,2 → 25 px ; aucun débordement sur Accueil, Sources, Paramètres**) Confirmer sur l'émulateur (`settings put system font_scale 1.3`) que la WebView suit la police du
   système ; ajouter `--font-scale=1.3` à l'audit de chaque version candidate (TEST-ALPHA-1 et 2).
 - [x] **IOS-NOTES-29-10** (04/11 16:35) Demandes iOS du 29/10 : `sources-titre` en `["play", "sideload"]`, stress de la montre sorti de `repas-actions` dans sa propre note Android ; badge « Nouveau » des Nouveautés recalé sur `--mint-label` / `--mint-bg` (4,16 → ≥ 4,5:1).
-- [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; clic P42.
+- [ ] **TEST-ALPHA-2** (jour 9–10, 12–13/11) : seconde version alpha, en ligne avant le jour 12 ; envoi par la CI (CD-ALPHA-1).
 - [x] **FIN-LANCEMENT-1** (03/11 21:35 ; `IDEES.md` I213) LIVRÉ : `LaunchEndCard` + `launchEndNotice()` ; lien « Voir ce que comprend Gold » (pendant la période, /premium n'affiche pas de prix) ; `launch.lastUntil` déjà retenu (`halcya_launch_last_until`) pour FIN-LANCEMENT-2 ; capture `--launch-ends-in=2`. Spécification d'origine : carte Accueil fermable à partir de `launchUntil` − 3 j :
   « Gold offert jusqu'au … Ensuite, le journal, les montres, le bien-être estimé et l'export restent gratuits. » +
   « Voir les formules ». Une fois par valeur de `until` ; coupée pour l'App Store (drapeau) ; tests jsdom à horloge
