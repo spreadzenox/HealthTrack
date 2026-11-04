@@ -39,6 +39,12 @@
 
 a.licences-tag {
   color: var(--accent);
+  /* cible tactile de 44 px (DESIGN.md) sans grossir le texte */
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: var(--tap-min);
+  min-width: var(--tap-min);
 }
 
 .licences-note {

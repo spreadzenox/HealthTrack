@@ -88,7 +88,7 @@
 
 .watch-guide-links a {
   color: var(--accent);
-  min-height: 32px;
+  min-height: var(--tap-min);
   display: inline-flex;
   align-items: center;
 }

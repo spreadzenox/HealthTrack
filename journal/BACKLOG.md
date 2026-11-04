@@ -1311,7 +1311,12 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [ ] Capacitor 8.4 (insets natifs sur API ≤ 34, correctifs 8.3–8.4) + aligner `@capacitor/cli` (^7.6 aujourd'hui) — vérifier avec les captures émulateur
 - [ ] Tokens de design (espacements, typographie, couleurs sémantiques) + composants communs (Card, Stat, Badge, EmptyState)
 - [ ] Mode clair (`prefers-color-scheme`) — vérifier avec `npm run visual -- --light`
-- [ ] Accessibilité : contrastes, cibles tactiles ≥ 44 px, libellés ARIA
+- [ ] Accessibilité : contrastes, cibles tactiles ≥ 44 px, libellés ARIA — **A11Y-1 fait (04/11 05:35)** : contrôle
+  « SANS NOM ACCESSIBLE » / « CIBLE < 44 px » dans `npm run visual` (avertissement) ; volets « Comment c'est calculé »,
+  « Hypothèse générale », « Attendu d'après vos habitudes », « Désactiver », « Restaurer un achat » (paywall), liens de
+  licence et guides montre à 44 px ; `src/tapTargets.test.js`. Audits `--play` démo et `--empty` : 0 avertissement
+  sur 16 pages. Reste : onboarding pas à pas (`--click`), lecteur d'écran réel (TalkBack) sur l'émulateur, contrastes
+  automatiques (axe-core ?).
 
 ### C2 — Écran « Aujourd'hui »
 - [x] **Remplacer le flux brut « Dernières entrées » par des résumés du jour** : « Vos derniers jours », une carte par jour (sommeil au jour du réveil, pas, FC repos, VFC, plage FC, dépense, bien-être, repas/kcal, cigarettes) + saisies du jour (#76)

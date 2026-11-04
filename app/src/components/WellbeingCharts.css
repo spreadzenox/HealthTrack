@@ -116,6 +116,9 @@
 .wellbeing-pred-details > summary {
   cursor: pointer;
   list-style: none;
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
 }
 
 .wellbeing-pred-details > summary::-webkit-details-marker {

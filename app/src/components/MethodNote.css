@@ -7,7 +7,7 @@
   gap: 4px;
   font-size: 0.8rem;
   color: var(--text-muted, var(--muted));
-  min-height: 32px;
+  min-height: var(--tap-min);
   display: flex;
   align-items: center;
 }

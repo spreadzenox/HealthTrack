@@ -89,7 +89,7 @@
 }
 
 .my-device-actions .btn {
-  min-height: 40px;
+  min-height: var(--tap-min);
 }
 
 .my-device-alert {
