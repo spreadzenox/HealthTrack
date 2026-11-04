@@ -44,3 +44,5 @@ Type : 🔧 run de code (23:35 Paris).
 - « Play — fiche du Store » **annulé** sans job : déclenché par `app/store/**` (seules les réponses Sécurité des
   données changeaient, pas la fiche), son exécution en attente a été remplacée dans le groupe `play-edits` par les
   envois Alpha. Rien à refaire.
+- Émulateur Galaxy A56 vert, puis « Play — Alpha » : **100782 placée sur Alpha** (7 fichiers de l'app changés depuis
+  100778, même AAB que le test interne) ; en examen chez Google, comme 100778 avant elle.
