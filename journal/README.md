@@ -14,8 +14,8 @@
 > Galaxy A56 (Android 16) et les tests de la CI (Android 14 à 16) ne pouvaient pas le voir. **Corrigé et vérifié sur
 > l'émulateur Android 9 (#681).** Ce qu'il faut faire :
 > 1. **Envoyer la version corrigée sur Alpha** (c'est votre premier clic P42, avancé) : GitHub → Actions → « Play — AAB »
->    → Run workflow → branche `main`, piste **`alpha`**, la version corrigée **100765** est en test interne depuis le
->    04/11 vers 11:10 : la piste `alpha` reprend cet AAB. Google l'examine ensuite (quelques
+>    → Run workflow → branche `main`, piste **`alpha`**, la version corrigée est en test interne depuis le 04/11 vers 11:10
+>    (**100769** au 04/11 13:22, vérifié au bilan : Alpha est toujours sur 100721) : la piste `alpha` reprend cet AAB. Google l'examine ensuite (quelques
 >    heures à 2 jours).
 > 2. **Jusque-là, n'invitez que des testeurs sous Android 13 ou plus récent** (Paramètres du téléphone → À propos du
 >    téléphone → Informations sur le logiciel → Version d'Android). Ceux qui ont déjà installé l'app sur un téléphone
@@ -103,6 +103,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 04/11 13:35 — [Bilan du relais et des pistes](runs/2026-11-04-1335-bilan-robots.md) | 🔎 | Relais redéployé et vérifié : Gold offert jusqu'au 27/11 (Android) et au 06/11 (iPhone), analyses Gold en Europe (≈ 1,2 € sur 7 jours pour les téléphones). Pistes Play : Alpha toujours sur **100721** (celle qui plante sous Android ≤ 12), test interne sur 100769 (corrigée). Les « nouvelles installations » sont retombées à 1–4 par jour ; le réglage des robots de Google n'est présent chez aucune (piste suivante au run « idées »). Rien ne change dans l'app. **Toujours à faire : P42 (Alpha)** |
 | 04/11 12:35 — [Méthodes natives sous Android 12](runs/2026-11-04-1235-natif-android12.md) | 🔧 | En coulisses : à chaque version, la CI ouvre maintenant l'app sur un téléphone virtuel Android 12, parcourt les 9 écrans du premier lancement et appelle 17 fonctions du code Android : aucun plantage. C'est le type de test qui aurait trouvé le plantage du 04/11 sous Android 12 et avant. La PR de 11:35 (lint) est mergée. Rien ne change dans l'app. **Toujours à faire : P42 (Alpha avec la 100765)** |
 | 04/11 11:35 — [Lint « NewApi »](runs/2026-11-04-1135-lint-newapi.md) | 🔧 | En coulisses : la CI vérifie maintenant chaque appel du code Android qui n'existe pas sous Android 8 (le type d'erreur qui a fait planter l'app sous Android 12 et avant). La PR de 10:35 (étiquette neutre des horaires de sommeil) est reprise et mergée (v486). 12 signalements, tous déjà protégés, annotés. Mergée (#685) au run suivant. Rien ne change dans l'app. **Toujours à faire : P42 (Alpha avec la 100765)** |
 | 04/11 10:35 — [Horaires de sommeil neutres](runs/2026-11-04-1035-horaires-neutres.md) | 🎨 | Journal → Tendances : « Horaires variables » s'affiche en gris neutre, comme les autres écarts à votre norme (des horaires qui bougent ne sont ni bons ni mauvais en soi, règle 6). PR #682, merge refusé à la session : repris au run suivant. Rien à faire de votre côté |

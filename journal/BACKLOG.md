@@ -496,6 +496,13 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
     l'API) → aussi dans le journal de l'étape « Nouvelles installations », par jour. Seulement 2 installations le 03/11 :
     relire au prochain déploiement, après 2 ou 3 versions du test interne (les robots passent à chaque version).
     Première lecture (déploiement du merge #658) : `absent` 62, **`unset` 1** (le 03/11) ; rien à conclure.
+    Deuxième lecture (04/11 13:35, déploiement manuel 41830314851) : 57 installations sur 7 jours, `absent` 53 (toutes
+    avant le 03/11, versions sans 21b-1), **`unset` 4** (3 le 03/11, 1 le 04/11), aucun `true` / `denied` / `error`. La
+    lecture du réglage marche mais il n'est posé sur aucun appareil ; les nouvelles installations sont tombées de
+    ≈ 10/jour (29–31/10) à 1–4/jour malgré ≈ 15 envois en test interne depuis le 03/11 : les robots ne suivraient
+    pas le test interne. → run « idées » (04/11 20:35) : autre signal (rapport de pré-lancement lié aux pistes fermées
+    ou ouvertes ? `Build` des appareils Test Lab, absence de compte Google). Si l'envoi Alpha (P42) refait un pic,
+    c'est confirmé.
 - [ ] **6 (préparé le 22/10 08:30, I146–I148)** Play Billing : plugin `capacitor-plugin-cdv-purchase` (MIT, PBL 9) avec
   validateur = relais ; relais : `subscriptionsv2.get` + accusé côté serveur + `linkedPurchaseToken` + RTDN ; prix et
   essai lus dans `pricingPhases`, jamais en dur ; lien d'annulation Play dans Réglages. Maintenance : aligner
