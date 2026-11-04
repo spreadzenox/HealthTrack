@@ -110,6 +110,20 @@ describe('envoi Google Play (jalon 3c)', () => {
     expect(calls.at(-1).key).toBe(`POST ${EDITS}/E1:commit`)
   })
 
+  it('livraison continue (reuseOnly) : aucun AAB importé, la version du test interne passe sur l’alpha', async () => {
+    const { fetchImpl, calls } = fakePlay(alphaRoutes())
+    const r = await publishBundle(args(fetchImpl, { track: 'alpha', aab: undefined, reuseOnly: true }))
+    expect(r).toMatchObject({ outcome: 'published', track: 'alpha', status: 'completed', reusedBundle: true })
+    expect(calls.some((c) => c.key.includes('/bundles'))).toBe(false)
+    expect(calls.at(-1).key).toBe(`POST ${EDITS}/E1:commit`)
+  })
+
+  it('reuseOnly hors alpha : refusé avant tout appel', async () => {
+    const { fetchImpl } = fakePlay(happy())
+    await expect(publishBundle(args(fetchImpl, { reuseOnly: true }))).rejects.toThrow(/alpha/)
+    expect(fetchImpl).not.toHaveBeenCalled()
+  })
+
   it('alpha : ajoute le groupe des testeurs s’il manque, sans retirer les autres', async () => {
     const { fetchImpl, calls } = fakePlay(alphaRoutes({ googleGroups: ['autre@googlegroups.com'] }))
     const r = await publishBundle(args(fetchImpl, { track: 'alpha' }))

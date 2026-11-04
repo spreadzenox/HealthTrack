@@ -1,0 +1,65 @@
+# Livraison continue vers le test fermé (alpha) — retours du propriétaire du 04/11 vers 19:45 : il ne lance plus
+# « Play — AAB » lui-même. Chaque version de main qui change l'app part sur l'alpha en plus du test interne, sans
+# plafond par jour, dès que « Tests », les émulateurs (dont Android 9) et « Play — AAB » ont réussi sur ce commit.
+#
+# - Déclenché à la fin de chacun de ces trois workflows sur main ; le dernier à finir fait l'envoi (les autres
+#   attendent). Décision testée dans app/scripts/play/alphaGate.mjs (versionCode toujours croissant, fichiers de l'app
+#   modifiés depuis la version de l'alpha, version bien en test interne).
+# - Aucun AAB reconstruit : la version déjà envoyée en test interne est placée telle quelle sur l'alpha (reuseOnly).
+# - Jamais la production (publish.mjs n'accepte que internal et alpha). La production reste le clic du propriétaire.
+# - Frein : ALPHA_AUTO "false" coupe les envois (examens Google qui s'enchaînent sans aboutir, refus…).
+# - workflow_run s'exécute sur la branche par défaut (refs/heads/main) : la connexion sans clé est acceptée.
+name: Play — Alpha (livraison continue)
+
+on:
+  workflow_run:
+    workflows: ["Tests", "Test — émulateur Samsung Galaxy A56", "Play — AAB"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+concurrency:
+  group: play-edits  # un seul edit Google Play à la fois (avec « Play — AAB » et « Play — fiche du Store »)
+  cancel-in-progress: false
+
+env:
+  ALPHA_AUTO: "true"
+
+jobs:
+  alpha:
+    name: Version de main sur l'alpha
+    if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Jeton Google Play (portée androidpublisher)
+        id: play-token
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+
+      - name: Décider et envoyer
+        working-directory: app
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
+        run: node scripts/play/alpha-cli.mjs
