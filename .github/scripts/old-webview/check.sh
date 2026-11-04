@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # WEBVIEW-MIN (04/11) : sur Android 9 (API 28), l'image d'émulateur garde sa WebView d'origine, plus ancienne que
 # android.minWebViewVersion (capacitor.config.json). L'app doit montrer sa page « Mettez à jour Android System
-# WebView » (server.errorPath) au lieu d'un écran blanc, sans planter. Si la WebView de l'image est assez récente,
+# WebView » (server.errorPath) au lieu d'un écran blanc, sans planter. Il a trouvé le 04/11 le plantage à l'ouverture
+# sous Android ≤ 12 (AssociationInfo dans une signature de CompanionPlugin, PLUGIN-API) : Capacitor lit les plugins
+# avant de charger la page, donc ce job couvre aussi le démarrage natif sur un vieil Android. Si la WebView de l'image est assez récente,
 # l'app doit simplement s'ouvrir (aucun plantage) : le résumé le dit.
 set -u
 APK="$1"
@@ -28,7 +30,7 @@ SHOWN=$(grep -c "Android System WebView" "$OUT/ui.xml" 2>/dev/null || true)
 {
   echo "## WebView trop ancienne (API 28)"
   echo "- WebView de l'image : ${WV:-inconnue} (majeure ${MAJOR:-?}) ; minimum déclaré : $MIN"
-  echo "- Processus vivant : ${ALIVE:+oui}${ALIVE:-NON} ; plantages Java : $CRASH"
+  echo "- Processus vivant : $([ -n "$ALIVE" ] && echo oui || echo NON) ; plantages Java : $CRASH"
   echo "- Page « Mettez à jour Android System WebView » lue à l'écran : $([ "$SHOWN" -gt 0 ] && echo oui || echo non)"
 } > old_webview.md
 cat old_webview.md

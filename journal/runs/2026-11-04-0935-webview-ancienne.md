@@ -1,6 +1,6 @@
-# Run du 04/11/2026 09:35 (Paris, CET) — WebView trop ancienne : un message plutôt qu'un écran blanc (WEBVIEW-MIN)
+# Run du 04/11/2026 09:35 (Paris, CET) — WebView trop ancienne (WEBVIEW-MIN) et plantage sous Android ≤ 12 (PLUGIN-API)
 
-**Type** : 🔧 code (fiabilité de la version Play pour les testeurs)
+**Type** : 🚑 code (fiabilité de la version Play pour les testeurs)
 
 ## Constat au démarrage
 - Main à `f2abb5b`. Deux PR « [Auto] » ouvertes, vertes, dont le merge avait été refusé à leur session :
@@ -29,6 +29,22 @@
   d'origine) : l'app ne plante pas et, si la WebView < 93, la page est lue à l'écran (uiautomator) ; capture publiée.
 - Nouveautés « Un message plutôt qu'un écran blanc » (play, sideload).
 
+## 🚑 Trouvé par le nouveau job API 28 : plantage à l'ouverture sous Android 8 à 12
+- Premier passage du job (WebView 66 de l'image) : processus mort, `FATAL EXCEPTION` :
+  `NoClassDefFoundError: Landroid/companion/AssociationInfo;` dans `Plugin.initializeActivityLaunchers` →
+  `Class.getDeclaredMethods`. Capacitor lit toutes les méthodes de chaque plugin au démarrage ; la méthode privée
+  `CompanionPlugin.finish(PluginCall, AssociationInfo, String)` charge un type d'Android 13 (API 33).
+- **Présent depuis le 15/10 (#162, « synchro dès qu'elle se reconnecte »)**, donc dans toutes les versions depuis, dont
+  l'**Alpha 100721** des testeurs. Invisible jusque-là : téléphone du propriétaire sous Android 16, émulateurs 34–36.
+- Corrigé (TDD, `src/pluginSignatures.test.js` rouge sur cette seule méthode, puis vert) : `finish(PluginCall, int,
+  String)`. Job API 28 relancé : **0 plantage, processus vivant, page « Mettez à jour Android System WebView » lue à
+  l'écran** (WebView 66 < 93). Job rendu bloquant (borné à 25 min ; un premier passage avait tourné 40 min sans
+  journal, annulé, commandes adb maintenant sous `timeout`).
+- Résumé : alerte en tête (P42 avancé, n'inviter que des testeurs Android 13+ d'ici l'Alpha corrigée).
+- Nouveautés « L'app s'ouvre de nouveau sous Android 12 et avant ».
+- Reste non couvert (PLUGIN-API-2) : le code natif appelé depuis le JS sur Android 9–12 (le JS ne tourne pas avec la
+  WebView 66 de l'image).
+
 ## Trouvé en route
 - Le banc a affiché le bandeau « Nouveautés » (entrée créée pendant qu'il tournait) : **« Voir » 49×28 et « × » 32×32**,
   sous les 44 px, sur chaque page. A11Y-1 ne l'avait pas vu (bandeau masqué par le banc), alors que chaque mise à jour
@@ -40,5 +56,6 @@
   page (Chromium, `Object.hasOwn` retiré ou non, clair et sombre) relues ; `npm run visual -- --play`.
 
 ## Suite
-- Lire le résumé du job API 28 sur la PR (version de la WebView de l'image, page affichée).
+- **P42 au plus tôt** (Alpha avec la correction), puis lever la restriction Android 13+ dans l'alerte du résumé.
+- PLUGIN-API-2 (job API 30/31 avec une WebView récente).
 - TEST-ALPHA-1 (07–08/11, clic P42) ; P37, P43, P44, P45 en attente du propriétaire.
