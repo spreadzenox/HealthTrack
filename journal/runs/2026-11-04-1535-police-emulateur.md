@@ -20,10 +20,11 @@ Type : 🔧 CI (rien ne change dans l'app).
   titres 19,2 → 25 px, lignes ×1,28, aucun débordement sur les trois écrans.
 
 ## Vérifications
-- `node --check`, `npm run test`, `npm run lint` ; le résultat sur l'émulateur se lit au résumé du job de la PR.
+- `node --check`, `npm run test` (3 007 verts), `npm run lint` (0 erreur) ; tous les checks de #689 verts.
+- **Résultat sur l'émulateur (API 32, WebView 120)** : la WebView suit la police du système, hauteur des lignes ×1,30
+  à `font_scale` 1,3 (titres 19,2 → 25 px, texte 14,4 → 18,7 px) ; aucun débordement ni bouton coupé sur l'Accueil,
+  les Sources et les Paramètres. FONT-SCALE-1 corrigeait donc un vrai cas des testeurs.
 
 ## Suite
-- Lire le tableau « Grande taille de police » du job API 32 : si la WebView ne suit pas (×1,0), le réglage du
-  téléphone n'agrandit pas l'app et FONT-SCALE-1 n'a servi qu'à la marge ; sinon passer `--font-scale=1.3` dans
-  l'audit de TEST-ALPHA-1 et 2.
+- Passer `--font-scale=1.3` dans l'audit de TEST-ALPHA-1 et 2 (le job API 32 le refait à chaque version).
 - TEST-ALPHA-1 (07–08/11, clic P42) ; P37, P43, P44, P45 en attente du propriétaire.
