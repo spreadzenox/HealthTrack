@@ -109,6 +109,10 @@
  *                                          # « CLIQUABLE MUET » : élément touchable sans rôle (TalkBack ne l'annonce pas) ;
  *                                          # « SANS TITRE H1 » : page sans titre de niveau 1 (navigation par titres)
  *                                          # « CONTRASTE FAIBLE » : texte sous 4,5:1 sur son fond (3:1 en grand ; WCAG 1.4.3)
+ *   npm run visual -- --play --font-scale=1.3   # grande police d'Android (Paramètres → Affichage → Taille de police) :
+ *                                          # la WebView agrandit le texte d'autant ; simulé par la taille de base
+ *                                          # (`html { font-size }`, quasi tout le CSS est en rem) ; à lire avec
+ *                                          # « DÉBORDEMENT HORIZONTAL » et « TEXTE QUI DÉBORDE » (1.3, 1.5, 2)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -500,6 +504,21 @@ async function main() {
       timezoneId: args.tz || 'Europe/Paris',
       colorScheme: args.light ? 'light' : 'dark',
     })
+
+    // Grande police d'Android : la WebView multiplie la taille du texte par l'échelle du système (textZoom).
+    if (args['font-scale']) {
+      const scale = Number(args['font-scale'])
+      if (!(scale >= 0.8 && scale <= 3)) throw new Error(`--font-scale invalide : ${args['font-scale']}`)
+      await context.addInitScript((pct) => {
+        const apply = () => {
+          const st = document.createElement('style')
+          st.textContent = `html { font-size: ${pct}% !important; }`
+          document.head.appendChild(st)
+        }
+        if (document.head) apply()
+        else document.addEventListener('DOMContentLoaded', apply)
+      }, Math.round(scale * 100))
+    }
 
     // Langue de l'app (src/i18n/locale.js, jalon 9) : choisie dans les Paramètres
     if (args.lang === 'en') {
