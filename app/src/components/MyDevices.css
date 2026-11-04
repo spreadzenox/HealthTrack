@@ -55,8 +55,8 @@
 }
 
 .device-status-ok {
-  background: rgba(var(--brand-rgb), 0.15);
-  color: var(--accent);
+  background: var(--mint-bg);
+  color: var(--mint-label);
 }
 
 .device-status-warn {

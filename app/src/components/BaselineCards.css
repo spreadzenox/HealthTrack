@@ -41,8 +41,8 @@
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(var(--brand-rgb), 0.15);
-  color: var(--accent);
+  background: var(--mint-bg);
+  color: var(--mint-label);
   white-space: nowrap;
 }
 
