@@ -1252,7 +1252,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       → ligne repliée dans Analyses, signal sans lien ne compte plus dans la phrase du Radar
 - [ ] **I104 (16)** fréquences au lieu de r (« 7 de vos 10 journées comparables… »), seulement après un verdict I102
 - [ ] **I105 (12)** jours hors norme mis de côté sans saisie (voyage, Radar « alert » ≥ 2 j, changement d'heure)
-- [ ] `SleepRegularityCard` : « Horaires variables » encore classé `is-unfavourable` (couleur de jugement)
+- [x] `SleepRegularityCard` : « Horaires variables » encore classé `is-unfavourable` (couleur de jugement) — **fait le 04/11 10:35** : `is-outside` neutre, « réguliers » `is-within`
 - [ ] `LEVER_ACTIONS` + `VARIABLE_META.direction` (`higher_better` / `lower_better`) dans `analysisEngine.js` codent un
       sens « sain » : `leverAction` **masque** une piste quand les données contredisent la norme → montrer la réalité
       personnelle (« chez vous, plus d'écran le soir va avec une meilleure humeur ») et formuler les pistes de façon
@@ -1335,7 +1335,7 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] **Radar expliqué** (I22) : tags « cause » (alcool, sport le soir, repas tardif, stress, nouveaux Voyage / Vaccin) le jour signalé ou la veille → « Probablement lié à… », badge « Explicable » ; série expliquée seulement si chaque jour a sa cause ; « Malade » confirme (`explainRadar`) (run 12/10 10:30 Paris)
 - [ ] Radar expliqué, étape 2 : « Je me sens bien / Je couve quelque chose » en 1 tap (entrée `radar_feedback`) + recalibration des seuils ; tags voyage / vaccin comme contrôles des Analyses
 - [ ] **Briefing du matin** (I24) : carte « Votre journée » jusqu'à midi (nuit vs norme, cœur / Radar, pression / pollen, énergie prévue en fourchette) + une seule action tirée des pistes solides
-- [ ] Contrôle qualité des nuits (I32) : nuits « 100 % léger » / sans phases / tronquées exclues des moyennes de phases
+- [ ] Contrôle qualité des nuits (I32) : nuits « 100 % léger » / sans phases / tronquées exclues des moyennes de phases — *sans objet au 04/11 : aucune moyenne de phases n'est calculée (durées seules, bornées) ; à reprendre si une carte de phases arrive*
 - [ ] Glycémie après les repas (I29) : pic, retour à la base, aire 0–2 h sur la carte du repas (HC ← Juggluco / Libre / Dexcom), sans conseil d'insuline
 - [ ] Readiness personnelle calibrée sur le ressenti (R#24, espace d'état bayésien) — pari long terme
 

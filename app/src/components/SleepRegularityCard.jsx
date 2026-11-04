@@ -7,10 +7,12 @@ import './BaselineCards.css'
 // 14 jours + la veille du premier (coucher avant minuit) + marge pour la comparaison à 24 h
 const HISTORY_DAYS = REGULARITY_DAYS + 2
 
+// Règle 6 (POL-PLAY-20) : des horaires variables sont un écart, ni bon ni mauvais par principe → style neutre
+// des autres écarts ; l'hypothèse générale reste dépliable plus bas, présentée comme telle.
 const LEVELS = {
-  regular: { label: 'Horaires réguliers', className: 'is-favourable' },
+  regular: { label: 'Horaires réguliers', className: 'is-within' },
   fairly: { label: 'Assez réguliers', className: 'is-within' },
-  variable: { label: 'Horaires variables', className: 'is-unfavourable' },
+  variable: { label: 'Horaires variables', className: 'is-outside' },
 }
 
 function Spread({ sd }) {
