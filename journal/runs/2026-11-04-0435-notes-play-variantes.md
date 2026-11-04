@@ -23,7 +23,7 @@
 - Pas de note Nouveautés : rien ne change dans l'app.
 
 ## Vérifications
-- Voir « Après les vérifications ».
+- `npm run test` 2970 verts ; `npm run lint` 0 erreur ; build OK ; `npm run visual` complet (démo), capture de l'Accueil lue (inchangée).
 
 ## Suite
 - TEST-ALPHA-1 (07–08/11, clic P42) ; FIN-LANCEMENT-MSG vers le 24/11 ; P37, P43, P44 en attente du propriétaire ;
