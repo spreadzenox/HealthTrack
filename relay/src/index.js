@@ -102,6 +102,7 @@ const handler = createHandler({
     store: config.creditsStore === 'firestore'
       ? createFirestoreFeedbackStore({ project: config.project, getToken: metadataTokenProvider({ scopes: [DATASTORE_SCOPE] }) })
       : createMemoryFeedbackStore(),
+    digestAuth: createPushVerifier({ audience: `${config.publicUrl}/v1/feedback/digest`, serviceAccount: config.benchServiceAccount }),
   },
   benchAuth: createPushVerifier({ audience: `${config.publicUrl}/v1/bench/analyze`, serviceAccount: config.benchServiceAccount }),
   allowedOrigins: config.allowedOrigins,

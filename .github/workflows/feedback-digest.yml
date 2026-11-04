@@ -1,0 +1,79 @@
+# « Votre avis » — résumé anonyme quotidien (AVIS-RELAIS-3, retours du propriétaire du 04/11, journal/BACKLOG.md).
+#
+# Le relais lit les avis de Firestore (collection feedback, 90 jours au plus) et ne renvoie que des comptes : par jour,
+# variante, plateforme, version et thème (mots-clés de relay/src/feedback.js). Aucun texte d'avis ne sort du relais :
+# le dépôt est public, ses résumés de workflow aussi. La routine lit ce résumé à chaque run et le reporte dans
+# journal/AVIS.md (anonyme : ni nom, ni e-mail, ni donnée de santé).
+#
+# Connexion sans clé (Workload Identity Federation, main seulement) : jeton OIDC de gh-deployer pour la route
+# /v1/feedback/digest, la seule que ce compte ouvre. Aucun droit Firestore n'est demandé à gh-deployer.
+name: Votre avis — résumé
+
+on:
+  schedule:
+    - cron: "47 5 * * *"
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Jours couverts (1 à 30, 7 par défaut)"
+        required: false
+        default: "7"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: feedback-digest
+  cancel-in-progress: false
+
+env:
+  RELAY_URL: https://halcya-relay-81378799481.europe-west1.run.app
+
+jobs:
+  digest:
+    name: Résumé anonyme des avis
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Jeton OIDC de la CI pour le relais (sans clé)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: id_token
+          id_token_audience: https://halcya-relay-81378799481.europe-west1.run.app/v1/feedback/digest
+          id_token_include_email: true
+
+      - name: Lire et publier le résumé
+        env:
+          DIGEST_ID_TOKEN: ${{ steps.auth.outputs.id_token }}
+          DAYS: ${{ inputs.days }}
+        run: |
+          set -euo pipefail
+          days="${DAYS:-7}"
+          if ! [[ "$days" =~ ^[0-9]+$ ]] || [ "$days" -lt 1 ] || [ "$days" -gt 30 ]; then days=7; fi
+          status=$(curl -sS -o "$RUNNER_TEMP/digest.json" -w '%{http_code}' --max-time 60 \
+            -H "Authorization: Bearer $DIGEST_ID_TOKEN" "$RELAY_URL/v1/feedback/digest?days=$days")
+          if [ "$status" != "200" ]; then
+            echo "### Votre avis : relais HTTP $status" | tee -a "$GITHUB_STEP_SUMMARY"
+            # 404 : relais pas encore redéployé avec la route ; 503 : Firestore injoignable (statut entre parenthèses)
+            jq -r '"Réponse : \(.error // "—") \(.status // "")"' "$RUNNER_TEMP/digest.json" 2>/dev/null | tee -a "$GITHUB_STEP_SUMMARY" || true
+            exit 1
+          fi
+          {
+            jq -r '"### Votre avis — \(.days) derniers jours : \(.total) avis" + (if .truncated then " (500 premiers seulement)" else "" end)' "$RUNNER_TEMP/digest.json"
+            echo
+            jq -r '"Période : \(.since[0:16]) → \(.until[0:16]) UTC ; longueur médiane : \(.medianChars) caractères"' "$RUNNER_TEMP/digest.json"
+            echo
+            echo "| Thème | Avis |"
+            echo "|---|---|"
+            jq -r '. as $d | .themes | to_entries | sort_by(-.value)[] | select(.value > 0) | "| \($d.themeLabels[.key]) | \(.value) |"' "$RUNNER_TEMP/digest.json"
+            jq -r 'select(.unclassified > 0) | "| Sans thème repéré | \(.unclassified) |"' "$RUNNER_TEMP/digest.json"
+            echo
+            jq -r '"Par jour : " + (.byDay | to_entries | sort_by(.key) | map("\(.key) × \(.value)") | join(", ") | if . == "" then "—" else . end)' "$RUNNER_TEMP/digest.json"
+            jq -r '"Par variante : " + (.byVariant | to_entries | map("\(.key) × \(.value)") | join(", ") | if . == "" then "—" else . end)' "$RUNNER_TEMP/digest.json"
+            jq -r '"Par plateforme : " + (.byPlatform | to_entries | map("\(.key) × \(.value)") | join(", ") | if . == "" then "—" else . end)' "$RUNNER_TEMP/digest.json"
+            jq -r '"Par version : " + (.byVersion | to_entries | sort_by(.key) | map("\(.key) × \(.value)") | join(", ") | if . == "" then "—" else . end)' "$RUNNER_TEMP/digest.json"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
