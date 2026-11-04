@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
-import { CHANGELOG } from '../data/changelog'
+import { useChangelog } from '../hooks/useChangelog'
 import { getLastSeenId, getUnseenEntries } from '../services/whatsNew'
 
 /** Pages rangées derrière le bouton « Réglages » (en haut à droite, jalon 2c). */
 const SETTINGS_PATHS = ['/plus', '/data', '/settings', '/nouveautes']
 
-export default function SettingsButton({ changelog = CHANGELOG }) {
+export default function SettingsButton({ changelog: given }) {
+  const changelog = useChangelog(given)
   // Relu à chaque navigation (la page Nouveautés marque tout comme vu).
   const { pathname } = useLocation()
   const hasUnseen = getUnseenEntries(changelog, getLastSeenId()).length > 0

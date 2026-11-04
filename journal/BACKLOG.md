@@ -1409,7 +1409,10 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
 - [x] Lint à 0 erreur (03/11 23:35 : 7 erreurs corrigées ; `npm run lint` dans le check « Frontend (Vitest) » de `tests.yml`)
 - [x] **Sauvegarde exhaustive** : l'export n'applique plus les plafonds de l'analyse (perte silencieuse des données anciennes) (#72)
 - [ ] Performance IndexedDB : `listEntries` fait un `getAll()` + filtre JS à chaque appel → utiliser les index
-- [ ] Code splitting (bundle principal > 500 kB, avertissement Vite)
+- [ ] Code splitting (bundle principal > 500 kB, avertissement Vite) — **PERF-CHANGELOG fait (04/11 19:35)** : Nouveautés
+  chargées après le premier affichage (`hooks/useChangelog.js`), fichier de démarrage 902 → 696 Ko (gzip 290 → 230 Ko).
+  Reste : **PERF-HUAWEI-LAZY** (pilote montre ≈ 186 Ko importé au démarrage par `watchAutoSync.js` : import dynamique
+  seulement si une montre est configurée, à vérifier sur l'émulateur), `analysisEngine.js` (≈ 77 Ko) et `mood/`.
 - [x] Tests instables corrigés (run 12/10 20:30) : `Recommendations.test.jsx` attendait la fin de « Chargement » au
       lieu de l'analyse (rouge une fois sur main, run Tests 309) ; `PhoneUsageCard.test.jsx` cliquait avant que l'accès
       accordé soit appliqué (rouge sur la PR #121)

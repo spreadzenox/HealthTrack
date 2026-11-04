@@ -187,6 +187,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **04/11 19:35** — **PERF-CHANGELOG** (C4, premier lancement rapide) : journal des Nouveautés (340 entrées) chargé après le premier affichage, fichier JavaScript lu au démarrage 902 → 696 Ko (gzip 290 → 230 Ko, −21 %). Prochain : PERF-HUAWEI-LAZY, TEST-ALPHA-1 (07–08/11).
 - **04/11 18:35** — **I83 (vue Jour)** : Historique du bien-être, au-delà de 24 lectures dans la journée, un point par heure (médianes pondérées), moyenne du jour inchangée ; option `--face-dense` du banc visuel. Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 16:35** — Demandes iOS du 29/10 (variantes des notes `sources-titre` et stress de la montre) ; étiquette « Nouveau » des Nouveautés au contraste 4,5:1 (tokens menthe). Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 15:35** — **FONT-SCALE-2** : le job émulateur API 32 rouvre l'app à `font_scale` 1,0 puis 1,3 (Accueil, Sources, Paramètres) et mesure titres, textes et débordements (avertissement seulement) : la WebView suit la police du système (×1,30), aucun débordement. Prochain : TEST-ALPHA-1 (07–08/11).
