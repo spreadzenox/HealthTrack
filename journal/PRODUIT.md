@@ -187,6 +187,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **04/11 12:35** — **PLUGIN-API-2 (dynamique)** : job émulateur Android 12L (API 32, WebView 120) qui parcourt 9 écrans et appelle 17 méthodes natives de lecture : aucun plantage. #685 mergée. Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 11:35** — **PLUGIN-API-2 (statique)** : Android Lint `NewApi` (minSdk 26) dans le job « Build APK » (`lintPlayDebug -PnewApiOnly`, artefact `lint-newapi`) ; #682 reprise en #684. Prochain : job émulateur API 30/31 (partie dynamique), TEST-ALPHA-1.
 - **04/11 10:35** — **Règle 6** : « Horaires variables » (Tendances) en style neutre `is-outside` au lieu de `is-unfavourable` (test) ; I32 rangé sans objet (aucune moyenne de phases). Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 09:35** — 🚑 **PLUGIN-API** : plantage à l'ouverture sous Android 8–12 depuis le 15/10 (AssociationInfo dans une signature de `CompanionPlugin`), donc dans l'Alpha 100721 : critère C4 (« aucun plantage connu ») était faux pour ces téléphones. Corrigé, vérifié sur émulateur API 28, verrou `pluginSignatures.test.js`. P42 avancé : envoyer la version corrigée sur Alpha au plus tôt ; d'ici là, inviter seulement des testeurs Android 13+.
