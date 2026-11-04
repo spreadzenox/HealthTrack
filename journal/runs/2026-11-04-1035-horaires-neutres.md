@@ -25,3 +25,8 @@
 
 ## Suite
 - TEST-ALPHA-1 (07–08/11, clic P42) ; P37, P43, P44, P45 en attente du propriétaire.
+
+## Merge
+- PR #682 ouverte ; **merge refusé à la session** (classifieur « Merge Without Review », comme pour #680). Aucun
+  fichier en commun avec #681. À merger au run suivant après remise à jour sur main et checks verts (conflit
+  probable du tableau du README avec #681 : garder les deux lignes).
