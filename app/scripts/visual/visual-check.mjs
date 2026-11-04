@@ -106,6 +106,7 @@
  *                                          # et onglets dont le libellé dépasse ou touche le bord (avertissement)
  *                                          # « SANS NOM ACCESSIBLE » / « CIBLE < 44 px » : bouton icône sans
  *                                          # aria-label, champ sans étiquette, cible tactile trop petite (avertissement)
+ *                                          # « CONTRASTE FAIBLE » : texte sous 4,5:1 sur son fond (3:1 en grand ; WCAG 1.4.3)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
  *   npm run visual -- --viewport --insets=24,48 # simule les barres d'état / navigation d'Android 15+
@@ -328,6 +329,93 @@ function findA11y() {
     }
   }
   return { unnamed: unnamed.slice(0, 8), small: small.slice(0, 8) }
+}
+
+/**
+ * Contrastes (WCAG 2.1, 1.4.3) : textes visibles dont le contraste avec leur fond est sous 4,5:1 (3:1 pour un grand
+ * texte : ≥ 24 px, ou ≥ 18,66 px en gras). Le fond est la pile des couleurs de fond des ancêtres (transparences
+ * fusionnées sur le fond de la page) ; un fond en image ou en dégradé est ignoré (inconnu), comme les contrôles
+ * désactivés (exemptés par la norme) et le texte des SVG. Exécuté dans la page ; un avertissement, pas un échec.
+ */
+function findContrast() {
+  const parse = (c) => {
+    const m = (c || '').match(/rgba?\(([^)]+)\)/)
+    if (!m) return null
+    const [r, g, b, a = 1] = m[1].split(/[\s,/]+/).filter(Boolean).map(Number)
+    return { r, g, b, a }
+  }
+  const over = (top, under) => {
+    const a = top.a + under.a * (1 - top.a)
+    if (!a) return { r: 0, g: 0, b: 0, a: 0 }
+    const mix = (k) => (top[k] * top.a + under[k] * under.a * (1 - top.a)) / a
+    return { r: mix('r'), g: mix('g'), b: mix('b'), a }
+  }
+  const lum = ({ r, g, b }) => {
+    const ch = (v) => {
+      const s = v / 255
+      return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4
+    }
+    return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b)
+  }
+  const ratio = (x, y) => {
+    const [l1, l2] = [lum(x), lum(y)].sort((p, q) => q - p)
+    return (l1 + 0.05) / (l2 + 0.05)
+  }
+  const pageBg = () => {
+    for (const el of [document.body, document.documentElement]) {
+      const c = parse(getComputedStyle(el).backgroundColor)
+      if (c && c.a > 0) return over(c, { r: 255, g: 255, b: 255, a: 1 })
+    }
+    return { r: 255, g: 255, b: 255, a: 1 }
+  }
+  const base = pageBg()
+  const out = []
+  const seen = new Set()
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    const text = n.textContent.trim().replace(/\s+/g, ' ')
+    const el = n.parentElement
+    if (!text || !el || seen.has(el)) continue
+    seen.add(el)
+    if (el.closest('svg, [aria-hidden="true"], [inert], :disabled, [aria-disabled="true"], script, style, noscript')) continue
+    let hidden = false
+    for (let d = el.closest('details:not([open])'); d && !hidden; d = d.parentElement?.closest('details:not([open])')) {
+      hidden = !d.querySelector(':scope > summary')?.contains(el)
+    }
+    if (hidden) continue
+    const st = getComputedStyle(el)
+    const r = el.getBoundingClientRect()
+    if (st.display === 'none' || st.visibility === 'hidden' || r.width === 0 || r.height === 0) continue
+    // Pile des fonds du plus proche au plus lointain, et opacité cumulée
+    const layers = []
+    let opacity = 1
+    let unknown = false
+    for (let a = el; a && a !== document.documentElement; a = a.parentElement) {
+      const s = getComputedStyle(a)
+      opacity *= Number(s.opacity)
+      if (s.backgroundImage && s.backgroundImage !== 'none') { unknown = true; break }
+      const c = parse(s.backgroundColor)
+      if (c && c.a > 0) {
+        layers.push(c)
+        if (c.a >= 1) break
+      }
+    }
+    if (unknown || opacity < 0.05) continue
+    let bg = base
+    for (const c of layers.reverse()) bg = over(c, bg)
+    const fgRaw = parse(st.color)
+    if (!fgRaw) continue
+    // Opacité d'un ancêtre : le texte se fond dans le fond qui est sous lui
+    const fg = over({ ...fgRaw, a: fgRaw.a * opacity }, bg)
+    const size = parseFloat(st.fontSize)
+    const large = size >= 24 || (size >= 18.66 && Number(st.fontWeight) >= 700)
+    const k = ratio(fg, bg)
+    if (k < (large ? 3 : 4.5)) {
+      const d = `${text.slice(0, 30)} ${k.toFixed(2)}:1`
+      if (!out.includes(d)) out.push(d)
+    }
+  }
+  return out.slice(0, 8)
 }
 
 /**
@@ -1222,6 +1310,7 @@ async function main() {
         )
         current.textOverflow = await page.evaluate(findTextOverflow)
         current.a11y = await page.evaluate(findA11y)
+        current.contrast = await page.evaluate(findContrast)
       } catch (e) {
         current.error = String(e?.message || e)
       }
@@ -1242,6 +1331,7 @@ async function main() {
         r.textOverflow?.length ? `TEXTE QUI DÉBORDE (« ${r.textOverflow.join(' », « ')} »)` : null,
         r.a11y?.unnamed.length ? `SANS NOM ACCESSIBLE (${r.a11y.unnamed.join(', ')})` : null,
         r.a11y?.small.length ? `CIBLE < 44 px (« ${r.a11y.small.join(' », « ')} »)` : null,
+        r.contrast?.length ? `CONTRASTE FAIBLE (« ${r.contrast.join(' », « ')} »)` : null,
         r.frenchLeft?.count ? `${r.frenchLeft.count} mot(s) français restant(s) (ex. « ${r.frenchLeft.samples.join(' », « ')} »)` : null,
       ].filter(Boolean)
       console.log(`  ${r.path.padEnd(18)} ${flags.join(' · ')}${r.tiles ? `  (${r.tiles.length} écran(s))` : ''}`)
