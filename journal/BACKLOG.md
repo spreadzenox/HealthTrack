@@ -695,9 +695,11 @@ l'ordre de livraison de la consigne du 18/10 ; vient juste après le signalement
   modèle personnel adopté **sans aucun lien** dans 60 % des jeux à humeur AR 0,8 / visage AR 0,95 ; 25 % avec les blocs
   seuls) → `calibrateRidge(X, y, { dayNums })` validé par blocs ±7 j **et** seulement si la vérification visage ↔
   notes (`gate.js`) est réussie → ≤ 5 %. Prix : modèle personnel vers ~6 semaines de notes (au lieu de 14 jours).
-- [ ] Perf : `evaluateGate` est maintenant recalculé 3 fois par ouverture de la carte (carte, `faceMoodEstimate`,
-  `testReadingEstimate`) en O(regards × n² × k²) ; négligeable aujourd'hui (0 jour noté), à mémoïser si > 150 jours
-  comparables (mesurer d'abord, D2).
+- [x] Perf (04/11 17:35, mesuré puis mémoïsé) : `evaluateGate` était recalculé 3 fois par ouverture de la carte
+  (carte, `faceMoodEstimate`, `testReadingEstimate`). Mesure sur PC, pire cas (aucun lien, porte fermée) : 23 ms à
+  60 jours notés, 51 ms à 150, 101 ms à 365, 431 ms à 730 (≈ ×5 sur téléphone, ×3 appels). Cache par contenu
+  (4 entrées, clé = date du regard + jours, copie rendue) : 2 calculs au lieu de 3 à la première ouverture, 0 ensuite
+  tant que les notes ne changent pas. 3 tests dans `gate.test.js`.
 - [ ] Retour du propriétaire : l'estimation est-elle plausible ? (« Tester maintenant » en souriant / sans sourire.)
 - [x] **Facteurs X ↔ humeur estimée (run 20/10 04:30)** : `mood/faceMoodDays.js` — jour estimé si ≥ 3 lectures du
   déverrouillage avec visage (médiane des estimations, ligne de base calculée une fois par jour), notes remplacées par
