@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-29",
+  "kind": "amélioration",
+  "title": "Stress de la montre : les mots de son échelle",
+  "items": [
+    "Données de la montre : le stress s'affiche « 46 · normal » avec les mots de l'échelle de la montre, au lieu de « 46 / 99 »."
+  ],
+  "variants": [
+    "play",
+    "sideload"
+  ]
+}
