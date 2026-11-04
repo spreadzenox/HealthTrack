@@ -187,6 +187,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **04/11 18:35** — **I83 (vue Jour)** : Historique du bien-être, au-delà de 24 lectures dans la journée, un point par heure (médianes pondérées), moyenne du jour inchangée ; option `--face-dense` du banc visuel. Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 16:35** — Demandes iOS du 29/10 (variantes des notes `sources-titre` et stress de la montre) ; étiquette « Nouveau » des Nouveautés au contraste 4,5:1 (tokens menthe). Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 15:35** — **FONT-SCALE-2** : le job émulateur API 32 rouvre l'app à `font_scale` 1,0 puis 1,3 (Accueil, Sources, Paramètres) et mesure titres, textes et débordements (avertissement seulement) : la WebView suit la police du système (×1,30), aucun débordement. Prochain : TEST-ALPHA-1 (07–08/11).
 - **04/11 13:35** — Bilan (🔎) : relais redéployé à la main, sert le 27/11 (Android) et le 06/11 (iPhone) ; Alpha toujours 100721, test interne 100769 ; INSTALLS-21b-2 : réglage Test Lab jamais posé (`unset` 4), installations retombées à 1–4/jour. P42 toujours en attente.

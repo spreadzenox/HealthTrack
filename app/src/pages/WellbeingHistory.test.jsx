@@ -35,6 +35,17 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
     loadWellbeingHistory.mockImplementation(({ period }) => Promise.resolve(history({ period })))
   })
 
+  it('jour très lu : la courbe et la légende disent « un point par heure » (I83)', async () => {
+    const hourly = (h, note) => ({ at: new Date(2026, 9, 24, h, 30).toISOString(), date: '2026-10-24', note, low: note - 0.5, high: note + 0.5, readings: 12, hourly: true })
+    loadWellbeingHistory.mockImplementation(({ period }) => Promise.resolve(history({
+      period, from: new Date(2026, 9, 24).toISOString(), points: [hourly(8, 2.6), hourly(9, 3.2)], notes: [], readings: 24, days: 1, mean: 2.9,
+    })))
+    renderPage()
+    fireEvent.click(await screen.findByRole('button', { name: 'Jour' }))
+    expect(await screen.findByRole('img', { name: /aujourd’hui : 24 lectures, un point par heure/ })).toBeInTheDocument()
+    expect(screen.getByText('estimé (visage), par heure')).toBeInTheDocument()
+  })
+
   it('montre la moyenne, la courbe, la légende et le détail des modèles comme des estimations', async () => {
     renderPage()
     expect(await screen.findByText('3,4')).toBeInTheDocument()

@@ -24,6 +24,8 @@
  *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
  *   npm run visual -- --routes=/connectors --hrv-gap  # plus de VFC depuis 4 jours (« qui envoie quoi »)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
+ *   npm run visual -- --routes=/bien-etre --face-dense --click=Jour  # aujourd'hui, une lecture du visage toutes
+ *                                          les 6 min depuis 7 h (déverrouillages fréquents) : vue Jour par heure (I83)
  *   npm run visual -- --routes=/recommendations --gut-links  # bilans du soir du ventre : une piste repas → ventre
  *                                          --gut-links=lactose : gêne les jours de lait ou yaourt (piste par sous-groupe, N5)
  *   npm run visual -- --routes=/reintroduction --fodmap  # réintroduction guidée (7b) : 8 jours de ventre calme, choix ;
@@ -1128,6 +1130,18 @@ async function main() {
       const from = dayStart(9)
       const to = dayStart(3)
       entries = entries.filter((e) => e.type !== 'wellbeing' || new Date(e.at) < from || new Date(e.at) >= to)
+    }
+    if (args['face-dense']) {
+      // Déverrouillages fréquents : la première lecture du jour recopiée toutes les 6 min depuis 7 h, valence en
+      // vague lente (données synthétiques, déterministes).
+      const start = new Date(); start.setHours(0, 0, 0, 0)
+      const model = entries.find((e) => e.type === 'face_burst' && new Date(e.at) >= start)
+      if (model) {
+        for (let t = start.getTime() + 7 * 3600000, k = 0; t < Date.now(); t += 6 * 60000, k++) {
+          const values = { ...model.payload.values, valence: 0.1 + 0.25 * Math.sin(k / 9) + ((k * 37) % 11 - 5) / 60 }
+          entries.push({ ...model, at: new Date(t).toISOString(), payload: { ...model.payload, values } })
+        }
+      }
     }
     const daysAgo = (n, h) => { const d = new Date(); d.setHours(h, 0, 0, 0); d.setDate(d.getDate() - n); return d }
     if (args.radar === 'explained') {

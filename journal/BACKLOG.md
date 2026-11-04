@@ -979,6 +979,9 @@ Inventaire du 12/10 16:30 Paris (captures `npm run visual`, chaque page lue) —
       page au-delà de 0,75 s
 - [ ] Cache d'agrégats journaliers / hebdo précalculés, invalidés à l'écriture (`health-entries-updated`) — **pas utile
       aujourd'hui** (mesure du 03/11 ci-dessus) ; à rouvrir si une page dépasse 1 s chez un testeur
+- [x] **I83-jour** (04/11 18:35) Historique du bien-être, vue Jour : un point par heure au-delà de 24 lectures
+      (`DAY_MAX_POINTS`), moyenne du jour sur les lectures ; `npm run visual -- --face-dense`. Les autres courbes lisent
+      déjà des agrégats journaliers (rien à réduire aujourd'hui).
 - [ ] **I83** (score 16) : courbes à résolution adaptée — MinMaxLTTB (`utils/downsample.js`) au-delà de ~2 points
       par pixel, périodes longues servies par les agrégats ci-dessus
 - [x] Web Worker pour l'analyse + cache des résultats invalidé à chaque écriture (révision des données) : Accueil
