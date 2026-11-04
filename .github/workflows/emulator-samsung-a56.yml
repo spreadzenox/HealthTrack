@@ -656,6 +656,8 @@ jobs:
   # PLUGIN-API-2 (04/11) : Android 12L avec une WebView (l'image API 31 n'a que la WebView 91, sous le minimum 93) qui lance le JS : parcours des écrans du premier lancement et
   # appel des méthodes natives de lecture des plugins. Le job API 28 ne voit que le démarrage ; celui-ci exécute les
   # corps des méthodes, où une API plus récente sans test de version ferait planter l'app sous Android 8 à 12.
+  # FONT-SCALE-2 (04/11) : puis Accueil, Sources et Paramètres à la police du système 1,0 et 1,3 (mesure et captures,
+  # avertissement seulement).
   emulator-test-api32-native:
     name: Méthodes natives sous Android 12L (API 32)
     runs-on: ubuntu-latest
