@@ -59,3 +59,9 @@
 - **P42 au plus tôt** (Alpha avec la correction), puis lever la restriction Android 13+ dans l'alerte du résumé.
 - PLUGIN-API-2 (job API 30/31 avec une WebView récente).
 - TEST-ALPHA-1 (07–08/11, clic P42) ; P37, P43, P44, P45 en attente du propriétaire.
+
+## Après le merge
+- #681 mergée (`1a81e11`) après un dernier passage vert de tous les checks (API 28 compris ; un passage avait échoué
+  parce que l'écran avait été lu trop tôt, d'où plusieurs lectures sur 40 s). Tests, Build & Release et Play — AAB
+  verts sur main : release **v485** (APK 34 536 919 octets), **versionCode 100765 envoyé en test interne**. À
+  envoyer sur Alpha par le propriétaire (P42 avancé, alerte en tête du résumé).
