@@ -7,6 +7,9 @@
  * appel d'API plus récente sans test de version ferait planter l'app (NoSuchMethodError, NoClassDefFoundError).
  *
  * Aucune méthode qui ouvre un écran système, demande une permission, écrit ou démarre un service n'est appelée.
+ * FONT-SCALE-2 : rouvre ensuite l'app à la police du système 1,0 puis 1,3 et compare titres, textes et débordements
+ * (avertissement seulement).
+ *
  * APK sideload debug déjà installé (WebView inspectable). Sorties : native_sweep.md, native-sweep/NN-<étape>.png.
  * Code de sortie non nul si le JS ne démarre pas, si l'app se ferme ou si logcat montre un plantage Java.
  */
@@ -213,6 +216,89 @@ if (!(await connect())) {
     await sleep(500)
   }
   lines.push('')
+}
+
+// FONT-SCALE-2 (04/11) — grande taille de police d'Android (Paramètres → Affichage → Taille de police). Vérifie que la
+// WebView suit l'échelle du système (texte agrandi d'autant) et relève les débordements, comme
+// `npm run visual -- --font-scale=1.3`. Mesure seulement : un débordement donne un avertissement, jamais un échec.
+const FONT_ROUTES = ['/', '/connectors', '/settings']
+const MEASURE = `(() => {
+  const vw = innerWidth
+  const h = document.querySelector('h1, h2')
+  const p = document.querySelector('main p, p')
+  const px = (el) => (el ? Math.round(parseFloat(getComputedStyle(el).fontSize) * 10) / 10 : null)
+  const lineH = (el) => {
+    if (!el || !el.firstChild) return null
+    const r = document.createRange()
+    r.selectNodeContents(el)
+    const rects = [...r.getClientRects()]
+    return rects.length ? Math.round(rects[0].height * 10) / 10 : null
+  }
+  const label = (el) => (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 50)
+  const outside = [...document.querySelectorAll('button, a, input, select, h1, h2, h3, p, span')]
+    .filter((el) => { const r = el.getBoundingClientRect(); return r.width > 1 && (r.right > vw + 1 || r.left < -1) })
+    .filter((el) => { for (let a = el.parentElement; a; a = a.parentElement) { const o = getComputedStyle(a).overflowX; if (o === 'auto' || o === 'scroll') return false } return true })
+    .map(label).filter(Boolean)
+  const clipped = [...document.querySelectorAll('button')].filter((b) => b.offsetWidth > 0 && b.scrollWidth > b.clientWidth + 1).map(label).filter(Boolean)
+  return { path: location.pathname, vw, title: h ? label(h) : null, titlePx: px(h), titleLine: lineH(h), textPx: px(p), textLine: lineH(p),
+    pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth, outside: [...new Set(outside)].slice(0, 6), clipped: [...new Set(clipped)].slice(0, 6) }
+})()`
+
+async function measureAt(scale) {
+  shell(`settings put system font_scale ${scale}`)
+  shell(`am force-stop ${PKG}`)
+  try {
+    cdp?.close()
+  } catch {
+    /* fermée */
+  }
+  cdp = null
+  await sleep(1000)
+  shell(`monkey -p ${PKG} -c android.intent.category.LAUNCHER 1`)
+  if (!(await connect())) return null
+  await sleep(6000)
+  const out = []
+  for (const route of FONT_ROUTES) {
+    if (!alive()) break
+    await evaluate(`(() => { history.pushState({}, '', ${JSON.stringify(route)}); dispatchEvent(new PopStateEvent('popstate')); return true })()`)
+    await sleep(3500)
+    out.push({ route, ...((await evaluate(MEASURE)) || { path: route, error: 'pas de mesure' }) })
+    shot(`police-${scale}-${route === '/' ? 'accueil' : route.slice(1)}`)
+  }
+  return out
+}
+
+const fontWarnings = []
+if (ok && alive()) {
+  lines.push('### Grande taille de police (FONT-SCALE-2)', '')
+  const normal = await measureAt('1.0')
+  const large = await measureAt('1.3')
+  shell('settings put system font_scale 1.0')
+  if (!normal || !large) {
+    fontWarnings.push(`mesure impossible (normal : ${!!normal}, 1,3 : ${!!large})`)
+  } else {
+    lines.push('| Écran | Titre (px, 1,0 → 1,3) | Ligne du titre | Texte (px) | Ligne du texte | Débordements à 1,3 |', '|---|---|---|---|---|---|')
+    const ratios = []
+    for (const big of large) {
+      const base = normal.find((m) => m.route === big.route) || {}
+      for (const [a, b] of [[base.titleLine, big.titleLine], [base.textLine, big.textLine]]) if (a && b) ratios.push(b / a)
+      const issues = [
+        big.pageOverflow > 1 ? `page +${big.pageOverflow} px` : '',
+        big.outside?.length ? `hors écran : ${big.outside.join(' · ')}` : '',
+        big.clipped?.length ? `texte coupé : ${big.clipped.join(' · ')}` : '',
+      ].filter(Boolean)
+      if (issues.length) fontWarnings.push(`${big.route} : ${issues.join(' ; ')}`)
+      lines.push(`| ${big.route} (${big.path ?? '?'}) | ${base.titlePx ?? '?'} → ${big.titlePx ?? '?'} | ${base.titleLine ?? '?'} → ${big.titleLine ?? '?'} | ${base.textPx ?? '?'} → ${big.textPx ?? '?'} | ${base.textLine ?? '?'} → ${big.textLine ?? '?'} | ${(issues.join(' ; ') || 'aucun').replace(/\|/g, '/')} |`)
+    }
+    const mean = ratios.length ? ratios.reduce((s, r) => s + r, 0) / ratios.length : null
+    const follows = mean != null && mean > 1.15
+    lines.push('', `- ${follows ? '✅' : '⚠️'} la WebView ${follows ? 'suit' : 'ne semble pas suivre'} la police du système : hauteur des lignes ×${mean ? mean.toFixed(2) : '?'} à l’échelle 1,3`)
+    if (!follows) fontWarnings.push(`la WebView ne suit pas la police du système (×${mean ? mean.toFixed(2) : '?'})`)
+  }
+  for (const w of fontWarnings) lines.push(`- ⚠️ ${w}`)
+  if (!fontWarnings.length) lines.push('- ✅ aucun débordement à l’échelle 1,3')
+  lines.push('')
+  for (const w of fontWarnings) console.log(`::warning::Grande police (FONT-SCALE-2) : ${w}`)
 }
 
 await sleep(2000)
