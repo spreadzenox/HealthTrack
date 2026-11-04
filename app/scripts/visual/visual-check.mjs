@@ -106,6 +106,8 @@
  *                                          # et onglets dont le libellé dépasse ou touche le bord (avertissement)
  *                                          # « SANS NOM ACCESSIBLE » / « CIBLE < 44 px » : bouton icône sans
  *                                          # aria-label, champ sans étiquette, cible tactile trop petite (avertissement)
+ *                                          # « CLIQUABLE MUET » : élément touchable sans rôle (TalkBack ne l'annonce pas) ;
+ *                                          # « SANS TITRE H1 » : page sans titre de niveau 1 (navigation par titres)
  *                                          # « CONTRASTE FAIBLE » : texte sous 4,5:1 sur son fond (3:1 en grand ; WCAG 1.4.3)
  *   npm run visual -- --url=http://localhost:5173   # serveur déjà lancé
  *   npm run visual -- --out=.visual/avant  # dossier de sortie
@@ -329,6 +331,32 @@ function findA11y() {
     }
   }
   return { unnamed: unnamed.slice(0, 8), small: small.slice(0, 8) }
+}
+
+/**
+ * Lecteur d'écran (TalkBack, A11Y-3) : éléments qu'on touche (curseur « main ») sans rôle interactif, donc annoncés
+ * comme du simple texte et sans action par TalkBack ; et page sans titre de niveau 1 (TalkBack navigue par titres).
+ * Exécuté dans la page ; un avertissement, pas un échec.
+ */
+function findScreenReader() {
+  const mute = []
+  const interactive = 'button, a[href], input, select, textarea, label, summary, [role="button"], [role="tab"], [role="switch"], [role="checkbox"], [role="radio"], [role="link"], [role="menuitem"], [role="option"], [role="slider"]'
+  for (const el of document.querySelectorAll('body *')) {
+    if (el.matches(interactive) || el.closest(interactive)) continue
+    const st = getComputedStyle(el)
+    if (st.cursor !== 'pointer') continue
+    // Hérité du parent : seul l'élément le plus haut qui déclare le curseur compte
+    if (el.parentElement && getComputedStyle(el.parentElement).cursor === 'pointer') continue
+    const r = el.getBoundingClientRect()
+    if (st.display === 'none' || st.visibility === 'hidden' || r.width === 0 || r.height === 0) continue
+    if (el.closest('[aria-hidden="true"], [inert], details:not([open]) > :not(summary)')) continue
+    const cls = typeof el.className === 'string' && el.className ? '.' + el.className.trim().split(/\s+/)[0] : ''
+    const d = `${el.tagName.toLowerCase()}${cls} « ${(el.innerText || '').trim().replace(/\s+/g, ' ').slice(0, 24)} »`
+    if (!mute.includes(d)) mute.push(d)
+  }
+  const h1 = [...document.querySelectorAll('h1, [role="heading"][aria-level="1"]')]
+    .some((h) => h.getBoundingClientRect().height > 0 || h.classList.contains('sr-only'))
+  return { mute: mute.slice(0, 8), noH1: !h1 }
 }
 
 /**
@@ -1311,6 +1339,7 @@ async function main() {
         current.textOverflow = await page.evaluate(findTextOverflow)
         current.a11y = await page.evaluate(findA11y)
         current.contrast = await page.evaluate(findContrast)
+        current.sr = await page.evaluate(findScreenReader)
       } catch (e) {
         current.error = String(e?.message || e)
       }
@@ -1331,6 +1360,8 @@ async function main() {
         r.textOverflow?.length ? `TEXTE QUI DÉBORDE (« ${r.textOverflow.join(' », « ')} »)` : null,
         r.a11y?.unnamed.length ? `SANS NOM ACCESSIBLE (${r.a11y.unnamed.join(', ')})` : null,
         r.a11y?.small.length ? `CIBLE < 44 px (« ${r.a11y.small.join(' », « ')} »)` : null,
+        r.sr?.mute.length ? `CLIQUABLE MUET (${r.sr.mute.join(', ')})` : null,
+        r.sr?.noH1 ? 'SANS TITRE H1' : null,
         r.contrast?.length ? `CONTRASTE FAIBLE (« ${r.contrast.join(' », « ')} »)` : null,
         r.frenchLeft?.count ? `${r.frenchLeft.count} mot(s) français restant(s) (ex. « ${r.frenchLeft.samples.join(' », « ')} »)` : null,
       ].filter(Boolean)
