@@ -44,6 +44,19 @@ android {
     // - play : la version Google Play, sans REQUEST_INSTALL_PACKAGES ni auto-mise à jour. Identifiant neutre et
     //   définitif (Google Play ne permet jamais de le changer), sans nom commercial, distinct de la sideload pour que
     //   les deux coexistent sur un téléphone.
+    // PLUGIN-API-2 (04/11) : `./gradlew lintPlayDebug -PnewApiOnly` (job « Build APK ») vérifie avec Android Lint
+    // que tout appel natif plus récent que minSdk 26 est derrière un test de version (NewApi). Le plantage du 15/10
+    // sous Android 8–12 venait d'un type d'Android 13 ; ce contrôle couvre aussi le corps des méthodes. Restreint à
+    // NewApi seulement sur demande, pour ne pas changer lintVital des builds release.
+    if (project.hasProperty('newApiOnly')) {
+        lint {
+            checkOnly 'NewApi'
+            abortOnError true
+            checkDependencies false
+            htmlReport true
+            textReport true
+        }
+    }
     flavorDimensions 'distribution'
     productFlavors {
         sideload {

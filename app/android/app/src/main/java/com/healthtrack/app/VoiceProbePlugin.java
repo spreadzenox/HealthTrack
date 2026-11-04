@@ -1,5 +1,6 @@
 package com.healthtrack.app;
 
+import androidx.annotation.RequiresApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -88,6 +89,7 @@ public class VoiceProbePlugin extends Plugin {
         new Handler(Looper.getMainLooper()).post(() -> checkSupport(context, call, ret, errors));
     }
 
+    @RequiresApi(api = 33) // appelé seulement après le test SDK_INT < 33 de probe (lambda non suivi par Lint)
     private void checkSupport(Context context, PluginCall call, JSObject ret, JSArray errors) {
         AtomicBoolean done = new AtomicBoolean(false);
         Handler main = new Handler(Looper.getMainLooper());

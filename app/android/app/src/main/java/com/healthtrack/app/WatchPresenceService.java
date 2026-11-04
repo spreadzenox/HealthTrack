@@ -67,6 +67,7 @@ public class WatchPresenceService extends CompanionDeviceService {
 
     /** Android 16 (API 36) : même information, par type d'événement. */
     @Override
+    @RequiresApi(api = 36) // Android n'appelle ce rappel qu'à partir d'Android 16
     public void onDevicePresenceEvent(@NonNull DevicePresenceEvent event) {
         int type = event.getEvent();
         boolean appeared = type == DevicePresenceEvent.EVENT_BT_CONNECTED || type == DevicePresenceEvent.EVENT_BLE_APPEARED;
