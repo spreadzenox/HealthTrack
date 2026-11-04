@@ -1,5 +1,6 @@
 package com.healthtrack.app;
 
+import androidx.annotation.RequiresApi;
 import android.companion.AssociationInfo;
 import android.companion.AssociationRequest;
 import android.companion.BluetoothDeviceFilter;
@@ -195,6 +196,7 @@ public class CompanionPlugin extends Plugin {
         notifyListeners("companionAssociated", data);
     }
 
+    @RequiresApi(api = 33) // appelé seulement depuis associate, derrière supported()
     @SuppressWarnings("deprecation")
     private void observe(CompanionDeviceManager m, String address) {
         try {
