@@ -19,8 +19,13 @@ timeout 15 adb logcat -c
 timeout 60 adb shell am start -n "$PKG/.MainActivity" >/dev/null
 sleep 12
 timeout 30 adb exec-out screencap -p > "$OUT/ecran.png"
-timeout 60 adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-timeout 30 adb pull /sdcard/ui.xml "$OUT/ui.xml" >/dev/null 2>&1 || true
+# L'arbre d'accessibilité de la WebView se remplit parfois tard : plusieurs lectures, sur 40 s au plus.
+for i in 1 2 3 4 5; do
+  timeout 60 adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+  timeout 30 adb pull /sdcard/ui.xml "$OUT/ui.xml" >/dev/null 2>&1 || true
+  grep -q "Android System WebView" "$OUT/ui.xml" 2>/dev/null && break
+  sleep 8
+done
 timeout 30 adb logcat -d > "$OUT/logcat.txt"
 
 ALIVE=$(timeout 15 adb shell pidof "$PKG" | tr -d '\r')
