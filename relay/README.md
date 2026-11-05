@@ -13,6 +13,11 @@ ni ici. Décisions et infrastructure : `journal/INFRA.md`, jalon 6 de `journal/P
   "resetAt": "2026-11-01T00:00:00.000Z", "state": "2026-10:1:0" }` (premium : `daily`, renouvellement à minuit UTC).
   429 quand un plafond est atteint (`scope` : `install`, `global`, `minute`, `credits` ou `premium_day`), 502 si le
   modèle n'a pas répondu.
+- `POST /v1/stool/analyze` (SELLES-PHOTO-1, mêmes en-têtes, contrôles et décompte qu'un repas) :
+  `{ "image": { "mimeType": "image/jpeg", "data": "<base64>" } }` → `{ "parsed": { "visible": true, "bristol": 4,
+  "confidence": "medium" }, "model": "…", "credits": { … } }`. Toujours Flash-Lite, même en Gold. Le modèle ne juge que
+  la forme (ni couleur, ni sang, ni mucus). Réponse vide ou illisible : `{ "visible": false, "bristol": null }` avec
+  `unreadable: true`, crédit rendu. Journaux sans image ni résultat.
 - `GET /v1/credits` (mêmes en-têtes) → `{ "credits": { … } }` sans rien consommer. Règle (`src/credits.js`) :
   10 analyses offertes une fois + 15 par mois civil non cumulables en gratuit, 10 par jour en premium. Registre en
   mémoire recopié dans Firestore (collection `credits`, empreintes seulement, champ `expireAt` = 13 mois après le mois

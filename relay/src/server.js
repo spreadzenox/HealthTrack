@@ -48,7 +48,7 @@ import { parseClientState } from './credits.js'
 import { dayKey } from './quota.js'
 import { readUsage } from './costs.js'
 import { DIGEST_MAX_DAYS, FEEDBACK_MAX_LENGTH, digestFeedback, parseFeedback } from './feedback.js'
-import { MEAL_TEXT_MAX_LENGTH, RESPONSE_SCHEMA, photoInstruction, textInstruction, textUserPart } from './prompts.js'
+import { MEAL_TEXT_MAX_LENGTH, RESPONSE_SCHEMA, STOOL_INSTRUCTION, STOOL_SCHEMA, photoInstruction, textInstruction, textUserPart } from './prompts.js'
 
 /** Taille maximale du corps JSON (photo en base64 comprise). */
 export const MAX_BODY_BYTES = 6 * 1024 * 1024
@@ -129,6 +129,36 @@ export function buildRequest(body, ingredientNames) {
     }
   }
   throw new HttpError(400, 'bad_kind', 'Type d\'analyse inconnu (photo ou text).')
+}
+
+/** Valide une photo de selles (SELLES-PHOTO-1) : JPEG seulement, métadonnées retirées, consigne fixe du relais. */
+export function buildStoolRequest(body) {
+  const { mimeType, data } = body?.image ?? {}
+  if (mimeType !== 'image/jpeg' || typeof data !== 'string' || !data) {
+    throw new HttpError(400, 'bad_image', 'Photo attendue au format JPEG.')
+  }
+  const bytes = Buffer.from(data, 'base64')
+  if (bytes.length > MAX_IMAGE_BYTES) throw new HttpError(413, 'too_large', 'Photo trop volumineuse.')
+  const clean = stripJpegMetadata(bytes)
+  if (!clean) throw new HttpError(400, 'bad_image', 'Photo illisible.')
+  return {
+    kind: 'stool',
+    systemInstruction: STOOL_INSTRUCTION,
+    parts: [{ inlineData: { mimeType: 'image/jpeg', data: clean.toString('base64') } }],
+    schema: STOOL_SCHEMA,
+    // Tâche simple : Flash-Lite même pour Gold (environ 10 fois moins cher qu'un repas Gold)
+    liteOnly: true,
+  }
+}
+
+const UNREADABLE_STOOL = Object.freeze({ visible: false, bristol: null, confidence: 'low' })
+
+/** Ne laisse sortir que `{ visible, bristol 1..7, confidence }` : tout autre champ du modèle est jeté. */
+export function normalizeStool(parsed) {
+  const bristol = Number(parsed?.bristol)
+  if (parsed?.visible !== true || !Number.isInteger(bristol) || bristol < 1 || bristol > 7) return { ...UNREADABLE_STOOL }
+  const confidence = ['high', 'medium', 'low'].includes(parsed.confidence) ? parsed.confidence : 'low'
+  return { visible: true, bristol, confidence }
 }
 
 /**
@@ -221,8 +251,8 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
   }
 
   async function generate(request, tier) {
-    const args = { systemInstruction: request.systemInstruction, parts: request.parts, schema: RESPONSE_SCHEMA }
-    if (tier === 'gold') {
+    const args = { systemInstruction: request.systemInstruction, parts: request.parts, schema: request.schema ?? RESPONSE_SCHEMA }
+    if (tier === 'gold' && !request.liteOnly) {
       const slot = goldSlot()
       if (slot.ok) {
         try {
@@ -503,7 +533,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       return
     }
 
-    if (path !== '/v1/meal/analyze') {
+    if (path !== '/v1/meal/analyze' && path !== '/v1/stool/analyze') {
       send(res, 404, { error: 'not_found', message: 'Adresse inconnue.' }, origin)
       return
     }
@@ -537,7 +567,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       } catch {
         throw new HttpError(400, 'bad_json', 'JSON attendu.')
       }
-      const request = buildRequest(body, ingredientNames)
+      const request = path === '/v1/stool/analyze' ? buildStoolRequest(body) : buildRequest(body, ingredientNames)
       kind = request.kind
 
       if (integrity) {
@@ -585,7 +615,26 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         }
       }
 
-      const { parsed, model, location, eur, served } = await generate(request, tier)
+      let generated
+      try {
+        generated = await generate(request, tier)
+      } catch (err) {
+        // Selles : réponse vide ou illisible (filtre de sécurité de Vertex, photo ambiguë) → « photo difficile à lire »,
+        // sans consommer de crédit ; le quota du jour reste pris si l'appel a coûté (il protège le budget)
+        if (kind !== 'stool' || err?.status !== 502) throw err
+        if (!err?.billed) quota.refund(installId)
+        if (credit?.ok) {
+          credits.refund(installId, { premium })
+          await persistCredits(installId)
+        }
+        log({ event: 'analyze', kind, status: 200, unreadable: true, ms: now() - started, install: hashInstallId(installId) })
+        const payload = { parsed: { ...UNREADABLE_STOOL }, unreadable: true }
+        if (credit) payload.credits = credits.peek(installId, { premium, tier, reported: null })
+        send(res, 200, payload, origin)
+        return
+      }
+      const { model, location, eur, served } = generated
+      const parsed = kind === 'stool' ? normalizeStool(generated.parsed) : generated.parsed
       log({ event: 'analyze', kind, model, location, tier, served, eur: Number(eur.toFixed(5)), status: 200, ms: now() - started, install: hashInstallId(installId), ...(installId.startsWith('ci-smoke-') ? { ci: true } : {}) })
       // Nouvelle installation qui prend son premier crédit (CREDITS-INSTALLS) : compté par jour, sans identifiant ;
       // l'analyse de test du workflow (« ci-smoke-<run> », une installation neuve à chaque fois) n'est pas comptée
