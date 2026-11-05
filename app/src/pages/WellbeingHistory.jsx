@@ -105,7 +105,10 @@ export function HistoryChart({ history, now, selected = null, onSelect }) {
     return d.toISOString()
   }
   const x = xScale(period, from, period === 'day' ? now : new Date(new Date(now).setHours(23, 59, 59, 999)))
-  const line = points.map((p, i) => `${i ? 'L' : 'M'} ${x(pointAt(p)).toFixed(1)} ${y(p.note).toFixed(1)}`).join(' ')
+  // Vue Jour : la ligne suit la tendance lissée (BE-BIAIS-4), les points restent les lectures.
+  const smooth = period === 'day' && history.trend?.length === points.length
+  const linePoints = smooth ? history.trend : points
+  const line = linePoints.map((p, i) => `${i ? 'L' : 'M'} ${x(pointAt(p)).toFixed(1)} ${y(p.note).toFixed(1)}`).join(' ')
   return (
     <svg className="wbh-chart" viewBox={`0 0 ${W} ${H}`} width="100%" role="img"
       aria-label={`Bien-être estimé ${words} : ${period === 'day' ? `${history.readings} lectures` : `${points.length} jours`}${points.some((p) => p.hourly) ? ', un point par heure' : ''}`}>
@@ -121,9 +124,9 @@ export function HistoryChart({ history, now, selected = null, onSelect }) {
       {period === 'day' && points.filter((p) => Number.isFinite(p.low) && Number.isFinite(p.high)).map((p) => (
         <line key={`r${p.at}`} className="wbh-range" x1={x(p.at)} x2={x(p.at)} y1={y(p.high)} y2={y(p.low)} />
       ))}
-      {points.length > 1 && <path className="wbh-line" d={line} />}
+      {points.length > 1 && <path className={`wbh-line${smooth ? ' is-trend' : ''}`} d={line} data-trend={smooth ? '' : undefined} />}
       {points.map((p) => (
-        <circle key={p.at} className={`wbh-dot${p.few ? ' is-few' : ''}${selected === p.at ? ' is-on' : ''}`}
+        <circle key={p.at} className={`wbh-dot${p.few ? ' is-few' : ''}${smooth ? ' is-reading' : ''}${selected === p.at ? ' is-on' : ''}`}
           cx={x(pointAt(p))} cy={y(p.note)} r={selected === p.at ? 6.5 : period === 'month' ? 3 : 4.5} />
       ))}
       {notes.map((n) => {
@@ -419,7 +422,10 @@ export default function WellbeingHistory({ now: givenNow, features }) {
             <p className="wbh-hint">Touchez un point pour voir sa lecture.</p>
           )}
           {!empty && <ul className="wbh-legend" aria-label="Légende">
-            <li><span className="wbh-key is-estimate" aria-hidden="true" />estimé (visage){history.points.some((p) => p.hourly) && ', par heure'}</li>
+            <li><span className={`wbh-key is-estimate${history.period === 'day' && history.trend?.length > 0 ? ' is-reading' : ''}`} aria-hidden="true" />estimé (visage){history.points.some((p) => p.hourly) && ', par heure'}</li>
+            {history.period === 'day' && history.trend?.length > 0 && (
+              <li><span className="wbh-key is-trend" aria-hidden="true" />tendance lissée</li>
+            )}
             {history.notes.length > 0 && <li><span className="wbh-key is-note" aria-hidden="true" />noté à la main</li>}
             {history.period === 'day' && history.points.some((p) => Number.isFinite(p.low) && Number.isFinite(p.high)) && (
               <li><span className="wbh-key is-range" aria-hidden="true" />fourchette</li>

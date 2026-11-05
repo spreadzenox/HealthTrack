@@ -109,6 +109,12 @@
   fill: var(--color-brand);
 }
 
+.wbh-dot.is-reading {
+  fill: var(--color-bg);
+  stroke: var(--color-brand);
+  stroke-width: 1.5;
+}
+
 .wbh-dot.is-few {
   fill: var(--mint-bg);
   stroke: var(--color-brand);
@@ -164,6 +170,19 @@
   border-radius: 0;
   background: none;
   border-top: 2px dashed var(--chart-ref);
+}
+
+.wbh-key.is-reading {
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-brand);
+}
+
+.wbh-key.is-trend {
+  width: 16px;
+  height: 0;
+  border-radius: 0;
+  background: none;
+  border-top: 3px solid var(--color-brand);
 }
 
 .wbh-key.is-few {
