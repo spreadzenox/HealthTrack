@@ -10,10 +10,46 @@ import { ESTIMATOR_INPUTS, isEstimatorInput, ESTIMATOR_TAGS } from './estimatorI
 import { VARIABLE_META, PHONE_APPS_KEYS, buildDailyDataset, computeBasicCorrelations } from '../analysisEngine'
 import { BEHAVIOR_TAGS, computeTagEffects } from '../behaviorTags'
 import { FACE_BURST_TYPE, MOOD_TRIGGERS, moodFaceBursts } from '../faceBursts'
+import { computeFaceMoodCorrelations } from './faceMoodDays'
 
 describe('séparation Y (humeur) / X (comportements et contexte)', () => {
-  it('déclare les seules entrées permises : visage, voix, auto-déclaration', () => {
-    expect(ESTIMATOR_INPUTS.map((i) => i.key).sort()).toEqual(['face', 'selfReport', 'voice'])
+  it('déclare les seules entrées permises : visage, voix, auto-déclaration (bien-être, ventre)', () => {
+    expect(ESTIMATOR_INPUTS.map((i) => i.key).sort()).toEqual(['face', 'gutSelfReport', 'selfReport', 'voice'])
+    expect(isEstimatorInput('gut')).toBe(true)
+    expect(isEstimatorInput('gut_pain_days')).toBe(true)
+  })
+
+  it("VENTRE-BE-2 : le ventre (notes, selles) n'est jamais un facteur des liens du bien-être, notes ou visage", () => {
+    const entries = []
+    for (let i = 0; i < 24; i++) {
+      const d = (h) => new Date(2026, 8, 1 + i, h).toISOString()
+      const level = ['calm', 'discomfort', 'pain'][i % 3]
+      entries.push({ type: 'wellbeing', at: d(21), payload: { score: 4 - (i % 3) } })
+      entries.push({ type: 'gut', source: 'app_gut', at: d(20), payload: { level, scope: 'day' } })
+      entries.push({ type: 'gut', source: 'app_gut', at: d(13), payload: { level } })
+      entries.push({ type: 'stool', at: d(9), payload: { bristol: 3 + (i % 3) } })
+      entries.push({ type: 'steps', at: d(12), payload: { value: 4000 + 700 * (i % 4) } })
+      for (const h of [8, 9, 10]) {
+        entries.push({ type: FACE_BURST_TYPE, source: 'face_sense', at: d(h), payload: { trigger: 'unlock', frames: 3, valid: 3, values: { valence: 0.3 - 0.2 * (i % 3), arousal: 0 } } })
+      }
+    }
+    const gutLike = (name) => /gut|stool|bristol|ventre/i.test(name)
+    const columns = new Set(buildDailyDataset(entries).flatMap((row) => Object.keys(row)))
+    expect([...columns].filter(gutLike)).toEqual([])
+    expect(Object.keys(VARIABLE_META).filter(gutLike)).toEqual([])
+    const fromNotes = (computeBasicCorrelations(entries)?.correlations || []).map((c) => c.variable)
+    expect(fromNotes).toContain('steps')
+    const face = computeFaceMoodCorrelations(entries)
+    expect(face.status).toBe('ok')
+    const fromFace = [
+      ...face.correlations.map((c) => c.variable),
+      ...[...(face.tagEffects.effects || []), ...(face.tagEffects.pending || [])].map((e) => e.tagId),
+      ...(face.laggedEffects.effects || []).map((e) => e.variable),
+    ]
+    for (const name of [...fromNotes, ...fromFace]) {
+      expect(gutLike(name)).toBe(false)
+      expect(isEstimatorInput(name)).toBe(false)
+    }
   })
 
   it("aucun facteur des Analyses n'est une entrée de l'estimateur", () => {

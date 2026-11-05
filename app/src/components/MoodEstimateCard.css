@@ -297,3 +297,10 @@
 .mood-calib-steps span.is-on {
   background: var(--mint-label);
 }
+
+/* VENTRE-BE-2 : la note du ventre a compté (pêche = ventre). */
+.mood-chip-gut {
+  font-family: var(--font-sans, inherit);
+  color: var(--peach-text);
+  background: var(--peach-bg);
+}

@@ -194,6 +194,7 @@ export default function MoodEstimateCard({
             <ConfidenceBadge level={est.confidence} />
             <span className="mood-chip mono">{est.day ? `${est.day.readings} ${est.day.readings > 1 ? 'lectures' : 'lecture'} auj.` : '1 lecture'}</span>
             {trend.mean != null && <span className="mood-chip mono">moy. {frDecimal(trend.mean)} · {trend.pastDays} j</span>}
+            {est.day?.gut && <span className="mood-chip mood-chip-gut">{est.day.gut.level === 'pain' ? 'douleur' : 'gêne'} au ventre comptée</span>}
           </div>
           <p className="mood-details-model mono">{modelLabel(est.model)}</p>
         </div>

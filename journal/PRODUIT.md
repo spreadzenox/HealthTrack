@@ -9,7 +9,9 @@
 
 > **Signalement du 05/11 vers 11:45** : Analyses → Tendances, « Votre bien-être » ne montrait que les notes à la main ;
 > corrigé le 05/11 12:35 (TENDANCES-VISAGE : même série estimée que l'historique et l'Accueil, notes en losanges,
-> détail au toucher, « Attendu » comparé à la note du jour). **I220 OUI** (05/11) : VENTRE-BE-2 au prochain run de code.
+> détail au toucher, « Attendu » comparé à la note du jour). **I220 OUI** (05/11) : livré le 05/11 13:35 (VENTRE-BE-2 :
+> une gêne ou une douleur du ventre fait baisser un peu le bien-être estimé du jour, le ventre n'est jamais un facteur
+> des liens du bien-être, verrouillé par le test de la règle 5).
 >
 > **Retours du 04/11 vers 19:45** (priorité des runs de code juste après le compte rendu du 02/11 ; détail et état dans
 > `BACKLOG.md`, section « Retours du propriétaire du 04/11 ») : (1) livraison continue vers Alpha par la CI, sans clic

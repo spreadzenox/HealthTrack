@@ -204,9 +204,15 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   Store en lecture (`reviews.list`). Plantages : VITALS-1 (attend P43).
 - [ ] **VENTRE-BE-1** (retour (3), étude I220) ~~d'ici la réponse du propriétaire : chaque piste dit « Ventre » ou
   « Bien-être » (étiquette pêche / menthe)~~ ✅ 04/11 21:35 (`DomainTag`, Analyses) ; **I220 OUI (propriétaire, 05/11)** :
-  → **VENTRE-BE-2** (prochain run de code) : une note « gêne » ou « douleur » entre dans l'estimation du bien-être comme
+  → ~~**VENTRE-BE-2** : une note « gêne » ou « douleur » entre dans l'estimation du bien-être comme
   auto-déclaration à poids faible, déclarée dans les entrées de l'estimateur, et le ventre sort des facteurs des pistes
-  « bien-être » (test de la règle 5 étendu au ventre) ; parcours « Mon ventre » intact.
+  « bien-être » (test de la règle 5 étendu au ventre) ; parcours « Mon ventre » intact~~ ✅ 05/11 13:35
+  (`mood/gutSelfReport.js` : pas de 20 % vers 2 / 5 pour une gêne, 1 / 5 pour une douleur, vers le bas seulement, la
+  note la plus forte du jour ; même note sur l'Accueil, l'historique, Tendances et la série Y des Analyses ;
+  `gutSelfReport` dans `ESTIMATOR_INPUTS` ; test de la règle 5 : aucune colonne, aucun lien, tag ni effet décalé du
+  bien-être, notes ou visage, ne parle du ventre ou des selles ; le ventre n'était déjà pas un facteur, c'est désormais
+  verrouillé). → VENTRE-BE-3 (idée) : les selles (Bristol) ne comptent pas dans le bien-être (pas dans I220) ; à
+  reproposer seulement si le propriétaire le demande.
 - [ ] **ANALYSES-ONGLETS** (retour (4)) ~~sous-onglets Bien-être, Ventre, FODMAP, Tendances (Tendances quitte le
   Journal)~~ ✅ 05/11 01:35 (ANALYSES-ONGLETS-1 : `AnalysesTabs`, route `/recommendations/ventre`, `GutView`, carte de
   l'Accueil vers le bon onglet) → ~~**ANALYSES-ONGLETS-2** : compte à rebours propre à chaque onglet ; encart d'intro de

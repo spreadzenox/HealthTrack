@@ -481,3 +481,13 @@
   font-size: 0.82rem;
   color: var(--mint-text);
 }
+
+/* VENTRE-BE-2 : une note du ventre a un peu compté ce jour-là (pêche = ventre). */
+.wbh-gut {
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border-radius: var(--radius-tag);
+  font-size: 0.8rem;
+  color: var(--peach-text);
+  background: var(--peach-bg);
+}

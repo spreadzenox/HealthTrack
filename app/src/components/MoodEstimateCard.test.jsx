@@ -130,3 +130,15 @@ describe('MoodEstimateCard', () => {
     expect(screen.queryByText(/Réglage sur vous/)).toBeNull()
   })
 })
+
+describe('MoodEstimateCard — ressenti du ventre (VENTRE-BE-2)', () => {
+  it('les détails disent quand la note du ventre a compté', () => {
+    const est = { ...estimate, day: { ...estimate.day, gut: { level: 'discomfort', shift: -0.3 } }, signals: ['visage', 'ventre'] }
+    renderCard({ data: { est, days }, details: true })
+    expect(screen.getByText('gêne au ventre comptée')).toBeInTheDocument()
+  })
+  it('aucune mention du ventre sans note du ventre', () => {
+    renderCard({ data: { est: estimate, days }, details: true })
+    expect(screen.queryByText(/au ventre/)).toBeNull()
+  })
+})

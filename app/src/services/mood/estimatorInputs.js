@@ -2,7 +2,7 @@
  * Entrées déclarées de l'estimateur d'humeur (règle anti-circularité, directive D5 du propriétaire).
  *
  * Y = l'humeur, estimée uniquement à partir de signaux émotionnels directs : expressions du visage,
- * voix, et ce que l'utilisateur déclare lui-même (note de bien-être, « Stress » ressenti).
+ * voix, et ce que l'utilisateur déclare lui-même (note de bien-être, « Stress » ressenti, gêne ou douleur au ventre).
  * X = comportements et contexte (sommeil, activité, écran, alimentation, météo…), qui servent
  * seulement à expliquer Y. Une variable listée ici ne doit jamais apparaître parmi les facteurs des
  * Analyses, des liens décalés ni des tags comparés au bien-être : `antiCircularity.test.js` y veille.
@@ -22,6 +22,14 @@ export const ESTIMATOR_INPUTS = [
     label: 'Ce que vous déclarez',
     columns: ['wellbeing'],
     tags: ['stress'],
+  },
+  {
+    // VENTRE-BE-2 (I220, accepté le 05/11) : une note « gêne » ou « douleur » ajuste un peu le bien-être du jour
+    // (poids faible, mood/gutSelfReport.js). Le ventre n'est donc jamais un facteur des liens du bien-être.
+    key: 'gutSelfReport',
+    label: 'Ce que vous déclarez de votre ventre (poids faible)',
+    columns: ['gut'],
+    prefix: 'gut_',
   },
   {
     key: 'face',
