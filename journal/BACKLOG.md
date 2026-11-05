@@ -200,8 +200,10 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   l'onglet Ventre en pêche~~ ✅ 05/11 02:35 (`AnalysisCountdown` : Bien-être = jours avec une note de bien-être, seuil
   des liens ; Ventre = jours avec une note du ventre, seuil des pistes repas → ventre) → ~~**ANALYSES-ONGLETS-3** : trois horizons
   (heures, jours, semaines)~~ ✅ 05/11 10:35 (`services/horizons.js`, `Horizon.jsx` : Ventre rangé heures / jours, Bien-être
-  sous « Sur quelques jours », « Sur quelques semaines » → Tendances ; 8 tests) → **ANALYSES-ONGLETS-4** : « pistes à
-  tester » et « liens repérés » expliqués en une ligne chacun ; plus tard, bien-être à l'échelle des heures (visage).
+  sous « Sur quelques jours », « Sur quelques semaines » → Tendances ; 8 tests ; mergée par le run de 11:35, v508) →
+  ~~**ANALYSES-ONGLETS-4** : « pistes à tester » et « liens repérés » expliqués en une ligne chacun~~ ✅ 05/11 11:35 (une
+  ligne sous chaque titre de l'onglet Bien-être, 1 test) → **ANALYSES-ONGLETS-5** (plus tard) : bien-être à l'échelle des
+  heures (visage), quand les lectures suffisent.
 - [x] **BE-BIAIS** (retour (5)) ✅ BE-BIAIS-1 05/11 06:35 (recalage de départ : `personalOffset`, dès 3 jours notés, écart moyen note − visage rétréci et plafonné ±2, remplacé par le modèle personnel ; 4 tests) ✅ BE-BIAIS-2 05/11 07:35 (calibration de départ : note du jour demandée dans la carte tant que 3 jours ne sont pas notés, `startCalibration`, 6 tests) ✅ BE-BIAIS-3 05/11 09:35 (expressions comparées à l'habitude des 28 jours : trait et phrase « plus de joie, moins de tristesse » ; fiabilité mesurée sur les notes, jour laissé de côté, `notesAgreement` ; 9 tests). Reste éventuel : lissage des creux et pics de la vue Jour si le propriétaire le signale encore. Énoncé : mesurer le biais (visage neutre lu triste ou méprisant : 42 % tristesse, 11 % mépris
   sur 32 lectures alors qu'il allait bien), recalage personnel, calibration de départ (notes de bien-être demandées les
   3 à 5 premiers jours, la plus courte qui suffit, puis calibration continue), lissage des creux et pics, fiabilité

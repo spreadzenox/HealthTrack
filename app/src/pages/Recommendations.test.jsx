@@ -644,6 +644,22 @@ describe('Recommendations levers', () => {
     tagSpy.mockRestore()
   })
 
+  it('explains in one line what sets levers apart from links (ANALYSES-ONGLETS-4)', async () => {
+    const sleep = { ...baseCorr, variable: 'sleepMinutes', label: 'Sommeil', r: 0.5, q: 0.004, evidence: 'solide' }
+    const hr = { ...baseCorr, variable: 'restingHR', label: 'FC au repos', r: -0.45, q: 0.004, evidence: 'solide' }
+    const lever = { ...sleep, action: 'Dormir un peu plus longtemps', stage: 'personal' }
+    const spy = await renderWithBasic({ status: 'ok', datasetDays: 40, reliability: 'good', correlations: [sleep, hr], levers: [lever] })
+    await screen.findByText(/Pistes à tester/)
+    expect(screen.getByTestId('reco-levers-hint')).toHaveTextContent(
+      'Les liens les plus nets avec votre bien-être, sur ce que vous pouvez changer.',
+    )
+    const section = await screen.findByTestId('reco-links')
+    expect(within(section).getByTestId('reco-links-hint')).toHaveTextContent(
+      'Tout ce qui varie avec votre bien-être, même ce qui ne se change pas, comme la météo ou le pouls.',
+    )
+    spy.mockRestore()
+  })
+
   it('shows activity calories and the total daily expenditure as one factor (POL-PLAY-5)', async () => {
     const active = { ...baseCorr, variable: 'activityCalories', label: 'Calories brûlées (activité)', r: 0.4, q: 0.02, evidence: 'à confirmer' }
     const total = { ...baseCorr, variable: 'dailyCaloriesHC', label: 'Dépense totale de la journée', r: 0.45, q: 0.004, evidence: 'solide' }
