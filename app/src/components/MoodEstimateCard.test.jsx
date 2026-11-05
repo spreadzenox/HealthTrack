@@ -106,4 +106,27 @@ describe('MoodEstimateCard', () => {
       expect(screen.queryByText('L’activer dans Sources')).toBeNull()
     })
   })
+
+  it('calibration de départ : demande la note du jour, avec la progression, tant que 3 jours ne sont pas notés', () => {
+    const add = vi.fn()
+    const est = { ...estimate, startCalibration: { done: 1, needed: 3, notedToday: false } }
+    renderCard({ data: { est, days }, onAddManual: add })
+    expect(screen.getByText('Réglage sur vous : 1 jour sur 3')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Noter mon bien-être du jour' }))
+    expect(add).toHaveBeenCalled()
+    expect(screen.queryByRole('button', { name: 'Noter moi-même' })).toBeNull()
+  })
+
+  it('calibration de départ : une fois la note du jour donnée, rendez-vous demain', () => {
+    const est = { ...estimate, startCalibration: { done: 2, needed: 3, notedToday: true } }
+    renderCard({ data: { est, days }, onAddManual: vi.fn() })
+    expect(screen.getByText('Réglage sur vous : 2 jours sur 3. Prochaine note demain.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Noter mon bien-être du jour' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Noter moi-même' })).toBeInTheDocument()
+  })
+
+  it('sans calibration en cours, rien de plus', () => {
+    renderCard({ data: { est: estimate, days }, onAddManual: vi.fn() })
+    expect(screen.queryByText(/Réglage sur vous/)).toBeNull()
+  })
 })

@@ -303,6 +303,18 @@ export function estimateBurst(burst, { bursts = [], calibration = null, base: gi
  *   `duo` : accord des deux modèles du visage (I126), sur les lectures du jour, sinon sur la dernière.
  *   null sans aucune lecture du déverrouillage avec un visage.
  */
+/**
+ * Calibration de départ (BE-BIAIS-2, retour (5) du 04/11) : tant que moins de 3 jours ont à la fois une note et une
+ * lecture (le recalage de départ attend ces 3 jours), la carte demande une note de bien-être chaque jour. Rend
+ * { done, needed, notedToday }, ou null quand elle est finie ou qu'un modèle personnel existe.
+ */
+export function startCalibration(entries, calibration, today) {
+  if (calibration.model || calibration.days >= OFFSET_MIN_DAYS) return null
+  const notedToday = (entries || []).some((e) => e?.type === 'wellbeing' && Number.isFinite(e.payload?.score) &&
+    e.at && localDateKey(e.at) === today)
+  return { done: calibration.days, needed: OFFSET_MIN_DAYS, notedToday }
+}
+
 export function faceMoodEstimate(entries, { now = new Date() } = {}) {
   const bursts = moodFaceBursts(entries).sort((a, b) => (a.at < b.at ? -1 : 1))
   if (!bursts.length) return null
@@ -362,6 +374,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     baselineDays: personalNeutral(bursts, last.at).days,
     calibrationDays: calibration.days,
     offsetDays: calibration.model ? 0 : calibration.offset?.days ?? 0,
+    startCalibration: startCalibration(entries, calibration, today),
     signals: ['visage'],
     duo: gap == null ? null : { models: 2, gap: Math.round(gap * 100) / 100, agreement: agreementOf(gap) },
   }
