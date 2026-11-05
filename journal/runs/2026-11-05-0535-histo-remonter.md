@@ -21,7 +21,7 @@ Type : 🎨 run de code (05:35 Paris). Priorité : retours du 04/11, point (6), 
 ## Vérifications
 - TDD : 2 tests service + 3 tests page rouges puis verts ; `npm run test` vert (3068 + 5) ; lint 0 erreur ; build OK.
 - Captures relues : semaine précédente en clair et en sombre (« du 23 au 29 octobre », flèches menthe), données
-  vides (flèches grisées, « Ces 7 jours », état vide inchangé). `npm run visual` complet : voir la PR.
+  vides (flèches grisées, « Ces 7 jours », état vide inchangé). `npm run visual` complet : 17 pages ok, aucune erreur JS.
 - Rien de collecté en plus, rien d'envoyé ; règle 5 inchangée (entrées Y seulement). Lecture IndexedDB inchangée
   (toutes les rafales étaient déjà lues).
 
