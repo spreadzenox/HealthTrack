@@ -475,6 +475,9 @@ function LinksSection({ analysis, levers = [], hidden = [], onHide }) {
   return (
     <section className="reco-section" data-testid="reco-links">
       <h3 className="reco-section-title">{leverVariables.size > 0 ? 'Autres liens repérés' : 'Liens repérés'}</h3>
+      <p className="reco-section-hint" data-testid="reco-links-hint">
+        Tout ce qui varie avec votre bien-être, même ce qui ne se change pas, comme la météo ou le pouls.
+      </p>
       {hasFace(clear) && faceHint}
       {clear.length > 0 ? list(clear.slice(0, LINKS_SHOWN)) : (
         <p className="reco-empty-levers">
@@ -713,8 +716,9 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
 
       <section className="reco-section">
         <h3 className="reco-section-title">Pistes à tester</h3>
-        <p className="reco-section-hint">
-          Ce qui va avec vos meilleurs jours de bien-être.
+        {/* ANALYSES-ONGLETS-4 : ce qui distingue une piste d'un lien, en une ligne */}
+        <p className="reco-section-hint" data-testid="reco-levers-hint">
+          Les liens les plus nets avec votre bien-être, sur ce que vous pouvez changer.
         </p>
         {shownLevers.length > 0 ? (
           <ol className="reco-advice-list">
