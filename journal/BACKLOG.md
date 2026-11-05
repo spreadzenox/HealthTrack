@@ -204,8 +204,11 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   sur 32 lectures alors qu'il allait bien), recalage personnel, calibration de départ (notes de bien-être demandées les
   3 à 5 premiers jours, la plus courte qui suffit, puis calibration continue), lissage des creux et pics, fiabilité
   affichée honnêtement.
-- [ ] **BE-HISTO-DETAIL** (retour (6)) toucher un point de la courbe ouvre la lecture (matrice des émotions, valence,
-  éveil, qualité) ; défilement aussi loin qu'on veut ; inspiration Emobot, rien de copié.
+- [ ] **BE-HISTO-DETAIL** (retour (6)) ~~toucher un point de la courbe ouvre la lecture (matrice des émotions, valence,
+  éveil, qualité)~~ ✅ 05/11 04:35 (BE-HISTO-DETAIL-1 : `pointDetail` dans `wellbeingHistory.js` — lecture, heure ou jour ;
+  colonnes touchables pleine hauteur `data-scrub`, carte « Lecture de 8 h 05 » / « jeudi 22 octobre » avec note,
+  fourchette, valence, éveil, grille 4 × 2 des expressions, lectures peu nettes ; 6 tests) → **BE-HISTO-DETAIL-2** :
+  remonter le temps (semaine ou mois précédents, flèches ou balayage), toujours joli ; inspiration Emobot, rien de copié.
 - [ ] **SELLES-PHOTO** (retour (7)) type de Bristol estimé par photo, dans un endroit dédié et discret (pas sur
   l'Accueil), geste explicite, analyse IA comme les repas, aucune photo gardée par défaut, résultat modifiable, jamais
   un diagnostic ; Sécurité des données et confidentialité à jour.

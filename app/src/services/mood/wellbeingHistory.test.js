@@ -92,4 +92,40 @@ describe('wellbeingHistory — historique du bien-être (POL-2)', () => {
     expect(mix.items).toHaveLength(8)
     expect(expressionMix([])).toBeNull()
   })
+
+  describe('détail d’un point (BE-HISTO-DETAIL, retour (6) du 04/11)', () => {
+    const ex = (over) => ({ ...EX_ZERO, exNeutral: 0.6, exSadness: 0.3, exHappiness: 0.1, ...over })
+
+    it('jour : chaque lecture porte sa valence, son éveil, ses expressions et sa netteté', () => {
+      const entries = [
+        burst(at(0, 8), { valence: 0.2, arousal: 0.1, ...ex() }),
+        burst(at(0, 12), { valence: -0.4, arousal: 0.3, yaw: 30 }, { valid: 2 }),
+      ]
+      const h = wellbeingHistory(entries, { period: 'day', now: NOW })
+      const [a, b] = h.points
+      expect(a.detail).toMatchObject({ readings: 1, poor: 0, valence: 0.2, arousal: 0.1 })
+      expect(a.detail.expressions.items[0]).toMatchObject({ key: 'exNeutral', p: 0.6 })
+      expect(b.detail).toMatchObject({ readings: 1, poor: 1, valence: -0.4, arousal: 0.3, expressions: null })
+    })
+
+    it('jour très lu : le détail d’une heure couvre toutes ses lectures', () => {
+      const entries = []
+      for (let m = 0; m <= 120; m += 5) entries.push(burst(new Date(2026, 9, 24, 8, m), { valence: m < 60 ? -0.2 : 0.4, ...ex() }))
+      const h = wellbeingHistory(entries, { period: 'day', now: NOW })
+      expect(h.points[0].detail).toMatchObject({ readings: 12, poor: 0, valence: -0.2 })
+      expect(h.points[1].detail).toMatchObject({ readings: 12, valence: 0.4 })
+      expect(h.points[1].detail.expressions.readings).toBe(12)
+    })
+
+    it('semaine : le détail d’un jour reprend les lectures de ce jour seulement', () => {
+      const entries = [
+        burst(at(1, 9), { valence: 0.5, arousal: -0.2 }), burst(at(1, 18), { valence: 0.1, arousal: 0 }),
+        burst(at(0, 9), { valence: -0.6, arousal: 0.4, ...ex() }),
+      ]
+      const h = wellbeingHistory(entries, { period: 'week', now: NOW })
+      expect(h.points[0].detail).toMatchObject({ readings: 2, valence: 0.3, arousal: -0.1, expressions: null })
+      expect(h.points[1].detail).toMatchObject({ readings: 1, valence: -0.6, arousal: 0.4 })
+      expect(h.points[1].detail.expressions.readings).toBe(1)
+    })
+  })
 })

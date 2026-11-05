@@ -133,4 +133,74 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
     renderPage()
     expect(await screen.findByText(/apparaîtront avec les prochaines lectures/)).toBeInTheDocument()
   })
+
+  describe('toucher un point ouvre sa lecture (BE-HISTO-DETAIL, retour (6) du 04/11)', () => {
+    const MIX = { readings: 1, items: [
+      { key: 'exNeutral', label: 'Neutre', p: 0.61 }, { key: 'exSadness', label: 'Tristesse', p: 0.2 },
+      { key: 'exHappiness', label: 'Joie', p: 0.1 }, { key: 'exSurprise', label: 'Surprise', p: 0.03 },
+      { key: 'exAnger', label: 'Colère', p: 0.02 }, { key: 'exFear', label: 'Peur', p: 0.02 },
+      { key: 'exDisgust', label: 'Dégoût', p: 0.01 }, { key: 'exContempt', label: 'Mépris', p: 0.01 },
+    ] }
+    const dayHistory = () => history({
+      period: 'day', from: new Date(2026, 9, 24).toISOString(), days: 1, readings: 2, notes: [],
+      points: [
+        { at: new Date(2026, 9, 24, 8, 5).toISOString(), date: '2026-10-24', note: 2.8, low: 2.1, high: 3.5, readings: 1,
+          detail: { readings: 1, poor: 1, valence: -0.18, arousal: 0.07, expressions: MIX } },
+        { at: new Date(2026, 9, 24, 12, 40).toISOString(), date: '2026-10-24', note: 3.6, low: 3, high: 4.2, readings: 1,
+          detail: { readings: 1, poor: 0, valence: 0.3, arousal: null, expressions: null } },
+      ],
+    })
+
+    it('vue Jour : la lecture touchée montre sa note, sa fourchette, valence, éveil, expressions et netteté', async () => {
+      loadWellbeingHistory.mockImplementation(() => Promise.resolve(dayHistory()))
+      renderPage()
+      const dot = await screen.findByRole('button', { name: /Lecture de 8 h 05 : 2,8 sur 5/ })
+      expect(screen.getByText('Touchez un point pour voir sa lecture.')).toBeInTheDocument()
+      fireEvent.click(dot)
+      const card = screen.getByRole('region', { name: 'Lecture de 8 h 05' })
+      expect(dot).toHaveAttribute('aria-pressed', 'true')
+      expect(card).toHaveTextContent('2,8')
+      expect(card).toHaveTextContent('entre 2,1 et 3,5')
+      expect(card).toHaveTextContent('lecture peu nette')
+      expect(card).toHaveTextContent('−0,18')
+      expect(card).toHaveTextContent('+0,07')
+      const cells = card.querySelectorAll('.wbh-matrix li')
+      expect(cells).toHaveLength(8)
+      expect(cells[0]).toHaveTextContent('Neutre')
+      expect(cells[0]).toHaveTextContent('61 %')
+      expect(screen.queryByText('Touchez un point pour voir sa lecture.')).toBeNull()
+    })
+
+    it('un autre point remplace le détail ; « Fermer » ou un second toucher le referme', async () => {
+      loadWellbeingHistory.mockImplementation(() => Promise.resolve(dayHistory()))
+      renderPage()
+      fireEvent.click(await screen.findByRole('button', { name: /Lecture de 8 h 05/ }))
+      const noon = screen.getByRole('button', { name: /Lecture de 12 h 40 : 3,6 sur 5/ })
+      fireEvent.click(noon)
+      const card = screen.getByRole('region', { name: 'Lecture de 12 h 40' })
+      expect(card).toHaveTextContent('lecture nette')
+      expect(card).toHaveTextContent('+0,30')
+      expect(card).not.toHaveTextContent('Éveil')
+      expect(card).toHaveTextContent('Pas d’expressions pour cette lecture.')
+      fireEvent.click(noon)
+      expect(screen.queryByRole('region', { name: /Lecture de/ })).toBeNull()
+      fireEvent.keyDown(noon, { key: 'Enter' })
+      fireEvent.click(screen.getByRole('button', { name: 'Fermer la lecture' }))
+      expect(screen.queryByRole('region', { name: /Lecture de/ })).toBeNull()
+    })
+
+    it('vue Semaine : le point d’un jour résume ses lectures ; changer de période referme le détail', async () => {
+      const pts = history().points.map((p, i) => ({ ...p, detail: { readings: p.readings, poor: i, valence: 0.12, arousal: -0.05, expressions: null } }))
+      loadWellbeingHistory.mockImplementation(({ period }) => Promise.resolve(history({ period, points: pts })))
+      renderPage()
+      fireEvent.click(await screen.findByRole('button', { name: /jeudi 22 octobre : 3,1 sur 5/ }))
+      const card = screen.getByRole('region', { name: 'jeudi 22 octobre' })
+      expect(card).toHaveTextContent('5 lectures')
+      expect(card).not.toHaveTextContent('peu nette')
+      fireEvent.click(screen.getByRole('button', { name: /vendredi 23 octobre/ }))
+      expect(screen.getByRole('region', { name: 'vendredi 23 octobre' })).toHaveTextContent('2 lectures, dont 1 peu nette')
+      fireEvent.click(screen.getByRole('button', { name: 'Mois' }))
+      await waitFor(() => expect(screen.queryByRole('region', { name: /octobre/ })).toBeNull())
+    })
+  })
 })

@@ -273,3 +273,127 @@
   font-size: 0.75rem;
   color: var(--color-ink-2);
 }
+
+/* BE-HISTO-DETAIL (retour (6) du 04/11) : point touché, cible invisible et carte de la lecture. */
+.wbh-hit {
+  fill: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wbh-hit:focus {
+  outline: none;
+}
+
+.wbh-hit:focus-visible {
+  stroke: var(--color-brand);
+  stroke-width: 2;
+}
+
+.wbh-dot.is-on {
+  fill: var(--color-brand);
+  stroke: var(--accent-amber);
+  stroke-width: 3;
+}
+
+.wbh-hint {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--mint-label);
+}
+
+.wbh-detail {
+  background: var(--mint-bg);
+  color: var(--mint-text);
+}
+
+.wbh-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wbh-detail-head .today-card-title::first-letter {
+  text-transform: uppercase;
+}
+
+.wbh-detail-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  margin: -8px -10px -8px 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mint-text);
+}
+
+.wbh-detail-note {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.wbh-detail-range {
+  margin-left: 6px;
+  font-size: 0.8rem;
+  color: var(--mint-label);
+}
+
+.wbh-detail .wbh-bipolar-ends,
+.wbh-detail .wbh-bipolar-head {
+  color: var(--mint-text);
+}
+
+.wbh-matrix {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wbh-matrix li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 64px;
+  padding: 6px 2px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.wbh-matrix-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--chart-bar-2);
+}
+
+.wbh-matrix-value,
+.wbh-matrix-label {
+  position: relative;
+}
+
+.wbh-matrix-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.wbh-matrix-label {
+  font-size: 0.72rem;
+}
+
+.wbh-sel {
+  stroke: var(--accent-amber);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
