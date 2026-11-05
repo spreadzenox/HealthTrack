@@ -33,3 +33,10 @@ routine : « avis du Play Store par l'API des avis »).
 - Au prochain bilan du matin (05:47 UTC) ou au lancement à la main, lire le bilan du job : « aucun avis » attendu ; un
   403 donnerait l'action du propriétaire (droit « Répondre aux avis » pour gh-deployer).
 - AVIS-RELAIS-3b quand des avis de l'app arrivent ; VITALS-1 après P43.
+
+## Après le merge
+- #730 mergée (squash `2dda5d2`) après 11 checks verts. « Build & Release » vert : **v516** (APK 34 552 998 octets).
+  Rien de l'app n'a changé : pas d'envoi sur Alpha.
+- « Votre avis — résumé » lancé à la main sur main : vert. Job « Avis du Play Store (comptes) » : **lecture acceptée
+  par Google** (aucun 403, aucun droit à ajouter) ; « Aucun avis public ces 7 derniers jours », attendu avant la
+  production.

@@ -11,4 +11,5 @@ geste du propriétaire (Play Console → Qualité → Avis). Aucun avis public a
 
 | Bilan lu | Période | Avis | Thèmes | Suite donnée |
 |---|---|---|---|---|
+| 05/11 17:58 (lancement à la main, Play Store) | 7 derniers jours | 0 | — | Aucune : lecture `reviews.list` acceptée par Google |
 | 05/11 00:55 (lancement à la main) | 05/10 → 04/11 | 0 | — | Aucune : chaîne vérifiée de bout en bout |
