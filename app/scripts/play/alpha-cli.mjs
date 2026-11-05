@@ -9,6 +9,7 @@ import { execFileSync } from 'node:child_process'
 import { appendFileSync, readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { decideAlpha, commitCountOf, findCommitByCount, VERSION_OFFSET, DEFAULT_MIN_HOURS } from './alphaGate.mjs'
+import { fetchReviewedSends, readFreezeUntil } from './reviewIo.mjs'
 import { publishBundle, readTracks, formatTracks, buildReleaseNotes, isAccessDenied } from './publish.mjs'
 
 const { HEAD_SHA: sha, GITHUB_TOKEN: ghToken, GITHUB_REPOSITORY: repo, PLAY_ACCESS_TOKEN: token, GITHUB_STEP_SUMMARY: summaryFile } = process.env
@@ -57,9 +58,17 @@ const alphaSentAt = alphaSha ? git('show', '-s', '--format=%cI', alphaSha) : nul
 const internalSha = shaOf(internalVersionCode)
 const inherited = internalSha ? { versionCode: internalVersionCode, filesSince: filesSince(internalSha) } : null
 
-const decision = decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited, enabled, alphaSentAt, minHours })
+// Fiche et abonnements : leurs envois relancent aussi l'examen (CD-ALPHA-5). Lecture impossible → on attend.
+let otherSends
+try {
+  otherSends = (await fetchReviewedSends({ repo, ghToken })).map(({ what, at }) => ({ what, at }))
+} catch (err) {
+  summary(['## Livraison continue vers l’alpha', '', `- ⚠️ Envois de la fiche et des abonnements illisibles (${err.message}) : envoi reporté au passage suivant.`])
+  process.exit(0)
+}
+const decision = decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited, enabled, alphaSentAt, minHours, otherSends, freezeUntil: readFreezeUntil() })
 const versionCode = decision.versionCode ?? candidateVersionCode
-summary(['## Livraison continue vers l’alpha', '', `- Commit \`${sha.slice(0, 7)}\` · versionCode ${candidateVersionCode} · alpha : ${alphaVersionCode ?? 'vide'} · test interne : ${internalVersionCode ?? 'vide'}`, `- Décision : **${decision.send ? `envoi de ${versionCode}` : decision.wait ? 'en attente' : decision.spaced ? 'envoi espacé' : 'pas d’envoi'}** (${decision.reason})`])
+summary(['## Livraison continue vers l’alpha', '', `- Commit \`${sha.slice(0, 7)}\` · versionCode ${candidateVersionCode} · alpha : ${alphaVersionCode ?? 'vide'} · test interne : ${internalVersionCode ?? 'vide'}`, `- Décision : **${decision.send ? `envoi de ${versionCode}` : decision.wait ? 'en attente' : decision.frozen ? 'envois gelés' : decision.spaced ? 'envoi espacé' : 'pas d’envoi'}** (${decision.reason})`])
 if (!decision.send) process.exit(0)
 
 const dir = resolve(process.cwd(), 'src/data/changelog')
