@@ -8,6 +8,13 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 📅 **Gold offert jusqu'au 30 novembre (au lieu du 27) : date recalée sur votre invitation (05/11 22:35).** Alpha
+> (100811) est encore en examen chez Google et reste en place au moins jusqu'à demain vers 16:30 : l'invitation ne
+> peut donc partir que **vendredi 6/11 au plus tôt**. Comme convenu le 02/11 (J + 14 jours + 10 jours), la fin de
+> Gold offert passe au **30 novembre inclus** ; le texte d'invitation plus bas est à jour. Si vous invitez plus tard
+> que le 6/11, dites le jour : le run suivant décalera encore la date. Rien à mettre à jour dans l'app : le relais
+> sert la nouvelle date dès son redéploiement.
+
 > ⏸️ **Alpha : une version par jour au plus, pour que Google finisse son examen (05/11 19:35, CD-ALPHA-2).** Depuis
 > hier soir, la livraison continue envoyait sur Alpha chaque version qui change l'app : **15 envois en 20 heures**
 > (100778 → 100811). Chaque envoi relance l'examen de Google, qui pouvait donc ne jamais aboutir, et c'est cet examen
@@ -49,7 +56,7 @@
 > > sommeil, énergie, bien-être), en gardant vos données sur votre téléphone. Avant sa sortie publique, Google
 > > m'impose un test fermé de **14 jours avec au moins 12 personnes** : pouvez-vous m'aider ?
 > >
-> > **Gold (le premium) est offert pendant le test (jusqu'au 27 novembre inclus) : vous n'avez rien à payer**,
+> > **Gold (le premium) est offert pendant le test (jusqu'au 30 novembre inclus) : vous n'avez rien à payer**,
 > > aucune carte bancaire n'est demandée. Il faut un téléphone **Android 8 ou plus récent** (pas encore d'iPhone).
 > >
 > > Ce qu'il faut faire (5 minutes, avec le compte Gmail de votre téléphone Android) :
@@ -101,7 +108,7 @@
   installation Android au jeton accepté, la vôtre en toute vraisemblance : empreinte **`5e4a69f72ffb`** (vue du 29/10
   au 02/11). Il suffit de **confirmer** : Paramètres → touchez 7 fois « Version » → « Empreinte de l'installation »
   commence-t-elle par **5e4a** ? Répondez « P37 oui » (ou donnez l'empreinte affichée si elle diffère) : la routine
-  l'ajoute alors au relais et vous gardez Gold après le 27/11.
+  l'ajoute alors au relais et vous gardez Gold après le 30/11.
 - **P44** (question, réponse avant le 20/11) : remercier les testeurs restés jusqu'au bout par **un mois de Gold en plus** (jusqu'au 27/12, sans carte bancaire, sous les plafonds du budget) ? Répondez « P44 oui » ou « P44 non » dans une consigne ; détail dans [`PRODUIT.md`](PRODUIT.md) §4.
 - **P39** (pas urgent) : expiration des clés App Attest dans Firestore, même geste que P33 (commande dans `PRODUIT.md` §4).
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4 (abonnements déjà prêts dans les 5 pays ; Suisse 4,90 / 29,00 / 9,90 CHF, Canada 6,99 / 39,99 / 12,99 $CA hors taxes : dites-le si vous voulez d'autres prix).
@@ -110,6 +117,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 05/11 22:35 — [Gold offert jusqu'au 30/11](runs/2026-11-05-2235-until-j06.md) | 🔧 | Fin de Gold offert recalée du 27 au 30 novembre, car l'invitation ne peut partir que vendredi 6/11 au plus tôt (Alpha encore en examen). Texte d'invitation à jour. Rien à faire de votre côté |
 | 05/11 21:35 — [Fiche et abonnements : même délai de 24 h que Alpha](runs/2026-11-05-2135-porte-envois-examines.md) | 🔧 | Coulisses seulement. Google compte son délai d'examen depuis le dernier changement envoyé (Alpha, fiche du Store, abonnements). Les trois envois respectent maintenant ensemble les 24 h, la fiche et les abonnements ne repartent que si leur contenu a changé, et un gel permet de ne rien envoyer pendant l'examen de votre demande de production (P30). Rien à faire de votre côté |
 | 05/11 20:35 — [Idées : l'examen de Google pendant le test fermé](runs/2026-11-05-2035-idees-examen-google.md) | 💡 | D'après l'aide officielle de la Play Console, le délai d'examen court depuis le **dernier changement envoyé pour l'app** (Alpha, mais aussi la fiche du Store ; pas le test interne), de quelques heures à 7 jours, et un nouvel envoi peut renvoyer l'app en fin de file. L'espacement d'Alpha (24 h) va dans ce sens ; prochaine étape (CD-ALPHA-5) : appliquer la même règle à la fiche et aux abonnements, et ne rien envoyer pendant l'examen de la demande de production. Aucune mise à jour de fiche depuis le 03/11 : l'examen de 100811 suit son cours. Décision iPhone du 05/11 vers 20:15 transmise à la routine iOS. #732 (tendance lissée) reprise et mergée. Rien à faire de votre côté |
 | 05/11 19:35 — [Alpha : une version par jour au plus](runs/2026-11-05-1935-alpha-espacee.md) | 🔧 | Retour (1) du 04/11 (« si les examens s'enchaînent sans aboutir, espace les envois ») : 15 envois sur Alpha en 20 h relançaient sans cesse l'examen de Google. Une nouvelle version ne part plus sur Alpha que 24 h après la précédente (réglable, 0 coupe la règle) ; un passage chaque matin envoie la dernière version si le délai est écoulé. 100811 reste sur Alpha au moins jusqu'au 06/11 vers 16:30. Rien ne change dans l'app. **À vérifier** : Alpha disponible dans la Play Console, puis invitation des testeurs. Mergée (#733) : **v517** |
