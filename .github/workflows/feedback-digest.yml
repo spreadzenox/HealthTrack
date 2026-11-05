@@ -7,6 +7,10 @@
 #
 # Connexion sans clé (Workload Identity Federation, main seulement) : jeton OIDC de gh-deployer pour la route
 # /v1/feedback/digest, la seule que ce compte ouvre. Aucun droit Firestore n'est demandé à gh-deployer.
+#
+# Second job (AVIS-PLAY-1) : avis du Play Store des 7 derniers jours (API Android Publisher, reviews.list, lecture
+# seule, jeton androidpublisher de gh-deployer) ; seuls des comptes sont publiés (étoiles, versions, thèmes), jamais le
+# texte, le nom ni l'identifiant d'un avis (app/scripts/play/reviews.mjs). Jamais bloquant pour le premier job.
 name: Votre avis — résumé
 
 on:
@@ -77,3 +81,35 @@ jobs:
             jq -r '"Par plateforme : " + (.byPlatform | to_entries | map("\(.key) × \(.value)") | join(", ") | if . == "" then "—" else . end)' "$RUNNER_TEMP/digest.json"
             jq -r '"Par version : " + (.byVersion | to_entries | sort_by(.key) | map("\(.key) × \(.value)") | join(", ") | if . == "" then "—" else . end)' "$RUNNER_TEMP/digest.json"
           } | tee -a "$GITHUB_STEP_SUMMARY"
+
+  play-reviews:
+    name: Avis du Play Store (comptes)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            app/scripts/play
+            relay/src
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Jeton Google Play (portée androidpublisher, sans clé)
+        id: play-token
+        continue-on-error: true
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/81378799481/locations/global/workloadIdentityPools/github/providers/healthtrack-main
+          service_account: gh-deployer@healthtrack-824b26.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+
+      - name: Lire et publier le bilan anonyme
+        working-directory: app
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
+        run: node scripts/play/reviews-cli.mjs

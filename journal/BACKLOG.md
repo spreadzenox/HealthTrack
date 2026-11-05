@@ -200,8 +200,12 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   anonyme quotidien~~ ✅ 05/11 00:35 (AVIS-RELAIS-3 : route `GET /v1/feedback/digest`, jeton OIDC de gh-deployer, comptes par
   jour, variante, version et 12 thèmes à mots-clés, jamais de texte ; workflow « Votre avis — résumé » chaque jour à
   05:47 UTC ; la routine reporte le bilan dans `journal/AVIS.md`) → AVIS-RELAIS-3b : quand il y a des avis, une phrase
-  anonyme par thème (Flash-Lite, sans citation ni donnée de santé) pour pouvoir corriger ou répondre → avis du Play
-  Store en lecture (`reviews.list`). Plantages : VITALS-1 (attend P43).
+  anonyme par thème (Flash-Lite, sans citation ni donnée de santé) pour pouvoir corriger ou répondre → ~~avis du Play
+  Store en lecture (`reviews.list`)~~ ✅ 05/11 17:35 (**AVIS-PLAY-1** : job « Avis du Play Store (comptes) » de
+  « Votre avis — résumé », `scripts/play/reviews.mjs`, 10 tests : étoiles, moyenne, versions, Android, thèmes de
+  « Votre avis », avis répondus et avis ≤ 3 étoiles sans réponse ; jamais le texte, le nom, l'identifiant ni
+  l'appareil ; 403 → geste « Répondre aux avis » ; aucun avis tant que l'app n'est pas en production). Plantages :
+  VITALS-1 (attend P43).
 - [ ] **VENTRE-BE-1** (retour (3), étude I220) ~~d'ici la réponse du propriétaire : chaque piste dit « Ventre » ou
   « Bien-être » (étiquette pêche / menthe)~~ ✅ 04/11 21:35 (`DomainTag`, Analyses) ; **I220 OUI (propriétaire, 05/11)** :
   → ~~**VENTRE-BE-2** : une note « gêne » ou « douleur » entre dans l'estimation du bien-être comme
