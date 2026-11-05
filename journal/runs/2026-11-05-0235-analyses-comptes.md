@@ -34,3 +34,9 @@ Type : 🎨 run de code (02:35 Paris).
 ## Suite
 - ANALYSES-ONGLETS-3 : trois horizons (heures, jours, semaines) ; « pistes à tester » et « liens repérés » expliqués.
 - Bilan Alpha de 100786 au run suivant.
+
+## Après le merge (#704, `3ec977a`)
+- Checks de la PR tous verts (Vitest, Build APK, relais, protocole montre, perf, émulateurs API 28/32/34/35/36).
+- Build & Release **v501** (APK 34 541 310 octets), Tests verts, « Play — AAB » vert.
+- Livraison continue : pour `f957a43` (#703), « Play — Alpha » a décidé **envoi** de **100786** sur Alpha (9 fichiers
+  de l'app modifiés depuis 100782) ; en examen chez Google. La version de #704 suivra à la fin de son émulateur.
