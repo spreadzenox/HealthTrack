@@ -213,7 +213,7 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   n'envoient que si **leur contenu** a changé depuis le dernier envoi (`app/store/` hors `data-safety/`, scripts,
   `premiumBenefits.js`) et 24 h après le dernier envoi examiné ; sinon report au passage quotidien (07:23 et 07:33
   UTC). Gel : `app/scripts/play/review-freeze.json` (`until`), à régler par PR le jour de P30. Hors porte :
-  « Play — sécurité des données » (manuel). **CD-ALPHA-6** : vérifier au premier report réel le bilan de la porte.
+  « Play — sécurité des données » (manuel). **CD-ALPHA-6** : vérifier au premier report réel le bilan de la porte (abonnements vérifiés le 05/11 : « rien de neuf », pas d'envoi) ; les passages de la fiche annulés par la file `play-edits` sont rattrapés au passage quotidien.
 - [ ] **AVIS-RELAIS-1..4** (retour (2), étude I219) ~~relais `POST /v1/feedback` (texte, version, variante ; quotas ; TTL
   à demander)~~ ✅ 04/11 22:35 (`relay/src/feedback.js`, 10 tests, P46 pour le TTL) → ~~formulaire « Votre avis » dans l'app + Sécurité des données + confidentialité~~ ✅ 04/11 23:35 (AVIS-RELAIS-2 : Paramètres, `sendFeedback`, lien d'avant en secours ; Sécurité des données inchangée, « Autre contenu généré par l'utilisateur » déjà déclaré ; confidentialité §« Votre avis ») → ~~workflow de résumé
   anonyme quotidien~~ ✅ 05/11 00:35 (AVIS-RELAIS-3 : route `GET /v1/feedback/digest`, jeton OIDC de gh-deployer, comptes par
