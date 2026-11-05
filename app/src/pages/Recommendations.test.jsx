@@ -1280,13 +1280,38 @@ describe('Recommendations — trois horizons d’effet (ANALYSES-ONGLETS-3)', ()
     expect(within(weeks.parentElement).getByRole('link', { name: /Voir vos tendances/ })).toHaveAttribute('href', '/tendances')
   })
 
-  it('Ventre : le lien vers les tendances reste même quand il est trop tôt', async () => {
+  it('Ventre : « Sur quelques semaines » parle du ventre seulement, sans lien vers les tendances du bien-être', async () => {
     const { saveOnboarding } = await import('../settings/onboarding')
     saveOnboarding({ goal: 'gut' })
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage({ view: 'gut' })
     await screen.findByTestId('reco-gut-view')
-    expect(screen.getByRole('link', { name: /Voir vos tendances/ })).toHaveAttribute('href', '/tendances')
+    const weeks = screen.getByTestId('gut-weeks')
+    expect(within(weeks).getByText(/jours calmes, de gêne et de douleur/)).toBeInTheDocument()
+    expect(within(weeks).getByText(/Arrive après 2 semaines de notes du ventre/)).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Voir vos tendances/ })).toBeNull()
+  })
+
+  it('Ventre : une colonne par semaine dès deux semaines notées, avant le rapport PDF', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const now = Date.now()
+    const notes = [1, 2, 10, 11].map((d, i) => ({
+      type: 'gut',
+      at: new Date(now - d * 86400000).toISOString(),
+      payload: { level: ['calm', 'discomfort', 'pain', 'calm'][i], scope: 'day' },
+    }))
+    listEntriesForAnalysis.mockResolvedValue([...makeEntries(5), ...notes])
+    renderPage({ view: 'gut' })
+    await screen.findByTestId('reco-gut-view')
+    const weeks = await screen.findByTestId('gut-weeks')
+    const cols = within(weeks).getAllByRole('img')
+    // Semaines d'avant la première note écartées : deux colonnes
+    expect(cols).toHaveLength(2)
+    expect(cols.some((c) => /1 calme, 1 gêne/.test(c.getAttribute('aria-label')))).toBe(true)
+    const report = screen.getByTestId('doctor-report')
+    expect(weeks.compareDocumentPosition(report) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })

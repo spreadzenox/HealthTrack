@@ -34,6 +34,7 @@ import GutLinks from '../components/GutLinks'
 import { GUT_LINKS_MIN_DAYS } from '../services/gutLinks'
 import ReintroductionEntry from '../components/ReintroductionEntry'
 import DoctorReportCard from '../components/DoctorReportCard'
+import GutWeeks from '../components/GutWeeks'
 import AnalysesTabs from '../components/AnalysesTabs'
 import { gutCardMode } from '../settings/onboarding'
 import { decimalMark } from '../i18n/locale.js'
@@ -797,7 +798,7 @@ export function AnalysisCountdown({ domain, days, target }) {
 }
 
 /**
- * Seulement le ventre : les pistes aliment → ventre, la réintroduction et le rapport PDF. Les pistes du bien-être
+ * Seulement le ventre : les pistes aliment → ventre, la réintroduction, les semaines du ventre et le rapport PDF. Les pistes du bien-être
  * restent sous « Bien-être » ; rien n'est recalculé, la même analyse sert les deux sous-onglets.
  */
 function GutView({ analysis, showGut }) {
@@ -831,7 +832,7 @@ function GutView({ analysis, showGut }) {
       <ReintroductionEntry />
       <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
       <SoonSection lines={lines} />
-      <WeeksHorizon />
+      <GutWeeks weeks={analysis.gutWeeks} />
       {gut && gut.status !== 'no_notes' && <DoctorReportCard />}
     </div>
   )

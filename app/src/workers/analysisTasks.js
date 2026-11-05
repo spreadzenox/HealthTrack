@@ -15,6 +15,7 @@ import { computeTagEffects } from '../services/behaviorTags'
 import { computeLaggedEffects } from '../services/laggedEffects'
 import { computeFaceMoodCorrelations } from '../services/mood/faceMoodDays'
 import { summarizeGutLinks } from '../services/gutLinks'
+import { gutWeeks } from '../services/gutWeeks'
 
 export const ANALYSIS_TASKS = {
   /** Accueil — « Prédiction du jour ». */
@@ -30,6 +31,8 @@ export const ANALYSIS_TASKS = {
       faceMood: computeFaceMoodCorrelations(entries),
       // Repas → ventre (jalon 5) : notes par fenêtre et bilans du soir ; le ventre n'explique jamais le bien-être.
       gut: summarizeGutLinks(entries),
+      // Ventre, « Sur quelques semaines » : jours calmes, de gêne et de douleur par semaine (description seulement).
+      gutWeeks: gutWeeks(entries),
       totalDays: countTotalDataDays(entries),
     }
   },
