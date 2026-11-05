@@ -24,3 +24,9 @@ Type : 🎨 run de code (10:35 Paris). Priorité : retours du 04/11, point (4) (
   `npm run test` vert (après la garde CSS), lint 0 erreur, build OK.
 - Captures relues : `/recommendations` et `/recommendations/ventre` (démo `--gut-links`, clair et sombre ; vierge) :
   titres lisibles, filet lilas contrasté sur les deux thèmes, rien de vide. `npm run visual` complet : 17 pages ok (seul avertissement : cible « Clé API Gemini » de la sideload, déjà connu).
+
+## Merge
+- PR #717 : « Frontend (Vitest) » et « Build APK » verts, branche à jour sur main (`a832ff9`). **Le merge (squash par
+  l'API) a été refusé par le garde-fou de permissions de la session** (« Merge Without Review »), pas par GitHub. Rien
+  contourné : la PR reste ouverte, prête. Suite : le run suivant (ou le propriétaire) la merge si les checks émulateurs
+  sont verts ; aucune autre étape n'en dépend. Pas de nouvelle version ni d'envoi Alpha depuis ce run.
