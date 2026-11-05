@@ -30,3 +30,14 @@ Type : 🎨 run de code (07:35 Paris). Priorité : retours du 04/11, point (5) (
 ## Suite
 - BE-BIAIS-3 : recentrer la grille des expressions sur l'habitude de la personne (« tristesse » au repos) et
   fiabilité affichée honnêtement. Puis ANALYSES-ONGLETS-3 (trois horizons).
+
+## Après le merge
+- PR #712 mergée (squash `32e92fb`) : 11 checks verts. « Build & Release » : **v505**, APK 34 544 710 octets.
+  Émulateur Galaxy A56 vert. « Play — AAB » : 100794 en test interne ; « Play — Alpha » : **100794 placée sur l'alpha**.
+- PR #709 (BE-HISTO-DETAIL-2) remise à jour une seconde fois sur main après #712 (fusion sans conflit, tests 3078
+  verts, build, lint 0 erreur). Premier passage : « Bord à bord sous Android 14 » rouge (encarts natifs corrects,
+  haut 128 et bas 63, lecture côté page à 0 px) ; relance du seul job : vert. Second passage : 11 checks verts.
+  Mergée (squash `7ffd877`) : **v506**, APK 34 545 830 octets ; « Play — Alpha » : **100795 placée sur l'alpha**
+  (en examen chez Google).
+- Le faux rouge « Bord à bord » est noté pour surveillance : s'il revient, regarder le moment de la lecture des
+  encarts côté page dans `.github/scripts/edge-insets/check.mjs`.
