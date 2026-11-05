@@ -342,6 +342,8 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
     const st = report.stool
     heading('Forme des selles')
     para(`${st.total} ${st.total > 1 ? 'notes' : 'note'} sur ${st.days} ${st.days > 1 ? 'jours' : 'jour'} : dures (Bristol 1–2) ${st.hard} · normales (3–5) ${st.normal} · liquides (6–7) ${st.loose}.`, { size: 9.5 })
+    // SELLES-PHOTO-3 : la forme a pu être estimée par photo, puis vérifiée ou corrigée par la personne.
+    if (st.estimated) para(`Dont ${st.estimated} ${st.estimated > 1 ? 'estimées' : 'estimée'} par photo, puis vérifiée${st.estimated > 1 ? 's' : ''} par la personne.`, { size: 8.5, color: C.muted })
     para('Saisie facultative : un jour sans note ne veut pas dire sans selles.', { size: 8.5, color: C.muted })
   }
 

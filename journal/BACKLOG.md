@@ -235,7 +235,7 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   `wellbeingHistory.js` ; flèches « Semaine précédente / suivante » autour du titre « du 23 au 29 octobre », balayage
   horizontal de la courbe, arrêt à la première lecture ou note ; 5 tests). Reste éventuel : vue « Année » (52 semaines)
   si le propriétaire la demande.
-- [ ] **SELLES-PHOTO** (retour (7)) type de Bristol estimé par photo, dans un endroit dédié et discret (pas sur
+- [x] **SELLES-PHOTO** (retour (7)) type de Bristol estimé par photo, dans un endroit dédié et discret (pas sur
   l'Accueil), geste explicite, analyse IA comme les repas, aucune photo gardée par défaut, résultat modifiable, jamais
   un diagnostic ; Sécurité des données et confidentialité à jour. **Étude faite le 05/11 08:35 (`IDEES.md` I221)** :
   ligne « Estimer avec une photo » dans la rubrique Selles du Journal (objectif « Mon ventre » seulement), appareil
@@ -245,8 +245,12 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   `STOOL_INSTRUCTION` : forme seule, ni couleur ni sang ; réponse vide ou illisible → `unreadable`, crédit rendu ; 6 tests) → ~~**SELLES-PHOTO-2** app : `analyzeStoolPhoto`, ligne du
   Journal, entrée `stool` + `estimated`/`estimate` (sans migration)~~ ✅ 05/11 15:35 (`services/stoolPhoto.js` relais ou clé
   Gemini, `StoolPhotoLine` en tête de Journal → Jours si `gutCardMode() !== 'hide'`, divulgation `ai_stool`, appareil photo
-  direct, forme présélectionnée et modifiable, confidentialité complétée ; 17 tests) → **SELLES-PHOTO-3** fiabilité personnelle,
-  confidentialité, Nouveautés.
+  direct, forme présélectionnée et modifiable, confidentialité complétée ; 17 tests) → ~~**SELLES-PHOTO-3** fiabilité personnelle~~
+  ✅ 05/11 16:35 (`stoolPhotoReliability` : corrections comptées au niveau des 3 formes, dès 5 photos, « Vous avez corrigé
+  N estimations sur M. » sous la ligne, « Souvent corrigée chez vous : vérifiez la forme. » au résultat si plus d'une sur
+  trois ; marque « · photo » dans le Journal ; rapport PDF « Dont N estimées par photo, puis vérifiées par la personne. » ;
+  la ligne lit elle-même les 200 dernières notes de selles, le Journal n'en chargeant que 3 jours ; 7 tests). Retour (7)
+  traité.
 - (8) Journal, Sources, Nouveautés, Données, Paramètres et Confidentialité : le propriétaire en est content, ne pas
   les remanier sans raison.
 

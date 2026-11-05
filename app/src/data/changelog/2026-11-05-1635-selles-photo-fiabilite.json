@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-05",
+  "kind": "amélioration",
+  "title": "Selles en photo : vos corrections comptées",
+  "items": [
+    "Après 5 photos, le Journal indique combien d'estimations vous avez corrigées.",
+    "Si vous en corrigez plus d'une sur trois, le résultat vous invite à vérifier la forme.",
+    "Les notes faites avec une photo portent la marque « photo » dans le Journal, et le rapport PDF les compte."
+  ]
+}

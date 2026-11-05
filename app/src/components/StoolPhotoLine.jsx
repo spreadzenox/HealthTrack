@@ -7,14 +7,24 @@
  * enregistré avant « Enregistrer ». L'entrée garde ce que proposait le modèle (`estimate`) pour mesurer plus tard la
  * fiabilité chez la personne (SELLES-PHOTO-3), sans aucune image. Jamais un diagnostic : seule la forme revient.
  */
-import { useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FEATURES } from '../config/distribution'
 import useDisclosure from '../hooks/useDisclosure'
 import { canAnalyzeMeals } from '../services/mealAi'
 import { analyzeStoolPhoto } from '../services/stoolPhoto'
-import { BRISTOL_TYPES, STOOL_FORMS, STOOL_SOURCE, STOOL_TYPE, formOfBristol, stoolEntryLabel, stoolPayload } from '../services/stool'
+import {
+  BRISTOL_TYPES,
+  STOOL_FORMS,
+  STOOL_SOURCE,
+  STOOL_TYPE,
+  formOfBristol,
+  stoolEntryLabel,
+  stoolPayload,
+  stoolPhotoReliability,
+  stoolPhotoReliabilityText,
+} from '../services/stool'
 import { WHEN_TO_SEE_DOCTOR } from '../services/today'
-import { createEntry } from '../storage/localHealthStorage'
+import { createEntry, listEntries } from '../storage/localHealthStorage'
 import { appLocale } from '../i18n/locale.js'
 import LineIcon from './LineIcon'
 import './TodayCards.css'
@@ -40,6 +50,13 @@ function rememberConsent() {
 
 const timeOf = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
+/** Notes de selles lues pour la fiabilité (les plus récentes ; le Journal, lui, ne charge que quelques jours). */
+const RELIABILITY_LIMIT = 200
+
+/**
+ * Dès 5 photos, la ligne dit combien d'estimations la personne a corrigées, et le résultat la prévient si c'est
+ * souvent le cas (SELLES-PHOTO-3). Les notes de selles sont lues ici, indépendamment des jours affichés.
+ */
 export default function StoolPhotoLine({ features = FEATURES }) {
   const inputRef = useRef(null)
   const [disclosure, askConsent] = useDisclosure()
@@ -50,6 +67,21 @@ export default function StoolPhotoLine({ features = FEATURES }) {
   const [precise, setPrecise] = useState(false)
   const [saved, setSaved] = useState(null)
   const [error, setError] = useState(null)
+  const [stools, setStools] = useState([])
+
+  const loadStools = useCallback(async () => {
+    try {
+      setStools(await listEntries({ type: STOOL_TYPE, limit: RELIABILITY_LIMIT }))
+    } catch {
+      setStools([])
+    }
+  }, [])
+
+  useEffect(() => {
+    loadStools()
+    window.addEventListener('health-entries-updated', loadStools)
+    return () => window.removeEventListener('health-entries-updated', loadStools)
+  }, [loadStools])
 
   async function start() {
     setError(null)
@@ -112,6 +144,7 @@ export default function StoolPhotoLine({ features = FEATURES }) {
     }
   }
 
+  const reliability = useMemo(() => stoolPhotoReliability(stools), [stools])
   const chosenForm = choice ? (choice.bristol ? formOfBristol(choice.bristol) : choice.form) : null
   const estimatedType = estimate?.readable ? BRISTOL_TYPES.find((t) => t.n === estimate.bristol) : null
 
@@ -135,6 +168,7 @@ export default function StoolPhotoLine({ features = FEATURES }) {
           {busy ? 'Estimation en cours…' : 'Selles : estimer la forme avec une photo'}
         </button>
       )}
+      {!estimate && reliability && <p className="stool-photo-reliability">{stoolPhotoReliabilityText(reliability)}</p>}
       {estimate && (
         <div className="stool-photo-result" role="group" aria-labelledby="stool-photo-title">
           <div className="stool-head">
@@ -148,6 +182,9 @@ export default function StoolPhotoLine({ features = FEATURES }) {
             </p>
           ) : (
             <p className="stool-photo-estimate">Photo difficile à lire. Choisissez vous-même.</p>
+          )}
+          {estimatedType && reliability?.often && (
+            <p className="stool-photo-often">Souvent corrigée chez vous : vérifiez la forme.</p>
           )}
           <div className="stool-forms">
             {STOOL_FORMS.map((f) => (

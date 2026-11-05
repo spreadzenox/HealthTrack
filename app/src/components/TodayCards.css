@@ -650,3 +650,17 @@
   font-size: 0.75rem;
   line-height: 1.4;
 }
+
+/* Fiabilité chez la personne (SELLES-PHOTO-3) */
+.stool-photo-reliability {
+  margin: 4px 0 0 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.stool-photo-often {
+  margin: -4px 0 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--peach-label);
+}
