@@ -27,3 +27,11 @@ Type : 🔧 run de code (14:35 Paris). Priorité : retours du 04/11, point (7) (
   « Estimer avec une photo » dans la rubrique Selles du Journal (objectif « Mon ventre »), entrée `stool` +
   `estimated`/`estimate`, captures. Puis SELLES-PHOTO-3 (fiabilité personnelle, confidentialité, Nouveautés).
 - Après déploiement du relais : vérifier au bilan que la route répond (400 sans photo).
+
+## Après le merge
+- #724 mergée (squash `42ae6e6`) : « Frontend (Vitest) », « Build APK », relais, montre, perf, WebView API 28,
+  Android 12L et bord à bord verts au merge. « Build & Release » **v512** (APK 34 548 150 octets). « Relais —
+  déploiement » vert (bilans Play, Integrity, analyses IA OK). Route vérifiée en production : `POST /v1/stool/analyze`
+  sans en-tête → 400 `install_id` (la route existe ; une adresse inconnue → 404).
+- App inchangée : pas d'envoi Alpha attendu pour cette version (la livraison continue saute les versions sans changement
+  de l'app).
