@@ -176,14 +176,15 @@ async function addIntegrityHeaders(headers, { integrity = requestIntegrity, test
   if (typeof test?.env === 'string') headers['X-Test-Env'] = test.env
 }
 
-async function postRelay(body, { fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = requestIntegrity, testDevice = testEnvironment } = {}) {
+/** POST d'une analyse au relais (repas par défaut, selles avec `path`) ; renvoie le corps décodé ou lève une Error lisible. */
+export async function postRelay(body, { path = '/v1/meal/analyze', fetchImpl = globalThis.fetch, timeoutMs = RELAY_TIMEOUT_MS, integrity = requestIntegrity, testDevice = testEnvironment } = {}) {
   const headers = { 'Content-Type': 'application/json', ...relayHeaders() }
   await addIntegrityHeaders(headers, { integrity, testDevice })
   const controller = typeof AbortController === 'function' ? new AbortController() : null
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
   let res
   try {
-    res = await fetchImpl(`${RELAY_URL}/v1/meal/analyze`, {
+    res = await fetchImpl(`${RELAY_URL}${path}`, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),

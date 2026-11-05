@@ -119,6 +119,18 @@ export const DISCLOSURES = {
     accept: 'J’accepte, analyser ce repas',
     decline: 'Pas maintenant',
   },
+  // Variante play : première forme des selles estimée par photo (SELLES-PHOTO-2)
+  ai_stool: {
+    title: 'Avant d’estimer la forme avec une photo',
+    points: [
+      'La photo, réduite et sans position, part vers notre serveur. Une IA de Google en estime la forme en Europe.',
+      'La photo est effacée juste après : elle n’est gardée ni sur ce téléphone ni sur notre serveur. Google ne s’en sert pas pour entraîner ses modèles.',
+      'Seul un type de l’échelle de Bristol revient, que vous pouvez corriger. L’IA ne juge ni la couleur ni votre santé.',
+    ],
+    leaves: 'Envoyé : la photo, à chaque estimation que vous lancez. Rien d’autre.',
+    accept: 'J’accepte, prendre la photo',
+    decline: 'Pas maintenant',
+  },
 }
 
 /** La divulgation d'un accès ; erreur si l'accès n'est pas décrit (pour ne jamais demander sans prévenir). */
