@@ -6,7 +6,7 @@ const base = { candidateVersionCode: 100694, alphaVersionCode: 100693, changedFi
 
 describe('livraison continue vers l’alpha (04/11)', () => {
   it('tout vert, app modifiée, version plus récente : envoi', () => {
-    expect(decideAlpha({ ...base, runs: ok() })).toMatchObject({ send: true })
+    expect(decideAlpha({ ...base, runs: ok() })).toMatchObject({ send: true, versionCode: 100694 })
   })
 
   it('un workflow encore en cours : on attend, sans envoyer', () => {
@@ -50,6 +50,36 @@ describe('livraison continue vers l’alpha (04/11)', () => {
     expect(decideAlpha({ ...base, runs: ok(), internalVersionCode: 100693 }).send).toBe(false)
     expect(decideAlpha({ ...base, runs: ok(), internalVersionCode: null }).send).toBe(false)
     expect(decideAlpha({ ...base, runs: ok(), internalVersionCode: 100695 }).send).toBe(true)
+  })
+
+  describe('commit de journal après une version de l’app (émulateur de celle-ci annulé, 05/11)', () => {
+    const journalOnly = () => ok().filter((r) => r.name !== 'Play — AAB')
+    const inherited = { versionCode: 100787, filesSince: ['journal/README.md', 'journal/runs/x.md'] }
+    const j = { runs: journalOnly(), candidateVersionCode: 100788, alphaVersionCode: 100786, internalVersionCode: 100787, changedFiles: ['app/src/pages/Recommendations.jsx', 'journal/README.md'], inherited }
+
+    it('reprend la version du test interne, validée par les tests et l’émulateur de ce commit', () => {
+      expect(decideAlpha(j)).toMatchObject({ send: true, versionCode: 100787 })
+    })
+
+    it('l’app a changé depuis la version du test interne : pas d’héritage', () => {
+      const d = decideAlpha({ ...j, inherited: { ...inherited, filesSince: ['app/src/pages/Home.jsx'] } })
+      expect(d).toMatchObject({ send: false, reason: expect.stringMatching(/journal/) })
+    })
+
+    it('émulateur encore en cours ou en échec sur ce commit : attente ou rien', () => {
+      const runs = journalOnly().map((r) => (r.name.startsWith('Test — émulateur') ? { ...r, status: 'in_progress', conclusion: null } : r))
+      expect(decideAlpha({ ...j, runs })).toMatchObject({ send: false, wait: true })
+      const failed = journalOnly().map((r) => (r.name.startsWith('Test — émulateur') ? { ...r, conclusion: 'cancelled' } : r))
+      expect(decideAlpha({ ...j, runs: failed }).send).toBe(false)
+    })
+
+    it('l’alpha a déjà cette version : rien ne part', () => {
+      expect(decideAlpha({ ...j, alphaVersionCode: 100787 }).send).toBe(false)
+    })
+
+    it('sans version héritée connue : comme avant, aucun AAB', () => {
+      expect(decideAlpha({ ...j, inherited: null })).toMatchObject({ send: false, reason: expect.stringMatching(/journal/) })
+    })
   })
 
   it('interrupteur coupé : rien ne part', () => {

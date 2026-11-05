@@ -176,6 +176,11 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   100776) envoyée sur l'alpha par la routine (workflow_dispatch de « Play — AAB », piste alpha) ; nouveau workflow
   « Play — Alpha (livraison continue) » : chaque version de main qui change l'app part sur l'alpha quand les Tests,
   les émulateurs (dont Android 9) et « Play — AAB » sont verts (`scripts/play/alphaGate.mjs`, tests). P42 retirée.
+- [x] **CD-ALPHA-3** (05/11 03:35, 🔧) Trou de la livraison continue : un commit de journal poussé juste après une
+  version de l'app annule l'émulateur de celle-ci (concurrency sur main), et lui-même n'a pas d'AAB → la version
+  (100787, #704) ne partait jamais sur l'alpha. `decideAlpha` reçoit `inherited` (version du test interne + fichiers
+  modifiés depuis son commit) : un commit sans AAB reprend la version du test interne si rien de l'app n'a changé
+  entre les deux, validée par ses propres « Tests » et émulateurs. 5 tests (`alphaGate.test.mjs`).
 - [ ] **CD-ALPHA-2** Suivre les examens : si deux bilans montrent une version alpha remplacée avant d'avoir abouti,
   espacer (24 h minimum, variable testée dans `alphaGate`) et le dire en tête du résumé. Erreur d'envoi = erreur exacte
   en tête du résumé, rien de contourné.

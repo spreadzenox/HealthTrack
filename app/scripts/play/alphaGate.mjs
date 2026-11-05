@@ -7,6 +7,10 @@
  * - son versionCode dépasse celui de l'alpha (jamais de retour en arrière) ;
  * - des fichiers de l'app ont changé depuis la version de l'alpha (journal, relais, scripts et tests ne comptent pas).
  * La production n'est jamais touchée (publish.mjs n'accepte que internal et alpha).
+ *
+ * Commit de journal seul (pas d'AAB) juste après une version de l'app : sur main, il annule l'émulateur de celle-ci
+ * (concurrency), qui ne serait alors jamais envoyée (100787, 05/11). Il hérite donc de la version du test interne si
+ * rien de l'app n'a changé entre elle et lui : ses « Tests » et son émulateur portent sur le même code d'app.
  */
 
 export const REQUIRED_WORKFLOWS = ['Tests', 'Test — émulateur Samsung Galaxy A56', 'Play — AAB']
@@ -33,23 +37,26 @@ export function commitCountOf(versionCode) {
  * `alphaVersionCode` / `internalVersionCode` : plus grand versionCode de l'alpha / du test interne (null si vide ;
  * le candidat doit avoir été envoyé en test interne). `changedFiles` : fichiers modifiés depuis
  * la version de l'alpha (null si ce commit est introuvable : on envoie).
- * Renvoie { send, wait?, reason }.
+ * `inherited` : { versionCode, filesSince } de la version du test interne, avec les fichiers modifiés entre son
+ * commit et celui-ci (null si inconnue).
+ * Renvoie { send, wait?, reason, versionCode? } (versionCode : la version à placer sur l'alpha).
  */
-export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, enabled = true }) {
+export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited = null, enabled = true }) {
   if (!enabled) return { send: false, reason: 'livraison continue coupée (ALPHA_AUTO=false)' }
+  const hasAab = runs.some((r) => r.name === 'Play — AAB' && r.event === 'push')
+  const inherit = !hasAab && inherited?.versionCode != null && Array.isArray(inherited.filesSince) && !inherited.filesSince.some(affectsApp)
+  if (!hasAab && !inherit) return { send: false, reason: 'aucun AAB pour ce commit (seul le journal a changé)' }
   for (const name of REQUIRED_WORKFLOWS) {
+    if (inherit && name === 'Play — AAB') continue
     const mine = runs.filter((r) => r.name === name && r.event === 'push')
-    if (!mine.length) {
-      return name === 'Play — AAB'
-        ? { send: false, reason: 'aucun AAB pour ce commit (seul le journal a changé)' }
-        : { send: false, wait: true, reason: `« ${name} » n’a pas encore démarré` }
-    }
+    if (!mine.length) return { send: false, wait: true, reason: `« ${name} » n’a pas encore démarré` }
     if (mine.some((r) => r.status !== 'completed')) return { send: false, wait: true, reason: `« ${name} » est encore en cours` }
     if (!mine.some((r) => r.conclusion === 'success')) {
       return { send: false, reason: `« ${name} » n’a pas réussi (${mine.map((r) => r.conclusion).join(', ')})` }
     }
   }
-  const candidate = Number(candidateVersionCode)
+  const candidate = Number(inherit ? inherited.versionCode : candidateVersionCode)
+  const from = inherit ? ` (version du test interne, reprise par ce commit de journal)` : ''
   if (internalVersionCode !== undefined && (internalVersionCode == null || candidate > Number(internalVersionCode))) {
     return { send: false, reason: `${candidate} n’est pas en test interne (envoi refusé ou en attente ; test interne : ${internalVersionCode ?? 'vide'})` }
   }
@@ -59,9 +66,9 @@ export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, inte
   if (changedFiles) {
     const app = changedFiles.filter(affectsApp)
     if (!app.length) return { send: false, reason: `rien ne change dans l’app depuis ${alphaVersionCode}` }
-    return { send: true, reason: `${app.length} fichier(s) de l’app modifié(s) depuis ${alphaVersionCode}` }
+    return { send: true, versionCode: candidate, reason: `${app.length} fichier(s) de l’app modifié(s) depuis ${alphaVersionCode}${from}` }
   }
-  return { send: true, reason: 'version de l’alpha introuvable dans l’historique : envoi' }
+  return { send: true, versionCode: candidate, reason: `version de l’alpha introuvable dans l’historique : envoi${from}` }
 }
 
 /**
