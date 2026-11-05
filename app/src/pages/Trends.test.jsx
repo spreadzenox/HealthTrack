@@ -7,13 +7,15 @@ import Trends from './Trends'
 vi.mock('../components/FormeSection', () => ({ default: () => <section data-testid="forme-section" /> }))
 vi.mock('../components/WellbeingCharts', () => ({ default: () => <section data-testid="wellbeing-charts" /> }))
 
-describe('Journal → Tendances (forme et courbes, déplacées de l’accueil, jalon 2b)', () => {
-  it('montre les sous-onglets du Journal, le titre et les deux blocs', () => {
+describe('Analyses → Tendances (forme et courbes ; sous Analyses depuis le 05/11)', () => {
+  it('montre les sous-onglets des Analyses, le titre et les deux blocs', () => {
     render(
       <MemoryRouter initialEntries={['/tendances']}>
         <Trends />
       </MemoryRouter>
     )
+    expect(screen.getByRole('navigation', { name: 'Analyses' })).toBeInTheDocument()
+    expect(screen.queryByRole('navigation', { name: 'Journal' })).toBeNull()
     expect(screen.getByRole('link', { name: 'Tendances' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('heading', { name: 'Vos tendances' })).toBeInTheDocument()
     expect(screen.getByTestId('forme-section')).toBeInTheDocument()

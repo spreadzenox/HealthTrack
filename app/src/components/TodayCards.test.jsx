@@ -274,6 +274,8 @@ describe('PistesTeaser', () => {
     wrap(<PistesTeaser read={async () => [day(0)]} />)
     expect(await screen.findByText('1 piste repérée')).toBeInTheDocument()
     expect(screen.getByText('Oignon → ventre')).toBeInTheDocument()
+    // Retours du 04/11 (4) : la première piste porte sur le ventre, la carte ouvre le sous-onglet « Ventre »
+    expect(screen.getByText('1 piste repérée').closest('a')).toHaveAttribute('href', '/recommendations/ventre')
   })
 
   it('sans aucune piste dans le résumé : le compte à rebours habituel', async () => {

@@ -4,10 +4,9 @@ const ITEMS = [
   { to: '/journal', label: 'Jours' },
   { to: '/food', label: 'Repas' },
   { to: '/nutrition', label: 'Nutrition' },
-  { to: '/tendances', label: 'Tendances' },
 ]
 
-/** Sous-onglets de « Journal » (jalons 2c, 2c-2 et 2b) : vos jours, vos repas, la nutrition, vos tendances. */
+/** Sous-onglets de « Journal » (jalons 2c et 2c-2) : vos jours, vos repas, la nutrition (Tendances sous Analyses, 05/11). */
 export default function JournalTabs() {
   const { pathname } = useLocation()
   return (

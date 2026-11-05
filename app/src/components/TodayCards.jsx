@@ -249,8 +249,10 @@ const PISTES_TEXT = {
 function PistesFound({ gut, levers, locked }) {
   const count = gut.length + levers.length
   const first = locked ? levers[0] : (gut[0] ?? levers[0])
+  // Retours du 04/11 (4) : la carte ouvre le sous-onglet de la piste annoncée (ventre ou bien-être)
+  const to = gut.length > 0 && (first === gut[0] || !levers.length) ? '/recommendations/ventre' : '/recommendations'
   return (
-    <Link to="/recommendations" className="today-card pistes-card pistes-card--found" aria-labelledby="pistes-card-title">
+    <Link to={to} className="today-card pistes-card pistes-card--found" aria-labelledby="pistes-card-title">
       <div className="today-card-head">
         <h3 id="pistes-card-title" className="today-card-title">
           {count} {count > 1 ? 'pistes repérées' : 'piste repérée'}

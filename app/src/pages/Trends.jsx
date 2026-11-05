@@ -1,15 +1,15 @@
-import JournalTabs from '../components/JournalTabs'
+import AnalysesTabs from '../components/AnalysesTabs'
 import FormeSection from '../components/FormeSection'
 import WellbeingCharts from '../components/WellbeingCharts'
 
 /**
- * Onglet Journal, page « Tendances » (jalon 2b) : la forme (radar, cœur, régularité du sommeil) et les
+ * Onglet Analyses, page « Tendances » (jalon 2b ; sortie du Journal le 05/11, retours du 04/11 (4)) : la forme (radar, cœur, régularité du sommeil) et les
  * courbes du bien-être, auparavant sous l'accueil. L'accueil garde le résumé du jour de la maquette.
  */
 export default function Trends() {
   return (
     <section className="journal-page">
-      <JournalTabs />
+      <AnalysesTabs />
       <h2 className="page-title">Vos tendances</h2>
       <p className="page-intro">Votre forme face à votre propre norme, et votre bien-être jour après jour.</p>
       <FormeSection />

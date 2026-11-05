@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
@@ -31,8 +32,10 @@ import { useDetailsMode } from '../hooks/useDetailsMode'
 import { PistesTeaser } from '../components/TodayCards'
 import DetailsToggle from '../components/DetailsToggle'
 import GutLinks from '../components/GutLinks'
+import { GUT_LINKS_MIN_DAYS } from '../services/gutLinks'
 import ReintroductionEntry from '../components/ReintroductionEntry'
 import DoctorReportCard from '../components/DoctorReportCard'
+import AnalysesTabs from '../components/AnalysesTabs'
 import { gutCardMode, homeFocus } from '../settings/onboarding'
 import { decimalMark } from '../i18n/locale.js'
 import './Recommendations.css'
@@ -657,7 +660,7 @@ function HiddenLine({ count, onUnhide }) {
   )
 }
 
-function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced, showGut = false }) {
+function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced }) {
   const { correlations: result } = analysis
   const levers = result.status === 'not_enough_data' ? [] : result.levers ?? []
   // Données insuffisantes : seuls les liens du visage sont montrés, donc seules ses habitudes en attente
@@ -675,31 +678,23 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
     rememberPistesSummary(analysis)
   }
   const shownLevers = levers.filter((l) => !hidden.includes(l.variable))
-  const gutLinks = showGut && analysis.gut?.status === 'links' ? analysis.gut.links : []
-  const hiddenGut = new Set(gutLinks.map(gutLinkKey).filter((k) => hidden.includes(k))).size
-  const hiddenCount = (levers.length - shownLevers.length) + allLinks.filter((l) => hidden.includes(l.key)).length + hiddenGut
+  const hiddenCount = (levers.length - shownLevers.length) + allLinks.filter((l) => hidden.includes(l.key)).length
   const hiddenLine = <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
-  const soon = soonLines(analysis, showGut, tagLines)
-  const gut = showGut ? <><GutLinks gut={analysis.gut} hidden={hidden} onHide={onHide} /><ReintroductionEntry /></> : null
-  // Le rapport décrit d'abord le ventre : avec l'objectif ventre seulement (toujours dans Données)
-  const report = showGut && analysis.gut?.status !== 'no_notes' ? <DoctorReportCard /> : null
+  const soon = soonLines(analysis, false, tagLines)
 
   if (result.status === 'not_enough_data') {
     return (
       <div data-testid="reco-basic-waiting">
         {/* VC-12 : sous la carte lilas, un seul seuil visible ; celui du bien-être passe dans ses « détails » */}
         {!teaserShown && <NotEnoughData currentDays={result.currentDays} minDays={result.minDays} />}
-        {gut}
         {analysis.faceMood?.status === 'ok' && (
           <LinksSection analysis={{ faceMood: analysis.faceMood }} hidden={hidden} onHide={onHide} />
         )}
         {hiddenLine}
         {/* Habitudes et effets décalés attendent les mêmes notes que la carte lilas : seul le visage a son compteur */}
-        {/* Données vierges : la carte lilas seule ; le rapport n'a sa ligne qu'une fois quelque chose noté */}
         <SoonSection
-          lines={soon.filter((l) => l.id === 'face' || l.id === 'gut' || l.id.startsWith('tag:') || (l.id === 'report' && result.currentDays > 0))}
+          lines={soon.filter((l) => l.id === 'face' || l.id.startsWith('tag:'))}
         />
-        {report}
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
       </div>
     )
@@ -716,8 +711,6 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
           Données exploratoires : continuez à noter votre bien-être (objectif : 10 jours).
         </p>
       )}
-
-      {gut}
 
       <section className="reco-section">
         <h3 className="reco-section-title">Pistes à tester</h3>
@@ -752,9 +745,49 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced,
 
       <SoonSection lines={soon} />
 
-      {report}
-
       <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
+    </div>
+  )
+}
+
+// ─── Sous-onglet « Ventre » (retours du 04/11, point 4) ──────────────────────
+
+/**
+ * Seulement le ventre : les pistes aliment → ventre, la réintroduction et le rapport PDF. Les pistes du bien-être
+ * restent sous « Bien-être » ; rien n'est recalculé, la même analyse sert les deux sous-onglets.
+ */
+function GutView({ analysis, showGut }) {
+  const [hidden, setHidden] = useState(getHiddenLinks)
+  if (!showGut) {
+    return (
+      <p className="reco-intro" data-testid="gut-off">
+        Le suivi du ventre est masqué. Pour le retrouver : Paramètres → <Link to="/settings">Ce qui vous amène</Link>.
+      </p>
+    )
+  }
+  const onHide = (key) => {
+    setHidden(hideLink(key))
+    rememberPistesSummary(analysis)
+  }
+  const onUnhide = () => {
+    setHidden(unhideAllLinks())
+    rememberPistesSummary(analysis)
+  }
+  const gut = analysis.gut
+  const gutLinks = gut?.status === 'links' ? gut.links : []
+  const hiddenCount = new Set(gutLinks.map(gutLinkKey).filter((k) => hidden.includes(k))).size
+  const lines = soonLines({ gut }, true)
+  if (!gut || gut.status === 'no_notes') {
+    lines.unshift({ id: 'gut', label: 'Votre ventre et vos repas', progress: `0/${gut?.minDays ?? GUT_LINKS_MIN_DAYS} jours` })
+  }
+  return (
+    <div className="reco-tab-content" data-testid="reco-gut-view">
+      <p className="reco-intro">Ce qui va avec vos jours de gêne ou de douleur, d’après vos notes du ventre et vos repas.</p>
+      <GutLinks gut={gut} hidden={hidden} onHide={onHide} />
+      <ReintroductionEntry />
+      <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
+      <SoonSection lines={lines} />
+      {gut && gut.status !== 'no_notes' && <DoctorReportCard />}
     </div>
   )
 }
@@ -1016,7 +1049,7 @@ function analysisMetaLine(analysis) {
   return parts.join(' · ')
 }
 
-export default function Recommendations() {
+export default function Recommendations({ view = 'wellbeing' }) {
   useAutoSync()
 
   // Une seule analyse à l'écran (POL-7). Le modèle de prédiction (ex-« analyse avancée ») n'est calculé, dans un
@@ -1078,15 +1111,17 @@ export default function Recommendations() {
   const current = analyses.basic
   const loading = current == null && !error
   // Rien à montrer encore (VC-2) : la même carte lilas que l'Accueil, sans seuils techniques
-  const waiting = current?.correlations?.status === 'not_enough_data'
-  const meta = analysisMetaLine(current)
+  const gutView = view === 'gut'
+  const waiting = !gutView && current?.correlations?.status === 'not_enough_data'
+  const meta = gutView ? null : analysisMetaLine(current)
 
   return (
     <section className="reco-page">
+      <AnalysesTabs />
       {meta && <p className="reco-meta-line">{meta}</p>}
       <h2 className="page-title">Vos analyses</h2>
       {/* Données vierges : la carte lilas seule (rien à nuancer encore) */}
-      {current && !waiting && (
+      {current && !waiting && !gutView && (
         <p className="reco-intro">
           Des liens repérés dans vos données, à vérifier avant d’y croire.
         </p>
@@ -1111,15 +1146,17 @@ export default function Recommendations() {
 
       {error && <div className="error-msg" role="alert">{error}</div>}
 
-      {!loading && !error && (
+      {!loading && !error && gutView && <GutView analysis={current} showGut={showGut} />}
+
+      {!loading && !error && !gutView && (
         <>
           {debugMode && <RecoDebugPanel entries={debugEntries} totalDbCount={totalDbCount} />}
+          {/* Le ventre a son sous-onglet (04/11 (4)) : ici, seulement le bien-être */}
           <AnalysisView
             analysis={current}
             teaserShown={waiting}
             advanced={analyses.advanced}
             onOpenAdvanced={() => setWantAdvanced(true)}
-            showGut={showGut}
           />
         </>
       )}
