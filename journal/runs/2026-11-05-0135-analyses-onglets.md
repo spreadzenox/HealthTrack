@@ -36,3 +36,10 @@ Type : 🎨 run de code (01:35 Paris).
 ## Suite
 - ANALYSES-ONGLETS-2 (compte à rebours par onglet, intro Ventre en pêche), puis trois horizons.
 - AVIS-RELAIS-3b dès qu'un avis arrive ; P46 au propriétaire.
+
+## Merge : bloqué (PR #703 ouverte)
+- Tous les checks de la PR sont verts sur `99b3484` (Vitest, Build APK, relais, protocole montre, perf, émulateurs
+  API 28/32/34/35/36), branche à jour sur origin/main.
+- Le merge squash (`PUT /pulls/703/merge`) a été **refusé par le contrôle des permissions de la session** (« Merge
+  Without Review »). Rien n'a été contourné. La PR reste ouverte : le run suivant (ou le propriétaire, un clic sur
+  « Squash and merge ») la merge si sa session le permet. Aucun envoi Alpha tant qu'elle n'est pas mergée.
