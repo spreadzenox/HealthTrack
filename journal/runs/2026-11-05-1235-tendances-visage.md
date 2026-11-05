@@ -32,3 +32,10 @@ livraison continue).
 - Captures `/tendances` relues : démo clair (courbe estimée, losanges, bloc Aujourd'hui avec fourchettes), sombre avec
   un point touché (« Dimanche 1 novembre, 2,3 / 5, 5 lectures dont 2 peu nettes »), vide (ligne « Pas encore de
   bien-être noté ni estimé » et tuiles menthe). Avant / après dans `journal/captures/tendances-visage/`.
+
+## Après le merge
+- #720 mergée (squash `816d3f7`) : « Frontend (Vitest) », « Build APK », relais, perf et montre verts au merge.
+  « Build & Release » **v510** (APK 34 547 122 octets). « Play — AAB » et émulateurs en cours à la fin du run ;
+  « Play — Alpha » enverra la version seule s'ils sont verts (à noter au run suivant). Versions en examen chez Google :
+  100800 et suivantes (chaque envoi remplace le précédent sur Alpha).
+- Prochain run de code : VENTRE-BE-2 (I220 OUI).
