@@ -99,7 +99,9 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const old = { id: 2, type: 'wellbeing', source: 'app_wellbeing', at: new Date(Date.now() - 6 * 86400000).toISOString(), payload: { score: 4 } }
     listEntries.mockClear()
     countEntries.mockClear()
-    listEntries.mockResolvedValueOnce([today]).mockResolvedValue([today, old])
+    // Lecture des selles (type 'stool', SELLES-PHOTO-3) à part : elle ne doit pas consommer la première réponse
+    let served = 0
+    listEntries.mockImplementation(async (o) => (o?.type ? [] : served++ === 0 ? [today] : [today, old]))
     countEntries.mockResolvedValue(5)
     renderJournal()
     const more = await screen.findByRole('button', { name: /Voir les jours précédents/i })
