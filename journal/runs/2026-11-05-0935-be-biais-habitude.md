@@ -26,3 +26,10 @@ Type : 🎨 run de code (09:35 Paris). Priorité : retours du 04/11, point (5) (
   `npm run test` 3087 verts ; lint 0 erreur ; build OK.
 - Captures `/bien-etre` (semaine sombre, Jour clair `--face-dense`) relues : trait lisible sur les deux thèmes,
   encart contrasté. `npm run visual` complet : 17 pages ok.
+
+## Après le merge
+- PR #715 mergée (squash `b01533e`). Premier passage : émulateur « API 36 / Android 16 » rouge sur
+  `HealthConnectTest.healthConnect_canWriteAndReadHeartRate` (`SQLiteDatabaseLockedException: database is locked`
+  dans Health Connect de l'émulateur, sans lien avec ce changement en JS) ; relance du seul job : vert. 11 checks verts.
+- « Build & Release » : **v507**, APK 34 547 090 octets. « Play — AAB » : 100798 en test interne. Émulateur Galaxy
+  A56 vert. « Play — Alpha » : **100798 placée sur l'alpha** (en examen chez Google).
