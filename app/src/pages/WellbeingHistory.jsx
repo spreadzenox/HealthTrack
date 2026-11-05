@@ -56,7 +56,7 @@ function axisLabels(period, from) {
 }
 
 /** Courbe du bien-être estimé (0–5) : fourchettes par lecture (jour), points des jours, notes à la main en losange. */
-export function HistoryChart({ history, now }) {
+export function HistoryChart({ history, now, selected = null, onSelect }) {
   const { period, from, points, notes, mean } = history
   const innerH = H - PAD.top - PAD.bottom
   const y = (v) => PAD.top + innerH * (1 - v / 5)
@@ -85,7 +85,8 @@ export function HistoryChart({ history, now }) {
       ))}
       {points.length > 1 && <path className="wbh-line" d={line} />}
       {points.map((p) => (
-        <circle key={p.at} className={`wbh-dot${p.few ? ' is-few' : ''}`} cx={x(pointAt(p))} cy={y(p.note)} r={period === 'month' ? 3 : 4.5} />
+        <circle key={p.at} className={`wbh-dot${p.few ? ' is-few' : ''}${selected === p.at ? ' is-on' : ''}`}
+          cx={x(pointAt(p))} cy={y(p.note)} r={selected === p.at ? 6.5 : period === 'month' ? 3 : 4.5} />
       ))}
       {notes.map((n) => {
         const cx = x(n.at)
@@ -95,6 +96,32 @@ export function HistoryChart({ history, now }) {
       {axisLabels(period, from).map((l) => (
         <text key={l.at} className="wbh-axis" x={x(l.at)} y={H - 6} textAnchor="middle">{l.text}</text>
       ))}
+      {selected && points.some((p) => p.at === selected) && (() => {
+        const sx = x(pointAt(points.find((p) => p.at === selected)))
+        return <line className="wbh-sel" x1={sx} x2={sx} y1={PAD.top} y2={H - PAD.bottom} />
+      })()}
+      {onSelect && points.map((p, i) => {
+        // Colonne pleine hauteur, coupée à mi-chemin des points voisins : on touche n'importe où au-dessus ou
+        // au-dessous d'un point (en vue Mois, 30 colonnes étroites forment une bande qu'on parcourt du doigt).
+        const cx = x(pointAt(p))
+        const prev = i ? x(pointAt(points[i - 1])) : null
+        const next = i < points.length - 1 ? x(pointAt(points[i + 1])) : null
+        const left = prev == null ? PAD.left - 6 : (prev + cx) / 2
+        const right = next == null ? W - PAD.right + 6 : (cx + next) / 2
+        const toggle = () => onSelect(selected === p.at ? null : p.at)
+        return (
+          <rect key={`hit${p.at}`} className="wbh-hit" data-scrub="" x={left} y={PAD.top} width={Math.max(1, right - left)}
+            height={H - PAD.top - PAD.bottom} role="button" tabIndex={0} aria-pressed={selected === p.at}
+            aria-label={`${pointTitle(p, period)} : ${frDecimal(p.note)} sur 5`}
+            onClick={toggle}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                toggle()
+              }
+            }} />
+        )
+      })}
     </svg>
   )
 }
@@ -114,6 +141,74 @@ function BipolarBar({ value, left, right, label }) {
       </div>
       <div className="wbh-bipolar-ends"><span>{left}</span><span>{right}</span></div>
     </div>
+  )
+}
+
+const hm = (iso) => {
+  const d = new Date(iso)
+  return `${d.getHours()} h ${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+/** « Lecture de 8 h 05 », « Lectures de 8 h à 9 h » (jour très lu) ou « jeudi 22 octobre » (semaine, mois). */
+function pointTitle(p, period) {
+  if (period !== 'day') {
+    return new Date(`${p.date}T12:00:00`).toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric', month: 'long' })
+  }
+  if (p.hourly) {
+    const h = new Date(p.at).getHours()
+    return `Lectures de ${h} h à ${h + 1} h`
+  }
+  return `Lecture de ${hm(p.at)}`
+}
+
+function readingsLine(detail) {
+  const n = detail?.readings ?? 0
+  const poor = detail?.poor ?? 0
+  if (n === 1) return poor ? 'lecture peu nette' : 'lecture nette'
+  const base = `${n} lectures`
+  return poor ? `${base}, dont ${poor} peu ${poor > 1 ? 'nettes' : 'nette'}` : base
+}
+
+/** Les 8 expressions en grille 4 × 2 : chaque case se remplit depuis le bas selon sa part. */
+function ExpressionMatrix({ mix }) {
+  return (
+    <ul className="wbh-matrix" aria-label="Expressions du visage estimées">
+      {mix.items.map((it) => (
+        <li key={it.key}>
+          <span className="wbh-matrix-fill" style={{ height: `${Math.round(it.p * 100)}%` }} aria-hidden="true" />
+          <span className="wbh-matrix-value mono">{Math.round(it.p * 100)} %</span>
+          <span className="wbh-matrix-label">{it.label}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+/** Détail du point touché (BE-HISTO-DETAIL, retour (6) du 04/11) : ce que les modèles ont lu, jamais un diagnostic. */
+function ReadingDetail({ point, period, onClose }) {
+  const title = pointTitle(point, period)
+  const d = point.detail ?? { readings: point.readings ?? 1, poor: 0, valence: null, arousal: null, expressions: null }
+  const hasRange = period === 'day' && Number.isFinite(point.low) && Number.isFinite(point.high)
+  return (
+    <article className="today-card wbh-detail" role="region" aria-label={title}>
+      <div className="wbh-detail-head">
+        <h3 className="today-card-title">{title}</h3>
+        <button type="button" className="wbh-detail-close" aria-label="Fermer la lecture" onClick={onClose}>
+          <LineIcon name="close" size={18} />
+        </button>
+      </div>
+      <p className="wbh-figure">
+        <span className="wbh-detail-note">{frDecimal(point.note)}</span>
+        <span className="wbh-figure-scale"> / 5</span>
+        {hasRange && <span className="wbh-detail-range mono"> entre {frDecimal(point.low)} et {frDecimal(point.high)}</span>}
+      </p>
+      <p className="wbh-figure-sub mono">{readingsLine(d)}</p>
+      {d.valence != null && <BipolarBar label="Valence" value={d.valence} left="désagréable" right="agréable" />}
+      {d.arousal != null && <BipolarBar label="Éveil" value={d.arousal} left="calme" right="animé" />}
+      {d.expressions
+        ? <ExpressionMatrix mix={d.expressions} />
+        : <p className="wbh-foot">Pas d’expressions pour cette lecture.</p>}
+    </article>
   )
 }
 
@@ -141,6 +236,7 @@ export default function WellbeingHistory({ now: givenNow, features }) {
   const [period, setPeriod] = useState('week')
   const [history, setHistory] = useState(undefined)
   const [noteOpen, setNoteOpen] = useState(false)
+  const [selected, setSelected] = useState(null)
   const [now] = useState(() => givenNow ?? new Date())
 
   useEffect(() => {
@@ -157,6 +253,7 @@ export default function WellbeingHistory({ now: givenNow, features }) {
   }, [period, now])
 
   const empty = history && !history.points.length && !history.notes.length
+  const selectedPoint = history && selected ? history.points.find((p) => p.at === selected) : null
   return (
     <section className="wbh-page">
       <p className="wbh-back"><Link to="/">← Aujourd’hui</Link></p>
@@ -165,7 +262,7 @@ export default function WellbeingHistory({ now: givenNow, features }) {
       <div className="wbh-tabs" role="group" aria-label="Période">
         {PERIOD_TABS.map((t) => (
           <button key={t.id} type="button" className={`wbh-tab${period === t.id ? ' is-on' : ''}`}
-            aria-pressed={period === t.id} onClick={() => setPeriod(t.id)}>
+            aria-pressed={period === t.id} onClick={() => { setPeriod(t.id); setSelected(null) }}>
             {t.label}
           </button>
         ))}
@@ -197,7 +294,10 @@ export default function WellbeingHistory({ now: givenNow, features }) {
               <Link to="/connectors">Sources</Link>.
             </p>
           ) : (
-            <HistoryChart history={history} now={now} />
+            <HistoryChart history={history} now={now} selected={selected} onSelect={setSelected} />
+          )}
+          {!empty && !selected && history.points.length > 0 && (
+            <p className="wbh-hint">Touchez un point pour voir sa lecture.</p>
           )}
           {!empty && <ul className="wbh-legend" aria-label="Légende">
             <li><span className="wbh-key is-estimate" aria-hidden="true" />estimé (visage){history.points.some((p) => p.hourly) && ', par heure'}</li>
@@ -215,6 +315,10 @@ export default function WellbeingHistory({ now: givenNow, features }) {
             Noter moi-même
           </button>
         </article>
+      )}
+
+      {selectedPoint && (
+        <ReadingDetail point={selectedPoint} period={history.period} onClose={() => setSelected(null)} />
       )}
 
       {history && history.readings > 0 && (

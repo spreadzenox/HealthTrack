@@ -331,7 +331,10 @@ function findA11y() {
     const inline = el.tagName === 'A' && st.display === 'inline' && (el.parentElement?.innerText || '').trim().length > (el.innerText || '').trim().length + 2
     // La zone touchable peut être agrandie par une étiquette englobante (case dans un <label>)
     const box = el.closest('label')?.getBoundingClientRect() || r
-    if (!inline && (box.height < 43.5 || box.width < 43.5)) {
+    // Colonnes d'un graphique (data-scrub, historique du bien-être) : jointives, elles forment une seule bande touchable
+    // de la largeur du graphique ; seule leur hauteur compte.
+    const scrub = el.hasAttribute('data-scrub')
+    if (!inline && (box.height < 43.5 || (!scrub && box.width < 43.5))) {
       const name = (label(el) || describe(el)).slice(0, 30)
       const d = `${name} ${Math.round(box.width)}×${Math.round(box.height)}`
       if (!small.includes(d)) small.push(d)
