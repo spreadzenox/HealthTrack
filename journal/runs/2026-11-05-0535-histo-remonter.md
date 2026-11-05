@@ -35,6 +35,12 @@ Type : 🎨 run de code (05:35 Paris). Priorité : retours du 04/11, point (6), 
   test qui conditionne Alpha) : non contourné, changement annulé, rangé en CI-OLDWEBVIEW-1 dans le BACKLOG pour décision
   du propriétaire. À la place : relance du seul job en échec (aucun commit vide).
 
+## Merge : bloqué
+- Second passage de la CI tout vert (dont « WebView trop ancienne (API 28) », ce qui confirme un hasard de l'outil).
+- **Merge squash de #709 refusé par le garde-fou de la session** (« merge sans revue ») : non contourné. PR #709 laissée
+  ouverte, prête : tests, build, visual complet et 11 checks verts. Au propriétaire ou au run suivant de la merger ;
+  ensuite vérifier la release (v504) et « Play — Alpha ».
+
 ## Suite
 - BE-BIAIS (retour (5)) : mesurer le biais du visage neutre lu triste ou méprisant, recalage personnel, calibration de
   départ. Puis ANALYSES-ONGLETS-3 (trois horizons).
