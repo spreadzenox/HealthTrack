@@ -69,10 +69,10 @@ async function openModel() {
   fireEvent(summary.closest('details'), new Event('toggle'))
 }
 
-function renderPage() {
+function renderPage(props = {}) {
   return render(
     <BrowserRouter>
-      <Recommendations />
+      <Recommendations {...props} />
     </BrowserRouter>
   )
 }
@@ -1115,7 +1115,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     saveOnboarding({ goal: 'gut' })
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(await gutEntries())
-    renderPage()
+    renderPage({ view: 'gut' })
     const section = await screen.findByTestId('gut-links')
     expect(within(section).getByText('Votre ventre et vos repas')).toBeInTheDocument()
     expect(within(section).getByText(/Oignon → ventre/)).toBeInTheDocument()
@@ -1136,7 +1136,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     saveOnboarding({ goal: 'gut' })
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(await gutEntries())
-    renderPage()
+    renderPage({ view: 'gut' })
     const section = await screen.findByTestId('gut-links')
     const card = within(section).getByText(/Oignon → ventre/).closest('li')
     fireEvent.click(within(card).getByRole('button', { name: /détails/i }))
@@ -1157,7 +1157,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
       ...makeEntries(5),
       { id: 900, type: 'gut', source: 'app_gut', at: '2026-01-03T10:00:00', created_at: '2026-01-03T10:00:00', payload: { level: 'calm' } },
     ])
-    renderPage()
+    renderPage({ view: 'gut' })
     const soon = await screen.findByTestId('reco-soon')
     expect(within(soon).getByText('Votre ventre et vos repas')).toBeInTheDocument()
     expect(within(soon).getByText('1/28 jours')).toBeInTheDocument()
@@ -1169,12 +1169,62 @@ describe('Recommendations — votre ventre et vos repas', () => {
     saveOnboarding({ goal: 'gut' })
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
-    renderPage()
+    renderPage({ view: 'gut' })
     const soon = await screen.findByTestId('reco-soon')
     expect(within(soon).getByText('Rapport PDF pour mon médecin')).toBeInTheDocument()
     expect(within(soon).getByText('dès votre 1re note du ventre')).toBeInTheDocument()
     expect(screen.queryByTestId('doctor-report')).toBeNull()
     expect(screen.queryByRole('link', { name: 'Débloquer' })).toBeNull()
+  })
+
+  it('keeps the gut out of the wellbeing tab: links, FODMAP entry and report are under « Ventre » (04/11 (4))', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(await gutEntries())
+    renderPage()
+    await screen.findByText(/Pistes à tester/)
+    expect(screen.getByRole('link', { name: 'Ventre' })).toHaveAttribute('href', '/recommendations/ventre')
+    expect(screen.queryByTestId('gut-links')).toBeNull()
+    expect(screen.queryByTestId('reintro-entry')).toBeNull()
+    expect(screen.queryByTestId('doctor-report')).toBeNull()
+  })
+
+  it('the gut tab shows only the gut: no wellbeing lever nor wellbeing link, and says what it is about', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(await gutEntries())
+    renderPage({ view: 'gut' })
+    await screen.findByTestId('gut-links')
+    expect(screen.getByRole('link', { name: 'Ventre' })).toBeInTheDocument()
+    expect(screen.getByText(/vos notes du ventre et vos repas/)).toBeInTheDocument()
+    expect(screen.queryByText('Pistes à tester')).toBeNull()
+    expect(screen.queryByTestId('reco-links')).toBeNull()
+    expect(screen.queryByText('Comment c’est calculé')).toBeNull()
+  })
+
+  it('the gut tab with no gut note says how to start, in one discreet line', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue([])
+    renderPage({ view: 'gut' })
+    const soon = await screen.findByTestId('reco-soon')
+    expect(within(soon).getByText('Votre ventre et vos repas')).toBeInTheDocument()
+    expect(within(soon).getByText('0/28 jours')).toBeInTheDocument()
+    expect(within(soon).getByText('dès votre 1re note du ventre')).toBeInTheDocument()
+    expect(screen.queryByTestId('reco-basic-waiting')).toBeNull()
+  })
+
+  it('the gut tab with another goal points to the setting instead of an empty page', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'energy' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(await gutEntries())
+    renderPage({ view: 'gut' })
+    expect(await screen.findByText(/Ce qui vous amène/)).toBeInTheDocument()
+    expect(screen.queryByTestId('gut-links')).toBeNull()
   })
 
   it('shows nothing about the gut with another goal (POL-4), without deleting anything', async () => {

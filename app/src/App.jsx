@@ -51,6 +51,7 @@ export default function App() {
             <Route path="connectors" element={<Connectors />} />
             <Route path="settings" element={<Settings />} />
             <Route path="recommendations" element={<Recommendations />} />
+            <Route path="recommendations/ventre" element={<Recommendations key="gut" view="gut" />} />
             <Route path="plus" element={<More />} />
             <Route path="nouveautes" element={<WhatsNew />} />
             <Route path="montre" element={<WatchData />} />

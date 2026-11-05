@@ -150,6 +150,7 @@ const DEFAULT_ROUTES = [
   ['/data', 'data'],
   ['/connectors', 'connectors'],
   ['/recommendations', 'recommendations'],
+  ['/recommendations/ventre', 'recommendations-ventre'],
   ['/settings', 'settings'],
   ['/plus', 'plus'],
   ['/montre', 'montre'],

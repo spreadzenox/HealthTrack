@@ -11,7 +11,7 @@ function renderAt(path) {
   )
 }
 
-describe('JournalTabs (Jours | Repas | Nutrition | Tendances sous l’onglet Journal)', () => {
+describe('JournalTabs (Jours | Repas | Nutrition sous l’onglet Journal ; Tendances passe sous Analyses le 05/11)', () => {
   it('links to the days, meals and nutrition', () => {
     renderAt('/food')
     const nav = screen.getByRole('navigation', { name: 'Journal' })
@@ -19,14 +19,13 @@ describe('JournalTabs (Jours | Repas | Nutrition | Tendances sous l’onglet Jou
     expect(screen.getByRole('link', { name: 'Jours' })).toHaveAttribute('href', '/journal')
     expect(screen.getByRole('link', { name: 'Repas' })).toHaveAttribute('href', '/food')
     expect(screen.getByRole('link', { name: 'Nutrition' })).toHaveAttribute('href', '/nutrition')
-    expect(screen.getByRole('link', { name: 'Tendances' })).toHaveAttribute('href', '/tendances')
+    expect(screen.queryByRole('link', { name: 'Tendances' })).toBeNull()
   })
 
   it.each([
     ['/journal', 'Jours', 'Repas'],
     ['/food', 'Repas', 'Nutrition'],
     ['/nutrition', 'Nutrition', 'Jours'],
-    ['/tendances', 'Tendances', 'Jours'],
   ])('on %s, « %s » is current', (path, current, other) => {
     renderAt(path)
     expect(screen.getByRole('link', { name: current })).toHaveAttribute('aria-current', 'page')
