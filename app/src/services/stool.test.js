@@ -8,6 +8,8 @@ import {
   stoolEntryLabel,
   stoolForm,
   stoolPayload,
+  stoolPhotoReliability,
+  stoolPhotoReliabilityText,
 } from './stool'
 
 const at = (d, h = 9) => new Date(2026, 9, d, h).toISOString()
@@ -60,5 +62,39 @@ describe('forme des selles (I176)', () => {
     expect(stoolCounts(entries, '2026-10-01', '2026-10-14')).toEqual({ total: 3, days: 2, hard: 1, normal: 1, loose: 1 })
     expect(stoolCounts(entries)).toMatchObject({ total: 4, days: 3 })
     expect(stoolCounts([])).toBeNull()
+  })
+})
+
+describe('fiabilité de l’estimation par photo chez la personne (SELLES-PHOTO-3)', () => {
+  const photoEntry = (estimated, chosen, day = 1) => ({
+    type: 'stool',
+    source: 'app_stool',
+    at: `2026-10-${String(day).padStart(2, '0')}T09:00:00`,
+    payload: stoolPayload({ bristol: chosen, estimate: { bristol: estimated } }),
+  })
+
+  it('rien avant 5 photos ; les notes sans photo ne comptent pas', () => {
+    const four = [photoEntry(4, 4), photoEntry(4, 4), photoEntry(4, 1), photoEntry(6, 7)]
+    expect(stoolPhotoReliability(four)).toBeNull()
+    expect(stoolPhotoReliability([...four, { type: 'stool', payload: { form: 'hard' } }])).toBeNull()
+  })
+
+  it('compte les corrections au niveau des trois formes (4 → 3 reste « normales »)', () => {
+    const entries = [photoEntry(4, 4), photoEntry(4, 3), photoEntry(6, 7), photoEntry(4, 1), photoEntry(2, 2), photoEntry(5, 5)]
+    expect(stoolPhotoReliability(entries)).toEqual({ total: 6, corrected: 1, often: false })
+  })
+
+  it('« souvent corrigée » quand plus d’une estimation sur trois l’a été', () => {
+    const entries = [photoEntry(4, 1), photoEntry(4, 7), photoEntry(4, 4), photoEntry(4, 4), photoEntry(4, 4)]
+    expect(stoolPhotoReliability(entries)).toEqual({ total: 5, corrected: 2, often: true })
+    expect(stoolPhotoReliabilityText({ total: 5, corrected: 2, often: true })).toBe('Vous avez corrigé 2 estimations sur 5.')
+    expect(stoolPhotoReliabilityText({ total: 6, corrected: 1, often: false })).toBe('Vous avez corrigé 1 estimation sur 6.')
+    expect(stoolPhotoReliabilityText({ total: 6, corrected: 0, often: false })).toBe('Aucune estimation corrigée sur 6.')
+  })
+
+  it('décompte du rapport : nombre de notes estimées par photo, absent sans photo', () => {
+    const entries = [photoEntry(4, 4, 2), photoEntry(6, 7, 3), { type: 'stool', at: '2026-10-04T09:00:00', payload: { form: 'hard' } }]
+    expect(stoolCounts(entries)).toEqual({ total: 3, days: 3, hard: 1, normal: 1, loose: 1, estimated: 2 })
+    expect(stoolCounts(entries.slice(2))).not.toHaveProperty('estimated')
   })
 })

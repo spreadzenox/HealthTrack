@@ -280,7 +280,7 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
           <span className="entry-kcal entry-score">{gutLevelLabel(e.payload.level)}</span>
         )}
         {e.type === 'stool' && stoolEntryLabel(e) && (
-          <span className="entry-kcal entry-score">{stoolEntryLabel(e)}</span>
+          <span className="entry-kcal entry-score">{`${stoolEntryLabel(e)}${e.payload?.estimated ? ' · photo' : ''}`}</span>
         )}
         {!isDeletableEntry(e) && (
           <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>

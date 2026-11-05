@@ -78,7 +78,7 @@ describe('renderReportPdf', () => {
       const entries = simulateRealistic({ seed: seed * 31, days: 90, timedNotes: false, dayNotes: true, dayEffect: { food: 'oignon', day: 0, odds: 8 } })
       const last = new Date(Math.max(...entries.map((e) => Date.parse(e.at))))
       // Forme des selles (I176) notée un jour sur deux : la section tient sans faire déborder la page 2.
-      const stools = Array.from({ length: 45 }, (_, i) => ({ type: 'stool', source: 'app_stool', at: new Date(last.getTime() - i * 2 * 86_400_000).toISOString(), payload: { form: ['hard', 'normal', 'loose'][i % 3] } }))
+      const stools = Array.from({ length: 45 }, (_, i) => ({ type: 'stool', source: 'app_stool', at: new Date(last.getTime() - i * 2 * 86_400_000).toISOString(), payload: { form: ['hard', 'normal', 'loose'][i % 3], ...(i < 3 ? { estimated: true, estimate: { bristol: [2, 4, 6][i] } } : {}) } }))
       const r = buildReport([...entries, ...stools], { now: last, weeks: 12, appVersion: 'v305' })
       if (r.links.items.length) report = r
     }
@@ -91,6 +91,7 @@ describe('renderReportPdf', () => {
     expect(all).toMatch(/Halcya v305/)
     expect(onPage(2)).toMatch(/Forme des selles/)
     expect(onPage(2)).toMatch(/42 notes sur 42 jours : dures \(Bristol 1–2\) 14 · normales \(3–5\) 14 · liquides \(6–7\) 14\./)
+    expect(onPage(2)).toMatch(/Dont 3 estimées par photo, puis vérifiées par la personne\./)
     expect(all).not.toMatch(/HealthTrack|diagnostiqu|traitement|prédi/i)
   })
 

@@ -263,6 +263,12 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
         if (Date.parse(t) <= now.getTime()) entries.push({ type: 'gut', source: 'app_gut', at: t, payload: { level: GUT[Math.floor(gutRand() * GUT.length)] } })
       }
     }
+    // Selles estimées par photo (SELLES-PHOTO-3) : 6 notes, dont 2 corrigées, pour voir la fiabilité dans le Journal
+    if (i >= 1 && i <= 6) {
+      const STOOL = [[4, 4], [4, 4], [3, 6], [4, 4], [5, 1], [4, 3]][i - 1]
+      const form = (n) => (n <= 2 ? 'hard' : n <= 5 ? 'normal' : 'loose')
+      entries.push({ type: 'stool', source: 'app_stool', at: at(day, 8, 40), payload: { form: form(STOOL[1]), bristol: STOOL[1], estimated: true, estimate: { bristol: STOOL[0], form: form(STOOL[0]) } } })
+    }
     if (i % 3 === 0) {
       weight += noise(0.4) - 0.05
       const fat = 22 + noise(0.8)

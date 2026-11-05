@@ -2,7 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 
 const createEntry = vi.fn().mockResolvedValue(1)
-vi.mock('../storage/localHealthStorage', () => ({ createEntry: (...a) => createEntry(...a) }))
+const listEntries = vi.fn().mockResolvedValue([])
+vi.mock('../storage/localHealthStorage', () => ({ createEntry: (...a) => createEntry(...a), listEntries: (...a) => listEntries(...a) }))
 const analyzeStoolPhoto = vi.fn()
 vi.mock('../services/stoolPhoto', () => ({ analyzeStoolPhoto: (...a) => analyzeStoolPhoto(...a) }))
 
@@ -105,5 +106,36 @@ describe('forme des selles estimée par photo, dans le Journal (SELLES-PHOTO-2)'
     await takePhoto(SIDELOAD)
     await screen.findByText('type 2')
     expect(analyzeStoolPhoto.mock.calls[0][1]).toBe(SIDELOAD)
+  })
+
+  describe('fiabilité chez la personne (SELLES-PHOTO-3)', () => {
+    const photoEntry = (estimated, chosen) => ({
+      type: 'stool',
+      source: 'app_stool',
+      at: '2026-10-02T09:00:00',
+      payload: { form: chosen, estimated: true, estimate: { bristol: estimated, form: 'normal' } },
+    })
+    const fiveWithTwoCorrected = [
+      photoEntry(4, 'hard'), photoEntry(4, 'loose'), photoEntry(4, 'normal'), photoEntry(4, 'normal'), photoEntry(4, 'normal'),
+    ]
+
+    it('rien sous la ligne avant 5 photos ; seules les notes de selles sont lues', async () => {
+      listEntries.mockResolvedValueOnce(fiveWithTwoCorrected.slice(0, 4))
+      render(<StoolPhotoLine features={SIDELOAD} />)
+      await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'stool' })))
+      expect(screen.queryByText(/corrigé/)).toBeNull()
+    })
+
+    it('dès 5 photos : nombre de corrections, et « souvent corrigée » au résultat si plus d’une sur trois', async () => {
+      localStorage.setItem('healthtrack_gemini_api_key', 'k')
+      analyzeStoolPhoto.mockResolvedValue({ readable: true, bristol: 4, form: 'normal', confidence: 'high' })
+      listEntries.mockResolvedValueOnce(fiveWithTwoCorrected)
+      const { container } = render(<StoolPhotoLine features={SIDELOAD} />)
+      expect(await screen.findByText('Vous avez corrigé 2 estimations sur 5.')).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: /Selles : estimer la forme avec une photo/ }))
+      fireEvent.change(container.querySelector('input[type="file"]'), { target: { files: [photo()] } })
+      await screen.findByText('type 4')
+      expect(screen.getByText('Souvent corrigée chez vous : vérifiez la forme.')).toBeInTheDocument()
+    })
   })
 })
