@@ -22,3 +22,11 @@ Type : 🎨 run de code (11:35 Paris). Priorité : retours du 04/11, point (4) (
   SLOP_WORDING vert.
 - Captures `/recommendations` claire et sombre relues : deux lignes lisibles, hiérarchie titre / ligne / cartes nette.
   `npm run visual` complet : 17 pages ok (seul avertissement connu : cible « Clé API Gemini » de la sideload).
+
+## Après les merges
+- #717 (10:35) : « Build & Release » **v508** (APK 34 547 822 octets), « Play — AAB » 100800 en test interne, émulateurs
+  verts, « Play — Alpha » : **100800 envoyée sur l'alpha** (en examen chez Google).
+- #718 (ce run, squash `c2c67c7`) : « Frontend (Vitest) » et « Build APK » verts au merge (émulateurs encore en cours,
+  ils conditionnent l'envoi Alpha). « Build & Release » **v509** (APK 34 548 046 octets). « Play — AAB » et émulateurs
+  en cours à la fin du run ; « Play — Alpha » enverra la version suivante seule s'ils sont verts (à noter au run suivant).
+- Versions en examen chez Google : 100798 puis 100800 (envois successifs ; chaque envoi remplace le précédent sur Alpha).
