@@ -126,3 +126,7 @@
   height: 8px;
   opacity: 0.25;
 }
+
+.gut-links-horizon + .gut-links-horizon {
+  margin-top: 16px;
+}

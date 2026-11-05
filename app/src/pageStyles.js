@@ -35,6 +35,7 @@ import './components/SoonList.css'
 // Pistes repas → ventre dans Analyses (jalon 5, 26/10)
 import './components/DomainTag.css'
 import './components/GutLinks.css'
+import './components/Horizon.css'
 // FODMAP par sous-groupe sur la carte d'un repas (N4, 26/10)
 import './components/MealFodmapLine.css'
 // Licences des composants de tiers (LICENCES-TIERCES, 02/11)

@@ -1249,3 +1249,28 @@ describe('Recommendations — votre ventre et vos repas', () => {
     expect(screen.queryByTestId('doctor-report')).toBeNull()
   })
 })
+
+describe('Recommendations — trois horizons d’effet (ANALYSES-ONGLETS-3)', () => {
+  it('Bien-être : pistes et liens sous « Sur quelques jours », puis un lien vers Tendances pour les semaines', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
+    renderPage()
+    const pistes = await screen.findByText('Pistes à tester')
+    const days = screen.getByTestId('horizon-days')
+    expect(days.compareDocumentPosition(pistes) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    // Aucun lien du bien-être ne se compte en heures : pas de titre vide
+    expect(screen.queryByTestId('horizon-hours')).toBeNull()
+    const weeks = screen.getByTestId('horizon-weeks')
+    expect(within(weeks.parentElement).getByRole('link', { name: /Voir vos tendances/ })).toHaveAttribute('href', '/tendances')
+  })
+
+  it('Ventre : le lien vers les tendances reste même quand il est trop tôt', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goal: 'gut' })
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
+    renderPage({ view: 'gut' })
+    await screen.findByTestId('reco-gut-view')
+    expect(screen.getByRole('link', { name: /Voir vos tendances/ })).toHaveAttribute('href', '/tendances')
+  })
+})

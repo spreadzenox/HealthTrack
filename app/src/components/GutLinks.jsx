@@ -8,6 +8,8 @@ import { FODMAP_FACTOR_LABELS, comparableLabel } from '../services/gutLinks'
 import { fodmapGroupOf } from '../services/gutWindows'
 import { challengePath } from '../services/fodmapChallenge'
 import { gutLinkKey } from '../settings/hiddenLinks'
+import { groupByHorizon, gutLinkHorizon } from '../services/horizons'
+import { HorizonHeading } from './Horizon'
 import './GutLinks.css'
 import { appLocale } from '../i18n/locale.js'
 
@@ -123,11 +125,17 @@ export default function GutLinks({ gut, hidden = [], onHide }) {
       {locked ? (
         <LockedGutLinks count={shown.length} />
       ) : shown.length > 0 ? (
-        <ul className="gut-link-list">
-          {shown.map((l) => (
-            <GutLinkCard key={`${l.factor}:${l.when}`} link={l} onHide={onHide && (() => onHide(gutLinkKey(l)))} />
-          ))}
-        </ul>
+        // ANALYSES-ONGLETS-3 : les pistes rangées par délai (heures, puis jours), chacune sous son horizon
+        groupByHorizon(shown, gutLinkHorizon).map(({ horizon, items }) => (
+          <div key={horizon.id} className="gut-links-horizon">
+            <HorizonHeading id={horizon.id} />
+            <ul className="gut-link-list">
+              {items.map((l) => (
+                <GutLinkCard key={`${l.factor}:${l.when}`} link={l} onHide={onHide && (() => onHide(gutLinkKey(l)))} />
+              ))}
+            </ul>
+          </div>
+        ))
       ) : gut.status === 'links' ? (
         <p className="gut-links-empty">Vous avez masqué toutes les pistes du ventre.</p>
       ) : (
