@@ -25,7 +25,7 @@ Type : 🎨 run de code (01:35 Paris).
 ## Vérifications
 - Tests ajoutés ou adaptés (TDD) : `AnalysesTabs.test.jsx` (6), `Recommendations.test.jsx` (4 nouveaux, gut en
   `view: 'gut'`), `JournalTabs`, `TabBar`, `Trends`, `TodayCards`.
-- `npm run test` : 3 052 verts ; `npm run build` OK ; `npm run lint` : 0 erreur (comme avant).
+- `npm run test` : 3 052 verts (puis `kind` des Nouveautés corrigé en « amélioration » après un échec du check Vitest de la PR : `WhatsNew.test.jsx` n’avait pas été relancé après l’ajout de la note) ; `npm run build` OK ; `npm run lint` : 0 erreur (comme avant).
 - Captures lues : Bien-être, Ventre, FODMAP, Tendances (démo, `--gut-links`) ; Ventre et Tendances en sombre à
   360×780 (les 4 pastilles tiennent) ; Bien-être et Ventre sur données vierges.
 
