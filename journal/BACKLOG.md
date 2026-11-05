@@ -214,7 +214,13 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   si le propriétaire la demande.
 - [ ] **SELLES-PHOTO** (retour (7)) type de Bristol estimé par photo, dans un endroit dédié et discret (pas sur
   l'Accueil), geste explicite, analyse IA comme les repas, aucune photo gardée par défaut, résultat modifiable, jamais
-  un diagnostic ; Sécurité des données et confidentialité à jour.
+  un diagnostic ; Sécurité des données et confidentialité à jour. **Étude faite le 05/11 08:35 (`IDEES.md` I221)** :
+  ligne « Estimer avec une photo » dans la rubrique Selles du Journal (objectif « Mon ventre » seulement), appareil
+  photo direct, rien gardé, 3 formes d'abord, modifiable, fiabilité mesurée sur les corrections de la personne.
+  → **SELLES-PHOTO-1** relais : `POST /v1/stool/analyze`, Flash-Lite toujours, schéma `{ visible, bristol, confidence }`,
+  une analyse décomptée, journaux sans résultat, tests simulés → **SELLES-PHOTO-2** app : `analyzeStoolPhoto`, ligne du
+  Journal, entrée `stool` + `estimated`/`estimate` (sans migration) → **SELLES-PHOTO-3** fiabilité personnelle,
+  confidentialité, Nouveautés.
 - (8) Journal, Sources, Nouveautés, Données, Paramètres et Confidentialité : le propriétaire en est content, ne pas
   les remanier sans raison.
 
