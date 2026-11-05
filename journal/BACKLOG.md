@@ -242,8 +242,10 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   photo direct, rien gardé, 3 formes d'abord, modifiable, fiabilité mesurée sur les corrections de la personne.
   → ~~**SELLES-PHOTO-1** relais : `POST /v1/stool/analyze`, Flash-Lite toujours, schéma `{ visible, bristol, confidence }`,
   une analyse décomptée, journaux sans résultat, tests simulés~~ ✅ 05/11 14:35 (`buildStoolRequest`, `normalizeStool`,
-  `STOOL_INSTRUCTION` : forme seule, ni couleur ni sang ; réponse vide ou illisible → `unreadable`, crédit rendu ; 6 tests) → **SELLES-PHOTO-2** app : `analyzeStoolPhoto`, ligne du
-  Journal, entrée `stool` + `estimated`/`estimate` (sans migration) → **SELLES-PHOTO-3** fiabilité personnelle,
+  `STOOL_INSTRUCTION` : forme seule, ni couleur ni sang ; réponse vide ou illisible → `unreadable`, crédit rendu ; 6 tests) → ~~**SELLES-PHOTO-2** app : `analyzeStoolPhoto`, ligne du
+  Journal, entrée `stool` + `estimated`/`estimate` (sans migration)~~ ✅ 05/11 15:35 (`services/stoolPhoto.js` relais ou clé
+  Gemini, `StoolPhotoLine` en tête de Journal → Jours si `gutCardMode() !== 'hide'`, divulgation `ai_stool`, appareil photo
+  direct, forme présélectionnée et modifiable, confidentialité complétée ; 17 tests) → **SELLES-PHOTO-3** fiabilité personnelle,
   confidentialité, Nouveautés.
 - (8) Journal, Sources, Nouveautés, Données, Paramètres et Confidentialité : le propriétaire en est content, ne pas
   les remanier sans raison.

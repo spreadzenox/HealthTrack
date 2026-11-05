@@ -66,8 +66,8 @@ export function extractResponseText(data) {
     .join('')
 }
 
-function postGemini(model, apiKey, body) {
-  return fetch(`${geminiUrl(model)}?key=${encodeURIComponent(apiKey)}`, {
+function postGemini(model, apiKey, body, fetchImpl = globalThis.fetch) {
+  return fetchImpl(`${geminiUrl(model)}?key=${encodeURIComponent(apiKey)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body,
@@ -88,12 +88,12 @@ async function readErrorMessage(res) {
  * Envoie les parties (prompt + éventuelle image) au premier modèle disponible, avec le schéma de
  * réponse (repli sans schéma si le modèle le refuse), et renvoie le JSON de réponse décodé.
  */
-async function requestMealJson(parts, apiKey) {
+export async function requestMealJson(parts, apiKey, { schema = RESPONSE_SCHEMA, fetchImpl = globalThis.fetch } = {}) {
   const buildBody = (withSchema) => JSON.stringify({
     contents: [{ parts }],
     generationConfig: {
       responseMimeType: 'application/json',
-      ...(withSchema ? { responseSchema: RESPONSE_SCHEMA } : {}),
+      ...(withSchema ? { responseSchema: schema } : {}),
     },
   })
 
@@ -102,13 +102,13 @@ async function requestMealJson(parts, apiKey) {
   let firstError = null
   let withSchema = true
   for (const model of getGeminiModelFallbacks()) {
-    let res = await postGemini(model, apiKey, buildBody(withSchema))
+    let res = await postGemini(model, apiKey, buildBody(withSchema), fetchImpl)
     if (!res.ok && res.status === 400 && withSchema) {
       const message = await readErrorMessage(res)
       // Un modèle qui ne connaît pas le schéma de réponse : même requête sans schéma
       if (!/schema/i.test(message)) throw new Error(message)
       withSchema = false
-      res = await postGemini(model, apiKey, buildBody(false))
+      res = await postGemini(model, apiKey, buildBody(false), fetchImpl)
     }
     if (res.ok) {
       data = await res.json()

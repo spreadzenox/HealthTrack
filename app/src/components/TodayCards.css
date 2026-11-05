@@ -594,3 +594,59 @@
   color: var(--color-brand);
   font-weight: 700;
 }
+
+/* Selles en photo (SELLES-PHOTO-2) : une ligne discrète du Journal, couleur pêche du ventre. Formes et échelle de
+   Bristol : mêmes classes que la ligne des selles de la carte ventre (TodayCards.css). */
+.stool-photo {
+  margin: 0 0 12px;
+}
+
+.stool-photo-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--peach-label);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.stool-photo-open:disabled {
+  opacity: 0.7;
+}
+
+.stool-photo-result {
+  padding: 12px 16px 16px;
+  border-radius: var(--radius-card);
+  background: var(--peach-bg);
+  color: var(--peach-text);
+}
+
+.stool-photo-estimate {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+}
+
+.stool-photo-result .stool-form.selected,
+.stool-photo-result .stool-bristol-choice.selected {
+  background: var(--peach-label);
+  border-color: var(--peach-label);
+  color: var(--peach-bg);
+}
+
+.stool-photo-save {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.stool-photo-note {
+  margin: 10px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}

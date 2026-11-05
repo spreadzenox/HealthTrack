@@ -5,6 +5,8 @@ import EntryActionsToggle from './EntryActionsToggle'
 import DeleteEntryButton from './DeleteEntryButton'
 import SavedMealEditor from './SavedMealEditor'
 import JournalEmpty from './JournalEmpty'
+import StoolPhotoLine from './StoolPhotoLine'
+import { gutCardMode } from '../settings/onboarding'
 import { groupCigarettes, isDeletableEntry } from '../utils/entries'
 import { getTagMeta } from '../services/behaviorTags'
 import MealItemList from './MealItemList'
@@ -351,6 +353,8 @@ export default function DailyJournal() {
   const navigate = useNavigate()
   const redoMeal = useCallback((meal) => navigate('/food', { state: { redoMeal: meal } }), [navigate])
   const [visibleDays, setVisibleDays] = useState(INITIAL_DAYS)
+  // Selles en photo (SELLES-PHOTO-2) : ici seulement, et comme la carte ventre, pas pour un autre objectif
+  const [stoolPhoto] = useState(() => gutCardMode() !== 'hide')
   // kcal des repas : table Ciqual chargée à la demande, journal recalculé à son arrivée
   const nutritionTable = useNutritionTable()
   const [hiddenKey, setHiddenKey] = useState(null)
@@ -414,6 +418,7 @@ export default function DailyJournal() {
     <section className="daily-journal" aria-labelledby="daily-journal-title">
       <h2 id="daily-journal-title" className="page-title">Vos derniers jours</h2>
       <p className="page-intro">Chaque jour, ce que vos sources ont mesuré et ce que vous avez noté.</p>
+      {stoolPhoto && <StoolPhotoLine />}
       <WellbeingPrompt
         open={editingWellbeing !== null}
         entry={editingWellbeing}

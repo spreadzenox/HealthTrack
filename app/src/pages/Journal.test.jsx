@@ -3,6 +3,8 @@ import { render, screen, fireEvent, waitFor, within } from '@testing-library/rea
 import { BrowserRouter } from 'react-router-dom'
 import Journal from './Journal'
 
+const ONBOARDING_KEY = 'healthtrack_onboarding'
+
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
   countEntries: vi.fn(),
@@ -176,6 +178,18 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(screen.getByText('Dures · type 2')).toBeInTheDocument()
     openActions()
     expect(screen.getByRole('button', { name: /Supprimer cette note des selles/i })).toBeInTheDocument()
+  })
+
+  it('SELLES-PHOTO-2 : « estimer la forme avec une photo » seulement avec l’objectif « Mon ventre », jamais ailleurs', async () => {
+    localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ done: true, goal: 'gut' }))
+    const { unmount } = renderJournal()
+    expect(await screen.findByRole('button', { name: /Selles : estimer la forme avec une photo/ })).toBeInTheDocument()
+    unmount()
+    localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ done: true, goal: 'energy' }))
+    renderJournal()
+    await screen.findByText('Vos derniers jours')
+    expect(screen.queryByRole('button', { name: /estimer la forme avec une photo/ })).toBeNull()
+    localStorage.removeItem(ONBOARDING_KEY)
   })
 
   it('shows food entries when returned', async () => {

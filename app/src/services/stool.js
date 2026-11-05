@@ -44,11 +44,21 @@ export function stoolForm(e) {
 
 export const stoolFormLabel = (id) => STOOL_FORMS.find((f) => f.id === id)?.label ?? null
 
-/** Payload à enregistrer : la forme, et le type précis s'il a été choisi (la forme suit alors le type). */
-export function stoolPayload({ form = null, bristol = null } = {}) {
-  if (isBristol(bristol)) return { form: formOfBristol(bristol), bristol }
-  if (STOOL_FORMS.some((f) => f.id === form)) return { form }
-  throw new Error('Forme des selles inconnue')
+/**
+ * Payload à enregistrer : la forme, et le type précis s'il a été choisi (la forme suit alors le type). Estimée par
+ * photo (SELLES-PHOTO-2) : `estimated: true` et `estimate` (ce que proposait le modèle), pour mesurer la fiabilité
+ * chez la personne sans garder aucune image. Champs ajoutés : les anciennes entrées restent valides, sans migration.
+ */
+export function stoolPayload({ form = null, bristol = null, estimate = null } = {}) {
+  let payload
+  if (isBristol(bristol)) payload = { form: formOfBristol(bristol), bristol }
+  else if (STOOL_FORMS.some((f) => f.id === form)) payload = { form }
+  else throw new Error('Forme des selles inconnue')
+  if (isBristol(estimate?.bristol)) {
+    payload.estimated = true
+    payload.estimate = { bristol: estimate.bristol, form: formOfBristol(estimate.bristol) }
+  }
+  return payload
 }
 
 /** Libellé court d'une entrée : « Normales », « Dures · type 2 ». */

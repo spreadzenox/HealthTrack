@@ -28,6 +28,18 @@ describe('forme des selles (I176)', () => {
     expect(() => stoolPayload({ form: 'autre' })).toThrow()
   })
 
+  it('SELLES-PHOTO-2 : estimée par photo, la proposition du modèle est gardée à côté du choix final', () => {
+    // Choix confirmé tel quel
+    expect(stoolPayload({ bristol: 4, estimate: { bristol: 4 } }))
+      .toEqual({ form: 'normal', bristol: 4, estimated: true, estimate: { bristol: 4, form: 'normal' } })
+    // Corrigé par la personne : sa forme compte, la proposition reste lisible
+    expect(stoolPayload({ form: 'hard', estimate: { bristol: 6 } }))
+      .toEqual({ form: 'hard', estimated: true, estimate: { bristol: 6, form: 'loose' } })
+    // Estimation absente ou illisible : rien d'ajouté
+    expect(stoolPayload({ form: 'normal', estimate: { bristol: null } })).toEqual({ form: 'normal' })
+    expect(stoolEntryLabel({ payload: { form: 'hard', estimated: true, estimate: { bristol: 6, form: 'loose' } } })).toBe('Dures')
+  })
+
   it('lecture tolérante : forme connue, sinon déduite du type ; libellés courts', () => {
     expect(stoolForm({ payload: { bristol: 2 } })).toBe('hard')
     expect(stoolForm({ payload: { form: 'x' } })).toBeNull()

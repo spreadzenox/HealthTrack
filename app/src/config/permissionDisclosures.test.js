@@ -50,6 +50,7 @@ describe('divulgations avant les autorisations sensibles', () => {
     ['src/components/PhoneUsageCard.jsx', /openSettings\(\)/, "askConsent('usage')"],
     ['src/pages/Food.jsx', /analyzeMealPhoto\(/, "askConsent('ai_meal')"],
     ['src/components/NewMealForm.jsx', /analyzeMealDescription\(/, "askConsent('ai_meal')"],
+    ['src/components/StoolPhotoLine.jsx', /analyzeStoolPhoto\(/, "askConsent('ai_stool')"],
     ['src/pages/Onboarding.jsx', /requestPermissions\(\)/, "askConsent('health_connect')"],
     ['src/pages/Connectors.jsx', /requestPermissions\(\)/, "askConsent('health_connect')"],
   ]
@@ -78,9 +79,11 @@ describe('divulgations avant les autorisations sensibles', () => {
 describe('divulgation de l’analyse IA (variante play)', () => {
   it('ne nomme aucun modèle, mais dit que c’est Google, en Europe (31/10)', async () => {
     const { disclosureFor } = await import('./permissionDisclosures')
-    const text = [...disclosureFor('ai_meal').points, disclosureFor('ai_meal').leaves].join(' ')
-    expect(text).not.toMatch(/Gemini/)
-    expect(text).toMatch(/Google/)
-    expect(text).toMatch(/Europe/)
+    for (const kind of ['ai_meal', 'ai_stool']) {
+      const text = [...disclosureFor(kind).points, disclosureFor(kind).leaves].join(' ')
+      expect(text).not.toMatch(/Gemini/)
+      expect(text).toMatch(/Google/)
+      expect(text).toMatch(/Europe/)
+    }
   })
 })
