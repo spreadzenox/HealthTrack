@@ -101,6 +101,29 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
     expect(screen.getByText('note manuelle ouverte')).toBeInTheDocument()
   })
 
+  it('vue Jour : la ligne suit la tendance lissée, les lectures restent en points (BE-BIAIS-4)', async () => {
+    const p = (h, note) => ({ at: new Date(2026, 9, 24, h).toISOString(), date: '2026-10-24', note, low: note - 0.5, high: note + 0.5, readings: 1 })
+    const points = [p(8, 1.2), p(10, 3.4), p(12, 4.6)]
+    loadWellbeingHistory.mockImplementation(({ period }) => Promise.resolve(history({
+      period, from: new Date(2026, 9, 24).toISOString(), points, notes: [], readings: 3, days: 1, mean: 3.1,
+      trend: period === 'day' ? [{ at: points[0].at, note: 2.9 }, { at: points[1].at, note: 3.2 }, { at: points[2].at, note: 3.5 }] : [],
+    })))
+    const { container } = renderPage()
+    await screen.findByText('3,1')
+    expect(container.querySelector('[data-trend]')).toBeNull()
+    expect(screen.queryByText('tendance lissée')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Jour' }))
+    expect(await screen.findByText('tendance lissée')).toBeInTheDocument()
+    const line = container.querySelector('path.wbh-line')
+    expect(line).toHaveAttribute('data-trend')
+    // Les points restent aux notes des lectures, la ligne passe plus haut que la lecture basse de 8 h.
+    const dots = [...container.querySelectorAll('circle.wbh-dot')]
+    expect(dots).toHaveLength(3)
+    expect(dots.every((d) => d.classList.contains('is-reading'))).toBe(true)
+    const firstLineY = Number(line.getAttribute('d').split(' ')[2])
+    expect(firstLineY).toBeLessThan(Number(dots[0].getAttribute('cy')))
+  })
+
   it('légende : la ligne pointillée est la moyenne ; en vue Jour, la fourchette de chaque lecture (POL-PLAY-85)', async () => {
     renderPage()
     await screen.findByText('3,4')

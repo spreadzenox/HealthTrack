@@ -162,6 +162,38 @@ function byHour(readings, date, burstAt) {
   }))
 }
 
+/** Largeur (écart-type, en minutes) du lissage de la vue Jour. */
+export const TREND_SIGMA_MIN = 60
+
+/**
+ * Tendance lissée de la vue Jour (BE-BIAIS-4, retour (5) du 04/11 : « creux à 8 h, pic à midi » sur des lectures
+ * bruitées). Moyenne glissante gaussienne (écart-type TREND_SIGMA_MIN) des notes des lectures, pondérée par leur
+ * netteté (readingWeight), rappelée vers la médiane du jour avec le poids d'une lecture typique : une lecture isolée
+ * ne fait plus un creux ou un pic à elle seule, un changement qui dure plusieurs heures reste visible. Les lectures
+ * ne sont pas modifiées, seule la ligne est lissée. `at` : instants où la calculer (par défaut ceux des lectures).
+ * Rien sous 3 lectures.
+ */
+export function dayTrend(readings, at = null) {
+  const list = (readings || []).filter((r) => isNum(r.note) && isNum(r.halfWidth) && r.halfWidth > 0)
+  if (list.length < 3) return []
+  const weights = list.map(readingWeight)
+  const center = weightedMedian(list.map((r) => r.note), weights)
+  const prior = weightedMedian(weights, weights.map(() => 1))
+  const times = list.map((r) => new Date(r.at).getTime())
+  const twoSigma2 = 2 * (TREND_SIGMA_MIN * 60000) ** 2
+  return (at || list.map((r) => r.at)).map((iso) => {
+    const t = new Date(iso).getTime()
+    let sw = prior
+    let sv = prior * center
+    list.forEach((r, i) => {
+      const w = weights[i] * Math.exp(-((times[i] - t) ** 2) / twoSigma2)
+      sw += w
+      sv += w * r.note
+    })
+    return { at: iso, note: round2(Math.min(5, Math.max(0, sv / sw))) }
+  })
+}
+
 /**
  * @param {object[]} entries  entrées `face_burst` et `wellbeing` (les autres sont ignorées)
  * @param {{ period?: 'day'|'week'|'fortnight'|'month', now?: Date }} [opts]
@@ -169,7 +201,7 @@ function byHour(readings, date, burstAt) {
  *   readings: number, few?: boolean, hourly?: boolean, detail: ReturnType<typeof pointDetail> }[], notes: { at: string, score: number }[], readings: number, days: number,
  *   mean: number|null, valence: number|null, arousal: number|null,
  *   expressions: null | { readings: number, habitDays?: number, items: { key, label, p, habit?, delta? }[] },
- *   agreement: null | { days: number, gap: number }, earliest: string|null }}
+ *   agreement: null | { days: number, gap: number }, earliest: string|null, trend: { at: string, note: number }[] }}
  */
 export function wellbeingHistory(entries, { period = 'week', now = new Date() } = {}) {
   const from = periodStart(period, now)
@@ -218,6 +250,7 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
   if (period === 'day' && dayReadings.length > DAY_MAX_POINTS) {
     points = byHour(dayReadings, localDateKey(from), new Map(inPeriod.map((b) => [b.at, b])))
   }
+  const trend = period === 'day' ? dayTrend(dayReadings, points.map((p) => p.at)) : []
   const habit = inPeriod.length ? habitualMix(all, now) : null
   if (habit) {
     points = points.map((p) => (p.detail?.expressions ? { ...p, detail: { ...p.detail, expressions: withHabit(p.detail.expressions, habit) } } : p))
@@ -226,6 +259,8 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
     period,
     from: fromIso,
     points,
+    // Vue Jour seulement : la ligne lissée (BE-BIAIS-4), aux instants des points.
+    trend,
     notes,
     readings: inPeriod.length,
     days: byDay.size,
