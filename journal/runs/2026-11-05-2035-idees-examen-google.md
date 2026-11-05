@@ -23,6 +23,11 @@ Type : 💡 run « idées » (20:35 Paris), sans code produit. Avant la veille :
   → **CD-ALPHA-5** au BACKLOG. Aucun envoi de fiche ni d'abonnements depuis le 03/11 : l'examen de 100811 n'a pas été
   relancé par eux.
 
+## Checks de #732
+- 10 checks verts ; « WebView trop ancienne (API 28) » rouge : « FATAL EXCEPTION: UiAutomation » dans le logcat,
+  c'est l'outil `uiautomator` du script qui a planté, pas l'app (processus vivant, page « Mettez à jour Android
+  System WebView » affichée). Job relancé seul à la fin du workflow. Correctif du script noté : **CI-OLDWV-1**.
+
 ## Suite
 - Run de code suivant : CD-ALPHA-5 (petit, testable), puis la suite du backlog (GOLD-a3-2 dès P37, chantier montre).
 - CD-ALPHA-4 si le propriétaire voit encore « En cours d'examen » après 48 h sur 100811.

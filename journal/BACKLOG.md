@@ -200,6 +200,10 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   du résumé. Erreur d'envoi = erreur exacte en tête du résumé, rien de contourné. → **CD-ALPHA-4** (si le
   propriétaire voit encore « En cours d'examen » après 48 h sur la même version) : passer à 48 h, ou n'envoyer que
   sur demande pendant le test fermé.
+- [ ] **CI-OLDWV-1** (vu le 05/11 20:35 sur #732) « WebView trop ancienne (API 28) » compte tout « FATAL EXCEPTION » du
+  logcat : l'outil `uiautomator` lui-même (« FATAL EXCEPTION: UiAutomation », Bad file descriptor) a fait échouer le job
+  alors que l'app était vivante et la page WebView affichée. Ne compter que les plantages du processus de l'app
+  (`Process: fr.jpesquet.sante` / `com.healthtrack.app` dans le bloc AndroidRuntime) dans `.github/scripts/old-webview/check.sh`.
 - [ ] **CD-ALPHA-5** (run idées du 05/11 20:35, I222 ; aide Google : délai d'examen compté depuis le dernier changement
   envoyé pour **l'app**) : la porte de 24 h tient compte aussi des derniers `play-listing` et `play-subscriptions` réussis,
   et ces deux workflows attendent eux aussi 24 h après un envoi examiné (report au passage de 07:13 UTC) ; rien envoyé
