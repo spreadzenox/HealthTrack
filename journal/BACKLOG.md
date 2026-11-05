@@ -207,8 +207,11 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
 - [ ] **BE-HISTO-DETAIL** (retour (6)) ~~toucher un point de la courbe ouvre la lecture (matrice des émotions, valence,
   éveil, qualité)~~ ✅ 05/11 04:35 (BE-HISTO-DETAIL-1 : `pointDetail` dans `wellbeingHistory.js` — lecture, heure ou jour ;
   colonnes touchables pleine hauteur `data-scrub`, carte « Lecture de 8 h 05 » / « jeudi 22 octobre » avec note,
-  fourchette, valence, éveil, grille 4 × 2 des expressions, lectures peu nettes ; 6 tests) → **BE-HISTO-DETAIL-2** :
-  remonter le temps (semaine ou mois précédents, flèches ou balayage), toujours joli ; inspiration Emobot, rien de copié.
+  fourchette, valence, éveil, grille 4 × 2 des expressions, lectures peu nettes ; 6 tests) → ~~**BE-HISTO-DETAIL-2** :
+  remonter le temps (semaine ou mois précédents, flèches ou balayage)~~ ✅ 05/11 05:35 (`viewEnd`, `earliest` dans
+  `wellbeingHistory.js` ; flèches « Semaine précédente / suivante » autour du titre « du 23 au 29 octobre », balayage
+  horizontal de la courbe, arrêt à la première lecture ou note ; 5 tests). Reste éventuel : vue « Année » (52 semaines)
+  si le propriétaire la demande.
 - [ ] **SELLES-PHOTO** (retour (7)) type de Bristol estimé par photo, dans un endroit dédié et discret (pas sur
   l'Accueil), geste explicite, analyse IA comme les repas, aucune photo gardée par défaut, résultat modifiable, jamais
   un diagnostic ; Sécurité des données et confidentialité à jour.
