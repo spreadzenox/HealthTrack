@@ -40,24 +40,30 @@ const tracks = await readTracks({ packageName, token })
 const alphaVersionCode = maxCode(tracks.find((t) => t.track === 'alpha'))
 const internalVersionCode = maxCode(tracks.find((t) => t.track === 'internal'))
 
-let changedFiles = null
-const n = commitCountOf(alphaVersionCode)
-if (n) {
-  const chain = git('rev-list', '--reverse', '--first-parent', sha).split('\n')
-  const alphaSha = findCommitByCount(chain, (c) => Number(git('rev-list', '--count', c)), n)
-  if (alphaSha) changedFiles = git('diff', '--name-only', alphaSha, sha).split('\n').filter(Boolean)
+const chain = git('rev-list', '--reverse', '--first-parent', sha).split('\n')
+const shaOf = (versionCode) => {
+  const n = commitCountOf(versionCode)
+  return n ? findCommitByCount(chain, (c) => Number(git('rev-list', '--count', c)), n) : null
 }
+const filesSince = (from) => git('diff', '--name-only', from, sha).split('\n').filter(Boolean)
 
-const decision = decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, enabled })
-summary(['## Livraison continue vers l’alpha', '', `- Commit \`${sha.slice(0, 7)}\` · versionCode ${candidateVersionCode} · alpha : ${alphaVersionCode ?? 'vide'} · test interne : ${internalVersionCode ?? 'vide'}`, `- Décision : **${decision.send ? 'envoi' : decision.wait ? 'en attente' : 'pas d’envoi'}** (${decision.reason})`])
+const alphaSha = shaOf(alphaVersionCode)
+const changedFiles = alphaSha ? filesSince(alphaSha) : null
+// Commit de journal seul : il peut reprendre la version du test interne (voir alphaGate.mjs).
+const internalSha = shaOf(internalVersionCode)
+const inherited = internalSha ? { versionCode: internalVersionCode, filesSince: filesSince(internalSha) } : null
+
+const decision = decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited, enabled })
+const versionCode = decision.versionCode ?? candidateVersionCode
+summary(['## Livraison continue vers l’alpha', '', `- Commit \`${sha.slice(0, 7)}\` · versionCode ${candidateVersionCode} · alpha : ${alphaVersionCode ?? 'vide'} · test interne : ${internalVersionCode ?? 'vide'}`, `- Décision : **${decision.send ? `envoi de ${versionCode}` : decision.wait ? 'en attente' : 'pas d’envoi'}** (${decision.reason})`])
 if (!decision.send) process.exit(0)
 
 const dir = resolve(process.cwd(), 'src/data/changelog')
 const entries = readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => ({ id: f, ...JSON.parse(readFileSync(resolve(dir, f), 'utf8')) }))
 try {
-  const r = await publishBundle({ packageName, versionCode: candidateVersionCode, track: 'alpha', reuseOnly: true, notes: buildReleaseNotes(entries), token, log: console.log })
+  const r = await publishBundle({ packageName, versionCode, track: 'alpha', reuseOnly: true, notes: buildReleaseNotes(entries), token, log: console.log })
   summary([
-    `- ✅ versionCode ${candidateVersionCode} placé sur l’alpha (même AAB que le test interne). Google l’examine (quelques heures à 2 jours) ; les testeurs le reçoivent ensuite.`,
+    `- ✅ versionCode ${versionCode} placé sur l’alpha (même AAB que le test interne). Google l’examine (quelques heures à 2 jours) ; les testeurs le reçoivent ensuite.`,
     ...(r.testersAdded ? ['- Groupe des testeurs ajouté à la piste alpha.'] : []),
     ...(r.notSentForReview ? ['- ⚠️ Validée sans envoi automatique pour examen : un envoi manuel est attendu dans la Play Console.'] : []),
   ])
