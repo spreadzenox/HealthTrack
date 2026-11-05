@@ -617,3 +617,18 @@
   margin: 0;
   color: var(--accent);
 }
+
+/* ─── Sous-onglet Ventre : intro en pêche, compte à rebours par onglet (ANALYSES-ONGLETS-2) ─── */
+
+.reco-intro--gut {
+  background: var(--peach-bg);
+  color: var(--peach-text);
+}
+
+.reco-countdown {
+  margin-bottom: 20px;
+}
+
+.reco-countdown .domain-tag {
+  margin-bottom: 6px;
+}
