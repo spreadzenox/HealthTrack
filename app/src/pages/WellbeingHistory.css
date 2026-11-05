@@ -442,3 +442,42 @@
 .wbh-card {
   touch-action: pan-y;
 }
+
+/* BE-BIAIS-3 (retour (5) du 04/11) : habitude de la personne (trait) et fiabilité mesurée sur ses notes. */
+.wbh-ex-track {
+  position: relative;
+}
+
+.wbh-ex-habit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--color-ink);
+}
+
+.wbh-matrix-habit {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: var(--color-ink);
+  opacity: 0.55;
+}
+
+.wbh-habit {
+  margin: 8px 0 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mint-text);
+}
+
+.wbh-reliability {
+  margin: 10px 0 14px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--mint-bg, var(--color-surface));
+  font-size: 0.82rem;
+  color: var(--mint-text);
+}

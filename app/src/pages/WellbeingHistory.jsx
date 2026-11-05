@@ -12,7 +12,7 @@ import { loadWellbeingHistory } from '../services/mood/faceMoodData'
 import { frDecimal } from '../services/today'
 import { appLocale } from '../i18n/locale.js'
 import { faceModelTag } from '../services/mood/modelName'
-import { viewEnd } from '../services/mood/wellbeingHistory'
+import { habitShifts, viewEnd } from '../services/mood/wellbeingHistory'
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Jour' },
@@ -205,13 +205,36 @@ function readingsLine(detail) {
   return poor ? `${base}, dont ${poor} peu ${poor > 1 ? 'nettes' : 'nette'}` : base
 }
 
-/** Les 8 expressions en grille 4 × 2 : chaque case se remplit depuis le bas selon sa part. */
+const pct = (p) => `${Math.round(p * 100)}%`
+const NOUNS = { exHappiness: 'joie', exSurprise: 'surprise', exSadness: 'tristesse', exAnger: 'colère', exFear: 'peur', exDisgust: 'dégoût', exContempt: 'mépris' }
+const shiftWords = (s) => (s.key === 'exNeutral'
+  ? `${s.delta > 0 ? 'plus' : 'moins'} souvent neutre`
+  : `${s.delta > 0 ? 'plus' : 'moins'} de ${NOUNS[s.key] ?? s.label.toLowerCase()}`)
+
+/**
+ * Expressions comparées à l'habitude de la personne (BE-BIAIS-3, retour (5) du 04/11) : « Par rapport à votre
+ * habitude : plus de joie, moins de tristesse. » Rien sans habitude (moins de 3 jours lus).
+ */
+function HabitLine({ mix }) {
+  const shifts = habitShifts(mix)
+  if (!shifts) return null
+  return (
+    <p className="wbh-habit">
+      {shifts.length
+        ? `Par rapport à votre habitude : ${shifts.map(shiftWords).join(', ')}.`
+        : 'Proche de votre habitude.'}
+    </p>
+  )
+}
+
+/** Les 8 expressions en grille 4 × 2 : chaque case se remplit depuis le bas selon sa part ; trait = l'habitude. */
 function ExpressionMatrix({ mix }) {
   return (
     <ul className="wbh-matrix" aria-label="Expressions du visage estimées">
       {mix.items.map((it) => (
         <li key={it.key}>
           <span className="wbh-matrix-fill" style={{ height: `${Math.round(it.p * 100)}%` }} aria-hidden="true" />
+          {Number.isFinite(it.habit) && <span className="wbh-matrix-habit" style={{ bottom: pct(it.habit) }} aria-hidden="true" />}
           <span className="wbh-matrix-value mono">{Math.round(it.p * 100)} %</span>
           <span className="wbh-matrix-label">{it.label}</span>
         </li>
@@ -242,9 +265,26 @@ function ReadingDetail({ point, period, onClose }) {
       {d.valence != null && <BipolarBar label="Valence" value={d.valence} left="désagréable" right="agréable" />}
       {d.arousal != null && <BipolarBar label="Éveil" value={d.arousal} left="calme" right="animé" />}
       {d.expressions
-        ? <ExpressionMatrix mix={d.expressions} />
+        ? <><ExpressionMatrix mix={d.expressions} /><HabitLine mix={d.expressions} /></>
         : <p className="wbh-foot">Pas d’expressions pour cette lecture.</p>}
     </article>
+  )
+}
+
+/**
+ * Fiabilité mesurée sur les notes de la personne (BE-BIAIS-3) : écart moyen entre ses notes et le visage du même
+ * jour, chaque jour laissé de côté pour le recalage. Aucun chiffre tant que 3 jours ne sont pas notés.
+ */
+function Reliability({ agreement }) {
+  if (!agreement) {
+    return <p className="wbh-reliability">Fiabilité mesurée dès 3 jours notés : elle compare vos notes à ces lectures.</p>
+  }
+  const pts = agreement.gap > 1 ? 'points' : 'point'
+  return (
+    <p className="wbh-reliability">
+      Écart moyen avec vos notes : <span className="mono">{frDecimal(agreement.gap)} {pts} sur 5</span>, mesuré sur
+      {' '}{agreement.days} jours notés.
+    </p>
   )
 }
 
@@ -254,7 +294,10 @@ function ExpressionBars({ mix }) {
       {mix.items.map((it) => (
         <li key={it.key}>
           <span className="wbh-ex-label">{it.label}</span>
-          <span className="wbh-ex-track" aria-hidden="true"><span style={{ width: `${Math.round(it.p * 100)}%` }} /></span>
+          <span className="wbh-ex-track" aria-hidden="true">
+            <span style={{ width: `${Math.round(it.p * 100)}%` }} />
+            {Number.isFinite(it.habit) && <i className="wbh-ex-habit" style={{ left: pct(it.habit) }} />}
+          </span>
           <span className="wbh-ex-value mono">{Math.round(it.p * 100)} %</span>
         </li>
       ))}
@@ -404,14 +447,23 @@ export default function WellbeingHistory({ now: givenNow, features }) {
           {history.arousal != null && (
             <BipolarBar label="Éveil" value={history.arousal} left="calme" right="animé" />
           )}
+          <Reliability agreement={history.agreement} />
           {history.valence == null && history.arousal == null && (
             <p className="wbh-models-intro">Le modèle valence / éveil n’a pas encore lu ces lectures (il se télécharge une fois).</p>
           )}
           {history.expressions ? (
             <>
               <h4 className="wbh-subtitle">Expressions</h4>
+              <HabitLine mix={history.expressions} />
               <ExpressionBars mix={history.expressions} />
-              <p className="wbh-foot mono">{expressionsBase(history.expressions.readings, history.readings)}</p>
+              <p className="wbh-foot mono">
+                {expressionsBase(history.expressions.readings, history.readings)}
+                {history.expressions.habitDays ? ` · trait : votre habitude sur ${history.expressions.habitDays} jours` : ''}
+              </p>
+              <p className="wbh-foot">
+                Un visage au repos peut être lu un peu triste ou méprisant : l’écart à votre habitude dit mieux ce
+                qui change.
+              </p>
             </>
           ) : (
             <p className="wbh-foot">Les expressions (joie, neutre, surprise…) apparaîtront avec les prochaines lectures.</p>

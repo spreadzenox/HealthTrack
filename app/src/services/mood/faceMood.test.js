@@ -10,6 +10,7 @@ import {
   arousalLabel,
   weightedMedian,
   lightPenalty,
+  notesAgreement,
 } from './faceMood'
 import { isEstimatorInput } from './estimatorInputs'
 
@@ -409,5 +410,28 @@ describe('faceMood — calibration de départ (BE-BIAIS-2, retour (5) du 04/11)'
   it('ends after 3 noted days', () => {
     const est = faceMoodEstimate([...day(3, 3), ...day(2, 4), ...day(1, 3), burst(at(0, 8))], { now: NOW })
     expect(est.startCalibration).toBeNull()
+  })
+})
+
+describe('faceMood — fiabilité mesurée sur les notes (BE-BIAIS-3, retour (5) du 04/11)', () => {
+  const days = (scores, valence = -0.3) => scores.map((score, d) => [
+    burst(at(d + 1, 9), { valence, arousal: 0 }), note(at(d + 1, 21), score),
+  ]).flat()
+
+  it('null under 3 noted days', () => {
+    expect(notesAgreement(days([4, 4]))).toBeNull()
+  })
+
+  it('small gap when notes are steady, larger when they swing while the face does not', () => {
+    const steady = notesAgreement(days([4, 4, 4, 4, 4]))
+    const swing = notesAgreement(days([1, 5, 1, 5, 1]))
+    expect(steady.days).toBe(5)
+    expect(swing.days).toBe(5)
+    expect(swing.gap).toBeGreaterThan(steady.gap + 1)
+  })
+
+  it('leaves each day out: a constant gap is not fully absorbed with few days', () => {
+    // Recalage rétréci : même des notes constantes gardent un petit écart mesuré, jamais 0 annoncé d'avance.
+    expect(notesAgreement(days([4, 4, 4])).gap).toBeGreaterThan(0)
   })
 })

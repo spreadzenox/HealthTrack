@@ -239,17 +239,40 @@ const OFFSET_MAX = 2
  * bien-être et visage, des entrées Y (D5). Rend { value, days }.
  */
 export function personalOffset(entries, days = gateDays(entries)) {
+  const gaps = noteGaps(entries, days)
+  if (gaps.length < OFFSET_MIN_DAYS) return { value: 0, days: 0 }
+  return { value: shrunkOffset(gaps), days: gaps.length }
+}
+
+/** Écarts note − visage (échelle 0–5) des derniers jours notés, visage habituel du jour compris. */
+function noteGaps(entries, days) {
   const recent = days.slice(-OFFSET_WINDOW).filter((d) => isNum(d.note))
-  if (recent.length < OFFSET_MIN_DAYS) return { value: 0, days: 0 }
+  if (recent.length < OFFSET_MIN_DAYS) return []
   const bursts = moodFaceBursts(entries)
-  const gaps = recent.map((d) => {
+  return recent.map((d) => {
     const base = personalNeutral(bursts, new Date(`${d.date}T23:59:59`).toISOString())
     return d.note - valenceToNote(generalValence(d.face, base.neutral))
   })
+}
+
+function shrunkOffset(gaps) {
   const k = gaps.length
+  if (!k) return 0
   const mean = gaps.reduce((s, v) => s + v, 0) / k
-  const value = Math.max(-OFFSET_MAX, Math.min(OFFSET_MAX, mean * (k / (k + OFFSET_SHRINK))))
-  return { value, days: k }
+  return Math.max(-OFFSET_MAX, Math.min(OFFSET_MAX, mean * (k / (k + OFFSET_SHRINK))))
+}
+
+/**
+ * Fiabilité mesurée (BE-BIAIS-3, retour (5) du 04/11) : écart moyen, en points sur 5, entre chaque note de bien-être
+ * et l'estimation du visage du même jour recalée sur les AUTRES jours notés (validation en laissant un jour de côté :
+ * un jour ne sert jamais à se prédire lui-même). null sous 3 jours notés. Entrées Y seulement (D5). Rend
+ * { days, gap } : un chiffre mesuré sur la personne, jamais une précision annoncée d'avance.
+ */
+export function notesAgreement(entries) {
+  const gaps = noteGaps(entries, gateDays(entries))
+  if (gaps.length < OFFSET_MIN_DAYS) return null
+  const errors = gaps.map((g, i) => Math.abs(g - shrunkOffset(gaps.filter((_, j) => j !== i))))
+  return { days: gaps.length, gap: Math.round((errors.reduce((s, v) => s + v, 0) / errors.length) * 10) / 10 }
 }
 
 function burstQuality(b) {

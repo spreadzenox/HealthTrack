@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { wellbeingHistory, expressionMix, EXPRESSIONS, DAY_MAX_POINTS, viewEnd } from './wellbeingHistory'
+import { wellbeingHistory, expressionMix, EXPRESSIONS, DAY_MAX_POINTS, viewEnd, habitShifts, habitualMix } from './wellbeingHistory'
 
 const NEUTRAL = { smile: 0.1, duchenne: 0.05, mouthFrown: 0.05, browDown: 0.15, browInnerUp: 0.1, yaw: 4 }
 const EX_ZERO = Object.fromEntries(EXPRESSIONS.map(({ key }) => [key, 0]))
@@ -146,5 +146,37 @@ describe('wellbeingHistory — historique du bien-être (POL-2)', () => {
       expect(past.earliest).toBe(at(12, 21).toISOString())
       expect(wellbeingHistory([], { period: 'week', now: NOW }).earliest).toBeNull()
     })
+  })
+})
+
+describe('wellbeingHistory — expressions comparées à l’habitude (BE-BIAIS-3, retour (5) du 04/11)', () => {
+  // Visage au repos lu « triste » à 40 % chez cette personne ; aujourd'hui plus de joie.
+  const ex = (over) => ({ ...EX_ZERO, exNeutral: 0.3, exSadness: 0.4, exHappiness: 0.1, exContempt: 0.2, ...over })
+  const restDays = (n) => Array.from({ length: n }, (_, d) => burst(at(d + 1, 9), ex()))
+
+  it('ajoute à chaque expression sa part habituelle et l’écart', () => {
+    const entries = [...restDays(5), burst(at(0, 9), ex({ exHappiness: 0.35, exSadness: 0.2 }))]
+    const h = wellbeingHistory(entries, { period: 'day', now: NOW })
+    expect(h.expressions.habitDays).toBe(6)
+    const sad = h.expressions.items.find((it) => it.key === 'exSadness')
+    expect(sad.p).toBeCloseTo(0.2, 5)
+    expect(sad.habit).toBeGreaterThan(0.35)
+    expect(sad.delta).toBeLessThan(-0.1)
+    expect(habitShifts(h.expressions).map((s) => s.key)).toEqual(['exHappiness', 'exSadness'])
+    // Le détail d'un point porte la même habitude.
+    expect(h.points[0].detail.expressions.items.find((it) => it.key === 'exSadness').habit).toBeCloseTo(sad.habit, 5)
+  })
+
+  it('un jour comme d’habitude : aucun écart à signaler', () => {
+    const h = wellbeingHistory([...restDays(5), burst(at(0, 9), ex())], { period: 'day', now: NOW })
+    expect(habitShifts(h.expressions)).toEqual([])
+  })
+
+  it('pas d’habitude sous 3 jours lus', () => {
+    const h = wellbeingHistory([...restDays(1), burst(at(0, 9), ex())], { period: 'day', now: NOW })
+    expect(h.expressions.habitDays).toBeUndefined()
+    expect(habitShifts(h.expressions)).toBeNull()
+    expect(habitualMix(restDays(2), NOW)).toBeNull()
+    expect(habitualMix(restDays(3), NOW).days).toBe(3)
   })
 })
