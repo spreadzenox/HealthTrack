@@ -9,6 +9,43 @@
 
 ---
 
+## Run du 05/11/2026 20:35 (Paris) — l'examen de Google pendant le test fermé
+
+Sources : aide officielle de la Play Console (« Publishing overview », 9859654, lue le 05/11), blogs de développeurs
+(tiers, chiffres contradictoires), workflows du dépôt (`play-alpha.yml`, `play-bundle.yml`, `play-listing.yml`,
+`play-subscriptions.yml`). Aucune donnée réelle consultée.
+
+### I222 — Un seul « dernier envoi » pour toute l'app pendant l'examen — impact 4, faisabilité 4
+**Besoin** : le propriétaire attend que Google valide Alpha pour inviter les testeurs ; tout ce qui relance l'examen
+retarde l'invitation, donc les 14 jours du test fermé, donc la production.
+**Constats** :
+- [V] Aide Google : « le délai d'examen est compté à partir du dernier changement envoyé pour l'app » ; un envoi pendant
+  un examen peut renvoyer l'app « en fin de file », et « Examiner et publier » reste grisé jusqu'à la fin de l'examen.
+  Durée : quelques heures à 7 jours (plus dans des cas exceptionnels) ; Google conseille une marge d'une semaine.
+- [V] Même page : le test interne n'est pas concerné (pas d'examen, sauf la toute première version et après un refus).
+  Les envois de chaque version en test interne (« Play — AAB ») ne relancent donc pas l'horloge.
+- [T] Plusieurs blogs (ptkd.com, testerbee, ontest.app, 2026) : une nouvelle version sur une piste examinée remplace la
+  précédente et relance l'examen ; pour la première version d'un test fermé, de 24 h à 7 jours selon les sources.
+- Conséquence pour Halcya : CD-ALPHA-2 (24 h entre deux envois sur Alpha) va dans le bon sens, mais le compteur est
+  **par app**, pas par piste. Une mise à jour de la fiche (`play-listing.yml`, sur `app/store/**`) ou des abonnements
+  (`play-subscriptions.yml`) pendant l'examen d'Alpha relance aussi l'horloge [H : les abonnements sont-ils examinés ?
+  non documenté]. Dernières : fiche le 03/11, abonnements le 03/11 : sans effet sur l'examen de 100811 (05/11 17:30).
+**Pistes** :
+1. `decideAlpha` : date du « dernier envoi examiné » = la plus récente entre la version d'Alpha, le dernier
+   `play-listing` réussi et le dernier `play-subscriptions` réussi (lues dans les runs des workflows, comme
+   `alpha-cli.mjs` lit déjà la date du commit).
+2. `play-listing.yml` et `play-subscriptions.yml` : même porte de 24 h (report au passage quotidien de 07:13 UTC, ou
+   `workflow_dispatch` forcé), raison au bilan.
+3. Jour de la production : ne rien envoyer dans les 7 jours qui précèdent la demande P30 et pendant son examen (le
+   bouton du propriétaire serait grisé) ; le dire dans `INVITATION-TESTEURS.md` §5.
+4. Pas d'état d'examen dans l'API Android Publisher [V, déjà noté au 05/11 19:35] : le propriétaire reste la seule
+   source (« En cours d'examen » dans la Play Console). Ne jamais deviner l'état.
+**Sources** : https://support.google.com/googleplay/android-developer/answer/9859654 (officielle, 05/11/2026) ;
+https://ptkd.com/journal/google-play-review-time ; https://testerbee.com/blog/how-long-google-play-review-actually-takes-in-2026 ;
+https://ontest.app/blog/google-play-closed-testing-review-time-2026 (tiers, consultés le 05/11/2026).
+
+---
+
 ## Run du 05/11/2026 08:35 (Paris) — selles en photo (retour (7) du 04/11) : ce que l'on sait, ce que l'on fera
 
 Sources : retours du propriétaire (prompt de la routine), code du dépôt (`app/src/services/stool.js`,
