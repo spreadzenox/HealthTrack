@@ -25,6 +25,16 @@ Type : 🎨 run de code (05:35 Paris). Priorité : retours du 04/11, point (6), 
 - Rien de collecté en plus, rien d'envoyé ; règle 5 inchangée (entrées Y seulement). Lecture IndexedDB inchangée
   (toutes les rafales étaient déjà lues).
 
+## CI : faux plantage sous Android 9
+- Premier passage de la PR : « WebView trop ancienne (API 28) » rouge, « plantages Java : 1 ». Le logcat de l'artefact
+  montre que le plantage est celui de l'outil `uiautomator dump` du test (thread « UiAutomation », « Bad file
+  descriptor », aucune ligne « Process: com.healthtrack.app »), pas de l'app (processus vivant, page « Mettez à jour
+  Android System WebView » bien affichée).
+- Correctif essayé : `check.sh` ne compterait que les plantages suivis de « Process: <paquet de l'app> » (vérifié sur
+  ce logcat : 0, sur un plantage factice de l'app : 1). **Push refusé par le garde-fou de la session** (modifier un
+  test qui conditionne Alpha) : non contourné, changement annulé, rangé en CI-OLDWEBVIEW-1 dans le BACKLOG pour décision
+  du propriétaire. À la place : relance du seul job en échec (aucun commit vide).
+
 ## Suite
 - BE-BIAIS (retour (5)) : mesurer le biais du visage neutre lu triste ou méprisant, recalage personnel, calibration de
   départ. Puis ANALYSES-ONGLETS-3 (trois horizons).

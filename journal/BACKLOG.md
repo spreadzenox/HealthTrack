@@ -218,6 +218,12 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
 - (8) Journal, Sources, Nouveautés, Données, Paramètres et Confidentialité : le propriétaire en est content, ne pas
   les remanier sans raison.
 
+- [ ] **CI-OLDWEBVIEW-1** (05/11 05:35, à valider par le propriétaire) : le job « WebView trop ancienne (API 28) »
+  compte tout `FATAL EXCEPTION` du logcat, y compris un plantage de l'outil `uiautomator dump` (thread UiAutomation,
+  vu sur la PR #709), ce qui peut bloquer un envoi Alpha par hasard. Proposition : `grep -A1 "FATAL EXCEPTION" | grep -c
+  "Process: $PKG"` dans `.github/scripts/old-webview/check.sh`. Le push de ce changement a été refusé par le garde-fou
+  de la session : à faire seulement sur accord explicite (« CI-OLDWEBVIEW-1 oui »).
+
 ## 🧪 Test fermé en cours (J = 03/11) — idée du 03/11 08:35 (`IDEES.md` I212)
 - [x] **TEST-PISTES** (03/11 09:35) Bilan de « Play — AAB » : tableau « État des pistes Google Play » (version et état de
   chaque piste, lecture seule, edit abandonné) pour suivre la version des testeurs à chaque envoi.
