@@ -8,6 +8,9 @@
 # - Aucun AAB reconstruit : la version déjà envoyée en test interne est placée telle quelle sur l'alpha (reuseOnly).
 # - Jamais la production (publish.mjs n'accepte que internal et alpha). La production reste le clic du propriétaire.
 # - Frein : ALPHA_AUTO "false" coupe les envois (examens Google qui s'enchaînent sans aboutir, refus…).
+# - Envois espacés (CD-ALPHA-2, 05/11) : une version toutes les ALPHA_MIN_HOURS heures au plus (24), pour que l'examen
+#   de Google aboutisse (15 envois en 20 h le 04-05/11 le relançaient sans cesse). Le passage de 07:13 UTC envoie la
+#   dernière version de main si le délai est écoulé et qu'aucun push ne l'a fait.
 # - workflow_run s'exécute sur la branche par défaut (refs/heads/main) : la connexion sans clé est acceptée.
 name: Play — Alpha (livraison continue)
 
@@ -16,6 +19,9 @@ on:
     workflows: ["Tests", "Test — émulateur Samsung Galaxy A56", "Play — AAB"]
     types: [completed]
     branches: [main]
+  schedule:
+    - cron: "13 7 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -28,18 +34,19 @@ concurrency:
 
 env:
   ALPHA_AUTO: "true"
+  ALPHA_MIN_HOURS: "24"
 
 jobs:
   alpha:
     name: Version de main sur l'alpha
-    if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success'
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -59,7 +66,7 @@ jobs:
       - name: Décider et envoyer
         working-directory: app
         env:
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
           GITHUB_TOKEN: ${{ github.token }}
           PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
         run: node scripts/play/alpha-cli.mjs

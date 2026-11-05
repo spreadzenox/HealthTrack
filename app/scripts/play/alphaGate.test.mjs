@@ -82,6 +82,40 @@ describe('livraison continue vers l’alpha (04/11)', () => {
     })
   })
 
+  describe('envois espacés pour laisser Google finir son examen (CD-ALPHA-2, 05/11)', () => {
+    const now = Date.parse('2026-11-05T19:00:00Z')
+    const h = (n) => new Date(now - n * 3600e3).toISOString()
+
+    it('version de l’alpha envoyée il y a moins de 24 h : pas d’envoi, date du prochain envoi donnée', () => {
+      const d = decideAlpha({ ...base, runs: ok(), alphaSentAt: h(3), now })
+      expect(d).toMatchObject({ send: false, spaced: true, nextAt: '2026-11-06T16:00:00.000Z' })
+      expect(d.wait).toBeUndefined()
+      expect(d.reason).toMatch(/il y a 3 h/)
+      expect(d.reason).toMatch(/24 h/)
+    })
+
+    it('24 h passées : envoi', () => {
+      expect(decideAlpha({ ...base, runs: ok(), alphaSentAt: h(24), now })).toMatchObject({ send: true, versionCode: 100694 })
+    })
+
+    it('délai réglable (ALPHA_MIN_HOURS), 0 le coupe', () => {
+      expect(decideAlpha({ ...base, runs: ok(), alphaSentAt: h(7), now, minHours: 6 }).send).toBe(true)
+      expect(decideAlpha({ ...base, runs: ok(), alphaSentAt: h(1), now, minHours: 0 }).send).toBe(true)
+      expect(decideAlpha({ ...base, runs: ok(), alphaSentAt: h(7), now, minHours: 12 }).send).toBe(false)
+    })
+
+    it('date inconnue (alpha vide, version introuvable) : envoi comme avant', () => {
+      expect(decideAlpha({ ...base, runs: ok(), alphaSentAt: null, now }).send).toBe(true)
+      expect(decideAlpha({ ...base, runs: ok(), alphaSentAt: 'pas une date', now }).send).toBe(true)
+    })
+
+    it('le délai ne masque pas les autres raisons (rien de l’app modifié, workflow en cours)', () => {
+      expect(decideAlpha({ ...base, runs: ok(), changedFiles: ['journal/README.md'], alphaSentAt: h(1), now }).spaced).toBeUndefined()
+      const runs = ok().map((r) => (r.name === 'Tests' ? { ...r, status: 'in_progress', conclusion: null } : r))
+      expect(decideAlpha({ ...base, runs, alphaSentAt: h(1), now })).toMatchObject({ wait: true })
+    })
+  })
+
   it('interrupteur coupé : rien ne part', () => {
     expect(decideAlpha({ ...base, runs: ok(), enabled: false }).send).toBe(false)
   })
