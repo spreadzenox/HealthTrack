@@ -284,6 +284,7 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   de la session : à faire seulement sur accord explicite (« CI-OLDWEBVIEW-1 oui »).
 
 ## 🧪 Test fermé en cours (J = 03/11, glissé au 06/11 au plus tôt)
+- [x] **IOS-ASC-0511** (05/11 23:35) Décision du propriétaire du 05/11 vers 23:00 (App Store Connect) reportée en tête de `POUR-IOS.md` ; Mac / Vision Pro : photos par `<input type=file capture>` (sélecteur de fichiers sans caméra), visage et HealthKit côté iOS.
 - [x] **UNTIL-J06** (05/11 22:35) `until` recalé au `2026-11-30T23:00:00Z` (J = 06/11 : Alpha encore en examen) ; à redécaler si le propriétaire invite plus tard (vérifier au bilan du déploiement du relais). — idée du 03/11 08:35 (`IDEES.md` I212)
 - [x] **TEST-PISTES** (03/11 09:35) Bilan de « Play — AAB » : tableau « État des pistes Google Play » (version et état de
   chaque piste, lecture seule, edit abandonné) pour suivre la version des testeurs à chaque envoi.
