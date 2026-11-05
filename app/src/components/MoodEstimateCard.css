@@ -234,3 +234,66 @@
   line-height: 1;
   cursor: pointer;
 }
+
+/* Calibration de départ (BE-BIAIS-2) : la note du jour demandée les 3 premiers jours. */
+.mood-calib {
+  margin: 12px 0 4px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: var(--bg);
+  border: 2px solid rgba(var(--brand-rgb), 0.25);
+}
+
+.mood-calib-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mood-calib-text {
+  margin: 6px 0 10px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.mood-calib-button {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--color-on-brand);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mood-calib.is-quiet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.8rem;
+  color: var(--mint-label);
+}
+
+.mood-calib-steps {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.mood-calib-steps span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--mint-label);
+}
+
+.mood-calib-steps span.is-on {
+  background: var(--mint-label);
+}

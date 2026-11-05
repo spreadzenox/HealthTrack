@@ -392,3 +392,22 @@ describe('faceMood — recalage de départ sur les notes (BE-BIAIS-1, retour (5)
     expect(lines.join(' ')).toMatch(/recalé sur vos notes de 4 jours/)
   })
 })
+
+describe('faceMood — calibration de départ (BE-BIAIS-2, retour (5) du 04/11)', () => {
+  const day = (d, score) => [burst(at(d, 9), { valence: 0.1 }), ...(score == null ? [] : [note(at(d, 21), score)])]
+
+  it('asks for a note while fewer than 3 days have a note and a reading', () => {
+    const est = faceMoodEstimate([...day(2, 3), ...day(1), burst(at(0, 8), { valence: 0.1 })], { now: NOW })
+    expect(est.startCalibration).toEqual({ done: 1, needed: 3, notedToday: false })
+  })
+
+  it('knows when today is already noted', () => {
+    const est = faceMoodEstimate([...day(1, 3), burst(at(0, 8)), note(at(0, 9), 4)], { now: NOW })
+    expect(est.startCalibration).toEqual({ done: 2, needed: 3, notedToday: true })
+  })
+
+  it('ends after 3 noted days', () => {
+    const est = faceMoodEstimate([...day(3, 3), ...day(2, 4), ...day(1, 3), burst(at(0, 8))], { now: NOW })
+    expect(est.startCalibration).toBeNull()
+  })
+})

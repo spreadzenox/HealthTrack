@@ -104,6 +104,38 @@ function UnlockReminder({ onDismiss }) {
   )
 }
 
+const jours = (n) => `${n} ${n > 1 ? 'jours' : 'jour'}`
+
+/**
+ * Calibration de départ (BE-BIAIS-2, retour (5) du 04/11) : tant que 3 jours n'ont pas à la fois une note et une
+ * lecture, la carte demande la note du jour, avec la progression. Jamais bloquant ; une fois la note du jour donnée,
+ * une ligne discrète suffit.
+ */
+function StartCalibration({ cal, onAddManual }) {
+  const steps = (
+    <span className="mood-calib-steps" aria-hidden="true">
+      {Array.from({ length: cal.needed }, (_, i) => <span key={i} className={i < cal.done ? 'is-on' : ''} />)}
+    </span>
+  )
+  if (cal.notedToday || !onAddManual) {
+    return (
+      <p className="mood-calib is-quiet">
+        {steps}
+        Réglage sur vous : {jours(cal.done)} sur {cal.needed}. Prochaine note demain.
+      </p>
+    )
+  }
+  return (
+    <div className="mood-calib" role="note">
+      <p className="mood-calib-title">{steps}Réglage sur vous : {jours(cal.done)} sur {cal.needed}</p>
+      <p className="mood-calib-text">
+        Chaque visage se lit un peu différemment. Une note par jour pendant {cal.needed} jours cale l’estimation sur vous.
+      </p>
+      <button type="button" className="mood-calib-button" onClick={onAddManual}>Noter mon bien-être du jour</button>
+    </div>
+  )
+}
+
 function hourOf(iso) {
   return new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 }
@@ -135,6 +167,7 @@ export default function MoodEstimateCard({
   }
   const { est, days } = data
   const shown = est.day || est.moment
+  const asking = Boolean(est.startCalibration && !est.startCalibration.notedToday && onAddManual)
   const trend = wellbeingTrend(days, est.day?.note ?? null, now ?? new Date())
   return (
     <section className="today-card mood-estimate" aria-labelledby="mood-estimate-title">
@@ -168,9 +201,10 @@ export default function MoodEstimateCard({
       <p className="today-card-text">
         {est.day ? trend.phrase : 'Pas encore de lecture aujourd’hui.'}
       </p>
+      {est.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} />}
       {reminder}
       <div className="mood-actions">
-        <ManualNoteButton onClick={onAddManual} />
+        <ManualNoteButton onClick={asking ? null : onAddManual} />
         <HistoryLink />
       </div>
     </section>
