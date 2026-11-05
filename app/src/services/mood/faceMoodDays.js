@@ -23,6 +23,7 @@ import { localDateKey, computeBasicCorrelations } from '../analysisEngine'
 import { computeTagEffects } from '../behaviorTags'
 import { computeLaggedEffects } from '../laggedEffects'
 import { moodFaceBursts } from '../faceBursts'
+import { gutAdjust, gutLevelsByDay } from './gutSelfReport'
 import { estimateBurst, personalCalibration, personalNeutral, readingWeight, weightedMedian } from './faceMood'
 
 export const FACE_MOOD_MIN_READINGS = 3
@@ -45,11 +46,13 @@ export function faceMoodDays(entries) {
   const days = [...byDay].filter(([, list]) => list.length >= FACE_MOOD_MIN_READINGS)
   if (!days.length) return []
   const calibration = personalCalibration(entries)
+  const gut = gutLevelsByDay(entries)
   return days.map(([date, list]) => {
     const lastAt = list[list.length - 1].at
     const base = personalNeutral(bursts, lastAt)
     const readings = list.map((b) => estimateBurst(b, { bursts, calibration, base }))
-    const note = weightedMedian(readings.map((r) => r.note), readings.map(readingWeight))
+    // Ressenti du ventre du jour (VENTRE-BE-2) : une entrée Y de plus, à poids faible.
+    const { note } = gutAdjust(weightedMedian(readings.map((r) => r.note), readings.map(readingWeight)), gut.get(date))
     return { date, note: Math.round(note * 100) / 100, readings: list.length, lastAt }
   })
 }

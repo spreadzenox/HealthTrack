@@ -15,10 +15,9 @@
 > émulateurs (dont Android 9) et l'envoi en test interne sont verts. P42 est retirée de vos actions. La production
 > reste votre clic. **Ce que vous pouvez vérifier** : Play Console → Tester → Test fermé → Alpha : 100776 « En cours
 > d'examen » puis disponible. **D'ici là, n'invitez que des testeurs sous Android 13 ou plus récent** (l'Alpha 100721
-> se ferme à l'ouverture sous Android 8 à 12). **Une question pour vous (I220, `IDEES.md`)** : pour mêler ventre et
-> bien-être proprement, les notes du ventre ajusteraient l'estimation du bien-être comme une note de ressenti à poids
-> faible, et le ventre ne serait plus un facteur des pistes « bien-être » (règle 5). D'accord ? Répondez « I220 oui »
-> ou « I220 non » dans une consigne.
+> se ferme à l'ouverture sous Android 8 à 12). **I220 : merci pour votre « oui » (05/11)**, appliqué le
+> 05/11 13:35 : une gêne ou une douleur du ventre fait un peu baisser le bien-être estimé du jour, et le ventre n'est
+> jamais un facteur des liens du bien-être.
 
 > 👉 **Version candidate prête : vous pouvez inviter les testeurs** (02/11 23:35), **dès que la Play Console
 > n'affiche plus « En cours d'examen » pour Alpha.** Vous avez lancé l'envoi vous-même hier soir (P40, merci) :
@@ -100,6 +99,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 05/11 13:35 — [Ventre → bien-être](runs/2026-11-05-1335-ventre-bien-etre.md) | 🧠 | Votre « I220 oui » appliqué : une note du ventre **Gêne** ou **Douleur** fait un peu baisser le bien-être estimé du jour (un pas de 20 % vers 2 / 5 ou 1 / 5, jamais vers le haut ; « Calme » ne change rien). Même chiffre sur l'Accueil, l'historique, Tendances et dans les Analyses. Les détails de la carte (« douleur au ventre comptée ») et le détail d'un jour de l'historique le disent. Le ventre n'est jamais un facteur des liens du bien-être (test de la règle 5 étendu). **À tester** : notez « Douleur » sur l'Accueil puis ouvrez les détails de la carte Bien-être. Mergée : voir le compte rendu |
 | 05/11 12:35 — [Tendances : bien-être estimé](runs/2026-11-05-1235-tendances-visage.md) | 🚑 | Votre signalement de 11:45 : dans **Analyses → Tendances**, « Votre bien-être » montre maintenant le bien-être **estimé** (même série que l'historique et l'Accueil), vos notes à la main en losanges à part ; toucher un point ouvre sa lecture ; « Attendu d'après vos habitudes » dit qu'il vient de vos jours notés à la main et se compare à **votre note du jour**. Captures avant / après : `captures/tendances-visage/`. I220 OUI noté (prochain run de code : VENTRE-BE-2). **À tester** : Analyses → Tendances, touchez un point de la courbe. Mergée (#720) : **v510** |
 | 05/11 11:35 — [Pistes et liens expliqués](runs/2026-11-05-1135-pistes-et-liens.md) | 🎨 | Retour (4) du 04/11, fin : dans **Analyses → Bien-être**, une ligne sous « Pistes à tester » (ce que vous pouvez changer) et une sous « Liens repérés » (tout ce qui varie avec votre bien-être, même la météo ou le pouls). La PR de 10:35 (trois horizons) est mergée ce run : **v508**. **À tester** : Analyses → Bien-être, lisez les deux lignes : la différence est-elle claire ? Mergées : #717 (**v508**, **100800 envoyée sur Alpha**, en examen) et #718 (**v509**, Alpha automatique après les émulateurs) |
 | 05/11 10:35 — [Analyses rangées par délai](runs/2026-11-05-1035-analyses-horizons.md) | 🎨 | Retour (4) du 04/11, trois horizons : dans **Analyses → Ventre**, les pistes repas → ventre sont rangées sous « Dans les heures » (jusqu'à 24 h après le repas) puis « Sur quelques jours » ; dans **Bien-être**, pistes et liens sont sous « Sur quelques jours » ; en bas des deux onglets, « Sur quelques semaines » ouvre vos Tendances. Aucun calcul changé. **À tester** : Analyses → Ventre, regardez sous quel délai tombe chaque piste. PR #717 mergée au run de 11:35 (v508). Suite : « Pistes à tester » et « Liens repérés » expliqués |

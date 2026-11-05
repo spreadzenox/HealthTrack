@@ -5,6 +5,7 @@
  */
 import { listEntries } from '../../storage/localHealthStorage'
 import { FACE_BURST_TYPE } from '../faceBursts'
+import { GUT_TYPE } from '../today'
 import { faceMoodEstimate } from './faceMood'
 import { faceMoodDays } from './faceMoodDays'
 import { wellbeingHistory } from './wellbeingHistory'
@@ -15,8 +16,12 @@ export async function loadFaceMoodEntries({ list = listEntries } = {}) {
   const first = bursts.reduce((min, b) => (b.at < min ? b.at : min), bursts[0].at)
   const since = new Date(first)
   since.setHours(0, 0, 0, 0)
-  const notes = await list({ type: 'wellbeing', since: since.toISOString(), limit: Infinity })
-  return { bursts, notes }
+  const [wellbeing, gut] = await Promise.all([
+    list({ type: 'wellbeing', since: since.toISOString(), limit: Infinity }),
+    // Notes du ventre : gêne et douleur ajustent un peu le bien-être du jour (VENTRE-BE-2).
+    list({ type: GUT_TYPE, since: since.toISOString(), limit: Infinity }),
+  ])
+  return { bursts, notes: [...wellbeing, ...(gut || [])] }
 }
 
 /**

@@ -6,7 +6,7 @@ const loadWellbeingHistory = vi.fn()
 vi.mock('../services/mood/faceMoodData', () => ({ loadWellbeingHistory: (...a) => loadWellbeingHistory(...a) }))
 vi.mock('../components/WellbeingPrompt', () => ({ default: ({ open }) => (open ? <div>note manuelle ouverte</div> : null) }))
 
-import WellbeingHistory from './WellbeingHistory'
+import WellbeingHistory, { ReadingDetail } from './WellbeingHistory'
 
 const NOW = new Date(2026, 9, 24, 20)
 const history = (over = {}) => ({
@@ -285,5 +285,17 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Mois' }))
       expect(await screen.findByText(/Fiabilité mesurée dès 3 jours notés/)).toBeInTheDocument()
     })
+  })
+})
+
+describe('ReadingDetail — ressenti du ventre (VENTRE-BE-2)', () => {
+  const point = { at: '2026-11-04T19:00:00.000Z', date: '2026-11-04', note: 2.9, readings: 3, detail: { readings: 3, poor: 0, valence: 0.2, arousal: 0, expressions: null } }
+  it('dit quand une note du ventre a fait baisser la note du jour', () => {
+    render(<ReadingDetail point={{ ...point, detail: { ...point.detail, gut: { level: 'pain', shift: -0.5 } } }} period="week" onClose={() => {}} />)
+    expect(screen.getByText('Douleur au ventre notée ce jour-là : la note baisse de 0,5.')).toBeInTheDocument()
+  })
+  it('rien sur le ventre sans note du ventre', () => {
+    render(<ReadingDetail point={point} period="week" onClose={() => {}} />)
+    expect(screen.queryByText(/au ventre/)).toBeNull()
   })
 })
