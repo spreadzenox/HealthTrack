@@ -192,9 +192,14 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   (100787, #704) ne partait jamais sur l'alpha. `decideAlpha` reçoit `inherited` (version du test interne + fichiers
   modifiés depuis son commit) : un commit sans AAB reprend la version du test interne si rien de l'app n'a changé
   entre les deux, validée par ses propres « Tests » et émulateurs. 5 tests (`alphaGate.test.mjs`).
-- [ ] **CD-ALPHA-2** Suivre les examens : si deux bilans montrent une version alpha remplacée avant d'avoir abouti,
-  espacer (24 h minimum, variable testée dans `alphaGate`) et le dire en tête du résumé. Erreur d'envoi = erreur exacte
-  en tête du résumé, rien de contourné.
+- [x] **CD-ALPHA-2** (05/11 19:35) Suivre les examens : 15 envois sur l'alpha en 20 h (100778 → 100811, du 04/11 21:04
+  au 05/11 16:36 UTC), chacun relançant l'examen de Google, qui n'aboutissait donc pas. L'API ne donne pas l'état
+  d'examen : `decideAlpha` espace désormais les envois (`minHours` 24, `ALPHA_MIN_HOURS` dans `play-alpha.yml`, 0 le
+  coupe ; date de la version de l'alpha = date de son commit), raison et `nextAt` au bilan ; passage quotidien à
+  07:13 UTC (+ `workflow_dispatch`) pour envoyer la dernière version si aucun push ne le fait ; 5 tests. Dit en tête
+  du résumé. Erreur d'envoi = erreur exacte en tête du résumé, rien de contourné. → **CD-ALPHA-4** (si le
+  propriétaire voit encore « En cours d'examen » après 48 h sur la même version) : passer à 48 h, ou n'envoyer que
+  sur demande pendant le test fermé.
 - [ ] **AVIS-RELAIS-1..4** (retour (2), étude I219) ~~relais `POST /v1/feedback` (texte, version, variante ; quotas ; TTL
   à demander)~~ ✅ 04/11 22:35 (`relay/src/feedback.js`, 10 tests, P46 pour le TTL) → ~~formulaire « Votre avis » dans l'app + Sécurité des données + confidentialité~~ ✅ 04/11 23:35 (AVIS-RELAIS-2 : Paramètres, `sendFeedback`, lien d'avant en secours ; Sécurité des données inchangée, « Autre contenu généré par l'utilisateur » déjà déclaré ; confidentialité §« Votre avis ») → ~~workflow de résumé
   anonyme quotidien~~ ✅ 05/11 00:35 (AVIS-RELAIS-3 : route `GET /v1/feedback/digest`, jeton OIDC de gh-deployer, comptes par

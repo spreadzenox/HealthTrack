@@ -11,7 +11,14 @@
  * Commit de journal seul (pas d'AAB) juste après une version de l'app : sur main, il annule l'émulateur de celle-ci
  * (concurrency), qui ne serait alors jamais envoyée (100787, 05/11). Il hérite donc de la version du test interne si
  * rien de l'app n'a changé entre elle et lui : ses « Tests » et son émulateur portent sur le même code d'app.
+ *
+ * Envois espacés (CD-ALPHA-2, 05/11) : chaque envoi relance l'examen de Google (quelques heures à 2 jours) ; à un
+ * envoi par heure, l'alpha restait « En cours d'examen » et les testeurs ne pouvaient pas être invités. Une nouvelle
+ * version ne part que `minHours` (24 par défaut, ALPHA_MIN_HOURS) après celle de l'alpha ; la date de celle-ci est
+ * celle de son commit sur main (l'envoi suit d'une heure environ).
  */
+
+export const DEFAULT_MIN_HOURS = 24
 
 export const REQUIRED_WORKFLOWS = ['Tests', 'Test — émulateur Samsung Galaxy A56', 'Play — AAB']
 export const VERSION_OFFSET = 100000
@@ -39,9 +46,10 @@ export function commitCountOf(versionCode) {
  * la version de l'alpha (null si ce commit est introuvable : on envoie).
  * `inherited` : { versionCode, filesSince } de la version du test interne, avec les fichiers modifiés entre son
  * commit et celui-ci (null si inconnue).
- * Renvoie { send, wait?, reason, versionCode? } (versionCode : la version à placer sur l'alpha).
+ * `alphaSentAt` : date (ISO) de la version de l'alpha, `now` : maintenant (ms), `minHours` : écart minimal.
+ * Renvoie { send, wait?, spaced?, nextAt?, reason, versionCode? } (versionCode : la version à placer sur l'alpha).
  */
-export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited = null, enabled = true }) {
+export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited = null, enabled = true, alphaSentAt = null, now = Date.now(), minHours = DEFAULT_MIN_HOURS }) {
   if (!enabled) return { send: false, reason: 'livraison continue coupée (ALPHA_AUTO=false)' }
   const hasAab = runs.some((r) => r.name === 'Play — AAB' && r.event === 'push')
   const inherit = !hasAab && inherited?.versionCode != null && Array.isArray(inherited.filesSince) && !inherited.filesSince.some(affectsApp)
@@ -63,11 +71,25 @@ export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, inte
   if (alphaVersionCode != null && candidate <= Number(alphaVersionCode)) {
     return { send: false, reason: `l’alpha a déjà ${alphaVersionCode} (≥ ${candidate})` }
   }
+  let why = `version de l’alpha introuvable dans l’historique : envoi${from}`
   if (changedFiles) {
     const app = changedFiles.filter(affectsApp)
     if (!app.length) return { send: false, reason: `rien ne change dans l’app depuis ${alphaVersionCode}` }
-    return { send: true, versionCode: candidate, reason: `${app.length} fichier(s) de l’app modifié(s) depuis ${alphaVersionCode}${from}` }
+    why = `${app.length} fichier(s) de l’app modifié(s) depuis ${alphaVersionCode}${from}`
   }
+  const sentAt = alphaSentAt == null ? NaN : Date.parse(alphaSentAt)
+  const gapMs = Number(minHours) * 3600e3
+  if (gapMs > 0 && Number.isFinite(sentAt) && now - sentAt < gapMs) {
+    const ago = Math.max(0, Math.round((now - sentAt) / 3600e3))
+    const nextAt = new Date(sentAt + gapMs).toISOString()
+    return {
+      send: false,
+      spaced: true,
+      nextAt,
+      reason: `${alphaVersionCode} est sur l’alpha depuis son commit d’il y a ${ago} h ; une version toutes les ${minHours} h au plus, pour laisser Google finir son examen (prochain envoi possible après ${nextAt.slice(0, 16).replace('T', ' ')} UTC)`,
+    }
+  }
+  if (changedFiles) return { send: true, versionCode: candidate, reason: why }
   return { send: true, versionCode: candidate, reason: `version de l’alpha introuvable dans l’historique : envoi${from}` }
 }
 
