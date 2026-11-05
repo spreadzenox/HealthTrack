@@ -35,3 +35,11 @@ Type : 🔧 run de code (15:35 Paris). Priorité : retours du 04/11, point (7) (
 - SELLES-PHOTO-3 : fiabilité chez la personne (« Vous avez corrigé 1 estimation sur 6 » après 5 photos ; « souvent
   corrigée chez vous » si plus d'une sur trois), marque « photo » dans la ligne du Journal, rapport PDF « estimées par
   photo ».
+
+## Après le merge
+- #726 mergée (squash `8234086`) après un premier « Frontend (Vitest) » rouge (type de la note de Nouveautés :
+  « nouveauté » au lieu de « nouveau », corrigé) ; au merge, Vitest, Build APK, relais, montre, perf, WebView API 28,
+  Android 12L, bord à bord et émulateurs A56 (API 35 et 36) verts.
+- « Build & Release » **v513** (APK 34 552 170 octets). « Site — GitHub Pages » vert (confidentialité du 5 novembre
+  publiée). « Play — AAB » et « Play — Alpha (livraison continue) » en cours à la fin du run : à vérifier au prochain
+  bilan (cette version change l'app, elle doit partir sur Alpha).
