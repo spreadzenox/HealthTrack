@@ -283,7 +283,8 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   "Process: $PKG"` dans `.github/scripts/old-webview/check.sh`. Le push de ce changement a été refusé par le garde-fou
   de la session : à faire seulement sur accord explicite (« CI-OLDWEBVIEW-1 oui »).
 
-## 🧪 Test fermé en cours (J = 03/11) — idée du 03/11 08:35 (`IDEES.md` I212)
+## 🧪 Test fermé en cours (J = 03/11, glissé au 06/11 au plus tôt)
+- [x] **UNTIL-J06** (05/11 22:35) `until` recalé au `2026-11-30T23:00:00Z` (J = 06/11 : Alpha encore en examen) ; à redécaler si le propriétaire invite plus tard (vérifier au bilan du déploiement du relais). — idée du 03/11 08:35 (`IDEES.md` I212)
 - [x] **TEST-PISTES** (03/11 09:35) Bilan de « Play — AAB » : tableau « État des pistes Google Play » (version et état de
   chaque piste, lecture seule, edit abandonné) pour suivre la version des testeurs à chaque envoi.
 - [x] **VITALS-1** (03/11 12:35) Bilan de « Play — AAB » : plantages et ANR d'Android vitals (`scripts/play/vitals.mjs`, `errorIssues:search`, lecture seule, jeton `playdeveloperreporting` à part, étape `continue-on-error`) : la routine voit enfin les plantages avant de choisir une version Alpha. Si l'API n'est pas activée, le bilan donne la commande du propriétaire (P43).
