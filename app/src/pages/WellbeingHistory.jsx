@@ -12,6 +12,7 @@ import { loadWellbeingHistory } from '../services/mood/faceMoodData'
 import { frDecimal } from '../services/today'
 import { appLocale } from '../i18n/locale.js'
 import { faceModelTag } from '../services/mood/modelName'
+import { viewEnd } from '../services/mood/wellbeingHistory'
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Jour' },
@@ -19,6 +20,40 @@ const PERIOD_TABS = [
   { id: 'month', label: 'Mois' },
 ]
 const PERIOD_WORDS = { day: 'aujourd’hui', week: 'ces 7 jours', month: 'ces 30 jours' }
+const PERIOD_NOW = { day: 'Aujourd’hui', week: 'Ces 7 jours', month: 'Ces 30 jours' }
+const STEP_WORDS = {
+  day: ['Jour précédent', 'Jour suivant'],
+  week: ['Semaine précédente', 'Semaine suivante'],
+  month: ['Mois précédent', 'Mois suivant'],
+}
+/** Balayage horizontal minimal (px) pour changer de période sur la courbe. */
+const SWIPE_MIN = 60
+
+/** « 1er » comme on l'écrit en français, sinon le numéro du jour. */
+const dayNum = (d) => (d.getDate() === 1 ? '1er' : String(d.getDate()))
+const monthName = (d) => d.toLocaleDateString(appLocale(), { month: 'long' })
+/** « du 23 au 29 octobre », « du 26 octobre au 1er novembre » (année précisée si elle n'est pas celle d'aujourd'hui). */
+function rangeText(fromIso, endIso, todayIso) {
+  const a = new Date(fromIso)
+  const b = new Date(endIso)
+  const year = b.getFullYear() !== new Date(todayIso).getFullYear() ? ` ${b.getFullYear()}` : ''
+  const start = a.getMonth() === b.getMonth() ? dayNum(a) : `${dayNum(a)} ${monthName(a)}`
+  return `du ${start} au ${dayNum(b)} ${monthName(b)}${year}`
+}
+const longDay = (d) => new Date(d).toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric', month: 'long' })
+
+/** Titre de la période affichée : « Ces 7 jours », ou, en remontant le temps, « vendredi 23 octobre » / « du 11 au 17 octobre ». */
+function periodTitle(period, offset, from, end, today) {
+  if (!offset) return PERIOD_NOW[period]
+  return period === 'day' ? longDay(from) : rangeText(from, end, today)
+}
+
+/** Même chose au fil d'une phrase : « aujourd’hui », « le vendredi 23 octobre », « du 11 au 17 octobre ». */
+function periodWords(history) {
+  if (!history.offset) return PERIOD_WORDS[history.period]
+  const t = periodTitle(history.period, history.offset, history.from, history.end, history.today)
+  return history.period === 'day' ? `le ${t}` : t
+}
 
 const W = 320
 const H = 170
@@ -57,6 +92,7 @@ function axisLabels(period, from) {
 
 /** Courbe du bien-être estimé (0–5) : fourchettes par lecture (jour), points des jours, notes à la main en losange. */
 export function HistoryChart({ history, now, selected = null, onSelect }) {
+  const words = periodWords(history)
   const { period, from, points, notes, mean } = history
   const innerH = H - PAD.top - PAD.bottom
   const y = (v) => PAD.top + innerH * (1 - v / 5)
@@ -70,7 +106,7 @@ export function HistoryChart({ history, now, selected = null, onSelect }) {
   const line = points.map((p, i) => `${i ? 'L' : 'M'} ${x(pointAt(p)).toFixed(1)} ${y(p.note).toFixed(1)}`).join(' ')
   return (
     <svg className="wbh-chart" viewBox={`0 0 ${W} ${H}`} width="100%" role="img"
-      aria-label={`Bien-être estimé ${PERIOD_WORDS[period]} : ${period === 'day' ? `${history.readings} lectures` : `${points.length} jours`}${points.some((p) => p.hourly) ? ', un point par heure' : ''}`}>
+      aria-label={`Bien-être estimé ${words} : ${period === 'day' ? `${history.readings} lectures` : `${points.length} jours`}${points.some((p) => p.hourly) ? ', un point par heure' : ''}`}>
       {[0, 2.5, 5].map((g) => (
         <g key={g}>
           <line className="wbh-grid" x1={PAD.left} x2={W - PAD.right} y1={y(g)} y2={y(g)} />
@@ -237,12 +273,16 @@ export default function WellbeingHistory({ now: givenNow, features }) {
   const [history, setHistory] = useState(undefined)
   const [noteOpen, setNoteOpen] = useState(false)
   const [selected, setSelected] = useState(null)
+  // Nombre de périodes en arrière (BE-HISTO-DETAIL-2) : 0 = la période qui finit maintenant.
+  const [offset, setOffset] = useState(0)
+  const [touch, setTouch] = useState(null)
   const [now] = useState(() => givenNow ?? new Date())
 
   useEffect(() => {
     let alive = true
-    const load = () => loadWellbeingHistory({ period, now })
-      .then((h) => { if (alive) setHistory(h) })
+    const end = viewEnd(period, now, offset)
+    const load = () => loadWellbeingHistory({ period, now: end })
+      .then((h) => { if (alive) setHistory(h && { ...h, offset, end: end.toISOString(), today: now.toISOString() }) })
       .catch(() => { if (alive) setHistory(null) })
     load()
     window.addEventListener('health-entries-updated', load)
@@ -250,9 +290,25 @@ export default function WellbeingHistory({ now: givenNow, features }) {
       alive = false
       window.removeEventListener('health-entries-updated', load)
     }
-  }, [period, now])
+  }, [period, now, offset])
 
   const empty = history && !history.points.length && !history.notes.length
+  const canBack = Boolean(history?.earliest && history.from > history.earliest)
+  const step = (delta) => {
+    const next = offset + delta
+    if (next < 0 || (delta > 0 && !canBack)) return
+    setOffset(next)
+    setSelected(null)
+  }
+  // Balayer la courbe vers la droite remonte le temps (comme on tourne une page vers le passé), vers la gauche revient.
+  const onTouchEnd = (e) => {
+    const t = e.changedTouches?.[0]
+    if (!touch || !t) return
+    const dx = t.clientX - touch.x
+    const dy = t.clientY - touch.y
+    setTouch(null)
+    if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > 1.5 * Math.abs(dy)) step(dx > 0 ? 1 : -1)
+  }
   const selectedPoint = history && selected ? history.points.find((p) => p.at === selected) : null
   return (
     <section className="wbh-page">
@@ -262,7 +318,7 @@ export default function WellbeingHistory({ now: givenNow, features }) {
       <div className="wbh-tabs" role="group" aria-label="Période">
         {PERIOD_TABS.map((t) => (
           <button key={t.id} type="button" className={`wbh-tab${period === t.id ? ' is-on' : ''}`}
-            aria-pressed={period === t.id} onClick={() => { setPeriod(t.id); setSelected(null) }}>
+            aria-pressed={period === t.id} onClick={() => { setPeriod(t.id); setOffset(0); setSelected(null) }}>
             {t.label}
           </button>
         ))}
@@ -272,7 +328,21 @@ export default function WellbeingHistory({ now: givenNow, features }) {
       {history === null && <p className="today-card-text">L’historique n’a pas pu être lu.</p>}
 
       {history && (
-        <article className="today-card wbh-card">
+        <div className="wbh-nav">
+          <button type="button" className="wbh-step" aria-label={STEP_WORDS[period][0]} disabled={!canBack} onClick={() => step(1)}>
+            <LineIcon name="chevron" size={20} className="wbh-step-back" />
+          </button>
+          <p className="wbh-nav-title">{periodTitle(period, history.offset, history.from, history.end, history.today)}</p>
+          <button type="button" className="wbh-step" aria-label={STEP_WORDS[period][1]} disabled={offset === 0} onClick={() => step(-1)}>
+            <LineIcon name="chevron" size={20} className="wbh-step-next" />
+          </button>
+        </div>
+      )}
+
+      {history && (
+        <article className="today-card wbh-card"
+          onTouchStart={(e) => { const t = e.touches?.[0]; if (t) setTouch({ x: t.clientX, y: t.clientY }) }}
+          onTouchEnd={onTouchEnd}>
           <p className="wbh-figure">
             {history.mean != null ? (
               <>
@@ -290,11 +360,11 @@ export default function WellbeingHistory({ now: givenNow, features }) {
           </p>}
           {empty ? (
             <p className="today-card-text">
-              Aucune lecture {PERIOD_WORDS[history.period]}. La lecture du visage se règle dans{' '}
+              Aucune lecture {periodWords(history)}. La lecture du visage se règle dans{' '}
               <Link to="/connectors">Sources</Link>.
             </p>
           ) : (
-            <HistoryChart history={history} now={now} selected={selected} onSelect={setSelected} />
+            <HistoryChart history={history} now={history.offset ? new Date(history.end) : now} selected={selected} onSelect={setSelected} />
           )}
           {!empty && !selected && history.points.length > 0 && (
             <p className="wbh-hint">Touchez un point pour voir sa lecture.</p>
@@ -325,7 +395,7 @@ export default function WellbeingHistory({ now: givenNow, features }) {
         <article className="today-card wbh-models" aria-labelledby="wbh-models-title">
           <h3 id="wbh-models-title" className="today-card-title">Ce que lisent les modèles</h3>
           <p className="wbh-models-intro">
-            Moyennes {PERIOD_WORDS[history.period]}. Ce sont des estimations de l’expression du visage, pas de ce que vous
+            Moyennes {periodWords(history)}. Ce sont des estimations de l’expression du visage, pas de ce que vous
             ressentez, ni un diagnostic.
           </p>
           {history.valence != null && (

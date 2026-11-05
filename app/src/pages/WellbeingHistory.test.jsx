@@ -203,4 +203,59 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
       await waitFor(() => expect(screen.queryByRole('region', { name: /octobre/ })).toBeNull())
     })
   })
+
+  describe('remonter le temps (BE-HISTO-DETAIL-2, retour (6) du 04/11)', () => {
+    const EARLY = new Date(2026, 8, 1).toISOString()
+    beforeEach(() => {
+      loadWellbeingHistory.mockImplementation(({ period, now }) => {
+        const end = new Date(now)
+        const from = new Date(end)
+        from.setHours(0, 0, 0, 0)
+        from.setDate(from.getDate() - ({ day: 1, week: 7, month: 30 }[period] - 1))
+        return Promise.resolve(history({ period, from: from.toISOString(), earliest: EARLY }))
+      })
+    })
+
+    it('flèche « précédente » : la semaine d’avant, datée ; « suivante » revient, puis se grise', async () => {
+      renderPage()
+      await screen.findByText('3,4')
+      expect(screen.getByText('Ces 7 jours')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Semaine suivante' })).toBeDisabled()
+      fireEvent.click(screen.getByRole('button', { name: 'Semaine précédente' }))
+      await waitFor(() => expect(loadWellbeingHistory).toHaveBeenLastCalledWith({ period: 'week', now: new Date(2026, 9, 17, 23, 59, 59, 999) }))
+      expect(await screen.findByText('du 11 au 17 octobre')).toBeInTheDocument()
+      expect(screen.getByRole('img', { name: /Bien-être estimé du 11 au 17 octobre/ })).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Semaine précédente' }))
+      expect(await screen.findByText('du 4 au 10 octobre')).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Semaine suivante' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Semaine suivante' }))
+      await waitFor(() => expect(loadWellbeingHistory).toHaveBeenLastCalledWith({ period: 'week', now: NOW }))
+      expect(screen.getByRole('button', { name: 'Semaine suivante' })).toBeDisabled()
+    })
+
+    it('vue Jour : la veille porte son nom ; changer de période revient au présent', async () => {
+      renderPage()
+      fireEvent.click(await screen.findByRole('button', { name: 'Jour' }))
+      fireEvent.click(await screen.findByRole('button', { name: 'Jour précédent' }))
+      expect(await screen.findByText('vendredi 23 octobre')).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Mois' }))
+      await waitFor(() => expect(loadWellbeingHistory).toHaveBeenLastCalledWith({ period: 'month', now: NOW }))
+      expect(await screen.findByText('Ces 30 jours')).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Mois précédent' }))
+      expect(await screen.findByText('du 26 août au 24 septembre')).toBeInTheDocument()
+    })
+
+    it('balayer la courbe vers la droite remonte le temps ; on ne descend pas avant la première lecture', async () => {
+      loadWellbeingHistory.mockImplementation(({ period, now }) => Promise.resolve(history({
+        period, from: new Date(new Date(now).getTime() - 6 * 86400000).toISOString(), earliest: new Date(2026, 9, 12).toISOString(),
+      })))
+      const { container } = renderPage()
+      await screen.findByText('3,4')
+      const card = container.querySelector('.wbh-card')
+      fireEvent.touchStart(card, { touches: [{ clientX: 40, clientY: 100 }] })
+      fireEvent.touchEnd(card, { changedTouches: [{ clientX: 200, clientY: 110 }] })
+      await waitFor(() => expect(loadWellbeingHistory).toHaveBeenLastCalledWith({ period: 'week', now: new Date(2026, 9, 17, 23, 59, 59, 999) }))
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Semaine précédente' })).toBeDisabled())
+    })
+  })
 })

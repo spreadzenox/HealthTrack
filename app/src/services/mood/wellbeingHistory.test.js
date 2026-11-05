@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { wellbeingHistory, expressionMix, EXPRESSIONS, DAY_MAX_POINTS } from './wellbeingHistory'
+import { wellbeingHistory, expressionMix, EXPRESSIONS, DAY_MAX_POINTS, viewEnd } from './wellbeingHistory'
 
 const NEUTRAL = { smile: 0.1, duchenne: 0.05, mouthFrown: 0.05, browDown: 0.15, browInnerUp: 0.1, yaw: 4 }
 const EX_ZERO = Object.fromEntries(EXPRESSIONS.map(({ key }) => [key, 0]))
@@ -126,6 +126,25 @@ describe('wellbeingHistory — historique du bien-être (POL-2)', () => {
       expect(h.points[0].detail).toMatchObject({ readings: 2, valence: 0.3, arousal: -0.1, expressions: null })
       expect(h.points[1].detail).toMatchObject({ readings: 1, valence: -0.6, arousal: 0.4 })
       expect(h.points[1].detail.expressions.readings).toBe(1)
+    })
+  })
+
+  describe('remonter le temps (BE-HISTO-DETAIL-2, retour (6) du 04/11)', () => {
+    it('viewEnd : maintenant au décalage 0, sinon la fin du dernier jour de la période d’avant', () => {
+      expect(viewEnd('week', NOW, 0)).toBe(NOW)
+      expect(viewEnd('day', NOW, 1)).toEqual(new Date(2026, 9, 23, 23, 59, 59, 999))
+      expect(viewEnd('week', NOW, 2)).toEqual(new Date(2026, 9, 10, 23, 59, 59, 999))
+      expect(viewEnd('month', NOW, 1)).toEqual(new Date(2026, 8, 24, 23, 59, 59, 999))
+    })
+
+    it('une semaine passée ne montre que ses jours, et dit où commence l’historique', () => {
+      const entries = [burst(at(10, 9)), burst(at(9, 9)), burst(at(1, 9)),
+        { type: 'wellbeing', at: at(12, 21).toISOString(), payload: { score: 4 } }]
+      const past = wellbeingHistory(entries, { period: 'week', now: viewEnd('week', NOW, 1) })
+      expect(past.points.map((p) => p.date)).toEqual(['2026-10-14', '2026-10-15'])
+      expect(past.notes).toHaveLength(1)
+      expect(past.earliest).toBe(at(12, 21).toISOString())
+      expect(wellbeingHistory([], { period: 'week', now: NOW }).earliest).toBeNull()
     })
   })
 })

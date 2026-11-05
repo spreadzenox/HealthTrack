@@ -207,13 +207,22 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
 - [ ] **BE-HISTO-DETAIL** (retour (6)) ~~toucher un point de la courbe ouvre la lecture (matrice des émotions, valence,
   éveil, qualité)~~ ✅ 05/11 04:35 (BE-HISTO-DETAIL-1 : `pointDetail` dans `wellbeingHistory.js` — lecture, heure ou jour ;
   colonnes touchables pleine hauteur `data-scrub`, carte « Lecture de 8 h 05 » / « jeudi 22 octobre » avec note,
-  fourchette, valence, éveil, grille 4 × 2 des expressions, lectures peu nettes ; 6 tests) → **BE-HISTO-DETAIL-2** :
-  remonter le temps (semaine ou mois précédents, flèches ou balayage), toujours joli ; inspiration Emobot, rien de copié.
+  fourchette, valence, éveil, grille 4 × 2 des expressions, lectures peu nettes ; 6 tests) → ~~**BE-HISTO-DETAIL-2** :
+  remonter le temps (semaine ou mois précédents, flèches ou balayage)~~ ✅ 05/11 05:35 (`viewEnd`, `earliest` dans
+  `wellbeingHistory.js` ; flèches « Semaine précédente / suivante » autour du titre « du 23 au 29 octobre », balayage
+  horizontal de la courbe, arrêt à la première lecture ou note ; 5 tests). Reste éventuel : vue « Année » (52 semaines)
+  si le propriétaire la demande.
 - [ ] **SELLES-PHOTO** (retour (7)) type de Bristol estimé par photo, dans un endroit dédié et discret (pas sur
   l'Accueil), geste explicite, analyse IA comme les repas, aucune photo gardée par défaut, résultat modifiable, jamais
   un diagnostic ; Sécurité des données et confidentialité à jour.
 - (8) Journal, Sources, Nouveautés, Données, Paramètres et Confidentialité : le propriétaire en est content, ne pas
   les remanier sans raison.
+
+- [ ] **CI-OLDWEBVIEW-1** (05/11 05:35, à valider par le propriétaire) : le job « WebView trop ancienne (API 28) »
+  compte tout `FATAL EXCEPTION` du logcat, y compris un plantage de l'outil `uiautomator dump` (thread UiAutomation,
+  vu sur la PR #709), ce qui peut bloquer un envoi Alpha par hasard. Proposition : `grep -A1 "FATAL EXCEPTION" | grep -c
+  "Process: $PKG"` dans `.github/scripts/old-webview/check.sh`. Le push de ce changement a été refusé par le garde-fou
+  de la session : à faire seulement sur accord explicite (« CI-OLDWEBVIEW-1 oui »).
 
 ## 🧪 Test fermé en cours (J = 03/11) — idée du 03/11 08:35 (`IDEES.md` I212)
 - [x] **TEST-PISTES** (03/11 09:35) Bilan de « Play — AAB » : tableau « État des pistes Google Play » (version et état de

@@ -397,3 +397,48 @@
   stroke-width: 1.5;
   stroke-dasharray: 3 3;
 }
+
+/* Remonter le temps (BE-HISTO-DETAIL-2) : flèches de part et d'autre du titre de la période. */
+.wbh-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.wbh-nav-title {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.wbh-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: 50%;
+  background: var(--mint-bg);
+  color: var(--color-brand);
+}
+
+.wbh-step:disabled {
+  background: transparent;
+  color: var(--color-ink-2);
+  opacity: 0.4;
+}
+
+.wbh-step-back {
+  transform: rotate(90deg);
+}
+
+.wbh-step-next {
+  transform: rotate(-90deg);
+}
+
+.wbh-card {
+  touch-action: pan-y;
+}

@@ -49,6 +49,18 @@ function periodStart(period, now) {
   return new Date(start.getTime() - (PERIODS[period] - 1) * DAY_MS)
 }
 
+/**
+ * Fin de la période affichée quand on remonte le temps (BE-HISTO-DETAIL-2) : `now` au décalage 0, sinon la fin du
+ * dernier jour de la période `offset` crans plus tôt (un cran = 1, 7 ou 30 jours, sans chevauchement).
+ */
+export function viewEnd(period, now, offset = 0) {
+  if (!offset) return now
+  const end = new Date(now)
+  end.setHours(23, 59, 59, 999)
+  end.setDate(end.getDate() - offset * PERIODS[period])
+  return end
+}
+
 /** Moyenne de chaque expression sur les lectures qui en portent : [{ key, label, p }] trié, ou null sans aucune. */
 export function expressionMix(bursts) {
   const withEx = bursts.filter((b) => EXPRESSIONS.every(({ key }) => isNum(b.payload.values?.[key])))
@@ -107,13 +119,14 @@ function byHour(readings, date, burstAt) {
  * @returns {{ period, from: string, points: { at: string, date: string, note: number, low?: number, high?: number,
  *   readings: number, few?: boolean, hourly?: boolean, detail: ReturnType<typeof pointDetail> }[], notes: { at: string, score: number }[], readings: number, days: number,
  *   mean: number|null, valence: number|null, arousal: number|null,
- *   expressions: null | { readings: number, items: { key, label, p }[] } }}
+ *   expressions: null | { readings: number, items: { key, label, p }[] }, earliest: string|null }}
  */
 export function wellbeingHistory(entries, { period = 'week', now = new Date() } = {}) {
   const from = periodStart(period, now)
   const fromIso = from.toISOString()
   const nowIso = now.toISOString()
   const all = moodFaceBursts(entries || []).sort((a, b) => (a.at < b.at ? -1 : 1))
+  const manual = (entries || []).filter((e) => e?.type === 'wellbeing' && isNum(e.payload?.score))
   const inPeriod = all.filter((b) => b.at >= fromIso && b.at <= nowIso)
   const calibration = inPeriod.length ? personalCalibration(entries) : null
   const byDay = new Map()
@@ -141,8 +154,8 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
       })
     }
   }
-  const notes = (entries || [])
-    .filter((e) => e?.type === 'wellbeing' && isNum(e.payload?.score) && e.at >= fromIso && e.at <= nowIso)
+  const notes = manual
+    .filter((e) => e.at >= fromIso && e.at <= nowIso)
     .sort((a, b) => (a.at < b.at ? -1 : 1))
     .map((e) => ({ at: e.at, score: e.payload.score }))
   const valence = mean(inPeriod.map((b) => b.payload.values.valence))
@@ -163,5 +176,7 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
     valence: valence == null ? null : round2(valence),
     arousal: arousal == null ? null : round2(arousal),
     expressions: expressionMix(inPeriod),
+    // Première lecture ou note connue : jusqu'où l'on peut remonter le temps.
+    earliest: [all[0]?.at, ...manual.map((e) => e.at)].filter(Boolean).sort()[0] ?? null,
   }
 }
