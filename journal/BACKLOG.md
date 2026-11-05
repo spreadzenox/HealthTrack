@@ -200,7 +200,7 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   l'onglet Ventre en pêche~~ ✅ 05/11 02:35 (`AnalysisCountdown` : Bien-être = jours avec une note de bien-être, seuil
   des liens ; Ventre = jours avec une note du ventre, seuil des pistes repas → ventre) → **ANALYSES-ONGLETS-3** : trois horizons
   (heures, jours, semaines) ; « pistes à tester », « liens repérés » rangés et expliqués.
-- [ ] **BE-BIAIS** (retour (5)) mesurer le biais (visage neutre lu triste ou méprisant : 42 % tristesse, 11 % mépris
+- [ ] **BE-BIAIS** (retour (5)) ✅ BE-BIAIS-1 05/11 06:35 (recalage de départ : `personalOffset`, dès 3 jours notés, écart moyen note − visage rétréci et plafonné ±2, remplacé par le modèle personnel ; 4 tests) → **BE-BIAIS-2** : notes demandées les 3 à 5 premiers jours (carte Bien-être) → BE-BIAIS-3 : expressions recentrées sur l'habitude, fiabilité. Énoncé : mesurer le biais (visage neutre lu triste ou méprisant : 42 % tristesse, 11 % mépris
   sur 32 lectures alors qu'il allait bien), recalage personnel, calibration de départ (notes de bien-être demandées les
   3 à 5 premiers jours, la plus courte qui suffit, puis calibration continue), lissage des creux et pics, fiabilité
   affichée honnêtement.

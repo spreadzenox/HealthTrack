@@ -216,11 +216,40 @@ function calibrationRow(values) {
  */
 export function personalCalibration(entries) {
   const days = gateDays(entries)
+  const offset = personalOffset(entries, days)
   // Même porte que la carte : pas de « modèle personnel » tant que la vérification visage ↔ notes n'est pas réussie.
-  if (evaluateGate(days).state !== 'active') return { model: null, days: days.length }
+  if (evaluateGate(days).state !== 'active') return { model: null, days: days.length, offset }
   const dayNums = days.map((d) => Math.round(Date.parse(`${d.date}T00:00:00Z`) / DAY_MS))
   const model = calibrateRidge(days.map((d) => calibrationRow(d.face)), days.map((d) => d.note), { dayNums })
-  return model ? { model, days: days.length } : { model: null, days: days.length }
+  return model ? { model, days: days.length, offset } : { model: null, days: days.length, offset }
+}
+
+/** Recalage de départ : jours notés qu'il faut au moins, fenêtre (derniers jours notés), rétrécissement, plafond. */
+export const OFFSET_MIN_DAYS = 3
+const OFFSET_WINDOW = 28
+const OFFSET_SHRINK = 2
+const OFFSET_MAX = 2
+
+/**
+ * Recalage de départ sur les notes (BE-BIAIS-1, retour (5) du 04/11 : « 42 % tristesse alors que j'allais plutôt
+ * bien ») : un visage au repos peut être lu un peu triste ou méprisant chez une personne donnée. Dès 3 jours avec une
+ * note et une lecture, l'écart moyen note − visage des 28 derniers jours notés décale toutes les lectures, rétréci
+ * vers 0 (× k / (k + 2)) et plafonné à ±2. Un simple décalage : il ne change ni l'ordre des lectures ni les liens des
+ * Analyses, seulement le niveau. Le modèle personnel (≥ 14 jours, porte réussie) le remplace. Entrées : notes de
+ * bien-être et visage, des entrées Y (D5). Rend { value, days }.
+ */
+export function personalOffset(entries, days = gateDays(entries)) {
+  const recent = days.slice(-OFFSET_WINDOW).filter((d) => isNum(d.note))
+  if (recent.length < OFFSET_MIN_DAYS) return { value: 0, days: 0 }
+  const bursts = moodFaceBursts(entries)
+  const gaps = recent.map((d) => {
+    const base = personalNeutral(bursts, new Date(`${d.date}T23:59:59`).toISOString())
+    return d.note - valenceToNote(generalValence(d.face, base.neutral))
+  })
+  const k = gaps.length
+  const mean = gaps.reduce((s, v) => s + v, 0) / k
+  const value = Math.max(-OFFSET_MAX, Math.min(OFFSET_MAX, mean * (k / (k + OFFSET_SHRINK))))
+  return { value, days: k }
 }
 
 function burstQuality(b) {
@@ -239,7 +268,7 @@ export function estimateBurst(burst, { bursts = [], calibration = null, base: gi
   const modelSd = modelSdFor(values, base, calibration)
   let note = calibration?.model
     ? predictCalibrated(calibration.model, calibrationRow(values))
-    : valenceToNote(generalValence(values, base.neutral))
+    : valenceToNote(generalValence(values, base.neutral)) + (calibration?.offset?.value ?? 0)
   note = clampNote(note)
   const yaw = Math.abs(values.yaw ?? 0)
   const penalty = (1 + 0.5 * (1 - burstQuality(burst))) * (yaw > MAX_YAW_GOOD ? 1.15 : 1) * lightPenalty(values.light)
@@ -332,6 +361,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     model: calibration.model ? 'personal' : hasModelValence(last.payload.values) ? 'va' : 'prior',
     baselineDays: personalNeutral(bursts, last.at).days,
     calibrationDays: calibration.days,
+    offsetDays: calibration.model ? 0 : calibration.offset?.days ?? 0,
     signals: ['visage'],
     duo: gap == null ? null : { models: 2, gap: Math.round(gap * 100) / 100, agreement: agreementOf(gap) },
   }
@@ -383,12 +413,13 @@ export function describeFaceMood(est, { features } = {}) {
   parts.push('un seul signal (visage)')
   lines.push(`Confiance ${est.confidence} : ${parts.join(', ')}.`)
   const habit = est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''
+  const notes = est.offsetDays ? `recalé sur vos notes de ${est.offsetDays} jours, que d’autres notes affineront` : 'vos notes, facultatives, l’affineront'
   lines.push(est.model === 'personal'
     ? `Modèle personnel, appris sur vos ${est.calibrationDays} jours notés.`
     : est.model === 'va' && est.duo
-      ? `Deux modèles valence / éveil embarqués${faceModelTag(features)}, appris sur des centaines de milliers de visages, mis en commun${habit} ; vos notes, facultatives, l’affineront.`
+      ? `Deux modèles valence / éveil embarqués${faceModelTag(features)}, appris sur des centaines de milliers de visages, mis en commun${habit} ; ${notes}.`
       : est.model === 'va'
-      ? `Modèle valence / éveil embarqué${faceModelTag(features)}, appris sur des centaines de milliers de visages${habit} ; vos notes, facultatives, l’affineront.`
-      : `Modèle général des expressions${est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''} ; vos notes, facultatives, l’affineront.`)
+      ? `Modèle valence / éveil embarqué${faceModelTag(features)}, appris sur des centaines de milliers de visages${habit} ; ${notes}.`
+      : `Modèle général des expressions${est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''} ; ${notes}.`)
   return lines
 }

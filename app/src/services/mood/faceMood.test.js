@@ -353,3 +353,42 @@ describe('faceMood — lumière du visage (I127b)', () => {
     expect(isEstimatorInput('light')).toBe(false)
   })
 })
+
+describe('faceMood — recalage de départ sur les notes (BE-BIAIS-1, retour (5) du 04/11)', () => {
+  // Un visage lu un peu triste (valence −0,3) alors que la personne note ses journées 4 / 5.
+  const sadFaceDays = (n, score = 4) => Array.from({ length: n }, (_, d) => [
+    burst(at(d + 1, 9), { valence: -0.3, arousal: 0 }),
+    burst(at(d + 1, 13), { valence: -0.3, arousal: 0 }),
+    note(at(d + 1, 21), score),
+  ]).flat()
+  const today = burst(at(0, 8), { valence: -0.3, arousal: 0 })
+
+  it('shifts the estimate toward the notes from 3 noted days', () => {
+    const without = faceMoodEstimate([...sadFaceDays(4).filter((e) => e.type === 'face_burst'), today], { now: NOW })
+    const withNotes = faceMoodEstimate([...sadFaceDays(4), today], { now: NOW })
+    expect(withNotes.offsetDays).toBe(4)
+    expect(withNotes.day.note).toBeGreaterThan(without.day.note + 0.5)
+    // Rétréci vers 0 : jamais au-delà de la note donnée.
+    expect(withNotes.day.note).toBeLessThan(4)
+    expect(without.offsetDays).toBe(0)
+  })
+
+  it('waits for 3 noted days before shifting anything', () => {
+    const two = faceMoodEstimate([...sadFaceDays(2), today], { now: NOW })
+    const none = faceMoodEstimate([...sadFaceDays(2).filter((e) => e.type === 'face_burst'), today], { now: NOW })
+    expect(two.offsetDays).toBe(0)
+    expect(two.day.note).toBe(none.day.note)
+  })
+
+  it('shifts down too when the face reads better than the notes', () => {
+    const days = Array.from({ length: 5 }, (_, d) => [burst(at(d + 1, 9), { valence: 0.5 }), note(at(d + 1, 21), 2)]).flat()
+    const est = faceMoodEstimate([...days, burst(at(0, 8), { valence: 0.5 })], { now: NOW })
+    const alone = faceMoodEstimate([...days.filter((e) => e.type === 'face_burst'), burst(at(0, 8), { valence: 0.5 })], { now: NOW })
+    expect(est.day.note).toBeLessThan(alone.day.note - 0.5)
+  })
+
+  it('says it is adjusted to the notes', () => {
+    const lines = describeFaceMood(faceMoodEstimate([...sadFaceDays(4), today], { now: NOW }))
+    expect(lines.join(' ')).toMatch(/recalé sur vos notes de 4 jours/)
+  })
+})
