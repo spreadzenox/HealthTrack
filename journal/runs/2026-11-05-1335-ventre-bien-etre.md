@@ -29,7 +29,9 @@ Type : 🧠 run de code (13:35 Paris). Priorité : retours du 04/11, point (3), 
   douleur).
 
 ## Après le merge
-- Voir la fin de ce fichier (complété avant le merge si le temps manque : PR ouverte sinon).
+- #722 mergée (squash `ade9361`) : « Frontend (Vitest) », « Build APK », relais, perf, montre et WebView API 28 verts au
+  merge (émulateurs A56 API 35/36 encore en cours). « Build & Release » **v511** (APK 34 548 150 octets). « Play — AAB »,
+  émulateurs et « Play — Alpha » en cours à la fin du run : à noter au run suivant (Alpha remplace la version en examen).
 
 ## Suite
 - Retours du 04/11 restants : (7) selles en photo (SELLES-PHOTO, étude I221 prête), (5) suite de la calibration,
