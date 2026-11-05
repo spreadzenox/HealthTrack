@@ -33,3 +33,15 @@ laisser l'examen de Google aboutir), étape préparée par le run « idées » d
 ## Suite
 - CD-ALPHA-6 : relire le bilan de la porte au premier vrai report.
 - CD-ALPHA-4 si 100811 est encore « En cours d'examen » après 48 h. Ensuite GOLD-a3-2 (dès P37), chantier montre.
+
+## Après les vérifications et le merge
+- Local : `npm run test` 3 154 verts, `npm run lint` 0 erreur, `npm run build` OK, `npm run visual` toutes les pages
+  « ok » (`dashboard-1.png` relu, inchangé).
+- #736 mergée (squash `fbaa9c5`) après 11 checks verts. « Build & Release » vert : **v520** (APK 34 553 586 octets).
+- « Play — abonnements » sur main : porte « rien de neuf dans les abonnements depuis le dernier envoi (`ab16d9a`) :
+  pas d'envoi », étape d'envoi sautée : la porte marche en vrai.
+- « Play — fiche du Store » **annulé** par la file `play-edits` (un seul passage en attente par groupe : celui de
+  « Play — Alpha » l'a remplacé, comme le 04/11). Sans conséquence ici (rien de neuf) ; et une fiche modifiée dont le
+  passage serait annulé partira quand même au passage quotidien de 07:23 UTC, la porte comparant les fichiers au
+  dernier envoi réussi. Noté dans CD-ALPHA-6.
+- « Play — Alpha » : seuls des scripts et des workflows ont changé, rien ne part (100811 reste sur Alpha).
