@@ -33,3 +33,11 @@ midi » ; reste « lissage des creux et pics » de BE-BIAIS).
 ## Suite
 - Retours du 04/11 : tous traités sauf CD-ALPHA-2 (veille), AVIS-RELAIS-3b (quand des avis arrivent),
   ANALYSES-ONGLETS-5 (plus tard). Ensuite : GOLD-a3-2 dès P37, chantier montre (confirmations sur la GT 6 Pro, M4 bis).
+
+## PR et merge
+- PR #732 : 11 checks verts. « WebView trop ancienne (API 28) » avait d'abord échoué pour une raison d'infrastructure
+  (téléchargement de l'émulateur cassé, « Error on ZipFile unknown archive » ; l'app n'a jamais tourné). Relancé seul,
+  le job est passé au vert.
+- **Merge refusé par les permissions de la session** (même cas que #703 le 05/11 01:35). La PR reste ouverte, à jour
+  sur main (`b87419d`) : **le prochain run la merge** (squash) après avoir revérifié les checks. Puis vérifier
+  « Build & Release » (v517 attendue) et l'envoi de la version sur Alpha.
