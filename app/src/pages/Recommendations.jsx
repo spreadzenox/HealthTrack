@@ -4,6 +4,7 @@ import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { rememberPistesSummary } from '../services/pistesSummary'
+import { HorizonHeading, WeeksHorizon } from '../components/Horizon'
 import DomainTag from '../components/DomainTag'
 import { getHiddenLinks, gutLinkKey, hideLink, unhideAllLinks } from '../settings/hiddenLinks'
 import {
@@ -689,6 +690,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
         <SoonSection
           lines={soon.filter((l) => l.id === 'face' || l.id.startsWith('tag:'))}
         />
+        <WeeksHorizon />
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
       </div>
     )
@@ -705,6 +707,9 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
           Données exploratoires : continuez à noter votre bien-être (objectif : 10 jours).
         </p>
       )}
+
+      {/* ANALYSES-ONGLETS-3 : pistes et liens du bien-être comparent le jour même ou 1 à 3 jours de délai */}
+      <HorizonHeading id="days" />
 
       <section className="reco-section">
         <h3 className="reco-section-title">Pistes à tester</h3>
@@ -738,6 +743,8 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
       {hiddenLine}
 
       <SoonSection lines={soon} />
+
+      <WeeksHorizon />
 
       <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
     </div>
@@ -820,6 +827,7 @@ function GutView({ analysis, showGut }) {
       <ReintroductionEntry />
       <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
       <SoonSection lines={lines} />
+      <WeeksHorizon />
       {gut && gut.status !== 'no_notes' && <DoctorReportCard />}
     </div>
   )

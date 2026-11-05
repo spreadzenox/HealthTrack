@@ -98,3 +98,23 @@ describe('GutLinks — chaque piste dit qu’elle porte sur le ventre (VENTRE-BE
     expect(card.querySelector('.domain-tag--gut')).toHaveTextContent('Ventre')
   })
 })
+
+describe('GutLinks — horizons d’effet (ANALYSES-ONGLETS-3)', () => {
+  const win = link({ factor: 'ail', label: 'Ail', when: '4-24', kind: 'window', whenLabel: '4–24 h après' })
+
+  it('range les pistes sous « Dans les heures » puis « Sur quelques jours »', () => {
+    render(<GutLinks gut={{ status: 'links', noteDays: 70, tested: 12, links: [link(), win] }} />)
+    const hours = screen.getByTestId('horizon-hours')
+    const days = screen.getByTestId('horizon-days')
+    expect(hours.compareDocumentPosition(days) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const titles = screen.getAllByText(/→ ventre/).map((n) => n.textContent)
+    expect(titles[0]).toMatch(/^Ail/)
+    expect(titles[1]).toMatch(/^Oignon/)
+  })
+
+  it('pas de titre d’horizon vide', () => {
+    render(<GutLinks gut={{ status: 'links', noteDays: 70, tested: 12, links: [link()] }} />)
+    expect(screen.queryByTestId('horizon-hours')).toBeNull()
+    expect(screen.getByTestId('horizon-days')).toBeTruthy()
+  })
+})

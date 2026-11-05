@@ -1,0 +1,33 @@
+/* ANALYSES-ONGLETS-3 : horizons d'effet (heures, jours, semaines) */
+.horizon-heading {
+  border-left: 3px solid var(--lilac-bar);
+  padding-left: 10px;
+  margin: 4px 0 10px;
+}
+
+.horizon-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.horizon-hint {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.horizon-weeks {
+  margin: 0 0 22px;
+}
+
+.horizon-link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 600;
+  color: var(--lilac-text);
+  text-decoration: none;
+}
