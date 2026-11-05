@@ -28,15 +28,13 @@ import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel } from '../utils/format'
 import { correlationStrength } from '../services/statistics'
 import { useAutoSync } from '../hooks/useAutoSync'
-import { useDetailsMode } from '../hooks/useDetailsMode'
-import { PistesTeaser } from '../components/TodayCards'
 import DetailsToggle from '../components/DetailsToggle'
 import GutLinks from '../components/GutLinks'
 import { GUT_LINKS_MIN_DAYS } from '../services/gutLinks'
 import ReintroductionEntry from '../components/ReintroductionEntry'
 import DoctorReportCard from '../components/DoctorReportCard'
 import AnalysesTabs from '../components/AnalysesTabs'
-import { gutCardMode, homeFocus } from '../settings/onboarding'
+import { gutCardMode } from '../settings/onboarding'
 import { decimalMark } from '../i18n/locale.js'
 import './Recommendations.css'
 
@@ -292,10 +290,6 @@ function NotEnoughData({ currentDays, minDays }) {
 }
 
 /** Seuil des liens avec le bien-être, en une ligne pour les « détails » de la carte lilas (VC-12). */
-function wellbeingWaitLine({ currentDays = 0, minDays }) {
-  return `liens avec le bien-être : ${Math.min(currentDays, minDays)}/${minDays} jours avec une note de bien-être («\u00a0Noter moi-même\u00a0»)`
-}
-
 // ─── Week-end control note ───────────────────────────────────────────────────
 
 function WeekendNote({ control }) {
@@ -753,6 +747,45 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
 // ─── Sous-onglet « Ventre » (retours du 04/11, point 4) ──────────────────────
 
 /**
+ * ANALYSES-ONGLETS-2 (retour (4) du 04/11) : le compte à rebours propre à chaque sous-onglet. Bien-être : jours avec
+ * une note de bien-être (seuil des liens) ; Ventre : jours avec une note du ventre (seuil des pistes repas → ventre).
+ * Plus de « jours avec un repas ou une note du ventre » sous Bien-être.
+ */
+const COUNTDOWN_TEXT = {
+  wellbeing: {
+    title: 'Vos pistes du bien-être arrivent dans',
+    count: 'jours avec une note de bien-être',
+    how: 'Notez votre bien-être depuis la carte de l’Accueil.',
+  },
+  gut: {
+    title: 'Vos pistes du ventre arrivent dans',
+    count: 'jours avec une note du ventre',
+    how: 'Notez votre ventre depuis la carte de l’Accueil.',
+  },
+}
+
+export function AnalysisCountdown({ domain, days, target }) {
+  const text = COUNTDOWN_TEXT[domain]
+  const done = Math.min(Math.max(days || 0, 0), target)
+  const remaining = target - done
+  return (
+    <section className="today-card pistes-card reco-countdown" data-testid={`reco-countdown-${domain}`} aria-labelledby={`reco-countdown-${domain}-title`}>
+      <DomainTag domain={domain} />
+      <h3 id={`reco-countdown-${domain}-title`} className="today-card-title">
+        {text.title} {remaining} jour{remaining > 1 ? 's' : ''}
+      </h3>
+      <div className="pistes-progress" role="progressbar" aria-valuemin={0} aria-valuemax={target} aria-valuenow={done} aria-label={text.count}>
+        <div className="pistes-progress-bar" style={{ width: `${(done / target) * 100}%` }} />
+      </div>
+      <p className="pistes-count">
+        <span className="mono">{done}/{target}</span> {text.count}
+      </p>
+      <p className="today-card-text">{text.how} Avec moins de jours, les résultats seraient surtout dus au hasard.</p>
+    </section>
+  )
+}
+
+/**
  * Seulement le ventre : les pistes aliment → ventre, la réintroduction et le rapport PDF. Les pistes du bien-être
  * restent sous « Bien-être » ; rien n'est recalculé, la même analyse sert les deux sous-onglets.
  */
@@ -776,13 +809,13 @@ function GutView({ analysis, showGut }) {
   const gut = analysis.gut
   const gutLinks = gut?.status === 'links' ? gut.links : []
   const hiddenCount = new Set(gutLinks.map(gutLinkKey).filter((k) => hidden.includes(k))).size
-  const lines = soonLines({ gut }, true)
-  if (!gut || gut.status === 'no_notes') {
-    lines.unshift({ id: 'gut', label: 'Votre ventre et vos repas', progress: `0/${gut?.minDays ?? GUT_LINKS_MIN_DAYS} jours` })
-  }
+  // Le compte des notes du ventre a sa carte : pas de ligne « Votre ventre et vos repas » en plus
+  const lines = soonLines({ gut }, true).filter((l) => l.id !== 'gut')
+  const waiting = !gut || gut.status === 'no_notes' || gut.status === 'too_early'
   return (
     <div className="reco-tab-content" data-testid="reco-gut-view">
-      <p className="reco-intro">Ce qui va avec vos jours de gêne ou de douleur, d’après vos notes du ventre et vos repas.</p>
+      <p className="reco-intro reco-intro--gut">Ce qui va avec vos jours de gêne ou de douleur, d’après vos notes du ventre et vos repas.</p>
+      {waiting && <AnalysisCountdown domain="gut" days={gut?.noteDays ?? 0} target={gut?.minDays ?? GUT_LINKS_MIN_DAYS} />}
       <GutLinks gut={gut} hidden={hidden} onHide={onHide} />
       <ReintroductionEntry />
       <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
@@ -1061,8 +1094,6 @@ export default function Recommendations({ view = 'wellbeing' }) {
   const [error, setError] = useState(null)
   const [revision, setRevision] = useState(0)
   const debugMode = isDebugModeEnabled()
-  const [details, toggleDetails] = useDetailsMode()
-  const [focus] = useState(() => homeFocus())
   // Comme la carte « Votre ventre » de l'Accueil (POL-4) : seulement pour qui suit son ventre
   const [showGut] = useState(() => gutCardMode() !== 'hide')
 
@@ -1128,13 +1159,7 @@ export default function Recommendations({ view = 'wellbeing' }) {
       )}
 
       {waiting && (
-        <PistesTeaser
-          focus={focus}
-          details={details}
-          onToggleDetails={toggleDetails}
-          onPistesPage
-          extraDetail={wellbeingWaitLine(current.correlations)}
-        />
+        <AnalysisCountdown domain="wellbeing" days={current.correlations.currentDays} target={current.correlations.minDays} />
       )}
 
       {loading && (

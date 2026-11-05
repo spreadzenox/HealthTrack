@@ -117,8 +117,10 @@ describe('Recommendations page', () => {
   // VC-2 : sans données, la page dit la même chose que la carte lilas de l'Accueil
   it('shows the same lilac card as the home page when there is no data, without tabs nor jargon', async () => {
     const { container } = renderPage()
-    expect(await screen.findByText(/Vos pistes arrivent dans 21 jours/i)).toBeInTheDocument()
-    expect(container.querySelector('.pistes-count')).toHaveTextContent(/0\/21 jours avec un repas ou une note du ventre/)
+    // ANALYSES-ONGLETS-2 : l'onglet Bien-être compte les jours de bien-être, plus les repas ni le ventre
+    expect(await screen.findByText(/Vos pistes du bien-être arrivent dans 5 jours/i)).toBeInTheDocument()
+    expect(container.querySelector('.pistes-count')).toHaveTextContent(/0\/5 jours avec une note de bien-être/)
+    expect(container.textContent).not.toMatch(/ventre/)
     expect(screen.getByText(/résultats seraient surtout dus au hasard/)).toBeInTheDocument()
     // VC-12 : un seul seuil visible sous la carte lilas
     expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
@@ -138,14 +140,15 @@ describe('Recommendations page', () => {
     expect(screen.queryByRole('link', { name: /onglet (Pistes|Analyses)/i })).not.toBeInTheDocument()
   })
 
-  it('keeps the wellbeing threshold in the lilac card details, not in a second card (VC-12)', async () => {
+  it('counts the days with a wellbeing note in the lilac card, a single threshold (VC-12, ANALYSES-ONGLETS-2)', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(2))
-    renderPage()
-    await screen.findByText(/Vos pistes arrivent dans/i)
+    const { container } = renderPage()
+    expect(await screen.findByText(/Vos pistes du bien-être arrivent dans 3 jours/i)).toBeInTheDocument()
+    expect(container.querySelector('.pistes-count')).toHaveTextContent('2/5 jours avec une note de bien-être')
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '2')
+    expect(screen.getByText('Bien-être', { selector: '.domain-tag' })).toBeInTheDocument()
     expect(screen.queryByText(/Encore 3 jours avec une note de bien-être/)).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /détails/i }))
-    expect(await screen.findByText(/liens avec le bien-être : 2\/5 jours avec une note de bien-être/)).toBeInTheDocument()
   })
 
   it('computes the prediction model only when its note is opened', async () => {
@@ -209,7 +212,7 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue([])
     renderPage()
-    await screen.findByText(/Vos pistes arrivent dans/i)
+    await screen.findByText(/Vos pistes du bien-être arrivent dans/i)
 
     const callsBefore = listEntriesForAnalysis.mock.calls.length
 
@@ -1149,7 +1152,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     expect(within(screen.getByTestId('gut-links')).getByText(/Oignon → ventre/)).toBeInTheDocument()
   })
 
-  it('says « trop tôt » in one discreet line while there are only a few days of gut notes', async () => {
+  it('counts the days of gut notes in the gut tab card while it is too early (ANALYSES-ONGLETS-2)', async () => {
     const { saveOnboarding } = await import('../settings/onboarding')
     saveOnboarding({ goal: 'gut' })
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
@@ -1158,9 +1161,10 @@ describe('Recommendations — votre ventre et vos repas', () => {
       { id: 900, type: 'gut', source: 'app_gut', at: '2026-01-03T10:00:00', created_at: '2026-01-03T10:00:00', payload: { level: 'calm' } },
     ])
     renderPage({ view: 'gut' })
-    const soon = await screen.findByTestId('reco-soon')
-    expect(within(soon).getByText('Votre ventre et vos repas')).toBeInTheDocument()
-    expect(within(soon).getByText('1/28 jours')).toBeInTheDocument()
+    const card = await screen.findByTestId('reco-countdown-gut')
+    expect(within(card).getByText(/arrivent dans 27 jours/)).toBeInTheDocument()
+    expect(within(card).getByText('1/28')).toBeInTheDocument()
+    expect(screen.queryByText('Votre ventre et vos repas')).toBeNull()
     expect(screen.queryByTestId('gut-links')).toBeNull()
   })
 
@@ -1210,9 +1214,14 @@ describe('Recommendations — votre ventre et vos repas', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue([])
     renderPage({ view: 'gut' })
-    const soon = await screen.findByTestId('reco-soon')
-    expect(within(soon).getByText('Votre ventre et vos repas')).toBeInTheDocument()
-    expect(within(soon).getByText('0/28 jours')).toBeInTheDocument()
+    // ANALYSES-ONGLETS-2 : le compte des notes du ventre a sa carte, l'intro est en pêche
+    const card = await screen.findByTestId('reco-countdown-gut')
+    expect(within(card).getByText(/Vos pistes du ventre arrivent dans 28 jours/)).toBeInTheDocument()
+    expect(within(card).getByText('jours avec une note du ventre', { exact: false })).toBeInTheDocument()
+    expect(within(card).getByText('Ventre', { selector: '.domain-tag' })).toBeInTheDocument()
+    expect(screen.getByText(/vos notes du ventre et vos repas/)).toHaveClass('reco-intro--gut')
+    const soon = screen.getByTestId('reco-soon')
+    expect(within(soon).queryByText('Votre ventre et vos repas')).toBeNull()
     expect(within(soon).getByText('dès votre 1re note du ventre')).toBeInTheDocument()
     expect(screen.queryByTestId('reco-basic-waiting')).toBeNull()
   })

@@ -191,9 +191,9 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   l'estimateur et ventre retiré des facteurs des pistes bien-être (test de la règle 5 étendu).
 - [ ] **ANALYSES-ONGLETS** (retour (4)) ~~sous-onglets Bien-être, Ventre, FODMAP, Tendances (Tendances quitte le
   Journal)~~ ✅ 05/11 01:35 (ANALYSES-ONGLETS-1 : `AnalysesTabs`, route `/recommendations/ventre`, `GutView`, carte de
-  l'Accueil vers le bon onglet) → **ANALYSES-ONGLETS-2** : compte à rebours propre à chaque onglet (la carte lilas de
-  l'onglet Bien-être compte encore « jours avec un repas ou une note du ventre » ; y mettre les jours de bien-être,
-  et le compte des notes du ventre dans l'onglet Ventre) ; encart d'intro de l'onglet Ventre en pêche → trois horizons
+  l'Accueil vers le bon onglet) → ~~**ANALYSES-ONGLETS-2** : compte à rebours propre à chaque onglet ; encart d'intro de
+  l'onglet Ventre en pêche~~ ✅ 05/11 02:35 (`AnalysisCountdown` : Bien-être = jours avec une note de bien-être, seuil
+  des liens ; Ventre = jours avec une note du ventre, seuil des pistes repas → ventre) → **ANALYSES-ONGLETS-3** : trois horizons
   (heures, jours, semaines) ; « pistes à tester », « liens repérés » rangés et expliqués.
 - [ ] **BE-BIAIS** (retour (5)) mesurer le biais (visage neutre lu triste ou méprisant : 42 % tristesse, 11 % mépris
   sur 32 lectures alors qu'il allait bien), recalage personnel, calibration de départ (notes de bien-être demandées les
