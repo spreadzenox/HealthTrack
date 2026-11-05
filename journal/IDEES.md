@@ -9,6 +9,78 @@
 
 ---
 
+## Run du 05/11/2026 08:35 (Paris) — selles en photo (retour (7) du 04/11) : ce que l'on sait, ce que l'on fera
+
+Sources : retours du propriétaire (prompt de la routine), code du dépôt (`app/src/services/stool.js`,
+`StoolLine.jsx`, `DailyJournal.jsx`, `relay/src/server.js`, `relay/src/prompts.js`, `app/store/data-safety`),
+recherches web du jour (liste en bas). Aucune donnée réelle consultée.
+
+### I221 — Type de Bristol estimé par photo, discret, rien gardé — impact 4, faisabilité 4
+**Besoin** : la forme des selles est ce que le médecin regarde le plus avec la douleur ; les gens se trompent souvent
+de type en le choisissant eux-mêmes, et la photo évite d'avoir à comparer à une échelle.
+
+**Ce que dit la recherche** :
+- Une étude de Cedars-Sinai (Am J Gastroenterol 2022, DOI 10.14309/ajg.0000000000001723 ; SII à diarrhée, photos
+  de toutes les selles pendant 2 semaines, 2 gastro-entérologues comme référence) : un modèle spécialisé, entraîné
+  sur environ 30 000 images annotées, s'accorde avec les experts (environ 95 % contre 89 % pour les patients, selon
+  la presse ; texte intégral non lu) [T].
+- Un réseau ResNet entraîné sur 614 images n'atteint que 74 % sur 272 images de test (arXiv 1903.10578) [T] : avec
+  peu de données, le type exact est difficile ; les erreurs sont surtout d'un type voisin [H].
+- **Aucune étude trouvée** sur un modèle généraliste (Gemini, GPT) pour Bristol. Sur un autre sujet visuel médical
+  (polypes, arXiv 2503.21840, 03/2025), les modèles généralistes classent bien moins bien qu'un réseau spécialisé
+  (Gemini 1.5 Pro : F1 6 %) [V résumé]. Il faut donc partir de l'idée que le type exact sera souvent faux d'un cran
+  et que les **trois formes** (dures 1–2, normales 3–5, liquides 6–7, déjà dans `stool.js`) seront plus sûres [H].
+
+**Décisions proposées (aucune ne demande de réponse du propriétaire)** :
+1. **Où** : pas sur l'Accueil. Dans le Journal, la journée a déjà la rubrique « Selles » : y ajouter une ligne
+   discrète « Estimer avec une photo » à côté du choix manuel, visible seulement si l'objectif « Mon ventre » est
+   choisi (comme la carte ventre). Ailleurs, rien.
+2. **Geste** : toucher la ligne ouvre l'appareil photo (pas la galerie par défaut : une image de selles n'a rien à
+   faire dans la galerie du téléphone), une phrase avant le premier envoi : « La photo part à l'analyse puis est
+   effacée. Elle n'est gardée ni sur le téléphone ni sur nos serveurs. » Réduite à 512 px et sans EXIF avant
+   l'envoi (comme les repas, `jpeg.js` côté relais en plus).
+3. **Résultat** : le choix des 3 formes, la forme estimée présélectionnée, le type 1–7 en dessous (« estimé : type 4 »),
+   modifiable, et rien n'est enregistré avant « Enregistrer ». Si le modèle ne voit pas de selles ou hésite : « Photo
+   difficile à lire, choisissez vous-même. » Entrée `stool` inchangée (`{ form, bristol }`) plus `estimated: true` et
+   `estimate: { bristol, form }` (ce que proposait le modèle) : aucune migration, les anciennes entrées restent
+   valides, l'export JSON garde les deux champs.
+4. **Fiabilité honnête** : on mesure sur la personne même, sans aucune image : nombre d'estimations, nombre corrigées
+   (forme, puis type). Après 5 photos, une ligne discrète « Vous avez corrigé 1 estimation sur 6 » ; si plus d'une sur
+   trois est corrigée, la ligne « Estimer avec une photo » le dit (« souvent corrigée chez vous »). Pas de pourcentage
+   général inventé.
+5. **Rien de médical** : le modèle ne décrit que la forme. Il ne commente ni la couleur, ni le sang, ni le mucus (ce
+   serait un avis médical, et un faux « rien vu » rassurerait à tort). La phrase fixe « quand consulter »
+   (`WHEN_TO_SEE_DOCTOR`, qui cite le sang dans les selles) s'affiche une fois sous le résultat, pas en refrain.
+6. **Relais** : nouvelle route `POST /v1/stool/analyze` (même vérification d'installation, d'intégrité, de quotas et
+   de plafond global que les repas), schéma de réponse `{ visible: bool, bristol: 1..7 | null, confidence: 'low' |
+   'medium' | 'high' }`, **toujours Flash-Lite** (tâche simple, coût environ 10 fois moindre qu'un repas Gold).
+   Décompte : une analyse IA, comme un repas (même compteur visible). Journaux sans image ni résultat, comme les repas
+   (`event: 'analyze', kind: 'stool'`). Variante sideload : même consigne, envoyée avec la clé Gemini de la personne.
+7. **Règle 5** : la forme des selles reste côté ventre (Y du ventre), jamais facteur des pistes bien-être ;
+   `analysisEngine` l'ignore déjà. Rien ne change.
+8. **Sécurité des données** : « Photos » est déjà déclaré (collectées, facultatives, fonctionnement de l'app) pour les
+   repas ; une analyse de selles relève du même type et de la même finalité : **aucun changement du formulaire**. La
+   confidentialité (`docs/confidentialite/`) gagne une phrase dans le paragraphe des analyses IA. Déclaration « Applis
+   de santé » : rien de nouveau (suivi digestif déjà déclaré) [H, à revérifier au moment du run].
+
+**Risques** : filtres de sécurité de Vertex qui refuseraient l'image (catégories sexuelles, peu probable) : la route
+répond alors « photo difficile à lire » sans consommer de crédit ; test au banc avec une image synthétique (une forme
+dessinée, jamais une vraie photo) avant d'ouvrir la ligne. Aucune image réelle de selles dans le dépôt, même
+publique (jeux Roboflow : licence inconnue).
+
+**Découpage en runs** (BACKLOG SELLES-PHOTO) : (1) relais, route, consigne et schéma, tests sur réponses simulées ;
+(2) app, service `analyzeStoolPhoto` et ligne du Journal, captures `--light`/sombre sur démo ; (3) fiabilité
+personnelle, confidentialité, Nouveautés. Ensuite seulement : le rapport PDF peut compter « estimées par photo ».
+
+**Sources (05/11/2026)** :
+- Cedars-Sinai, application d'IA pour la forme des selles, AJG 2022 — https://www.news-medical.net/news/20220710/Artificial-Intelligence-based-smartphone-app-for-characterizing-stool-form.aspx [T]
+- TechTarget, même étude — https://techtarget.com/healthtechanalytics/news/366590713/Artificial-Intelligence-App-Outperforms-Patient-Reported-Stool-Assessments [T]
+- Choy et al., réseau profond sur images de selles — https://arxiv.org/pdf/1903.10578 [T]
+- Khalafi et al., modèles vision-langage contre réseaux spécialisés (polypes) — https://arxiv.org/abs/2503.21840 [V résumé]
+- Validation iconographique de l'échelle de Bristol, Fr J Urol 2025 — https://pubmed.ncbi.nlm.nih.gov/40774377/ [T]
+
+---
+
 ## Run du 04/11/2026 20:35 (Paris) — retours du propriétaire du 04/11 19:45 : livraison continue, retours des utilisateurs, ventre et bien-être
 
 Sources : retours du propriétaire (prompt de la routine), code du dépôt (`app/src/config/feedback.js`,

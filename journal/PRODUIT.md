@@ -14,7 +14,7 @@
 > ventre pour ajuster le bien-être (modèle proposé I220, réponse attendue ; étiquette « Ventre » / « Bien-être » sur
 > chaque piste d'Analyses le 04/11 21:35, VENTRE-BE-1) ; (4) Analyses en sous-onglets et trois
 > horizons ; (5) bien-être sous-estimé : biais mesuré, calibration de départ 3 à 5 jours ; (6) détail d'une lecture
-> en touchant la courbe ; (7) selles en photo (Bristol estimé, discret, rien gardé) ; (8) Journal, Sources,
+> en touchant la courbe ; (7) selles en photo (Bristol estimé, discret, rien gardé ; étude du 05/11 08:35, `IDEES.md` I221, 3 runs SELLES-PHOTO-1 à 3) ; (8) Journal, Sources,
 > Nouveautés, Données, Paramètres, Confidentialité : ok.
 
 | Sujet | Décision |
