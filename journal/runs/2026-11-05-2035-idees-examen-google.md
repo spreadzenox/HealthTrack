@@ -31,3 +31,7 @@ Type : 💡 run « idées » (20:35 Paris), sans code produit. Avant la veille :
 ## Suite
 - Run de code suivant : CD-ALPHA-5 (petit, testable), puis la suite du backlog (GOLD-a3-2 dès P37, chantier montre).
 - CD-ALPHA-4 si le propriétaire voit encore « En cours d'examen » après 48 h sur 100811.
+
+## Après le merge
+- #732 mergée (squash `eaf6263`) après 11 checks verts (API 28 relancé). « Build & Release » vert : **v518**
+  (APK 34 553 566 octets). Alpha : envoi espacé, 100811 y reste jusqu'au 06/11 vers 16:30 UTC au plus tôt.
