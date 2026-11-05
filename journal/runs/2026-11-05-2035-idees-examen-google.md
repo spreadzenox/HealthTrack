@@ -35,3 +35,9 @@ Type : 💡 run « idées » (20:35 Paris), sans code produit. Avant la veille :
 ## Après le merge
 - #732 mergée (squash `eaf6263`) après 11 checks verts (API 28 relancé). « Build & Release » vert : **v518**
   (APK 34 553 566 octets). Alpha : envoi espacé, 100811 y reste jusqu'au 06/11 vers 16:30 UTC au plus tôt.
+
+## CI-OLDWV-1 (dans #735)
+- Le même faux positif est revenu sur #735 (journal seul) : il bloquerait aussi la livraison continue sur main.
+  `.github/scripts/old-webview/check.sh` ne compte plus que les blocs AndroidRuntime « Process: com.healthtrack.app »
+  (les autres plantages sont affichés à part au bilan). `bash -n` OK ; vérifié sur le logcat réel (0) et sur un
+  plantage synthétique de l'app (1). Le contrôle « processus vivant » reste inchangé.

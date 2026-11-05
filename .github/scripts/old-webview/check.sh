@@ -29,13 +29,16 @@ done
 timeout 30 adb logcat -d > "$OUT/logcat.txt"
 
 ALIVE=$(timeout 15 adb shell pidof "$PKG" | tr -d '\r')
-CRASH=$(grep -c "FATAL EXCEPTION" "$OUT/logcat.txt" || true)
+# Seuls les plantages du processus de l'app comptent (CI-OLDWV-1, 05/11) : l'outil uiautomator lui-même plante
+# parfois (« FATAL EXCEPTION: UiAutomation », sans ligne « Process: »), ce qui n'est pas un défaut de l'app.
+CRASH=$(grep -cE "AndroidRuntime: Process: $PKG(,|:| )" "$OUT/logcat.txt" || true)
+OTHER=$(( $(grep -c "FATAL EXCEPTION" "$OUT/logcat.txt" || true) - CRASH ))
 SHOWN=$(grep -c "Android System WebView" "$OUT/ui.xml" 2>/dev/null || true)
 
 {
   echo "## WebView trop ancienne (API 28)"
   echo "- WebView de l'image : ${WV:-inconnue} (majeure ${MAJOR:-?}) ; minimum déclaré : $MIN"
-  echo "- Processus vivant : $([ -n "$ALIVE" ] && echo oui || echo NON) ; plantages Java : $CRASH"
+  echo "- Processus vivant : $([ -n "$ALIVE" ] && echo oui || echo NON) ; plantages Java : $CRASH (autres processus : $OTHER)"
   echo "- Page « Mettez à jour Android System WebView » lue à l'écran : $([ "$SHOWN" -gt 0 ] && echo oui || echo non)"
 } > old_webview.md
 cat old_webview.md
