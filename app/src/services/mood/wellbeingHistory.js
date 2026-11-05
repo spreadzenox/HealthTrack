@@ -19,7 +19,8 @@ import { moodFaceBursts } from '../faceBursts'
 import { BASELINE_DAYS, estimateBurst, isPoorReading, notesAgreement, personalCalibration, personalNeutral, readingWeight, weightedMedian } from './faceMood'
 import { FACE_MOOD_MIN_READINGS } from './faceMoodDays'
 
-export const PERIODS = { day: 1, week: 7, month: 30 }
+// fortnight : les 14 jours de « Votre bien-être » dans Analyses → Tendances (signalement du 05/11).
+export const PERIODS = { day: 1, week: 7, fortnight: 14, month: 30 }
 /** Au-delà, la vue « jour » regroupe les lectures par heure (≈ 12 px par point sur la largeur de la courbe). */
 export const DAY_MAX_POINTS = 24
 
@@ -162,7 +163,7 @@ function byHour(readings, date, burstAt) {
 
 /**
  * @param {object[]} entries  entrées `face_burst` et `wellbeing` (les autres sont ignorées)
- * @param {{ period?: 'day'|'week'|'month', now?: Date }} [opts]
+ * @param {{ period?: 'day'|'week'|'fortnight'|'month', now?: Date }} [opts]
  * @returns {{ period, from: string, points: { at: string, date: string, note: number, low?: number, high?: number,
  *   readings: number, few?: boolean, hourly?: boolean, detail: ReturnType<typeof pointDetail> }[], notes: { at: string, score: number }[], readings: number, days: number,
  *   mean: number|null, valence: number|null, arousal: number|null,
