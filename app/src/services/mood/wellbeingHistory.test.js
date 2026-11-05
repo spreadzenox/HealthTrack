@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { wellbeingHistory, expressionMix, EXPRESSIONS, DAY_MAX_POINTS, viewEnd, habitShifts, habitualMix } from './wellbeingHistory'
+import { wellbeingHistory, expressionMix, EXPRESSIONS, DAY_MAX_POINTS, viewEnd, habitShifts, habitualMix, dayTrend, TREND_SIGMA_MIN } from './wellbeingHistory'
 
 const NEUTRAL = { smile: 0.1, duchenne: 0.05, mouthFrown: 0.05, browDown: 0.15, browInnerUp: 0.1, yaw: 4 }
 const EX_ZERO = Object.fromEntries(EXPRESSIONS.map(({ key }) => [key, 0]))
@@ -178,5 +178,57 @@ describe('wellbeingHistory — expressions comparées à l’habitude (BE-BIAIS-
     expect(habitShifts(h.expressions)).toBeNull()
     expect(habitualMix(restDays(2), NOW)).toBeNull()
     expect(habitualMix(restDays(3), NOW).days).toBe(3)
+  })
+})
+
+describe('wellbeingHistory — tendance lissée de la vue Jour (BE-BIAIS-4, retour (5) du 04/11 : creux à 8 h, pic à midi)', () => {
+  const r = (h, m, note, halfWidth = 0.5) => ({ at: new Date(2026, 9, 24, h, m).toISOString(), note, halfWidth })
+
+  it('une lecture isolée très basse ne crée plus de creux : la tendance reste près de la journée', () => {
+    const readings = [r(7, 0, 3.5), r(7, 30, 3.6), r(8, 15, 1.2), r(9, 30, 3.4), r(10, 0, 3.5), r(11, 0, 3.6)]
+    const t = dayTrend(readings)
+    expect(t).toHaveLength(readings.length)
+    const dip = t.find((p) => p.at === readings[2].at)
+    expect(dip.note).toBeGreaterThan(2.6)
+    expect(dip.note).toBeLessThan(3.5)
+    // Les lectures restent telles quelles : seule la ligne est lissée.
+    expect(readings[2].note).toBe(1.2)
+  })
+
+  it('un vrai changement qui dure plusieurs heures reste visible', () => {
+    const readings = []
+    for (let h = 7; h < 11; h++) readings.push(r(h, 0, 2), r(h, 30, 2))
+    for (let h = 14; h < 18; h++) readings.push(r(h, 0, 4), r(h, 30, 4))
+    const t = dayTrend(readings)
+    expect(t[0].note).toBeLessThan(2.4)
+    expect(t[t.length - 1].note).toBeGreaterThan(3.6)
+  })
+
+  it('les lectures nettes pèsent plus que les lectures peu nettes', () => {
+    const readings = [r(12, 0, 4, 0.3), r(12, 10, 1, 1.5), r(12, 20, 4, 0.3)]
+    const t = dayTrend(readings)
+    expect(t[1].note).toBeGreaterThan(3.5)
+  })
+
+  it('rien sous 3 lectures ; la vue Jour porte la tendance, la semaine non', () => {
+    expect(dayTrend([r(8, 0, 3), r(9, 0, 2)])).toEqual([])
+    expect(TREND_SIGMA_MIN).toBe(60)
+    const entries = [burst(at(0, 8), { valence: 0.2 }), burst(at(0, 12), { valence: 0.4 }), burst(at(0, 15), { valence: -0.3 })]
+    const day = wellbeingHistory(entries, { period: 'day', now: NOW })
+    expect(day.trend.map((p) => p.at)).toEqual(day.points.map((p) => p.at))
+    expect(day.trend.every((p) => p.note >= 0 && p.note <= 5)).toBe(true)
+    expect(wellbeingHistory(entries, { period: 'week', now: NOW }).trend).toEqual([])
+  })
+
+  it('regroupée par heure, la tendance suit les points des heures, calculée sur toutes les lectures', () => {
+    const entries = []
+    for (let m = 0; m < 120; m += 5) entries.push(burst(new Date(2026, 9, 24, 8, m), { valence: -0.4 }))
+    for (let m = 0; m < 60; m += 15) entries.push(burst(new Date(2026, 9, 24, 10, m), { valence: 0.6 }))
+    const h = wellbeingHistory(entries, { period: 'day', now: NOW })
+    expect(h.points.every((p) => p.hourly)).toBe(true)
+    expect(h.trend.map((p) => p.at)).toEqual(h.points.map((p) => p.at))
+    // 24 lectures basses contre 4 hautes : l'heure de 10 h est tirée vers le bas, pas l'inverse.
+    expect(h.trend[2].note).toBeLessThan(h.points[2].note)
+    expect(h.trend[0].note - h.points[0].note).toBeLessThan(h.points[2].note - h.trend[2].note)
   })
 })
