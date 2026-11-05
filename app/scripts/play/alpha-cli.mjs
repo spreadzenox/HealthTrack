@@ -2,18 +2,20 @@
 /**
  * CLI du workflow « Play — Alpha (livraison continue) » : `node scripts/play/alpha-cli.mjs` (depuis app/).
  * Variables : HEAD_SHA (commit de main), GITHUB_TOKEN, GITHUB_REPOSITORY, PLAY_ACCESS_TOKEN, ALPHA_AUTO ("false"
- * coupe l'envoi), PLAY_PACKAGE, GITHUB_STEP_SUMMARY. Décision : alphaGate.mjs. Code de sortie : 0 (envoyé, ou rien à
+ * coupe l'envoi), ALPHA_MIN_HOURS (écart minimal entre deux envois, 24 par défaut ; 0 le coupe), PLAY_PACKAGE, GITHUB_STEP_SUMMARY. Décision : alphaGate.mjs. Code de sortie : 0 (envoyé, ou rien à
  * faire), 1 erreur d'envoi (l'erreur exacte est dans le résumé ; rien n'est contourné).
  */
 import { execFileSync } from 'node:child_process'
 import { appendFileSync, readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { decideAlpha, commitCountOf, findCommitByCount, VERSION_OFFSET } from './alphaGate.mjs'
+import { decideAlpha, commitCountOf, findCommitByCount, VERSION_OFFSET, DEFAULT_MIN_HOURS } from './alphaGate.mjs'
 import { publishBundle, readTracks, formatTracks, buildReleaseNotes, isAccessDenied } from './publish.mjs'
 
 const { HEAD_SHA: sha, GITHUB_TOKEN: ghToken, GITHUB_REPOSITORY: repo, PLAY_ACCESS_TOKEN: token, GITHUB_STEP_SUMMARY: summaryFile } = process.env
 const packageName = process.env.PLAY_PACKAGE || 'fr.jpesquet.sante'
 const enabled = process.env.ALPHA_AUTO !== 'false'
+const minHoursEnv = Number(process.env.ALPHA_MIN_HOURS)
+const minHours = process.env.ALPHA_MIN_HOURS && Number.isFinite(minHoursEnv) ? minHoursEnv : DEFAULT_MIN_HOURS
 const summary = (lines) => {
   if (summaryFile) appendFileSync(summaryFile, `${lines.join('\n')}\n`)
   console.log(lines.join('\n'))
@@ -49,13 +51,15 @@ const filesSince = (from) => git('diff', '--name-only', from, sha).split('\n').f
 
 const alphaSha = shaOf(alphaVersionCode)
 const changedFiles = alphaSha ? filesSince(alphaSha) : null
+// Date de la version de l'alpha (son commit sur main) : envois espacés de minHours (CD-ALPHA-2).
+const alphaSentAt = alphaSha ? git('show', '-s', '--format=%cI', alphaSha) : null
 // Commit de journal seul : il peut reprendre la version du test interne (voir alphaGate.mjs).
 const internalSha = shaOf(internalVersionCode)
 const inherited = internalSha ? { versionCode: internalVersionCode, filesSince: filesSince(internalSha) } : null
 
-const decision = decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited, enabled })
+const decision = decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited, enabled, alphaSentAt, minHours })
 const versionCode = decision.versionCode ?? candidateVersionCode
-summary(['## Livraison continue vers l’alpha', '', `- Commit \`${sha.slice(0, 7)}\` · versionCode ${candidateVersionCode} · alpha : ${alphaVersionCode ?? 'vide'} · test interne : ${internalVersionCode ?? 'vide'}`, `- Décision : **${decision.send ? `envoi de ${versionCode}` : decision.wait ? 'en attente' : 'pas d’envoi'}** (${decision.reason})`])
+summary(['## Livraison continue vers l’alpha', '', `- Commit \`${sha.slice(0, 7)}\` · versionCode ${candidateVersionCode} · alpha : ${alphaVersionCode ?? 'vide'} · test interne : ${internalVersionCode ?? 'vide'}`, `- Décision : **${decision.send ? `envoi de ${versionCode}` : decision.wait ? 'en attente' : decision.spaced ? 'envoi espacé' : 'pas d’envoi'}** (${decision.reason})`])
 if (!decision.send) process.exit(0)
 
 const dir = resolve(process.cwd(), 'src/data/changelog')
