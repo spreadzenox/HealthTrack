@@ -28,3 +28,11 @@ Type : 🔧 run de code (16:35 Paris). Priorité : retours du 04/11, point (7), 
   `/journal` clair et sombre) : `journal-1.png` relu (« Vous avez corrigé 2 estimations sur 6. » sous la ligne),
   `journal-2.png` (« Normales · type 4 · photo »).
 - Données de démo du script visuel : 6 notes de selles estimées par photo (dont 2 corrigées) les 6 derniers jours.
+
+## Après le merge
+- Premier « Frontend (Vitest) » rouge sur la PR : un test du Journal (`mockResolvedValueOnce`) voyait sa première réponse
+  prise par la nouvelle lecture des selles selon l'ordre des effets ; rendu indépendant du type lu, corrigé.
+- #728 mergée (squash `8d5c73b`) après 11 checks verts (Vitest, Build APK, relais, montre, perf, WebView API 28,
+  Android 12L, bord à bord, émulateurs A56 API 35 et 36). Fusion : un 500 de GitHub au premier essai, passée au second.
+- « Build & Release » : échec à l'étape « Create Release » sur un **HTTP 502 de GitHub** (aucun tag créé) ; job relancé.
+  Résultat de la relance : à reporter (en cours à la fin de ce commit).
