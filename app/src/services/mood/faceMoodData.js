@@ -41,3 +41,19 @@ export async function loadWellbeingHistory({ list = listEntries, period = 'week'
   const manual = bursts.length ? notes : await list({ type: 'wellbeing', since, limit: Infinity })
   return wellbeingHistory([...bursts, ...manual], { period, now })
 }
+
+/**
+ * Analyses → Tendances (signalement du 05/11) : la même série que l'historique du bien-être et la carte de l'Accueil,
+ * sur les 14 derniers jours et sur aujourd'hui, en une seule lecture de la base.
+ * @returns {Promise<{ days: ReturnType<typeof wellbeingHistory>, today: ReturnType<typeof wellbeingHistory> }>}
+ */
+export async function loadWellbeingTrends({ list = listEntries, now = new Date() } = {}) {
+  const { bursts, notes } = await loadFaceMoodEntries({ list })
+  const since = new Date(now.getTime() - 31 * 86400000).toISOString()
+  const manual = bursts.length ? notes : await list({ type: 'wellbeing', since, limit: Infinity })
+  const entries = [...bursts, ...manual]
+  return {
+    days: wellbeingHistory(entries, { period: 'fortnight', now }),
+    today: wellbeingHistory(entries, { period: 'day', now }),
+  }
+}

@@ -12,14 +12,14 @@ import { loadWellbeingHistory } from '../services/mood/faceMoodData'
 import { frDecimal } from '../services/today'
 import { appLocale } from '../i18n/locale.js'
 import { faceModelTag } from '../services/mood/modelName'
-import { habitShifts, viewEnd } from '../services/mood/wellbeingHistory'
+import { PERIODS, habitShifts, viewEnd } from '../services/mood/wellbeingHistory'
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Jour' },
   { id: 'week', label: 'Semaine' },
   { id: 'month', label: 'Mois' },
 ]
-const PERIOD_WORDS = { day: 'aujourd’hui', week: 'ces 7 jours', month: 'ces 30 jours' }
+const PERIOD_WORDS = { day: 'aujourd’hui', week: 'ces 7 jours', fortnight: 'ces 14 jours', month: 'ces 30 jours' }
 const PERIOD_NOW = { day: 'Aujourd’hui', week: 'Ces 7 jours', month: 'Ces 30 jours' }
 const STEP_WORDS = {
   day: ['Jour précédent', 'Jour suivant'],
@@ -72,10 +72,12 @@ function axisLabels(period, from) {
   if (period === 'day') {
     return [6, 12, 18].map((h) => ({ at: new Date(t0.getTime() + h * 3600000).toISOString(), text: `${h} h` }))
   }
-  const n = period === 'week' ? 7 : 30
-  const step = period === 'week' ? 1 : 7
+  const n = PERIODS[period]
+  // 14 jours (Tendances) : une date tous les 3 jours, jusqu'à aujourd'hui.
+  const step = period === 'week' ? 1 : period === 'fortnight' ? 3 : 7
+  const first = period === 'fortnight' ? (n - 1) % step : 0
   const out = []
-  for (let i = 0; i < n; i += step) {
+  for (let i = first; i < n; i += step) {
     const d = new Date(t0)
     d.setDate(d.getDate() + i)
     d.setHours(12)
@@ -244,7 +246,7 @@ function ExpressionMatrix({ mix }) {
 }
 
 /** Détail du point touché (BE-HISTO-DETAIL, retour (6) du 04/11) : ce que les modèles ont lu, jamais un diagnostic. */
-function ReadingDetail({ point, period, onClose }) {
+export function ReadingDetail({ point, period, onClose }) {
   const title = pointTitle(point, period)
   const d = point.detail ?? { readings: point.readings ?? 1, poor: 0, valence: null, arousal: null, expressions: null }
   const hasRange = period === 'day' && Number.isFinite(point.low) && Number.isFinite(point.high)

@@ -170,6 +170,17 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     suspects », « pas une cause », tirets cadratins, énumérations par trois), 2 phrases de refrain supprimées ;
     `wording.test.js` applique `SLOP_WORDING` à chaque titre et phrase des notes.
 
+## 🚑 Signalement du propriétaire du 05/11 vers 11:45 — Tendances : « Votre bien-être » sans les lectures du visage
+
+- [x] **TENDANCES-VISAGE** ✅ 05/11 12:35 : `WellbeingCharts.jsx` lit maintenant la même série que l'historique du
+  bien-être et la carte de l'Accueil (`loadWellbeingTrends` dans `faceMoodData.js` → `wellbeingHistory`, nouvelle
+  période `fortnight` de 14 jours, et `day` pour aujourd'hui) ; notes à la main en losanges à part ; légende (estimé,
+  noté à la main, fourchette, peu de lectures) ; toucher un point ouvre `ReadingDetail` (exporté de
+  `WellbeingHistory.jsx`) ; « Attendu d'après vos habitudes » dit qu'il vient des jours notés à la main et se compare à
+  « votre note du jour » (au lieu de « réel »). Règle 5 inchangée (courbes = entrées Y seulement). Tests : 11 dans
+  `WellbeingCharts.test.jsx` (dont « montre les lectures du visage même sans aucune note », rouge sur l'ancien code).
+  Captures avant / après : `journal/captures/tendances-visage/`. Reste éventuel : point « attendu » sur la courbe.
+
 ## 🗣️ Retours du propriétaire du 04/11 vers 19:45 — priorité des runs de code juste après le compte rendu du 02/11
 Un run = une étape testable ; les runs « idées » préparent maquettes et études (I218–I220 dans `IDEES.md`).
 - [x] **CD-ALPHA-1** (04/11 20:35, retour (1), priorité absolue) Version actuelle du test interne (653e48c, versionCode
@@ -192,8 +203,10 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   anonyme par thème (Flash-Lite, sans citation ni donnée de santé) pour pouvoir corriger ou répondre → avis du Play
   Store en lecture (`reviews.list`). Plantages : VITALS-1 (attend P43).
 - [ ] **VENTRE-BE-1** (retour (3), étude I220) ~~d'ici la réponse du propriétaire : chaque piste dit « Ventre » ou
-  « Bien-être » (étiquette pêche / menthe)~~ ✅ 04/11 21:35 (`DomainTag`, Analyses) ; puis, si accord, notes du ventre comme auto-déclaration à poids faible de
-  l'estimateur et ventre retiré des facteurs des pistes bien-être (test de la règle 5 étendu).
+  « Bien-être » (étiquette pêche / menthe)~~ ✅ 04/11 21:35 (`DomainTag`, Analyses) ; **I220 OUI (propriétaire, 05/11)** :
+  → **VENTRE-BE-2** (prochain run de code) : une note « gêne » ou « douleur » entre dans l'estimation du bien-être comme
+  auto-déclaration à poids faible, déclarée dans les entrées de l'estimateur, et le ventre sort des facteurs des pistes
+  « bien-être » (test de la règle 5 étendu au ventre) ; parcours « Mon ventre » intact.
 - [ ] **ANALYSES-ONGLETS** (retour (4)) ~~sous-onglets Bien-être, Ventre, FODMAP, Tendances (Tendances quitte le
   Journal)~~ ✅ 05/11 01:35 (ANALYSES-ONGLETS-1 : `AnalysesTabs`, route `/recommendations/ventre`, `GutView`, carte de
   l'Accueil vers le bon onglet) → ~~**ANALYSES-ONGLETS-2** : compte à rebours propre à chaque onglet ; encart d'intro de

@@ -7,6 +7,10 @@
 
 ## 1. Décisions (résumé fidèle)
 
+> **Signalement du 05/11 vers 11:45** : Analyses → Tendances, « Votre bien-être » ne montrait que les notes à la main ;
+> corrigé le 05/11 12:35 (TENDANCES-VISAGE : même série estimée que l'historique et l'Accueil, notes en losanges,
+> détail au toucher, « Attendu » comparé à la note du jour). **I220 OUI** (05/11) : VENTRE-BE-2 au prochain run de code.
+>
 > **Retours du 04/11 vers 19:45** (priorité des runs de code juste après le compte rendu du 02/11 ; détail et état dans
 > `BACKLOG.md`, section « Retours du propriétaire du 04/11 ») : (1) livraison continue vers Alpha par la CI, sans clic
 > du propriétaire (fait le 04/11 20:35, CD-ALPHA-1 ; trou des commits de journal comblé le 05/11 03:35, CD-ALPHA-3) ; (2) retours des utilisateurs lus par la routine (« Votre avis »
