@@ -27,3 +27,9 @@ Type : 🎨 run de code (06:35 Paris). Priorité : retours du 04/11, point (5) (
 - BE-BIAIS-2 : calibration de départ (demander une note de bien-être chaque jour les 3 à 5 premiers jours de lecture
   du visage, discrètement dans la carte Bien-être, jamais bloquant), puis BE-BIAIS-3 : recentrer la grille des
   expressions sur l'habitude de la personne (« tristesse » au repos) et fiabilité affichée.
+
+## Après le merge
+- PR #710 mergée (squash `135878e`) : Vitest, Build APK et Relais verts. « Build & Release » : **v504**, APK
+  34 543 746 octets. Émulateur Galaxy A56 vert. « Play — Alpha » : **100792 placée sur l'alpha** (même AAB que le test
+  interne ; en examen chez Google).
+- PR #709 (BE-HISTO-DETAIL-2, run de 05:35) laissée à son run : verte et sans conflit à 06:45.
