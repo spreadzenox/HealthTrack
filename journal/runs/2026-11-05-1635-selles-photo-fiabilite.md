@@ -35,4 +35,5 @@ Type : 🔧 run de code (16:35 Paris). Priorité : retours du 04/11, point (7), 
 - #728 mergée (squash `8d5c73b`) après 11 checks verts (Vitest, Build APK, relais, montre, perf, WebView API 28,
   Android 12L, bord à bord, émulateurs A56 API 35 et 36). Fusion : un 500 de GitHub au premier essai, passée au second.
 - « Build & Release » : échec à l'étape « Create Release » sur un **HTTP 502 de GitHub** (aucun tag créé) ; job relancé.
-  Résultat de la relance : à reporter (en cours à la fin de ce commit).
+  Relance verte : **v514** (APK 34 552 990 octets). « Play — AAB » vert ; « Play — Alpha (livraison continue) » attend
+  la fin de l'émulateur A56 pour envoyer cette version (100809 = v513 déjà sur l'alpha, en examen chez Google).
