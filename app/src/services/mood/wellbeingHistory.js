@@ -16,7 +16,7 @@
  */
 import { localDateKey } from '../analysisEngine'
 import { moodFaceBursts } from '../faceBursts'
-import { estimateBurst, isPoorReading, personalCalibration, personalNeutral, readingWeight, weightedMedian } from './faceMood'
+import { BASELINE_DAYS, estimateBurst, isPoorReading, notesAgreement, personalCalibration, personalNeutral, readingWeight, weightedMedian } from './faceMood'
 import { FACE_MOOD_MIN_READINGS } from './faceMoodDays'
 
 export const PERIODS = { day: 1, week: 7, month: 30 }
@@ -73,6 +73,53 @@ export function expressionMix(bursts) {
   }
 }
 
+/** Jours de lectures avec expressions qu'il faut au moins pour parler d'une habitude. */
+export const HABIT_MIN_DAYS = 3
+/** Écart à l'habitude (en part, 0–1) à partir duquel la phrase le mentionne. */
+export const HABIT_SHIFT = 0.05
+
+/**
+ * Expressions habituelles de la personne (BE-BIAIS-3, retour (5) du 04/11 : « 42 % tristesse alors que j'allais
+ * plutôt bien ») : moyenne de chaque expression sur les 28 jours qui finissent à `end`. Chez beaucoup de gens, un
+ * visage au repos est lu en partie « triste » ou « méprisant » : comparer à cette habitude dit ce qui change vraiment.
+ * Rend { days, p: { [key]: number } }, ou null sous HABIT_MIN_DAYS jours.
+ */
+export function habitualMix(bursts, end) {
+  const t = end.getTime()
+  const recent = bursts.filter((b) => {
+    const bt = Date.parse(b.at)
+    return bt <= t && bt > t - BASELINE_DAYS * DAY_MS
+  })
+  const mix = expressionMix(recent)
+  if (!mix) return null
+  const days = new Set(recent.filter((b) => isNum(b.payload.values?.exNeutral)).map((b) => localDateKey(b.at))).size
+  if (days < HABIT_MIN_DAYS) return null
+  return { days, p: Object.fromEntries(mix.items.map((it) => [it.key, it.p])) }
+}
+
+/** Ajoute à chaque expression sa part habituelle (`habit`) et l'écart (`delta`), et le nombre de jours de l'habitude. */
+function withHabit(mix, habit) {
+  if (!mix || !habit) return mix
+  return {
+    ...mix,
+    habitDays: habit.days,
+    items: mix.items.map((it) => ({ ...it, habit: habit.p[it.key], delta: round2(it.p - habit.p[it.key]) })),
+  }
+}
+
+/**
+ * Ce qui change par rapport à l'habitude : jusqu'à 2 expressions dont la part s'écarte d'au moins HABIT_SHIFT, la plus
+ * grande d'abord. [] quand tout est proche de l'habitude ; null sans habitude.
+ */
+export function habitShifts(mix) {
+  if (!mix?.habitDays) return null
+  return mix.items
+    .filter((it) => isNum(it.delta) && Math.abs(it.delta) >= HABIT_SHIFT)
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
+    .slice(0, 2)
+    .map((it) => ({ key: it.key, label: it.label, delta: it.delta }))
+}
+
 /**
  * Détail d'un point de la courbe (BE-HISTO-DETAIL, retour (6) du 04/11) : ce que les modèles ont lu dans ses lectures
  * (une lecture, une heure ou un jour) — valence et éveil moyens, expressions, et combien de lectures étaient peu nettes.
@@ -119,7 +166,8 @@ function byHour(readings, date, burstAt) {
  * @returns {{ period, from: string, points: { at: string, date: string, note: number, low?: number, high?: number,
  *   readings: number, few?: boolean, hourly?: boolean, detail: ReturnType<typeof pointDetail> }[], notes: { at: string, score: number }[], readings: number, days: number,
  *   mean: number|null, valence: number|null, arousal: number|null,
- *   expressions: null | { readings: number, items: { key, label, p }[] }, earliest: string|null }}
+ *   expressions: null | { readings: number, habitDays?: number, items: { key, label, p, habit?, delta? }[] },
+ *   agreement: null | { days: number, gap: number }, earliest: string|null }}
  */
 export function wellbeingHistory(entries, { period = 'week', now = new Date() } = {}) {
   const from = periodStart(period, now)
@@ -165,6 +213,10 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
   if (period === 'day' && dayReadings.length > DAY_MAX_POINTS) {
     points = byHour(dayReadings, localDateKey(from), new Map(inPeriod.map((b) => [b.at, b])))
   }
+  const habit = inPeriod.length ? habitualMix(all, now) : null
+  if (habit) {
+    points = points.map((p) => (p.detail?.expressions ? { ...p, detail: { ...p.detail, expressions: withHabit(p.detail.expressions, habit) } } : p))
+  }
   return {
     period,
     from: fromIso,
@@ -175,7 +227,9 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
     mean: m == null ? null : round2(m),
     valence: valence == null ? null : round2(valence),
     arousal: arousal == null ? null : round2(arousal),
-    expressions: expressionMix(inPeriod),
+    expressions: withHabit(expressionMix(inPeriod), habit),
+    // Écart mesuré entre vos notes et le visage (null sous 3 jours notés).
+    agreement: inPeriod.length ? notesAgreement(entries || []) : null,
     // Première lecture ou note connue : jusqu'où l'on peut remonter le temps.
     earliest: [all[0]?.at, ...manual.map((e) => e.at)].filter(Boolean).sort()[0] ?? null,
   }

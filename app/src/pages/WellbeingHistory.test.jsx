@@ -258,4 +258,32 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
       await waitFor(() => expect(screen.getByRole('button', { name: 'Semaine précédente' })).toBeDisabled())
     })
   })
+
+  describe('expressions comparées à l’habitude et fiabilité (BE-BIAIS-3, retour (5) du 04/11)', () => {
+    const withHabit = (items) => ({ readings: 3, habitDays: 12, items })
+    const it8 = (deltas) => history().expressions.items.map((x) => ({ ...x, habit: x.p - (deltas[x.key] ?? 0), delta: deltas[x.key] ?? 0 }))
+
+    it('dit ce qui change par rapport à l’habitude et l’explique', async () => {
+      loadWellbeingHistory.mockResolvedValue(history({ expressions: withHabit(it8({ exHappiness: 0.12, exSadness: -0.2, exContempt: -0.03 })) }))
+      renderPage()
+      expect(await screen.findByText('Par rapport à votre habitude : moins de tristesse, plus de joie.')).toBeInTheDocument()
+      expect(screen.getByText(/trait : votre habitude sur 12 jours/)).toBeInTheDocument()
+      expect(screen.getByText(/Un visage au repos peut être lu un peu triste ou méprisant/)).toBeInTheDocument()
+    })
+
+    it('un jour comme d’habitude : le dit en une phrase', async () => {
+      loadWellbeingHistory.mockResolvedValue(history({ expressions: withHabit(it8({ exNeutral: 0.02 })) }))
+      renderPage()
+      expect(await screen.findByText('Proche de votre habitude.')).toBeInTheDocument()
+    })
+
+    it('fiabilité : écart mesuré sur les notes, ou quand il sera mesuré', async () => {
+      loadWellbeingHistory.mockResolvedValue(history({ agreement: { days: 6, gap: 0.7 } }))
+      renderPage()
+      expect(await screen.findByText(/Écart moyen avec vos notes/)).toHaveTextContent('Écart moyen avec vos notes : 0,7 point sur 5, mesuré sur 6 jours notés.')
+      loadWellbeingHistory.mockResolvedValue(history({ agreement: null }))
+      fireEvent.click(screen.getByRole('button', { name: 'Mois' }))
+      expect(await screen.findByText(/Fiabilité mesurée dès 3 jours notés/)).toBeInTheDocument()
+    })
+  })
 })
