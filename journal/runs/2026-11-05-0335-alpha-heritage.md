@@ -27,3 +27,12 @@ Type : 🔧 run de CI (03:35 Paris). Priorité : retour (1) du 04/11 (livraison 
 ## Suite
 - Bilan Alpha de la version de cette PR au run suivant ; CD-ALPHA-2 (examens qui s'enchaînent).
 - ANALYSES-ONGLETS-3 (trois horizons, pistes expliquées).
+
+## Après le merge (#706, `3d812e3`)
+- Checks de la PR tous verts (Vitest, Build APK, relais, protocole montre, perf, émulateurs API 28/32/34/35/36).
+- Build & Release **v502** (APK 34 541 270 octets), Tests verts, « Play — AAB » vert (test interne **100789**).
+- Émulateur Galaxy A56 vert, puis « Play — Alpha » : **envoi de 100789** sur l'alpha (3 fichiers de l'app modifiés
+  depuis 100786 : les onglets d'Analyses de #703/#704 y sont). En examen chez Google. 100787 n'est jamais partie
+  (ancien script), sans conséquence : 100789 la contient.
+- Ce commit de bilan (journal seul) est le premier cas réel du nouvel héritage : il ne doit rien envoyer (l'alpha a
+  déjà 100789). À vérifier au run suivant.
