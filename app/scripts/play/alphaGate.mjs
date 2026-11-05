@@ -15,10 +15,13 @@
  * Envois espacés (CD-ALPHA-2, 05/11) : chaque envoi relance l'examen de Google (quelques heures à 2 jours) ; à un
  * envoi par heure, l'alpha restait « En cours d'examen » et les testeurs ne pouvaient pas être invités. Une nouvelle
  * version ne part que `minHours` (24 par défaut, ALPHA_MIN_HOURS) après celle de l'alpha ; la date de celle-ci est
- * celle de son commit sur main (l'envoi suit d'une heure environ).
+ * celle de son commit sur main (l'envoi suit d'une heure environ). Depuis CD-ALPHA-5, les derniers envois de la fiche
+ * et des abonnements comptent aussi (`otherSends`), et le gel de review-freeze.json s'applique (reviewGate.mjs).
  */
 
-export const DEFAULT_MIN_HOURS = 24
+import { decideReviewed, DEFAULT_MIN_HOURS } from './reviewGate.mjs'
+
+export { DEFAULT_MIN_HOURS }
 
 export const REQUIRED_WORKFLOWS = ['Tests', 'Test — émulateur Samsung Galaxy A56', 'Play — AAB']
 export const VERSION_OFFSET = 100000
@@ -47,9 +50,10 @@ export function commitCountOf(versionCode) {
  * `inherited` : { versionCode, filesSince } de la version du test interne, avec les fichiers modifiés entre son
  * commit et celui-ci (null si inconnue).
  * `alphaSentAt` : date (ISO) de la version de l'alpha, `now` : maintenant (ms), `minHours` : écart minimal.
+ * `otherSends` : autres envois examinés [{ what, at }] (fiche, abonnements), `freezeUntil` : gel (ISO ou null).
  * Renvoie { send, wait?, spaced?, nextAt?, reason, versionCode? } (versionCode : la version à placer sur l'alpha).
  */
-export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited = null, enabled = true, alphaSentAt = null, now = Date.now(), minHours = DEFAULT_MIN_HOURS }) {
+export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, internalVersionCode, changedFiles, inherited = null, enabled = true, alphaSentAt = null, now = Date.now(), minHours = DEFAULT_MIN_HOURS, otherSends = [], freezeUntil = null }) {
   if (!enabled) return { send: false, reason: 'livraison continue coupée (ALPHA_AUTO=false)' }
   const hasAab = runs.some((r) => r.name === 'Play — AAB' && r.event === 'push')
   const inherit = !hasAab && inherited?.versionCode != null && Array.isArray(inherited.filesSince) && !inherited.filesSince.some(affectsApp)
@@ -77,18 +81,9 @@ export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, inte
     if (!app.length) return { send: false, reason: `rien ne change dans l’app depuis ${alphaVersionCode}` }
     why = `${app.length} fichier(s) de l’app modifié(s) depuis ${alphaVersionCode}${from}`
   }
-  const sentAt = alphaSentAt == null ? NaN : Date.parse(alphaSentAt)
-  const gapMs = Number(minHours) * 3600e3
-  if (gapMs > 0 && Number.isFinite(sentAt) && now - sentAt < gapMs) {
-    const ago = Math.max(0, Math.round((now - sentAt) / 3600e3))
-    const nextAt = new Date(sentAt + gapMs).toISOString()
-    return {
-      send: false,
-      spaced: true,
-      nextAt,
-      reason: `${alphaVersionCode} est sur l’alpha depuis son commit d’il y a ${ago} h ; une version toutes les ${minHours} h au plus, pour laisser Google finir son examen (prochain envoi possible après ${nextAt.slice(0, 16).replace('T', ' ')} UTC)`,
-    }
-  }
+  const sends = [{ what: `${alphaVersionCode} sur l’alpha`, at: alphaSentAt }, ...otherSends]
+  const gate = decideReviewed({ sends, now, minHours, freezeUntil })
+  if (!gate.send) return gate
   if (changedFiles) return { send: true, versionCode: candidate, reason: why }
   return { send: true, versionCode: candidate, reason: `version de l’alpha introuvable dans l’historique : envoi${from}` }
 }

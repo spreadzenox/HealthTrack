@@ -204,10 +204,16 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   logcat : l'outil `uiautomator` lui-même (« FATAL EXCEPTION: UiAutomation », Bad file descriptor) a fait échouer le job
   alors que l'app était vivante et la page WebView affichée. Ne compter que les plantages du processus de l'app
   (`Process: fr.jpesquet.sante` / `com.healthtrack.app` dans le bloc AndroidRuntime) dans `.github/scripts/old-webview/check.sh`.
-- [ ] **CD-ALPHA-5** (run idées du 05/11 20:35, I222 ; aide Google : délai d'examen compté depuis le dernier changement
+- [x] ✅ 05/11 21:35 **CD-ALPHA-5** (run idées du 05/11 20:35, I222 ; aide Google : délai d'examen compté depuis le dernier changement
   envoyé pour **l'app**) : la porte de 24 h tient compte aussi des derniers `play-listing` et `play-subscriptions` réussis,
   et ces deux workflows attendent eux aussi 24 h après un envoi examiné (report au passage de 07:13 UTC) ; rien envoyé
   pendant l'examen de la demande de production (P30). Tests dans `alphaGate.test.mjs`.
+  → Livré : `reviewGate.mjs` (décision pure, 8 tests) + `reviewIo.mjs` + `review-gate-cli.mjs` ; l'alpha compte les
+  derniers envois réussis de la fiche et des abonnements (étape d'envoi réussie, API Actions) ; fiche et abonnements
+  n'envoient que si **leur contenu** a changé depuis le dernier envoi (`app/store/` hors `data-safety/`, scripts,
+  `premiumBenefits.js`) et 24 h après le dernier envoi examiné ; sinon report au passage quotidien (07:23 et 07:33
+  UTC). Gel : `app/scripts/play/review-freeze.json` (`until`), à régler par PR le jour de P30. Hors porte :
+  « Play — sécurité des données » (manuel). **CD-ALPHA-6** : vérifier au premier report réel le bilan de la porte.
 - [ ] **AVIS-RELAIS-1..4** (retour (2), étude I219) ~~relais `POST /v1/feedback` (texte, version, variante ; quotas ; TTL
   à demander)~~ ✅ 04/11 22:35 (`relay/src/feedback.js`, 10 tests, P46 pour le TTL) → ~~formulaire « Votre avis » dans l'app + Sécurité des données + confidentialité~~ ✅ 04/11 23:35 (AVIS-RELAIS-2 : Paramètres, `sendFeedback`, lien d'avant en secours ; Sécurité des données inchangée, « Autre contenu généré par l'utilisateur » déjà déclaré ; confidentialité §« Votre avis ») → ~~workflow de résumé
   anonyme quotidien~~ ✅ 05/11 00:35 (AVIS-RELAIS-3 : route `GET /v1/feedback/digest`, jeton OIDC de gh-deployer, comptes par

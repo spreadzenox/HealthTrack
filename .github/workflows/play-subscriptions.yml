@@ -3,6 +3,8 @@
 # (9,99 €/mois), sans essai ; grâce + suspension de compte (app/scripts/play/subscriptions.mjs). Idempotent : ne crée que ce qui manque, n'active que les brouillons, ne
 # modifie jamais un prix existant. Connexion sans clé (Workload Identity Federation, main uniquement).
 # Refus de Google (accès, profil de paiement pas encore vérifié) → avertissement avec l'erreur exacte, pas d'échec.
+# Envois espacés (CD-ALPHA-5, 05/11) : comme l'alpha, un envoi examiné par Google 24 h au plus après le dernier
+# (alpha, fiche ou abonnements) ; sinon il est reporté au passage quotidien (app/scripts/play/reviewGate.mjs).
 name: Play — abonnements
 
 on:
@@ -12,10 +14,13 @@ on:
       - "app/scripts/play/subscriptions*.mjs"
       - "app/src/config/premiumBenefits.js"
       - ".github/workflows/play-subscriptions.yml"
+  schedule:
+    - cron: "33 7 * * *"  # envoi reporté par la porte des 24 h (CD-ALPHA-5), seulement s'il attend
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
   id-token: write
 
 concurrency:
@@ -29,6 +34,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -49,7 +56,16 @@ jobs:
           access_token_scopes: https://www.googleapis.com/auth/androidpublisher
           create_credentials_file: false
 
+      - name: Délai entre deux envois examinés par Google
+        id: gate
+        working-directory: app
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
+        run: node scripts/play/review-gate-cli.mjs subscriptions
+
       - name: Créer et activer les abonnements (Google Play)
+        if: steps.gate.outputs.send == 'true'
         working-directory: app
         env:
           PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}

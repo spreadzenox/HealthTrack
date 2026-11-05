@@ -116,6 +116,26 @@ describe('livraison continue vers l’alpha (04/11)', () => {
     })
   })
 
+  describe('fiche et abonnements comptent aussi (CD-ALPHA-5, 05/11)', () => {
+    const now = Date.parse('2026-11-07T08:00:00Z')
+    const h = (n) => new Date(now - n * 3600e3).toISOString()
+
+    it('alpha ancienne mais fiche envoyée il y a 5 h : envoi reporté', () => {
+      const d = decideAlpha({ ...base, runs: ok(), alphaSentAt: h(40), now, otherSends: [{ what: 'la fiche du Store', at: h(5) }] })
+      expect(d).toMatchObject({ send: false, spaced: true, nextAt: '2026-11-08T03:00:00.000Z' })
+      expect(d.reason).toMatch(/fiche du Store/)
+    })
+
+    it('tous les envois de plus de 24 h : envoi', () => {
+      expect(decideAlpha({ ...base, runs: ok(), alphaSentAt: h(40), now, otherSends: [{ what: 'les abonnements', at: h(30) }, { what: 'la fiche du Store', at: null }] }).send).toBe(true)
+    })
+
+    it('gel (demande de production en examen) : rien ne part', () => {
+      const d = decideAlpha({ ...base, runs: ok(), alphaSentAt: h(40), now, freezeUntil: '2026-11-10T00:00:00Z' })
+      expect(d).toMatchObject({ send: false, frozen: true })
+    })
+  })
+
   it('interrupteur coupé : rien ne part', () => {
     expect(decideAlpha({ ...base, runs: ok(), enabled: false }).send).toBe(false)
   })

@@ -15,7 +15,7 @@
 >
 > **Retours du 04/11 vers 19:45** (priorité des runs de code juste après le compte rendu du 02/11 ; détail et état dans
 > `BACKLOG.md`, section « Retours du propriétaire du 04/11 ») : (1) livraison continue vers Alpha par la CI, sans clic
-> du propriétaire (fait le 04/11 20:35, CD-ALPHA-1 ; trou des commits de journal comblé le 05/11 03:35, CD-ALPHA-3 ; envois espacés de 24 h au plus le 05/11 19:35, CD-ALPHA-2, après 15 envois en 20 h qui relançaient l'examen de Google) ; (2) retours des utilisateurs lus par la routine (« Votre avis »
+> du propriétaire (fait le 04/11 20:35, CD-ALPHA-1 ; trou des commits de journal comblé le 05/11 03:35, CD-ALPHA-3 ; envois espacés de 24 h au plus le 05/11 19:35, CD-ALPHA-2, après 15 envois en 20 h qui relançaient l'examen de Google ; même porte pour la fiche et les abonnements, et gel possible pendant P30, le 05/11 21:35, CD-ALPHA-5) ; (2) retours des utilisateurs lus par la routine (« Votre avis »
 > par le relais, plantages, avis du Play Store ; étude I219) ; (3) ventre et bien-être séparés clairement, notes du
 > ventre pour ajuster le bien-être (modèle proposé I220, réponse attendue ; étiquette « Ventre » / « Bien-être » sur
 > chaque piste d'Analyses le 04/11 21:35, VENTRE-BE-1) ; (4) Analyses en sous-onglets et trois
