@@ -41,3 +41,11 @@ Type : 🧰 run de code (relais, bilan du déploiement, une phrase de confidenti
   Integrity). Si les `error:-9` et les premiers crédits inexpliqués tombent en `testnet`, l'hypothèse est confirmée ;
   si `testnet` reste à 0 partout, vérifier d'abord que Cloud Run n'ajoute pas une adresse interne après celle du client.
 - Alpha : 100811 jusqu'à la porte de 24 h (vers 16:30 UTC).
+
+## Après le merge (#750, `dbfae0f`)
+- Build & Release : **v530**, APK 34 560 645 octets. Tests, émulateur A56, Play — AAB, GitHub Pages (politique à
+  jour) : verts. Play — Alpha : une exécution annulée par la suivante (concurrence normale), la porte de 24 h garde
+  100811 jusque vers 16:30 UTC.
+- Relais — déploiement : vert. Le relais sert toujours Gold offert jusqu'au **30/11 23:00 UTC** (Android) et jusqu'au
+  06/11 23:00 UTC (iPhone). Bilan : 40 premiers crédits sur 7 jours, **0 `testnet` et 40 « sans ce détail »**, ce qui
+  est attendu puisque tous ces journaux datent d'avant ce relais. La lecture utile (21c-2) se fera dans 2 ou 3 jours.
