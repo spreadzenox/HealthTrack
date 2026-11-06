@@ -209,7 +209,7 @@ function LinkCard({ kind, name, children, meta, evidence, extra, onHide }) {
     <li className={`reco-link-card reco-link-card--${kind}` + (evidence === 'incertain' ? ' reco-link-card-uncertain' : '')}>
       <div className="reco-link-body">
         <DomainTag domain="wellbeing" />
-        <p className="reco-link-name">{name}</p>
+        <p className="reco-link-name">{keepWhole(name)}</p>
         {children}
         {open && meta && <p className="reco-link-meta">{meta}</p>}
         <EvidenceBadge evidence={evidence} />
@@ -234,7 +234,7 @@ function TagEffectCard({ effect, measure = 'bien-être', extra, onHide }) {
   return (
     <LinkCard kind="tag" name={effect.label} meta={meta} evidence={effect.evidence} extra={extra} onHide={onHide}>
       <p className="reco-link-text">
-        {when} : {measure} {frScore(effect.meanWith)} / 5 contre {frScore(effect.meanWithout)} sans{' '}
+        {when} : {keepWhole(measure)} {frScore(effect.meanWith)} / 5 contre {frScore(effect.meanWithout)} sans{' '}
         <Delta value={shown} />
       </p>
     </LinkCard>
@@ -254,7 +254,7 @@ function LaggedEffectCard({ effect, measure = 'bien-être du jour', extra, onHid
       onHide={onHide}
     >
       <p className="reco-link-text">
-        {effect.when}, {effect.sdText} de plus que d’habitude → {measure} <Delta value={effect.effectPerSd} />
+        {effect.when}, {effect.sdText} de plus que d’habitude → {keepWhole(measure)} <Delta value={effect.effectPerSd} />
       </p>
       {effect.action && <p className="reco-link-text">Piste : {effect.action}</p>}
       {effect.action && effect.againstNorm && <AgainstNormNote />}
@@ -270,7 +270,7 @@ function CorrelationCard({ item, measure = 'bien-être', extra, onHide }) {
   return (
     <LinkCard kind="corr" name={item.label} meta={meta.join(' · ')} evidence={item.evidence} extra={extra} onHide={onHide}>
       <p className="reco-link-text">
-        Le jour même : plus haut, {item.r >= 0 ? `meilleur ${measure}` : `${measure} moins bon`}.
+        {keepWhole(`Le jour même : plus haut, ${item.r >= 0 ? `meilleur ${measure}` : `${measure} moins bon`}.`)}
       </p>
     </LinkCard>
   )

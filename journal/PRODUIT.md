@@ -211,6 +211,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **06/11 11:35** — **KEEP-WHOLE-3** (revue C1, play démo, clair, 360 px) : même correctif dans les cartes « Autres liens repérés » d'Analyses (« meilleur bien- / être »). KEEP-WHOLE-2 close sans code (lilas = sources). Prochain : CD-ALPHA-6 vers 16:30, TEST-ALPHA-1 (07–08/11).
 - **06/11 10:35** — **KEEP-WHOLE** (revue C1, play vierge, sombre, 360 px) : « bien-être » ne se coupe plus au trait d'union dans le titre du compte à rebours d'Analyses et de la carte lilas de l'Accueil (`utils/keepWhole.jsx`, texte inchangé). Prochain : CD-ALPHA-6 vers 16:30, TEST-ALPHA-1 (07–08/11).
 - **06/11 04:35** — **POL-PLAY-VENTRE-BIENTOT** (revue C1) : onglet Ventre sans note, le rapport PDF n'est plus un bloc « Bientôt » en mono mais une phrase discrète (« Le rapport PDF pour votre médecin arrive avec votre première note du ventre. »), clair et sombre vérifiés.
 - **06/11 06:35** — **COUNTDOWN-LIEN** (C1) : « la carte de l'Accueil » du compte à rebours des onglets Bien-être et Ventre est un lien ; #746 (VISUAL-FLAKY-1) mergée.
