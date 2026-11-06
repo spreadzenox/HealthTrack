@@ -101,11 +101,13 @@ export function MeasureTiles({ tiles, details }) {
   )
 }
 
-/** Rangée Calme / Gêne / Douleur : rond à côté du mot, ou au-dessus pour les trois à la fois (grande police). */
+/** Rangée Calme / Gêne / Douleur : rond à côté du mot, au-dessus pour les trois à la fois (grande police), ou un
+ * choix par ligne quand même le mot seul ne tient plus (320 px, police ×1,3). */
 function GutChoiceRow({ children, ...rest }) {
-  const [ref, stacked] = useStackedChoices()
+  const [ref, layout] = useStackedChoices()
+  const cls = layout === 'row' ? 'gut-choices' : `gut-choices gut-choices--${layout}`
   return (
-    <div ref={ref} className={stacked ? 'gut-choices gut-choices--stacked' : 'gut-choices'} {...rest}>
+    <div ref={ref} className={cls} {...rest}>
       {children}
     </div>
   )

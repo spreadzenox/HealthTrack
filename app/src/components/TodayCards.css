@@ -191,6 +191,11 @@
   flex-direction: column;
 }
 
+/* Même empilé, un mot ne tient plus (320 px, police ×1,3) : un choix par ligne, rond à côté du mot. */
+.gut-choices--column {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .gut-choice-radio {
   width: 16px;
   height: 16px;

@@ -13,6 +13,7 @@ import DetailsToggle from './DetailsToggle'
 import LineIcon from './LineIcon'
 import './MoodEstimateCard.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
+import { keepWhole } from '../utils/keepWhole'
 
 const pct = (v) => `${(v / 5) * 100}%`
 
@@ -70,7 +71,7 @@ function ManualNoteButton({ onClick }) {
   return (
     <button type="button" className="mood-manual" onClick={onClick}>
       <LineIcon name="plus" size={16} />
-      Noter moi-même
+      <span>{keepWhole('Noter moi-même')}</span>
     </button>
   )
 }

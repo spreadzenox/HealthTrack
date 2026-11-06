@@ -52,7 +52,10 @@ describe('MoodEstimateCard', () => {
   it('« Noter moi-même » ouvre la note manuelle, aussi sans lecture du visage', () => {
     const add = vi.fn()
     const { rerender } = renderCard({ data: { est: estimate, days }, onAddManual: add })
-    fireEvent.click(screen.getByRole('button', { name: 'Noter moi-même' }))
+    const manual = screen.getByRole('button', { name: 'Noter moi-même' })
+    // 320 px, police ×1,3 : « Noter moi- / même » se coupait au trait d'union (revue C1 du 06/11 19:35)
+    expect([...manual.querySelectorAll('span')].some((s) => s.textContent === 'moi-même' && s.style.whiteSpace === 'nowrap')).toBe(true)
+    fireEvent.click(manual)
     expect(add).toHaveBeenCalledTimes(1)
     rerender(<BrowserRouter><MoodEstimateCard now={NOW} data={null} onAddManual={add} /></BrowserRouter>)
     fireEvent.click(screen.getByRole('button', { name: 'Noter moi-même' }))
