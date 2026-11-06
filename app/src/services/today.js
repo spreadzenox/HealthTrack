@@ -59,7 +59,7 @@ export function gutLevelLabel(id) {
   return GUT_LEVELS.find((l) => l.id === id)?.label ?? null
 }
 
-/** Jours suivis avant de chercher des pistes (« Vos pistes arrivent dans N jours »). */
+/** Jours suivis avant de chercher des pistes (« Vos analyses arrivent dans N jours »). */
 export const PISTES_MIN_DAYS = 21
 /**
  * Jours de notes du ventre avant les pistes repas → ventre (= `gutLinks.GUT_LINKS_MIN_DAYS`, vérifié par un test ;
@@ -75,10 +75,15 @@ const DAY_MS = 86_400_000
 
 export const frDecimal = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
-/** « mer. 21 oct. · Bonjour » (prénom ajouté quand l'onboarding le demandera). */
+/**
+ * En-tête de l'Accueil : la date courte et « Bonjour », chacun sur sa ligne (retours du testeur du 06/11 : plus de
+ * « · ») ; prénom ajouté quand l'onboarding le demandera.
+ */
 export function headerLine(now = new Date(), firstName = '') {
-  const date = localeDate(now, { weekday: 'short', day: 'numeric', month: 'short' })
-  return `${date} · Bonjour${firstName ? ` ${firstName}` : ''}`
+  return {
+    date: localeDate(now, { weekday: 'short', day: 'numeric', month: 'short' }),
+    hello: `Bonjour${firstName ? ` ${firstName}` : ''}`,
+  }
 }
 
 /**

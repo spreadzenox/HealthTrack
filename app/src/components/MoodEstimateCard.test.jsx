@@ -43,7 +43,7 @@ describe('MoodEstimateCard', () => {
     expect(screen.getByText('confiance moyenne')).toBeInTheDocument()
     expect(container.querySelectorAll('.mood-confidence-dots .is-on')).toHaveLength(2)
     expect(screen.getByText('4 lectures auj.')).toBeInTheDocument()
-    expect(screen.getByText('moy. 3,0 · 3 j')).toBeInTheDocument()
+    expect(screen.getByText('moy. 3,0 sur 3 j')).toBeInTheDocument()
     expect(screen.getByText('deux modèles valence / éveil (HSEmotion)')).toBeInTheDocument()
     // la phrase simple reste : les détails s'ajoutent, ils ne remplacent plus
     expect(screen.getByText(/Un peu mieux/)).toBeInTheDocument()
@@ -69,7 +69,8 @@ describe('MoodEstimateCard', () => {
 
   it('sans lecture aujourd’hui, montre la dernière lecture sans la comparer', () => {
     renderCard({ data: { est: { ...estimate, day: null, moment: { ...estimate.moment, today: false } }, days } })
-    expect(screen.getByText(/dernière lecture ·/)).toBeInTheDocument()
+    expect(screen.getByText(/^dernière lecture le .+ à \d\d:\d\d$/)).toBeInTheDocument()
+    expect(document.querySelector('.mood-estimate-when').textContent).not.toMatch(/·/)
     expect(screen.queryByText(/vs moy\./)).not.toBeInTheDocument()
     expect(screen.getByText('Pas encore de lecture aujourd’hui.')).toBeInTheDocument()
   })

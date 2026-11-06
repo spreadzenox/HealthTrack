@@ -212,6 +212,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **06/11 23:35** — **TESTEUR-1a** : Accueil, date et « Bonjour » sur deux lignes, plus de « · », plus de ligne « Pas et nuits… » sans mesure, « Vos analyses arrivent dans N jours » (Accueil et Analyses) sans détail technique ; PR #764 du run précédent mergée.
 - **06/11 22:35** — **Retours du premier testeur iPhone** consignés (`RETOURS-TESTEURS.md`, étapes TESTEUR-1a à 5b, point (5) transmis à iOS) ; **TESTEUR-4a** livré : Repas vierges = un titre et « Ajouter mon premier repas » (ouvre l'appareil photo).
 - **06/11 21:35** — **REVUE-320-VIERGE** (C1, play vierge, 320 px, police ×1,3, 17 pages ok) : les trois repères du premier écran de l'onboarding passent l'un sous l'autre sous 16 rem de large (`useNarrowBox`) au lieu d'un mot par ligne.
 - **06/11 15:35** — **REVUE-320** (revue C1, play démo, clair, 320 px, 17 pages) : sous-onglets d'Analyses sur une ligne (débordaient de 24 px) ; l'outil de captures nomme le coupable d'un débordement. Prochain : CD-ALPHA-6 vers 16:30 UTC, TEST-ALPHA-1 (07–08/11).

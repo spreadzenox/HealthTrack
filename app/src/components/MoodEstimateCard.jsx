@@ -185,7 +185,7 @@ export default function MoodEstimateCard({
           </span>
         )}
       </p>
-      {!est.day && <p className="mood-estimate-when mono">dernière lecture · {localeDate(est.moment.at, { day: 'numeric', month: 'short' })} {hourOf(est.moment.at)}</p>}
+      {!est.day && <p className="mood-estimate-when mono">dernière lecture le {localeDate(est.moment.at, { day: 'numeric', month: 'short' })} à {hourOf(est.moment.at)}</p>}
       <Sparkline series={trend.series} mean={trend.mean} />
       {details && (
         <div className="mood-details">
@@ -194,7 +194,7 @@ export default function MoodEstimateCard({
           <div className="mood-chips">
             <ConfidenceBadge level={est.confidence} />
             <span className="mood-chip mono">{est.day ? `${est.day.readings} ${est.day.readings > 1 ? 'lectures' : 'lecture'} auj.` : '1 lecture'}</span>
-            {trend.mean != null && <span className="mood-chip mono">moy. {frDecimal(trend.mean)} · {trend.pastDays} j</span>}
+            {trend.mean != null && <span className="mood-chip mono">moy. {frDecimal(trend.mean)} sur {trend.pastDays} j</span>}
             {est.day?.gut && <span className="mood-chip mood-chip-gut">{est.day.gut.level === 'pain' ? 'douleur' : 'gêne'} au ventre comptée</span>}
           </div>
           <p className="mood-details-model mono">{modelLabel(est.model)}</p>

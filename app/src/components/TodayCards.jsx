@@ -72,17 +72,9 @@ function useEntries(read) {
 
 /** Sommeil, VFC et pas du jour ; chiffres en mono, source en mode détails. */
 export function MeasureTiles({ tiles, details }) {
-  // Rien de mesuré : une ligne plutôt que trois tuiles « — » (VC-26), les tuiles reviennent avec le premier chiffre
-  if (tiles.every((t) => t.value == null)) {
-    return (
-      <section className="today-tiles-wrap" aria-label="Mesures du jour">
-        <p className="today-tiles-hint today-tiles-empty">
-          Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur ·{' '}
-          <Link to="/connectors">Ajouter une source</Link>
-        </p>
-      </section>
-    )
-  }
+  // Rien de mesuré : ni trois tuiles « — » (VC-26) ni phrase sur les sources, branchées pendant l'accueil (retours du
+  // testeur du 06/11) ; les tuiles reviennent avec le premier chiffre
+  if (tiles.every((t) => t.value == null)) return null
   return (
     <section className="today-tiles-wrap" aria-label="Mesures du jour">
       <ul className="today-tiles">
@@ -246,7 +238,7 @@ const readTrackedEnergy = async () => {
 const PISTES_TEXT = {
   // Carte ventre montrée : le compte des notes du ventre, celui de l'onglet Ventre (revue du 06/11)
   gut: {
-    title: 'Vos pistes du ventre arrivent dans',
+    title: 'Vos analyses du ventre arrivent dans',
     count: 'jours avec une note du ventre',
     bar: 'Jours de notes du ventre',
     ready: 'Aucune piste pour l’instant : elles se précisent à chaque note du ventre',
@@ -255,7 +247,7 @@ const PISTES_TEXT = {
   },
   // Carte ventre masquée (autre objectif) : les repas seuls, sans parler du ventre
   meals: {
-    title: 'Vos pistes arrivent dans',
+    title: 'Vos analyses arrivent dans',
     count: 'jours avec un repas',
     bar: 'Jours suivis',
     ready: 'Aucune piste pour l’instant : elles se précisent à chaque jour suivi',
@@ -263,7 +255,7 @@ const PISTES_TEXT = {
     minimum: `minimum ${PISTES_MIN_DAYS} jours suivis`,
   },
   energy: {
-    title: 'Vos pistes arrivent dans',
+    title: 'Vos analyses arrivent dans',
     count: 'nuits suivies d’une mesure du bien-être',
     bar: 'Jours suivis',
     ready: 'Les pistes sommeil → bien-être arrivent dans une prochaine version',
@@ -345,18 +337,19 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
         <div className="pistes-progress-bar" style={{ width: `${(bar.days / bar.target) * 100}%` }} />
       </div>
       <p className="pistes-count">
-        <span className="mono">{bar.days}/{bar.target}</span> {text.count} <span className="pistes-count-window">(6{'\u00a0'}dernières semaines)</span>
+        <span className="mono">{bar.days}/{bar.target}</span> {text.count}
       </p>
-      <p className="today-card-text">
-        {bar.ready
-          ? (onPistesPage
+      {/* Avant l'échéance, le compte à rebours suffit : plus de « surtout du hasard » (retours du testeur du 06/11) */}
+      {bar.ready && (
+        <p className="today-card-text">
+          {onPistesPage
             ? `${text.ready}.`
-            : <>{text.ready}. Voyez <Link to="/recommendations">l’onglet Analyses</Link>.</>)
-          : 'Avec moins de jours, les résultats seraient surtout dus au hasard.'}
-      </p>
+            : <>{text.ready}. Voyez <Link to="/recommendations">l’onglet Analyses</Link>.</>}
+        </p>
+      )}
       {details && (
         <p className="today-details-line mono">
-          {text.details} · comparaisons multiples corrigées (Benjamini-Hochberg) · {text.minimum}
+          {text.details}. Comparaisons multiples corrigées (Benjamini-Hochberg), {text.minimum}.
         </p>
       )}
       {details && extraDetail && <p className="today-details-line mono">{extraDetail}</p>}

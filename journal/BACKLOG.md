@@ -37,9 +37,10 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   montre ») au toucher seulement ; problème et solution dans la même carte.
 
 **(1) Aujourd'hui, à refaire** (plusieurs runs ; un run « idées » prépare la maquette)
-- [ ] TESTEUR-1a — Petites retouches : date et « Bonjour » sur deux lignes ; plus de séparateurs « · » ; retirer
+- [x] TESTEUR-1a — Petites retouches : date et « Bonjour » sur deux lignes ; plus de séparateurs « · » ; retirer
   « Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur » ; « Vos pistes arrivent dans N jours »
-  devient « Vos analyses arrivent dans N jours ».
+  devient « Vos analyses arrivent dans N jours » (06/11 23:35 ; aussi dans Analyses, sans « 6 dernières semaines » ni
+  « surtout du hasard » sur la carte du compte à rebours).
 - [ ] TESTEUR-1b — Maquette (run idées) : statut du jour en tête (« Votre journée : plutôt moyenne » et d'où il vient),
   animation chaleureuse originale, puis l'explication, puis les données du jour par source, puis « Noter ».
 - [ ] TESTEUR-1c — Statut du jour en tête de l'Accueil (composant + tests, sans casser les cartes existantes).
@@ -56,6 +57,8 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
 
 **(3) Analyses**
 - [ ] TESTEUR-3a — Retirer « sur les 6 dernières semaines », « sinon surtout du hasard » ; garder « encore N nuits ».
+  Fait le 06/11 23:35 pour la carte du compte à rebours ; reste la phrase « Avec moins de jours… hasard » de
+  `Recommendations.jsx` (texte `how`) et les autres mentions techniques de l'onglet.
 - [ ] TESTEUR-3b — Bien-être et Tendances : fusionner ou différencier (proposition en run idées d'abord).
 - [ ] TESTEUR-3c — Plus d'interrupteur dans un interrupteur (calcul du modèle qui prédit le bien-être).
 

@@ -21,9 +21,9 @@ const at = (d, h = 9) => new Date(2026, 9, d, h, 0).toISOString()
 const key = (d) => `2026-10-${String(d).padStart(2, '0')}`
 
 describe('headerLine', () => {
-  it('écrit la date courte puis « Bonjour »', () => {
-    expect(headerLine(NOW)).toBe('mer. 21 oct. · Bonjour')
-    expect(headerLine(NOW, 'Julien')).toBe('mer. 21 oct. · Bonjour Julien')
+  it('sépare la date courte et « Bonjour », sans « · » (retours du testeur du 06/11)', () => {
+    expect(headerLine(NOW)).toEqual({ date: 'mer. 21 oct.', hello: 'Bonjour' })
+    expect(headerLine(NOW, 'Julien')).toEqual({ date: 'mer. 21 oct.', hello: 'Bonjour Julien' })
   })
 })
 
