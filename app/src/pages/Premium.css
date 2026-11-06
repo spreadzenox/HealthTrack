@@ -266,6 +266,13 @@
 }
 
 .paywall-links {
+  /* Liens côte à côte, sans « · » : sur un écran étroit, un lien passe à la ligne entier
+     au lieu de laisser un séparateur orphelin en fin de ligne (revue 320 px, sombre). */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 1.25rem;
+  row-gap: 0.25rem;
   text-align: center;
   font-size: 0.85rem;
   margin: 0;
