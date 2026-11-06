@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-06",
+  "kind": "amélioration",
+  "title": "Mieux en grande taille de police",
+  "items": [
+    "Dans Paramètres et l'écran des formules, les ronds de choix gardent leur taille quand le texte passe sur deux lignes.",
+    "Les lignes de chiffres, comme « 33 lectures · 7 jours · 6 notes à la main », ne se coupent plus au milieu d'un élément."
+  ]
+}

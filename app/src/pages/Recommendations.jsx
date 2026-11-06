@@ -27,7 +27,7 @@ import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { FACE_MOOD_MIN_DAYS, FACE_MOOD_MIN_READINGS } from '../services/mood/faceMoodDays'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel } from '../utils/format'
-import { keepWhole } from '../utils/keepWhole'
+import { keepWhole, keepSegments } from '../utils/keepWhole'
 import { correlationStrength } from '../services/statistics'
 import { useAutoSync } from '../hooks/useAutoSync'
 import DetailsToggle from '../components/DetailsToggle'
@@ -1094,9 +1094,10 @@ const TAB_TASKS = { basic: 'basicAnalysis', advanced: 'advancedAnalysis' }
 function analysisMetaLine(analysis) {
   const r = analysis?.correlations
   if (!r || r.status === 'not_enough_data') return null
-  const parts = [`analyse sur ${r.datasetDays} jour${r.datasetDays > 1 ? 's' : ''} notés`]
-  if (analysis.totalDays > r.datasetDays) parts.push(`${analysis.totalDays} jours de données`)
-  return parts.join(' · ')
+  const days = r.datasetDays
+  const parts = [`analyse sur ${days} ${days > 1 ? 'jours notés' : 'jour noté'}`]
+  if (analysis.totalDays > days) parts.push(`${analysis.totalDays} jours de données`)
+  return keepSegments(parts)
 }
 
 export default function Recommendations({ view = 'wellbeing' }) {

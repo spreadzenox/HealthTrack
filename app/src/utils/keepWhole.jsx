@@ -8,3 +8,13 @@ export function keepWhole(text) {
     i % 2 === 1 ? <span key={i} style={{ whiteSpace: 'nowrap' }}>{part}</span> : part,
   )
 }
+
+// KEEP-SEGMENTS (06/11 13:35, revue C1 en grande police à 360 px) : une ligne de chiffres « a · b · c » ne se coupe
+// qu'aux points médians (« 6 notes / à la main » ou « 76 / jours de données » sinon). Texte inchangé.
+export function keepSegments(parts, sep = ' · ') {
+  const list = parts.filter(Boolean)
+  return list.flatMap((part, i) => [
+    i > 0 ? sep : null,
+    <span key={i} style={{ whiteSpace: 'nowrap' }}>{part}</span>,
+  ]).filter((x) => x !== null)
+}
