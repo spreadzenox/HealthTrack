@@ -9,6 +9,7 @@ vi.mock('../storage/localHealthStorage', () => ({
   importFromJson: vi.fn(),
   parseBackup: vi.fn(),
   countAllEntries: vi.fn(),
+  countEntries: vi.fn(),
 }))
 
 // Le rapport PDF a ses propres tests (DoctorReportCard.test.jsx)
@@ -384,6 +385,18 @@ describe('Data page — ce que contient la sauvegarde (POL-PLAY-79)', () => {
     renderData()
     expect(await screen.findByText(/1\s918 entrées et votre profil/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Télécharger la sauvegarde' })).toBeEnabled()
+  })
+
+  it('le fuseau horaire noté seul par l’app ne compte pas comme une entrée (REVUE-320-SOMBRE-2)', async () => {
+    const { countAllEntries, countEntries } = await import('../storage/localHealthStorage')
+    countAllEntries.mockResolvedValue(3)
+    countEntries.mockImplementation(async ({ type } = {}) => (type === 'context' ? 1 : 0))
+    renderData()
+    expect(await screen.findByText(/2 entrées et votre profil/)).toBeInTheDocument()
+    countAllEntries.mockResolvedValue(1)
+    await act(async () => { window.dispatchEvent(new CustomEvent('health-entries-updated')) })
+    expect(await screen.findByText(/Rien à sauvegarder pour l’instant/)).toBeInTheDocument()
+    countEntries.mockReset()
   })
 
   it('se met à jour après un import ou une nouvelle entrée', async () => {

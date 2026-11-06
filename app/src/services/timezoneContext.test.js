@@ -37,6 +37,18 @@ describe('recordTimezoneContext', () => {
     expect(upsertEntries.mock.calls[1][0][0].payload.tz).toBe('Europe/London')
   })
 
+  it('two screens recording at the same time write a single entry (REVUE-320-SOMBRE-2)', async () => {
+    let release
+    upsertEntries.mockImplementationOnce(() => new Promise((res) => { release = () => res({ inserted: 1, skipped: 0 }) }))
+    const now = new Date(2026, 9, 20, 9)
+    const a = recordTimezoneContext(now, 'Europe/Paris')
+    const b = recordTimezoneContext(now, 'Europe/Paris')
+    release()
+    expect(await a).toBe(true)
+    expect(await b).toBe(false)
+    expect(upsertEntries).toHaveBeenCalledTimes(1)
+  })
+
   it('never throws when the database is unavailable', async () => {
     upsertEntries.mockRejectedValueOnce(new Error('idb'))
     await expect(recordTimezoneContext(new Date(2026, 9, 19, 9), 'Europe/Paris')).resolves.toBe(false)
