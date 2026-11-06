@@ -172,7 +172,8 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 4px 6px;
-  /* Grande police d'Android : le rond passe au-dessus du mot au lieu de le pousser hors du cadre */
+  /* Grande police d'Android : le rond passe au-dessus du mot au lieu de le pousser hors du cadre ; la rangée se
+     décide en bloc (`gut-choices--stacked`, useStackedChoices) pour que les trois choix restent alignés */
   padding: 4px 6px;
   border-radius: var(--radius-choice);
   border: 2px solid rgba(var(--ink-rgb), 0.18);
@@ -180,6 +181,14 @@
   color: var(--color-ink);
   font-weight: 600;
   font-size: 0.95rem;
+}
+
+.gut-choice .choice-label {
+  white-space: nowrap;
+}
+
+.gut-choices--stacked .gut-choice {
+  flex-direction: column;
 }
 
 .gut-choice-radio {
