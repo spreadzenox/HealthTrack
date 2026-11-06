@@ -9,6 +9,78 @@
 
 ---
 
+## Run du 06/11/2026 20:35 (Paris) — après la production : trouver les premiers utilisateurs SII sans payer (I224)
+
+Sources (lues le 06/11) : site apssii.org (accueil : actions, partenaires, agenda) ; fiches AP-HP des associations ;
+forum Carenity « Syndrome de l'intestin irritable, parlons-en ! » (extrait de recherche) ; podcast « I Gut The Power »,
+épisode du 14/02/2026 « Low Fodmap : et si on testait enfin nos aliments en France ! » (Fodmapedia, E. Alquier) ;
+annuaire fodmap-directory et fiche App Store de « Fodmap Facile » (tiers) ; Le Quotidien du médecin et La Revue du
+praticien (régime pauvre en FODMAP en France) ; blog Android Developers « policy on incentivized » (2017) et presse
+2025 ; pages DGCCRF / vie-publique sur la loi « influenceurs » n° 2023-451 et le décret n° 2026-233 (titre seul lu).
+Aucune donnée personnelle consultée. Rien n'est à faire avant la production (P30) : ceci prépare le jour J.
+
+### I224 — Plan d'acquisition organique du lancement, canal par canal — impact 4, faisabilité 4
+**Besoin** : la production ouvrira vers la fin novembre (P30 au plus tôt 14 jours après le 12ᵉ testeur). Sans budget
+publicitaire, il faudra que les premières centaines d'installations viennent de personnes atteintes du SII qui
+cherchent déjà une aide. Le propriétaire n'aura que quelques minutes par canal : chaque geste doit être prêt.
+**Constats** :
+- [V] **APSSII** : seule association française dédiée au SII, agréée par le ministère de la Santé, membre de France
+  Assos Santé ; comité scientifique ; partenaires affichés : Biocodex, Apicil, Aprifel, Biocodex Microbiota Institute ;
+  **aucune application** citée. Journée annuelle du SII **le 06/11/2026 à Paris** (aujourd'hui : manquée pour cette
+  année) ; semaine nationale du SII en **avril** (mois de sensibilisation au SII depuis 1997). Contact par le
+  formulaire « Nous contacter » ; aucune procédure de partenariat publiée. [H] Une association agréée ne recommandera
+  pas une app commerciale sans regard de son comité scientifique : viser d'abord une **présentation** (« outil
+  disponible, local, sans diagnostic »), pas un partenariat.
+- [V] **Carenity** : forum français actif sur le SII (fil principal ≈ 5 100 vues, 292 commentaires) ; son équipe
+  modère la promotion. [H] Y entrer comme patient qui « teste son app » serait mal vu : passer par l'équipe
+  (rubrique partenaires) ou ne pas y aller.
+- [V] **Concurrents français 2026** : « Fodmap Facile » (iOS, scan de codes-barres, gratuit, FODMAP seuls) ;
+  « Fodmapedia » (projet de mesures de FODMAP sur des aliments français avec des laboratoires, présenté en podcast,
+  plateformes non trouvées) ; Monash reste critiquée par des Français pour ses aliments manquants. **Aucun ne fait le
+  lien repas → ventre avec délais ni le bien-être** : notre angle tient toujours. [H] Fodmapedia pourrait un jour
+  publier des mesures françaises par sous-groupe : à surveiller comme source (licence à vérifier), jamais copié.
+- [V] Le régime pauvre en FODMAP **n'a pas démontré en France sa supériorité en première intention** sur des conseils
+  diététiques classiques, et doit être **suivi par un diététicien** (Le Quotidien du médecin, La Revue du praticien).
+  C'est exactement le discours de l'app (hypothèses de départ, données personnelles d'abord, « avec votre
+  diététicienne ») : à garder dans tout message, il rassure les professionnels.
+- [V] **Google Play** interdit d'offrir quoi que ce soit (argent, contenu, Gold) contre une note, un avis ou une
+  installation ; sanctions possibles sur l'app. Conséquence : **P44 (« un mois de Gold en plus » pour les testeurs) ne
+  doit jamais être lié à un avis sur le Store** ; le remerciement vaut pour avoir testé, et le texte ne parle pas de note.
+- [V] **Loi « influenceurs » (2023-451, ordonnance du 06/11/2024, décret n° 2026-233 du 30/03/2026)** : tout contenu
+  promotionnel contre avantage (argent, Gold offert) porte « Publicité » ou « Collaboration commerciale » pendant toute
+  la promotion ; l'omission est une pratique commerciale trompeuse. [H] Liste exacte des produits de santé visés non
+  lue (Légifrance à lire au run qui préparera un message à un créateur) ; une app de bien-être sans allégation
+  médicale ne semble pas visée, mais aucune phrase de créateur ne doit présenter l'app comme un soin.
+
+**Proposition (ordre, coût en temps du propriétaire, ce que la routine prépare)** :
+1. **Fiche Play prête pour la recherche** (déjà I210) : vérifier le jour J que la description courte contient « SII »
+   ou « côlon irritable » et « FODMAP » (sans bourrage). 0 min.
+2. **Diététiciennes** (le canal le plus durable : elles revoient leurs patients chaque mois et cherchent des carnets
+   alimentaires lisibles) : une **page « Pour les professionnels »** sur GitHub Pages (ce que fait l'app, ce qu'elle ne
+   fait pas, le rapport PDF en exemple sur données de démonstration, aucune donnée envoyée au professionnel par l'app),
+   et un e-mail court que le propriétaire envoie lui-même à 10 diététiciennes formées au FODMAP de son entourage ou de
+   sa région. Aucune commission, aucun avantage contre une recommandation (déontologie). 30 min.
+3. **APSSII** : un message de présentation (brouillon ci-dessous) via « Nous contacter », après l'ouverture de la
+   production, avec la page professionnels en lien ; viser la newsletter « APSSII News » ou la semaine d'avril 2027.
+   Adhérer à titre personnel (cotisation) est un geste possible, laissé au propriétaire. 10 min.
+4. **Reddit r/ibs, r/FODMAPS et r/QuantifiedSelf** (anglais, donc après le jalon 9) et **Product Hunt** : plus tard.
+5. **Micro-créateurs SII / nutrition** : seulement avec mention « Collaboration commerciale » si Gold est offert ;
+   pas avant 10 abonnés payants (même seuil que P26). 
+
+Brouillon pour l'APSSII (à relire par le propriétaire, à envoyer après la production) :
+> Bonjour, je développe seul Halcya, une application Android gratuite (abonnement facultatif) pour les personnes qui
+> vivent avec un SII : on note ses repas en photo et son ventre en un geste, l'app relie montre et téléphone (sommeil,
+> activité) et montre, après quelques semaines, les liens qu'elle repère entre repas et jours difficiles, avec les
+> délais. Ce sont des pistes à discuter avec un médecin ou une diététicienne, jamais un diagnostic ; les données
+> restent sur le téléphone. Si l'outil peut intéresser vos adhérents ou votre comité scientifique, je serais heureux
+> de vous le présenter ou de vous donner un accès complet. Bien cordialement, [votre nom].
+
+**Ce que ça ne fait pas** : aucune publicité payante, aucun avis sollicité contre avantage, aucune donnée d'utilisateur
+partagée avec un partenaire. → **ACQ-1** (page professionnels, run de code après P30) et **ACQ-2** (messages prêts dans
+`INVITATION-TESTEURS.md` ou un nouveau `ACQUISITION.md`, run idées) au BACKLOG ; règle P44 notée.
+
+---
+
 ## Run du 06/11/2026 08:35 (Paris) — reconnaître les robots de Google sans rien savoir des personnes (INSTALLS-21b)
 
 Sources : documentation Firebase Test Lab (« Get started », section des blocs d'adresses IP, lue le 06/11 ; « Test Lab
