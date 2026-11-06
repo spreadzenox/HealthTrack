@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-06",
+  "kind": "correctif",
+  "title": "Accueil : le même compte à rebours que dans Analyses",
+  "items": [
+    "Avec « Mon ventre », la carte des pistes de l’Accueil compte vos jours de notes du ventre, comme l’onglet Ventre d’Analyses. Elle annonçait 21 jours alors que l’onglet en demandait 28.",
+    "Avec un autre objectif, elle compte vos jours avec un repas et ne parle plus du ventre."
+  ]
+}

@@ -285,6 +285,9 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
 - (8) Journal, Sources, Nouveautés, Données, Paramètres et Confidentialité : le propriétaire en est content, ne pas
   les remanier sans raison.
 
+- [x] **PISTES-UN-COMPTE** (06/11 03:35, revue C1 sur données vierges) Accueil « 21 jours » contre onglet Ventre « 28 jours » : un seul compte, celui des notes du ventre quand la carte ventre est montrée ; jours avec un repas, sans ventre, sinon (`PistesTeaser`, 2 tests).
+- [ ] **POL-PLAY-VENTRE-BIENTOT** (06/11 03:35, revue C1) onglet Ventre vierge : bloc « Bientôt » avec « Rapport PDF pour mon médecin · dès votre 1re note du ventre » en mono (une phrase en mono, et le mot « Bientôt » proscrit en play) ; à remplacer par une ligne discrète en Figtree (« Le rapport PDF arrive avec votre première note du ventre »).
+- [ ] **VISUAL-FLAKY-1** (06/11 03:35) `npm run visual -- --play --empty --routes=/` échoue environ 1 fois sur 4 (`page.goto` : délai de 20 s en attendant « networkidle »), autant sur main que sur la branche ; piste : attendre `domcontentloaded` puis un sélecteur, ou un nouvel essai.
 - [ ] **CI-OLDWEBVIEW-1** (05/11 05:35, à valider par le propriétaire) : le job « WebView trop ancienne (API 28) »
   compte tout `FATAL EXCEPTION` du logcat, y compris un plantage de l'outil `uiautomator dump` (thread UiAutomation,
   vu sur la PR #709), ce qui peut bloquer un envoi Alpha par hasard. Proposition : `grep -A1 "FATAL EXCEPTION" | grep -c
