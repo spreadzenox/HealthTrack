@@ -9,6 +9,66 @@
 
 ---
 
+## Run du 06/11/2026 08:35 (Paris) — reconnaître les robots de Google sans rien savoir des personnes (INSTALLS-21b)
+
+Sources : documentation Firebase Test Lab (« Get started », section des blocs d'adresses IP, lue le 06/11 ; « Test Lab
+avec Android Studio », réglage `firebase.test.lab`), aide Play Integrity (codes d'erreur), questions de développeurs
+(tiers), code du dépôt (`PlayIntegrityPlugin.environment()`, `relay/src/server.js`, `relay/src/integrity.js`) et bilans
+du relais déjà notés (03/11 18:35, 04/11 13:35). Aucune donnée réelle consultée.
+
+### I223 — Les robots du rapport de pré-lancement reconnus à leur réseau, au relais — impact 3, faisabilité 4
+**Besoin** : pendant la période de lancement, toute installation play a Gold ; les robots de Google qui parcourent
+chaque version consomment des analyses Gold (≈ 4 centimes, 8 dès 2027) et brouillent deux bilans : les « premiers
+crédits » (INSTALLS-21) et les `missing` de Play Integrity, qui empêchent de passer en `enforce` (6b-2c). Avec 12 à
+15 testeurs qui arrivent, il faut séparer « robots » et « téléphones » pour lire leurs vrais chiffres.
+**Constats** :
+- [V] Le seul signal côté appareil que documente Firebase est le réglage système `firebase.test.lab` = `"true"`. Rien
+  dans la documentation ne dit qu'il est posé pour le rapport de pré-lancement de la Play Console. Nos bilans le
+  confirment : versions ≥ 21b-1, `unset` 2 (03/11) puis 4 (04/11), jamais `true`.
+- [V] Firebase publie les blocs d'adresses d'où sort **tout** le trafic des appareils Test Lab (« mis à jour en
+  moyenne une fois par an », la page date chaque ajout). Relevé du 06/11 : appareils physiques et virtuels Arm :
+  70.32.128.0/19, 108.177.6.0/23, 108.177.18.192/26, 108.177.29.64/27, 108.177.31.160/27, 199.36.156.8/29,
+  199.36.156.16/28, 209.85.131.0/27, 70.32.128.48/28 (04-2024), 70.32.150.192/27, 108.177.6.0/27, 108.177.24.160/27,
+  108.177.29.0/27 (09-2025), 108.177.25.128/27, 108.177.26.128/26, 108.177.29.192/26 (05-2026), 172.217.120.64/26,
+  172.217.120.128/26 ; virtuels non Arm : 34.68.194.64/29, 34.69.234.64/29, 34.73.34.72/29, 34.73.178.72/29,
+  34.74.10.72/29, 34.136.2.136/29, 34.136.50.136/29, 34.145.234.144/29, 35.192.160.56/29, 35.196.166.80/29,
+  35.196.169.240/29, 35.203.128.0/28, 35.234.176.160/28, 35.243.2.0/27, 35.245.243.240/29, 199.192.115.0/30,
+  199.192.115.8/30, 199.192.115.16/29 ; retirés en 02-2022 : 74.125.122.32/29, 216.239.44.24/29.
+- [V] Le rapport de pré-lancement tourne sur l'infrastructure Test Lab (« powered by Robo test ») [doc Firebase
+  « test-lab-play »]. [H] Ses appareils sortent donc par ces blocs ; à vérifier sur nos propres bilans (étape 2).
+- [V] `error:-9` = `CANNOT_BIND_TO_SERVICE` : l'app n'arrive pas à joindre le service du Play Store (Play Store ou
+  services Google Play absents ou trop anciens). Fréquent sur des appareils de banc, rare sur un téléphone ordinaire
+  [H]. C'est le motif de 54–56 installations sur 7 jours : cohérent avec les robots, pas une preuve.
+- [T] Des développeurs filtrent déjà leurs statistiques par ces blocs (108.177.6.0/23 cité depuis 2017) ; Google
+  exclut lui-même ces adresses des impressions publicitaires.
+- Le relais tourne sur Cloud Run, qui transmet l'adresse du client dans `X-Forwarded-For` (premier élément). Le
+  relais ne la lit pas aujourd'hui.
+**Pistes** (un run = une étape) :
+1. **INSTALLS-21c-1 (relais)** `src/testLabNet.js` : liste ci-dessus en constante datée (source, date du relevé),
+   `isTestLabAddress(ip)` (IPv4 CIDR, IPv6 → `false`), lecture du **premier** élément de `X-Forwarded-For`. Le relais
+   n'écrit jamais l'adresse : seulement un booléen `testnet` ajouté aux journaux `first_credit` et `integrity`, et au
+   bilan « Relais — déploiement » (« dont N depuis le réseau de test de Google »). Tests : adresses dans / hors des
+   blocs, en-tête absent, liste de plusieurs adresses, IPv6, valeur invalide.
+2. **INSTALLS-21c-2 (lecture, 2–3 jours plus tard)** : relire le bilan. Si les `error:-9` et les « premiers crédits »
+   non expliqués tombent en `testnet`, l'hypothèse est confirmée ; sinon, on le dit et on garde `observe`.
+3. **INSTALLS-21c-3 (seulement après 2)** : depuis le réseau de test, Gold servi par Flash-Lite (coût ≈ 0), crédits
+   décomptés comme ailleurs, rien de bloqué (un examinateur de Google doit voir l'app marcher) ; `testnet` exclu du
+   calcul de la règle `enforce` de Play Integrity. Aucun changement pour les téléphones.
+4. Garde-fou de mise à jour : un test échoue si la constante a plus de 13 mois, pour relire la page une fois par an.
+**Vie privée** : l'adresse est seulement comparée en mémoire pendant la requête, jamais écrite (journal, Firestore,
+résumé) ; c'est un traitement éphémère au sens du formulaire Sécurité des données (pas de nouvelle déclaration).
+Confidentialité : une phrase (« l'adresse IP de la requête sert seulement à reconnaître les appareils de test de
+Google ; elle n'est pas conservée ») à ajouter avec l'étape 1, test SLOP_WORDING inclus.
+**Ce qui est écarté** : empreinte d'appareil (modèle, fabricant, `Build.*`) : peu fiable et inutile ; compte Google
+de l'appareil : donnée personnelle, hors de question.
+**Sources** : https://firebase.google.com/docs/test-lab/android/get-started (blocs d'adresses, officielle, 06/11/2026) ;
+https://firebase.google.com/docs/test-lab/android/android-studio (`firebase.test.lab`, officielle) ;
+https://firebase.google.com/docs/test-lab/android/test-lab-play (rapport de pré-lancement = Robo, officielle) ;
+https://developer.android.com/google/play/integrity/error-codes (`CANNOT_BIND_TO_SERVICE`, officielle) ;
+https://pub.dev/documentation/firebase_testlab_detector/latest et questions Stack Overflow archivées (tiers, 06/11/2026).
+
+---
+
 ## Run du 05/11/2026 20:35 (Paris) — l'examen de Google pendant le test fermé
 
 Sources : aide officielle de la Play Console (« Publishing overview », 9859654, lue le 05/11), blogs de développeurs
