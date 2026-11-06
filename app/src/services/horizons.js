@@ -7,7 +7,7 @@ import { GUT_WINDOWS } from './gutWindows'
 export const HORIZONS = [
   { id: 'hours', title: 'Dans les heures', hint: 'Entre un repas et votre ventre, jusqu’à 24 h après.' },
   { id: 'days', title: 'Sur quelques jours', hint: 'Le jour même, ou jusqu’à 3 jours après.' },
-  { id: 'weeks', title: 'Sur quelques semaines', hint: 'Votre forme et votre bien-être d’une semaine à l’autre.' },
+  { id: 'weeks', title: 'Sur quelques semaines', hint: 'D’une semaine à l’autre.' },
 ]
 
 /** Repas → ventre : une fenêtre qui finit avant 24 h compte « dans les heures », le reste « sur quelques jours ». */

@@ -4,7 +4,7 @@ import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { rememberPistesSummary } from '../services/pistesSummary'
-import { HorizonHeading, MealHoursHorizon, WeeksHorizon } from '../components/Horizon'
+import { HorizonHeading, MealHoursHorizon, WellbeingWeeks } from '../components/Horizon'
 import DomainTag from '../components/DomainTag'
 import { getHiddenLinks, gutLinkKey, hideLink, unhideAllLinks } from '../settings/hiddenLinks'
 import {
@@ -695,7 +695,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
           lines={soon.filter((l) => l.id === 'face' || l.id.startsWith('tag:'))}
         />
         <MealHoursHorizon result={analysis.mealHours} />
-        <WeeksHorizon />
+        <WellbeingWeeks weeks={analysis.wellbeingWeeks} />
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
       </div>
     )
@@ -753,7 +753,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
 
       <SoonSection lines={soon} />
 
-      <WeeksHorizon />
+      <WellbeingWeeks weeks={analysis.wellbeingWeeks} />
 
       <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
     </div>

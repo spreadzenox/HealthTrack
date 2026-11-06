@@ -1267,7 +1267,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
 })
 
 describe('Recommendations — trois horizons d’effet (ANALYSES-ONGLETS-3)', () => {
-  it('Bien-être : pistes et liens sous « Sur quelques jours », puis un lien vers Tendances pour les semaines', async () => {
+  it('Bien-être : pistes et liens sous « Sur quelques jours », puis les semaines du bien-être, sans renvoi vers Tendances', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
     renderPage()
@@ -1276,8 +1276,29 @@ describe('Recommendations — trois horizons d’effet (ANALYSES-ONGLETS-3)', ()
     expect(days.compareDocumentPosition(pistes) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     // Aucun lien du bien-être ne se compte en heures : pas de titre vide
     expect(screen.queryByTestId('horizon-hours')).toBeNull()
-    const weeks = screen.getByTestId('horizon-weeks')
-    expect(within(weeks.parentElement).getByRole('link', { name: /Voir vos tendances/ })).toHaveAttribute('href', '/tendances')
+    const weeks = screen.getByTestId('wellbeing-weeks')
+    expect(within(weeks).getByText(/bien-être moyen, semaine par semaine/)).toBeInTheDocument()
+    // Notes de janvier : rien dans les 8 dernières semaines
+    expect(within(weeks).getByText(/Arrive après 2 semaines de bien-être estimé ou noté/)).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Voir vos tendances/ })).toBeNull()
+  })
+
+  it('Bien-être : une colonne par semaine dès deux semaines notées, notes en point à part', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    const now = Date.now()
+    const notes = [1, 2, 10].map((d, i) => ({
+      type: 'wellbeing',
+      source: 'app_wellbeing',
+      at: new Date(now - d * 86400000).toISOString(),
+      payload: { score: [4, 2, 3][i] },
+    }))
+    listEntriesForAnalysis.mockResolvedValue([...makeEntries(20), ...notes])
+    renderPage()
+    const weeks = await screen.findByTestId('wellbeing-weeks')
+    const cols = within(weeks).getAllByRole('img')
+    expect(cols).toHaveLength(2)
+    expect(cols.some((c) => /vos notes 3 sur 5 \(2 jours\)/.test(c.getAttribute('aria-label')))).toBe(true)
+    expect(within(weeks).getByText('Vos notes')).toBeInTheDocument()
   })
 
   it('Ventre : « Sur quelques semaines » parle du ventre seulement, sans lien vers les tendances du bien-être', async () => {

@@ -1,6 +1,14 @@
-import { Link } from 'react-router-dom'
 import { HORIZONS } from '../services/horizons'
 import { formatSigned } from '../utils/format'
+import { decimalMark } from '../i18n/locale.js'
+import {
+  WELLBEING_WEEKS_MIN, shownWellbeingWeeks, wellbeingWeekLabel, wellbeingWeeksReady,
+} from '../services/mood/wellbeingWeeks'
+
+const shortDay = (key) => {
+  const [, m, d] = key.split('-')
+  return `${d}/${m}`
+}
 
 /** Titre d'un horizon d'effet (ANALYSES-ONGLETS-3) : le délai en titre, une ligne pour dire ce qu'il compare. */
 export function HorizonHeading({ id, hint }) {
@@ -13,12 +21,45 @@ export function HorizonHeading({ id, hint }) {
   )
 }
 
-/** Le long terme du bien-être vit dans Tendances : une ligne pour y aller, en bas de l'onglet Bien-être. */
-export function WeeksHorizon() {
+/**
+ * Bien-être « Sur quelques semaines » (retours du 04/11, point 4) : une colonne par semaine, la barre = bien-être estimé
+ * moyen (même note du jour que l'historique), le point = moyenne de vos notes, jamais mêlés. Huit semaines au plus, à
+ * partir de la première semaine lue ou notée (services/mood/wellbeingWeeks.js). Description seulement.
+ */
+export function WellbeingWeeks({ weeks }) {
+  const ready = wellbeingWeeksReady(weeks)
+  const shown = ready ? shownWellbeingWeeks(weeks) : []
+  const withNotes = shown.some((w) => w.note != null)
   return (
-    <section className="horizon-weeks">
-      <HorizonHeading id="weeks" />
-      <Link to="/tendances" className="horizon-link">Voir vos tendances ›</Link>
+    <section className="horizon-weeks wb-weeks" data-testid="wellbeing-weeks">
+      <HorizonHeading id="weeks" hint="Votre bien-être moyen, semaine par semaine." />
+      {!ready && (
+        <p className="horizon-line horizon-line--soon">
+          Arrive après {WELLBEING_WEEKS_MIN} semaines de bien-être estimé ou noté.
+        </p>
+      )}
+      {ready && (
+        <>
+          <div className="wb-weeks-chart" style={{ gridTemplateColumns: `repeat(${shown.length}, minmax(0, 44px))` }}>
+            {shown.map((w) => (
+              <div key={w.from} className="wb-weeks-col" role="img" aria-label={wellbeingWeekLabel(w)}>
+                <span className="wb-weeks-value mono" aria-hidden="true">
+                  {w.est != null ? w.est.toFixed(1).replace('.', decimalMark()) : ''}
+                </span>
+                <div className="wb-weeks-track">
+                  {w.est != null && <span className="wb-weeks-bar" style={{ height: `${(w.est / 5) * 100}%` }} />}
+                  {w.note != null && <span className="wb-weeks-note" style={{ bottom: `${(w.note / 5) * 100}%` }} />}
+                </div>
+                <span className="wb-weeks-date mono" aria-hidden="true">{shortDay(w.from)}</span>
+              </div>
+            ))}
+          </div>
+          <ul className="wb-weeks-legend" aria-hidden="true">
+            <li><span className="wb-weeks-swatch" />Estimé, moyenne sur 5</li>
+            {withNotes && <li><span className="wb-weeks-swatch wb-weeks-swatch--note" />Vos notes</li>}
+          </ul>
+        </>
+      )}
     </section>
   )
 }
