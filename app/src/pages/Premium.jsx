@@ -242,9 +242,11 @@ export default function Premium({ context = null, onClose = null }) {
                   <span className="paywall-plan-text">
                     <span className="paywall-plan-name">{p.period === 'year' ? 'Annuel' : 'Mensuel'}</span>
                     <span className="paywall-plan-price">
-                      {p.price} / {PER[p.period]}
+                      {`${p.price} /\u00a0${PER[p.period]}`}
                     </span>
-                    {monthly && <span className="paywall-plan-note">soit {monthly} par mois</span>}
+                    {/* REVUE-320-PRIX : à 320 px, « soit 2,50 € » puis « par mois », jamais « par » / « mois » ni « soit » seul ;
+                        de même « / an » reste entier au-dessus. */}
+                    {monthly && <span className="paywall-plan-note">{`soit\u00a0${monthly} par\u00a0mois`}</span>}
                   </span>
                   {p.period === 'year' && saving && <span className="paywall-badge">−{saving} %</span>}
                 </label>
