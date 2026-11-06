@@ -211,6 +211,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **06/11 21:35** — **REVUE-320-VIERGE** (C1, play vierge, 320 px, police ×1,3, 17 pages ok) : les trois repères du premier écran de l'onboarding passent l'un sous l'autre sous 16 rem de large (`useNarrowBox`) au lieu d'un mot par ligne.
 - **06/11 15:35** — **REVUE-320** (revue C1, play démo, clair, 320 px, 17 pages) : sous-onglets d'Analyses sur une ligne (débordaient de 24 px) ; l'outil de captures nomme le coupable d'un débordement. Prochain : CD-ALPHA-6 vers 16:30 UTC, TEST-ALPHA-1 (07–08/11).
 - **06/11 19:35** — **VENTRE-COLONNE** (C1, play démo, 320 px, police ×1,3, 17 pages) : Calme / Gêne / Douleur un par ligne quand même un mot seul dépasse sa colonne ; « Noter moi-même » insécable.
 - **06/11 18:35** — **REVUE-320-PRIX** (C1, paywall à 320 px et en police ×1,3) : prix et équivalent mensuel coupés aux bons endroits ; décision iOS du 06/11 18:20 (examen bêta d'Apple, lecture seule) reportée dans `POUR-IOS.md`.

@@ -129,6 +129,22 @@
   white-space: nowrap;
 }
 
+/* Boîte étroite (useNarrowBox) : un repère par ligne, le chiffre à gauche du texte. */
+.onb-tiles--stacked {
+  grid-template-columns: 1fr;
+}
+
+.onb-tiles--stacked li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.onb-tiles--stacked .onb-tile-num {
+  flex: 0 0 4.6em;
+  margin-bottom: 0;
+}
+
 @media (max-width: 340px) {
   .onb-tile-num {
     font-size: 0.88rem;
