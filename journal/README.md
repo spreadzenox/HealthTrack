@@ -8,14 +8,11 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
-> 🚨 **GitHub Actions est bloqué par un problème de facturation de votre compte GitHub (06/11 07:40, P47).** Depuis
-> 06:40 UTC, chaque job s'arrête avant de démarrer avec ce message de GitHub : « The job was not started because your
-> account is locked due to a billing issue ». Tant que ce n'est pas réglé : aucun test, aucune nouvelle version,
-> **aucun envoi sur Alpha** (le passage prévu vers 16:30 ne partira pas) et aucun déploiement du relais. L'app et le
-> relais déjà en ligne continuent de marcher, Alpha 100811 reste en place. **Geste** : github.com → photo de profil →
-> Settings → **Billing and licensing** (https://github.com/settings/billing), régler le paiement en échec ou la
-> limite de dépense d'Actions indiquée en haut, puis dites « P47 fait ». La PR #748 (petit correctif d'un graphique)
-> attend ses checks, sans merge d'ici là.
+> ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
+> jobs (« account is locked due to a billing issue »). À 07:33 UTC, le run de 08:35 a relancé les checks de la PR #748 :
+> ils ont tous démarré et sont **verts** (11 sur 11). Rien à faire, sauf si vous recevez un e-mail de GitHub sur un
+> paiement en échec : réglez-le alors dans Settings → Billing and licensing. Le passage vers Alpha de 16:30 peut partir.
+> #748 (petit correctif d'un graphique) est vérifiée et attend son merge au run suivant.
 
 > 📅 **Gold offert jusqu'au 30 novembre (au lieu du 27) : date recalée sur votre invitation (05/11 22:35).** Alpha
 > (100811) est encore en examen chez Google et reste en place au moins jusqu'à demain vers 16:30 : l'invitation ne
@@ -126,6 +123,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 06/11 08:35 — [Idées : reconnaître les robots de Google](runs/2026-11-06-0835-idees-robots-reseau.md) | 💡 | GitHub Actions repart (le blocage de facturation de 06:40 est levé : checks de #748 relancés, 11 sur 11 verts ; son merge a été refusé par le garde-fou de la session, il revient au run suivant). Veille : les robots de Google qui testent chaque version consomment des analyses Gold et brouillent les bilans ; ils sortent d'adresses que Google publie. Proposition (INSTALLS-21c) : le relais les reconnaît sans jamais garder l'adresse, puis leur sert le modèle le moins cher. Rien à faire de votre côté |
 | 06/11 07:35 — [Bien-être par semaine : repère clair](runs/2026-11-06-0735-semaines-repere.md) | 🎨 | Revue sur données de démo : dans Analyses → Bien-être, le graphique « Sur quelques semaines » marquait le milieu de l'échelle d'un pointillé, que l'historique du bien-être réserve à la moyenne. C'est maintenant un trait plein, comme dans l'historique. **Non mergée : GitHub Actions bloqué par la facturation de votre compte GitHub (P47, en tête)** ; PR #748 en attente |
 | 06/11 06:35 — [Analyses : un lien vers la carte où noter](runs/2026-11-06-0635-compte-lien-accueil.md) | 🎨 | Dans Analyses, tant que vos pistes ne sont pas prêtes, les onglets Bien-être et Ventre disaient « Notez … depuis la carte de l'Accueil » sans lien : c'est maintenant un lien qui y mène. Au passage, la PR de 05:35 (banc de captures fiable) est mergée. Alpha reste sur 100811 (porte de 24 h, vers 16:30). Rien à faire de votre côté |
 | 06/11 05:35 — [Banc de captures fiable](runs/2026-11-06-0535-visual-fiable.md) | 🧰 | En coulisses : l'outil qui photographie chaque écran avant un merge échouait environ une fois sur quatre en attendant que le réseau se taise. Il attend maintenant que la page soit chargée et affichée, et réessaie une fois (6 passages sur 6 réussis). Rien ne change dans l'app. PR #746 verte, laissée ouverte (merge refusé par le garde-fou de la session) pour le run suivant. Alpha reste sur 100811 (porte de 24 h, vers 16:30). Rien à faire de votre côté |
