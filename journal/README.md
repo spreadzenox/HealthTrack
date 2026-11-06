@@ -8,6 +8,15 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 🚨 **GitHub Actions est bloqué par un problème de facturation de votre compte GitHub (06/11 07:40, P47).** Depuis
+> 06:40 UTC, chaque job s'arrête avant de démarrer avec ce message de GitHub : « The job was not started because your
+> account is locked due to a billing issue ». Tant que ce n'est pas réglé : aucun test, aucune nouvelle version,
+> **aucun envoi sur Alpha** (le passage prévu vers 16:30 ne partira pas) et aucun déploiement du relais. L'app et le
+> relais déjà en ligne continuent de marcher, Alpha 100811 reste en place. **Geste** : github.com → photo de profil →
+> Settings → **Billing and licensing** (https://github.com/settings/billing), régler le paiement en échec ou la
+> limite de dépense d'Actions indiquée en haut, puis dites « P47 fait ». La PR #748 (petit correctif d'un graphique)
+> attend ses checks, sans merge d'ici là.
+
 > 📅 **Gold offert jusqu'au 30 novembre (au lieu du 27) : date recalée sur votre invitation (05/11 22:35).** Alpha
 > (100811) est encore en examen chez Google et reste en place au moins jusqu'à demain vers 16:30 : l'invitation ne
 > peut donc partir que **vendredi 6/11 au plus tôt**. Comme convenu le 02/11 (J + 14 jours + 10 jours), la fin de
@@ -117,7 +126,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
-| 06/11 07:35 — [Bien-être par semaine : repère clair](runs/2026-11-06-0735-semaines-repere.md) | 🎨 | Revue sur données de démo : dans Analyses → Bien-être, le graphique « Sur quelques semaines » marquait le milieu de l'échelle d'un pointillé, que l'historique du bien-être réserve à la moyenne. C'est maintenant un trait plein, comme dans l'historique. Alpha reste sur 100811 (porte de 24 h, vers 16:30). Rien à faire de votre côté |
+| 06/11 07:35 — [Bien-être par semaine : repère clair](runs/2026-11-06-0735-semaines-repere.md) | 🎨 | Revue sur données de démo : dans Analyses → Bien-être, le graphique « Sur quelques semaines » marquait le milieu de l'échelle d'un pointillé, que l'historique du bien-être réserve à la moyenne. C'est maintenant un trait plein, comme dans l'historique. **Non mergée : GitHub Actions bloqué par la facturation de votre compte GitHub (P47, en tête)** ; PR #748 en attente |
 | 06/11 06:35 — [Analyses : un lien vers la carte où noter](runs/2026-11-06-0635-compte-lien-accueil.md) | 🎨 | Dans Analyses, tant que vos pistes ne sont pas prêtes, les onglets Bien-être et Ventre disaient « Notez … depuis la carte de l'Accueil » sans lien : c'est maintenant un lien qui y mène. Au passage, la PR de 05:35 (banc de captures fiable) est mergée. Alpha reste sur 100811 (porte de 24 h, vers 16:30). Rien à faire de votre côté |
 | 06/11 05:35 — [Banc de captures fiable](runs/2026-11-06-0535-visual-fiable.md) | 🧰 | En coulisses : l'outil qui photographie chaque écran avant un merge échouait environ une fois sur quatre en attendant que le réseau se taise. Il attend maintenant que la page soit chargée et affichée, et réessaie une fois (6 passages sur 6 réussis). Rien ne change dans l'app. PR #746 verte, laissée ouverte (merge refusé par le garde-fou de la session) pour le run suivant. Alpha reste sur 100811 (porte de 24 h, vers 16:30). Rien à faire de votre côté |
 | 06/11 04:35 — [Onglet Ventre : le rapport PDF en une phrase](runs/2026-11-06-0435-ventre-rapport-ligne.md) | 🐛 | Revue d'une installation neuve : avant la première note du ventre, l'onglet Ventre d'Analyses affichait un bloc « Bientôt » avec une phrase en police de chiffres. C'est maintenant une phrase simple en bas : « Le rapport PDF pour votre médecin arrive avec votre première note du ventre. » Alpha reste sur 100811 (porte de 24 h, vers 16:30). Rien à faire de votre côté |

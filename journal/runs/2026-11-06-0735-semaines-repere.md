@@ -23,6 +23,16 @@ de 24 h jusque vers 16:04 UTC ; invitation au plus tôt aujourd'hui, `until` = 3
 - `npm run test` 3 187 verts ; build OK ; lint 0 erreur ; `npm run visual -- --play --routes=/recommendations` en
   clair et en sombre, graphique relu dans les deux thèmes ; `/recommendations/ventre` et `/bien-etre` relus en clair.
 
+## 🚨 Blocage : GitHub Actions arrêté (facturation)
+- PR #748 poussée à 06:40 UTC : **tous les jobs** (Tests, Build APK, émulateur, relais, montre, budget de lectures)
+  échouent en 3 s, sans runner ni étape. Annotation de GitHub : « The job was not started because your account is
+  locked due to a billing issue. » Ce n'est pas le code (les mêmes vérifications passent en local).
+- Garde-fou : checks rouges → **pas de merge**. PR #748 laissée ouverte. Action du propriétaire **P47** (`PRODUIT.md`
+  §4, en tête du résumé). Conséquences : plus de release ni d'envoi Alpha (CD-ALPHA-6 de 16:30 compromis), plus de
+  « Votre avis — résumé » ni de déploiement du relais tant que le compte est verrouillé. Rien n'est contourné.
+- Run suivant : relancer les jobs de #748 (`POST /actions/runs/<id>/rerun`) ; si verts, remettre à jour sur main et
+  merger ; sinon, rien de neuf à pousser (chaque push échouerait de même).
+
 ## Suite
 - CD-ALPHA-6 vers 16:30 ; `until` à redécaler si l'invitation part après le 06/11 ; GOLD-a3-2 dès P37 ;
   TEST-ALPHA-1 (07–08/11) ; chantier montre (relevés du propriétaire).
