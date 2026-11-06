@@ -763,12 +763,12 @@ const COUNTDOWN_TEXT = {
   wellbeing: {
     title: 'Vos pistes du bien-être arrivent dans',
     count: 'jours avec une note de bien-être',
-    how: 'Notez votre bien-être depuis la carte de l’Accueil.',
+    how: 'Notez votre bien-être depuis',
   },
   gut: {
     title: 'Vos pistes du ventre arrivent dans',
     count: 'jours avec une note du ventre',
-    how: 'Notez votre ventre depuis la carte de l’Accueil.',
+    how: 'Notez votre ventre depuis',
   },
 }
 
@@ -788,7 +788,10 @@ export function AnalysisCountdown({ domain, days, target }) {
       <p className="pistes-count">
         <span className="mono">{done}/{target}</span> {text.count}
       </p>
-      <p className="today-card-text">{text.how} Avec moins de jours, les résultats seraient surtout dus au hasard.</p>
+      {/* COUNTDOWN-LIEN : la carte où noter, à un geste */}
+      <p className="today-card-text">
+        {text.how} <Link to="/">la carte de l’Accueil</Link>. Avec moins de jours, les résultats seraient surtout dus au hasard.
+      </p>
     </section>
   )
 }

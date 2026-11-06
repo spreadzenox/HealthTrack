@@ -122,6 +122,9 @@ describe('Recommendations page', () => {
     expect(container.querySelector('.pistes-count')).toHaveTextContent(/0\/5 jours avec une note de bien-être/)
     expect(container.textContent).not.toMatch(/ventre/)
     expect(screen.getByText(/résultats seraient surtout dus au hasard/)).toBeInTheDocument()
+    // COUNTDOWN-LIEN : « la carte de l'Accueil » mène à l'Accueil, en un geste
+    const home = within(screen.getByTestId('reco-countdown-wellbeing')).getByRole('link', { name: 'la carte de l’Accueil' })
+    expect(home).toHaveAttribute('href', '/')
     // VC-12 : un seul seuil visible sous la carte lilas
     expect(screen.queryByText(/Pas encore assez de jours mesurés/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/au moins 5 jours/i)).not.toBeInTheDocument()
@@ -1237,6 +1240,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     expect(within(card).getByText(/Vos pistes du ventre arrivent dans 28 jours/)).toBeInTheDocument()
     expect(within(card).getByText('jours avec une note du ventre', { exact: false })).toBeInTheDocument()
     expect(within(card).getByText('Ventre', { selector: '.domain-tag' })).toBeInTheDocument()
+    expect(within(card).getByRole('link', { name: 'la carte de l’Accueil' })).toHaveAttribute('href', '/')
     expect(screen.getByText(/vos notes du ventre et vos repas/)).toHaveClass('reco-intro--gut')
     expect(screen.queryByText('Votre ventre et vos repas')).toBeNull()
     expect(screen.queryByTestId('reco-soon')).toBeNull()
