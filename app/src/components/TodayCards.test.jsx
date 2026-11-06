@@ -59,6 +59,17 @@ describe('GutCard', () => {
     window.removeEventListener('health-entries-updated', updated)
   })
 
+  it('chaque choix porte son libellé à part, pour que la rangée s’empile en bloc (grande police)', async () => {
+    const morning = new Date()
+    morning.setHours(9, 0, 0, 0)
+    wrap(<GutCard read={async () => []} now={morning} />)
+    const group = await screen.findByRole('group', { name: 'Comment va votre ventre ?' })
+    expect(group).toHaveClass('gut-choices')
+    expect(group).not.toHaveClass('gut-choices--stacked')
+    const labels = [...group.querySelectorAll('.gut-choice .choice-label')].map((el) => el.textContent)
+    expect(labels).toEqual(['Calme', 'Gêne', 'Douleur'])
+  })
+
   it('montre la dernière note du jour, et le bilan de 7 jours en mode détails', async () => {
     const at = new Date()
     at.setHours(8, 15, 0, 0)

@@ -28,6 +28,7 @@ import { readPistesSummary } from '../services/pistesSummary'
 import GutEveningReminder from './GutEveningReminder'
 import StoolLine from './StoolLine'
 import LineIcon from './LineIcon'
+import { useStackedChoices } from '../hooks/useStackedChoices'
 import { keepWhole } from '../utils/keepWhole'
 import './TodayCards.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
@@ -100,6 +101,16 @@ export function MeasureTiles({ tiles, details }) {
   )
 }
 
+/** Rangée Calme / Gêne / Douleur : rond à côté du mot, ou au-dessus pour les trois à la fois (grande police). */
+function GutChoiceRow({ children, ...rest }) {
+  const [ref, stacked] = useStackedChoices()
+  return (
+    <div ref={ref} className={stacked ? 'gut-choices gut-choices--stacked' : 'gut-choices'} {...rest}>
+      {children}
+    </div>
+  )
+}
+
 const readGut = () => listEntries({ type: GUT_TYPE, since: new Date(Date.now() - 7 * DAY_MS).toISOString(), limit: 500 })
 
 /**
@@ -141,7 +152,7 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
       {eveningFirst && (
         <div className="gut-evening gut-evening-first" role="group" aria-labelledby="gut-evening-title">
           <p id="gut-evening-title" className="gut-evening-title">Et votre ventre aujourd’hui, dans l’ensemble ?</p>
-          <div className="gut-choices">
+          <GutChoiceRow>
             {GUT_LEVELS.map((l) => (
               <button
                 key={l.id}
@@ -152,17 +163,17 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
                 aria-label={`Journée : ${l.label}`}
               >
                 <span className="gut-choice-radio" aria-hidden="true" />
-                {l.label}
+                <span className="choice-label">{l.label}</span>
               </button>
             ))}
-          </div>
+          </GutChoiceRow>
         </div>
       )}
       {error && <p className="error-msg" role="alert">{error}</p>}
       {showMoment && (
         <>
           {eveningFirst && <p className="gut-moment-title">À l’instant</p>}
-          <div className="gut-choices" role="group" aria-label="Comment va votre ventre ?">
+          <GutChoiceRow role="group" aria-label="Comment va votre ventre ?">
             {GUT_LEVELS.map((l) => (
               <button
                 key={l.id}
@@ -173,10 +184,10 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
                 onClick={() => note(l.id)}
               >
                 <span className="gut-choice-radio" aria-hidden="true" />
-                {l.label}
+                <span className="choice-label">{l.label}</span>
               </button>
             ))}
-          </div>
+          </GutChoiceRow>
           <p className="today-card-text">
             {summary.last
               ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${lastNoteWhen(summary.last.at)}.`
