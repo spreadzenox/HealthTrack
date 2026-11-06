@@ -37,6 +37,7 @@ describe('politique de confidentialité', () => {
     ['l’export', /Exporter/],
     ['la sauvegarde Android chiffrée, jamais lue', /sauvegarde Google[\s\S]*chiffrées[\s\S]*ne peut pas les lire/],
     ['la suppression', /Supprimer toutes mes données/],
+    ['l’adresse IP comparée aux appareils de test de Google, jamais gardée (INSTALLS-21c)', /adresse IP de la requête[^.]*appareils de test : elle n'est ni enregistrée ni conservée/],
     ['le contact', /Contact/],
     ['l’âge minimum', /18 ans et plus/],
     ['l’adresse publique', /spreadzenox\.github\.io\/HealthTrack\/confidentialite/],

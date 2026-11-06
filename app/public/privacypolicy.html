@@ -152,7 +152,9 @@
     journée. Quand Google Play ne fournit pas de jeton, l'app indique seulement pourquoi (délai dépassé ou code
     d'erreur de Google Play), pour que nous vérifiions que cette protection ne gêne pas de vrais utilisateurs.
     Sur les appareils de test de Google (ceux qui essaient l'app avant chaque mise à jour), l'app le signale aussi,
-    pour que ces essais ne soient pas comptés comme de vraies installations.
+    pour que ces essais ne soient pas comptés comme de vraies installations. Le serveur les reconnaît aussi à
+    l'adresse IP de la requête, comparée aux adresses que Google publie pour ses appareils de test : elle n'est
+    ni enregistrée ni conservée.
     Pour fabriquer ce jeton, Google Play utilise des informations sur l'appareil, selon ses propres conditions.
     Rien d'autre n'est envoyé : ni votre ventre, ni votre sommeil, ni vos autres mesures. Sans analyse lancée,
     rien ne part. (Dans la version installée hors Google Play, l'analyse utilise à la place la clé Gemini que

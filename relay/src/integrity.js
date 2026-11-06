@@ -130,8 +130,9 @@ export function evaluateVerdict(payload, { packageName, requestHash, now = Date.
 }
 
 /**
- * Garde Play Integrity du relais. `check(installId, token, { clientStatus, testDevice, platform })` → `{ ok, mode, status }` ; `ok` vaut toujours
+ * Garde Play Integrity du relais. `check(installId, token, { clientStatus, testDevice, testnet, platform })` → `{ ok, mode, status }` ; `ok` vaut toujours
  * `true` hors du mode `enforce`, et pour une requête iOS (`platform` = en-tête `X-Platform`, voir requestPlatform).
+ * `testnet` : requête venue des blocs d'adresses de Firebase Test Lab (src/testLabNet.js), journalisé seulement.
  * `status` : 'off' | 'not_android' | 'trusted' (cache) | 'passed' | 'missing' | 'rejected' | 'unavailable'.
  * Avec `appAttest` (routes de src/attestroutes.js, mode autre que `off`), une requête iOS est confiée à
  * `appAttest.verify` (`attest` = en-têtes X-AppAttest-*, `body` = corps brut) : statuts 'attest_passed',
@@ -150,7 +151,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', ap
 
   return {
     mode: effective,
-    async check(installId, integrityToken, { clientStatus, testDevice = false, platform, attest, body } = {}) {
+    async check(installId, integrityToken, { clientStatus, testDevice = false, testnet = false, platform, attest, body } = {}) {
       // Appareil de test de Google (robots du rapport de pré-lancement), signalé par l'app : journalisé à part
       const testlab = testDevice === true
       // iPhone avec App Attest réglé (APP_ATTEST_MODE, I6-RELAIS-5d-2) : assertion vérifiée, indépendamment d'INTEGRITY_MODE
@@ -160,7 +161,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', ap
       if (effective === 'off' || !client) return { ok: true, mode: 'off', status: 'off' }
       if (requestPlatform(platform, clientStatus) === 'ios') {
         // Pas de Play Integrity sur iPhone : jamais bloqué (App Attest plus tard), compté à part dans le bilan
-        log({ event: 'integrity', status: 'not_android', mode: effective, platform: 'ios', client: clientIntegrityStatus(clientStatus), ci: isCiInstall(installId), testlab, install: hash(installId) })
+        log({ event: 'integrity', status: 'not_android', mode: effective, platform: 'ios', client: clientIntegrityStatus(clientStatus), ci: isCiInstall(installId), testlab, testnet: testnet === true, install: hash(installId) })
         return { ok: true, mode: effective, status: 'not_android' }
       }
       const t = now()
@@ -169,7 +170,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', ap
         return result(cached.ok, cached.ok ? 'trusted' : 'rejected')
       }
       if (!isIntegrityToken(integrityToken)) {
-        log({ event: 'integrity', status: 'missing', mode: effective, client: clientIntegrityStatus(clientStatus), ci: isCiInstall(installId), testlab, install: hash(installId) })
+        log({ event: 'integrity', status: 'missing', mode: effective, client: clientIntegrityStatus(clientStatus), ci: isCiInstall(installId), testlab, testnet: testnet === true, install: hash(installId) })
         return result(false, 'missing')
       }
       try {
@@ -177,7 +178,7 @@ export function createIntegrityGuard({ client, packageName, mode = 'observe', ap
         const verdict = evaluateVerdict(payload, { packageName, requestHash: requestHashFor(installId), now: t })
         prune(t)
         cache.set(installId, { ok: verdict.ok, until: t + (verdict.ok ? VERDICT_CACHE_MS : REJECT_CACHE_MS) })
-        log({ event: 'integrity', status: verdict.ok ? 'passed' : 'rejected', mode: effective, reasons: verdict.reasons, licensed: verdict.licensed, ci: isCiInstall(installId), testlab, install: hash(installId) })
+        log({ event: 'integrity', status: verdict.ok ? 'passed' : 'rejected', mode: effective, reasons: verdict.reasons, licensed: verdict.licensed, ci: isCiInstall(installId), testlab, testnet: testnet === true, install: hash(installId) })
         return result(verdict.ok, verdict.ok ? 'passed' : 'rejected')
       } catch (err) {
         // Google injoignable : on ne punit pas l'utilisateur (les plafonds du relais restent en place)

@@ -49,6 +49,7 @@ import { dayKey } from './quota.js'
 import { readUsage } from './costs.js'
 import { DIGEST_MAX_DAYS, FEEDBACK_MAX_LENGTH, digestFeedback, parseFeedback } from './feedback.js'
 import { MEAL_TEXT_MAX_LENGTH, RESPONSE_SCHEMA, STOOL_INSTRUCTION, STOOL_SCHEMA, photoInstruction, textInstruction, textUserPart } from './prompts.js'
+import { fromTestLabNetwork } from './testLabNet.js'
 
 /** Taille maximale du corps JSON (photo en base64 comprise). */
 export const MAX_BODY_BYTES = 6 * 1024 * 1024
@@ -458,7 +459,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         const entry = parseFeedback(body, { now: now(), platform })
         if (integrity) {
           const attest = { keyId: req.headers['x-appattest-key'], assertion: req.headers['x-appattest-assertion'], time: req.headers['x-appattest-time'] }
-          const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], platform: req.headers['x-platform'], attest, body: raw })
+          const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], platform: req.headers['x-platform'], attest, body: raw, testnet: fromTestLabNetwork(req) })
           if (!check.ok) throw new HttpError(403, 'integrity', platform === 'ios' ? INTEGRITY_MESSAGE_IOS : INTEGRITY_MESSAGE)
         }
         const slot = feedback.quota.take(installId)
@@ -558,6 +559,9 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       // Comment l'app a lu le réglage de Test Lab (INSTALLS-21b) : valeur bornée, pour comprendre pourquoi aucun robot
       // n'était repéré ; journalisée avec le premier crédit seulement
       const testEnv = testEnvValue(req.headers['x-test-env'])
+      // Requête venue du réseau de test de Google (blocs publiés de Firebase Test Lab, INSTALLS-21c-1) : un booléen
+      // pour les bilans, calculé en mémoire ; l'adresse n'est jamais écrite. Il ne change aucun droit
+      const testnet = fromTestLabNetwork(req)
 
       // Corps brut gardé : l'assertion App Attest de l'iPhone signe ces octets exacts (I6-RELAIS-5d-2)
       const raw = await readBody(req, MAX_BODY_BYTES)
@@ -572,7 +576,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
 
       if (integrity) {
         const attest = { keyId: req.headers['x-appattest-key'], assertion: req.headers['x-appattest-assertion'], time: req.headers['x-appattest-time'] }
-        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], testDevice, platform: req.headers['x-platform'], attest, body: raw })
+        const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], testDevice, testnet, platform: req.headers['x-platform'], attest, body: raw })
         if (!check.ok) throw new HttpError(403, 'integrity', String(check.status).startsWith('attest_') ? INTEGRITY_MESSAGE_IOS : INTEGRITY_MESSAGE)
       }
 
@@ -638,7 +642,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       log({ event: 'analyze', kind, model, location, tier, served, eur: Number(eur.toFixed(5)), status: 200, ms: now() - started, install: hashInstallId(installId), ...(installId.startsWith('ci-smoke-') ? { ci: true } : {}) })
       // Nouvelle installation qui prend son premier crédit (CREDITS-INSTALLS) : compté par jour, sans identifiant ;
       // l'analyse de test du workflow (« ci-smoke-<run> », une installation neuve à chaque fois) n'est pas comptée
-      if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan, ...(testDevice ? { testlab: true } : {}), testenv: testEnv })
+      if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan, ...(testDevice ? { testlab: true } : {}), testnet, testenv: testEnv })
       const payload = { parsed, model, quota: { remaining: slot.remaining, resetAt: slot.resetAt } }
       if (credit) {
         const { ok: _ok, firstUse: _first, ...state } = credit
