@@ -16,6 +16,8 @@ import {
   gutWeekLine,
   pistesProgress,
   gutNotesProgress,
+  PISTES_MIN_DAYS,
+  GUT_PISTES_MIN_NOTE_DAYS,
   WHEN_TO_SEE_DOCTOR,
 } from '../services/today'
 import DetailsToggle from './DetailsToggle'
@@ -228,16 +230,31 @@ const readTrackedEnergy = async () => {
 }
 
 const PISTES_TEXT = {
+  // Carte ventre montrée : le compte des notes du ventre, celui de l'onglet Ventre (revue du 06/11)
   gut: {
-    count: 'jours avec un repas ou une note du ventre',
+    title: 'Vos pistes du ventre arrivent dans',
+    count: 'jours avec une note du ventre',
+    bar: 'Jours de notes du ventre',
     ready: 'Aucune piste pour l’instant : elles se précisent à chaque note du ventre',
-    notes: 'jours avec une note du ventre',
     details: 'Délais testés : 0–4 h, 4–24 h, 24–48 h après le repas ; le jour même ou la veille pour le bilan du soir',
+    minimum: `minimum ${GUT_PISTES_MIN_NOTE_DAYS} jours de notes du ventre`,
+  },
+  // Carte ventre masquée (autre objectif) : les repas seuls, sans parler du ventre
+  meals: {
+    title: 'Vos pistes arrivent dans',
+    count: 'jours avec un repas',
+    bar: 'Jours suivis',
+    ready: 'Aucune piste pour l’instant : elles se précisent à chaque jour suivi',
+    details: 'Vos repas sont comparés à votre bien-être des heures et des jours qui suivent',
+    minimum: `minimum ${PISTES_MIN_DAYS} jours suivis`,
   },
   energy: {
+    title: 'Vos pistes arrivent dans',
     count: 'nuits suivies d’une mesure du bien-être',
+    bar: 'Jours suivis',
     ready: 'Les pistes sommeil → bien-être arrivent dans une prochaine version',
     details: 'Vos pistes sommeil → bien-être compareront chaque nuit au bien-être du jour qui suit',
+    minimum: `minimum ${PISTES_MIN_DAYS} jours suivis`,
   },
 }
 
@@ -287,15 +304,16 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
       return <PistesFound gut={gut} levers={summary.levers} locked={locked} />
     }
   }
-  const p = pistesProgress(entries, focus)
-  const text = PISTES_TEXT[focus] || PISTES_TEXT.gut
-  // Objectif ventre, 21 jours suivis : le seuil qui reste est celui des notes du ventre (un seul compte à rebours)
-  const notes = p.ready && focus !== 'energy' ? gutNotesProgress(entries) : null
-  const waitNotes = notes && !notes.ready
-  const bar = waitNotes ? notes : p
-  const title = waitNotes
-    ? `Vos pistes du ventre arrivent dans ${notes.remaining} jour${notes.remaining > 1 ? 's' : ''}`
-    : p.ready ? 'Assez de jours pour chercher des pistes' : `Vos pistes arrivent dans ${p.remaining} jour${p.remaining > 1 ? 's' : ''}`
+  // Objectif ventre avec la carte ventre : les pistes repas → ventre ne dépendent que des notes du ventre (chaque jour
+  // noté est aussi un jour suivi) ; un seul compte à rebours, le même que l'onglet Ventre d'Analyses
+  const kind = focus === 'energy' ? 'energy' : gutCardMode() !== 'hide' ? 'gut' : 'meals'
+  const bar = kind === 'gut'
+    ? gutNotesProgress(entries)
+    : pistesProgress(kind === 'meals' ? entries.filter((e) => e.type !== GUT_TYPE) : entries, focus)
+  const text = PISTES_TEXT[kind]
+  const title = bar.ready
+    ? 'Assez de jours pour chercher des pistes'
+    : `${text.title} ${bar.remaining} jour${bar.remaining > 1 ? 's' : ''}`
   return (
     <section className="today-card pistes-card" aria-labelledby="pistes-card-title">
       <div className="today-card-head">
@@ -308,15 +326,15 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
         aria-valuemin={0}
         aria-valuemax={bar.target}
         aria-valuenow={bar.days}
-        aria-label={waitNotes ? 'Jours de notes du ventre' : 'Jours suivis'}
+        aria-label={text.bar}
       >
         <div className="pistes-progress-bar" style={{ width: `${(bar.days / bar.target) * 100}%` }} />
       </div>
       <p className="pistes-count">
-        <span className="mono">{bar.days}/{bar.target}</span> {waitNotes ? text.notes : text.count} (6{'\u00a0'}dernières semaines)
+        <span className="mono">{bar.days}/{bar.target}</span> {text.count} <span className="pistes-count-window">(6{'\u00a0'}dernières semaines)</span>
       </p>
       <p className="today-card-text">
-        {p.ready && !waitNotes
+        {bar.ready
           ? (onPistesPage
             ? `${text.ready}.`
             : <>{text.ready}. Voyez <Link to="/recommendations">l’onglet Analyses</Link>.</>)
@@ -324,7 +342,7 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
       </p>
       {details && (
         <p className="today-details-line mono">
-          {text.details} · comparaisons multiples corrigées (Benjamini-Hochberg) · minimum 21 jours suivis{focus === 'energy' ? '' : ' et 28 jours de notes du ventre'}
+          {text.details} · comparaisons multiples corrigées (Benjamini-Hochberg) · {text.minimum}
         </p>
       )}
       {details && extraDetail && <p className="today-details-line mono">{extraDetail}</p>}

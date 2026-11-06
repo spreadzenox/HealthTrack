@@ -664,3 +664,8 @@
   font-weight: 600;
   color: var(--peach-label);
 }
+
+/* « (6 dernières semaines) » ne se coupe pas en fin de ligne (revue du 06/11) */
+.pistes-count-window {
+  white-space: nowrap;
+}
