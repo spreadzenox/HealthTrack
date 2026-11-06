@@ -284,13 +284,11 @@ export default function Premium({ context = null, onClose = null }) {
             <button type="button" className="paywall-link" onClick={restore} disabled={busy}>
               Restaurer un achat
             </button>
-            {' · '}
           </>
         )}
         <a className="paywall-link" href={TERMS_URL} target="_blank" rel="noopener noreferrer">
           Conditions
         </a>
-        {' · '}
         <a className="paywall-link" href={PRIVACY_URL} target="_blank" rel="noopener noreferrer">
           Confidentialité
         </a>

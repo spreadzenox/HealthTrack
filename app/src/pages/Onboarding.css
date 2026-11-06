@@ -125,6 +125,14 @@
   font-weight: 600;
   color: var(--text);
   margin-bottom: 4px;
+  /* « 1 geste » reste sur une ligne, comme « 0 Mo » et « 2–48 h » (revue 320 px). */
+  white-space: nowrap;
+}
+
+@media (max-width: 340px) {
+  .onb-tile-num {
+    font-size: 0.88rem;
+  }
 }
 
 .onb-choices {
