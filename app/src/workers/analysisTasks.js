@@ -17,6 +17,7 @@ import { computeFaceMoodCorrelations } from '../services/mood/faceMoodDays'
 import { summarizeGutLinks } from '../services/gutLinks'
 import { gutWeeks } from '../services/gutWeeks'
 import { mealHoursEffect } from '../services/mood/mealHours'
+import { wellbeingWeeks } from '../services/mood/wellbeingWeeks'
 
 export const ANALYSIS_TASKS = {
   /** Accueil — « Prédiction du jour ». */
@@ -36,6 +37,8 @@ export const ANALYSIS_TASKS = {
       gutWeeks: gutWeeks(entries),
       // Bien-être « dans les heures » : lectures du visage après un repas comparées au reste du jour (ANALYSES-ONGLETS-5).
       mealHours: mealHoursEffect(entries),
+      // Bien-être « Sur quelques semaines » : estimé et notes, moyennes par semaine (description seulement).
+      wellbeingWeeks: wellbeingWeeks(entries),
       totalDays: countTotalDataDays(entries),
     }
   },

@@ -23,14 +23,6 @@
   margin: 0 0 22px;
 }
 
-.horizon-link {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  font-weight: 600;
-  color: var(--lilac-text);
-  text-decoration: none;
-}
 
 /* ANALYSES-ONGLETS-5 : bien-être dans les heures après un repas */
 .horizon-hours {
@@ -57,4 +49,103 @@
   font-family: var(--font-mono);
   font-size: 0.75rem;
   white-space: nowrap;
+}
+
+/* Bien-être « Sur quelques semaines » : barre menthe = estimé, point émeraude = vos notes (accents graphiques) */
+.wb-weeks-chart {
+  display: grid;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 12px 10px;
+  border-radius: 22px;
+  background: var(--mint-bg);
+}
+
+.wb-weeks-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wb-weeks-value {
+  min-height: 1em;
+  font-size: 0.62rem;
+  color: var(--mint-text);
+}
+
+.wb-weeks-track {
+  position: relative;
+  width: 100%;
+  max-width: 26px;
+  height: 84px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px rgba(var(--brand-rgb), 0.25);
+  background: transparent;
+}
+
+.wb-weeks-track::before {
+  /* repère du milieu de l'échelle (2,5 sur 5) */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 50%;
+  border-top: 1px dashed var(--chart-ref);
+  opacity: 0.5;
+}
+
+.wb-weeks-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 6px;
+  background: var(--chart-bar-2);
+}
+
+.wb-weeks-note {
+  position: absolute;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin: 0 0 -5px -5px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  box-shadow: 0 0 0 2px var(--mint-bg);
+}
+
+.wb-weeks-date {
+  font-size: 0.62rem;
+  color: var(--mint-text);
+}
+
+.wb-weeks-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.wb-weeks-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wb-weeks-swatch {
+  width: 14px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--chart-bar-2);
+}
+
+.wb-weeks-swatch--note {
+  width: 10px;
+  border-radius: 50%;
+  background: var(--color-brand);
 }

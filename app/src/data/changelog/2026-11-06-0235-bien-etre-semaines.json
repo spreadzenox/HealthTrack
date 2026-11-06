@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-06",
+  "kind": "amélioration",
+  "title": "Analyses, onglet Bien-être : vos semaines",
+  "items": [
+    "En bas de l’onglet Bien-être, « Sur quelques semaines » montre une colonne par semaine : votre bien-être estimé en moyenne, et vos notes à part, en point.",
+    "Le graphique apparaît après 2 semaines de bien-être estimé ou noté. Les 14 derniers jours restent dans Tendances."
+  ]
+}
