@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-06",
+  "kind": "amélioration",
+  "title": "Premier repas en un geste",
+  "items": [
+    "Tant qu'aucun repas n'est enregistré, Journal → Repas affiche un seul bouton, « Ajouter mon premier repas », qui ouvre l'appareil photo."
+  ]
+}

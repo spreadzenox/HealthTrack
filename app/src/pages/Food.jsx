@@ -396,7 +396,7 @@ export default function Food() {
 
       <h3 className="section-title">Derniers repas enregistrés</h3>
       {recentMeals.length === 0 ? (
-        <MealsEmpty />
+        <MealsEmpty inputId="camera-upload" />
       ) : (
         <>
           {mealDays.slice(0, visibleDays).map((day) => {
