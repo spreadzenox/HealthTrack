@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
-import { keepWhole } from './keepWhole'
+import { keepWhole, keepSegments } from './keepWhole'
 
 // KEEP-WHOLE (06/11, revue C1 à 360 px) : « Vos pistes du bien- / être arrivent dans 5 jours » se coupait au trait
 // d'union. Les mots composés d'un titre restent d'un seul tenant, sans changer le texte (scripts et tests le cherchent tel quel).
@@ -23,5 +23,15 @@ describe('keepWhole', () => {
     expect(keepWhole('Vos pistes du ventre arrivent dans 3 jours')).toBe('Vos pistes du ventre arrivent dans 3 jours')
     expect(keepWhole('')).toBe('')
     expect(keepWhole('2026-11-06')).toBe('2026-11-06')
+  })
+})
+
+describe('keepSegments', () => {
+  it('chaque segment reste d’un seul tenant, la ligne ne se coupe qu’aux points médians', () => {
+    const { container } = render(<p>{keepSegments(['33 lectures', '7 jours', null, '6 notes à la main'])}</p>)
+    expect(container.textContent).toBe('33 lectures · 7 jours · 6 notes à la main')
+    const spans = [...container.querySelectorAll('span')]
+    expect(spans.map((s) => s.textContent)).toEqual(['33 lectures', '7 jours', '6 notes à la main'])
+    expect(spans.every((s) => s.style.whiteSpace === 'nowrap')).toBe(true)
   })
 })

@@ -13,6 +13,7 @@ import { frDecimal } from '../services/today'
 import { appLocale } from '../i18n/locale.js'
 import { faceModelTag } from '../services/mood/modelName'
 import { PERIODS, habitShifts, viewEnd } from '../services/mood/wellbeingHistory'
+import { keepSegments } from '../utils/keepWhole'
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Jour' },
@@ -406,9 +407,11 @@ export default function WellbeingHistory({ now: givenNow, features }) {
             )}
           </p>
           {!empty && <p className="wbh-figure-sub mono">
-            {history.readings} {history.readings > 1 ? 'lectures' : 'lecture'}
-            {history.period !== 'day' && ` · ${history.days} ${history.days > 1 ? 'jours' : 'jour'}`}
-            {history.notes.length > 0 && ` · ${history.notes.length} ${history.notes.length > 1 ? 'notes' : 'note'} à la main`}
+            {keepSegments([
+              `${history.readings} ${history.readings > 1 ? 'lectures' : 'lecture'}`,
+              history.period !== 'day' && `${history.days} ${history.days > 1 ? 'jours' : 'jour'}`,
+              history.notes.length > 0 && `${history.notes.length} ${history.notes.length > 1 ? 'notes' : 'note'} à la main`,
+            ])}
           </p>}
           {empty ? (
             <p className="today-card-text">

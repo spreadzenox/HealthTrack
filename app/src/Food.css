@@ -250,6 +250,7 @@
 .theme-choice input {
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
   margin: 0;
   accent-color: var(--color-brand);
 }

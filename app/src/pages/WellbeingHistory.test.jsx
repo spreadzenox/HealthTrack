@@ -49,7 +49,10 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
   it('montre la moyenne, la courbe, la légende et le détail des modèles comme des estimations', async () => {
     renderPage()
     expect(await screen.findByText('3,4')).toBeInTheDocument()
-    expect(screen.getByText(/7 lectures · 2 jours · 1 note à la main/)).toBeInTheDocument()
+    const sub = document.querySelector('.wbh-figure-sub')
+    expect(sub.textContent).toMatch(/7 lectures · 2 jours · 1 note à la main/)
+    // KEEP-SEGMENTS : la ligne ne se coupe qu'aux points médians (« 1 note / à la main » à 360 px sinon).
+    expect([...sub.querySelectorAll('span')].map((s) => s.textContent)).toEqual(['7 lectures', '2 jours', '1 note à la main'])
     expect(screen.getByRole('img', { name: /Bien-être estimé ces 7 jours : 2 jours/ })).toBeInTheDocument()
     expect(screen.getByText('peu de lectures')).toBeInTheDocument()
     expect(screen.getByText('noté à la main')).toBeInTheDocument()
