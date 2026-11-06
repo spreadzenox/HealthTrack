@@ -34,7 +34,10 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     const annual = await screen.findByRole('radio', { name: /Annuel/ })
     expect(annual).toBeChecked()
     expect(screen.getByText('29,99 € / an')).toBeInTheDocument()
-    expect(screen.getByText(/soit 2,50.€ par mois/)).toBeInTheDocument()
+    const note = screen.getByText(/soit 2,50.€.par.mois/)
+    // REVUE-320-PRIX : à 320 px, la ligne ne peut passer qu'entre « soit 2,50 € » et « par mois ».
+    expect(note.textContent).toBe('soit\u00a02,50\u00a0€ par\u00a0mois')
+    expect(screen.getByText('29,99 € / an').textContent).toMatch(/\/\u00a0an$/)
     expect(screen.getByText('−50 %')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Essayer 14 jours gratuitement' })).toBeEnabled()
     expect(screen.getByText(/Puis 29,99 € par an\. Annulable à tout moment dans Google Play/)).toBeInTheDocument()

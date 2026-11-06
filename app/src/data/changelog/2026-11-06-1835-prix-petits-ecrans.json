@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-06",
+  "kind": "correctif",
+  "title": "Prix de l'abonnement lisibles sur petit écran",
+  "items": [
+    "Sur un petit téléphone ou en grande police, le prix annuel et son équivalent par mois ne se coupent plus au milieu : « / an » et « par mois » restent entiers."
+  ]
+}
