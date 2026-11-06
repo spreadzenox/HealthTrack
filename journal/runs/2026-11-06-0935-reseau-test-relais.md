@@ -7,7 +7,7 @@ Type : 🧰 run de code (relais, bilan du déploiement, une phrase de confidenti
   la levée de P47) et **#749** (run « idées » de 08:35, empilée sur #748).
 - **#748 mergée** (squash, `2a58432`). #749 ne se mettait plus à jour seule (conflit entre les commits d'origine de
   #748 et leur squash) : commit de fusion avec main dont l'arbre est exactement « main + journal de #749 » (pas de
-  force-push), checks relancés, puis mergée par ce run une fois verte (voir plus bas).
+  force-push), checks relancés, puis mergée par ce run une fois verte (09:45, `6ad56a5`).
 
 ## Fait (INSTALLS-21c-1, `IDEES.md` I223)
 - `relay/src/testLabNet.js` : blocs d'adresses de Firebase Test Lab en constante datée (relevé du 06/11/2026, source

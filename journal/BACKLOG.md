@@ -614,7 +614,8 @@ les montres ; « collecter est gratuit, comprendre est payant ». Jalons (état 
 - [ ] **6b-2c** lire les journaux `event=integrity` du relais (workflow de lecture des journaux) après les premières analyses de la version Play ; si `passed` sur le téléphone du propriétaire et aucun `rejected` inexpliqué → `INTEGRITY_MODE=enforce` dans `relay-deploy.yml`. **28/10** : `passed` vu ; **03/11 10:35 : rester en `observe`** — 54 installations « téléphones » sans jeton (`error:-9`, sans doute les robots du rapport de pré-lancement, voir INSTALLS-21b) ; relire après quelques jours de testeurs ; attendre quelques jours de lignes « téléphones » (version ≥ celle de 6b-2c-2) sans `missing` inexpliqué avant `enforce` ; un `timeout` récurrent sur de vrais téléphones → garder `observe` (ou n'exiger le jeton que pour les crédits offerts).
 - [ ] **INSTALLS-21c** (run idées 06/11 08:35, `IDEES.md` I223) robots du rapport de pré-lancement reconnus au relais par
   les blocs d'adresses publiés de Firebase Test Lab (booléen `testnet` dans les journaux, adresse jamais écrite) :
-  **21c-1** `relay/src/testLabNet.js` + journaux + bilan du déploiement + phrase de confidentialité (run de code, tests) ;
+  **21c-1 ✅ (06/11 09:35)** `relay/src/testLabNet.js` + journaux + bilan du déploiement + phrase de confidentialité ;
+  dernier élément de `X-Forwarded-For` (celui que Cloud Run ajoute, que le client ne choisit pas) ; garde-fou des 13 mois livré ;
   **21c-2** relire le bilan 2–3 jours après ; **21c-3** seulement si confirmé : Flash-Lite pour le réseau de test,
   `testnet` hors de la règle `enforce` ; garde-fou d'âge de la liste (13 mois).
 - [ ] **INSTALLS-21b** (03/11 10:35) Trouver un signal fiable des robots du rapport de pré-lancement (le réglage

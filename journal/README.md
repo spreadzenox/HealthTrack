@@ -12,7 +12,7 @@
 > jobs (« account is locked due to a billing issue »). À 07:33 UTC, le run de 08:35 a relancé les checks de la PR #748 :
 > ils ont tous démarré et sont **verts** (11 sur 11). Rien à faire, sauf si vous recevez un e-mail de GitHub sur un
 > paiement en échec : réglez-le alors dans Settings → Billing and licensing. Le passage vers Alpha de 16:30 peut partir.
-> #748 (petit correctif d'un graphique) est vérifiée et attend son merge au run suivant.
+> #748 (petit correctif d'un graphique) est mergée (09:35).
 
 > 📅 **Gold offert jusqu'au 30 novembre (au lieu du 27) : date recalée sur votre invitation (05/11 22:35).** Alpha
 > (100811) est encore en examen chez Google et reste en place au moins jusqu'à demain vers 16:30 : l'invitation ne
@@ -123,6 +123,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 06/11 09:35 — [Relais : le réseau de test de Google reconnu](runs/2026-11-06-0935-reseau-test-relais.md) | 🧰 | En coulisses : le serveur d'analyse reconnaît maintenant les robots de Google qui testent chaque version, à l'adresse d'où part leur requête (comparée en mémoire aux adresses que Google publie, jamais enregistrée). Le bilan du déploiement les compte à part (« dont N depuis le réseau de test de Google »), pour lire enfin les vrais chiffres des testeurs. Rien ne change dans l'app ni pour personne ; une phrase ajoutée à la politique de confidentialité. Au passage, #748 (graphique « Sur quelques semaines ») et #749 (run « idées ») sont mergées. Rien à faire de votre côté |
 | 06/11 08:35 — [Idées : reconnaître les robots de Google](runs/2026-11-06-0835-idees-robots-reseau.md) | 💡 | GitHub Actions repart (le blocage de facturation de 06:40 est levé : checks de #748 relancés, 11 sur 11 verts ; son merge a été refusé par le garde-fou de la session, il revient au run suivant). Veille : les robots de Google qui testent chaque version consomment des analyses Gold et brouillent les bilans ; ils sortent d'adresses que Google publie. Proposition (INSTALLS-21c) : le relais les reconnaît sans jamais garder l'adresse, puis leur sert le modèle le moins cher. Rien à faire de votre côté |
 | 06/11 07:35 — [Bien-être par semaine : repère clair](runs/2026-11-06-0735-semaines-repere.md) | 🎨 | Revue sur données de démo : dans Analyses → Bien-être, le graphique « Sur quelques semaines » marquait le milieu de l'échelle d'un pointillé, que l'historique du bien-être réserve à la moyenne. C'est maintenant un trait plein, comme dans l'historique. **Non mergée : GitHub Actions bloqué par la facturation de votre compte GitHub (P47, en tête)** ; PR #748 en attente |
 | 06/11 06:35 — [Analyses : un lien vers la carte où noter](runs/2026-11-06-0635-compte-lien-accueil.md) | 🎨 | Dans Analyses, tant que vos pistes ne sont pas prêtes, les onglets Bien-être et Ventre disaient « Notez … depuis la carte de l'Accueil » sans lien : c'est maintenant un lien qui y mène. Au passage, la PR de 05:35 (banc de captures fiable) est mergée. Alpha reste sur 100811 (porte de 24 h, vers 16:30). Rien à faire de votre côté |
