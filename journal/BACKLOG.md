@@ -247,8 +247,11 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   ligne sous chaque titre de l'onglet Bien-être, 1 test) → ~~**VENTRE-SEMAINES** : l'onglet Ventre avait pour « Sur quelques
   semaines » un lien vers Tendances (forme et bien-être seulement) : mélange~~ ✅ 06/11 00:35 (`services/gutWeeks.js`,
   `GutWeeks.jsx` : jours calmes / gêne / douleur par semaine, mêmes chiffres que le rapport PDF, dès 2 semaines notées,
-  avant la carte du rapport ; 8 tests) → **ANALYSES-ONGLETS-5** (plus tard) : bien-être à l'échelle des
-  heures (visage), quand les lectures suffisent.
+  avant la carte du rapport ; 8 tests) → ~~**ANALYSES-ONGLETS-5** : bien-être à l'échelle des
+  heures (visage)~~ ✅ 06/11 01:35 (`services/mood/mealHours.js`, `MealHoursHorizon` : lectures dans les 2 h après un repas contre
+  celles à plus de 3 h, même jour, corrigées de la tranche de 3 h ; ≥ 10 jours ; permutation des signes ; 12 tests) → **ANALYSES-ONGLETS-6**
+  (idée) : même horizon pour d'autres moments datés (café, alcool, activité finie) si le propriétaire le demande, avec
+  Benjamini-Hochberg dès qu'il y a plus d'une comparaison.
 - [x] **BE-BIAIS** (retour (5)) ✅ BE-BIAIS-1 05/11 06:35 (recalage de départ : `personalOffset`, dès 3 jours notés, écart moyen note − visage rétréci et plafonné ±2, remplacé par le modèle personnel ; 4 tests) ✅ BE-BIAIS-2 05/11 07:35 (calibration de départ : note du jour demandée dans la carte tant que 3 jours ne sont pas notés, `startCalibration`, 6 tests) ✅ BE-BIAIS-3 05/11 09:35 (expressions comparées à l'habitude des 28 jours : trait et phrase « plus de joie, moins de tristesse » ; fiabilité mesurée sur les notes, jour laissé de côté, `notesAgreement` ; 9 tests). ✅ BE-BIAIS-4 05/11 18:35 (vue Jour : ligne lissée `dayTrend`, σ = 60 min, pondérée par la netteté, rappel vers la médiane du jour ; lectures en points ; affichage seulement, note du jour inchangée ; 6 tests). Énoncé : mesurer le biais (visage neutre lu triste ou méprisant : 42 % tristesse, 11 % mépris
   sur 32 lectures alors qu'il allait bien), recalage personnel, calibration de départ (notes de bien-être demandées les
   3 à 5 premiers jours, la plus courte qui suffit, puis calibration continue), lissage des creux et pics, fiabilité
