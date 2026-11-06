@@ -123,6 +123,7 @@
    libellé, avec une marge intérieure : sur un écran de 360 px, « Tendances » ne touche plus sa bordure. */
 .journal-tabs {
   display: flex;
+  flex-wrap: wrap; /* filet : en très grande police, une pilule passe à la ligne plutôt que de sortir de l'écran */
   gap: 6px;
   margin: 4px 0 12px;
 }
@@ -153,6 +154,18 @@
   .journal-tab {
     padding: 0 6px;
     font-size: 15px;
+  }
+}
+
+/* Petits écrans (320 px) : les quatre sous-onglets d'Analyses tiennent sur une ligne (mesuré : 278 px pour
+   288 de large ; REVUE-320). */
+@media (max-width: 340px) {
+  .journal-tabs {
+    gap: 3px;
+  }
+  .journal-tab {
+    padding: 0 3px;
+    font-size: 14px;
   }
 }
 

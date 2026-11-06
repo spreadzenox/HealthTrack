@@ -260,6 +260,19 @@ function routeName(path) {
  * Boutons, liens et onglets dont le libellé dépasse de leur cadre (texte qui touche ou franchit la bordure sur un
  * écran étroit, `--size=360x780`). Exécuté dans la page ; un avertissement à regarder, pas un échec.
  */
+// Les éléments les plus profonds qui dépassent le bord droit de la page (au plus 3) : le coupable d'un
+// « DÉBORDEMENT HORIZONTAL », décrit par sa balise, ses classes et le début de son texte.
+function findWideElements() {
+  const limit = document.documentElement.clientWidth + 1
+  const wide = [...document.body.querySelectorAll('*')].filter((el) => el.getBoundingClientRect().right > limit)
+  const deepest = wide.filter((el) => !wide.some((other) => other !== el && el.contains(other)))
+  return deepest.slice(0, 3).map((el) => {
+    const cls = typeof el.className === 'string' && el.className.trim() ? '.' + el.className.trim().split(/\s+/).join('.') : ''
+    const text = (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 30)
+    return `${el.tagName.toLowerCase()}${cls}${text ? ` « ${text} »` : ''} → ${Math.round(el.getBoundingClientRect().right)} px`
+  })
+}
+
 function findTextOverflow() {
   const out = []
   for (const el of document.querySelectorAll('button, a, [role="tab"]')) {
@@ -1382,6 +1395,7 @@ async function main() {
         current.overflowX = await page.evaluate(
           () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
         )
+        if (current.overflowX) current.overflowCulprits = await page.evaluate(findWideElements)
         current.textOverflow = await page.evaluate(findTextOverflow)
         current.a11y = await page.evaluate(findA11y)
         current.contrast = await page.evaluate(findContrast)
@@ -1402,7 +1416,7 @@ async function main() {
         r.error ? `ÉCHEC: ${r.error}` : 'ok',
         r.pageErrors.length ? `${r.pageErrors.length} erreur(s) JS` : null,
         r.console.length ? `${r.console.length} msg console` : null,
-        r.overflowX ? 'DÉBORDEMENT HORIZONTAL' : null,
+        r.overflowX ? `DÉBORDEMENT HORIZONTAL${r.overflowCulprits?.length ? ` (${r.overflowCulprits.join(', ')})` : ''}` : null,
         r.textOverflow?.length ? `TEXTE QUI DÉBORDE (« ${r.textOverflow.join(' », « ')} »)` : null,
         r.a11y?.unnamed.length ? `SANS NOM ACCESSIBLE (${r.a11y.unnamed.join(', ')})` : null,
         r.a11y?.small.length ? `CIBLE < 44 px (« ${r.a11y.small.join(' », « ')} »)` : null,
