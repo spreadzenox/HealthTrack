@@ -272,6 +272,9 @@ describe('Correlation link direction', () => {
     const lipid = screen.getByText('Lipides').closest('.reco-link-card')
     expect(lipid).toHaveTextContent('Le jour même : plus haut, meilleur bien-être.')
     expect(lipid).toHaveClass('reco-link-card--corr')
+    // KEEP-WHOLE-3 : « meilleur bien- / être » ne se coupe plus au trait d'union dans la phrase du lien
+    const whole = [...lipid.querySelectorAll('.reco-link-text span')].find((s) => s.textContent === 'bien-être')
+    expect(whole?.style.whiteSpace).toBe('nowrap')
     // VENTRE-BE-1 : chaque lien dit qu'il porte sur le bien-être
     expect(lipid.querySelector('.domain-tag--wellbeing')).toHaveTextContent('Bien-être')
 

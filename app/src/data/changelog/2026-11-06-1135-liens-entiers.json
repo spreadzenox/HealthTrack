@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-06",
+  "kind": "amélioration",
+  "title": "Liens repérés plus lisibles",
+  "items": [
+    "Dans Analyses, les phrases des liens comme « plus haut, meilleur bien-être » ne coupent plus « bien-être » en fin de ligne."
+  ]
+}
