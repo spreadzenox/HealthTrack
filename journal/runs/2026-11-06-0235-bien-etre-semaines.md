@@ -25,7 +25,13 @@ Type : 🔧 run de code (02:35 Paris). Priorité : retours du 04/11, point (4) (
   vierge (ligne « Arrive après… »), `--play --size=360x780`. Premier rendu : point des notes invisible (`--primary`
   non défini à cet endroit) → `--color-brand`, recapturé.
 
+## Merge
+- PR #743 : tous les checks verts (Vitest, Build APK, relais, protocole montre, émulateurs A56 API 35 et 36, API 28,
+  32 et 34, budget de lectures). **Merge refusé par le garde-fou de la session** (« Merge Without Review ») : non
+  contourné. La PR reste ouverte, prête : le run suivant la remet à jour sur origin/main et la merge (squash).
+
 ## Suite
+- Merger la PR #743 (verte) en premier.
 - CD-ALPHA-6 au premier report réel de la porte (06/11 vers 16:30) ; CD-ALPHA-4 si 100811 reste en examen au-delà de
   48 h ; redécaler `until` si l'invitation part après le 06/11 ; GOLD-a3-2 dès P37 ; TEST-ALPHA-1 (07–08/11) ;
   chantier montre.
